@@ -308,4 +308,230 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 	loadScene(1000);
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 1001 - Fleeing planet cutscene
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene1001::Action1::signal() {
+	Scene1001 *scene = (Scene1001 *)_globals->_sceneManager._scene;
+	
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(10);
+		break;
+	case 1:
+		scene->_object3.animate(ANIM_MODE_5, this);
+		break;
+	case 2: {
+		Common::Point pt(108, 171);
+		NpcMover *mover = new NpcMover();
+		scene->_object3.addMover(mover, &pt, this);
+		break;
+	}
+	case 3: {
+		Common::Point pt(170, 159);
+		NpcMover *mover = new NpcMover();
+		scene->_object3.addMover(mover, &pt, this);
+		break;
+	}
+	case 4: {
+		scene->_object2.postInit();
+		scene->_object2.setVisage(16);
+		scene->_object2.setStrip2(4);
+		scene->_object2.setPosition(Common::Point(61, 177));
+		scene->_object2.animate(ANIM_MODE_5, this);
+
+		Common::Point pt(320, 100);
+		NpcMover *mover = new NpcMover();
+		scene->_object3.addMover(mover, &pt, this);
+		break;
+	}
+	case 5: {
+		Common::Point pt(82, 166);
+		NpcMover *mover = new NpcMover();
+		scene->_object2.addMover(mover, &pt, this);
+		break;
+	}
+	case 6: {
+		Common::Point pt(64, 149);
+		NpcMover *mover = new NpcMover();
+		scene->_object2.addMover(mover, &pt, this);
+		break;
+	}
+	case 7: {
+		Common::Point pt(15, 136);
+		NpcMover *mover = new NpcMover();
+		scene->_object2.addMover(mover, &pt, this);
+		break;
+	}
+	case 8: {
+		Common::Point pt(-5, 120);
+		NpcMover *mover = new NpcMover();
+		scene->_object2.addMover(mover, &pt, this);
+		break;
+	}
+	case 9: {
+		scene->_object1.postInit();
+		scene->_object1.setVisage(16);
+		scene->_object1.setStrip2(1);
+		scene->_object1.setFrame(1);
+		scene->_object1.setPosition(Common::Point(-75, 87));
+		scene->_object1.animate(ANIM_MODE_2, NULL);
+		
+		Common::Point pt(0, 100);
+		NpcMover *mover = new NpcMover();
+		scene->_object1.addMover(mover, &pt, this);
+		break;
+	}
+	case 10: {
+		Common::Point pt1(107, 115);
+		NpcMover *mover1 = new NpcMover();
+		scene->_object1.addMover(mover1, &pt1, NULL);
+
+		scene->_object3.setVisage(16);
+		scene->_object3.setStrip2(5);
+		scene->_object3.setFrame2(2);
+		scene->_object3.setPosition(Common::Point(220, 200));
+
+		Common::Point pt2(187, 181);
+		NpcMover *mover2 = new NpcMover();
+		scene->_object3.addMover(mover2, &pt2, this);
+		break;
+	}
+	case 11: {
+		scene->_object2.setVisage(16);
+		scene->_object2.setStrip2(5);
+		scene->_object2.setFrame2(1);
+		scene->_object2.setPosition(Common::Point(211, 0));
+
+		Common::Point pt(189, 30);
+		NpcMover *mover = new NpcMover();
+		scene->_object2.addMover(mover, &pt, this);
+		break;
+	}
+	case 12:
+		scene->_stripManager.start(100, this);
+		break;
+	case 13: {
+		scene->_object4.postInit();
+		scene->_object4.setVisage(16);
+		scene->_object4.setStrip2(2);
+		scene->_object4.setFrame(4);
+		scene->_object4.setPosition(Common::Point(360, 80));
+		scene->_object4.animate(ANIM_MODE_2, NULL);
+
+		Common::Point pt(303, 97);
+		NpcMover *mover = new NpcMover();
+		scene->_object4.addMover(mover, &pt, this);
+		break;
+	}
+	case 14:
+		scene->_stripManager.start(110, this);
+		break;
+	case 15:
+		setDelay(10);
+		break;
+	case 16: {
+		scene->_soundHandler1.startSound(90);
+
+		scene->_object6.postInit();
+		scene->_object6.setVisage(16);
+		scene->_object6.setStrip2(6);
+		scene->_object6.setFrame2(2);
+		scene->_object6._moveDiff = Common::Point(20, 20);
+		scene->_object6.setPriority2(20);
+		scene->_object6.setPosition(Common::Point(scene->_object2._position.x - 6, scene->_object2._position.y + 7));
+		scene->_object6.animate(ANIM_MODE_5, NULL);
+
+		Common::Point pt(scene->_object6._position.x - 70, scene->_object6._position.y + 70);
+		NpcMover *mover = new NpcMover();
+		scene->_object6.addMover(mover, &pt, this);
+		break;
+	}		
+	case 17: {
+		scene->_soundHandler1.startSound(90);
+		scene->_object6.remove();
+
+		scene->_object7.postInit();
+		scene->_object7.setVisage(16);
+		scene->_object7.setStrip2(6);
+		scene->_object7.setFrame2(1);
+		scene->_object7._moveDiff = Common::Point(20, 20);
+		scene->_object7.setPosition(Common::Point(scene->_object3._position.x - 28, scene->_object3._position.y - 11));
+		scene->_object7.setPriority2(200);
+		scene->_object7.animate(ANIM_MODE_5, NULL);
+
+		Common::Point pt(scene->_object7._position.x - 70, scene->_object7._position.y - 70);
+		NpcMover *mover = new NpcMover();
+		scene->_object7.addMover(mover, &pt, this);
+		break;
+	}		
+	case 18:
+		scene->_object7.remove();
+
+		scene->_object5.postInit();
+		scene->_object5.setVisage(16);
+		scene->_object5.setPosition(Common::Point(306, 93));
+		scene->_object5._strip = 3;
+		scene->_object5.setPriority2(200);
+		scene->_object5.animate(ANIM_MODE_2, NULL);
+		setDelay(30);
+		break;
+	case 19: {
+		_globals->_soundHandler.startSound(91);
+		byte adjustData[4] = {0xff, 0xff, 0xff, 0};
+		_globals->_scenePalette.fade(adjustData, true, 0);
+
+		scene->_object1._strip = 7;
+		scene->_object1._frame = 1;
+		scene->_object1.setPosition(Common::Point(314, 112));
+		scene->_object1.addMover(NULL);
+		setDelay(2);
+	}
+	case 20:
+		_globals->_scenePalette.loadPalette(16);
+		_globals->_scenePalette.refresh();
+		setDelay(6);
+		break;
+	case 21:
+		scene->_object1._numFrames = 15;
+		scene->_object1.animate(ANIM_MODE_5, this);
+		break;
+	case 22:
+		_globals->_soundHandler.startSound(92);
+		scene->_stripManager.start(111, this);
+		break;
+	case 23:
+		setDelay(60);
+		break;
+	case 24:
+		_globals->_sceneManager.changeScene(2000);
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene1001::postInit(SceneObjectList *OwnerList) {
+	loadScene(16);
+	Scene::postInit();
+	setZoomPercents(0, 100, 200, 100);
+
+	_stripManager.addSpeaker(&_speakerQText);
+	_stripManager.addSpeaker(&_speakerCText);
+	_stripManager.addSpeaker(&_speakerCR);
+	_stripManager.addSpeaker(&_speakerSL);
+	_speakerQText._colour1 = 11;
+
+	_object3.postInit();
+	_object3.setVisage(16);
+	_object3.setStrip2(4);
+	_object3.setPosition(Common::Point(61, 177));
+
+	_globals->_soundHandler.startSound(85);
+	setAction(&_action1);
+}
+
+
 } // End of namespace tSage

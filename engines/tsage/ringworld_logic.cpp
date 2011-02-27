@@ -59,7 +59,8 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	/* Scene group 2 */
 	// Title screen
 	case 1000: return new Scene1000();
-
+	// Fleeing planet cutscene
+	case 1001: return new Scene1001();
 
 	default:
 		error("Unknown scene number - %d", sceneNumber);
@@ -200,6 +201,16 @@ SpeakerMText::SpeakerMText() {
 
 /*--------------------------------------------------------------------------*/
 
+SpeakerCText::SpeakerCText() {
+	_speakerName = "CTEXT";
+	_colour1 = 4;
+	_textWidth = 240;
+	_textMode = ALIGN_CENTRE;
+	_hideObjects = false;
+}
+
+/*--------------------------------------------------------------------------*/
+
 SpeakerQL::SpeakerQL(): AnimatedSpeaker() {
 	_speakerName = "QL";
 	_newSceneNumber = 2610;
@@ -330,6 +341,33 @@ void SpeakerQR::setText(const Common::String &msg) {
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(197, 84));
+	_object2.setAction(&_speakerAction, NULL);
+
+	Speaker::setText(msg);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerCR::SpeakerCR() {
+	_speakerName = "CR";
+	_newSceneNumber = 9010;
+	_textPos = Common::Point(20, 40);
+	_colour1 = 4;
+}
+
+void SpeakerCR::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(9011);
+	_object1.setStrip2(2);
+	_object1.setPriority2(255);
+	_object1.setPosition(Common::Point(219, 168));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
+	
+	_object2.postInit(&_objectList);
+	_object2.setVisage(9011);
+	_object2.setStrip2(1);
+	_object2.setPriority2(255);
+	_object2.setPosition(Common::Point(232, 81));
 	_object2.setAction(&_speakerAction, NULL);
 
 	Speaker::setText(msg);
