@@ -35,7 +35,7 @@ SceneManager::SceneManager() {
 	_hasPalette = false;
 	_sceneNumber = -1; 
 	_nextSceneNumber = -1;
-	_FadeMode = FADEMODE_GRADUAL;
+	_fadeMode = FADEMODE_GRADUAL;
 	_scrollerRect = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	_saver->addListener(this);
 }
@@ -109,7 +109,7 @@ void SceneManager::fadeInIfNecessary() {
 	if (_hasPalette) {
 		uint32 adjustData = 0;
 		for (int percent = 0; percent < 100; percent += 5) {
-			if (_globals->_sceneManager._FadeMode == FADEMODE_IMMEDIATE)
+			if (_globals->_sceneManager._fadeMode == FADEMODE_IMMEDIATE)
 				percent = 100;
 
 			_globals->_scenePalette.fade((const byte *)&adjustData, false, percent);

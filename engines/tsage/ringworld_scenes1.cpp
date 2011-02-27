@@ -282,7 +282,7 @@ void Scene20::Action1::signal() {
 		_globals->_soundHandler.proc1(this);
 		break;
 	case 3:
-		_globals->_sceneManager._FadeMode = FADEMODE_GRADUAL;
+		_globals->_sceneManager._fadeMode = FADEMODE_GRADUAL;
 		_globals->_sceneManager.changeScene(30);	// First game scene
 		break;
 	default:
@@ -349,7 +349,7 @@ void Scene20::Action2::signal() {
 		break;
 	case 9:
 		SceneItem::display(0, 0, LIST_END);
-		_globals->_sceneManager._FadeMode = FADEMODE_GRADUAL;
+		_globals->_sceneManager._fadeMode = FADEMODE_GRADUAL;
 		_globals->_sceneManager.changeScene(40);
 		break;
 	default:
@@ -407,7 +407,7 @@ void Scene20::Action3::signal() {
 		_globals->_soundHandler.proc4();
 		break;
 	case 7:
-		_globals->_sceneManager._FadeMode = FADEMODE_GRADUAL;
+		_globals->_sceneManager._fadeMode = FADEMODE_GRADUAL;
 		_globals->_sceneManager.changeScene(90);
 		break;
 	default:

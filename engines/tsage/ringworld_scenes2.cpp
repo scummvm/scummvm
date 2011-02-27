@@ -655,6 +655,135 @@ void Scene1250::postInit(SceneObjectList *OwnerList) {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 1400 - Arriving at Ringworld
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene1400::Action1::signal() {
+	Scene1400 *scene = (Scene1400 *)_globals->_sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(5);
+		break;
+	case 1: {
+		SceneItem::display(1400, 0, SET_X, 120, SET_Y, 610, SET_FONT, 2, SET_EXT_BGCOLOUR, 23, SET_KEEP_ONSCREEN, -1, LIST_END);
+
+		Common::Point pt(160, 700);
+		NpcMover *mover = new NpcMover();
+		_globals->_player.addMover(mover, &pt, this);
+		break;
+	}
+	case 2: {
+		_globals->_player.setStrip2(3);
+		_globals->_player.changeZoom(100);
+
+		Common::Point pt(160, 100);
+		NpcMover *mover = new NpcMover();
+		_globals->_player.addMover(mover, &pt, this);
+		SceneItem::display(0, 0);
+		break;
+	}
+	case 3:
+		SceneItem::display(1400, 2, SET_X, 60, SET_Y, _globals->_sceneManager._scene->_sceneBounds.bottom - 80,
+			SET_FONT, 2, SET_FG_COLOUR, 13, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
+		setDelay(420);
+		break;
+	case 4:
+		SceneItem::display(0, 0);
+		setDelay(360);
+		break;
+	case 5:
+		SceneItem::display(1400, 3, SET_X, 60, SET_Y, _globals->_sceneManager._scene->_sceneBounds.bottom - 80,
+			SET_FONT, 2, SET_FG_COLOUR, 23, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
+		setDelay(360);
+		break;
+	case 6:
+		SceneItem::display(0, 0);
+		break;
+	case 7: {
+		_globals->_player._frame = 1;
+		_globals->_player.setStrip2(1);
+		_globals->_player._numFrames = 5;
+		_globals->_player.animate(ANIM_MODE_5, this);
+
+		Common::Point pt(205, 70);
+		NpcMover *mover = new NpcMover();
+		_globals->_player.addMover(mover, &pt, NULL);
+		_globals->_sceneManager._fadeMode = FADEMODE_NONE;
+
+		scene->loadScene(1402);
+		break;
+	}
+	case 8:
+		_globals->_player.setStrip2(2);
+		_globals->_player._numFrames = 10;
+		_globals->_player.animate(ANIM_MODE_2, NULL);
+
+		SceneItem::display(1400, 4, SET_X, 30, SET_Y, _globals->_player._position.y + 10, SET_FONT, 2,
+			SET_FG_COLOUR, 13, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
+		setDelay(300);
+		break;
+	case 9: {
+		SceneItem::display(0, 0);
+		Common::Point pt(450, 45);
+		NpcMover *mover = new NpcMover();
+		_globals->_player.addMover(mover, &pt, this);
+		break;
+	}
+	case 10:
+		_globals->_sceneManager._scrollerRect = Rect(40, 20, 280, 180);
+		_globals->_sceneManager._fadeMode = FADEMODE_GRADUAL;
+		_globals->_stripNum = 1500;
+		_globals->_soundHandler.proc3();
+
+		_globals->_sceneManager.changeScene(1500);
+		break;
+	}
+}
+
+void Scene1400::Action1::dispatch() {
+	Action::dispatch();
+
+	if ((_actionIndex > 3) && (_actionIndex < 9))
+		_globals->_sceneText.setPosition(Common::Point(60, _globals->_sceneManager._scene->_sceneBounds.bottom - 80));
+
+	if ((_actionIndex <= 2) && (_globals->_player._percent > 22))
+		_globals->_player.changeZoom(100 - (800 - _globals->_player._position.y));
+
+	if ((_actionIndex >= 9) && (_globals->_player._percent > 22))
+		_globals->_player.changeZoom(100 - (_globals->_player._position.x - 205));
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene1400::postInit(SceneObjectList *OwnerList) {
+	if (_globals->_stripNum != 1400) {
+		loadScene(1401);
+	} else {
+		loadScene(1402);
+	}
+	Scene::postInit();
+
+	_globals->_sceneManager._scrollerRect = Rect(40, 90, 280, 180);
+	_globals->_player.postInit();
+	_globals->_player.setVisage(1401);
+	_globals->_player.animate(ANIM_MODE_2, 0);
+	_globals->_player.setStrip2(4);
+	_globals->_player.setPriority2(4);
+	_globals->_player.disableControl();
+
+	_globals->_player._moveDiff = Common::Point(4, 2);
+	_globals->_player.setPosition(Common::Point(160, 800));
+	_globals->_sceneManager._scene->_sceneBounds.centre(_globals->_player._position);
+	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
+	_globals->_sceneOffset.y = (_globals->_sceneManager._scene->_sceneBounds.top / 100) * 100;
+
+	setAction(&_action1);
+	_globals->_soundHandler.startSound(118);
+}
+
+/*--------------------------------------------------------------------------
  * Scene 1500 - Ringworld Space-port
  *
  *--------------------------------------------------------------------------*/

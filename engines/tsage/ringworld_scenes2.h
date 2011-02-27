@@ -110,6 +110,21 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
+class Scene1400: public Scene {
+public:
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+		virtual void dispatch();
+	};
+public:
+	Action1 _action1;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+
+};
+
 class Scene1500: public Scene {
 public:
 	/* Actions */

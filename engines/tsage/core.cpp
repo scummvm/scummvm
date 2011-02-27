@@ -2171,7 +2171,7 @@ void SceneObjectList::draw() {
 
 			Rect tempRect = _globals->_sceneManager._scene->_sceneBounds;
 			tempRect.translate(-_globals->_sceneOffset.x, -_globals->_sceneOffset.y);
-			ScenePalette::changeBackground(tempRect, _globals->_sceneManager._FadeMode);
+			ScenePalette::changeBackground(tempRect, _globals->_sceneManager._fadeMode);
 		} else {
 			_globals->_paneRegions[CURRENT_PANENUM].draw();
 		}
@@ -2256,7 +2256,7 @@ void SceneObjectList::draw() {
 			// Change the background
 			Rect tempRect = _globals->_sceneManager._scene->_sceneBounds;
 			tempRect.translate(-_globals->_sceneOffset.x, -_globals->_sceneOffset.y);
-			ScenePalette::changeBackground(tempRect, _globals->_sceneManager._FadeMode);
+			ScenePalette::changeBackground(tempRect, _globals->_sceneManager._fadeMode);
 		} else {
 			for (uint objIndex = 0; objIndex < objList.size(); ++objIndex) {
 				SceneObject *obj = objList[objIndex];

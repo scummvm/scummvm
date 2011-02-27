@@ -81,7 +81,7 @@ public:
 	int _sceneNumber;
 	int _previousScene;
 	int _nextSceneNumber;
-	FadeMode _FadeMode;
+	FadeMode _fadeMode;
 	Common::Point _sceneBgOffset;
 	int _sceneLoadCount;
 	Rect _scrollerRect;
