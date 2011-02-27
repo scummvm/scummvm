@@ -38,8 +38,8 @@ void ToonstruckSmackerDecoder::handleAudioTrack(byte track, uint32 chunkSize, ui
 		Video::SmackerDecoder::handleAudioTrack(track, chunkSize, unpackedSize);
 }
 
-bool ToonstruckSmackerDecoder::loadFile(const Common::String &filename, int forcedflags) {
-	debugC(1, kDebugMovie, "loadFile(%s, %d)", filename.c_str(), forcedflags);
+bool ToonstruckSmackerDecoder::loadFile(const Common::String &filename) {
+	debugC(1, kDebugMovie, "loadFile(%s)", filename.c_str());
 
 	_lowRes = false;
 
@@ -88,7 +88,7 @@ void Movie::play(Common::String video, int32 flags) {
 	_playing = true;
 	if (flags & 1)
 		_vm->getAudioManager()->setMusicVolume(0);
-	_decoder->loadFile(video.c_str(), flags);
+	_decoder->loadFile(video.c_str());
 	playVideo(isFirstIntroVideo);
 	_vm->flushPalette(false);
 	if (flags & 1)
