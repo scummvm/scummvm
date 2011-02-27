@@ -61,9 +61,10 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 1000: return new Scene1000();
 	// Fleeing planet cutscene
 	case 1001: return new Scene1001();
-	//
+	// Unused
 	case 1250: return new Scene1250();
-
+	// Ringworld Space-port
+	case 1500: return new Scene1500();
 
 	default:
 		error("Unknown scene number - %d", sceneNumber);

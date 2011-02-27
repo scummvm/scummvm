@@ -110,6 +110,28 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
+class Scene1500: public Scene {
+public:
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	SoundHandler _soundHandler;
+	Action1 _action1;
+	Action2 _action2;
+	SceneObject _object1, _object2, _object3;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+};
+
+
+
 } // End of namespace tSage
 
 #endif

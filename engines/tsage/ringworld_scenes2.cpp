@@ -654,6 +654,146 @@ void Scene1250::postInit(SceneObjectList *OwnerList) {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 1500 - Ringworld Space-port
+ *
+ *--------------------------------------------------------------------------*/
 
+void Scene1500::Action1::signal() {
+	Scene1500 *scene = (Scene1500 *)_globals->_sceneManager._scene;
+	
+	switch (_actionIndex++) {
+	case 0: {
+		scene->_object1.postInit();
+		scene->_object1.setVisage(1501);
+		scene->_object1._moveDiff = Common::Point(2, 1);
+		scene->_object1.setPosition(Common::Point(204, 85));
+		scene->_object1.animate(ANIM_MODE_2, NULL);
+		scene->_object1._numFrames = 3;
+		scene->_object1.changeZoom(-1);
+
+		Common::Point pt(238, 121);
+		PlayerMover *mover = new PlayerMover();
+		scene->_object1.addMover(mover, &pt, this);
+		break;
+	}
+	case 1: {
+		Common::Point pt(312, 145);
+		PlayerMover *mover = new PlayerMover();
+		scene->_object1.addMover(mover, &pt, this);
+		break;
+	}
+	case 2: {
+		scene->_object1.setStrip(2);
+		scene->_object1.setFrame(1);
+		scene->_object1._moveDiff.y = 2;
+		scene->_object1._numFrames = 5;
+
+		Common::Point pt(310, 150);
+		PlayerMover *mover = new PlayerMover();
+		scene->_object1.addMover(mover, &pt, this);
+		break;
+	}
+	case 3: {
+		Common::Point pt(304, 165);
+		PlayerMover *mover = new PlayerMover();
+		scene->_object1.addMover(mover, &pt, this);
+		break;
+	}
+	case 4: {
+		scene->_object1._numFrames = 3;
+		scene->_object1.setStrip2(3);
+		scene->_object1.animate(ANIM_MODE_2, this);
+
+		Common::Point pt(94, 175);
+		PlayerMover *mover = new PlayerMover();
+		scene->_object1.addMover(mover, &pt, this);
+		break;
+	}
+	case 5:
+		setDelay(30);
+		break;
+	case 6:
+		scene->_soundHandler.startSound(123);
+		scene->_object1.setStrip2(4);
+		scene->_object1.setFrame(1);
+		scene->_object1.animate(ANIM_MODE_5, this);
+		break;
+	case 7:
+		scene->_object1.setStrip2(5);
+		scene->_object1.animate(ANIM_MODE_2, NULL);
+		scene->_soundHandler.startSound(124, this);
+		break;
+	case 8:
+		_globals->_soundHandler.startSound(126, this);
+		break;
+	case 9:
+		_globals->_soundHandler.startSound(127);
+		_globals->_sceneManager.changeScene(2000);
+		break;
+	}
+}
+
+void Scene1500::Action2::signal() {
+	Scene1500 *scene = (Scene1500 *)_globals->_sceneManager._scene;
+	
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(6);
+		break;
+	case 1: {
+		scene->_object2.postInit();
+		scene->_object2.setVisage(1502);
+		scene->_object2.setPriority2(255);
+		scene->_object2.changeZoom(5);
+		scene->_object2._frame = 1;
+		scene->_object2._moveDiff = Common::Point(1, 1);
+		scene->_object2.setPosition(Common::Point(104, 184));
+		scene->_object2.animate(ANIM_MODE_2, NULL);
+
+		Common::Point pt(118, 147);
+		NpcMover *mover = new NpcMover();
+		scene->_object2.addMover(mover, &pt, this);
+		break;
+	}
+	case 2: {
+		scene->_object2._moveDiff.x = 5;
+		scene->_object2.changeZoom(-1);
+		Common::Point pt(-55, 200);
+		NpcMover *mover = new NpcMover();
+		scene->_object2.addMover(mover, &pt, this);
+		break;
+	}
+	case 3:
+		scene->_soundHandler.proc4();
+		_globals->_stripNum = 1505;
+		_globals->_sceneManager.changeScene(1505);
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene1500::postInit(SceneObjectList *OwnerList) {
+	loadScene(1500);
+	Scene::postInit();
+
+	if ((_globals->_stripNum == 1500) || ((_globals->_stripNum != 1504) && (_globals->_stripNum != 2751))) {
+		_globals->_soundHandler.startSound(120);
+		setZoomPercents(105, 20, 145, 100);
+
+		setAction(&_action1);
+	} else {
+		setZoomPercents(150, 5, 200, 100);
+
+		_object1.postInit();
+		_object1.setVisage(1501);
+		_object1.setStrip2(5);
+		_object1.setPosition(Common::Point(94, 175));
+		_object1.animate(ANIM_MODE_2, NULL);
+
+		setAction(&_action2);
+	}
+}
 
 } // End of namespace tSage
