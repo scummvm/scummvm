@@ -142,7 +142,7 @@ void *OSystem_Android::timerThreadFunc(void *arg) {
 
 	// renice this thread to boost the audio thread
 	if (setpriority(PRIO_PROCESS, 0, 19) < 0)
-		warning("couldn't renice the timer thread");
+		LOGW("couldn't renice the timer thread");
 
 	JNI::attachThread();
 
@@ -250,7 +250,7 @@ void *OSystem_Android::audioThreadFunc(void *arg) {
 			written = JNI::writeAudio(env, bufa, offset, left);
 
 			if (written < 0) {
-				error("AudioTrack error: %d", written);
+				LOGE("AudioTrack error: %d", written);
 				break;
 			}
 
