@@ -189,7 +189,7 @@ void *OSystem_Android::audioThreadFunc(void *arg) {
 	tv_full.tv_nsec = msecs_full * 1000 * 1000;
 
 	bool silence;
-	uint silence_count = 0;
+	uint silence_count = 33;
 
 	while (!system->_audio_thread_exit) {
 		buf = (byte *)env->GetPrimitiveArrayCritical(bufa, 0);
