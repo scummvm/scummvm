@@ -318,9 +318,6 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 
 	int volume = musicSlot->volume;
 
-	// Reset hold so that the song can actually stop
-	musicSlot->hold = -1;
-
 	// If sound is not playing currently, set signal directly
 	if (musicSlot->status != kSoundPlaying) {
 		debugC(kDebugLevelSound, "kDoSound(fade): %04x:%04x fading requested, but sound is currently not playing", PRINT_REG(obj));
@@ -534,12 +531,6 @@ reg_t SoundCommandParser::kDoSoundSetHold(int argc, reg_t *argv, reg_t acc) {
 		return acc;
 	}
 
-	// Is the song being faded? If yes, don't set a hold value, otherwise the
-	// song will never actually stop. Fixes bug #3106107.
-	if (musicSlot->fadeStep && argv[1].toSint16() != -1) {
-		warning("kDoSound(setHold): Attempt to set a hold value (%d) to a song being faded, ignoring", argv[1].toSint16());
-		return acc;
-	}
 	// Set the special hold marker ID where the song should be looped at.
 	musicSlot->hold = argv[1].toSint16();
 	return acc;

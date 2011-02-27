@@ -441,10 +441,15 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 				// when loading a saved game. Fixes bug #3083151.
 				uint16 prevLoop = pSnd->loop;
 				pSnd->loop = 0;
+				// Same for hold. Fixes bug #3106107.
+				int16 prevHold = pSnd->hold;
+				pSnd->hold = -1;
 				// Fast forward to the last position and perform associated events when loading
 				pSnd->pMidiParser->jumpToTick(pSnd->ticker, true, true, true);
 				// Restore looping
 				pSnd->loop = prevLoop;
+				// Restore hold
+				pSnd->hold = prevHold;
 			}
 			pSnd->pMidiParser->mainThreadEnd();
 			_mutex.unlock();
