@@ -359,9 +359,6 @@ public class ScummVM implements SurfaceHolder.Callback {
 	}
 
 	// Set scummvm config options
-	final public native static void loadConfigFile(String path);
-	final public native static void setConfMan(String key, int value);
-	final public native static void setConfMan(String key, String value);
 	final public native void enableZoning(boolean enable);
 	final public native void setSurfaceSize(int width, int height);
 

@@ -79,10 +79,6 @@ const JNINativeMethod JNI::_natives[] = {
 	 	(void *)JNI::main },
 	{ "pushEvent", "(Lorg/inodes/gus/scummvm/Event;)V",
 		(void *)JNI::pushEvent },
-	{ "setConfMan", "(Ljava/lang/String;I)V",
-		(void *)JNI::setConfManInt },
-	{ "setConfMan", "(Ljava/lang/String;Ljava/lang/String;)V",
-		(void *)JNI::setConfManString },
 	{ "enableZoning", "(Z)V",
 		(void *)JNI::enableZoning },
 	{ "setSurfaceSize", "(II)V",
@@ -561,41 +557,6 @@ void JNI::pushEvent(JNIEnv *env, jobject self, jobject java_event) {
 	}
 
 	_system->pushEvent(event);
-}
-
-void JNI::setConfManInt(JNIEnv *env, jclass cls, jstring key_obj, jint value) {
-	ENTER("%p, %d", key_obj, (int)value);
-
-	const char *key = env->GetStringUTFChars(key_obj, 0);
-
-	if (key == 0)
-		return;
-
-	ConfMan.setInt(key, value);
-
-	env->ReleaseStringUTFChars(key_obj, key);
-}
-
-void JNI::setConfManString(JNIEnv *env, jclass cls, jstring key_obj,
-							jstring value_obj) {
-	ENTER("%p, %p", key_obj, value_obj);
-
-	const char *key = env->GetStringUTFChars(key_obj, 0);
-
-	if (key == 0)
-		return;
-
-	const char *value = env->GetStringUTFChars(value_obj, 0);
-
-	if (value == 0) {
-		env->ReleaseStringUTFChars(key_obj, key);
-		return;
-	}
-
-	ConfMan.set(key, value);
-
-	env->ReleaseStringUTFChars(value_obj, value);
-	env->ReleaseStringUTFChars(key_obj, key);
 }
 
 void JNI::enableZoning(JNIEnv *env, jobject self, jboolean enable) {

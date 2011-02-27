@@ -285,7 +285,8 @@ void OSystem_Android::initBackend() {
 	_main_thread = pthread_self();
 
 	ConfMan.setInt("autosave_period", 0);
-	ConfMan.setInt("FM_medium_quality", true);
+	ConfMan.setBool("FM_high_quality", false);
+	ConfMan.setBool("FM_medium_quality", true);
 
 	// must happen before creating TimerManager to avoid race in
 	// creating EventManager
