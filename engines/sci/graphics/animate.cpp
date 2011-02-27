@@ -637,10 +637,10 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 		// beginUpdate()/endUpdate() were introduced SCI1.
 		// Calling those for SCI0 will work most of the time but breaks minor
 		// stuff like percentage bar of qfg1ega at the character skill screen.
-		if (getSciVersion() >= SCI_VERSION_1_EGA)
+		if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY)
 			_ports->beginUpdate(_ports->_picWind);
 		update();
-		if (getSciVersion() >= SCI_VERSION_1_EGA)
+		if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY)
 			_ports->endUpdate(_ports->_picWind);
 	}
 

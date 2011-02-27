@@ -132,7 +132,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 				//  SCI1 VGA conversion games (which will get detected as SCI1EARLY/MIDDLE/LATE) have some views
 				//  with broken mapping tables. I guess those games won't use the mapping, so I rather disable it
 				//  for them
-				if (getSciVersion() == SCI_VERSION_1_EGA) {
+				if (getSciVersion() == SCI_VERSION_1_EGA_ONLY) {
 					_EGAmapping = &_resourceData[palOffset];
 					for (EGAmapNr = 0; EGAmapNr < SCI_VIEW_EGAMAPPING_COUNT; EGAmapNr++) {
 						if (memcmp(_EGAmapping, EGAmappingStraight, SCI_VIEW_EGAMAPPING_SIZE) != 0)

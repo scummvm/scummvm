@@ -275,7 +275,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	bool completed = false;
 	bool handleMoveCount = g_sci->_features->handleMoveCount();
 
-	if (getSciVersion() >= SCI_VERSION_1_EGA) {
+	if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY) {
 		uint client_signal = readSelectorValue(segMan, client, SELECTOR(signal));
 		writeSelectorValue(segMan, client, SELECTOR(signal), client_signal & ~kSignalHitObstacle);
 	}
@@ -307,7 +307,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		int16 mover_org_i2 = mover_i2;
 		int16 mover_org_di = mover_di;
 
-		if ((getSciVersion() >= SCI_VERSION_1_EGA)) {
+		if ((getSciVersion() >= SCI_VERSION_1_EGA_ONLY)) {
 			// save current position into mover
 			writeSelectorValue(segMan, mover, SELECTOR(xLast), client_x);
 			writeSelectorValue(segMan, mover, SELECTOR(yLast), client_y);
@@ -374,7 +374,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		writeSelectorValue(segMan, mover, SELECTOR(b_i2), mover_i2);
 		writeSelectorValue(segMan, mover, SELECTOR(b_di), mover_di);
 
-		if (getSciVersion() == SCI_VERSION_1_EGA) {
+		if (getSciVersion() == SCI_VERSION_1_EGA_ONLY) {
 			// We need to compare directly in here, complete may have happened during
 			//  the current move
 			if ((client_x == mover_x) && (client_y == mover_y))

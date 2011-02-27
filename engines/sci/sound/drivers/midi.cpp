@@ -955,7 +955,7 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 
 			// TODO: The MT-32 <-> GM mapping hasn't been worked on for SCI1 games. Throw
 			// a warning to the user
-			if (getSciVersion() >= SCI_VERSION_1_EGA)
+			if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY)
 				warning("The automatic mapping for General MIDI hasn't been worked on for "
 						"SCI1 games. Music might sound wrong or broken. Please choose another "
 						"music driver for this game (e.g. Adlib or MT-32) if you are "

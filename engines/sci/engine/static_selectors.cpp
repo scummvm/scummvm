@@ -185,7 +185,7 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 				// dispose comes right after init
 				names[initSelectorPos + 1] = "dispose";
 
-				if ((getSciVersion() >= SCI_VERSION_1_EGA)) {
+				if ((getSciVersion() >= SCI_VERSION_1_EGA_ONLY)) {
 					// Find the xLast and yLast selectors, used in kDoBresen
 
 					// xLast and yLast always come between illegalBits and xStep
@@ -205,7 +205,7 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 
 					names[xLastSelectorPos] = "xLast";
 					names[yLastSelectorPos] = "yLast";
-				}	// if ((getSciVersion() >= SCI_VERSION_1_EGA))
+				}	// if ((getSciVersion() >= SCI_VERSION_1_EGA_ONLY))
 			}	// if (actorClass)
 
 			_segMan->uninstantiateScript(998);

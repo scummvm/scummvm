@@ -75,7 +75,7 @@ void SciMusic::init() {
 		deviceFlags |= MDT_PREFER_GM;
 
 	// Currently our CMS implementation only supports SCI1(.1)
-	if (getSciVersion() >= SCI_VERSION_1_EGA && getSciVersion() <= SCI_VERSION_1_1)
+	if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY && getSciVersion() <= SCI_VERSION_1_1)
 		deviceFlags |= MDT_CMS;
 
 	uint32 dev = MidiDriver::detectDevice(deviceFlags);

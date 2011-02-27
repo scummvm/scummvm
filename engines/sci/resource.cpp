@@ -67,7 +67,7 @@ const char *getSciVersionDesc(SciVersion version) {
 		return "Late SCI0";
 	case SCI_VERSION_01:
 		return "SCI01";
-	case SCI_VERSION_1_EGA:
+	case SCI_VERSION_1_EGA_ONLY:
 		return "SCI1 EGA";
 	case SCI_VERSION_1_EARLY:
 		return "Early SCI1";
@@ -2127,9 +2127,9 @@ void ResourceManager::detectSciVersion() {
 
 	if (viewCompression != kCompLZW) {
 		// If it's a different compression type from kCompLZW, the game is probably
-		// SCI_VERSION_1_EGA or later. If the views are uncompressed, it is
+		// SCI_VERSION_1_EGA_ONLY or later. If the views are uncompressed, it is
 		// likely not an early disk game.
-		s_sciVersion = SCI_VERSION_1_EGA;
+		s_sciVersion = SCI_VERSION_1_EGA_ONLY;
 		oldDecompressors = false;
 	}
 
@@ -2243,9 +2243,9 @@ void ResourceManager::detectSciVersion() {
 			return;
 		}
 
-		// New decompressors. It's either SCI_VERSION_1_EGA or SCI_VERSION_1_EARLY.
+		// New decompressors. It's either SCI_VERSION_1_EGA_ONLY or SCI_VERSION_1_EARLY.
 		if (hasSci1Voc900()) {
-			s_sciVersion = SCI_VERSION_1_EGA;
+			s_sciVersion = SCI_VERSION_1_EGA_ONLY;
 			return;
 		}
 
