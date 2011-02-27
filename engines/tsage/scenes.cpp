@@ -210,6 +210,7 @@ void SceneManager::listenerSynchronise(Serialiser &s) {
 	s.syncAsUint16LE(_globals->_sceneManager._scene->_activeScreenNumber);
 	_globals->_sceneManager._scrollerRect.synchronise(s);
 	SYNC_POINTER(_globals->_scrollFollower);
+	s.syncAsSint16LE(_loadMode);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -291,7 +292,7 @@ void Scene::loadSceneData(int sceneNum) {
 	_globals->_sceneOffset.y = (_sceneBounds.top / 100) * 100;
 	_globals->_paneRefreshFlag[0] = 1;
 	_globals->_paneRefreshFlag[1] = 1;
-	_sceneMode = 1;
+	_globals->_sceneManager._loadMode = 1;
 	_globals->_sceneManager._sceneLoadCount = 0;
 	_globals->_sceneManager._sceneBgOffset = Common::Point(0, 0);
 
@@ -310,10 +311,10 @@ void Scene::loadBackground(int xAmount, int yAmount) {
 	_globals->_sceneOffset.x &= ~3;
 
 	if ((_sceneBounds.top != _oldSceneBounds.top) || (_sceneBounds.left != _oldSceneBounds.left)) {
-		if (_sceneMode == 0) {
+		if (_globals->_sceneManager._loadMode == 0) {
 			_globals->_paneRefreshFlag[0] = 2;
 			_globals->_paneRefreshFlag[1] = 2;
-			_sceneMode = 2;
+			_globals->_sceneManager._loadMode = 2;
 		}
 		_oldSceneBounds = _sceneBounds;
 	}

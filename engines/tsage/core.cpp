@@ -2282,7 +2282,7 @@ redraw:
 
 		// Update the palette
 		_globals->_sceneManager.fadeInIfNecessary();
-		_globals->_sceneManager._scene->_sceneMode = 0;
+		_globals->_sceneManager._loadMode = 0;
 		_globals->_paneRefreshFlag[paneNum] = 0;
 
 		// Loop through the object list, removing any objects and refreshing the screen as necessary

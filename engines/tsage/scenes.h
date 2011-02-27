@@ -77,6 +77,7 @@ private:
 public:
 	Scene *_scene;
 	bool _hasPalette;
+	int _loadMode;
 	int _sceneNumber;
 	int _previousScene;
 	int _nextSceneNumber;
