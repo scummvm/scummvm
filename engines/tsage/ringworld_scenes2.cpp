@@ -534,4 +534,126 @@ void Scene1001::postInit(SceneObjectList *OwnerList) {
 }
 
 
+/*--------------------------------------------------------------------------
+ * Scene 1250 - 
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene1250::Action1::signal() {
+	Scene1250 *scene = (Scene1250 *)_globals->_sceneManager._scene;
+	
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(_globals->_randomSource.getRandomNumber(120) + 60);
+		break;
+	case 1:
+		scene->_object1.animate(ANIM_MODE_5, this);
+		_actionIndex = 0;
+		break;
+	}
+}
+
+void Scene1250::Action2::signal() {
+	Scene1250 *scene = (Scene1250 *)_globals->_sceneManager._scene;
+	
+	switch (_actionIndex++) {
+	case 0:
+		switch (_globals->_randomSource.getRandomNumber(2)) {
+		case 0:
+			scene->_object2.setPosition(Common::Point(163, 75));
+			break;
+		case 1:
+			scene->_object2.setPosition(Common::Point(109, 65));
+			break;
+		case 2:
+			scene->_object2.setPosition(Common::Point(267, 20));
+			break;
+		}
+
+		setDelay(30);
+		break;
+	case 1:
+		scene->_object2.animate(ANIM_MODE_5, this);
+		_actionIndex = 0;
+		break;
+	}
+}
+
+void Scene1250::Action3::signal() {
+	Scene1250 *scene = (Scene1250 *)_globals->_sceneManager._scene;
+	
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(30);
+		break;
+	case 1:
+		scene->_stripManager.start(1251, this);
+		break;
+	case 2:
+		setDelay(6);
+		break;
+	case 3:
+		_globals->_sceneManager.changeScene(1000);
+		break;
+	}
+}
+
+void Scene1250::Action4::signal() {
+	Scene1250 *scene = (Scene1250 *)_globals->_sceneManager._scene;
+	
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(3);
+		break;
+	case 1:
+		scene->_stripManager.start(1250, this);
+		break;
+	case 2:
+		setDelay(6);
+		break;
+	case 3:
+		_globals->_sceneManager.changeScene(2000);
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene1250::postInit(SceneObjectList *OwnerList) {
+	loadScene(1250);
+	Scene::postInit();
+	setZoomPercents(0, 100, 200, 100);
+
+	_stripManager.addSpeaker(&_speakerQText);
+	_speakerQText._textPos = Common::Point(120, 120);
+	_speakerQText._textWidth = 180;
+
+	_object1.postInit();
+	_object1.setVisage(1250);
+	_object1.setPosition(Common::Point(126, 69));
+	_object1.setStrip2(1);
+	_object1._frame = 1;
+	_object1.setAction(&_action1);
+
+	_object2.postInit();
+	_object2.setVisage(1250);
+	_object2.setPosition(Common::Point(126, 69));
+	_object2.setStrip2(2);
+	_object2.setPriority2(255);
+	_object2._frame = 1;
+	_object2.setAction(&_action2);
+	
+	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
+	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
+
+	if ((_globals->_sceneManager._previousScene != 2000) || (_globals->_stripNum != 1250)) {
+		setAction(&_action4);
+	} else {
+		setAction(&_action3);
+		_globals->_soundHandler.startSound(114);
+	}
+}
+
+
+
 } // End of namespace tSage

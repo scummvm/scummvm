@@ -61,6 +61,9 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 1000: return new Scene1000();
 	// Fleeing planet cutscene
 	case 1001: return new Scene1001();
+	//
+	case 1250: return new Scene1250();
+
 
 	default:
 		error("Unknown scene number - %d", sceneNumber);
