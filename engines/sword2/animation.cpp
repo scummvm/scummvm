@@ -110,7 +110,7 @@ void MoviePlayer::play(MovieText *movieTexts, uint32 numMovieTexts, uint32 leadI
 
 	terminated = !playVideo();
 
-	closeTextObject(_currentMovieText, NULL);
+	closeTextObject(_currentMovieText, NULL, 0);
 
 	if (terminated) {
 		_snd->stopHandle(*_bgSoundHandle);
@@ -165,7 +165,7 @@ void MoviePlayer::openTextObject(uint32 index) {
 	}
 }
 
-void MoviePlayer::closeTextObject(uint32 index, byte *screen) {
+void MoviePlayer::closeTextObject(uint32 index, byte *screen, uint16 pitch) {
 	if (index < _numMovieTexts) {
 		MovieText *text = &_movieTexts[index];
 
@@ -183,7 +183,7 @@ void MoviePlayer::closeTextObject(uint32 index, byte *screen) {
 				int frameX = (_system->getWidth() - frameWidth) / 2;
 				int frameY = (_system->getHeight() - frameHeight) / 2;
 
-				byte *dst = screen + _textY * _system->getWidth();
+				byte *dst = screen + _textY * pitch;
 
 				for (int y = 0; y < text->_textSprite.h; y++) {
 					if (_textY + y < frameY || _textY + y >= frameY + frameHeight) {
@@ -195,7 +195,7 @@ void MoviePlayer::closeTextObject(uint32 index, byte *screen) {
 							memset(dst + frameX + frameWidth, findBlackPalIndex(), _textX + text->_textSprite.w - (frameX + frameWidth));
 					}
 
-					dst += _system->getWidth();
+					dst += pitch;
 				}
 			}
 
@@ -205,7 +205,7 @@ void MoviePlayer::closeTextObject(uint32 index, byte *screen) {
 	}
 }
 
-void MoviePlayer::drawTextObject(uint32 index, byte *screen) {
+void MoviePlayer::drawTextObject(uint32 index, byte *screen, uint16 pitch) {
 	MovieText *text = &_movieTexts[index];
 
 	byte white = findWhitePalIndex();
@@ -224,7 +224,7 @@ void MoviePlayer::drawTextObject(uint32 index, byte *screen) {
 			src = buffer;
 		}
 
-		byte *dst = screen + _textY * RENDERWIDE + _textX;
+		byte *dst = screen + _textY * pitch + _textX;
 
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
@@ -234,12 +234,12 @@ void MoviePlayer::drawTextObject(uint32 index, byte *screen) {
 					dst[x] = white;
 			}
 			src += width;
-			dst += RENDERWIDE;
+			dst += pitch;
 		}
 	}
 }
 
-void MoviePlayer::performPostProcessing(byte *screen) {
+void MoviePlayer::performPostProcessing(byte *screen, uint16 pitch) {
 	MovieText *text;
 	int frame = _decoder->getCurFrame();
 
@@ -261,9 +261,9 @@ void MoviePlayer::performPostProcessing(byte *screen) {
 			_vm->_sound->playCompSpeech(text->_speechId, 16, 0);
 		}
 		if (frame < text->_endFrame) {
-			drawTextObject(_currentMovieText, screen);
+			drawTextObject(_currentMovieText, screen, pitch);
 		} else {
-			closeTextObject(_currentMovieText, screen);
+			closeTextObject(_currentMovieText, screen, pitch);
 			_currentMovieText++;
 		}
 	}
@@ -313,7 +313,7 @@ bool MoviePlayer::playVideo() {
 			}
 
 			Graphics::Surface *screen = _vm->_system->lockScreen();
-			performPostProcessing((byte *)screen->pixels);
+			performPostProcessing((byte *)screen->pixels, screen->pitch);
 			_vm->_system->unlockScreen();
 			_vm->_system->updateScreen();
 		}

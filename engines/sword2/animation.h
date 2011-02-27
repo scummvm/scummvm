@@ -96,12 +96,12 @@ protected:
 	uint32 _leadOut;
 	int _leadOutFrame;
 
-	void performPostProcessing(byte *screen);
+	void performPostProcessing(byte *screen, uint16 pitch);
 	bool playVideo();
 
 	void openTextObject(uint32 index);
-	void closeTextObject(uint32 index, byte *screen);
-	void drawTextObject(uint32 index, byte *screen);
+	void closeTextObject(uint32 index, byte *screen, uint16 pitch);
+	void drawTextObject(uint32 index, byte *screen, uint16 pitch);
 
 	byte findBlackPalIndex();
 	byte findWhitePalIndex();
