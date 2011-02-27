@@ -103,6 +103,8 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_audio_sample_rate(audio_sample_rate),
 	_audio_buffer_size(audio_buffer_size),
 	_screen_changeid(0),
+	_egl_surface_width(0),
+	_egl_surface_height(0),
 	_force_redraw(false),
 	_game_texture(0),
 	_overlay_texture(0),
@@ -126,11 +128,9 @@ OSystem_Android::~OSystem_Android() {
 	delete _overlay_texture;
 	delete _mouse_texture;
 
-	JNI::destroySurface();
-
 	delete _savefile;
-	delete _mixer;
 	delete _timer;
+	delete _mixer;
 	delete _fsFactory;
 
 	deleteMutex(_event_queue_lock);
@@ -303,21 +303,19 @@ void OSystem_Android::initBackend() {
 	_mixer = new Audio::MixerImpl(this, _audio_sample_rate);
 	_mixer->setReady(true);
 
-	JNI::initBackend();
-
 	_timer_thread_exit = false;
 	pthread_create(&_timer_thread, 0, timerThreadFunc, this);
 
 	_audio_thread_exit = false;
 	pthread_create(&_audio_thread, 0, audioThreadFunc, this);
 
-	OSystem::initBackend();
-
 	setupSurface();
 
 	// renice this thread to boost the audio thread
 	if (setpriority(PRIO_PROCESS, 0, 19) < 0)
 		warning("couldn't renice the main thread");
+
+	JNI::setReadyForEvents(true);
 }
 
 void OSystem_Android::addPluginDirectories(Common::FSList &dirs) const {
@@ -385,6 +383,28 @@ void OSystem_Android::setupKeymapper() {
 bool OSystem_Android::pollEvent(Common::Event &event) {
 	//ENTER();
 
+	if (pthread_self() == _main_thread) {
+		if (_screen_changeid != JNI::surface_changeid) {
+			if (JNI::egl_surface_width > 0 && JNI::egl_surface_height > 0) {
+				LOGD("initializing surface");
+
+				JNI::deinitSurface();
+				setupSurface();
+
+				event.type = Common::EVENT_SCREEN_CHANGED;
+
+				return true;
+			}
+
+			LOGD("deinitialiting surface");
+
+			_screen_changeid = JNI::surface_changeid;
+			JNI::deinitSurface();
+
+			// TODO prevent swapBuffers
+		}
+	}
+
 	lockMutex(_event_queue_lock);
 
 	if (_event_queue.empty()) {
@@ -433,12 +453,6 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 		}
 		break;
 	}
-	case Common::EVENT_SCREEN_CHANGED:
-		debug("EVENT_SCREEN_CHANGED");
-		_screen_changeid++;
-		JNI::destroySurface();
-		setupSurface();
-		break;
 	default:
 		break;
 	}
@@ -525,11 +539,15 @@ void OSystem_Android::deleteMutex(MutexRef mutex) {
 void OSystem_Android::quit() {
 	ENTER();
 
+	JNI::setReadyForEvents(false);
+
 	_audio_thread_exit = true;
 	pthread_join(_audio_thread, 0);
 
 	_timer_thread_exit = true;
 	pthread_join(_timer_thread, 0);
+
+	JNI::deinitSurface();
 }
 
 void OSystem_Android::setWindowCaption(const char *caption) {

@@ -41,6 +41,10 @@ private:
 	virtual ~JNI();
 
 public:
+	static int surface_changeid;
+	static int egl_surface_width;
+	static int egl_surface_height;
+
 	static jint onLoad(JavaVM *vm);
 
 	static JNIEnv *getEnv();
@@ -48,16 +52,17 @@ public:
 	static void attachThread();
 	static void detachThread();
 
-	static void initBackend();
+	static void setReadyForEvents(bool ready);
+
 	static void getPluginDirectories(Common::FSList &dirs);
 	static void setWindowCaption(const char *caption);
 	static void displayMessageOnOSD(const char *msg);
 	static void showVirtualKeyboard(bool enable);
 	static void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 
-	static inline bool setupSurface();
-	static inline void destroySurface();
-	static inline bool swapBuffers();
+	static inline int swapBuffers();
+	static void initSurface();
+	static void deinitSurface();
 
 	static void setAudioPause();
 	static void setAudioPlay();
@@ -75,6 +80,8 @@ private:
 	static Common::Archive *_asset_archive;
 	static OSystem_Android *_system;
 
+	static bool _ready_for_events;
+
 	static jfieldID _FID_Event_type;
 	static jfieldID _FID_Event_synthetic;
 	static jfieldID _FID_Event_kbd_keycode;
@@ -87,13 +94,12 @@ private:
 
 	static jmethodID _MID_displayMessageOnOSD;
 	static jmethodID _MID_setWindowCaption;
-	static jmethodID _MID_initBackend;
 	static jmethodID _MID_showVirtualKeyboard;
 	static jmethodID _MID_getSysArchives;
 	static jmethodID _MID_getPluginDirectories;
-	static jmethodID _MID_setupScummVMSurface;
-	static jmethodID _MID_destroyScummVMSurface;
 	static jmethodID _MID_swapBuffers;
+	static jmethodID _MID_initSurface;
+	static jmethodID _MID_deinitSurface;
 
 	static jmethodID _MID_AudioTrack_flush;
 	static jmethodID _MID_AudioTrack_pause;
@@ -104,40 +110,24 @@ private:
 	static const JNINativeMethod _natives[];
 
 	static void throwByName(JNIEnv *env, const char *name, const char *msg);
+	static void throwRuntimeException(JNIEnv *env, const char *msg);
 
 	// natives for the dark side
 	static void create(JNIEnv *env, jobject self, jobject am, jobject at,
 						jint sample_rate, jint buffer_size);
 	static void destroy(JNIEnv *env, jobject self);
+
+	static void setSurface(JNIEnv *env, jobject self, jint width, jint height);
 	static jint main(JNIEnv *env, jobject self, jobjectArray args);
+
 	static void pushEvent(JNIEnv *env, jobject self, jobject java_event);
-	static void setConfManInt(JNIEnv *env, jclass cls, jstring key_obj,
-								jint value);
-	static void setConfManString(JNIEnv *env, jclass cls, jstring key_obj,
-							   		jstring value_obj);
 	static void enableZoning(JNIEnv *env, jobject self, jboolean enable);
-	static void setSurfaceSize(JNIEnv *env, jobject self, jint width,
-								jint height);
 };
 
-inline bool JNI::setupSurface() {
+inline int JNI::swapBuffers() {
 	JNIEnv *env = JNI::getEnv();
 
-	env->CallVoidMethod(_jobj, _MID_setupScummVMSurface);
-
-	return !env->ExceptionCheck();
-}
-
-inline void JNI::destroySurface() {
-	JNIEnv *env = JNI::getEnv();
-
-	env->CallVoidMethod(_jobj, _MID_destroyScummVMSurface);
-}
-
-inline bool JNI::swapBuffers() {
-	JNIEnv *env = JNI::getEnv();
-
-	return env->CallBooleanMethod(_jobj, _MID_swapBuffers);
+	return env->CallIntMethod(_jobj, _MID_swapBuffers);
 }
 
 inline int JNI::writeAudio(JNIEnv *env, jbyteArray &data, int offset, int size) {

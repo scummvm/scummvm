@@ -151,10 +151,6 @@ public:
 	virtual void initBackend();
 	void addPluginDirectories(Common::FSList &dirs) const;
 	void enableZoning(bool enable) { _enable_zoning = enable; }
-	void setSurfaceSize(int width, int height) {
-		_egl_surface_width = width;
-		_egl_surface_height = height;
-	}
 
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
@@ -166,10 +162,7 @@ public:
 	virtual int getGraphicsMode() const;
 	virtual void initSize(uint width, uint height,
 							const Graphics::PixelFormat *format);
-
-	virtual int getScreenChangeID() const {
-		return _screen_changeid;
-	}
+	virtual int getScreenChangeID() const;
 
 	virtual int16 getHeight();
 	virtual int16 getWidth();

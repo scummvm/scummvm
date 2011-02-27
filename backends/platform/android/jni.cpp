@@ -44,6 +44,11 @@ jobject JNI::_jobj_audio_track = 0;
 Common::Archive *JNI::_asset_archive = 0;
 OSystem_Android *JNI::_system = 0;
 
+int JNI::surface_changeid = 0;
+int JNI::egl_surface_width = 0;
+int JNI::egl_surface_height = 0;
+bool JNI::_ready_for_events = 0;
+
 jfieldID JNI::_FID_Event_type = 0;
 jfieldID JNI::_FID_Event_synthetic = 0;
 jfieldID JNI::_FID_Event_kbd_keycode = 0;
@@ -55,13 +60,12 @@ jfieldID JNI::_FID_Event_mouse_relative = 0;
 
 jmethodID JNI::_MID_displayMessageOnOSD = 0;
 jmethodID JNI::_MID_setWindowCaption = 0;
-jmethodID JNI::_MID_initBackend = 0;
 jmethodID JNI::_MID_showVirtualKeyboard = 0;
 jmethodID JNI::_MID_getSysArchives = 0;
 jmethodID JNI::_MID_getPluginDirectories = 0;
-jmethodID JNI::_MID_setupScummVMSurface = 0;
-jmethodID JNI::_MID_destroyScummVMSurface = 0;
 jmethodID JNI::_MID_swapBuffers = 0;
+jmethodID JNI::_MID_initSurface = 0;
+jmethodID JNI::_MID_deinitSurface = 0;
 
 jmethodID JNI::_MID_AudioTrack_flush = 0;
 jmethodID JNI::_MID_AudioTrack_pause = 0;
@@ -73,16 +77,16 @@ const JNINativeMethod JNI::_natives[] = {
 	{ "create", "(Landroid/content/res/AssetManager;"
 				"Landroid/media/AudioTrack;II)V",
 		(void *)JNI::create },
-	{ "nativeDestroy", "()V",
+	{ "destroy", "()V",
 		(void *)JNI::destroy },
-	{ "scummVMMain", "([Ljava/lang/String;)I",
+	{ "setSurface", "(II)V",
+	 	(void *)JNI::setSurface },
+	{ "main", "([Ljava/lang/String;)I",
 	 	(void *)JNI::main },
 	{ "pushEvent", "(Lorg/inodes/gus/scummvm/Event;)V",
 		(void *)JNI::pushEvent },
 	{ "enableZoning", "(Z)V",
 		(void *)JNI::enableZoning },
-	{ "setSurfaceSize", "(II)V",
-		(void *)JNI::setSurfaceSize },
 };
 
 JNI::JNI() {
@@ -178,6 +182,10 @@ void JNI::detachThread() {
 	}
 }
 
+void JNI::setReadyForEvents(bool ready) {
+	_ready_for_events = ready;
+}
+
 void JNI::throwByName(JNIEnv *env, const char *name, const char *msg) {
 	jclass cls = env->FindClass(name);
 
@@ -188,61 +196,26 @@ void JNI::throwByName(JNIEnv *env, const char *name, const char *msg) {
 	env->DeleteLocalRef(cls);
 }
 
-// calls to the dark side
-
-void JNI::initBackend() {
-	JNIEnv *env = JNI::getEnv();
-
-	env->CallVoidMethod(_jobj, _MID_initBackend);
-
-	if (env->ExceptionCheck()) {
-		error("Error in Java initBackend");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-
-		// TODO now what?
-	}
+void JNI::throwRuntimeException(JNIEnv *env, const char *msg) {
+	throwByName(env, "java/lang/RuntimeException", msg);
 }
 
-void JNI::getPluginDirectories(Common::FSList &dirs) {
-	JNIEnv *env = JNI::getEnv();
+// calls to the dark side
 
-	jobjectArray array =
-		(jobjectArray)env->CallObjectMethod(_jobj, _MID_getPluginDirectories);
+void JNI::displayMessageOnOSD(const char *msg) {
+	JNIEnv *env = JNI::getEnv();
+	jstring java_msg = env->NewStringUTF(msg);
+
+	env->CallVoidMethod(_jobj, _MID_displayMessageOnOSD, java_msg);
 
 	if (env->ExceptionCheck()) {
-		LOGE("Error finding plugin directories");
+		LOGE("Failed to display OSD message");
 
 		env->ExceptionDescribe();
 		env->ExceptionClear();
-
-		return;
 	}
 
-	jsize size = env->GetArrayLength(array);
-	for (jsize i = 0; i < size; ++i) {
-		jstring path_obj = (jstring)env->GetObjectArrayElement(array, i);
-
-		if (path_obj == 0)
-			continue;
-
-		const char *path = env->GetStringUTFChars(path_obj, 0);
-
-		if (path == 0) {
-			LOGE("Error getting string characters from plugin directory");
-
-			env->ExceptionClear();
-			env->DeleteLocalRef(path_obj);
-
-			continue;
-		}
-
-		dirs.push_back(Common::FSNode(path));
-
-		env->ReleaseStringUTFChars(path_obj, path);
-		env->DeleteLocalRef(path_obj);
-	}
+	env->DeleteLocalRef(java_msg);
 }
 
 void JNI::setWindowCaption(const char *caption) {
@@ -259,22 +232,6 @@ void JNI::setWindowCaption(const char *caption) {
 	}
 
 	env->DeleteLocalRef(java_caption);
-}
-
-void JNI::displayMessageOnOSD(const char *msg) {
-	JNIEnv *env = JNI::getEnv();
-	jstring java_msg = env->NewStringUTF(msg);
-
-	env->CallVoidMethod(_jobj, _MID_displayMessageOnOSD, java_msg);
-
-	if (env->ExceptionCheck()) {
-		LOGE("Failed to display OSD message");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-	}
-
-	env->DeleteLocalRef(java_msg);
 }
 
 void JNI::showVirtualKeyboard(bool enable) {
@@ -318,6 +275,72 @@ void JNI::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 		}
 
 		env->DeleteLocalRef(path_obj);
+	}
+}
+
+void JNI::getPluginDirectories(Common::FSList &dirs) {
+	JNIEnv *env = JNI::getEnv();
+
+	jobjectArray array =
+		(jobjectArray)env->CallObjectMethod(_jobj, _MID_getPluginDirectories);
+
+	if (env->ExceptionCheck()) {
+		LOGE("Error finding plugin directories");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		return;
+	}
+
+	jsize size = env->GetArrayLength(array);
+	for (jsize i = 0; i < size; ++i) {
+		jstring path_obj = (jstring)env->GetObjectArrayElement(array, i);
+
+		if (path_obj == 0)
+			continue;
+
+		const char *path = env->GetStringUTFChars(path_obj, 0);
+
+		if (path == 0) {
+			LOGE("Error getting string characters from plugin directory");
+
+			env->ExceptionClear();
+			env->DeleteLocalRef(path_obj);
+
+			continue;
+		}
+
+		dirs.push_back(Common::FSNode(path));
+
+		env->ReleaseStringUTFChars(path_obj, path);
+		env->DeleteLocalRef(path_obj);
+	}
+}
+
+void JNI::initSurface() {
+	JNIEnv *env = JNI::getEnv();
+
+	env->CallVoidMethod(_jobj, _MID_initSurface);
+
+	if (env->ExceptionCheck()) {
+		LOGE("initSurface failed");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+}
+
+void JNI::deinitSurface() {
+	JNIEnv *env = JNI::getEnv();
+
+	env->CallVoidMethod(_jobj, _MID_deinitSurface);
+
+	if (env->ExceptionCheck()) {
+		LOGE("deinitSurface failed");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
 	}
 }
 
@@ -396,13 +419,12 @@ void JNI::create(JNIEnv *env, jobject self, jobject am, jobject at,
 
 	FIND_METHOD(setWindowCaption, "(Ljava/lang/String;)V");
 	FIND_METHOD(displayMessageOnOSD, "(Ljava/lang/String;)V");
-	FIND_METHOD(initBackend, "()V");
 	FIND_METHOD(showVirtualKeyboard, "(Z)V");
 	FIND_METHOD(getSysArchives, "()[Ljava/lang/String;");
 	FIND_METHOD(getPluginDirectories, "()[Ljava/lang/String;");
-	FIND_METHOD(setupScummVMSurface, "()V");
-	FIND_METHOD(destroyScummVMSurface, "()V");
-	FIND_METHOD(swapBuffers, "()Z");
+	FIND_METHOD(swapBuffers, "()I");
+	FIND_METHOD(initSurface, "()V");
+	FIND_METHOD(deinitSurface, "()V");
 
 #undef FIND_METHOD
 
@@ -428,21 +450,23 @@ void JNI::create(JNIEnv *env, jobject self, jobject am, jobject at,
 }
 
 void JNI::destroy(JNIEnv *env, jobject self) {
-	if (!_system)
-		return;
-
-	OSystem_Android *tmp = _system;
-	g_system = 0;
-	_system = 0;
-	delete tmp;
-
 	delete _asset_archive;
 	_asset_archive = 0;
+
+	delete _system;
+	g_system = 0;
+	_system = 0;
 
 	// see above
 	//JNI::getEnv()->DeleteWeakGlobalRef(_jobj);
 	JNI::getEnv()->DeleteGlobalRef(_jobj_audio_track);
 	JNI::getEnv()->DeleteGlobalRef(_jobj);
+}
+
+void JNI::setSurface(JNIEnv *env, jobject self, jint width, jint height) {
+	egl_surface_width = width;
+	egl_surface_height = height;
+	surface_changeid++;
 }
 
 jint JNI::main(JNIEnv *env, jobject self, jobjectArray args) {
@@ -489,7 +513,7 @@ jint JNI::main(JNIEnv *env, jobject self, jobjectArray args) {
 
 	res = scummvm_main(argc, argv);
 
-	LOGI("Exiting scummvm_main");
+	LOGI("scummvm_main exited with code %d", res);
 
 	_system->quit();
 
@@ -514,6 +538,10 @@ cleanup:
 }
 
 void JNI::pushEvent(JNIEnv *env, jobject self, jobject java_event) {
+	// drop events until we're ready and after we quit
+	if (!_ready_for_events)
+		return;
+
 	assert(_system);
 
 	Common::Event event;
@@ -563,12 +591,6 @@ void JNI::enableZoning(JNIEnv *env, jobject self, jboolean enable) {
 	assert(_system);
 
 	_system->enableZoning(enable);
-}
-
-void JNI::setSurfaceSize(JNIEnv *env, jobject self, jint width, jint height) {
-	assert(_system);
-
-	_system->setSurfaceSize(width, height);
 }
 
 #endif

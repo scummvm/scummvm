@@ -65,8 +65,13 @@ int OSystem_Android::getGraphicsMode() const {
 void OSystem_Android::setupSurface() {
 	ENTER();
 
-	if (!JNI::setupSurface())
-		return;
+	_screen_changeid = JNI::surface_changeid;
+	JNI::initSurface();
+
+	_egl_surface_width = JNI::egl_surface_width;
+	_egl_surface_height = JNI::egl_surface_height;
+
+	assert(_egl_surface_width > 0 && _egl_surface_height > 0);
 
 	// EGL set up with a new surface.  Initialise OpenGLES context.
 	GLESTexture::initGLExtensions();
@@ -146,6 +151,10 @@ void OSystem_Android::initSize(uint width, uint height,
 	// setMouseCursor however, so just take a guess at the desired
 	// size (it's small).
 	_mouse_texture->allocBuffer(20, 20);
+}
+
+int OSystem_Android::getScreenChangeID() const {
+	return _screen_changeid;
 }
 
 int16 OSystem_Android::getHeight() {
@@ -279,10 +288,14 @@ void OSystem_Android::updateScreen() {
 
 	GLCALL(glPopMatrix());
 
-	if (!JNI::swapBuffers()) {
-		// Context lost -> need to reinit GL
-		JNI::destroySurface();
+	int res = JNI::swapBuffers();
+
+	if (res) {
+		warning("swapBuffers returned 0x%x", res);
+#if 0
+		JNI::initSurface();
 		setupSurface();
+#endif
 	}
 }
 

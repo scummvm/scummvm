@@ -1,18 +1,12 @@
 package org.inodes.gus.scummvm;
 
-import android.content.Context;
+import android.util.Log;
 import android.content.res.AssetManager;
+import android.view.SurfaceHolder;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Process;
-import android.util.Log;
-import android.view.Surface;
-import android.view.SurfaceHolder;
 
-import javax.microedition.khronos.opengles.GL;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGL11;
@@ -22,28 +16,242 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
 import java.io.File;
-import java.util.concurrent.Semaphore;
 import java.util.Map;
 import java.util.LinkedHashMap;
 
+public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
+	final protected static String LOG_TAG = "ScummVM";
+	final private AssetManager asset_manager;
+	final private Object sem_surface;
 
-// At least in Android 2.1, eglCreateWindowSurface() requires an
-// EGLNativeWindowSurface object, which is hidden deep in the bowels
-// of libui.  Until EGL is properly exposed, it's probably safer to
-// use the Java versions of most EGL functions :(
+	private EGL10 egl;
+	private EGLDisplay eglDisplay = EGL10.EGL_NO_DISPLAY;
+	private EGLConfig eglConfig;
+	private EGLContext eglContext = EGL10.EGL_NO_CONTEXT;
+	private EGLSurface eglSurface = EGL10.EGL_NO_SURFACE;
 
-public class ScummVM implements SurfaceHolder.Callback {
-	protected final static String LOG_TAG = "ScummVM";
+	private SurfaceHolder surface_holder;
+	private AudioTrack audio_track;
+	private int sample_rate = 0;
+	private int buffer_size = 0;
 
-	private native void create(AssetManager am, AudioTrack audio_track,
-								int sample_rate, int buffer_size);
+	private String[] args;
 
-	public ScummVM(Context context) throws Exception {
-		int sample_rate = AudioTrack.getNativeOutputSampleRate(
-							AudioManager.STREAM_MUSIC);
-		int buffer_size = AudioTrack.getMinBufferSize(sample_rate,
-							AudioFormat.CHANNEL_CONFIGURATION_STEREO,
-							AudioFormat.ENCODING_PCM_16BIT);
+	final private native void create(AssetManager asset_manager,
+										AudioTrack audio_track,
+										int sample_rate, int buffer_size);
+	final private native void destroy();
+	final private native void setSurface(int width, int height);
+	final private native int main(String[] args);
+
+	// Set scummvm config options
+	final public native void enableZoning(boolean enable);
+	// Feed an event to ScummVM.  Safe to call from other threads.
+	final public native void pushEvent(Event e);
+
+	// Callbacks from C++ peer instance
+	abstract protected void displayMessageOnOSD(String msg);
+	abstract protected void setWindowCaption(String caption);
+	abstract protected String[] getPluginDirectories();
+	abstract protected void showVirtualKeyboard(boolean enable);
+	abstract protected String[] getSysArchives();
+
+	final protected int swapBuffers() {
+		if (!egl.eglSwapBuffers(eglDisplay, eglSurface))
+			return egl.eglGetError();
+
+		return 0;
+	}
+
+	public ScummVM(AssetManager asset_manager, SurfaceHolder holder) {
+		this.asset_manager = asset_manager;
+		sem_surface = new Object();
+
+		holder.addCallback(this);
+	}
+
+	// SurfaceHolder callback
+	final public void surfaceCreated(SurfaceHolder holder) {
+		Log.d(LOG_TAG, "surfaceCreated");
+
+		// no need to do anything, surfaceChanged() will be called in any case
+	}
+
+	// SurfaceHolder callback
+	final public void surfaceChanged(SurfaceHolder holder, int format,
+										int width, int height) {
+		Log.d(LOG_TAG, String.format("surfaceChanged: %dx%d (%d)",
+										width, height, format));
+
+		synchronized(sem_surface) {
+			surface_holder = holder;
+			sem_surface.notifyAll();
+		}
+
+		// store values for the native code
+		setSurface(width, height);
+	}
+
+	// SurfaceHolder callback
+	final public void surfaceDestroyed(SurfaceHolder holder) {
+		Log.d(LOG_TAG, "surfaceDestroyed");
+
+		synchronized(sem_surface) {
+			surface_holder = null;
+			sem_surface.notifyAll();
+		}
+
+		// clear values for the native code
+		setSurface(0, 0);
+	}
+
+	final public void setArgs(String[] args) {
+		this.args = args;
+	}
+
+	final public void run() {
+		try {
+			initAudio();
+			initEGL();
+
+			// wait for the surfaceChanged callback
+			synchronized(sem_surface) {
+				while (surface_holder == null)
+					sem_surface.wait();
+			}
+		} catch (Exception e) {
+			deinitEGL();
+			deinitAudio();
+
+			throw new RuntimeException("Error preparing the ScummVM thread", e);
+		}
+
+		create(asset_manager, audio_track, sample_rate, buffer_size);
+
+		int res = main(args);
+
+		destroy();
+
+		deinitEGL();
+		deinitAudio();
+
+		// On exit, tear everything down for a fresh restart next time.
+		System.exit(res);
+	}
+
+	public void pause() {
+		// TODO
+	}
+
+	public void resume() {
+		// TODO
+	}
+
+	final private void initEGL() throws Exception {
+		egl = (EGL10)EGLContext.getEGL();
+		eglDisplay = egl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
+
+		int[] version = new int[2];
+		egl.eglInitialize(eglDisplay, version);
+
+		int[] num_config = new int[1];
+		egl.eglChooseConfig(eglDisplay, configSpec, null, 0, num_config);
+
+		final int numConfigs = num_config[0];
+
+		if (numConfigs <= 0)
+			throw new IllegalArgumentException("No configs match configSpec");
+
+		EGLConfig[] configs = new EGLConfig[numConfigs];
+		egl.eglChooseConfig(eglDisplay, configSpec, configs, numConfigs,
+							num_config);
+
+		if (false) {
+			Log.d(LOG_TAG, String.format("Found %d EGL configurations.",
+											numConfigs));
+			for (EGLConfig config : configs)
+				dumpEglConfig(config);
+		}
+
+		// Android's eglChooseConfig is busted in several versions and
+		// devices so we have to filter/rank the configs again ourselves.
+		eglConfig = chooseEglConfig(configs);
+
+		if (false) {
+			Log.d(LOG_TAG, String.format("Chose from %d EGL configs",
+											numConfigs));
+			dumpEglConfig(eglConfig);
+		}
+
+		eglContext = egl.eglCreateContext(eglDisplay, eglConfig,
+											EGL10.EGL_NO_CONTEXT, null);
+
+		if (eglContext == EGL10.EGL_NO_CONTEXT)
+			throw new Exception(String.format("Failed to create context: 0x%x",
+												egl.eglGetError()));
+	}
+
+	// Callback from C++ peer instance
+	final protected void initSurface() throws Exception {
+		eglSurface = egl.eglCreateWindowSurface(eglDisplay, eglConfig,
+												surface_holder, null);
+
+		if (eglSurface == EGL10.EGL_NO_SURFACE)
+			throw new Exception(String.format(
+					"eglCreateWindowSurface failed: 0x%x", egl.eglGetError()));
+
+		egl.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
+
+		GL10 gl = (GL10)eglContext.getGL();
+
+		Log.i(LOG_TAG, String.format("Using EGL %s (%s); GL %s/%s (%s)",
+						egl.eglQueryString(eglDisplay, EGL10.EGL_VERSION),
+						egl.eglQueryString(eglDisplay, EGL10.EGL_VENDOR),
+						gl.glGetString(GL10.GL_VERSION),
+						gl.glGetString(GL10.GL_RENDERER),
+						gl.glGetString(GL10.GL_VENDOR)));
+	}
+
+	// Callback from C++ peer instance
+	final protected void deinitSurface() {
+		if (eglDisplay != EGL10.EGL_NO_DISPLAY) {
+			egl.eglMakeCurrent(eglDisplay, EGL10.EGL_NO_SURFACE,
+								EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
+
+			if (eglSurface != EGL10.EGL_NO_SURFACE)
+				egl.eglDestroySurface(eglDisplay, eglSurface);
+		}
+
+		eglSurface = EGL10.EGL_NO_SURFACE;
+	}
+
+	final private void deinitEGL() {
+		if (eglDisplay != EGL10.EGL_NO_DISPLAY) {
+			egl.eglMakeCurrent(eglDisplay, EGL10.EGL_NO_SURFACE,
+								EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
+
+			if (eglSurface != EGL10.EGL_NO_SURFACE)
+				egl.eglDestroySurface(eglDisplay, eglSurface);
+
+			if (eglContext != EGL10.EGL_NO_CONTEXT)
+				egl.eglDestroyContext(eglDisplay, eglContext);
+
+			egl.eglTerminate(eglDisplay);
+		}
+
+		eglSurface = EGL10.EGL_NO_SURFACE;
+		eglContext = EGL10.EGL_NO_CONTEXT;
+		eglConfig = null;
+		eglDisplay = EGL10.EGL_NO_DISPLAY;
+		egl = null;
+	}
+
+	final private void initAudio() throws Exception {
+		sample_rate = AudioTrack.getNativeOutputSampleRate(
+									AudioManager.STREAM_MUSIC);
+		buffer_size = AudioTrack.getMinBufferSize(sample_rate,
+									AudioFormat.CHANNEL_CONFIGURATION_STEREO,
+									AudioFormat.ENCODING_PCM_16BIT);
 
 		// ~100ms
 		int buffer_size_want = (sample_rate * 2 * 2 / 10) & ~1023;
@@ -58,48 +266,28 @@ public class ScummVM implements SurfaceHolder.Callback {
 		Log.i(LOG_TAG, String.format("Using %d bytes buffer for %dHz audio",
 										buffer_size, sample_rate));
 
-		AudioTrack audio_track =
-			new AudioTrack(AudioManager.STREAM_MUSIC,
-							sample_rate,
-							AudioFormat.CHANNEL_CONFIGURATION_STEREO,
-							AudioFormat.ENCODING_PCM_16BIT,
-							buffer_size,
-							AudioTrack.MODE_STREAM);
+		audio_track = new AudioTrack(AudioManager.STREAM_MUSIC,
+									sample_rate,
+									AudioFormat.CHANNEL_CONFIGURATION_STEREO,
+									AudioFormat.ENCODING_PCM_16BIT,
+									buffer_size,
+									AudioTrack.MODE_STREAM);
 
 		if (audio_track.getState() != AudioTrack.STATE_INITIALIZED)
 			throw new Exception(
 				String.format("Error initialising AudioTrack: %d",
 								audio_track.getState()));
-
-		// Init C++ code
-		create(context.getAssets(), audio_track, sample_rate, buffer_size);
 	}
 
-	private native void nativeDestroy();
+	final private void deinitAudio() {
+		if (audio_track != null)
+			audio_track.stop();
 
-	public synchronized void destroy() {
-		nativeDestroy();
+		audio_track = null;
+		buffer_size = 0;
+		sample_rate = 0;
 	}
 
-	protected void finalize() {
-		destroy();
-	}
-
-	// Surface creation:
-	// GUI thread: create surface, release lock
-	// ScummVM thread: acquire lock (block), read surface
-
-	// Surface deletion:
-	// GUI thread: post event, acquire lock (block), return
-	// ScummVM thread: read event, free surface, release lock
-
-	// In other words, ScummVM thread does this:
-	//	acquire lock
-	//	setup surface
-	//	when SCREEN_CHANGED arrives:
-	//		destroy surface
-	//		release lock
-	//	back to acquire lock
 	static final int configSpec[] = {
 		EGL10.EGL_RED_SIZE, 5,
 		EGL10.EGL_GREEN_SIZE, 5,
@@ -108,33 +296,6 @@ public class ScummVM implements SurfaceHolder.Callback {
 		EGL10.EGL_SURFACE_TYPE, EGL10.EGL_WINDOW_BIT,
 		EGL10.EGL_NONE,
 	};
-
-	EGL10 egl;
-	EGLDisplay eglDisplay = EGL10.EGL_NO_DISPLAY;
-	EGLConfig eglConfig;
-	EGLContext eglContext = EGL10.EGL_NO_CONTEXT;
-	EGLSurface eglSurface = EGL10.EGL_NO_SURFACE;
-	Semaphore surfaceLock = new Semaphore(0, true);
-	SurfaceHolder nativeSurface;
-
-	public void surfaceCreated(SurfaceHolder holder) {
-		nativeSurface = holder;
-		surfaceLock.release();
-	}
-
-	public void surfaceChanged(SurfaceHolder holder, int format,
-								int width, int height) {
-		// Disabled while I debug GL problems
-		pushEvent(new Event(Event.EVENT_SCREEN_CHANGED));
-	}
-
-	public void surfaceDestroyed(SurfaceHolder holder) {
-		try {
-			surfaceLock.acquire();
-		} catch (InterruptedException e) {
-			Log.e(LOG_TAG, "Interrupted while waiting for surface lock", e);
-		}
-	}
 
 	// For debugging
 	private static final Map<String, Integer> attribs;
@@ -170,7 +331,7 @@ public class ScummVM implements SurfaceHolder.Callback {
 		attribs.put("TRANSPARENT_BLUE_VALUE", EGL10.EGL_TRANSPARENT_BLUE_VALUE);
 	}
 
-	private void dumpEglConfig(EGLConfig config) {
+	final private void dumpEglConfig(EGLConfig config) {
 		int[] value = new int[1];
 
 		for (Map.Entry<String, Integer> entry : attribs.entrySet()) {
@@ -184,49 +345,7 @@ public class ScummVM implements SurfaceHolder.Callback {
 		}
 	}
 
-	// Called by ScummVM thread (from initBackend)
-	private void createScummVMGLContext() {
-		egl = (EGL10)EGLContext.getEGL();
-		eglDisplay = egl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
-
-		int[] version = new int[2];
-		egl.eglInitialize(eglDisplay, version);
-
-		int[] num_config = new int[1];
-		egl.eglChooseConfig(eglDisplay, configSpec, null, 0, num_config);
-
-		final int numConfigs = num_config[0];
-
-		if (numConfigs <= 0)
-			throw new IllegalArgumentException("No configs match configSpec");
-
-		EGLConfig[] configs = new EGLConfig[numConfigs];
-		egl.eglChooseConfig(eglDisplay, configSpec, configs, numConfigs,
-							num_config);
-
-		if (false) {
-			Log.d(LOG_TAG, String.format("Found %d EGL configurations.", numConfigs));
-			for (EGLConfig config : configs)
-				dumpEglConfig(config);
-		}
-
-		// Android's eglChooseConfig is busted in several versions and
-		// devices so we have to filter/rank the configs again ourselves.
-		eglConfig = chooseEglConfig(configs);
-
-		if (false) {
-			Log.d(LOG_TAG, String.format("Chose EGL config from %d possibilities.", numConfigs));
-			dumpEglConfig(eglConfig);
-		}
-
-		eglContext = egl.eglCreateContext(eglDisplay, eglConfig,
-											EGL10.EGL_NO_CONTEXT, null);
-
-		if (eglContext == EGL10.EGL_NO_CONTEXT)
-			throw new RuntimeException("Failed to create context");
-	}
-
-	private EGLConfig chooseEglConfig(EGLConfig[] configs) {
+	final private EGLConfig chooseEglConfig(EGLConfig[] configs) {
 		int best = 0;
 		int bestScore = -1;
 		int[] value = new int[1];
@@ -286,111 +405,6 @@ public class ScummVM implements SurfaceHolder.Callback {
 		return configs[best];
 	}
 
-	// Called by ScummVM thread
-	static private boolean _log_version = true;
-
-	protected void setupScummVMSurface() {
-		try {
-			surfaceLock.acquire();
-		} catch (InterruptedException e) {
-			Log.e(LOG_TAG, "Interrupted while waiting for surface lock", e);
-			return;
-		}
-
-		eglSurface = egl.eglCreateWindowSurface(eglDisplay, eglConfig,
-												nativeSurface, null);
-
-		if (eglSurface == EGL10.EGL_NO_SURFACE)
-			Log.e(LOG_TAG, "CreateWindowSurface failed!");
-
-		egl.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
-
-		GL10 gl = (GL10)eglContext.getGL();
-
-		if (_log_version) {
-			Log.i(LOG_TAG, String.format("Using EGL %s (%s); GL %s/%s (%s)",
-											egl.eglQueryString(eglDisplay, EGL10.EGL_VERSION),
-											egl.eglQueryString(eglDisplay, EGL10.EGL_VENDOR),
-											gl.glGetString(GL10.GL_VERSION),
-											gl.glGetString(GL10.GL_RENDERER),
-											gl.glGetString(GL10.GL_VENDOR)));
-
-			// only log this once
-			_log_version = false;
-		}
-
-		int[] value = new int[1];
-		egl.eglQuerySurface(eglDisplay, eglSurface, EGL10.EGL_WIDTH, value);
-
-		int width = value[0];
-		egl.eglQuerySurface(eglDisplay, eglSurface, EGL10.EGL_HEIGHT, value);
-
-		int height = value[0];
-		Log.i(LOG_TAG, String.format("New surface is %dx%d", width, height));
-		setSurfaceSize(width, height);
-	}
-
-	// Called by ScummVM thread
-	protected void destroyScummVMSurface() {
-		if (eglSurface != null) {
-			egl.eglMakeCurrent(eglDisplay, EGL10.EGL_NO_SURFACE,
-								EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
-
-			egl.eglDestroySurface(eglDisplay, eglSurface);
-			eglSurface = EGL10.EGL_NO_SURFACE;
-		}
-
-		surfaceLock.release();
-	}
-
-	public void setSurface(SurfaceHolder holder) {
-		holder.addCallback(this);
-	}
-
-	final public boolean swapBuffers() {
-		if (!egl.eglSwapBuffers(eglDisplay, eglSurface)) {
-			int error = egl.eglGetError();
-			Log.w(LOG_TAG, String.format("eglSwapBuffers exited with error 0x%x", error));
-			if (error == EGL11.EGL_CONTEXT_LOST)
-				return false;
-		}
-
-		return true;
-	}
-
-	// Set scummvm config options
-	final public native void enableZoning(boolean enable);
-	final public native void setSurfaceSize(int width, int height);
-
-	// Feed an event to ScummVM.  Safe to call from other threads.
-	final public native void pushEvent(Event e);
-
-	// Runs the actual ScummVM program and returns when it does.
-	// This should not be called from multiple threads simultaneously...
-	final public native int scummVMMain(String[] argv);
-
-	// Callbacks from C++ peer instance
-	//protected GraphicsMode[] getSupportedGraphicsModes() {}
-	protected void displayMessageOnOSD(String msg) {}
-	protected void setWindowCaption(String caption) {}
-	protected void showVirtualKeyboard(boolean enable) {}
-	protected String[] getSysArchives() { return new String[0]; }
-	protected String[] getPluginDirectories() { return new String[0]; }
-
-	protected void initBackend() {
-		createScummVMGLContext();
-	}
-
-	public void pause() {
-		// TODO: need to pause audio
-		// TODO: need to pause engine
-	}
-
-	public void resume() {
-		// TODO: need to resume audio
-		// TODO: need to resume engine
-	}
-
 	static {
 		// For grabbing with gdb...
 		final boolean sleep_for_debugger = false;
@@ -401,10 +415,10 @@ public class ScummVM implements SurfaceHolder.Callback {
 			}
 		}
 
-		//System.loadLibrary("scummvm");
 		File cache_dir = ScummVMApplication.getLastCacheDir();
 		String libname = System.mapLibraryName("scummvm");
 		File libpath = new File(cache_dir, libname);
+
 		System.load(libpath.getPath());
 	}
 }

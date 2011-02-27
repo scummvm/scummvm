@@ -3,6 +3,7 @@ package org.inodes.gus.scummvm;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
+import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.inputmethod.InputMethodManager;
@@ -30,8 +32,6 @@ public class ScummVMActivity extends Activity {
 	private final static int TRACKBALL_SCALE = 2;
 
 	private class MyScummVM extends ScummVM {
-		private boolean scummvmRunning = false;
-
 		private boolean usingSmallScreen() {
 			// Multiple screen sizes came in with Android 1.6.  Have
 			// to use reflection in order to continue supporting 1.5
@@ -49,30 +49,13 @@ public class ScummVMActivity extends Activity {
 			}
 		}
 
-		public MyScummVM() throws Exception {
-			super(ScummVMActivity.this);
+		public MyScummVM(SurfaceHolder holder) {
+			super(ScummVMActivity.this.getAssets(), holder);
 
 			// Enable ScummVM zoning on 'small' screens.
 			// FIXME make this optional for the user
 			// disabled for now since it crops too much
 			//enableZoning(usingSmallScreen());
-		}
-
-		@Override
-		protected void initBackend() {
-			synchronized (this) {
-				scummvmRunning = true;
-				notifyAll();
-			}
-
-			super.initBackend();
-		}
-
-		public void waitUntilRunning() throws InterruptedException {
-			synchronized (this) {
-				while (!scummvmRunning)
-					wait();
-			}
 		}
 
 		@Override
@@ -105,6 +88,12 @@ public class ScummVMActivity extends Activity {
 					}
 				});
 		}
+
+		@Override
+		protected String[] getSysArchives() {
+			return new String[0];
+		}
+
 	}
 
 	private MyScummVM scummvm;
@@ -140,74 +129,36 @@ public class ScummVMActivity extends Activity {
 		}
 
 		SurfaceView main_surface = (SurfaceView)findViewById(R.id.main_surface);
+
 		main_surface.setOnTouchListener(new View.OnTouchListener() {
 				public boolean onTouch(View v, MotionEvent event) {
 					return onTouchEvent(event);
 				}
 			});
+
 		main_surface.setOnKeyListener(new View.OnKeyListener() {
 				public boolean onKey(View v, int code, KeyEvent ev) {
 					return onKeyDown(code, ev);
 				}
 			});
+
 		main_surface.requestFocus();
 
-		// Start ScummVM
-		try {
-			scummvm = new MyScummVM();
-		} catch (Exception e) {
-			Log.e(ScummVM.LOG_TAG, "Fatal error", e);
-			finish();
-			return;
-		}
-
-		scummvm_thread = new Thread(new Runnable() {
-				public void run() {
-					try {
-						runScummVM();
-					} catch (Exception e) {
-						Log.e(ScummVM.LOG_TAG, "Fatal error in ScummVM thread", e);
-						new AlertDialog.Builder(ScummVMActivity.this)
-							.setTitle("Error")
-							.setMessage(e.toString())
-							.setIcon(android.R.drawable.ic_dialog_alert)
-							.show();
-						finish();
-					}
-				}
-			}, "ScummVM");
-
-		scummvm_thread.start();
-
-		// Block UI thread until ScummVM has started.  In particular,
-		// this means that surface and event callbacks should be safe
-		// after this point.
-		try {
-			scummvm.waitUntilRunning();
-		} catch (InterruptedException e) {
-			Log.e(ScummVM.LOG_TAG, "Interrupted while waiting for ScummVM.initBackend", e);
-			finish();
-		}
-
-		scummvm.setSurface(main_surface.getHolder());
-	}
-
-	// Runs in another thread
-	private void runScummVM() throws IOException {
 		getFilesDir().mkdirs();
-		String[] args = {
-			"ScummVM-lib",
+
+		// Start ScummVM
+		scummvm = new MyScummVM(main_surface.getHolder());
+
+		scummvm.setArgs(new String[] {
+			"ScummVM",
 			"--config=" + getFileStreamPath("scummvmrc").getPath(),
 			"--path=" + Environment.getExternalStorageDirectory().getPath(),
 			"--gui-theme=scummmodern",
 			"--savepath=" + getDir("saves", 0).getPath()
-		};
+		});
 
-		int ret = scummvm.scummVMMain(args);
-
-		// On exit, tear everything down for a fresh
-		// restart next time.
-		System.exit(ret);
+		scummvm_thread = new Thread(scummvm, "ScummVM");
+		scummvm_thread.start();
 	}
 
 	private boolean was_paused = false;
