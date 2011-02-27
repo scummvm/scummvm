@@ -374,17 +374,10 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		writeSelectorValue(segMan, mover, SELECTOR(b_i2), mover_i2);
 		writeSelectorValue(segMan, mover, SELECTOR(b_di), mover_di);
 
-		if (getSciVersion() == SCI_VERSION_1_EGA_ONLY) {
-			// We need to compare directly in here, complete may have happened during
-			//  the current move
-			if ((client_x == mover_x) && (client_y == mover_y))
-				invokeSelector(s, mover, SELECTOR(moveDone), argc, argv);
-		}
-
-		if (getSciVersion() >= SCI_VERSION_1_EARLY) {
-			// This calling code here was right before the last return in
-			//  sci1ega and got changed to this position since sci1early
-			//  this was an uninitialized issue in sierra sci
+		if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY) {
+			// In sci1egaonly this block of code was outside of the main if,
+			// but client_x/client_y aren't set there, so it was an
+			// uninitialized read in SSCI. (This issue was fixed in sci1early.)
 			if (handleMoveCount)
 				writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), mover_moveCnt);
 			// We need to compare directly in here, complete may have happened during
