@@ -1703,7 +1703,7 @@ void SceneObject::setFrame(int frameNum) {
 }
 
 void SceneObject::setFrame2(int frameNum) {
-	if (frameNum == -1) {
+	if (frameNum != -1) {
 		_flags |= OBJFLAG_NO_UPDATES;
 		setFrame(frameNum);
 	} else {
