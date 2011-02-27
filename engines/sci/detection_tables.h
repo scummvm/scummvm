@@ -2634,7 +2634,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "1c2563fee189885e29d9348f37306d94", 12175},
 		{"ressci.000", 0, "b2e1826ca81ce2e7e764587f5a14eee9", 127149181},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NONE	},
 
 	// Police Quest: SWAT - English Windows (from the Police Quest Collection)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.0c"
@@ -2649,7 +2649,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.004", 0, "4228038906f041623e65789500b22285", 6835},
 		{"ressci.004", 0, "b7e619e6ecf62fe65d5116a3a422e5f0", 46223872},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NOSPEECH	},
+		Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NONE	},
 #endif // ENABLE_SCI32
 
 	// Quest for Glory 1 / Hero's Quest - English DOS 3.5" Floppy (supplied by merkur in bug report #2718784)
