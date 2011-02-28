@@ -237,6 +237,10 @@ void MoviePlayer::drawTextObject(uint32 index, byte *screen, uint16 pitch) {
 			src += width;
 			dst += pitch;
 		}
+
+		// Free buffer used to resize psx sprite
+		if (Sword2Engine::isPsx())
+			free(src);
 	}
 }
 
