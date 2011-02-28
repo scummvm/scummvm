@@ -708,18 +708,16 @@ void Scheduler::saveEvents(Common::WriteStream *f) {
 	f->writeSint16BE(tailIndex);
 
 	// Convert event ptrs to indexes
-	event_t  saveEventArr[kMaxEvents];              // Convert event ptrs to indexes
 	for (int16 i = 0; i < kMaxEvents; i++) {
 		event_t *wrkEvent = &_events[i];
-		saveEventArr[i] = *wrkEvent;
 
 		// fix up action pointer (to do better)
 		int16 index, subElem;
-		findAction(saveEventArr[i].action, &index, &subElem);
+		findAction(wrkEvent->action, &index, &subElem);
 		f->writeSint16BE(index);
 		f->writeSint16BE(subElem);
-		f->writeByte((wrkEvent[i].localActionFl) ? 1 : 0);
-		f->writeUint32BE(wrkEvent[i].time);
+		f->writeByte((wrkEvent->localActionFl) ? 1 : 0);
+		f->writeUint32BE(wrkEvent->time);
 		f->writeSint16BE((wrkEvent->prevEvent == 0) ? -1 : (wrkEvent->prevEvent - _events));
 		f->writeSint16BE((wrkEvent->nextEvent == 0) ? -1 : (wrkEvent->nextEvent - _events));
 	}
@@ -830,19 +828,13 @@ void Scheduler::restoreSchedulerData(Common::ReadStream *in) {
 void Scheduler::restoreEvents(Common::ReadStream *f) {
 	debugC(1, kDebugSchedule, "restoreEvents");
 
-	event_t  savedEvents[kMaxEvents];               // Convert event ptrs to indexes
-
 	uint32 saveTime = f->readUint32BE();            // time of save
 	int16 freeIndex = f->readSint16BE();            // Free list index
 	int16 headIndex = f->readSint16BE();            // Head of list index
 	int16 tailIndex = f->readSint16BE();            // Tail of list index
 
-	event_t *wrkEvent;
 	// Restore events indexes to pointers
 	for (int i = 0; i < kMaxEvents; i++) {
-		wrkEvent = &savedEvents[i];
-		_events[i] = *wrkEvent;
-
 		int16 index = f->readSint16BE();
 		int16 subElem = f->readSint16BE();
 
@@ -867,7 +859,7 @@ void Scheduler::restoreEvents(Common::ReadStream *f) {
 
 	// Adjust times to fit our time
 	uint32 curTime = getTicks();
-	wrkEvent = _headEvent;                          // The earliest event
+	event_t *wrkEvent = _headEvent;                 // The earliest event
 	while (wrkEvent) {                              // While mature events found
 		wrkEvent->time = wrkEvent->time - saveTime + curTime;
 		wrkEvent = wrkEvent->nextEvent;
