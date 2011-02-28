@@ -49,6 +49,9 @@ enum {
 	SCI_WINDOWMGR_STYLE_USER        = (1 << 7)
 };
 
+typedef Common::List<Port *> PortList;
+typedef Common::Array<Port *> PortArray;
+
 /**
  * Ports class, includes all port managment for SCI0->SCI1.1 games. Ports are some sort of windows in SCI
  *  this class also handles adjusting coordinates to a specific port
@@ -115,8 +118,12 @@ public:
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
+	/** The list of open 'windows' (and ports), in visual order. */
+	PortList _windowList;
+
 private:
-	typedef Common::List<Port *> PortList;
+	/** The list of all open 'windows' (and ports), ordered by their id. */
+	PortArray _windowsById;
 
 	SegManager *_segMan;
 	GfxPaint16 *_paint16;
@@ -129,12 +136,6 @@ private:
 
 	// counts windows that got disposed but are not freed yet
 	uint16 _freeCounter;
-
-	/** The list of open 'windows' (and ports), in visual order. */
-	PortList _windowList;
-
-	/** The list of all open 'windows' (and ports), ordered by their id. */
-	Common::Array<Port *> _windowsById;
 
 	Common::Rect _bounds;
 

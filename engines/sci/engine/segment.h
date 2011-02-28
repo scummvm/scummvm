@@ -315,14 +315,17 @@ struct ListTable : public Table<List> {
 struct HunkTable : public Table<Hunk> {
 	HunkTable() : Table<Hunk>(SEG_TYPE_HUNK) {}
 
-	virtual void freeEntry(int idx) {
-		Table<Hunk>::freeEntry(idx);
-
-		if (!_table[idx].mem)
-			warning("Attempt to free an already freed hunk");
+	void freeEntryContents(int idx) {
 		free(_table[idx].mem);
 		_table[idx].mem = 0;
 	}
+
+	virtual void freeEntry(int idx) {
+		Table<Hunk>::freeEntry(idx);
+		freeEntryContents(idx);
+	}
+
+	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };

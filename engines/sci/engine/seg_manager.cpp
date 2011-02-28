@@ -403,7 +403,7 @@ void SegManager::freeHunkEntry(reg_t addr) {
 		return;
 	}
 
-	ht->freeEntry(addr.offset);
+	ht->freeEntryContents(addr.offset);
 }
 
 reg_t SegManager::allocateHunkEntry(const char *hunk_type, int size) {

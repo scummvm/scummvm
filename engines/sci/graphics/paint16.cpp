@@ -360,7 +360,7 @@ void GfxPaint16::bitsRestore(reg_t memoryHandle) {
 
 		if (memoryPtr) {
 			_screen->bitsRestore(memoryPtr);
-			_segMan->freeHunkEntry(memoryHandle);
+			bitsFree(memoryHandle);
 		}
 	}
 }
@@ -532,20 +532,7 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 		case SCI_DISPLAY_RESTOREUNDER:
 			bitsGetRect(argv[0], &rect);
 			rect.translate(-_ports->getPort()->left, -_ports->getPort()->top);
-			if (g_sci->getGameId() == GID_PQ3 && g_sci->getEngineState()->currentRoomNumber() == 29) {
-				// WORKAROUND: PQ3 calls this without calling the associated
-				// kDisplay(SCI_DISPLAY_SAVEUNDER) call before. Theoretically,
-				// this would result in no rect getting restored. However, we
-				// still maintain a pointer from the previous room, resulting
-				// in invalidated content being restored on screen, and causing
-				// graphics glitches. Thus, we simply don't restore a rect in
-				// that room. The correct fix for this would be to erase hunk
-				// pointers when changing rooms, but this will suffice for now,
-				// as restoring from a totally invalid pointer is very rare.
-				// Fixes bug #3037945.
-			} else {
-				bitsRestore(argv[0]);
-			}
+			bitsRestore(argv[0]);
 			kernelGraphRedrawBox(rect);
 			// finishing loop
 			argc = 0;

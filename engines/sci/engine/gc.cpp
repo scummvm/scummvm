@@ -25,6 +25,7 @@
 
 #include "sci/engine/gc.h"
 #include "common/array.h"
+#include "sci/graphics/ports.h"
 
 namespace Sci {
 
@@ -81,6 +82,18 @@ static void processWorkList(SegManager *segMan, WorklistManager &wm, const Commo
 				wm.pushArray(heap[reg.segment]->listAllOutgoingReferences(reg));
 			}
 		}
+	}
+}
+
+static void processEngineHunkList(WorklistManager &wm) {
+	PortList windowList = g_sci->_gfxPorts->_windowList;
+
+	for (PortList::const_iterator it = windowList.begin(); it != windowList.end(); ++it) {
+		// FIXME: We also store Port objects in the window list.
+		// We should add a check that we really only pass windows here...
+		Window *wnd = ((Window *)*it);
+		wm.push(wnd->hSaved1);
+		wm.push(wnd->hSaved2);
 	}
 }
 
@@ -142,6 +155,7 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 	debugC(kDebugLevelGC, "[GC] -- Finished explicitly loaded scripts, done with root set");
 
 	processWorkList(s->_segMan, wm, heap);
+	processEngineHunkList(wm);
 
 	return normalizeAddresses(s->_segMan, wm._map);
 }

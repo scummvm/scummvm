@@ -275,6 +275,11 @@ Common::Array<reg_t> DataStack::listAllOutgoingReferences(reg_t object) const {
 }
 
 
+//-------------------- hunk ---------------------
+void HunkTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
+	freeEntry(sub_addr.offset);
+}
+
 //-------------------- lists --------------------
 void ListTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 	freeEntry(sub_addr.offset);
