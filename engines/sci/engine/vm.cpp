@@ -632,18 +632,41 @@ static void	logKernelCall(const KernelFunction *kernelCall, const KernelSubFunct
 				debugN(" (%s)", s->_segMan->getObjectName(argv[parmNr]));
 				break;
 			case SIG_TYPE_REFERENCE:
-				if (kernelCall->function == kSaid) {
-					SegmentRef saidSpec = s->_segMan->dereference(argv[parmNr]);
-					if (saidSpec.isRaw) {
-						debugN(" ('");
-						g_sci->getVocabulary()->debugDecipherSaidBlock(saidSpec.raw);
-						debugN("')");
-					} else {
-						debugN(" (non-raw said-spec)");
-					}
-				} else {
-					debugN(" ('%s')", s->_segMan->getString(argv[parmNr]).c_str());
+			{
+				SegmentObj *mobj = s->_segMan->getSegmentObj(argv[parmNr].segment);
+				switch (mobj->getType()) {
+				case SEG_TYPE_HUNK:
+				{
+					HunkTable *ht = (HunkTable*)mobj;
+					int index = argv[parmNr].offset;
+					if (ht->isValidEntry(index)) {
+						// NOTE: This ", deleted" isn't as useful as it could
+						// be because it prints the status _after_ the kernel
+						// call.
+						debugN(" ('%s' hunk%s)", ht->_table[index].type, ht->_table[index].mem ? "" : ", deleted");
+					} else
+						debugN(" (INVALID hunk ref)");
+					break;
 				}
+				default:
+					// TODO: Any other segment types which could
+					// use special handling?
+
+					if (kernelCall->function == kSaid) {
+						SegmentRef saidSpec = s->_segMan->dereference(argv[parmNr]);
+						if (saidSpec.isRaw) {
+							debugN(" ('");
+							g_sci->getVocabulary()->debugDecipherSaidBlock(saidSpec.raw);
+							debugN("')");
+						} else {
+							debugN(" (non-raw said-spec)");
+						}
+					} else {
+						debugN(" ('%s')", s->_segMan->getString(argv[parmNr]).c_str());
+					}
+					break;
+				}
+			}
 			default:
 				break;
 			}
