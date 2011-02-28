@@ -37,9 +37,6 @@ class GfxPaint16;
 class GfxScreen;
 class GfxText16;
 
-#define PORTS_FIRSTWINDOWID 2
-#define PORTS_FIRSTSCRIPTWINDOWID 3
-
 // window styles
 enum {
 	SCI_WINDOWMGR_STYLE_TRANSPARENT = (1 << 0),

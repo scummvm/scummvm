@@ -45,6 +45,10 @@ typedef int GuiResourceId; // is a resource-number and -1 means no parameter giv
 
 typedef int16 TextAlignment;
 
+#define PORTS_FIRSTWINDOWID 2
+#define PORTS_FIRSTSCRIPTWINDOWID 3
+
+
 struct Port {
 	uint16 id;
 	int16 top, left;
@@ -62,6 +66,8 @@ struct Port {
 		fontHeight(0), fontId(0), greyedOutput(false),
 		penClr(0), backClr(0xFF), penMode(0), counterTillFree(0) {
 	}
+
+	bool isWindow() const { return id >= PORTS_FIRSTWINDOWID && id != 0xFFFF; }
 };
 
 struct Window : public Port, public Common::Serializable {

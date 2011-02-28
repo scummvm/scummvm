@@ -246,8 +246,10 @@ void GfxPorts::beginUpdate(Window *wnd) {
 	PortList::iterator it = _windowList.reverse_begin();
 	const PortList::iterator end = Common::find(_windowList.begin(), _windowList.end(), wnd);
 	while (it != end) {
-		// FIXME: We also store Port objects in the window list.
-		// We should add a check that we really only pass windows here...
+		// We also store Port objects in the window list, but they
+		// shouldn't be encountered during this iteration.
+		assert((*it)->isWindow());
+
 		updateWindow((Window *)*it);
 		--it;
 	}
@@ -263,8 +265,10 @@ void GfxPorts::endUpdate(Window *wnd) {
 	assert(it != end);
 
 	while (++it != end) {
-		// FIXME: We also store Port objects in the window list.
-		// We should add a check that we really only pass windows here...
+		// We also store Port objects in the window list, but they
+		// shouldn't be encountered during this iteration.
+		assert((*it)->isWindow());
+
 		updateWindow((Window *)*it);
 	}
 
