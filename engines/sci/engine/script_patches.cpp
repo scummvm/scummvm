@@ -826,16 +826,22 @@ const uint16 qfg1vgaPatchFightEvents[] = {
 	PATCH_END
 };
 
+// FIXME:
 // When QFG1VGA and QFG3 dispose of a child window. For example, when choosing
 // a spell (parent window), if the spell can't be casted, a subsequent window
 // opens, notifying that it can't be casted. When showing the child window, the
 // scripts restore the area below the parent window, draw the child window, and
 // then attempt to redraw the parent window, which leads to the background
-// picture (which has just been restored) overwriting the child window. It
-// appers that kGraph(redrawBox) is different in QFG1VGA and QFG3. However, we
-// can just remove the window redraw and update calls when the window is
-// supposed to be disposed, and the window is disposed of correctly. Fixes bug
-// #3053093.
+// picture (which has just been restored) overwriting the child window.
+//
+// This faulty redraw is caused by a used and freed SaveBits handle that is
+// still stored in spellWin::pUnderBits being re-assigned with a SaveBits
+// call for the child window. We should ensure that invalidated SaveBits handles
+// can't (soon?) become valid again.
+//
+// However, we can just remove the window redraw and update calls when the
+// window is supposed to be disposed, and the window is disposed of correctly.
+// This is a workaround for bug #3053093.
 const byte qfg1vgaWindowDispose[] = {
 	17,
 	0x39, 0x05,       // pushi 05
