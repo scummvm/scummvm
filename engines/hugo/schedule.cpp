@@ -708,12 +708,14 @@ void Scheduler::saveEvents(Common::WriteStream *f) {
 	f->writeSint16BE(tailIndex);
 
 	// Convert event ptrs to indexes
+	event_t  saveEventArr[kMaxEvents];              // Convert event ptrs to indexes
 	for (int16 i = 0; i < kMaxEvents; i++) {
 		event_t *wrkEvent = &_events[i];
+		saveEventArr[i] = *wrkEvent;
 
 		// fix up action pointer (to do better)
 		int16 index, subElem;
-		findAction(wrkEvent[i].action, &index, &subElem);
+		findAction(saveEventArr[i].action, &index, &subElem);
 		f->writeSint16BE(index);
 		f->writeSint16BE(subElem);
 		f->writeByte((wrkEvent[i].localActionFl) ? 1 : 0);
@@ -777,7 +779,6 @@ void Scheduler::saveActions(Common::WriteStream* f) const {
 /*
 * Find the index in the action list to be able to serialize the action to save game
 */
-
 void Scheduler::findAction(const act* action, int16* index, int16* subElem) {
 	
 	assert(index && subElem);
