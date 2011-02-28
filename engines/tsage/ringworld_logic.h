@@ -114,6 +114,13 @@ public:
 	virtual Common::String getClassName() { return "SpeakerCText"; }
 };
 
+class SpeakerHText: public ScreenSpeaker {
+public:
+	SpeakerHText();
+
+	virtual Common::String getClassName() { return "SpeakerHText"; }
+};
+
 class SpeakerQL: public AnimatedSpeaker {
 public:
 	SpeakerQL();
@@ -155,6 +162,15 @@ public:
 	virtual Common::String getClassName() { return "SpeakerCR"; }
 	virtual void setText(const Common::String &msg);
 };
+
+class SpeakerMR: public AnimatedSpeaker {
+public:
+	SpeakerMR();
+
+	virtual Common::String getClassName() { return "SpeakerMR"; }
+	virtual void setText(const Common::String &msg);
+};
+
 
 } // End of namespace tSage
 

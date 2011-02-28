@@ -29,6 +29,7 @@
 #include "tsage/staticres.h"
 #include "tsage/ringworld_scenes1.h"
 #include "tsage/ringworld_scenes2.h"
+#include "tsage/ringworld_scenes3.h"
 
 namespace tSage {
 
@@ -67,6 +68,10 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 1400: return new Scene1400();
 	// Ringworld Space-port
 	case 1500: return new Scene1500();
+
+	/* Scene group 3 */
+	// Cockpit cutscenes */
+	case 2000: return new Scene2000();
 
 	default:
 		error("Unknown scene number - %d", sceneNumber);
@@ -212,6 +217,15 @@ SpeakerCText::SpeakerCText() {
 	_colour1 = 4;
 	_textWidth = 240;
 	_textMode = ALIGN_CENTRE;
+	_hideObjects = false;
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerHText::SpeakerHText() {
+	_speakerName = "HTEXT";
+	_textPos = Common::Point(160, 40);
+	_colour1 = 52;
 	_hideObjects = false;
 }
 
@@ -374,6 +388,36 @@ void SpeakerCR::setText(const Common::String &msg) {
 	_object2.setStrip2(1);
 	_object2.setPriority2(255);
 	_object2.setPosition(Common::Point(232, 81));
+	_object2.setAction(&_speakerAction, NULL);
+
+	Speaker::setText(msg);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerMR::SpeakerMR() {
+	_speakerName = "MR";
+	_newSceneNumber = 2711;
+	_textPos = Common::Point(40, 10);
+	_colour1 = 22;
+}
+
+void SpeakerMR::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(2713);
+	_object1.setStrip2(2);
+	_object1.setPriority2(255);
+	_object1.changeZoom(100);
+	_object1._frame = 1;
+	_object1.setPosition(Common::Point(220, 143));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
+	
+	_object2.postInit(&_objectList);
+	_object2.setVisage(2713);
+	_object2.setStrip2(1);
+	_object2.setPriority2(255);
+	_object2._frame = 1;
+	_object2.setPosition(Common::Point(215, 99));
 	_object2.setAction(&_speakerAction, NULL);
 
 	Speaker::setText(msg);
