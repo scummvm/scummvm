@@ -212,7 +212,7 @@ void JNI::getPluginDirectories(Common::FSList &dirs) {
 		(jobjectArray)env->CallObjectMethod(_jobj, _MID_getPluginDirectories);
 
 	if (env->ExceptionCheck()) {
-		warning("Error finding plugin directories");
+		LOGE("Error finding plugin directories");
 
 		env->ExceptionDescribe();
 		env->ExceptionClear();
@@ -230,7 +230,7 @@ void JNI::getPluginDirectories(Common::FSList &dirs) {
 		const char *path = env->GetStringUTFChars(path_obj, 0);
 
 		if (path == 0) {
-			warning("Error getting string characters from plugin directory");
+			LOGE("Error getting string characters from plugin directory");
 
 			env->ExceptionClear();
 			env->DeleteLocalRef(path_obj);
@@ -252,7 +252,7 @@ void JNI::setWindowCaption(const char *caption) {
 	env->CallVoidMethod(_jobj, _MID_setWindowCaption, java_caption);
 
 	if (env->ExceptionCheck()) {
-		warning("Failed to set window caption");
+		LOGE("Failed to set window caption");
 
 		env->ExceptionDescribe();
 		env->ExceptionClear();
@@ -268,7 +268,7 @@ void JNI::displayMessageOnOSD(const char *msg) {
 	env->CallVoidMethod(_jobj, _MID_displayMessageOnOSD, java_msg);
 
 	if (env->ExceptionCheck()) {
-		warning("Failed to display OSD message");
+		LOGE("Failed to display OSD message");
 
 		env->ExceptionDescribe();
 		env->ExceptionClear();
@@ -283,7 +283,7 @@ void JNI::showVirtualKeyboard(bool enable) {
 	env->CallVoidMethod(_jobj, _MID_showVirtualKeyboard, enable);
 
 	if (env->ExceptionCheck()) {
-		error("Error trying to show virtual keyboard");
+		LOGE("Error trying to show virtual keyboard");
 
 		env->ExceptionDescribe();
 		env->ExceptionClear();
@@ -299,7 +299,7 @@ void JNI::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 		(jobjectArray)env->CallObjectMethod(_jobj, _MID_getSysArchives);
 
 	if (env->ExceptionCheck()) {
-		warning("Error finding system archive path");
+		LOGE("Error finding system archive path");
 
 		env->ExceptionDescribe();
 		env->ExceptionClear();
@@ -327,7 +327,7 @@ void JNI::setAudioPause() {
 	env->CallVoidMethod(_jobj_audio_track, _MID_AudioTrack_flush);
 
 	if (env->ExceptionCheck()) {
-		warning("Error flushing AudioTrack");
+		LOGE("Error flushing AudioTrack");
 
 		env->ExceptionDescribe();
 		env->ExceptionClear();
@@ -336,7 +336,7 @@ void JNI::setAudioPause() {
 	env->CallVoidMethod(_jobj_audio_track, _MID_AudioTrack_pause);
 
 	if (env->ExceptionCheck()) {
-		warning("Error setting AudioTrack: pause");
+		LOGE("Error setting AudioTrack: pause");
 
 		env->ExceptionDescribe();
 		env->ExceptionClear();
@@ -349,7 +349,7 @@ void JNI::setAudioPlay() {
 	env->CallVoidMethod(_jobj_audio_track, _MID_AudioTrack_play);
 
 	if (env->ExceptionCheck()) {
-		warning("Error setting AudioTrack: play");
+		LOGE("Error setting AudioTrack: play");
 
 		env->ExceptionDescribe();
 		env->ExceptionClear();
@@ -362,7 +362,7 @@ void JNI::setAudioStop() {
 	env->CallVoidMethod(_jobj_audio_track, _MID_AudioTrack_stop);
 
 	if (env->ExceptionCheck()) {
-		warning("Error setting AudioTrack: stop");
+		LOGE("Error setting AudioTrack: stop");
 
 		env->ExceptionDescribe();
 		env->ExceptionClear();
