@@ -56,14 +56,6 @@ reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
 		ResourceType restype = g_sci->getResMan()->convertResType(argv[0].toUint16());
 		reg_t resnr = argv[1];
 
-		// WORKAROUND for a broken script in room 320 in Castle of Dr. Brain.
-		// Script 377 tries to free the hunk memory allocated for the saved area
-		// (underbits) beneath the pop up window, which results in having the
-		// window stay on screen even when it's closed. Ignore this request here.
-		if (restype == kResourceTypeMemory && g_sci->getGameId() == GID_CASTLEBRAIN &&
-			s->currentRoomNumber() == 320)
-			return s->r_acc;
-
 		if (restype == kResourceTypeMemory)
 			s->_segMan->freeHunkEntry(resnr);
 	}
