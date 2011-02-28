@@ -58,7 +58,7 @@ class RandomSource;
  */
 namespace Hugo {
 
-static const int kSavegameVersion = 4;
+static const int kSavegameVersion = 5;
 static const int kInvDx = 32;                       // Width of an inventory icon
 static const int kInvDy = 32;                       // Height of inventory icon
 static const int kMaxTunes = 16;                    // Max number of tunes

@@ -728,27 +728,11 @@ void Scheduler::saveEvents(Common::WriteStream *f) {
  */
 
 void Scheduler::restoreActions(Common::ReadStream *f) {
-
 	for (int i = 0; i < _actListArrSize; i++) {
-	
-		// read all the sub elems
-		int j = 0;
-		do {
-
-			// handle special case for a3, keep list pointer
-			int* responsePtr = 0;
-			if (_actListArr[i][j].a3.actType == PROMPT) {
-				responsePtr = _actListArr[i][j].a3.responsePtr;
-			}
-
-			f->read(&_actListArr[i][j], sizeof(act));
-
-			// handle special case for a3, reset list pointer
-			if (_actListArr[i][j].a3.actType == PROMPT) {
-				_actListArr[i][j].a3.responsePtr = responsePtr;
-			}
-			j++;
-		} while (_actListArr[i][j-1].a0.actType != ANULL);
+		uint16 numSubElem = f->readUint16BE();
+		for (int j = 0; j < numSubElem; j++) {
+			readAct(*f, _actListArr[i][j]);
+		}
 	}
 }
 
@@ -762,15 +746,294 @@ int16 Scheduler::calcMaxPoints() const {
 /*
 * Save the action data in the file with handle f
 */
-void Scheduler::saveActions(Common::WriteStream* f) const {
+void Scheduler::saveActions(Common::WriteStream *f) const {
+	byte  subElemType;
+	int16 nbrCpt;
+	uint16 nbrSubElem;
+
 	for (int i = 0; i < _actListArrSize; i++) {
 		// write all the sub elems data
+		for (nbrSubElem = 1; _actListArr[i][nbrSubElem - 1].a0.actType != ANULL; i++)
+			;
 
-		int j = 0;
-		do {
-			f->write(&_actListArr[i][j], sizeof(act));
-			j++;
-		} while (_actListArr[i][j-1].a0.actType != ANULL);
+		f->writeUint16BE(nbrSubElem);
+		for (int j = 0; j < nbrSubElem; j++) {
+			subElemType = _actListArr[i][j].a0.actType;
+			f->writeByte(subElemType);
+			switch (subElemType) {
+			case ANULL:              // -1
+				break;
+			case ASCHEDULE:          // 0
+				f->writeSint16BE(_actListArr[i][j].a0.timer);
+				f->writeUint16BE(_actListArr[i][j].a0.actIndex);
+				break;
+			case START_OBJ:          // 1
+				f->writeSint16BE(_actListArr[i][j].a1.timer);
+				f->writeSint16BE(_actListArr[i][j].a1.objIndex);
+				f->writeSint16BE(_actListArr[i][j].a1.cycleNumb);
+				f->writeByte(_actListArr[i][j].a1.cycle);
+				break;
+			case INIT_OBJXY:         // 2
+				f->writeSint16BE(_actListArr[i][j].a2.timer);
+				f->writeSint16BE(_actListArr[i][j].a2.objIndex);
+				f->writeSint16BE(_actListArr[i][j].a2.x);
+				f->writeSint16BE(_actListArr[i][j].a2.y);
+				break;
+			case PROMPT:             // 3
+				f->writeSint16BE(_actListArr[i][j].a3.timer);
+				f->writeSint16BE(_actListArr[i][j].a3.promptIndex);
+				for (nbrCpt = 0; _actListArr[i][j].a3.responsePtr[nbrCpt] != -1; nbrCpt++)
+					;
+				nbrCpt++;
+				f->writeUint16BE(nbrCpt);
+				for (int k = 0; k < nbrCpt; k++)
+					f->writeSint16BE(_actListArr[i][j].a3.responsePtr[k]);
+				f->writeUint16BE(_actListArr[i][j].a3.actPassIndex);
+				f->writeUint16BE(_actListArr[i][j].a3.actFailIndex);
+				f->writeByte((_actListArr[i][j].a3.encodedFl) ? 1 : 0);
+				break;
+			case BKGD_COLOR:         // 4
+				f->writeSint16BE(_actListArr[i][j].a4.timer);
+				f->writeUint32BE(_actListArr[i][j].a4.newBackgroundColor);
+				break;
+			case INIT_OBJVXY:        // 5
+				f->writeSint16BE(_actListArr[i][j].a5.timer);
+				f->writeSint16BE(_actListArr[i][j].a5.objIndex);
+				f->writeSint16BE(_actListArr[i][j].a5.vx);
+				f->writeSint16BE(_actListArr[i][j].a5.vy);
+				break;
+			case INIT_CARRY:         // 6
+				f->writeSint16BE(_actListArr[i][j].a6.timer);
+				f->writeSint16BE(_actListArr[i][j].a6.objIndex);
+				f->writeByte((_actListArr[i][j].a6.carriedFl) ? 1 : 0);
+				break;
+			case INIT_HF_COORD:      // 7
+				f->writeSint16BE(_actListArr[i][j].a7.timer);
+				f->writeSint16BE(_actListArr[i][j].a7.objIndex);
+				break;
+			case NEW_SCREEN:         // 8
+				f->writeSint16BE(_actListArr[i][j].a8.timer);
+				f->writeSint16BE(_actListArr[i][j].a8.screenIndex);
+				break;
+			case INIT_OBJSTATE:      // 9
+				f->writeSint16BE(_actListArr[i][j].a9.timer);
+				f->writeSint16BE(_actListArr[i][j].a9.objIndex);
+				f->writeByte(_actListArr[i][j].a9.newState);
+				break;
+			case INIT_PATH:          // 10
+				f->writeSint16BE(_actListArr[i][j].a10.timer);
+				f->writeSint16BE(_actListArr[i][j].a10.objIndex);
+				f->writeSint16BE(_actListArr[i][j].a10.newPathType);
+				f->writeByte(_actListArr[i][j].a10.vxPath);
+				f->writeByte(_actListArr[i][j].a10.vyPath);
+				break;
+			case COND_R:             // 11
+				f->writeSint16BE(_actListArr[i][j].a11.timer);
+				f->writeSint16BE(_actListArr[i][j].a11.objIndex);
+				f->writeByte(_actListArr[i][j].a11.stateReq);
+				f->writeUint16BE(_actListArr[i][j].a11.actPassIndex);
+				f->writeUint16BE(_actListArr[i][j].a11.actFailIndex);
+				break;
+			case TEXT:               // 12
+				f->writeSint16BE(_actListArr[i][j].a12.timer);
+				f->writeSint16BE(_actListArr[i][j].a12.stringIndex);
+				break;
+			case SWAP_IMAGES:        // 13
+				f->writeSint16BE(_actListArr[i][j].a13.timer);
+				f->writeSint16BE(_actListArr[i][j].a13.objIndex1);
+				f->writeSint16BE(_actListArr[i][j].a13.objIndex2);
+				break;
+			case COND_SCR:           // 14
+				f->writeSint16BE(_actListArr[i][j].a14.timer);
+				f->writeSint16BE(_actListArr[i][j].a14.objIndex);
+				f->writeSint16BE(_actListArr[i][j].a14.screenReq);
+				f->writeUint16BE(_actListArr[i][j].a14.actPassIndex);
+				f->writeUint16BE(_actListArr[i][j].a14.actFailIndex);
+				break;
+			case AUTOPILOT:          // 15
+				f->writeSint16BE(_actListArr[i][j].a15.timer);
+				f->writeSint16BE(_actListArr[i][j].a15.objIndex1);
+				f->writeSint16BE(_actListArr[i][j].a15.objIndex2);
+				f->writeByte(_actListArr[i][j].a15.dx);
+				f->writeByte(_actListArr[i][j].a15.dy);
+				break;
+			case INIT_OBJ_SEQ:       // 16
+				f->writeSint16BE(_actListArr[i][j].a16.timer);
+				f->writeSint16BE(_actListArr[i][j].a16.objIndex);
+				f->writeSint16BE(_actListArr[i][j].a16.seqIndex);
+				break;
+			case SET_STATE_BITS:     // 17
+				f->writeSint16BE(_actListArr[i][j].a17.timer);
+				f->writeSint16BE(_actListArr[i][j].a17.objIndex);
+				f->writeSint16BE(_actListArr[i][j].a17.stateMask);
+				break;
+			case CLEAR_STATE_BITS:   // 18
+				f->writeSint16BE(_actListArr[i][j].a18.timer);
+				f->writeSint16BE(_actListArr[i][j].a18.objIndex);
+				f->writeSint16BE(_actListArr[i][j].a18.stateMask);
+				break;
+			case TEST_STATE_BITS:    // 19
+				f->writeSint16BE(_actListArr[i][j].a19.timer);
+				f->writeSint16BE(_actListArr[i][j].a19.objIndex);
+				f->writeSint16BE(_actListArr[i][j].a19.stateMask);
+				f->writeUint16BE(_actListArr[i][j].a19.actPassIndex);
+				f->writeUint16BE(_actListArr[i][j].a19.actFailIndex);
+				break;
+			case DEL_EVENTS:         // 20
+				f->writeSint16BE(_actListArr[i][j].a20.timer);
+				f->writeByte(_actListArr[i][j].a20.actTypeDel);
+				break;
+			case GAMEOVER:           // 21
+				f->writeSint16BE(_actListArr[i][j].a21.timer);
+				break;
+			case INIT_HH_COORD:      // 22
+				f->writeSint16BE(_actListArr[i][j].a22.timer);
+				f->writeSint16BE(_actListArr[i][j].a22.objIndex);
+				break;
+			case EXIT:               // 23
+				f->writeSint16BE(_actListArr[i][j].a23.timer);
+				break;
+			case BONUS:              // 24
+				f->writeSint16BE(_actListArr[i][j].a24.timer);
+				f->writeSint16BE(_actListArr[i][j].a24.pointIndex);
+				break;
+			case COND_BOX:           // 25
+				f->writeSint16BE(_actListArr[i][j].a25.timer);
+				f->writeSint16BE(_actListArr[i][j].a25.objIndex);
+				f->writeSint16BE(_actListArr[i][j].a25.x1);
+				f->writeSint16BE(_actListArr[i][j].a25.y1);
+				f->writeSint16BE(_actListArr[i][j].a25.x2);
+				f->writeSint16BE(_actListArr[i][j].a25.y2);
+				f->writeUint16BE(_actListArr[i][j].a25.actPassIndex);
+				f->writeUint16BE(_actListArr[i][j].a25.actFailIndex);
+				break;
+			case SOUND:              // 26
+				f->writeSint16BE(_actListArr[i][j].a26.timer);
+				f->writeSint16BE(_actListArr[i][j].a26.soundIndex);
+				break;
+			case ADD_SCORE:          // 27
+				f->writeSint16BE(_actListArr[i][j].a27.timer);
+				f->writeSint16BE(_actListArr[i][j].a27.objIndex);
+				break;
+			case SUB_SCORE:          // 28
+				f->writeSint16BE(_actListArr[i][j].a28.timer);
+				f->writeSint16BE(_actListArr[i][j].a28.objIndex);
+				break;
+			case COND_CARRY:         // 29
+				f->writeSint16BE(_actListArr[i][j].a29.timer);
+				f->writeSint16BE(_actListArr[i][j].a29.objIndex);
+				f->writeUint16BE(_actListArr[i][j].a29.actPassIndex);
+				f->writeUint16BE(_actListArr[i][j].a29.actFailIndex);
+				break;
+			case INIT_MAZE:          // 30
+				f->writeSint16BE(_actListArr[i][j].a30.timer);
+				f->writeByte(_actListArr[i][j].a30.mazeSize);
+				f->writeSint16BE(_actListArr[i][j].a30.x1);
+				f->writeSint16BE(_actListArr[i][j].a30.y1);
+				f->writeSint16BE(_actListArr[i][j].a30.x2);
+				f->writeSint16BE(_actListArr[i][j].a30.y2);
+				f->writeSint16BE(_actListArr[i][j].a30.x3);
+				f->writeSint16BE(_actListArr[i][j].a30.x4);
+				f->writeByte(_actListArr[i][j].a30.firstScreenIndex);
+				break;
+			case EXIT_MAZE:          // 31
+				f->writeSint16BE(_actListArr[i][j].a31.timer);
+				break;
+			case INIT_PRIORITY:      // 32
+				f->writeSint16BE(_actListArr[i][j].a32.timer);
+				f->writeSint16BE(_actListArr[i][j].a32.objIndex);
+				f->writeByte(_actListArr[i][j].a32.priority);
+				break;
+			case INIT_SCREEN:        // 33
+				f->writeSint16BE(_actListArr[i][j].a33.timer);
+				f->writeSint16BE(_actListArr[i][j].a33.objIndex);
+				f->writeSint16BE(_actListArr[i][j].a33.screenIndex);
+				break;
+			case AGSCHEDULE:         // 34
+				f->writeSint16BE(_actListArr[i][j].a34.timer);
+				f->writeUint16BE(_actListArr[i][j].a34.actIndex);
+				break;
+			case REMAPPAL:           // 35
+				f->writeSint16BE(_actListArr[i][j].a35.timer);
+				f->writeSint16BE(_actListArr[i][j].a35.oldColorIndex);
+				f->writeSint16BE(_actListArr[i][j].a35.newColorIndex);
+				break;
+			case COND_NOUN:          // 36
+				f->writeSint16BE(_actListArr[i][j].a36.timer);
+				f->writeUint16BE(_actListArr[i][j].a36.nounIndex);
+				f->writeUint16BE(_actListArr[i][j].a36.actPassIndex);
+				f->writeUint16BE(_actListArr[i][j].a36.actFailIndex);
+				break;
+			case SCREEN_STATE:       // 37
+				f->writeSint16BE(_actListArr[i][j].a37.timer);
+				f->writeSint16BE(_actListArr[i][j].a37.screenIndex);
+				f->writeByte(_actListArr[i][j].a37.newState);
+				break;
+			case INIT_LIPS:          // 38
+				f->writeSint16BE(_actListArr[i][j].a38.timer);
+				f->writeSint16BE(_actListArr[i][j].a38.lipsObjIndex);
+				f->writeSint16BE(_actListArr[i][j].a38.objIndex);
+				f->writeByte(_actListArr[i][j].a38.dxLips);
+				f->writeByte(_actListArr[i][j].a38.dyLips);
+				break;
+			case INIT_STORY_MODE:    // 39
+				f->writeSint16BE(_actListArr[i][j].a39.timer);
+				f->writeByte((_actListArr[i][j].a39.storyModeFl) ? 1 : 0);
+				break;
+			case WARN:               // 40
+				f->writeSint16BE(_actListArr[i][j].a40.timer);
+				f->writeSint16BE(_actListArr[i][j].a40.stringIndex);
+				break;
+			case COND_BONUS:         // 41
+				f->writeSint16BE(_actListArr[i][j].a41.timer);
+				f->writeSint16BE(_actListArr[i][j].a41.BonusIndex);
+				f->writeUint16BE(_actListArr[i][j].a41.actPassIndex);
+				f->writeUint16BE(_actListArr[i][j].a41.actFailIndex);
+				break;
+			case TEXT_TAKE:          // 42
+				f->writeSint16BE(_actListArr[i][j].a42.timer);
+				f->writeSint16BE(_actListArr[i][j].a42.objIndex);
+				break;
+			case YESNO:              // 43
+				f->writeSint16BE(_actListArr[i][j].a43.timer);
+				f->writeSint16BE(_actListArr[i][j].a43.promptIndex);
+				f->writeUint16BE(_actListArr[i][j].a43.actYesIndex);
+				f->writeUint16BE(_actListArr[i][j].a43.actNoIndex);
+				break;
+			case STOP_ROUTE:         // 44
+				f->writeSint16BE(_actListArr[i][j].a44.timer);
+				break;
+			case COND_ROUTE:         // 45
+				f->writeSint16BE(_actListArr[i][j].a45.timer);
+				f->writeSint16BE(_actListArr[i][j].a45.routeIndex);
+				f->writeUint16BE(_actListArr[i][j].a45.actPassIndex);
+				f->writeUint16BE(_actListArr[i][j].a45.actFailIndex);
+				break;
+			case INIT_JUMPEXIT:      // 46
+				f->writeSint16BE(_actListArr[i][j].a46.timer);
+				f->writeByte((_actListArr[i][j].a46.jumpExitFl) ? 1 : 0);
+				break;
+			case INIT_VIEW:          // 47
+				f->writeSint16BE(_actListArr[i][j].a47.timer);
+				f->writeSint16BE(_actListArr[i][j].a47.objIndex);
+				f->writeSint16BE(_actListArr[i][j].a47.viewx);
+				f->writeSint16BE(_actListArr[i][j].a47.viewy);
+				f->writeSint16BE(_actListArr[i][j].a47.direction);
+				break;
+			case INIT_OBJ_FRAME:     // 48
+				f->writeSint16BE(_actListArr[i][j].a48.timer);
+				f->writeSint16BE(_actListArr[i][j].a48.objIndex);
+				f->writeSint16BE(_actListArr[i][j].a48.seqIndex);
+				f->writeSint16BE(_actListArr[i][j].a48.frameIndex);
+				break;
+			case OLD_SONG:           // 49, Added by Strangerke for DOS versions
+				f->writeSint16BE(_actListArr[i][j].a49.timer);
+				f->writeUint16BE(_actListArr[i][j].a49.songIndex);
+				break;
+			default:
+				error("Unknown action %d", subElemType);
+			}
+		}
 	}
 }
 
