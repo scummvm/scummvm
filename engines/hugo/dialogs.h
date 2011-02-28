@@ -27,6 +27,7 @@
 #define HUGO_TOPMENU_H
 
 #include "gui/dialog.h"
+#include "gui/widgets/edittext.h"
 
 namespace Hugo {
 
@@ -54,6 +55,7 @@ enum {
 };
 
 enum {
+	// TopMenu commands
 	kCmdWhat = 'WHAT',
 	kCmdMusic = 'MUZK',
 	kCmdSoundFX = 'SOUN',
@@ -62,7 +64,10 @@ enum {
 	kCmdRecall = 'RECL',
 	kCmdTurbo = 'TURB',
 	kCmdLook = 'LOOK',
-	kCmdInvent = 'INVT'
+	kCmdInvent = 'INVT',
+
+	// EntryDialog commands
+	kCmdButton = 'BTNP'
 };
 
 class TopMenu : public GUI::Dialog {
@@ -93,6 +98,21 @@ protected:
 
 	Graphics::Surface **arrayBmp;
 	uint16 arraySize;
+};
+
+class EntryDialog : public GUI::Dialog {
+	EntryDialog(const Common::String &title, const Common::String &buttonLabel, const Common::String &defaultValue);
+	~EntryDialog();
+
+	void reflowLayout();
+	void handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data);
+
+	const Common::String &getEditString() const	{ return _text->getEditString(); }
+
+protected:
+	void init();
+
+	GUI::EditTextWidget *_text;
 };
 
 }
