@@ -586,7 +586,7 @@ const SciScriptSignature larry6Signatures[] = {
 };
 
 // ===========================================================================
-// rm560::doit was supposed to close the painting, when heimlich enters the
+// rm560::doit was supposed to close the painting, when Heimlich enters the
 //  room. The code is buggy, so it actually closes the painting, when heimlich
 //  is not in the room. We fix that.
 const byte laurabow2SignaturePaintingClosing[] = {
@@ -912,55 +912,6 @@ const SciScriptSignature sq4Signatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
-// ===========================================================================
-// It seems to scripts warp ego outside the screen somehow (or maybe kDoBresen?)
-//  ego::mover is set to 0 and rm119::doit will crash in that case. This here
-//  fixes part of the problem and actually checks ego::mover to be 0 and skips
-//  TODO: this should get further investigated by waltervn and maybe properly
-//   patched. For now ego will shortly disappear and reappear a bit after
-//   this isn't good, but sierra sci also "crashed" (endless looped) so this
-//   is at least better than the original code
-const byte sq5SignatureScrubbing[] = {
-	19,
-	0x18,             // not
-	0x31, 0x37,       // bnt 37
-	0x78,             // push1 (selector x)
-	0x76,             // push0
-	0x39, 0x38,       // pushi 38 (selector mover)
-	0x76,             // push0
-	0x81, 0x00,       // lag 00
-	0x4a, 0x04,       // send 04 - read ego::mover
-	0x4a, 0x04,       // send 04 - read ego::mover::x
-	0x36,             // push
-	0x34, 0xa0, 0x00, // ldi 00a0
-	0x1c,             // ne?
-	0
-};
-
-const uint16 sq5PatchScrubbing[] = {
-	0x18,             // not
-	0x31, 0x37,       // bnt 37
-//	0x2f, 0x38,       // bt 37 (would save another byte, isn't needed
-	0x39, 0x38,       // pushi 38 (selector mover)
-	0x76,             // push0
-	0x81, 0x00,       // lag 00
-	0x4a, 0x04,       // send 04 - read ego::mover
-	0x31, 0x2e,       // bnt 2e (jump if ego::mover is 0)
-	0x78,             // push1 (selector x)
-	0x76,             // push0
-	0x4a, 0x04,       // send 04 - read ego::mover::x
-	0x39, 0xa0,       // pushi a0 (saving 2 bytes)
-	0x1c,             // ne?
-	PATCH_END
-};
-
-//    script, description,                                      magic DWORD,                                  adjust
-const SciScriptSignature sq5Signatures[] = {
-	{    119, "scrubbing send crash",                        1, PATCH_MAGICDWORD(0x18, 0x31, 0x37, 0x78),     0, sq5SignatureScrubbing, sq5PatchScrubbing },
-	SCI_SIGNATUREENTRY_TERMINATOR
-};
-
-
 // will actually patch previously found signature area
 void Script::applyPatch(const uint16 *patch, byte *scriptData, const uint32 scriptSize, int32 signatureOffset) {
 	byte orgData[PATCH_VALUELIMIT];
@@ -1094,9 +1045,6 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 		break;
 	case GID_SQ4:
 		signatureTable = sq4Signatures;
-		break;
-	case GID_SQ5:
-		signatureTable = sq5Signatures;
 		break;
 	default:
 		break;
