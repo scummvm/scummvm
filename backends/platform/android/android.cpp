@@ -442,9 +442,12 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 		} else {
 			// Touchscreen events need to be converted
 			// from device to game coords first.
-			const GLESTexture *tex = _show_overlay
-				? static_cast<GLESTexture *>(_overlay_texture)
-				: static_cast<GLESTexture *>(_game_texture);
+			const GLESTexture *tex;
+			if (_show_overlay)
+				tex = _overlay_texture;
+			else
+				tex = _game_texture;
+
 			event.mouse.x = scalef(event.mouse.x, tex->width(),
 									_egl_surface_width);
 			event.mouse.y = scalef(event.mouse.y, tex->height(),

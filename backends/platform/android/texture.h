@@ -59,10 +59,6 @@ public:
 		return _surface.h;
 	}
 
-	inline GLuint texture_name() const {
-		return _texture_name;
-	}
-
 	inline const Graphics::Surface *surface_const() const {
 		return &_surface;
 	}

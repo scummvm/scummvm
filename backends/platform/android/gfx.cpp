@@ -128,8 +128,8 @@ void OSystem_Android::initSize(uint width, uint height,
 
 	_game_texture->allocBuffer(width, height);
 
-	GLuint overlay_width = _egl_surface_width;
-	GLuint overlay_height = _egl_surface_height;
+	int overlay_width = _egl_surface_width;
+	int overlay_height = _egl_surface_height;
 
 	// the 'normal' theme layout uses a max height of 400 pixels. if the
 	// surface is too big we use only a quarter of the size so that the widgets
@@ -290,13 +290,8 @@ void OSystem_Android::updateScreen() {
 
 	int res = JNI::swapBuffers();
 
-	if (res) {
+	if (res)
 		warning("swapBuffers returned 0x%x", res);
-#if 0
-		JNI::initSurface();
-		setupSurface();
-#endif
-	}
 }
 
 Graphics::Surface *OSystem_Android::lockScreen() {

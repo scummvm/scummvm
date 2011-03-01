@@ -154,7 +154,7 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 	GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
 	GLCALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 
-	setDirtyRect(Common::Rect(x, y, x+w, y+h));
+	setDirtyRect(Common::Rect(x, y, x + w, y + h));
 
 	if (static_cast<int>(w) * bytesPerPixel() == pitch) {
 		GLCALL(glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h,
