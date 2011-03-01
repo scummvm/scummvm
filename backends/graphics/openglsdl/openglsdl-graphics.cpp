@@ -345,13 +345,10 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	if (_aspectRatioCorrection)
 		_videoMode.mode = OpenGL::GFX_4_3;
 
-	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
-	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
-
 	// If the screen was resized, do not change its size
 	if (!_screenResized) {
-		_videoMode.hardwareWidth = _videoMode.overlayWidth;
-		_videoMode.hardwareHeight = _videoMode.overlayHeight;
+		_videoMode.overlayWidth = _videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
+		_videoMode.overlayHeight = _videoMode.hardwareHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
 		int screenAspectRatio = _videoMode.screenWidth * 10000 / _videoMode.screenHeight;
 		int desiredAspectRatio = getAspectRatio();
@@ -366,6 +363,9 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 		// the width is modified it can break the overlay.
 		if (_videoMode.hardwareHeight > _videoMode.overlayHeight)
 			_videoMode.overlayHeight = _videoMode.hardwareHeight;
+	} else {
+		_videoMode.overlayWidth = _videoMode.hardwareWidth;
+		_videoMode.overlayHeight = _videoMode.hardwareHeight;
 	}
 
 	_screenResized = false;
@@ -377,10 +377,14 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-	if (_videoMode.fullscreen)
+	if (_videoMode.fullscreen) {
 		if (!setupFullscreenMode())
 			// Failed setuping a fullscreen mode
 			return false;
+
+		_videoMode.overlayWidth = _videoMode.hardwareWidth;
+		_videoMode.overlayHeight = _videoMode.hardwareHeight;
+	}
 
 	uint32 flags = SDL_OPENGL;
 

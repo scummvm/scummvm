@@ -1002,7 +1002,7 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 			refreshOverlay();
 
 		// Draw the overlay
-		_overlayTexture->drawTexture(_displayX, _displayY, _displayWidth, _displayHeight);
+		_overlayTexture->drawTexture(0, 0, _videoMode.overlayWidth, _videoMode.overlayHeight);
 	}
 
 	if (_cursorVisible) {
@@ -1218,32 +1218,20 @@ uint OpenGLGraphicsManager::getAspectRatio() {
 }
 
 void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
+	if (_overlayVisible)
+		return;
+
 	if (_videoMode.mode == OpenGL::GFX_NORMAL) {
-		if (_videoMode.hardwareWidth != _videoMode.overlayWidth)
-			x = x * _videoMode.overlayWidth / _videoMode.hardwareWidth;
-		if (_videoMode.hardwareHeight != _videoMode.overlayHeight)
-			y = y * _videoMode.overlayHeight / _videoMode.hardwareHeight;
-
-		if (!_overlayVisible) {
-			x /= _videoMode.scaleFactor;
-			y /= _videoMode.scaleFactor;
-		}
-
-	} else {
+		x /= _videoMode.scaleFactor;
+		y /= _videoMode.scaleFactor;
+	} else if (!_overlayVisible) {
 		x -= _displayX;
 		y -= _displayY;
 
-		if (_overlayVisible) {
-			if (_displayWidth != _videoMode.overlayWidth)
-				x = x * _videoMode.overlayWidth / _displayWidth;
-			if (_displayHeight != _videoMode.overlayHeight)
-				y = y * _videoMode.overlayHeight / _displayHeight;
-		} else {
-			if (_displayWidth != _videoMode.screenWidth)
-				x = x * _videoMode.screenWidth / _displayWidth;
-			if (_displayHeight != _videoMode.screenHeight)
-				y = y * _videoMode.screenHeight / _displayHeight;
-		}
+		if (_displayWidth != _videoMode.screenWidth)
+			x = x * _videoMode.screenWidth / _displayWidth;
+		if (_displayHeight != _videoMode.screenHeight)
+			y = y * _videoMode.screenHeight / _displayHeight;
 	}
 }
 
