@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(GP2X) || defined(GP2XWIZ)
+#if defined(GP2X)
 
 #include "backends/events/gp2xsdl/gp2xsdl-events.h"
 #if defined(GP2X)
@@ -441,7 +441,7 @@ bool GP2XSdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event
 			_km.x_down_count = 0;
 		}
 #endif
- 
+
 	} else if (ev.jaxis.axis == JOY_YAXIS) {
 #ifndef JOY_INVERT_Y
 		axis = -axis;

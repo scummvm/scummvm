@@ -29,7 +29,7 @@
 #include "backends/events/sdl/sdl-events.h"
 
 /**
- * SDL events manager for GP2X and GP2XWIZ
+ * SDL events manager for GP2X
  */
 class GP2XSdlEventSource : public SdlEventSource {
 public:
