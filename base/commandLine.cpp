@@ -178,6 +178,9 @@ void registerDefaults() {
 	ConfMan.registerDefault("midi_gain", 100);
 //	ConfMan.registerDefault("music_driver", ???);
 
+	ConfMan.registerDefault("mt32_device", "null");
+	ConfMan.registerDefault("gm_device", "null");
+
 	ConfMan.registerDefault("cdrom", 0);
 
 	// Game specific
