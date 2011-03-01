@@ -71,9 +71,19 @@ enum MusicType {
  * A set of flags to be passed to detectDevice() which can be used to
  * specify what kind of music driver is preferred / accepted.
  *
- * The flags (except for MDT_PREFER_MT32 and MDT_PREFER_GM) indicate whether a given driver
- * type is acceptable. E.g. the TOWNS music driver could be returned by
- * detectDevice if and only if MDT_TOWNS is specified.
+ * The flags (except for MDT_PREFER_MT32 and MDT_PREFER_GM) indicate whether a
+ * given driver type is acceptable. E.g. the TOWNS music driver could be
+ * returned by detectDevice if and only if MDT_TOWNS is specified.
+ *
+ * MDT_PREFER_MT32 and MDT_PREFER_GM indicate the MIDI device type to use when
+ * no device is selected in the music options, or when the MIDI device selected
+ * does not match the requirements of a game engine. With these flags, more
+ * priority is given to an MT-32 device, or a GM device respectively.
+ *
+ * In desktop systems (where the MT-32 emulator is enabled), if no music driver
+ * is selected in the options, MDT_PREFER_MT32 results in ending up with the
+ * MT-32 emulator being chosen as the "optimal" music setting (unless, of course,
+ * a real MT-32 is present in the user's system).
  *
  * @todo Rename MidiDriverFlags to MusicDriverFlags
  */
