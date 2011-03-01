@@ -34,7 +34,7 @@
 
 namespace Sci {
 
-/* #define DEBUG */
+//#define DEBUG
 
 class MidiDriver_AmigaMac : public MidiDriver_Emulated {
 public:
@@ -289,7 +289,7 @@ void MidiDriver_AmigaMac::playInstrument(int16 *dest, Voice *channel, int count)
 void MidiDriver_AmigaMac::changeInstrument(int channel, int instrument) {
 #ifdef DEBUG
 	if (_bank.instruments[instrument][0])
-		debugN("[sfx:seq:amiga] Setting channel %i to \"%s\" (%i)\n", channel, _bank.instruments[instrument]->name, instrument);
+		debugN("[sfx:seq:amiga] Setting channel %i to \"%s\" (%i)\n", channel, _bank.instruments[instrument].name, instrument);
 	else
 		warning("[sfx:seq:amiga] instrument %i does not exist (channel %i)", instrument, channel);
 #endif
@@ -452,9 +452,9 @@ MidiDriver_AmigaMac::InstrumentSample *MidiDriver_AmigaMac::readInstrumentSCI0(C
 	}
 
 	int seg_size[3];
-	seg_size[0] = READ_BE_UINT16(header + 35) * 2;
-	seg_size[1] = READ_BE_UINT16(header + 41) * 2;
-	seg_size[2] = READ_BE_UINT16(header + 47) * 2;
+	seg_size[0] = (int16)READ_BE_UINT16(header + 35) * 2;
+	seg_size[1] = (int16)READ_BE_UINT16(header + 41) * 2;
+	seg_size[2] = (int16)READ_BE_UINT16(header + 47) * 2;
 
 	InstrumentSample *instrument = new InstrumentSample;
 
@@ -495,7 +495,7 @@ MidiDriver_AmigaMac::InstrumentSample *MidiDriver_AmigaMac::readInstrumentSCI0(C
 	debugN("                Looping: %s\n", instrument->mode & kModeLoop ? "on" : "off");
 	debugN("                Pitch changes: %s\n", instrument->mode & kModePitch ? "on" : "off");
 	debugN("                Segment sizes: %i %i %i\n", seg_size[0], seg_size[1], seg_size[2]);
-	debugN("                Segment offsets: 0 %i %i\n", loop_offset, read_int32(header + 43));
+	debugN("                Segment offsets: 0 %i %i\n", loop_offset, (int32)READ_BE_UINT32(header + 43));
 #endif
 
 	instrument->samples = (int8 *) malloc(size + 1);
