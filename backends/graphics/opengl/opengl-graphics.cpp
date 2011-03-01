@@ -845,7 +845,8 @@ void OpenGLGraphicsManager::refreshCursorScale() {
 	} else {
 		// Otherwise, scale the cursor for the overlay
 		int targetScaleFactor = MIN(_cursorTargetScale, _videoMode.scaleFactor);
-		int actualFactor = screenScaleFactor - (targetScaleFactor - 1) * 10000;
+		// We limit the maximum scale to 3 here to avoid too big cursors, for large overlay resolutions
+		int actualFactor = MIN<uint>(3, screenScaleFactor - (targetScaleFactor - 1)) * 10000;
 		_cursorState.rW = (int16)(_cursorState.w * actualFactor / 10000);
 		_cursorState.rH = (int16)(_cursorState.h * actualFactor / 10000);
 		_cursorState.rHotX = (int16)(_cursorState.hotX * actualFactor / 10000);
