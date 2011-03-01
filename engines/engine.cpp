@@ -145,7 +145,11 @@ void initCommonGFX(bool defaultTo1XScaler) {
 	assert(transientDomain);
 
 	const bool useDefaultGraphicsMode =
-		!transientDomain->contains("gfx_mode") &&
+		(!transientDomain->contains("gfx_mode") ||
+		!scumm_stricmp(transientDomain->getVal("gfx_mode").c_str(), "normal") ||
+		!scumm_stricmp(transientDomain->getVal("gfx_mode").c_str(), "default")
+		)
+		 &&
 		(
 		!gameDomain ||
 		!gameDomain->contains("gfx_mode") ||
