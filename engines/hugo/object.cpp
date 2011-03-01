@@ -418,20 +418,25 @@ void ObjectHandler::readUse(Common::ReadStream &in, uses_t &curUse) {
  */
 void ObjectHandler::loadObjectUses(Common::ReadStream &in) {
 	uses_t tmpUse;
+	tmpUse.targets = 0;
+
 	//Read _uses
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
-		tmpUse.targets = 0;
 		uint16 numElem = in.readUint16BE();
 		if (varnt == _vm->_gameVariant) {
 			_usesSize = numElem;
 			_uses = (uses_t *)malloc(sizeof(uses_t) * numElem);
 		}
 
-		for (int i = 0; i < numElem; i++)
-			readUse(in, (varnt == _vm->_gameVariant) ? _uses[i] : tmpUse);
-
-		if (tmpUse.targets)
-			free(tmpUse.targets);
+		for (int i = 0; i < numElem; i++) {
+			if (varnt == _vm->_gameVariant) 
+				readUse(in, _uses[i]);
+			else {
+				readUse(in, tmpUse);
+				free(tmpUse.targets);
+				tmpUse.targets = 0;
+			}
+		}
 	}
 }
 
@@ -497,20 +502,26 @@ void ObjectHandler::readObject(Common::ReadStream &in, object_t &curObject) {
 void ObjectHandler::loadObjectArr(Common::ReadStream &in) {
 	debugC(6, kDebugObject, "loadObject(&in)");
 	object_t tmpObject;
+	tmpObject.stateDataIndex = 0;
 
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		uint16 numElem = in.readUint16BE();
-		tmpObject.stateDataIndex = 0;
+
 		if (varnt == _vm->_gameVariant) {
 			_objCount = numElem;
 			_objects = (object_t *)malloc(sizeof(object_t) * numElem);
 		}
 
-		for (int i = 0; i < numElem; i++)
-			readObject(in, (varnt == _vm->_gameVariant) ? _objects[i] : tmpObject);
-
-		if (tmpObject.stateDataIndex)
-			free(tmpObject.stateDataIndex);
+		for (int i = 0; i < numElem; i++) {
+			if (varnt == _vm->_gameVariant)
+				readObject(in, _objects[i]);
+			else {
+				// Skip over uneeded objects.
+				readObject(in, tmpObject);
+				free(tmpObject.stateDataIndex);
+				tmpObject.stateDataIndex = 0;
+			}
+		}
 	}
 }
 
