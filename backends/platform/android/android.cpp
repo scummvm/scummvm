@@ -124,10 +124,6 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 OSystem_Android::~OSystem_Android() {
 	ENTER();
 
-	delete _game_texture;
-	delete _overlay_texture;
-	delete _mouse_texture;
-
 	delete _savefile;
 	delete _timer;
 	delete _mixer;
@@ -323,6 +319,10 @@ void OSystem_Android::initBackend() {
 
 	setupSurface();
 
+	_game_texture = new GLESPaletteTexture();
+	_overlay_texture = new GLES4444Texture();
+	_mouse_texture = new GLESPaletteATexture();
+
 	// renice this thread to boost the audio thread
 	if (setpriority(PRIO_PROCESS, 0, 19) < 0)
 		warning("couldn't renice the main thread");
@@ -400,8 +400,16 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 			if (JNI::egl_surface_width > 0 && JNI::egl_surface_height > 0) {
 				LOGD("initializing surface");
 
+				_game_texture->release();
+				_overlay_texture->release();
+				_mouse_texture->release();
+
 				JNI::deinitSurface();
 				setupSurface();
+
+				_game_texture->reinit();
+				_overlay_texture->reinit();
+				_mouse_texture->reinit();
 
 				event.type = Common::EVENT_SCREEN_CHANGED;
 
@@ -410,15 +418,20 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 
 			LOGD("deinitialiting surface");
 
+			_game_texture->release();
+			_overlay_texture->release();
+			_mouse_texture->release();
+
 			_screen_changeid = JNI::surface_changeid;
 			JNI::deinitSurface();
 		}
 
 		if (JNI::pause) {
 			// release some resources
-			// TODO
-			// free textures? they're garbled anyway since no engine
-			// respects EVENT_SCREEN_CHANGED
+			_game_texture->release();
+			_overlay_texture->release();
+			_mouse_texture->release();
+
 			LOGD("deinitialiting surface");
 			JNI::deinitSurface();
 
@@ -572,6 +585,10 @@ void OSystem_Android::quit() {
 
 	_timer_thread_exit = true;
 	pthread_join(_timer_thread, 0);
+
+	delete _game_texture;
+	delete _overlay_texture;
+	delete _mouse_texture;
 
 	JNI::deinitSurface();
 }

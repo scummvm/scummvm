@@ -98,12 +98,15 @@ GLESTexture::GLESTexture() :
 }
 
 GLESTexture::~GLESTexture() {
+	release();
+}
+
+void GLESTexture::release() {
 	debug("Destroying texture %u", _texture_name);
 	GLCALL(glDeleteTextures(1, &_texture_name));
 }
 
-void GLESTexture::reinitGL() {
-	GLCALL(glDeleteTextures(1, &_texture_name));
+void GLESTexture::reinit() {
 	GLCALL(glGenTextures(1, &_texture_name));
 
 	// bypass allocBuffer() shortcut to reinit the texture properly

@@ -42,7 +42,9 @@ public:
 	GLESTexture();
 	virtual ~GLESTexture();
 
-	virtual void reinitGL();
+	void release();
+	void reinit();
+
 	virtual void allocBuffer(GLuint width, GLuint height);
 
 	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,

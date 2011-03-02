@@ -94,21 +94,6 @@ void OSystem_Android::setupSurface() {
 
 	GLCALL(glEnable(GL_TEXTURE_2D));
 
-	if (!_game_texture)
-		_game_texture = new GLESPaletteTexture();
-	else
-		_game_texture->reinitGL();
-
-	if (!_overlay_texture)
-		_overlay_texture = new GLES4444Texture();
-	else
-		_overlay_texture->reinitGL();
-
-	if (!_mouse_texture)
-		_mouse_texture = new GLESPaletteATexture();
-	else
-		_mouse_texture->reinitGL();
-
 	GLCALL(glViewport(0, 0, _egl_surface_width, _egl_surface_height));
 
 	GLCALL(glMatrixMode(GL_PROJECTION));
