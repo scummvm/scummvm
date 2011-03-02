@@ -151,6 +151,12 @@ void *OSystem_Android::timerThreadFunc(void *arg) {
 	tv.tv_nsec = 100 * 1000 * 1000;	// 100ms
 
 	while (!system->_timer_thread_exit) {
+		if (JNI::pause) {
+			LOGD("timer thread going to sleep");
+			sem_wait(&JNI::pause_sem);
+			LOGD("timer thread woke up");
+		}
+			
 		timer->handler();
 		nanosleep(&tv, 0);
 	}
@@ -192,6 +198,12 @@ void *OSystem_Android::audioThreadFunc(void *arg) {
 	uint silence_count = 33;
 
 	while (!system->_audio_thread_exit) {
+		if (JNI::pause) {
+			LOGD("audio thread going to sleep");
+			sem_wait(&JNI::pause_sem);
+			LOGD("audio thread woke up");
+		}
+			
 		buf = (byte *)env->GetPrimitiveArrayCritical(bufa, 0);
 		assert(buf);
 
@@ -400,6 +412,19 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 
 			_screen_changeid = JNI::surface_changeid;
 			JNI::deinitSurface();
+		}
+
+		if (JNI::pause) {
+			// release some resources
+			// TODO
+			// free textures? they're garbled anyway since no engine
+			// respects EVENT_SCREEN_CHANGED
+			LOGD("deinitialiting surface");
+			JNI::deinitSurface();
+
+			LOGD("main thread going to sleep");
+			sem_wait(&JNI::pause_sem);
+			LOGD("main thread woke up");
 		}
 	}
 

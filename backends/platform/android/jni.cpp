@@ -48,6 +48,9 @@ jobject JNI::_jobj_egl_surface = 0;
 Common::Archive *JNI::_asset_archive = 0;
 OSystem_Android *JNI::_system = 0;
 
+bool JNI::pause = false;
+sem_t JNI::pause_sem = { 0 };
+
 int JNI::surface_changeid = 0;
 int JNI::egl_surface_width = 0;
 int JNI::egl_surface_height = 0;
@@ -417,6 +420,10 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 				jobject at, jint audio_sample_rate, jint audio_buffer_size) {
 	assert(!_system);
 
+	pause = false;
+	// initial value of zero!
+	sem_init(&pause_sem, 0, 0);
+
 	_asset_archive = new AndroidAssetArchive(asset_manager);
 	assert(_asset_archive);
 
@@ -476,6 +483,8 @@ void JNI::destroy(JNIEnv *env, jobject self) {
 	delete _system;
 	g_system = 0;
 	_system = 0;
+
+	sem_destroy(&pause_sem);
 
 	// see above
 	//JNI::getEnv()->DeleteWeakGlobalRef(_jobj);
@@ -616,13 +625,23 @@ void JNI::enableZoning(JNIEnv *env, jobject self, jboolean enable) {
 	_system->enableZoning(enable);
 }
 
-void JNI::pauseEngine(JNIEnv *env, jobject self, jboolean pause) {
-	if (!_system || !g_engine)
+void JNI::pauseEngine(JNIEnv *env, jobject self, jboolean value) {
+	if (!_system)
 		return;
 
-	if ((pause && !g_engine->isPaused()) || (!pause && g_engine->isPaused())) {
-		LOGD("pauseEngine: %d", pause);
-		g_engine->pauseEngine(pause);
+	if (g_engine)
+		if ((value && !g_engine->isPaused()) ||
+				(!value && g_engine->isPaused())) {
+			LOGD("pauseEngine: %d", value);
+			g_engine->pauseEngine(value);
+		}
+
+	pause = value;
+
+	if (!pause) {
+		// wake up all threads
+		for (uint i = 0; i < 3; ++i)
+			sem_post(&pause_sem);
 	}
 }
 

@@ -29,6 +29,7 @@
 #if defined(__ANDROID__)
 
 #include <jni.h>
+#include <semaphore.h>
 
 #include "common/fs.h"
 #include "common/archive.h"
@@ -41,6 +42,9 @@ private:
 	virtual ~JNI();
 
 public:
+	static bool pause;
+	static sem_t pause_sem;
+
 	static int surface_changeid;
 	static int egl_surface_width;
 	static int egl_surface_height;
