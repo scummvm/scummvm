@@ -198,6 +198,9 @@ void OSystem_Android::updateScreen() {
 
 	GLTHREADCHECK;
 
+	if (!JNI::haveSurface())
+		return;
+
 	if (!_force_redraw &&
 			!_game_texture->dirty() &&
 			!_overlay_texture->dirty() &&

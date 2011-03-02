@@ -400,8 +400,6 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 
 			_screen_changeid = JNI::surface_changeid;
 			JNI::deinitSurface();
-
-			// TODO prevent swapBuffers
 		}
 	}
 

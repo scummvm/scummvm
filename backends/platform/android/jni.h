@@ -60,6 +60,7 @@ public:
 	static void showVirtualKeyboard(bool enable);
 	static void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 
+	static inline bool haveSurface();
 	static inline bool swapBuffers();
 	static bool initSurface();
 	static void deinitSurface();
@@ -129,6 +130,10 @@ private:
 	static void pushEvent(JNIEnv *env, jobject self, jobject java_event);
 	static void enableZoning(JNIEnv *env, jobject self, jboolean enable);
 };
+
+inline bool JNI::haveSurface() {
+	return _jobj_egl_surface != 0;
+}
 
 inline bool JNI::swapBuffers() {
 	JNIEnv *env = JNI::getEnv();
