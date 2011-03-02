@@ -70,8 +70,10 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 1500: return new Scene1500();
 
 	/* Scene group 3 */
-	// Cockpit cutscenes */
+	// Cockpit cutscenes
 	case 2000: return new Scene2000();
+	// Cockpit
+	case 2100: return new Scene2100();
 
 	default:
 		error("Unknown scene number - %d", sceneNumber);
@@ -418,6 +420,37 @@ void SpeakerMR::setText(const Common::String &msg) {
 	_object2.setPriority2(255);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(215, 99));
+	_object2.setAction(&_speakerAction, NULL);
+
+	Speaker::setText(msg);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerSAL::SpeakerSAL() {
+	_speakerName = "SAL";
+	_newSceneNumber = 2851;
+	_textPos = Common::Point(10, 30);
+	_colour1 = 13;
+	_textMode = ALIGN_CENTRE;
+}
+
+void SpeakerSAL::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(2853);
+	_object1.setStrip2(2);
+	_object1.setPriority2(255);
+	_object1.changeZoom(100);
+	_object1._frame = 1;
+	_object1.setPosition(Common::Point(185, 200));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
+	
+	_object2.postInit(&_objectList);
+	_object2.setVisage(2853);
+	_object2.setStrip2(1);
+	_object2.setPriority2(255);
+	_object2._frame = 1;
+	_object2.setPosition(Common::Point(170, 92));
 	_object2.setAction(&_speakerAction, NULL);
 
 	Speaker::setText(msg);
