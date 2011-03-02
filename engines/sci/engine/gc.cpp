@@ -155,7 +155,9 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 	debugC(kDebugLevelGC, "[GC] -- Finished explicitly loaded scripts, done with root set");
 
 	processWorkList(s->_segMan, wm, heap);
-	processEngineHunkList(wm);
+
+	if (getSciVersion() <= SCI_VERSION_1_1)
+		processEngineHunkList(wm);
 
 	return normalizeAddresses(s->_segMan, wm._map);
 }
