@@ -129,6 +129,17 @@ void Script::load(ResourceManager *resMan) {
 	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, _nr), 0);
 	assert(script != 0);
 
+	uint extraLocalsWorkaround = 0;
+	if (g_sci->getGameId() == GID_FANMADE && _nr == 1 && script->size == 11140) {
+		// WORKAROUND: Script 1 in Ocean Battle doesn't have enough locals to
+		// fit the string showing how many shots are left (a nasty script bug,
+		// corrupting heap memory). We add 10 more locals so that it has enough
+		// space to use as the target for its kFormat operation. Fixes bug
+		// #3059871.
+		extraLocalsWorkaround = 10;
+	}
+	_bufSize += extraLocalsWorkaround * 2;
+
 	_buf = (byte *)malloc(_bufSize);
 	assert(_buf);
 
@@ -187,6 +198,9 @@ void Script::load(ResourceManager *resMan) {
 			_localsOffset = 24 + _numExports * 2;
 	}
 
+	// WORKAROUND: Increase locals, if needed (check above)
+	_localsCount += extraLocalsWorkaround;
+
 	if (getSciVersion() == SCI_VERSION_0_EARLY) {
 		// SCI0 early
 		// Old script block. There won't be a localvar block in this case.
@@ -202,7 +216,7 @@ void Script::load(ResourceManager *resMan) {
 
 		if (_localsOffset + _localsCount * 2 + 1 >= (int)_bufSize) {
 			error("Locals extend beyond end of script: offset %04x, count %d vs size %d", _localsOffset, _localsCount, _bufSize);
-			_localsCount = (_bufSize - _localsOffset) >> 1;
+			//_localsCount = (_bufSize - _localsOffset) >> 1;
 		}
 	}
 }
