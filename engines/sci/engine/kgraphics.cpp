@@ -58,6 +58,17 @@
 
 namespace Sci {
 
+static int16 adjustGraphColor(int16 color) {
+	// WORKAROUND: SCI1 EGA and Amiga games can set invalid colors (above 0 - 15).
+	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
+	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
+	// for the undithering algorithm in EGA games - bug #3048908.
+	if (getSciVersion() >= SCI_VERSION_1_EARLY && g_sci->getResMan()->getViewType() == kViewEga)
+		return color & 0x0F;	// 0 - 15
+	else
+		return color;
+}
+
 void showScummVMDialog(const Common::String &message) {
 	GUI::MessageDialog dialog(message, "OK");
 	dialog.runModal();
@@ -248,16 +259,9 @@ reg_t kGraphGetColorCount(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kGraphDrawLine(EngineState *s, int argc, reg_t *argv) {
-	int16 color = argv[4].toSint16();
+	int16 color = adjustGraphColor(argv[4].toSint16());
 	int16 priority = (argc > 5) ? argv[5].toSint16() : -1;
 	int16 control = (argc > 6) ? argv[6].toSint16() : -1;
-
-	// WORKAROUND: SCI1 EGA games can set invalid colors (above 0 - 15).
-	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
-	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
-	// for the undithering algorithm in EGA games - bug #3048908.
-	if (g_sci->getResMan()->getViewType() == kViewEga && getSciVersion() >= SCI_VERSION_1_EARLY)
-		color &= 0x0F;
 
 	g_sci->_gfxPaint16->kernelGraphDrawLine(getGraphPoint(argv), getGraphPoint(argv + 2), color, priority, control);
 	return s->r_acc;
@@ -290,16 +294,9 @@ reg_t kGraphFillBoxForeground(EngineState *s, int argc, reg_t *argv) {
 reg_t kGraphFillBoxAny(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect rect = getGraphRect(argv);
 	int16 colorMask = argv[4].toUint16();
-	int16 color = argv[5].toSint16();
+	int16 color = adjustGraphColor(argv[5].toSint16());
 	int16 priority = argv[6].toSint16(); // yes, we may read from stack sometimes here
 	int16 control = argv[7].toSint16(); // sierra did the same
-
-	// WORKAROUND: SCI1 EGA games can set invalid colors (above 0 - 15).
-	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
-	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
-	// for the undithering algorithm in EGA games - bug #3048908.
-	if (g_sci->getResMan()->getViewType() == kViewEga && getSciVersion() >= SCI_VERSION_1_EARLY)
-		color &= 0x0F;
 
 	g_sci->_gfxPaint16->kernelGraphFillBox(rect, colorMask, color, priority, control);
 	return s->r_acc;
@@ -1083,17 +1080,8 @@ reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
 	int argextra = argc >= 13 ? 4 : 0; // Triggers in PQ3 and SCI1.1 games, argc 13 for DOS argc 15 for mac
 	int	style = argv[5 + argextra].toSint16();
 	int	priority = (argc > 6 + argextra) ? argv[6 + argextra].toSint16() : -1;
-	int colorPen = (argc > 7 + argextra) ? argv[7 + argextra].toSint16() : 0;
-	int colorBack = (argc > 8 + argextra) ? argv[8 + argextra].toSint16() : 255;
-
-	// WORKAROUND: SCI1 EGA games can set invalid colors (above 0 - 15).
-	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
-	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
-	// for the undithering algorithm in EGA games - bug #3048908.
-	if (g_sci->getResMan()->getViewType() == kViewEga && getSciVersion() >= SCI_VERSION_1_EARLY) {
-		colorPen &= 0x0F;
-		colorBack &= 0x0F;
-	}
+	int colorPen = adjustGraphColor((argc > 7 + argextra) ? argv[7 + argextra].toSint16() : 0);
+	int colorBack = adjustGraphColor((argc > 8 + argextra) ? argv[8 + argextra].toSint16() : 255);
 
 	//	const char *title = argv[4 + argextra].segment ? kernel_dereference_char_pointer(s, argv[4 + argextra], 0) : NULL;
 	if (argc>=13) {
