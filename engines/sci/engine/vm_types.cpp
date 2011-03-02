@@ -31,8 +31,6 @@
 
 namespace Sci {
 
-extern const char *opcodeNames[]; // from scriptdebug.cpp
-
 reg_t reg_t::lookForWorkaround(const reg_t right) const {
 	SciTrackOriginReply originReply;
 	SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, arithmeticWorkarounds, &originReply);

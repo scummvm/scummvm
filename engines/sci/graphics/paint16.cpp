@@ -568,7 +568,7 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	// now drawing the text
 	_text16->Size(rect, text, -1, width);
 	rect.moveTo(_ports->getPort()->curLeft, _ports->getPort()->curTop);
-	if (getSciVersion() >= SCI_VERSION_1_LATE) {
+	if (getSciVersion() >= SCI_VERSION_1_MIDDLE) {
 		int16 leftPos = rect.right <= _screen->getWidth() ? 0 : _screen->getWidth() - rect.right;
 		int16 topPos = rect.bottom <= _screen->getHeight() ? 0 : _screen->getHeight() - rect.bottom;
 		_ports->move(leftPos, topPos);
