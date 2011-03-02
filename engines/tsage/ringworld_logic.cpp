@@ -75,6 +75,16 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	// Cockpit
 	case 2100: return new Scene2100();
 
+	/* Scene group 4 */
+
+	/* Scene group 5 */
+
+	/* Scene group 6 */
+
+	/* Scene group 8 */
+
+	/* Scene group 10 */
+
 	default:
 		error("Unknown scene number - %d", sceneNumber);
 		break;
