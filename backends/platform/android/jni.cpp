@@ -27,6 +27,7 @@
 
 #include "base/main.h"
 #include "common/config-manager.h"
+#include "engines/engine.h"
 
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/asset-archive.h"
@@ -93,6 +94,8 @@ const JNINativeMethod JNI::_natives[] = {
 		(void *)JNI::pushEvent },
 	{ "enableZoning", "(Z)V",
 		(void *)JNI::enableZoning },
+	{ "pauseEngine", "(Z)V",
+		(void *)JNI::pauseEngine }
 };
 
 JNI::JNI() {
@@ -611,6 +614,16 @@ void JNI::enableZoning(JNIEnv *env, jobject self, jboolean enable) {
 	assert(_system);
 
 	_system->enableZoning(enable);
+}
+
+void JNI::pauseEngine(JNIEnv *env, jobject self, jboolean pause) {
+	if (!_system || !g_engine)
+		return;
+
+	if ((pause && !g_engine->isPaused()) || (!pause && g_engine->isPaused())) {
+		LOGD("pauseEngine: %d", pause);
+		g_engine->pauseEngine(pause);
+	}
 }
 
 #endif

@@ -161,30 +161,46 @@ public class ScummVMActivity extends Activity {
 		scummvm_thread.start();
 	}
 
-	private boolean was_paused = false;
-
 	@Override
-	public void onPause() {
-		if (scummvm != null) {
-			was_paused = true;
-			scummvm.pause();
-		}
+	public void onStart() {
+		Log.d(ScummVM.LOG_TAG, "onStart");
 
-		super.onPause();
+		super.onStart();
 	}
 
 	@Override
 	public void onResume() {
+		Log.d(ScummVM.LOG_TAG, "onResume");
+
 		super.onResume();
 
-		if (scummvm != null && was_paused)
-			scummvm.resume();
+		if (scummvm != null)
+			scummvm.pause(false);
+	}
 
-		was_paused = false;
+	@Override
+	public void onPause() {
+		Log.d(ScummVM.LOG_TAG, "onPause");
+
+		super.onPause();
+
+		if (scummvm != null)
+			scummvm.pause(true);
 	}
 
 	@Override
 	public void onStop() {
+		Log.d(ScummVM.LOG_TAG, "onStop");
+
+		super.onStop();
+	}
+
+	@Override
+	public void onDestroy() {
+		Log.d(ScummVM.LOG_TAG, "onDestroy");
+
+		super.onDestroy();
+
 		if (scummvm != null) {
 			scummvm.pushEvent(new Event(Event.EVENT_QUIT));
 
@@ -194,9 +210,9 @@ public class ScummVMActivity extends Activity {
 			} catch (InterruptedException e) {
 				Log.i(ScummVM.LOG_TAG, "Error while joining ScummVM thread", e);
 			}
-		}
 
-		super.onStop();
+			scummvm = null;
+		}
 	}
 
 	static final int MSG_MENU_LONG_PRESS = 1;
