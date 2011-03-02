@@ -273,10 +273,6 @@ void MidiDriver_AdLib::send(uint32 b) {
 	case 0x90:
 		noteOn(channel, op1, op2);
 		break;
-	case 0xe0:
-		_channels[channel].pitchWheel = (op1 & 0x7f) | ((op2 & 0x7f) << 7);
-		renewNotes(channel, true);
-		break;
 	case 0xb0:
 		switch (op1) {
 		case 0x07:
@@ -320,6 +316,10 @@ void MidiDriver_AdLib::send(uint32 b) {
 	// The original AdLib driver from sierra ignores aftertouch completely, so should we
 	case 0xa0: // Polyphonic key pressure (aftertouch)
 	case 0xd0: // Channel pressure (aftertouch)
+		break;
+	case 0xe0:
+		_channels[channel].pitchWheel = (op1 & 0x7f) | ((op2 & 0x7f) << 7);
+		renewNotes(channel, true);
 		break;
 	case 0xf0:	// SysEx, ignore it
 		break;

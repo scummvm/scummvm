@@ -248,11 +248,17 @@ void MidiPlayer_Midi::controlChange(int channel, int control, int value) {
 
 		_channels[channel].hold = value;
 		break;
+	case 0x4b:	// voice mapping
+		break;
+	case 0x4e:	// velocity
+		break;
 	case 0x7b:
 		if (!_channels[channel].playing)
 			return;
 
 		_channels[channel].playing = false;
+	default:
+		break;
 	}
 
 	_driver->send(0xb0 | channel, control, value);
@@ -349,6 +355,8 @@ void MidiPlayer_Midi::send(uint32 b) {
 		break;
 	case 0xe0:
 		_driver->send(b);
+		break;
+	case 0xf0:	// SysEx, ignore it
 		break;
 	default:
 		warning("Ignoring MIDI event %02x", command);
