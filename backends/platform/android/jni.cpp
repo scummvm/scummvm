@@ -428,54 +428,38 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 
 	jclass cls = env->GetObjectClass(_jobj);
 
-#define FIND_METHOD(name, signature) do {							\
-		_MID_ ## name = env->GetMethodID(cls, #name, signature);	\
-		if (_MID_ ## name == 0)										\
-			return;													\
+#define FIND_METHOD(prefix, name, signature) do {							\
+		_MID_ ## prefix ## name = env->GetMethodID(cls, #name, signature);	\
+		if (_MID_ ## prefix ## name == 0)									\
+			return;															\
 	} while (0)
 
-	FIND_METHOD(setWindowCaption, "(Ljava/lang/String;)V");
-	FIND_METHOD(displayMessageOnOSD, "(Ljava/lang/String;)V");
-	FIND_METHOD(showVirtualKeyboard, "(Z)V");
-	FIND_METHOD(getSysArchives, "()[Ljava/lang/String;");
-	FIND_METHOD(getPluginDirectories, "()[Ljava/lang/String;");
-	FIND_METHOD(initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
-	FIND_METHOD(deinitSurface, "()V");
-
-#undef FIND_METHOD
+	FIND_METHOD(, setWindowCaption, "(Ljava/lang/String;)V");
+	FIND_METHOD(, displayMessageOnOSD, "(Ljava/lang/String;)V");
+	FIND_METHOD(, showVirtualKeyboard, "(Z)V");
+	FIND_METHOD(, getSysArchives, "()[Ljava/lang/String;");
+	FIND_METHOD(, getPluginDirectories, "()[Ljava/lang/String;");
+	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
+	FIND_METHOD(, deinitSurface, "()V");
 
 	_jobj_egl = env->NewGlobalRef(egl);
 	_jobj_egl_display = env->NewGlobalRef(egl_display);
 
 	cls = env->GetObjectClass(_jobj_egl);
 
-#define FIND_METHOD(name, signature) do {									\
-		_MID_EGL10_ ## name = env->GetMethodID(cls, #name, signature);		\
-		if (_MID_EGL10_ ## name == 0)										\
-			return;															\
-	} while (0)
-
-	FIND_METHOD(eglSwapBuffers, "(Ljavax/microedition/khronos/egl/EGLDisplay;"
-								"Ljavax/microedition/khronos/egl/EGLSurface;"
-								")Z");
-
-#undef FIND_METHOD
+	FIND_METHOD(EGL10_, eglSwapBuffers,
+				"(Ljavax/microedition/khronos/egl/EGLDisplay;"
+				"Ljavax/microedition/khronos/egl/EGLSurface;)Z");
 
 	_jobj_audio_track = env->NewGlobalRef(at);
 
 	cls = env->GetObjectClass(_jobj_audio_track);
 
-#define FIND_METHOD(name, signature) do {									\
-		_MID_AudioTrack_ ## name = env->GetMethodID(cls, #name, signature);	\
-		if (_MID_AudioTrack_ ## name == 0)									\
-			return;															\
-	} while (0)
-
-	FIND_METHOD(flush, "()V");
-	FIND_METHOD(pause, "()V");
-	FIND_METHOD(play, "()V");
-	FIND_METHOD(stop, "()V");
-	FIND_METHOD(write, "([BII)I");
+	FIND_METHOD(AudioTrack_, flush, "()V");
+	FIND_METHOD(AudioTrack_, pause, "()V");
+	FIND_METHOD(AudioTrack_, play, "()V");
+	FIND_METHOD(AudioTrack_, stop, "()V");
+	FIND_METHOD(AudioTrack_, write, "([BII)I");
 
 #undef FIND_METHOD
 
