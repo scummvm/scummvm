@@ -96,6 +96,14 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for OpenGL. (GSoC Task)
    - Closed memory leaks in Mouse Surfaces.
 
+ Android port:
+   - Switched to the official NDK toolchain for building.
+   - Fixed GFX output for various devices.
+   - Fixed various crashes.
+
+ Nintendo DS port:
+   - Added support for loadable modules.
+
  PSP port:
    - Added support for loadable modules.
    - Added image viewer.
@@ -103,17 +111,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  PS2 port:
    - Added support for loadable modules.
 
- Nintendo DS port:
-   - Added support for loadable modules.
-
  Wii/GameCube port:
    - Added support for loadable modules.
    - Fixed 16bit mouse cursors on HE games.
-
- Android port:
-   - Switched to the official NDK toolchain for building.
-   - Fixed GFX output for various devices.
-   - Fixed various crashes.
 
 1.2.1 (2010-12-19)
  General
