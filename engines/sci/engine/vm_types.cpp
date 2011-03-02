@@ -46,7 +46,7 @@ reg_t reg_t::lookForWorkaround(const reg_t right) const {
 }
 
 reg_t reg_t::operator+(const reg_t right) const {
-	if (isPointer() && isInitialized()) {
+	if (isPointer()) {
 		// Pointer arithmetics. Only some pointer types make sense here
 		SegmentObj *mobj = g_sci->getEngineState()->_segMan->getSegmentObj(segment);
 
@@ -59,13 +59,13 @@ reg_t reg_t::operator+(const reg_t right) const {
 		case SEG_TYPE_STACK:
 		case SEG_TYPE_DYNMEM:
 			// Make sure that we are adding an offset to the pointer
-			if (right.isPointer())
+			if (!right.isNumber())
 				return lookForWorkaround(right);
 			return make_reg(segment, offset + right.toSint16());
 		default:
 			return lookForWorkaround(right);
 		}	
-	} else if (isNumber() && isInitialized() && right.isPointer()) {
+	} else if (isNumber() && right.isPointer()) {
 		// Adding a pointer to a number, flip the order
 		return right + *this;
 	} else {
