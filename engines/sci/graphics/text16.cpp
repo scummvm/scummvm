@@ -204,6 +204,8 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 			maxChars = curCharCount; // return count up to (but not including) breaking space
 			break;
 		}
+		if (width + _font->getCharWidth(curChar) > maxWidth)
+			break;
 		width += _font->getCharWidth(curChar);
 		curCharCount++;
 	}

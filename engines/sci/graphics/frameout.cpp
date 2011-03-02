@@ -337,6 +337,8 @@ static int16 GetLongest(const char *text, int16 maxWidth, GfxFont *font) {
 			maxChars = curCharCount; // return count up to (but not including) breaking space
 			break;
 		}
+		if (width + font->getCharWidth(curChar) > maxWidth)
+			break;
 		width += font->getCharWidth(curChar);
 		curCharCount++;
 	}
