@@ -40,6 +40,9 @@ jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
 JavaVM *JNI::_vm = 0;
 jobject JNI::_jobj = 0;
 jobject JNI::_jobj_audio_track = 0;
+jobject JNI::_jobj_egl = 0;
+jobject JNI::_jobj_egl_display = 0;
+jobject JNI::_jobj_egl_surface = 0;
 
 Common::Archive *JNI::_asset_archive = 0;
 OSystem_Android *JNI::_system = 0;
@@ -63,9 +66,10 @@ jmethodID JNI::_MID_setWindowCaption = 0;
 jmethodID JNI::_MID_showVirtualKeyboard = 0;
 jmethodID JNI::_MID_getSysArchives = 0;
 jmethodID JNI::_MID_getPluginDirectories = 0;
-jmethodID JNI::_MID_swapBuffers = 0;
 jmethodID JNI::_MID_initSurface = 0;
 jmethodID JNI::_MID_deinitSurface = 0;
+
+jmethodID JNI::_MID_EGL10_eglSwapBuffers = 0;
 
 jmethodID JNI::_MID_AudioTrack_flush = 0;
 jmethodID JNI::_MID_AudioTrack_pause = 0;
@@ -75,6 +79,8 @@ jmethodID JNI::_MID_AudioTrack_write = 0;
 
 const JNINativeMethod JNI::_natives[] = {
 	{ "create", "(Landroid/content/res/AssetManager;"
+				"Ljavax/microedition/khronos/egl/EGL10;"
+				"Ljavax/microedition/khronos/egl/EGLDisplay;"
 				"Landroid/media/AudioTrack;II)V",
 		(void *)JNI::create },
 	{ "destroy", "()V",
@@ -318,17 +324,23 @@ void JNI::getPluginDirectories(Common::FSList &dirs) {
 	}
 }
 
-void JNI::initSurface() {
+bool JNI::initSurface() {
 	JNIEnv *env = JNI::getEnv();
 
-	env->CallVoidMethod(_jobj, _MID_initSurface);
+	jobject obj = env->CallObjectMethod(_jobj, _MID_initSurface);
 
-	if (env->ExceptionCheck()) {
+	if (!obj || env->ExceptionCheck()) {
 		LOGE("initSurface failed");
 
 		env->ExceptionDescribe();
 		env->ExceptionClear();
+
+		return false;
 	}
+
+	_jobj_egl_surface = env->NewGlobalRef(obj);
+
+	return true;
 }
 
 void JNI::deinitSurface() {
@@ -342,6 +354,9 @@ void JNI::deinitSurface() {
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 	}
+
+	env->DeleteGlobalRef(_jobj_egl_surface);
+	_jobj_egl_surface = 0;
 }
 
 void JNI::setAudioPause() {
@@ -394,11 +409,12 @@ void JNI::setAudioStop() {
 
 // natives for the dark side
 
-void JNI::create(JNIEnv *env, jobject self, jobject am, jobject at,
-					jint audio_sample_rate, jint audio_buffer_size) {
+void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
+				jobject egl, jobject egl_display,
+				jobject at, jint audio_sample_rate, jint audio_buffer_size) {
 	assert(!_system);
 
-	_asset_archive = new AndroidAssetArchive(am);
+	_asset_archive = new AndroidAssetArchive(asset_manager);
 	assert(_asset_archive);
 
 	_system = new OSystem_Android(audio_sample_rate, audio_buffer_size);
@@ -407,6 +423,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject am, jobject at,
 	// weak global ref to allow class to be unloaded
 	// ... except dalvik implements NewWeakGlobalRef only on froyo
 	//_jobj = env->NewWeakGlobalRef(self);
+
 	_jobj = env->NewGlobalRef(self);
 
 	jclass cls = env->GetObjectClass(_jobj);
@@ -422,9 +439,25 @@ void JNI::create(JNIEnv *env, jobject self, jobject am, jobject at,
 	FIND_METHOD(showVirtualKeyboard, "(Z)V");
 	FIND_METHOD(getSysArchives, "()[Ljava/lang/String;");
 	FIND_METHOD(getPluginDirectories, "()[Ljava/lang/String;");
-	FIND_METHOD(swapBuffers, "()I");
-	FIND_METHOD(initSurface, "()V");
+	FIND_METHOD(initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
 	FIND_METHOD(deinitSurface, "()V");
+
+#undef FIND_METHOD
+
+	_jobj_egl = env->NewGlobalRef(egl);
+	_jobj_egl_display = env->NewGlobalRef(egl_display);
+
+	cls = env->GetObjectClass(_jobj_egl);
+
+#define FIND_METHOD(name, signature) do {									\
+		_MID_EGL10_ ## name = env->GetMethodID(cls, #name, signature);		\
+		if (_MID_EGL10_ ## name == 0)										\
+			return;															\
+	} while (0)
+
+	FIND_METHOD(eglSwapBuffers, "(Ljavax/microedition/khronos/egl/EGLDisplay;"
+								"Ljavax/microedition/khronos/egl/EGLSurface;"
+								")Z");
 
 #undef FIND_METHOD
 
@@ -459,6 +492,9 @@ void JNI::destroy(JNIEnv *env, jobject self) {
 
 	// see above
 	//JNI::getEnv()->DeleteWeakGlobalRef(_jobj);
+
+	JNI::getEnv()->DeleteGlobalRef(_jobj_egl_display);
+	JNI::getEnv()->DeleteGlobalRef(_jobj_egl);
 	JNI::getEnv()->DeleteGlobalRef(_jobj_audio_track);
 	JNI::getEnv()->DeleteGlobalRef(_jobj);
 }

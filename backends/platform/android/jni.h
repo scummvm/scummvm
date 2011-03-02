@@ -60,8 +60,8 @@ public:
 	static void showVirtualKeyboard(bool enable);
 	static void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 
-	static inline int swapBuffers();
-	static void initSurface();
+	static inline bool swapBuffers();
+	static bool initSurface();
 	static void deinitSurface();
 
 	static void setAudioPause();
@@ -76,6 +76,9 @@ private:
 	// back pointer to (java) peer instance
 	static jobject _jobj;
 	static jobject _jobj_audio_track;
+	static jobject _jobj_egl;
+	static jobject _jobj_egl_display;
+	static jobject _jobj_egl_surface;
 
 	static Common::Archive *_asset_archive;
 	static OSystem_Android *_system;
@@ -97,9 +100,10 @@ private:
 	static jmethodID _MID_showVirtualKeyboard;
 	static jmethodID _MID_getSysArchives;
 	static jmethodID _MID_getPluginDirectories;
-	static jmethodID _MID_swapBuffers;
 	static jmethodID _MID_initSurface;
 	static jmethodID _MID_deinitSurface;
+
+	static jmethodID _MID_EGL10_eglSwapBuffers;
 
 	static jmethodID _MID_AudioTrack_flush;
 	static jmethodID _MID_AudioTrack_pause;
@@ -113,8 +117,10 @@ private:
 	static void throwRuntimeException(JNIEnv *env, const char *msg);
 
 	// natives for the dark side
-	static void create(JNIEnv *env, jobject self, jobject am, jobject at,
-						jint sample_rate, jint buffer_size);
+	static void create(JNIEnv *env, jobject self, jobject asset_manager,
+						jobject egl, jobject egl_display,
+						jobject at, jint audio_sample_rate,
+						jint audio_buffer_size);
 	static void destroy(JNIEnv *env, jobject self);
 
 	static void setSurface(JNIEnv *env, jobject self, jint width, jint height);
@@ -124,10 +130,11 @@ private:
 	static void enableZoning(JNIEnv *env, jobject self, jboolean enable);
 };
 
-inline int JNI::swapBuffers() {
+inline bool JNI::swapBuffers() {
 	JNIEnv *env = JNI::getEnv();
 
-	return env->CallIntMethod(_jobj, _MID_swapBuffers);
+	return env->CallBooleanMethod(_jobj_egl, _MID_EGL10_eglSwapBuffers,
+									_jobj_egl_display, _jobj_egl_surface);
 }
 
 inline int JNI::writeAudio(JNIEnv *env, jbyteArray &data, int offset, int size) {

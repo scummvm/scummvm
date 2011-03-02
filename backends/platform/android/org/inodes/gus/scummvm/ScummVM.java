@@ -38,6 +38,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	private String[] args;
 
 	final private native void create(AssetManager asset_manager,
+										EGL10 egl, EGLDisplay eglDisplay,
 										AudioTrack audio_track,
 										int sample_rate, int buffer_size);
 	final private native void destroy();
@@ -55,13 +56,6 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected String[] getPluginDirectories();
 	abstract protected void showVirtualKeyboard(boolean enable);
 	abstract protected String[] getSysArchives();
-
-	final protected int swapBuffers() {
-		if (!egl.eglSwapBuffers(eglDisplay, eglSurface))
-			return egl.eglGetError();
-
-		return 0;
-	}
 
 	public ScummVM(AssetManager asset_manager, SurfaceHolder holder) {
 		this.asset_manager = asset_manager;
@@ -126,7 +120,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 			throw new RuntimeException("Error preparing the ScummVM thread", e);
 		}
 
-		create(asset_manager, audio_track, sample_rate, buffer_size);
+		create(asset_manager, egl, eglDisplay,
+				audio_track, sample_rate, buffer_size);
 
 		int res = main(args);
 
@@ -192,7 +187,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	}
 
 	// Callback from C++ peer instance
-	final protected void initSurface() throws Exception {
+	final protected EGLSurface initSurface() throws Exception {
 		eglSurface = egl.eglCreateWindowSurface(eglDisplay, eglConfig,
 												surface_holder, null);
 
@@ -210,6 +205,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 						gl.glGetString(GL10.GL_VERSION),
 						gl.glGetString(GL10.GL_RENDERER),
 						gl.glGetString(GL10.GL_VENDOR)));
+
+		return eglSurface;
 	}
 
 	// Callback from C++ peer instance

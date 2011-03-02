@@ -288,10 +288,8 @@ void OSystem_Android::updateScreen() {
 
 	GLCALL(glPopMatrix());
 
-	int res = JNI::swapBuffers();
-
-	if (res)
-		warning("swapBuffers returned 0x%x", res);
+	if (!JNI::swapBuffers())
+		LOGW("swapBuffers failed: 0x%x", glGetError());
 }
 
 Graphics::Surface *OSystem_Android::lockScreen() {
