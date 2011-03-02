@@ -308,10 +308,11 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 
 	_windowsById[id] = pwnd;
 
-
-	// Hoyle3-demo's NewWindow always adds windows to the back of the list.
-	// TODO: Determine if other interpreters do the same.
-	bool forceToBack = (g_sci->getGameId() == GID_HOYLE3 && g_sci->isDemo());
+	// KQ1sci, KQ4, iceman, QfG2 always add windows to the back of the list.
+	// KQ5CD checks style.
+	// Hoyle3-demo also always adds to the back (#3036763).
+	bool forceToBack = (getSciVersion() <= SCI_VERSION_1_EGA_ONLY) ||
+	                   (g_sci->getGameId() == GID_HOYLE3 && g_sci->isDemo());
 
 	if (!forceToBack && (style & SCI_WINDOWMGR_STYLE_TOPMOST))
 		_windowList.push_front(pwnd);
