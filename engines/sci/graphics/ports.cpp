@@ -272,6 +272,9 @@ void GfxPorts::endUpdate(Window *wnd) {
 		updateWindow((Window *)*it);
 	}
 
+	if (getSciVersion() < SCI_VERSION_1_EGA_ONLY)
+		g_sci->_gfxPaint16->kernelGraphRedrawBox(_curPort->rect);
+
 	setPort(oldPort);
 }
 
