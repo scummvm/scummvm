@@ -753,7 +753,8 @@ void Scheduler::saveActions(Common::WriteStream *f) const {
 
 	for (int i = 0; i < _actListArrSize; i++) {
 		// write all the sub elems data
-		for (nbrSubElem = 1; _actListArr[i][nbrSubElem - 1].a0.actType != ANULL; nbrSubElem++);
+		for (nbrSubElem = 1; _actListArr[i][nbrSubElem - 1].a0.actType != ANULL; nbrSubElem++)
+			;
 
 		f->writeUint16BE(nbrSubElem);
 		for (int j = 0; j < nbrSubElem; j++) {
