@@ -24,14 +24,14 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  Cine:
    - Corrected memory leaks and invalid memory accesses.
      Future Wars should be more stable.
-   - Operation Stealth is now completable, though significant
-     graphical glitches remain so not official supported.
+   - Made Operation Stealth completable, though significant graphical
+     glitches remain so not official supported.
 
  Drascula:
    - Added German and French subtitles in the Von Braun cutscene (#3069981:
      no subtitles in scene with "von Braun").
    - Improved French translation of the game.
-   - Return To Launcher now supported.
+   - Added support for "Return To Launcher".
 
  Gob:
    - Fixed "Goblin Stuck On Reload" bugs affecting Gobliiins.
@@ -41,7 +41,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  Parallaction:
    - Corrected issue which could cause crash at engine exit.
-   - Leak fixes in Nippon Safes Amiga.
+   - Closed memory leaks in Nippon Safes Amiga.
 
  SCI:
    - Added a CMS music driver for SCI1 - SCI1.1 games.
@@ -78,8 +78,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Improved support for FM-TOWNS versions of games.
 
  Sky:
-   - Fixed crashes on sequences for several backends
-     (e.g. OpenGL, including Android)
+   - Fixed crashes on sequences for several ports (Android, OpenGL, ...)
 
  Teenagent:
    - Closed memory leaks.
@@ -117,8 +116,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
 1.2.1 (2010-12-19)
  General
-   - Add Hungarian translation.
-   - Add Brazilian Portuguese translation.
+   - Added Hungarian translation.
+   - Added Brazilian Portuguese translation.
 
  Cruise:
    - Fixed a problem with Raoul appearing when examining the Book.
