@@ -629,12 +629,10 @@ void JNI::pauseEngine(JNIEnv *env, jobject self, jboolean value) {
 	if (!_system)
 		return;
 
-	if (g_engine)
-		if ((value && !g_engine->isPaused()) ||
-				(!value && g_engine->isPaused())) {
-			LOGD("pauseEngine: %d", value);
-			g_engine->pauseEngine(value);
-		}
+	if (g_engine) {
+		LOGD("pauseEngine: %d", value);
+		g_engine->pauseEngine(value);
+	}
 
 	pause = value;
 
