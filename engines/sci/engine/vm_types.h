@@ -37,20 +37,20 @@ struct reg_t {
 	SegmentId segment;
 	uint16 offset;
 
-	bool isNull() const {
-		return !(offset || segment);
+	inline bool isNull() const {
+		return (offset | segment) == 0;
 	}
 
-	uint16 toUint16() const {
+	inline uint16 toUint16() const {
 		return offset;
 	}
 
-	int16 toSint16() const {
-		return (int16) offset;
+	inline int16 toSint16() const {
+		return (int16)offset;
 	}
 
 	bool isNumber() const {
-		return !segment;
+		return segment == 0;
 	}
 
 	bool isPointer() const {
@@ -60,7 +60,7 @@ struct reg_t {
 	uint16 requireUint16() const;
 	int16 requireSint16() const;
 
-	bool isInitialized() const {
+	inline bool isInitialized() const {
 		return segment != 0xFFFF;
 	}
 
@@ -101,8 +101,6 @@ struct reg_t {
 		return ltU(right);
 	}
 
-	bool pointerComparisonWithInteger(const reg_t right) const;
-
 	// Arithmetic operators
 	reg_t operator+(const reg_t right) const;
 	reg_t operator-(const reg_t right) const;
@@ -125,7 +123,9 @@ struct reg_t {
 	reg_t operator|(const reg_t right) const;
 	reg_t operator^(const reg_t right) const;
 
+private:
 	reg_t lookForWorkaround(const reg_t right) const;
+	bool pointerComparisonWithInteger(const reg_t right) const;
 };
 
 static inline reg_t make_reg(SegmentId segment, uint16 offset) {
