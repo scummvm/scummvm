@@ -159,17 +159,9 @@ reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 			source++;
 		}
 		while (*source) {
-			if ((*source < '0') || (*source > '9')) {
-				// Sierra's atoi stopped processing at anything which is not
-				// a digit. Sometimes the input has a trailing space, that's
-				// fine (example: lsl3)
-				if (*source != ' ') {
-					// TODO: this happens in lsl5 right in the intro -> we get '1' '3' 0xCD 0xCD 0xCD 0xCD 0xCD
-					//       find out why this happens and fix it
-					warning("Invalid character in kReadNumber input");
-				}
+			if ((*source < '0') || (*source > '9'))
+				// Stop if we encounter anything other than a digit (like atoi)
 				break;
-			}
 			result *= 10;
 			result += *source - 0x30;
 			source++;
