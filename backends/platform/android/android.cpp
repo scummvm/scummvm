@@ -55,7 +55,8 @@ extern "C" {
 								 expr, file, line);
 	}
 
-	void __assert2(const char *file, int line, const char *func, const char *expr) {
+	void __assert2(const char *file, int line, const char *func,
+					const char *expr) {
 		__android_log_assert(expr, android_log_tag,
 								"Assertion failure: '%s' in %s:%d (%s)",
 								 expr, file, line, func);
@@ -152,7 +153,7 @@ void *OSystem_Android::timerThreadFunc(void *arg) {
 			sem_wait(&JNI::pause_sem);
 			LOGD("timer thread woke up");
 		}
-			
+
 		timer->handler();
 		nanosleep(&tv, 0);
 	}
@@ -199,7 +200,7 @@ void *OSystem_Android::audioThreadFunc(void *arg) {
 			sem_wait(&JNI::pause_sem);
 			LOGD("audio thread woke up");
 		}
-			
+
 		buf = (byte *)env->GetPrimitiveArrayCritical(bufa, 0);
 		assert(buf);
 
@@ -650,7 +651,8 @@ void OSystem_Android::addSysArchivesToSearchSet(Common::SearchSet &s,
 	JNI::addSysArchivesToSearchSet(s, priority);
 }
 
-void OSystem_Android::logMessage(LogMessageType::Type type, const char *message) {
+void OSystem_Android::logMessage(LogMessageType::Type type,
+									const char *message) {
 	switch (type) {
 	case LogMessageType::kDebug:
 		__android_log_write(ANDROID_LOG_DEBUG, android_log_tag, message);

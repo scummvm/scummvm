@@ -149,7 +149,8 @@ inline bool JNI::swapBuffers() {
 }
 
 inline int JNI::writeAudio(JNIEnv *env, jbyteArray &data, int offset, int size) {
-	return env->CallIntMethod(_jobj_audio_track, _MID_AudioTrack_write, data, offset, size);
+	return env->CallIntMethod(_jobj_audio_track, _MID_AudioTrack_write, data,
+								offset, size);
 }
 
 #endif

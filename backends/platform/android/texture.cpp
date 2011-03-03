@@ -332,7 +332,8 @@ void GLESPaletteTexture::uploadTexture() const {
 									0, texture_size, _texture));
 }
 
-void GLESPaletteTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
+void GLESPaletteTexture::drawTexture(GLshort x, GLshort y, GLshort w,
+										GLshort h) {
 	if (_all_dirty) {
 		GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
 		GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,

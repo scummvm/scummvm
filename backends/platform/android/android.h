@@ -177,7 +177,8 @@ protected:
 	virtual void grabPalette(byte *colors, uint start, uint num);
 
 public:
-	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
+	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y,
+									int w, int h);
 	virtual void updateScreen();
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
@@ -190,7 +191,8 @@ public:
 	virtual void hideOverlay();
 	virtual void clearOverlay();
 	virtual void grabOverlay(OverlayColor *buf, int pitch);
-	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch,
+									int x, int y, int w, int h);
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
 
@@ -214,7 +216,10 @@ public:
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format);
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX,
+								int hotspotY, uint32 keycolor,
+								int cursorTargetScale,
+								const Graphics::PixelFormat *format);
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 	virtual void disableCursorPalette(bool disable);
 
@@ -240,7 +245,8 @@ public:
 	virtual Common::TimerManager *getTimerManager();
 	virtual FilesystemFactory *getFilesystemFactory();
 	virtual void logMessage(LogMessageType::Type type, const char *message);
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s,
+											int priority = 0);
 };
 
 #endif
