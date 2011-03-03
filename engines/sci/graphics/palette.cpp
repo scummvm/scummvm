@@ -418,10 +418,6 @@ void GfxPalette::getSys(Palette *pal) {
 }
 
 void GfxPalette::setOnScreen() {
-	// We dont change palette at all times for amiga
-	if (_resMan->isAmiga32color())
-		return;
-
 	copySysPaletteToScreen();
 }
 
