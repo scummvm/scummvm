@@ -197,12 +197,34 @@ class Scene2100: public Scene {
 	};
 
 	/* Hotspots */
-
 	class Hotspot2: public SceneHotspot {
 	public:
 		virtual void doAction(int action);
 	};
 
+	/* Custom classes */
+	class SceneArea: public SavedObject {
+	public:
+		GfxSurface _surface;
+		GfxSurface *_savedArea;
+		Common::Point _pt;
+		int _resNum;
+		int _rlbNum;
+		int _subNum;
+		int _actionId;
+		Rect _bounds;
+		int _field20;
+	public:
+		SceneArea();
+		~SceneArea();
+
+		void setup(int resNum, int rlbNum, int subNum, int actionId);
+		void draw();
+		void display();
+		void draw2(bool flag);
+
+		virtual void synchronise(Serialiser &s);
+	};
 public:
 	SequenceManager _sequenceManager;
 	SoundHandler _soundHandler;
@@ -241,9 +263,11 @@ public:
 	Action16 _action16;
 	Action17 _action17;
 	int _field1800;
+	SceneArea _area1, _area2, _area3, _area4;
 
 	Scene2100();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
 };
 
 } // End of namespace tSage

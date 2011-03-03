@@ -485,6 +485,7 @@ void Scene2000::stripCallback(int v) {
  *--------------------------------------------------------------------------*/
 
 void Scene2100::Action1::signal() {
+
 }
 
 void Scene2100::Action2::signal() {
@@ -558,6 +559,57 @@ void Scene2100::Object1::doAction(int action) {
 	}
 }
 */
+
+/*--------------------------------------------------------------------------*/
+
+Scene2100::SceneArea::SceneArea() {
+	_savedArea = NULL;
+	_pt.x = _pt.y = 0;
+}
+
+Scene2100::SceneArea::~SceneArea() {
+	delete _savedArea;
+}
+
+void Scene2100::SceneArea::setup(int resNum, int rlbNum, int subNum, int actionId) {
+	_resNum = resNum;
+	_rlbNum = rlbNum;
+	_subNum = subNum;
+	_actionId = actionId;
+	_field20 = 0;
+
+	_surface = surfaceFromRes(resNum, rlbNum, subNum);
+}
+
+void Scene2100::SceneArea::draw() {
+	_surface.draw(Common::Point(_bounds.left, _bounds.top));	
+}
+
+void Scene2100::SceneArea::display() {
+	_bounds.left = _pt.x - (_surface.getBounds().width() / 2);
+	_bounds.top = _pt.y + 1 - _surface.getBounds().height();
+	_bounds.setWidth(_surface.getBounds().width());
+	_bounds.setHeight(_surface.getBounds().height());
+
+	_savedArea = Surface_getArea(_globals->_gfxManagerInstance.getSurface(), _bounds);
+	draw();
+}
+
+void Scene2100::SceneArea::draw2(bool flag) {
+	_surface = surfaceFromRes(_resNum, _rlbNum, flag ? _subNum + 1 : _subNum);
+	_surface.draw(Common::Point(_bounds.left, _bounds.top));
+}
+
+void Scene2100::SceneArea::synchronise(Serialiser &s) {
+	s.syncAsSint16LE(_pt.x);
+	s.syncAsSint16LE(_pt.y);
+	s.syncAsSint32LE(_resNum);
+	s.syncAsSint32LE(_rlbNum);
+	s.syncAsSint32LE(_subNum);
+	s.syncAsSint32LE(_actionId);
+	_bounds.synchronise(s);
+	s.syncAsSint32LE(_field20);
+}
 
 /*--------------------------------------------------------------------------*/
 
@@ -686,7 +738,14 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 		&_hotspot5, &_object7, &_object8, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6,
 		&_hotspot1, NULL);
 
-	// TODO: Load visages
+	_area1.setup(2153, 2, 1, 2100);
+	_area1._pt = Common::Point(200, 31);
+	_area2.setup(2153, 3, 1, 2150);
+	_area2._pt = Common::Point(200, 50);
+	_area3.setup(2153, 4, 1, 2320);
+	_area3._pt = Common::Point(200, 75);
+	_area4.setup(2153, 1, 1, OBJECT_TRANSLATOR);
+	_area4._pt = Common::Point(237, 77);
 
 	_globals->_player.postInit();
 	_globals->_player.setVisage(_globals->getFlag(13) ? 2170 : 0);
@@ -921,6 +980,38 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 
 	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
 	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
+}
+
+void Scene2100::signal() {
+	switch (_sceneMode) {
+	case 2101:
+		_field1800 = 1;
+		_globals->_player._uiEnabled = true;
+		_globals->_events.setCursor(CURSOR_USE);
+		break;
+	case 2102:
+		_field1800 = 0;
+		_globals->_player.enableControl();
+		break;
+	case 2103:
+		_globals->_stripNum = 9000;
+		_globals->_sceneManager.changeScene(4000);
+		break;
+	case 2106:
+		_globals->_sceneManager.changeScene(7000);
+		break;
+	case 2107:
+		_globals->_sceneManager.changeScene(5000);
+		break;
+	case 2104:
+	case 2105:
+	case 2108:
+	case 2110:
+	case 2111:
+	case 2112:
+		_globals->_player.enableControl();
+		break;
+	}
 }
 
 } // End of namespace tSage
