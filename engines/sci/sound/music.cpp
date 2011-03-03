@@ -318,8 +318,21 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(), _pMidiDrv->hasRhythmChannel());
 
 			pSnd->pMidiParser->mainThreadBegin();
+			// loadMusic() below calls jumpToTick.
+			// Disable sound looping and hold before jumpToTick is called,
+			// otherwise the song may keep looping forever when it ends in
+			// jumpToTick (e.g. LSL3, when going left from room 210).
+			uint16 prevLoop = pSnd->loop;
+			int16 prevHold = pSnd->hold;
+			pSnd->loop = 0;
+			pSnd->hold = -1;
+
 			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
 			pSnd->reverb = pSnd->pMidiParser->getSongReverb();
+
+			// Restore looping and hold
+			pSnd->loop = prevLoop;
+			pSnd->hold = prevHold;
 			pSnd->pMidiParser->mainThreadEnd();
 			_mutex.unlock();
 		}
@@ -434,23 +447,26 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			if (pSnd->status != kSoundPaused)
 				pSnd->pMidiParser->sendInitCommands();
 			pSnd->pMidiParser->setVolume(pSnd->volume);
-			if (pSnd->status == kSoundStopped) {
+
+			// Disable sound looping and hold before jumpToTick is called,
+			// otherwise the song may keep looping forever when it ends in jumpToTick.
+			// This is needed when loading saved games, or when a game
+			// stops the same sound twice (e.g. LSL3 Amiga, going left from
+			// room 210 to talk with Kalalau). Fixes bugs #3083151 and #3106107.
+			uint16 prevLoop = pSnd->loop;
+			int16 prevHold = pSnd->hold;
+			pSnd->loop = 0;
+			pSnd->hold = -1;
+
+			if (pSnd->status == kSoundStopped)
 				pSnd->pMidiParser->jumpToTick(0);
-			} else {
-				// Disable sound looping before fast forwarding to the last position,
-				// when loading a saved game. Fixes bug #3083151.
-				uint16 prevLoop = pSnd->loop;
-				pSnd->loop = 0;
-				// Same for hold. Fixes bug #3106107.
-				int16 prevHold = pSnd->hold;
-				pSnd->hold = -1;
+			else
 				// Fast forward to the last position and perform associated events when loading
 				pSnd->pMidiParser->jumpToTick(pSnd->ticker, true, true, true);
-				// Restore looping
-				pSnd->loop = prevLoop;
-				// Restore hold
-				pSnd->hold = prevHold;
-			}
+
+			// Restore looping and hold
+			pSnd->loop = prevLoop;
+			pSnd->hold = prevHold;
 			pSnd->pMidiParser->mainThreadEnd();
 			_mutex.unlock();
 		}
