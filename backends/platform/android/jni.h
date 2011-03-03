@@ -134,7 +134,7 @@ private:
 	static void pushEvent(JNIEnv *env, jobject self, jobject java_event);
 	static void enableZoning(JNIEnv *env, jobject self, jboolean enable);
 
-	static void pauseEngine(JNIEnv *env, jobject self, jboolean pause);
+	static void setPause(JNIEnv *env, jobject self, jboolean value);
 };
 
 inline bool JNI::haveSurface() {

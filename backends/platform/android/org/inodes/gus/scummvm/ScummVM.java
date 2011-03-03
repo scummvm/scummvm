@@ -44,9 +44,9 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	final private native void destroy();
 	final private native void setSurface(int width, int height);
 	final private native int main(String[] args);
-	final private native void pauseEngine(boolean pause);
 
-	// Set scummvm config options
+	// pause the engine and all native threads
+	final public native void setPause(boolean pause);
 	final public native void enableZoning(boolean enable);
 	// Feed an event to ScummVM.  Safe to call from other threads.
 	final public native void pushEvent(Event e);
@@ -133,16 +133,6 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 
 		// On exit, tear everything down for a fresh restart next time.
 		System.exit(res);
-	}
-
-	public void pause(boolean pause) {
-		if (audio_track != null && !pause)
-			audio_track.play();
-
-		pauseEngine(pause);
-
-		if (audio_track != null && pause)
-			audio_track.stop();
 	}
 
 	final private void initEGL() throws Exception {

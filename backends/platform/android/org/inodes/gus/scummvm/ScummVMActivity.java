@@ -175,7 +175,7 @@ public class ScummVMActivity extends Activity {
 		super.onResume();
 
 		if (scummvm != null)
-			scummvm.pause(false);
+			scummvm.setPause(false);
 	}
 
 	@Override
@@ -185,7 +185,7 @@ public class ScummVMActivity extends Activity {
 		super.onPause();
 
 		if (scummvm != null)
-			scummvm.pause(true);
+			scummvm.setPause(true);
 	}
 
 	@Override

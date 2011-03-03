@@ -97,8 +97,8 @@ const JNINativeMethod JNI::_natives[] = {
 		(void *)JNI::pushEvent },
 	{ "enableZoning", "(Z)V",
 		(void *)JNI::enableZoning },
-	{ "pauseEngine", "(Z)V",
-		(void *)JNI::pauseEngine }
+	{ "setPause", "(Z)V",
+		(void *)JNI::setPause }
 };
 
 JNI::JNI() {
@@ -625,7 +625,7 @@ void JNI::enableZoning(JNIEnv *env, jobject self, jboolean enable) {
 	_system->enableZoning(enable);
 }
 
-void JNI::pauseEngine(JNIEnv *env, jobject self, jboolean value) {
+void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 	if (!_system)
 		return;
 

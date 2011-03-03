@@ -196,6 +196,11 @@ void *OSystem_Android::audioThreadFunc(void *arg) {
 
 	while (!system->_audio_thread_exit) {
 		if (JNI::pause) {
+			JNI::setAudioStop();
+
+			paused = true;
+			silence_count = 33;
+
 			LOGD("audio thread going to sleep");
 			sem_wait(&JNI::pause_sem);
 			LOGD("audio thread woke up");
