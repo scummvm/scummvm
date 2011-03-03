@@ -321,8 +321,6 @@ void MidiDriver_AdLib::send(uint32 b) {
 		_channels[channel].pitchWheel = (op1 & 0x7f) | ((op2 & 0x7f) << 7);
 		renewNotes(channel, true);
 		break;
-	case 0xf0:	// SysEx, ignore it
-		break;
 	default:
 		warning("ADLIB: Unknown event %02x", command);
 	}

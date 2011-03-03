@@ -356,8 +356,6 @@ void MidiPlayer_Midi::send(uint32 b) {
 	case 0xe0:
 		_driver->send(b);
 		break;
-	case 0xf0:	// SysEx, ignore it
-		break;
 	default:
 		warning("Ignoring MIDI event %02x", command);
 	}

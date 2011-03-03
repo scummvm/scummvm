@@ -700,8 +700,6 @@ void MidiDriver_AmigaMac::send(uint32 b) {
 	case 0xe0:
 		pitchWheel(channel, (op2 << 7) | op1);
 		break;
-	case 0xf0:	// SysEx, ignore it
-		break;
 	default:
 		warning("Amiga/Mac driver: unknown event %02x", command);
 	}
