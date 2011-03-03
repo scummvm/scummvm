@@ -118,8 +118,8 @@ static reg_t &validate_property(EngineState *s, Object *obj, int index) {
 	if (index < 0 || (uint)index >= obj->getVarCount()) {
 		// This is same way sierra does it and there are some games, that contain such scripts like
 		//  iceman script 998 (fred::canBeHere, executed right at the start)
-		debugC(kDebugLevelVM, "[VM] Invalid property #%d (out of [0..%d]) requested!",
-			index, obj->getVarCount());
+		debugC(kDebugLevelVM, "[VM] Invalid property #%d (out of [0..%d]) requested from object %04x:%04x (%s)",
+			index, obj->getVarCount(), PRINT_REG(obj->getPos()), s->_segMan->getObjectName(obj->getPos()));
 		return dummyReg;
 	}
 
