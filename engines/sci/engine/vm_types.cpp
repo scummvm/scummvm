@@ -211,13 +211,13 @@ bool reg_t::pointerComparisonWithInteger(const reg_t right) const {
 	// It works because in those games, the maximum resource number is 999,
 	// so any parameter value above that threshold must be a pointer.
 	// PQ2 japanese compares pointers to 2000 to find out if its a pointer
-	// or a resource ID.
-	// There are cases where game scripts check for arbitrary numbers against
-	// pointers, e.g.:
+	// or a resource ID. Thus, we check for all integers <= 2000.
+	//
+	// Some examples where game scripts check for arbitrary numbers against
+	// pointers:
 	// Hoyle 3, Pachisi, when any opponent is about to talk
 	// SQ1, room 28, when throwing water at the Orat
 	// SQ1, room 58, when giving the ID card to the robot
-	// Thus we check for all integers <= 2000
 	return (isPointer() && right.isNumber() && right.offset <= 2000 && getSciVersion() <= SCI_VERSION_1_LATE);
 }
 
