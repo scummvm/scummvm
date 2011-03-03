@@ -44,6 +44,7 @@ public:
 
 	void release();
 	void reinit();
+	void initSize();
 
 	virtual void allocBuffer(GLuint width, GLuint height);
 

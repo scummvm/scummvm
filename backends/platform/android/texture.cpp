@@ -109,12 +109,32 @@ void GLESTexture::release() {
 void GLESTexture::reinit() {
 	GLCALL(glGenTextures(1, &_texture_name));
 
-	// bypass allocBuffer() shortcut to reinit the texture properly
-	_texture_width = 0;
-	_texture_height = 0;
+	if (paletteSize()) {
+		// paletted textures are in a local buffer, don't wipe it
+		initSize();
+	} else {
+		// bypass allocBuffer() shortcut to reinit the texture properly
+		_texture_width = 0;
+		_texture_height = 0;
 
-	allocBuffer(_surface.w, _surface.h);
+		allocBuffer(_surface.w, _surface.h);
+	}
+
 	setDirty();
+}
+
+void GLESTexture::initSize() {
+	// Allocate room for the texture now, but pixel data gets uploaded
+	// later (perhaps with multiple TexSubImage2D operations).
+	GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
+	GLCALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+	GLCALL(glTexImage2D(GL_TEXTURE_2D, 0, glFormat(),
+						_texture_width, _texture_height,
+						0, glFormat(), glType(), 0));
 }
 
 void GLESTexture::allocBuffer(GLuint w, GLuint h) {
@@ -137,17 +157,7 @@ void GLESTexture::allocBuffer(GLuint w, GLuint h) {
 
 	_surface.pitch = _texture_width * bpp;
 
-	// Allocate room for the texture now, but pixel data gets uploaded
-	// later (perhaps with multiple TexSubImage2D operations).
-	GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
-	GLCALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
-	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
-	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-	GLCALL(glTexImage2D(GL_TEXTURE_2D, 0, glFormat(),
-						_texture_width, _texture_height,
-						0, glFormat(), glType(), 0));
+	initSize();
 }
 
 void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
