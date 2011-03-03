@@ -102,6 +102,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Touche:
    - Corrected memory leaks and minor issues.
 
+ Tucker:
+   - Added workarounds for several issues present in the original game.
+
  SDL ports:
    - Added support for OpenGL. (GSoC Task)
    - Closed memory leaks in Mouse Surfaces.
