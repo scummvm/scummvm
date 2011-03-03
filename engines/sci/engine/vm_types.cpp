@@ -35,7 +35,7 @@ reg_t reg_t::lookForWorkaround(const reg_t right) const {
 	SciTrackOriginReply originReply;
 	SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, arithmeticWorkarounds, &originReply);
 	if (solution.type == WORKAROUND_NONE)
-		error("arithmetic operation on non-integer (%04x:%04x, %04x:%04x) from method %s::%s (script %d, room %d, localCall %x)", 
+		error("Invalid arithmetic operation (params: %04x:%04x and %04x:%04x) from method %s::%s (script %d, room %d, localCall %x)", 
 		PRINT_REG(*this), PRINT_REG(right), originReply.objectName.c_str(), 
 		originReply.methodName.c_str(), originReply.scriptNr, g_sci->getEngineState()->currentRoomNumber(),
 		originReply.localCallOffset);
@@ -44,7 +44,7 @@ reg_t reg_t::lookForWorkaround(const reg_t right) const {
 }
 
 reg_t reg_t::operator+(const reg_t right) const {
-	if (isPointer()) {
+	if (isPointer() && right.isNumber()) {
 		// Pointer arithmetics. Only some pointer types make sense here
 		SegmentObj *mobj = g_sci->getEngineState()->_segMan->getSegmentObj(segment);
 
@@ -56,9 +56,6 @@ reg_t reg_t::operator+(const reg_t right) const {
 		case SEG_TYPE_SCRIPT:
 		case SEG_TYPE_STACK:
 		case SEG_TYPE_DYNMEM:
-			// Make sure that we are adding an offset to the pointer
-			if (!right.isNumber())
-				return lookForWorkaround(right);
 			return make_reg(segment, offset + right.toSint16());
 		default:
 			return lookForWorkaround(right);
@@ -66,19 +63,11 @@ reg_t reg_t::operator+(const reg_t right) const {
 	} else if (isNumber() && right.isPointer()) {
 		// Adding a pointer to a number, flip the order
 		return right + *this;
+	} else if (isNumber() && right.isNumber()) {
+		// Normal arithmetics
+		return make_reg(0, toSint16() + right.toSint16());
 	} else {
-		// Normal arithmetics. Make sure we're adding a number
-		if (right.isPointer())
-			return lookForWorkaround(right);
-		// If the current variable is uninitialized, it'll be set
-		// to zero in order to perform the operation. Such a case
-		// happens in SQ1, room 28, when throwing the water at Orat.
-		if (!isInitialized())
-			return make_reg(0, right.toSint16());
-		else if (!right.isInitialized())
-			return *this;
-		else
-			return make_reg(0, toSint16() + right.toSint16());
+		return lookForWorkaround(right);
 	}
 }
 
@@ -95,24 +84,19 @@ reg_t reg_t::operator-(const reg_t right) const {
 reg_t reg_t::operator*(const reg_t right) const {
 	if (isNumber() && right.isNumber())
 		return make_reg(0, toSint16() * right.toSint16());
-	else if (!isInitialized() || !right.isInitialized())
-		return NULL_REG;	// unitialized variables - always return 0
 	else
 		return lookForWorkaround(right);
 }
 
 reg_t reg_t::operator/(const reg_t right) const {
-	if (isNumber() && right.isNumber()) {
-		if (right.isNull())
-			return NULL_REG;	// division by zero
-		else
-			return make_reg(0, toSint16() / right.toSint16());
-	} else
+	if (isNumber() && right.isNumber() && !right.isNull())
+		return make_reg(0, toSint16() / right.toSint16());
+	else
 		return lookForWorkaround(right);
 }
 
 reg_t reg_t::operator%(const reg_t right) const {
-	if (isNumber() && right.isNumber()) {
+	if (isNumber() && right.isNumber() && !right.isNull()) {
 		// Support for negative numbers was added in Iceman, and perhaps in 
 		// SCI0 0.000.685 and later. Theoretically, this wasn't really used
 		// in SCI0, so the result is probably unpredictable. Such a case 
@@ -123,7 +107,7 @@ reg_t reg_t::operator%(const reg_t right) const {
 			warning("Modulo of a negative number has been requested for SCI0. This *could* lead to issues");
 		int16 value = toSint16();
 		int16 modulo = ABS(right.toSint16());
-		int16 result = (modulo != 0 ? value % modulo : 0);
+		int16 result = value % modulo;
 		if (result < 0)
 			result += modulo;
 		return make_reg(0, result);
@@ -157,6 +141,8 @@ uint16 reg_t::requireUint16() const {
 	if (isNumber())
 		return toUint16();
 	else
+		// The right parameter is NULL_REG because
+		// we're not comparing *this with anything here.
 		return lookForWorkaround(NULL_REG).toUint16();
 }
 
@@ -164,6 +150,8 @@ int16 reg_t::requireSint16() const {
 	if (isNumber())
 		return toSint16();
 	else
+		// The right parameter is NULL_REG because
+		// we're not comparing *this with anything here.
 		return lookForWorkaround(NULL_REG).toSint16();
 }
 
@@ -188,62 +176,35 @@ reg_t reg_t::operator^(const reg_t right) const {
 		return lookForWorkaround(right);
 }
 
-bool reg_t::operator>(const reg_t right) const {
-	if (isNumber() && right.isNumber())
-		return toSint16() > right.toSint16();
-	else if (isPointer() && segment == right.segment)
-		return toUint16() > right.toUint16();	// pointer comparison
-	else if (pointerComparisonWithInteger(right))
-		return true;
-	else if (right.pointerComparisonWithInteger(*this))
-		return false;
-	else
-		return lookForWorkaround(right).toSint16();
-}
-
-bool reg_t::operator<(const reg_t right) const {
-	if (isNumber() && right.isNumber())
-		return toSint16() < right.toSint16();
-	else if (isPointer() && segment == right.segment)
-		return toUint16() < right.toUint16();	// pointer comparison
-	else if (pointerComparisonWithInteger(right))
-		return false;
-	else if (right.pointerComparisonWithInteger(*this))
-		return true;
-	else
-		return lookForWorkaround(right).toSint16();
-}
-
-bool reg_t::gtU(const reg_t right) const {
-	if (isNumber() && right.isNumber())
-		return toUint16() > right.toUint16();
-	else if (isPointer() && segment == right.segment)
-		return toUint16() > right.toUint16();	// pointer comparison
-	else if (pointerComparisonWithInteger(right))
-		return true;
-	else if (right.pointerComparisonWithInteger(*this))
-		return false;
-	else
-		return lookForWorkaround(right).toSint16();
-}
-
-bool reg_t::ltU(const reg_t right) const {
-	if (isNumber() && right.isNumber())
-		return toUint16() < right.toUint16();
-	else if (isPointer() && segment == right.segment)
-		return toUint16() < right.toUint16();	// pointer comparison
-	else if (pointerComparisonWithInteger(right))
-		return false;
-	else if (right.pointerComparisonWithInteger(*this))
-		return true;
-	else
+int reg_t::cmp(const reg_t right, bool treatAsUnsigned) const {
+	if (segment == right.segment) { // can compare things in the same segment
+		if (treatAsUnsigned || !isNumber())
+			return toUint16() - right.toUint16();
+		else
+			return toSint16() - right.toSint16(); 
+	} else if (pointerComparisonWithInteger(right)) {
+		return 1;
+	} else if (right.pointerComparisonWithInteger(*this)) {
+		return -1;
+	} else
 		return lookForWorkaround(right).toSint16();
 }
 
 bool reg_t::pointerComparisonWithInteger(const reg_t right) const {
-	// SCI0 - SCI1.1 scripts use this to check whether a parameter is a pointer
-	// or a far text reference. It is used e.g. by the standard library Print
-	// function to distinguish two ways of calling it:
+	// This function handles the case where a script tries to compare a pointer
+	// to a number. Normally, we would not want to allow that. However, SCI0 -
+	// SCI1 scripts do this in order to distinguish pointers (to resources)
+	// from plain numbers. In our SCI implementation, such a check may seem
+	// pointless, as one can simply use the segment value to achieve this goal.
+	// But Sierra's SCI did not have the notion of segment IDs, so both pointer
+	// and numbers were simple integers.
+	// But for some things, scripts had (and have) to distinguish between
+	// numbers and pointers. Lacking the segment information, Sierra's
+	// developers resorted to a hack: If an integer is smaller than a certain
+	// bound, it can be assumed to be a number, otherwise it is assumed to be a
+	// pointer. This allowed them to implement polymorphic functions, such as
+	// the Print function, which can be called in two different ways, with a
+	// pointer or a far text reference:
 	//
 	// (Print "foo") // Pointer to a string
 	// (Print 420 5) // Reference to the fifth message in text resource 420
@@ -256,9 +217,8 @@ bool reg_t::pointerComparisonWithInteger(const reg_t right) const {
 	// Hoyle 3, Pachisi, when any opponent is about to talk
 	// SQ1, room 28, when throwing water at the Orat
 	// SQ1, room 58, when giving the ID card to the robot
-	// QFG3, room 440, when talking to Uhura
 	// Thus we check for all integers <= 2000
-	return (isPointer() && right.isNumber() && right.offset <= 2000 && getSciVersion() <= SCI_VERSION_1_1);
+	return (isPointer() && right.isNumber() && right.offset <= 2000 && getSciVersion() <= SCI_VERSION_1_LATE);
 }
 
 } // End of namespace Sci
