@@ -265,8 +265,6 @@ Common::Error SciEngine::run() {
 	// Initialize all graphics related subsystems
 	initGraphics();
 
-	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()));
-
 	// Patch in our save/restore code, so that dialogs are replaced
 	patchGameSaveRestore();
 	setLauncherLanguage();
@@ -425,7 +423,7 @@ static byte patchGameRestoreSave[] = {
 	0x76,              // push0
 	0x38, 0xff, 0xff,  // pushi -1
 	0x76,              // push0
-	0x43, 0xff, 0x06,  // callk kRestoreGame/kSaveGame (will get fixed directly)
+	0x43, 0xff, 0x06,  // callk kRestoreGame/kSaveGame (will get changed afterwards)
 	0x48,              // ret
 };
 
@@ -435,7 +433,18 @@ static byte patchGameRestoreSaveSci2[] = {
 	0x76,              // push0
 	0x38, 0xff, 0xff,  // pushi -1
 	0x76,              // push0
-	0x43, 0xff, 0x06, 0x00, // callk kRestoreGame/kSaveGame (will get fixed directly)
+	0x43, 0xff, 0x06, 0x00, // callk kRestoreGame/kSaveGame (will get changed afterwards)
+	0x48,              // ret
+};
+
+// SCI21 version: Same as above, but the second parameter to callk is a word
+static byte patchGameRestoreSaveSci21[] = {
+	0x39, 0x04,        // pushi 04
+	0x76,              // push0	// 0: save, 1: restore (will get changed afterwards)
+	0x76,              // push0
+	0x38, 0xff, 0xff,  // pushi -1
+	0x76,              // push0
+	0x43, 0xff, 0x08, 0x00, // callk kSave (will get changed afterwards)
 	0x48,              // ret
 };
 
@@ -447,6 +456,15 @@ static void patchGameSaveRestoreCode(SegManager *segMan, reg_t methodAddress, by
 	else	// SCI2+
 		memcpy(patchPtr, patchGameRestoreSaveSci2, sizeof(patchGameRestoreSaveSci2));
 	patchPtr[8] = id;
+}
+
+static void patchGameSaveRestoreCodeSci21(SegManager *segMan, reg_t methodAddress, byte id, bool doRestore) {
+	Script *script = segMan->getScript(methodAddress.segment);
+	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.offset));
+	memcpy(patchPtr, patchGameRestoreSaveSci21, sizeof(patchGameRestoreSaveSci21));
+	if (doRestore)
+		patchPtr[2] = 0x78;	// push1
+	patchPtr[9] = id;
 }
 
 void SciEngine::patchGameSaveRestore() {
@@ -478,23 +496,28 @@ void SciEngine::patchGameSaveRestore() {
 			kernelIdRestore = kernelNr;
 		if (kernelName == "SaveGame")
 			kernelIdSave = kernelNr;
+		if (kernelName == "Save")
+			kernelIdSave = kernelIdRestore = kernelNr;
 	}
-
-	// TODO: This feature does not yet work with the SCI2.1 middle and newer
-	// kernel functions (i.e. kSave)
-	if (!kernelIdRestore || !kernelIdSave)
-		return;
 
 	// Search for gameobject superclass ::restore
 	uint16 gameSuperObjectMethodCount = gameSuperObject->getMethodCount();
 	for (uint16 methodNr = 0; methodNr < gameSuperObjectMethodCount; methodNr++) {
 		uint16 selectorId = gameSuperObject->getFuncSelector(methodNr);
 		Common::String methodName = _kernel->getSelectorName(selectorId);
-		if (methodName == "restore")
-			patchGameSaveRestoreCode(segMan, gameSuperObject->getFunction(methodNr), kernelIdRestore);
+		if (methodName == "restore") {
+			if (kernelIdSave != kernelIdRestore)
+				patchGameSaveRestoreCode(segMan, gameSuperObject->getFunction(methodNr), kernelIdRestore);
+			else
+				patchGameSaveRestoreCodeSci21(segMan, gameSuperObject->getFunction(methodNr), kernelIdRestore, true);
+		}
 		else if (methodName == "save") {
-			if (_gameId != GID_FAIRYTALES)	// Fairy Tales saves automatically without a dialog
-				patchGameSaveRestoreCode(segMan, gameSuperObject->getFunction(methodNr), kernelIdSave);
+			if (_gameId != GID_FAIRYTALES) {	// Fairy Tales saves automatically without a dialog
+				if (kernelIdSave != kernelIdRestore)
+					patchGameSaveRestoreCode(segMan, gameSuperObject->getFunction(methodNr), kernelIdSave);
+				else
+					patchGameSaveRestoreCodeSci21(segMan, gameSuperObject->getFunction(methodNr), kernelIdSave, false);
+			}
 		}
 	}
 
@@ -504,8 +527,12 @@ void SciEngine::patchGameSaveRestore() {
 		uint16 selectorId = gameObject->getFuncSelector(methodNr);
 		Common::String methodName = _kernel->getSelectorName(selectorId);
 		if (methodName == "save") {
-			if (_gameId != GID_FAIRYTALES)	// Fairy Tales saves automatically without a dialog
-				patchGameSaveRestoreCode(segMan, gameObject->getFunction(methodNr), kernelIdSave);
+			if (_gameId != GID_FAIRYTALES) {	// Fairy Tales saves automatically without a dialog
+				if (kernelIdSave != kernelIdRestore)
+					patchGameSaveRestoreCode(segMan, gameObject->getFunction(methodNr), kernelIdSave);
+				else
+					patchGameSaveRestoreCodeSci21(segMan, gameObject->getFunction(methodNr), kernelIdSave, false);
+			}
 			break;
 		}
 	}
