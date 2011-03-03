@@ -21,24 +21,24 @@ import java.util.LinkedHashMap;
 
 public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	final protected static String LOG_TAG = "ScummVM";
-	final private AssetManager asset_manager;
-	final private Object sem_surface;
+	final private AssetManager _asset_manager;
+	final private Object _sem_surface;
 
-	private EGL10 egl;
-	private EGLDisplay eglDisplay = EGL10.EGL_NO_DISPLAY;
-	private EGLConfig eglConfig;
-	private EGLContext eglContext = EGL10.EGL_NO_CONTEXT;
-	private EGLSurface eglSurface = EGL10.EGL_NO_SURFACE;
+	private EGL10 _egl;
+	private EGLDisplay _egl_display = EGL10.EGL_NO_DISPLAY;
+	private EGLConfig _egl_config;
+	private EGLContext _egl_context = EGL10.EGL_NO_CONTEXT;
+	private EGLSurface _egl_surface = EGL10.EGL_NO_SURFACE;
 
-	private SurfaceHolder surface_holder;
-	private AudioTrack audio_track;
-	private int sample_rate = 0;
-	private int buffer_size = 0;
+	private SurfaceHolder _surface_holder;
+	private AudioTrack _audio_track;
+	private int _sample_rate = 0;
+	private int _buffer_size = 0;
 
-	private String[] args;
+	private String[] _args;
 
-	final private native void create(AssetManager asset_manager,
-										EGL10 egl, EGLDisplay eglDisplay,
+	final private native void create(AssetManager _asset_manager,
+										EGL10 egl, EGLDisplay egl_display,
 										AudioTrack audio_track,
 										int sample_rate, int buffer_size);
 	final private native void destroy();
@@ -59,8 +59,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected String[] getSysArchives();
 
 	public ScummVM(AssetManager asset_manager, SurfaceHolder holder) {
-		this.asset_manager = asset_manager;
-		sem_surface = new Object();
+		_asset_manager = asset_manager;
+		_sem_surface = new Object();
 
 		holder.addCallback(this);
 	}
@@ -78,9 +78,9 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 		Log.d(LOG_TAG, String.format("surfaceChanged: %dx%d (%d)",
 										width, height, format));
 
-		synchronized(sem_surface) {
-			surface_holder = holder;
-			sem_surface.notifyAll();
+		synchronized(_sem_surface) {
+			_surface_holder = holder;
+			_sem_surface.notifyAll();
 		}
 
 		// store values for the native code
@@ -91,9 +91,9 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	final public void surfaceDestroyed(SurfaceHolder holder) {
 		Log.d(LOG_TAG, "surfaceDestroyed");
 
-		synchronized(sem_surface) {
-			surface_holder = null;
-			sem_surface.notifyAll();
+		synchronized(_sem_surface) {
+			_surface_holder = null;
+			_sem_surface.notifyAll();
 		}
 
 		// clear values for the native code
@@ -101,7 +101,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	}
 
 	final public void setArgs(String[] args) {
-		this.args = args;
+		_args = args;
 	}
 
 	final public void run() {
@@ -110,9 +110,9 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 			initEGL();
 
 			// wait for the surfaceChanged callback
-			synchronized(sem_surface) {
-				while (surface_holder == null)
-					sem_surface.wait();
+			synchronized(_sem_surface) {
+				while (_surface_holder == null)
+					_sem_surface.wait();
 			}
 		} catch (Exception e) {
 			deinitEGL();
@@ -121,10 +121,10 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 			throw new RuntimeException("Error preparing the ScummVM thread", e);
 		}
 
-		create(asset_manager, egl, eglDisplay,
-				audio_track, sample_rate, buffer_size);
+		create(_asset_manager, _egl, _egl_display,
+				_audio_track, _sample_rate, _buffer_size);
 
-		int res = main(args);
+		int res = main(_args);
 
 		destroy();
 
@@ -136,14 +136,14 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	}
 
 	final private void initEGL() throws Exception {
-		egl = (EGL10)EGLContext.getEGL();
-		eglDisplay = egl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
+		_egl = (EGL10)EGLContext.getEGL();
+		_egl_display = _egl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
 
 		int[] version = new int[2];
-		egl.eglInitialize(eglDisplay, version);
+		_egl.eglInitialize(_egl_display, version);
 
 		int[] num_config = new int[1];
-		egl.eglChooseConfig(eglDisplay, configSpec, null, 0, num_config);
+		_egl.eglChooseConfig(_egl_display, configSpec, null, 0, num_config);
 
 		final int numConfigs = num_config[0];
 
@@ -151,8 +151,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 			throw new IllegalArgumentException("No configs match configSpec");
 
 		EGLConfig[] configs = new EGLConfig[numConfigs];
-		egl.eglChooseConfig(eglDisplay, configSpec, configs, numConfigs,
-							num_config);
+		_egl.eglChooseConfig(_egl_display, configSpec, configs, numConfigs,
+								num_config);
 
 		if (false) {
 			Log.d(LOG_TAG, String.format("Found %d EGL configurations.",
@@ -163,119 +163,120 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 
 		// Android's eglChooseConfig is busted in several versions and
 		// devices so we have to filter/rank the configs again ourselves.
-		eglConfig = chooseEglConfig(configs);
+		_egl_config = chooseEglConfig(configs);
 
 		if (false) {
 			Log.d(LOG_TAG, String.format("Chose from %d EGL configs",
 											numConfigs));
-			dumpEglConfig(eglConfig);
+			dumpEglConfig(_egl_config);
 		}
 
-		eglContext = egl.eglCreateContext(eglDisplay, eglConfig,
+		_egl_context = _egl.eglCreateContext(_egl_display, _egl_config,
 											EGL10.EGL_NO_CONTEXT, null);
 
-		if (eglContext == EGL10.EGL_NO_CONTEXT)
+		if (_egl_context == EGL10.EGL_NO_CONTEXT)
 			throw new Exception(String.format("Failed to create context: 0x%x",
-												egl.eglGetError()));
+												_egl.eglGetError()));
 	}
 
 	// Callback from C++ peer instance
 	final protected EGLSurface initSurface() throws Exception {
-		eglSurface = egl.eglCreateWindowSurface(eglDisplay, eglConfig,
-												surface_holder, null);
+		_egl_surface = _egl.eglCreateWindowSurface(_egl_display, _egl_config,
+													_surface_holder, null);
 
-		if (eglSurface == EGL10.EGL_NO_SURFACE)
+		if (_egl_surface == EGL10.EGL_NO_SURFACE)
 			throw new Exception(String.format(
-					"eglCreateWindowSurface failed: 0x%x", egl.eglGetError()));
+					"eglCreateWindowSurface failed: 0x%x", _egl.eglGetError()));
 
-		egl.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
+		_egl.eglMakeCurrent(_egl_display, _egl_surface, _egl_surface,
+							_egl_context);
 
-		GL10 gl = (GL10)eglContext.getGL();
+		GL10 gl = (GL10)_egl_context.getGL();
 
 		Log.i(LOG_TAG, String.format("Using EGL %s (%s); GL %s/%s (%s)",
-						egl.eglQueryString(eglDisplay, EGL10.EGL_VERSION),
-						egl.eglQueryString(eglDisplay, EGL10.EGL_VENDOR),
+						_egl.eglQueryString(_egl_display, EGL10.EGL_VERSION),
+						_egl.eglQueryString(_egl_display, EGL10.EGL_VENDOR),
 						gl.glGetString(GL10.GL_VERSION),
 						gl.glGetString(GL10.GL_RENDERER),
 						gl.glGetString(GL10.GL_VENDOR)));
 
-		return eglSurface;
+		return _egl_surface;
 	}
 
 	// Callback from C++ peer instance
 	final protected void deinitSurface() {
-		if (eglDisplay != EGL10.EGL_NO_DISPLAY) {
-			egl.eglMakeCurrent(eglDisplay, EGL10.EGL_NO_SURFACE,
+		if (_egl_display != EGL10.EGL_NO_DISPLAY) {
+			_egl.eglMakeCurrent(_egl_display, EGL10.EGL_NO_SURFACE,
 								EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
 
-			if (eglSurface != EGL10.EGL_NO_SURFACE)
-				egl.eglDestroySurface(eglDisplay, eglSurface);
+			if (_egl_surface != EGL10.EGL_NO_SURFACE)
+				_egl.eglDestroySurface(_egl_display, _egl_surface);
 		}
 
-		eglSurface = EGL10.EGL_NO_SURFACE;
+		_egl_surface = EGL10.EGL_NO_SURFACE;
 	}
 
 	final private void deinitEGL() {
-		if (eglDisplay != EGL10.EGL_NO_DISPLAY) {
-			egl.eglMakeCurrent(eglDisplay, EGL10.EGL_NO_SURFACE,
+		if (_egl_display != EGL10.EGL_NO_DISPLAY) {
+			_egl.eglMakeCurrent(_egl_display, EGL10.EGL_NO_SURFACE,
 								EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
 
-			if (eglSurface != EGL10.EGL_NO_SURFACE)
-				egl.eglDestroySurface(eglDisplay, eglSurface);
+			if (_egl_surface != EGL10.EGL_NO_SURFACE)
+				_egl.eglDestroySurface(_egl_display, _egl_surface);
 
-			if (eglContext != EGL10.EGL_NO_CONTEXT)
-				egl.eglDestroyContext(eglDisplay, eglContext);
+			if (_egl_context != EGL10.EGL_NO_CONTEXT)
+				_egl.eglDestroyContext(_egl_display, _egl_context);
 
-			egl.eglTerminate(eglDisplay);
+			_egl.eglTerminate(_egl_display);
 		}
 
-		eglSurface = EGL10.EGL_NO_SURFACE;
-		eglContext = EGL10.EGL_NO_CONTEXT;
-		eglConfig = null;
-		eglDisplay = EGL10.EGL_NO_DISPLAY;
-		egl = null;
+		_egl_surface = EGL10.EGL_NO_SURFACE;
+		_egl_context = EGL10.EGL_NO_CONTEXT;
+		_egl_config = null;
+		_egl_display = EGL10.EGL_NO_DISPLAY;
+		_egl = null;
 	}
 
 	final private void initAudio() throws Exception {
-		sample_rate = AudioTrack.getNativeOutputSampleRate(
+		_sample_rate = AudioTrack.getNativeOutputSampleRate(
 									AudioManager.STREAM_MUSIC);
-		buffer_size = AudioTrack.getMinBufferSize(sample_rate,
+		_buffer_size = AudioTrack.getMinBufferSize(_sample_rate,
 									AudioFormat.CHANNEL_CONFIGURATION_STEREO,
 									AudioFormat.ENCODING_PCM_16BIT);
 
 		// ~100ms
-		int buffer_size_want = (sample_rate * 2 * 2 / 10) & ~1023;
+		int buffer_size_want = (_sample_rate * 2 * 2 / 10) & ~1023;
 
-		if (buffer_size < buffer_size_want) {
+		if (_buffer_size < buffer_size_want) {
 			Log.w(LOG_TAG, String.format(
-				"adjusting audio buffer size (was: %d)", buffer_size));
+				"adjusting audio buffer size (was: %d)", _buffer_size));
 
-			buffer_size = buffer_size_want;
+			_buffer_size = buffer_size_want;
 		}
 
 		Log.i(LOG_TAG, String.format("Using %d bytes buffer for %dHz audio",
-										buffer_size, sample_rate));
+										_buffer_size, _sample_rate));
 
-		audio_track = new AudioTrack(AudioManager.STREAM_MUSIC,
-									sample_rate,
+		_audio_track = new AudioTrack(AudioManager.STREAM_MUSIC,
+									_sample_rate,
 									AudioFormat.CHANNEL_CONFIGURATION_STEREO,
 									AudioFormat.ENCODING_PCM_16BIT,
-									buffer_size,
+									_buffer_size,
 									AudioTrack.MODE_STREAM);
 
-		if (audio_track.getState() != AudioTrack.STATE_INITIALIZED)
+		if (_audio_track.getState() != AudioTrack.STATE_INITIALIZED)
 			throw new Exception(
 				String.format("Error initialising AudioTrack: %d",
-								audio_track.getState()));
+								_audio_track.getState()));
 	}
 
 	final private void deinitAudio() {
-		if (audio_track != null)
-			audio_track.stop();
+		if (_audio_track != null)
+			_audio_track.stop();
 
-		audio_track = null;
-		buffer_size = 0;
-		sample_rate = 0;
+		_audio_track = null;
+		_buffer_size = 0;
+		_sample_rate = 0;
 	}
 
 	static final int configSpec[] = {
@@ -325,7 +326,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 		int[] value = new int[1];
 
 		for (Map.Entry<String, Integer> entry : attribs.entrySet()) {
-			egl.eglGetConfigAttrib(eglDisplay, config,
+			_egl.eglGetConfigAttrib(_egl_display, config,
 									entry.getValue(), value);
 
 			if (value[0] == EGL10.EGL_NONE)
@@ -344,14 +345,14 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 			EGLConfig config = configs[i];
 			int score = 10000;
 
-			egl.eglGetConfigAttrib(eglDisplay, config,
+			_egl.eglGetConfigAttrib(_egl_display, config,
 									EGL10.EGL_SURFACE_TYPE, value);
 
 			// must have
 			if ((value[0] & EGL10.EGL_WINDOW_BIT) == 0)
 				continue;
 
-			egl.eglGetConfigAttrib(eglDisplay, config,
+			_egl.eglGetConfigAttrib(_egl_display, config,
 									EGL10.EGL_CONFIG_CAVEAT, value);
 
 			if (value[0] != EGL10.EGL_NONE)
@@ -365,7 +366,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 									};
 
 			for (int component : colorBits) {
-				egl.eglGetConfigAttrib(eglDisplay, config, component, value);
+				_egl.eglGetConfigAttrib(_egl_display, config, component, value);
 
 				// boost if >5 bits accuracy
 				if (value[0] >= 5)
@@ -375,7 +376,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 				score -= value[0];
 			}
 
-			egl.eglGetConfigAttrib(eglDisplay, config,
+			_egl.eglGetConfigAttrib(_egl_display, config,
 									EGL10.EGL_DEPTH_SIZE, value);
 
 			// penalize for wasted bits

@@ -96,8 +96,8 @@ public class ScummVMActivity extends Activity {
 
 	}
 
-	private MyScummVM scummvm;
-	private Thread scummvm_thread;
+	private MyScummVM _scummvm;
+	private Thread _scummvm_thread;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -147,9 +147,9 @@ public class ScummVMActivity extends Activity {
 		getFilesDir().mkdirs();
 
 		// Start ScummVM
-		scummvm = new MyScummVM(main_surface.getHolder());
+		_scummvm = new MyScummVM(main_surface.getHolder());
 
-		scummvm.setArgs(new String[] {
+		_scummvm.setArgs(new String[] {
 			"ScummVM",
 			"--config=" + getFileStreamPath("scummvmrc").getPath(),
 			"--path=" + Environment.getExternalStorageDirectory().getPath(),
@@ -157,8 +157,8 @@ public class ScummVMActivity extends Activity {
 			"--savepath=" + getDir("saves", 0).getPath()
 		});
 
-		scummvm_thread = new Thread(scummvm, "ScummVM");
-		scummvm_thread.start();
+		_scummvm_thread = new Thread(_scummvm, "ScummVM");
+		_scummvm_thread.start();
 	}
 
 	@Override
@@ -174,8 +174,8 @@ public class ScummVMActivity extends Activity {
 
 		super.onResume();
 
-		if (scummvm != null)
-			scummvm.setPause(false);
+		if (_scummvm != null)
+			_scummvm.setPause(false);
 	}
 
 	@Override
@@ -184,8 +184,8 @@ public class ScummVMActivity extends Activity {
 
 		super.onPause();
 
-		if (scummvm != null)
-			scummvm.setPause(true);
+		if (_scummvm != null)
+			_scummvm.setPause(true);
 	}
 
 	@Override
@@ -201,17 +201,17 @@ public class ScummVMActivity extends Activity {
 
 		super.onDestroy();
 
-		if (scummvm != null) {
-			scummvm.pushEvent(new Event(Event.EVENT_QUIT));
+		if (_scummvm != null) {
+			_scummvm.pushEvent(new Event(Event.EVENT_QUIT));
 
 			try {
 				// 1s timeout
-				scummvm_thread.join(1000);
+				_scummvm_thread.join(1000);
 			} catch (InterruptedException e) {
 				Log.i(ScummVM.LOG_TAG, "Error while joining ScummVM thread", e);
 			}
 
-			scummvm = null;
+			_scummvm = null;
 		}
 	}
 
@@ -265,7 +265,7 @@ public class ScummVMActivity extends Activity {
 
 			if (kevent.getAction() == KeyEvent.ACTION_UP) {
 				if (!timeout_fired)
-					scummvm.pushEvent(new Event(Event.EVENT_MAINMENU));
+					_scummvm.pushEvent(new Event(Event.EVENT_MAINMENU));
 
 				return true;
 			}
@@ -332,7 +332,7 @@ public class ScummVMActivity extends Activity {
 				break;
 			}
 
-			scummvm.pushEvent(e);
+			_scummvm.pushEvent(e);
 
 			return true;
 		}
@@ -404,13 +404,13 @@ public class ScummVMActivity extends Activity {
 		if (kevent.getAction() == KeyEvent.ACTION_MULTIPLE) {
 			for (int i = 0; i <= kevent.getRepeatCount(); i++) {
 				e.type = Event.EVENT_KEYDOWN;
-				scummvm.pushEvent(e);
+				_scummvm.pushEvent(e);
 
 				e.type = Event.EVENT_KEYUP;
-				scummvm.pushEvent(e);
+				_scummvm.pushEvent(e);
 			}
 		} else {
-			scummvm.pushEvent(e);
+			_scummvm.pushEvent(e);
 		}
 
 		return true;
@@ -448,7 +448,7 @@ public class ScummVMActivity extends Activity {
 			(int)(event.getY() * event.getYPrecision()) * TRACKBALL_SCALE;
 		e.mouse_relative = true;
 
-		scummvm.pushEvent(e);
+		_scummvm.pushEvent(e);
 
 		return true;
 	}
@@ -465,7 +465,7 @@ public class ScummVMActivity extends Activity {
 		e.mouse_y = (int)event.getY();
 		e.mouse_relative = false;
 
-		scummvm.pushEvent(e);
+		_scummvm.pushEvent(e);
 
 		return true;
 	}
