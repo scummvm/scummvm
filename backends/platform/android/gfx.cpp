@@ -62,19 +62,59 @@ int OSystem_Android::getGraphicsMode() const {
 	return 1;
 }
 
-void OSystem_Android::setupSurface() {
-	ENTER();
+void OSystem_Android::initSurface() {
+	LOGD("initializing surface");
+
+	assert(!JNI::haveSurface());
 
 	_screen_changeid = JNI::surface_changeid;
-	JNI::initSurface();
-
 	_egl_surface_width = JNI::egl_surface_width;
 	_egl_surface_height = JNI::egl_surface_height;
 
 	assert(_egl_surface_width > 0 && _egl_surface_height > 0);
 
-	// EGL set up with a new surface.  Initialise OpenGLES context.
+	JNI::initSurface();
+
+	// Initialise OpenGLES context.
 	GLESTexture::initGLExtensions();
+
+	if (_game_texture)
+		_game_texture->reinit();
+
+	if (_overlay_texture)
+		_overlay_texture->reinit();
+
+	if (_mouse_texture)
+		_mouse_texture->reinit();
+}
+
+void OSystem_Android::deinitSurface() {
+	if (!JNI::haveSurface())
+		return;
+
+	LOGD("deinitializing surface");
+
+	_screen_changeid = JNI::surface_changeid;
+	_egl_surface_width = 0;
+	_egl_surface_height = 0;
+
+	// release texture resources
+	if (_game_texture)
+		_game_texture->release();
+
+	if (_overlay_texture)
+		_overlay_texture->release();
+
+	if (_mouse_texture)
+		_mouse_texture->release();
+
+	JNI::deinitSurface();
+}
+
+void OSystem_Android::initViewport() {
+	LOGD("initializing viewport");
+
+	assert(JNI::haveSurface());
 
 	// Turn off anything that looks like 3D ;)
 	GLCALL(glDisable(GL_CULL_FACE));
@@ -210,8 +250,8 @@ void OSystem_Android::updateScreen() {
 	}
 
 	if (_focus_rect.isEmpty()) {
-		_game_texture->drawTexture(0, 0,
-									_egl_surface_width, _egl_surface_height);
+		_game_texture->drawTexture(0, 0, _egl_surface_width,
+									_egl_surface_height);
 	} else {
 		GLCALL(glPushMatrix());
 		GLCALL(glScalex(xdiv(_egl_surface_width, _focus_rect.width()),
@@ -223,8 +263,8 @@ void OSystem_Android::updateScreen() {
 						xdiv(_game_texture->height(), _egl_surface_height),
 						1 << 16));
 
-		_game_texture->drawTexture(0, 0,
-									_egl_surface_width, _egl_surface_height);
+		_game_texture->drawTexture(0, 0, _egl_surface_width,
+									_egl_surface_height);
 		GLCALL(glPopMatrix());
 	}
 
@@ -234,9 +274,8 @@ void OSystem_Android::updateScreen() {
 		// ugly, but the modern theme sets a wacko factor, only god knows why
 		cs = 1;
 
-		GLCALL(_overlay_texture->drawTexture(0, 0,
-												_egl_surface_width,
-												_egl_surface_height));
+		GLCALL(_overlay_texture->drawTexture(0, 0, _egl_surface_width,
+													_egl_surface_height));
 	}
 
 	if (_show_mouse) {

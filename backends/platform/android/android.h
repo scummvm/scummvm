@@ -140,7 +140,10 @@ private:
 	FilesystemFactory *_fsFactory;
 	timeval _startTime;
 
-	void setupSurface();
+	void initSurface();
+	void deinitSurface();
+	void initViewport();
+
 	void setupKeymapper();
 	void _setCursorPalette(const byte *colors, uint start, uint num);
 

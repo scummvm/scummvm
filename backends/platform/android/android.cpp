@@ -323,7 +323,8 @@ void OSystem_Android::initBackend() {
 	_audio_thread_exit = false;
 	pthread_create(&_audio_thread, 0, audioThreadFunc, this);
 
-	setupSurface();
+	initSurface();
+	initViewport();
 
 	_game_texture = new GLESPaletteTexture();
 	_overlay_texture = new GLES4444Texture();
@@ -404,42 +405,38 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 	if (pthread_self() == _main_thread) {
 		if (_screen_changeid != JNI::surface_changeid) {
 			if (JNI::egl_surface_width > 0 && JNI::egl_surface_height > 0) {
-				LOGD("initializing surface");
+				if (_egl_surface_width > 0 && _egl_surface_height > 0) {
+					// surface still alive but changed
+					_screen_changeid = JNI::surface_changeid;
+					_egl_surface_width = JNI::egl_surface_width;
+					_egl_surface_height = JNI::egl_surface_height;
 
-				_game_texture->release();
-				_overlay_texture->release();
-				_mouse_texture->release();
+					initViewport();
+					// double buffered, flip twice
+					_force_redraw = true;
+					updateScreen();
+					_force_redraw = true;
 
-				JNI::deinitSurface();
-				setupSurface();
+					event.type = Common::EVENT_SCREEN_CHANGED;
 
-				_game_texture->reinit();
-				_overlay_texture->reinit();
-				_mouse_texture->reinit();
+					return true;
+				} else {
+					// new surface
+					initSurface();
+					_force_redraw = true;
 
-				event.type = Common::EVENT_SCREEN_CHANGED;
+					event.type = Common::EVENT_SCREEN_CHANGED;
 
-				return true;
+					return true;
+				}
+			} else {
+				// surface lost
+				deinitSurface();
 			}
-
-			LOGD("deinitialiting surface");
-
-			_game_texture->release();
-			_overlay_texture->release();
-			_mouse_texture->release();
-
-			_screen_changeid = JNI::surface_changeid;
-			JNI::deinitSurface();
 		}
 
 		if (JNI::pause) {
-			// release some resources
-			_game_texture->release();
-			_overlay_texture->release();
-			_mouse_texture->release();
-
-			LOGD("deinitialiting surface");
-			JNI::deinitSurface();
+			deinitSurface();
 
 			LOGD("main thread going to sleep");
 			sem_wait(&JNI::pause_sem);
@@ -596,7 +593,7 @@ void OSystem_Android::quit() {
 	delete _overlay_texture;
 	delete _mouse_texture;
 
-	JNI::deinitSurface();
+	deinitSurface();
 }
 
 void OSystem_Android::setWindowCaption(const char *caption) {
