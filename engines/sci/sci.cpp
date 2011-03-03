@@ -444,9 +444,8 @@ static void patchGameSaveRestoreCode(SegManager *segMan, reg_t methodAddress, by
 	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.offset));
 	if (getSciVersion() <= SCI_VERSION_1_1)
 		memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
-	else if (getSciVersion() == SCI_VERSION_2)
+	else	// SCI2+
 		memcpy(patchPtr, patchGameRestoreSaveSci2, sizeof(patchGameRestoreSaveSci2));
-	// TODO: SCI21/SCI3
 	patchPtr[8] = id;
 }
 
@@ -458,10 +457,6 @@ void SciEngine::patchGameSaveRestore() {
 		gameSuperObject = gameObject;	// happens in KQ5CD, when loading saved games before r54510
 	byte kernelIdRestore = 0;
 	byte kernelIdSave = 0;
-
-	// This feature is currently not supported in SCI21 or SCI3
-	if (getSciVersion() >= SCI_VERSION_2_1)
-		return;
 
 	switch (_gameId) {
 	case GID_MOTHERGOOSE256: // mother goose saves/restores directly and has no save/restore dialogs
@@ -484,6 +479,11 @@ void SciEngine::patchGameSaveRestore() {
 		if (kernelName == "SaveGame")
 			kernelIdSave = kernelNr;
 	}
+
+	// TODO: This feature does not yet work with the SCI2.1 middle and newer
+	// kernel functions (i.e. kSave)
+	if (!kernelIdRestore || !kernelIdSave)
+		return;
 
 	// Search for gameobject superclass ::restore
 	uint16 gameSuperObjectMethodCount = gameSuperObject->getMethodCount();
