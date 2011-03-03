@@ -108,6 +108,8 @@ void GfxTransitions::init() {
 
 	if (getSciVersion() >= SCI_VERSION_1_LATE)
 		_translationTable = NULL;
+	else if (g_sci->getResMan()->isAmiga32color())
+		_translationTable = NULL;
 	else
 		_translationTable = oldTransitionIDs;
 
@@ -124,6 +126,7 @@ void GfxTransitions::setup(int16 number, bool blackoutFlag) {
 		_number = SCI_TRANSITIONS_NONE;
 #endif
 		_blackoutFlag = blackoutFlag;
+		debugC(kDebugLevelGraphics, "Transition %d, blackout %d", number, blackoutFlag);
 	}
 }
 
