@@ -113,7 +113,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	_unditherState = true;
 	_fontIsUpscaled = false;
 
-	if (_resMan->isVGA() || (_resMan->isAmiga32color())) {
+	if (_resMan->getViewType() != kViewEga) {
 		// It is not 100% accurate to set white to be 255 for Amiga 32-color
 		// games. But 255 is defined as white in our SCI at all times, so it
 		// doesn't matter.

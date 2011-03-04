@@ -104,9 +104,9 @@ void GfxView::initData(GuiResourceId resourceId) {
 	}
 
 	switch (curViewType) {
-	case kViewEga: // View-format SCI0 (and Amiga 16 colors)
+	case kViewEga: // SCI0 (and Amiga 16 colors)
 		isEGA = true;
-	case kViewAmiga: // View-format Amiga (32 colors)
+	case kViewAmiga: // Amiga (32 colors)
 	case kViewVga: // View-format SCI1
 		// LoopCount:WORD MirrorMask:WORD Version:WORD PaletteOffset:WORD LoopOffset0:WORD LoopOffset1:WORD...
 
@@ -412,7 +412,7 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 
 		rlePtr = _resourceData + celInfo->offsetRLE;
 		if (!celInfo->offsetLiteral) { // no additional literal data
-			if (_resMan->isAmiga32color()) {
+			if (_resMan->getViewType() == kViewAmiga) {
 				// decompression for amiga views
 				while (pixelNo < pixelCount) {
 					pixel = *rlePtr++;
@@ -531,9 +531,8 @@ const byte *GfxView::getBitmap(int16 loopNo, int16 celNo) {
 	// unpack the actual cel bitmap data
 	unpackCel(loopNo, celNo, pBitmap, pixelCount);
 
-	if (!_resMan->isVGA()) {
+	if (_resMan->getViewType() == kViewEga)
 		unditherBitmap(pBitmap, width, height, _loop[loopNo].cel[celNo].clearKey);
-	}
 
 	// mirroring the cel if needed
 	if (_loop[loopNo].mirrorFlag) {
