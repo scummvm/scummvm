@@ -2255,6 +2255,9 @@ void ResourceManager::detectSciVersion() {
 	case kResVersionSci1Middle:
 	case kResVersionKQ5FMT:
 		s_sciVersion = SCI_VERSION_1_MIDDLE;
+		// Amiga SCI1 middle games are actually SCI1 late
+		if (_viewType == kViewAmiga)
+			s_sciVersion = SCI_VERSION_1_LATE;
 		return;
 	case kResVersionSci1Late:
 		if (_volVersion == kResVersionSci11) {

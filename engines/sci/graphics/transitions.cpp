@@ -108,8 +108,6 @@ void GfxTransitions::init() {
 
 	if (getSciVersion() >= SCI_VERSION_1_LATE)
 		_translationTable = NULL;
-	else if (g_sci->getResMan()->isAmiga32color())
-		_translationTable = NULL;
 	else
 		_translationTable = oldTransitionIDs;
 
