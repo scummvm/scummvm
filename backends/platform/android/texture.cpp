@@ -175,9 +175,6 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 	} else {
 		// GLES removed the ability to specify pitch, so we
 		// have to do this ourselves.
-		if (h == 0)
-			return;
-
 #if TEXSUBIMAGE_IS_EXPENSIVE
 		byte *tmp = new byte[w * h * bytesPerPixel()];
 		assert(tmp);

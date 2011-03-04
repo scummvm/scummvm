@@ -411,7 +411,7 @@ void OSystem_Android::grabOverlay(OverlayColor *buf, int pitch) {
 	const Graphics::Surface *surface = _overlay_texture->surface_const();
 	assert(surface->bytesPerPixel == sizeof(buf[0]));
 
-	int h = surface->h;
+	uint h = surface->h;
 
 	do {
 		memset(buf, 0, surface->w * sizeof(buf[0]));
@@ -475,7 +475,7 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 
 	// Update palette alpha based on keycolor
 	byte *palette = _mouse_texture->palette();
-	int i = 256;
+	uint i = 256;
 
 	do {
 		palette[3] = 0xff;
