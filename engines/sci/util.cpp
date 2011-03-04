@@ -30,15 +30,15 @@
 
 namespace Sci {
 
-uint16 READ_SCI1ENDIAN_UINT16(const void *ptr) {
-	if (g_sci->isBE() && getSciVersion() >= SCI_VERSION_1_EGA_ONLY && getSciVersion() <= SCI_VERSION_1_LATE)
+uint16 READ_SCIENDIAN_UINT16(const void *ptr) {
+	if (g_sci->isBE())
 		return READ_BE_UINT16(ptr);
 	else
 		return READ_LE_UINT16(ptr);
 }
 
-void WRITE_SCI1ENDIAN_UINT16(void *ptr, uint16 val) {
-	if (g_sci->isBE() && getSciVersion() >= SCI_VERSION_1_EGA_ONLY && getSciVersion() <= SCI_VERSION_1_LATE)
+void WRITE_SCIENDIAN_UINT16(void *ptr, uint16 val) {
+	if (g_sci->isBE())
 		WRITE_BE_UINT16(ptr, val);
 	else
 		WRITE_LE_UINT16(ptr, val);

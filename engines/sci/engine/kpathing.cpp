@@ -265,8 +265,8 @@ static Common::Point readPoint(SegmentRef list_r, int offset) {
 	Common::Point point;
 
 	if (list_r.isRaw) {	// dynmem blocks are raw
-		point.x = (int16)READ_SCI1ENDIAN_UINT16(list_r.raw + offset * POLY_POINT_SIZE);
-		point.y = (int16)READ_SCI1ENDIAN_UINT16(list_r.raw + offset * POLY_POINT_SIZE + 2);
+		point.x = (int16)READ_SCIENDIAN_UINT16(list_r.raw + offset * POLY_POINT_SIZE);
+		point.y = (int16)READ_SCIENDIAN_UINT16(list_r.raw + offset * POLY_POINT_SIZE + 2);
 	} else {
 		point.x = list_r.reg[offset * 2].toUint16();
 		point.y = list_r.reg[offset * 2 + 1].toUint16();
@@ -276,8 +276,8 @@ static Common::Point readPoint(SegmentRef list_r, int offset) {
 
 static void writePoint(SegmentRef ref, int offset, const Common::Point &point) {
 	if (ref.isRaw) {	// dynmem blocks are raw
-		WRITE_SCI1ENDIAN_UINT16(ref.raw + offset * POLY_POINT_SIZE, point.x);
-		WRITE_SCI1ENDIAN_UINT16(ref.raw + offset * POLY_POINT_SIZE + 2, point.y);
+		WRITE_SCIENDIAN_UINT16(ref.raw + offset * POLY_POINT_SIZE, point.x);
+		WRITE_SCIENDIAN_UINT16(ref.raw + offset * POLY_POINT_SIZE + 2, point.y);
 	} else {
 		ref.reg[offset * 2] = make_reg(0, point.x);
 		ref.reg[offset * 2 + 1] = make_reg(0, point.y);

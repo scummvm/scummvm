@@ -30,11 +30,10 @@
 
 namespace Sci {
 
-// Wrappers for reading/writing integer values for SCI1 Amiga.
-// Amiga versions store big endian data in dynmem blocks, as
-// the game resources are in LE, but the actual system is BE.
-uint16 READ_SCI1ENDIAN_UINT16(const void *ptr);
-void WRITE_SCI1ENDIAN_UINT16(void *ptr, uint16 val);
+// Wrappers for reading/writing 16-bit values in the endianness
+// of the original game platform.
+uint16 READ_SCIENDIAN_UINT16(const void *ptr);
+void WRITE_SCIENDIAN_UINT16(void *ptr, uint16 val);
 
 // Wrappers for reading integer values for SCI1.1+.
 // Mac versions have big endian data for some fields.
