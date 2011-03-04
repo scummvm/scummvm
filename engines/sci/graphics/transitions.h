@@ -65,7 +65,7 @@ class Screen;
  */
 class GfxTransitions {
 public:
-	GfxTransitions(GfxScreen *screen, GfxPalette *palette, bool isVGA);
+	GfxTransitions(GfxScreen *screen, GfxPalette *palette);
 	~GfxTransitions();
 
 	void setup(int16 number, bool blackoutFlag);
@@ -97,7 +97,6 @@ private:
 	GfxScreen *_screen;
 	GfxPalette *_palette;
 
-	bool _isVGA;
 	const GfxTransitionTranslateEntry *_translationTable;
 	int16 _number;
 	bool _blackoutFlag;
