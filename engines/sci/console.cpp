@@ -3767,11 +3767,16 @@ int Console::printObject(reg_t pos) {
 	return 0;
 }
 
+static void printChar(byte c) {
+	if (c < 32 || c >= 127)
+		c = '.';
+	debugN("%c", c);
+}
+
 void Console::hexDumpReg(const reg_t *data, int len, int regsPerLine, int startOffset, bool isArray) {
 	// reg_t version of Common::hexdump
 	assert(1 <= regsPerLine && regsPerLine <= 8);
 	int i;
-	byte c;
 	int offset = startOffset;
 	while (len >= regsPerLine) {
 		debugN("%06x: ", offset);
@@ -3780,14 +3785,13 @@ void Console::hexDumpReg(const reg_t *data, int len, int regsPerLine, int startO
 		}
 		debugN(" |");
 		for (i = 0; i < regsPerLine; i++) {
-			c = data[i].toUint16() & 0xff;
-			if (c < 32 || c >= 127)
-				c = '.';
-			debugN("%c", c);
-			c = data[i].toUint16() >> 8;
-			if (c < 32 || c >= 127)
-				c = '.';
-			debugN("%c", c);
+			if (g_sci->isBE()) {
+				printChar(data[i].toUint16() >> 8);
+				printChar(data[i].toUint16() & 0xff);
+			} else {
+				printChar(data[i].toUint16() & 0xff);
+				printChar(data[i].toUint16() >> 8);
+			}
 		}
 		debugN("|\n");
 		data += regsPerLine;
@@ -3807,14 +3811,13 @@ void Console::hexDumpReg(const reg_t *data, int len, int regsPerLine, int startO
 	}
 	debugN(" |");
 	for (i = 0; i < len; i++) {
-		c = data[i].toUint16() & 0xff;
-		if (c < 32 || c >= 127)
-			c = '.';
-		debugN("%c", c);
-		c = data[i].toUint16() >> 8;
-		if (c < 32 || c >= 127)
-			c = '.';
-		debugN("%c", c);
+		if (g_sci->isBE()) {
+			printChar(data[i].toUint16() >> 8);
+			printChar(data[i].toUint16() & 0xff);
+		} else {
+			printChar(data[i].toUint16() & 0xff);
+			printChar(data[i].toUint16() >> 8);
+		}
 	}
 	for (; i < regsPerLine; i++)
 		debugN("  ");
