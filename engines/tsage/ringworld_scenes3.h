@@ -127,7 +127,7 @@ public:
 
 class Scene2100: public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1: public Action2 {
 	public:
 		virtual void signal();
 	};
@@ -213,17 +213,18 @@ class Scene2100: public Scene {
 		int _subNum;
 		int _actionId;
 		Rect _bounds;
-		int _field20;
 	public:
 		SceneArea();
 		~SceneArea();
 
 		void setup(int resNum, int rlbNum, int subNum, int actionId);
-		void draw();
+		void draw2();
 		void display();
-		void draw2(bool flag);
+		void restore();
 
 		virtual void synchronise(Serialiser &s);
+		virtual void draw(bool flag);
+		virtual void wait();
 	};
 public:
 	SequenceManager _sequenceManager;
@@ -267,6 +268,7 @@ public:
 
 	Scene2100();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void stripCallback(int v);
 	virtual void signal();
 };
 
