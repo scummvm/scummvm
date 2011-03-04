@@ -1535,10 +1535,16 @@ void ResourceManager::readResourcePatches() {
 		mask += s_resourceTypeSuffixes[i];
 		SearchMan.listMatchingMembers(files, mask);
 
-		if (i == kResourceTypeScript && files.size() == 0) {
-			// SCI3 (we can't use getSciVersion() at this point)
-			mask = "*.csc";
-			SearchMan.listMatchingMembers(files, mask);
+		if (i == kResourceTypeView) {
+			SearchMan.listMatchingMembers(files, "*.v16");	// EGA SCI1 view patches
+			SearchMan.listMatchingMembers(files, "*.v32");	// Amiga SCI1 view patches
+		} else if (i == kResourceTypePic) {
+			SearchMan.listMatchingMembers(files, "*.p16");	// EGA SCI1 picture patches
+			SearchMan.listMatchingMembers(files, "*.p32");	// Amiga SCI1 picture patches
+		} else if (i == kResourceTypeScript) {
+			if (files.size() == 0)
+				// SCI3 (we can't use getSciVersion() at this point)
+				SearchMan.listMatchingMembers(files, "*.csc");
 		}
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
