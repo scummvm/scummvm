@@ -253,9 +253,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kGraphGetColorCount(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->getResMan()->isAmiga32color())
-		return make_reg(0, 32);
-	return make_reg(0, !g_sci->getResMan()->isVGA() ? 16 : 256);
+	return make_reg(0, g_sci->_gfxPalette->getTotalColorCount());
 }
 
 reg_t kGraphDrawLine(EngineState *s, int argc, reg_t *argv) {
@@ -551,8 +549,6 @@ reg_t kSetNowSeen(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-// we are called on EGA/amiga games as well, this doesnt make sense.
-//  doing this would actually break the system EGA/amiga palette
 reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 	if (!s)
 		return make_reg(0, getSciVersion());
@@ -560,86 +556,83 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPaletteSetFromResource(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->getResMan()->isVGA()) {
-		GuiResourceId resourceId = argv[0].toUint16();
-		bool force = false;
-		if (argc == 2)
-			force = argv[1].toUint16() == 2 ? true : false;
-		g_sci->_gfxPalette->kernelSetFromResource(resourceId, force);
-	}
+	GuiResourceId resourceId = argv[0].toUint16();
+	bool force = false;
+	if (argc == 2)
+		force = argv[1].toUint16() == 2 ? true : false;
+
+	// Non-VGA games don't use palette resources
+	if (g_sci->_gfxPalette->getTotalColorCount() < 256)
+		return s->r_acc;
+
+	g_sci->_gfxPalette->kernelSetFromResource(resourceId, force);
 	return s->r_acc;
 }
 
 reg_t kPaletteSetFlag(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->getResMan()->isVGA()) {
-		uint16 fromColor = CLIP<uint16>(argv[0].toUint16(), 1, 255);
-		uint16 toColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
-		uint16 flags = argv[2].toUint16();
-		g_sci->_gfxPalette->kernelSetFlag(fromColor, toColor, flags);
-	}
+	uint16 fromColor = CLIP<uint16>(argv[0].toUint16(), 1, 255);
+	uint16 toColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
+	uint16 flags = argv[2].toUint16();
+	g_sci->_gfxPalette->kernelSetFlag(fromColor, toColor, flags);
 	return s->r_acc;
 }
 
 reg_t kPaletteUnsetFlag(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->getResMan()->isVGA()) {
-		uint16 fromColor = CLIP<uint16>(argv[0].toUint16(), 1, 255);
-		uint16 toColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
-		uint16 flags = argv[2].toUint16();
-		g_sci->_gfxPalette->kernelUnsetFlag(fromColor, toColor, flags);
-	}
+	uint16 fromColor = CLIP<uint16>(argv[0].toUint16(), 1, 255);
+	uint16 toColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
+	uint16 flags = argv[2].toUint16();
+	g_sci->_gfxPalette->kernelUnsetFlag(fromColor, toColor, flags);
 	return s->r_acc;
 }
 
 reg_t kPaletteSetIntensity(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->getResMan()->isVGA()) {
-		uint16 fromColor = CLIP<uint16>(argv[0].toUint16(), 1, 255);
-		uint16 toColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
-		uint16 intensity = argv[2].toUint16();
-		bool setPalette = (argc < 4) ? true : (argv[3].isNull()) ? true : false;
+	uint16 fromColor = CLIP<uint16>(argv[0].toUint16(), 1, 255);
+	uint16 toColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
+	uint16 intensity = argv[2].toUint16();
+	bool setPalette = (argc < 4) ? true : (argv[3].isNull()) ? true : false;
 
-		g_sci->_gfxPalette->kernelSetIntensity(fromColor, toColor, intensity, setPalette);
-	}
+	// Palette intensity in non-VGA SCI1 games has been removed
+	if (g_sci->_gfxPalette->getTotalColorCount() < 256)
+		return s->r_acc;
+
+	g_sci->_gfxPalette->kernelSetIntensity(fromColor, toColor, intensity, setPalette);
 	return s->r_acc;
 }
 
 reg_t kPaletteFindColor(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->getResMan()->isVGA()) {
-		uint16 r = argv[0].toUint16();
-		uint16 g = argv[1].toUint16();
-		uint16 b = argv[2].toUint16();
-		return make_reg(0, g_sci->_gfxPalette->kernelFindColor(r, g, b));
-	}
-	return NULL_REG;
+	uint16 r = argv[0].toUint16();
+	uint16 g = argv[1].toUint16();
+	uint16 b = argv[2].toUint16();
+	return make_reg(0, g_sci->_gfxPalette->kernelFindColor(r, g, b));
 }
 
 reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->getResMan()->isVGA()) {
-		int16 argNr;
-		bool paletteChanged = false;
-		for (argNr = 0; argNr < argc; argNr += 3) {
-			uint16 fromColor = argv[argNr].toUint16();
-			uint16 toColor = argv[argNr + 1].toUint16();
-			int16 speed = argv[argNr + 2].toSint16();
-			if (g_sci->_gfxPalette->kernelAnimate(fromColor, toColor, speed))
-				paletteChanged = true;
-		}
-		if (paletteChanged)
-			g_sci->_gfxPalette->kernelAnimateSet();
+	int16 argNr;
+	bool paletteChanged = false;
+
+	// Palette animation in non-VGA SCI1 games has been removed
+	if (g_sci->_gfxPalette->getTotalColorCount() < 256)
+		return s->r_acc;
+
+	for (argNr = 0; argNr < argc; argNr += 3) {
+		uint16 fromColor = argv[argNr].toUint16();
+		uint16 toColor = argv[argNr + 1].toUint16();
+		int16 speed = argv[argNr + 2].toSint16();
+		if (g_sci->_gfxPalette->kernelAnimate(fromColor, toColor, speed))
+			paletteChanged = true;
 	}
+	if (paletteChanged)
+		g_sci->_gfxPalette->kernelAnimateSet();
+
 	return s->r_acc;
 }
 
 reg_t kPaletteSave(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->getResMan()->isVGA()) {
-		return g_sci->_gfxPalette->kernelSave();
-	}
-	return NULL_REG;
+	return g_sci->_gfxPalette->kernelSave();
 }
 
 reg_t kPaletteRestore(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->getResMan()->isVGA()) {
-		g_sci->_gfxPalette->kernelRestore(argv[0]);
-	}
+	g_sci->_gfxPalette->kernelRestore(argv[0]);
 	return argv[0];
 }
 

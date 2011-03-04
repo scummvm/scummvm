@@ -76,6 +76,21 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMergi
 #ifdef ENABLE_SCI32
 	_clutTable = 0;
 #endif
+
+	switch (_resMan->getViewType()) {
+	case kViewVga:
+	case kViewVga11:
+		_totalScreenColors = 256;
+		break;
+	case kViewAmiga:
+		_totalScreenColors = 32;
+		break;
+	case kViewEga:
+		_totalScreenColors = 16;
+		break;
+	default:
+		error("GfxPalette: Unknown view type");
+	}
 }
 
 GfxPalette::~GfxPalette() {
@@ -97,7 +112,7 @@ bool GfxPalette::isMerging() {
 void GfxPalette::setDefault() {
 	if (_resMan->getViewType() == kViewEga)
 		setEGA();
-	else if (_resMan->isAmiga32color())
+	else if (_resMan->getViewType() == kViewAmiga)
 		setAmiga();
 	else
 		kernelSetFromResource(999, true);
