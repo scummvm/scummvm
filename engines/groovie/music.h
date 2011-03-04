@@ -94,14 +94,14 @@ public:
 	~MusicPlayerMidi();
 
 	// MidiDriver interface
-	int open();
-	void close();
-	void send(uint32 b);
-	void metaEvent(byte type, byte *data, uint16 length);
-	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc);
-	uint32 getBaseTempo();
-	MidiChannel *allocateChannel();
-	MidiChannel *getPercussionChannel();
+	virtual int open();
+	virtual void close();
+	virtual void send(uint32 b);
+	virtual void metaEvent(byte type, byte *data, uint16 length);
+	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc);
+	virtual uint32 getBaseTempo();
+	virtual MidiChannel *allocateChannel();
+	virtual MidiChannel *getPercussionChannel();
 
 private:
 	// Channel volumes
@@ -115,7 +115,7 @@ protected:
 	MidiParser *_midiParser;
 	MidiDriver *_driver;
 
-	void onTimerInternal();
+	virtual void onTimerInternal();
 	void updateVolume();
 	void unload();
 
