@@ -568,6 +568,9 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	// now drawing the text
 	_text16->Size(rect, text, -1, width);
 	rect.moveTo(_ports->getPort()->curLeft, _ports->getPort()->curTop);
+	// Note: This code has been found in SCI1 middle and newer games. It was
+	// previously only for SCI1 late and newer, but the LSL1 interpreter contains
+	// this code.
 	if (getSciVersion() >= SCI_VERSION_1_MIDDLE) {
 		int16 leftPos = rect.right <= _screen->getWidth() ? 0 : _screen->getWidth() - rect.right;
 		int16 topPos = rect.bottom <= _screen->getHeight() ? 0 : _screen->getHeight() - rect.bottom;
