@@ -485,6 +485,9 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 	palette = _mouse_texture->palette();
 	palette[keycolor * 4 + 3] = 0x00;
 
+	if (w == 0 || h == 0)
+		return;
+
 	_mouse_texture->updateBuffer(0, 0, w, h, buf, w);
 
 	_mouse_hotspot = Common::Point(hotspotX, hotspotY);
