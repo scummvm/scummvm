@@ -299,10 +299,7 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 			return s->r_acc;
 		}
 		if (ref.isRaw) {
-			if (g_sci->getPlatform() == Common::kPlatformAmiga)
-				return make_reg(0, (int16)READ_BE_UINT16(ref.raw));		// Amiga versions are BE
-			else
-				return make_reg(0, (int16)READ_LE_UINT16(ref.raw));
+			return make_reg(0, (int16)READ_SCI1ENDIAN_UINT16(ref.raw));
 		} else {
 			if (ref.skipByte)
 				error("Attempt to peek memory at odd offset %04X:%04X", PRINT_REG(argv[1]));
@@ -323,10 +320,7 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 				error("Attempt to poke memory reference %04x:%04x to %04x:%04x", PRINT_REG(argv[2]), PRINT_REG(argv[1]));
 				return s->r_acc;
 			}
-			if (g_sci->getPlatform() == Common::kPlatformAmiga)
-				WRITE_BE_UINT16(ref.raw, argv[2].offset);		// Amiga versions are BE
-			else
-				WRITE_LE_UINT16(ref.raw, argv[2].offset);
+			WRITE_SCI1ENDIAN_UINT16(ref.raw, argv[2].offset);		// Amiga versions are BE
 		} else {
 			if (ref.skipByte)
 				error("Attempt to poke memory at odd offset %04X:%04X", PRINT_REG(argv[1]));

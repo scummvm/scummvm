@@ -238,6 +238,7 @@ public:
 	Common::Platform getPlatform() const;
 	bool isDemo() const;
 	bool isCD() const;
+	bool isBE() const;
 	bool hasMacIconBar() const;
 
 	inline ResourceManager *getResMan() const { return _resMan; }

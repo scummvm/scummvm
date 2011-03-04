@@ -777,6 +777,16 @@ bool SciEngine::isCD() const {
 	return _gameDescription->flags & ADGF_CD;
 }
 
+bool SciEngine::isBE() const{
+	switch(_gameDescription->platform) {
+	case Common::kPlatformAmiga:
+	case Common::kPlatformMacintosh:
+		return true;
+	default:
+		return false;
+	}
+}
+
 bool SciEngine::hasMacIconBar() const {
 	return _resMan->isSci11Mac() && getSciVersion() == SCI_VERSION_1_1 &&
 			(getGameId() == GID_KQ6 || getGameId() == GID_FREDDYPHARKAS);

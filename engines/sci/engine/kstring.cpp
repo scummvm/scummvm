@@ -113,7 +113,7 @@ reg_t kStrAt(EngineState *s, int argc, reg_t *argv) {
 		reg_t &tmp = dest_r.reg[offset / 2];
 
 		bool oddOffset = offset & 1;
-		if (g_sci->getPlatform() == Common::kPlatformAmiga)
+		if (g_sci->isBE())
 			oddOffset = !oddOffset;
 
 		if (!oddOffset) {

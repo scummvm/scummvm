@@ -31,14 +31,14 @@
 namespace Sci {
 
 uint16 READ_SCI1ENDIAN_UINT16(const void *ptr) {
-	if (g_sci->getPlatform() == Common::kPlatformAmiga && getSciVersion() >= SCI_VERSION_1_EGA_ONLY && getSciVersion() <= SCI_VERSION_1_LATE)
+	if (g_sci->isBE() && getSciVersion() >= SCI_VERSION_1_EGA_ONLY && getSciVersion() <= SCI_VERSION_1_LATE)
 		return READ_BE_UINT16(ptr);
 	else
 		return READ_LE_UINT16(ptr);
 }
 
 void WRITE_SCI1ENDIAN_UINT16(void *ptr, uint16 val) {
-	if (g_sci->getPlatform() == Common::kPlatformAmiga && getSciVersion() >= SCI_VERSION_1_EGA_ONLY && getSciVersion() <= SCI_VERSION_1_LATE)
+	if (g_sci->isBE() && getSciVersion() >= SCI_VERSION_1_EGA_ONLY && getSciVersion() <= SCI_VERSION_1_LATE)
 		WRITE_BE_UINT16(ptr, val);
 	else
 		WRITE_LE_UINT16(ptr, val);

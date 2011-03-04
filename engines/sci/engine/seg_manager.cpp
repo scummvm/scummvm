@@ -602,8 +602,8 @@ static inline char getChar(const SegmentRef &ref, uint offset) {
 			warning("Attempt to read character from non-raw data");
 
 	bool oddOffset = offset & 1;
-	if (g_sci->getPlatform() == Common::kPlatformAmiga)
-		oddOffset = !oddOffset;		// Amiga versions are BE
+	if (g_sci->isBE())
+		oddOffset = !oddOffset;
 
 	return (oddOffset ? val.offset >> 8 : val.offset & 0xff);
 }
@@ -617,8 +617,8 @@ static inline void setChar(const SegmentRef &ref, uint offset, byte value) {
 	val->segment = 0;
 
 	bool oddOffset = offset & 1;
-	if (g_sci->getPlatform() == Common::kPlatformAmiga)
-		oddOffset = !oddOffset;		// Amiga versions are BE
+	if (g_sci->isBE())
+		oddOffset = !oddOffset;
 
 	if (oddOffset)
 		val->offset = (val->offset & 0x00ff) | (value << 8);
