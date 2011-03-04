@@ -866,6 +866,8 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 	byte matchedMask, matchMask;
 	int16 w, e, a_set, b_set;
 
+	bool isEGA = (_resMan->getViewType() == kViewEga);
+
 	p.x = x + curPort->left;
 	p.y = y + curPort->top;
 	stack.push(p);
@@ -873,6 +875,18 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 	byte searchColor = _screen->getVisual(p.x, p.y);
 	byte searchPriority = _screen->getPriority(p.x, p.y);
 	byte searchControl = _screen->getControl(p.x, p.y);
+
+	if (isEGA) {
+		// In EGA games a pixel in the framebuffer is only 4 bits. We store
+		// a full byte per pixel to allow undithering, but when comparing
+		// pixels for flood-fill purposes, we should only compare the
+		// visible color of a pixel.
+
+		if ((x ^ y) & 1)
+			searchColor = (searchColor ^ (searchColor >> 4)) & 0x0F;
+		else
+			searchColor = searchColor & 0x0F;
+	}
 
 	// This logic was taken directly from sierra sci, floodfill will get aborted on various occations
 	if (screenMask & GFX_SCREEN_MASK_VISUAL) {
@@ -913,20 +927,20 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 	int b = curPort->rect.bottom + curPort->top - 1;
 	while (stack.size()) {
 		p = stack.pop();
-		if ((matchedMask = _screen->isFillMatch(p.x, p.y, matchMask, searchColor, searchPriority, searchControl)) == 0) // already filled
+		if ((matchedMask = _screen->isFillMatch(p.x, p.y, matchMask, searchColor, searchPriority, searchControl, isEGA)) == 0) // already filled
 			continue;
 		_screen->putPixel(p.x, p.y, screenMask, color, priority, control);
 		w = p.x;
 		e = p.x;
 		// moving west and east pointers as long as there is a matching color to fill
-		while (w > l && (matchedMask = _screen->isFillMatch(w - 1, p.y, matchMask, searchColor, searchPriority, searchControl)))
+		while (w > l && (matchedMask = _screen->isFillMatch(w - 1, p.y, matchMask, searchColor, searchPriority, searchControl, isEGA)))
 			_screen->putPixel(--w, p.y, screenMask, color, priority, control);
-		while (e < r && (matchedMask = _screen->isFillMatch(e + 1, p.y, matchMask, searchColor, searchPriority, searchControl)))
+		while (e < r && (matchedMask = _screen->isFillMatch(e + 1, p.y, matchMask, searchColor, searchPriority, searchControl, isEGA)))
 			_screen->putPixel(++e, p.y, screenMask, color, priority, control);
 		// checking lines above and below for possible flood targets
 		a_set = b_set = 0;
 		while (w <= e) {
-			if (p.y > t && (matchedMask = _screen->isFillMatch(w, p.y - 1, matchMask, searchColor, searchPriority, searchControl))) { // one line above
+			if (p.y > t && (matchedMask = _screen->isFillMatch(w, p.y - 1, matchMask, searchColor, searchPriority, searchControl, isEGA))) { // one line above
 				if (a_set == 0) {
 					p1.x = w;
 					p1.y = p.y - 1;
@@ -936,7 +950,7 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 			} else
 				a_set = 0;
 
-			if (p.y < b && (matchedMask = _screen->isFillMatch(w, p.y + 1, matchMask, searchColor, searchPriority, searchControl))) { // one line below
+			if (p.y < b && (matchedMask = _screen->isFillMatch(w, p.y + 1, matchMask, searchColor, searchPriority, searchControl, isEGA))) { // one line below
 				if (b_set == 0) {
 					p1.x = w;
 					p1.y = p.y + 1;

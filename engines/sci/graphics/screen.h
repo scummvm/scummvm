@@ -99,7 +99,7 @@ public:
 	byte getVisual(int x, int y);
 	byte getPriority(int x, int y);
 	byte getControl(int x, int y);
-	byte isFillMatch(int16 x, int16 y, byte drawMask, byte t_color, byte t_pri, byte t_con);
+	byte isFillMatch(int16 x, int16 y, byte drawMask, byte t_color, byte t_pri, byte t_con, bool isEGA);
 
 	int bitsGetDataSize(Common::Rect rect, byte mask);
 	void bitsSave(Common::Rect rect, byte mask, byte *memoryPtr);

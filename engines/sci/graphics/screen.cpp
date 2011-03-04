@@ -353,19 +353,30 @@ byte GfxScreen::getControl(int x, int y) {
 	return _controlScreen[y * _width + x];
 }
 
-byte GfxScreen::isFillMatch(int16 x, int16 y, byte screenMask, byte t_color, byte t_pri, byte t_con) {
+byte GfxScreen::isFillMatch(int16 x, int16 y, byte screenMask, byte t_color, byte t_pri, byte t_con, bool isEGA) {
 	int offset = y * _width + x;
 	byte match = 0;
 
 	// FIXME:
-	// This does not behave properly in EGA games where a pixel in the
-	// framebuffer is only 4 bits. We store a full byte per pixel to allow
-	// undithering, but when comparing pixels for flood-fill purposes, we
-	// should only compare the visible color of a pixel (with dithering
-	// enabled). See bug #3078365. Also see IS_BOUNDARY in FreeSCI's picfill.
+	if (screenMask & GFX_SCREEN_MASK_VISUAL) {
+		if (!isEGA) {
+			if (*(_visualScreen + offset) == t_color)
+				match |= GFX_SCREEN_MASK_VISUAL;
+		} else {
+			// In EGA games a pixel in the framebuffer is only 4 bits. We store
+			// a full byte per pixel to allow undithering, but when comparing
+			// pixels for flood-fill purposes, we should only compare the
+			// visible color of a pixel.
 
-	if ((screenMask & GFX_SCREEN_MASK_VISUAL) && *(_visualScreen + offset) == t_color)
-		match |= GFX_SCREEN_MASK_VISUAL;
+			byte c = *(_visualScreen + offset);
+			if ((x ^ y) & 1)
+				c = (c ^ (c >> 4)) & 0x0F;
+			else
+				c = c & 0x0F;
+			if (c == t_color)
+				match |= GFX_SCREEN_MASK_VISUAL;
+		}
+	}
 	if ((screenMask & GFX_SCREEN_MASK_PRIORITY) && *(_priorityScreen + offset) == t_pri)
 		match |= GFX_SCREEN_MASK_PRIORITY;
 	if ((screenMask & GFX_SCREEN_MASK_CONTROL) && *(_controlScreen + offset) == t_con)
