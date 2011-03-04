@@ -608,7 +608,7 @@ static inline char getChar(const SegmentRef &ref, uint offset) {
 	return (oddOffset ? val.offset >> 8 : val.offset & 0xff);
 }
 
-static inline void setChar(const SegmentRef &ref, uint offset, char value) {
+static inline void setChar(const SegmentRef &ref, uint offset, byte value) {
 	if (ref.skipByte)
 		offset++;
 
