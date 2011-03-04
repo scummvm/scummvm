@@ -152,6 +152,7 @@ void OSystem_Android::initSize(uint width, uint height,
 	GLTHREADCHECK;
 
 	_game_texture->allocBuffer(width, height);
+	_game_texture->fillBuffer(0);
 
 	int overlay_width = _egl_surface_width;
 	int overlay_height = _egl_surface_height;
