@@ -858,19 +858,28 @@ void GfxPalette::palVaryProcess(int signal, bool setPalette) {
 	}
 }
 
+static inline uint getMacColorDiff(byte r1, byte g1, byte b1, byte r2, byte g2, byte b2) {
+	// Use the difference of the top 4 bits and add together the differences
+	return ABS((r2 & 0xf0) - (r1 & 0xf0)) + ABS((g2 & 0xf0) - (g1 & 0xf0)) + ABS((b2 & 0xf0) - (b1 & 0xf0));
+}
+
 byte GfxPalette::findMacIconBarColor(byte r, byte g, byte b) {
 	// Find the best color for use with the Mac icon bar
+	// Check white, then the palette colors, and then black
 
-	byte found = 0xFF;
-	uint diff = 0xFFFFFFFF;
+	// Try white first
+	byte found = 0xff;
+	uint diff = getMacColorDiff(r, g, b, 0xff, 0xff, 0xff);
 
-	for (uint16 i = 0; i < 256; i++) {
-		// Use the difference of the top 4 bits
-		int dr = (_macClut[i * 3    ] & 0xf0) - (r & 0xf0);
-		int dg = (_macClut[i * 3 + 1] & 0xf0) - (g & 0xf0);
-		int db = (_macClut[i * 3 + 2] & 0xf0) - (b & 0xf0);
+	if (diff == 0)
+		return found;
 
-		uint cdiff = ABS(dr) + ABS(dg) + ABS(db);
+	// Go through the main colors of the CLUT
+	for (uint16 i = 1; i < 255; i++) {
+		if (!colorIsFromMacClut(i))
+			continue;
+
+		uint cdiff = getMacColorDiff(r, g, b, _macClut[i * 3], _macClut[i * 3 + 1], _macClut[i * 3 + 2]);
 
 		if (cdiff == 0)
 			return i;
@@ -879,6 +888,10 @@ byte GfxPalette::findMacIconBarColor(byte r, byte g, byte b) {
 			diff = cdiff;
 		}
 	}
+
+	// Also check black here
+	if (getMacColorDiff(r, g, b, 0, 0, 0) < diff)
+		return 0;
 
 	return found;
 }
