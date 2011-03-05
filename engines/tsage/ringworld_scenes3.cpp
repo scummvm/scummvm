@@ -1720,6 +1720,8 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 
 	if (!_globals->getFlag(59) && !_globals->getFlag(70) && !_globals->getFlag(37) && !_globals->getFlag(114)) {
 		_object2.postInit();
+		_object2.setVisage(2108);
+		_object2._strip = 3;
 		_object2.setPosition(Common::Point(150, 100));
 		_object2.animate(ANIM_MODE_NONE, NULL);
 		_object2.changeZoom(100);
