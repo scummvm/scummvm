@@ -86,7 +86,7 @@ struct WinCursorGroup {
 	Common::Array<CursorItem> cursors;
 
 	static WinCursorGroup *createCursorGroup(Common::NEResources &exe, const Common::WinResourceID &id);
-	//static WinCursorGroup *createCursorGroup(Common::PEResources &exe, const Common::WinResourceID &id);
+	static WinCursorGroup *createCursorGroup(Common::PEResources &exe, const Common::WinResourceID &id);
 };
 
 } // End of namespace Graphics

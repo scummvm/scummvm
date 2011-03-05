@@ -29,6 +29,7 @@
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/winexe_ne.h"
+#include "common/winexe_pe.h"
 
 #include "graphics/wincursor.h"
 
@@ -205,6 +206,69 @@ WinCursorGroup *WinCursorGroup::createCursorGroup(Common::NEResources &exe, cons
 		uint32 cursorId = stream->readUint32LE();
 
 		Common::SeekableReadStream *cursorStream = exe.getResource(Common::kNECursor, cursorId);
+		if (!cursorStream) {
+			delete stream;
+			delete group;
+			return 0;
+		}
+
+		WinCursor *cursor = new WinCursor();
+		if (!cursor->readFromStream(*cursorStream)) {
+			delete stream;
+			delete cursorStream;
+			delete cursor;
+			delete group;
+			return 0;
+		}
+
+		delete cursorStream;
+
+		CursorItem item;
+		item.id = cursorId;
+		item.cursor = cursor;
+		group->cursors.push_back(item);
+	}
+
+	delete stream;
+	return group;
+}
+
+WinCursorGroup *WinCursorGroup::createCursorGroup(Common::PEResources &exe, const Common::WinResourceID &id) {
+	Common::SeekableReadStream *stream = exe.getResource(Common::kPEGroupCursor, id);
+
+	if (!stream || stream->size() <= 6)
+		return 0;
+
+	stream->skip(4);
+	uint32 cursorCount = stream->readUint16LE();
+	if ((uint32)stream->size() < (6 + cursorCount * 16))
+		return 0;
+
+	WinCursorGroup *group = new WinCursorGroup();
+	group->cursors.reserve(cursorCount);
+
+	for (uint32 i = 0; i < cursorCount; i++) {
+		stream->readUint16LE(); // width
+		stream->readUint16LE(); // height
+
+		// Plane count
+		if (stream->readUint16LE() != 1) {
+			delete stream;
+			delete group;
+			return 0;
+		}
+
+		// Bit count
+		if (stream->readUint16LE() != 1) {
+			delete stream;
+			delete group;
+			return 0;
+		}
+
+		stream->readUint32LE(); // data size
+		uint32 cursorId = stream->readUint32LE();
+
+		Common::SeekableReadStream *cursorStream = exe.getResource(Common::kPECursor, cursorId);
 		if (!cursorStream) {
 			delete stream;
 			delete group;
