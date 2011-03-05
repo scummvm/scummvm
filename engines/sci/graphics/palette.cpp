@@ -80,7 +80,10 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMergi
 	switch (_resMan->getViewType()) {
 	case kViewVga:
 	case kViewVga11:
-		_totalScreenColors = 256;
+		if (g_sci->getPlatform() == Common::kPlatformAmiga)
+			_totalScreenColors = 64;	// Longbow Amiga
+		else
+			_totalScreenColors = 256;
 		break;
 	case kViewAmiga:
 		_totalScreenColors = 32;

@@ -561,8 +561,10 @@ reg_t kPaletteSetFromResource(EngineState *s, int argc, reg_t *argv) {
 	if (argc == 2)
 		force = argv[1].toUint16() == 2 ? true : false;
 
-	// Non-VGA games don't use palette resources
-	if (g_sci->_gfxPalette->getTotalColorCount() < 256)
+	// Non-VGA games don't use palette resources.
+	// This has been changed to 64 colors because Longbow Amiga does have
+	// one palette (palette 999).
+	if (g_sci->_gfxPalette->getTotalColorCount() < 64)
 		return s->r_acc;
 
 	g_sci->_gfxPalette->kernelSetFromResource(resourceId, force);

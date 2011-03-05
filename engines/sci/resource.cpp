@@ -1538,9 +1538,11 @@ void ResourceManager::readResourcePatches() {
 		if (i == kResourceTypeView) {
 			SearchMan.listMatchingMembers(files, "*.v16");	// EGA SCI1 view patches
 			SearchMan.listMatchingMembers(files, "*.v32");	// Amiga SCI1 view patches
+			SearchMan.listMatchingMembers(files, "*.v64");	// Amiga AGA SCI1 (i.e. Longbow) view patches
 		} else if (i == kResourceTypePic) {
 			SearchMan.listMatchingMembers(files, "*.p16");	// EGA SCI1 picture patches
 			SearchMan.listMatchingMembers(files, "*.p32");	// Amiga SCI1 picture patches
+			SearchMan.listMatchingMembers(files, "*.p64");	// Amiga AGA SCI1 (i.e. Longbow) picture patches
 		} else if (i == kResourceTypeScript) {
 			if (files.size() == 0)
 				// SCI3 (we can't use getSciVersion() at this point)
