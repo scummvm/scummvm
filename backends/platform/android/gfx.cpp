@@ -266,6 +266,11 @@ void OSystem_Android::initSize(uint width, uint height,
 	// setMouseCursor however, so just take a guess at the desired
 	// size (it's small).
 	_mouse_texture_palette->allocBuffer(20, 20);
+
+	// clear screen
+	GLCALL(glClearColorx(0, 0, 0, 1 << 16));
+	GLCALL(glClear(GL_COLOR_BUFFER_BIT));
+	JNI::swapBuffers();
 }
 
 int OSystem_Android::getScreenChangeID() const {
@@ -528,9 +533,6 @@ void OSystem_Android::copyRectToOverlay(const OverlayColor *buf, int pitch,
 	ENTER("%p, %d, %d, %d, %d, %d", buf, pitch, x, y, w, h);
 
 	GLTHREADCHECK;
-
-	const Graphics::Surface *surface = _overlay_texture->surface_const();
-	assert(surface->bytesPerPixel == sizeof(buf[0]));
 
 	// This 'pitch' is pixels not bytes
 	_overlay_texture->updateBuffer(x, y, w, h, buf, pitch * sizeof(buf[0]));
