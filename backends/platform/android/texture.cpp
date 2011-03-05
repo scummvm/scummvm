@@ -166,15 +166,15 @@ void GLESTexture::allocBuffer(GLuint w, GLuint h) {
 }
 
 void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
-								const void *buf, int pitch) {
-	ENTER("%u, %u, %u, %u, %p, %d", x, y, w, h, buf, pitch);
+								const void *buf, int pitch_buf) {
+	ENTER("%u, %u, %u, %u, %p, %d", x, y, w, h, buf, pitch_buf);
 
 	GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
 	GLCALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 
 	setDirtyRect(Common::Rect(x, y, x + w, y + h));
 
-	if (static_cast<int>(w) * _bytesPerPixel == pitch) {
+	if (static_cast<int>(w) * _bytesPerPixel == pitch_buf) {
 		GLCALL(glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h,
 								_glFormat, _glType, buf));
 	} else {
@@ -191,7 +191,7 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 		do {
 			memcpy(dst, src, w * _bytesPerPixel);
 			dst += w * _bytesPerPixel;
-			src += pitch;
+			src += pitch_buf;
 		} while (--count);
 
 		GLCALL(glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h,
@@ -206,7 +206,7 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 			GLCALL(glTexSubImage2D(GL_TEXTURE_2D, 0, x, y,
 									w, 1, _glFormat, _glType, src));
 			++y;
-			src += pitch;
+			src += pitch_buf;
 		} while (--h);
 #endif
 	}
@@ -359,7 +359,7 @@ void GLESPaletteTexture::fillBuffer(uint32 color) {
 
 void GLESPaletteTexture::updateBuffer(GLuint x, GLuint y,
 										GLuint w, GLuint h,
-										const void *buf, int pitch) {
+										const void *buf, int pitch_buf) {
 	_all_dirty = true;
 
 	const byte * src = static_cast<const byte *>(buf);
@@ -368,7 +368,7 @@ void GLESPaletteTexture::updateBuffer(GLuint x, GLuint y,
 	do {
 		memcpy(dst, src, w * _bytesPerPixel);
 		dst += _surface.pitch;
-		src += pitch;
+		src += pitch_buf;
 	} while (--h);
 }
 
