@@ -59,7 +59,7 @@ void Mechanical::setupOpcodes() {
 	OPCODE(107, o_elevatorRotationMove);
 	OPCODE(108, o_elevatorRotationStop);
 	OPCODE(121, o_elevatorWindowMovie);
-	OPCODE(122, opcode_122);
+	OPCODE(122, o_elevatorGoMiddle);
 	OPCODE(123, o_elevatorTopMovie);
 	OPCODE(124, opcode_124);
 	OPCODE(125, o_mystStaircaseMovie);
@@ -82,7 +82,7 @@ void Mechanical::setupOpcodes() {
 	OPCODE(209, opcode_209);
 
 	// "Exit" Opcodes
-	OPCODE(300, opcode_300);
+	OPCODE(300, NOP);
 }
 
 #undef OPCODE
@@ -92,6 +92,7 @@ void Mechanical::disablePersistentScripts() {
 	opcode_205_disable();
 	opcode_206_disable();
 	opcode_209_disable();
+	_elevatorGoingMiddle = false;
 }
 
 void Mechanical::runPersistentScripts() {
@@ -99,6 +100,9 @@ void Mechanical::runPersistentScripts() {
 
 	if (_elevatorRotationLeverMoving)
 		elevatorRotation_run();
+
+	if (_elevatorGoingMiddle)
+		elevatorGoMiddle_run();
 
 	opcode_205_run();
 	opcode_206_run();
@@ -139,8 +143,13 @@ uint16 Mechanical::getVar(uint16 var) {
 		return _state.elevatorRotation;
 	case 12: // Fortress Elevator Rotation Cog Position
 		return 5 - (uint16)(_elevatorRotationGearPosition + 0.5) % 6;
+	case 13: // Elevator position
+		return _elevatorPosition;
 	case 14: // Elevator going down when at top
-		return _elevatorGoingDown; // TODO add too late value (2)
+		if (_elevatorGoingDown && _elevatorTooLate)
+			return 2;
+		else
+			return _elevatorGoingDown;
 	case 15: // Code Lock Execute Button Script
 		if (_mystStaircaseState)
 			return 0;
@@ -187,6 +196,9 @@ void Mechanical::toggleVar(uint16 var) {
 	case 19: // Code Lock Shape #4 - Right
 		_state.codeShape[var - 16] = (_state.codeShape[var - 16] + 1) % 10;
 		break;
+	case 23: // Elevator player is in cabin
+		_elevatorInCabin = false;
+		break;
 	case 102: // Red page
 		if (!(_globals.redPagesInBook & 4)) {
 			if (_globals.heldPage == 9)
@@ -213,6 +225,8 @@ bool Mechanical::setVarValue(uint16 var, uint16 value) {
 	bool refresh = false;
 
 	switch (var) {
+	case 13:
+		_elevatorPosition = value;
 	case 14: // Elevator going down when at top
 		_elevatorGoingDown = value;
 		break;
@@ -342,14 +356,63 @@ void Mechanical::o_elevatorWindowMovie(uint16 op, uint16 var, uint16 argc, uint1
 	_vm->_video->waitUntilMovieEnds(window);
 }
 
-void Mechanical::opcode_122(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 0) {
-		// Used on Card 6120 (Elevator)
-		// Called when Exit Midde Button Pressed
+void Mechanical::o_elevatorGoMiddle(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Elevator go middle from top", op);
 
-		// TODO: hcelev? Movie of Elevator?
-	} else
-		unknown(op, var, argc, argv);
+	_elevatorTooLate = false;
+	_elevatorTopCounter = 5;
+	_elevatorGoingMiddle = true;
+	_elevatorInCabin = true;
+	_elevatorNextTime = _vm->_system->getMillis() + 1000;
+}
+
+void Mechanical::elevatorGoMiddle_run() {
+	uint32 time = _vm->_system->getMillis();
+	if (_elevatorNextTime < time) {
+		_elevatorNextTime = time + 1000;
+		_elevatorTopCounter--;
+
+		if (_elevatorTopCounter > 0) {
+			// Draw button pressed
+			if (_elevatorInCabin) {
+				_vm->_gfx->copyImageSectionToScreen(6332, Common::Rect(0, 35, 51, 63), Common::Rect(10, 137, 61, 165));
+				_vm->_system->updateScreen();
+			}
+
+			// Blip
+			_vm->_sound->playSoundBlocking(14120);
+
+			// Restore button
+			if (_elevatorInCabin) {
+				_vm->_gfx->copyBackBufferToScreen(Common::Rect(10, 137, 61, 165));
+				_vm->_system->updateScreen();
+			 }
+		} else if (_elevatorInCabin) {
+			_elevatorTooLate = true;
+
+			// Elevator going to middle animation
+			_vm->_cursor->hideCursor();
+			_vm->_sound->playSoundBlocking(11120);
+			_vm->_gfx->copyImageToBackBuffer(6118, Common::Rect(544, 333));
+			_vm->_sound->replaceSoundMyst(12120);
+			_vm->_gfx->runTransition(2, Common::Rect(177, 0, 370, 333), 25, 0);
+			_vm->_sound->playSoundBlocking(13120);
+			_vm->_sound->replaceSoundMyst(8120);
+			_vm->_gfx->copyImageToBackBuffer(6327, Common::Rect(544, 333));
+			_vm->_system->delayMillis(500);
+			_vm->_sound->replaceSoundMyst(9120);
+			static uint16 moviePos[2] = { 3540, 5380 };
+			o_elevatorWindowMovie(121, 0, 2, moviePos);
+			_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
+			_vm->_sound->replaceSoundMyst(10120);
+			_vm->_cursor->showCursor();
+
+			_elevatorGoingMiddle = false;
+			_elevatorPosition = 1;
+
+			_vm->changeToCard(6327, true);
+		}
+	}
 }
 
 void Mechanical::o_elevatorTopMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -598,12 +661,6 @@ void Mechanical::opcode_209(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 		g_opcode209Parameters.enabled = true;
 	else
 		unknown(op, var, argc, argv);
-}
-
-void Mechanical::opcode_300(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used in Card 6156 (Fortress Elevator View)
-	varUnusedCheck(op, var);
-	// TODO: Fill in Logic. Clearing Variable for View?
 }
 
 } // End of namespace MystStacks

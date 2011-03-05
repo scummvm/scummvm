@@ -55,6 +55,7 @@ private:
 	void opcode_202_run();
 	void opcode_202_disable();
 	void elevatorRotation_run();
+	void elevatorGoMiddle_run();
 	void opcode_205_run();
 	void opcode_205_disable();
 	void opcode_206_run();
@@ -69,7 +70,7 @@ private:
 	DECLARE_OPCODE(o_elevatorRotationMove);
 	DECLARE_OPCODE(o_elevatorRotationStop);
 	DECLARE_OPCODE(o_elevatorWindowMovie);
-	DECLARE_OPCODE(opcode_122);
+	DECLARE_OPCODE(o_elevatorGoMiddle);
 	DECLARE_OPCODE(o_elevatorTopMovie);
 	DECLARE_OPCODE(opcode_124);
 	DECLARE_OPCODE(o_mystStaircaseMovie);
@@ -90,8 +91,6 @@ private:
 	DECLARE_OPCODE(opcode_206);
 	DECLARE_OPCODE(opcode_209);
 
-	DECLARE_OPCODE(opcode_300);
-
 	MystGameState::Mechanical &_state;
 
 	bool _mystStaircaseState; // 76
@@ -104,6 +103,13 @@ private:
 	float _elevatorRotationGearPosition; // 124
 	uint16 _elevatorRotationSoundId; // 128
 	bool _elevatorRotationLeverMoving; // 184
+
+	bool _elevatorGoingMiddle; // 148
+	bool _elevatorTooLate;
+	uint16 _elevatorPosition; // 104
+	bool _elevatorInCabin; // 108
+	uint16 _elevatorTopCounter;
+	uint32 _elevatorNextTime;
 
 	uint16 _crystalLit; // 130
 
