@@ -103,7 +103,7 @@ private:
 	bool _force_redraw;
 
 	// Game layer
-	GLESPaletteTexture *_game_texture;
+	GLESPalette888Texture *_game_texture;
 	int _shake_offset;
 	Common::Rect _focus_rect;
 
@@ -112,7 +112,7 @@ private:
 	bool _show_overlay;
 
 	// Mouse layer
-	GLESPaletteATexture *_mouse_texture;
+	GLESPalette8888Texture *_mouse_texture;
 	Common::Point _mouse_hotspot;
 	int _mouse_targetscale;
 	bool _show_mouse;

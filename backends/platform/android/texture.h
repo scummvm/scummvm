@@ -39,9 +39,12 @@ class GLESTexture {
 public:
 	static void initGLExtensions();
 
-	GLESTexture();
+protected:
+	GLESTexture(byte bytesPerPixel, GLenum glFormat, GLenum glType,
+				size_t paletteSize);
 	virtual ~GLESTexture();
 
+public:
 	void release();
 	void reinit();
 	void initSize();
@@ -80,14 +83,6 @@ public:
 	}
 
 protected:
-	virtual byte bytesPerPixel() const = 0;
-	virtual GLenum glFormat() const = 0;
-	virtual GLenum glType() const = 0;
-
-	virtual size_t paletteSize() const {
-		return 0;
-	}
-
 	inline void setDirty() {
 		_all_dirty = true;
 		_dirty_rect = Common::Rect();
@@ -102,6 +97,11 @@ protected:
 		}
 	}
 
+	byte _bytesPerPixel;
+	GLenum _glFormat;
+	GLenum _glType;
+	size_t _paletteSize;
+
 	GLuint _texture_name;
 	Graphics::Surface _surface;
 	GLuint _texture_width;
@@ -114,42 +114,25 @@ protected:
 
 // RGBA4444 texture
 class GLES4444Texture : public GLESTexture {
-protected:
-	virtual byte bytesPerPixel() const {
-		return 2;
-	}
-
-	virtual GLenum glFormat() const {
-		return GL_RGBA;
-	}
-
-	virtual GLenum glType() const {
-		return GL_UNSIGNED_SHORT_4_4_4_4;
-	}
+public:
+	GLES4444Texture();
+	virtual ~GLES4444Texture();
 };
 
 // RGB565 texture
 class GLES565Texture : public GLESTexture {
-protected:
-	virtual byte bytesPerPixel() const {
-		return 2;
-	}
-
-	virtual GLenum glFormat() const {
-		return GL_RGB;
-	}
-
-	virtual GLenum glType() const {
-		return GL_UNSIGNED_SHORT_5_6_5;
-	}
+public:
+	GLES565Texture();
+	virtual ~GLES565Texture();
 };
 
-// RGB888 256-entry paletted texture
 class GLESPaletteTexture : public GLESTexture {
-public:
-	GLESPaletteTexture();
+protected:
+	GLESPaletteTexture(byte bytesPerPixel, GLenum glFormat, GLenum glType,
+						size_t paletteSize);
 	virtual ~GLESPaletteTexture();
 
+public:
 	virtual void allocBuffer(GLuint width, GLuint height);
 	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
 								const void *buf, int pitch);
@@ -171,41 +154,23 @@ public:
 	};
 
 protected:
-	virtual byte bytesPerPixel() const {
-		return 1;
-	}
-
-	virtual GLenum glFormat() const {
-		return GL_RGB;
-	}
-
-	virtual GLenum glType() const {
-		return GL_PALETTE8_RGB8_OES;
-	}
-
-	virtual size_t paletteSize() const {
-		return 256 * 3;
-	}
-
 	void uploadTexture() const;
 
 	byte *_texture;
 };
 
+// RGB888 256-entry paletted texture
+class GLESPalette888Texture : public GLESPaletteTexture {
+public:
+	GLESPalette888Texture();
+	virtual ~GLESPalette888Texture();
+};
+
 // RGBA8888 256-entry paletted texture
-class GLESPaletteATexture : public GLESPaletteTexture {
-protected:
-	virtual GLenum glFormat() const {
-		return GL_RGBA;
-	}
-
-	virtual GLenum glType() const {
-		return GL_PALETTE8_RGBA8_OES;
-	}
-
-	virtual size_t paletteSize() const {
-		return 256 * 4;
-	}
+class GLESPalette8888Texture : public GLESPaletteTexture {
+public:
+	GLESPalette8888Texture();
+	virtual ~GLESPalette8888Texture();
 };
 
 #endif

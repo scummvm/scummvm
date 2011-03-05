@@ -326,9 +326,9 @@ void OSystem_Android::initBackend() {
 	initSurface();
 	initViewport();
 
-	_game_texture = new GLESPaletteTexture();
+	_game_texture = new GLESPalette888Texture();
 	_overlay_texture = new GLES4444Texture();
-	_mouse_texture = new GLESPaletteATexture();
+	_mouse_texture = new GLESPalette8888Texture();
 
 	// renice this thread to boost the audio thread
 	if (setpriority(PRIO_PROCESS, 0, 19) < 0)
