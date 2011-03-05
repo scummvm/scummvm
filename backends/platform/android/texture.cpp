@@ -348,15 +348,6 @@ void GLESPaletteTexture::updateBuffer(GLuint x, GLuint y,
 	} while (--h);
 }
 
-void GLESPaletteTexture::uploadTexture() const {
-	const size_t texture_size =
-		_paletteSize + _texture_width * _texture_height * _bytesPerPixel;
-
-	GLCALL(glCompressedTexImage2D(GL_TEXTURE_2D, 0, _glType,
-									_texture_width, _texture_height,
-									0, texture_size, _texture));
-}
-
 void GLESPaletteTexture::drawTexture(GLshort x, GLshort y, GLshort w,
 										GLshort h) {
 	if (_all_dirty) {
@@ -369,7 +360,14 @@ void GLESPaletteTexture::drawTexture(GLshort x, GLshort y, GLshort w,
 								GL_CLAMP_TO_EDGE));
 		GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
 								GL_CLAMP_TO_EDGE));
-		uploadTexture();
+
+		const size_t texture_size =
+			_paletteSize + _texture_width * _texture_height * _bytesPerPixel;
+
+		GLCALL(glCompressedTexImage2D(GL_TEXTURE_2D, 0, _glType,
+										_texture_width, _texture_height,
+										0, texture_size, _texture));
+
 		_all_dirty = false;
 	}
 

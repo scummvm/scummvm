@@ -57,6 +57,10 @@ public:
 
 	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
 
+	inline void drawTexture() {
+		drawTexture(0, 0, _surface.w, _surface.h);
+	}
+
 	inline GLuint width() const {
 		return _surface.w;
 	}
@@ -76,10 +80,6 @@ public:
 
 	inline bool dirty() const {
 		return _all_dirty || !_dirty_rect.isEmpty();
-	}
-
-	inline void drawTexture() {
-		drawTexture(0, 0, _surface.w, _surface.h);
 	}
 
 protected:
@@ -154,8 +154,6 @@ public:
 	};
 
 protected:
-	void uploadTexture() const;
-
 	byte *_texture;
 };
 
