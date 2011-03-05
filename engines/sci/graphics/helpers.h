@@ -138,12 +138,13 @@ struct PalSchedule {
 	uint32 schedule;
 };
 
+// Game view types, sorted by the number of colors
 enum ViewType {
-	kViewUnknown,
-	kViewEga,
-	kViewVga,
-	kViewVga11,
-	kViewAmiga
+	kViewUnknown,   // uninitialized, or non-SCI
+	kViewEga,       // EGA SCI0/SCI1 and Amiga SCI0/SCI1 ECS 16 colors
+	kViewAmiga,     // Amiga SCI1 ECS 32 colors
+	kViewVga,       // VGA SCI1 256 colors or Amiga SCI1 AGA 64 colors (i.e. Longbow)
+	kViewVga11      // VGA SCI1.1 and newer 256 colors
 };
 
 } // End of namespace Sci
