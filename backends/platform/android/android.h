@@ -103,7 +103,7 @@ private:
 	bool _force_redraw;
 
 	// Game layer
-	GLESPalette888Texture *_game_texture;
+	GLESTexture *_game_texture;
 	int _shake_offset;
 	Common::Rect _focus_rect;
 
@@ -112,7 +112,9 @@ private:
 	bool _show_overlay;
 
 	// Mouse layer
-	GLESPalette8888Texture *_mouse_texture;
+	GLESTexture *_mouse_texture;
+	GLESPaletteTexture *_mouse_texture_palette;
+	GLESTexture *_mouse_texture_rgb;
 	Common::Point _mouse_hotspot;
 	int _mouse_targetscale;
 	bool _show_mouse;
@@ -144,6 +146,12 @@ private:
 	void deinitSurface();
 	void initViewport();
 
+#ifdef USE_RGB_COLOR
+	Common::String getPixelFormatName(const Graphics::PixelFormat &format) const;
+	void initTexture(GLESTexture **texture, uint width, uint height,
+						const Graphics::PixelFormat *format, bool alphaPalette);
+#endif
+
 	void setupKeymapper();
 	void _setCursorPalette(const byte *colors, uint start, uint num);
 
@@ -158,11 +166,18 @@ public:
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
+
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
 	bool setGraphicsMode(const char *name);
 	virtual bool setGraphicsMode(int mode);
 	virtual int getGraphicsMode() const;
+
+#ifdef USE_RGB_COLOR
+	virtual Graphics::PixelFormat getScreenFormat() const;
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
+#endif
+
 	virtual void initSize(uint width, uint height,
 							const Graphics::PixelFormat *format);
 	virtual int getScreenChangeID() const;

@@ -62,6 +62,92 @@ int OSystem_Android::getGraphicsMode() const {
 	return 1;
 }
 
+#ifdef USE_RGB_COLOR
+Graphics::PixelFormat OSystem_Android::getScreenFormat() const {
+	return _game_texture->getPixelFormat();
+}
+
+Common::List<Graphics::PixelFormat> OSystem_Android::getSupportedFormats() const {
+	Common::List<Graphics::PixelFormat> res;
+	res.push_back(GLES565Texture::getPixelFormat());
+	res.push_back(GLES5551Texture::getPixelFormat());
+	res.push_back(GLES4444Texture::getPixelFormat());
+	res.push_back(Graphics::PixelFormat::createFormatCLUT8());
+
+	return res;
+}
+
+Common::String OSystem_Android::getPixelFormatName(const Graphics::PixelFormat &format) const {
+	if (format.bytesPerPixel == 1)
+		return "CLUT8";
+
+	if (format.aLoss == 8)
+		return Common::String::format("RGB%u%u%u",
+										8 - format.rLoss,
+										8 - format.gLoss,
+										8 - format.bLoss);
+
+	return Common::String::format("RGBA%u%u%u%u",
+									8 - format.rLoss,
+									8 - format.gLoss,
+									8 - format.bLoss,
+									8 - format.aLoss);
+}
+
+void OSystem_Android::initTexture(GLESTexture **texture,
+									uint width, uint height,
+									const Graphics::PixelFormat *format,
+									bool alphaPalette) {
+	assert(texture);
+	Graphics::PixelFormat format_clut8 =
+		Graphics::PixelFormat::createFormatCLUT8();
+	Graphics::PixelFormat format_current;
+	Graphics::PixelFormat format_new;
+
+	if (*texture)
+		format_current = (*texture)->getPixelFormat();
+	else
+		format_current = Graphics::PixelFormat();
+
+	if (format)
+		format_new = *format;
+	else
+		format_new = format_clut8;
+
+	if (format_current != format_new) {
+		if (*texture)
+			LOGD("switching pixel format from: %s",
+					getPixelFormatName((*texture)->getPixelFormat()).c_str());
+
+		delete *texture;
+
+		if (format_new == GLES565Texture::getPixelFormat())
+			*texture = new GLES565Texture();
+		else if (format_new == GLES5551Texture::getPixelFormat())
+			*texture = new GLES5551Texture();
+		else if (format_new == GLES4444Texture::getPixelFormat())
+			*texture = new GLES4444Texture();
+		else {
+			// TODO what now?
+			if (format_new != format_clut8)
+				LOGE("unsupported pixel format: %s",
+					getPixelFormatName(format_new).c_str());
+
+			if (alphaPalette)
+				*texture = new GLESPalette8888Texture;
+			else
+				*texture = new GLESPalette888Texture;
+		}
+
+		LOGD("new pixel format: %s",
+				getPixelFormatName((*texture)->getPixelFormat()).c_str());
+	}
+
+	(*texture)->allocBuffer(width, height);
+	(*texture)->fillBuffer(0);
+}
+#endif
+
 void OSystem_Android::initSurface() {
 	LOGD("initializing surface");
 
@@ -151,9 +237,6 @@ void OSystem_Android::initSize(uint width, uint height,
 
 	GLTHREADCHECK;
 
-	_game_texture->allocBuffer(width, height);
-	_game_texture->fillBuffer(0);
-
 	int overlay_width = _egl_surface_width;
 	int overlay_height = _egl_surface_height;
 
@@ -172,11 +255,17 @@ void OSystem_Android::initSize(uint width, uint height,
 
 	_overlay_texture->allocBuffer(overlay_width, overlay_height);
 
+#ifdef USE_RGB_COLOR
+	initTexture(&_game_texture, width, height, format, false);
+#else
+	_game_texture->allocBuffer(width, height);
+	_game_texture->fillBuffer(0);
+#endif
 	// Don't know mouse size yet - it gets reallocated in
 	// setMouseCursor.  We need the palette allocated before
 	// setMouseCursor however, so just take a guess at the desired
 	// size (it's small).
-	_mouse_texture->allocBuffer(20, 20);
+	_mouse_texture_palette->allocBuffer(20, 20);
 }
 
 int OSystem_Android::getScreenChangeID() const {
@@ -194,20 +283,30 @@ int16 OSystem_Android::getWidth() {
 void OSystem_Android::setPalette(const byte *colors, uint start, uint num) {
 	ENTER("%p, %u, %u", colors, start, num);
 
+#ifdef USE_RGB_COLOR
+	assert(_game_texture->getPixelFormat().bytesPerPixel == 1);
+#endif
+
 	GLTHREADCHECK;
+
+	memcpy(((GLESPaletteTexture *)_game_texture)->palette() + start * 3,
+			colors, num * 3);
 
 	if (!_use_mouse_palette)
 		_setCursorPalette(colors, start, num);
-
-	memcpy(_game_texture->palette() + start * 3, colors, num * 3);
 }
 
 void OSystem_Android::grabPalette(byte *colors, uint start, uint num) {
 	ENTER("%p, %u, %u", colors, start, num);
 
+#ifdef USE_RGB_COLOR
+	assert(_game_texture->getPixelFormat().bytesPerPixel == 1);
+#endif
+
 	GLTHREADCHECK;
 
-	memcpy(colors, _game_texture->palette_const() + start * 3, num * 3);
+	memcpy(colors, ((GLESPaletteTexture *)_game_texture)->palette() + start * 3,
+			num * 3);
 }
 
 void OSystem_Android::copyRectToScreen(const byte *buf, int pitch,
@@ -325,6 +424,7 @@ Graphics::Surface *OSystem_Android::lockScreen() {
 
 	GLTHREADCHECK;
 
+	// TODO this doesn't return any pixel data for non CLUT8
 	Graphics::Surface *surface = _game_texture->surface();
 	assert(surface->pixels);
 
@@ -353,6 +453,7 @@ void OSystem_Android::fillScreen(uint32 col) {
 
 	GLTHREADCHECK;
 
+	// TODO FIXME rgb colors
 	assert(col < 256);
 	_game_texture->fillBuffer(col);
 }
@@ -472,19 +573,39 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 
 	assert(keycolor < 256);
 
-	_mouse_texture->allocBuffer(w, h);
+#ifdef USE_RGB_COLOR
+	if (format && format->bytesPerPixel > 1) {
+		if (_mouse_texture != _mouse_texture_rgb)
+			LOGD("switching to rgb mouse cursor");
 
-	// Update palette alpha based on keycolor
-	byte *palette = _mouse_texture->palette();
-	uint i = 256;
+		initTexture(&_mouse_texture_rgb, w, h, format, true);
 
-	do {
-		palette[3] = 0xff;
-		palette += 4;
-	} while (--i);
+		_mouse_texture = _mouse_texture_rgb;
+	} else {
+		if (_mouse_texture != _mouse_texture_palette)
+			LOGD("switching to paletted mouse cursor");
 
-	palette = _mouse_texture->palette();
-	palette[keycolor * 4 + 3] = 0x00;
+		initTexture((GLESTexture **)&_mouse_texture_palette, w, h, format,
+					true);
+
+		_mouse_texture = _mouse_texture_palette;
+
+		delete _mouse_texture_rgb;
+		_mouse_texture_rgb = 0;
+	}
+#else
+	_mouse_texture_palette->allocBuffer(w, h);
+#endif
+
+	if (_mouse_texture->getPixelFormat().bytesPerPixel == 1) {
+		// Update palette alpha based on keycolor
+		byte *palette = _mouse_texture_palette->palette();
+
+		for (uint i = 0; i < 256; ++i, palette += 4)
+			palette[3] = 0xff;
+
+		_mouse_texture_palette->palette()[keycolor * 4 + 3] = 0x00;
+	}
 
 	if (w == 0 || h == 0)
 		return;
@@ -497,17 +618,14 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 
 void OSystem_Android::_setCursorPalette(const byte *colors,
 										uint start, uint num) {
-	byte *palette = _mouse_texture->palette() + start * 4;
+	byte *palette = _mouse_texture_palette->palette() + start * 4;
 
-	do {
-		for (int i = 0; i < 3; ++i)
-			palette[i] = colors[i];
-
+	for (uint i = 0; i < num; ++i, palette += 4, colors += 3) {
+		palette[0] = colors[0];
+		palette[1] = colors[1];
+		palette[2] = colors[2];
 		// Leave alpha untouched to preserve keycolor
-
-		palette += 4;
-		colors += 3;
-	} while (--num);
+	}
 }
 
 void OSystem_Android::setCursorPalette(const byte *colors,
@@ -516,12 +634,35 @@ void OSystem_Android::setCursorPalette(const byte *colors,
 
 	GLTHREADCHECK;
 
+	if (_mouse_texture->getPixelFormat().bytesPerPixel != 1) {
+		LOGD("switching to paletted mouse cursor");
+
+		_mouse_texture = _mouse_texture_palette;
+
+		delete _mouse_texture_rgb;
+		_mouse_texture_rgb = 0;
+	}
+
 	_setCursorPalette(colors, start, num);
 	_use_mouse_palette = true;
 }
 
 void OSystem_Android::disableCursorPalette(bool disable) {
 	ENTER("%d", disable);
+
+	// when disabling the cursor palette, and we're running a clut8 game,
+	// it expects the game palette to be used for the cursor
+	if (disable && _game_texture->getPixelFormat().bytesPerPixel == 1) {
+		byte *src = ((GLESPaletteTexture *)_game_texture)->palette();
+		byte *dst = _mouse_texture_palette->palette();
+
+		for (uint i = 0; i < 256; ++i, src += 3, dst += 4) {
+			dst[0] = src[0];
+			dst[1] = src[1];
+			dst[2] = src[2];
+			// Leave alpha untouched to preserve keycolor
+		}
+	}
 
 	_use_mouse_palette = !disable;
 }

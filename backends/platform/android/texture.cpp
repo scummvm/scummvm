@@ -83,11 +83,12 @@ void GLESTexture::initGLExtensions() {
 }
 
 GLESTexture::GLESTexture(byte bytesPerPixel, GLenum glFormat, GLenum glType,
-		size_t paletteSize) :
+		size_t paletteSize, Graphics::PixelFormat pixelFormat) :
 	_bytesPerPixel(bytesPerPixel),
 	_glFormat(glFormat),
 	_glType(glType),
 	_paletteSize(paletteSize),
+	_pixelFormat(pixelFormat),
 	_texture_width(0),
 	_texture_height(0),
 	_all_dirty(true)
@@ -279,14 +280,21 @@ void GLESTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 }
 
 GLES4444Texture::GLES4444Texture() :
-	GLESTexture(2, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, 0) {
+	GLESTexture(2, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, 0, getPixelFormat()) {
 }
 
 GLES4444Texture::~GLES4444Texture() {
 }
 
+GLES5551Texture::GLES5551Texture() :
+	GLESTexture(2, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, 0, getPixelFormat()) {
+}
+
+GLES5551Texture::~GLES5551Texture() {
+}
+
 GLES565Texture::GLES565Texture() :
-	GLESTexture(2, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, 0) {
+	GLESTexture(2, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, 0, getPixelFormat()) {
 }
 
 GLES565Texture::~GLES565Texture() {
@@ -294,7 +302,8 @@ GLES565Texture::~GLES565Texture() {
 
 GLESPaletteTexture::GLESPaletteTexture(byte bytesPerPixel, GLenum glFormat,
 										GLenum glType, size_t paletteSize) :
-	GLESTexture(bytesPerPixel, glFormat, glType, paletteSize),
+	GLESTexture(bytesPerPixel, glFormat, glType, paletteSize,
+				Graphics::PixelFormat::createFormatCLUT8()),
 	_texture(0)
 {
 }

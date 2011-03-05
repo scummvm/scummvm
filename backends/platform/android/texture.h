@@ -31,6 +31,7 @@
 #include <GLES/gl.h>
 
 #include "graphics/surface.h"
+#include "graphics/pixelformat.h"
 
 #include "common/rect.h"
 #include "common/array.h"
@@ -41,10 +42,11 @@ public:
 
 protected:
 	GLESTexture(byte bytesPerPixel, GLenum glFormat, GLenum glType,
-				size_t paletteSize);
-	virtual ~GLESTexture();
+				size_t paletteSize, Graphics::PixelFormat pixelFormat);
 
 public:
+	virtual ~GLESTexture();
+
 	void release();
 	void reinit();
 	void initSize();
@@ -82,6 +84,10 @@ public:
 		return _all_dirty || !_dirty_rect.isEmpty();
 	}
 
+	inline Graphics::PixelFormat getPixelFormat() const {
+		return _pixelFormat;
+	}
+
 protected:
 	inline void setDirty() {
 		_all_dirty = true;
@@ -110,6 +116,8 @@ protected:
 
 	// Covers dirty area
 	Common::Rect _dirty_rect;
+
+	Graphics::PixelFormat _pixelFormat;
 };
 
 // RGBA4444 texture
@@ -117,6 +125,21 @@ class GLES4444Texture : public GLESTexture {
 public:
 	GLES4444Texture();
 	virtual ~GLES4444Texture();
+
+	static inline Graphics::PixelFormat getPixelFormat() {
+		return Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0);
+	}
+};
+
+// RGBA5551 texture
+class GLES5551Texture : public GLESTexture {
+public:
+	GLES5551Texture();
+	virtual ~GLES5551Texture();
+
+	static inline Graphics::PixelFormat getPixelFormat() {
+		return Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0);
+	}
 };
 
 // RGB565 texture
@@ -124,15 +147,20 @@ class GLES565Texture : public GLESTexture {
 public:
 	GLES565Texture();
 	virtual ~GLES565Texture();
+
+	static inline Graphics::PixelFormat getPixelFormat() {
+		return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	}
 };
 
 class GLESPaletteTexture : public GLESTexture {
 protected:
 	GLESPaletteTexture(byte bytesPerPixel, GLenum glFormat, GLenum glType,
 						size_t paletteSize);
-	virtual ~GLESPaletteTexture();
 
 public:
+	virtual ~GLESPaletteTexture();
+
 	virtual void allocBuffer(GLuint width, GLuint height);
 	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
 								const void *buf, int pitch);

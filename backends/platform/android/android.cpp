@@ -110,6 +110,8 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_game_texture(0),
 	_overlay_texture(0),
 	_mouse_texture(0),
+	_mouse_texture_palette(0),
+	_mouse_texture_rgb(0),
 	_use_mouse_palette(false),
 	_show_mouse(false),
 	_show_overlay(false),
@@ -328,7 +330,8 @@ void OSystem_Android::initBackend() {
 
 	_game_texture = new GLESPalette888Texture();
 	_overlay_texture = new GLES4444Texture();
-	_mouse_texture = new GLESPalette8888Texture();
+	_mouse_texture_palette = new GLESPalette8888Texture();
+	_mouse_texture = _mouse_texture_palette;
 
 	// renice this thread to boost the audio thread
 	if (setpriority(PRIO_PROCESS, 0, 19) < 0)
@@ -591,7 +594,8 @@ void OSystem_Android::quit() {
 
 	delete _game_texture;
 	delete _overlay_texture;
-	delete _mouse_texture;
+	delete _mouse_texture_palette;
+	delete _mouse_texture_rgb;
 
 	deinitSurface();
 }
