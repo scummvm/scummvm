@@ -71,6 +71,10 @@ public:
 		return _surface.h;
 	}
 
+	inline uint16 pitch() const {
+		return _surface.pitch;
+	}
+
 	inline const Graphics::Surface *surface_const() const {
 		return &_surface;
 	}
@@ -84,7 +88,7 @@ public:
 		return _all_dirty || !_dirty_rect.isEmpty();
 	}
 
-	inline Graphics::PixelFormat getPixelFormat() const {
+	inline const Graphics::PixelFormat &getPixelFormat() const {
 		return _pixelFormat;
 	}
 

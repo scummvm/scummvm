@@ -114,7 +114,7 @@ private:
 	// Mouse layer
 	GLESTexture *_mouse_texture;
 	GLESPaletteTexture *_mouse_texture_palette;
-	GLESTexture *_mouse_texture_rgb;
+	GLES5551Texture *_mouse_texture_rgb;
 	Common::Point _mouse_hotspot;
 	int _mouse_targetscale;
 	bool _show_mouse;
