@@ -153,7 +153,7 @@ private:
 #endif
 
 	void setupKeymapper();
-	void _setCursorPalette(const byte *colors, uint start, uint num);
+	void setCursorPaletteInternal(const byte *colors, uint start, uint num);
 
 public:
 	OSystem_Android(int audio_sample_rate, int audio_buffer_size);

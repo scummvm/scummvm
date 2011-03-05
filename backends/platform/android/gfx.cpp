@@ -298,7 +298,7 @@ void OSystem_Android::setPalette(const byte *colors, uint start, uint num) {
 			colors, num * 3);
 
 	if (!_use_mouse_palette)
-		_setCursorPalette(colors, start, num);
+		setCursorPaletteInternal(colors, start, num);
 }
 
 void OSystem_Android::grabPalette(byte *colors, uint start, uint num) {
@@ -618,8 +618,8 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 	_mouse_targetscale = cursorTargetScale;
 }
 
-void OSystem_Android::_setCursorPalette(const byte *colors,
-										uint start, uint num) {
+void OSystem_Android::setCursorPaletteInternal(const byte *colors,
+												uint start, uint num) {
 	byte *palette = _mouse_texture_palette->palette() + start * 4;
 
 	for (uint i = 0; i < num; ++i, palette += 4, colors += 3) {
@@ -645,7 +645,7 @@ void OSystem_Android::setCursorPalette(const byte *colors,
 		_mouse_texture_rgb = 0;
 	}
 
-	_setCursorPalette(colors, start, num);
+	setCursorPaletteInternal(colors, start, num);
 	_use_mouse_palette = true;
 }
 
