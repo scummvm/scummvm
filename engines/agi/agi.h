@@ -810,9 +810,7 @@ public:
 	Common::Error saveGameState(int slot, const char *desc);
 
 private:
-
-	uint32 _tickTimer;
-	uint32 _lastTickTimer;
+	uint32 _lastTick;
 
 	int _keyQueue[KEY_QUEUE_SIZE];
 	int _keyQueueStart;
@@ -883,7 +881,6 @@ public:
 	virtual bool isKeypress();
 	virtual void clearKeyQueue();
 
-	static void agiTimerFunctionLow(void *refCon);
 	void initPriTable();
 
 	void newInputMode(InputMode mode);

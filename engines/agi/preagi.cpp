@@ -122,9 +122,6 @@ void PreAgiEngine::initialize() {
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
 							_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
-
-	//_timer->installTimerProc(agiTimerFunctionLow, 10 * 1000, NULL);
-
 	debugC(2, kDebugLevelMain, "Detect game");
 
 	// clear all resources and events

@@ -273,23 +273,16 @@ void AgiEngine::processEvents() {
 }
 
 void AgiEngine::pollTimer() {
-	uint32 dm;
+	_lastTick += 50;
 
-	if (_tickTimer < _lastTickTimer)
-		_lastTickTimer = 0;
-
-	while ((dm = _tickTimer - _lastTickTimer) < 5) {
+	while (_system->getMillis() < _lastTick) {
 		processEvents();
 		_console->onFrame();
 		_system->delayMillis(10);
 		_system->updateScreen();
 	}
-	_lastTickTimer = _tickTimer;
-}
 
-void AgiEngine::agiTimerFunctionLow(void *refCon) {
-	AgiEngine *self = (AgiEngine *)refCon;
-	self->_tickTimer++;
+	_lastTick = _system->getMillis();
 }
 
 void AgiEngine::pause(uint32 msec) {
@@ -532,9 +525,6 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	_allowSynthetic = false;
 
-	_tickTimer = 0;
-	_lastTickTimer = 0;
-
 	_intobj = NULL;
 
 	_menu = NULL;
@@ -646,10 +636,9 @@ void AgiEngine::initialize() {
 
 	_lastSaveTime = 0;
 
-	_timer->installTimerProc(agiTimerFunctionLow, 10 * 1000, this);
+	_lastTick = _system->getMillis();
 
 	debugC(2, kDebugLevelMain, "Detect game");
-
 
 	if (agiDetectGame() == errOK) {
 		_game.state = STATE_LOADED;
@@ -662,8 +651,6 @@ void AgiEngine::initialize() {
 }
 
 AgiEngine::~AgiEngine() {
-	_timer->removeTimerProc(agiTimerFunctionLow);
-
 	// If the engine hasn't been initialized yet via AgiEngine::initialize(), don't attempt to free any resources,
 	// as they haven't been allocated. Fixes bug #1742432 - AGI: Engine crashes if no game is detected
 	if (_game.state == STATE_INIT) {
@@ -719,7 +706,7 @@ void AgiEngine::parseFeatures() {
 	/* FIXME: Seems this method doesn't really do anything. It might
 	   be a leftover that could be removed, except that some of its
 	   intended purpose may still need to be reimplemented.
-	   
+
 	[0:29] <Fingolfin> can you tell me what the point behind AgiEngine::parseFeatures() is?
 	[0:30] <_sev> when games are created with WAGI studio
 	[0:31] <_sev> it creates .wag site with game-specific features such as full game title, whether to use AGIMOUSE etc
