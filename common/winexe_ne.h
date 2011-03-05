@@ -36,54 +36,6 @@ class MemoryReadStream;
 class SeekableReadStream;
 class String;
 
-/** A New Executable cursor. */
-class NECursor {
-public:
-	NECursor();
-	~NECursor();
-
-	/** Return the cursor's width. */
-	uint16 getWidth() const;
-	/** Return the cursor's height. */
-	uint16 getHeight() const;
-	/** Return the cursor's hotspot's x coordinate. */
-	uint16 getHotspotX() const;
-	/** Return the cursor's hotspot's y coordinate. */
-	uint16 getHotspotY() const;
-	/** Return the cursor's transparent key. */
-	byte getKeyColor() const;
-
-	const byte *getSurface() const { return _surface; }
-	const byte *getPalette() const { return _palette; }
-
-	/** Set the cursor's dimensions. */
-	void setDimensions(uint16 width, uint16 height);
-	/** Set the cursor's hotspot. */
-	void setHotspot(uint16 x, uint16 y);
-
-	/** Read the cursor's data out of a stream. */
-	bool readCursor(SeekableReadStream &stream, uint32 count);
-
-private:
-	byte *_surface;
-	byte _palette[256 * 3];
-
-	uint16 _width;    ///< The cursor's width.
-	uint16 _height;   ///< The cursor's height.
-	uint16 _hotspotX; ///< The cursor's hotspot's x coordinate.
-	uint16 _hotspotY; ///< The cursor's hotspot's y coordinate.
-	byte   _keyColor; ///< The cursor's transparent key
-
-	/** Clear the cursor. */
-	void clear();
-};
-
-/** A New Executable cursor group. */
-struct NECursorGroup {
-	WinResourceID id;
-	Array<NECursor *> cursors; ///< The cursors.
-};
-
 /** The default Windows resources. */
 enum NEResourceType {
 	kNECursor = 0x8001,
@@ -132,9 +84,6 @@ public:
 	/** Load from a stream. */
 	bool loadFromEXE(SeekableReadStream *stream);
 
-	/** Get all cursor's read from the New Executable. */
-	const Array<NECursorGroup> &getCursors() const;
-
 	/** Return a list of resources for a given type. */
 	const Array<WinResourceID> getIDList(uint16 type) const;
 
@@ -161,18 +110,10 @@ private:
 	/** All resources. */
 	List<Resource> _resources;
 
-	/** All cursor resources. */
-	Array<NECursorGroup> _cursors;
-
 	/** Read the offset to the resource table. */
 	uint32 getResourceTableOffset();
 	/** Read the resource table. */
 	bool readResourceTable(uint32 offset);
-
-	// Cursor reading helpers
-	bool readCursors();
-	bool readCursorGroup(NECursorGroup &group, const Resource &resource);
-	bool readCursor(NECursor &cursor, const Resource &resource, uint32 size);
 
 	/** Find a specific resource. */
 	const Resource *findResource(uint16 type, WinResourceID id) const;

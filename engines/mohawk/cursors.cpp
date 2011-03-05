@@ -34,6 +34,7 @@
 #include "common/system.h"
 #include "common/winexe_ne.h"
 #include "graphics/cursorman.h"
+#include "graphics/wincursor.h"
 
 namespace Mohawk {
 
@@ -295,16 +296,14 @@ NECursorManager::~NECursorManager() {
 }
 
 void NECursorManager::setCursor(uint16 id) {
-	if (!_exe) {
-		Common::Array<Common::NECursorGroup> cursors = _exe->getCursors();
+	if (_exe) {
+		Graphics::WinCursorGroup *cursorGroup = Graphics::WinCursorGroup::createCursorGroup(*_exe, id);
 
-		for (uint32 i = 0; i < cursors.size(); i++) {
-			if (cursors[i].id == id) {
-				Common::NECursor *cursor = cursors[i].cursors[0];
-				CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
-				CursorMan.replaceCursorPalette(cursor->getPalette(), 0, 256);
-				return;
-			}
+		if (cursorGroup) {
+			Graphics::WinCursor *cursor = cursorGroup->cursors[0].cursor;
+			CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
+			CursorMan.replaceCursorPalette(cursor->getPalette(), 0, 256);
+			return;
 		}
 	}
 

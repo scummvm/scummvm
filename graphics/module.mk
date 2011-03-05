@@ -23,7 +23,8 @@ MODULE_OBJS := \
 	surface.o \
 	thumbnail.o \
 	VectorRenderer.o \
-	VectorRendererSpec.o
+	VectorRendererSpec.o \
+	wincursor.o
 
 ifdef USE_SCALERS
 MODULE_OBJS += \
