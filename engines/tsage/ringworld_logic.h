@@ -39,7 +39,7 @@ public:
 	static Scene *createScene(int sceneNumber);
 };
 
-class DisplayHotspot: public SceneHotspot {
+class DisplayHotspot: public SceneObject {
 private:
 	Common::Array<int> _actions;
 	bool performAction(int action);

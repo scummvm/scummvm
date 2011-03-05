@@ -197,7 +197,41 @@ class Scene2100: public Scene {
 	};
 
 	/* Hotspots */
-	class Hotspot2: public SceneHotspot {
+	class Hotspot2: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot3: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot4: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot8: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot10: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot14: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+
+	/* Objects */
+	class Object1: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Object2: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Object3: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -241,11 +275,22 @@ public:
 	SpeakerHText _speakerHText;
 	
 	DisplayHotspot _hotspot1;
-	SceneHotspot _hotspot2, _hotspot3, _hotspot4;
-	SceneHotspot _hotspot5, _hotspot6, _hotspot7, _hotspot8;
-	SceneObject _object1, _object2, _object3, _object4, _object5;
-	SceneObject _object6, _object7, _object8, _object9, _object10;
-	SceneObject _object11;
+	Hotspot2 _hotspot2;
+	Hotspot3 _hotspot3;
+	Hotspot4 _hotspot4;
+	DisplayHotspot _hotspot5, _hotspot6, _hotspot7;
+	Hotspot8 _hotspot8;
+	DisplayHotspot _hotspot9;
+	Hotspot10 _hotspot10;
+	DisplayHotspot _hotspot11, _hotspot12, _hotspot13;
+	Hotspot14 _hotspot14;
+	DisplayHotspot _hotspot15;
+
+	Object1 _object1;
+	Object2 _object2;
+	Object3 _object3;
+	SceneObject _object4;
+
 	Action1 _action1;
 	Action2 _action2;
 	Action3 _action3;
