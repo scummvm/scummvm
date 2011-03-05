@@ -458,8 +458,6 @@ void OSystem_Android::fillScreen(uint32 col) {
 
 	GLTHREADCHECK;
 
-	// TODO FIXME rgb colors
-	assert(col < 256);
 	_game_texture->fillBuffer(col);
 }
 

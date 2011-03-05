@@ -212,13 +212,18 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 	}
 }
 
-void GLESTexture::fillBuffer(byte x) {
+void GLESTexture::fillBuffer(uint32 color) {
 	uint rowbytes = _surface.w * _bytesPerPixel;
 
 	byte *tmp = new byte[rowbytes];
 	assert(tmp);
 
-	memset(tmp, x, rowbytes);
+	if (_bytesPerPixel == 1 || ((color & 0xff) == ((color >> 8) & 0xff))) {
+		memset(tmp, color & 0xff, rowbytes);
+	} else {
+		uint16 *p = (uint16 *)tmp;
+		Common::set_to(p, p + _surface.w, (uint16)color);
+	}
 
 	GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
 	GLCALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
@@ -346,9 +351,9 @@ void GLESPaletteTexture::allocBuffer(GLuint w, GLuint h) {
 	_surface.pixels = _texture + _paletteSize;
 }
 
-void GLESPaletteTexture::fillBuffer(byte x) {
+void GLESPaletteTexture::fillBuffer(uint32 color) {
 	assert(_surface.pixels);
-	memset(_surface.pixels, x, _surface.pitch * _surface.h);
+	memset(_surface.pixels, color & 0xff, _surface.pitch * _surface.h);
 	setDirty();
 }
 

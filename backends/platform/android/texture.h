@@ -55,7 +55,7 @@ public:
 
 	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
 								const void *buf, int pitch);
-	virtual void fillBuffer(byte x);
+	virtual void fillBuffer(uint32 color);
 
 	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
 
@@ -164,7 +164,7 @@ public:
 	virtual void allocBuffer(GLuint width, GLuint height);
 	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
 								const void *buf, int pitch);
-	virtual void fillBuffer(byte x);
+	virtual void fillBuffer(uint32 color);
 
 	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
 
