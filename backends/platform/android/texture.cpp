@@ -214,13 +214,21 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 void GLESTexture::fillBuffer(byte x) {
 	uint rowbytes = _surface.w * _bytesPerPixel;
 
-	byte *tmp = new byte[_surface.h * rowbytes];
+	byte *tmp = new byte[rowbytes];
 	assert(tmp);
 
-	memset(tmp, x, _surface.h * rowbytes);
-	updateBuffer(0, 0, _surface.w, _surface.h, tmp, rowbytes);
+	memset(tmp, x, rowbytes);
+
+	GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
+	GLCALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+
+	for (GLuint y = 0; y < _surface.h; ++y)
+		GLCALL(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, y, _surface.w, 1,
+								_glFormat, _glType, tmp));
 
 	delete[] tmp;
+
+	setDirty();
 }
 
 void GLESTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
@@ -311,12 +319,14 @@ void GLESPaletteTexture::allocBuffer(GLuint w, GLuint h) {
 		_texture_width = nextHigher2(_surface.w);
 		_texture_height = nextHigher2(_surface.h);
 	}
+
 	_surface.pitch = _texture_width * _bytesPerPixel;
 
 	// Texture gets uploaded later (from drawTexture())
 
 	byte *new_buffer = new byte[_paletteSize +
 		_texture_width * _texture_height * _bytesPerPixel];
+
 	if (_texture) {
 		// preserve palette
 		memcpy(new_buffer, _texture, _paletteSize);
@@ -367,8 +377,6 @@ void GLESPaletteTexture::drawTexture(GLshort x, GLshort y, GLshort w,
 		GLCALL(glCompressedTexImage2D(GL_TEXTURE_2D, 0, _glType,
 										_texture_width, _texture_height,
 										0, texture_size, _texture));
-
-		_all_dirty = false;
 	}
 
 	GLESTexture::drawTexture(x, y, w, h);
