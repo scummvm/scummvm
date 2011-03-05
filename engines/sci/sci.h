@@ -238,7 +238,10 @@ public:
 	Common::Platform getPlatform() const;
 	bool isDemo() const;
 	bool isCD() const;
+
+	/** Returns true if the game's original platform is big-endian. */
 	bool isBE() const;
+
 	bool hasMacIconBar() const;
 
 	inline ResourceManager *getResMan() const { return _resMan; }
