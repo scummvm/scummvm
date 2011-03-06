@@ -713,7 +713,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 					break;
 				case PIC_OPX_VGA_SET_PALETTE:
 					if (_resMan->getViewType() == kViewAmiga ||
-						_resMan->getViewType() == kViewVga && g_sci->getPlatform() == Common::kPlatformAmiga	// Longbow Amiga
+						(_resMan->getViewType() == kViewVga && g_sci->getPlatform() == Common::kPlatformAmiga)	// Longbow Amiga
 						) {
 						if ((data[curPos] == 0x00) && (data[curPos + 1] == 0x01) && ((data[curPos + 32] & 0xF0) != 0xF0)) {
 							// Left-Over VGA palette, we simply ignore it
