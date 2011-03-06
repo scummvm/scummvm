@@ -842,7 +842,7 @@ void PlayerMover::checkMovement2(const Common::Point &srcPos, const Common::Poin
 }
 
 int PlayerMover::proc1(int *routeList, int srcRegion, int destRegion, int &v) {
-	int tempList[REGION_LIST_SIZE];
+	int tempList[REGION_LIST_SIZE + 1];
 	v = 0;
 	for (int idx = 0; idx <= *routeList; ++idx)
 		tempList[idx] = routeList[idx];
