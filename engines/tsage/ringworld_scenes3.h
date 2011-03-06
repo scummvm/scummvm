@@ -341,16 +341,17 @@ class Scene2120: public Scene {
 
 public:
 	SoundHandler _soundHandler;
-	SceneObject _hotspot1, _hotspot2, _hotspot3;
+	SceneObject _topicArrowHotspot, _arrowHotspot, _visageHotspot;
 	SceneObject _subjectButton, _nextPageButton, _previousPageButton, _exitButton;
 	Action1 _action1;
 	Rect _listRect;
 	int _dbMode, _prevDbMode;
-	bool _incrOffset;
+	bool _visageVisable;
 	int _subjectIndex;
 	int _lineOffset;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void synchronise(Serialiser &s);
 };
 
 } // End of namespace tSage

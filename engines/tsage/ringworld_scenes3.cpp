@@ -2072,10 +2072,12 @@ void Scene2120::Action1::signal() {
 		_globals->_events.setCursor(CURSOR_WALK);
 		break;
 	case 1:
+		// First page of index
 		SceneItem::display(2120, 0, SET_X, 120, SET_FONT, 1, SET_EXT_BGCOLOUR, 7, SET_BG_COLOUR, -1,
 			SET_WIDTH, 200, SET_KEEP_ONSCREEN, -1, SET_TEXT_MODE, 0, LIST_END);
 		break;
 	case 2:
+		// Second page of index
 		SceneItem::display(2120, 1, SET_X, 120, SET_FONT, 1, SET_EXT_BGCOLOUR, 7, SET_BG_COLOUR, -1,
 			SET_WIDTH, 200, SET_KEEP_ONSCREEN, -1, SET_TEXT_MODE, 0, LIST_END);
 		break;
@@ -2083,11 +2085,11 @@ void Scene2120::Action1::signal() {
 		// Display an image associated with the encyclopedia entry
 		SceneItem::display(0, 0);
 		
-		scene->_hotspot3.postInit();
-		scene->_hotspot3.setVisage(_entries[scene->_subjectIndex]._visage);
-		scene->_hotspot3.setPosition(Common::Point(129, 180));
-		scene->_hotspot3.animate(ANIM_MODE_NONE, NULL);
-		scene->_incrOffset = true;
+		scene->_visageHotspot.postInit();
+		scene->_visageHotspot.setVisage(_entries[scene->_subjectIndex]._visage);
+		scene->_visageHotspot.setPosition(Common::Point(129, 180));
+		scene->_visageHotspot.animate(ANIM_MODE_NONE, NULL);
+		scene->_visageVisable = true;
 		break;
 	case 4:
 		// Display page of text
@@ -2105,24 +2107,24 @@ void Scene2120::Action1::dispatch() {
 	Event event;
 	if (_globals->_events.getEvent(event) && (event.eventType == EVENT_BUTTON_DOWN)) {
 		if (scene->_listRect.contains(event.mousePos) && (scene->_dbMode != 2)) {
-			scene->_hotspot1.setPosition(Common::Point(scene->_hotspot1._position.x, event.mousePos.y));
+			scene->_topicArrowHotspot.setPosition(Common::Point(scene->_topicArrowHotspot._position.x, event.mousePos.y));
 		}
 
 		// Subject button handling
 		if (scene->_subjectButton._bounds.contains(event.mousePos) && (scene->_dbMode != 2)) {
-			scene->_hotspot2.setPosition(Common::Point(291, 34));
-			scene->_hotspot2._strip = 1;
-			scene->_hotspot2.animate(ANIM_MODE_5, NULL);
+			scene->_arrowHotspot.setPosition(Common::Point(291, 34));
+			scene->_arrowHotspot._strip = 1;
+			scene->_arrowHotspot.animate(ANIM_MODE_5, NULL);
 
 			if (scene->_dbMode == 0)
-				scene->_subjectIndex = (scene->_hotspot1._position.y - 48) / 8;
+				scene->_subjectIndex = (scene->_topicArrowHotspot._position.y - 48) / 8;
 			else
-				scene->_subjectIndex = (scene->_hotspot1._position.y - 44) / 8 + 16;
+				scene->_subjectIndex = (scene->_topicArrowHotspot._position.y - 44) / 8 + 16;
 
 			if ((scene->_subjectIndex == 27) && _globals->getFlag(70))
 				_globals->setFlag(75);
 
-			scene->_hotspot1.flag100();
+			scene->_topicArrowHotspot.flag100();
 			scene->_prevDbMode = scene->_dbMode;
 			scene->_dbMode = 2;
 			scene->_lineOffset = 0;
@@ -2135,9 +2137,9 @@ void Scene2120::Action1::dispatch() {
 		// Next Page button handling
 		if (scene->_nextPageButton._bounds.contains(event.mousePos)) {
 			if (!scene->_dbMode) {
-				scene->_hotspot2._strip = 2;
-				scene->_hotspot2.setPosition(Common::Point(291, 76));
-				scene->_hotspot2.animate(ANIM_MODE_5, NULL);
+				scene->_arrowHotspot._strip = 2;
+				scene->_arrowHotspot.setPosition(Common::Point(291, 76));
+				scene->_arrowHotspot.animate(ANIM_MODE_5, NULL);
 				scene->_dbMode = 1;
 				
 				_actionIndex = 2;
@@ -2145,18 +2147,18 @@ void Scene2120::Action1::dispatch() {
 			}
 
 			if ((scene->_dbMode == 2) && (scene->_lineOffset < _entries[scene->_subjectIndex]._size)) {
-				if (!scene->_incrOffset) {
+				if (!scene->_visageVisable) {
 					++scene->_lineOffset;
 				} else {
-					scene->_incrOffset = false;
-					scene->_hotspot3.remove();
+					scene->_visageVisable = false;
+					scene->_visageHotspot.remove();
 				}
 				setDelay(30);
 			}
 
-			if ((scene->_subjectIndex == 20) && scene->_incrOffset) {
-				scene->_incrOffset = false;
-				scene->_hotspot3.remove();
+			if ((scene->_subjectIndex == 20) && scene->_visageVisable) {
+				scene->_visageVisable = false;
+				scene->_visageHotspot.remove();
 				setDelay(30);
 			}
 
@@ -2167,9 +2169,9 @@ void Scene2120::Action1::dispatch() {
 		if (scene->_previousPageButton._bounds.contains(event.mousePos)) {
 			switch (scene->_dbMode) {
 			case 1:
-				scene->_hotspot2._strip = 3;
-				scene->_hotspot2.setPosition(Common::Point(291, 117));
-				scene->_hotspot2.animate(ANIM_MODE_5, NULL);
+				scene->_arrowHotspot._strip = 3;
+				scene->_arrowHotspot.setPosition(Common::Point(291, 117));
+				scene->_arrowHotspot.animate(ANIM_MODE_5, NULL);
 
 				scene->_dbMode = 0;
 				_actionIndex = 1;
@@ -2193,6 +2195,7 @@ void Scene2120::Action1::dispatch() {
 		// Exit button handling
 		if (scene->_exitButton._bounds.contains(event.mousePos)) {
 			if (scene->_dbMode != 2) {
+				// In the index, so return to the previous scene
 				setAction(NULL);
 				SceneItem::display(0, 0);
 
@@ -2200,18 +2203,19 @@ void Scene2120::Action1::dispatch() {
 				_globals->_sceneText._fontNumber = 2;
 				_globals->_sceneManager.changeScene(_globals->_sceneManager._previousScene);
 			} else {
+				// Exit out of topic display to index
 				SceneItem::display(0, 0);
 
 				if (_entries[scene->_subjectIndex]._visage)
-					scene->_hotspot3.remove();
+					scene->_visageHotspot.remove();
 
-				scene->_hotspot2._strip = 4;
-				scene->_hotspot2.setPosition(Common::Point(291, 159));
-				scene->_hotspot2.animate(ANIM_MODE_5, NULL);
+				scene->_arrowHotspot._strip = 4;
+				scene->_arrowHotspot.setPosition(Common::Point(291, 159));
+				scene->_arrowHotspot.animate(ANIM_MODE_5, NULL);
 				scene->_dbMode = scene->_prevDbMode;
-				_actionIndex = scene->_prevDbMode;
+				_actionIndex = scene->_prevDbMode + 1;
 
-				scene->_hotspot1.unflag100();
+				scene->_topicArrowHotspot.unflag100();
 				setDelay(1);
 			}
 
@@ -2231,31 +2235,41 @@ void Scene2120::postInit(SceneObjectList *OwnerList) {
 
 	// TODO: Initialise encyclopedia
 
-	_listRect = Rect(18, 48, 260, 176);
+	_listRect = Rect(18, 48, 260, 177);
 	_subjectButton.setBounds(Rect(266, 13, 320, 56));
 	_nextPageButton.setBounds(Rect(266, 56, 320, 98));
 	_previousPageButton.setBounds(Rect(266, 98, 320, 140));
 	_exitButton.setBounds(Rect(266, 140, 320, 182));
 
-	_hotspot1.postInit();
-	_hotspot1.setVisage(2120);
-	_hotspot1.animate(ANIM_MODE_NONE, NULL);
-	_hotspot1.setPosition(Common::Point(240, 55));
+	_topicArrowHotspot.postInit();
+	_topicArrowHotspot.setVisage(2120);
+	_topicArrowHotspot.animate(ANIM_MODE_NONE, NULL);
+	_topicArrowHotspot.setPosition(Common::Point(240, 55));
 	
-	_hotspot2.postInit();
-	_hotspot2.setVisage(2121);
-	_hotspot2.animate(ANIM_MODE_NONE, NULL);
-	_hotspot2._frame = 1;
-	_hotspot2.setPosition(Common::Point(400, 200));
+	_arrowHotspot.postInit();
+	_arrowHotspot.setVisage(2121);
+	_arrowHotspot.animate(ANIM_MODE_NONE, NULL);
+	_arrowHotspot._frame = 1;
+	_arrowHotspot.setPosition(Common::Point(400, 200));
 
 	_dbMode = 0;
 	_prevDbMode = 0;
-	_incrOffset = false;
+	_visageVisable = false;
 	_subjectIndex = 0;
 
 	setAction(&_action1);
 	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
 	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
+}
+
+void Scene2120::synchronise(Serialiser &s) {
+	Scene::synchronise(s);
+
+	s.syncAsSint16LE(_dbMode);
+	s.syncAsSint16LE(_prevDbMode);
+	s.syncAsSint16LE(_visageVisable);
+	s.syncAsSint16LE(_subjectIndex);
+	s.syncAsSint16LE(_lineOffset);
 }
 
 } // End of namespace tSage
