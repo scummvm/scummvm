@@ -36,6 +36,8 @@
 
 namespace Sci {
 
+//#define DEBUG_PICTURE_DRAW
+
 GfxPicture::GfxPicture(ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize)
 	: _resMan(resMan), _coordAdjuster(coordAdjuster), _ports(ports), _screen(screen), _palette(palette), _resourceId(resourceId), _EGAdrawingVisualize(EGAdrawingVisualize) {
 	assert(resourceId != -1);
@@ -443,6 +445,7 @@ enum {
 	PIC_OP_OPX = 0xfe,
 	PIC_OP_TERMINATE = 0xff
 };
+
 #define PIC_OP_FIRST PIC_OP_SET_COLOR
 
 enum {
@@ -464,6 +467,47 @@ enum {
 	PIC_OPX_VGA_PRIORITY_TABLE_EQDIST = 3,
 	PIC_OPX_VGA_PRIORITY_TABLE_EXPLICIT = 4
 };
+
+#ifdef DEBUG_PICTURE_DRAW
+const char *picOpcodeNames[] = {
+	"Set color",
+	"Disable visual",
+	"Set priority",
+	"Disable priority",
+	"Short patterns",
+	"Medium lines",
+	"Long lines",
+	"Short lines",
+	"Fill",
+	"Set pattern",
+	"Absolute pattern",
+	"Set control",
+	"Disable control",
+	"Medium patterns",
+	"Extended opcode",
+	"Terminate"
+};
+
+const char *picExOpcodeNamesEGA[] = {
+	"Set palette entries",
+	"Set palette",
+	"Mono0",
+	"Mono1",
+	"Mono2",
+	"Mono3",
+	"Mono4",
+	"Embedded view",
+	"Set priority table"
+};
+
+const char *picExOpcodeNamesVGA[] = {
+	"Set palette entries",
+	"Embedded view",
+	"Set palette",
+	"Set priority table (eqdist)",
+	"Set priority table (explicit)"
+};
+#endif
 
 #define PIC_EGAPALETTE_COUNT 4
 #define PIC_EGAPALETTE_SIZE  40
@@ -543,7 +587,9 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 
 	// Drawing
 	while (curPos < dataSize) {
-		//warning("%X at %d", data[curPos], curPos);
+#ifdef DEBUG_PICTURE_DRAW
+		debug("Picture op: %X (%s) at %d", data[curPos], picOpcodeNames[data[curPos] - 0xF0], curPos);
+#endif
 		switch (pic_op = data[curPos++]) {
 		case PIC_OP_SET_COLOR:
 			pic_color = data[curPos++];
@@ -681,6 +727,9 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 
 		case PIC_OP_OPX: // Extended functions
 			if (isEGA) {
+#ifdef DEBUG_PICTURE_DRAW
+				debug("* Picture ex op: %X (%s) at %d", data[curPos], picExOpcodeNamesEGA[data[curPos]], curPos);
+#endif
 				switch (pic_op = data[curPos++]) {
 				case PIC_OPX_EGA_SET_PALETTE_ENTRIES:
 					while (vectorIsNonOpcode(data[curPos])) {
@@ -726,6 +775,9 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 					error("Unsupported sci1 extended pic-operation %X", pic_op);
 				}
 			} else {
+#ifdef DEBUG_PICTURE_DRAW
+				debug("* Picture ex op: %X (%s) at %d", data[curPos], picExOpcodeNamesVGA[data[curPos]], curPos);
+#endif
 				switch (pic_op = data[curPos++]) {
 				case PIC_OPX_VGA_SET_PALETTE_ENTRIES:
 					while (vectorIsNonOpcode(data[curPos])) {
@@ -733,7 +785,9 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 					}
 					break;
 				case PIC_OPX_VGA_SET_PALETTE:
-					if (_resMan->getViewType() == kViewAmiga) {
+					if (_resMan->getViewType() == kViewAmiga ||
+						_resMan->getViewType() == kViewVga && g_sci->getPlatform() == Common::kPlatformAmiga	// Longbow Amiga
+						) {
 						if ((data[curPos] == 0x00) && (data[curPos + 1] == 0x01) && ((data[curPos + 32] & 0xF0) != 0xF0)) {
 							// Left-Over VGA palette, we simply ignore it
 							curPos += 256 + 4 + 1024;
