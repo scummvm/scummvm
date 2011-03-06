@@ -2022,4 +2022,240 @@ void Scene2100::signal() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 2120 - Encyclopedia
+ *
+ *--------------------------------------------------------------------------*/
+
+Scene2120::Action1::Action1() {
+	_entries.push_back(Entry(0, 0, 0));
+	_entries.push_back(Entry(0, 0, 0));
+	_entries.push_back(Entry(4, 1, 2123));
+	_entries.push_back(Entry(1, 6, 0));
+	_entries.push_back(Entry(2, 8, 0));
+	_entries.push_back(Entry(1, 11, 0));
+	_entries.push_back(Entry(4, 13, 2131));
+	_entries.push_back(Entry(2, 18, 0));
+	_entries.push_back(Entry(4, 21, 0));
+	_entries.push_back(Entry(7, 26, 2128));
+	_entries.push_back(Entry(3, 34, 0));
+	_entries.push_back(Entry(0, 38, 0));
+	_entries.push_back(Entry(3, 39, 2126));
+	_entries.push_back(Entry(3, 43, 0));
+	_entries.push_back(Entry(4, 47, 2125));
+	_entries.push_back(Entry(3, 52, 0));
+	_entries.push_back(Entry(4, 56, 2129));
+	_entries.push_back(Entry(7, 61, 0));
+	_entries.push_back(Entry(2, 69, 2127));
+	_entries.push_back(Entry(7, 72, 2122));
+	_entries.push_back(Entry(0, 80, 2124));
+	_entries.push_back(Entry(0, 81, 0));
+	_entries.push_back(Entry(0, 82, 0));
+	_entries.push_back(Entry(1, 83, 0));
+	_entries.push_back(Entry(2, 85, 2132));
+	_entries.push_back(Entry(1, 88, 2133));
+	_entries.push_back(Entry(2, 90, 2136));
+	_entries.push_back(Entry(1, 93, 0));
+	_entries.push_back(Entry(10, 95, 2135));
+	_entries.push_back(Entry(5, 106, 0));
+	_entries.push_back(Entry(2, 112, 2134));
+	_entries.push_back(Entry(1, 115, 2130));
+	_entries.push_back(Entry(0, 117, 0));
+}
+
+void Scene2120::Action1::signal() {
+	Scene2120 *scene = (Scene2120 *)_globals->_sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(30);
+		_globals->_events.setCursor(CURSOR_WALK);
+		break;
+	case 1:
+		SceneItem::display(2120, 0, SET_X, 120, SET_FONT, 1, SET_EXT_BGCOLOUR, 7, SET_BG_COLOUR, -1,
+			SET_WIDTH, 200, SET_KEEP_ONSCREEN, -1, SET_TEXT_MODE, 0, LIST_END);
+		break;
+	case 2:
+		SceneItem::display(2120, 1, SET_X, 120, SET_FONT, 1, SET_EXT_BGCOLOUR, 7, SET_BG_COLOUR, -1,
+			SET_WIDTH, 200, SET_KEEP_ONSCREEN, -1, SET_TEXT_MODE, 0, LIST_END);
+		break;
+	case 3:
+		// Display an image associated with the encyclopedia entry
+		SceneItem::display(0, 0);
+		
+		scene->_hotspot3.postInit();
+		scene->_hotspot3.setVisage(_entries[scene->_subjectIndex]._visage);
+		scene->_hotspot3.setPosition(Common::Point(129, 180));
+		scene->_hotspot3.animate(ANIM_MODE_NONE, NULL);
+		scene->_incrOffset = true;
+		break;
+	case 4:
+		// Display page of text
+		SceneItem::display(2121, _entries[scene->_subjectIndex]._lineNum + scene->_lineOffset,
+			SET_X, 130, SET_FONT, 1, SET_EXT_BGCOLOUR, 7, SET_BG_COLOUR, -1, SET_WIDTH, 200,
+			SET_KEEP_ONSCREEN, -1, SET_TEXT_MODE, 0, LIST_END);
+		_actionIndex = 4;
+		break;
+	}
+}
+
+void Scene2120::Action1::dispatch() {
+	Scene2120 *scene = (Scene2120 *)_globals->_sceneManager._scene;
+
+	Event event;
+	if (_globals->_events.getEvent(event) && (event.eventType == EVENT_BUTTON_DOWN)) {
+		if (scene->_listRect.contains(event.mousePos) && (scene->_dbMode != 2)) {
+			scene->_hotspot1.setPosition(Common::Point(scene->_hotspot1._position.x, event.mousePos.y));
+		}
+
+		// Subject button handling
+		if (scene->_subjectButton._bounds.contains(event.mousePos) && (scene->_dbMode != 2)) {
+			scene->_hotspot2.setPosition(Common::Point(291, 34));
+			scene->_hotspot2._strip = 1;
+			scene->_hotspot2.animate(ANIM_MODE_5, NULL);
+
+			if (scene->_dbMode == 0)
+				scene->_subjectIndex = (scene->_hotspot1._position.y - 48) / 8;
+			else
+				scene->_subjectIndex = (scene->_hotspot1._position.y - 44) / 8 + 16;
+
+			if ((scene->_subjectIndex == 27) && _globals->getFlag(70))
+				_globals->setFlag(75);
+
+			scene->_hotspot1.flag100();
+			scene->_prevDbMode = scene->_dbMode;
+			scene->_dbMode = 2;
+			scene->_lineOffset = 0;
+			
+			_actionIndex = !_entries[scene->_subjectIndex]._visage ? 4 : 3;
+			setDelay(30);
+			scene->_soundHandler.startSound(159);
+		}
+
+		// Next Page button handling
+		if (scene->_nextPageButton._bounds.contains(event.mousePos)) {
+			if (!scene->_dbMode) {
+				scene->_hotspot2._strip = 2;
+				scene->_hotspot2.setPosition(Common::Point(291, 76));
+				scene->_hotspot2.animate(ANIM_MODE_5, NULL);
+				scene->_dbMode = 1;
+				
+				_actionIndex = 2;
+				setDelay(30);
+			}
+
+			if ((scene->_dbMode == 2) && (scene->_lineOffset < _entries[scene->_subjectIndex]._size)) {
+				if (!scene->_incrOffset) {
+					++scene->_lineOffset;
+				} else {
+					scene->_incrOffset = false;
+					scene->_hotspot3.remove();
+				}
+				setDelay(30);
+			}
+
+			if ((scene->_subjectIndex == 20) && scene->_incrOffset) {
+				scene->_incrOffset = false;
+				scene->_hotspot3.remove();
+				setDelay(30);
+			}
+
+			scene->_soundHandler.startSound(159);
+		}
+
+		// Previous Page button handling
+		if (scene->_previousPageButton._bounds.contains(event.mousePos)) {
+			switch (scene->_dbMode) {
+			case 1:
+				scene->_hotspot2._strip = 3;
+				scene->_hotspot2.setPosition(Common::Point(291, 117));
+				scene->_hotspot2.animate(ANIM_MODE_5, NULL);
+
+				scene->_dbMode = 0;
+				_actionIndex = 1;
+				setDelay(30);
+				break;
+			case 2:
+				if (scene->_lineOffset > 0) {
+					--scene->_lineOffset;
+					setDelay(20);
+				}
+				if ((_entries[scene->_subjectIndex]._visage != 0) && (scene->_lineOffset == 0)) {
+					_actionIndex = 3;
+					setDelay(30);
+				}
+				break;
+			}
+
+			scene->_soundHandler.startSound(159);
+		}
+
+		// Exit button handling
+		if (scene->_exitButton._bounds.contains(event.mousePos)) {
+			if (scene->_dbMode != 2) {
+				setAction(NULL);
+				SceneItem::display(0, 0);
+
+				_globals->_gfxManagerInstance._font.setFontNumber(2);
+				_globals->_sceneText._fontNumber = 2;
+				_globals->_sceneManager.changeScene(_globals->_sceneManager._previousScene);
+			} else {
+				SceneItem::display(0, 0);
+
+				if (_entries[scene->_subjectIndex]._visage)
+					scene->_hotspot3.remove();
+
+				scene->_hotspot2._strip = 4;
+				scene->_hotspot2.setPosition(Common::Point(291, 159));
+				scene->_hotspot2.animate(ANIM_MODE_5, NULL);
+				scene->_dbMode = scene->_prevDbMode;
+				_actionIndex = scene->_prevDbMode;
+
+				scene->_hotspot1.unflag100();
+				setDelay(1);
+			}
+
+			scene->_soundHandler.startSound(159);
+		}
+	}
+	
+	Action::dispatch();
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene2120::postInit(SceneObjectList *OwnerList) {
+	loadScene(2120);
+	setZoomPercents(0, 100, 200, 100);
+	_globals->_player.disableControl();
+
+	// TODO: Initialise encyclopedia
+
+	_listRect = Rect(18, 48, 260, 176);
+	_subjectButton.setBounds(Rect(266, 13, 320, 56));
+	_nextPageButton.setBounds(Rect(266, 56, 320, 98));
+	_previousPageButton.setBounds(Rect(266, 98, 320, 140));
+	_exitButton.setBounds(Rect(266, 140, 320, 182));
+
+	_hotspot1.postInit();
+	_hotspot1.setVisage(2120);
+	_hotspot1.animate(ANIM_MODE_NONE, NULL);
+	_hotspot1.setPosition(Common::Point(240, 55));
+	
+	_hotspot2.postInit();
+	_hotspot2.setVisage(2121);
+	_hotspot2.animate(ANIM_MODE_NONE, NULL);
+	_hotspot2._frame = 1;
+	_hotspot2.setPosition(Common::Point(400, 200));
+
+	_dbMode = 0;
+	_prevDbMode = 0;
+	_incrOffset = false;
+	_subjectIndex = 0;
+
+	setAction(&_action1);
+	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
+	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
+}
+
 } // End of namespace tSage

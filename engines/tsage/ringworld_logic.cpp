@@ -74,6 +74,8 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 2000: return new Scene2000();
 	// Cockpit
 	case 2100: return new Scene2100();
+	// Encyclopedia
+	case 2120: return new Scene2120();
 
 	/* Scene group 4 */
 

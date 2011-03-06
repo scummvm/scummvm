@@ -317,6 +317,42 @@ public:
 	virtual void signal();
 };
 
+class Scene2120: public Scene {
+	/* Actions */
+	class Entry {
+	public:
+		int _size;
+		int _lineNum;
+		int _visage;
+
+		Entry() { _size = 0; _lineNum = 0; _visage = 0; }
+		Entry(int size, int lineNum, int visage) { _size = size; _lineNum = lineNum; _visage = visage; }
+	};
+
+	class Action1: public Action {
+	private:
+		Common::Array<Entry> _entries;
+	public:
+		Action1();
+
+		virtual void signal();
+		virtual void dispatch();
+	};
+
+public:
+	SoundHandler _soundHandler;
+	SceneObject _hotspot1, _hotspot2, _hotspot3;
+	SceneObject _subjectButton, _nextPageButton, _previousPageButton, _exitButton;
+	Action1 _action1;
+	Rect _listRect;
+	int _dbMode, _prevDbMode;
+	bool _incrOffset;
+	int _subjectIndex;
+	int _lineOffset;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+};
+
 } // End of namespace tSage
 
 #endif
