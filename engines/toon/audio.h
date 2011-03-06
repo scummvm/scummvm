@@ -52,6 +52,10 @@ public:
 		return _fadingIn || _fadingOut;
 	}
 
+	int32 getPlayedSampleCount() {
+		return _playedSamples;
+	}
+
 	void setVolume(int32 volume);
 protected:
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -93,6 +97,7 @@ protected:
 	int32 _volume;
 	int32 _musicAttenuation;
 	bool _deleteFileStream;
+	int32 _playedSamples;
 };
 
 class AudioStreamPackage {

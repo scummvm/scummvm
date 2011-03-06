@@ -63,6 +63,8 @@ AudioManager::AudioManager(ToonEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixe
 	_voiceMuted = false;
 	_musicMuted = false;
 	_sfxMuted = false;
+
+	_currentMusicChannel = 0;
 }
 
 AudioManager::~AudioManager(void) {
@@ -113,24 +115,23 @@ void AudioManager::playMusic(Common::String dir, Common::String music) {
 		return;
 
 	// see what channel to take
-	if (_channels[0] && _channels[0]->isPlaying() && _channels[1] && _channels[1]->isPlaying()) {
-		// take the one that is fading
-		if (_channels[0]->isFading()) {
-			_channels[0]->stop(false);
-			_channels[1]->stop(true);
-			_currentMusicChannel = 0;
-		} else {
-			_channels[1]->stop(false);
-			_channels[0]->stop(true);
-			_currentMusicChannel = 1;
+	// if the current channel didn't really start. reuse this one
+	if (_channels[_currentMusicChannel] && _channels[_currentMusicChannel]->isPlaying()) {
+		if (_channels[_currentMusicChannel]->getPlayedSampleCount() < 500) {
+			_channels[_currentMusicChannel]->stop(false);
+			_currentMusicChannel = 1 - _currentMusicChannel;
 		}
-	} else if (_channels[0] && _channels[0]->isPlaying()) {
-		_channels[0]->stop(true);
-		_currentMusicChannel = 1;
-	} else {
-		if (_channels[1] && _channels[1]->isPlaying())
-			_channels[1]->stop(true);
-		_currentMusicChannel = 0;
+		else
+		{
+			_channels[_currentMusicChannel]->stop(true);
+		}
+	}
+	// go to the next channel
+	_currentMusicChannel = 1 - _currentMusicChannel;
+
+	// if it's already playing.. stop it quickly (no fade)
+	if (_channels[_currentMusicChannel] && _channels[_currentMusicChannel]->isPlaying()) {
+		_channels[_currentMusicChannel]->stop(false);
 	}
 
 	// no need to delete instance here it will automatically deleted by the mixer is done with it
@@ -261,6 +262,7 @@ AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer,
 	_looping = looping;
 	_musicAttenuation = 1000;
 	_deleteFileStream = deleteFileStreamAtEnd;
+	_playedSamples = 0;
 
 	// preload one packet
 	if (_totalSize > 0) {
@@ -308,6 +310,8 @@ int AudioStreamInstance::readBuffer(int16 *buffer, const int numSamples) {
 		memcpy(buffer + destOffset, &_buffer[_bufferOffset], MIN(leftSamples * 2, _bufferSize));
 		_bufferOffset += leftSamples;
 	}
+
+	_playedSamples += numSamples;
 
 	return numSamples;
 }
@@ -468,9 +472,11 @@ void AudioStreamInstance::stop(bool fade /*= false*/) {
 	debugC(1, kDebugAudio, "stop(%d)", (fade) ? 1 : 0);
 
 	if (fade) {
-		_fadingIn = false;
-		_fadingOut = true;
-		_fadeTime = 0;
+		if (!_fadingOut) {
+			_fadingIn = false;
+			_fadingOut = true;
+			_fadeTime = 0;
+		}
 	} else {
 		stopNow();
 	}
