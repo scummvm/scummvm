@@ -1385,7 +1385,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 	Common::String msg = !resNum ? Common::String() : _vm->_dataManager->getMessage(resNum, lineNum);
 
 	if (_globals->_sceneObjects->contains(&_globals->_sceneText)) {
-		_globals->_sceneObjects->remove(&_globals->_sceneText);
+		_globals->_sceneText.remove();
 		_globals->_sceneObjects->draw();
 	}
 
