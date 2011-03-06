@@ -298,8 +298,6 @@ void Scene::loadSceneData(int sceneNum) {
 
 	// Load the background for the scene
 	loadBackground(0, 0);
-
-	_globals->_events.showCursor();
 }
 
 void Scene::loadBackground(int xAmount, int yAmount) {

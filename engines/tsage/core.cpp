@@ -59,6 +59,8 @@ InvObject::InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType curs
 }
 
 void InvObject::setCursor() {
+	_globals->_events._currentCursor = _cursorId;
+
 	if (_iconResNum != -1) {
 		GfxSurface s = surfaceFromRes(_iconResNum, _rlbNum, _cursorNum);
 		
@@ -1310,7 +1312,6 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 
 	_globals->_screenSurface.copyFrom(_globals->_sceneManager._scene->_backSurface, 
 		bounds, Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), NULL);
-	_globals->_events.showCursor();
 	tempPalette._listeners.clear2();
 }
 
@@ -2511,19 +2512,23 @@ void Player::postInit(SceneObjectList *OwnerList) {
 void Player::disableControl() {
 	_canWalk = false;
 	_uiEnabled = false;
-	_globals->_events.hideCursor();
+	_globals->_events.setCursor(CURSOR_NONE);
 }
 
 void Player::enableControl() {
 	_canWalk = true;
 	_uiEnabled = true;
-	_globals->_events.showCursor();
+	_globals->_events.setCursor(CURSOR_WALK);
 
 	switch (_globals->_events.getCursor()) {
-	case CURSOR_CROSSHAIRS:
-		_globals->_events.setCursor(CURSOR_WALK);
+	case CURSOR_WALK:
+	case CURSOR_LOOK:
+	case CURSOR_USE:
+	case CURSOR_TALK:
+		_globals->_events.setCursor(_globals->_events.getCursor());
 		break;
 	default:
+		_globals->_events.setCursor(CURSOR_WALK);
 		break;
 	}
 }
@@ -3314,8 +3319,8 @@ void SceneHandler::process(Event &event) {
 	if (_globals->_sceneManager._scene)
 		_globals->_sceneManager._scene->process(event);
 
-	// Separate check for F5 - Save key
 	if (!event.handled) {
+		// Separate check for F5 - Save key
 		if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_F5)) {
 			// F5 - Save
 			_globals->_game.saveGame();
@@ -3344,7 +3349,7 @@ void SceneHandler::process(Event &event) {
 				(*i)->doAction(_globals->_events.getCursor());
 				event.handled = _globals->_events.getCursor() != CURSOR_WALK;
 
-				if (!_globals->_player._uiEnabled && !_globals->_player._canWalk &&
+				if (_globals->_player._uiEnabled && _globals->_player._canWalk &&
 						(_globals->_events.getCursor() != CURSOR_LOOK)) {
 					_globals->_events.setCursor(CURSOR_WALK);
 				} else if (_globals->_player._canWalk && (_globals->_events.getCursor() != CURSOR_LOOK)) {

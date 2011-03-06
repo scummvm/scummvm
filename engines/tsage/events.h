@@ -65,14 +65,13 @@ enum CursorType {
 	OBJECT_NULLIFIER = 25, OBJECT_PEG = 26, OBJECT_VIAL = 27, OBJECT_JACKET = 28, 
 	OBJECT_TUNIC2 = 29, OBJECT_BONE = 30, OBJECT_EMPTY_JAR = 31, OBJECT_JAR = 32, 
 
-	CURSOR_WALK = 0x100, CURSOR_LOOK = 0x200, 
-	CURSOR_700 = 700, CURSOR_USE = 0x400, CURSOR_TALK = 0x800, CURSOR_CROSSHAIRS = 0xfffe, CURSOR_ARROW = 0xffff
+	CURSOR_WALK = 0x100, CURSOR_LOOK = 0x200, CURSOR_700 = 700, CURSOR_USE = 0x400, CURSOR_TALK = 0x800, 
+	CURSOR_NONE = -1, CURSOR_CROSSHAIRS = -2, CURSOR_ARROW = -3
 };
 
 class EventsClass: public SaveListener {
 private:
 	Common::Event _event;
-	CursorType _currentCursor;
 	uint32 _frameNumber;
 	uint32 _prevDelayFrame;
 	uint32 _priorFrameTime;
@@ -80,6 +79,7 @@ public:
 	EventsClass();
 
 	Common::Point _mousePos;
+	CursorType _currentCursor;
 
 	void setCursor(CursorType cursorType);
 	void setCursor(Graphics::Surface &cursor, int transColour, const Common::Point &hotspot, CursorType cursorId);

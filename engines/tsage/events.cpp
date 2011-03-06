@@ -137,8 +137,16 @@ bool EventsClass::getEvent(Event &evt, int eventMask) {
 void EventsClass::setCursor(CursorType cursorType) {
 	_globals->clearFlag(122);
 	
-	if (cursorType != CURSOR_ARROW)
-		_currentCursor = cursorType;
+	if ((_currentCursor == cursorType) && CursorMan.isVisible())
+		return;
+
+	if (cursorType == CURSOR_NONE) {
+		if (CursorMan.isVisible())
+			CursorMan.showMouse(false);
+		return;
+	}
+	
+	CursorMan.showMouse(true);
 
 	const byte *cursor;
 	bool delFlag = true;
@@ -154,16 +162,19 @@ void EventsClass::setCursor(CursorType cursorType) {
 	case CURSOR_LOOK:
 		// Look cursor
 		cursor = _vm->_dataManager->getSubResource(4, 1, 5, &size);
+		_currentCursor = CURSOR_LOOK;
 		break;
 
 	case CURSOR_USE:
 		// Use cursor
 		cursor = _vm->_dataManager->getSubResource(4, 1, 4, &size);
+		_currentCursor = CURSOR_USE;
 		break;
 
 	case CURSOR_TALK:
 		// Talk cursor
 		cursor = _vm->_dataManager->getSubResource(4, 1, 3, &size);
+		_currentCursor = CURSOR_TALK;
 		break;
 
 	case CURSOR_ARROW:
@@ -172,9 +183,11 @@ void EventsClass::setCursor(CursorType cursorType) {
 		delFlag = false;
 		break;
 
+	case CURSOR_WALK:
 	default:
 		// Walk cursor
 		cursor = CURSOR_WALK_DATA;
+		_currentCursor = CURSOR_WALK;
 		delFlag = false;
 		break;
 	}
