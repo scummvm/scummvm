@@ -434,9 +434,15 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 
 	if (_macCursorRemap.empty()) {
 		// QFG1/Freddy/Hoyle4 use a straight viewNum->cursor ID mapping
-		// KQ6 seems to use this mapping for its cursors
-		if (g_sci->getGameId() == GID_KQ6)
-			viewNum = loopNum * 1000 + celNum;
+		// KQ6 uses this mapping for its cursors
+		if (g_sci->getGameId() == GID_KQ6) {
+			if (viewNum == 990)      // Inventory Cursors
+				viewNum = loopNum * 16 + celNum + 2000;
+			else if (viewNum == 998) // Regular Cursors
+				viewNum = celNum + 1000;
+			else                     // Unknown cursor, ignored
+				return;
+		}
 	} else {
 		// If we do have the list, we'll be using a remap based on what the
 		// scripts have given us.
