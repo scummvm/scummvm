@@ -456,23 +456,24 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 
 				pixelNr = pixelLine + width;
 			}
-		}
-		// decompression for data that has two separate streams (probably SCI 1.1 view)
-		while (pixelNr < pixelCount) {
-			curByte = *rlePtr++;
-			runLength = curByte & 0x3F;
-			switch (curByte & 0xC0) {
-			case 0: // copy bytes as-is
-				while (runLength-- && pixelNr < pixelCount)
-					outPtr[pixelNr++] = *literalPtr++;
-				break;
-			case 0x80: // fill with color
-				memset(outPtr + pixelNr, *literalPtr++, MIN<uint16>(runLength, pixelCount - pixelNr));
-				pixelNr += runLength;
-				break;
-			case 0xC0: // fill with transparent
-				pixelNr += runLength;
-				break;
+		} else {
+			// decompression for data that has two separate streams (probably SCI 1.1 view)
+			while (pixelNr < pixelCount) {
+				curByte = *rlePtr++;
+				runLength = curByte & 0x3F;
+				switch (curByte & 0xC0) {
+				case 0: // copy bytes as-is
+					while (runLength-- && pixelNr < pixelCount)
+						outPtr[pixelNr++] = *literalPtr++;
+					break;
+				case 0x80: // fill with color
+					memset(outPtr + pixelNr, *literalPtr++, MIN<uint16>(runLength, pixelCount - pixelNr));
+					pixelNr += runLength;
+					break;
+				case 0xC0: // fill with transparent
+					pixelNr += runLength;
+					break;
+				}
 			}
 		}
 	}
