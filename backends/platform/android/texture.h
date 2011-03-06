@@ -95,7 +95,14 @@ public:
 protected:
 	inline void setDirty() {
 		_all_dirty = true;
-		_dirty_rect = Common::Rect();
+	}
+
+	inline void clearDirty() {
+		_all_dirty = false;
+		_dirty_rect.top = 0;
+		_dirty_rect.left = 0;
+		_dirty_rect.bottom = 0;
+		_dirty_rect.right = 0;
 	}
 
 	inline void setDirtyRect(const Common::Rect& r) {
@@ -116,9 +123,9 @@ protected:
 	Graphics::Surface _surface;
 	GLuint _texture_width;
 	GLuint _texture_height;
-	bool _all_dirty;
 
 	// Covers dirty area
+	bool _all_dirty;
 	Common::Rect _dirty_rect;
 
 	Graphics::PixelFormat _pixelFormat;
