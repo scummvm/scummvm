@@ -106,9 +106,9 @@ void ToonEngine::init() {
 
 	_pathFinding = new PathFinding(this);
 
-	resources()->openPackage("LOCAL.PAK", true);
-	resources()->openPackage("ONETIME.PAK", true);
-	resources()->openPackage("DREW.PAK", true);
+	resources()->openPackage("LOCAL.PAK");
+	resources()->openPackage("ONETIME.PAK");
+	resources()->openPackage("DREW.PAK");
 
 	for (int32 i = 0; i < 32; i++)
 		_characters[i] = NULL;
@@ -1080,7 +1080,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 
 	// load package
 	strcpy(temp, createRoomFilename(Common::String::format("%s.PAK", _gameState->_locations[_gameState->_currentScene]._name).c_str()).c_str());
-	resources()->openPackage(temp, true);
+	resources()->openPackage(temp);
 
 	strcpy(temp, state()->_locations[SceneId]._name);
 	strcat(temp, ".NPP");
