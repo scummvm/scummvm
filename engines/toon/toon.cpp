@@ -818,6 +818,19 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_inventoryIconSlots = NULL;
 	_genericTexts = NULL;
 	_audioManager = NULL; 
+	_gameState = NULL;
+
+	_locationDirNotVisited = NULL;
+	_locationDirVisited = NULL;
+	_specialInfoLine = NULL;
+
+	for (int i = 0; i < 64; i++) {
+		_sceneAnimations[i]._active = false;
+	}
+
+	for (int i = 0; i < 32; i++) {
+		_characters[i] = NULL;
+	}
 
 	memset(&_scriptData, 0, sizeof(EMCData));
 
