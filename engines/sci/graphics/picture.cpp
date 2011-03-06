@@ -224,19 +224,20 @@ void GfxPicture::drawSci32Vga(int16 celNo, int16 drawX, int16 drawY, int16 pictu
 }
 #endif
 
+extern void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCount, int rlePos, int literalPos, ViewType viewType, uint16 width, bool isMacSci11ViewData);
+
 void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 drawX, int16 drawY, int16 pictureX) {
 	byte *celBitmap = NULL;
 	byte *ptr = NULL;
 	byte *headerPtr = inbuffer + headerPos;
 	byte *rlePtr = inbuffer + rlePos;
-	byte *literalPtr = inbuffer + literalPos;
 	int16 displaceX, displaceY;
 	byte priority = _addToFlag ? _priority : 0;
 	byte clearColor;
 	bool compression = true;
-	byte curByte, runLength;
+	byte curByte;
 	int16 y, lastY, x, leftX, rightX;
-	int pixelNr, pixelCount;
+	int pixelCount;
 	uint16 width, height;
 
 #ifdef ENABLE_SCI32
@@ -247,12 +248,11 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 		height = READ_LE_UINT16(headerPtr + 2);
 		displaceX = (signed char)headerPtr[4];
 		displaceY = (unsigned char)headerPtr[5];
-		if (_resourceType == SCI_PICTURE_TYPE_SCI11) {
+		if (_resourceType == SCI_PICTURE_TYPE_SCI11)
 			// SCI1.1 uses hardcoded clearcolor for pictures, even if cel header specifies otherwise
 			clearColor = _screen->getColorWhite();
-		} else {
+		else
 			clearColor = headerPtr[6];
-		}
 #ifdef ENABLE_SCI32
 	} else {
 		width = READ_SCI11ENDIAN_UINT16(headerPtr + 0);
@@ -268,91 +268,18 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 	if (displaceX || displaceY)
 		error("unsupported embedded cel-data in picture");
 
+	// We will unpack cel-data into a temporary buffer and then plot it to screen
+	//  That needs to be done cause a mirrored picture may be requested
 	pixelCount = width * height;
 	celBitmap = new byte[pixelCount];
 	if (!celBitmap)
 		error("Unable to allocate temporary memory for picture drawing");
 
-	if (compression) {
-		// We will unpack cel-data into a temporary buffer and then plot it to screen
-		//  That needs to be done cause a mirrored picture may be requested
-		memset(celBitmap, clearColor, pixelCount);
-		pixelNr = 0;
-		ptr = celBitmap;
-		if (literalPos == 0) {
-			// decompression for data that has only one stream (vecor embedded view data)
-			switch (_resMan->getViewType()) {
-			case kViewEga:
-				while (pixelNr < pixelCount) {
-					curByte = *rlePtr++;
-					runLength = curByte >> 4;
-					memset(ptr + pixelNr, curByte & 0x0F, MIN<uint16>(runLength, pixelCount - pixelNr));
-					pixelNr += runLength;
-				}
-				break;
-			case kViewVga:
-			case kViewVga11:
-				while (pixelNr < pixelCount) {
-					curByte = *rlePtr++;
-					runLength = curByte & 0x3F;
-					switch (curByte & 0xC0) {
-					case 0: // copy bytes as-is
-						while (runLength-- && pixelNr < pixelCount)
-							ptr[pixelNr++] = *rlePtr++;
-						break;
-					case 0x80: // fill with color
-						memset(ptr + pixelNr, *rlePtr++, MIN<uint16>(runLength, pixelCount - pixelNr));
-						pixelNr += runLength;
-						break;
-					case 0xC0: // fill with transparent
-						pixelNr += runLength;
-						break;
-					}
-				}
-				break;
-			case kViewAmiga:
-				while (pixelNr < pixelCount) {
-					curByte = *rlePtr++;
-					if (curByte & 0x07) { // fill with color
-						runLength = curByte & 0x07;
-						curByte = curByte >> 3;
-						while (runLength-- && pixelNr < pixelCount) {
-							ptr[pixelNr++] = curByte;
-						}
-					} else { // fill with transparent
-						runLength = curByte >> 3;
-						pixelNr += runLength;
-					}
-				}
-				break;
-
-			default:
-				error("Unsupported picture viewtype");
-			}
-		} else {
-			// decompression for data that has two separate streams (probably SCI 1.1 picture)
-			while (pixelNr < pixelCount) {
-				curByte = *rlePtr++;
-				runLength = curByte & 0x3F;
-				switch (curByte & 0xC0) {
-				case 0: // copy bytes as-is
-					while (runLength-- && pixelNr < pixelCount)
-						ptr[pixelNr++] = *literalPtr++;
-					break;
-				case 0x80: // fill with color
-					memset(ptr + pixelNr, *literalPtr++, MIN<uint16>(runLength, pixelCount - pixelNr));
-					pixelNr += runLength;
-					break;
-				case 0xC0: // fill with transparent
-					pixelNr += runLength;
-					break;
-				}
-			}
-		}
-	} else {
+	if (compression)
+		unpackCelData(inbuffer, celBitmap, clearColor, pixelCount, rlePos, literalPos, _resMan->getViewType(), width, false);
+	else
 		// No compression (some SCI32 pictures)
 		memcpy(celBitmap, rlePtr, pixelCount);
-	}
 
 	Common::Rect displayArea = _coordAdjuster->pictureGetDisplayArea();
 
