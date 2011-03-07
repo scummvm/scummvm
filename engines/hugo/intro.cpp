@@ -119,15 +119,19 @@ bool intro_v1d::introPlay() {
 				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
 
 			char buffer[80];
-			if (_vm->_boot.registered)
+			if (_vm->_boot.registered == kRegRegistered)
 				strcpy(buffer, "Registered Version");
-			else
+			else if (_vm->_boot.registered == kRegShareware)
 				strcpy(buffer, "Shareware Version");
+			else if (_vm->_boot.registered == kRegFreeware)
+				strcpy(buffer, "Freeware Version");
+			else
+				error("Unknown registration flag in hugo.bsf: %d", _vm->_boot.registered);
 
 			font.drawString(&surf, buffer, 0, 163, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 			font.drawString(&surf, _vm->getCopyrightString(), 0, 176, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 
-			if (scumm_stricmp(_vm->_boot.distrib, "David P. Gray")) {
+			if ((*_vm->_boot.distrib != '\0') && (scumm_stricmp(_vm->_boot.distrib, "David P. Gray"))) {
 				sprintf(buffer, "Distributed by %s.", _vm->_boot.distrib);
 				font.drawString(&surf, buffer, 0, 75, 320, _TMAGENTA, Graphics::kTextAlignCenter);
 			}

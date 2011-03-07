@@ -168,11 +168,9 @@ void OpenGLGraphicsManager::resetGraphicsScale() {
 }
 
 #ifdef USE_RGB_COLOR
-
 Graphics::PixelFormat OpenGLGraphicsManager::getScreenFormat() const {
 	return _screenFormat;
 }
-
 #endif
 
 void OpenGLGraphicsManager::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
@@ -310,7 +308,7 @@ int16 OpenGLGraphicsManager::getWidth() {
 
 void OpenGLGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
 	assert(colors);
-	
+
 #ifdef USE_RGB_COLOR
 	assert(_screenFormat.bytesPerPixel == 1);
 #endif
@@ -326,7 +324,7 @@ void OpenGLGraphicsManager::setPalette(const byte *colors, uint start, uint num)
 
 void OpenGLGraphicsManager::grabPalette(byte *colors, uint start, uint num) {
 	assert(colors);
-	
+
 #ifdef USE_RGB_COLOR
 	assert(_screenFormat.bytesPerPixel == 1);
 #endif
@@ -369,6 +367,7 @@ void OpenGLGraphicsManager::fillScreen(uint32 col) {
 	if (_gameTexture == NULL)
 		return;
 
+#ifdef USE_RGB_COLOR
 	if (_screenFormat.bytesPerPixel == 1) {
 		memset(_screenData.pixels, col, _screenData.h * _screenData.pitch);
 	} else if (_screenFormat.bytesPerPixel == 2) {
@@ -394,7 +393,9 @@ void OpenGLGraphicsManager::fillScreen(uint32 col) {
 			pixels[i] = col;
 		}
 	}
-
+#else
+	memset(_screenData.pixels, col, _screenData.h * _screenData.pitch);
+#endif
 	_screenNeedsRedraw = true;
 }
 
@@ -1138,7 +1139,7 @@ void OpenGLGraphicsManager::loadTextures() {
 		_cursorTexture = new GLTexture(4, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
 	else
 		_cursorTexture->refresh();
-		
+
 	GLint filter = _videoMode.antialiasing ? GL_LINEAR : GL_NEAREST;
 	_gameTexture->setFilter(filter);
 	_overlayTexture->setFilter(filter);
@@ -1149,17 +1150,26 @@ void OpenGLGraphicsManager::loadTextures() {
 	_overlayTexture->allocBuffer(_videoMode.overlayWidth, _videoMode.overlayHeight);
 	_cursorTexture->allocBuffer(_cursorState.w, _cursorState.h);
 
-	if (_transactionDetails.formatChanged || 
+	if (
+#ifdef USE_RGB_COLOR
+			_transactionDetails.formatChanged ||
+#endif
 			_oldVideoMode.screenWidth != _videoMode.screenWidth ||
 			_oldVideoMode.screenHeight != _videoMode.screenHeight)
 		_screenData.create(_videoMode.screenWidth, _videoMode.screenHeight,
-			_screenFormat.bytesPerPixel);
+#ifdef USE_RGB_COLOR
+			_screenFormat.bytesPerPixel
+#else
+			1
+#endif
+			);
+
 
 	if (_oldVideoMode.overlayWidth != _videoMode.overlayWidth ||
 		_oldVideoMode.overlayHeight != _videoMode.overlayHeight)
 		_overlayData.create(_videoMode.overlayWidth, _videoMode.overlayHeight,
 			_overlayFormat.bytesPerPixel);
-	
+
 	_screenNeedsRedraw = true;
 	_overlayNeedsRedraw = true;
 	_cursorNeedsRedraw = true;

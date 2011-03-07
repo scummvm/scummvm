@@ -193,11 +193,13 @@ int reg_t::cmp(const reg_t right, bool treatAsUnsigned) const {
 bool reg_t::pointerComparisonWithInteger(const reg_t right) const {
 	// This function handles the case where a script tries to compare a pointer
 	// to a number. Normally, we would not want to allow that. However, SCI0 -
-	// SCI1 scripts do this in order to distinguish pointers (to resources)
-	// from plain numbers. In our SCI implementation, such a check may seem
-	// pointless, as one can simply use the segment value to achieve this goal.
-	// But Sierra's SCI did not have the notion of segment IDs, so both pointer
-	// and numbers were simple integers.
+	// SCI1 scripts do this in order to distinguish references to
+	// external resources (which are numbers) from pointers. In
+	// our SCI implementation, such a check may seem pointless, as
+	// one can simply use the segment value to achieve this goal.
+	// But Sierra's SCI did not have the notion of segment IDs, so
+	// both pointer and numbers were simple integers.
+	//
 	// But for some things, scripts had (and have) to distinguish between
 	// numbers and pointers. Lacking the segment information, Sierra's
 	// developers resorted to a hack: If an integer is smaller than a certain

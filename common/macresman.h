@@ -154,14 +154,13 @@ public:
 
 	/**
 	 * Convert cursor from crsr format to format suitable for feeding to CursorMan
-	 * @param data Pointer to the cursor data
-	 * @param datasize Size of the cursor data
+	 * @param data Pointer to the cursor datax
 	 * @param cursor Pointer to memory where result cursor will be stored. The memory
 	 *               block will be malloc()'ed
 	 * @param w Pointer to int where the cursor width will be stored
 	 * @param h Pointer to int where the cursor height will be stored
-	 * @param hotspot_x Storage for cursor hotspot X coordinate
-	 * @param hotspot_Y Storage for cursor hotspot Y coordinate
+	 * @param hotspotX Storage for cursor hotspot X coordinate
+	 * @param hotspotY Storage for cursor hotspot Y coordinate
 	 * @param keycolor Pointer to int where the transpared color value will be stored
 	 * @param colored If set to true then colored cursor will be returned (if any).
 	 *                b/w version will be used otherwise
@@ -169,8 +168,8 @@ public:
 	 *                The memory will be malloc()'ed
 	 * @param palSize Pointer to integer where the palette size will be stored.
 	 */
-	static void convertCrsrCursor(byte *data, int datasize, byte **cursor, int *w, int *h,
-					  int *hotspot_x, int *hotspot_y, int *keycolor, bool colored, byte **palette, int *palSize);
+	static void convertCrsrCursor(SeekableReadStream *data, byte **cursor, int &w, int &h, int &hotspotX,
+			int &hotspotY, int &keycolor, bool colored, byte **palette, int &palSize);
 
 	/**
 	 * Return list of resource IDs with specified type ID

@@ -380,8 +380,6 @@ void Parser_v1d::lineHandler() {
 
 	if (!strcmp("restore", _vm->_line)) {
 		_vm->_file->restoreGame(-1);
-		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
-		gameStatus.viewState = kViewPlay;
 		return;
 	}
 

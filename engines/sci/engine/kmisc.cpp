@@ -497,7 +497,7 @@ reg_t kStub(EngineState *s, int argc, reg_t *argv) {
 	Kernel *kernel = g_sci->getKernel();
 	int kernelCallNr = -1;
 
-	Common::List<ExecStack>::iterator callIterator = s->_executionStack.end();
+	Common::List<ExecStack>::const_iterator callIterator = s->_executionStack.end();
 	if (callIterator != s->_executionStack.begin()) {
 		callIterator--;
 		ExecStack lastCall = *callIterator;

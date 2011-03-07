@@ -196,8 +196,6 @@ void TopMenu::handleCommand(GUI::CommandSender *sender, uint32 command, uint32 d
 	case kCmdLoad:
 		close();
 		_vm->_file->restoreGame(-1);
-		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
-		_vm->getGameStatus().viewState = kViewPlay;
 		break;
 	case kCmdRecall:
 		close();

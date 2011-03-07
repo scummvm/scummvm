@@ -1143,20 +1143,6 @@ void MohawkEngine_Myst::loadResources() {
 	delete rlstStream;
 }
 
-void MohawkEngine_Myst::runLoadDialog() {
-	const Common::String gameId = ConfMan.get("gameid");
-
-	const EnginePlugin *plugin = 0;
-	EngineMan.findGame(gameId, &plugin);
-
-	pauseEngine(true);
-	int slot = _loadDialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
-	if (slot >= 0) {
-		// TODO
-	}
-	pauseEngine(false);
-}
-
 Common::Error MohawkEngine_Myst::loadGameState(int slot) {
 	if (_gameState->load(_gameState->generateSaveGameList()[slot]))
 		return Common::kNoError;

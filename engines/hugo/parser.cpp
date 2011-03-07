@@ -286,11 +286,10 @@ void Parser::keyHandler(Common::Event event) {
 			break;
 		case Common::KEYCODE_l:
 			_vm->_file->restoreGame(-1);
-			_vm->_scheduler->restoreScreen(*_vm->_screen_p);
-			gameStatus.viewState = kViewPlay;
 			break;
 		case Common::KEYCODE_n:
-			warning("STUB: CTRL-N (WIN) - New Game");
+			if (Utils::Box(kBoxYesNo, "%s", "Are you sure you want to start a new game?") != 0)
+				_vm->_file->restoreGame(0);
 			break;
 		case Common::KEYCODE_s:
 			if (gameStatus.viewState == kViewPlay) {
@@ -360,8 +359,6 @@ void Parser::keyHandler(Common::Event event) {
 		break;
 	case Common::KEYCODE_F5:                        // Restore game
 		_vm->_file->restoreGame(-1);
-		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
-		gameStatus.viewState = kViewPlay;
 		break;
 	case Common::KEYCODE_F6:                        // Inventory
 		showInventory();

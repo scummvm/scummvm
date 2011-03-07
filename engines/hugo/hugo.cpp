@@ -259,8 +259,8 @@ Common::Error HugoEngine::run() {
 	if (loadSlot >= 0) {
 		_status.skipIntroFl = true;
 		_file->restoreGame(loadSlot);
-		_scheduler->restoreScreen(*_screen_p);
-		_status.viewState = kViewPlay;
+	} else {
+		_file->saveGame(0, "New Game");
 	}
 
 	while (!_status.doQuitFl) {
@@ -673,7 +673,7 @@ void HugoEngine::calcMaxScore() {
 void HugoEngine::endGame() {
 	debugC(1, kDebugEngine, "endGame");
 
-	if (!_boot.registered)
+	if (_boot.registered != kRegRegistered)
 		Utils::Box(kBoxAny, "%s", _text->getTextEngine(kEsAdvertise));
 	Utils::Box(kBoxAny, "%s\n%s", _episode, getCopyrightString());
 	_status.viewState = kViewExit;

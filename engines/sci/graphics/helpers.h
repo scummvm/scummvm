@@ -143,7 +143,8 @@ enum ViewType {
 	kViewUnknown,   // uninitialized, or non-SCI
 	kViewEga,       // EGA SCI0/SCI1 and Amiga SCI0/SCI1 ECS 16 colors
 	kViewAmiga,     // Amiga SCI1 ECS 32 colors
-	kViewVga,       // VGA SCI1 256 colors or Amiga SCI1 AGA 64 colors (i.e. Longbow)
+	kViewAmiga64,   // Amiga SCI1 AGA 64 colors (i.e. Longbow)
+	kViewVga,       // VGA SCI1 256 colors
 	kViewVga11      // VGA SCI1.1 and newer 256 colors
 };
 

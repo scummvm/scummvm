@@ -69,6 +69,10 @@ public:
 	void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const;
 
 private:
+	bool loadFromPE(const Common::String &fileName, const WinFontDirEntry &dirEntry);
+	bool loadFromNE(const Common::String &fileName, const WinFontDirEntry &dirEntry);
+
+	uint32 getFontIndex(Common::SeekableReadStream &stream, const WinFontDirEntry &dirEntry);
 	bool loadFromFNT(Common::SeekableReadStream &stream);
 	char indexToCharacter(uint16 index) const;
 	uint16 characterToIndex(byte character) const;

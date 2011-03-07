@@ -114,7 +114,7 @@ private:
 	// Mouse layer
 	GLESTexture *_mouse_texture;
 	GLESPaletteTexture *_mouse_texture_palette;
-	GLESTexture *_mouse_texture_rgb;
+	GLES5551Texture *_mouse_texture_rgb;
 	Common::Point _mouse_hotspot;
 	int _mouse_targetscale;
 	bool _show_mouse;
@@ -146,6 +146,8 @@ private:
 	void deinitSurface();
 	void initViewport();
 
+	void initOverlay();
+
 #ifdef USE_RGB_COLOR
 	Common::String getPixelFormatName(const Graphics::PixelFormat &format) const;
 	void initTexture(GLESTexture **texture, uint width, uint height,
@@ -153,7 +155,7 @@ private:
 #endif
 
 	void setupKeymapper();
-	void _setCursorPalette(const byte *colors, uint start, uint num);
+	void setCursorPaletteInternal(const byte *colors, uint start, uint num);
 
 public:
 	OSystem_Android(int audio_sample_rate, int audio_buffer_size);

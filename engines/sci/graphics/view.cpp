@@ -106,7 +106,8 @@ void GfxView::initData(GuiResourceId resourceId) {
 	switch (curViewType) {
 	case kViewEga: // SCI0 (and Amiga 16 colors)
 		isEGA = true;
-	case kViewAmiga: // Amiga (32 colors)
+	case kViewAmiga: // Amiga ECS (32 colors)
+	case kViewAmiga64: // Amiga AGA (64 colors)
 	case kViewVga: // View-format SCI1
 		// LoopCount:WORD MirrorMask:WORD Version:WORD PaletteOffset:WORD LoopOffset0:WORD LoopOffset1:WORD...
 
@@ -370,22 +371,129 @@ void GfxView::getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int1
 	outRect.top = outRect.bottom - scaledHeight;
 }
 
+void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCount, int rlePos, int literalPos, ViewType viewType, uint16 width, bool isMacSci11ViewData) {
+	byte *outPtr = celBitmap;
+	byte curByte, runLength;
+	byte *rlePtr = inBuffer + rlePos;
+	byte *literalPtr = inBuffer + literalPos;
+	int pixelNr = 0;
+
+	memset(celBitmap, clearColor, pixelCount);
+
+	if (!literalPos) {
+		// decompression for data that has only one combined stream
+		switch (viewType) {
+		case kViewEga:
+			while (pixelNr < pixelCount) {
+				curByte = *rlePtr++;
+				runLength = curByte >> 4;
+				memset(outPtr + pixelNr, curByte & 0x0F, MIN<uint16>(runLength, pixelCount - pixelNr));
+				pixelNr += runLength;
+			}
+			break;
+		case kViewAmiga:
+			while (pixelNr < pixelCount) {
+				curByte = *rlePtr++;
+				if (curByte & 0x07) { // fill with color
+					runLength = curByte & 0x07;
+					curByte = curByte >> 3;
+					while (runLength-- && pixelNr < pixelCount)
+						outPtr[pixelNr++] = curByte;
+				} else { // fill with transparent
+					runLength = curByte >> 3;
+					pixelNr += runLength;
+				}
+			}
+			break;
+		case kViewAmiga64:
+			// TODO: This isn't 100% right. Implement it fully.
+			while (pixelNr < pixelCount) {
+				curByte = *rlePtr++;
+				runLength = curByte >> 6;
+				memset(outPtr + pixelNr, curByte & 0x3F, MIN<uint16>(runLength, pixelCount - pixelNr));
+				pixelNr += runLength;
+			}
+			break;
+		case kViewVga:
+		case kViewVga11:
+			while (pixelNr < pixelCount) {
+				curByte = *rlePtr++;
+				runLength = curByte & 0x3F;
+				switch (curByte & 0xC0) {
+				case 0: // copy bytes as-is
+					while (runLength-- && pixelNr < pixelCount)
+						outPtr[pixelNr++] = *rlePtr++;
+					break;
+				case 0x40: // copy bytes as is (In copy case, runLength can go upto 127 i.e. pixel & 0x40). Fixes bug #3135872.
+					runLength += 64;
+					break;
+				case 0x80: // fill with color
+					memset(outPtr + pixelNr, *rlePtr++, MIN<uint16>(runLength, pixelCount - pixelNr));
+					pixelNr += runLength;
+					break;
+				case 0xC0: // fill with transparent
+					pixelNr += runLength;
+					break;
+				}
+			}
+			break;
+		default:
+			error("Unsupported picture viewtype");
+		}
+	} else {
+		// decompression for data that has two separate streams (probably a SCI 1.1 view)
+		if (isMacSci11ViewData) {
+			// KQ6/Freddy Pharkas use byte lengths, all others use uint16
+			// The SCI devs must have realized that a max of 255 pixels wide
+			// was not very good for 320 or 640 width games.
+			bool hasByteLengths = (g_sci->getGameId() == GID_KQ6 || g_sci->getGameId() == GID_FREDDYPHARKAS);
+
+			// compression for SCI1.1+ Mac
+			while (pixelNr < pixelCount) {
+				uint32 pixelLine = pixelNr;
+		
+				if (hasByteLengths) {
+					pixelNr += *rlePtr++;
+					runLength = *rlePtr++;
+				} else {
+					pixelNr += READ_BE_UINT16(rlePtr);
+					runLength = READ_BE_UINT16(rlePtr + 2);
+					rlePtr += 4;
+				}
+
+				while (runLength-- && pixelNr < pixelCount)
+					outPtr[pixelNr++] = *literalPtr++;
+
+				pixelNr = pixelLine + width;
+			}
+		} else {
+			while (pixelNr < pixelCount) {
+				curByte = *rlePtr++;
+				runLength = curByte & 0x3F;
+				switch (curByte & 0xC0) {
+				case 0: // copy bytes as-is
+					while (runLength-- && pixelNr < pixelCount)
+						outPtr[pixelNr++] = *literalPtr++;
+					break;
+				case 0x80: // fill with color
+					memset(outPtr + pixelNr, *literalPtr++, MIN<uint16>(runLength, pixelCount - pixelNr));
+					pixelNr += runLength;
+					break;
+				case 0xC0: // fill with transparent
+					pixelNr += runLength;
+					break;
+				}
+			}
+		}
+	}
+}
+
 void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCount) {
 	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
-	byte *rlePtr;
-	byte *literalPtr;
-	uint32 pixelNo = 0, runLength;
-	byte pixel;
 
 	if (celInfo->offsetEGA) {
 		// decompression for EGA views
-		literalPtr = _resourceData + _loop[loopNo].cel[celNo].offsetEGA;
-		while (pixelNo < pixelCount) {
-			pixel = *literalPtr++;
-			runLength = pixel >> 4;
-			memset(outPtr + pixelNo, pixel & 0x0F, MIN<uint32>(runLength, pixelCount - pixelNo));
-			pixelNo += runLength;
-		}
+		unpackCelData(_resourceData, outPtr, 0, pixelCount, celInfo->offsetEGA, 0, _resMan->getViewType(), celInfo->width, false);
 	} else {
 		// We fill the buffer with transparent pixels, so that we can later skip
 		//  over pixels to automatically have them transparent
@@ -408,100 +516,8 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 				clearColor = 0;
 		}
 
-		memset(outPtr, clearColor, pixelCount);
-
-		rlePtr = _resourceData + celInfo->offsetRLE;
-		if (!celInfo->offsetLiteral) { // no additional literal data
-			if (_resMan->getViewType() == kViewAmiga) {
-				// decompression for amiga views
-				while (pixelNo < pixelCount) {
-					pixel = *rlePtr++;
-					if (pixel & 0x07) { // fill with color
-						runLength = pixel & 0x07;
-						pixel = pixel >> 3;
-						while (runLength-- && pixelNo < pixelCount) {
-							outPtr[pixelNo++] = pixel;
-						}
-					} else { // fill with transparent
-						runLength = pixel >> 3;
-						pixelNo += runLength;
-					}
-				}
-			} else {
-				// decompression for data that has just one combined stream
-				while (pixelNo < pixelCount) {
-					pixel = *rlePtr++;
-					runLength = pixel & 0x3F;
-					switch (pixel & 0xC0) {
-					case 0x40: // copy bytes as is (In copy case, runLength can go upto 127 i.e. pixel & 0x40)
-						runLength += 64;
-					case 0x00: // copy bytes as-is
-						while (runLength-- && pixelNo < pixelCount)
-							outPtr[pixelNo++] = *rlePtr++;
-						break;
-					case 0x80: // fill with color
-						memset(outPtr + pixelNo, *rlePtr++, MIN<uint32>(runLength, pixelCount - pixelNo));
-						pixelNo += runLength;
-						break;
-					case 0xC0: // fill with transparent
-						pixelNo += runLength;
-						break;
-					}
-				}
-			}
-		} else {
-			literalPtr = _resourceData + celInfo->offsetLiteral;
-			if (celInfo->offsetRLE) {
-				if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() == SCI_VERSION_1_1) {
-					// KQ6/Freddy Pharkas use byte lengths, all others use uint16
-					// The SCI devs must have realized that a max of 255 pixels wide
-					// was not very good for 320 or 640 width games.
-					bool hasByteLengths = (g_sci->getGameId() == GID_KQ6 || g_sci->getGameId() == GID_FREDDYPHARKAS);
-
-					// compression for SCI1.1+ Mac
-					while (pixelNo < pixelCount) {
-						uint32 pixelLine = pixelNo;
-		
-						if (hasByteLengths) {
-							pixelNo += *rlePtr++;
-							runLength = *rlePtr++;
-						} else {
-							pixelNo += READ_BE_UINT16(rlePtr);
-							runLength = READ_BE_UINT16(rlePtr + 2);
-							rlePtr += 4;
-						}
-
-						while (runLength-- && pixelNo < pixelCount)
-							outPtr[pixelNo++] = *literalPtr++;
-
-						pixelNo = pixelLine + celInfo->width;
-					}
-				} else {
-					// decompression for data that has separate rle and literal streams
-					while (pixelNo < pixelCount) {
-						pixel = *rlePtr++;
-						runLength = pixel & 0x3F;
-						switch (pixel & 0xC0) {
-						case 0: // copy bytes as-is
-							while (runLength-- && pixelNo < pixelCount)
-								outPtr[pixelNo++] = *literalPtr++;
-							break;
-						case 0x80: // fill with color
-							memset(outPtr + pixelNo, *literalPtr++, MIN<uint32>(runLength, pixelCount - pixelNo));
-							pixelNo += runLength;
-							break;
-						case 0xC0: // fill with transparent
-							pixelNo += runLength;
-							break;
-						}
-					}
-				}
-			} else {
-				// literal stream only, so no compression
-				memcpy(outPtr, literalPtr, pixelCount);
-				pixelNo = pixelCount;
-			}
-		}
+		bool isMacSci11ViewData = g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() == SCI_VERSION_1_1;
+		unpackCelData(_resourceData, outPtr, clearColor, pixelCount, celInfo->offsetRLE, celInfo->offsetLiteral, _resMan->getViewType(), celInfo->width, isMacSci11ViewData);
 
 		// Swap 0 and 0xff pixels for Mac SCI1.1+ games (see above)
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1) {

@@ -88,19 +88,15 @@ GLESTexture::GLESTexture(byte bytesPerPixel, GLenum glFormat, GLenum glType,
 	_glFormat(glFormat),
 	_glType(glType),
 	_paletteSize(paletteSize),
-	_pixelFormat(pixelFormat),
+	_texture_name(0),
+	_surface(),
 	_texture_width(0),
 	_texture_height(0),
-	_all_dirty(true)
+	_all_dirty(false),
+	_dirty_rect(),
+	_pixelFormat(pixelFormat)
 {
 	GLCALL(glGenTextures(1, &_texture_name));
-
-	// This all gets reset later in allocBuffer:
-	_surface.w = 0;
-	_surface.h = 0;
-	_surface.pitch = 0;
-	_surface.pixels = 0;
-	_surface.bytesPerPixel = 0;
 }
 
 GLESTexture::~GLESTexture() {
@@ -166,15 +162,15 @@ void GLESTexture::allocBuffer(GLuint w, GLuint h) {
 }
 
 void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
-								const void *buf, int pitch) {
-	ENTER("%u, %u, %u, %u, %p, %d", x, y, w, h, buf, pitch);
+								const void *buf, int pitch_buf) {
+	ENTER("%u, %u, %u, %u, %p, %d", x, y, w, h, buf, pitch_buf);
 
 	GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
 	GLCALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 
 	setDirtyRect(Common::Rect(x, y, x + w, y + h));
 
-	if (static_cast<int>(w) * _bytesPerPixel == pitch) {
+	if (static_cast<int>(w) * _bytesPerPixel == pitch_buf) {
 		GLCALL(glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h,
 								_glFormat, _glType, buf));
 	} else {
@@ -191,7 +187,7 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 		do {
 			memcpy(dst, src, w * _bytesPerPixel);
 			dst += w * _bytesPerPixel;
-			src += pitch;
+			src += pitch_buf;
 		} while (--count);
 
 		GLCALL(glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h,
@@ -206,19 +202,24 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 			GLCALL(glTexSubImage2D(GL_TEXTURE_2D, 0, x, y,
 									w, 1, _glFormat, _glType, src));
 			++y;
-			src += pitch;
+			src += pitch_buf;
 		} while (--h);
 #endif
 	}
 }
 
-void GLESTexture::fillBuffer(byte x) {
+void GLESTexture::fillBuffer(uint32 color) {
 	uint rowbytes = _surface.w * _bytesPerPixel;
 
 	byte *tmp = new byte[rowbytes];
 	assert(tmp);
 
-	memset(tmp, x, rowbytes);
+	if (_bytesPerPixel == 1 || ((color & 0xff) == ((color >> 8) & 0xff))) {
+		memset(tmp, color & 0xff, rowbytes);
+	} else {
+		uint16 *p = (uint16 *)tmp;
+		Common::set_to(p, p + _surface.w, (uint16)color);
+	}
 
 	GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
 	GLCALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
@@ -275,8 +276,7 @@ void GLESTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 		GLCALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, ARRAYSIZE(vertices) / 2));
 	}
 
-	_all_dirty = false;
-	_dirty_rect = Common::Rect();
+	clearDirty();
 }
 
 GLES4444Texture::GLES4444Texture() :
@@ -313,28 +313,13 @@ GLESPaletteTexture::~GLESPaletteTexture() {
 }
 
 void GLESPaletteTexture::allocBuffer(GLuint w, GLuint h) {
-	_surface.w = w;
-	_surface.h = h;
-	_surface.bytesPerPixel = _bytesPerPixel;
-
-	// Already allocated a sufficiently large buffer?
-	if (w <= _texture_width && h <= _texture_height)
-		return;
-
-	if (npot_supported) {
-		_texture_width = _surface.w;
-		_texture_height = _surface.h;
-	} else {
-		_texture_width = nextHigher2(_surface.w);
-		_texture_height = nextHigher2(_surface.h);
-	}
-
-	_surface.pitch = _texture_width * _bytesPerPixel;
+	GLESTexture::allocBuffer(w, h);
 
 	// Texture gets uploaded later (from drawTexture())
 
 	byte *new_buffer = new byte[_paletteSize +
 		_texture_width * _texture_height * _bytesPerPixel];
+	assert(new_buffer);
 
 	if (_texture) {
 		// preserve palette
@@ -346,16 +331,15 @@ void GLESPaletteTexture::allocBuffer(GLuint w, GLuint h) {
 	_surface.pixels = _texture + _paletteSize;
 }
 
-void GLESPaletteTexture::fillBuffer(byte x) {
+void GLESPaletteTexture::fillBuffer(uint32 color) {
 	assert(_surface.pixels);
-	memset(_surface.pixels, x, _surface.pitch * _surface.h);
+	memset(_surface.pixels, color & 0xff, _surface.pitch * _surface.h);
 	setDirty();
 }
 
-void GLESPaletteTexture::updateBuffer(GLuint x, GLuint y,
-										GLuint w, GLuint h,
-										const void *buf, int pitch) {
-	_all_dirty = true;
+void GLESPaletteTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
+										const void *buf, int pitch_buf) {
+	setDirtyRect(Common::Rect(x, y, x + w, y + h));
 
 	const byte * src = static_cast<const byte *>(buf);
 	byte *dst = static_cast<byte *>(_surface.getBasePtr(x, y));
@@ -363,22 +347,14 @@ void GLESPaletteTexture::updateBuffer(GLuint x, GLuint y,
 	do {
 		memcpy(dst, src, w * _bytesPerPixel);
 		dst += _surface.pitch;
-		src += pitch;
+		src += pitch_buf;
 	} while (--h);
 }
 
 void GLESPaletteTexture::drawTexture(GLshort x, GLshort y, GLshort w,
 										GLshort h) {
-	if (_all_dirty) {
+	if (dirty()) {
 		GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
-		GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-								GL_NEAREST));
-		GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-								GL_NEAREST));
-		GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-								GL_CLAMP_TO_EDGE));
-		GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
-								GL_CLAMP_TO_EDGE));
 
 		const size_t texture_size =
 			_paletteSize + _texture_width * _texture_height * _bytesPerPixel;

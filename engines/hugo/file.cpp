@@ -411,6 +411,8 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 	out->writeSint16BE(_vm->_maze.x4);
 	out->writeByte(_vm->_maze.firstScreenIndex);
 
+	out->writeByte((byte)_vm->getGameStatus().viewState);
+
 	out->finalize();
 
 	delete out;
@@ -507,6 +509,11 @@ bool FileManager::restoreGame(const int16 slot) {
 	_vm->_maze.x4 = in->readSint16BE();
 	_vm->_maze.firstScreenIndex = in->readByte();
 
+	_vm->_scheduler->restoreScreen(*_vm->_screen_p);
+	if ((_vm->getGameStatus().viewState = (vstate_t) in->readByte()) != kViewPlay)
+		_vm->_screen->hideCursor();
+
+
 	delete in;
 	return true;
 }
@@ -563,6 +570,8 @@ void FileManager::readBootFile() {
 		if (_vm->_gameVariant == kGameVariantH1Dos) {
 			//TODO initialize properly _boot structure
 			warning("readBootFile - Skipping as H1 Dos may be a freeware");
+			memset(_vm->_boot.distrib, '\0', sizeof(_vm->_boot.distrib));
+			_vm->_boot.registered = kRegFreeware;
 			return;
 		} else {
 			error("Missing startup file");

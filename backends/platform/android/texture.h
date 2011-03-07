@@ -54,8 +54,8 @@ public:
 	virtual void allocBuffer(GLuint width, GLuint height);
 
 	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
-								const void *buf, int pitch);
-	virtual void fillBuffer(byte x);
+								const void *buf, int pitch_buf);
+	virtual void fillBuffer(uint32 color);
 
 	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
 
@@ -71,6 +71,10 @@ public:
 		return _surface.h;
 	}
 
+	inline uint16 pitch() const {
+		return _surface.pitch;
+	}
+
 	inline const Graphics::Surface *surface_const() const {
 		return &_surface;
 	}
@@ -84,14 +88,21 @@ public:
 		return _all_dirty || !_dirty_rect.isEmpty();
 	}
 
-	inline Graphics::PixelFormat getPixelFormat() const {
+	inline const Graphics::PixelFormat &getPixelFormat() const {
 		return _pixelFormat;
 	}
 
 protected:
 	inline void setDirty() {
 		_all_dirty = true;
-		_dirty_rect = Common::Rect();
+	}
+
+	inline void clearDirty() {
+		_all_dirty = false;
+		_dirty_rect.top = 0;
+		_dirty_rect.left = 0;
+		_dirty_rect.bottom = 0;
+		_dirty_rect.right = 0;
 	}
 
 	inline void setDirtyRect(const Common::Rect& r) {
@@ -112,9 +123,9 @@ protected:
 	Graphics::Surface _surface;
 	GLuint _texture_width;
 	GLuint _texture_height;
-	bool _all_dirty;
 
 	// Covers dirty area
+	bool _all_dirty;
 	Common::Rect _dirty_rect;
 
 	Graphics::PixelFormat _pixelFormat;
@@ -163,8 +174,8 @@ public:
 
 	virtual void allocBuffer(GLuint width, GLuint height);
 	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
-								const void *buf, int pitch);
-	virtual void fillBuffer(byte x);
+								const void *buf, int pitch_buf);
+	virtual void fillBuffer(uint32 color);
 
 	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
 

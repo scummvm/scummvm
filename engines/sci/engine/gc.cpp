@@ -108,7 +108,7 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 
 	// Initialize value stack
 	// We do this one by hand since the stack doesn't know the current execution stack
-	Common::List<ExecStack>::iterator iter = s->_executionStack.reverse_begin();
+	Common::List<ExecStack>::const_iterator iter = s->_executionStack.reverse_begin();
 
 	// Skip fake kernel stack frame if it's on top
 	if ((*iter).type == EXEC_STACK_TYPE_KERNEL)
@@ -116,9 +116,9 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 
 	assert((iter != s->_executionStack.end()) && ((*iter).type != EXEC_STACK_TYPE_KERNEL));
 
-	ExecStack &xs = *iter;
+	const StackPtr sp = iter->sp;
 
-	for (reg_t *pos = s->stack_base; pos < xs.sp; pos++)
+	for (reg_t *pos = s->stack_base; pos < sp; pos++)
 		wm.push(*pos);
 
 	debugC(kDebugLevelGC, "[GC] -- Finished adding value stack");
@@ -126,7 +126,7 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 	// Init: Execution Stack
 	for (iter = s->_executionStack.begin();
 	     iter != s->_executionStack.end(); ++iter) {
-		ExecStack &es = *iter;
+		const ExecStack &es = *iter;
 
 		if (es.type != EXEC_STACK_TYPE_KERNEL) {
 			wm.push(es.objp);

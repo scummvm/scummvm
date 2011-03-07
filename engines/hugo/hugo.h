@@ -58,7 +58,7 @@ class RandomSource;
  */
 namespace Hugo {
 
-static const int kSavegameVersion = 5;
+static const int kSavegameVersion = 6;
 static const int kInvDx = 32;                       // Width of an inventory icon
 static const int kInvDy = 32;                       // Height of inventory icon
 static const int kMaxTunes = 16;                    // Max number of tunes
@@ -123,6 +123,12 @@ enum HugoDebugChannels {
 	kDebugInventory = 1 <<  7,
 	kDebugObject    = 1 <<  8,
 	kDebugMusic     = 1 <<  9
+};
+
+enum HugoRegistered {
+	kRegShareware = 0,
+	kRegRegistered,
+	kRegFreeware
 };
 
 /**

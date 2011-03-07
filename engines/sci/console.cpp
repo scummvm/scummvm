@@ -2198,7 +2198,7 @@ bool Console::cmdStack(int argc, const char **argv) {
 		return true;
 	}
 
-	ExecStack &xs = _engine->_gamestate->_executionStack.back();
+	const ExecStack &xs = _engine->_gamestate->_executionStack.back();
 	int nr = atoi(argv[1]);
 
 	for (int i = nr; i > 0; i--) {
@@ -2447,12 +2447,12 @@ bool Console::cmdScriptSteps(int argc, const char **argv) {
 
 bool Console::cmdBacktrace(int argc, const char **argv) {
 	DebugPrintf("Call stack (current base: 0x%x):\n", _engine->_gamestate->executionStackBase);
-	Common::List<ExecStack>::iterator iter;
+	Common::List<ExecStack>::const_iterator iter;
 	uint i = 0;
 
 	for (iter = _engine->_gamestate->_executionStack.begin();
 	     iter != _engine->_gamestate->_executionStack.end(); ++iter, ++i) {
-		ExecStack &call = *iter;
+		const ExecStack &call = *iter;
 		const char *objname = _engine->_gamestate->_segMan->getObjectName(call.sendp);
 		int paramc, totalparamc;
 

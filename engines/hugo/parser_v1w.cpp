@@ -132,8 +132,6 @@ void Parser_v1w::lineHandler() {
 
 	if (!strcmp("restore", _vm->_line) && (gameStatus.viewState == kViewPlay || gameStatus.viewState == kViewIdle)) {
 		_vm->_file->restoreGame(-1);
-		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
-		gameStatus.viewState = kViewPlay;
 		return;
 	}
 
