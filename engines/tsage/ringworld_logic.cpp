@@ -72,10 +72,12 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	/* Scene group 3 */
 	// Cockpit cutscenes
 	case 2000: return new Scene2000();
-	// Cockpit
+	// Spaceship - Cockpit
 	case 2100: return new Scene2100();
 	// Encyclopedia
 	case 2120: return new Scene2120();
+	// Spaceship - Level 2
+	case 2150: return new Scene2150();
 
 	/* Scene group 4 */
 
@@ -147,6 +149,82 @@ bool DisplayObject::performAction(int action) {
 	}
 
 	return false;
+}
+
+/*--------------------------------------------------------------------------*/
+
+SceneArea::SceneArea() {
+	_savedArea = NULL;
+	_pt.x = _pt.y = 0;
+}
+
+SceneArea::~SceneArea() {
+	delete _savedArea;
+}
+
+void SceneArea::setup(int resNum, int rlbNum, int subNum, int actionId) {
+	_resNum = resNum;
+	_rlbNum = rlbNum;
+	_subNum = subNum;
+	_actionId = actionId;
+
+	_surface = surfaceFromRes(resNum, rlbNum, subNum);
+}
+
+void SceneArea::draw2() {
+	_surface.draw(Common::Point(_bounds.left, _bounds.top));	
+}
+
+void SceneArea::display() {
+	_bounds.left = _pt.x - (_surface.getBounds().width() / 2);
+	_bounds.top = _pt.y + 1 - _surface.getBounds().height();
+	_bounds.setWidth(_surface.getBounds().width());
+	_bounds.setHeight(_surface.getBounds().height());
+
+	_savedArea = Surface_getArea(_globals->_gfxManagerInstance.getSurface(), _bounds);
+	draw2();
+}
+
+void SceneArea::restore() {
+	assert(_savedArea);
+	_savedArea->draw(Common::Point(_bounds.left, _bounds.top));
+	delete _savedArea;
+	_savedArea = NULL;
+}
+
+void SceneArea::draw(bool flag) {
+	_surface = surfaceFromRes(_resNum, _rlbNum, flag ? _subNum + 1 : _subNum);
+	_surface.draw(Common::Point(_bounds.left, _bounds.top));
+}
+
+void SceneArea::wait() {
+	// Wait until a mouse or keypress
+	Event event;
+	while (!_vm->getEventManager()->shouldQuit() && !_globals->_events.getEvent(event)) {
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+
+	List<SceneItem *>::iterator ii;
+	for (ii = _globals->_sceneItems.begin(); ii != _globals->_sceneItems.end(); ++ii) {
+		SceneItem *sceneItem = *ii;
+		if (sceneItem->contains(event.mousePos)) {
+			sceneItem->doAction(_actionId);
+			break;
+		}
+	}
+
+	_globals->_events.setCursor(CURSOR_ARROW);
+}
+
+void SceneArea::synchronise(Serialiser &s) {
+	s.syncAsSint16LE(_pt.x);
+	s.syncAsSint16LE(_pt.y);
+	s.syncAsSint32LE(_resNum);
+	s.syncAsSint32LE(_rlbNum);
+	s.syncAsSint32LE(_subNum);
+	s.syncAsSint32LE(_actionId);
+	_bounds.synchronise(s);
 }
 
 /*--------------------------------------------------------------------------*/

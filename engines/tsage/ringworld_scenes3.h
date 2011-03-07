@@ -27,11 +27,9 @@
 #define TSAGE_RINGWORLD_SCENES3_H
 
 #include "common/scummsys.h"
-#include "tsage/ringworld_logic.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
-#include "tsage/globals.h"
+#include "tsage/converse.h"
+#include "tsage/ringworld_logic.h"
 
 namespace tSage {
 
@@ -235,31 +233,6 @@ class Scene2100: public Scene {
 	public:
 		virtual void doAction(int action);
 	};
-
-	/* Custom classes */
-	class SceneArea: public SavedObject {
-	public:
-		GfxSurface _surface;
-		GfxSurface *_savedArea;
-		Common::Point _pt;
-		int _resNum;
-		int _rlbNum;
-		int _subNum;
-		int _actionId;
-		Rect _bounds;
-	public:
-		SceneArea();
-		~SceneArea();
-
-		void setup(int resNum, int rlbNum, int subNum, int actionId);
-		void draw2();
-		void display();
-		void restore();
-
-		virtual void synchronise(Serialiser &s);
-		virtual void draw(bool flag);
-		virtual void wait();
-	};
 public:
 	SequenceManager _sequenceManager;
 	SoundHandler _soundHandler;
@@ -352,6 +325,65 @@ public:
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void synchronise(Serialiser &s);
+};
+
+class Scene2150: public Scene {
+	/* Actions */
+	class Action1: public Action2 {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+
+	/* Hotspots */
+	class Hotspot1: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot2: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot4: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot7: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot10: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+public:
+	SoundHandler _soundHandler;
+	SequenceManager _sequenceManager;
+	SpeakerGameText _speakerGameText;
+
+	Rect _rect1, _rect2;
+	Hotspot1 _hotspot1;
+	Hotspot2 _hotspot2;
+	DisplayHotspot _hotspot3;
+	Hotspot4 _hotspot4;
+	DisplayHotspot _hotspot5, _hotspot6;
+	Hotspot7 _hotspot7;
+	DisplayHotspot _hotspot8, _hotspot9;
+	Hotspot10 _hotspot10;
+	DisplayHotspot _hotspot11;
+	SceneObject _hotspot12, _hotspot13, _hotspot14;
+	SceneArea _area1, _area2, _area3, _area4;
+	Action1 _action1;
+	Action2 _action2;
+
+	Scene2150();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void synchronise(Serialiser &s);
+	virtual void signal();
+	virtual void dispatch();
 };
 
 } // End of namespace tSage

@@ -65,6 +65,30 @@ public:
 	}
 };
 
+class SceneArea: public SavedObject {
+public:
+	GfxSurface _surface;
+	GfxSurface *_savedArea;
+	Common::Point _pt;
+	int _resNum;
+	int _rlbNum;
+	int _subNum;
+	int _actionId;
+	Rect _bounds;
+public:
+	SceneArea();
+	~SceneArea();
+
+	void setup(int resNum, int rlbNum, int subNum, int actionId);
+	void draw2();
+	void display();
+	void restore();
+
+	virtual void synchronise(Serialiser &s);
+	virtual void draw(bool flag);
+	virtual void wait();
+};
+
 /*--------------------------------------------------------------------------*/
 // Ringworld specific game speakers
 

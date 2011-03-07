@@ -28,6 +28,7 @@
 
 #include "common/scummsys.h"
 #include "tsage/ringworld_logic.h"
+#include "tsage/converse.h"
 #include "tsage/events.h"
 #include "tsage/core.h"
 #include "tsage/scenes.h"
