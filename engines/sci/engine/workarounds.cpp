@@ -401,14 +401,14 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 		return sci3IgnoreForNow;
 	}
 
-	EngineState *state = g_sci->getEngineState();
+	const EngineState *state = g_sci->getEngineState();
 	ExecStack *lastCall = state->xs;
-	Script *local_script = state->_segMan->getScriptIfLoaded(lastCall->local_segment);
-	int curScriptNr = local_script->getScriptNumber();
+	const Script *localScript = state->_segMan->getScriptIfLoaded(lastCall->local_segment);
+	int curScriptNr = localScript->getScriptNumber();
 
 	if (lastCall->debugLocalCallOffset != -1) {
 		// if lastcall was actually a local call search back for a real call
-		Common::List<ExecStack>::iterator callIterator = state->_executionStack.end();
+		Common::List<ExecStack>::const_iterator callIterator = state->_executionStack.end();
 		while (callIterator != state->_executionStack.begin()) {
 			callIterator--;
 			ExecStack loopCall = *callIterator;
