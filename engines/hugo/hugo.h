@@ -125,6 +125,12 @@ enum HugoDebugChannels {
 	kDebugMusic     = 1 <<  9
 };
 
+enum HugoRegistered {
+	kRegShareware = 0,
+	kRegRegistered,
+	kRegFreeware
+};
+
 /**
  * Ways to dismiss a text/prompt box
  */

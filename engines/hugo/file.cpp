@@ -563,6 +563,8 @@ void FileManager::readBootFile() {
 		if (_vm->_gameVariant == kGameVariantH1Dos) {
 			//TODO initialize properly _boot structure
 			warning("readBootFile - Skipping as H1 Dos may be a freeware");
+			memset(_vm->_boot.distrib, '\0', sizeof(_vm->_boot.distrib));
+			_vm->_boot.registered = kRegFreeware;
 			return;
 		} else {
 			error("Missing startup file");

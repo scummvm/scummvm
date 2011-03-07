@@ -673,7 +673,7 @@ void HugoEngine::calcMaxScore() {
 void HugoEngine::endGame() {
 	debugC(1, kDebugEngine, "endGame");
 
-	if (!_boot.registered)
+	if (_boot.registered != kRegRegistered)
 		Utils::Box(kBoxAny, "%s", _text->getTextEngine(kEsAdvertise));
 	Utils::Box(kBoxAny, "%s\n%s", _episode, getCopyrightString());
 	_status.viewState = kViewExit;
