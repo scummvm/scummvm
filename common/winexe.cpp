@@ -28,8 +28,8 @@
 
 namespace Common {
 
-WinResourceID &WinResourceID::operator=(String string) {
-	_name = string;
+WinResourceID &WinResourceID::operator=(const String &x) {
+	_name = x;
 	_idType = kIDTypeString;
 	return *this;
 }

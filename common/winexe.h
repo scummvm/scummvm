@@ -38,7 +38,7 @@ public:
 	WinResourceID(String x) { _idType = kIDTypeString; _name = x; }
 	WinResourceID(uint32 x) { _idType = kIDTypeNumerical; _id = x; }
 
-	WinResourceID &operator=(String string);
+	WinResourceID &operator=(const String &x);
 	WinResourceID &operator=(uint32 x);
 
 	bool operator==(const String &x) const;
