@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/macresman.h"
+#include "common/memstream.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "graphics/cursorman.h"
@@ -485,8 +486,8 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 					cursorBitmap[i * 8 + b] = 0; // Doesn't matter, just is transparent
 		}
 
-		uint16 hotspotX = READ_BE_UINT16(data);
-		uint16 hotspotY = READ_BE_UINT16(data + 2);
+		uint16 hotspotY = READ_BE_UINT16(data);
+		uint16 hotspotX = READ_BE_UINT16(data + 2);
 
 		static const byte cursorPalette[] = { 0x00, 0x00, 0x00, 0xff, 0xff, 0xff };
 
@@ -498,11 +499,12 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 		// Mac crsr cursor
 		byte *cursorBitmap, *palette;
 		int width, height, hotspotX, hotspotY, palSize, keycolor;
-		Common::MacResManager::convertCrsrCursor(resource->data, resource->size, &cursorBitmap, &width, &height, &hotspotX, &hotspotY, &keycolor, true, &palette, &palSize);
+		Common::MemoryReadStream resStream(resource->data, resource->size);
+		Common::MacResManager::convertCrsrCursor(&resStream, &cursorBitmap, width, height, hotspotX, hotspotY, keycolor, true, &palette, palSize);
 		CursorMan.replaceCursor(cursorBitmap, width, height, hotspotX, hotspotY, keycolor);
 		CursorMan.replaceCursorPalette(palette, 0, palSize);
-		free(cursorBitmap);
-		free(palette);
+		delete[] cursorBitmap;
+		delete[] palette;
 	}
 
 	kernelShow();

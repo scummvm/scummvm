@@ -4,10 +4,6 @@
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
- * Parts of this code are based on:
- * icoutils - A set of programs dealing with MS Windows icons and cursors.
- * Copyright (C) 1998-2001 Oskar Liljeblad
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -44,33 +40,31 @@ public:
 
 	void setCursor(int id);
 
-	virtual int extractResource(int id, byte **buf) { return 0; }
-	virtual int convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
-							 int *hotspot_x, int *hotspot_y, int *keycolor,
-							 byte **palette, int *palSize) { return 0; }
-
-	enum {
-		MAX_CACHED_CURSORS = 10
-	};
-
+protected:
 	struct CachedCursor {
 		bool valid;
 		int id;
 		byte *bitmap;
-		int w, h;
-		int hotspot_x, hotspot_y;
-		uint32 last_used;
+		int width, height;
+		int hotspotX, hotspotY;
+		uint32 lastUsed;
 		byte *palette;
 		int palSize;
 	};
 
+	Common::String _fileName;
 	ScummEngine_v70he *_vm;
+
+	virtual bool extractResource(int id, CachedCursor *cc) = 0;
+
+private:
+	enum {
+		MAX_CACHED_CURSORS = 10
+	};
 
 	ResExtractor::CachedCursor *findCachedCursor(int id);
 	ResExtractor::CachedCursor *getCachedCursorSlot();
-
-	bool _arg_raw;
-	Common::String _fileName;
+	
 	CachedCursor _cursorCache[MAX_CACHED_CURSORS];
 };
 
@@ -78,59 +72,22 @@ class Win32ResExtractor : public ResExtractor {
 public:
 	Win32ResExtractor(ScummEngine_v70he *scumm);
 	~Win32ResExtractor() {}
-	int extractResource(int id, byte **data);
-	void setCursor(int id);
-	int convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
-			 int *hotspot_x, int *hotspot_y, int *keycolor, byte **palette, int *palSize);
 
 private:
 	Common::PEResources _exe;
 
-/*
- * Structures
- */
-
-#include "common/pack-start.h"	// START STRUCT PACKING
-
-	struct Win32BitmapInfoHeader {
-		uint32 size;
-		int32 width;
-		int32 height;
-		uint16 planes;
-		uint16 bit_count;
-		uint32 compression;
-		uint32 size_image;
-		int32 x_pels_per_meter;
-		int32 y_pels_per_meter;
-		uint32 clr_used;
-		uint32 clr_important;
-	} PACKED_STRUCT;
-
-	struct Win32RGBQuad {
-		byte blue;
-		byte green;
-		byte red;
-		byte reserved;
-	} PACKED_STRUCT;
-
-#include "common/pack-end.h"	// END STRUCT PACKING
-
-	uint32 simple_vec(byte *data, uint32 ofs, byte size);
-	void fix_win32_bitmap_info_header_endian(Win32BitmapInfoHeader *obj);
+	bool extractResource(int id, CachedCursor *cc);
 };
 
 class MacResExtractor : public ResExtractor {
-
 public:
 	MacResExtractor(ScummEngine_v70he *scumm);
-	~MacResExtractor() { }
+	~MacResExtractor() {}
 
 private:
 	Common::MacResManager *_resMgr;
 
-	int extractResource(int id, byte **buf);
-	int convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
-			 int *hotspot_x, int *hotspot_y, int *keycolor, byte **palette, int *palSize);
+	bool extractResource(int id, CachedCursor *cc);
 };
 
 } // End of namespace Scumm

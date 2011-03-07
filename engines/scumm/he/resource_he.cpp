@@ -4,10 +4,6 @@
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
- * Parts of this code are based on:
- * icoutils - A set of programs dealing with MS Windows icons and cursors.
- * Copyright (C) 1998-2001 Oskar Liljeblad
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -36,6 +32,7 @@
 
 #include "audio/decoders/wave.h"
 #include "graphics/cursorman.h"
+#include "graphics/wincursor.h"
 
 #include "common/archive.h"
 #include "common/memstream.h"
@@ -57,71 +54,71 @@ ResExtractor::~ResExtractor() {
 			free(cc->palette);
 		}
 	}
+
 	memset(_cursorCache, 0, sizeof(_cursorCache));
 }
 
 ResExtractor::CachedCursor *ResExtractor::findCachedCursor(int id) {
-	for (int i = 0; i < MAX_CACHED_CURSORS; ++i) {
-		CachedCursor *cc = &_cursorCache[i];
-		if (cc->valid && cc->id == id) {
-			return cc;
-		}
-	}
+	for (int i = 0; i < MAX_CACHED_CURSORS; ++i)
+		if (_cursorCache[i].valid && _cursorCache[i].id == id)
+			return &_cursorCache[i];
+
 	return NULL;
 }
 
 ResExtractor::CachedCursor *ResExtractor::getCachedCursorSlot() {
-	uint32 min_last_used = 0;
+	uint32 minLastUsed = 0;
 	CachedCursor *r = NULL;
+
 	for (int i = 0; i < MAX_CACHED_CURSORS; ++i) {
 		CachedCursor *cc = &_cursorCache[i];
-		if (!cc->valid) {
+		if (!cc->valid)
 			return cc;
-		} else {
-			if (min_last_used == 0 || cc->last_used < min_last_used) {
-				min_last_used = cc->last_used;
-				r = cc;
-			}
+
+		if (minLastUsed == 0 || cc->lastUsed < minLastUsed) {
+			minLastUsed = cc->lastUsed;
+			r = cc;
 		}
 	}
+
 	assert(r);
-	free(r->bitmap);
-	free(r->palette);
+	delete[] r->bitmap;
+	delete[] r->palette;
 	memset(r, 0, sizeof(CachedCursor));
 	return r;
 }
 
 void ResExtractor::setCursor(int id) {
-	byte *cursorRes = 0;
-	int cursorsize;
-	int keycolor = 0;
 	CachedCursor *cc = findCachedCursor(id);
+
 	if (cc != NULL) {
 		debug(7, "Found cursor %d in cache slot %lu", id, (long)(cc - _cursorCache));
 	} else {
 		cc = getCachedCursorSlot();
 		assert(cc && !cc->valid);
-		cursorsize = extractResource(id, &cursorRes);
-		convertIcons(cursorRes, cursorsize, &cc->bitmap, &cc->w, &cc->h, &cc->hotspot_x, &cc->hotspot_y, &keycolor, &cc->palette, &cc->palSize);
+
+		if (!extractResource(id, cc))
+			error("Could not extract cursor %d", id);
+
 		debug(7, "Adding cursor %d to cache slot %lu", id, (long)(cc - _cursorCache));
-		free(cursorRes);
+
 		cc->valid = true;
 		cc->id = id;
-		cc->last_used = g_system->getMillis();
+		cc->lastUsed = g_system->getMillis();
 	}
 
 	if (cc->palette)
 		CursorMan.replaceCursorPalette(cc->palette, 0, cc->palSize);
 
-	_vm->setCursorHotspot(cc->hotspot_x, cc->hotspot_y);
-	_vm->setCursorFromBuffer(cc->bitmap, cc->w, cc->h, cc->w);
+	_vm->setCursorHotspot(cc->hotspotX, cc->hotspotY);
+	_vm->setCursorFromBuffer(cc->bitmap, cc->width, cc->height, cc->width);
 }
 
 
 Win32ResExtractor::Win32ResExtractor(ScummEngine_v70he *scumm) : ResExtractor(scumm) {
 }
 
-int Win32ResExtractor::extractResource(int resId, byte **data) {
+bool Win32ResExtractor::extractResource(int id, CachedCursor *cc) {
 	if (_fileName.empty()) { // We are running for the first time
 		_fileName = _vm->generateFilename(-3);
 
@@ -129,176 +126,40 @@ int Win32ResExtractor::extractResource(int resId, byte **data) {
 			error("Cannot open file %s", _fileName.c_str());
 	}
 
-	Common::SeekableReadStream *cursorGroup = _exe.getResource(Common::kPEGroupCursor, resId);
+	Graphics::WinCursorGroup *group = Graphics::WinCursorGroup::createCursorGroup(_exe, id);
 
-	if (!cursorGroup)
-		error("Could not find cursor group %d", resId);
+	if (!group)
+		return false;
 
-	cursorGroup->skip(4);
-	uint16 count = cursorGroup->readUint16LE();
-	assert(count > 0);
+	Graphics::WinCursor *cursor = group->cursors[0].cursor;
 
-	cursorGroup->skip(12);
-	resId = cursorGroup->readUint16LE();
+	cc->bitmap = new byte[cursor->getWidth() * cursor->getHeight()];
+	cc->width = cursor->getWidth();
+	cc->height = cursor->getHeight();
+	cc->hotspotX = cursor->getHotspotX();
+	cc->hotspotY = cursor->getHotspotY();
 
-	delete cursorGroup;
+	// Convert from the paletted format to the SCUMM palette
+	const byte *srcBitmap = cursor->getSurface();
 
-	Common::SeekableReadStream *cursor = _exe.getResource(Common::kPECursor, resId);
-
-	if (!cursor)
-		error("Could not find cursor %d", resId);
-
-	int size = cursor->size();
-	*data = (byte *)malloc(size);
-	cursor->read(*data, size);
-	delete cursor;
-
-	return size;
-}
-
-#define ROW_BYTES(bits) ((((bits) + 31) >> 5) << 2)
-
-int Win32ResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
-			int *hotspot_x, int *hotspot_y, int *keycolor, byte **pal, int *palSize) {
-
-	Common::MemoryReadStream *in = new Common::MemoryReadStream(data, datasize);
-
-	*hotspot_x = in->readUint16LE();
-	*hotspot_y = in->readUint16LE();
-
-	Win32BitmapInfoHeader bitmap;
-
-	in->read(&bitmap, sizeof(Win32BitmapInfoHeader));
-
-	fix_win32_bitmap_info_header_endian(&bitmap);
-	if (bitmap.size < sizeof(Win32BitmapInfoHeader))
-		error("bitmap header is too short");
-
-	if (bitmap.compression != 0)
-		error("compressed image data not supported");
-
-	if (bitmap.x_pels_per_meter != 0)
-		error("x_pels_per_meter field in bitmap should be zero");
-
-	if (bitmap.y_pels_per_meter != 0)
-		error("y_pels_per_meter field in bitmap should be zero");
-
-	if (bitmap.clr_important != 0)
-		error("clr_important field in bitmap should be zero");
-
-	if (bitmap.planes != 1)
-		error("planes field in bitmap should be one");
-
-	Win32RGBQuad *palette = NULL;
-	uint32 palette_count = 0;
-	if (bitmap.clr_used != 0 || bitmap.bit_count < 24) {
-		palette_count = (bitmap.clr_used != 0 ? bitmap.clr_used : 1 << bitmap.bit_count);
-		palette = (Win32RGBQuad *)malloc(sizeof(Win32RGBQuad) * palette_count);
-		in->read(palette, sizeof(Win32RGBQuad) * palette_count);
+	for (int i = 0; i < cursor->getWidth() * cursor->getHeight(); i++) {
+		if (srcBitmap[i] == cursor->getKeyColor()) // Transparent
+			cc->bitmap[i] = 255;
+		else if (srcBitmap[i] == 0)                // Black
+			cc->bitmap[i] = 253;
+		else                                       // White
+			cc->bitmap[i] = 254;
 	}
 
-	uint32 width = bitmap.width;
-	uint32 height = ABS(bitmap.height) / 2;
-
-	uint32 image_size = height * ROW_BYTES(width * bitmap.bit_count);
-	uint32 mask_size = height * ROW_BYTES(width);
-
-	byte *image_data = (byte *)malloc(image_size);
-	in->read(image_data, image_size);
-
-	byte *mask_data = (byte *)malloc(mask_size);
-	in->read(mask_data, mask_size);
-
-	
-	*w = width;
-	*h = height;
-	*keycolor = 0;
-	*cursor = (byte *)malloc(width * height);
-
-	byte *row = (byte *)malloc(width * 4);
-
-	for (uint32 d = 0; d < height; d++) {
-		uint32 y = (bitmap.height < 0 ? d : height - d - 1);
-		uint32 imod = y * (image_size / height) * 8 / bitmap.bit_count;
-		uint32 mmod = y * (mask_size / height) * 8;
-
-		for (uint32 x = 0; x < width; x++) {
-			uint32 color = simple_vec(image_data, x + imod, bitmap.bit_count);
-
-			// HACK: Ignore the actual cursor palette and use SCUMM's
-			if (!simple_vec(mask_data, x + mmod, 1)) {
-				if (color)
-					cursor[0][width * d + x] = 254; // white
-				else
-					cursor[0][width * d + x] = 253; // black
-			} else {
-				cursor[0][width * d + x] = 255; // transparent
-			}
-		}
-
-	}
-
-	free(row);
-	free(palette);
-	if (image_data != NULL) {
-		free(image_data);
-		free(mask_data);
-	}
-
-	return 1;
+	delete group;
+	return true;
 }
-
-uint32 Win32ResExtractor::simple_vec(byte *data, uint32 ofs, byte size) {
-	switch (size) {
-	case 1:
-		return (data[ofs/8] >> (7 - ofs%8)) & 1;
-	case 2:
-		return (data[ofs/4] >> ((3 - ofs%4) << 1)) & 3;
-	case 4:
-		return (data[ofs/2] >> ((1 - ofs%2) << 2)) & 15;
-	case 8:
-		return data[ofs];
-	case 16:
-		return data[2*ofs] | data[2*ofs+1] << 8;
-	case 24:
-		return data[3*ofs] | data[3*ofs+1] << 8 | data[3*ofs+2] << 16;
-	case 32:
-		return data[4*ofs] | data[4*ofs+1] << 8 | data[4*ofs+2] << 16 | data[4*ofs+3] << 24;
-	}
-
-	return 0;
-}
-
-#if defined(SCUMM_LITTLE_ENDIAN)
-#define LE16(x)
-#define LE32(x)
-#elif defined(SCUMM_BIG_ENDIAN)
-#define LE16(x)      ((x) = TO_LE_16(x))
-#define LE32(x)      ((x) = TO_LE_32(x))
-#endif
-
-void Win32ResExtractor::fix_win32_bitmap_info_header_endian(Win32BitmapInfoHeader *obj) {
-	LE32(obj->size);
-	LE32(obj->width);
-	LE32(obj->height);
-	LE16(obj->planes);
-	LE16(obj->bit_count);
-	LE32(obj->compression);
-	LE32(obj->size_image);
-	LE32(obj->x_pels_per_meter);
-	LE32(obj->y_pels_per_meter);
-	LE32(obj->clr_used);
-	LE32(obj->clr_important);
-}
-
-#undef LE16
-#undef LE32
 
 MacResExtractor::MacResExtractor(ScummEngine_v70he *scumm) : ResExtractor(scumm) {
 	_resMgr = NULL;
 }
 
-int MacResExtractor::extractResource(int id, byte **buf) {
+bool MacResExtractor::extractResource(int id, CachedCursor *cc) {
 	// Create the MacResManager if not created already
 	if (_resMgr == NULL) {
 		_resMgr = new Common::MacResManager();
@@ -306,25 +167,18 @@ int MacResExtractor::extractResource(int id, byte **buf) {
 			error("Cannot open file %s", _fileName.c_str());
 	}
 
-	Common::SeekableReadStream *dataStream = _resMgr->getResource('crsr', 1000 + id);
+	Common::SeekableReadStream *dataStream = _resMgr->getResource('crsr', id + 1000);
 	
 	if (!dataStream)
-		error("There is no cursor ID #%d", 1000 + id);
-	
-	uint32 size = dataStream->size();
-	*buf = (byte *)malloc(size);
-	dataStream->read(*buf, size);
+		return false;
+
+	int keyColor; // HACK: key color is ignored
+	_resMgr->convertCrsrCursor(dataStream, &cc->bitmap, cc->width, cc->height, cc->hotspotX, cc->hotspotY,
+						keyColor, _vm->_system->hasFeature(OSystem::kFeatureCursorHasPalette),
+						&cc->palette, cc->palSize);
+
 	delete dataStream;
-
-	return size;
-}
-
-int MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
-			  int *hotspot_x, int *hotspot_y, int *keycolor, byte **palette, int *palSize) {
-			  
-	_resMgr->convertCrsrCursor(data, datasize, cursor, w, h, hotspot_x, hotspot_y, keycolor,
-						_vm->_system->hasFeature(OSystem::kFeatureCursorHasPalette), palette, palSize);
-	return 1;
+	return true;
 }
 
 void ScummEngine_v70he::readRoomsOffsets() {
