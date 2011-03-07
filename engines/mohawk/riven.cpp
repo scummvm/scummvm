@@ -120,7 +120,15 @@ Common::Error MohawkEngine_Riven::run() {
 	_externalScriptHandler = new RivenExternal(this);
 	_optionsDialog = new RivenOptionsDialog(this);
 	_scriptMan = new RivenScriptManager(this);
-	_cursor = new RivenCursorManager();
+
+	// Create the cursor manager
+	// TODO: Error handling when none can be found
+	if (Common::File::exists("rivendmo.exe"))
+		_cursor = new PECursorManager("rivendmo.exe");
+	else if (Common::File::exists("riven.exe"))
+		_cursor = new PECursorManager("riven.exe");
+	else // last resort: try the Mac executable
+		_cursor = new MacCursorManager("Riven");
 
 	_rnd = new Common::RandomSource();
 	g_eventRec.registerRandomSource(*_rnd, "riven");
@@ -135,6 +143,7 @@ Common::Error MohawkEngine_Riven::run() {
 
 	// Start at main cursor
 	_cursor->setCursor(kRivenMainCursor);
+	_system->updateScreen();
 
 	// Let's begin, shall we?
 	if (getFeatures() & GF_DEMO) {
@@ -488,10 +497,12 @@ void MohawkEngine_Riven::checkHotspotChange() {
 		if (_curHotspot != hotspotIndex) {
 			_curHotspot = hotspotIndex;
 			_cursor->setCursor(_hotspots[_curHotspot].mouse_cursor);
+			_system->updateScreen();
 		}
 	} else {
 		_curHotspot = -1;
 		_cursor->setCursor(kRivenMainCursor);
+		_system->updateScreen();
 	}
 }
 
