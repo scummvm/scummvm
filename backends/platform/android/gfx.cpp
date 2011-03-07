@@ -577,8 +577,6 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 
 	GLTHREADCHECK;
 
-	assert(keycolor < 256);
-
 #ifdef USE_RGB_COLOR
 	if (format && format->bytesPerPixel > 1) {
 		if (_mouse_texture != _mouse_texture_rgb)
@@ -600,6 +598,8 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 	_mouse_texture->allocBuffer(w, h);
 
 	if (_mouse_texture == _mouse_texture_palette) {
+		assert(keycolor < 256);
+
 		// Update palette alpha based on keycolor
 		byte *palette = _mouse_texture_palette->palette();
 
