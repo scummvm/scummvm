@@ -177,7 +177,7 @@ uint32 WinFont::getFontIndex(Common::SeekableReadStream &stream, const WinFontDi
 			return id;
 	}
 
-	return 0xfffffff;
+	return 0xffffffff;
 }
 
 bool WinFont::loadFromFNT(const Common::String &fileName) {
