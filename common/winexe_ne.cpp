@@ -111,6 +111,7 @@ bool NEResources::loadFromCompressedEXE(const String &fileName) {
 	memset(window, 0x20, 0x1000); // Initialize to all spaces
 
 	byte *unpackedData = (byte *)malloc(unpackedLength);
+	assert(unpackedData);
 	byte *dataPos = unpackedData;
 
 	// Apply simple LZSS decompression
