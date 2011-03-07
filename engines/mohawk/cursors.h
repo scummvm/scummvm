@@ -81,6 +81,7 @@ public:
 	virtual void hideCursor();
 	virtual void setCursor(uint16 id);
 	virtual void setDefaultCursor();
+	virtual bool hasSource() const { return false; }
 
 protected:
 	// Set a Mac XOR/AND map cursor to the screen
@@ -95,6 +96,7 @@ public:
 	~DefaultCursorManager() {}
 
 	void setCursor(uint16 id);
+	bool hasSource() const { return true; }
 
 private:
 	MohawkEngine *_vm;
@@ -112,6 +114,7 @@ public:
 	void hideCursor();
 	void setCursor(uint16 id);
 	void setDefaultCursor();
+	bool hasSource() const { return true; }
 
 private:
 	MohawkEngine_Myst *_vm;
@@ -125,6 +128,7 @@ public:
 	~NECursorManager();
 
 	void setCursor(uint16 id);
+	bool hasSource() const { return _exe != 0; }
 
 private:
 	Common::NEResources *_exe;
@@ -137,6 +141,7 @@ public:
 	~MacCursorManager();
 
 	void setCursor(uint16 id);
+	bool hasSource() const { return _resFork != 0; }
 
 private:
 	Common::MacResManager *_resFork;
@@ -150,6 +155,7 @@ public:
 	~LivingBooksCursorManager_v2();
 
 	void setCursor(uint16 id);
+	bool hasSource() const { return _sysArchive != 0; }
 
 private:
 	MohawkArchive *_sysArchive;
@@ -162,6 +168,7 @@ public:
 	~PECursorManager();
 
 	void setCursor(uint16 id);
+	bool hasSource() const { return _exe != 0; }
 
 private:
 	Common::PEResources *_exe;

@@ -198,6 +198,8 @@ MacCursorManager::MacCursorManager(const Common::String &appName) {
 			delete _resFork;
 			_resFork = 0;
 		}
+	} else {
+		_resFork = 0;
 	}
 }
 

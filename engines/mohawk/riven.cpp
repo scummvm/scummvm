@@ -121,8 +121,10 @@ Common::Error MohawkEngine_Riven::run() {
 	_optionsDialog = new RivenOptionsDialog(this);
 	_scriptMan = new RivenScriptManager(this);
 
+	_rnd = new Common::RandomSource();
+	g_eventRec.registerRandomSource(*_rnd, "riven");
+
 	// Create the cursor manager
-	// TODO: Error handling when none can be found
 	if (Common::File::exists("rivendmo.exe"))
 		_cursor = new PECursorManager("rivendmo.exe");
 	else if (Common::File::exists("riven.exe"))
@@ -130,16 +132,27 @@ Common::Error MohawkEngine_Riven::run() {
 	else // last resort: try the Mac executable
 		_cursor = new MacCursorManager("Riven");
 
-	_rnd = new Common::RandomSource();
-	g_eventRec.registerRandomSource(*_rnd, "riven");
-
 	initVars();
+
+	// We need to have a cursor source, or the game won't work
+	if (!_cursor->hasSource()) {
+		Common::String message = "You're missing a Riven executable. The Windows executable is 'riven.exe' or 'rivendemo.exe'. ";
+		message += "Using the 'arcriven.z' installer file also works. In addition, you can use the Mac 'Riven' executable.";
+		GUIErrorMessage(message);
+		warning("%s", message.c_str());
+		return Common::kNoGameDataFoundError;
+	}
 
 	// Open extras.mhk for common images
 	_extrasFile = new MohawkArchive();
 
-	if (!_extrasFile->open("extras.mhk"))
-		error("Could not open extras.mhk");
+	// We need extras.mhk for inventory images, marble images, and credits images
+	if (!_extrasFile->open("extras.mhk")) {
+		Common::String message = "You're missing a extras.mhk. Using the 'arcriven.z' installer file also works.";
+		GUIErrorMessage(message);
+		warning("%s", message.c_str());
+		return Common::kNoGameDataFoundError;
+	}
 
 	// Start at main cursor
 	_cursor->setCursor(kRivenMainCursor);
