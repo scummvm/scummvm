@@ -69,7 +69,7 @@ uint32 WinResourceID::getID() const {
 	if (_idType != kIDTypeNumerical)
 		return 0xffffffff;
 
-	return _idType;
+	return _id;
 }
 
 String WinResourceID::toString() const {
