@@ -23,8 +23,9 @@
  */
 
 #include "common/file.h"
-#include "common/ne_exe.h"
 #include "common/str.h"
+#include "common/winexe_ne.h"
+#include "common/winexe_pe.h"
 #include "graphics/fonts/winfont.h"
 
 namespace Graphics {
@@ -75,8 +76,15 @@ static WinFontDirEntry readDirEntry(Common::SeekableReadStream &stream) {
 }
 
 bool WinFont::loadFromFON(const Common::String &fileName, const WinFontDirEntry &dirEntry) {
-	// TODO: PE libraries (If it's used anywhere by a ScummVM game)
+	// First try loading via the NE code
+	if (loadFromNE(fileName, dirEntry))
+		return true;
 
+	// Then try loading via the PE code
+	return loadFromPE(fileName, dirEntry);	
+}
+
+bool WinFont::loadFromNE(const Common::String &fileName, const WinFontDirEntry &dirEntry) {
 	Common::NEResources exe;
 
 	if (!exe.loadFromEXE(fileName))
@@ -89,38 +97,12 @@ bool WinFont::loadFromFON(const Common::String &fileName, const WinFontDirEntry 
 		return false;
 	}
 
-	uint16 numFonts = fontDirectory->readUint16LE();
-
-	// Probably not possible, so this is really a sanity check
-	if (numFonts == 0) {
-		warning("No fonts in '%s'", fileName.c_str());
-		return false;
-	}
-
-	// Scour the directory for our matching name
-	int fontId = -1;
-	for (uint16 i = 0; i < numFonts; i++) {
-		uint16 id = fontDirectory->readUint16LE();
-
-		if (dirEntry.faceName.empty()) {
-			// Use the first name when empty
-			fontId = id;
-			break;
-		}
-
-		WinFontDirEntry entry = readDirEntry(*fontDirectory);
-
-		if (dirEntry.faceName.equalsIgnoreCase(entry.faceName) && dirEntry.points == entry.points) {
-			// Match!
-			fontId = id;
-			break;
-		}
-	}
-
+	uint32 fontId = getFontIndex(*fontDirectory, dirEntry);
+	
 	delete fontDirectory;
 
 	// Couldn't match the face name
-	if (fontId < 0) {
+	if (fontId == 0xffffffff) {
 		warning("Could not find face '%s' in '%s'", dirEntry.faceName.c_str(), fileName.c_str());
 		return false;
 	}
@@ -135,6 +117,67 @@ bool WinFont::loadFromFON(const Common::String &fileName, const WinFontDirEntry 
 	bool ok = loadFromFNT(*fontStream);
 	delete fontStream;
 	return ok;
+}
+
+bool WinFont::loadFromPE(const Common::String &fileName, const WinFontDirEntry &dirEntry) {
+	Common::PEResources exe;
+
+	if (!exe.loadFromEXE(fileName))
+		return false;
+
+	// Let's pull out the font directory
+	Common::SeekableReadStream *fontDirectory = exe.getResource(Common::kPEFontDir, Common::String("FONTDIR"));
+	if (!fontDirectory) {
+		warning("No font directory in '%s'", fileName.c_str());
+		return false;
+	}
+
+	uint32 fontId = getFontIndex(*fontDirectory, dirEntry);
+	
+	delete fontDirectory;
+
+	// Couldn't match the face name
+	if (fontId == 0xffffffff) {
+		warning("Could not find face '%s' in '%s'", dirEntry.faceName.c_str(), fileName.c_str());
+		return false;
+	}
+
+	// Actually go get our font now...
+	Common::SeekableReadStream *fontStream = exe.getResource(Common::kPEFont, fontId);
+	if (!fontStream) {
+		warning("Could not find font %d in %s", fontId, fileName.c_str());
+		return false;
+	}
+
+	bool ok = loadFromFNT(*fontStream);
+	delete fontStream;
+	return ok;
+}
+
+uint32 WinFont::getFontIndex(Common::SeekableReadStream &stream, const WinFontDirEntry &dirEntry) {
+	uint16 numFonts = stream.readUint16LE();
+
+	// Probably not possible, so this is really a sanity check
+	if (numFonts == 0) {
+		warning("No fonts in exe");
+		return 0xffffffff;
+	}
+
+	// Scour the directory for our matching name
+	for (uint16 i = 0; i < numFonts; i++) {
+		uint16 id = stream.readUint16LE();
+
+		// Use the first name when empty
+		if (dirEntry.faceName.empty())
+			return id;
+
+		WinFontDirEntry entry = readDirEntry(stream);
+
+		if (dirEntry.faceName.equalsIgnoreCase(entry.faceName) && dirEntry.points == entry.points) // Match!
+			return id;
+	}
+
+	return 0xffffffff;
 }
 
 bool WinFont::loadFromFNT(const Common::String &fileName) {

@@ -424,6 +424,7 @@ void RivenScript::stopSound(uint16 op, uint16 argc, uint16 *argv) {
 void RivenScript::changeCursor(uint16 op, uint16 argc, uint16 *argv) {
 	debug(2, "Change to cursor %d", argv[0]);
 	_vm->_cursor->setCursor(argv[0]);
+	_vm->_system->updateScreen();
 }
 
 // Command 14: pause script execution (delay in ms, u1)

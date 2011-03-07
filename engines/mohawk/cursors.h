@@ -31,6 +31,7 @@
 namespace Common {
 	class MacResManager;
 	class NEResources;
+	class PEResources;
 	class SeekableReadStream;
 	class String;
 }
@@ -80,13 +81,11 @@ public:
 	virtual void hideCursor();
 	virtual void setCursor(uint16 id);
 	virtual void setDefaultCursor();
+	virtual bool hasSource() const { return false; }
 
 protected:
-	// Handles the Mac version of the xor/and map cursor
-	void decodeMacXorCursor(Common::SeekableReadStream *stream, byte *cursor);
-
-	// Set a tCUR resource as the current cursor
-	void setStandardCursor(Common::SeekableReadStream *stream);
+	// Set a Mac XOR/AND map cursor to the screen
+	void setMacXorCursor(Common::SeekableReadStream *stream);
 };
 
 // The default Mohawk cursor manager
@@ -97,6 +96,7 @@ public:
 	~DefaultCursorManager() {}
 
 	void setCursor(uint16 id);
+	bool hasSource() const { return true; }
 
 private:
 	MohawkEngine *_vm;
@@ -114,31 +114,21 @@ public:
 	void hideCursor();
 	void setCursor(uint16 id);
 	void setDefaultCursor();
+	bool hasSource() const { return true; }
 
 private:
 	MohawkEngine_Myst *_vm;
 	MystBitmap *_bmpDecoder;
 };
 
-
-// The cursor manager for Riven
-// Uses hardcoded cursors
-class RivenCursorManager : public CursorManager {
-public:
-	RivenCursorManager() {}
-	~RivenCursorManager() {}
-
-	void setCursor(uint16 id);
-	void setDefaultCursor();
-};
-
-// The cursor manager for NE exe's
+// The cursor manager for NE EXE's
 class NECursorManager : public CursorManager {
 public:
 	NECursorManager(const Common::String &appName);
 	~NECursorManager();
 
 	void setCursor(uint16 id);
+	bool hasSource() const { return _exe != 0; }
 
 private:
 	Common::NEResources *_exe;
@@ -151,6 +141,7 @@ public:
 	~MacCursorManager();
 
 	void setCursor(uint16 id);
+	bool hasSource() const { return _resFork != 0; }
 
 private:
 	Common::MacResManager *_resFork;
@@ -164,9 +155,23 @@ public:
 	~LivingBooksCursorManager_v2();
 
 	void setCursor(uint16 id);
+	bool hasSource() const { return _sysArchive != 0; }
 
 private:
 	MohawkArchive *_sysArchive;
+};
+
+// The cursor manager for PE EXE's
+class PECursorManager : public CursorManager {
+public:
+	PECursorManager(const Common::String &appName);
+	~PECursorManager();
+
+	void setCursor(uint16 id);
+	bool hasSource() const { return _exe != 0; }
+
+private:
+	Common::PEResources *_exe;
 };
 
 } // End of namespace Mohawk
