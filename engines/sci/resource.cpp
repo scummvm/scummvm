@@ -948,14 +948,17 @@ void ResourceManager::init(bool initFromFallbackDetector) {
 	case kViewEga:
 		debugC(1, kDebugLevelResMan, "resMan: Detected EGA graphic resources");
 		break;
+	case kViewAmiga:
+		debugC(1, kDebugLevelResMan, "resMan: Detected Amiga ECS graphic resources");
+		break;
+	case kViewAmiga64:
+		debugC(1, kDebugLevelResMan, "resMan: Detected Amiga AGA graphic resources");
+		break;
 	case kViewVga:
 		debugC(1, kDebugLevelResMan, "resMan: Detected VGA graphic resources");
 		break;
 	case kViewVga11:
 		debugC(1, kDebugLevelResMan, "resMan: Detected SCI1.1 VGA graphic resources");
-		break;
-	case kViewAmiga:
-		debugC(1, kDebugLevelResMan, "resMan: Detected Amiga graphic resources");
 		break;
 	default:
 #ifdef ENABLE_SCI32
@@ -2057,7 +2060,13 @@ ViewType ResourceManager::detectViewType() {
 
 			switch (res->data[1]) {
 			case 128:
-				// If the 2nd byte is 128, it's a VGA game
+				// If the 2nd byte is 128, it's a VGA game.
+				// However, Longbow Amiga (AGA, 64 colors), also sets this byte
+				// to 128, but it's a mixed VGA/Amiga format. Detect this from
+				// the platform here.
+				if (g_sci && g_sci->getPlatform() == Common::kPlatformAmiga)
+					return kViewAmiga64;
+
 				return kViewVga;
 			case 0:
 				// EGA or Amiga, try to read as Amiga view
@@ -2264,7 +2273,7 @@ void ResourceManager::detectSciVersion() {
 	case kResVersionKQ5FMT:
 		s_sciVersion = SCI_VERSION_1_MIDDLE;
 		// Amiga SCI1 middle games are actually SCI1 late
-		if (_viewType == kViewAmiga)
+		if (_viewType == kViewAmiga || _viewType == kViewAmiga64)
 			s_sciVersion = SCI_VERSION_1_LATE;
 		return;
 	case kResVersionSci1Late:

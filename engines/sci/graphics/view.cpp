@@ -106,7 +106,8 @@ void GfxView::initData(GuiResourceId resourceId) {
 	switch (curViewType) {
 	case kViewEga: // SCI0 (and Amiga 16 colors)
 		isEGA = true;
-	case kViewAmiga: // Amiga (32 colors)
+	case kViewAmiga: // Amiga ECS (32 colors)
+	case kViewAmiga64: // Amiga AGA (64 colors)
 	case kViewVga: // View-format SCI1
 		// LoopCount:WORD MirrorMask:WORD Version:WORD PaletteOffset:WORD LoopOffset0:WORD LoopOffset1:WORD...
 
@@ -396,13 +397,21 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 				if (curByte & 0x07) { // fill with color
 					runLength = curByte & 0x07;
 					curByte = curByte >> 3;
-					while (runLength-- && pixelNr < pixelCount) {
+					while (runLength-- && pixelNr < pixelCount)
 						outPtr[pixelNr++] = curByte;
-					}
 				} else { // fill with transparent
 					runLength = curByte >> 3;
 					pixelNr += runLength;
 				}
+			}
+			break;
+		case kViewAmiga64:
+			// TODO: This isn't 100% right. Implement it fully.
+			while (pixelNr < pixelCount) {
+				curByte = *rlePtr++;
+				runLength = curByte >> 6;
+				memset(outPtr + pixelNr, curByte & 0x3F, MIN<uint16>(runLength, pixelCount - pixelNr));
+				pixelNr += runLength;
 			}
 			break;
 		case kViewVga:
@@ -432,6 +441,7 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 			error("Unsupported picture viewtype");
 		}
 	} else {
+		// decompression for data that has two separate streams (probably a SCI 1.1 view)
 		if (isMacSci11ViewData) {
 			// KQ6/Freddy Pharkas use byte lengths, all others use uint16
 			// The SCI devs must have realized that a max of 255 pixels wide
@@ -457,7 +467,6 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 				pixelNr = pixelLine + width;
 			}
 		} else {
-			// decompression for data that has two separate streams (probably SCI 1.1 view)
 			while (pixelNr < pixelCount) {
 				curByte = *rlePtr++;
 				runLength = curByte & 0x3F;

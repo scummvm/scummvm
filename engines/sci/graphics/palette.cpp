@@ -78,18 +78,18 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMergi
 #endif
 
 	switch (_resMan->getViewType()) {
-	case kViewVga:
-	case kViewVga11:
-		if (g_sci->getPlatform() == Common::kPlatformAmiga)
-			_totalScreenColors = 64;	// Longbow Amiga
-		else
-			_totalScreenColors = 256;
+	case kViewEga:
+		_totalScreenColors = 16;
 		break;
 	case kViewAmiga:
 		_totalScreenColors = 32;
 		break;
-	case kViewEga:
-		_totalScreenColors = 16;
+	case kViewAmiga64:
+		_totalScreenColors = 64;
+		break;
+	case kViewVga:
+	case kViewVga11:
+			_totalScreenColors = 256;
 		break;
 	default:
 		error("GfxPalette: Unknown view type");
