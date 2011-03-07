@@ -146,6 +146,8 @@ private:
 	void deinitSurface();
 	void initViewport();
 
+	void initOverlay();
+
 #ifdef USE_RGB_COLOR
 	Common::String getPixelFormatName(const Graphics::PixelFormat &format) const;
 	void initTexture(GLESTexture **texture, uint width, uint height,

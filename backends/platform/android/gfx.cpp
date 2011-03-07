@@ -169,8 +169,10 @@ void OSystem_Android::initSurface() {
 	if (_game_texture)
 		_game_texture->reinit();
 
-	if (_overlay_texture)
+	if (_overlay_texture) {
 		_overlay_texture->reinit();
+		initOverlay();
+	}
 
 	if (_mouse_texture)
 		_mouse_texture->reinit();
@@ -233,12 +235,7 @@ void OSystem_Android::initViewport() {
 	clearFocusRectangle();
 }
 
-void OSystem_Android::initSize(uint width, uint height,
-								const Graphics::PixelFormat *format) {
-	ENTER("%d, %d, %p", width, height, format);
-
-	GLTHREADCHECK;
-
+void OSystem_Android::initOverlay() {
 	int overlay_width = _egl_surface_width;
 	int overlay_height = _egl_surface_height;
 
@@ -256,6 +253,13 @@ void OSystem_Android::initSize(uint width, uint height,
 	LOGI("overlay size is %ux%u", overlay_width, overlay_height);
 
 	_overlay_texture->allocBuffer(overlay_width, overlay_height);
+}
+
+void OSystem_Android::initSize(uint width, uint height,
+								const Graphics::PixelFormat *format) {
+	ENTER("%d, %d, %p", width, height, format);
+
+	GLTHREADCHECK;
 
 #ifdef USE_RGB_COLOR
 	initTexture(&_game_texture, width, height, format, false);

@@ -333,6 +333,8 @@ void OSystem_Android::initBackend() {
 	_mouse_texture_palette = new GLESPalette8888Texture();
 	_mouse_texture = _mouse_texture_palette;
 
+	initOverlay();
+
 	// renice this thread to boost the audio thread
 	if (setpriority(PRIO_PROCESS, 0, 19) < 0)
 		warning("couldn't renice the main thread");
