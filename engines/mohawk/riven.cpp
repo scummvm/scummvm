@@ -156,6 +156,7 @@ Common::Error MohawkEngine_Riven::run() {
 
 	// Start at main cursor
 	_cursor->setCursor(kRivenMainCursor);
+	_cursor->showCursor();
 	_system->updateScreen();
 
 	// Let's begin, shall we?
