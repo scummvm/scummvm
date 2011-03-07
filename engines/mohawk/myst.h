@@ -155,8 +155,6 @@ public:
 	Common::String wrapMovieFilename(const Common::String &movieName, uint16 stack);
 
 	void reloadSaveList();
-	void runLoadDialog();
-	void runSaveDialog();
 
 	void changeToStack(uint16 stack, uint16 card, uint16 linkSrcSound, uint16 linkDstSound);
 	void changeToCard(uint16 card, bool updateScreen);
