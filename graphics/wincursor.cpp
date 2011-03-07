@@ -161,9 +161,22 @@ bool WinCursor::readFromStream(Common::SeekableReadStream &stream) {
 		// If we're not using the maximum colors in a byte, we can fit it in
 		_keyColor = numColors;
 	} else {
-		// TODO
-		warning("Handle 8bpp cursors with all colors");
-		return false;
+		// HACK: Try to find a color that's not being used so it can become
+		// our keycolor. It's quite impossible to fit 257 entries into 256...
+		for (uint32 i = 0; i < 256; i++) {
+			for (int j = 0; j < _width * _height; j++) {
+				// TODO: Also check to see if the space is transparent
+
+				if (_surface[j] == i)
+					break;
+
+				if (j == _width * _height - 1) {
+					_keyColor = i;
+					i = 256;
+					break;
+				}
+			}
+		}
 	}
 
 	// Now go through and apply the AND map to get the transparency
