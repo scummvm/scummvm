@@ -83,12 +83,22 @@ bool WinCursor::readFromStream(Common::SeekableReadStream &stream) {
 	_width = stream.readUint32LE();
 	_height = stream.readUint32LE() / 2;
 
+	if (_width & 3) {
+		// Cursors should always be a power of 2
+		// Of course, it wouldn't be hard to handle but if we have no examples...
+		warning("Non-divisible-by-4 width cursor found");
+		return false;
+	}
+
 	// Color planes
 	if (stream.readUint16LE() != 1)
 		return false;
-	// Bits per pixel
-	if (stream.readUint16LE() != 1)
+
+	// Only 1bpp and 8bpp supported
+	uint16 bitsPerPixel = stream.readUint16LE();
+	if (bitsPerPixel != 1 && bitsPerPixel != 8)
 		return false;
+
 	// Compression
 	if (stream.readUint32LE() != 0)
 		return false;
@@ -98,26 +108,16 @@ bool WinCursor::readFromStream(Common::SeekableReadStream &stream) {
 
 	uint32 numColors = stream.readUint32LE();
 
+	// If the color count is 0, then it uses up the maximum amount
 	if (numColors == 0)
-		numColors = 2;
-	else if (numColors > 2)
-		return false;
-
-	// Sanity check: ensure that enough data is there for the whole cursor
-	if ((uint32)(stream.size() - stream.pos()) < 40 + numColors * 4 + _width * _height * 2 / 8)
-		return false;
-
-	// Standard palette: transparent, black, white
-	_palette[6] = 0xff;
-	_palette[7] = 0xff;
-	_palette[8] = 0xff;
+		numColors = 1 << bitsPerPixel;
 
 	// Reading the palette
 	stream.seek(40 + 4);
 	for (uint32 i = 0 ; i < numColors; i++) {
-		_palette[(i + 1) * 3 + 2] = stream.readByte();
-		_palette[(i + 1) * 3 + 1] = stream.readByte();
-		_palette[(i + 1) * 3 + 0] = stream.readByte();
+		_palette[i * 3 + 2] = stream.readByte();
+		_palette[i * 3 + 1] = stream.readByte();
+		_palette[i * 3    ] = stream.readByte();
 		stream.readByte();
 	}
 
@@ -125,33 +125,57 @@ bool WinCursor::readFromStream(Common::SeekableReadStream &stream) {
 	uint32 dataSize = stream.size() - stream.pos();
 	byte *initialSource = new byte[dataSize];
 	stream.read(initialSource, dataSize);
-	const byte *srcP = initialSource;
-	const byte *srcM = srcP + ((_width * _height) / 8);
 
+	// Parse the XOR map
+	const byte *src = initialSource;
 	_surface = new byte[_width * _height];
 	byte *dest = _surface + _width * (_height - 1);
+	uint32 imagePitch = _width * bitsPerPixel / 8;
 
 	for (uint32 i = 0; i < _height; i++) {
 		byte *rowDest = dest;
 
-		for (uint32 j = 0; j < (_width / 8); j++) {
-			byte p = srcP[j];
-			byte m = srcM[j];
+		if (bitsPerPixel == 1) {
+			// 1bpp
+			for (uint32 j = 0; j < (_width / 8); j++) {
+				byte p = src[j];
 
-			for (int k = 0; k < 8; k++, rowDest++, p <<= 1, m <<= 1) {
-				if ((m & 0x80) != 0x80) {
+				for (int k = 0; k < 8; k++, rowDest++, p <<= 1) {
 					if ((p & 0x80) == 0x80)
-						*rowDest = 2;
-					else
 						*rowDest = 1;
-				} else
-					*rowDest = _keyColor;
+					else
+						*rowDest = 0;
+				}
 			}
+		} else {
+			// 8bpp
+			memcpy(rowDest, src, _width);
 		}
 
 		dest -= _width;
-		srcP += _width / 8;
-		srcM += _width / 8;
+		src += imagePitch;
+	}
+
+	// Calculate our key color
+	if (numColors < 256) {
+		// If we're not using the maximum colors in a byte, we can fit it in
+		_keyColor = numColors;
+	} else {
+		// TODO
+		warning("Handle 8bpp cursors with all colors");
+		return false;
+	}
+
+	// Now go through and apply the AND map to get the transparency
+	uint32 andWidth = (_width + 7) / 8;
+	src += andWidth * (_height - 1);
+
+	for (uint32 y = 0; y < _height; y++) {
+		for (uint32 x = 0; x < _width; x++)
+			if (src[x / 8] & (1 << (7 - x % 8)))
+				_surface[y * _width + x] = _keyColor;
+
+		src -= andWidth;
 	}
 
 	delete[] initialSource;
@@ -195,7 +219,8 @@ WinCursorGroup *WinCursorGroup::createCursorGroup(Common::NEResources &exe, cons
 			return 0;
 		}
 
-		// Bit count
+		// Bits per pixel
+		// NE cursors can only be 1bpp
 		if (stream->readUint16LE() != 1) {
 			delete stream;
 			delete group;
@@ -241,7 +266,7 @@ WinCursorGroup *WinCursorGroup::createCursorGroup(Common::PEResources &exe, cons
 
 	stream->skip(4);
 	uint32 cursorCount = stream->readUint16LE();
-	if ((uint32)stream->size() < (6 + cursorCount * 16))
+	if ((uint32)stream->size() < (6 + cursorCount * 14))
 		return 0;
 
 	WinCursorGroup *group = new WinCursorGroup();
@@ -258,15 +283,9 @@ WinCursorGroup *WinCursorGroup::createCursorGroup(Common::PEResources &exe, cons
 			return 0;
 		}
 
-		// Bit count
-		if (stream->readUint16LE() != 1) {
-			delete stream;
-			delete group;
-			return 0;
-		}
-
+		stream->readUint16LE(); // bits per pixel
 		stream->readUint32LE(); // data size
-		uint32 cursorId = stream->readUint32LE();
+		uint32 cursorId = stream->readUint16LE();
 
 		Common::SeekableReadStream *cursorStream = exe.getResource(Common::kPECursor, cursorId);
 		if (!cursorStream) {
