@@ -74,6 +74,15 @@ private:
 	void clear();
 };
 
+/**
+ * A structure holding an array of cursors from a single Windows Executable cursor group.
+ *
+ * Windows lumps different versions of the same cursors/icons together and decides which one
+ * to use based on the screen's color depth and resolution. For instance, one cursor group
+ * could hold a 1bpp 16x16 cursorand a 8bpp 16x16 cursor. This will hold all cursors in the
+ * group. This class should be used to actually parse the cursors, whereas WinCursor is just
+ * the representation used by this struct to store the cursors.
+ */
 struct WinCursorGroup {
 	WinCursorGroup();
 	~WinCursorGroup();
@@ -85,7 +94,9 @@ struct WinCursorGroup {
 
 	Common::Array<CursorItem> cursors;
 
+	/** Create a cursor group from an NE EXE, returns 0 on failure */
 	static WinCursorGroup *createCursorGroup(Common::NEResources &exe, const Common::WinResourceID &id);
+	/** Create a cursor group from an PE EXE, returns 0 on failure */
 	static WinCursorGroup *createCursorGroup(Common::PEResources &exe, const Common::WinResourceID &id);
 };
 
