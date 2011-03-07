@@ -86,6 +86,9 @@ bool NEResources::loadFromEXE(SeekableReadStream *stream) {
 bool NEResources::loadFromCompressedEXE(const String &fileName) {
 	// Based on http://www.cabextract.org.uk/libmspack/doc/szdd_kwaj_format.html
 
+	// TODO: Merge this with with loadFromEXE() so the handling of the compressed
+	// EXE's is transparent
+
 	File file;
 
 	if (!file.open(fileName))
