@@ -132,8 +132,6 @@ void Parser_v2d::lineHandler() {
 	if (!strcmp("restore", _vm->_line)) {
 		_vm->_config.soundFl = false;
 		_vm->_file->restoreGame(-1);
-		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
-		gameStatus.viewState = kViewPlay;
 		return;
 	}
 

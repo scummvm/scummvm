@@ -259,8 +259,8 @@ Common::Error HugoEngine::run() {
 	if (loadSlot >= 0) {
 		_status.skipIntroFl = true;
 		_file->restoreGame(loadSlot);
-		_scheduler->restoreScreen(*_screen_p);
-		_status.viewState = kViewPlay;
+	} else {
+		_file->saveGame(0, "New Game");
 	}
 
 	while (!_status.doQuitFl) {

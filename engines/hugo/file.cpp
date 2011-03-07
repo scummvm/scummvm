@@ -411,6 +411,8 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 	out->writeSint16BE(_vm->_maze.x4);
 	out->writeByte(_vm->_maze.firstScreenIndex);
 
+	out->writeByte((byte)_vm->getGameStatus().viewState);
+
 	out->finalize();
 
 	delete out;
@@ -506,6 +508,11 @@ bool FileManager::restoreGame(const int16 slot) {
 	_vm->_maze.x3 = in->readSint16BE();
 	_vm->_maze.x4 = in->readSint16BE();
 	_vm->_maze.firstScreenIndex = in->readByte();
+
+	_vm->_scheduler->restoreScreen(*_vm->_screen_p);
+	if ((_vm->getGameStatus().viewState = (vstate_t) in->readByte()) != kViewPlay)
+		_vm->_screen->hideCursor();
+
 
 	delete in;
 	return true;
