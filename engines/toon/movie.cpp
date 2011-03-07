@@ -135,11 +135,13 @@ bool Movie::playVideo(bool isFirstIntroVideo) {
 		Common::Event event;
 		while (_vm->getSystem()->getEventManager()->pollEvent(event))
 			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+				_vm->dirtyAllScreen();
 				return false;
 			}
 
 		_vm->getSystem()->delayMillis(10);
 	}
+	_vm->dirtyAllScreen();
 	return !_vm->shouldQuit();
 }
 

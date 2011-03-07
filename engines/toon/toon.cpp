@@ -378,10 +378,21 @@ void ToonEngine::updateTimer(int32 timeIncrement) {
 }
 
 void ToonEngine::render() {
-	if (_gameState->_inCutaway)
-		_currentCutaway->draw(*_mainSurface, 0, 0, 0, 0);
-	else
-		_currentPicture->draw(*_mainSurface, 0, 0, 0, 0);
+
+	if (_dirtyAll) {
+		if (_gameState->_inCutaway)
+			_currentCutaway->draw(*_mainSurface, 0, 0, 0, 0);
+		else
+			_currentPicture->draw(*_mainSurface, 0, 0, 0, 0);
+		_dirtyRects.push_back(Common::Rect(0, 0, 1280, 400));
+	} else {
+		if (_gameState->_inCutaway)
+			_currentCutaway->drawWithRectList(*_mainSurface, 0, 0, 0, 0, _dirtyRects);
+		else
+			_currentPicture->drawWithRectList(*_mainSurface, 0, 0, 0, 0, _dirtyRects);
+	}
+
+	clearDirtyRects();
 
 	//_currentMask->drawMask(*_mainSurface,0,0,0,0);
 	_animationManager->render();
@@ -422,8 +433,8 @@ void ToonEngine::render() {
 	// add a little sleep here
 	int32 newMillis = (int32)_system->getMillis();
 	int32 sleepMs = 1; // Minimum delay to allow thread scheduling
-	if ((newMillis - _lastRenderTime)  < _tickLength)
-		sleepMs = _tickLength - (newMillis - _lastRenderTime);
+	if ((newMillis - _lastRenderTime)  < _tickLength * 2)
+		sleepMs = _tickLength * 2 - (newMillis - _lastRenderTime);
 	assert(sleepMs >= 0);
 	_system->delayMillis(sleepMs);
 	_lastRenderTime = _system->getMillis();
@@ -484,7 +495,51 @@ void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 		_cursorAnimationInstance->setPosition(_mouseX - 40 + state()->_currentScrollValue - _cursorOffsetX, _mouseY - 40 - _cursorOffsetY, 0, false);
 		_cursorAnimationInstance->render();
 	}
-	_system->copyRectToScreen((byte *)_mainSurface->pixels + state()->_currentScrollValue, 1280, 0, 0, 640, 400);
+	
+
+	// Handle dirty rects here
+	static int32 lastScroll = 0;
+
+	if (_dirtyAll || _gameState->_currentScrollValue != lastScroll) {
+		// we have to refresh everything in case of scrolling.
+		_system->copyRectToScreen((byte *)_mainSurface->pixels + state()->_currentScrollValue, 1280, 0, 0, 640, 400);
+	} else {
+
+		int32 offX = 0;
+		for (uint i = 0; i < _oldDirtyRects.size(); i++) {
+			Common::Rect rect = _oldDirtyRects[i];
+			rect.translate(-state()->_currentScrollValue,0);
+			offX = 0;
+			if(rect.right <= 0) 
+				continue;
+			if (rect.left < 0) {
+				offX = -rect.left;
+				rect.left = 0;
+			}
+			rect.clip(640, 400);
+			if (rect.left >= 0 && rect.top >= 0 && rect.right - rect.left > 0 && rect.bottom - rect.top > 0) {
+				_system->copyRectToScreen((byte *)_mainSurface->pixels + _oldDirtyRects[i].left + offX + _oldDirtyRects[i].top * 1280, 1280, rect.left , rect.top, rect.right - rect.left, rect.bottom - rect.top);
+			}
+		}
+
+		for (uint i = 0; i < _dirtyRects.size(); i++) {
+			Common::Rect rect = _dirtyRects[i];
+			rect.translate(-state()->_currentScrollValue,0);
+			offX = 0;
+			if (rect.right <= 0) 
+				continue;
+			if (rect.left < 0) {
+				offX = -rect.left;
+				rect.left = 0;
+			}
+			rect.clip(640, 400);
+			if (rect.left >= 0 && rect.top >= 0 && rect.right - rect.left > 0 && rect.bottom - rect.top > 0) {
+				_system->copyRectToScreen((byte *)_mainSurface->pixels + _dirtyRects[i].left + offX + _dirtyRects[i].top * 1280, 1280, rect.left , rect.top, rect.right - rect.left, rect.bottom - rect.top);
+			}
+		}
+	}
+	lastScroll = _gameState->_currentScrollValue;
+
 	if (updateScreen) {
 		_system->updateScreen();
 		_shouldQuit = shouldQuit();	// update game quit flag - this shouldn't be called all the time, as it's a virtual function
@@ -589,6 +644,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 	bool musicPlaying = false;
 
 	_gameState->_inMenu = true;
+	dirtyAllScreen();
 
 	while (!doExit) {
 		clickingOn = MAINMENUHOTSPOT_NONE;
@@ -607,7 +663,15 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 		}
 
 		while (!clickRelease) {
-			mainmenuPicture->draw(*_mainSurface, 0, 0, 0, 0);
+			
+			if(_dirtyAll) {
+				mainmenuPicture->draw(*_mainSurface, 0, 0, 0, 0);
+				addDirtyRect(0,0,640,400);
+			} else {
+				mainmenuPicture->drawWithRectList(*_mainSurface, 0, 0, 0, 0, _dirtyRects);
+			}
+
+			clearDirtyRects();
 
 			for (int entryNr = 0; entryNr < MAINMENU_ENTRYCOUNT; entryNr++) {
 				if (entries[entryNr].menuMask & menuMask) {
@@ -1210,6 +1274,9 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	createShadowLUT();
 
 	state()->_mouseHidden = false;
+
+	clearDirtyRects();
+	dirtyAllScreen();
 
 	if (!forGameLoad) {
 
@@ -2562,7 +2629,13 @@ void ToonEngine::renderInventory() {
 	if (!_gameState->_inInventory)
 		return;
 
-	_inventoryPicture->draw(*_mainSurface, 0, 0, 0, 0);
+	if (!_dirtyAll) {
+		_inventoryPicture->drawWithRectList(*_mainSurface, 0, 0, 0, 0, _dirtyRects);
+	} else {
+		_inventoryPicture->draw(*_mainSurface, 0, 0, 0, 0);
+		_dirtyRects.push_back(Common::Rect(0,0,640,400));
+	}
+	clearDirtyRects();
 
 	// draw items on screen
 	for (int32 i = 0; i < _gameState->_numInventoryItems; i++) {
@@ -2597,6 +2670,7 @@ int32 ToonEngine::showInventory() {
 	fadeOut(5);
 	_inventoryPicture->loadPicture("SACK128.CPS", true);
 	_inventoryPicture->setupPalette();
+	dirtyAllScreen();
 
 	if (_gameState->_mouseState >= 0) {
 		setCursor(_gameState->_mouseState, true, -18, -14);
@@ -2710,6 +2784,7 @@ int32 ToonEngine::showInventory() {
 		setupGeneralPalette();
 	}
 	flushPalette();
+	dirtyAllScreen();
 	_firstFrame = true;
 
 	return 0;
@@ -2784,6 +2859,7 @@ void ToonEngine::showCutaway(Common::String cutawayPicture) {
 	_currentCutaway->setupPalette();
 	_oldScrollValue = _gameState->_currentScrollValue;
 	_gameState->_currentScrollValue = 0;
+	dirtyAllScreen();
 	flushPalette();
 }
 
@@ -2794,6 +2870,7 @@ void ToonEngine::hideCutaway() {
 	_gameState->_currentScrollValue = _oldScrollValue;
 	_currentCutaway = 0;
 	_currentPicture->setupPalette();
+	dirtyAllScreen();
 	flushPalette();
 }
 
@@ -4673,6 +4750,47 @@ void ToonEngine::playRoomMusic() {
 	_audioManager->playMusic(_gameState->_locations[_gameState->_currentScene]._name, _gameState->_locations[_gameState->_currentScene]._music);
 }
 
+void ToonEngine::dirtyAllScreen()
+{
+	_dirtyRects.clear();
+	_dirtyAll = true;
+}
+
+void ToonEngine::addDirtyRect( int32 left, int32 top, int32 right, int32 bottom ) {
+	left = MAX<int32>(left, 0);
+	right = MIN<int32>(right, 1280);
+	top = MAX<int32>(top, 0);
+	bottom = MIN<int32>(bottom, 400);
+
+	Common::Rect rect(left,top,right,bottom);
+
+	if (bottom - top <= 0 || right - left <= 0) 
+		return;
+
+	for (uint32 i = 0; i < _dirtyRects.size(); i++) {
+		if (_dirtyRects[i].contains(rect))
+			return;
+		if (rect.contains(_dirtyRects[i])) {
+			_dirtyRects.remove_at(i);
+			i--;
+		}
+	}
+
+	// check also in the old rect (of the old frame)
+	for (int32 i = _oldDirtyRects.size() - 1 ; i >= 0; i--) {
+		if (rect.contains(_oldDirtyRects[i])) {
+			_oldDirtyRects.remove_at(i);
+		}
+	}
+
+	_dirtyRects.push_back(rect);
+}
+
+void ToonEngine::clearDirtyRects() {
+	_oldDirtyRects = _dirtyRects;
+	_dirtyRects.clear();
+	_dirtyAll = false;
+}
 void SceneAnimation::save(ToonEngine *vm, Common::WriteStream *stream) {
 	stream->writeByte(_active);
 	stream->writeSint32BE(_id);

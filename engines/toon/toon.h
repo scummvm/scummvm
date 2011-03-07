@@ -334,6 +334,10 @@ public:
 			(f == kSupportsSavingDuringRuntime);
 	}
 
+	void dirtyAllScreen();
+	void addDirtyRect(int32 left, int32 top, int32 right, int32 bottom);
+	void clearDirtyRects();
+
 protected:
 	OSystem *_system;
 	int32 _tickLength;
@@ -371,6 +375,11 @@ protected:
 	bool _updatingSceneScriptRunFlag;
 
 	Graphics::Surface *_mainSurface;
+	Common::Array<Common::Rect> _dirtyRects;
+	Common::Array<Common::Rect> _oldDirtyRects;
+
+	bool _dirtyAll;
+	
 
 	AnimationInstance *_cursorAnimationInstance;
 	Animation *_cursorAnimation;

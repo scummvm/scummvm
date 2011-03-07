@@ -1028,7 +1028,7 @@ int32 ScriptFunc::sys_Cmd_Draw_Scene_Anim_WSA_Frame(EMCState *state) {
 		else if (animId == 20 || animId == 15 || animId == 21 || animId == 16 || animId == 17 || animId == 18)
 			_vm->pauseSceneAnimationScript(_vm->getCurrentUpdatingSceneAnimation(), 1);
 		else if (animId == 9) {
-			_vm->pauseSceneAnimationScript(_vm->getCurrentUpdatingSceneAnimation(), 6);
+			_vm->pauseSceneAnimationScript(_vm->getCurrentUpdatingSceneAnimation(), 3);
 		}
 	}
 

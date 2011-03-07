@@ -151,6 +151,8 @@ void Animation::drawFrame(Graphics::Surface &surface, int32 frame, int32 xx, int
 	int32 offsX = 0;
 	int32 offsY = 0;
 
+	_vm->addDirtyRect(xx + _x1 + _frames[frame]._x1, yy + _y1 + _frames[frame]._y1, xx + rectX + _x1 + _frames[frame]._x1 , yy + rectY + _y1 + _frames[frame]._y1);
+
 	if (xx + _x1 + _frames[frame]._x1 < 0) {
 		offsX = -(xx + _x1 + _frames[frame]._x1);
 	}
@@ -212,6 +214,7 @@ void Animation::drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 fram
 	int32 finalWidth = rectX * scale / 1024;
 	int32 finalHeight = rectY * scale / 1024;
 
+
 	// compute final x1,y1,x2,y2
 	int32 xx1 = xx + _x1 + _frames[frame]._x1 * scale / 1024;
 	int32 yy1 = yy + _y1 + _frames[frame]._y1 * scale / 1024;
@@ -220,6 +223,9 @@ void Animation::drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 fram
 	int32 w = _frames[frame]._x2 - _frames[frame]._x1;
 // Strangerke - Commented (not used)
 //	int32 h = _frames[frame]._y2 - _frames[frame]._y1;
+
+	_vm->addDirtyRect(xx1,yy1,xx2,yy2);
+
 
 	int32 destPitch = surface.pitch;
 	int32 destPitchMask = mask->getWidth();

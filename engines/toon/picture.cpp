@@ -187,6 +187,44 @@ void Picture::drawMask(Graphics::Surface &surface, int32 x, int32 y, int32 dx, i
 	}
 }
 
+void Picture::drawWithRectList(Graphics::Surface& surface, int32 x, int32 y, int32 dx, int32 dy, Common::Array<Common::Rect>& rectArray) {
+
+	int32 rx = MIN(_width, surface.w - x);
+	int32 ry = MIN(_height, surface.h - y);
+
+	if (rx < 0 || ry < 0)
+		return;
+
+	int32 destPitch = surface.pitch;
+	int32 srcPitch = _width;
+
+	for (uint32 i = 0; i < rectArray.size(); i++) {
+
+		Common::Rect rect = rectArray[i];
+
+		int32 fillRx = MIN<int32>(rx, rect.right - rect.left);
+		int32 fillRy = MIN<int32>(ry, rect.bottom - rect.top);
+
+		uint8 *c = _data + _width * (dy + rect.top) + (dx + rect.left);
+		uint8 *curRow = (uint8 *)surface.pixels + (y + rect.top) * destPitch + (x + rect.left);
+
+		for (int32 yy = 0; yy < fillRy; yy++) {
+			uint8 *curSrc = c;
+			uint8 *cur = curRow;
+			for (int32 xx = 0; xx < fillRx; xx++) {
+				*cur = *curSrc;
+				curSrc++;
+				cur++;
+			}
+			curRow += destPitch;
+			c += srcPitch;
+		}
+
+	}
+
+	
+}
+
 void Picture::draw(Graphics::Surface &surface, int32 x, int32 y, int32 dx, int32 dy) {
 	debugC(6, kDebugPicture, "draw(surface, %d, %d, %d, %d)", x, y, dx, dy);
 
