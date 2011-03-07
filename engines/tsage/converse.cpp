@@ -831,8 +831,11 @@ void Speaker::proc12(Action *action) {
 		// Activate the object list for display
 		_objectList.activate();
 
-	// TODO: Implement word_4639A properly
+	// Draw the speaker objects without any fading
+	FadeMode fadeMode = _globals->_sceneManager._fadeMode;
+	_globals->_sceneManager._fadeMode = FADEMODE_IMMEDIATE;
 	_globals->_sceneObjects->draw();
+	_globals->_sceneManager._fadeMode = fadeMode;
 }
 
 void Speaker::setText(const Common::String &msg) {
