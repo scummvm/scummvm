@@ -26,6 +26,7 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/ptr.h"
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/winexe_ne.h"
@@ -208,7 +209,7 @@ WinCursorGroup::~WinCursorGroup() {
 }
 
 WinCursorGroup *WinCursorGroup::createCursorGroup(Common::NEResources &exe, const Common::WinResourceID &id) {
-	Common::SeekableReadStream *stream = exe.getResource(Common::kNEGroupCursor, id);
+	Common::ScopedPtr<Common::SeekableReadStream> stream(exe.getResource(Common::kNEGroupCursor, id));
 
 	if (!stream || stream->size() <= 6)
 		return 0;
@@ -227,7 +228,6 @@ WinCursorGroup *WinCursorGroup::createCursorGroup(Common::NEResources &exe, cons
 
 		// Plane count
 		if (stream->readUint16LE() != 1) {
-			delete stream;
 			delete group;
 			return 0;
 		}
@@ -235,7 +235,6 @@ WinCursorGroup *WinCursorGroup::createCursorGroup(Common::NEResources &exe, cons
 		// Bits per pixel
 		// NE cursors can only be 1bpp
 		if (stream->readUint16LE() != 1) {
-			delete stream;
 			delete group;
 			return 0;
 		}
@@ -243,23 +242,18 @@ WinCursorGroup *WinCursorGroup::createCursorGroup(Common::NEResources &exe, cons
 		stream->readUint32LE(); // data size
 		uint32 cursorId = stream->readUint32LE();
 
-		Common::SeekableReadStream *cursorStream = exe.getResource(Common::kNECursor, cursorId);
+		Common::ScopedPtr<Common::SeekableReadStream> cursorStream(exe.getResource(Common::kNECursor, cursorId));
 		if (!cursorStream) {
-			delete stream;
 			delete group;
 			return 0;
 		}
 
 		WinCursor *cursor = new WinCursor();
 		if (!cursor->readFromStream(*cursorStream)) {
-			delete stream;
-			delete cursorStream;
 			delete cursor;
 			delete group;
 			return 0;
 		}
-
-		delete cursorStream;
 
 		CursorItem item;
 		item.id = cursorId;
@@ -267,12 +261,11 @@ WinCursorGroup *WinCursorGroup::createCursorGroup(Common::NEResources &exe, cons
 		group->cursors.push_back(item);
 	}
 
-	delete stream;
 	return group;
 }
 
 WinCursorGroup *WinCursorGroup::createCursorGroup(Common::PEResources &exe, const Common::WinResourceID &id) {
-	Common::SeekableReadStream *stream = exe.getResource(Common::kPEGroupCursor, id);
+	Common::ScopedPtr<Common::SeekableReadStream> stream(exe.getResource(Common::kPEGroupCursor, id));
 
 	if (!stream || stream->size() <= 6)
 		return 0;
@@ -291,7 +284,6 @@ WinCursorGroup *WinCursorGroup::createCursorGroup(Common::PEResources &exe, cons
 
 		// Plane count
 		if (stream->readUint16LE() != 1) {
-			delete stream;
 			delete group;
 			return 0;
 		}
@@ -300,23 +292,18 @@ WinCursorGroup *WinCursorGroup::createCursorGroup(Common::PEResources &exe, cons
 		stream->readUint32LE(); // data size
 		uint32 cursorId = stream->readUint16LE();
 
-		Common::SeekableReadStream *cursorStream = exe.getResource(Common::kPECursor, cursorId);
+		Common::ScopedPtr<Common::SeekableReadStream> cursorStream(exe.getResource(Common::kPECursor, cursorId));
 		if (!cursorStream) {
-			delete stream;
 			delete group;
 			return 0;
 		}
 
 		WinCursor *cursor = new WinCursor();
 		if (!cursor->readFromStream(*cursorStream)) {
-			delete stream;
-			delete cursorStream;
 			delete cursor;
 			delete group;
 			return 0;
 		}
-
-		delete cursorStream;
 
 		CursorItem item;
 		item.id = cursorId;
@@ -324,7 +311,6 @@ WinCursorGroup *WinCursorGroup::createCursorGroup(Common::PEResources &exe, cons
 		group->cursors.push_back(item);
 	}
 
-	delete stream;
 	return group;
 }
 
