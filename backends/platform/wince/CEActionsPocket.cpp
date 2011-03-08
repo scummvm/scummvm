@@ -239,10 +239,12 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 	if (!pushed) {
 		switch (action) {
 		case POCKET_ACTION_RIGHTCLICK:
-			_CESystem->add_right_click(false);
+			//_CESystem->add_right_click(false);
+			((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->add_right_click(false);
 			return true;
 		case POCKET_ACTION_LEFTCLICK:
-			_CESystem->add_left_click(false);
+			//_CESystem->add_left_click(false);
+			((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->add_left_click(false);
 			return true;
 		case POCKET_ACTION_PAUSE:
 		case POCKET_ACTION_SAVE:
@@ -272,43 +274,55 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 		EventsBuffer::simulateKey(&_key_action[action], true);
 		return true;
 	case POCKET_ACTION_KEYBOARD:
-		_CESystem->swap_panel();
+		//_CESystem->swap_panel();
+		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->swap_panel();
 		return true;
 	case POCKET_ACTION_HIDE:
-		_CESystem->swap_panel_visibility();
+		//_CESystem->swap_panel_visibility();
+		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->swap_panel_visibility();
 		return true;
 	case POCKET_ACTION_SOUND:
 		_CESystem->swap_sound_master();
 		return true;
 	case POCKET_ACTION_RIGHTCLICK:
-		_CESystem->add_right_click(true);
+		//_CESystem->add_right_click(true);
+		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->add_right_click(true);
 		return true;
 	case POCKET_ACTION_CURSOR:
-		_CESystem->swap_mouse_visibility();
+		//_CESystem->swap_mouse_visibility();
+		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->swap_mouse_visibility();
 		return true;
 	case POCKET_ACTION_FREELOOK:
-		_CESystem->swap_freeLook();
+		//_CESystem->swap_freeLook();
+		((WINCESdlEventSource *)((OSystem_SDL *)g_system)->getEventManager())->swap_freeLook();
 		return true;
 	case POCKET_ACTION_ZOOM_UP:
-		_CESystem->swap_zoom_up();
+		//_CESystem->swap_zoom_up();
+		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->swap_zoom_up();
 		return true;
 	case POCKET_ACTION_ZOOM_DOWN:
-		_CESystem->swap_zoom_down();
+		//_CESystem->swap_zoom_down();
+		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->swap_zoom_down();
 		return true;
 	case POCKET_ACTION_LEFTCLICK:
-		_CESystem->add_left_click(true);
+		//_CESystem->add_left_click(true);
+		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->add_left_click(true);
 		return true;
 	case POCKET_ACTION_UP:
-		_CESystem->move_cursor_up();
+		//_CESystem->move_cursor_up();
+		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->move_cursor_up();
 		return true;
 	case POCKET_ACTION_DOWN:
-		_CESystem->move_cursor_down();
+		//_CESystem->move_cursor_down();
+		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->move_cursor_down();
 		return true;
 	case POCKET_ACTION_LEFT:
-		_CESystem->move_cursor_left();
+		//_CESystem->move_cursor_left();
+		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->move_cursor_left();
 		return true;
 	case POCKET_ACTION_RIGHT:
-		_CESystem->move_cursor_right();
+		//_CESystem->move_cursor_right();
+		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->move_cursor_right();
 		return true;
 	case POCKET_ACTION_QUIT:
 		if (!quitdialog) {

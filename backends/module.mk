@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	events/samsungtvsdl/samsungtvsdl-events.o \
 	events/sdl/sdl-events.o \
 	events/symbiansdl/symbiansdl-events.o \
+	events/wincesdl/wincesdl-events.o \
 	fs/abstract-fs.o \
 	fs/stdiostream.o \
 	fs/amigaos4/amigaos4-fs-factory.o \
@@ -27,6 +28,7 @@ MODULE_OBJS := \
 	graphics/openglsdl/openglsdl-graphics.o \
 	graphics/sdl/sdl-graphics.o \
 	graphics/symbiansdl/symbiansdl-graphics.o \
+	graphics/wincesdl/wincesdl-graphics.o \
 	keymapper/action.o \
 	keymapper/keymap.o \
 	keymapper/keymapper.o \
@@ -44,6 +46,7 @@ MODULE_OBJS := \
 	mixer/doublebuffersdl/doublebuffersdl-mixer.o \
 	mixer/sdl/sdl-mixer.o \
 	mixer/symbiansdl/symbiansdl-mixer.o \
+	mixer/wincesdl/wincesdl-mixer.o \
 	mutex/sdl/sdl-mutex.o \
 	plugins/elf/elf-loader.o \
 	plugins/elf/mips-loader.o \

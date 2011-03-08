@@ -44,7 +44,7 @@ extern "C" void WINAPI SystemIdleTimerReset(void);
 
 #define TIMER_TRIGGER 9000
 
-DWORD CEDevice::reg_access(TCHAR *key, TCHAR *val, DWORD data) {
+DWORD CEDevice::reg_access(const TCHAR *key, const TCHAR *val, DWORD data) {
 	HKEY regkey;
 	DWORD tmpval, cbdata;
 
@@ -70,7 +70,7 @@ DWORD CEDevice::reg_access(TCHAR *key, TCHAR *val, DWORD data) {
 void CEDevice::backlight_xchg() {
 	HANDLE h;
 
-	REG_bat = reg_access(TEXT("ControlPanel\\BackLight"), TEXT("BatteryTimeout"), REG_bat);
+	REG_bat = reg_access(TEXT("ControlPanel\\BackLight"), (const TCHAR*)TEXT("BatteryTimeout"), REG_bat);
 	REG_ac = reg_access(TEXT("ControlPanel\\BackLight"), TEXT("ACTimeout"), REG_ac);
 	REG_disp = reg_access(TEXT("ControlPanel\\Power"), TEXT("Display"), REG_disp);
 
@@ -127,6 +127,10 @@ bool CEDevice::hasSquareQVGAResolution() {
 	return (OSystem_WINCE3::getScreenWidth() == 240 && OSystem_WINCE3::getScreenHeight() == 240);
 }
 
+bool CEDevice::hasWideResolution() {
+	return (OSystem_WINCE3::getScreenWidth() >= 640 || OSystem_WINCE3::getScreenHeight() >= 640);
+}
+
 bool CEDevice::hasPocketPCResolution() {
 	if (OSystem_WINCE3::isOzone() && hasWideResolution())
 		return true;
@@ -137,10 +141,6 @@ bool CEDevice::hasDesktopResolution() {
 	if (OSystem_WINCE3::isOzone() && hasWideResolution())
 		return true;
 	return (OSystem_WINCE3::getScreenWidth() > 320);
-}
-
-bool CEDevice::hasWideResolution() {
-	return (OSystem_WINCE3::getScreenWidth() >= 640 || OSystem_WINCE3::getScreenHeight() >= 640);
 }
 
 bool CEDevice::hasSmartphoneResolution() {

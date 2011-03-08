@@ -23,28 +23,31 @@
  *
  */
 
-#ifndef CEDEVICE_H
-#define CEDEVICE_H
+#ifndef BACKENDS_MIXER_WINCE_SDL_H
+#define BACKENDS_MIXER_WINCE_SDL_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "common/str.h"
+#include "backends/mixer/sdl/sdl-mixer.h"
 
-class CEDevice {
+/**
+ * SDL mixer manager for WinCE
+ */
+class WINCESdlMixerManager : public SdlMixerManager {
 public:
-	static void init();
-	static void end();
-	static void wakeUp();
-	static bool hasPocketPCResolution();
-	static bool hasSquareQVGAResolution();
-	static bool hasDesktopResolution();
-	static bool hasWideResolution();
-	static bool hasSmartphoneResolution();
-	static bool isSmartphone();
+	WINCESdlMixerManager();
+	virtual ~WINCESdlMixerManager();
+
+	virtual void init();
 
 private:
-	static DWORD reg_access(const TCHAR *key, const TCHAR *val, DWORD data);
-	static void backlight_xchg();
+
+#ifdef USE_VORBIS
+	bool checkOggHighSampleRate();
+#endif
+
+	static void private_sound_proc(void *param, byte *buf, int len);
+	uint32 compute_sample_rate();
+
 };
 
 #endif
+

@@ -161,13 +161,6 @@ SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *sdlEventSource)
 
 	_graphicsMutex = g_system->createMutex();
 
-#ifdef _WIN32_WCE
-	if (ConfMan.hasKey("use_GDI") && ConfMan.getBool("use_GDI")) {
-		SDL_VideoInit("windib", 0);
-		sdlFlags ^= SDL_INIT_VIDEO;
-	}
-#endif
-
 	SDL_ShowCursor(SDL_DISABLE);
 
 	memset(&_oldVideoMode, 0, sizeof(_oldVideoMode));

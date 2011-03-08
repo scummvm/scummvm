@@ -23,28 +23,40 @@
  *
  */
 
-#ifndef CEDEVICE_H
-#define CEDEVICE_H
+#ifndef BACKENDS_EVENTS_SDL_WINCE_H
+#define BACKENDS_EVENTS_SDL_WINCE_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "common/str.h"
+#include "backends/events/sdl/sdl-events.h"
 
-class CEDevice {
+extern bool _isSmartphone;
+
+class WINCESdlEventSource : public SdlEventSource {
 public:
-	static void init();
-	static void end();
-	static void wakeUp();
-	static bool hasPocketPCResolution();
-	static bool hasSquareQVGAResolution();
-	static bool hasDesktopResolution();
-	static bool hasWideResolution();
-	static bool hasSmartphoneResolution();
-	static bool isSmartphone();
+	WINCESdlEventSource();
+
+	void loadDeviceConfiguration();
+
+	// Overloaded from SDL backend (toolbar handling)
+	bool pollEvent(Common::Event &event);
+	// Overloaded from SDL backend (mouse and new scaler handling)
+	void fillMouseEvent(Common::Event &event, int x, int y);
+
+	void swap_freeLook();
+
+protected:
 
 private:
-	static DWORD reg_access(const TCHAR *key, const TCHAR *val, DWORD data);
-	static void backlight_xchg();
+	int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode, bool unfilter);
+
+	// Keyboard tap
+	int _tapX;
+	int _tapY;
+	long _tapTime;
+
+	bool _closeClick;			// flag when taps are spatially close together
+	bool _rbutton;				// double tap -> right button simulation
+	bool _freeLook;				// freeLook mode (do not send mouse button events)
+
 };
 
-#endif
+#endif /* BACKENDS_EVENTS_SDL_WINCE_H */
