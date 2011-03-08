@@ -39,7 +39,7 @@
 
 WINCESdlEventSource::WINCESdlEventSource()
 	: _tapTime(0), _closeClick(false), _rbutton(false),
-	_freeLook(false) {
+	  _freeLook(false) {
 }
 
 void WINCESdlEventSource::fillMouseEvent(Common::Event &event, int x, int y) {
@@ -102,7 +102,8 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 				((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_lastKeyPressed = 0;
 				event.type = Common::EVENT_PREDICTIVE_DIALOG;
 				return true;
-			} 			event.type = Common::EVENT_KEYDOWN;
+			}
+			event.type = Common::EVENT_KEYDOWN;
 			if (!GUI::Actions::Instance()->mappingActive())
 				event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
 			else
@@ -131,7 +132,7 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 				event.kbd.flags = 0xFF;
 			else if (ev.key.keysym.sym == SDLK_PAUSE) {
 				((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_lastKeyPressed = 0;
-				return false;	// chew up the show agi dialog key up event
+				return false;   // chew up the show agi dialog key up event
 			}
 
 			event.type = Common::EVENT_KEYUP;
@@ -177,10 +178,10 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 
 			if (!_isSmartphone) {
 				// handle double-taps
-				if (_tapTime) {		// second tap
+				if (_tapTime) {     // second tap
 					if (_closeClick && (GetTickCount() - _tapTime < 1000)) {
-						if ( event.mouse.y <= 20 &&
-								((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_panelInitialized) {
+						if (event.mouse.y <= 20 &&
+						        ((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_panelInitialized) {
 							// top of screen (show panel)
 							((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->swap_panel_visibility();
 						} else if (!((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_noDoubleTapRMB) {
@@ -212,7 +213,7 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 					((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_toolbarHighDrawn = false;
 					((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->internUpdateScreen();
 				}
-				if (((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_newOrientation != ((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_orientationLandscape){
+				if (((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_newOrientation != ((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_orientationLandscape) {
 					((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_orientationLandscape = ((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_newOrientation;
 					((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_toolbarHighDrawn = false;
 					ConfMan.setInt("landscape", ((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_orientationLandscape);

@@ -30,13 +30,13 @@
 #include "backends/platform/wince/CEgui/CEGUI.h"
 
 // Internal GUI names
-#define NAME_MAIN_PANEL			"MainPanel"
-#define NAME_PANEL_KEYBOARD		"Keyboard"
-#define NAME_ITEM_OPTIONS		"Options"
-#define NAME_ITEM_SKIP			"Skip"
-#define NAME_ITEM_SOUND			"Sound"
-#define NAME_ITEM_ORIENTATION	"Orientation"
-#define NAME_ITEM_BINDKEYS		"Bindkeys"
+#define NAME_MAIN_PANEL         "MainPanel"
+#define NAME_PANEL_KEYBOARD     "Keyboard"
+#define NAME_ITEM_OPTIONS       "Options"
+#define NAME_ITEM_SKIP          "Skip"
+#define NAME_ITEM_SOUND         "Sound"
+#define NAME_ITEM_ORIENTATION   "Orientation"
+#define NAME_ITEM_BINDKEYS      "Bindkeys"
 
 #define TOTAL_ZONES 3
 
@@ -109,21 +109,21 @@ public:
 	void smartphone_rotate_display();
 //#endif
 
-	bool _panelInitialized;	// only initialize the toolbar once
-	bool _noDoubleTapRMB;	// disable double tap -> rmb click
+	bool _panelInitialized; // only initialize the toolbar once
+	bool _noDoubleTapRMB;   // disable double tap -> rmb click
 
 	CEGUI::ToolbarHandler _toolbarHandler;
 
-	bool _toolbarHighDrawn;		// cache toolbar 640x80
-	int _newOrientation;		// new orientation
-	int _orientationLandscape;	// current orientation
+	bool _toolbarHighDrawn;     // cache toolbar 640x80
+	int _newOrientation;        // new orientation
+	int _orientationLandscape;  // current orientation
 
-	int _scaleFactorXm;		// scaler X *
-	int _scaleFactorXd;		// scaler X /
-	int _scaleFactorYm;		// scaler Y *
-	int _scaleFactorYd;		// scaler Y /
+	int _scaleFactorXm;     // scaler X *
+	int _scaleFactorXd;     // scaler X /
+	int _scaleFactorYm;     // scaler Y *
+	int _scaleFactorYd;     // scaler Y /
 
-	bool _hasfocus;			// scummvm has the top window
+	bool _hasfocus;         // scummvm has the top window
 
 	bool hasPocketPCResolution();
 	bool hasDesktopResolution();
@@ -132,20 +132,20 @@ public:
 
 	MousePos _mouseCurState;
 
-	bool _zoomUp;			// zooming up mode
-	bool _zoomDown;			// zooming down mode
+	bool _zoomUp;           // zooming up mode
+	bool _zoomDown;         // zooming down mode
 
-	bool _usesEmulatedMouse;	// emulated mousemove ever been used in this session
+	bool _usesEmulatedMouse;    // emulated mousemove ever been used in this session
 
 	int _mouseXZone[TOTAL_ZONES];
 	int _mouseYZone[TOTAL_ZONES];
 	int _currentZone;
 
 	// Smartphone specific variables
-	int _lastKeyPressed;		// last key pressed
-	int _keyRepeat;				// number of time the last key was repeated
-	int _keyRepeatTime;			// elapsed time since the key was pressed
-	int _keyRepeatTrigger;		// minimum time to consider the key was repeated
+	int _lastKeyPressed;        // last key pressed
+	int _keyRepeat;             // number of time the last key was repeated
+	int _keyRepeatTime;         // elapsed time since the key was pressed
+	int _keyRepeatTrigger;      // minimum time to consider the key was repeated
 
 	struct zoneDesc {
 		int x;
@@ -165,41 +165,41 @@ private:
 	void drawToolbarMouse(SDL_Surface *surf, bool draw);
 
 	void create_toolbar();
-	bool _panelVisible;			// panel visibility
-	bool _panelStateForced;		// panel visibility forced by external call
-	String _saveActiveToolbar;	// save active toolbar when forced
+	bool _panelVisible;         // panel visibility
+	bool _panelStateForced;     // panel visibility forced by external call
+	String _saveActiveToolbar;  // save active toolbar when forced
 
-	bool _canBeAspectScaled;	// game screen size allows for aspect scaling
+	bool _canBeAspectScaled;    // game screen size allows for aspect scaling
 
 	SDL_Rect _dirtyRectOut[NUM_DIRTY_RECT];
 	bool _scalersChanged;
 
 	bool isOzone();
 
-	bool _saveToolbarState;		// save visibility when forced
-	bool _saveToolbarZoom;		// save visibility when zooming
+	bool _saveToolbarState;     // save visibility when forced
+	bool _saveToolbarZoom;      // save visibility when zooming
 
-	SDL_Surface *_toolbarLow;	// toolbar 320x40
-	SDL_Surface *_toolbarHigh;	// toolbar 640x80
+	SDL_Surface *_toolbarLow;   // toolbar 320x40
+	SDL_Surface *_toolbarHigh;  // toolbar 640x80
 
 	// Mouse
-	int	_mouseHotspotX, _mouseHotspotY;
+	int _mouseHotspotX, _mouseHotspotY;
 	byte *_mouseBackupOld;
 	uint16 *_mouseBackupToolbar;
 	uint16 _mouseBackupDim;
 
-	bool _forceHideMouse;		// force invisible mouse cursor
+	bool _forceHideMouse;       // force invisible mouse cursor
 
 	// Smartphone specific variables
 	void loadDeviceConfigurationElement(Common::String element, int &value, int defaultValue);
-	int _repeatX;				// repeat trigger for left and right cursor moves
-	int _repeatY;				// repeat trigger for up and down cursor moves
-	int _stepX1;				// offset for left and right cursor moves (slowest)
-	int _stepX2;				// offset for left and right cursor moves (faster)
-	int _stepX3;				// offset for left and right cursor moves (fastest)
-	int _stepY1;				// offset for up and down cursor moves (slowest)
-	int _stepY2;				// offset for up and down cursor moves (faster)
-	int _stepY3;				// offset for up and down cursor moves (fastest)
+	int _repeatX;               // repeat trigger for left and right cursor moves
+	int _repeatY;               // repeat trigger for up and down cursor moves
+	int _stepX1;                // offset for left and right cursor moves (slowest)
+	int _stepX2;                // offset for left and right cursor moves (faster)
+	int _stepX3;                // offset for left and right cursor moves (fastest)
+	int _stepY1;                // offset for up and down cursor moves (slowest)
+	int _stepY2;                // offset for up and down cursor moves (faster)
+	int _stepY3;                // offset for up and down cursor moves (fastest)
 };
 
 #endif /* BACKENDS_GRAPHICS_WINCE_SDL_H */

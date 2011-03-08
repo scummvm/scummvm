@@ -46,13 +46,13 @@
 
 WINCESdlGraphicsManager::WINCESdlGraphicsManager(SdlEventSource *sdlEventSource)
 	: SdlGraphicsManager(sdlEventSource),
-	_panelInitialized(false), _noDoubleTapRMB(false),
-	_toolbarHighDrawn(false), _newOrientation(0), _orientationLandscape(0),
-	_panelVisible(true), _saveActiveToolbar(NAME_MAIN_PANEL), _panelStateForced(false),
-	_canBeAspectScaled(false), _scalersChanged(false), _saveToolbarState(false),
-	_mouseBackupOld(NULL), _mouseBackupDim(0), _mouseBackupToolbar(NULL),
-	_usesEmulatedMouse(false), _forceHideMouse(false), _hasfocus(true),
-	_zoomUp(false), _zoomDown(false) {
+	  _panelInitialized(false), _noDoubleTapRMB(false),
+	  _toolbarHighDrawn(false), _newOrientation(0), _orientationLandscape(0),
+	  _panelVisible(true), _saveActiveToolbar(NAME_MAIN_PANEL), _panelStateForced(false),
+	  _canBeAspectScaled(false), _scalersChanged(false), _saveToolbarState(false),
+	  _mouseBackupOld(NULL), _mouseBackupDim(0), _mouseBackupToolbar(NULL),
+	  _usesEmulatedMouse(false), _forceHideMouse(false), _hasfocus(true),
+	  _zoomUp(false), _zoomDown(false) {
 	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
 	if (_isSmartphone) {
 		_mouseCurState.x = 20;
@@ -77,7 +77,7 @@ WINCESdlGraphicsManager::WINCESdlGraphicsManager(SdlEventSource *sdlEventSource)
 	create_toolbar();
 	_hasSmartphoneResolution = CEDevice::hasSmartphoneResolution() || CEDevice::isSmartphone();
 	if (_hasSmartphoneResolution)
-		_panelVisible = false;	// init correctly in smartphones
+		_panelVisible = false;  // init correctly in smartphones
 
 	_screen = NULL;
 }
@@ -137,12 +137,11 @@ void WINCESdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 			_saveActiveToolbar = _toolbarHandler.activeName();
 			_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
 			_toolbarHandler.setVisible(true);
-		} else
-			if (_panelStateForced) {
-				_panelStateForced = false;
-				_toolbarHandler.setActive(_saveActiveToolbar);
-				//_toolbarHandler.setVisible(_saveToolbarState);
-			}
+		} else if (_panelStateForced) {
+			_panelStateForced = false;
+			_toolbarHandler.setActive(_saveActiveToolbar);
+			//_toolbarHandler.setVisible(_saveToolbarState);
+		}
 		return;
 
 	case OSystem::kFeatureDisableKeyFiltering:
@@ -186,7 +185,7 @@ void WINCESdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelForm
 		h = 240; // use the extra 40 pixels height for the toolbar
 	}
 
-	if (h == 400)	// touche engine fixup
+	if (h == 400)   // touche engine fixup
 		h += 80;
 
 	if (!_hasSmartphoneResolution) {
@@ -197,7 +196,7 @@ void WINCESdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelForm
 	} else {
 		if (h == 240)
 			_toolbarHandler.setOffset(200);
-		else	// 176x220
+		else    // 176x220
 			_toolbarHandler.setOffset(0);
 	}
 
@@ -312,10 +311,10 @@ void WINCESdlGraphicsManager::switch_zone() {
 
 	for (i = 0; i < TOTAL_ZONES; i++)
 		if (x >= _zones[i].x && y >= _zones[i].y &&
-			x <= _zones[i].x + _zones[i].width && y <= _zones[i].y + _zones[i].height) {
-				_mouseXZone[i] = x;
-				_mouseYZone[i] = y;
-				break;
+		        x <= _zones[i].x + _zones[i].width && y <= _zones[i].y + _zones[i].height) {
+			_mouseXZone[i] = x;
+			_mouseYZone[i] = y;
+			break;
 		}
 	_currentZone = i + 1;
 	if (_currentZone >= TOTAL_ZONES)
@@ -344,7 +343,7 @@ bool WINCESdlGraphicsManager::update_scalers() {
 			return false;
 
 		if ((!_orientationLandscape && (_videoMode.screenWidth == 320 || !_videoMode.screenWidth))
-			|| CEDevice::hasSquareQVGAResolution() ) {
+		        || CEDevice::hasSquareQVGAResolution()) {
 			if (OSystem_WINCE3::getScreenWidth() != 320) {
 				_scaleFactorXm = 3;
 				_scaleFactorXd = 4;
@@ -358,7 +357,7 @@ bool WINCESdlGraphicsManager::update_scalers() {
 				_scaleFactorYd = 1;
 				_scalerProc = Normal1x;
 			}
-		} else if ( _orientationLandscape && (_videoMode.screenWidth == 320 || !_videoMode.screenWidth)) {
+		} else if (_orientationLandscape && (_videoMode.screenWidth == 320 || !_videoMode.screenWidth)) {
 			if (!_panelVisible && !_hasSmartphoneResolution  && !_overlayVisible && _canBeAspectScaled) {
 				_scaleFactorXm = 1;
 				_scaleFactorXd = 1;
@@ -390,15 +389,15 @@ bool WINCESdlGraphicsManager::update_scalers() {
 		return true;
 	} else if (CEDevice::hasWideResolution()) {
 #ifdef USE_ARM_SCALER_ASM
-		if ( _videoMode.mode == GFX_DOUBLESIZE && (_videoMode.screenWidth == 320 || !_videoMode.screenWidth) ) {
-			if ( !_panelVisible && !_overlayVisible && _canBeAspectScaled ) {
+		if (_videoMode.mode == GFX_DOUBLESIZE && (_videoMode.screenWidth == 320 || !_videoMode.screenWidth)) {
+			if (!_panelVisible && !_overlayVisible && _canBeAspectScaled) {
 				_scaleFactorXm = 2;
 				_scaleFactorXd = 1;
 				_scaleFactorYm = 12;
 				_scaleFactorYd = 5;
 				_scalerProc = Normal2xAspect;
 				_videoMode.aspectRatioCorrection = true;
-			} else if ( (_panelVisible || _overlayVisible) && _canBeAspectScaled ) {
+			} else if ((_panelVisible || _overlayVisible) && _canBeAspectScaled) {
 				_scaleFactorXm = 2;
 				_scaleFactorXd = 1;
 				_scaleFactorYm = 2;
@@ -447,7 +446,7 @@ void WINCESdlGraphicsManager::update_game_settings() {
 		// Skip
 		panel->add(NAME_ITEM_SKIP, new CEGUI::ItemAction(ITEM_SKIP, POCKET_ACTION_SKIP));
 		// sound
-//__XXX__		panel->add(NAME_ITEM_SOUND, new CEGUI::ItemSwitch(ITEM_SOUND_OFF, ITEM_SOUND_ON, &_soundMaster));
+//__XXX__       panel->add(NAME_ITEM_SOUND, new CEGUI::ItemSwitch(ITEM_SOUND_OFF, ITEM_SOUND_ON, &_soundMaster));
 		panel->add(NAME_ITEM_SOUND, new CEGUI::ItemSwitch(ITEM_SOUND_OFF, ITEM_SOUND_ON, &OSystem_WINCE3::_soundMaster));
 
 		// bind keys
@@ -500,7 +499,7 @@ void WINCESdlGraphicsManager::internUpdateScreen() {
 
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
-		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth * _scaleFactorXm / _scaleFactorXd, _newShakePos * _scaleFactorYm / _scaleFactorYd};
+		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth *_scaleFactorXm / _scaleFactorXd, _newShakePos *_scaleFactorYm / _scaleFactorYd};
 		if (_videoMode.aspectRatioCorrection)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
 		SDL_FillRect(_hwscreen, &blackrect, 0);
@@ -562,9 +561,9 @@ void WINCESdlGraphicsManager::internUpdateScreen() {
 
 		for (r = _dirtyRectList; r != last_rect; ++r) {
 			dst = *r;
-			dst.x++;	// Shift rect by one since 2xSai needs to access the data around
-			dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
-					// NOTE: This is also known as BLACK MAGIC, copied from the sdl backend
+			dst.x++;    // Shift rect by one since 2xSai needs to access the data around
+			dst.y++;    // any pixel to scale it, and we want to avoid mem access crashes.
+			// NOTE: This is also known as BLACK MAGIC, copied from the sdl backend
 			if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
 				error("SDL_BlitSurface failed: %s", SDL_GetError());
 		}
@@ -593,15 +592,15 @@ void WINCESdlGraphicsManager::internUpdateScreen() {
 
 			// transform
 			shakestretch = _currentShakePos * _scaleFactorYm / _scaleFactorYd;
-			routx = r->x * _scaleFactorXm / _scaleFactorXd;					// locate position in scaled screen
-			routy = r->y * _scaleFactorYm / _scaleFactorYd + shakestretch;	// adjust for shake offset
+			routx = r->x * _scaleFactorXm / _scaleFactorXd;                 // locate position in scaled screen
+			routy = r->y * _scaleFactorYm / _scaleFactorYd + shakestretch;  // adjust for shake offset
 			routw = r->w * _scaleFactorXm / _scaleFactorXd;
 			routh = r->h * _scaleFactorYm / _scaleFactorYd - shakestretch;
 
 			// clipping destination rectangle inside device screen (more strict, also more tricky but more stable)
 			// note that all current scalers do not make dst rect exceed left/right, unless chosen badly (FIXME)
-			if (_zoomDown)	routy -= 240;			// adjust for zoom position
-			if (routy + routh < 0)	continue;
+			if (_zoomDown)  routy -= 240;           // adjust for zoom position
+			if (routy + routh < 0)  continue;
 			if (routy < 0) {
 				routh += routy;
 				r->y -= routy * _scaleFactorYd / _scaleFactorYm;
@@ -609,13 +608,13 @@ void WINCESdlGraphicsManager::internUpdateScreen() {
 				r->h = routh * _scaleFactorYd / _scaleFactorYm;
 			}
 			if (_orientationLandscape) {
-				if (routy > OSystem_WINCE3::getScreenWidth())	continue;
+				if (routy > OSystem_WINCE3::getScreenWidth())   continue;
 				if (routy + routh > OSystem_WINCE3::getScreenWidth()) {
 					routh = OSystem_WINCE3::getScreenWidth() - routy;
 					r->h = routh * _scaleFactorYd / _scaleFactorYm;
 				}
 			} else {
-				if (routy > OSystem_WINCE3::getScreenHeight())	continue;
+				if (routy > OSystem_WINCE3::getScreenHeight())  continue;
 				if (routy + routh > OSystem_WINCE3::getScreenHeight()) {
 					routh = OSystem_WINCE3::getScreenHeight() - routy;
 					r->h = routh * _scaleFactorYd / _scaleFactorYm;
@@ -627,13 +626,15 @@ void WINCESdlGraphicsManager::internUpdateScreen() {
 				_toolbarHandler.forceRedraw();
 
 			// blit it (with added voodoo from the sdl backend, shifting the source rect again)
-			_scalerProc(	(byte *)srcSurf->pixels + (r->x * 2 + 2)+ (r->y + 1) * srcPitch, srcPitch,
-					(byte *)_hwscreen->pixels + routx * 2 + routy * dstPitch, dstPitch,
-					r->w, r->h - _currentShakePos);
+			_scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
+			            (byte *)_hwscreen->pixels + routx * 2 + routy * dstPitch, dstPitch,
+			            r->w, r->h - _currentShakePos);
 
 			// add this rect to output
-			rout->x = routx;	rout->y = routy - shakestretch;
-			rout->w = routw;	rout->h = routh + shakestretch;
+			rout->x = routx;
+			rout->y = routy - shakestretch;
+			rout->w = routw;
+			rout->h = routh + shakestretch;
 			numRectsOut++;
 			rout++;
 
@@ -654,7 +655,7 @@ void WINCESdlGraphicsManager::internUpdateScreen() {
 				// Resize the toolbar
 				SDL_LockSurface(_toolbarLow);
 				SDL_LockSurface(_toolbarHigh);
-				Normal2x((byte*)_toolbarLow->pixels, _toolbarLow->pitch, (byte*)_toolbarHigh->pixels, _toolbarHigh->pitch, toolbar_rect[0].w, toolbar_rect[0].h);
+				Normal2x((byte *)_toolbarLow->pixels, _toolbarLow->pitch, (byte *)_toolbarHigh->pixels, _toolbarHigh->pitch, toolbar_rect[0].w, toolbar_rect[0].h);
 				SDL_UnlockSurface(_toolbarHigh);
 				SDL_UnlockSurface(_toolbarLow);
 				_toolbarHighDrawn = true;
@@ -662,11 +663,10 @@ void WINCESdlGraphicsManager::internUpdateScreen() {
 			toolbar_rect[0].w *= 2;
 			toolbar_rect[0].h *= 2;
 			toolbarSurface = _toolbarHigh;
-		}
-		else
+		} else
 			toolbarSurface = _toolbarLow;
 
-		drawToolbarMouse(toolbarSurface, true);		// draw toolbar mouse if applicable
+		drawToolbarMouse(toolbarSurface, true);     // draw toolbar mouse if applicable
 
 		// Apply the appropriate scaler
 		SDL_LockSurface(toolbarSurface);
@@ -680,8 +680,8 @@ void WINCESdlGraphicsManager::internUpdateScreen() {
 		else if (_videoMode.scaleFactor == 3)
 			toolbarScaler = Normal3x;
 		toolbarScaler((byte *)toolbarSurface->pixels, srcPitch,
-					(byte *)_hwscreen->pixels + (_toolbarHandler.getOffset() * _scaleFactorYm / _scaleFactorYd * dstPitch),
-					dstPitch, toolbar_rect[0].w, toolbar_rect[0].h);
+		              (byte *)_hwscreen->pixels + (_toolbarHandler.getOffset() * _scaleFactorYm / _scaleFactorYd * dstPitch),
+		              dstPitch, toolbar_rect[0].w, toolbar_rect[0].h);
 		SDL_UnlockSurface(toolbarSurface);
 		SDL_UnlockSurface(_hwscreen);
 
@@ -694,7 +694,7 @@ void WINCESdlGraphicsManager::internUpdateScreen() {
 
 		SDL_UpdateRects(_hwscreen, 1, toolbar_rect);
 
-		drawToolbarMouse(toolbarSurface, false);	// undraw toolbar mouse
+		drawToolbarMouse(toolbarSurface, false);    // undraw toolbar mouse
 	}
 
 	// Finally, blit all our changes to the screen
@@ -796,9 +796,9 @@ bool WINCESdlGraphicsManager::setGraphicsMode(int mode) {
 
 	// Check if the scaler can be accepted, if not get back to normal scaler
 	if (_videoMode.scaleFactor && ((_videoMode.scaleFactor * _videoMode.screenWidth > OSystem_WINCE3::getScreenWidth() && _videoMode.scaleFactor * _videoMode.screenWidth > OSystem_WINCE3::getScreenHeight())
-		 || (_videoMode.scaleFactor * _videoMode.screenHeight > OSystem_WINCE3::getScreenWidth() &&	_videoMode.scaleFactor * _videoMode.screenHeight > OSystem_WINCE3::getScreenHeight()))) {
-				_videoMode.scaleFactor = 1;
-				_scalerProc = Normal1x;
+	                               || (_videoMode.scaleFactor * _videoMode.screenHeight > OSystem_WINCE3::getScreenWidth() && _videoMode.scaleFactor * _videoMode.screenHeight > OSystem_WINCE3::getScreenHeight()))) {
+		_videoMode.scaleFactor = 1;
+		_scalerProc = Normal1x;
 	}
 
 	// Common scaler system was used
@@ -812,12 +812,11 @@ bool WINCESdlGraphicsManager::setGraphicsMode(int mode) {
 	_forceFull = true;
 
 	if (oldScaleFactorXm != _scaleFactorXm ||
-		oldScaleFactorXd != _scaleFactorXd ||
-		oldScaleFactorYm != _scaleFactorYm ||
-		oldScaleFactorYd != _scaleFactorYd) {
+	        oldScaleFactorXd != _scaleFactorXd ||
+	        oldScaleFactorYm != _scaleFactorYm ||
+	        oldScaleFactorYd != _scaleFactorYd) {
 		_scalersChanged = true;
-	}
-	else
+	} else
 		_scalersChanged = false;
 
 
@@ -850,18 +849,18 @@ bool WINCESdlGraphicsManager::loadGFXMode() {
 		displayHeight = _videoMode.screenHeight * _scaleFactorYm / _scaleFactorYd;
 	} else {
 		displayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
-		displayHeight = _videoMode.screenHeight* _videoMode.scaleFactor;
+		displayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 	}
 
 	switch (_orientationLandscape) {
-		case 1:
-			flags |= SDL_LANDSCVIDEO;
-			break;
-		case 2:
-			flags |= SDL_INVLNDVIDEO;
-			break;
-		default:
-			flags |= SDL_PORTRTVIDEO;
+	case 1:
+		flags |= SDL_LANDSCVIDEO;
+		break;
+	case 2:
+		flags |= SDL_INVLNDVIDEO;
+		break;
+	default:
+		flags |= SDL_PORTRTVIDEO;
 	}
 	_hwscreen = SDL_SetVideoMode(displayWidth, displayHeight, 16, flags);
 
@@ -872,11 +871,11 @@ bool WINCESdlGraphicsManager::loadGFXMode() {
 
 	// see what orientation sdl finally accepted
 	if (_hwscreen->flags & SDL_PORTRTVIDEO)
-		_orientationLandscape = _newOrientation	= 0;
+		_orientationLandscape = _newOrientation = 0;
 	else if (_hwscreen->flags & SDL_LANDSCVIDEO)
-		_orientationLandscape = _newOrientation	= 1;
+		_orientationLandscape = _newOrientation = 1;
 	else
-		_orientationLandscape = _newOrientation	= 2;
+		_orientationLandscape = _newOrientation = 2;
 
 	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
 	// Distinguish 555 and 565 mode
@@ -919,7 +918,7 @@ bool WINCESdlGraphicsManager::loadGFXMode() {
 
 	// Toolbar
 	_toolbarHighDrawn = false;
-	uint16 *toolbar_screen = (uint16 *)calloc(320 * 40, sizeof(uint16));	// *not* leaking memory here
+	uint16 *toolbar_screen = (uint16 *)calloc(320 * 40, sizeof(uint16));    // *not* leaking memory here
 	_toolbarLow = SDL_CreateRGBSurfaceFrom(toolbar_screen, 320, 40, 16, 320 * 2, _hwscreen->format->Rmask, _hwscreen->format->Gmask, _hwscreen->format->Bmask, _hwscreen->format->Amask);
 
 	if (_toolbarLow == NULL)
@@ -1019,13 +1018,13 @@ bool WINCESdlGraphicsManager::hotswapGFXMode() {
 bool WINCESdlGraphicsManager::saveScreenshot(const char *filename) {
 	assert(_hwscreen != NULL);
 
-	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
+	Common::StackLock lock(_graphicsMutex); // Lock the mutex until this function ends
 	SDL_SaveBMP(_hwscreen, filename);
 	return true;
 }
 
 void WINCESdlGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	if (_overlayscreen == NULL)
 		return;
@@ -1038,7 +1037,8 @@ void WINCESdlGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pit
 	}
 
 	if (y < 0) {
-		h += y; buf -= y * pitch;
+		h += y;
+		buf -= y * pitch;
 		y = 0;
 	}
 
@@ -1072,13 +1072,13 @@ void WINCESdlGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pit
 }
 
 void WINCESdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 	assert(src);
 
 	if (_screen == NULL)
 		return;
 
-	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
+	Common::StackLock lock(_graphicsMutex); // Lock the mutex until this function ends
 
 	/* Clip the coordinates */
 	if (x < 0) {
@@ -1115,7 +1115,7 @@ void WINCESdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int x
 	byte *dst = (byte *)_screen->pixels + y * _videoMode.screenWidth + x;
 
 	if (_videoMode.screenWidth == pitch && pitch == w) {
-		memcpy(dst, src, h*w);
+		memcpy(dst, src, h * w);
 	} else {
 		do {
 			memcpy(dst, src, w);
@@ -1152,7 +1152,7 @@ void WINCESdlGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, in
 		free(_mouseBackupOld);
 		free(_mouseBackupToolbar);
 		uint16 tmp = (w > h) ? w : h;
-		_mouseBackupOld = (byte *) malloc(tmp * tmp * 2);	// can hold 8bpp (playfield) or 16bpp (overlay) data
+		_mouseBackupOld = (byte *) malloc(tmp * tmp * 2);   // can hold 8bpp (playfield) or 16bpp (overlay) data
 		_mouseBackupToolbar = (uint16 *) malloc(tmp * tmp * 2); // 16 bpp
 		_mouseBackupDim = tmp;
 	}
@@ -1192,7 +1192,7 @@ Graphics::Surface *WINCESdlGraphicsManager::lockScreen() {
 }
 
 void WINCESdlGraphicsManager::showOverlay() {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	if (_overlayVisible)
 		return;
@@ -1204,7 +1204,7 @@ void WINCESdlGraphicsManager::showOverlay() {
 }
 
 void WINCESdlGraphicsManager::hideOverlay() {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	if (!_overlayVisible)
 		return;
@@ -1252,17 +1252,17 @@ void WINCESdlGraphicsManager::drawToolbarMouse(SDL_Surface *surf, bool draw) {
 	if (SDL_LockSurface(surf) == -1)
 		error("SDL_LockSurface failed at internDrawToolbarMouse: %s", SDL_GetError());
 
-	uint16 *bak = _mouseBackupToolbar;	// toolbar surfaces are 16bpp
+	uint16 *bak = _mouseBackupToolbar;  // toolbar surfaces are 16bpp
 	uint16 *dst;
 	dst = (uint16 *)surf->pixels + y * surf->w + x;
 
-	if (draw) {		// blit it
+	if (draw) {     // blit it
 		while (h > 0) {
 			width = w;
 			while (width > 0) {
 				*bak++ = *dst;
 				color = *src++;
-				if (color != _mouseKeyColor)	// transparent color
+				if (color != _mouseKeyColor)    // transparent color
 					*dst = 0xFFFF;
 				dst++;
 				width--;
@@ -1272,7 +1272,7 @@ void WINCESdlGraphicsManager::drawToolbarMouse(SDL_Surface *surf, bool draw) {
 			dst += surf->w - w;
 			h--;
 		}
-	} else {		// restore bg
+	} else {        // restore bg
 		for (y = 0; y < h; ++y, bak += _mouseBackupDim, dst += surf->w)
 			memcpy(dst, bak, w << 1);
 	}
@@ -1308,7 +1308,7 @@ void WINCESdlGraphicsManager::internDrawMouse() {
 	int w = _mouseCurState.w;
 	int h = _mouseCurState.h;
 	byte color;
-	const byte *src = _mouseData;		// Image representing the mouse
+	const byte *src = _mouseData;       // Image representing the mouse
 	int width;
 
 	// clip the mouse rect, and adjust the src pointer accordingly
@@ -1340,8 +1340,8 @@ void WINCESdlGraphicsManager::internDrawMouse() {
 	addDirtyRect(x, y, w, h);
 
 	if (!_overlayVisible) {
-		byte *bak = _mouseBackupOld;		// Surface used to backup the area obscured by the mouse
-		byte *dst;					// Surface we are drawing into
+		byte *bak = _mouseBackupOld;        // Surface used to backup the area obscured by the mouse
+		byte *dst;                  // Surface we are drawing into
 
 		dst = (byte *)_screen->pixels + y * _videoMode.screenWidth + x;
 		while (h > 0) {
@@ -1349,7 +1349,7 @@ void WINCESdlGraphicsManager::internDrawMouse() {
 			while (width > 0) {
 				*bak++ = *dst;
 				color = *src++;
-				if (color != _mouseKeyColor)	// transparent, don't draw
+				if (color != _mouseKeyColor)    // transparent, don't draw
 					*dst = color;
 				dst++;
 				width--;
@@ -1361,8 +1361,8 @@ void WINCESdlGraphicsManager::internDrawMouse() {
 		}
 
 	} else {
-		uint16 *bak = (uint16 *)_mouseBackupOld;	// Surface used to backup the area obscured by the mouse
-		byte *dst;					// Surface we are drawing into
+		uint16 *bak = (uint16 *)_mouseBackupOld;    // Surface used to backup the area obscured by the mouse
+		byte *dst;                  // Surface we are drawing into
 
 		dst = (byte *)_overlayscreen->pixels + (y + 1) * _overlayscreen->pitch + (x + 1) * 2;
 		while (h > 0) {
@@ -1370,7 +1370,7 @@ void WINCESdlGraphicsManager::internDrawMouse() {
 			while (width > 0) {
 				*bak++ = *(uint16 *)dst;
 				color = *src++;
-				if (color != 0xFF)	// 0xFF = transparent, don't draw
+				if (color != 0xFF)  // 0xFF = transparent, don't draw
 					*(uint16 *)dst = SDL_MapRGB(_overlayscreen->format, _currentPalette[color].r, _currentPalette[color].g, _currentPalette[color].b);
 				dst += 2;
 				width--;
@@ -1389,7 +1389,7 @@ void WINCESdlGraphicsManager::internDrawMouse() {
 }
 
 void WINCESdlGraphicsManager::undrawMouse() {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	if (_mouseNeedsRedraw)
 		return;
@@ -1476,53 +1476,54 @@ void WINCESdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool mous
 
 void WINCESdlGraphicsManager::swap_panel_visibility() {
 	//if (!_forcePanelInvisible && !_panelStateForced) {
-		if (_zoomDown || _zoomUp)	return;
+	if (_zoomDown || _zoomUp)
+		return;
 
-		if (_panelVisible) {
-			if (_toolbarHandler.activeName() == NAME_PANEL_KEYBOARD)
-				_panelVisible = !_panelVisible;
-			else
-				_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
-		} else {
-			_toolbarHandler.setActive(NAME_MAIN_PANEL);
+	if (_panelVisible) {
+		if (_toolbarHandler.activeName() == NAME_PANEL_KEYBOARD)
 			_panelVisible = !_panelVisible;
-		}
-		_toolbarHandler.setVisible(_panelVisible);
-		_toolbarHighDrawn = false;
-
-		if (_videoMode.screenHeight > 240)
-			addDirtyRect(0, 400, 640, 80);
 		else
-			addDirtyRect(0, 200, 320, 40);
+			_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
+	} else {
+		_toolbarHandler.setActive(NAME_MAIN_PANEL);
+		_panelVisible = !_panelVisible;
+	}
+	_toolbarHandler.setVisible(_panelVisible);
+	_toolbarHighDrawn = false;
 
-		if (_toolbarHandler.activeName() == NAME_PANEL_KEYBOARD && _panelVisible)
-			internUpdateScreen();
-		else {
-			update_scalers();
-			hotswapGFXMode();
-		}
+	if (_videoMode.screenHeight > 240)
+		addDirtyRect(0, 400, 640, 80);
+	else
+		addDirtyRect(0, 200, 320, 40);
+
+	if (_toolbarHandler.activeName() == NAME_PANEL_KEYBOARD && _panelVisible)
+		internUpdateScreen();
+	else {
+		update_scalers();
+		hotswapGFXMode();
+	}
 	//}
 }
 
 void WINCESdlGraphicsManager::swap_panel() {
 	_toolbarHighDrawn = false;
 	//if (!_panelStateForced) {
-		if (_toolbarHandler.activeName() == NAME_PANEL_KEYBOARD && _panelVisible)
-			_toolbarHandler.setActive(NAME_MAIN_PANEL);
-		else
-			_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
+	if (_toolbarHandler.activeName() == NAME_PANEL_KEYBOARD && _panelVisible)
+		_toolbarHandler.setActive(NAME_MAIN_PANEL);
+	else
+		_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
 
-		if (_videoMode.screenHeight > 240)
-			addDirtyRect(0, 400, 640, 80);
-		else
-			addDirtyRect(0, 200, 320, 40);
+	if (_videoMode.screenHeight > 240)
+		addDirtyRect(0, 400, 640, 80);
+	else
+		addDirtyRect(0, 200, 320, 40);
 
-		_toolbarHandler.setVisible(true);
-		if (!_panelVisible) {
-			_panelVisible = true;
-			update_scalers();
-			hotswapGFXMode();
-		}
+	_toolbarHandler.setVisible(true);
+	if (!_panelVisible) {
+		_panelVisible = true;
+		update_scalers();
+		hotswapGFXMode();
+	}
 	//}
 }
 
