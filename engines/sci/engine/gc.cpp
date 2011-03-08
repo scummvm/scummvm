@@ -43,7 +43,7 @@ const char *segmentTypeNames[] = {
 	"nodes",     // 7
 	"hunk",      // 8
 	"dynmem",    // 9
-	"obsolete",  // 10: obsolete system strings
+	"obsolete",  // 10: obsolete string fragments
 	"array",     // 11: SCI32 arrays
 	"string"     // 12: SCI32 strings
 };

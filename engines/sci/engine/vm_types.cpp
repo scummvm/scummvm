@@ -220,7 +220,7 @@ bool reg_t::pointerComparisonWithInteger(const reg_t right) const {
 	// Hoyle 3, Pachisi, when any opponent is about to talk
 	// SQ1, room 28, when throwing water at the Orat
 	// SQ1, room 58, when giving the ID card to the robot
-	// SQ4 CD, at the first game screen, when the narrator is about to talk
+	// SQ4 CD, at the first game screen, when the narrator is about to speak
 	return (isPointer() && right.isNumber() && right.offset <= 2000 && getSciVersion() <= SCI_VERSION_1_1);
 }
 
