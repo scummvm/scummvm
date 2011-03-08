@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	events/default/default-events.o \
 	events/dinguxsdl/dinguxsdl-events.o \
 	events/gp2xsdl/gp2xsdl-events.o \
+	events/gph/gph-events.o \
 	events/linuxmotosdl/linuxmotosdl-events.o \
 	events/samsungtvsdl/samsungtvsdl-events.o \
 	events/sdl/sdl-events.o \
@@ -21,6 +22,7 @@ MODULE_OBJS := \
 	fs/windows/windows-fs-factory.o \
 	graphics/dinguxsdl/dinguxsdl-graphics.o \
 	graphics/gp2xsdl/gp2xsdl-graphics.o \
+	graphics/gph/gph-graphics.o \
 	graphics/linuxmotosdl/linuxmotosdl-graphics.o \
 	graphics/opengl/glerrorcheck.o \
 	graphics/opengl/gltexture.o \
