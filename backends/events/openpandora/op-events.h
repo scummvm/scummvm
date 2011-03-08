@@ -18,33 +18,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
-#include "backends/platform/openpandora/op-sdl.h"
-#include "common/mutex.h"
-#include "common/translation.h"
-#include "common/util.h"
+#if !defined(BACKEND_EVENTS_OP_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
+#define BACKEND_EVENTS_OP_H
 
-#include "graphics/scaler/aspect.h"
-#include "graphics/surface.h"
+#include "backends/events/sdl/sdl-events.h"
 
-bool OSystem_OP::loadGFXMode() {
-	/* FIXME: For now we just cheat and set the overlay to 640*480 not 800*480 and let SDL
-	   deal with the boarders (it saves cleaning up the overlay when the game screen is
-	   smaller than the overlay ;)
-	*/
-	_videoMode.overlayWidth = 640;
-	_videoMode.overlayHeight = 480;
-	_videoMode.fullscreen = true;
+/**
+ * Events manager for the OpenPandora.
+ */
+class OPEventSource : public SdlEventSource {
+public:
+	OPEventSource();
 
-	if (_videoMode.screenHeight != 200 && _videoMode.screenHeight != 400)
-		_videoMode.aspectRatioCorrection = false;
+protected:
+	/** Button state for L button modifier */
+	bool _buttonStateL;
 
-	OSystem_SDL::loadGFXMode();
+	bool remapKey(SDL_Event &ev, Common::Event &event);
 
-	return true;
+//private:
+	bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
+	bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
+};
 
-}
+#endif /* BACKEND_EVENTS_OP_H */

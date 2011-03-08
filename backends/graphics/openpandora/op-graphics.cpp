@@ -20,36 +20,37 @@
  *
  */
 
-#ifndef OP_SDL_H
-#define OP_SDL_H
+#include "common/scummsys.h"
 
 #if defined(OPENPANDORA)
 
-#include "backends/base-backend.h"
-#include "backends/platform/sdl/sdl.h"
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/events/openpandora/op-events.h"
 #include "backends/graphics/openpandora/op-graphics.h"
+#include "backends/events/openpandora/op-events.h"
+#include "backends/platform/openpandora/op-sdl.h"
+#include "common/mutex.h"
+#include "common/translation.h"
+#include "common/util.h"
 
-#define __OPENPANDORA__
-#define MIXER_DOUBLE_BUFFERING 1
+#include "graphics/scaler/aspect.h"
+#include "graphics/surface.h"
 
-#ifndef PATH_MAX
-	#define PATH_MAX 255
+OPGraphicsManager::OPGraphicsManager(SdlEventSource *boss)
+	: SdlGraphicsManager(boss) {
+}
+
+bool OPGraphicsManager::loadGFXMode() {
+	/* FIXME: For now we just cheat and set the overlay to 640*480 not 800*480 and let SDL
+	   deal with the boarders (it saves cleaning up the overlay when the game screen is
+	   smaller than the overlay ;)
+	*/
+	_videoMode.overlayWidth = 640;
+	_videoMode.overlayHeight = 480;
+	_videoMode.fullscreen = true;
+
+	if (_videoMode.screenHeight != 200 && _videoMode.screenHeight != 400)
+		_videoMode.aspectRatioCorrection = false;
+
+	return SdlGraphicsManager::loadGFXMode();
+}
+
 #endif
-
-class OSystem_OP : public OSystem_POSIX {
-public:
-	OSystem_OP() {}
-
-	/* Platform Setup Stuff */
-	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
-	void initBackend();
-	void initSDL();
-	void quit();
-
-protected:
-
-};
-#endif
-#endif //OP_SDL_H

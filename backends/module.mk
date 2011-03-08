@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	events/gp2xsdl/gp2xsdl-events.o \
 	events/gph/gph-events.o \
 	events/linuxmotosdl/linuxmotosdl-events.o \
+	events/openpandora/op-events.o \
 	events/samsungtvsdl/samsungtvsdl-events.o \
 	events/sdl/sdl-events.o \
 	events/symbiansdl/symbiansdl-events.o \
@@ -28,6 +29,7 @@ MODULE_OBJS := \
 	graphics/opengl/gltexture.o \
 	graphics/opengl/opengl-graphics.o \
 	graphics/openglsdl/openglsdl-graphics.o \
+	graphics/openpandora/op-graphics.o \
 	graphics/sdl/sdl-graphics.o \
 	graphics/symbiansdl/symbiansdl-graphics.o \
 	graphics/wincesdl/wincesdl-graphics.o \

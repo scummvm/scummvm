@@ -18,16 +18,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
+
+#include "common/scummsys.h"
 
 /*
  * OpenPandora: Device Specific Event Handling.
  *
  */
 
+#if defined(OPENPANDORA)
+
+#include "backends/events/openpandora/op-events.h"
+#include "backends/graphics/openpandora/op-graphics.h"
 #include "backends/platform/openpandora/op-sdl.h"
 #include "backends/platform/openpandora/op-options.h"
 
@@ -41,81 +44,87 @@ enum {
 	TAPMODE_HOVER		= 2
 };
 
+OPEventSource::OPEventSource()
+	: _buttonStateL(false){
+}
+
 /* On the OpenPandora by default the ABXY and L/R Trigger buttons are returned by SDL as
    (A): SDLK_HOME (B): SDLK_END (X): SDLK_PAGEDOWN (Y): SDLK_PAGEUP (L): SDLK_RSHIFT (R): SDLK_RCTRL
 */
 
-bool OSystem_OP::handleKeyDown(SDL_Event &ev, Common::Event &event) {
-	switch (ev.key.keysym.sym) {
-	case SDLK_HOME:
-		event.type = Common::EVENT_LBUTTONDOWN;
-		fillMouseEvent(event, _km.x, _km.y);
-		return true;
-		break;
-	case SDLK_END:
-		event.type = Common::EVENT_RBUTTONDOWN;
-		fillMouseEvent(event, _km.x, _km.y);
-		return true;
-		break;
-	case SDLK_PAGEDOWN:
-		event.type = Common::EVENT_MAINMENU;
-		return true;
-		break;
-	case SDLK_PAGEUP:
-		OP::ToggleTapMode();
-		if (OP::tapmodeLevel == TAPMODE_LEFT) {
-			displayMessageOnOSD("Touchscreen 'Tap Mode' - Left Click");
-		} else if (OP::tapmodeLevel == TAPMODE_RIGHT) {
-			displayMessageOnOSD("Touchscreen 'Tap Mode' - Right Click");
-		} else if (OP::tapmodeLevel == TAPMODE_HOVER) {
-			displayMessageOnOSD("Touchscreen 'Tap Mode' - Hover (No Click)");
-		}
-		break;
-	case SDLK_RSHIFT:
-		BUTTON_STATE_L = true;
-		break;
-	case SDLK_RCTRL:
-		break;
-	default:
-		return OSystem_SDL::handleKeyDown(ev, event);
-		break;
-	}
-	return false;
-}
+bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 
-bool OSystem_OP::handleKeyUp(SDL_Event &ev, Common::Event &event) {
-	switch (ev.key.keysym.sym) {
-	case SDLK_HOME:
-		event.type = Common::EVENT_LBUTTONUP;
-		fillMouseEvent(event, _km.x, _km.y);
-		return true;
-		break;
-	case SDLK_END:
-		event.type = Common::EVENT_RBUTTONUP;
-		fillMouseEvent(event, _km.x, _km.y);
-		return true;
-		break;
-	case SDLK_PAGEDOWN:
-		event.type = Common::EVENT_MAINMENU;
-		return true;
-		break;
-	case SDLK_PAGEUP:
-		break;
-	case SDLK_RSHIFT:
-		BUTTON_STATE_L = false;
-		break;
-	case SDLK_RCTRL:
-		break;
-	default:
-		return OSystem_SDL::handleKeyUp(ev, event);
-		break;
+	if (ev.type == SDL_KEYDOWN) {
+		switch (ev.key.keysym.sym) {
+		case SDLK_HOME:
+			event.type = Common::EVENT_LBUTTONDOWN;
+			fillMouseEvent(event, _km.x, _km.y);
+			return true;
+			break;
+		case SDLK_END:
+			event.type = Common::EVENT_RBUTTONDOWN;
+			fillMouseEvent(event, _km.x, _km.y);
+			return true;
+			break;
+		case SDLK_PAGEDOWN:
+			event.type = Common::EVENT_MAINMENU;
+			return true;
+			break;
+		case SDLK_PAGEUP:
+			OP::ToggleTapMode();
+			if (OP::tapmodeLevel == TAPMODE_LEFT) {
+				g_system->displayMessageOnOSD("Touchscreen 'Tap Mode' - Left Click");
+			} else if (OP::tapmodeLevel == TAPMODE_RIGHT) {
+				g_system->displayMessageOnOSD("Touchscreen 'Tap Mode' - Right Click");
+			} else if (OP::tapmodeLevel == TAPMODE_HOVER) {
+				g_system->displayMessageOnOSD("Touchscreen 'Tap Mode' - Hover (No Click)");
+			}
+			break;
+		case SDLK_RSHIFT:
+			BUTTON_STATE_L = true;
+			break;
+		case SDLK_RCTRL:
+			break;
+		default:
+			return false;
+			break;
+		}
+		return false;
+	} else {
+		switch (ev.key.keysym.sym) {
+		case SDLK_HOME:
+			event.type = Common::EVENT_LBUTTONUP;
+			fillMouseEvent(event, _km.x, _km.y);
+			return true;
+			break;
+		case SDLK_END:
+			event.type = Common::EVENT_RBUTTONUP;
+			fillMouseEvent(event, _km.x, _km.y);
+			return true;
+			break;
+		case SDLK_PAGEDOWN:
+			event.type = Common::EVENT_MAINMENU;
+			return true;
+			break;
+		case SDLK_PAGEUP:
+			break;
+		case SDLK_RSHIFT:
+			BUTTON_STATE_L = false;
+			break;
+		case SDLK_RCTRL:
+			break;
+		default:
+			return false;
+			break;
+		}
+		return false;
 	}
 	return false;
 }
 
 /* Custom handleMouseButtonDown/handleMouseButtonUp to deal with 'Tap Mode' for the touchscreen */
 
-bool OSystem_OP::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
+bool OPEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT){
 		if (BUTTON_STATE_L == true) /* BUTTON_STATE_L = Left Trigger Held, force Right Click */
 			event.type = Common::EVENT_RBUTTONDOWN;
@@ -148,7 +157,7 @@ bool OSystem_OP::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool OSystem_OP::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
+bool OPEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT){
 		if (BUTTON_STATE_L == true) /* BUTTON_STATE_L = Left Trigger Held, force Right Click */
 			event.type = Common::EVENT_RBUTTONUP;
@@ -174,3 +183,4 @@ bool OSystem_OP::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 
 	return true;
 }
+#endif
