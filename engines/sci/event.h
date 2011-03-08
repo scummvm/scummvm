@@ -56,11 +56,8 @@ struct SciEvent {
 #define SCI_EVENT_DIRECTION       (1<<6)
 #define SCI_EVENT_SAID            (1<<7)
 /*Fake values for other events*/
-#define SCI_EVENT_ERROR           (1<<10)
 #define SCI_EVENT_QUIT            (1<<11)
 #define SCI_EVENT_PEEK            (1<<15)
-/* The QUIT event may be used to signal an external 'quit' command being
-** issued to the gfx driver.  */
 #define SCI_EVENT_ANY             0x7fff
 
 /* Keycodes of special keys: */
@@ -121,7 +118,6 @@ private:
 	SciEvent getScummVMEvent();
 
 	const bool _fontIsExtended;
-	int _modifierStates;
 	Common::List<SciEvent> _events;
 };
 
