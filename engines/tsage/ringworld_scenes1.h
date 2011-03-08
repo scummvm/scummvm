@@ -462,7 +462,7 @@ public:
 };
 
 class Scene95: public Scene {
-	class Action1: public Action2 {
+	class Action1: public ActionExt {
 	public:
 		virtual void signal();
 	};

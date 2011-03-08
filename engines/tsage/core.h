@@ -190,7 +190,7 @@ public:
 	void setDelay(int numFrames);
 };
 
-class Action2: public Action {
+class ActionExt: public Action {
 public:
 	int _state;
 };

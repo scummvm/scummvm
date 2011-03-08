@@ -80,6 +80,8 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 2150: return new Scene2150();
 	// Spaceship - AutoDoc
 	case 2200: return new Scene2200();
+	// Stasis Field Map
+	case 2222: return new Scene2222();
 		
 	/* Scene group 4 */
 
@@ -543,6 +545,36 @@ void SpeakerSAL::setText(const Common::String &msg) {
 	_object2.setPriority2(255);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(170, 92));
+	_object2.setAction(&_speakerAction, NULL);
+
+	Speaker::setText(msg);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerML::SpeakerML() {
+	_speakerName = "ML";
+	_newSceneNumber = 2710;
+	_textPos = Common::Point(160, 40);
+	_colour1 = 22;
+}
+
+void SpeakerML::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(2712);
+	_object1.setStrip2(2);
+	_object1.setPriority2(255);
+	_object1.changeZoom(100);
+	_object1._frame = 1;
+	_object1.setPosition(Common::Point(99, 143));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
+	
+	_object2.postInit(&_objectList);
+	_object2.setVisage(2712);
+	_object2.setStrip2(1);
+	_object2.setPriority2(255);
+	_object2._frame = 1;
+	_object2.setPosition(Common::Point(105, 99));
 	_object2.setAction(&_speakerAction, NULL);
 
 	Speaker::setText(msg);
