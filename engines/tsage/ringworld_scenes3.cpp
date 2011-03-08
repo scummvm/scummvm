@@ -2629,7 +2629,7 @@ void Scene2150::dispatch() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 2200 - Spaceship - Cyro-tube cutscene
+ * Scene 2200 - Spaceship - AutoDoc
  *
  *--------------------------------------------------------------------------*/
 
@@ -2806,9 +2806,76 @@ void Scene2200::Action4::signal() {
 
 /*--------------------------------------------------------------------------*/
 
+void Scene2200::Hotspot3::doAction(int action) {
+	Scene2200 *scene = (Scene2200 *)_globals->_sceneManager._scene;
 
-Scene2200::Scene2200() {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(2200, 10);
+		break;
+	case CURSOR_USE:
+		SceneItem::display2(2200, 11);
+		break;
+	case CURSOR_TALK:
+		_globals->_player._uiEnabled = false;
+		scene->setAction(&scene->_action4);
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
 
+void Scene2200::Hotspot5::doAction(int action) {
+	Scene2200 *scene = (Scene2200 *)_globals->_sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(2200, 8);
+		break;
+	case CURSOR_USE:
+		SceneItem::display2(2200, 9);
+		break;
+	case CURSOR_TALK:
+		scene->_sceneMode = 2201;
+		_globals->_player._uiEnabled = false;
+		scene->setAction(&scene->_sequenceManager, scene, 2201, NULL);
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+void Scene2200::Hotspot9::doAction(int action) {
+	Scene2200 *scene = (Scene2200 *)_globals->_sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(2200, _globals->getFlag(8) ? 1 : 0);
+		break;
+	case CURSOR_USE:
+		SceneItem::display2(2200, 3);
+		break;
+	case OBJECT_INFODISK:
+		if (_globals->_sceneManager._previousScene == 2310) {
+			scene->_soundHandler2.startSound(35);
+			_globals->_player.disableControl();
+			scene->setAction(&scene->_action3);
+		}
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+
+Scene2200::Scene2200():
+		_hotspot1(0, CURSOR_LOOK, 2200, 5, CURSOR_USE, 2200, 6, LIST_END),
+		_hotspot10(0, CURSOR_LOOK, 2200, 4, LIST_END) {
 }
 
 void Scene2200::postInit(SceneObjectList *OwnerList) {
@@ -2898,6 +2965,7 @@ void Scene2200::postInit(SceneObjectList *OwnerList) {
 		_soundHandler2.startSound(100);
 		_globals->_soundHandler.proc5(true);
 		
+		_globals->_sceneItems.push_back(&_hotspot5);
 		setAction(&_action2);
 		break;
 	}

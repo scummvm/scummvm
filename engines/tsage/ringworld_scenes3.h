@@ -407,7 +407,18 @@ class Scene2200: public Scene {
 	};
 
 	/* Hotspots */
-
+	class Hotspot3: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot5: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot9: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
 public:
 	SequenceManager _sequenceManager;
 	SpeakerMText _speakerMText;
@@ -423,8 +434,13 @@ public:
 	Action2 _action2;
 	Action3 _action3;
 	Action4 _action4;
-	SceneObject _hotspot1, _hotspot2, _hotspot3, _hotspot4, _hotspot5;
-	SceneObject _hotspot6, _hotspot7, _hotspot8, _hotspot9, _hotspot10;
+	DisplayHotspot _hotspot1;
+	Hotspot3 _hotspot3;
+	Hotspot5 _hotspot5;
+	Hotspot9 _hotspot9;
+	DisplayHotspot _hotspot10;
+	SceneObject _hotspot2, _hotspot4;
+	SceneObject _hotspot6, _hotspot7, _hotspot8;
 	SoundHandler _soundHandler1, _soundHandler2;
 
 	Scene2200();

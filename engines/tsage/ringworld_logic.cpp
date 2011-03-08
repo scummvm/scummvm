@@ -78,7 +78,7 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 2120: return new Scene2120();
 	// Spaceship - Level 2
 	case 2150: return new Scene2150();
-	// Spaceship - Cyro-tube cutscene
+	// Spaceship - AutoDoc
 	case 2200: return new Scene2200();
 		
 	/* Scene group 4 */
