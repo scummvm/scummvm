@@ -90,69 +90,6 @@ SegmentRef SegmentObj::dereference(reg_t pointer) {
 	return SegmentRef();
 }
 
-
-bool LocalVariables::isValidOffset(uint16 offset) const {
-	return offset < _locals.size() * 2;
-}
-
-SegmentRef LocalVariables::dereference(reg_t pointer) {
-	SegmentRef ret;
-	ret.isRaw = false;	// reg_t based data!
-	ret.maxSize = (_locals.size() - pointer.offset / 2) * 2;
-
-	if (pointer.offset & 1) {
-		ret.maxSize -= 1;
-		ret.skipByte = true;
-	}
-
-	if (ret.maxSize > 0) {
-		ret.reg = &_locals[pointer.offset / 2];
-	} else {
-		if ((g_sci->getEngineState()->currentRoomNumber() == 660 || g_sci->getEngineState()->currentRoomNumber() == 660)
-			&& g_sci->getGameId() == GID_LAURABOW2) {
-			// Happens in two places during the intro of LB2CD, both from kMemory(peek):
-			// - room 160: Heap 160 has 83 local variables (0-82), and the game
-			//   asks for variables at indices 83 - 90 too.
-			// - room 220: Heap 220 has 114 local variables (0-113), and the
-			//   game asks for variables at indices 114-120 too.
-		} else {
-			error("LocalVariables::dereference: Offset at end or out of bounds %04x:%04x", PRINT_REG(pointer));
-		}
-		ret.reg = 0;
-	}
-	return ret;
-}
-
-bool DataStack::isValidOffset(uint16 offset) const {
-	return offset < _capacity * 2;
-}
-
-SegmentRef DataStack::dereference(reg_t pointer) {
-	SegmentRef ret;
-	ret.isRaw = false;	// reg_t based data!
-	ret.maxSize = (_capacity - pointer.offset / 2) * 2;
-
-	if (pointer.offset & 1) {
-		ret.maxSize -= 1;
-		ret.skipByte = true;
-	}
-
-	ret.reg = &_entries[pointer.offset / 2];
-	return ret;
-}
-
-bool DynMem::isValidOffset(uint16 offset) const {
-	return offset < _size;
-}
-
-SegmentRef DynMem::dereference(reg_t pointer) {
-	SegmentRef ret;
-	ret.isRaw = true;
-	ret.maxSize = _size - pointer.offset;
-	ret.raw = _buf + pointer.offset;
-	return ret;
-}
-
 //-------------------- clones --------------------
 
 Common::Array<reg_t> CloneTable::listAllOutgoingReferences(reg_t addr) const {
@@ -195,18 +132,44 @@ void CloneTable::freeAtAddress(SegManager *segMan, reg_t addr) {
 
 
 //-------------------- locals --------------------
+
+SegmentRef LocalVariables::dereference(reg_t pointer) {
+	SegmentRef ret;
+	ret.isRaw = false;	// reg_t based data!
+	ret.maxSize = (_locals.size() - pointer.offset / 2) * 2;
+
+	if (pointer.offset & 1) {
+		ret.maxSize -= 1;
+		ret.skipByte = true;
+	}
+
+	if (ret.maxSize > 0) {
+		ret.reg = &_locals[pointer.offset / 2];
+	} else {
+		if ((g_sci->getEngineState()->currentRoomNumber() == 660 || g_sci->getEngineState()->currentRoomNumber() == 660)
+			&& g_sci->getGameId() == GID_LAURABOW2) {
+			// Happens in two places during the intro of LB2CD, both from kMemory(peek):
+			// - room 160: Heap 160 has 83 local variables (0-82), and the game
+			//   asks for variables at indices 83 - 90 too.
+			// - room 220: Heap 220 has 114 local variables (0-113), and the
+			//   game asks for variables at indices 114-120 too.
+		} else {
+			error("LocalVariables::dereference: Offset at end or out of bounds %04x:%04x", PRINT_REG(pointer));
+		}
+		ret.reg = 0;
+	}
+	return ret;
+}
+
 reg_t LocalVariables::findCanonicAddress(SegManager *segMan, reg_t addr) const {
 	// Reference the owning script
 	SegmentId owner_seg = segMan->getScriptSegment(script_id);
-
 	assert(owner_seg > 0);
-
 	return make_reg(owner_seg, 0);
 }
 
 Common::Array<reg_t> LocalVariables::listAllOutgoingReferences(reg_t addr) const {
 	Common::Array<reg_t> tmp;
-
 	for (uint i = 0; i < _locals.size(); i++)
 		tmp.push_back(_locals[i]);
 
@@ -215,8 +178,19 @@ Common::Array<reg_t> LocalVariables::listAllOutgoingReferences(reg_t addr) const
 
 
 //-------------------- stack --------------------
-reg_t DataStack::findCanonicAddress(SegManager *segMan, reg_t addr) const {
-	return make_reg(addr.segment, 0);
+
+SegmentRef DataStack::dereference(reg_t pointer) {
+	SegmentRef ret;
+	ret.isRaw = false;	// reg_t based data!
+	ret.maxSize = (_capacity - pointer.offset / 2) * 2;
+
+	if (pointer.offset & 1) {
+		ret.maxSize -= 1;
+		ret.skipByte = true;
+	}
+
+	ret.reg = &_entries[pointer.offset / 2];
+	return ret;
 }
 
 Common::Array<reg_t> DataStack::listAllOutgoingReferences(reg_t object) const {
@@ -227,16 +201,7 @@ Common::Array<reg_t> DataStack::listAllOutgoingReferences(reg_t object) const {
 	return tmp;
 }
 
-
-//-------------------- hunk ---------------------
-void HunkTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
-	freeEntry(sub_addr.offset);
-}
-
 //-------------------- lists --------------------
-void ListTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
-	freeEntry(sub_addr.offset);
-}
 
 Common::Array<reg_t> ListTable::listAllOutgoingReferences(reg_t addr) const {
 	Common::Array<reg_t> tmp;
@@ -254,11 +219,7 @@ Common::Array<reg_t> ListTable::listAllOutgoingReferences(reg_t addr) const {
 	return tmp;
 }
 
-
 //-------------------- nodes --------------------
-void NodeTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
-	freeEntry(sub_addr.offset);
-}
 
 Common::Array<reg_t> NodeTable::listAllOutgoingReferences(reg_t addr) const {
 	Common::Array<reg_t> tmp;
@@ -279,13 +240,12 @@ Common::Array<reg_t> NodeTable::listAllOutgoingReferences(reg_t addr) const {
 
 //-------------------- dynamic memory --------------------
 
-reg_t DynMem::findCanonicAddress(SegManager *segMan, reg_t addr) const {
-	return make_reg(addr.segment, 0);
-}
-
-Common::Array<reg_t> DynMem::listAllDeallocatable(SegmentId segId) const {
-	const reg_t r = make_reg(segId, 0);
-	return Common::Array<reg_t>(&r, 1);
+SegmentRef DynMem::dereference(reg_t pointer) {
+	SegmentRef ret;
+	ret.isRaw = true;
+	ret.maxSize = _size - pointer.offset;
+	ret.raw = _buf + pointer.offset;
+	return ret;
 }
 
 #ifdef ENABLE_SCI32
@@ -348,11 +308,6 @@ SegmentRef StringTable::dereference(reg_t pointer) {
 	ret.maxSize = _table[pointer.offset].getSize();
 	ret.raw = (byte*)_table[pointer.offset].getRawData();
 	return ret;
-}
-
-void StringTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) { 
-	_table[sub_addr.offset].destroy();
-	freeEntry(sub_addr.offset);
 }
 
 #endif

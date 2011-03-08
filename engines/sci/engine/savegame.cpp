@@ -328,14 +328,14 @@ void Object::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 template <>
-void syncWithSerializer(Common::Serializer &s, Table<Clone>::Entry &obj) {
+void syncWithSerializer(Common::Serializer &s, SegmentObjTable<Clone>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
 	syncWithSerializer<Object>(s, obj);
 }
 
 template <>
-void syncWithSerializer(Common::Serializer &s, Table<List>::Entry &obj) {
+void syncWithSerializer(Common::Serializer &s, SegmentObjTable<List>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
 	syncWithSerializer(s, obj.first);
@@ -343,7 +343,7 @@ void syncWithSerializer(Common::Serializer &s, Table<List>::Entry &obj) {
 }
 
 template <>
-void syncWithSerializer(Common::Serializer &s, Table<Node>::Entry &obj) {
+void syncWithSerializer(Common::Serializer &s, SegmentObjTable<Node>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
 	syncWithSerializer(s, obj.pred);
@@ -354,7 +354,7 @@ void syncWithSerializer(Common::Serializer &s, Table<Node>::Entry &obj) {
 
 #ifdef ENABLE_SCI32
 template <>
-void syncWithSerializer(Common::Serializer &s, Table<SciArray<reg_t> >::Entry &obj) {
+void syncWithSerializer(Common::Serializer &s, SegmentObjTable<SciArray<reg_t> >::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
 	byte type = 0;
@@ -390,7 +390,7 @@ void syncWithSerializer(Common::Serializer &s, Table<SciArray<reg_t> >::Entry &o
 }
 
 template <>
-void syncWithSerializer(Common::Serializer &s, Table<SciString>::Entry &obj) {
+void syncWithSerializer(Common::Serializer &s, SegmentObjTable<SciString>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
 	uint32 size = 0;
