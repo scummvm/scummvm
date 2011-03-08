@@ -79,10 +79,6 @@ private:
 };
 
 enum {
-	MAX_SAVE_DIR_SIZE = MAXPATHLEN
-};
-
-enum {
 	MAX_SAVEGAME_NR = 20 /**< Maximum number of savegames */
 };
 
