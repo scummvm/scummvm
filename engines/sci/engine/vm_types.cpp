@@ -193,7 +193,7 @@ int reg_t::cmp(const reg_t right, bool treatAsUnsigned) const {
 bool reg_t::pointerComparisonWithInteger(const reg_t right) const {
 	// This function handles the case where a script tries to compare a pointer
 	// to a number. Normally, we would not want to allow that. However, SCI0 -
-	// SCI1 scripts do this in order to distinguish references to
+	// SCI1.1 scripts do this in order to distinguish references to
 	// external resources (which are numbers) from pointers. In
 	// our SCI implementation, such a check may seem pointless, as
 	// one can simply use the segment value to achieve this goal.
@@ -220,7 +220,8 @@ bool reg_t::pointerComparisonWithInteger(const reg_t right) const {
 	// Hoyle 3, Pachisi, when any opponent is about to talk
 	// SQ1, room 28, when throwing water at the Orat
 	// SQ1, room 58, when giving the ID card to the robot
-	return (isPointer() && right.isNumber() && right.offset <= 2000 && getSciVersion() <= SCI_VERSION_1_LATE);
+	// SQ4 CD, at the first game screen, when the narrator is about to talk
+	return (isPointer() && right.isNumber() && right.offset <= 2000 && getSciVersion() <= SCI_VERSION_1_1);
 }
 
 } // End of namespace Sci
