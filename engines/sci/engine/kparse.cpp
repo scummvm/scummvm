@@ -70,7 +70,7 @@ reg_t kSaid(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	new_lastmatch = said(s, said_block, debug_parser);
+	new_lastmatch = said(said_block, debug_parser);
 	if (new_lastmatch  != SAID_NO_MATCH) { /* Build and possibly display a parse tree */
 
 #ifdef DEBUG_PARSER

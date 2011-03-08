@@ -404,7 +404,6 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 	GuiMenuItemList::iterator itemEnd = _itemList.end();
 	GuiMenuItemEntry *itemEntry = NULL;
 	bool forceClaimed = false;
-	EngineState *s;
 
 	switch (eventType) {
 	case SCI_EVENT_KEYBOARD:
@@ -438,8 +437,6 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 		break;
 
 	case SCI_EVENT_SAID:
-		// HACK: should be removed as soon as said() is cleaned up
-		s = g_sci->getEngineState();
 		while (itemIterator != itemEnd) {
 			itemEntry = *itemIterator;
 
@@ -451,7 +448,7 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 					continue;
 				}
 
-				if (said(s, saidSpec, 0) != SAID_NO_MATCH)
+				if (said(saidSpec, 0) != SAID_NO_MATCH)
 					break;
 			}
 			itemIterator++;

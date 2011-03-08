@@ -1436,7 +1436,7 @@ bool Console::cmdSaid(int argc, const char **argv) {
 			_engine->getVocabulary()->dumpParseTree();
 			_engine->getVocabulary()->parserIsValid = true;
 
-			int ret = said(_engine->_gamestate, (byte*)spec, true);
+			int ret = said((byte*)spec, true);
 			DebugPrintf("kSaid: %s\n", (ret == SAID_NO_MATCH ? "No match" : "Match"));
 		}
 

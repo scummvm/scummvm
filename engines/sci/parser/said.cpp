@@ -1020,7 +1020,7 @@ static int augment_parse_nodes(ParseTreeNode *parseT, ParseTreeNode *saidT) {
 /**** Main code ****/
 /*******************/
 
-int said(EngineState *s, const byte *spec, bool verbose) {
+int said(const byte *spec, bool verbose) {
 	int retval;
 	Vocabulary *voc = g_sci->getVocabulary();
 
