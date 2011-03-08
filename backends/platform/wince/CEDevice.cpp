@@ -85,13 +85,12 @@ void CEDevice::init() {
 	// 2003+ power management code borrowed from MoDaCo & Betaplayer. Thanks !
 	HINSTANCE dll = LoadLibrary(TEXT("aygshell.dll"));
 	if (dll) {
-		*(FARPROC*)&_SHIdleTimerReset = GetProcAddress(dll, MAKEINTRESOURCE(2006));
+		_SHIdleTimerReset = (void (*)())GetProcAddress(dll, MAKEINTRESOURCE(2006));
 	}
 	dll = LoadLibrary(TEXT("coredll.dll"));
 	if (dll) {
-		*(FARPROC*)&_SetPowerRequirement = GetProcAddress(dll, TEXT("SetPowerRequirement"));
-		*(FARPROC*)&_ReleasePowerRequirement = GetProcAddress(dll, TEXT("ReleasePowerRequirement"));
-
+		_SetPowerRequirement = (HANDLE (*)(PVOID,int,ULONG,PVOID,ULONG))GetProcAddress(dll, TEXT("SetPowerRequirement"));
+		_ReleasePowerRequirement = (DWORD (*)(HANDLE))GetProcAddress(dll, TEXT("ReleasePowerRequirement"));
 	}
 	if (_SetPowerRequirement)
 		_hPowerManagement = _SetPowerRequirement((PVOID) TEXT("BKL1:"), 0, 1, (PVOID) NULL, 0);

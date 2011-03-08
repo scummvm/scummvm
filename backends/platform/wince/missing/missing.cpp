@@ -63,7 +63,7 @@ void *bsearch(const void *key, const void *base, size_t nmemb,
 		else if (tmp > 0)
 			lo = mid + 1;
 		else
-			return (void *)p;
+			return const_cast<void *>(p);
 	}
 
 	return NULL;
@@ -158,7 +158,7 @@ int _access(const char *path, int mode) {
 		// hits for files that don't exist. TRIPLE checking for the same fname
 		// seems to weed out those false positives.
 		// Exhibited in kyra engine.
-		HANDLE h = FindFirstFile(fname, &ffd);
+		h = FindFirstFile(fname, &ffd);
 		FindClose(h);
 		if (h == INVALID_HANDLE_VALUE)
 			return -1;  //Can't find file
