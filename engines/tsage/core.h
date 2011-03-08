@@ -433,11 +433,13 @@ public:
 	int _rlbNum;
 public:
 	Visage();
+	Visage(const Visage &v);
 	~Visage();
 
 	void setVisage(int resNum, int rlbNum = 9999);
 	GfxSurface getFrame(int frameNum);
 	int getFrameCount() const;
+	Visage &operator=(const Visage &s);
 };
 
 class SceneObjectWrapper: public EventHandler {

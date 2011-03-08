@@ -2465,6 +2465,24 @@ Visage::Visage() {
 	_data = NULL;
 }
 
+Visage::Visage(const Visage &v) {
+	_resNum = v._resNum;
+	_rlbNum = v._rlbNum;
+	_data = v._data;
+	if (_data)
+		_vm->_memoryManager.incLocks(_data);
+}
+
+Visage &Visage::operator=(const Visage &s) {
+	_resNum = s._resNum;
+	_rlbNum = s._rlbNum;
+	_data = s._data;
+	if (_data)
+		_vm->_memoryManager.incLocks(_data);
+
+	return *this;
+}
+
 void Visage::setVisage(int resNum, int rlbNum) {
 	if ((_resNum != resNum) || (_rlbNum != rlbNum)) {
 		_resNum = resNum;
