@@ -3011,4 +3011,117 @@ void Scene2200::dispatch() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 2222 - Stasis Field Map
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene2222::Action1::signal() {
+	Scene2222 *scene = (Scene2222 *)_globals->_sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(5);
+		break;
+	case 1:
+		scene->_stripManager.start(2222, this);
+		break;
+	case 2:
+		setDelay(30);
+		break;
+	case 3:
+		_globals->_sceneManager.changeScene(1000);
+		break;
+	}
+}
+
+void Scene2222::Action2::signal() {
+	Scene2222 *scene = (Scene2222 *)_globals->_sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(60);
+		break;
+	case 1:
+		scene->_stripManager.start(5700, this);
+		break;
+	case 2:
+		setDelay(120);
+		break;
+	case 3:
+		_globals->_sceneManager._fadeMode = FADEMODE_GRADUAL;
+		_globals->_sceneManager.changeScene(2100);
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene2222::postInit(SceneObjectList *OwnerList) {
+	loadScene((_globals->_sceneManager._previousScene == 2000) ? 3400 : 3450);
+	Scene::postInit();
+	setZoomPercents(0, 100, 200, 100);
+
+	_stripManager.addSpeaker(&_speakerSText);
+	_stripManager.addSpeaker(&_speakerMText);
+	_stripManager.addSpeaker(&_speakerQText);
+	_stripManager.addSpeaker(&_speakerSR);
+	_stripManager.addSpeaker(&_speakerML);
+
+	_hotspot1.postInit();
+	_hotspot1.setVisage(3401);
+	_hotspot1.setStrip2(1);
+	_hotspot1._frame = 1;
+	_hotspot1.animate(ANIM_MODE_2, 0);
+
+	_hotspot2.postInit();
+	_hotspot2.setVisage(3401);
+	_hotspot2.setStrip2(2);
+	_hotspot2._frame = 2;
+	_hotspot2.animate(ANIM_MODE_2, 0);
+	
+	_hotspot3.postInit();
+	_hotspot3.setVisage(3401);
+	_hotspot3.setStrip2(2);
+	_hotspot3._frame = 3;
+	_hotspot3.animate(ANIM_MODE_2, 0);
+
+	_hotspot4.postInit();
+	_hotspot4.setVisage(3401);
+	_hotspot4.setStrip2(2);
+	_hotspot4._frame = 4;
+	_hotspot4.animate(ANIM_MODE_2, 0);
+
+	_hotspot5.postInit();
+	_hotspot5.setVisage(3401);
+	_hotspot5.setStrip2(2);
+	_hotspot5._frame = 5;
+	_hotspot5.animate(ANIM_MODE_2, 0);
+
+	if (_globals->_sceneManager._previousScene == 2100) {
+		_hotspot1.setPosition(Common::Point(61, 101));
+		_hotspot2.setPosition(Common::Point(239, 149));
+		_hotspot3.setPosition(Common::Point(184, 85));
+		_hotspot4.setPosition(Common::Point(105, 165));
+		_hotspot5.remove();
+
+		setAction(&_action2);
+	} else {
+		_hotspot1.setPosition(Common::Point(110, 108));
+		_hotspot2.setPosition(Common::Point(175, 136));
+		_hotspot3.setPosition(Common::Point(162, 96));
+		_hotspot4.setPosition(Common::Point(118, 141));
+		_hotspot5.setPosition(Common::Point(124, 107));
+		
+		setAction(&_action1);
+	}
+
+	_soundHandler.startSound(116);
+	_globals->_sceneManager._scene->_sceneBounds.centre(_hotspot1._position);
+
+	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
+	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
+}
+
+
 } // End of namespace tSage

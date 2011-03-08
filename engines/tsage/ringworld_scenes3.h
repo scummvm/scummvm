@@ -125,7 +125,7 @@ public:
 
 class Scene2100: public Scene {
 	/* Actions */
-	class Action1: public Action2 {
+	class Action1: public ActionExt {
 	public:
 		virtual void signal();
 	};
@@ -329,7 +329,7 @@ public:
 
 class Scene2150: public Scene {
 	/* Actions */
-	class Action1: public Action2 {
+	class Action1: public ActionExt {
 	public:
 		virtual void signal();
 	};
@@ -396,7 +396,7 @@ class Scene2200: public Scene {
 	public:
 		virtual void signal();
 	};
-	class Action3: public tSage::Action2 {
+	class Action3: public ActionExt {
 	public:
 		virtual void signal();
 		virtual void process(Event &event);
@@ -449,6 +449,33 @@ public:
 	virtual void synchronise(Serialiser &s);
 	virtual void signal();
 	virtual void dispatch();
+};
+
+class Scene2222: public Scene {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+
+	/* Hotspots */
+
+public:
+	SoundHandler _soundHandler;
+	SpeakerSText _speakerSText;
+	SpeakerMText _speakerMText;
+	SpeakerQText _speakerQText;
+	SpeakerML _speakerML;
+	SpeakerSR _speakerSR;
+	Action1 _action1;
+	Action2 _action2;
+	SceneObject _hotspot1, _hotspot2, _hotspot3, _hotspot4, _hotspot5;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
 } // End of namespace tSage
