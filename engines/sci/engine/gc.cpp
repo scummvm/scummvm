@@ -31,6 +31,24 @@ namespace Sci {
 
 //#define GC_DEBUG_CODE
 
+#ifdef GC_DEBUG_CODE
+const char *segmentTypeNames[] = {
+	"invalid",   // 0
+	"script",    // 1
+	"clones",    // 2
+	"locals",    // 3
+	"stack",     // 4
+	"obsolete",  // 5: obsolete system strings
+	"lists",     // 6
+	"nodes",     // 7
+	"hunk",      // 8
+	"dynmem",    // 9
+	"obsolete",  // 10: obsolete system strings
+	"array",     // 11: SCI32 arrays
+	"string"     // 12: SCI32 strings
+};
+#endif
+
 struct WorklistManager {
 	Common::Array<reg_t> _worklist;
 	AddrSet _map;	// used for 2 contains() calls, inside push() and run_gc()
@@ -186,7 +204,7 @@ void run_gc(EngineState *s) {
 		if (mobj != NULL) {
 #ifdef GC_DEBUG_CODE
 			const SegmentType type = mobj->getType();
-			segnames[type] = SegmentObj::getSegmentTypeName(type);
+			segnames[type] = segmentTypeNames[type];
 #endif
 
 			// Get a list of all deallocatable objects in this segment,

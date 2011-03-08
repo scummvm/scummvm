@@ -39,7 +39,6 @@ namespace Sci {
 //#define GC_DEBUG // Debug garbage collection
 //#define GC_DEBUG_VERBOSE // Debug garbage verbosely
 
-
 SegmentObj *SegmentObj::createSegmentObj(SegmentType type) {
 	SegmentObj *mem = 0;
 	switch (type) {
@@ -83,47 +82,6 @@ SegmentObj *SegmentObj::createSegmentObj(SegmentType type) {
 	assert(mem);
 	assert(mem->_type == type);
 	return mem;
-}
-
-const char *SegmentObj::getSegmentTypeName(SegmentType type) {
-	switch (type) {
-	case SEG_TYPE_SCRIPT:
-		return "script";
-		break;
-	case SEG_TYPE_CLONES:
-		return "clones";
-		break;
-	case SEG_TYPE_LOCALS:
-		return "locals";
-		break;
-	case SEG_TYPE_STACK:
-		return "stack";
-		break;
-	case SEG_TYPE_HUNK:
-		return "hunk";
-		break;
-	case SEG_TYPE_LISTS:
-		return "lists";
-		break;
-	case SEG_TYPE_NODES:
-		return "nodes";
-		break;
-	case SEG_TYPE_DYNMEM:
-		return "dynmem";
-		break;
-#ifdef ENABLE_SCI32
-	case SEG_TYPE_ARRAY:
-		return "array";
-		break;
-	case SEG_TYPE_STRING:
-		return "string";
-		break;
-#endif
-	default:
-		error("Unknown SegmentObj type %d", type);
-		break;
-	}
-	return NULL;
 }
 
 SegmentRef SegmentObj::dereference(reg_t pointer) {
@@ -220,8 +178,6 @@ Common::Array<reg_t> CloneTable::listAllOutgoingReferences(reg_t addr) const {
 
 void CloneTable::freeAtAddress(SegManager *segMan, reg_t addr) {
 #ifdef GC_DEBUG
-	//	assert(addr.segment == _segId);
-
 	Object *victim_obj = &(_table[addr.offset]);
 
 	if (!(victim_obj->_flags & OBJECT_FLAG_FREED))
@@ -229,12 +185,11 @@ void CloneTable::freeAtAddress(SegManager *segMan, reg_t addr) {
 #ifdef GC_DEBUG_VERBOSE
 	else
 		warning("[GC-DEBUG] Clone %04x:%04x: Freeing", PRINT_REG(addr));
+
+	warning("[GC] Clone had pos %04x:%04x", PRINT_REG(victim_obj->pos));
 #endif
 #endif
-	/*
-		warning("[GC] Clone %04x:%04x: Freeing", PRINT_REG(addr));
-		warning("[GC] Clone had pos %04x:%04x", PRINT_REG(victim_obj->pos));
-	*/
+
 	freeEntry(addr.offset);
 }
 
@@ -251,7 +206,6 @@ reg_t LocalVariables::findCanonicAddress(SegManager *segMan, reg_t addr) const {
 
 Common::Array<reg_t> LocalVariables::listAllOutgoingReferences(reg_t addr) const {
 	Common::Array<reg_t> tmp;
-//	assert(addr.segment == _segId);
 
 	for (uint i = 0; i < _locals.size(); i++)
 		tmp.push_back(_locals[i]);
@@ -262,8 +216,7 @@ Common::Array<reg_t> LocalVariables::listAllOutgoingReferences(reg_t addr) const
 
 //-------------------- stack --------------------
 reg_t DataStack::findCanonicAddress(SegManager *segMan, reg_t addr) const {
-	addr.offset = 0;
-	return addr;
+	return make_reg(addr.segment, 0);
 }
 
 Common::Array<reg_t> DataStack::listAllOutgoingReferences(reg_t object) const {
@@ -327,8 +280,7 @@ Common::Array<reg_t> NodeTable::listAllOutgoingReferences(reg_t addr) const {
 //-------------------- dynamic memory --------------------
 
 reg_t DynMem::findCanonicAddress(SegManager *segMan, reg_t addr) const {
-	addr.offset = 0;
-	return addr;
+	return make_reg(addr.segment, 0);
 }
 
 Common::Array<reg_t> DynMem::listAllDeallocatable(SegmentId segId) const {
