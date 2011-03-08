@@ -512,7 +512,7 @@ bool DrasculaEngine::runCurrentChapter() {
 			checkObjects();
 
 #ifdef _WIN32_WCE
-		if (rightMouseButton)
+		if (rightMouseButton) {
 			if (_menuScreen) {
 #else
 		if (rightMouseButton == 1 && _menuScreen) {
@@ -570,6 +570,9 @@ bool DrasculaEngine::runCurrentChapter() {
 #endif
 			selectVerb(kVerbNone);
 		}
+#ifdef _WIN32_WCE
+		}
+#endif
 
 		if (leftMouseButton == 1 && _menuBar) {
 			delay(100);
