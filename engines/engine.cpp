@@ -281,7 +281,7 @@ void initGraphics(int width, int height, bool defaultTo1xScaler) {
 	initGraphics(width, height, defaultTo1xScaler, &format);
 }
 
-void GUIErrorMessage(const Common::String msg) {
+void GUIErrorMessage(const Common::String &msg) {
 	g_system->setWindowCaption("Error");
 	g_system->beginGFXTransaction();
 		initCommonGFX(false);

@@ -47,7 +47,7 @@ namespace GUI {
 /**
  * Initializes graphics and shows error message.
  */
-void GUIErrorMessage(const Common::String msg);
+void GUIErrorMessage(const Common::String &msg);
 
 
 class Engine {
