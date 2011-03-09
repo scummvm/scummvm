@@ -223,13 +223,27 @@ void RivenExternal::runEndGame(uint16 video) {
 }
 
 void RivenExternal::runCredits(uint16 video) {
-	// TODO: Play until the last frame and then run the credits
+	// Initialize our credits state
+	_vm->_cursor->hideCursor();
+	_vm->_gfx->beginCredits();
+	uint nextCreditsFrameStart = 0;
 
 	VideoHandle videoHandle = _vm->_video->findVideoHandleRiven(video);
 
-	while (!_vm->_video->endOfVideo(videoHandle) && !_vm->shouldQuit()) {
-		if (_vm->_video->updateMovies())
-			_vm->_system->updateScreen();
+	while (!_vm->shouldQuit() && _vm->_gfx->getCurCreditsImage() <= 320) {
+		if (_vm->_video->getCurFrame(videoHandle) >= (int32)_vm->_video->getFrameCount(videoHandle) - 1) {
+			if (_vm->_system->getMillis() >= nextCreditsFrameStart) {
+				// the first two frames stay on for 5 seconds
+				// the rest of the scroll updates happen at 30Hz
+				if (_vm->_gfx->getCurCreditsImage() < 304)
+					nextCreditsFrameStart = _vm->_system->getMillis() + 5000;
+				else
+					nextCreditsFrameStart = _vm->_system->getMillis() + 1000 / 30;
+
+				_vm->_gfx->updateCredits();
+			}
+		} else if (_vm->_video->updateMovies())
+			_vm->_system->updateScreen(); 
 
 		Common::Event event;
 		while (_vm->_system->getEventManager()->pollEvent(event))
