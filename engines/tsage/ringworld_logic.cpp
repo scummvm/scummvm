@@ -82,7 +82,9 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 2200: return new Scene2200();
 	// Stasis Field Map
 	case 2222: return new Scene2222();
-		
+	// Spaceship - Quinn's Room
+	case 2230: return new Scene2230();
+
 	/* Scene group 4 */
 
 	/* Scene group 5 */

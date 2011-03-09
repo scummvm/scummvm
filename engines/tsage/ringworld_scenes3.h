@@ -478,6 +478,113 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
+class Scene2230: public Scene {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action3: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action4: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action5: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action6: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action7: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action8: public Action {
+	public:
+		virtual void signal();
+	};
+
+	/* Hotspots */
+	class Hotspot1: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot3: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot4: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot5: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot6: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot7: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot8: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot10: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot11: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot12: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+public:
+	SoundHandler _soundHandler;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+	Action5 _action5;
+	Action6 _action6;
+	Action7 _action7;
+	Action8 _action8;
+	Hotspot1 _hotspot1;
+	Hotspot3 _hotspot3;
+	Hotspot4 _hotspot4;
+	SceneObject _hotspot2; 
+	Hotspot5 _hotspot5;
+	Hotspot6 _hotspot6;
+	Hotspot7 _hotspot7;
+	Hotspot8 _hotspot8;
+	DisplayHotspot _hotspot9;
+	Hotspot10 _hotspot10;
+	Hotspot11 _hotspot11;
+	Hotspot12 _hotspot12;
+	Rect _rect1;
+	int _field30A;
+
+	Scene2230();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void synchronise(Serialiser &s);
+	virtual void dispatch();
+};
+
 } // End of namespace tSage
 
 #endif
