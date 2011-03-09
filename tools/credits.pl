@@ -800,14 +800,14 @@ begin_credits("Credits");
     
     begin_section("Website (maintenance)");
 	  begin_persons();
-	    add_person("James Brown", "Ender". "IRC Logs maintainer");
+	    add_person("James Brown", "Ender", "IRC Logs maintainer");
 		add_person("Thierry Crozat", "criezy", "Wiki maintainer");
 		add_person("Andre Heider", "dhewg", "Buildbot maintainer");
-		add_person("Max Horn", "Fingolfin". "Forum, IRC channel and Mailing list maintainer");
+		add_person("Max Horn", "Fingolfin", "Forum, IRC channel and Mailing list maintainer");
 		add_person("Joost Peters", "JoostP", "Doxygen Project Documentation maintainer");
 		add_person("Jordi Vilalta Prat", "jvprat", "Wiki maintainer");
-		add_person("Eugene Sandulenko", "sev". "Forum, IRC channel, Screen Shots and Mailing list maintainer");
-		add_person("John Willis", "DJWillis". "");
+		add_person("Eugene Sandulenko", "sev", "Forum, IRC channel, Screen Shots and Mailing list maintainer");
+		add_person("John Willis", "DJWillis", "");
 	  end_persons();
     end_section();
 
