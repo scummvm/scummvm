@@ -187,6 +187,7 @@ ScummVM Team
   Backend Teams
   -------------
     Android:
+       Andre Heider
        Angus Lees
 
     Dreamcast:
@@ -264,6 +265,17 @@ ScummVM Team
   Website (code)
   --------------
      Fredrik Wendel        - (retired)
+
+  Website (maintenance)
+  ---------------------
+     James Brown
+     Thierry Crozat        - Wiki maintainer
+     Andre Heider          - Buildbot maintainer
+     Max Horn
+     Joost Peters          - Doxygen Project Documentation maintainer
+     Jordi Vilalta Prat    - Wiki maintainer
+     Eugene Sandulenko
+     John Willis
 
   Website (content)
   -----------------
@@ -396,6 +408,7 @@ Other contributions
      David Jensen          - SVG logo conversion
      Jean Marc Gimenez     - ScummVM logo
      Raina                 - ScummVM forum buttons
+     William Claydon       - Skins for doxygen and wiki
 
   Code contributions
   ------------------
