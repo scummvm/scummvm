@@ -27,6 +27,7 @@
 #define SCI_EVENT_H
 
 #include "common/list.h"
+#include "common/rect.h"
 
 namespace Sci {
 
@@ -46,6 +47,13 @@ struct SciEvent {
 	 * PC keyboard scancodes.
 	 */
 	short character;
+
+	/**
+	 * The mouse position at the time the event was created.
+	 *
+	 * These are display coordinates!
+	 */
+	Common::Point mousePos;
 };
 
 /*Values for type*/

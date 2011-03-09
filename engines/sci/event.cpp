@@ -136,18 +136,27 @@ static int altify(int ch) {
 }
 
 SciEvent EventManager::getScummVMEvent() {
-	SciEvent input = { SCI_EVENT_NONE, 0, 0, 0 };
-	SciEvent noEvent = { SCI_EVENT_NONE, 0, 0, 0 };
+	SciEvent input = { SCI_EVENT_NONE, 0, 0, 0, Common::Point(0, 0) };
+	SciEvent noEvent = { SCI_EVENT_NONE, 0, 0, 0, Common::Point(0, 0) };
 
 	Common::EventManager *em = g_system->getEventManager();
 	Common::Event ev;
 
 	bool found = em->pollEvent(ev);
-	Common::Point p = ev.mouse;
 
 	// Don't generate events for mouse movement
 	while (found && ev.type == Common::EVENT_MOUSEMOVE)
 		found = em->pollEvent(ev);
+
+	// Save the mouse position
+	//
+	// We call getMousePos of the event manager here, since we also want to
+	// store the mouse position in case of keyboard events, which do not feature
+	// any mouse position information itself.
+	// This should be safe, since the mouse position in the event manager should
+	// only be updated when a mouse related event has been taken from the queue
+	// via pollEvent.
+	noEvent.mousePos = input.mousePos = em->getMousePos();
 
 	if (!found || ev.type == Common::EVENT_MOUSEMOVE)
 		return noEvent;
@@ -277,7 +286,7 @@ void EventManager::updateScreen() {
 }
 
 SciEvent EventManager::getSciEvent(unsigned int mask) {
-	SciEvent event = { 0, 0, 0, 0 };
+	SciEvent event = { 0, 0, 0, 0, Common::Point(0, 0) };
 
 	EventManager::updateScreen();
 
