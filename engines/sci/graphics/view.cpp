@@ -375,116 +375,138 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 	byte *outPtr = celBitmap;
 	byte curByte, runLength;
 	byte *rlePtr = inBuffer + rlePos;
+	// The existence of a literal position pointer signifies data with two
+	// separate streams, most likely a SCI1.1 view
 	byte *literalPtr = inBuffer + literalPos;
 	int pixelNr = 0;
 
 	memset(celBitmap, clearColor, pixelCount);
 
-	if (!literalPos) {
-		// decompression for data that has only one combined stream
-		switch (viewType) {
-		case kViewEga:
-			while (pixelNr < pixelCount) {
-				curByte = *rlePtr++;
-				runLength = curByte >> 4;
-				memset(outPtr + pixelNr, curByte & 0x0F, MIN<uint16>(runLength, pixelCount - pixelNr));
-				pixelNr += runLength;
+	// View unpacking:
+	//
+	// EGA:
+	// Each byte is like XXXXYYYY (XXXX: 0 - 15, YYYY: 0 - 15)
+	// Set the next XXXX pixels to YYYY
+	//
+	// Amiga:
+	// Each byte is like XXXXXYYY (XXXXX: 0 - 31, YYY: 0 - 7)
+	// - Case A: YYY != 0
+	//   Set the next YYY pixels to XXXXX
+	// - Case B: YYY == 0
+	//   Skip the next XXXXX pixels (i.e. transparency)
+	//
+	// Amiga 64:
+	// Each byte is like XXYYYYYY (XX: 0 - 3, YYYYYY: 0 - 63)
+	// - Case A: XX != 0
+	//   Set the next XX pixels to YYYYYY
+	// - Case B: XX == 0
+	//   Skip the next YYYYYY pixels (i.e. transparency)
+	//
+	// VGA:
+	// Each byte is like XXYYYYYY (YYYYY: 0 - 63)
+	// - Case A: XX == 00 (binary)
+	//   Copy next YYYYYY bytes as-is
+	// - Case B: XX == 01 (binary)
+	//   Same as above, copy YYYYYY + 64 bytes as-is
+	// - Case C: XX == 10 (binary)
+	//   Set the next YYYYY pixels to the next byte value
+	// - Case D: XX == 11 (binary)
+	//   Skip the next YYYYY pixels (i.e. transparency)
+
+	if (literalPos && isMacSci11ViewData) {
+		// KQ6/Freddy Pharkas use byte lengths, all others use uint16
+		// The SCI devs must have realized that a max of 255 pixels wide
+		// was not very good for 320 or 640 width games.
+		bool hasByteLengths = (g_sci->getGameId() == GID_KQ6 || g_sci->getGameId() == GID_FREDDYPHARKAS);
+
+		// compression for SCI1.1+ Mac
+		while (pixelNr < pixelCount) {
+			uint32 pixelLine = pixelNr;
+		
+			if (hasByteLengths) {
+				pixelNr += *rlePtr++;
+				runLength = *rlePtr++;
+			} else {
+				pixelNr += READ_BE_UINT16(rlePtr);
+				runLength = READ_BE_UINT16(rlePtr + 2);
+				rlePtr += 4;
 			}
-			break;
-		case kViewAmiga:
-			while (pixelNr < pixelCount) {
-				curByte = *rlePtr++;
-				if (curByte & 0x07) { // fill with color
-					runLength = curByte & 0x07;
-					curByte = curByte >> 3;
-					while (runLength-- && pixelNr < pixelCount)
-						outPtr[pixelNr++] = curByte;
-				} else { // fill with transparent
-					runLength = curByte >> 3;
-					pixelNr += runLength;
-				}
+
+			while (runLength-- && pixelNr < pixelCount)
+				outPtr[pixelNr++] = *literalPtr++;
+
+			pixelNr = pixelLine + width;
+		}
+		return;
+	}
+
+	switch (viewType) {
+	case kViewEga:
+		while (pixelNr < pixelCount) {
+			curByte = *rlePtr++;
+			runLength = curByte >> 4;
+			memset(outPtr + pixelNr, curByte & 0x0F, MIN<uint16>(runLength, pixelCount - pixelNr));
+			pixelNr += runLength;
+		}
+		break;
+	case kViewAmiga:
+		while (pixelNr < pixelCount) {
+			curByte = *rlePtr++;
+			if (curByte & 0x07) { // fill with color
+				runLength = curByte & 0x07;
+				curByte = curByte >> 3;
+				memset(outPtr + pixelNr, curByte, MIN<uint16>(runLength, pixelCount - pixelNr));
+			} else { // skip the next pixels (transparency)
+				runLength = curByte >> 3;
 			}
-			break;
-		case kViewAmiga64:
-			// TODO: This isn't 100% right. Implement it fully.
-			while (pixelNr < pixelCount) {
-				curByte = *rlePtr++;
+			pixelNr += runLength;
+		}
+		break;
+	case kViewAmiga64:
+		while (pixelNr < pixelCount) {
+			curByte = *rlePtr++;
+			if (curByte & 0xC0) { // fill with color
 				runLength = curByte >> 6;
 				memset(outPtr + pixelNr, curByte & 0x3F, MIN<uint16>(runLength, pixelCount - pixelNr));
-				pixelNr += runLength;
-			}
-			break;
-		case kViewVga:
-		case kViewVga11:
-			while (pixelNr < pixelCount) {
-				curByte = *rlePtr++;
+			} else { // skip the next pixels (transparency)
 				runLength = curByte & 0x3F;
-				switch (curByte & 0xC0) {
-				case 0: // copy bytes as-is
-					while (runLength-- && pixelNr < pixelCount)
-						outPtr[pixelNr++] = *rlePtr++;
-					break;
-				case 0x40: // copy bytes as is (In copy case, runLength can go upto 127 i.e. pixel & 0x40). Fixes bug #3135872.
-					runLength += 64;
-					break;
-				case 0x80: // fill with color
-					memset(outPtr + pixelNr, *rlePtr++, MIN<uint16>(runLength, pixelCount - pixelNr));
-					pixelNr += runLength;
-					break;
-				case 0xC0: // fill with transparent
-					pixelNr += runLength;
-					break;
-				}
 			}
-			break;
-		default:
-			error("Unsupported picture viewtype");
+			pixelNr += runLength;
 		}
-	} else {
-		// decompression for data that has two separate streams (probably a SCI 1.1 view)
-		if (isMacSci11ViewData) {
-			// KQ6/Freddy Pharkas use byte lengths, all others use uint16
-			// The SCI devs must have realized that a max of 255 pixels wide
-			// was not very good for 320 or 640 width games.
-			bool hasByteLengths = (g_sci->getGameId() == GID_KQ6 || g_sci->getGameId() == GID_FREDDYPHARKAS);
+		break;
+	case kViewVga:
+	case kViewVga11:
+		while (pixelNr < pixelCount) {
+			curByte = *rlePtr++;
+			runLength = curByte & 0x3F;
 
-			// compression for SCI1.1+ Mac
-			while (pixelNr < pixelCount) {
-				uint32 pixelLine = pixelNr;
-		
-				if (hasByteLengths) {
-					pixelNr += *rlePtr++;
-					runLength = *rlePtr++;
+			switch (curByte & 0xC0) {
+			case 0x40: // copy bytes as is (In copy case, runLength can go up to 127 i.e. pixel & 0x40). Fixes bug #3135872.
+				runLength += 64;
+			case 0x00: // copy bytes as-is
+				if (!literalPos) {
+					memcpy(outPtr + pixelNr, rlePtr, MIN<uint16>(runLength, pixelCount - pixelNr));
+					rlePtr += runLength;
 				} else {
-					pixelNr += READ_BE_UINT16(rlePtr);
-					runLength = READ_BE_UINT16(rlePtr + 2);
-					rlePtr += 4;
-				}
-
-				while (runLength-- && pixelNr < pixelCount)
-					outPtr[pixelNr++] = *literalPtr++;
-
-				pixelNr = pixelLine + width;
-			}
-		} else {
-			while (pixelNr < pixelCount) {
-				curByte = *rlePtr++;
-				runLength = curByte & 0x3F;
-				switch (curByte & 0xC0) {
-				case 0: // copy bytes as-is
-					while (runLength-- && pixelNr < pixelCount)
-						outPtr[pixelNr++] = *literalPtr++;
-					break;
-				case 0x80: // fill with color
+					memcpy(outPtr + pixelNr, literalPtr, MIN<uint16>(runLength, pixelCount - pixelNr));
+					literalPtr += runLength;
+				}			
+				break;
+			case 0x80: // fill with color
+				if (!literalPos)
+					memset(outPtr + pixelNr,     *rlePtr++, MIN<uint16>(runLength, pixelCount - pixelNr));
+				else
 					memset(outPtr + pixelNr, *literalPtr++, MIN<uint16>(runLength, pixelCount - pixelNr));
-					pixelNr += runLength;
-					break;
-				case 0xC0: // fill with transparent
-					pixelNr += runLength;
-					break;
-				}
+				break;
+			case 0xC0: // skip the next pixels (transparency)
+				break;
 			}
+
+			pixelNr += runLength;
 		}
+		break;
+	default:
+		error("Unsupported picture viewtype");
 	}
 }
 
