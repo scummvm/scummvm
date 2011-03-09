@@ -1940,7 +1940,7 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 					*_vm->getVar("agehn") = 4;                          // Set Gehn to the trapped state
 					*_vm->getVar("atrapbook") = 1;                      // We've got the trap book again
 					_vm->_sound->playSound(0);                          // Play the link sound again
-					_vm->changeToCard(_vm->matchRMAPToCard(0x2885));    // Link out! (TODO: Shouldn't this card change?)
+					_vm->changeToCard(_vm->matchRMAPToCard(0x2885));    // Link out!
 					return;
 				}
 				break;
