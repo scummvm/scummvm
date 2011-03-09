@@ -36,7 +36,7 @@ namespace CEGUI {
 class Panel;
 
 class PanelItem : public GUIElement {
-friend class Panel;
+	friend class Panel;
 public:
 	PanelItem(WORD reference);
 	virtual ~PanelItem();

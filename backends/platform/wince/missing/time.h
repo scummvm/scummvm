@@ -6,8 +6,7 @@
 #include <stdlib.h>
 
 #ifndef __MINGW32CE__
-struct tm
-{
+struct tm {
 	short tm_year;
 	short tm_mon;
 	short tm_mday;
@@ -23,8 +22,8 @@ struct tm
 #define EXT_C
 #endif
 
-EXT_C time_t time(time_t* dummy);
-EXT_C struct tm* localtime(time_t* dummy);
+EXT_C time_t time(time_t *dummy);
+EXT_C struct tm *localtime(time_t *dummy);
 
 unsigned int clock();
 
