@@ -29,15 +29,15 @@
 namespace CEGUI {
 
 ToolbarHandler::ToolbarHandler():
-_current(""), _active(NULL) {
+	_current(""), _active(NULL) {
 }
 
 
 bool ToolbarHandler::add(const String &name, const Toolbar &toolbar) {
-	_toolbarMap[name] = (Toolbar*)&toolbar;
+	_toolbarMap[name] = (Toolbar *)&toolbar;
 
 	if (!_active) {
-		_active = &((Toolbar&)toolbar);
+		_active = &((Toolbar &)toolbar);
 		_current = name;
 	}
 
@@ -53,7 +53,7 @@ bool ToolbarHandler::setActive(const String &name) {
 		return false;
 	if (_current == name)
 		return true;
-	_active->action(0, 0, false);	// make sure any items are unpushed when changing toolbars (e.g. forced VK->main panel)
+	_active->action(0, 0, false);   // make sure any items are unpushed when changing toolbars (e.g. forced VK->main panel)
 	_current = name;
 	_active = _toolbarMap[name];
 	_active->forceRedraw();
@@ -67,8 +67,7 @@ bool ToolbarHandler::action(int x, int y, bool pushed) {
 			return _active->action(x / 2, (y - _offset) / 2, pushed);
 		else
 			return _active->action(x, y - _offset, pushed);
-	}
-	else
+	} else
 		return false;
 }
 
@@ -118,7 +117,7 @@ int ToolbarHandler::getOffset() {
 	return _offset;
 }
 
-Toolbar* ToolbarHandler::active() {
+Toolbar *ToolbarHandler::active() {
 	return _active;
 }
 

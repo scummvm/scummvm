@@ -30,7 +30,6 @@
 #include "common/config-manager.h"
 
 #include "backends/events/wincesdl/wincesdl-events.h"
-#include "backends/graphics/wincesdl/wincesdl-graphics.h"
 #include "backends/platform/wince/CEActionsPocket.h"
 #include "backends/platform/wince/CEActionsSmartphone.h"
 #include "backends/platform/wince/CEDevice.h"
@@ -39,7 +38,12 @@
 
 WINCESdlEventSource::WINCESdlEventSource()
 	: _tapTime(0), _closeClick(false), _rbutton(false),
-	  _freeLook(false) {
+	  _freeLook(false), _graphicsMan(0) {
+}
+
+void WINCESdlEventSource::init(WINCESdlGraphicsManager *graphicsMan) {
+	assert(graphicsMan);
+	_graphicsMan = graphicsMan;
 }
 
 void WINCESdlEventSource::fillMouseEvent(Common::Event &event, int x, int y) {
@@ -51,11 +55,11 @@ void WINCESdlEventSource::fillMouseEvent(Common::Event &event, int x, int y) {
 	_km.y = event.mouse.y;
 
 	// Adjust for the screen scaling
-	if (((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_zoomDown)
+	if (_graphicsMan->_zoomDown)
 		event.mouse.y += 240;
 
-	event.mouse.x = event.mouse.x * ((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_scaleFactorXd / ((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_scaleFactorXm;
-	event.mouse.y = event.mouse.y * ((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_scaleFactorYd / ((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_scaleFactorYm;
+	event.mouse.x = event.mouse.x * _graphicsMan->_scaleFactorXd / _graphicsMan->_scaleFactorXm;
+	event.mouse.y = event.mouse.y * _graphicsMan->_scaleFactorYd / _graphicsMan->_scaleFactorYm;
 }
 
 bool WINCESdlEventSource::pollEvent(Common::Event &event) {
@@ -70,7 +74,7 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 	handleKbdMouse();
 
 	// If the screen changed, send an Common::EVENT_SCREEN_CHANGED
-	int screenID = ((OSystem_SDL *)g_system)->getGraphicsManager()->getScreenChangeID();
+	int screenID = _graphicsMan->getScreenChangeID();
 	if (screenID != _lastScreenID) {
 		_lastScreenID = screenID;
 		event.type = Common::EVENT_SCREEN_CHANGED;
@@ -88,9 +92,9 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 			// KMOD_RESERVED is used if the key has been injected by an external buffer
 			if (ev.key.keysym.mod != KMOD_RESERVED && !GUI::Actions::Instance()->mappingActive()) {
 				keyEvent = true;
-				((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_lastKeyPressed = ev.key.keysym.sym;
-				((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_keyRepeatTime = currentTime;
-				((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_keyRepeat = 0;
+				_graphicsMan->_lastKeyPressed = ev.key.keysym.sym;
+				_graphicsMan->_keyRepeatTime = currentTime;
+				_graphicsMan->_keyRepeat = 0;
 
 				if (!GUI_Actions::Instance()->mappingActive() && GUI_Actions::Instance()->performMapped(ev.key.keysym.sym, true))
 					return true;
@@ -99,7 +103,7 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 			if (GUI_Actions::Instance()->mappingActive())
 				event.kbd.flags = 0xFF;
 			else if (ev.key.keysym.sym == SDLK_PAUSE) {
-				((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_lastKeyPressed = 0;
+				_graphicsMan->_lastKeyPressed = 0;
 				event.type = Common::EVENT_PREDICTIVE_DIALOG;
 				return true;
 			}
@@ -122,7 +126,7 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 			// KMOD_RESERVED is used if the key has been injected by an external buffer
 			if (ev.key.keysym.mod != KMOD_RESERVED && !GUI::Actions::Instance()->mappingActive()) {
 				keyEvent = true;
-				((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_lastKeyPressed = 0;
+				_graphicsMan->_lastKeyPressed = 0;
 
 				if (!GUI_Actions::Instance()->mappingActive() && GUI_Actions::Instance()->performMapped(ev.key.keysym.sym, false))
 					return true;
@@ -131,7 +135,7 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 			if (GUI_Actions::Instance()->mappingActive())
 				event.kbd.flags = 0xFF;
 			else if (ev.key.keysym.sym == SDLK_PAUSE) {
-				((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_lastKeyPressed = 0;
+				_graphicsMan->_lastKeyPressed = 0;
 				return false;   // chew up the show agi dialog key up event
 			}
 
@@ -152,7 +156,7 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 		case SDL_MOUSEMOTION:
 			event.type = Common::EVENT_MOUSEMOVE;
 			fillMouseEvent(event, ev.motion.x, ev.motion.y);
-			((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->setMousePos(event.mouse.x, event.mouse.y);
+			_graphicsMan->setMousePos(event.mouse.x, event.mouse.y);
 
 			return true;
 
@@ -181,10 +185,10 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 				if (_tapTime) {     // second tap
 					if (_closeClick && (GetTickCount() - _tapTime < 1000)) {
 						if (event.mouse.y <= 20 &&
-						        ((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_panelInitialized) {
+						        _graphicsMan->_panelInitialized) {
 							// top of screen (show panel)
-							((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->swap_panel_visibility();
-						} else if (!((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_noDoubleTapRMB) {
+							_graphicsMan->swap_panel_visibility();
+						} else if (!_graphicsMan->_noDoubleTapRMB) {
 							// right click
 							event.type = Common::EVENT_RBUTTONDOWN;
 							_rbutton = true;
@@ -204,21 +208,21 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 				_tapX = event.mouse.x;
 				_tapY = event.mouse.y;
 				event.type = Common::EVENT_MOUSEMOVE;
-				((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->setMousePos(event.mouse.x, event.mouse.y);
+				_graphicsMan->setMousePos(event.mouse.x, event.mouse.y);
 			}
 
 
-			if (((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_toolbarHandler.action(event.mouse.x, event.mouse.y, true)) {
-				if (!((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_toolbarHandler.drawn()) {
-					((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_toolbarHighDrawn = false;
-					((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->internUpdateScreen();
+			if (_graphicsMan->_toolbarHandler.action(event.mouse.x, event.mouse.y, true)) {
+				if (!_graphicsMan->_toolbarHandler.drawn()) {
+					_graphicsMan->_toolbarHighDrawn = false;
+					_graphicsMan->internUpdateScreen();
 				}
-				if (((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_newOrientation != ((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_orientationLandscape) {
-					((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_orientationLandscape = ((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_newOrientation;
-					((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_toolbarHighDrawn = false;
-					ConfMan.setInt("landscape", ((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_orientationLandscape);
+				if (_graphicsMan->_newOrientation != _graphicsMan->_orientationLandscape) {
+					_graphicsMan->_orientationLandscape = _graphicsMan->_newOrientation;
+					_graphicsMan->_toolbarHighDrawn = false;
+					ConfMan.setInt("landscape", _graphicsMan->_orientationLandscape);
 					ConfMan.flushToDisk();
-					((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->hotswapGFXMode();
+					_graphicsMan->hotswapGFXMode();
 				}
 				return false;
 			}
@@ -244,13 +248,13 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 				_tapX = event.mouse.x;
 				_tapY = event.mouse.y;
 				event.type = Common::EVENT_MOUSEMOVE;
-				((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->setMousePos(event.mouse.x, event.mouse.y);
+				_graphicsMan->setMousePos(event.mouse.x, event.mouse.y);
 			}
 
-			if (((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_toolbarHandler.action(event.mouse.x, event.mouse.y, false)) {
-				if (!((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_toolbarHandler.drawn()) {
-					((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_toolbarHighDrawn = false;
-					((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->internUpdateScreen();
+			if (_graphicsMan->_toolbarHandler.action(event.mouse.x, event.mouse.y, false)) {
+				if (!_graphicsMan->_toolbarHandler.drawn()) {
+					_graphicsMan->_toolbarHighDrawn = false;
+					_graphicsMan->internUpdateScreen();
 				}
 				return false;
 
@@ -274,9 +278,9 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 			if (ev.active.state & SDL_APPACTIVE)
 				debug(2, "%s total focus.", ev.active.gain ? "Got" : "Lost");
 			if (ev.active.state & SDL_APPINPUTFOCUS) {
-				((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_hasfocus = ev.active.gain;
-				SDL_PauseAudio(!((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_hasfocus);
-				if (((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_hasfocus) {
+				_graphicsMan->_hasfocus = ev.active.gain;
+				SDL_PauseAudio(!_graphicsMan->_hasfocus);
+				if (_graphicsMan->_hasfocus) {
 					event.type = (Common::EventType)OSystem_SDL::kSdlEventExpose;
 				}
 			}
@@ -285,10 +289,10 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 	}
 
 	// Simulate repeated key for backend
-	if (!keyEvent && ((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_lastKeyPressed && (int)currentTime > ((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_keyRepeatTime + ((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_keyRepeatTrigger) {
-		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_keyRepeatTime = currentTime;
-		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_keyRepeat++;
-		GUI_Actions::Instance()->performMapped(((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->_lastKeyPressed, true);
+	if (!keyEvent && _graphicsMan->_lastKeyPressed && (int)currentTime > _graphicsMan->_keyRepeatTime + _graphicsMan->_keyRepeatTrigger) {
+		_graphicsMan->_keyRepeatTime = currentTime;
+		_graphicsMan->_keyRepeat++;
+		GUI_Actions::Instance()->performMapped(_graphicsMan->_lastKeyPressed, true);
 	}
 
 	return false;

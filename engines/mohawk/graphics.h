@@ -110,6 +110,7 @@ protected:
 	virtual Common::Array<MohawkSurface *> decodeImages(uint16 id);
 
 	virtual MohawkEngine *getVM() = 0;
+	void addImageToCache(uint16 id, MohawkSurface *surface);
 
 private:
 	// An image cache that stores images until clearCache() is called
@@ -195,10 +196,16 @@ public:
 	// Transitions
 	void scheduleTransition(uint16 id, Common::Rect rect = Common::Rect(0, 0, 608, 392));
 	void runScheduledTransition();
+	void fadeToBlack();
 
 	// Inventory
 	void showInventory();
 	void hideInventory();
+
+	// Credits
+	void beginCredits();
+	void updateCredits();
+	uint getCurCreditsImage() { return _creditsImage; }
 
 protected:
 	MohawkSurface *decodeImage(uint16 id);
@@ -224,6 +231,10 @@ private:
 	Graphics::Surface *_mainScreen;
 	bool _dirtyScreen;
 	Graphics::PixelFormat _pixelFormat;
+	void clearMainScreen();
+
+	// Credits
+	uint _creditsImage, _creditsPos;
 };
 
 class LBGraphics : public GraphicsManager {

@@ -34,7 +34,7 @@ Panel::Panel(int interleave_first, int interleave) : Toolbar() {
 
 
 bool Panel::add(const String &name, const PanelItem *item) {
-	_itemsMap[name] = (PanelItem*)item;
+	_itemsMap[name] = (PanelItem *)item;
 	_itemsMap[name]->move(_currentItem, _y + 10);
 	_itemsMap[name]->setPanel(this);
 	_currentItem += _interleave;
@@ -47,11 +47,10 @@ bool Panel::draw(SDL_Surface *surface) {
 	if (!_drawn && _visible) {
 		GUIElement::draw(surface);
 		for (iterator = _itemsMap.begin(); iterator != _itemsMap.end(); ++iterator) {
-			((GUIElement*)(iterator->_value))->draw(surface);
+			((GUIElement *)(iterator->_value))->draw(surface);
 		}
 		return true;
-	}
-	else
+	} else
 		return false;
 }
 
@@ -59,7 +58,7 @@ void Panel::forceRedraw() {
 	ItemMap::const_iterator iterator;
 	GUIElement::forceRedraw();
 	for (iterator = _itemsMap.begin(); iterator != _itemsMap.end(); ++iterator)
-		((GUIElement*)(iterator->_value))->forceRedraw();
+		((GUIElement *)(iterator->_value))->forceRedraw();
 }
 
 bool Panel::action(int x, int y, bool pushed) {
@@ -69,7 +68,7 @@ bool Panel::action(int x, int y, bool pushed) {
 		return false;
 
 	for (iterator = _itemsMap.begin(); !result && iterator != _itemsMap.end(); ++iterator)
-		result = ((GUIElement*)(iterator->_value))->action(x, y, pushed);
+		result = ((GUIElement *)(iterator->_value))->action(x, y, pushed);
 	return result;
 }
 

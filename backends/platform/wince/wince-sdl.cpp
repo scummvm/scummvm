@@ -69,7 +69,7 @@
 #endif
 
 #ifdef __GNUC__
-extern "C" _CRTIMP FILE* __cdecl   _wfreopen (const wchar_t*, const wchar_t*, FILE*);
+extern "C" _CRTIMP FILE *__cdecl   _wfreopen(const wchar_t *, const wchar_t *, FILE *);
 #endif
 
 using namespace CEGUI;
@@ -99,7 +99,7 @@ bool isSmartphone() {
 }
 
 const TCHAR *ASCIItoUnicode(const char *str) {
-	static TCHAR ustr[MAX_PATH];	// size good enough
+	static TCHAR ustr[MAX_PATH];    // size good enough
 
 	MultiByteToWideChar(CP_ACP, 0, str, strlen(str) + 1, ustr, sizeof(ustr) / sizeof(TCHAR));
 	return ustr;
@@ -128,7 +128,7 @@ int SDL_main(int argc, char **argv) {
 	// thanks to joostp and DJWillis
 	extern void (*__CTOR_LIST__)();
 	void (**constructor)() = &__CTOR_LIST__;
-	constructor++;	// First item in list of constructors has special meaning (platform dependent), ignore it.
+	constructor++;  // First item in list of constructors has special meaning (platform dependent), ignore it.
 	while (*constructor) {
 		(*constructor)();
 		constructor++;
@@ -193,10 +193,10 @@ int SDL_main(int argc, char **argv) {
 		res = scummvm_main(argc, argv);
 
 		// Free OSystem
-		delete (OSystem_WINCE3 *)g_system;
+		delete(OSystem_WINCE3 *)g_system;
 #if !defined(DEBUG) && !defined(__GNUC__)
 	}
-	__except (handleException(GetExceptionInformation())) {
+	__except(handleException(GetExceptionInformation())) {
 	}
 #endif
 
@@ -219,22 +219,22 @@ int console_main(int argc, char *argv[]) {
 	char *bufp, *appname;
 
 	appname = argv[0];
-	if ( (bufp=strrchr(argv[0], '\\')) != NULL )
+	if ((bufp = strrchr(argv[0], '\\')) != NULL)
 		appname = bufp + 1;
-	else if ( (bufp=strrchr(argv[0], '/')) != NULL )
+	else if ((bufp = strrchr(argv[0], '/')) != NULL)
 		appname = bufp + 1;
 
-	if ( (bufp=strrchr(appname, '.')) == NULL )
+	if ((bufp = strrchr(appname, '.')) == NULL)
 		n = strlen(appname);
 	else
-		n = (bufp-appname);
+		n = (bufp - appname);
 
 	bufp = (char *) alloca(n + 1);
 	strncpy(bufp, appname, n);
 	bufp[n] = '\0';
 	appname = bufp;
 
-	if ( SDL_Init(SDL_INIT_NOPARACHUTE) < 0 ) {
+	if (SDL_Init(SDL_INIT_NOPARACHUTE) < 0) {
 		error("WinMain() error: %d", SDL_GetError());
 		return(FALSE);
 	}
@@ -299,31 +299,31 @@ int dynamic_modules_main(HINSTANCE hInst, HINSTANCE hPrev, LPWSTR szCmdLine, int
 	int nLen;
 
 	if (wcsncmp(szCmdLine, TEXT("\\"), 1)) {
-		nLen = wcslen(szCmdLine)+128+1;
-		bufp = (wchar_t *) alloca(nLen*2);
-		wcscpy (bufp, TEXT("\""));
-		GetModuleFileName(NULL, bufp+1, 128-3);
-		wcscpy (bufp+wcslen(bufp), TEXT("\" "));
-		wcsncpy(bufp+wcslen(bufp), szCmdLine,nLen-wcslen(bufp));
+		nLen = wcslen(szCmdLine) + 128 + 1;
+		bufp = (wchar_t *) alloca(nLen * 2);
+		wcscpy(bufp, TEXT("\""));
+		GetModuleFileName(NULL, bufp + 1, 128 - 3);
+		wcscpy(bufp + wcslen(bufp), TEXT("\" "));
+		wcsncpy(bufp + wcslen(bufp), szCmdLine, nLen - wcslen(bufp));
 	} else
 		bufp = szCmdLine;
 
-	nLen = wcslen(bufp)+1;
+	nLen = wcslen(bufp) + 1;
 	cmdline = (char *) alloca(nLen);
 	WideCharToMultiByte(CP_ACP, 0, bufp, -1, cmdline, nLen, NULL, NULL);
 
 	// Parse command line into argv and argc
 	argc = ParseCommandLine(cmdline, NULL);
-	argv = (char **) alloca((argc+1)*(sizeof *argv));
+	argv = (char **) alloca((argc + 1) * (sizeof * argv));
 	ParseCommandLine(cmdline, argv);
 
 	// fix gdb-emulator combo
 	while (argc > 1 && !strstr(argv[0], ".exe")) {
 		OutputDebugString(TEXT("SDL: gdb argv[0] fixup\n"));
-		*(argv[1]-1) = ' ';
+		*(argv[1] - 1) = ' ';
 		int i;
-		for (i=1; i<argc; i++)
-			argv[i] = argv[i+1];
+		for (i = 1; i < argc; i++)
+			argv[i] = argv[i + 1];
 		argc--;
 	}
 
@@ -378,11 +378,13 @@ void OSystem_WINCE3::initBackend() {
 	if (_graphicsManager == 0)
 		_graphicsManager = new WINCESdlGraphicsManager(_eventSource);
 
+	((WINCESdlEventSource *)_eventSource)->init((WINCESdlGraphicsManager *)_graphicsManager);
+
 	// Create the timer. CE SDL does not support multiple timers (SDL_AddTimer).
 	// We work around this by using the SetTimer function, since we only use
 	// one timer in scummvm (for the time being)
 	_timer = _int_timer = new DefaultTimerManager();
-	//_timerID = NULL;	// OSystem_SDL will call removetimer with this, it's ok
+	//_timerID = NULL;  // OSystem_SDL will call removetimer with this, it's ok
 	SDL_SetTimer(10, &timer_handler_wrapper);
 
 	// Chain init
@@ -391,9 +393,9 @@ void OSystem_WINCE3::initBackend() {
 	// Initialize global key mapping
 	GUI::Actions::init();
 	GUI_Actions::Instance()->initInstanceMain(this);
-	if (!GUI_Actions::Instance()->loadMapping()) {	// error during loading means not present/wrong version
+	if (!GUI_Actions::Instance()->loadMapping()) {  // error during loading means not present/wrong version
 		warning("Setting default action mappings");
-		GUI_Actions::Instance()->saveMapping();	// write defaults
+		GUI_Actions::Instance()->saveMapping(); // write defaults
 	}
 
 	// Call parent implementation of this method
@@ -435,8 +437,7 @@ Common::String OSystem_WINCE3::getDefaultConfigFileName() {
 
 
 OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
-	_forcePanelInvisible(false)
-{
+	_forcePanelInvisible(false) {
 	// Initialze File System Factory
 	_fsFactory = new WindowsFilesystemFactory();
 	_mixer = 0;
@@ -456,8 +457,8 @@ void OSystem_WINCE3::swap_sound_master() {
 
 	//WINCESdlGraphicsManager _graphicsManager
 
-	if (((WINCESdlGraphicsManager*)_graphicsManager)->_toolbarHandler.activeName() == NAME_MAIN_PANEL)
-		((WINCESdlGraphicsManager*)_graphicsManager)->_toolbarHandler.forceRedraw(); // redraw sound icon
+	if (((WINCESdlGraphicsManager *)_graphicsManager)->_toolbarHandler.activeName() == NAME_MAIN_PANEL)
+		((WINCESdlGraphicsManager *)_graphicsManager)->_toolbarHandler.forceRedraw(); // redraw sound icon
 }
 
 
@@ -478,7 +479,7 @@ void OSystem_WINCE3::check_mappings() {
 		return;
 
 	GUI_Actions::Instance()->initInstanceGame();
-	instance = (CEActionsPocket*)GUI_Actions::Instance();
+	instance = (CEActionsPocket *)GUI_Actions::Instance();
 
 	// Some games need to map the right click button, signal it here if it wasn't done
 	if (instance->needsRightClickMapping()) {
@@ -518,7 +519,7 @@ void OSystem_WINCE3::check_mappings() {
 
 	// Extra warning for Zak Mc Kracken
 	if (strncmp(gameid.c_str(), "zak", 3) == 0 &&
-		!GUI_Actions::Instance()->getMapping(POCKET_ACTION_HIDE)) {
+	        !GUI_Actions::Instance()->getMapping(POCKET_ACTION_HIDE)) {
 		GUI::MessageDialog alert(_("Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"));
 		alert.runModal();
 	}
@@ -568,12 +569,12 @@ void OSystem_WINCE3::getTimeAndDate(TimeDate &t) const {
 	SYSTEMTIME systime;
 
 	GetLocalTime(&systime);
-	t.tm_year	= systime.wYear - 1900;
-	t.tm_mon	= systime.wMonth - 1;
-	t.tm_mday	= systime.wDay;
-	t.tm_hour	= systime.wHour;
-	t.tm_min	= systime.wMinute;
-	t.tm_sec	= systime.wSecond;
+	t.tm_year   = systime.wYear - 1900;
+	t.tm_mon    = systime.wMonth - 1;
+	t.tm_mday   = systime.wDay;
+	t.tm_hour   = systime.wHour;
+	t.tm_min    = systime.wMinute;
+	t.tm_sec    = systime.wSecond;
 }
 
 int OSystem_WINCE3::_platformScreenWidth;

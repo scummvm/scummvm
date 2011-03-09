@@ -5,9 +5,9 @@
 #define strdup _strdup
 
 #ifndef _FILE_DEFINED
-   typedef void FILE;
-   #define _FILE_DEFINED
+typedef void FILE;
+#define _FILE_DEFINED
 #endif
-FILE* wce_fopen(const char* fname, const char* fmode);
+FILE *wce_fopen(const char *fname, const char *fmode);
 #define fopen wce_fopen
 

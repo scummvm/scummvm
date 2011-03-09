@@ -246,6 +246,13 @@ void GraphicsManager::copyAnimImageSectionToScreen(MohawkSurface *image, Common:
 	getVM()->_system->unlockScreen();
 }
 
+void GraphicsManager::addImageToCache(uint16 id, MohawkSurface *surface) {
+	if (_cache.contains(id))
+		error("Image %d already in cache", id);
+
+	_cache[id] = surface;
+}
+
 MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 	_bmpDecoder = new MystBitmap();
 
@@ -630,6 +637,9 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm
 	_scheduledTransition = -1;	// no transition
 	_dirtyScreen = false;
 	_inventoryDrawn = false;
+
+	_creditsImage = 302;
+	_creditsPos = 0;
 }
 
 RivenGraphics::~RivenGraphics() {
@@ -840,6 +850,17 @@ void RivenGraphics::runScheduledTransition() {
 	_scheduledTransition = -1; // Clear scheduled transition
 }
 
+void RivenGraphics::clearMainScreen() {
+	_mainScreen->fillRect(Common::Rect(0, 0, 608, 392), _pixelFormat.RGBToColor(0, 0, 0));
+}
+
+void RivenGraphics::fadeToBlack() {
+	// Self-explanatory
+	scheduleTransition(16);
+	clearMainScreen();
+	runScheduledTransition();
+}
+
 void RivenGraphics::showInventory() {
 	// Don't redraw the inventory
 	if (_inventoryDrawn)
@@ -953,6 +974,60 @@ void RivenGraphics::drawExtrasImage(uint16 id, Common::Rect dstRect) {
 
 	delete mhkSurface;
 	_dirtyScreen = true;
+}
+
+void RivenGraphics::beginCredits() {
+	// Clear the old cache
+	clearCache();
+
+	// Now cache all the credits images
+	for (uint16 i = 302; i <= 320; i++) {
+		MohawkSurface *surface = _bitmapDecoder->decodeImage(_vm->getExtrasResource(ID_TBMP, i));
+		surface->convertToTrueColor();
+		addImageToCache(i, surface);
+	}
+
+	// And clear our screen too
+	clearMainScreen();
+}
+
+void RivenGraphics::updateCredits() {
+	if ((_creditsImage == 303 || _creditsImage == 304) && _creditsPos == 0)
+		fadeToBlack();
+
+	if (_creditsImage < 304) {
+		// For the first two credit images, they are faded from black to the image and then out again
+		scheduleTransition(16);
+
+		Graphics::Surface *frame = findImage(_creditsImage++)->getSurface();
+
+		for (int y = 0; y < frame->h; y++)
+			memcpy(_mainScreen->getBasePtr(124, y), frame->getBasePtr(0, y), frame->pitch);
+
+		runScheduledTransition();
+	} else {
+		// Otheriwse, we're scrolling
+		// Move the screen up one row
+		memmove(_mainScreen->pixels, _mainScreen->getBasePtr(0, 1), _mainScreen->pitch * (_mainScreen->h - 1));
+
+		// Only update as long as we're not before the last frame
+		// Otherwise, we're just moving up a row (which we already did)
+		if (_creditsImage <= 320) {
+			// Copy the next row to the bottom of the screen
+			Graphics::Surface *frame = findImage(_creditsImage)->getSurface();
+			memcpy(_mainScreen->getBasePtr(124, _mainScreen->h - 1), frame->getBasePtr(0, _creditsPos), frame->pitch);
+			_creditsPos++;
+
+			if (_creditsPos == _mainScreen->h) {
+				_creditsImage++;
+				_creditsPos = 0;
+			}
+		}
+
+		// Now flush the new screen
+		_vm->_system->copyRectToScreen((byte *)_mainScreen->pixels, _mainScreen->pitch, 0, 0, _mainScreen->w, _mainScreen->h);
+		_vm->_system->updateScreen();
+	}
 }
 
 LBGraphics::LBGraphics(MohawkEngine_LivingBooks *vm, uint16 width, uint16 height) : GraphicsManager(), _vm(vm) {

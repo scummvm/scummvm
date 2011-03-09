@@ -216,20 +216,37 @@ void RivenExternal::runDemoBoundaryDialog() {
 	dialog.runModal();
 }
 
-void RivenExternal::runEndGame(uint16 video) {
+void RivenExternal::runEndGame(uint16 video, uint32 delay) {
 	_vm->_sound->stopAllSLST();
 	_vm->_video->playMovieRiven(video);
-	runCredits(video);
+	runCredits(video, delay);
 }
 
-void RivenExternal::runCredits(uint16 video) {
-	// TODO: Play until the last frame and then run the credits
+void RivenExternal::runCredits(uint16 video, uint32 delay) {
+	// Initialize our credits state
+	_vm->_cursor->hideCursor();
+	_vm->_gfx->beginCredits();
+	uint nextCreditsFrameStart = 0;
 
 	VideoHandle videoHandle = _vm->_video->findVideoHandleRiven(video);
 
-	while (!_vm->_video->endOfVideo(videoHandle) && !_vm->shouldQuit()) {
-		if (_vm->_video->updateMovies())
-			_vm->_system->updateScreen();
+	while (!_vm->shouldQuit() && _vm->_gfx->getCurCreditsImage() <= 320) {
+		if (_vm->_video->getCurFrame(videoHandle) >= (int32)_vm->_video->getFrameCount(videoHandle) - 1) {
+			if (nextCreditsFrameStart == 0) {
+				// Set us up to start after delay ms
+				nextCreditsFrameStart = _vm->_system->getMillis() + delay;
+			} else if (_vm->_system->getMillis() >= nextCreditsFrameStart) {
+				// the first two frames stay on for 5 seconds
+				// the rest of the scroll updates happen at 30Hz
+				if (_vm->_gfx->getCurCreditsImage() < 304)
+					nextCreditsFrameStart = _vm->_system->getMillis() + 5000;
+				else
+					nextCreditsFrameStart = _vm->_system->getMillis() + 1000 / 30;
+
+				_vm->_gfx->updateCredits();
+			}
+		} else if (_vm->_video->updateMovies())
+			_vm->_system->updateScreen(); 
 
 		Common::Event event;
 		while (_vm->_system->getEventManager()->pollEvent(event))
@@ -1838,11 +1855,11 @@ void RivenExternal::xorollcredittime(uint16 argc, uint16 *argv) {
 	uint32 *gehnState = _vm->getVar("agehn");
 
 	if (*gehnState == 0)		// Gehn who?
-		runEndGame(1);
+		runEndGame(1, 9500);
 	else if (*gehnState == 4)	// You freed him? Are you kidding me?
-		runEndGame(2);
+		runEndGame(2, 12000);
 	else						// You already spoke with Gehn. What were you thinking?
-		runEndGame(3);
+		runEndGame(3, 8000);
 }
 
 void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
@@ -1923,7 +1940,7 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 					*_vm->getVar("agehn") = 4;                          // Set Gehn to the trapped state
 					*_vm->getVar("atrapbook") = 1;                      // We've got the trap book again
 					_vm->_sound->playSound(0);                          // Play the link sound again
-					_vm->changeToCard(_vm->matchRMAPToCard(0x2885));    // Link out! (TODO: Shouldn't this card change?)
+					_vm->changeToCard(_vm->matchRMAPToCard(0x2885));    // Link out!
 					return;
 				}
 				break;
@@ -1951,7 +1968,7 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 	// Run the credits from here.
 	if (*_vm->getVar("agehn") == 3) {
 		_vm->_scriptMan->stopAllScripts();
-		runCredits(argv[0]);
+		runCredits(argv[0], 5000);
 		return;
 	}
 
@@ -2126,7 +2143,7 @@ void RivenExternal::xrcredittime(uint16 argc, uint16 *argv) {
 	// For the record, when agehn == 4, Gehn will thank you for
 	// showing him the rebel age and then leave you to die.
 	// Otherwise, the rebels burn the book. Epic fail either way.
-	runEndGame(1);
+	runEndGame(1, 1500);
 }
 
 void RivenExternal::xrshowinventory(uint16 argc, uint16 *argv) {
@@ -2166,30 +2183,26 @@ void RivenExternal::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
 			if (*_vm->getVar("pcage") == 2) {
 				// The best ending: Catherine is free, Gehn is trapped, Atrus comes to rescue you.
 				// And now we fall back to Earth... all the way...
-				warning("xtexterior300_telescopedown: Good ending");
 				_vm->_video->activateMLST(8, _vm->getCurCard());
-				runEndGame(8);
+				runEndGame(8, 5000);
 			} else if (*_vm->getVar("agehn") == 4) {
 				// The ok ending: Catherine is still trapped, Gehn is trapped, Atrus comes to rescue you.
 				// Nice going! Catherine and the islanders are all dead now! Just go back to your home...
-				warning("xtexterior300_telescopedown: OK ending");
 				_vm->_video->activateMLST(9, _vm->getCurCard());
-				runEndGame(9);
+				runEndGame(9, 5000);
 			} else if (*_vm->getVar("atrapbook") == 1) {
 				// The bad ending: Catherine is trapped, Gehn is free, Atrus gets shot by Gehn,
 				// And then you get shot by Cho. Nice going! Catherine and the islanders are dead
 				// and you have just set Gehn free from Riven, not to mention you're dead.
-				warning("xtexterior300_telescopedown: Bad ending");
 				_vm->_video->activateMLST(10, _vm->getCurCard());
-				runEndGame(10);
+				runEndGame(10, 5000);
 			} else {
 				// The impossible ending: You don't have Catherine's journal and yet you were somehow
 				// able to open the hatch on the telescope. The game provides an ending for those who
 				// cheat, load a saved game with the combo, or just guess the telescope combo. Atrus
 				// doesn't come and you just fall into the fissure.
-				warning("xtexterior300_telescopedown: Wtf ending");
 				_vm->_video->activateMLST(11, _vm->getCurCard());
-				runEndGame(11);
+				runEndGame(11, 5000);
 			}
 		} else {
 			// ...the telescope can't move down anymore.

@@ -34,10 +34,10 @@ int isprint(int c);
 int isspace(int c);
 char *strrchr(const char *s, int c);
 char *strdup(const char *s);
-int _stricmp( const char *string1, const char *string2 );
-int stricmp( const char *string1, const char *string2 );
-void assert( void* expression );
-void assert( int expression );
+int _stricmp(const char *string1, const char *string2);
+int stricmp(const char *string1, const char *string2);
+void assert(void *expression);
+void assert(int expression);
 long int strtol(const char *nptr, char **endptr, int base);
 char *_strdup(const char *s);
 char *strpbrk(const char *s, const char *accept);
@@ -47,20 +47,20 @@ char *strpbrk(const char *s, const char *accept);
 #ifdef _WIN32_WCE
 
 #ifndef __GNUC__
-	void *bsearch(const void *, const void *, size_t, size_t, int (*x) (const void *, const void *));
-	char *getcwd(char *buf, int size);
-	typedef int ptrdiff_t;
-	void GetCurrentDirectory(int len, char *buf);
-	#define INVALID_FILE_ATTRIBUTES 0xffffffff
+void *bsearch(const void *, const void *, size_t, size_t, int (*x)(const void *, const void *));
+char *getcwd(char *buf, int size);
+typedef int ptrdiff_t;
+void GetCurrentDirectory(int len, char *buf);
+#define INVALID_FILE_ATTRIBUTES 0xffffffff
 #else
-	#include <math.h>
-	#undef GetCurrentDirectory
-	extern "C" void GetCurrentDirectory(int len, char *buf);
-	#define stricmp _stricmp
-	#define strnicmp _strnicmp
-	#define snprintf _snprintf
-	#define strdup _strdup
-	#define fopen wce_fopen
+#include <math.h>
+#undef GetCurrentDirectory
+extern "C" void GetCurrentDirectory(int len, char *buf);
+#define stricmp _stricmp
+#define strnicmp _strnicmp
+#define snprintf _snprintf
+#define strdup _strdup
+#define fopen wce_fopen
 #endif
 
 #include <windows.h>
@@ -75,12 +75,12 @@ char *strpbrk(const char *s, const char *accept);
 //#include <direct.h>
 
 #ifdef __MINGW32CE__
-	void *bsearch(const void *, const void *, size_t, size_t, int (*x) (const void *, const void *));
+void *bsearch(const void *, const void *, size_t, size_t, int (*x)(const void *, const void *));
 #endif
 int remove(const char *path);
 int _access(const char *path, int mode);
 
-void drawError(char*);
+void drawError(char *);
 
 #define vsnprintf _vsnprintf
 

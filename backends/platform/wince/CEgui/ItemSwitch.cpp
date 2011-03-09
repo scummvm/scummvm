@@ -40,7 +40,7 @@ void ItemSwitch::init(WORD referenceTrue, WORD referenceFalse) {
 }
 
 ItemSwitch::ItemSwitch(WORD referenceTrue, WORD referenceFalse, bool *item) :
-PanelItem(referenceTrue) {
+	PanelItem(referenceTrue) {
 	init(referenceTrue, referenceFalse);
 	_item = item;
 	_itemmax = -1;
@@ -49,8 +49,8 @@ PanelItem(referenceTrue) {
 }
 
 ItemSwitch::ItemSwitch(WORD referenceTrue, WORD referenceFalse, int *item, int max) :
-PanelItem(referenceTrue) {
-	 init(referenceTrue, referenceFalse);
+	PanelItem(referenceTrue) {
+	init(referenceTrue, referenceFalse);
 	_itemmultiple = item;
 	_itemmax = max;
 	if (!*item)

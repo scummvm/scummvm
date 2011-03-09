@@ -70,8 +70,8 @@ public:
 	static void initScreenInfos();
 	static bool isOzone();
 
-	static bool _soundMaster;	// turn off sound after all calculations
-								// static since needed by the SDL callback
+	static bool _soundMaster;   // turn off sound after all calculations
+	// static since needed by the SDL callback
 
 protected:
 	void initSDL();
@@ -82,11 +82,11 @@ protected:
 private:
 	void check_mappings();
 
-	bool _forcePanelInvisible;	// force panel visibility for some cases
+	bool _forcePanelInvisible;  // force panel visibility for some cases
 
 	static int _platformScreenWidth;
 	static int _platformScreenHeight;
-	static bool _isOzone;		// true if running on Windows 2003 SE
+	static bool _isOzone;       // true if running on Windows 2003 SE
 
 };
 
