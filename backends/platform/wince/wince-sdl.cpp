@@ -378,6 +378,8 @@ void OSystem_WINCE3::initBackend() {
 	if (_graphicsManager == 0)
 		_graphicsManager = new WINCESdlGraphicsManager(_eventSource);
 
+	((WINCESdlEventSource *)_eventSource)->init((WINCESdlGraphicsManager *)_graphicsManager);
+
 	// Create the timer. CE SDL does not support multiple timers (SDL_AddTimer).
 	// We work around this by using the SetTimer function, since we only use
 	// one timer in scummvm (for the time being)
