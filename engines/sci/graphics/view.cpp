@@ -445,7 +445,7 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 		while (pixelNr < pixelCount) {
 			curByte = *rlePtr++;
 			runLength = curByte >> 4;
-			memset(outPtr + pixelNr, curByte & 0x0F, MIN<uint16>(runLength, pixelCount - pixelNr));
+			memset(outPtr + pixelNr,        curByte & 0x0F, MIN<uint16>(runLength, pixelCount - pixelNr));
 			pixelNr += runLength;
 		}
 		break;
@@ -455,7 +455,7 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 			if (curByte & 0x07) { // fill with color
 				runLength = curByte & 0x07;
 				curByte = curByte >> 3;
-				memset(outPtr + pixelNr, curByte, MIN<uint16>(runLength, pixelCount - pixelNr));
+				memset(outPtr + pixelNr,           curByte, MIN<uint16>(runLength, pixelCount - pixelNr));
 			} else { // skip the next pixels (transparency)
 				runLength = curByte >> 3;
 			}
@@ -467,7 +467,7 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 			curByte = *rlePtr++;
 			if (curByte & 0xC0) { // fill with color
 				runLength = curByte >> 6;
-				memset(outPtr + pixelNr, curByte & 0x3F, MIN<uint16>(runLength, pixelCount - pixelNr));
+				memset(outPtr + pixelNr,    curByte & 0x3F, MIN<uint16>(runLength, pixelCount - pixelNr));
 			} else { // skip the next pixels (transparency)
 				runLength = curByte & 0x3F;
 			}
@@ -485,10 +485,10 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 				runLength += 64;
 			case 0x00: // copy bytes as-is
 				if (!literalPos) {
-					memcpy(outPtr + pixelNr, rlePtr, MIN<uint16>(runLength, pixelCount - pixelNr));
+					memcpy(outPtr + pixelNr,        rlePtr, MIN<uint16>(runLength, pixelCount - pixelNr));
 					rlePtr += runLength;
 				} else {
-					memcpy(outPtr + pixelNr, literalPtr, MIN<uint16>(runLength, pixelCount - pixelNr));
+					memcpy(outPtr + pixelNr,    literalPtr, MIN<uint16>(runLength, pixelCount - pixelNr));
 					literalPtr += runLength;
 				}			
 				break;
