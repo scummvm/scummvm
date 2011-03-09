@@ -1546,6 +1546,10 @@ void SceneObjectWrapper::synchronise(Serialiser &s) {
 	SYNC_POINTER(_sceneObject);
 }
 
+void SceneObjectWrapper::remove() {
+	delete this;
+}
+
 void SceneObjectWrapper::dispatch() {
 	_visageImages.setVisage(_sceneObject->_visage);
 	int frameCount = _visageImages.getFrameCount();

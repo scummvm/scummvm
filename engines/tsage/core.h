@@ -455,6 +455,7 @@ public:
 
 	virtual void synchronise(Serialiser &s);
 	virtual Common::String getClassName() { return "SceneObjectWrapper"; }
+	virtual void remove();
 	virtual void dispatch();
 };
 
