@@ -69,7 +69,7 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	// Ringworld Space-port
 	case 1500: return new Scene1500();
 
-	/* Scene group 3 */
+	/* Scene group 3 - Part #1 */
 	// Cockpit cutscenes
 	case 2000: return new Scene2000();
 	// Spaceship - Cockpit
@@ -84,6 +84,10 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 2222: return new Scene2222();
 	// Spaceship - Quinn's Room
 	case 2230: return new Scene2230();
+
+	/* Scene group 3 - Part #2 */
+	// Spaceship - Storage Room
+	case 2280: return new Scene2280();
 
 	/* Scene group 4 */
 
