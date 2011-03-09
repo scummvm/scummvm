@@ -63,7 +63,7 @@ void SegManager::resetSegMan() {
 	// Free memory
 	for (uint i = 0; i < _heap.size(); i++) {
 		if (_heap[i])
-			deallocate(i, false);
+			deallocate(i);
 	}
 
 	_heap.clear();
@@ -151,7 +151,7 @@ Script *SegManager::allocateScript(int script_nr, SegmentId *segid) {
 	return (Script *)mem;
 }
 
-void SegManager::deallocate(SegmentId seg, bool recursive) {
+void SegManager::deallocate(SegmentId seg) {
 	VERIFY(check(seg), "invalid seg id");
 
 	SegmentObj *mobj = _heap[seg];
@@ -159,8 +159,8 @@ void SegManager::deallocate(SegmentId seg, bool recursive) {
 	if (mobj->getType() == SEG_TYPE_SCRIPT) {
 		Script *scr = (Script *)mobj;
 		_scriptSegMap.erase(scr->getScriptNumber());
-		if (recursive && scr->_localsSegment)
-			deallocate(scr->_localsSegment, recursive);
+		if (scr->_localsSegment)
+			deallocate(scr->_localsSegment);
 	}
 
 	delete mobj;
@@ -176,8 +176,7 @@ bool SegManager::isHeapObject(reg_t pos) const {
 }
 
 void SegManager::deallocateScript(int script_nr) {
-	SegmentId seg = getScriptSegment(script_nr);
-	deallocate(seg, true);
+	deallocate(getScriptSegment(script_nr));
 }
 
 Script *SegManager::getScript(const SegmentId seg) {
@@ -864,7 +863,7 @@ bool SegManager::freeDynmem(reg_t addr) {
 	if (addr.segment < 1 || addr.segment >= _heap.size() || !_heap[addr.segment] || _heap[addr.segment]->getType() != SEG_TYPE_DYNMEM)
 		return false; // error
 
-	deallocate(addr.segment, true);
+	deallocate(addr.segment);
 
 	return true; // OK
 }
