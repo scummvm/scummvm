@@ -43,10 +43,9 @@ public:
 
 	void addIcon(reg_t obj);
 	void drawIcons();
-	void redrawIcon(uint16 index);
-	void drawSelectedImage(uint16 index);
-	bool isIconEnabled(uint16 index) const;
-	void setIconEnabled(uint16 index, bool enabled);
+	void setIconEnabled(int16 index, bool enabled);
+	void setInventoryIcon(int16 icon);
+	reg_t handleEvents();
 
 private:
 	struct IconBarItem {
@@ -59,12 +58,20 @@ private:
 
 	Common::Array<IconBarItem> _iconBarItems;
 	uint32 _lastX;
+	uint16 _inventoryIndex;
+	Graphics::Surface *_inventoryIcon;
+	bool _allDisabled;
 
+	Graphics::Surface *loadPict(ResourceId id);
 	Graphics::Surface *createImage(uint32 iconIndex, bool isSelected);
 	void remapColors(Graphics::Surface *surf, byte *palette);
 
+	void drawIcon(uint16 index, bool selected);
+	void drawSelectedImage(uint16 index);
+	bool isIconEnabled(uint16 index) const;
 	void drawEnabledImage(Graphics::Surface *surface, const Common::Rect &rect);
 	void drawDisabledImage(Graphics::Surface *surface, const Common::Rect &rect);
+	bool pointOnIcon(uint32 iconIndex, Common::Point point);
 };
 
 } // End of namespace Sci

@@ -359,23 +359,22 @@ reg_t kIconBar(EngineState *s, int argc, reg_t *argv) {
 	case 0: // InitIconBar
 		for (int i = 0; i < argv[1].toUint16(); i++)
 			g_sci->_gfxMacIconBar->addIcon(argv[i + 2]);
-
-		// TODO: Should return icon bar handle
-		// Said handle is then used by DisposeIconBar
 		break;
 	case 1: // DisposeIconBar
 		warning("kIconBar(Dispose)");
 		break;
-	case 2: // EnableIconBar (0xffff = all)
-		debug(0, "kIconBar(Enable, %d)", argv[1].toUint16());
-		g_sci->_gfxMacIconBar->setIconEnabled(argv[1].toUint16(), true);
+	case 2: // EnableIconBar (-1 = all)
+		debug(0, "kIconBar(Enable, %i)", argv[1].toSint16());
+		g_sci->_gfxMacIconBar->setIconEnabled(argv[1].toSint16(), true);
 		break;
-	case 3: // DisableIconBar (0xffff = all)
-		debug(0, "kIconBar(Disable, %d)", argv[1].toUint16());
-		g_sci->_gfxMacIconBar->setIconEnabled(argv[1].toUint16(), false);
+	case 3: // DisableIconBar (-1 = all)
+		debug(0, "kIconBar(Disable, %i)", argv[1].toSint16());
+		g_sci->_gfxMacIconBar->setIconEnabled(argv[1].toSint16(), false);
 		break;
 	case 4: // SetIconBarIcon
-		warning("kIconBar(SetIcon, %d, %d)", argv[1].toUint16(), argv[2].toUint16());
+		debug(0, "kIconBar(SetIcon, %d, %d)", argv[1].toUint16(), argv[2].toUint16());
+		if (argv[2].toSint16() == -1)
+			g_sci->_gfxMacIconBar->setInventoryIcon(argv[2].toSint16());
 		break;
 	default:
 		error("Unknown kIconBar(%d)", argv[0].toUint16());

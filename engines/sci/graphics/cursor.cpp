@@ -39,6 +39,7 @@
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/view.h"
 #include "sci/graphics/cursor.h"
+#include "sci/graphics/maciconbar.h"
 
 namespace Sci {
 
@@ -444,6 +445,8 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 			else                     // Unknown cursor, ignored
 				return;
 		}
+		if (g_sci->hasMacIconBar())
+			g_sci->_gfxMacIconBar->setInventoryIcon(viewNum);
 	} else {
 		// If we do have the list, we'll be using a remap based on what the
 		// scripts have given us.

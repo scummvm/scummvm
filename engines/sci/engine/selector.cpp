@@ -165,6 +165,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(vanishingX);
 	FIND_SELECTOR(vanishingY);
 	FIND_SELECTOR(iconIndex);
+	FIND_SELECTOR(select);
 
 #ifdef ENABLE_SCI32
 	FIND_SELECTOR(data);

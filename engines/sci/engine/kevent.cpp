@@ -35,6 +35,7 @@
 #include "sci/event.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/cursor.h"
+#include "sci/graphics/maciconbar.h"
 
 namespace Sci {
 
@@ -45,6 +46,13 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	int modifier_mask = getSciVersion() <= SCI_VERSION_01 ? SCI_KEYMOD_ALL : SCI_KEYMOD_NO_FOOLOCK;
 	SegManager *segMan = s->_segMan;
 	Common::Point mousePos;
+
+	// For Mac games with an icon bar, handle possible icon bar events first
+	if (g_sci->hasMacIconBar()) {
+		reg_t iconObj = g_sci->_gfxMacIconBar->handleEvents();
+		if (!iconObj.isNull())
+			invokeSelector(s, iconObj, SELECTOR(select), argc, argv, 0, NULL);
+	}
 
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event
@@ -145,7 +153,11 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	default:
-		s->r_acc = NULL_REG; // Unknown or no event
+		// Return a null event
+		writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_NONE);
+		writeSelectorValue(segMan, obj, SELECTOR(message), 0);
+		writeSelectorValue(segMan, obj, SELECTOR(modifiers), curEvent.modifiers & modifier_mask);
+		s->r_acc = NULL_REG;
 	}
 
 	if ((s->r_acc.offset) && (g_sci->_debugState.stopOnEvent)) {

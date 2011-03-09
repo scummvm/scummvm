@@ -130,6 +130,7 @@ struct SelectorCache {
 
 	// SCI1.1 Mac icon bar selectors
 	Selector iconIndex; ///< Used to index icon bar objects
+	Selector select;
 
 #ifdef ENABLE_SCI32
 	Selector data; // Used by Array()/String()
