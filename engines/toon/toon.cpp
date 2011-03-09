@@ -477,7 +477,7 @@ void ToonEngine::doMagnifierEffect() {
 	for (int32 y = -12; y <= 12; y++) {
 		for (int32 x = -12; x <= 12; x++) {
 			int32 dist = y * y + x * x;
-			if (dist > 144) 
+			if (dist > 144)
 				continue;
 			int32 destPitch = surface.pitch;
 			uint8 *curRow = (uint8 *)surface.pixels + (posY + y) * destPitch + (posX + x);
@@ -495,7 +495,7 @@ void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 		_cursorAnimationInstance->setPosition(_mouseX - 40 + state()->_currentScrollValue - _cursorOffsetX, _mouseY - 40 - _cursorOffsetY, 0, false);
 		_cursorAnimationInstance->render();
 	}
-	
+
 
 	// Handle dirty rects here
 	static int32 lastScroll = 0;
@@ -510,7 +510,7 @@ void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 			Common::Rect rect = _oldDirtyRects[i];
 			rect.translate(-state()->_currentScrollValue,0);
 			offX = 0;
-			if(rect.right <= 0) 
+			if(rect.right <= 0)
 				continue;
 			if (rect.left < 0) {
 				offX = -rect.left;
@@ -526,7 +526,7 @@ void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 			Common::Rect rect = _dirtyRects[i];
 			rect.translate(-state()->_currentScrollValue,0);
 			offX = 0;
-			if (rect.right <= 0) 
+			if (rect.right <= 0)
 				continue;
 			if (rect.left < 0) {
 				offX = -rect.left;
@@ -663,7 +663,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 		}
 
 		while (!clickRelease) {
-			
+
 			if(_dirtyAll) {
 				mainmenuPicture->draw(*_mainSurface, 0, 0, 0, 0);
 				addDirtyRect(0,0,640,400);
@@ -881,7 +881,7 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_inventoryIcons = NULL;
 	_inventoryIconSlots = NULL;
 	_genericTexts = NULL;
-	_audioManager = NULL; 
+	_audioManager = NULL;
 	_gameState = NULL;
 
 	_locationDirNotVisited = NULL;
@@ -936,7 +936,7 @@ ToonEngine::~ToonEngine() {
 		_mainSurface->free();
 		delete _mainSurface;
 	}
-	
+
 	delete[] _finalPalette;
 	delete[] _backupPalette;
 	delete[] _additionalPalette1;
@@ -1028,7 +1028,7 @@ void ToonEngine::simpleUpdate(bool waitCharacterToTalk) {
 	_audioManager->updateAmbientSFX();
 	render();
 
-	
+
 }
 
 void ToonEngine::fixPaletteEntries(uint8 *palette, int num) {
@@ -1295,7 +1295,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 			_gameState->_nextSpecialEnterX = -1;
 			_gameState->_nextSpecialEnterY = -1;
 		}
-	
+
 		_script->start(&_scriptState[0], 3);
 
 		while (_script->run(&_scriptState[0]))
@@ -2211,7 +2211,7 @@ void ToonEngine::haveAConversation(int32 convId) {
 	_gameState->_currentConversationId = convId;
 
 	// change the music to the "conversation" music if needed.
-	playRoomMusic();	
+	playRoomMusic();
 
 	if (conv->_enable) {
 		// fix dialog script based on new flags
@@ -2291,7 +2291,7 @@ void ToonEngine::haveAConversation(int32 convId) {
 	_gameState->_sackVisible = true;
 
 	// switch back to original music
-	playRoomMusic();	
+	playRoomMusic();
 
 }
 
@@ -2768,7 +2768,7 @@ int32 ToonEngine::showInventory() {
 	}
 
 	_gameState->_currentScrollValue = oldScrollValue;
-	_gameState->_inInventory = false; 
+	_gameState->_inInventory = false;
 	_mouseButton = 0;
 	_lastMouseButton = 0x3;
 
@@ -3011,7 +3011,7 @@ void ToonEngine::drawConversationLine() {
 }
 
 void ToonEngine::pauseEngineIntern(bool pause) {
-	
+
 	Engine::pauseEngineIntern(pause);
 
 	static int32 pauseStart = 0;
@@ -4764,7 +4764,7 @@ void ToonEngine::addDirtyRect( int32 left, int32 top, int32 right, int32 bottom 
 
 	Common::Rect rect(left,top,right,bottom);
 
-	if (bottom - top <= 0 || right - left <= 0) 
+	if (bottom - top <= 0 || right - left <= 0)
 		return;
 
 	for (uint32 i = 0; i < _dirtyRects.size(); i++) {

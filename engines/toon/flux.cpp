@@ -96,7 +96,7 @@ int32 CharacterFlux::fixFacingForAnimation(int32 originalFacing, int32 animation
 		if (!facingMask)
 			break;
 	}
-	
+
 	return finalFacing;
 }
 

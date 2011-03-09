@@ -99,7 +99,7 @@ bool Animation::loadAnimation(Common::String file) {
 				_frames[e]._data = new uint8[decompressedSize];
 				if (compressedSize < decompressedSize) {
 					decompressLZSS(imageData, _frames[e]._data, decompressedSize);
-				} else {					
+				} else {
 					memcpy(_frames[e]._data, imageData, compressedSize);
 				}
 			}
@@ -610,7 +610,7 @@ void AnimationInstance::setZ(int32 z, bool relative) {
 
 void AnimationInstance::setLayerZ(int32 z) {
 	_layerZ = z;
-	if (_vm->getAnimationManager()->hasInstance(this)) 
+	if (_vm->getAnimationManager()->hasInstance(this))
 		_vm->getAnimationManager()->updateInstance(this);
 }
 
@@ -688,7 +688,7 @@ AnimationManager::AnimationManager(ToonEngine *vm) : _vm(vm) {
 
 bool AnimationManager::hasInstance(AnimationInstance* instance) {
 	for (uint32 i = 0; i < _instances.size(); i++) {
-		if(_instances[i] == instance) 
+		if(_instances[i] == instance)
 			return true;
 	}
 	return false;
@@ -704,12 +704,12 @@ void AnimationManager::addInstance(AnimationInstance *instance) {
 
 	// if the instance already exists, we skip the add
 	for (uint32 i = 0; i < _instances.size(); i++) {
-		if(_instances[i] == instance) 
+		if(_instances[i] == instance)
 			return;
 	}
-	
+
 	int found = -1;
-		
+
 	// here we now do an ordered insert (closer to the original game)
 	for (uint32 i = 0; i < _instances.size(); i++) {
 		if (_instances[i]->getLayerZ() >= instance->getLayerZ()) {
@@ -723,7 +723,7 @@ void AnimationManager::addInstance(AnimationInstance *instance) {
 	} else {
 		_instances.insert_at(found, instance);
 	}
-	
+
 }
 
 void AnimationManager::removeInstance(AnimationInstance *instance) {

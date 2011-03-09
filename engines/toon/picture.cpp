@@ -32,7 +32,7 @@ namespace Toon {
 
 bool Picture::loadPicture(Common::String file, bool totalPalette /*= false*/) {
 	debugC(1, kDebugPicture, "loadPicture(%s, %d)", file.c_str(), (totalPalette) ? 1 : 0);
-	
+
 	uint32 size = 0;
 	uint8 *fileData = _vm->resources()->getFileData(file, &size);
 	if (!fileData)
@@ -222,7 +222,7 @@ void Picture::drawWithRectList(Graphics::Surface& surface, int32 x, int32 y, int
 
 	}
 
-	
+
 }
 
 void Picture::draw(Graphics::Surface &surface, int32 x, int32 y, int32 dx, int32 dy) {
@@ -327,7 +327,7 @@ void Picture::drawLineOnMask(int32 x, int32 y, int32 x2, int32 y2, bool walkable
 		int32 rx = bx >> 16;
 		int32 ry = by >> 16;
 
-		if( rx >= 0 && rx < _width-1 && ry >= 0 && ry < _height) {	// sanity check: some lines in the game 
+		if( rx >= 0 && rx < _width-1 && ry >= 0 && ry < _height) {	// sanity check: some lines in the game
 																	// were drawing outside the screen causing corruption
 			if (!walkable) {
 				_data[_width * ry + rx] &= 0xe0;

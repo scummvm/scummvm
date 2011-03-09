@@ -111,7 +111,7 @@ void CharacterDrew::update(int32 timeIncrement) {
 			_scale = _currentScale;
 	} else if (_currentScale < _scale) {
 		_scale -= timeIncrement * 2;
-		if (_scale < _currentScale) 
+		if (_scale < _currentScale)
 			_scale = _currentScale;
 	}
 	setPosition(_x, _y);

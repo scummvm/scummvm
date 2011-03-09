@@ -48,7 +48,7 @@ AudioManager::AudioManager(ToonEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixe
 	for (int32 i = 0; i < 16; i++)
 		_channels[i] = NULL;
 
-	for (int32 i = 0; i < 4; i++) 
+	for (int32 i = 0; i < 4; i++)
 		_audioPacks[i] = NULL;
 
 	for (int32 i = 0; i < 4; i++) {
@@ -288,7 +288,7 @@ AudioStreamInstance::~AudioStreamInstance() {
 int AudioStreamInstance::readBuffer(int16 *buffer, const int numSamples) {
 	debugC(5, kDebugAudio, "readBuffer(buffer, %d)", numSamples);
 
-	if(_stopped) 
+	if(_stopped)
 		return 0;
 
 	handleFade(numSamples);
@@ -427,7 +427,7 @@ void AudioStreamInstance::handleFade(int32 numSamples) {
 	debugC(5, kDebugAudio, "handleFade(%d)", numSamples);
 
 	// Fading enabled only for music
-	if (_soundType != Audio::Mixer::kMusicSoundType) 
+	if (_soundType != Audio::Mixer::kMusicSoundType)
 		return;
 
 	int32 finalVolume = _volume;
@@ -461,7 +461,7 @@ void AudioStreamInstance::handleFade(int32 numSamples) {
 			_musicAttenuation = 250;
 	} else {
 		_musicAttenuation += numSamples >> 5;
-		if (_musicAttenuation > 1000) 
+		if (_musicAttenuation > 1000)
 			_musicAttenuation = 1000;
 	}
 
@@ -557,7 +557,7 @@ void AudioManager::startAmbientSFX(int32 id, int32 delay, int32 mode, int32 volu
 		}
 	}
 
-	if (found < 0) 
+	if (found < 0)
 		return;
 
 	_ambientSFXs[found]._lastTimer = _vm->getOldMilli() - 1;
@@ -622,7 +622,7 @@ void AudioManager::updateAmbientSFX()
 		AudioAmbientSFX* ambient = &_ambientSFXs[i];
 		if (ambient->_enabled && (ambient->_channel < 0 || !(_channels[ambient->_channel] && _channels[ambient->_channel]->isPlaying()))) {
 			if(ambient->_mode == 1) {
-				if (_vm->randRange(0, 32767) < ambient->_delay) {					
+				if (_vm->randRange(0, 32767) < ambient->_delay) {
 					ambient->_channel = playSFX(ambient->_id, ambient->_volume, false);
 				}
 			} else {

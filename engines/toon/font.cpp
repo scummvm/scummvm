@@ -278,7 +278,7 @@ void FontRenderer::renderMultiLineText(int32 x, int32 y, Common::String origText
 		const byte *line = lines[i];
 		curX = x - lineSize[i] / 2;
 		_vm->addDirtyRect(curX + _vm->state()->_currentScrollValue, y, curX + lineSize[i] + _vm->state()->_currentScrollValue, curY + height);
-		
+
 		while (*line) {
 			byte curChar = textToFont(*line);
 			if (curChar != 32) _currentFont->drawFontFrame(_vm->getMainSurface(), curChar, curX + _vm->state()->_currentScrollValue, curY, _currentFontColor);

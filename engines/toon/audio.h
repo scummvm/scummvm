@@ -138,14 +138,14 @@ public:
 	void playVoice(int32 id, bool genericVoice);
 	int32 playSFX(int32 id, int volume, bool genericSFX);
 	void stopCurrentVoice();
-	void stopAllSfxs(); 
+	void stopAllSfxs();
 	void setMusicVolume(int32 volume);
 	void stopMusic();
 	void muteVoice(bool mute);
 	void muteMusic(bool mute);
 	void muteSfx(bool mute);
 	bool isVoiceMuted() { return _voiceMuted; }
-	bool isMusicMuted() { return _musicMuted; }	
+	bool isMusicMuted() { return _musicMuted; }
 	bool isSfxMuted() { return _sfxMuted; }
 
 	void startAmbientSFX(int32 id, int32 delay, int32 mode, int32 volume);

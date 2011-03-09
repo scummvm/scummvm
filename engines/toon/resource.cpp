@@ -92,7 +92,7 @@ void Resources::addToCache(Common::String packName, Common::String fileName, uin
 		}
 		if (!bestEntry)
 			break;
-	
+
 		free(bestEntry->_data);
 		bestEntry->_data = 0;
 		_cacheSize -= bestEntry->_size;
@@ -109,7 +109,7 @@ void Resources::addToCache(Common::String packName, Common::String fileName, uin
 			return;
 		}
 	}
-	
+
 	CacheEntry *entry = new CacheEntry();
 	entry->_packName = packName;
 	entry->_fileName = fileName;
@@ -175,7 +175,7 @@ uint8 *Resources::getFileData(Common::String fileName, uint32 *fileSize) {
 		}
 
 		for (uint32 i = 0; i < _pakFiles.size(); i++) {
-	
+
 			locFileData = _pakFiles[i]->getFileData(fileName, &locFileSize);
 			if (locFileData) {
 				*fileSize = locFileSize;
@@ -238,7 +238,7 @@ uint8 *PakFile::getFileData(Common::String fileName, uint32 *fileSize) {
 			if (file.open(_packName)) {
 					*fileSize = _files[i]._size;
 					file.seek(_files[i]._offset);
-					
+
 					// Use malloc() because that's what MemoryReadStream
 					// uses to dispose of the memory when it's done.
 					uint8 *buffer = (uint8 *)malloc(*fileSize);

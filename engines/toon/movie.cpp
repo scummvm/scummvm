@@ -56,7 +56,7 @@ bool ToonstruckSmackerDecoder::loadFile(const Common::String &filename) {
 
 		return true;
 	}
-	
+
 
 	return false;
 }

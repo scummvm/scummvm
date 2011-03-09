@@ -104,7 +104,7 @@ void Character::setFacing(int32 facing) {
 		_lastWalkTime = _vm->getSystem()->getMillis();
 		if ((_facing - facing + 8) % 8 > (facing - _facing + 8) % 8)
 			dir = 1;
-		else 
+		else
 			dir = -1;
 
 		while (_facing != facing) {
@@ -191,7 +191,7 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 		_currentPathNodeCount = _vm->getPathFinding()->getPathNodeCount();
 		_currentPathNode = 0;
 		stopSpecialAnim();
-	
+
 		_lastWalkTime = _vm->getSystem()->getMillis();
 
 		_numPixelToWalk = 0;
@@ -434,8 +434,8 @@ void Character::update(int32 timeIncrement) {
 
 			if (_animScriptId != -1)
 				_vm->getSceneAnimationScript(_animScriptId)->_frozenForConversation = true;
-			
-			
+
+
 			// TODO setup backup //
 
 			_animFlags |= 0x10;
@@ -525,7 +525,7 @@ void Character::update(int32 timeIncrement) {
 
 	//label78
 
-	
+
 #if 0
 	if (_id == 0)
 		debug(" drew animation name %s / flag %d / frame %d", _specialAnim->_name, _animFlags, nextFrame);
