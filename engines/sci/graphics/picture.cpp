@@ -759,7 +759,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 				case GID_SQ3:
 					switch (_resourceId) {
 					case 154: // SQ3: intro, ship gets sucked in
-						_screen->ditherForceMemorial(0xD0);
+						_screen->ditherForceDitheredColor(0xD0);
 						break;
 					default:
 						break;

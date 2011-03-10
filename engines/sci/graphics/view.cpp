@@ -586,11 +586,11 @@ const byte *GfxView::getBitmap(int16 loopNo, int16 celNo) {
  * cel if the dithering in here matches dithering used by the current picture.
  */
 void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte clearKey) {
-	int16 *unditherMemorial = _screen->unditherGetMemorial();
+	int16 *ditheredPicColors = _screen->unditherGetDitheredBgColors();
 
-	// It makes no sense to go further, if no memorial data from current picture
-	// is available
-	if (!unditherMemorial)
+	// It makes no sense to go further, if there isn't any dithered color data
+	// available for the current picture
+	if (!ditheredPicColors)
 		return;
 
 	// Makes no sense to process bitmaps that are 3 pixels wide or less
@@ -606,13 +606,13 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 		return;
 
 	// Walk through the bitmap and remember all combinations of colors
-	int16 bitmapMemorial[SCI_SCREEN_UNDITHERMEMORIAL_SIZE];
+	int16 ditheredBitmapColors[DITHERED_BG_COLORS_SIZE];
 	byte *curPtr;
 	byte color1, color2;
 	byte nextColor1, nextColor2;
 	int16 y, x;
 
-	memset(&bitmapMemorial, 0, sizeof(bitmapMemorial));
+	memset(&ditheredBitmapColors, 0, sizeof(ditheredBitmapColors));
 
 	// Count all seemingly dithered pixel-combinations as soon as at least 4
 	// pixels are adjacent and check pixels in the following line as well to
@@ -631,17 +631,17 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 			nextColor1 = (nextColor1 >> 4) | (nextColor2 << 4);
 			nextColor2 = (nextColor2 >> 4) | *nextPtr++ << 4;
 			if ((color1 == color2) && (color1 == nextColor1) && (color1 == nextColor2))
-				bitmapMemorial[color1]++;
+				ditheredBitmapColors[color1]++;
 		}
 	}
 
-	// Now compare both memorial tables to find out matching
-	// dithering-combinations
-	bool unditherTable[SCI_SCREEN_UNDITHERMEMORIAL_SIZE];
+	// Now compare both dither color tables to find out matching dithered color
+	// combinations
+	bool unditherTable[DITHERED_BG_COLORS_SIZE];
 	byte color, unditherCount = 0;
 	memset(&unditherTable, false, sizeof(unditherTable));
 	for (color = 0; color < 255; color++) {
-		if ((bitmapMemorial[color] > 5) && (unditherMemorial[color] > 200)) {
+		if ((ditheredBitmapColors[color] > 5) && (ditheredPicColors[color] > 200)) {
 			// match found, check if colorKey is contained -> if so, we ignore
 			// of course
 			color1 = color & 0x0F; color2 = color >> 4;

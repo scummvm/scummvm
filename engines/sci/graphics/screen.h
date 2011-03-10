@@ -51,7 +51,7 @@ enum GfxScreenMasks {
 };
 
 enum {
-	SCI_SCREEN_UNDITHERMEMORIAL_SIZE = 256
+	DITHERED_BG_COLORS_SIZE = 256
 };
 
 /**
@@ -112,9 +112,11 @@ public:
 	void adjustBackUpscaledCoordinates(int16 &y, int16 &x);
 
 	void dither(bool addToFlag);
-	void ditherForceMemorial(byte color);
+
+	// Force a color combination as a dithered color
+	void ditherForceDitheredColor(byte color);
 	void debugUnditherSetState(bool flag);
-	int16 *unditherGetMemorial();
+	int16 *unditherGetDitheredBgColors();
 
 	void debugShowMap(int mapNo);
 
@@ -146,7 +148,7 @@ private:
 	void setVerticalShakePos(uint16 shakePos);
 
 	bool _unditherState;
-	int16 _unditherMemorial[SCI_SCREEN_UNDITHERMEMORIAL_SIZE];
+	int16 _ditheredPicColors[DITHERED_BG_COLORS_SIZE];
 
 	// These screens have the real resolution of the game engine (320x200 for
 	// SCI0/SCI1/SCI11 games, 640x480 for SCI2 games). SCI0 games will be

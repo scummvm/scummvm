@@ -583,7 +583,7 @@ void GfxScreen::dither(bool addToFlag) {
 		}
 	} else {
 		if (!addToFlag)
-			memset(&_unditherMemorial, 0, sizeof(_unditherMemorial));
+			memset(&_ditheredPicColors, 0, sizeof(_ditheredPicColors));
 		// Do dithering on visual screen and put decoded but undithered byte onto display-screen
 		for (y = 0; y < _height; y++) {
 			for (x = 0; x < _width; x++) {
@@ -591,7 +591,7 @@ void GfxScreen::dither(bool addToFlag) {
 				if (color & 0xF0) {
 					color ^= color << 4;
 					// remember dither combination for cel-undithering
-					_unditherMemorial[color]++;
+					_ditheredPicColors[color]++;
 					// if decoded color wants do dither with black on left side, we turn it around
 					//  otherwise the normal ega color would get used for display
 					if (color & 0xF0) {
@@ -618,18 +618,17 @@ void GfxScreen::dither(bool addToFlag) {
 	}
 }
 
-// Force a color combination into memorial
-void GfxScreen::ditherForceMemorial(byte color) {
-	_unditherMemorial[color] = 256;
+void GfxScreen::ditherForceDitheredColor(byte color) {
+	_ditheredPicColors[color] = 256;
 }
 
 void GfxScreen::debugUnditherSetState(bool flag) {
 	_unditherState = flag;
 }
 
-int16 *GfxScreen::unditherGetMemorial() {
+int16 *GfxScreen::unditherGetDitheredBgColors() {
 	if (_unditherState)
-		return (int16 *)&_unditherMemorial;
+		return (int16 *)&_ditheredPicColors;
 	else
 		return NULL;
 }
