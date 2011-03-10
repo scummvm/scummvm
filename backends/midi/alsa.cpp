@@ -44,7 +44,7 @@
 
 #if SND_LIB_MAJOR >= 1 || SND_LIB_MINOR >= 6
 #define snd_seq_flush_output(x) snd_seq_drain_output(x)
-#define snd_seq_set_client_group(x,name)	/*nop */
+#define snd_seq_set_client_group(x,name)    /*nop */
 #define my_snd_seq_open(seqp) snd_seq_open(seqp, "hw", SND_SEQ_OPEN_DUPLEX, 0)
 #else
 /* SND_SEQ_OPEN_OUT causes oops on early version of ALSA */
@@ -53,9 +53,8 @@
 
 #define perm_ok(pinfo,bits) ((snd_seq_port_info_get_capability(pinfo) & (bits)) == (bits))
 
-static int check_permission(snd_seq_port_info_t *pinfo)
-{
-	if (perm_ok(pinfo, SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE)) {
+static int check_permission(snd_seq_port_info_t *pinfo) {
+	if (perm_ok(pinfo, SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_WRITE)) {
 		if (!(snd_seq_port_info_get_capability(pinfo) & SND_SEQ_PORT_CAP_NO_EXPORT))
 			return 1;
 	}
@@ -68,7 +67,7 @@ static int check_permission(snd_seq_port_info_t *pinfo)
 
 #define ADDR_DELIM      ".:"
 
-class MidiDriver_ALSA:public MidiDriver_MPU401 {
+class MidiDriver_ALSA : public MidiDriver_MPU401 {
 public:
 	MidiDriver_ALSA(int client, int port);
 	int open();
@@ -88,8 +87,7 @@ private:
 };
 
 MidiDriver_ALSA::MidiDriver_ALSA(int client, int port)
- : _isOpen(false), seq_handle(0), seq_client(client), seq_port(port), my_client(0), my_port(0), _channel0Volume(127)
-{
+	: _isOpen(false), seq_handle(0), seq_client(client), seq_port(port), my_client(0), my_port(0), _channel0Volume(127) {
 	memset(&ev, 0, sizeof(ev));
 }
 
@@ -116,7 +114,7 @@ int MidiDriver_ALSA::open() {
 	// with those capabilities.
 
 	my_port = snd_seq_create_simple_port(seq_handle, "SCUMMVM port 0", 0,
-		SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION);
+	                                     SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION);
 
 	if (my_port < 0) {
 		snd_seq_close(seq_handle);
@@ -238,14 +236,13 @@ void MidiDriver_ALSA::send(uint32 b) {
 		// somewhere.
 		send(0x07B0 | (_channel0Volume << 16));
 		break;
-	case 0xE0:{
-			// long theBend = ((((long)midiCmd[1] + (long)(midiCmd[2] << 7))) - 0x2000) / 4;
-			// snd_seq_ev_set_pitchbend(&ev, chanID, theBend);
-			long theBend = ((long)midiCmd[1] + (long)(midiCmd[2] << 7)) - 0x2000;
-			snd_seq_ev_set_pitchbend(&ev, chanID, theBend);
-			send_event(1);
-		}
-		break;
+	case 0xE0: {
+		// long theBend = ((((long)midiCmd[1] + (long)(midiCmd[2] << 7))) - 0x2000) / 4;
+		// snd_seq_ev_set_pitchbend(&ev, chanID, theBend);
+		long theBend = ((long)midiCmd[1] + (long)(midiCmd[2] << 7)) - 0x2000;
+		snd_seq_ev_set_pitchbend(&ev, chanID, theBend);
+		send_event(1);
+		} break;
 
 	default:
 		warning("Unknown MIDI Command: %08x", (int)b);
