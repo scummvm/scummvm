@@ -280,6 +280,9 @@ typedef Common::List<AlsaDevice> AlsaDevices;
 
 AlsaDevice::AlsaDevice(Common::String name, MusicType mt, int client)
 	: _name(name), _type(mt), _client(client) {
+	// Make sure we do not get any trailing spaces to avoid problems when
+	// storing the name in the configuration file.
+	_name.trim();
 }
 
 Common::String AlsaDevice::getName() {
