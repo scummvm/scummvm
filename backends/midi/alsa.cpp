@@ -83,10 +83,12 @@ private:
 	snd_seq_t *seq_handle;
 	int seq_client, seq_port;
 	int my_client, my_port;
+	// The volume controller value of the first MIDI channel
+	int8 _channel0Volume;
 };
 
 MidiDriver_ALSA::MidiDriver_ALSA(int client, int port)
- : _isOpen(false), seq_handle(0), seq_client(client), seq_port(port), my_client(0), my_port(0)
+ : _isOpen(false), seq_handle(0), seq_client(client), seq_port(port), my_client(0), my_port(0), _channel0Volume(127)
 {
 	memset(&ev, 0, sizeof(ev));
 }
@@ -208,15 +210,33 @@ void MidiDriver_ALSA::send(uint32 b) {
 	case 0xB0:
 		/* is it this simple ? Wow... */
 		snd_seq_ev_set_controller(&ev, chanID, midiCmd[1], midiCmd[2]);
+
+		// We save the volume of the first MIDI channel here to utilize it in
+		// our workaround for broken USB-MIDI cables.
+		if (chanID == 0 && midiCmd[1] == 0x07)
+			_channel0Volume = midiCmd[2];
+
 		send_event(1);
 		break;
 	case 0xC0:
 		snd_seq_ev_set_pgmchange(&ev, chanID, midiCmd[1]);
 		send_event(0);
+
+		// Send a volume change command to work around a firmware bug in common
+		// USB-MIDI cables. If the first MIDI command in a USB packet is a
+		// Cx or Dx command, the second command in the packet is dropped
+		// somewhere.
+		send(0x07B0 | (_channel0Volume << 16));
 		break;
 	case 0xD0:
 		snd_seq_ev_set_chanpress(&ev, chanID, midiCmd[1]);
 		send_event(1);
+
+		// Send a volume change command to work around a firmware bug in common
+		// USB-MIDI cables. If the first MIDI command in a USB packet is a
+		// Cx or Dx command, the second command in the packet is dropped
+		// somewhere.
+		send(0x07B0 | (_channel0Volume << 16));
 		break;
 	case 0xE0:{
 			// long theBend = ((((long)midiCmd[1] + (long)(midiCmd[2] << 7))) - 0x2000) / 4;
