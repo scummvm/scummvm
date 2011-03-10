@@ -282,7 +282,7 @@ void Menu::adjustTestVolume() {
 void Menu::setupMusic() {
 	getSound()->stopAll();
 
-	uint32 index = getScene() ? getWorld()->musicCurrentResourceIndex : kMusicStopped;
+	int32 index = getScene() ? getWorld()->musicCurrentResourceIndex : kMusicStopped;
 
 	if (index == kMusicStopped) {
 		_soundResourceId = kResourceNone;
@@ -301,7 +301,7 @@ void Menu::adjustPerformance() {
 	getSound()->playMusic(kResourceNone, 0);
 	setupMusic();
 
-	uint32 index = getScene() ? getWorld()->musicCurrentResourceIndex : kMusicStopped;
+	int32 index = getScene() ? getWorld()->musicCurrentResourceIndex : kMusicStopped;
 	if (index != kMusicStopped)
 		getSound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, index));
 }
