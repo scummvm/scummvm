@@ -490,6 +490,12 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(ListFirstTrue),     SIG_EVERYWHERE,           "li(.*)",                NULL,            NULL },
 	{ MAP_CALL(ListIndexOf),       SIG_EVERYWHERE,           "l[o0]",                 NULL,            NULL },
 	{ "OnMe", kIsOnMe,             SIG_EVERYWHERE,           "iioi",                  NULL,            NULL },
+	// Purge is used by the memory manager in SSCI to ensure that X number of bytes (the so called "unmovable
+	// memory") are available when the current room changes. This is similar to the SCI0-SCI1.1 FlushResources
+	// call, with the added functionality of ensuring that a specific amount of memory is available. We have
+	// our own memory manager and garbage collector, thus we simply call FlushResources, which in turn invokes
+	// our garbage collector (i.e. the SCI0-SCI1.1 semantics).
+	{ "Purge", kFlushResources,    SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(RepaintPlane),      SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(SetShowStyle),      SIG_EVERYWHERE,           "ioiiiii([ri])(i)",      NULL,            NULL },
 	{ MAP_CALL(String),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
@@ -507,12 +513,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// ObjectIntersect - used in QFG4 floppy
 	// MakeSaveCatName - used in the Save/Load dialog of GK1CD (SRDialog, script 64990)
 	// MakeSaveFileName - used in the Save/Load dialog of GK1CD (SRDialog, script 64990)
-
-	// SCI2 empty functions
-
-	// Purge is used by the memory manager in SSCI to ensure that X number of bytes (the so called "unmovable
-	// memory") are available. We have our own memory manager and garbage collector, thus we ignore this call.
-	{ MAP_EMPTY(Purge),            SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 
 	// Unused / debug SCI2 unused functions, always mapped to kDummy
 	{ MAP_DUMMY(InspectObject),    SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
