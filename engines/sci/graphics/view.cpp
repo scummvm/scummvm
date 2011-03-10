@@ -476,6 +476,12 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 		break;
 	case kViewVga:
 	case kViewVga11:
+		// If we have no RLE data, the image is just uncompressed
+		if (rlePos == 0) {
+			memcpy(outPtr, literalPtr, pixelCount);
+			break;
+		}
+
 		while (pixelNr < pixelCount) {
 			curByte = *rlePtr++;
 			runLength = curByte & 0x3F;
