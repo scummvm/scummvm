@@ -593,12 +593,8 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 	if (!ditheredPicColors)
 		return;
 
-	// Makes no sense to process bitmaps that are 3 pixels wide or less
-	if (width <= 3)
-		return;
-
-	// We need at least 2 pixel lines
-	if (height < 2)
+	// We need at least a 4x2 bitmap for this algorithm to work
+	if (width < 4 || height < 2)
 		return;
 
 	// If EGA mapping is used for this view, dont do undithering as well
