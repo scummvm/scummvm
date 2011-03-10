@@ -976,7 +976,7 @@ get_system_exe_extension $guessed_host
 NATIVEEXEEXT=$_exeext
 
 case $_host in
-android)
+android | android-v7a)
 	_host_os=android
 	_host_cpu=arm
 	_host_alias=arm-linux-androideabi
@@ -1504,8 +1504,16 @@ case $_host_os in
 		add_line_to_config_mk 'AMIGAOS = 1'
 		;;
 	android)
+		case $_host in
+			android)
+				CXXFLAGS="$CXXFLAGS -march=armv5te -mtune=xscale -msoft-float"
+				;;
+			android-v7a)
+				CXXFLAGS="$CXXFLAGS -march=armv7-a -mfloat-abi=softfp -mfpu=vfp"
+				LDFLAGS="$LDFLAGS -Wl,--fix-cortex-a8"
+				;;
+		esac
 		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
-		CXXFLAGS="$CXXFLAGS -march=armv5te -mtune=xscale -msoft-float"
 		CXXFLAGS="$CXXFLAGS -fpic -ffunction-sections -funwind-tables"
 		if test "$_release_build" = yes; then
 			CXXFLAGS="$CXXFLAGS	-fomit-frame-pointer -fstrict-aliasing"
@@ -1668,7 +1676,7 @@ if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
 	echo "Cross-compiling to $_host"
 	case "$_host" in
-		android)
+		android | android-v7a)
 			_unix=yes
 			_need_memalign=yes
 			# we link a .so as default
