@@ -1021,7 +1021,7 @@ void SegManager::uninstantiateScript(int script_nr) {
 	SegmentId segmentId = getScriptSegment(script_nr);
 	Script *scr = getScriptIfLoaded(segmentId);
 
-	if (!scr) {   // Is it already unloaded?
+	if (!scr || scr->isMarkedAsDeleted()) {   // Is it already unloaded?
 		//warning("unloading script 0x%x requested although not loaded", script_nr);
 		// This is perfectly valid SCI behaviour
 		return;
@@ -1078,15 +1078,7 @@ void SegManager::uninstantiateScriptSci0(int script_nr) {
 					if (scr->getLockers())
 						scr->decrementLockers();  // Decrease lockers if this is us ourselves
 				} else {
-					if (g_sci->getGameId() == GID_HOYLE3 && (superclass_script == 0 || superclass_script >= 990)) {
-						// HACK for Hoyle 3: when exiting Checkers or Pachisi, scripts 0, 999 and some others
-						// are deleted but are never instantiated again. We ignore deletion of these scripts
-						// here for Hoyle 3 - bug #3038837
-						// TODO/FIXME: find out why this happens, seems like there is a problem with the object
-						// lock code
-					} else {
-						uninstantiateScript(superclass_script);
-					}
+					uninstantiateScript(superclass_script);
 				}
 				// Recurse to assure that the superclass lockers number gets decreased
 			}
