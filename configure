@@ -1516,11 +1516,11 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
 		CXXFLAGS="$CXXFLAGS -fpic -ffunction-sections -funwind-tables"
 		if test "$_release_build" = yes; then
-			CXXFLAGS="$CXXFLAGS	-fomit-frame-pointer -fstrict-aliasing"
+			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer -fstrict-aliasing"
 		else
-			CXXFLAGS="$CXXFLAGS	-fno-omit-frame-pointer -fno-strict-aliasing"
+			CXXFLAGS="$CXXFLAGS -fno-omit-frame-pointer -fno-strict-aliasing"
 		fi
-		CXXFLAGS="$CXXFLAGS	-finline-limit=300"
+		CXXFLAGS="$CXXFLAGS -finline-limit=300"
 		CXXFLAGS="$CXXFLAGS -Os -mthumb-interwork"
 		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__"
 		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5E__ -D__ARM_ARCH_5TE__"
@@ -1567,8 +1567,8 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -fuse-cxa-atexit"
 		LDFLAGS="$LDFLAGS -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt"
 		if test "$_dynamic_modules" = no ; then
-  			LDFLAGS="$LDFLAGS -Wl,--gc-sections"
- 		else
+			LDFLAGS="$LDFLAGS -Wl,--gc-sections"
+		else
 				LDFLAGS="$LDFLAGS -Wl,--no-gc-sections"
 				# TODO automate this required 2 step linking phase
 				# LDFLAGS="$LDFLAGS -Wl,--retain-symbols-file,ds.syms"
@@ -3060,8 +3060,8 @@ case $_backend in
 		DEFINES="$DEFINES -D_EE -DFORCE_RTL"
 		INCLUDES="$INCLUDES -I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2SDK/ports/include"
 		if test "$_dynamic_modules" = no ; then
-  			LDFLAGS="$LDFLAGS -mno-crt0 $PS2SDK/ee/startup/crt0.o -T $PS2SDK/ee/startup/linkfile"
- 		fi
+			LDFLAGS="$LDFLAGS -mno-crt0 $PS2SDK/ee/startup/crt0.o -T $PS2SDK/ee/startup/linkfile"
+		fi
 		LDFLAGS="$LDFLAGS -L$PS2SDK/ee/lib -L$PS2SDK/ports/lib"
 		LIBS="$LIBS -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lm -lc -lfileXio -lkernel -lstdc++ "
 		;;
