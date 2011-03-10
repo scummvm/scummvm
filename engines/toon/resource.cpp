@@ -29,7 +29,6 @@
 #include "common/substream.h"
 #include "toon/toon.h"
 
-
 namespace Toon {
 
 Resources::Resources(ToonEngine *vm) : _vm(vm), _cacheSize(0) {
@@ -218,6 +217,7 @@ void Resources::purgeFileData() {
 	}
 	_allocatedFileData.clear();
 }
+
 Common::SeekableReadStream *PakFile::createReadStream(Common::String fileName) {
 	debugC(1, kDebugResource, "createReadStream(%s)", fileName.c_str());
 
@@ -284,11 +284,9 @@ void PakFile::open(Common::SeekableReadStream *rs, Common::String packName) {
 }
 
 void PakFile::close() {
-
 }
 
 PakFile::PakFile() {
-
 }
 
 PakFile::~PakFile() {

@@ -91,7 +91,6 @@ protected:
 	int32 _gridPathCount;
 
 	ToonEngine *_vm;
-
 };
 
 } // End of namespace Toon

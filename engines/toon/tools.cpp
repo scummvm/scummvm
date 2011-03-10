@@ -125,7 +125,6 @@ uint32 decompressSPCN(byte *src, byte *dst, uint32 dstsize) {
 	return (dstp - dst);
 }
 
-
 //return codes
 #define NOT_PACKED  0
 #define PACKED_CRC  -1
@@ -296,7 +295,6 @@ int32 RncDecoder::unpackM1(const void *input, void *output) {
 	uint16 crcUnpacked = 0;
 	uint16 crcPacked = 0;
 
-
 	_bitBuffl = 0;
 	_bitBuffh = 0;
 	_bitCount = 0;
@@ -397,9 +395,6 @@ int32 RncDecoder::unpackM2(const void *input, void *output) {
 	uint16 crcUnpacked = 0;
 	uint16 crcPacked = 0;
 
-// Strangerke - Commented (not used)
-//	uint16 counts = 0;
-
 	_bitBuffl = 0;
 	_bitCount = 0;
 
@@ -428,7 +423,6 @@ int32 RncDecoder::unpackM2(const void *input, void *output) {
 	inputptr = (((const uint8 *)input) + HEADER_LEN);
 	_srcPtr = inputptr;
 	_dstPtr = (uint8 *)output;
-
 
 	uint16 ofs, len;
 	byte ofs_hi, ofs_lo;

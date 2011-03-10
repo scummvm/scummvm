@@ -23,7 +23,6 @@
 *
 */
 
-
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/util.h"
@@ -177,7 +176,7 @@ bool EMCInterpreter::start(EMCState *script, int function) {
 	if (functionOffset == 0xFFFF)
 		return false;
 
-	script->ip = &script->dataPtr->data[functionOffset+1];
+	script->ip = &script->dataPtr->data[functionOffset + 1];
 
 	return true;
 }

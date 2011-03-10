@@ -56,8 +56,6 @@ bool ToonstruckSmackerDecoder::loadFile(const Common::String &filename) {
 
 		return true;
 	}
-
-
 	return false;
 }
 
@@ -107,9 +105,9 @@ bool Movie::playVideo(bool isFirstIntroVideo) {
 				if (_decoder->isLowRes()) {
 					// handle manually 2x scaling here
 					Graphics::Surface* surf = _vm->getSystem()->lockScreen();
-					for (int y = 0; y < frame->h/2; y++) {
-						memcpy(surf->getBasePtr(0, y*2+0), frame->getBasePtr(0, y), frame->pitch);
-						memcpy(surf->getBasePtr(0, y*2+1), frame->getBasePtr(0, y), frame->pitch);
+					for (int y = 0; y < frame->h / 2; y++) {
+						memcpy(surf->getBasePtr(0, y * 2 + 0), frame->getBasePtr(0, y), frame->pitch);
+						memcpy(surf->getBasePtr(0, y * 2 + 1), frame->getBasePtr(0, y), frame->pitch);
 					}
 					_vm->getSystem()->unlockScreen();
 				} else {

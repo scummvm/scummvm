@@ -81,7 +81,6 @@ public:
 	int32 _nextSpecialEnterX;
 	int32 _nextSpecialEnterY;
 
-
 	bool _timerEnabled[2];
 	int32 _timerTimeout[2];
 	int32 _timerDelay[2];
@@ -94,7 +93,6 @@ public:
 
 	void loadConversations(Common::ReadStream *stream);
 	void saveConversations(Common::WriteStream *stream);
-
 };
 
 } // End of namespace Toon

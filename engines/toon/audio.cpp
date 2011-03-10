@@ -209,7 +209,6 @@ void AudioManager::stopCurrentVoice() {
 		_channels[2]->stop(false);
 }
 
-
 void AudioManager::closeAudioPack(int32 id) {
 	delete _audioPacks[id];
 	_audioPacks[id] = NULL;
@@ -616,7 +615,8 @@ void AudioManager::killAllAmbientSFX()
 
 void AudioManager::updateAmbientSFX()
 {
-	if (_vm->getMoviePlayer()->isPlaying()) return;
+	if (_vm->getMoviePlayer()->isPlaying())
+		return;
 
 	for (int32 i = 0; i < 4; i++) {
 		AudioAmbientSFX* ambient = &_ambientSFXs[i];
@@ -634,7 +634,6 @@ void AudioManager::updateAmbientSFX()
 		}
 	}
 }
-
 
 } // End of namespace Toon
 

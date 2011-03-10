@@ -186,7 +186,7 @@ int32 PathFinding::findClosestWalkingPoint(int32 xx, int32 yy, int32 *fxx, int32
 
 	for (int y = 0; y < _height; y++) {
 		for (int x = 0; x < _width; x++) {
-			if (isWalkable(x, y) && isLikelyWalkable(x,y)) {
+			if (isWalkable(x, y) && isLikelyWalkable(x, y)) {
 				int32 ndist = (x - xx) * (x - xx) + (y - yy) * (y - yy);
 				int32 ndist2 = (x - origX) * (x - origX) + (y - origY) * (y - origY);
 				if (currentFound < 0 || ndist < dist || (ndist == dist && ndist2 < dist2)) {
@@ -283,8 +283,8 @@ int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	}
 
 	// first test direct line
-	if (lineIsWalkable(x,y,destx,desty)) {
-		walkLine(x,y,destx,desty);
+	if (lineIsWalkable(x, y, destx, desty)) {
+		walkLine(x, y, destx, desty);
 		return true;
 	}
 
@@ -317,7 +317,7 @@ int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 
 					int32 curPNode = px + py * _width;
 					if (isWalkable(px, py)) { // walkable ?
-						int sum = sq[curNode] + wei * (1 + (isLikelyWalkable(px,py) ? 5 : 0));
+						int sum = sq[curNode] + wei * (1 + (isLikelyWalkable(px, py) ? 5 : 0));
 						if (sq[curPNode] > sum || !sq[curPNode]) {
 							int newWeight = abs(destx - px) + abs(desty - py);
 							sq[curPNode] = sum;
@@ -437,7 +437,6 @@ void PathFinding::addBlockingEllipse(int32 x1, int32 y1, int32 w, int32 h) {
 	_blockingRects[_numBlockingRects][4] = 1;
 	_numBlockingRects++;
 }
-
 
 int32 PathFinding::getPathNodeCount() const {
 	return _gridPathCount;

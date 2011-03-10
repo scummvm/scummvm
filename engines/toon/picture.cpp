@@ -23,7 +23,6 @@
 *
 */
 
-
 #include "toon/picture.h"
 #include "toon/tools.h"
 #include "common/stack.h"
@@ -69,7 +68,7 @@ bool Picture::loadPicture(Common::String file, bool totalPalette /*= false*/) {
 	}
 	case kCompSPCN: {
 		uint32 decSize = READ_LE_UINT32(fileData + 10);
-		_data = new uint8[decSize+100];
+		_data = new uint8[decSize + 100];
 		_paletteEntries = READ_LE_UINT16(fileData + 14) / 3;
 
 		if (_paletteEntries) {
@@ -219,10 +218,7 @@ void Picture::drawWithRectList(Graphics::Surface& surface, int32 x, int32 y, int
 			curRow += destPitch;
 			c += srcPitch;
 		}
-
 	}
-
-
 }
 
 void Picture::draw(Graphics::Surface &surface, int32 x, int32 y, int32 dx, int32 dy) {
@@ -317,7 +313,6 @@ void Picture::drawLineOnMask(int32 x, int32 y, int32 x2, int32 y2, bool walkable
 	else
 		t = adx;
 
-
 	int32 cdx = (dx << 16) / t;
 	int32 cdy = (dy << 16) / t;
 
@@ -331,11 +326,11 @@ void Picture::drawLineOnMask(int32 x, int32 y, int32 x2, int32 y2, bool walkable
 																	// were drawing outside the screen causing corruption
 			if (!walkable) {
 				_data[_width * ry + rx] &= 0xe0;
-				_data[_width * ry + rx+1] &= 0xe0;
+				_data[_width * ry + rx + 1] &= 0xe0;
 			} else {
 				int32 v = _data[_width * (by >> 16) + rx - 1];
 				_data[_width * ry + rx] = v;
-				_data[_width * ry + rx+1] = v;
+				_data[_width * ry + rx + 1] = v;
 			}
 		}
 

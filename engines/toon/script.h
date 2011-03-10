@@ -31,7 +31,6 @@
 #include "common/func.h"
 #include "common/iff_container.h"
 
-
 // Based on Kyra script interpretor
 namespace Toon {
 

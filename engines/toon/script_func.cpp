@@ -265,7 +265,6 @@ int32 ScriptFunc::sys_Cmd_Draw_Actor_Standing(EMCState *state) {
 		arg1 = 1;
 	}
 
-
 	if (arg2 > -1)
 		_vm->getDrew()->forceFacing(arg2);
 
@@ -495,7 +494,7 @@ int32 ScriptFunc::sys_Cmd_Set_Anim_Scale_Size(EMCState *state) {
 	SceneAnimation *sceneAnim = _vm->getSceneAnimation(animID);
 	if (sceneAnim) {
 		sceneAnim->_animInstance->setUseMask(true);
-		sceneAnim->_animInstance->setScale(scale,true);
+		sceneAnim->_animInstance->setScale(scale, true);
 	}
 	return 0;
 }
@@ -939,8 +938,6 @@ int32 ScriptFunc::sys_Cmd_Init_Scene_Anim(EMCState *state) {
 	sceneAnim->_animInstance->setAnimationRange(stackPos(11), stackPos(11));
 	sceneAnim->_animInstance->setFrame(stackPos(11));
 
-
-
 	debugC(0, 0xfff, "Init Anim %s %d %d %d %d %d %d %d %d %d %d %d %d %d\n", GetText(12, state), stackPos(0), stackPos(1), stackPos(2), stackPos(3),
 	       stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9), stackPos(10), stackPos(11),  stackPos(12));
 
@@ -1091,13 +1088,13 @@ int32 ScriptFunc::sys_Cmd_Proceed_To_Next_Chapter(EMCState *state) {
 }
 
 int32 ScriptFunc::sys_Cmd_Play_Sfx_Plus(EMCState *state) {
-	//debugC(0,0xfff, "playSfx ( %d , %d, %d, %d, %d )", stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	//debugC(0, 0xfff, "playSfx ( %d , %d, %d, %d, %d )", stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	_vm->playSFX(stackPos(0), stackPos(1));
 	return 0;
 }
 
 int32 ScriptFunc::sys_Cmd_Play_Sfx(EMCState *state) {
-	//debugC(0,0xfff, "playSfx ( %d , %d)", stackPos(0), stackPos(1));
+	//debugC(0, 0xfff, "playSfx ( %d , %d)", stackPos(0), stackPos(1));
 	_vm->playSFX(stackPos(0), stackPos(1));
 	return 0;
 }

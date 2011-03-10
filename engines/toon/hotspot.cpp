@@ -78,8 +78,6 @@ int32 Hotspots::Find(int32 x, int32 y) {
 	debugC(6, kDebugHotspot, "Find(%d, %d)", x, y);
 
 	int32 priority = -1;
-// Strangerke - Commented (not used)
-//	bool found = false;
 	int32 foundId = -1;
 	int32 testId = -1;
 
@@ -91,8 +89,6 @@ int32 Hotspots::Find(int32 x, int32 y) {
 				testId = i;
 
 			if (_items[testId].getPriority() > priority) {
-// Strangerke - Commented (not used)
-//				found = true;
 				foundId = testId;
 				priority = _items[testId].getPriority();
 			}

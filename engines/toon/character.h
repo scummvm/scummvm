@@ -49,7 +49,6 @@ struct SpecialCharacterAnimation {
 	byte _flags9;      // 25
 };
 
-
 class Character {
 public:
 	Character(ToonEngine *vm);
@@ -105,7 +104,6 @@ public:
 
 	int32 getFacingFromDirection(int32 dx, int32 dy);
 	static const SpecialCharacterAnimation *getSpecialAnimation(int32 characterId, int32 animationId);
-
 
 protected:
 	ToonEngine *_vm;

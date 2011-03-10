@@ -206,8 +206,6 @@ public:
 	void waitForScriptStep();
 	void doMagnifierEffect();
 
-
-
 	bool canSaveGameStateCurrently();
 	bool canLoadGameStateCurrently();
 	void pauseEngineIntern(bool pause);

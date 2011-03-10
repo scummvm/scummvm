@@ -45,5 +45,4 @@ void Conversation::load(Common::ReadStream *stream, int16 *conversationDataBase)
 	}
 }
 
-
 }

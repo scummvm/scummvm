@@ -81,7 +81,7 @@ void FontRenderer::renderText(int32 x, int32 y, Common::String origText, int32 m
 		x -= xx / 2;
 	}
 
-	_vm->addDirtyRect(x,y,x+xx,y+yy);
+	_vm->addDirtyRect(x, y, x + xx, y + yy);
 
 	int32 curX = x;
 	int32 curY = y;
@@ -271,8 +271,6 @@ void FontRenderer::renderMultiLineText(int32 x, int32 y, Common::String origText
 	// we have good coordinates now, we can render the multi line
 	int32 curX = x;
 	int32 curY = y;
-
-
 
 	for (int32 i = 0; i < numLines; i++) {
 		const byte *line = lines[i];

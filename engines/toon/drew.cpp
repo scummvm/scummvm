@@ -115,7 +115,6 @@ void CharacterDrew::update(int32 timeIncrement) {
 			_scale = _currentScale;
 	}
 	setPosition(_x, _y);
-
 }
 
 int32 CharacterDrew::getRandomIdleAnim() {

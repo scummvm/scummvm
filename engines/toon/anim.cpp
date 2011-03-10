@@ -214,18 +214,14 @@ void Animation::drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 fram
 	int32 finalWidth = rectX * scale / 1024;
 	int32 finalHeight = rectY * scale / 1024;
 
-
-	// compute final x1,y1,x2,y2
+	// compute final x1, y1, x2, y2
 	int32 xx1 = xx + _x1 + _frames[frame]._x1 * scale / 1024;
 	int32 yy1 = yy + _y1 + _frames[frame]._y1 * scale / 1024;
 	int32 xx2 = xx1 + finalWidth;
 	int32 yy2 = yy1 + finalHeight;
 	int32 w = _frames[frame]._x2 - _frames[frame]._x1;
-// Strangerke - Commented (not used)
-//	int32 h = _frames[frame]._y2 - _frames[frame]._y1;
 
-	_vm->addDirtyRect(xx1,yy1,xx2,yy2);
-
+	_vm->addDirtyRect(xx1, yy1, xx2, yy2);
 
 	int32 destPitch = surface.pitch;
 	int32 destPitchMask = mask->getWidth();
@@ -448,7 +444,6 @@ AnimationInstance::AnimationInstance(ToonEngine *vm, AnimationInstanceType type)
 	_layerZ = 0;
 }
 
-
 void AnimationInstance::render() {
 	debugC(5, kDebugAnim, "render()");
 	if (_visible && _animation) {
@@ -580,7 +575,7 @@ void AnimationInstance::getRect(int32 *x1, int32 *y1, int32 *x2, int32 *y2) cons
 	int32 finalWidth = rectX * _scale / 1024;
 	int32 finalHeight = rectY * _scale / 1024;
 
-	// compute final x1,y1,x2,y2
+	// compute final x1, y1, x2, y2
 	*x1 = _x + _animation->_x1 + _animation->_frames[_currentFrame]._x1 * _scale / 1024;
 	*y1 = _y + _animation->_y1 + _animation->_frames[_currentFrame]._y1 * _scale / 1024;
 	*x2 = *x1 + finalWidth;
@@ -671,8 +666,6 @@ void AnimationInstance::load(Common::ReadStream *stream) {
 	_useMask = stream->readSint32LE();
 }
 
-
-
 void AnimationInstance::setLooping(bool enable) {
 	debugC(6, kDebugAnim, "setLooping(%d)", (enable) ? 1 : 0);
 	_looping = enable;
@@ -723,7 +716,6 @@ void AnimationManager::addInstance(AnimationInstance *instance) {
 	} else {
 		_instances.insert_at(found, instance);
 	}
-
 }
 
 void AnimationManager::removeInstance(AnimationInstance *instance) {
