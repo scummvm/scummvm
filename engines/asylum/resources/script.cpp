@@ -327,7 +327,7 @@ bool ScriptManager::process() {
 	if (_queue.currentEntry) {
 		uint32 entryIndex = _queue.currentEntry;
 		uint32 nextIndex = _queue.entries[entryIndex].field_C;
-		uint32 scriptIndex = _queue.entries[entryIndex].scriptIndex;
+		int32 scriptIndex = _queue.entries[entryIndex].scriptIndex;
 
 		if (scriptIndex != -1) {
 
