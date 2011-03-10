@@ -1515,10 +1515,10 @@ case $_host_os in
 		esac
 		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
 		CXXFLAGS="$CXXFLAGS -fpic -ffunction-sections -funwind-tables"
-		if test "$_release_build" = yes; then
-			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer -fstrict-aliasing"
-		else
+		if test "$_debug_build" = yes; then
 			CXXFLAGS="$CXXFLAGS -fno-omit-frame-pointer -fno-strict-aliasing"
+		else
+			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer -fstrict-aliasing"
 		fi
 		CXXFLAGS="$CXXFLAGS -finline-limit=300"
 		CXXFLAGS="$CXXFLAGS -Os -mthumb-interwork"
@@ -2973,7 +2973,12 @@ fi
 case $_backend in
 	android)
 		# ssp at this point so the cxxtests link
-		CXXFLAGS="$CXXFLAGS -fstack-protector -Wa,--noexecstack"
+		if test "$_debug_build" = yes; then
+			CXXFLAGS="$CXXFLAGS -fstack-protector"
+		else
+			CXXFLAGS="$CXXFLAGS -fno-stack-protector"
+		fi
+		CXXFLAGS="$CXXFLAGS -Wa,--noexecstack"
 		LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
 
 		static_libs=''
