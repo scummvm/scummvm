@@ -32,6 +32,7 @@
 #include "sci/console.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
+#include "sci/graphics/screen.h"
 
 namespace Sci {
 
@@ -156,7 +157,11 @@ SciEvent EventManager::getScummVMEvent() {
 	// This should be safe, since the mouse position in the event manager should
 	// only be updated when a mouse related event has been taken from the queue
 	// via pollEvent.
-	noEvent.mousePos = input.mousePos = em->getMousePos();
+	// We also adjust the position based on the scaling of the screen.
+	Common::Point mousePos = em->getMousePos();
+	g_sci->_gfxScreen->adjustBackUpscaledCoordinates(mousePos.y, mousePos.x);
+
+	noEvent.mousePos = input.mousePos = mousePos;
 
 	if (!found || ev.type == Common::EVENT_MOUSEMOVE)
 		return noEvent;
