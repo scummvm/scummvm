@@ -555,8 +555,9 @@ void MohawkEngine_LivingBooks::queueDelayedEvent(DelayedEvent event) {
 uint16 MohawkEngine_LivingBooks::getResourceVersion() {
 	Common::SeekableReadStream *versionStream = getResource(ID_VRSN, 1000);
 
+	// FIXME: some V2 games have very strange version entries
 	if (versionStream->size() != 2)
-		warning("Version Record size mismatch");
+		debug(1, "Version Record size mismatch");
 
 	uint16 version = versionStream->readUint16BE();
 
