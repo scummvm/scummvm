@@ -500,19 +500,18 @@ const uint16 kq5PatchCdHarpyVolume[] = {
 
 // This is a heap patch, and it modifies the properties of an object, instead
 // of patching script code.
-// The witchCage object in script 200 is different than other objects, as it
-// has 4 properties for its bounding box (top, left, bottom, right), but it
-// initializes 4 extra ones before them to 0. The fact that this object's
-// bounding box is invalid confuses the game scripts and makes the game enter
-// an endless loop, as the scripts are trying to see if the witch can be inside
-// an empty rectangle (which will never be true). The dimensions of the actual
-// bounding box can be observed from the values of these invalid parameters.
-// This object is also invalid in SV, so there must be special code to treat
-// such situations. The following heap patch sets the first four valid object
-// properties (which are what the game scripts refer to) to their valid values,
-// equal to the values of the subsequent four invalid values. We don't know why
-// or how this worked in SSCI, but this simple patch fixes this situation.
-// Fixes bug #3034714.
+//
+// The witchCage object in script 200 is broken and claims to have 12
+// variables instead of the 8 it should have because it is a Cage.
+// Additionally its top,left,bottom,right properties are set to 0 rather
+// than the right values. We fix the object by setting the right values.
+// If they are all zero, this causes an impossible position check in
+// witch::cantBeHere and an infinite loop when entering room 22 (bug #3034714).
+//
+// This bug is accidentally not triggered in SSCI because the invalid number
+// of variables effectively hides witchCage::doit, causing this position check
+// to be bypassed entirely.
+// See also the warning+comment in Object::initBaseObject
 const byte kq5SignatureWitchCageInit[] = {
 	16,
 	0x00, 0x00,	// top
