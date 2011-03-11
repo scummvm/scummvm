@@ -320,6 +320,12 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 #endif
 	st_sample_t *ostart = obuf;
 
+	if (vol_l > 0xff)
+		vol_l = 0xff;
+
+	if (vol_r > 0xff)
+		vol_r = 0xff;
+
 	if (!stereo) {
 		obuf = ARM_LinearRate_M(input,
 		                        &SimpleRate_readFudge,
