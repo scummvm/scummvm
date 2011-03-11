@@ -857,7 +857,7 @@ bool PrisonerEngine::updateActorSpriteWalkingPosition(ActorSprite *actorSprite, 
 	if (flag) {
 		actorSprite->xsub -= x;
 		actorSprite->ysub -= y;
-		_pathSystem->path252C1(prevX, prevY, newX, newY, x, y);
+		_pathSystem->calcPathHelperEdge(prevX, prevY, newX, newY, x, y);
 		actorSprite->xadd = newX - x;
 		actorSprite->yadd = newY - y;
 		actorSprite->x = x;
@@ -866,7 +866,7 @@ bool PrisonerEngine::updateActorSpriteWalkingPosition(ActorSprite *actorSprite, 
 	} else {
 		actorSprite->x = newX;
 		actorSprite->y = newY;
-		_pathSystem->path252C1(prevX, prevY, actorSprite->x, actorSprite->y, x, y);
+		_pathSystem->calcPathHelperEdge(prevX, prevY, actorSprite->x, actorSprite->y, x, y);
 		actorSprite->xsub -= actorSprite->x;
 		actorSprite->ysub -= actorSprite->y;
 		actorSprite->yadd = 0;

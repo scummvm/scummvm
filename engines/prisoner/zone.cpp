@@ -146,18 +146,15 @@ int16 PrisonerEngine::addItemZone(int16 sceneItemIndex, int16 mouseCursor, Commo
 
 void PrisonerEngine::drawZoneDescription(int16 zoneIndex) {
 	Zone *zone = &_zones[zoneIndex];
+ 	_screen->fillRect(0, 398, 639, 479, 0);
 	if (zone->hasText) {
 		TextResource *textResource = _res->get<TextResource>(zone->resourceCacheSlot);
 		setFontColors(_textFont, _zoneFontColor.outlineColor, _zoneFontColor.inkColor);
 		setActiveFont(_textFont);
- 		_screen->fillRect(0, 398, 639, 479, 0);
 		drawTextEx(0, 639, 398, 479, textResource->getText(zone->textIndex)->getChunkLineString(0, 0));
-		addDirtyRect(0, 398, 640, 82, 1);
 		_zoneTextActive = true;
-	} else {
-		_screen->fillRect(0, 398, 639, 479, 0);
-		addDirtyRect(0, 398, 640, 82, 1);
 	}
+	addDirtyRect(0, 398, 640, 82, 1);
 }
 
 void PrisonerEngine::updateZones(int16 x, int16 y) {
@@ -172,6 +169,7 @@ void PrisonerEngine::updateZones(int16 x, int16 y) {
 		Zone *zone = &_zones[zoneIndex];
 		if (zone->used == 1) {
 			if (zone->type == 1) {
+				// If the zone is connected to an actor, update the zone position accordingly
 				ActorSprite *actorSprite = _actors[zone->actorIndex].actorSprite;
 				zone->x1 = actorSprite->zoneX1;
 				zone->y1 = actorSprite->zoneY1;
@@ -235,7 +233,7 @@ void PrisonerEngine::checkQueuedZoneAction() {
 				_queuedZoneAction.scriptProgIndex, _queuedZoneAction.scriptIndex1);
 			startScript(_queuedZoneAction.scriptProgIndex, _queuedZoneAction.scriptIndex1);
 			_queuedZoneAction.used = 2;
-			if (_newSceneIndex != -1 &&  _newModuleIndex != -1)
+			if (_newSceneIndex != -1 && _newModuleIndex != -1)
 				setLeaveSceneScript(_queuedZoneAction.scriptProgIndex, _queuedZoneAction.scriptIndex1);
 		}
 
@@ -349,14 +347,6 @@ int16 PrisonerEngine::checkZoneAction(int16 zoneActionType) {
 		if (zoneAction->pathNodeIndex != -1 && _mainActorIndex != -1) {
 			actorWalkToPathNode(_mainActorIndex, zoneAction->pathNodeIndex);
 		}
-
-		debug(
-			"_queuedZoneAction: zoneIndex = %d; type = %d; pathNodeIndex = %d; scriptIndex1 = %d\n"
-			"scriptProgIndex = %d; sceneIndex = %d; moduleIndex = %d",
-			_queuedZoneAction.zoneIndex, _queuedZoneAction.type, _queuedZoneAction.pathNodeIndex,
-			_queuedZoneAction.scriptIndex1, _queuedZoneAction.scriptProgIndex,
-			_queuedZoneAction.sceneIndex, _queuedZoneAction.moduleIndex);
-
 	} else if (_currZoneActionIndex != -1) {
 		ZoneAction *zoneAction = &_zoneActions[_currZoneActionIndex];
 		zoneActionIndex = _currZoneActionIndex;

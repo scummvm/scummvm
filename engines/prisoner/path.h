@@ -48,7 +48,7 @@ struct PathNodeConnection {
 
 struct PathNode {
 	byte used;
-	byte unk1;
+	byte temporary;
 	int16 x, y, scale;
 	uint16 connectionsCount;
 	ObjectStorage<PathNodeConnection, kMaxPathNodeConnections> connections;
@@ -143,16 +143,16 @@ public:
 	int16 findPathPolygonAtPos(int16 x, int16 y);
 	int16 findPathNodeAtPos(int16 x, int16 y, bool fuzzy);
 	void findClosestPointOnEdge(int16 x, int16 y, bool flag1, bool flag2, int16 nodeIndex);
-	bool path252C1(int16 x1, int16 y1, int16 &x2, int16 &y2, int16 x3, int16 y3);
+	bool calcPathHelperEdge(int16 x1, int16 y1, int16 &x2, int16 &y2, int16 x3, int16 y3);
 	int16 findPathConnectionEdge(int16 nodeIndex1, int16 nodeIndex2);
-	bool path25964(int16 nodeIndex1, int16 nodeIndex2, int16 value, int16 edgeIndex1, int16 edgeIndex2);
+	bool addWorkPathEdge(int16 nodeIndex1, int16 nodeIndex2, int16 value, int16 edgeIndex1, int16 edgeIndex2);
 	bool path24D5B(int16 x1, int16 y1, int16 x2, int16 y2, int16 x3, int16 y3, int16 x4, int16 y4);
 	int16 findPathPolygonByEdges(int16 edgeIndex1, int16 edgeIndex2);
 	int16 findPathPolygonByNodes(int16 nodeIndex1, int16 nodeIndex2);
 	int16 findPathPolygonByNodeAndEdge(int16 nodeIndex, int16 edgeIndex);
-	void path25669(int16 nodeIndex1, uint16 distance, int16 nodeIndex2, int16 nodeIndex3);
+	void calcPathSegment(int16 nodeIndex1, uint16 distance, int16 nodeIndex2, int16 nodeIndex3);
 	void clearPathNodeHelpers();
- 	void path2579A(int16 nodeIndex);
+ 	void processResultNode(int16 nodeIndex);
  	bool insertPathEdge(int16 nodeIndex1, int16 nodeIndex2);
  	void cleanupPathResult();
  	void deletePathResultItem(int16 resultIndex);

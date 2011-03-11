@@ -503,8 +503,6 @@ struct SoundSlot {
 	int16 resourceCacheSlot;
 	bool volumeFlag;
 	uint volume;
-	//Common::String pakName;
-	//int16 pakSlot;
 	bool shouldResume;
 	bool moduleWide;
 	bool isEmpty() const { return resourceCacheSlot == -1; }
