@@ -498,9 +498,46 @@ const uint16 kq5PatchCdHarpyVolume[] = {
 	PATCH_END
 };
 
+// This is a heap patch, and it modifies the properties of an object, instead
+// of patching script code.
+// The witchCage object in script 200 is different than other objects, as it
+// has 4 properties for its bounding box (top, left, bottom, right), but it
+// initializes 4 extra ones before them to 0. The fact that this object's
+// bounding box is invalid confuses the game scripts and makes the game enter
+// an endless loop, as the scripts are trying to see if the witch can be inside
+// an empty rectangle (which will never be true). The dimensions of the actual
+// bounding box can be observed from the values of these invalid parameters.
+// This object is also invalid in SV, so there must be special code to treat
+// such situations. The following heap patch sets the first four valid object
+// properties (which are what the game scripts refer to) to their valid values,
+// equal to the values of the subsequent four invalid values. We don't know why
+// or how this worked in SSCI, but this simple patch fixes this situation.
+// Fixes bug #3034714.
+const byte kq5SignatureWitchCageInit[] = {
+	16,
+	0x00, 0x00,	// top
+	0x00, 0x00,	// left
+	0x00, 0x00,	// bottom
+	0x00, 0x00,	// right
+	0x00, 0x00,	// extra property #1
+	0x7a, 0x00,	// extra property #2
+	0xc8, 0x00,	// extra property #3
+	0xa3, 0x00,	// extra property #4
+	0
+};
+
+const uint16 kq5PatchWitchCageInit[] = {
+	0x00, 0x00,	// top
+	0x7a, 0x00,	// left
+	0xc8, 0x00,	// bottom
+	0xa3, 0x00,	// right
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                 adjust
 const SciScriptSignature kq5Signatures[] = {
 	{      0, "CD: harpy volume change",                     1, PATCH_MAGICDWORD(0x80, 0x91, 0x01, 0x18),     0, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
+	{    200, "CD: witch cage init",                         1, PATCH_MAGICDWORD(0x7a, 0x00, 0xc8, 0x00),   -10, kq5SignatureWitchCageInit, kq5PatchWitchCageInit },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
