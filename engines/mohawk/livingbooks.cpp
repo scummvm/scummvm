@@ -2443,7 +2443,7 @@ void LBItem::runScriptEntry(LBScriptEntry *entry) {
 			break;
 
 		case kLBOpRewind:
-			target->seek(0);
+			target->seek(1);
 			break;
 
 		case kLBOpStop:
