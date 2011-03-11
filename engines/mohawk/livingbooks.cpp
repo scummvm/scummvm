@@ -864,7 +864,6 @@ void MohawkEngine_LivingBooks::handleUIPoetryMenuClick(uint controlId) {
 		break;
 
 	case 7:
-	case 0xA:
 		item = getItemById(10);
 		if (item)
 			item->destroySelf();
@@ -874,7 +873,18 @@ void MohawkEngine_LivingBooks::handleUIPoetryMenuClick(uint controlId) {
 		item = getItemById(12);
 		if (item) {
 			item->setVisible(true);
-			item->togglePlaying(controlId == 7);
+			item->togglePlaying(true);
+		}
+		break;
+
+	case 0xA:
+		item = getItemById(10);
+		if (item)
+			item->destroySelf();
+		item = getItemById(11);
+		if (item) {
+			item->setVisible(true);
+			item->togglePlaying(true);
 		}
 		break;
 
