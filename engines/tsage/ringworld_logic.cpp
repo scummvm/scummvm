@@ -72,22 +72,24 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	/* Scene group 3 - Part #1 */
 	// Cockpit cutscenes
 	case 2000: return new Scene2000();
-	// Spaceship - Cockpit
+	// Starcraft - Cockpit
 	case 2100: return new Scene2100();
 	// Encyclopedia
 	case 2120: return new Scene2120();
-	// Spaceship - Level 2
+	// Starcraft - Level 2
 	case 2150: return new Scene2150();
-	// Spaceship - AutoDoc
+	// Starcraft - AutoDoc
 	case 2200: return new Scene2200();
 	// Stasis Field Map
 	case 2222: return new Scene2222();
-	// Spaceship - Quinn's Room
+	// Starcraft - Quinn's Room
 	case 2230: return new Scene2230();
 
 	/* Scene group 3 - Part #2 */
-	// Spaceship - Storage Room
+	// Starcraft - Storage Room
 	case 2280: return new Scene2280();
+	// Starcraft - Hanger Bay
+	case 2300: return new Scene2300();
 
 	/* Scene group 4 */
 
