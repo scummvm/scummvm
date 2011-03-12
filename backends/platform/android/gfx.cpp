@@ -300,8 +300,7 @@ void OSystem_Android::setPalette(const byte *colors, uint start, uint num) {
 
 	GLTHREADCHECK;
 
-	memcpy(((GLESPaletteTexture *)_game_texture)->palette() + start * 3,
-			colors, num * 3);
+	memcpy(_game_texture->palette() + start * 3, colors, num * 3);
 
 	if (!_use_mouse_palette)
 		setCursorPaletteInternal(colors, start, num);
@@ -316,8 +315,7 @@ void OSystem_Android::grabPalette(byte *colors, uint start, uint num) {
 
 	GLTHREADCHECK;
 
-	memcpy(colors, ((GLESPaletteTexture *)_game_texture)->palette() + start * 3,
-			num * 3);
+	memcpy(colors, _game_texture->palette() + start * 3, num * 3);
 }
 
 void OSystem_Android::copyRectToScreen(const byte *buf, int pitch,
@@ -685,7 +683,7 @@ void OSystem_Android::disableCursorPalette(bool disable) {
 	// when disabling the cursor palette, and we're running a clut8 game,
 	// it expects the game palette to be used for the cursor
 	if (disable && _game_texture->getPixelFormat().bytesPerPixel == 1) {
-		byte *src = ((GLESPaletteTexture *)_game_texture)->palette();
+		byte *src = _game_texture->palette();
 		byte *dst = _mouse_texture_palette->palette();
 
 		for (uint i = 0; i < 256; ++i, src += 3, dst += 4) {

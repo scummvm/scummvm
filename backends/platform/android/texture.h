@@ -84,6 +84,14 @@ public:
 		return &_surface;
 	}
 
+	virtual const byte *palette_const() const {
+		return 0;
+	};
+
+	virtual byte *palette() {
+		return 0;
+	};
+
 	inline bool dirty() const {
 		return _all_dirty || !_dirty_rect.isEmpty();
 	}
@@ -183,11 +191,11 @@ public:
 		drawTexture(0, 0, _surface.w, _surface.h);
 	}
 
-	inline const byte *palette_const() const {
+	virtual const byte *palette_const() const {
 		return _texture;
 	};
 
-	inline byte *palette() {
+	virtual byte *palette() {
 		setDirty();
 		return _texture;
 	};
