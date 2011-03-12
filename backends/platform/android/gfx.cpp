@@ -25,6 +25,7 @@
 
 #if defined(__ANDROID__)
 
+#include "common/endian.h"
 #include "graphics/conversion.h"
 
 #include "backends/platform/android/android.h"
@@ -134,7 +135,7 @@ void OSystem_Android::initTexture(GLESTexture **texture,
 				LOGE("unsupported pixel format: %s",
 					getPixelFormatName(format_new).c_str());
 
-			*texture = new GLESPalette888Texture;
+			*texture = new GLESPalette565Texture;
 		}
 
 		LOGD("new pixel format: %s",
@@ -296,10 +297,14 @@ void OSystem_Android::setPalette(const byte *colors, uint start, uint num) {
 
 	GLTHREADCHECK;
 
-	memcpy(_game_texture->palette() + start * 3, colors, num * 3);
-
 	if (!_use_mouse_palette)
 		setCursorPaletteInternal(colors, start, num);
+
+	const Graphics::PixelFormat &pf = _game_texture->getPalettePixelFormat();
+	byte *p = _game_texture->palette() + start * 2;
+
+	for (uint i = 0; i < num; ++i, colors += 3, p += 2)
+		WRITE_UINT16(p, pf.RGBToColor(colors[0], colors[1], colors[2]));
 }
 
 void OSystem_Android::grabPalette(byte *colors, uint start, uint num) {
@@ -311,7 +316,11 @@ void OSystem_Android::grabPalette(byte *colors, uint start, uint num) {
 
 	GLTHREADCHECK;
 
-	memcpy(colors, _game_texture->palette() + start * 3, num * 3);
+	const Graphics::PixelFormat &pf = _game_texture->getPalettePixelFormat();
+	const byte *p = _game_texture->palette_const() + start * 2;
+
+	for (uint i = 0; i < num; ++i, colors += 3, p += 2)
+		pf.colorToRGB(READ_UINT16(p), colors[0], colors[1], colors[2]);
 }
 
 void OSystem_Android::copyRectToScreen(const byte *buf, int pitch,
@@ -594,13 +603,11 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 	if (_mouse_texture == _mouse_texture_palette) {
 		assert(keycolor < 256);
 
-		// Update palette alpha based on keycolor
-		byte *palette = _mouse_texture_palette->palette();
+		byte *p = _mouse_texture_palette->palette() + _mouse_keycolor * 2;
 
-		for (uint i = 0; i < 256; ++i, palette += 4)
-			palette[3] = 0xff;
-
-		_mouse_texture_palette->palette()[keycolor * 4 + 3] = 0;
+		WRITE_UINT16(p, READ_UINT16(p) | 1);
+		_mouse_keycolor = keycolor;
+		WRITE_UINT16(_mouse_texture_palette->palette() + keycolor * 2, 0);
 	}
 
 	if (w == 0 || h == 0)
@@ -644,14 +651,14 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 
 void OSystem_Android::setCursorPaletteInternal(const byte *colors,
 												uint start, uint num) {
-	byte *palette = _mouse_texture_palette->palette() + start * 4;
+	const Graphics::PixelFormat &pf =
+		_mouse_texture_palette->getPalettePixelFormat();
+	byte *p = _mouse_texture_palette->palette() + start * 2;
 
-	for (uint i = 0; i < num; ++i, palette += 4, colors += 3) {
-		palette[0] = colors[0];
-		palette[1] = colors[1];
-		palette[2] = colors[2];
-		// Leave alpha untouched to preserve keycolor
-	}
+	for (uint i = 0; i < num; ++i, colors += 3, p += 2)
+		WRITE_UINT16(p, pf.RGBToColor(colors[0], colors[1], colors[2]));
+
+	WRITE_UINT16(_mouse_texture_palette->palette() + _mouse_keycolor * 2, 0);
 }
 
 void OSystem_Android::setCursorPalette(const byte *colors,
@@ -679,15 +686,22 @@ void OSystem_Android::disableCursorPalette(bool disable) {
 	// when disabling the cursor palette, and we're running a clut8 game,
 	// it expects the game palette to be used for the cursor
 	if (disable && _game_texture->hasPalette()) {
-		byte *src = _game_texture->palette();
+		const byte *src = _game_texture->palette_const();
 		byte *dst = _mouse_texture_palette->palette();
 
-		for (uint i = 0; i < 256; ++i, src += 3, dst += 4) {
-			dst[0] = src[0];
-			dst[1] = src[1];
-			dst[2] = src[2];
-			// Leave alpha untouched to preserve keycolor
+		const Graphics::PixelFormat &pf_src =
+			_game_texture->getPalettePixelFormat();
+		const Graphics::PixelFormat &pf_dst =
+			_mouse_texture_palette->getPalettePixelFormat();
+
+		uint8 r, g, b;
+
+		for (uint i = 0; i < 256; ++i, src += 2, dst += 2) {
+			pf_src.colorToRGB(READ_UINT16(src), r, g, b);
+			WRITE_UINT16(dst, pf_dst.RGBToColor(r, g, b));
 		}
+
+		WRITE_UINT16(_mouse_texture_palette->palette() + _mouse_keycolor * 2, 0);
 	}
 
 	_use_mouse_palette = !disable;

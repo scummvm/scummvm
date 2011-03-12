@@ -112,6 +112,8 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_mouse_texture(0),
 	_mouse_texture_palette(0),
 	_mouse_texture_rgb(0),
+	_mouse_hotspot(),
+	_mouse_keycolor(0),
 	_use_mouse_palette(false),
 	_show_mouse(false),
 	_show_overlay(false),
@@ -328,9 +330,9 @@ void OSystem_Android::initBackend() {
 	initSurface();
 	initViewport();
 
-	_game_texture = new GLESPalette888Texture();
+	_game_texture = new GLESPalette565Texture();
 	_overlay_texture = new GLES4444Texture();
-	_mouse_texture_palette = new GLESPalette8888Texture();
+	_mouse_texture_palette = new GLESPalette5551Texture();
 	_mouse_texture = _mouse_texture_palette;
 
 	initOverlay();

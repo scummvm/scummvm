@@ -116,6 +116,7 @@ private:
 	GLESPaletteTexture *_mouse_texture_palette;
 	GLES5551Texture *_mouse_texture_rgb;
 	Common::Point _mouse_hotspot;
+	uint32 _mouse_keycolor;
 	int _mouse_targetscale;
 	bool _show_mouse;
 	bool _use_mouse_palette;
