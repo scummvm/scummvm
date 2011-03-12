@@ -1613,6 +1613,13 @@ SceneObject::SceneObject(): SceneHotspot() {
 	_frameChange = 0;
 }
 
+SceneObject::SceneObject(const SceneObject &so) {
+	*this = so;
+	if (_objectWrapper)
+		// Create a fresh object wrapper for this object
+		_objectWrapper = new SceneObjectWrapper();
+}
+
 SceneObject::~SceneObject() {
 	delete _mover;
 	delete _objectWrapper;

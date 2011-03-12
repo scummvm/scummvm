@@ -500,6 +500,7 @@ public:
 	uint32 _regionBitList;
 public:
 	SceneObject();
+	SceneObject(const SceneObject &so);
 	virtual ~SceneObject();
 
 	void setPosition(const Common::Point &p, int yDiff = 0);
