@@ -619,8 +619,7 @@ void StripManager::synchronise(Serialiser &s) {
 	for (int i = 0; i < arrSize; ++i)
 		SYNC_POINTER(_speakerList[i]);
 
-	// TODO: Properly handle the callback function
-	warning("TODO: StripManager::synchronise::fnCallback");
+	SYNC_POINTER(_callbackObject);
 }
 
 void StripManager::remove() {
@@ -697,7 +696,7 @@ void StripManager::signal() {
 				_activeSpeaker->remove();
 			_activeSpeaker = speakerP;
 
-			if ((_activeSpeaker->_newSceneNumber == -1) && (_globals->_sceneManager._sceneNumber != _sceneNumber)) {
+			if ((_activeSpeaker->_newSceneNumber == -1) && (_globals->_sceneManager._scene->_sceneNumber != _sceneNumber)) {
 				_globals->_sceneManager._scene->_sceneBounds = _sceneBounds;
 				_globals->_sceneManager._scene->loadScene(_sceneNumber);
 			}
