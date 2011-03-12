@@ -37,6 +37,7 @@ class SciEngine;
 struct List;
 
 reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode);
+bool isJumpOpcode(EngineState *s, reg_t pos, reg_t& jumpOffset);
 
 class Console : public GUI::Debugger {
 public:

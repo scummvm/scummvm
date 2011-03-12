@@ -2601,7 +2601,6 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 		DebugPrintf("Valid options are:\n");
 		DebugPrintf(" bwt  : Print byte/word tag\n");
 		DebugPrintf(" bc   : Print bytecode\n");
-		DebugPrintf(" rX   : Continue after X ret opcodes before stopping decompilation\n");
 		return true;
 	}
 
@@ -2640,17 +2639,19 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 			printBWTag = true;
 		else if (!scumm_stricmp(argv[i], "bc"))
 			printBytecode = true;
-		else if (argv[i][0] == 'r')
-			ignoreXret = atoi(argv[i] + 1);
 	}
 
+	reg_t farthestTarget = addr;
 	do {
 		reg_t prevAddr = addr;
-		addr = disassemble(_engine->_gamestate, addr, printBWTag, printBytecode);
-		if (addr.isNull() && ignoreXret) {
-			addr = prevAddr + 1;	// skip past the ret
-			ignoreXret--;
+		reg_t jumpTarget;
+		if (isJumpOpcode(_engine->_gamestate, addr, jumpTarget)) {
+			if (jumpTarget > farthestTarget)
+				farthestTarget = jumpTarget;
 		}
+		addr = disassemble(_engine->_gamestate, addr, printBWTag, printBytecode);
+		if (addr.isNull() && prevAddr < farthestTarget)
+			addr = prevAddr + 1; // skip past the ret
 	} while (addr.offset > 0);
 
 	return true;

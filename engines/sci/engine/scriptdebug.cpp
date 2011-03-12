@@ -281,6 +281,35 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 	return retval;
 }
 
+bool isJumpOpcode(EngineState *s, reg_t pos, reg_t& jumpTarget)
+{
+	SegmentObj *mobj = s->_segMan->getSegment(pos.segment, SEG_TYPE_SCRIPT);
+	if (!mobj)
+		return false;
+	Script *script_entity = (Script *)mobj;
+
+	const byte *scr = script_entity->getBuf();
+	int scr_size = script_entity->getBufSize();
+
+	if (pos.offset >= scr_size)
+		return false;
+
+	int16 opparams[4];
+	byte opsize;
+	int bytecount = readPMachineInstruction(scr + pos.offset, opsize, opparams);
+	const byte opcode = opsize >> 1;
+
+	switch (opcode) {
+	case op_bt:
+	case op_bnt:
+	case op_jmp:
+		jumpTarget = pos + bytecount + opparams[0];
+		return true;
+	default:
+		return false;
+	}
+}
+
 
 void SciEngine::scriptDebug() {
 	EngineState *s = _gamestate;
