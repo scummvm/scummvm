@@ -163,6 +163,10 @@ release/%.apk: %.apk
 
 androidrelease: $(addprefix release/, $(APK_MAIN) $(APK_PLUGINS))
 
+androidtestmain: $(APK_MAIN)
+	$(ADB) install -r $(APK_MAIN)
+	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.inodes.gus.scummvm/.Unpacker
+
 androidtest: $(APK_MAIN) $(APK_PLUGINS)
 	@set -e; for apk in $^; do \
 		$(ADB) install -r $$apk; \
