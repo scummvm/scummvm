@@ -41,7 +41,7 @@ namespace tSage {
 
 TSageEngine *_vm = NULL;
 
-TSageEngine::TSageEngine(OSystem *system, const ADGameDescription *gameDesc): Engine(system),
+TSageEngine::TSageEngine(OSystem *system, const tSageGameDescription *gameDesc): Engine(system),
 		_gameDescription(gameDesc) {
 	_vm = this;
 	DebugMan.addDebugChannel(kRingDebugScripts, "scripts", "Scripts debugging");

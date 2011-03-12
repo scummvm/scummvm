@@ -43,17 +43,21 @@
 namespace tSage {
 
 enum {
-	GType_Ringworld = 0
+	GType_Ringworld = 0,
+	GType_BlueForce = 1
 };
 
 enum {
-	GF_CD		= 1 <<  0,
-	GF_LNGUNK	= 1 << 15
+	GF_DEMO = 1 << 0,
+	GF_CD = 1 << 1,
+	GF_FLOPPY = 1 << 2
 };
 
 enum {
 	kRingDebugScripts = 1 << 0
 };
+
+struct tSageGameDescription;
 
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
@@ -62,9 +66,9 @@ enum {
 
 class TSageEngine : public Engine {
 private:
-	const ADGameDescription *_gameDescription;
+	const tSageGameDescription *_gameDescription;
 public:
-	TSageEngine(OSystem *system, const ADGameDescription *gameDesc);
+	TSageEngine(OSystem *system, const tSageGameDescription *gameDesc);
 	~TSageEngine();
 	virtual bool hasFeature(EngineFeature f) const;
 
@@ -74,6 +78,8 @@ public:
 	RlbManager *_dataManager;
 
 	const char *getGameId() const;
+	uint32 getGameID() const;
+	uint32 getFeatures() const;
 
 	virtual Common::Error init();
 	virtual Common::Error run();

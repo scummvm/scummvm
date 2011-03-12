@@ -90,6 +90,8 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 2280: return new Scene2280();
 	// Starcraft - Hanger Bay
 	case 2300: return new Scene2300();
+	// Starcraft - Copy Protection Screen
+	case 2310: return new Scene2310();
 
 	/* Scene group 4 */
 

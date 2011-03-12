@@ -33,82 +33,47 @@
 
 #include "tsage/tsage.h"
 
-static const PlainGameDescriptor TSAgeGameTitles[] = {
-	{ "tsage", "Unknown Tsunami TSAGE-based Game" },
-	{ "ring", "Ringworld: Revenge of the Patriarch" },
-	{ "blue", "Blue Force" },
-	{ 0, 0 }
-};
-
 namespace tSage {
 
-static const ADGameDescription TSAgeGameDescriptions[] = {
-	// Ringworld English CD version
-	{ 
-		"ring",
-		"CD",
-		AD_ENTRY1s("ring.rlb", "466f0e6492d9d0f34d35c5cd088de90f", 37847618),
-		Common::EN_ANY,
-		Common::kPlatformPC,
-		ADGF_NO_FLAGS,
-		Common::GUIO_NONE
-	},
-	// Ringworld English Floppy version
-	{
-		"ring",
-		"Floppy",
-		AD_ENTRY1s("ring.rlb", "61f78f68a56832ae95fe06748c403234", 8438770),
-		Common::EN_ANY,
-		Common::kPlatformPC,
-		ADGF_NO_FLAGS,
-		Common::GUIO_NONE
-	},
-	// Blue Force
-	{
-		"blue",
-		"",
-		AD_ENTRY1s("blue.rlb", "467da43c848cc0e800b547c59d84ccb1", 10032614),
-		Common::EN_ANY,
-		Common::kPlatformPC,
-		ADGF_NO_FLAGS,
-		Common::GUIO_NONE
-	},
+struct tSageGameDescription {
+	ADGameDescription desc;
 
-	AD_TABLE_END_MARKER,
+	int gameID;
+	uint32 features;
 };
 
 const char *TSageEngine::getGameId() const {
-	return _gameDescription->gameid;
+	return _gameDescription->desc.gameid;
+}
+
+uint32 TSageEngine::getGameID() const {
+	return _gameDescription->gameID;
+}
+
+uint32 TSageEngine::getFeatures() const {
+	return _gameDescription->features;
 }
 
 } // End of namespace tSage
 
-static const ADGameDescription TSAgeGameGeneric[] = {
-	{"tsage", 0,
-		AD_ENTRY1("tsage.rlb", NULL),
-		Common::UNK_LANG,
-		Common::kPlatformUnknown,
-		0,
-		Common::GUIO_NONE
-	},
-	AD_TABLE_END_MARKER
+static const PlainGameDescriptor tSageGameTitles[] = {
+	{ "tsage", "Unknown Tsunami TSAGE-based Game" },
+	{ "ring", "Ringworld: Revenge of the Patriarch" },
+	{ "blueforce", "Blue Force" },
+	{ 0, 0 }
 };
 
-static const ADFileBasedFallback TSAgeGameFallback[] = {
-	{(const void*)&TSAgeGameGeneric[0], {"ring.rlb", NULL} },
-	{(const void*)&TSAgeGameGeneric[0], {"blue.rlb", NULL} },
-	{0, {NULL}}
-};
+#include "engines/tsage/detection_tables.h"
 
 static const ADParams detectionParams = {
-	(const byte *)tSage::TSAgeGameDescriptions,
-	sizeof(ADGameDescription),
+	(const byte *)tSage::gameDescriptions,
+	sizeof(tSage::tSageGameDescription),
 	0,
-	TSAgeGameTitles,
+	tSageGameTitles,
 	0,
 	"tsage",
-	TSAgeGameFallback,
-	kADFlagPrintWarningOnFileBasedFallback,
+	NULL,
+	NULL,
 	Common::GUIO_NONE,
 	0,
 	NULL
@@ -146,7 +111,7 @@ public:
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 		if (desc) {
-			*engine = new tSage::TSageEngine(syst, desc);
+			*engine = new tSage::TSageEngine(syst, (const tSage::tSageGameDescription *)desc);
 		}
 		return desc != 0;
 	}
