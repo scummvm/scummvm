@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "tsage/ringworld_scenes3.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
@@ -4808,6 +4809,185 @@ void Scene2300::postInit(SceneObjectList *OwnerList) {
 
 	_hotspot15.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 	_globals->_sceneItems.addItems(&_hotspot12, &_hotspot11, &_hotspot13, &_hotspot14, &_hotspot15, NULL);
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 2310 - Starcraft - Copy Protection Screen
+ *
+ *--------------------------------------------------------------------------*/
+
+Scene2310::Scene2310() {
+	_pageList[0].set(0, 0, 0, 0, 0, 0);
+	_pageList[1].set(1, 0, 3, 2, 1, 4);
+	_pageList[2].set(2, 1, 4, 3, 2, 0);
+	_pageList[3].set(3, 2, 0, 4, 3, 1);
+	_pageList[4].set(4, 3, 1, 0, 2, 4);
+	_pageList[5].set(5, 4, 2, 1, 3, 0);
+	_pageList[6].set(6, 0, 4, 2, 3, 1);
+	_pageList[7].set(7, 1, 0, 2, 4, 3);
+	_pageList[8].set(8, 2, 1, 3, 0, 4);
+	_pageList[9].set(9, 3, 2, 4, 1, 0);
+	_pageList[10].set(10, 4, 1, 2, 0, 3);
+	_pageList[11].set(11, 0, 2, 3, 4, 1);
+	_pageList[12].set(12, 1, 2, 0, 4, 3);
+	_pageList[13].set(13, 2, 4, 0, 3, 1);
+	_pageList[14].set(14, 3, 4, 1, 0, 2);
+	_pageList[15].set(15, 4, 3, 1, 2, 0);
+	_pageList[16].set(16, 0, 1, 4, 2, 3);
+	_pageList[17].set(17, 1, 3, 4, 0, 2);
+	_pageList[18].set(18, 2, 3, 0, 1, 4);
+	_pageList[19].set(19, 3, 0, 1, 4, 2);
+	_pageList[20].set(20, 4, 0, 3, 1, 2);
+}
+
+void Scene2310::postInit(SceneObjectList *OwnerList) {
+	Scene::postInit();
+	loadScene(2301);
+	Common::Point pointList[5] = { Common::Point(142, 82), Common::Point(158, 82), Common::Point(174, 82),
+		Common::Point(190, 82), Common::Point(205, 82) };
+
+	for (int idx = 0; idx < 5; ++idx) {
+		_wireList[idx].postInit();
+		_wireList[idx].setVisage(2300);
+		_wireList[idx]._strip = idx + 1;
+		_wireList[idx]._frame = 1;
+		_wireList[idx].setPosition(pointList[idx]);
+	}
+
+	_rectList[0].set(135, 70, 151, 140);
+	_rectList[1].set(151, 70, 167, 140);
+	_rectList[2].set(167, 70, 183, 140);
+	_rectList[3].set(183, 70, 199, 140);
+	_rectList[4].set(199, 70, 215, 140);
+
+	_globals->_player.disableControl();
+	_globals->_events.setCursor(CURSOR_WALK);
+
+	_wireIndex = 5;
+	_pageIndex = _globals->_randomSource.getRandomNumber(19) + 1;
+	signal();
+}
+
+void Scene2310::signal() {
+	switch (_sceneMode++) {
+	case 0: {
+		Common::String fmtString = _vm->_dataManager->getMessage(2300, 22);
+		Common::String msg = Common::String::format(fmtString.c_str(), _pageList[_pageIndex]._pageNumber);
+
+		_sceneText._width = 280;
+		_sceneText._textMode = ALIGN_CENTRE;
+		_sceneText._colour1 = 35;
+		_sceneText._fontNumber = 2;
+		_sceneText.setup(msg);
+		_sceneText.setPriority2(255);
+		_sceneText.setPosition(Common::Point(30, 20));
+		break;
+	}
+	case 1: {
+		Common::String msg = _vm->_dataManager->getMessage(2300, 23);
+		_sceneText.setup(msg);
+		_sceneText.setPriority2(255);
+		_sceneText.setPosition(Common::Point(30, 170));
+
+		_globals->_sceneObjects->draw();
+		_globals->_events.waitForPress();
+
+		_sceneText.flag100();
+		_globals->_sceneObjects->draw();
+
+		_globals->_sceneManager.changeScene(2200);
+		break;
+	}
+	}
+}
+
+void Scene2310::synchronise(Serialiser &s) {
+	Scene::synchronise(s);
+
+	s.syncAsSint16LE(_wireIndex);
+	s.syncAsSint16LE(_pageIndex);
+}
+
+void Scene2310::process(Event &event) {
+	int frameNum = 0;
+
+	if (!event.handled && (event.eventType == EVENT_BUTTON_DOWN)) {
+		int idx = 0; 
+		while (idx < 5) {
+			if (_rectList[idx].contains(event.mousePos))
+				break;
+			++idx;
+		}
+
+		if (idx < 5) {
+			// In handled rectangle area
+			if (_wireIndex == 5) {
+				// No wire is currently active, so start moving designated wire
+				_wireIndex = idx;
+				frameNum = idx + 2;
+
+				if (event.mousePos.y > 105)
+					idx = findObject(idx);
+			
+				if (idx != 5) {
+					_wireList[idx].flag100();
+					_globals->_sceneObjects->draw();
+					_wireList[idx].setFrame(frameNum);
+
+					_wireList[idx].unflag100();
+					_globals->_sceneObjects->draw();
+				}
+			} else {
+				// End the moving of the currently active wire
+				_wireList[_wireIndex].setFrame(idx + 2);
+				_wireIndex = 5;
+
+				// Check if solution has been reached
+				int idx2 = 0;
+				do {
+					int objIndex = findObject(idx2);
+					if (_pageList[_pageIndex]._connectionList[idx2] != objIndex)
+						// Mismatch
+						break;
+				} while (++idx2 < 5);
+
+				if (idx2 == 5)
+					// All the entries are correct
+					signal();
+			}
+
+			event.handled = true;
+		} else if (_wireIndex != 5) {
+			// Reset the active wire back to unplugged
+			_wireList[_wireIndex].setFrame(1);
+			_wireIndex = 5;
+		}
+	}
+}
+
+void Scene2310::dispatch() {
+	if ((_vm->getFeatures() & GF_CD) && !ConfMan.getBool("copy_protection")) {
+		// CD version of Ringworld has the copy protection disabled
+		signal();
+	} else if (_wireIndex != 5) {
+		for (int idx = 0; idx < 5; ++idx) {
+			if (_rectList[idx].contains(_globals->_events._mousePos)) {
+				_wireList[_wireIndex].setFrame(idx + 2);
+				return;
+			}
+		}
+
+		_wireList[_wireIndex].setFrame(1);
+	}
+}
+
+int Scene2310::findObject(int objIndex) {
+	for (int idx = 0; idx < 5; ++idx) {
+		if (_wireList[idx]._frame == (objIndex + 2))
+			return idx;
+	}
+
+	return 5;
 }
 
 } // End of namespace tSage

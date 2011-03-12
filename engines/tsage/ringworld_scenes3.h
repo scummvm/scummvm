@@ -742,6 +742,39 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
+class Scene2310: public Scene {
+private:
+	int findObject(int objIndex);
+
+	/* Custom classes */
+	class ProtectionEntry {
+	public:
+		int _pageNumber;
+		int _connectionList[5];
+	
+		void set(int pageNumber, int v1, int v2, int v3, int v4, int v5) { 
+			_pageNumber = pageNumber;
+			_connectionList[0] = v1; _connectionList[1] = v2; _connectionList[2] = v3;
+			_connectionList[3] = v4; _connectionList[4] = v5;
+		}
+	};
+
+public:
+	SequenceManager _sequenceManager;
+	int _wireIndex, _pageIndex;
+	SceneObject _wireList[5];
+	Rect _rectList[5];
+	SceneText _sceneText;
+	ProtectionEntry _pageList[21];
+
+	Scene2310();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void synchronise(Serialiser &s);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
 } // End of namespace tSage
 
 #endif
