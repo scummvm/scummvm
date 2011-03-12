@@ -83,11 +83,10 @@ void GLESTexture::initGLExtensions() {
 }
 
 GLESTexture::GLESTexture(byte bytesPerPixel, GLenum glFormat, GLenum glType,
-		size_t paletteSize, Graphics::PixelFormat pixelFormat) :
+							Graphics::PixelFormat pixelFormat) :
 	_bytesPerPixel(bytesPerPixel),
 	_glFormat(glFormat),
 	_glType(glType),
-	_paletteSize(paletteSize),
 	_texture_name(0),
 	_surface(),
 	_texture_width(0),
@@ -111,7 +110,7 @@ void GLESTexture::release() {
 void GLESTexture::reinit() {
 	GLCALL(glGenTextures(1, &_texture_name));
 
-	if (_paletteSize) {
+	if (hasPalette()) {
 		// paletted textures are in a local buffer, don't wipe it
 		initSize();
 	} else {
@@ -239,7 +238,7 @@ void GLESTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 #ifdef GL_OES_draw_texture
 	// Great extension, but only works under specific conditions.
 	// Still a work-in-progress - disabled for now.
-	if (false && draw_tex_supported && _paletteSize == 0) {
+	if (false && draw_tex_supported && !hasPalette()) {
 		//GLCALL(glTexEnvx(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE));
 		const GLint crop[4] = { 0, _surface.h, _surface.w, -_surface.h };
 
@@ -280,21 +279,21 @@ void GLESTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 }
 
 GLES4444Texture::GLES4444Texture() :
-	GLESTexture(2, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, 0, getPixelFormat()) {
+	GLESTexture(2, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, getPixelFormat()) {
 }
 
 GLES4444Texture::~GLES4444Texture() {
 }
 
 GLES5551Texture::GLES5551Texture() :
-	GLESTexture(2, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, 0, getPixelFormat()) {
+	GLESTexture(2, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, getPixelFormat()) {
 }
 
 GLES5551Texture::~GLES5551Texture() {
 }
 
 GLES565Texture::GLES565Texture() :
-	GLESTexture(2, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, 0, getPixelFormat()) {
+	GLESTexture(2, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, getPixelFormat()) {
 }
 
 GLES565Texture::~GLES565Texture() {
@@ -302,8 +301,9 @@ GLES565Texture::~GLES565Texture() {
 
 GLESPaletteTexture::GLESPaletteTexture(byte bytesPerPixel, GLenum glFormat,
 										GLenum glType, size_t paletteSize) :
-	GLESTexture(bytesPerPixel, glFormat, glType, paletteSize,
+	GLESTexture(bytesPerPixel, glFormat, glType,
 				Graphics::PixelFormat::createFormatCLUT8()),
+	_paletteSize(paletteSize),
 	_texture(0)
 {
 }

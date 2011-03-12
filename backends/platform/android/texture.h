@@ -42,7 +42,7 @@ public:
 
 protected:
 	GLESTexture(byte bytesPerPixel, GLenum glFormat, GLenum glType,
-				size_t paletteSize, Graphics::PixelFormat pixelFormat);
+				Graphics::PixelFormat pixelFormat);
 
 public:
 	virtual ~GLESTexture();
@@ -92,6 +92,10 @@ public:
 		return 0;
 	};
 
+	inline bool hasPalette() const {
+		return palette_const() != 0;
+	}
+
 	inline bool dirty() const {
 		return _all_dirty || !_dirty_rect.isEmpty();
 	}
@@ -125,7 +129,6 @@ protected:
 	byte _bytesPerPixel;
 	GLenum _glFormat;
 	GLenum _glType;
-	size_t _paletteSize;
 
 	GLuint _texture_name;
 	Graphics::Surface _surface;
@@ -202,6 +205,7 @@ public:
 
 protected:
 	byte *_texture;
+	size_t _paletteSize;
 };
 
 // RGB888 256-entry paletted texture

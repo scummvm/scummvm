@@ -295,7 +295,7 @@ void OSystem_Android::setPalette(const byte *colors, uint start, uint num) {
 	ENTER("%p, %u, %u", colors, start, num);
 
 #ifdef USE_RGB_COLOR
-	assert(_game_texture->getPixelFormat().bytesPerPixel == 1);
+	assert(_game_texture->hasPalette());
 #endif
 
 	GLTHREADCHECK;
@@ -310,7 +310,7 @@ void OSystem_Android::grabPalette(byte *colors, uint start, uint num) {
 	ENTER("%p, %u, %u", colors, start, num);
 
 #ifdef USE_RGB_COLOR
-	assert(_game_texture->getPixelFormat().bytesPerPixel == 1);
+	assert(_game_texture->hasPalette());
 #endif
 
 	GLTHREADCHECK;
@@ -664,7 +664,7 @@ void OSystem_Android::setCursorPalette(const byte *colors,
 
 	GLTHREADCHECK;
 
-	if (_mouse_texture->getPixelFormat().bytesPerPixel != 1) {
+	if (!_mouse_texture->hasPalette()) {
 		LOGD("switching to paletted mouse cursor");
 
 		_mouse_texture = _mouse_texture_palette;
@@ -682,7 +682,7 @@ void OSystem_Android::disableCursorPalette(bool disable) {
 
 	// when disabling the cursor palette, and we're running a clut8 game,
 	// it expects the game palette to be used for the cursor
-	if (disable && _game_texture->getPixelFormat().bytesPerPixel == 1) {
+	if (disable && _game_texture->hasPalette()) {
 		byte *src = _game_texture->palette();
 		byte *dst = _mouse_texture_palette->palette();
 
