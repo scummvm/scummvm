@@ -93,7 +93,7 @@ public:
 	};
 
 	inline bool hasPalette() const {
-		return palette_const() != 0;
+		return _palettePixelFormat.bytesPerPixel > 0;
 	}
 
 	inline bool dirty() const {
@@ -102,6 +102,10 @@ public:
 
 	inline const Graphics::PixelFormat &getPixelFormat() const {
 		return _pixelFormat;
+	}
+
+	inline const Graphics::PixelFormat &getPalettePixelFormat() const {
+		return _palettePixelFormat;
 	}
 
 protected:
@@ -140,6 +144,7 @@ protected:
 	Common::Rect _dirty_rect;
 
 	Graphics::PixelFormat _pixelFormat;
+	Graphics::PixelFormat _palettePixelFormat;
 };
 
 // RGBA4444 texture
@@ -178,7 +183,7 @@ public:
 class GLESPaletteTexture : public GLESTexture {
 protected:
 	GLESPaletteTexture(byte bytesPerPixel, GLenum glFormat, GLenum glType,
-						size_t paletteSize);
+						Graphics::PixelFormat palettePixelFormat);
 
 public:
 	virtual ~GLESPaletteTexture();
@@ -220,6 +225,27 @@ class GLESPalette8888Texture : public GLESPaletteTexture {
 public:
 	GLESPalette8888Texture();
 	virtual ~GLESPalette8888Texture();
+};
+
+// RGB565 256-entry paletted texture
+class GLESPalette565Texture : public GLESPaletteTexture {
+public:
+	GLESPalette565Texture();
+	virtual ~GLESPalette565Texture();
+};
+
+// RGBA4444 256-entry paletted texture
+class GLESPalette4444Texture : public GLESPaletteTexture {
+public:
+	GLESPalette4444Texture();
+	virtual ~GLESPalette4444Texture();
+};
+
+// RGBA5551 256-entry paletted texture
+class GLESPalette5551Texture : public GLESPaletteTexture {
+public:
+	GLESPalette5551Texture();
+	virtual ~GLESPalette5551Texture();
 };
 
 #endif

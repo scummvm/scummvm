@@ -93,7 +93,8 @@ GLESTexture::GLESTexture(byte bytesPerPixel, GLenum glFormat, GLenum glType,
 	_texture_height(0),
 	_all_dirty(false),
 	_dirty_rect(),
-	_pixelFormat(pixelFormat)
+	_pixelFormat(pixelFormat),
+	_palettePixelFormat()
 {
 	GLCALL(glGenTextures(1, &_texture_name));
 }
@@ -300,12 +301,14 @@ GLES565Texture::~GLES565Texture() {
 }
 
 GLESPaletteTexture::GLESPaletteTexture(byte bytesPerPixel, GLenum glFormat,
-										GLenum glType, size_t paletteSize) :
+									GLenum glType,
+									Graphics::PixelFormat palettePixelFormat) :
 	GLESTexture(bytesPerPixel, glFormat, glType,
 				Graphics::PixelFormat::createFormatCLUT8()),
-	_paletteSize(paletteSize),
 	_texture(0)
 {
+	_palettePixelFormat = palettePixelFormat;
+	_paletteSize = _palettePixelFormat.bytesPerPixel * 256;
 }
 
 GLESPaletteTexture::~GLESPaletteTexture() {
@@ -368,17 +371,43 @@ void GLESPaletteTexture::drawTexture(GLshort x, GLshort y, GLshort w,
 }
 
 GLESPalette888Texture::GLESPalette888Texture() :
-	GLESPaletteTexture(1, GL_RGB, GL_PALETTE8_RGB8_OES, 256 * 3) {
+	GLESPaletteTexture(1, GL_RGB, GL_PALETTE8_RGB8_OES,
+						Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0)) {
 }
 
 GLESPalette888Texture::~GLESPalette888Texture() {
 }
 
 GLESPalette8888Texture::GLESPalette8888Texture() :
-	GLESPaletteTexture(1, GL_RGBA, GL_PALETTE8_RGBA8_OES, 256 * 4) {
+	GLESPaletteTexture(1, GL_RGBA, GL_PALETTE8_RGBA8_OES,
+						Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) {
 }
 
 GLESPalette8888Texture::~GLESPalette8888Texture() {
+}
+
+GLESPalette565Texture::GLESPalette565Texture() :
+	GLESPaletteTexture(1, GL_RGB, GL_PALETTE8_R5_G6_B5_OES,
+						Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) {
+}
+
+GLESPalette565Texture::~GLESPalette565Texture() {
+}
+
+GLESPalette4444Texture::GLESPalette4444Texture() :
+	GLESPaletteTexture(1, GL_RGBA, GL_PALETTE8_RGBA4_OES,
+						Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0)) {
+}
+
+GLESPalette4444Texture::~GLESPalette4444Texture() {
+}
+
+GLESPalette5551Texture::GLESPalette5551Texture() :
+	GLESPaletteTexture(1, GL_RGBA, GL_PALETTE8_RGB5_A1_OES,
+						Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0)) {
+}
+
+GLESPalette5551Texture::~GLESPalette5551Texture() {
 }
 
 #endif
