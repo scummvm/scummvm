@@ -82,9 +82,8 @@ void GLESTexture::initGLExtensions() {
 	}
 }
 
-GLESTexture::GLESTexture(byte bytesPerPixel, GLenum glFormat, GLenum glType,
+GLESTexture::GLESTexture(GLenum glFormat, GLenum glType,
 							Graphics::PixelFormat pixelFormat) :
-	_bytesPerPixel(bytesPerPixel),
 	_glFormat(glFormat),
 	_glType(glType),
 	_texture_name(0),
@@ -142,7 +141,7 @@ void GLESTexture::initSize() {
 void GLESTexture::allocBuffer(GLuint w, GLuint h) {
 	_surface.w = w;
 	_surface.h = h;
-	_surface.bytesPerPixel = _bytesPerPixel;
+	_surface.bytesPerPixel = _pixelFormat.bytesPerPixel;
 
 	// Already allocated a sufficiently large buffer?
 	if (w <= _texture_width && h <= _texture_height)
@@ -156,7 +155,7 @@ void GLESTexture::allocBuffer(GLuint w, GLuint h) {
 		_texture_height = nextHigher2(_surface.h);
 	}
 
-	_surface.pitch = _texture_width * _bytesPerPixel;
+	_surface.pitch = _texture_width * _pixelFormat.bytesPerPixel;
 
 	initSize();
 }
@@ -170,14 +169,14 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 
 	setDirtyRect(Common::Rect(x, y, x + w, y + h));
 
-	if (static_cast<int>(w) * _bytesPerPixel == pitch_buf) {
+	if (static_cast<int>(w) * _pixelFormat.bytesPerPixel == pitch_buf) {
 		GLCALL(glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h,
 								_glFormat, _glType, buf));
 	} else {
 		// GLES removed the ability to specify pitch, so we
 		// have to do this ourselves.
 #if TEXSUBIMAGE_IS_EXPENSIVE
-		byte *tmp = new byte[w * h * _bytesPerPixel];
+		byte *tmp = new byte[w * h * _pixelFormat.bytesPerPixel];
 		assert(tmp);
 
 		const byte *src = static_cast<const byte *>(buf);
@@ -185,8 +184,8 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 		GLuint count = h;
 
 		do {
-			memcpy(dst, src, w * _bytesPerPixel);
-			dst += w * _bytesPerPixel;
+			memcpy(dst, src, w * _pixelFormat.bytesPerPixel);
+			dst += w * _pixelFormat.bytesPerPixel;
 			src += pitch_buf;
 		} while (--count);
 
@@ -209,12 +208,13 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 }
 
 void GLESTexture::fillBuffer(uint32 color) {
-	uint rowbytes = _surface.w * _bytesPerPixel;
+	uint rowbytes = _surface.w * _pixelFormat.bytesPerPixel;
 
 	byte *tmp = new byte[rowbytes];
 	assert(tmp);
 
-	if (_bytesPerPixel == 1 || ((color & 0xff) == ((color >> 8) & 0xff))) {
+	if (_pixelFormat.bytesPerPixel == 1 ||
+			((color & 0xff) == ((color >> 8) & 0xff))) {
 		memset(tmp, color & 0xff, rowbytes);
 	} else {
 		uint16 *p = (uint16 *)tmp;
@@ -280,30 +280,29 @@ void GLESTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 }
 
 GLES4444Texture::GLES4444Texture() :
-	GLESTexture(2, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, getPixelFormat()) {
+	GLESTexture(GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, getPixelFormat()) {
 }
 
 GLES4444Texture::~GLES4444Texture() {
 }
 
 GLES5551Texture::GLES5551Texture() :
-	GLESTexture(2, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, getPixelFormat()) {
+	GLESTexture(GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, getPixelFormat()) {
 }
 
 GLES5551Texture::~GLES5551Texture() {
 }
 
 GLES565Texture::GLES565Texture() :
-	GLESTexture(2, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, getPixelFormat()) {
+	GLESTexture(GL_RGB, GL_UNSIGNED_SHORT_5_6_5, getPixelFormat()) {
 }
 
 GLES565Texture::~GLES565Texture() {
 }
 
-GLESPaletteTexture::GLESPaletteTexture(byte bytesPerPixel, GLenum glFormat,
-									GLenum glType,
+GLESPaletteTexture::GLESPaletteTexture(GLenum glFormat, GLenum glType,
 									Graphics::PixelFormat palettePixelFormat) :
-	GLESTexture(bytesPerPixel, glFormat, glType,
+	GLESTexture(glFormat, glType,
 				Graphics::PixelFormat::createFormatCLUT8()),
 	_texture(0)
 {
@@ -321,7 +320,7 @@ void GLESPaletteTexture::allocBuffer(GLuint w, GLuint h) {
 	// Texture gets uploaded later (from drawTexture())
 
 	byte *new_buffer = new byte[_paletteSize +
-		_texture_width * _texture_height * _bytesPerPixel];
+						_texture_width * _texture_height];
 	assert(new_buffer);
 
 	if (_texture) {
@@ -348,7 +347,7 @@ void GLESPaletteTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 	byte *dst = static_cast<byte *>(_surface.getBasePtr(x, y));
 
 	do {
-		memcpy(dst, src, w * _bytesPerPixel);
+		memcpy(dst, src, w);
 		dst += _surface.pitch;
 		src += pitch_buf;
 	} while (--h);
@@ -359,8 +358,8 @@ void GLESPaletteTexture::drawTexture(GLshort x, GLshort y, GLshort w,
 	if (dirty()) {
 		GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
 
-		const size_t texture_size =
-			_paletteSize + _texture_width * _texture_height * _bytesPerPixel;
+		const size_t texture_size = _paletteSize +
+									_texture_width * _texture_height;
 
 		GLCALL(glCompressedTexImage2D(GL_TEXTURE_2D, 0, _glType,
 										_texture_width, _texture_height,
@@ -371,7 +370,7 @@ void GLESPaletteTexture::drawTexture(GLshort x, GLshort y, GLshort w,
 }
 
 GLESPalette888Texture::GLESPalette888Texture() :
-	GLESPaletteTexture(1, GL_RGB, GL_PALETTE8_RGB8_OES,
+	GLESPaletteTexture(GL_RGB, GL_PALETTE8_RGB8_OES,
 						Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0)) {
 }
 
@@ -379,7 +378,7 @@ GLESPalette888Texture::~GLESPalette888Texture() {
 }
 
 GLESPalette8888Texture::GLESPalette8888Texture() :
-	GLESPaletteTexture(1, GL_RGBA, GL_PALETTE8_RGBA8_OES,
+	GLESPaletteTexture(GL_RGBA, GL_PALETTE8_RGBA8_OES,
 						Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) {
 }
 
@@ -387,7 +386,7 @@ GLESPalette8888Texture::~GLESPalette8888Texture() {
 }
 
 GLESPalette565Texture::GLESPalette565Texture() :
-	GLESPaletteTexture(1, GL_RGB, GL_PALETTE8_R5_G6_B5_OES,
+	GLESPaletteTexture(GL_RGB, GL_PALETTE8_R5_G6_B5_OES,
 						Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) {
 }
 
@@ -395,7 +394,7 @@ GLESPalette565Texture::~GLESPalette565Texture() {
 }
 
 GLESPalette4444Texture::GLESPalette4444Texture() :
-	GLESPaletteTexture(1, GL_RGBA, GL_PALETTE8_RGBA4_OES,
+	GLESPaletteTexture(GL_RGBA, GL_PALETTE8_RGBA4_OES,
 						Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0)) {
 }
 
@@ -403,7 +402,7 @@ GLESPalette4444Texture::~GLESPalette4444Texture() {
 }
 
 GLESPalette5551Texture::GLESPalette5551Texture() :
-	GLESPaletteTexture(1, GL_RGBA, GL_PALETTE8_RGB5_A1_OES,
+	GLESPaletteTexture(GL_RGBA, GL_PALETTE8_RGB5_A1_OES,
 						Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0)) {
 }
 

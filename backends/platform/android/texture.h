@@ -41,7 +41,7 @@ public:
 	static void initGLExtensions();
 
 protected:
-	GLESTexture(byte bytesPerPixel, GLenum glFormat, GLenum glType,
+	GLESTexture(GLenum glFormat, GLenum glType,
 				Graphics::PixelFormat pixelFormat);
 
 public:
@@ -130,7 +130,6 @@ protected:
 		}
 	}
 
-	byte _bytesPerPixel;
 	GLenum _glFormat;
 	GLenum _glType;
 
@@ -182,7 +181,7 @@ public:
 
 class GLESPaletteTexture : public GLESTexture {
 protected:
-	GLESPaletteTexture(byte bytesPerPixel, GLenum glFormat, GLenum glType,
+	GLESPaletteTexture(GLenum glFormat, GLenum glType,
 						Graphics::PixelFormat palettePixelFormat);
 
 public:
