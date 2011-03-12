@@ -2607,7 +2607,6 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 	reg_t objAddr = NULL_REG;
 	bool printBytecode = false;
 	bool printBWTag = false;
-	int ignoreXret = 0;
 
 	if (parse_reg_t(_engine->_gamestate, argv[1], &objAddr, false)) {
 		DebugPrintf("Invalid address passed.\n");
