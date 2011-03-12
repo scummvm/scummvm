@@ -368,12 +368,6 @@ const SciWorkaroundEntry kStrAt_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
-const SciWorkaroundEntry kStrCat_workarounds[] = {
-	{ GID_LONGBOW,       210,   210,  0,         "giveScroll", "changeState",0x3294,    0, { WORKAROUND_FAKE,      0 } }, // German version, when handing the scroll with the druid hand code to Marion - bug #3048054
-	SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kStrLen_workarounds[] = {
 	{ GID_QFG2,          210,     2,  0,                   "", "export 21",   0xdeb,    0, { WORKAROUND_FAKE,      0 } }, // When saying something incorrect at the WIT, an integer is passed instead of a reference - bug #3100292
 	SCI_WORKAROUNDENTRY_TERMINATOR

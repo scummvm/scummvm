@@ -571,6 +571,52 @@ const SciScriptSignature kq6Signatures[] = {
 };
 
 // ===========================================================================
+// Script 210 in the German version of Longbow handles the case where Robin
+// hands out the scroll to Marion and then types his name using the hand code.
+// The German version script contains a typo (probably a copy/paste error),
+// and the function that is used to show each letter is called twice. The
+// second time that the function is called, the second parameter passed to
+// the function is undefined, thus kStrCat() that is called inside the function
+// reads a random pointer and crashes. We patch all of the 5 function calls
+// (one for each letter typed from "R", "O", "B", "I", "N") so that they are
+// the same as the English version. Fixes bug #3048054.
+const byte longbowSignatureShowHandCode[] = {
+	3,
+	0x78,                   // push1
+	0x78,                   // push1
+	0x72,                   // lofsa
+	+2, 2,                  // skip 2 bytes, offset of lofsa (the letter typed)
+	0x36,                   // push
+	0x40,                   // call
+	+2, 3,                  // skip 2 bytes, offset of call
+	0x02,                   // perform the call above with 2 parameters
+	0x36,                   // push
+	0x40,                   // call
+	+2, 8,                  // skip 2 bytes, offset of call
+	0x02,                   // perform the call above with 2 parameters
+	0x38, 0x1c, 0x01,       // pushi 011c (setMotion)
+	0x39, 0x04,             // pushi 04 (x)
+	0x51, 0x1e,             // class MoveTo
+	0
+};
+
+const uint16 longbowPatchShowHandCode[] = {
+	0x39, 0x01,             // pushi 1 (combine the two push1's in one, like in the English version)
+	PATCH_ADDTOOFFSET | +3, // leave the lofsa call untouched
+	// The following will remove the duplicate call
+	0x32, 0x02, 0x00,       // jmp 02 - skip 2 bytes (the remainder of the first call)
+	0x48,                   // ret (dummy, should never be reached)
+	0x48,                   // ret (dummy, should never be reached)
+	PATCH_END
+};
+
+//    script, description,                                      magic DWORD,                                  adjust
+const SciScriptSignature longbowSignatures[] = {
+	{    210, "hand code crash",                             5, PATCH_MAGICDWORD(0x02, 0x38, 0x1c, 0x01),   -14, longbowSignatureShowHandCode, longbowPatchShowHandCode },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 // this is called on every death dialog. Problem is at least the german
 //  version of lsl6 gets title text that is far too long for the
 //  available temp space resulting in temp space corruption
@@ -1110,6 +1156,9 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 		break;
 	case GID_LAURABOW2:
 		signatureTable = laurabow2Signatures;
+		break;
+	case GID_LONGBOW:
+		signatureTable = longbowSignatures;
 		break;
 	case GID_LSL6:
 		signatureTable = larry6Signatures;
