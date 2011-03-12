@@ -98,8 +98,7 @@ Common::String OSystem_Android::getPixelFormatName(const Graphics::PixelFormat &
 
 void OSystem_Android::initTexture(GLESTexture **texture,
 									uint width, uint height,
-									const Graphics::PixelFormat *format,
-									bool alphaPalette) {
+									const Graphics::PixelFormat *format) {
 	assert(texture);
 	Graphics::PixelFormat format_clut8 =
 		Graphics::PixelFormat::createFormatCLUT8();
@@ -135,10 +134,7 @@ void OSystem_Android::initTexture(GLESTexture **texture,
 				LOGE("unsupported pixel format: %s",
 					getPixelFormatName(format_new).c_str());
 
-			if (alphaPalette)
-				*texture = new GLESPalette8888Texture;
-			else
-				*texture = new GLESPalette888Texture;
+			*texture = new GLESPalette888Texture;
 		}
 
 		LOGD("new pixel format: %s",
@@ -262,7 +258,7 @@ void OSystem_Android::initSize(uint width, uint height,
 	GLTHREADCHECK;
 
 #ifdef USE_RGB_COLOR
-	initTexture(&_game_texture, width, height, format, false);
+	initTexture(&_game_texture, width, height, format);
 #else
 	_game_texture->allocBuffer(width, height);
 	_game_texture->fillBuffer(0);
