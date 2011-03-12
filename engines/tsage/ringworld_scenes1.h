@@ -99,7 +99,7 @@ public:
 	Action2 _action2;
 	Action3 _action3;
 	Action4 _action4;
-	SceneObject _sceneObject1, _sceneObject2, _sceneObject3, _sceneObject4, _sceneObject5;
+	SceneObject _sceneObject1, _SceneObjectExt, _sceneObject3, _sceneObject4, _sceneObject5;
 	SoundHandler _sound;
 public:
 	Scene20();
@@ -364,16 +364,16 @@ class Scene60: public Scene {
 	public:
 		virtual void doAction(int action);
 	};
-	class SlaveObject: public SceneObject2 {
+	class SlaveObject: public SceneObjectExt {
 	public:
 		virtual void doAction(int action);
 	};
-	class SceneObject2: public SceneObject {
+	class SceneObjectExt: public SceneObject {
 	public:
 		int _state;
 		virtual void synchronise(Serialiser &s);
 	};
-	class Object8: public SceneObject2 {
+	class Object8: public SceneObjectExt {
 	public:
 		virtual void doAction(int action);
 	};

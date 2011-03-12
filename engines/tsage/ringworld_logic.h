@@ -34,6 +34,14 @@
 
 namespace tSage {
 
+#define ADD_PLAYER_MOVER(X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
+	_globals->_player.addMover(mover, &pt, this); }
+#define ADD_MOVER(OBJ, X, Y) { Common::Point pt(X, Y); NpcMover *mover = new NpcMover(); \
+	OBJ.addMover(mover, &pt, this); }
+#define ADD_MOVER2(OBJ, X, Y) { Common::Point pt(X, Y); NpcMover *mover = new NpcMover(); \
+	OBJ.addMover(mover, &pt, NULL); }
+
+
 class SceneFactory {
 public:
 	static Scene *createScene(int sceneNumber);

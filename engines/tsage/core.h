@@ -539,7 +539,7 @@ public:
 	virtual void updateScreen();
 };
 
-class SceneObject2: public SceneObject {
+class SceneObjectExt: public SceneObject {
 public:
 	int _state;
 
@@ -547,7 +547,7 @@ public:
 		SceneObject::synchronise(s);
 		s.syncAsSint16LE(_state);
 	}
-	virtual Common::String getClassName() { return "SceneObject2"; }
+	virtual Common::String getClassName() { return "SceneObjectExt"; }
 };
 
 class SceneText: public SceneObject {

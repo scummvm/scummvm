@@ -775,6 +775,76 @@ public:
 	virtual void dispatch();
 };
 
+class Scene2320: public Scene {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action3: public ActionExt {
+	public:
+		virtual void signal();
+	};
+	class Action4: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action5: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action6: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action7: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action8: public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	SoundHandler _soundHandler;
+	SequenceManager _sequenceManager1, _sequenceManager2;
+	SpeakerMText _speakerMText;
+	SpeakerMR _speakerMR;
+	SpeakerML _speakerML;
+	SpeakerQText _speakerQText;
+	SpeakerQL _speakerQL;
+	SpeakerQR _speakerQR;
+	SpeakerSAL _speakerSAL;
+	SpeakerSL _speakerSL;
+	SpeakerSR _speakerSR;
+	SpeakerSText _speakerSText;
+	SpeakerGameText _speakerGameText;
+	SceneArea _area1, _area2, _area3, _area4;
+	SceneObject _hotspot1, _hotspot2, _hotspot3, _hotspot4, _hotspot5;
+	SceneObject _hotspot6, _hotspot7, _hotspot8, _hotspot9;
+	SceneObjectExt _hotspot10, _hotspot11;
+	SceneObject _hotspot12, _hotspot13, _hotspot14, _hotspot15;
+	SceneObject _hotspot16;
+	SceneItem *_hotspotPtr;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+	Action5 _action5;
+	Action6 _action6;
+	Action7 _action7;
+	Action8 _action8;
+
+	Scene2320();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void synchronise(Serialiser &s);
+	virtual void signal();
+};
+
 } // End of namespace tSage
 
 #endif

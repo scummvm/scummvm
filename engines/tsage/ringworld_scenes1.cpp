@@ -308,7 +308,7 @@ void Scene20::Action2::signal() {
 		Common::Point pt(455, 77);
 		_globals->_player.addMover(mover, &pt, this);
 		ObjectMover2 *mover2 = new ObjectMover2();
-		scene->_sceneObject2.addMover(mover2, 5, 10, &_globals->_player);
+		scene->_SceneObjectExt.addMover(mover2, 5, 10, &_globals->_player);
 		ObjectMover2 *mover3 = new ObjectMover2();
 		scene->_sceneObject3.addMover(mover3, 10, 15, &_globals->_player);
 		break;
@@ -370,7 +370,7 @@ void Scene20::Action3::signal() {
 		Common::Point pt(615, 81);
 		_globals->_player.addMover(npcMover, &pt, this);
 		ObjectMover2 *mover1 = new ObjectMover2();
-		scene->_sceneObject2.addMover(mover1, 5, 10, &_globals->_player);
+		scene->_SceneObjectExt.addMover(mover1, 5, 10, &_globals->_player);
 		ObjectMover2 *mover2 = new ObjectMover2();
 		scene->_sceneObject3.addMover(mover2, 20, 25, &_globals->_player);
 		break;
@@ -383,7 +383,7 @@ void Scene20::Action3::signal() {
 	}
 	case 3: {
 		_globals->_player._moveDiff = Common::Point(10, 10);
-		scene->_sceneObject2._moveDiff = Common::Point(10, 10);
+		scene->_SceneObjectExt._moveDiff = Common::Point(10, 10);
 		scene->_sceneObject3._moveDiff = Common::Point(10, 10);
 		npcMover = new NpcMover();
 		Common::Point pt(445, 132);
@@ -428,12 +428,12 @@ void Scene20::Action4::signal() {
 		Common::Point pt(486, 134);
 		_globals->_player.addMover(npcMover, &pt, this);
 		ObjectMover2 *mover1 = new ObjectMover2();
-		scene->_sceneObject2.addMover(mover1, 20, 35, &_globals->_player);
+		scene->_SceneObjectExt.addMover(mover1, 20, 35, &_globals->_player);
 		break;
 	}
 	case 2: {
 		_globals->_player._moveDiff = Common::Point(12, 12);
-		scene->_sceneObject2._moveDiff = Common::Point(12, 12);
+		scene->_SceneObjectExt._moveDiff = Common::Point(12, 12);
 		NpcMover *mover1 = new NpcMover();
 		Common::Point pt(486, 134);
 		scene->_sceneObject3.addMover(mover1, &pt, this);
@@ -442,7 +442,7 @@ void Scene20::Action4::signal() {
 		_globals->_player.addMover(mover2, &pt, NULL);
 		NpcMover *mover3 = new NpcMover();
 		pt = Common::Point(-15, 134);
-		scene->_sceneObject2.addMover(mover3, &pt, NULL);
+		scene->_SceneObjectExt.addMover(mover3, &pt, NULL);
 		break;
 	}
 	case 3: {
@@ -462,21 +462,21 @@ void Scene20::Action4::signal() {
 		scene->_sceneObject4._moveDiff.x = 48;
 
 		ObjectMover3 *mover = new ObjectMover3();
-		scene->_sceneObject4.addMover(mover, &scene->_sceneObject2, 4, this);
+		scene->_sceneObject4.addMover(mover, &scene->_SceneObjectExt, 4, this);
 		break;
 	}
 	case 5: {
 		scene->_sound.startSound(42);
 		scene->_sceneObject4.remove();
-		scene->_sceneObject2.setVisage(21);
-		scene->_sceneObject2.setStrip(1);
-		scene->_sceneObject2.setFrame(1);
-		scene->_sceneObject2.animate(ANIM_MODE_5, NULL);
+		scene->_SceneObjectExt.setVisage(21);
+		scene->_SceneObjectExt.setStrip(1);
+		scene->_SceneObjectExt.setFrame(1);
+		scene->_SceneObjectExt.animate(ANIM_MODE_5, NULL);
 		
-		scene->_sceneObject2._moveDiff.x = 4;
+		scene->_SceneObjectExt._moveDiff.x = 4;
 		NpcMover *mover1 = new NpcMover();
-		Common::Point pt(scene->_sceneObject2._position.x - 12, scene->_sceneObject2._position.y + 5);
-		scene->_sceneObject2.addMover(mover1, &pt, NULL);
+		Common::Point pt(scene->_SceneObjectExt._position.x - 12, scene->_SceneObjectExt._position.y + 5);
+		scene->_SceneObjectExt.addMover(mover1, &pt, NULL);
 
 		scene->_sceneObject5.postInit();
 		scene->_sceneObject5.setVisage(21);
@@ -491,8 +491,8 @@ void Scene20::Action4::signal() {
 	}
 	case 6: {
 		scene->_sound.startSound(42);
-		scene->_sceneObject2.setStrip(2);
-		scene->_sceneObject2.animate(ANIM_MODE_2, NULL);
+		scene->_SceneObjectExt.setStrip(2);
+		scene->_SceneObjectExt.animate(ANIM_MODE_2, NULL);
 		
 		scene->_sceneObject5.remove();
 		_globals->_player.setVisage(21);
@@ -539,17 +539,17 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 		_globals->_player._moveDiff = Common::Point(10, 10);
 		_globals->_player.animate(ANIM_MODE_1, NULL);
 
-		_sceneObject2.postInit();
-		_sceneObject2.setVisage(20);
-		_sceneObject2.setPosition(Common::Point(400, 69));
-		_sceneObject2.animate(ANIM_MODE_1, NULL);
+		_SceneObjectExt.postInit();
+		_SceneObjectExt.setVisage(20);
+		_SceneObjectExt.setPosition(Common::Point(400, 69));
+		_SceneObjectExt.animate(ANIM_MODE_1, NULL);
 		
 		_sceneObject3.postInit();
 		_sceneObject3.setVisage(20);
 		_sceneObject3.setPosition(Common::Point(395, 69));
 		_sceneObject3.animate(ANIM_MODE_1, NULL);
 
-		_sceneObject2._moveDiff = Common::Point(10, 10);
+		_SceneObjectExt._moveDiff = Common::Point(10, 10);
 		_sceneObject3._moveDiff = Common::Point(10, 10);
 		_globals->_soundHandler.startSound(20);
 		_sound.startSound(21);
@@ -583,23 +583,23 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 		_globals->_player.setPriority2(50);
 		_globals->_player.animate(ANIM_MODE_1, NULL);
 
-		_sceneObject2.postInit();
-		_sceneObject2.setVisage(20);
-		_sceneObject2.setPosition(Common::Point(583, 79));
-		_sceneObject2.animate(ANIM_MODE_1, NULL);
+		_SceneObjectExt.postInit();
+		_SceneObjectExt.setVisage(20);
+		_SceneObjectExt.setPosition(Common::Point(583, 79));
+		_SceneObjectExt.animate(ANIM_MODE_1, NULL);
 
 		_sceneObject3.postInit();
 		_sceneObject3.setVisage(20);
 		_sceneObject3.setStrip(2);
-		_sceneObject2.setPosition(Common::Point(595, 79));
-		_sceneObject2.animate(ANIM_MODE_1, NULL);
+		_SceneObjectExt.setPosition(Common::Point(595, 79));
+		_SceneObjectExt.animate(ANIM_MODE_1, NULL);
 
 		if ((_globals->getFlag(120) && _globals->getFlag(116)) || 
 				(_globals->getFlag(117) && _globals->getFlag(119))) {
 			setAction(&_action3);
 		} else if (_globals->getFlag(104)) {
 			_sceneMode = 21;
-			setAction(&_sequenceManager, this, 21, &_globals->_player, &_sceneObject2, NULL);
+			setAction(&_sequenceManager, this, 21, &_globals->_player, &_SceneObjectExt, NULL);
 		} else {
 			_sceneObject3._moveDiff = Common::Point(8, 8);
 			setAction(&_action4);
@@ -2108,7 +2108,7 @@ void Scene60::Object6::doAction(int action) {
 	}	
 }
 
-void Scene60::SceneObject2::synchronise(Serialiser &s) {
+void Scene60::SceneObjectExt::synchronise(Serialiser &s) {
 	s.syncAsUint16LE(_state);
 }
 
