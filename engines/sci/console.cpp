@@ -2601,12 +2601,14 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 		DebugPrintf("Valid options are:\n");
 		DebugPrintf(" bwt  : Print byte/word tag\n");
 		DebugPrintf(" bc   : Print bytecode\n");
+		DebugPrintf(" rX   : Continue after X ret opcodes before stopping decompilation\n");
 		return true;
 	}
 
 	reg_t objAddr = NULL_REG;
 	bool printBytecode = false;
 	bool printBWTag = false;
+	int ignoreXret = 0;
 
 	if (parse_reg_t(_engine->_gamestate, argv[1], &objAddr, false)) {
 		DebugPrintf("Invalid address passed.\n");
@@ -2616,7 +2618,7 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 
 	const Object *obj = _engine->_gamestate->_segMan->getObject(objAddr);
 	int selectorId = _engine->getKernel()->findSelector(argv[2]);
-	reg_t addr;
+	reg_t addr = NULL_REG;
 
 	if (!obj) {
 		DebugPrintf("Not an object.");
@@ -2635,13 +2637,20 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 
 	for (int i = 3; i < argc; i++) {
 		if (!scumm_stricmp(argv[i], "bwt"))
-			printBytecode = true;
-		else if (!scumm_stricmp(argv[i], "bc"))
 			printBWTag = true;
+		else if (!scumm_stricmp(argv[i], "bc"))
+			printBytecode = true;
+		else if (argv[i][0] == 'r')
+			ignoreXret = atoi(argv[i] + 1);
 	}
 
 	do {
+		reg_t prevAddr = addr;
 		addr = disassemble(_engine->_gamestate, addr, printBWTag, printBytecode);
+		if (addr.isNull() && ignoreXret) {
+			addr = prevAddr + 1;	// skip past the ret
+			ignoreXret--;
+		}
 	} while (addr.offset > 0);
 
 	return true;
