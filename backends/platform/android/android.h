@@ -121,6 +121,9 @@ private:
 	bool _show_mouse;
 	bool _use_mouse_palette;
 
+	bool _fullscreen;
+	bool _ar_correction;
+
 	Common::Queue<Common::Event> _event_queue;
 	MutexRef _event_queue_lock;
 
@@ -183,6 +186,8 @@ public:
 
 	virtual void initSize(uint width, uint height,
 							const Graphics::PixelFormat *format);
+	void clearScreen(bool swapBuffers);
+	void updateScreenRect();
 	virtual int getScreenChangeID() const;
 
 	virtual int16 getHeight();

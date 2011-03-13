@@ -115,6 +115,8 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_mouse_hotspot(),
 	_mouse_keycolor(0),
 	_use_mouse_palette(false),
+	_fullscreen(false),
+	_ar_correction(false),
 	_show_mouse(false),
 	_show_overlay(false),
 	_enable_zoning(false),
@@ -302,6 +304,9 @@ void OSystem_Android::initBackend() {
 
 	_main_thread = pthread_self();
 
+	ConfMan.registerDefault("fullscreen", true);
+	ConfMan.registerDefault("aspect_ratio", true);
+
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setBool("FM_high_quality", false);
 	ConfMan.setBool("FM_medium_quality", true);
@@ -351,7 +356,9 @@ void OSystem_Android::addPluginDirectories(Common::FSList &dirs) const {
 }
 
 bool OSystem_Android::hasFeature(Feature f) {
-	return (f == kFeatureCursorHasPalette ||
+	return (f == kFeatureFullscreenMode ||
+			f == kFeatureAspectRatioCorrection ||
+			f == kFeatureCursorHasPalette ||
 			f == kFeatureVirtualKeyboard ||
 			f == kFeatureOverlaySupportsAlpha);
 }
@@ -360,6 +367,14 @@ void OSystem_Android::setFeatureState(Feature f, bool enable) {
 	ENTER("%d, %d", f, enable);
 
 	switch (f) {
+	case kFeatureFullscreenMode:
+		_fullscreen = enable;
+		updateScreenRect();
+		break;
+	case kFeatureAspectRatioCorrection:
+		_ar_correction = enable;
+		updateScreenRect();
+		break;
 	case kFeatureVirtualKeyboard:
 		_virtkeybd_on = enable;
 		showVirtualKeyboard(enable);
@@ -490,17 +505,28 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 		} else {
 			// Touchscreen events need to be converted
 			// from device to game coords first.
-			const GLESBaseTexture *tex;
-			if (_show_overlay)
-				tex = _overlay_texture;
-			else
-				tex = _game_texture;
+			if (_show_overlay) {
+				event.mouse.x = scalef(event.mouse.x,
+										_overlay_texture->width(),
+										_egl_surface_width);
+				event.mouse.y = scalef(event.mouse.y,
+										_overlay_texture->height(),
+										_egl_surface_height);
+			} else {
+				const Common::Rect &r = _game_texture->getDrawRect();
 
-			event.mouse.x = scalef(event.mouse.x, tex->width(),
-									_egl_surface_width);
-			event.mouse.y = scalef(event.mouse.y, tex->height(),
-									_egl_surface_height);
-			event.mouse.x -= _shake_offset;
+				event.mouse.x -= r.left;
+				event.mouse.y -= r.top;
+
+				event.mouse.x = scalef(event.mouse.x,
+										_game_texture->width(),
+										r.width());
+				event.mouse.y = scalef(event.mouse.y,
+										_game_texture->height(),
+										r.height());
+
+				event.mouse.x -= _shake_offset;
+			}
 		}
 		break;
 	}

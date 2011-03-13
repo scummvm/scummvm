@@ -59,6 +59,15 @@ public class ScummVMActivity extends Activity {
 		}
 
 		@Override
+		protected void getDPI(float[] values) {
+			DisplayMetrics metrics = new DisplayMetrics();
+			getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+			values[0] = metrics.xdpi;
+			values[1] = metrics.ydpi;
+		}
+
+		@Override
 		protected void displayMessageOnOSD(String msg) {
 			Log.i(LOG_TAG, "OSD: " + msg);
 			Toast.makeText(ScummVMActivity.this, msg, Toast.LENGTH_LONG).show();

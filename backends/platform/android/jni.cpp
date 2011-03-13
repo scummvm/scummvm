@@ -65,6 +65,7 @@ jfieldID JNI::_FID_Event_mouse_x = 0;
 jfieldID JNI::_FID_Event_mouse_y = 0;
 jfieldID JNI::_FID_Event_mouse_relative = 0;
 
+jmethodID JNI::_MID_getDPI = 0;
 jmethodID JNI::_MID_displayMessageOnOSD = 0;
 jmethodID JNI::_MID_setWindowCaption = 0;
 jmethodID JNI::_MID_showVirtualKeyboard = 0;
@@ -213,6 +214,35 @@ void JNI::throwRuntimeException(JNIEnv *env, const char *msg) {
 }
 
 // calls to the dark side
+
+void JNI::getDPI(float *values) {
+	values[0] = 0.0;
+	values[1] = 0.0;
+
+	JNIEnv *env = JNI::getEnv();
+
+	jfloatArray array = env->NewFloatArray(2);
+
+	env->CallVoidMethod(_jobj, _MID_getDPI, array);
+
+	if (env->ExceptionCheck()) {
+		LOGE("Failed to get DPIs");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	} else {
+		jfloat *res = env->GetFloatArrayElements(array, 0);
+
+		if (res) {
+			values[0] = res[0];
+			values[1] = res[1];
+
+			env->ReleaseFloatArrayElements(array, res, 0);
+		}
+	}
+
+	env->DeleteLocalRef(array);
+}
 
 void JNI::displayMessageOnOSD(const char *msg) {
 	JNIEnv *env = JNI::getEnv();
@@ -445,6 +475,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	} while (0)
 
 	FIND_METHOD(, setWindowCaption, "(Ljava/lang/String;)V");
+	FIND_METHOD(, getDPI, "([F)V");
 	FIND_METHOD(, displayMessageOnOSD, "(Ljava/lang/String;)V");
 	FIND_METHOD(, showVirtualKeyboard, "(Z)V");
 	FIND_METHOD(, getSysArchives, "()[Ljava/lang/String;");

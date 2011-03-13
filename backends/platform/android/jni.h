@@ -60,6 +60,7 @@ public:
 
 	static void getPluginDirectories(Common::FSList &dirs);
 	static void setWindowCaption(const char *caption);
+	static void getDPI(float *values);
 	static void displayMessageOnOSD(const char *msg);
 	static void showVirtualKeyboard(bool enable);
 	static void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
@@ -100,6 +101,7 @@ private:
 	static jfieldID _FID_Event_mouse_relative;
 	static jfieldID _FID_ScummVM_nativeScummVM;
 
+	static jmethodID _MID_getDPI;
 	static jmethodID _MID_displayMessageOnOSD;
 	static jmethodID _MID_setWindowCaption;
 	static jmethodID _MID_showVirtualKeyboard;

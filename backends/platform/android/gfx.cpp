@@ -267,7 +267,7 @@ void OSystem_Android::initSize(uint width, uint height,
 	_game_texture->fillBuffer(0);
 #endif
 
-	_game_texture->setDrawRect(0, 0, _egl_surface_width, _egl_surface_height);
+	updateScreenRect();
 
 	// Don't know mouse size yet - it gets reallocated in
 	// setMouseCursor.  We need the palette allocated before
@@ -275,10 +275,54 @@ void OSystem_Android::initSize(uint width, uint height,
 	// size (it's small).
 	_mouse_texture_palette->allocBuffer(20, 20);
 
+	clearScreen(true);
+}
+
+void OSystem_Android::clearScreen(bool swapBuffers) {
 	// clear screen
 	GLCALL(glClearColorx(0, 0, 0, 1 << 16));
 	GLCALL(glClear(GL_COLOR_BUFFER_BIT));
-	JNI::swapBuffers();
+
+	if (swapBuffers)
+		JNI::swapBuffers();
+}
+
+void OSystem_Android::updateScreenRect() {
+	uint16 w = _game_texture->width();
+	uint16 h = _game_texture->height();
+
+	Common::Rect rect(0, 0, _egl_surface_width, _egl_surface_height);
+
+	if (!_fullscreen) {
+		if (_ar_correction && w == 320 && h == 200)
+			h = 240;
+
+		float dpi[2];
+		JNI::getDPI(dpi);
+
+		float screen_ar;
+		if (dpi[0] != 0.0 && dpi[1] != 0.0) {
+			// horizontal orientation
+			screen_ar = (dpi[1] * _egl_surface_width) /
+						(dpi[0] * _egl_surface_height);
+		} else {
+			screen_ar = float(_egl_surface_width) / float(_egl_surface_height);
+		}
+
+		float game_ar = float(w) / float(h);
+
+		if (screen_ar > game_ar) {
+			rect.setWidth(round(_egl_surface_height * game_ar));
+			rect.moveTo((_egl_surface_width - rect.width()) / 2, 0);
+		} else {
+			rect.setHeight(round(_egl_surface_width / game_ar));
+			rect.moveTo((_egl_surface_height - rect.height()) / 2, 0);
+		}
+	}
+
+	glScissor(rect.left, rect.top, rect.width(), rect.height());
+
+	_game_texture->setDrawRect(rect);
 }
 
 int OSystem_Android::getScreenChangeID() const {
@@ -353,6 +397,10 @@ void OSystem_Android::updateScreen() {
 
 	_force_redraw = false;
 
+	// clear pointer leftovers in dead areas
+	if (_show_overlay && !_fullscreen)
+		clearScreen(false);
+
 	GLCALL(glPushMatrix());
 
 	if (_shake_offset != 0 ||
@@ -361,8 +409,7 @@ void OSystem_Android::updateScreen() {
 							_game_texture->height()).contains(_focus_rect))) {
 		// These are the only cases where _game_texture doesn't
 		// cover the entire screen.
-		GLCALL(glClearColorx(0, 0, 0, 1 << 16));
-		GLCALL(glClear(GL_COLOR_BUFFER_BIT));
+		clearScreen(false);
 
 		// Move everything up by _shake_offset (game) pixels
 		GLCALL(glTranslatex(0, -_shake_offset << 16, 0));
@@ -397,20 +444,25 @@ void OSystem_Android::updateScreen() {
 	if (_show_mouse) {
 		GLCALL(glPushMatrix());
 
+		Common::Point mouse = getEventManager()->getMousePos();
+
 		// Scale up ScummVM -> OpenGL (pixel) coordinates
-		int texwidth, texheight;
-
 		if (_show_overlay) {
-			texwidth = getOverlayWidth();
-			texheight = getOverlayHeight();
+			GLCALL(glScalex(xdiv(_egl_surface_width,
+									_overlay_texture->width()),
+							xdiv(_egl_surface_height,
+									_overlay_texture->height()),
+							1 << 16));
 		} else {
-			texwidth = getWidth();
-			texheight = getHeight();
-		}
+			const Common::Rect &r = _game_texture->getDrawRect();
 
-		GLCALL(glScalex(xdiv(_egl_surface_width, texwidth),
-						xdiv(_egl_surface_height, texheight),
-						1 << 16));
+			GLCALL(glTranslatex(r.left << 16,
+								r.top << 16,
+								0));
+			GLCALL(glScalex(xdiv(r.width(), _game_texture->width()),
+							xdiv(r.height(), _game_texture->height()),
+							1 << 16));
+		}
 
 		GLCALL(glTranslatex((-_mouse_hotspot.x * cs) << 16,
 							(-_mouse_hotspot.y * cs) << 16,
@@ -418,7 +470,6 @@ void OSystem_Android::updateScreen() {
 
 		// Note the extra half texel to position the mouse in
 		// the middle of the x,y square:
-		const Common::Point& mouse = getEventManager()->getMousePos();
 		GLCALL(glTranslatex((mouse.x << 16) | 1 << 15,
 							(mouse.y << 16) | 1 << 15, 0));
 
@@ -494,6 +545,8 @@ void OSystem_Android::showOverlay() {
 
 	_show_overlay = true;
 	_force_redraw = true;
+
+	GLCALL(glDisable(GL_SCISSOR_TEST));
 }
 
 void OSystem_Android::hideOverlay() {
@@ -501,6 +554,10 @@ void OSystem_Android::hideOverlay() {
 
 	_show_overlay = false;
 	_force_redraw = true;
+
+	clearScreen(false);
+
+	GLCALL(glEnable(GL_SCISSOR_TEST));
 }
 
 void OSystem_Android::clearOverlay() {
