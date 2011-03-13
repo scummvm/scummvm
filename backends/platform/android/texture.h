@@ -59,8 +59,29 @@ public:
 
 	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
 
-	inline void drawTexture() {
-		drawTexture(0, 0, _surface.w, _surface.h);
+	inline void setDrawRect(const Common::Rect &rect) {
+		_draw_rect = rect;
+	}
+
+	inline void setDrawRect(int16 w, int16 h) {
+		_draw_rect = Common::Rect(w, h);
+	}
+
+	inline void setDrawRect(int16 x1, int16 y1, int16 x2, int16 y2) {
+		_draw_rect = Common::Rect(x1, y1, x2, y2);
+	}
+
+	inline const Common::Rect &getDrawRect() {
+		return _draw_rect;
+	}
+
+	inline void drawTextureRect() {
+		drawTexture(_draw_rect.left, _draw_rect.top,
+					_draw_rect.width(), _draw_rect.height());
+	}
+
+	inline void drawTextureOrigin() {
+			drawTexture(0, 0, _surface.w, _surface.h);
 	}
 
 	inline GLuint width() const {
@@ -136,7 +157,8 @@ protected:
 	GLuint _texture_width;
 	GLuint _texture_height;
 
-	// Covers dirty area
+	Common::Rect _draw_rect;
+
 	bool _all_dirty;
 	Common::Rect _dirty_rect;
 
@@ -159,10 +181,6 @@ public:
 	virtual void fillBuffer(uint32 color);
 
 	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
-
-	inline void drawTexture() {
-		drawTexture(0, 0, _surface.w, _surface.h);
-	}
 
 protected:
 	byte *_pixels;
@@ -216,10 +234,6 @@ public:
 	virtual void fillBuffer(uint32 color);
 
 	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
-
-	inline void drawTexture() {
-		drawTexture(0, 0, _surface.w, _surface.h);
-	}
 
 	virtual const byte *palette_const() const {
 		return _texture;
@@ -284,10 +298,6 @@ public:
 	virtual void fillBuffer(uint32 color);
 
 	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
-
-	inline void drawTexture() {
-		drawTexture(0, 0, _surface.w, _surface.h);
-	}
 
 	virtual const byte *palette_const() const {
 		return (byte *)_palette;

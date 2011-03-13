@@ -250,6 +250,8 @@ void OSystem_Android::initOverlay() {
 	LOGI("overlay size is %ux%u", overlay_width, overlay_height);
 
 	_overlay_texture->allocBuffer(overlay_width, overlay_height);
+	_overlay_texture->setDrawRect(0, 0,
+									_egl_surface_width, _egl_surface_height);
 }
 
 void OSystem_Android::initSize(uint width, uint height,
@@ -264,6 +266,9 @@ void OSystem_Android::initSize(uint width, uint height,
 	_game_texture->allocBuffer(width, height);
 	_game_texture->fillBuffer(0);
 #endif
+
+	_game_texture->setDrawRect(0, 0, _egl_surface_width, _egl_surface_height);
+
 	// Don't know mouse size yet - it gets reallocated in
 	// setMouseCursor.  We need the palette allocated before
 	// setMouseCursor however, so just take a guess at the desired
@@ -364,8 +369,7 @@ void OSystem_Android::updateScreen() {
 	}
 
 	if (_focus_rect.isEmpty()) {
-		_game_texture->drawTexture(0, 0, _egl_surface_width,
-									_egl_surface_height);
+		_game_texture->drawTextureRect();
 	} else {
 		GLCALL(glPushMatrix());
 		GLCALL(glScalex(xdiv(_egl_surface_width, _focus_rect.width()),
@@ -377,8 +381,7 @@ void OSystem_Android::updateScreen() {
 						xdiv(_game_texture->height(), _egl_surface_height),
 						1 << 16));
 
-		_game_texture->drawTexture(0, 0, _egl_surface_width,
-									_egl_surface_height);
+		_game_texture->drawTextureRect();
 		GLCALL(glPopMatrix());
 	}
 
@@ -388,8 +391,7 @@ void OSystem_Android::updateScreen() {
 		// ugly, but the modern theme sets a wacko factor, only god knows why
 		cs = 1;
 
-		GLCALL(_overlay_texture->drawTexture(0, 0, _egl_surface_width,
-													_egl_surface_height));
+		GLCALL(_overlay_texture->drawTextureRect());
 	}
 
 	if (_show_mouse) {
@@ -422,7 +424,7 @@ void OSystem_Android::updateScreen() {
 
 		GLCALL(glScalex(cs << 16, cs << 16, 1 << 16));
 
-		_mouse_texture->drawTexture();
+		_mouse_texture->drawTextureOrigin();
 
 		GLCALL(glPopMatrix());
 	}
