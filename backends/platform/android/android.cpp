@@ -540,24 +540,7 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 void OSystem_Android::pushEvent(const Common::Event& event) {
 	lockMutex(_event_queue_lock);
 
-	// Try to combine multiple queued mouse move events
-	if (event.type == Common::EVENT_MOUSEMOVE &&
-			!_event_queue.empty() &&
-			_event_queue.back().type == Common::EVENT_MOUSEMOVE) {
-		Common::Event tail = _event_queue.back();
-		if (event.kbd.flags) {
-			// relative movement hack
-			tail.mouse.x += event.mouse.x;
-			tail.mouse.y += event.mouse.y;
-		} else {
-			// absolute position, clear relative flag
-			tail.kbd.flags = 0;
-			tail.mouse.x = event.mouse.x;
-			tail.mouse.y = event.mouse.y;
-		}
-	} else {
-	  _event_queue.push(event);
-	}
+	_event_queue.push(event);
 
 	unlockMutex(_event_queue_lock);
 }
