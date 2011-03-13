@@ -526,6 +526,11 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 										r.height());
 
 				event.mouse.x -= _shake_offset;
+
+				event.mouse.x = CLIP(event.mouse.x, int16(0),
+										int16(_game_texture->width()));
+				event.mouse.y = CLIP(event.mouse.y, int16(0),
+										int16(_game_texture->height()));
 			}
 		}
 		break;
