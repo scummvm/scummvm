@@ -1078,10 +1078,8 @@ reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
 	int colorPen = adjustGraphColor((argc > 7 + argextra) ? argv[7 + argextra].toSint16() : 0);
 	int colorBack = adjustGraphColor((argc > 8 + argextra) ? argv[8 + argextra].toSint16() : 255);
 
-	//	const char *title = argv[4 + argextra].segment ? kernel_dereference_char_pointer(s, argv[4 + argextra], 0) : NULL;
-	if (argc>=13) {
+	if (argc >= 13)
 		rect2 = Common::Rect (argv[5].toSint16(), argv[4].toSint16(), argv[7].toSint16(), argv[6].toSint16());
-	}
 
 	Common::String title;
 	if (argv[4 + argextra].segment) {
