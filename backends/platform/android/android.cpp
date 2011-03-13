@@ -480,7 +480,6 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
-		// TODO: only dirty/redraw move bounds
 		_force_redraw = true;
 		// fallthrough
 	case Common::EVENT_LBUTTONDOWN:
