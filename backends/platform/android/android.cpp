@@ -423,6 +423,7 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 					_force_redraw = true;
 					updateScreen();
 					_force_redraw = true;
+					updateScreen();
 
 					event.type = Common::EVENT_SCREEN_CHANGED;
 
@@ -431,6 +432,7 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 					// new surface
 					initSurface();
 					_force_redraw = true;
+					updateScreen();
 
 					event.type = Common::EVENT_SCREEN_CHANGED;
 
