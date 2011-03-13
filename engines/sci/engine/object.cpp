@@ -175,13 +175,13 @@ bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClas
 		if (_variables.size() != baseObj->getVarCount()) {
 			warning("Object %04x:%04x varnum doesn't match baseObj's: obj %d, base %d ", PRINT_REG(_pos), _variables.size(), baseObj->getVarCount());
 			// These objects are probably broken.
-			// An example is 'witchCage' in script 200 in KQ5, but also
-			// 'girl' in script 216 and 'door' in script 22.
+			// An example is 'witchCage' in script 200 in KQ5 (#3034714),
+			// but also 'girl' in script 216 and 'door' in script 22.
 			// In LSL3 a number of sound objects trigger this right away.
+			// SQ4-floppy's bug #3037938 also seems related.
 
 			// The effect is that a number of its method selectors may be
 			// treated as variable selectors, causing unpredictable effects.
-			// In the case of KQ5/witchCage, this caused bug #3034714.
 		}
 		_variables.resize(baseObj->getVarCount());
 		// Copy base from species class, as we need its selector IDs
