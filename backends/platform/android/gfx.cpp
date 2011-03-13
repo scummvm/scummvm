@@ -72,9 +72,9 @@ Graphics::PixelFormat OSystem_Android::getScreenFormat() const {
 
 Common::List<Graphics::PixelFormat> OSystem_Android::getSupportedFormats() const {
 	Common::List<Graphics::PixelFormat> res;
-	res.push_back(GLES565Texture::getPixelFormat());
-	res.push_back(GLES5551Texture::getPixelFormat());
-	res.push_back(GLES4444Texture::getPixelFormat());
+	res.push_back(GLES565Texture::pixelFormat());
+	res.push_back(GLES5551Texture::pixelFormat());
+	res.push_back(GLES4444Texture::pixelFormat());
 	res.push_back(Graphics::PixelFormat::createFormatCLUT8());
 
 	return res;
@@ -123,11 +123,11 @@ void OSystem_Android::initTexture(GLESTexture **texture,
 
 		delete *texture;
 
-		if (format_new == GLES565Texture::getPixelFormat())
+		if (format_new == GLES565Texture::pixelFormat())
 			*texture = new GLES565Texture();
-		else if (format_new == GLES5551Texture::getPixelFormat())
+		else if (format_new == GLES5551Texture::pixelFormat())
 			*texture = new GLES5551Texture();
-		else if (format_new == GLES4444Texture::getPixelFormat())
+		else if (format_new == GLES4444Texture::pixelFormat())
 			*texture = new GLES4444Texture();
 		else {
 			// TODO what now?
@@ -135,7 +135,7 @@ void OSystem_Android::initTexture(GLESTexture **texture,
 				LOGE("unsupported pixel format: %s",
 					getPixelFormatName(format_new).c_str());
 
-			*texture = new GLESPalette565Texture;
+			*texture = new GLESFakePalette565Texture;
 		}
 
 		LOGD("new pixel format: %s",

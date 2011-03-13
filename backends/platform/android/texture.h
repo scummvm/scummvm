@@ -100,9 +100,7 @@ public:
 		return _all_dirty || !_dirty_rect.isEmpty();
 	}
 
-	inline const Graphics::PixelFormat &getPixelFormat() const {
-		return _pixelFormat;
-	}
+	virtual const Graphics::PixelFormat &getPixelFormat() const;
 
 	inline const Graphics::PixelFormat &getPalettePixelFormat() const {
 		return _palettePixelFormat;
@@ -152,7 +150,7 @@ public:
 	GLES4444Texture();
 	virtual ~GLES4444Texture();
 
-	static inline Graphics::PixelFormat getPixelFormat() {
+	static Graphics::PixelFormat pixelFormat() {
 		return Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0);
 	}
 };
@@ -163,7 +161,7 @@ public:
 	GLES5551Texture();
 	virtual ~GLES5551Texture();
 
-	static inline Graphics::PixelFormat getPixelFormat() {
+	static inline Graphics::PixelFormat pixelFormat() {
 		return Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0);
 	}
 };
@@ -174,7 +172,7 @@ public:
 	GLES565Texture();
 	virtual ~GLES565Texture();
 
-	static inline Graphics::PixelFormat getPixelFormat() {
+	static inline Graphics::PixelFormat pixelFormat() {
 		return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	}
 };
@@ -245,6 +243,49 @@ class GLESPalette5551Texture : public GLESPaletteTexture {
 public:
 	GLESPalette5551Texture();
 	virtual ~GLESPalette5551Texture();
+};
+
+class GLESFakePaletteTexture : public GLESTexture {
+protected:
+	GLESFakePaletteTexture(GLenum glFormat, GLenum glType,
+							Graphics::PixelFormat pixelFormat);
+
+public:
+	virtual ~GLESFakePaletteTexture();
+
+	virtual void allocBuffer(GLuint width, GLuint height);
+	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
+								const void *buf, int pitch_buf);
+	virtual void fillBuffer(uint32 color);
+
+	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
+
+	inline void drawTexture() {
+		drawTexture(0, 0, _surface.w, _surface.h);
+	}
+
+	virtual const byte *palette_const() const {
+		return (byte *)_palette;
+	};
+
+	virtual byte *palette() {
+		setDirty();
+		return (byte *)_palette;
+	};
+
+	virtual const Graphics::PixelFormat &getPixelFormat() const;
+
+protected:
+	Graphics::PixelFormat _fake_format;
+	uint16 *_palette;
+	byte *_pixels;
+	uint16 *_buf;
+};
+
+class GLESFakePalette565Texture : public GLESFakePaletteTexture {
+public:
+	GLESFakePalette565Texture();
+	virtual ~GLESFakePalette565Texture();
 };
 
 #endif
