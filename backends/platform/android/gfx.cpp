@@ -546,6 +546,13 @@ void OSystem_Android::clearFocusRectangle() {
 void OSystem_Android::showOverlay() {
 	ENTER();
 
+	Common::Event e;
+	e.type = Common::EVENT_MOUSEMOVE;
+	e.mouse.x = _egl_surface_width / 2;
+	e.mouse.y = _egl_surface_height / 2;
+
+	pushEvent(e);
+
 	_show_overlay = true;
 	_force_redraw = true;
 
@@ -554,6 +561,13 @@ void OSystem_Android::showOverlay() {
 
 void OSystem_Android::hideOverlay() {
 	ENTER();
+
+	Common::Event e;
+	e.type = Common::EVENT_MOUSEMOVE;
+	e.mouse.x = _egl_surface_width / 2;
+	e.mouse.y = _egl_surface_height / 2;
+
+	pushEvent(e);
 
 	_show_overlay = false;
 	_force_redraw = true;
