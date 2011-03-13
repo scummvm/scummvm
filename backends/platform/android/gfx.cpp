@@ -143,7 +143,7 @@ void OSystem_Android::initTexture(GLESBaseTexture **texture,
 	}
 
 	(*texture)->allocBuffer(width, height);
-	(*texture)->fillBuffer(0);
+	(*texture)->clearBuffer();
 }
 #endif
 
@@ -264,7 +264,7 @@ void OSystem_Android::initSize(uint width, uint height,
 	initTexture(&_game_texture, width, height, format);
 #else
 	_game_texture->allocBuffer(width, height);
-	_game_texture->fillBuffer(0);
+	_game_texture->clearBuffer();
 #endif
 
 	updateScreenRect();
@@ -686,7 +686,7 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 
 			delete[] tmp;
 
-			_mouse_texture->fillBuffer(0);
+			_mouse_texture->clearBuffer();
 
 			return;
 		}
