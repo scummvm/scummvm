@@ -48,12 +48,12 @@ bool Picture::loadPicture(Common::String file, bool totalPalette /*= false*/) {
 		decompressLZSS(fileData + 8, _data, dstsize);
 
 		// size can only be 640x400 or 1280x400
-		if (dstsize > 640 * 400 + 768)
-			_width = 1280;
+		if (dstsize > TOON_SCREEN_WIDTH * TOON_SCREEN_HEIGHT + 768)
+			_width = TOON_BACKBUFFER_WIDTH;
 		else
-			_width = 640;
+			_width = TOON_SCREEN_WIDTH;
 
-		_height = 400;
+		_height = TOON_SCREEN_HEIGHT;
 
 		// do we have a palette ?
 		_paletteEntries = (dstsize & 0x7ff) / 3;
@@ -78,12 +78,12 @@ bool Picture::loadPicture(Common::String file, bool totalPalette /*= false*/) {
 		}
 
 		// size can only be 640x400 or 1280x400
-		if (decSize > 640 * 400 + 768)
-			_width = 1280;
+		if (decSize > TOON_SCREEN_WIDTH * TOON_SCREEN_HEIGHT + 768)
+			_width = TOON_BACKBUFFER_WIDTH;
 		else
-			_width = 640;
+			_width = TOON_SCREEN_WIDTH;
 
-		_height = 400;
+		_height = TOON_SCREEN_HEIGHT;
 
 		// decompress the picture into our buffer
 		decompressSPCN(fileData + 16 + _paletteEntries * 3, _data, decSize);
@@ -100,12 +100,12 @@ bool Picture::loadPicture(Common::String file, bool totalPalette /*= false*/) {
 		rnc.unpackM1(fileData, _data);
 
 		// size can only be 640x400 or 1280x400
-		if (decSize > 640 * 400 + 768)
-			_width = 1280;
+		if (decSize > TOON_SCREEN_WIDTH * TOON_SCREEN_HEIGHT + 768)
+			_width = TOON_BACKBUFFER_WIDTH;
 		else
-			_width = 640;
+			_width = TOON_SCREEN_WIDTH;
 
-		_height = 400;
+		_height = TOON_SCREEN_HEIGHT;
 		return true;
 	}
 	case kCompRNC2: {
@@ -118,12 +118,12 @@ bool Picture::loadPicture(Common::String file, bool totalPalette /*= false*/) {
 
 		decSize = rnc.unpackM2(fileData, _data);
 
-		if (decSize > 640 * 400 + 768)
-			_width = 1280;
+		if (decSize > TOON_SCREEN_WIDTH * TOON_SCREEN_HEIGHT + 768)
+			_width = TOON_BACKBUFFER_WIDTH;
 		else
-			_width = 640;
+			_width = TOON_SCREEN_WIDTH;
 
-		_height = 400;
+		_height = TOON_SCREEN_HEIGHT;
 		return true;
 	}
 	}

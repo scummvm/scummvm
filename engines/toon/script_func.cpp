@@ -947,7 +947,7 @@ int32 ScriptFunc::sys_Cmd_Init_Scene_Anim(EMCState *state) {
 	int32 layerZ = stackPos(3);
 
 	if (dx == -2)
-		sceneAnim->_animInstance->moveRelative(640, 0, 0);
+		sceneAnim->_animInstance->moveRelative(TOON_SCREEN_WIDTH, 0, 0);
 	else if (dx < 0) {
 		dx = sceneAnim->_animation->_x1;
 	}

@@ -57,7 +57,7 @@ void ToonEngine::init() {
 	_hotspots = new Hotspots(this);
 
 	_mainSurface = new Graphics::Surface();
-	_mainSurface->create(1280, 400, 1);
+	_mainSurface->create(TOON_BACKBUFFER_WIDTH, TOON_BACKBUFFER_HEIGHT, 1);
 
 	_finalPalette = new uint8[768];
 	_backupPalette = new uint8[768];
@@ -322,8 +322,8 @@ void ToonEngine::updateScrolling(bool force, int32 timeIncrement) {
 		if ((_gameState->_locations[_gameState->_currentScene]._flags & 0x80) == 0) {
 			if (desiredScrollValue < 0)
 				desiredScrollValue = 0;
-			if (desiredScrollValue >= _currentPicture->getWidth() - 640)
-				desiredScrollValue = _currentPicture->getWidth() - 640;
+			if (desiredScrollValue >= _currentPicture->getWidth() - TOON_SCREEN_WIDTH)
+				desiredScrollValue = _currentPicture->getWidth() - TOON_SCREEN_WIDTH;
 
 			if (force) {
 				_gameState->_currentScrollValue = desiredScrollValue;
@@ -381,7 +381,7 @@ void ToonEngine::render() {
 			_currentCutaway->draw(*_mainSurface, 0, 0, 0, 0);
 		else
 			_currentPicture->draw(*_mainSurface, 0, 0, 0, 0);
-		_dirtyRects.push_back(Common::Rect(0, 0, 1280, 400));
+		_dirtyRects.push_back(Common::Rect(0, 0, TOON_BACKBUFFER_WIDTH, TOON_BACKBUFFER_HEIGHT));
 	} else {
 		if (_gameState->_inCutaway)
 			_currentCutaway->drawWithRectList(*_mainSurface, 0, 0, 0, 0, _dirtyRects);
@@ -498,7 +498,7 @@ void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 
 	if (_dirtyAll || _gameState->_currentScrollValue != lastScroll) {
 		// we have to refresh everything in case of scrolling.
-		_system->copyRectToScreen((byte *)_mainSurface->pixels + state()->_currentScrollValue, 1280, 0, 0, 640, 400);
+		_system->copyRectToScreen((byte *)_mainSurface->pixels + state()->_currentScrollValue, TOON_BACKBUFFER_WIDTH, 0, 0, TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT);
 	} else {
 
 		int32 offX = 0;
@@ -512,9 +512,9 @@ void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 				offX = -rect.left;
 				rect.left = 0;
 			}
-			rect.clip(640, 400);
+			rect.clip(TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT);
 			if (rect.left >= 0 && rect.top >= 0 && rect.right - rect.left > 0 && rect.bottom - rect.top > 0) {
-				_system->copyRectToScreen((byte *)_mainSurface->pixels + _oldDirtyRects[i].left + offX + _oldDirtyRects[i].top * 1280, 1280, rect.left , rect.top, rect.right - rect.left, rect.bottom - rect.top);
+				_system->copyRectToScreen((byte *)_mainSurface->pixels + _oldDirtyRects[i].left + offX + _oldDirtyRects[i].top * TOON_BACKBUFFER_WIDTH, TOON_BACKBUFFER_WIDTH, rect.left , rect.top, rect.right - rect.left, rect.bottom - rect.top);
 			}
 		}
 
@@ -528,9 +528,9 @@ void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 				offX = -rect.left;
 				rect.left = 0;
 			}
-			rect.clip(640, 400);
+			rect.clip(TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT);
 			if (rect.left >= 0 && rect.top >= 0 && rect.right - rect.left > 0 && rect.bottom - rect.top > 0) {
-				_system->copyRectToScreen((byte *)_mainSurface->pixels + _dirtyRects[i].left + offX + _dirtyRects[i].top * 1280, 1280, rect.left , rect.top, rect.right - rect.left, rect.bottom - rect.top);
+				_system->copyRectToScreen((byte *)_mainSurface->pixels + _dirtyRects[i].left + offX + _dirtyRects[i].top * TOON_BACKBUFFER_WIDTH, TOON_BACKBUFFER_WIDTH, rect.left , rect.top, rect.right - rect.left, rect.bottom - rect.top);
 			}
 		}
 	}
@@ -662,7 +662,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 
 			if(_dirtyAll) {
 				mainmenuPicture->draw(*_mainSurface, 0, 0, 0, 0);
-				addDirtyRect(0, 0, 640, 400);
+				addDirtyRect(0, 0, TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT);
 			} else {
 				mainmenuPicture->drawWithRectList(*_mainSurface, 0, 0, 0, 0, _dirtyRects);
 			}
@@ -779,7 +779,7 @@ Common::Error ToonEngine::run() {
 
 	g_eventRec.registerRandomSource(_rnd, "toon");
 
-	initGraphics(640, 400, true);
+	initGraphics(TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT, true);
 	init();
 
 	// do we need to load directly a game?
@@ -1478,7 +1478,7 @@ void ToonEngine::clickEvent() {
 
 	int32 mouseX = _mouseX;
 	if (_gameState->_inCutaway) {
-		mouseX += 1280;
+		mouseX += TOON_BACKBUFFER_WIDTH;
 	}
 
 	// find hotspot
@@ -1615,7 +1615,7 @@ void ToonEngine::selectHotspot() {
 	int32 mouseX = _mouseX;
 
 	if (_gameState->_inCutaway)
-		mouseX += 1280;
+		mouseX += TOON_BACKBUFFER_WIDTH;
 
 	if (_gameState->_sackVisible) {
 		if (_mouseX > 0 && _mouseX < 40 && _mouseY > 356 && _mouseY < 396) {
@@ -1784,7 +1784,7 @@ void ToonEngine::flipScreens() {
 	_gameState->_inCloseUp = !_gameState->_inCloseUp;
 
 	if (_gameState->_inCloseUp) {
-		_gameState->_currentScrollValue = 640;
+		_gameState->_currentScrollValue = TOON_SCREEN_WIDTH;
 		setPaletteEntries(_cutawayPalette, 1, 128);
 		setPaletteEntries(_additionalPalette2, 232, 23);
 	} else {
@@ -1874,8 +1874,8 @@ int32 ToonEngine::getScaleAtPoint(int32 x, int32 y) {
 		return 1024;
 
 	// clamp values
-	x = MIN<int32>(1279, MAX<int32>(0, x));
-	y = MIN<int32>(399, MAX<int32>(0, y));
+	x = MIN<int32>(TOON_BACKBUFFER_WIDTH - 1, MAX<int32>(0, x));
+	y = MIN<int32>(TOON_BACKBUFFER_HEIGHT - 1, MAX<int32>(0, y));
 
 	int32 maskData = _currentMask->getData(x, y) & 0x1f;
 	return _roomScaleData[maskData + 2] * 1024 / 100;
@@ -1886,8 +1886,8 @@ int32 ToonEngine::getLayerAtPoint(int32 x, int32 y) {
 		return 0;
 
 	// clamp values
-	x = MIN<int32>(1279, MAX<int32>(0, x));
-	y = MIN<int32>(399, MAX<int32>(0, y));
+	x = MIN<int32>(TOON_BACKBUFFER_WIDTH - 1, MAX<int32>(0, x));
+	y = MIN<int32>(TOON_BACKBUFFER_HEIGHT - 1, MAX<int32>(0, y));
 
 	int32 maskData = _currentMask->getData(x, y) & 0x1f;
 	return _roomScaleData[maskData + 130] << 5;
@@ -2560,7 +2560,7 @@ void ToonEngine::renderInventory() {
 		_inventoryPicture->drawWithRectList(*_mainSurface, 0, 0, 0, 0, _dirtyRects);
 	} else {
 		_inventoryPicture->draw(*_mainSurface, 0, 0, 0, 0);
-		_dirtyRects.push_back(Common::Rect(0, 0, 640, 400));
+		_dirtyRects.push_back(Common::Rect(0, 0, TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT));
 	}
 	clearDirtyRects();
 
@@ -2866,7 +2866,7 @@ void ToonEngine::getTextPosition(int32 characterId, int32 *retX, int32 *retY) {
 		// drew
 		int32 x = _drew->getX();
 		int32 y = _drew->getY();
-		if (x >= _gameState->_currentScrollValue && x <= _gameState->_currentScrollValue + 640) {
+		if (x >= _gameState->_currentScrollValue && x <= _gameState->_currentScrollValue + TOON_SCREEN_WIDTH) {
 			if (!_gameState->_inCutaway && !_gameState->_inInventory) {
 				*retX = x;
 				*retY = y - ((_drew->getScale() * 256 / 1024) >> 1) - 45;
@@ -2876,7 +2876,7 @@ void ToonEngine::getTextPosition(int32 characterId, int32 *retX, int32 *retY) {
 		// flux
 		int32 x = _flux->getX();
 		int32 y = _flux->getY();
-		if (x >= _gameState->_currentScrollValue && x <= _gameState->_currentScrollValue + 640) {
+		if (x >= _gameState->_currentScrollValue && x <= _gameState->_currentScrollValue + TOON_SCREEN_WIDTH) {
 			if (!_gameState->_inCutaway) {
 				*retX = x;
 				*retY = y - ((_drew->getScale() * 100 / 1024) >> 1) - 30;
@@ -2906,7 +2906,7 @@ void ToonEngine::getTextPosition(int32 characterId, int32 *retX, int32 *retY) {
 		Character *character = getCharacterById(characterId);
 		if (character && !_gameState->_inCutaway) {
 			if (character->getAnimationInstance()) {
-				if (character->getX() >= _gameState->_currentScrollValue && character->getX() <= _gameState->_currentScrollValue + 640) {
+				if (character->getX() >= _gameState->_currentScrollValue && character->getX() <= _gameState->_currentScrollValue + TOON_SCREEN_WIDTH) {
 					int32 x1, y1, x2, y2;
 					character->getAnimationInstance()->getRect(&x1, &y1, &x2, &y2);
 					*retX = (x1 + x2) / 2;
@@ -4674,10 +4674,10 @@ void ToonEngine::dirtyAllScreen()
 }
 
 void ToonEngine::addDirtyRect( int32 left, int32 top, int32 right, int32 bottom ) {
-	left = MAX<int32>(left, 0);
-	right = MIN<int32>(right, 1280);
-	top = MAX<int32>(top, 0);
-	bottom = MIN<int32>(bottom, 400);
+	left = MIN<int32>(MAX<int32>(left, 0), TOON_BACKBUFFER_WIDTH - 1);
+	right = MIN<int32>(MAX<int32>(right, 0), TOON_BACKBUFFER_WIDTH - 1);
+	top = MIN<int32>(MAX<int32>(top, 0), TOON_BACKBUFFER_HEIGHT - 1);
+	bottom = MIN<int32>(MAX<int32>(bottom, 0), TOON_BACKBUFFER_HEIGHT - 1);
 
 	Common::Rect rect(left, top, right, bottom);
 

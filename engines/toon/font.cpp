@@ -265,8 +265,8 @@ void FontRenderer::renderMultiLineText(int32 x, int32 y, Common::String origText
 	if (x - 30 - maxWidth / 2 < 0)
 		x = maxWidth / 2 + 30;
 
-	if (x + 30 + (maxWidth / 2) > 640)
-		x = 640 - (maxWidth / 2) - 30;
+	if (x + 30 + (maxWidth / 2) > TOON_SCREEN_WIDTH)
+		x = TOON_SCREEN_WIDTH - (maxWidth / 2) - 30;
 
 	// we have good coordinates now, we can render the multi line
 	int32 curX = x;
