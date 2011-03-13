@@ -218,7 +218,13 @@ GLESTexture::~GLESTexture() {
 }
 
 void GLESTexture::allocBuffer(GLuint w, GLuint h) {
+	GLuint oldw = _surface.w;
+	GLuint oldh = _surface.h;
+
 	GLESBaseTexture::allocBuffer(w, h);
+
+	if (_surface.w == oldw && _surface.h == oldh)
+		return;
 
 	delete[] _buf;
 	delete[] _pixels;
@@ -341,9 +347,13 @@ GLESPaletteTexture::~GLESPaletteTexture() {
 }
 
 void GLESPaletteTexture::allocBuffer(GLuint w, GLuint h) {
+	GLuint oldw = _surface.w;
+	GLuint oldh = _surface.h;
+
 	GLESBaseTexture::allocBuffer(w, h);
 
-	// Texture gets uploaded later (from drawTexture())
+	if (_surface.w == oldw && _surface.h == oldh)
+		return;
 
 	byte *new_buffer = new byte[_paletteSize +
 						_texture_width * _texture_height];
@@ -457,7 +467,13 @@ GLESFakePaletteTexture::~GLESFakePaletteTexture() {
 }
 
 void GLESFakePaletteTexture::allocBuffer(GLuint w, GLuint h) {
+	GLuint oldw = _surface.w;
+	GLuint oldh = _surface.h;
+
 	GLESBaseTexture::allocBuffer(w, h);
+
+	if (_surface.w == oldw && _surface.h == oldh)
+		return;
 
 	delete[] _buf;
 	delete[] _pixels;
