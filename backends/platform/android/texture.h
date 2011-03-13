@@ -51,6 +51,8 @@ public:
 	void reinit();
 	void initSize();
 
+	void setLinearFilter(bool value);
+
 	virtual void allocBuffer(GLuint w, GLuint h);
 
 	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
@@ -152,6 +154,7 @@ protected:
 
 	GLenum _glFormat;
 	GLenum _glType;
+	GLint _glFilter;
 
 	GLuint _texture_name;
 	Graphics::Surface _surface;

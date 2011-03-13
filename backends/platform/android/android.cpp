@@ -116,6 +116,7 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_mouse_keycolor(0),
 	_use_mouse_palette(false),
 	_fullscreen(false),
+	_graphicsMode(0),
 	_ar_correction(false),
 	_show_mouse(false),
 	_show_overlay(false),

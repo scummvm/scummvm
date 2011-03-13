@@ -121,6 +121,7 @@ private:
 	bool _show_mouse;
 	bool _use_mouse_palette;
 
+	int _graphicsMode;
 	bool _fullscreen;
 	bool _ar_correction;
 
@@ -175,7 +176,6 @@ public:
 
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
-	bool setGraphicsMode(const char *name);
 	virtual bool setGraphicsMode(int mode);
 	virtual int getGraphicsMode() const;
 

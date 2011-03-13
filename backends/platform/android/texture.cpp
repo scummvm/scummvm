@@ -83,6 +83,7 @@ GLESBaseTexture::GLESBaseTexture(GLenum glFormat, GLenum glType,
 									Graphics::PixelFormat pixelFormat) :
 	_glFormat(glFormat),
 	_glType(glType),
+	_glFilter(GL_NEAREST),
 	_texture_name(0),
 	_surface(),
 	_texture_width(0),
@@ -127,13 +128,25 @@ void GLESBaseTexture::initSize() {
 	// later (perhaps with multiple TexSubImage2D operations).
 	GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
 	GLCALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
-	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
-	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
+	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
 	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
 	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 	GLCALL(glTexImage2D(GL_TEXTURE_2D, 0, _glFormat,
 						_texture_width, _texture_height,
 						0, _glFormat, _glType, 0));
+}
+
+void GLESBaseTexture::setLinearFilter(bool value) {
+	if (value)
+		_glFilter = GL_LINEAR;
+	else
+		_glFilter = GL_NEAREST;
+
+	GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
+
+	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
+	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
 }
 
 void GLESBaseTexture::allocBuffer(GLuint w, GLuint h) {

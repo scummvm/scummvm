@@ -38,7 +38,8 @@ static inline GLfixed xdiv(int numerator, int denominator) {
 
 const OSystem::GraphicsMode *OSystem_Android::getSupportedGraphicsModes() const {
 	static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-		{ "default", "Default", 1 },
+		{ "default", "Default", 0 },
+		{ "filter", "Linear filtering", 1 },
 		{ 0, 0, 0 },
 	};
 
@@ -46,23 +47,25 @@ const OSystem::GraphicsMode *OSystem_Android::getSupportedGraphicsModes() const 
 }
 
 int OSystem_Android::getDefaultGraphicsMode() const {
-	return 1;
-}
-
-bool OSystem_Android::setGraphicsMode(const char *mode) {
-	ENTER("%s", mode);
-
-	return true;
+	return 0;
 }
 
 bool OSystem_Android::setGraphicsMode(int mode) {
 	ENTER("%d", mode);
 
+	if (_game_texture)
+		_game_texture->setLinearFilter(mode == 1);
+
+	if (_overlay_texture)
+		_overlay_texture->setLinearFilter(mode == 1);
+
+	_graphicsMode = mode;
+
 	return true;
 }
 
 int OSystem_Android::getGraphicsMode() const {
-	return 1;
+	return _graphicsMode;
 }
 
 #ifdef USE_RGB_COLOR
