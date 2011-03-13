@@ -2275,6 +2275,9 @@ void ResourceManager::detectSciVersion() {
 		// Amiga SCI1 middle games are actually SCI1 late
 		if (_viewType == kViewAmiga || _viewType == kViewAmiga64)
 			s_sciVersion = SCI_VERSION_1_LATE;
+		// Same goes for Mac SCI1 middle games
+		if (g_sci && g_sci->getPlatform() == Common::kPlatformMacintosh)
+			s_sciVersion = SCI_VERSION_1_LATE;
 		return;
 	case kResVersionSci1Late:
 		if (_volVersion == kResVersionSci11) {
