@@ -41,7 +41,20 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_Ringworld,
 		GF_CD
 	},
-
+	// Ringworld First Wave English CD version
+	{
+		{ 
+			"ring",
+			"CD",
+			AD_ENTRY1s("ring.rlb", "0a25b4ee58d44a54425c0b47e5096bbc", 37847618),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_Ringworld,
+		GF_CD
+	},
 	// Ringworld English Floppy version
 	{
 		{
