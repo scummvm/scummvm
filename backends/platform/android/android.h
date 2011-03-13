@@ -103,7 +103,7 @@ private:
 	bool _force_redraw;
 
 	// Game layer
-	GLESTexture *_game_texture;
+	GLESBaseTexture *_game_texture;
 	int _shake_offset;
 	Common::Rect _focus_rect;
 
@@ -112,7 +112,7 @@ private:
 	bool _show_overlay;
 
 	// Mouse layer
-	GLESTexture *_mouse_texture;
+	GLESBaseTexture *_mouse_texture;
 	GLESPaletteTexture *_mouse_texture_palette;
 	GLES5551Texture *_mouse_texture_rgb;
 	Common::Point _mouse_hotspot;
@@ -151,7 +151,7 @@ private:
 
 #ifdef USE_RGB_COLOR
 	Common::String getPixelFormatName(const Graphics::PixelFormat &format) const;
-	void initTexture(GLESTexture **texture, uint width, uint height,
+	void initTexture(GLESBaseTexture **texture, uint width, uint height,
 						const Graphics::PixelFormat *format);
 #endif
 

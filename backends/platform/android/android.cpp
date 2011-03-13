@@ -488,7 +488,7 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 		} else {
 			// Touchscreen events need to be converted
 			// from device to game coords first.
-			const GLESTexture *tex;
+			const GLESBaseTexture *tex;
 			if (_show_overlay)
 				tex = _overlay_texture;
 			else

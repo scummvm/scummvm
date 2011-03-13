@@ -97,7 +97,7 @@ Common::String OSystem_Android::getPixelFormatName(const Graphics::PixelFormat &
 									8 - format.aLoss);
 }
 
-void OSystem_Android::initTexture(GLESTexture **texture,
+void OSystem_Android::initTexture(GLESBaseTexture **texture,
 									uint width, uint height,
 									const Graphics::PixelFormat *format) {
 	assert(texture);
@@ -438,7 +438,6 @@ Graphics::Surface *OSystem_Android::lockScreen() {
 
 	GLTHREADCHECK;
 
-	// TODO this doesn't return any pixel data for non CLUT8
 	Graphics::Surface *surface = _game_texture->surface();
 	assert(surface->pixels);
 

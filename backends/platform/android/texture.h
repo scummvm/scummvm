@@ -36,26 +36,26 @@
 #include "common/rect.h"
 #include "common/array.h"
 
-class GLESTexture {
+class GLESBaseTexture {
 public:
 	static void initGLExtensions();
 
 protected:
-	GLESTexture(GLenum glFormat, GLenum glType,
-				Graphics::PixelFormat pixelFormat);
+	GLESBaseTexture(GLenum glFormat, GLenum glType,
+					Graphics::PixelFormat pixelFormat);
 
 public:
-	virtual ~GLESTexture();
+	virtual ~GLESBaseTexture();
 
 	void release();
 	void reinit();
 	void initSize();
 
-	virtual void allocBuffer(GLuint width, GLuint height);
+	virtual void allocBuffer(GLuint w, GLuint h);
 
 	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
-								const void *buf, int pitch_buf);
-	virtual void fillBuffer(uint32 color);
+								const void *buf, int pitch_buf) = 0;
+	virtual void fillBuffer(uint32 color) = 0;
 
 	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
 
@@ -144,6 +144,31 @@ protected:
 	Graphics::PixelFormat _palettePixelFormat;
 };
 
+class GLESTexture : public GLESBaseTexture {
+protected:
+	GLESTexture(GLenum glFormat, GLenum glType,
+				Graphics::PixelFormat pixelFormat);
+
+public:
+	virtual ~GLESTexture();
+
+	virtual void allocBuffer(GLuint w, GLuint h);
+
+	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
+								const void *buf, int pitch_buf);
+	virtual void fillBuffer(uint32 color);
+
+	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
+
+	inline void drawTexture() {
+		drawTexture(0, 0, _surface.w, _surface.h);
+	}
+
+protected:
+	byte *_pixels;
+	byte *_buf;
+};
+
 // RGBA4444 texture
 class GLES4444Texture : public GLESTexture {
 public:
@@ -177,7 +202,7 @@ public:
 	}
 };
 
-class GLESPaletteTexture : public GLESTexture {
+class GLESPaletteTexture : public GLESBaseTexture {
 protected:
 	GLESPaletteTexture(GLenum glFormat, GLenum glType,
 						Graphics::PixelFormat palettePixelFormat);
@@ -185,7 +210,7 @@ protected:
 public:
 	virtual ~GLESPaletteTexture();
 
-	virtual void allocBuffer(GLuint width, GLuint height);
+	virtual void allocBuffer(GLuint w, GLuint h);
 	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
 								const void *buf, int pitch_buf);
 	virtual void fillBuffer(uint32 color);
@@ -245,7 +270,7 @@ public:
 	virtual ~GLESPalette5551Texture();
 };
 
-class GLESFakePaletteTexture : public GLESTexture {
+class GLESFakePaletteTexture : public GLESBaseTexture {
 protected:
 	GLESFakePaletteTexture(GLenum glFormat, GLenum glType,
 							Graphics::PixelFormat pixelFormat);
@@ -253,7 +278,7 @@ protected:
 public:
 	virtual ~GLESFakePaletteTexture();
 
-	virtual void allocBuffer(GLuint width, GLuint height);
+	virtual void allocBuffer(GLuint w, GLuint h);
 	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
 								const void *buf, int pitch_buf);
 	virtual void fillBuffer(uint32 color);
