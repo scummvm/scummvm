@@ -361,24 +361,49 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 	}
 
 	pwnd->dims = r;
-	const Common::Rect *wmprect = &_wmgrPort->rect;
+
+	// Clip window, if needed
+	Common::Rect wmprect = _wmgrPort->rect;
+	// Handle a special case for Dr. Brain 1 Mac. When hovering the mouse cursor
+	// over the status line on top, the game scripts try to draw the game's icon
+	// bar above the current port, by specifying a negative window top, so that
+	// the end result will be drawn 10 pixels above the current port. This is a
+	// hack by Sierra, and is only limited to user style windows. Normally, we
+	// should not clip, same as what Sierra does. However, this will result in
+	// having invalid rectangles with negative coordinates. For this reason, we
+	// adjust the containing rectangle instead.
+	if (pwnd->dims.top < 0 && g_sci->getPlatform() == Common::kPlatformMacintosh &&
+		(style & SCI_WINDOWMGR_STYLE_USER) && _wmgrPort->top + pwnd->dims.top >= 0) {
+		// Offset the final rect top by the requested pixels
+		wmprect.top += pwnd->dims.top;
+	}
+
 	int16 oldtop = pwnd->dims.top;
 	int16 oldleft = pwnd->dims.left;
-	if (wmprect->top > pwnd->dims.top)
-		pwnd->dims.moveTo(pwnd->dims.left, wmprect->top);
 
-	if (wmprect->bottom < pwnd->dims.bottom)
-		pwnd->dims.moveTo(pwnd->dims.left, wmprect->bottom - pwnd->dims.bottom + pwnd->dims.top);
+	if (wmprect.top > pwnd->dims.top)
+		pwnd->dims.moveTo(pwnd->dims.left, wmprect.top);
 
-	if (wmprect->right < pwnd->dims.right)
-		pwnd->dims.moveTo(wmprect->right + pwnd->dims.left - pwnd->dims.right, pwnd->dims.top);
+	if (wmprect.bottom < pwnd->dims.bottom)
+		pwnd->dims.moveTo(pwnd->dims.left, wmprect.bottom - pwnd->dims.bottom + pwnd->dims.top);
 
-	if (wmprect->left > pwnd->dims.left)
-		pwnd->dims.moveTo(wmprect->left, pwnd->dims.top);
+	if (wmprect.right < pwnd->dims.right)
+		pwnd->dims.moveTo(wmprect.right + pwnd->dims.left - pwnd->dims.right, pwnd->dims.top);
+
+	if (wmprect.left > pwnd->dims.left)
+		pwnd->dims.moveTo(wmprect.left, pwnd->dims.top);
 
 	pwnd->rect.moveTo(pwnd->rect.left + pwnd->dims.left - oldleft, pwnd->rect.top + pwnd->dims.top - oldtop);
+
 	if (restoreRect == 0)
 		pwnd->restoreRect = pwnd->dims;
+
+	if (pwnd->restoreRect.top < 0 && g_sci->getPlatform() == Common::kPlatformMacintosh &&
+		(style & SCI_WINDOWMGR_STYLE_USER) && _wmgrPort->top + pwnd->restoreRect.top >= 0) {
+		// Special case for Dr. Brain 1 Mac (check above), applied to the
+		// restore rectangle.
+		pwnd->restoreRect.moveTo(pwnd->restoreRect.left, wmprect.top);
+	}
 
 	if (draw)
 		drawWindow(pwnd);

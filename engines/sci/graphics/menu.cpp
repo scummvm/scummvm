@@ -911,6 +911,13 @@ void GfxMenu::kernelDrawStatus(const char *text, int16 colorPen, int16 colorBack
 	_ports->moveTo(0, 1);
 	_text16->DrawStatus(text);
 	_paint16->bitsShow(_ports->_menuBarRect);
+	// Also draw the line under the status bar. Normally, this is never drawn,
+	// but we need it to be drawn because Dr. Brain 1 Mac draws over it when
+	// it displays the icon bar. SSCI used negative rectangles to erase the
+	// area after drawing the icon bar, but this is a much cleaner way of
+	// achieving the same effect.
+	_paint16->fillRect(_ports->_menuLine, 1, 0);
+	_paint16->bitsShow(_ports->_menuLine);
 	_ports->setPort(oldPort);
 }
 
