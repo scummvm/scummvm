@@ -292,8 +292,6 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		mover_moveCnt = 0;
 		int16 client_x = readSelectorValue(segMan, client, SELECTOR(x));
 		int16 client_y = readSelectorValue(segMan, client, SELECTOR(y));
-		int16 client_org_x = client_x;
-		int16 client_org_y = client_y;
 		int16 mover_x = readSelectorValue(segMan, mover, SELECTOR(x));
 		int16 mover_y = readSelectorValue(segMan, mover, SELECTOR(y));
 		int16 mover_xAxis = readSelectorValue(segMan, mover, SELECTOR(b_xAxis));
@@ -312,7 +310,14 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 			writeSelectorValue(segMan, mover, SELECTOR(xLast), client_x);
 			writeSelectorValue(segMan, mover, SELECTOR(yLast), client_y);
 		}
-		// sierra sci saves full client selector variables here
+
+		// Store backups of all client selector variables. We will restore them
+		// in case of a collision.
+		Object* clientObject = segMan->getObject(client);
+		uint clientVarNum = clientObject->getVarCount();
+		reg_t* clientBackup = new reg_t[clientVarNum];
+		for (uint i = 0; i < clientVarNum; ++i)
+			clientBackup[i] = clientObject->getVariable(i);
 
 		if (mover_xAxis) {
 			if (ABS(mover_x - client_x) < ABS(mover_dx))
@@ -360,9 +365,10 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		if (collision) {
-			// sierra restores full client variables here, seems that restoring x/y is enough
-			writeSelectorValue(segMan, client, SELECTOR(x), client_org_x);
-			writeSelectorValue(segMan, client, SELECTOR(y), client_org_y);
+			// We restore the backup of the client variables
+			for (uint i = 0; i < clientVarNum; ++i)
+				clientObject->getVariableRef(i) = clientBackup[i];
+
 			mover_i1 = mover_org_i1;
 			mover_i2 = mover_org_i2;
 			mover_di = mover_org_di;
@@ -370,6 +376,8 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 			uint16 client_signal = readSelectorValue(segMan, client, SELECTOR(signal));
 			writeSelectorValue(segMan, client, SELECTOR(signal), client_signal | kSignalHitObstacle);
 		}
+		delete[] clientBackup;
+
 		writeSelectorValue(segMan, mover, SELECTOR(b_i1), mover_i1);
 		writeSelectorValue(segMan, mover, SELECTOR(b_i2), mover_i2);
 		writeSelectorValue(segMan, mover, SELECTOR(b_di), mover_di);

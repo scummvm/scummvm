@@ -668,50 +668,6 @@ const SciScriptSignature larry6Signatures[] = {
 };
 
 // ===========================================================================
-// This is a heap patch, and it modifies the properties of an object, instead
-// of patching script code.
-// Prevent the murderer from getting stuck behind the door in Colonel's
-// Bequest, room 215. Fixes bug #3122075.
-// TODO/FIXME: Add a proper fix for this. There is a regression in this
-// scene with the new kInitBresen and kDoBresen functions (r52467). Using
-// just the "old" kInitBresen works. This hack is added for now because the
-// two functions are quite complex. The "old" versions were created based
-// on observations, and not on the interpreter itself, thus they have a lot
-// of differences in the way they behave and set variables to the mover object.
-// Since this is just a death scene where Laura is supposed to die anyway,
-// figuring out the exact cause of this is just not worth the effort.
-// Differences between the new and the old kInitBresen to the MoveTo object:
-// dy: 1 (new) - 2 (old)
-// b-i1: 20 (new) - 12 (old)
-// b-di: 65526 (new) - 65516 (old)
-// Performing the changes above to MoveTo (0017:033a) allows the killer to
-// move. Note that the actual issue might not be with kInitBresen/kDoBresen,
-// and there might be another underlying problem here.
-
-const byte laurabow1SignatureKillerPosition[] = {
-	12,
-	0x5f, 0x00,	// y
-	0x00, 0x00,	// x
-	0x00, 0x00,	// z
-	0x00, 0x00,	// heading
-	0x02, 0x00,	// yStep
-	0x0f, 0x01,	// view
-	0
-};
-
-const uint16 laurabow1PatchKillerPosition[] = {
-	0x5f, 0x00,	// y (same)
-	0x06, 0x00,	// x (changed to 6)
-	PATCH_END
-};
-
-//    script, description,                                      magic DWORD,                                  adjust
-const SciScriptSignature laurabow1Signatures[] = {
-	{    215, "actor position for shower scene",             1, PATCH_MAGICDWORD(0x02, 0x00, 0x0f, 0x01),    -8, laurabow1SignatureKillerPosition, laurabow1PatchKillerPosition },
-	SCI_SIGNATUREENTRY_TERMINATOR
-};
-
-// ===========================================================================
 // rm560::doit was supposed to close the painting, when Heimlich enters the
 //  room. The code is buggy, so it actually closes the painting, when heimlich
 //  is not in the room. We fix that.
@@ -1150,9 +1106,6 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 		break;
 	case GID_KQ6:
 		signatureTable = kq6Signatures;
-		break;
-	case GID_LAURABOW:
-		signatureTable = laurabow1Signatures;
 		break;
 	case GID_LAURABOW2:
 		signatureTable = laurabow2Signatures;
