@@ -280,10 +280,6 @@ void GLESTexture::fillBuffer(uint32 color) {
 	setDirty();
 }
 
-void GLESTexture::clearBuffer() {
-	fillBuffer(_pixelFormat.ARGBToColor(0xff, 0, 0, 0));
-}
-
 void GLESTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 	if (_all_dirty) {
 		_dirty_rect.top = 0;
@@ -392,10 +388,6 @@ void GLESPaletteTexture::fillBuffer(uint32 color) {
 	assert(_surface.pixels);
 	memset(_surface.pixels, color & 0xff, _surface.pitch * _surface.h);
 	setDirty();
-}
-
-void GLESPaletteTexture::clearBuffer() {
-	fillBuffer(0);
 }
 
 void GLESPaletteTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
@@ -518,10 +510,6 @@ void GLESFakePaletteTexture::fillBuffer(uint32 color) {
 	assert(_surface.pixels);
 	memset(_surface.pixels, color & 0xff, _surface.pitch * _surface.h);
 	setDirty();
-}
-
-void GLESFakePaletteTexture::clearBuffer() {
-	fillBuffer(_palettePixelFormat.ARGBToColor(0xff, 0, 0, 0));
 }
 
 void GLESFakePaletteTexture::updateBuffer(GLuint x, GLuint y, GLuint w,
