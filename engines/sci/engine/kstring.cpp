@@ -190,7 +190,6 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 	char targetbuf[4096];
 	char *target = targetbuf;
 	reg_t position = argv[1]; /* source */
-	int index = argv[2].toUint16();
 	int mode = 0;
 	int paramindex = 0; /* Next parameter to evaluate */
 	char xfer;
@@ -201,9 +200,16 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 	if (position.segment)
 		startarg = 2;
-	else
-		startarg = 3; /* First parameter to use for formatting */
+	else {
+		// WORKAROUND: QFG1 VGA Mac calls this without the first parameter (dest). It then
+		// treats the source as the dest and overwrites the source string with an empty string.
+		if (argc < 3)
+			return NULL_REG;
 
+		startarg = 3; /* First parameter to use for formatting */
+	}
+
+	int index = (startarg == 3) ? argv[2].toUint16() : 0;
 	Common::String source_str = g_sci->getKernel()->lookupText(position, index);
 	const char* source = source_str.c_str();
 

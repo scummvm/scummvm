@@ -348,7 +348,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(FindKey),           SIG_EVERYWHERE,           "l.",                    NULL,            kFindKey_workarounds },
 	{ MAP_CALL(FirstNode),         SIG_EVERYWHERE,           "[l0]",                  NULL,            NULL },
 	{ MAP_CALL(FlushResources),    SIG_EVERYWHERE,           "i",                     NULL,            NULL },
-	{ MAP_CALL(Format),            SIG_EVERYWHERE,           "r(.*)",                 NULL,            NULL },
+	{ MAP_CALL(Format),            SIG_EVERYWHERE,           "r[ri](.*)",             NULL,            NULL },
 	{ MAP_CALL(GameIsRestarting),  SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
 	{ MAP_CALL(GetAngle),          SIG_EVERYWHERE,           "iiii",                  NULL,            kGetAngle_workarounds },
 	{ MAP_CALL(GetCWD),            SIG_EVERYWHERE,           "r",                     NULL,            NULL },
