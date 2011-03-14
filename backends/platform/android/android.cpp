@@ -286,9 +286,7 @@ void *OSystem_Android::audioThreadFunc(void *arg) {
 		if (written < 0)
 			break;
 
-		// sleep a little, prepare the next buffer, and run into the
-		// blocking AudioTrack.write
-		nanosleep(&tv_delay, 0);
+		// prepare the next buffer, and run into the blocking AudioTrack.write
 	}
 
 	JNI::setAudioStop();

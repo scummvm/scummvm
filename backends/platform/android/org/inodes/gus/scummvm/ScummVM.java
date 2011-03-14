@@ -245,8 +245,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 									AudioFormat.CHANNEL_CONFIGURATION_STEREO,
 									AudioFormat.ENCODING_PCM_16BIT);
 
-		// ~100ms
-		int buffer_size_want = (_sample_rate * 2 * 2 / 10) & ~1023;
+		// ~50ms
+		int buffer_size_want = (_sample_rate * 2 * 2 / 20) & ~1023;
 
 		if (_buffer_size < buffer_size_want) {
 			Log.w(LOG_TAG, String.format(
