@@ -278,25 +278,46 @@ void OSystem_Android::initSize(uint width, uint height,
 	// size (it's small).
 	_mouse_texture_palette->allocBuffer(20, 20);
 
-	clearScreen(true);
+	clearScreen(kClear);
 }
 
-void OSystem_Android::clearScreen(bool swapBuffers) {
-	// clear screen
-	GLCALL(glClearColorx(0, 0, 0, 1 << 16));
-	GLCALL(glClear(GL_COLOR_BUFFER_BIT));
+void OSystem_Android::clearScreen(FixupType type, byte count) {
+	assert(count > 0);
 
-	if (swapBuffers)
-		JNI::swapBuffers();
+	for (byte i = 0; i < count; ++i) {
+		if (!_show_overlay)
+			GLCALL(glDisable(GL_SCISSOR_TEST));
+
+		// clear screen
+		GLCALL(glClearColorx(0, 0, 0, 1 << 16));
+		GLCALL(glClear(GL_COLOR_BUFFER_BIT));
+
+		if (!_show_overlay)
+			GLCALL(glEnable(GL_SCISSOR_TEST));
+
+		switch (type) {
+		case kClear:
+			break;
+
+		case kClearSwap:
+			JNI::swapBuffers();
+			break;
+
+		case kClearUpdate:
+			_force_redraw = true;
+			updateScreen();
+			break;
+		}
+	}
 }
 
 void OSystem_Android::updateScreenRect() {
-	uint16 w = _game_texture->width();
-	uint16 h = _game_texture->height();
-
 	Common::Rect rect(0, 0, _egl_surface_width, _egl_surface_height);
 
 	_overlay_texture->setDrawRect(rect);
+
+	uint16 w = _game_texture->width();
+	uint16 h = _game_texture->height();
 
 	if (w && h && !_fullscreen) {
 		if (_ar_correction && w == 320 && h == 200)
@@ -404,7 +425,7 @@ void OSystem_Android::updateScreen() {
 
 	// clear pointer leftovers in dead areas
 	if (_show_overlay && !_fullscreen)
-		clearScreen(false);
+		clearScreen(kClear);
 
 	GLCALL(glPushMatrix());
 
@@ -414,7 +435,7 @@ void OSystem_Android::updateScreen() {
 							_game_texture->height()).contains(_focus_rect))) {
 		// These are the only cases where _game_texture doesn't
 		// cover the entire screen.
-		clearScreen(false);
+		clearScreen(kClear);
 
 		// Move everything up by _shake_offset (game) pixels
 		GLCALL(glTranslatex(0, -_shake_offset << 16, 0));
@@ -574,7 +595,8 @@ void OSystem_Android::hideOverlay() {
 	_show_overlay = false;
 	_force_redraw = true;
 
-	clearScreen(false);
+	// double buffered, flip twice
+	clearScreen(kClearUpdate, 2);
 
 	GLCALL(glEnable(GL_SCISSOR_TEST));
 }

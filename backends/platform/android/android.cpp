@@ -438,10 +438,7 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 					updateScreenRect();
 
 					// double buffered, flip twice
-					_force_redraw = true;
-					updateScreen();
-					_force_redraw = true;
-					updateScreen();
+					clearScreen(kClearUpdate, 2);
 
 					event.type = Common::EVENT_SCREEN_CHANGED;
 
@@ -451,8 +448,8 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 					initSurface();
 					updateScreenRect();
 
-					_force_redraw = true;
-					updateScreen();
+					// double buffered, flip twice
+					clearScreen(kClearUpdate, 2);
 
 					event.type = Common::EVENT_SCREEN_CHANGED;
 

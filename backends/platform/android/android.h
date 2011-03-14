@@ -186,7 +186,15 @@ public:
 
 	virtual void initSize(uint width, uint height,
 							const Graphics::PixelFormat *format);
-	void clearScreen(bool swapBuffers);
+
+	enum FixupType {
+		kClear = 0,		// glClear
+		kClearSwap,		// glClear + swapBuffers
+		kClearUpdate	// glClear + updateScreen
+	};
+
+	void clearScreen(FixupType type, byte count = 1);
+
 	void updateScreenRect();
 	virtual int getScreenChangeID() const;
 
