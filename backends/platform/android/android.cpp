@@ -385,6 +385,10 @@ void OSystem_Android::setFeatureState(Feature f, bool enable) {
 
 bool OSystem_Android::getFeatureState(Feature f) {
 	switch (f) {
+	case kFeatureFullscreenMode:
+		return _fullscreen;
+	case kFeatureAspectRatioCorrection:
+		return _ar_correction;
 	case kFeatureVirtualKeyboard:
 		return _virtkeybd_on;
 	default:
