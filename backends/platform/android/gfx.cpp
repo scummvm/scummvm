@@ -253,6 +253,7 @@ void OSystem_Android::initOverlay() {
 	LOGI("overlay size is %ux%u", overlay_width, overlay_height);
 
 	_overlay_texture->allocBuffer(overlay_width, overlay_height);
+	_overlay_texture->clearBuffer();
 	_overlay_texture->setDrawRect(0, 0,
 									_egl_surface_width, _egl_surface_height);
 }
@@ -618,17 +619,15 @@ void OSystem_Android::grabOverlay(OverlayColor *buf, int pitch) {
 
 	GLTHREADCHECK;
 
-	// We support overlay alpha blending, so the pixel data here
-	// shouldn't actually be used.	Let's fill it with zeros, I'm sure
-	// it will be fine...
 	const Graphics::Surface *surface = _overlay_texture->surface_const();
 	assert(surface->bytesPerPixel == sizeof(buf[0]));
 
+	const byte *src = (const byte *)surface->pixels;
 	uint h = surface->h;
 
 	do {
-		memset(buf, 0, surface->w * sizeof(buf[0]));
-
+		memcpy(buf, src, surface->w * surface->bytesPerPixel);
+		src += surface->pitch;
 		// This 'pitch' is pixels not bytes
 		buf += pitch;
 	} while (--h);
