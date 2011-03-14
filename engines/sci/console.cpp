@@ -2720,9 +2720,10 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 	SegManager *segMan = _engine->getEngineState()->_segMan;
 
 	while (itr != resources->end()) {
-		if (_engine->getGameId() == GID_KQ5 && itr->getNumber() == 980) {
-			// Ignore script 980 in KQ5. Seems to be a leftover, as it
-			// uses a superclass from script 988, which doesn't exist
+		// Ignore specific leftover scripts, which require other non-existing scripts
+		if ((_engine->getGameId() == GID_HOYLE3 && itr->getNumber() == 995) ||
+		    (_engine->getGameId() == GID_KQ5    && itr->getNumber() == 980) ||
+		    (_engine->getGameId() == GID_SLATER && itr->getNumber() == 947)) {
 			itr++;
 			continue;
 		}
