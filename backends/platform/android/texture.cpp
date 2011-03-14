@@ -480,6 +480,8 @@ GLESFakePaletteTexture::GLESFakePaletteTexture(GLenum glFormat, GLenum glType,
 
 	_palette = new uint16[256];
 	assert(_palette);
+
+	memset(_palette, 0, 256 * 2);
 }
 
 GLESFakePaletteTexture::~GLESFakePaletteTexture() {
