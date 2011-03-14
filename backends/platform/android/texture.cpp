@@ -103,22 +103,15 @@ GLESBaseTexture::~GLESBaseTexture() {
 
 void GLESBaseTexture::release() {
 	LOGD("Destroying texture %u", _texture_name);
+
 	GLCALL(glDeleteTextures(1, &_texture_name));
+	_texture_name = 0;
 }
 
 void GLESBaseTexture::reinit() {
 	GLCALL(glGenTextures(1, &_texture_name));
 
-	if (hasPalette()) {
-		// paletted textures are in a local buffer, don't wipe it
-		initSize();
-	} else {
-		// bypass allocBuffer() shortcut to reinit the texture properly
-		_texture_width = 0;
-		_texture_height = 0;
-
-		allocBuffer(_surface.w, _surface.h);
-	}
+	initSize();
 
 	setDirty();
 }
@@ -154,8 +147,7 @@ void GLESBaseTexture::allocBuffer(GLuint w, GLuint h) {
 	_surface.h = h;
 	_surface.bytesPerPixel = _pixelFormat.bytesPerPixel;
 
-	// Already allocated a sufficiently large buffer?
-	if (w <= _texture_width && h <= _texture_height)
+	if (w == _texture_width && h == _texture_height)
 		return;
 
 	if (npot_supported) {
