@@ -296,7 +296,9 @@ void OSystem_Android::updateScreenRect() {
 
 	Common::Rect rect(0, 0, _egl_surface_width, _egl_surface_height);
 
-	if (!_fullscreen) {
+	_overlay_texture->setDrawRect(rect);
+
+	if (w && h && !_fullscreen) {
 		if (_ar_correction && w == 320 && h == 200)
 			h = 240;
 

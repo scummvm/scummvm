@@ -435,6 +435,8 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 					_egl_surface_height = JNI::egl_surface_height;
 
 					initViewport();
+					updateScreenRect();
+
 					// double buffered, flip twice
 					_force_redraw = true;
 					updateScreen();
@@ -447,6 +449,8 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 				} else {
 					// new surface
 					initSurface();
+					updateScreenRect();
+
 					_force_redraw = true;
 					updateScreen();
 
