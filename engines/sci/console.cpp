@@ -2717,7 +2717,9 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 
 	int scriptSegment;
 	Script *script;
-	SegManager *segMan = _engine->getEngineState()->_segMan;
+	// Create a custom segment manager here, so that the game's segment
+	// manager won't be affected by loading and unloading scripts here.
+	SegManager *customSegMan = new SegManager(_engine->getResMan());
 
 	while (itr != resources->end()) {
 		// Ignore specific leftover scripts, which require other non-existing scripts
@@ -2729,15 +2731,15 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 		}
 
 		// Load script
-		scriptSegment = segMan->instantiateScript(itr->getNumber());
-		script = segMan->getScript(scriptSegment);
+		scriptSegment = customSegMan->instantiateScript(itr->getNumber());
+		script = customSegMan->getScript(scriptSegment);
 
 		// Iterate through all the script's objects
 		ObjMap::iterator it;
 		const ObjMap::iterator end = script->_objects.end();
 		for (it = script->_objects.begin(); it != end; ++it) {
-			const Object *obj = segMan->getObject(it->_value.getPos());
-			const char *objName = segMan->getObjectName(it->_value.getPos());
+			const Object *obj = customSegMan->getObject(it->_value.getPos());
+			const char *objName = customSegMan->getObjectName(it->_value.getPos());
 
 			// Now dissassemble each method of the script object
 			for (uint16 i = 0; i < obj->getMethodCount(); i++) {
@@ -2780,9 +2782,11 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 			}	// for (uint16 i = 0; i < obj->getMethodCount(); i++)
 		}	// for (it = script->_objects.begin(); it != end; ++it)
 
-		segMan->uninstantiateScript(itr->getNumber());
+		customSegMan->uninstantiateScript(itr->getNumber());
 		++itr;
 	}
+
+	delete customSegMan;
 
 	delete resources;
 }
