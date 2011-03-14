@@ -534,6 +534,7 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 		}
 		break;
 	}
+
 	default:
 		break;
 	}
@@ -554,7 +555,7 @@ uint32 OSystem_Android::getMillis() {
 
 	gettimeofday(&curTime, 0);
 
-	return (uint32)(((curTime.tv_sec - _startTime.tv_sec) * 1000) + \
+	return (uint32)(((curTime.tv_sec - _startTime.tv_sec) * 1000) +
 			((curTime.tv_usec - _startTime.tv_usec) / 1000));
 }
 

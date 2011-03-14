@@ -449,6 +449,7 @@ void OSystem_Android::updateScreen() {
 		_game_texture->drawTextureRect();
 	} else {
 		GLCALL(glPushMatrix());
+
 		GLCALL(glScalex(xdiv(_egl_surface_width, _focus_rect.width()),
 						xdiv(_egl_surface_height, _focus_rect.height()),
 						1 << 16));
@@ -459,6 +460,7 @@ void OSystem_Android::updateScreen() {
 						1 << 16));
 
 		_game_texture->drawTextureRect();
+
 		GLCALL(glPopMatrix());
 	}
 
@@ -476,7 +478,7 @@ void OSystem_Android::updateScreen() {
 	if (_show_mouse) {
 		GLCALL(glPushMatrix());
 
-		Common::Point mouse = getEventManager()->getMousePos();
+		const Common::Point &mouse = getEventManager()->getMousePos();
 
 		// Scale up ScummVM -> OpenGL (pixel) coordinates
 		if (_show_overlay) {
@@ -657,6 +659,10 @@ int16 OSystem_Android::getOverlayHeight() {
 
 int16 OSystem_Android::getOverlayWidth() {
 	return _overlay_texture->width();
+}
+
+Graphics::PixelFormat OSystem_Android::getOverlayFormat() const {
+	return _overlay_texture->getPixelFormat();
 }
 
 bool OSystem_Android::showMouse(bool visible) {

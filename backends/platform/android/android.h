@@ -229,23 +229,7 @@ public:
 									int x, int y, int w, int h);
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
-
-	// RGBA 4444
-	virtual Graphics::PixelFormat getOverlayFormat() const {
-		Graphics::PixelFormat format;
-
-		format.bytesPerPixel = 2;
-		format.rLoss = 8 - 4;
-		format.gLoss = 8 - 4;
-		format.bLoss = 8 - 4;
-		format.aLoss = 8 - 4;
-		format.rShift = 3 * 4;
-		format.gShift = 2 * 4;
-		format.bShift = 1 * 4;
-		format.aShift = 0 * 4;
-
-		return format;
-	}
+	virtual Graphics::PixelFormat getOverlayFormat() const;
 
 	virtual bool showMouse(bool visible);
 
