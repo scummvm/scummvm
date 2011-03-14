@@ -206,7 +206,7 @@ bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClas
 			}
 
 			warning("Object %04x:%04x (name %s, script %d) varnum doesn't "
-			        "match baseObj's: obj %d, base %d ", PRINT_REG(_pos),
+			        "match baseObj's: obj %d, base %d", PRINT_REG(_pos),
 			        name, objScript, originalVarCount, baseObj->getVarCount());
 
 #if 0
