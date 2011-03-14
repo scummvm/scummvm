@@ -3413,6 +3413,7 @@ void ToonEngine::viewInventoryItem(Common::String str, int32 lineId, int32 itemD
 	Picture *pic = new Picture(this);
 	pic->loadPicture(str, false);
 	pic->setupPalette();
+	dirtyAllScreen();
 	flushPalette();
 
 	if (lineId) {
@@ -3436,7 +3437,13 @@ void ToonEngine::viewInventoryItem(Common::String str, int32 lineId, int32 itemD
 			break;
 		}
 
-		pic->draw(*_mainSurface, 0, 0, 0, 0);
+		if (!_dirtyAll) {
+			pic->drawWithRectList(*_mainSurface, 0, 0, 0, 0, _dirtyRects);
+		} else {
+			pic->draw(*_mainSurface, 0, 0, 0, 0);
+			_dirtyRects.push_back(Common::Rect(0, 0, TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT));
+		}
+		clearDirtyRects();
 
 		drawConversationLine();
 		if (!_audioManager->voiceStillPlaying()) {
@@ -3455,6 +3462,7 @@ void ToonEngine::viewInventoryItem(Common::String str, int32 lineId, int32 itemD
 	}
 
 	fadeOut(5);
+	dirtyAllScreen();
 	restorePalette();
 	_firstFrame = true;
 	_gameState->_currentScrollValue = oldScrollValue;
@@ -4674,10 +4682,10 @@ void ToonEngine::dirtyAllScreen()
 }
 
 void ToonEngine::addDirtyRect( int32 left, int32 top, int32 right, int32 bottom ) {
-	left = MIN<int32>(MAX<int32>(left, 0), TOON_BACKBUFFER_WIDTH - 1);
-	right = MIN<int32>(MAX<int32>(right, 0), TOON_BACKBUFFER_WIDTH - 1);
-	top = MIN<int32>(MAX<int32>(top, 0), TOON_BACKBUFFER_HEIGHT - 1);
-	bottom = MIN<int32>(MAX<int32>(bottom, 0), TOON_BACKBUFFER_HEIGHT - 1);
+	left = MIN<int32>(MAX<int32>(left, 0), TOON_BACKBUFFER_WIDTH);
+	right = MIN<int32>(MAX<int32>(right, 0), TOON_BACKBUFFER_WIDTH);
+	top = MIN<int32>(MAX<int32>(top, 0), TOON_BACKBUFFER_HEIGHT);
+	bottom = MIN<int32>(MAX<int32>(bottom, 0), TOON_BACKBUFFER_HEIGHT);
 
 	Common::Rect rect(left, top, right, bottom);
 
