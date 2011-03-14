@@ -152,7 +152,8 @@ Script *SegManager::allocateScript(int script_nr, SegmentId *segid) {
 }
 
 void SegManager::deallocate(SegmentId seg) {
-	VERIFY(check(seg), "invalid seg id");
+	if (!check(seg))
+		error("SegManager::deallocate(): invalid segment ID");
 
 	SegmentObj *mobj = _heap[seg];
 
@@ -359,9 +360,8 @@ LocalVariables *SegManager::allocLocalsSegment(Script *scr) {
 
 		if (scr->_localsSegment) {
 			locals = (LocalVariables *)_heap[scr->_localsSegment];
-			VERIFY(locals != NULL, "Re-used locals segment was NULL'd out");
-			VERIFY(locals->getType() == SEG_TYPE_LOCALS, "Re-used locals segment did not consist of local variables");
-			VERIFY(locals->script_id == scr->getScriptNumber(), "Re-used locals segment belonged to other script");
+			if (!locals || locals->getType() != SEG_TYPE_LOCALS || locals->script_id != scr->getScriptNumber())
+				error("Invalid script locals segment while allocating locals");
 		} else
 			locals = (LocalVariables *)allocSegment(new LocalVariables(), &scr->_localsSegment);
 

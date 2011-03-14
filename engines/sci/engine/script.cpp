@@ -70,7 +70,7 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
 
 	if (!script)
-		error("Script %d not found\n", script_nr);
+		error("Script %d not found", script_nr);
 
 	_localsOffset = 0;
 	_localsBlock = NULL;
@@ -257,9 +257,8 @@ Object *Script::scriptObjInit(reg_t obj_pos, bool fullObjectInit) {
 	if (getSciVersion() < SCI_VERSION_1_1 && fullObjectInit)
 		obj_pos.offset += 8;	// magic offset (SCRIPT_OBJECT_MAGIC_OFFSET)
 
-	VERIFY(obj_pos.offset < _bufSize, "Attempt to initialize object beyond end of script\n");
-
-	VERIFY(obj_pos.offset + kOffsetFunctionArea < (int)_bufSize, "Function area pointer stored beyond end of script\n");
+	if (obj_pos.offset >= _bufSize)
+		error("Attempt to initialize object beyond end of script");
 
 	// Get the object at the specified position and init it. This will
 	// automatically "allocate" space for it in the _objects map if necessary.
@@ -327,8 +326,9 @@ void Script::relocateSci0Sci21(reg_t block) {
 		heapOffset = _scriptSize;
 	}
 
-	VERIFY(block.offset < (uint16)heapSize && READ_SCI11ENDIAN_UINT16(heap + block.offset) * 2 + block.offset < (uint16)heapSize,
-	       "Relocation block outside of script\n");
+	if (block.offset >= (uint16)heapSize ||
+		READ_SCI11ENDIAN_UINT16(heap + block.offset) * 2 + block.offset >= (uint16)heapSize)
+	    error("Relocation block outside of script");
 
 	int count = READ_SCI11ENDIAN_UINT16(heap + block.offset);
 	int exportIndex = 0;
@@ -418,7 +418,8 @@ uint16 Script::validateExportFunc(int pubfunct, bool relocate) {
 		offset = relocateOffsetSci3(pubfunct * 2 + 22);
 	}
 
-	VERIFY(offset < _bufSize, "invalid export function pointer");
+	if (offset >= _bufSize)
+		error("Invalid export function pointer");
 
 	// Check if the offset found points to a second export table (e.g. script 912
 	// in Camelot and script 306 in KQ4). Such offsets are usually small (i.e. < 10),
@@ -432,7 +433,8 @@ uint16 Script::validateExportFunc(int pubfunct, bool relocate) {
 		if (secondExportTable) {
 			secondExportTable += 3;	// skip header plus 2 bytes (secondExportTable is a uint16 pointer)
 			offset = READ_SCI11ENDIAN_UINT16(secondExportTable + pubfunct);
-			VERIFY(offset < _bufSize, "invalid export function pointer");
+			if (offset >= _bufSize)
+				error("Invalid export function pointer");
 		}
 	}
 
