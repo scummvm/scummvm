@@ -742,6 +742,7 @@ uint16 GfxScreen::getLowResScreenHeight() {
 		case GID_FREDDYPHARKAS:
 		case GID_KQ5:
 		case GID_KQ6:
+		case GID_SQ1:
 			return 190;
 		default:
 			break;
