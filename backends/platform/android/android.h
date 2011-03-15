@@ -125,9 +125,6 @@ private:
 	bool _fullscreen;
 	bool _ar_correction;
 
-	Common::Queue<Common::Event> _event_queue;
-	MutexRef _event_queue_lock;
-
 	pthread_t _main_thread;
 
 	bool _timer_thread_exit;
@@ -205,6 +202,25 @@ public:
 		return this;
 	}
 
+public:
+	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5);
+
+private:
+	Common::Queue<Common::Event> _event_queue;
+	MutexRef _event_queue_lock;
+
+	Common::Point _touch_pt_down, _touch_pt_dt;
+	int _eventScaleX;
+	int _eventScaleY;
+	bool _touchpad_mode;
+	int _touchpad_scale;
+	int _trackball_scale;
+	int _dpad_scale;
+
+	void clipMouse(Common::Point &p);
+	void scaleMouse(Common::Point &p, int x, int y, bool deductDrawRect = true);
+	void updateEventScale();
+
 protected:
 	// PaletteManager API
 	virtual void setPalette(const byte *colors, uint start, uint num);
@@ -242,7 +258,6 @@ public:
 	virtual void disableCursorPalette(bool disable);
 
 	virtual bool pollEvent(Common::Event &event);
-	void pushEvent(const Common::Event& event);
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 

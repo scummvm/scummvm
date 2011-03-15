@@ -56,15 +56,6 @@ int JNI::egl_surface_width = 0;
 int JNI::egl_surface_height = 0;
 bool JNI::_ready_for_events = 0;
 
-jfieldID JNI::_FID_Event_type = 0;
-jfieldID JNI::_FID_Event_synthetic = 0;
-jfieldID JNI::_FID_Event_kbd_keycode = 0;
-jfieldID JNI::_FID_Event_kbd_ascii = 0;
-jfieldID JNI::_FID_Event_kbd_flags = 0;
-jfieldID JNI::_FID_Event_mouse_x = 0;
-jfieldID JNI::_FID_Event_mouse_y = 0;
-jfieldID JNI::_FID_Event_mouse_relative = 0;
-
 jmethodID JNI::_MID_getDPI = 0;
 jmethodID JNI::_MID_displayMessageOnOSD = 0;
 jmethodID JNI::_MID_setWindowCaption = 0;
@@ -94,7 +85,7 @@ const JNINativeMethod JNI::_natives[] = {
 		(void *)JNI::setSurface },
 	{ "main", "([Ljava/lang/String;)I",
 		(void *)JNI::main },
-	{ "pushEvent", "(Lorg/inodes/gus/scummvm/Event;)V",
+	{ "pushEvent", "(IIIIII)V",
 		(void *)JNI::pushEvent },
 	{ "enableZoning", "(Z)V",
 		(void *)JNI::enableZoning },
@@ -121,42 +112,6 @@ jint JNI::onLoad(JavaVM *vm) {
 		return JNI_ERR;
 
 	if (env->RegisterNatives(cls, _natives, ARRAYSIZE(_natives)) < 0)
-		return JNI_ERR;
-
-	jclass event = env->FindClass("org/inodes/gus/scummvm/Event");
-	if (event == 0)
-		return JNI_ERR;
-
-	_FID_Event_type = env->GetFieldID(event, "type", "I");
-	if (_FID_Event_type == 0)
-		return JNI_ERR;
-
-	_FID_Event_synthetic = env->GetFieldID(event, "synthetic", "Z");
-	if (_FID_Event_synthetic == 0)
-		return JNI_ERR;
-
-	_FID_Event_kbd_keycode = env->GetFieldID(event, "kbd_keycode", "I");
-	if (_FID_Event_kbd_keycode == 0)
-		return JNI_ERR;
-
-	_FID_Event_kbd_ascii = env->GetFieldID(event, "kbd_ascii", "I");
-	if (_FID_Event_kbd_ascii == 0)
-		return JNI_ERR;
-
-	_FID_Event_kbd_flags = env->GetFieldID(event, "kbd_flags", "I");
-	if (_FID_Event_kbd_flags == 0)
-		return JNI_ERR;
-
-	_FID_Event_mouse_x = env->GetFieldID(event, "mouse_x", "I");
-	if (_FID_Event_mouse_x == 0)
-		return JNI_ERR;
-
-	_FID_Event_mouse_y = env->GetFieldID(event, "mouse_y", "I");
-	if (_FID_Event_mouse_y == 0)
-		return JNI_ERR;
-
-	_FID_Event_mouse_relative = env->GetFieldID(event, "mouse_relative", "Z");
-	if (_FID_Event_mouse_relative == 0)
 		return JNI_ERR;
 
 	return JNI_VERSION_1_2;
@@ -600,54 +555,17 @@ cleanup:
 	return res;
 }
 
-void JNI::pushEvent(JNIEnv *env, jobject self, jobject java_event) {
+void JNI::pushEvent(JNIEnv *env, jobject self, int type, int arg1, int arg2,
+					int arg3, int arg4, int arg5) {
 	// drop events until we're ready and after we quit
-	if (!_ready_for_events)
+	if (!_ready_for_events) {
+		LOGW("dropping event");
 		return;
+	}
 
 	assert(_system);
 
-	Common::Event event;
-	event.type = (Common::EventType)env->GetIntField(java_event,
-														_FID_Event_type);
-
-	event.synthetic =
-		env->GetBooleanField(java_event, _FID_Event_synthetic);
-
-	switch (event.type) {
-	case Common::EVENT_KEYDOWN:
-	case Common::EVENT_KEYUP:
-		event.kbd.keycode = (Common::KeyCode)env->GetIntField(
-			java_event, _FID_Event_kbd_keycode);
-		event.kbd.ascii = static_cast<int>(env->GetIntField(
-			java_event, _FID_Event_kbd_ascii));
-		event.kbd.flags = static_cast<int>(env->GetIntField(
-			java_event, _FID_Event_kbd_flags));
-		break;
-	case Common::EVENT_MOUSEMOVE:
-	case Common::EVENT_LBUTTONDOWN:
-	case Common::EVENT_LBUTTONUP:
-	case Common::EVENT_RBUTTONDOWN:
-	case Common::EVENT_RBUTTONUP:
-	case Common::EVENT_WHEELUP:
-	case Common::EVENT_WHEELDOWN:
-	case Common::EVENT_MBUTTONDOWN:
-	case Common::EVENT_MBUTTONUP:
-		event.mouse.x =
-			env->GetIntField(java_event, _FID_Event_mouse_x);
-		event.mouse.y =
-			env->GetIntField(java_event, _FID_Event_mouse_y);
-		// This is a terrible hack.	 We stash "relativeness"
-		// in the kbd.flags field until pollEvent() can work
-		// it out.
-		event.kbd.flags = env->GetBooleanField(
-			java_event, _FID_Event_mouse_relative) ? 1 : 0;
-		break;
-	default:
-		break;
-	}
-
-	_system->pushEvent(event);
+	_system->pushEvent(type, arg1, arg2, arg3, arg4, arg5);
 }
 
 void JNI::enableZoning(JNIEnv *env, jobject self, jboolean enable) {

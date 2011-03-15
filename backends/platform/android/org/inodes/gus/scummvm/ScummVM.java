@@ -9,14 +9,12 @@ import android.media.AudioTrack;
 
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.egl.EGL10;
-import javax.microedition.khronos.egl.EGL11;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
 import java.io.File;
-import java.util.Map;
 import java.util.LinkedHashMap;
 
 public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
@@ -49,7 +47,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	final public native void setPause(boolean pause);
 	final public native void enableZoning(boolean enable);
 	// Feed an event to ScummVM.  Safe to call from other threads.
-	final public native void pushEvent(Event e);
+	final public native void pushEvent(int type, int arg1, int arg2, int arg3,
+										int arg4, int arg5);
 
 	// Callbacks from C++ peer instance
 	abstract protected void getDPI(float[] values);

@@ -91,16 +91,6 @@ private:
 
 	static bool _ready_for_events;
 
-	static jfieldID _FID_Event_type;
-	static jfieldID _FID_Event_synthetic;
-	static jfieldID _FID_Event_kbd_keycode;
-	static jfieldID _FID_Event_kbd_ascii;
-	static jfieldID _FID_Event_kbd_flags;
-	static jfieldID _FID_Event_mouse_x;
-	static jfieldID _FID_Event_mouse_y;
-	static jfieldID _FID_Event_mouse_relative;
-	static jfieldID _FID_ScummVM_nativeScummVM;
-
 	static jmethodID _MID_getDPI;
 	static jmethodID _MID_displayMessageOnOSD;
 	static jmethodID _MID_setWindowCaption;
@@ -133,7 +123,8 @@ private:
 	static void setSurface(JNIEnv *env, jobject self, jint width, jint height);
 	static jint main(JNIEnv *env, jobject self, jobjectArray args);
 
-	static void pushEvent(JNIEnv *env, jobject self, jobject java_event);
+	static void pushEvent(JNIEnv *env, jobject self, int type, int arg1,
+							int arg2, int arg3, int arg4, int arg5);
 	static void enableZoning(JNIEnv *env, jobject self, jboolean enable);
 
 	static void setPause(JNIEnv *env, jobject self, jboolean value);

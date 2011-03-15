@@ -272,6 +272,7 @@ void OSystem_Android::initSize(uint width, uint height,
 #endif
 
 	updateScreenRect();
+	updateEventScale();
 
 	// Don't know mouse size yet - it gets reallocated in
 	// setMouseCursor.  We need the palette allocated before
@@ -285,16 +286,12 @@ void OSystem_Android::initSize(uint width, uint height,
 void OSystem_Android::clearScreen(FixupType type, byte count) {
 	assert(count > 0);
 
-	for (byte i = 0; i < count; ++i) {
-		if (!_show_overlay)
-			GLCALL(glDisable(GL_SCISSOR_TEST));
+	GLCALL(glDisable(GL_SCISSOR_TEST));
 
+	for (byte i = 0; i < count; ++i) {
 		// clear screen
 		GLCALL(glClearColorx(0, 0, 0, 1 << 16));
 		GLCALL(glClear(GL_COLOR_BUFFER_BIT));
-
-		if (!_show_overlay)
-			GLCALL(glEnable(GL_SCISSOR_TEST));
 
 		switch (type) {
 		case kClear:
@@ -310,6 +307,9 @@ void OSystem_Android::clearScreen(FixupType type, byte count) {
 			break;
 		}
 	}
+
+	if (!_show_overlay)
+		GLCALL(glEnable(GL_SCISSOR_TEST));
 }
 
 void OSystem_Android::updateScreenRect() {
@@ -577,15 +577,12 @@ void OSystem_Android::clearFocusRectangle() {
 void OSystem_Android::showOverlay() {
 	ENTER();
 
-	Common::Event e;
-	e.type = Common::EVENT_MOUSEMOVE;
-	e.mouse.x = _egl_surface_width / 2;
-	e.mouse.y = _egl_surface_height / 2;
-
-	pushEvent(e);
-
 	_show_overlay = true;
 	_force_redraw = true;
+
+	updateEventScale();
+
+	warpMouse(_overlay_texture->width() / 2, _overlay_texture->height() / 2);
 
 	GLCALL(glDisable(GL_SCISSOR_TEST));
 }
@@ -593,18 +590,14 @@ void OSystem_Android::showOverlay() {
 void OSystem_Android::hideOverlay() {
 	ENTER();
 
-	Common::Event e;
-	e.type = Common::EVENT_MOUSEMOVE;
-	e.mouse.x = _egl_surface_width / 2;
-	e.mouse.y = _egl_surface_height / 2;
-
-	pushEvent(e);
+	clearScreen(kClear);
 
 	_show_overlay = false;
 	_force_redraw = true;
 
-	// double buffered, flip twice
-	clearScreen(kClearUpdate, 2);
+	updateEventScale();
+
+	warpMouse(_game_texture->width() / 2, _game_texture->height() / 2);
 
 	GLCALL(glEnable(GL_SCISSOR_TEST));
 }
@@ -673,13 +666,6 @@ bool OSystem_Android::showMouse(bool visible) {
 	return true;
 }
 
-void OSystem_Android::warpMouse(int x, int y) {
-	ENTER("%d, %d", x, y);
-
-	// We use only the eventmanager's idea of the current mouse
-	// position, so there is nothing extra to do here.
-}
-
 void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 										int hotspotX, int hotspotY,
 										uint32 keycolor, int cursorTargetScale,
@@ -719,8 +705,10 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 		WRITE_UINT16(_mouse_texture_palette->palette() + keycolor * 2, 0);
 	}
 
-	if (w == 0 || h == 0)
+	if (w == 0 || h == 0) {
+		_show_mouse = false;
 		return;
+	}
 
 	if (_mouse_texture == _mouse_texture_palette) {
 		_mouse_texture->updateBuffer(0, 0, w, h, buf, w);
@@ -737,7 +725,7 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 
 			delete[] tmp;
 
-			_mouse_texture->fillBuffer(0);
+			_show_mouse = false;
 
 			return;
 		}

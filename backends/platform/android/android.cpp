@@ -94,12 +94,6 @@ void checkGlError(const char *expr, const char *file, int line) {
 }
 #endif
 
-// floating point. use sparingly
-template <class T>
-static inline T scalef(T in, float numerator, float denominator) {
-	return static_cast<float>(in) * numerator / denominator;
-}
-
 OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_audio_sample_rate(audio_sample_rate),
 	_audio_buffer_size(audio_buffer_size),
@@ -126,7 +120,16 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_timer(0),
 	_fsFactory(new POSIXFilesystemFactory()),
 	_shake_offset(0),
-	_event_queue_lock(createMutex()) {
+	_event_queue_lock(createMutex()),
+	_touch_pt_down(),
+	_touch_pt_dt(),
+	_eventScaleX(100),
+	_eventScaleY(100),
+	// TODO put these values in some option dlg?
+	_touchpad_mode(true),
+	_touchpad_scale(50),
+	_dpad_scale(4),
+	_trackball_scale(2) {
 }
 
 OSystem_Android::~OSystem_Android() {
@@ -310,6 +313,10 @@ void OSystem_Android::initBackend() {
 	ConfMan.setBool("FM_high_quality", false);
 	ConfMan.setBool("FM_medium_quality", true);
 
+	// TODO hackity hack
+	if (ConfMan.hasKey("multi_midi"))
+		_touchpad_mode = !ConfMan.getBool("multi_midi");
+
 	// must happen before creating TimerManager to avoid race in
 	// creating EventManager
 	setupKeymapper();
@@ -394,164 +401,6 @@ bool OSystem_Android::getFeatureState(Feature f) {
 	default:
 		return false;
 	}
-}
-
-void OSystem_Android::setupKeymapper() {
-#ifdef ENABLE_KEYMAPPER
-	using namespace Common;
-
-	Keymapper *mapper = getEventManager()->getKeymapper();
-
-	HardwareKeySet *keySet = new HardwareKeySet();
-
-	keySet->addHardwareKey(
-		new HardwareKey("n", KeyState(KEYCODE_n), "n (vk)",
-				kTriggerLeftKeyType,
-				kVirtualKeyboardActionType));
-
-	mapper->registerHardwareKeySet(keySet);
-
-	Keymap *globalMap = new Keymap("global");
-	Action *act;
-
-	act = new Action(globalMap, "VIRT", "Display keyboard",
-						kVirtualKeyboardActionType);
-	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
-
-	mapper->addGlobalKeymap(globalMap);
-
-	mapper->pushKeymap("global");
-#endif
-}
-
-bool OSystem_Android::pollEvent(Common::Event &event) {
-	//ENTER();
-
-	if (pthread_self() == _main_thread) {
-		if (_screen_changeid != JNI::surface_changeid) {
-			if (JNI::egl_surface_width > 0 && JNI::egl_surface_height > 0) {
-				if (_egl_surface_width > 0 && _egl_surface_height > 0) {
-					// surface still alive but changed
-					_screen_changeid = JNI::surface_changeid;
-					_egl_surface_width = JNI::egl_surface_width;
-					_egl_surface_height = JNI::egl_surface_height;
-
-					initViewport();
-					updateScreenRect();
-
-					// double buffered, flip twice
-					clearScreen(kClearUpdate, 2);
-
-					event.type = Common::EVENT_SCREEN_CHANGED;
-
-					return true;
-				} else {
-					// new surface
-					initSurface();
-					updateScreenRect();
-
-					// double buffered, flip twice
-					clearScreen(kClearUpdate, 2);
-
-					event.type = Common::EVENT_SCREEN_CHANGED;
-
-					return true;
-				}
-			} else {
-				// surface lost
-				deinitSurface();
-			}
-		}
-
-		if (JNI::pause) {
-			deinitSurface();
-
-			LOGD("main thread going to sleep");
-			sem_wait(&JNI::pause_sem);
-			LOGD("main thread woke up");
-		}
-	}
-
-	lockMutex(_event_queue_lock);
-
-	if (_event_queue.empty()) {
-		unlockMutex(_event_queue_lock);
-		return false;
-	}
-
-	event = _event_queue.pop();
-	unlockMutex(_event_queue_lock);
-
-	switch (event.type) {
-	case Common::EVENT_MOUSEMOVE:
-		_force_redraw = true;
-		// fallthrough
-	case Common::EVENT_LBUTTONDOWN:
-	case Common::EVENT_LBUTTONUP:
-	case Common::EVENT_RBUTTONDOWN:
-	case Common::EVENT_RBUTTONUP:
-	case Common::EVENT_WHEELUP:
-	case Common::EVENT_WHEELDOWN:
-	case Common::EVENT_MBUTTONDOWN:
-	case Common::EVENT_MBUTTONUP: {
-		// relative mouse hack
-		if (event.kbd.flags == 1) {
-			// Relative (trackball) mouse hack.
-			const Common::Point& mouse_pos =
-				getEventManager()->getMousePos();
-			event.mouse.x += mouse_pos.x;
-			event.mouse.y += mouse_pos.y;
-			event.mouse.x = CLIP(event.mouse.x, (int16)0, _show_overlay ?
-									getOverlayWidth() : getWidth());
-			event.mouse.y = CLIP(event.mouse.y, (int16)0, _show_overlay ?
-									getOverlayHeight() : getHeight());
-		} else {
-			// Touchscreen events need to be converted
-			// from device to game coords first.
-			if (_show_overlay) {
-				event.mouse.x = scalef(event.mouse.x,
-										_overlay_texture->width(),
-										_egl_surface_width);
-				event.mouse.y = scalef(event.mouse.y,
-										_overlay_texture->height(),
-										_egl_surface_height);
-			} else {
-				const Common::Rect &r = _game_texture->getDrawRect();
-
-				event.mouse.x -= r.left;
-				event.mouse.y -= r.top;
-
-				event.mouse.x = scalef(event.mouse.x,
-										_game_texture->width(),
-										r.width());
-				event.mouse.y = scalef(event.mouse.y,
-										_game_texture->height(),
-										r.height());
-
-				event.mouse.x -= _shake_offset;
-
-				event.mouse.x = CLIP(event.mouse.x, int16(0),
-										int16(_game_texture->width()));
-				event.mouse.y = CLIP(event.mouse.y, int16(0),
-										int16(_game_texture->height()));
-			}
-		}
-		break;
-	}
-
-	default:
-		break;
-	}
-
-	return true;
-}
-
-void OSystem_Android::pushEvent(const Common::Event& event) {
-	lockMutex(_event_queue_lock);
-
-	_event_queue.push(event);
-
-	unlockMutex(_event_queue_lock);
 }
 
 uint32 OSystem_Android::getMillis() {

@@ -6,6 +6,7 @@ ANDROID_PLUGIN_VERSIONCODE = 6
 
 JAVA_FILES = \
 	ScummVM.java \
+	ScummVMEvents.java \
 	ScummVMApplication.java \
 	ScummVMActivity.java \
 	EditableSurfaceView.java \
