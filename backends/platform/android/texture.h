@@ -73,7 +73,7 @@ public:
 		_draw_rect = Common::Rect(x1, y1, x2, y2);
 	}
 
-	inline const Common::Rect &getDrawRect() {
+	inline const Common::Rect &getDrawRect() const {
 		return _draw_rect;
 	}
 
