@@ -1262,7 +1262,7 @@ NodeState LBAnimationNode::update(bool seeking) {
 			uint16 strLen = READ_BE_UINT16(entry.data + 2);
 
 			if (strLen)
-				error("String length for unnamed wave file");
+				warning("Named wave file encountered");
 
 			switch (entry.opcode) {
 			case kLBAnimOpPlaySound:
