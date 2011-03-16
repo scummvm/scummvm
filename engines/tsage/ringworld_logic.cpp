@@ -413,6 +413,15 @@ SpeakerEText::SpeakerEText() {
 
 /*--------------------------------------------------------------------------*/
 
+SpeakerEText::SpeakerEText() {
+	_speakerName = "ETEXT";
+	_textPos = Common::Point(20, 20);
+	_colour1 = 22;
+	_hideObjects = false;
+}
+
+/*--------------------------------------------------------------------------*/
+
 SpeakerHText::SpeakerHText() {
 	_speakerName = "HTEXT";
 	_textPos = Common::Point(160, 40);
