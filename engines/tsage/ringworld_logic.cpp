@@ -30,6 +30,7 @@
 #include "tsage/ringworld_scenes1.h"
 #include "tsage/ringworld_scenes2.h"
 #include "tsage/ringworld_scenes3.h"
+#include "tsage/ringworld_scenes8.h"
 
 namespace tSage {
 
@@ -102,6 +103,7 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	/* Scene group 6 */
 
 	/* Scene group 8 */
+	case 7600: return new Scene7600();
 
 	/* Scene group 10 */
 
@@ -325,6 +327,15 @@ SpeakerCText::SpeakerCText() {
 	_colour1 = 4;
 	_textWidth = 240;
 	_textMode = ALIGN_CENTRE;
+	_hideObjects = false;
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerEText::SpeakerEText() {
+	_speakerName = "ETEXT";
+	_textPos = Common::Point(20, 20);
+	_colour1 = 22;
 	_hideObjects = false;
 }
 

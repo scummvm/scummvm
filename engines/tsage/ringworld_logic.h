@@ -146,6 +146,13 @@ public:
 	virtual Common::String getClassName() { return "SpeakerCText"; }
 };
 
+class SpeakerEText: public ScreenSpeaker {
+public:
+	SpeakerEText();
+
+	virtual Common::String getClassName() { return "SpeakerEText"; }
+};
+
 class SpeakerHText: public ScreenSpeaker {
 public:
 	SpeakerHText();
