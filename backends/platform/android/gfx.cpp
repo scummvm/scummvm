@@ -442,8 +442,9 @@ void OSystem_Android::updateScreen() {
 		GLCALL(glTranslatex(0, -_shake_offset << 16, 0));
 	}
 
-	if (_show_overlay)
-		GLCALL(glColor4ub(0x9f, 0x9f, 0x9f, 0x9f));
+// TODO this doesnt work on those sucky drivers, do it differently
+//	if (_show_overlay)
+//		GLCALL(glColor4ub(0x9f, 0x9f, 0x9f, 0x9f));
 
 	if (_focus_rect.isEmpty()) {
 		_game_texture->drawTextureRect();
@@ -467,7 +468,8 @@ void OSystem_Android::updateScreen() {
 	int cs = _mouse_targetscale;
 
 	if (_show_overlay) {
-		GLCALL(glColor4ub(0xff, 0xff, 0xff, 0xff));
+// TODO see above
+//		GLCALL(glColor4ub(0xff, 0xff, 0xff, 0xff));
 
 		// ugly, but the modern theme sets a wacko factor, only god knows why
 		cs = 1;
