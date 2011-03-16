@@ -175,13 +175,13 @@ struct MouseEvent : public BaseEvent {
  */
 struct CustomEvent : public BaseEvent {
 	CustomEventMessage message;
-	uint32 param1;
-	uint32 param2;
+	void* param1;
+	void* param2;
 
 	void init() {
 		message = MESSAGE_INVALID;
-		param1 = 0;
-		param2 = 0;
+		param1 = NULL;
+		param2 = NULL;
 	}
 };
 
