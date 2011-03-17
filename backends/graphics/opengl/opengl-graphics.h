@@ -219,7 +219,10 @@ protected:
 
 	/**
 	 * Sets the dispaly mode.
-	 * @mode the dispaly mode, if -1 it will switch to next mode. If -2 to previous mode.
+	 *
+	 * This can only be used in a GFX transaction.
+	 *
+	 * @param mode the dispaly mode, if -1 it will switch to next mode. If -2 to previous mode.
 	 */
 	virtual void switchDisplayMode(int mode);
 

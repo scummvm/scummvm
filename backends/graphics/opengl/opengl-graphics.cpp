@@ -1376,19 +1376,19 @@ const char *OpenGLGraphicsManager::getCurrentModeName() {
 }
 
 void OpenGLGraphicsManager::switchDisplayMode(int mode) {
-	if (_oldVideoMode.setup && _oldVideoMode.mode == mode)
+	assert(_transactionMode == kTransactionActive);
+
+	if (_videoMode.mode == mode)
 		return;
 
-	if (_transactionMode == kTransactionActive) {
-		if (mode == -1) // If -1, switch to next mode
-			_videoMode.mode = (_videoMode.mode + 1) % 4;
-		else if (mode == -2) // If -2, switch to previous mode
-			_videoMode.mode = (_videoMode.mode + 3) % 4;
-		else
-			_videoMode.mode = mode;
+	if (mode == -1) // If -1, switch to next mode
+		_videoMode.mode = (_videoMode.mode + 1) % 4;
+	else if (mode == -2) // If -2, switch to previous mode
+		_videoMode.mode = (_videoMode.mode + 3) % 4;
+	else
+		_videoMode.mode = mode;
 
-		_transactionDetails.needRefresh = true;
-	}
+	_transactionDetails.needRefresh = true;
 }
 
 #ifdef USE_OSD
