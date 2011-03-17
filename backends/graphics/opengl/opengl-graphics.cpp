@@ -1219,6 +1219,8 @@ void OpenGLGraphicsManager::unloadGFXMode() {
 }
 
 void OpenGLGraphicsManager::setScale(int newScale) {
+	assert(_transactionMode == kTransactionActive);
+
 	if (newScale == _videoMode.scaleFactor)
 		return;
 

@@ -176,7 +176,14 @@ protected:
 	virtual bool loadGFXMode();
 	virtual void unloadGFXMode();
 
-	virtual void setScale(int newScale);
+	/**
+	 * Set the scale factor.
+	 * 
+	 * This can only be used in a GFX transaction.
+	 *
+	 * @param newScale New scale factor.
+	 */
+	void setScale(int newScale);
 
 	/**
 	 * Query the scale factor.
