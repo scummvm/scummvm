@@ -903,8 +903,8 @@ void OpenGLGraphicsManager::refreshCursorScale() {
 
 void OpenGLGraphicsManager::calculateDisplaySize(int &width, int &height) {
 	if (_videoMode.mode == OpenGL::GFX_ORIGINAL) {
-		width = _videoMode.overlayWidth;
-		height = _videoMode.overlayHeight;
+		width = _videoMode.screenWidth;
+		height = _videoMode.screenHeight;
 	} else {
 		width = _videoMode.hardwareWidth;
 		height = _videoMode.hardwareHeight;
