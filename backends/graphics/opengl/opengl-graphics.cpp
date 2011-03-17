@@ -1338,9 +1338,9 @@ bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {
 	// Write BMP header
 	out.writeByte('B');
 	out.writeByte('M');
-	out.writeUint32LE(height * width * 3 + 52);
+	out.writeUint32LE(height * width * 3 + 54);
 	out.writeUint32LE(0);
-	out.writeUint32LE(52);
+	out.writeUint32LE(54);
 	out.writeUint32LE(40);
 	out.writeUint32LE(width);
 	out.writeUint32LE(height);
