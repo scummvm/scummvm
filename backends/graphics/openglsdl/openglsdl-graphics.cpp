@@ -35,6 +35,7 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 	:
 	_hwscreen(0),
 	_screenResized(false),
+	_activeFullscreenMode(-2),
 	_lastFullscreenModeWidth(0),
 	_lastFullscreenModeHeight(0),
 	_desktopWidth(0),
@@ -215,7 +216,7 @@ bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
 	if (availableModes == (void *)-1) {
 		_videoMode.hardwareWidth = _desktopWidth;
 		_videoMode.hardwareHeight = _desktopHeight;
-		_videoMode.activeFullscreenMode = -2;
+		_activeFullscreenMode = -2;
 		return true;
 	}
 
@@ -223,7 +224,7 @@ bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
 	// The last used fullscreen mode will be prioritized, if there is no last fullscreen
 	// mode, the desktop resolution will be used, and in case the desktop resolution
 	// is not available as a fullscreen mode, the one with smallest metric will be selected.
-	if (_videoMode.activeFullscreenMode == -2) {
+	if (_activeFullscreenMode == -2) {
 		// Desktop resolution
 		int desktopModeIndex = -1;
 
@@ -238,7 +239,7 @@ bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
 			if (mode->w == _lastFullscreenModeWidth && mode->h == _lastFullscreenModeHeight) {
 				_videoMode.hardwareWidth = _lastFullscreenModeWidth;
 				_videoMode.hardwareHeight = _lastFullscreenModeHeight;
-				_videoMode.activeFullscreenMode = i;
+				_activeFullscreenMode = i;
 				return true;
 			}
 
@@ -262,32 +263,32 @@ bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
 			_videoMode.hardwareWidth = _desktopWidth;
 			_videoMode.hardwareHeight = _desktopHeight;
 
-			_videoMode.activeFullscreenMode = desktopModeIndex;
+			_activeFullscreenMode = desktopModeIndex;
 			return true;
 		} else if (bestMode) {
 			_videoMode.hardwareWidth = bestMode->w;
 			_videoMode.hardwareHeight = bestMode->h;
 
-			_videoMode.activeFullscreenMode = bestModeIndex;
+			_activeFullscreenMode = bestModeIndex;
 			return true;
 		}
 	} else {
 		// Use last fullscreen mode if looping backwards from the first mode
-		if (_videoMode.activeFullscreenMode == -1) {
+		if (_activeFullscreenMode == -1) {
 			do {
-				_videoMode.activeFullscreenMode++;
-			} while(availableModes[_videoMode.activeFullscreenMode]);
-			_videoMode.activeFullscreenMode--;
+				_activeFullscreenMode++;
+			} while(availableModes[_activeFullscreenMode]);
+			_activeFullscreenMode--;
 		}
 
 		// Use first fullscreen mode if looping from last mode
-		if (!availableModes[_videoMode.activeFullscreenMode])
-			_videoMode.activeFullscreenMode = 0;
+		if (!availableModes[_activeFullscreenMode])
+			_activeFullscreenMode = 0;
 
 		// Check if the fullscreen mode is valid
-		if (availableModes[_videoMode.activeFullscreenMode]) {
-			_videoMode.hardwareWidth = availableModes[_videoMode.activeFullscreenMode]->w;
-			_videoMode.hardwareHeight = availableModes[_videoMode.activeFullscreenMode]->h;
+		if (availableModes[_activeFullscreenMode]) {
+			_videoMode.hardwareWidth = availableModes[_activeFullscreenMode]->w;
+			_videoMode.hardwareHeight = availableModes[_activeFullscreenMode]->h;
 			return true;
 		}
 	}
@@ -326,7 +327,11 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-	if (_videoMode.fullscreen) {
+	// In case we have an fullscreen mode and we are not in a rollback, detect
+	// a proper mode to use. In case we are in a rollback, we already detected
+	// a proper mode when setting up that mode, thus there is no need to run
+	// the detection again.
+	if (_videoMode.fullscreen && _transactionMode != kTransactionRollback) {
 		if (!setupFullscreenMode())
 			// Failed setuping a fullscreen mode
 			return false;
@@ -418,8 +423,7 @@ void OpenGLSdlGraphicsManager::displayScaleChangedMsg() {
 #endif
 
 void OpenGLSdlGraphicsManager::setFullscreenMode(bool enable) {
-	if (_oldVideoMode.setup && _oldVideoMode.fullscreen == enable &&
-		_oldVideoMode.activeFullscreenMode == _videoMode.activeFullscreenMode)
+	if (_oldVideoMode.setup && _oldVideoMode.fullscreen == enable)
 		return;
 
 	if (_transactionMode == kTransactionActive) {
@@ -446,10 +450,10 @@ bool OpenGLSdlGraphicsManager::isHotkey(const Common::Event &event) {
 void OpenGLSdlGraphicsManager::toggleFullScreen(int loop) {
 	beginGFXTransaction();
 		if (_videoMode.fullscreen && loop) {
-			_videoMode.activeFullscreenMode += loop;
+			_activeFullscreenMode += loop;
 			setFullscreenMode(true);
 		} else {
-			_videoMode.activeFullscreenMode = -2;
+			_activeFullscreenMode = -2;
 			setFullscreenMode(!_videoMode.fullscreen);
 		}
 	endGFXTransaction();

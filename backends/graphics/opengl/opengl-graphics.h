@@ -152,7 +152,6 @@ protected:
 		bool setup;
 
 		bool fullscreen;
-		int activeFullscreenMode;
 
 		int mode;
 		int scaleFactor;

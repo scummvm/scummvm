@@ -78,6 +78,8 @@ protected:
 	 */
 	virtual void toggleFullScreen(int loop);
 
+	int _activeFullscreenMode;
+
 	/**
 	 * Setup the fullscreen mode.
 	 * @return false if failed finding a mode, true otherwise.
