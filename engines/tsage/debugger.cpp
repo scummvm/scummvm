@@ -36,6 +36,7 @@ Debugger::Debugger(): GUI::Debugger() {
 	DCmd_Register("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("scene",			WRAP_METHOD(Debugger, Cmd_Scene));
 	DCmd_Register("walk_regions",	WRAP_METHOD(Debugger, Cmd_WalkRegions));
+	DCmd_Register("item",			WRAP_METHOD(Debugger, Cmd_Item));
 }
 
 static int strToInt(const char *s) {
@@ -93,7 +94,8 @@ bool Debugger::Cmd_WalkRegions(int argc, const char **argv) {
 			LineSliceSet sliceSet = wr.getLineSlices(yp);
 
 			for (uint idx = 0; idx < sliceSet.items.size(); ++idx)
-				destSurface.hLine(sliceSet.items[idx].xs, yp, sliceSet.items[idx].xe, colour);
+				destSurface.hLine(sliceSet.items[idx].xs - _globals->_sceneOffset.x, yp,
+				sliceSet.items[idx].xe - _globals->_sceneOffset.x, colour);
 		}
 	}
 
@@ -104,6 +106,14 @@ bool Debugger::Cmd_WalkRegions(int argc, const char **argv) {
 	_globals->_paneRefreshFlag[0] = 2;
 
 	return false;
+}
+
+/**
+ * Give a specified item to the player
+ */
+bool Debugger::Cmd_Item(int argc, const char **argv) {
+	_globals->_inventory._infoDisk._sceneNumber = 1;
+	return true;
 }
 
 } // End of namespace tSage
