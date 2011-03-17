@@ -419,7 +419,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		}
 
 		if (arg2 < 1 || arg2 > ARRAYSIZE(jkeymap)) {
-			LOGE("received invalid keycode: %d", arg2);
+			LOGE("received invalid keycode: %d (%d)", arg2, arg3);
 			return;
 		}
 
