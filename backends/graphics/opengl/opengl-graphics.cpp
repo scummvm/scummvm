@@ -646,6 +646,7 @@ void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
 	assert(_transactionMode == kTransactionNone);
 	assert(msg);
 
+#ifdef USE_OSD
 	// Split the message into separate lines.
 	_osdLines.clear();
 
@@ -659,6 +660,7 @@ void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
 	// Init the OSD display parameters, and the fade out
 	_osdAlpha = kOSDInitialAlpha;
 	_osdFadeStartTime = g_system->getMillis() + kOSDFadeOutDelay;
+#endif
 }
 
 //

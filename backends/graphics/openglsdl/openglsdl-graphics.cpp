@@ -565,7 +565,9 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			// Ctrl-Alt-<number key> will change the GFX mode
 			if (isNormalNumber || isKeypadNumber) {
 				if (sdlKey - (isNormalNumber ? SDLK_1 : SDLK_KP1) <= 4) {
+#ifdef USE_OSD
 					int lastMode = _videoMode.mode;
+#endif
 					beginGFXTransaction();
 						_videoMode.mode = sdlKey - (isNormalNumber ? SDLK_1 : SDLK_KP1);
 						_transactionDetails.needRefresh = true;
