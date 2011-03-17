@@ -1207,6 +1207,11 @@ void OpenGLGraphicsManager::loadTextures() {
 	if (gameScreenBPP)
 		glPixelStorei(GL_UNPACK_ALIGNMENT, Common::gcd<uint>(gameScreenBPP, 2));
 
+	// We use a "pack" alignment (when reading from textures) to 4 here,
+	// since the only place where we really use it is the BMP screenshot
+	// code and that requires the same alignment too.
+	glPixelStorei(GL_PACK_ALIGNMENT, 4);
+
 #ifdef USE_OSD
 	if (!_osdTexture)
 		_osdTexture = new GLTexture(2, GL_RGBA, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1);
@@ -1317,8 +1322,16 @@ bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {
 	int width = _videoMode.hardwareWidth;
 	int height = _videoMode.hardwareHeight;
 	
+	// A line of a BMP image must have a size divisible by 4.
+	// We calculate the padding bytes needed here.
+	// Since we use a 3 byte per pixel mode, we can use width % 4 here, since
+	// it is equal to 4 - (width * 3) % 4. (4 - (width * Bpp) % 4, is the
+	// usual way of computing the padding bytes required).
+	const int linePaddingSize = width % 4;
+	const int lineSize = width * 3 + linePaddingSize;
+
 	// Allocate memory for screenshot
-	uint8 *pixels = new uint8[width * height * 3];
+	uint8 *pixels = new uint8[lineSize * height];
 
 	// Get pixel data from OpenGL buffer
 #ifdef USE_GLES
@@ -1338,7 +1351,7 @@ bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {
 	// Write BMP header
 	out.writeByte('B');
 	out.writeByte('M');
-	out.writeUint32LE(height * width * 3 + 54);
+	out.writeUint32LE(height * lineSize + 54);
 	out.writeUint32LE(0);
 	out.writeUint32LE(54);
 	out.writeUint32LE(40);
@@ -1354,7 +1367,7 @@ bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {
 	out.writeUint32LE(0); 
 
 	// Write pixel data to BMP
-	out.write(pixels, width * height * 3);
+	out.write(pixels, lineSize * height);
 
 	// Free allocated memory
 	delete[] pixels;
