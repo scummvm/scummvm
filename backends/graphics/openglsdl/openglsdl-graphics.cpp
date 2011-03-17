@@ -79,9 +79,6 @@ bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 
 void OpenGLSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	switch (f) {
-	case OSystem::kFeatureFullscreenMode:
-		setFullscreenMode(enable);
-		break;
 	case OSystem::kFeatureIconifyWindow:
 		if (enable)
 			SDL_WM_IconifyWindow();
@@ -421,16 +418,6 @@ void OpenGLSdlGraphicsManager::displayScaleChangedMsg() {
 	displayMessageOnOSD(buffer);
 }
 #endif
-
-void OpenGLSdlGraphicsManager::setFullscreenMode(bool enable) {
-	if (_oldVideoMode.setup && _oldVideoMode.fullscreen == enable)
-		return;
-
-	if (_transactionMode == kTransactionActive) {
-		_videoMode.fullscreen = enable;
-		_transactionDetails.needRefresh = true;
-	}
-}
 
 bool OpenGLSdlGraphicsManager::isHotkey(const Common::Event &event) {
 	if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {

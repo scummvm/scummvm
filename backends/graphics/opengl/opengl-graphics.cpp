@@ -98,6 +98,10 @@ bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) {
 
 void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	switch (f) {
+	case OSystem::kFeatureFullscreenMode:
+		setFullscreenMode(enable);
+		break;
+
 	case OSystem::kFeatureAspectRatioCorrection:
 		// TODO: If we enable aspect ratio correction, we automatically set
 		// the video mode to 4/3. That is quity messy, but since we have that
@@ -108,6 +112,7 @@ void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 		if (enable)
 			_videoMode.mode = OpenGL::GFX_4_3;
 		break;
+
 	default:
 		break;
 	}
@@ -115,8 +120,12 @@ void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 
 bool OpenGLGraphicsManager::getFeatureState(OSystem::Feature f) {
 	switch (f) {
+	case OSystem::kFeatureFullscreenMode:
+		return _videoMode.fullscreen;
+
 	case OSystem::kFeatureAspectRatioCorrection:
 		return _videoMode.mode == OpenGL::GFX_4_3;
+
 	default:
 		return false;
 	}
@@ -676,6 +685,18 @@ void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
 //
 // Intern
 //
+
+void OpenGLGraphicsManager::setFullscreenMode(bool enable) {
+	assert(_transactionMode == kTransactionActive);
+
+	if (_oldVideoMode.setup && _oldVideoMode.fullscreen == enable)
+		return;
+
+	if (_transactionMode == kTransactionActive) {
+		_videoMode.fullscreen = enable;
+		_transactionDetails.needRefresh = true;
+	}
+}
 
 void OpenGLGraphicsManager::refreshGameScreen() {
 	if (_screenNeedsRedraw)

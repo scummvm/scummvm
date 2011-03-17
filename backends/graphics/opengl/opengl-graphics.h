@@ -176,6 +176,11 @@ protected:
 	virtual void unloadGFXMode();
 
 	/**
+	 * Setup the fullscreen mode state.
+	 */
+	void setFullscreenMode(bool enable);
+
+	/**
 	 * Set the scale factor.
 	 * 
 	 * This can only be used in a GFX transaction.

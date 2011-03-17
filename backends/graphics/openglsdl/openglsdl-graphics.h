@@ -57,9 +57,6 @@ protected:
 
 	virtual bool loadGFXMode();
 	virtual void unloadGFXMode();
-
-	virtual void setFullscreenMode(bool enable);
-
 	virtual bool isHotkey(const Common::Event &event);
 
 #ifdef USE_RGB_COLOR
