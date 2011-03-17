@@ -178,6 +178,23 @@ protected:
 
 	virtual void setScale(int newScale);
 
+	/**
+	 * Query the scale factor.
+	 */
+	inline int getScale() const { return _videoMode.scaleFactor; }
+
+	/**
+	 * Toggle the antialiasing state of the current video mode.
+	 *
+	 * This can only be used in a GFX transaction.
+	 */
+	void toggleAntialiasing();
+
+	/**
+	 * Query the antialiasing state.
+	 */
+	inline bool getAntialiasingState() const { return _videoMode.antialiasing; }
+
 	// Drawing coordinates for the current display mode and scale
 	int _displayX;
 	int _displayY;
@@ -195,12 +212,12 @@ protected:
 	virtual void calculateDisplaySize(int &width, int &height);
 	virtual void refreshDisplaySize();
 
-	bool _aspectRatioCorrection;
-
 	/**
 	 * Returns the current target aspect ratio x 10000
 	 */
 	virtual uint getAspectRatio();
+
+	bool _aspectRatioCorrection;
 
 	bool _formatBGR;
 
@@ -232,7 +249,7 @@ protected:
 	bool _overlayVisible;
 	bool _overlayNeedsRedraw;
 	Common::Rect _overlayDirtyRect;
-	
+
 	virtual void refreshOverlay();
 
 	//

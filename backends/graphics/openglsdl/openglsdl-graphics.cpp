@@ -298,7 +298,7 @@ bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
 
 bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	// Force 4/3 if feature enabled
-	if (_aspectRatioCorrection)
+	if (getFeatureState(OSystem::kFeatureAspectRatioCorrection))
 		_videoMode.mode = OpenGL::GFX_4_3;
 
 	// If the screen was resized, do not change its size
@@ -522,11 +522,14 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			// Ctrl-Alt-f toggles antialiasing
 			if (event.kbd.keycode == 'f') {
 				beginGFXTransaction();
-					_videoMode.antialiasing = !_videoMode.antialiasing;
-					_transactionDetails.filterChanged = true;
+					toggleAntialiasing();
 				endGFXTransaction();
+
 #ifdef USE_OSD
-				if (_videoMode.antialiasing)
+				// TODO: This makes guesses about what internal antialiasing
+				// modes we use, we might want to consider a better way of
+				// displaying information to the user.
+				if (getAntialiasingState())
 					displayMessageOnOSD("Active filter mode: Linear");
 				else
 					displayMessageOnOSD("Active filter mode: Nearest");
@@ -568,10 +571,16 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 #ifdef USE_OSD
 					int lastMode = _videoMode.mode;
 #endif
+					// We need to query the scale and set it up, because
+					// setGraphicsMode sets the default scale to 2
+					int oldScale = getScale();
 					beginGFXTransaction();
-						_videoMode.mode = sdlKey - (isNormalNumber ? SDLK_1 : SDLK_KP1);
-						_transactionDetails.needRefresh = true;
-						_aspectRatioCorrection = false;
+						setGraphicsMode(sdlKey - (isNormalNumber ? SDLK_1 : SDLK_KP1));
+						setScale(oldScale);
+						// TODO: We disable the aspect ratio correction here,
+						// we might switch to mode which ignores it...
+						// We should really fix this mess up.
+						setFeatureState(OSystem::kFeatureAspectRatioCorrection, false);
 					endGFXTransaction();
 #ifdef USE_OSD
 					if (lastMode != _videoMode.mode)

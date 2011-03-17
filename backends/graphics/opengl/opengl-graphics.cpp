@@ -100,7 +100,12 @@ bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) {
 void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	switch (f) {
 	case OSystem::kFeatureAspectRatioCorrection:
-		_videoMode.mode = OpenGL::GFX_4_3;
+		// TODO: If we enable aspect ratio correction, we automatically set
+		// the video mode to 4/3. That is quity messy, but since we have that
+		// messy OpenGL mode use there's not much to do about it right now...
+		// Think of a way to get rid of this mess.
+		if (enable)
+			_videoMode.mode = OpenGL::GFX_4_3;
 		_aspectRatioCorrection = enable;
 		break;
 	default:
@@ -109,7 +114,12 @@ void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 }
 
 bool OpenGLGraphicsManager::getFeatureState(OSystem::Feature f) {
-	return false;
+	switch (f) {
+	case OSystem::kFeatureAspectRatioCorrection:
+		return _aspectRatioCorrection || (_videoMode.mode == OpenGL::GFX_4_3);
+	default:
+		return false;
+	}
 }
 
 //
@@ -1214,6 +1224,13 @@ void OpenGLGraphicsManager::setScale(int newScale) {
 
 	_videoMode.scaleFactor = newScale;
 	_transactionDetails.sizeChanged = true;
+}
+
+void OpenGLGraphicsManager::toggleAntialiasing() {
+	assert(_transactionMode == kTransactionActive);
+
+	_videoMode.antialiasing = !_videoMode.antialiasing;
+	_transactionDetails.filterChanged = true;
 }
 
 uint OpenGLGraphicsManager::getAspectRatio() {
