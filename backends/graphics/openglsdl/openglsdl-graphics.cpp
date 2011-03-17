@@ -303,8 +303,9 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 
 	// If the screen was resized, do not change its size
 	if (!_screenResized) {
-		_videoMode.overlayWidth = _videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
-		_videoMode.overlayHeight = _videoMode.hardwareHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
+		const int scaleFactor = getScale();
+		_videoMode.overlayWidth = _videoMode.hardwareWidth = _videoMode.screenWidth * scaleFactor;
+		_videoMode.overlayHeight = _videoMode.hardwareHeight = _videoMode.screenHeight * scaleFactor;
 
 		int screenAspectRatio = _videoMode.screenWidth * 10000 / _videoMode.screenHeight;
 		int desiredAspectRatio = getAspectRatio();
@@ -392,11 +393,13 @@ void OpenGLSdlGraphicsManager::internUpdateScreen() {
 void OpenGLSdlGraphicsManager::displayModeChangedMsg() {
 	const char *newModeName = getCurrentModeName();
 	if (newModeName) {
+		const int scaleFactor = getScale();
+
 		char buffer[128];
 		sprintf(buffer, "Current display mode: %s\n%d x %d -> %d x %d",
 			newModeName,
-			_videoMode.screenWidth * _videoMode.scaleFactor,
-			_videoMode.screenHeight * _videoMode.scaleFactor,
+			_videoMode.screenWidth * scaleFactor,
+			_videoMode.screenHeight * scaleFactor,
 			_hwscreen->w, _hwscreen->h
 			);
 		displayMessageOnOSD(buffer);
@@ -404,8 +407,9 @@ void OpenGLSdlGraphicsManager::displayModeChangedMsg() {
 }
 void OpenGLSdlGraphicsManager::displayScaleChangedMsg() {
 	char buffer[128];
+	const int scaleFactor = getScale();
 	sprintf(buffer, "Current scale: x%d\n%d x %d -> %d x %d",
-		_videoMode.scaleFactor,
+		scaleFactor,
 		_videoMode.screenWidth, _videoMode.screenHeight,
 		_videoMode.overlayWidth, _videoMode.overlayHeight
 		);
@@ -542,7 +546,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			// Ctrl+Alt+Plus/Minus Increase/decrease the scale factor
 			if ((sdlKey == SDLK_EQUALS || sdlKey == SDLK_PLUS || sdlKey == SDLK_MINUS ||
 				sdlKey == SDLK_KP_PLUS || sdlKey == SDLK_KP_MINUS)) {
-				int factor = _videoMode.scaleFactor;
+				int factor = getScale();
 				factor += (sdlKey == SDLK_MINUS || sdlKey == SDLK_KP_MINUS) ? -1 : +1;
 				if (0 < factor && factor < 4) {
 					// Check if the desktop resolution has been detected
@@ -631,10 +635,11 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				}
 
 				int scale = MIN(_videoMode.hardwareWidth / _videoMode.screenWidth,
-							_videoMode.hardwareHeight / _videoMode.screenHeight);
-				if (_videoMode.scaleFactor != scale) {
+				                _videoMode.hardwareHeight / _videoMode.screenHeight);
+
+				if (getScale() != scale) {
 					scaleChanged = true;
-					_videoMode.scaleFactor = MAX(MIN(scale, 3), 1);
+					setScale(MAX(MIN(scale, 3), 1));
 				}
 
 				if (_videoMode.mode == OpenGL::GFX_ORIGINAL) {
