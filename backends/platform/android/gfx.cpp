@@ -286,6 +286,9 @@ void OSystem_Android::initSize(uint width, uint height,
 void OSystem_Android::clearScreen(FixupType type, byte count) {
 	assert(count > 0);
 
+	bool sm = _show_mouse;
+	_show_mouse = false;
+
 	GLCALL(glDisable(GL_SCISSOR_TEST));
 
 	for (byte i = 0; i < count; ++i) {
@@ -310,6 +313,9 @@ void OSystem_Android::clearScreen(FixupType type, byte count) {
 
 	if (!_show_overlay)
 		GLCALL(glEnable(GL_SCISSOR_TEST));
+
+	_show_mouse = sm;
+	_force_redraw = true;
 }
 
 void OSystem_Android::updateScreenRect() {
@@ -592,14 +598,14 @@ void OSystem_Android::showOverlay() {
 void OSystem_Android::hideOverlay() {
 	ENTER();
 
-	clearScreen(kClear);
-
 	_show_overlay = false;
-	_force_redraw = true;
 
 	updateEventScale();
 
 	warpMouse(_game_texture->width() / 2, _game_texture->height() / 2);
+
+	// double buffered, flip twice
+	clearScreen(kClearUpdate, 2);
 
 	GLCALL(glEnable(GL_SCISSOR_TEST));
 }
