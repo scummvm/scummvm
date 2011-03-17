@@ -477,7 +477,7 @@ void OSystem_Android::updateScreen() {
 		GLCALL(_overlay_texture->drawTextureRect());
 	}
 
-	if (_show_mouse) {
+	if (_show_mouse && !_mouse_texture->isEmpty()) {
 		GLCALL(glPushMatrix());
 
 		const Common::Point &mouse = getEventManager()->getMousePos();
@@ -710,10 +710,8 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 		WRITE_UINT16(_mouse_texture_palette->palette() + keycolor * 2, 0);
 	}
 
-	if (w == 0 || h == 0) {
-		_show_mouse = false;
+	if (w == 0 || h == 0)
 		return;
-	}
 
 	if (_mouse_texture == _mouse_texture_palette) {
 		_mouse_texture->updateBuffer(0, 0, w, h, buf, w);
@@ -730,7 +728,7 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 
 			delete[] tmp;
 
-			_show_mouse = false;
+			_mouse_texture->allocBuffer(0, 0);
 
 			return;
 		}

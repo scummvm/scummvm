@@ -98,6 +98,10 @@ public:
 		return _surface.pitch;
 	}
 
+	inline bool isEmpty() const {
+		return _surface.w == 0 || _surface.h == 0;
+	}
+
 	inline const Graphics::Surface *surface_const() const {
 		return &_surface;
 	}
