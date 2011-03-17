@@ -314,14 +314,6 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 			_videoMode.hardwareHeight = (_videoMode.overlayWidth * 10000  + 5000) / desiredAspectRatio;
 		else if (screenAspectRatio < desiredAspectRatio)
 			_videoMode.hardwareWidth = (_videoMode.overlayHeight * desiredAspectRatio + 5000) / 10000;
-
-		// Only adjust the overlay height if it is bigger than original one. If
-		// the width is modified it can break the overlay.
-		if (_videoMode.hardwareHeight > _videoMode.overlayHeight)
-			_videoMode.overlayHeight = _videoMode.hardwareHeight;
-	} else {
-		_videoMode.overlayWidth = _videoMode.hardwareWidth;
-		_videoMode.overlayHeight = _videoMode.hardwareHeight;
 	}
 
 	_screenResized = false;
@@ -337,10 +329,10 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 		if (!setupFullscreenMode())
 			// Failed setuping a fullscreen mode
 			return false;
-
-		_videoMode.overlayWidth = _videoMode.hardwareWidth;
-		_videoMode.overlayHeight = _videoMode.hardwareHeight;
 	}
+
+	_videoMode.overlayWidth = _videoMode.hardwareWidth;
+	_videoMode.overlayHeight = _videoMode.hardwareHeight;
 
 	uint32 flags = SDL_OPENGL;
 
