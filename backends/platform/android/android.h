@@ -209,7 +209,7 @@ private:
 	Common::Queue<Common::Event> _event_queue;
 	MutexRef _event_queue_lock;
 
-	Common::Point _touch_pt_down, _touch_pt_dt;
+	Common::Point _touch_pt_down, _touch_pt_scroll, _touch_pt_dt;
 	int _eventScaleX;
 	int _eventScaleY;
 	bool _touchpad_mode;

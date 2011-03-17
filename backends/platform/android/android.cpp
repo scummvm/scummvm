@@ -122,6 +122,7 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_shake_offset(0),
 	_event_queue_lock(createMutex()),
 	_touch_pt_down(),
+	_touch_pt_scroll(),
 	_touch_pt_dt(),
 	_eventScaleX(100),
 	_eventScaleY(100),

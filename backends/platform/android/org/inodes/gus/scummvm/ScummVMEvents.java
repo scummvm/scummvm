@@ -31,7 +31,6 @@ public class ScummVMEvents implements
 	final protected ScummVM _scummvm;
 	final protected GestureDetector _gd;
 	final protected int _longPress;
-	final protected int _slop;
 
 	public ScummVMEvents(Context context, ScummVM scummvm) {
 		_context = context;
@@ -42,8 +41,6 @@ public class ScummVMEvents implements
 		_gd.setIsLongpressEnabled(false);
 
 		_longPress = ViewConfiguration.getLongPressTimeout();
-		_slop = ViewConfiguration.get(context).getScaledTouchSlop();
-
 	}
 
 	final public void sendQuitEvent() {
@@ -167,7 +164,7 @@ public class ScummVMEvents implements
 	final public boolean onScroll(MotionEvent e1, MotionEvent e2,
 									float distanceX, float distanceY) {
 		_scummvm.pushEvent(JE_SCROLL, (int)e1.getX(), (int)e1.getY(),
-							(int)e2.getX(), (int)e2.getY(), _slop);
+							(int)e2.getX(), (int)e2.getY(), 0);
 
 		return true;
 	}
@@ -189,7 +186,7 @@ public class ScummVMEvents implements
 
 	final public boolean onDoubleTapEvent(MotionEvent e) {
 		_scummvm.pushEvent(JE_DOUBLE_TAP, (int)e.getX(), (int)e.getY(),
-							e.getAction(), _slop, 0);
+							e.getAction(), 0, 0);
 
 		return true;
 	}

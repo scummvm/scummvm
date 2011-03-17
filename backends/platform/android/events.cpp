@@ -444,13 +444,22 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 	case JE_DOWN:
 		_touch_pt_down = getEventManager()->getMousePos();
+		_touch_pt_scroll.x = -1;
+		_touch_pt_scroll.y = -1;
 		break;
 
 	case JE_SCROLL:
 		e.type = Common::EVENT_MOUSEMOVE;
 
 		if (_touchpad_mode) {
-			scaleMouse(e.mouse, arg3 - arg1, arg4 - arg2, false);
+			if (_touch_pt_scroll.x == -1 && _touch_pt_scroll.y == -1) {
+				_touch_pt_scroll.x = arg3;
+				_touch_pt_scroll.y = arg4;
+				return;
+			}
+
+			scaleMouse(e.mouse, arg3 - _touch_pt_scroll.x,
+						arg4 - _touch_pt_scroll.y, false);
 			e.mouse += _touch_pt_down;
 			clipMouse(e.mouse);
 		} else {
@@ -520,14 +529,20 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			switch (arg3) {
 			case JACTION_DOWN:
 				dptype = Common::EVENT_LBUTTONDOWN;
-				_touch_pt_dt.x = arg1;
-				_touch_pt_dt.y = arg2;
+				_touch_pt_dt.x = -1;
+				_touch_pt_dt.y = -1;
 				break;
 			case JACTION_UP:
 				dptype = Common::EVENT_LBUTTONUP;
 				break;
+			// held and moved
 			case JACTION_MULTIPLE:
-				// held and moved
+				if (_touch_pt_dt.x == -1 && _touch_pt_dt.y == -1) {
+					_touch_pt_dt.x = arg1;
+					_touch_pt_dt.y = arg2;
+					return;
+				}
+
 				dptype = Common::EVENT_MOUSEMOVE;
 
 				if (_touchpad_mode) {
