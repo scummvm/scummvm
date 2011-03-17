@@ -53,8 +53,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	_cursorVisible(false), _cursorKeyColor(0),
 	_cursorTargetScale(1),
 	_formatBGR(false),
-	_displayX(0), _displayY(0), _displayWidth(0), _displayHeight(0),
-	_aspectRatioCorrection(false) {
+	_displayX(0), _displayY(0), _displayWidth(0), _displayHeight(0) {
 
 	memset(&_oldVideoMode, 0, sizeof(_oldVideoMode));
 	memset(&_videoMode, 0, sizeof(_videoMode));
@@ -103,10 +102,11 @@ void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 		// TODO: If we enable aspect ratio correction, we automatically set
 		// the video mode to 4/3. That is quity messy, but since we have that
 		// messy OpenGL mode use there's not much to do about it right now...
+		// Of course in case we disasble the aspect ratio correction, we
+		// might want to setup a different mode, but which one?
 		// Think of a way to get rid of this mess.
 		if (enable)
 			_videoMode.mode = OpenGL::GFX_4_3;
-		_aspectRatioCorrection = enable;
 		break;
 	default:
 		break;
@@ -116,7 +116,7 @@ void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 bool OpenGLGraphicsManager::getFeatureState(OSystem::Feature f) {
 	switch (f) {
 	case OSystem::kFeatureAspectRatioCorrection:
-		return _aspectRatioCorrection || (_videoMode.mode == OpenGL::GFX_4_3);
+		return _videoMode.mode == OpenGL::GFX_4_3;
 	default:
 		return false;
 	}
@@ -1365,7 +1365,6 @@ void OpenGLGraphicsManager::switchDisplayMode(int mode) {
 			_videoMode.mode = mode;
 
 		_transactionDetails.needRefresh = true;
-		_aspectRatioCorrection = false;
 	}
 }
 

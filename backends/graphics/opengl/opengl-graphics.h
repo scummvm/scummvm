@@ -217,8 +217,6 @@ protected:
 	 */
 	virtual uint getAspectRatio();
 
-	bool _aspectRatioCorrection;
-
 	bool _formatBGR;
 
 	//
