@@ -119,9 +119,13 @@ public class ScummVMEvents implements
 		// sequence of characters
 		if (action == KeyEvent.ACTION_MULTIPLE &&
 				keyCode == KeyEvent.KEYCODE_UNKNOWN) {
-			KeyCharacterMap m = KeyCharacterMap.load(e.getDeviceId());
+			final KeyCharacterMap m = KeyCharacterMap.load(e.getDeviceId());
+			final KeyEvent[] es = m.getEvents(e.getCharacters().toCharArray());
 
-			for (KeyEvent s : m.getEvents(e.getCharacters().toCharArray())) {
+			if (es == null)
+				return true;
+
+			for (KeyEvent s : es) {
 				_scummvm.pushEvent(JE_KEY, s.getAction(), s.getKeyCode(),
 					s.getUnicodeChar() & KeyCharacterMap.COMBINING_ACCENT_MASK,
 					s.getMetaState(), s.getRepeatCount());
