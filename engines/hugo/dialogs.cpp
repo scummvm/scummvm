@@ -239,6 +239,9 @@ EntryDialog::EntryDialog(const Common::String &title, const Common::String &butt
 	new GUI::ButtonWidget(this, 20, 20, 30, 10, buttonLabel, 0, kCmdButton);
 }
 
+EntryDialog::~EntryDialog() {
+}
+
 void EntryDialog::handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data) {
 	switch (command) {
 	case kCmdButton:
@@ -247,6 +250,12 @@ void EntryDialog::handleCommand(GUI::CommandSender *sender, uint32 command, uint
 	default:
 		Dialog::handleCommand(sender, command, data);
 	}
+}
+
+void EntryDialog::reflowLayout() {
+}
+
+void EntryDialog::init() {
 }
 
 

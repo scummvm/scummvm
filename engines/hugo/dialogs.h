@@ -102,7 +102,7 @@ protected:
 
 class EntryDialog : public GUI::Dialog {
 	EntryDialog(const Common::String &title, const Common::String &buttonLabel, const Common::String &defaultValue);
-	~EntryDialog();
+	virtual ~EntryDialog();
 
 	void reflowLayout();
 	void handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data);
