@@ -272,6 +272,15 @@ protected:
 
 	virtual void refreshCursor();
 	virtual void refreshCursorScale();
+
+	/**
+	 * Set up the mouse position for the (event) system.
+	 *
+	 * @param x X coordinate in native coordinates.
+	 * @param y Y coordinate in native coordinates.
+	 */
+	virtual void setInternalMousePosition(int x, int y) = 0;
+
 	/**
 	 * Adjusts hardware screen coordinates to either overlay or game screen
 	 * coordinates depending on whether the overlay is visible or not.
@@ -280,7 +289,6 @@ protected:
 	 * @param y Y coordinate of the mouse position.
 	 */
 	virtual void adjustMousePosition(int16 &x, int16 &y);
-	virtual void setMousePos(int x, int y);
 
 	//
 	// Misc

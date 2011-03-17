@@ -48,8 +48,6 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
 
-	virtual void warpMouse(int x, int y);
-
 	virtual bool notifyEvent(const Common::Event &event);
 
 	virtual void updateScreen();
@@ -85,6 +83,8 @@ protected:
 	 * @return false if failed finding a mode, true otherwise.
 	 */
 	virtual bool setupFullscreenMode();
+
+	virtual void setInternalMousePosition(int x, int y);
 
 	int _lastFullscreenModeWidth;
 	int _lastFullscreenModeHeight;

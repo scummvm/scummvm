@@ -540,13 +540,53 @@ bool OpenGLGraphicsManager::showMouse(bool visible) {
 	return last;
 }
 
-void OpenGLGraphicsManager::setMousePos(int x, int y) {
-	_cursorState.x = x;
-	_cursorState.y = y;
-}
-
 void OpenGLGraphicsManager::warpMouse(int x, int y) {
-	setMousePos(x, y);
+	int scaledX = x;
+	int scaledY = y;
+
+	int16 currentX = _cursorState.x;
+	int16 currentY = _cursorState.y;
+
+	adjustMousePosition(currentX, currentY);
+
+	// Do not adjust the real screen position, when the current game / overlay
+	// coordinates match the requested coordinates. This avoids a slight
+	// movement which might occur otherwise when the mouse is at a subpixel
+	// position.
+	if (x == currentX && y == currentY)
+		return;
+
+	if (_videoMode.mode == OpenGL::GFX_NORMAL) {
+		if (_videoMode.hardwareWidth != _videoMode.overlayWidth)
+			scaledX = scaledX * _videoMode.hardwareWidth / _videoMode.overlayWidth;
+		if (_videoMode.hardwareHeight != _videoMode.overlayHeight)
+			scaledY = scaledY * _videoMode.hardwareHeight / _videoMode.overlayHeight;
+
+		if (!_overlayVisible) {
+			scaledX *= _videoMode.scaleFactor;
+			scaledY *= _videoMode.scaleFactor;
+		}
+	} else {
+		if (_overlayVisible) {
+			if (_displayWidth != _videoMode.overlayWidth)
+				scaledX = scaledX * _displayWidth / _videoMode.overlayWidth;
+			if (_displayHeight != _videoMode.overlayHeight)
+				scaledY = scaledY * _displayHeight / _videoMode.overlayHeight;
+		} else {
+			if (_displayWidth != _videoMode.screenWidth)
+				scaledX = scaledX * _displayWidth / _videoMode.screenWidth;
+			if (_displayHeight != _videoMode.screenHeight)
+				scaledY = scaledY * _displayHeight / _videoMode.screenHeight;
+		}
+
+		scaledX += _displayX;
+		scaledY += _displayY;
+	}
+
+	setInternalMousePosition(scaledX, scaledY);
+
+	_cursorState.x = scaledX;
+	_cursorState.y = scaledY;
 }
 
 void OpenGLGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
@@ -1249,8 +1289,10 @@ void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
 bool OpenGLGraphicsManager::notifyEvent(const Common::Event &event) {
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
-		if (!event.synthetic)
-			setMousePos(event.mouse.x, event.mouse.y);
+		if (!event.synthetic) {
+			_cursorState.x = event.mouse.x;
+			_cursorState.y = event.mouse.y;
+		}
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_WHEELUP:

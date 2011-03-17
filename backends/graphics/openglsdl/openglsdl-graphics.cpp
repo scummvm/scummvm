@@ -192,52 +192,8 @@ void OpenGLSdlGraphicsManager::detectSupportedFormats() {
 
 #endif
 
-void OpenGLSdlGraphicsManager::warpMouse(int x, int y) {
-	int scaledX = x;
-	int scaledY = y;
-
-	int16 currentX = _cursorState.x;
-	int16 currentY = _cursorState.y;
-
-	adjustMousePosition(currentX, currentY);
-
-	// Do not adjust the real screen position, when the current game / overlay
-	// coordinates match the requested coordinates. This avoids a slight
-	// movement which might occur otherwise when the mouse is at a subpixel
-	// position.
-	if (x == currentX && y == currentY)
-		return;
-
-	if (_videoMode.mode == OpenGL::GFX_NORMAL) {
-		if (_videoMode.hardwareWidth != _videoMode.overlayWidth)
-			scaledX = scaledX * _videoMode.hardwareWidth / _videoMode.overlayWidth;
-		if (_videoMode.hardwareHeight != _videoMode.overlayHeight)
-			scaledY = scaledY * _videoMode.hardwareHeight / _videoMode.overlayHeight;
-
-		if (!_overlayVisible) {
-			scaledX *= _videoMode.scaleFactor;
-			scaledY *= _videoMode.scaleFactor;
-		}
-	} else {
-		if (_overlayVisible) {
-			if (_displayWidth != _videoMode.overlayWidth)
-				scaledX = scaledX * _displayWidth / _videoMode.overlayWidth;
-			if (_displayHeight != _videoMode.overlayHeight)
-				scaledY = scaledY * _displayHeight / _videoMode.overlayHeight;
-		} else {
-			if (_displayWidth != _videoMode.screenWidth)
-				scaledX = scaledX * _displayWidth / _videoMode.screenWidth;
-			if (_displayHeight != _videoMode.screenHeight)
-				scaledY = scaledY * _displayHeight / _videoMode.screenHeight;
-		}
-
-		scaledX += _displayX;
-		scaledY += _displayY;
-	}
-
-	SDL_WarpMouse(scaledX, scaledY);
-
-	setMousePos(scaledX, scaledY);
+void OpenGLSdlGraphicsManager::setInternalMousePosition(int x, int y) {
+	SDL_WarpMouse(x, y);
 }
 
 void OpenGLSdlGraphicsManager::updateScreen() {
