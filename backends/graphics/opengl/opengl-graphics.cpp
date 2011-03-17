@@ -33,6 +33,9 @@
 #include "common/file.h"
 #include "common/mutex.h"
 #include "common/translation.h"
+#ifdef USE_OSD
+#include "common/tokenizer.h"
+#endif
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 
@@ -643,61 +646,12 @@ void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
 	assert(_transactionMode == kTransactionNone);
 	assert(msg);
 
-	// The font we are going to use:
-	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kOSDFont);
-
-	if (_osdSurface.w != _osdTexture->getWidth() || _osdSurface.h != _osdTexture->getHeight())
-		_osdSurface.create(_osdTexture->getWidth(), _osdTexture->getHeight(), 2);
-	else
-		// Clear everything
-		memset(_osdSurface.pixels, 0, _osdSurface.h * _osdSurface.pitch);
-
 	// Split the message into separate lines.
-	Common::Array<Common::String> lines;
-	const char *ptr;
-	for (ptr = msg; *ptr; ++ptr) {
-		if (*ptr == '\n') {
-			lines.push_back(Common::String(msg, ptr - msg));
-			msg = ptr + 1;
-		}
-	}
-	lines.push_back(Common::String(msg, ptr - msg));
+	_osdLines.clear();
 
-	// Determine a rect which would contain the message string (clipped to the
-	// screen dimensions).
-	const int vOffset = 6;
-	const int lineSpacing = 1;
-	const int lineHeight = font->getFontHeight() + 2 * lineSpacing;
-	int width = 0;
-	int height = lineHeight * lines.size() + 2 * vOffset;
-	for (uint i = 0; i < lines.size(); i++) {
-		width = MAX(width, font->getStringWidth(lines[i]) + 14);
-	}
-
-	// Clip the rect
-	if (width > _osdSurface.w)
-		width = _osdSurface.w;
-	if (height > _osdSurface.h)
-		height = _osdSurface.h;
-
-	int dstX = (_osdSurface.w - width) / 2;
-	int dstY = (_osdSurface.h - height) / 2;
-
-	// Draw a dark gray rect
-	uint16 color = 0x294B;
-	uint16 *dst = (uint16 *)_osdSurface.pixels + dstY * _osdSurface.w + dstX;
-	for (int i = 0; i < height; i++) {
-		for (int j = 0; j < width; j++)
-			dst[j] = color;
-		dst += _osdSurface.w;
-	}
-
-	// Render the message, centered, and in white
-	for (uint i = 0; i < lines.size(); i++) {
-		font->drawString(&_osdSurface, lines[i],
-							dstX, dstY + i * lineHeight + vOffset + lineSpacing, width,
-							0xFFFF, Graphics::kTextAlignCenter);
-	}
+	Common::StringTokenizer tokenizer(msg, "\n");
+	while (!tokenizer.empty())
+		_osdLines.push_back(tokenizer.nextToken());
 
 	// Request update of the texture
 	_requireOSDUpdate = true;
@@ -1071,9 +1025,7 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 #ifdef USE_OSD
 	if (_osdAlpha > 0) {
 		if (_requireOSDUpdate) {
-			// Update the texture
-			_osdTexture->updateBuffer(_osdSurface.pixels, _osdSurface.pitch, 0, 0, 
-			                          _osdSurface.w, _osdSurface.h);
+			updateOSD();
 			_requireOSDUpdate = false;
 		}
 
@@ -1229,6 +1181,9 @@ void OpenGLGraphicsManager::loadTextures() {
 		_osdTexture->refresh();
 
 	_osdTexture->allocBuffer(_videoMode.overlayWidth, _videoMode.overlayHeight);
+
+	// Update the OSD in case it is used right now
+	_requireOSDUpdate = true;
 #endif
 }
 
@@ -1394,5 +1349,53 @@ void OpenGLGraphicsManager::switchDisplayMode(int mode) {
 		_aspectRatioCorrection = false;
 	}
 }
+
+#ifdef USE_OSD
+void OpenGLGraphicsManager::updateOSD() {
+	// The font we are going to use:
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kOSDFont);
+
+	if (_osdSurface.w != _osdTexture->getWidth() || _osdSurface.h != _osdTexture->getHeight())
+		_osdSurface.create(_osdTexture->getWidth(), _osdTexture->getHeight(), 2);
+	else
+		// Clear everything
+		memset(_osdSurface.pixels, 0, _osdSurface.h * _osdSurface.pitch);
+
+	// Determine a rect which would contain the message string (clipped to the
+	// screen dimensions).
+	const int vOffset = 6;
+	const int lineSpacing = 1;
+	const int lineHeight = font->getFontHeight() + 2 * lineSpacing;
+	int width = 0;
+	int height = lineHeight * _osdLines.size() + 2 * vOffset;
+	for (uint i = 0; i < _osdLines.size(); i++) {
+		width = MAX(width, font->getStringWidth(_osdLines[i]) + 14);
+	}
+
+	// Clip the rect
+	if (width > _osdSurface.w)
+		width = _osdSurface.w;
+	if (height > _osdSurface.h)
+		height = _osdSurface.h;
+
+	int dstX = (_osdSurface.w - width) / 2;
+	int dstY = (_osdSurface.h - height) / 2;
+
+	// Draw a dark gray rect
+	const uint16 color = 0x294B;
+	_osdSurface.fillRect(Common::Rect(dstX, dstY, dstX + width, dstY + height), color);
+
+	// Render the message, centered, and in white
+	for (uint i = 0; i < _osdLines.size(); i++) {
+		font->drawString(&_osdSurface, _osdLines[i],
+		                 dstX, dstY + i * lineHeight + vOffset + lineSpacing, width,
+		                 0xFFFF, Graphics::kTextAlignCenter);
+	}
+ 
+	// Update the texture
+	_osdTexture->updateBuffer(_osdSurface.pixels, _osdSurface.pitch, 0, 0, 
+	                          _osdSurface.w, _osdSurface.h);
+}
+#endif
 
 #endif

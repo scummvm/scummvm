@@ -296,6 +296,16 @@ protected:
 	virtual bool saveScreenshot(const char *filename);
 
 #ifdef USE_OSD
+	/**
+	 * The OSD contents.
+	 */
+	Common::Array<Common::String> _osdLines;
+
+	/**
+	 * Update the OSD texture / surface.
+	 */
+	void updateOSD();
+
 	GLTexture *_osdTexture;
 	Graphics::Surface _osdSurface;
 	uint8 _osdAlpha;
