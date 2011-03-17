@@ -344,10 +344,10 @@ void Scene::refreshBackground(int xAmount, int yAmount) {
 	int yHalfOffset = (_backgroundBounds.height() / 100) == 3 ? 0 : _sceneBounds.top / 100;
 
 	// Set the limits and increment amounts
-	int yInc = (xAmount < 0) ? -1 : 1;
+	int xInc = (xAmount < 0) ? -1 : 1;
 	int xSection = (xAmount < 0) ? 15 : 0;
 	int xSectionEnd = (xAmount < 0) ? -1 : 16;
-	int xInc = (yAmount < 0) ? -1 : 1;
+	int yInc = (yAmount < 0) ? -1 : 1;
 	int ySection = (yAmount < 0) ? 15 : 0;
 	int ySectionEnd = (yAmount < 0) ? -1 : 16;
 	bool changedFlag = false;

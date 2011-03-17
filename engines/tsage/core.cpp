@@ -2160,8 +2160,8 @@ void SceneObject::updateScreen() {
 
 	if (srcRect.isValidRect()) {
 		Rect destRect  = srcRect;
-		destRect.translate(-_globals->_sceneOffset.x, -_globals->_sceneOffset.y);
 		destRect.translate(-sceneBounds.left, -sceneBounds.top);
+		srcRect.translate(-_globals->_sceneOffset.x, -_globals->_sceneOffset.y);
 
 		_globals->_screenSurface.copyFrom(_globals->_sceneManager._scene->_backSurface, srcRect, destRect);
 	}
@@ -2194,8 +2194,10 @@ void SceneObjectList::draw() {
 	} else {
 		// If there is a scroll follower, check whether it has moved off-screen
 		if (_globals->_scrollFollower) {
-			const Common::Point &objPos = _globals->_scrollFollower->_position;
 			const Rect &scrollerRect = _globals->_sceneManager._scrollerRect;
+			Common::Point objPos(
+				_globals->_scrollFollower->_position.x - _globals->_sceneManager._scene->_sceneBounds.left,
+				_globals->_scrollFollower->_position.y - _globals->_sceneManager._scene->_sceneBounds.top);
 			int loadCount = 0;
 
 			if (objPos.x >= scrollerRect.right) {
@@ -2568,8 +2570,8 @@ void Player::process(Event &event) {
 			(_position != event.mousePos) && _globals->_sceneObjects->contains(this)) {
 
 		PlayerMover *newMover = new PlayerMover();
-		Common::Point destPos(event.mousePos.x - _globals->_sceneManager._scene->_sceneBounds.left,
-			event.mousePos.y - _globals->_sceneManager._scene->_sceneBounds.top);
+		Common::Point destPos(event.mousePos.x + _globals->_sceneManager._scene->_sceneBounds.left,
+			event.mousePos.y + _globals->_sceneManager._scene->_sceneBounds.top);
 
 		addMover(newMover, &destPos, NULL);
 		event.handled = true;
