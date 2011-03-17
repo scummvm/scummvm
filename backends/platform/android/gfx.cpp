@@ -679,10 +679,13 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 
 #ifdef USE_RGB_COLOR
 	if (format && format->bytesPerPixel > 1) {
-		if (_mouse_texture != _mouse_texture_rgb)
+		if (_mouse_texture != _mouse_texture_rgb) {
 			LOGD("switching to rgb mouse cursor");
 
-		_mouse_texture_rgb = new GLES5551Texture();
+			assert(!_mouse_texture_rgb);
+			_mouse_texture_rgb = new GLES5551Texture();
+		}
+
 		_mouse_texture = _mouse_texture_rgb;
 	} else {
 		if (_mouse_texture != _mouse_texture_palette)
