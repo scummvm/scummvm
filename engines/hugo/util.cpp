@@ -89,7 +89,7 @@ void Utils::reverseByte(byte *data) {
 	*data = result;
 }
 
-char *Utils::Box(box_t dismiss, const char *s, ...) {
+const char *Utils::Box(box_t dismiss, const char *s, ...) {
 	static char buffer[kMaxStrLength + 1];          // Format text into this
 
 	if (!s)
@@ -126,18 +126,18 @@ char *Utils::Box(box_t dismiss, const char *s, ...) {
 		break;
 		}
 	case kBoxPrompt: {
-		// TODO: Some boxes (i.e. the combination code for the shed), needs to return an input.
-		warning("Box: unhandled BOX_PROMPT");
-		int boxTime = strlen(buffer) * 30;
-		GUI::TimedMessageDialog dialog(buffer, MAX(1500, boxTime));
-		dialog.runModal();
+		EntryDialog dialog(buffer, "OK", "");
+		Common::String result = dialog.getEditString();
+
+		return result.c_str();
+
 		break;
 		}
 	default:
 		error("Unknown BOX Type %d", dismiss);
 	}
 
-	return buffer;
+	return 0;
 }
 
 char *Utils::strlwr(char *buffer) {

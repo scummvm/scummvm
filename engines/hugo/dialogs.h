@@ -101,6 +101,7 @@ protected:
 };
 
 class EntryDialog : public GUI::Dialog {
+public:
 	EntryDialog(const Common::String &title, const Common::String &buttonLabel, const Common::String &defaultValue);
 	virtual ~EntryDialog();
 

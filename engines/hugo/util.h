@@ -47,7 +47,7 @@ int   lastBit(byte data);
 
 void  reverseByte(byte *data);
 
-char *Box(box_t, const char *, ...) GCC_PRINTF(2, 3);
+const char *Box(box_t, const char *, ...) GCC_PRINTF(2, 3);
 char *strlwr(char *buffer);
 }
 
