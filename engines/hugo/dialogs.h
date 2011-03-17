@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef HUGO_TOPMENU_H
-#define HUGO_TOPMENU_H
+#ifndef HUGO_DIALOGS_H
+#define HUGO_DIALOGS_H
 
 #include "gui/dialog.h"
 #include "gui/widgets/edittext.h"
@@ -117,4 +117,4 @@ protected:
 
 }
 
-#endif // HUGO_TOPMENU_H
+#endif // HUGO_DIALOGS_H
