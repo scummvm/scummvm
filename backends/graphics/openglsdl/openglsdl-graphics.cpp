@@ -324,11 +324,13 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
+	const bool isFullscreen = getFullscreenMode();
+
 	// In case we have an fullscreen mode and we are not in a rollback, detect
 	// a proper mode to use. In case we are in a rollback, we already detected
 	// a proper mode when setting up that mode, thus there is no need to run
 	// the detection again.
-	if (_videoMode.fullscreen && _transactionMode != kTransactionRollback) {
+	if (isFullscreen && _transactionMode != kTransactionRollback) {
 		if (!setupFullscreenMode())
 			// Failed setuping a fullscreen mode
 			return false;
@@ -339,7 +341,7 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 
 	uint32 flags = SDL_OPENGL;
 
-	if (_videoMode.fullscreen)
+	if (isFullscreen)
 		flags |= SDL_FULLSCREEN;
 	else
 		flags |= SDL_RESIZABLE;
@@ -365,7 +367,7 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	// Check if the screen is BGR format
 	_formatBGR = _hwscreen->format->Rshift != 0;
 
-	if (_videoMode.fullscreen) {
+	if (isFullscreen) {
 		_lastFullscreenModeWidth = _videoMode.hardwareWidth;
 		_lastFullscreenModeHeight = _videoMode.hardwareHeight;
 		ConfMan.setInt("last_fullscreen_mode_width", _lastFullscreenModeWidth);
@@ -436,12 +438,14 @@ bool OpenGLSdlGraphicsManager::isHotkey(const Common::Event &event) {
 
 void OpenGLSdlGraphicsManager::toggleFullScreen(int loop) {
 	beginGFXTransaction();
-		if (_videoMode.fullscreen && loop) {
+		const bool isFullscreen = getFullscreenMode();
+
+		if (isFullscreen && loop) {
 			_activeFullscreenMode += loop;
 			setFullscreenMode(true);
 		} else {
 			_activeFullscreenMode = -2;
-			setFullscreenMode(!_videoMode.fullscreen);
+			setFullscreenMode(!isFullscreen);
 		}
 	endGFXTransaction();
 
@@ -450,7 +454,7 @@ void OpenGLSdlGraphicsManager::toggleFullScreen(int loop) {
 
 #ifdef USE_OSD
 	char buffer[128];
-	if (_videoMode.fullscreen)
+	if (getFullscreenMode())
 		sprintf(buffer, "Fullscreen mode\n%d x %d",
 			_hwscreen->w, _hwscreen->h
 			);
@@ -614,7 +618,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	// there is no common resize event.
 	case OSystem_SDL::kSdlEventResize:
 		// Do not resize if ignoring resize events.
-		if (!_ignoreResizeFrames && !_videoMode.fullscreen) {
+		if (!_ignoreResizeFrames && !getFullscreenMode()) {
 			bool scaleChanged = false;
 			beginGFXTransaction();
 				_videoMode.hardwareWidth = event.mouse.x;

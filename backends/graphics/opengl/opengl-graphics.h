@@ -181,6 +181,11 @@ protected:
 	void setFullscreenMode(bool enable);
 
 	/**
+	 * Query the fullscreen state.
+	 */
+	inline bool getFullscreenMode() const { return _videoMode.fullscreen; }
+
+	/**
 	 * Set the scale factor.
 	 * 
 	 * This can only be used in a GFX transaction.
