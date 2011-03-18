@@ -103,6 +103,7 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	/* Scene group 6 */
 
 	/* Scene group 8 */
+	case 7000: return new Scene7000();
 	case 7600: return new Scene7600();
 
 	/* Scene group 10 */
@@ -348,6 +349,46 @@ SpeakerHText::SpeakerHText() {
 	_hideObjects = false;
 }
 
+/*--------------------------------------------------------------------------*/
+
+SpeakerSKText::SpeakerSKText(): ScreenSpeaker() {
+	_speakerName = "SKTEXT";
+	_textWidth = 240;
+	_textMode = ALIGN_CENTRE;
+	_colour1 = 9;
+	_hideObjects = false;
+};
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerSKL::SpeakerSKL(): AnimatedSpeaker() {
+	_speakerName = "SKL";
+	_newSceneNumber = 7011;
+	_textPos = Common::Point(10, 30);
+	_colour1 = 10;
+}
+
+void SpeakerSKL::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(7013);
+	_object1.setStrip2(2);
+	_object1._frame = 1;
+	_object1.setPriority2(255);
+	_object1.changeZoom(100);
+	_object1.setPosition(Common::Point(203, 120));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
+	
+	_object2.postInit(&_objectList);
+	_object2.setVisage(7013);
+	_object2.setStrip2(1);
+	_object2.setPriority2(255);
+	_object2.changeZoom(100);
+	_object2._frame = 1;
+	_object2.setPosition(Common::Point(197, 80));
+	_object2.setAction(&_speakerAction, NULL);
+
+	Speaker::setText(msg);
+}
 /*--------------------------------------------------------------------------*/
 
 SpeakerQL::SpeakerQL(): AnimatedSpeaker() {

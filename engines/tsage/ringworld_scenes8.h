@@ -35,6 +35,82 @@
 
 namespace tSage {
 
+class Scene7000: public Scene {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action3: public Action {
+	public:
+		virtual void dispatch();
+		virtual void signal();
+	};
+	class Action4: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action5: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action6: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action7: public Action {
+	public:
+		virtual void signal();
+	};
+
+	/* Objects */
+	class Object1: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+
+	/* Items */
+	class SceneItem1: public SceneItem {
+	public:
+		virtual void doAction(int action);
+	};
+
+public:
+	SoundHandler _soundHandler;
+	SequenceManager _sequenceManager;
+	SpeakerSKText _speakerSKText;
+	SpeakerSKL _speakerSKL;
+	SpeakerQL _speakerQL;
+	SpeakerQR _speakerQR;
+	SpeakerQText _speakerQText;
+	SceneObject _object1;
+	SceneObject _object2;
+	SceneObject _object3;
+	SceneObject _object4;
+	SceneObject _object5;
+	SceneObject _object6;
+	SceneObject _object7;
+	SceneObject _object8;
+	SceneObject _object9;
+	SceneObject _object10;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+	Action5 _action5;
+	Action6 _action6;
+	Action7 _action7;
+	SceneItem1  _sceneItem1;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
+};
+
 class Scene7600: public Scene {
 	/* Actions */
 	class Action1: public Action {
