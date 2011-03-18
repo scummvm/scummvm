@@ -840,13 +840,12 @@ void AGOSEngine_Feeble::printInteractText(uint16 num, const char *string) {
 
 void AGOSEngine_Feeble::sendInteractText(uint16 num, const char *fmt, ...) {
 	va_list arglist;
-	char string[256];
 
 	va_start(arglist, fmt);
-	vsprintf(string, fmt, arglist);
+	Common::String string = Common::String::vformat(fmt, arglist);
 	va_end(arglist);
 
-	printInteractText(num, string);
+	printInteractText(num, string.c_str());
 }
 #endif
 
