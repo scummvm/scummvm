@@ -65,7 +65,7 @@ public:
 	Region _paneRegions[2];
 	int _paneRefreshFlag[2];
 	Common::Point _sceneOffset;
-	Common::Point _stru_4642E;
+	Common::Point _prevSceneOffset;
 	SceneObject *_scrollFollower;
 	SequenceManager _sequenceManager;
 	Common::RandomSource _randomSource;

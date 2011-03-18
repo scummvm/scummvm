@@ -63,7 +63,7 @@ Globals::Globals():
 	_sceneObjects = &_sceneObjectsInstance;
 	_sceneObjects_queue.push_front(_sceneObjects);
 
-	_stru_4642E = Common::Point(-1, -1);
+	_prevSceneOffset = Common::Point(-1, -1);
 	_sceneListeners.push_back(&_soundHandler);
 	_sceneListeners.push_back(&_sequenceManager._soundHandler);
 }
@@ -95,7 +95,7 @@ void Globals::synchronise(Serialiser &s) {
 		s.syncAsByte(_flags[i]);
 
 	s.syncAsSint16LE(_sceneOffset.x); s.syncAsSint16LE(_sceneOffset.y);
-	s.syncAsSint16LE(_stru_4642E.x); s.syncAsSint16LE(_stru_4642E.y);
+	s.syncAsSint16LE(_prevSceneOffset.x); s.syncAsSint16LE(_prevSceneOffset.y);
 	SYNC_POINTER(_scrollFollower);
 	s.syncAsSint32LE(_stripNum);
 }

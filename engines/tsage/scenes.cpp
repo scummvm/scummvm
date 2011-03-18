@@ -167,8 +167,8 @@ void SceneManager::setBackSurface() {
 			_globals->_sceneManager._scene->_backSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT);
 			_globals->_sceneManager._scrollerRect = Rect(0, 30, SCREEN_WIDTH, SCREEN_HEIGHT - 30);
 		} else {
-			// Double-size size creation
-			_globals->_sceneManager._scene->_backSurface.create(SCREEN_WIDTH * 2, SCREEN_HEIGHT);
+			// Wide screen needs extra space to allow for scrolling
+			_globals->_sceneManager._scene->_backSurface.create(SCREEN_WIDTH * 3 / 2, SCREEN_HEIGHT);
 			_globals->_sceneManager._scrollerRect = Rect(80, 0, SCREEN_WIDTH - 80, SCREEN_HEIGHT);
 		}
 	} else {
@@ -235,7 +235,7 @@ void Scene::synchronise(Serialiser &s) {
 	_oldSceneBounds.synchronise(s);
 
 	for (int i = 0; i < 256; ++i)
-		s.syncAsSint16LE(_enabledSections[i]);
+		s.syncAsUint16LE(_enabledSections[i]);
 	for (int i = 0; i < 256; ++i)
 		s.syncAsSint16LE(_zoomPercents[i]);
 }
@@ -325,10 +325,10 @@ void Scene::loadBackground(int xAmount, int yAmount) {
 	if ((_backgroundBounds.height() / 100) == 3)
 		_globals->_sceneOffset.y = 0;
 
-	if ((_globals->_sceneOffset.x != _globals->_stru_4642E.y) || 
-		(_globals->_sceneOffset.y != _globals->_stru_4642E.y)) {
+	if ((_globals->_sceneOffset.x != _globals->_prevSceneOffset.x) || 
+		(_globals->_sceneOffset.y != _globals->_prevSceneOffset.y)) {
 		// Change has happend, so refresh background
-		_globals->_stru_4642E = _globals->_sceneOffset;
+		_globals->_prevSceneOffset = _globals->_sceneOffset;
 		refreshBackground(xAmount, yAmount);
 	}
 }
@@ -345,35 +345,43 @@ void Scene::refreshBackground(int xAmount, int yAmount) {
 
 	// Set the limits and increment amounts
 	int xInc = (xAmount < 0) ? -1 : 1;
-	int xSection = (xAmount < 0) ? 15 : 0;
+	int xSectionStart = (xAmount < 0) ? 15 : 0;
 	int xSectionEnd = (xAmount < 0) ? -1 : 16;
 	int yInc = (yAmount < 0) ? -1 : 1;
-	int ySection = (yAmount < 0) ? 15 : 0;
+	int ySectionStart = (yAmount < 0) ? 15 : 0;
 	int ySectionEnd = (yAmount < 0) ? -1 : 16;
 	bool changedFlag = false;
 
-	for (int yp = ySection; yp < ySectionEnd; yp += yInc) {
-		for (int xp = xSection; xp < xSectionEnd; xp += xInc) {
+	for (int yp = ySectionStart; yp != ySectionEnd; yp += yInc) {
+		for (int xp = xSectionStart; xp != xSectionEnd; xp += xInc) {
 			if ((yp < yHalfOffset) || (yp >= (yHalfOffset + yHalfCount)) ||
 				(xp < xHalfOffset) || (xp >= (xHalfOffset + xHalfCount))) {
 				// Flag section as enabled
 				_enabledSections[xp * 16 + yp] = 0xffff;
 			} else {
-				// Check if the section is enabled
-				if (_enabledSections[xp * 16 + yp] || ((xAmount == 0) && (yAmount == 0))) {
+				// Check if the section is already loaded
+//				if (_enabledSections[xp * 16 + yp] || ((xAmount == 0) && (yAmount == 0))) {
 					Graphics::Surface s = _backSurface.lockSurface();
 					GfxSurface::loadScreenSection(s, xp - xHalfOffset, yp - yHalfOffset, xp, yp);
 					_backSurface.unlockSurface();
 					changedFlag = true;
-				} else {
+/*				} else {
 					int yv = _enabledSections[xp * 16 + yp] == ((xp - xHalfOffset) << 4) ? 0 : 1;
 					if (yv != (yp - yHalfOffset)) {
-						int xSectionTemp = _enabledSections[xp * 16 + yp] >> 4;
-						int ySectionTemp = _enabledSections[xp * 16 + yp] & 0xffff;
+						// Copy an existing 160x100 screen section previously loaded
+						int xSectionSrc = xp - xHalfOffset;
+						int ySectionSrc = yp - yHalfOffset;
+						int xSectionDest = _enabledSections[xp * 16 + yp] >> 4;
+						int ySectionDest = _enabledSections[xp * 16 + yp] & 0xffff;
+				
+						Rect srcBounds(xSectionSrc * 160, ySectionSrc * 100, 
+								(xSectionSrc + 1) * 160, (ySectionSrc + 1) * 100);
+						Rect destBounds(xSectionDest * 160, ySectionDest * 100, 
+								(xSectionDest + 1) * 160, (ySectionDest + 1) * 100);
 
-						reuseSection(xp - xHalfOffset, yp - yHalfOffset, xSectionTemp, ySectionTemp);
+						_backSurface.copyFrom(_backSurface, srcBounds, destBounds);	
 					}
-				}
+				}*/
 
 				_enabledSections[xp * 16 + yp] = 
 					((xp - xHalfOffset) << 4) && (yp - yHalfOffset);
@@ -384,12 +392,6 @@ void Scene::refreshBackground(int xAmount, int yAmount) {
 	if (changedFlag) {
 		signalListeners();
 	}
-}
-
-void Scene::reuseSection(int xHalf, int yHalf, int xSection, int ySection) {
-//	Rect rect1, rect2, rect3;
-
-	// TODO: Figure out purpose
 }
 
 void Scene::signalListeners() {
