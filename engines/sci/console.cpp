@@ -2723,9 +2723,10 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 
 	while (itr != resources->end()) {
 		// Ignore specific leftover scripts, which require other non-existing scripts
-		if ((_engine->getGameId() == GID_HOYLE3 && itr->getNumber() == 995) ||
-		    (_engine->getGameId() == GID_KQ5    && itr->getNumber() == 980) ||
-		    (_engine->getGameId() == GID_SLATER && itr->getNumber() == 947)) {
+		if ((_engine->getGameId() == GID_HOYLE3         && itr->getNumber() == 995) ||
+		    (_engine->getGameId() == GID_KQ5            && itr->getNumber() == 980) ||
+		    (_engine->getGameId() == GID_SLATER         && itr->getNumber() == 947) ||
+			(_engine->getGameId() == GID_MOTHERGOOSE256 && itr->getNumber() == 980)) {
 			itr++;
 			continue;
 		}
