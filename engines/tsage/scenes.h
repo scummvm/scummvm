@@ -36,7 +36,6 @@ namespace tSage {
 
 class Scene: public StripCallback {
 private:
-	void reuseSection(int xHalf, int yHalf, int xSection, int ySection);
 	void signalListeners();
 public:
 	int _field12;

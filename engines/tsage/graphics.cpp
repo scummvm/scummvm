@@ -405,8 +405,8 @@ void GfxSurface::loadScreenSection(Graphics::Surface &dest, int xHalf, int yHalf
 	int screenNum = _globals->_sceneManager._scene->_activeScreenNumber;
 	Rect updateRect(0, 0, 160, 100);
 	updateRect.translate(xHalf * 160, yHalf * 100);
-	int xHalfCount = (dest.w + 159) / 160;
-	int yHalfCount = (dest.h + 99) / 100;
+	int xHalfCount = (_globals->_sceneManager._scene->_backgroundBounds.right + 159) / 160;
+	int yHalfCount = (_globals->_sceneManager._scene->_backgroundBounds.bottom + 99) / 100;
 
 	if (xSection < xHalfCount && ySection < yHalfCount) {
 		int rlbNum = xSection * yHalfCount + ySection;
