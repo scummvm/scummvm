@@ -3751,6 +3751,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640x480 | kFeaturesTrueColor,
 		0, 0, 0
 	},
+	{ // Supplied by Alex on the gobsmacked blog
+		{
+			"urban",
+			"",
+			AD_ENTRY1s("intro.stk", "9ea647085a16dd0fb9ecd84cd8778ec9", 1253436),
+			IT_ITA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeUrban,
+		kFeatures640x480 | kFeaturesTrueColor,
+		0, 0, 0
+	},
 	{ // Supplied by goodoldgeorg in bug report #2770340
 		{
 			"urban",
