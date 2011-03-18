@@ -25,8 +25,6 @@
 #include "common/str.h"
 #include "common/util.h"
 
-#include <stdarg.h>
-
 namespace Common {
 
 MemoryPool *g_refCountPool = 0; // FIXME: This is never freed right now
@@ -429,10 +427,22 @@ uint String::hash() const {
 // static
 String String::format(const char *fmt, ...) {
 	String output;
-	assert(output.isStorageIntern());
 
 	va_list va;
 	va_start(va, fmt);
+	output = String::vformat(fmt, va);
+	va_end(va);
+
+	return output;
+}
+
+// static
+String String::vformat(const char *fmt, va_list args) {
+	String output;
+	assert(output.isStorageIntern());
+
+	va_list va;
+	scumm_va_copy(va, args);
 	int len = vsnprintf(output._str, _builtinCapacity, fmt, va);
 	va_end(va);
 
@@ -457,7 +467,7 @@ String String::format(const char *fmt, ...) {
 			assert(!output.isStorageIntern());
 			size = output._extern._capacity;
 
-			va_start(va, fmt);
+			scumm_va_copy(va, args);
 			len = vsnprintf(output._str, size, fmt, va);
 			va_end(va);
 		} while (len == -1 || len >= size - 1);
@@ -468,7 +478,7 @@ String String::format(const char *fmt, ...) {
 	} else {
 		// vsnprintf didn't have enough space, so grow buffer
 		output.ensureCapacity(len, false);
-		va_start(va, fmt);
+		scumm_va_copy(va, args);
 		int len2 = vsnprintf(output._str, len+1, fmt, va);
 		va_end(va);
 		assert(len == len2);
