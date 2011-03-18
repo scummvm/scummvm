@@ -381,14 +381,14 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		case JKEYCODE_DPAD_DOWN:
 		case JKEYCODE_DPAD_LEFT:
 		case JKEYCODE_DPAD_RIGHT:
+			if (arg1 != JACTION_DOWN)
+				return;
+
+			e.type = Common::EVENT_MOUSEMOVE;
+
+			e.mouse = getEventManager()->getMousePos();
+
 			{
-				if (arg1 != JACTION_DOWN)
-					return;
-
-				e.type = Common::EVENT_MOUSEMOVE;
-
-				e.mouse = getEventManager()->getMousePos();
-
 				int16 *c;
 				int s;
 
@@ -408,13 +408,13 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 					*c -= f;
 				else
 					*c += f;
-
-				clipMouse(e.mouse);
-
-				lockMutex(_event_queue_lock);
-				_event_queue.push(e);
-				unlockMutex(_event_queue_lock);
 			}
+
+			clipMouse(e.mouse);
+
+			lockMutex(_event_queue_lock);
+			_event_queue.push(e);
+			unlockMutex(_event_queue_lock);
 
 			return;
 
@@ -431,15 +431,11 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 				return;
 			}
 
-			{
-				const Common::Point &m = getEventManager()->getMousePos();
+			e.mouse = getEventManager()->getMousePos();
 
-				e.mouse = m;
-
-				lockMutex(_event_queue_lock);
-				_event_queue.push(e);
-				unlockMutex(_event_queue_lock);
-			}
+			lockMutex(_event_queue_lock);
+			_event_queue.push(e);
+			unlockMutex(_event_queue_lock);
 
 			return;
 		}
