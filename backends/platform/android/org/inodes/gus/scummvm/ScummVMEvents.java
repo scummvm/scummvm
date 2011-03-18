@@ -48,8 +48,10 @@ public class ScummVMEvents implements
 	}
 
 	public boolean onTrackballEvent(MotionEvent e) {
-		_scummvm.pushEvent(JE_BALL, (int)(e.getX() * e.getXPrecision() * 100),
-							(int)(e.getY() * e.getYPrecision() * 100), 0, 0, 0);
+		_scummvm.pushEvent(JE_BALL, e.getAction(),
+							(int)(e.getX() * e.getXPrecision() * 100),
+							(int)(e.getY() * e.getYPrecision() * 100),
+							0, 0);
 		return true;
 	}
 

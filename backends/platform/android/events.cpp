@@ -569,15 +569,29 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		return;
 
 	case JE_BALL:
-		e.type = Common::EVENT_MOUSEMOVE;
-
 		e.mouse = getEventManager()->getMousePos();
 
-		// already multiplied by 100
-		e.mouse.x += arg1 * _trackball_scale / _eventScaleX;
-		e.mouse.y += arg2 * _trackball_scale / _eventScaleY;
+		switch (arg1) {
+		case JACTION_DOWN:
+			e.type = Common::EVENT_LBUTTONDOWN;
+			break;
+		case JACTION_UP:
+			e.type = Common::EVENT_LBUTTONUP;
+			break;
+		case JACTION_MULTIPLE:
+			e.type = Common::EVENT_MOUSEMOVE;
 
-		clipMouse(e.mouse);
+			// already multiplied by 100
+			e.mouse.x += arg2 * _trackball_scale / _eventScaleX;
+			e.mouse.y += arg3 * _trackball_scale / _eventScaleY;
+
+			clipMouse(e.mouse);
+
+			break;
+		default:
+			LOGE("unhandled jaction on system key: %d", arg1);
+			return;
+		}
 
 		lockMutex(_event_queue_lock);
 		_event_queue.push(e);
