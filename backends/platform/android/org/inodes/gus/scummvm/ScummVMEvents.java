@@ -20,11 +20,12 @@ public class ScummVMEvents implements
 
 	public static final int JE_SYS_KEY = 0;
 	public static final int JE_KEY = 1;
-	public static final int JE_DOWN = 2;
-	public static final int JE_SCROLL = 3;
-	public static final int JE_TAP = 4;
-	public static final int JE_DOUBLE_TAP = 5;
-	public static final int JE_BALL = 6;
+	public static final int JE_DPAD = 2;
+	public static final int JE_DOWN = 3;
+	public static final int JE_SCROLL = 4;
+	public static final int JE_TAP = 5;
+	public static final int JE_DOUBLE_TAP = 6;
+	public static final int JE_BALL = 7;
 	public static final int JE_QUIT = 0x1000;
 
 	final protected Context _context;
@@ -133,6 +134,18 @@ public class ScummVMEvents implements
 					s.getMetaState(), s.getRepeatCount());
 			}
 
+			return true;
+		}
+
+		switch (keyCode) {
+		case KeyEvent.KEYCODE_DPAD_UP:
+		case KeyEvent.KEYCODE_DPAD_DOWN:
+		case KeyEvent.KEYCODE_DPAD_LEFT:
+		case KeyEvent.KEYCODE_DPAD_RIGHT:
+		case KeyEvent.KEYCODE_DPAD_CENTER:
+			_scummvm.pushEvent(JE_DPAD, action, keyCode,
+								(int)(e.getEventTime() - e.getDownTime()),
+								e.getRepeatCount(), 0);
 			return true;
 		}
 

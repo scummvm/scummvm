@@ -38,11 +38,12 @@
 enum {
 	JE_SYS_KEY = 0,
 	JE_KEY = 1,
-	JE_DOWN = 2,
-	JE_SCROLL = 3,
-	JE_TAP = 4,
-	JE_DOUBLE_TAP = 5,
-	JE_BALL = 6,
+	JE_DPAD = 2,
+	JE_DOWN = 3,
+	JE_SCROLL = 4,
+	JE_TAP = 5,
+	JE_DOUBLE_TAP = 6,
+	JE_BALL = 7,
 	JE_QUIT = 0x1000
 };
 
@@ -338,74 +339,6 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		break;
 
 	case JE_KEY:
-		// five-way first
-		switch (arg2) {
-		case JKEYCODE_DPAD_UP:
-		case JKEYCODE_DPAD_DOWN:
-		case JKEYCODE_DPAD_LEFT:
-		case JKEYCODE_DPAD_RIGHT:
-			{
-				if (arg1 != JACTION_DOWN)
-					return;
-
-				e.type = Common::EVENT_MOUSEMOVE;
-				e.synthetic = true;
-
-				e.mouse = getEventManager()->getMousePos();
-
-				int16 *c;
-				int s;
-
-				if (arg2 == JKEYCODE_DPAD_UP || arg2 == JKEYCODE_DPAD_DOWN) {
-					c = &e.mouse.y;
-					s = _eventScaleY;
-				} else {
-					c = &e.mouse.x;
-					s = _eventScaleX;
-				}
-
-				// the longer the button held, the faster the pointer is
-				// TODO put these values in some option dlg?
-				int f = CLIP(arg5, 1, 8) * _dpad_scale * 100 / s;
-
-				*c += ((arg2 == JKEYCODE_DPAD_UP ||
-						arg2 == JKEYCODE_DPAD_LEFT) ? -1 : 1) * f;
-
-				clipMouse(e.mouse);
-
-				lockMutex(_event_queue_lock);
-				_event_queue.push(e);
-				unlockMutex(_event_queue_lock);
-			}
-
-			return;
-
-		case JKEYCODE_DPAD_CENTER:
-			switch (arg1) {
-			case JACTION_DOWN:
-				e.type = Common::EVENT_LBUTTONDOWN;
-				break;
-			case JACTION_UP:
-				e.type = Common::EVENT_LBUTTONUP;
-				break;
-			default:
-				LOGE("unhandled jaction on dpad key: %d", arg1);
-				return;
-			}
-
-			{
-				const Common::Point &m = getEventManager()->getMousePos();
-
-				e.mouse = m;
-
-				lockMutex(_event_queue_lock);
-				_event_queue.push(e);
-				unlockMutex(_event_queue_lock);
-			}
-
-			return;
-		}
-
 		switch (arg1) {
 		case JACTION_DOWN:
 			e.type = Common::EVENT_KEYDOWN;
@@ -441,6 +374,75 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		unlockMutex(_event_queue_lock);
 
 		return;
+
+	case JE_DPAD:
+		switch (arg2) {
+		case JKEYCODE_DPAD_UP:
+		case JKEYCODE_DPAD_DOWN:
+		case JKEYCODE_DPAD_LEFT:
+		case JKEYCODE_DPAD_RIGHT:
+			{
+				if (arg1 != JACTION_DOWN)
+					return;
+
+				e.type = Common::EVENT_MOUSEMOVE;
+
+				e.mouse = getEventManager()->getMousePos();
+
+				int16 *c;
+				int s;
+
+				if (arg2 == JKEYCODE_DPAD_UP || arg2 == JKEYCODE_DPAD_DOWN) {
+					c = &e.mouse.y;
+					s = _eventScaleY;
+				} else {
+					c = &e.mouse.x;
+					s = _eventScaleX;
+				}
+
+				// the longer the button held, the faster the pointer is
+				// TODO put these values in some option dlg?
+				int f = CLIP(arg4, 1, 8) * _dpad_scale * 100 / s;
+
+				if (arg2 == JKEYCODE_DPAD_UP || arg2 == JKEYCODE_DPAD_LEFT)
+					*c -= f;
+				else
+					*c += f;
+
+				clipMouse(e.mouse);
+
+				lockMutex(_event_queue_lock);
+				_event_queue.push(e);
+				unlockMutex(_event_queue_lock);
+			}
+
+			return;
+
+		case JKEYCODE_DPAD_CENTER:
+			switch (arg1) {
+			case JACTION_DOWN:
+				e.type = Common::EVENT_LBUTTONDOWN;
+				break;
+			case JACTION_UP:
+				e.type = Common::EVENT_LBUTTONUP;
+				break;
+			default:
+				LOGE("unhandled jaction on dpad key: %d", arg1);
+				return;
+			}
+
+			{
+				const Common::Point &m = getEventManager()->getMousePos();
+
+				e.mouse = m;
+
+				lockMutex(_event_queue_lock);
+				_event_queue.push(e);
+				unlockMutex(_event_queue_lock);
+			}
+
+			return;
+		}
 
 	case JE_DOWN:
 		_touch_pt_down = getEventManager()->getMousePos();
