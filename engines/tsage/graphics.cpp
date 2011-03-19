@@ -547,7 +547,9 @@ void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Regi
 				int xp = destBounds.left;
 
 				while (tempSrc < (pSrc + destBounds.width())) {
-					if (!priorityRegion || !priorityRegion->contains(Common::Point(xp, destBounds.top + y))) {
+					if (!priorityRegion || !priorityRegion->contains(Common::Point(
+							xp + _globals->_sceneManager._scene->_sceneBounds.left,
+							destBounds.top + y + _globals->_sceneManager._scene->_sceneBounds.top))) {
 						if (*tempSrc != src._transColour)
 							*tempDest = *tempSrc;
 					}
