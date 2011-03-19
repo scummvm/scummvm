@@ -554,6 +554,12 @@ void OSystem_Android::logMessage(LogMessageType::Type type,
 	}
 }
 
+Common::String OSystem_Android::getSystemLanguage() const {
+	return Common::String::format("%s_%s",
+							getSystemProperty("persist.sys.language").c_str(),
+							getSystemProperty("persist.sys.country").c_str());
+}
+
 Common::String OSystem_Android::getSystemProperty(const char *name) const {
 	char value[PROP_VALUE_MAX];
 
