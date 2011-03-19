@@ -1045,18 +1045,15 @@ uint32 AGOSEngine::getTime() const {
 }
 
 void AGOSEngine::syncSoundSettings() {
-	// Sync the engine with the config manager
-	int soundVolumeMusic = ConfMan.getInt("music_volume");
-	int soundVolumeSFX = ConfMan.getInt("sfx_volume");
-	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
+	Engine::syncSoundSettings();
 
 	bool mute = false;
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
 
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, (mute ? 0 : (_musicPaused ? 0 : soundVolumeMusic)));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, (mute ? 0 : soundVolumeSFX));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, (mute ? 0 : soundVolumeSpeech));
+	// Sync the engine with the config manager
+	int soundVolumeMusic = ConfMan.getInt("music_volume");
+	int soundVolumeSFX = ConfMan.getInt("sfx_volume");
 
 	if (_midiEnabled)
 		_midi.setVolume((mute ? 0 : soundVolumeMusic), (mute ? 0 : soundVolumeSFX));
