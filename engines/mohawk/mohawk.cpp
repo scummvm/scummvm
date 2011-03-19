@@ -46,8 +46,8 @@ MohawkEngine::MohawkEngine(OSystem *syst, const MohawkGameDescription *gamedesc)
 	if (!_mixer->isReady())
 		error ("Sound initialization failed");
 
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	// Setup mixer
+	syncSoundSettings();
 
 	_sound = 0;
 	_video = 0;
