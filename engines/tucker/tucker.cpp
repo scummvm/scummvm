@@ -68,12 +68,6 @@ Common::Error TuckerEngine::run() {
 	return Common::kNoError;
 }
 
-void TuckerEngine::syncSoundSettings() {
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-}
-
 int TuckerEngine::getRandomNumber() {
 	return _rnd.getRandomNumber(0x7FFF);
 }
