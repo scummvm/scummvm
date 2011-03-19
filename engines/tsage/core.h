@@ -652,8 +652,9 @@ private:
 	void sortList(Common::Array<SceneObject *> &ObjList);
 
 	List<SceneObject *> _objList;
+	bool _listAltered;
 public:
-	SceneObjectList() {}
+	SceneObjectList() { _listAltered = false; }
 
 	virtual Common::String getClassName() { return "SceneObjectList"; }
 	virtual void synchronise(Serialiser &s);
@@ -665,7 +666,8 @@ public:
 	typedef void (*EventHandlerFn)(EventHandler *fn);
 	void recurse(EventHandlerFn Fn) {
 		// Loop through each object
-		for (List<SceneObject *>::iterator i = _objList.begin(); i != _objList.end(); ) {
+		_listAltered = false;
+		for (List<SceneObject *>::iterator i = _objList.begin(); i != _objList.end() && !_listAltered; ) {
 			SceneObject *o = *i;
 			++i;
 			Fn(o);
@@ -676,7 +678,10 @@ public:
 	bool contains(SceneObject *sceneObj) { return _objList.contains(sceneObj); }
 	void push_back(SceneObject *sceneObj) { _objList.push_back(sceneObj); }
 	void push_front(SceneObject *sceneObj) { _objList.push_front(sceneObj); }
-	void remove(SceneObject *sceneObj) { _objList.remove(sceneObj); }
+	void remove(SceneObject *sceneObj) { 
+		_objList.remove(sceneObj); 
+		_listAltered = true;
+	}
 };
 
 class ScenePriorities: public List<Region> {
