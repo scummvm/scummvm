@@ -101,7 +101,7 @@ void SequenceManager::signal() {
 		if (idx > 34)
 			continue;
 
-		uint v1, v2, v3;
+		int16 v1, v2, v3;
 		switch (idx) {
 		case 0:
 			// Stop sequence
