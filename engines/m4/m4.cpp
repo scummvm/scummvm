@@ -107,6 +107,8 @@ void gameMenuHotkeyHandler(MadsM4Engine *vm, View *view, uint32 key) {
 
 MadsM4Engine::MadsM4Engine(OSystem *syst, const M4GameDescription *gameDesc) :
 	Engine(syst), _gameDescription(gameDesc) {
+	// Setup mixer
+	syncSoundSettings();
 
 	// FIXME
 	_vm = this;
