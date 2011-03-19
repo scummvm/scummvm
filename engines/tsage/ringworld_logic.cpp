@@ -104,6 +104,7 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 
 	/* Scene group 8 */
 	case 7000: return new Scene7000();
+	case 7200: return new Scene7200();
 	case 7600: return new Scene7600();
 
 	/* Scene group 10 */

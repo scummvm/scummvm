@@ -111,6 +111,34 @@ public:
 	virtual void dispatch();
 };
 
+class Scene7200: public Scene {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+
+public:
+	Action1 _action1;
+	Action2 _action2;
+	SceneObject _swimmer;
+	SceneObject _object2;
+	SceneObject _object3;
+	SceneObject _object4;
+	SceneObject _object5;
+	SceneObject _object6;
+	SceneObject _object7;
+	SceneObject _object8;
+	SceneObject _object9;
+	SoundHandler _soundHandler;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+};
+
 class Scene7600: public Scene {
 	/* Actions */
 	class Action1: public Action {
