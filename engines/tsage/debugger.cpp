@@ -113,10 +113,11 @@ bool Debugger::Cmd_WalkRegions(int argc, const char **argv) {
  * This command draws the priority regions onto the screen
  */
 bool Debugger::Cmd_PriorityRegions(int argc, const char **argv) {
-	if (argc != 1) {
-		DebugPrintf("Usage: %s\n", argv[0]);
-		return true;
-	}
+	int regionNum = 0;
+
+	// Check for an optional specific region to display
+	if (argc == 2)
+		regionNum = strToInt(argv[1]);
 
 	// Colour index to use for the first priority region
 	int colour = 16;	
@@ -126,18 +127,26 @@ bool Debugger::Cmd_PriorityRegions(int argc, const char **argv) {
 	Graphics::Surface destSurface = _globals->_sceneManager._scene->_backSurface.lockSurface();
 
 	List<Region>::iterator i = _globals->_sceneManager._scene->_priorities.begin();
+	Common::String regionsDesc;
 
 	for (; i != _globals->_sceneManager._scene->_priorities.end(); ++i, ++colour, ++count) {
-		for (int y = 0; y < destSurface.h; ++y) {
-			byte *destP = (byte *)destSurface.getBasePtr(0, y);
+		Region &r = *i;
 
-			for (int x = 0; x < destSurface.w; ++x) {
-				if ((*i).contains(Common::Point(_globals->_sceneManager._scene->_sceneBounds.left + x,
-						_globals->_sceneManager._scene->_sceneBounds.top + y)))
-					*destP = colour;
-				++destP;
+		if ((regionNum == 0) || (regionNum == (count + 1))) {
+			for (int y = 0; y < destSurface.h; ++y) {
+				byte *destP = (byte *)destSurface.getBasePtr(0, y);
+
+				for (int x = 0; x < destSurface.w; ++x) {
+					if (r.contains(Common::Point(_globals->_sceneManager._scene->_sceneBounds.left + x,
+							_globals->_sceneManager._scene->_sceneBounds.top + y)))
+						*destP = colour;
+					++destP;
+				}
 			}
 		}
+
+		regionsDesc += Common::String::format("Region Priority = %d bounds=%d,%d,%d,%d\n", 
+			r._regionId, r._bounds.left, r._bounds.top, r._bounds.right, r._bounds.bottom);
 	}
 
 	// Release the surface
@@ -147,8 +156,9 @@ bool Debugger::Cmd_PriorityRegions(int argc, const char **argv) {
 	_globals->_paneRefreshFlag[0] = 2;
 
 	DebugPrintf("Total regions = %d\n", count);
+	DebugPrintf("%s", regionsDesc.c_str());
 
-	return false;
+	return true;
 }
 
 /**
