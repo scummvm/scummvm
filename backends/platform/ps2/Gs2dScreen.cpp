@@ -680,7 +680,7 @@ void Gs2dScreen::animThread(void) {
 		{ SCALE(1),   SCALE(1) }, { SCALE(1),   SCALE(14) },
 		{ SCALE(128), SCALE(1) }, { SCALE(128), SCALE(14) }
 	};
-	float angleStep = ((2 * PI) / _tvHeight);
+	float angleStep = ((2 * M_PI) / _tvHeight);
 
 	while (!_systemQuit) {
 		do {
@@ -739,7 +739,7 @@ void Gs2dScreen::animThread(void) {
 				float z[4];
 				GsVertex nodes[4];
 
-				float angle = PI / 2 + angleStep * drawY;
+				float angle = M_PI / 2 + angleStep * drawY;
 				float rotSin = sinf(angle);
 				float rotCos = cosf(angle);
 				for (int coord = 0; coord < 4; coord++) {
