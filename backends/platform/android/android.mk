@@ -22,6 +22,8 @@ JAVA_FILES_GEN = \
 PATH_DIST = $(srcdir)/dists/android
 PATH_RESOURCES = $(PATH_DIST)/res
 
+PORT_DISTFILES = $(PATH_DIST)/README.Android
+
 RESOURCES = \
 	$(PATH_RESOURCES)/values/strings.xml \
 	$(PATH_RESOURCES)/layout/main.xml \
@@ -178,7 +180,7 @@ androidtest: $(APK_MAIN) $(APK_PLUGINS)
 androiddistdebug: all
 	$(MKDIR) debug
 	$(CP) $(APK_MAIN) $(APK_PLUGINS) debug/
-	for i in $(DIST_FILES_DOCS); do \
+	for i in $(DIST_FILES_DOCS) $(PORT_DISTFILES); do \
 		sed 's/$$/\r/' < $$i > debug/`basename $$i`.txt; \
 	done
 
