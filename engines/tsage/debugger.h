@@ -39,6 +39,7 @@ public:
 protected:
 	bool Cmd_Scene(int argc, const char **argv);
 	bool Cmd_WalkRegions(int argc, const char **argv);
+	bool Cmd_PriorityRegions(int argc, const char **argv);
 	bool Cmd_Item(int argc, const char **argv);
 };
 
