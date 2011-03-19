@@ -27,6 +27,7 @@
 
 #include <sys/time.h>
 #include <sys/resource.h>
+#include <sys/system_properties.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -131,6 +132,11 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_touchpad_scale(66),
 	_dpad_scale(4),
 	_trackball_scale(2) {
+	LOGI("Running on: [%s] [%s] SDK:%s ABI:%s",
+			getSystemProperty("ro.build.fingerprint").c_str(),
+			getSystemProperty("ro.build.display.id").c_str(),
+			getSystemProperty("ro.build.version.sdk").c_str(),
+			getSystemProperty("ro.product.cpu.abi").c_str());
 }
 
 OSystem_Android::~OSystem_Android() {
@@ -546,6 +552,14 @@ void OSystem_Android::logMessage(LogMessageType::Type type,
 		__android_log_write(ANDROID_LOG_ERROR, android_log_tag, message);
 		break;
 	}
+}
+
+Common::String OSystem_Android::getSystemProperty(const char *name) const {
+	char value[PROP_VALUE_MAX];
+
+	int len = __system_property_get(name, value);
+
+	return Common::String(value, len);
 }
 
 #ifdef DYNAMIC_MODULES

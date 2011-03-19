@@ -144,6 +144,8 @@ private:
 	FilesystemFactory *_fsFactory;
 	timeval _startTime;
 
+	Common::String getSystemProperty(const char *name) const;
+
 	void initSurface();
 	void deinitSurface();
 	void initViewport();
