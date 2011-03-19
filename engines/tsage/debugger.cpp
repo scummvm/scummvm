@@ -36,6 +36,7 @@ Debugger::Debugger(): GUI::Debugger() {
 	DCmd_Register("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("scene",			WRAP_METHOD(Debugger, Cmd_Scene));
 	DCmd_Register("walk_regions",	WRAP_METHOD(Debugger, Cmd_WalkRegions));
+	DCmd_Register("priority_regions",	WRAP_METHOD(Debugger, Cmd_PriorityRegions));
 	DCmd_Register("item",			WRAP_METHOD(Debugger, Cmd_Item));
 }
 
@@ -76,7 +77,7 @@ bool Debugger::Cmd_Scene(int argc, const char **argv) {
  */
 bool Debugger::Cmd_WalkRegions(int argc, const char **argv) {
 	if (argc != 1) {
-		DebugPrintf("USage: %s\n", argv[0]);
+		DebugPrintf("Usage: %s\n", argv[0]);
 		return true;
 	}
 
@@ -104,6 +105,48 @@ bool Debugger::Cmd_WalkRegions(int argc, const char **argv) {
 
 	// Mark the scene as requiring a full redraw
 	_globals->_paneRefreshFlag[0] = 2;
+
+	return false;
+}
+
+/*
+ * This command draws the priority regions onto the screen
+ */
+bool Debugger::Cmd_PriorityRegions(int argc, const char **argv) {
+	if (argc != 1) {
+		DebugPrintf("Usage: %s\n", argv[0]);
+		return true;
+	}
+
+	// Colour index to use for the first priority region
+	int colour = 16;	
+	int count = 0;
+
+	// Lock the background surface for access
+	Graphics::Surface destSurface = _globals->_sceneManager._scene->_backSurface.lockSurface();
+
+	List<Region>::iterator i = _globals->_sceneManager._scene->_priorities.begin();
+
+	for (; i != _globals->_sceneManager._scene->_priorities.end(); ++i, ++colour, ++count) {
+		for (int y = 0; y < destSurface.h; ++y) {
+			byte *destP = (byte *)destSurface.getBasePtr(0, y);
+
+			for (int x = 0; x < destSurface.w; ++x) {
+				if ((*i).contains(Common::Point(_globals->_sceneManager._scene->_sceneBounds.left + x,
+						_globals->_sceneManager._scene->_sceneBounds.top + y)))
+					*destP = colour;
+				++destP;
+			}
+		}
+	}
+
+	// Release the surface
+	_globals->_sceneManager._scene->_backSurface.unlockSurface();
+
+	// Mark the scene as requiring a full redraw
+	_globals->_paneRefreshFlag[0] = 2;
+
+	DebugPrintf("Total regions = %d\n", count);
 
 	return false;
 }
