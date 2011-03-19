@@ -1682,6 +1682,10 @@ void SceneObject::setZoom(int percent) {
 	}
 }
 
+void SceneObject::updateZoom() {
+	changeZoom(_percent);
+}
+
 void SceneObject::changeZoom(int percent) {
 	if (percent == -1)
 		_flags &= ~OBJFLAG_ZOOMED;

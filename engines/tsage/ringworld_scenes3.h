@@ -886,6 +886,20 @@ public:
 	virtual void signal();
 };
 
+class Scene2400: public Scene {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+		virtual void dispatch();
+	};
+public:
+	Action1 _action1;
+	SceneObject _object;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+};
+
 } // End of namespace tSage
 
 #endif

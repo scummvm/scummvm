@@ -6034,6 +6034,65 @@ void Scene2320::signal() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 2400 - Descending in Lander
+ *
+ *--------------------------------------------------------------------------*/
 
+void Scene2400::Action1::signal() {
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(60);
+		break;
+	case 1:
+		ADD_MOVER(_globals->_player, 160, 71);
+		break;
+	case 2:
+		ADD_MOVER(_globals->_player, 160, 360);
+		break;
+	case 3:
+		_globals->_player._moveDiff = Common::Point(1, 1);
+		ADD_MOVER(_globals->_player, 140, 375);
+		break;
+	case 4:
+		ADD_MOVER(_globals->_player, 87, 338);
+		break;
+	case 5:
+		_globals->_player.flag100();
+		setDelay(60);
+		break;
+	case 6:
+		_globals->_sceneManager.changeScene(4000);
+		break;
+	}
+}
+
+void Scene2400::Action1::dispatch() {
+	Action::dispatch();
+	if ((_actionIndex == 4) && (_globals->_player._percent > 5))
+		_globals->_player.changeZoom(_globals->_player._percent - 2);
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene2400::postInit(SceneObjectList *OwnerList) {
+	loadScene(2400);
+	Scene::postInit();
+	setZoomPercents(0, 100, 200, 100);
+
+	_globals->_player.postInit();
+	_globals->_player.setVisage(2410);
+	_globals->_player.setPosition(Common::Point(340, -10));
+	_globals->_player.animate(ANIM_MODE_2, NULL);
+	_globals->_player.disableControl();
+
+	setAction(&_action1);
+
+	_globals->_sceneManager._scene->_sceneBounds.centre(_globals->_player._position.x, _globals->_player._position.y);
+	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
+	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
+	
+	_globals->_soundHandler.startSound(153);
+}
 
 } // End of namespace tSage
