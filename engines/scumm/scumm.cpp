@@ -1874,11 +1874,11 @@ void ScummEngine::setupMusic(int midi) {
 }
 
 void ScummEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
 
 	// Sync the engine with the config manager
 	int soundVolumeMusic = ConfMan.getInt("music_volume");
 	int soundVolumeSfx = ConfMan.getInt("sfx_volume");
-	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
 
 	bool mute = false;
 
@@ -1886,7 +1886,7 @@ void ScummEngine::syncSoundSettings() {
 		mute = ConfMan.getBool("mute");
 
 		if (mute)
-			soundVolumeMusic = soundVolumeSfx = soundVolumeSpeech = 0;
+			soundVolumeMusic = soundVolumeSfx = 0;
 	}
 
 	if (_musicEngine) {
@@ -1896,10 +1896,6 @@ void ScummEngine::syncSoundSettings() {
 	if (_townsPlayer) {
 		_townsPlayer->setSfxVolume(soundVolumeSfx);
 	}
-
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSfx);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
 
 	if (ConfMan.getBool("speech_mute"))
 		_voiceMode = 2;
