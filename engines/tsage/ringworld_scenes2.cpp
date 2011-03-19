@@ -655,7 +655,7 @@ void Scene1250::postInit(SceneObjectList *OwnerList) {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 1400 - Arriving at Ringworld
+ * Scene 1400 - Ringworld Wall
  *
  *--------------------------------------------------------------------------*/
 
@@ -681,7 +681,9 @@ void Scene1400::Action1::signal() {
 		Common::Point pt(160, 100);
 		NpcMover *mover = new NpcMover();
 		_globals->_player.addMover(mover, &pt, this);
+
 		SceneItem::display(0, 0);
+		setDelay(360);
 		break;
 	}
 	case 3:
