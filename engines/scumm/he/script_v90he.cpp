@@ -351,12 +351,12 @@ void ScummEngine_v90he::o90_max() {
 }
 
 void ScummEngine_v90he::o90_sin() {
-	double a = pop() * PI / 180.;
+	double a = pop() * M_PI / 180.;
 	push((int)(sin(a) * 100000));
 }
 
 void ScummEngine_v90he::o90_cos() {
-	double a = pop() * PI / 180.;
+	double a = pop() * M_PI / 180.;
 	push((int)(cos(a) * 100000));
 }
 
@@ -372,7 +372,7 @@ void ScummEngine_v90he::o90_sqrt() {
 void ScummEngine_v90he::o90_atan2() {
 	int y = pop();
 	int x = pop();
-	int a = (int)(atan2((double)y, (double)x) * 180. / PI);
+	int a = (int)(atan2((double)y, (double)x) * 180. / M_PI);
 	if (a < 0) {
 		a += 360;
 	}
@@ -384,7 +384,7 @@ void ScummEngine_v90he::o90_getSegmentAngle() {
 	int x1 = pop();
 	int dy = y1 - pop();
 	int dx = x1 - pop();
-	int a = (int)(atan2((double)dy, (double)dx) * 180. / PI);
+	int a = (int)(atan2((double)dy, (double)dx) * 180. / M_PI);
 	if (a < 0) {
 		a += 360;
 	}
@@ -2292,13 +2292,13 @@ void ScummEngine_v90he::o90_kernelGetFunctions() {
 	switch (args[0]) {
 	case 1001:
 		{
-		double b = args[1] * PI / 180.;
+		double b = args[1] * M_PI / 180.;
 		push((int)(sin(b) * 100000));
 		}
 		break;
 	case 1002:
 		{
-		double b = args[1] * PI / 180.;
+		double b = args[1] * M_PI / 180.;
 		push((int)(cos(b) * 100000));
 		}
 		break;

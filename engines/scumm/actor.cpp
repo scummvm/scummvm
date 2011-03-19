@@ -241,7 +241,7 @@ void Actor::setActorWalkSpeed(uint newSpeedX, uint newSpeedY) {
 int getAngleFromPos(int x, int y, bool useATAN) {
 	if (useATAN) {
 		double temp = atan2((double)x, (double)-y);
-		return normalizeAngle((int)(temp * 180 / PI));
+		return normalizeAngle((int)(temp * 180 / M_PI));
 	} else {
 		if (ABS(y) * 2 < ABS(x)) {
 			if (x > 0)

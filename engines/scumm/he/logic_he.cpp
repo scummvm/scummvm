@@ -160,8 +160,8 @@ int32 LogicHErace::dispatch(int op, int numArgs, int32 *args) {
 	return res;
 }
 
-#define RAD2DEG (180 / PI)
-#define DEG2RAD (PI / 180)
+#define RAD2DEG (180 / M_PI)
+#define DEG2RAD (M_PI / 180)
 
 int32 LogicHErace::op_1003(int32 *args) {
 	int value = args[2] ? args[2] : 1;
@@ -457,7 +457,7 @@ void LogicHEfunshop::op_1004(int32 *args) {
 		sq = sqrt(data[i + 1] * data[i + 1] + data[i] * data[i]);
 
 		if (at <= 0)
-			at += 2 * PI;
+			at += 2 * M_PI;
 
 		data[i] = cos(at + a1) * sq;
 		data[i + 1] = sin(at + a1) * sq;
