@@ -708,7 +708,7 @@ static int OPLOpenTable(void) {
 	/* degree 0 = degree 180                   = off */
 	SIN_TABLE[0] = SIN_TABLE[SIN_ENT /2 ] = &TL_TABLE[EG_ENT - 1];
 	for (s = 1;s <= SIN_ENT / 4; s++) {
-		pom = sin(2 * PI * s / SIN_ENT); /* sin     */
+		pom = sin(2 * M_PI * s / SIN_ENT); /* sin     */
 		pom = 20 * log10(1 / pom);	   /* decibel */
 		j = int(pom / EG_STEP);         /* TL_TABLE steps */
 
@@ -739,14 +739,14 @@ static int OPLOpenTable(void) {
 	ENV_CURVE[EG_OFF >> ENV_BITS]= EG_ENT - 1;
 	/* make LFO ams table */
 	for (i=0; i < AMS_ENT; i++) {
-		pom = (1.0 + sin(2 * PI * i / AMS_ENT)) / 2; /* sin */
+		pom = (1.0 + sin(2 * M_PI * i / AMS_ENT)) / 2; /* sin */
 		AMS_TABLE[i]         = (int)((1.0 / EG_STEP) * pom); /* 1dB   */
 		AMS_TABLE[AMS_ENT + i] = (int)((4.8 / EG_STEP) * pom); /* 4.8dB */
 	}
 	/* make LFO vibrate table */
 	for (i=0; i < VIB_ENT; i++) {
 		/* 100cent = 1seminote = 6% ?? */
-		pom = (double)VIB_RATE * 0.06 * sin(2 * PI * i / VIB_ENT); /* +-100sect step */
+		pom = (double)VIB_RATE * 0.06 * sin(2 * M_PI * i / VIB_ENT); /* +-100sect step */
 		VIB_TABLE[i]         = (int)(VIB_RATE + (pom * 0.07)); /* +- 7cent */
 		VIB_TABLE[VIB_ENT + i] = (int)(VIB_RATE + (pom * 0.14)); /* +-14cent */
 	}

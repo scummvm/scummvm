@@ -1253,7 +1253,7 @@ void TownsPC98_FmSynth::generateTables() {
 	delete[] _oprSinTbl;
 	_oprSinTbl = new uint32[1024];
 	for (int i = 0; i < 1024; i++) {
-		double val = sin((double)(((i << 1) + 1) * PI / 1024.0));
+		double val = sin((double)(((i << 1) + 1) * M_PI / 1024.0));
 		double d_dcb = log(1.0 / (double)ABS(val)) / log(2.0) * 256.0;
 		int32 i_dcb = (int32)(2.0 * d_dcb);
 		i_dcb = (i_dcb & 1) ? (i_dcb >> 1) + 1 : (i_dcb >> 1);

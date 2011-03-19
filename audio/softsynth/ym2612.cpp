@@ -677,14 +677,14 @@ void MidiDriver_YM2612::createLookupTables() {
 		int i;
 		sintbl = new int [2048];
 		for (i = 0; i < 2048; i++)
-			sintbl[i] = (int)(0xffff * sin(i/2048.0*2.0*PI));
+			sintbl[i] = (int)(0xffff * sin(i/2048.0 * 2.0 * M_PI));
 	}
 
 	{
 		int i;
 		powtbl = new int [1025];
 		for (i = 0; i <= 1024; i++)
-			powtbl[i] = (int)(0x10000 * pow(2.0, (i-512)/512.0));
+			powtbl[i] = (int)(0x10000 * pow(2.0, (i - 512) / 512.0));
 	}
 
 	{
