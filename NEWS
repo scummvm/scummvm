@@ -15,7 +15,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added Danish translation.
    - Added Norwegian Bokmaal translation.
    - Added Norwegian Nynorsk translation.
-   - Added Debug Console to Cine, Draci, Gob, MADE, Sword1, Touche and 
+   - Added Debug Console to Cine, Draci, Gob, MADE, Sword1, Touche and
      Tucker Engines.
    - Closed significant memory leaks. RTL should now be more usable.
 
@@ -92,7 +92,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Touche:
    - Corrected memory leaks and minor issues.
 
- SDL:
+ SDL ports:
    - Added support for OpenGL. (GSoC Task)
    - Closed memory leaks in Mouse Surfaces.
 
