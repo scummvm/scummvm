@@ -176,6 +176,10 @@ Common::Error HugoEngine::run() {
 	_inventory = new InventoryHandler(this);
 	_route = new Route(this);
 	_sound = new SoundHandler(this);
+
+	// Setup mixer
+	syncSoundSettings();
+
 	_text = new TextHandler(this);
 
 	_topMenu = new TopMenu(this);
