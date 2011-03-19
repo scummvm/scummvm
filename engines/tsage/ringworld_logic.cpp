@@ -94,6 +94,8 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 2310: return new Scene2310();
 	// Starcraft - Lander Bay
 	case 2320: return new Scene2320();
+	// Scene 2400 - Descending in Lander
+	case 2400: return new Scene2400();
 
 	/* Scene group 4 */
 

@@ -164,7 +164,7 @@ void SceneManager::setBackSurface() {
 	if (size > 96000) {
 		if (_globals->_sceneManager._scene->_backgroundBounds.width() <= SCREEN_WIDTH) {
 			// Standard size creation
-			_globals->_sceneManager._scene->_backSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT);
+			_globals->_sceneManager._scene->_backSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT * 3 / 2);
 			_globals->_sceneManager._scrollerRect = Rect(0, 30, SCREEN_WIDTH, SCREEN_HEIGHT - 30);
 		} else {
 			// Wide screen needs extra space to allow for scrolling

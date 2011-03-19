@@ -507,6 +507,7 @@ public:
 	void setStrip(int frameNum);
 	void setStrip2(int frameNum);
 	void setZoom(int percent);
+	void updateZoom();
 	void changeZoom(int percent);
 	void setFrame(int frameNum);
 	void setFrame2(int frameNum);
