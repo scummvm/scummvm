@@ -360,19 +360,20 @@ void Scene::refreshBackground(int xAmount, int yAmount) {
 				_enabledSections[xp * 16 + yp] = 0xffff;
 			} else {
 				// Check if the section is already loaded
-//				if (_enabledSections[xp * 16 + yp] || ((xAmount == 0) && (yAmount == 0))) {
+				if ((_enabledSections[xp * 16 + yp] == 0xffff) || ((xAmount == 0) && (yAmount == 0))) {
+					// Chunk isn't loaded, so load it in
 					Graphics::Surface s = _backSurface.lockSurface();
 					GfxSurface::loadScreenSection(s, xp - xHalfOffset, yp - yHalfOffset, xp, yp);
 					_backSurface.unlockSurface();
 					changedFlag = true;
-/*				} else {
-					int yv = _enabledSections[xp * 16 + yp] == ((xp - xHalfOffset) << 4) ? 0 : 1;
-					if (yv != (yp - yHalfOffset)) {
+				} else {
+					int yv = (_enabledSections[xp * 16 + yp] == ((xp - xHalfOffset) << 4)) ? 0 : 1;
+					if (yv | (yp - yHalfOffset)) {
 						// Copy an existing 160x100 screen section previously loaded
-						int xSectionSrc = xp - xHalfOffset;
-						int ySectionSrc = yp - yHalfOffset;
-						int xSectionDest = _enabledSections[xp * 16 + yp] >> 4;
-						int ySectionDest = _enabledSections[xp * 16 + yp] & 0xffff;
+						int xSectionDest = xp - xHalfOffset;
+						int ySectionDest = yp - yHalfOffset;
+						int xSectionSrc = _enabledSections[xp * 16 + yp] >> 4;
+						int ySectionSrc = _enabledSections[xp * 16 + yp] & 0xf;
 				
 						Rect srcBounds(xSectionSrc * 160, ySectionSrc * 100, 
 								(xSectionSrc + 1) * 160, (ySectionSrc + 1) * 100);
@@ -381,10 +382,10 @@ void Scene::refreshBackground(int xAmount, int yAmount) {
 
 						_backSurface.copyFrom(_backSurface, srcBounds, destBounds);	
 					}
-				}*/
+				}
 
 				_enabledSections[xp * 16 + yp] = 
-					((xp - xHalfOffset) << 4) && (yp - yHalfOffset);
+					((xp - xHalfOffset) << 4) | (yp - yHalfOffset);
 			}
 		}
 	}
