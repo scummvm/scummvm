@@ -195,8 +195,7 @@ Common::Error DrasculaEngine::run() {
 	loadArchives();
 
 	// Setup mixer
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	syncSoundSettings();
 
 	currentChapter = 1; // values from 1 to 6 will start each part of game
 	loadedDifferentChapter = 0;
