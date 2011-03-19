@@ -1732,9 +1732,9 @@ void SceneObject::setPriority(int priority) {
 
 void SceneObject::setPriority2(int priority) {
 	if (priority == -1) {
-		_flags &= ~1;
+		_flags &= ~OBJFLAG_FIXED_PRIORITY;
 	} else {
-		_flags |= 1;
+		_flags |= OBJFLAG_FIXED_PRIORITY;
 		setPriority(priority);
 	}
 }
