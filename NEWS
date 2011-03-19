@@ -100,6 +100,14 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Switched to the official NDK toolchain for building.
    - Fixed GFX output for various devices.
    - Fixed various crashes.
+   - Switched to the native screen resolution to improve text readability.
+   - Added support for pause/resume.
+   - Added support for games using 16bit graphics.
+   - Increased the performance significantly.
+   - Added support for the "Fullscreen mode" option. Unticking this keeps the
+     game's aspect ratio.
+   - Added a new graphics mode for linear filtering.
+   - Overhauled the input system (see README.Android).
 
  Nintendo DS port:
    - Added support for loadable modules.
