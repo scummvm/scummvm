@@ -58,6 +58,15 @@ AddrSet *findAllActiveReferences(EngineState *s);
  */
 void run_gc(EngineState *s);
 
+struct WorklistManager {
+	Common::Array<reg_t> _worklist;
+	AddrSet _map;	// used for 2 contains() calls, inside push() and run_gc()
+
+	void push(reg_t reg);
+	void pushArray(const Common::Array<reg_t> &tmp);
+};
+
+
 } // End of namespace Sci
 
 #endif // SCI_ENGINE_GC_H

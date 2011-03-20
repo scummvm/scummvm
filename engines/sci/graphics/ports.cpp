@@ -28,6 +28,7 @@
 #include "sci/console.h"
 #include "sci/sci.h"
 #include "sci/engine/features.h"
+#include "sci/engine/gc.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
@@ -706,6 +707,16 @@ int16 GfxPorts::kernelPriorityToCoordinate(byte priority) {
 				return y;
 	}
 	return _priorityBottom;
+}
+
+void GfxPorts::processEngineHunkList(WorklistManager &wm) {
+	for (PortList::const_iterator it = _windowList.begin(); it != _windowList.end(); ++it) {
+		if ((*it)->isWindow()) {
+			Window *wnd = ((Window *)*it);
+			wm.push(wnd->hSaved1);
+			wm.push(wnd->hSaved2);
+		}
+	}
 }
 
 void GfxPorts::printWindowList(Console *con) {

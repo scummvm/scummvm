@@ -49,28 +49,23 @@ const char *segmentTypeNames[] = {
 };
 #endif
 
-struct WorklistManager {
-	Common::Array<reg_t> _worklist;
-	AddrSet _map;	// used for 2 contains() calls, inside push() and run_gc()
+void WorklistManager::push(reg_t reg) {
+	if (!reg.segment) // No numbers
+		return;
 
-	void push(reg_t reg) {
-		if (!reg.segment) // No numbers
-			return;
+	debugC(kDebugLevelGC, "[GC] Adding %04x:%04x", PRINT_REG(reg));
 
-		debugC(kDebugLevelGC, "[GC] Adding %04x:%04x", PRINT_REG(reg));
+	if (_map.contains(reg))
+		return; // already dealt with it
 
-		if (_map.contains(reg))
-			return; // already dealt with it
+	_map.setVal(reg, true);
+	_worklist.push_back(reg);
+}
 
-		_map.setVal(reg, true);
-		_worklist.push_back(reg);
-	}
-
-	void pushArray(const Common::Array<reg_t> &tmp) {
-		for (Common::Array<reg_t>::const_iterator it = tmp.begin(); it != tmp.end(); ++it)
-			push(*it);
-	}
-};
+void WorklistManager::pushArray(const Common::Array<reg_t> &tmp) {
+	for (Common::Array<reg_t>::const_iterator it = tmp.begin(); it != tmp.end(); ++it)
+		push(*it);
+}
 
 static AddrSet *normalizeAddresses(SegManager *segMan, const AddrSet &nonnormal_map) {
 	AddrSet *normal_map = new AddrSet();
@@ -99,18 +94,6 @@ static void processWorkList(SegManager *segMan, WorklistManager &wm, const Commo
 				// Valid heap object? Find its outgoing references!
 				wm.pushArray(heap[reg.segment]->listAllOutgoingReferences(reg));
 			}
-		}
-	}
-}
-
-static void processEngineHunkList(WorklistManager &wm) {
-	PortList windowList = g_sci->_gfxPorts->_windowList;
-
-	for (PortList::const_iterator it = windowList.begin(); it != windowList.end(); ++it) {
-		if ((*it)->isWindow()) {
-			Window *wnd = ((Window *)*it);
-			wm.push(wnd->hSaved1);
-			wm.push(wnd->hSaved2);
 		}
 	}
 }
@@ -174,8 +157,8 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 
 	processWorkList(s->_segMan, wm, heap);
 
-	if (getSciVersion() <= SCI_VERSION_1_1)
-		processEngineHunkList(wm);
+	if (g_sci->_gfxPorts)
+		g_sci->_gfxPorts->processEngineHunkList(wm);
 
 	return normalizeAddresses(s->_segMan, wm._map);
 }
