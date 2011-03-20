@@ -57,9 +57,10 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_gameOver = false;
 	_activatedSLST = false;
 	_ignoreNextMouseUp = false;
-	_extrasFile = NULL;
+	_extrasFile = 0;
 	_curStack = aspit;
-	_hotspots = NULL;
+	_hotspots = 0;
+	removeTimer();
 
 	// NOTE: We can never really support CD swapping. All of the music files
 	// (*_Sounds.mhk) are stored on disc 1. They are copied to the hard drive
@@ -185,11 +186,12 @@ Common::Error MohawkEngine_Riven::run() {
 }
 
 void MohawkEngine_Riven::handleEvents() {
-	Common::Event event;
-
-	// Update background videos and the water effect
+	// Update background running things
+	checkTimer();
 	bool needsUpdate = _gfx->runScheduledWaterEffects();
 	needsUpdate |= _video->updateMovies();
+
+	Common::Event event;
 
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
@@ -376,6 +378,10 @@ void MohawkEngine_Riven::changeToCard(uint16 dest) {
 }
 
 void MohawkEngine_Riven::refreshCard() {
+	// Clear any timer still floating around, and then install any hardcoded one
+	removeTimer();
+	installCardTimer();
+
 	loadHotspots(_curCard);
 
 	_gfx->_updatesEnabled = true;
@@ -393,10 +399,9 @@ void MohawkEngine_Riven::refreshCard() {
 	if (!_activatedSLST)
 		_sound->playSLST(1, _curCard);
 
-	if (_showHotspots) {
+	if (_showHotspots)
 		for (uint16 i = 0; i < _hotspotCount; i++)
 			_gfx->drawRect(_hotspots[i].rect, _hotspots[i].enabled);
-	}
 
 	// Now we need to redraw the cursor if necessary and handle mouse over scripts
 	updateCurrentHotspot();
@@ -742,6 +747,33 @@ Common::String MohawkEngine_Riven::getStackName(uint16 stack) const {
 	};
 
 	return rivenStackNames[stack];
+}
+
+void MohawkEngine_Riven::installTimer(TimerProc proc, uint32 time) {
+	removeTimer();
+	_timerProc = proc;
+	_timerTime = time + getTotalPlayTime();
+}
+
+void MohawkEngine_Riven::checkTimer() {
+	if (!_timerProc)
+		return;
+
+	// NOTE: If the specified timer function is called, it is its job to remove the timer!
+	if (getTotalPlayTime() >= _timerTime) {
+		TimerProc proc = _timerProc;
+		proc(this);
+	}
+}
+
+void MohawkEngine_Riven::removeTimer() {
+	_timerProc = 0;
+	_timerTime = 0;
+}
+
+void MohawkEngine_Riven::installCardTimer() {
+	// TODO: Handle sunners hardcoded videos
+	// TODO: Handle Catherine hardcoded videos
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {

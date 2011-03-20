@@ -870,12 +870,57 @@ void RivenExternal::xbupdateboiler(uint16 argc, uint16 *argv) {
 	}
 }
 
+static void ytramTrapTimer(MohawkEngine_Riven *vm) {
+	// Remove this timer
+	vm->removeTimer();
+
+	// Check if we've caught a Ytram
+	vm->_externalScriptHandler->checkYtramCatch(true);
+}
+
 void RivenExternal::xbsettrap(uint16 argc, uint16 *argv) {
-	// TODO: Set the Ytram trap
+	// Set the Ytram trap
+
+	// We can catch the Ytram between 10 seconds and 3 minutes from now
+	uint32 timeUntilCatch = _vm->_rnd->getRandomNumberRng(1000 * 10, 1000 * 60 * 3);
+	*_vm->getVar("bytramtime") = timeUntilCatch + _vm->getTotalPlayTime();
+
+	// And set the timer too
+	_vm->installTimer(&ytramTrapTimer, timeUntilCatch);
+}
+
+void RivenExternal::checkYtramCatch(bool playSound) {
+	// Check if we've caught a Ytram
+
+	uint32 *ytramTime = _vm->getVar("bytramtime");
+
+	// If the trap still has not gone off, reinstall our timer
+	// This is in case you set the trap, walked away, and returned
+	if (_vm->getTotalPlayTime() < *ytramTime) {
+		_vm->installTimer(&ytramTrapTimer, *ytramTime - _vm->getTotalPlayTime());
+		return;
+	}
+
+	// Increment the movie per catch (max = 3)
+	uint32 *ytramMovie = _vm->getVar("bytram");
+	*ytramMovie += 1;
+	if (*ytramMovie > 3)
+		*ytramMovie = 3;
+
+	// Reset variables
+	*_vm->getVar("bytrapped") = 1;
+	*_vm->getVar("bbait") = 0;
+	*_vm->getVar("bytrap") = 0;
+	*ytramTime = 0;
+
+	// Play the capture sound, if requested
+	if (playSound)
+		_vm->_sound->playSound(33);
 }
 
 void RivenExternal::xbcheckcatch(uint16 argc, uint16 *argv) {
-	// TODO: Check if we've caught a Ytram
+	// Just pass our parameter along...
+	checkYtramCatch(argv[0] != 0);
 }
 
 void RivenExternal::xbait(uint16 argc, uint16 *argv) {
@@ -914,7 +959,28 @@ void RivenExternal::xbait(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xbfreeytram(uint16 argc, uint16 *argv) {
-	// TODO: Play a random Ytram movie
+	// Play a random Ytram movie after freeing it
+	uint16 mlstId;
+
+	switch (*_vm->getVar("bytram")) {
+	case 1:
+		mlstId = 11;
+		break;
+	case 2:
+		mlstId = 12;
+		break;
+	default:
+		mlstId = _vm->_rnd->getRandomNumberRng(13, 15);
+		break;
+	}
+
+	// Activate the MLST and play the video
+	_vm->_video->activateMLST(mlstId, _vm->getCurCard());
+	_vm->_video->playMovieBlockingRiven(11);
+
+	// Now play the second movie
+	_vm->_video->activateMLST(mlstId + 5, _vm->getCurCard());
+	_vm->_video->playMovieBlockingRiven(12);
 }
 
 void RivenExternal::xbaitplate(uint16 argc, uint16 *argv) {
