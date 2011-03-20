@@ -4935,7 +4935,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeUrban,
-		kFeaturesCD | kFeaturesTrueColor,
+		kFeatures640x480 | kFeaturesTrueColor,
 		0, 0, 0
 	},
 	{ //13
