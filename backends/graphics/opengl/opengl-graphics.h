@@ -217,15 +217,6 @@ protected:
 	int _displayWidth;
 	int _displayHeight;
 
-	/**
-	 * Sets the dispaly mode.
-	 *
-	 * This can only be used in a GFX transaction.
-	 *
-	 * @param mode the dispaly mode, if -1 it will switch to next mode. If -2 to previous mode.
-	 */
-	virtual void switchDisplayMode(int mode);
-
 	virtual const char *getCurrentModeName();
 
 	virtual void calculateDisplaySize(int &width, int &height);
