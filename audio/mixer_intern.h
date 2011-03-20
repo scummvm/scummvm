@@ -64,6 +64,7 @@ private:
 	bool _mixerReady;
 	uint32 _handleSeed;
 
+	bool _mute[4];
 	int _volumeForSoundType[4];
 	Channel *_channels[NUM_CHANNELS];
 
@@ -96,6 +97,9 @@ public:
 	virtual int getSoundID(SoundHandle handle);
 
 	virtual bool isSoundHandleActive(SoundHandle handle);
+
+	virtual void setMuteForSoundType(SoundType type, bool mute);
+	virtual bool getMuteForSoundType(SoundType type) const;
 
 	virtual void setChannelVolume(SoundHandle handle, byte volume);
 	virtual void setChannelBalance(SoundHandle handle, int8 balance);

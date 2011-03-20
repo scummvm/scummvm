@@ -197,6 +197,20 @@ public:
 	virtual bool isSoundHandleActive(SoundHandle handle) = 0;
 
 
+	/**
+	 * Set the mute state for a given sound type.
+	 *
+	 * @param mute Whether to mute (= true) or not (= false).
+	 * @param type the sound type
+	 */
+	virtual void setMuteForSoundType(SoundType type, bool mute) = 0;
+
+	/**
+	 * Query the mute state for a given sound type.
+	 *
+	 * @param type the sound type
+	 */
+	virtual bool getMuteForSoundType(SoundType type) const = 0;
 
 	/**
 	 * Set the channel volume for the given handle.
