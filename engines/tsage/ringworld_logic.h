@@ -111,12 +111,34 @@ public:
 	virtual void removeText();
 };	
 
+class SpeakerPOR: public AnimatedSpeaker {
+	class SpeakerAction1: public SpeakerAction {
+	public:
+		virtual void signal();
+	};
+
+public:
+	SceneObject _object3;
+	SpeakerAction1 _action2;
+public:
+	SpeakerPOR();
+	virtual Common::String getClassName() { return "SpeakerPOR"; }
+	virtual void setText(const Common::String &msg);
+};	
+
 class SpeakerOText: public SpeakerGText {
 public:
 	SpeakerOText();
 
 	virtual Common::String getClassName() { return "SpeakerOText"; }
 };	
+
+class SpeakerPOText: public ScreenSpeaker {
+public:
+	SpeakerPOText();
+
+	virtual Common::String getClassName() { return "SpeakerPOText"; }
+};
 
 class SpeakerSText: public ScreenSpeaker {
 public:
@@ -167,6 +189,22 @@ public:
 	virtual Common::String getClassName() { return "SpeakerSKText"; }
 };
 
+class SpeakerQR: public AnimatedSpeaker {
+public:
+	SpeakerQR();
+
+	virtual Common::String getClassName() { return "SpeakerQR"; }
+	virtual void setText(const Common::String &msg);
+};
+
+class SpeakerQU: public AnimatedSpeaker {
+public:
+	SpeakerQU();
+
+	virtual Common::String getClassName() { return "SpeakerQU"; }
+	virtual void setText(const Common::String &msg);
+};
+
 class SpeakerSKL: public AnimatedSpeaker {
 public:
 	SpeakerSKL();
@@ -198,14 +236,6 @@ public:
 	SpeakerSL();
 
 	virtual Common::String getClassName() { return "SpeakerSL"; }
-	virtual void setText(const Common::String &msg);
-};
-
-class SpeakerQR: public AnimatedSpeaker {
-public:
-	SpeakerQR();
-
-	virtual Common::String getClassName() { return "SpeakerQR"; }
 	virtual void setText(const Common::String &msg);
 };
 

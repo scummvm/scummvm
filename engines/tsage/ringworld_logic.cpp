@@ -105,6 +105,7 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	/* Scene group 8 */
 	case 7000: return new Scene7000();
 	case 7200: return new Scene7200();
+	case 7300: return new Scene7300();
 	case 7600: return new Scene7600();
 
 	/* Scene group 10 */
@@ -283,6 +284,54 @@ void SpeakerGText::removeText() {
 
 /*--------------------------------------------------------------------------*/
 
+SpeakerPOR::SpeakerPOR() {
+	_speakerName = "POR";
+	_newSceneNumber = 7221;
+	_textPos = Common::Point(10, 30);
+	_colour1 = 41;
+}
+
+void SpeakerPOR::SpeakerAction1::signal(){
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(_globals->_randomSource.getRandomNumber(60) + 60);
+		break;
+	case 1:
+		static_cast<SceneObject *>(_owner)->animate(ANIM_MODE_5, this, NULL);
+		break;
+	case 2:
+		setDelay(_globals->_randomSource.getRandomNumber(10));
+		_actionIndex = 0;
+		break;
+	default:
+		break;
+	}
+}
+
+void SpeakerPOR::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(7223);
+	_object1.setStrip2(2);
+	_object1.setPosition(Common::Point(191, 166), 0);
+	_object1.animate(ANIM_MODE_7, 0, 0);
+
+	_object2.postInit(&_objectList);
+	_object2.setVisage(7223);
+	_object2.setPosition(Common::Point(159, 86), 0);
+	_object2.setAction(&_speakerAction, 0);
+
+	_object3.postInit(&_objectList);
+	_object3.setVisage(7223);
+	_object3.setStrip(3);
+	_object3.setPosition(Common::Point(119, 107), 0);
+	_object3.setPriority2(199);
+	_object3.setAction(&_action2);
+
+	Speaker::setText(msg);
+}
+
+/*--------------------------------------------------------------------------*/
+
 SpeakerOText::SpeakerOText(): SpeakerGText() {
 	_speakerName = "OTEXT";
 	_textWidth = 240;
@@ -309,6 +358,16 @@ SpeakerSText::SpeakerSText(): ScreenSpeaker() {
 	_colour1 = 13;
 	_textWidth = 240;
 	_textMode = ALIGN_CENTRE;
+	_hideObjects = false;
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerPOText::SpeakerPOText(): ScreenSpeaker() {
+	_speakerName = "POTEXT";
+	_textWidth = 240;
+	_textMode = ALIGN_CENTRE;
+	_colour1 = 41;
 	_hideObjects = false;
 }
 
@@ -523,6 +582,38 @@ void SpeakerQR::setText(const Common::String &msg) {
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(197, 84));
 	_object2.setAction(&_speakerAction, NULL);
+
+	Speaker::setText(msg);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerQU::SpeakerQU() {
+	_speakerName = "QU";
+	_newSceneNumber = 7020;
+	_textPos = Common::Point(160, 30);
+	_colour1 = 35;
+	_textMode = ALIGN_CENTRE;
+}
+
+void SpeakerQU::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(7021);
+	_object1.setStrip2(2);
+	_object1.setPriority2(255);
+	_object1.changeZoom(100);
+	_object1._frame = 1;
+	_object1.setPosition(Common::Point(116, 120), 0);
+	_object1.animate(ANIM_MODE_7, 0, 0);
+	
+	_object2.postInit(&_objectList);
+	_object2.setVisage(7021);
+	_object2.setStrip2(1);
+	_object2.setPriority2(255);
+	_object2.changeZoom(100);
+	_object2._frame = 1;
+	_object2.setPosition(Common::Point(111, 84), 0);
+	_object2.setAction(&_speakerAction, 0);
 
 	Speaker::setText(msg);
 }

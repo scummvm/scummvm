@@ -139,6 +139,47 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
+class Scene7300: public Scene {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action3: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action4: public Action {
+	public:
+		virtual void signal();
+	};
+
+public:
+	SpeakerPOR _speakerPOR;
+	SpeakerPOText _speakerPOText;
+	SpeakerSKText _speakerSKText;
+	SpeakerQU _speakerQU;
+	SceneObject _object1;
+	SceneObject _object2;
+	SceneObject _object3;
+	SceneObject _object4;
+	SceneObject _object5;
+	SceneObject _object6;
+	SceneObject _object7;
+	SceneObject _object8;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void dispatch();
+};
+
 class Scene7600: public Scene {
 	/* Actions */
 	class Action1: public Action {
