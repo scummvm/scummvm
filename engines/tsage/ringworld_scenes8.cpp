@@ -634,6 +634,490 @@ void Scene7000::signal() {
 
 
 /*--------------------------------------------------------------------------
+ * Scene 7100
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene7100::Action3::signal() {
+	Scene7100 *scene = (Scene7100 *)_globals->_sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(1);
+		break;
+	case 1: {
+		Common::Point pt(433, 308);
+		NpcMover *mover = new NpcMover();
+		scene->_object4.addMover(mover, &pt, this);
+		break;
+	}
+	case 2:
+		scene->_object4.remove();
+		remove();
+		break;
+	}
+}
+
+void Scene7100::Action4::signal() {
+	Scene7100 *scene = (Scene7100 *)_globals->_sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(_globals->_randomSource.getRandomNumber(1) + 1);
+		break;
+	case 1: {
+		scene->_object5.setStrip(3);
+		Common::Point pt(85, 52);
+		NpcMover *mover = new NpcMover();
+		scene->_object5.addMover(mover, &pt, this);
+		break;
+	}
+	case 2: {
+		scene->_object5.setStrip(4);
+		Common::Point pt(20, 52);
+		NpcMover *mover = new NpcMover();
+		scene->_object5.addMover(mover, &pt, this);
+		break;
+	}
+	case 3:
+		_actionIndex = 0;
+		setDelay(1);
+		break;
+	}
+}
+
+void Scene7100::Action5::signal() {
+	Scene7100 *scene = (Scene7100 *)_globals->_sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(1);
+		break;
+	case 1: {
+		Common::Point pt(59, 151);
+		NpcMover *mover = new NpcMover();
+		scene->_object9.addMover(mover, &pt, this);
+		break;
+	}
+	case 2: {
+		scene->_object9.setStrip2(1);
+		Common::Point pt(127, 144);
+		NpcMover *mover = new NpcMover();
+		scene->_object9.addMover(mover, &pt, this);
+		break;
+	}
+	case 3: {
+		scene->_object9.setStrip2(2);
+		scene->_object9.setPriority2(180);
+		Common::Point pt(8, 181);
+		NpcMover *mover = new NpcMover();
+		scene->_object9.addMover(mover, &pt, this);
+		break;
+	}
+	case 4: {
+		scene->_object9.remove();
+		remove();
+	}
+	}
+}
+
+void Scene7100::Action6::signal() {
+	Scene7100 *scene = (Scene7100 *)_globals->_sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(1);
+		scene->_object10.setPriority2(8);
+		scene->_object10.setPosition(Common::Point(155, 187), 0);
+
+		scene->_object11.setPriority2(8);
+		scene->_object11.setPosition(Common::Point(155, 190), 0);
+
+		scene->_object12.setPriority2(8);
+		scene->_object12.setPosition(Common::Point(151, 193), 0);
+		break;
+	case 1: {
+		Common::Point pt1(167, 187);
+		NpcMover *mover1 = new NpcMover();
+		scene->_object10.addMover(mover1, &pt1, this);
+
+		Common::Point pt2(165, 185);
+		NpcMover *mover2 = new NpcMover();
+		scene->_object11.addMover(mover2, &pt2, 0);
+
+		Common::Point pt3(163, 183);
+		NpcMover *mover3 = new NpcMover();
+		scene->_object12.addMover(mover3, &pt3, 0);
+		break;
+	}
+	case 2: {
+		scene->_object10.setStrip2(6);
+		Common::Point pt1(91, 187);
+		NpcMover *mover1 = new NpcMover();
+		scene->_object10.addMover(mover1, &pt1, this);
+
+		scene->_object11.setStrip2(6);
+		scene->_object11.setPriority2(50);
+		Common::Point pt2(89, 185);
+		NpcMover *mover2 = new NpcMover();
+		scene->_object11.addMover(mover2, &pt2, 0);
+
+		scene->_object12.setStrip2(6);
+		scene->_object12.setPriority2(50);
+		Common::Point pt3(87, 183);
+		NpcMover *mover3 = new NpcMover();
+		scene->_object12.addMover(mover3, &pt3, 0);
+		break;
+	}
+	case 3:
+		_actionIndex = 0;
+		setDelay(1);
+		break;
+	}
+}
+
+void Scene7100::Action7::signal() {
+	Scene7100 *scene = (Scene7100 *)_globals->_sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(1);
+		break;
+	case 1: {
+		scene->_object13.setStrip2(8);
+		Common::Point pt(324, 87);
+		NpcMover *mover = new NpcMover();
+		scene->_object13.addMover(mover, &pt, this);
+		break;
+	}
+	case 2: {
+		scene->_object13.setStrip2(2);
+		Common::Point pt(524, 104);
+		NpcMover *mover = new NpcMover();
+		scene->_object13.addMover(mover, &pt, 0);
+		break;
+	}
+	case 3:
+		_actionIndex = 0;
+		setDelay(1);
+		break;
+	}
+}
+
+void Scene7100::Action8::signal() {
+	Scene7100 *scene = (Scene7100 *)_globals->_sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(1);
+		break;
+	case 1: {
+		scene->_object17.setStrip2(4);
+		scene->_object18.setStrip2(4);
+		scene->_object19.setStrip2(4);
+		
+		Common::Point pt1(482, 153);
+		NpcMover *mover1 = new NpcMover();
+		scene->_object17.addMover(mover1, &pt1, this);
+
+		Common::Point pt2(480, 146);
+		NpcMover *mover2 = new NpcMover();
+		scene->_object18.addMover(mover2, &pt2, 0);
+
+		Common::Point pt3(470, 153);
+		NpcMover *mover3 = new NpcMover();
+		scene->_object19.addMover(mover3, &pt3, 0);
+		break;
+	}
+	case 2: {
+		scene->_object17.setStrip2(3);
+		scene->_object18.setStrip2(3);
+		scene->_object19.setStrip2(3);
+
+		Common::Point pt1(506, 186);
+		NpcMover *mover1 = new NpcMover();
+		scene->_object17.addMover(mover1, &pt1, this);
+
+		Common::Point pt2(502, 179);
+		NpcMover *mover2 = new NpcMover();
+		scene->_object18.addMover(mover2, &pt2, 0);
+
+		Common::Point pt3(495, 184);
+		NpcMover *mover3 = new NpcMover();
+		scene->_object19.addMover(mover3, &pt3, 0);
+		break;
+	}
+	case 3: {
+		scene->_object17.setStrip2(4);
+		scene->_object18.setStrip2(4);
+		scene->_object19.setStrip2(4);
+		
+		Common::Point pt1(386, 167);
+		NpcMover *mover1 = new NpcMover();
+		scene->_object17.addMover(mover1, &pt1, this);
+
+		Common::Point pt2(379, 161);
+		NpcMover *mover2 = new NpcMover();
+		scene->_object18.addMover(mover2, &pt2, 0);
+
+		Common::Point pt3(373, 167);
+		NpcMover *mover3 = new NpcMover();
+		scene->_object19.addMover(mover3, &pt3, 0);
+		break;
+	}
+	case 4: {
+		scene->_object17.setStrip2(3);
+		scene->_object18.setStrip2(3);
+		scene->_object19.setStrip2(3);
+
+		Common::Point pt1(479, 193);
+		NpcMover *mover1 = new NpcMover();
+		scene->_object17.addMover(mover1, &pt1, this);
+
+		Common::Point pt2(473, 187);
+		NpcMover *mover2 = new NpcMover();
+		scene->_object18.addMover(mover2, &pt2, 0);
+
+		Common::Point pt3(466, 192);
+		NpcMover *mover3 = new NpcMover();
+		scene->_object19.addMover(mover3, &pt3, 0);
+		break;
+	}
+	case 5: {
+		Common::Point pt1(552, 183);
+		NpcMover *mover1 = new NpcMover();
+		scene->_object17.addMover(mover1, &pt1, this);
+
+		Common::Point pt2(552, 178);
+		NpcMover *mover2 = new NpcMover();
+		scene->_object18.addMover(mover2, &pt2, 0);
+
+		Common::Point pt3(541, 183);
+		NpcMover *mover3 = new NpcMover();
+		scene->_object19.addMover(mover3, &pt3, 0);
+
+		_actionIndex = 0;
+		break;
+	}
+	}
+}
+
+void Scene7100::Action9::signal() {
+	Scene7100 *scene = (Scene7100 *)_globals->_sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(1);
+		break;
+	case 1: {
+		scene->_object24.setStrip2(1);
+		Common::Point pt(64, 159);
+		NpcMover *mover = new NpcMover();
+		scene->_object24.addMover(mover, &pt, this);
+		break;
+	}
+	case 2: {
+		scene->_object24.setStrip2(2);
+		scene->_object24.setPriority2(160);
+		Common::Point pt(34, 159);
+		NpcMover *mover = new NpcMover();
+		scene->_object24.addMover(mover, &pt, this);
+		break;
+	}
+	case 3: {
+		scene->_object24.setStrip2(1);
+		Common::Point pt(64, 159);
+		NpcMover *mover = new NpcMover();
+		scene->_object24.addMover(mover, &pt, this);
+		break;
+	}
+	case 4: {
+		scene->_object24.setStrip2(2);
+		scene->_object24.setPriority2(180);
+		Common::Point pt(-12, 182);
+		NpcMover *mover = new NpcMover();
+		scene->_object24.addMover(mover, &pt, this);
+		break;
+	}
+	case 5: {
+		_actionIndex = 0;
+		setDelay(1);
+		break;
+	}
+	}
+}
+
+void Scene7100::Action10::signal() {
+	Scene7100 *scene = (Scene7100 *)_globals->_sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(1000);
+		break;
+	case 1: {
+		Common::Point pt(610, -60);
+		NpcMover *mover = new NpcMover();
+		scene->_object25.addMover(mover, &pt, this);
+		break;
+	}
+	case 2:
+		scene->_object25.remove();
+		remove();
+		break;
+	}
+}
+
+void Scene7100::Action11::signal() {
+	Scene7100 *scene = (Scene7100 *)_globals->_sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(30);
+		break;
+	case 1: {
+		Common::Point pt(154, 175);
+		NpcMover *mover = new NpcMover();
+		_globals->_player.addMover(mover, &pt, this);
+		ObjectMover2 *mover2 = new ObjectMover2();
+		scene->_object1.addMover(mover2, 25, 35, &_globals->_player);
+		break;
+	}
+	case 2: {
+		Common::Point pt(700, 155);
+		NpcMover *mover = new NpcMover();
+		_globals->_player.addMover(mover, &pt, this);
+		break;
+	}
+	case 3:
+		_globals->_sceneManager.changeScene(7200);
+		remove();
+		break;
+	}
+}
+
+void Scene7100::postInit(SceneObjectList *OwnerList) {
+	loadScene(7100);
+	Scene::postInit();
+	setZoomPercents(60, 85, 200, 100);
+
+	_object2.postInit();
+	_object2.setVisage(7161);
+	_object2.animate(ANIM_MODE_2, 0);
+	_object2.setPosition(Common::Point(10, 140), 0);
+	_object2._numFrames = 1;
+	_object2.setPriority2(180);
+	_object2.setAction(&_action1, 0);
+
+	_object3.postInit();
+	_object3.setVisage(7161);
+	_object3.animate(ANIM_MODE_2, 0);
+	_object3.setPosition(Common::Point(34, 115), 0);
+	_object3._numFrames = 1;
+	_object3.setPriority2(180);
+	_object3.setAction(&_action2, 0);
+
+	_object4.postInit();
+	_object4.setVisage(7164);
+	_object4.animate(ANIM_MODE_2, 0);
+	_object4.setPosition(Common::Point(-10, 159), 0);
+	_object4._numFrames = 2;
+	_object4.setPriority2(250);
+	_object4.setAction(&_action3, 0);
+
+	_object5.postInit();
+	_object5.setVisage(7162);
+	_object5.setStrip(3);
+	_object5.animate(ANIM_MODE_2, 0);
+	_object5.setPosition(Common::Point(20, 52), 0);
+	_object5.setAction(&_action4, 0);
+
+	_object9.postInit();
+	_object9.setVisage(7160);
+	_object5.setStrip(2);
+	_object9.animate(ANIM_MODE_2, 0);
+	_object9.setPosition(Common::Point(110, 168), 0);
+	_object9._numFrames = 2;
+	_object9.setPriority2(16);
+	_object9.setAction(&_action5, 0);
+
+	_object13.postInit();
+	_object13.setVisage(7161);
+	_object13.setStrip(8);
+	_object13.animate(ANIM_MODE_2, 0);
+	_object13.setPosition(Common::Point(524, 104), 0);
+	_object13._numFrames = 5;
+	_object13.setPriority2(250);
+	_object13.setAction(&_action7, 0);
+
+	_object17.postInit();
+	_object17.setVisage(7160);
+	_object17.setStrip(3);
+	_object17.animate(ANIM_MODE_2, 0);
+	_object17.setPosition(Common::Point(552, 183), 0);
+	_object17._numFrames = 4;
+	_object17._moveDiff.x = 12;
+	_object17._moveDiff.y = 12;
+	_object17.setAction(&_action8, 0);
+
+	_object18.postInit();
+	_object18.setVisage(7160);
+	_object18.setStrip(3);
+	_object18.animate(ANIM_MODE_2, 0);
+	_object18.setPosition(Common::Point(552, 178), 0);
+	_object18._numFrames = 4;
+	_object18._moveDiff.x = 12;
+	_object18._moveDiff.y = 12;
+
+	_object19.postInit();
+	_object19.setVisage(7160);
+	_object19.setStrip(3);
+	_object19.animate(ANIM_MODE_2, 0);
+	_object19.setPosition(Common::Point(541, 183), 0);
+	_object19._numFrames = 4;
+	_object19._moveDiff.x = 12;
+	_object19._moveDiff.y = 12;
+
+	_object24.postInit();
+	_object24.setVisage(7162);
+	_object24.setStrip(1);
+	_object24.animate(ANIM_MODE_2, 0);
+	_object24.setPosition(Common::Point(-12, 182), 0);
+	_object24._numFrames = 4;
+	_object24.setPriority2(180);
+	_object24.setAction(&_action9, 0);
+
+	_object25.postInit();
+	_object25.setVisage(7163);
+	_object25.animate(ANIM_MODE_2, 0);
+	_object25.setPosition(Common::Point(551, 145), 0);
+	_object25._numFrames = 5;
+	_object25.setPriority2(160);
+	_object25.setAction(&_action10, 0);
+
+	// Swimmer 1
+	_globals->_player.postInit();
+	_globals->_player.setVisage(7101);
+	_globals->_player.animate(ANIM_MODE_2, 0);
+	_globals->_player._moveDiff.x = 4;
+	_globals->_player._moveDiff.y = 2;
+	_globals->_player.setPosition(Common::Point(135, 135), 0);
+	_globals->_player.setPriority2(200);
+	_globals->_player.disableControl();
+
+	// Swimmer 2
+	_object1.postInit();
+	_object1.setVisage(7110);
+	_object1.animate(ANIM_MODE_1, 0);
+	_object1._moveDiff.x = 4;
+	_object1._moveDiff.y = 2;
+	_object1.setPosition(Common::Point(100, 100), 0);
+
+	setAction(&_action11);
+	_soundHandler1.startSound(270, 0, 127);
+	_soundHandler2.startSound(275, 0, 127);
+	_globals->_soundHandler.startSound(270, 0, 127);
+}
+/*--------------------------------------------------------------------------
  * Scene 7200
  *
  *--------------------------------------------------------------------------*/

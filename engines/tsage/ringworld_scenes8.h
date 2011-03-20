@@ -111,6 +111,88 @@ public:
 	virtual void dispatch();
 };
 
+class Scene7100: public Scene {
+	/* Actions */
+	class Action3: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action4: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action5: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action6: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action7: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action8: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action9: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action10: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action11: public Action {
+	public:
+		virtual void signal();
+	};
+
+public:
+	SoundHandler _soundHandler1;
+	SoundHandler _soundHandler2;
+	SceneObject _object1;
+	SceneObject _object2;
+	SceneObject _object3;
+	SceneObject _object4;
+	SceneObject _object5;
+	SceneObject _object6;
+	SceneObject _object7;
+	SceneObject _object8;
+	SceneObject _object9;
+	SceneObject _object10;
+	SceneObject _object11;
+	SceneObject _object12;
+	SceneObject _object13;
+	SceneObject _object14;
+	SceneObject _object15;
+	SceneObject _object16;
+	SceneObject _object17;
+	SceneObject _object18;
+	SceneObject _object19;
+	SceneObject _object20;
+	SceneObject _object21;
+	SceneObject _object22;
+	SceneObject _object23;
+	SceneObject _object24;
+	SceneObject _object25;
+	Action _action1;
+	Action _action2;
+	Action3 _action3;
+	Action4 _action4;
+	Action5 _action5;
+	Action6 _action6;
+	Action7 _action7;
+	Action8 _action8;
+	Action9 _action9;
+	Action10 _action10;
+	Action11 _action11;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+};
+
 class Scene7200: public Scene {
 	/* Actions */
 	class Action1: public Action {
