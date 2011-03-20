@@ -295,10 +295,6 @@ bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
 }
 
 bool OpenGLSdlGraphicsManager::loadGFXMode() {
-	// Force 4/3 if feature enabled
-	if (getFeatureState(OSystem::kFeatureAspectRatioCorrection))
-		_videoMode.mode = OpenGL::GFX_4_3;
-
 	// If the screen was resized, do not change its size
 	if (!_screenResized) {
 		const int scaleFactor = getScale();
@@ -509,10 +505,19 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			// Ctrl-Alt-a switch between display modes
 			if (event.kbd.keycode == 'a') {
 				beginGFXTransaction();
-					switchDisplayMode(-1);
+					setFeatureState(OSystem::kFeatureAspectRatioCorrection, !getFeatureState(OSystem::kFeatureAspectRatioCorrection));
 				endGFXTransaction();
 #ifdef USE_OSD
-				displayModeChangedMsg();
+			char buffer[128];
+			if (getFeatureState(OSystem::kFeatureAspectRatioCorrection))
+				sprintf(buffer, "Enabled aspect ratio correction\n%d x %d -> %d x %d",
+				        _videoMode.screenWidth, _videoMode.screenHeight,
+				        _hwscreen->w, _hwscreen->h);
+			else
+				sprintf(buffer, "Disabled aspect ratio correction\n%d x %d -> %d x %d",
+				        _videoMode.screenWidth, _videoMode.screenHeight,
+				        _hwscreen->w, _hwscreen->h);
+			displayMessageOnOSD(buffer);
 #endif
 				internUpdateScreen();
 				return true;
@@ -561,12 +566,12 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				}
 			}
 
-			const bool isNormalNumber = (SDLK_1 <= sdlKey && sdlKey <= SDLK_4);
-			const bool isKeypadNumber = (SDLK_KP1 <= sdlKey && sdlKey <= SDLK_KP4);
+			const bool isNormalNumber = (SDLK_1 <= sdlKey && sdlKey <= SDLK_3);
+			const bool isKeypadNumber = (SDLK_KP1 <= sdlKey && sdlKey <= SDLK_KP3);
 
 			// Ctrl-Alt-<number key> will change the GFX mode
 			if (isNormalNumber || isKeypadNumber) {
-				if (sdlKey - (isNormalNumber ? SDLK_1 : SDLK_KP1) <= 4) {
+				if (sdlKey - (isNormalNumber ? SDLK_1 : SDLK_KP1) <= 3) {
 #ifdef USE_OSD
 					int lastMode = _videoMode.mode;
 #endif
@@ -576,10 +581,6 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 					beginGFXTransaction();
 						setGraphicsMode(sdlKey - (isNormalNumber ? SDLK_1 : SDLK_KP1));
 						setScale(oldScale);
-						// TODO: We disable the aspect ratio correction here,
-						// we might switch to mode which ignores it...
-						// We should really fix this mess up.
-						setFeatureState(OSystem::kFeatureAspectRatioCorrection, false);
 					endGFXTransaction();
 #ifdef USE_OSD
 					if (lastMode != _videoMode.mode)
@@ -595,18 +596,6 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			if (event.kbd.keycode == Common::KEYCODE_RETURN ||
 				event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER) {
 				toggleFullScreen(-1);
-				return true;
-			}
-
-			// Ctrl-Shift-a switch backwards between display modes
-			if (event.kbd.keycode == 'a') {
-				beginGFXTransaction();
-					switchDisplayMode(-2);
-				endGFXTransaction();
-#ifdef USE_OSD
-				displayModeChangedMsg();
-#endif
-				internUpdateScreen();
 				return true;
 			}
 		}

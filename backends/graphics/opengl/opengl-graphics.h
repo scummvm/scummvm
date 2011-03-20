@@ -39,8 +39,7 @@ namespace OpenGL {
 enum {
 	GFX_NORMAL = 0,
 	GFX_CONSERVE = 1,
-	GFX_4_3 = 2,
-	GFX_ORIGINAL = 3
+	GFX_ORIGINAL = 2
 };
 
 }
@@ -156,6 +155,7 @@ protected:
 		int mode;
 		int scaleFactor;
 		bool antialiasing;
+		bool aspectRatioCorrection;
 
 		int screenWidth, screenHeight;
 		int overlayWidth, overlayHeight;

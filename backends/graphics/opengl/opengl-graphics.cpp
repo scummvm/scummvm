@@ -103,14 +103,8 @@ void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 		break;
 
 	case OSystem::kFeatureAspectRatioCorrection:
-		// TODO: If we enable aspect ratio correction, we automatically set
-		// the video mode to 4/3. That is quity messy, but since we have that
-		// messy OpenGL mode use there's not much to do about it right now...
-		// Of course in case we disasble the aspect ratio correction, we
-		// might want to setup a different mode, but which one?
-		// Think of a way to get rid of this mess.
-		if (enable)
-			_videoMode.mode = OpenGL::GFX_4_3;
+		_videoMode.aspectRatioCorrection = enable;
+		_transactionDetails.needRefresh = true;
 		break;
 
 	default:
@@ -124,7 +118,7 @@ bool OpenGLGraphicsManager::getFeatureState(OSystem::Feature f) {
 		return _videoMode.fullscreen;
 
 	case OSystem::kFeatureAspectRatioCorrection:
-		return _videoMode.mode == OpenGL::GFX_4_3;
+		return _videoMode.aspectRatioCorrection;
 
 	default:
 		return false;
@@ -138,7 +132,6 @@ bool OpenGLGraphicsManager::getFeatureState(OSystem::Feature f) {
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"gl1", _s("OpenGL Normal"), OpenGL::GFX_NORMAL},
 	{"gl2", _s("OpenGL Conserve"), OpenGL::GFX_CONSERVE},
-	{"gl3", _s("OpenGL 4/3"), OpenGL::GFX_4_3},
 	{"gl4", _s("OpenGL Original"), OpenGL::GFX_ORIGINAL},
 	{0, 0, 0}
 };
@@ -166,11 +159,10 @@ bool OpenGLGraphicsManager::setGraphicsMode(int mode) {
 	switch (mode) {
 	case OpenGL::GFX_NORMAL:
 	case OpenGL::GFX_CONSERVE:
-	case OpenGL::GFX_4_3:
 	case OpenGL::GFX_ORIGINAL:
 		break;
 	default:
-		warning("unknown gfx mode %d", mode);
+		warning("Unknown gfx mode %d", mode);
 		return false;
 	}
 
@@ -1262,10 +1254,14 @@ void OpenGLGraphicsManager::toggleAntialiasing() {
 }
 
 uint OpenGLGraphicsManager::getAspectRatio() {
-	if (_videoMode.mode == OpenGL::GFX_NORMAL)
-		return _videoMode.hardwareWidth * 10000 / _videoMode.hardwareHeight;
-	else if (_videoMode.mode == OpenGL::GFX_4_3)
+	// In case we enable aspect ratio correction we force a 4/3 ratio.
+	// TODO: This makes OpenGL Normal behave like OpenGL Conserve, when aspect
+	// ratio correction is enabled, but it's better than the previous 4/3 mode
+	// mess at least...
+	if (_videoMode.aspectRatioCorrection)
 		return 13333;
+	else if (_videoMode.mode == OpenGL::GFX_NORMAL)
+		return _videoMode.hardwareWidth * 10000 / _videoMode.hardwareHeight;
 	else
 		return _videoMode.screenWidth * 10000 / _videoMode.screenHeight;
 }
