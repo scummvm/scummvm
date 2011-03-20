@@ -4,9 +4,11 @@
 
 #include "engines/grim/lua/lobject.h"
 
+#include "engines/grim/font.h"
+
 namespace Grim {
 
-typedef Object *(*CreatorFunc)();
+typedef ObjectPtr<Object> (*CreatorFunc)(SaveGame *);
 Common::HashMap<Common::String, CreatorFunc> ObjectManager::_creators;
 
 Object::Object() : _refCount(0) {
@@ -22,18 +24,6 @@ Object::~Object() {
 	}
 }
 
-void Object::save(SaveGame *state) const {
-	state->writeLEUint32(_refCount);
-
-	saveState(state);
-}
-
-bool Object::restore(SaveGame *state) {
-	_refCount = state->readLEUint32();
-
-	return restoreState(state);
-}
-
 void Object::saveState(SaveGame */*state*/) const {
 
 }
@@ -42,11 +32,11 @@ bool Object::restoreState(SaveGame */*state*/) {
 	return false;
 }
 
-void Object::ref() {
+void Object::reference() {
 	++_refCount;
 }
 
-void Object::deref() {
+void Object::dereference() {
 	if (_refCount > 0) {
 		--_refCount;
 	}
@@ -65,32 +55,23 @@ void ObjectManager::saveObject(SaveGame *state, Object *object) {
 	state->writeLEUint32(len);
 	state->write(str, len);
 
-	object->save(state);
+	object->saveState(state);
 }
 
-Object *ObjectManager::restoreObject(SaveGame *state) {
-	int32 len = state->readLEUint32();
-	char *str = new char[len + 1];
-	state->read(str, len);
-	str[len] = '\0';
+ObjectPtr<Object> ObjectManager::restoreObject(SaveGame *state) {
+	const char *str = state->readCharString();
 
-	Object *o = newObject(str);
+	ObjectPtr<Object> ptr;
+	Common::String type = str;
 	delete[] str;
-	o->restore(state);
-	return o;
-}
-
-Object *ObjectManager::newObject(const char *typeName) {
-	Common::String type = typeName;
 	if (_creators.contains(type)) {
 		CreatorFunc func = _creators.getVal(type);
-		Object *o = (func)();
-		return o;
+		ptr = (func)(state);
 	} else {
-		warning("Type name \"%s\" not registered", typeName);
+		error("Type name \"%s\" not registered", type.c_str());
 	}
 
-	return 0;
+	return ptr;
 }
 
 }

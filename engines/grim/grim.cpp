@@ -61,10 +61,10 @@ namespace Grim {
 
 static const bool color = ObjectManager::registerType<Color>();
 static const bool luafile = ObjectManager::registerType<LuaFile>();
-static const bool bitmap = ObjectManager::registerType<Bitmap>();
-static const bool costume = ObjectManager::registerType<Costume>();
+// static const bool bitmap = ObjectManager::registerType<Bitmap>();
+// static const bool costume = ObjectManager::registerType<Costume>();
 static const bool font = ObjectManager::registerType<Font>();
-static const bool material = ObjectManager::registerType<Material>();
+// static const bool material = ObjectManager::registerType<Material>();
 
 static bool g_lua_initialized = false;
 

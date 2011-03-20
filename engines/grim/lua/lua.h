@@ -56,7 +56,7 @@ public:
 	~LuaFile();
 
 	void saveState(SaveGame *state) const;
-	bool restoreState(SaveGame *state);
+	static ObjectPtr<Object> restoreObject(SaveGame *state);
 
 	void close();
 	bool isOpen() const;

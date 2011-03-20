@@ -2738,7 +2738,7 @@ static void GetImage() {
 	const char *bitmapName = lua_getstring(nameObj);
 	BitmapPtr ptr = g_resourceloader->getBitmap(bitmapName).object();
 	Bitmap *image = ptr.object();
-	image->ref();
+	image->reference();
 	lua_pushusertag(image, MKID_BE('VBUF'));
 }
 
@@ -2747,7 +2747,7 @@ static void FreeImage() {
 	if (!lua_isuserdata(param) || lua_tag(param) != MKID_BE('VBUF'))
 		return;
 	Bitmap *bitmap = static_cast<Bitmap *>(lua_getuserdata(param));
-	bitmap->deref();
+	bitmap->dereference();
 	killBitmapPrimitives(bitmap);
 }
 
@@ -3648,7 +3648,7 @@ static void LockFont() {
 		const char *fontName = lua_getstring(param1);
 		FontPtr ptr = g_resourceloader->getFont(fontName);
 		Font *result = ptr.object();
-		result->ref();
+		result->reference();
 		if (result) {
 			lua_pushusertag(result, MKID_BE('FONT'));
 			return;

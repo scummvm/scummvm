@@ -31,8 +31,8 @@
 #include "common/hash-str.h"
 #include "common/func.h"
 #include "common/list.h"
-#include <iostream>
-using namespace std;
+#include "common/debug.h"
+
 namespace Grim {
 
 class SaveGame;
@@ -45,15 +45,11 @@ public:
 
 	virtual const char *typeName() const { return ""; }
 
-	void save(SaveGame *state) const;
-	bool restore(SaveGame *state);
-
-	void ref();
-	void deref();
-
-protected:
 	virtual void saveState(SaveGame *state) const;
 	virtual bool restoreState(SaveGame *state);
+
+	void reference();
+	void dereference();
 
 private:
 	int _refCount;
@@ -87,7 +83,7 @@ public:
 	ObjectPtr(T *obj) :
 		_obj(obj) {
 		if (obj) {
-			_obj->ref();
+			_obj->reference();
 			addPointer(obj);
 		}
 	}
@@ -98,7 +94,7 @@ public:
 	~ObjectPtr() {
 		if (_obj) {
 			rmPointer(_obj);
-			_obj->deref();
+			_obj->dereference();
 		}
 	}
 
@@ -106,14 +102,14 @@ public:
 		if (obj != _obj) {
 			if (_obj) {
 				rmPointer(_obj);
-				_obj->deref();
+				_obj->dereference();
 				_obj = NULL;
 
 			}
 
 			if (obj) {
 				_obj = obj;
-				_obj->ref();
+				_obj->reference();
 				addPointer(obj);
 			}
 		}
@@ -124,14 +120,14 @@ public:
 		if (_obj != ptr._obj) {
 			if (_obj) {
 				rmPointer(_obj);
-				_obj->deref();
+				_obj->dereference();
 				_obj = NULL;
 
 			}
 
 			if (ptr._obj) {
 				_obj = ptr._obj;
-				_obj->ref();
+				_obj->reference();
 				addPointer(_obj);
 			}
 		}
@@ -176,8 +172,7 @@ private:
 class ObjectManager {
 public:
 	static void saveObject(SaveGame *state, Object *object);
-	static Object *restoreObject(SaveGame *state);
-	static Object *newObject(const char *typeName);
+	static ObjectPtr<Object> restoreObject(SaveGame *state);
 
 	template<class T> static bool registerType() {
 		T obj;
@@ -186,7 +181,7 @@ public:
 			warning("Type name %s already registered", type.c_str());
 			return false;
 		}
-		_creators.setVal(type, &createObj<T>);
+		_creators.setVal(type, T::restoreObject);
 
 		return true;
 	}
@@ -196,7 +191,7 @@ private:
 		return new T();
 	}
 
-	typedef Object *(*CreatorFunc)();
+	typedef ObjectPtr<Object> (*CreatorFunc)(SaveGame *);
 	static Common::HashMap<Common::String, CreatorFunc> _creators;
 
 };

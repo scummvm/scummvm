@@ -67,12 +67,14 @@ public:
 		state->writeByte(_vals[2]);
 	}
 
-	bool restoreState(SaveGame *state) {
-		_vals[0] = state->readByte();
-		_vals[1] = state->readByte();
-		_vals[2] = state->readByte();
+	static ObjectPtr<Object> restoreObject(SaveGame *state) {
+		Color *c = new Color();
+		ObjectPtr<Object> ptr(c);
+		c->_vals[0] = state->readByte();
+		c->_vals[1] = state->readByte();
+		c->_vals[2] = state->readByte();
 
-		return true;
+		return ptr;
 	}
 };
 

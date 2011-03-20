@@ -120,24 +120,26 @@ void LuaFile::saveState(SaveGame *state) const {
 	state->writeLESint32(_stderr);
 }
 
-bool LuaFile::restoreState(SaveGame *state) {
-	_name = state->readString();;
-	_filename = state->readString();
+ObjectPtr<Object> LuaFile::restoreObject(SaveGame *state) {
+	LuaFile *l = new LuaFile();
+
+	l->_name = state->readString();
+	l->_filename = state->readString();
 
 	if (state->readLESint32()) {
 		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-		_in = saveFileMan->openForLoading(_filename.c_str());
+		l->_in = saveFileMan->openForLoading(l->_filename.c_str());
 	}
 	if (state->readLESint32()) {
 		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-		_out = saveFileMan->openForSaving(_filename.c_str());
+		l->_out = saveFileMan->openForSaving(l->_filename.c_str());
 	}
 
-	_stdin = state->readLESint32();
-	_stdout = state->readLESint32();
-	_stderr = state->readLESint32();
+	l->_stdin = state->readLESint32();
+	l->_stdout = state->readLESint32();
+	l->_stderr = state->readLESint32();
 
-	return true;
+	return ObjectPtr<Object>(l);
 }
 
 static int32 gettag(int32 i) {
