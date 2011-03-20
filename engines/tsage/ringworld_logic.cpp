@@ -31,6 +31,7 @@
 #include "tsage/ringworld_scenes2.h"
 #include "tsage/ringworld_scenes3.h"
 #include "tsage/ringworld_scenes4.h"
+#include "tsage/ringworld_scenes5.h"
 #include "tsage/ringworld_scenes8.h"
 
 namespace tSage {
@@ -106,6 +107,8 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 3700: return new Scene3700();
 
 	/* Scene group 5 */
+	// Village
+	case 4000: return new Scene4000();
 
 	/* Scene group 6 */
 
@@ -429,6 +432,26 @@ SpeakerSKText::SpeakerSKText(): ScreenSpeaker() {
 
 /*--------------------------------------------------------------------------*/
 
+SpeakerPText::SpeakerPText() {
+	_speakerName = "PTEXT";
+	_textWidth = 240;
+	_textMode = ALIGN_CENTRE;
+	_colour1 = 5;
+	_hideObjects = false;
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerCHFText::SpeakerCHFText() {
+	_speakerName = "SpeakerCHFText";
+	_textWidth = 240;
+	_textMode = ALIGN_CENTRE;
+	_colour1 = 56;
+	_hideObjects = false;
+}
+
+/*--------------------------------------------------------------------------*/
+
 SpeakerSKL::SpeakerSKL(): AnimatedSpeaker() {
 	_speakerName = "SKL";
 	_newSceneNumber = 7011;
@@ -742,6 +765,109 @@ void SpeakerML::setText(const Common::String &msg) {
 	_object2.setAction(&_speakerAction, NULL);
 
 	Speaker::setText(msg);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerCHFL::SpeakerCHFL() {
+	_speakerName = "CHFL";
+	_newSceneNumber = 4111;
+	_textPos = Common::Point(10, 40);
+	_colour1 = 56;
+}
+
+void SpeakerCHFL::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(4113);
+	_object1.setStrip2(2);
+	_object1.setPriority2(255);
+	_object1.changeZoom(100);
+	_object1._frame = 1;
+	_object1.setPosition(Common::Point(205, 116));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
+	
+	_object2.postInit(&_objectList);
+	_object2.setVisage(4113);
+	_object2.setStrip2(1);
+	_object2.setPriority2(255);
+	_object2._frame = 1;
+	_object2.setPosition(Common::Point(202, 71));
+	_object2.setAction(&_speakerAction, NULL);
+
+	Speaker::setText(msg);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerCHFR::SpeakerCHFR() {
+	_speakerName = "CHFR";
+	_newSceneNumber = 4110;
+	_textPos = Common::Point(160, 40);
+	_colour1 = 56;
+}
+
+void SpeakerCHFR::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(4112);
+	_object1.setStrip2(2);
+	_object1.setPriority2(255);
+	_object1.changeZoom(100);
+	_object1._frame = 1;
+	_object1.setPosition(Common::Point(103, 116));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
+	
+	_object2.postInit(&_objectList);
+	_object2.setVisage(4112);
+	_object2.setStrip2(1);
+	_object2.setPriority2(255);
+	_object2._frame = 1;
+	_object2.setPosition(Common::Point(106, 71));
+	_object2.setAction(&_speakerAction, NULL);
+
+	Speaker::setText(msg);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerPL::SpeakerPL() {
+	_speakerName = "PL";
+	_newSceneNumber = 4060;
+	_textPos = Common::Point(160, 40);
+	_colour1 = 5;
+}
+
+void SpeakerPL::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(4062);
+	_object1.setStrip2(2);
+	_object1.setPriority2(255);
+	_object1.changeZoom(100);
+	_object1._frame = 1;
+	_object1.setPosition(Common::Point(107, 117));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
+	
+	_object2.postInit(&_objectList);
+	_object2.setVisage(4062);
+	_object2.setStrip2(1);
+	_object2.setPriority2(200);
+	_object2._frame = 1;
+	_object2.setPosition(Common::Point(105, 62));
+	_object2.setAction(&_speakerAction, NULL);
+
+	_object3.postInit(&_objectList);
+	_object3.setVisage(4062);
+	_object3.setStrip2(3);
+	_object3.setPriority2(255);
+	_object3._frame = 1;
+	_object3.setPosition(Common::Point(105, 59));
+	_object3.setAction(&_speakerAction2, NULL);
+
+	Speaker::setText(msg);
+}
+
+void SpeakerPL::removeText() {
+	_object3.remove();
+	AnimatedSpeaker::removeText();
 }
 
 } // End of namespace tSage
