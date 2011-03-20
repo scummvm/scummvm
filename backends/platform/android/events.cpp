@@ -352,14 +352,20 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		}
 
 		if (arg2 < 1 || arg2 > ARRAYSIZE(jkeymap)) {
-			LOGE("received invalid keycode: %d (%d)", arg2, arg3);
-			return;
+			if (arg3 < 1) {
+				LOGE("received invalid keycode: %d (%d)", arg2, arg3);
+				return;
+			} else {
+				// lets bet on the ascii code
+				e.kbd.keycode = Common::KEYCODE_INVALID;
+			}
+		} else {
+			e.kbd.keycode = jkeymap[arg2];
 		}
 
 		if (arg5 > 0)
 			e.synthetic = true;
 
-		e.kbd.keycode = jkeymap[arg2];
 		e.kbd.ascii = arg3;
 
 		if (arg4 & JMETA_SHIFT)
