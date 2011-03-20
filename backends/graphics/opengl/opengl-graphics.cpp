@@ -1270,10 +1270,7 @@ void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
 	if (_overlayVisible)
 		return;
 
-	if (_videoMode.mode == OpenGL::GFX_NORMAL) {
-		x /= _videoMode.scaleFactor;
-		y /= _videoMode.scaleFactor;
-	} else if (!_overlayVisible) {
+	if (!_overlayVisible) {
 		x -= _displayX;
 		y -= _displayY;
 
