@@ -32,7 +32,6 @@
 
 namespace Sci {
 
-class SciGui;
 class GfxPaint16;
 class GfxScreen;
 class GfxText16;
@@ -103,6 +102,7 @@ public:
 	void kernelGraphAdjustPriority(int top, int bottom);
 	byte kernelCoordinateToPriority(int16 y);
 	int16 kernelPriorityToCoordinate(byte priority);
+	void printWindowList(Console *con);
 
 	Port *_wmgrPort;
 	Window *_picWind;
