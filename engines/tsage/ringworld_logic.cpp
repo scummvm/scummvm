@@ -101,6 +101,8 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	/* Scene group 4 */
 	// Ringworld Scan
 	case 3500: return new Scene3500();
+	// Remote Viewer
+	case 3700: return new Scene3700();
 
 	/* Scene group 5 */
 
