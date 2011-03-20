@@ -27,10 +27,13 @@
 #define GRIM_COLOR_H
 
 #include "common/sys.h"
+#include "engines/grim/savegame.h"
+#include "engines/grim/object.h"
 
 namespace Grim {
 
-class Color {
+class Color : public Object {
+	GRIM_OBJECT(Color)
 public:
 	byte _vals[3];
 
@@ -56,6 +59,20 @@ public:
 	Color& operator =(Color *c) {
 		_vals[0] = c->_vals[0]; _vals[1] = c->_vals[1]; _vals[2] = c->_vals[2];
 		return *this;
+	}
+
+	void saveState(SaveGame *state) const {
+		state->writeByte(_vals[0]);
+		state->writeByte(_vals[1]);
+		state->writeByte(_vals[2]);
+	}
+
+	bool restoreState(SaveGame *state) {
+		_vals[0] = state->readByte();
+		_vals[1] = state->readByte();
+		_vals[2] = state->readByte();
+
+		return true;
 	}
 };
 

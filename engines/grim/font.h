@@ -27,13 +27,20 @@
 #define GRIM_FONT_H
 
 #include "engines/grim/resource.h"
+#include "engines/grim/object.h"
 
 namespace Grim {
 
-class Font {
+class SaveGame;
+
+class Font : public Object {
+	GRIM_OBJECT(Font)
 public:
 	Font(const char *filename, const char *data, int len);
+    Font() : Object() { _charIndex = 0; }
 	~Font();
+
+    void load(const char *filename, const char *data, int len);
 
 	Common::String getFilename() { return _filename; }
 	int32 getHeight() { return _height; }
@@ -44,6 +51,9 @@ public:
 	int32 getCharStartingCol(unsigned char c) { return _charHeaders[getCharIndex(c)].startingCol; }
 	int32 getCharStartingLine(unsigned char c) { return _charHeaders[getCharIndex(c)].startingLine; }
 	const byte *getCharData(unsigned char c) { return _fontData + (_charHeaders[getCharIndex(c)].offset); }
+
+	void saveState(SaveGame *savedState) const;
+	bool restoreState(SaveGame *savedState);
 
 	static const uint8 emerFont[][13];
 private:

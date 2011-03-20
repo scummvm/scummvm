@@ -320,7 +320,7 @@ void lua_error(const char *s) {
 static void do_callinc(int32 nResults) {
 	StkId base = lua_state->Cstack.base;
 	luaD_call(base + 1, nResults);
-	lua_state->Cstack.lua2C = base;  // position of the luaM_new results 
+	lua_state->Cstack.lua2C = base;  // position of the luaM_new results
 	lua_state->Cstack.num = (lua_state->stack.top - lua_state->stack.stack) - base;  // number of results
 	lua_state->Cstack.base = base + lua_state->Cstack.num;  // incorporate results on lua_state->stack.stack/
 }
@@ -373,10 +373,10 @@ static int32 protectedparser(ZIO *z, int32 bin) {
 	}
 	lua_state->errorJmp = oldErr;
 	if (status)
-		return 1;  // error code 
+		return 1;  // error code
 	if (tf == NULL)
 		return 2;  // 'natural' end
-	luaD_adjusttop(lua_state->Cstack.base + 1);  // one slot for the pseudo-function 
+	luaD_adjusttop(lua_state->Cstack.base + 1);  // one slot for the pseudo-function
 	lua_state->stack.stack[lua_state->Cstack.base].ttype = LUA_T_PROTO;
 	lua_state->stack.stack[lua_state->Cstack.base].value.tf = tf;
 	luaV_closure(0);
@@ -391,7 +391,7 @@ static int32 do_main(ZIO *z, int32 bin) {
 		if (status == 1)
 			return 1;  // error
 		else if (status == 2)
-			return 0;  // 'natural' end 
+			return 0;  // 'natural' end
 		else {
 			int32 newelems2 = 2 * (nblocks - old_blocks);
 			GCthreshold += newelems2;

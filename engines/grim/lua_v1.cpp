@@ -38,6 +38,9 @@
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/imuse/imuse.h"
 
+#include <iostream>
+using namespace std;
+
 namespace Grim {
 
 extern Imuse *g_imuse;
@@ -133,7 +136,7 @@ static void PrintWarning() {
 static void FunctionName() {
 	const char *name;
 	char buf[256];
-	const char *filename;
+	const char *filename = 0;
 	int32 line;
 	lua_Object param1 = lua_getparam(1);
 
@@ -153,6 +156,7 @@ static void FunctionName() {
 		break;
 	default:
 		{
+//             cout<<(void*)filename<<endl;
 			if (line == 0)
 				sprintf(buf, "main of %.100s", filename);
 			else if (line < 0)
@@ -724,13 +728,13 @@ static void GetActorYawToPoint() {
 	if (lua_istable(pointObj)) {
 		lua_pushobject(pointObj);
 		lua_pushstring("x");
-		xObj = lua_gettable();		
+		xObj = lua_gettable();
 		lua_pushobject(pointObj);
 		lua_pushstring("y");
-		yObj = lua_gettable();		
+		yObj = lua_gettable();
 		lua_pushobject(pointObj);
 		lua_pushstring("z");
-		zObj = lua_gettable();		
+		zObj = lua_gettable();
 	} else {
 		xObj = pointObj;
 		yObj = lua_getparam(3);
@@ -1017,7 +1021,6 @@ static void SetActorColormap() {
 	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
 	if (lua_isstring(nameObj)) {
 		const char *name = lua_getstring(nameObj);
-		g_resourceloader->loadColormap(name);
 		actor->setColormap(name);
 	} else if (lua_isnil(nameObj)) {
 		error("SetActorColormap: implement remove cmap");
@@ -1360,7 +1363,7 @@ static void ActorLookAt() {
 			fZ = 0.0f;
 
 		Graphics::Vector3d vector;
-		vector.set(fX, fY, fZ);
+		vector.set(fX, fY, fZ); //FIXME: This values are wrong when looking at something manny has in his hand
 		actor->setLookAtVector(vector);
 	} else if (lua_isuserdata(xObj) && lua_tag(xObj) == MKID_BE('ACTR')) { // look at another actor
 		Actor *lookedAct = static_cast<Actor *>(lua_getuserdata(xObj));
@@ -1408,7 +1411,7 @@ static void TurnActorTo() {
 	}
 
 	// TODO turning stuff below is not complete
-	
+
 	// Find the vector pointing from the actor to the desired location
 	Graphics::Vector3d turnToVector(x, y, z);
 	Graphics::Vector3d lookVector = turnToVector - actor->pos();
@@ -1447,7 +1450,7 @@ static void PointActorAt() {
 	}
 
 	// TODO turning stuff below is not complete
-	
+
 	// Find the vector pointing from the actor to the desired location
 	Graphics::Vector3d turnToVector(x, y, z);
 	Graphics::Vector3d lookVector = turnToVector - actor->pos();
@@ -1715,12 +1718,13 @@ static void GetVisibleThings() {
 
 	// TODO verify code below
 	for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); ++i) {
-		if (!(*i)->inSet(g_grim->sceneName()))
+		Actor *a = i->_value;
+		if (!i->_value->inSet(g_grim->sceneName()))
 			continue;
 		// Consider the active actor visible
-		if (actor == (*i) || actor->angleTo(*(*i)) < 90) {
+		if (actor == a || actor->angleTo(*a) < 90) {
 			lua_pushobject(result);
-			lua_pushusertag(*i, MKID_BE('ACTR'));
+			lua_pushusertag(a, MKID_BE('ACTR'));
 			lua_pushnumber(1);
 			lua_settable();
 		}
@@ -2612,6 +2616,7 @@ static void FileFindDispose() {
 	if (g_filesiter)
 		g_filesiter->begin();
 	g_listfiles.clear();
+	g_filesiter = NULL;
 }
 
 static void luaFileFindNext() {
@@ -2630,7 +2635,7 @@ static void luaFileFindFirst() {
 		lua_pushnil();
 		return;
 	}
-		
+
 	FileFindDispose();
 
 	const char *extension = lua_getstring(extObj);
@@ -2716,7 +2721,7 @@ void GetControlState() {
 
 static void killBitmapPrimitives(Bitmap *bitmap) {
 	for (GrimEngine::PrimitiveListType::const_iterator i = g_grim->primitivesBegin(); i != g_grim->primitivesEnd(); ++i) {
-		PrimitiveObject *p = *i;
+		PrimitiveObject *p = i->_value;
 		if (p->isBitmap() && p->getBitmapHandle() == bitmap) {
 			g_grim->killPrimitiveObject(p);
 			break;
@@ -2731,7 +2736,9 @@ static void GetImage() {
 		return;
 	}
 	const char *bitmapName = lua_getstring(nameObj);
-	Bitmap *image = g_resourceloader->loadBitmap(bitmapName);
+	BitmapPtr ptr = g_resourceloader->getBitmap(bitmapName).object();
+	Bitmap *image = ptr.object();
+	image->ref();
 	lua_pushusertag(image, MKID_BE('VBUF'));
 }
 
@@ -2740,6 +2747,7 @@ static void FreeImage() {
 	if (!lua_isuserdata(param) || lua_tag(param) != MKID_BE('VBUF'))
 		return;
 	Bitmap *bitmap = static_cast<Bitmap *>(lua_getuserdata(param));
+	bitmap->deref();
 	killBitmapPrimitives(bitmap);
 }
 
@@ -2988,11 +2996,11 @@ static void GetTextObjectDimensions() {
 static void ExpireText() {
 	// Expire all the text objects
 	for (GrimEngine::TextListType::const_iterator i = g_grim->textsBegin(); i != g_grim->textsEnd(); ++i)
-		(*i)->setDisabled(true);
+		i->_value->setDisabled(true);
 
 	// Cleanup actor references to deleted text objects
 	for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); ++i)
-		(*i)->lineCleanup();
+		i->_value->lineCleanup();
 }
 
 static void GetTextCharPosition() {
@@ -3233,7 +3241,7 @@ static void ChangePrimitive() {
 	psearch = static_cast<PrimitiveObject *>(lua_getuserdata(param1));
 
 	for (GrimEngine::PrimitiveListType::const_iterator i = g_grim->primitivesBegin(); i != g_grim->primitivesEnd(); ++i) {
-		PrimitiveObject *p = *i;
+		PrimitiveObject *p = i->_value;
 		if (p->getP1().x == psearch->getP1().x && p->getP2().x == psearch->getP2().x
 				&& p->getP1().y == psearch->getP1().y && p->getP2().y == psearch->getP2().y) {
 			pmodify = p;
@@ -3441,6 +3449,7 @@ static void NewObjectState() {
 	bool transparency = getbool(5);
 
 	ObjectState *state = new ObjectState(setupID, pos, bitmap, zbitmap, transparency);
+	g_grim->registerObjectState(state);
 	g_grim->currScene()->addObjectState(state);
 	lua_pushusertag(state, MKID_BE('STAT'));
 }
@@ -3451,6 +3460,7 @@ static void FreeObjectState() {
 		return;
 	ObjectState *state =  static_cast<ObjectState *>(lua_getuserdata(param));
 	g_grim->currScene()->deleteObjectState(state);
+	cout<<"free "<<state<<endl;
 }
 
 static void SendObjectToBack() {
@@ -3636,10 +3646,11 @@ static void LockFont() {
 	lua_Object param1 = lua_getparam(1);
 	if (lua_isstring(param1)) {
 		const char *fontName = lua_getstring(param1);
-		Font *result = g_resourceloader->loadFont(fontName);
+		FontPtr ptr = g_resourceloader->getFont(fontName);
+		Font *result = ptr.object();
+		result->ref();
 		if (result) {
 			lua_pushusertag(result, MKID_BE('FONT'));
-			g_grim->registerFont(result);
 			return;
 		}
 	}

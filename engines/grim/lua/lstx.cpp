@@ -371,7 +371,7 @@ static void add_localvar (TaggedString *name)
 }
 
 
-/* 
+/*
 ** dotted variables <a.x> must be stored like regular indexed vars <a["x"]>
 */
 static vardesc var2store (vardesc var)

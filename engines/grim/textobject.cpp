@@ -30,6 +30,8 @@
 
 namespace Grim {
 
+int TextObject::s_id = 0;
+
 Common::String parseMsgText(const char *msg, char *msgId);
 
 TextObjectDefaults sayLineDefaults;
@@ -37,7 +39,7 @@ TextObjectDefaults printLineDefaults;
 TextObjectDefaults blastTextDefaults;
 
 TextObject::TextObject(bool blastDraw, bool isSpeech) :
-		_created(false), _x(0), _y(0), _width(0), _height(0), _justify(0),
+		Object(), _created(false), _x(0), _y(0), _width(0), _height(0), _justify(0),
 		_numberLines(1), _disabled(false), _font(NULL), _textBitmap(NULL),
 		_bitmapWidthPtr(NULL), _textObjectHandle(NULL) {
 	memset(_textID, 0, sizeof(_textID));
@@ -46,6 +48,14 @@ TextObject::TextObject(bool blastDraw, bool isSpeech) :
 	_fgColor._vals[2] = 0;
 	_blastDraw = blastDraw;
 	_isSpeech = isSpeech;
+
+	++s_id;
+	_id = s_id;
+}
+
+TextObject::TextObject() :
+	Object(), _textObjectHandle(NULL), _bitmapWidthPtr(NULL) {
+
 }
 
 void TextObject::setText(const char *text) {
@@ -64,26 +74,53 @@ TextObject::~TextObject() {
 	destroyBitmap();
 }
 
-void TextObject::saveState(SaveGame *savedState) {
-	int32 size;
-	PointerId ptr;
+void TextObject::saveState(SaveGame *state) const {
+//     state->writeLESint32(_created);
 
-	size = strlen(_textID);
-	savedState->writeLESint32(size);
-	savedState->write(_textID, size);
-	ptr = makeIdFromPointer(_font);
-	savedState->writeLEUint32(ptr.low);
-	savedState->writeLEUint32(ptr.hi);
-	savedState->writeLEUint32(_blastDraw);
-	savedState->writeLEUint32(_disabled);
-	savedState->writeLEUint32(_justify);
-	savedState->writeLEUint32(_width);
-	savedState->writeLEUint32(_height);
-	savedState->writeLEUint32(_x);
-	savedState->writeLEUint32(_y);
-	savedState->writeLEUint32(_fgColor.red());
-	savedState->writeLEUint32(_fgColor.green());
-	savedState->writeLEUint32(_fgColor.blue());
+	state->writeColor(_fgColor);
+
+	state->writeLESint32(_x);
+	state->writeLESint32(_y);
+	state->writeLESint32(_width);
+	state->writeLESint32(_height);
+	state->writeLESint32(_justify);
+	state->writeLESint32(_numberLines);
+
+	state->writeLESint32(_disabled);
+	state->writeLESint32(_blastDraw);
+	state->writeLESint32(_isSpeech);
+
+	state->writeString(_font->getFilename());
+
+	state->write(_textID, 256);
+}
+
+bool TextObject::restoreState(SaveGame *state) {
+//     _created = state->readLESint32();
+
+	_fgColor = state->readColor();
+
+	_x = state->readLESint32();
+	_y = state->readLESint32();
+	_width = state->readLESint32();
+	_height = state->readLESint32();
+	_justify = state->readLESint32();
+	_numberLines = state->readLESint32();
+
+	_disabled = state->readLESint32();
+	_blastDraw = state->readLESint32();
+	_isSpeech = state->readLESint32();
+
+	_font = g_resourceloader->getFont(state->readString().c_str());
+
+	state->read(_textID, 256);
+
+	_created = false;
+	_textBitmap = NULL;
+	_textObjectHandle = NULL;
+	_bitmapWidthPtr = NULL;
+
+	return true;
 }
 
 void TextObject::setDefaults(TextObjectDefaults *defaults) {
@@ -178,7 +215,7 @@ void TextObject::createBitmap() {
 					lineWidth -= MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
 					message.deleteLastChar();
 					--i;
-				} 
+				}
 			} else if (msg[i] != ' ') { // if it is a unique word
 				int dashWidth = MAX(_font->getCharWidth('-'), _font->getCharDataWidth('-'));
 				while (lineWidth + dashWidth > maxWidth) {

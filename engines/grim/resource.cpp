@@ -30,6 +30,9 @@
 #include "engines/grim/material.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/lipsync.h"
+#include "engines/grim/savegame.h"
+#include "engines/grim/actor.h"
+
 
 namespace Grim {
 
@@ -108,7 +111,7 @@ Block *ResourceLoader::getFileFromCache(const char *filename) {
 ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const char *filename) {
 	if (_cache.empty())
 		return NULL;
-	
+
 	if (_cacheDirty) {
 		qsort(_cache.begin(), _cache.size(), sizeof(ResourceCache), sortCallback);
 		_cacheDirty = false;
@@ -130,6 +133,20 @@ Block *ResourceLoader::getFileBlock(const char *filename) const {
 		return NULL;
 	else
 		return l->getFileBlock(filename);
+}
+
+Block *ResourceLoader::getBlock(const char *filename) {
+    Common::String fname = filename;
+    fname.toLowercase();
+    Block *b = getFileFromCache(fname.c_str());
+    if (!b) {
+        b = getFileBlock(fname.c_str());
+		if (b) {
+			putIntoCache(fname, b);
+		}
+    }
+
+    return b;
 }
 
 LuaFile *ResourceLoader::openNewStreamLuaFile(const char *filename) const {
@@ -182,6 +199,7 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 	}
 
 	Bitmap *result = g_grim->registerBitmap(filename, b->data(), b->len());
+	_bitmaps.push_back(result);
 
 	return result;
 }
@@ -192,12 +210,14 @@ CMap *ResourceLoader::loadColormap(const char *filename) {
 	Block *b = getFileFromCache(fname.c_str());
 	if (!b) {
 		b = getFileBlock(fname.c_str());
-		if (!b)
+		if (!b) {
 			error("Could not find colormap %s", filename);
+        }
 		putIntoCache(fname, b);
 	}
 
 	CMap *result = new CMap(filename, b->data(), b->len());
+	_colormaps.push_back(result);
 
 	return result;
 }
@@ -209,10 +229,11 @@ Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
 	if (!b) {
 		b = getFileBlock(fname.c_str());
 		if (!b)
-			error("Could not find costume %s", filename);
+			error("Could not find costume \"%s\"", filename);
 		putIntoCache(fname, b);
 	}
 	Costume *result = new Costume(filename, b->data(), b->len(), prevCost);
+	_costumes.push_back(result);
 
 	return result;
 }
@@ -229,6 +250,7 @@ Font *ResourceLoader::loadFont(const char *filename) {
 	}
 
 	Font *result = new Font(filename, b->data(), b->len());
+	_fonts.push_back(result);
 
 	return result;
 }
@@ -245,6 +267,7 @@ KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 	}
 
 	KeyframeAnim *result = new KeyframeAnim(filename, b->data(), b->len());
+	_keyframeAnims.push_back(result);
 
 	return result;
 }
@@ -265,6 +288,7 @@ LipSync *ResourceLoader::loadLipSync(const char *filename) {
 	// Some lipsync files have no data
 	if (result->isValid()) {
 		putIntoCache(fname, b);
+		_lipsyncs.push_back(result);
 	} else {
 		delete result;
 		delete b;
@@ -274,7 +298,7 @@ LipSync *ResourceLoader::loadLipSync(const char *filename) {
 	return result;
 }
 
-Material *ResourceLoader::loadMaterial(const char *filename, const CMap *c) {
+Material *ResourceLoader::loadMaterial(const char *filename, CMap *c) {
 	Common::String fname = Common::String(filename);
 	fname.toLowercase();
 	Block *b = getFileFromCache(fname.c_str());
@@ -286,11 +310,12 @@ Material *ResourceLoader::loadMaterial(const char *filename, const CMap *c) {
 	}
 
 	Material *result = new Material(fname.c_str(), b->data(), b->len(), c);
+	_materials.push_back(result);
 
 	return result;
 }
 
-Model *ResourceLoader::loadModel(const char *filename, const CMap *c) {
+Model *ResourceLoader::loadModel(const char *filename, CMap *c) {
 	Common::String fname = filename;
 	fname.toLowercase();
 	Block *b = getFileFromCache(fname.c_str());
@@ -302,6 +327,7 @@ Model *ResourceLoader::loadModel(const char *filename, const CMap *c) {
 	}
 
 	Model *result = new Model(filename, b->data(), b->len(), c);
+	_models.push_back(result);
 
 	return result;
 }
@@ -324,6 +350,126 @@ void ResourceLoader::uncache(const char *filename) {
 			_cacheDirty = true;
 		}
 	}
+}
+
+void ResourceLoader::uncacheMaterial(Material *mat) {
+	_materials.remove(mat);
+}
+
+void ResourceLoader::uncacheBitmap(Bitmap *bitmap) {
+	_bitmaps.remove(bitmap);
+}
+
+void ResourceLoader::uncacheModel(Model *m) {
+	_models.remove(m);
+}
+
+void ResourceLoader::uncacheColormap(CMap *c) {
+	_colormaps.remove(c);
+}
+
+void ResourceLoader::uncacheKeyframe(KeyframeAnim *k) {
+	_keyframeAnims.remove(k);
+}
+
+void ResourceLoader::uncacheFont(Font *f) {
+	_fonts.remove(f);
+}
+
+void ResourceLoader::uncacheCostume(Costume *c) {
+	_costumes.remove(c);
+}
+
+void ResourceLoader::uncacheLipSync(LipSync *s) {
+	_lipsyncs.remove(s);
+}
+
+MaterialPtr ResourceLoader::getMaterial(const char *fname, CMap *c) {
+	for (Common::List<Material *>::const_iterator i = _materials.begin(); i != _materials.end(); ++i) {
+		Material *m = *i;
+		if (strcmp(fname, m->_fname.c_str()) == 0 && *m->_cmap == *c) {
+			return m;
+		}
+	}
+
+	return loadMaterial(fname, c);
+}
+
+BitmapPtr ResourceLoader::getBitmap(const char *fname) {
+	for (Common::List<Bitmap *>::const_iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
+		Bitmap *b = *i;
+		if (strcmp(fname, b->filename()) == 0) {
+			return b;
+		}
+	}
+
+	return loadBitmap(fname);
+}
+
+ModelPtr ResourceLoader::getModel(const char *fname, CMap *c) {
+	for (Common::List<Model *>::const_iterator i = _models.begin(); i != _models.end(); ++i) {
+		Model *m = *i;
+		if (strcmp(fname, m->_fname.c_str()) == 0 && *m->_cmap == *c) {
+			return m;
+		}
+	}
+
+	return loadModel(fname, c);
+}
+
+CMapPtr ResourceLoader::getColormap(const char *fname) {
+	for (Common::List<CMap *>::const_iterator i = _colormaps.begin(); i != _colormaps.end(); ++i) {
+		CMap *c = *i;
+		if (strcmp(fname, c->_fname.c_str()) == 0) {
+			return c;
+		}
+	}
+
+	return loadColormap(fname);
+}
+
+KeyframeAnimPtr ResourceLoader::getKeyframe(const char *fname) {
+	for (Common::List<KeyframeAnim *>::const_iterator i = _keyframeAnims.begin(); i != _keyframeAnims.end(); ++i) {
+		KeyframeAnim *k = *i;
+		if (strcmp(fname, k->filename()) == 0) {
+			return k;
+		}
+	}
+
+	return loadKeyframe(fname);
+}
+
+FontPtr ResourceLoader::getFont(const char *fname) {
+	for (Common::List<Font *>::const_iterator i = _fonts.begin(); i != _fonts.end(); ++i) {
+		Font *f = *i;
+		if (strcmp(fname, f->getFilename().c_str()) == 0) {
+			return f;
+		}
+	}
+
+	return loadFont(fname);
+}
+
+CostumePtr ResourceLoader::getCostume(const char *fname, Costume *prev) {
+	for (Common::List<Costume *>::const_iterator i = _costumes.begin(); i != _costumes.end(); ++i) {
+		Costume *c = *i;
+		if (strcmp(fname, c->filename()) == 0) {
+			return c;
+		}
+	}
+
+	return loadCostume(fname, prev);
+}
+
+LipSyncPtr ResourceLoader::getLipSync(const char *fname) {
+	for (Common::List<LipSync *>::const_iterator i = _lipsyncs.begin(); i != _lipsyncs.end(); ++i) {
+		LipSync *l = *i;
+		if (strcmp(fname, l->filename()) == 0) {
+			return l;
+		}
+	}
+
+	return loadLipSync(fname);
 }
 
 } // end of namespace Grim

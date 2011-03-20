@@ -249,6 +249,7 @@ void GfxOpenGL::startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, f
 		// TODO find out why shadowMask at device in woods is null
 		if (!_currentShadowArray->shadowMask) {
 			_currentShadowArray->shadowMask = new byte[_screenWidth * _screenHeight];
+			_currentShadowArray->shadowMaskSize = _screenWidth * _screenHeight;
 		}
 		SectorListType::iterator i = _currentShadowArray->planeList.begin();
 		Sector *shadowSector = *i;

@@ -100,6 +100,46 @@ void LuaFile::seek(int32 pos, int whence) {
 		assert(0);
 }
 
+void LuaFile::saveState(SaveGame *state) const {
+	state->writeString(_name);
+	state->writeString(_filename);
+
+	if (_in) {
+		state->writeLESint32(1);
+	} else {
+		state->writeLESint32(0);
+	}
+	if (_out) {
+		state->writeLESint32(1);
+	} else {
+		state->writeLESint32(0);
+	}
+
+	state->writeLESint32(_stdin);
+	state->writeLESint32(_stdout);
+	state->writeLESint32(_stderr);
+}
+
+bool LuaFile::restoreState(SaveGame *state) {
+	_name = state->readString();;
+	_filename = state->readString();
+
+	if (state->readLESint32()) {
+		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+		_in = saveFileMan->openForLoading(_filename.c_str());
+	}
+	if (state->readLESint32()) {
+		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+		_out = saveFileMan->openForSaving(_filename.c_str());
+	}
+
+	_stdin = state->readLESint32();
+	_stdout = state->readLESint32();
+	_stderr = state->readLESint32();
+
+	return true;
+}
+
 static int32 gettag(int32 i) {
 	return (int32)lua_getnumber(lua_getparam(i));
 }
@@ -179,6 +219,7 @@ static void io_readfrom() {
 		else {
 			current = new LuaFile();
 			current->_in = inFile;
+			current->_filename = s;
 		}
 		if (!current) {
 			delete current;
@@ -217,6 +258,7 @@ static void io_writeto() {
 		}
 		current = new LuaFile();
 		current->_out = outFile;
+		current->_filename = s;
 		setreturn(current, FOUTPUT);
 	}
 }
@@ -243,6 +285,7 @@ static void io_appendto() {
 		outFile->write(buf, size);
 		LuaFile *current = new LuaFile();
 		current->_out = outFile;
+		current->_filename = s;
 		setreturn(current, FOUTPUT);
 	}
 	delete[] buf;
@@ -351,7 +394,7 @@ static void lua_printstack() {
 		case 't':
 			sprintf(buf, "`%s' tag method", name);
 			break;
-		default: 
+		default:
 			{
 				if (linedefined == 0)
 					sprintf(buf, "main of %s", filename);

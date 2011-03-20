@@ -127,17 +127,18 @@ public:
 	void makeCurrentSetup(int num);
 
 	// Scene registration
-	typedef Common::List<Scene *> SceneListType;
+	typedef Common::HashMap<int, Scene *> SceneListType;
 	SceneListType::const_iterator scenesBegin() const {
 		return _scenes.begin();
 	}
 	SceneListType::const_iterator scenesEnd() const {
 		return _scenes.end();
 	}
-	void registerScene(Scene *a) { _scenes.push_back(a); }
-	void removeScene(Scene *a) {
-		_scenes.remove(a);
-	}
+	void registerScene(Scene *a);
+	void removeScene(Scene *a);
+	void killScenes();
+	int sceneId(Scene *s) const;
+	Scene *scene(int id) const;
 
 	void flagRefreshShadowMask(bool flag) {
 		_refreshShadowMask = flag;
@@ -156,43 +157,44 @@ public:
 		_bitmaps.push_back(b);
 		return b;
 	}
+	void registerBitmap(Bitmap *bitmap) {
+        _bitmaps.push_back(bitmap);
+	}
 	void killBitmap(Bitmap *b) { _bitmaps.remove(b); }
 
 	// Actor registration
-	typedef Common::List<Actor *> ActorListType;
+	typedef Common::HashMap<int, Actor *> ActorListType;
 	ActorListType::const_iterator actorsBegin() const {
 		return _actors.begin();
 	}
 	ActorListType::const_iterator actorsEnd() const {
 		return _actors.end();
 	}
-	void registerActor(Actor *a) { _actors.push_back(a); }
-	void killActor(Actor *a) { _actors.remove(a); }
+	void registerActor(Actor *a);
+	void killActor(Actor *a);
+	int actorId(Actor *a) const;
+	Actor *actor(int id) const;
+
 	void setSelectedActor(Actor *a) { _selectedActor = a; }
 	Actor *selectedActor() { return _selectedActor; }
+    void killActors();
 
-	// Text Object Registration
-	typedef Common::List<TextObject *> TextListType;
+    // Text Object Registration
+	typedef Common::HashMap<int, TextObject *> TextListType;
 	TextListType::const_iterator textsBegin() const {
 		return _textObjects.begin();
 	}
 	TextListType::const_iterator textsEnd() const {
 		return _textObjects.end();
 	}
-	void registerTextObject(TextObject *a) { _textObjects.push_back(a); }
-	void killTextObject(TextObject *a) {
-		_textObjects.remove(a);
-		delete a;
-	}
-	void killTextObjects() {
-		while (!_textObjects.empty()) {
-			delete _textObjects.back();
-			_textObjects.pop_back();
-		}
-	}
+	void registerTextObject(TextObject *a);
+	void killTextObject(TextObject *a);
+	void killTextObjects();
+	int textObjectId(TextObject *t) const;
+	TextObject *textObject(int id) const;
 
 	// Primitives Object Registration
-	typedef Common::List<PrimitiveObject *> PrimitiveListType;
+	typedef Common::HashMap<int, PrimitiveObject *> PrimitiveListType;
 	PrimitiveListType::const_iterator primitivesBegin() const {
 		return _primitiveObjects.begin();
 	}
@@ -200,29 +202,31 @@ public:
 		return _primitiveObjects.end();
 	}
 
-	void registerPrimitiveObject(PrimitiveObject *a) { _primitiveObjects.push_back(a); }
-	void killPrimitiveObject(PrimitiveObject *a) {
-		_primitiveObjects.remove(a);
-	}
-	void killPrimitiveObjects() {
-		while (!_primitiveObjects.empty()) {
-			delete _primitiveObjects.back();
-			_primitiveObjects.pop_back();
-		}
-	}
+	void registerPrimitiveObject(PrimitiveObject *a);
+	void killPrimitiveObject(PrimitiveObject *a);
+	void killPrimitiveObjects();
+	int primitiveObjectId(PrimitiveObject *p) const;
+	PrimitiveObject *primitiveObject(int id) const;
 
-	void registerFont(Font *a) { _fonts.push_back(a); }
-	void unregisterFont(Font *a) {
-		_fonts.remove(a);
-	}
+	void registerObjectState(ObjectState *o);
+	void killObjectState(ObjectState *o);
+	void killObjectStates();
+	int objectStateId(ObjectState *o) const;
+	ObjectState *objectState(int id) const;
 
 	void savegameSave();
-	void savegameRestore();
 	void saveActors(SaveGame *savedState);
-	void saveFonts(SaveGame *savedState);
 	void saveTextObjects(SaveGame *savedState);
 	void savePrimitives(SaveGame *savedState);
 	void saveScenes(SaveGame *savedState);
+	void saveObjectStates(SaveGame *savedState);
+
+	void savegameRestore();
+	void restoreActors(SaveGame *savedState);
+	void restoreTextObjects(SaveGame *savedState);
+	void restorePrimitives(SaveGame *savedState);
+	void restoreScenes(SaveGame *savedState);
+	void restoreObjectStates(SaveGame *savedState);
 
 	void savegameCallback();
 	static void savegameReadStream(void *data, int32 size);
@@ -274,8 +278,8 @@ private:
 	Actor *_selectedActor;
 	TextListType _textObjects;
 	PrimitiveListType _primitiveObjects;
-	Common::List<Font *> _fonts;
 	Common::List<Bitmap *> _bitmaps;
+	Common::HashMap<int, ObjectState *> _objectStates;
 
 	int _gameFlags;
 };

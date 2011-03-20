@@ -355,6 +355,7 @@ void GfxTinyGL::startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, f
 		// TODO find out why shadowMask at device in woods is null
 		if (!_currentShadowArray->shadowMask) {
 			_currentShadowArray->shadowMask = new byte[_screenWidth * _screenHeight];
+			_currentShadowArray->shadowMaskSize = _screenWidth * _screenHeight;
 		}
 		assert(_currentShadowArray->shadowMask);
 		//tglSetShadowColor(255, 255, 255);
@@ -400,6 +401,7 @@ void GfxTinyGL::drawShadowPlanes() {
 	tglEnable(TGL_SHADOW_MASK_MODE);
 	if (!_currentShadowArray->shadowMask) {
 		_currentShadowArray->shadowMask = new byte[_screenWidth * _screenHeight];
+		_currentShadowArray->shadowMaskSize = _screenWidth * _screenHeight;
 	}
 	memset(_currentShadowArray->shadowMask, 0, _screenWidth * _screenHeight);
 

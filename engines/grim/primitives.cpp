@@ -30,29 +30,32 @@
 
 namespace Grim {
 
-PrimitiveObject::PrimitiveObject() {
-	memset(&_color, 0, sizeof(Color));
+int PrimitiveObject::s_id = 0;
+
+PrimitiveObject::PrimitiveObject() :
+	Object() {
+// 	memset(&_color, 0, sizeof(Color));
 	_filled = false;
 	_type = 0;
 	_bitmap = NULL;
+	++s_id;
+	_id = s_id;
 }
 
 PrimitiveObject::~PrimitiveObject() {
-	if (_type == 2)
-		g_driver->destroyBitmap(_bitmap);
+	if (_bitmap && _type == 2)
+		g_driver->destroyBitmap(_bitmap.object());
 }
 
-void PrimitiveObject::saveState(SaveGame *savedState) {
-	PointerId ptr;
-
+void PrimitiveObject::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_type);
-	savedState->writeLEUint32(_color.red());
-	savedState->writeLEUint32(_color.green());
-	savedState->writeLEUint32(_color.blue());
+
+	savedState->writeColor(_color);
+
 	savedState->writeLEUint32(_filled);
-	ptr = makeIdFromPointer(_bitmap);
-	savedState->writeLEUint32(ptr.low);
-	savedState->writeLEUint32(ptr.hi);
+
+	savedState->writeCharString(_bitmap->filename());
+
 	savedState->writeLEUint32(_p1.x);
 	savedState->writeLEUint32(_p1.y);
 	savedState->writeLEUint32(_p2.x);
@@ -61,6 +64,29 @@ void PrimitiveObject::saveState(SaveGame *savedState) {
 	savedState->writeLEUint32(_p3.y);
 	savedState->writeLEUint32(_p4.x);
 	savedState->writeLEUint32(_p4.y);
+}
+
+bool PrimitiveObject::restoreState(SaveGame *savedState) {
+	_type = savedState->readLESint32();
+
+	_color = savedState->readColor();
+
+	_filled = savedState->readLEUint32();
+
+	const char *name = savedState->readCharString();
+	_bitmap = g_resourceloader->getBitmap(name);
+	delete[] name;
+
+	_p1.x = savedState->readLEUint32();
+	_p1.y = savedState->readLEUint32();
+	_p2.x = savedState->readLEUint32();
+	_p2.y = savedState->readLEUint32();
+	_p3.x = savedState->readLEUint32();
+	_p3.y = savedState->readLEUint32();
+	_p4.x = savedState->readLEUint32();
+	_p4.y = savedState->readLEUint32();
+
+	return true;
 }
 
 void PrimitiveObject::createRectangle(Common::Point p1, Common::Point p2, Color color, bool filled) {
@@ -77,7 +103,7 @@ void PrimitiveObject::createBitmap(Bitmap *bitmap, Common::Point p, bool /*trans
 	_bitmap->setX(p.x);
 	_bitmap->setY(p.y);
 	// transparent: what to do ?
-	g_driver->createBitmap(_bitmap);
+	g_driver->createBitmap(bitmap);
 }
 
 void PrimitiveObject::createLine(Common::Point p1, Common::Point p2, Color color) {
@@ -102,7 +128,7 @@ void PrimitiveObject::draw() {
 	if (_type == RECTANGLE)
 		g_driver->drawRectangle(this);
 	else if (_type == BITMAP)
-		g_driver->drawBitmap(_bitmap);
+		g_driver->drawBitmap(_bitmap.object());
 	else if (_type == LINE)
 		g_driver->drawLine(this);
 	else if (_type == POLYGON)

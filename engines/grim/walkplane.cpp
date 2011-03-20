@@ -28,8 +28,52 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/walkplane.h"
 #include "engines/grim/textsplit.h"
+#include "engines/grim/savegame.h"
 
 namespace Grim {
+
+void Sector::saveState(SaveGame *savedState) const {
+	savedState->writeLESint32(_numVertices);
+	savedState->writeLESint32(_id);
+	savedState->writeLESint32(_type);
+	savedState->writeLESint32(_visible);
+	savedState->writeFloat(_height);
+
+	const char *str = _name.c_str();
+	int32 size = strlen(str);
+	savedState->writeLESint32(size);
+	savedState->write(str, size);
+
+	for (int i = 0; i < _numVertices + 1; ++i) {
+		savedState->writeVector3d(_vertices[i]);
+	}
+
+	savedState->writeVector3d(_normal);
+}
+
+bool Sector::restoreState(SaveGame *savedState) {
+	_numVertices = savedState->readLESint32();
+	_id          = savedState->readLESint32();
+	_type        = savedState->readLESint32();
+	_visible     = savedState->readLESint32();
+	_height      = savedState->readFloat();
+
+	int32 size   = savedState->readLESint32();
+	char *str = new char[size+1];
+	savedState->read(str, size);
+	str[size]='\0';
+	_name = str;
+	delete[] str;
+
+	_vertices = new Graphics::Vector3d[_numVertices + 1];
+	for (int i = 0; i < _numVertices + 1; ++i) {
+		_vertices[i] = savedState->readVector3d();
+	}
+
+	_normal = savedState->readVector3d();
+
+	return true;
+}
 
 void Sector::load(TextSplitter &ts) {
 	char buf[256];
@@ -108,7 +152,6 @@ bool Sector::isPointInSector(Graphics::Vector3d point) const {
 	// z-coordinates so the railing in Cafe Calavera works properly.
 	if (_height != 0.0f && _height != 9999.0f) {
 		bool heightOK = false;
-
 		// Handle height above Z
 		if ((point.z() >= _vertices[0].z()) && (point.z() <= _vertices[0].z() + _height))
 			heightOK = true;

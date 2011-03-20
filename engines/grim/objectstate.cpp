@@ -26,37 +26,80 @@
 #include "engines/grim/objectstate.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/lua.h"
+#include "engines/grim/grim.h"
 
 namespace Grim {
 
+int ObjectState::s_id = 0;
+
 ObjectState::ObjectState(int setup, ObjectState::Position position, const char *bitmap, const char *zbitmap, bool transparency) :
-		_setupID(setup), _pos(position), _visibility(false) {
-	_bitmap = g_resourceloader->loadBitmap(bitmap);
-	if (zbitmap)
-		_zbitmap = g_resourceloader->loadBitmap(zbitmap);
-	else
+		Object(), _setupID(setup), _pos(position), _visibility(false) {
+	_bitmap = g_resourceloader->getBitmap(bitmap);
+	if (zbitmap) {
+		_zbitmap = g_resourceloader->getBitmap(zbitmap);
+	} else
 		_zbitmap = NULL;
+
+	++s_id;
+	_id = s_id;
+}
+
+ObjectState::ObjectState() :
+		Object(), _bitmap(NULL), _zbitmap(NULL) {
+
 }
 
 ObjectState::~ObjectState() {
+	g_grim->killObjectState(this);
 //	g_resourceloader->uncache(_bitmap->getFilename());
 //	if (_zbitmap)
 //		g_resourceloader->uncache(_zbitmap->getFilename());
 }
 
-void ObjectState::saveState(SaveGame *savedState) {
-	PointerId ptr;
-
+void ObjectState::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_visibility);
 	savedState->writeLEUint32(_setupID);
 	savedState->writeLEUint32(_pos);
 
-	ptr = makeIdFromPointer(_bitmap);
-	savedState->writeLEUint32(ptr.low);
-	savedState->writeLEUint32(ptr.hi);
-	ptr = makeIdFromPointer(_zbitmap);
-	savedState->writeLEUint32(ptr.low);
-	savedState->writeLEUint32(ptr.hi);
+	//_bitmap
+	if (_bitmap) {
+		savedState->writeLEUint32(1);
+		savedState->writeCharString(_bitmap->filename());
+	} else {
+		savedState->writeLEUint32(0);
+	}
+
+	//_zbitmap
+	if (_zbitmap) {
+		savedState->writeLEUint32(1);
+		savedState->writeCharString(_zbitmap->filename());
+	} else {
+		savedState->writeLEUint32(0);
+	}
+}
+
+bool ObjectState::restoreState(SaveGame *savedState) {
+	_visibility = savedState->readLEUint32();
+	_setupID    = savedState->readLEUint32();
+	_pos        = (Position) savedState->readLEUint32();
+
+	if (savedState->readLEUint32()) {
+		const char *name = savedState->readCharString();
+		_bitmap = g_resourceloader->getBitmap(name);
+		delete[] name;
+	} else {
+		_bitmap = 0;
+	}
+
+	if (savedState->readLEUint32()) {
+		const char *name = savedState->readCharString();
+		_zbitmap = g_resourceloader->getBitmap(name);
+		delete[] name;
+	} else {
+		_zbitmap = 0;
+	}
+
+	return true;
 }
 
 } // end of namespace Grim

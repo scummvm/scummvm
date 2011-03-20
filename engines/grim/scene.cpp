@@ -28,10 +28,13 @@
 #include "engines/grim/colormap.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/savegame.h"
+#include "engines/grim/lua.h"
 
 #include "engines/grim/imuse/imuse.h"
 
 namespace Grim {
+
+int Scene::s_id = 0;
 
 Scene::Scene(const char *sceneName, const char *buf, int len) :
 		_locked(false), _name(sceneName), _enableLights(false) {
@@ -40,15 +43,15 @@ Scene::Scene(const char *sceneName, const char *buf, int len) :
 
 	ts.expectString("section: colormaps");
 	ts.scanString(" numcolormaps %d", 1, &_numCmaps);
-	_cmaps = new CMap*[_numCmaps];
+	_cmaps = new CMapPtr[_numCmaps];
 	char cmap_name[256];
 	for (int i = 0; i < _numCmaps; i++) {
 		ts.scanString(" colormap %256s", 1, cmap_name);
-		_cmaps[i] = g_resourceloader->loadColormap(cmap_name);
+		_cmaps[i] = g_resourceloader->getColormap(cmap_name);
 	}
 
-	if (ts.checkString("section: objectstates")) {
-		ts.expectString("section: objectstates");
+	if (ts.checkString("section: object_states")) {
+		ts.expectString("section: object_states");
 		ts.scanString(" tot_objects %d", 1, &_numObjectStates);
 		char object_name[256];
 		for (int l = 0; l < _numObjectStates; l++) {
@@ -99,34 +102,199 @@ Scene::Scene(const char *sceneName, const char *buf, int len) :
 			_numSectors++;
 	}
 	// Allocate and fill an array of sector info
-	_sectors = new Sector[_numSectors];
+	_sectors = new Sector*[_numSectors];
 	ts.setLineNumber(sectorStart);
-	for (int i = 0; i < _numSectors; i++)
-		_sectors[i].load(ts);
+	for (int i = 0; i < _numSectors; i++) {
+        _sectors[i] = new Sector();
+		_sectors[i]->load(ts);
+    }
+
+    ++s_id;
+	_id = s_id;
+}
+
+Scene::Scene() :
+	_cmaps(NULL) {
+
 }
 
 Scene::~Scene() {
-	delete[] _cmaps;
-	delete[] _setups;
-	delete[] _lights;
-	delete[] _sectors;
-	for (StateList::iterator i = _states.begin(); i != _states.end(); ++i)
-		delete (*i);
+	if (_cmaps) {
+		delete[] _cmaps;
+		delete[] _setups;
+		delete[] _lights;
+		for (int i = 0; i < _numSectors; ++i) {
+			delete _sectors[i];
+		}
+		delete[] _sectors;
+		for (StateList::iterator i = _states.begin(); i != _states.end(); ++i)
+			delete (*i);
+	}
 }
 
-void Scene::saveState(SaveGame *savedState) {
-	savedState->writeLESint32(_name.size());
-	savedState->write(_name.c_str(), _name.size());
+void Scene::saveState(SaveGame *savedState) const {
+	savedState->writeString(_name);
+	savedState->writeLESint32(_numCmaps);
+	for (int i = 0; i < _numCmaps; ++i) {
+		savedState->writeCharString(_cmaps[i]->filename());
+	}
 	savedState->writeLEUint32(_currSetup - _setups); // current setup id
 	savedState->writeLEUint32(_locked);
 	savedState->writeLEUint32(_enableLights);
 	savedState->writeLEUint32(_minVolume);
 	savedState->writeLEUint32(_maxVolume);
 
-	savedState->writeLEUint32(_numObjectStates);
-	for (StateList::iterator i = _states.begin(); i != _states.end(); ++i) {
-//		ObjectState *s = *i;
+	savedState->writeLEUint32(_states.size());
+	for (StateList::const_iterator i = _states.begin(); i != _states.end(); ++i) {
+		savedState->writeLEUint32(g_grim->objectStateId(*i));
 	}
+
+	//Setups
+	savedState->writeLEUint32(_numSetups);
+	for (int i = 0; i < _numSetups; ++i) {
+		Setup &set = _setups[i];
+
+		//name
+		savedState->writeString(set._name);
+
+		//bkgndBm
+		if (set._bkgndBm) {
+			savedState->writeLEUint32(1);
+			savedState->writeCharString(set._bkgndBm->filename());
+		} else {
+			savedState->writeLEUint32(0);
+		}
+
+		//bkgndZBm
+		if (set._bkgndZBm) {
+			savedState->writeLEUint32(1);
+			savedState->writeCharString(set._bkgndZBm->filename());
+		} else {
+			savedState->writeLEUint32(0);
+		}
+
+		savedState->writeVector3d(set._pos);
+		savedState->writeVector3d(set._interest);
+		savedState->writeFloat(set._roll);
+		savedState->writeFloat(set._fov);
+		savedState->writeFloat(set._nclip);
+		savedState->writeFloat(set._fclip);
+	}
+
+	//Sectors
+	savedState->writeLEUint32(_numSectors);
+	for (int i = 0; i < _numSectors; ++i) {
+		_sectors[i]->saveState(savedState);
+	}
+
+	//Lights
+	savedState->writeLEUint32(_numLights);
+	for (int i = 0; i < _numLights; ++i) {
+		Light &l = _lights[i];
+
+		//name
+		savedState->writeString(l._name);
+
+		//type
+		savedState->writeString(l._type);
+
+		savedState->writeVector3d(l._pos);
+		savedState->writeVector3d(l._dir);
+
+		savedState->writeColor(l._color);
+
+		savedState->writeFloat(l._intensity);
+		savedState->writeFloat(l._umbraangle);
+		savedState->writeFloat(l._penumbraangle);
+    }
+}
+
+bool Scene::restoreState(SaveGame *savedState) {
+	_name = savedState->readString();
+	_numCmaps = savedState->readLESint32();
+	_cmaps = new CMapPtr[_numCmaps];
+	for (int i = 0; i < _numCmaps; ++i) {
+		const char *str = savedState->readCharString();
+		_cmaps[i] = g_resourceloader->getColormap(str);
+		delete[] str;
+	}
+
+	int32 currSetupId = savedState->readLEUint32();
+	_locked           = savedState->readLEUint32();
+	_enableLights     = savedState->readLEUint32();
+	_minVolume        = savedState->readLEUint32();
+	_maxVolume        = savedState->readLEUint32();
+
+	_numObjectStates = savedState->readLEUint32();
+	_states.clear();
+	for (int i = 0; i < _numObjectStates; ++i) {
+		int32 id = savedState->readLEUint32();
+		ObjectState *o = g_grim->objectState(id);
+		_states.push_back(o);
+	}
+
+	//Setups
+	_numSetups = savedState->readLEUint32();
+	_setups = new Setup[_numSetups];
+	_currSetup = _setups + currSetupId;
+	for (int i = 0; i < _numSetups; ++i) {
+		Setup &set = _setups[i];
+
+		set._name = savedState->readString();
+
+		if (savedState->readLEUint32()) {
+			const char *fname = savedState->readCharString();
+			set._bkgndBm = g_resourceloader->getBitmap(fname);
+		} else {
+			set._bkgndBm = NULL;
+		}
+
+			if (savedState->readLEUint32()) {
+			const char *fname = savedState->readCharString();
+			set._bkgndZBm = g_resourceloader->getBitmap(fname);
+		} else {
+			set._bkgndZBm = NULL;
+		}
+
+		set._pos      = savedState->readVector3d();
+		set._interest = savedState->readVector3d();
+		set._roll     = savedState->readFloat();
+		set._fov      = savedState->readFloat();
+		set._nclip    = savedState->readFloat();
+		set._fclip    = savedState->readFloat();
+	}
+
+    //Sectors
+	_numSectors = savedState->readLEUint32();
+	if (_numSectors > 0) {
+		_sectors = new Sector*[_numSectors];
+		for (int i = 0; i < _numSectors; ++i) {
+			_sectors[i] = new Sector();
+			_sectors[i]->restoreState(savedState);
+		}
+	} else {
+		_sectors = NULL;
+	}
+
+	_numLights = savedState->readLEUint32();
+	_lights = new Light[_numLights];
+	for (int i = 0; i < _numLights; ++i) {
+		Light &l = _lights[i];
+
+		l._name = savedState->readString();
+		l._type = savedState->readString();
+
+		l._pos           = savedState->readVector3d();
+		l._dir           = savedState->readVector3d();
+
+		l._color         = savedState->readColor();
+
+		l._intensity     = savedState->readFloat();
+		l._umbraangle    = savedState->readFloat();
+		l._penumbraangle = savedState->readFloat();
+	}
+
+	return true;
 }
 
 void Scene::Setup::load(TextSplitter &ts) {
@@ -136,7 +304,7 @@ void Scene::Setup::load(TextSplitter &ts) {
 	_name = buf;
 
 	ts.scanString(" background %256s", 1, buf);
-	_bkgndBm = g_resourceloader->loadBitmap(buf);
+	_bkgndBm = g_resourceloader->getBitmap(buf);
 	if (!_bkgndBm) {
 		if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
 			printf("Unable to load scene bitmap: %s\n", buf);
@@ -152,7 +320,7 @@ void Scene::Setup::load(TextSplitter &ts) {
 		ts.scanString(" zbuffer %256s", 1, buf);
 		// Don't even try to load if it's the "none" bitmap
 		if (strcmp(buf, "<none>.lbm") != 0) {
-			_bkgndZBm = g_resourceloader->loadBitmap(buf);
+			_bkgndZBm = g_resourceloader->getBitmap(buf);
 			if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
 				printf("Loading scene z-buffer bitmap: %s\n", buf);
 		}
@@ -237,6 +405,19 @@ void Scene::setSetup(int num) {
 	g_grim->flagRefreshShadowMask(true);
 }
 
+void Scene::drawBackground() const {
+	if (_currSetup->_bkgndZBm) // Some screens have no zbuffer mask (eg, Alley)
+		_currSetup->_bkgndZBm->draw();
+
+	if (!_currSetup->_bkgndBm) {
+		// This should fail softly, for some reason jumping to the signpost (sg) will load
+		// the scene in such a way that the background isn't immediately available
+		warning("Background hasn't loaded yet for setup %s in %s!", _currSetup->_name.c_str(), _name.c_str());
+	} else {
+		_currSetup->_bkgndBm->draw();
+	}
+}
+
 void Scene::drawBitmaps(ObjectState::Position stage) {
 	for (StateList::iterator i = _states.begin(); i != _states.end(); ++i) {
 		if ((*i)->pos() == stage && _currSetup == _setups + (*i)->setupID())
@@ -246,8 +427,8 @@ void Scene::drawBitmaps(ObjectState::Position stage) {
 
 Sector *Scene::findPointSector(Graphics::Vector3d p, int flags) {
 	for (int i = 0; i < _numSectors; i++) {
-		Sector *sector = _sectors + i;
-		if ((sector->type() & flags) && sector->visible() && sector->isPointInSector(p))
+		Sector *sector = _sectors[i];
+		if (sector && (sector->type() & flags) && sector->visible() && sector->isPointInSector(p))
 			return sector;
 	}
 	return NULL;
@@ -259,7 +440,7 @@ void Scene::findClosestSector(Graphics::Vector3d p, Sector **sect, Graphics::Vec
 	float minDist = 0.0;
 
 	for (int i = 0; i < _numSectors; i++) {
-		Sector *sector = _sectors + i;
+		Sector *sector = _sectors[i];
 		if ((sector->type() & 0x1000) == 0 || !sector->visible())
 			continue;
 		Graphics::Vector3d closestPt = sector->closestPoint(p);

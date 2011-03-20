@@ -14,6 +14,7 @@
 #include "engines/grim/lua/lopcodes.h"
 #include "engines/grim/lua/lstring.h"
 #include "engines/grim/lua/lua.h"
+#include "engines/grim/actor.h"
 
 namespace Grim {
 
@@ -241,6 +242,26 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 						tempString->globalval.value.ts = (TaggedString *)makePointerFromId(ptr);
 					}
 					saveObjectValue((TObject *)&tempString->globalval, saveSint32, saveUint32);
+					if (tempString->globalval.value.ts) {
+						saveUint32(1);
+						Object *o = (Object *)tempString->globalval.value.ts;
+
+						if (Actor *a = dynamic_cast<Actor *>(o)) {
+							saveUint32(1);
+							saveUint32(g_grim->actorId(a));
+						} else if (TextObject *t = dynamic_cast<TextObject *>(o)) {
+							saveUint32(2);
+							saveUint32(g_grim->textObjectId(t));
+						} else if (ObjectState *s = dynamic_cast<ObjectState *>(o)) {
+							saveUint32(3);
+							saveUint32(g_grim->objectStateId(s));
+						} else {
+							saveUint32(4);
+							ObjectManager::saveObject(g_grim->_savedState, o);
+						}
+					} else {
+						saveUint32(0);
+					}
 				}
 			}
 		}
@@ -358,7 +379,7 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 	int32 countStates = 0, currentState = 0;
 	LState *state = lua_rootState;
 	while (state) {
-		if (lua_rootState == state)
+		if (lua_state == state)
 			currentState = countStates;
 		countStates++;
 		state = state->next;

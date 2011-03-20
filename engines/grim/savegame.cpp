@@ -26,7 +26,10 @@
 #include "common/endian.h"
 #include "common/system.h"
 
+#include "graphics/vector3d.h"
+
 #include "engines/grim/savegame.h"
+#include "engines/grim/color.h"
 
 namespace Grim {
 
@@ -226,6 +229,70 @@ void SaveGame::writeByte(byte data) {
 
 	_sectionBuffer[_sectionSize] = data;
 	_sectionSize++;
+}
+
+void SaveGame::writeVector3d(const Graphics::Vector3d &vec) {
+    writeFloat(vec.x());
+    writeFloat(vec.y());
+    writeFloat(vec.z());
+}
+
+void SaveGame::writeColor(const Grim::Color &color) {
+    writeByte(color.red());
+    writeByte(color.green());
+    writeByte(color.blue());
+}
+
+void SaveGame::writeFloat(float data) {
+    write(reinterpret_cast<void *>(&data), sizeof(float));
+}
+
+void SaveGame::writeCharString(const char *string) {
+	int32 len = strlen(string);
+	writeLESint32(len);
+	write(string, len);
+}
+
+void SaveGame::writeString(const Common::String &string) {
+	writeCharString(string.c_str());
+}
+
+Graphics::Vector3d SaveGame::readVector3d() {
+    float x = readFloat();
+    float y = readFloat();
+    float z = readFloat();
+    return Graphics::Vector3d(x, y, z);
+}
+
+Grim::Color SaveGame::readColor() {
+    Color color;
+    color.red() = readByte();
+    color.green() = readByte();
+    color.blue() = readByte();
+
+    return color;
+}
+
+float SaveGame::readFloat() {
+    float f;
+    read(reinterpret_cast<void *>(&f), sizeof(float));
+    return f;
+}
+
+const char *SaveGame::readCharString() {
+	int32 len = readLESint32();
+	char *str = new char[len + 1];
+	read(str, len);
+	str[len] = '\0';
+
+	return str;
+}
+
+Common::String SaveGame::readString() {
+	const char *str = readCharString();
+	Common::String s = str;
+	delete[] str;
+	return s;
 }
 
 } // end of namespace Grim

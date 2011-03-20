@@ -75,6 +75,7 @@ static void checkCparams(int32 nParams) {
 static lua_Object put_luaObject(TObject *o) {
 	luaD_openstack((lua_state->stack.top - lua_state->stack.stack) - lua_state->Cstack.base);
 	lua_state->stack.stack[lua_state->Cstack.base++] = *o;
+
 	return lua_state->Cstack.base;  // this is +1 real position (see Ref)
 }
 
@@ -414,15 +415,21 @@ int32 lua_setlocal(lua_Function func, int32 local_number) {
 void lua_funcinfo(lua_Object func, const char **filename, int32 *linedefined) {
 	if (!lua_isfunction(func))
 		lua_error("API - `funcinfo' called with a non-function value");
-	else {
-		TObject *f = luaA_protovalue(Address(func));
-		if (normalized_type(f) == LUA_T_PROTO) {
-			*filename = tfvalue(f)->fileName->str;
-			*linedefined = tfvalue(f)->lineDefined;
-		} else {
+    else {
+		//FIXME: After loading a savegame tfvalue(f) will point to a
+		// TProtoFunc which was deleted by lua_close(), called by lua_restore(). so
+		// it will crash. Anyway commenting it doesn't seem to cause any harm aside the
+		// fact that an eventual lua stack will not report the file names.
+		// So it is commented until we come up with a fix.
+
+// 		TObject *f = luaA_protovalue(Address(func));
+// 		if (normalized_type(f) == LUA_T_PROTO) {
+// 			*filename = tfvalue(f)->fileName->str;
+// 			*linedefined = tfvalue(f)->lineDefined;
+// 		} else {
 			*filename = "(C)";
 			*linedefined = -1;
-		}
+// 		}
 	}
 }
 

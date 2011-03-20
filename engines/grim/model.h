@@ -27,24 +27,27 @@
 #define GRIM_MODEL_H
 
 #include "engines/grim/resource.h"
+#include "engines/grim/object.h"
 #include "graphics/matrix4.h"
 
 namespace Grim {
 
 class TextSplitter;
 
-class Model {
+class Model : public Object {
+	GRIM_OBJECT(Model)
 public:
 	// Construct a 3D model from the given data.
-	Model(const char *filename, const char *data, int len, const CMap *cmap);
-	void loadBinary(const char *&data, const CMap *cmap);
-	void loadText(TextSplitter *ts, const CMap *cmap);
-	void reload(const CMap *cmap);
+	Model(const char *filename, const char *data, int len, CMap *cmap);
+	void loadBinary(const char *&data, CMap *cmap);
+	void loadText(TextSplitter *ts, CMap *cmap);
+	void reload(CMap *cmap);
 	void draw() const;
 
 	~Model();
 
 	Common::String _fname;
+	CMapPtr _cmap;
 
 	struct Geoset;
 	struct Mesh;
@@ -132,13 +135,14 @@ public:
 
 	int _numMaterials;
 	char (*_materialNames)[32];
-	Material **_materials;
+	MaterialPtr *_materials;
 	Graphics::Vector3d _insertOffset;
 	int _numGeosets;
 	Geoset *_geosets;
 	float _radius;
 	int _numHierNodes;
 	HierNode *_rootHierNode;
+	HierNode *_headNode;
 };
 
 } // end of namespace Grim

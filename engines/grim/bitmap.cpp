@@ -28,12 +28,14 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/gfx_base.h"
+#include "engines/grim/savegame.h"
 
 namespace Grim {
 
 static void decompress_codec3(const char *compressed, char *result);
 
-Bitmap::Bitmap(const char *fname, const char *data, int len) {
+Bitmap::Bitmap(const char *fname, const char *data, int len) :
+		Object() {
 	_fname = fname;
 
 	if (len < 8 || memcmp(data, "BM  F\0\0\0", 8) != 0) {
@@ -44,19 +46,19 @@ Bitmap::Bitmap(const char *fname, const char *data, int len) {
 	strcpy(_filename, fname);
 
 	int codec = READ_LE_UINT32(data + 8);
-//	_paletteIncluded = READ_LE_UINT32(data + 12);
+//  _paletteIncluded = READ_LE_UINT32(data + 12);
 	_numImages = READ_LE_UINT32(data + 16);
 	_x = READ_LE_UINT32(data + 20);
 	_y = READ_LE_UINT32(data + 24);
-//	_transparentColor = READ_LE_UINT32(data + 28);
+//  _transparentColor = READ_LE_UINT32(data + 28);
 	_format = READ_LE_UINT32(data + 32);
-//	_numBits = READ_LE_UINT32(data + 36);
-//	_blueBits = READ_LE_UINT32(data + 40);
-//	_greenBits = READ_LE_UINT32(data + 44);
-//	_redBits = READ_LE_UINT32(data + 48);
-//	_blueShift = READ_LE_UINT32(data + 52);
-//	_greenShift = READ_LE_UINT32(data + 56);
-//	_redShift = READ_LE_UINT32(data + 60);
+//  _numBits = READ_LE_UINT32(data + 36);
+//  _blueBits = READ_LE_UINT32(data + 40);
+//  _greenBits = READ_LE_UINT32(data + 44);
+//  _redBits = READ_LE_UINT32(data + 48);
+//  _blueShift = READ_LE_UINT32(data + 52);
+//  _greenShift = READ_LE_UINT32(data + 56);
+//  _redShift = READ_LE_UINT32(data + 60);
 	_width = READ_LE_UINT32(data + 128);
 	_height = READ_LE_UINT32(data + 132);
 	_currImage = 1;
@@ -85,7 +87,7 @@ Bitmap::Bitmap(const char *fname, const char *data, int len) {
 	g_driver->createBitmap(this);
 }
 
-Bitmap::Bitmap(const char *data, int w, int h, const char *fname) {
+Bitmap::Bitmap(const char *data, int w, int h, const char *fname) : Object() {
 	_fname = fname;
 	if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
 		printf("New bitmap loaded: %s\n", fname);
@@ -121,8 +123,11 @@ Bitmap::~Bitmap() {
 
 		delete[] _data;
 		_data = NULL;
+
+		g_driver->destroyBitmap(this);
 	}
-	g_driver->destroyBitmap(this);
+	if (g_resourceloader)
+		g_resourceloader->uncacheBitmap(this);
 }
 
 #define GET_BIT do { bit = bitstr_value & 1; \

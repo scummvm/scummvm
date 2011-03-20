@@ -32,12 +32,16 @@
 
 namespace Grim {
 
+class SaveGame;
 class TextSplitter;
 
 class Sector {
 public:
-	Sector() : _vertices(0) {}
-	~Sector() { if (_vertices) delete[] _vertices; }
+	Sector() : _vertices(NULL) {}
+	virtual ~Sector() { if (_vertices) delete[] _vertices; }
+
+    void saveState(SaveGame *savedState) const;
+    bool restoreState(SaveGame *savedState);
 
 	void load(TextSplitter &ts);
 

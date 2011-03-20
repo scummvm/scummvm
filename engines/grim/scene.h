@@ -37,25 +37,16 @@ class SaveGame;
 class Scene {
 public:
 	Scene(const char *name, const char *buf, int len);
+	Scene();
 	~Scene();
 
-	void saveState(SaveGame *savedState);
+	void saveState(SaveGame *savedState) const;
+    bool restoreState(SaveGame *savedState);
 
 	int _minVolume;
 	int _maxVolume;
 
-	void drawBackground() const {
-		if (_currSetup->_bkgndZBm) // Some screens have no zbuffer mask (eg, Alley)
-			_currSetup->_bkgndZBm->draw();
-
-		if (!_currSetup->_bkgndBm) {
-			// This should fail softly, for some reason jumping to the signpost (sg) will load
-			// the scene in such a way that the background isn't immediately available
-			warning("Background hasn't loaded yet for setup %s in %s!", _currSetup->_name.c_str(), _name.c_str());
-		} else {
-			_currSetup->_bkgndBm->draw();
-		}
-	}
+	void drawBackground() const;
 	void drawBitmaps(ObjectState::Position stage);
 	void setupCamera() {
 		_currSetup->setupCamera();
@@ -82,7 +73,7 @@ public:
 	}
 	Sector *getSectorBase(int id) {
 		if ((_numSectors >= 0) && (id < _numSectors))
-			return &_sectors[id];
+			return _sectors[id];
 		else
 			return NULL;
 	}
@@ -106,7 +97,7 @@ public:
 		void load(TextSplitter &ts);
 		void setupCamera() const;
 		Common::String _name;
-		Bitmap *_bkgndBm, *_bkgndZBm;
+		BitmapPtr _bkgndBm, _bkgndZBm;
 		Graphics::Vector3d _pos, _interest;
 		float _roll, _fov, _nclip, _fclip;
 	};
@@ -126,10 +117,10 @@ private:
 
 	Common::String _name;
 	int _numCmaps;
-	CMap **_cmaps;
+	CMapPtr *_cmaps;
 	int _numSetups, _numLights, _numSectors, _numObjectStates;
 	bool _enableLights;
-	Sector *_sectors;
+	Sector **_sectors;
 	Light *_lights;
 	Setup *_setups;
 public:
@@ -137,6 +128,11 @@ public:
 private:
 	typedef Common::List<ObjectState*> StateList;
 	StateList _states;
+
+	int _id;
+	static int s_id;
+
+	friend class GrimEngine;
 };
 
 } // end of namespace Grim

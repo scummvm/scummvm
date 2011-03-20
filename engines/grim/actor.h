@@ -26,6 +26,7 @@
 #ifndef GRIM_ACTOR_H
 #define GRIM_ACTOR_H
 
+#include "engines/grim/object.h"
 #include "engines/grim/color.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/savegame.h"
@@ -45,16 +46,20 @@ struct Shadow {
 	Graphics::Vector3d pos;
 	SectorListType planeList;
 	byte *shadowMask;
+	int shadowMaskSize;
 	bool active;
 	bool dontNegate;
 };
 
-class Actor {
+class Actor : public Object {
+	GRIM_OBJECT(Actor)
 public:
 	Actor(const char *name);
+	Actor();
 	~Actor();
 
-	void saveState(SaveGame *savedState);
+	void saveState(SaveGame *savedState) const;
+	bool restoreState(SaveGame *savedState);
 
 	const char *name() const { return _name.c_str(); }
 
@@ -93,9 +98,7 @@ public:
 	float angleTo(const Actor &a) const;
 	float yawTo(Graphics::Vector3d p) const;
 
-	bool inSet(const char *setName) const {
-		return _setName == setName;
-	}
+	bool inSet(const char *setName) const;
 	void walkForward();
 	void setReflection(float angle) { _reflectionAngle = angle; }
 	Graphics::Vector3d puckVector() const;
@@ -168,6 +171,7 @@ public:
 private:
 	Common::String _name;
 	Common::String _setName;    // The actual current set
+
 	Color _talkColor;
 	Graphics::Vector3d _pos;
 	float _pitch, _yaw, _roll;
@@ -178,8 +182,8 @@ private:
 	bool _visible;
 	bool _lookingMode;
 	Common::String _talkSoundName;
-	LipSync *_lipSync;
-	Common::List<Costume *> _costumeStack;
+	LipSyncPtr _lipSync;
+	Common::List<CostumePtr> _costumeStack;
 
 	// Variables for gradual turning
 	bool _turning;
@@ -190,28 +194,28 @@ private:
 	Graphics::Vector3d _destPos;
 
 	// chores
-	Costume *_restCostume;
+	CostumePtr _restCostume;
 	int _restChore;
 
-	Costume *_walkCostume;
+	CostumePtr _walkCostume;
 	int _walkChore;
 	bool _walkedLast, _walkedCur;
 
-	Costume *_turnCostume;
+	CostumePtr _turnCostume;
 	int _leftTurnChore, _rightTurnChore;
 	int _lastTurnDir, _currTurnDir;
 
-	Costume *_talkCostume[10];
+	CostumePtr _talkCostume[10];
 	int _talkChore[10];
 	int _talkAnim;
 
-	Costume *_mumbleCostume;
+	CostumePtr _mumbleCostume;
 	int _mumbleChore;
 
 	Shadow *_shadowArray;
 	int _activeShadowSlot;
 
-	static Font *_sayLineFont;
+	static FontPtr _sayLineFont;
 	TextObject *_sayLineText;
 
 	// Validate a yaw angle then set it appropriately
@@ -221,18 +225,16 @@ private:
 		return (dir > 0 ? _rightTurnChore : _leftTurnChore);
 	}
 
-	void freeCostumeChore(Costume *toFree, Costume *&cost, int &chore) {
-		if (cost == toFree) {
-			cost = NULL;
-			chore = -1;
-		}
-	}
+	void freeCostumeChore(Costume *toFree, CostumePtr &cost, int &chore);
 
 	// lookAt
 	Graphics::Vector3d _lookAtVector;
 	float _lookAtRate;
 
 	int _winX1, _winY1, _winX2, _winY2;
+
+	int _id;
+	static int s_id;
 
 	friend class GrimEngine;
 };

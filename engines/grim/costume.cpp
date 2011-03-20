@@ -124,11 +124,12 @@ public:
 	~ModelComponent();
 
 	Model::HierNode *hierarchy() { return _hier; }
+	int numNodes() { return _obj->numNodes(); }
 	void draw();
 
 protected:
 	Common::String _filename;
-	Model *_obj;
+	ModelPtr _obj;
 	Model::HierNode *_hier;
 	Graphics::Matrix4 _matrix;
 };
@@ -241,10 +242,11 @@ void ModelComponent::init() {
 			if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 				warning("No colormap specified for %s, using %s", _filename.c_str(), DEFAULT_COLORMAP);
 
-			cm = g_resourceloader->loadColormap(DEFAULT_COLORMAP);
+			cm = g_resourceloader->getColormap(DEFAULT_COLORMAP);
 		}
-		_obj = g_resourceloader->loadModel(_filename.c_str(), cm);
+		_obj = g_resourceloader->getModel(_filename.c_str(), cm);
 		_hier = _obj->copyHierarchy();
+
 		// Use parent availablity to decide whether to default the
 		// component to being visible
 		if (!_parent || !_parent->visible())
@@ -297,8 +299,9 @@ void ModelComponent::resetColormap() {
 }
 
 ModelComponent::~ModelComponent() {
-	if (_hier && _hier->_parent)
+	if (_hier && _hier->_parent) {
 		_hier->_parent->removeChild(_hier);
+	}
 
 	delete[] _hier;
 }
@@ -316,13 +319,16 @@ void translateObject(Model::HierNode *node, bool reset) {
 void ModelComponent::draw() {
 	// If the object was drawn by being a component
 	// of it's parent then don't draw it
+
 	if (_parent && _parent->visible())
 			return;
 	// Need to translate object to be in accordance
 	// with the setup of the parent
 	if (_hier->_parent)
 		translateObject(_hier->_parent, false);
+
 	_hier->draw();
+
 	// Need to un-translate when done
 	if (_hier->_parent)
 		translateObject(_hier->_parent, true);
@@ -376,14 +382,14 @@ public:
 	~MaterialComponent() { }
 
 private:
-	Material *_mat;
+	MaterialPtr _mat;
 	Common::String _filename;
 	int _num;
 };
 
 ColormapComponent::ColormapComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
 		Costume::Component(p, parentID, t) {
-	_cmap = g_resourceloader->loadColormap(filename);
+	_cmap = g_resourceloader->getColormap(filename);
 
 	if (p)
 		p->setColormap(_cmap);
@@ -404,7 +410,7 @@ public:
 	~KeyframeComponent() {}
 
 private:
-	KeyframeAnim *_keyf;
+	KeyframeAnimPtr _keyf;
 	int _priority1, _priority2;
 	Model::HierNode *_hier;
 	bool _active;
@@ -419,10 +425,10 @@ KeyframeComponent::KeyframeComponent(Costume::Component *p, int parentID, const 
 	const char *comma = strchr(filename, ',');
 	if (comma) {
 		Common::String realName(filename, comma);
-		_keyf = g_resourceloader->loadKeyframe(realName.c_str());
+		_keyf = g_resourceloader->getKeyframe(realName.c_str());
 		sscanf(comma + 1, "%d,%d", &_priority1, &_priority2);
 	} else
-		_keyf = g_resourceloader->loadKeyframe(filename);
+		_keyf = g_resourceloader->getKeyframe(filename);
 }
 
 void KeyframeComponent::setKey(int val) {
@@ -541,9 +547,9 @@ void MaterialComponent::init() {
 		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("MaterialComponent::init on %s", _filename.c_str());
 
-		cm = g_resourceloader->loadColormap(DEFAULT_COLORMAP);
+		cm = g_resourceloader->getColormap(DEFAULT_COLORMAP);
 	}
-	_mat = g_resourceloader->loadMaterial(_filename.c_str(), cm);
+	_mat = g_resourceloader->getMaterial(_filename.c_str(), cm);
 }
 
 void MaterialComponent::setKey(int val) {
@@ -583,9 +589,9 @@ public:
 	void setKey(int val);
 	void reset();
 	~SoundComponent() {
-	// Stop the sound if it's in progress
-	reset();
-}
+        // Stop the sound if it's in progress
+        reset();
+    }
 
 private:
 	Common::String _soundName;
@@ -626,12 +632,27 @@ void SoundComponent::setKey(int val) {
 
 void SoundComponent::reset() {
 	// A lot of the sound components this gets called against aren't actually running
-	if (g_imuse->getSoundStatus(_soundName.c_str()))
+	if (g_imuse && g_imuse->getSoundStatus(_soundName.c_str()))
 		g_imuse->stopSound(_soundName.c_str());
 }
 
 Costume::Costume(const char *fname, const char *data, int len, Costume *prevCost) :
-	_fname(fname), _cmap(NULL) {
+    Object() {
+
+    load(fname, data, len, prevCost);
+}
+
+void Costume::load(const char *filename, const char *data, int len, Costume *prevCost) {
+	_fname = filename;
+	_headNode = NULL;
+	_neckNode = NULL;
+	_head.maxPitch = 0;
+	_headYaw = 0;
+	_headPitch = 0;
+	_lastTime = 0;
+	_headZ = 0;
+    _prevCostume = prevCost;
+
 	TextSplitter ts(data, len);
 
 	ts.expectString("costume v0.1");
@@ -714,20 +735,55 @@ Costume::Costume(const char *fname, const char *data, int len, Costume *prevCost
 		ts.scanString("chore %d", 1, &which);
 		_chores[which].load(this, ts);
 	}
+
+	Model::HierNode *hier = 0;
+	int count = 0;
+	for (int i = 0; i < _numComponents; i++) {
+		if (!_components[i])
+			continue;
+		// Needs to handle Main Models (pigeons) and normal Models
+		// (when Manny climbs the rope)
+		if (FROM_BE_32(_components[i]->tag()) == MKID_BE('MMDL')) {
+			ModelComponent *c = static_cast<ModelComponent *>(_components[i]);
+			hier = c->hierarchy();
+			count = c->numNodes();
+			break;
+		}
+	}
+
+	for (int i = 0; i < count; i++) {
+		if (strcmp(hier[i]._name, "m_head_2") == 0) {
+			_headNode = hier + i;
+			break;
+		}
+	}
+
+	if (_headNode) {
+		Model::HierNode *hn = _headNode->_parent;
+		while (hn) {
+			_headZ += hn->_animPos.z();
+			if (strcmp(hn->_name, "m_nck_b1") == 0)
+				_neckNode = hn;
+			hn = hn->_parent;
+		}
+	}
 }
 
 Costume::~Costume() {
-	stopChores();
-	for (int i = _numComponents - 1; i >= 0; i--) {
-		// The "Sprite" component can be NULL
-		if (_components[i])
-			delete _components[i];
+	if (_chores) {
+		stopChores();
+		for (int i = _numComponents - 1; i >= 0; i--) {
+			// The "Sprite" component can be NULL
+			if (_components[i])
+				delete _components[i];
+		}
+		delete[] _components;
+		delete[] _chores;
+		g_resourceloader->uncacheCostume(this);
 	}
-	delete[] _components;
-	delete[] _chores;
 }
 
-Costume::Component::Component(Component *p, int parentID, tag32 t) {
+Costume::Component::Component(Component *p, int parentID, tag32 t)  {
 	_visible = true;
 	_previousCmap = NULL;
 	_cmap = NULL;
@@ -952,7 +1008,7 @@ void Costume::setColormap(const char *map) {
 	// see where raoul is gone in hh.set
 	if (!map)
 		return;
-	_cmap = g_resourceloader->loadColormap(map);
+	_cmap = g_resourceloader->getColormap(map);
 	for (int i = 0; i < _numComponents; i++)
 		_components[i]->setColormap(NULL);
 }
@@ -1007,6 +1063,120 @@ void Costume::update() {
 			_components[i]->update();
 		}
 	}
+
+	moveHead();
+}
+
+void Costume::moveHead() {
+	if (_headNode && _head.maxPitch) {
+		Model::HierNode *p = _headNode->_parent;
+		if (p && strcmp(p->_name, "m_head_2") == 0) { //Strange enough, when talking happens that a
+													  //new "m_head_2" gets created as the parent of
+													  //the old one.
+			return;
+		}
+
+		const int time = g_system->getMillis();
+		const int elapsed = time - _lastTime;
+		_lastTime = time;
+		float yawStep = 0.3 * elapsed;
+		float pitchStep = 0.1 * elapsed;
+		if (_lookAt.isZero()) {
+			//animate yaw
+			if (_headYaw > yawStep) {
+				_headYaw -= yawStep;
+			} else if (_headYaw < -yawStep) {
+				_headYaw += yawStep;
+			} else {
+				_headYaw = 0;
+			}
+			//animate pitch
+			if (_headPitch > pitchStep) {
+				_headPitch -= pitchStep;
+			} else if (_headPitch < -pitchStep) {
+				_headPitch += pitchStep;
+			} else {
+				_headPitch = 0;
+			}
+			_headNode->_animYaw = _headYaw;
+			_neckNode->_animPitch = _headPitch;
+			_headNode->_animRoll = _headNode->_animYaw / 10.;
+
+			if (_headNode->_animRoll > _head.maxRoll)
+				_headNode->_animRoll = _head.maxRoll;
+			if (_headNode->_animRoll < -_head.maxRoll)
+				_headNode->_animRoll = -_head.maxRoll;
+			return;
+		}
+
+		Graphics::Vector3d v = -(_headNode->_animPos + _matrix._pos + Graphics::Vector3d(0, 0, _headZ)) + _lookAt;
+		if (v.isZero()) {
+			return;
+		}
+// 		cout<<_lookAt.x()<<" "<<_lookAt.y()<<" "<<_lookAt.z()<<" "<<v.x()<<" "<<v.y()<<" "<<v.z()<<endl;
+		float magnitude = sqrt(v.x() * v.x() + v.y() * v.y());
+		float a = v.x() / magnitude;
+		float b = v.y() / magnitude;
+		float yaw;
+		yaw = acos(a) * (180.0f / LOCAL_PI);
+		if (b < 0.0f)
+			yaw = 360.0f - yaw;
+
+		float h = sqrt(v.x() * v.x() + v.y() * v.y());
+		magnitude = sqrt(v.z() * v.z() + h * h);
+		a = h / magnitude;
+		b = v.z() / magnitude;
+		float pitch;
+		pitch = acos(a) * (180.0f / LOCAL_PI);
+		if (b < 0.0f)
+			pitch = 360.0f - pitch;
+
+		_neckNode->_animPitch = pitch;
+		_headNode->_animYaw =  - 90 + yaw - _matrix._rot.getYaw();
+
+		if (_neckNode->_animPitch > 180)
+			_neckNode->_animPitch -= 360;
+
+		if (_headNode->_animYaw < 0)
+			_headNode->_animYaw += 360.;
+		if (_headNode->_animYaw > 180.)
+			_headNode->_animYaw -= 360;
+
+		//animate pitch
+		if (_neckNode->_animPitch - _headPitch > pitchStep)
+			_neckNode->_animPitch = _headPitch + pitchStep;
+		if (_headPitch - _neckNode->_animPitch > pitchStep)
+			_neckNode->_animPitch = _headPitch - pitchStep;
+		//animate yaw
+		if (_headNode->_animYaw - _headYaw > yawStep)
+			_headNode->_animYaw = _headYaw + yawStep;
+		if (_headYaw - _headNode->_animYaw > yawStep)
+			_headNode->_animYaw = _headYaw - yawStep;
+
+		if (_neckNode->_animPitch > _head.maxPitch)
+			_neckNode->_animPitch = _head.maxPitch;
+		if (_neckNode->_animPitch < -_head.maxPitch)
+			_neckNode->_animPitch = -_head.maxPitch;
+
+		if (_headNode->_animYaw > _head.maxYaw)
+			_headNode->_animYaw = _head.maxYaw;
+		if (_headNode->_animYaw < -_head.maxYaw)
+			_headNode->_animYaw = -_head.maxYaw;
+
+		_headNode->_animRoll = _headNode->_animYaw / 10.;
+
+		if (_headNode->_animRoll > _head.maxRoll)
+			_headNode->_animRoll = _head.maxRoll;
+		if (_headNode->_animRoll < -_head.maxRoll)
+			_headNode->_animRoll = -_head.maxRoll;
+
+		_headPitch = _neckNode->_animPitch;
+		_headYaw = _headNode->_animYaw;
+	}
+}
+
+void Costume::setLookAt(const Graphics::Vector3d &vec) {
+	_lookAt = vec;
 }
 
 void Costume::setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw) {
@@ -1021,6 +1191,64 @@ void Costume::setHead(int joint1, int joint2, int joint3, float maxRoll, float m
 void Costume::setPosRotate(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
 	_matrix._pos = pos;
 	_matrix._rot.buildFromPitchYawRoll(pitch, yaw, roll);
+}
+
+Costume *Costume::previousCostume() const {
+	return _prevCostume;
+}
+
+void Costume::saveState(SaveGame *state) const {
+	if (_cmap) {
+		state->writeLEUint32(1);
+		state->writeCharString(_cmap->filename());
+	} else {
+		state->writeLEUint32(0);
+	}
+
+	for (int i = 0; i < _numChores; ++i) {
+		Chore &c = _chores[i];
+
+		state->writeLESint32(c._hasPlayed);
+		state->writeLESint32(c._playing);
+		state->writeLESint32(c._looping);
+		state->writeLESint32(c._currTime);
+	}
+
+	for (int i = 0; i < _numComponents; ++i) {
+		Component *c = _components[i];
+
+		if (c) {
+			state->writeLESint32(c->_visible);
+			state->writeVector3d(c->_matrix._pos);
+		}
+	}
+}
+
+bool Costume::restoreState(SaveGame *state) {
+	if (state->readLEUint32()) {
+		const char *str = state->readCharString();
+		setColormap(str);
+		delete[] str;
+	}
+
+	for (int i = 0; i < _numChores; ++i) {
+		Chore &c = _chores[i];
+
+		c._hasPlayed = state->readLESint32();
+		c._playing = state->readLESint32();
+		c._looping = state->readLESint32();
+		c._currTime = state->readLESint32();
+	}
+	for (int i = 0; i < _numComponents; ++i) {
+		Component *c = _components[i];
+
+		if (c) {
+			c->_visible = state->readLESint32();
+			c->_matrix._pos = state->readVector3d();
+		}
+	}
+
+	return true;
 }
 
 } // end of namespace Grim

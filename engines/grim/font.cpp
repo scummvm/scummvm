@@ -26,58 +26,190 @@
 #include "common/endian.h"
 
 #include "engines/grim/grim.h"
+#include "engines/grim/savegame.h"
 #include "engines/grim/font.h"
+#include "engines/grim/lua.h"
+
+#include <iostream>
+using namespace std;
 
 namespace Grim {
 
-Font::Font(const char *filename, const char *data, int /*len*/) {
-	_fname = filename;
-
-	_filename = filename;
-	_numChars = READ_LE_UINT32(data);
-	_dataSize = READ_LE_UINT32(data + 4);
-	_height = READ_LE_UINT32(data + 8);
-	_baseOffsetY = READ_LE_UINT32(data + 12);
-	_firstChar = READ_LE_UINT32(data + 24);
-	_lastChar = READ_LE_UINT32(data + 28);
-
-	data += 32;
-
-	// Read character indexes - are the key/value reversed?
-	_charIndex = new uint16[_numChars];
-	if (!_charIndex)
-		error("Could not load font %s. Out of memory", filename);
-	for (uint i = 0; i < _numChars; ++i) {
-		_charIndex[i] = READ_LE_UINT16(data + 2 * i);
-	}
-
-	data += _numChars * 2;
-
-	// Read character headers
-	_charHeaders = new CharHeader[_numChars];
-	if (!_charHeaders)
-		error("Could not load font %s. Out of memory", filename);
-	for (uint i = 0; i < _numChars; ++i) {
-		_charHeaders[i].offset = READ_LE_UINT32(data);
-		_charHeaders[i].width = *(int8 *)(data + 4);
-		_charHeaders[i].startingCol = *(int8 *)(data + 5);
-		_charHeaders[i].startingLine = *(int8 *)(data + 6);
-		_charHeaders[i].dataWidth = READ_LE_UINT32(data + 8);
-		_charHeaders[i].dataHeight = READ_LE_UINT32(data + 12);
-		data += 16;
-	}
-	// Read font data
-	_fontData = new byte[_dataSize];
-	if (!_fontData)
-		error("Could not load font %s. Out of memory", filename);
-
-	memcpy(_fontData, data, _dataSize);
+Font::Font(const char *filename, const char *data, int len) : Object() {
+    load(filename, data, len);
 }
 
 Font::~Font() {
-	delete[] _charIndex;
-	delete[] _charHeaders;
-	delete[] _fontData;
+    if (_charIndex) {
+        delete[] _charIndex;
+        delete[] _charHeaders;
+        delete[] _fontData;
+
+		g_resourceloader->uncacheFont(this);
+    }
+}
+
+void Font::load(const char *filename, const char *data, int len) {
+    _fname = filename;
+
+    _filename = filename;
+    _numChars = READ_LE_UINT32(data);
+    _dataSize = READ_LE_UINT32(data + 4);
+    _height = READ_LE_UINT32(data + 8);
+    _baseOffsetY = READ_LE_UINT32(data + 12);
+    _firstChar = READ_LE_UINT32(data + 24);
+    _lastChar = READ_LE_UINT32(data + 28);
+
+    data += 32;
+
+    // Read character indexes - are the key/value reversed?
+    _charIndex = new uint16[_numChars];
+    if (!_charIndex)
+        error("Could not load font %s. Out of memory", filename);
+    for (uint i = 0; i < _numChars; ++i) {
+        _charIndex[i] = READ_LE_UINT16(data + 2 * i);
+    }
+
+    data += _numChars * 2;
+
+    // Read character headers
+    _charHeaders = new CharHeader[_numChars];
+    if (!_charHeaders)
+        error("Could not load font %s. Out of memory", filename);
+    for (uint i = 0; i < _numChars; ++i) {
+        _charHeaders[i].offset = READ_LE_UINT32(data);
+        _charHeaders[i].width = *(int8 *)(data + 4);
+        _charHeaders[i].startingCol = *(int8 *)(data + 5);
+        _charHeaders[i].startingLine = *(int8 *)(data + 6);
+        _charHeaders[i].dataWidth = READ_LE_UINT32(data + 8);
+        _charHeaders[i].dataHeight = READ_LE_UINT32(data + 12);
+        data += 16;
+    }
+    // Read font data
+    _fontData = new byte[_dataSize];
+    if (!_fontData)
+        error("Could not load font %s. Out of memory", filename);
+
+    memcpy(_fontData, data, _dataSize);
+}
+
+void Font::saveState(SaveGame *savedState) const {
+    int32 size;
+    const char *str;
+
+    str = _fname.c_str();
+    size = strlen(str);
+    savedState->writeLESint32(size);
+    savedState->write(str, size);
+
+//     savedState->writeLESint32(_fname.size());
+//     savedState->write(_fname.c_str(), _fname.size());
+//     savedState->writeLESint32(_filename.size());
+//     savedState->write(_filename.c_str(), _filename.size());
+//
+//     //_fontData
+//     savedState->writeLEUint32(_dataSize);
+//     PointerId ptr = makeIdFromPointer(_fontData);
+// //     cout<<ptr.low<<endl;
+//     savedState->writeLEUint32(ptr.low);
+//     savedState->writeLEUint32(ptr.hi);
+//     for (uint32 i = 0; i < _dataSize; ++i) {
+//         savedState->writeByte(_fontData[i]);
+//     }
+//
+//     //_charHeaders
+//     savedState->writeLEUint32(_numChars);
+//     ptr = makeIdFromPointer(_charHeaders);
+//     savedState->writeLEUint32(ptr.low);
+//     savedState->writeLEUint32(ptr.hi);
+// //     cout<<_numChars<<endl;
+//     for (uint32 i = 0; i < _numChars; ++i) {
+//         savedState->writeLESint32(_charHeaders[i].offset);
+//         savedState->writeLESint32(_charHeaders[i].width);
+//         savedState->writeLESint32(_charHeaders[i].startingCol);
+//         savedState->writeLESint32(_charHeaders[i].startingLine);
+//         savedState->writeLESint32(_charHeaders[i].dataWidth);
+//         savedState->writeLESint32(_charHeaders[i].dataHeight);
+//     }
+//
+//     //_charIndex
+//     ptr = makeIdFromPointer(_charIndex);
+//     savedState->writeLEUint32(ptr.low);
+//     savedState->writeLEUint32(ptr.hi);
+//     for (uint32 i = 0; i < _numChars; ++i) {
+//         savedState->writeLEUint32(_charIndex[i]);
+//     }
+//
+//     savedState->writeLEUint32(_firstChar);
+//     savedState->writeLEUint32(_lastChar);
+//     savedState->writeLEUint32(_height);
+//     savedState->writeLEUint32(_baseOffsetY);
+}
+
+bool Font::restoreState(SaveGame *savedState) {
+    int32 size;
+    char *str = 0;
+
+    // load actor name
+    size = savedState->readLESint32();
+    str = new char[size + 1];
+    savedState->read(str, size);
+    str[size] = '\0';
+
+    Block *b = g_resourceloader->getBlock(str);
+    if (b) {
+        load(str, b->data(), b->len());
+    }
+
+
+    delete[] str;
+	return true;
+
+//     int32 size = savedState->readLESint32();
+//     char *str = new char[size];
+//     savedState->read(str, size);
+//     _fname.load(str, size);
+//     delete str;
+//     size = savedState->readLESint32();
+//     str = new char[size];
+//     savedState->read(str, size);
+//     _filename.load(str, size);
+//     delete str;
+//
+//     _dataSize = savedState->readLEUint32();
+//     PointerId ptr;
+//     ptr.low = savedState->readLEUint32();
+//     ptr.hi = savedState->readLEUint32();
+//     _fontData = static_cast<byte *>(makePointerFromId(ptr));
+//     for (uint32 i = 0; i < _dataSize; ++i) {
+//         _fontData[i] = savedState->readByte();
+//     }
+//
+//     _numChars = savedState->readLEUint32();
+//     ptr.low = savedState->readLEUint32();
+//     ptr.hi = savedState->readLEUint32();
+//     _charHeaders = static_cast<CharHeader *>(makePointerFromId(ptr));
+//     for (uint32 i = 0; i < _numChars; ++i) {
+//         _charHeaders[i].offset = savedState->readLESint32();
+//         _charHeaders[i].width = savedState->readLESint32();
+//         _charHeaders[i].startingCol = savedState->readLESint32();
+//         _charHeaders[i].startingLine = savedState->readLESint32();
+//         _charHeaders[i].dataWidth = savedState->readLESint32();
+//         _charHeaders[i].dataHeight = savedState->readLESint32();
+//     }
+//
+//     //_charIndex
+//     ptr.low = savedState->readLEUint32();
+//     ptr.hi = savedState->readLEUint32();
+//     _charIndex = static_cast<uint16 *>(makePointerFromId(ptr));
+//     for (uint32 i = 0; i < _numChars; ++i) {
+//         _charIndex[i] = savedState->readLEUint32();
+//     }
+//
+//     _firstChar = savedState->readLEUint32();
+//     _lastChar = savedState->readLEUint32();
+//     _height = savedState->readLEUint32();
+//     _baseOffsetY = savedState->readLEUint32();
 }
 
 uint16 Font::getCharIndex(unsigned char c) {

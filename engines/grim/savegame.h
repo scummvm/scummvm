@@ -28,7 +28,13 @@
 
 #include "common/savefile.h"
 
+namespace Graphics {
+    class Vector3d;
+}
+
 namespace Grim {
+
+class Color;
 
 class SaveGame {
 public:
@@ -48,6 +54,17 @@ public:
 	void writeLESint32(int32 data);
 	void writeLEBool(bool data);
 	void writeByte(byte data);
+	void writeCharString(const char *string);
+	void writeString(const Common::String &string);
+
+    void writeVector3d(const Graphics::Vector3d &vec);
+    void writeColor(const Grim::Color &color);
+    void writeFloat(float data);
+    Graphics::Vector3d readVector3d();
+    Grim::Color readColor();
+    float readFloat();
+	const char *readCharString();
+	Common::String readString();
 
 protected:
 	bool _saving;

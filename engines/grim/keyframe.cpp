@@ -31,7 +31,8 @@
 
 namespace Grim {
 
-KeyframeAnim::KeyframeAnim(const char *fname, const char *data, int len) {
+KeyframeAnim::KeyframeAnim(const char *fname, const char *data, int len) :
+	Object() {
 	_fname = fname;
 
 	if (len >= 4 && READ_BE_UINT32(data) == MKID_BE('FYEK'))
@@ -140,6 +141,7 @@ KeyframeAnim::~KeyframeAnim() {
 	for (int i = 0; i < _numJoints; i++)
 		delete _nodes[i];
 	delete[] _markers;
+	g_resourceloader->uncacheKeyframe(this);
 }
 
 void KeyframeAnim::animate(Model::HierNode *nodes, float time, int priority1, int priority2) const {

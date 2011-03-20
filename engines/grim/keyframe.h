@@ -27,10 +27,12 @@
 #define GRIM_KEYFRAME_H
 
 #include "engines/grim/model.h"
+#include "engines/grim/object.h"
 
 namespace Grim {
 
-class KeyframeAnim {
+class KeyframeAnim : public Object {
+	GRIM_OBJECT(KeyFrameAnim)
 public:
 	KeyframeAnim(const char *filename, const char *data, int len);
 	~KeyframeAnim();

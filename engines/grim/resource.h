@@ -29,6 +29,7 @@
 #include "common/archive.h"
 
 #include "engines/grim/lab.h"
+#include "engines/grim/object.h"
 
 namespace Grim {
 
@@ -40,6 +41,17 @@ class KeyframeAnim;
 class Material;
 class Model;
 class LipSync;
+class TrackedObject;
+class SaveGame;
+
+typedef ObjectPtr<Material> MaterialPtr;
+typedef ObjectPtr<Bitmap> BitmapPtr;
+typedef ObjectPtr<Model> ModelPtr;
+typedef ObjectPtr<CMap> CMapPtr;
+typedef ObjectPtr<KeyframeAnim> KeyframeAnimPtr;
+typedef ObjectPtr<Font> FontPtr;
+typedef ObjectPtr<Costume> CostumePtr;
+typedef ObjectPtr<LipSync> LipSyncPtr;
 
 class ResourceLoader {
 public:
@@ -51,15 +63,33 @@ public:
 	Costume *loadCostume(const char *fname, Costume *prevCost);
 	Font *loadFont(const char *fname);
 	KeyframeAnim *loadKeyframe(const char *fname);
-	Material *loadMaterial(const char *fname, const CMap *c);
-	Model *loadModel(const char *fname, const CMap *c);
+	Material *loadMaterial(const char *fname, CMap *c);
+	Model *loadModel(const char *fname, CMap *c);
 	LipSync *loadLipSync(const char *fname);
 	Block *getFileBlock(const char *filename) const;
+	Block *getBlock(const char *filename);
 	Common::File *openNewStreamFile(const char *filename) const;
 	LuaFile *openNewStreamLuaFile(const char *filename) const;
 	void uncache(const char *fname);
 	bool fileExists(const char *filename) const;
 	int fileLength(const char *filename) const;
+
+	MaterialPtr getMaterial(const char *filename, CMap *c);
+	BitmapPtr getBitmap(const char *fname);
+	ModelPtr getModel(const char *fname, CMap *c);
+	CMapPtr getColormap(const char *fname);
+	KeyframeAnimPtr getKeyframe(const char *fname);
+	FontPtr getFont(const char *fname);
+	CostumePtr getCostume(const char *fname, Costume *prevCostume);
+	LipSyncPtr getLipSync(const char *fname);
+	void uncacheMaterial(Material *m);
+	void uncacheBitmap(Bitmap *bitmap);
+	void uncacheModel(Model *m);
+	void uncacheColormap(CMap *c);
+	void uncacheKeyframe(KeyframeAnim *kf);
+	void uncacheFont(Font *f);
+	void uncacheCostume(Costume *c);
+	void uncacheLipSync(LipSync *l);
 
 	struct ResourceCache {
 		char *fname;
@@ -67,7 +97,6 @@ public:
 	};
 
 private:
-
 	const Lab *getLab(const char *filename) const;
 	Block *getFileFromCache(const char *filename);
 	ResourceLoader::ResourceCache *getEntryFromCache(const char *filename);
@@ -80,6 +109,15 @@ private:
 	Common::Array<ResourceCache> _cache;
 	bool _cacheDirty;
 	int32 _cacheMemorySize;
+
+	Common::List<Material *> _materials;
+	Common::List<Bitmap *> _bitmaps;
+	Common::List<Model *> _models;
+	Common::List<CMap *> _colormaps;
+	Common::List<KeyframeAnim *> _keyframeAnims;
+	Common::List<Font *> _fonts;
+	Common::List<Costume *> _costumes;
+	Common::List<LipSync *> _lipsyncs;
 };
 
 extern ResourceLoader *g_resourceloader;

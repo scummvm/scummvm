@@ -27,10 +27,11 @@
 #define GRIM_LIPSYNC_H
 
 #include "engines/grim/resource.h"
+#include "engines/grim/object.h"
 
 namespace Grim {
 
-class LipSync {
+class LipSync : public Object {
 public:
 	LipSync(const char *filename, const char *data, int len);
 	~LipSync();
@@ -42,6 +43,9 @@ public:
 
 	int getAnim(int pos);
 	bool isValid() { return _numEntries > 0; }
+	const char *filename() const;
+
+    int typeId() const { return 16; }
 
 private:
 	LipEntry *_entries;

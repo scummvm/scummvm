@@ -27,14 +27,17 @@
 #define GRIM_BITMAP_H
 
 #include "engines/grim/resource.h"
+#include "engines/grim/object.h"
 
 namespace Grim {
 
-class Bitmap {
+class Bitmap : public Object {
+	GRIM_OBJECT(Bitmap)
 public:
 	// Construct a bitmap from the given data.
 	Bitmap(const char *filename, const char *data, int len);
 	Bitmap(const char *data, int width, int height, const char *filename);
+    Bitmap() : Object() { _data = 0; }
 
 	const char *filename() const { return _fname.c_str(); }
 
@@ -57,7 +60,7 @@ public:
 
 	char *getFilename() { return _filename; }
 
-	~Bitmap();
+	virtual ~Bitmap();
 
 //private:
 	Common::String _fname;

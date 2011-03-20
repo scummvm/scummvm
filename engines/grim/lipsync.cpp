@@ -32,7 +32,8 @@ namespace Grim {
 // A new define that'll be around when theres a configure script :)
 #undef DEBUG_VERBOSE
 
-LipSync::LipSync(const char *filename, const char *data, int len) {
+LipSync::LipSync(const char *filename, const char *data, int len) :
+	Object() {
 	_fname = filename;
 	uint16 readPhoneme;
 	int j;
@@ -76,6 +77,7 @@ LipSync::LipSync(const char *filename, const char *data, int len) {
 
 LipSync::~LipSync() {
 	delete[] _entries;
+	g_resourceloader->uncacheLipSync(this);
 }
 
 int LipSync::getAnim(int pos) {
@@ -98,6 +100,10 @@ int LipSync::getAnim(int pos) {
 	}
 
 	return -1;
+}
+
+const char *LipSync::filename() const {
+    return _fname.c_str();
 }
 
 const LipSync::PhonemeAnim LipSync::_animTable[] = {

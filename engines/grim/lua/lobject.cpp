@@ -6,6 +6,8 @@
 
 #include "engines/grim/lua/lobject.h"
 #include "engines/grim/lua/lua.h"
+#include "engines/grim/lua/lstring.h"
+#include "engines/grim/lua/lstate.h"
 
 namespace Grim {
 
@@ -76,6 +78,25 @@ void luaO_insertlist(GCnode *root, GCnode *node) {
 	node->next = root->next;
 	root->next = node;
 	node->marked = 0;
+}
+
+void luaO_resetObject(void *o) {
+	TaggedString *tempString;
+	if (string_root) {
+		for (int i = 0; i < NUM_HASHS; i++) {
+			stringtable *tempStringTable = &string_root[i];
+			for (int l = 0; l < tempStringTable->size; l++) {
+				if (tempStringTable->hash[l] && tempStringTable->hash[l] != &EMPTY) {
+					tempString = tempStringTable->hash[l];
+					if (tempString->constindex == -1) {
+						if (tempString->globalval.value.ts == o) {
+							tempString->globalval.value.ts = NULL;
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 } // end of namespace Grim

@@ -34,9 +34,10 @@
 
 namespace Grim {
 
-Model::Model(const char *filename, const char *data, int len, const CMap *cmap) :
-		_numMaterials(0), _numGeosets(0) {
+Model::Model(const char *filename, const char *data, int len, CMap *cmap) :
+		Object(), _numMaterials(0), _numGeosets(0), _cmap(cmap) {
 	_fname = filename;
+	_headNode = NULL;
 
 	if (len >= 4 && READ_BE_UINT32(data) == MKID_BE('LDOM'))
 		loadBinary(data, cmap);
@@ -46,35 +47,50 @@ Model::Model(const char *filename, const char *data, int len, const CMap *cmap) 
 	}
 }
 
-void Model::reload(const CMap *cmap) {
+void Model::reload(CMap *cmap) {
 	// Load the new colormap
-	for (int i = 0; i < _numMaterials; i++)
-		_materials[i] = g_resourceloader->loadMaterial(_materialNames[i], cmap);
+	for (int i = 0; i < _numMaterials; i++) {
+		_materials[i] = g_resourceloader->getMaterial(_materialNames[i], cmap);
+	}
+	Material **materials = new Material*[_numMaterials];
+	for (int j = 0; j < _numMaterials; ++j) {
+		materials[j] = _materials[j];
+	}
 	for (int i = 0; i < _numGeosets; i++)
-		_geosets[i].changeMaterials(_materials);
+		_geosets[i].changeMaterials(materials);
+	delete[] materials;
 }
 
-void Model::loadBinary(const char *&data, const CMap *cmap) {
+void Model::loadBinary(const char *&data, CMap *cmap) {
 	_numMaterials = READ_LE_UINT32(data + 4);
 	data += 8;
-	_materials = new Material*[_numMaterials];
+	_materials = new MaterialPtr[_numMaterials];
 	_materialNames = new char[_numMaterials][32];
 	for (int i = 0; i < _numMaterials; i++) {
 		strcpy(_materialNames[i], data);
-		_materials[i] = g_resourceloader->loadMaterial(_materialNames[i], cmap);
+		_materials[i] = g_resourceloader->getMaterial(_materialNames[i], cmap);
 		data += 32;
 	}
 	data += 32; // skip name
 	_numGeosets = READ_LE_UINT32(data + 4);
 	data += 8;
 	_geosets = new Geoset[_numGeosets];
+	Material **materials = new Material*[_numMaterials];
+	for (int j = 0; j < _numMaterials; ++j) {
+		materials[j] = _materials[j];
+	}
 	for (int i = 0; i < _numGeosets; i++)
-		_geosets[i].loadBinary(data, _materials);
+		_geosets[i].loadBinary(data, materials);
+	delete[] materials;
 	_numHierNodes = READ_LE_UINT32(data + 4);
 	data += 8;
 	_rootHierNode = new HierNode[_numHierNodes];
-	for (int i = 0; i < _numHierNodes; i++)
+	for (int i = 0; i < _numHierNodes; i++) {
 		_rootHierNode[i].loadBinary(data, _rootHierNode, &_geosets[0]);
+		if (strcmp(_rootHierNode[i]._name, "head") == 0) {
+			_headNode = _rootHierNode + i;
+		}
+	}
 	_radius = get_float(data);
 	_insertOffset = Graphics::get_vector3d(data + 40);
 }
@@ -84,6 +100,7 @@ Model::~Model() {
 	delete[] _materialNames;
 	delete[] _geosets;
 	delete[] _rootHierNode;
+	g_resourceloader->uncacheModel(this);
 }
 
 void Model::Geoset::loadBinary(const char *&data, Material *materials[]) {
@@ -144,6 +161,7 @@ Model::Mesh::~Mesh() {
 	delete[] _vertNormals;
 	delete[] _textureVerts;
 	delete[] _faces;
+	delete[] _materialid;
 }
 
 void Model::Mesh::update() {
@@ -262,20 +280,20 @@ Model::HierNode *Model::copyHierarchy() {
 	return result;
 }
 
-void Model::loadText(TextSplitter *ts, const CMap *cmap) {
+void Model::loadText(TextSplitter *ts, CMap *cmap) {
 	ts->expectString("section: header");
 	int major, minor;
 	ts->scanString("3do %d.%d", 2, &major, &minor);
 	ts->expectString("section: modelresource");
 	ts->scanString("materials %d", 1, &_numMaterials);
-	_materials = new Material*[_numMaterials];
+	_materials = new MaterialPtr[_numMaterials];
 	_materialNames = new char[_numMaterials][32];
 	for (int i = 0; i < _numMaterials; i++) {
 		char materialName[32];
 		int num;
 
 		ts->scanString("%d: %32s", 2, &num, materialName);
-		_materials[num] = g_resourceloader->loadMaterial(materialName, cmap);
+		_materials[num] = g_resourceloader->getMaterial(materialName, cmap);
 		strcpy(_materialNames[num], materialName);
 	}
 
@@ -284,11 +302,16 @@ void Model::loadText(TextSplitter *ts, const CMap *cmap) {
 	ts->scanString("insert offset %f %f %f", 3, &_insertOffset.x(), &_insertOffset.y(), &_insertOffset.z());
 	ts->scanString("geosets %d", 1, &_numGeosets);
 	_geosets = new Geoset[_numGeosets];
+	Material **materials = new Material*[_numMaterials];
+	for (int j = 0; j < _numMaterials; ++j) {
+		materials[j] = _materials[j];
+	}
 	for (int i = 0; i < _numGeosets; i++) {
 		int num;
 		ts->scanString("geoset %d", 1, &num);
-		_geosets[num].loadText(ts, _materials);
+		_geosets[num].loadText(ts, materials);
 	}
+	delete[] materials;
 
 	ts->expectString("section: hierarchydef");
 	ts->scanString("hierarchy nodes %d", 1, &_numHierNodes);
@@ -358,7 +381,7 @@ void Model::Mesh::changeMaterials(Material *materials[]) {
 		_faces[i].changeMaterial(materials[_materialid[i]]);
 }
 
-void Model::Mesh::loadText(TextSplitter *ts, Material *materials[]) {
+void Model::Mesh::loadText(TextSplitter *ts, Material* materials[]) {
 	ts->scanString("name %32s", 1, _name);
 	ts->scanString("radius %f", 1, &_radius);
 

@@ -30,13 +30,16 @@
 #include "engines/grim/lipsync.h"
 #include "engines/grim/smush/smush.h"
 #include "engines/grim/imuse/imuse.h"
+#include "engines/grim/lua.h"
 
 namespace Grim {
+
+int Actor::s_id = 0;
 
 int g_winX1, g_winY1, g_winX2, g_winY2;
 
 Actor::Actor(const char *actorName) :
-		_name(actorName), _setName(""), _talkColor(255, 255, 255), _pos(0, 0, 0),
+		Object(), _name(actorName), _setName(""), _talkColor(255, 255, 255), _pos(0, 0, 0),
 		// Some actors don't set walk and turn rates, so we default the
 		// _turnRate so Doug at the cat races can turn and we set the
 		// _walkRate so Glottis at the demon beaver entrance can walk
@@ -48,7 +51,6 @@ Actor::Actor(const char *actorName) :
 		_turnCostume(NULL), _leftTurnChore(-1), _rightTurnChore(-1),
 		_lastTurnDir(0), _currTurnDir(0),
 		_mumbleCostume(NULL), _mumbleChore(-1), _sayLineText(NULL) {
-	g_grim->registerActor(this);
 	_lookingMode = false;
 	_constrain = false;
 	_talkSoundName = "";
@@ -61,27 +63,338 @@ Actor::Actor(const char *actorName) :
 		_shadowArray[i].active = false;
 		_shadowArray[i].dontNegate = false;
 		_shadowArray[i].shadowMask = NULL;
+		_shadowArray[i].shadowMaskSize = 0;
 	}
 
 	for (int i = 0; i < 10; i++) {
 		_talkCostume[i] = NULL;
 		_talkChore[i] = -1;
 	}
+
+	++s_id;
+	_id = s_id;
+
+	g_grim->registerActor(this);
 }
+
+Actor::Actor() :
+	Object() {
+
+	_shadowArray = new Shadow[5];
+	_winX1 = _winY1 = 1000;
+	_winX2 = _winY2 = -1000;
+
+	for (int i = 0; i < 5; i++) {
+		_shadowArray[i].active = false;
+		_shadowArray[i].dontNegate = false;
+		_shadowArray[i].shadowMask = NULL;
+		_shadowArray[i].shadowMaskSize = 0;
+	}
+}
+
 
 Actor::~Actor() {
-	clearShadowPlanes();
-	delete[] _shadowArray;
+	if (_shadowArray) {
+		clearShadowPlanes();
+		delete[] _shadowArray;
+	}
 }
 
-void Actor::saveState(SaveGame *savedState) {
-	int32 size;
-
+void Actor::saveState(SaveGame *savedState) const {
 	// store actor name
-	size = strlen(name());
-	savedState->writeLESint32(size);
-	savedState->write(name(), size);
+	savedState->writeString(_name);
+	savedState->writeString(_setName);
 
+	savedState->writeColor(_talkColor);
+
+	savedState->writeVector3d(_pos);
+
+	savedState->writeFloat(_pitch);
+	savedState->writeFloat(_yaw);
+	savedState->writeFloat(_roll);
+	savedState->writeFloat(_walkRate);
+	savedState->writeFloat(_turnRate);
+	savedState->writeLESint32(_constrain);
+	savedState->writeFloat(_reflectionAngle);
+	savedState->writeLESint32(_visible);
+	savedState->writeLESint32(_lookingMode),
+
+	savedState->writeString(_talkSoundName);
+
+	if (_lipSync) {
+		savedState->writeLEUint32(1);
+		savedState->writeCharString(_lipSync->filename());
+	} else {
+		savedState->writeLEUint32(0);
+	}
+
+	savedState->writeLESint32(_costumeStack.size());
+	for (Common::List<CostumePtr>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+		const CostumePtr &c = *i;
+		savedState->writeCharString(c->filename());
+		Costume *pc = c->previousCostume();
+		int depth = 0;
+		while (pc) {
+			++depth;
+			pc = pc->previousCostume();
+		}
+		savedState->writeLEUint32(depth);
+		pc = c->previousCostume();
+		for (int j = 0; j < depth; ++j) { //save the previousCostume hierarchy
+			savedState->writeCharString(pc->filename());
+			pc = pc->previousCostume();
+		}
+		c->saveState(savedState);
+	}
+
+	savedState->writeLESint32(_turning);
+	savedState->writeFloat(_destYaw);
+
+	savedState->writeLESint32(_walking);
+	savedState->writeVector3d(_destPos);
+
+	if (_restCostume) {
+		savedState->writeLEUint32(1);
+		savedState->writeCharString(_restCostume->filename());
+	} else {
+		savedState->writeLEUint32(0);
+	}
+	savedState->writeLESint32(_restChore);
+
+	if (_walkCostume) {
+		savedState->writeLEUint32(1);
+		savedState->writeCharString(_walkCostume->filename());
+	} else {
+		savedState->writeLEUint32(0);
+	}
+	savedState->writeLESint32(_walkChore);
+	savedState->writeLESint32(_walkedLast);
+	savedState->writeLESint32(_walkedCur);
+
+	if (_turnCostume) {
+		savedState->writeLEUint32(1);
+		savedState->writeCharString(_turnCostume->filename());
+	} else {
+		savedState->writeLEUint32(0);
+	}
+	savedState->writeLESint32(_leftTurnChore);
+	savedState->writeLESint32(_rightTurnChore);
+	savedState->writeLESint32(_lastTurnDir);
+	savedState->writeLESint32(_currTurnDir);
+
+	for (int i = 0; i < 10; ++i) {
+		if (_talkCostume[i]) {
+			savedState->writeLEUint32(1);
+			savedState->writeCharString(_talkCostume[i]->filename());
+		} else {
+			savedState->writeLEUint32(0);
+		}
+		savedState->writeLESint32(_talkChore[i]);
+	}
+	savedState->writeLESint32(_talkAnim);
+
+	if (_mumbleCostume) {
+		savedState->writeLEUint32(1);
+		savedState->writeCharString(_mumbleCostume->filename());
+	} else {
+		savedState->writeLEUint32(0);
+	}
+	savedState->writeLESint32(_mumbleChore);
+
+	for (int i = 0; i < 5; ++i) {
+		Shadow &shadow = _shadowArray[i];
+		savedState->writeString(shadow.name);
+
+		savedState->writeVector3d(shadow.pos);
+
+		savedState->writeLESint32(shadow.planeList.size());
+		for (SectorListType::iterator j = shadow.planeList.begin(); j != shadow.planeList.end(); ++j) {
+			Sector *sec = *j;
+			Scene *s = g_grim->currScene();
+			for (int k = 0; k < s->getSectorCount(); ++k) {
+				if (s->getSectorBase(k) == sec) {
+					savedState->writeLEUint32(k);
+					break;
+				}
+			}
+		}
+
+		savedState->writeLESint32(shadow.shadowMaskSize);
+		for (int j = 0; j < shadow.shadowMaskSize; ++j) {
+			savedState->writeByte(shadow.shadowMask[j]);
+		}
+		savedState->writeLESint32(shadow.active);
+		savedState->writeLESint32(shadow.dontNegate);
+	}
+	savedState->writeLESint32(_activeShadowSlot);
+
+	if (_sayLineText) {
+		savedState->writeLEUint32(g_grim->textObjectId(_sayLineText));
+	} else {
+		savedState->writeLEUint32(0);
+	}
+
+	savedState->writeVector3d(_lookAtVector);
+	savedState->writeFloat(_lookAtRate);
+
+	savedState->writeLESint32(_winX1);
+	savedState->writeLESint32(_winY1);
+	savedState->writeLESint32(_winX2);
+	savedState->writeLESint32(_winY2);
+}
+
+bool Actor::restoreState(SaveGame *savedState) {
+	// load actor name
+	_name = savedState->readString();
+	_setName = savedState->readString();
+
+	_talkColor          = savedState->readColor();
+
+	_pos                = savedState->readVector3d();
+	_pitch              = savedState->readFloat();
+	_yaw                = savedState->readFloat();
+	_roll               = savedState->readFloat();
+	_walkRate           = savedState->readFloat();
+	_turnRate           = savedState->readFloat();
+	_constrain          = savedState->readLESint32();
+	_reflectionAngle    = savedState->readFloat();
+	_visible            = savedState->readLESint32();
+	_lookingMode        = savedState->readLESint32();
+
+	_talkSoundName 		= savedState->readString();
+
+	if (savedState->readLEUint32()) {
+		const char *fn = savedState->readCharString();
+		_lipSync = g_resourceloader->getLipSync(fn);
+		delete[] fn;
+	} else {
+		_lipSync = NULL;
+	}
+
+	int32 size = savedState->readLESint32();
+	_costumeStack.clear();
+	for (int32 i = 0; i < size; ++i) {
+		const char *fname = savedState->readCharString();
+		const int depth = savedState->readLEUint32();
+		CostumePtr pc = NULL;
+		if (depth > 0) {	//build all the previousCostume hierarchy
+			const char **names = new const char*[depth];
+			for (int j = 0; j < depth; ++j) {
+				names[j] = savedState->readCharString();
+			}
+			for (int j = depth - 1; j >= 0; --j) {
+				pc = g_resourceloader->getCostume(names[j], pc);
+			}
+			for (int j = 0; j < depth; ++j) {
+				delete[] names[j];
+			}
+			delete[] names;
+		}
+
+		CostumePtr c = g_resourceloader->getCostume(fname, pc);
+		c->restoreState(savedState);
+		_costumeStack.push_back(c);
+	}
+
+	_turning = savedState->readLESint32();
+	_destYaw = savedState->readFloat();
+
+	_walking = savedState->readLESint32();
+	_destPos = savedState->readVector3d();
+
+	if (savedState->readLEUint32()) {
+		const char *fname = savedState->readCharString();
+		_restCostume = g_resourceloader->getCostume(fname, 0);
+		delete[] fname;
+	} else {
+		_restCostume = NULL;
+	}
+	_restChore = savedState->readLESint32();
+
+	if (savedState->readLEUint32()) {
+		const char *fname = savedState->readCharString();
+		_walkCostume = g_resourceloader->getCostume(fname, 0);
+		delete[] fname;
+	} else {
+		_walkCostume = NULL;
+	}
+	_walkChore = savedState->readLESint32();
+	_walkedLast = savedState->readLESint32();
+	_walkedCur = savedState->readLESint32();
+
+	if (savedState->readLEUint32()) {
+		const char *fname = savedState->readCharString();
+		_turnCostume = g_resourceloader->getCostume(fname, 0);
+		delete[] fname;
+	} else {
+		_turnCostume = NULL;
+	}
+	_leftTurnChore = savedState->readLESint32();
+	_rightTurnChore = savedState->readLESint32();
+	_lastTurnDir = savedState->readLESint32();
+	_currTurnDir = savedState->readLESint32();
+
+	for (int i = 0; i < 10; ++i) {
+		if (savedState->readLEUint32()) {
+			const char *fname = savedState->readCharString();
+			_talkCostume[i] = g_resourceloader->getCostume(fname, 0);
+			delete[] fname;
+		} else {
+			_talkCostume[i] = NULL;
+		}
+		_talkChore[i] = savedState->readLESint32();
+	}
+	_talkAnim = savedState->readLESint32();
+
+	if (savedState->readLEUint32()) {
+		const char *fname = savedState->readCharString();
+		_mumbleCostume = g_resourceloader->getCostume(fname, 0);
+		delete[] fname;
+	} else {
+		_mumbleCostume = NULL;
+	}
+	_mumbleChore = savedState->readLESint32();
+
+	for (int i = 0; i < 5; ++i) {
+		Shadow &shadow = _shadowArray[i];
+		shadow.name = savedState->readString();
+
+		shadow.pos = savedState->readVector3d();
+
+		size = savedState->readLESint32();
+		shadow.planeList.clear();
+		for (int j = 0; j < size; ++j) {
+			int32 id = savedState->readLEUint32();
+			Sector *s = g_grim->currScene()->getSectorBase(id);
+			shadow.planeList.push_back(s);
+		}
+
+		shadow.shadowMaskSize = savedState->readLESint32();
+		delete[] shadow.shadowMask;
+		if (shadow.shadowMaskSize > 0) {
+			shadow.shadowMask = new byte[shadow.shadowMaskSize];
+			for (int j = 0; j < shadow.shadowMaskSize; ++j) {
+				shadow.shadowMask[j] = savedState->readByte();
+			}
+		} else {
+			shadow.shadowMask = NULL;
+		}
+		shadow.active = savedState->readLESint32();
+		shadow.dontNegate = savedState->readLESint32();
+	}
+	_activeShadowSlot = savedState->readLESint32();
+
+	_sayLineText = g_grim->textObject(savedState->readLEUint32());
+
+	_lookAtVector = savedState->readVector3d();
+	_lookAtRate = savedState->readFloat();
+
+	_winX1 = savedState->readLESint32();
+	_winY1 = savedState->readLESint32();
+	_winX2 = savedState->readLESint32();
+	_winY2 = savedState->readLESint32();
+
+	return true;
 }
 
 void Actor::setYaw(float yawParam) {
@@ -222,7 +535,7 @@ Graphics::Vector3d Actor::puckVector() const {
 }
 
 void Actor::setRestChore(int chore, Costume *cost) {
-	if (_restCostume == cost && _restChore == chore)
+	if (_restCostume.object() == cost && _restChore == chore)
 		return;
 
 	if (_restChore >= 0)
@@ -236,7 +549,7 @@ void Actor::setRestChore(int chore, Costume *cost) {
 }
 
 void Actor::setWalkChore(int chore, Costume *cost) {
-	if (_walkCostume == cost && _walkChore == chore)
+	if (_walkCostume.object() == cost && _walkChore == chore)
 		return;
 
 	if (_walkChore >= 0)
@@ -247,7 +560,7 @@ void Actor::setWalkChore(int chore, Costume *cost) {
 }
 
 void Actor::setTurnChores(int left_chore, int right_chore, Costume *cost) {
-	if (_turnCostume == cost && _leftTurnChore == left_chore &&
+	if (_turnCostume.object() == cost && _leftTurnChore == left_chore &&
 		_rightTurnChore == right_chore)
 		return;
 
@@ -270,7 +583,7 @@ void Actor::setTalkChore(int index, int chore, Costume *cost) {
 
 	index--;
 
-	if (_talkCostume[index] == cost && _talkChore[index] == chore)
+	if (_talkCostume[index].object() == cost && _talkChore[index] == chore)
 		return;
 
 	if (_talkChore[index] >= 0)
@@ -353,7 +666,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 			// For example, when reading the work order (a LIP file exists for no reason).
 			// Also, some lip sync files have no entries
 			// In these cases, revert to using the mumble chore.
-			_lipSync = g_resourceloader->loadLipSync(soundLip.c_str());
+			_lipSync = g_resourceloader->getLipSync(soundLip.c_str());
 			// If there's no lip sync file then load the mumble chore if it exists
 			// (the mumble chore doesn't exist with the cat races announcer)
 			if (!_lipSync && _mumbleChore != -1)
@@ -393,7 +706,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 
 bool Actor::talking() {
 	// If there's no sound file then we're obviously not talking
-	if (strlen(_talkSoundName.c_str()) == 0)
+    if (strlen(_talkSoundName.c_str()) == 0)
 		return false;
 
 	return g_imuse->getSoundStatus(_talkSoundName.c_str());
@@ -423,7 +736,7 @@ void Actor::shutUp() {
 }
 
 void Actor::pushCostume(const char *n) {
-	Costume *newCost = g_resourceloader->loadCostume(n, currentCostume());
+	CostumePtr newCost = g_resourceloader->getCostume(n, currentCostume());
 
 	newCost->setColormap(NULL);
 	_costumeStack.push_back(newCost);
@@ -447,8 +760,8 @@ void Actor::setCostume(const char *n) {
 
 void Actor::popCostume() {
 	if (!_costumeStack.empty()) {
-		freeCostumeChore(_costumeStack.back(), _restCostume, _restChore);
-		freeCostumeChore(_costumeStack.back(), _walkCostume, _walkChore);
+		freeCostumeChore(_costumeStack.back().object(), _restCostume, _restChore);
+		freeCostumeChore(_costumeStack.back().object(), _walkCostume, _walkChore);
 
 		if (_turnCostume == _costumeStack.back()) {
 			_turnCostume = NULL;
@@ -489,9 +802,10 @@ void Actor::setHead(int joint1, int joint2, int joint3, float maxRoll, float max
 }
 
 Costume *Actor::findCostume(const char *n) {
-	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i)
+	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		if (strcasecmp((*i)->filename(), n) == 0)
 			return *i;
+    }
 
 	return NULL;
 }
@@ -541,8 +855,9 @@ void Actor::update() {
 // It seems that we need to allow an already active turning motion to
 // continue or else turning actors away from barriers won't work right
 //			_turning = false;
-		} else
+		} else {
 			_pos += dir * walkAmt;
+        }
 
 		_walkedCur = true;
 	}
@@ -602,8 +917,9 @@ void Actor::update() {
 		}
 	}
 
-	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		(*i)->setPosRotate(_pos, _pitch, _yaw, _roll);
+		(*i)->setLookAt(_lookAtVector);
 		(*i)->update();
 	}
 
@@ -616,7 +932,7 @@ void Actor::draw() {
 	g_winX1 = g_winY1 = 1000;
 	g_winX2 = g_winY2 = -1000;
 
-	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i)
+	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i)
 		(*i)->setupTextures();
 
 	if (!g_driver->isHardwareAccelerated() && g_grim->getFlagRefreshShadowMask()) {
@@ -735,9 +1051,21 @@ void Actor::clearShadowPlanes() {
 			shadow->planeList.pop_back();
 		}
 		delete[] shadow->shadowMask;
+		shadow->shadowMaskSize = 0;
 		shadow->shadowMask = NULL;
 		shadow->active = false;
 		shadow->dontNegate = false;
+	}
+}
+
+bool Actor::inSet(const char *setName) const {
+	return _setName == setName;
+}
+
+void Actor::freeCostumeChore(Costume *toFree, CostumePtr &cost, int &chore) {
+	if (cost.object() == toFree) {
+		cost = NULL;
+		chore = -1;
 	}
 }
 

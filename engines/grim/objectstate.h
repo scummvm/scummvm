@@ -27,12 +27,14 @@
 #define GRIM_OSTATE_H
 
 #include "engines/grim/bitmap.h"
+#include "engines/grim/object.h"
 
 namespace Grim {
 
 class SaveGame;
 
-class ObjectState {
+class ObjectState : public Object {
+	GRIM_OBJECT(ObjectState)
 public:
 	enum Position {
 		OBJSTATE_BACKGROUND = 0,
@@ -42,9 +44,11 @@ public:
 	};
 
 	ObjectState(int setupID, ObjectState::Position pos, const char *bitmap, const char *zbitmap, bool visible);
+    ObjectState();
 	~ObjectState();
 
-	void saveState(SaveGame *savedState);
+    void saveState(SaveGame *savedState) const;
+    bool restoreState(SaveGame *savedState);
 
 	int setupID() const { return _setupID; }
 	Position pos() const { return _pos; }
@@ -78,7 +82,12 @@ private:
 	bool _visibility;
 	int _setupID;
 	Position _pos;
-	Bitmap *_bitmap, *_zbitmap;
+	BitmapPtr _bitmap, _zbitmap;
+
+	int _id;
+	static int s_id;
+
+	friend class GrimEngine;
 };
 
 } // end of namespace Grim

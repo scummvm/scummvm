@@ -39,7 +39,7 @@ struct TextObjectDefaults {
 	int width, height;
 	int justify;
 	bool disabled;
-	Font *font;
+	FontPtr font;
 };
 
 #define TEXT_NULL   ' '
@@ -48,9 +48,11 @@ extern TextObjectDefaults sayLineDefaults;
 extern TextObjectDefaults printLineDefaults;
 extern TextObjectDefaults blastTextDefaults;
 
-class TextObject {
+class TextObject : public Object {
+	GRIM_OBJECT(TextObject)
 public:
 	TextObject(bool blastDraw, bool isSpeech = false);
+	TextObject();
 	~TextObject();
 	void createBitmap();
 	void destroyBitmap();
@@ -79,10 +81,12 @@ public:
 	int getBitmapWidth();
 	int getBitmapHeight();
 	int getTextCharPosition(int pos);
-	void saveState(SaveGame *savedState);
 
 	const char *name() const { return _textID; }
 	void draw();
+
+    void saveState(SaveGame *state) const;
+    bool restoreState(SaveGame *state);
 
 	enum Justify {
 		NONE,
@@ -100,11 +104,16 @@ protected:
 	bool _disabled;
 	bool _blastDraw;
 	bool _isSpeech;
-	Font *_font;
+	FontPtr _font;
 	char _textID[256];
 	uint8 *_textBitmap;
 	int *_bitmapWidthPtr;
 	GfxBase::TextObjectHandle **_textObjectHandle;
+
+	int _id;
+	static int s_id;
+
+	friend class GrimEngine;
 };
 
 } // end of namespace Grim

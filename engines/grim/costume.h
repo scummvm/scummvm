@@ -27,6 +27,8 @@
 #define GRIM_COSTUME_H
 
 #include "engines/grim/model.h"
+#include "engines/grim/object.h"
+#include "engines/grim/colormap.h"
 
 namespace Grim {
 
@@ -34,11 +36,15 @@ namespace Grim {
 
 typedef uint32 tag32;
 
-class Costume {
+class Costume : public Object {
+	GRIM_OBJECT(Costume)
 public:
 	Costume(const char *filename, const char *data, int len, Costume *prevCost);
+    Costume() : Object() { _chores = 0; }
 
-	~Costume();
+    void load(const char *filename, const char *data, int len, Costume *prevCost);
+
+	virtual ~Costume();
 
 	const char *filename() const { return _fname.c_str(); }
 	void playChore(int num);
@@ -47,18 +53,25 @@ public:
 	void setChoreLooping(int num, bool val) { _chores[num].setLooping(val); }
 	void stopChore(int num) { _chores[num].stop(); }
 	Model::HierNode *getModelNodes();
+	Model *getModel();
 	void setColormap(const char *map);
 	void stopChores();
 	int isChoring(const char *name, bool excludeLooping);
 	int isChoring(int num, bool excludeLooping);
 	int isChoring(bool excludeLooping);
 
+	void setLookAt(const Graphics::Vector3d &vec);
 	void setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
 
 	void update();
 	void setupTextures();
 	void draw();
 	void setPosRotate(Graphics::Vector3d pos, float pitch, float yaw, float roll);
+
+	Costume *previousCostume() const;
+
+	void saveState(SaveGame *state) const;
+	bool restoreState(SaveGame *state);
 
 	class Component {
 	public:
@@ -80,7 +93,7 @@ public:
 		virtual ~Component() { }
 
 	protected:
-		CMap *_cmap, *_previousCmap;
+		CMapPtr _cmap, _previousCmap;
 		tag32 _tag;
 		int _parentID;
 		bool _visible;
@@ -95,7 +108,10 @@ public:
 
 private:
 	Component *loadComponent(tag32 tag, Component *parent, int parentID, const char *name, Component *prevComponent);
-	Common::String _fname;
+	void moveHead();
+
+    Common::String _fname;
+    CostumePtr _prevCostume;
 
 	int _numComponents;
 	Component **_components;
@@ -147,10 +163,18 @@ private:
 		friend class Costume;
 	};
 
-	CMap *_cmap;
+	CMapPtr _cmap;
 	int _numChores;
 	Chore *_chores;
 	Graphics::Matrix4 _matrix;
+	Model::HierNode *_headNode;
+	Model::HierNode *_neckNode;
+	float _headZ;
+	Graphics::Vector3d _lookAt;
+
+	float _headPitch;
+	float _headYaw;
+	int _lastTime;
 };
 
 } // end of namespace Grim

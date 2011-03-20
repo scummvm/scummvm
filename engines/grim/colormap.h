@@ -29,23 +29,39 @@
 #include "common/endian.h"
 
 #include "engines/grim/resource.h"
+#include "engines/grim/object.h"
 
 namespace Grim {
 
-class CMap {
+class CMap : public Object {
+	GRIM_OBJECT(ColorMap)
 public:
 	// Load a colormap from the given data.
-	CMap(const char *fileName, const char *data, int len) {
+	CMap(const char *fileName, const char *data, int len) :
+		Object() {
 		_fname = fileName;
 		if (len < 4 || READ_BE_UINT32(data) != MKID_BE('CMP '))
 			error("Invalid magic loading colormap");
 		memcpy(_colors, data + 64, sizeof(_colors));
+	}
+	CMap() : Object() {}
+	~CMap() {
+		if (g_resourceloader)
+			g_resourceloader->uncacheColormap(this);
 	}
 	const char *filename() const { return _fname.c_str(); }
 
 	// The color data, in RGB format
 	char _colors[256 * 3];
 	Common::String _fname;
+
+	bool operator==(const CMap &c) const {
+		if (_fname != c._fname) {
+			return false;
+		}
+
+		return true;
+	}
 };
 
 } // end of namespace Grim

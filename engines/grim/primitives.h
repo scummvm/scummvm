@@ -34,7 +34,8 @@ namespace Grim {
 
 class SaveGame;
 
-class PrimitiveObject {
+class PrimitiveObject : public Object {
+	GRIM_OBJECT(PrimitiveObject)
 public:
 	PrimitiveObject();
 	~PrimitiveObject();
@@ -60,15 +61,21 @@ public:
 	bool isFilled() { return _filled; }
 	void draw();
 	bool isBitmap() { return _type == BITMAP; }
-	Bitmap *getBitmapHandle() { assert(_bitmap); return _bitmap; }
-	void saveState(SaveGame *savedState);
+	Bitmap *getBitmapHandle() { assert(_bitmap); return _bitmap.object(); }
+	void saveState(SaveGame *state) const;
+    bool restoreState(SaveGame *state);
 
 private:
 	Common::Point _p1, _p2, _p3, _p4;
 	Color _color;
 	bool _filled;
 	int _type;
-	Bitmap *_bitmap;
+	BitmapPtr _bitmap;
+
+	int _id;
+	static int s_id;
+
+	friend class GrimEngine;
 };
 
 } // end of namespace Grim

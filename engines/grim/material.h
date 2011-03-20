@@ -27,14 +27,17 @@
 #define GRIM_MATERIAL_H
 
 #include "engines/grim/resource.h"
+#include "engines/grim/object.h"
+#include "engines/grim/colormap.h"
 
 namespace Grim {
 
-class Material {
+class Material : public Object {
+	GRIM_OBJECT(Material)
 public:
-	Material() {}
+	Material() { _width = 0; }
 	// Load a texture from the given data.
-	Material(const char *filename, const char *data, int len, const CMap *cmap);
+	Material(const char *filename, const char *data, int len, CMap *cmap);
 
 	// Load this texture into the GL context
 	void select() const;
@@ -44,12 +47,13 @@ public:
 
 	int numImages() const { return _numImages; }
 	int currentImage() const { return _currImage; }
+	const char *filename() { return _fname.c_str(); }
 
 	~Material();
 
 	Common::String _fname;
 
-	const CMap *_cmap;
+	const CMapPtr _cmap;
 	int _numImages, _currImage;
 	int _width, _height;
 	void *_textures;

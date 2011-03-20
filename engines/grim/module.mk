@@ -59,6 +59,7 @@ MODULE_OBJS := \
 	scene.o \
 	textobject.o \
 	textsplit.o \
+	object.o \
 	walkplane.o
 
 # This module can be built as a plugin
