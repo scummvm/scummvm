@@ -27,6 +27,7 @@
 #include "common/stack.h"
 #include "graphics/primitives.h"
 
+#include "sci/console.h"
 #include "sci/sci.h"
 #include "sci/event.h"
 #include "sci/engine/kernel.h"
@@ -726,6 +727,23 @@ void GfxAnimate::kernelAddToPicView(GuiResourceId viewId, int16 loopNo, int16 ce
 	_ports->setPort((Port *)_ports->_picWind);
 	addToPicDrawView(viewId, loopNo, celNo, x, y, priority, control);
 	addToPicSetPicNotValid();
+}
+
+void GfxAnimate::printAnimateList(Console *con) {
+	AnimateList::iterator it;
+	const AnimateList::iterator end = _list.end();
+
+	for (it = _list.begin(); it != end; ++it) {
+		Script *scr = _s->_segMan->getScriptIfLoaded(it->object.segment);
+		int16 scriptNo = scr ? scr->getScriptNumber() : -1;
+
+		con->DebugPrintf("%04x:%04x (%s), script %d, view %d (%d, %d), pal %d, "
+			"at %d, %d, scale %d, %d / %d (z: %d, prio: %d, shown: %d, signal: %d)\n",
+			PRINT_REG(it->object), _s->_segMan->getObjectName(it->object),
+			scriptNo, it->viewId, it->loopNo, it->celNo, it->paletteNo,
+			it->x, it->y, it->scaleX, it->scaleY, it->scaleSignal,
+			it->z, it->priority, it->showBitsFlag, it->signal);
+	}
 }
 
 } // End of namespace Sci

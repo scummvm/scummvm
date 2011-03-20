@@ -40,6 +40,7 @@
 #include "sci/sound/music.h"
 #include "sci/sound/drivers/mididriver.h"
 #include "sci/sound/drivers/map-mt32-to-gm.h"
+#include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
@@ -125,6 +126,8 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("undither",           WRAP_METHOD(Console, cmdUndither));
 	DCmd_Register("pic_visualize",		WRAP_METHOD(Console, cmdPicVisualize));
 	DCmd_Register("play_video",         WRAP_METHOD(Console, cmdPlayVideo));
+	DCmd_Register("animate_list",       WRAP_METHOD(Console, cmdAnimateList));
+	DCmd_Register("al",                 WRAP_METHOD(Console, cmdAnimateList));	// alias
 	// Segments
 	DCmd_Register("segment_table",		WRAP_METHOD(Console, cmdPrintSegmentTable));
 	DCmd_Register("segtable",			WRAP_METHOD(Console, cmdPrintSegmentTable));	// alias
@@ -356,6 +359,8 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" draw_cel - Draws a cel from a view resource\n");
 	DebugPrintf(" pic_visualize - Enables visualization of the drawing process of EGA pictures\n");
 	DebugPrintf(" undither - Enable/disable undithering\n");
+	DebugPrintf(" play_video - Plays a SEQ, AVI, VMD, RBT or DUK video\n");
+	DebugPrintf(" animate_object_list / al - Shows the current list of objects in kAnimate's draw list\n");
 	DebugPrintf("\n");
 	DebugPrintf("Segments:\n");
 	DebugPrintf(" segment_table / segtable - Lists all segments\n");
@@ -1574,6 +1579,12 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 		DebugPrintf("Unknown video file type\n");
 		return true;
 	}
+}
+
+bool Console::cmdAnimateList(int argc, const char **argv) {
+	DebugPrintf("Animate list:\n");
+	_engine->_gfxAnimate->printAnimateList(this);
+	return true;
 }
 
 bool Console::cmdParseGrammar(int argc, const char **argv) {
