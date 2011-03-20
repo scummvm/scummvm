@@ -111,7 +111,12 @@ void Matrix3::getPitchYawRoll(float* pPitch, float* pYaw, float* pRoll) {
 	float angle_y;
 	float angle_z;
 
-	angle_y = D = asin(_right.z());        /* Calculate Y-axis angle */
+	float mag = sqrt(_right.x() * _right.x() + _right.z() * _right.z());
+
+	angle_y = D = asin(_right.z() / mag);        /* Calculate Y-axis angle */
+	if (_right.x() < 0) {
+		angle_y = LOCAL_PI - angle_y;
+	}
 	C			= cos(angle_y);
 	angle_y		= RadianToDegree(angle_y);
 
