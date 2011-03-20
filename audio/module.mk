@@ -45,6 +45,7 @@ MODULE_OBJS := \
 	softsynth/ym2612.o \
 	softsynth/fluidsynth.o \
 	softsynth/mt32.o \
+	softsynth/eas.o \
 	softsynth/pcspk.o \
 	softsynth/sid.o \
 	softsynth/wave6581.o
