@@ -53,6 +53,39 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
+class Scene3700: public Scene {
+	/* Custom classes */
+	class Viewer: public SceneObject {
+	public:
+		GfxSurface _imgList[4];
+		int _field88;
+		int _percent;
+		int _field94;
+		int _field96;
+		int _field98;
+
+		Viewer();
+		virtual void reposition();
+		virtual void draw();
+	};
+
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	Viewer _viewer;
+	Action _action1;
+	SceneObject _hotspot1, _hotspot2;
+	SpeakerSText _speakerSText;
+	SpeakerMText _speakerMText;
+	SpeakerMR _speakerMR;
+	SoundHandler _soundHandler;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+};
+
 } // End of namespace tSage
 
 #endif
