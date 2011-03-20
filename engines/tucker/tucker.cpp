@@ -124,10 +124,7 @@ void TuckerEngine::restart() {
 	_timerCounter2 = 0;
 	_partNum = _currentPartNum = 0;
 	_locationNum = 0;
-	_nextLocationNum = ConfMan.getInt("boot_param");
-	if (_nextLocationNum == 0) {
-		_nextLocationNum = (_gameFlags & kGameFlagDemo) == 0 ? kStartupLocationGame : kStartupLocationDemo;
-	}
+	_nextLocationNum = (_gameFlags & kGameFlagDemo) == 0 ? kStartupLocationGame : kStartupLocationDemo;
 	_gamePaused = false;
 	_gameDebug = false;
 	_displayGameHints = false;
@@ -352,6 +349,15 @@ void TuckerEngine::mainLoop() {
 	_flagsTable[105] = 1;
 
 	_spriteAnimationFrameIndex =  _spriteAnimationsTable[14].firstFrameIndex;
+
+	if (ConfMan.hasKey("save_slot")) {
+		const int slot = ConfMan.getInt("save_slot");
+		if (slot >= 0 && slot <= kLastSaveSlot) {
+			loadGameState(slot);
+		}
+	} else if (ConfMan.hasKey("boot_param")) {
+		_nextLocationNum = ConfMan.getInt("boot_param");
+	}
 
 	do {
 		++_syncCounter;
