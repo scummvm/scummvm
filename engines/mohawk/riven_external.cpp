@@ -882,7 +882,7 @@ void RivenExternal::xbsettrap(uint16 argc, uint16 *argv) {
 	// Set the Ytram trap
 
 	// We can catch the Ytram between 10 seconds and 3 minutes from now
-	uint32 timeUntilCatch = _vm->_rnd->getRandomNumberRng(1000 * 10, 1000 * 60 * 3);
+	uint32 timeUntilCatch = _vm->_rnd->getRandomNumberRng(10, 60 * 3) * 1000;
 	*_vm->getVar("bytramtime") = timeUntilCatch + _vm->getTotalPlayTime();
 
 	// And set the timer too

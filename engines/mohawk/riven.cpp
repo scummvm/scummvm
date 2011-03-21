@@ -813,11 +813,23 @@ static void catherineIdleTimer(MohawkEngine_Riven *vm) {
 }
 
 void MohawkEngine_Riven::installCardTimer() {
-	// TODO: Handle sunners hardcoded videos
-
-	if (getCurStack() == pspit && getCurCardRMAP() == 0x3a85) {
+	switch (getCurCardRMAP()) {
+	case 0x3a85: // Top of elevator on prison island
 		// Handle Catherine hardcoded videos
 		installTimer(&catherineIdleTimer, _rnd->getRandomNumberRng(1, 33) * 1000);
+		break;
+	case 0x77d6: // Sunners, top of stairs
+		// TODO: Background Sunner videos
+		break;
+	case 0x79bd: // Sunners, middle of stairs
+		// TODO: Background Sunner videos
+		break;
+	case 0x7beb: // Sunners, bottom of stairs
+		// TODO: Background Sunner videos
+		break;
+	case 0xb6ca: // Sunners, shoreline
+		// TODO: Background Sunner videos
+		break;
 	}
 }
 
