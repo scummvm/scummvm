@@ -835,13 +835,6 @@ ps2)
 	;;
 esac
 
-# special case for Snow Leopard is to force compile as 32 bit
-os=${_host_os%.*.*}
-if test "$os" = "darwin10"; then
-	CXXFLAGS="$CXXFLAGS -m32"
-	LDFLAGS="$LDFLAGS -m32"
-fi	
-
 if test -z "$_host_alias"; then
 	_host_alias="$_host_cpu-$_host_os"
 else
@@ -1214,7 +1207,7 @@ case $_host_os in
 		;;
 	darwin*)
 		DEFINES="$DEFINES -DUNIX -DMACOSX -DUSE_OPENGL"
-		LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI -framework OpenGL \
+		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI -framework OpenGL \
 		-dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
 		add_line_to_config_mk 'MACOSX = 1'
 		;;
@@ -2262,7 +2255,11 @@ $_def_64bit_type_signed
 typedef signed $type_1_byte int8;
 typedef signed $type_2_byte int16;
 typedef signed $type_4_byte int32;
+
+#ifndef _UINT64
+#define _UINT64
 $_def_64bit_type_unsigned
+#endif
 
 /* Libs */
 $_def_vorbis
