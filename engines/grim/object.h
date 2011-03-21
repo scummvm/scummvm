@@ -176,8 +176,7 @@ public:
 
 	template<class T>
 	static bool registerType() {
-		T obj;
-		Common::String type = obj.typeName();
+		Common::String type = T::staticTypeName();
 		if (_creators.contains(type)) {
 			warning("Type name %s already registered", type.c_str());
 			return false;
@@ -199,10 +198,13 @@ private:
 
 } // end of namespace Grim
 
-#define GRIM_OBJECT(class) 				\
-	public:								\
-		const char *typeName() const {	\
-			return #class;				\
+#define GRIM_OBJECT(class)						\
+	public:										\
+		static const char *staticTypeName() {	\
+			return #class;						\
+		}										\
+		const char *typeName() const {			\
+			return staticTypeName();			\
 		}
 
 #endif
