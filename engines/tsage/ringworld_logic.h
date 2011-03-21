@@ -36,9 +36,14 @@ namespace tSage {
 
 #define ADD_PLAYER_MOVER(X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
 	_globals->_player.addMover(mover, &pt, this); }
+#define ADD_PLAYER_MOVER_NULL(OBJ, X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
+	OBJ.addMover(mover, &pt, NULL); }
+#define ADD_PLAYER_MOVER_THIS(OBJ, X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
+	OBJ.addMover(mover, &pt, this); }
+
 #define ADD_MOVER(OBJ, X, Y) { Common::Point pt(X, Y); NpcMover *mover = new NpcMover(); \
 	OBJ.addMover(mover, &pt, this); }
-#define ADD_MOVER2(OBJ, X, Y) { Common::Point pt(X, Y); NpcMover *mover = new NpcMover(); \
+#define ADD_MOVER_NULL(OBJ, X, Y) { Common::Point pt(X, Y); NpcMover *mover = new NpcMover(); \
 	OBJ.addMover(mover, &pt, NULL); }
 
 

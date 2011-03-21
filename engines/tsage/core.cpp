@@ -1787,6 +1787,10 @@ void SceneObject::getHorizBounds() {
 	_xe = tempRect.right;
 }
 
+int SceneObject::getRegionIndex() {
+	return _globals->_sceneRegions.indexOf(_position);
+}
+
 int SceneObject::checkRegion(const Common::Point &pt) {
 	Rect tempRect;
 	int regionIndex = 0;

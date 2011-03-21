@@ -65,6 +65,11 @@ class Scene3700: public Scene {
 		int _field98;
 
 		Viewer();
+		virtual Common::String getClassName() { return "Viewer"; }
+		virtual void synchronise(Serialiser &s) {
+			// TODO: Check if we need to store viewer fields
+			SceneObject::synchronise(s);
+		}
 		virtual void reposition();
 		virtual void draw();
 	};
