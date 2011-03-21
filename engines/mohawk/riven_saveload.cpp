@@ -173,7 +173,7 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 			stackID = mapOldStackIDToNew(rawVariables[i]);
 		else if (name.equalsIgnoreCase("CurrentCardID"))
 			cardID = rawVariables[i];
-		else if (name.equalsIgnoreCase("ReturnStackID"))
+		else if (name.equalsIgnoreCase("ReturnStackID") && *var != 0) // if 0, the game did not use the variable yet
 			*var = mapOldStackIDToNew(rawVariables[i]);
 	}
 
