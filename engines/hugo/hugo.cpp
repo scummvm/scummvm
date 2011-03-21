@@ -165,7 +165,7 @@ bool HugoEngine::isPacked() const {
  * Print options for user when dead
  */
 void HugoEngine::gameOverMsg() {
-	Utils::Box(kBoxOk, "%s", _text->getTextUtil(kGameOver));
+	Utils::notifyBox(_text->getTextUtil(kGameOver));
 }
 
 Common::Error HugoEngine::run() {
@@ -678,8 +678,8 @@ void HugoEngine::endGame() {
 	debugC(1, kDebugEngine, "endGame");
 
 	if (_boot.registered != kRegRegistered)
-		Utils::Box(kBoxAny, "%s", _text->getTextEngine(kEsAdvertise));
-	Utils::Box(kBoxAny, "%s\n%s", _episode, getCopyrightString());
+		Utils::notifyBox(_text->getTextEngine(kEsAdvertise));
+	Utils::notifyBox(Common::String::format("%s\n%s", _episode, getCopyrightString()));
 	_status.viewState = kViewExit;
 }
 

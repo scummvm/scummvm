@@ -46,9 +46,27 @@ int   lastBit(byte data);
 
 void  reverseByte(byte *data);
 
-void Box(box_t, const char *, ...) GCC_PRINTF(2, 3);
-Common::String promptBox(const char *msg);
-bool yesNoBox(const char *msg);
+/**
+ * Show a dialog notifying the user about something, with
+ * only a simple "OK" button to dismiss it.
+ */
+void notifyBox(const Common::String &msg);
+
+/**
+ * Show a dialog prompting the player to input some text.
+ */
+Common::String promptBox(const Common::String &msg);
+
+/**
+ * Show a dialog prompting the player for a "yes"/"no" choice.
+ */
+bool yesNoBox(const Common::String &msg);
+
+/**
+ * Convert a string to lower case, in place.
+ * @param buffer	string to convert to lower case
+ * @return the string which was passed in
+ */
 char *strlwr(char *buffer);
 
 } // End of namespace Utils

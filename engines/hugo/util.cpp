@@ -43,11 +43,6 @@ namespace Hugo {
 
 namespace Utils {
 
-enum {
-	kMaxStrLength = 1024
-};
-
-
 /**
  * Returns index (0 to 7) of first 1 in supplied byte, or 8 if not found
  */
@@ -96,52 +91,24 @@ void reverseByte(byte *data) {
 	*data = result;
 }
 
-void Box(box_t dismiss, const char *s, ...) {
-	static char buffer[kMaxStrLength + 1];          // Format text into this
-
-	if (!s)
-		return;                                   // NULL strings catered for
-
-	if (s[0] == '\0')
+void notifyBox(const Common::String &msg) {
+	if (msg.empty())
 		return;
 
-	if (strlen(s) > kMaxStrLength - 100) {          // Test length
-		warning("String too long: '%s'", s);
-		return;
-	}
-
-	va_list marker;
-	va_start(marker, s);
-	vsprintf(buffer, s, marker);                    // Format string into buffer
-	va_end(marker);
-
-	if (buffer[0] == '\0')
-		return;
-
-	switch(dismiss) {
-	case kBoxAny:
-	case kBoxOk: {
-		GUI::MessageDialog dialog(buffer, "OK");
-		dialog.runModal();
-		break;
-		}
-	default:
-		error("Unknown BOX Type %d", dismiss);
-	}
-
-	return;
+	GUI::MessageDialog dialog(msg, "OK");
+	dialog.runModal();
 }
 
-Common::String promptBox(const char *msg) {
-	if (!msg || !*msg)
-		return 0;
+Common::String promptBox(const Common::String &msg) {
+	if (msg.empty())
+		return Common::String();
 
 	EntryDialog dialog(msg, "OK", "");
 	return dialog.getEditString();
 }
 
-bool yesNoBox(const char *msg) {
-	if (!msg || !*msg)
+bool yesNoBox(const Common::String &msg) {
+	if (msg.empty())
 		return 0;
 
 	GUI::MessageDialog dialog(msg, "YES", "NO");

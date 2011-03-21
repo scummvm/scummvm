@@ -550,7 +550,7 @@ void FileManager::printBootText() {
 			buf[i] ^= cypher[i % strlen(cypher)];
 
 		buf[i] = '\0';
-		Utils::Box(kBoxOk, "%s", buf);
+		Utils::notifyBox(buf);
 	}
 
 	free(buf);

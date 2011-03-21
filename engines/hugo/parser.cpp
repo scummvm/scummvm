@@ -485,7 +485,7 @@ void Parser::showDosInventory() const {
 	if (index & 1)
 		buffer += "\n";
 	buffer += Common::String(_vm->_text->getTextParser(kTBOutro));
-	Utils::Box(kBoxAny, "%s", buffer.c_str());
+	Utils::notifyBox(buffer.c_str());
 }
 
 } // End of namespace Hugo
