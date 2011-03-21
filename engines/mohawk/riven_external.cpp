@@ -1446,12 +1446,105 @@ void RivenExternal::xglview_villageoff(uint16 argc, uint16 *argv) {
 	_vm->_gfx->updateScreen();
 }
 
+static void catherineViewerIdleTimer(MohawkEngine_Riven *vm) {
+	uint32 *cathState = vm->getVar("gcathstate");
+	uint16 movie;
+
+	// Choose a new movie
+	if (*cathState == 1) {
+		static const int movieList[] = { 9, 10, 19, 19, 21, 21 };
+		movie = movieList[vm->_rnd->getRandomNumber(5)];
+	} else if (*cathState == 2) {
+		static const int movieList[] = { 18, 20, 22 };
+		movie = movieList[vm->_rnd->getRandomNumber(2)];
+	} else {
+		static const int movieList[] = { 11, 11, 12, 17, 17, 17, 17, 23 };
+		movie = movieList[vm->_rnd->getRandomNumber(7)];
+	}
+
+	// Update Catherine's state
+	if (movie == 10 || movie == 17 || movie == 18 || movie == 20)
+		*cathState = 1;
+	else if (movie == 19 || movie == 21 || movie == 23)
+		*cathState = 2;
+	else
+		*cathState = 3;
+
+	// Begin playing the new movie
+	vm->_video->activateMLST(movie, vm->getCurCard());
+	VideoHandle videoHandle = vm->_video->playMovieRiven(30);
+
+	// Reset the timer
+	vm->installTimer(&catherineViewerIdleTimer, vm->_video->getDuration(videoHandle) + vm->_rnd->getRandomNumber(60) * 1000);
+}
+
 void RivenExternal::xglview_prisonon(uint16 argc, uint16 *argv) {
-	// TODO: Activate random background Catherine videos
+	// Activate random background Catherine videos
+
+	// Turn on the left viewer to 'prison mode'
+	*_vm->getVar("glview") = 1;
+
+	// Get basic starting states
+	uint16 cathMovie = _vm->_rnd->getRandomNumberRng(8, 23);
+	uint16 turnOnMovie = 4;
+	uint32 *cathState = _vm->getVar("gcathstate");
+
+	// Adjust the turn on movie
+	if (cathMovie == 14)
+		turnOnMovie = 6;
+	else if (cathMovie == 15)
+		turnOnMovie = 7;
+
+	// Adjust Catherine's state
+	if (cathMovie == 9 || cathMovie == 11 || cathMovie == 12 || cathMovie == 22)
+		*cathState = 3;
+	else if (cathMovie == 19 || cathMovie == 21 || cathMovie == 23 || cathMovie == 14)
+		*cathState = 2;
+	else
+		*cathState = 1;
+
+	// Turn on the viewer
+	_vm->_cursor->hideCursor();
+	_vm->_video->playMovieBlockingRiven(turnOnMovie);
+	_vm->_cursor->showCursor();
+
+	uint32 timeUntilNextMovie;
+
+	// Begin playing a movie immediately if Catherine is already in the viewer
+	if (cathMovie == 8 || (cathMovie >= 13 && cathMovie <= 16)) {
+		_vm->_video->activateMLST(cathMovie, _vm->getCurCard());
+		VideoHandle videoHandle = _vm->_video->playMovieRiven(30);
+
+		timeUntilNextMovie = _vm->_video->getDuration(videoHandle) + _vm->_rnd->getRandomNumber(60) * 1000;
+	} else {
+		// Otherwise, just redraw the imager
+		timeUntilNextMovie = _vm->_rnd->getRandomNumberRng(10, 20) * 1000;
+		_vm->_gfx->drawPLST(8);
+		_vm->_gfx->updateScreen();
+	}
+
+	// Create the timer for the next video
+	_vm->installTimer(&catherineViewerIdleTimer, timeUntilNextMovie);
 }
 
 void RivenExternal::xglview_prisonoff(uint16 argc, uint16 *argv) {
-	// TODO: Deactivate random background Catherine videos
+	// Deactivate random background Catherine videos
+
+	// Update the viewer state (now off)
+	*_vm->getVar("glview") = 0;
+
+	// Remove the timer we set in xglview_prisonon()
+	_vm->removeTimer();
+
+	// Play the 'turn off' movie after stopping any videos still playing
+	_vm->_video->stopVideos();
+	_vm->_cursor->hideCursor();
+	_vm->_video->playMovieBlockingRiven(5);
+	_vm->_cursor->showCursor();
+
+	// Redraw the viewer
+	_vm->_gfx->drawPLST(1);
+	_vm->_gfx->updateScreen();
 }
 
 // ------------------------------------------------------------------------------------
