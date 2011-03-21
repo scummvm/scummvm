@@ -174,7 +174,8 @@ public:
 	static void saveObject(SaveGame *state, Object *object);
 	static ObjectPtr<Object> restoreObject(SaveGame *state);
 
-	template<class T> static bool registerType() {
+	template<class T>
+	static bool registerType() {
 		T obj;
 		Common::String type = obj.typeName();
 		if (_creators.contains(type)) {
@@ -186,8 +187,13 @@ public:
 		return true;
 	}
 
+	static void clearTypes() {
+		_creators.clear();
+	}
+
 private:
-	template<class T> static Object *createObj() {
+	template<class T>
+	static Object *createObj() {
 		return new T();
 	}
 

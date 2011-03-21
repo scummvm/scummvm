@@ -59,13 +59,6 @@
 
 namespace Grim {
 
-static const bool color = ObjectManager::registerType<Color>();
-static const bool luafile = ObjectManager::registerType<LuaFile>();
-// static const bool bitmap = ObjectManager::registerType<Bitmap>();
-// static const bool costume = ObjectManager::registerType<Costume>();
-static const bool font = ObjectManager::registerType<Font>();
-// static const bool material = ObjectManager::registerType<Material>();
-
 static bool g_lua_initialized = false;
 
 // Entries in the system.controls table
@@ -252,6 +245,13 @@ GrimEngine::GrimEngine(OSystem *syst, int gameFlags) :
 		Engine(syst), _currScene(NULL), _selectedActor(NULL) {
 	g_grim = this;
 
+	ObjectManager::registerType<Color>();
+	ObjectManager::registerType<LuaFile>();
+	//ObjectManager::registerType<Bitmap>();
+	//ObjectManager::registerType<Costume>();
+	ObjectManager::registerType<Font>();
+	//ObjectManager::registerType<Material>();
+
 	_gameFlags = gameFlags;
 
 	g_registry = new Registry();
@@ -317,6 +317,8 @@ GrimEngine::GrimEngine(OSystem *syst, int gameFlags) :
 }
 
 GrimEngine::~GrimEngine() {
+	ObjectManager::clearTypes();
+
 	delete[] _controlsEnabled;
 	delete[] _controlsState;
 
