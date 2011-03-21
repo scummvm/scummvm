@@ -50,8 +50,8 @@ Scene::Scene(const char *sceneName, const char *buf, int len) :
 		_cmaps[i] = g_resourceloader->getColormap(cmap_name);
 	}
 
-	if (ts.checkString("section: object_states")) {
-		ts.expectString("section: object_states");
+	if (ts.checkString("section: objectstates") || ts.checkString("sections: object_states")) {
+		ts.nextLine();
 		ts.scanString(" tot_objects %d", 1, &_numObjectStates);
 		char object_name[256];
 		for (int l = 0; l < _numObjectStates; l++) {
