@@ -113,9 +113,13 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	/* Scene group 6 */
 
 	/* Scene group 8 */
+	// Scene 7000: Landing
 	case 7000: return new Scene7000();
+	// Scene 7100: swimming under water
 	case 7100: return new Scene7100();
+	// Scene 7200: Entering the underwater cave
 	case 7200: return new Scene7200();
+	// Scene 7300: Discussion with Lord Poria
 	case 7300: return new Scene7300();
 	case 7600: return new Scene7600();
 
