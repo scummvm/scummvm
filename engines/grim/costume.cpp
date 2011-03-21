@@ -1222,6 +1222,13 @@ void Costume::saveState(SaveGame *state) const {
 			state->writeVector3d(c->_matrix._pos);
 		}
 	}
+
+	state->writeLESint32(_head.joint1);
+	state->writeLESint32(_head.joint2);
+	state->writeLESint32(_head.joint3);
+	state->writeFloat(_head.maxPitch);
+	state->writeFloat(_head.maxYaw);
+	state->writeFloat(_head.maxRoll);
 }
 
 bool Costume::restoreState(SaveGame *state) {
@@ -1247,6 +1254,13 @@ bool Costume::restoreState(SaveGame *state) {
 			c->_matrix._pos = state->readVector3d();
 		}
 	}
+
+	_head.joint1 = state->readLESint32();
+	_head.joint2 = state->readLESint32();
+	_head.joint3 = state->readLESint32();
+	_head.maxPitch = state->readFloat();
+	_head.maxYaw = state->readFloat();
+	_head.maxRoll = state->readFloat();
 
 	return true;
 }
