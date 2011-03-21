@@ -331,7 +331,7 @@ public:
 
 template<bool stereo, bool reverseStereo>
 RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate) {
-	if (inrate != outrate) {
+	if (outrate && inrate != outrate) {
 		if ((inrate % outrate) == 0) {
 			return new SimpleRateConverter<stereo, reverseStereo>(inrate, outrate);
 		} else {
