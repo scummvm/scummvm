@@ -83,10 +83,16 @@ int MidiPlayer::open() {
 	return 0;
 }
 
+bool MidiPlayer::isOpen() const {
+	return _driver && _driver->isOpen();
+}
+
 void MidiPlayer::close() {
 	stopMusic();
-	if (_driver)
+	if (_driver) {
 		_driver->close();
+		delete _driver;
+	}
 	_driver = 0;
 }
 

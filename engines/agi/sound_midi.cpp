@@ -138,6 +138,10 @@ int SoundGenMIDI::open() {
 	return 0;
 }
 
+bool SoundGenMIDI::isOpen() const {
+	return _driver && _driver->isOpen();
+}
+
 void SoundGenMIDI::close() {
 	stop();
 	if (_driver)

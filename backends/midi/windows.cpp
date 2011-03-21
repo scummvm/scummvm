@@ -61,6 +61,7 @@ private:
 public:
 	MidiDriver_WIN(int deviceIndex) : _isOpen(false), _device(deviceIndex) { }
 	int open();
+	bool isOpen() const { return _isOpen; }
 	void close();
 	void send(uint32 b);
 	void sysEx(const byte *msg, uint16 length);
@@ -93,6 +94,8 @@ void MidiDriver_WIN::close() {
 }
 
 void MidiDriver_WIN::send(uint32 b) {
+	assert(_isOpen);
+
 	union {
 		DWORD dwData;
 		BYTE bData[4];

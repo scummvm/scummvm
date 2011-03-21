@@ -57,6 +57,7 @@ class MidiDriver_DMEDIA : public MidiDriver_MPU401 {
 public:
 	MidiDriver_DMEDIA();
 	int open();
+	bool isOpen() const { return _isOpen; }
 	void close();
 	void send(uint32 b);
 	void sysEx(const byte *msg, uint16 length);
@@ -179,7 +180,7 @@ void MidiDriver_DMEDIA::sysEx (const byte *msg, uint16 length) {
 	memcpy(buf, msg, length);
 	buf[length] = MD_EOX;
 	event.sysexmsg = buf;
-        event.msglen = length;
+	event.msglen = length;
 	event.msg[0] = MD_SYSEX;
 	event.msg[1] = 0;
 	event.msg[2] = 0;

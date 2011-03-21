@@ -694,6 +694,10 @@ int MidiMusic::open() {
 	return 0;
 }
 
+bool MidiMusic::isOpen() const {
+	return _driver != 0;
+}
+
 void MidiMusic::close() {
 }
 

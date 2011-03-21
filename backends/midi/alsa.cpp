@@ -71,6 +71,7 @@ class MidiDriver_ALSA : public MidiDriver_MPU401 {
 public:
 	MidiDriver_ALSA(int client, int port);
 	int open();
+	bool isOpen() const { return _isOpen; }
 	void close();
 	void send(uint32 b);
 	void sysEx(const byte *msg, uint16 length);

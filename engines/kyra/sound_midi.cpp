@@ -55,6 +55,7 @@ public:
 
 	// DUMMY
 	int open() { return 0; }
+	bool isOpen() const { return true; }
 	void close() {}
 
 	MidiChannel *allocateChannel()		{ return 0; }

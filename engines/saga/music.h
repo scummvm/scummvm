@@ -58,6 +58,7 @@ public:
 
 	//MidiDriver interface implementation
 	int open();
+	bool isOpen() const;
 	void close() { _driver->close(); }
 	void send(uint32 b);
 

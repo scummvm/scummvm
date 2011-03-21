@@ -182,6 +182,11 @@ public:
 	 */
 	virtual int open() = 0;
 
+	/**
+	 * Check whether the midi driver has already been opened.
+	 */
+	virtual bool isOpen() const = 0;
+
 	/** Close the midi driver. */
 	virtual void close() = 0;
 

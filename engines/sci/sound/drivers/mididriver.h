@@ -89,6 +89,7 @@ public:
 		return open(resMan);
 	}
 	virtual int open(ResourceManager *resMan) { return _driver->open(); }
+	bool isOpen() const { return _driver->isOpen(); }
 	virtual void close() { _driver->close(); }
 	virtual void send(uint32 b) { _driver->send(b); }
 	uint32 getBaseTempo() { return _driver->getBaseTempo(); }

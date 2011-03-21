@@ -50,6 +50,7 @@ MusicDriver::MusicDriver() : _isGM(false) {
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_driver = MidiDriver::createMidi(dev);
+	assert(_driver);
 	_driverType = MidiDriver::getMusicType(dev);
 	if (isMT32())
 		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
@@ -73,6 +74,10 @@ int MusicDriver::open() {
 		_driver->sendGMReset();
 
 	return 0;
+}
+
+bool MusicDriver::isOpen() const {
+	return _driver->isOpen();
 }
 
 void MusicDriver::setVolume(int volume) {

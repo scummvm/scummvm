@@ -264,6 +264,10 @@ int MusicPlayerMidi::open() {
 	return 0;
 }
 
+bool MusicPlayerMidi::isOpen() const {
+	return _driver && _driver->isOpen();
+}
+
 void MusicPlayerMidi::close() {}
 
 void MusicPlayerMidi::send(uint32 b) {

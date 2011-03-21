@@ -95,6 +95,7 @@ public:
 
 	// MidiDriver interface
 	virtual int open();
+	virtual bool isOpen() const;
 	virtual void close();
 	virtual void send(uint32 b);
 	virtual void metaEvent(byte type, byte *data, uint16 length);

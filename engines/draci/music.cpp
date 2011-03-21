@@ -97,10 +97,16 @@ int MusicPlayer::open() {
 	return 0;
 }
 
+bool MusicPlayer::isOpen() const {
+	return _driver && _driver->isOpen();
+}
+
 void MusicPlayer::close() {
 	stop();
-	if (_driver)
+	if (_driver) {
 		_driver->close();
+		delete _driver;
+	}
 	_driver = 0;
 }
 

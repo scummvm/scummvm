@@ -59,6 +59,7 @@ public:
 
 	// MidiDriver interface
 	int open();
+	bool isOpen() const;
 	void close();
 	void send(uint32 b);
 	void metaEvent(byte type, byte *data, uint16 length);
@@ -176,6 +177,10 @@ int MidiPlayer::open() {
 		_driver->setTimerCallback(this, &timerCallback);
 	}
 	return ret;
+}
+
+bool MidiPlayer::isOpen() const {
+	return _driver && _driver->isOpen();
 }
 
 void MidiPlayer::close() {

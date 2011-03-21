@@ -76,6 +76,8 @@ public:
 		return 0;
 	}
 
+	bool isOpen() const { return _isOpen; }
+
 	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {
 		_timerProc = timer_proc;
 		_timerParam = timer_param;

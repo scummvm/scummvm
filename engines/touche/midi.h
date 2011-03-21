@@ -59,6 +59,7 @@ public:
 
 	// MidiDriver interface
 	int open();
+	bool isOpen() const;
 	void close();
 	void send(uint32 b);
 	void metaEvent(byte type, byte *data, uint16 length);

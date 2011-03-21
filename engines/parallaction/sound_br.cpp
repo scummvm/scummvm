@@ -222,6 +222,7 @@ public:
 
 	// MidiDriver interface
 	int open();
+	bool isOpen() const;
 	void close();
 	void send(uint32 b);
 	void metaEvent(byte type, byte *data, uint16 length);
@@ -340,6 +341,10 @@ int MidiPlayer_MSC::open() {
 		_driver->setTimerCallback(this, &timerCallback);
 	}
 	return ret;
+}
+
+bool MidiPlayer_MSC::isOpen() const {
+	return _driver && _driver->isOpen();
 }
 
 void MidiPlayer_MSC::close() {

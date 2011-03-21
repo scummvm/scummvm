@@ -78,8 +78,10 @@ MidiMusic::MidiMusic(QueenEngine *vm)
 			_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 		}
 	}
+	assert(_driver);
 
-	_driver->open();
+	int ret = _driver->open();
+	assert(ret == 0);
 	_driver->setTimerCallback(this, &timerCallback);
 
 	if (_nativeMT32)

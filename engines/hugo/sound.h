@@ -60,6 +60,7 @@ public:
 
 	// MidiDriver interface
 	int open();
+	bool isOpen() const;
 
 	MidiChannel *allocateChannel();
 	MidiChannel *getPercussionChannel();
