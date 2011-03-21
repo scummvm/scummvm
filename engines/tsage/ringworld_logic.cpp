@@ -360,7 +360,7 @@ SpeakerPText::SpeakerPText() {
 /*--------------------------------------------------------------------------*/
 
 SpeakerCHFText::SpeakerCHFText() {
-	_speakerName = "SpeakerCHFText";
+	_speakerName = "CHFTEXT";
 	_textWidth = 240;
 	_textMode = ALIGN_CENTRE;
 	_colour1 = 56;

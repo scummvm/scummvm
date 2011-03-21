@@ -1675,7 +1675,7 @@ void SceneObject::setPosition(const Common::Point &p, int yDiff) {
 }
 
 void SceneObject::setZoom(int percent) {
-	assert(_percent >= 0);
+	assert((percent >= -1) && (percent < 999));
 	if (percent != _percent) {
 		_percent = percent;
 		_flags |= OBJFLAG_PANES;
@@ -2093,7 +2093,7 @@ void SceneObject::dispatch() {
 
 	// Handle updating the zoom and/or priority
 	if (!(_flags & OBJFLAG_ZOOMED)) {
-		int yp = MIN((int)_position.y, 255);
+		int yp = CLIP((int)_position.y, 0, 255);
 		setZoom(_globals->_sceneManager._scene->_zoomPercents[yp]);
 	}
 	if (!(_flags & OBJFLAG_FIXED_PRIORITY)) {

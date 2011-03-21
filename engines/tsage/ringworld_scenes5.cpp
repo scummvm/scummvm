@@ -609,7 +609,7 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 		} else {
 			_globals->_player.disableControl();
 			_sceneMode = 4001;
-			setAction(&_sequenceManager1, this, &_globals->_player, NULL);
+			setAction(&_sequenceManager1, this, 4001, &_globals->_player, NULL);
 
 			if (!_globals->getFlag(36) && !_globals->getFlag(43))
 				_hotspot7.setAction(&_sequenceManager2, NULL, 4002, &_hotspot7, NULL);
@@ -636,6 +636,8 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 		_hotspot2._numFrames = 5;
 		_hotspot2.setPosition(Common::Point(182, 146));
 		_hotspot2.setAction(&_action10);
+
+		setAction(&_action2);
 		break;
 
 	case 4025:
