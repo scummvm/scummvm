@@ -110,6 +110,8 @@ public:
 
 	static bool getMetatable(lua_State *L, const Common::String &tableName);
 
+	static void *my_checkudata(lua_State *L, int ud, const char *tname);
+
 private:
 	static bool createTable(lua_State *L, const Common::String &tableName);
 };
