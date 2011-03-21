@@ -378,9 +378,8 @@ void MohawkEngine_Riven::changeToCard(uint16 dest) {
 }
 
 void MohawkEngine_Riven::refreshCard() {
-	// Clear any timer still floating around, and then install any hardcoded one
+	// Clear any timer still floating around
 	removeTimer();
-	installCardTimer();
 
 	loadHotspots(_curCard);
 
@@ -405,6 +404,9 @@ void MohawkEngine_Riven::refreshCard() {
 
 	// Now we need to redraw the cursor if necessary and handle mouse over scripts
 	updateCurrentHotspot();
+
+	// Finally, install any hardcoded timer
+	installCardTimer();
 }
 
 void MohawkEngine_Riven::loadCard(uint16 id) {
@@ -771,9 +773,52 @@ void MohawkEngine_Riven::removeTimer() {
 	_timerTime = 0;
 }
 
+static void catherineIdleTimer(MohawkEngine_Riven *vm) {
+	uint32 *cathCheck = vm->getVar("pcathcheck");
+	uint32 *cathState = vm->getVar("acathstate");
+	uint16 movie;
+
+	// Choose a random movie based on where Catherine is
+	if (*cathCheck == 0) {
+		static const int movieList[] = { 5, 6, 7, 8 };
+		*cathCheck = 1;
+		movie = movieList[vm->_rnd->getRandomNumber(3)];
+	} else if (*cathState == 1) {
+		static const int movieList[] = { 11, 14 };
+		movie = movieList[vm->_rnd->getRandomBit()];
+	} else {
+		static const int movieList[] = { 9, 10, 12, 13 };
+		movie = movieList[vm->_rnd->getRandomNumber(3)];
+	}
+
+	// Update her state if she moves from left/right or right/left, resp.
+	if (movie == 5 || movie == 7 || movie == 11 || movie == 14)
+		*cathState = 2;
+	else
+		*cathState = 1;
+
+	// Play the movie, blocking
+	vm->_video->activateMLST(movie, vm->getCurCard());
+	vm->_cursor->hideCursor();
+	vm->_video->playMovieBlockingRiven(movie);
+	vm->_cursor->showCursor();
+	vm->_system->updateScreen();
+
+	// Install the next timer for the next video
+	uint32 timeUntilNextMovie = vm->_rnd->getRandomNumber(120) * 1000;
+
+	*vm->getVar("pcathtime") = timeUntilNextMovie + vm->getTotalPlayTime();
+
+	vm->installTimer(&catherineIdleTimer, timeUntilNextMovie);
+}
+
 void MohawkEngine_Riven::installCardTimer() {
 	// TODO: Handle sunners hardcoded videos
-	// TODO: Handle Catherine hardcoded videos
+
+	if (getCurStack() == pspit && getCurCardRMAP() == 0x3a85) {
+		// Handle Catherine hardcoded videos
+		installTimer(&catherineIdleTimer, _rnd->getRandomNumberRng(1, 33) * 1000);
+	}
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {
