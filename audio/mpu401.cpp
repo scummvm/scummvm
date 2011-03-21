@@ -101,6 +101,9 @@ MidiDriver_MPU401::MidiDriver_MPU401() :
 	}
 }
 
+MidiDriver_MPU401::~MidiDriver_MPU401() {
+}
+
 void MidiDriver_MPU401::close() {
 	if (_timer_proc)
 		g_system->getTimerManager()->removeTimerProc(_timer_proc);
