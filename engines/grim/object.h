@@ -192,11 +192,6 @@ public:
 	}
 
 private:
-	template<class T>
-	static Object *createObj() {
-		return new T();
-	}
-
 	typedef ObjectPtr<Object> (*CreatorFunc)(SaveGame *);
 	static Common::HashMap<Common::String, CreatorFunc> _creators;
 
