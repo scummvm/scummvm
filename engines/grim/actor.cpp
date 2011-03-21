@@ -244,6 +244,35 @@ void Actor::saveState(SaveGame *savedState) const {
 }
 
 bool Actor::restoreState(SaveGame *savedState) {
+	for (Common::List<CostumePtr>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+		if (*i) {
+			delete (*i).object();
+		}
+	}
+	_costumeStack.clear();
+	if (_restCostume) {
+		delete _restCostume.object();
+		_restCostume = NULL;
+	}
+	if (_walkCostume) {
+		delete _walkCostume.object();
+		_walkCostume = NULL;
+	}
+	if (_turnCostume) {
+		delete _turnCostume.object();
+		_turnCostume = NULL;
+	}
+	for (int i = 0; i < 10; ++i) {
+		if (_talkCostume[i]) {
+			delete _talkCostume[i].object();
+			_talkCostume[i] = NULL;
+		}
+	}
+	if (_mumbleCostume) {
+		delete _mumbleCostume.object();
+		_mumbleCostume = NULL;
+	}
+
 	// load actor name
 	_name = savedState->readString();
 	_setName = savedState->readString();
@@ -272,7 +301,6 @@ bool Actor::restoreState(SaveGame *savedState) {
 	}
 
 	int32 size = savedState->readLESint32();
-	_costumeStack.clear();
 	for (int32 i = 0; i < size; ++i) {
 		const char *fname = savedState->readCharString();
 		const int depth = savedState->readLEUint32();
