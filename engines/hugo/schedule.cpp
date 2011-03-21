@@ -1379,7 +1379,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		Utils::Box(kBoxAny, TAKE_TEXT, _vm->_text->getNoun(_vm->_object->_objects[action->a42.objIndex].nounIndex, TAKE_NAME));
 		break;
 	case YESNO:                                     // act43: Prompt user for Yes or No
-		if (Utils::Box(kBoxYesNo, "%s", _vm->_file->fetchString(action->a43.promptIndex)) != 0)
+		if (Utils::yesNoBox(_vm->_file->fetchString(action->a43.promptIndex)))
 			insertActionList(action->a43.actYesIndex);
 		else
 			insertActionList(action->a43.actNoIndex);
@@ -1529,7 +1529,7 @@ void Scheduler_v1d::runScheduler() {
 }
 
 void Scheduler_v1d::promptAction(act *action) {
-	Utils::Box(kBoxPrompt, "%s", _vm->_file->fetchString(action->a3.promptIndex));
+	Utils::promptBox(_vm->_file->fetchString(action->a3.promptIndex));
 
 	warning("STUB: doAction(act3)");
 	// TODO: The answer of the player is not handled currently! Once it'll be read in the messageBox, uncomment this block
@@ -1578,7 +1578,7 @@ const char *Scheduler_v2d::getCypher() const {
 }
 
 void Scheduler_v2d::promptAction(act *action) {
-	Utils::Box(kBoxPrompt, "%s", _vm->_file->fetchString(action->a3.promptIndex));
+	Utils::promptBox(_vm->_file->fetchString(action->a3.promptIndex));
 	warning("STUB: doAction(act3), expecting answer %s", _vm->_file->fetchString(action->a3.responsePtr[0]));
 
 	// TODO: The answer of the player is not handled currently! Once it'll be read in the messageBox, uncomment this block

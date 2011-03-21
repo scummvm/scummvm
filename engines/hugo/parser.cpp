@@ -288,7 +288,7 @@ void Parser::keyHandler(Common::Event event) {
 			_vm->_file->restoreGame(-1);
 			break;
 		case Common::KEYCODE_n:
-			if (Utils::Box(kBoxYesNo, "%s", "Are you sure you want to start a new game?") != 0)
+			if (Utils::yesNoBox("Are you sure you want to start a new game?"))
 				_vm->_file->restoreGame(0);
 			break;
 		case Common::KEYCODE_s:

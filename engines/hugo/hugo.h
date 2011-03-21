@@ -134,7 +134,7 @@ enum HugoRegistered {
 /**
  * Ways to dismiss a text/prompt box
  */
-enum box_t {kBoxAny, kBoxOk, kBoxPrompt, kBoxYesNo};
+enum box_t {kBoxAny, kBoxOk};
 
 /**
  * Inventory icon bar states

@@ -41,10 +41,17 @@
 
 namespace Hugo {
 
+namespace Utils {
+
+enum {
+	kMaxStrLength = 1024
+};
+
+
 /**
  * Returns index (0 to 7) of first 1 in supplied byte, or 8 if not found
  */
-int Utils::firstBit(byte data) {
+int firstBit(byte data) {
 	if (!data)
 		return 8;
 
@@ -60,7 +67,7 @@ int Utils::firstBit(byte data) {
 /**
  * Returns index (0 to 7) of last 1 in supplied byte, or 8 if not found
  */
-int Utils::lastBit(byte data) {
+int lastBit(byte data) {
 	if (!data)
 		return 8;
 
@@ -76,7 +83,7 @@ int Utils::lastBit(byte data) {
 /**
  * Reverse the bit order in supplied byte
  */
-void Utils::reverseByte(byte *data) {
+void reverseByte(byte *data) {
 	byte maskIn = 0x80;
 	byte maskOut = 0x01;
 	byte result = 0;
@@ -89,18 +96,18 @@ void Utils::reverseByte(byte *data) {
 	*data = result;
 }
 
-const char *Utils::Box(box_t dismiss, const char *s, ...) {
+void Box(box_t dismiss, const char *s, ...) {
 	static char buffer[kMaxStrLength + 1];          // Format text into this
 
 	if (!s)
-		return 0;                                   // NULL strings catered for
+		return;                                   // NULL strings catered for
 
 	if (s[0] == '\0')
-		return 0;
+		return;
 
 	if (strlen(s) > kMaxStrLength - 100) {          // Test length
 		warning("String too long: '%s'", s);
-		return 0;
+		return;
 	}
 
 	va_list marker;
@@ -109,7 +116,7 @@ const char *Utils::Box(box_t dismiss, const char *s, ...) {
 	va_end(marker);
 
 	if (buffer[0] == '\0')
-		return 0;
+		return;
 
 	switch(dismiss) {
 	case kBoxAny:
@@ -118,29 +125,30 @@ const char *Utils::Box(box_t dismiss, const char *s, ...) {
 		dialog.runModal();
 		break;
 		}
-	case kBoxYesNo: {
-		GUI::MessageDialog dialog(buffer, "YES", "NO");
-		if (dialog.runModal() == GUI::kMessageOK)
-			return buffer;
-		return 0;
-		break;
-		}
-	case kBoxPrompt: {
-		EntryDialog dialog(buffer, "OK", "");
-		Common::String result = dialog.getEditString();
-
-		return result.c_str();
-
-		break;
-		}
 	default:
 		error("Unknown BOX Type %d", dismiss);
 	}
 
-	return 0;
+	return;
 }
 
-char *Utils::strlwr(char *buffer) {
+Common::String promptBox(const char *msg) {
+	if (!msg || !*msg)
+		return 0;
+
+	EntryDialog dialog(msg, "OK", "");
+	return dialog.getEditString();
+}
+
+bool yesNoBox(const char *msg) {
+	if (!msg || !*msg)
+		return 0;
+
+	GUI::MessageDialog dialog(msg, "YES", "NO");
+	return (dialog.runModal() == GUI::kMessageOK);
+}
+
+char *strlwr(char *buffer) {
 	char *result = buffer;
 
 	while (*buffer != '\0') {
@@ -151,5 +159,7 @@ char *Utils::strlwr(char *buffer) {
 
 	return result;
 }
+
+} // End of namespace Utils
 
 } // End of namespace Hugo

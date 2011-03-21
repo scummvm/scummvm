@@ -40,16 +40,18 @@ enum seqTextUtil {
 };
 
 namespace Utils {
-static const int kMaxStrLength = 1024;
 
 int   firstBit(byte data);
 int   lastBit(byte data);
 
 void  reverseByte(byte *data);
 
-const char *Box(box_t, const char *, ...) GCC_PRINTF(2, 3);
+void Box(box_t, const char *, ...) GCC_PRINTF(2, 3);
+Common::String promptBox(const char *msg);
+bool yesNoBox(const char *msg);
 char *strlwr(char *buffer);
-}
+
+} // End of namespace Utils
 
 } // End of namespace Hugo
 
