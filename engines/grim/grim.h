@@ -177,9 +177,9 @@ public:
 
 	void setSelectedActor(Actor *a) { _selectedActor = a; }
 	Actor *selectedActor() { return _selectedActor; }
-    void killActors();
+	void killActors();
 
-    // Text Object Registration
+	// Text Object Registration
 	typedef Common::HashMap<int, TextObject *> TextListType;
 	TextListType::const_iterator textsBegin() const {
 		return _textObjects.begin();

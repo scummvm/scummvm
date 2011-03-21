@@ -42,7 +42,7 @@ public:
 	Costume(const char *filename, const char *data, int len, Costume *prevCost);
     Costume() : Object() { _chores = 0; }
 
-    void load(const char *filename, const char *data, int len, Costume *prevCost);
+	void load(const char *filename, const char *data, int len, Costume *prevCost);
 
 	virtual ~Costume();
 
@@ -110,8 +110,8 @@ private:
 	Component *loadComponent(tag32 tag, Component *parent, int parentID, const char *name, Component *prevComponent);
 	void moveHead();
 
-    Common::String _fname;
-    CostumePtr _prevCostume;
+	Common::String _fname;
+	CostumePtr _prevCostume;
 
 	int _numComponents;
 	Component **_components;

@@ -39,10 +39,7 @@ void Sector::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_visible);
 	savedState->writeFloat(_height);
 
-	const char *str = _name.c_str();
-	int32 size = strlen(str);
-	savedState->writeLESint32(size);
-	savedState->write(str, size);
+	savedState->writeString(_name);
 
 	for (int i = 0; i < _numVertices + 1; ++i) {
 		savedState->writeVector3d(_vertices[i]);
@@ -58,12 +55,7 @@ bool Sector::restoreState(SaveGame *savedState) {
 	_visible     = savedState->readLESint32();
 	_height      = savedState->readFloat();
 
-	int32 size   = savedState->readLESint32();
-	char *str = new char[size+1];
-	savedState->read(str, size);
-	str[size]='\0';
-	_name = str;
-	delete[] str;
+	_name 		 = savedState->readString();
 
 	_vertices = new Graphics::Vector3d[_numVertices + 1];
 	for (int i = 0; i < _numVertices + 1; ++i) {

@@ -108,6 +108,11 @@ Bitmap::Bitmap(const char *data, int w, int h, const char *fname) : Object() {
 	g_driver->createBitmap(this);
 }
 
+Bitmap::Bitmap() :
+		Object() {
+	_data = NULL;
+}
+
 void Bitmap::draw() const {
 	if (_currImage == 0)
 		return;

@@ -589,9 +589,9 @@ public:
 	void setKey(int val);
 	void reset();
 	~SoundComponent() {
-        // Stop the sound if it's in progress
-        reset();
-    }
+		// Stop the sound if it's in progress
+		reset();
+	}
 
 private:
 	Common::String _soundName;
@@ -637,9 +637,9 @@ void SoundComponent::reset() {
 }
 
 Costume::Costume(const char *fname, const char *data, int len, Costume *prevCost) :
-    Object() {
+		Object() {
 
-    load(fname, data, len, prevCost);
+	load(fname, data, len, prevCost);
 }
 
 void Costume::load(const char *filename, const char *data, int len, Costume *prevCost) {
@@ -651,7 +651,7 @@ void Costume::load(const char *filename, const char *data, int len, Costume *pre
 	_headPitch = 0;
 	_lastTime = 0;
 	_headZ = 0;
-    _prevCostume = prevCost;
+	_prevCostume = prevCost;
 
 	TextSplitter ts(data, len);
 
@@ -1113,7 +1113,7 @@ void Costume::moveHead() {
 		if (v.isZero()) {
 			return;
 		}
-// 		cout<<_lookAt.x()<<" "<<_lookAt.y()<<" "<<_lookAt.z()<<" "<<v.x()<<" "<<v.y()<<" "<<v.z()<<endl;
+
 		float magnitude = sqrt(v.x() * v.x() + v.y() * v.y());
 		float a = v.x() / magnitude;
 		float b = v.y() / magnitude;

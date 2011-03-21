@@ -75,8 +75,6 @@ TextObject::~TextObject() {
 }
 
 void TextObject::saveState(SaveGame *state) const {
-//     state->writeLESint32(_created);
-
 	state->writeColor(_fgColor);
 
 	state->writeLESint32(_x);
@@ -96,8 +94,6 @@ void TextObject::saveState(SaveGame *state) const {
 }
 
 bool TextObject::restoreState(SaveGame *state) {
-//     _created = state->readLESint32();
-
 	_fgColor = state->readColor();
 
 	_x = state->readLESint32();

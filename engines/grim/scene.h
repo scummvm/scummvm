@@ -41,7 +41,7 @@ public:
 	~Scene();
 
 	void saveState(SaveGame *savedState) const;
-    bool restoreState(SaveGame *savedState);
+	bool restoreState(SaveGame *savedState);
 
 	int _minVolume;
 	int _maxVolume;

@@ -232,19 +232,19 @@ void SaveGame::writeByte(byte data) {
 }
 
 void SaveGame::writeVector3d(const Graphics::Vector3d &vec) {
-    writeFloat(vec.x());
-    writeFloat(vec.y());
-    writeFloat(vec.z());
+	writeFloat(vec.x());
+	writeFloat(vec.y());
+	writeFloat(vec.z());
 }
 
 void SaveGame::writeColor(const Grim::Color &color) {
-    writeByte(color.red());
-    writeByte(color.green());
-    writeByte(color.blue());
+	writeByte(color.red());
+	writeByte(color.green());
+	writeByte(color.blue());
 }
 
 void SaveGame::writeFloat(float data) {
-    write(reinterpret_cast<void *>(&data), sizeof(float));
+	write(reinterpret_cast<void *>(&data), sizeof(float));
 }
 
 void SaveGame::writeCharString(const char *string) {
@@ -258,25 +258,25 @@ void SaveGame::writeString(const Common::String &string) {
 }
 
 Graphics::Vector3d SaveGame::readVector3d() {
-    float x = readFloat();
-    float y = readFloat();
-    float z = readFloat();
-    return Graphics::Vector3d(x, y, z);
+	float x = readFloat();
+	float y = readFloat();
+	float z = readFloat();
+	return Graphics::Vector3d(x, y, z);
 }
 
 Grim::Color SaveGame::readColor() {
-    Color color;
-    color.red() = readByte();
-    color.green() = readByte();
-    color.blue() = readByte();
+	Color color;
+	color.red() = readByte();
+	color.green() = readByte();
+	color.blue() = readByte();
 
-    return color;
+	return color;
 }
 
 float SaveGame::readFloat() {
-    float f;
-    read(reinterpret_cast<void *>(&f), sizeof(float));
-    return f;
+	float f;
+	read(reinterpret_cast<void *>(&f), sizeof(float));
+	return f;
 }
 
 const char *SaveGame::readCharString() {

@@ -37,7 +37,7 @@ public:
 	// Construct a bitmap from the given data.
 	Bitmap(const char *filename, const char *data, int len);
 	Bitmap(const char *data, int width, int height, const char *filename);
-    Bitmap() : Object() { _data = 0; }
+	Bitmap();
 
 	const char *filename() const { return _fname.c_str(); }
 

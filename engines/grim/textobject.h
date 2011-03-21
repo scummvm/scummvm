@@ -85,8 +85,8 @@ public:
 	const char *name() const { return _textID; }
 	void draw();
 
-    void saveState(SaveGame *state) const;
-    bool restoreState(SaveGame *state);
+	void saveState(SaveGame *state) const;
+	bool restoreState(SaveGame *state);
 
 	enum Justify {
 		NONE,

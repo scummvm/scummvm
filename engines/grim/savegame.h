@@ -57,12 +57,12 @@ public:
 	void writeCharString(const char *string);
 	void writeString(const Common::String &string);
 
-    void writeVector3d(const Graphics::Vector3d &vec);
-    void writeColor(const Grim::Color &color);
-    void writeFloat(float data);
-    Graphics::Vector3d readVector3d();
-    Grim::Color readColor();
-    float readFloat();
+	void writeVector3d(const Graphics::Vector3d &vec);
+	void writeColor(const Grim::Color &color);
+	void writeFloat(float data);
+	Graphics::Vector3d readVector3d();
+	Grim::Color readColor();
+	float readFloat();
 	const char *readCharString();
 	Common::String readString();
 

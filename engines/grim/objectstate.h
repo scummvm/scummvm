@@ -44,11 +44,11 @@ public:
 	};
 
 	ObjectState(int setupID, ObjectState::Position pos, const char *bitmap, const char *zbitmap, bool visible);
-    ObjectState();
+	ObjectState();
 	~ObjectState();
 
-    void saveState(SaveGame *savedState) const;
-    bool restoreState(SaveGame *savedState);
+	void saveState(SaveGame *savedState) const;
+	bool restoreState(SaveGame *savedState);
 
 	int setupID() const { return _setupID; }
 	Position pos() const { return _pos; }

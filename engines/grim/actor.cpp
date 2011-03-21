@@ -805,7 +805,7 @@ Costume *Actor::findCostume(const char *n) {
 	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		if (strcasecmp((*i)->filename(), n) == 0)
 			return *i;
-    }
+	}
 
 	return NULL;
 }
@@ -857,7 +857,7 @@ void Actor::update() {
 //			_turning = false;
 		} else {
 			_pos += dir * walkAmt;
-        }
+		}
 
 		_walkedCur = true;
 	}

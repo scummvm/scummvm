@@ -107,9 +107,9 @@ Scene::Scene(const char *sceneName, const char *buf, int len) :
 	for (int i = 0; i < _numSectors; i++) {
         _sectors[i] = new Sector();
 		_sectors[i]->load(ts);
-    }
+	}
 
-    ++s_id;
+	++s_id;
 	_id = s_id;
 }
 

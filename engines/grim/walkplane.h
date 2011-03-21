@@ -40,8 +40,8 @@ public:
 	Sector() : _vertices(NULL) {}
 	virtual ~Sector() { if (_vertices) delete[] _vertices; }
 
-    void saveState(SaveGame *savedState) const;
-    bool restoreState(SaveGame *savedState);
+	void saveState(SaveGame *savedState) const;
+	bool restoreState(SaveGame *savedState);
 
 	void load(TextSplitter &ts);
 
