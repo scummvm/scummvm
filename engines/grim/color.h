@@ -37,11 +37,13 @@ class Color : public Object {
 public:
 	byte _vals[3];
 
-	Color() {}
-	Color(byte r, byte g, byte b) {
+	Color() : Object() {}
+	Color(byte r, byte g, byte b) :
+			Object() {
 		_vals[0] = r; _vals[1] = g; _vals[2] = b;
 	}
-	Color(const Color& c) {
+	Color(const Color& c) :
+			Object() {
 		_vals[0] = c._vals[0]; _vals[1] = c._vals[1]; _vals[2] = c._vals[2];
 	}
 	byte &red() { return _vals[0]; }
