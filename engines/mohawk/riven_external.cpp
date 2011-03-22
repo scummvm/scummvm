@@ -2316,8 +2316,53 @@ void RivenExternal::xrhideinventory(uint16 argc, uint16 *argv) {
 	_vm->_gfx->hideInventory();
 }
 
+static void rebelPrisonWindowTimer(MohawkEngine_Riven *vm) {
+	// Randomize a video out in the middle of Tay
+	uint16 movie = vm->_rnd->getRandomNumberRng(2, 13);
+	vm->_video->activateMLST(movie, vm->getCurCard());
+	VideoHandle handle = vm->_video->playMovieRiven(movie);
+
+	// Ensure the next video starts after this one ends
+	uint32 timeUntilNextVideo = vm->_video->getDuration(handle) + vm->_rnd->getRandomNumberRng(38, 58) * 1000;
+
+	// Save the time in case we leave the card and return
+	*vm->getVar("rvillagetime") = timeUntilNextVideo + vm->getTotalPlayTime();
+
+	// Reinstall this timer with the new time
+	vm->installTimer(&rebelPrisonWindowTimer, timeUntilNextVideo);
+}
+
 void RivenExternal::xrwindowsetup(uint16 argc, uint16 *argv) {
-	// TODO: Randomizing what effect happens when you look out into the middle of Tay (useless! :P)
+	// Randomize what effect happens when you look out into the middle of Tay
+
+	uint32 villageTime = *_vm->getVar("rvillagetime");
+
+	// If we have time leftover from a previous run, set up the timer again
+	if (_vm->getTotalPlayTime() < villageTime) {
+		_vm->installTimer(&rebelPrisonWindowTimer, villageTime - _vm->getTotalPlayTime());
+		return;
+	}
+
+	uint32 timeUntilNextVideo;
+
+	// Randomize the time until the next video
+	if (_vm->_rnd->getRandomNumber(2) == 0 && *_vm->getVar("rrichard") == 0) {
+		// In this case, a rebel is placed on a bridge
+		// The video itself is handled by the scripts later on
+		*_vm->getVar("rrebelview") = 0;
+		timeUntilNextVideo = _vm->_rnd->getRandomNumberRng(38, 58) * 1000;
+	} else {
+		// Otherwise, just a random video from the timer
+		*_vm->getVar("rrebelview") = 1;
+		timeUntilNextVideo = _vm->_rnd->getRandomNumber(20) * 1000;
+	}
+
+	// We don't set rvillagetime here because the scripts later just reset it to 0
+	// Of course, because of this, you can't return to the window twice and expect
+	// the timer to reinstall itself...
+
+	// Install our timer and we're on our way
+	_vm->installTimer(&rebelPrisonWindowTimer, timeUntilNextVideo);
 }
 
 // ------------------------------------------------------------------------------------
