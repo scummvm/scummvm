@@ -1237,4 +1237,51 @@ void Scene4000::dispatch() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 4010 - Village - Outside Lander
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene4010::postInit(SceneObjectList *OwnerList) {
+	loadScene(4010);
+	Scene::postInit();
+	setZoomPercents(0, 20, 70, 50);
+
+	_stripManager.addSpeaker(&_speakerQText);
+	_stripManager.addSpeaker(&_speakerSText);
+	_stripManager.addSpeaker(&_speakerMText);
+	_speakerSText._npc = &_hotspot1;
+	_speakerMText._npc = &_hotspot2;
+	_speakerQText._npc = &_globals->_player;
+
+	_globals->_player.postInit();
+	_globals->_player.setVisage(0);
+	_globals->_player.animate(ANIM_MODE_1, NULL);
+	_globals->_player.setObjectWrapper(new SceneObjectWrapper());
+	_globals->_player.setPosition(Common::Point(-38, 175));
+	_globals->_player.changeZoom(75);
+
+	_hotspot2.postInit();
+	_hotspot2.setVisage(2705);
+	_hotspot2.animate(ANIM_MODE_1, NULL);
+	_hotspot2.setObjectWrapper(new SceneObjectWrapper());
+	_hotspot2._moveDiff = Common::Point(4, 2);
+	_hotspot2.setPosition(Common::Point(-50, 185));
+	_hotspot2.changeZoom(75);
+
+	_hotspot1.postInit();
+	_hotspot1.setVisage(2806);
+	_hotspot1.setPosition(Common::Point(-20, 175));
+	_hotspot1.changeZoom(75);
+	_hotspot1.animate(ANIM_MODE_1, NULL);
+	_hotspot1.setObjectWrapper(new SceneObjectWrapper());
+	
+	_globals->_player.disableControl();
+	setAction(&_sequenceManager, this, 4017, &_globals->_player, &_hotspot1, &_hotspot2, NULL);
+}
+
+void Scene4010::signal() {
+	_globals->_sceneManager.changeScene(4000);
+}
+
 } // End of namespace tSage

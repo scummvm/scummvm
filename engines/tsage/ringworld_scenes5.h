@@ -186,6 +186,18 @@ public:
 	virtual void dispatch();
 };
 
+class Scene4010: public Scene {
+public:
+	SequenceManager _sequenceManager;
+	SpeakerQText _speakerQText;
+	SpeakerSText _speakerSText;
+	SpeakerMText _speakerMText;
+	SceneObject _hotspot1, _hotspot2;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);	
+	virtual void signal();
+};
+
 } // End of namespace tSage
 
 #endif

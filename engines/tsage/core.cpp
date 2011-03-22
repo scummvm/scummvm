@@ -3076,9 +3076,11 @@ void WalkRegions::load(int sceneNum) {
 
 	_resNum = sceneNum;
 	byte *regionData = _vm->_dataManager->getResource(RES_WALKRGNS, sceneNum, 1, true);
-	if (!regionData)
+	if (!regionData) {
 		// No data, so return
+		_resNum = -1;
 		return;
+	}
 
 	byte *dataP;
 	int dataSize;
