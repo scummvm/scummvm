@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-03-22 08:13+0000\n"
+"POT-Creation-Date: 2011-03-22 21:55+0000\n"
 "PO-Revision-Date: 2010-12-22 22:32+0100\n"
 "Last-Translator: Einar Johan T. Sømåen\n"
 "Language-Team: somaen <einarjohants@gmail.com>\n"
@@ -1170,17 +1170,23 @@ msgstr "Space"
 msgid "Pause game"
 msgstr "Pause spill"
 
-#: engines/scumm/help.cpp:82
-msgid "Ctrl 0-9"
-msgstr "Ctrl 0-9"
+#: engines/scumm/help.cpp:82 engines/scumm/help.cpp:87
+#: engines/scumm/help.cpp:98 engines/scumm/help.cpp:99
+#: engines/scumm/help.cpp:100 engines/scumm/help.cpp:101
+#: engines/scumm/help.cpp:102 engines/scumm/help.cpp:103
+#: engines/scumm/help.cpp:104 engines/scumm/help.cpp:105
+msgid "Ctrl"
+msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:82
 msgid "Load game state 1-10"
 msgstr "Åpne spilltilstand 1-10"
 
-#: engines/scumm/help.cpp:83
-msgid "Alt 0-9"
-msgstr "Alt 0-9"
+#: engines/scumm/help.cpp:83 engines/scumm/help.cpp:87
+#: engines/scumm/help.cpp:89 engines/scumm/help.cpp:103
+#: engines/scumm/help.cpp:104 engines/scumm/help.cpp:105
+msgid "Alt"
+msgstr "Alt"
 
 #: engines/scumm/help.cpp:83
 msgid "Save game state 1-10"
@@ -1193,13 +1199,9 @@ msgstr "Lagre spilltilstand 1-10"
 msgid "Quit"
 msgstr "Avslutt"
 
-#: engines/scumm/help.cpp:87
-msgid "Alt x, Ctrl z"
-msgstr "Alt x, Ctrl z"
-
-#: engines/scumm/help.cpp:89
-msgid "Alt Enter"
-msgstr "Alt Enter"
+#: engines/scumm/help.cpp:89 engines/scumm/help.cpp:92
+msgid "Enter"
+msgstr "Enter"
 
 #: engines/scumm/help.cpp:89
 msgid "Toggle fullscreen"
@@ -1212,10 +1214,6 @@ msgstr "Musikkvolum opp/ned"
 #: engines/scumm/help.cpp:91
 msgid "Text speed slower / faster"
 msgstr "Tekstfart saktere/raskere"
-
-#: engines/scumm/help.cpp:92
-msgid "Enter"
-msgstr "Enter"
 
 #: engines/scumm/help.cpp:92
 msgid "Simulate left mouse button"
@@ -1238,64 +1236,32 @@ msgid "Show / Hide console"
 msgstr "Vis / Skjul konsollen"
 
 #: engines/scumm/help.cpp:98
-msgid "Ctrl d"
-msgstr "Ctrl d"
-
-#: engines/scumm/help.cpp:98
 msgid "Start the debugger"
 msgstr "Start debuggeren"
-
-#: engines/scumm/help.cpp:99
-msgid "Ctrl s"
-msgstr "Ctrl s"
 
 #: engines/scumm/help.cpp:99
 msgid "Show memory consumption"
 msgstr "Vis minneforbruk"
 
 #: engines/scumm/help.cpp:100
-msgid "Ctrl f"
-msgstr "Ctrl f"
-
-#: engines/scumm/help.cpp:100
 msgid "Run in fast mode (*)"
 msgstr "Kjør i rask modus (*)"
-
-#: engines/scumm/help.cpp:101
-msgid "Ctrl g"
-msgstr "Ctrl g"
 
 #: engines/scumm/help.cpp:101
 msgid "Run in really fast mode (*)"
 msgstr "Kjør i virkelig rask modus (*)"
 
 #: engines/scumm/help.cpp:102
-msgid "Ctrl m"
-msgstr "Ctrl m"
-
-#: engines/scumm/help.cpp:102
 msgid "Toggle mouse capture"
 msgstr "Veksle muslåsing"
-
-#: engines/scumm/help.cpp:103
-msgid "Ctrl Alt 1-8"
-msgstr "Ctrl Alt 1-8"
 
 #: engines/scumm/help.cpp:103
 msgid "Switch between graphics filters"
 msgstr "Bytt grafikkfiltre"
 
 #: engines/scumm/help.cpp:104
-msgid "Ctrl Alt +, -"
-msgstr "Ctrl Alt +, -"
-
-#: engines/scumm/help.cpp:104
 msgid "Increase / Decrease scale factor"
 msgstr "Øk / Minsk skaleringsfaktor"
-
-#: engines/scumm/help.cpp:105
-msgid "Ctrl Alt a"
-msgstr "Ctrl Alt a"
 
 #: engines/scumm/help.cpp:105
 msgid "Toggle aspect-ratio correction"
@@ -2236,6 +2202,36 @@ msgid ""
 msgstr ""
 "Ikke glem å koble en tast til handlingen 'Skjul verktøylinje' for å se hele "
 "inventaret"
+
+#~ msgid "Ctrl 0-9"
+#~ msgstr "Ctrl 0-9"
+
+#~ msgid "Alt x, Ctrl z"
+#~ msgstr "Alt x, Ctrl z"
+
+#~ msgid "Alt Enter"
+#~ msgstr "Alt Enter"
+
+#~ msgid "Ctrl s"
+#~ msgstr "Ctrl s"
+
+#~ msgid "Ctrl f"
+#~ msgstr "Ctrl f"
+
+#~ msgid "Ctrl g"
+#~ msgstr "Ctrl g"
+
+#~ msgid "Ctrl m"
+#~ msgstr "Ctrl m"
+
+#~ msgid "Ctrl Alt 1-8"
+#~ msgstr "Ctrl Alt 1-8"
+
+#~ msgid "Ctrl Alt +, -"
+#~ msgstr "Ctrl Alt +, -"
+
+#~ msgid "Ctrl Alt a"
+#~ msgstr "Ctrl Alt a"
 
 #~ msgid "OpenGL 4/3"
 #~ msgstr "OpenGL 4/3"

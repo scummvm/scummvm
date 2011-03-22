@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-03-22 08:13+0000\n"
+"POT-Creation-Date: 2011-03-22 21:55+0000\n"
 "PO-Revision-Date: 2010-11-27 22:15+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
 "Language-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki "
@@ -1180,16 +1180,22 @@ msgstr "Leertaste"
 msgid "Pause game"
 msgstr "Spielpause"
 
-#: engines/scumm/help.cpp:82
-msgid "Ctrl 0-9"
+#: engines/scumm/help.cpp:82 engines/scumm/help.cpp:87
+#: engines/scumm/help.cpp:98 engines/scumm/help.cpp:99
+#: engines/scumm/help.cpp:100 engines/scumm/help.cpp:101
+#: engines/scumm/help.cpp:102 engines/scumm/help.cpp:103
+#: engines/scumm/help.cpp:104 engines/scumm/help.cpp:105
+msgid "Ctrl"
 msgstr ""
 
 #: engines/scumm/help.cpp:82
 msgid "Load game state 1-10"
 msgstr "Spielstand 1-10 laden"
 
-#: engines/scumm/help.cpp:83
-msgid "Alt 0-9"
+#: engines/scumm/help.cpp:83 engines/scumm/help.cpp:87
+#: engines/scumm/help.cpp:89 engines/scumm/help.cpp:103
+#: engines/scumm/help.cpp:104 engines/scumm/help.cpp:105
+msgid "Alt"
 msgstr ""
 
 #: engines/scumm/help.cpp:83
@@ -1203,13 +1209,9 @@ msgstr "Spielstand 1-10 speichern"
 msgid "Quit"
 msgstr "Beenden"
 
-#: engines/scumm/help.cpp:87
-msgid "Alt x, Ctrl z"
-msgstr ""
-
-#: engines/scumm/help.cpp:89
-msgid "Alt Enter"
-msgstr "Alt+Enter"
+#: engines/scumm/help.cpp:89 engines/scumm/help.cpp:92
+msgid "Enter"
+msgstr "Enter"
 
 #: engines/scumm/help.cpp:89
 msgid "Toggle fullscreen"
@@ -1222,10 +1224,6 @@ msgstr "Musiklautstärke höher/niedriger"
 #: engines/scumm/help.cpp:91
 msgid "Text speed slower / faster"
 msgstr "Texttempo langsamer/schneller"
-
-#: engines/scumm/help.cpp:92
-msgid "Enter"
-msgstr "Enter"
 
 #: engines/scumm/help.cpp:92
 msgid "Simulate left mouse button"
@@ -1248,64 +1246,32 @@ msgid "Show / Hide console"
 msgstr "Konsole zeigen/verbergen"
 
 #: engines/scumm/help.cpp:98
-msgid "Ctrl d"
-msgstr ""
-
-#: engines/scumm/help.cpp:98
 msgid "Start the debugger"
 msgstr "Debugger starten"
-
-#: engines/scumm/help.cpp:99
-msgid "Ctrl s"
-msgstr ""
 
 #: engines/scumm/help.cpp:99
 msgid "Show memory consumption"
 msgstr "Speicherverbrauch anzeigen"
 
 #: engines/scumm/help.cpp:100
-msgid "Ctrl f"
-msgstr ""
-
-#: engines/scumm/help.cpp:100
 msgid "Run in fast mode (*)"
 msgstr "Schneller Modus (*)"
-
-#: engines/scumm/help.cpp:101
-msgid "Ctrl g"
-msgstr ""
 
 #: engines/scumm/help.cpp:101
 msgid "Run in really fast mode (*)"
 msgstr "Sehr schneller Modus (*)"
 
 #: engines/scumm/help.cpp:102
-msgid "Ctrl m"
-msgstr ""
-
-#: engines/scumm/help.cpp:102
 msgid "Toggle mouse capture"
 msgstr "Mauseingrenzung in Fenster an/aus"
-
-#: engines/scumm/help.cpp:103
-msgid "Ctrl Alt 1-8"
-msgstr ""
 
 #: engines/scumm/help.cpp:103
 msgid "Switch between graphics filters"
 msgstr "Zwischen Grafikfiltern wechseln"
 
 #: engines/scumm/help.cpp:104
-msgid "Ctrl Alt +, -"
-msgstr ""
-
-#: engines/scumm/help.cpp:104
 msgid "Increase / Decrease scale factor"
 msgstr "Größenverhätlnis höher/niedriger"
-
-#: engines/scumm/help.cpp:105
-msgid "Ctrl Alt a"
-msgstr ""
 
 #: engines/scumm/help.cpp:105
 msgid "Toggle aspect-ratio correction"
@@ -2246,6 +2212,9 @@ msgid ""
 msgstr ""
 "Vergessen Sie nicht, der Aktion \"Werkzeugleiste verbergen\" eine Taste "
 "zuzuweisen, um das ganze Inventar sehen zu können."
+
+#~ msgid "Alt Enter"
+#~ msgstr "Alt+Enter"
 
 #~ msgid "Failed to load any GUI theme, aborting"
 #~ msgstr "Fehler: Konnte kein Benutzeroberflächen-Thema laden. Abbruch..."
