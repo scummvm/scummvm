@@ -644,13 +644,16 @@ Costume::Costume(const char *fname, const char *data, int len, Costume *prevCost
 
 void Costume::load(const char *filename, const char *data, int len, Costume *prevCost) {
 	_fname = filename;
-	_headNode = NULL;
-	_neckNode = NULL;
 	_head.maxPitch = 0;
+	_head.joint1 = -1;
+	_head.joint2 = -1;
+	_head.joint3 = -1;
+	_joint1Node = NULL;
+	_joint2Node = NULL;
+	_joint3Node = NULL;
 	_headYaw = 0;
 	_headPitch = 0;
 	_lastTime = 0;
-	_headZ = 0;
 	_prevCostume = prevCost;
 
 	TextSplitter ts(data, len);
@@ -748,23 +751,6 @@ void Costume::load(const char *filename, const char *data, int len, Costume *pre
 			hier = c->hierarchy();
 			count = c->numNodes();
 			break;
-		}
-	}
-
-	for (int i = 0; i < count; i++) {
-		if (strcmp(hier[i]._name, "m_head_2") == 0) {
-			_headNode = hier + i;
-			break;
-		}
-	}
-
-	if (_headNode) {
-		Model::HierNode *hn = _headNode->_parent;
-		while (hn) {
-			_headZ += hn->_animPos.z();
-			if (strcmp(hn->_name, "m_nck_b1") == 0)
-				_neckNode = hn;
-			hn = hn->_parent;
 		}
 	}
 }
@@ -1068,14 +1054,7 @@ void Costume::update() {
 }
 
 void Costume::moveHead() {
-	if (_headNode && _head.maxPitch) {
-		Model::HierNode *p = _headNode->_parent;
-		if (p && strcmp(p->_name, "m_head_2") == 0) { //Strange enough, when talking happens that a
-													  //new "m_head_2" gets created as the parent of
-													  //the old one.
-			return;
-		}
-
+	if (_joint1Node) {
 		const int time = g_system->getMillis();
 		const int elapsed = time - _lastTime;
 		_lastTime = time;
@@ -1098,18 +1077,25 @@ void Costume::moveHead() {
 			} else {
 				_headPitch = 0;
 			}
-			_headNode->_animYaw = _headYaw;
-			_neckNode->_animPitch = _headPitch;
-			_headNode->_animRoll = _headNode->_animYaw / 10.;
+			_joint3Node->_animYaw = _headYaw;
+			_joint1Node->_animPitch = _headPitch;
+			_joint3Node->_animRoll = _joint3Node->_animYaw / 10.;
 
-			if (_headNode->_animRoll > _head.maxRoll)
-				_headNode->_animRoll = _head.maxRoll;
-			if (_headNode->_animRoll < -_head.maxRoll)
-				_headNode->_animRoll = -_head.maxRoll;
+			if (_joint3Node->_animRoll > _head.maxRoll)
+				_joint3Node->_animRoll = _head.maxRoll;
+			if (_joint3Node->_animRoll < -_head.maxRoll)
+				_joint3Node->_animRoll = -_head.maxRoll;
 			return;
 		}
 
-		Graphics::Vector3d v = -(_headNode->_animPos + _matrix._pos + Graphics::Vector3d(0, 0, _headZ)) + _lookAt;
+		float headZ = _joint1Node->_animPos.z();
+		Model::HierNode *p = _joint1Node->_parent;
+		while (p) {
+			headZ += p->_animPos.z();
+			p = p->_parent;
+		}
+
+		Graphics::Vector3d v = -(_joint3Node->_animPos + _matrix._pos + Graphics::Vector3d(0, 0, headZ)) + _lookAt;
 		if (v.isZero()) {
 			return;
 		}
@@ -1131,47 +1117,47 @@ void Costume::moveHead() {
 		if (b < 0.0f)
 			pitch = 360.0f - pitch;
 
-		_neckNode->_animPitch = pitch;
-		_headNode->_animYaw =  - 90 + yaw - _matrix._rot.getYaw();
+		_joint1Node->_animPitch = pitch;
+		_joint3Node->_animYaw =  - 90 + yaw - _matrix._rot.getYaw();
 
-		if (_neckNode->_animPitch > 180)
-			_neckNode->_animPitch -= 360;
+		if (_joint1Node->_animPitch > 180)
+			_joint1Node->_animPitch -= 360;
 
-		if (_headNode->_animYaw < 0)
-			_headNode->_animYaw += 360.;
-		if (_headNode->_animYaw > 180.)
-			_headNode->_animYaw -= 360;
+		if (_joint3Node->_animYaw < 0)
+			_joint3Node->_animYaw += 360.;
+		if (_joint3Node->_animYaw > 180.)
+			_joint3Node->_animYaw -= 360;
 
 		//animate pitch
-		if (_neckNode->_animPitch - _headPitch > pitchStep)
-			_neckNode->_animPitch = _headPitch + pitchStep;
-		if (_headPitch - _neckNode->_animPitch > pitchStep)
-			_neckNode->_animPitch = _headPitch - pitchStep;
+		if (_joint1Node->_animPitch - _headPitch > pitchStep)
+			_joint1Node->_animPitch = _headPitch + pitchStep;
+		if (_headPitch - _joint1Node->_animPitch > pitchStep)
+			_joint1Node->_animPitch = _headPitch - pitchStep;
 		//animate yaw
-		if (_headNode->_animYaw - _headYaw > yawStep)
-			_headNode->_animYaw = _headYaw + yawStep;
-		if (_headYaw - _headNode->_animYaw > yawStep)
-			_headNode->_animYaw = _headYaw - yawStep;
+		if (_joint3Node->_animYaw - _headYaw > yawStep)
+			_joint3Node->_animYaw = _headYaw + yawStep;
+		if (_headYaw - _joint3Node->_animYaw > yawStep)
+			_joint3Node->_animYaw = _headYaw - yawStep;
 
-		if (_neckNode->_animPitch > _head.maxPitch)
-			_neckNode->_animPitch = _head.maxPitch;
-		if (_neckNode->_animPitch < -_head.maxPitch)
-			_neckNode->_animPitch = -_head.maxPitch;
+		if (_joint1Node->_animPitch > _head.maxPitch)
+			_joint1Node->_animPitch = _head.maxPitch;
+		if (_joint1Node->_animPitch < -_head.maxPitch)
+			_joint1Node->_animPitch = -_head.maxPitch;
 
-		if (_headNode->_animYaw > _head.maxYaw)
-			_headNode->_animYaw = _head.maxYaw;
-		if (_headNode->_animYaw < -_head.maxYaw)
-			_headNode->_animYaw = -_head.maxYaw;
+		if (_joint3Node->_animYaw > _head.maxYaw)
+			_joint3Node->_animYaw = _head.maxYaw;
+		if (_joint3Node->_animYaw < -_head.maxYaw)
+			_joint3Node->_animYaw = -_head.maxYaw;
 
-		_headNode->_animRoll = _headNode->_animYaw / 10.;
+		_joint3Node->_animRoll = _joint3Node->_animYaw / 10.;
 
-		if (_headNode->_animRoll > _head.maxRoll)
-			_headNode->_animRoll = _head.maxRoll;
-		if (_headNode->_animRoll < -_head.maxRoll)
-			_headNode->_animRoll = -_head.maxRoll;
+		if (_joint3Node->_animRoll > _head.maxRoll)
+			_joint3Node->_animRoll = _head.maxRoll;
+		if (_joint3Node->_animRoll < -_head.maxRoll)
+			_joint3Node->_animRoll = -_head.maxRoll;
 
-		_headPitch = _neckNode->_animPitch;
-		_headYaw = _headNode->_animYaw;
+		_headPitch = _joint1Node->_animPitch;
+		_headYaw = _joint3Node->_animYaw;
 	}
 }
 
@@ -1186,6 +1172,15 @@ void Costume::setHead(int joint1, int joint2, int joint3, float maxRoll, float m
 	_head.maxRoll = maxRoll;
 	_head.maxPitch = maxPitch;
 	_head.maxYaw = maxYaw;
+
+	if (joint1 >= 0 && joint2 >= 0 && joint3 >= 0) {
+		Model::HierNode *nodes = getModelNodes();
+		if (nodes) {
+			_joint1Node = nodes + joint1;
+			_joint2Node = nodes + joint2;
+			_joint3Node = nodes + joint3;
+		}
+	}
 }
 
 void Costume::setPosRotate(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
@@ -1259,12 +1254,13 @@ bool Costume::restoreState(SaveGame *state) {
 		}
 	}
 
-	_head.joint1 = state->readLESint32();
-	_head.joint2 = state->readLESint32();
-	_head.joint3 = state->readLESint32();
-	_head.maxPitch = state->readFloat();
-	_head.maxYaw = state->readFloat();
-	_head.maxRoll = state->readFloat();
+	int j1 = state->readLESint32();
+	int j2 = state->readLESint32();
+	int j3 = state->readLESint32();
+	float mP = state->readFloat();
+	float mY = state->readFloat();
+	float mR = state->readFloat();
+	setHead(j1, j2, j3, mR, mP, mY);
 
 	return true;
 }

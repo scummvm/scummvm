@@ -167,9 +167,9 @@ private:
 	int _numChores;
 	Chore *_chores;
 	Graphics::Matrix4 _matrix;
-	Model::HierNode *_headNode;
-	Model::HierNode *_neckNode;
-	float _headZ;
+	Model::HierNode *_joint1Node;
+	Model::HierNode *_joint2Node;
+	Model::HierNode *_joint3Node;
 	Graphics::Vector3d _lookAt;
 
 	float _headPitch;
