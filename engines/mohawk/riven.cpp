@@ -171,7 +171,12 @@ Common::Error MohawkEngine_Riven::run() {
 		Common::StringArray savedGamesList = _saveLoad->generateSaveGameList();
 		if (gameToLoad > savedGamesList.size())
 			error ("Could not find saved game");
-		_saveLoad->loadGame(savedGamesList[gameToLoad]);
+
+		// Attempt to load the game. On failure, just send us to the main menu.
+		if (!_saveLoad->loadGame(savedGamesList[gameToLoad])) {
+			changeToStack(aspit);
+			changeToCard(1);
+		}
 	} else {
 		// Otherwise, start us off at aspit's card 1 (the main menu)
         changeToStack(aspit);
