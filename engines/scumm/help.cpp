@@ -79,14 +79,14 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND(".", _("Skip line of text"));
 		ADD_BIND(_("Esc"), _("Skip cutscene"));
 		ADD_BIND(_("Space"), _("Pause game"));
-		ADD_BIND(_("Ctrl 0-9"), _("Load game state 1-10"));
-		ADD_BIND(_("Alt 0-9"), _("Save game state 1-10"));
+		ADD_BIND(String(_("Ctrl")) + " 0-9", _("Load game state 1-10"));
+		ADD_BIND(String(_("Alt")) + " 0-9", _("Save game state 1-10"));
 #ifdef MACOSX
 		ADD_BIND("Cmd q", _("Quit"));
 #else
-		ADD_BIND(_("Alt x, Ctrl z"), _("Quit"));
+		ADD_BIND(String(_("Alt")) + " x, " + _("Ctrl") + " z", _("Quit"));
 #endif
-		ADD_BIND(_("Alt Enter"), _("Toggle fullscreen"));
+		ADD_BIND(String(_("Alt")) + " " + _("Enter"), _("Toggle fullscreen"));
 		ADD_BIND("[, ]", _("Music volume up / down"));
 		ADD_BIND("-, +", _("Text speed slower / faster"));
 		ADD_BIND(_("Enter"), _("Simulate left mouse button"));
@@ -95,14 +95,14 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 	case 2:
 		title = _("Special keyboard commands:");
 		ADD_BIND("~, #", _("Show / Hide console"));
-		ADD_BIND(_("Ctrl d"), _("Start the debugger"));
-		ADD_BIND(_("Ctrl s"), _("Show memory consumption"));
-		ADD_BIND(_("Ctrl f"), _("Run in fast mode (*)"));
-		ADD_BIND(_("Ctrl g"), _("Run in really fast mode (*)"));
-		ADD_BIND(_("Ctrl m"), _("Toggle mouse capture"));
-		ADD_BIND(_("Ctrl Alt 1-8"), _("Switch between graphics filters"));
-		ADD_BIND(_("Ctrl Alt +, -"), _("Increase / Decrease scale factor"));
-		ADD_BIND(_("Ctrl Alt a"), _("Toggle aspect-ratio correction"));
+		ADD_BIND(String(_("Ctrl")) + " d", _("Start the debugger"));
+		ADD_BIND(String(_("Ctrl")) + " s", _("Show memory consumption"));
+		ADD_BIND(String(_("Ctrl")) + " f", _("Run in fast mode (*)"));
+		ADD_BIND(String(_("Ctrl")) + " g", _("Run in really fast mode (*)"));
+		ADD_BIND(String(_("Ctrl")) + " m", _("Toggle mouse capture"));
+		ADD_BIND(String(_("Ctrl")) + " " + _("Alt") + " 1-8", _("Switch between graphics filters"));
+		ADD_BIND(String(_("Ctrl")) + " " + _("Alt") + " +, -", _("Increase / Decrease scale factor"));
+		ADD_BIND(String(_("Ctrl")) + " " + _("Alt") + " a", _("Toggle aspect-ratio correction"));
 		ADD_LINE;
 		ADD_LINE;
 		// FIXME: This should use word-wrapping, and should not assume
