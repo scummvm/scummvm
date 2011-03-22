@@ -491,6 +491,282 @@ void Scene4000::Action13::signal() {
 
 /*--------------------------------------------------------------------------*/
 
+void Scene4000::Hotspot7::doAction(int action) {
+	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
+
+	switch (action) {
+	case OBJECT_STUNNER:
+		SceneItem::display2(4000, 31);
+		break;
+	case CURSOR_LOOK:
+		SceneItem::display2(4000, 29);
+		break;
+	case CURSOR_TALK:
+		if (_globals->getFlag(31)) {
+			if (!_globals->getFlag(111)) {
+				_globals->setFlag(111);
+				_globals->_stripNum = 4070;
+			} else if (!_globals->getFlag(33))
+				_globals->_stripNum = 4094;
+			else if (!_globals->getFlag(112)) {
+				_globals->setFlag(112);
+				_globals->_stripNum = 4300;
+			} else if (!_globals->getFlag(113)) {
+				_globals->setFlag(113);
+				_globals->_stripNum = 4093;
+			} else
+				_globals->_stripNum = 4094;
+		} else {
+			if (!_globals->getFlag(33))
+				_globals->_stripNum = 4094;
+			else if (!_globals->getFlag(112)) {
+				_globals->setFlag(112);
+				_globals->_stripNum = 4300;
+			} else
+				_globals->_stripNum = 4094;
+		}
+
+		scene->setAction(&scene->_action5);
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+void Scene4000::Hotspot8::doAction(int action) {
+	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
+
+	switch (action) {
+	case OBJECT_STUNNER:
+		SceneItem::display2(4000, 26);
+		break;
+	case CURSOR_LOOK:
+		SceneItem::display2(4000, 25);
+		break;
+	case CURSOR_TALK:
+		if (_globals->_inventory._peg._sceneNumber == 1)
+			SceneItem::display2(4000, 34);
+		else {
+			switch (_ctr) {
+			case 0:
+				_globals->_stripNum = 4090;
+				break;
+			case 1:
+				_globals->_stripNum = 4091;
+				break;
+			case 2:
+				_globals->_stripNum = 4092;
+				break;
+			default:
+				SceneItem::display2(4000, 34);
+				break;
+			}
+
+			if (_globals->_stripNum) {
+				setAction(NULL);
+				addMover(NULL);
+				++_ctr;
+				scene->setAction(&scene->_action5);
+			}
+		}
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+void Scene4000::Hotspot9::doAction(int action) {
+	switch (action) {
+	case OBJECT_STUNNER:
+		SceneItem::display2(4000, 28);
+		break;
+	case CURSOR_LOOK:
+		SceneItem::display2(4000, 27);
+		break;
+	case CURSOR_TALK:
+		error("*** Do we need dialog.");
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+void Scene4000::Hotspot10::doAction(int action) {
+	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(4000, 30);
+		break;
+	case CURSOR_USE:
+		_globals->_player.disableControl();
+		if (_globals->getFlag(40)) {
+			scene->_sceneMode = 4005;
+			scene->setAction(&scene->_sequenceManager1, scene, 4005, &_globals->_player, NULL);
+		} else {
+			scene->_sceneMode = 4004;
+			scene->setAction(&scene->_sequenceManager1, scene, 4004, &_globals->_player, &scene->_hotspot10, NULL);
+		}
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+void Scene4000::Hotspot12::doAction(int action) {
+	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(4000, 13);
+		break;
+	case OBJECT_SCANNER:
+		SceneItem::display2(4000, 19);
+		break;
+	case OBJECT_STUNNER:
+		SceneItem::display2(4000, 20);
+		break;
+	case CURSOR_USE:
+		if (_globals->getFlag(40))
+			SceneItem::display2(4000, 37);
+		else {
+			_globals->_player.disableControl();
+			if (_globals->_sceneObjects->contains(&scene->_hotspot7))
+				_globals->clearFlag(96);
+
+			scene->_sceneMode = 4012;
+			scene->setAction(&scene->_sequenceManager1, scene, 4012, &_globals->_player, NULL);
+		}
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+void Scene4000::Hotspot13::doAction(int action) {
+	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(4000, 21);
+		break;
+	case OBJECT_ROPE:
+		if (_globals->getFlag(40))
+			scene->setAction(&scene->_action4);
+		else
+			SceneItem::display2(4000, 22);
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+void Scene4000::Hotspot::doAction(int action) {
+	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(4000, 16);
+		break;
+	case OBJECT_SCANNER:
+		SceneItem::display2(4000, 17);
+		break;
+	case OBJECT_STUNNER:
+		SceneItem::display2(4000, 18);
+		break;
+	case OBJECT_LADDER:
+		_globals->_player.disableControl();
+
+		scene->_hotspot10.postInit();
+		scene->_hotspot10.setVisage(4000);
+		scene->_hotspot10.setStrip(5);
+		scene->_hotspot10.setPosition(Common::Point(245, 147));
+		scene->_hotspot10.flag100();
+		_globals->_sceneItems.push_front(&scene->_hotspot10);
+
+		if (_globals->_sceneObjects->contains(&scene->_hotspot8)) {
+			scene->_hotspot8.setAction(NULL);
+			ADD_MOVER_NULL(scene->_hotspot8, 118, 145);
+		}
+
+		scene->_sceneMode = 4004;
+		scene->setAction(&scene->_sequenceManager1, scene, 4011, &_globals->_player, &scene->_hotspot10, NULL);
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}	
+}
+
+void Scene4000::Hotspot17::doAction(int action) {
+	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(4000, 23);
+		break;
+	case CURSOR_USE:
+		if (_globals->getFlag(40))
+			scene->setAction(&scene->_action7);
+		else
+			SceneItem::display2(4000, 24);
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+void Scene4000::Hotspot18::doAction(int action) {
+	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(4000, 36);
+		break;
+	case CURSOR_USE:
+		if (_globals->getFlag(40))
+			scene->setAction(&scene->_action8);
+		else
+			SceneItem::display2(4000, 24);
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+void Scene4000::Hotspot23::doAction(int action) {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(4000, _globals->getFlag(31) ? 10 : 9);
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene4000::Scene4000():
+	_hotspot11(0, CURSOR_LOOK, 4000, 14, CURSOR_USE, 4000, 32, OBJECT_STUNNER, 4000, 33, 
+		OBJECT_SCANNER, 4000, 19, LIST_END),
+	_hotspot19(0, CURSOR_LOOK, 4000, 7, LIST_END),
+	_hotspot20(0, CURSOR_LOOK, 4000, 3, LIST_END),
+	_hotspot21(0, CURSOR_LOOK, 4000, 1, LIST_END),
+	_hotspot22(0, CURSOR_LOOK, 4000, 8, LIST_END),
+	_hotspot24(0, CURSOR_LOOK, 4000, 11, LIST_END),
+	_hotspot25(0, CURSOR_LOOK, 4000, 4, LIST_END),
+	_hotspot26(0, CURSOR_LOOK, 4000, 0, LIST_END) {
+}
+
 void Scene4000::postInit(SceneObjectList *OwnerList) {
 	loadScene(4000);
 	Scene::postInit();

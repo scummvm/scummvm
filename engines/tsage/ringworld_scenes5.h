@@ -87,6 +87,54 @@ class Scene4000: public Scene {
 	public:
 		virtual void signal();
 	};
+
+	/* Hotspots */
+	class Hotspot7: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot8: public SceneObject {
+	private:
+		int _ctr;
+	public:
+		virtual void synchronise(Serialiser &s) {
+			SceneObject::synchronise(s);
+			s.syncAsUint16LE(_ctr);
+		}
+		virtual void doAction(int action);
+	};
+	class Hotspot9: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot10: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot12: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot13: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot17: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot18: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot23: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3;
 	SoundHandler _soundHandler1, _soundHandler2;
@@ -103,12 +151,21 @@ public:
 	SpeakerCHFR _speakerCHFR;
 	SpeakerQL _speakerQL;
 	SpeakerCHFText _speakerCHFText;
-	SceneObject _hotspot1, _hotspot2, _hotspot3, _hotspot4, _hotspot5;
-	SceneObject _hotspot6, _hotspot7, _hotspot8, _hotspot9, _hotspot10;
-	SceneObject _hotspot11, _hotspot12, _hotspot13, _hotspot14, _hotspot15;
-	SceneObject _hotspot16, _hotspot17, _hotspot18, _hotspot19, _hotspot20;
-	SceneObject _hotspot21, _hotspot22, _hotspot23, _hotspot24, _hotspot25;
-	SceneObject _hotspot26, _hotspot27;
+	SceneObject _hotspot1, _hotspot2, _hotspot3, _hotspot4, _hotspot5, _hotspot6;
+	Hotspot7 _hotspot7;
+	Hotspot8 _hotspot8;
+	Hotspot9 _hotspot9;
+	Hotspot10 _hotspot10;
+	DisplayHotspot _hotspot11;
+	Hotspot12 _hotspot12;
+	Hotspot13 _hotspot13;
+	Hotspot _hotspot14, _hotspot15, _hotspot16;
+	Hotspot17 _hotspot17;
+	Hotspot18 _hotspot18;
+	DisplayHotspot _hotspot19, _hotspot20, _hotspot21, _hotspot22;
+	Hotspot23 _hotspot23;
+	DisplayHotspot _hotspot24, _hotspot25, _hotspot26;
+	SceneObject _hotspot27;
 	Action1 _action1;
 	Action2 _action2;
 	Action3 _action3;
@@ -123,6 +180,7 @@ public:
 	Action12 _action12;
 	Action13 _action13;
 
+	Scene4000();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 	virtual void dispatch();
