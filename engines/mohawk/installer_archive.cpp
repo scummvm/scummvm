@@ -40,11 +40,6 @@ InstallerArchive::~InstallerArchive() {
 	close();
 }
 
-struct DirectoryEntry {
-	uint16 fileCount;
-	Common::String name;
-};
-
 bool InstallerArchive::open(const Common::String &filename) {
 	close();
 
@@ -60,67 +55,54 @@ bool InstallerArchive::open(const Common::String &filename) {
 		return false;
 	}
 
-	// Let's move to the directory
+	// Let's pull some relevant data from the header
 	_stream->seek(41);
-	uint32 offset = _stream->readUint32LE();
-	_stream->seek(offset);
+	uint32 directoryTableOffset = _stream->readUint32LE();
+	/* uint32 directoryTableSize = */ _stream->readUint32LE();
+	uint16 directoryCount = _stream->readUint16LE();
+	uint32 fileTableOffset = _stream->readUint32LE();
+	/* uint32 fileTableSize = */ _stream->readUint32LE();
 
-	// Now read in each file from the directory
+	// We need to have at least one directory in order for the archive to be valid
+	if (directoryCount == 0) {
+		close();
+		return false;
+	}
+
+	// TODO: Currently, we only support getting files from the first directory
+	// To that end, get the number of files from that entry
+	_stream->seek(directoryTableOffset);
 	uint16 fileCount = _stream->readUint16LE();
 	debug(2, "File count = %d", fileCount);
 
-	_stream->skip(9);
+	// Following the directory table is the file table with files stored recursively
+	// by directory. Since we're only using the first directory, we can just go
+	// right to that one.
+	_stream->seek(fileTableOffset);
 
-	Common::Array<DirectoryEntry> directories;
+	for (uint16 i = 0; i < fileCount; i++) {
+		FileEntry entry;
 
-	for (uint16 i = 0; i < fileCount;) {
-		uint16 dirFileCount = _stream->readUint16LE();
+		_stream->skip(3); // Unknown
 
-		if (dirFileCount == 0) {
-			// We've found a file
-			FileEntry entry;
+		entry.uncompressedSize = _stream->readUint32LE();
+		entry.compressedSize = _stream->readUint32LE();
+		entry.offset = _stream->readUint32LE();
 
-			_stream->skip(1); // Unknown
+		_stream->skip(14); // Unknown
 
-			entry.uncompressedSize = _stream->readUint32LE();
-			entry.compressedSize = _stream->readUint32LE();
-			entry.offset = _stream->readUint32LE();
+		byte nameLength = _stream->readByte();
+		Common::String name;
+		while (nameLength--)
+			name += _stream->readByte();
 
-			_stream->skip(14); // Unknown
+		_stream->skip(13); // Unknown
 
-			byte nameLength = _stream->readByte();
-			Common::String name;
-			while (nameLength--)
-				name += _stream->readByte();
+		_map[name] = entry;
 
-			_stream->skip(13); // Unknown
-
-			_map[name] = entry;
-			i++;
-
-			debug(3, "Found file '%s' at 0x%08x (Comp: 0x%08x, Uncomp: 0x%08x)", name.c_str(),
-					entry.offset, entry.compressedSize, entry.uncompressedSize);
-		} else {
-			// We've found a directory
-			DirectoryEntry dirEntry;
-
-			dirEntry.fileCount = dirFileCount;
-			/* uint16 entrySize = */ _stream->readUint16LE();
-
-			uint16 nameLength = _stream->readUint16LE();
-			while (nameLength--)
-				dirEntry.name += _stream->readByte();
-
-			directories.push_back(dirEntry);
-
-			_stream->skip(5);  // Unknown
-
-			debug(3, "Ignoring directory '%s'", dirEntry.name.c_str());
-		}
+		debug(3, "Found file '%s' at 0x%08x (Comp: 0x%08x, Uncomp: 0x%08x)", name.c_str(),
+				entry.offset, entry.compressedSize, entry.uncompressedSize);
 	}
-
-	// TODO: Handle files in directories
-	// Per directory found follows DirectoryEntry::fileCount files
 
 	return true;
 }
