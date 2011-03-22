@@ -110,6 +110,8 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 4000: return new Scene4000();
 	// Village - Outside Lander
 	case 4010: return new Scene4010();
+	// Village - Puzzle Board
+	case 4025: return new Scene4025();
 
 	/* Scene group 6 */
 

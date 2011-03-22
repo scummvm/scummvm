@@ -66,7 +66,7 @@ extern const char *START_PLAY_BTN_STRING;
 extern const char *INTRODUCTION_BTN_STRING;
 
 // Scene specific resources
-extern const char *SCENE60_EXIT_MSG;
+extern const char *EXIT_MSG;
 extern const char *SCENE6100_CAREFUL;
 extern const char *SCENE6100_TOUGHER;
 extern const char *SCENE6100_ONE_MORE_HIT;

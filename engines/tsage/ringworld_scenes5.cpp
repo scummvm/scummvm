@@ -1284,4 +1284,340 @@ void Scene4010::signal() {
 	_globals->_sceneManager.changeScene(4000);
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 4025 - Village - Puzzle Board
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene4025::Action1::signal() {
+	Scene4025 *scene = (Scene4025 *)_globals->_sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		scene->_armHotspot._strip = scene->_pegPtr->_armStrip;
+		scene->_armHotspot._frame = 4;
+		scene->_armHotspot.animate(ANIM_MODE_4, 2, -1, this);
+
+		if (scene->_pegPtr->_armStrip > 3) {
+			if (scene->_hole1._armStrip == scene->_pegPtr->_armStrip)
+				scene->_hole1._pegPtr = NULL;
+			if (scene->_hole2._armStrip == scene->_pegPtr->_armStrip)
+				scene->_hole2._pegPtr = NULL;
+			if (scene->_hole3._armStrip == scene->_pegPtr->_armStrip)
+				scene->_hole3._pegPtr = NULL;
+			if (scene->_hole4._armStrip == scene->_pegPtr->_armStrip)
+				scene->_hole4._pegPtr = NULL;
+			if (scene->_hole5._armStrip == scene->_pegPtr->_armStrip)
+				scene->_hole5._pegPtr = NULL;
+		}
+		break;
+	case 1:
+		scene->_pegPtr->flag100();
+
+		if (scene->_pegPtr2) {
+			if (scene->_pegPtr->_armStrip == 3)
+				scene->_pegPtr2->_strip = 2;
+
+			scene->_pegPtr2->setPosition(scene->_pegPtr->_position);
+			scene->_pegPtr2->unflag100();
+			scene->_pegPtr2->_armStrip = scene->_pegPtr->_armStrip;
+		}
+		
+		scene->_pegPtr->_armStrip = 0;
+		scene->_pegPtr->setPosition(Common::Point(-10, -10));
+		scene->_pegPtr2 = scene->_pegPtr;
+		scene->_armHotspot.animate(ANIM_MODE_5, this);
+		break;
+
+	case 2:
+		_globals->_player._uiEnabled = true;
+		_globals->_events.setCursor(CURSOR_USE);
+		remove();
+		break;
+	}
+}
+
+void Scene4025::Action2::signal() {
+	Scene4025 *scene = (Scene4025 *)_globals->_sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		scene->_armHotspot._strip = scene->_holePtr->_armStrip;
+		scene->_armHotspot.animate(ANIM_MODE_4, 2, -1, this);
+		break;
+	case 1:
+		if (!scene->_pegPtr2) {
+			// Getting a peg
+			scene->_holePtr->_pegPtr->flag100();
+			scene->_pegPtr = scene->_holePtr->_pegPtr;
+			scene->_pegPtr->_armStrip = 0;
+			scene->_pegPtr->setPosition(Common::Point(-10, -10));
+			scene->_pegPtr2 = scene->_pegPtr;
+			scene->_pegPtr = NULL;
+		} else {
+			// Placing a peg
+			scene->_pegPtr2 = NULL;
+			if (scene->_holePtr->_pegPtr) {
+				scene->_holePtr->_pegPtr->flag100();
+				scene->_pegPtr2 = scene->_holePtr->_pegPtr;
+			}
+
+			assert(scene->_pegPtr);
+			scene->_pegPtr->setPosition(scene->_holePtr->_newPosition);
+			scene->_pegPtr->setStrip(1);
+			scene->_pegPtr->unflag100();
+			scene->_pegPtr->_armStrip = scene->_holePtr->_armStrip;
+			
+			scene->_holePtr->_pegPtr = scene->_pegPtr;
+			scene->_pegPtr = scene->_pegPtr2;
+		}
+		scene->_armHotspot.animate(ANIM_MODE_5, this);
+		break;
+	case 2:
+		_globals->_player._uiEnabled = true;
+		_globals->_events.setCursor(CURSOR_USE);
+		remove();
+		break;
+	}
+}
+
+void Scene4025::Action3::signal() {
+	switch (_actionIndex++) {
+	case 0:
+		_globals->_player.disableControl();
+		_globals->_scenePalette.addRotation(64, 111, -1);
+		setDelay(120);
+		break;
+	case 1:
+		_globals->clearFlag(34);
+		_globals->_stripNum = 4025;
+		_globals->_sceneManager.changeScene(4000);
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene4025::Hole::synchronise(Serialiser &s) {
+	SceneObject::synchronise(s);
+	SYNC_POINTER(_pegPtr);
+	s.syncAsSint16LE(_armStrip);
+	s.syncAsSint16LE(_newPosition.x);
+	s.syncAsSint16LE(_newPosition.y);
+}
+
+void Scene4025::Hole::doAction(int action) {
+	Scene4025 *scene = (Scene4025 *)_globals->_sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(4025, 3);
+		break;
+	case CURSOR_USE:
+		if (!scene->_holePtr && !_pegPtr) {
+			setAction(&scene->_sequenceManager, scene, 4028, NULL);
+		} else {
+			_globals->_player.disableControl();
+			scene->_holePtr = this;
+			scene->setAction(&scene->_action2);
+		}
+		break;
+	case OBJECT_PEG:
+		if (!scene->_pegPtr2) {
+			_globals->_player.disableControl();
+			_globals->_events.setCursor(CURSOR_USE);
+			_globals->_inventory._peg._sceneNumber = 4025;
+
+			scene->_pegPtr = &scene->_peg5;
+			scene->_holePtr = this;
+			scene->_pegPtr->_armStrip = 0;
+			scene->_pegPtr2 = scene->_pegPtr;
+
+			scene->setAction(&scene->_action2);
+		} else {
+			scene->_sceneMode = 4027;
+			scene->setAction(&scene->_sequenceManager, scene, 4027, NULL);
+		}
+		break;
+	}
+}
+
+void Scene4025::Peg::synchronise(Serialiser &s) {
+	SceneObject::synchronise(s);
+	s.syncAsSint16LE(_field88);
+	SYNC_POINTER(_armStrip);
+}
+
+void Scene4025::Peg::doAction(int action) {
+	Scene4025 *scene = (Scene4025 *)_globals->_sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(4025, 1);
+		break;
+	case CURSOR_USE:
+		_globals->_player.disableControl();
+		scene->_pegPtr = this;
+		scene->setAction(&scene->_action1);
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene4025::postInit(SceneObjectList *OwnerList) {
+	loadScene(4025);
+	Scene::postInit();
+	setZoomPercents(0, 100, 200, 100);
+
+	_globals->_events.setCursor(CURSOR_USE);
+	_pegPtr = _pegPtr2 = NULL;
+
+	_peg1.postInit();
+	_peg1._field88 = 1;
+	_peg1.setVisage(4025);
+	_peg1.setStrip(2);
+	_peg1.setFrame(1);
+	_peg1.setPosition(Common::Point(203, 61));
+
+	_peg2.postInit();
+	_peg2._field88 = 4;
+	_peg2.setVisage(4025);
+	_peg2.setStrip(2);
+	_peg2.setFrame(2);
+	_peg2.setPosition(Common::Point(195, 57));
+
+	_peg3.postInit();
+	_peg3._field88 = 0;
+	_peg3.setVisage(4025);
+	_peg3.setStrip(2);
+	_peg3.setFrame(3);
+	_peg3.setPosition(Common::Point(202, 66));
+
+	_peg4.postInit();
+	_peg4._field88 = 3;
+	_peg4.setVisage(4025);
+	_peg4.setStrip(2);
+	_peg4.setFrame(4);
+	_peg4.setPosition(Common::Point(194, 68));
+
+	_peg5.postInit();
+	_peg5._field88 = 2;
+	_peg5.setVisage(4025);
+	_peg5.setStrip(1);
+	_peg5.setFrame(5);
+	_peg5.flag100();
+
+	_hole1.postInit();
+	_hole1.setVisage(4025);
+	_hole1.setStrip(1);
+	_hole1.setFrame2(6);
+	_hole1.setPosition(Common::Point(123, 51));
+	_hole1._pegPtr = NULL;
+	_hole1._newPosition = Common::Point(123, 44);
+	_hole1._armStrip = 8;
+
+	_hole2.postInit();
+	_hole2.setVisage(4025);
+	_hole2.setStrip(1);
+	_hole2.setFrame2(7);
+	_hole2.setPosition(Common::Point(167, 51));
+	_hole2._pegPtr = NULL;
+	_hole2._newPosition = Common::Point(166, 44);
+	_hole2._armStrip = 7;
+
+	_hole3.postInit();
+	_hole3.setVisage(4025);
+	_hole3.setStrip(1);
+	_hole3.setFrame2(8);
+	_hole3.setPosition(Common::Point(145, 69));
+	_hole3._pegPtr = NULL;
+	_hole3._newPosition = Common::Point(145, 60);
+	_hole3._armStrip = 6;
+
+	_hole4.postInit();
+	_hole4.setVisage(4025);
+	_hole4.setStrip(1);
+	_hole4.setFrame2(6);
+	_hole4.setPosition(Common::Point(123, 87));
+	_hole4._pegPtr = NULL;
+	_hole4._newPosition = Common::Point(123, 80);
+	_hole4._armStrip = 5;
+
+	_hole5.postInit();
+	_hole5.setVisage(4025);
+	_hole5.setStrip(1);
+	_hole5.setFrame2(10);
+	_hole5.setPosition(Common::Point(167, 87));
+	_hole5._pegPtr = NULL;
+	_hole5._newPosition = Common::Point(166, 80);
+	_hole5._armStrip = 4;
+
+	_hole1.setPriority2(1);
+	_hole2.setPriority2(1);
+	_hole3.setPriority2(1);
+	_hole4.setPriority2(1);
+	_hole5.setPriority2(1);
+
+	_armHotspot.postInit();
+	_armHotspot.setVisage(4025);
+	_armHotspot.setPosition(Common::Point(190, 161));
+	_armHotspot.setStrip(3);
+	_armHotspot.setFrame(4);
+
+	_globals->_sceneItems.addItems(&_hole1, &_hole2, &_hole3, &_hole4, &_hole5,
+		&_peg1, &_peg2, &_peg3, &_peg4, &_peg5, NULL);
+
+	_globals->_player._uiEnabled = true;
+	_globals->_player.disableControl();
+	setAction(&_sequenceManager, this, 4026, NULL);
+}
+
+void Scene4025::synchronise(Serialiser &s) {
+	Scene::synchronise(s);
+	SYNC_POINTER(_pegPtr);
+	SYNC_POINTER(_pegPtr2);
+	SYNC_POINTER(_holePtr);
+}
+
+void Scene4025::remove() {
+	_globals->_scenePalette.clearListeners();
+	Scene::remove();
+}
+
+void Scene4025::signal() {
+	if (_sceneMode != 4027) {
+		if (_sceneMode != 4028) {
+			_gfxButton.setText(EXIT_MSG);
+			_gfxButton._bounds.centre(144, 107);
+			_gfxButton.draw();
+			_gfxButton._bounds.expandPanes();
+		}
+
+		_globals->_player._uiEnabled = true;
+	}
+
+	_globals->_events.setCursor(CURSOR_USE);
+}
+
+void Scene4025::process(Event &event) {
+	Scene::process(event);
+
+	if (_gfxButton.process(event)) {
+		if (_globals->_inventory._peg._sceneNumber == 4025)
+			_globals->_inventory._peg._sceneNumber = 1;
+
+		_globals->_sceneManager.changeScene(4000);
+	}
+}
+
+void Scene4025::dispatch() {
+	if ((_peg1._armStrip == 7) && (_peg2._armStrip == 4) && (_peg3._armStrip == 8) &&
+			(_peg4._armStrip == 5) && (_peg5._armStrip == 6))
+		setAction(&_action3);
+
+	Scene::dispatch();
+}
+
+
 } // End of namespace tSage

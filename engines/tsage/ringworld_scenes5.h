@@ -198,6 +198,62 @@ public:
 	virtual void signal();
 };
 
+class Scene4025: public Scene {
+	/* Custom classes */
+	class Peg;
+
+	class Hole: public SceneObject {
+	public:
+		Peg *_pegPtr;
+		int _armStrip;
+		Common::Point _newPosition;
+
+		virtual void synchronise(Serialiser &s);
+		virtual void doAction(int action);
+	};
+	class Peg: public SceneObject {
+	public:
+		int _field88;
+		int _armStrip;
+
+		Peg(): SceneObject() { _field88 = 0; _armStrip = 3; }
+		virtual void synchronise(Serialiser &s);
+		virtual void doAction(int action);
+	};
+
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action3: public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager;
+	GfxButton _gfxButton;
+	SceneObject _armHotspot;
+	Hole _hole1, _hole2, _hole3, _hole4, _hole5;
+	Peg _peg1, _peg2, _peg3, _peg4, _peg5;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Peg *_pegPtr, *_pegPtr2;
+	Hole *_holePtr;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void synchronise(Serialiser &s);
+	virtual void remove();
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
 } // End of namespace tSage
 
 #endif
