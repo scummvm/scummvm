@@ -1283,10 +1283,8 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 		) {
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		if (_game.platform == Common::kPlatformFMTowns) {
-			if (color == 254) {
-				color = color;
+			if (color == 254)
 				towns_setupPalCycleField(x, y, x2, y2);
-			}
 		} else
 #endif
 		{
