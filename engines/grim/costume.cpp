@@ -1252,6 +1252,10 @@ bool Costume::restoreState(SaveGame *state) {
 		if (c) {
 			c->_visible = state->readLESint32();
 			c->_matrix._pos = state->readVector3d();
+			if (FROM_BE_32(c->_tag) == MKID_BE('MODL') || FROM_BE_32(c->_tag) == MKID_BE('MMDL')) {
+				ModelComponent *m = static_cast<ModelComponent *>(c);
+				m->hierarchy()->_hierVisible = c->_visible;
+			}
 		}
 	}
 
