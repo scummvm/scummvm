@@ -2221,6 +2221,3 @@ msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
 
-#, fuzzy
-#~ msgid "Dave"
-#~ msgstr "Guardar"

@@ -2209,39 +2209,3 @@ msgstr ""
 "Não se esqueça de mapear uma tecla para \"Ocultar a barra de ferramentas\" "
 "para ver todo o seu inventário"
 
-#~ msgid "Ctrl 0-9"
-#~ msgstr "Ctrl 0-9"
-
-#~ msgid "Alt x, Ctrl z"
-#~ msgstr "Alt x, Ctrl z"
-
-#~ msgid "Alt Enter"
-#~ msgstr "Alt Enter"
-
-#~ msgid "Ctrl s"
-#~ msgstr "Ctrl s"
-
-#~ msgid "Ctrl f"
-#~ msgstr "Ctrl f"
-
-#~ msgid "Ctrl g"
-#~ msgstr "Ctrl g"
-
-#~ msgid "Ctrl m"
-#~ msgstr "Ctrl m"
-
-#~ msgid "Ctrl Alt 1-8"
-#~ msgstr "Ctrl Alt 1-8"
-
-#~ msgid "Ctrl Alt +, -"
-#~ msgstr "Ctrl Alt +, -"
-
-#~ msgid "Ctrl Alt a"
-#~ msgstr "Ctrl Alt a"
-
-#~ msgid "OpenGL 4/3"
-#~ msgstr "OpenGL 4/3"
-
-#, fuzzy
-#~ msgid "Dave"
-#~ msgstr "Salvar"

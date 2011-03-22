@@ -2220,29 +2220,3 @@ msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
 
-#, fuzzy
-#~ msgid "Dave"
-#~ msgstr "Записати"
-
-#~ msgctxt "lowres"
-#~ msgid "Preferred Device:"
-#~ msgstr "Пристрій якому віддається перевага:"
-
-#~ msgctxt "lowres"
-#~ msgid "True Roland MT-32 (disable GM emulation)"
-#~ msgstr "Справжній Roland MT-32 (вимкнути емуляцию GM)"
-
-#, fuzzy
-#~ msgctxt "lowres"
-#~ msgid "Standard Renderer (16bpp)"
-#~ msgstr "Стандартний растеризатор (16bpp)"
-
-#, fuzzy
-#~ msgctxt "lowres"
-#~ msgid "Antialiased Renderer (16bpp)"
-#~ msgstr "Растеризатор зі згладжуванням (16bpp)"
-
-#, fuzzy
-#~ msgctxt "lowres"
-#~ msgid "Special sound effects volume"
-#~ msgstr "Гучність спеціальних звукових ефектів"

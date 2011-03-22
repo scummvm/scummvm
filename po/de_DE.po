@@ -2213,37 +2213,3 @@ msgstr ""
 "Vergessen Sie nicht, der Aktion \"Werkzeugleiste verbergen\" eine Taste "
 "zuzuweisen, um das ganze Inventar sehen zu können."
 
-#~ msgid "Alt Enter"
-#~ msgstr "Alt+Enter"
-
-#~ msgid "Failed to load any GUI theme, aborting"
-#~ msgstr "Fehler: Konnte kein Benutzeroberflächen-Thema laden. Abbruch..."
-
-#~ msgid "User picked target '%s' (gameid '%s')...\n"
-#~ msgstr "Gewähltes Ziel: \"%s\" (Spielkennung \"%s\")...\n"
-
-#~ msgid "  Looking for a plugin supporting this gameid... "
-#~ msgstr ""
-#~ " Suche nach einer Erweiterung, die diese Spielkennung unterstützt..."
-
-#~ msgid "failed\n"
-#~ msgstr "fehlgeschlagen\n"
-
-#~ msgid ""
-#~ "%s is an invalid gameid. Use the --list-games option to list supported "
-#~ "gameid"
-#~ msgstr ""
-#~ "%s ist eine ungültige Spielkennung. Benutzen Sie die Option --list-games "
-#~ "zum Anzeigen der unterstützten Spielkennungen."
-
-#~ msgid "  Starting '%s'\n"
-#~ msgstr "  Starte \"%s\"\n"
-
-#~ msgid "%s failed to instantiate engine: %s (target '%s', path '%s')"
-#~ msgstr "%s konnte Engine nicht starten: %s (Ziel \"%s\", Pfad \"%s\")"
-
-#~ msgid "Music driver:"
-#~ msgstr "Musiktreiber:"
-
-#~ msgid "Creative Music System"
-#~ msgstr "Creative-Musik-System"
