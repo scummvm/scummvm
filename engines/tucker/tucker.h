@@ -280,7 +280,6 @@ public:
 
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
-	virtual void syncSoundSettings();
 	GUI::Debugger *getDebugger() { return _console; }
 
 protected:

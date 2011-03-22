@@ -239,6 +239,9 @@ void Music::setVolume(int volume, int time) {
 		volume = 255;
 
 	if (time == 1) {
+		if (ConfMan.hasKey("mute") && ConfMan.getBool("mute"))
+			volume = 0;
+
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
 		_driver->setVolume(volume);
 		_vm->getTimerManager()->removeTimerProc(&musicVolumeGaugeCallback);

@@ -127,6 +127,8 @@ public:
 	Common::Error saveGameState(int slot, const char *desc);
 	bool hasFeature(EngineFeature f) const;
 
+	typedef void (*TimerProc)(MohawkEngine_Riven *vm);
+
 private:
 	MohawkArchive *_extrasFile; // We need a separate handle for the extra data
 	RivenConsole *_console;
@@ -151,6 +153,10 @@ private:
 	// Variables
 	uint32 *_vars;
 	uint32 _varCount;
+
+	// Timer
+	TimerProc _timerProc;
+	uint32 _timerTime;
 
 	// Miscellaneous
 	bool _gameOver;
@@ -195,6 +201,12 @@ public:
 	bool _activatedSLST;
 	void runLoadDialog();
 	void delayAndUpdate(uint32 ms);
+
+	// Timer
+	void installTimer(TimerProc proc, uint32 time);
+	void installCardTimer();
+	void checkTimer();
+	void removeTimer();
 };
 
 } // End of namespace Mohawk

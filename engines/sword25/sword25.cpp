@@ -56,6 +56,8 @@ const char *const DEFAULT_SCRIPT_FILE = "/system/boot.lua";
 Sword25Engine::Sword25Engine(OSystem *syst, const ADGameDescription *gameDesc):
 	Engine(syst),
 	_gameDescription(gameDesc) {
+	// Setup mixer
+	syncSoundSettings();
 
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Script debug level");
 	DebugMan.addDebugChannel(kDebugScript, "Scripts", "Script debug level");

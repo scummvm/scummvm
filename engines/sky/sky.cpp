@@ -100,6 +100,22 @@ SkyEngine::~SkyEngine() {
 			free(_itemList[i]);
 }
 
+void SkyEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	if (ConfMan.getBool("sfx_mute"))
+		SkyEngine::_systemVars.systemFlags |= SF_FX_OFF;
+
+	if (ConfMan.getBool("music_mute"))
+		SkyEngine::_systemVars.systemFlags |= SF_MUS_OFF;
+
+	_skyMusic->setVolume(mute ? 0: ConfMan.getInt("music_volume") >> 1);
+}
+
 GUI::Debugger *SkyEngine::getDebugger() {
 	return _debugger;
 }
@@ -242,16 +258,6 @@ Common::Error SkyEngine::go() {
 Common::Error SkyEngine::init() {
 	initGraphics(320, 200, false);
 
-	if (ConfMan.getBool("sfx_mute")) {
-		SkyEngine::_systemVars.systemFlags |= SF_FX_OFF;
-	}
-	if (ConfMan.getBool("music_mute")) {
-		SkyEngine::_systemVars.systemFlags |= SF_MUS_OFF;
-	}
-	 _mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	 _mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-	 _mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-
 	_skyDisk = new Disk();
 	_skySound = new Sound(_mixer, _skyDisk, Audio::Mixer::kMaxChannelVolume);
 
@@ -346,7 +352,8 @@ Common::Error SkyEngine::init() {
 				}
 	}
 
-	_skyMusic->setVolume(ConfMan.getInt("music_volume") >> 1);
+	// Setup mixer
+	syncSoundSettings();
 
 	_debugger = new Debugger(_skyLogic, _skyMouse, _skyScreen, _skyCompact);
 	return Common::kNoError;

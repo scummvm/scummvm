@@ -52,6 +52,8 @@ uint32		_globalFlags = 0;
 Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gameDesc) :
 	Engine(syst), _gameDescription(gameDesc), _location(getGameType()),
 	_dialogueMan(0) {
+	// Setup mixer
+	syncSoundSettings();
 
 	_vm = this;
 	DebugMan.addDebugChannel(kDebugDialogue, "dialogue", "Dialogues debug level");

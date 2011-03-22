@@ -240,14 +240,20 @@ void QueenEngine::checkOptionSettings() {
 }
 
 void QueenEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
 	readOptionSettings();
 }
 
 void QueenEngine::readOptionSettings() {
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
 	_sound->setVolume(ConfMan.getInt("music_volume"));
-	_sound->musicToggle(!ConfMan.getBool("music_mute"));
-	_sound->sfxToggle(!ConfMan.getBool("sfx_mute"));
-	_sound->speechToggle(!ConfMan.getBool("speech_mute"));
+	_sound->musicToggle(!(mute || ConfMan.getBool("music_mute")));
+	_sound->sfxToggle(!(mute || ConfMan.getBool("sfx_mute")));
+	_sound->speechToggle(!(mute || ConfMan.getBool("speech_mute")));
 	_talkSpeed = (ConfMan.getInt("talkspeed") * (MAX_TEXT_SPEED - MIN_TEXT_SPEED) + 255 / 2) / 255 + MIN_TEXT_SPEED;
 	_subtitles = ConfMan.getBool("subtitles");
 	checkOptionSettings();
@@ -470,11 +476,14 @@ Common::Error QueenEngine::run() {
 	}
 
 	_sound = Sound::makeSoundInstance(_mixer, this, _resource->getCompression());
+
 	_walk = new Walk(this);
 	//_talkspeedScale = (MAX_TEXT_SPEED - MIN_TEXT_SPEED) / 255.0;
 
 	registerDefaultSettings();
-	readOptionSettings();
+
+	// Setup mixer
+	syncSoundSettings();
 
 	_logic->start();
 	if (ConfMan.hasKey("save_slot") && canLoadOrSave()) {

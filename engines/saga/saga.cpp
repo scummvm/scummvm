@@ -625,6 +625,8 @@ GUI::Debugger *SagaEngine::getDebugger() {
 }
 
 void SagaEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
 	_readingSpeed = getTalkspeed();
 

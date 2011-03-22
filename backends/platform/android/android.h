@@ -144,6 +144,8 @@ private:
 	FilesystemFactory *_fsFactory;
 	timeval _startTime;
 
+	Common::String getSystemProperty(const char *name) const;
+
 	void initSurface();
 	void deinitSurface();
 	void initViewport();
@@ -280,6 +282,7 @@ public:
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s,
 											int priority = 0);
+	virtual Common::String getSystemLanguage() const;
 };
 
 #endif

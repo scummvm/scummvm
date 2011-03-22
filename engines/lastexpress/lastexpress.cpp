@@ -56,6 +56,8 @@ LastExpressEngine::LastExpressEngine(OSystem *syst, const ADGameDescription *gd)
     _font(NULL), _logic(NULL), _menu(NULL), _frameCounter(0), _lastFrameCount(0),
 	_graphicsMan(NULL), _resMan(NULL), _sceneMan(NULL), _soundMan(NULL),
 	_eventMouse(NULL), _eventTick(NULL), _eventMouseBackup(NULL), _eventTickBackup(NULL) {
+	// Setup mixer
+	syncSoundSettings();
 
 	// Adding the default directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));

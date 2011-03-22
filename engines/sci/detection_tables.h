@@ -1608,7 +1608,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
-	// Larry 1 VGA Remake - English Amiga (from www.back2roots.org)
+#if 0
+	// The resource.002 file, contained in disk 3, is broken in this version
+	// (it contains a large chunk of zeroes and several broken resources,
+	// e.g. pic 250 and views 250 and 251).
+	// Thus this detection entry isn't accurate.
+
+	// Larry 1 Remake - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.004.024"
 	// SCI interpreter version 1.000.784
 	{"lsl1sci", "SCI", {
@@ -1619,6 +1625,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "4a34c3367c2fe7eb380d741374da1989", 572251},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO_NOSPEECH	},
+#endif
 
 	// Larry 1 VGA Remake - English DOS (from spookypeanut)
 	// Executable scanning reports "1.000.577", VERSION file reports "2.1"

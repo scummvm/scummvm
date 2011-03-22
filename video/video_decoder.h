@@ -266,6 +266,11 @@ public:
 	 * Implementation of RewindableVideoDecoder::rewind().
 	 */
 	virtual void rewind() { seekToTime(0); }
+
+	/**
+	 * Get the total duration of the video (in ms).
+	 */
+	virtual uint32 getDuration() const = 0;
 };
 
 } // End of namespace Video

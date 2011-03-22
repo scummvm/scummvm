@@ -50,19 +50,14 @@ Sound *g_sound = 0;
 CineEngine *g_cine = 0;
 
 CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+	// Setup mixer
+	syncSoundSettings();
+
 	DebugMan.addDebugChannel(kCineDebugScript,    "Script",    "Script debug level");
 	DebugMan.addDebugChannel(kCineDebugPart,      "Part",      "Part debug level");
 	DebugMan.addDebugChannel(kCineDebugSound,     "Sound",     "Sound debug level");
 	DebugMan.addDebugChannel(kCineDebugCollision, "Collision", "Collision debug level");
 	_console = new CineConsole(this);
-
-	// Setup mixer
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-	// Use music volume for plain sound types (At least the AdLib player uses a plain sound type
-	// so previously the music and sfx volume controls didn't affect it at all).
-	// FIXME: Make AdLib player differentiate between playing sound effects and music and remove this.
-	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, ConfMan.getInt("music_volume"));
 
 	g_cine = this;
 
@@ -76,6 +71,20 @@ CineEngine::~CineEngine() {
 
 	DebugMan.clearAllDebugChannels();
 	delete _console;
+}
+
+void CineEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	// Use music volume for plain sound types (At least the AdLib player uses a plain sound type
+	// so previously the music and sfx volume controls didn't affect it at all).
+	// FIXME: Make AdLib player differentiate between playing sound effects and music and remove this.
+	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType,
+									mute ? 0 : ConfMan.getInt("music_volume"));
 }
 
 Common::Error CineEngine::run() {

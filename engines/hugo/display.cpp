@@ -479,7 +479,7 @@ void Screen::shadowStr(int16 sx, const int16 sy, const char *s, const byte color
  * present in the DOS versions
  */
 void Screen::userHelp() const {
-	Utils::Box(kBoxAny , "%s",
+	Utils::notifyBox(
 	           "F1  - Press F1 again\n"
 	           "      for instructions\n"
 	           "F2  - Sound on/off\n"

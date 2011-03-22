@@ -575,6 +575,9 @@ bool GobEngine::initGameParts() {
 		return false;
 	}
 
+	// Setup mixer
+	syncSoundSettings();
+
 	_inter->setupOpcodes();
 
 	return true;

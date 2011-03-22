@@ -175,6 +175,9 @@ int DraciEngine::init() {
 	_music->open();
 	//_music->setAdLib(adlib);
 
+	// Setup mixer
+	syncSoundSettings();
+
 	// Load the game's fonts
 	_smallFont = new Font(kFontSmall);
 	_bigFont = new Font(kFontBig);

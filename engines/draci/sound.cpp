@@ -408,6 +408,9 @@ void Sound::stopVoice() {
 }
 
 void Sound::setVolume() {
+	_showSubtitles = ConfMan.getBool("subtitles");
+	_talkSpeed = ConfMan.getInt("talkspeed");
+
 	if (_mixer->isReady()) {
 		_muteSound = ConfMan.getBool("sfx_mute");
 		_muteVoice = ConfMan.getBool("speech_mute");
@@ -417,10 +420,10 @@ void Sound::setVolume() {
 	if (ConfMan.getBool("mute")) {
 		_muteSound = _muteVoice = true;
 	}
-	_showSubtitles = ConfMan.getBool("subtitles");
-	_talkSpeed = ConfMan.getInt("talkspeed");
-	const int soundVolume = ConfMan.getInt("sfx_volume");
-	const int speechVolume = ConfMan.getInt("speech_volume");
+
+	const int soundVolume = _muteSound ? 0: ConfMan.getInt("sfx_volume");
+	const int speechVolume = _muteVoice ? 0 : ConfMan.getInt("speech_volume");
+
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolume);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, speechVolume);
 }

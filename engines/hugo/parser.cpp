@@ -288,7 +288,7 @@ void Parser::keyHandler(Common::Event event) {
 			_vm->_file->restoreGame(-1);
 			break;
 		case Common::KEYCODE_n:
-			if (Utils::Box(kBoxYesNo, "%s", "Are you sure you want to start a new game?") != 0)
+			if (Utils::yesNoBox("Are you sure you want to start a new game?"))
 				_vm->_file->restoreGame(0);
 			break;
 		case Common::KEYCODE_s:
@@ -485,7 +485,7 @@ void Parser::showDosInventory() const {
 	if (index & 1)
 		buffer += "\n";
 	buffer += Common::String(_vm->_text->getTextParser(kTBOutro));
-	Utils::Box(kBoxAny, "%s", buffer.c_str());
+	Utils::notifyBox(buffer.c_str());
 }
 
 } // End of namespace Hugo

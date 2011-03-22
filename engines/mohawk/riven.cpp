@@ -57,9 +57,10 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_gameOver = false;
 	_activatedSLST = false;
 	_ignoreNextMouseUp = false;
-	_extrasFile = NULL;
+	_extrasFile = 0;
 	_curStack = aspit;
-	_hotspots = NULL;
+	_hotspots = 0;
+	removeTimer();
 
 	// NOTE: We can never really support CD swapping. All of the music files
 	// (*_Sounds.mhk) are stored on disc 1. They are copied to the hard drive
@@ -185,11 +186,12 @@ Common::Error MohawkEngine_Riven::run() {
 }
 
 void MohawkEngine_Riven::handleEvents() {
-	Common::Event event;
-
-	// Update background videos and the water effect
+	// Update background running things
+	checkTimer();
 	bool needsUpdate = _gfx->runScheduledWaterEffects();
 	needsUpdate |= _video->updateMovies();
+
+	Common::Event event;
 
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
@@ -376,6 +378,9 @@ void MohawkEngine_Riven::changeToCard(uint16 dest) {
 }
 
 void MohawkEngine_Riven::refreshCard() {
+	// Clear any timer still floating around
+	removeTimer();
+
 	loadHotspots(_curCard);
 
 	_gfx->_updatesEnabled = true;
@@ -393,13 +398,15 @@ void MohawkEngine_Riven::refreshCard() {
 	if (!_activatedSLST)
 		_sound->playSLST(1, _curCard);
 
-	if (_showHotspots) {
+	if (_showHotspots)
 		for (uint16 i = 0; i < _hotspotCount; i++)
 			_gfx->drawRect(_hotspots[i].rect, _hotspots[i].enabled);
-	}
 
 	// Now we need to redraw the cursor if necessary and handle mouse over scripts
 	updateCurrentHotspot();
+
+	// Finally, install any hardcoded timer
+	installCardTimer();
 }
 
 void MohawkEngine_Riven::loadCard(uint16 id) {
@@ -742,6 +749,88 @@ Common::String MohawkEngine_Riven::getStackName(uint16 stack) const {
 	};
 
 	return rivenStackNames[stack];
+}
+
+void MohawkEngine_Riven::installTimer(TimerProc proc, uint32 time) {
+	removeTimer();
+	_timerProc = proc;
+	_timerTime = time + getTotalPlayTime();
+}
+
+void MohawkEngine_Riven::checkTimer() {
+	if (!_timerProc)
+		return;
+
+	// NOTE: If the specified timer function is called, it is its job to remove the timer!
+	if (getTotalPlayTime() >= _timerTime) {
+		TimerProc proc = _timerProc;
+		proc(this);
+	}
+}
+
+void MohawkEngine_Riven::removeTimer() {
+	_timerProc = 0;
+	_timerTime = 0;
+}
+
+static void catherineIdleTimer(MohawkEngine_Riven *vm) {
+	uint32 *cathCheck = vm->getVar("pcathcheck");
+	uint32 *cathState = vm->getVar("acathstate");
+	uint16 movie;
+
+	// Choose a random movie based on where Catherine is
+	if (*cathCheck == 0) {
+		static const int movieList[] = { 5, 6, 7, 8 };
+		*cathCheck = 1;
+		movie = movieList[vm->_rnd->getRandomNumber(3)];
+	} else if (*cathState == 1) {
+		static const int movieList[] = { 11, 14 };
+		movie = movieList[vm->_rnd->getRandomBit()];
+	} else {
+		static const int movieList[] = { 9, 10, 12, 13 };
+		movie = movieList[vm->_rnd->getRandomNumber(3)];
+	}
+
+	// Update her state if she moves from left/right or right/left, resp.
+	if (movie == 5 || movie == 7 || movie == 11 || movie == 14)
+		*cathState = 2;
+	else
+		*cathState = 1;
+
+	// Play the movie, blocking
+	vm->_video->activateMLST(movie, vm->getCurCard());
+	vm->_cursor->hideCursor();
+	vm->_video->playMovieBlockingRiven(movie);
+	vm->_cursor->showCursor();
+	vm->_system->updateScreen();
+
+	// Install the next timer for the next video
+	uint32 timeUntilNextMovie = vm->_rnd->getRandomNumber(120) * 1000;
+
+	*vm->getVar("pcathtime") = timeUntilNextMovie + vm->getTotalPlayTime();
+
+	vm->installTimer(&catherineIdleTimer, timeUntilNextMovie);
+}
+
+void MohawkEngine_Riven::installCardTimer() {
+	switch (getCurCardRMAP()) {
+	case 0x3a85: // Top of elevator on prison island
+		// Handle Catherine hardcoded videos
+		installTimer(&catherineIdleTimer, _rnd->getRandomNumberRng(1, 33) * 1000);
+		break;
+	case 0x77d6: // Sunners, top of stairs
+		// TODO: Background Sunner videos
+		break;
+	case 0x79bd: // Sunners, middle of stairs
+		// TODO: Background Sunner videos
+		break;
+	case 0x7beb: // Sunners, bottom of stairs
+		// TODO: Background Sunner videos
+		break;
+	case 0xb6ca: // Sunners, shoreline
+		// TODO: Background Sunner videos
+		break;
+	}
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {

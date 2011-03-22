@@ -39,8 +39,7 @@ namespace OpenGL {
 enum {
 	GFX_NORMAL = 0,
 	GFX_CONSERVE = 1,
-	GFX_4_3 = 2,
-	GFX_ORIGINAL = 3
+	GFX_ORIGINAL = 2
 };
 
 }
@@ -156,6 +155,7 @@ protected:
 		int mode;
 		int scaleFactor;
 		bool antialiasing;
+		bool aspectRatioCorrection;
 
 		int screenWidth, screenHeight;
 		int overlayWidth, overlayHeight;
@@ -216,15 +216,6 @@ protected:
 	int _displayY;
 	int _displayWidth;
 	int _displayHeight;
-
-	/**
-	 * Sets the dispaly mode.
-	 *
-	 * This can only be used in a GFX transaction.
-	 *
-	 * @param mode the dispaly mode, if -1 it will switch to next mode. If -2 to previous mode.
-	 */
-	virtual void switchDisplayMode(int mode);
 
 	virtual const char *getCurrentModeName();
 
