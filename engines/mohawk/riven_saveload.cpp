@@ -166,20 +166,20 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 			continue;
 
 		uint32 *var = _vm->getVar(name);
+		name.toLowercase();
 
 		// Handle any special variables here
-		// WORKAROUND: bytramtime is reset here for one main reason:
+		// WORKAROUND: time variables are reset here for one main reason:
 		// The save does not store any start point for the time, so we don't know the real time.
 		// Because of this, in many cases, the original would just give a 'free' Ytram upon saving
 		// since the time would be used in a new (improper) time frame.
-		// TODO: Check of the other 'time' variables require this too
 		if (name.equalsIgnoreCase("CurrentStackID"))                  // Remap to our definitions, store for later
 			stackID = mapOldStackIDToNew(rawVariables[i]);
 		else if (name.equalsIgnoreCase("CurrentCardID"))              // Store for later
 			cardID = rawVariables[i];
 		else if (name.equalsIgnoreCase("ReturnStackID") && *var != 0) // if 0, the game did not use the variable yet
 			*var = mapOldStackIDToNew(rawVariables[i]);
-		else if (name.equalsIgnoreCase("bytramtime"))                 // WORKAROUND: See above
+		else if (name.contains("time"))                               // WORKAROUND: See above
 			*var = 0;
 		else                                                          // Otherwise, just store it
 			*var = rawVariables[i];
