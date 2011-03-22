@@ -87,6 +87,7 @@ void TextObject::saveState(SaveGame *state) const {
 	state->writeLESint32(_disabled);
 	state->writeLESint32(_blastDraw);
 	state->writeLESint32(_isSpeech);
+	state->writeLESint32(_created);
 
 	state->writeString(_font->getFilename());
 
@@ -94,6 +95,8 @@ void TextObject::saveState(SaveGame *state) const {
 }
 
 bool TextObject::restoreState(SaveGame *state) {
+	destroyBitmap();
+
 	_fgColor = state->readColor();
 
 	_x = state->readLESint32();
@@ -106,15 +109,20 @@ bool TextObject::restoreState(SaveGame *state) {
 	_disabled = state->readLESint32();
 	_blastDraw = state->readLESint32();
 	_isSpeech = state->readLESint32();
+	_created = state->readLESint32();
 
 	_font = g_resourceloader->getFont(state->readString().c_str());
 
 	state->read(_textID, 256);
 
-	_created = false;
 	_textBitmap = NULL;
 	_textObjectHandle = NULL;
 	_bitmapWidthPtr = NULL;
+
+	if (_created) {
+		_created = false;
+		createBitmap();
+	}
 
 	return true;
 }
