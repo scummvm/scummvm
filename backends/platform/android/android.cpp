@@ -162,7 +162,7 @@ void *OSystem_Android::timerThreadFunc(void *arg) {
 
 	struct timespec tv;
 	tv.tv_sec = 0;
-	tv.tv_nsec = 100 * 1000 * 1000;	// 100ms
+	tv.tv_nsec = 10 * 1000 * 1000; // 10ms
 
 	while (!system->_timer_thread_exit) {
 		if (JNI::pause) {
