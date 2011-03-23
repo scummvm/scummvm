@@ -31,6 +31,7 @@
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 
+#include "common/memstream.h"
 #include "common/stream.h"
 
 namespace Mohawk {
@@ -138,7 +139,7 @@ void RivenScript::setupOpcodes() {
 		// 0x24 (36 decimal)
 		OPCODE(unk_36),						// Unknown
 		OPCODE(fadeAmbientSounds),
-		OPCODE(complexPlayMovie),
+		OPCODE(storeMovieOpcode),
 		OPCODE(activatePLST),
 		// 0x28 (40 decimal)
 		OPCODE(activateSLST),
@@ -475,7 +476,7 @@ void RivenScript::incrementVariable(uint16 op, uint16 argc, uint16 *argv) {
 	debug(2, "Incrementing variable %d by %d, variable now is equal to %d", argv[0], argv[1], *localVar);
 }
 
-// Command 27: go to stack (stack_name code_hi code_lo)
+// Command 27: go to stack (stack name, code high, code low)
 void RivenScript::changeStack(uint16 op, uint16 argc, uint16 *argv) {
 	Common::String stackName = _vm->getName(StackNames, argv[0]);
 	int8 index = -1;
@@ -538,18 +539,41 @@ void RivenScript::fadeAmbientSounds(uint16 op, uint16 argc, uint16 *argv) {
 	_vm->_sound->stopAllSLST(true);
 }
 
-// Command 38: Play a movie with extra parameters (movie id, delay high, delay low, record type, record id)
-void RivenScript::complexPlayMovie(uint16 op, uint16 argc, uint16 *argv) {
-	warning("STUB: complexPlayMovie");
-	debugN("\tMovie ID = %d\n", argv[0]);
-	debugN("\tDelay = %d\n", (argv[1] << 16) + argv[2]);
+// Command 38: Store an opcode for use when playing a movie (movie id, time high, time low, opcode, arguments...)
+void RivenScript::storeMovieOpcode(uint16 op, uint16 argc, uint16 *argv) {
+	uint32 scriptSize = 6 + (argc - 4) * 2;
 
-	if (argv[3] == 0)
-		debugN("\tDraw PLST %d\n", argv[4]);
-	else if (argv[3] == 40)
-		debugN("\tPlay SLST %d\n", argv[4]);
-	else
-		error("Unknown complexPlayMovie record type %d", argv[3]);
+	// Create our dummy script
+	byte *scriptBuf = (byte *)malloc(scriptSize);
+	WRITE_BE_UINT16(scriptBuf, 1);            // One command
+	WRITE_BE_UINT16(scriptBuf + 2, argv[3]);  // One opcode
+	WRITE_BE_UINT16(scriptBuf + 4, argc - 4); // argc - 4 args      
+
+	for (int i = 0; i < argc - 4; i++)
+		WRITE_BE_UINT16(scriptBuf + 6 + (i * 2), argv[i + 4]);
+
+	// Build a script out of 'er
+	Common::SeekableReadStream *scriptStream = new Common::MemoryReadStream(scriptBuf, scriptSize, DisposeAfterUse::YES);
+	RivenScript *script = new RivenScript(_vm, scriptStream, kStoredOpcodeScript, getParentStack(), getParentCard());
+
+	uint32 delayTime = (argv[1] << 16) + argv[2];
+
+	if (delayTime > 0) {
+		// Store the script
+		RivenScriptManager::StoredMovieOpcode storedOp;
+		storedOp.script = script;
+		storedOp.time = delayTime + _vm->getTotalPlayTime();
+		storedOp.id = argv[0];
+
+		// TODO: Actually store the movie and call it in our movie loop
+		// For now, just delete the script and move on
+		//_vm->_scriptMan->setStoredMovieOpcode(storedOp);
+		delete script;
+	} else {
+		// Run immediately if we have no delay
+		script->runScript();
+		delete script;
+	}
 }
 
 // Command 39: activate PLST record (card picture lists)
@@ -640,11 +664,16 @@ void RivenScript::activateMLST(uint16 op, uint16 argc, uint16 *argv) {
 
 RivenScriptManager::RivenScriptManager(MohawkEngine_Riven *vm) {
 	_vm = vm;
+	_storedMovieOpcode.script = 0;
+	_storedMovieOpcode.time = 0;
+	_storedMovieOpcode.id = 0;
 }
 
 RivenScriptManager::~RivenScriptManager() {
 	for (uint32 i = 0; i < _currentScripts.size(); i++)
 		delete _currentScripts[i];
+
+	clearStoredMovieOpcode();
 }
 
 RivenScriptList RivenScriptManager::readScripts(Common::SeekableReadStream *stream, bool garbageCollect) {
@@ -683,6 +712,35 @@ void RivenScriptManager::unloadUnusedScripts() {
 			i--;
 		}
 	}
+}
+
+void RivenScriptManager::setStoredMovieOpcode(const StoredMovieOpcode &op) {
+	clearStoredMovieOpcode();
+	_storedMovieOpcode.script = op.script;
+	_storedMovieOpcode.id = op.id;
+	_storedMovieOpcode.time = op.time;
+}
+
+void RivenScriptManager::runStoredMovieOpcode(uint16 id) {
+	if (_storedMovieOpcode.script) {
+		if (_storedMovieOpcode.id == id) {
+			// If we've passed the time, run our script
+			if (_vm->getTotalPlayTime() >= _storedMovieOpcode.time) {
+				_storedMovieOpcode.script->runScript();
+				clearStoredMovieOpcode();
+			}
+		} else {
+			// We're on a completely different video, kill off any remaining opcode
+			clearStoredMovieOpcode();
+		}
+	}
+}
+
+void RivenScriptManager::clearStoredMovieOpcode() {
+	delete _storedMovieOpcode.script;
+	_storedMovieOpcode.script = 0;
+	_storedMovieOpcode.time = 0;
+	_storedMovieOpcode.id = 0;
 }
 
 } // End of namespace Mohawk
