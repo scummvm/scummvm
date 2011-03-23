@@ -1363,11 +1363,14 @@ static void ActorLookAt() {
 			fZ = 0.0f;
 
 		Graphics::Vector3d vector;
-		vector.set(fX, fY, fZ); //FIXME: This values are wrong when looking at something manny has in his hand
+		// FIXME: This values seem to be crap, i can't understand how to use them.
+		// The control enters this side of the if when examining something manny is holding
+		// or some other times, like when speaking to glottis the first time.
+// 		vector.set(fX, fY, fZ);
+		vector.set(0, 0, 0);
 		actor->setLookAtVector(vector);
 	} else if (lua_isuserdata(xObj) && lua_tag(xObj) == MKID_BE('ACTR')) { // look at another actor
 		Actor *lookedAct = static_cast<Actor *>(lua_getuserdata(xObj));
-
 		actor->setLookAtVector(lookedAct->pos());
 
 		if (lua_isnumber(yObj))
