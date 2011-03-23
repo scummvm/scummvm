@@ -62,6 +62,7 @@ public:
 
 	void setLookAt(const Graphics::Vector3d &vec, float rate);
 	void setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
+	void moveHead();
 
 	void update();
 	void setupTextures();
@@ -108,7 +109,7 @@ public:
 
 private:
 	Component *loadComponent(tag32 tag, Component *parent, int parentID, const char *name, Component *prevComponent);
-	void moveHead();
+
 
 	Common::String _fname;
 	CostumePtr _prevCostume;

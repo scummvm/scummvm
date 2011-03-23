@@ -52,6 +52,7 @@ Actor::Actor(const char *actorName) :
 		_lastTurnDir(0), _currTurnDir(0),
 		_mumbleCostume(NULL), _mumbleChore(-1), _sayLineText(NULL) {
 	_lookingMode = false;
+	_lookAtRate = 200;
 	_constrain = false;
 	_talkSoundName = "";
 	_activeShadowSlot = -1;
@@ -952,6 +953,11 @@ void Actor::update() {
 			c->setLookAt(_lookAtVector, _lookAtRate);
 		}
 		c->update();
+	}
+
+	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+		Costume *c = *i;
+		c->moveHead();
 	}
 }
 

@@ -1048,8 +1048,6 @@ void Costume::update() {
 			_components[i]->update();
 		}
 	}
-
-	moveHead();
 }
 
 void Costume::moveHead() {
