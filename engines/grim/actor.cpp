@@ -947,7 +947,7 @@ void Actor::update() {
 
 	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		(*i)->setPosRotate(_pos, _pitch, _yaw, _roll);
-		(*i)->setLookAt(_lookAtVector);
+		(*i)->setLookAt(_lookAtVector, _lookAtRate);
 		(*i)->update();
 	}
 

@@ -653,7 +653,6 @@ void Costume::load(const char *filename, const char *data, int len, Costume *pre
 	_joint3Node = NULL;
 	_headYaw = 0;
 	_headPitch = 0;
-	_lastTime = 0;
 	_prevCostume = prevCost;
 
 	TextSplitter ts(data, len);
@@ -1055,11 +1054,9 @@ void Costume::update() {
 
 void Costume::moveHead() {
 	if (_joint1Node) {
-		const int time = g_system->getMillis();
-		const int elapsed = time - _lastTime;
-		_lastTime = time;
-		float yawStep = 0.3 * elapsed;
-		float pitchStep = 0.1 * elapsed;
+		float step = g_grim->perSecond(_lookAtRate);
+		float yawStep = step;
+		float pitchStep = step / 3.;
 		if (_lookAt.isZero()) {
 			//animate yaw
 			if (_headYaw > yawStep) {
@@ -1161,8 +1158,9 @@ void Costume::moveHead() {
 	}
 }
 
-void Costume::setLookAt(const Graphics::Vector3d &vec) {
+void Costume::setLookAt(const Graphics::Vector3d &vec, float rate) {
 	_lookAt = vec;
+	_lookAtRate = rate;
 }
 
 void Costume::setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw) {
