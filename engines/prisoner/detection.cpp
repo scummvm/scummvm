@@ -89,6 +89,91 @@ static const PrisonerGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	{
+		// Prisoner Multilingual Version - English
+		{
+			"prisoner",
+			0,
+			AD_ENTRY1s("e_klang.bin", "c8e85c96425a2c5bd535410ef39fd9fe", 561),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		0,
+		0,
+		0,
+		0,
+	},
+
+	{
+		// Prisoner Multilingual Version - German
+		{
+			"prisoner",
+			0,
+			AD_ENTRY1s("d_klang.bin", "2c5e71abf3c7908f80db62fe850a459b", 561),
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		0,
+		0,
+		0,
+		0,
+	},
+
+	{
+		// Prisoner Multilingual Version - French
+		{
+			"prisoner",
+			0,
+			AD_ENTRY1s("f_klang.bin", "08866dc389a00b2c3c611b782c68220c", 561),
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		0,
+		0,
+		0,
+		0,
+	},
+
+	{
+		// Prisoner Multilingual Version - Dutch
+		{
+			"prisoner",
+			0,
+			AD_ENTRY1s("n_klang.bin", "dd8bcbe13bbf2cc2f5039dd4254b74b7", 561),
+			Common::NL_NLD,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		0,
+		0,
+		0,
+		0,
+	},
+
+	{
+		// Prisoner Multilingual Version - Swedish
+		{
+			"prisoner",
+			0,
+			AD_ENTRY1s("w_klang.bin", "68ee7ecba3965975bb857d41026be4b7", 561),
+			Common::SE_SWE,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		0,
+		0,
+		0,
+		0,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };
 
