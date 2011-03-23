@@ -98,26 +98,26 @@ void MidiPlayer::play(uint8 *stream, uint16 size) {
 	_midiData = (uint8 *)malloc(size);
 	if (_midiData) {
 		memcpy(_midiData, stream, size);
-		_mutex.lock();
+
+		Common::StackLock lock(_mutex);
 		syncVolume();
 		_parser->loadMusic(_midiData, size);
 		_parser->setTrack(0);
 		_isLooping = false;
 		_isPlaying = true;
-		_mutex.unlock();
 	}
 }
 
 void MidiPlayer::stop() {
 	debugC(3, kDebugMusic, "MidiPlayer::stop");
-	_mutex.lock();
+
+	Common::StackLock lock(_mutex);
 	if (_isPlaying) {
 		_isPlaying = false;
 		_parser->unloadMusic();
 		free(_midiData);
 		_midiData = 0;
 	}
-	_mutex.unlock();
 }
 
 void MidiPlayer::pause(bool p) {
@@ -135,11 +135,10 @@ void MidiPlayer::updateTimer() {
 		return;
 	}
 
-	_mutex.lock();
+	Common::StackLock lock(_mutex);
 	if (_isPlaying) {
 		_parser->onTimer();
 	}
-	_mutex.unlock();
 }
 
 void MidiPlayer::adjustVolume(int diff) {
@@ -159,13 +158,13 @@ void MidiPlayer::syncVolume() {
 void MidiPlayer::setVolume(int volume) {
 	debugC(3, kDebugMusic, "MidiPlayer::setVolume");
 	_masterVolume = CLIP(volume, 0, 255);
-	_mutex.lock();
+
+	Common::StackLock lock(_mutex);
 	for (int i = 0; i < kNumbChannels; ++i) {
 		if (_channelsTable[i]) {
 			_channelsTable[i]->volume(_channelsVolume[i] * _masterVolume / 255);
 		}
 	}
-	_mutex.unlock();
 }
 
 void MidiPlayer::setChannelVolume(int channel) {
@@ -198,7 +197,8 @@ bool MidiPlayer::isOpen() const {
 
 void MidiPlayer::close() {
 	stop();
-	_mutex.lock();
+
+	Common::StackLock lock(_mutex);
 	_driver->setTimerCallback(0, 0);
 	_driver->close();
 	delete _driver;
@@ -206,7 +206,6 @@ void MidiPlayer::close() {
 	if (_parser)
 		_parser->setMidiDriver(0);
 	delete _parser;
-	_mutex.unlock();
 }
 
 void MidiPlayer::send(uint32 b) {

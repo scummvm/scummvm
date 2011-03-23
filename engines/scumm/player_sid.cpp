@@ -1287,7 +1287,7 @@ uint8 *Player_SID::getResource(int resID) {
 int Player_SID::readBuffer(int16 *buffer, const int numSamples) {
 	int samplesLeft = numSamples;
 
-	_mutex.lock();
+	Common::StackLock lock(_mutex);
 
 	while (samplesLeft > 0) {
 		// update SID status after each frame
@@ -1300,8 +1300,6 @@ int Player_SID::readBuffer(int16 *buffer, const int numSamples) {
 		samplesLeft -= sampleCount;
 		buffer += sampleCount;
 	}
-
-	_mutex.unlock();
 
 	return numSamples;
 }
@@ -1337,7 +1335,7 @@ void Player_SID::startSound(int nr) {
 	// prio 7 is never used in any sound file use this byte for auto-detection.
 	bool isMusic = (data[4] == 0x07);
 
-	_mutex.lock();
+	Common::StackLock lock(_mutex);
 
 	if (isMusic) {
 		initMusic(nr);
@@ -1345,29 +1343,25 @@ void Player_SID::startSound(int nr) {
 		stopSound_intern(nr);
 		initSound(nr);
 	}
-
-	_mutex.unlock();
 }
 
 void Player_SID::stopSound(int nr) {
 	if (nr == -1)
 		return;
 
-	_mutex.lock();
+	Common::StackLock lock(_mutex);
 	stopSound_intern(nr);
-	_mutex.unlock();
 }
 
 void Player_SID::stopAllSounds() {
-	_mutex.lock();
+	Common::StackLock lock(_mutex);
 	stopAllSounds_intern();
-	_mutex.unlock();
 }
 
 int Player_SID::getSoundStatus(int nr) const {
 	int result = 0;
 
-	//_mutex.lock();
+	//Common::StackLock lock(_mutex);
 
 	if (resID_song == nr && isMusicPlaying) {
 		result = 1;
@@ -1378,8 +1372,6 @@ int Player_SID::getSoundStatus(int nr) const {
 			result = 1;
 		}
 	}
-
-	//_mutex.unlock();
 
 	return result;
 }

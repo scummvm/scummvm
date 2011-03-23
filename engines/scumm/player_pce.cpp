@@ -515,7 +515,7 @@ int Player_PCE::readBuffer(int16 *buffer, const int numSamples) {
 	int sampleCopyCnt;
 	int samplesLeft = numSamples;
 
-	_mutex.lock();
+	Common::StackLock lock(_mutex);
 
 	while (true) {
 		// copy samples to output buffer
@@ -542,8 +542,6 @@ int Player_PCE::readBuffer(int16 *buffer, const int numSamples) {
 			&_sampleBuffer[_samplesPerPeriod - _sampleBufferCnt],
 			_sampleBufferCnt * sizeof(int16));
 	}
-
-	_mutex.unlock();
 
 	return numSamples;
 }

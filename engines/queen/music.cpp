@@ -218,10 +218,9 @@ void MidiMusic::metaEvent(byte type, byte *data, uint16 length) {
 }
 
 void MidiMusic::onTimer() {
-	_mutex.lock();
+	Common::StackLock lock(_mutex);
 	if (_isPlaying)
 		_parser->onTimer();
-	_mutex.unlock();
 }
 
 void MidiMusic::queueTuneList(int16 tuneList) {
@@ -319,11 +318,10 @@ void MidiMusic::playMusic() {
 
 	stopMusic();
 
-	_mutex.lock();
+	Common::StackLock lock(_mutex);
 	_parser->loadMusic(musicPtr, size);
 	_parser->setTrack(0);
 	_isPlaying = true;
-	_mutex.unlock();
 
 	debug(8, "Playing song %d [queue position: %d]", songNum, _queuePos);
 	queueUpdatePos();
@@ -349,14 +347,13 @@ uint8 MidiMusic::randomQueuePos() {
 	if (!queueSize)
 		return 0;
 
-	return (uint8) _rnd.getRandomNumber(queueSize - 1) & 0xFF;
+	return (uint8)_rnd.getRandomNumber(queueSize - 1) & 0xFF;
 }
 
 void MidiMusic::stopMusic() {
-	_mutex.lock();
+	Common::StackLock lock(_mutex);
 	_isPlaying = false;
 	_parser->unloadMusic();
-	_mutex.unlock();
 }
 
 uint32 MidiMusic::songOffset(uint16 songNum) const {

@@ -278,24 +278,23 @@ void MidiPlayer_MSC::play(Common::SeekableReadStream *stream) {
 	if (_midiData) {
 		stream->read(_midiData, size);
 		delete stream;
-		_mutex.lock();
+
+		Common::StackLock lock(_mutex);
 		_parser->loadMusic(_midiData, size);
 		_parser->setTrack(0);
 		_isLooping = true;
 		_isPlaying = true;
-		_mutex.unlock();
 	}
 }
 
 void MidiPlayer_MSC::stop() {
-	_mutex.lock();
+	Common::StackLock lock(_mutex);
 	if (_isPlaying) {
 		_isPlaying = false;
 		_parser->unloadMusic();
 		free(_midiData);
 		_midiData = 0;
 	}
-	_mutex.unlock();
 }
 
 void MidiPlayer_MSC::pause(bool p) {
@@ -349,14 +348,14 @@ bool MidiPlayer_MSC::isOpen() const {
 
 void MidiPlayer_MSC::close() {
 	stop();
-	_mutex.lock();
+
+	Common::StackLock lock(_mutex);
 	_driver->setTimerCallback(NULL, NULL);
 	_driver->close();
 	delete _driver;
 	_driver = 0;
 	_parser->setMidiDriver(NULL);
 	delete _parser;
-	_mutex.unlock();
 }
 
 void MidiPlayer_MSC::send(uint32 b) {
