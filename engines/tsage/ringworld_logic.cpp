@@ -112,6 +112,8 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 4010: return new Scene4010();
 	// Village - Puzzle Board
 	case 4025: return new Scene4025();
+	// Village - Temple Antechamber
+	case 4045: return new Scene4045();
 
 	/* Scene group 6 */
 
@@ -725,6 +727,51 @@ void SpeakerPL::setText(const Common::String &msg) {
 }
 
 void SpeakerPL::removeText() {
+	_object3.remove();
+	AnimatedSpeaker::removeText();
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerPR::SpeakerPR() {
+	_speakerName = "PR";
+	_newSceneNumber = 4061;
+	_textPos = Common::Point(10, 40);
+	_colour1 = 5;
+}
+
+void SpeakerPR::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(4063);
+	_object1.setStrip2(1);
+	_object1.setPriority2(255);
+	_object1.changeZoom(100);
+	_object1._frame = 1;
+	_object1.setPosition(Common::Point(212, 117));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
+	
+	_object2.postInit(&_objectList);
+	_object2.setVisage(4063);
+	_object2.setStrip2(2);
+	_object2.setPriority2(200);
+	_object2.changeZoom(100);
+	_object2._frame = 1;
+	_object2.setPosition(Common::Point(214, 62));
+	_object2.setAction(&_speakerAction, NULL);
+
+	_object3.postInit(&_objectList);
+	_object3.setVisage(4063);
+	_object3.setStrip2(3);
+	_object3.setPriority2(255);
+	_object3.changeZoom(100);
+	_object3._frame = 1;
+	_object3.setPosition(Common::Point(214, 59));
+	_object3.setAction(&_speakerAction2, NULL);
+
+	Speaker::setText(msg);
+}
+
+void SpeakerPR::removeText() {
 	_object3.remove();
 	AnimatedSpeaker::removeText();
 }

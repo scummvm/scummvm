@@ -266,6 +266,17 @@ public:
 	virtual void removeText();
 };	
 
+class SpeakerPR: public AnimatedSpeaker {
+public:
+	SceneObject _object3;
+	SpeakerAction _speakerAction2;
+
+	SpeakerPR();
+
+	virtual Common::String getClassName() { return "SpeakerPR"; }
+	virtual void setText(const Common::String &msg);
+	virtual void removeText();
+};	
 
 
 } // End of namespace tSage
