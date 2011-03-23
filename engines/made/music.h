@@ -43,7 +43,7 @@ enum MusicFlags {
 
 class MusicPlayer : public MidiDriver_BASE {
 public:
-	MusicPlayer(MidiDriver *driver);
+	MusicPlayer();
 	~MusicPlayer();
 
 	bool isPlaying() { return _isPlaying; }
@@ -52,8 +52,7 @@ public:
 	void setVolume(int volume);
 	int getVolume() { return _masterVolume; }
 
-	void setNativeMT32(bool b) { _nativeMT32 = b; }
-	bool hasNativeMT32() { return _nativeMT32; }
+	bool hasNativeMT32() const { return _nativeMT32; }
 	void playXMIDI(GenericResource *midiResource, MusicFlags flags = MUSIC_NORMAL);
 	void playSMF(GenericResource *midiResource, MusicFlags flags = MUSIC_NORMAL);
 	void stop();
@@ -64,19 +63,16 @@ public:
 
 	void setGM(bool isGM) { _isGM = isGM; }
 
-	//MidiDriver interface implementation
-	int open();
-	void close();
-	void send(uint32 b);
-
-	void metaEvent(byte type, byte *data, uint16 length);
-
-	MidiParser *_parser;
-	Common::Mutex _mutex;
+	// MidiDriver_BASE interface implementation
+	virtual void send(uint32 b);
+	virtual void metaEvent(byte type, byte *data, uint16 length);
 
 protected:
 
 	static void onTimer(void *data);
+
+	MidiParser *_parser;
+	Common::Mutex _mutex;
 
 	MidiChannel *_channel[16];
 	MidiDriver *_driver;

@@ -74,6 +74,7 @@ MIDISound::MIDISound(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : A
 SoundGenMIDI::SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer), _parser(0), _isPlaying(false), _passThrough(false), _isGM(false) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
 	_driver = MidiDriver::createMidi(dev);
+	assert(_driver);
 
 	if (ConfMan.getBool("native_mt32") || MidiDriver::getMusicType(dev) == MT_MT32) {
 		_nativeMT32 = true;
@@ -85,7 +86,17 @@ SoundGenMIDI::SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, p
 	memset(_channel, 0, sizeof(_channel));
 	memset(_channelVolume, 127, sizeof(_channelVolume));
 	_masterVolume = 0;
-	this->open();
+
+	int ret = _driver->open();
+	if (ret == 0) {
+		if (_nativeMT32)
+			_driver->sendMT32Reset();
+		else
+			_driver->sendGMReset();
+
+		_driver->setTimerCallback(this, &onTimer);
+	}
+
 	_smfParser = MidiParser::createParser_SMF();
 	_midiMusicData = NULL;
 }
@@ -93,7 +104,11 @@ SoundGenMIDI::SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, p
 SoundGenMIDI::~SoundGenMIDI() {
 	_driver->setTimerCallback(NULL, NULL);
 	stop();
-	this->close();
+	if (_driver) {
+		_driver->close();
+		delete _driver;
+		_driver = 0;
+	}
 	_smfParser->setMidiDriver(NULL);
 	delete _smfParser;
 	delete[] _midiMusicData;
@@ -117,32 +132,6 @@ void SoundGenMIDI::setVolume(int volume) {
 			setChannelVolume(i);
 		}
 	}
-}
-
-int SoundGenMIDI::open() {
-	// Don't ever call open without first setting the output driver!
-	if (!_driver)
-		return 255;
-
-	int ret = _driver->open();
-	if (ret)
-		return ret;
-
-	_driver->setTimerCallback(this, &onTimer);
-
-	if (_nativeMT32)
-		_driver->sendMT32Reset();
-	else
-		_driver->sendGMReset();
-
-	return 0;
-}
-
-void SoundGenMIDI::close() {
-	stop();
-	if (_driver)
-		_driver->close();
-	_driver = 0;
 }
 
 void SoundGenMIDI::send(uint32 b) {

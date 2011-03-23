@@ -58,12 +58,11 @@ public:
 	void syncVolume();
 	void updateTimer();
 
-	// MidiDriver interface
-	int open();
-	void close();
-	void metaEvent(byte type, byte *data, uint16 length);
-	void send(uint32 b);
+	// MidiDriver_BASE interface
+	virtual void metaEvent(byte type, byte *data, uint16 length);
+	virtual void send(uint32 b);
 
+	int open();
 	uint32 getBaseTempo();
 
 private:

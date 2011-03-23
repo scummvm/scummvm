@@ -57,11 +57,9 @@ public:
 	int getVolume() const { return _masterVolume; }
 	void setLooping(bool loop) { _isLooping = loop; }
 
-	// MidiDriver interface
-	int open();
-	void close();
-	void send(uint32 b);
-	void metaEvent(byte type, byte *data, uint16 length);
+	// MidiDriver_BASE interface
+	virtual void send(uint32 b);
+	virtual void metaEvent(byte type, byte *data, uint16 length);
 
 private:
 
@@ -87,11 +85,25 @@ MidiPlayer::MidiPlayer(MidiDriver *driver)
 		_channelsVolume[i] = 127;
 	}
 
-	open();
+	int ret = _driver->open();
+	if (ret == 0) {
+		_parser = MidiParser::createParser_SMF();
+		_parser->setMidiDriver(this);
+		_parser->setTimerRate(_driver->getBaseTempo());
+		_driver->setTimerCallback(this, &timerCallback);
+	}
 }
 
 MidiPlayer::~MidiPlayer() {
-	close();
+	stop();
+
+	Common::StackLock lock(_mutex);
+	_driver->setTimerCallback(NULL, NULL);
+	_driver->close();
+	delete _driver;
+	_driver = 0;
+	_parser->setMidiDriver(NULL);
+	delete _parser;
 }
 
 void MidiPlayer::play(Common::SeekableReadStream *stream) {
@@ -159,29 +171,6 @@ void MidiPlayer::setVolume(int volume) {
 			_channelsTable[i]->volume(_channelsVolume[i] * _masterVolume / 255);
 		}
 	}
-}
-
-int MidiPlayer::open() {
-	int ret = _driver->open();
-	if (ret == 0) {
-		_parser = MidiParser::createParser_SMF();
-		_parser->setMidiDriver(this);
-		_parser->setTimerRate(_driver->getBaseTempo());
-		_driver->setTimerCallback(this, &timerCallback);
-	}
-	return ret;
-}
-
-void MidiPlayer::close() {
-	stop();
-
-	Common::StackLock lock(_mutex);
-	_driver->setTimerCallback(NULL, NULL);
-	_driver->close();
-	delete _driver;
-	_driver = 0;
-	_parser->setMidiDriver(NULL);
-	delete _parser;
 }
 
 void MidiPlayer::send(uint32 b) {

@@ -36,18 +36,46 @@
 
 namespace Draci {
 
-MusicPlayer::MusicPlayer(MidiDriver *driver, const char *pathMask) : _parser(0), _driver(driver), _pathMask(pathMask), _looping(false), _isPlaying(false), _passThrough(false), _isGM(false), _track(-1) {
+MusicPlayer::MusicPlayer(const char *pathMask) : _parser(0), _driver(0), _pathMask(pathMask), _looping(false), _isPlaying(false), _passThrough(false), _isGM(false), _track(-1) {
+
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
+	//bool adlib = (MidiDriver::getMusicType(dev) == MT_ADLIB);
+
+	_driver = MidiDriver::createMidi(dev);
+	assert(_driver);
+	if (_nativeMT32)
+		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+
 	memset(_channel, 0, sizeof(_channel));
 	memset(_channelVolume, 127, sizeof(_channelVolume));
 	_masterVolume = 0;
 	_smfParser = MidiParser::createParser_SMF();
 	_midiMusicData = NULL;
+
+	int ret = _driver->open();
+	if (ret == 0) {
+		if (_nativeMT32)
+			_driver->sendMT32Reset();
+		else
+			_driver->sendGMReset();
+
+		// TODO: Load cmf.ins with the instrument table.  It seems that an
+		// interface for such an operation is supported for AdLib.  Maybe for
+		// this card, setting instruments is necessary.
+
+		_driver->setTimerCallback(this, &onTimer);
+	}
 }
 
 MusicPlayer::~MusicPlayer() {
 	_driver->setTimerCallback(NULL, NULL);
 	stop();
-	this->close();
+	if (_driver) {
+		_driver->close();
+		delete _driver;
+		_driver = 0;
+	}
 	_smfParser->setMidiDriver(NULL);
 	delete _smfParser;
 	delete[] _midiMusicData;
@@ -73,37 +101,6 @@ void MusicPlayer::setVolume(int volume) {
 			setChannelVolume(i);
 		}
 	}
-}
-
-int MusicPlayer::open() {
-	// Don't ever call open without first setting the output driver!
-	if (!_driver)
-		return 255;
-
-	int ret = _driver->open();
-	if (ret)
-		return ret;
-
-	if (_nativeMT32)
-		_driver->sendMT32Reset();
-	else
-		_driver->sendGMReset();
-
-	// TODO: Load cmf.ins with the instrument table.  It seems that an
-	// interface for such an operation is supported for AdLib.  Maybe for
-	// this card, setting instruments is necessary.
-
-	_driver->setTimerCallback(this, &onTimer);
-	return 0;
-}
-
-void MusicPlayer::close() {
-	stop();
-	if (_driver) {
-		_driver->close();
-		delete _driver;
-	}
-	_driver = 0;
 }
 
 void MusicPlayer::send(uint32 b) {

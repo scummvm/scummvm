@@ -39,14 +39,21 @@ MidiPlayer::MidiPlayer(MadsM4Engine *vm, MidiDriver *driver) : _vm(vm), _midiDat
 	_parser = MidiParser::createParser_SMF();
 	_parser->setMidiDriver(this);
 	_parser->setTimerRate(_driver->getBaseTempo());
-	open();
+
+	int ret = _driver->open();
+	if (ret == 0)
+		_driver->setTimerCallback(this, &onTimer);
 }
 
 MidiPlayer::~MidiPlayer() {
 	_driver->setTimerCallback(NULL, NULL);
 	_parser->setMidiDriver(NULL);
 	stopMusic();
-	close();
+	if (_driver) {
+		_driver->close();
+		delete _driver;
+	}
+	_driver = 0;
 	delete _parser;
 	free(_midiData);
 }
@@ -69,28 +76,6 @@ void MidiPlayer::setVolume(int volume) {
 			_channel[i]->volume(_channelVolume[i] * _masterVolume / 255);
 		}
 	}
-}
-
-int MidiPlayer::open() {
-	// Don't ever call open without first setting the output driver!
-	if (!_driver)
-		return 255;
-
-	int ret = _driver->open();
-	if (ret)
-		return ret;
-
-	_driver->setTimerCallback(this, &onTimer);
-	return 0;
-}
-
-void MidiPlayer::close() {
-	stopMusic();
-	if (_driver) {
-		_driver->close();
-		delete _driver;
-	}
-	_driver = 0;
 }
 
 void MidiPlayer::send(uint32 b) {

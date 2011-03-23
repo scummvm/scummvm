@@ -57,11 +57,9 @@ public:
 	int getVolume() const { return _masterVolume; }
 	void setLooping(bool loop) { _isLooping = loop; }
 
-	// MidiDriver interface
-	int open();
-	void close();
-	void send(uint32 b);
-	void metaEvent(byte type, byte *data, uint16 length);
+	// MidiDriver_BASE interface
+	virtual void send(uint32 b);
+	virtual void metaEvent(byte type, byte *data, uint16 length);
 
 private:
 

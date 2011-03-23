@@ -470,7 +470,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_planarBuf = 0;
 
 	_midiEnabled = false;
-	_nativeMT32 = false;
 
 	_vgaTickCounter = 0;
 
@@ -555,30 +554,13 @@ Common::Error AGOSEngine::init() {
 		((getFeatures() & GF_TALKIE) && getPlatform() == Common::kPlatformAcorn) ||
 		(getPlatform() == Common::kPlatformPC)) {
 
-		// Setup midi driver
-		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | (getGameType() == GType_SIMON1 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
-		_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
-
-		_driver = MidiDriver::createMidi(dev);
-
-		if (_nativeMT32)
-			_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-
-		_midi.setNativeMT32(_nativeMT32);
-		_midi.mapMT32toGM(getGameType() != GType_SIMON2 && !_nativeMT32);
-
-		_midi.setDriver(_driver);
-
-		int ret = _midi.open();
+		int ret = _midi.open(getGameType());
 		if (ret)
-			warning("MIDI Player init failed: \"%s\"", MidiDriver::getErrorName (ret));
+			warning("MIDI Player init failed: \"%s\"", MidiDriver::getErrorName(ret));
 
 		_midi.setVolume(ConfMan.getInt("music_volume"), ConfMan.getInt("sfx_volume"));
 
-
 		_midiEnabled = true;
-	} else {
-		_driver = NULL;
 	}
 
 	// Setup mixer
@@ -734,7 +716,7 @@ void AGOSEngine_Simon2::setupGame() {
 	_itemMemSize = 20000;
 	_tableMemSize = 100000;
 	// Check whether to use MT-32 MIDI tracks in Simon the Sorcerer 2
-	if (getGameType() == GType_SIMON2 && _nativeMT32)
+	if (getGameType() == GType_SIMON2 && _midi.hasNativeMT32())
 		_musicIndexBase = (1128 + 612) / 4;
 	else
 		_musicIndexBase = 1128 / 4;
@@ -895,9 +877,6 @@ void AGOSEngine::setupGame() {
 }
 
 AGOSEngine::~AGOSEngine() {
-	_midi.close();
-	delete _driver;
-
 	_system->getAudioCDManager()->stop();
 
 	for (uint i = 0; i < _itemHeap.size(); i++) {

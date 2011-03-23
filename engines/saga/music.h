@@ -56,18 +56,14 @@ public:
 	bool isMT32() { return _driverType == MT_MT32 || _nativeMT32; }
 	void setGM(bool isGM) { _isGM = isGM; }
 
-	//MidiDriver interface implementation
-	int open();
-	bool isOpen() const;
-	void close() { _driver->close(); }
-	void send(uint32 b);
-
-	void metaEvent(byte type, byte *data, uint16 length) {}
+	// MidiDriver_BASE interface implementation
+	virtual void send(uint32 b);
+	virtual void metaEvent(byte type, byte *data, uint16 length) {}
 
 	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { _driver->setTimerCallback(timerParam, timerProc); }
 	uint32 getBaseTempo()	{ return _driver->getBaseTempo(); }
 
-	Common::Mutex _mutex;
+	Common::Mutex _mutex;	// FIXME: Make _mutex protected
 
 protected:
 

@@ -162,18 +162,7 @@ int DraciEngine::init() {
 	_dubbingArchive = openAnyPossibleDubbing();
 	_sound = new Sound(_mixer);
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	bool native_mt32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
-	//bool adlib = (MidiDriver::getMusicType(dev) == MT_ADLIB);
-
-	_midiDriver = MidiDriver::createMidi(dev);
-	if (native_mt32)
-		_midiDriver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-
-	_music = new MusicPlayer(_midiDriver, musicPathMask);
-	_music->setNativeMT32(native_mt32);
-	_music->open();
-	//_music->setAdLib(adlib);
+	_music = new MusicPlayer(musicPathMask);
 
 	// Setup mixer
 	syncSoundSettings();
@@ -404,7 +393,6 @@ DraciEngine::~DraciEngine() {
 
 	delete _sound;
 	delete _music;
-	delete _midiDriver;
 	delete _soundsArchive;
 	delete _dubbingArchive;
 

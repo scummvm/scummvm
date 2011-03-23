@@ -85,7 +85,6 @@ public:
 	AnimationManager *_anims;
 	Sound *_sound;
 	MusicPlayer *_music;
-	MidiDriver *_midiDriver;
 
 	Font *_smallFont;
 	Font *_bigFont;

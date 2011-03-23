@@ -56,9 +56,9 @@ public:
 	void queueClear();
 	void toggleVChange();
 
-	//MidiDriver interface implementation
-	void send(uint32 b);
-	void metaEvent(byte type, byte *data, uint16 length);
+	// MidiDriver_BASE interface implementation
+	virtual void send(uint32 b);
+	virtual void metaEvent(byte type, byte *data, uint16 length);
 
 protected:
 

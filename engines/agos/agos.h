@@ -550,9 +550,7 @@ protected:
 	byte _lettersToPrintBuf[80];
 
 	MidiPlayer _midi;
-	MidiDriver *_driver;
 	bool _midiEnabled;
-	bool _nativeMT32;
 
 	int _vgaTickCounter;
 

@@ -100,18 +100,7 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 
 	_script = new ScriptInterpreter(this);
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	bool native_mt32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
-	//bool adlib = (MidiDriver::getMusicType(dev) == MT_ADLIB);
-
-	MidiDriver *driver = MidiDriver::createMidi(dev);
-	if (native_mt32)
-		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-
-	_music = new MusicPlayer(driver);
-	_music->setNativeMT32(native_mt32);
-	_music->open();
-	//_music->setAdLib(adlib);
+	_music = new MusicPlayer();
 
 	// Set default sound frequency
 	switch (getGameID()) {

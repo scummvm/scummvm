@@ -36,11 +36,34 @@ MidiPlayer::MidiPlayer()
 	: _driver(0), _parser(0), _midiData(0), _isLooping(false), _isPlaying(false), _masterVolume(0) {
 	memset(_channelsTable, 0, sizeof(_channelsTable));
 	memset(_channelsVolume, 0, sizeof(_channelsVolume));
-	open();
+
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
+	_driver = MidiDriver::createMidi(dev);
+	int ret = _driver->open();
+	if (ret == 0) {
+		_parser = MidiParser::createParser_SMF();
+		_parser->setMidiDriver(this);
+		_parser->setTimerRate(_driver->getBaseTempo());
+		_driver->setTimerCallback(this, &timerCallback);
+
+		if (_nativeMT32)
+			_driver->sendMT32Reset();
+		else
+			_driver->sendGMReset();
+	}
 }
 
 MidiPlayer::~MidiPlayer() {
-	close();
+	stop();
+
+	Common::StackLock lock(_mutex);
+	_driver->setTimerCallback(NULL, NULL);
+	_driver->close();
+	delete _driver;
+	_driver = 0;
+	_parser->setMidiDriver(NULL);
+	delete _parser;
 }
 
 void MidiPlayer::play(Common::ReadStream &stream, int size, bool loop) {
@@ -86,37 +109,6 @@ void MidiPlayer::setVolume(int volume) {
 			_channelsTable[i]->volume(_channelsVolume[i] * _masterVolume / 255);
 		}
 	}
-}
-
-int MidiPlayer::open() {
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
-	_driver = MidiDriver::createMidi(dev);
-	int ret = _driver->open();
-	if (ret == 0) {
-		_parser = MidiParser::createParser_SMF();
-		_parser->setMidiDriver(this);
-		_parser->setTimerRate(_driver->getBaseTempo());
-		_driver->setTimerCallback(this, &timerCallback);
-
-		if (_nativeMT32)
-			_driver->sendMT32Reset();
-		else
-			_driver->sendGMReset();
-	}
-	return ret;
-}
-
-void MidiPlayer::close() {
-	stop();
-
-	Common::StackLock lock(_mutex);
-	_driver->setTimerCallback(NULL, NULL);
-	_driver->close();
-	delete _driver;
-	_driver = 0;
-	_parser->setMidiDriver(NULL);
-	delete _parser;
 }
 
 void MidiPlayer::send(uint32 b) {

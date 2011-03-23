@@ -386,18 +386,41 @@ void DeleteMidiBuffer() {
 	midiBuffer.pDat = NULL;
 }
 
-MidiMusicPlayer::MidiMusicPlayer(MidiDriver *driver) : _parser(0), _driver(driver), _looping(false), _isPlaying(false) {
+MidiMusicPlayer::MidiMusicPlayer() : _parser(0), _driver(0), _looping(false), _isPlaying(false) {
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	bool native_mt32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
+	//bool adlib = (MidiDriver::getMusicType(dev) == MT_ADLIB);
+
+	_driver = MidiDriver::createMidi(dev);
+	assert(_driver);
+	if (native_mt32)
+		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+
 	memset(_channel, 0, sizeof(_channel));
 	memset(_channelVolume, 0, sizeof(_channelVolume));
 	_masterVolume = 0;
-	this->open();
+
+	int ret = _driver->open();
+	if (ret == 0) {
+		if (native_mt32)
+			_driver->sendMT32Reset();
+		else
+			_driver->sendGMReset();
+
+		_driver->setTimerCallback(this, &onTimer);
+	}
+
 	_xmidiParser = MidiParser::createParser_XMIDI();
 }
 
 MidiMusicPlayer::~MidiMusicPlayer() {
 	_driver->setTimerCallback(NULL, NULL);
 	stop();
-	this->close();
+	if (_driver) {
+		_driver->close();
+		delete _driver;
+		_driver = 0;
+	}
 	_xmidiParser->setMidiDriver(NULL);
 	delete _xmidiParser;
 }
@@ -417,28 +440,6 @@ void MidiMusicPlayer::setVolume(int volume) {
 			_channel[i]->volume(_channelVolume[i] * _masterVolume / 255);
 		}
 	}
-}
-
-int MidiMusicPlayer::open() {
-	// Don't ever call open without first setting the output driver!
-	if (!_driver)
-		return 255;
-
-	int ret = _driver->open();
-	if (ret)
-		return ret;
-
-	_driver->setTimerCallback(this, &onTimer);
-	return 0;
-}
-
-void MidiMusicPlayer::close() {
-	stop();
-	if (_driver) {
-		_driver->close();
-		delete _driver;
-	}
-	_driver = 0;
 }
 
 void MidiMusicPlayer::send(uint32 b) {

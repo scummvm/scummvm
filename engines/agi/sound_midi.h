@@ -70,12 +70,9 @@ public:
 
 	void setGM(bool isGM) { _isGM = isGM; }
 
-	// MidiDriver interface implementation
-	int open();
-	void close();
-	void send(uint32 b);
-
-	void metaEvent(byte type, byte *data, uint16 length);
+	// MidiDriver_BASE interface implementation
+	virtual void send(uint32 b);
+	virtual void metaEvent(byte type, byte *data, uint16 length);
 
 private:
 

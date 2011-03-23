@@ -84,13 +84,11 @@ public:
 	void setPassThrough(bool b) { _passThrough = b; }
 	void toggleVChange();
 
-	//MidiDriver interface implementation
-	int open();
-	void close();
-	void send(uint32 b);
-	void onTimer();
+	// MidiDriver_BASE interface implementation
+	virtual void send(uint32 b);
+	virtual void metaEvent(byte type, byte *data, uint16 length);
 
-	void metaEvent(byte type, byte *data, uint16 length);
+	void onTimer();
 
 	uint8 channelNumber() { return _channelNumber; }
 	uint8 soundNumber() { return _soundNumber; }

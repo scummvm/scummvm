@@ -62,7 +62,7 @@ void dumpMusic();
 
 class MidiMusicPlayer : public MidiDriver_BASE {
 public:
-	MidiMusicPlayer(MidiDriver *driver);
+	MidiMusicPlayer();
 	~MidiMusicPlayer();
 
 	bool isPlaying() { return _isPlaying; }
@@ -78,16 +78,12 @@ public:
 	void resume();
 	void setLoop(bool loop) { _looping = loop; }
 
-	//MidiDriver interface implementation
-	int open();
-	void close();
-	void send(uint32 b);
-
-	void metaEvent(byte type, byte *data, uint16 length);
+	// MidiDriver_BASE interface implementation
+	virtual void send(uint32 b);
+	virtual void metaEvent(byte type, byte *data, uint16 length);
 
 	// The original sets the "sequence timing" to 109 Hz, whatever that
 	// means. The default is 120.
-
 	uint32 getBaseTempo()	{ return _driver ? (109 * _driver->getBaseTempo()) / 120 : 0; }
 
 protected:

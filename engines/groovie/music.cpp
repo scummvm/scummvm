@@ -247,21 +247,10 @@ MusicPlayerMidi::~MusicPlayerMidi() {
 	delete _midiParser;
 
 	// Unload the MIDI Driver
-	if (_driver)
+	if (_driver) {
 		_driver->close();
-	delete _driver;
-}
-
-int MusicPlayerMidi::open() {
-	// Don't ever call open without first setting the output driver!
-	if (!_driver)
-		return 255;
-
-	int ret = _driver->open();
-	if (ret)
-		return ret;
-
-	return 0;
+		delete _driver;
+	}
 }
 
 void MusicPlayerMidi::send(uint32 b) {
@@ -375,7 +364,9 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 	// Create the driver
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_driver = MidiDriver::createMidi(dev);
-	this->open();
+	assert(_driver);
+
+	_driver->open();	// TODO: Handle return value != 0 (indicating an error)
 
 	// Set the parser's driver
 	_midiParser->setMidiDriver(this);
@@ -675,7 +666,9 @@ MusicPlayerMac::MusicPlayerMac(GroovieEngine *vm) : MusicPlayerMidi(vm) {
 	// Create the driver
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_driver = MidiDriver::createMidi(dev);
-	this->open();
+	assert(_driver);
+
+	_driver->open();	// TODO: Handle return value != 0 (indicating an error)
 
 	// Set the parser's driver
 	_midiParser->setMidiDriver(this);

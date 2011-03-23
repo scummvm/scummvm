@@ -55,25 +55,18 @@ MusicDriver::MusicDriver() : _isGM(false) {
 	if (isMT32())
 		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	this->open();
+	int retValue = _driver->open();
+	if (retValue == 0) {
+		if (_nativeMT32)
+			_driver->sendMT32Reset();
+		else
+			_driver->sendGMReset();
+	}
 }
 
 MusicDriver::~MusicDriver() {
-	this->close();
+	_driver->close();
 	delete _driver;
-}
-
-int MusicDriver::open() {
-	int retValue = _driver->open();
-	if (retValue)
-		return retValue;
-
-	if (_nativeMT32)
-		_driver->sendMT32Reset();
-	else
-		_driver->sendGMReset();
-
-	return 0;
 }
 
 void MusicDriver::setVolume(int volume) {

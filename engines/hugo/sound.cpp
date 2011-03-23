@@ -60,7 +60,16 @@ MidiPlayer::MidiPlayer(MidiDriver *driver)
 }
 
 MidiPlayer::~MidiPlayer() {
-	close();
+	stop();
+
+	Common::StackLock lock(_mutex);
+	_driver->setTimerCallback(0, 0);
+	_driver->close();
+	delete _driver;
+	_driver = 0;
+	if (_parser)
+		_parser->setMidiDriver(0);
+	delete _parser;
 }
 
 bool MidiPlayer::isPlaying() const {
@@ -177,19 +186,6 @@ int MidiPlayer::open() {
 	_driver->setTimerCallback(this, &timerCallback);
 
 	return 0;
-}
-
-void MidiPlayer::close() {
-	stop();
-
-	Common::StackLock lock(_mutex);
-	_driver->setTimerCallback(0, 0);
-	_driver->close();
-	delete _driver;
-	_driver = 0;
-	if (_parser)
-		_parser->setMidiDriver(0);
-	delete _parser;
 }
 
 void MidiPlayer::send(uint32 b) {

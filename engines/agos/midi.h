@@ -97,8 +97,7 @@ public:
 	void loadXMIDI(Common::File *in, bool sfx = false);
 	void loadS1D(Common::File *in, bool sfx = false);
 
-	void mapMT32toGM(bool map);
-	void setNativeMT32(bool nativeMT32) { _nativeMT32 = nativeMT32; }
+	bool hasNativeMT32() const { return _nativeMT32; }
 	void setLoop(bool loop);
 	void startTrack(int track);
 	void queueTrack(int track, bool loop);
@@ -113,13 +112,13 @@ public:
 	void setDriver(MidiDriver *md);
 
 public:
-	// MidiDriver interface implementation
-	int open();
-	void close();
-	void send(uint32 b);
-
-	void metaEvent(byte type, byte *data, uint16 length);
+	int open(int gameType);
 	void setPassThrough(bool b)		{ _passThrough = b; }
+
+	// MidiDriver_BASE interface implementation
+	virtual void send(uint32 b);
+	virtual void metaEvent(byte type, byte *data, uint16 length);
+
 };
 
 } // End of namespace AGOS
