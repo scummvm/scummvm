@@ -946,13 +946,12 @@ void Actor::update() {
 	}
 
 	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
-		(*i)->setPosRotate(_pos, _pitch, _yaw, _roll);
-		(*i)->setLookAt(_lookAtVector, _lookAtRate);
-		(*i)->update();
-	}
-
-	if (_lookingMode) {
-		/*float lookAtAmt = */g_grim->perSecond(_lookAtRate);
+		Costume *c = *i;
+		c->setPosRotate(_pos, _pitch, _yaw, _roll);
+		if (_lookingMode) {
+			c->setLookAt(_lookAtVector, _lookAtRate);
+		}
+		c->update();
 	}
 }
 
