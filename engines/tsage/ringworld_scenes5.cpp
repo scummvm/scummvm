@@ -1347,15 +1347,15 @@ void Scene4025::Action2::signal() {
 		break;
 	case 1:
 		if (!scene->_pegPtr2) {
-			// Getting a peg
+			// Getting a peg from a hole
 			scene->_holePtr->_pegPtr->flag100();
 			scene->_pegPtr = scene->_holePtr->_pegPtr;
 			scene->_pegPtr->_armStrip = 0;
 			scene->_pegPtr->setPosition(Common::Point(-10, -10));
-			scene->_pegPtr2 = scene->_pegPtr;
-			scene->_pegPtr = NULL;
+			scene->_pegPtr2 = scene->_holePtr->_pegPtr;
+			scene->_holePtr->_pegPtr = NULL;
 		} else {
-			// Placing a peg
+			// Placing a peg into a hole
 			scene->_pegPtr2 = NULL;
 			if (scene->_holePtr->_pegPtr) {
 				scene->_holePtr->_pegPtr->flag100();
@@ -1414,7 +1414,7 @@ void Scene4025::Hole::doAction(int action) {
 		SceneItem::display2(4025, 3);
 		break;
 	case CURSOR_USE:
-		if (!scene->_holePtr && !_pegPtr) {
+		if (!scene->_pegPtr && !_pegPtr) {
 			setAction(&scene->_sequenceManager, scene, 4028, NULL);
 		} else {
 			_globals->_player.disableControl();
@@ -1464,6 +1464,11 @@ void Scene4025::Peg::doAction(int action) {
 }
 
 /*--------------------------------------------------------------------------*/
+
+Scene4025::Scene4025(): Scene() {
+	_holePtr = NULL;
+	_pegPtr = _pegPtr2 = NULL;
+}
 
 void Scene4025::postInit(SceneObjectList *OwnerList) {
 	loadScene(4025);
@@ -1612,7 +1617,7 @@ void Scene4025::process(Event &event) {
 }
 
 void Scene4025::dispatch() {
-	if ((_peg1._armStrip == 7) && (_peg2._armStrip == 4) && (_peg3._armStrip == 8) &&
+	if (!_action && (_peg1._armStrip == 7) && (_peg2._armStrip == 4) && (_peg3._armStrip == 8) &&
 			(_peg4._armStrip == 5) && (_peg5._armStrip == 6))
 		setAction(&_action3);
 

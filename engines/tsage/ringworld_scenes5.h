@@ -246,6 +246,7 @@ public:
 	Peg *_pegPtr, *_pegPtr2;
 	Hole *_holePtr;
 
+	Scene4025();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void synchronise(Serialiser &s);
 	virtual void remove();
