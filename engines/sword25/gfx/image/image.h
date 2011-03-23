@@ -55,75 +55,72 @@ public:
 
 	// Enums
 	/**
-	    @brief Die möglichen Flippingparameter für die Blit-Methode.
+	    @brief The possible flipping parameters for the blit methode.
 	*/
 	enum FLIP_FLAGS {
-		/// Das Bild wird nicht gespiegelt.
+		/// The image will not be flipped.
 		FLIP_NONE = 0,
-		/// Das Bild wird an der horizontalen Achse gespiegelt.
+		/// The image will be flipped at the horizontal axis.
 		FLIP_H = 1,
-		/// Das Bild wird an der vertikalen Achse gespiegelt.
+		/// The image will be flipped at the vertical axis.
 		FLIP_V = 2,
-		/// Das Bild wird an der horizontalen und vertikalen Achse gespiegelt.
+		/// The image will be flipped at the horizontal and vertical axis.
 		FLIP_HV = FLIP_H | FLIP_V,
-		/// Das Bild wird an der horizontalen und vertikalen Achse gespiegelt.
+		/// The image will be flipped at the horizontal and vertical axis.
 		FLIP_VH = FLIP_H | FLIP_V
 	};
 
 	//@{
-	/** @name Accessor-Methoden */
+	/** @name Accessor methods */
 
 	/**
-	    @brief Gibt die Breite des Bildes in Pixeln zurück
+	    @brief Returns the width of the image in pixels
 	*/
 	virtual int getWidth() const = 0;
 
 	/**
-	    @brief Gibt die Höhe des Bildes in Pixeln zurück
+	    @brief Returns the height of the image in pixels
 	*/
 	virtual int getHeight() const = 0;
 
 	/**
-	    @brief Gibt das Farbformat des Bildes zurück
+	    @brief Returns the color format of the image
 	*/
 	virtual GraphicEngine::COLOR_FORMATS getColorFormat() const = 0;
 
 	//@}
 
 	//@{
-	/** @name Render-Methoden */
+	/** @name Render methodes */
 
 	/**
-	    @brief Rendert das Bild in den Framebuffer.
-	    @param pDest ein Pointer auf das Zielbild. In den meisten Fällen ist dies der Framebuffer.
-	    @param PosX die Position auf der X-Achse im Zielbild in Pixeln, an der das Bild gerendert werden soll.<br>
-	                Der Standardwert ist 0.
-	    @param PosY die Position auf der Y-Achse im Zielbild in Pixeln, an der das Bild gerendert werden soll.<br>
-	                Der Standardwert ist 0.
-	    @param Flipping gibt an, wie das Bild gespiegelt werden soll.<br>
-	                    Der Standardwert ist BS_Image::FLIP_NONE (keine Spiegelung)
-	    @param pSrcPartRect Pointer auf ein Common::Rect, welches den Ausschnitt des Quellbildes spezifiziert, der gerendert
-	                        werden soll oder NULL, falls das gesamte Bild gerendert werden soll.<br>
-	                        Dieser Ausschnitt bezieht sich auf das ungespiegelte und unskalierte Bild.<br>
-	                        Der Standardwert ist NULL.
-	    @param Color ein ARGB Farbwert, der die Parameter für die Farbmodulation und fürs Alphablending festlegt.<br>
-	                 Die Alpha-Komponente der Farbe bestimmt den Alphablending Parameter (0 = keine Deckung, 255 = volle Deckung).<br>
-	                 Die Farbkomponenten geben die Farbe für die Farbmodulation an.<br>
-	                 Der Standardwert is BS_ARGB(255, 255, 255, 255) (volle Deckung, keine Farbmodulation).
-	                 Zum Erzeugen des Farbwertes können die Makros BS_RGB und BS_ARGB benutzt werden.
-	    @param Width gibt die Ausgabebreite des Bildausschnittes an.
-	                 Falls diese von der Breite des Bildausschnittes abweicht wird
-	                 das Bild entsprechend Skaliert.<br>
-	                 Der Wert -1 gibt an, dass das Bild nicht Skaliert werden soll.<br>
-	                 Der Standardwert ist -1.
-	    @param Width gibt die Ausgabehöhe des Bildausschnittes an.
-	                 Falls diese von der Höhe des Bildauschnittes abweicht, wird
-	                 das Bild entsprechend Skaliert.<br>
-	                 Der Wert -1 gibt an, dass das Bild nicht Skaliert werden soll.<br>
-	                 Der Standardwert ist -1.
-	    @return Gibt false zurück, falls das Rendern fehlgeschlagen ist.
-	    @remark Er werden nicht alle Blitting-Operationen von allen BS_Image-Klassen unterstützt.<br>
-	            Mehr Informationen gibt es in der Klassenbeschreibung von BS_Image und durch folgende Methoden:
+	    @brief renders the image in the framebuffer
+	    @param pDest a pointer to the target image. In most cases this is the framebuffer.
+	    @param PosX the position on the X-axis in the target image in pixels where the image is supposed to be rendered.<br>
+	                The default value is 0.
+	    @param PosY the position on the Y-axis in the target image in pixels where the image is supposed to be rendered.<br>
+	                The default value is 0.
+	    @param Flipping how the the image should be flipped.<br>
+	                    The default value is BS_Image::FLIP_NONE (no flipping)
+	    @param pSrcPartRect Pointer on Common::Rect which specifies the section to be rendered. If the whole image has to be rendered the Pointer is NULL.<br>
+	                        This referes to the unflipped and unscaled image.<br>
+	                        The default value is NULL.
+	    @param Color an ARGB color value, which determines the parameters for the color modulation und alpha blending.<br>
+	                 The alpha component of the color determines the alpha blending parameter (0 = no covering, 255 = full covering).<br>
+	                 The color components determines the color for color modulation.<br>
+	                 The default value is BS_ARGB(255, 255, 255, 255) (full covering, no color modulation).
+	                 The macros BS_RGB and BS_ARGB can be used for the creation of the color value.
+	    @param Width the output width of the screen section.
+	                 The images will be scaled if the output width of the screen section differs from the image section.<br>
+	                 The value -1 determines that the image should not be scaled.<br>
+	                 The default value is -1.
+	    @param Width the output height of the screen section.
+	                 The images will be scaled if the output width of the screen section differs from the image section.<br>
+	                 The value -1 determines that the image should not be scaled.<br>
+	                 The default value is -1.
+	    @return returns false if the rendering failed.
+	    @remark Not all blitting operations of all BS_Image classes are supported.<br>
+	            More information can be find in the class description of BS_Image and the following methodes:
 	            - IsBlitTarget()
 	            - IsScalingAllowed()
 	            - IsFillingAllowed()
@@ -138,79 +135,74 @@ public:
 	                  int width = -1, int height = -1) = 0;
 
 	/**
-	    @brief Füllt einen Rechteckigen Bereich des Bildes mit einer Farbe.
-	    @param pFillRect Pointer auf ein Common::Rect, welches den Ausschnitt des Bildes spezifiziert, der gefüllt
-	                      werden soll oder NULL, falls das gesamte Bild gefüllt werden soll.<br>
-	                      Der Standardwert ist NULL.
-	    @param Color der 32 Bit Farbwert mit dem der Bildbereich gefüllt werden soll.
-	    @remark Es ist möglich über die Methode transparente Rechtecke darzustellen, indem man eine Farbe mit einem Alphawert ungleich
-	            255 angibt.
-	    @remark Unabhängig vom Farbformat des Bildes muss ein 32 Bit Farbwert angegeben werden. Zur Erzeugung, können die Makros
-	            BS_RGB und BS_ARGB benutzt werden.
-	    @remark Falls das Rechteck nicht völlig innerhalb des Bildschirms ist, wird es automatisch zurechtgestutzt.
+	    @brief fills a rectangular section of the image with a color.
+	    @param pFillRect Pointer on Common::Rect which specifies the section of the image which is supposed to be filled. If the whole image has to be filled this value is NULL.<br>
+	                      The default value is NULL.
+	    @param Color the 32 Bit color value for filling the image section.
+	    @remark It is possible to create transparent rectangulars by using a color with alpha value not equal to 255.
+	    @remark Independent from the color format of the image, it must be given a 32 bit color value. The macros BS_RGB and BS_ARGB can be used for the creation of the color value.
+	    @remark If the rectangular is not completely inside the screen area, it will be automatically trimmed.
 	*/
 	virtual bool fill(const Common::Rect *pFillRect = 0, uint color = BS_RGB(0, 0, 0)) = 0;
 
 	/**
-	    @brief Füllt den Inhalt des Bildes mit Pixeldaten.
-	    @param Pixeldata ein Vector der die Pixeldaten enthält. Sie müssen in dem Farbformat des Bildes vorliegen und es müssen genügend Daten
-	           vorhanden sein, um das ganze Bild zu füllen.
-	    @param Offset der Offset in Byte im Pixeldata-Vector an dem sich der erste zu schreibende Pixel befindet.<br>
-	           Der Standardwert ist 0.
-	    @param Stride der Abstand in Byte zwischen dem Zeilenende und dem Beginn einer neuen Zeile im Pixeldata-Vector.<br>
-	           Der Standardwert ist 0.
-	    @return Gibt false zurück, falls der Aufruf fehlgeschlagen ist.
-	    @remark Ein Aufruf dieser Methode ist nur erlaubt, wenn IsSetContentAllowed() true zurückgibt.
+	    @brief Fills the content of the image with pixel data.
+	    @param Pixeldata a vector which cotains the pixel data. They must be present in the color format of the image and there must be enough data available for filling the whole image.
+	    @param Offset the offset in Byte in Pixeldata-Vector on which the first pixel to write is located.<br>
+	           The default value is 0.
+	    @param Stride the distance in Byte between the end of line and the beginning of a new line in Pixeldata-Vector.<br>
+	           The default value is 0.
+	    @return returns false, if the call failed.
+	    @remark A call of this methode is only allowd if IsSetContentAllowed() returns true.
 	*/
 	virtual bool setContent(const byte *pixeldata, uint size, uint offset, uint stride) = 0;
 
 	/**
-	    @brief Liest einen Pixel des Bildes.
-	    @param X die X-Koordinate des Pixels.
-	    @param Y die Y-Koordinate des Pixels
-	    @return Gibt den 32-Bit Farbwert des Pixels an der übergebenen Koordinate zurück.
-	    @remark Diese Methode sollte auf keine Fall benutzt werden um größere Teile des Bildes zu lesen, da sie sehr langsam ist. Sie ist
-	            eher dafür gedacht einzelne Pixel des Bildes auszulesen.
+	    @brief Reads out a pixel of the image.
+	    @param X the X-coordinate of the pixel.
+	    @param Y the y-coordinate of the pixel.
+	    @return Returns the 32-bit color value of the pixel at the given position.
+	    @remark This methode should not be used in no way to read out bigger parts of the image because the method is very slow. The method is rather intended for reading out single pixels of the image..
 	*/
 	virtual uint getPixel(int x, int y) = 0;
 
 	//@{
-	/** @name Auskunfts-Methoden */
+	/** @name Information methodes */
 
 	/**
-	    @brief Überprüft, ob an dem BS_Image Blit() aufgerufen werden darf.
-	    @return Gibt false zurück, falls ein Blit()-Aufruf an diesem Objekt nicht gestattet ist.
+	    @brief Checks, if it is allowed to call BS_Image Blit().
+	    @return Returns false, if a Blit() call is not allowed at this object.
 	*/
 	virtual bool isBlitSource() const = 0;
 
 	/**
-	    @brief Überprüft, ob das BS_Image ein Zielbild für einen Blit-Aufruf sein kann.
-	    @return Gibt false zurück, falls ein Blit-Aufruf mit diesem Objekt als Ziel nicht gestattet ist.
+	    @brief Checks, if the BS_Image can be a target image for a Blit call.
+	    @return Returns false, if a Blit() call with this object as an target is not allowed.
 	*/
 	virtual bool isBlitTarget() const = 0;
 
 	/**
-	    @brief Gibt true zurück, falls das BS_Image bei einem Aufruf von Blit() skaliert dargestellt werden kann.
+	    @brief Returns true, if the BS_Image is allowed to be scaled by a Blit() call.
 	*/
 	virtual bool isScalingAllowed() const = 0;
 
 	/**
-	    @brief Gibt true zurück, wenn das BS_Image mit einem Aufruf von Fill() gefüllt werden kann.
+	    @brief Returns true, if the BS_Image is allowed to be filled by a Fill() call.
 	*/
 	virtual bool isFillingAllowed() const = 0;
 
 	/**
-	    @brief Gibt true zurück, wenn das BS_Image bei einem Aufruf von Blit() mit einem Alphawert dargestellt werden kann.
+	    @brief Returns true, if the BS_Image is allowed to be displayed with an alpha value.
 	*/
 	virtual bool isAlphaAllowed() const = 0;
 
 	/**
-	    @brief Gibt true zurück, wenn das BS_Image bei einem Aufruf von Blit() mit Farbmodulation dargestellt werden kann.
+	    @brief Return true, if the BS_Image is allowed to be displayed with color modulation by a Blit() call
 	*/
 	virtual bool isColorModulationAllowed() const = 0;
 
 	/**
-	    @brief Gibt true zurück, wenn der Inhalt des BS_Image durch eine Aufruf von SetContent() ausgetauscht werden kann.
+	    @brief Returns true, if the content of the BS_Image is allowed to be replaced by call of SetContent().
 	*/
 	virtual bool isSetContentAllowed() const = 0;
 
