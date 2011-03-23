@@ -129,23 +129,36 @@ void Actor::saveState(SaveGame *savedState) const {
 		savedState->writeLEUint32(0);
 	}
 
-	savedState->writeLESint32(_costumeStack.size());
+	// This count is necessary because it happens that an actor can have some NULL costumes.
+	// A case i know of is when you climb the ties rope, then go somewhere else, the pigeon1
+	// actors will have NULL costumes.
+	int costumes = 0;
 	for (Common::List<CostumePtr>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		const CostumePtr &c = *i;
-		savedState->writeCharString(c->filename());
-		Costume *pc = c->previousCostume();
-		int depth = 0;
-		while (pc) {
-			++depth;
-			pc = pc->previousCostume();
+		if (c) {
+			++costumes;
 		}
-		savedState->writeLEUint32(depth);
-		pc = c->previousCostume();
-		for (int j = 0; j < depth; ++j) { //save the previousCostume hierarchy
-			savedState->writeCharString(pc->filename());
-			pc = pc->previousCostume();
+	}
+
+	savedState->writeLESint32(costumes);
+	for (Common::List<CostumePtr>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+		const CostumePtr &c = *i;
+		if (c) {
+			savedState->writeCharString(c->filename());
+			Costume *pc = c->previousCostume();
+			int depth = 0;
+			while (pc) {
+				++depth;
+				pc = pc->previousCostume();
+			}
+			savedState->writeLEUint32(depth);
+			pc = c->previousCostume();
+			for (int j = 0; j < depth; ++j) { //save the previousCostume hierarchy
+				savedState->writeCharString(pc->filename());
+				pc = pc->previousCostume();
+			}
+			c->saveState(savedState);
 		}
-		c->saveState(savedState);
 	}
 
 	savedState->writeLESint32(_turning);
