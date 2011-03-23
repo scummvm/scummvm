@@ -97,12 +97,12 @@ public:
 	MidiChannel *allocateChannel()		{ return 0; }
 	MidiChannel *getPercussionChannel()	{ return 0; }
 
-	MidiParser *_parser;
-	Common::Mutex _mutex;
-
 protected:
 
 	static void onTimer(void *data);
+
+	MidiParser *_parser;
+	Common::Mutex _mutex;
 
 	MidiChannel *_channel[16];
 	MidiDriver *_driver;
