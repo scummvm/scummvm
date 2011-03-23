@@ -107,10 +107,6 @@ int MidiPlayer::open() {
 	return ret;
 }
 
-bool MidiPlayer::isOpen() const {
-	return _driver && _driver->isOpen();
-}
-
 void MidiPlayer::close() {
 	stop();
 

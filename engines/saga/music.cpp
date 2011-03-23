@@ -76,10 +76,6 @@ int MusicDriver::open() {
 	return 0;
 }
 
-bool MusicDriver::isOpen() const {
-	return _driver->isOpen();
-}
-
 void MusicDriver::setVolume(int volume) {
 	volume = CLIP(volume, 0, 255);
 

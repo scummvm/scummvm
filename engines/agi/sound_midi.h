@@ -46,7 +46,7 @@ protected:
 	uint16 _type; ///< Sound resource type
 };
 
-class SoundGenMIDI : public SoundGen, public MidiDriver {
+class SoundGenMIDI : public SoundGen, public MidiDriver_BASE {
 public:
 	SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer);
 	~SoundGenMIDI();
@@ -72,26 +72,18 @@ public:
 
 	// MidiDriver interface implementation
 	int open();
-	bool isOpen() const;
 	void close();
 	void send(uint32 b);
 
 	void metaEvent(byte type, byte *data, uint16 length);
 
-	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo() { return _driver ? _driver->getBaseTempo() : 0; }
-
-	// Channel allocation functions
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
-
-	MidiParser *_parser;
-	Common::Mutex _mutex;
-
 private:
 
 	static void onTimer(void *data);
 	void setChannelVolume(int channel);
+
+	MidiParser *_parser;
+	Common::Mutex _mutex;
 
 	MidiChannel *_channel[16];
 	MidiDriver *_driver;

@@ -41,7 +41,7 @@ enum MusicFlags {
 	MUSIC_LOOP = 1
 };
 
-class MusicPlayer : public MidiDriver {
+class MusicPlayer : public MidiDriver_BASE {
 public:
 	MusicPlayer(MidiDriver *driver);
 	~MusicPlayer();
@@ -66,18 +66,10 @@ public:
 
 	//MidiDriver interface implementation
 	int open();
-	bool isOpen() const;
 	void close();
 	void send(uint32 b);
 
 	void metaEvent(byte type, byte *data, uint16 length);
-
-	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo()	{ return _driver ? _driver->getBaseTempo() : 0; }
-
-	//Channel allocation functions
-	MidiChannel *allocateChannel()		{ return 0; }
-	MidiChannel *getPercussionChannel()	{ return 0; }
 
 	MidiParser *_parser;
 	Common::Mutex _mutex;

@@ -986,10 +986,6 @@ void Player::fixAfterLoad() {
 	}
 }
 
-uint32 Player::getBaseTempo() {
-	return (_midi ? _midi->getBaseTempo() : 0);
-}
-
 void Player::metaEvent(byte type, byte *msg, uint16 len) {
 	if (type == 0x2F)
 		clear();

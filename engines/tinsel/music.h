@@ -60,7 +60,7 @@ SCNHANDLE GetTrackOffset(int trackNumber);
 
 void dumpMusic();
 
-class MidiMusicPlayer : public MidiDriver {
+class MidiMusicPlayer : public MidiDriver_BASE {
 public:
 	MidiMusicPlayer(MidiDriver *driver);
 	~MidiMusicPlayer();
@@ -80,22 +80,15 @@ public:
 
 	//MidiDriver interface implementation
 	int open();
-	bool isOpen() const;
 	void close();
 	void send(uint32 b);
 
 	void metaEvent(byte type, byte *data, uint16 length);
 
-	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-
 	// The original sets the "sequence timing" to 109 Hz, whatever that
 	// means. The default is 120.
 
 	uint32 getBaseTempo()	{ return _driver ? (109 * _driver->getBaseTempo()) / 120 : 0; }
-
-	//Channel allocation functions
-	MidiChannel *allocateChannel()		{ return 0; }
-	MidiChannel *getPercussionChannel()	{ return 0; }
 
 protected:
 

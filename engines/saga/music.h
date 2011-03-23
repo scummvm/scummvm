@@ -44,7 +44,7 @@ enum MusicFlags {
 	MUSIC_DEFAULT = 0xffff
 };
 
-class MusicDriver : public MidiDriver {
+class MusicDriver : public MidiDriver_BASE {
 public:
 	MusicDriver();
 	~MusicDriver();
@@ -67,15 +67,9 @@ public:
 	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { _driver->setTimerCallback(timerParam, timerProc); }
 	uint32 getBaseTempo()	{ return _driver->getBaseTempo(); }
 
-	//Channel allocation functions
-	MidiChannel *allocateChannel()		{ return 0; }
-	MidiChannel *getPercussionChannel()	{ return 0; }
-
 	Common::Mutex _mutex;
 
 protected:
-
-	static void onTimer(void *data);
 
 	MidiChannel *_channel[16];
 	MidiDriver *_driver;

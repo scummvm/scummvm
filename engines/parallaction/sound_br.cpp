@@ -201,7 +201,7 @@ MidiParser *createParser_MSC() {
 }
 
 
-class MidiPlayer_MSC : public MidiDriver {
+class MidiPlayer_MSC : public MidiDriver_BASE {
 public:
 
 	enum {
@@ -222,14 +222,9 @@ public:
 
 	// MidiDriver interface
 	int open();
-	bool isOpen() const;
 	void close();
 	void send(uint32 b);
 	void metaEvent(byte type, byte *data, uint16 length);
-	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo() { return _driver ? _driver->getBaseTempo() : 0; }
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
 
 private:
 
@@ -340,10 +335,6 @@ int MidiPlayer_MSC::open() {
 		_driver->setTimerCallback(this, &timerCallback);
 	}
 	return ret;
-}
-
-bool MidiPlayer_MSC::isOpen() const {
-	return _driver && _driver->isOpen();
 }
 
 void MidiPlayer_MSC::close() {

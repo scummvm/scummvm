@@ -40,7 +40,7 @@
 
 namespace Hugo {
 
-class MidiPlayer : public MidiDriver {
+class MidiPlayer : public MidiDriver_BASE {
 public:
 	MidiPlayer(MidiDriver *driver);
 	~MidiPlayer();
@@ -60,15 +60,9 @@ public:
 
 	// MidiDriver interface
 	int open();
-	bool isOpen() const;
-
-	MidiChannel *allocateChannel();
-	MidiChannel *getPercussionChannel();
-
 	void close();
 	void metaEvent(byte type, byte *data, uint16 length);
 	void send(uint32 b);
-	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
 
 	uint32 getBaseTempo();
 

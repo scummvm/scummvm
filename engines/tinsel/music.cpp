@@ -432,10 +432,6 @@ int MidiMusicPlayer::open() {
 	return 0;
 }
 
-bool MidiMusicPlayer::isOpen() const {
-	return _driver && _driver->isOpen();
-}
-
 void MidiMusicPlayer::close() {
 	stop();
 	if (_driver) {

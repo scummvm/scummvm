@@ -84,10 +84,6 @@ int MidiPlayer::open() {
 	return 0;
 }
 
-bool MidiPlayer::isOpen() const {
-	return _driver && _driver->isOpen();
-}
-
 void MidiPlayer::close() {
 	stop();
 //	_system->lockMutex(_mutex);

@@ -72,7 +72,7 @@ MIDISound::MIDISound(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : A
 }
 
 SoundGenMIDI::SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer), _parser(0), _isPlaying(false), _passThrough(false), _isGM(false) {
-	DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
 	_driver = MidiDriver::createMidi(dev);
 
 	if (ConfMan.getBool("native_mt32") || MidiDriver::getMusicType(dev) == MT_MT32) {
@@ -136,10 +136,6 @@ int SoundGenMIDI::open() {
 		_driver->sendGMReset();
 
 	return 0;
-}
-
-bool SoundGenMIDI::isOpen() const {
-	return _driver && _driver->isOpen();
 }
 
 void SoundGenMIDI::close() {
@@ -221,7 +217,7 @@ void SoundGenMIDI::play(int resnum) {
 		MidiParser *parser = _smfParser;
 		parser->setTrack(0);
 		parser->setMidiDriver(this);
-		parser->setTimerRate(getBaseTempo());
+		parser->setTimerRate(_driver->getBaseTempo());
 		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 
 		_parser = parser;

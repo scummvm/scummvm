@@ -75,18 +75,6 @@ void MidiPlayer::setLooping(bool loop) {
 	_isLooping = loop;
 }
 
-MidiChannel *MidiPlayer::allocateChannel() {
-	return 0;
-}
-
-MidiChannel *MidiPlayer::getPercussionChannel() {
-	return 0;
-}
-
-uint32 MidiPlayer::getBaseTempo() {
-	return _driver ? _driver->getBaseTempo() : 0;
-}
-
 void MidiPlayer::play(uint8 *stream, uint16 size) {
 	debugC(3, kDebugMusic, "MidiPlayer::play");
 	if (!stream) {
@@ -189,10 +177,6 @@ int MidiPlayer::open() {
 	_driver->setTimerCallback(this, &timerCallback);
 
 	return 0;
-}
-
-bool MidiPlayer::isOpen() const {
-	return _driver && _driver->isOpen();
 }
 
 void MidiPlayer::close() {

@@ -34,7 +34,7 @@
 
 namespace M4 {
 
-class MidiPlayer : public MidiDriver {
+class MidiPlayer : public MidiDriver_BASE {
 public:
 	MidiPlayer(MadsM4Engine *vm, MidiDriver *driver);
 	~MidiPlayer();
@@ -54,18 +54,10 @@ public:
 
 	//MidiDriver interface implementation
 	int open();
-	bool isOpen() const;
 	void close();
 	void send(uint32 b);
 
 	void metaEvent(byte type, byte *data, uint16 length);
-
-	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo()	{ return _driver ? _driver->getBaseTempo() : 0; }
-
-	//Channel allocation functions
-	MidiChannel *allocateChannel()		{ return 0; }
-	MidiChannel *getPercussionChannel()	{ return 0; }
 
 protected:
 	static void onTimer(void *data);

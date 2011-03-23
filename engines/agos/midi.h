@@ -55,7 +55,7 @@ struct MusicInfo {
 	}
 };
 
-class MidiPlayer : public MidiDriver {
+class MidiPlayer : public MidiDriver_BASE {
 protected:
 	Common::Mutex _mutex;
 	MidiDriver *_driver;
@@ -115,20 +115,11 @@ public:
 public:
 	// MidiDriver interface implementation
 	int open();
-	bool isOpen() const;
 	void close();
 	void send(uint32 b);
 
 	void metaEvent(byte type, byte *data, uint16 length);
 	void setPassThrough(bool b)		{ _passThrough = b; }
-
-	// Timing functions - MidiDriver now operates timers
-	void setTimerCallback(void *timer_param, void (*timer_proc) (void *)) { }
-	uint32 getBaseTempo() { return _driver ? _driver->getBaseTempo() : 0; }
-
-	// Channel allocation functions
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
 };
 
 } // End of namespace AGOS

@@ -39,7 +39,7 @@ struct TuneData;
 
 class QueenEngine;
 
-class MidiMusic : public MidiDriver {
+class MidiMusic : public MidiDriver_BASE {
 public:
 	MidiMusic(QueenEngine *vm);
 	~MidiMusic();
@@ -57,19 +57,8 @@ public:
 	void toggleVChange();
 
 	//MidiDriver interface implementation
-	int open() { return 0; }
-	bool isOpen() const { return true; }
-	void close() {}
 	void send(uint32 b);
-
 	void metaEvent(byte type, byte *data, uint16 length);
-
-	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo()	{ return _driver ? _driver->getBaseTempo() : 0; }
-
-	//Channel allocation functions
-	MidiChannel *allocateChannel()		{ return 0; }
-	MidiChannel *getPercussionChannel()	{ return 0; }
 
 protected:
 

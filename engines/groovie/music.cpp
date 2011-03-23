@@ -264,12 +264,6 @@ int MusicPlayerMidi::open() {
 	return 0;
 }
 
-bool MusicPlayerMidi::isOpen() const {
-	return _driver && _driver->isOpen();
-}
-
-void MusicPlayerMidi::close() {}
-
 void MusicPlayerMidi::send(uint32 b) {
 	if ((b & 0xFFF0) == 0x07B0) { // Volume change
 		// Save the specific channel volume
@@ -296,32 +290,6 @@ void MusicPlayerMidi::metaEvent(byte type, byte *data, uint16 length) {
 			_driver->metaEvent(type, data, length);
 		break;
 	}
-}
-
-void MusicPlayerMidi::setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {
-	if (_driver)
-		_driver->setTimerCallback(timer_param, timer_proc);
-}
-
-uint32 MusicPlayerMidi::getBaseTempo() {
-	if (_driver)
-		return _driver->getBaseTempo();
-	else
-		return 0;
-}
-
-MidiChannel *MusicPlayerMidi::allocateChannel() {
-	if (_driver)
-		return _driver->allocateChannel();
-	else
-		return 0;
-}
-
-MidiChannel *MusicPlayerMidi::getPercussionChannel() {
-	if (_driver)
-		return _driver->getPercussionChannel();
-	else
-		return 0;
 }
 
 void MusicPlayerMidi::updateChanVolume(byte channel) {
@@ -406,7 +374,7 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 
 	// Create the driver
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_driver = createMidi(dev);
+	_driver = MidiDriver::createMidi(dev);
 	this->open();
 
 	// Set the parser's driver
@@ -706,7 +674,7 @@ MusicPlayerMac::MusicPlayerMac(GroovieEngine *vm) : MusicPlayerMidi(vm) {
 
 	// Create the driver
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_driver = createMidi(dev);
+	_driver = MidiDriver::createMidi(dev);
 	this->open();
 
 	// Set the parser's driver

@@ -155,7 +155,7 @@ struct CommandQueue {
 //
 //////////////////////////////////////////////////
 
-class Player : public MidiDriver {
+class Player : public MidiDriver_BASE {
 /*
  * External SysEx handler functions shall each be defined in
  * a separate file. This header file shall be included at the
@@ -282,17 +282,9 @@ public:
 
 public:
 	// MidiDriver interface
-	int open() { return 0; }
-	bool isOpen() const { return true; }
-	void close() { }
 	void send(uint32 b);
-	const char *getErrorName(int error_code) { return "Unknown"; }
 	void sysEx(const byte *msg, uint16 length);
 	void metaEvent(byte type, byte *data, uint16 length);
-	void setTimerCallback(void *timer_param, void(*timer_proc)(void *)) { }
-	uint32 getBaseTempo();
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
 };
 
 

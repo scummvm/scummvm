@@ -33,11 +33,12 @@
 namespace M4 {
 
 MidiPlayer::MidiPlayer(MadsM4Engine *vm, MidiDriver *driver) : _vm(vm), _midiData(NULL), _driver(driver), _isPlaying(false), _passThrough(false), _isGM(false) {
+	assert(_driver);
 	memset(_channel, 0, sizeof(_channel));
 	_masterVolume = 0;
 	_parser = MidiParser::createParser_SMF();
 	_parser->setMidiDriver(this);
-	_parser->setTimerRate(getBaseTempo());
+	_parser->setTimerRate(_driver->getBaseTempo());
 	open();
 }
 
@@ -81,10 +82,6 @@ int MidiPlayer::open() {
 
 	_driver->setTimerCallback(this, &onTimer);
 	return 0;
-}
-
-bool MidiPlayer::isOpen() const {
-	return _driver && _driver->isOpen();
 }
 
 void MidiPlayer::close() {

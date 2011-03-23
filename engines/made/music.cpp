@@ -89,10 +89,6 @@ int MusicPlayer::open() {
 	return 0;
 }
 
-bool MusicPlayer::isOpen() const {
-	return _driver && _driver->isOpen();
-}
-
 void MusicPlayer::close() {
 	stop();
 	if (_driver) {
@@ -169,7 +165,7 @@ void MusicPlayer::playXMIDI(GenericResource *midiResource, MusicFlags flags) {
 		MidiParser *parser = _xmidiParser;
 		parser->setTrack(0);
 		parser->setMidiDriver(this);
-		parser->setTimerRate(getBaseTempo());
+		parser->setTimerRate(_driver->getBaseTempo());
 		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 		parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
 
@@ -196,7 +192,7 @@ void MusicPlayer::playSMF(GenericResource *midiResource, MusicFlags flags) {
 		MidiParser *parser = _smfParser;
 		parser->setTrack(0);
 		parser->setMidiDriver(this);
-		parser->setTimerRate(getBaseTempo());
+		parser->setTimerRate(_driver->getBaseTempo());
 		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 
 		_parser = parser;

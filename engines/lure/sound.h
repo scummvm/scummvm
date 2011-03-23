@@ -46,7 +46,7 @@ struct ChannelEntry {
 	uint8 volume;
 };
 
-class MidiMusic: public MidiDriver {
+class MidiMusic: public MidiDriver_BASE {
 private:
 	uint8 _soundNumber;
 	uint8 _channelNumber;
@@ -86,19 +86,11 @@ public:
 
 	//MidiDriver interface implementation
 	int open();
-	bool isOpen() const;
 	void close();
 	void send(uint32 b);
 	void onTimer();
 
 	void metaEvent(byte type, byte *data, uint16 length);
-
-	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo() { return _driver ? _driver->getBaseTempo() : 0; }
-
-	//Channel allocation functions
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
 
 	uint8 channelNumber() { return _channelNumber; }
 	uint8 soundNumber() { return _soundNumber; }

@@ -571,7 +571,7 @@ Common::Error AGOSEngine::init() {
 
 		int ret = _midi.open();
 		if (ret)
-			warning("MIDI Player init failed: \"%s\"", _midi.getErrorName (ret));
+			warning("MIDI Player init failed: \"%s\"", MidiDriver::getErrorName (ret));
 
 		_midi.setVolume(ConfMan.getInt("music_volume"), ConfMan.getInt("sfx_volume"));
 

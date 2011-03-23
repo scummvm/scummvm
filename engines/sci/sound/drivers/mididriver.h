@@ -76,7 +76,7 @@ enum {
 
 #define SCI_MIDI_CONTROLLER(status) ((status & 0xF0) == 0xB0)
 
-class MidiPlayer : public MidiDriver {
+class MidiPlayer : public MidiDriver_BASE {
 protected:
 	MidiDriver *_driver;
 	int8 _reverb;
@@ -89,13 +89,10 @@ public:
 		return open(resMan);
 	}
 	virtual int open(ResourceManager *resMan) { return _driver->open(); }
-	bool isOpen() const { return _driver->isOpen(); }
 	virtual void close() { _driver->close(); }
 	virtual void send(uint32 b) { _driver->send(b); }
-	uint32 getBaseTempo() { return _driver->getBaseTempo(); }
+	virtual uint32 getBaseTempo() { return _driver->getBaseTempo(); }
 	virtual bool hasRhythmChannel() const = 0;
-	MidiChannel *allocateChannel() { return _driver->allocateChannel(); }
-	MidiChannel *getPercussionChannel() { return _driver->getPercussionChannel(); }
 	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) { _driver->setTimerCallback(timer_param, timer_proc); }
 
 	virtual byte getPlayId() const = 0;
