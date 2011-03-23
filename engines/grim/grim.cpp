@@ -30,6 +30,7 @@
 #undef ARRAYSIZE
 #endif
 
+#include "common/archive.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/config-manager.h"
@@ -314,6 +315,9 @@ GrimEngine::GrimEngine(OSystem *syst, int gameFlags) :
 	blastTextDefaults.fgColor._vals[2] = 80;
 	blastTextDefaults.font = NULL;
 	blastTextDefaults.justify = TextObject::LJUSTIFY;
+
+	// Add 'movies' subdirectory for the demo
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "movies");
 }
 
 GrimEngine::~GrimEngine() {
