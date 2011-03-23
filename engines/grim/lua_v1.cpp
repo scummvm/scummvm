@@ -1369,6 +1369,9 @@ static void ActorLookAt() {
 // 		vector.set(fX, fY, fZ);
 		vector.set(0, 0, 0);
 		actor->setLookAtVector(vector);
+
+		if (lua_isnumber(rateObj))
+			actor->setLookAtRate(lua_getnumber(rateObj));
 	} else if (lua_isuserdata(xObj) && lua_tag(xObj) == MKID_BE('ACTR')) { // look at another actor
 		Actor *lookedAct = static_cast<Actor *>(lua_getuserdata(xObj));
 		actor->setLookAtVector(lookedAct->pos());
