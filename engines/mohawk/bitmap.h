@@ -181,10 +181,10 @@ private:
 	} _info;
 };
 
-class OldMohawkBitmap : public MohawkBitmap {
+class LivingBooksBitmap_v1 : public MohawkBitmap {
 public:
-	OldMohawkBitmap() : MohawkBitmap() {}
-	~OldMohawkBitmap() {}
+	LivingBooksBitmap_v1() : MohawkBitmap() {}
+	~LivingBooksBitmap_v1() {}
 
 	MohawkSurface *decodeImage(Common::SeekableReadStream *stream);
 

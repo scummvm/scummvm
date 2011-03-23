@@ -721,7 +721,7 @@ MohawkSurface *MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
 	return new MohawkSurface(surface, palData);
 }
 
-MohawkSurface *OldMohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
+MohawkSurface *LivingBooksBitmap_v1::decodeImage(Common::SeekableReadStream *stream) {
 	Common::SeekableSubReadStreamEndian *endianStream = (Common::SeekableSubReadStreamEndian *)stream;
 
 	// 12 bytes header for the image
@@ -756,10 +756,10 @@ MohawkSurface *OldMohawkBitmap::decodeImage(Common::SeekableReadStream *stream) 
 		_data = decompressLZ(stream, uncompressedSize);
 
 		if (endianStream->pos() != endianStream->size())
-			error("OldMohawkBitmap decompression failed");
+			error("LivingBooksBitmap_v1 decompression failed");
 	} else {
 		if ((_header.format & 0xf0) != 0)
-			error("Tried to use unknown OldMohawkBitmap compression (format %02x)", _header.format & 0xf0);
+			error("Tried to use unknown LivingBooksBitmap_v1 compression (format %02x)", _header.format & 0xf0);
 
 		// This is so nasty on so many levels. The original Windows LZ decompressor for the
 		// Living Books v1 games had knowledge of the underlying RLE8 data. While going
