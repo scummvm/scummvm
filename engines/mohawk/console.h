@@ -75,7 +75,6 @@ private:
 	bool Cmd_StopSound(int argc, const char **argv);
 	bool Cmd_CurStack(int argc, const char **argv);
 	bool Cmd_ChangeStack(int argc, const char **argv);
-	bool Cmd_Restart(int argc, const char **argv);
 	bool Cmd_Hotspots(int argc, const char **argv);
 	bool Cmd_ZipMode(int argc, const char **argv);
 	bool Cmd_RunAllBlocks(int argc, const char **argv);

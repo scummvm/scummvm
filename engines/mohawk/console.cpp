@@ -316,7 +316,6 @@ RivenConsole::RivenConsole(MohawkEngine_Riven *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("stopSound",		WRAP_METHOD(RivenConsole, Cmd_StopSound));
 	DCmd_Register("curStack",		WRAP_METHOD(RivenConsole, Cmd_CurStack));
 	DCmd_Register("changeStack",	WRAP_METHOD(RivenConsole, Cmd_ChangeStack));
-	DCmd_Register("restart",		WRAP_METHOD(RivenConsole, Cmd_Restart));
 	DCmd_Register("hotspots",		WRAP_METHOD(RivenConsole, Cmd_Hotspots));
 	DCmd_Register("zipMode",		WRAP_METHOD(RivenConsole, Cmd_ZipMode));
 	DCmd_Register("dumpScript",     WRAP_METHOD(RivenConsole, Cmd_DumpScript));
@@ -442,14 +441,6 @@ bool RivenConsole::Cmd_ChangeStack(int argc, const char **argv) {
 
 	_vm->changeToStack(stackNum - 1);
 	_vm->changeToCard((uint16)atoi(argv[2]));
-
-	return false;
-}
-
-bool RivenConsole::Cmd_Restart(int argc, const char **argv) {
-	_vm->initVars();
-	_vm->changeToStack(aspit);
-	_vm->changeToCard(1);
 
 	return false;
 }
