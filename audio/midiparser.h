@@ -32,7 +32,7 @@
 #include "common/endian.h"
 
 class MidiParser;
-class MidiDriver;
+class MidiDriver_BASE;
 
 
 
@@ -273,7 +273,7 @@ protected:
 	                                ///< Used for "Smart Jump" and MIDI formats that do not include explicit Note Off events.
 	byte      _hanging_notes_count; ///< Count of hanging notes, used to optimize expiration.
 
-	MidiDriver *_driver;    ///< The device to which all events will be transmitted.
+	MidiDriver_BASE *_driver;    ///< The device to which all events will be transmitted.
 	uint32 _timer_rate;     ///< The time in microseconds between onTimer() calls. Obtained from the MidiDriver.
 	uint32 _ppqn;           ///< Pulses Per Quarter Note. (We refer to "pulses" as "ticks".)
 	uint32 _tempo;          ///< Microseconds per quarter note.
@@ -380,7 +380,7 @@ public:
 	virtual void unloadMusic();
 	virtual void property(int prop, int value);
 
-	void setMidiDriver(MidiDriver *driver) { _driver = driver; }
+	void setMidiDriver(MidiDriver_BASE *driver) { _driver = driver; }
 	void setTimerRate(uint32 rate) { _timer_rate = rate; }
 	void setTempo(uint32 tempo);
 	void onTimer();
