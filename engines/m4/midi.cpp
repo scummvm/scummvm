@@ -32,7 +32,7 @@
 
 namespace M4 {
 
-MidiPlayer::MidiPlayer(MadsM4Engine *vm, MidiDriver *driver) : _vm(vm), _midiData(NULL), _driver(driver), _isPlaying(false), _passThrough(false), _isGM(false) {
+MidiPlayer::MidiPlayer(MadsM4Engine *vm, MidiDriver *driver) : _vm(vm), _midiData(NULL), _driver(driver), _isPlaying(false), _isGM(false) {
 	assert(_driver);
 	memset(_channel, 0, sizeof(_channel));
 	_masterVolume = 0;
@@ -79,11 +79,6 @@ void MidiPlayer::setVolume(int volume) {
 }
 
 void MidiPlayer::send(uint32 b) {
-	if (_passThrough) {
-		_driver->send(b);
-		return;
-	}
-
 	byte channel = (byte)(b & 0x0F);
 	if ((b & 0xFFF0) == 0x07B0) {
 		// Adjust volume changes by master volume

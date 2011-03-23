@@ -39,16 +39,15 @@ public:
 	MidiPlayer(MadsM4Engine *vm, MidiDriver *driver);
 	~MidiPlayer();
 
-	bool isPlaying() { return _isPlaying; }
+	bool isPlaying() const { return _isPlaying; }
 
 	void setVolume(int volume);
-	int getVolume() { return _masterVolume; }
+	int getVolume() const { return _masterVolume; }
 
 	void setNativeMT32(bool b) { _nativeMT32 = b; }
-	bool hasNativeMT32() { return _nativeMT32; }
+	bool hasNativeMT32()  const{ return _nativeMT32; }
 	void playMusic(const char *name, int32 vol, bool loop, int32 trigger, int32 scene);
 	void stopMusic();
-	void setPassThrough(bool b) { _passThrough = b; }
 
 	void setGM(bool isGM) { _isGM = isGM; }
 
@@ -68,7 +67,6 @@ protected:
 	byte _channelVolume[16];
 	bool _nativeMT32;
 	bool _isGM;
-	bool _passThrough;
 
 	bool _isPlaying;
 	bool _randomLoop;

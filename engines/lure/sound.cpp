@@ -615,8 +615,6 @@ MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
 	else
 		setVolume(Sound.sfxVolume());
 
-	_passThrough = false;
-
 	_parser = MidiParser::createParser_SMF();
 	_parser->setMidiDriver(this);
 	_parser->setTimerRate(_driver->getBaseTempo());
@@ -685,11 +683,6 @@ void MidiMusic::playMusic() {
 }
 
 void MidiMusic::send(uint32 b) {
-	if (_passThrough) {
-		_driver->send(b);
-		return;
-	}
-
 #ifdef SOUND_CROP_CHANNELS
 	if ((b & 0xF) >= _numChannels) return;
 	byte channel = _channelNumber + (byte)(b & 0x0F);

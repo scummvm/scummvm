@@ -71,7 +71,7 @@ MIDISound::MIDISound(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : A
 		warning("Error creating MIDI sound from resource %d (Type %d, length %d)", resnum, _type, len);
 }
 
-SoundGenMIDI::SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer), _parser(0), _isPlaying(false), _passThrough(false), _isGM(false) {
+SoundGenMIDI::SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer), _parser(0), _isPlaying(false), _isGM(false) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
 	_driver = MidiDriver::createMidi(dev);
 	assert(_driver);
@@ -135,11 +135,6 @@ void SoundGenMIDI::setVolume(int volume) {
 }
 
 void SoundGenMIDI::send(uint32 b) {
-	if (_passThrough) {
-		_driver->send(b);
-		return;
-	}
-
 	byte channel = (byte)(b & 0x0F);
 	if ((b & 0xFFF0) == 0x07B0) {
 		// Adjust volume changes by master volume

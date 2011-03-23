@@ -41,20 +41,19 @@ public:
 	MusicPlayer(const char *pathMask);
 	~MusicPlayer();
 
-	bool isPlaying() { return _isPlaying; }
+	bool isPlaying() const { return _isPlaying; }
 	void setPlaying(bool playing) { _isPlaying = playing; }
 
 	void setVolume(int volume);
-	int getVolume() { return _masterVolume; }
+	int getVolume() const { return _masterVolume; }
 	void syncVolume();
 
-	bool hasNativeMT32() { return _nativeMT32; }
+	bool hasNativeMT32() const { return _nativeMT32; }
 	void playSMF(int track, bool loop);
 	void stop();
 	void pause();
 	void resume();
 	void setLoop(bool loop) { _looping = loop; }
-	void setPassThrough(bool b) { _passThrough = b; }
 
 	void setGM(bool isGM) { _isGM = isGM; }
 
@@ -77,7 +76,6 @@ protected:
 	byte _channelVolume[16];
 	bool _nativeMT32;
 	bool _isGM;
-	bool _passThrough;
 
 	bool _isPlaying;
 	bool _looping;

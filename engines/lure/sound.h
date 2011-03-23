@@ -66,14 +66,12 @@ private:
 	uint32 songOffset(uint16 songNum) const;
 	uint32 songLength(uint16 songNum) const;
 
-	bool _passThrough;
-
 public:
 	MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
 		 uint8 channelNum, uint8 soundNum, bool isMus, uint8 numChannels, void *soundData, uint32 size);
 	~MidiMusic();
 	void setVolume(int volume);
-	int getVolume() { return _volume; }
+	int getVolume() const { return _volume; }
 
 	void playSong(uint16 songNum);
 	void stopSong() { stopMusic(); }
@@ -81,7 +79,6 @@ public:
 	void stopMusic();
 	void queueTuneList(int16 tuneList);
 	bool queueSong(uint16 songNum);
-	void setPassThrough(bool b) { _passThrough = b; }
 	void toggleVChange();
 
 	// MidiDriver_BASE interface implementation
@@ -90,10 +87,10 @@ public:
 
 	void onTimer();
 
-	uint8 channelNumber() { return _channelNumber; }
-	uint8 soundNumber() { return _soundNumber; }
-	bool isPlaying() { return _isPlaying; }
-	bool isMusic() {return _isMusic; }
+	uint8 channelNumber() const { return _channelNumber; }
+	uint8 soundNumber() const { return _soundNumber; }
+	bool isPlaying() const { return _isPlaying; }
+	bool isMusic() const { return _isMusic; }
 };
 
 class SoundManager : public Common::Singleton<SoundManager> {

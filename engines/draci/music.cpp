@@ -36,7 +36,7 @@
 
 namespace Draci {
 
-MusicPlayer::MusicPlayer(const char *pathMask) : _parser(0), _driver(0), _pathMask(pathMask), _looping(false), _isPlaying(false), _passThrough(false), _isGM(false), _track(-1) {
+MusicPlayer::MusicPlayer(const char *pathMask) : _parser(0), _driver(0), _pathMask(pathMask), _looping(false), _isPlaying(false), _isGM(false), _track(-1) {
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
@@ -104,11 +104,6 @@ void MusicPlayer::setVolume(int volume) {
 }
 
 void MusicPlayer::send(uint32 b) {
-	if (_passThrough) {
-		_driver->send(b);
-		return;
-	}
-
 	byte channel = (byte)(b & 0x0F);
 	if ((b & 0xFFF0) == 0x07B0) {
 		// Adjust volume changes by master volume

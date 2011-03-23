@@ -60,7 +60,6 @@ protected:
 	Common::Mutex _mutex;
 	MidiDriver *_driver;
 	bool _map_mt32_to_gm;
-	bool _passThrough;
 	bool _nativeMT32;
 
 	MusicInfo _music;
@@ -106,14 +105,12 @@ public:
 	void stop();
 	void pause(bool b);
 
-	int  getMusicVolume() { return _musicVolume; }
-	int  getSFXVolume() { return _sfxVolume; }
+	int  getMusicVolume() const { return _musicVolume; }
+	int  getSFXVolume() const { return _sfxVolume; }
 	void setVolume(int musicVol, int sfxVol);
-	void setDriver(MidiDriver *md);
 
 public:
 	int open(int gameType);
-	void setPassThrough(bool b)		{ _passThrough = b; }
 
 	// MidiDriver_BASE interface implementation
 	virtual void send(uint32 b);

@@ -45,7 +45,6 @@ MidiPlayer::MidiPlayer() {
 	// between songs.
 	_driver = 0;
 	_map_mt32_to_gm = false;
-	_passThrough = false;
 
 	_enable_sfx = true;
 	_current = 0;
@@ -107,11 +106,6 @@ int MidiPlayer::open(int gameType) {
 void MidiPlayer::send(uint32 b) {
 	if (!_current)
 		return;
-
-	if (_passThrough) {
-		_driver->send(b);
-		return;
-	}
 
 	byte channel = (byte)(b & 0x0F);
 	if ((b & 0xFFF0) == 0x07B0) {
@@ -304,13 +298,6 @@ void MidiPlayer::setVolume(int musicVol, int sfxVol) {
 				_sfx.channel[i]->volume(_sfx.volume[i] * _sfxVolume / 255);
 		}
 	}
-}
-
-void MidiPlayer::setDriver(MidiDriver *md) {
-	// Don't try to set this more than once.
-	if (_driver)
-		return;
-	_driver = md;
 }
 
 void MidiPlayer::setLoop(bool loop) {

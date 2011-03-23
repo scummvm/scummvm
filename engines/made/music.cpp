@@ -37,7 +37,7 @@
 
 namespace Made {
 
-MusicPlayer::MusicPlayer() : _parser(0), _driver(0), _looping(false), _isPlaying(false), _passThrough(false), _isGM(false) {
+MusicPlayer::MusicPlayer() : _parser(0), _driver(0), _looping(false), _isPlaying(false), _isGM(false) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
 	//bool adlib = (MidiDriver::getMusicType(dev) == MT_ADLIB);
@@ -95,11 +95,6 @@ void MusicPlayer::setVolume(int volume) {
 }
 
 void MusicPlayer::send(uint32 b) {
-	if (_passThrough) {
-		_driver->send(b);
-		return;
-	}
-
 	byte channel = (byte)(b & 0x0F);
 	if ((b & 0xFFF0) == 0x07B0) {
 		// Adjust volume changes by master volume
