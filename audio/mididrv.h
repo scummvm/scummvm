@@ -38,15 +38,6 @@ namespace Audio {
 namespace Common { class String; }
 
 /**
- * Music Driver Types, used to uniquely identify each music driver.
- *
- * The pseudo drivers are listed first, then all native drivers,
- * then all other MIDI drivers, and finally the non-MIDI drivers.
- *
- * @todo Rename MidiDriverType to MusicDriverType
- */
-
-/**
  * Music types that music drivers can implement and engines can rely on.
  */
 enum MusicType {
@@ -84,8 +75,8 @@ enum MusicType {
  */
 enum MidiDriverFlags {
 	MDT_NONE        = 0,
-	MDT_PCSPK       = 1 << 0,		// PC Speaker: Maps to MD_PCSPK and MD_PCJR
-	MDT_CMS         = 1 << 1,		// Creative Music System / Gameblaster: Maps to MD_CMS
+	MDT_PCSPK       = 1 << 0,		// PC Speaker: Maps to MT_PCSPK and MT_PCJR
+	MDT_CMS         = 1 << 1,		// Creative Music System / Gameblaster: Maps to MT_CMS
 	MDT_PCJR        = 1 << 2,		// Tandy/PC Junior driver
 	MDT_ADLIB       = 1 << 3,		// AdLib: Maps to MT_ADLIB
 	MDT_C64         = 1 << 4,
@@ -97,14 +88,6 @@ enum MidiDriverFlags {
 	MDT_PREFER_MT32 = 1 << 10,		// MT-32 output is preferred
 	MDT_PREFER_GM   = 1 << 11		// GM output is preferred
 };
-
-/**
- * Abstract description of a MIDI driver. Used by the config file and command
- * line parsing code, and also to be able to give the user a list of available
- * drivers.
- *
- * @todo Rename MidiDriverType to MusicDriverType
- */
 
 /**
  * Abstract MIDI Driver Class
