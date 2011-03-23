@@ -32,7 +32,6 @@
 #include "mohawk/video.h"
 
 #include "common/stream.h"
-#include "graphics/cursorman.h"
 
 namespace Mohawk {
 
@@ -513,9 +512,9 @@ void RivenScript::enableMovie(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 32: play foreground movie - blocking (movie_id)
 void RivenScript::playMovieBlocking(uint16 op, uint16 argc, uint16 *argv) {
-	CursorMan.showMouse(false); // Hide the cursor before playing the video
+	_vm->_cursor->hideCursor();
 	_vm->_video->playMovieBlockingRiven(argv[0]);
-	CursorMan.showMouse(true); // Show the cursor again when we're done ;)
+	_vm->_cursor->showCursor();
 }
 
 // Command 33: play background movie - nonblocking (movie_id)
