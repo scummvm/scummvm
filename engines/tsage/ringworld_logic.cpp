@@ -114,6 +114,8 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 4025: return new Scene4025();
 	// Village - Temple Antechamber
 	case 4045: return new Scene4045();
+	// Village - Temple
+	case 4050: return new Scene4050();
 
 	/* Scene group 6 */
 
