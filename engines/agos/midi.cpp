@@ -62,9 +62,8 @@ MidiPlayer::MidiPlayer() {
 }
 
 MidiPlayer::~MidiPlayer() {
-	_mutex.lock();
+	Common::StackLock lock(_mutex);
 	close();
-	_mutex.unlock();
 }
 
 int MidiPlayer::open() {
@@ -211,14 +210,14 @@ void MidiPlayer::onTimer(void *data) {
 }
 
 void MidiPlayer::startTrack(int track) {
+	Common::StackLock lock(_mutex);
+
 	if (track == _currentTrack)
 		return;
 
 	if (_music.num_songs > 0) {
 		if (track >= _music.num_songs)
 			return;
-
-		_mutex.lock();
 
 		if (_music.parser) {
 			_current = &_music;
@@ -240,9 +239,7 @@ void MidiPlayer::startTrack(int track) {
 		_currentTrack = (byte)track;
 		_music.parser = parser; // That plugs the power cord into the wall
 	} else if (_music.parser) {
-		_mutex.lock();
 		if (!_music.parser->setTrack(track)) {
-			_mutex.unlock();
 			return;
 		}
 		_currentTrack = (byte)track;
@@ -250,8 +247,6 @@ void MidiPlayer::startTrack(int track) {
 		_music.parser->jumpToTick(0);
 		_current = 0;
 	}
-
-	_mutex.unlock();
 }
 
 void MidiPlayer::stop() {
