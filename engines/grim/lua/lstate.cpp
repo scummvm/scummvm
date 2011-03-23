@@ -233,4 +233,8 @@ void lua_close() {
 #endif
 }
 
+bool lua_isopen() {
+	return (lua_rootState);
+}
+
 } // end of namespace Grim

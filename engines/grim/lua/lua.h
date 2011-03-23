@@ -84,6 +84,7 @@ void lua_removelibslists();
 
 void lua_open();
 void lua_close();
+bool lua_isopen();
 
 lua_Object lua_settagmethod(int32 tag, const char *event); // In: new method
 lua_Object lua_gettagmethod(int32 tag, const char *event);

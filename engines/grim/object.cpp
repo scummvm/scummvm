@@ -16,9 +16,10 @@ Object::Object() : _refCount(0) {
 }
 
 Object::~Object() {
-	luaO_resetObject(this);	//after climbing the ties rope an ObjectState gets deleted but not removed
-							//from the lua's userdata list, resulting in a dangling pointer
-							//that breaks the saving. We need to reset to NULL the pointer manually.
+	if (lua_isopen()) {
+		luaO_resetObject(this);	//after climbing the ties rope an ObjectState gets deleted but not removed
+	}							//from the lua's userdata list, resulting in a dangling pointer
+								//that breaks the saving. We need to reset to NULL the pointer manually.
 	for (Common::List<Pointer *>::iterator i = _pointers.begin(); i != _pointers.end(); ++i) {
 		(*i)->resetPointer();
 	}
