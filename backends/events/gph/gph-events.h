@@ -30,8 +30,8 @@
  */
 
 class GPHEventSource : public SdlEventSource {
-//public:
-//	GPHEventSource();
+public:
+	GPHEventSource();
 
 protected:
 	bool _stickBtn[32];
@@ -46,16 +46,11 @@ protected:
 	 */
 	void moveStick();
 
-	virtual bool handleKeyDown(SDL_Event &ev, Common::Event &event);
-	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
-	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
-	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
-	virtual bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
-	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
-
-//	void fillMouseEvent(Common::Event &event, int x, int y);
-	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
-	virtual void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event);
+	bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
+	bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
+	bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
+	bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
+	bool remapKey(SDL_Event &ev, Common::Event &event);
 };
 
 #endif /* BACKEND_EVENTS_GPH_H */

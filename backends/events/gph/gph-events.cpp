@@ -122,9 +122,9 @@ enum {
 	TAPMODE_HOVER		= 2
 };
 
-//GPHEventSource::GPHEventSource()
-//	: _buttonStateL(false){
-//}
+GPHEventSource::GPHEventSource()
+	: _buttonStateL(false){
+}
 
 //void GPHEventSource::fillMouseEvent(Common::Event &event, int x, int y) {
 //	if (GPHGraphicsManager::_videoMode.mode == GFX_HALF && !GPHGraphicsManager::_overlayVisible){
