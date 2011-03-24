@@ -156,12 +156,14 @@ void GfxScreen::copyToScreen() {
 }
 
 void GfxScreen::copyFromScreen(byte *buffer) {
+	// TODO this ignores the pitch
 	Graphics::Surface *screen = g_system->lockScreen();
 	memcpy(buffer, screen->pixels, _displayPixels);
 	g_system->unlockScreen();
 }
 
 void GfxScreen::kernelSyncWithFramebuffer() {
+	// TODO this ignores the pitch
 	Graphics::Surface *screen = g_system->lockScreen();
 	memcpy(_displayScreen, screen->pixels, _displayPixels);
 	g_system->unlockScreen();
