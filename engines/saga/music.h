@@ -67,10 +67,10 @@ public:
 
 protected:
 
-	MidiChannel *_channel[16];
+	MidiChannel *_channelsTable[16];
 	MidiDriver *_driver;
 	MusicType _driverType;
-	byte _channelVolume[16];
+	byte _channelsVolume[16];
 	bool _isGM;
 	bool _nativeMT32;
 
