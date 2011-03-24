@@ -47,6 +47,7 @@ ResourceLoader::ResourceLoader() {
 	Common::ArchiveMemberList files;
 
 	SearchMan.listMatchingMembers(files, "*.lab");
+	SearchMan.listMatchingMembers(files, "*.m4b");
 
 	if (files.empty())
 		error("Cannot find game data - check configuration file");

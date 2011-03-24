@@ -115,6 +115,20 @@ static const GrimGameDescription gameDescriptions[] = {
 		GType_GRIM
 	},
 	{
+		// Escape from Monkey Island English PS2
+		{
+			"monkey4",
+			"",
+			AD_ENTRY1s("local.m4b", "00c4eb73f6b6607ba3d4e8d3f956b37b", 3804862),
+			Common::EN_ANY,
+			Common::kPlatformPS2,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		0,
+		GType_MONKEY4
+	},
+	{
 		// Escape from Monkey Island demo
 		{
 			"monkey4",
@@ -130,11 +144,23 @@ static const GrimGameDescription gameDescriptions[] = {
 	},
 
 
-	{ AD_TABLE_END_MARKER, 0 }
+	{ AD_TABLE_END_MARKER, 0, GType_GRIM }
 };
 
 static const GrimGameDescription fallbackGameDescriptions[] = {
-	{{"grim", 0, {{0, 0, 0, 0}}, Common::UNK_LANG, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO_NONE}, 0}
+	{
+		{
+			"grim",
+			"",
+			{{0, 0, 0, 0}},
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		0,
+		GType_GRIM
+	}
 };
 
 static const ADFileBasedFallback grimFallback[] = {
