@@ -139,7 +139,6 @@ public:
 	void removeScene(Scene *a);
 	void killScenes();
 	int sceneId(Scene *s) const;
-	Scene *scene(int id) const;
 
 	void flagRefreshShadowMask(bool flag) {
 		_refreshShadowMask = flag;

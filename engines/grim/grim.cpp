@@ -1077,7 +1077,7 @@ void GrimEngine::restoreScenes(SaveGame *state) {
 	int32 size = state->readLESint32();
 	for (int32 i = 0; i < size; ++i) {
 		int32 id = state->readLEUint32();
-		Scene *s = scene(id);
+		Scene *s = _scenes[id];
 		if (!s) {
 			s = new Scene();
 			s->_id = id;
@@ -1090,7 +1090,7 @@ void GrimEngine::restoreScenes(SaveGame *state) {
 		s->restoreState(state);
 	}
 
-	_currScene = scene(state->readLEUint32());
+	_currScene = _scenes[state->readLEUint32()];
 
 	state->endSection();
 }
@@ -1518,10 +1518,6 @@ void GrimEngine::killScenes() {
 
 int GrimEngine::sceneId(Scene *s) const {
 	return s->_id;
-}
-
-Scene *GrimEngine::scene(int id) const {
-	return _scenes[id];
 }
 
 } // end of namespace Grim

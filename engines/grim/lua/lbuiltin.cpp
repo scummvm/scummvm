@@ -136,7 +136,16 @@ static const char *to_string(lua_Object obj) {
 		}
 	case LUA_T_CPROTO:
 		{
-			sprintf(buff, "function: %p", (void *)o->value.f);
+			// WORKAROUND: C++ forbids casting from a pointer-to-function to a
+			// pointer-to-object. We use a union to work around that.
+			union {
+				void *objPtr;
+				lua_CFunction funcPtr;
+			} ptrUnion;
+
+			ptrUnion.funcPtr = o->value.f;
+
+			sprintf(buff, "function: %p", ptrUnion.objPtr);
 			return buff;
 		}
 	case LUA_T_USERDATA:

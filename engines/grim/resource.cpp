@@ -121,7 +121,7 @@ ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const char *fil
 	}
 
 	ResourceCache key;
-	key.fname = (char *)filename;
+	key.fname = const_cast<char *>(filename);
 
 	return (ResourceLoader::ResourceCache *)bsearch(&key, _cache.begin(), _cache.size(), sizeof(ResourceCache), sortCallback);
 }
@@ -456,7 +456,7 @@ FontPtr ResourceLoader::getFont(const char *fname) {
 CostumePtr ResourceLoader::getCostume(const char *fname, Costume *prev) {
 	for (Common::List<Costume *>::const_iterator i = _costumes.begin(); i != _costumes.end(); ++i) {
 		Costume *c = *i;
-		if (strcmp(fname, c->filename()) == 0) {
+		if (strcmp(fname, c->getFilename()) == 0) {
 			return c;
 		}
 	}
@@ -467,7 +467,7 @@ CostumePtr ResourceLoader::getCostume(const char *fname, Costume *prev) {
 LipSyncPtr ResourceLoader::getLipSync(const char *fname) {
 	for (Common::List<LipSync *>::const_iterator i = _lipsyncs.begin(); i != _lipsyncs.end(); ++i) {
 		LipSync *l = *i;
-		if (strcmp(fname, l->filename()) == 0) {
+		if (strcmp(fname, l->getFilename()) == 0) {
 			return l;
 		}
 	}

@@ -43,7 +43,7 @@ public:
 
 	int getAnim(int pos);
 	bool isValid() { return _numEntries > 0; }
-	const char *filename() const;
+	const char *getFilename() const;
 
     int typeId() const { return 16; }
 

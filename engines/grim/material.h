@@ -47,7 +47,7 @@ public:
 
 	int numImages() const { return _numImages; }
 	int currentImage() const { return _currImage; }
-	const char *filename() { return _fname.c_str(); }
+	const char *getFilename() { return _fname.c_str(); }
 
 	~Material();
 

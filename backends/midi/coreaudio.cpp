@@ -142,7 +142,7 @@ int MidiDriver_CORE::open() {
 		}
 
 		if (err != noErr)
-			warning("Failed loading custom sound font '%s' (error %ld)\n", soundfont, err);
+			warning("Failed loading custom sound font '%s' (error %d)\n", soundfont, err);
 	}
 
 #ifdef COREAUDIO_DISABLE_REVERB

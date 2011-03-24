@@ -46,7 +46,7 @@ public:
 
 	virtual ~Costume();
 
-	const char *filename() const { return _fname.c_str(); }
+	const char *getFilename() const { return _fname.c_str(); }
 	void playChore(int num);
 	void playChoreLooping(int num);
 	void setChoreLastFrame(int num) { _chores[num].setLastFrame(); }

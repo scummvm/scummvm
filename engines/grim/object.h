@@ -87,7 +87,7 @@ public:
 			addPointer(obj);
 		}
 	}
-	ObjectPtr(const ObjectPtr<T> &ptr) {
+	ObjectPtr(const ObjectPtr<T> &ptr) : Pointer() {
 		_obj = NULL;
 		*this = ptr;
 	}

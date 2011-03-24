@@ -1102,7 +1102,7 @@ static void GetActorCostume() {
 		return;
 
 	if (costume)
-		lua_pushstring(const_cast<char *>(costume->filename()));
+		lua_pushstring(const_cast<char *>(costume->getFilename()));
 	else
 		lua_pushnil();
 }
@@ -1114,7 +1114,7 @@ static void PopActorCostume() {
 
 	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
 	if (actor->currentCostume()) {
-		lua_pushstring(const_cast<char *>(actor->currentCostume()->filename()));
+		lua_pushstring(const_cast<char *>(actor->currentCostume()->getFilename()));
 		actor->popCostume();
 	} else
 		lua_pushnil();
@@ -1350,7 +1350,7 @@ static void ActorLookAt() {
 		float fY;
 		float fZ;
 
-		float fX = lua_getnumber(xObj);
+		//float fX = lua_getnumber(xObj);
 
 		if (lua_isnumber(yObj))
 			fY = lua_getnumber(yObj);

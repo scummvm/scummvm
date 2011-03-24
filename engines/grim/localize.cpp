@@ -110,7 +110,7 @@ Common::String Localizer::localize(const char *str) const {
 
 	LocaleEntry key, *result;
 	Common::String s(str + 1, slash2 - str - 1);
-	key.text = (char *)s.c_str();
+	key.text = const_cast<char *>(s.c_str());
 	result = (Localizer::LocaleEntry *)bsearch(&key, _entries.begin(), _entries.size(), sizeof(LocaleEntry), sortCallback);
 
 	if (!result)

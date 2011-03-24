@@ -125,7 +125,7 @@ void  glVertexPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid 
 	p[0].op = OP_VertexPointer;
 	p[1].i = size;
 	p[2].i = stride;
-	p[3].p = (void *)pointer;
+	p[3].p = const_cast<void *>(pointer);
 	gl_add_op(p);
 }
 
@@ -141,7 +141,7 @@ void  glColorPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *
 	p[0].op = OP_ColorPointer;
 	p[1].i = size;
 	p[2].i = stride;
-	p[3].p = (void *)pointer;
+	p[3].p = const_cast<void *>(pointer);
 	gl_add_op(p);
 }
 
@@ -155,7 +155,7 @@ void glNormalPointer(TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
 	assert(type == TGL_FLOAT);
 	p[0].op = OP_NormalPointer;
 	p[1].i = stride;
-	p[2].p = (void *)pointer;
+	p[2].p = const_cast<void *>(pointer);
 }
 
 void glopTexCoordPointer(GLContext *c, GLParam *p) {
@@ -170,7 +170,7 @@ void glTexCoordPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid
 	p[0].op = OP_TexCoordPointer;
 	p[1].i = size;
 	p[2].i = stride;
-	p[3].p = (void *)pointer;
+	p[3].p = const_cast<void *>(pointer);
 }
 
 } // end of namespace TinyGL

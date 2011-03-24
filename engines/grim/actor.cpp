@@ -124,7 +124,7 @@ void Actor::saveState(SaveGame *savedState) const {
 
 	if (_lipSync) {
 		savedState->writeLEUint32(1);
-		savedState->writeCharString(_lipSync->filename());
+		savedState->writeCharString(_lipSync->getFilename());
 	} else {
 		savedState->writeLEUint32(0);
 	}
@@ -132,7 +132,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_costumeStack.size());
 	for (Common::List<CostumePtr>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		const CostumePtr &c = *i;
-		savedState->writeCharString(c->filename());
+		savedState->writeCharString(c->getFilename());
 		Costume *pc = c->previousCostume();
 		int depth = 0;
 		while (pc) {
@@ -142,7 +142,7 @@ void Actor::saveState(SaveGame *savedState) const {
 		savedState->writeLEUint32(depth);
 		pc = c->previousCostume();
 		for (int j = 0; j < depth; ++j) { //save the previousCostume hierarchy
-			savedState->writeCharString(pc->filename());
+			savedState->writeCharString(pc->getFilename());
 			pc = pc->previousCostume();
 		}
 		c->saveState(savedState);
@@ -156,7 +156,7 @@ void Actor::saveState(SaveGame *savedState) const {
 
 	if (_restCostume) {
 		savedState->writeLEUint32(1);
-		savedState->writeCharString(_restCostume->filename());
+		savedState->writeCharString(_restCostume->getFilename());
 	} else {
 		savedState->writeLEUint32(0);
 	}
@@ -164,7 +164,7 @@ void Actor::saveState(SaveGame *savedState) const {
 
 	if (_walkCostume) {
 		savedState->writeLEUint32(1);
-		savedState->writeCharString(_walkCostume->filename());
+		savedState->writeCharString(_walkCostume->getFilename());
 	} else {
 		savedState->writeLEUint32(0);
 	}
@@ -174,7 +174,7 @@ void Actor::saveState(SaveGame *savedState) const {
 
 	if (_turnCostume) {
 		savedState->writeLEUint32(1);
-		savedState->writeCharString(_turnCostume->filename());
+		savedState->writeCharString(_turnCostume->getFilename());
 	} else {
 		savedState->writeLEUint32(0);
 	}
@@ -186,7 +186,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	for (int i = 0; i < 10; ++i) {
 		if (_talkCostume[i]) {
 			savedState->writeLEUint32(1);
-			savedState->writeCharString(_talkCostume[i]->filename());
+			savedState->writeCharString(_talkCostume[i]->getFilename());
 		} else {
 			savedState->writeLEUint32(0);
 		}
@@ -196,7 +196,7 @@ void Actor::saveState(SaveGame *savedState) const {
 
 	if (_mumbleCostume) {
 		savedState->writeLEUint32(1);
-		savedState->writeCharString(_mumbleCostume->filename());
+		savedState->writeCharString(_mumbleCostume->getFilename());
 	} else {
 		savedState->writeLEUint32(0);
 	}
@@ -841,7 +841,7 @@ void Actor::setHead(int joint1, int joint2, int joint3, float maxRoll, float max
 
 Costume *Actor::findCostume(const char *n) {
 	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
-		if (strcasecmp((*i)->filename(), n) == 0)
+		if (strcasecmp((*i)->getFilename(), n) == 0)
 			return *i;
 	}
 

@@ -102,7 +102,7 @@ int LipSync::getAnim(int pos) {
 	return -1;
 }
 
-const char *LipSync::filename() const {
+const char *LipSync::getFilename() const {
     return _fname.c_str();
 }
 

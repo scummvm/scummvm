@@ -81,7 +81,16 @@ static void restoreObjectValue(TObject *object, RestoreSint32 restoreSint32, Res
 				PointerId ptr;
 				ptr.low = restoreUint32();
 				ptr.hi = restoreUint32();
-				object->value.f = (lua_CFunction)makePointerFromId(ptr);
+
+				// WORKAROUND: C++ forbids casting from a pointer-to-function to a
+				// pointer-to-object. We use a union to work around that.
+				union {
+					void *objPtr;
+					lua_CFunction funcPtr;
+				} ptrUnion;
+
+				ptrUnion.objPtr = makePointerFromId(ptr);
+				object->value.f = ptrUnion.funcPtr;
 			}
 			break;
 		case LUA_T_CLOSURE:
