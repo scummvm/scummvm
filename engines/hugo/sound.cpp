@@ -37,6 +37,7 @@
 
 #include "audio/decoders/raw.h"
 #include "audio/audiostream.h"
+#include "audio/midiparser.h"
 
 #include "hugo/hugo.h"
 #include "hugo/game.h"
@@ -47,16 +48,9 @@
 namespace Hugo {
 
 MidiPlayer::MidiPlayer(MidiDriver *driver)
-	: _driver(driver), _parser(0), _midiData(0) {
+	: _midiData(0) {
 	assert(_driver);
-	memset(_channelsTable, 0, sizeof(_channelsTable));
-	for (int i = 0; i < kNumbChannels; i++) {
-		_channelsVolume[i] = 127;
-	}
-	_isLooping = false;
-	_isPlaying = false;
 	_paused = false;
-	_masterVolume = 0;
 }
 
 MidiPlayer::~MidiPlayer() {
@@ -72,18 +66,6 @@ MidiPlayer::~MidiPlayer() {
 	delete _parser;
 }
 
-bool MidiPlayer::isPlaying() const {
-	return _isPlaying;
-}
-
-int MidiPlayer::getVolume() const {
-	return _masterVolume;
-}
-
-void MidiPlayer::setLooping(bool loop) {
-	_isLooping = loop;
-}
-
 void MidiPlayer::play(uint8 *stream, uint16 size) {
 	debugC(3, kDebugMusic, "MidiPlayer::play");
 	if (!stream) {
@@ -97,7 +79,7 @@ void MidiPlayer::play(uint8 *stream, uint16 size) {
 		memcpy(_midiData, stream, size);
 
 		Common::StackLock lock(_mutex);
-		syncVolume();
+		syncVolume();	// FIXME: syncVolume calls setVolume which in turn also locks the mutex! ugh
 		_parser->loadMusic(_midiData, size);
 		_parser->setTrack(0);
 		_isLooping = false;
@@ -120,7 +102,7 @@ void MidiPlayer::stop() {
 void MidiPlayer::pause(bool p) {
 	_paused = p;
 
-	for (int i = 0; i < kNumbChannels; ++i) {
+	for (int i = 0; i < kNumChannels; ++i) {
 		if (_channelsTable[i]) {
 			_channelsTable[i]->volume(_paused ? 0 : _channelsVolume[i] * _masterVolume / 255);
 		}
@@ -136,39 +118,6 @@ void MidiPlayer::updateTimer() {
 	if (_isPlaying) {
 		_parser->onTimer();
 	}
-}
-
-void MidiPlayer::adjustVolume(int diff) {
-	debugC(3, kDebugMusic, "MidiPlayer::adjustVolume");
-	setVolume(_masterVolume + diff);
-}
-
-void MidiPlayer::syncVolume() {
-	int volume = ConfMan.getInt("music_volume");
-	if (ConfMan.getBool("mute")) {
-		volume = -1;
-	}
-	debugC(2, kDebugMusic, "Syncing music volume to %d", volume);
-	setVolume(volume);
-}
-
-void MidiPlayer::setVolume(int volume) {
-	debugC(3, kDebugMusic, "MidiPlayer::setVolume");
-	_masterVolume = CLIP(volume, 0, 255);
-
-	Common::StackLock lock(_mutex);
-	for (int i = 0; i < kNumbChannels; ++i) {
-		if (_channelsTable[i]) {
-			_channelsTable[i]->volume(_channelsVolume[i] * _masterVolume / 255);
-		}
-	}
-}
-
-void MidiPlayer::setChannelVolume(int channel) {
-	int newVolume = _channelsVolume[channel] * _masterVolume / 255;
-	debugC(3, kDebugMusic, "Music channel %d: volume %d->%d",
-		channel, _channelsVolume[channel], newVolume);
-	_channelsTable[channel]->volume(newVolume);
 }
 
 int MidiPlayer::open() {
@@ -188,49 +137,19 @@ int MidiPlayer::open() {
 	return 0;
 }
 
-void MidiPlayer::send(uint32 b) {
-	byte volume, ch = (byte)(b & 0xF);
-	debugC(9, kDebugMusic, "MidiPlayer::send, channel %d (volume is %d)", ch, _channelsVolume[ch]);
-	switch (b & 0xFFF0) {
-	case 0x07B0:                                    // volume change
-		volume = (byte)((b >> 16) & 0x7F);
-		_channelsVolume[ch] = volume;
-		volume = volume * _masterVolume / 255;
-		b = (b & 0xFF00FFFF) | (volume << 16);
-		debugC(8, kDebugMusic, "Volume change, channel %d volume %d", ch, volume);
-		break;
-	case 0x7BB0:                                    // all notes off
-		debugC(8, kDebugMusic, "All notes off, channel %d", ch);
-		if (!_channelsTable[ch]) {                  // channel not yet allocated, no need to send the event
-			return;
-		}
-		break;
+void MidiPlayer::sendToChannel(byte channel, uint32 b) {
+	if (!_channelsTable[channel]) {
+		_channelsTable[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+		// If a new channel is allocated during the playback, make sure
+		// its volume is correctly initialized.
+		if (_channelsTable[channel])
+			_channelsTable[channel]->volume(_channelsVolume[channel] * _masterVolume / 255);
 	}
 
-	if (!_channelsTable[ch]) {
-		_channelsTable[ch] = (ch == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
-		if (_channelsTable[ch])
-			setChannelVolume(ch);
-	}
-	if (_channelsTable[ch]) {
-		_channelsTable[ch]->send(b);
-	}
+	if (_channelsTable[channel])
+		_channelsTable[channel]->send(b);
 }
 
-void MidiPlayer::metaEvent(byte type, byte *data, uint16 length) {
-	switch (type) {
-	case 0x2F:                                      // end of Track
-		if (_isLooping) {
-			_parser->jumpToTick(0);
-		} else {
-			stop();
-		}
-		break;
-	default:
-//		warning("Unhandled meta event: %02x", type);
-		break;
-	}
-}
 
 void MidiPlayer::timerCallback(void *p) {
 	MidiPlayer *player = (MidiPlayer *)p;
