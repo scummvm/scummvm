@@ -32,12 +32,12 @@ namespace Grim {
 struct GrimGameDescription {
 	ADGameDescription desc;
 	int flags;
+	GrimGameType gameType;
 };
 
 static const PlainGameDescriptor grimGames[] = {
 	{"grim", "Grim Fandango"},
-	{"grimdemo", "Grim Fandango Demo"},
-	{"monkey", "Escape From Monkey Island"},
+	{"monkey4", "Escape From Monkey Island"},
 	{0, 0}
 };
 
@@ -45,10 +45,10 @@ using Common::GUIO_NONE;
 
 static const GrimGameDescription gameDescriptions[] = {
 	{
-		// Grim Fandago English version
+		// Grim Fandango English version
 		{
 			"grim",
-			0,
+			"",
 			AD_ENTRY1s("grim.tab", "cfb333d6aec260c905151b6b98ef71e8", 362212),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -56,12 +56,13 @@ static const GrimGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		0,
+		GType_GRIM
 	},
 	{
-		// Grim Fandago German version
+		// Grim Fandango German version
 		{
 			"grim",
-			0,
+			"",
 			AD_ENTRY1s("grim.tab", "464138caf47e580cbb237dee10674b16", 398592),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
@@ -69,12 +70,13 @@ static const GrimGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		0,
+		GType_GRIM
 	},
 	{
-		// Grim Fandago Spanish version
+		// Grim Fandango Spanish version
 		{
 			"grim",
-			0,
+			"",
 			AD_ENTRY1s("grim.tab", "b1460cd029f13718f7f62c2403e047ec", 372709),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
@@ -82,12 +84,13 @@ static const GrimGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		0,
+		GType_GRIM
 	},
 	{
-		// Grim Fandago Italian version
+		// Grim Fandango Italian version
 		{
 			"grim",
-			0,
+			"",
 			AD_ENTRY1s("grim.tab", "2d99c796b7a4e5c421cae49dc29dab6c", 369071),
 			Common::IT_ITA,
 			Common::kPlatformWindows,
@@ -95,19 +98,21 @@ static const GrimGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		0,
+		GType_GRIM
 	},
 	{
-		// Grim Fandago English demo version
+		// Grim Fandango English demo version
 		{
-			"grimdemo",
-			0,
+			"grim",
+			"Demo",
 			AD_ENTRY1s("gfdemo01.lab", "755cdac083f7f751bec7506402278f1a", 29489930),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DEMO,
 			GUIO_NONE
 		},
 		GF_DEMO,
+		GType_GRIM
 	},
 
 
@@ -123,6 +128,11 @@ static const ADFileBasedFallback grimFallback[] = {
 	{0, {0}}
 };
 
+static const ADObsoleteGameID obsoleteGameIDsTable[] = {
+	{"grimdemo", "grim", Common::kPlatformWindows},
+	{0, 0, Common::kPlatformUnknown}
+};
+
 static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)gameDescriptions,
@@ -133,9 +143,9 @@ static const ADParams detectionParams = {
 	// List of all engine targets
 	grimGames,
 	// Structure for autoupgrading obsolete targets
-	0,
+	obsoleteGameIDsTable,
 	// Name of single gameid (optional)
-	"grim",
+	0,
 	// List of files for file-based fallback detection (optional)
 	grimFallback,
 	// Flags
@@ -161,9 +171,10 @@ public:
 
 bool GrimMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const GrimGameDescription *gd = (const GrimGameDescription *)desc;
-	if (gd) {
-		*engine = new GrimEngine(syst, gd->flags);
-	}
+
+	if (gd)
+		*engine = new GrimEngine(syst, gd->flags, gd->gameType);
+
 	return gd != 0;
 }
 

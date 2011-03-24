@@ -242,7 +242,7 @@ extern Common::StringList::const_iterator g_filesiter;
 // hack for access current upated actor to allow access position of actor to sound costume component
 Actor *g_currentUpdatedActor = NULL;
 
-GrimEngine::GrimEngine(OSystem *syst, int gameFlags) :
+GrimEngine::GrimEngine(OSystem *syst, int gameFlags, GrimGameType gameType) :
 		Engine(syst), _currScene(NULL), _selectedActor(NULL) {
 	g_grim = this;
 
@@ -254,6 +254,7 @@ GrimEngine::GrimEngine(OSystem *syst, int gameFlags) :
 	//ObjectManager::registerType<Material>();
 
 	_gameFlags = gameFlags;
+	_gameType = gameType;
 
 	g_registry = new Registry();
 	g_resourceloader = NULL;

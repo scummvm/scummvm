@@ -47,8 +47,8 @@ enum enDebugLevels {
 #define ENGINE_MODE_DRAW	4
 
 enum GrimGameType {
-	GType_GRIM = 1,
-	GType_MONKEY
+	GType_GRIM,
+	GType_MONKEY4
 };
 
 enum GrimGameFeatures {
@@ -74,10 +74,11 @@ protected:
 
 public:
 
-	GrimEngine(OSystem *syst, int gameFlags);
+	GrimEngine(OSystem *syst, int gameFlags, GrimGameType gameType);
 	virtual ~GrimEngine();
 
 	int getGameFlags() { return _gameFlags; }
+	GrimGameType getGameType() { return _gameType; }
 
 	bool loadSaveDirectory(void);
 	void makeSystemMenu(void);
@@ -282,6 +283,7 @@ private:
 	Common::HashMap<int, ObjectState *> _objectStates;
 
 	int _gameFlags;
+	GrimGameType _gameType;
 };
 
 extern GrimEngine *g_grim;
