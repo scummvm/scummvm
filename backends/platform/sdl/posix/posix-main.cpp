@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(UNIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(LINUXMOTO) && !defined(GP2XWIZ) && !defined(GP2X) && !defined(DINGUX)
+#if defined(UNIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA)
 
 #include "backends/platform/sdl/posix/posix.h"
 #include "backends/plugins/sdl/sdl-provider.h"
