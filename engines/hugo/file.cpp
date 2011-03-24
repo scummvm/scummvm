@@ -46,6 +46,13 @@
 #include "hugo/mouse.h"
 
 namespace Hugo {
+
+namespace {
+static const char *s_bootCyper = "Copyright 1992, David P Gray, Gray Design Associates";
+static const int s_bootCyperLen = sizeof(s_bootCyper) - 1;
+}
+
+
 FileManager::FileManager(HugoEngine *vm) : _vm(vm) {
 	has_read_header = false;
 	firstUIFFl = true;
@@ -523,7 +530,6 @@ bool FileManager::restoreGame(const int16 slot) {
  */
 void FileManager::printBootText() {
 	debugC(1, kDebugFile, "printBootText()");
-	static const char *cypher = getBootCypher();
 
 	Common::File ofp;
 	if (!ofp.open(getBootFilename())) {
@@ -547,7 +553,7 @@ void FileManager::printBootText() {
 		// Decrypt the exit text, using CRYPT substring
 		int i;
 		for (i = 0; i < _vm->_boot.exit_len; i++)
-			buf[i] ^= cypher[i % strlen(cypher)];
+			buf[i] ^= s_bootCyper[i % s_bootCyperLen];
 
 		buf[i] = '\0';
 		Utils::notifyBox(buf);
@@ -563,7 +569,6 @@ void FileManager::printBootText() {
  */
 void FileManager::readBootFile() {
 	debugC(1, kDebugFile, "readBootFile()");
-	static const char *cypher = getBootCypher();
 
 	Common::File ofp;
 	if (!ofp.open(getBootFilename())) {
@@ -592,7 +597,7 @@ void FileManager::readBootFile() {
 	byte checksum = 0;
 	for (uint32 i = 0; i < sizeof(_vm->_boot); i++) {
 		checksum ^= p[i];
-		p[i] ^= cypher[i % strlen(cypher)];
+		p[i] ^= s_bootCyper[i % s_bootCyperLen];
 	}
 	ofp.close();
 
@@ -669,8 +674,5 @@ void FileManager::readUIFImages() {
 	readUIFItem(UIF_IMAGES, _vm->_screen->getGUIBuffer());   // Read all uif images
 }
 
-const char *FileManager::getBootCypher() const {
-	return "Copyright 1992, David P Gray, Gray Design Associates";
-}
 } // End of namespace Hugo
 
