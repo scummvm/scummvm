@@ -41,6 +41,18 @@ namespace Audio {
  * start of the real thing, which tries to include code replicated between
  * several of our engines.
  *
+ * Eventually, this should offer ways to start playback of SMF and XMIDI
+ * data (and possibly make it easy to add further playback methods),
+ * should be able to automatically instantiate _driver as needed,
+ * should perform memory management on the MidiParser object(s) being
+ * used, and possibly more.
+ *
+ * Also, care should be taken to ensure that mutex locking is done right;
+ * currently, it isn't: That is, many engines have (and already had before
+ * this class was introduced) various potential deadlocks hiding in their
+ * MIDI code, caused by a thread trying to lock a mutex twice -- this may
+ * work on some systems, but on others is a sure way towards a deadlock.
+ *
  * @todo Document origin of this class. It is based on code shared by
  * several engines (e.g. DRACI says it copied it from MADE, which took
  * it from SAGE).
