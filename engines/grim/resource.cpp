@@ -43,6 +43,11 @@ ResourceLoader::ResourceLoader() {
 	_cacheDirty = false;
 	_cacheMemorySize = 0;
 
+	// We don't support MI4's LAB format yet
+	// It's been slightly modified and the strings have been XOR encrypted
+	if (g_grim->getGameType() == GType_MONKEY4)
+		return;
+
 	Lab *l;
 	Common::ArchiveMemberList files;
 

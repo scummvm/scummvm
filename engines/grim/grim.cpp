@@ -383,12 +383,12 @@ Common::Error GrimEngine::run() {
 	g_driver->setupScreen(640, 480, fullscreen);
 
 	BitmapPtr splash_bm;
-	if (!(_gameFlags & GF_DEMO))
+	if (!(_gameFlags & GF_DEMO) && getGameType() == GType_GRIM)
 		splash_bm = g_resourceloader->loadBitmap("splash.bm");
 
 	g_driver->clearScreen();
 
-	if (!(_gameFlags & GF_DEMO))
+	if (!(_gameFlags & GF_DEMO) && getGameType() == GType_GRIM)
 		splash_bm->draw();
 
 	g_driver->flipBuffer();

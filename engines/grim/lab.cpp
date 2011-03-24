@@ -87,7 +87,7 @@ bool Lab::fileExists(const char *filename) const {
 }
 
 bool Lab::isOpen() const {
-	return _f->isOpen();
+	return _f && _f->isOpen();
 }
 
 Block *Lab::getFileBlock(const char *filename) const {
