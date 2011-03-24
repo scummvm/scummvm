@@ -28,9 +28,7 @@
 #ifndef AGI_SOUND_MIDI_H
 #define AGI_SOUND_MIDI_H
 
-#include "audio/mididrv.h"
-#include "audio/midiparser.h"
-#include "common/mutex.h"
+#include "audio/midiplayer.h"
 
 namespace Agi {
 
@@ -46,51 +44,29 @@ protected:
 	uint16 _type; ///< Sound resource type
 };
 
-class SoundGenMIDI : public SoundGen, public MidiDriver_BASE {
+class SoundGenMIDI : public SoundGen, public Audio::MidiPlayer {
 public:
 	SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer);
 	~SoundGenMIDI();
 
 	void play(int resnum);
-	void stop();
-
-	bool isPlaying() const { return _isPlaying; }
-	void setPlaying(bool playing) { _isPlaying = playing; }
-
-	void setVolume(int volume);
-	int getVolume() const { return _masterVolume; }
-	void syncVolume();
-
-	void setNativeMT32(bool b) { _nativeMT32 = b; }
-	bool hasNativeMT32() const { return _nativeMT32; }
-	void pause();
-	void resume();
-	void setLoop(bool loop) { _looping = loop; }
+	void stop() { Audio::MidiPlayer::stop(); }
 
 	void setGM(bool isGM) { _isGM = isGM; }
 
 	// MidiDriver_BASE interface implementation
 	virtual void send(uint32 b);
-	virtual void metaEvent(byte type, byte *data, uint16 length);
+
+	// Overload Audio::MidiPlayer method
+	virtual void sendToChannel(byte channel, uint32 b);
+	virtual void endOfTrack();
 
 private:
 
 	static void onTimer(void *data);
-	void setChannelVolume(int channel);
 
-	MidiParser *_parser;
-	Common::Mutex _mutex;
-
-	MidiChannel *_channel[16];
-	MidiDriver *_driver;
 	MidiParser *_smfParser;
-	byte _channelVolume[16];
-	bool _nativeMT32;
 	bool _isGM;
-
-	bool _isPlaying;
-	bool _looping;
-	byte _masterVolume;
 
 	byte *_midiMusicData;
 

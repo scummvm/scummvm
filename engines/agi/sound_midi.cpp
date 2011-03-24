@@ -71,7 +71,7 @@ MIDISound::MIDISound(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : A
 		warning("Error creating MIDI sound from resource %d (Type %d, length %d)", resnum, _type, len);
 }
 
-SoundGenMIDI::SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer), _parser(0), _isPlaying(false), _isGM(false) {
+SoundGenMIDI::SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer), _isGM(false) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
 	_driver = MidiDriver::createMidi(dev);
 	assert(_driver);
@@ -82,10 +82,6 @@ SoundGenMIDI::SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, p
 	} else {
 		_nativeMT32 = false;
 	}
-
-	memset(_channel, 0, sizeof(_channel));
-	memset(_channelVolume, 127, sizeof(_channelVolume));
-	_masterVolume = 0;
 
 	int ret = _driver->open();
 	if (ret == 0) {
@@ -114,67 +110,30 @@ SoundGenMIDI::~SoundGenMIDI() {
 	delete[] _midiMusicData;
 }
 
-void SoundGenMIDI::setChannelVolume(int channel) {
-	int newVolume = _channelVolume[channel] * _masterVolume / 255;
-	_channel[channel]->volume(newVolume);
-}
-
-void SoundGenMIDI::setVolume(int volume) {
-	Common::StackLock lock(_mutex);
-
-	volume = CLIP(volume, 0, 255);
-	if (_masterVolume == volume)
-		return;
-	_masterVolume = volume;
-
-	for (int i = 0; i < 16; ++i) {
-		if (_channel[i]) {
-			setChannelVolume(i);
-		}
-	}
-}
-
 void SoundGenMIDI::send(uint32 b) {
-	byte channel = (byte)(b & 0x0F);
-	if ((b & 0xFFF0) == 0x07B0) {
-		// Adjust volume changes by master volume
-		byte volume = (byte)((b >> 16) & 0x7F);
-		_channelVolume[channel] = volume;
-		volume = volume * _masterVolume / 255;
-		b = (b & 0xFF00FFFF) | (volume << 16);
-	} else if ((b & 0xF0) == 0xC0 && !_isGM && !_nativeMT32) {
+	if ((b & 0xF0) == 0xC0 && !_isGM && !_nativeMT32) {
 		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
 	}
-	else if ((b & 0xFFF0) == 0x007BB0) {
-		//Only respond to All Notes Off if this channel
-		//has currently been allocated
-		if (_channel[b & 0x0F])
-			return;
-	}
 
-	if (!_channel[channel]) {
-		_channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
-		// If a new channel is allocated during the playback, make sure
-		// its volume is correctly initialized.
-		if (_channel[channel])
-			setChannelVolume(channel);
-	}
-
-	if (_channel[channel])
-		_channel[channel]->send(b);
+	Audio::MidiPlayer::send(b);
 }
 
-void SoundGenMIDI::metaEvent(byte type, byte *data, uint16 length) {
-
-	switch (type) {
-	case 0x2F:	// End of Track
-		stop();
-		_vm->_sound->soundIsFinished();
-		break;
-	default:
-		//warning("Unhandled meta event: %02x", type);
-		break;
+void SoundGenMIDI::sendToChannel(byte channel, uint32 b) {
+	if (!_channelsTable[channel]) {
+		_channelsTable[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+		// If a new channel is allocated during the playback, make sure
+		// its volume is correctly initialized.
+		if (_channelsTable[channel])
+			_channelsTable[channel]->volume(_channelsVolume[channel] * _masterVolume / 255);
 	}
+
+	if (_channelsTable[channel])
+		_channelsTable[channel]->send(b);
+}
+
+void SoundGenMIDI::endOfTrack() {
+	stop();
+	_vm->_sound->soundIsFinished();
 }
 
 void SoundGenMIDI::onTimer(void *refCon) {
@@ -210,37 +169,6 @@ void SoundGenMIDI::play(int resnum) {
 
 		_isPlaying = true;
 	}
-}
-
-void SoundGenMIDI::stop() {
-	Common::StackLock lock(_mutex);
-
-	if (!_isPlaying)
-		return;
-
-	_isPlaying = false;
-	if (_parser) {
-		_parser->unloadMusic();
-		_parser = NULL;
-	}
-}
-
-void SoundGenMIDI::pause() {
-	setVolume(-1);
-	_isPlaying = false;
-}
-
-void SoundGenMIDI::resume() {
-	syncVolume();
-	_isPlaying = true;
-}
-
-void SoundGenMIDI::syncVolume() {
-	int volume = ConfMan.getInt("music_volume");
-	if (ConfMan.getBool("mute")) {
-		volume = -1;
-	}
-	setVolume(volume);
 }
 
 /* channel / intrument setup: */
