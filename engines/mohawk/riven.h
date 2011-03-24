@@ -191,8 +191,7 @@ public:
 
 	// Variables
 	RivenVariableMap _vars;
-	uint32 *getLocalVar(uint32 index);
-	uint32 *getVar(const Common::String &varName);
+	uint32 &getStackVar(uint32 index);
 
 	// Miscellaneous
 	void setGameOver() { _gameOver = true; }

@@ -489,7 +489,7 @@ void MohawkEngine_Riven::updateZipMode() {
 
 	for (uint32 i = 0; i < _hotspotCount; i++) {
 		if (_hotspots[i].zipModeHotspot) {
-			if (*getVar("azip") != 0) {
+			if (_vars["azip"] != 0) {
 				// Check if a zip mode hotspot is enabled by checking the name/id against the ZIPS records.
 				Common::String hotspotName = getName(HotspotNames, _hotspots[i].name_resource);
 
@@ -576,13 +576,13 @@ void MohawkEngine_Riven::checkInventoryClick() {
 		return;
 
 	// Set the return stack/card id's.
-	*getVar("returnstackid") = _curStack;
-	*getVar("returncardid") = _curCard;
+	_vars["returnstackid"] = _curStack;
+	_vars["returncardid"] = _curCard;
 
 	// See RivenGraphics::showInventory() for an explanation
 	// of the variables' meanings.
-	bool hasCathBook = *getVar("acathbook") != 0;
-	bool hasTrapBook = *getVar("atrapbook") != 0;
+	bool hasCathBook = _vars["acathbook"] != 0;
+	bool hasTrapBook = _vars["atrapbook"] != 0;
 
 	// Go to the book if a hotspot contains the mouse
 	if (!hasCathBook) {
@@ -778,16 +778,16 @@ void MohawkEngine_Riven::removeTimer() {
 }
 
 static void catherineIdleTimer(MohawkEngine_Riven *vm) {
-	uint32 *cathCheck = vm->getVar("pcathcheck");
-	uint32 *cathState = vm->getVar("acathstate");
+	uint32 &cathCheck = vm->_vars["pcathcheck"];
+	uint32 &cathState = vm->_vars["acathstate"];
 	uint16 movie;
 
 	// Choose a random movie based on where Catherine is
-	if (*cathCheck == 0) {
+	if (cathCheck == 0) {
 		static const int movieList[] = { 5, 6, 7, 8 };
-		*cathCheck = 1;
+		cathCheck = 1;
 		movie = movieList[vm->_rnd->getRandomNumber(3)];
-	} else if (*cathState == 1) {
+	} else if (cathState == 1) {
 		static const int movieList[] = { 11, 14 };
 		movie = movieList[vm->_rnd->getRandomBit()];
 	} else {
@@ -797,9 +797,9 @@ static void catherineIdleTimer(MohawkEngine_Riven *vm) {
 
 	// Update her state if she moves from left/right or right/left, resp.
 	if (movie == 5 || movie == 7 || movie == 11 || movie == 14)
-		*cathState = 2;
+		cathState = 2;
 	else
-		*cathState = 1;
+		cathState = 1;
 
 	// Play the movie, blocking
 	vm->_video->activateMLST(movie, vm->getCurCard());
@@ -811,7 +811,7 @@ static void catherineIdleTimer(MohawkEngine_Riven *vm) {
 	// Install the next timer for the next video
 	uint32 timeUntilNextMovie = vm->_rnd->getRandomNumber(120) * 1000;
 
-	*vm->getVar("pcathtime") = timeUntilNextMovie + vm->getTotalPlayTime();
+	vm->_vars["pcathtime"] = timeUntilNextMovie + vm->getTotalPlayTime();
 
 	vm->installTimer(&catherineIdleTimer, timeUntilNextMovie);
 }

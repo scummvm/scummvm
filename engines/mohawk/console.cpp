@@ -354,18 +354,17 @@ bool RivenConsole::Cmd_Var(int argc, const char **argv) {
 		return true;
 	}
 
-	uint32 *globalVar = _vm->getVar(argv[1]);
-
-	if (!globalVar) {
-		DebugPrintf("Unknown variable \'%s\'\n", argv[1]);
+	if (!_vm->_vars.contains(argv[1])) {
+		DebugPrintf("Unknown variable '%s'\n", argv[1]);
 		return true;
 	}
 
+	uint32 &var = _vm->_vars[argv[1]];
+
 	if (argc > 2)
-		*globalVar = (uint32)atoi(argv[2]);
+		var = (uint32)atoi(argv[2]);
 
-	DebugPrintf("%s = %d\n", argv[1], *globalVar);
-
+	DebugPrintf("%s = %d\n", argv[1], var);
 	return true;
 }
 
@@ -464,11 +463,11 @@ bool RivenConsole::Cmd_Hotspots(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_ZipMode(int argc, const char **argv) {
-	uint32 *zipModeActive = _vm->getVar("azip");
-	*zipModeActive = !(*zipModeActive);
+	uint32 &zipModeActive = _vm->_vars["azip"];
+	zipModeActive = !zipModeActive;
 
 	DebugPrintf("Zip Mode is ");
-	DebugPrintf((*zipModeActive) ? "Enabled" : "Disabled");
+	DebugPrintf(zipModeActive ? "Enabled" : "Disabled");
 	DebugPrintf("\n");
 	return true;
 }
@@ -615,9 +614,9 @@ bool RivenConsole::Cmd_Combos(int argc, const char **argv) {
 	// You'll need to look up the Rebel Tunnel puzzle on your own; the
 	// solution is constant.
 
-	uint32 teleCombo = *_vm->getVar("tcorrectorder");
-	uint32 prisonCombo = *_vm->getVar("pcorrectorder");
-	uint32 domeCombo = *_vm->getVar("adomecombo");
+	uint32 teleCombo = _vm->_vars["tcorrectorder"];
+	uint32 prisonCombo = _vm->_vars["pcorrectorder"];
+	uint32 domeCombo = _vm->_vars["adomecombo"];
 	
 	DebugPrintf("Telescope Combo:\n  ");
 	for (int i = 0; i < 5; i++)

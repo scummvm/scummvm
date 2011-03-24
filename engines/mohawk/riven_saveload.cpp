@@ -165,7 +165,7 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 		if (name == "dropLeftStart" || name == "dropRightStart")
 			continue;
 
-		uint32 *var = _vm->getVar(name);
+		uint32 &var = _vm->_vars[name];
 		name.toLowercase();
 
 		// Handle any special variables here
@@ -177,12 +177,12 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 			stackID = mapOldStackIDToNew(rawVariables[i]);
 		else if (name.equalsIgnoreCase("CurrentCardID"))              // Store for later
 			cardID = rawVariables[i];
-		else if (name.equalsIgnoreCase("ReturnStackID") && *var != 0) // if 0, the game did not use the variable yet
-			*var = mapOldStackIDToNew(rawVariables[i]);
+		else if (name.equalsIgnoreCase("ReturnStackID") && var != 0) // if 0, the game did not use the variable yet
+			var = mapOldStackIDToNew(rawVariables[i]);
 		else if (name.contains("time"))                               // WORKAROUND: See above
-			*var = 0;
+			var = 0;
 		else                                                          // Otherwise, just store it
-			*var = rawVariables[i];
+			var = rawVariables[i];
 	}
 
 	_vm->changeToStack(stackID);
@@ -284,8 +284,8 @@ bool RivenSaveLoad::saveGame(Common::String filename) {
 		filename += ".rvn";
 
 	// Convert class variables to variable numbers
-	*_vm->getVar("currentstackid") = mapNewStackIDToOld(_vm->getCurStack());
-	*_vm->getVar("currentcardid") = _vm->getCurCard();
+	_vm->_vars["currentstackid"] = mapNewStackIDToOld(_vm->getCurStack());
+	_vm->_vars["currentcardid"] = _vm->getCurCard();
 
 	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(filename);
 	if (!saveFile)

@@ -270,15 +270,8 @@ static const char *variableNames[] = {
 	"currentcardid"
 };
 
-uint32 *MohawkEngine_Riven::getLocalVar(uint32 index) {
-	return getVar(getName(VariableNames, index));
-}
-
-uint32 *MohawkEngine_Riven::getVar(const Common::String &varName) {
-	if (!_vars.contains(varName))
-		error("Unknown variable: '%s'", varName.c_str());
-
-	return &_vars[varName];
+uint32 &MohawkEngine_Riven::getStackVar(uint32 index) {
+	return _vars[getName(VariableNames, index)];
 }
 
 void MohawkEngine_Riven::initVars() {

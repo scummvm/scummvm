@@ -260,7 +260,7 @@ void RivenScript::processCommands(bool runCommands) {
 				// Run the following block if the block's variable is equal to the variable to check against
 				// Don't run it if the parent block is not executed
 				// And don't run it if another block has already evaluated to true (needed for the default case)
-				runBlock = (*_vm->getLocalVar(var) == checkValue || checkValue == 0xffff) && runCommands && !anotherBlockEvaluated;
+				runBlock = (_vm->getStackVar(var) == checkValue || checkValue == 0xffff) && runCommands && !anotherBlockEvaluated;
 				processCommands(runBlock);
 
 				if (runBlock)
@@ -363,8 +363,7 @@ void RivenScript::playSound(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 7: set variable value (variable, value)
 void RivenScript::setVariable(uint16 op, uint16 argc, uint16 *argv) {
-	debug(2, "Setting variable %d to %d", argv[0], argv[1]);
-	*_vm->getLocalVar(argv[0]) = argv[1];
+	_vm->getStackVar(argv[0]) = argv[1];
 }
 
 // Command 8: conditional branch
@@ -471,9 +470,7 @@ void RivenScript::enableScreenUpdate(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 24: increment variable (variable, value)
 void RivenScript::incrementVariable(uint16 op, uint16 argc, uint16 *argv) {
-	uint32 *localVar = _vm->getLocalVar(argv[0]);
-	*localVar += argv[1];
-	debug(2, "Incrementing variable %d by %d, variable now is equal to %d", argv[0], argv[1], *localVar);
+	_vm->getStackVar(argv[0]) += argv[1];
 }
 
 // Command 27: go to stack (stack name, code high, code low)
