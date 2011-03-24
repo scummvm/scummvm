@@ -40,9 +40,9 @@ namespace Queen {
 extern MidiDriver *C_Player_CreateAdLibMidiDriver(Audio::Mixer *);
 
 MidiMusic::MidiMusic(QueenEngine *vm)
-	: _isPlaying(false), _looping(false), _randomLoop(false), _masterVolume(192), _buf(0) {
+	: _isPlaying(false), _isLooping(false), _randomLoop(false), _masterVolume(192), _buf(0) {
 
-	memset(_channel, 0, sizeof(_channel));
+	memset(_channelsTable, 0, sizeof(_channelsTable));
 	_queuePos = _lastSong = _currentSong = 0;
 	queueClear();
 
@@ -118,8 +118,8 @@ void MidiMusic::setVolume(int volume) {
 	_masterVolume = volume;
 
 	for (int i = 0; i < 16; ++i) {
-		if (_channel[i])
-			_channel[i]->volume(_channelVolume[i] * _masterVolume / 255);
+		if (_channelsTable[i])
+			_channelsTable[i]->volume(_channelsVolume[i] * _masterVolume / 255);
 	}
 }
 
@@ -156,7 +156,7 @@ bool MidiMusic::queueSong(uint16 songNum) {
 void MidiMusic::queueClear() {
 	_lastSong = _songQueue[0];
 	_queuePos = 0;
-	_looping = _randomLoop = false;
+	_isLooping = _randomLoop = false;
 	memset(_songQueue, 0, sizeof(_songQueue));
 }
 
@@ -170,7 +170,7 @@ void MidiMusic::send(uint32 b) {
 	if ((b & 0xFFF0) == 0x07B0) {
 		// Adjust volume changes by master volume
 		byte volume = (byte)((b >> 16) & 0x7F);
-		_channelVolume[channel] = volume;
+		_channelsVolume[channel] = volume;
 		volume = volume * _masterVolume / 255;
 		b = (b & 0xFF00FFFF) | (volume << 16);
 	} else if ((b & 0xF0) == 0xC0 && !_nativeMT32) {
@@ -178,7 +178,7 @@ void MidiMusic::send(uint32 b) {
 	} else if ((b & 0xFFF0) == 0x007BB0) {
 		//Only respond to All Notes Off if this channel
 		//has currently been allocated
-		if (!_channel[channel])
+		if (!_channelsTable[channel])
 			return;
 	}
 
@@ -190,17 +190,17 @@ void MidiMusic::send(uint32 b) {
 	if (channel == 5 && _currentSong == 38)
 		return;
 
-	if (!_channel[channel])
-		_channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+	if (!_channelsTable[channel])
+		_channelsTable[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
 
-	if (_channel[channel])
-		_channel[channel]->send(b);
+	if (_channelsTable[channel])
+		_channelsTable[channel]->send(b);
 }
 
 void MidiMusic::metaEvent(byte type, byte *data, uint16 length) {
 	switch (type) {
 	case 0x2F: // End of Track
-		if (_looping || _songQueue[1]) {
+		if (_isLooping || _songQueue[1]) {
 			playMusic();
 		} else {
 			stopMusic();
@@ -333,7 +333,7 @@ void MidiMusic::queueUpdatePos() {
 	} else {
 		if (_queuePos < (MUSIC_QUEUE_SIZE - 1) && _songQueue[_queuePos + 1])
 			_queuePos++;
-		else if (_looping)
+		else if (_isLooping)
 			_queuePos = 0;
 	}
 }

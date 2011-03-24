@@ -50,7 +50,7 @@ public:
 	void stopSong() { stopMusic(); }
 	void playMusic();
 	void stopMusic();
-	void setLoop(bool loop)		{ _looping = loop; }
+	void setLoop(bool loop)		{ _isLooping = loop; }
 	void queueTuneList(int16 tuneList);
 	bool queueSong(uint16 songNum);
 	void queueClear();
@@ -76,15 +76,15 @@ protected:
 
 	MidiDriver *_driver;
 	MidiParser *_parser;
-	MidiChannel *_channel[16];
-	byte _channelVolume[16];
+	MidiChannel *_channelsTable[16];
+	byte _channelsVolume[16];
 	bool _adlib;
 	bool _nativeMT32;
 	Common::Mutex _mutex;
 	Common::RandomSource _rnd;
 
 	bool _isPlaying;
-	bool _looping;
+	bool _isLooping;
 	bool _randomLoop;
 	byte _masterVolume;
 	uint8 _queuePos;
