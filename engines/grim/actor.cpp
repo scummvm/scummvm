@@ -983,8 +983,12 @@ void Actor::draw() {
 	g_winX1 = g_winY1 = 1000;
 	g_winX2 = g_winY2 = -1000;
 
-	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i)
-		(*i)->setupTextures();
+	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+		Costume *c = *i;
+		if (c) {
+			c->setupTextures();
+		}
+	}
 
 	if (!g_driver->isHardwareAccelerated() && g_grim->getFlagRefreshShadowMask()) {
 		for (int l = 0; l < 5; l++) {
