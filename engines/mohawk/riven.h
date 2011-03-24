@@ -106,6 +106,8 @@ struct ZipMode {
 	bool operator== (const ZipMode& z) const;
 };
 
+typedef Common::HashMap<Common::String, uint32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> RivenVariableMap;
+
 class MohawkEngine_Riven : public MohawkEngine {
 protected:
 	Common::Error run();
@@ -153,9 +155,7 @@ private:
 	void checkHotspotChange();
 
 	// Variables
-	typedef Common::HashMap<Common::String, uint32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> VariableMap;
-	VariableMap _vars;
-	uint32 _varCount;
+	void initVars();
 
 	// Timer
 	TimerProc _timerProc;
@@ -189,11 +189,8 @@ public:
 	Common::String getHotspotName(uint16 hotspot);
 	void updateCurrentHotspot();
 
-	// Variable functions
-	void initVars();
-	uint32 getVarCount() const { return _varCount; }
-	uint32 getGlobalVar(uint32 index);
-	Common::String getGlobalVarName(uint32 index);
+	// Variables
+	RivenVariableMap _vars;
 	uint32 *getLocalVar(uint32 index);
 	uint32 *getVar(const Common::String &varName);
 

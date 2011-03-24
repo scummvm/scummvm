@@ -274,14 +274,6 @@ uint32 *MohawkEngine_Riven::getLocalVar(uint32 index) {
 	return getVar(getName(VariableNames, index));
 }
 
-uint32 MohawkEngine_Riven::getGlobalVar(uint32 index) {
-	return _vars[variableNames[index]];
-}
-
-Common::String MohawkEngine_Riven::getGlobalVarName(uint32 index) {
-	return variableNames[index];
-}
-
 uint32 *MohawkEngine_Riven::getVar(const Common::String &varName) {
 	if (!_vars.contains(varName))
 		error("Unknown variable: '%s'", varName.c_str());
@@ -290,10 +282,8 @@ uint32 *MohawkEngine_Riven::getVar(const Common::String &varName) {
 }
 
 void MohawkEngine_Riven::initVars() {
-	_varCount = ARRAYSIZE(variableNames);
-
 	// Most variables just start at 0, it's simpler to do this
-	for (uint32 i = 0; i < _varCount; i++)
+	for (uint32 i = 0; i < ARRAYSIZE(variableNames); i++)
 		_vars[variableNames[i]] = 0;
 
 	// Initialize the rest of the variables to their proper state

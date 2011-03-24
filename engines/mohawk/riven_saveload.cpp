@@ -224,14 +224,14 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVERSSection() {
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVARSSection() {
 	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
 
-	for (uint32 i = 0; i < _vm->getVarCount(); i++) {
+	for (RivenVariableMap::const_iterator it = _vm->_vars.begin(); it != _vm->_vars.end(); it++) {
 		stream->writeUint32BE(0); // Unknown
 		stream->writeUint32BE(0); // Unknown
 
 		// Remap returnstackid here because we don't actually want to change
 		// our internal returnstackid.
-		uint32 variable = _vm->getGlobalVar(i);
-		if (_vm->getGlobalVarName(i) == "returnstackid")
+		uint32 variable = it->_value;
+		if (it->_key == "returnstackid")
 			variable = mapNewStackIDToOld(variable);
 
 		stream->writeUint32BE(variable);
@@ -243,19 +243,19 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVARSSection() {
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genNAMESection() {
 	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
 
-	stream->writeUint16BE((uint16)_vm->getVarCount());
+	stream->writeUint16BE(_vm->_vars.size());
 
 	uint16 curPos = 0;
-	for (uint16 i = 0; i < _vm->getVarCount(); i++) {
+	for (RivenVariableMap::const_iterator it = _vm->_vars.begin(); it != _vm->_vars.end(); it++) {
 		stream->writeUint16BE(curPos);
-		curPos += _vm->getGlobalVarName(i).size() + 1;
+		curPos += it->_key.size() + 1;
 	}
 
-	for (uint16 i = 0; i < _vm->getVarCount(); i++)
+	for (uint16 i = 0; i < _vm->_vars.size(); i++)
 		stream->writeUint16BE(i);
 
-	for (uint16 i = 0; i < _vm->getVarCount(); i++) {
-		stream->write(_vm->getGlobalVarName(i).c_str(), _vm->getGlobalVarName(i).size());
+	for (RivenVariableMap::const_iterator it = _vm->_vars.begin(); it != _vm->_vars.end(); it++) {
+		stream->write(it->_key.c_str(), it->_key.size());
 		stream->writeByte(0);
 	}
 
