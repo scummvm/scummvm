@@ -172,6 +172,13 @@ public:
 	virtual Common::String getClassName() { return "SpeakerCHFText"; }
 };
 
+class SpeakerCDRText: public ScreenSpeaker {
+public:
+	SpeakerCDRText();
+
+	virtual Common::String getClassName() { return "SpeakerCDRText"; }
+};
+
 class SpeakerQL: public AnimatedSpeaker {
 public:
 	SpeakerQL();
@@ -276,6 +283,14 @@ public:
 	virtual Common::String getClassName() { return "SpeakerPR"; }
 	virtual void setText(const Common::String &msg);
 	virtual void removeText();
+};	
+
+class SpeakerCDR: public AnimatedSpeaker {
+public:
+	SpeakerCDR();
+
+	virtual Common::String getClassName() { return "SpeakerCDR"; }
+	virtual void setText(const Common::String &msg);
 };	
 
 

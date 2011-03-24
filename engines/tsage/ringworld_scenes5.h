@@ -359,6 +359,67 @@ public:
 	virtual void dispatch();
 };
 
+class Scene4100: public Scene {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action3: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action4: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action5: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action6: public Action {
+	public:
+		virtual void signal();
+	};
+
+	/* Hotspots */
+	class Hotspot14: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot17: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+public:	
+	SequenceManager _sequenceManager;
+	SpeakerMText _speakerMText;
+	SpeakerML _speakerML;
+	SpeakerQText _speakerQText;
+	SpeakerQR _speakerQR;
+	SpeakerCHFText _speakerCHFText;
+	SpeakerCDRText _speakerCDRText;
+	SpeakerCDR _speakerCDR;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+	Action5 _action5;
+	Action6 _action6;
+	SceneObject _hotspot1, _hotspot2, _hotspot3, _hotspot4, _hotspot5;
+	SceneObject _hotspot6, _hotspot7, _hotspot8, _hotspot9, _hotspot10;
+	SceneObject  _hotspot11, _hotspot12, _hotspot13, _hotspot14;
+
+	Scene4100();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
+};
+
 
 } // End of namespace tSage
 

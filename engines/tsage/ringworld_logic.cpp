@@ -116,6 +116,8 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 4045: return new Scene4045();
 	// Village - Temple
 	case 4050: return new Scene4050();
+	// Village - Hut
+	case 4100: return new Scene4100();
 
 	/* Scene group 6 */
 
@@ -372,6 +374,16 @@ SpeakerCHFText::SpeakerCHFText() {
 	_textWidth = 240;
 	_textMode = ALIGN_CENTRE;
 	_colour1 = 56;
+	_hideObjects = false;
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerCDRText::SpeakerCDRText() {
+	_speakerName = "CDRTEXT";
+	_textWidth = 240;
+	_textMode = ALIGN_CENTRE;
+	_colour1 = 52;
 	_hideObjects = false;
 }
 
@@ -776,6 +788,37 @@ void SpeakerPR::setText(const Common::String &msg) {
 void SpeakerPR::removeText() {
 	_object3.remove();
 	AnimatedSpeaker::removeText();
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerCDR::SpeakerCDR() {
+	_speakerName = "CDR";
+	_newSceneNumber = 4161;
+	_textPos = Common::Point(10, 40);
+	_colour1 = 52;
+}
+
+void SpeakerCDR::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(4163);
+	_object1.setStrip2(1);
+	_object1.setPriority2(255);
+	_object1.changeZoom(100);
+	_object1._frame = 1;
+	_object1.setPosition(Common::Point(208, 97));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
+	
+	_object2.postInit(&_objectList);
+	_object2.setVisage(4163);
+	_object2.setStrip2(2);
+	_object2.setPriority2(255);
+	_object2.changeZoom(100);
+	_object2._frame = 1;
+	_object2.setPosition(Common::Point(200, 57));
+	_object2.setAction(&_speakerAction, NULL);
+
+	Speaker::setText(msg);
 }
 
 } // End of namespace tSage
