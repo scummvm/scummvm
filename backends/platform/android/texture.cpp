@@ -102,10 +102,12 @@ GLESBaseTexture::~GLESBaseTexture() {
 }
 
 void GLESBaseTexture::release() {
-	LOGD("Destroying texture %u", _texture_name);
+	if (_texture_name) {
+		LOGD("Destroying texture %u", _texture_name);
 
-	GLCALL(glDeleteTextures(1, &_texture_name));
-	_texture_name = 0;
+		GLCALL(glDeleteTextures(1, &_texture_name));
+		_texture_name = 0;
+	}
 }
 
 void GLESBaseTexture::reinit() {
