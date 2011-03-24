@@ -28,14 +28,22 @@
 
 #include "m4/m4.h"
 #include "m4/midi.h"
+#include "audio/midiparser.h"
+#include "common/config-manager.h"
 #include "common/memstream.h"
 
 namespace M4 {
 
-MidiPlayer::MidiPlayer(MadsM4Engine *vm, MidiDriver *driver) : _vm(vm), _midiData(NULL), _driver(driver), _isPlaying(false), _isGM(false) {
+MidiPlayer::MidiPlayer(MadsM4Engine *vm) : _vm(vm), _midiData(NULL), _isGM(false) {
+
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
+
+	_driver = MidiDriver::createMidi(dev);
 	assert(_driver);
-	memset(_channel, 0, sizeof(_channel));
-	_masterVolume = 0;
+	if (_nativeMT32)
+		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+
 	_parser = MidiParser::createParser_SMF();
 	_parser->setMidiDriver(this);
 	_parser->setTimerRate(_driver->getBaseTempo());
@@ -48,7 +56,7 @@ MidiPlayer::MidiPlayer(MadsM4Engine *vm, MidiDriver *driver) : _vm(vm), _midiDat
 MidiPlayer::~MidiPlayer() {
 	_driver->setTimerCallback(NULL, NULL);
 	_parser->setMidiDriver(NULL);
-	stopMusic();
+	stop();
 	if (_driver) {
 		_driver->close();
 		delete _driver;
@@ -58,64 +66,12 @@ MidiPlayer::~MidiPlayer() {
 	free(_midiData);
 }
 
-void MidiPlayer::setVolume(int volume) {
-	Common::StackLock lock(_mutex);
-
-	if (volume < 0)
-		volume = 0;
-	else if (volume > 255)
-		volume = 255;
-
-	if (_masterVolume == volume)
-		return;
-
-	_masterVolume = volume;
-
-	for (int i = 0; i < 16; ++i) {
-		if (_channel[i]) {
-			_channel[i]->volume(_channelVolume[i] * _masterVolume / 255);
-		}
-	}
-}
-
 void MidiPlayer::send(uint32 b) {
-	byte channel = (byte)(b & 0x0F);
-	if ((b & 0xFFF0) == 0x07B0) {
-		// Adjust volume changes by master volume
-		byte volume = (byte)((b >> 16) & 0x7F);
-		_channelVolume[channel] = volume;
-		volume = volume * _masterVolume / 255;
-		b = (b & 0xFF00FFFF) | (volume << 16);
-	} else if ((b & 0xF0) == 0xC0 && !_isGM && !_nativeMT32) {
+	if ((b & 0xF0) == 0xC0 && !_isGM && !_nativeMT32) {
 		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
 	}
-	else if ((b & 0xFFF0) == 0x007BB0) {
-		//Only respond to All Notes Off if this channel
-		//has currently been allocated
-		if (!_channel[b & 0x0F])
-			return;
-	}
 
-	if (!_channel[channel])
-		_channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
-
-	if (_channel[channel])
-		_channel[channel]->send(b);
-}
-
-void MidiPlayer::metaEvent(byte type, byte *data, uint16 length) {
-	switch (type) {
-	case 0x2F:
-		// End of track. (Not called when auto-looping.)
-		stopMusic();
-		break;
-	case 0x51:
-		// Set tempo. Handled by the standard MIDI parser already.
-		break;
-	default:
-		warning("Unhandled meta event: %02x", type);
-		break;
-	}
+	Audio::MidiPlayer::send(b);
 }
 
 void MidiPlayer::onTimer(void *refCon) {
@@ -127,7 +83,7 @@ void MidiPlayer::onTimer(void *refCon) {
 }
 
 void MidiPlayer::playMusic(const char *name, int32 vol, bool loop, int32 trigger, int32 scene) {
-	stopMusic();
+	stop();
 
 	char fullname[144];
 	_vm->res()->changeExtension(fullname, name, "HMP");
@@ -157,7 +113,7 @@ void MidiPlayer::playMusic(const char *name, int32 vol, bool loop, int32 trigger
 	_isPlaying = true;
 }
 
-void MidiPlayer::stopMusic() {
+void MidiPlayer::stop() {
 	Common::StackLock lock(_mutex);
 
 	_isPlaying = false;

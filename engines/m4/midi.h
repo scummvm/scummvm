@@ -28,32 +28,22 @@
 #ifndef M4_MIDI_H
 #define M4_MIDI_H
 
-#include "audio/mididrv.h"
-#include "audio/midiparser.h"
-#include "common/mutex.h"
+#include "audio/midiplayer.h"
 
 namespace M4 {
 
-class MidiPlayer : public MidiDriver_BASE {
+class MidiPlayer : public Audio::MidiPlayer {
 public:
-	MidiPlayer(MadsM4Engine *vm, MidiDriver *driver);
+	MidiPlayer(MadsM4Engine *vm);
 	~MidiPlayer();
 
-	bool isPlaying() const { return _isPlaying; }
-
-	void setVolume(int volume);
-	int getVolume() const { return _masterVolume; }
-
-	void setNativeMT32(bool b) { _nativeMT32 = b; }
-	bool hasNativeMT32()  const{ return _nativeMT32; }
 	void playMusic(const char *name, int32 vol, bool loop, int32 trigger, int32 scene);
-	void stopMusic();
+	virtual void stop();
 
 	void setGM(bool isGM) { _isGM = isGM; }
 
 	// MidiDriver_BASE interface implementation
 	virtual void send(uint32 b);
-	virtual void metaEvent(byte type, byte *data, uint16 length);
 
 protected:
 	static void onTimer(void *data);
@@ -61,22 +51,13 @@ protected:
 	MadsM4Engine *_vm;
 	byte *_midiData;
 
-	MidiChannel *_channel[16];
-	MidiDriver *_driver;
-	MidiParser *_parser;
-	byte _channelVolume[16];
-	bool _nativeMT32;
 	bool _isGM;
 
-	bool _isPlaying;
 	bool _randomLoop;
-	byte _masterVolume;
 
 	byte *_musicData;
 	uint16 *_buf;
 	size_t _musicDataSize;
-
-	Common::Mutex _mutex;
 
 	byte *convertHMPtoSMF(byte *data, uint32 inSize, uint32 &outSize);
 };
