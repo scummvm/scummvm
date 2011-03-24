@@ -178,7 +178,7 @@ void MidiMusic::send(uint32 b) {
 	} else if ((b & 0xFFF0) == 0x007BB0) {
 		//Only respond to All Notes Off if this channel
 		//has currently been allocated
-		if (_channel[channel])
+		if (!_channel[channel])
 			return;
 	}
 
