@@ -977,7 +977,7 @@ void GrimEngine::savegameRestore() {
 // 	killActors();
 // 	killScenes();
 // 	killPrimitiveObjects();
-// 	killTextObjects();
+	killTextObjects();
 // 	killFonts();
 
 	_selectedActor = NULL;
