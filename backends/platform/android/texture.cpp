@@ -231,6 +231,8 @@ void GLESTexture::allocBuffer(GLuint w, GLuint h) {
 
 	GLESBaseTexture::allocBuffer(w, h);
 
+	_surface.pitch = w * _pixelFormat.bytesPerPixel;
+
 	if (_surface.w == oldw && _surface.h == oldh) {
 		fillBuffer(0);
 		return;
@@ -243,7 +245,6 @@ void GLESTexture::allocBuffer(GLuint w, GLuint h) {
 	assert(_pixels);
 
 	_surface.pixels = _pixels;
-	_surface.pitch = w * _pixelFormat.bytesPerPixel;
 
 	fillBuffer(0);
 
@@ -364,6 +365,8 @@ void GLESPaletteTexture::allocBuffer(GLuint w, GLuint h) {
 
 	GLESBaseTexture::allocBuffer(w, h);
 
+	_surface.pitch = _texture_width;
+
 	if (_surface.w == oldw && _surface.h == oldh) {
 		fillBuffer(0);
 		return;
@@ -375,7 +378,6 @@ void GLESPaletteTexture::allocBuffer(GLuint w, GLuint h) {
 	assert(_texture);
 
 	_surface.pixels = _texture + _paletteSize;
-	_surface.pitch = _texture_width;
 
 	fillBuffer(0);
 
@@ -490,6 +492,9 @@ void GLESFakePaletteTexture::allocBuffer(GLuint w, GLuint h) {
 
 	GLESBaseTexture::allocBuffer(w, h);
 
+	_surface.bytesPerPixel = 1;
+	_surface.pitch = w;
+
 	if (_surface.w == oldw && _surface.h == oldh) {
 		fillBuffer(0);
 		return;
@@ -503,8 +508,6 @@ void GLESFakePaletteTexture::allocBuffer(GLuint w, GLuint h) {
 
 	// fixup surface, for the outside this is a CLUT8 surface
 	_surface.pixels = _pixels;
-	_surface.bytesPerPixel = 1;
-	_surface.pitch = w;
 
 	fillBuffer(0);
 
