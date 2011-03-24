@@ -532,7 +532,7 @@ void FileManager::printBootText() {
 			warning("printBootText - Skipping as H1 Dos may be a freeware");
 			return;
 		} else {
-			error("Missing startup file");
+			error("Missing startup file '%s'", getBootFilename());
 		}
 	}
 
@@ -574,7 +574,7 @@ void FileManager::readBootFile() {
 			_vm->_boot.registered = kRegFreeware;
 			return;
 		} else {
-			error("Missing startup file");
+			error("Missing startup file '%s'", getBootFilename());
 		}
 	}
 
