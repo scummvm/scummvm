@@ -417,6 +417,8 @@ private:
 	int _repeatMode;
 	int _currTime;
 	Common::String _fname;
+
+	friend class Costume;
 };
 
 KeyframeComponent::KeyframeComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
@@ -1211,6 +1213,13 @@ void Costume::saveState(SaveGame *state) const {
 		if (c) {
 			state->writeLESint32(c->_visible);
 			state->writeVector3d(c->_matrix._pos);
+
+			if (FROM_BE_32(c->_tag) == MKID_BE('KEYF')) {
+				KeyframeComponent *f = static_cast<KeyframeComponent *>(c);
+				state->writeLESint32(f->_active);
+				state->writeLESint32(f->_repeatMode);
+				state->writeLESint32(f->_currTime);
+			}
 		}
 	}
 
@@ -1246,6 +1255,11 @@ bool Costume::restoreState(SaveGame *state) {
 			if (FROM_BE_32(c->_tag) == MKID_BE('MODL') || FROM_BE_32(c->_tag) == MKID_BE('MMDL')) {
 				ModelComponent *m = static_cast<ModelComponent *>(c);
 				m->hierarchy()->_hierVisible = c->_visible;
+			} else if (FROM_BE_32(c->_tag) == MKID_BE('KEYF')) {
+				KeyframeComponent *f = static_cast<KeyframeComponent *>(c);
+				f->_active = state->readLESint32();
+				f->_repeatMode = state->readLESint32();
+				f->_currTime = state->readLESint32();
 			}
 		}
 	}
