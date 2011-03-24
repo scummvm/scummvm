@@ -90,7 +90,6 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _extrasFile;
 	delete _saveLoad;
 	delete _scriptMan;
-	delete[] _vars;
 	delete _optionsDialog;
 	delete _rnd;
 	delete[] _hotspots;

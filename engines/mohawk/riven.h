@@ -32,6 +32,8 @@
 
 #include "gui/saveload.h"
 
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 #include "common/random.h"
 
 namespace Mohawk {
@@ -151,7 +153,8 @@ private:
 	void checkHotspotChange();
 
 	// Variables
-	uint32 *_vars;
+	typedef Common::HashMap<Common::String, uint32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> VariableMap;
+	VariableMap _vars;
 	uint32 _varCount;
 
 	// Timer
