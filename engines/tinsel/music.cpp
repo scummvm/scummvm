@@ -386,7 +386,7 @@ void DeleteMidiBuffer() {
 	midiBuffer.pDat = NULL;
 }
 
-MidiMusicPlayer::MidiMusicPlayer() : _parser(0), _driver(0), _looping(false), _isPlaying(false) {
+MidiMusicPlayer::MidiMusicPlayer() {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	bool native_mt32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
 	//bool adlib = (MidiDriver::getMusicType(dev) == MT_ADLIB);
@@ -395,10 +395,6 @@ MidiMusicPlayer::MidiMusicPlayer() : _parser(0), _driver(0), _looping(false), _i
 	assert(_driver);
 	if (native_mt32)
 		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-
-	memset(_channel, 0, sizeof(_channel));
-	memset(_channelVolume, 0, sizeof(_channelVolume));
-	_masterVolume = 0;
 
 	int ret = _driver->open();
 	if (ret == 0) {
@@ -428,61 +424,20 @@ MidiMusicPlayer::~MidiMusicPlayer() {
 void MidiMusicPlayer::setVolume(int volume) {
 	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
 
-	if (_masterVolume == volume)
-		return;
-
-	_masterVolume = volume;
-
-	Common::StackLock lock(_mutex);
-
-	for (int i = 0; i < 16; ++i) {
-		if (_channel[i]) {
-			_channel[i]->volume(_channelVolume[i] * _masterVolume / 255);
-		}
-	}
+	Audio::MidiPlayer::setVolume(volume);
 }
 
 void MidiMusicPlayer::send(uint32 b) {
+	Audio::MidiPlayer::send(b);
+
 	byte channel = (byte)(b & 0x0F);
-	if ((b & 0xFFF0) == 0x07B0) {
-		// Adjust volume changes by master volume
-		byte volume = (byte)((b >> 16) & 0x7F);
-		_channelVolume[channel] = volume;
-		volume = volume * _masterVolume / 255;
-		b = (b & 0xFF00FFFF) | (volume << 16);
-	} else if ((b & 0xFFF0) == 0x007BB0) {
-		// Only respond to All Notes Off if this channel
-		// has currently been allocated
-		if (!_channel[b & 0x0F])
-			return;
-	}
-
-	if (!_channel[channel])
-		_channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
-
-	if (_channel[channel]) {
-		_channel[channel]->send(b);
-
+	if (_channelsTable[channel]) {
 		if ((b & 0xFFF0) == 0x0079B0) {
 			// We've just Reset All Controllers, so we need to
 			// re-adjust the volume. Otherwise, volume is reset to
 			// default whenever the music changes.
-			_channel[channel]->send(0x000007B0 | (((_channelVolume[channel] * _masterVolume) / 255) << 16) | channel);
+			_channelsTable[channel]->send(0x000007B0 | (((_channelsVolume[channel] * _masterVolume) / 255) << 16) | channel);
 		}
-	}
-}
-
-void MidiMusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
-	switch (type) {
-	case 0x2F:	// End of Track
-		if (_looping)
-			_parser->jumpToTick(0);
-		else
-			stop();
-		break;
-	default:
-		//warning("Unhandled meta event: %02x", type);
-		break;
 	}
 }
 
@@ -522,18 +477,8 @@ void MidiMusicPlayer::playXMIDI(byte *midiData, uint32 size, bool loop) {
 
 		_parser = parser;
 
-		_looping = loop;
+		_isLooping = loop;
 		_isPlaying = true;
-	}
-}
-
-void MidiMusicPlayer::stop() {
-	Common::StackLock lock(_mutex);
-
-	_isPlaying = false;
-	if (_parser) {
-		_parser->unloadMusic();
-		_parser = NULL;
 	}
 }
 

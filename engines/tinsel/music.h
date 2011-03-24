@@ -28,11 +28,12 @@
 #ifndef TINSEL_MUSIC_H
 #define TINSEL_MUSIC_H
 
-#include "audio/mididrv.h"
-#include "audio/midiparser.h"
+#include "audio/midiplayer.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/mutex.h"
+
+class MidiParser;
 
 namespace Tinsel {
 
@@ -60,27 +61,21 @@ SCNHANDLE GetTrackOffset(int trackNumber);
 
 void dumpMusic();
 
-class MidiMusicPlayer : public MidiDriver_BASE {
+class MidiMusicPlayer : public Audio::MidiPlayer {
 public:
 	MidiMusicPlayer();
 	~MidiMusicPlayer();
 
-	bool isPlaying() { return _isPlaying; }
-	void setPlaying(bool playing) { _isPlaying = playing; }
-
-	void setVolume(int volume);
-	int getVolume() { return _masterVolume; }
+	virtual void setVolume(int volume);
 
 	void playXMIDI(byte *midiData, uint32 size, bool loop);
 
-	void stop();
+//	void stop();
 	void pause();
 	void resume();
-	void setLoop(bool loop) { _looping = loop; }
 
 	// MidiDriver_BASE interface implementation
 	virtual void send(uint32 b);
-	virtual void metaEvent(byte type, byte *data, uint16 length);
 
 	// The original sets the "sequence timing" to 109 Hz, whatever that
 	// means. The default is 120.
@@ -90,17 +85,7 @@ protected:
 
 	static void onTimer(void *data);
 
-	MidiParser *_parser;
-	Common::Mutex _mutex;
-
-	MidiChannel *_channel[16];
-	MidiDriver *_driver;
 	MidiParser *_xmidiParser;
-	byte _channelVolume[16];
-
-	bool _isPlaying;
-	bool _looping;
-	byte _masterVolume;
 };
 
 class PCMMusicPlayer : public Audio::AudioStream {
