@@ -28,7 +28,7 @@
 #ifndef MADE_MUSIC_H
 #define MADE_MUSIC_H
 
-#include "audio/mididrv.h"
+#include "audio/midiplayer.h"
 #include "audio/midiparser.h"
 #include "common/mutex.h"
 
@@ -41,48 +41,28 @@ enum MusicFlags {
 	MUSIC_LOOP = 1
 };
 
-class MusicPlayer : public MidiDriver_BASE {
+class MusicPlayer : public Audio::MidiPlayer {
 public:
 	MusicPlayer();
 	~MusicPlayer();
 
-	bool isPlaying() const { return _isPlaying; }
-	void setPlaying(bool playing) { _isPlaying = playing; }
-
-	void setVolume(int volume);
-	int getVolume() const { return _masterVolume; }
-
-	bool hasNativeMT32() const { return _nativeMT32; }
 	void playXMIDI(GenericResource *midiResource, MusicFlags flags = MUSIC_NORMAL);
 	void playSMF(GenericResource *midiResource, MusicFlags flags = MUSIC_NORMAL);
-	void stop();
+//	void stop();
 	void pause();
 	void resume();
-	void setLoop(bool loop) { _looping = loop; }
 
 	void setGM(bool isGM) { _isGM = isGM; }
 
 	// MidiDriver_BASE interface implementation
 	virtual void send(uint32 b);
-	virtual void metaEvent(byte type, byte *data, uint16 length);
 
 protected:
 
 	static void onTimer(void *data);
 
-	MidiParser *_parser;
-	Common::Mutex _mutex;
-
-	MidiChannel *_channel[16];
-	MidiDriver *_driver;
 	MidiParser *_xmidiParser, *_smfParser;
-	byte _channelVolume[16];
-	bool _nativeMT32;
 	bool _isGM;
-
-	bool _isPlaying;
-	bool _looping;
-	byte _masterVolume;
 };
 
 } // End of namespace Made
