@@ -72,6 +72,8 @@ public:
 	};
 
 private:
+	void parseGrimFileTable();
+	void parseMonkey4FileTable();
 
 	Common::File *_f;
 	typedef Common::HashMap<Common::String, LabEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> LabMap;

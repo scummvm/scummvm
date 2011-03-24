@@ -26,6 +26,7 @@
 #include "common/endian.h"
 #include "common/file.h"
 
+#include "engines/grim/grim.h"
 #include "engines/grim/lab.h"
 #include "engines/grim/lua/lua.h"
 
@@ -40,28 +41,37 @@ bool Lab::open(const Common::String &filename) {
 	if (!_f->open(filename))
 		return false;
 
-	char header[16];
-	_f->read(header, sizeof(header));
-	if (READ_BE_UINT32(header) != MKID_BE('LABN')) {
+	if (_f->readUint32BE() != MKID_BE('LABN')) {
 		close();
 		return false;
 	}
 
-	uint32 entryCount = READ_LE_UINT32(header + 8);
+	_f->readUint32LE(); // version
 
-	int string_table_size = READ_LE_UINT32(header + 12);
-	char *string_table = new char[string_table_size];
+	if (g_grim->getGameType() == GType_GRIM)
+		parseGrimFileTable();
+	else
+		parseMonkey4FileTable();
+
+	return true;
+}
+
+void Lab::parseGrimFileTable() {
+	uint32 entryCount = _f->readUint32LE();
+	uint32 stringTableSize = _f->readUint32LE();
+
+	char *stringTable = new char[stringTableSize];
 	_f->seek(16 * (entryCount + 1));
-	_f->read(string_table, string_table_size);
+	_f->read(stringTable, stringTableSize);
 	_f->seek(16);
 
 	for (uint32 i = 0; i < entryCount; i++) {
-		int fname_offset = _f->readUint32LE();
+		int fnameOffset = _f->readUint32LE();
 		int start = _f->readUint32LE();
 		int size = _f->readUint32LE();
 		_f->readUint32LE();
 
-		Common::String fname = string_table + fname_offset;
+		Common::String fname = stringTable + fnameOffset;
 
 		LabEntry entry;
 		entry.offset = start;
@@ -70,8 +80,40 @@ bool Lab::open(const Common::String &filename) {
 		_entries[fname] = entry;
 	}
 
-	delete[] string_table;
-	return true;
+	delete[] stringTable;
+}
+
+void Lab::parseMonkey4FileTable() {
+	uint32 entryCount = _f->readUint32LE();
+	uint32 stringTableSize = _f->readUint32LE();
+	uint32 stringTableOffset = _f->readUint32LE() - 0x13d0f;
+
+	char *stringTable = new char[stringTableSize];
+	_f->seek(stringTableOffset);
+	_f->read(stringTable, stringTableSize);
+	_f->seek(20);
+
+	// Decrypt the string table
+	for (uint32 i = 0; i < stringTableSize; i++)
+		if (stringTable[i] != 0)
+			stringTable[i] ^= 0x96;
+
+	for (uint32 i = 0; i < entryCount; i++) {
+		int fnameOffset = _f->readUint32LE();
+		int start = _f->readUint32LE();
+		int size = _f->readUint32LE();
+		_f->readUint32LE();
+
+		Common::String fname = stringTable + fnameOffset;
+
+		LabEntry entry;
+		entry.offset = start;
+		entry.len = size;
+
+		_entries[fname] = entry;
+	}
+
+	delete[] stringTable;
 }
 
 bool Lab::fileExists(const Common::String &filename) const {
