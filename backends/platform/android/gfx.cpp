@@ -710,7 +710,9 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 		WRITE_UINT16(p, READ_UINT16(p) | 1);
 
 		_mouse_keycolor = keycolor;
-		WRITE_UINT16(_mouse_texture_palette->palette() + keycolor * 2, 0);
+
+		p = _mouse_texture_palette->palette() + _mouse_keycolor * 2;
+		WRITE_UINT16(p, READ_UINT16(p) & ~1);
 	}
 
 	if (w == 0 || h == 0)
@@ -761,7 +763,8 @@ void OSystem_Android::setCursorPaletteInternal(const byte *colors,
 	for (uint i = 0; i < num; ++i, colors += 3, p += 2)
 		WRITE_UINT16(p, pf.RGBToColor(colors[0], colors[1], colors[2]));
 
-	WRITE_UINT16(_mouse_texture_palette->palette() + _mouse_keycolor * 2, 0);
+	p = _mouse_texture_palette->palette() + _mouse_keycolor * 2;
+	WRITE_UINT16(p, READ_UINT16(p) & ~1);
 }
 
 void OSystem_Android::setCursorPalette(const byte *colors,
@@ -804,7 +807,8 @@ void OSystem_Android::disableCursorPalette(bool disable) {
 			WRITE_UINT16(dst, pf_dst.RGBToColor(r, g, b));
 		}
 
-		WRITE_UINT16(_mouse_texture_palette->palette() + _mouse_keycolor * 2, 0);
+		byte *p = _mouse_texture_palette->palette() + _mouse_keycolor * 2;
+		WRITE_UINT16(p, READ_UINT16(p) & ~1);
 	}
 
 	_use_mouse_palette = !disable;
