@@ -318,6 +318,12 @@ struct ListTable : public SegmentObjTable<List> {
 /* HunkTable */
 struct HunkTable : public SegmentObjTable<Hunk> {
 	HunkTable() : SegmentObjTable<Hunk>(SEG_TYPE_HUNK) {}
+	virtual ~HunkTable() {
+		for (uint i = 0; i < _table.size(); i++) {
+			if (isValidEntry(i))
+				freeEntryContents(i);
+		}
+	}
 
 	void freeEntryContents(int idx) {
 		free(_table[idx].mem);
