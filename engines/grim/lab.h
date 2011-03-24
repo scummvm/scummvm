@@ -26,6 +26,8 @@
 #ifndef GRIM_LAB_H
 #define GRIM_LAB_H
 
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 #include "common/str.h"
 
 namespace Common {
@@ -52,32 +54,29 @@ private:
 
 class Lab {
 public:
-	Lab() : _f(NULL), _entries(NULL), _numEntries(0) { }
-	Lab(const char *filename) : _f(NULL), _entries(NULL), _numEntries(0) { open(filename); }
-	bool open(const char *filename);
+	Lab() : _f(NULL) { }
+
+	bool open(const Common::String &filename);
 	bool isOpen() const;
 	void close();
-	bool fileExists(const char *filename) const;
-	Block *getFileBlock(const char *filename) const;
-	Common::File *openNewStreamFile(const char *filename) const;
-	LuaFile *openNewStreamLua(const char *filename) const;
-	int fileLength(const char *filename) const;
+	bool fileExists(const Common::String &filename) const;
+	Block *getFileBlock(const Common::String &filename) const;
+	Common::File *openNewStreamFile(const Common::String &filename) const;
+	LuaFile *openNewStreamLua(const Common::String &filename) const;
+	int fileLength(const Common::String &filename) const;
 
 	~Lab() { close(); }
 
 	struct LabEntry {
 		int offset, len;
-		char *filename;
 	};
 
 private:
 
 	Common::File *_f;
-	LabEntry *_entries;
+	typedef Common::HashMap<Common::String, LabEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> LabMap;
+	LabMap _entries;
 	Common::String _labFileName;
-	int _numEntries;
-
-	LabEntry *findFilename(const char *filename) const;
 };
 
 } // end of namespace Grim

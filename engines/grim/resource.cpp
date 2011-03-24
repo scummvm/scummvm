@@ -58,8 +58,9 @@ ResourceLoader::ResourceLoader() {
 
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 		const Common::String filename = (*x)->getName();
-		l = new Lab(filename.c_str());
-		if (l->isOpen()) {
+		l = new Lab();
+
+		if (l->open(filename)) {
 			if (filename.equalsIgnoreCase("data005.lab"))
 				_labs.push_front(l);
 			else
@@ -77,8 +78,9 @@ ResourceLoader::ResourceLoader() {
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 			const Common::String filename = (*x)->getName();
-			l = new Lab(filename.c_str());
-			if (l->isOpen()) {
+			l = new Lab();
+
+			if (l->open(filename)) {
 				_labs.push_back(l);
 				lab_counter++;
 			} else {

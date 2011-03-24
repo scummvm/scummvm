@@ -31,17 +31,13 @@
 
 namespace Grim {
 
-static int sortCallback(const void *entry1, const void *entry2) {
-	return strcasecmp(((Lab::LabEntry *)entry1)->filename, ((Lab::LabEntry *)entry2)->filename);
-}
-
-bool Lab::open(const char *filename) {
+bool Lab::open(const Common::String &filename) {
 	_labFileName = filename;
 
 	close();
+
 	_f = new Common::File();
-	_f->open(filename);
-	if (!_f->isOpen())
+	if (!_f->open(filename))
 		return false;
 
 	char header[16];
@@ -51,64 +47,60 @@ bool Lab::open(const char *filename) {
 		return false;
 	}
 
-	_numEntries = READ_LE_UINT32(header + 8);
+	uint32 entryCount = READ_LE_UINT32(header + 8);
+
 	int string_table_size = READ_LE_UINT32(header + 12);
-
 	char *string_table = new char[string_table_size];
-	_f->seek(16 * (_numEntries + 1), SEEK_SET);
+	_f->seek(16 * (entryCount + 1));
 	_f->read(string_table, string_table_size);
+	_f->seek(16);
 
-	_entries = new LabEntry[_numEntries];
-	_f->seek(16, SEEK_SET);
-	char binary_entry[16];
-	for (int i = 0; i < _numEntries; i++) {
-		_f->read(binary_entry, 16);
-		int fname_offset = READ_LE_UINT32(binary_entry);
-		int start = READ_LE_UINT32(binary_entry + 4);
-		int size = READ_LE_UINT32(binary_entry + 8);
+	for (uint32 i = 0; i < entryCount; i++) {
+		int fname_offset = _f->readUint32LE();
+		int start = _f->readUint32LE();
+		int size = _f->readUint32LE();
+		_f->readUint32LE();
 
 		Common::String fname = string_table + fname_offset;
-		fname.toLowercase();
 
-		_entries[i].offset = start;
-		_entries[i].len = size;
-		_entries[i].filename = new char[fname.size() + 1];
-		strcpy(_entries[i].filename, fname.c_str());
+		LabEntry entry;
+		entry.offset = start;
+		entry.len = size;
+
+		_entries[fname] = entry;
 	}
-
-	qsort(_entries, _numEntries, sizeof(LabEntry), sortCallback);
 
 	delete[] string_table;
 	return true;
 }
 
-bool Lab::fileExists(const char *filename) const {
-	return findFilename(filename) != NULL;
+bool Lab::fileExists(const Common::String &filename) const {
+	return _entries.contains(filename);
 }
 
 bool Lab::isOpen() const {
 	return _f && _f->isOpen();
 }
 
-Block *Lab::getFileBlock(const char *filename) const {
-	LabEntry *i = findFilename(filename);
-	if (!i)
-		return NULL;
+Block *Lab::getFileBlock(const Common::String &filename) const {
+	if (!fileExists(filename))
+		return 0;
 
-	_f->seek(i->offset, SEEK_SET);
-	char *data = new char[i->len];
-	_f->read(data, i->len);
-	return new Block(data, i->len);
+	const LabEntry &i = _entries[filename];
+
+	_f->seek(i.offset, SEEK_SET);
+	char *data = new char[i.len];
+	_f->read(data, i.len);
+	return new Block(data, i.len);
 }
 
-LuaFile *Lab::openNewStreamLua(const char *filename) const {
-	LabEntry *i = findFilename(filename);
-	if (!i)
-		return NULL;
+LuaFile *Lab::openNewStreamLua(const Common::String &filename) const {
+	if (!fileExists(filename))
+		return 0;
 
 	Common::File *file = new Common::File();
 	file->open(_labFileName);
-	file->seek(i->offset, SEEK_SET);
+	file->seek(_entries[filename].offset, SEEK_SET);
 
 	LuaFile *filehandle = new LuaFile();
 	filehandle->_in = file;
@@ -116,47 +108,29 @@ LuaFile *Lab::openNewStreamLua(const char *filename) const {
 	return filehandle;
 }
 
-Common::File *Lab::openNewStreamFile(const char *filename) const {
-	Common::File *file;
-	LabEntry *i = findFilename(filename);
-	if (!i)
-		return NULL;
+Common::File *Lab::openNewStreamFile(const Common::String &filename) const {
+	if (!fileExists(filename))
+		return 0;
 
-	file = new Common::File();
-	file->open(_labFileName.c_str());
-	file->seek(i->offset, SEEK_SET);
+	Common::File *file = new Common::File();
+	file->open(_labFileName);
+	file->seek(_entries[filename].offset, SEEK_SET);
 
 	return file;
 }
 
-int Lab::fileLength(const char *filename) const {
-	LabEntry *i = findFilename(filename);
-	if (!i)
+int Lab::fileLength(const Common::String &filename) const {
+	if (!fileExists(filename))
 		return -1;
 
-	return i->len;
-}
-
-Lab::LabEntry *Lab::findFilename(const char *filename) const {
-	LabEntry key;
-
-	Common::String s = filename;
-	s.toLowercase();
-	key.filename = (char *)s.c_str();
-
-	return (Lab::LabEntry *)bsearch(&key, _entries, _numEntries, sizeof(LabEntry), sortCallback);
+	return _entries[filename].len;
 }
 
 void Lab::close() {
 	delete _f;
 	_f = NULL;
-	if (_entries)
-		for (int i = 0; i < _numEntries; i++)
-			delete[] _entries[i].filename;
 
-	delete[] _entries;
-	_entries = NULL;
-	_numEntries = 0;
+	_entries.clear();
 }
 
 } // end of namespace Grim
