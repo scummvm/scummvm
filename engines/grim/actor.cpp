@@ -129,36 +129,23 @@ void Actor::saveState(SaveGame *savedState) const {
 		savedState->writeLEUint32(0);
 	}
 
-	// This count is necessary because it happens that an actor can have some NULL costumes.
-	// A case i know of is when you climb the ties rope, then go somewhere else, the pigeon1
-	// actors will have NULL costumes.
-	int costumes = 0;
+	savedState->writeLESint32(_costumeStack.size());
 	for (Common::List<CostumePtr>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		const CostumePtr &c = *i;
-		if (c) {
-			++costumes;
+		savedState->writeCharString(c->filename());
+		Costume *pc = c->previousCostume();
+		int depth = 0;
+		while (pc) {
+			++depth;
+			pc = pc->previousCostume();
 		}
-	}
-
-	savedState->writeLESint32(costumes);
-	for (Common::List<CostumePtr>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
-		const CostumePtr &c = *i;
-		if (c) {
-			savedState->writeCharString(c->filename());
-			Costume *pc = c->previousCostume();
-			int depth = 0;
-			while (pc) {
-				++depth;
-				pc = pc->previousCostume();
-			}
-			savedState->writeLEUint32(depth);
-			pc = c->previousCostume();
-			for (int j = 0; j < depth; ++j) { //save the previousCostume hierarchy
-				savedState->writeCharString(pc->filename());
-				pc = pc->previousCostume();
-			}
-			c->saveState(savedState);
+		savedState->writeLEUint32(depth);
+		pc = c->previousCostume();
+		for (int j = 0; j < depth; ++j) { //save the previousCostume hierarchy
+			savedState->writeCharString(pc->filename());
+			pc = pc->previousCostume();
 		}
+		c->saveState(savedState);
 	}
 
 	savedState->writeLESint32(_turning);
@@ -837,6 +824,15 @@ void Actor::clearCostumes() {
 		popCostume();
 }
 
+void Actor::checkCostumes() {
+	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+		Costume *c = *i;
+		if (!c) {
+			i = _costumeStack.reverse_erase(i);
+		}
+	}
+}
+
 void Actor::setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw) {
 	if (!_costumeStack.empty()) {
 		_costumeStack.back()->setHead(joint1, joint2, joint3, maxRoll, maxPitch, maxYaw);
@@ -853,6 +849,10 @@ Costume *Actor::findCostume(const char *n) {
 }
 
 void Actor::update() {
+	// Remove any NULL costume from the stack.
+	// It can happen to have NULL costumes, especially on the demo.
+	checkCostumes();
+
 	// Snap actor to walkboxes if following them.  This might be
 	// necessary for example after activating/deactivating
 	// walkboxes, etc.
@@ -962,18 +962,16 @@ void Actor::update() {
 	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
 		// This check is needed or otherwise the Grim demo will crash when saying BANG to the ballon guy
-		if (c) {
-			c->setPosRotate(_pos, _pitch, _yaw, _roll);
-			if (_lookingMode) {
-				c->setLookAt(_lookAtVector, _lookAtRate);
-			}
-			c->update();
+		c->setPosRotate(_pos, _pitch, _yaw, _roll);
+		if (_lookingMode) {
+			c->setLookAt(_lookAtVector, _lookAtRate);
 		}
+		c->update();
 	}
 
 	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
-		if (c && _lookingMode) {
+		if (_lookingMode) {
 			c->moveHead();
 		}
 	}
@@ -985,9 +983,7 @@ void Actor::draw() {
 
 	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
-		if (c) {
-			c->setupTextures();
-		}
+		c->setupTextures();
 	}
 
 	if (!g_driver->isHardwareAccelerated() && g_grim->getFlagRefreshShadowMask()) {

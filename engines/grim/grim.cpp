@@ -1216,6 +1216,10 @@ void GrimEngine::saveActors(SaveGame *state) {
 	for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); ++i) {
 		Actor *a = i->_value;
 		state->writeLEUint32(actorId(a));
+		// This check is necessary because it happens that an actor can have some NULL costumes.
+		// A case i know of is when you climb the ties rope, then go somewhere else, the pigeon1
+		// actors will have NULL costumes.
+		a->checkCostumes();
 		a->saveState(state);
 	}
 

@@ -122,6 +122,7 @@ public:
 	void setCostume(const char *name);
 	void popCostume();
 	void clearCostumes();
+	void checkCostumes();
 	Costume *currentCostume() {
 		if (_costumeStack.empty())
 			return NULL;
