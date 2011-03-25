@@ -123,7 +123,10 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 			if (it->planeRect.left < 0) {
 				it->planeOffsetX = -it->planeRect.left;
 				it->planeRect.left = 0;
+			} else {
+				it->planeOffsetX = 0;
 			}
+
 			if (it->planeRect.top < 0)
 				it->planeRect.top = 0;
 			// We get bad plane-bottom in sq6
