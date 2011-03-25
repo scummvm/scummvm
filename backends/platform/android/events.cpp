@@ -366,7 +366,63 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		if (arg5 > 0)
 			e.synthetic = true;
 
-		e.kbd.ascii = arg3;
+		// map special keys to 'our' ascii codes
+		switch (e.kbd.keycode) {
+		case Common::KEYCODE_BACKSPACE:
+			e.kbd.ascii = Common::ASCII_BACKSPACE;
+			break;
+		case Common::KEYCODE_TAB:
+			e.kbd.ascii = Common::ASCII_TAB;
+			break;
+		case Common::KEYCODE_RETURN:
+			e.kbd.ascii = Common::ASCII_RETURN;
+			break;
+		case Common::KEYCODE_ESCAPE:
+			e.kbd.ascii = Common::ASCII_ESCAPE;
+			break;
+		case Common::KEYCODE_SPACE:
+			e.kbd.ascii = Common::ASCII_SPACE;
+			break;
+		case Common::KEYCODE_F1:
+			e.kbd.ascii = Common::ASCII_F1;
+			break;
+		case Common::KEYCODE_F2:
+			e.kbd.ascii = Common::ASCII_F2;
+			break;
+		case Common::KEYCODE_F3:
+			e.kbd.ascii = Common::ASCII_F3;
+			break;
+		case Common::KEYCODE_F4:
+			e.kbd.ascii = Common::ASCII_F4;
+			break;
+		case Common::KEYCODE_F5:
+			e.kbd.ascii = Common::ASCII_F5;
+			break;
+		case Common::KEYCODE_F6:
+			e.kbd.ascii = Common::ASCII_F6;
+			break;
+		case Common::KEYCODE_F7:
+			e.kbd.ascii = Common::ASCII_F7;
+			break;
+		case Common::KEYCODE_F8:
+			e.kbd.ascii = Common::ASCII_F8;
+			break;
+		case Common::KEYCODE_F9:
+			e.kbd.ascii = Common::ASCII_F9;
+			break;
+		case Common::KEYCODE_F10:
+			e.kbd.ascii = Common::ASCII_F10;
+			break;
+		case Common::KEYCODE_F11:
+			e.kbd.ascii = Common::ASCII_F11;
+			break;
+		case Common::KEYCODE_F12:
+			e.kbd.ascii = Common::ASCII_F12;
+			break;
+		default:
+			e.kbd.ascii = arg3;
+			break;
+		}
 
 		if (arg4 & JMETA_SHIFT)
 			e.kbd.flags |= Common::KBD_SHIFT;
