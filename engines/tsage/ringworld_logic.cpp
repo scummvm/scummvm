@@ -122,6 +122,7 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	// Scene 7300: Discussion with Lord Poria
 	case 7300: return new Scene7300();
 	case 7600: return new Scene7600();
+	case 7700: return new Scene7700();
 
 	/* Scene group 10 */
 

@@ -406,6 +406,7 @@ public:
 
 	bool contains(const Common::Point &pt);
 	void setBounds(const Rect &newBounds) { _bounds = newBounds; }
+	void setBounds(const int ys, const int xe, const int ye, const int xs) { _bounds = Rect(MIN(xs, xe), MIN(ys, ye), MAX(xs, xe), MAX(ys, ye)); }
 	static void display(int resNum, int lineNum, ...);
 	static void display2(int resNum, int lineNum) {
 		display(resNum, lineNum, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
@@ -418,6 +419,14 @@ public:
 
 	virtual Common::String getClassName() { return "SceneHotspot"; }
 	virtual void doAction(int action);
+};
+
+class SceneHotspot_2: public SceneHotspot {
+public:
+	int _field26, _field28;
+	SceneHotspot_2(): SceneHotspot() {}
+
+	virtual Common::String getClassName() { return "SceneHotspot2"; }
 };
 
 enum AnimateMode {ANIM_MODE_NONE = 0, ANIM_MODE_1 = 1, ANIM_MODE_2 = 2, ANIM_MODE_3 = 3,
@@ -550,6 +559,18 @@ public:
 		s.syncAsSint16LE(_state);
 	}
 	virtual Common::String getClassName() { return "SceneObjectExt"; }
+};
+
+class SceneObject3: public SceneObjectExt {
+public:
+	int _field88, _field8A;
+
+	virtual void synchronise(Serialiser &s) {
+		SceneObject::synchronise(s);
+		s.syncAsSint16LE(_field88);
+		s.syncAsSint16LE(_field8A);
+	}
+	virtual Common::String getClassName() { return "SceneObject3"; }
 };
 
 class SceneText: public SceneObject {

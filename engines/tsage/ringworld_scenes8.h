@@ -288,6 +288,186 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
+class Scene7700: public Scene {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action3: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action4: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action5: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action6: public Action {
+	public:
+		virtual void signal();
+	};
+
+	class Object1: public SceneObject3 {
+	public:
+		virtual void signal();
+		virtual void doAction(int action);
+	};
+	class Object3: public SceneObject3 {
+	public:
+		virtual void doAction(int action);
+	};
+	class Object7: public SceneObjectExt {
+	public:
+		virtual void doAction(int action);
+	};
+	class Object8: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Object9: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Object10: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Object11: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Object12: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+
+	/* Items */
+	class SceneHotspot1: public SceneHotspot {
+	public:
+		virtual void doAction(int action);
+	};
+	class SceneHotspot2: public SceneHotspot {
+	public:
+		virtual void doAction(int action);
+	};
+	class SceneHotspot3: public SceneHotspot {
+	public:
+		virtual void doAction(int action);
+	};
+	class SceneHotspot4: public SceneHotspot {
+	public:
+		virtual void doAction(int action);
+	};
+	class SceneHotspot5: public SceneHotspot {
+	public:
+		virtual void doAction(int action);
+	};
+	class SceneHotspot6: public SceneHotspot {
+	public:
+		virtual void doAction(int action);
+	};
+	class SceneItem7: public SceneItem {
+	public:
+		virtual void doAction(int action);
+	};
+	class SceneHotspot8: public SceneHotspot {
+	public:
+		virtual void doAction(int action);
+	};
+	class SceneHotspot9: public SceneHotspot {
+	public:
+		virtual void doAction(int action);
+	};
+	class SceneItem10: public SceneItem {
+	public:
+		virtual void doAction(int action);
+	};
+	class SceneHotspot11: public SceneHotspot_2 {
+	public:
+		virtual void doAction(int action);
+	};
+public:
+	SoundHandler _soundHandler;
+	SequenceManager _sequenceManager;
+	GfxButton _gfxButton;
+	SpeakerEText _speakerEText;
+	SpeakerQText _speakerQText;
+	Object1 _object1;
+	Object1 _object2;
+	Object3 _object3;
+	Object1 _object4;
+	Object1 _object5;
+	Object1 _object6;
+	Object7 _prof;
+	Object8 _object8;
+	Object9 _object9;
+	Object10 _object10;
+	Object11 _object11;
+	Object12 _object12;
+	SceneObject _object13;
+	SceneObject _object14;
+	SceneObject _object15;
+	SceneObject _object16;
+	SceneObject _object17;
+	SceneObject _object18;
+	SceneObject _object19;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+	Action5 _action5;
+	Action6 _action6;
+	SceneHotspot1  _sceneHotspot1;
+	SceneHotspot2  _sceneHotspot2;
+	SceneHotspot3  _sceneHotspot3;
+	SceneHotspot4  _sceneHotspot4;
+	SceneHotspot5  _sceneHotspot5;
+	SceneHotspot6  _sceneHotspot6;
+	SceneItem7  _sceneItem7;
+	SceneHotspot8  _sceneHotspot8;
+	SceneHotspot9  _sceneHotspot9;
+	SceneItem10 _sceneItem10;
+	SceneHotspot11 _sceneHotspot11;
+	SceneHotspot11 _sceneHotspot12;
+	SceneHotspot11 _sceneHotspot13;
+	SceneHotspot11 _sceneHotspot14;
+	SceneHotspot11 _sceneHotspot15;
+	SceneHotspot11 _sceneHotspot16;
+	SceneHotspot11 _sceneHotspot17;
+	SceneHotspot11 _sceneHotspot18;
+	SceneHotspot11 _sceneHotspot19;
+	SceneHotspot11 _sceneHotspot20;
+	SceneHotspot11 _sceneHotspot21;
+	SceneHotspot11 _sceneHotspot22;
+	SceneHotspot11 _sceneHotspot23;
+	SceneHotspot11 _sceneHotspot24;
+	SceneHotspot11 _sceneHotspot25;
+	SceneHotspot11 _sceneHotspot26;
+	SceneHotspot11 _sceneHotspot27;
+	SceneHotspot11 _sceneHotspot28;
+	SceneHotspot11 _sceneHotspot29;
+	SceneHotspot11 _sceneHotspot30;
+	SceneHotspot11 _sceneHotspot31;
+	SceneHotspot11 _sceneHotspot32;
+	SceneHotspot11 _sceneHotspot33;
+	SceneHotspot11 _sceneHotspot34;
+	SceneHotspot11 _sceneHotspot35;
+	SceneHotspot11 _sceneHotspot36;
+	int _field977, _field979, _field97B;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
 } // End of namespace tSage
 
 #endif
