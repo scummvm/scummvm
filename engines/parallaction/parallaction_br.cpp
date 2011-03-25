@@ -61,9 +61,7 @@ Common::Error Parallaction_br::init() {
 			_disk = new DosDisk_br(this);
 		}
 		_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
-		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-		MidiDriver *driver = MidiDriver::createMidi(dev);
-		_soundManI = new DosSoundMan_br(this, driver);
+		_soundManI = new DosSoundMan_br(this);
 	} else {
 		_disk = new AmigaDisk_br(this);
 		_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.

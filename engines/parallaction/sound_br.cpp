@@ -204,7 +204,7 @@ MidiParser *createParser_MSC() {
 class MidiPlayer_MSC : public Audio::MidiPlayer {
 public:
 
-	MidiPlayer_MSC(MidiDriver *driver);
+	MidiPlayer_MSC();
 	~MidiPlayer_MSC();
 
 	void play(Common::SeekableReadStream *stream);
@@ -227,9 +227,11 @@ private:
 
 
 
-MidiPlayer_MSC::MidiPlayer_MSC(MidiDriver *driver)
+MidiPlayer_MSC::MidiPlayer_MSC()
 	: _midiData(0), _paused(false) {
-	_driver = driver;
+
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_driver = MidiDriver::createMidi(dev);
 	assert(_driver);
 
 	int ret = _driver->open();
@@ -333,8 +335,8 @@ void MidiPlayer_MSC::timerCallback(void *p) {
 	player->updateTimer();
 }
 
-DosSoundMan_br::DosSoundMan_br(Parallaction_br *vm, MidiDriver *driver) : SoundMan_br(vm) {
-	_midiPlayer = new MidiPlayer_MSC(driver);
+DosSoundMan_br::DosSoundMan_br(Parallaction_br *vm) : SoundMan_br(vm) {
+	_midiPlayer = new MidiPlayer_MSC();
 	assert(_midiPlayer);
 }
 

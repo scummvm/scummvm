@@ -42,7 +42,7 @@ namespace Parallaction {
 class MidiPlayer : public Audio::MidiPlayer {
 public:
 
-	MidiPlayer(MidiDriver *driver);
+	MidiPlayer();
 	~MidiPlayer();
 
 	void play(Common::SeekableReadStream *stream);
@@ -57,10 +57,12 @@ private:
 	bool _paused;
 };
 
-MidiPlayer::MidiPlayer(MidiDriver *driver)
+MidiPlayer::MidiPlayer()
 	: _midiData(0), _paused(false) {
-	assert(driver);
-	_driver = driver;
+
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_driver = MidiDriver::createMidi(dev);
+	assert(_driver);
 
 	int ret = _driver->open();
 	if (ret == 0) {
@@ -137,8 +139,8 @@ void MidiPlayer::timerCallback(void *p) {
 	player->updateTimer();
 }
 
-DosSoundMan_ns::DosSoundMan_ns(Parallaction_ns *vm, MidiDriver *midiDriver) : SoundMan_ns(vm), _playing(false) {
-	_midiPlayer = new MidiPlayer(midiDriver);
+DosSoundMan_ns::DosSoundMan_ns(Parallaction_ns *vm) : SoundMan_ns(vm), _playing(false) {
+	_midiPlayer = new MidiPlayer();
 }
 
 DosSoundMan_ns::~DosSoundMan_ns() {

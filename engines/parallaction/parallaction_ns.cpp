@@ -166,9 +166,7 @@ Common::Error Parallaction_ns::init() {
 	_disk->init();
 
 	if (getPlatform() == Common::kPlatformPC) {
-		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-		MidiDriver *driver = MidiDriver::createMidi(dev);
-		_soundManI = new DosSoundMan_ns(this, driver);
+		_soundManI = new DosSoundMan_ns(this);
 		_soundManI->setMusicVolume(ConfMan.getInt("music_volume"));
 	} else {
 		_soundManI = new AmigaSoundMan_ns(this);
