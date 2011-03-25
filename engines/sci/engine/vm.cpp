@@ -270,24 +270,6 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 #define PUSH32(a) (*(validate_stack_addr(s, (s->xs->sp)++)) = (a))
 #define POP32() (*(validate_stack_addr(s, --(s->xs->sp))))
 
-bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
-	if (_debugState._activeBreakpointTypes & BREAK_EXPORT) {
-		uint32 bpaddress = (script << 16 | pubfunct);
-
-		Common::List<Breakpoint>::const_iterator bp;
-		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
-			if (bp->type == BREAK_EXPORT && bp->address == bpaddress) {
-				_console->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
-				_debugState.debugging = true;
-				_debugState.breakpointWasHit = true;
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
-
 ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackPtr sp, reg_t calling_obj, uint16 argc, StackPtr argp) {
 	int seg = s->_segMan->getScriptSegment(script);
 	Script *scr = s->_segMan->getScriptIfLoaded(seg);
@@ -320,41 +302,6 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	return add_exec_stack_entry(s->_executionStack, make_reg(seg, temp), sp, calling_obj, argc, argp, -1, pubfunct, -1, calling_obj, s->_executionStack.size()-1, seg);
 }
 
-
-static void _exec_varselectors(EngineState *s) {
-	// Executes all varselector read/write ops on the TOS
-	while (!s->_executionStack.empty() && s->_executionStack.back().type == EXEC_STACK_TYPE_VARSELECTOR) {
-		ExecStack &xs = s->_executionStack.back();
-		reg_t *var = xs.getVarPointer(s->_segMan);
-		if (!var) {
-			error("Invalid varselector exec stack entry");
-		} else {
-			// varselector access?
-			if (xs.argc) { // write?
-				*var = xs.variables_argp[1];
-
-			} else // No, read
-				s->r_acc = *var;
-		}
-		s->_executionStack.pop_back();
-	}
-}
-
-/** This struct is used to buffer the list of send calls in send_selector() */
-struct CallsStruct {
-	reg_t addr_func;
-	reg_t varp_objp;
-	union {
-		reg_t func;
-		ObjVarRef var;
-	} address;
-	StackPtr argp;
-	int argc;
-	Selector selector;
-	StackPtr sp; /**< Stack pointer */
-	int type; /**< Same as ExecStack.type */
-};
-
 bool SciEngine::checkSelectorBreakpoint(BreakpointType breakpointType, reg_t send_obj, int selector) {
 	Common::String methodName = _gamestate->_segMan->getObjectName(send_obj);
 	methodName += ("::" + getKernel()->getSelectorName(selector));
@@ -368,6 +315,24 @@ bool SciEngine::checkSelectorBreakpoint(BreakpointType breakpointType, reg_t sen
 			return true;
 		}
 	}
+	return false;
+}
+
+bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
+	if (_debugState._activeBreakpointTypes & BREAK_EXPORT) {
+		uint32 bpaddress = (script << 16 | pubfunct);
+
+		Common::List<Breakpoint>::const_iterator bp;
+		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
+			if (bp->type == BREAK_EXPORT && bp->address == bpaddress) {
+				_console->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
+				_debugState.debugging = true;
+				_debugState.breakpointWasHit = true;
+				return true;
+			}
+		}
+	}
+
 	return false;
 }
 
@@ -441,6 +406,41 @@ void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr arg
 		break;
 	}	// switch
 }
+
+
+static void _exec_varselectors(EngineState *s) {
+	// Executes all varselector read/write ops on the TOS
+	while (!s->_executionStack.empty() && s->_executionStack.back().type == EXEC_STACK_TYPE_VARSELECTOR) {
+		ExecStack &xs = s->_executionStack.back();
+		reg_t *var = xs.getVarPointer(s->_segMan);
+		if (!var) {
+			error("Invalid varselector exec stack entry");
+		} else {
+			// varselector access?
+			if (xs.argc) { // write?
+				*var = xs.variables_argp[1];
+
+			} else // No, read
+				s->r_acc = *var;
+		}
+		s->_executionStack.pop_back();
+	}
+}
+
+/** This struct is used to buffer the list of send calls in send_selector() */
+struct CallsStruct {
+	reg_t addr_func;
+	reg_t varp_objp;
+	union {
+		reg_t func;
+		ObjVarRef var;
+	} address;
+	StackPtr argp;
+	int argc;
+	Selector selector;
+	StackPtr sp; /**< Stack pointer */
+	int type; /**< Same as ExecStack.type */
+};
 
 ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPtr sp, int framesize, StackPtr argp) {
 	// send_obj and work_obj are equal for anything but 'super'
