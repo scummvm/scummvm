@@ -41,7 +41,7 @@ namespace Hugo {
 
 class MidiPlayer : public Audio::MidiPlayer {
 public:
-	MidiPlayer(MidiDriver *driver);
+	MidiPlayer();
 	~MidiPlayer();
 
 	void pause(bool p);

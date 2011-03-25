@@ -47,8 +47,11 @@
 
 namespace Hugo {
 
-MidiPlayer::MidiPlayer(MidiDriver *driver)
+MidiPlayer::MidiPlayer()
 	: _midiData(0) {
+
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_driver = MidiDriver::createMidi(dev);
 	assert(_driver);
 	_paused = false;
 }
@@ -158,10 +161,7 @@ void MidiPlayer::timerCallback(void *p) {
 }
 
 SoundHandler::SoundHandler(HugoEngine *vm) : _vm(vm) {
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	MidiDriver *driver = MidiDriver::createMidi(dev);
-
-	_midiPlayer = new MidiPlayer(driver);
+	_midiPlayer = new MidiPlayer();
 	_speakerStream = new Audio::PCSpeaker(_vm->_mixer->getOutputRate());
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
 						_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
