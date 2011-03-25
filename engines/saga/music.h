@@ -29,6 +29,7 @@
 #define SAGA_MUSIC_H
 
 #include "audio/midiplayer.h"
+#include "audio/midiparser.h"
 #include "audio/mixer.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/vorbis.h"
