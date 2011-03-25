@@ -85,7 +85,7 @@ public:
 	 * This method is invoked by send() after suitably filtering
 	 * the message b.
 	 */
-	virtual void sendToChannel(byte channel, uint32 b);
+	virtual void sendToChannel(byte ch, uint32 b);
 
 	/**
 	 * This method is invoked by metaEvent when an end-of-track

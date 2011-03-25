@@ -75,32 +75,33 @@ void MidiPlayer::syncVolume() {
 
 
 void MidiPlayer::send(uint32 b) {
-	byte channel = (byte)(b & 0x0F);
+	byte ch = (byte)(b & 0x0F);
 	if ((b & 0xFFF0) == 0x07B0) {
 		// Adjust volume changes by master volume
 		byte volume = (byte)((b >> 16) & 0x7F);
-		_channelsVolume[channel] = volume;
+		_channelsVolume[ch] = volume;
 		volume = volume * _masterVolume / 255;
 		b = (b & 0xFF00FFFF) | (volume << 16);
 	} else if ((b & 0xFFF0) == 0x007BB0) {
 		// Only respond to All Notes Off if this channel
 		// has currently been allocated
-		if (!_channelsTable[channel])
+		if (!_channelsTable[ch])
 			return;
 	}
 
-	sendToChannel(channel, b);
+	sendToChannel(ch, b);
 }
 
-void MidiPlayer::sendToChannel(byte channel, uint32 b) {
-	if (!_channelsTable[channel]) {
-		_channelsTable[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+void MidiPlayer::sendToChannel(byte ch, uint32 b) {
+	if (!_channelsTable[ch]) {
+		_channelsTable[ch] = (ch == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
 		// TODO: Some engines overload this method to insert code at this
 		// point which calls the channel's volume() method.
 		// Does this make sense, and should we maybe do it in general?
 	}
-	if (_channelsTable[channel])
-		_channelsTable[channel]->send(b);
+	if (_channelsTable[ch]) {
+		_channelsTable[ch]->send(b);
+	}
 }
 
 void MidiPlayer::metaEvent(byte type, byte *data, uint16 length) {
