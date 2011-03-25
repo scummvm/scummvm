@@ -405,20 +405,6 @@ MidiMusicPlayer::MidiMusicPlayer() {
 
 		_driver->setTimerCallback(this, &onTimer);
 	}
-
-	_xmidiParser = MidiParser::createParser_XMIDI();
-}
-
-MidiMusicPlayer::~MidiMusicPlayer() {
-	_driver->setTimerCallback(NULL, NULL);
-	stop();
-	if (_driver) {
-		_driver->close();
-		delete _driver;
-		_driver = 0;
-	}
-	_xmidiParser->setMidiDriver(NULL);
-	delete _xmidiParser;
 }
 
 void MidiMusicPlayer::setVolume(int volume) {
@@ -441,15 +427,9 @@ void MidiMusicPlayer::send(uint32 b) {
 	}
 }
 
-void MidiMusicPlayer::onTimer(void *refCon) {
-	MidiMusicPlayer *music = (MidiMusicPlayer *)refCon;
-	Common::StackLock lock(music->_mutex);
-
-	if (music->_isPlaying)
-		music->_parser->onTimer();
-}
-
 void MidiMusicPlayer::playXMIDI(byte *midiData, uint32 size, bool loop) {
+	Common::StackLock lock(_mutex);
+
 	if (_isPlaying)
 		return;
 
@@ -467,8 +447,8 @@ void MidiMusicPlayer::playXMIDI(byte *midiData, uint32 size, bool loop) {
 
 	// Load XMID resource data
 
-	if (_xmidiParser->loadMusic(midiData, size)) {
-		MidiParser *parser = _xmidiParser;
+	MidiParser *parser = MidiParser::createParser_XMIDI();
+	if (parser->loadMusic(midiData, size)) {
 		parser->setTrack(0);
 		parser->setMidiDriver(this);
 		parser->setTimerRate(getBaseTempo());
@@ -479,6 +459,8 @@ void MidiMusicPlayer::playXMIDI(byte *midiData, uint32 size, bool loop) {
 
 		_isLooping = loop;
 		_isPlaying = true;
+	} else {
+		delete parser;
 	}
 }
 

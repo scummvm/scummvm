@@ -859,8 +859,6 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	_midiMusic = new MidiMusicPlayer();
 	_pcmMusic = new PCMMusicPlayer();
 
-	_musicVolume = ConfMan.getInt("music_volume");
-
 	_sound = new SoundManager(this);
 
 	_bmv = new BMVPlayer();

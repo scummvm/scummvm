@@ -219,9 +219,6 @@ public:
 	RectList _clipRects;
 
 private:
-	//MidiMusicPlayer *_midiMusic;
-	int _musicVolume;
-
 	void NextGameCycle();
 	void CreateConstProcesses();
 	void RestartGame();
