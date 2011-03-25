@@ -58,8 +58,6 @@ private:
 	static void timerCallback(void *p);
 
 	uint8 *_midiData;
-
-	static const uint8 _gmToRol[];
 };
 
 } // namespace Touche
