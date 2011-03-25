@@ -59,7 +59,7 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 
 	_backSurface = Kernel::getInstance()->getGfx()->getSurface();
 
-	// Datei laden
+	// Load file
 	byte *pFileData;
 	uint fileSize;
 	pFileData = pPackage->getFile(filename, &fileSize);
@@ -68,7 +68,7 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 		return;
 	}
 
-	// Bildeigenschaften bestimmen
+	// Determine image properties
 	int pitch;
 	if (!PNGLoader::imageProperties(pFileData, fileSize, _width, _height)) {
 		error("Could not read image properties.");
@@ -76,14 +76,14 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 		return;
 	}
 
-	// Das Bild dekomprimieren
+	// Uncompress the image
 	if (!PNGLoader::decodeImage(pFileData, fileSize, _data, _width, _height, pitch)) {
 		error("Could not decode image.");
 		delete[] pFileData;
 		return;
 	}
 
-	// Dateidaten freigeben
+	// Cleanup FileData
 	delete[] pFileData;
 
 	_doCleanup = true;
@@ -134,7 +134,7 @@ bool RenderedImage::fill(const Common::Rect *pFillRect, uint color) {
 // -----------------------------------------------------------------------------
 
 bool RenderedImage::setContent(const byte *pixeldata, uint size, uint offset, uint stride) {
-	// Überprüfen, ob PixelData ausreichend viele Pixel enthält um ein Bild der Größe Width * Height zu erzeugen
+	// Check if PixelData contains enough pixel to create an image with image size equals width * height
 	if (size < static_cast<uint>(_width * _height * 4)) {
 		error("PixelData vector is too small to define a 32 bit %dx%d image.", _width, _height);
 		return false;
@@ -198,11 +198,11 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 		srcImage.w = pPartRect->right - pPartRect->left;
 		srcImage.h = pPartRect->bottom - pPartRect->top;
 
-		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, 
+		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping,
 			pPartRect->left,  pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
 	} else {
 
-		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, 0, 0, 
+		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, 0, 0,
 			srcImage.w, srcImage.h, color, width, height);
 	}
 
@@ -324,7 +324,7 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 			ino += inoStep;
 		}
 
-		g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(posX, posY), _backSurface->pitch, posX, posY, 
+		g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(posX, posY), _backSurface->pitch, posX, posY,
 			img->w, img->h);
 	}
 
@@ -413,7 +413,7 @@ int *RenderedImage::scaleLine(int size, int srcSize) {
 			distCtr -= 100;
 		}
 	}
-	
+
 	return v;
 }
 

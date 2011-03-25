@@ -218,7 +218,7 @@ bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize, byte *&unc
 	Common::MemoryReadStream *fileStr = new Common::MemoryReadStream(fileDataPtr, fileSize, DisposeAfterUse::NO);
 	Graphics::PNG *png = new Graphics::PNG();
 	if (!png->read(fileStr))	// the fileStr pointer, and thus pFileData will be deleted after this is done
-		error("Error while reading PNG image");	
+		error("Error while reading PNG image");
 
 	Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
 	Graphics::Surface *pngSurface = png->getSurface(format);
