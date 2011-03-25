@@ -3154,10 +3154,9 @@ bool Console::cmdBreakpointKernel(int argc, const char **argv) {
 }
 
 bool Console::cmdBreakpointFunction(int argc, const char **argv) {
-	// TODO/FIXME: Why does this accept 2 parameters (the high and the low part of the address)?"
 	if (argc != 3) {
 		DebugPrintf("Sets a breakpoint on the execution of the specified exported function.\n");
-		DebugPrintf("Usage: %s <addr1> <addr2>\n", argv[0]);
+		DebugPrintf("Usage: %s <script number> <export number\n", argv[0]);
 		return true;
 	}
 
@@ -3166,6 +3165,7 @@ bool Console::cmdBreakpointFunction(int argc, const char **argv) {
 	   A breakpoint set on an invalid method name will just never trigger. */
 	Breakpoint bp;
 	bp.type = BREAK_EXPORT;
+	// script number, export number
 	bp.address = (atoi(argv[1]) << 16 | atoi(argv[2]));
 
 	_debugState._breakpoints.push_back(bp);

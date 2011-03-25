@@ -34,18 +34,18 @@ namespace Sci {
 // These types are used both as identifiers and as elements of bitfields
 enum BreakpointType {
 	/**
-	 * Break when selector is executed. data contains (char *) selector name
+	 * Break when a selector is executed. Data contains (char *) selector name
 	 * (in the format Object::Method)
 	 */
-	BREAK_SELECTOREXEC = 1 << 0, // break when selector gets executed
-	BREAK_SELECTORREAD = 1 << 1, // break when selector gets executed
-	BREAK_SELECTORWRITE = 1 << 2, // break when selector gets executed
+	BREAK_SELECTOREXEC  = 1 << 0, // break when a function selector is executed
+	BREAK_SELECTORREAD  = 1 << 1, // break when a variable selector is read
+	BREAK_SELECTORWRITE = 1 << 2, // break when a variable selector is written
 
 	/**
-	 * Break when an exported function is called. data contains
+	 * Break when an exported function is called. Data contains
 	 * script_no << 16 | export_no.
 	 */
-	BREAK_EXPORT = 1 << 3
+	BREAK_EXPORT        = 1 << 3
 };
 
 struct Breakpoint {

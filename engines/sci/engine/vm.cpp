@@ -272,9 +272,7 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 
 bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
 	if (_debugState._activeBreakpointTypes & BREAK_EXPORT) {
-		uint32 bpaddress;
-
-		bpaddress = (script << 16 | pubfunct);
+		uint32 bpaddress = (script << 16 | pubfunct);
 
 		Common::List<Breakpoint>::const_iterator bp;
 		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
