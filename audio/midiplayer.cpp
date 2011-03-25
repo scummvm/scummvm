@@ -174,8 +174,8 @@ void MidiPlayer::stop() {
 
 void MidiPlayer::pause() {
 //	debugC(2, kDraciSoundDebugLevel, "Pausing track %d", _track);
-	setVolume(-1);	// FIXME: This should be 0, shouldn't it?
 	_isPlaying = false;
+	setVolume(-1);	// FIXME: This should be 0, shouldn't it?
 }
 
 void MidiPlayer::resume() {

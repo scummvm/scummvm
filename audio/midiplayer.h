@@ -69,6 +69,24 @@ public:
 	virtual void pause();
 	virtual void resume();
 
+	/**
+	 * Return whether there is currently any MIDI music playing.
+	 *
+	 * @todo There is a subtle difference between the semantics of this in
+	 *       various subclasses, related to paused music: Namely, should this
+	 *       function return true or false if a MIDI song is currently loaded,
+	 *       but paused? In the base implementation of pause/resume, "false"
+	 *       will be returned (that is, it is not possible to distinguish between
+	 *       nothing being played, and an active but paused MIDI tune).
+	 *       But in several subclasses (e.g. in HUGO), there is a separate _paused
+	 *       variable, which is used to pause playback, and for these, "true"
+	 *       will be returned.
+	 *       And in SAGA, isPlaying is overwritten to return the value
+	 *       of _parser->isPlaying() (which should amount to "true" in the
+	 *       described situation).
+	 *       We really should unify this and clearly define the desired
+	 *       semantics of this method.
+	 */
 	bool isPlaying() const { return _isPlaying; }
 
 	/**
