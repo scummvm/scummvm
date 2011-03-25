@@ -350,7 +350,7 @@ void MidiParser::hangAllActiveNotes() {
 		if (_next_event.command() == 0x8) {
 			if (temp_active[_next_event.basic.param1] & (1 << _next_event.channel())) {
 				hangingNote(_next_event.channel(), _next_event.basic.param1, (advance_tick - _position._last_event_tick) * _psec_per_tick, false);
-				temp_active[_next_event.basic.param1] &= ~ (1 << _next_event.channel());
+				temp_active[_next_event.basic.param1] &= ~(1 << _next_event.channel());
 			}
 		} else if (_next_event.event == 0xFF && _next_event.ext.type == 0x2F) {
 			// warning("MidiParser::hangAllActiveNotes(): Hit End of Track with active notes left");
