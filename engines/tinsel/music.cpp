@@ -388,22 +388,22 @@ void DeleteMidiBuffer() {
 
 MidiMusicPlayer::MidiMusicPlayer() {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	bool native_mt32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
+	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
 	//bool adlib = (MidiDriver::getMusicType(dev) == MT_ADLIB);
 
 	_driver = MidiDriver::createMidi(dev);
 	assert(_driver);
-	if (native_mt32)
+	if (_nativeMT32)
 		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
 	int ret = _driver->open();
 	if (ret == 0) {
-		if (native_mt32)
+		if (_nativeMT32)
 			_driver->sendMT32Reset();
 		else
 			_driver->sendGMReset();
 
-		_driver->setTimerCallback(this, &onTimer);
+		_driver->setTimerCallback(this, &timerCallback);
 	}
 }
 

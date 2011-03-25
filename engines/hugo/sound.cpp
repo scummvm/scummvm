@@ -47,58 +47,43 @@
 
 namespace Hugo {
 
-MidiPlayer::MidiPlayer()
-	: _midiData(0) {
-
+MidiPlayer::MidiPlayer() {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_driver = MidiDriver::createMidi(dev);
 	assert(_driver);
 	_paused = false;
-}
 
-MidiPlayer::~MidiPlayer() {
-	stop();
 
-	Common::StackLock lock(_mutex);
-	_driver->setTimerCallback(0, 0);
-	_driver->close();
-	delete _driver;
-	_driver = 0;
-	if (_parser)
-		_parser->setMidiDriver(0);
-	delete _parser;
+	int ret = _driver->open();
+	if (ret == 0) {
+		_driver->sendGMReset();
+
+		_driver->setTimerCallback(this, &timerCallback);
+	}
 }
 
 void MidiPlayer::play(uint8 *stream, uint16 size) {
 	debugC(3, kDebugMusic, "MidiPlayer::play");
-	if (!stream) {
-		stop();
-		return;
-	}
+
+	Common::StackLock lock(_mutex);
 
 	stop();
+	if (!stream)
+		return;
+
 	_midiData = (uint8 *)malloc(size);
 	if (_midiData) {
 		memcpy(_midiData, stream, size);
 
-		Common::StackLock lock(_mutex);
 		syncVolume();	// FIXME: syncVolume calls setVolume which in turn also locks the mutex! ugh
+
+		_parser = MidiParser::createParser_SMF();
 		_parser->loadMusic(_midiData, size);
 		_parser->setTrack(0);
+		_parser->setMidiDriver(this);
+		_parser->setTimerRate(_driver->getBaseTempo());
 		_isLooping = false;
 		_isPlaying = true;
-	}
-}
-
-void MidiPlayer::stop() {
-	debugC(3, kDebugMusic, "MidiPlayer::stop");
-
-	Common::StackLock lock(_mutex);
-	if (_isPlaying) {
-		_isPlaying = false;
-		_parser->unloadMusic();
-		free(_midiData);
-		_midiData = 0;
 	}
 }
 
@@ -112,32 +97,12 @@ void MidiPlayer::pause(bool p) {
 	}
 }
 
-void MidiPlayer::updateTimer() {
-	if (_paused) {
-		return;
-	}
-
+void MidiPlayer::onTimer() {
 	Common::StackLock lock(_mutex);
-	if (_isPlaying) {
+
+	if (!_paused && _isPlaying && _parser) {
 		_parser->onTimer();
 	}
-}
-
-int MidiPlayer::open() {
-	if (!_driver)
-		return 255;
-	int ret = _driver->open();
-	if (ret)
-		return ret;
-
-	_driver->sendGMReset();
-
-	_parser = MidiParser::createParser_SMF();
-	_parser->setMidiDriver(this);
-	_parser->setTimerRate(_driver->getBaseTempo());
-	_driver->setTimerCallback(this, &timerCallback);
-
-	return 0;
 }
 
 void MidiPlayer::sendToChannel(byte channel, uint32 b) {
@@ -153,12 +118,6 @@ void MidiPlayer::sendToChannel(byte channel, uint32 b) {
 		_channelsTable[channel]->send(b);
 }
 
-
-void MidiPlayer::timerCallback(void *p) {
-	MidiPlayer *player = (MidiPlayer *)p;
-
-	player->updateTimer();
-}
 
 SoundHandler::SoundHandler(HugoEngine *vm) : _vm(vm) {
 	_midiPlayer = new MidiPlayer();
@@ -263,7 +222,7 @@ void SoundHandler::playSound(int16 sound, const byte priority) {
  * Initialize for MCI sound and midi
  */
 void SoundHandler::initSound() {
-	_midiPlayer->open();
+	//_midiPlayer->open();
 }
 
 void SoundHandler::syncVolume() {

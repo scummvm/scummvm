@@ -47,11 +47,10 @@ namespace Audio {
  * should perform memory management on the MidiParser object(s) being
  * used, and possibly more.
  *
- * Also, care should be taken to ensure that mutex locking is done right;
- * currently, it isn't: That is, many engines have (and already had before
- * this class was introduced) various potential deadlocks hiding in their
- * MIDI code, caused by a thread trying to lock a mutex twice -- this may
- * work on some systems, but on others is a sure way towards a deadlock.
+ * Also, pause/resume handling should be unified (we provide an implementation,
+ * but several subclasses use different ones).
+ *
+ * Also, care should be taken to ensure that mutex locking is done right.
  *
  * @todo Document origin of this class. It is based on code shared by
  * several engines (e.g. DRACI says it copied it from MADE, which took
@@ -64,6 +63,7 @@ public:
 
 	// TODO: Implement ways to actually play stuff
 	//virtual void play(TODO);
+
 	// TODO: Document these
 	virtual void stop();
 	virtual void pause();
@@ -71,19 +71,42 @@ public:
 
 	bool isPlaying() const { return _isPlaying; }
 
+	/**
+	 * Return the currently active master volume, in the range 0-255.
+	 */
 	int getVolume() const { return _masterVolume; }
-	virtual void setVolume(int volume);	// FIXME: Overloaded by Tinsel
+
+	/**
+	 * Set the master volume to the specified value in the range 0-255.
+	 * (values outside this range are automatically clipped).
+	 * This may cause suitable MIDI events to be sent to active channels.
+	 *
+	 * @todo This method currently does not do anything if the new volume
+	 *       matches the old volume. But some engines always update the
+	 *       volume (Parallaction, Tinsel, Touche, ...). This is why
+	 *       this method is currently virtual. We really should figure
+	 *       which way to do it, and then make this the default, and make
+	 *       this method non-virtual again.
+	 */
+	virtual void setVolume(int volume);
+
+	/**
+	 * Update the volume according to the ConfMan's 'music_volume'
+	 * setting. also respects the 'mute' setting.
+	 */
 	void syncVolume();
 
+	// TODO: Document this
 	bool hasNativeMT32() const { return _nativeMT32; }
 
-	// MidiDriver_BASE interface
+	// MidiDriver_BASE implementation
 	virtual void send(uint32 b);
 	virtual void metaEvent(byte type, byte *data, uint16 length);
 
+protected:
 	/**
-	 * This method is invoked by send() after suitably filtering
-	 * the message b.
+	 * This method is invoked by the default send() implementation,
+	 * after suitably filtering the message b.
 	 */
 	virtual void sendToChannel(byte ch, uint32 b);
 
@@ -96,28 +119,46 @@ public:
 	 */
 	virtual void endOfTrack();
 
-protected:
-
-#if 0
-	// TODO: Start to make use of these, once we figured
-	// out the right way :)
-	static void onTimer(void *data);
+	// TODO: Document this
 	virtual void onTimer();
-#endif
+
+	static void timerCallback(void *data);
 
 	enum {
+		/**
+		 * The number of MIDI channels supported.
+		 */
 		kNumChannels = 16
 	};
 
 	Common::Mutex _mutex;
 	MidiDriver *_driver;
+
+	/**
+	 * A MidiParser instances, to be created by methods of a MidiPlayer
+	 * subclass.
+	 * @note The stop() method (and hence the destructor) invoke the
+	 * unloadMusic() method of _parser and then delete it.
+	 */
 	MidiParser *_parser;
+
+	/**
+	 * This is an (optional) pointer to a malloc'ed buffer containing
+	 * MIDI data used by _parser. The stop() method (and hence the
+	 * destructor) will free this if set.
+	 * Subclasses of this class may use _midiData, but don't have to
+	 */
+	byte *_midiData;
 
 	MidiChannel *_channelsTable[kNumChannels];
 	uint8 _channelsVolume[kNumChannels];
 
 	bool _isLooping;
 	bool _isPlaying;
+
+	/**
+	 * The master volume, in the range 0-255.
+	 */
 	int _masterVolume;	// FIXME: byte or int ?
 
 	bool _nativeMT32;

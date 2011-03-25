@@ -37,27 +37,18 @@ namespace Draci {
 class MusicPlayer : public Audio::MidiPlayer {
 public:
 	MusicPlayer(const char *pathMask);
-	~MusicPlayer();
 
 	void playSMF(int track, bool loop);
 	void stop();
-
-	void setGM(bool isGM) { _isGM = isGM; }
 
 	// Overload Audio::MidiPlayer method
 	virtual void sendToChannel(byte channel, uint32 b);
 
 protected:
-
-	static void onTimer(void *data);
-
-	MidiParser *_smfParser;
 	Common::String _pathMask;
 	bool _isGM;
 
 	int _track;
-
-	byte *_midiMusicData;
 };
 
 } // End of namespace Draci

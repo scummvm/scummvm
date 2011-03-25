@@ -34,7 +34,7 @@
 
 namespace M4 {
 
-MidiPlayer::MidiPlayer(MadsM4Engine *vm) : _vm(vm), _midiData(NULL), _isGM(false) {
+MidiPlayer::MidiPlayer(MadsM4Engine *vm) : _vm(vm), _isGM(false) {
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
@@ -44,26 +44,10 @@ MidiPlayer::MidiPlayer(MadsM4Engine *vm) : _vm(vm), _midiData(NULL), _isGM(false
 	if (_nativeMT32)
 		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	_parser = MidiParser::createParser_SMF();
-	_parser->setMidiDriver(this);
-	_parser->setTimerRate(_driver->getBaseTempo());
-
 	int ret = _driver->open();
-	if (ret == 0)
-		_driver->setTimerCallback(this, &onTimer);
-}
-
-MidiPlayer::~MidiPlayer() {
-	_driver->setTimerCallback(NULL, NULL);
-	_parser->setMidiDriver(NULL);
-	stop();
-	if (_driver) {
-		_driver->close();
-		delete _driver;
+	if (ret == 0) {
+		_driver->setTimerCallback(this, &timerCallback);
 	}
-	_driver = 0;
-	delete _parser;
-	free(_midiData);
 }
 
 void MidiPlayer::send(uint32 b) {
@@ -74,15 +58,9 @@ void MidiPlayer::send(uint32 b) {
 	Audio::MidiPlayer::send(b);
 }
 
-void MidiPlayer::onTimer(void *refCon) {
-	MidiPlayer *midi = (MidiPlayer *)refCon;
-	Common::StackLock lock(midi->_mutex);
-
-	if (midi->_isPlaying)
-		midi->_parser->onTimer();
-}
-
 void MidiPlayer::playMusic(const char *name, int32 vol, bool loop, int32 trigger, int32 scene) {
+	Common::StackLock lock(_mutex);
+
 	stop();
 
 	char fullname[144];
@@ -99,11 +77,10 @@ void MidiPlayer::playMusic(const char *name, int32 vol, bool loop, int32 trigger
 	_vm->res()->purge();
 
 	if (_midiData) {
-		/*
-		FILE *out = fopen("music.mid", "wb");
-		fwrite(_midiData, smfSize, 1, out);
-		fclose(out);
-		*/
+		_parser = MidiParser::createParser_SMF();
+		_parser->setMidiDriver(this);
+		_parser->setTimerRate(_driver->getBaseTempo());
+
 		_parser->loadMusic(_midiData, smfSize);
 		_parser->property(MidiParser::mpAutoLoop, loop);
 	}
@@ -111,20 +88,6 @@ void MidiPlayer::playMusic(const char *name, int32 vol, bool loop, int32 trigger
 	setVolume(255);
 
 	_isPlaying = true;
-}
-
-void MidiPlayer::stop() {
-	Common::StackLock lock(_mutex);
-
-	_isPlaying = false;
-	if (_parser) {
-		_parser->unloadMusic();
-	}
-
-	if (_midiData) {
-		free(_midiData);
-		_midiData = NULL;
-	}
 }
 
 // This function will convert HMP music into type 1 SMF, which our SMF parser

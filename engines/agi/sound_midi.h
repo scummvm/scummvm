@@ -28,6 +28,8 @@
 #ifndef AGI_SOUND_MIDI_H
 #define AGI_SOUND_MIDI_H
 
+#include "agi/sound.h"
+
 #include "audio/midiplayer.h"
 
 namespace Agi {
@@ -47,12 +49,11 @@ protected:
 class SoundGenMIDI : public SoundGen, public Audio::MidiPlayer {
 public:
 	SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer);
-	~SoundGenMIDI();
 
 	void play(int resnum);
+	// We must overload stop() here to implement the pure virtual
+	// stop() method of the SoundGen class.
 	void stop() { Audio::MidiPlayer::stop(); }
-
-	void setGM(bool isGM) { _isGM = isGM; }
 
 	// MidiDriver_BASE interface implementation
 	virtual void send(uint32 b);
@@ -62,13 +63,7 @@ public:
 	virtual void endOfTrack();
 
 private:
-
-	static void onTimer(void *data);
-
-	MidiParser *_smfParser;
 	bool _isGM;
-
-	byte *_midiMusicData;
 
 	SoundMgr *_manager;
 };

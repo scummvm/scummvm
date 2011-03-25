@@ -47,9 +47,6 @@ MusicPlayer::MusicPlayer() : _isGM(false) {
 	if (_nativeMT32)
 		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	_xmidiParser = MidiParser::createParser_XMIDI();
-	_smfParser = MidiParser::createParser_SMF();
-
 	int ret = _driver->open();
 	if (ret == 0) {
 		if (_nativeMT32)
@@ -57,22 +54,8 @@ MusicPlayer::MusicPlayer() : _isGM(false) {
 		else
 			_driver->sendGMReset();
 
-		_driver->setTimerCallback(this, &onTimer);
+		_driver->setTimerCallback(this, &timerCallback);
 	}
-}
-
-MusicPlayer::~MusicPlayer() {
-	_driver->setTimerCallback(NULL, NULL);
-	stop();
-	if (_driver) {
-		_driver->close();
-		delete _driver;
-		_driver = 0;
-	}
-	_xmidiParser->setMidiDriver(NULL);
-	_smfParser->setMidiDriver(NULL);
-	delete _xmidiParser;
-	delete _smfParser;
 }
 
 void MusicPlayer::send(uint32 b) {
@@ -83,15 +66,9 @@ void MusicPlayer::send(uint32 b) {
 	Audio::MidiPlayer::send(b);
 }
 
-void MusicPlayer::onTimer(void *refCon) {
-	MusicPlayer *music = (MusicPlayer *)refCon;
-	Common::StackLock lock(music->_mutex);
-
-	if (music->_isPlaying)
-		music->_parser->onTimer();
-}
-
 void MusicPlayer::playXMIDI(GenericResource *midiResource, MusicFlags flags) {
+	Common::StackLock lock(_mutex);
+
 	if (_isPlaying)
 		return;
 
@@ -101,8 +78,8 @@ void MusicPlayer::playXMIDI(GenericResource *midiResource, MusicFlags flags) {
 
 	_isGM = true;
 
-	if (_xmidiParser->loadMusic(midiResource->getData(), midiResource->getSize())) {
-		MidiParser *parser = _xmidiParser;
+	MidiParser *parser = MidiParser::createParser_XMIDI();
+	if (parser->loadMusic(midiResource->getData(), midiResource->getSize())) {
 		parser->setTrack(0);
 		parser->setMidiDriver(this);
 		parser->setTimerRate(_driver->getBaseTempo());
@@ -115,10 +92,14 @@ void MusicPlayer::playXMIDI(GenericResource *midiResource, MusicFlags flags) {
 
 		_isLooping = flags & MUSIC_LOOP;
 		_isPlaying = true;
+	} else {
+		delete parser;
 	}
 }
 
 void MusicPlayer::playSMF(GenericResource *midiResource, MusicFlags flags) {
+	Common::StackLock lock(_mutex);
+
 	if (_isPlaying)
 		return;
 
@@ -128,8 +109,8 @@ void MusicPlayer::playSMF(GenericResource *midiResource, MusicFlags flags) {
 
 	_isGM = true;
 
-	if (_smfParser->loadMusic(midiResource->getData(), midiResource->getSize())) {
-		MidiParser *parser = _smfParser;
+	MidiParser *parser = MidiParser::createParser_SMF();
+	if (parser->loadMusic(midiResource->getData(), midiResource->getSize())) {
 		parser->setTrack(0);
 		parser->setMidiDriver(this);
 		parser->setTimerRate(_driver->getBaseTempo());
@@ -141,6 +122,8 @@ void MusicPlayer::playSMF(GenericResource *midiResource, MusicFlags flags) {
 
 		_isLooping = flags & MUSIC_LOOP;
 		_isPlaying = true;
+	} else {
+		delete parser;
 	}
 }
 

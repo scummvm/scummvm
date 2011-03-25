@@ -42,23 +42,17 @@ namespace Hugo {
 class MidiPlayer : public Audio::MidiPlayer {
 public:
 	MidiPlayer();
-	~MidiPlayer();
 
 	void pause(bool p);
 	void play(uint8 *stream, uint16 size);
-	void stop();
-	void updateTimer();
 
-	int open();
 	uint32 getBaseTempo();
 
 	// Overload Audio::MidiPlayer method
 	virtual void sendToChannel(byte channel, uint32 b);
+	virtual void onTimer();
 
 private:
-	static void timerCallback(void *p);
-
-	uint8 *_midiData;
 	bool _paused;
 };
 

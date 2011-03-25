@@ -33,6 +33,7 @@ namespace Audio {
 MidiPlayer::MidiPlayer() :
 	_driver(0),
 	_parser(0),
+	_midiData(0),
 	_isLooping(false),
 	_isPlaying(false),
 	_masterVolume(0),
@@ -45,19 +46,29 @@ MidiPlayer::MidiPlayer() :
 }
 
 MidiPlayer::~MidiPlayer() {
-// TODO
+	// FIXME/TODO: In some engines, stop() was called first;
+	// in others, _driver->setTimerCallback(NULL, NULL) came first.
+	// Hopefully, this make no real difference, but we should
+	// watch out for regressions.
+	stop();
+
+	// Unhook & unload the driver
+	if (_driver) {
+		_driver->setTimerCallback(0, 0);
+		_driver->close();
+		delete _driver;
+		_driver = 0;
+	}
 }
 
 void MidiPlayer::setVolume(int volume) {
 	volume = CLIP(volume, 0, 255);
-
 	if (_masterVolume == volume)
 		return;
 
 	Common::StackLock lock(_mutex);
 
 	_masterVolume = volume;
-
 	for (int i = 0; i < kNumChannels; ++i) {
 		if (_channelsTable[i]) {
 			_channelsTable[i]->volume(_channelsVolume[i] * _masterVolume / 255);
@@ -123,8 +134,7 @@ void MidiPlayer::endOfTrack() {
 		stop();
 }
 
-#if 0
-void MidiPlayer::onTimer(void *data) {
+void MidiPlayer::timerCallback(void *data) {
 	assert(data);
 	((MidiPlayer *)data)->onTimer();
 }
@@ -132,20 +142,13 @@ void MidiPlayer::onTimer(void *data) {
 void MidiPlayer::onTimer() {
 	Common::StackLock lock(_mutex);
 
-	// FIXME: There are various alternatives for this function:
+	// TODO: Maybe we can replace _isPlaying
+	// by a simple check for "_parser != 0" ?
 
-#if 0
-	if (_parser) {
+	if (_isPlaying && _parser) {
 		_parser->onTimer();
 	}
-#elif 0
-	if (_isPlaying) {
-		assert(_parser);
-		_parser->onTimer();
-	}
-#endif
 }
-#endif
 
 
 void MidiPlayer::stop() {
@@ -154,8 +157,19 @@ void MidiPlayer::stop() {
 	_isPlaying = false;
 	if (_parser) {
 		_parser->unloadMusic();
+
+		// FIXME/TODO: The MidiParser destructor calls allNotesOff()
+		// but unloadMusic also does. To suppress double notes-off,
+		// we reset the midi driver of _parser before deleting it.
+		// This smells very fishy, in any case.
+		_parser->setMidiDriver(0);
+
+		delete _parser;
 		_parser = NULL;
 	}
+
+	free(_midiData);
+	_midiData = 0;
 }
 
 void MidiPlayer::pause() {

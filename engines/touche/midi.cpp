@@ -44,8 +44,7 @@ static const uint8 _gmToRol[256] = {
 };
 
 
-MidiPlayer::MidiPlayer()
-	: _midiData(0) {
+MidiPlayer::MidiPlayer() {
 
 	// FIXME: Necessary?
 	memset(_channelsVolume, 0, sizeof(_channelsVolume));
@@ -55,9 +54,6 @@ MidiPlayer::MidiPlayer()
 	_driver = MidiDriver::createMidi(dev);
 	int ret = _driver->open();
 	if (ret == 0) {
-		_parser = MidiParser::createParser_SMF();
-		_parser->setMidiDriver(this);
-		_parser->setTimerRate(_driver->getBaseTempo());
 		_driver->setTimerCallback(this, &timerCallback);
 
 		if (_nativeMT32)
@@ -67,42 +63,22 @@ MidiPlayer::MidiPlayer()
 	}
 }
 
-MidiPlayer::~MidiPlayer() {
-	stop();
-
-	Common::StackLock lock(_mutex);
-	_driver->setTimerCallback(NULL, NULL);
-	_driver->close();
-	delete _driver;
-	_driver = 0;
-	_parser->setMidiDriver(NULL);
-	delete _parser;
-}
-
 void MidiPlayer::play(Common::ReadStream &stream, int size, bool loop) {
+	Common::StackLock lock(_mutex);
+
 	stop();
-	_midiData = (uint8 *)malloc(size);
+	_midiData = (byte *)malloc(size);
 	if (_midiData) {
 		stream.read(_midiData, size);
 
-		Common::StackLock lock(_mutex);
+		_parser = MidiParser::createParser_SMF();
+		_parser->setMidiDriver(this);
+		_parser->setTimerRate(_driver->getBaseTempo());
+
 		_parser->loadMusic(_midiData, size);
 		_parser->setTrack(0);
 		_isLooping = loop;
 		_isPlaying = true;
-	}
-}
-
-void MidiPlayer::stop() {
-	Audio::MidiPlayer::stop();
-	free(_midiData);
-	_midiData = 0;
-}
-
-void MidiPlayer::updateTimer() {
-	Common::StackLock lock(_mutex);
-	if (_isPlaying) {
-		_parser->onTimer();
 	}
 }
 
@@ -133,11 +109,6 @@ void MidiPlayer::send(uint32 b) {
 		b = (b & 0xFFFF00FF) | (_gmToRol[(b >> 8) & 0x7F] << 8);
 	}
 	Audio::MidiPlayer::send(b);
-}
-
-void MidiPlayer::timerCallback(void *p) {
-	MidiPlayer *player = (MidiPlayer *)p;
-	player->updateTimer();
 }
 
 } // Touche namespace

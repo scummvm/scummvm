@@ -47,9 +47,6 @@ MusicPlayer::MusicPlayer(const char *pathMask) : _pathMask(pathMask), _isGM(fals
 	if (_nativeMT32)
 		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	_smfParser = MidiParser::createParser_SMF();
-	_midiMusicData = NULL;
-
 	int ret = _driver->open();
 	if (ret == 0) {
 		if (_nativeMT32)
@@ -61,21 +58,8 @@ MusicPlayer::MusicPlayer(const char *pathMask) : _pathMask(pathMask), _isGM(fals
 		// interface for such an operation is supported for AdLib.  Maybe for
 		// this card, setting instruments is necessary.
 
-		_driver->setTimerCallback(this, &onTimer);
+		_driver->setTimerCallback(this, &timerCallback);
 	}
-}
-
-MusicPlayer::~MusicPlayer() {
-	_driver->setTimerCallback(NULL, NULL);
-	stop();
-	if (_driver) {
-		_driver->close();
-		delete _driver;
-		_driver = 0;
-	}
-	_smfParser->setMidiDriver(NULL);
-	delete _smfParser;
-	delete[] _midiMusicData;
 }
 
 void MusicPlayer::sendToChannel(byte channel, uint32 b) {
@@ -91,15 +75,9 @@ void MusicPlayer::sendToChannel(byte channel, uint32 b) {
 		_channelsTable[channel]->send(b);
 }
 
-void MusicPlayer::onTimer(void *refCon) {
-	MusicPlayer *music = (MusicPlayer *)refCon;
-	Common::StackLock lock(music->_mutex);
-
-	if (music->_parser)
-		music->_parser->onTimer();
-}
-
 void MusicPlayer::playSMF(int track, bool loop) {
+	Common::StackLock lock(_mutex);
+
 	if (_isPlaying && track == _track) {
 		debugC(2, kDraciSoundDebugLevel, "Already plaing track %d", track);
 		return;
@@ -109,24 +87,23 @@ void MusicPlayer::playSMF(int track, bool loop) {
 
 	_isGM = true;
 
-
 	// Load MIDI resource data
 	Common::File musicFile;
 	char musicFileName[40];
-	sprintf(musicFileName, _pathMask.c_str(), track);
+	snprintf(musicFileName, sizeof(musicFileName), _pathMask.c_str(), track);
 	musicFile.open(musicFileName);
 	if (!musicFile.isOpen()) {
 		debugC(2, kDraciSoundDebugLevel, "Cannot open track %d", track);
 		return;
 	}
 	int midiMusicSize = musicFile.size();
-	delete[] _midiMusicData;
-	_midiMusicData = new byte[midiMusicSize];
-	musicFile.read(_midiMusicData, midiMusicSize);
+	free(_midiData);
+	_midiData = (byte *)malloc(midiMusicSize);
+	musicFile.read(_midiData, midiMusicSize);
 	musicFile.close();
 
-	if (_smfParser->loadMusic(_midiMusicData, midiMusicSize)) {
-		MidiParser *parser = _smfParser;
+	MidiParser *parser = MidiParser::createParser_SMF();
+	if (parser->loadMusic(_midiData, midiMusicSize)) {
 		parser->setTrack(0);
 		parser->setMidiDriver(this);
 		parser->setTimerRate(_driver->getBaseTempo());
@@ -142,6 +119,7 @@ void MusicPlayer::playSMF(int track, bool loop) {
 		debugC(2, kDraciSoundDebugLevel, "Playing track %d", track);
 	} else {
 		debugC(2, kDraciSoundDebugLevel, "Cannot play track %d", track);
+		delete parser;
 	}
 }
 

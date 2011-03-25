@@ -90,24 +90,11 @@ SoundGenMIDI::SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, p
 		else
 			_driver->sendGMReset();
 
-		_driver->setTimerCallback(this, &onTimer);
+		// FIXME: We need to cast "this" here due to the effects of
+		// multiple inheritance. This hack can go away once this
+		// setTimerCallback() has been moved inside Audio::MidiPlayer code.
+		_driver->setTimerCallback(static_cast<Audio::MidiPlayer *>(this), &timerCallback);
 	}
-
-	_smfParser = MidiParser::createParser_SMF();
-	_midiMusicData = NULL;
-}
-
-SoundGenMIDI::~SoundGenMIDI() {
-	_driver->setTimerCallback(NULL, NULL);
-	stop();
-	if (_driver) {
-		_driver->close();
-		delete _driver;
-		_driver = 0;
-	}
-	_smfParser->setMidiDriver(NULL);
-	delete _smfParser;
-	delete[] _midiMusicData;
 }
 
 void SoundGenMIDI::send(uint32 b) {
@@ -136,14 +123,6 @@ void SoundGenMIDI::endOfTrack() {
 	_vm->_sound->soundIsFinished();
 }
 
-void SoundGenMIDI::onTimer(void *refCon) {
-	SoundGenMIDI *music = (SoundGenMIDI *)refCon;
-	Common::StackLock lock(music->_mutex);
-
-	if (music->_parser)
-		music->_parser->onTimer();
-}
-
 void SoundGenMIDI::play(int resnum) {
 	MIDISound *track;
  
@@ -154,10 +133,10 @@ void SoundGenMIDI::play(int resnum) {
 	track = (MIDISound *)_vm->_game.sounds[resnum];
 
 	// Convert AGI Sound data to MIDI
-	int midiMusicSize = convertSND2MIDI(track->_data, &_midiMusicData);
+	int midiMusicSize = convertSND2MIDI(track->_data, &_midiData);
 
-	if (_smfParser->loadMusic(_midiMusicData, midiMusicSize)) {
-		MidiParser *parser = _smfParser;
+	MidiParser *parser = MidiParser::createParser_SMF();
+	if (parser->loadMusic(_midiData, midiMusicSize)) {
 		parser->setTrack(0);
 		parser->setMidiDriver(this);
 		parser->setTimerRate(_driver->getBaseTempo());
@@ -168,6 +147,8 @@ void SoundGenMIDI::play(int resnum) {
 		syncVolume();
 
 		_isPlaying = true;
+	} else {
+		delete parser;
 	}
 }
 

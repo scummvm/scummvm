@@ -42,22 +42,13 @@ namespace Touche {
 class MidiPlayer : public Audio::MidiPlayer {
 public:
 	MidiPlayer();
-	~MidiPlayer();
 
 	void play(Common::ReadStream &stream, int size, bool loop = false);
-	void stop();
-	void updateTimer();
 	void adjustVolume(int diff);
 	void setVolume(int volume);
 
 	// MidiDriver_BASE interface
 	virtual void send(uint32 b);
-
-private:
-
-	static void timerCallback(void *p);
-
-	uint8 *_midiData;
 };
 
 } // namespace Touche

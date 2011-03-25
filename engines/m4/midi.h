@@ -35,10 +35,8 @@ namespace M4 {
 class MidiPlayer : public Audio::MidiPlayer {
 public:
 	MidiPlayer(MadsM4Engine *vm);
-	~MidiPlayer();
 
 	void playMusic(const char *name, int32 vol, bool loop, int32 trigger, int32 scene);
-	virtual void stop();
 
 	void setGM(bool isGM) { _isGM = isGM; }
 
@@ -46,10 +44,7 @@ public:
 	virtual void send(uint32 b);
 
 protected:
-	static void onTimer(void *data);
-
 	MadsM4Engine *_vm;
-	byte *_midiData;
 
 	bool _isGM;
 

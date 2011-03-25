@@ -205,30 +205,25 @@ class MidiPlayer_MSC : public Audio::MidiPlayer {
 public:
 
 	MidiPlayer_MSC();
-	~MidiPlayer_MSC();
 
 	void play(Common::SeekableReadStream *stream);
-	void stop();
-	void pause(bool p);
-	void updateTimer();
-	void setVolume(int volume);
+	virtual void pause(bool p);
+	virtual void setVolume(int volume);
+	virtual void onTimer();
 
 	// MidiDriver_BASE interface
 	virtual void send(uint32 b);
 
+
 private:
-
-	static void timerCallback(void *p);
 	void setVolumeInternal(int volume);
-
-	uint8 *_midiData;
 	bool _paused;
 };
 
 
 
 MidiPlayer_MSC::MidiPlayer_MSC()
-	: _midiData(0), _paused(false) {
+	: _paused(false) {
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_driver = MidiDriver::createMidi(dev);
@@ -236,50 +231,31 @@ MidiPlayer_MSC::MidiPlayer_MSC()
 
 	int ret = _driver->open();
 	if (ret == 0) {
-		_parser = createParser_MSC();
-		_parser->setMidiDriver(this);
-		_parser->setTimerRate(_driver->getBaseTempo());
 		_driver->setTimerCallback(this, &timerCallback);
 	}
 }
 
-MidiPlayer_MSC::~MidiPlayer_MSC() {
-	stop();
-
-	Common::StackLock lock(_mutex);
-	_driver->setTimerCallback(NULL, NULL);
-	_driver->close();
-	delete _driver;
-	_driver = 0;
-	_parser->setMidiDriver(NULL);
-	delete _parser;
-}
-
 void MidiPlayer_MSC::play(Common::SeekableReadStream *stream) {
-	if (!stream) {
-		stop();
-		return;
-	}
+	Common::StackLock lock(_mutex);
 
 	stop();
+	if (!stream)
+		return;
+
 	int size = stream->size();
 	_midiData = (uint8 *)malloc(size);
 	if (_midiData) {
 		stream->read(_midiData, size);
 		delete stream;
 
-		Common::StackLock lock(_mutex);
+		_parser = createParser_MSC();
 		_parser->loadMusic(_midiData, size);
 		_parser->setTrack(0);
+		_parser->setMidiDriver(this);
+		_parser->setTimerRate(_driver->getBaseTempo());
 		_isLooping = true;
 		_isPlaying = true;
 	}
-}
-
-void MidiPlayer_MSC::stop() {
-	Audio::MidiPlayer::stop();
-	free(_midiData);
-	_midiData = 0;
 }
 
 void MidiPlayer_MSC::pause(bool p) {
@@ -287,13 +263,10 @@ void MidiPlayer_MSC::pause(bool p) {
 	setVolumeInternal(_paused ? 0 : _masterVolume);
 }
 
-void MidiPlayer_MSC::updateTimer() {
-	if (_paused) {
-		return;
-	}
-
+void MidiPlayer_MSC::onTimer() {
 	Common::StackLock lock(_mutex);
-	if (_isPlaying) {
+
+	if (!_paused && _isPlaying && _parser) {
 		_parser->onTimer();
 	}
 }
@@ -327,12 +300,6 @@ void MidiPlayer_MSC::send(uint32 b) {
 	}
 
 	sendToChannel(ch, b);
-}
-
-void MidiPlayer_MSC::timerCallback(void *p) {
-	MidiPlayer_MSC *player = (MidiPlayer_MSC *)p;
-
-	player->updateTimer();
 }
 
 DosSoundMan_br::DosSoundMan_br(Parallaction_br *vm) : SoundMan_br(vm) {
