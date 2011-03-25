@@ -28,8 +28,7 @@
 #ifndef SAGA_MUSIC_H
 #define SAGA_MUSIC_H
 
-#include "audio/mididrv.h"
-#include "audio/midiparser.h"
+#include "audio/midiplayer.h"
 #include "audio/mixer.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/vorbis.h"
@@ -44,41 +43,26 @@ enum MusicFlags {
 	MUSIC_DEFAULT = 0xffff
 };
 
-class MusicDriver : public MidiDriver_BASE {
+class MusicDriver : public Audio::MidiPlayer {
 public:
 	MusicDriver();
-	~MusicDriver();
 
-	void setVolume(int volume);
-	int getVolume() { return _masterVolume; }
+	void play(SagaEngine *vm, ByteArray *buffer, bool loop);
+	virtual void pause();
+	virtual void resume();
 
 	bool isAdlib() { return _driverType == MT_ADLIB; }
-	bool isMT32() { return _driverType == MT_MT32 || _nativeMT32; }
-	void setGM(bool isGM) { _isGM = isGM; }
+
+	// FIXME
+	bool isPlaying() const { return _parser && _parser->isPlaying(); }
 
 	// MidiDriver_BASE interface implementation
 	virtual void send(uint32 b);
-	virtual void metaEvent(byte type, byte *data, uint16 length) {}
-
-	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { _driver->setTimerCallback(timerParam, timerProc); }
-	uint32 getBaseTempo()	{ return _driver->getBaseTempo(); }
-
-	Common::Mutex _mutex;	// FIXME: Make _mutex protected
+	virtual void metaEvent(byte type, byte *data, uint16 length);
 
 protected:
-
-	MidiChannel *_channelsTable[16];
-	MidiDriver *_driver;
 	MusicType _driverType;
-	byte _channelsVolume[16];
 	bool _isGM;
-	bool _nativeMT32;
-
-	byte _masterVolume;
-
-	byte *_musicData;
-	uint16 *_buf;
-	size_t _musicDataSize;
 };
 
 class Music {
@@ -103,7 +87,7 @@ private:
 	SagaEngine *_vm;
 	Audio::Mixer *_mixer;
 
-	MusicDriver *_driver;
+	MusicDriver *_player;
 	Audio::SoundHandle _musicHandle;
 	uint32 _trackNumber;
 
@@ -114,7 +98,6 @@ private:
 
 	ResourceContext *_musicContext;
 	ResourceContext *_digitalMusicContext;
-	MidiParser *_parser;
 
 
 	static void musicVolumeGaugeCallback(void *refCon);
