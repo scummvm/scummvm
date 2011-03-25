@@ -30,8 +30,6 @@
 
 namespace Queen {
 
-class AdLibMidiChannel;
-
 class AdLibMidiDriver : public MidiDriver_Emulated {
 public:
 
