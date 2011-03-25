@@ -373,21 +373,91 @@ bool SciEngine::checkSelectorBreakpoint(BreakpointType breakpointType, reg_t sen
 	return false;
 }
 
+void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr argp, ObjVarRef &varp, reg_t funcp, SegManager *segMan, SelectorType selectorType) {
+	int activeBreakpointTypes = g_sci->_debugState._activeBreakpointTypes;
+	const char *objectName = segMan->getObjectName(send_obj);
+	const char *selectorName = g_sci->getKernel()->getSelectorName(selector).c_str();
+	Console *con = g_sci->getSciDebugger();
+
+#ifdef VM_DEBUG_SEND
+		debugN("Send to %04x:%04x (%s), selector %04x (%s):", PRINT_REG(send_obj), 
+			s->_segMan->getObjectName(send_obj), selector, 
+			g_sci->getKernel()->getSelectorName(selector).c_str());
+#endif // VM_DEBUG_SEND
+
+	switch (selectorType) {
+	case kSelectorNone:
+		break;
+	case kSelectorVariable:
+#ifdef VM_DEBUG_SEND
+		if (argc)
+			debugN("Varselector: Write %04x:%04x\n", PRINT_REG(argp[1]));
+		else
+			debugN("Varselector: Read\n");
+#endif // VM_DEBUG_SEND
+
+		// argc == 0: read selector
+		// argc == 1: write selector
+		// argc can be bigger than 1 in some cases, because of a script bug.
+		// Usually, these aren't fatal.
+		if ((activeBreakpointTypes & BREAK_SELECTORREAD) ||
+			(activeBreakpointTypes & BREAK_SELECTORWRITE) ||
+			argc > 1) {
+
+			reg_t selectorValue = *varp.getPointer(segMan);
+			if (!argc && (activeBreakpointTypes & BREAK_SELECTORREAD)) {
+				if (g_sci->checkSelectorBreakpoint(BREAK_SELECTORREAD, send_obj, selector))
+					con->DebugPrintf("Read from selector (%s:%s): %04x:%04x\n", 
+							objectName, selectorName,
+							PRINT_REG(selectorValue));
+			} else if (argc && (activeBreakpointTypes & BREAK_SELECTORWRITE)) {
+				if (g_sci->checkSelectorBreakpoint(BREAK_SELECTORWRITE, send_obj, selector))
+					con->DebugPrintf("Write to selector (%s:%s): change %04x:%04x to %04x:%04x\n", 
+							objectName, selectorName,
+							PRINT_REG(selectorValue), PRINT_REG(argp[1]));
+			}
+
+			if (argc > 1)
+				debug(kDebugLevelScripts, "Write to selector (%s:%s): change %04x:%04x to %04x:%04x, argc == %d\n", 
+							objectName, selectorName,
+							PRINT_REG(selectorValue), PRINT_REG(argp[1]), argc);
+		}
+		break;
+	case kSelectorMethod:
+#ifndef VM_DEBUG_SEND
+			if (activeBreakpointTypes & BREAK_SELECTOREXEC) {
+				if (g_sci->checkSelectorBreakpoint(BREAK_SELECTOREXEC, send_obj, selector)) {
+#else
+			if (true) {
+				if (true) {
+#endif
+					con->DebugPrintf("%s::%s(", objectName, selectorName);
+					for (int i = 0; i < argc; i++) {
+						con->DebugPrintf("%04x:%04x", PRINT_REG(argp[i+1]));
+						if (i + 1 < argc)
+							con->DebugPrintf(", ");
+					}
+					con->DebugPrintf(") at %04x:%04x\n", PRINT_REG(funcp));
+				}
+			}
+		break;
+	}	// switch
+}
+
 ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPtr sp, int framesize, StackPtr argp) {
-// send_obj and work_obj are equal for anything but 'super'
-// Returns a pointer to the TOS exec_stack element
+	// send_obj and work_obj are equal for anything but 'super'
+	// Returns a pointer to the TOS exec_stack element
 	assert(s);
 
 	reg_t funcp;
-	int selector;
+	Selector selector;
 	int argc;
-	int origin = s->_executionStack.size()-1; // Origin: Used for debugging
+	int origin = s->_executionStack.size() - 1; // Origin: Used for debugging
+	int activeBreakpointTypes = g_sci->_debugState._activeBreakpointTypes;
 	// We return a pointer to the new active ExecStack
 
 	// The selector calls we catch are stored below:
 	Common::Stack<CallsStruct> sendCalls;
-
-	int activeBreakpointTypes = g_sci->_debugState._activeBreakpointTypes;
 
 	while (framesize > 0) {
 		selector = argp->requireUint16();
@@ -397,145 +467,49 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		if (argc > 0x800)	// More arguments than the stack could possibly accomodate for
 			error("send_selector(): More than 0x800 arguments to function call");
 
-#ifdef VM_DEBUG_SEND
-		debugN("Send to %04x:%04x (%s), selector %04x (%s):", PRINT_REG(send_obj), 
-			s->_segMan->getObjectName(send_obj), selector, 
-			g_sci->getKernel()->getSelectorName(selector).c_str());
-#endif // VM_DEBUG_SEND
-
 		ObjVarRef varp;
-		switch (lookupSelector(s->_segMan, send_obj, selector, &varp, &funcp)) {
+		CallsStruct call;
+		call.argp = argp;
+		call.argc = argc;
+		call.selector = selector;
+		SelectorType selectorType = lookupSelector(s->_segMan, send_obj, selector, &varp, &funcp);
+		if (activeBreakpointTypes || DebugMan.isDebugChannelEnabled(kDebugLevelScripts))
+			debugSelectorCall(send_obj, selector, argc, argp, varp, funcp, s->_segMan, selectorType);
+
+		switch (selectorType) {
 		case kSelectorNone:
 			error("Send to invalid selector 0x%x of object at %04x:%04x", 0xffff & selector, PRINT_REG(send_obj));
 			break;
-
 		case kSelectorVariable:
-
-#ifdef VM_DEBUG_SEND
-			if (argc)
-				debugN("Varselector: Write %04x:%04x\n", PRINT_REG(argp[1]));
-			else
-				debugN("Varselector: Read\n");
-#endif // VM_DEBUG_SEND
-
-			// argc == 0: read selector
-			// argc != 0: write selector
-			if (!argc) {
-				// read selector
-				if (activeBreakpointTypes & BREAK_SELECTORREAD) {
-					if (g_sci->checkSelectorBreakpoint(BREAK_SELECTORREAD, send_obj, selector))
-						debug("[read selector]\n");
-				}
-			} else {
-				// write selector
-				if (activeBreakpointTypes & BREAK_SELECTORWRITE) {
-					if (g_sci->checkSelectorBreakpoint(BREAK_SELECTORWRITE, send_obj, selector)) {
-						reg_t oldReg = *varp.getPointer(s->_segMan);
-						reg_t newReg = argp[1];
-						warning("[write to selector (%s:%s): change %04x:%04x to %04x:%04x]\n", 
-							s->_segMan->getObjectName(send_obj), g_sci->getKernel()->getSelectorName(selector).c_str(), 
-							PRINT_REG(oldReg), PRINT_REG(newReg));
-					}
-				}
-			}
-
-			if (argc > 1) {
-				// argc can indeed be bigger than 1 in some cases, and it's usually the
-				// result of a script bug. Usually these aren't fatal.
-
-				const char *objectName = s->_segMan->getObjectName(send_obj);
-
-				reg_t oldReg = *varp.getPointer(s->_segMan);
-				reg_t newReg = argp[1];
-				const char *selectorName = g_sci->getKernel()->getSelectorName(selector).c_str();
-				debug(2, "send_selector(): argc = %d while modifying variable selector "
-						"%x (%s) of object %04x:%04x (%s) from %04x:%04x to %04x:%04x",
-						argc, selector, selectorName, PRINT_REG(send_obj),
-						objectName, PRINT_REG(oldReg), PRINT_REG(newReg));
-			}
-
-			{
-				CallsStruct call;
-				call.address.var = varp; // register the call
-				call.argp = argp;
-				call.argc = argc;
-				call.selector = selector;
-				call.type = EXEC_STACK_TYPE_VARSELECTOR; // Register as a varselector
-				sendCalls.push(call);
-			}
-
+			call.address.var = varp; // register the call
+			call.type = EXEC_STACK_TYPE_VARSELECTOR; // Register as a varselector
 			break;
-
 		case kSelectorMethod:
-
-#ifndef VM_DEBUG_SEND
-			if (activeBreakpointTypes & BREAK_SELECTOREXEC) {
-				if (g_sci->checkSelectorBreakpoint(BREAK_SELECTOREXEC, send_obj, selector)) {
-					debugN("[execute selector]");
-
-					int displaySize = 0;
-					for (int argNr = 1; argNr <= argc; argNr++) {
-						if (argNr == 1)
-							debugN(" - ");
-						reg_t curParam = argp[argNr];
-						if (curParam.isPointer()) {
-							debugN("[%04x:%04x] ", PRINT_REG(curParam));
-							displaySize += 12;
-						} else {
-							debugN("[%04x] ", curParam.offset);
-							displaySize += 7;
-						}
-						if (displaySize > 50) {
-							if (argNr < argc)
-								debugN("...");
-							break;
-						}
-					}
-					debugN("\n");
-				}
-			}
-#else // VM_DEBUG_SEND
-			if (activeBreakpointTypes & BREAK_SELECTOREXEC)
-				g_sci->checkSelectorBreakpoint(BREAK_SELECTOREXEC, send_obj, selector);
-			debugN("Funcselector(");
-			for (int i = 0; i < argc; i++) {
-				debugN("%04x:%04x", PRINT_REG(argp[i+1]));
-				if (i + 1 < argc)
-					debugN(", ");
-			}
-			debugN(") at %04x:%04x\n", PRINT_REG(funcp));
-#endif // VM_DEBUG_SEND
-
-			{
-				CallsStruct call;
-				call.address.func = funcp; // register call
-				call.argp = argp;
-				call.argc = argc;
-				call.selector = selector;
-				call.type = EXEC_STACK_TYPE_CALL;
-				call.sp = sp;
-				sp = CALL_SP_CARRY; // Destroy sp, as it will be carried over
-				sendCalls.push(call);
-			}
-
+			call.address.func = funcp; // register call
+			call.type = EXEC_STACK_TYPE_CALL;
+			call.sp = sp;
+			sp = CALL_SP_CARRY; // Destroy sp, as it will be carried over
 			break;
 		} // switch (lookupSelector())
 
+		sendCalls.push(call);
+
 		framesize -= (2 + argc);
 		argp += argc + 1;
-	}
+	}	// while (framesize > 0)
 
 	// Iterate over all registered calls in the reverse order. This way, the first call is
 	// placed on the TOS; as soon as it returns, it will cause the second call to be executed.
 	while (!sendCalls.empty()) {
 		CallsStruct call = sendCalls.pop();
 		if (call.type == EXEC_STACK_TYPE_VARSELECTOR) // Write/read variable?
-			add_exec_stack_varselector(s->_executionStack, work_obj, call.argc, call.argp,
-			                                    call.selector, call.address.var, origin);
-		else
+			add_exec_stack_varselector(s->_executionStack, work_obj,
+										call.argc, call.argp, call.selector,
+										call.address.var, origin);
+		else	// Invoke function
 			add_exec_stack_entry(s->_executionStack, call.address.func, call.sp, work_obj,
-			                         call.argc, call.argp,
-			                         call.selector, -1, -1, send_obj, origin, SCI_XS_CALLEE_LOCALS);
+									call.argc, call.argp, call.selector,
+									-1, -1, send_obj, origin, SCI_XS_CALLEE_LOCALS);
 	}
 
 	_exec_varselectors(s);
