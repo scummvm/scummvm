@@ -29,7 +29,7 @@
 #include "common/util.h"
 #include "common/mutex.h"
 
-#include "audio/mididrv.h"
+#include "audio/midiplayer.h"
 
 class MidiParser;
 
@@ -39,13 +39,8 @@ namespace Common {
 
 namespace Touche {
 
-class MidiPlayer : public MidiDriver_BASE {
+class MidiPlayer : public Audio::MidiPlayer {
 public:
-
-	enum {
-		NUM_CHANNELS = 16
-	};
-
 	MidiPlayer();
 	~MidiPlayer();
 
@@ -54,27 +49,15 @@ public:
 	void updateTimer();
 	void adjustVolume(int diff);
 	void setVolume(int volume);
-	int getVolume() const { return _masterVolume; }
-	void setLooping(bool loop) { _isLooping = loop; }
 
 	// MidiDriver_BASE interface
 	virtual void send(uint32 b);
-	virtual void metaEvent(byte type, byte *data, uint16 length);
 
 private:
 
 	static void timerCallback(void *p);
 
-	MidiDriver *_driver;
-	MidiParser *_parser;
 	uint8 *_midiData;
-	bool _isLooping;
-	bool _isPlaying;
-	int _masterVolume;
-	bool _nativeMT32;
-	MidiChannel *_channelsTable[NUM_CHANNELS];
-	uint8 _channelsVolume[NUM_CHANNELS];
-	Common::Mutex _mutex;
 
 	static const uint8 _gmToRol[];
 };

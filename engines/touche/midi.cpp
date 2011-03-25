@@ -33,8 +33,9 @@
 namespace Touche {
 
 MidiPlayer::MidiPlayer()
-	: _driver(0), _parser(0), _midiData(0), _isLooping(false), _isPlaying(false), _masterVolume(0) {
-	memset(_channelsTable, 0, sizeof(_channelsTable));
+	: _midiData(0) {
+
+	// FIXME: Necessary?
 	memset(_channelsVolume, 0, sizeof(_channelsVolume));
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
@@ -81,13 +82,9 @@ void MidiPlayer::play(Common::ReadStream &stream, int size, bool loop) {
 }
 
 void MidiPlayer::stop() {
-	Common::StackLock lock(_mutex);
-	if (_isPlaying) {
-		_isPlaying = false;
-		_parser->unloadMusic();
-		free(_midiData);
-		_midiData = 0;
-	}
+	Audio::MidiPlayer::stop();
+	free(_midiData);
+	_midiData = 0;
 }
 
 void MidiPlayer::updateTimer() {
@@ -102,9 +99,17 @@ void MidiPlayer::adjustVolume(int diff) {
 }
 
 void MidiPlayer::setVolume(int volume) {
+	// FIXME: This is almost identical to Audio::MidiPlayer::setVolume,
+	// the only difference is that this implementation will always
+	// transmit the volume change, even if the current _masterVolume
+	// equals the new master volume. This *could* make a difference in
+	// some situations.
+	// So, we should determine whether Touche requires this behavioral
+	// difference; and maybe also if other engines could benefit from it
+	// (as hypothetically, it might fix some subtle bugs?)
 	_masterVolume = CLIP(volume, 0, 255);
 	Common::StackLock lock(_mutex);
-	for (int i = 0; i < NUM_CHANNELS; ++i) {
+	for (int i = 0; i < kNumChannels; ++i) {
 		if (_channelsTable[i]) {
 			_channelsTable[i]->volume(_channelsVolume[i] * _masterVolume / 255);
 		}
@@ -112,47 +117,10 @@ void MidiPlayer::setVolume(int volume) {
 }
 
 void MidiPlayer::send(uint32 b) {
-	byte volume, ch = (byte)(b & 0xF);
-	switch (b & 0xFFF0) {
-	case 0x07B0: // volume change
-		volume = (byte)((b >> 16) & 0x7F);
-		_channelsVolume[ch] = volume;
-		volume = volume * _masterVolume / 255;
-		b = (b & 0xFF00FFFF) | (volume << 16);
-		break;
-	case 0x7BB0: // all notes off
-		if (!_channelsTable[ch]) {
-			// channel not yet allocated, no need to send the event
-			return;
-		}
-		break;
-	default:
-		if ((b & 0xF0) == 0xC0 && _nativeMT32) { // program change
-			b = (b & 0xFFFF00FF) | (_gmToRol[(b >> 8) & 0x7F] << 8);
-		}
-		break;
+	if ((b & 0xF0) == 0xC0 && _nativeMT32) { // program change
+		b = (b & 0xFFFF00FF) | (_gmToRol[(b >> 8) & 0x7F] << 8);
 	}
-	if (!_channelsTable[ch]) {
-		_channelsTable[ch] = (ch == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
-	}
-	if (_channelsTable[ch]) {
-		_channelsTable[ch]->send(b);
-	}
-}
-
-void MidiPlayer::metaEvent(byte type, byte *data, uint16 length) {
-	switch (type) {
-	case 0x2F: // end of Track
-		if (_isLooping) {
-			_parser->jumpToTick(0);
-		} else {
-			stop();
-		}
-		break;
-	default:
-//		warning("Unhandled meta event: %02x", type);
-		break;
-	}
+	Audio::MidiPlayer::send(b);
 }
 
 void MidiPlayer::timerCallback(void *p) {
