@@ -122,9 +122,9 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 
 extern const char *opcodeNames[]; // from scriptdebug.cpp
 
-static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, reg_t default_value) {
-	if (validate_variable(r, stack_base, type, max, index)) {
-		if (r[index].segment == 0xffff) {
+static reg_t read_var(EngineState *s, int type, int index) {
+	if (validate_variable(s->variables[type], s->stack_base, type, s->variablesMax[type], index)) {
+		if (s->variables[type][index].segment == 0xffff) {
 			switch (type) {
 			case VAR_TEMP: {
 				// Uninitialized read on a temp
@@ -147,7 +147,7 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 #endif
 				}
 				assert(solution.type == WORKAROUND_FAKE);
-				r[index] = make_reg(0, solution.value);
+				s->variables[type][index] = make_reg(0, solution.value);
 				break;
 			}
 			case VAR_PARAM:
@@ -159,13 +159,13 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 				break;
 			}
 		}
-		return r[index];
+		return s->variables[type][index];
 	} else
-		return default_value;
+		return s->r_acc;
 }
 
-static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, int index, reg_t value, SegManager *segMan, Kernel *kernel) {
-	if (validate_variable(r, stack_base, type, max, index)) {
+static void write_var(EngineState *s, int type, int index, reg_t value) {
+	if (validate_variable(s->variables[type], s->stack_base, type, s->variablesMax[type], index)) {
 
 		// WORKAROUND: This code is needed to work around a probable script bug, or a
 		// limitation of the original SCI engine, which can be observed in LSL5.
@@ -185,12 +185,12 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 		// done, ego's movement will not be updated properly, so the result is
 		// unpredictable (for example in LSL5, Patti spins around instead of walking).
 		if (index == 0 && type == VAR_GLOBAL && getSciVersion() > SCI_VERSION_0_EARLY) {	// global 0 is ego
-			reg_t stopGroopPos = segMan->findObjectByName("stopGroop");
+			reg_t stopGroopPos = s->_segMan->findObjectByName("stopGroop");
 			if (!stopGroopPos.isNull()) {	// does the game have a stopGroop object?
 				// Find the "client" member variable of the stopGroop object, and update it
 				ObjVarRef varp;
-				if (lookupSelector(segMan, stopGroopPos, SELECTOR(client), &varp, NULL) == kSelectorVariable) {
-					reg_t *clientVar = varp.getPointer(segMan);
+				if (lookupSelector(s->_segMan, stopGroopPos, SELECTOR(client), &varp, NULL) == kSelectorVariable) {
+					reg_t *clientVar = varp.getPointer(s->_segMan);
 					*clientVar = value;
 				}
 			}
@@ -203,7 +203,7 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 		if (type == VAR_TEMP && value.segment == 0xffff)
 			value.segment = 0;
 
-		r[index] = value;
+		s->variables[type][index] = value;
 
 		// If the game is trying to change its speech/subtitle settings, apply the ScummVM audio
 		// options first, if they haven't been applied yet
@@ -213,10 +213,6 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 		}
 	}
 }
-
-#define READ_VAR(type, index) validate_read_var(s->variables[type], s->stack_base, type, s->variablesMax[type], index, s->r_acc)
-#define WRITE_VAR(type, index, value) validate_write_var(s->variables[type], s->stack_base, type, s->variablesMax[type], index, value, s->_segMan, g_sci->getKernel())
-#define WRITE_VAR16(type, index, value) WRITE_VAR(type, index, make_reg(0, value));
 
 // Operating on the stack
 // 16 bit:
@@ -1382,7 +1378,7 @@ void run_vm(EngineState *s) {
 			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + (opcode >= op_lagi ? s->r_acc.requireSint16() : 0);
-			s->r_acc = READ_VAR(var_type, var_number);
+			s->r_acc = read_var(s, var_type, var_number);
 			break;
 
 		case op_lsg: // 0x44 (68)
@@ -1398,7 +1394,7 @@ void run_vm(EngineState *s) {
 			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + (opcode >= op_lsgi ? s->r_acc.requireSint16() : 0);
-			PUSH32(READ_VAR(var_type, var_number));
+			PUSH32(read_var(s, var_type, var_number));
 			break;
 
 		case op_sag: // 0x50 (80)
@@ -1416,7 +1412,7 @@ void run_vm(EngineState *s) {
 			var_number = opparams[0] + (opcode >= op_sagi ? s->r_acc.requireSint16() : 0);
 			if (opcode >= op_sagi)	// load the actual value to store in the accumulator
 				s->r_acc = POP32();
-			WRITE_VAR(var_type, var_number, s->r_acc);
+			write_var(s, var_type, var_number, s->r_acc);
 			break;
 
 		case op_ssg: // 0x54 (84)
@@ -1432,7 +1428,7 @@ void run_vm(EngineState *s) {
 			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + (opcode >= op_ssgi ? s->r_acc.requireSint16() : 0);
-			WRITE_VAR(var_type, var_number, POP32());
+			write_var(s, var_type, var_number, POP32());
 			break;
 
 		case op_plusag: // 0x60 (96)
@@ -1449,8 +1445,8 @@ void run_vm(EngineState *s) {
 			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + (opcode >= op_plusagi ? s->r_acc.requireSint16() : 0);
-			s->r_acc = READ_VAR(var_type, var_number) + 1;
-			WRITE_VAR(var_type, var_number, s->r_acc);
+			s->r_acc = read_var(s, var_type, var_number) + 1;
+			write_var(s, var_type, var_number, s->r_acc);
 			break;
 
 		case op_plussg: // 0x64 (100)
@@ -1467,9 +1463,9 @@ void run_vm(EngineState *s) {
 			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + (opcode >= op_plussgi ? s->r_acc.requireSint16() : 0);
-			r_temp = READ_VAR(var_type, var_number) + 1;
+			r_temp = read_var(s, var_type, var_number) + 1;
 			PUSH32(r_temp);
-			WRITE_VAR(var_type, var_number, r_temp);
+			write_var(s, var_type, var_number, r_temp);
 			break;
 
 		case op_minusag: // 0x70 (112)
@@ -1486,8 +1482,8 @@ void run_vm(EngineState *s) {
 			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + (opcode >= op_minusagi ? s->r_acc.requireSint16() : 0);
-			s->r_acc = READ_VAR(var_type, var_number) - 1;
-			WRITE_VAR(var_type, var_number, s->r_acc);
+			s->r_acc = read_var(s, var_type, var_number) - 1;
+			write_var(s, var_type, var_number, s->r_acc);
 			break;
 
 		case op_minussg: // 0x74 (116)
@@ -1504,9 +1500,9 @@ void run_vm(EngineState *s) {
 			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + (opcode >= op_minussgi ? s->r_acc.requireSint16() : 0);
-			r_temp = READ_VAR(var_type, var_number) - 1;
+			r_temp = read_var(s, var_type, var_number) - 1;
 			PUSH32(r_temp);
-			WRITE_VAR(var_type, var_number, r_temp);
+			write_var(s, var_type, var_number, r_temp);
 			break;
 
 		default:
