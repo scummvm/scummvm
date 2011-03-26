@@ -1365,7 +1365,7 @@ static void ActorLookAt() {
 		float fY;
 		float fZ;
 
-		//float fX = lua_getnumber(xObj);
+		float fX = lua_getnumber(xObj);
 
 		if (lua_isnumber(yObj))
 			fY = lua_getnumber(yObj);
