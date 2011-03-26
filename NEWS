@@ -122,6 +122,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      game's aspect ratio.
    - Added a new graphics mode for linear filtering.
    - Overhauled the input system (see README.Android).
+   - Added a MIDI driver based on SONiVOX's Embedded Audio Synthesis (EAS).
 
  Nintendo DS port:
    - Added support for loadable modules.
