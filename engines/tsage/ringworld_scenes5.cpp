@@ -2703,6 +2703,8 @@ void Scene4100::dispatch() {
 			setAction(&_sequenceManager, this, 4105, &_globals->_player, NULL);
 		}
 	}
+
+	Scene::dispatch();
 }
 
 } // End of namespace tSage
