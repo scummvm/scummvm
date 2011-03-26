@@ -304,9 +304,13 @@ void MidiDriver_EAS::close() {
 void MidiDriver_EAS::send(uint32 b) {
 	byte buf[4];
 
-	WRITE_UINT32(buf, b);
+	WRITE_LE_UINT32(buf, b);
 
-	int32 res = _writeStreamFunc(_EASHandle, _midiStream, buf, 4);
+	int32 len = 3;
+	if ((buf[0] >> 4) == 0xC || (buf[0] >> 4) == 0xD)
+		len = 2;
+
+	int32 res = _writeStreamFunc(_EASHandle, _midiStream, buf, len);
 	if (res)
 		warning("error writing to EAS MIDI stream: %d", res);
 }
