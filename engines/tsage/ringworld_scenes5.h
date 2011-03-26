@@ -387,11 +387,23 @@ class Scene4100: public Scene {
 	};
 
 	/* Hotspots */
-	class Hotspot14: public SceneObject {
+	class Hotspot1: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot17: public SceneObject {
+	class Hotspot2: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot5: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot6: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot14: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -410,9 +422,14 @@ public:
 	Action4 _action4;
 	Action5 _action5;
 	Action6 _action6;
-	SceneObject _hotspot1, _hotspot2, _hotspot3, _hotspot4, _hotspot5;
-	SceneObject _hotspot6, _hotspot7, _hotspot8, _hotspot9, _hotspot10;
-	SceneObject  _hotspot11, _hotspot12, _hotspot13, _hotspot14;
+	Hotspot1 _hotspot1;
+	Hotspot2 _hotspot2;
+	DisplayHotspot _hotspot3, _hotspot4;
+	Hotspot5 _hotspot5;
+	Hotspot6 _hotspot6;
+	DisplayHotspot _hotspot7, _hotspot8, _hotspot9, _hotspot10;
+	DisplayHotspot _hotspot11, _hotspot12, _hotspot13;
+	Hotspot14 _hotspot14;
 
 	Scene4100();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

@@ -2450,7 +2450,126 @@ void Scene4100::Action6::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene4100::Scene4100() {
+void Scene4100::Hotspot1::doAction(int action)  {
+	Scene4100 *scene = (Scene4100 *)_globals->_sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(4100, _globals->getFlag(42) ? 24 : 12);
+		break;
+	case OBJECT_STUNNER:
+		SceneItem::display2(4100, 16);
+		break;
+	case CURSOR_USE:
+		SceneItem::display2(4100, 22);
+		break;
+	case CURSOR_TALK:
+		if (_globals->_inventory._peg._sceneNumber == 1) {
+			_globals->_player.disableControl();
+			scene->setAction(&scene->_sequenceManager, scene, 4109, NULL);
+		} else if (_globals->getFlag(42)) {
+			scene->setAction(&scene->_sequenceManager, scene, 4102, NULL);
+		} else {
+			if (_globals->getFlag(33))
+				_globals->_stripNum = 4077;
+			else if (_globals->getFlag(82)) {
+				_globals->clearFlag(82);
+				_globals->_stripNum = 4100;
+			} else {
+				_globals->_stripNum = 4075;
+				_globals->setFlag(33);
+			}
+
+			scene->setAction(&scene->_action1);
+		}
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+void Scene4100::Hotspot2::doAction(int action)  {
+	switch (action) {
+	case CURSOR_LOOK:
+		error("*** The Chief's daughter... WOW!");
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+void Scene4100::Hotspot5::doAction(int action)  {
+	Scene4100 *scene = (Scene4100 *)_globals->_sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(4100, 14);
+		break;
+	case CURSOR_TALK:
+		scene->_sceneMode = 4102;
+		scene->setAction(&scene->_sequenceManager, scene, 4104, NULL);
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+void Scene4100::Hotspot6::doAction(int action)  {
+	Scene4100 *scene = (Scene4100 *)_globals->_sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(4100, 2);
+		break;
+	case CURSOR_USE:
+		if (_globals->getFlag(42)) {
+			_globals->_player.disableControl();
+			scene->setAction(&scene->_action5);
+		} else {
+			scene->_sceneMode = 4102;
+			scene->setAction(&scene->_sequenceManager, scene, 4103, NULL);
+		}
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+
+void Scene4100::Hotspot14::doAction(int action)  {
+	Scene4100 *scene = (Scene4100 *)_globals->_sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(4100, 0);
+		break;
+	case OBJECT_LADDER:
+		_globals->_player.disableControl();
+		scene->setAction(&scene->_action5);
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+
+/*--------------------------------------------------------------------------*/
+
+Scene4100::Scene4100():
+		_hotspot3(0, CURSOR_LOOK, 4100, 10, CURSOR_USE, 4100, 21, LIST_END),
+		_hotspot4(0, CURSOR_LOOK, 4100, 8, LIST_END),
+		_hotspot7(0, CURSOR_USE, 4100, 3, CURSOR_USE, 4150, 29, LIST_END),
+		_hotspot8(0, CURSOR_LOOK, 4100, 5, LIST_END),
+		_hotspot9(0, CURSOR_LOOK, 4100, 6, CURSOR_USE, 4100, 20, LIST_END),
+		_hotspot10(0, CURSOR_LOOK, 4100, 7, CURSOR_USE, 4100, 19, LIST_END),
+		_hotspot11(0, CURSOR_LOOK, 4100, 8, CURSOR_USE, 4100, 18, LIST_END),
+		_hotspot12(0, CURSOR_LOOK, 4100, 9, LIST_END),
+		_hotspot13(0, CURSOR_LOOK, 4100, 11, CURSOR_USE, 4100, 17, LIST_END) {
 }
 
 void Scene4100::postInit(SceneObjectList *OwnerList) {
