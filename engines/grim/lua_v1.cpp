@@ -967,7 +967,8 @@ static void IsActorResting() {
  * used by Glottis to watch where Manny is located in
  * order to hand him the work order.  This function is
  * also important for when Velasco hands Manny the logbook
- * in Rubacava
+ * in Rubacava. It is also used for calculating many positions
+ * passed to ActorLookAt.
  */
 static void GetActorNodeLocation() {
 	lua_Object actorObj = lua_getparam(1);
@@ -983,15 +984,29 @@ static void GetActorNodeLocation() {
 	if (!actor->currentCostume() || !actor->currentCostume()->getModelNodes())
 		return;
 
-	int node = (int)lua_getnumber(nodeObj);
+	int nodeId = (int)lua_getnumber(nodeObj);
 
 	Model::HierNode *allNodes = actor->currentCostume()->getModelNodes();
+	Model::HierNode *node = allNodes + nodeId;
 
-	// TODO implement missing calculations
+	Graphics::Vector3d p = node->_pos;
+	Model::HierNode *parent = node->_parent;
+	while (parent) {
+		p += parent->_pos;
+		parent = parent->_parent;
+	}
+	float yaw = actor->yaw() * LOCAL_PI / 180.;
 
-	lua_pushnumber(allNodes[node]._pos.x());
-	lua_pushnumber(allNodes[node]._pos.y());
-	lua_pushnumber(allNodes[node]._pos.z());
+	Graphics::Vector3d pos;
+	pos.x() = p.x() * cos(yaw) - p.y() * sin(yaw);
+	pos.y() = p.x() * sin(yaw) + p.y() * cos(yaw);
+	pos.z() = p.z();
+
+	pos += actor->pos();
+
+	lua_pushnumber(pos.x());
+	lua_pushnumber(pos.y());
+	lua_pushnumber(pos.z());
 }
 
 /* This function is called to stop walking actions that
@@ -1363,11 +1378,7 @@ static void ActorLookAt() {
 			fZ = 0.0f;
 
 		Graphics::Vector3d vector;
-		// FIXME: This values seem to be crap, i can't understand how to use them.
-		// The control enters this side of the if when examining something manny is holding
-		// or some other times, like when speaking to glottis the first time.
-// 		vector.set(fX, fY, fZ);
-		vector.set(0, 0, 0);
+		vector.set(fX, fY, fZ);
 		actor->setLookAtVector(vector);
 
 		if (lua_isnumber(rateObj))

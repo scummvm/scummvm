@@ -961,7 +961,6 @@ void Actor::update() {
 
 	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
-		// This check is needed or otherwise the Grim demo will crash when saying BANG to the ballon guy
 		c->setPosRotate(_pos, _pitch, _yaw, _roll);
 		if (_lookingMode) {
 			c->setLookAt(_lookAtVector, _lookAtRate);
