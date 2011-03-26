@@ -52,51 +52,6 @@ const reg_t TRUE_REG = {0, 1};
 // to an infinite loop). Aids in detecting script bugs such as #3040722.
 //#define ABORT_ON_INFINITE_LOOP
 
-#define SCI_XS_CALLEE_LOCALS ((SegmentId)-1)
-
-/**
- * Adds an entry to the top of the execution stack.
- *
- * @param[in] s				The state with which to execute
- * @param[in] pc			The initial program counter
- * @param[in] sp			The initial stack pointer
- * @param[in] objp			Pointer to the beginning of the current object
- * @param[in] argc			Number of parameters to call with
- * @param[in] argp			Heap pointer to the first parameter
- * @param[in] selector		The selector by which it was called or
- *							NULL_SELECTOR if n.a. For debugging.
- * @param[in] exportId		The exportId by which it was called or
- *							-1 if n.a. For debugging.
- * @param[in] sendp			Pointer to the object which the message was
- * 							sent to. Equal to objp for anything but super.
- * @param[in] origin		Number of the execution stack element this
- * 							entry was created by (usually the current TOS
- * 							number, except for multiple sends).
- * @param[in] local_segment	The segment to use for local variables,
- *							or SCI_XS_CALLEE_LOCALS to use obj's segment.
- * @return 					A pointer to the new exec stack TOS entry
- */
-static ExecStack *add_exec_stack_entry(Common::List<ExecStack> &execStack, reg_t pc, StackPtr sp,
-		reg_t objp, int argc, StackPtr argp, Selector selector, int exportId, int localCallOffset,
-		reg_t sendp, int origin, SegmentId local_segment);
-
-/**
- * Adds one varselector access to the execution stack.
- * This function is called from send_selector only.
- * @param[in] s			The EngineState to use
- * @param[in] objp		Pointer to the object owning the selector
- * @param[in] argc		1 for writing, 0 for reading
- * @param[in] argp		Pointer to the address of the data to write -2
- * @param[in] selector	Selector name
- * @param[in] address	Heap address of the selector
- * @param[in] origin	Stack frame which the access originated from
- * @return 				Pointer to the new exec-TOS element
- */
-static ExecStack *add_exec_stack_varselector(Common::List<ExecStack> &execStack, reg_t objp, int argc,
-		StackPtr argp, Selector selector, const ObjVarRef& address,
-		int origin);
-
-
 // validation functionality
 
 static reg_t &validate_property(EngineState *s, Object *obj, int index) {
@@ -299,7 +254,11 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	// Check if a breakpoint is set on this method
 	g_sci->checkExportBreakpoint(script, pubfunct);
 
-	return add_exec_stack_entry(s->_executionStack, make_reg(seg, temp), sp, calling_obj, argc, argp, -1, pubfunct, -1, calling_obj, s->_executionStack.size()-1, seg);
+	ExecStack xstack(calling_obj, calling_obj, sp, argc, argp,
+						seg, make_reg(seg, temp), -1, pubfunct, -1,
+						s->_executionStack.size() - 1, EXEC_STACK_TYPE_CALL);
+	s->_executionStack.push_back(xstack);
+	return &(s->_executionStack.back());
 }
 
 bool SciEngine::checkSelectorBreakpoint(BreakpointType breakpointType, reg_t send_obj, int selector) {
@@ -427,21 +386,6 @@ static void _exec_varselectors(EngineState *s) {
 	}
 }
 
-/** This struct is used to buffer the list of send calls in send_selector() */
-struct CallsStruct {
-	reg_t addr_func;
-	reg_t varp_objp;
-	union {
-		reg_t func;
-		ObjVarRef var;
-	} address;
-	StackPtr argp;
-	int argc;
-	Selector selector;
-	StackPtr sp; /**< Stack pointer */
-	int type; /**< Same as ExecStack.type */
-};
-
 ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPtr sp, int framesize, StackPtr argp) {
 	// send_obj and work_obj are equal for anything but 'super'
 	// Returns a pointer to the TOS exec_stack element
@@ -452,10 +396,9 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 	int argc;
 	int origin = s->_executionStack.size() - 1; // Origin: Used for debugging
 	int activeBreakpointTypes = g_sci->_debugState._activeBreakpointTypes;
-	// We return a pointer to the new active ExecStack
+	ObjVarRef varp;
 
-	// The selector calls we catch are stored below:
-	Common::Stack<CallsStruct> sendCalls;
+	Common::List<ExecStack>::iterator prevElementIterator = s->_executionStack.end();
 
 	while (framesize > 0) {
 		selector = argp->requireUint16();
@@ -465,111 +408,53 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		if (argc > 0x800)	// More arguments than the stack could possibly accomodate for
 			error("send_selector(): More than 0x800 arguments to function call");
 
-		ObjVarRef varp;
-		CallsStruct call;
-		call.argp = argp;
-		call.argc = argc;
-		call.selector = selector;
 		SelectorType selectorType = lookupSelector(s->_segMan, send_obj, selector, &varp, &funcp);
+		if (selectorType == kSelectorNone)
+			error("Send to invalid selector 0x%x of object at %04x:%04x", 0xffff & selector, PRINT_REG(send_obj));
+
+		ExecStackType stackType = EXEC_STACK_TYPE_VARSELECTOR;
+		StackPtr curSP = NULL;
+		reg_t curFP = NULL_REG;
+		if (selectorType == kSelectorMethod) {
+			stackType = EXEC_STACK_TYPE_CALL;
+			curSP = sp;
+			curFP = funcp;
+			sp = CALL_SP_CARRY; // Destroy sp, as it will be carried over
+		}
+
 		if (activeBreakpointTypes || DebugMan.isDebugChannelEnabled(kDebugLevelScripts))
 			debugSelectorCall(send_obj, selector, argc, argp, varp, funcp, s->_segMan, selectorType);
 
-		switch (selectorType) {
-		case kSelectorNone:
-			error("Send to invalid selector 0x%x of object at %04x:%04x", 0xffff & selector, PRINT_REG(send_obj));
-			break;
-		case kSelectorVariable:
-			call.address.var = varp; // register the call
-			call.type = EXEC_STACK_TYPE_VARSELECTOR; // Register as a varselector
-			break;
-		case kSelectorMethod:
-			call.address.func = funcp; // register call
-			call.type = EXEC_STACK_TYPE_CALL;
-			call.sp = sp;
-			sp = CALL_SP_CARRY; // Destroy sp, as it will be carried over
-			break;
-		} // switch (lookupSelector())
+		ExecStack xstack(work_obj, send_obj, curSP, argc, argp,
+							0xFFFF, curFP, selector, -1, -1,
+							origin, stackType);
 
-		sendCalls.push(call);
+		if (selectorType == kSelectorVariable)
+			xstack.addr.varp = varp;
+
+		// The new stack entries should be put on the stack in reverse order
+		// so that the first one is executed first
+		s->_executionStack.insert(prevElementIterator, xstack);
+		// Decrement the stack end pointer so that it points to our recently
+		// added element, so that the next insert() places it before this one.
+		--prevElementIterator;
 
 		framesize -= (2 + argc);
 		argp += argc + 1;
 	}	// while (framesize > 0)
-
-	// Iterate over all registered calls in the reverse order. This way, the first call is
-	// placed on the TOS; as soon as it returns, it will cause the second call to be executed.
-	while (!sendCalls.empty()) {
-		CallsStruct call = sendCalls.pop();
-		if (call.type == EXEC_STACK_TYPE_VARSELECTOR) // Write/read variable?
-			add_exec_stack_varselector(s->_executionStack, work_obj,
-										call.argc, call.argp, call.selector,
-										call.address.var, origin);
-		else	// Invoke function
-			add_exec_stack_entry(s->_executionStack, call.address.func, call.sp, work_obj,
-									call.argc, call.argp, call.selector,
-									-1, -1, send_obj, origin, SCI_XS_CALLEE_LOCALS);
-	}
 
 	_exec_varselectors(s);
 
 	return s->_executionStack.empty() ? NULL : &(s->_executionStack.back());
 }
 
-static ExecStack *add_exec_stack_varselector(Common::List<ExecStack> &execStack, reg_t objp, int argc, StackPtr argp, Selector selector, const ObjVarRef& address, int origin) {
-	ExecStack *xstack = add_exec_stack_entry(execStack, NULL_REG, 0, objp, argc, argp, selector, -1, -1, objp, origin, SCI_XS_CALLEE_LOCALS);
-	// Store selector address in sp
-
-	xstack->addr.varp = address;
-	xstack->type = EXEC_STACK_TYPE_VARSELECTOR;
-
-	return xstack;
-}
-
-static ExecStack *add_exec_stack_entry(Common::List<ExecStack> &execStack, reg_t pc, StackPtr sp, reg_t objp, int argc,
-								   StackPtr argp, Selector selector, int exportId, int localCallOffset, reg_t sendp, int origin, SegmentId _localsSegment) {
-	// Returns new TOS element for the execution stack
-	// _localsSegment may be -1 if derived from the called object
-
-	//debug("Exec stack: [%d/%d], origin %d, at %p", s->execution_stack_pos, s->_executionStack.size(), origin, s->execution_stack);
-
-	ExecStack xstack;
-
-	xstack.objp = objp;
-	if (_localsSegment != SCI_XS_CALLEE_LOCALS)
-		xstack.local_segment = _localsSegment;
-	else
-		xstack.local_segment = pc.segment;
-
-	xstack.sendp = sendp;
-	xstack.addr.pc = pc;
-	xstack.fp = xstack.sp = sp;
-	xstack.argc = argc;
-
-	xstack.variables_argp = argp; // Parameters
-
-	*argp = make_reg(0, argc);  // SCI code relies on the zeroeth argument to equal argc
-
-	// Additional debug information
-	xstack.debugSelector = selector;
-	xstack.debugExportId = exportId;
-	xstack.debugLocalCallOffset = localCallOffset;
-	xstack.debugOrigin = origin;
-
-	xstack.type = EXEC_STACK_TYPE_CALL; // Normal call
-
-	execStack.push_back(xstack);
-	return &(execStack.back());
-}
-
 static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int argc, reg_t *argv) {
 	// Add stack frame to indicate we're executing a callk.
 	// This is useful in debugger backtraces if this
 	// kernel function calls a script itself.
-	ExecStack *xstack;
-	xstack = add_exec_stack_entry(s->_executionStack, NULL_REG, NULL, NULL_REG, argc, argv - 1, 0, -1, -1, NULL_REG,
-			  s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
-	xstack->debugSelector = kernelCallNr;
-	xstack->type = EXEC_STACK_TYPE_KERNEL;
+	ExecStack xstack(NULL_REG, NULL_REG, NULL, argc, argv - 1, 0xFFFF, NULL_REG,
+						kernelCallNr, -1, -1, s->_executionStack.size() - 1, EXEC_STACK_TYPE_KERNEL);
+	s->_executionStack.push_back(xstack);
 }
 
 static void	logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *kernelSubCall, EngineState *s, int argc, reg_t *argv, reg_t result) {
@@ -1129,12 +1014,15 @@ void run_vm(EngineState *s) {
 
 			uint16 localCallOffset = s->xs->addr.pc.offset + opparams[0];
 
-			xs_new = add_exec_stack_entry(s->_executionStack, make_reg(s->xs->addr.pc.segment,
-											localCallOffset),
-											s->xs->sp, s->xs->objp,
-											(call_base->requireUint16()) + s->restAdjust,
-											call_base, NULL_SELECTOR, -1, localCallOffset, s->xs->objp,
-											s->_executionStack.size()-1, s->xs->local_segment);
+			ExecStack xstack(s->xs->objp, s->xs->objp, s->xs->sp, 
+							(call_base->requireUint16()) + s->restAdjust, call_base,
+							s->xs->local_segment, make_reg(s->xs->addr.pc.segment, localCallOffset),
+							NULL_SELECTOR, -1, localCallOffset, s->_executionStack.size() - 1, 
+							EXEC_STACK_TYPE_CALL);
+
+			s->_executionStack.push_back(xstack);
+			xs_new = &(s->_executionStack.back());
+
 			s->restAdjust = 0; // Used up the &rest adjustment
 			s->xs->sp = call_base;
 
