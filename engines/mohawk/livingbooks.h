@@ -88,6 +88,7 @@ enum {
 	kLBPaletteAItem = 0x44, // unused?
 	kLBPaletteItem = 0x45,
 	kLBProxyItem = 0x46,
+	kLBMiniGameItem = 666, // EVIL!!!!
 	kLBXDataFileItem = 0x3e9,
 	kLBDiscDectectorItem = 0xfa1
 };
@@ -534,6 +535,14 @@ public:
 	~LBMovieItem();
 
 	void update();
+	bool togglePlaying(bool playing, bool restart);
+};
+
+class LBMiniGameItem : public LBItem {
+public:
+	LBMiniGameItem(MohawkEngine_LivingBooks *_vm, Common::Rect rect);
+	~LBMiniGameItem();
+
 	bool togglePlaying(bool playing, bool restart);
 };
 
