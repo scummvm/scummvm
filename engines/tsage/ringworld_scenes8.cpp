@@ -1697,12 +1697,12 @@ void Scene7700::Action5::signal() {
 		setDelay(_globals->_randomSource.getRandomNumber(240));
 		break;
 	case 1: {
-		scene->_object16.setFrame(_globals->_randomSource.getRandomNumber(1) + 1);
-		scene->_object16.setPosition(Common::Point(133, 145 + _globals->_randomSource.getRandomNumber(54)), 0);
+		scene->_cloud.setFrame(_globals->_randomSource.getRandomNumber(1) + 1);
+		scene->_cloud.setPosition(Common::Point(133, 145 + _globals->_randomSource.getRandomNumber(54)), 0);
 
-		Common::Point pt(360, scene->_object16._position.y);
+		Common::Point pt(360, scene->_cloud._position.y);
 		NpcMover *mover = new NpcMover();
-		scene->_object16.addMover(mover, &pt, this);
+		scene->_cloud.addMover(mover, &pt, this);
 		_actionIndex = 0;
 		break;
 	}
@@ -1718,24 +1718,24 @@ void Scene7700::Action6::signal() {
 	case 1: {
 		Common::Point pt(2, 66);
 		NpcMover *mover = new NpcMover();
-		scene->_object17.addMover(mover, &pt, this);
+		scene->_easterEgg1.addMover(mover, &pt, this);
 		break;
 	}
 	case 2:
-		scene->_object17.setStrip(2);
-		scene->_object17.setPosition(Common::Point(43, 65), 0);
+		scene->_easterEgg1.setStrip(2);
+		scene->_easterEgg1.setPosition(Common::Point(43, 65), 0);
 
-		scene->_object18.postInit();
-		scene->_object18.setVisage(7708);
-		scene->_object18.setStrip(3);
-		scene->_object18.setPosition(Common::Point(116, 54), 0);
-		scene->_object18.animate(ANIM_MODE_2, 0);
+		scene->_easterEgg2.postInit();
+		scene->_easterEgg2.setVisage(7708);
+		scene->_easterEgg2.setStrip(3);
+		scene->_easterEgg2.setPosition(Common::Point(116, 54), 0);
+		scene->_easterEgg2.animate(ANIM_MODE_2, 0);
 
 		setDelay(120);
 		break;
 	case 3:
-		scene->_object17.remove();
-		scene->_object18.remove();
+		scene->_easterEgg1.remove();
+		scene->_easterEgg2.remove();
 		remove();
 		break;
 	}
@@ -1761,10 +1761,10 @@ void Scene7700::SceneHotspot3::doAction(int action) {
 	switch (action) {
 	case OBJECT_KEY:
 		SceneItem::display(7702, 3, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
-		_globals->_inventory._emptyJar._sceneNumber = 7700;
+		_globals->_inventory._key._sceneNumber = 7700;
 		break;
 	case CURSOR_LOOK:
-		if (_globals->_inventory._emptyJar._sceneNumber == 7700)
+		if (_globals->_inventory._key._sceneNumber == 7700)
 			scene->setAction(&scene->_action4, 0);
 		else
 			SceneItem::display(7700, 53, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
@@ -1773,8 +1773,9 @@ void Scene7700::SceneHotspot3::doAction(int action) {
 		if (!_globals->getFlag(78)) {
 			scene->_sceneMode = 7712;
 			scene->setAction(&scene->_sequenceManager, scene, 7715, 0);
-		} else if (_globals->_inventory._emptyJar._sceneNumber == 7700) {
+		} else if (_globals->_inventory._key._sceneNumber == 7700) {
 			_globals->_player.disableControl();
+			scene->_sceneMode = 7705;
 			scene->setAction(&scene->_sequenceManager, scene, 7705, &_globals->_player, 0); 
 		}
 		break;
@@ -1795,7 +1796,7 @@ void Scene7700::SceneHotspot4::doAction(int action) {
 		if (!_globals->getFlag(78)) {
 			scene->_sceneMode = 7712;
 			scene->setAction(&scene->_sequenceManager, scene, 7715, 0);
-		} else if (_globals->_inventory._emptyJar._sceneNumber == 7700) {
+		} else {
 			SceneItem::display(7700, 12, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
 		}
 		break;
@@ -1813,7 +1814,7 @@ void Scene7700::SceneHotspot5::doAction(int action) {
 		SceneItem::display(7700, 28, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
 		break;
 	case CURSOR_USE:
-		if (!_globals->getFlag(78)) {
+		if (_globals->getFlag(78)) {
 			if (_globals->_inventory._paper._sceneNumber == 7700) {
 				_globals->_player.disableControl();
 				scene->_sceneMode = 7708;
@@ -1928,7 +1929,7 @@ void Scene7700::Object1::doAction(int action) {
 			_globals->_player.disableControl();
 			scene->setAction(&scene->_action1, this);
 		} else {
-			scene->_sceneMode = 7715;
+			scene->_sceneMode = 7712;
 			scene->setAction(&scene->_sequenceManager, scene, 7715, 0);
 		}
 	} else {
@@ -1978,6 +1979,8 @@ void Scene7700::Object3::doAction(int action) {
 			scene->_sceneMode = 7712;
 			scene->setAction(&scene->_sequenceManager, scene, 7715, 0);
 		}
+	} else {
+		SceneHotspot::doAction(action);
 	}
 }
 
@@ -2162,7 +2165,8 @@ void Scene7700::Object11::doAction(int action) {
 			_globals->_inventory._emptyJar._sceneNumber = 0;
 			_globals->_inventory._jar._sceneNumber = 1;
 			_globals->_player.disableControl();
-			scene->setAction(&scene->_sequenceManager, scene, 7710, &_globals->_player, this, NULL);
+			scene->_sceneMode = 7710;
+			scene->setAction(&scene->_sequenceManager, scene, 7710, &_globals->_player, NULL);
 			break;
 		default:
 			SceneHotspot::doAction(action);
@@ -2229,8 +2233,8 @@ void Scene7700::signal() {
 		_globals->_player.enableControl();
 		SceneItem::display(7700, 62, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
 		break;
-	case 7013:
-		_object12.remove();
+	case 7713:
+		_emptyJar.remove();
 		_globals->_inventory._emptyJar._sceneNumber = 1;
 		break;
 	default:
@@ -2257,13 +2261,13 @@ void Scene7700::process(Event &event) {
 	}
 	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_p)) {
 		event.handled = true;
-		if (!_globals->_sceneObjects->contains(&_object17)) {
-			_object17.postInit();
-			_object17.setVisage(7708);
-			_object17.setPosition(Common::Point(163, 50), 0);
-			_object17.setPriority2(1);
-			_object17.animate(ANIM_MODE_2, 0);
-			_object17.setAction(&_action6);
+		if (!_globals->_sceneObjects->contains(&_easterEgg1)) {
+			_easterEgg1.postInit();
+			_easterEgg1.setVisage(7708);
+			_easterEgg1.setPosition(Common::Point(163, 50), 0);
+			_easterEgg1.setPriority2(1);
+			_easterEgg1.animate(ANIM_MODE_2, 0);
+			_easterEgg1.setAction(&_action6);
 		}
 	}
 }
@@ -2323,14 +2327,14 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 		_prof.setAction(&_action2);
 	}
 
-	_object16.postInit();
-	_object16.setVisage(7700);
-	_object16.setStrip2(5);
-	_object16.setPriority2(1);
-	_object16.setPosition(Common::Point(133, 160), 0);
-	_object16._moveDiff.x = 1;
-	_object16._field7A = 7;
-	_object16.setAction(&_action5);
+	_cloud.postInit();
+	_cloud.setVisage(7700);
+	_cloud.setStrip2(5);
+	_cloud.setPriority2(1);
+	_cloud.setPosition(Common::Point(133, 160), 0);
+	_cloud._moveDiff.x = 1;
+	_cloud._field7A = 7;
+	_cloud.setAction(&_action5);
 
 	_object1.postInit();
 	_object1.setVisage(7700);
@@ -2382,19 +2386,19 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_sceneHotspot8.setBounds(82, 141, 161, 92);
 	_sceneHotspot9.setBounds(82, 187, 161, 141);
 
-	_object11.postInit();
-	_object11.setVisage(7703);
-	_object11.setPosition(Common::Point(32, 128), 0);
+	_cork.postInit();
+	_cork.setVisage(7703);
+	_cork.setPosition(Common::Point(32, 128), 0);
 
 	if (_globals->getFlag(49))
-		_object11.setFrame(_object11.getFrameCount());
+		_cork.setFrame(_cork.getFrameCount());
 
 	if (_globals->_inventory._emptyJar._sceneNumber == 7700) {
-		_object12.postInit();
-		_object12.setVisage(7700);
-		_object12.setStrip(8);
-		_object12.setPosition(Common::Point(189, 48), 0);
-		_globals->_sceneItems.addItems(&_object12, NULL);
+		_emptyJar.postInit();
+		_emptyJar.setVisage(7700);
+		_emptyJar.setStrip(8);
+		_emptyJar.setPosition(Common::Point(189, 48), 0);
+		_globals->_sceneItems.addItems(&_emptyJar, NULL);
 	}
 	_sceneHotspot1._sceneRegionId = 28;
 	_sceneHotspot2._sceneRegionId = 6;
@@ -2489,13 +2493,23 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_globals->_sceneItems.addItems(&_sceneHotspot31, &_sceneHotspot30, &_sceneHotspot29, &_sceneHotspot5, &_sceneHotspot28, &_sceneHotspot27, NULL);
 	_globals->_sceneItems.addItems(&_sceneHotspot26, &_sceneHotspot25, &_sceneHotspot24, &_sceneHotspot23, &_sceneHotspot22, &_sceneHotspot21, NULL);
 	_globals->_sceneItems.addItems(&_sceneHotspot20, &_sceneHotspot19, &_sceneHotspot18, &_sceneHotspot17, &_sceneHotspot4, &_sceneHotspot3, NULL);
-	_globals->_sceneItems.addItems(&_sceneHotspot16, &_sceneHotspot15, &_sceneHotspot2, &_sceneHotspot14, &_object11, &_sceneHotspot1, NULL);
+	_globals->_sceneItems.addItems(&_sceneHotspot16, &_sceneHotspot15, &_sceneHotspot2, &_sceneHotspot14, &_cork, &_sceneHotspot1, NULL);
 	_globals->_sceneItems.addItems(&_sceneHotspot13, &_sceneHotspot12, &_sceneHotspot11, &_object2, &_object1, &_object3, NULL);
 	_globals->_sceneItems.addItems(&_object6, &_object5, &_object4, &_sceneHotspot6, &_sceneHotspot36, &_sceneItem7, NULL);
 
 	_sceneMode = 7701;
 	setAction(&_sequenceManager, this, 7701, &_globals->_player, 0);
 	_soundHandler.startSound(256, 0, 127);
+}
+
+Scene7700::Scene7700() {
+	_object1._state = 0;
+	_object2._state = 0;
+	_object3._state = 0;
+	_object4._state = 0;
+	_object5._state = 0;
+	_object6._state = 0;
+	_prof._state = 0;
 }
 
 } // End of namespace tSage

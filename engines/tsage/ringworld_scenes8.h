@@ -410,14 +410,14 @@ public:
 	Object8 _object8;
 	Object9 _object9;
 	Object10 _object10;
-	Object11 _object11;
-	Object12 _object12;
+	Object11 _cork;
+	Object12 _emptyJar;
 	SceneObject _object13;
 	SceneObject _object14;
 	SceneObject _object15;
-	SceneObject _object16;
-	SceneObject _object17;
-	SceneObject _object18;
+	SceneObject _cloud;
+	SceneObject _easterEgg1;
+	SceneObject _easterEgg2;
 	SceneObject _object19;
 	Action1 _action1;
 	Action2 _action2;
@@ -463,6 +463,7 @@ public:
 	SceneHotspot11 _sceneHotspot36;
 	int _field977, _field979, _field97B;
 
+	Scene7700();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 	virtual void process(Event &event);
