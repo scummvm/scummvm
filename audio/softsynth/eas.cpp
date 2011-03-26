@@ -30,11 +30,14 @@
 
 #include "common/debug.h"
 #include "common/endian.h"
+#include "common/file.h"
 #include "common/config-manager.h"
 #include "audio/audiostream.h"
 #include "audio/mpu401.h"
 #include "audio/musicplugin.h"
 #include "audio/mixer.h"
+
+//#define EAS_DUMPSTREAM
 
 // NOTE:
 // EAS's render function *only* accepts one mix buffer size. it's defined at
@@ -140,6 +143,8 @@ private:
 	uint32 _baseTempo;
 	uint _rounds;
 	Audio::SoundHandle _soundHandle;
+
+	Common::DumpFile _dump;
 };
 
 MidiDriver_EAS::MidiDriver_EAS() :
@@ -160,7 +165,8 @@ MidiDriver_EAS::MidiDriver_EAS() :
 	_timerParam(0),
 	_baseTempo(0),
 	_rounds(0),
-	_soundHandle() {
+	_soundHandle(),
+	_dump() {
 }
 
 MidiDriver_EAS::~MidiDriver_EAS() {
@@ -256,6 +262,11 @@ int MidiDriver_EAS::open() {
 			"tempo:%u rounds:%u", _config->voices, _config->channels,
 			_config->rate, _config->bufSize, _baseTempo, _rounds);
 
+#ifdef EAS_DUMPSTREAM
+	if (!_dump.open("/sdcard/eas.dump"))
+		warning("error opening EAS dump file");
+#endif
+
 	g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType,
 										&_soundHandle, this, -1,
 										Audio::Mixer::kMaxChannelVolume, 0,
@@ -275,6 +286,11 @@ void MidiDriver_EAS::close() {
 		return;
 
 	g_system->getMixer()->stopHandle(_soundHandle);
+
+#ifdef EAS_DUMPSTREAM
+	if (_dump.isOpen())
+		_dump.close();
+#endif
 
 	// not pretty, but better than a mutex
 	g_system->delayMillis((_baseTempo * _rounds) / 1000);
@@ -356,6 +372,11 @@ int MidiDriver_EAS::readBuffer(int16 *buffer, const int numSamples) {
 			warning("error rendering EAS samples: %d", res);
 			return -1;
 		}
+
+#ifdef EAS_DUMPSTREAM
+		if (_dump.isOpen())
+			_dump.write(buffer, c * _config->channels * 2);
+#endif
 
 		buffer += c * _config->channels;
 	}
