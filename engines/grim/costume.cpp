@@ -766,7 +766,6 @@ Costume::~Costume() {
 		}
 		delete[] _components;
 		delete[] _chores;
-		g_resourceloader->uncacheCostume(this);
 	}
 }
 

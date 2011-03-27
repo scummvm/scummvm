@@ -236,7 +236,6 @@ Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
 		putIntoCache(fname, b);
 	}
 	Costume *result = new Costume(filename, b->data(), b->len(), prevCost);
-	_costumes.push_back(result);
 
 	return result;
 }
@@ -379,10 +378,6 @@ void ResourceLoader::uncacheFont(Font *f) {
 	_fonts.remove(f);
 }
 
-void ResourceLoader::uncacheCostume(Costume *c) {
-	_costumes.remove(c);
-}
-
 void ResourceLoader::uncacheLipSync(LipSync *s) {
 	_lipsyncs.remove(s);
 }
@@ -451,17 +446,6 @@ FontPtr ResourceLoader::getFont(const char *fname) {
 	}
 
 	return loadFont(fname);
-}
-
-CostumePtr ResourceLoader::getCostume(const char *fname, Costume *prev) {
-	for (Common::List<Costume *>::const_iterator i = _costumes.begin(); i != _costumes.end(); ++i) {
-		Costume *c = *i;
-		if (strcmp(fname, c->getFilename()) == 0) {
-			return c;
-		}
-	}
-
-	return loadCostume(fname, prev);
 }
 
 LipSyncPtr ResourceLoader::getLipSync(const char *fname) {

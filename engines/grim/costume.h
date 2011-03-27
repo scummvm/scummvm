@@ -112,7 +112,7 @@ private:
 
 
 	Common::String _fname;
-	CostumePtr _prevCostume;
+	Costume *_prevCostume;
 
 	int _numComponents;
 	Component **_components;

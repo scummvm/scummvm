@@ -122,7 +122,6 @@ public:
 	void setCostume(const char *name);
 	void popCostume();
 	void clearCostumes();
-	void checkCostumes();
 	Costume *currentCostume() {
 		if (_costumeStack.empty())
 			return NULL;
@@ -184,7 +183,7 @@ private:
 	bool _lookingMode;
 	Common::String _talkSoundName;
 	LipSyncPtr _lipSync;
-	Common::List<CostumePtr> _costumeStack;
+	Common::List<Costume *> _costumeStack;
 
 	// Variables for gradual turning
 	bool _turning;
@@ -195,22 +194,22 @@ private:
 	Graphics::Vector3d _destPos;
 
 	// chores
-	CostumePtr _restCostume;
+	Costume *_restCostume;
 	int _restChore;
 
-	CostumePtr _walkCostume;
+	Costume *_walkCostume;
 	int _walkChore;
 	bool _walkedLast, _walkedCur;
 
-	CostumePtr _turnCostume;
+	Costume *_turnCostume;
 	int _leftTurnChore, _rightTurnChore;
 	int _lastTurnDir, _currTurnDir;
 
-	CostumePtr _talkCostume[10];
+	Costume *_talkCostume[10];
 	int _talkChore[10];
 	int _talkAnim;
 
-	CostumePtr _mumbleCostume;
+	Costume *_mumbleCostume;
 	int _mumbleChore;
 
 	Shadow *_shadowArray;
@@ -226,7 +225,7 @@ private:
 		return (dir > 0 ? _rightTurnChore : _leftTurnChore);
 	}
 
-	void freeCostumeChore(Costume *toFree, CostumePtr &cost, int &chore);
+	void freeCostumeChore(Costume *toFree, Costume *&cost, int &chore);
 
 	// lookAt
 	Graphics::Vector3d _lookAtVector;

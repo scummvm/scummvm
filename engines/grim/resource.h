@@ -50,7 +50,6 @@ typedef ObjectPtr<Model> ModelPtr;
 typedef ObjectPtr<CMap> CMapPtr;
 typedef ObjectPtr<KeyframeAnim> KeyframeAnimPtr;
 typedef ObjectPtr<Font> FontPtr;
-typedef ObjectPtr<Costume> CostumePtr;
 typedef ObjectPtr<LipSync> LipSyncPtr;
 
 class ResourceLoader {
@@ -80,7 +79,6 @@ public:
 	CMapPtr getColormap(const char *fname);
 	KeyframeAnimPtr getKeyframe(const char *fname);
 	FontPtr getFont(const char *fname);
-	CostumePtr getCostume(const char *fname, Costume *prevCostume);
 	LipSyncPtr getLipSync(const char *fname);
 	void uncacheMaterial(Material *m);
 	void uncacheBitmap(Bitmap *bitmap);
@@ -88,7 +86,6 @@ public:
 	void uncacheColormap(CMap *c);
 	void uncacheKeyframe(KeyframeAnim *kf);
 	void uncacheFont(Font *f);
-	void uncacheCostume(Costume *c);
 	void uncacheLipSync(LipSync *l);
 
 	struct ResourceCache {
@@ -116,7 +113,6 @@ private:
 	Common::List<CMap *> _colormaps;
 	Common::List<KeyframeAnim *> _keyframeAnims;
 	Common::List<Font *> _fonts;
-	Common::List<Costume *> _costumes;
 	Common::List<LipSync *> _lipsyncs;
 };
 

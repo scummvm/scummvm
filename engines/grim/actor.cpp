@@ -130,8 +130,8 @@ void Actor::saveState(SaveGame *savedState) const {
 	}
 
 	savedState->writeLESint32(_costumeStack.size());
-	for (Common::List<CostumePtr>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
-		const CostumePtr &c = *i;
+	for (Common::List<Costume *>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+		Costume *c = *i;
 		savedState->writeCharString(c->getFilename());
 		Costume *pc = c->previousCostume();
 		int depth = 0;
@@ -245,34 +245,10 @@ void Actor::saveState(SaveGame *savedState) const {
 }
 
 bool Actor::restoreState(SaveGame *savedState) {
-	for (Common::List<CostumePtr>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
-		if (*i) {
-			delete (*i).object();
-		}
+	for (Common::List<Costume *>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+		delete *i;
 	}
 	_costumeStack.clear();
-	if (_restCostume) {
-		delete _restCostume.object();
-		_restCostume = NULL;
-	}
-	if (_walkCostume) {
-		delete _walkCostume.object();
-		_walkCostume = NULL;
-	}
-	if (_turnCostume) {
-		delete _turnCostume.object();
-		_turnCostume = NULL;
-	}
-	for (int i = 0; i < 10; ++i) {
-		if (_talkCostume[i]) {
-			delete _talkCostume[i].object();
-			_talkCostume[i] = NULL;
-		}
-	}
-	if (_mumbleCostume) {
-		delete _mumbleCostume.object();
-		_mumbleCostume = NULL;
-	}
 
 	// load actor name
 	_name = savedState->readString();
@@ -305,22 +281,23 @@ bool Actor::restoreState(SaveGame *savedState) {
 	for (int32 i = 0; i < size; ++i) {
 		const char *fname = savedState->readCharString();
 		const int depth = savedState->readLEUint32();
-		CostumePtr pc = NULL;
+		Costume *pc = NULL;
 		if (depth > 0) {	//build all the previousCostume hierarchy
 			const char **names = new const char*[depth];
 			for (int j = 0; j < depth; ++j) {
 				names[j] = savedState->readCharString();
 			}
 			for (int j = depth - 1; j >= 0; --j) {
-				pc = g_resourceloader->getCostume(names[j], pc);
-			}
-			for (int j = 0; j < depth; ++j) {
+				pc = findCostume(names[j]);
+				if (!pc) {
+					pc = g_resourceloader->loadCostume(names[j], pc);
+				}
 				delete[] names[j];
 			}
 			delete[] names;
 		}
 
-		CostumePtr c = g_resourceloader->getCostume(fname, pc);
+		Costume *c = g_resourceloader->loadCostume(fname, pc);
 		c->restoreState(savedState);
 		_costumeStack.push_back(c);
 	}
@@ -333,7 +310,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 
 	if (savedState->readLEUint32()) {
 		const char *fname = savedState->readCharString();
-		_restCostume = g_resourceloader->getCostume(fname, 0);
+		_restCostume = findCostume(fname);
 		delete[] fname;
 	} else {
 		_restCostume = NULL;
@@ -342,18 +319,19 @@ bool Actor::restoreState(SaveGame *savedState) {
 
 	if (savedState->readLEUint32()) {
 		const char *fname = savedState->readCharString();
-		_walkCostume = g_resourceloader->getCostume(fname, 0);
+		_walkCostume = findCostume(fname);
 		delete[] fname;
 	} else {
 		_walkCostume = NULL;
 	}
+
 	_walkChore = savedState->readLESint32();
 	_walkedLast = savedState->readLESint32();
 	_walkedCur = savedState->readLESint32();
 
 	if (savedState->readLEUint32()) {
 		const char *fname = savedState->readCharString();
-		_turnCostume = g_resourceloader->getCostume(fname, 0);
+		_turnCostume = findCostume(fname);
 		delete[] fname;
 	} else {
 		_turnCostume = NULL;
@@ -366,7 +344,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 	for (int i = 0; i < 10; ++i) {
 		if (savedState->readLEUint32()) {
 			const char *fname = savedState->readCharString();
-			_talkCostume[i] = g_resourceloader->getCostume(fname, 0);
+			_talkCostume[i] = findCostume(fname);
 			delete[] fname;
 		} else {
 			_talkCostume[i] = NULL;
@@ -377,7 +355,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 
 	if (savedState->readLEUint32()) {
 		const char *fname = savedState->readCharString();
-		_mumbleCostume = g_resourceloader->getCostume(fname, 0);
+		_mumbleCostume = findCostume(fname);
 		delete[] fname;
 	} else {
 		_mumbleCostume = NULL;
@@ -564,7 +542,7 @@ Graphics::Vector3d Actor::puckVector() const {
 }
 
 void Actor::setRestChore(int chore, Costume *cost) {
-	if (_restCostume.object() == cost && _restChore == chore)
+	if (_restCostume == cost && _restChore == chore)
 		return;
 
 	if (_restChore >= 0)
@@ -578,7 +556,7 @@ void Actor::setRestChore(int chore, Costume *cost) {
 }
 
 void Actor::setWalkChore(int chore, Costume *cost) {
-	if (_walkCostume.object() == cost && _walkChore == chore)
+	if (_walkCostume == cost && _walkChore == chore)
 		return;
 
 	if (_walkChore >= 0)
@@ -589,7 +567,7 @@ void Actor::setWalkChore(int chore, Costume *cost) {
 }
 
 void Actor::setTurnChores(int left_chore, int right_chore, Costume *cost) {
-	if (_turnCostume.object() == cost && _leftTurnChore == left_chore &&
+	if (_turnCostume == cost && _leftTurnChore == left_chore &&
 		_rightTurnChore == right_chore)
 		return;
 
@@ -612,7 +590,7 @@ void Actor::setTalkChore(int index, int chore, Costume *cost) {
 
 	index--;
 
-	if (_talkCostume[index].object() == cost && _talkChore[index] == chore)
+	if (_talkCostume[index] == cost && _talkChore[index] == chore)
 		return;
 
 	if (_talkChore[index] >= 0)
@@ -765,7 +743,7 @@ void Actor::shutUp() {
 }
 
 void Actor::pushCostume(const char *n) {
-	CostumePtr newCost = g_resourceloader->getCostume(n, currentCostume());
+	Costume *newCost = g_resourceloader->loadCostume(n, currentCostume());
 
 	newCost->setColormap(NULL);
 	_costumeStack.push_back(newCost);
@@ -789,8 +767,8 @@ void Actor::setCostume(const char *n) {
 
 void Actor::popCostume() {
 	if (!_costumeStack.empty()) {
-		freeCostumeChore(_costumeStack.back().object(), _restCostume, _restChore);
-		freeCostumeChore(_costumeStack.back().object(), _walkCostume, _walkChore);
+		freeCostumeChore(_costumeStack.back(), _restCostume, _restChore);
+		freeCostumeChore(_costumeStack.back(), _walkCostume, _walkChore);
 
 		if (_turnCostume == _costumeStack.back()) {
 			_turnCostume = NULL;
@@ -801,6 +779,7 @@ void Actor::popCostume() {
 		freeCostumeChore(_costumeStack.back(), _mumbleCostume, _mumbleChore);
 		for (int i = 0; i < 10; i++)
 			freeCostumeChore(_costumeStack.back(), _talkCostume[i], _talkChore[i]);
+		delete _costumeStack.back();
 		_costumeStack.pop_back();
 		Costume *newCost;
 		if (_costumeStack.empty())
@@ -823,15 +802,6 @@ void Actor::clearCostumes() {
 		popCostume();
 }
 
-void Actor::checkCostumes() {
-	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
-		Costume *c = *i;
-		if (!c) {
-			i = _costumeStack.reverse_erase(i);
-		}
-	}
-}
-
 void Actor::setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw) {
 	if (!_costumeStack.empty()) {
 		_costumeStack.back()->setHead(joint1, joint2, joint3, maxRoll, maxPitch, maxYaw);
@@ -839,7 +809,7 @@ void Actor::setHead(int joint1, int joint2, int joint3, float maxRoll, float max
 }
 
 Costume *Actor::findCostume(const char *n) {
-	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		if (strcasecmp((*i)->getFilename(), n) == 0)
 			return *i;
 	}
@@ -848,10 +818,6 @@ Costume *Actor::findCostume(const char *n) {
 }
 
 void Actor::update() {
-	// Remove any NULL costume from the stack.
-	// It can happen to have NULL costumes, especially on the demo.
-	checkCostumes();
-
 	// Snap actor to walkboxes if following them.  This might be
 	// necessary for example after activating/deactivating
 	// walkboxes, etc.
@@ -958,7 +924,7 @@ void Actor::update() {
 		}
 	}
 
-	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
 		c->setPosRotate(_pos, _pitch, _yaw, _roll);
 		if (_lookingMode) {
@@ -967,7 +933,7 @@ void Actor::update() {
 		c->update();
 	}
 
-	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
 		if (_lookingMode) {
 			c->moveHead();
@@ -979,7 +945,7 @@ void Actor::draw() {
 	g_winX1 = g_winY1 = 1000;
 	g_winX2 = g_winY2 = -1000;
 
-	for (Common::List<CostumePtr>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
 		c->setupTextures();
 	}
@@ -1111,8 +1077,8 @@ bool Actor::inSet(const char *setName) const {
 	return _setName == setName;
 }
 
-void Actor::freeCostumeChore(Costume *toFree, CostumePtr &cost, int &chore) {
-	if (cost.object() == toFree) {
+void Actor::freeCostumeChore(Costume *toFree, Costume *&cost, int &chore) {
+	if (cost == toFree) {
 		cost = NULL;
 		chore = -1;
 	}
