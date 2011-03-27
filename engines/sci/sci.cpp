@@ -575,9 +575,8 @@ bool SciEngine::initGame() {
 	}
 
 	// Reset parser
-	if (_vocabulary) {
+	if (_vocabulary)
 		_vocabulary->reset();
-	}
 
 	_gamestate->lastWaitTime = _gamestate->_screenUpdateTime = g_system->getMillis();
 

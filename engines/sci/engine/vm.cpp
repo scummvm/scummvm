@@ -84,10 +84,9 @@ static reg_t &validate_property(EngineState *s, Object *obj, int index) {
 static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 	if (sp >= s->stack_base && sp < s->stack_top)
 		return sp;
-
+	else
 	error("[VM] Stack index %d out of valid range [%d..%d]",
 		(int)(sp - s->stack_base), 0, (int)(s->stack_top - s->stack_base - 1));
-	return 0;
 }
 
 static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int index) {
@@ -553,7 +552,7 @@ void run_vm(EngineState *s) {
 	StackPtr s_temp; // Temporary stack pointer
 	int16 opparams[4]; // opcode parameters
 
-	s->restAdjust = 0;	// &rest adjusts the parameter count by this value
+	s->r_rest = 0;	// &rest adjusts the parameter count by this value
 	// Current execution data:
 	s->xs = &(s->_executionStack.back());
 	ExecStack *xs_new = NULL;
@@ -826,14 +825,14 @@ void run_vm(EngineState *s) {
 		case op_call: { // 0x20 (32)
 			// Call a script subroutine
 			int argc = (opparams[1] >> 1) // Given as offset, but we need count
-			           + 1 + s->restAdjust;
+			           + 1 + s->r_rest;
 			StackPtr call_base = s->xs->sp - argc;
-			s->xs->sp[1].offset += s->restAdjust;
+			s->xs->sp[1].offset += s->r_rest;
 
 			uint16 localCallOffset = s->xs->addr.pc.offset + opparams[0];
 
 			ExecStack xstack(s->xs->objp, s->xs->objp, s->xs->sp, 
-							(call_base->requireUint16()) + s->restAdjust, call_base,
+							(call_base->requireUint16()) + s->r_rest, call_base,
 							s->xs->local_segment, make_reg(s->xs->addr.pc.segment, localCallOffset),
 							NULL_SELECTOR, -1, localCallOffset, s->_executionStack.size() - 1, 
 							EXEC_STACK_TYPE_CALL);
@@ -841,7 +840,7 @@ void run_vm(EngineState *s) {
 			s->_executionStack.push_back(xstack);
 			xs_new = &(s->_executionStack.back());
 
-			s->restAdjust = 0; // Used up the &rest adjustment
+			s->r_rest = 0; // Used up the &rest adjustment
 			s->xs->sp = call_base;
 
 			s->_executionStackPosChanged = true;
@@ -860,17 +859,17 @@ void run_vm(EngineState *s) {
 
 			bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 			if (!oldScriptHeader)
-				s->xs->sp -= s->restAdjust;
+				s->xs->sp -= s->r_rest;
 
 			int argc = s->xs->sp[0].requireUint16();
 
 			if (!oldScriptHeader)
-				argc += s->restAdjust;
+				argc += s->r_rest;
 
 			callKernelFunc(s, opparams[0], argc);
 
 			if (!oldScriptHeader)
-				s->restAdjust = 0;
+				s->r_rest = 0;
 
 			// Calculate xs again: The kernel function might
 			// have spawned a new VM
@@ -887,28 +886,28 @@ void run_vm(EngineState *s) {
 
 		case op_callb: // 0x22 (34)
 			// Call base script
-			temp = ((opparams[1] >> 1) + s->restAdjust + 1);
+			temp = ((opparams[1] >> 1) + s->r_rest + 1);
 			s_temp = s->xs->sp;
 			s->xs->sp -= temp;
 
-			s->xs->sp[0].offset += s->restAdjust;
+			s->xs->sp[0].offset += s->r_rest;
 			xs_new = execute_method(s, 0, opparams[0], s_temp, s->xs->objp,
 									s->xs->sp[0].offset, s->xs->sp);
-			s->restAdjust = 0; // Used up the &rest adjustment
+			s->r_rest = 0; // Used up the &rest adjustment
 			if (xs_new)    // in case of error, keep old stack
 				s->_executionStackPosChanged = true;
 			break;
 
 		case op_calle: // 0x23 (35)
 			// Call external script
-			temp = ((opparams[2] >> 1) + s->restAdjust + 1);
+			temp = ((opparams[2] >> 1) + s->r_rest + 1);
 			s_temp = s->xs->sp;
 			s->xs->sp -= temp;
 
-			s->xs->sp[0].offset += s->restAdjust;
+			s->xs->sp[0].offset += s->r_rest;
 			xs_new = execute_method(s, opparams[0], opparams[1], s_temp, s->xs->objp,
 									s->xs->sp[0].offset, s->xs->sp);
-			s->restAdjust = 0; // Used up the &rest adjustment
+			s->r_rest = 0; // Used up the &rest adjustment
 
 			if (xs_new)  // in case of error, keep old stack
 				s->_executionStackPosChanged = true;
@@ -960,16 +959,16 @@ void run_vm(EngineState *s) {
 		case op_send: // 0x25 (37)
 			// Send for one or more selectors
 			s_temp = s->xs->sp;
-			s->xs->sp -= ((opparams[0] >> 1) + s->restAdjust); // Adjust stack
+			s->xs->sp -= ((opparams[0] >> 1) + s->r_rest); // Adjust stack
 
-			s->xs->sp[1].offset += s->restAdjust;
+			s->xs->sp[1].offset += s->r_rest;
 			xs_new = send_selector(s, s->r_acc, s->r_acc, s_temp,
-									(int)(opparams[0] >> 1) + (uint16)s->restAdjust, s->xs->sp);
+									(int)(opparams[0] >> 1) + (uint16)s->r_rest, s->xs->sp);
 
 			if (xs_new && xs_new != s->xs)
 				s->_executionStackPosChanged = true;
 
-			s->restAdjust = 0;
+			s->r_rest = 0;
 
 			break;
 
@@ -1003,17 +1002,17 @@ void run_vm(EngineState *s) {
 		case op_self: // 0x2a (42)
 			// Send to self
 			s_temp = s->xs->sp;
-			s->xs->sp -= ((opparams[0] >> 1) + s->restAdjust); // Adjust stack
+			s->xs->sp -= ((opparams[0] >> 1) + s->r_rest); // Adjust stack
 
-			s->xs->sp[1].offset += s->restAdjust;
+			s->xs->sp[1].offset += s->r_rest;
 			xs_new = send_selector(s, s->xs->objp, s->xs->objp,
-									s_temp, (int)(opparams[0] >> 1) + (uint16)s->restAdjust,
+									s_temp, (int)(opparams[0] >> 1) + (uint16)s->r_rest,
 									s->xs->sp);
 
 			if (xs_new && xs_new != s->xs)
 				s->_executionStackPosChanged = true;
 
-			s->restAdjust = 0;
+			s->r_rest = 0;
 			break;
 
 		case op_super: // 0x2b (43)
@@ -1024,17 +1023,17 @@ void run_vm(EngineState *s) {
 				error("[VM]: Invalid superclass in object");
 			else {
 				s_temp = s->xs->sp;
-				s->xs->sp -= ((opparams[1] >> 1) + s->restAdjust); // Adjust stack
+				s->xs->sp -= ((opparams[1] >> 1) + s->r_rest); // Adjust stack
 
-				s->xs->sp[1].offset += s->restAdjust;
+				s->xs->sp[1].offset += s->r_rest;
 				xs_new = send_selector(s, r_temp, s->xs->objp, s_temp,
-										(int)(opparams[1] >> 1) + (uint16)s->restAdjust,
+										(int)(opparams[1] >> 1) + (uint16)s->r_rest,
 										s->xs->sp);
 
 				if (xs_new && xs_new != s->xs)
 					s->_executionStackPosChanged = true;
 
-				s->restAdjust = 0;
+				s->r_rest = 0;
 			}
 
 			break;
@@ -1042,7 +1041,7 @@ void run_vm(EngineState *s) {
 		case op_rest: // 0x2c (44)
 			// Pushes all or part of the parameter variable list on the stack
 			temp = (uint16) opparams[0]; // First argument
-			s->restAdjust = MAX<int16>(s->xs->argc - temp + 1, 0); // +1 because temp counts the paramcount while argc doesn't
+			s->r_rest = MAX<int16>(s->xs->argc - temp + 1, 0); // +1 because temp counts the paramcount while argc doesn't
 
 			for (; temp <= s->xs->argc; temp++)
 				PUSH32(s->xs->variables_argp[temp]);
