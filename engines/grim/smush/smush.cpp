@@ -164,7 +164,7 @@ void Smush::handleFrame() {
 		// frame then reset the frame number and the movie time, this
 		// needs to occur at the beginning so the last frame has time to
 		// render appropriately
-		_frame = 0;
+		_frame = 1;
 		_movieTime = 0;
 	}
 
