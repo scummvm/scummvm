@@ -469,6 +469,7 @@ public:
 	virtual void process(Event &event);
 	virtual void dispatch();
 };
+
 } // End of namespace tSage
 
 #endif
