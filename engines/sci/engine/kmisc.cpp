@@ -151,8 +151,13 @@ reg_t kMemorySegment(EngineState *s, int argc, reg_t *argv) {
 		if (!size)
 			size = s->_segMan->strlen(argv[1]) + 1;
 
-		if (size > EngineState::kMemorySegmentMax)
-			size = EngineState::kMemorySegmentMax;
+		if (size > EngineState::kMemorySegmentMax) {
+			// This was set to cut the block to 256 bytes. This should be an
+			// error, as we won't restore the full block that the game scripts
+			// request, thus error out instead.
+			//size = EngineState::kMemorySegmentMax;
+			error("kMemorySegment: Requested to save more than 256 bytes (%d)", size);
+		}
 
 		s->_memorySegmentSize = size;
 
