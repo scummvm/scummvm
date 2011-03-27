@@ -430,8 +430,8 @@ SpeakerHText::SpeakerHText() {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerPText::SpeakerPText() {
-	_speakerName = "PTEXT";
+SpeakerSKText::SpeakerSKText(): ScreenSpeaker() {
+	_speakerName = "SKTEXT";
 	_textWidth = 240;
 	_textMode = ALIGN_CENTRE;
 	_colour1 = 5;
@@ -488,26 +488,6 @@ void SpeakerSKL::setText(const Common::String &msg) {
 
 	Speaker::setText(msg);
 }
-/*--------------------------------------------------------------------------*/
-
-SpeakerPText::SpeakerPText() {
-	_speakerName = "PTEXT";
-	_textWidth = 240;
-	_textMode = ALIGN_CENTRE;
-	_colour1 = 5;
-	_hideObjects = false;
-}
-
-/*--------------------------------------------------------------------------*/
-
-SpeakerCHFText::SpeakerCHFText() {
-	_speakerName = "SpeakerCHFText";
-	_textWidth = 240;
-	_textMode = ALIGN_CENTRE;
-	_colour1 = 56;
-	_hideObjects = false;
-}
-
 /*--------------------------------------------------------------------------*/
 
 SpeakerQL::SpeakerQL(): AnimatedSpeaker() {
