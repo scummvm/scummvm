@@ -430,13 +430,33 @@ SpeakerHText::SpeakerHText() {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerSKText::SpeakerSKText(): ScreenSpeaker() {
-	_speakerName = "SKTEXT";
+SpeakerPText::SpeakerPText() {
+	_speakerName = "PTEXT";
 	_textWidth = 240;
 	_textMode = ALIGN_CENTRE;
-	_colour1 = 9;
+	_colour1 = 5;
 	_hideObjects = false;
-};
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerPText::SpeakerPText() {
+	_speakerName = "PTEXT";
+	_textWidth = 240;
+	_textMode = ALIGN_CENTRE;
+	_colour1 = 5;
+	_hideObjects = false;
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerCHFText::SpeakerCHFText() {
+	_speakerName = "SpeakerCHFText";
+	_textWidth = 240;
+	_textMode = ALIGN_CENTRE;
+	_colour1 = 56;
+	_hideObjects = false;
+}
 
 /*--------------------------------------------------------------------------*/
 
