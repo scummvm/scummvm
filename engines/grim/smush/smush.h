@@ -42,6 +42,8 @@
 
 namespace Grim {
 
+class SaveGame;
+
 struct SavePos {
 	uint32 filePos;
 	z_stream streamBuf;
@@ -81,6 +83,7 @@ private:
 	Common::File _f;
 	Audio::SoundHandle _soundHandle;
 	Audio::QueuingAudioStream *_stream;
+	Common::String _fname;
 
 	int32 _frame;
 	bool _updateNeeded;
@@ -117,6 +120,9 @@ public:
 	int getFrame() { return _frame; }
 	void clearUpdateNeeded() { _updateNeeded = false; }
 	int32 getMovieTime() { return _movieTime; }
+
+	void saveState(SaveGame *state);
+	void restoreState(SaveGame *state);
 
 private:
 	static void timerCallback(void *ptr);

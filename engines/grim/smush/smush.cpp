@@ -516,6 +516,7 @@ void Smush::stop() {
 
 bool Smush::play(const char *filename, bool looping, int x, int y) {
 	deinit();
+	_fname = filename;
 
 	if (gDebugLevel == DEBUG_SMUSH)
 		printf("Playing video '%s'.\n", filename);
@@ -537,6 +538,44 @@ bool Smush::play(const char *filename, bool looping, int x, int y) {
 	init();
 
 	return true;
+}
+
+void Smush::saveState(SaveGame *state) {
+	state->beginSection('SMUS');
+
+	state->writeString(_fname);
+
+	state->writeLESint32(_frame);
+	state->writeLESint32(_movieTime);
+	state->writeLESint32(_videoFinished);
+	state->writeLESint32(_videoLooping);
+
+	state->writeLESint32(_x);
+	state->writeLESint32(_y);
+
+	state->endSection();
+}
+
+void Smush::restoreState(SaveGame *state) {
+	state->beginSection('SMUS');
+
+	_fname = state->readString();
+
+	int32 frame = state->readLESint32();
+	int32 movieTime = state->readLESint32();
+	bool videoFinished = state->readLESint32();
+	bool videoLooping = state->readLESint32();
+
+	int x = state->readLESint32();
+	int y = state->readLESint32();
+
+	if (!videoFinished) {
+		play(_fname.c_str(), videoLooping, x, y);
+	}
+	_frame = frame;
+	_movieTime = movieTime;
+
+	state->endSection();
 }
 
 zlibFile::zlibFile() {

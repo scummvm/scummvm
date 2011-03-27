@@ -999,6 +999,7 @@ void GrimEngine::savegameRestore() {
 	//Primitive_Restore(_savedState);
 	//Smush_Restore(_savedState);
 	g_imuse->restoreState(_savedState);
+	g_smush->restoreState(_savedState);
 	_savedState->beginSection('LUAS');
 	lua_Restore(savegameReadStream, savegameReadSint32, savegameReadUint32);
 	_savedState->endSection();
@@ -1199,6 +1200,7 @@ void GrimEngine::savegameSave() {
 	//Primitive_Save(_savedState);
 	//Smush_Save(_savedState);
 	g_imuse->saveState(_savedState);
+	g_smush->saveState(_savedState);
 	_savedState->beginSection('LUAS');
 	lua_Save(savegameWriteStream, savegameWriteSint32, savegameWriteUint32);
 	_savedState->endSection();

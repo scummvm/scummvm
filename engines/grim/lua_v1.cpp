@@ -3122,7 +3122,7 @@ static void StopMovie() {
 }
 
 static void PauseMovie() {
-	g_smush->pause(lua_isnil(lua_getparam(1)) != 0);
+	g_smush->pause(lua_isnil(lua_getparam(1)) == 0);
 }
 
 static void PurgePrimitiveQueue() {
