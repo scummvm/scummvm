@@ -35,6 +35,17 @@
 
 namespace tSage {
 
+class Scene9750: public Scene {
+public:
+	SequenceManager _sequenceManager;
+	SceneObject _object1;
+	SceneObject _object2;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
+};
+
 class Scene9999: public Scene {
 	/* Actions */
 	class Action1: public Action {

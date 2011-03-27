@@ -32,6 +32,41 @@
 namespace tSage {
 
 /*--------------------------------------------------------------------------
+ * Scene 9750
+ *
+ *--------------------------------------------------------------------------*/
+void Scene9750::signal() {
+	switch (_sceneMode ++) {
+	case 9751:
+		_globals->_soundHandler.proc1(this);
+		break;
+	case 9752:
+		_globals->_sceneManager.changeScene(2100);		
+	default:
+		break;
+	}
+}
+
+void Scene9750::dispatch() {
+	Scene::dispatch();
+}
+
+void Scene9750::postInit(SceneObjectList *OwnerList) {
+	loadScene(9750);
+	Scene::postInit();
+	setZoomPercents(0, 100, 200, 100);
+	
+	_globals->_player.postInit();
+	_object1.postInit();
+	_object1.flag100();
+	_object2.postInit();
+	_object2.flag100();
+	_globals->_player.disableControl();
+	_sceneMode = 9751;
+	setAction(&_sequenceManager, this, 9751, &_globals->_player, &_object1, &_object2, 0);
+}
+
+/*--------------------------------------------------------------------------
  * Scene 9999
  *
  *--------------------------------------------------------------------------*/
