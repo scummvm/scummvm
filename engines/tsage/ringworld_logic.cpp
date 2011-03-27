@@ -118,6 +118,8 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 4050: return new Scene4050();
 	// Village - Hut
 	case 4100: return new Scene4100();
+	// Village - Bedroom
+	case 4150: return new Scene4150();
 
 	/* Scene group 6 */
 
@@ -816,6 +818,37 @@ void SpeakerCDR::setText(const Common::String &msg) {
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(200, 57));
+	_object2.setAction(&_speakerAction, NULL);
+
+	Speaker::setText(msg);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerCDL::SpeakerCDL() {
+	_speakerName = "CDL";
+	_newSceneNumber = 4160;
+	_textPos = Common::Point(160, 40);
+	_colour1 = 52;
+}
+
+void SpeakerCDL::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(4162);
+	_object1.setStrip2(1);
+	_object1.setPriority2(255);
+	_object1.changeZoom(100);
+	_object1._frame = 1;
+	_object1.setPosition(Common::Point(112, 97));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
+	
+	_object2.postInit(&_objectList);
+	_object2.setVisage(4162);
+	_object2.setStrip2(2);
+	_object2.setPriority2(255);
+	_object2.changeZoom(100);
+	_object2._frame = 1;
+	_object2.setPosition(Common::Point(115, 57));
 	_object2.setAction(&_speakerAction, NULL);
 
 	Speaker::setText(msg);

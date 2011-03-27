@@ -117,6 +117,7 @@ void SceneManager::fadeInIfNecessary() {
 				percent = 100;
 
 			_globals->_scenePalette.fade((const byte *)&adjustData, false, percent);
+			g_system->updateScreen();
 			g_system->delayMillis(10);
 		}
 
