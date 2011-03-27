@@ -109,6 +109,7 @@ private:
 	typedef int32 (*ShutdownFunc)(EASDataHandle);
 	typedef int32 (*LoadDLSFunc)(EASDataHandle, EASHandle, EASFile *);
 	typedef int32 (*SetParameterFunc)(EASDataHandle, int32, int32, int32);
+	typedef int32 (*SetVolumeFunc)(EASDataHandle, EASHandle, int32);
 	typedef int32 (*OpenStreamFunc)(EASDataHandle, EASHandle *, EASHandle);
 	typedef int32 (*WriteStreamFunc)(EASDataHandle, EASHandle, byte *, int32);
 	typedef int32 (*CloseStreamFunc)(EASDataHandle, EASHandle);
@@ -138,6 +139,7 @@ private:
 	ShutdownFunc _shutdownFunc;
 	LoadDLSFunc _loadDLSFunc;
 	SetParameterFunc _setParameterFunc;
+	SetVolumeFunc _setVolumeFunc;
 	OpenStreamFunc _openStreamFunc;
 	WriteStreamFunc _writeStreamFunc;
 	CloseStreamFunc _closeStreamFunc;
@@ -164,6 +166,7 @@ MidiDriver_EAS::MidiDriver_EAS() :
 	_shutdownFunc(0),
 	_loadDLSFunc(0),
 	_setParameterFunc(0),
+	_setVolumeFunc(0),
 	_openStreamFunc(0),
 	_writeStreamFunc(0),
 	_closeStreamFunc(0),
@@ -228,6 +231,7 @@ int MidiDriver_EAS::open() {
 	sym(_shutdownFunc, "EAS_Shutdown");
 	sym(_loadDLSFunc, "EAS_LoadDLSCollection");
 	sym(_setParameterFunc, "EAS_SetParameter");
+	sym(_setVolumeFunc, "EAS_SetVolume");
 	sym(_openStreamFunc, "EAS_OpenMIDIStream");
 	sym(_writeStreamFunc, "EAS_WriteMIDIStream");
 	sym(_closeStreamFunc, "EAS_CloseMIDIStream");
@@ -247,14 +251,20 @@ int MidiDriver_EAS::open() {
 		return -1;
 	}
 
-	_setParameterFunc(_EASHandle, EAS_REVERB, EAS_REVERB_PRESET,
-						EAS_REVERB_CHAMBER);
+	res = _setParameterFunc(_EASHandle, EAS_REVERB, EAS_REVERB_PRESET,
+							EAS_REVERB_CHAMBER);
 	if (res)
 		warning("error setting reverb preset: %d", res);
 
-	_setParameterFunc(_EASHandle, EAS_REVERB, EAS_REVERB_BYPASS, 0);
+	res = _setParameterFunc(_EASHandle, EAS_REVERB, EAS_REVERB_BYPASS, 0);
 	if (res)
 		warning("error disabling reverb bypass: %d", res);
+
+	// 90 is EAS's default, max is 100
+	// so the option slider will only work from 0.1 to 1.1
+	res = _setVolumeFunc(_EASHandle, 0, ConfMan.getInt("midi_gain") - 10);
+	if (res)
+		warning("error setting EAS master volume: %d", res);
 
 	res = _openStreamFunc(_EASHandle, &_midiStream, 0);
 	if (res) {
