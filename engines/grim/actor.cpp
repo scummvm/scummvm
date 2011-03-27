@@ -801,7 +801,6 @@ void Actor::popCostume() {
 		freeCostumeChore(_costumeStack.back(), _mumbleCostume, _mumbleChore);
 		for (int i = 0; i < 10; i++)
 			freeCostumeChore(_costumeStack.back(), _talkCostume[i], _talkChore[i]);
-		delete _costumeStack.back();
 		_costumeStack.pop_back();
 		Costume *newCost;
 		if (_costumeStack.empty())
