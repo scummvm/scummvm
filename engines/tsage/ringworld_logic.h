@@ -36,9 +36,14 @@ namespace tSage {
 
 #define ADD_PLAYER_MOVER(X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
 	_globals->_player.addMover(mover, &pt, this); }
+#define ADD_PLAYER_MOVER_NULL(OBJ, X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
+	OBJ.addMover(mover, &pt, NULL); }
+#define ADD_PLAYER_MOVER_THIS(OBJ, X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
+	OBJ.addMover(mover, &pt, this); }
+
 #define ADD_MOVER(OBJ, X, Y) { Common::Point pt(X, Y); NpcMover *mover = new NpcMover(); \
 	OBJ.addMover(mover, &pt, this); }
-#define ADD_MOVER2(OBJ, X, Y) { Common::Point pt(X, Y); NpcMover *mover = new NpcMover(); \
+#define ADD_MOVER_NULL(OBJ, X, Y) { Common::Point pt(X, Y); NpcMover *mover = new NpcMover(); \
 	OBJ.addMover(mover, &pt, NULL); }
 
 
@@ -203,6 +208,13 @@ public:
 	virtual Common::String getClassName() { return "SpeakerSKText"; }
 };
 
+class SpeakerCDRText: public ScreenSpeaker {
+public:
+	SpeakerCDRText();
+
+	virtual Common::String getClassName() { return "SpeakerCDRText"; }
+};
+
 class SpeakerQR: public AnimatedSpeaker {
 public:
 	SpeakerQR();
@@ -313,7 +325,33 @@ public:
 	virtual void removeText();
 };	
 
+class SpeakerPR: public AnimatedSpeaker {
+public:
+	SceneObject _object3;
+	SpeakerAction _speakerAction2;
 
+	SpeakerPR();
+
+	virtual Common::String getClassName() { return "SpeakerPR"; }
+	virtual void setText(const Common::String &msg);
+	virtual void removeText();
+};	
+
+class SpeakerCDR: public AnimatedSpeaker {
+public:
+	SpeakerCDR();
+
+	virtual Common::String getClassName() { return "SpeakerCDR"; }
+	virtual void setText(const Common::String &msg);
+};	
+
+class SpeakerCDL: public AnimatedSpeaker {
+public:
+	SpeakerCDL();
+
+	virtual Common::String getClassName() { return "SpeakerCDL"; }
+	virtual void setText(const Common::String &msg);
+};
 
 } // End of namespace tSage
 

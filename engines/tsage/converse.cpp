@@ -287,7 +287,6 @@ void SequenceManager::signal() {
 			break;
 		}
 	}
-
 }
 
 void SequenceManager::process(Event &event) {

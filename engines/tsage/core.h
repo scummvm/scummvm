@@ -526,6 +526,7 @@ public:
 	void setObjectWrapper(SceneObjectWrapper *objWrapper);
 	void addMover(ObjectMover *mover, ...);
 	void getHorizBounds();
+	int getRegionIndex();
 	int checkRegion(const Common::Point &pt);
 	void animate(AnimateMode animMode, ...);
 	SceneObject *clone() const;

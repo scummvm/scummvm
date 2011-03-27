@@ -5433,9 +5433,9 @@ void Scene2320::Action7::signal() {
 		break;
 	case 2:
 		scene->_hotspot10.setPriority2(-1);
-		ADD_MOVER2(scene->_hotspot10, 321, 94);
+		ADD_MOVER_NULL(scene->_hotspot10, 321, 94);
 		scene->_hotspot11.setPriority2(-1);
-		ADD_MOVER2(scene->_hotspot11, 346, 85);
+		ADD_MOVER_NULL(scene->_hotspot11, 346, 85);
 		
 		_globals->_player.setPriority2(-1);
 		ADD_MOVER(_globals->_player, 297, 89);
@@ -5452,7 +5452,7 @@ void Scene2320::Action7::signal() {
 		_globals->_player.setStrip(3);
 		break;
 	case 6:
-		ADD_MOVER2(scene->_hotspot10, 491, 160);
+		ADD_MOVER_NULL(scene->_hotspot10, 491, 160);
 		ADD_MOVER(_globals->_player, 391, 88);
 
 		_globals->_player.setStrip(1);

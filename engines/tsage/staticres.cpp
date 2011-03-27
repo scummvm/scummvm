@@ -98,8 +98,8 @@ const char *LOOK_BTN_STRING = "Look";
 const char *PICK_BTN_STRING = "Pick";
 const char *START_PLAY_BTN_STRING = " Start Play ";
 const char *INTRODUCTION_BTN_STRING = "Introduction";
-const char *SCENE_EXIT_MSG = "   EXIT   ";
 
+const char *EXIT_MSG = "   EXIT   ";
 const char *SCENE6100_CAREFUL = "Be careful! The probe cannot handle too much of that.";
 const char *SCENE6100_TOUGHER = "Hey! This is tougher than it looks!";
 const char *SCENE6100_ONE_MORE_HIT = "You had better be more careful. One more hit like that \

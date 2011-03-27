@@ -1675,7 +1675,7 @@ void SceneObject::setPosition(const Common::Point &p, int yDiff) {
 }
 
 void SceneObject::setZoom(int percent) {
-	assert(_percent >= 0);
+	assert((percent >= -1) && (percent < 999));
 	if (percent != _percent) {
 		_percent = percent;
 		_flags |= OBJFLAG_PANES;
@@ -1785,6 +1785,10 @@ void SceneObject::getHorizBounds() {
 
 	_xs = tempRect.left;
 	_xe = tempRect.right;
+}
+
+int SceneObject::getRegionIndex() {
+	return _globals->_sceneRegions.indexOf(_position);
 }
 
 int SceneObject::checkRegion(const Common::Point &pt) {
@@ -2089,7 +2093,7 @@ void SceneObject::dispatch() {
 
 	// Handle updating the zoom and/or priority
 	if (!(_flags & OBJFLAG_ZOOMED)) {
-		int yp = MIN((int)_position.y, 255);
+		int yp = CLIP((int)_position.y, 0, 255);
 		setZoom(_globals->_sceneManager._scene->_zoomPercents[yp]);
 	}
 	if (!(_flags & OBJFLAG_FIXED_PRIORITY)) {
@@ -3072,9 +3076,11 @@ void WalkRegions::load(int sceneNum) {
 
 	_resNum = sceneNum;
 	byte *regionData = _vm->_dataManager->getResource(RES_WALKRGNS, sceneNum, 1, true);
-	if (!regionData)
+	if (!regionData) {
 		// No data, so return
+		_resNum = -1;
 		return;
+	}
 
 	byte *dataP;
 	int dataSize;

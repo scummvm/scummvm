@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	ringworld_scenes2.o \
 	ringworld_scenes3.o \
 	ringworld_scenes4.o \
+	ringworld_scenes5.o \
 	ringworld_scenes8.o \
 	ringworld_scenes10.o \
 	saveload.o \

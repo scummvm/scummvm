@@ -58,6 +58,10 @@ void SceneManager::checkScene() {
 }
 
 void SceneManager::sceneChange() {
+	// Handle removing the scene
+	if (_scene)
+		_scene->remove();
+
 	// Clear the scene objects
 	List<SceneObject *>::iterator io = _globals->_sceneObjects->begin();
 	while (io != _globals->_sceneObjects->end()) {
@@ -113,6 +117,7 @@ void SceneManager::fadeInIfNecessary() {
 				percent = 100;
 
 			_globals->_scenePalette.fade((const byte *)&adjustData, false, percent);
+			g_system->updateScreen();
 			g_system->delayMillis(10);
 		}
 
