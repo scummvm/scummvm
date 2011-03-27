@@ -139,7 +139,7 @@ enum {
 
 /** Number of kernel calls in between gcs; should be < 50000 */
 enum {
-	GC_INTERVAL = 32768
+	GC_INTERVAL = 0x8000
 };
 
 // Opcode formats
