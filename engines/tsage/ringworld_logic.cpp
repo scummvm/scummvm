@@ -33,6 +33,7 @@
 #include "tsage/ringworld_scenes4.h"
 #include "tsage/ringworld_scenes5.h"
 #include "tsage/ringworld_scenes8.h"
+#include "tsage/ringworld_scenes10.h"
 
 namespace tSage {
 
@@ -125,6 +126,7 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 7700: return new Scene7700();
 
 	/* Scene group 10 */
+	case 9999: return new Scene9999();
 
 	default:
 		error("Unknown scene number - %d", sceneNumber);
