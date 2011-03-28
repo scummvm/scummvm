@@ -72,7 +72,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      a lockup in the shower scene of Laura bow 1 and pathfinding in some
      screens during the chase sequence in Laura Bow 2).
    - Fixed several music related glitches and possible lockups (like, for
-     example, a rare music lockup that occured when loading a saved game
+     example, a rare music lockup that occurred when loading a saved game
      outside the palace in Quest for Glory 3).
    - Fixed possible problems and lockups in the character import screens of
      Quest for Glory 2 and 3.
@@ -81,7 +81,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed a script bug in the CD version of King's Quest 5, which caused a
      lockup under certain circumstances when going outside the witch's house
      in the dark forest.
-   - Function keys now work correctly when the numlock key is on.
+   - Function keys now work correctly when the num lock key is on.
    - Improved support for fanmade game scripts.
    - Improved support for non-English versions of games.
    - Made several enhancements and fixes related to MT-32 music (e.g. reverb).
@@ -119,7 +119,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for pause/resume.
    - Added support for games using 16bit graphics.
    - Increased the performance significantly.
-   - Added support for the "Fullscreen mode" option. Unticking this keeps the
+   - Added support for the "Fullscreen mode" option. Unchecking this keeps the
      game's aspect ratio.
    - Added a new graphics mode for linear filtering.
    - Overhauled the input system (see README.Android).
