@@ -1250,6 +1250,8 @@ void Costume::saveState(SaveGame *state) const {
 				state->writeLESint32(f->_active);
 				state->writeLESint32(f->_repeatMode);
 				state->writeLESint32(f->_currTime);
+			} else if (FROM_BE_32(c->_tag) == MKID_BE('MESH')) {
+				state->writeLESint32(static_cast<MeshComponent *>(c)->node()->_meshVisible);
 			}
 		}
 	}
@@ -1291,6 +1293,8 @@ bool Costume::restoreState(SaveGame *state) {
 				f->_active = state->readLESint32();
 				f->_repeatMode = state->readLESint32();
 				f->_currTime = state->readLESint32();
+			} else if (FROM_BE_32(c->_tag) == MKID_BE('MESH')) {
+				static_cast<MeshComponent *>(c)->node()->_meshVisible = state->readLESint32();
 			}
 		}
 	}
