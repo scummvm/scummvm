@@ -72,16 +72,7 @@ MIDISound::MIDISound(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : A
 }
 
 SoundGenMIDI::SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer), _isGM(false) {
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
-	_driver = MidiDriver::createMidi(dev);
-	assert(_driver);
-
-	if (ConfMan.getBool("native_mt32") || MidiDriver::getMusicType(dev) == MT_MT32) {
-		_nativeMT32 = true;
-		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-	} else {
-		_nativeMT32 = false;
-	}
+	MidiPlayer::createDriver(MDT_MIDI | MDT_ADLIB);
 
 	int ret = _driver->open();
 	if (ret == 0) {

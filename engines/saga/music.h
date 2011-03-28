@@ -52,7 +52,7 @@ public:
 	virtual void pause();
 	virtual void resume();
 
-	bool isAdlib() { return _driverType == MT_ADLIB; }
+	bool isAdlib() const { return _driverType == MT_ADLIB; }
 
 	// FIXME
 	bool isPlaying() const { return _parser && _parser->isPlaying(); }

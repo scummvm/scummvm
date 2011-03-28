@@ -36,13 +36,7 @@ namespace M4 {
 
 MidiPlayer::MidiPlayer(MadsM4Engine *vm) : _vm(vm), _isGM(false) {
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
-
-	_driver = MidiDriver::createMidi(dev);
-	assert(_driver);
-	if (_nativeMT32)
-		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+	MidiPlayer::createDriver();
 
 	int ret = _driver->open();
 	if (ret == 0) {

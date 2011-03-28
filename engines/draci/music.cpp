@@ -38,14 +38,7 @@ namespace Draci {
 
 MusicPlayer::MusicPlayer(const char *pathMask) : _pathMask(pathMask), _isGM(false), _track(-1) {
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
-	//bool adlib = (MidiDriver::getMusicType(dev) == MT_ADLIB);
-
-	_driver = MidiDriver::createMidi(dev);
-	assert(_driver);
-	if (_nativeMT32)
-		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+	MidiPlayer::createDriver();
 
 	int ret = _driver->open();
 	if (ret == 0) {

@@ -61,6 +61,17 @@ MidiPlayer::~MidiPlayer() {
 	}
 }
 
+void MidiPlayer::createDriver(int flags) {
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(flags);
+	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
+
+	_driver = MidiDriver::createMidi(dev);
+	assert(_driver);
+	if (_nativeMT32)
+		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+}
+
+
 void MidiPlayer::setVolume(int volume) {
 	volume = CLIP(volume, 0, 255);
 	if (_masterVolume == volume)

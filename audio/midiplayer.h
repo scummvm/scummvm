@@ -142,6 +142,9 @@ protected:
 
 	static void timerCallback(void *data);
 
+	void createDriver(int flags = MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+
+protected:
 	enum {
 		/**
 		 * The number of MIDI channels supported.
