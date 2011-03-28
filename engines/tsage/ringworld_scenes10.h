@@ -35,6 +35,35 @@
 
 namespace tSage {
 
+class Scene9350: public Scene {
+	/* Objects */
+	class Object1: public SceneObject {
+	public:
+		virtual void postInit();
+		virtual void draw();
+	};
+
+	/* Items */
+	class SceneHotspot1: public SceneHotspot_3 {
+	public:
+		virtual void doAction(int action);
+	};
+public:
+	int _field30A;
+	SequenceManager _sequenceManager;
+	Object1 _object1;
+	SceneObject _object2;
+	SceneHotspot1 _sceneHotspot1;
+	SceneHotspot1 _sceneHotspot2;
+	SceneHotspot1 _sceneHotspot3;
+	SceneHotspot1 _sceneHotspot4;
+	SceneHotspot1 _sceneHotspot5;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
+};
+
 class Scene9750: public Scene {
 public:
 	SequenceManager _sequenceManager;

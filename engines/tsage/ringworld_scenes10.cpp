@@ -30,6 +30,162 @@
 #include "tsage/staticres.h"
 
 namespace tSage {
+/*--------------------------------------------------------------------------
+ * Scene 9350
+ *
+ *--------------------------------------------------------------------------*/
+void Scene9350::Object1::postInit() {
+	warning("Scene9350::Object1::postInit - Weird cast to be verified");
+	_globals->_sceneManager.postInit((SceneObjectList*) &_globals->_sceneManager._sceneChangeListeners);
+}
+
+void Scene9350::Object1::draw() {
+	warning("Scene9350::Object1::draw - TODO");
+}
+
+void Scene9350::SceneHotspot1::doAction(int action) {
+	switch (action) {
+	case CURSOR_WALK:
+		// Nothing
+		break;
+	case CURSOR_LOOK:
+		if (_field28 == -1)
+			SceneHotspot::doAction(action);
+		else
+			SceneItem::display(_field26, _field28, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		break;
+	case CURSOR_USE:
+		if (_field2A == -1)
+			SceneHotspot::doAction(action);
+		else
+			SceneItem::display(_field26, _field2A, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+void Scene9350::signal() {
+	switch (_field30A ++) {
+	case 0:
+	case 9352:
+	case 9353:
+	case 9354:
+		_globals->_player.enableControl();
+		break;
+	case 9355:
+		_globals->_sceneManager.changeScene(9300);
+		break;
+	case 9356:
+		_globals->_sceneManager.changeScene(9360);
+		break;
+	case 9357:
+	case 9359:
+		_globals->_sceneManager.changeScene(9400);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene9350::dispatch() {
+	if (_action == 0) {
+		if ((_globals->_player._position.x <= 300) || (_globals->_player._position.y >= 160)) {
+			if ((_globals->_player._position.x <= 110) || (_globals->_player._position.y < 195)) {
+				_globals->_player.disableControl();
+				_field30A = 9355;
+				Scene::setAction(&_sequenceManager, this, 9355, &_globals->_player, &_object2, 0);
+			} else {
+				_globals->_player.disableControl();
+				_field30A = 9357;
+				Scene::setAction(&_sequenceManager, this, 9357, &_globals->_player, &_object2, 0);
+			}
+		} else {
+			_globals->_player.disableControl();
+			_field30A = 9356;
+			Scene::setAction(&_sequenceManager, this, 9356, &_globals->_player, &_object2, 0);
+		}
+	} else {
+		Scene::dispatch();
+	}
+}
+
+void Scene9350::postInit(SceneObjectList *OwnerList) {
+	Scene::postInit();
+	setZoomPercents(95, 80, 200, 100);
+	_globals->_player.postInit();
+
+	//TODO: Implement and use SUB_1F1DF in order to reduce code size
+	// SUB_1F1DF(&_object1, 9350, 1, 3, 139, 97, 0);
+	_object1.postInit();
+	_object1.setVisage(9350);
+	_object1.setStrip(1);
+	_object1.setFrame(3);
+	_object1.setPosition(Common::Point(139, 97), 0);
+	_object1.setPriority2(0);
+
+	//TODO: Implement and use SUB_4C09
+	// SUB_4C09(&_sceneItem1, 42, 0, 97, 60, 9350, 0, -1);
+	_sceneHotspot1.setBounds(42, 0, 97, 60);
+	_sceneHotspot1._field26 = 9350;
+	_sceneHotspot1._field28 = 0;
+	_sceneHotspot1._field2A = -1;
+	_globals->_sceneItems.addItems(&_sceneHotspot1, NULL);
+
+	// SUB_4C09(&_sceneItem2, 37, 205, 82, 256, 9350, 0, -1);
+	_sceneHotspot2.setBounds(37, 205, 82, 256);
+	_sceneHotspot2._field26 = 9350;
+	_sceneHotspot2._field28 = 0;
+	_sceneHotspot2._field2A = -1;
+	_globals->_sceneItems.addItems(&_sceneHotspot2, NULL);
+
+	// SUB_4C09(&_sceneItem3, 29, 93, 92, 174, 9350, 1, -1);
+	_sceneHotspot3.setBounds(29, 93, 92, 174);
+	_sceneHotspot3._field26 = 9350;
+	_sceneHotspot3._field28 = 1;
+	_sceneHotspot3._field2A = -1;
+	_globals->_sceneItems.addItems(&_sceneHotspot3, NULL);
+
+	// SUB_4C09(&_sceneItem4, 0, 308, 109, 320, 9350, 2, -1);
+	_sceneHotspot4.setBounds(0, 308, 109, 320);
+	_sceneHotspot4._field26 = 9350;
+	_sceneHotspot4._field28 = 2;
+	_sceneHotspot4._field2A = -1;
+	_globals->_sceneItems.addItems(&_sceneHotspot4, NULL);
+
+	// SUB_4C09(&_sceneItem5, 0, 0, 200, 320, 9350, 3, -1);
+	_sceneHotspot5.setBounds(0, 0, 200, 320);
+	_sceneHotspot5._field26 = 9350;
+	_sceneHotspot5._field28 = 3;
+	_sceneHotspot5._field2A = -1;
+	_globals->_sceneItems.addItems(&_sceneHotspot5, NULL);
+
+	_globals->_events.setCursor(CURSOR_WALK);
+	_globals->_player.disableControl();
+
+	if (_globals->_sceneManager._previousScene == 9360) {
+		_globals->_player.disableControl();
+		_field30A = 9352;
+		setAction(&_sequenceManager, this, 9352, &_globals->_player, &_object2, 0);
+	} else if (_globals->_sceneManager._previousScene == 9400) {
+		_globals->_player.disableControl();
+		_field30A = 9353;
+		setAction(&_sequenceManager, this, 9353, &_globals->_player, &_object2, 0);
+	} else {
+		if (!_globals->getFlag(84)) {
+			_globals->clearFlag(84);
+			_object2.postInit();
+			_globals->_player.disableControl();
+			_field30A = 9359;
+			setAction(&_sequenceManager, this, 9359, &_globals->_player, &_object2, 0);
+		} else {
+			_globals->_player.disableControl();
+			_field30A = 9354;
+			setAction(&_sequenceManager, this, 9354, &_globals->_player, &_object2, 0);
+		}
+	}
+}
 
 /*--------------------------------------------------------------------------
  * Scene 9750
