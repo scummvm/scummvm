@@ -640,8 +640,10 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("Mohawk");
+		  add_person("Bastien Bouclet", "bgk", "");
 		  add_person("Matthew Hoops", "clone2727", "");
 		  add_person("Filippos Karapetis", "[md5]", "");
+		  add_person("Alyssa Milburn", "fuzzie", "");
 		  add_person("Eugene Sandulenko", "sev", "");
 		  add_person("David Turner", "digitall", "");
 	  end_section();
