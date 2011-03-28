@@ -30,10 +30,13 @@
 #include "common/file.h"
 #include "common/savefile.h"
 
-#include "mohawk/myst.h"
 #include "mohawk/riven.h"
 #include "mohawk/livingbooks.h"
 #include "mohawk/cstime.h"
+
+#ifdef ENABLE_MYST
+#include "mohawk/myst.h"
+#endif
 
 namespace Mohawk {
 
@@ -78,12 +81,16 @@ bool MohawkEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsRTL);
 }
 
+#ifdef ENABLE_MYST
+
 bool MohawkEngine_Myst::hasFeature(EngineFeature f) const {
 	return
 		MohawkEngine::hasFeature(f)
 		|| (f == kSupportsLoadingDuringRuntime)
 		|| (f == kSupportsSavingDuringRuntime);
 }
+
+#endif
 
 bool MohawkEngine_Riven::hasFeature(EngineFeature f) const {
 	return
@@ -229,8 +236,13 @@ bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 		switch (gd->gameType) {
 		case Mohawk::GType_MYST:
 		case Mohawk::GType_MAKINGOF:
+#ifdef ENABLE_MYST
 			*engine = new Mohawk::MohawkEngine_Myst(syst, gd);
 			break;
+#else
+			warning("Myst support not compiled in");
+			return false;
+#endif
 		case Mohawk::GType_RIVEN:
 			*engine = new Mohawk::MohawkEngine_Riven(syst, gd);
 			break;
@@ -251,10 +263,10 @@ bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 		case Mohawk::GType_TREEHOUSE:
 		case Mohawk::GType_1STDEGREE:
 		case Mohawk::GType_CSUSA:
-			error ("Unsupported Mohawk Engine");
+			error("Unsupported Mohawk Engine");
 			break;
 		default:
-			error ("Unknown Mohawk Engine");
+			error("Unknown Mohawk Engine");
 		}
 	}
 

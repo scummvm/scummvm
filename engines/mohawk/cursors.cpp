@@ -23,11 +23,9 @@
  *
  */
 
-#include "mohawk/bitmap.h"
 #include "mohawk/cursors.h"
+#include "mohawk/mohawk.h"
 #include "mohawk/resource.h"
-#include "mohawk/graphics.h"
-#include "mohawk/myst.h"
 
 #include "common/macresman.h"
 #include "common/system.h"
@@ -35,6 +33,11 @@
 #include "common/winexe_pe.h"
 #include "graphics/cursorman.h"
 #include "graphics/wincursor.h"
+
+#ifdef ENABLE_MYST
+#include "mohawk/bitmap.h"
+#include "mohawk/myst.h"
+#endif
 
 namespace Mohawk {
 
@@ -115,6 +118,8 @@ void DefaultCursorManager::setCursor(uint16 id) {
 	setMacXorCursor(_vm->getResource(_tag, id));
 }
 
+#ifdef ENABLE_MYST
+
 MystCursorManager::MystCursorManager(MohawkEngine_Myst *vm) : _vm(vm) {
 	_bmpDecoder = new MystBitmap();
 }
@@ -158,6 +163,8 @@ void MystCursorManager::setCursor(uint16 id) {
 void MystCursorManager::setDefaultCursor() {
 	setCursor(kDefaultMystCursor);
 }
+
+#endif
 
 NECursorManager::NECursorManager(const Common::String &appName) {
 	_exe = new Common::NEResources();

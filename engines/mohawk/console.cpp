@@ -24,9 +24,6 @@
  */
 
 #include "mohawk/console.h"
-#include "mohawk/myst.h"
-#include "mohawk/myst_areas.h"
-#include "mohawk/myst_scripts.h"
 #include "mohawk/graphics.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_external.h"
@@ -35,7 +32,15 @@
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 
+#ifdef ENABLE_MYST
+#include "mohawk/myst.h"
+#include "mohawk/myst_areas.h"
+#include "mohawk/myst_scripts.h"
+#endif
+
 namespace Mohawk {
+
+#ifdef ENABLE_MYST
 
 MystConsole::MystConsole(MohawkEngine_Myst *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("changeCard",			WRAP_METHOD(MystConsole, Cmd_ChangeCard));
@@ -306,6 +311,8 @@ bool MystConsole::Cmd_Resources(int argc, const char **argv) {
 
 	return true;
 }
+
+#endif // ENABLE_MYST
 
 RivenConsole::RivenConsole(MohawkEngine_Riven *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("changeCard",		WRAP_METHOD(RivenConsole, Cmd_ChangeCard));

@@ -16,12 +16,7 @@ MODULE_OBJS = \
 	livingbooks.o \
 	livingbooks_code.o \
 	mohawk.o \
-	myst.o \
-	myst_areas.o \
-	myst_scripts.o \
-	myst_state.o \
 	resource.o \
-	resource_cache.o \
 	riven.o \
 	riven_external.o \
 	riven_saveload.o \
@@ -30,6 +25,14 @@ MODULE_OBJS = \
 	sound.o \
 	video.o \
 	view.o \
+
+ifdef ENABLE_MYST
+MODULE_OBJS += \
+	myst.o \
+	myst_areas.o \
+	myst_scripts.o \
+	myst_state.o \
+	resource_cache.o \
 	myst_stacks/channelwood.o \
 	myst_stacks/credits.o \
 	myst_stacks/demo.o \
@@ -42,6 +45,7 @@ MODULE_OBJS = \
 	myst_stacks/selenitic.o \
 	myst_stacks/slides.o \
 	myst_stacks/stoneship.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MOHAWK), DYNAMIC_PLUGIN)

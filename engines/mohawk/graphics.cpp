@@ -25,16 +25,19 @@
 
 #include "mohawk/resource.h"
 #include "mohawk/graphics.h"
-#include "mohawk/myst.h"
 #include "mohawk/riven.h"
 #include "mohawk/livingbooks.h"
 #include "mohawk/cstime.h"
 
 #include "common/substream.h"
 #include "engines/util.h"
-#include "graphics/jpeg.h"
 #include "graphics/primitives.h"
 #include "gui/message.h"
+
+#ifdef ENABLE_MYST
+#include "mohawk/myst.h"
+#include "graphics/jpeg.h"
+#endif
 
 namespace Mohawk {
 
@@ -252,6 +255,8 @@ void GraphicsManager::addImageToCache(uint16 id, MohawkSurface *surface) {
 
 	_cache[id] = surface;
 }
+
+#ifdef ENABLE_MYST
 
 MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 	_bmpDecoder = new MystBitmap();
@@ -617,6 +622,8 @@ void MystGraphics::drawRect(Common::Rect rect, RectState state) {
 void MystGraphics::drawLine(const Common::Point &p1, const Common::Point &p2, uint32 color) {
 	_backBuffer->drawLine(p1.x, p1.y, p2.x, p2.y, color);
 }
+
+#endif
 
 RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm) {
 	_bitmapDecoder = new MohawkBitmap();

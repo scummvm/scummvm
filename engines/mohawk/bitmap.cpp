@@ -622,6 +622,8 @@ void MohawkBitmap::drawRLE8(Graphics::Surface *surface, bool isLE) {
 	}
 }
 
+#ifdef ENABLE_MYST
+
 //////////////////////////////////////////
 // Myst Bitmap Decoder
 //////////////////////////////////////////
@@ -720,6 +722,8 @@ MohawkSurface *MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
 
 	return new MohawkSurface(surface, palData);
 }
+
+#endif
 
 MohawkSurface *LivingBooksBitmap_v1::decodeImage(Common::SeekableReadStream *stream) {
 	Common::SeekableSubReadStreamEndian *endianStream = (Common::SeekableSubReadStreamEndian *)stream;

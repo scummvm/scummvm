@@ -30,10 +30,12 @@
 
 namespace Mohawk {
 
-class MohawkEngine_Myst;
 class MohawkEngine_Riven;
 class MohawkEngine_LivingBooks;
 class MohawkEngine_CSTime;
+
+#ifdef ENABLE_MYST
+class MohawkEngine_Myst;
 
 class MystConsole : public GUI::Debugger {
 public:
@@ -58,6 +60,7 @@ private:
 	bool Cmd_Cache(int argc, const char **argv);
 	bool Cmd_Resources(int argc, const char **argv);
 };
+#endif
 
 class RivenConsole : public GUI::Debugger {
 public:

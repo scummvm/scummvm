@@ -33,26 +33,16 @@
 #include "graphics/pict.h"
 
 namespace Graphics {
-
-class JPEG;
-
+	class JPEG;
 }
 
 namespace Mohawk {
 
 class MohawkEngine;
-class MohawkEngine_Myst;
 class MohawkEngine_Riven;
 class MohawkEngine_LivingBooks;
 class MohawkEngine_CSTime;
 class MohawkBitmap;
-class MystBitmap;
-
-enum RectState{
-	kRectEnabled,
-	kRectDisabled,
-	kRectUnreachable
-};
 
 class MohawkSurface {
 public:
@@ -118,6 +108,17 @@ private:
 	Common::HashMap<uint16, Common::Array<MohawkSurface*> > _subImageCache;
 };
 
+#ifdef ENABLE_MYST
+
+class MystBitmap;
+class MohawkEngine_Myst;
+
+enum RectState {
+	kRectEnabled,
+	kRectDisabled,
+	kRectUnreachable
+};
+
 class MystGraphics : public GraphicsManager {
 public:
 	MystGraphics(MohawkEngine_Myst*);
@@ -161,6 +162,8 @@ private:
 	Graphics::PixelFormat _pixelFormat;
 	Common::Rect _viewport;
 };
+
+#endif
 
 struct SFXERecord {
 	// Record values

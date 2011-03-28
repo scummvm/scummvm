@@ -24,13 +24,16 @@
  */
 
 #include "mohawk/mohawk.h"
-#include "mohawk/myst.h"
 #include "mohawk/riven.h"
 #include "mohawk/dialogs.h"
 
 #include "gui/gui-manager.h"
 #include "common/savefile.h"
 #include "common/translation.h"
+
+#ifdef ENABLE_MYST
+#include "mohawk/myst.h"
+#endif
 
 namespace Mohawk {
 
@@ -77,6 +80,8 @@ enum {
 	kWaterCmd = 'WATR'
 };
 
+#ifdef ENABLE_MYST
+
 MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : GUI::OptionsDialog("", 120, 120, 360, 200), _vm(vm) {
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
 	_transitionsCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, _("~T~ransitions Enabled"), 0, kTransCmd);
@@ -110,6 +115,8 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 		GUI::OptionsDialog::handleCommand(sender, cmd, data);
 	}
 }
+
+#endif
 
 RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) : GUI::OptionsDialog("", 120, 120, 360, 200), _vm(vm) {
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);

@@ -97,6 +97,10 @@ endif
 ifdef ENABLE_MOHAWK
 DEFINES += -DENABLE_MOHAWK=$(ENABLE_MOHAWK)
 MODULES += engines/mohawk
+
+ifdef ENABLE_MYST
+DEFINES += -DENABLE_MYST
+endif
 endif
 
 ifdef ENABLE_PARALLACTION

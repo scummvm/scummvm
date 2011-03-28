@@ -38,7 +38,6 @@
 namespace Mohawk {
 
 class MohawkEngine;
-class MohawkEngine_Myst;
 class MohawkEngine_Riven;
 
 class InfoDialog : public GUI::Dialog {
@@ -71,6 +70,10 @@ public:
 	virtual void handleKeyDown(Common::KeyState state);
 };
 
+#ifdef ENABLE_MYST
+
+class MohawkEngine_Myst;
+
 class MystOptionsDialog : public GUI::OptionsDialog {
 public:
 	MystOptionsDialog(MohawkEngine_Myst *vm);
@@ -83,6 +86,8 @@ private:
 	GUI::CheckboxWidget *_zipModeCheckbox;
 	GUI::CheckboxWidget *_transitionsCheckbox;
 };
+
+#endif
 
 class RivenOptionsDialog : public GUI::OptionsDialog {
 public:

@@ -40,25 +40,6 @@ namespace Common {
 
 namespace Mohawk {
 
-// 803-805 are animated, one large bmp which is in chunks - these are NEVER USED
-// Other cursors (200, 300, 400, 500, 600, 700) are not the same in each stack
-enum {
-	kDefaultMystCursor = 100,				// The default hand
-	kWhitePageCursor = 800,					// Holding a white page
-	kRedPageCursor = 801,					// Holding a red page
-	kBluePageCursor = 802,					// Holding a blue page
-	// kDroppingWhitePageAnimCursor = 803,
-	// kDroppingRedPageAnimCursor = 804,
-	// kDroppingBluePageAnimCursor = 805,
-	kNewMatchCursor = 900,					// Match that has not yet been lit
-	kLitMatchCursor = 901,					// Match that's burning
-	kDeadMatchCursor = 902,					// Match that's been extinguished
-	kKeyCursor = 903, 						// Key in Lighthouse in Stoneship
-	kRotateClockwiseCursor = 904, 			// Rotate gear clockwise (boiler on Myst)
-	kRotateCounterClockwiseCursor = 905,	// Rotate gear counter clockwise (boiler on Myst)
-	kMystZipModeCursor = 999				// Zip Mode cursor
-};
-
 enum {
 	kRivenOpenHandCursor = 2003,
 	kRivenClosedHandCursor = 2004,
@@ -69,8 +50,6 @@ enum {
 
 class MohawkArchive;
 class MohawkEngine;
-class MohawkEngine_Myst;
-class MystBitmap;
 
 class CursorManager {
 public:
@@ -103,6 +82,30 @@ private:
 	uint32 _tag;
 };
 
+#ifdef ENABLE_MYST
+
+// 803-805 are animated, one large bmp which is in chunks - these are NEVER USED
+// Other cursors (200, 300, 400, 500, 600, 700) are not the same in each stack
+enum {
+	kDefaultMystCursor = 100,				// The default hand
+	kWhitePageCursor = 800,					// Holding a white page
+	kRedPageCursor = 801,					// Holding a red page
+	kBluePageCursor = 802,					// Holding a blue page
+	// kDroppingWhitePageAnimCursor = 803,
+	// kDroppingRedPageAnimCursor = 804,
+	// kDroppingBluePageAnimCursor = 805,
+	kNewMatchCursor = 900,					// Match that has not yet been lit
+	kLitMatchCursor = 901,					// Match that's burning
+	kDeadMatchCursor = 902,					// Match that's been extinguished
+	kKeyCursor = 903, 						// Key in Lighthouse in Stoneship
+	kRotateClockwiseCursor = 904, 			// Rotate gear clockwise (boiler on Myst)
+	kRotateCounterClockwiseCursor = 905,	// Rotate gear counter clockwise (boiler on Myst)
+	kMystZipModeCursor = 999				// Zip Mode cursor
+};
+
+class MohawkEngine_Myst;
+class MystBitmap;
+
 // The cursor manager for Myst
 // Uses WDIB + CLRC resources
 class MystCursorManager : public CursorManager {
@@ -120,6 +123,8 @@ private:
 	MohawkEngine_Myst *_vm;
 	MystBitmap *_bmpDecoder;
 };
+
+#endif // ENABLE_MYST
 
 // The cursor manager for NE EXE's
 class NECursorManager : public CursorManager {
