@@ -496,6 +496,84 @@ public:
 	virtual void dispatch();
 };
 
+class Scene4250: public Scene {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action3: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action4: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action5: public Action {
+	public:
+		virtual void signal();
+	};
+
+	/* Hotspots */
+	class Hotspot1: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot2: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot4: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot6: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot8: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+
+public:
+	SequenceManager _sequenceManager;
+	SoundHandler _soundHandler;
+	SpeakerSR _speakerSR;
+	SpeakerSL _speakerSL;
+	SpeakerSText _speakerSText;
+	SpeakerGameText _speakerGameText;
+	SpeakerQL _speakerQL;
+	SpeakerQR _speakerQR;
+	SpeakerQText _speakerQText;
+	SpeakerPText _speakerPText;
+	SpeakerMText _speakerMText;
+	SpeakerFLText _speakerFLText;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+	Action5 _action5;
+	Hotspot1 _hotspot1;
+	Hotspot2 _hotspot2;
+	SceneObject _hotspot3;
+	Hotspot4 _hotspot4;
+	SceneObject _hotspot5;
+	Hotspot6 _hotspot6;
+	DisplayHotspot _hotspot7;
+	Hotspot8 _hotspot8;
+
+	Scene4250();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
+};
+
 } // End of namespace tSage
 
 #endif
