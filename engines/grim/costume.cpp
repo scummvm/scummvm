@@ -739,21 +739,6 @@ void Costume::load(const char *filename, const char *data, int len, Costume *pre
 		ts.scanString("chore %d", 1, &which);
 		_chores[which].load(this, ts);
 	}
-
-	Model::HierNode *hier = 0;
-	int count = 0;
-	for (int i = 0; i < _numComponents; i++) {
-		if (!_components[i])
-			continue;
-		// Needs to handle Main Models (pigeons) and normal Models
-		// (when Manny climbs the rope)
-		if (FROM_BE_32(_components[i]->tag()) == MKID_BE('MMDL')) {
-			ModelComponent *c = static_cast<ModelComponent *>(_components[i]);
-			hier = c->hierarchy();
-			count = c->numNodes();
-			break;
-		}
-	}
 }
 
 Costume::~Costume() {
