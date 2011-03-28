@@ -622,6 +622,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// Gabriel Knight - English DOS Floppy
+	// SCI interpreter version 2.000.000, VERSION file reports "1.0\nGabriel Knight\n11/22/10:33 pm\n\x1A"
+	{"gk1", "", {
+		{"resource.map", 0, "ef41df08cf2c1f680216cdbeed0f8311", 10783},
+		{"resource.000", 0, "69b7516962510f780d38519cc15fcc7c", 13022630},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Gabriel Knight - German DOS Floppy (supplied my markcoolio in bug report #2723775)
 	// SCI interpreter version 2.000.000
 	{"gk1", "", {
