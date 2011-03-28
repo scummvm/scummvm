@@ -8,6 +8,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Urban Runner.
    - Added support for Playtoons: Bambou le Sauveur de la Jungle.
    - Added support for Toonstruck.
+   - Added support for Living Books v1 and v2 games.
 
  General
    - Added support for loadable modules on platforms without a dynamic loader.
