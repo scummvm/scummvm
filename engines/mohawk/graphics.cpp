@@ -27,12 +27,15 @@
 #include "mohawk/graphics.h"
 #include "mohawk/riven.h"
 #include "mohawk/livingbooks.h"
-#include "mohawk/cstime.h"
 
 #include "common/substream.h"
 #include "engines/util.h"
 #include "graphics/primitives.h"
 #include "gui/message.h"
+
+#ifdef ENABLE_CSTIME
+#include "mohawk/cstime.h"
+#endif
 
 #ifdef ENABLE_MYST
 #include "mohawk/myst.h"
@@ -1105,6 +1108,8 @@ void LBGraphics::setPalette(uint16 id) {
 	}
 }
 
+#ifdef ENABLE_CSTIME
+
 CSTimeGraphics::CSTimeGraphics(MohawkEngine_CSTime *vm) : GraphicsManager(), _vm(vm) {
 	_bmpDecoder = new MohawkBitmap();
 
@@ -1136,5 +1141,7 @@ MohawkSurface *CSTimeGraphics::decodeImage(uint16 id) {
 Common::Array<MohawkSurface *> CSTimeGraphics::decodeImages(uint16 id) {
 	return _bmpDecoder->decodeImages(_vm->getResource(ID_TBMH, id));
 }
+
+#endif
 
 } // End of namespace Mohawk

@@ -28,9 +28,12 @@
 #include "mohawk/riven.h"
 #include "mohawk/riven_external.h"
 #include "mohawk/livingbooks.h"
-#include "mohawk/cstime.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
+
+#ifdef ENABLE_CSTIME
+#include "mohawk/cstime.h"
+#endif
 
 #ifdef ENABLE_MYST
 #include "mohawk/myst.h"
@@ -701,6 +704,8 @@ bool LivingBooksConsole::Cmd_ChangePage(int argc, const char **argv) {
 	return true;
 }
 
+#ifdef ENABLE_CSTIME
+
 CSTimeConsole::CSTimeConsole(MohawkEngine_CSTime *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("playSound",			WRAP_METHOD(CSTimeConsole, Cmd_PlaySound));
 	DCmd_Register("stopSound",			WRAP_METHOD(CSTimeConsole, Cmd_StopSound));
@@ -802,5 +807,7 @@ bool CSTimeConsole::Cmd_InvItem(int argc, const char **argv) {
 	}
 	return false;
 }
+
+#endif // ENABLE_CSTIME
 
 } // End of namespace Mohawk

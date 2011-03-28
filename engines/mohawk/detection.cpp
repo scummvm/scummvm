@@ -32,7 +32,10 @@
 
 #include "mohawk/riven.h"
 #include "mohawk/livingbooks.h"
+
+#ifdef ENABLE_CSTIME
 #include "mohawk/cstime.h"
+#endif
 
 #ifdef ENABLE_MYST
 #include "mohawk/myst.h"
@@ -254,8 +257,13 @@ bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 			*engine = new Mohawk::MohawkEngine_LivingBooks(syst, gd);
 			break;
 		case Mohawk::GType_CSTIME:
+#ifdef ENABLE_CSTIME
 			*engine = new Mohawk::MohawkEngine_CSTime(syst, gd);
 			break;
+#else
+			warning("CSTime support not compiled in");
+			return false;
+#endif
 		case Mohawk::GType_ZOOMBINI:
 		case Mohawk::GType_CSWORLD:
 		case Mohawk::GType_CSAMTRAK:
@@ -263,8 +271,8 @@ bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 		case Mohawk::GType_TREEHOUSE:
 		case Mohawk::GType_1STDEGREE:
 		case Mohawk::GType_CSUSA:
-			error("Unsupported Mohawk Engine");
-			break;
+			warning("Unsupported Mohawk Engine");
+			return false;
 		default:
 			error("Unknown Mohawk Engine");
 		}

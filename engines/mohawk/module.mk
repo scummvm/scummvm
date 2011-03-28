@@ -3,11 +3,6 @@ MODULE := engines/mohawk
 MODULE_OBJS = \
 	bitmap.o \
 	console.o \
-	cstime.o \
-	cstime_cases.o \
-	cstime_game.o \
-	cstime_ui.o \
-	cstime_view.o \
 	cursors.o \
 	detection.o \
 	dialogs.o \
@@ -24,7 +19,16 @@ MODULE_OBJS = \
 	riven_vars.o \
 	sound.o \
 	video.o \
-	view.o \
+	view.o
+
+ifdef ENABLE_CSTIME
+MODULE_OBJS += \
+	cstime.o \
+	cstime_cases.o \
+	cstime_game.o \
+	cstime_ui.o \
+	cstime_view.o
+endif
 
 ifdef ENABLE_MYST
 MODULE_OBJS += \

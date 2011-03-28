@@ -41,7 +41,6 @@ namespace Mohawk {
 class MohawkEngine;
 class MohawkEngine_Riven;
 class MohawkEngine_LivingBooks;
-class MohawkEngine_CSTime;
 class MohawkBitmap;
 
 class MohawkSurface {
@@ -258,6 +257,10 @@ private:
 	MohawkEngine_LivingBooks *_vm;
 };
 
+#ifdef ENABLE_CSTIME
+
+class MohawkEngine_CSTime;
+
 class CSTimeGraphics : public GraphicsManager {
 public:
 	CSTimeGraphics(MohawkEngine_CSTime *vm);
@@ -274,6 +277,8 @@ private:
 	MohawkBitmap *_bmpDecoder;
 	MohawkEngine_CSTime *_vm;
 };
+
+#endif
 
 } // End of namespace Mohawk
 
