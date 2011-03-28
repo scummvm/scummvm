@@ -137,7 +137,7 @@ static reg_t read_var(EngineState *s, int type, int index) {
 					index, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, 
 					g_sci->getEngineState()->currentRoomNumber(), originReply.localCallOffset);
 
-					r[index] = NULL_REG;
+					s->variables[type][index] = NULL_REG;
 					break;
 #else
 					error("Uninitialized read for temp %d from method %s::%s (script %d, room %d, localCall %x)", 
