@@ -12,11 +12,6 @@ MODULE_OBJS = \
 	livingbooks_code.o \
 	mohawk.o \
 	resource.o \
-	riven.o \
-	riven_external.o \
-	riven_saveload.o \
-	riven_scripts.o \
-	riven_vars.o \
 	sound.o \
 	video.o \
 	view.o
@@ -49,6 +44,15 @@ MODULE_OBJS += \
 	myst_stacks/selenitic.o \
 	myst_stacks/slides.o \
 	myst_stacks/stoneship.o
+endif
+
+ifdef ENABLE_RIVEN
+MODULE_OBJS += \
+	riven.o \
+	riven_external.o \
+	riven_saveload.o \
+	riven_scripts.o \
+	riven_vars.o
 endif
 
 # This module can be built as a plugin

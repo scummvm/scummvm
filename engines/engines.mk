@@ -105,6 +105,10 @@ endif
 ifdef ENABLE_MYST
 DEFINES += -DENABLE_MYST
 endif
+
+ifdef ENABLE_RIVEN
+DEFINES += -DENABLE_RIVEN
+endif
 endif
 
 ifdef ENABLE_PARALLACTION

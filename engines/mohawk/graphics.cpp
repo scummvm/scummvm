@@ -25,7 +25,6 @@
 
 #include "mohawk/resource.h"
 #include "mohawk/graphics.h"
-#include "mohawk/riven.h"
 #include "mohawk/livingbooks.h"
 
 #include "common/substream.h"
@@ -40,6 +39,10 @@
 #ifdef ENABLE_MYST
 #include "mohawk/myst.h"
 #include "graphics/jpeg.h"
+#endif
+
+#ifdef ENABLE_RIVEN
+#include "mohawk/riven.h"
 #endif
 
 namespace Mohawk {
@@ -626,7 +629,9 @@ void MystGraphics::drawLine(const Common::Point &p1, const Common::Point &p2, ui
 	_backBuffer->drawLine(p1.x, p1.y, p2.x, p2.y, color);
 }
 
-#endif
+#endif // ENABLE_MYST
+
+#ifdef ENABLE_RIVEN
 
 RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm) {
 	_bitmapDecoder = new MohawkBitmap();
@@ -1039,6 +1044,8 @@ void RivenGraphics::updateCredits() {
 		_vm->_system->updateScreen();
 	}
 }
+
+#endif // ENABLE_RIVEN
 
 LBGraphics::LBGraphics(MohawkEngine_LivingBooks *vm, uint16 width, uint16 height) : GraphicsManager(), _vm(vm) {
 	_bmpDecoder = _vm->isPreMohawk() ? new LivingBooksBitmap_v1() : new MohawkBitmap();

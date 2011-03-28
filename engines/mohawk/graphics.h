@@ -39,7 +39,6 @@ namespace Graphics {
 namespace Mohawk {
 
 class MohawkEngine;
-class MohawkEngine_Riven;
 class MohawkEngine_LivingBooks;
 class MohawkBitmap;
 
@@ -162,19 +161,11 @@ private:
 	Common::Rect _viewport;
 };
 
-#endif
+#endif // ENABLE_MYST
 
-struct SFXERecord {
-	// Record values
-	uint16 frameCount;
-	Common::Rect rect;
-	uint16 speed;
-	Common::Array<Common::SeekableReadStream*> frameScripts;
+#ifdef ENABLE_RIVEN
 
-	// Cur frame
-	uint16 curFrame;
-	uint32 lastFrameTime;
-};
+class MohawkEngine_Riven;
 
 class RivenGraphics : public GraphicsManager {
 public:
@@ -218,6 +209,17 @@ private:
 	MohawkBitmap *_bitmapDecoder;
 
 	// Water Effects
+	struct SFXERecord {
+		// Record values
+		uint16 frameCount;
+		Common::Rect rect;
+		uint16 speed;
+		Common::Array<Common::SeekableReadStream*> frameScripts;
+
+		// Cur frame
+		uint16 curFrame;
+		uint32 lastFrameTime;
+	};
 	Common::Array<SFXERecord> _waterEffects;
 
 	// Transitions
@@ -238,6 +240,8 @@ private:
 	// Credits
 	uint _creditsImage, _creditsPos;
 };
+
+#endif ENABLE_RIVEN
 
 class LBGraphics : public GraphicsManager {
 public:

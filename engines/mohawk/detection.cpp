@@ -30,7 +30,6 @@
 #include "common/file.h"
 #include "common/savefile.h"
 
-#include "mohawk/riven.h"
 #include "mohawk/livingbooks.h"
 
 #ifdef ENABLE_CSTIME
@@ -39,6 +38,10 @@
 
 #ifdef ENABLE_MYST
 #include "mohawk/myst.h"
+#endif
+
+#ifdef ENABLE_RIVEN
+#include "mohawk/riven.h"
 #endif
 
 namespace Mohawk {
@@ -95,12 +98,16 @@ bool MohawkEngine_Myst::hasFeature(EngineFeature f) const {
 
 #endif
 
+#ifdef ENABLE_RIVEN
+
 bool MohawkEngine_Riven::hasFeature(EngineFeature f) const {
 	return
 		MohawkEngine::hasFeature(f)
 		|| (f == kSupportsLoadingDuringRuntime)
 		|| (f == kSupportsSavingDuringRuntime);
 }
+
+#endif
 
 } // End of Namespace Mohawk
 
@@ -247,8 +254,13 @@ bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 			return false;
 #endif
 		case Mohawk::GType_RIVEN:
+#ifdef ENABLE_RIVEN
 			*engine = new Mohawk::MohawkEngine_Riven(syst, gd);
 			break;
+#else
+			warning("Riven support not compiled in");
+			return false;
+#endif
 		case Mohawk::GType_LIVINGBOOKSV1:
 		case Mohawk::GType_LIVINGBOOKSV2:
 		case Mohawk::GType_LIVINGBOOKSV3:

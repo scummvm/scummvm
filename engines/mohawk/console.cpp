@@ -25,8 +25,6 @@
 
 #include "mohawk/console.h"
 #include "mohawk/graphics.h"
-#include "mohawk/riven.h"
-#include "mohawk/riven_external.h"
 #include "mohawk/livingbooks.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
@@ -39,6 +37,11 @@
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_scripts.h"
+#endif
+
+#ifdef ENABLE_RIVEN
+#include "mohawk/riven.h"
+#include "mohawk/riven_external.h"
 #endif
 
 namespace Mohawk {
@@ -316,6 +319,8 @@ bool MystConsole::Cmd_Resources(int argc, const char **argv) {
 }
 
 #endif // ENABLE_MYST
+
+#ifdef ENABLE_RIVEN
 
 RivenConsole::RivenConsole(MohawkEngine_Riven *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("changeCard",		WRAP_METHOD(RivenConsole, Cmd_ChangeCard));
@@ -652,6 +657,8 @@ bool RivenConsole::Cmd_SliderState(int argc, const char **argv) {
 	DebugPrintf("Dome Slider State = %08x\n", _vm->_externalScriptHandler->getDomeSliderState());
 	return true;
 }
+
+#endif // ENABLE_RIVEN
 
 LivingBooksConsole::LivingBooksConsole(MohawkEngine_LivingBooks *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("playSound",			WRAP_METHOD(LivingBooksConsole, Cmd_PlaySound));

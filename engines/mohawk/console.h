@@ -30,7 +30,6 @@
 
 namespace Mohawk {
 
-class MohawkEngine_Riven;
 class MohawkEngine_LivingBooks;
 
 #ifdef ENABLE_MYST
@@ -63,6 +62,10 @@ private:
 
 #endif
 
+#ifdef ENABLE_RIVEN
+
+class MohawkEngine_Riven;
+
 class RivenConsole : public GUI::Debugger {
 public:
 	RivenConsole(MohawkEngine_Riven *vm);
@@ -88,6 +91,8 @@ private:
 	bool Cmd_Combos(int argc, const char **argv);
 	bool Cmd_SliderState(int argc, const char **argv);
 };
+
+#endif
 
 class LivingBooksConsole : public GUI::Debugger {
 public:
