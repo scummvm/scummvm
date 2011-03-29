@@ -48,8 +48,8 @@
 namespace Hugo {
 
 namespace {
-static const char *s_bootCyper = "Copyright 1992, David P Gray, Gray Design Associates";
-static const int s_bootCyperLen = sizeof(s_bootCyper) - 1;
+static const char *s_bootCypher = "Copyright 1992, David P Gray, Gray Design Associates";
+static const int s_bootCypherLen = strlen(s_bootCypher) - 1;
 }
 
 
@@ -533,12 +533,14 @@ void FileManager::printBootText() {
 
 	Common::File ofp;
 	if (!ofp.open(getBootFilename())) {
-		if (_vm->_gameVariant == kGameVariantH1Dos) {
+		if (_vm->getPlatform() == Common::kPlatformPC) {
 			//TODO initialize properly _boot structure
-			warning("printBootText - Skipping as H1 Dos may be a freeware");
+			warning("printBootText - Skipping as Dos versions may be a freeware or shareware");
 			return;
 		} else {
-			error("Missing startup file '%s'", getBootFilename());
+			Utils::notifyBox(Common::String::format("Missing startup file '%s'", getBootFilename()));
+			_vm->getGameStatus().doQuitFl = true;
+			return;
 		}
 	}
 
@@ -547,13 +549,16 @@ void FileManager::printBootText() {
 	if (buf) {
 		// Skip over the boot structure (already read) and read exit text
 		ofp.seek((long)sizeof(_vm->_boot), SEEK_SET);
-		if (ofp.read(buf, _vm->_boot.exit_len) != (size_t)_vm->_boot.exit_len)
-			error("Error while reading startup file");
+		if (ofp.read(buf, _vm->_boot.exit_len) != (size_t)_vm->_boot.exit_len) {
+			Utils::notifyBox(Common::String::format("Error while reading startup file '%s'", getBootFilename()));
+			_vm->getGameStatus().doQuitFl = true;
+			return;
+		}
 
 		// Decrypt the exit text, using CRYPT substring
 		int i;
 		for (i = 0; i < _vm->_boot.exit_len; i++)
-			buf[i] ^= s_bootCyper[i % s_bootCyperLen];
+			buf[i] ^= s_bootCypher[i % s_bootCypherLen];
 
 		buf[i] = '\0';
 		Utils::notifyBox(buf);
@@ -578,13 +583,23 @@ void FileManager::readBootFile() {
 			memset(_vm->_boot.distrib, '\0', sizeof(_vm->_boot.distrib));
 			_vm->_boot.registered = kRegFreeware;
 			return;
+		} else if (_vm->getPlatform() == Common::kPlatformPC) {
+			warning("readBootFile - Skipping as H2 and H3 Dos may be shareware");
+			memset(_vm->_boot.distrib, '\0', sizeof(_vm->_boot.distrib));
+			_vm->_boot.registered = kRegShareware;
+			return;
 		} else {
-			error("Missing startup file '%s'", getBootFilename());
+			Utils::notifyBox(Common::String::format("Missing startup file '%s'", getBootFilename()));
+			_vm->getGameStatus().doQuitFl = true;
+			return;
 		}
 	}
 
-	if (ofp.size() < (int32)sizeof(_vm->_boot))
-		error("Corrupted startup file");
+	if (ofp.size() < (int32)sizeof(_vm->_boot)) {
+		Utils::notifyBox(Common::String::format("Corrupted startup file '%s'", getBootFilename()));
+		_vm->getGameStatus().doQuitFl = true;
+		return;
+	}
 
 	_vm->_boot.checksum = ofp.readByte();
 	_vm->_boot.registered = ofp.readByte();
@@ -597,12 +612,14 @@ void FileManager::readBootFile() {
 	byte checksum = 0;
 	for (uint32 i = 0; i < sizeof(_vm->_boot); i++) {
 		checksum ^= p[i];
-		p[i] ^= s_bootCyper[i % s_bootCyperLen];
+		p[i] ^= s_bootCypher[i % s_bootCypherLen];
 	}
 	ofp.close();
 
-	if (checksum)
-		error("Corrupted startup file");
+	if (checksum) {
+		Utils::notifyBox(Common::String::format("Corrupted startup file '%s'", getBootFilename()));
+		_vm->getGameStatus().doQuitFl = true;
+	}
 }
 
 /**
