@@ -365,6 +365,7 @@ public:
 	virtual void notify(uint16 data, uint16 from); // 0x1A
 
 	uint16 getId() { return _itemId; }
+	uint16 getSoundPriority() { return _soundMode; }
 
 protected:
 	MohawkEngine_LivingBooks *_vm;
@@ -598,6 +599,9 @@ public:
 	void notifyAll(uint16 data, uint16 from);
 	void queueDelayedEvent(DelayedEvent event);
 
+	bool playSound(LBItem *source, uint16 resourceId);
+	void lockSound(LBItem *owner, bool lock);
+
 	bool isBigEndian() const { return getGameType() != GType_LIVINGBOOKSV1 || getPlatform() == Common::kPlatformMacintosh; }
 	bool isPreMohawk() const;
 
@@ -631,6 +635,11 @@ private:
 	void destroyPage();
 	bool loadPage(LBMode mode, uint page, uint subpage);
 	void updatePage();
+
+	uint16 _lastSoundOwner, _lastSoundId;
+	uint16 _lastSoundPriority;
+	uint16 _soundLockOwner;
+	uint16 _maxSoundPriority;
 
 	uint16 getResourceVersion();
 	void loadBITL(uint16 resourceId);

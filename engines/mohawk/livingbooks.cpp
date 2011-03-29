@@ -270,6 +270,10 @@ Common::String MohawkEngine_LivingBooks::stringForMode(LBMode mode) {
 
 void MohawkEngine_LivingBooks::destroyPage() {
 	_sound->stopSound();
+	_lastSoundOwner = 0;
+	_lastSoundId = 0;
+	_soundLockOwner = 0;
+
 	_gfx->clearCache();
 	_video->stopVideos();
 
@@ -552,6 +556,49 @@ void MohawkEngine_LivingBooks::notifyAll(uint16 data, uint16 from) {
 
 void MohawkEngine_LivingBooks::queueDelayedEvent(DelayedEvent event) {
 	_eventQueue.push(event);
+}
+
+bool MohawkEngine_LivingBooks::playSound(LBItem *source, uint16 resourceId) {
+	if (_lastSoundId && !_sound->isPlaying(_lastSoundId))
+		_lastSoundId = 0;
+
+	if (!_soundLockOwner) {
+		if (_lastSoundId && _lastSoundOwner != source->getId())
+			if (source->getSoundPriority() >= _lastSoundPriority)
+				return false;
+	} else {
+		if (_soundLockOwner != source->getId() && source->getSoundPriority() >= _maxSoundPriority)
+			return false;
+	}
+
+	_sound->stopSound();
+
+	_sound->playSound(resourceId);
+	_lastSoundId = resourceId;
+	_lastSoundOwner = source->getId();
+	_lastSoundPriority = source->getSoundPriority();
+
+	return true;
+}
+
+void MohawkEngine_LivingBooks::lockSound(LBItem *owner, bool lock) {
+	if (!lock) {
+		_soundLockOwner = 0;
+		return;
+	}
+
+	if (_soundLockOwner)
+		return;
+
+	if (_lastSoundId && !_sound->isPlaying(_lastSoundId))
+		_lastSoundId = 0;
+
+	_soundLockOwner = owner->getId();
+	_maxSoundPriority = owner->getSoundPriority();
+	if (_lastSoundId && _lastSoundPriority < _maxSoundPriority) {
+		_sound->stopSound(_lastSoundId);
+		_lastSoundId = 0;
+	}
 }
 
 // Only 1 VSRN resource per stack, Id 1000
@@ -1642,7 +1689,7 @@ void LBAnimation::stop() {
 
 void LBAnimation::playSound(uint16 resourceId) {
 	_currentSound = resourceId;
-	_vm->_sound->playSound(_currentSound);
+	_vm->playSound(_parent, _currentSound);
 }
 
 bool LBAnimation::soundPlaying(uint16 resourceId) {
@@ -2165,7 +2212,7 @@ bool LBItem::togglePlaying(bool playing, bool restart) {
 			if (_controlMode >= kLBControlHideMouse) {
 				debug(2, "Hiding cursor");
 				_vm->_cursor->hideCursor();
-				// TODO: lock sound?
+				_vm->lockSound(this, true);
 
 				if (_controlMode >= kLBControlPauseItems) {
 					debug(2, "Disabling all");
@@ -2203,7 +2250,7 @@ void LBItem::done(bool onlyNotify) {
 	if (_controlMode >= kLBControlHideMouse) {
 		debug(2, "Showing cursor");
 		_vm->_cursor->showCursor();
-		// TODO: unlock sound?
+		_vm->lockSound(this, false);
 
 		if (_controlMode >= kLBControlPauseItems) {
 			debug(2, "Enabling all");
@@ -2864,7 +2911,8 @@ bool LBSoundItem::togglePlaying(bool playing, bool restart) {
 		return false;
 
 	_running = true;
-	_vm->_sound->playSound(_resourceId, Audio::Mixer::kMaxChannelVolume, false);
+	debug(4, "sound %d play for item %d (%s)", _resourceId, _itemId, _desc.c_str());
+	_vm->playSound(this, _resourceId);
 	return true;
 }
 
@@ -3259,7 +3307,7 @@ void LBLiveTextItem::handleMouseDown(Common::Point pos) {
 				return;
 			}
 			_currentWord = i;
-			_vm->_sound->playSound(soundId);
+			_vm->playSound(this, soundId);
 			paletteUpdate(_currentWord, true);
 			return;
 		}
