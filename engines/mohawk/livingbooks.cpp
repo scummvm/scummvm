@@ -2404,7 +2404,7 @@ void LBItem::runScriptEntry(LBScriptEntry *entry) {
 				debug(2, "Target %04x (%04x) doesn't exist, skipping", targetId, param);
 				continue;
 			}
-			debug(2, "Target: %04x (%04x) '%s'", targetId, param, _desc.c_str());
+			debug(2, "Target: %04x (%04x) '%s'", targetId, param, target->_desc.c_str());
 		} else {
 			target = this;
 			debug(2, "Self-target on '%s'", _desc.c_str());
