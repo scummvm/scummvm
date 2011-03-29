@@ -424,6 +424,7 @@ public:
 
 	void readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream);
 
+	void destroySelf();
 	void setEnabled(bool enabled);
 	void setGlobalEnabled(bool enabled);
 	bool contains(Common::Point point);

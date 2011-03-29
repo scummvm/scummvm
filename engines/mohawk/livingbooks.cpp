@@ -2909,6 +2909,16 @@ void LBGroupItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStre
 	}
 }
 
+void LBGroupItem::destroySelf() {
+	LBItem::destroySelf();
+
+	for (uint i = 0; i < _groupEntries.size(); i++) {
+		LBItem *item = _vm->getItemById(_groupEntries[i].entryId);
+		if (item)
+			item->destroySelf();
+	}
+}
+
 void LBGroupItem::setEnabled(bool enabled) {
 	if (_starting) {
 		_starting = false;
