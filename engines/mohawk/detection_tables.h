@@ -576,6 +576,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Harry and the Haunted House 1.1
+	// From pacifist
+	{
+		{
+			"harryhh",
+			"",
+			AD_ENTRY1("HARRY.512", "8d786f0998f27e44603a2202d6786c25"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"HARRY.EXE"
+	},
+
 	{
 		{
 			"carmentq",
@@ -1032,6 +1049,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Living Books Player"
 	},
 
+	// Ruff's Bone 1.0
+	// From pacifist
+	{
+		{
+			"ruff",
+			"",
+			AD_ENTRY1("RUFF.512", "3dbda0de6f47a64d1714d89f5a5f60d1"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"RUFF.EXE"
+	},
+
 	{
 		{
 			"newkid",
@@ -1393,6 +1427,40 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV4,
+		0,
+		0
+	},
+
+	// Stellaluna 1.0
+	// From pacifist
+	{
+		{
+			"stellaluna",
+			"",
+			AD_ENTRY1("STELLA.LB", "763bb4a4721aebb5af316ca8e1b478ed"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// Sheila Rae the Brave 1.0
+	// From pacifist
+	{
+		{
+			"sheila",
+			"",
+			AD_ENTRY1("SHEILA.LB", "c28a60f615a46384d9a8941fc5c89d63"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
 		0,
 		0
 	},
