@@ -43,29 +43,6 @@ void Scene9350::Object1::draw() {
 	warning("Scene9350::Object1::draw - TODO");
 }
 
-void Scene9350::SceneHotspot1::doAction(int action) {
-	switch (action) {
-	case CURSOR_WALK:
-		// Nothing
-		break;
-	case CURSOR_LOOK:
-		if (_field28 == -1)
-			SceneHotspot::doAction(action);
-		else
-			SceneItem::display(_field26, _field28, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
-		break;
-	case CURSOR_USE:
-		if (_field2A == -1)
-			SceneHotspot::doAction(action);
-		else
-			SceneItem::display(_field26, _field2A, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
-		break;
-	default:
-		SceneHotspot::doAction(action);
-		break;
-	}
-}
-
 void Scene9350::signal() {
 	switch (_field30A ++) {
 	case 0:
@@ -116,8 +93,8 @@ void Scene9350::postInit(SceneObjectList *OwnerList) {
 	setZoomPercents(95, 80, 200, 100);
 	_globals->_player.postInit();
 
-	//TODO: Implement and use SUB_1F1DF in order to reduce code size
-	// SUB_1F1DF(&_object1, 9350, 1, 3, 139, 97, 0);
+	//TODO: Fix _object1.quickInit(9350, 1, 3, 139, 97, 0);
+
 	_object1.postInit();
 	_object1.setVisage(9350);
 	_object1.setStrip(1);
@@ -125,36 +102,35 @@ void Scene9350::postInit(SceneObjectList *OwnerList) {
 	_object1.setPosition(Common::Point(139, 97), 0);
 	_object1.setPriority2(0);
 
-	//TODO: Implement and use SUB_4C09
-	// SUB_4C09(&_sceneItem1, 42, 0, 97, 60, 9350, 0, -1);
+	//TODO: check _sceneHotspot1.quickInit(42, 0, 97, 60, 9350, 0, -1);
 	_sceneHotspot1.setBounds(42, 0, 97, 60);
 	_sceneHotspot1._field26 = 9350;
 	_sceneHotspot1._field28 = 0;
 	_sceneHotspot1._field2A = -1;
 	_globals->_sceneItems.addItems(&_sceneHotspot1, NULL);
 
-	// SUB_4C09(&_sceneItem2, 37, 205, 82, 256, 9350, 0, -1);
+	//TODO: check _sceneHotspot2.quickInit(37, 205, 82, 256, 9350, 0, -1);
 	_sceneHotspot2.setBounds(37, 205, 82, 256);
 	_sceneHotspot2._field26 = 9350;
 	_sceneHotspot2._field28 = 0;
 	_sceneHotspot2._field2A = -1;
 	_globals->_sceneItems.addItems(&_sceneHotspot2, NULL);
 
-	// SUB_4C09(&_sceneItem3, 29, 93, 92, 174, 9350, 1, -1);
+	//TODO: check _sceneHotspot3.quickInit(29, 93, 92, 174, 9350, 1, -1);
 	_sceneHotspot3.setBounds(29, 93, 92, 174);
 	_sceneHotspot3._field26 = 9350;
 	_sceneHotspot3._field28 = 1;
 	_sceneHotspot3._field2A = -1;
 	_globals->_sceneItems.addItems(&_sceneHotspot3, NULL);
 
-	// SUB_4C09(&_sceneItem4, 0, 308, 109, 320, 9350, 2, -1);
+	//TODO: check _sceneHotspot4.quickInit(0, 308, 109, 320, 9350, 2, -1);
 	_sceneHotspot4.setBounds(0, 308, 109, 320);
 	_sceneHotspot4._field26 = 9350;
 	_sceneHotspot4._field28 = 2;
 	_sceneHotspot4._field2A = -1;
 	_globals->_sceneItems.addItems(&_sceneHotspot4, NULL);
 
-	// SUB_4C09(&_sceneItem5, 0, 0, 200, 320, 9350, 3, -1);
+	//TODO: check _sceneHotspot5.quickInit(0, 0, 200, 320, 9350, 3, -1);
 	_sceneHotspot5.setBounds(0, 0, 200, 320);
 	_sceneHotspot5._field26 = 9350;
 	_sceneHotspot5._field28 = 3;
@@ -184,6 +160,113 @@ void Scene9350::postInit(SceneObjectList *OwnerList) {
 			_field30A = 9354;
 			setAction(&_sequenceManager, this, 9354, &_globals->_player, &_object2, 0);
 		}
+	}
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 9700
+ *
+ *--------------------------------------------------------------------------*/
+void Scene9700::signal() {
+	switch (_sceneMode ++) {
+	case 9703:
+		_globals->setFlag(88);
+		// No break on purpose
+	case 9701:
+	case 9702:
+		_gfxButton1.setText(EXIT_MSG);
+		_gfxButton1._bounds.centre(50, 190);
+		_gfxButton1.draw();
+		_gfxButton1._bounds.expandPanes();
+		_globals->_player.enableControl();
+		_globals->_player._canWalk = 0;
+		_globals->_events.setCursor(CURSOR_USE);
+
+		break;
+	case 9704:
+		_globals->_soundHandler.startSound(323, 0, 127);
+		_globals->_sceneManager.changeScene(9750);
+		break;
+	}
+}
+
+void Scene9700::process(Event &event) {
+	if ((event.eventType == EVENT_BUTTON_DOWN) && (event.kbd.keycode == 0)) {
+		if (_gfxButton1.process(event)) {
+			_globals->_sceneManager.changeScene(9200);
+		} else if (_globals->_events._currentCursor == OBJECT_SCANNER) {
+			event.handled = true;
+			if (_globals->_inventory._helmet._sceneNumber == 1) {
+				_globals->_player.disableControl();
+				_sceneMode = 9704;
+				setAction(&_sequenceManager, this, 9704, &_globals->_player, &_object1, 0);
+			} else {
+				_globals->_player.disableControl();
+				_sceneMode = 9703;
+				setAction(&_sequenceManager, this, 9703, &_globals->_player, &_object1, 0);
+			}
+		}
+	}
+}
+
+void Scene9700::postInit(SceneObjectList *OwnerList) {
+	Scene::postInit();
+	setZoomPercents(0, 100, 200, 100);
+
+	//TODO: check _sceneHotspot1.quickInit(84, 218, 151, 278, 9700, 14, -1);
+	_sceneHotspot1.setBounds(84, 218, 151, 278);
+	_sceneHotspot1._field26 = 9700;
+	_sceneHotspot1._field28 = 14;
+	_sceneHotspot1._field2A = -1;
+	_globals->_sceneItems.addItems(&_sceneHotspot1, NULL);
+
+	//TODO: check _sceneHotspot2.quickInit(89, 11, 151, 121, 9700, 14, -1);
+	_sceneHotspot2.setBounds(89, 11, 151, 121);
+	_sceneHotspot2._field26 = 9700;
+	_sceneHotspot2._field28 = 14;
+	_sceneHotspot2._field2A = -1;
+	_globals->_sceneItems.addItems(&_sceneHotspot2, NULL);
+
+	//TODO: check _sceneHotspot3.quickInit(69, 119, 138, 218, 9700, 15, 16);
+	_sceneHotspot3.setBounds(69, 119, 138, 218);
+	_sceneHotspot3._field26 = 9700;
+	_sceneHotspot3._field28 = 15;
+	_sceneHotspot3._field2A = 16;
+	_globals->_sceneItems.addItems(&_sceneHotspot3, NULL);
+
+	//TODO: check _sceneHotspot4.quickInit(34, 13, 88, 116, 9700, 17, -1);
+	_sceneHotspot4.setBounds(34, 13, 88, 116);
+	_sceneHotspot4._field26 = 9700;
+	_sceneHotspot4._field28 = 17;
+	_sceneHotspot4._field2A = -1;
+	_globals->_sceneItems.addItems(&_sceneHotspot4, NULL);
+
+	//TODO: check _sceneHotspot5.quickInit(52, 119, 68, 204, 9700, 17, -1);
+	_sceneHotspot5.setBounds(52, 119, 68, 204);
+	_sceneHotspot5._field26 = 9700;
+	_sceneHotspot5._field28 = 17;
+	_sceneHotspot5._field2A = -1;
+	_globals->_sceneItems.addItems(&_sceneHotspot5, NULL);
+
+	//TODO: check _sceneHotspot6.quickInit(0, 22, 56, 275, 9700, 18, -1);
+	_sceneHotspot6.setBounds(0, 22, 56, 275);
+	_sceneHotspot6._field26 = 9700;
+	_sceneHotspot6._field28 = 18;
+	_sceneHotspot6._field2A = -1;
+	_globals->_sceneItems.addItems(&_sceneHotspot6, NULL);
+
+	_object1.postInit();
+	_object1.flag100();
+	_globals->_player.postInit();
+	if (_globals->getFlag(97)) {
+		_globals->_player.disableControl();
+		_sceneMode = 9701;
+		setAction(&_sequenceManager, this, 9701, &_globals->_player, &_object1, 0);
+		_globals->setFlag(97);
+	} else {
+		_globals->_player.disableControl();
+		_sceneMode = 9702;
+		setAction(&_sequenceManager, this, 9702, &_globals->_player, &_object1, 0);
 	}
 }
 

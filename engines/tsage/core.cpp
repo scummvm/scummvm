@@ -1535,6 +1535,39 @@ void SceneHotspot::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
+void SceneHotspot_3::doAction(int action) {
+	switch (action) {
+	case CURSOR_WALK:
+		// Nothing
+		break;
+	case CURSOR_LOOK:
+		if (_field28 == -1)
+			SceneHotspot::doAction(action);
+		else
+			SceneItem::display(_field26, _field28, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		break;
+	case CURSOR_USE:
+		if (_field2A == -1)
+			SceneHotspot::doAction(action);
+		else
+			SceneItem::display(_field26, _field2A, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+void SceneHotspot_3::quickInit(const int ys, const int xe, const int ye, const int xs, const int val26, const int val28, const int val2A) {
+	setBounds(ys, xe, ye, xs);
+	_field26 = val26;
+	_field28 = val28;
+	_field2A = val2A;
+	_globals->_sceneItems.addItems(this, NULL);
+}
+
+/*--------------------------------------------------------------------------*/
+
 void SceneObjectWrapper::setSceneObject(SceneObject *so) {
 	_sceneObject = so;
 	so->_strip = 1;
@@ -2173,6 +2206,15 @@ void SceneObject::updateScreen() {
 
 		_globals->_screenSurface.copyFrom(_globals->_sceneManager._scene->_backSurface, srcRect, destRect);
 	}
+}
+
+void SceneObject::quickInit(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority) {
+	postInit();
+	setVisage(visage);
+	setStrip(stripFrameNum);
+	setFrame(frameNum);
+	setPosition(Common::Point(posX, posY), 0);
+	setPriority2(priority);
 }
 
 /*--------------------------------------------------------------------------*/

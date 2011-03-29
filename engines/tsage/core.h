@@ -434,6 +434,8 @@ public:
 	int _field2A;
 	SceneHotspot_3(): SceneHotspot_2() {}
 
+	void quickInit(const int ys, const int xe, const int ye, const int xs, const int val26, const int val28, const int val2A);
+	virtual void doAction(int action);
 	virtual Common::String getClassName() { return "SceneHotspot_3"; }
 };
 
@@ -557,6 +559,7 @@ public:
 	virtual void draw();
 	virtual void proc19() {}
 	virtual void updateScreen();
+	void quickInit(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority);
 };
 
 class SceneObjectExt: public SceneObject {
