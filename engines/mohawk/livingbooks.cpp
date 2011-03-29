@@ -562,22 +562,25 @@ bool MohawkEngine_LivingBooks::playSound(LBItem *source, uint16 resourceId) {
 	if (_lastSoundId && !_sound->isPlaying(_lastSoundId))
 		_lastSoundId = 0;
 
-	if (!_soundLockOwner) {
-		if (_lastSoundId && _lastSoundOwner != source->getId())
-			if (source->getSoundPriority() >= _lastSoundPriority)
+	if (!source->isAmbient() || !_sound->isPlaying()) {
+		if (!_soundLockOwner) {
+			if (_lastSoundId && _lastSoundOwner != source->getId())
+				if (source->getSoundPriority() >= _lastSoundPriority)
+					return false;
+		} else {
+			if (_soundLockOwner != source->getId() && source->getSoundPriority() >= _maxSoundPriority)
 				return false;
-	} else {
-		if (_soundLockOwner != source->getId() && source->getSoundPriority() >= _maxSoundPriority)
-			return false;
+		}
+
+		if (_lastSoundId)
+			_sound->stopSound(_lastSoundId);
+
+		_lastSoundOwner = source->getId();
+		_lastSoundPriority = source->getSoundPriority();
 	}
 
-	if (_lastSoundId)
-		_sound->stopSound(_lastSoundId);
-
-	_sound->playSound(resourceId);
 	_lastSoundId = resourceId;
-	_lastSoundOwner = source->getId();
-	_lastSoundPriority = source->getSoundPriority();
+	_sound->playSound(resourceId);
 
 	return true;
 }
@@ -588,7 +591,7 @@ void MohawkEngine_LivingBooks::lockSound(LBItem *owner, bool lock) {
 		return;
 	}
 
-	if (_soundLockOwner)
+	if (_soundLockOwner || (owner->isAmbient() && _sound->isPlaying()))
 		return;
 
 	if (_lastSoundId && !_sound->isPlaying(_lastSoundId))

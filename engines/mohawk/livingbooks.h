@@ -366,6 +366,7 @@ public:
 
 	uint16 getId() { return _itemId; }
 	uint16 getSoundPriority() { return _soundMode; }
+	bool isAmbient() { return _isAmbient; }
 
 protected:
 	MohawkEngine_LivingBooks *_vm;
