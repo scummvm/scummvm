@@ -595,7 +595,7 @@ void MohawkEngine_LivingBooks::lockSound(LBItem *owner, bool lock) {
 
 	_soundLockOwner = owner->getId();
 	_maxSoundPriority = owner->getSoundPriority();
-	if (_lastSoundId && _lastSoundPriority < _maxSoundPriority) {
+	if (_lastSoundId && _maxSoundPriority <= _lastSoundPriority) {
 		_sound->stopSound(_lastSoundId);
 		_lastSoundId = 0;
 	}
