@@ -376,13 +376,7 @@ static inline unsigned int getBits(GetBitContext *s, int n) {
 }
 
 static inline void skipBits(GetBitContext *s, int n) {
-	int reIndex, reCache;
-
-	reIndex = s->index;
-	reCache = 0;
-
-	reCache = READ_LE_UINT32((const uint8 *)s->buffer + (reIndex >> 3)) >> (reIndex & 0x07);
-	s->index = reIndex + n;
+	s->index += n;
 }
 
 #define BITS_LEFT(length, gb) ((length) - getBitsCount((gb)))

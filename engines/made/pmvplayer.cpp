@@ -98,7 +98,7 @@ bool PmvPlayer::play(const char *filename) {
 
 	uint32 soundStartTime = 0, skipFrames = 0;
 
-	uint32 frameNum, bytesRead;
+	uint32 bytesRead;
 	uint16 width, height, cmdOffs, pixelOffs, maskOffs, lineSize;
 
 	// TODO: Sound can still be a little choppy. A bug in the decoder or -
@@ -156,7 +156,7 @@ bool PmvPlayer::play(const char *filename) {
 		// Handle video
 		imageData = frameData + READ_LE_UINT32(frameData + 12) - 8;
 
-		frameNum = READ_LE_UINT32(frameData);
+		// frameNum @0
 		width = READ_LE_UINT16(imageData + 8);
 		height = READ_LE_UINT16(imageData + 10);
 		cmdOffs = READ_LE_UINT16(imageData + 12);

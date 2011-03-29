@@ -164,7 +164,7 @@ WoodScript::WoodScript(MadsM4Engine *vm) {
 
 	_backgroundSurface = NULL;
 
-	Common::Rect viewBounds = Common::Rect(0, 0, 640, 480);
+	//Common::Rect viewBounds = Common::Rect(0, 0, 640, 480);
 	//_surfaceView = new View(viewBounds);
 }
 

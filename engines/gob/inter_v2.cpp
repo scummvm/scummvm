@@ -1172,12 +1172,11 @@ void Inter_v2::o2_addHotspot(OpFuncParams &params) {
 		top     = 0;
 	}
 
-	int16 index;
 	if (id < 0)
-		index = _vm->_game->_hotspots->add(0xD000 - id, left & 0xFFFC, top & 0xFFFC,
+		_vm->_game->_hotspots->add(0xD000 - id, left & 0xFFFC, top & 0xFFFC,
 				left + width + 3, top + height + 3, flags, key, 0, 0, funcPos);
 	else
-		index = _vm->_game->_hotspots->add(0xE000 + id, left, top,
+		_vm->_game->_hotspots->add(0xE000 + id, left, top,
 				left + width - 1, top + height - 1, flags, key, 0, 0, funcPos);
 }
 

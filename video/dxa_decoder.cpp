@@ -306,11 +306,11 @@ void DXADecoder::decode13(int size) {
 	memcpy(_frameBuffer2, _frameBuffer1, _frameSize);
 
 	int codeSize = _width * _curHeight / 16;
-	int dataSize, motSize, maskSize;
+	int dataSize, motSize;
 
 	dataSize = READ_BE_UINT32(&_decompBuffer[0]);
 	motSize  = READ_BE_UINT32(&_decompBuffer[4]);
-	maskSize = READ_BE_UINT32(&_decompBuffer[8]);
+	//maskSize = READ_BE_UINT32(&_decompBuffer[8]);
 
 	codeBuf = &_decompBuffer[12];
 	dataBuf = &codeBuf[codeSize];

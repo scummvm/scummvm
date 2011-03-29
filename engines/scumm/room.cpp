@@ -581,7 +581,7 @@ void ScummEngine::resetRoomSubBlocks() {
 
 void ScummEngine_v3old::setupRoomSubBlocks() {
 	const byte *ptr;
-	byte *roomptr, *searchptr = 0;
+	byte *roomptr;
 	const RoomHeader *rmhd;
 
 	_ENCD_offs = 0;
@@ -669,7 +669,6 @@ void ScummEngine_v3old::setupRoomSubBlocks() {
 
 	// Determine the room script base address
 	roomptr = getResourceAddress(rtRoom, _roomResource);
-	searchptr = roomptr;
 
 	memset(_localScriptOffsets, 0, sizeof(_localScriptOffsets));
 

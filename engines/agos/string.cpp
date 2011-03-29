@@ -725,12 +725,11 @@ void AGOSEngine_Feeble::printScreenText(uint vgaSpriteId, uint color, const char
 	const char *string2 = string;
 	int16 height, talkDelay;
 	int stringLength = strlen(string);
-	int lettersPerRow, lettersPerRowJustified;
+	int lettersPerRow;
 	const int textHeight = 15;
 
 	height = textHeight;
 	lettersPerRow = width / 6;
-	lettersPerRowJustified = stringLength / (stringLength / lettersPerRow + 1) + 1;
 
 	talkDelay = (stringLength + 3) / 3;
 		if (_variableArray[86] == 0)

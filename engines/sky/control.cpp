@@ -115,7 +115,7 @@ void TextResource::flushForRedraw() {
 }
 
 void TextResource::drawToScreen(bool doMask) {
-	doMask = true;
+	(void)doMask;
 	uint16 cnty, cntx, cpWidth, cpHeight;
 	if ((_oldX == _x) && (_oldY == _y) && (_spriteData))
 		return;

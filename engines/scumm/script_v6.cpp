@@ -1228,11 +1228,11 @@ void ScummEngine_v6::o6_animateActor() {
 }
 
 void ScummEngine_v6::o6_doSentence() {
-	int verb, objectA, objectB, dummy = 0;
+	int verb, objectA, objectB;
 
 	objectB = pop();
 	if (_game.version < 8)
-		dummy = pop();	// dummy pop (in Sam&Max, seems to be always 0 or 130)
+		pop();	// dummy pop (in Sam&Max, seems to be always 0 or 130)
 	objectA = pop();
 	verb = pop();
 
