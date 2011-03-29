@@ -1381,9 +1381,9 @@ bool IMDDecoder::renderFrame(Common::Rect &rect) {
 			const int offsetY = (_y + rect.top) * _surface.pitch;
 			const int offset  = offsetX + offsetY;
 
-			deLZ77((byte *)_surface.pixels + offset, dataPtr, dataSize,
-					_surface.w * _surface.h * _surface.bytesPerPixel - offset);
-			return true;
+			if (deLZ77((byte *)_surface.pixels + offset, dataPtr, dataSize,
+			           _surface.w * _surface.h * _surface.bytesPerPixel - offset))
+				return true;
 		}
 
 		_videoBufferLen[1] = deLZ77(_videoBuffer[1], dataPtr, dataSize, _videoBufferSize);
@@ -2249,9 +2249,9 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 			const int offsetY = (_y + rect.top) * _surface.pitch;
 			const int offset  = offsetX - offsetY;
 
-			deLZ77((byte *)_surface.pixels + offset, dataPtr, dataSize,
-					_surface.w * _surface.h * _surface.bytesPerPixel - offset);
-			return true;
+			if (deLZ77((byte *)_surface.pixels + offset, dataPtr, dataSize,
+			           _surface.w * _surface.h * _surface.bytesPerPixel - offset))
+				return true;
 		}
 
 		srcBuffer = 1;
