@@ -42,7 +42,7 @@ public:
 	int iconIndex;
 
 	GUIInventoryItem(const char *_name, const char *_verb, M4Surface *_icon, int _iconIndex) {
-		name = _name; _verb = verb; icon = _icon; iconIndex = _iconIndex;
+		name = _name; verb = _verb; icon = _icon; iconIndex = _iconIndex;
 	}
 };
 
