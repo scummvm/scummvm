@@ -48,8 +48,8 @@
 namespace Hugo {
 
 namespace {
-static const char *s_bootCypher = "Copyright 1992, David P Gray, Gray Design Associates";
-static const int s_bootCypherLen = sizeof(s_bootCypher) - 2;
+static const char s_bootCypher[] = "Copyright 1992, David P Gray, Gray Design Associates";
+static const int s_bootCypherLen = sizeof(s_bootCypher) - 1;
 }
 
 
