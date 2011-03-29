@@ -1661,6 +1661,11 @@ void LBAnimation::seek(uint16 pos) {
 	_lastTime = 0;
 	_currentFrame = 0;
 
+	if (_currentSound != 0xffff) {
+		_vm->_sound->stopSound(_currentSound);
+		_currentSound = 0xffff;
+	}
+
 	for (uint32 i = 0; i < _nodes.size(); i++)
 		_nodes[i]->reset();
 
