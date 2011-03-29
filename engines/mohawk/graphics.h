@@ -241,7 +241,7 @@ private:
 	uint _creditsImage, _creditsPos;
 };
 
-#endif ENABLE_RIVEN
+#endif // ENABLE_RIVEN
 
 class LBGraphics : public GraphicsManager {
 public:
