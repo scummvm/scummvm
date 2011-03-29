@@ -1695,7 +1695,7 @@ void LBAnimation::stop() {
 
 void LBAnimation::playSound(uint16 resourceId) {
 	_currentSound = resourceId;
-	_vm->playSound(_parent, _currentSound);
+	_vm->_sound->playSound(_currentSound);
 }
 
 bool LBAnimation::soundPlaying(uint16 resourceId) {
