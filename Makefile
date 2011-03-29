@@ -55,10 +55,6 @@ ifeq "$(HAVE_ICC)" "1"
 	CXXFLAGS+= -diag-disable 161,1899
 endif
 
-# Warn if global constructors are used. Only available in GCC with LLVM backend
-# (and maybe clang?), hence off by default.
-#CXXFLAGS+= -Wglobal-constructors
-
 #######################################################################
 # Default commands - put the necessary replacements in config.mk      #
 #######################################################################
