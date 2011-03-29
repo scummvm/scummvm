@@ -133,6 +133,7 @@ public:
 	void pauseSound();
 	void resumeSound();
 	bool isPlaying(uint16 id);
+	bool isPlaying();
 	uint getNumSamplesPlayed(uint16 id);
 
 	// Myst-specific sound functions

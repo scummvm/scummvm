@@ -576,6 +576,15 @@ bool Sound::isPlaying(uint16 id) {
 	return false;
 }
 
+bool Sound::isPlaying() {
+	for (uint32 i = 0; i < _handles.size(); i++)
+		if (_handles[i].type == kUsedHandle)
+			if (_vm->_mixer->isSoundHandleActive(_handles[i].handle))
+				return true;
+
+	return false;
+}
+
 uint Sound::getNumSamplesPlayed(uint16 id) {
 	for (uint32 i = 0; i < _handles.size(); i++)
 		if (_handles[i].type == kUsedHandle && _handles[i].id == id) {
