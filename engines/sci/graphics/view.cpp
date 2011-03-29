@@ -202,8 +202,13 @@ void GfxView::initData(GuiResourceId resourceId) {
 		assert(headerSize >= 16);
 		_loopCount = _resourceData[2];
 		assert(_loopCount);
-		_isSci2Hires = _resourceData[5] == 1 ? true : false;
 		palOffset = READ_SCI11ENDIAN_UINT32(_resourceData + 8);
+
+		// FIXME: _resourceData[5] is sometimes 2 in GK1 also denoting scaled, but somehow modified.
+		// For a good test, jump to room 720 and talk to Wolfgang. Wolfgang's head is scaled when it
+		// shouldn't be, but the positioning of his eyes and mouth is also incorrect.
+		_isSci2Hires = _resourceData[5] == 1 && _screen->getUpscaledHires() != GFX_SCREEN_UPSCALED_DISABLED;
+
 		// flags is actually a bit-mask
 		//  it seems it was only used for some early sci1.1 games (or even just laura bow 2)
 		//  later interpreters dont support it at all anymore

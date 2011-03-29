@@ -89,12 +89,15 @@ public:
 	void drawLine(int16 left, int16 top, int16 right, int16 bottom, byte color, byte prio, byte control) {
 		drawLine(Common::Point(left, top), Common::Point(right, bottom), color, prio, control);
 	}
-	int getUpscaledHires() const {
+
+	GfxScreenUpscaledMode getUpscaledHires() const {
 		return _upscaledHires;
 	}
+
 	bool getUnditherState() const {
 		return _unditherState;
 	}
+
 	void putKanjiChar(Graphics::FontSJIS *commonFont, int16 x, int16 y, uint16 chr, byte color);
 	byte getVisual(int x, int y);
 	byte getPriority(int x, int y);
@@ -174,7 +177,7 @@ private:
 
 	// This variable defines, if upscaled hires is active and what upscaled mode
 	// is used.
-	int _upscaledHires;
+	GfxScreenUpscaledMode _upscaledHires;
 
 	// This here holds a translation for vertical coordinates between native
 	// (visual) and actual (display) screen.
