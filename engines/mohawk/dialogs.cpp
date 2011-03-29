@@ -24,7 +24,6 @@
  */
 
 #include "mohawk/mohawk.h"
-#include "mohawk/riven.h"
 #include "mohawk/dialogs.h"
 
 #include "gui/gui-manager.h"
@@ -33,6 +32,10 @@
 
 #ifdef ENABLE_MYST
 #include "mohawk/myst.h"
+#endif
+
+#ifdef ENABLE_RIVEN
+#include "mohawk/riven.h"
 #endif
 
 namespace Mohawk {
@@ -118,6 +121,8 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 
 #endif
 
+#ifdef ENABLE_RIVEN
+
 RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) : GUI::OptionsDialog("", 120, 120, 360, 200), _vm(vm) {
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
 	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, _("~W~ater Effect Enabled"), 0, kWaterCmd);
@@ -151,5 +156,7 @@ void RivenOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, u
 		GUI::OptionsDialog::handleCommand(sender, cmd, data);
 	}
 }
+
+#endif
 
 } // End of namespace Mohawk

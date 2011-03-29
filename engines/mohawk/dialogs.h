@@ -38,7 +38,6 @@
 namespace Mohawk {
 
 class MohawkEngine;
-class MohawkEngine_Riven;
 
 class InfoDialog : public GUI::Dialog {
 protected:
@@ -89,6 +88,10 @@ private:
 
 #endif
 
+#ifdef ENABLE_RIVEN
+
+class MohawkEngine_Riven;
+
 class RivenOptionsDialog : public GUI::OptionsDialog {
 public:
 	RivenOptionsDialog(MohawkEngine_Riven *vm);
@@ -101,6 +104,8 @@ private:
 	GUI::CheckboxWidget *_zipModeCheckbox;
 	GUI::CheckboxWidget *_waterEffectCheckbox;
 };
+
+#endif
 
 } // End of namespace Mohawk
 
