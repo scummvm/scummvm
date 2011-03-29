@@ -1591,25 +1591,20 @@ void Scene7600::postInit(SceneObjectList *OwnerList) {
 
 void Scene7700::Action1::signal() {
 	Scene7700 *scene = (Scene7700 *)_globals->_sceneManager._scene;
-	warning("TODO: Scene7700::Action1::signal - Find the SceneObject behind _fmt");
-
+	SceneObject *fmtObj = (SceneObject *) _fmt;
 	switch (_actionIndex++) {
 	case 0: {
 		PlayerMover *mover1 = new PlayerMover();
-//		Common::Point pt = Common::Point(_fmt._position.x, _fmt._position.y + 30);
-		Common::Point pt = Common::Point(scene->_object1._position.x, scene->_object1._position.y + 30);
+		Common::Point pt = Common::Point(fmtObj->_position.x, fmtObj->_position.y + 30);
 		_globals->_player.addMover(mover1, &pt, this);
 		break;
 	}
 	case 1:
-//		_globals->_player.checkAngle(&_fmt);
-		_globals->_player.checkAngle(&scene->_object1);
+		_globals->_player.checkAngle(fmtObj);
 		if (_globals->_player._field8C == 0)
-//			_fmt.animate(ANIM_MODE_5, this);
-			scene->_object1.animate(ANIM_MODE_5, this);
+			fmtObj->animate(ANIM_MODE_5, this);
 		else
-//			_fmt.animate(ANIM_MODE_6, this);
-			scene->_object1.animate(ANIM_MODE_6, this);
+			fmtObj->animate(ANIM_MODE_6, this);
 		break;
 	case 2:
 		remove();
