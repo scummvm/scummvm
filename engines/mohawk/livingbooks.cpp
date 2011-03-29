@@ -571,7 +571,8 @@ bool MohawkEngine_LivingBooks::playSound(LBItem *source, uint16 resourceId) {
 			return false;
 	}
 
-	_sound->stopSound();
+	if (_lastSoundId)
+		_sound->stopSound(_lastSoundId);
 
 	_sound->playSound(resourceId);
 	_lastSoundId = resourceId;
