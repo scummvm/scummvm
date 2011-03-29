@@ -498,6 +498,7 @@ void MohawkEngine_LivingBooks::updatePage() {
 			switch (delayedEvent.type) {
 			case kLBDelayedEventDestroy:
 				_items.remove_at(i);
+				i--;
 				delete delayedEvent.item;
 				if (_focus == delayedEvent.item)
 					_focus = NULL;
