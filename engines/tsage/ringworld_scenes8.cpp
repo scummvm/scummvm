@@ -1590,7 +1590,6 @@ void Scene7600::postInit(SceneObjectList *OwnerList) {
  *--------------------------------------------------------------------------*/
 
 void Scene7700::Action1::signal() {
-	Scene7700 *scene = (Scene7700 *)_globals->_sceneManager._scene;
 	SceneObject *fmtObj = (SceneObject *) _fmt;
 	switch (_actionIndex++) {
 	case 0: {
