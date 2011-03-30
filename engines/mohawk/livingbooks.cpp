@@ -763,6 +763,8 @@ Common::String MohawkEngine_LivingBooks::convertWinFileName(const Common::String
 	Common::String filename;
 
 	for (uint32 i = 0; i < string.size(); i++) {
+		if (i == 0 && (string[i] == '/' || string[i] == '\\')) // ignore slashes at start
+			continue;
 		if (string[i] == '\\')
 			filename += '/';
 		else
