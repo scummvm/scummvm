@@ -669,14 +669,15 @@ private:
 	bool _alreadyShowedIntro;
 
 	// String Manipulation Functions
-	Common::String removeQuotesFromString(const Common::String &string);
+	Common::String removeQuotesFromString(const Common::String &string, Common::String &leftover);
 	Common::String convertMacFileName(const Common::String &string);
 	Common::String convertWinFileName(const Common::String &string);
 
 	// Configuration File Functions
 	Common::String getStringFromConfig(const Common::String &section, const Common::String &key);
+	Common::String getStringFromConfig(const Common::String &section, const Common::String &key, Common::String &leftover);
 	int getIntFromConfig(const Common::String &section, const Common::String &key);
-	Common::String getFileNameFromConfig(const Common::String &section, const Common::String &key);
+	Common::String getFileNameFromConfig(const Common::String &section, const Common::String &key, Common::String &leftover);
 
 	// Platform/Version functions
 	MohawkArchive *createMohawkArchive() const;

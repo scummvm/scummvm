@@ -305,21 +305,36 @@ bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 	else
 		base = Common::String::format("Page%d", page);
 
-	Common::String filename;
+	Common::String filename, leftover;
 
-	filename = getFileNameFromConfig(name, base);
+	filename = getFileNameFromConfig(name, base, leftover);
 	_readOnly = false;
 
 	if (filename.empty()) {
-		filename = getFileNameFromConfig(name, base + ".r");
+		leftover.clear();
+		filename = getFileNameFromConfig(name, base + ".r", leftover);
 		_readOnly = true;
 	}
 
 	// TODO: fading between pages
 	bool fade = false;
-	if (filename.hasSuffix(" fade")) {
+	if (leftover.contains("fade")) {
 		fade = true;
-		filename = Common::String(filename.c_str(), filename.size() - 5);
+	}
+	if (leftover.contains("read")) {
+		_readOnly = true;
+	}
+	if (leftover.contains("load")) {
+		// FIXME: don't ignore this
+		warning("ignoring 'load' for filename '%s'", filename.c_str());
+	}
+	if (leftover.contains("cut")) {
+		// FIXME: don't ignore this
+		warning("ignoring 'cut' for filename '%s'", filename.c_str());
+	}
+	if (leftover.contains("killgag")) {
+		// FIXME: don't ignore this
+		warning("ignoring 'killgag' for filename '%s'", filename.c_str());
 	}
 
 	MohawkArchive *pageArchive = createMohawkArchive();
@@ -672,17 +687,27 @@ Common::SeekableSubReadStreamEndian *MohawkEngine_LivingBooks::wrapStreamEndian(
 }
 
 Common::String MohawkEngine_LivingBooks::getStringFromConfig(const Common::String &section, const Common::String &key) {
+	Common::String x, leftover;
+	_bookInfoFile.getKey(key, section, x);
+	Common::String tmp = removeQuotesFromString(x, leftover);
+	if (!leftover.empty())
+		warning("while parsing config key '%s' from section '%s', string '%s' was left after '%s'",
+			key.c_str(), section.c_str(), leftover.c_str(), tmp.c_str());
+	return tmp;
+}
+
+Common::String MohawkEngine_LivingBooks::getStringFromConfig(const Common::String &section, const Common::String &key, Common::String &leftover) {
 	Common::String x;
 	_bookInfoFile.getKey(key, section, x);
-	return removeQuotesFromString(x);
+	return removeQuotesFromString(x, leftover);
 }
 
 int MohawkEngine_LivingBooks::getIntFromConfig(const Common::String &section, const Common::String &key) {
 	return atoi(getStringFromConfig(section, key).c_str());
 }
 
-Common::String MohawkEngine_LivingBooks::getFileNameFromConfig(const Common::String &section, const Common::String &key) {
-	Common::String string = getStringFromConfig(section, key);
+Common::String MohawkEngine_LivingBooks::getFileNameFromConfig(const Common::String &section, const Common::String &key, Common::String &leftover) {
+	Common::String string = getStringFromConfig(section, key, leftover);
 	Common::String x;
 
 	uint32 i = 0;
@@ -697,17 +722,23 @@ Common::String MohawkEngine_LivingBooks::getFileNameFromConfig(const Common::Str
 	return (getPlatform() == Common::kPlatformMacintosh) ? convertMacFileName(x) : convertWinFileName(x);
 }
 
-Common::String MohawkEngine_LivingBooks::removeQuotesFromString(const Common::String &string) {
-	// The last char isn't necessarily a quote, the line could have "fade" in it
-	// (which is then handled in loadPage).
+Common::String MohawkEngine_LivingBooks::removeQuotesFromString(const Common::String &string, Common::String &leftover) {
+	if (string.empty())
+		return string;
 
-	// Some versions wrap in quotations, some don't...
-	Common::String tmp = string;
-	for (uint32 i = 0; i < tmp.size(); i++) {
-		if (tmp[i] == '\"') {
-			tmp.deleteChar(i);
-			i--;
-		}
+	char quoteChar = string[0];
+	if (quoteChar != '\"' && quoteChar != '\'')
+		return string;
+
+	Common::String tmp;
+	bool inLeftover = false;
+	for (uint32 i = 1; i < string.size(); i++) {
+		if (inLeftover)
+			leftover += string[i];
+		else if (string[i] == quoteChar)
+			inLeftover = true;
+		else
+			tmp += string[i];
 	}
 
 	return tmp;
