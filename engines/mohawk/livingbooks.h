@@ -42,6 +42,17 @@
 
 namespace Mohawk {
 
+#define LBKEY_MOD_CTRL 1
+#define LBKEY_MOD_ALT 2
+#define LBKEY_MOD_SHIFT 4
+
+struct LBKey {
+	byte code;
+	byte modifiers;
+	byte char_;
+	byte repeats;
+};
+
 enum NodeState {
 	kLBNodeDone = 0,
 	kLBNodeRunning = 1,
@@ -152,7 +163,7 @@ enum {
 	kLBSetOneShot = 0x6d,    // unused?
 	kLBSetPlayPhase = 0x6e,
 	// from here, 2.x+
-	kLBUnknown6F = 0x6f,
+	kLBSetKeyNotify = 0x6f,
 	kLBCommand = 0x70,
 	kLBPaletteAData = 0x71,  // unused?
 	kLBPaletteXData = 0x72,
@@ -166,10 +177,10 @@ enum {
 	kLBGlobalSetVisible = 0x7a, // unused?
 	kLBSetAmbient = 0x7b,
 	kLBUnknown7C = 0x7c,     // unused?
-	kLBUnknown7D = 0x7d,
+	kLBSetKeyEvent = 0x7d,
 	kLBUnknown7E = 0x7e,     // unused? (rect flag)
 	kLBSetParent = 0x7f,     // unused?
-	kLBUnknown80 = 0x80,      // unused? TODO: sets +36
+	kLBSetHitTest = 0x80,
 	// from here, rugrats
 	kLBUnknown194 = 0x194
 };

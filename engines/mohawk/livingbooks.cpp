@@ -2077,22 +2077,22 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 		debug(2, "kLBSetPlayPhase: %d", _phase);
 		break;
 
-	case kLBUnknown6F:
+	case kLBSetKeyNotify:
 		{
+		// FIXME: variable-size notifies, targets
 		if (size != 18)
 			error("0x6f had wrong size (%d)", size);
-		uint u1 = stream->readUint16();
-		uint u2 = stream->readUint16();
 		uint event = stream->readUint16();
+		LBKey key;
+		stream->read(&key, 4);
 		uint opcode = stream->readUint16();
 		uint param = stream->readUint16();
 		uint u6 = stream->readUint16();
 		uint u7 = stream->readUint16();
 		uint u8 = stream->readUint16();
 		uint u9 = stream->readUint16();
-		// FIXME: this is scripting stuff
-		warning("0x6f: unknown: item %s, unknowns: %04x, %04x, event %04x, opcode %04x, param %04x, unknowns %04x, %04x, %04x, %04x",
-			_desc.c_str(), u1, u2, event, opcode, param, u6, u7, u8, u9);
+		warning("ignoring kLBSetKeyNotify: item %s, key code %02x (modifier mask %d, char %d, repeat %d), event %04x, opcode %04x, param %04x, unknowns %04x, %04x, %04x, %04x",
+			_desc.c_str(), key.code, key.modifiers, key.char_, key.repeats, event, opcode, param, u6, u7, u8, u9);
 		}
 		break;
 
@@ -2126,27 +2126,27 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 		_isAmbient = true;
 		break;
 
-	case kLBUnknown7D:
+	case kLBSetKeyEvent:
 		{
+		// FIXME: targets
 		if (size != 10)
-			error("0x7d had wrong size (%d)", size);
-		uint u1 = stream->readUint16();
-		uint key = stream->readUint16();
+			error("kLBSetKeyEvent had wrong size (%d)", size);
 		uint u3 = stream->readUint16();
+		LBKey key;
+		stream->read(&key, 4);
 		uint target = stream->readUint16();
-		byte event = stream->readByte();
-		byte u4 = stream->readByte();
+		uint16 event = stream->readUint16();
 		// FIXME: this is scripting stuff: what to run when key is pressed
-		warning("0x7d: unknown: item %s, unknown %04x, key %04x, unknown %04x, target %d, event %02x, unknown %02x",
-			_desc.c_str(), u1, key, u3, target, event, u4);
+		warning("ignoring kLBSetKeyEvent: item %s, key code %02x (modifier mask %d, char %d, repeat %d) unknown %04x, target %d, event %04x",
+			_desc.c_str(), key.code, key.modifiers, key.char_, key.repeats, u3, target, event);
 		}
 		break;
 
-	case kLBUnknown80:
+	case kLBSetHitTest:
 		{
 		assert(size == 2);
 		uint id = stream->readUint16();
-		warning("0x80: unknown: item %s, id %04x", _desc.c_str(), id);
+		warning("kLBSetHitTest: unknown: item %s, value %04x", _desc.c_str(), id);
 		// FIXME
 		}
 		break;
