@@ -1798,6 +1798,7 @@ LBItem::LBItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : _vm(vm), _rect
 	_loops = 0;
 
 	_isAmbient = false;
+	_doHitTest = true;
 }
 
 LBItem::~LBItem() {
@@ -2145,9 +2146,9 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 	case kLBSetHitTest:
 		{
 		assert(size == 2);
-		uint id = stream->readUint16();
-		warning("kLBSetHitTest: unknown: item %s, value %04x", _desc.c_str(), id);
-		// FIXME
+		uint val = stream->readUint16();
+		_doHitTest = (bool)val;
+		debug(2, "kLBSetHitTest (on %s): value %04x", _desc.c_str(), val);
 		}
 		break;
 
@@ -3446,6 +3447,9 @@ bool LBPictureItem::contains(Common::Point point) {
 	if (!LBItem::contains(point))
 		return false;
 
+	if (!_doHitTest)
+		return true;
+
 	// TODO: only check pixels if necessary
 	return !_vm->_gfx->imageIsTransparentAt(_resourceId, false, point.x - _rect.left, point.y - _rect.top);
 }
@@ -3485,7 +3489,13 @@ void LBAnimationItem::setEnabled(bool enabled) {
 }
 
 bool LBAnimationItem::contains(Common::Point point) {
-	return LBItem::contains(point) && !_anim->transparentAt(point.x, point.y);
+	if (!LBItem::contains(point))
+		return false;
+
+	if (!_doHitTest)
+		return true;
+
+	return !_anim->transparentAt(point.x, point.y);
 }
 
 void LBAnimationItem::update() {

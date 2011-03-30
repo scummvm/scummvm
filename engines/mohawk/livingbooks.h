@@ -401,6 +401,7 @@ protected:
 	Common::Point _relocPoint;
 
 	bool _isAmbient;
+	bool _doHitTest;
 
 	Common::Array<LBScriptEntry *> _scriptEntries;
 	void runScript(uint event, uint16 data = 0, uint16 from = 0);
