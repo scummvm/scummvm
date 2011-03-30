@@ -696,41 +696,35 @@ void GfxScreen::scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHei
 	}
 }
 
-typedef struct {
+struct UpScaledAdjust {
 	GfxScreenUpscaledMode gameHiresMode;
 	Sci32ViewNativeResolution viewNativeRes;
 	int numerator;
 	int denominator;
-} UpScaledAdjust;
-
-UpScaledAdjust upscaledAdjustTable[] = {
-	{GFX_SCREEN_UPSCALED_640x480, SCI_VIEW_NATIVERES_640x400, 5, 6},
 };
 
-int upscaledAdjustTableSize = ARRAYSIZE(upscaledAdjustTable);
+static const UpScaledAdjust s_upscaledAdjustTable[] = {
+	{ GFX_SCREEN_UPSCALED_640x480, SCI_VIEW_NATIVERES_640x400, 5, 6 }
+};
 
 void GfxScreen::adjustToUpscaledCoordinates(int16 &y, int16 &x, Sci32ViewNativeResolution viewNativeRes) {
 	x *= 2;
 	y = _upscaledMapping[y];
 
-	for (int i = 0; i < upscaledAdjustTableSize; i++)
-	{
-		if (upscaledAdjustTable[i].gameHiresMode == _upscaledHires &&
-		    upscaledAdjustTable[i].viewNativeRes == viewNativeRes)
-		{
-			y = (y * upscaledAdjustTable[i].numerator) / upscaledAdjustTable[i].denominator;
+	for (int i = 0; i < ARRAYSIZE(s_upscaledAdjustTable); i++) {
+		if (s_upscaledAdjustTable[i].gameHiresMode == _upscaledHires &&
+				s_upscaledAdjustTable[i].viewNativeRes == viewNativeRes) {
+			y = (y * s_upscaledAdjustTable[i].numerator) / s_upscaledAdjustTable[i].denominator;
 			break;
 		}
 	}
 }
 
 void GfxScreen::adjustBackUpscaledCoordinates(int16 &y, int16 &x, Sci32ViewNativeResolution viewNativeRes) {
-	for (int i = 0; i < upscaledAdjustTableSize; i++)
-	{
-		if (upscaledAdjustTable[i].gameHiresMode == _upscaledHires &&
-		    upscaledAdjustTable[i].viewNativeRes == viewNativeRes)
-		{
-			y = (y * upscaledAdjustTable[i].denominator) / upscaledAdjustTable[i].numerator;
+	for (int i = 0; i < ARRAYSIZE(s_upscaledAdjustTable); i++) {
+		if (s_upscaledAdjustTable[i].gameHiresMode == _upscaledHires &&
+				s_upscaledAdjustTable[i].viewNativeRes == viewNativeRes) {
+			y = (y * s_upscaledAdjustTable[i].denominator) / s_upscaledAdjustTable[i].numerator;
 			break;
 		}
 	}

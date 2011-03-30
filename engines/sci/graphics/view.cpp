@@ -204,12 +204,9 @@ void GfxView::initData(GuiResourceId resourceId) {
 		assert(_loopCount);
 		palOffset = READ_SCI11ENDIAN_UINT32(_resourceData + 8);
 
-		// FIXME: _resourceData[5] is sometimes 2 in GK1 also denoting scaled, but somehow modified.
-		// For a good test, jump to room 720 and talk to Wolfgang. Wolfgang's head is scaled when it
-		// shouldn't be, but the positioning of his eyes and mouth is also incorrect.
-		if (getSciVersion() >= SCI_VERSION_2)
-		{ 
-			_sci2ScaleRes = (Sci32ViewNativeResolution) _resourceData[5];
+		// For SCI32, this is a scale flag
+		if (getSciVersion() >= SCI_VERSION_2) { 
+			_sci2ScaleRes = (Sci32ViewNativeResolution)_resourceData[5];
 			if (_screen->getUpscaledHires() == GFX_SCREEN_UPSCALED_DISABLED)
 				_sci2ScaleRes = SCI_VIEW_NATIVERES_NONE;
 		}
@@ -340,7 +337,7 @@ Palette *GfxView::getPalette() {
 }
 
 bool GfxView::isSci2Hires() {
-	return _sci2ScaleRes > 0;
+	return _sci2ScaleRes > SCI_VIEW_NATIVERES_320x200;
 }
 
 bool GfxView::isScaleable() {
@@ -725,6 +722,8 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 						// get drawn onto lowres screen.
 						// FIXME(?): we can't read priority directly with the
 						// hires coordinates. May not be needed at all in kq6
+						// FIXME: Handle proper aspect ratio. Some GK1 hires images
+						// are in 640x400 instead of 640x480
 						_screen->putPixelOnDisplay(x2, y2, palette->mapping[color]);
 					}
 				}
