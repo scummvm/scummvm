@@ -331,6 +331,21 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 			return;
 
+		case JKEYCODE_CAMERA:
+		case JKEYCODE_SEARCH:
+			if (arg1 == JACTION_DOWN)
+				e.type = Common::EVENT_RBUTTONDOWN;
+			else
+				e.type = Common::EVENT_RBUTTONUP;
+
+			e.mouse = getEventManager()->getMousePos();
+
+			lockMutex(_event_queue_lock);
+			_event_queue.push(e);
+			unlockMutex(_event_queue_lock);
+
+			return;
+
 		default:
 			LOGW("unmapped system key: %d", arg2);
 			return;

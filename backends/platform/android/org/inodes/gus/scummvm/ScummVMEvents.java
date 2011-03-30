@@ -80,6 +80,8 @@ public class ScummVMEvents implements
 			switch (keyCode) {
 			case KeyEvent.KEYCODE_BACK:
 			case KeyEvent.KEYCODE_MENU:
+			case KeyEvent.KEYCODE_CAMERA:
+			case KeyEvent.KEYCODE_SEARCH:
 				break;
 
 			default:
