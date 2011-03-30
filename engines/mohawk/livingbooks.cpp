@@ -175,8 +175,7 @@ Common::Error MohawkEngine_LivingBooks::run() {
 
 				case Common::KEYCODE_ESCAPE:
 					if (_curMode == kLBIntroMode)
-						if (!loadPage(kLBControlMode, 1, 1))
-							loadPage(kLBControlMode, 1, 0);
+						tryLoadPageStart(kLBControlMode, 1);
 					break;
 
 				case Common::KEYCODE_LEFT:
@@ -771,19 +770,17 @@ bool MohawkEngine_LivingBooks::tryDefaultPage() {
 	if (_curMode == kLBCreditsMode || _curMode == kLBPreviewMode) {
 		// go to options page
 		if (getFeatures() & GF_LB_10) {
-			if (loadPage(kLBControlMode, 2, 0))
+			if (tryLoadPageStart(kLBControlMode, 2))
 				return true;
 		} else {
-			if (loadPage(kLBControlMode, 3, 0))
+			if (tryLoadPageStart(kLBControlMode, 3))
 				return true;
 		}
-	} else {
-		// go to menu page
-		if (loadPage(kLBControlMode, 1, 1))
-			return true;
-		if (loadPage(kLBControlMode, 1, 0))
-			return true;
 	}
+
+	// go to menu page
+	if (tryLoadPageStart(kLBControlMode, 1))
+		return true;
 
 	return false;
 }
@@ -818,9 +815,11 @@ void MohawkEngine_LivingBooks::handleUIMenuClick(uint controlId) {
 	switch (controlId) {
 	case 1:
 		if (getFeatures() & GF_LB_10) {
-			loadPage(kLBControlMode, 2, 0);
+			if (!tryLoadPageStart(kLBControlMode, 2))
+				error("couldn't load options page");
 		} else {
-			loadPage(kLBControlMode, 3, 0);
+			if (!tryLoadPageStart(kLBControlMode, 3))
+				error("couldn't load options page");
 		}
 		break;
 
@@ -854,9 +853,11 @@ void MohawkEngine_LivingBooks::handleUIMenuClick(uint controlId) {
 
 	case 4:
 		if (getFeatures() & GF_LB_10) {
-			loadPage(kLBControlMode, 3, 0);
+			if (!tryLoadPageStart(kLBControlMode, 3))
+				error("couldn't load quit page");
 		} else {
-			loadPage(kLBControlMode, 2, 0);
+			if (!tryLoadPageStart(kLBControlMode, 2))
+				error("couldn't load quit page");
 		}
 		break;
 
@@ -879,7 +880,8 @@ void MohawkEngine_LivingBooks::handleUIMenuClick(uint controlId) {
 
 	case 12:
 		// start game, in play mode
-		loadPage(kLBPlayMode, 1, 0);
+		if (!tryLoadPageStart(kLBPlayMode, 1))
+			error("couldn't start play mode");
 		break;
 
 	default:
@@ -893,7 +895,8 @@ void MohawkEngine_LivingBooks::handleUIMenuClick(uint controlId) {
 			_curLanguage = newLanguage;
 		} else if (controlId >= 200 && controlId < 200 + (uint)_numLanguages) {
 			// start game, in read mode
-			loadPage(kLBReadMode, 1, 0);
+			if (!tryLoadPageStart(kLBReadMode, 1))
+				error("couldn't start read mode");
 		}
 		break;
 	}
@@ -1001,7 +1004,8 @@ void MohawkEngine_LivingBooks::handleUIQuitClick(uint controlId) {
 
 	case 13:
 		// 'no', go back to menu
-		loadPage(kLBControlMode, 1, 0);
+		if (!tryLoadPageStart(kLBControlMode, 1))
+			error("couldn't return to menu");
 		break;
 	}
 }
@@ -1062,11 +1066,13 @@ void MohawkEngine_LivingBooks::handleUIOptionsClick(uint controlId) {
 		break;
 
 	case 4:
-		loadPage(kLBCreditsMode, 1, 0);
+		if (!tryLoadPageStart(kLBCreditsMode, 1))
+			error("failed to start credits");
 		break;
 
 	case 5:
-		loadPage(kLBPreviewMode, 1, 0);
+		if (!tryLoadPageStart(kLBPreviewMode, 1))
+			error("failed to start preview");
 		break;
 
 	case 202:
@@ -1123,7 +1129,7 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 	case kLBNotifyGoToControls:
 		debug(2, "kLBNotifyGoToControls: %d", event.param);
 
-		if (!loadPage(kLBControlMode, 1, 0))
+		if (!tryLoadPageStart(kLBControlMode, 1))
 			error("couldn't load controls page");
 		break;
 
@@ -1153,7 +1159,7 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 	case kLBNotifyGotoQuit:
 		debug(2, "kLBNotifyGotoQuit: %d", event.param);
 
-		if (!loadPage(kLBControlMode, 2, 0))
+		if (!tryLoadPageStart(kLBControlMode, 2))
 			error("couldn't load quit page");
 		break;
 
@@ -1187,9 +1193,10 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 			if (!event.newMode)
 				event.newMode = _curMode;
 			if (!loadPage((LBMode)event.newMode, event.newPage, event.newSubpage)) {
-				if (event.newSubpage != 0 || !loadPage((LBMode)event.newMode, event.newPage, 1))
-					error("kLBNotifyChangeMode failed to move to mode %d, page %d.%d",
-						event.newMode, event.newPage, event.newSubpage);
+				if (event.newPage != 0 || !loadPage((LBMode)event.newMode, _curPage, event.newSubpage))
+					if (event.newSubpage != 0 || !loadPage((LBMode)event.newMode, event.newPage, 1))
+						error("kLBNotifyChangeMode failed to move to mode %d, page %d.%d",
+							event.newMode, event.newPage, event.newSubpage);
 			}
 		}
 		break;
