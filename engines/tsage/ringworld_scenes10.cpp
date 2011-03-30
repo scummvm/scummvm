@@ -31,6 +31,133 @@
 
 namespace tSage {
 /*--------------------------------------------------------------------------
+ * Scene 9100
+ *
+ *--------------------------------------------------------------------------*/
+void Scene9100::SceneHotspot1::doAction(int action) {
+	Scene9100 *scene = (Scene9100 *)_globals->_sceneManager._scene;
+
+	if (action == CURSOR_TALK) {
+		if (_globals->getFlag(23)) {
+			_globals->_player.disableControl();
+			scene->_sceneMode = 9104;
+		} else {
+			_globals->setFlag(23);
+			_globals->_player.disableControl();
+			scene->_sceneMode = 9105;
+		}
+		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &_globals->_player, &scene->_object5, &scene->_object6, 0);
+	} else {
+		SceneHotspot_3::doAction(action);
+	}
+}
+
+void Scene9100::dispatch() {
+	Scene9100 *scene = (Scene9100 *)_globals->_sceneManager._scene;
+	
+	if (!_action) {
+		if (_globals->_player._position.x < 25) {
+			if (_globals->getFlag(11)) {
+				scene->_sceneMode = 9106;
+			} else {
+				scene->_sceneMode = 9108;
+				_globals->setFlag(11);
+			}
+		} else {
+			scene->_sceneMode = 9106;
+		}
+		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &_globals->_player, 0);
+	} else {
+		Scene::dispatch();
+	}
+}
+
+void Scene9100::signal() {
+	Scene9100 *scene = (Scene9100 *)_globals->_sceneManager._scene;
+
+	switch (scene->_sceneMode) {
+	case 9102:
+	case 9106:
+	case 9108:
+		_globals->_sceneManager.changeScene(9150);
+		break;
+	case 9105:
+		_sceneHotspot1.remove();
+	// No break on purpose
+	case 9103:
+	case 9104:
+	case 9107:
+	case 9109:
+	default:
+		_globals->_player.enableControl();
+		break;
+	}
+}
+
+void Scene9100::postInit(SceneObjectList *OwnerList) {
+	Scene9100 *scene = (Scene9100 *)_globals->_sceneManager._scene;
+
+	Scene::postInit();
+	setZoomPercents(0, 100, 200, 100);
+	_object1.postInit();
+	_object1.setVisage(9100);
+	_object1._strip = 1;
+	_object1._numFrames = 6;
+	_object1.setPosition(Common::Point(297, 132), 0);
+	_object1.animate(ANIM_MODE_2, 0);
+	_object1.setPriority2(10);
+
+	_globals->_player.postInit();
+
+	_object2.postInit();
+	_object2.flag100();
+
+	_object3.postInit();
+	_object3.flag100();
+
+	_object4.postInit();
+	_object4.flag100();
+
+	_object5.postInit();
+	_object5.flag100();
+
+	if (!_globals->getFlag(23)) {
+		_object6.postInit();
+		_object6.setVisage(9111);
+		_object6.setStrip(6);
+		_object6.setFrame(1);
+		_object6.setPosition(Common::Point(138, 166), 0);
+		_sceneHotspot3.quickInit(145, 125, 166, 156, 9100, 40, 43);
+	}
+	_sceneHotspot1.quickInit(140, 176, 185, 215, 9100, 36, 37);
+	_sceneHotspot2.quickInit(161, 138, 182, 175, 9100, 38, 39);
+	_sceneHotspot4.quickInit(37, 196, 47, 320, 9100, 44, -1);
+	_sceneHotspot5.quickInit(69, 36, 121, 272, 9100, 45, 46);
+	_sceneHotspot6.quickInit(127, 0, 200, 52, 9100, 47, 48);
+
+	_globals->_soundHandler.startSound(251, 0, 127);
+	if (_globals->_sceneManager._previousScene == 9150) {
+		if (_globals->getFlag(20)) {
+			_globals->_player.disableControl();
+			if (_globals->getFlag(11))
+				_sceneMode = 9107;
+			else
+				_sceneMode = 9109;
+			setAction(&scene->_sequenceManager, scene, _sceneMode, &_globals->_player, &_object5, 0);
+		} else {
+			_sceneMode = 9103;
+			_globals->_player.disableControl();
+			setAction(&scene->_sequenceManager, scene, _sceneMode, &_globals->_player, &_object2, &_object3, &_object4, &_object5, 0);
+			_globals->setFlag(20);
+		}
+	} else {
+		_sceneMode = 9102;
+		_globals->_player.disableControl();
+		setAction(&scene->_sequenceManager, scene, _sceneMode, &_globals->_player, &_object2, &_object3, &_object4, &_object5, 0);
+	}
+}
+
+/*--------------------------------------------------------------------------
  * Scene 9350
  *
  *--------------------------------------------------------------------------*/
