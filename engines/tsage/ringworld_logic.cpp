@@ -122,6 +122,8 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 4150: return new Scene4150();
 	// Village - Near Slaver Ship
 	case 4250: return new Scene4250();
+	// Village - Slaver Ship
+	case 4300: return new Scene4300();
 
 	/* Scene group 6 */
 
