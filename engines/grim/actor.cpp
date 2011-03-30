@@ -59,6 +59,7 @@ Actor::Actor(const char *actorName) :
 	_shadowArray = new Shadow[5];
 	_winX1 = _winY1 = 1000;
 	_winX2 = _winY2 = -1000;
+	_toClean = false;
 
 	for (int i = 0; i < 5; i++) {
 		_shadowArray[i].active = false;

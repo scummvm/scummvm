@@ -765,6 +765,21 @@ static void PutActorInSet() {
 	if (!lua_isstring(setObj) && !lua_isnil(setObj))
 		return;
 
+	if (actor->_toClean) {
+		actor->_toClean = false;
+
+		// FIXME HACK: This hack allows manny to exit from the sets where actors are freezed
+		// (and though ActorToClean is called), otherwise the set will never change and manny
+		// will be trapped inside. I'm aware this is really ugly, but i could not come up
+		// with a better solution, since the bug here seems to be inside the lua scripts, and
+		// not in the engine. If you want to have a look, the important bits are in:
+		// _system.LUA, TrackManny()
+		// _actors.LUA, put_in_set(), freeze() and stamp()
+		// Be aware that is not needed for the OpenGL renderer.
+		lua_call("reset_doorman");
+		return;
+	}
+
 	const char *set = lua_getstring(setObj);
 
 	// FIXME verify adding actor to set
@@ -889,6 +904,22 @@ static void WalkActorTo() {
 	Graphics::Vector3d tVec(tx, ty, tz);
 
 	actor->walkTo(destVec);
+}
+
+static void ActorToClean() {
+	lua_Object actorObj = lua_getparam(1);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR')) {
+		lua_pushnil();
+		return;
+	}
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+
+	// TODO: It seems this function should load/create an image to be used in place
+	// of the real actor until it is put in the set again.
+	// For now this Actor::_toClean is used to leave the actor in the set.
+	actor->_toClean = true;
 }
 
 static void IsActorMoving() {
@@ -3848,7 +3879,6 @@ STUB_FUNC(SetActorClipActive)
 STUB_FUNC(SetActorCollisionScale)
 STUB_FUNC(SetActorCollisionMode)
 STUB_FUNC(FlushControls)
-STUB_FUNC(ActorToClean)
 STUB_FUNC(LightMgrStartup)
 STUB_FUNC(SetLightIntensity)
 STUB_FUNC(SetLightPosition)
@@ -4273,6 +4303,11 @@ void register_lua() {
 	refTextObjectPan = lua_ref(true);
 	lua_pushstring("background");
 	refTextObjectBackground = lua_ref(true);
+
+	// FIXME: see PutActorInSet
+	const char *func = "function reset_doorman() doorman_in_hot_box = FALSE end";
+	lua_pushstring(func);
+	lua_call("dostring");
 }
 
 int bundle_dofile(const char *filename) {

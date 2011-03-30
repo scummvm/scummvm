@@ -168,6 +168,8 @@ public:
 	}
 	void setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
 
+	bool _toClean;
+
 private:
 	Common::String _name;
 	Common::String _setName;    // The actual current set
