@@ -83,7 +83,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 	_loopCount = 0;
 	_embeddedPal = false;
 	_EGAmapping = NULL;
-	_isSci2Hires = false;
+	_sci2ScaleRes = SCI_VIEW_NATIVERES_NONE;
 	_isScaleable = true;
 
 	// we adjust inside getCelRect for SCI0EARLY (that version didn't have the +1 when calculating bottom)
@@ -207,7 +207,12 @@ void GfxView::initData(GuiResourceId resourceId) {
 		// FIXME: _resourceData[5] is sometimes 2 in GK1 also denoting scaled, but somehow modified.
 		// For a good test, jump to room 720 and talk to Wolfgang. Wolfgang's head is scaled when it
 		// shouldn't be, but the positioning of his eyes and mouth is also incorrect.
-		_isSci2Hires = _resourceData[5] == 1 && _screen->getUpscaledHires() != GFX_SCREEN_UPSCALED_DISABLED;
+		if (getSciVersion() >= SCI_VERSION_2)
+		{ 
+			_sci2ScaleRes = (Sci32ViewNativeResolution) _resourceData[5];
+			if (_screen->getUpscaledHires() == GFX_SCREEN_UPSCALED_DISABLED)
+				_sci2ScaleRes = SCI_VIEW_NATIVERES_NONE;
+		}
 
 		// flags is actually a bit-mask
 		//  it seems it was only used for some early sci1.1 games (or even just laura bow 2)
@@ -288,10 +293,10 @@ void GfxView::initData(GuiResourceId resourceId) {
 		}
 #ifdef ENABLE_SCI32
 		// adjust width/height returned to scripts
-		if (_isSci2Hires) {
+		if (_sci2ScaleRes != SCI_VIEW_NATIVERES_NONE) {
 			for (loopNo = 0; loopNo < _loopCount; loopNo++)
 				for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++)
-					_screen->adjustBackUpscaledCoordinates(_loop[loopNo].cel[celNo].scriptWidth, _loop[loopNo].cel[celNo].scriptHeight);
+					_screen->adjustBackUpscaledCoordinates(_loop[loopNo].cel[celNo].scriptWidth, _loop[loopNo].cel[celNo].scriptHeight, _sci2ScaleRes);
 		} else if (getSciVersion() == SCI_VERSION_2_1) {
 			for (loopNo = 0; loopNo < _loopCount; loopNo++)
 				for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++)
@@ -335,7 +340,7 @@ Palette *GfxView::getPalette() {
 }
 
 bool GfxView::isSci2Hires() {
-	return _isSci2Hires;
+	return _sci2ScaleRes > 0;
 }
 
 bool GfxView::isScaleable() {
@@ -825,6 +830,14 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 			}
 		}
 	}
+}
+
+void GfxView::adjustToUpscaledCoordinates(int16 &y, int16 &x) {
+	_screen->adjustToUpscaledCoordinates(y, x, _sci2ScaleRes);
+}
+
+void GfxView::adjustBackUpscaledCoordinates(int16 &y, int16 &x) {
+	_screen->adjustBackUpscaledCoordinates(y, x, _sci2ScaleRes);
 }
 
 } // End of namespace Sci

@@ -28,6 +28,7 @@
 
 #include "sci/sci.h"
 #include "sci/graphics/helpers.h"
+#include "sci/graphics/view.h"
 
 #include "graphics/sjis.h"
 
@@ -111,8 +112,8 @@ public:
 
 	void scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight, byte bytesPerPixel = 1);
 
-	void adjustToUpscaledCoordinates(int16 &y, int16 &x);
-	void adjustBackUpscaledCoordinates(int16 &y, int16 &x);
+	void adjustToUpscaledCoordinates(int16 &y, int16 &x, Sci32ViewNativeResolution viewScalingType = SCI_VIEW_NATIVERES_NONE);
+	void adjustBackUpscaledCoordinates(int16 &y, int16 &x, Sci32ViewNativeResolution viewScalingType = SCI_VIEW_NATIVERES_NONE);
 
 	void dither(bool addToFlag);
 
