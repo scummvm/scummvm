@@ -959,6 +959,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Living Books Player"
 	},
 
+	// Just Grandma and Me 2.0
+	// From pacifist
+	{
+		{
+			"grandma",
+			"v2.0",
+			AD_ENTRY1("OUTLINE", "159c18b663c58d1aa17ad5e1ab1f0e12"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
 	{
 		{
 			"grandma",
