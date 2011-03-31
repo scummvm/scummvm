@@ -94,7 +94,7 @@ class Scene9350: public Scene {
 	/* Objects */
 	class Object1: public SceneObject {
 	public:
-		virtual void postInit();
+		virtual void postInit(SceneObjectList *OwnerList = NULL);
 		virtual void draw();
 	};
 

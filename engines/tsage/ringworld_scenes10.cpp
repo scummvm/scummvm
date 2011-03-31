@@ -57,7 +57,8 @@ void Scene9100::dispatch() {
 	
 	if (!_action) {
 		if (_globals->_player._position.x < 25) {
-			if (_globals->getFlag(11)) {
+			warning("There");
+			if (!_globals->getFlag(11)) {
 				scene->_sceneMode = 9106;
 			} else {
 				scene->_sceneMode = 9108;
@@ -200,6 +201,7 @@ void Scene9150::signal() {
 }
 
 void Scene9150::dispatch() {
+
 	if ((_field30A != 0) && (_sceneBounds.left == 0)) {
 		_object3._field88 = 0;
 		_field30A = 0;
@@ -207,7 +209,7 @@ void Scene9150::dispatch() {
 		_sceneHotspot10.remove();
 	}
 	
-	if (_action != 0) {
+	if (_action) {
 		_action->dispatch();
 	} else {
 		if (_globals->_player._position.x >= 160) {
@@ -257,13 +259,17 @@ void Scene9150::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.disableControl();
 
 	if (_globals->getFlag(20)) {
+		// Walking alone
 		_globals->_scrollFollower = &_globals->_player;
 		if (_globals->getFlag(11))
+			// Hero wearing peasan suit
 			_sceneMode = 9155;
 		else
+			// Hero wearing Purple suit
 			_sceneMode = 9152;
 		setAction(&_sequenceManager1, this, _sceneMode, &_globals->_player, 0);
 	} else {
+		// Walking with the tiger
 		_sceneMode = 9151;
 		_object2.postInit();
 		_object2.flag100();
@@ -276,7 +282,7 @@ void Scene9150::postInit(SceneObjectList *OwnerList) {
  * Scene 9350
  *
  *--------------------------------------------------------------------------*/
-void Scene9350::Object1::postInit() {
+void Scene9350::Object1::postInit(SceneObjectList *OwnerList) {
 	warning("Scene9350::Object1::postInit - Weird cast to be verified");
 	_globals->_sceneManager.postInit((SceneObjectList*) &_globals->_sceneManager._sceneChangeListeners);
 }
@@ -335,49 +341,12 @@ void Scene9350::postInit(SceneObjectList *OwnerList) {
 	setZoomPercents(95, 80, 200, 100);
 	_globals->_player.postInit();
 
-	//TODO: Fix _object1.quickInit(9350, 1, 3, 139, 97, 0);
-
-	_object1.postInit();
-	_object1.setVisage(9350);
-	_object1.setStrip(1);
-	_object1.setFrame(3);
-	_object1.setPosition(Common::Point(139, 97), 0);
-	_object1.setPriority2(0);
-
-	//TODO: check _sceneHotspot1.quickInit(42, 0, 97, 60, 9350, 0, -1);
-	_sceneHotspot1.setBounds(42, 0, 97, 60);
-	_sceneHotspot1._field26 = 9350;
-	_sceneHotspot1._field28 = 0;
-	_sceneHotspot1._field2A = -1;
-	_globals->_sceneItems.addItems(&_sceneHotspot1, NULL);
-
-	//TODO: check _sceneHotspot2.quickInit(37, 205, 82, 256, 9350, 0, -1);
-	_sceneHotspot2.setBounds(37, 205, 82, 256);
-	_sceneHotspot2._field26 = 9350;
-	_sceneHotspot2._field28 = 0;
-	_sceneHotspot2._field2A = -1;
-	_globals->_sceneItems.addItems(&_sceneHotspot2, NULL);
-
-	//TODO: check _sceneHotspot3.quickInit(29, 93, 92, 174, 9350, 1, -1);
-	_sceneHotspot3.setBounds(29, 93, 92, 174);
-	_sceneHotspot3._field26 = 9350;
-	_sceneHotspot3._field28 = 1;
-	_sceneHotspot3._field2A = -1;
-	_globals->_sceneItems.addItems(&_sceneHotspot3, NULL);
-
-	//TODO: check _sceneHotspot4.quickInit(0, 308, 109, 320, 9350, 2, -1);
-	_sceneHotspot4.setBounds(0, 308, 109, 320);
-	_sceneHotspot4._field26 = 9350;
-	_sceneHotspot4._field28 = 2;
-	_sceneHotspot4._field2A = -1;
-	_globals->_sceneItems.addItems(&_sceneHotspot4, NULL);
-
-	//TODO: check _sceneHotspot5.quickInit(0, 0, 200, 320, 9350, 3, -1);
-	_sceneHotspot5.setBounds(0, 0, 200, 320);
-	_sceneHotspot5._field26 = 9350;
-	_sceneHotspot5._field28 = 3;
-	_sceneHotspot5._field2A = -1;
-	_globals->_sceneItems.addItems(&_sceneHotspot5, NULL);
+	_object1.quickInit(9350, 1, 3, 139, 97, 0);
+	_sceneHotspot1.quickInit(42, 0, 97, 60, 9350, 0, -1);
+	_sceneHotspot2.quickInit(37, 205, 82, 256, 9350, 0, -1);
+	_sceneHotspot3.quickInit(29, 93, 92, 174, 9350, 1, -1);
+	_sceneHotspot4.quickInit(0, 308, 109, 320, 9350, 2, -1);
+	_sceneHotspot5.quickInit(0, 0, 200, 320, 9350, 3, -1);
 
 	_globals->_events.setCursor(CURSOR_WALK);
 	_globals->_player.disableControl();
@@ -455,47 +424,12 @@ void Scene9700::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit();
 	setZoomPercents(0, 100, 200, 100);
 
-	//TODO: check _sceneHotspot1.quickInit(84, 218, 151, 278, 9700, 14, -1);
-	_sceneHotspot1.setBounds(84, 218, 151, 278);
-	_sceneHotspot1._field26 = 9700;
-	_sceneHotspot1._field28 = 14;
-	_sceneHotspot1._field2A = -1;
-	_globals->_sceneItems.addItems(&_sceneHotspot1, NULL);
-
-	//TODO: check _sceneHotspot2.quickInit(89, 11, 151, 121, 9700, 14, -1);
-	_sceneHotspot2.setBounds(89, 11, 151, 121);
-	_sceneHotspot2._field26 = 9700;
-	_sceneHotspot2._field28 = 14;
-	_sceneHotspot2._field2A = -1;
-	_globals->_sceneItems.addItems(&_sceneHotspot2, NULL);
-
-	//TODO: check _sceneHotspot3.quickInit(69, 119, 138, 218, 9700, 15, 16);
-	_sceneHotspot3.setBounds(69, 119, 138, 218);
-	_sceneHotspot3._field26 = 9700;
-	_sceneHotspot3._field28 = 15;
-	_sceneHotspot3._field2A = 16;
-	_globals->_sceneItems.addItems(&_sceneHotspot3, NULL);
-
-	//TODO: check _sceneHotspot4.quickInit(34, 13, 88, 116, 9700, 17, -1);
-	_sceneHotspot4.setBounds(34, 13, 88, 116);
-	_sceneHotspot4._field26 = 9700;
-	_sceneHotspot4._field28 = 17;
-	_sceneHotspot4._field2A = -1;
-	_globals->_sceneItems.addItems(&_sceneHotspot4, NULL);
-
-	//TODO: check _sceneHotspot5.quickInit(52, 119, 68, 204, 9700, 17, -1);
-	_sceneHotspot5.setBounds(52, 119, 68, 204);
-	_sceneHotspot5._field26 = 9700;
-	_sceneHotspot5._field28 = 17;
-	_sceneHotspot5._field2A = -1;
-	_globals->_sceneItems.addItems(&_sceneHotspot5, NULL);
-
-	//TODO: check _sceneHotspot6.quickInit(0, 22, 56, 275, 9700, 18, -1);
-	_sceneHotspot6.setBounds(0, 22, 56, 275);
-	_sceneHotspot6._field26 = 9700;
-	_sceneHotspot6._field28 = 18;
-	_sceneHotspot6._field2A = -1;
-	_globals->_sceneItems.addItems(&_sceneHotspot6, NULL);
+	_sceneHotspot1.quickInit(84, 218, 151, 278, 9700, 14, -1);
+	_sceneHotspot2.quickInit(89, 11, 151, 121, 9700, 14, -1);
+	_sceneHotspot3.quickInit(69, 119, 138, 218, 9700, 15, 16);
+	_sceneHotspot4.quickInit(34, 13, 88, 116, 9700, 17, -1);
+	_sceneHotspot5.quickInit(52, 119, 68, 204, 9700, 17, -1);
+	_sceneHotspot6.quickInit(0, 22, 56, 275, 9700, 18, -1);
 
 	_object1.postInit();
 	_object1.flag100();
