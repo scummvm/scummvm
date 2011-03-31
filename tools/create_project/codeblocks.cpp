@@ -163,8 +163,13 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 
 		project << "\t\t\t\t\t<Add option=\"-g\" />\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\\engines\" />\n"
-		           "\t\t\t\t\t<Add directory=\"..\\..\\..\\scummvm\" />\n"
-		           "\t\t\t\t</Compiler>\n"
+		           "\t\t\t\t\t<Add directory=\"..\\..\\..\\scummvm\" />\n";
+
+		// Sword2.5 engine needs theora and vorbis includes
+		if (name == "sword25")
+			project << "\t\t\t\t\t<Add directory=\"$(SCUMMVM_LIBS)include\" />\n";
+
+		project << "\t\t\t\t</Compiler>\n"
 		           "\t\t\t</Target>\n"
 		           "\t\t</Build>\n";
 	}
