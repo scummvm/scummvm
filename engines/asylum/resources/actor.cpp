@@ -2157,7 +2157,7 @@ uint32 Actor::distance(Common::Point vec1, Common::Point vec2) {
 }
 
 uint32 Actor::angle(Common::Point vec1, Common::Point vec2) {
-	int32 result = ((long)(180 - acos((double)(vec2.y - vec1.y) / distance(vec1, vec2)) * 180 / PI)) % 360;
+	int32 result = ((long)(180 - acos((double)(vec2.y - vec1.y) / distance(vec1, vec2)) * 180 / M_PI)) % 360;
 
 	if (vec1.x < vec2.x)
 		return 360 - result;
