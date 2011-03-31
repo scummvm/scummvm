@@ -35,11 +35,11 @@ public:
 	 * 	Values representing the taskbar progress state
 	 */
 	enum TaskbarProgressState {
-		NoProgress = 0,
-		Indeterminate = 1,
-		Normal = 2,
-		Error = 4,
-		Paused = 8
+		kTaskbarNoProgress = 0,
+		kTaskbarIndeterminate = 1,
+		kTaskbarNormal = 2,
+		kTaskbarError = 4,
+		kTaskbarPaused = 8
 	};
 
 	TaskbarManager() {}
@@ -61,10 +61,10 @@ public:
     /**
      * Sets a progress value on the taskbar icon
      *
-     * @param	val The current progress value
-     * @param	max The maximum progress value
+     * @param	completed	The current progress value.
+     * @param	total	 	The maximum progress value.
      */
-    virtual void setProgressValue(int val, int max) {}
+    virtual void setProgressValue(int completed, int total) {}
 
     /**
      * Sets the progress state on the taskbar icon

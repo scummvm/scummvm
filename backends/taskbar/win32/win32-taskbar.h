@@ -28,18 +28,35 @@
 #ifndef BACKEND_WIN32_TASKBAR_H
 #define BACKEND_WIN32_TASKBAR_H
 
+#ifdef WIN32
+
 #include "common/str.h"
 #include "common/taskbar.h"
+
+struct ITaskbarList3;
 
 class Win32TaskbarManager : public Common::TaskbarManager {
 public:
 	Win32TaskbarManager();
 	virtual ~Win32TaskbarManager();
 
+	void init();
+
 	virtual void setOverlayIcon(const Common::String &name, const Common::String &description);
-	virtual void setProgressValue(int val, int max);
+	virtual void setProgressValue(int completed, int total);
 	virtual void setProgressState(TaskbarProgressState state);
 	virtual void addRecent(const Common::String &name, const Common::String &description);
+
+private:
+	HWND           _hwnd;
+	ITaskbarList3 *_taskbar;
+
+	// Helper functions
+	bool isWin7OrLater();
+	LPWSTR ansiToUnicode(const char *s);
+	HWND getHwnd();
 };
+
+#endif
 
 #endif // BACKEND_WIN32_TASKBAR_H

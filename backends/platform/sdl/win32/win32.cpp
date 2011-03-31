@@ -87,6 +87,7 @@ void OSystem_Win32::init() {
 
 	// Initialize task bar manager
 	_taskbarManager = new Win32TaskbarManager();
+	((Win32TaskbarManager *)_taskbarManager)->init();
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
