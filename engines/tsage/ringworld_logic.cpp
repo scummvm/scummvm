@@ -122,6 +122,12 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 4100: return new Scene4100();
 	// Village - Bedroom
 	case 4150: return new Scene4150();
+	// Village - Near Slaver Ship
+	case 4250: return new Scene4250();
+	// Village - Slaver Ship
+	case 4300: return new Scene4300();
+	// Village - Slaver Ship Keypad
+	case 4301: return new Scene4301();
 
 	/* Scene group 6 */
 
@@ -481,6 +487,15 @@ SpeakerCDRText::SpeakerCDRText() {
 	_textWidth = 240;
 	_textMode = ALIGN_CENTRE;
 	_colour1 = 52;
+	_hideObjects = false;
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerFLText::SpeakerFLText() {
+	_speakerName = "FLTEXT";
+	_textPos = Common::Point(10, 40);
+	_colour1 = 17;
 	_hideObjects = false;
 }
 

@@ -496,6 +496,210 @@ public:
 	virtual void dispatch();
 };
 
+class Scene4250: public Scene {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action3: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action4: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action5: public Action {
+	public:
+		virtual void signal();
+	};
+
+	/* Hotspots */
+	class Hotspot1: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot2: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot4: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot6: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot8: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+
+public:
+	SequenceManager _sequenceManager;
+	SoundHandler _soundHandler;
+	SpeakerSR _speakerSR;
+	SpeakerSL _speakerSL;
+	SpeakerSText _speakerSText;
+	SpeakerGameText _speakerGameText;
+	SpeakerQL _speakerQL;
+	SpeakerQR _speakerQR;
+	SpeakerQText _speakerQText;
+	SpeakerPText _speakerPText;
+	SpeakerMText _speakerMText;
+	SpeakerFLText _speakerFLText;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+	Action5 _action5;
+	Hotspot1 _hotspot1;
+	Hotspot2 _hotspot2;
+	SceneObject _hotspot3;
+	Hotspot4 _hotspot4;
+	SceneObject _hotspot5;
+	Hotspot6 _hotspot6;
+	DisplayHotspot _hotspot7;
+	Hotspot8 _hotspot8;
+
+	Scene4250();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
+};
+
+class HotspotBase4300: public SceneObject {
+public:
+	int _resNum;
+	int _lookLine, _useLine;
+
+	virtual void doAction(int action);
+
+	void setup(const Rect &bounds, int resNum, int lookLine, int useLine);
+};
+
+class Scene4300: public Scene {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+
+	/* Hotspots */
+	class Hotspot8: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot9: public HotspotBase4300 {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot10: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot15: public SceneObject {
+	public:
+		virtual void signal();
+	};
+	class Hotspot16: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot17: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot19: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+public:
+	SoundHandler _soundHandler1, _soundHandler2;
+	SequenceManager _sequenceManager;
+	GfxButton _gfxButton;
+	SpeakerQText _speakerQText;
+	SpeakerSText _speakerSText;
+	SpeakerMText _speakerMText;
+	SpeakerFLText _speakerFLText;
+
+	SceneObject _hotspot1, _hotspot2, _hotspot3, _hotspot4;
+	SceneObject _hotspot5, _hotspot6, _hotspot7;
+	Hotspot8 _hotspot8;
+	Hotspot9 _hotspot9;
+	Hotspot10 _hotspot10;
+	HotspotBase4300 _hotspot11;
+	SceneObject _hotspot12, _hotspot13, _hotspot14;
+	Hotspot15 _hotspot15;
+	Hotspot16 _hotspot16;
+	Hotspot17 _hotspot17;
+	DisplayHotspot _hotspot18;
+	Hotspot19 _hotspot19;
+	Action1 _action1;
+	Action2 _action2;
+
+	Scene4300();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void stripCallback(int v);
+	virtual void remove();
+	virtual void signal();
+	virtual void dispatch();
+	virtual void process(Event &event);
+};
+
+class Scene4301: public Scene {
+	/* Actions */
+	class Action1: public ActionExt {
+	public:
+		SceneObject _buttonList[6];
+		int _field34E;
+		int _indexList[6];
+
+		virtual void synchronise(Serialiser &s);
+		virtual void remove();
+		virtual void signal();
+		virtual void process(Event &event);
+	};
+
+	/* Hotspots */
+	class Hotspot4: public HotspotBase4300 {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot5: public HotspotBase4300 {
+	public:
+		virtual void doAction(int action);
+	};
+
+public:
+	Common::List<int> _list1;
+	SequenceManager _sequenceManager;
+	SoundHandler _soundHandler;
+	Action1 _action1;
+	SceneObject _hotspot1, _hotspot2, _hotspot3;
+	Hotspot4 _hotspot4;
+	Hotspot5 _hotspot5;
+	bool _field68E;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void dispatch();
+	virtual void synchronise(Serialiser &s) { 
+		Scene::synchronise(s);
+		s.syncAsSint16LE(_field68E);
+	}
+};
+
+
 } // End of namespace tSage
 
 #endif
