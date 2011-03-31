@@ -3743,7 +3743,7 @@ void Scene4300::Action2::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene4300::HotspotBase::doAction(int action) {
+void HotspotBase4300::doAction(int action) {
 	switch (action) {
 	case CURSOR_WALK:
 		break;
@@ -3765,7 +3765,7 @@ void Scene4300::HotspotBase::doAction(int action) {
 	}
 }
 
-void Scene4300::HotspotBase::setup(const Rect &bounds, int resNum, int lookLine, int useLine) {
+void HotspotBase4300::setup(const Rect &bounds, int resNum, int lookLine, int useLine) {
 	SceneHotspot::setBounds(bounds);
 	_resNum = resNum;
 	_lookLine = lookLine;
@@ -3829,7 +3829,7 @@ void Scene4300::Hotspot9::doAction(int action) {
 			SceneItem::display2(4300, 23);
 		break;
 	default:
-		HotspotBase::doAction(action);
+		HotspotBase4300::doAction(action);
 		break;
 	}
 }
@@ -4158,6 +4158,230 @@ void Scene4300::process(Event &event) {
 	Scene::process(event);
 	if (_gfxButton.process(event))
 		_globals->_sceneManager.changeScene(4250);
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 4301 - Village - Slaver Ship Keypad
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene4301::Action1::synchronise(Serialiser &s) {
+	Action::synchronise(s);
+	s.syncAsSint16LE(_field34E);
+	for (int idx = 0; idx < 6; ++idx)
+		s.syncAsSint16LE(_indexList[idx]);
+}
+
+void Scene4301::Action1::remove() {
+	Scene4301 *scene = (Scene4301 *)_globals->_sceneManager._scene;
+	_globals->_player.enableControl();
+	
+	for (_state = 0; _state < 6; ++_state)
+		_buttonList[_state].remove();
+	
+	scene->_hotspot3.remove();
+	scene->_hotspot2.remove();
+
+	scene->_hotspot1.animate(ANIM_MODE_6, NULL);
+	Action::remove();
+}
+
+void Scene4301::Action1::signal() {
+	Scene4301 *scene = (Scene4301 *)_globals->_sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		scene->_soundHandler.startSound(164);
+		scene->_hotspot1.animate(ANIM_MODE_5, this);
+		break;
+	case 1:
+		_globals->_soundHandler.startSound(335);
+		_globals->_events.setCursor(CURSOR_USE);
+
+		scene->_hotspot2.postInit();
+		scene->_hotspot2.setVisage(4303);
+		scene->_hotspot2.setStrip(2);
+		scene->_hotspot2.setFrame(1);
+		scene->_hotspot2.setPosition(Common::Point(30, 15));
+		scene->_hotspot2.setPriority2(255);
+
+		scene->_hotspot3.postInit();
+		scene->_hotspot3.setVisage(4303);
+		scene->_hotspot3.setStrip(2);
+		scene->_hotspot3.setFrame(2);
+		scene->_hotspot3.setPosition(Common::Point(48, 29));
+		scene->_hotspot3.setPriority2(255);
+		scene->_hotspot3.flag100();
+
+		_field34E = 0;
+		_state = 0;
+		_actionIndex = 2;
+		break;
+	case 10:
+		_globals->_events.setCursor(CURSOR_NONE);
+		scene->_soundHandler.startSound(337);
+		if (scene->_hotspot3._flags & OBJFLAG_100) 
+			scene->_hotspot3.unflag100();
+		else
+			scene->_hotspot3.flag100();
+		setDelay(20);
+
+		if (_state <= 8)
+			_actionIndex = 10;
+		++_state;
+		break;
+	case 11:
+		for (_state = 0; _state < 6; ++_state)
+			_buttonList[_state].remove();
+
+		scene->_soundHandler.startSound(338);
+		scene->_hotspot3.flag100();
+
+		_actionIndex = 2;
+		_state = 0;
+		_globals->_events.setCursor(CURSOR_USE);
+		break;
+	case 20:
+		_globals->_player.disableControl();
+		scene->_soundHandler.startSound(339);
+		scene->_hotspot3._frame = 3;
+		if (scene->_hotspot3._flags & OBJFLAG_100) 
+			scene->_hotspot3.unflag100();
+		else
+			scene->_hotspot3.flag100();
+		
+		if (_state <= 8)
+			_actionIndex = 20;
+		++_state;
+
+		setDelay(20);
+		break;
+	case 21:
+		scene->_field68E = true;
+		remove();
+		break;
+	}
+}
+
+void Scene4301::Action1::process(Event &event) {
+	Scene4301 *scene = (Scene4301 *)_globals->_sceneManager._scene;
+	Rect buttonsRect;
+
+	Action::process(event);
+	if (event.handled || (_actionIndex != 2))
+		return;
+
+	buttonsRect = Rect(14, 35, 112, 100);
+	buttonsRect.translate(30, 15);
+
+	if ((event.eventType == EVENT_BUTTON_DOWN) && buttonsRect.contains(event.mousePos)) {
+		event.handled = true;
+		scene->_soundHandler.startSound(336);
+
+		int buttonIndex = ((event.mousePos.y - buttonsRect.top) / 33) * 3 +
+			((event.mousePos.x - buttonsRect.left) / 33);
+
+		_buttonList[_state].postInit();
+		_buttonList[_state].setVisage(4303);
+		_buttonList[_state].setStrip(buttonIndex + 3);
+		_buttonList[_state].setFrame(1);
+		_buttonList[_state].setPosition(Common::Point((_state % 3) * 25 + 55, (_state / 3) * 25 + 121));
+		_buttonList[_state].setPriority2(255);
+		_buttonList[_state]._numFrames = 25;
+		_buttonList[_state].animate(ANIM_MODE_5, NULL);
+	
+		_indexList[_state++] = buttonIndex;	
+
+		if (_state == 6) {
+			// Six buttons pressed
+			if ((_indexList[0] == 2) && (_indexList[1] == 3) && (_indexList[2] == 0) &&
+				(_indexList[3] == 4) && (_indexList[4] == 1) && (_indexList[5] == 5)) {
+				// Entered the correct full combination
+				_state = 0;
+				_actionIndex = 20;
+			} else {
+				// Incorrect combination entered
+				_state = 0;
+				_actionIndex = 10;
+			}
+
+			signal();
+		}
+	}
+
+	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+		event.handled = true;
+		remove();
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene4301::Hotspot4::doAction(int action) {
+	Scene4301 *scene = (Scene4301 *)_globals->_sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		_globals->_player.disableControl();
+		scene->setAction(&scene->_action1);
+	} else {
+		HotspotBase4300::doAction(action);
+	}
+}
+
+void Scene4301::Hotspot5::doAction(int action) {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(4300, 0);
+		break;
+	case CURSOR_USE:
+		SceneItem::display(4300, 30);
+		break;
+	case OBJECT_SCANNER:
+		SceneItem::display2(4300, 31);
+		break;
+	case OBJECT_STUNNER:
+		SceneItem::display2(4300, 32);
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene4301::postInit(SceneObjectList *OwnerList) {
+	_globals->setFlag(50);
+	loadScene(4301);
+	Scene::postInit();
+	setZoomPercents(0, 100, 200, 100);
+
+	_field68E = false;
+	_globals->_inventory._stasisBox2._sceneNumber = 1;
+	_hotspot4.setup(Rect(76, 97, 102, 127), 4300, 5, 6);
+
+	_hotspot1.postInit();
+	_hotspot1.setPosition(Common::Point(90, 128));
+	_hotspot1.setVisage(4303);
+	_hotspot1._strip = 1;
+	_hotspot1._frame = 1;
+	_hotspot1.setPriority2(250);
+	
+	_hotspot5.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	_globals->_sceneItems.push_back(&_hotspot5);
+
+	_globals->_player.enableControl();
+}
+
+void Scene4301::dispatch() {
+	if (_action) {
+		_action->dispatch();
+	} else if (_field68E) {
+		_field68E = 0;
+		_globals->clearFlag(50);
+		_globals->_sceneManager._fadeMode = FADEMODE_NONE;
+		_globals->_sceneManager.setNewScene(4300);
+	}
 }
 
 } // End of namespace tSage

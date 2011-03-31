@@ -574,6 +574,16 @@ public:
 	virtual void dispatch();
 };
 
+class HotspotBase4300: public SceneObject {
+public:
+	int _resNum;
+	int _lookLine, _useLine;
+
+	virtual void doAction(int action);
+
+	void setup(const Rect &bounds, int resNum, int lookLine, int useLine);
+};
+
 class Scene4300: public Scene {
 	/* Actions */
 	class Action1: public Action {
@@ -586,21 +596,11 @@ class Scene4300: public Scene {
 	};
 
 	/* Hotspots */
-	class HotspotBase: public SceneObject {
-	public:
-		int _resNum;
-		int _lookLine, _useLine;
-
-		virtual void doAction(int action);
-
-		void setup(const Rect &bounds, int resNum, int lookLine, int useLine);
-	};
-
 	class Hotspot8: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot9: public HotspotBase {
+	class Hotspot9: public HotspotBase4300 {
 	public:
 		virtual void doAction(int action);
 	};
@@ -638,7 +638,7 @@ public:
 	Hotspot8 _hotspot8;
 	Hotspot9 _hotspot9;
 	Hotspot10 _hotspot10;
-	HotspotBase _hotspot11;
+	HotspotBase4300 _hotspot11;
 	SceneObject _hotspot12, _hotspot13, _hotspot14;
 	Hotspot15 _hotspot15;
 	Hotspot16 _hotspot16;
@@ -656,6 +656,49 @@ public:
 	virtual void dispatch();
 	virtual void process(Event &event);
 };
+
+class Scene4301: public Scene {
+	/* Actions */
+	class Action1: public ActionExt {
+	public:
+		SceneObject _buttonList[6];
+		int _field34E;
+		int _indexList[6];
+
+		virtual void synchronise(Serialiser &s);
+		virtual void remove();
+		virtual void signal();
+		virtual void process(Event &event);
+	};
+
+	/* Hotspots */
+	class Hotspot4: public HotspotBase4300 {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot5: public HotspotBase4300 {
+	public:
+		virtual void doAction(int action);
+	};
+
+public:
+	Common::List<int> _list1;
+	SequenceManager _sequenceManager;
+	SoundHandler _soundHandler;
+	Action1 _action1;
+	SceneObject _hotspot1, _hotspot2, _hotspot3;
+	Hotspot4 _hotspot4;
+	Hotspot5 _hotspot5;
+	bool _field68E;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void dispatch();
+	virtual void synchronise(Serialiser &s) { 
+		Scene::synchronise(s);
+		s.syncAsSint16LE(_field68E);
+	}
+};
+
 
 } // End of namespace tSage
 
