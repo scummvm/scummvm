@@ -117,6 +117,9 @@ Common::Error MohawkEngine_LivingBooks::run() {
 		debug("Starting Living Books Title \'%s\'", _title.c_str());
 	if (!_copyright.empty())
 		debug("Copyright: %s", _copyright.c_str());
+	debug("This book has %d pages in %d languages.", _numPages, _numLanguages);
+	if (_poetryMode)
+		debug("Running in poetry mode.");
 
 	if (!_screenWidth || !_screenHeight)
 		error("Could not find xRes/yRes variables");
@@ -1360,8 +1363,9 @@ NodeState LBAnimationNode::update(bool seeking) {
 			assert(entry.size == 4);
 			uint16 strLen = READ_BE_UINT16(entry.data + 2);
 
-			if (strLen)
-				warning("Named wave file encountered");
+			if (strLen) {
+				warning("Named wave file encountered (strlen %04x, id %d)", strLen, soundResourceId);
+			}
 
 			switch (entry.opcode) {
 			case kLBAnimOpPlaySound:
