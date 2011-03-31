@@ -398,10 +398,6 @@ void MohawkEngine_LivingBooks::updatePage() {
 			// hard-coded control page startup
 			LBItem *item;
 
-			item = getItemById(10);
-			if (item)
-				item->togglePlaying(false);
-
 			uint16 page = _curPage;
 			if (getFeatures() & GF_LB_10) {
 				// Living Books 1.0 had the meanings of these pages reversed
@@ -492,6 +488,12 @@ void MohawkEngine_LivingBooks::updatePage() {
 	case 1:
 		for (uint32 i = 0; i < _items.size(); i++)
 			_items[i]->startPhase(_phase);
+
+		if (_curMode == kLBControlMode) {
+			LBItem *item = getItemById(10);
+			if (item)
+				item->togglePlaying(false);
+		}
 
 		_phase++;
 		break;
