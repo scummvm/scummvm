@@ -1100,6 +1100,19 @@ void Costume::moveHead() {
 		if (b < 0.0f)
 			yaw = 360.0f - yaw;
 
+		_joint1Node->_animYaw =  - 90 + yaw - _matrix._rot.getYaw();
+		if (_joint1Node->_animYaw < -180.) {
+			_joint1Node->_animYaw += 360;
+		}
+		if (_joint1Node->_animYaw > 180.) {
+			_joint1Node->_animYaw -= 360;
+		}
+
+		if (_joint1Node->_animYaw > _head.maxYaw)
+			_joint1Node->_animYaw = _head.maxYaw;
+		if (_joint1Node->_animYaw < -_head.maxYaw)
+			_joint1Node->_animYaw = -_head.maxYaw;
+
 		float sqLenght = v.x() * v.x() + v.y() * v.y();
 		float h;
 		if (sqLenght > 0) {
@@ -1112,10 +1125,23 @@ void Costume::moveHead() {
 		b = v.z() / magnitude;
 		float pitch;
 		pitch = acos(a) * (180.0f / LOCAL_PI);
+
 		if (b < 0.0f)
 			pitch = 360.0f - pitch;
+
 		if (pitch > 180)
 			pitch -= 360;
+
+		if (pitch > _head.maxPitch)
+			pitch = _head.maxPitch;
+		if (pitch < -_head.maxPitch)
+			pitch = -_head.maxPitch;
+
+		if ((_joint1Node->_animYaw > 0 && pitch < 0) || (_joint1Node->_animYaw < 0 && pitch > 0)) {
+			pitch += _joint1Node->_animYaw / 10.;
+		} else {
+			pitch -= _joint1Node->_animYaw / 10.;
+		}
 
 		if (pitch > _head.maxPitch)
 			pitch = _head.maxPitch;
@@ -1131,36 +1157,12 @@ void Costume::moveHead() {
 		_joint1Node->_animPitch = pitch / 3. + _joint1Node->_animPitch;
 		_joint2Node->_animPitch = pitch / 3. + _joint2Node->_animPitch;
 		_joint3Node->_animPitch = pitch / 3. + _joint3Node->_animPitch;
-		_joint1Node->_animYaw =  - 90 + yaw - _matrix._rot.getYaw();
-
-		float totPitch = _joint1Node->_animPitch + _joint2Node->_animPitch + _joint3Node->_animPitch;
-		if (totPitch > _head.maxPitch) {
-			float f = (_head.maxPitch - totPitch) / 3.;
-			_joint1Node->_animPitch -= f;
-			_joint2Node->_animPitch -= f;
-			_joint3Node->_animPitch -= f;
-		} else if (totPitch < -_head.maxPitch) {
-			float f = (totPitch + _head.maxPitch) / 3.;
-			_joint1Node->_animPitch -= f;
-			_joint2Node->_animPitch -= f;
-			_joint3Node->_animPitch -= f;
-		}
-
-		if (_joint1Node->_animYaw < 0)
-			_joint1Node->_animYaw += 360.;
-		if (_joint1Node->_animYaw > 180.)
-			_joint1Node->_animYaw -= 360;
 
 		//animate yaw
 		if (_joint1Node->_animYaw - _headYaw > yawStep)
 			_joint1Node->_animYaw = _headYaw + yawStep;
 		if (_headYaw - _joint1Node->_animYaw > yawStep)
 			_joint1Node->_animYaw = _headYaw - yawStep;
-
-		if (_joint1Node->_animYaw > _head.maxYaw)
-			_joint1Node->_animYaw = _head.maxYaw;
-		if (_joint1Node->_animYaw < -_head.maxYaw)
-			_joint1Node->_animYaw = -_head.maxYaw;
 
 		_joint1Node->_animRoll = (_joint1Node->_animYaw / 20.) * -pitch / 5.;
 
