@@ -238,7 +238,7 @@ struct InstrumentSetInfo {
 	uint instCount;          ///< Amount of instrument in the set
 	const char *md5;         ///< MD5 hex digest of the whole instrument set
 	const char *waveFileMd5; ///< MD5 hex digest of the wave file (i.e. the sample data used by the instruments)
-	const MidiProgramChangeMapping &progToInst; ///< Program change to instrument number mapping
+	const MidiProgramChangeMapping *progToInst; ///< Program change to instrument number mapping
 };
 
 /** Apple IIGS AGI executable file information. */
@@ -248,7 +248,7 @@ struct IIgsExeInfo {
 	uint agiVer;                      ///< Apple IIGS AGI version number, not strictly needed
 	uint exeSize;                     ///< Size of the Apple IIGS AGI executable file in bytes
 	uint instSetStart;                ///< Starting offset of the instrument set inside the executable file
-	const InstrumentSetInfo &instSet; ///< Information about the used instrument set
+	const InstrumentSetInfo *instSet; ///< Information about the used instrument set
 };
 
 class IIgsMidiChannel {

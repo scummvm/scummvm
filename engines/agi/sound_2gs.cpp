@@ -766,7 +766,7 @@ bool SoundGen2GS::loadInstruments() {
 	// load the instrument headers and their sample data.
 	// None of the tested SIERRASTANDARD-files have zeroes in them so
 	// there's no need to check for prematurely ending samples here.
-	setProgramChangeMapping(&exeInfo->instSet.progToInst);
+	setProgramChangeMapping(exeInfo->instSet->progToInst);
 	return loadWaveFile(*waveFsnode, *exeInfo) && loadInstrumentHeaders(*exeFsnode, *exeInfo);
 }
 
@@ -792,29 +792,29 @@ static const MidiProgramChangeMapping progToInstMappingV2 = {
 
 /** Older Apple IIGS AGI instrument set. Used only by Space Quest I (AGI v1.002). */
 static const InstrumentSetInfo instSetV1 = {
-	1192, 26, "7ee16bbc135171ffd6b9120cc7ff1af2", "edd3bf8905d9c238e02832b732fb2e18", progToInstMappingV1
+	1192, 26, "7ee16bbc135171ffd6b9120cc7ff1af2", "edd3bf8905d9c238e02832b732fb2e18", &progToInstMappingV1
 };
 
 /** Newer Apple IIGS AGI instrument set (AGI v1.003+). Used by all others than Space Quest I. */
 static const InstrumentSetInfo instSetV2 = {
-	1292, 28, "b7d428955bb90721996de1cbca25e768", "c05fb0b0e11deefab58bc68fbd2a3d07", progToInstMappingV2
+	1292, 28, "b7d428955bb90721996de1cbca25e768", "c05fb0b0e11deefab58bc68fbd2a3d07", &progToInstMappingV2
 };
 
 /** Information about different Apple IIGS AGI executables. */
 static const IIgsExeInfo IIgsExeInfos[] = {
-	{GID_SQ1,      "SQ",   0x1002, 138496, 0x80AD, instSetV1},
-	{GID_LSL1,     "LL",   0x1003, 141003, 0x844E, instSetV2},
-	{GID_AGIDEMO,  "DEMO", 0x1005, 141884, 0x8469, instSetV2},
-	{GID_KQ1,      "KQ",   0x1006, 141894, 0x8469, instSetV2},
-	{GID_PQ1,      "PQ",   0x1007, 141882, 0x8469, instSetV2},
-	{GID_MIXEDUP,  "MG",   0x1013, 142552, 0x84B7, instSetV2},
-	{GID_KQ2,      "KQ2",  0x1013, 143775, 0x84B7, instSetV2},
-	{GID_KQ3,      "KQ3",  0x1014, 144312, 0x84B7, instSetV2},
-	{GID_SQ2,      "SQ2",  0x1014, 107882, 0x6563, instSetV2},
-	{GID_MH1,      "MH",   0x2004, 147678, 0x8979, instSetV2},
-	{GID_KQ4,      "KQ4",  0x2006, 147652, 0x8979, instSetV2},
-	{GID_BC,       "BC",   0x3001, 148192, 0x8979, instSetV2},
-	{GID_GOLDRUSH, "GR",   0x3003, 148268, 0x8979, instSetV2}
+	{GID_SQ1,      "SQ",   0x1002, 138496, 0x80AD, &instSetV1},
+	{GID_LSL1,     "LL",   0x1003, 141003, 0x844E, &instSetV2},
+	{GID_AGIDEMO,  "DEMO", 0x1005, 141884, 0x8469, &instSetV2},
+	{GID_KQ1,      "KQ",   0x1006, 141894, 0x8469, &instSetV2},
+	{GID_PQ1,      "PQ",   0x1007, 141882, 0x8469, &instSetV2},
+	{GID_MIXEDUP,  "MG",   0x1013, 142552, 0x84B7, &instSetV2},
+	{GID_KQ2,      "KQ2",  0x1013, 143775, 0x84B7, &instSetV2},
+	{GID_KQ3,      "KQ3",  0x1014, 144312, 0x84B7, &instSetV2},
+	{GID_SQ2,      "SQ2",  0x1014, 107882, 0x6563, &instSetV2},
+	{GID_MH1,      "MH",   0x2004, 147678, 0x8979, &instSetV2},
+	{GID_KQ4,      "KQ4",  0x2006, 147652, 0x8979, &instSetV2},
+	{GID_BC,       "BC",   0x3001, 148192, 0x8979, &instSetV2},
+	{GID_GOLDRUSH, "GR",   0x3003, 148268, 0x8979, &instSetV2}
 };
 
 /**
@@ -844,20 +844,20 @@ bool SoundGen2GS::loadInstrumentHeaders(const Common::FSNode &exePath, const IIg
 	file.close();
 
 	// Check that we got enough data to be able to parse the instruments
-	if (data && data->size() >= (int32)(exeInfo.instSetStart + exeInfo.instSet.byteCount)) {
+	if (data && data->size() >= (int32)(exeInfo.instSetStart + exeInfo.instSet->byteCount)) {
 		// Check instrument set's length (The info's saved in the executable)
 		data->seek(exeInfo.instSetStart - 4);
 		uint16 instSetByteCount = data->readUint16LE();
-		if (instSetByteCount != exeInfo.instSet.byteCount) {
+		if (instSetByteCount != exeInfo.instSet->byteCount) {
 			debugC(3, kDebugLevelSound, "Wrong instrument set size (Is %d, should be %d) in Apple IIGS executable (%s)",
-				instSetByteCount, exeInfo.instSet.byteCount, exePath.getPath().c_str());
+				instSetByteCount, exeInfo.instSet->byteCount, exePath.getPath().c_str());
 		}
 
 		// Check instrument set's md5sum
 		data->seek(exeInfo.instSetStart);
 
-		Common::String md5str = Common::computeStreamMD5AsString(*data, exeInfo.instSet.byteCount);
-		if (md5str != exeInfo.instSet.md5) {
+		Common::String md5str = Common::computeStreamMD5AsString(*data, exeInfo.instSet->byteCount);
+		if (md5str != exeInfo.instSet->md5) {
 			warning("Unknown Apple IIGS instrument set (md5: %s) in %s, trying to use it nonetheless",
 				md5str.c_str(), exePath.getPath().c_str());
 		}
@@ -867,20 +867,20 @@ bool SoundGen2GS::loadInstrumentHeaders(const Common::FSNode &exePath, const IIg
 
 		// Load the instruments
 		_instruments.clear();
-		_instruments.reserve(exeInfo.instSet.instCount);
+		_instruments.reserve(exeInfo.instSet->instCount);
 
 		IIgsInstrumentHeader instrument;
-		for (uint i = 0; i < exeInfo.instSet.instCount; i++) {
+		for (uint i = 0; i < exeInfo.instSet->instCount; i++) {
 			if (!instrument.read(*data)) {
 				warning("Error loading Apple IIGS instrument (%d. of %d) from %s, not loading more instruments",
-					i + 1, exeInfo.instSet.instCount, exePath.getPath().c_str());
+					i + 1, exeInfo.instSet->instCount, exePath.getPath().c_str());
 				break;
 			}
 			_instruments.push_back(instrument); // Add the successfully loaded instrument to the instruments array
 		}
 
 		// Loading was successful only if all instruments were loaded successfully
-		loadedOk = (_instruments.size() == exeInfo.instSet.instCount);
+		loadedOk = (_instruments.size() == exeInfo.instSet->instCount);
 	} else // Couldn't read enough data from the executable file
 		warning("Error loading instruments from Apple IIGS executable (%s)", exePath.getPath().c_str());
 
@@ -899,7 +899,7 @@ bool SoundGen2GS::loadWaveFile(const Common::FSNode &wavePath, const IIgsExeInfo
 	if (uint8Wave && uint8Wave->size() == SIERRASTANDARD_SIZE) {
 		// Check wave file's md5sum
 		Common::String md5str = Common::computeStreamMD5AsString(*uint8Wave, SIERRASTANDARD_SIZE);
-		if (md5str != exeInfo.instSet.waveFileMd5) {
+		if (md5str != exeInfo.instSet->waveFileMd5) {
 			warning("Unknown Apple IIGS wave file (md5: %s, game: %s).\n" \
 				"Please report the information on the previous line to the ScummVM team.\n" \
 				"Using the wave file as it is - music may sound weird", md5str.c_str(), exeInfo.exePrefix);
