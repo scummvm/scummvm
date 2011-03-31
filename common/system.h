@@ -42,6 +42,7 @@ struct Rect;
 class SaveFileManager;
 class SearchSet;
 class String;
+class TaskbarManager;
 class TimerManager;
 class SeekableReadStream;
 class WriteStream;
@@ -1046,6 +1047,14 @@ public:
 	inline Common::SaveFileManager *getSavefileManager() {
 		return _savefileManager;
 	}
+
+	/**
+	 * Returns the TaskbarManager, used to handle progress bars,
+	 * icon overlay, tasks and recent items list on the taskbar.
+	 *
+	 * @return the TaskbarManager for the current architecture
+	 */
+	virtual Common::TaskbarManager *getTaskbarManager() = 0;
 
 	/**
 	 * Returns the FilesystemFactory object, depending on the current architecture.

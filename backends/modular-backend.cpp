@@ -238,3 +238,8 @@ void ModularBackend::displayMessageOnOSD(const char *msg) {
 void ModularBackend::quit() {
 	exit(0);
 }
+
+Common::TaskbarManager *ModularBackend::getTaskbarManager() {
+	assert(_taskbarManager);
+	return _taskbarManager;
+}

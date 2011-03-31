@@ -134,6 +134,7 @@ public:
 	//@{
 
 	virtual void quit();
+	virtual TaskbarManager *getTaskbarManager();
 	virtual void displayMessageOnOSD(const char *msg);
 
 	//@}
