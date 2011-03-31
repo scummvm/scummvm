@@ -1467,10 +1467,15 @@ static void TurnActorTo() {
 	float yaw = lookVector.unitCircleAngle();
 	// yaw is offset from forward by 90 degrees
 	yaw -= 90.0f;
+	if (yaw < 0) {
+		yaw += 360.f;
+	}
 	actor->turnTo(0, yaw, 0);
 
-	// Game will lock in elevator if this doesn't return false
-	pushbool(false);
+	float diff = actor->yaw() - yaw;
+	// Return true if the actor is still turning and its yaw is not the target one.
+	// This allows manny to have the right yaw when he exits the elevator in the garage
+	pushbool((diff > 0.005) || (diff < -0.005)); //fuzzy compare
 }
 
 static void PointActorAt() {
