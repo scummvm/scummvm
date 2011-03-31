@@ -95,8 +95,9 @@ public:
 	// Get the angle a vector is around the unit circle
 	// (ignores z-component)
 	float unitCircleAngle() const {
-		float a = x() / magnitude();
-		float b = y() / magnitude();
+		const float mag = sqrt(x() * x() + y() * y());
+		float a = x() / mag;
+		float b = y() / mag;
 		float yaw;
 
 		// find the angle on the upper half of the unit circle
