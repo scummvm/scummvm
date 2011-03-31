@@ -48,8 +48,9 @@ public:
 	virtual void addRecent(const Common::String &name, const Common::String &description);
 
 private:
-	HWND           _hwnd;
 	ITaskbarList3 *_taskbar;
+
+	Common::String getIconPath(Common::String target);
 
 	// Helper functions
 	bool isWin7OrLater();

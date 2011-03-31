@@ -31,12 +31,18 @@
 #include <SDKDDKVer.h>
 #include <shlobj.h>
 
+// For Bitmap and overlay icons
+#include <gdiplus.h>
+using namespace Gdiplus;
+
+// For HWND
+#include <SDL_syswm.h>
+
 #include "backends/taskbar/win32/win32-taskbar.h"
 
 #include "common/config-manager.h"
 #include "common/textconsole.h"
-
-#include <SDL_syswm.h>
+#include "common/file.h"
 
 // System.Title property key, values taken from http://msdn.microsoft.com/en-us/library/bb787584.aspx
 const PROPERTYKEY PKEY_Title = { /* fmtid = */ { 0xF29F85E0, 0x4FF9, 0x1068, { 0xAB, 0x91, 0x08, 0x00, 0x2B, 0x27, 0xB3, 0xD9 } }, /* propID = */ 2 };
@@ -82,7 +88,25 @@ void Win32TaskbarManager::setOverlayIcon(const Common::String &name, const Commo
 	if (_taskbar == NULL)
 		return;
 
-	warning("[Win32TaskbarManager::setOverlayIcon] Not implemented");
+	if (name.empty()) {
+		_taskbar->SetOverlayIcon(getHwnd(), NULL, L"");
+		return;
+	}
+
+	// Compute full icon path
+	Common::String path = getIconPath(name);
+	if (path.empty())
+		return;
+
+	HICON pIcon = (HICON)::LoadImage(NULL, path.c_str(), IMAGE_ICON, 16, 16, LR_LOADFROMFILE);
+
+	// Sets the overlay icon
+	LPWSTR desc = ansiToUnicode(description.c_str());
+	_taskbar->SetOverlayIcon(getHwnd(), pIcon, desc);
+
+	DestroyIcon(pIcon);
+
+	delete[] desc;
 }
 
 void Win32TaskbarManager::setProgressValue(int completed, int total) {
@@ -119,7 +143,17 @@ void Win32TaskbarManager::addRecent(const Common::String &name, const Common::St
 		// Set link properties.
 		link->SetPath(path);
 		link->SetArguments(game);
-		link->SetIconLocation(path, 0); // There's no way to get a game-specific icon, is there?
+
+		Common::String iconPath = getIconPath(name);
+		if (iconPath.empty()) {
+			link->SetIconLocation(path, 0); // No game-specific icon available
+		} else {
+			LPWSTR icon = ansiToUnicode(iconPath.c_str());
+
+			link->SetIconLocation(icon, 0);
+
+			delete[] icon;
+		}
 
 		// The link's display name must be set via property store.
 		IPropertyStore* propStore;
@@ -142,6 +176,24 @@ void Win32TaskbarManager::addRecent(const Common::String &name, const Common::St
 		delete[] game;
 		delete[] desc;
 	}
+}
+
+Common::String Win32TaskbarManager::getIconPath(Common::String target) {
+	// Get extra path
+	Common::String extra = ConfMan.get("extrapath");
+
+	Common::String filename = target + ".ico";
+	Common::String path = extra + filename;
+
+	if (!Common::File::exists(filename)) {
+		// Try with the game id instead of the domain name
+		filename = ConfMan.get("gameid") + ".ico";
+
+		if (!Common::File::exists(filename))
+			return "";
+	}
+
+	return extra + filename;
 }
 
 bool Win32TaskbarManager::isWin7OrLater() {
