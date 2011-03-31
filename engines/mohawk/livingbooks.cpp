@@ -3479,12 +3479,10 @@ LBAnimationItem::~LBAnimationItem() {
 
 void LBAnimationItem::setEnabled(bool enabled) {
 	if (_running) {
-		if (enabled && _neverEnabled)
+		if (enabled && _globalEnabled && _neverEnabled)
 			_anim->start();
 		else if (!_neverEnabled && !enabled && _enabled && _globalEnabled)
-			if (_running) {
-				_anim->stop();
-			}
+			_anim->stop();
 	}
 
 	return LBItem::setEnabled(enabled);
