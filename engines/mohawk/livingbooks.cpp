@@ -3503,8 +3503,10 @@ bool LBAnimationItem::contains(Common::Point point) {
 void LBAnimationItem::update() {
 	if (!_neverEnabled && _enabled && _globalEnabled && _running) {
 		bool wasDone = _anim->update();
-		if (wasDone)
+		if (wasDone) {
+			_running = false;
 			done(true);
+		}
 	}
 
 	LBItem::update();
