@@ -1058,11 +1058,12 @@ void Costume::moveHead() {
 			} else {
 				_headPitch = 0;
 			}
-			_joint1Node->_animYaw = _headYaw;
-			_joint1Node->_animPitch = _headPitch / 3. + _joint1Node->_animPitch;
-			_joint2Node->_animPitch = _headPitch / 3. + _joint2Node->_animPitch;
-			_joint3Node->_animPitch = _headPitch / 3. + _joint3Node->_animPitch;
-			_joint1Node->_animRoll = (_joint1Node->_animYaw / 20.) * -_headPitch / 5;;
+			_joint1Node->_animYaw = _headYaw * _joint1Node->_totalWeight;
+			float pi = _headPitch / 3.f;
+			_joint1Node->_animPitch = pi * _joint1Node->_totalWeight + _joint1Node->_animPitch;
+			_joint2Node->_animPitch = pi * _joint2Node->_totalWeight + _joint2Node->_animPitch;
+			_joint3Node->_animPitch = pi * _joint3Node->_totalWeight + _joint3Node->_animPitch;
+			_joint1Node->_animRoll = (_joint1Node->_animYaw / _joint1Node->_totalWeight / 20.) * -_headPitch / 5.;
 
 			if (_joint1Node->_animRoll > _head.maxRoll)
 				_joint1Node->_animRoll = _head.maxRoll;
@@ -1071,10 +1072,10 @@ void Costume::moveHead() {
 			return;
 		}
 
-		Graphics::Vector3d po = _joint3Node->_animPos;
+		Graphics::Vector3d po = _joint3Node->_animPos / _joint3Node->_totalWeight;
 		Model::HierNode *p = _joint3Node->_parent;
 		while (p) {
-			po += p->_animPos;
+			po += p->_animPos / p->_totalWeight;
 			p = p->_parent;
 		}
 
@@ -1100,7 +1101,7 @@ void Costume::moveHead() {
 		if (b < 0.0f)
 			yaw = 360.0f - yaw;
 
-		_joint1Node->_animYaw =  - 90 + yaw - _matrix._rot.getYaw();
+		_joint1Node->_animYaw = (- 90 + yaw - _matrix._rot.getYaw()) * _joint1Node->_totalWeight;
 		if (_joint1Node->_animYaw < -180.) {
 			_joint1Node->_animYaw += 360;
 		}
@@ -1138,15 +1139,10 @@ void Costume::moveHead() {
 			pitch = -_head.maxPitch;
 
 		if ((_joint1Node->_animYaw > 0 && pitch < 0) || (_joint1Node->_animYaw < 0 && pitch > 0)) {
-			pitch += _joint1Node->_animYaw / 10.;
+			pitch += _joint1Node->_animYaw / _joint1Node->_totalWeight / 10.;
 		} else {
-			pitch -= _joint1Node->_animYaw / 10.;
+			pitch -= _joint1Node->_animYaw / _joint1Node->_totalWeight / 10.;
 		}
-
-		if (pitch > _head.maxPitch)
-			pitch = _head.maxPitch;
-		if (pitch < -_head.maxPitch)
-			pitch = -_head.maxPitch;
 
 		//animate pitch
 		if (pitch - _headPitch > pitchStep)
@@ -1154,9 +1150,10 @@ void Costume::moveHead() {
 		if (_headPitch - pitch > pitchStep)
 			pitch = _headPitch - pitchStep;
 
-		_joint1Node->_animPitch = pitch / 3. + _joint1Node->_animPitch;
-		_joint2Node->_animPitch = pitch / 3. + _joint2Node->_animPitch;
-		_joint3Node->_animPitch = pitch / 3. + _joint3Node->_animPitch;
+		float pi = pitch / 3.f;
+		_joint1Node->_animPitch = pi * _joint1Node->_totalWeight + _joint1Node->_animPitch;
+		_joint2Node->_animPitch = pi * _joint2Node->_totalWeight + _joint2Node->_animPitch;
+		_joint3Node->_animPitch = pi * _joint3Node->_totalWeight + _joint3Node->_animPitch;
 
 		//animate yaw
 		if (_joint1Node->_animYaw - _headYaw > yawStep)
@@ -1164,7 +1161,7 @@ void Costume::moveHead() {
 		if (_headYaw - _joint1Node->_animYaw > yawStep)
 			_joint1Node->_animYaw = _headYaw - yawStep;
 
-		_joint1Node->_animRoll = (_joint1Node->_animYaw / 20.) * -pitch / 5.;
+		_joint1Node->_animRoll = (_joint1Node->_animYaw / _joint1Node->_totalWeight / 20.) * -pitch / 5.;
 
 		if (_joint1Node->_animRoll > _head.maxRoll)
 			_joint1Node->_animRoll = _head.maxRoll;
