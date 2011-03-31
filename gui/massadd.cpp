@@ -24,6 +24,7 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/system.h"
+#include "common/taskbar.h"
 #include "common/translation.h"
 
 #include "gui/launcher.h"	// For addGameToConf()
@@ -60,6 +61,7 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	: Dialog("MassAdd"),
 	_dirsScanned(0),
 	_oldGamesCount(0),
+	_dirTotal(0),
 	_okButton(0),
 	_dirProgressText(0),
 	_gameProgressText(0) {
@@ -130,6 +132,9 @@ struct GameDescLess {
 
 
 void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	// Remove progress bar from taskbar
+	g_system->getTaskbarManager()->setProgressState(Common::TaskbarManager::kTaskbarNoProgress);
+
 	// FIXME: It's a really bad thing that we use two arbitrary constants
 	if (cmd == kOkCmd) {
 		// Sort the detected games. This is not strictly necessary, but nice for
@@ -226,10 +231,14 @@ void MassAddDialog::handleTickle() {
 		for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
 			if (file->isDirectory()) {
 				_scanStack.push(*file);
+
+				_dirTotal++;
 			}
 		}
 
 		_dirsScanned++;
+
+		g_system->getTaskbarManager()->setProgressValue(_dirsScanned, _dirTotal);
 	}
 
 
