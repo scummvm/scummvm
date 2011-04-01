@@ -28,9 +28,9 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/system.h"
 
 #include "audio/fmopl.h"
-#include "audio/softsynth/emumidi.h"
 
 #include "sci/resource.h"
 #include "sci/engine/features.h"
@@ -393,7 +393,7 @@ int MidiPlayer_Midi::getVolume() {
 
 void MidiPlayer_Midi::setReverb(int8 reverb) {
 	assert(reverb < kReverbConfigNr);
-	
+
 	if (_hasReverb && (_reverb != reverb))
 		sendMt32SysEx(0x100001, _reverbConfig[reverb], 3, true);
 
