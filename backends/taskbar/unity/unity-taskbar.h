@@ -31,17 +31,20 @@
 #include "common/str.h"
 #include "common/taskbar.h"
 
+#include <unity.h>
+
 class UnityTaskbarManager : public Common::TaskbarManager {
 public:
 	UnityTaskbarManager();
 	virtual ~UnityTaskbarManager();
 
-	virtual void setOverlayIcon(Common::String name, Common::String description);
+	virtual void setOverlayIcon(const Common::String &name, const Common::String &description);
 	virtual void setProgressValue(int completed, int total);
 	virtual void setProgressState(TaskbarProgressState state);
-	virtual void addRecent(Common::String name, Common::String description);
+	virtual void addRecent(const Common::String &name, const Common::String &description);
 
 private:
+	UnityLauncherEntry *_launcher;
 };
 
 #endif

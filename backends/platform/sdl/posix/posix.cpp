@@ -33,6 +33,7 @@
 #include "backends/platform/sdl/posix/posix.h"
 #include "backends/saves/posix/posix-saves.h"
 #include "backends/fs/posix/posix-fs-factory.h"
+#include "backends/taskbar/unity/unity-taskbar.h"
 
 #include <errno.h>
 #include <sys/stat.h>
@@ -48,6 +49,11 @@ OSystem_POSIX::OSystem_POSIX(Common::String baseConfigName)
 void OSystem_POSIX::init() {
 	// Initialze File System Factory
 	_fsFactory = new POSIXFilesystemFactory();
+
+#if defined(USE_TASKBAR)
+	// Initialize taskbar manager	
+	_taskbarManager = new UnityTaskbarManager();	
+#endif
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();

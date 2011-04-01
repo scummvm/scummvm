@@ -23,33 +23,64 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if defined(UNIX) && defined(USE_TASKBAR)
 
 #include "backends/taskbar/unity/unity-taskbar.h"
 
-#include "common/config-manager.h"
 #include "common/textconsole.h"
-#include "common/file.h"
 
 UnityTaskbarManager::UnityTaskbarManager() {
+    g_type_init();
+
+    _launcher = unity_launcher_entry_get_for_desktop_id("scummvm.desktop");
 }
 
 UnityTaskbarManager::~UnityTaskbarManager() {
 }
 
-void UnityTaskbarManager::setOverlayIcon(Common::String name, Common::String description) {
+void UnityTaskbarManager::setOverlayIcon(const Common::String &name, const Common::String &description) {
+	if (_launcher == NULL)
+        return;
+
 	warning("[UnityTaskbarManager::setOverlayIcon] Not implemented");
 }
 
 void UnityTaskbarManager::setProgressValue(int completed, int total) {
-	warning("[UnityTaskbarManager::setProgressValue] Not implemented");
+    if (_launcher == NULL)
+            return;
+
+    double percentage = (double)completed / (double)total;
+    unity_launcher_entry_set_progress(_launcher, percentage);
+	unity_launcher_entry_set_progress_visible(_launcher, TRUE);
 }
 
 void UnityTaskbarManager::setProgressState(TaskbarProgressState state) {
-	warning("[UnityTaskbarManager::setProgressState] Not implemented");
+	if (_launcher == NULL)
+		return;
+
+	switch (state) {
+	default:
+		warning("[UnityTaskbarManager::setProgressState] Unknown state / Not implemented (%d)", state);
+		// fallback to noprogress state
+
+	case kTaskbarNoProgress:
+		unity_launcher_entry_set_progress_visible(_launcher, FALSE);
+		break;
+
+	// Unity only support two progress states as of 3.0: visible or not visible
+	// We show progress in all of those states
+	case kTaskbarIndeterminate:
+	case kTaskbarNormal:
+	case kTaskbarError:
+	case kTaskbarPaused:
+		unity_launcher_entry_set_progress_visible(_launcher, TRUE);
+		break;
+	}
 }
 
-void UnityTaskbarManager::addRecent(Common::String name, Common::String description) {
+void UnityTaskbarManager::addRecent(const Common::String &name, const Common::String &description) {
 	warning("[UnityTaskbarManager::addRecent] Not implemented");
 }
 
