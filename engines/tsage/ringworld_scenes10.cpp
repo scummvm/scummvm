@@ -279,6 +279,178 @@ void Scene9150::postInit(SceneObjectList *OwnerList) {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 9200
+ *
+ *--------------------------------------------------------------------------*/
+void Scene9200::SceneHotspot1::doAction(int action) {
+	Scene9200 *scene = (Scene9200 *)_globals->_sceneManager._scene;
+
+	if (action == OBJECT_TUNIC) {
+		_globals->_player.disableControl();
+		if (_globals->getFlag(93)) {
+			scene->_field30A = 9214;
+			setAction(&scene->_sequenceManager, scene, 9214, &_globals->_player, &scene->_object2, 0);
+		} else {
+			_globals->setFlag(93);
+			scene->_field30A = 9213;
+			setAction(&scene->_sequenceManager, scene, 9213, &_globals->_player, &scene->_object2, 0);
+		}
+	} else if (action <= 100) {
+		_globals->_player.disableControl();
+		scene->_field30A = 9214;
+		setAction(&scene->_sequenceManager, scene, 9214, &_globals->_player, &scene->_object2, 0);
+	} else {
+		SceneHotspot_3::doAction(action);
+	}
+}
+
+void Scene9200::signal() {
+	switch (_field30A++) {
+	case 9207:
+		_globals->_sceneManager.changeScene(9700);
+		break;
+	case 9208:
+	case 9211:
+	case 9212:
+		_globals->_sceneManager.changeScene(9500);
+		break;
+	case 9209:
+		_globals->_sceneManager.changeScene(9360);
+		break;
+	case 9210:
+		_hotspot1.remove();
+	// No break on purpose
+	case 9201:
+	case 9202:
+	case 9203:
+	case 9204:
+	case 9205:
+	case 9206:
+	default:
+		_globals->_player.enableControl();
+		break;
+	}
+}
+
+void Scene9200::process(Event &event) {
+	Scene::process(event);
+}
+
+void Scene9200::dispatch() {
+//	Rect rect9200 = Rect(320, 175, 250, 154);
+	Rect rect9200 = Rect(250, 154, 320, 175);
+
+	if (_action) {
+		_action->dispatch();
+	} else {
+		if ( (_globals->_player._position.x <= 0) || ((_globals->_player._position.x < 100) && (_globals->_player._position.y > 199))) {
+				_globals->_player.disableControl();
+				_field30A = 9209;
+				setAction(&_sequenceManager, this, 9209, &_globals->_player, &_object2, &_object3, 0);
+		} else {
+			if (rect9200.contains(_globals->_player._position)) {
+				if (_globals->getFlag(93)) {
+					if (_globals->getFlag(86)) {
+						_field30A = 9215;
+						setAction(&_sequenceManager, this, 9215, &_globals->_player, &_object2, &_object3, 0);
+					} else {
+						_field30A = 9208;
+						setAction(&_sequenceManager, this, 9208, &_globals->_player, &_object2, &_object3, 0);
+					}
+				} else {
+					_globals->_player.disableControl();
+					_field30A = 9204;
+					setAction(&_sequenceManager, this, 9204, &_globals->_player, &_object2, &_object3, 0);
+				}
+			} else {
+				if (_globals->_player._position.y < 140) {
+					_globals->_player.disableControl();
+					_field30A = 9207;
+					setAction(&_sequenceManager, this, 9207, &_globals->_player, &_object2, &_object3, 0);
+				} 
+			}
+		}
+	}
+}
+
+void Scene9200::postInit(SceneObjectList *OwnerList) {
+	Scene::postInit();
+	setZoomPercents(130, 50, 200, 150);
+
+	_globals->_player.postInit();
+	_object3.postInit();
+	_object3.flag100();
+	_object1.postInit();
+	// Water animation
+	_object1.setVisage(9200);
+	_object1._strip = 3;
+	_object1.animate(ANIM_MODE_2, 0);
+	_object1.setPosition(Common::Point(132, 114), 0);
+	_object1.setPriority2(140);
+	_soundHandler.startSound(297, 0, 127);
+	_stripManager.addSpeaker(&_speakerQText);
+	_stripManager.addSpeaker(&_speakerGR);
+	_stripManager.addSpeaker(&_speakerGText);
+
+	if (!_globals->getFlag(86)) {
+		_object2.postInit();
+		_hotspot1.quickInit(96, 194, 160, 234, 9200, 29, 31);
+	}
+	_hotspot2.quickInit(164, 0, 200, 282, 9200, 0, 1);
+	_hotspot3.quickInit(140, 39, 165, 153, 9200, 2, 3);
+	_hotspot4.quickInit(92, 122, 139, 152, 9200, 4, 5);
+	_hotspot5.quickInit(33, 20, 142, 115, 9200, 6, 7);
+	_hotspot6.quickInit(104, 235, 153, 265, 9200, 8, 9);
+	_hotspot7.quickInit(107, 262, 153, 286, 9200, 10, 11);
+	_hotspot8.quickInit(69, 276, 164, 320, 9200, 12, 13);
+
+	_globals->_events.setCursor(CURSOR_WALK);
+	_globals->_player.disableControl();
+
+	switch (_globals->_sceneManager._previousScene) {
+	case 9500:
+		if (_globals->getFlag(85)) {
+			if (_globals->_inventory._helmet._sceneNumber == 1) {
+				_globals->setFlag(86);
+				_field30A = 9210;
+				setAction(&_sequenceManager, this, 9210, &_globals->_player, &_object2, &_object3, 0);
+			} else {
+				_field30A = 9212;
+				setAction(&_sequenceManager, this, 9212, &_globals->_player, &_object2, &_object3, 0);
+			}
+		} else {
+			if (_globals->_inventory._helmet._sceneNumber == 1) {
+				_field30A = 9211;
+				setAction(&_sequenceManager, this, 9211, &_globals->_player, &_object2, &_object3, 0);
+			} else {
+				_field30A = 9202;
+				setAction(&_sequenceManager, this, 9202, &_globals->_player, &_object2, &_object3, 0);
+			}
+		}
+		break;
+	case 9700:
+		if (_globals->getFlag(86)) {
+			_field30A = 9206;
+			setAction(&_sequenceManager, this, 9206, &_globals->_player, &_object2, &_object3, 0);
+		} else {
+			_field30A = 9203;
+			setAction(&_sequenceManager, this, 9203, &_globals->_player, &_object2, &_object3, 0);
+		}
+		break;
+	case 9360:
+	default:
+		if (_globals->getFlag(86)) {
+			_field30A = 9205;
+			setAction(&_sequenceManager, this, 9205, &_globals->_player, &_object2, &_object3, 0);
+		} else {
+			_field30A = 9201;
+			setAction(&_sequenceManager, this, 9201, &_globals->_player, &_object2, &_object3, 0);
+		}
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------
  * Scene 9350
  *
  *--------------------------------------------------------------------------*/

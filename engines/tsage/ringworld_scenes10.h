@@ -73,7 +73,7 @@ class Scene9150: public Scene {
 	SceneObject _object1;
 	SceneObject _object2;
 	Object3 _object3;
-	int _field30A; //_fieldB96;
+	int _field30A;
 	SceneHotspot_3 _sceneHotspot1;
 	SceneHotspot_3 _sceneHotspot2;
 	SceneHotspot_3 _sceneHotspot3;
@@ -88,6 +88,37 @@ class Scene9150: public Scene {
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 	virtual void dispatch();
+};
+
+class Scene9200: public Scene {
+	class SceneHotspot1: public SceneHotspot_3{
+	public:
+		virtual void doAction(int action);
+	};
+
+	SequenceManager _sequenceManager;
+	SceneObject _object1;
+	SceneObject _object2;
+	SceneObject _object3;
+	int _field30A;
+	Action _action1;
+	SpeakerGText _speakerGText;
+	SpeakerGR _speakerGR;
+	SpeakerQText _speakerQText;
+	SoundHandler _soundHandler;
+	SceneHotspot1 _hotspot1;
+	SceneHotspot_3 _hotspot2;
+	SceneHotspot_3 _hotspot3;
+	SceneHotspot_3 _hotspot4;
+	SceneHotspot_3 _hotspot5;
+	SceneHotspot_3 _hotspot6;
+	SceneHotspot_3 _hotspot7;
+	SceneHotspot_3 _hotspot8;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
+	virtual void process(Event &event);
 };
 
 class Scene9350: public Scene {

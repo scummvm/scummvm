@@ -146,6 +146,7 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	/* Scene group 10 */
 	case 9100: return new Scene9100();
 	case 9150: return new Scene9150();
+	case 9200: return new Scene9200();
 	case 9350: return new Scene9350();
 	case 9700: return new Scene9700();
 	case 9750: return new Scene9750();
@@ -325,6 +326,7 @@ void SpeakerGText::removeText() {
 
 /*--------------------------------------------------------------------------*/
 
+
 SpeakerPOR::SpeakerPOR() {
 	_speakerName = "POR";
 	_newSceneNumber = 7221;
@@ -439,6 +441,16 @@ SpeakerEText::SpeakerEText() {
 	_textPos = Common::Point(20, 20);
 	_colour1 = 22;
 	_hideObjects = false;
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerGR::SpeakerGR() {
+	_speakerName = "GR";
+	_newSceneNumber = 9220;
+	_textWidth = 136;
+	_textPos = Common::Point(168, 36);
+	_colour1 = 14;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1026,4 +1038,5 @@ void SpeakerCDL::setText(const Common::String &msg) {
 	Speaker::setText(msg);
 }
 
+/*--------------------------------------------------------------------------*/
 } // End of namespace tSage

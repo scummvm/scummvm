@@ -180,6 +180,13 @@ public:
 	virtual Common::String getClassName() { return "SpeakerEText"; }
 };
 
+class SpeakerGR: public AnimatedSpeaker {
+public:
+	SpeakerGR();
+
+	virtual Common::String getClassName() { return "SpeakerGR"; }
+};	
+
 class SpeakerHText: public ScreenSpeaker {
 public:
 	SpeakerHText();
