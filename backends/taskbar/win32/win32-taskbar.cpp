@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(WIN32)
+#if defined(WIN32) && defined(USE_TASKBAR)
 
 // Needed for taskbar functions
 #if defined(__GNUC__)

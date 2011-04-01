@@ -26,7 +26,7 @@
 #ifndef BACKEND_WIN32_TASKBAR_H
 #define BACKEND_WIN32_TASKBAR_H
 
-#if defined(WIN32)
+#if defined(WIN32) && defined(USE_TASKBAR)
 
 #include "common/str.h"
 #include "common/taskbar.h"

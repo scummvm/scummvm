@@ -138,6 +138,7 @@ _fluidsynth=auto
 _opengl=auto
 _opengles=auto
 _readline=auto
+_taskbar=auto
 # Default option behaviour yes/no
 _debug_build=auto
 _release_build=auto
@@ -771,6 +772,9 @@ Optional Libraries:
   --with-readline-prefix=DIR    Prefix where readline is installed (optional)
   --disable-readline       disable readline support in text console [autodetect]
 
+  --with-unity-prefix=DIR  Prefix where libunity is installed (optional)
+  --disable-unity          disable unity[autodetect]
+
 Some influential environment variables:
   LDFLAGS        linker flags, e.g. -L<lib dir> if you have libraries in a
                  nonstandard directory <lib dir>
@@ -818,6 +822,8 @@ for ac_option in $@; do
 	--disable-fluidsynth)     _fluidsynth=no  ;;
 	--enable-readline)        _readline=yes   ;;
 	--disable-readline)       _readline=no    ;;
+	--enable-taskbar)         _taskbar=yes    ;;
+	--disable-taskbar)        _taskbar=no     ;;
 	--enable-opengl)          _opengl=yes     ;;
 	--disable-opengl)         _opengl=no      ;;
 	--enable-verbose-build)   _verbose_build=yes ;;
@@ -892,6 +898,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		READLINE_CFLAGS="-I$arg/include"
 		READLINE_LIBS="-L$arg/lib"
+		;;
+	--with-unity-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		UNITY_CFLAGS="-I$arg/include"
+		UNITY_LIBS="-L$arg/lib"
 		;;
 	--with-opengl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -2919,6 +2930,25 @@ fi
 define_in_config_h_if_yes "$_readline" 'USE_READLINE'
 
 define_in_config_h_if_yes "$_text_console" 'USE_TEXT_CONSOLE_FOR_DEBUGGER'
+
+#
+# Check for Unity if taskbar integration is enabled
+#
+echocheck "taskbar"
+if test "$_taskbar" = auto ; then
+	_taskbar=no
+	cat > $TMPC << EOF
+#include <unity.h>
+int main(void) { return 0; }
+EOF
+	cc_check $UNITY_CFLAGS $UNITY_LIBS -lunity && _taskbar=yes
+fi
+if test "$_taskbar" = yes ; then
+	LIBS="$LIBS $UNITY_LIBS -lunity"
+	INCLUDES="$INCLUDES $UNITY_CFLAGS"
+fi
+define_in_config_h_if_yes "$_taskbar" 'USE_TASKBAR'
+echo "$_taskbar"
 
 #
 # Check for OpenGL (ES)

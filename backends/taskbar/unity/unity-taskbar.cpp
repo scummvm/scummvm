@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(UNIX)
+#if defined(UNIX) && defined(USE_TASKBAR)
 
 #include "backends/taskbar/unity/unity-taskbar.h"
 

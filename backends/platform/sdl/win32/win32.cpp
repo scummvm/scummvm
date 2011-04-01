@@ -85,9 +85,11 @@ void OSystem_Win32::init() {
 	// Initialize File System Factory
 	_fsFactory = new WindowsFilesystemFactory();
 
-	// Initialize task bar manager
+#if defined(USE_TASKBAR)
+	// Initialize taskbar manager
 	_taskbarManager = new Win32TaskbarManager();
 	((Win32TaskbarManager *)_taskbarManager)->init();
+#endif
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
