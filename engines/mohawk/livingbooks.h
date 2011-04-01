@@ -29,6 +29,7 @@
 #include "mohawk/mohawk.h"
 #include "mohawk/console.h"
 #include "mohawk/graphics.h"
+#include "mohawk/sound.h"
 
 #include "common/config-file.h"
 #include "common/substream.h"
@@ -313,7 +314,7 @@ public:
 	void stop();
 
 	void playSound(uint16 resourceId);
-	bool soundPlaying(uint16 resourceId);
+	bool soundPlaying(uint16 resourceId, const Common::String &cue);
 
 	bool transparentAt(int x, int y);
 
@@ -335,7 +336,10 @@ protected:
 	Common::Array<LBAnimationNode *> _nodes;
 
 	uint16 _tempo;
+
 	uint16 _currentSound;
+	CueList _cueList;
+
 	uint32 _lastTime, _currentFrame;
 	bool _running;
 

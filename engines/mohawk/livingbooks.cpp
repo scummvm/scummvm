@@ -1360,12 +1360,17 @@ NodeState LBAnimationNode::update(bool seeking) {
 				break;
 			}
 
-			assert(entry.size == 4);
-			uint16 strLen = READ_BE_UINT16(entry.data + 2);
-
-			if (strLen) {
-				warning("Named wave file encountered (strlen %04x, id %d)", strLen, soundResourceId);
+			Common::String cue;
+			uint pos = 2;
+			while (pos < entry.size) {
+				char in = entry.data[pos];
+				if (!in)
+					break;
+				pos++;
+				cue += in;
 			}
+			if (pos == entry.size)
+				error("Cue in sound kLBAnimOp wasn't null-terminated");
 
 			switch (entry.opcode) {
 			case kLBAnimOpPlaySound:
@@ -1378,7 +1383,7 @@ NodeState LBAnimationNode::update(bool seeking) {
 				if (seeking)
 					break;
 				debug(4, "b: WaitForSound(%0d)", soundResourceId);
-				if (!_parent->soundPlaying(soundResourceId))
+				if (!_parent->soundPlaying(soundResourceId, cue))
 					break;
 				_currentEntry--;
 				return kLBNodeWaiting;
@@ -1744,11 +1749,27 @@ void LBAnimation::stop() {
 
 void LBAnimation::playSound(uint16 resourceId) {
 	_currentSound = resourceId;
-	_vm->_sound->playSound(_currentSound);
+	_vm->_sound->playSound(_currentSound, Audio::Mixer::kMaxChannelVolume, false, &_cueList);
 }
 
-bool LBAnimation::soundPlaying(uint16 resourceId) {
-	return _currentSound == resourceId && _vm->_sound->isPlaying(_currentSound);
+bool LBAnimation::soundPlaying(uint16 resourceId, const Common::String &cue) {
+	if (_currentSound != resourceId)
+		return false;
+	if (!_vm->_sound->isPlaying(_currentSound))
+		return false;
+
+	if (cue.empty())
+		return true;
+
+	uint samples = _vm->_sound->getNumSamplesPlayed(_currentSound);
+	for (uint i = 0; i < _cueList.pointCount; i++) {
+		if (_cueList.points[i].sampleFrame > samples)
+			break;
+		if (_cueList.points[i].name == cue)
+			return false;
+	}
+
+	return true;
 }
 
 bool LBAnimation::transparentAt(int x, int y) {
