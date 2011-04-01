@@ -75,7 +75,8 @@ MODULE_OBJS += \
 	fs/posix/posix-fs.o \
 	fs/posix/posix-fs-factory.o \
 	plugins/posix/posix-provider.o \
-	saves/posix/posix-saves.o
+	saves/posix/posix-saves.o \
+	taskbar/unity/unity-taskbar.o
 endif
 
 ifdef MACOSX
