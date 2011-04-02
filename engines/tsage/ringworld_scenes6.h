@@ -18,76 +18,87 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/scene_logic.h $
- * $Id: scene_logic.h 232 2011-02-12 11:56:38Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
-#ifndef TSAGE_RINGWORLD_SCENES4_H
-#define TSAGE_RINGWORLD_SCENES4_H
+#ifndef TSAGE_RINGWORLD_SCENES6_H
+#define TSAGE_RINGWORLD_SCENES6_H
 
 #include "common/scummsys.h"
-#include "tsage/core.h"
-#include "tsage/converse.h"
 #include "tsage/ringworld_logic.h"
+#include "tsage/events.h"
+#include "tsage/core.h"
+#include "tsage/scenes.h"
+#include "tsage/globals.h"
 
 namespace tSage {
 
-class Scene3500: public Scene {
+class Scene5000: public Scene {
 	/* Actions */
 	class Action1: public Action {
 	public:
 		virtual void signal();
+		virtual void dispatch();
 	};
 	class Action2: public Action {
 	public:
 		virtual void signal();
 	};
-public:
-	SpeakerSText _speakerSText;
-	SpeakerMText _speakerMText;
-	SpeakerQText _speakerQText;
-	Action1 _action1;
-	Action2 _action2;
-
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-};
-
-class Scene3700: public Scene {
-	/* Custom classes */
-	class Viewer: public SceneObject {
-	public:
-		Visage _images1;
-		Visage _images2;
-
-		int _frameList[4];
-		int _percentList[4];
-		bool _active;
-		int _countdownCtr;
-
-		Viewer();
-		virtual Common::String getClassName() { return "Viewer"; }
-		virtual void synchronise(Serialiser &s);
-		virtual void dispatch();
-		virtual void reposition();
-		virtual void draw();
-	};
-
-	/* Actions */
-	class Action1: public Action {
+	class Action3: public Action {
 	public:
 		virtual void signal();
 	};
-public:
-	Viewer _viewer;
-	Action1 _action1;
-	SceneObject _hotspot1, _hotspot2;
-	SpeakerSText _speakerSText;
-	SpeakerMText _speakerMText;
-	SpeakerMR _speakerMR;
-	SoundHandler _soundHandler;
+	class Action4: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action5: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action6: public Action {
+	public:
+		virtual void signal();
+	};
 
+	/* Hotspots */
+	class Hotspot7: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot8: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class HotspotGroup1: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+public:
+	SequenceManager _sequenceManager;
+	SoundHandler _soundHandler;
+	SpeakerSText _speakerSText;
+	SpeakerQText _speakerQText;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+	Action5 _action5;
+	Action6 _action6;
+	DisplayHotspot _hotspot1;
+	SceneObject _hotspot2, _hotspot3, _hotspot4, _hotspot5, _hotspot6;
+	Hotspot7 _hotspot7;
+	Hotspot8 _hotspot8;
+	HotspotGroup1 _hotspot9, _hotspot10, _hotspot11;
+	DisplayHotspot _hotspot12, _hotspot13, _hotspot14, _hotspot15;
+	DisplayHotspot _hotspot16, _hotspot17, _hotspot18;
+
+	Scene5000();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
 };
 
 } // End of namespace tSage
