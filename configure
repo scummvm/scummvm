@@ -1670,6 +1670,7 @@ case $_host_os in
 	webos)
 		CXXFLAGS="$CXXFLAGS --sysroot=$WEBOS_PDK/arm-gcc/sysroot"
 		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/include/SDL"
+		CXXFLAGS="$CXXFLAGS -DWEBOS"
 		LDFLAGS="$LDFLAGS -L$WEBOS_PDK/device/lib"
 		LDFLAGS="$LDFLAGS -Wl,--allow-shlib-undefined"
 		LIBS="$LIBS -lSDL -lpdl"
