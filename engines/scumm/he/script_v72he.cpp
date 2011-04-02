@@ -1420,6 +1420,12 @@ void ScummEngine_v72he::o72_openFile() {
 				_hOutFileTable[slot] = _saveFileMan->openForSaving(filename);
 			}
 			break;
+		case 6:
+			// FIXME: Appending to saved game file is not supported right now
+			// This is used in several Backyard Sports games. The stub is required for
+			// baseball2001 to continue after trying to save Hall of Fame data.
+			slot = -1;
+			break;
 		default:
 			error("o72_openFile(): wrong open file mode %d", mode);
 		}
