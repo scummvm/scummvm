@@ -13,6 +13,7 @@ webosrelease:
 	mkdir -p $(STAGING_DIR)/lib
 	cp -f $(PATH_RESOURCES)/* $(STAGING_DIR)
 	cp -f scummvm $(STAGING_DIR)/bin
+	$(WEBOS_PDK)/arm-gcc/bin/arm-none-linux-gnueabi-strip $(STAGING_DIR)/bin/scummvm
 	$(WEBOS_SDK)/bin/palm-package $(STAGING_DIR)
 	rm -rf STAGING
 
