@@ -95,16 +95,43 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
  *
  *--------------------------------------------------------------------------*/
 
-Scene3700::Viewer::Viewer() {
-	_imgList[0] = surfaceFromRes(3705, 1, 1);
-	for (int idx = 1; idx <= 3; ++idx)
-		_imgList[idx] = surfaceFromRes(3705, 2, _globals->_randomSource.getRandomNumber(4) + 1);
+#define VIEW_FRAME_DELAY 10
 
-	_field88 = 1;
+Scene3700::Viewer::Viewer() {
+	_images1.setVisage(3705, 1);
+	_images2.setVisage(3705, 2);
+
+	_frameList[0] = 1;
+	for (int idx = 1; idx <= 3; ++idx)
+		_frameList[idx] = _globals->_randomSource.getRandomNumber(4) + 1;
+
+	_active = true;
+	_countdownCtr = 0;
 	_percent = 120;
+
+	// Fields don't seem to be used
 	_field94 = 50;
 	_field96 = 75;
 	_field98 = 114;
+}
+
+void Scene3700::Viewer::dispatch() {
+	if (_active) {
+		if (_countdownCtr-- <= 0) {
+			_countdownCtr = VIEW_FRAME_DELAY;
+
+			for (int idx = 3; idx > 1; --idx)
+				_frameList[idx] = _frameList[idx - 1];
+			
+			int newFrame;
+			do {
+				newFrame = _globals->_randomSource.getRandomNumber(4) + 1;
+			} while (newFrame == _frameList[2]);
+
+			_frameList[1] = newFrame;
+			_flags |= OBJFLAG_PANES;
+		}
+	}
 }
 
 void Scene3700::Viewer::reposition() {
@@ -112,16 +139,20 @@ void Scene3700::Viewer::reposition() {
 }
 
 void Scene3700::Viewer::draw() {
+	Region *priorityRegion = _globals->_sceneManager._scene->_priorities.find(1);
+
 	for (int idx = 0; idx < 4; ++idx) {
-		Rect destRect = _imgList[idx].getBounds();
-		destRect.resize(_imgList[idx], (_position.x - _globals->_sceneOffset.x), 
+		Visage &v = (idx == 0) ? _images1 : _images2;
+
+		GfxSurface img = v.getFrame(_frameList[idx]);
+		Rect destRect = img.getBounds();
+		destRect.resize(img, (_position.x - _globals->_sceneOffset.x), 
 			(_position.y  - _globals->_sceneOffset.y - _yDiff), _percent);
 
 		destRect.translate(-_globals->_sceneManager._scene->_sceneBounds.left, 
 			-_globals->_sceneManager._scene->_sceneBounds.top);
 
-		Region *priorityRegion = _globals->_sceneManager._scene->_priorities.find(1);
-		_globals->gfxManager().copyFrom(_imgList[idx], destRect, priorityRegion); 
+		_globals->gfxManager().copyFrom(img, destRect, priorityRegion); 
 	}
 }
 
@@ -138,7 +169,7 @@ void Scene3700::Action1::signal() {
 		scene->_stripManager.start(2162, this);
 		break;
 	case 2:
-		scene->_viewer._field88 = 0;
+		scene->_viewer._active = false;
 		setDelay(90);
 		break;
 	case 3:
