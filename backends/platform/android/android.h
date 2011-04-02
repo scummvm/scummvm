@@ -99,6 +99,7 @@ private:
 	int _screen_changeid;
 	int _egl_surface_width;
 	int _egl_surface_height;
+	bool _htc_fail;
 
 	bool _force_redraw;
 

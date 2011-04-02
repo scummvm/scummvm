@@ -523,6 +523,14 @@ void OSystem_Android::updateScreen() {
 
 	if (!JNI::swapBuffers())
 		LOGW("swapBuffers failed: 0x%x", glGetError());
+
+	// HTC's GLES drivers are made of fail
+	// http://code.google.com/p/android/issues/detail?id=3047
+	if (!_show_overlay && _htc_fail) {
+		const Common::Rect &rect = _game_texture->getDrawRect();
+
+		glScissor(rect.left, rect.top, rect.width(), rect.height());
+	}
 }
 
 Graphics::Surface *OSystem_Android::lockScreen() {
