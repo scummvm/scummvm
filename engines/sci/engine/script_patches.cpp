@@ -994,6 +994,53 @@ const SciScriptSignature sq4Signatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+const byte sq1vgaSignatureEgoShowsCard[] = {
+	25,
+	0x38, 0x46, 0x02, // push 0x246 (set up send frame to set timesShownID)
+	0x78,             // push1
+	0x38, 0x46, 0x02, // push 0x246 (set up send frame to get timesShownID)
+	0x76,             // push0
+	0x51, 0x7c,       // class DeltaurRegion
+	0x4a, 0x04,       // send 0x04 (get timesShownID)
+	0x36,             // push
+	0x35, 0x01,       // ldi 1
+	0x02,             // add
+	0x36,             // push
+	0x51, 0x7c,       // class DeltaurRegion
+	0x4a, 0x06,       // send 0x06 (set timesShownID)
+	0x36,             // push      (wrong, acc clobbered by class, above)
+	0x35, 0x03,       // ldi 0x03
+	0x22,             // lt?
+	0};
+
+// Note that this script patch is merely a reordering of the
+// instructions in the original script.
+const uint16 sq1vgaPatchEgoShowsCard[] = {
+	0x38, 0x46, 0x02, // push 0x246 (set up send frame to get timesShownID)
+	0x76,             // push0
+	0x51, 0x7c,       // class DeltaurRegion
+	0x4a, 0x04,       // send 0x04 (get timesShownID)
+	0x36,             // push
+	0x35, 0x01,       // ldi 1
+	0x02,             // add
+	0x36,             // push (this push corresponds to the wrong one above)
+	0x38, 0x46, 0x02, // push 0x246 (set up send frame to set timesShownID)
+	0x78,             // push1
+	0x36,             // push
+	0x51, 0x7c,       // class DeltaurRegion
+	0x4a, 0x06,       // send 0x06 (set timesShownID)
+	0x35, 0x03,       // ldi 0x03
+	0x22,             // lt?
+	PATCH_END};
+
+
+//    script, description,                                      magic DWORD,                                  adjust
+const SciScriptSignature sq1vgaSignatures[] = {
+	{   58, "Sarien armory droid zapping ego first time", 1, PATCH_MAGICDWORD( 0x72, 0x88, 0x15, 0x36 ), -70,  
+		sq1vgaSignatureEgoShowsCard, sq1vgaPatchEgoShowsCard },
+
+	SCI_SIGNATUREENTRY_TERMINATOR};
+
 // will actually patch previously found signature area
 void Script::applyPatch(const uint16 *patch, byte *scriptData, const uint32 scriptSize, int32 signatureOffset) {
 	byte orgData[PATCH_VALUELIMIT];
@@ -1127,6 +1174,9 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 		break;
 	case GID_QFG3:
 		signatureTable = qfg3Signatures;
+		break;
+	case GID_SQ1:
+		signatureTable = sq1vgaSignatures;
 		break;
 	case GID_SQ4:
 		signatureTable = sq4Signatures;

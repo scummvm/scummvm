@@ -129,7 +129,7 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"1stdegree", "In the 1st Degree"},
 	{"csusa", "Where in the USA is Carmen Sandiego?"},
 	{"tortoise", "Aesop's Fables: The Tortoise and the Hare"},
-	{"arthur", "Arthur's Teacher Troubles"},
+	{"arthur", "Arthur's Teacher Trouble"},
 	{"grandma", "Just Grandma and Me"},
 	{"ruff", "Ruff's Bone"},
 	{"newkid", "The New Kid on the Block"},
