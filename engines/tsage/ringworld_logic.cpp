@@ -32,6 +32,7 @@
 #include "tsage/ringworld_scenes3.h"
 #include "tsage/ringworld_scenes4.h"
 #include "tsage/ringworld_scenes5.h"
+#include "tsage/ringworld_scenes6.h"
 
 namespace tSage {
 
@@ -128,6 +129,8 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 4301: return new Scene4301();
 
 	/* Scene group 6 */
+	// Caverns - Entrance
+	case 5000: return new Scene5000();
 
 	/* Scene group 8 */
 
