@@ -121,6 +121,29 @@ class Scene9200: public Scene {
 	virtual void process(Event &event);
 };
 
+class Scene9300: public Scene {
+	SequenceManager _sequenceManager;
+	SceneObject _object1;
+	SceneObject _object2;
+	SceneHotspot_3 _hotspot1;
+	SceneHotspot_3 _hotspot2;
+	SceneHotspot_3 _hotspot3;
+	SceneHotspot_3 _hotspot4;
+	SceneHotspot_3 _hotspot5;
+	SceneHotspot_3 _hotspot6;
+	SceneHotspot_3 _hotspot7;
+	SceneHotspot_3 _hotspot8;
+	SceneHotspot_3 _hotspot9;
+	SceneHotspot_3 _hotspot10;
+	SceneHotspot_3 _hotspot11;
+	SceneHotspot_3 _hotspot12;
+	SceneHotspot_3 _hotspot13;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
+};
+
 class Scene9350: public Scene {
 	/* Objects */
 	class Object1: public SceneObject {

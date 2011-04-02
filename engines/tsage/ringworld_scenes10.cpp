@@ -451,6 +451,73 @@ void Scene9200::postInit(SceneObjectList *OwnerList) {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 9300
+ *
+ *--------------------------------------------------------------------------*/
+void Scene9300::signal() {
+	switch (_sceneMode++) {
+	case 9301:
+		_globals->setFlag(84);
+		// No break on purpose
+	case 9303:
+		_globals->_soundHandler.startSound(295, 0, 127);
+		_globals->_sceneManager.changeScene(9350);
+		break;
+	case 9302:
+		_globals->_player.enableControl();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene9300::dispatch() {
+	if (_action) {
+		_action->dispatch();
+	} else if (_globals->_player._position.y < 145) {
+		_globals->_player.disableControl();
+		_sceneMode = 9303;
+		setAction(&_sequenceManager, this, 9303, &_globals->_player, &_object1, &_object2, 0);
+	}
+}
+
+void Scene9300::postInit(SceneObjectList *OwnerList) {
+	Scene::postInit();
+	setZoomPercents(130, 75, 230, 150);
+
+	_sceneMode = 0;
+	_globals->_player.postInit();
+	_globals->_player.changeZoom(-1);
+	_object1.postInit();
+	_object2.postInit();
+	_globals->_soundHandler.startSound(289, 0, 127);
+
+	_hotspot1.quickInit(35, 142, 76, 212, 9300, 0, 1);
+	_hotspot2.quickInit(28, 90, 81, 143, 9300, 2, 3);
+	_hotspot3.quickInit(78, 142, 146, 216, 9300, 4, 5);
+	_hotspot4.quickInit(3, 43, 91, 74, 9300, 6, 7);
+	_hotspot5.quickInit(82, 19, 157, 65, 9300, 8, 9);
+	_hotspot6.quickInit(5, 218, 84, 274, 9300, 10, 11);
+	_hotspot7.quickInit(86, 233, 168, 293, 9300, 12, 13);
+	_hotspot8.quickInit(157, 0, 200, 230, 9300, 14, 15);
+	_hotspot9.quickInit(169, 227, 200, 320, 9300, 16, 17);
+	_hotspot10.quickInit(145, 97, 166, 225, 9300, 18, 19);
+	_hotspot11.quickInit(81, 75, 145, 145, 9300, 20, 21);
+	_hotspot12.quickInit(0, 0, 94, 35, 9300, 22, 23);
+	_hotspot13.quickInit(12, 268, 149, 320, 9300, 24, 25);
+
+	if (_globals->_sceneManager._previousScene == 9350) {
+		_globals->_player.disableControl();
+		_sceneMode = 9302;
+		setAction(&_sequenceManager, this, 9302, &_globals->_player, &_object1, &_object2, 0);
+	} else {
+		_globals->_player.disableControl();
+		_sceneMode = 9301;
+		setAction(&_sequenceManager, this, 9301, &_globals->_player, &_object1, &_object2, 0);
+	}
+}
+
+/*--------------------------------------------------------------------------
  * Scene 9350
  *
  *--------------------------------------------------------------------------*/
