@@ -35,6 +35,17 @@
 
 namespace tSage {
 
+class Scene2: public Scene {
+public :
+	int _sceneState;
+
+	Scene2();
+	virtual void synchronise(Serialiser &s) {
+		Scene::synchronise(s);
+		s.syncAsSint16LE(_sceneState);
+	}
+};
+
 class Scene9100: public Scene {
 	/* Items */
 	class SceneHotspot1: public SceneHotspot_3 {
@@ -61,7 +72,7 @@ class Scene9100: public Scene {
 	virtual void dispatch();
 };
 
-class Scene9150: public Scene {
+class Scene9150: public Scene2 {
 	class Object3: public SceneObject4 {
 	public:
 		virtual void signal();
@@ -73,7 +84,6 @@ class Scene9150: public Scene {
 	SceneObject _object1;
 	SceneObject _object2;
 	Object3 _object3;
-	int _field30A;
 	SceneHotspot_3 _sceneHotspot1;
 	SceneHotspot_3 _sceneHotspot2;
 	SceneHotspot_3 _sceneHotspot3;
@@ -90,7 +100,7 @@ class Scene9150: public Scene {
 	virtual void dispatch();
 };
 
-class Scene9200: public Scene {
+class Scene9200: public Scene2 {
 	class SceneHotspot1: public SceneHotspot_3{
 	public:
 		virtual void doAction(int action);
@@ -100,7 +110,6 @@ class Scene9200: public Scene {
 	SceneObject _object1;
 	SceneObject _object2;
 	SceneObject _object3;
-	int _field30A;
 	Action _action1;
 	SpeakerGText _speakerGText;
 	SpeakerGR _speakerGR;
@@ -144,7 +153,7 @@ class Scene9300: public Scene {
 	virtual void dispatch();
 };
 
-class Scene9350: public Scene {
+class Scene9350: public Scene2 {
 	/* Objects */
 	class Object1: public SceneObject {
 	public:
@@ -153,7 +162,6 @@ class Scene9350: public Scene {
 	};
 
 public:
-	int _field30A;
 	SequenceManager _sequenceManager;
 	Object1 _object1;
 	SceneObject _object2;
@@ -168,8 +176,7 @@ public:
 	virtual void dispatch();
 };
 
-class Scene9700: public Scene {
-	int _field30A;
+class Scene9700: public Scene2 {
 	SequenceManager _sequenceManager;
 	SceneObject _object1;
 	SceneHotspot_3 _sceneHotspot1;

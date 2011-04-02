@@ -30,6 +30,12 @@
 #include "tsage/staticres.h"
 
 namespace tSage {
+
+Scene2::Scene2() {
+	Scene::Scene();
+	_sceneState = 0;
+}
+
 /*--------------------------------------------------------------------------
  * Scene 9100
  *
@@ -202,9 +208,9 @@ void Scene9150::signal() {
 
 void Scene9150::dispatch() {
 
-	if ((_field30A != 0) && (_sceneBounds.left == 0)) {
+	if ((_sceneState != 0) && (_sceneBounds.left == 0)) {
 		_object3._field88 = 0;
-		_field30A = 0;
+		_sceneState = 0;
 		_sceneHotspot3.setAction(&_sequenceManager2, 0, 9154, &_object3, 0);
 		_sceneHotspot10.remove();
 	}
@@ -237,7 +243,7 @@ void Scene9150::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.postInit();
 
 	_object3.postInit();
-	_field30A = 1;
+	_sceneState = 1;
 	_object3.setVisage(9151);
 	_object3._strip = 1;
 	_object3._frame = 1;
@@ -288,16 +294,16 @@ void Scene9200::SceneHotspot1::doAction(int action) {
 	if (action == OBJECT_TUNIC) {
 		_globals->_player.disableControl();
 		if (_globals->getFlag(93)) {
-			scene->_field30A = 9214;
+			scene->_sceneState = 9214;
 			setAction(&scene->_sequenceManager, scene, 9214, &_globals->_player, &scene->_object2, 0);
 		} else {
 			_globals->setFlag(93);
-			scene->_field30A = 9213;
+			scene->_sceneState = 9213;
 			setAction(&scene->_sequenceManager, scene, 9213, &_globals->_player, &scene->_object2, 0);
 		}
 	} else if (action <= 100) {
 		_globals->_player.disableControl();
-		scene->_field30A = 9214;
+		scene->_sceneState = 9214;
 		setAction(&scene->_sequenceManager, scene, 9214, &_globals->_player, &scene->_object2, 0);
 	} else {
 		SceneHotspot_3::doAction(action);
@@ -305,7 +311,7 @@ void Scene9200::SceneHotspot1::doAction(int action) {
 }
 
 void Scene9200::signal() {
-	switch (_field30A++) {
+	switch (_sceneState++) {
 	case 9207:
 		_globals->_sceneManager.changeScene(9700);
 		break;
@@ -345,27 +351,27 @@ void Scene9200::dispatch() {
 	} else {
 		if ( (_globals->_player._position.x <= 0) || ((_globals->_player._position.x < 100) && (_globals->_player._position.y > 199))) {
 				_globals->_player.disableControl();
-				_field30A = 9209;
+				_sceneState = 9209;
 				setAction(&_sequenceManager, this, 9209, &_globals->_player, &_object2, &_object3, 0);
 		} else {
 			if (rect9200.contains(_globals->_player._position)) {
 				if (_globals->getFlag(93)) {
 					if (_globals->getFlag(86)) {
-						_field30A = 9215;
+						_sceneState = 9215;
 						setAction(&_sequenceManager, this, 9215, &_globals->_player, &_object2, &_object3, 0);
 					} else {
-						_field30A = 9208;
+						_sceneState = 9208;
 						setAction(&_sequenceManager, this, 9208, &_globals->_player, &_object2, &_object3, 0);
 					}
 				} else {
 					_globals->_player.disableControl();
-					_field30A = 9204;
+					_sceneState = 9204;
 					setAction(&_sequenceManager, this, 9204, &_globals->_player, &_object2, &_object3, 0);
 				}
 			} else {
 				if (_globals->_player._position.y < 140) {
 					_globals->_player.disableControl();
-					_field30A = 9207;
+					_sceneState = 9207;
 					setAction(&_sequenceManager, this, 9207, &_globals->_player, &_object2, &_object3, 0);
 				} 
 			}
@@ -412,38 +418,38 @@ void Scene9200::postInit(SceneObjectList *OwnerList) {
 		if (_globals->getFlag(85)) {
 			if (_globals->_inventory._helmet._sceneNumber == 1) {
 				_globals->setFlag(86);
-				_field30A = 9210;
+				_sceneState = 9210;
 				setAction(&_sequenceManager, this, 9210, &_globals->_player, &_object2, &_object3, 0);
 			} else {
-				_field30A = 9212;
+				_sceneState = 9212;
 				setAction(&_sequenceManager, this, 9212, &_globals->_player, &_object2, &_object3, 0);
 			}
 		} else {
 			if (_globals->_inventory._helmet._sceneNumber == 1) {
-				_field30A = 9211;
+				_sceneState = 9211;
 				setAction(&_sequenceManager, this, 9211, &_globals->_player, &_object2, &_object3, 0);
 			} else {
-				_field30A = 9202;
+				_sceneState = 9202;
 				setAction(&_sequenceManager, this, 9202, &_globals->_player, &_object2, &_object3, 0);
 			}
 		}
 		break;
 	case 9700:
 		if (_globals->getFlag(86)) {
-			_field30A = 9206;
+			_sceneState = 9206;
 			setAction(&_sequenceManager, this, 9206, &_globals->_player, &_object2, &_object3, 0);
 		} else {
-			_field30A = 9203;
+			_sceneState = 9203;
 			setAction(&_sequenceManager, this, 9203, &_globals->_player, &_object2, &_object3, 0);
 		}
 		break;
 	case 9360:
 	default:
 		if (_globals->getFlag(86)) {
-			_field30A = 9205;
+			_sceneState = 9205;
 			setAction(&_sequenceManager, this, 9205, &_globals->_player, &_object2, &_object3, 0);
 		} else {
-			_field30A = 9201;
+			_sceneState = 9201;
 			setAction(&_sequenceManager, this, 9201, &_globals->_player, &_object2, &_object3, 0);
 		}
 		break;
@@ -531,7 +537,7 @@ void Scene9350::Object1::draw() {
 }
 
 void Scene9350::signal() {
-	switch (_field30A ++) {
+	switch (_sceneState ++) {
 	case 0:
 	case 9352:
 	case 9353:
@@ -558,16 +564,16 @@ void Scene9350::dispatch() {
 		if ((_globals->_player._position.x <= 300) || (_globals->_player._position.y >= 160)) {
 			if ((_globals->_player._position.x <= 110) || (_globals->_player._position.y < 195)) {
 				_globals->_player.disableControl();
-				_field30A = 9355;
+				_sceneState = 9355;
 				Scene::setAction(&_sequenceManager, this, 9355, &_globals->_player, &_object2, 0);
 			} else {
 				_globals->_player.disableControl();
-				_field30A = 9357;
+				_sceneState = 9357;
 				Scene::setAction(&_sequenceManager, this, 9357, &_globals->_player, &_object2, 0);
 			}
 		} else {
 			_globals->_player.disableControl();
-			_field30A = 9356;
+			_sceneState = 9356;
 			Scene::setAction(&_sequenceManager, this, 9356, &_globals->_player, &_object2, 0);
 		}
 	} else {
@@ -592,22 +598,22 @@ void Scene9350::postInit(SceneObjectList *OwnerList) {
 
 	if (_globals->_sceneManager._previousScene == 9360) {
 		_globals->_player.disableControl();
-		_field30A = 9352;
+		_sceneState = 9352;
 		setAction(&_sequenceManager, this, 9352, &_globals->_player, &_object2, 0);
 	} else if (_globals->_sceneManager._previousScene == 9400) {
 		_globals->_player.disableControl();
-		_field30A = 9353;
+		_sceneState = 9353;
 		setAction(&_sequenceManager, this, 9353, &_globals->_player, &_object2, 0);
 	} else {
 		if (!_globals->getFlag(84)) {
 			_globals->clearFlag(84);
 			_object2.postInit();
 			_globals->_player.disableControl();
-			_field30A = 9359;
+			_sceneState = 9359;
 			setAction(&_sequenceManager, this, 9359, &_globals->_player, &_object2, 0);
 		} else {
 			_globals->_player.disableControl();
-			_field30A = 9354;
+			_sceneState = 9354;
 			setAction(&_sequenceManager, this, 9354, &_globals->_player, &_object2, 0);
 		}
 	}
