@@ -255,7 +255,7 @@ ScummVM Team
     Miscellaneous:
        David Corrales-Lopez  - Filesystem access improvements (GSoC 2007
                                task) (retired)
-       Jerome Fisher         - MT-32 emulator (retired)
+       Jerome Fisher         - MT-32 emulator
        Benjamin Haisch       - Heavily improved de-/encoder for DXA videos
        Jochen Hoenicke       - Speaker & PCjr sound support, AdLib work
                                (retired)

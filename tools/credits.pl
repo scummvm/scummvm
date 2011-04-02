@@ -786,7 +786,7 @@ begin_credits("Credits");
 
 	  begin_section("Miscellaneous");
 		add_person("David Corrales-Lopez", "david_corrales", "Filesystem access improvements (GSoC 2007 task) (retired)");
-		add_person("Jerome Fisher", "KingGuppy", "MT-32 emulator (retired)");
+		add_person("Jerome Fisher", "KingGuppy", "MT-32 emulator");
 		add_person("Benjamin Haisch", "john_doe", "Heavily improved de-/encoder for DXA videos");
 		add_person("Jochen Hoenicke", "hoenicke", "Speaker &amp; PCjr sound support, AdLib work (retired)");
 		add_person("Chris Page", "cp88", "Return to launcher, savestate improvements, leak fixes, ... (GSoC 2008 task) (retired)");

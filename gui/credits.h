@@ -282,7 +282,7 @@ static const char *credits[] = {
 "C0""David Corrales-Lopez",
 "C2""Filesystem access improvements (GSoC 2007 task) (retired)",
 "C0""Jerome Fisher",
-"C2""MT-32 emulator (retired)",
+"C2""MT-32 emulator",
 "C0""Benjamin Haisch",
 "C2""Heavily improved de-/encoder for DXA videos",
 "C0""Jochen Hoenicke",
