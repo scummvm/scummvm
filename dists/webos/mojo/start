@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# Get app directory
+APPDIR=$(readlink -f $(dirname $0))
+
+# Create the initial ScummVM directory structure
+mkdir -p /media/internal/ScummVM/Games
+mkdir -p /media/internal/ScummVM/Saves
+mkdir -p /media/internal/ScummVM/Screenshots
+mkdir -p /media/internal/ScummVM/Themes
+mkdir -p /media/internal/ScummVM/Extras
+mkdir -p /media/internal/ScummVM/Plugins
+
+# Install default configuration file if not already present
+if [ ! -f $APPDIR/scummvmrc ]
+then
+    cp $APPDIR/scummvmrc-default $APPDIR/scummvmrc
+fi
+
+# Change into the screenshots directory so screenshots are saved there
+cd /media/internal/ScummVM/Screenshots
+
+# Set library path so the app finds its custom shared libraries
+export LD_LIBRARY_PATH=$APPDIR/lib
+
+# Run the game
+exec $APPDIR/bin/scummvm -c $APPDIR/scummvmrc

@@ -19,6 +19,7 @@ lib*.a
 /MT32_CONTROL.ROM
 /MT32_PCM.ROM
 /ScummVM.app
+/*.ipk
 /.project
 /.cproject
 
