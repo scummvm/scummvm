@@ -183,7 +183,7 @@ void RlbManager::loadSection(uint32 fileOffset) {
 		re->fileOffset = offset;
 		re->isCompressed = type != 0;
 		re->size = ((sizeHi & 0xF) << 16) | size;
-		re->uncompressedSize = ((sizeHi & 0xF) << 16) | uncSize;
+		re->uncompressedSize = ((sizeHi & 0xF0) << 12) | uncSize;
 
 		_resources.push_back(*re);
 	}
