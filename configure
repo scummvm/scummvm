@@ -698,6 +698,7 @@ Special configuration feature:
                                            ps2 for PlayStation 2
                                            psp for PlayStation Portable
                                            samsungtv for Samsung TV
+                                           webos for HP Palm WebOS
                                            wii for Nintendo Wii
                                            wince for Windows CE
 
@@ -1134,6 +1135,11 @@ samsungtv)
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabi
 	;;
+webos)
+	_host_os=webos
+	_host_cpu=arm
+	_host_alias=arm-none-linux-gnueabi
+	;;
 wii)
 	_host_os=wii
 	_host_cpu=ppc
@@ -1238,6 +1244,16 @@ psp)
 	PSPSDK=`psp-config --pspsdk-path`
 	if test -z "$PSPSDK"; then
 		echo "Please set the path to PSPSDK in your environment."
+		exit 1
+	fi
+	;;
+webos)
+	if test -z "$WEBOS_SDK"; then
+		echo "Please set WEBOS_SDK in your environment. export WEBOS_SDK=<path to WebOS SDK>"
+		exit 1
+	fi
+	if test -z "$WEBOS_PDK"; then
+		echo "Please set WEBOS_PDK in your environment. export WEBOS_PDK=<path to WebOS PDK>"
 		exit 1
 	fi
 	;;
@@ -1650,6 +1666,16 @@ case $_host_os in
 		# Needs -lbind -lsocket for the timidity MIDI driver
 		LIBS="$LIBS -lnsl -lsocket"
 		_unix=yes
+		;;
+	webos)
+		CXXFLAGS="$CXXFLAGS --sysroot=$WEBOS_PDK/arm-gcc/sysroot"
+		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/include/SDL"
+		LDFLAGS="$LDFLAGS -L$WEBOS_PDK/device/lib"
+		LDFLAGS="$LDFLAGS -Wl,--allow-shlib-undefined"
+		LIBS="$LIBS -lSDL -lpdl"
+		add_line_to_config_mk "WEBOS_SDK = $WEBOS_SDK"
+		_unix=yes
+		_seq_midi=no
 		;;
 	wii)
 		CXXFLAGS="$CXXFLAGS -Os -mrvl -mcpu=750 -meabi -mhard-float"
