@@ -871,7 +871,7 @@ void MohawkEngine_LivingBooks::handleUIMenuClick(uint controlId) {
 		item = getItemById(199 + _curLanguage);
 		if (item) {
 			item->setVisible(true);
-			item->togglePlaying(true);
+			item->togglePlaying(false, true);
 		}
 		break;
 
@@ -885,7 +885,7 @@ void MohawkEngine_LivingBooks::handleUIMenuClick(uint controlId) {
 		item = getItemById(12);
 		if (item) {
 			item->setVisible(true);
-			item->togglePlaying(true);
+			item->togglePlaying(false, true);
 		}
 		break;
 
@@ -904,16 +904,16 @@ void MohawkEngine_LivingBooks::handleUIMenuClick(uint controlId) {
 		if (item)
 			item->destroySelf();
 		item = getItemById(11);
-		if (item)
+		if (item) {
 			item->setVisible(true);
-		if (item)
 			item->togglePlaying(false);
+		}
 		break;
 
 	case 11:
 		item = getItemById(11);
 		if (item)
-			item->togglePlaying(true);
+			item->togglePlaying(false, true);
 		break;
 
 	case 12:
@@ -972,7 +972,7 @@ void MohawkEngine_LivingBooks::handleUIPoetryMenuClick(uint controlId) {
 		item = getItemById(12);
 		if (item) {
 			item->setVisible(true);
-			item->togglePlaying(true);
+			item->togglePlaying(false, true);
 		}
 		break;
 
@@ -983,14 +983,14 @@ void MohawkEngine_LivingBooks::handleUIPoetryMenuClick(uint controlId) {
 		item = getItemById(11);
 		if (item) {
 			item->setVisible(true);
-			item->togglePlaying(true);
+			item->togglePlaying(false);
 		}
 		break;
 
 	case 0xB:
-		item = getItemById(12);
+		item = getItemById(11);
 		if (item)
-			item->togglePlaying(true);
+			item->togglePlaying(false, true);
 		break;
 
 	case 0xC:
@@ -1032,7 +1032,7 @@ void MohawkEngine_LivingBooks::handleUIQuitClick(uint controlId) {
 	case 11:
 		item = getItemById(11);
 		if (item)
-			item->togglePlaying(true);
+			item->togglePlaying(false, true);
 		break;
 
 	case 12:
@@ -1059,7 +1059,7 @@ void MohawkEngine_LivingBooks::handleUIOptionsClick(uint controlId) {
 		item = getItemById(202);
 		if (item) {
 			item->setVisible(true);
-			item->togglePlaying(true);
+			item->togglePlaying(false, true);
 		}
 		break;
 
