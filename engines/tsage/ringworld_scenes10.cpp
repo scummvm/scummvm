@@ -36,6 +36,15 @@ Scene2::Scene2() {
 	_sceneState = 0;
 }
 
+void Object9350::postInit(SceneObjectList *OwnerList) {
+	warning("Object9350::postInit - Weird cast to be verified");
+	_globals->_sceneManager.postInit((SceneObjectList*) &_globals->_sceneManager._sceneChangeListeners);
+}
+
+void Object9350::draw() {
+	warning("Scene9350::Object1::draw - TODO");
+}
+
 /*--------------------------------------------------------------------------
  * Scene 9100
  *
@@ -527,14 +536,6 @@ void Scene9300::postInit(SceneObjectList *OwnerList) {
  * Scene 9350
  *
  *--------------------------------------------------------------------------*/
-void Scene9350::Object1::postInit(SceneObjectList *OwnerList) {
-	warning("Scene9350::Object1::postInit - Weird cast to be verified");
-	_globals->_sceneManager.postInit((SceneObjectList*) &_globals->_sceneManager._sceneChangeListeners);
-}
-
-void Scene9350::Object1::draw() {
-	warning("Scene9350::Object1::draw - TODO");
-}
 
 void Scene9350::signal() {
 	switch (_sceneState ++) {
@@ -561,20 +562,18 @@ void Scene9350::signal() {
 
 void Scene9350::dispatch() {
 	if (_action == 0) {
-		if ((_globals->_player._position.x <= 300) || (_globals->_player._position.y >= 160)) {
-			if ((_globals->_player._position.x <= 110) || (_globals->_player._position.y < 195)) {
-				_globals->_player.disableControl();
-				_sceneState = 9355;
-				Scene::setAction(&_sequenceManager, this, 9355, &_globals->_player, &_object2, 0);
-			} else {
-				_globals->_player.disableControl();
-				_sceneState = 9357;
-				Scene::setAction(&_sequenceManager, this, 9357, &_globals->_player, &_object2, 0);
-			}
-		} else {
+		if ((_globals->_player._position.x > 300) && (_globals->_player._position.y < 160)) {
 			_globals->_player.disableControl();
 			_sceneState = 9356;
-			Scene::setAction(&_sequenceManager, this, 9356, &_globals->_player, &_object2, 0);
+			setAction(&_sequenceManager, this, 9356, &_globals->_player, &_object2, 0);
+		} else if ((_globals->_player._position.x > 110) && (_globals->_player._position.y >= 195)) {
+			_globals->_player.disableControl();
+			_sceneState = 9357;
+			setAction(&_sequenceManager, this, 9357, &_globals->_player, &_object2, 0);
+		} else if ((_globals->_player._position.x < 10) || ((_globals->_player._position.x <= 110) && (_globals->_player._position.y >= 195))) {
+			_globals->_player.disableControl();
+			_sceneState = 9355;
+			setAction(&_sequenceManager, this, 9355, &_globals->_player, &_object2, 0);
 		}
 	} else {
 		Scene::dispatch();
@@ -617,6 +616,84 @@ void Scene9350::postInit(SceneObjectList *OwnerList) {
 			setAction(&_sequenceManager, this, 9354, &_globals->_player, &_object2, 0);
 		}
 	}
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 9360
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene9360::signal() {
+	switch (_sceneState ++) {
+	case 0:
+	case 9362:
+	case 9363:
+	case 9364:
+		_globals->_player.enableControl();
+		break;
+	case 9365:
+		_globals->_sceneManager.changeScene(9350);
+		break;
+	case 9366:
+		_globals->_sceneManager.changeScene(9200);
+		break;
+	case 9367:
+		_globals->_sceneManager.changeScene(9450);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene9360::dispatch() {
+	if (_action == 0) {
+		if ((_globals->_player._position.x > 300) && (_globals->_player._position.y < 160)) {
+			_globals->_player.disableControl();
+			_sceneState = 9366;
+			setAction(&_sequenceManager, this, 9366, &_globals->_player, 0);
+		} else if ((_globals->_player._position.x > 110) && (_globals->_player._position.y >= 195)) {
+			_globals->_player.disableControl();
+			_sceneState = 9367;
+			setAction(&_sequenceManager, this, 9367, &_globals->_player, 0);
+		} else if ((_globals->_player._position.x < 10) || ((_globals->_player._position.x <= 110) && (_globals->_player._position.y >= 195))) {
+			_globals->_player.disableControl();
+			_sceneState = 9365;
+			setAction(&_sequenceManager, this, 9365, &_globals->_player, 0);
+		}
+	} else {
+		Scene::dispatch();
+	}
+}
+
+void Scene9360::postInit(SceneObjectList *OwnerList) {
+	Scene::postInit();
+	setZoomPercents(95, 80, 200, 100);
+	_globals->_player.postInit();
+
+	_hotspot1.quickInit(37, 92, 93, 173, 9360, 0, 1);
+	_hotspot2.quickInit(42, 0, 100, 63, 9360, 2, -1);
+	_hotspot3.quickInit(36, 205, 82, 260, 9360, 3, -1);
+	_hotspot4.quickInit(103, 2, 200, 320, 9360, 4, -1);
+	_hotspot5.quickInit(0, 0, 37, 320, 9360, 4, -1);
+	_hotspot6.quickInit(35, 61, 103, 92, 9360, 4, -1);
+	_hotspot7.quickInit(33, 174, 93, 207, 9360, 4, -1);
+	_hotspot8.quickInit(28, 257, 149, 320, 9360, 4, -1);
+	_globals->_events.setCursor(CURSOR_WALK);
+	_globals->_player.disableControl();
+	if (_globals->_sceneManager._previousScene == 9350) {
+		_globals->_player.disableControl();
+		_sceneState = 9364;
+		setAction(&_sequenceManager, this, 9364, &_globals->_player, 0);
+	} else if (_globals->_sceneManager._previousScene == 9450) {
+		_globals->_player.disableControl();
+		_sceneState = 9363;
+		setAction(&_sequenceManager, this, 9363, &_globals->_player, 0);
+	} else {
+		_globals->_player.disableControl();
+		_sceneState = 9362;
+		setAction(&_sequenceManager, this, 9362, &_globals->_player, 0);
+	}
+	_object1.quickInit(9351, 1, 1, 131, 90, 0);
 }
 
 /*--------------------------------------------------------------------------

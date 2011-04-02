@@ -46,6 +46,12 @@ public :
 	}
 };
 
+class Object9350: public SceneObject {
+public:
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void draw();
+};
+
 class Scene9100: public Scene {
 	/* Items */
 	class SceneHotspot1: public SceneHotspot_3 {
@@ -154,22 +160,32 @@ class Scene9300: public Scene {
 };
 
 class Scene9350: public Scene2 {
-	/* Objects */
-	class Object1: public SceneObject {
-	public:
-		virtual void postInit(SceneObjectList *OwnerList = NULL);
-		virtual void draw();
-	};
-
-public:
 	SequenceManager _sequenceManager;
-	Object1 _object1;
+	Object9350 _object1;
 	SceneObject _object2;
 	SceneHotspot_3 _sceneHotspot1;
 	SceneHotspot_3 _sceneHotspot2;
 	SceneHotspot_3 _sceneHotspot3;
 	SceneHotspot_3 _sceneHotspot4;
 	SceneHotspot_3 _sceneHotspot5;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
+};
+
+class Scene9360: public Scene2 {
+	SequenceManager _sequenceManager;
+	Action _action1;
+	Object9350 _object1;
+	SceneHotspot_3 _hotspot1;
+	SceneHotspot_3 _hotspot2;
+	SceneHotspot_3 _hotspot3;
+	SceneHotspot_3 _hotspot4;
+	SceneHotspot_3 _hotspot5;
+	SceneHotspot_3 _hotspot6;
+	SceneHotspot_3 _hotspot7;
+	SceneHotspot_3 _hotspot8;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
