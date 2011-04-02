@@ -2935,10 +2935,10 @@ define_in_config_h_if_yes "$_text_console" 'USE_TEXT_CONSOLE_FOR_DEBUGGER'
 # Check for Unity if taskbar integration is enabled
 #
 echocheck "unity"
-# Unity has a lots of dependency, update the libs and cflags var with them
-UNITY_LIBS="$UNITY_LIBS $(pkg-config --libs unity)"
-UNITY_CFLAGS="$UNITY_CFLAGS $(pkg-config --cflags unity)"
 if test "$_unity" = auto ; then
+	# Unity has a lots of dependency, update the libs and cflags var with them
+	UNITY_LIBS="$UNITY_LIBS $(pkg-config --libs unity)"
+	UNITY_CFLAGS="$UNITY_CFLAGS $(pkg-config --cflags unity)"
 	_unity=no
 	cat > $TMPC << EOF
 #include <unity.h>
