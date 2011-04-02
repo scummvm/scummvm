@@ -61,25 +61,13 @@ class Scene3700: public Scene {
 		Visage _images2;
 
 		int _frameList[4];
+		int _percentList[4];
 		bool _active;
 		int _countdownCtr;
-		int _percent;
-
-		// Unused fields?
-		int _field94;
-		int _field96;
-		int _field98;
 
 		Viewer();
 		virtual Common::String getClassName() { return "Viewer"; }
-		virtual void synchronise(Serialiser &s) {
-			SceneObject::synchronise(s);
-			s.syncAsByte(_active);
-			s.syncAsSint16LE(_countdownCtr);
-			for (int idx = 0; idx < 4; ++idx)
-				s.syncAsSint16LE(_frameList[idx]);
-
-		}
+		virtual void synchronise(Serialiser &s);
 		virtual void dispatch();
 		virtual void reposition();
 		virtual void draw();

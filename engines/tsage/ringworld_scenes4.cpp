@@ -107,12 +107,20 @@ Scene3700::Viewer::Viewer() {
 
 	_active = true;
 	_countdownCtr = 0;
-	_percent = 120;
+	_percentList[0] = 120;
+	_percentList[1] = 50;
+	_percentList[2] = 75;
+	_percentList[3] = 114;
+}
 
-	// Fields don't seem to be used
-	_field94 = 50;
-	_field96 = 75;
-	_field98 = 114;
+void Scene3700::Viewer::synchronise(Serialiser &s) {
+	SceneObject::synchronise(s);
+	s.syncAsByte(_active);
+	s.syncAsSint16LE(_countdownCtr);
+	for (int idx = 0; idx < 4; ++idx) {
+		s.syncAsSint16LE(_frameList[idx]);
+		s.syncAsSint16LE(_percentList[idx]);
+	}
 }
 
 void Scene3700::Viewer::dispatch() {
@@ -147,7 +155,7 @@ void Scene3700::Viewer::draw() {
 		GfxSurface img = v.getFrame(_frameList[idx]);
 		Rect destRect = img.getBounds();
 		destRect.resize(img, (_position.x - _globals->_sceneOffset.x), 
-			(_position.y  - _globals->_sceneOffset.y - _yDiff), _percent);
+			(_position.y  - _globals->_sceneOffset.y - _yDiff), _percentList[idx]);
 
 		destRect.translate(-_globals->_sceneManager._scene->_sceneBounds.left, 
 			-_globals->_sceneManager._scene->_sceneBounds.top);
