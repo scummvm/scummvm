@@ -117,7 +117,7 @@ Common::Error MohawkEngine_LivingBooks::run() {
 		debug("Starting Living Books Title \'%s\'", _title.c_str());
 	if (!_copyright.empty())
 		debug("Copyright: %s", _copyright.c_str());
-	debug("This book has %d pages in %d languages.", _numPages, _numLanguages);
+	debug("This book has %d page(s) in %d language(s).", _numPages, _numLanguages);
 	if (_poetryMode)
 		debug("Running in poetry mode.");
 
