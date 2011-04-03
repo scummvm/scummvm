@@ -291,13 +291,13 @@ void VirtualKeyboardGUI::mainLoop() {
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_LBUTTONDOWN:
-				if (_kbdBound.contains(event.mouse)) {
+                                if (_kbdBound.contains(event.mouse.getPoint())) {
 					_kbd->handleMouseDown(event.mouse.x - _kbdBound.left,
 										  event.mouse.y - _kbdBound.top);
 				}
 				break;
 			case Common::EVENT_LBUTTONUP:
-				if (_kbdBound.contains(event.mouse)) {
+                                if (_kbdBound.contains(event.mouse.getPoint())) {
 					_kbd->handleMouseUp(event.mouse.x - _kbdBound.left,
 										event.mouse.y - _kbdBound.top);
 				}

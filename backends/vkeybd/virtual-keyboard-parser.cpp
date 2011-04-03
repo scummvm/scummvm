@@ -193,7 +193,7 @@ bool VirtualKeyboardParser::parserCallback_event(ParserNode *node) {
 		}
 		evt->type = VirtualKeyboard::kVKEventKey;
 
-		KeyState *ks = (KeyState*) malloc(sizeof(KeyState));
+                KeyboardEvent *ks = (KeyboardEvent*) malloc(sizeof(KeyboardEvent));
 		ks->keycode = (KeyCode)atoi(node->values["code"].c_str());
 		ks->ascii = atoi(node->values["ascii"].c_str());
 		ks->flags = 0;

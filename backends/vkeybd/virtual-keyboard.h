@@ -91,7 +91,7 @@ protected:
 		/**
 		 * Void pointer that will point to different types of data depending
 		 * on the type of the event, these are:
-		 * - KeyState struct for kVKEventKey events
+                 * - KeyboardEvent struct for kVKEventKey events
 		 * - a flags byte for kVKEventModifier events
 		 * - c-string stating the name of the new mode for kSwitchMode events
 		 */
@@ -145,7 +145,7 @@ protected:
 	};
 
 	struct VirtualKeyPress {
-		KeyState key;
+                KeyboardEvent key;
 		/** length of the key presses description string */
 		uint strLen;
 	};
@@ -159,11 +159,11 @@ protected:
 		KeyPressQueue();
 		void toggleFlags(byte fl);
 		void clearFlags();
-		void insertKey(KeyState key);
+                void insertKey(KeyboardEvent key);
 		void deleteKey();
 		void moveLeft();
 		void moveRight();
-		KeyState pop();
+                KeyboardEvent pop();
 		void clear();
 		bool empty();
 		String getString();
