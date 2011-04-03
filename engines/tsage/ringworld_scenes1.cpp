@@ -2462,7 +2462,7 @@ void Scene90::Action1::signal() {
 		scene->_object5.addMover(mover2, &pt2, this);
 		break;
 	}
-	case 10:
+	case 10: {
 		PlayerMover2 *mover = new PlayerMover2();
 		scene->_object1.addMover(mover, 10, 15, &scene->_object5);
 
