@@ -48,6 +48,7 @@
 // toggles start
 //#define ANDROID_DEBUG_ENTER
 //#define ANDROID_DEBUG_GL
+//#define ANDROID_DEBUG_GL_CALLS
 // toggles end
 
 extern const char *android_log_tag;
@@ -67,9 +68,23 @@ extern const char *android_log_tag;
 #ifdef ANDROID_DEBUG_GL
 extern void checkGlError(const char *expr, const char *file, int line);
 
+#ifdef ANDROID_DEBUG_GL_CALLS
+#define GLCALLLOG(x, before) \
+	do { \
+		if (before) \
+			LOGD("calling '%s' (%s:%d)", x, __FILE__, __LINE__); \
+		else \
+			LOGD("returned from '%s' (%s:%d)", x, __FILE__, __LINE__); \
+	} while (false)
+#else
+#define GLCALLLOG(x, before) do {  } while (false)
+#endif
+
 #define GLCALL(x) \
 	do { \
+		GLCALLLOG(#x, true); \
 		(x); \
+		GLCALLLOG(#x, false); \
 		checkGlError(#x, __FILE__, __LINE__); \
 	} while (false)
 
