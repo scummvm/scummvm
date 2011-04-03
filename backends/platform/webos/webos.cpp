@@ -23,34 +23,23 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "backends/platform/webos/webos.h"
+#include "backends/events/webossdl/webossdl-events.h"
 
-#if defined(UNIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA)
+#if defined(WEBOS)
 
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
+OSystem_SDL_WebOS::OSystem_SDL_WebOS()
+	:
+	OSystem_POSIX("/media/cryptofs/apps/usr/palm/applications/org.scummvm/scummvmrc") {
+}
 
-int main(int argc, char *argv[]) {
+void OSystem_SDL_WebOS::initBackend() {
+	// Create the events manager
+	if (_eventSource == 0)
+		_eventSource = new WebOSSdlEventSource();
 
-	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
-	assert(g_system);
-
-	// Pre initialize the backend
-	((OSystem_POSIX *)g_system)->init();
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-
-	// Free OSystem
-	delete (OSystem_POSIX *)g_system;
-
-	return res;
+	// Call parent implementation of this method
+	OSystem_SDL::initBackend();
 }
 
 #endif

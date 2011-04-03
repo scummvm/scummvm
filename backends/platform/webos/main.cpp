@@ -23,22 +23,20 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#if defined(UNIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA)
-
-#include "backends/platform/sdl/posix/posix.h"
+#include "backends/platform/webos/webos.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
-int main(int argc, char *argv[]) {
+#if defined(WEBOS)
 
-	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
+#include <unistd.h>
+
+int main(int argc, char* argv[]) {
+
+	g_system = new OSystem_SDL_WebOS();
 	assert(g_system);
 
-	// Pre initialize the backend
-	((OSystem_POSIX *)g_system)->init();
+	((OSystem_SDL_WebOS *)g_system)->init();
 
 #ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
@@ -48,7 +46,7 @@ int main(int argc, char *argv[]) {
 	int res = scummvm_main(argc, argv);
 
 	// Free OSystem
-	delete (OSystem_POSIX *)g_system;
+	delete (OSystem_SDL_WebOS *)g_system;
 
 	return res;
 }
