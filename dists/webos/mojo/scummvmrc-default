@@ -1,4 +1,5 @@
 [scummvm]
+gui_theme=scummwebos
 mute=false 
 speech_volume=192
 native_mt32=false
