@@ -131,6 +131,8 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	/* Scene group 6 */
 	// Caverns - Entrance
 	case 5000: return new Scene5000();
+	// Caverns
+	case 5100: return new Scene5100();
 
 	/* Scene group 8 */
 
@@ -404,6 +406,16 @@ SpeakerFLText::SpeakerFLText() {
 	_speakerName = "FLTEXT";
 	_textPos = Common::Point(10, 40);
 	_colour1 = 17;
+	_hideObjects = false;
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerBatText::SpeakerBatText() {
+	_speakerName = "BATTEXT";
+	_textWidth = 240;
+	_textMode = ALIGN_CENTRE;
+	_colour1 = 3;
 	_hideObjects = false;
 }
 

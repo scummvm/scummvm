@@ -186,6 +186,12 @@ public:
 	virtual Common::String getClassName() { return "SpeakerFLText"; }
 };
 
+class SpeakerBatText: public ScreenSpeaker {
+public:
+	SpeakerBatText();
+
+	virtual Common::String getClassName() { return "SpeakerFLText"; }
+};
 
 class SpeakerQL: public AnimatedSpeaker {
 public:
