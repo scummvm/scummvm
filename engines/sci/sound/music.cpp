@@ -663,9 +663,11 @@ void SciMusic::printPlayList(Console *con) {
 
 	for (uint32 i = 0; i < _playList.size(); i++) {
 		MusicEntry *song = _playList[i];
-		con->DebugPrintf("%d: %04x:%04x, resource id: %d, status: %s, %s type\n", i,
-						PRINT_REG(song->soundObj), song->resourceId,
-						musicStatus[song->status], song->pMidiParser ? "MIDI" : "digital audio");
+		con->DebugPrintf("%d: %04x:%04x (%s), resource id: %d, status: %s, %s type\n",
+						i, PRINT_REG(song->soundObj),
+						g_sci->getEngineState()->_segMan->getObjectName(song->soundObj),
+						song->resourceId, musicStatus[song->status],
+						song->pMidiParser ? "MIDI" : "digital audio");
 	}
 }
 
