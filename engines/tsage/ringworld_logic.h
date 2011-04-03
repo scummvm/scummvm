@@ -382,6 +382,14 @@ public:
 	virtual void setText(const Common::String &msg);
 };
 
+class SpeakerBatR: public AnimatedSpeaker {
+public:
+	SpeakerBatR();
+
+	virtual Common::String getClassName() { return "SpeakerBatR"; }
+	virtual void setText(const Common::String &msg);
+};
+
 } // End of namespace tSage
 
 #endif
