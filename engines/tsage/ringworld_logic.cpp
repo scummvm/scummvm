@@ -33,6 +33,8 @@
 #include "tsage/ringworld_scenes4.h"
 #include "tsage/ringworld_scenes5.h"
 #include "tsage/ringworld_scenes6.h"
+#include "tsage/ringworld_scenes8.h"
+#include "tsage/ringworld_scenes10.h"
 
 namespace tSage {
 
@@ -137,8 +139,27 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 5200: return new Scene5200();
 
 	/* Scene group 8 */
+	// Scene 7000: Landing
+	case 7000: return new Scene7000();
+	// Scene 7100: swimming under water
+	case 7100: return new Scene7100();
+	// Scene 7200: Entering the underwater cave
+	case 7200: return new Scene7200();
+	// Scene 7300: Discussion with Lord Poria
+	case 7300: return new Scene7300();
+	case 7600: return new Scene7600();
+	case 7700: return new Scene7700();
 
 	/* Scene group 10 */
+	case 9100: return new Scene9100();
+	case 9150: return new Scene9150();
+	case 9200: return new Scene9200();
+	case 9300: return new Scene9300();
+	case 9350: return new Scene9350();
+	case 9360: return new Scene9360();
+	case 9700: return new Scene9700();
+	case 9750: return new Scene9750();
+	case 9999: return new Scene9999();
 
 	default:
 		error("Unknown scene number - %d", sceneNumber);
@@ -314,6 +335,55 @@ void SpeakerGText::removeText() {
 
 /*--------------------------------------------------------------------------*/
 
+
+SpeakerPOR::SpeakerPOR() {
+	_speakerName = "POR";
+	_newSceneNumber = 7221;
+	_textPos = Common::Point(10, 30);
+	_colour1 = 41;
+}
+
+void SpeakerPOR::SpeakerAction1::signal(){
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(_globals->_randomSource.getRandomNumber(60) + 60);
+		break;
+	case 1:
+		static_cast<SceneObject *>(_owner)->animate(ANIM_MODE_5, this, NULL);
+		break;
+	case 2:
+		setDelay(_globals->_randomSource.getRandomNumber(10));
+		_actionIndex = 0;
+		break;
+	default:
+		break;
+	}
+}
+
+void SpeakerPOR::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(7223);
+	_object1.setStrip2(2);
+	_object1.setPosition(Common::Point(191, 166), 0);
+	_object1.animate(ANIM_MODE_7, 0, 0);
+
+	_object2.postInit(&_objectList);
+	_object2.setVisage(7223);
+	_object2.setPosition(Common::Point(159, 86), 0);
+	_object2.setAction(&_speakerAction, 0);
+
+	_object3.postInit(&_objectList);
+	_object3.setVisage(7223);
+	_object3.setStrip(3);
+	_object3.setPosition(Common::Point(119, 107), 0);
+	_object3.setPriority2(199);
+	_object3.setAction(&_action2);
+
+	Speaker::setText(msg);
+}
+
+/*--------------------------------------------------------------------------*/
+
 SpeakerOText::SpeakerOText(): SpeakerGText() {
 	_speakerName = "OTEXT";
 	_textWidth = 240;
@@ -345,6 +415,16 @@ SpeakerSText::SpeakerSText(): ScreenSpeaker() {
 
 /*--------------------------------------------------------------------------*/
 
+SpeakerPOText::SpeakerPOText(): ScreenSpeaker() {
+	_speakerName = "POTEXT";
+	_textWidth = 240;
+	_textMode = ALIGN_CENTRE;
+	_colour1 = 41;
+	_hideObjects = false;
+}
+
+/*--------------------------------------------------------------------------*/
+
 SpeakerMText::SpeakerMText() {
 	_speakerName = "MTEXT";
 	_colour1 = 11;
@@ -365,10 +445,39 @@ SpeakerCText::SpeakerCText() {
 
 /*--------------------------------------------------------------------------*/
 
+SpeakerEText::SpeakerEText() {
+	_speakerName = "ETEXT";
+	_textPos = Common::Point(20, 20);
+	_colour1 = 22;
+	_hideObjects = false;
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerGR::SpeakerGR() {
+	_speakerName = "GR";
+	_newSceneNumber = 9220;
+	_textWidth = 136;
+	_textPos = Common::Point(168, 36);
+	_colour1 = 14;
+}
+
+/*--------------------------------------------------------------------------*/
+
 SpeakerHText::SpeakerHText() {
 	_speakerName = "HTEXT";
 	_textPos = Common::Point(160, 40);
 	_colour1 = 52;
+	_hideObjects = false;
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerSKText::SpeakerSKText(): ScreenSpeaker() {
+	_speakerName = "SKTEXT";
+	_textWidth = 240;
+	_textMode = ALIGN_CENTRE;
+	_colour1 = 5;
 	_hideObjects = false;
 }
 
@@ -419,6 +528,37 @@ SpeakerBatText::SpeakerBatText() {
 	_textMode = ALIGN_CENTRE;
 	_colour1 = 3;
 	_hideObjects = false;
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerSKL::SpeakerSKL(): AnimatedSpeaker() {
+	_speakerName = "SKL";
+	_newSceneNumber = 7011;
+	_textPos = Common::Point(10, 30);
+	_colour1 = 10;
+}
+
+void SpeakerSKL::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(7013);
+	_object1.setStrip2(2);
+	_object1._frame = 1;
+	_object1.setPriority2(255);
+	_object1.changeZoom(100);
+	_object1.setPosition(Common::Point(203, 120));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
+	
+	_object2.postInit(&_objectList);
+	_object2.setVisage(7013);
+	_object2.setStrip2(1);
+	_object2.setPriority2(255);
+	_object2.changeZoom(100);
+	_object2._frame = 1;
+	_object2.setPosition(Common::Point(197, 80));
+	_object2.setAction(&_speakerAction, NULL);
+
+	Speaker::setText(msg);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -554,6 +694,38 @@ void SpeakerQR::setText(const Common::String &msg) {
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(197, 84));
 	_object2.setAction(&_speakerAction, NULL);
+
+	Speaker::setText(msg);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerQU::SpeakerQU() {
+	_speakerName = "QU";
+	_newSceneNumber = 7020;
+	_textPos = Common::Point(160, 30);
+	_colour1 = 35;
+	_textMode = ALIGN_CENTRE;
+}
+
+void SpeakerQU::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(7021);
+	_object1.setStrip2(2);
+	_object1.setPriority2(255);
+	_object1.changeZoom(100);
+	_object1._frame = 1;
+	_object1.setPosition(Common::Point(116, 120), 0);
+	_object1.animate(ANIM_MODE_7, 0, 0);
+	
+	_object2.postInit(&_objectList);
+	_object2.setVisage(7021);
+	_object2.setStrip2(1);
+	_object2.setPriority2(255);
+	_object2.changeZoom(100);
+	_object2._frame = 1;
+	_object2.setPosition(Common::Point(111, 84), 0);
+	_object2.setAction(&_speakerAction, 0);
 
 	Speaker::setText(msg);
 }
