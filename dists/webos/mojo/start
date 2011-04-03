@@ -17,6 +17,9 @@ then
     cp $APPDIR/scummvmrc-default $APPDIR/scummvmrc
 fi
 
+# Copy themes to theme directory
+cp -f $APPDIR/share/scummvm/*.zip /media/internal/ScummVM/Themes
+
 # Change into the screenshots directory so screenshots are saved there
 cd /media/internal/ScummVM/Screenshots
 

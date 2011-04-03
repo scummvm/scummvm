@@ -1,7 +1,7 @@
 # WebOS specific build targets
 
 PATH_DIST = $(srcdir)/dists/webos
-PATH_RESOURCES = $(PATH_DIST)/mojo
+PATH_MOJO = $(PATH_DIST)/mojo
 
 STAGING_DIR=STAGING/org.scummvm.scummvm
 
@@ -11,7 +11,10 @@ webosrelease:
 	mkdir -p $(STAGING_DIR)
 	mkdir -p $(STAGING_DIR)/bin
 	mkdir -p $(STAGING_DIR)/lib
-	cp -f $(PATH_RESOURCES)/* $(STAGING_DIR)
+	mkdir -p $(STAGING_DIR)/share/scummvm
+	cp -f $(PATH_MOJO)/* $(STAGING_DIR)
+	cp -f gui/themes/translations.dat $(STAGING_DIR)/share/scummvm
+	cp -f gui/themes/scummmodern.zip $(STAGING_DIR)/share/scummvm
 	cp -f scummvm $(STAGING_DIR)/bin
 	$(WEBOS_PDK)/arm-gcc/bin/arm-none-linux-gnueabi-strip $(STAGING_DIR)/bin/scummvm
 	$(WEBOS_SDK)/bin/palm-package $(STAGING_DIR)

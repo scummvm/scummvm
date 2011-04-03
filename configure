@@ -2067,7 +2067,7 @@ if test -n "$_host"; then
 			_timidity=no
 			_mt32emu=no
 			_seq_midi=no
-			_vkeybd=yes
+			_vkeybd=no
 			_keymapper=yes
 			;;
 		wii)
