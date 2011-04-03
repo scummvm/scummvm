@@ -412,6 +412,7 @@ void ObjectMover2::dispatch() {
 	if (area > _maxArea) {
 		// Setup again for the new destination
 		setup(_destObject->_position);
+		ObjectMover::dispatch();
 	} else if (area >= _minArea) {
 		// Keep dispatching
 		ObjectMover::dispatch();
