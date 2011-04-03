@@ -696,35 +696,19 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 	if (pthread_self() == _main_thread) {
 		if (_screen_changeid != JNI::surface_changeid) {
 			if (JNI::egl_surface_width > 0 && JNI::egl_surface_height > 0) {
-				if (_egl_surface_width > 0 && _egl_surface_height > 0) {
-					// surface still alive but changed
-					_screen_changeid = JNI::surface_changeid;
-					_egl_surface_width = JNI::egl_surface_width;
-					_egl_surface_height = JNI::egl_surface_height;
+				// surface changed
+				JNI::deinitSurface();
+				initSurface();
+				initViewport();
+				updateScreenRect();
+				updateEventScale();
 
-					initViewport();
-					updateScreenRect();
-					updateEventScale();
+				// double buffered, flip twice
+				clearScreen(kClearUpdate, 2);
 
-					// double buffered, flip twice
-					clearScreen(kClearUpdate, 2);
+				event.type = Common::EVENT_SCREEN_CHANGED;
 
-					event.type = Common::EVENT_SCREEN_CHANGED;
-
-					return true;
-				} else {
-					// new surface
-					initSurface();
-					updateScreenRect();
-					updateEventScale();
-
-					// double buffered, flip twice
-					clearScreen(kClearUpdate, 2);
-
-					event.type = Common::EVENT_SCREEN_CHANGED;
-
-					return true;
-				}
+				return true;
 			} else {
 				// surface lost
 				deinitSurface();

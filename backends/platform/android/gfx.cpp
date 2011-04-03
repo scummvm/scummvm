@@ -235,8 +235,10 @@ void OSystem_Android::initViewport() {
 }
 
 void OSystem_Android::initOverlay() {
-	int overlay_width = _egl_surface_width;
-	int overlay_height = _egl_surface_height;
+	// minimum of 320x200
+	// (surface can get smaller when opening the virtual keyboard on *QVGA*)
+	int overlay_width = MAX(_egl_surface_width, 320);
+	int overlay_height = MAX(_egl_surface_height, 200);
 
 	// the 'normal' theme layout uses a max height of 400 pixels. if the
 	// surface is too big we use only a quarter of the size so that the widgets
@@ -244,7 +246,7 @@ void OSystem_Android::initOverlay() {
 	// enforces the 'lowres' layout, which will be scaled back up by factor 2x,
 	// but this looks way better than the 'normal' layout scaled by some
 	// calculated factors
-	if (overlay_height > 480) {
+	while (overlay_height > 480) {
 		overlay_width /= 2;
 		overlay_height /= 2;
 	}

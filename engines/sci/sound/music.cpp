@@ -442,6 +442,25 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 		if (pSnd->pMidiParser) {
 			Common::StackLock lock(_mutex);
 			pSnd->pMidiParser->mainThreadBegin();
+
+			if (pSnd->status != kSoundPaused) {
+				// Stop any in progress music fading, as that will reset the
+				// volume of the sound channels that the faded song occupies..
+				// Fixes bug #3266480 and partially fixes bug #3041738.
+				for (uint i = 0; i < playListCount; i++) {
+					// Is another MIDI song being faded? If yes, stop it
+					// immediately instead
+					if (_playList[i]->fadeStep && _playList[i]->pMidiParser) {
+						_playList[i]->status = kSoundStopped;
+						if (_soundVersion <= SCI_VERSION_0_LATE)
+							_playList[i]->isQueued = false;
+						_playList[i]->pMidiParser->stop();
+						freeChannels(_playList[i]);
+						_playList[i]->fadeStep = 0;
+					}
+				}
+			}
+
 			pSnd->pMidiParser->tryToOwnChannels();
 			if (pSnd->status != kSoundPaused)
 				pSnd->pMidiParser->sendInitCommands();
@@ -644,9 +663,11 @@ void SciMusic::printPlayList(Console *con) {
 
 	for (uint32 i = 0; i < _playList.size(); i++) {
 		MusicEntry *song = _playList[i];
-		con->DebugPrintf("%d: %04x:%04x, resource id: %d, status: %s, %s type\n", i,
-						PRINT_REG(song->soundObj), song->resourceId,
-						musicStatus[song->status], song->pMidiParser ? "MIDI" : "digital audio");
+		con->DebugPrintf("%d: %04x:%04x (%s), resource id: %d, status: %s, %s type\n",
+						i, PRINT_REG(song->soundObj),
+						g_sci->getEngineState()->_segMan->getObjectName(song->soundObj),
+						song->resourceId, musicStatus[song->status],
+						song->pMidiParser ? "MIDI" : "digital audio");
 	}
 }
 
