@@ -419,6 +419,17 @@ public:
 	}
 };
 
+class SceneItemExt: public SceneItem {
+public:
+	int _state;
+
+	virtual Common::String getClassName() { return "SceneItemExt"; }
+	virtual void synchronise(Serialiser &s) {
+		SceneItem::synchronise(s);
+		s.syncAsSint16LE(_state);
+	}
+};
+
 class SceneHotspot: public SceneItem {
 public:
 	SceneHotspot(): SceneItem() {}

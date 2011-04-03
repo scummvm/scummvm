@@ -238,6 +238,8 @@ void Scene::synchronise(Serialiser &s) {
 	_backgroundBounds.synchronise(s);
 	_sceneBounds.synchronise(s);
 	_oldSceneBounds.synchronise(s);
+	s.syncAsSint16LE(_fieldA);
+	s.syncAsSint16LE(_fieldE);
 
 	for (int i = 0; i < 256; ++i)
 		s.syncAsUint16LE(_enabledSections[i]);

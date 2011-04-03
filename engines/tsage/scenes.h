@@ -51,6 +51,9 @@ public:
 	int _enabledSections[256];
 	int _zoomPercents[256];
 	ScenePriorities _priorities;
+
+	int _fieldA;
+	int _fieldE;
 public:
 	Scene();
 	virtual ~Scene();
