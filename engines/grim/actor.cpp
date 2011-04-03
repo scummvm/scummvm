@@ -442,9 +442,103 @@ void Actor::walkTo(Graphics::Vector3d p) {
 	else {
 		_walking = true;
 		_destPos = p;
+		_path.clear();
 
-		if (p.x() != _pos.x() || p.y() != _pos.y())
-			turnTo(_pitch, yawTo(p), _roll);
+		if (_constrain) {
+			Common::List<PathNode *> openList;
+			Common::List<PathNode *> closedList;
+
+			PathNode *start = new PathNode;
+			start->parent = NULL;
+			start->pos = _pos;
+			start->dist = 0.f;
+			start->cost = 0.f;
+			openList.push_back(start);
+			g_grim->currScene()->findClosestSector(_pos, &start->sect, NULL);
+
+			Graphics::Vector3d currPos = _pos;
+			Common::List<Sector *> sectors;
+			for (int i = 0; i < g_grim->currScene()->getSectorCount(); ++i) {
+				Sector *s = g_grim->currScene()->getSectorBase(i);
+				if (s->type() >= 0x1000) {
+					sectors.push_back(s);
+				}
+			}
+
+			Sector *endSec = NULL;
+			g_grim->currScene()->findClosestSector(_destPos, &endSec, NULL);
+
+			do {
+				PathNode *node = NULL;
+				float cost = -1.f;
+				for (Common::List<PathNode *>::iterator j = openList.begin(); j != openList.end(); ++j) {
+					PathNode *n = *j;
+					float c = n->dist + n->cost;
+					if (cost < 0.f || c < cost) {
+						cost = c;
+						node = n;
+					}
+				}
+				closedList.push_back(node);
+				openList.remove(node);
+				Sector *sector = node->sect;
+
+				if (sector == endSec) {
+					break;
+				}
+
+				for (Common::List<Sector *>::iterator i = sectors.begin(); i != sectors.end(); ++i) {
+					Sector *s = *i;
+					bool inClosed = false;
+					for (Common::List<PathNode *>::iterator j = closedList.begin(); j != closedList.end(); ++j) {
+						if ((*j)->sect == s) {
+							inClosed = true;
+							break;
+						}
+					}
+					if (!inClosed && sector->isAdjacentTo(s)) {
+						PathNode *n = NULL;
+						for (Common::List<PathNode *>::iterator j = openList.begin(); j != openList.end(); ++j) {
+							if ((*j)->sect == s) {
+								n = *j;
+								break;
+							}
+						}
+						if (n) {
+							float newCost = node->cost + (n->pos - node->pos).magnitude();
+							if (newCost < n->cost) {
+								n->cost = newCost;
+								n->parent = node;
+							}
+						} else {
+							n = new PathNode;
+							n->parent = node;
+							n->sect = s;
+							n->pos = (s->closestPoint(_destPos) + s->closestPoint(node->pos)) / 2.;
+							n->dist = (n->pos - _destPos).magnitude();
+							n->cost = node->cost + (n->pos - node->pos).magnitude();
+							openList.push_back(n);
+						}
+					}
+				}
+
+			} while (!openList.empty());
+
+			PathNode *node = closedList.back()->parent;
+			while (node) {
+				_path.push_back(node->pos);
+				node = node->parent;
+			}
+
+			for (Common::List<PathNode *>::iterator j = closedList.begin(); j != closedList.end(); ++j) {
+				delete *j;
+			}
+			for (Common::List<PathNode *>::iterator j = openList.begin(); j != openList.end(); ++j) {
+				delete *j;
+			}
+		}
+
+		_path.push_front(_destPos);
 	}
 }
 
@@ -818,6 +912,50 @@ Costume *Actor::findCostume(const char *n) {
 	return NULL;
 }
 
+void Actor::updateWalk() {
+	if (_path.empty()) {
+		return;
+	}
+
+	if (_turning) {
+		float dy = _destYaw - _yaw;
+		if (dy > 20 || dy < -20)
+			return;
+	}
+
+	Graphics::Vector3d destPos = _path.back();
+	float y = yawTo(destPos);
+	if (y < 0.f) {
+		y += 360.f;
+	}
+	if (_pos.x() != destPos.x() || _pos.y() != destPos.y()) {
+		turnTo(_pitch, y, _roll);
+	}
+
+	Graphics::Vector3d dir = destPos - _pos;
+	float dist = dir.magnitude();
+
+	if (dist > 0)
+		dir /= dist;
+
+	float walkAmt = g_grim->perSecond(_walkRate);
+
+	if (walkAmt >= dist) {
+		_pos = destPos;
+		_path.pop_back();
+		if (_path.empty()) {
+			_walking = false;
+// It seems that we need to allow an already active turning motion to
+// continue or else turning actors away from barriers won't work right
+			_turning = false;
+		}
+	} else {
+		_pos += dir * walkAmt;
+	}
+
+	_walkedCur = true;
+}
+
 void Actor::update() {
 	// Snap actor to walkboxes if following them.  This might be
 	// necessary for example after activating/deactivating
@@ -849,25 +987,7 @@ void Actor::update() {
 	}
 
 	if (_walking) {
-		Graphics::Vector3d dir = _destPos - _pos;
-		float dist = dir.magnitude();
-
-		if (dist > 0)
-			dir /= dist;
-
-		float walkAmt = g_grim->perSecond(_walkRate);
-
-		if (walkAmt >= dist) {
-			_pos = _destPos;
-			_walking = false;
-// It seems that we need to allow an already active turning motion to
-// continue or else turning actors away from barriers won't work right
-//			_turning = false;
-		} else {
-			_pos += dir * walkAmt;
-		}
-
-		_walkedCur = true;
+		updateWalk();
 	}
 
 	// The rest chore might have been stopped because of a

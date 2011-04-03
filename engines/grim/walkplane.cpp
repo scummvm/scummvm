@@ -177,6 +177,26 @@ bool Sector::isPointInSector(Graphics::Vector3d point) const {
 	return true;
 }
 
+bool Sector::isAdjacentTo(Sector *sector) const {
+	int vertices[2] = {-1, -1};
+	Graphics::Vector3d *sectorVertices = sector->getVertices();
+	for (int j = 0; j < _numVertices; ++j) {
+		Graphics::Vector3d &vect = _vertices[j];
+		for (int k = 0; k < sector->getNumVertices(); ++k) {
+			if (vect == sectorVertices[k] && j != vertices[0] && j != vertices[1]) {
+				if (vertices[0] > -1) {
+					vertices[1] = j;
+					return true;
+				} else {
+					vertices[0] = j;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
 Graphics::Vector3d Sector::projectToPlane(Graphics::Vector3d point) const {
 	if (_normal.z() == 0)
 		error("Trying to walk along vertical plane");

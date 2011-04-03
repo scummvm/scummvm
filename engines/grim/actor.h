@@ -171,6 +171,8 @@ public:
 	bool _toClean;
 
 private:
+	void updateWalk();
+
 	Common::String _name;
 	Common::String _setName;    // The actual current set
 
@@ -237,6 +239,16 @@ private:
 
 	int _id;
 	static int s_id;
+
+	// struct used for path finding
+	struct PathNode {
+		Sector *sect;
+		PathNode *parent;
+		Graphics::Vector3d pos;
+		float dist;
+		float cost;
+	};
+	Common::List<Graphics::Vector3d> _path;
 
 	friend class GrimEngine;
 };
