@@ -24,33 +24,32 @@
  */
 
 #include "common/scummsys.h"
+#include <stdio.h>
 
-#if defined(UNIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA)
+#ifdef WEBOS
 
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
+#include "backends/events/webossdl/webossdl-events.h"
 
-int main(int argc, char *argv[]) {
+bool WebOSSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
+	switch (ev.type) {
+		case SDL_KEYDOWN:{
+			if (ev.key.keysym.sym == 231) {
+				printf("metatap down\n");
+				return true;
+			}
+			break;
+		}
+		case SDL_KEYUP: {
+			if (ev.key.keysym.sym == 231) {
+				printf("metatap up\n");
+				return true;
+			}
+			break;
+		}
+	}
 
-	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
-	assert(g_system);
-
-	// Pre initialize the backend
-	((OSystem_POSIX *)g_system)->init();
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-
-	// Free OSystem
-	delete (OSystem_POSIX *)g_system;
-
-	return res;
+	// Invoke parent implementation of this method
+	return SdlEventSource::remapKey(ev, event);
 }
 
 #endif
