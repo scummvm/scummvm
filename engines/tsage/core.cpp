@@ -449,7 +449,7 @@ void ObjectMover3::dispatch() {
 }
 
 void ObjectMover3::startMove(SceneObject *sceneObj, va_list va) {
-	_sceneObject = va_arg(va, SceneObject *);
+	_sceneObject = sceneObj;
 	_destObject = va_arg(va, SceneObject *);
 	_minArea = va_arg(va, int);
 	_action = va_arg(va, Action *);
@@ -996,6 +996,38 @@ bool PlayerMover::sub_F8E5(const Common::Point &pt1, const Common::Point &pt2, c
 
 /*--------------------------------------------------------------------------*/
 
+void PlayerMover2::synchronise(Serialiser &s) {
+	SYNC_POINTER(_destObject);
+	s.syncAsSint16LE(_field7E);
+	s.syncAsSint16LE(_minArea);
+}
+
+void PlayerMover2::dispatch() {
+	int total = _sceneObject->getSpliceArea(_destObject);
+
+	if (total <= _minArea)
+		endMove();
+	else {
+		setDest(_destObject->_position);
+		ObjectMover::dispatch();
+	}
+}
+
+void PlayerMover2::startMove(SceneObject *sceneObj, va_list va) {
+	_sceneObject = sceneObj;
+	_field7E = va_arg(va, int);
+	_minArea = va_arg(va, int);
+	_destObject = va_arg(va, SceneObject *);
+	
+	PlayerMover::setDest(_destObject->_position);
+}
+
+void PlayerMover2::endMove() {
+	_sceneObject->_field6E = 0x40;
+}
+
+/*--------------------------------------------------------------------------*/
+
 PaletteModifier::PaletteModifier() {
 	_scenePalette = NULL;
 	_action = NULL;
@@ -1045,8 +1077,7 @@ void PaletteRotation::signal() {
 	if (_disabled)
 		return;
 
-	bool flag = true;
-	switch (_rotationMode) {
+	bool flag = true;	switch (_rotationMode) {
 	case -1:
 		if (--_currIndex < _start) {
 			flag = decDuration();

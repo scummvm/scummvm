@@ -259,7 +259,7 @@ public:
 };
 
 class PlayerMover: public NpcMover {
-private:
+protected:
 	void setDest(const Common::Point &destPos);
 	void pathfind(Common::Point *routeList, Common::Point srcPos, Common::Point destPos, RouteEnds routeEnds);
 	int regionIndexOf(const Common::Point &pt);
@@ -286,9 +286,16 @@ public:
 
 class PlayerMover2: public PlayerMover {
 public:
-	int _field7A;
+	SceneObject *_destObject;
 	int _field7E;
-	PlayerMover2(): PlayerMover() { _field7A = 0; }
+	int _minArea;
+	PlayerMover2(): PlayerMover() { _destObject = NULL; }
+
+	virtual void synchronise(Serialiser &s);
+	virtual Common::String getClassName() { return "PlayerMover2"; }
+	virtual void dispatch();
+	virtual void startMove(SceneObject *sceneObj, va_list va);
+	virtual void endMove();
 };
 
 /*--------------------------------------------------------------------------*/
