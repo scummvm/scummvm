@@ -157,6 +157,7 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 9300: return new Scene9300();
 	case 9350: return new Scene9350();
 	case 9360: return new Scene9360();
+	case 9400: return new Scene9400();
 	case 9700: return new Scene9700();
 	case 9750: return new Scene9750();
 	case 9999: return new Scene9999();
@@ -325,16 +326,15 @@ void SpeakerGText::setText(const Common::String &msg) {
 	_globals->gfxManager()._font.getStringBounds(msg.c_str(), textRect, _textWidth);
 	textRect.centre(_sceneObject._position.x, _sceneObject._position.y);
 	_textPos.x = textRect.left;
-	setText(msg);
+	Speaker::setText(msg);
 }
 
 void SpeakerGText::removeText() {
 	_sceneObject.remove();
-	removeText();
+	Speaker::removeText();
 }
 
 /*--------------------------------------------------------------------------*/
-
 
 SpeakerPOR::SpeakerPOR() {
 	_speakerName = "POR";
@@ -378,6 +378,38 @@ void SpeakerPOR::setText(const Common::String &msg) {
 	_object3.setPosition(Common::Point(119, 107), 0);
 	_object3.setPriority2(199);
 	_object3.setAction(&_action2);
+
+	Speaker::setText(msg);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerOR::SpeakerOR() {
+	_speakerName = "OR";
+	_newSceneNumber = 9430;
+	_textPos = Common::Point(8, 36);
+	_colour1 = 42;
+	_textWidth = 136;
+}
+
+void SpeakerOR::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(9431);
+	_object1.setStrip2(2);
+	_object1.setPriority2(255);
+	_object1.changeZoom(100);
+	_object1._frame = 1;
+	_object1.setPosition(Common::Point(202, 147), 0);
+	_object1.animate(ANIM_MODE_7, 0, 0);
+
+	_object2.postInit(&_objectList);
+	_object2.setVisage(9431);
+	_object2.setStrip2(1);
+	_object2.setPriority2(255);
+	_object2.setZoom(100);
+	_object2._frame = 1;
+	_object2.setPosition(Common::Point(199, 85), 0);
+	_object2.setAction(&_speakerAction, 0);
 
 	Speaker::setText(msg);
 }

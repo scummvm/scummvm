@@ -58,7 +58,7 @@ class Scene9100: public Scene {
 	public:
 		virtual void doAction(int action);
 	};
-
+public:
 	SequenceManager _sequenceManager;
 	SceneObject _object1;
 	SceneObject _object2;
@@ -84,7 +84,7 @@ class Scene9150: public Scene2 {
 		virtual void signal();
 		virtual void dispatch();
 	};
-
+public:
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
 	SceneObject _object1;
@@ -111,7 +111,7 @@ class Scene9200: public Scene2 {
 	public:
 		virtual void doAction(int action);
 	};
-
+public:
 	SequenceManager _sequenceManager;
 	SceneObject _object1;
 	SceneObject _object2;
@@ -137,6 +137,7 @@ class Scene9200: public Scene2 {
 };
 
 class Scene9300: public Scene {
+public:
 	SequenceManager _sequenceManager;
 	SceneObject _object1;
 	SceneObject _object2;
@@ -160,6 +161,7 @@ class Scene9300: public Scene {
 };
 
 class Scene9350: public Scene2 {
+public:
 	SequenceManager _sequenceManager;
 	Object9350 _object1;
 	SceneObject _object2;
@@ -175,6 +177,7 @@ class Scene9350: public Scene2 {
 };
 
 class Scene9360: public Scene2 {
+public:
 	SequenceManager _sequenceManager;
 	Action _action1;
 	Object9350 _object1;
@@ -186,6 +189,42 @@ class Scene9360: public Scene2 {
 	SceneHotspot_3 _hotspot6;
 	SceneHotspot_3 _hotspot7;
 	SceneHotspot_3 _hotspot8;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
+};
+
+class Scene9400: public Scene2 {
+	class SceneHotspot7: public SceneHotspot_3{
+	public:
+		virtual void doAction(int action);
+	};
+
+	class SceneHotspot8: public SceneHotspot_3{
+	public:
+		virtual void doAction(int action);
+	};
+public:
+	Scene9400();
+	SequenceManager _sequenceManager;
+	Action _action1;
+	SceneObject _object1;
+	SceneObject _object2;
+	SceneObject _object3;
+	SpeakerOText _speakerOText;
+	SpeakerOR _speakerOR;
+	SpeakerQText _speakerQText;
+	SceneHotspot_3 _hotspot1;
+	SceneHotspot_3 _hotspot2;
+	SceneHotspot_3 _hotspot3;
+	SceneHotspot_3 _hotspot4;
+	SceneHotspot_3 _hotspot5;
+	SceneHotspot_3 _hotspot6;
+	SoundHandler _soundHandler;
+	int _field1032;
+	SceneHotspot7 _hotspot7;
+	SceneHotspot8 _hotspot8;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();

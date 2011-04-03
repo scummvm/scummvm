@@ -697,6 +697,124 @@ void Scene9360::postInit(SceneObjectList *OwnerList) {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 9400
+ *
+ *--------------------------------------------------------------------------*/
+Scene9400::Scene9400() {
+	_field1032 = 0;
+}
+
+void Scene9400::SceneHotspot7::doAction(int action) {
+	Scene9400 *scene = (Scene9400 *)_globals->_sceneManager._scene;
+
+	if ((action == CURSOR_USE) && (_globals->_inventory._straw._sceneNumber != 1)) {
+		scene->_sceneState = 1;
+		scene->setAction(&scene->_sequenceManager, scene, 9408, &_globals->_player, 0);
+	} else {
+		SceneHotspot_3::doAction(action);
+	}
+}
+
+void Scene9400::SceneHotspot8::doAction(int action) {
+	Scene9400 *scene = (Scene9400 *)_globals->_sceneManager._scene;
+
+	if (action == CURSOR_TALK) {
+		_globals->_player.disableControl();
+		scene->_sceneState = 2;
+		scene->signal();
+	} else {
+		SceneHotspot_3::doAction(action);
+	}
+}
+
+void Scene9400::signal() {
+	switch (_sceneState ++) {
+	case 0:
+		_object1._numFrames = 6;
+		_stripManager.start(9400, this);
+		break;
+	case 1:
+		_object1._numFrames = 6;
+		_object1.animate(ANIM_MODE_2, 0);
+		_globals->_player.enableControl();
+		break;
+	case 2:
+		_object1.animate(ANIM_MODE_5, this);
+		break;
+	case 3:
+		_stripManager.start(9405, this);
+		break;
+	case 4:
+		_object1.animate(ANIM_MODE_2, this);
+		_globals->_player.enableControl();
+		break;
+	case 9350:
+		_globals->_sceneManager.changeScene(9350);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene9400::dispatch() {
+	if ((_object1._animateMode == 2) && (_object1._strip == 1) && (_object1._frame == 4)){
+		if (_field1032 == 0) {
+			_soundHandler.startSound(296, 0, 127);
+			_field1032 = 1;
+		}
+	} else {
+		_field1032 = 0;
+	}
+	if (_action == 0) {
+		if (_globals->_player._position.y < 120) {
+			_sceneState = 9350;
+			_globals->_player.disableControl();
+			setAction(&_action1);
+			Common::Point pt(-45, 88);
+			NpcMover *mover = new NpcMover();
+			_globals->_player.addMover(mover, &pt, this);
+		}
+	} else {
+		Scene::dispatch();
+	}
+}
+
+void Scene9400::postInit(SceneObjectList *OwnerList) {
+	Scene::postInit();
+	_sceneNumber = 9400;
+	setZoomPercents(0, 100, 200, 100);
+	_globals->_player.postInit();
+	_object1.postInit(0);
+	_object3.postInit(0);
+	_speakerQText._textPos.x = 20;
+
+	_hotspot7.quickInit(157, 66, 180, 110, 9400, 21, 23);
+	_hotspot5.quickInit(130, 133, 152, 198, 9400, 22, -1);
+	_hotspot1.quickInit(33, 280, 69, 297, 9400, 1, 2);
+	_hotspot2.quickInit(73, 96, 87, 159, 9400, 3, 4);
+	_hotspot3.quickInit(89, 253, 111, 305, 9400, 5, 6);
+	_hotspot4.quickInit(46, 0, 116, 35, 9400, 7, 8);
+	_hotspot8.quickInit(58, 169, 122, 200, 9400, 9, 10);
+	_hotspot6.quickInit(0, 0, 199, 319, 9400, 16, 0);
+
+	_stripManager.addSpeaker(&_speakerQText);
+	_stripManager.addSpeaker(&_speakerOR);
+	_stripManager.addSpeaker(&_speakerOText);
+
+	_globals->_events.setCursor(CURSOR_WALK);
+	_globals->_player.disableControl();
+
+	// Useless check (skipped) : if (_globals->_sceneManager._previousScene == 9350)
+	_sceneState = 2;
+	if (!_globals->getFlag(89)) {
+		_globals->setFlag(89);
+		_sceneState = 0;
+	}
+
+	setAction(&_sequenceManager, this, 9400, &_globals->_player, &_object1, &_object3, 0);
+}
+
+/*--------------------------------------------------------------------------
  * Scene 9700
  *
  *--------------------------------------------------------------------------*/

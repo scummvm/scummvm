@@ -131,6 +131,13 @@ public:
 	virtual void setText(const Common::String &msg);
 };	
 
+class SpeakerOR: public AnimatedSpeaker {
+public:
+	SpeakerOR();
+	virtual Common::String getClassName() { return "SpeakerOR"; }
+	virtual void setText(const Common::String &msg);
+};	
+
 class SpeakerOText: public SpeakerGText {
 public:
 	SpeakerOText();
