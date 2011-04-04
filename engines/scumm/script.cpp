@@ -1283,7 +1283,8 @@ void ScummEngine::beginCutscene(int *args) {
 	int scr = _currentScript;
 	vm.slot[scr].cutsceneOverride++;
 
-	if (++vm.cutSceneStackPointer > ARRAYSIZE(vm.cutSceneData))
+	++vm.cutSceneStackPointer;
+	if (vm.cutSceneStackPointer > ARRAYSIZE(vm.cutSceneData))
 		error("Cutscene stack overflow");
 
 	vm.cutSceneData[vm.cutSceneStackPointer] = args[0];
@@ -1313,6 +1314,9 @@ void ScummEngine::endCutscene() {
 
 	vm.cutSceneScript[vm.cutSceneStackPointer] = 0;
 	vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
+
+	if (0 == vm.cutSceneStackPointer)
+		error("Cutscene stack underflow");
 	vm.cutSceneStackPointer--;
 
 	if (VAR(VAR_CUTSCENE_END_SCRIPT))
