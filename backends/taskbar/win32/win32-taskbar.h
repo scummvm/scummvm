@@ -38,8 +38,6 @@ public:
 	Win32TaskbarManager();
 	virtual ~Win32TaskbarManager();
 
-	void init();
-
 	virtual void setOverlayIcon(const Common::String &name, const Common::String &description);
 	virtual void setProgressValue(int completed, int total);
 	virtual void setProgressState(TaskbarProgressState state);

@@ -51,19 +51,7 @@
 const PROPERTYKEY PKEY_Title = { /* fmtid = */ { 0xF29F85E0, 0x4FF9, 0x1068, { 0xAB, 0x91, 0x08, 0x00, 0x2B, 0x27, 0xB3, 0xD9 } }, /* propID = */ 2 };
 
 Win32TaskbarManager::Win32TaskbarManager() {
-	_taskbar = NULL;
-}
-
-Win32TaskbarManager::~Win32TaskbarManager() {
-	if (_taskbar)
-		_taskbar->Release();
-	_taskbar = NULL;
-
-	CoUninitialize();
-}
-
-void Win32TaskbarManager::init() {
-	// Do nothing if not running on Windows 7 of later
+	// Do nothing if not running on Windows 7 or later
 	if (!isWin7OrLater())
 		return;
 
@@ -71,10 +59,10 @@ void Win32TaskbarManager::init() {
 
 	// Try creating instance (on fail, _taskbar will contain NULL)
 	HRESULT hr = CoCreateInstance(CLSID_TaskbarList,
-								  0,
-								  CLSCTX_INPROC_SERVER,
-								  IID_ITaskbarList3,
-								  reinterpret_cast<void**> (&(_taskbar)));
+	                              0,
+	                              CLSCTX_INPROC_SERVER,
+	                              IID_ITaskbarList3,
+	                              reinterpret_cast<void**> (&(_taskbar)));
 
 	if (SUCCEEDED(hr)) {
 		// Initialize taskbar object
@@ -85,6 +73,14 @@ void Win32TaskbarManager::init() {
 	} else {
 		warning("[Win32TaskbarManager::init] Cannot create taskbar instance");
 	}
+}
+
+Win32TaskbarManager::~Win32TaskbarManager() {
+	if (_taskbar)
+		_taskbar->Release();
+	_taskbar = NULL;
+
+	CoUninitialize();
 }
 
 void Win32TaskbarManager::setOverlayIcon(const Common::String &name, const Common::String &description) {
