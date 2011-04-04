@@ -32,27 +32,31 @@
 #include "common/textconsole.h"
 
 UnityTaskbarManager::UnityTaskbarManager() {
-    g_type_init();
+	g_type_init();
 
-    _launcher = unity_launcher_entry_get_for_desktop_id("scummvm.desktop");
+	_loop = g_main_loop_new(NULL, FALSE);
+
+	_launcher = unity_launcher_entry_get_for_desktop_id("scummvm.desktop");
 }
 
 UnityTaskbarManager::~UnityTaskbarManager() {
+	g_main_loop_unref(_loop);
+	_loop = NULL;
 }
 
 void UnityTaskbarManager::setOverlayIcon(const Common::String &name, const Common::String &description) {
 	if (_launcher == NULL)
-        return;
+		return;
 
 	warning("[UnityTaskbarManager::setOverlayIcon] Not implemented");
 }
 
 void UnityTaskbarManager::setProgressValue(int completed, int total) {
-    if (_launcher == NULL)
-            return;
+	if (_launcher == NULL)
+		return;
 
-    double percentage = (double)completed / (double)total;
-    unity_launcher_entry_set_progress(_launcher, percentage);
+	double percentage = (double)completed / (double)total;
+	unity_launcher_entry_set_progress(_launcher, percentage);
 	unity_launcher_entry_set_progress_visible(_launcher, TRUE);
 }
 
@@ -82,6 +86,23 @@ void UnityTaskbarManager::setProgressState(TaskbarProgressState state) {
 
 void UnityTaskbarManager::addRecent(const Common::String &name, const Common::String &description) {
 	warning("[UnityTaskbarManager::addRecent] Not implemented");
+}
+
+// Unity requires the glib event loop to the run to function properly
+// as events are sent asynchronously
+bool UnityTaskbarManager::pollEvent(Common::Event &event) {
+	if (!_loop)
+		return false;
+
+	// Get context
+	GMainContext *context = g_main_loop_get_context(_loop);
+	if (!context)
+		return false;
+
+	// Dispatch events
+	g_main_context_iteration(context, FALSE);
+
+	return false;
 }
 
 #endif

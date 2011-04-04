@@ -28,13 +28,13 @@
 // Needed for taskbar functions
 #if defined(__GNUC__)
 #ifdef __MINGW32__
-    #include "backends/taskbar/win32/mingw-compat.h"
+	#include "backends/taskbar/win32/mingw-compat.h"
 #else
-    #error Only compilation with MingW is supported
+	#error Only compilation with MingW is supported
 #endif
 #else
-    // Default MSVC headers for ITaskbarList3 and IShellLink
-    #include <SDKDDKVer.h>
+	// Default MSVC headers for ITaskbarList3 and IShellLink
+	#include <SDKDDKVer.h>
 #endif
 #include <shlobj.h>
 
@@ -71,10 +71,10 @@ void Win32TaskbarManager::init() {
 
 	// Try creating instance (on fail, _taskbar will contain NULL)
 	HRESULT hr = CoCreateInstance(CLSID_TaskbarList,
-	                              0,
-	                              CLSCTX_INPROC_SERVER,
-	                              IID_ITaskbarList3,
-	                              reinterpret_cast<void**> (&(_taskbar)));
+								  0,
+								  CLSCTX_INPROC_SERVER,
+								  IID_ITaskbarList3,
+								  reinterpret_cast<void**> (&(_taskbar)));
 
 	if (SUCCEEDED(hr)) {
 		// Initialize taskbar object
@@ -105,8 +105,8 @@ void Win32TaskbarManager::setOverlayIcon(const Common::String &name, const Commo
 
 	HICON pIcon = (HICON)::LoadImage(NULL, path.c_str(), IMAGE_ICON, 16, 16, LR_LOADFROMFILE);
 	if (!pIcon) {
-	    warning("[Win32TaskbarManager::setOverlayIcon] Cannot load icon!");
-	    return;
+		warning("[Win32TaskbarManager::setOverlayIcon] Cannot load icon!");
+		return;
 	}
 
 	// Sets the overlay icon
@@ -206,18 +206,18 @@ Common::String Win32TaskbarManager::getIconPath(Common::String target) {
 }
 
 bool Win32TaskbarManager::isWin7OrLater() {
-   OSVERSIONINFOEX versionInfo;
-   DWORDLONG conditionMask = 0;
+	OSVERSIONINFOEX versionInfo;
+	DWORDLONG conditionMask = 0;
 
-   ZeroMemory(&versionInfo, sizeof(OSVERSIONINFOEX));
-   versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-   versionInfo.dwMajorVersion = 6;
-   versionInfo.dwMinorVersion = 1;
+	ZeroMemory(&versionInfo, sizeof(OSVERSIONINFOEX));
+	versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+	versionInfo.dwMajorVersion = 6;
+	versionInfo.dwMinorVersion = 1;
 
-   VER_SET_CONDITION(conditionMask, VER_MAJORVERSION, VER_GREATER_EQUAL);
-   VER_SET_CONDITION(conditionMask, VER_MINORVERSION, VER_GREATER_EQUAL);
+	VER_SET_CONDITION(conditionMask, VER_MAJORVERSION, VER_GREATER_EQUAL);
+	VER_SET_CONDITION(conditionMask, VER_MINORVERSION, VER_GREATER_EQUAL);
 
-   return VerifyVersionInfo(&versionInfo, VER_MAJORVERSION | VER_MINORVERSION, conditionMask);
+	return VerifyVersionInfo(&versionInfo, VER_MAJORVERSION | VER_MINORVERSION, conditionMask);
 }
 
 LPWSTR Win32TaskbarManager::ansiToUnicode(const char *s) {

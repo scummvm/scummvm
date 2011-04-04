@@ -28,12 +28,13 @@
 
 #if defined(UNIX) && defined(USE_TASKBAR)
 
+#include "common/events.h"
 #include "common/str.h"
 #include "common/taskbar.h"
 
 #include <unity.h>
 
-class UnityTaskbarManager : public Common::TaskbarManager {
+class UnityTaskbarManager : public Common::TaskbarManager, public Common::EventSource {
 public:
 	UnityTaskbarManager();
 	virtual ~UnityTaskbarManager();
@@ -43,7 +44,11 @@ public:
 	virtual void setProgressState(TaskbarProgressState state);
 	virtual void addRecent(const Common::String &name, const Common::String &description);
 
+	// Implementation of the EventSource interface
+        virtual bool pollEvent(Common::Event &event);
+
 private:
+	GMainLoop          *_loop;
 	UnityLauncherEntry *_launcher;
 };
 

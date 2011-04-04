@@ -51,8 +51,8 @@ void OSystem_POSIX::init() {
 	_fsFactory = new POSIXFilesystemFactory();
 
 #if defined(USE_TASKBAR)
-	// Initialize taskbar manager	
-	_taskbarManager = new UnityTaskbarManager();	
+	// Initialize taskbar manager
+	_taskbarManager = new UnityTaskbarManager();
 #endif
 
 	// Invoke parent implementation of this method
@@ -66,6 +66,11 @@ void OSystem_POSIX::initBackend() {
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();
+
+#if defined(USE_TASKBAR)
+	// Register the taskbar manager as an event source (this is necessary for the glib event loop to be run)
+	_eventManager->getEventDispatcher()->registerSource((UnityTaskbarManager *)_taskbarManager, false);
+#endif
 }
 
 bool OSystem_POSIX::hasFeature(Feature f) {
