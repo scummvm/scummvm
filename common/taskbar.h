@@ -32,7 +32,7 @@ namespace Common {
 class TaskbarManager {
 public:
 	/**
-	 * 	Values representing the taskbar progress state
+	 * Values representing the taskbar progress state
 	 */
 	enum TaskbarProgressState {
 		kTaskbarNoProgress = 0,
@@ -46,51 +46,61 @@ public:
 	virtual ~TaskbarManager() {}
 
 	/**
-	 * Sets an overlay icon on the taskbar icon.
+	 * Sets an overlay icon on the taskbar icon
 	 *
 	 * When an empty name is given, no icon is shown
 	 * and the current overlay icon (if any) is removed
 	 *
-	 * @param	name        Path to the icon
-	 * @param	description The description
+	 * @param  name         Path to the icon
+	 * @param  description  The description
 	 *
 	 * @note on Windows, the icon should be an ICO file
 	 */
-	 virtual void setOverlayIcon(const String &name, const String &description) {}
+	virtual void setOverlayIcon(const String &name, const String &description) {}
 
-    /**
-     * Sets a progress value on the taskbar icon
-     *
-     * @param	completed	The current progress value.
-     * @param	total	 	The maximum progress value.
-     */
-    virtual void setProgressValue(int completed, int total) {}
+	/**
+	 * Sets a progress value on the taskbar icon
+	 *
+	 * @param  completed  The current progress value.
+	 * @param  total      The maximum progress value.
+	 */
+	virtual void setProgressValue(int completed, int total) {}
 
-    /**
-     * Sets the progress state on the taskbar icon
-     *
-     * 	State can be any of the following:
-	 * 	 - NoProgress: disable display of progress state
+	/**
+	 * Sets the progress state on the taskbar icon
+	 *
+	 * State can be any of the following:
+	 *   - NoProgress: disable display of progress state
 	 *   - Indeterminate
 	 *   - Normal
 	 *   - Error
 	 *   - Paused
-     *
-     * @param	state	The progress state
-     */
-     virtual void setProgressState(TaskbarProgressState state) {}
+	 *
+	 * @param  state    The progress state
+	 */
+	virtual void setProgressState(TaskbarProgressState state) {}
 
-	 /**
-	  * Adds an engine to the recent items list
-	  *
-	  * Path is automatically set to the current executable path,
-	  * an icon name is generated (with fallback to default icon)
-	  * and the command line is set to start the engine on click.
-	  *
-	  * @param	name	   	The target name.
-	  * @param	description	The description.
-	  */
-	 virtual void addRecent(const String &name, const String &description) {}
+	/**
+	 * Sets the count number associated with the icon as an overlay
+	 *
+	 * @param  count    The count
+	 *
+	 * @note Setting a count of 0 will hide the count
+	 */
+	virtual void setCount(int count) {}
+
+	/**
+	 * Adds an engine to the recent items list
+	 *
+	 * Path is automatically set to the current executable path,
+	 * an icon name is generated (with fallback to default icon)
+	 * and the command line is set to start the engine on click.
+	 *
+	 * @param  name         The target name.
+	 * @param  description  The description.
+	 */
+	virtual void addRecent(const String &name, const String &description) {}
+
 };
 
 }	// End of namespace Common

@@ -88,6 +88,15 @@ void UnityTaskbarManager::addRecent(const Common::String &name, const Common::St
 	warning("[UnityTaskbarManager::addRecent] Not implemented");
 }
 
+void UnityTaskbarManager::setCount(int count) {
+	if (_launcher == NULL)
+		return;
+
+	unity_launcher_entry_set_count(_launcher, count);
+
+	unity_launcher_entry_set_count_visible(_launcher, (count == 0) ? FALSE : TRUE);
+}
+
 // Unity requires the glib event loop to the run to function properly
 // as events are sent asynchronously
 bool UnityTaskbarManager::pollEvent(Common::Event &event) {

@@ -71,14 +71,14 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	// The dir we start our scan at
 	_scanStack.push(startDir);
 
-//	Removed for now... Why would you put a title on mass add dialog called "Mass Add Dialog"?
-//	new StaticTextWidget(this, "massadddialog_caption",	"Mass Add Dialog");
+	// Removed for now... Why would you put a title on mass add dialog called "Mass Add Dialog"?
+	// new StaticTextWidget(this, "massadddialog_caption", "Mass Add Dialog");
 
 	_dirProgressText = new StaticTextWidget(this, "MassAdd.DirProgressText",
-											_("... progress ..."));
+	                                       _("... progress ..."));
 
 	_gameProgressText = new StaticTextWidget(this, "MassAdd.GameProgressText",
-											 _("... progress ..."));
+	                                         _("... progress ..."));
 
 	_dirProgressText->setAlign(Graphics::kTextAlignCenter);
 	_gameProgressText->setAlign(Graphics::kTextAlignCenter);
@@ -132,8 +132,9 @@ struct GameDescLess {
 
 
 void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	// Remove progress bar from taskbar
+	// Remove progress bar and count from taskbar
 	g_system->getTaskbarManager()->setProgressState(Common::TaskbarManager::kTaskbarNoProgress);
+	g_system->getTaskbarManager()->setCount(0);
 
 	// FIXME: It's a really bad thing that we use two arbitrary constants
 	if (cmd == kOkCmd) {
@@ -239,6 +240,7 @@ void MassAddDialog::handleTickle() {
 		_dirsScanned++;
 
 		g_system->getTaskbarManager()->setProgressValue(_dirsScanned, _dirTotal);
+		g_system->getTaskbarManager()->setCount(_games.size());
 	}
 
 
