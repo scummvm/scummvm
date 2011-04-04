@@ -904,6 +904,7 @@ class FloatSet {
 public:
 	double _float1, _float2, _float3, _float4;
 
+	FloatSet() { _float1 = _float2 = _float3 = _float4 = 0; }
 	void add(double v1, double v2, double v3);
 	void proc1(double v);
 	double sqrt(FloatSet &floatSet);

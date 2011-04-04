@@ -538,11 +538,15 @@ public:
 	SceneText _sceneText;
 	SceneItem _item1;
 
-	int _field_30A, _field_30C, _field_30E, _field_310;
+	int _turnAmount, _angle, _field_30E, _fadePercent;
 	int _field_312, _field_314;
 	Object *_objList[4];
+	bool _msgActive;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void process(Event &event);
+	virtual void dispatch();
 	void showMessage(const Common::String &msg, int colour, Action *action);
 
 };
