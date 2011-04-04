@@ -1717,7 +1717,26 @@ static void PutActorAtInterest() {
 	if (!g_grim->currScene())
 		return;
 
-	actor->setPos(g_grim->currScene()->_currSetup->_interest);
+	Graphics::Vector3d p = g_grim->currScene()->_currSetup->_interest;
+	Graphics::Vector3d resultPt = p;
+	float minDist = -1.f;
+
+	for (int i = 0; i < g_grim->currScene()->getSectorCount(); ++i) {
+		Sector *sector = g_grim->currScene()->getSectorBase(i);
+		if (sector->type() != 0x1000 || !sector->visible())
+			continue;
+
+		Graphics::Vector3d closestPt = sector->closestPoint(p);
+		if (g_grim->currScene()->findPointSector(closestPt, 0x8000))
+			continue;
+		float thisDist = (closestPt - p).magnitude();
+		if (minDist < 0 || thisDist < minDist) {
+			resultPt = closestPt;
+			minDist = thisDist;
+		}
+	}
+
+	actor->setPos(resultPt);
 }
 
 static void SetActorFollowBoxes() {
