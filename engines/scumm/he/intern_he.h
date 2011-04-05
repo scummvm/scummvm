@@ -67,6 +67,8 @@ public:
 	ScummEngine_v60he(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v60he();
 
+	virtual Common::String generateFilename(const int room) const;
+
 	virtual void resetScumm();
 
 protected:

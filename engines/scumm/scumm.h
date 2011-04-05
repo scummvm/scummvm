@@ -613,7 +613,7 @@ public:
 
 	FilenamePattern _filenamePattern;
 
-	Common::String generateFilename(const int room) const;
+	virtual Common::String generateFilename(const int room) const;
 
 protected:
 	Common::KeyState _keyPressed;
