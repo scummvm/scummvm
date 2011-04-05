@@ -319,6 +319,9 @@ void ScummEngine::runScriptNested(int script) {
 
 	updateScriptPtr();
 
+	if (vm.numNestedScripts >= kMaxScriptNesting)
+		error("Too many nested scripts");
+
 	nest = &vm.nest[vm.numNestedScripts];
 
 	if (_currentScript == 0xFF) {
@@ -333,9 +336,6 @@ void ScummEngine::runScriptNested(int script) {
 	}
 
 	vm.numNestedScripts++;
-
-	if (vm.numNestedScripts > ARRAYSIZE(vm.nest))
-		error("Too many nested scripts");
 
 	_currentScript = script;
 	getScriptBaseAddress();
@@ -1284,7 +1284,7 @@ void ScummEngine::beginCutscene(int *args) {
 	vm.slot[scr].cutsceneOverride++;
 
 	++vm.cutSceneStackPointer;
-	if (vm.cutSceneStackPointer > ARRAYSIZE(vm.cutSceneData))
+	if (vm.cutSceneStackPointer >= kMaxCutsceneNum)
 		error("Cutscene stack overflow");
 
 	vm.cutSceneData[vm.cutSceneStackPointer] = args[0];
@@ -1325,7 +1325,7 @@ void ScummEngine::endCutscene() {
 
 void ScummEngine::abortCutscene() {
 	const int idx = vm.cutSceneStackPointer;
-	assert(0 <= idx && idx < 5);
+	assert(0 <= idx && idx < kMaxCutsceneNum);
 
 	uint32 offs = vm.cutScenePtr[idx];
 	if (offs) {
@@ -1344,7 +1344,7 @@ void ScummEngine::abortCutscene() {
 
 void ScummEngine::beginOverride() {
 	const int idx = vm.cutSceneStackPointer;
-	assert(0 <= idx && idx < 5);
+	assert(0 <= idx && idx < kMaxCutsceneNum);
 
 	vm.cutScenePtr[idx] = _scriptPointer - _scriptOrgPointer;
 	vm.cutSceneScript[idx] = _currentScript;
@@ -1361,7 +1361,7 @@ void ScummEngine::beginOverride() {
 
 void ScummEngine::endOverride() {
 	const int idx = vm.cutSceneStackPointer;
-	assert(0 <= idx && idx < 5);
+	assert(0 <= idx && idx < kMaxCutsceneNum);
 
 	vm.cutScenePtr[idx] = 0;
 	vm.cutSceneScript[idx] = 0;
