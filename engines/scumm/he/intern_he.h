@@ -113,6 +113,7 @@ class ScummEngine_v70he : public ScummEngine_v60he {
 protected:
 	ResExtractor *_resExtractor;
 
+	byte *_heV7DiskOffsets;
 	byte *_heV7RoomOffsets;
 
 	int32 _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndSoundFreq;
@@ -123,6 +124,8 @@ protected:
 public:
 	ScummEngine_v70he(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v70he();
+
+	virtual Common::String generateFilename(const int room) const;
 
 	void restoreBackgroundHE(Common::Rect rect, int dirtybit = 0);
 

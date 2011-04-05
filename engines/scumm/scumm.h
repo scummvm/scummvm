@@ -773,7 +773,6 @@ public:
 protected:
 	int _resourceHeaderSize;
 	byte _resourceMapper[128];
-	byte *_heV7DiskOffsets;
 	uint32 *_heV7RoomIntOffsets;
 	const byte *_resourceLastSearchBuf; // FIXME: need to put it to savefile?
 	uint32 _resourceLastSearchSize;    // FIXME: need to put it to savefile?

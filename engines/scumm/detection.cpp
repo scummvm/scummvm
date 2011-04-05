@@ -108,7 +108,44 @@ Common::String ScummEngine_v60he::generateFilename(const int room) const {
 	case kGenHEPC:
 		if (room < 0) {
 			id = '0' - room;
-		} else if (_game.heversion >= 98) {
+		} else {
+			const int diskNumber = (room > 0) ? _res->roomno[rtRoom][room] : 0;
+			id = diskNumber + '0';
+		}
+
+		if (_filenamePattern.genMethod == kGenHEPC) {
+			snprintf(buf, sizeof(buf), "%s.he%c", _filenamePattern.pattern, id);
+		} else {
+			if (id == '3') { // special case for cursors
+				// For mac they're stored in game binary
+				strncpy(buf, _filenamePattern.pattern, sizeof(buf));
+			} else {
+				if (_filenamePattern.genMethod == kGenHEMac)
+					snprintf(buf, sizeof(buf), "%s (%c)", _filenamePattern.pattern, id);
+				else
+					snprintf(buf, sizeof(buf), "%s %c", _filenamePattern.pattern, id);
+			}
+		}
+
+		break;
+
+	default:
+		// Fallback to parent method
+		return ScummEngine::generateFilename(room);
+	}
+
+	return buf;
+}
+
+Common::String ScummEngine_v70he::generateFilename(const int room) const {
+	char buf[128];
+	char id = 0;
+
+	switch (_filenamePattern.genMethod) {
+	case kGenHEMac:
+	case kGenHEMacNoParens:
+	case kGenHEPC:
+		if (_game.heversion >= 98 && room >= 0) {
 			int disk = 0;
 			if (_heV7DiskOffsets)
 				disk = _heV7DiskOffsets[room];
@@ -132,11 +169,10 @@ Common::String ScummEngine_v60he::generateFilename(const int room) const {
 				id = '0';
 				snprintf(buf, sizeof(buf), "%s.he0", _filenamePattern.pattern);
 			}
-		} else if (_game.heversion >= 70) {
-			id = (room == 0) ? '0' : '1';
+		} else if (room < 0) {
+			id = '0' - room;
 		} else {
-			const int diskNumber = (room > 0) ? _res->roomno[rtRoom][room] : 0;
-			id = diskNumber + '0';
+			id = (room == 0) ? '0' : '1';
 		}
 
 		if (_filenamePattern.genMethod == kGenHEPC) {
@@ -158,8 +194,8 @@ Common::String ScummEngine_v60he::generateFilename(const int room) const {
 		break;
 
 	default:
-		// Fallback to original method
-		return ScummEngine::generateFilename(room);
+		// Fallback to parent method
+		return ScummEngine_v60he::generateFilename(room);
 	}
 
 	return buf;

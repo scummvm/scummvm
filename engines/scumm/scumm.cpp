@@ -201,7 +201,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_bootParam = 0;
 	_dumpScripts = false;
 	_debugMode = 0;
-	_heV7DiskOffsets = NULL;
 	_heV7RoomIntOffsets = NULL;
 	_objectOwnerTable = NULL;
 	_objectRoomTable = NULL;
@@ -788,6 +787,7 @@ ScummEngine_v70he::ScummEngine_v70he(OSystem *syst, const DetectorResult &dr)
 	else
 		_resExtractor = new Win32ResExtractor(this);
 
+	_heV7DiskOffsets = NULL;
 	_heV7RoomOffsets = NULL;
 
 	_heSndSoundId = 0;
