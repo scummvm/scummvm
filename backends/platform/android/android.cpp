@@ -133,19 +133,19 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_touchpad_scale(66),
 	_dpad_scale(4),
 	_trackball_scale(2) {
-	Common::String fp = getSystemProperty("ro.build.fingerprint");
+	Common::String mf = getSystemProperty("ro.product.manufacturer");
 
 	LOGI("Running on: [%s] [%s] [%s] [%s] [%s] SDK:%s ABI:%s",
-			getSystemProperty("ro.product.manufacturer").c_str(),
+			mf.c_str(),
 			getSystemProperty("ro.product.model").c_str(),
 			getSystemProperty("ro.product.brand").c_str(),
-			fp.c_str(),
+			getSystemProperty("ro.build.fingerprint").c_str(),
 			getSystemProperty("ro.build.display.id").c_str(),
 			getSystemProperty("ro.build.version.sdk").c_str(),
 			getSystemProperty("ro.product.cpu.abi").c_str());
 
-	fp.toLowercase();
-	_htc_fail = fp.contains("htc");
+	mf.toLowercase();
+	_htc_fail = mf.contains("htc");
 
 	if (_htc_fail)
 		LOGI("Enabling HTC workaround");
