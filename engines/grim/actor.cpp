@@ -511,7 +511,7 @@ void Actor::walkTo(Graphics::Vector3d p) {
 							n = new PathNode;
 							n->parent = node;
 							n->sect = s;
-							n->pos = (s->closestPoint(_destPos) + s->closestPoint(node->pos)) / 2.;
+							n->pos = (s->closestPoint(_destPos) + s->closestPoint(node->pos)) / 2.f;
 							n->dist = (n->pos - _destPos).magnitude();
 							n->cost = node->cost + (n->pos - node->pos).magnitude();
 							openList.push_back(n);

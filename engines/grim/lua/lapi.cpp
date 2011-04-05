@@ -222,9 +222,9 @@ int32 lua_isfunction(lua_Object o) {
 
 float lua_getnumber(lua_Object object) {
 	if (object == LUA_NOOBJECT)
-		return 0.0;
+		return 0.0f;
 	if (tonumber(Address(object)))
-		return 0.0;
+		return 0.0f;
 	else
 		return (nvalue(Address(object)));
 }

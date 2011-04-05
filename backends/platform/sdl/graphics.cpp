@@ -225,11 +225,11 @@ void OSystem_SDL::updateScreen() {
 					glBegin(GL_QUADS);
 					glTexCoord2f(0, 0);
 					glVertex2i(x, y);
-					glTexCoord2f(1.0, 0.0);
+					glTexCoord2f(1.0f, 0.0f);
 					glVertex2i(x + BITMAP_TEXTURE_SIZE, y);
-					glTexCoord2f(1.0, 1.0);
+					glTexCoord2f(1.0f, 1.0f);
 					glVertex2i(x + BITMAP_TEXTURE_SIZE, y + BITMAP_TEXTURE_SIZE);
-					glTexCoord2f(0.0, 1.0);
+					glTexCoord2f(0.0f, 1.0f);
 					glVertex2i(x, y + BITMAP_TEXTURE_SIZE);
 					glEnd();
 					curTexIdx++;

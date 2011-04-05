@@ -82,19 +82,19 @@ static void lookAt(TGLfloat eyex, TGLfloat eyey, TGLfloat eyez, TGLfloat centerx
 	M(0, 0) = x[0];
 	M(0, 1) = x[1];
 	M(0, 2) = x[2];
-	M(0, 3) = 0.0;
+	M(0, 3) = 0.0f;
 	M(1, 0) = y[0];
 	M(1, 1) = y[1];
 	M(1, 2) = y[2];
-	M(1, 3) = 0.0;
+	M(1, 3) = 0.0f;
 	M(2, 0) = z[0];
 	M(2, 1) = z[1];
 	M(2, 2) = z[2];
-	M(2, 3) = 0.0;
-	M(3, 0) = 0.0;
-	M(3, 1) = 0.0;
-	M(3, 2) = 0.0;
-	M(3, 3) = 1.0;
+	M(2, 3) = 0.0f;
+	M(3, 0) = 0.0f;
+	M(3, 1) = 0.0f;
+	M(3, 2) = 0.0f;
+	M(3, 3) = 1.0f;
 #undef M
 	tglMultMatrixf(m);
 
@@ -117,7 +117,7 @@ TGLint tgluProject(TGLfloat objx, TGLfloat objy, TGLfloat objz, const TGLfloat m
 	in[0] = objx;
 	in[1] = objy;
 	in[2] = objz;
-	in[3] = 1.0;
+	in[3] = 1.0f;
 	transformPoint(out, model, in);
 	transformPoint(in, proj, out);
 
@@ -772,8 +772,8 @@ Bitmap *GfxTinyGL::getScreenshot(int w, int h) {
 		}
 	}
 
-	float step_x = 640.0 / w;
-	float step_y = 480.0 / h;
+	float step_x = 640.0f / w;
+	float step_y = 480.0f / h;
 	step = 0;
 	for (float y = 0; y < 479; y += step_y) {
 		for (float x = 0; x < 639; x += step_x) {

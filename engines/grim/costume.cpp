@@ -488,7 +488,7 @@ void KeyframeComponent::update() {
 					warning("Unknown repeat mode %d for keyframe %s", _repeatMode, _keyf->filename());
 		}
 	}
-	_keyf->animate(_hier, _currTime / 1000.0, _priority1, _priority2);
+	_keyf->animate(_hier, _currTime / 1000.0f, _priority1, _priority2);
 }
 
 void KeyframeComponent::init() {
@@ -1040,7 +1040,7 @@ void Costume::moveHead() {
 	if (_joint1Node) {
 		float step = g_grim->perSecond(_lookAtRate);
 		float yawStep = step;
-		float pitchStep = step / 3.;
+		float pitchStep = step / 3.f;
 		if (_lookAt.isZero()) {
 			//animate yaw
 			if (_headYaw > yawStep) {
@@ -1063,7 +1063,7 @@ void Costume::moveHead() {
 			_joint1Node->_animPitch = pi * _joint1Node->_totalWeight + _joint1Node->_animPitch;
 			_joint2Node->_animPitch = pi * _joint2Node->_totalWeight + _joint2Node->_animPitch;
 			_joint3Node->_animPitch = pi * _joint3Node->_totalWeight + _joint3Node->_animPitch;
-			_joint1Node->_animRoll = (_joint1Node->_animYaw / _joint1Node->_totalWeight / 20.) * -_headPitch / 5.;
+			_joint1Node->_animRoll = (_joint1Node->_animYaw / _joint1Node->_totalWeight / 20.f) * -_headPitch / 5.f;
 
 			if (_joint1Node->_animRoll > _head.maxRoll)
 				_joint1Node->_animRoll = _head.maxRoll;
@@ -1139,9 +1139,9 @@ void Costume::moveHead() {
 			pitch = -_head.maxPitch;
 
 		if ((_joint1Node->_animYaw > 0 && pitch < 0) || (_joint1Node->_animYaw < 0 && pitch > 0)) {
-			pitch += _joint1Node->_animYaw / _joint1Node->_totalWeight / 10.;
+			pitch += _joint1Node->_animYaw / _joint1Node->_totalWeight / 10.f;
 		} else {
-			pitch -= _joint1Node->_animYaw / _joint1Node->_totalWeight / 10.;
+			pitch -= _joint1Node->_animYaw / _joint1Node->_totalWeight / 10.f;
 		}
 
 		//animate pitch
@@ -1161,7 +1161,7 @@ void Costume::moveHead() {
 		if (_headYaw - _joint1Node->_animYaw > yawStep)
 			_joint1Node->_animYaw = _headYaw - yawStep;
 
-		_joint1Node->_animRoll = (_joint1Node->_animYaw / _joint1Node->_totalWeight / 20.) * -pitch / 5.;
+		_joint1Node->_animRoll = (_joint1Node->_animYaw / _joint1Node->_totalWeight / 20.f) * -pitch / 5.f;
 
 		if (_joint1Node->_animRoll > _head.maxRoll)
 			_joint1Node->_animRoll = _head.maxRoll;

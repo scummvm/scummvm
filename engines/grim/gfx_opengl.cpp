@@ -179,10 +179,10 @@ void GfxOpenGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, in
 		return;
 	}
 
-	GLfloat top = 1000;
-	GLfloat right = -1000;
-	GLfloat left = 1000;
-	GLfloat bottom = -1000;
+	GLdouble top = 1000;
+	GLdouble right = -1000;
+	GLdouble left = 1000;
+	GLdouble bottom = -1000;
 	GLdouble winX, winY, winZ;
 
 	for (int i = 0; i < model->_numFaces; i++) {
@@ -214,7 +214,7 @@ void GfxOpenGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, in
 		}
 	}
 
-	float t = bottom;
+	double t = bottom;
 	bottom = 480 - top;
 	top = 480 - t;
 
@@ -257,7 +257,7 @@ void GfxOpenGL::startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, f
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
 		//glColor3f(0.0f, 1.0f, 0.0f);
-		glColor3f(_shadowColorR / 255.0, _shadowColorG / 255.0, _shadowColorB / 255.0);
+		glColor3f(_shadowColorR / 255.0f, _shadowColorG / 255.0f, _shadowColorB / 255.0f);
 		glShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
 	glTranslatef(pos.x(), pos.y(), pos.z());
@@ -271,7 +271,7 @@ void GfxOpenGL::finishActorDraw() {
 	glDisable(GL_TEXTURE_2D);
 	if (_currentShadowArray) {
 		glEnable(GL_LIGHTING);
-		glColor3f(1.0, 1.0, 1.0);
+		glColor3f(1.0f, 1.0f, 1.0f);
 		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 }
@@ -557,13 +557,13 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap) {
 				textures = (GLuint *)bitmap->_texIds;
 				glBindTexture(GL_TEXTURE_2D, textures[cur_tex_idx]);
 				glBegin(GL_QUADS);
-				glTexCoord2f(0.0, 0.0);
+				glTexCoord2f(0.0f, 0.0f);
 				glVertex2i(x, y);
-				glTexCoord2f(1.0, 0.0);
+				glTexCoord2f(1.0f, 0.0f);
 				glVertex2i(x + BITMAP_TEXTURE_SIZE, y);
-				glTexCoord2f(1.0, 1.0);
+				glTexCoord2f(1.0f, 1.0f);
 				glVertex2i(x + BITMAP_TEXTURE_SIZE, y + BITMAP_TEXTURE_SIZE);
-				glTexCoord2f(0.0, 1.0);
+				glTexCoord2f(0.0f, 1.0f);
 				glVertex2i(x, y + BITMAP_TEXTURE_SIZE);
 				glEnd();
 				cur_tex_idx++;
@@ -737,11 +737,11 @@ void GfxOpenGL::drawSmushFrame(int offsetX, int offsetY) {
 			glBegin(GL_QUADS);
 			glTexCoord2f(0, 0);
 			glVertex2i(x + offsetX, y + offsetY);
-			glTexCoord2f(1.0, 0.0);
+			glTexCoord2f(1.0f, 0.0f);
 			glVertex2i(x + offsetX + BITMAP_TEXTURE_SIZE, y + offsetY);
-			glTexCoord2f(1.0, 1.0);
+			glTexCoord2f(1.0f, 1.0f);
 			glVertex2i(x + offsetX + BITMAP_TEXTURE_SIZE, y + offsetY + BITMAP_TEXTURE_SIZE);
-			glTexCoord2f(0.0, 1.0);
+			glTexCoord2f(0.0f, 1.0f);
 			glVertex2i(x + offsetX, y + offsetY + BITMAP_TEXTURE_SIZE);
 			glEnd();
 			curTexIdx++;
@@ -890,13 +890,13 @@ void GfxOpenGL::drawTextBitmap(int x, int y, TextObjectHandle *handle) {
 			GLuint *textures = (GLuint *)handle->texIds;
 			glBindTexture(GL_TEXTURE_2D, textures[curTexIdx]);
 			glBegin(GL_QUADS);
-			glTexCoord2f(0.0, 0.0);
+			glTexCoord2f(0.0f, 0.0f);
 			glVertex2i(t_x + x, t_y + y);
-			glTexCoord2f(1.0, 0.0);
+			glTexCoord2f(1.0f, 0.0f);
 			glVertex2i(t_x + x + BITMAP_TEXTURE_SIZE, y + t_y);
-			glTexCoord2f(1.0, 1.0);
+			glTexCoord2f(1.0f, 1.0f);
 			glVertex2i(t_x + x + BITMAP_TEXTURE_SIZE, y + t_y + BITMAP_TEXTURE_SIZE);
-			glTexCoord2f(0.0, 1.0);
+			glTexCoord2f(0.0f, 1.0f);
 			glVertex2i(t_x + x, t_y + y + BITMAP_TEXTURE_SIZE);
 			glEnd();
 			curTexIdx++;
