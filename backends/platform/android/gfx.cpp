@@ -617,10 +617,6 @@ void OSystem_Android::clearOverlay() {
 	GLTHREADCHECK;
 
 	_overlay_texture->fillBuffer(0);
-
-	// breaks more than it fixes, disabled for now
-	// Shouldn't need this, but works around a 'blank screen' bug on Nexus1
-	//updateScreen();
 }
 
 void OSystem_Android::grabOverlay(OverlayColor *buf, int pitch) {
@@ -650,9 +646,6 @@ void OSystem_Android::copyRectToOverlay(const OverlayColor *buf, int pitch,
 
 	// This 'pitch' is pixels not bytes
 	_overlay_texture->updateBuffer(x, y, w, h, buf, pitch * sizeof(buf[0]));
-
-	// Shouldn't need this, but works around a 'blank screen' bug on Nexus1?
-	//updateScreen();
 }
 
 int16 OSystem_Android::getOverlayHeight() {
