@@ -231,6 +231,55 @@ public:
 	virtual void dispatch();
 };
 
+class Scene9450: public Scene2 {
+	class Object2: public SceneObject {
+	public:
+		virtual void signal();
+	};
+
+	class Object3: public SceneObject4 {
+	public:
+		virtual void dispatch();
+	};
+
+	class Hotspot1: public SceneHotspot_3{
+	public:
+		virtual void doAction(int action);
+	};
+
+	class Hotspot3: public SceneHotspot_3{
+	public:
+		virtual void doAction(int action);
+	};
+public:
+	SceneObject _object1;
+	SequenceManager _sequenceManager1;
+	SequenceManager _sequenceManager2;
+	Object2 _object2;
+	SequenceManager _sequenceManager3;
+	Object3 _object3;
+	Hotspot1 _hotspot1;
+	SceneHotspot_3 _hotspot2;
+	Hotspot3 _hotspot3;
+	SceneHotspot_3 _hotspot4;
+	SceneHotspot_3 _hotspot5;
+	SceneHotspot_3 _hotspot6;
+	SceneHotspot_3 _hotspot7;
+	SceneHotspot_3 _hotspot8;
+	SceneHotspot_3 _hotspot9;
+	SceneHotspot_3 _hotspot10;
+	SceneHotspot_3 _hotspot11;
+	SceneHotspot_3 _hotspot12;
+	SceneHotspot_3 _hotspot13;
+	SceneHotspot_3 _hotspot14;
+	SceneHotspot_3 _hotspot15;
+	SceneHotspot_3 _hotspot16;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
+};
+
 class Scene9700: public Scene2 {
 	SequenceManager _sequenceManager;
 	SceneObject _object1;

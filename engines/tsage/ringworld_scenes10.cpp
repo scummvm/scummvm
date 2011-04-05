@@ -38,11 +38,17 @@ Scene2::Scene2() {
 
 void Object9350::postInit(SceneObjectList *OwnerList) {
 	warning("Object9350::postInit - Weird cast to be verified");
-	_globals->_sceneManager.postInit((SceneObjectList*) &_globals->_sceneManager._sceneChangeListeners);
+	SceneObject::postInit((SceneObjectList*) &_globals->_sceneManager._sceneChangeListeners);
 }
 
 void Object9350::draw() {
 	warning("Scene9350::Object1::draw - TODO");
+	reposition();
+	Rect destRect = _bounds;
+	destRect.translate(-_globals->_sceneOffset.x, -_globals->_sceneOffset.y);
+	Region *priorityRegion = _globals->_sceneManager._scene->_priorities.find(_globals->_sceneManager._scene->_stripManager._stripNum);
+	GfxSurface frame = getFrame();
+	_globals->gfxManager().copyFrom(frame, destRect, priorityRegion); 
 }
 
 /*--------------------------------------------------------------------------
@@ -815,6 +821,185 @@ void Scene9400::postInit(SceneObjectList *OwnerList) {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 9450
+ *
+ *--------------------------------------------------------------------------*/
+void Scene9450::Object2::signal() {
+	Scene9450 *scene = (Scene9450 *)_globals->_sceneManager._scene;
+
+	this->setAction(&scene->_sequenceManager3, this, 9458, &scene->_object1, 0);
+}
+
+void Scene9450::Object3::dispatch() {
+	SceneObject::dispatch();
+	_percent = (_percent * 20) / 30;
+}
+
+void Scene9450::Hotspot1::doAction(int action) {
+	Scene9450 *scene = (Scene9450 *)_globals->_sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		if (scene->_object2._action)
+			scene->_object2._action->remove();
+		scene->_sceneMode = 9459;
+		_globals->_player.disableControl();
+		setAction(&scene->_sequenceManager1, scene, 9459, &scene->_object2, &scene->_object1, &scene->_object3, &_globals->_player, 0);
+	} else {
+		SceneHotspot_3::doAction(action);
+	}
+}
+
+void Scene9450::Hotspot3::doAction(int action) {
+	Scene9450 *scene = (Scene9450 *)_globals->_sceneManager._scene;
+	
+	switch (action) {
+	case OBJECT_CLOAK:
+	case OBJECT_JACKET:
+	case OBJECT_TUNIC2:
+		scene->_sceneMode = 9460;
+		_globals->_player.disableControl();
+		setAction(&scene->_sequenceManager1, scene, 9460, &_globals->_player, &scene->_object2, &scene->_object1, 0);
+		break;
+	case OBJECT_TUNIC:
+		SceneItem::display(9450, 49, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		break;
+	case CURSOR_WALK:
+		// nothing
+		break;
+	case CURSOR_LOOK:
+		SceneItem::display(9450, 41, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		break;
+	case CURSOR_USE:
+	case CURSOR_TALK:
+		if (_globals->_inventory._tunic._sceneNumber == 9450) {
+			if (scene->_object2._action)
+				scene->_object2._action->remove();
+			scene->_sceneMode = 9459;
+			_globals->_player.disableControl();
+			setAction(&scene->_sequenceManager1, scene, 9459, &scene->_object2, &scene->_object1, &scene->_object3, &_globals->_player, 0);
+		} else if ((_globals->_inventory._cloak._sceneNumber != 1) && (_globals->_inventory._jacket._sceneNumber != 1) && (_globals->_inventory._tunic2._sceneNumber != 1)) {
+			SceneItem::display(9450, 38, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		} else {
+			scene->_sceneMode = 9460;
+			_globals->_player.disableControl();
+			setAction(&scene->_sequenceManager1, scene, 9460, &_globals->_player, &scene->_object2, &scene->_object1, 0);
+		}
+		break;
+	default:
+		SceneItem::display(9450, 45, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		break;
+	}
+}
+
+void Scene9450::signal() {
+	switch (_sceneMode++) {
+	case 1002:
+	case 1004:
+		// Drink
+		setAction(&_sequenceManager1, this, 9456, &_object2, &_object1, &_object3, 0);
+		break;
+	case 1005:
+		// Bring me more wine
+		setAction(&_sequenceManager1, this, 9457, &_object2, &_object1, &_object3, 0);
+		break;
+	case 9451:
+		if (_globals->getFlag(87)) {
+			_globals->_player.enableControl();
+		} else {
+			_sceneMode = 1001;
+			if (_object2._action)
+				_object2._action->remove();
+		}
+		// No break on purpose
+	case 1001:
+	case 1003:
+		// Eat
+		setAction(&_sequenceManager1, this, 9455, &_object2, &_object1, &_object3, 0);
+		break;
+	case 9453:
+		_globals->_sceneManager.changeScene(9360);
+		break;
+	case 9459:
+		_object2.signal();
+		_globals->_events.setCursor(CURSOR_WALK);
+		_hotspot1.remove();
+		break;
+	case 1006:
+		_globals->setFlag(87);
+		// No break on purpose
+	default:
+		_globals->_player.enableControl();
+		break;
+	}
+}
+
+void Scene9450::dispatch() {
+	if (_action) {
+		_action->dispatch();
+	} else {
+		if ((_globals->_player._position.y < 98) && (_globals->_player._position.x > 241) && (_globals->_player._position.x < 282)) {
+			_globals->_player.disableControl();
+			_sceneMode = 9452;
+			setAction(&_sequenceManager1, this, 9452, &_globals->_player, 0);
+		} else if ((_globals->_player._position.y < 99) && (_globals->_player._position.x > 68) && (_globals->_player._position.x < 103)) {
+			_globals->_player.disableControl();
+			_sceneMode = 9453;
+			setAction(&_sequenceManager1, this, 9453, &_globals->_player, 0);
+		}
+	}
+}
+
+void Scene9450::postInit(SceneObjectList *OwnerList) {
+	Scene::postInit();
+	setZoomPercents(84, 75, 167, 150);
+	_globals->_events.setCursor(CURSOR_WALK);
+	_globals->_player.postInit();
+
+	_object2.postInit();
+	_object1.postInit();
+	_object1.flag100();
+
+	_globals->_player.disableControl();
+	_sceneMode = 9451;
+	setAction(&_sequenceManager1, this, 9451, &_globals->_player, 0);
+
+	if (_globals->getFlag(87)) {
+		if (_globals->_inventory._tunic._sceneNumber == 1) {
+			_object2.signal();
+		} else {
+			_object2.setPosition(Common::Point(184, 144), 0);
+			_object2.setVisage(9451);
+			_object2.setPriority2(250);
+			_object2._strip = 5;
+			_object2._frame = 10;
+		}
+	} else {
+		_object3.postInit();
+		_object3.flag100();
+		_object3.setAction(&_sequenceManager2, 0, 9455, &_object2, &_object1, 0);
+	}
+
+	if (_globals->_inventory._tunic._sceneNumber != 1)
+		_hotspot1.quickInit(123, 139, 138, 170, 9450, 37, -1);
+
+	_hotspot2.quickInit(153, 102, 176, 141, 9450, 39, 40);
+	_hotspot3.quickInit(97, 198, 130, 229, 9450, 41, 42);
+	_hotspot15.quickInit(131, 190, 145, 212, 9450, 43, 44);
+	_hotspot4.quickInit(33, 144, 105, 192, 9450, 0, 1);
+	_hotspot5.quickInit(20, 236, 106, 287, 9450, 2, 3);
+	_hotspot6.quickInit(137, 119, 195, 320, 9450, 4, 5);
+	_hotspot7.quickInit(20, 59, 99, 111, 9450, 6, -1);
+	_hotspot8.quickInit(110, 0, 199, 117, 9450, 7, 8);
+	_hotspot9.quickInit(101, 104, 130, 174, 9450, 9, 10);
+	_hotspot10.quickInit(110, 246, 149, 319, 9450, 11, 12);
+	_hotspot11.quickInit(16, 34, 74, 62, 6450, 13, 14);
+	_hotspot12.quickInit(19, 108, 72, 134, 9450, 15, 16);
+	_hotspot13.quickInit(18, 215, 71, 237, 9450, 17, 18);
+	_hotspot14.quickInit(15, 288, 76, 314, 9450, 19, 20);
+	_hotspot16.quickInit(0, 0, 200, 320, 9450, 46, -1);
+}
+
+/*--------------------------------------------------------------------------
  * Scene 9700
  *
  *--------------------------------------------------------------------------*/
@@ -832,7 +1017,6 @@ void Scene9700::signal() {
 		_globals->_player.enableControl();
 		_globals->_player._canWalk = 0;
 		_globals->_events.setCursor(CURSOR_USE);
-
 		break;
 	case 9704:
 		_globals->_soundHandler.startSound(323, 0, 127);
