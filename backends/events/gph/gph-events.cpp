@@ -18,19 +18,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
+
+#include "common/scummsys.h"
 
 /*
  * GPH: Device Specific Event Handling.
- *
  */
 
-#include "backends/platform/gph/gph-sdl.h"
+#if defined(GP2XWIZ) || defined(CAANOO)
+
+#include "backends/events/gph/gph-events.h"
+#include "backends/graphics/gph/gph-graphics.h"
 #include "backends/platform/gph/gph-hw.h"
-#include "graphics/scaler/aspect.h"
 
 #include "common/util.h"
 #include "common/events.h"
@@ -122,48 +122,34 @@ enum {
 	TAPMODE_HOVER		= 2
 };
 
-static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
-	if (key >= SDLK_F1 && key <= SDLK_F9) {
-		return key - SDLK_F1 + Common::ASCII_F1;
-	} else if (key >= SDLK_KP0 && key <= SDLK_KP9) {
-		return key - SDLK_KP0 + '0';
-	} else if (key >= SDLK_UP && key <= SDLK_PAGEDOWN) {
-		return key;
-	} else if (unicode) {
-		return unicode;
-	} else if (key >= 'a' && key <= 'z' && (mod & KMOD_SHIFT)) {
-		return key & ~0x20;
-	} else if (key >= SDLK_NUMLOCK && key <= SDLK_EURO) {
-		return 0;
-	}
-	return key;
+GPHEventSource::GPHEventSource()
+	: _buttonStateL(false){
 }
 
+//void GPHEventSource::fillMouseEvent(Common::Event &event, int x, int y) {
+//	if (GPHGraphicsManager::_videoMode.mode == GFX_HALF && !GPHGraphicsManager::_overlayVisible){
+//		event.mouse.x = x*2;
+//		event.mouse.y = y*2;
+//	} else {
+//		event.mouse.x = x;
+//		event.mouse.y = y;
+//	}
+//
+//	// Update the "keyboard mouse" coords
+//	_km.x = x;
+//	_km.y = y;
+//
+//	// Adjust for the screen scaling
+//	if (!_overlayVisible) {
+//		event.mouse.x /= _videoMode.scaleFactor;
+//		event.mouse.y /= _videoMode.scaleFactor;
+//		if (_videoMode.aspectRatioCorrection)
+//			event.mouse.y = aspect2Real(event.mouse.y);
+//	}
+//}
 
-void OSystem_GPH::fillMouseEvent(Common::Event &event, int x, int y) {
-	if (_videoMode.mode == GFX_HALF && !_overlayVisible){
-		event.mouse.x = x*2;
-		event.mouse.y = y*2;
-	} else {
-		event.mouse.x = x;
-		event.mouse.y = y;
-	}
 
-	// Update the "keyboard mouse" coords
-	_km.x = x;
-	_km.y = y;
-
-	// Adjust for the screen scaling
-	if (!_overlayVisible) {
-		event.mouse.x /= _videoMode.scaleFactor;
-		event.mouse.y /= _videoMode.scaleFactor;
-		if (_videoMode.aspectRatioCorrection)
-			event.mouse.y = aspect2Real(event.mouse.y);
-	}
-}
-
-
-void OSystem_GPH::moveStick() {
+void GPHEventSource::moveStick() {
 	bool stickBtn[32];
 
 	memcpy(stickBtn, _stickBtn, sizeof(stickBtn));
@@ -208,7 +194,7 @@ void OSystem_GPH::moveStick() {
 
 /* Custom handleMouseButtonDown/handleMouseButtonUp to deal with 'Tap Mode' for the touchscreen */
 
-bool OSystem_GPH::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
+bool GPHEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT){
 		if (BUTTON_STATE_L == true) /* BUTTON_STATE_L = Left Trigger Held, force Right Click */
 			event.type = Common::EVENT_RBUTTONDOWN;
@@ -241,7 +227,7 @@ bool OSystem_GPH::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool OSystem_GPH::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
+bool GPHEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT){
 		if (BUTTON_STATE_L == true) /* BUTTON_STATE_L = Left Trigger Held, force Right Click */
 			event.type = Common::EVENT_RBUTTONUP;
@@ -270,7 +256,7 @@ bool OSystem_GPH::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 
 /* Custom handleJoyButtonDown/handleJoyButtonUp to deal with the joystick buttons on GPH devices */
 
-bool OSystem_GPH::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
+bool GPHEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 
 	_stickBtn[ev.jbutton.button] = 1;
 	event.kbd.flags = 0;
@@ -339,11 +325,11 @@ bool OSystem_GPH::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 		if (BUTTON_STATE_L == true) {
 			GPH::ToggleTapMode();
 			if (GPH::tapmodeLevel == TAPMODE_LEFT) {
-				displayMessageOnOSD("Touchscreen 'Tap Mode' - Left Click");
+				g_system->displayMessageOnOSD("Touchscreen 'Tap Mode' - Left Click");
 			} else if (GPH::tapmodeLevel == TAPMODE_RIGHT) {
-				displayMessageOnOSD("Touchscreen 'Tap Mode' - Right Click");
+				g_system->displayMessageOnOSD("Touchscreen 'Tap Mode' - Right Click");
 			} else if (GPH::tapmodeLevel == TAPMODE_HOVER) {
-				displayMessageOnOSD("Touchscreen 'Tap Mode' - Hover (No Click)");
+				g_system->displayMessageOnOSD("Touchscreen 'Tap Mode' - Hover (No Click)");
 			}
 		} else {
 			event.kbd.keycode = Common::KEYCODE_SPACE;
@@ -363,17 +349,17 @@ bool OSystem_GPH::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	case BUTTON_VOLUP:
 		WIZ_HW::mixerMoveVolume(2);
 		if (WIZ_HW::volumeLevel == 100) {
-			displayMessageOnOSD("Maximum Volume");
+			g_system->displayMessageOnOSD("Maximum Volume");
 		} else {
-			displayMessageOnOSD("Increasing Volume");
+			g_system->displayMessageOnOSD("Increasing Volume");
 		}
 		break;
 	case BUTTON_VOLDOWN:
 		WIZ_HW::mixerMoveVolume(1);
 		if (WIZ_HW::volumeLevel == 0) {
-			displayMessageOnOSD("Minimal Volume");
+			g_system->displayMessageOnOSD("Minimal Volume");
 		} else {
-			displayMessageOnOSD("Decreasing Volume");
+			g_system->displayMessageOnOSD("Decreasing Volume");
 		}
 		break;
 	case BUTTON_HOLD:
@@ -382,18 +368,18 @@ bool OSystem_GPH::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	case BUTTON_HELP2:
 		GPH::ToggleTapMode();
 		if (GPH::tapmodeLevel == TAPMODE_LEFT) {
-			displayMessageOnOSD("Touchscreen 'Tap Mode': Left Click");
+			g_system->displayMessageOnOSD("Touchscreen 'Tap Mode': Left Click");
 		} else if (GPH::tapmodeLevel == TAPMODE_RIGHT) {
-			displayMessageOnOSD("Touchscreen 'Tap Mode': Right Click");
+			g_system->displayMessageOnOSD("Touchscreen 'Tap Mode': Right Click");
 		} else if (GPH::tapmodeLevel == TAPMODE_HOVER) {
-			displayMessageOnOSD("Touchscreen 'Tap Mode': Hover (No Click)");
+			g_system->displayMessageOnOSD("Touchscreen 'Tap Mode': Hover (No Click)");
 		}
 		break;
 	}
 	return true;
 }
 
-bool OSystem_GPH::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
+bool GPHEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 
 	_stickBtn[ev.jbutton.button] = 0;
 	event.kbd.flags = 0;
@@ -476,6 +462,8 @@ bool OSystem_GPH::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool OSystem_GPH::remapKey(SDL_Event &ev,Common::Event &event) {
+bool GPHEventSource::remapKey(SDL_Event &ev,Common::Event &event) {
 	return false;
 }
+
+#endif

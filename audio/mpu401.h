@@ -46,22 +46,22 @@ private:
 public:
 	MidiDriver *device();
 	byte getNumber() { return _channel; }
-	void release() { _allocated = false; }
+	virtual void release() { _allocated = false; }
 
-	void send(uint32 b);
+	virtual void send(uint32 b);
 
 	// Regular messages
-	void noteOff(byte note);
-	void noteOn(byte note, byte velocity);
-	void programChange(byte program);
-	void pitchBend(int16 bend);
+	virtual void noteOff(byte note);
+	virtual void noteOn(byte note, byte velocity);
+	virtual void programChange(byte program);
+	virtual void pitchBend(int16 bend);
 
 	// Control Change messages
-	void controlChange(byte control, byte value);
-	void pitchBendFactor(byte value);
+	virtual void controlChange(byte control, byte value);
+	virtual void pitchBendFactor(byte value);
 
 	// SysEx messages
-	void sysEx_customInstrument(uint32 type, const byte *instr);
+	virtual void sysEx_customInstrument(uint32 type, const byte *instr);
 
 	// Only to be called by the owner
 	void init(MidiDriver *owner, byte channel);
@@ -78,14 +78,15 @@ private:
 
 public:
 	MidiDriver_MPU401();
+	virtual ~MidiDriver_MPU401();
 
 	virtual void close();
-	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc);
-	uint32 getBaseTempo(void) { return 10000; }
-	uint32 property(int prop, uint32 param);
+	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc);
+	virtual uint32 getBaseTempo(void) { return 10000; }
+	virtual uint32 property(int prop, uint32 param);
 
-	MidiChannel *allocateChannel();
-	MidiChannel *getPercussionChannel() { return &_midi_channels[9]; }
+	virtual MidiChannel *allocateChannel();
+	virtual MidiChannel *getPercussionChannel() { return &_midi_channels[9]; }
 };
 
 

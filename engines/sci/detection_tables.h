@@ -622,6 +622,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// Gabriel Knight - English DOS Floppy
+	// SCI interpreter version 2.000.000, VERSION file reports "1.0\nGabriel Knight\n11/22/10:33 pm\n\x1A"
+	{"gk1", "", {
+		{"resource.map", 0, "ef41df08cf2c1f680216cdbeed0f8311", 10783},
+		{"resource.000", 0, "69b7516962510f780d38519cc15fcc7c", 13022630},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Gabriel Knight - German DOS Floppy (supplied my markcoolio in bug report #2723775)
 	// SCI interpreter version 2.000.000
 	{"gk1", "", {
@@ -1608,7 +1616,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
-	// Larry 1 VGA Remake - English Amiga (from www.back2roots.org)
+#if 0
+	// The resource.002 file, contained in disk 3, is broken in this version
+	// (it contains a large chunk of zeroes and several broken resources,
+	// e.g. pic 250 and views 250 and 251).
+	// Thus this detection entry isn't accurate.
+
+	// Larry 1 Remake - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.004.024"
 	// SCI interpreter version 1.000.784
 	{"lsl1sci", "SCI", {
@@ -1619,6 +1633,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "4a34c3367c2fe7eb380d741374da1989", 572251},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO_NOSPEECH	},
+#endif
 
 	// Larry 1 VGA Remake - English DOS (from spookypeanut)
 	// Executable scanning reports "1.000.577", VERSION file reports "2.1"

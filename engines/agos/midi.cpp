@@ -25,6 +25,7 @@
 
 
 
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/system.h"
 
@@ -44,7 +45,6 @@ MidiPlayer::MidiPlayer() {
 	// between songs.
 	_driver = 0;
 	_map_mt32_to_gm = false;
-	_passThrough = false;
 
 	_enable_sfx = true;
 	_current = 0;
@@ -62,15 +62,33 @@ MidiPlayer::MidiPlayer() {
 }
 
 MidiPlayer::~MidiPlayer() {
-	_mutex.lock();
-	close();
-	_mutex.unlock();
+	stop();
+
+	Common::StackLock lock(_mutex);
+	if (_driver) {
+		_driver->close();
+		delete _driver;
+	}
+	_driver = NULL;
+	clearConstructs();
 }
 
-int MidiPlayer::open() {
-	// Don't ever call open without first setting the output driver!
+int MidiPlayer::open(int gameType) {
+	// Don't call open() twice!
+	assert(!_driver);
+
+	// Setup midi driver
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | (gameType == GType_SIMON1 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
+	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
+
+	_driver = MidiDriver::createMidi(dev);
 	if (!_driver)
 		return 255;
+
+	if (_nativeMT32)
+		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+
+	_map_mt32_to_gm = (gameType != GType_SIMON2 && !_nativeMT32);
 
 	int ret = _driver->open();
 	if (ret)
@@ -85,24 +103,9 @@ int MidiPlayer::open() {
 	return 0;
 }
 
-void MidiPlayer::close() {
-	stop();
-//	_system->lockMutex(_mutex);
-	if (_driver)
-		_driver->close();
-	_driver = NULL;
-	clearConstructs();
-//	_system->unlockMutex(_mutex);
-}
-
 void MidiPlayer::send(uint32 b) {
 	if (!_current)
 		return;
-
-	if (_passThrough) {
-		_driver->send(b);
-		return;
-	}
 
 	byte channel = (byte)(b & 0x0F);
 	if ((b & 0xFFF0) == 0x07B0) {
@@ -205,14 +208,14 @@ void MidiPlayer::onTimer(void *data) {
 }
 
 void MidiPlayer::startTrack(int track) {
+	Common::StackLock lock(_mutex);
+
 	if (track == _currentTrack)
 		return;
 
 	if (_music.num_songs > 0) {
 		if (track >= _music.num_songs)
 			return;
-
-		_mutex.lock();
 
 		if (_music.parser) {
 			_current = &_music;
@@ -234,9 +237,7 @@ void MidiPlayer::startTrack(int track) {
 		_currentTrack = (byte)track;
 		_music.parser = parser; // That plugs the power cord into the wall
 	} else if (_music.parser) {
-		_mutex.lock();
 		if (!_music.parser->setTrack(track)) {
-			_mutex.unlock();
 			return;
 		}
 		_currentTrack = (byte)track;
@@ -244,8 +245,6 @@ void MidiPlayer::startTrack(int track) {
 		_music.parser->jumpToTick(0);
 		_current = 0;
 	}
-
-	_mutex.unlock();
 }
 
 void MidiPlayer::stop() {
@@ -299,19 +298,6 @@ void MidiPlayer::setVolume(int musicVol, int sfxVol) {
 				_sfx.channel[i]->volume(_sfx.volume[i] * _sfxVolume / 255);
 		}
 	}
-}
-
-void MidiPlayer::setDriver(MidiDriver *md) {
-	// Don't try to set this more than once.
-	if (_driver)
-		return;
-	_driver = md;
-}
-
-void MidiPlayer::mapMT32toGM(bool map) {
-	Common::StackLock lock(_mutex);
-
-	_map_mt32_to_gm = map;
 }
 
 void MidiPlayer::setLoop(bool loop) {

@@ -3723,6 +3723,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640x480 | kFeaturesTrueColor,
 		0, 0, 0
 	},
+	{ // Supplied by Collector9 in bug report #3228040
+		{
+			"urban",
+			"",
+			AD_ENTRY1s("intro.stk", "6ce3d878178932053267237ec4843ce1", 1252518),
+			EN_USA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeUrban,
+		kFeatures640x480 | kFeaturesTrueColor,
+		0, 0, 0
+	},
 	{ // Supplied by gamin in the forums
 		{
 			"urban",
@@ -3743,6 +3757,20 @@ static const GOBGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1s("intro.stk", "4ec3c0864e2b54c5b4ccf9f6ad96528d", 1253328),
 			ES_ESP,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeUrban,
+		kFeatures640x480 | kFeaturesTrueColor,
+		0, 0, 0
+	},
+	{ // Supplied by Alex on the gobsmacked blog
+		{
+			"urban",
+			"",
+			AD_ENTRY1s("intro.stk", "9ea647085a16dd0fb9ecd84cd8778ec9", 1253436),
+			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
@@ -4921,7 +4949,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeUrban,
-		kFeaturesCD | kFeaturesTrueColor,
+		kFeatures640x480 | kFeaturesTrueColor,
 		0, 0, 0
 	},
 	{ //13

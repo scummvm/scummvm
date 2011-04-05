@@ -46,6 +46,7 @@ class MidiDriver_CAMD : public MidiDriver_MPU401 {
 public:
 	MidiDriver_CAMD();
 	int open();
+	bool isOpen() const { return _isOpen; }
 	void close();
 	void send(uint32 b);
 	void sysEx(const byte *msg, uint16 length);

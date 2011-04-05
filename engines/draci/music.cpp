@@ -36,133 +36,41 @@
 
 namespace Draci {
 
-MusicPlayer::MusicPlayer(MidiDriver *driver, const char *pathMask) : _parser(0), _driver(driver), _pathMask(pathMask), _looping(false), _isPlaying(false), _passThrough(false), _isGM(false), _track(-1) {
-	memset(_channel, 0, sizeof(_channel));
-	memset(_channelVolume, 127, sizeof(_channelVolume));
-	_masterVolume = 0;
-	_smfParser = MidiParser::createParser_SMF();
-	_midiMusicData = NULL;
-}
+MusicPlayer::MusicPlayer(const char *pathMask) : _pathMask(pathMask), _isGM(false), _track(-1) {
 
-MusicPlayer::~MusicPlayer() {
-	_driver->setTimerCallback(NULL, NULL);
-	stop();
-	this->close();
-	_smfParser->setMidiDriver(NULL);
-	delete _smfParser;
-	delete[] _midiMusicData;
-}
-
-void MusicPlayer::setChannelVolume(int channel) {
-	int newVolume = _channelVolume[channel] * _masterVolume / 255;
-	debugC(3, kDraciSoundDebugLevel, "Music channel %d: volume %d->%d",
-		channel, _channelVolume[channel], newVolume);
-	_channel[channel]->volume(newVolume);
-}
-
-void MusicPlayer::setVolume(int volume) {
-	Common::StackLock lock(_mutex);
-
-	volume = CLIP(volume, 0, 255);
-	if (_masterVolume == volume)
-		return;
-	_masterVolume = volume;
-
-	for (int i = 0; i < 16; ++i) {
-		if (_channel[i]) {
-			setChannelVolume(i);
-		}
-	}
-}
-
-int MusicPlayer::open() {
-	// Don't ever call open without first setting the output driver!
-	if (!_driver)
-		return 255;
+	MidiPlayer::createDriver();
 
 	int ret = _driver->open();
-	if (ret)
-		return ret;
+	if (ret == 0) {
+		if (_nativeMT32)
+			_driver->sendMT32Reset();
+		else
+			_driver->sendGMReset();
 
-	if (_nativeMT32)
-		_driver->sendMT32Reset();
-	else
-		_driver->sendGMReset();
+		// TODO: Load cmf.ins with the instrument table.  It seems that an
+		// interface for such an operation is supported for AdLib.  Maybe for
+		// this card, setting instruments is necessary.
 
-	// TODO: Load cmf.ins with the instrument table.  It seems that an
-	// interface for such an operation is supported for AdLib.  Maybe for
-	// this card, setting instruments is necessary.
-
-	_driver->setTimerCallback(this, &onTimer);
-	return 0;
+		_driver->setTimerCallback(this, &timerCallback);
+	}
 }
 
-void MusicPlayer::close() {
-	stop();
-	if (_driver)
-		_driver->close();
-	_driver = 0;
-}
-
-void MusicPlayer::send(uint32 b) {
-	if (_passThrough) {
-		_driver->send(b);
-		return;
-	}
-
-	byte channel = (byte)(b & 0x0F);
-	if ((b & 0xFFF0) == 0x07B0) {
-		// Adjust volume changes by master volume
-		byte volume = (byte)((b >> 16) & 0x7F);
-		_channelVolume[channel] = volume;
-		volume = volume * _masterVolume / 255;
-		b = (b & 0xFF00FFFF) | (volume << 16);
-	} else if ((b & 0xF0) == 0xC0 && !_isGM && !_nativeMT32) {
-		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
-	}
-	else if ((b & 0xFFF0) == 0x007BB0) {
-		//Only respond to All Notes Off if this channel
-		//has currently been allocated
-		if (_channel[b & 0x0F])
-			return;
-	}
-
-	if (!_channel[channel]) {
-		_channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+void MusicPlayer::sendToChannel(byte channel, uint32 b) {
+	if (!_channelsTable[channel]) {
+		_channelsTable[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
 		// If a new channel is allocated during the playback, make sure
 		// its volume is correctly initialized.
-		if (_channel[channel])
-			setChannelVolume(channel);
+		if (_channelsTable[channel])
+			_channelsTable[channel]->volume(_channelsVolume[channel] * _masterVolume / 255);
 	}
 
-	if (_channel[channel])
-		_channel[channel]->send(b);
-}
-
-void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
-
-	switch (type) {
-	case 0x2F:	// End of Track
-		if (_looping)
-			_parser->jumpToTick(0);
-		else
-			stop();
-		break;
-	default:
-		//warning("Unhandled meta event: %02x", type);
-		break;
-	}
-}
-
-void MusicPlayer::onTimer(void *refCon) {
-	MusicPlayer *music = (MusicPlayer *)refCon;
-	Common::StackLock lock(music->_mutex);
-
-	if (music->_parser)
-		music->_parser->onTimer();
+	if (_channelsTable[channel])
+		_channelsTable[channel]->send(b);
 }
 
 void MusicPlayer::playSMF(int track, bool loop) {
+	Common::StackLock lock(_mutex);
+
 	if (_isPlaying && track == _track) {
 		debugC(2, kDraciSoundDebugLevel, "Already plaing track %d", track);
 		return;
@@ -172,76 +80,46 @@ void MusicPlayer::playSMF(int track, bool loop) {
 
 	_isGM = true;
 
-
 	// Load MIDI resource data
 	Common::File musicFile;
 	char musicFileName[40];
-	sprintf(musicFileName, _pathMask.c_str(), track);
+	snprintf(musicFileName, sizeof(musicFileName), _pathMask.c_str(), track);
 	musicFile.open(musicFileName);
 	if (!musicFile.isOpen()) {
 		debugC(2, kDraciSoundDebugLevel, "Cannot open track %d", track);
 		return;
 	}
 	int midiMusicSize = musicFile.size();
-	delete[] _midiMusicData;
-	_midiMusicData = new byte[midiMusicSize];
-	musicFile.read(_midiMusicData, midiMusicSize);
+	free(_midiData);
+	_midiData = (byte *)malloc(midiMusicSize);
+	musicFile.read(_midiData, midiMusicSize);
 	musicFile.close();
 
-	if (_smfParser->loadMusic(_midiMusicData, midiMusicSize)) {
-		MidiParser *parser = _smfParser;
+	MidiParser *parser = MidiParser::createParser_SMF();
+	if (parser->loadMusic(_midiData, midiMusicSize)) {
 		parser->setTrack(0);
 		parser->setMidiDriver(this);
-		parser->setTimerRate(getBaseTempo());
+		parser->setTimerRate(_driver->getBaseTempo());
 		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 
 		_parser = parser;
 
 		syncVolume();
 
-		_looping = loop;
+		_isLooping = loop;
 		_isPlaying = true;
 		_track = track;
 		debugC(2, kDraciSoundDebugLevel, "Playing track %d", track);
 	} else {
 		debugC(2, kDraciSoundDebugLevel, "Cannot play track %d", track);
+		delete parser;
 	}
 }
 
 void MusicPlayer::stop() {
-	Common::StackLock lock(_mutex);
-
-	if (!_isPlaying)
-		return;
-
+	Audio::MidiPlayer::stop();
 	debugC(2, kDraciSoundDebugLevel, "Stopping track %d", _track);
 	_track = -1;
-	_isPlaying = false;
-	if (_parser) {
-		_parser->unloadMusic();
-		_parser = NULL;
-	}
-}
-
-void MusicPlayer::pause() {
-	debugC(2, kDraciSoundDebugLevel, "Pausing track %d", _track);
-	setVolume(-1);
-	_isPlaying = false;
-}
-
-void MusicPlayer::resume() {
-	debugC(2, kDraciSoundDebugLevel, "Resuming track %d", _track);
-	syncVolume();
-	_isPlaying = true;
-}
-
-void MusicPlayer::syncVolume() {
-	int volume = ConfMan.getInt("music_volume");
-	if (ConfMan.getBool("mute")) {
-		volume = -1;
-	}
-	debugC(2, kDraciSoundDebugLevel, "Syncing music volume to %d", volume);
-	setVolume(volume);
 }
 
 } // End of namespace Draci

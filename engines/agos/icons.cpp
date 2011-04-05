@@ -484,7 +484,7 @@ void AGOSEngine::drawIconArray(uint num, Item *itemRef, int line, int classMask)
 	Item *item_ptr_org = itemRef;
 	WindowBlock *window;
 	uint width, height;
-	uint k, i, curWidth;
+	uint k, curWidth;
 	bool item_again, showArrows;
 	uint x_pos, y_pos;
 	const int iconSize = (getGameType() == GType_SIMON2) ? 20 : 1;
@@ -501,8 +501,6 @@ void AGOSEngine::drawIconArray(uint num, Item *itemRef, int line, int classMask)
 		width = window->width / 3;
 		height = window->height / 3;
 	}
-
-	i = 0;
 
 	if (window == NULL)
 		return;

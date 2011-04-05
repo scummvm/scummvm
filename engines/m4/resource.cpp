@@ -465,7 +465,6 @@ Common::SeekableReadStream *MADSResourceManager::loadResource(const char *resour
 
 bool MADSResourceManager::resourceExists(const char *resourceName) {
 	Common::File hagFile;
-	uint32 offset, size;
 
 	// If the first character is the wildcard (resource indicator), skip over it
 	if (*resourceName == '*')
@@ -488,8 +487,8 @@ bool MADSResourceManager::resourceExists(const char *resourceName) {
 	while (++resIndex < numEntries) {
 		// Read in the details of the next resource
 		char resourceBuffer[14];
-		offset = hagFile.readUint32LE();
-		size = hagFile.readUint32LE();
+		hagFile.readUint32LE(); // offset
+		hagFile.readUint32LE(); // size
 		hagFile.read(resourceBuffer, 14);
 
 		if (!strcmp(resName, resourceBuffer))

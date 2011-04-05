@@ -122,6 +122,7 @@ public:
 	// SeekableVideoDecoder API
 	void seekToFrame(uint32 frame);
 	void seekToTime(Audio::Timestamp time);
+	uint32 getDuration() const { return _duration * 1000 / _timeScale; }
 
 private:
 	// This is the file handle from which data is read from. It can be the actual file handle or a decompressed stream.

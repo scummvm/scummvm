@@ -490,6 +490,11 @@ uint32 VideoManager::getElapsedTime(VideoHandle handle) {
 	return _videoStreams[handle]->getElapsedTime();
 }
 
+uint32 VideoManager::getDuration(VideoHandle handle) {
+	assert(handle != NULL_VID_HANDLE);
+	return _videoStreams[handle]->getDuration();
+}
+
 bool VideoManager::endOfVideo(VideoHandle handle) {
 	assert(handle != NULL_VID_HANDLE);
 	return _videoStreams[handle].endOfVideo();

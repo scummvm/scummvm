@@ -146,7 +146,6 @@ void OSystem_Android::initTexture(GLESBaseTexture **texture,
 	}
 
 	(*texture)->allocBuffer(width, height);
-	(*texture)->fillBuffer(0);
 }
 #endif
 
@@ -236,8 +235,10 @@ void OSystem_Android::initViewport() {
 }
 
 void OSystem_Android::initOverlay() {
-	int overlay_width = _egl_surface_width;
-	int overlay_height = _egl_surface_height;
+	// minimum of 320x200
+	// (surface can get smaller when opening the virtual keyboard on *QVGA*)
+	int overlay_width = MAX(_egl_surface_width, 320);
+	int overlay_height = MAX(_egl_surface_height, 200);
 
 	// the 'normal' theme layout uses a max height of 400 pixels. if the
 	// surface is too big we use only a quarter of the size so that the widgets
@@ -245,7 +246,7 @@ void OSystem_Android::initOverlay() {
 	// enforces the 'lowres' layout, which will be scaled back up by factor 2x,
 	// but this looks way better than the 'normal' layout scaled by some
 	// calculated factors
-	if (overlay_height > 480) {
+	while (overlay_height > 480) {
 		overlay_width /= 2;
 		overlay_height /= 2;
 	}
@@ -253,7 +254,6 @@ void OSystem_Android::initOverlay() {
 	LOGI("overlay size is %ux%u", overlay_width, overlay_height);
 
 	_overlay_texture->allocBuffer(overlay_width, overlay_height);
-	_overlay_texture->fillBuffer(0);
 	_overlay_texture->setDrawRect(0, 0,
 									_egl_surface_width, _egl_surface_height);
 }
@@ -268,10 +268,10 @@ void OSystem_Android::initSize(uint width, uint height,
 	initTexture(&_game_texture, width, height, format);
 #else
 	_game_texture->allocBuffer(width, height);
-	_game_texture->fillBuffer(0);
 #endif
 
 	updateScreenRect();
+	updateEventScale();
 
 	// Don't know mouse size yet - it gets reallocated in
 	// setMouseCursor.  We need the palette allocated before
@@ -285,16 +285,15 @@ void OSystem_Android::initSize(uint width, uint height,
 void OSystem_Android::clearScreen(FixupType type, byte count) {
 	assert(count > 0);
 
-	for (byte i = 0; i < count; ++i) {
-		if (!_show_overlay)
-			GLCALL(glDisable(GL_SCISSOR_TEST));
+	bool sm = _show_mouse;
+	_show_mouse = false;
 
+	GLCALL(glDisable(GL_SCISSOR_TEST));
+
+	for (byte i = 0; i < count; ++i) {
 		// clear screen
 		GLCALL(glClearColorx(0, 0, 0, 1 << 16));
 		GLCALL(glClear(GL_COLOR_BUFFER_BIT));
-
-		if (!_show_overlay)
-			GLCALL(glEnable(GL_SCISSOR_TEST));
 
 		switch (type) {
 		case kClear:
@@ -310,6 +309,12 @@ void OSystem_Android::clearScreen(FixupType type, byte count) {
 			break;
 		}
 	}
+
+	if (!_show_overlay)
+		GLCALL(glEnable(GL_SCISSOR_TEST));
+
+	_show_mouse = sm;
+	_force_redraw = true;
 }
 
 void OSystem_Android::updateScreenRect() {
@@ -425,7 +430,9 @@ void OSystem_Android::updateScreen() {
 	_force_redraw = false;
 
 	// clear pointer leftovers in dead areas
-	if (_show_overlay && !_fullscreen)
+	// also, HTC's GLES drivers are made of fail and don't preserve the buffer
+	// ( http://www.khronos.org/registry/egl/specs/EGLTechNote0001.html )
+	if ((_show_overlay || _htc_fail) && !_fullscreen)
 		clearScreen(kClear);
 
 	GLCALL(glPushMatrix());
@@ -442,8 +449,9 @@ void OSystem_Android::updateScreen() {
 		GLCALL(glTranslatex(0, -_shake_offset << 16, 0));
 	}
 
-	if (_show_overlay)
-		GLCALL(glColor4ub(0x9f, 0x9f, 0x9f, 0x9f));
+// TODO this doesnt work on those sucky drivers, do it differently
+//	if (_show_overlay)
+//		GLCALL(glColor4ub(0x9f, 0x9f, 0x9f, 0x9f));
 
 	if (_focus_rect.isEmpty()) {
 		_game_texture->drawTextureRect();
@@ -467,7 +475,8 @@ void OSystem_Android::updateScreen() {
 	int cs = _mouse_targetscale;
 
 	if (_show_overlay) {
-		GLCALL(glColor4ub(0xff, 0xff, 0xff, 0xff));
+// TODO see above
+//		GLCALL(glColor4ub(0xff, 0xff, 0xff, 0xff));
 
 		// ugly, but the modern theme sets a wacko factor, only god knows why
 		cs = 1;
@@ -475,7 +484,7 @@ void OSystem_Android::updateScreen() {
 		GLCALL(_overlay_texture->drawTextureRect());
 	}
 
-	if (_show_mouse) {
+	if (_show_mouse && !_mouse_texture->isEmpty()) {
 		GLCALL(glPushMatrix());
 
 		const Common::Point &mouse = getEventManager()->getMousePos();
@@ -577,15 +586,12 @@ void OSystem_Android::clearFocusRectangle() {
 void OSystem_Android::showOverlay() {
 	ENTER();
 
-	Common::Event e;
-	e.type = Common::EVENT_MOUSEMOVE;
-	e.mouse.x = _egl_surface_width / 2;
-	e.mouse.y = _egl_surface_height / 2;
-
-	pushEvent(e);
-
 	_show_overlay = true;
 	_force_redraw = true;
+
+	updateEventScale();
+
+	warpMouse(_overlay_texture->width() / 2, _overlay_texture->height() / 2);
 
 	GLCALL(glDisable(GL_SCISSOR_TEST));
 }
@@ -593,15 +599,11 @@ void OSystem_Android::showOverlay() {
 void OSystem_Android::hideOverlay() {
 	ENTER();
 
-	Common::Event e;
-	e.type = Common::EVENT_MOUSEMOVE;
-	e.mouse.x = _egl_surface_width / 2;
-	e.mouse.y = _egl_surface_height / 2;
-
-	pushEvent(e);
-
 	_show_overlay = false;
-	_force_redraw = true;
+
+	updateEventScale();
+
+	warpMouse(_game_texture->width() / 2, _game_texture->height() / 2);
 
 	// double buffered, flip twice
 	clearScreen(kClearUpdate, 2);
@@ -615,10 +617,6 @@ void OSystem_Android::clearOverlay() {
 	GLTHREADCHECK;
 
 	_overlay_texture->fillBuffer(0);
-
-	// breaks more than it fixes, disabled for now
-	// Shouldn't need this, but works around a 'blank screen' bug on Nexus1
-	//updateScreen();
 }
 
 void OSystem_Android::grabOverlay(OverlayColor *buf, int pitch) {
@@ -648,9 +646,6 @@ void OSystem_Android::copyRectToOverlay(const OverlayColor *buf, int pitch,
 
 	// This 'pitch' is pixels not bytes
 	_overlay_texture->updateBuffer(x, y, w, h, buf, pitch * sizeof(buf[0]));
-
-	// Shouldn't need this, but works around a 'blank screen' bug on Nexus1?
-	//updateScreen();
 }
 
 int16 OSystem_Android::getOverlayHeight() {
@@ -673,13 +668,6 @@ bool OSystem_Android::showMouse(bool visible) {
 	return true;
 }
 
-void OSystem_Android::warpMouse(int x, int y) {
-	ENTER("%d, %d", x, y);
-
-	// We use only the eventmanager's idea of the current mouse
-	// position, so there is nothing extra to do here.
-}
-
 void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 										int hotspotX, int hotspotY,
 										uint32 keycolor, int cursorTargetScale,
@@ -691,10 +679,13 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 
 #ifdef USE_RGB_COLOR
 	if (format && format->bytesPerPixel > 1) {
-		if (_mouse_texture != _mouse_texture_rgb)
+		if (_mouse_texture != _mouse_texture_rgb) {
 			LOGD("switching to rgb mouse cursor");
 
-		_mouse_texture_rgb = new GLES5551Texture();
+			assert(!_mouse_texture_rgb);
+			_mouse_texture_rgb = new GLES5551Texture();
+		}
+
 		_mouse_texture = _mouse_texture_rgb;
 	} else {
 		if (_mouse_texture != _mouse_texture_palette)
@@ -713,10 +704,12 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 		assert(keycolor < 256);
 
 		byte *p = _mouse_texture_palette->palette() + _mouse_keycolor * 2;
-
 		WRITE_UINT16(p, READ_UINT16(p) | 1);
+
 		_mouse_keycolor = keycolor;
-		WRITE_UINT16(_mouse_texture_palette->palette() + keycolor * 2, 0);
+
+		p = _mouse_texture_palette->palette() + _mouse_keycolor * 2;
+		WRITE_UINT16(p, READ_UINT16(p) & ~1);
 	}
 
 	if (w == 0 || h == 0)
@@ -737,7 +730,7 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 
 			delete[] tmp;
 
-			_mouse_texture->fillBuffer(0);
+			_mouse_texture->allocBuffer(0, 0);
 
 			return;
 		}
@@ -767,7 +760,8 @@ void OSystem_Android::setCursorPaletteInternal(const byte *colors,
 	for (uint i = 0; i < num; ++i, colors += 3, p += 2)
 		WRITE_UINT16(p, pf.RGBToColor(colors[0], colors[1], colors[2]));
 
-	WRITE_UINT16(_mouse_texture_palette->palette() + _mouse_keycolor * 2, 0);
+	p = _mouse_texture_palette->palette() + _mouse_keycolor * 2;
+	WRITE_UINT16(p, READ_UINT16(p) & ~1);
 }
 
 void OSystem_Android::setCursorPalette(const byte *colors,
@@ -810,7 +804,8 @@ void OSystem_Android::disableCursorPalette(bool disable) {
 			WRITE_UINT16(dst, pf_dst.RGBToColor(r, g, b));
 		}
 
-		WRITE_UINT16(_mouse_texture_palette->palette() + _mouse_keycolor * 2, 0);
+		byte *p = _mouse_texture_palette->palette() + _mouse_keycolor * 2;
+		WRITE_UINT16(p, READ_UINT16(p) & ~1);
 	}
 
 	_use_mouse_palette = !disable;

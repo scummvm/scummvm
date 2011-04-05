@@ -138,7 +138,7 @@ bool WinCursor::readFromStream(Common::SeekableReadStream &stream) {
 
 		if (bitsPerPixel == 1) {
 			// 1bpp
-			for (uint32 j = 0; j < (_width / 8); j++) {
+			for (uint16 j = 0; j < (_width / 8); j++) {
 				byte p = src[j];
 
 				for (int k = 0; k < 8; k++, rowDest++, p <<= 1) {

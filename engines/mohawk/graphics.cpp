@@ -25,16 +25,25 @@
 
 #include "mohawk/resource.h"
 #include "mohawk/graphics.h"
-#include "mohawk/myst.h"
-#include "mohawk/riven.h"
 #include "mohawk/livingbooks.h"
-#include "mohawk/cstime.h"
 
 #include "common/substream.h"
 #include "engines/util.h"
-#include "graphics/jpeg.h"
 #include "graphics/primitives.h"
 #include "gui/message.h"
+
+#ifdef ENABLE_CSTIME
+#include "mohawk/cstime.h"
+#endif
+
+#ifdef ENABLE_MYST
+#include "mohawk/myst.h"
+#include "graphics/jpeg.h"
+#endif
+
+#ifdef ENABLE_RIVEN
+#include "mohawk/riven.h"
+#endif
 
 namespace Mohawk {
 
@@ -252,6 +261,8 @@ void GraphicsManager::addImageToCache(uint16 id, MohawkSurface *surface) {
 
 	_cache[id] = surface;
 }
+
+#ifdef ENABLE_MYST
 
 MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 	_bmpDecoder = new MystBitmap();
@@ -618,6 +629,10 @@ void MystGraphics::drawLine(const Common::Point &p1, const Common::Point &p2, ui
 	_backBuffer->drawLine(p1.x, p1.y, p2.x, p2.y, color);
 }
 
+#endif // ENABLE_MYST
+
+#ifdef ENABLE_RIVEN
+
 RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm) {
 	_bitmapDecoder = new MohawkBitmap();
 
@@ -758,7 +773,7 @@ void RivenGraphics::clearWaterEffects() {
 
 bool RivenGraphics::runScheduledWaterEffects() {
 	// Don't run the effect if it's disabled
-	if (*_vm->getVar("waterenabled") == 0)
+	if (_vm->_vars["waterenabled"] == 0)
 		return false;
 
 	Graphics::Surface *screen = NULL;
@@ -885,8 +900,8 @@ void RivenGraphics::showInventory() {
 		// you get Catherine's journal and the trap book. Near the end,
 		// you lose the trap book and have just the two journals.
 
-		bool hasCathBook = *_vm->getVar("acathbook") != 0;
-		bool hasTrapBook = *_vm->getVar("atrapbook") != 0;
+		bool hasCathBook = _vm->_vars["acathbook"] != 0;
+		bool hasTrapBook = _vm->_vars["atrapbook"] != 0;
 
 		if (!hasCathBook) {
 			drawInventoryImage(101, g_atrusJournalRect1);
@@ -1030,8 +1045,10 @@ void RivenGraphics::updateCredits() {
 	}
 }
 
+#endif // ENABLE_RIVEN
+
 LBGraphics::LBGraphics(MohawkEngine_LivingBooks *vm, uint16 width, uint16 height) : GraphicsManager(), _vm(vm) {
-	_bmpDecoder = _vm->isPreMohawk() ? new OldMohawkBitmap() : new MohawkBitmap();
+	_bmpDecoder = _vm->isPreMohawk() ? new LivingBooksBitmap_v1() : new MohawkBitmap();
 
 	initGraphics(width, height, true);
 }
@@ -1098,6 +1115,8 @@ void LBGraphics::setPalette(uint16 id) {
 	}
 }
 
+#ifdef ENABLE_CSTIME
+
 CSTimeGraphics::CSTimeGraphics(MohawkEngine_CSTime *vm) : GraphicsManager(), _vm(vm) {
 	_bmpDecoder = new MohawkBitmap();
 
@@ -1129,5 +1148,7 @@ MohawkSurface *CSTimeGraphics::decodeImage(uint16 id) {
 Common::Array<MohawkSurface *> CSTimeGraphics::decodeImages(uint16 id) {
 	return _bmpDecoder->decodeImages(_vm->getResource(ID_TBMH, id));
 }
+
+#endif
 
 } // End of namespace Mohawk

@@ -360,7 +360,7 @@ void GFXtests::drawEllipse(int cx, int cy, int a, int b) {
 
 	// Illuminate the points lying on ellipse
 
-	for (theta = 0; theta <= PI / 2; theta += PI / 360) {
+	for (theta = 0; theta <= M_PI / 2; theta += M_PI / 360) {
 		x = (int)(b * sin(theta) + 0.5);
 		y = (int)(a * cos(theta) + 0.5);
 

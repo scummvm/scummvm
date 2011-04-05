@@ -358,7 +358,7 @@ int loadFNTSub(uint8 *ptr, int destIdx) {
 	uint8 *ptr2 = ptr;
 	uint8 *destPtr;
 	int fileIndex;
-	uint32 fontSize;
+	//uint32 fontSize;
 
 	ptr2 += 4;
 	loadFileVar1 = READ_BE_UINT32(ptr2);
@@ -373,7 +373,7 @@ int loadFNTSub(uint8 *ptr, int destIdx) {
 
 	memcpy(destPtr, ptr2, loadFileVar1);
 
-	fontSize = READ_BE_UINT32(ptr2);
+	//fontSize = READ_BE_UINT32(ptr2);
 
 	if (destPtr != NULL) {
 		int32 i;

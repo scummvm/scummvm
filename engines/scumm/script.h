@@ -98,16 +98,29 @@ struct NestedScript {
 	uint8 slot;
 };
 
+enum {
+	/**
+	 * The maximal number of cutscenes that can be active
+	 * in parallel (i.e. nested).
+	 */
+	kMaxCutsceneNum = 5,
+
+	/**
+	 * The maximal 'nesting' level for scripts.
+	 */
+	kMaxScriptNesting = 15
+};
+
 struct VirtualMachineState {
-	uint32 cutScenePtr[5];
-	byte cutSceneScript[5];
-	int16 cutSceneData[5];
+	uint32 cutScenePtr[kMaxCutsceneNum];
+	byte cutSceneScript[kMaxCutsceneNum];
+	int16 cutSceneData[kMaxCutsceneNum];
 	int16 cutSceneScriptIndex;
 	byte cutSceneStackPointer;
 	ScriptSlot slot[NUM_SCRIPT_SLOT];
 	int32 localvar[NUM_SCRIPT_SLOT][26];
 
-	NestedScript nest[15];
+	NestedScript nest[kMaxScriptNesting];
 	byte numNestedScripts;
 };
 

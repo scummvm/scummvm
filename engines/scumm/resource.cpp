@@ -167,8 +167,6 @@ void ScummEngine::deleteRoomOffsets() {
 
 /** Read room offsets */
 void ScummEngine::readRoomsOffsets() {
-	int num, room;
-
 	debug(9, "readRoomOffsets()");
 
 	if (_game.features & GF_SMALL_HEADER) {
@@ -177,13 +175,12 @@ void ScummEngine::readRoomsOffsets() {
 		_fileHandle->seek(16, SEEK_SET);
 	}
 
-	num = _fileHandle->readByte();
+	int num = _fileHandle->readByte();
 	while (num--) {
-		room = _fileHandle->readByte();
+		int room = _fileHandle->readByte();
+		int offset =  _fileHandle->readUint32LE();
 		if (_res->roomoffs[rtRoom][room] != RES_INVALID_OFFSET) {
-			_res->roomoffs[rtRoom][room] = _fileHandle->readUint32LE();
-		} else {
-			_fileHandle->readUint32LE();
+			_res->roomoffs[rtRoom][room] = offset;
 		}
 	}
 }
@@ -491,7 +488,7 @@ void ScummEngine::readArrayFromIndexFile() {
 	error("readArrayFromIndexFile() not supported in pre-V6 games");
 }
 
-void ScummEngine::readResTypeList(int id) {
+int ScummEngine::readResTypeList(int id) {
 	int num;
 	int i;
 
@@ -511,16 +508,27 @@ void ScummEngine::readResTypeList(int id) {
 	}
 	for (i = 0; i < num; i++) {
 		_res->roomoffs[id][i] = _fileHandle->readUint32LE();
-
-		if (id == rtRoom && _game.heversion >= 70)
-			_heV7RoomIntOffsets[i] = _res->roomoffs[id][i];
 	}
 
-	if (_game.heversion >= 70) {
+	return num;
+}
+
+int ScummEngine_v70he::readResTypeList(int id) {
+	int num;
+	int i;
+
+	num = ScummEngine::readResTypeList(id);
+
+	if (id == rtRoom)
 		for (i = 0; i < num; i++) {
-			_res->globsize[id][i] = _fileHandle->readUint32LE();
+			_heV7RoomIntOffsets[i] = _res->roomoffs[rtRoom][i];
 		}
+
+	for (i = 0; i < num; i++) {
+		_res->globsize[id][i] = _fileHandle->readUint32LE();
 	}
+
+	return num;
 }
 
 void ResourceManager::allocResTypeData(int id, uint32 tag, int num_, const char *name_, int mode_) {
@@ -635,18 +643,9 @@ int ScummEngine::loadResource(int type, int idx) {
 	if (roomNr == 0)
 		roomNr = _roomResource;
 
-	if (type == rtRoom) {
-		if (_game.version == 8)
-			fileOffs = 8;
-		else if (_game.heversion >= 70)
-			fileOffs = _heV7RoomIntOffsets[idx];
-		else
-			fileOffs = 0;
-	} else {
-		fileOffs = _res->roomoffs[type][idx];
-		if (fileOffs == RES_INVALID_OFFSET)
-			return 0;
-	}
+	fileOffs = getResourceRoomOffset(type, idx);
+	if (fileOffs == RES_INVALID_OFFSET)
+		return 0;
 
 	openRoom(roomNr);
 
@@ -691,19 +690,31 @@ int ScummEngine::loadResource(int type, int idx) {
 		dumpResource("script-", idx, getResourceAddress(rtScript, idx));
 	}
 
-	if (!_fileHandle->err() && !_fileHandle->eos()) {
-		return 1;
+	if (_fileHandle->err() || _fileHandle->eos()) {
+		error("Cannot read resource");
 	}
 
-	_res->nukeResource(type, idx);
-
-	error("Cannot read resource");
+	return 1;
 }
 
 int ScummEngine::getResourceRoomNr(int type, int idx) {
 	if (type == rtRoom && _game.heversion < 70)
 		return idx;
 	return _res->roomno[type][idx];
+}
+
+uint32 ScummEngine::getResourceRoomOffset(int type, int idx) {
+	if (type == rtRoom) {
+		return (_game.version == 8) ? 8 : 0;
+	}
+	return _res->roomoffs[type][idx];
+}
+
+uint32 ScummEngine_v70he::getResourceRoomOffset(int type, int idx) {
+	if (type == rtRoom) {
+		return _heV7RoomIntOffsets[idx];
+	}
+	return _res->roomoffs[type][idx];
 }
 
 int ScummEngine::getResourceSize(int type, int idx) {
@@ -1295,12 +1306,15 @@ void ScummEngine::allocateArrays() {
 	_res->allocResTypeData(rtMatrix, 0, 10, "boxes", 0);
 	_res->allocResTypeData(rtImage, MKID_BE('AWIZ'), _numImages, "images", 1);
 	_res->allocResTypeData(rtTalkie, MKID_BE('TLKE'), _numTalkies, "talkie", 1);
-
-	if (_game.heversion >= 70) {
-		_res->allocResTypeData(rtSpoolBuffer, 0, 9, "spool buffer", 1);
-		_heV7RoomIntOffsets = (uint32 *)calloc(_numRooms, sizeof(uint32));
-	}
 }
+
+void ScummEngine_v70he::allocateArrays() {
+	ScummEngine::allocateArrays();
+
+	_res->allocResTypeData(rtSpoolBuffer, 0, 9, "spool buffer", 1);
+	_heV7RoomIntOffsets = (uint32 *)calloc(_numRooms, sizeof(uint32));
+}
+
 
 void ScummEngine::dumpResource(const char *tag, int idx, const byte *ptr, int length) {
 	char buf[256];

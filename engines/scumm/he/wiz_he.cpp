@@ -111,7 +111,7 @@ void Wiz::polygonStore(int id, bool flag, int vert1x, int vert1y, int vert2x, in
 }
 
 void Wiz::polygonRotatePoints(Common::Point *pts, int num, int angle) {
-	double alpha = angle * PI / 180.;
+	double alpha = angle * M_PI / 180.;
 	double cos_alpha = cos(alpha);
 	double sin_alpha = sin(alpha);
 

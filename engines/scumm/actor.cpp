@@ -26,6 +26,7 @@
 #include "common/system.h"	// for setFocusRectangle/clearFocusRectangle
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
+#include "scumm/actor_he.h"
 #include "scumm/akos.h"
 #include "scumm/boxes.h"
 #include "scumm/charset.h"
@@ -75,7 +76,7 @@ void ActorHE::initActor(int mode) {
 	if (_vm->_game.heversion >= 61)
 		_flip = 0;
 
-	_clipOverride = _vm->_actorClipOverride;
+	_clipOverride = ((ScummEngine_v60he *)_vm)->_actorClipOverride;
 
 	_auxBlock.reset();
 }
@@ -241,7 +242,7 @@ void Actor::setActorWalkSpeed(uint newSpeedX, uint newSpeedY) {
 int getAngleFromPos(int x, int y, bool useATAN) {
 	if (useATAN) {
 		double temp = atan2((double)x, (double)-y);
-		return normalizeAngle((int)(temp * 180 / PI));
+		return normalizeAngle((int)(temp * 180 / M_PI));
 	} else {
 		if (ABS(y) * 2 < ABS(x)) {
 			if (x > 0)

@@ -62,7 +62,7 @@ void Insane::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 					  int16 par1, int16 par2, int16 par3, int16 par4) {
-	int16 par5, par6, par7, par9, par11, par13, tmp;
+	int16 par5, par6, par7, par9, par11, par13;
 
 	switch (par1) {
 	case 2: // PATCH
@@ -99,15 +99,15 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		if (par2 != 13)
 			break;
 
-		tmp = b.readUint16LE();   // +8
-		tmp = b.readUint16LE();   // +10
-		par7 = b.readUint16LE();  // +12 dx
-		tmp = b.readUint16LE();   // +14
-		par9 = b.readUint16LE();  // +16 bx
-		tmp = b.readUint16LE();   // +18
-		par11 = b.readUint16LE(); // +20 cx
-		tmp = b.readUint16LE();   // +22
-		par13 = b.readUint16LE(); // +24 ax
+		b.readUint16LE();			// +8
+		b.readUint16LE();			// +10
+		par7 = b.readUint16LE();	// +12 dx
+		b.readUint16LE();			// +14
+		par9 = b.readUint16LE();	// +16 bx
+		b.readUint16LE();			// +18
+		par11 = b.readUint16LE();	// +20 cx
+		b.readUint16LE();			// +22
+		par13 = b.readUint16LE();	// +24 ax
 
 		if (par13 > _actor[0].x || par11 < _actor[0].x) {
 			_tiresRustle = true;

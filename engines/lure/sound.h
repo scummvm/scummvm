@@ -46,7 +46,7 @@ struct ChannelEntry {
 	uint8 volume;
 };
 
-class MidiMusic: public MidiDriver {
+class MidiMusic: public MidiDriver_BASE {
 private:
 	uint8 _soundNumber;
 	uint8 _channelNumber;
@@ -66,14 +66,12 @@ private:
 	uint32 songOffset(uint16 songNum) const;
 	uint32 songLength(uint16 songNum) const;
 
-	bool _passThrough;
-
 public:
 	MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
 		 uint8 channelNum, uint8 soundNum, bool isMus, uint8 numChannels, void *soundData, uint32 size);
 	~MidiMusic();
 	void setVolume(int volume);
-	int getVolume() { return _volume; }
+	int getVolume() const { return _volume; }
 
 	void playSong(uint16 songNum);
 	void stopSong() { stopMusic(); }
@@ -81,28 +79,18 @@ public:
 	void stopMusic();
 	void queueTuneList(int16 tuneList);
 	bool queueSong(uint16 songNum);
-	void setPassThrough(bool b) { _passThrough = b; }
 	void toggleVChange();
 
-	//MidiDriver interface implementation
-	int open();
-	void close();
-	void send(uint32 b);
+	// MidiDriver_BASE interface implementation
+	virtual void send(uint32 b);
+	virtual void metaEvent(byte type, byte *data, uint16 length);
+
 	void onTimer();
 
-	void metaEvent(byte type, byte *data, uint16 length);
-
-	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo() { return _driver ? _driver->getBaseTempo() : 0; }
-
-	//Channel allocation functions
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
-
-	uint8 channelNumber() { return _channelNumber; }
-	uint8 soundNumber() { return _soundNumber; }
-	bool isPlaying() { return _isPlaying; }
-	bool isMusic() {return _isMusic; }
+	uint8 channelNumber() const { return _channelNumber; }
+	uint8 soundNumber() const { return _soundNumber; }
+	bool isPlaying() const { return _isPlaying; }
+	bool isMusic() const { return _isMusic; }
 };
 
 class SoundManager : public Common::Singleton<SoundManager> {

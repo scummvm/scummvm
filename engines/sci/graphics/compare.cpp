@@ -125,7 +125,7 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 
 #ifdef ENABLE_SCI32
 	if (view->isSci2Hires())
-		_screen->adjustToUpscaledCoordinates(y, x);
+		view->adjustToUpscaledCoordinates(y, x);
 	else if (getSciVersion() == SCI_VERSION_2_1)
 		_coordAdjuster->fromScriptToDisplay(y, x);
 #endif
@@ -134,8 +134,8 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 
 #ifdef ENABLE_SCI32
 	if (view->isSci2Hires()) {
-		_screen->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
-		_screen->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
+		view->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
+		view->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
 	} else if (getSciVersion() == SCI_VERSION_2_1) {
 		_coordAdjuster->fromDisplayToScript(celRect.top, celRect.left);
 		_coordAdjuster->fromDisplayToScript(celRect.bottom, celRect.right);
@@ -223,13 +223,13 @@ void GfxCompare::kernelBaseSetter(reg_t object) {
 			celRect.bottom = readSelectorValue(_segMan, object, SELECTOR(nsBottom));
 		} else {
 			if (tmpView->isSci2Hires())
-				_screen->adjustToUpscaledCoordinates(y, x);
+				tmpView->adjustToUpscaledCoordinates(y, x);
 
 			tmpView->getCelRect(loopNo, celNo, x, y, z, celRect);
 
 			if (tmpView->isSci2Hires()) {
-				_screen->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
-				_screen->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
+				tmpView->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
+				tmpView->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
 			}
 		}
 

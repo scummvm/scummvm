@@ -212,6 +212,9 @@ public:
 		#ifdef USE_MT32EMU
 		LINK_PLUGIN(MT32)
 		#endif
+		#if defined(__ANDROID__)
+		LINK_PLUGIN(EAS)
+		#endif
 		LINK_PLUGIN(ADLIB)
 		LINK_PLUGIN(PCSPK)
 		LINK_PLUGIN(PCJR)

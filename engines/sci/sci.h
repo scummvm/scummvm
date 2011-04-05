@@ -77,7 +77,6 @@ class GfxText16;
 class GfxTransitions;
 
 #ifdef ENABLE_SCI32
-class SciGui32;
 class RobotDecoder;
 class GfxFrameout;
 #endif

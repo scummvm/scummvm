@@ -25,8 +25,10 @@
 
 #include "common/util.h"
 
+#include "sci/console.h"
 #include "sci/sci.h"
 #include "sci/engine/features.h"
+#include "sci/engine/gc.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
@@ -705,6 +707,28 @@ int16 GfxPorts::kernelPriorityToCoordinate(byte priority) {
 				return y;
 	}
 	return _priorityBottom;
+}
+
+void GfxPorts::processEngineHunkList(WorklistManager &wm) {
+	for (PortList::const_iterator it = _windowList.begin(); it != _windowList.end(); ++it) {
+		if ((*it)->isWindow()) {
+			Window *wnd = ((Window *)*it);
+			wm.push(wnd->hSaved1);
+			wm.push(wnd->hSaved2);
+		}
+	}
+}
+
+void GfxPorts::printWindowList(Console *con) {
+	for (PortList::const_iterator it = _windowList.begin(); it != _windowList.end(); ++it) {
+		if ((*it)->isWindow()) {
+			Window *wnd = ((Window *)*it);
+			con->DebugPrintf("%d: '%s' at %d, %d, (%d, %d, %d, %d), drawn: %d, style: %d\n",
+					wnd->id, wnd->title.c_str(), wnd->left, wnd->top, 
+					wnd->rect.left, wnd->rect.top, wnd->rect.right, wnd->rect.bottom,
+					wnd->bDrawn, wnd->wndStyle);
+		}
+	}
 }
 
 } // End of namespace Sci

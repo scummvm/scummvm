@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(GP2X) || defined(GP2XWIZ)
+#if defined(GP2X)
 
 #include "backends/events/gp2xsdl/gp2xsdl-events.h"
 #if defined(GP2X)

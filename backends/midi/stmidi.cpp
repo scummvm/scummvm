@@ -48,8 +48,9 @@
 
 class MidiDriver_STMIDI : public MidiDriver_MPU401 {
 public:
-        MidiDriver_STMIDI() : _isOpen (false) { }
+	MidiDriver_STMIDI() : _isOpen (false) { }
 	int open();
+	bool isOpen() const { return _isOpen; }
 	void close();
 	void send(uint32 b);
 	void sysEx(const byte *msg, uint16 length);
@@ -59,7 +60,7 @@ private:
 };
 
 int MidiDriver_STMIDI::open() {
-	if ((_isOpen) && (!Bcostat(4)))
+	if (_isOpen && (!Bcostat(4)))
 		return MERR_ALREADY_OPEN;
 	warning("ST Midi Port Open");
 	_isOpen = true;
@@ -123,36 +124,36 @@ void MidiDriver_STMIDI::sysEx (const byte *msg, uint16 length) {
 
 class StMidiMusicPlugin : public MusicPluginObject {
 public:
-        const char *getName() const {
-                return "STMIDI";
-        }
+	const char *getName() const {
+		return "STMIDI";
+	}
 
-        const char *getId() const {
-                return "stmidi";
-        }
+	const char *getId() const {
+		return "stmidi";
+	}
 
-        MusicDevices getDevices() const;
-		Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	MusicDevices getDevices() const;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
 };
 
 MusicDevices StMidiMusicPlugin::getDevices() const {
-        MusicDevices devices;
-        // TODO: Return a different music type depending on the configuration
-        // TODO: List the available devices
-        devices.push_back(MusicDevice(this, "", MT_GM));
-        return devices;
+	MusicDevices devices;
+	// TODO: Return a different music type depending on the configuration
+	// TODO: List the available devices
+	devices.push_back(MusicDevice(this, "", MT_GM));
+	return devices;
 }
 
 Common::Error StMidiMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
-        *mididriver = new MidiDriver_STMIDI();
+	*mididriver = new MidiDriver_STMIDI();
 
-        return Common::kNoError;
+	return Common::kNoError;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(STMIDI)
-        //REGISTER_PLUGIN_DYNAMIC(STMIDI, PLUGIN_TYPE_MUSIC, StMidiMusicPlugin);
+	//REGISTER_PLUGIN_DYNAMIC(STMIDI, PLUGIN_TYPE_MUSIC, StMidiMusicPlugin);
 //#else
-        REGISTER_PLUGIN_STATIC(STMIDI, PLUGIN_TYPE_MUSIC, StMidiMusicPlugin);
+	REGISTER_PLUGIN_STATIC(STMIDI, PLUGIN_TYPE_MUSIC, StMidiMusicPlugin);
 //#endif
 
 #endif

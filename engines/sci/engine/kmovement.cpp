@@ -569,8 +569,8 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 		debugC(kDebugLevelBresen, " avoider %04x:%04x", PRINT_REG(avoider));
 
 		for (moves = 0; moves < 8; moves++) {
-			int move_x = (int)(sin(angle * PI / 180.0) * (xstep));
-			int move_y = (int)(-cos(angle * PI / 180.0) * (ystep));
+			int move_x = (int)(sin(angle * M_PI / 180.0) * (xstep));
+			int move_y = (int)(-cos(angle * M_PI / 180.0) * (ystep));
 
 			writeSelectorValue(segMan, client, SELECTOR(x), oldx + move_x);
 			writeSelectorValue(segMan, client, SELECTOR(y), oldy + move_y);

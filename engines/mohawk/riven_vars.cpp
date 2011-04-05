@@ -270,85 +270,64 @@ static const char *variableNames[] = {
 	"currentcardid"
 };
 
-uint32 *MohawkEngine_Riven::getLocalVar(uint32 index) {
-	return getVar(getName(VariableNames, index));
-}
-
-uint32 MohawkEngine_Riven::getGlobalVar(uint32 index) {
-	return _vars[index];
-}
-
-Common::String MohawkEngine_Riven::getGlobalVarName(uint32 index) {
-	return variableNames[index];
-}
-
-uint32 *MohawkEngine_Riven::getVar(const Common::String &varName) {
-	for (uint32 i = 0; i < _varCount; i++)
-		if (varName.equalsIgnoreCase(variableNames[i]))
-			return &_vars[i];
-
-	error ("Unknown variable: '%s'", varName.c_str());
-	return NULL;
+uint32 &MohawkEngine_Riven::getStackVar(uint32 index) {
+	return _vars[getName(VariableNames, index)];
 }
 
 void MohawkEngine_Riven::initVars() {
-	_varCount = ARRAYSIZE(variableNames);
+	// Most variables just start at 0, it's simpler to do this
+	for (uint32 i = 0; i < ARRAYSIZE(variableNames); i++)
+		_vars[variableNames[i]] = 0;
 
-	_vars = new uint32[_varCount];
-
-	// Temporary:
-	for (uint32 i = 0; i < _varCount; i++)
-		_vars[i] = 0;
-
-	// Init Variables to their correct starting state.
-	*getVar("ttelescope") = 5;
-	*getVar("tgatestate") = 1;
-	*getVar("jbridge1") = 1;
-	*getVar("jbridge4") = 1;
-	*getVar("jgallows") = 1;
-	*getVar("jiconcorrectorder") = 12068577;
-	*getVar("bblrvalve") = 1;
-	*getVar("bblrwtr") = 1;
-	*getVar("bfans") = 1;
-	*getVar("bytrap") = 2;
-	*getVar("aatruspage") = 1;
-	*getVar("acathpage") = 1;
-	*getVar("bheat") = 1;
-	*getVar("waterenabled") = 1;
-	*getVar("ogehnpage") = 1;
-	*getVar("bblrsw") = 1;
-	*getVar("ocage") = 1;
-	*getVar("jbeetle") = 1;
-	*getVar("tdl") = 1;
-	*getVar("bmagcar") = 1;
-	*getVar("gnmagcar") = 1;
-	*getVar("omusicplayer") = 1;
+	// Initialize the rest of the variables to their proper state
+	_vars["ttelescope"] = 5;
+	_vars["tgatestate"] = 1;
+	_vars["jbridge1"] = 1;
+	_vars["jbridge4"] = 1;
+	_vars["jgallows"] = 1;
+	_vars["jiconcorrectorder"] = 12068577;
+	_vars["bblrvalve"] = 1;
+	_vars["bblrwtr"] = 1;
+	_vars["bfans"] = 1;
+	_vars["bytrap"] = 2;
+	_vars["aatruspage"] = 1;
+	_vars["acathpage"] = 1;
+	_vars["bheat"] = 1;
+	_vars["waterenabled"] = 1;
+	_vars["ogehnpage"] = 1;
+	_vars["bblrsw"] = 1;
+	_vars["ocage"] = 1;
+	_vars["jbeetle"] = 1;
+	_vars["tdl"] = 1;
+	_vars["bmagcar"] = 1;
+	_vars["gnmagcar"] = 1;
+	_vars["omusicplayer"] = 1;
 
 	// Randomize the telescope combination
-	uint32 *teleCombo = getVar("tcorrectorder");
+	uint32 &teleCombo = _vars["tcorrectorder"];
 	for (byte i = 0; i < 5; i++) {
-		*teleCombo *= 10;
-		*teleCombo += _rnd->getRandomNumberRng(1, 5); // 5 buttons
+		teleCombo *= 10;
+		teleCombo += _rnd->getRandomNumberRng(1, 5); // 5 buttons
 	}
 
 	// Randomize the prison combination
-	uint32 *prisonCombo = getVar("pcorrectorder");
+	uint32 &prisonCombo = _vars["pcorrectorder"];
 	for (byte i = 0; i < 5; i++) {
-		*prisonCombo *= 10;
-		*prisonCombo += _rnd->getRandomNumberRng(1, 3); // 3 buttons/sounds
+		prisonCombo *= 10;
+		prisonCombo += _rnd->getRandomNumberRng(1, 3); // 3 buttons/sounds
 	}
 
 	// Randomize the dome combination -- each bit represents a slider position,
 	// the highest bit (1 << 24) represents 1, (1 << 23) represents 2, etc.
-	uint32 *domeCombo = getVar("adomecombo");
+	uint32 &domeCombo = _vars["adomecombo"];
 	for (byte bitsSet = 0; bitsSet < 5;) {
 		uint32 randomBit = 1 << (24 - _rnd->getRandomNumber(24));
 
 		// Don't overwrite a bit we already set, and throw out the bottom five bits being set
-		if (*domeCombo & randomBit || (*domeCombo | randomBit) == 31)
+		if (domeCombo & randomBit || (domeCombo | randomBit) == 31)
 			continue;
 
-		*domeCombo |= randomBit;
+		domeCombo |= randomBit;
 		bitsSet++;
 	}
 }

@@ -53,7 +53,7 @@ HugoEngine *HugoEngine::s_Engine = 0;
 
 HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(syst), _gameDescription(gd),
 	_hero(0), _heroImage(0), _defltTunes(0), _numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0),
-	_screenStates(0), _score(0), _maxscore(0), _lastTime(0), _curTime(0)
+	_screenStates(0), _score(0), _maxscore(0), _lastTime(0), _curTime(0), _episode(0)
 {
 	_system = syst;
 	DebugMan.addDebugChannel(kDebugSchedule, "Schedule", "Script Schedule debug level");
@@ -165,7 +165,7 @@ bool HugoEngine::isPacked() const {
  * Print options for user when dead
  */
 void HugoEngine::gameOverMsg() {
-	Utils::Box(kBoxOk, "%s", _text->getTextUtil(kGameOver));
+	Utils::notifyBox(_text->getTextUtil(kGameOver));
 }
 
 Common::Error HugoEngine::run() {
@@ -176,6 +176,10 @@ Common::Error HugoEngine::run() {
 	_inventory = new InventoryHandler(this);
 	_route = new Route(this);
 	_sound = new SoundHandler(this);
+
+	// Setup mixer
+	syncSoundSettings();
+
 	_text = new TextHandler(this);
 
 	_topMenu = new TopMenu(this);
@@ -248,19 +252,21 @@ Common::Error HugoEngine::run() {
 
 	initStatus();                                   // Initialize game status
 	initConfig();                                   // Initialize user's config
-	initialize();
-	resetConfig();                                  // Reset user's config
-	initMachine();
+	if (!_status.doQuitFl) {
+		initialize();
+		resetConfig();                              // Reset user's config
+		initMachine();
 
-	// Start the state machine
-	_status.viewState = kViewIntroInit;
-	_status.doQuitFl = false;
-	int16 loadSlot = Common::ConfigManager::instance().getInt("save_slot");
-	if (loadSlot >= 0) {
-		_status.skipIntroFl = true;
-		_file->restoreGame(loadSlot);
-	} else {
-		_file->saveGame(0, "New Game");
+		// Start the state machine
+		_status.viewState = kViewIntroInit;
+
+		int16 loadSlot = Common::ConfigManager::instance().getInt("save_slot");
+		if (loadSlot >= 0) {
+			_status.skipIntroFl = true;
+			_file->restoreGame(loadSlot);
+		} else {
+			_file->saveGame(0, "New Game");
+		}
 	}
 
 	while (!_status.doQuitFl) {
@@ -674,8 +680,8 @@ void HugoEngine::endGame() {
 	debugC(1, kDebugEngine, "endGame");
 
 	if (_boot.registered != kRegRegistered)
-		Utils::Box(kBoxAny, "%s", _text->getTextEngine(kEsAdvertise));
-	Utils::Box(kBoxAny, "%s\n%s", _episode, getCopyrightString());
+		Utils::notifyBox(_text->getTextEngine(kEsAdvertise));
+	Utils::notifyBox(Common::String::format("%s\n%s", _episode, getCopyrightString()));
 	_status.viewState = kViewExit;
 }
 

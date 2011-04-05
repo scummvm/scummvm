@@ -124,7 +124,7 @@ void OSScript::setupTable() {
 		{ 0, 0 },
 		{ &FWScript::o2_loadPart, "s" },
 		/* 40 */
-		{ 0, 0 }, /* o1_closePart, triggered by some scripts (STARTA.PRC 4 for ex.) */
+		{ &FWScript::o1_closePart, "" },
 		{ &FWScript::o1_loadNewPrcName, "bs" },
 		{ &FWScript::o1_requestCheckPendingDataLoad, "" },
 		{ 0, 0 },

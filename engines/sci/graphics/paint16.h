@@ -36,7 +36,6 @@ class GfxPorts;
 class GfxScreen;
 class GfxPalette;
 class Font;
-class SciGuiPicture;
 class GfxView;
 
 /**

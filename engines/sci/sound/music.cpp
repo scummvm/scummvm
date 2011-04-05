@@ -303,7 +303,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			pSnd->hCurrentAud = Audio::SoundHandle();
 		} else {
 			// play MIDI track
-			_mutex.lock();
+			Common::StackLock lock(_mutex);
 			pSnd->soundType = Audio::Mixer::kMusicSoundType;
 			if (pSnd->pMidiParser == NULL) {
 				pSnd->pMidiParser = new MidiParser_SCI(_soundVersion, this);
@@ -334,7 +334,6 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			pSnd->loop = prevLoop;
 			pSnd->hold = prevHold;
 			pSnd->pMidiParser->mainThreadEnd();
-			_mutex.unlock();
 		}
 	}
 }
@@ -441,8 +440,27 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 		}
 	} else {
 		if (pSnd->pMidiParser) {
-			_mutex.lock();
+			Common::StackLock lock(_mutex);
 			pSnd->pMidiParser->mainThreadBegin();
+
+			if (pSnd->status != kSoundPaused) {
+				// Stop any in progress music fading, as that will reset the
+				// volume of the sound channels that the faded song occupies..
+				// Fixes bug #3266480 and partially fixes bug #3041738.
+				for (uint i = 0; i < playListCount; i++) {
+					// Is another MIDI song being faded? If yes, stop it
+					// immediately instead
+					if (_playList[i]->fadeStep && _playList[i]->pMidiParser) {
+						_playList[i]->status = kSoundStopped;
+						if (_soundVersion <= SCI_VERSION_0_LATE)
+							_playList[i]->isQueued = false;
+						_playList[i]->pMidiParser->stop();
+						freeChannels(_playList[i]);
+						_playList[i]->fadeStep = 0;
+					}
+				}
+			}
+
 			pSnd->pMidiParser->tryToOwnChannels();
 			if (pSnd->status != kSoundPaused)
 				pSnd->pMidiParser->sendInitCommands();
@@ -468,7 +486,6 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			pSnd->loop = prevLoop;
 			pSnd->hold = prevHold;
 			pSnd->pMidiParser->mainThreadEnd();
-			_mutex.unlock();
 		}
 	}
 
@@ -484,7 +501,7 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 		_pMixer->stopHandle(pSnd->hCurrentAud);
 
 	if (pSnd->pMidiParser) {
-		_mutex.lock();
+		Common::StackLock lock(_mutex);
 		pSnd->pMidiParser->mainThreadBegin();
 		// We shouldn't call stop in case it's paused, otherwise we would send
 		// allNotesOff() again
@@ -492,7 +509,6 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 			pSnd->pMidiParser->stop();
 		freeChannels(pSnd);
 		pSnd->pMidiParser->mainThreadEnd();
-		_mutex.unlock();
 	}
 
 	pSnd->fadeStep = 0; // end fading, if fading was in progress
@@ -504,11 +520,10 @@ void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
 		// we simply ignore volume changes for samples, because sierra sci also
 		//  doesn't support volume for samples via kDoSound
 	} else if (pSnd->pMidiParser) {
-		_mutex.lock();
+		Common::StackLock lock(_mutex);
 		pSnd->pMidiParser->mainThreadBegin();
 		pSnd->pMidiParser->setVolume(volume);
 		pSnd->pMidiParser->mainThreadEnd();
-		_mutex.unlock();
 	}
 }
 
@@ -530,13 +545,12 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 	pSnd->status = kSoundStopped;
 
 	if (pSnd->pMidiParser) {
-		_mutex.lock();
+		Common::StackLock lock(_mutex);
 		pSnd->pMidiParser->mainThreadBegin();
 		pSnd->pMidiParser->unloadMusic();
 		pSnd->pMidiParser->mainThreadEnd();
 		delete pSnd->pMidiParser;
 		pSnd->pMidiParser = NULL;
-		_mutex.unlock();
 	}
 
 	if (pSnd->pStreamAud) {
@@ -547,7 +561,7 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 		pSnd->pLoopStream = 0;
 	}
 
-	_mutex.lock();
+	Common::StackLock lock(_mutex);
 	uint sz = _playList.size(), i;
 	// Remove sound from playlist
 	for (i = 0; i < sz; i++) {
@@ -558,7 +572,6 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 			break;
 		}
 	}
-	_mutex.unlock();
 }
 
 void SciMusic::soundPause(MusicEntry *pSnd) {
@@ -581,12 +594,11 @@ void SciMusic::soundPause(MusicEntry *pSnd) {
 		_pMixer->pauseHandle(pSnd->hCurrentAud, true);
 	} else {
 		if (pSnd->pMidiParser) {
-			_mutex.lock();
+			Common::StackLock lock(_mutex);
 			pSnd->pMidiParser->mainThreadBegin();
 			pSnd->pMidiParser->pause();
 			freeChannels(pSnd);
 			pSnd->pMidiParser->mainThreadEnd();
-			_mutex.unlock();
 		}
 	}
 }
@@ -651,9 +663,11 @@ void SciMusic::printPlayList(Console *con) {
 
 	for (uint32 i = 0; i < _playList.size(); i++) {
 		MusicEntry *song = _playList[i];
-		con->DebugPrintf("%d: %04x:%04x, resource id: %d, status: %s, %s type\n", i,
-						PRINT_REG(song->soundObj), song->resourceId,
-						musicStatus[song->status], song->pMidiParser ? "MIDI" : "digital audio");
+		con->DebugPrintf("%d: %04x:%04x (%s), resource id: %d, status: %s, %s type\n",
+						i, PRINT_REG(song->soundObj),
+						g_sci->getEngineState()->_segMan->getObjectName(song->soundObj),
+						song->resourceId, musicStatus[song->status],
+						song->pMidiParser ? "MIDI" : "digital audio");
 	}
 }
 

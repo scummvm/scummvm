@@ -48,7 +48,7 @@
 
 namespace Sword25 {
 
-void art_rgb_fill_run1(art_u8 *buf, art_u8 r, art_u8 g, art_u8 b, int n) {
+void art_rgb_fill_run1(byte *buf, byte r, byte g, byte b, int n) {
 	int i;
 
 	if (r == g && g == b && r == 255) {
@@ -62,7 +62,7 @@ void art_rgb_fill_run1(art_u8 *buf, art_u8 r, art_u8 g, art_u8 b, int n) {
 	}
 }
 
-void art_rgb_run_alpha1(art_u8 *buf, art_u8 r, art_u8 g, art_u8 b, int alpha, int n) {
+void art_rgb_run_alpha1(byte *buf, byte r, byte g, byte b, int alpha, int n) {
 	int i;
 	int v;
 
@@ -82,8 +82,8 @@ typedef struct _ArtRgbSVPAlphaData ArtRgbSVPAlphaData;
 
 struct _ArtRgbSVPAlphaData {
 	int alphatab[256];
-	art_u8 r, g, b, alpha;
-	art_u8 *buf;
+	byte r, g, b, alpha;
+	byte *buf;
 	int rowstride;
 	int x0, x1;
 };
@@ -91,12 +91,12 @@ struct _ArtRgbSVPAlphaData {
 static void art_rgb_svp_alpha_callback1(void *callback_data, int y,
                                         int start, ArtSVPRenderAAStep *steps, int n_steps) {
 	ArtRgbSVPAlphaData *data = (ArtRgbSVPAlphaData *)callback_data;
-	art_u8 *linebuf;
+	byte *linebuf;
 	int run_x0, run_x1;
-	art_u32 running_sum = start;
+	uint32 running_sum = start;
 	int x0, x1;
 	int k;
-	art_u8 r, g, b;
+	byte r, g, b;
 	int *alphatab;
 	int alpha;
 
@@ -146,12 +146,12 @@ static void art_rgb_svp_alpha_opaque_callback1(void *callback_data, int y,
         int start,
         ArtSVPRenderAAStep *steps, int n_steps) {
 	ArtRgbSVPAlphaData *data = (ArtRgbSVPAlphaData *)callback_data;
-	art_u8 *linebuf;
+	byte *linebuf;
 	int run_x0, run_x1;
-	art_u32 running_sum = start;
+	uint32 running_sum = start;
 	int x0, x1;
 	int k;
-	art_u8 r, g, b;
+	byte r, g, b;
 	int *alphatab;
 	int alpha;
 
@@ -216,7 +216,7 @@ static void art_rgb_svp_alpha_opaque_callback1(void *callback_data, int y,
 void art_rgb_svp_alpha1(const ArtSVP *svp,
                         int x0, int y0, int x1, int y1,
                         uint32 color,
-                        art_u8 *buf, int rowstride) {
+                        byte *buf, int rowstride) {
 	ArtRgbSVPAlphaData data;
 	byte r, g, b, alpha;
 	int i;
@@ -320,7 +320,7 @@ ArtVpath *art_vpath_reverse_free(ArtVpath *a) {
 	return dest;
 }
 
-void drawBez(ArtBpath *bez1, ArtBpath *bez2, art_u8 *buffer, int width, int height, int deltaX, int deltaY, double scaleX, double scaleY, double penWidth, unsigned int color) {
+void drawBez(ArtBpath *bez1, ArtBpath *bez2, byte *buffer, int width, int height, int deltaX, int deltaY, double scaleX, double scaleY, double penWidth, unsigned int color) {
 	ArtVpath *vec = NULL;
 	ArtVpath *vec1 = NULL;
 	ArtVpath *vec2 = NULL;

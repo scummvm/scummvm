@@ -308,24 +308,7 @@ enum WhereIsObject {
 	WIO_FLOBJECT = 4
 };
 
-struct AuxBlock {
-	bool visible;
-	Common::Rect r;
-
-	void reset() {
-		visible = false;
-		r.left = r.top = 0;
-		r.right = r.bottom = -1;
-	}
-};
-
-struct AuxEntry {
-	int actorNum;
-	int subIndex;
-};
-
-// TODO: Rename InfoStuff to something more descriptive
-struct InfoStuff {
+struct SaveStateMetaInfos {
 	uint32 date;
 	uint16 time;
 	uint32 playtime;
@@ -630,7 +613,7 @@ public:
 
 	FilenamePattern _filenamePattern;
 
-	Common::String generateFilename(const int room) const;
+	virtual Common::String generateFilename(const int room) const;
 
 protected:
 	Common::KeyboardEvent _keyPressed;
@@ -694,11 +677,11 @@ public:
 	}
 	static Graphics::Surface *loadThumbnailFromSlot(const char *target, int slot);
 
-	static bool loadInfosFromSlot(const char *target, int slot, InfoStuff *stuff);
+	static bool loadInfosFromSlot(const char *target, int slot, SaveStateMetaInfos *stuff);
 
 protected:
 	void saveInfos(Common::WriteStream* file);
-	static bool loadInfos(Common::SeekableReadStream *file, InfoStuff *stuff);
+	static bool loadInfos(Common::SeekableReadStream *file, SaveStateMetaInfos *stuff);
 
 protected:
 	/* Script VM - should be in Script class */
@@ -790,8 +773,6 @@ public:
 protected:
 	int _resourceHeaderSize;
 	byte _resourceMapper[128];
-	byte *_heV7DiskOffsets;
-	uint32 *_heV7RoomIntOffsets;
 	const byte *_resourceLastSearchBuf; // FIXME: need to put it to savefile?
 	uint32 _resourceLastSearchSize;    // FIXME: need to put it to savefile?
 
@@ -804,11 +785,13 @@ protected:
 	bool openResourceFile(const Common::String &filename, byte encByte);	// TODO: Use Common::String
 
 	void loadPtrToResource(int type, int i, const byte *ptr);
-	virtual void readResTypeList(int id);
+	virtual int readResTypeList(int id);
 //	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
 //	byte *createResource(int type, int index, uint32 size);
 	int loadResource(int type, int i);
 //	void nukeResource(int type, int i);
+	int getResourceRoomNr(int type, int idx);
+	virtual uint32 getResourceRoomOffset(int type, int idx);
 	int getResourceSize(int type, int idx);
 
 public:
@@ -816,7 +799,6 @@ public:
 	virtual byte *getStringAddress(int i);
 	byte *getStringAddressVar(int i);
 	void ensureResourceLoaded(int type, int i);
-	int getResourceRoomNr(int type, int index);
 
 protected:
 	int readSoundResource(int index);
@@ -971,8 +953,6 @@ public:
 
 	// Generic costume code
 	bool isCostumeInUse(int i) const;
-
-	Common::Rect _actorClipOverride;	// HE specific
 
 protected:
 	/* Should be in Graphics class? */

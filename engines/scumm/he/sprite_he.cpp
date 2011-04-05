@@ -46,7 +46,7 @@ Sprite::~Sprite() {
 }
 
 void ScummEngine_v90he::allocateArrays() {
-	ScummEngine::allocateArrays();
+	ScummEngine_v70he::allocateArrays();
 	_sprite->allocTables(_numSprites, MAX(64, _numSprites / 4), 64);
 }
 

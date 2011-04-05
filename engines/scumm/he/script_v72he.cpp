@@ -1408,18 +1408,49 @@ void ScummEngine_v72he::o72_openFile() {
 
 	if (slot != -1) {
 		switch (mode) {
-		case 1:
+		case 1:   // Read mode
 			if (!_saveFileMan->listSavefiles(filename).empty()) {
 				_hInFileTable[slot] = _saveFileMan->openForLoading(filename);
 			} else {
 				_hInFileTable[slot] = SearchMan.createReadStreamForMember(filename);
 			}
 			break;
-		case 2:
+		case 2:   // Write mode
 			if (!strchr(filename, '/')) {
 				_hOutFileTable[slot] = _saveFileMan->openForSaving(filename);
 			}
 			break;
+		case 6: { // Append mode
+			if (strchr(filename, '/'))
+				break;
+
+			// First check if the file already exists
+			Common::InSaveFile *initialState = 0;
+			if (!_saveFileMan->listSavefiles(filename).empty())
+				initialState = _saveFileMan->openForLoading(filename);
+			else
+				initialState = SearchMan.createReadStreamForMember(filename);
+
+			// Read in the data from the initial file
+			uint32 initialSize = 0;
+			byte *initialData = 0;
+			if (initialState) {
+				initialSize = initialState->size();
+				initialData = new byte[initialSize];
+				initialState->read(initialData, initialSize);
+				delete initialState;
+			}
+
+			// Attempt to open a save file
+			_hOutFileTable[slot] = _saveFileMan->openForSaving(filename);
+
+			// Begin us off with the data from the previous file
+			if (_hOutFileTable[slot] && initialData) {
+				_hOutFileTable[slot]->write(initialData, initialSize);
+				delete[] initialData;
+			}
+			
+			} break;
 		default:
 			error("o72_openFile(): wrong open file mode %d", mode);
 		}

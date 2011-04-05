@@ -185,7 +185,7 @@ SciEvent EventManager::getScummVMEvent() {
 		return noEvent;
 
 	// Check for Control-D (debug console)
-	if (ev.kbd.hasFlags(Common::KBD_CTRL) && ev.kbd.keycode == Common::KEYCODE_d) {
+	if (ev.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_SHIFT) && ev.kbd.keycode == Common::KEYCODE_d) {
 		// Open debug console
 		Console *con = g_sci->getSciDebugger();
 		con->attach();

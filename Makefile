@@ -26,7 +26,7 @@ ifeq "$(HAVE_GCC)" "1"
 	CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
 	# Enable even more warnings...
 	CXXFLAGS+= -Wpointer-arith -Wcast-qual
-	CXXFLAGS+= -Wshadow -Wimplicit -Wnon-virtual-dtor -Wwrite-strings
+	CXXFLAGS+= -Wshadow -Wnon-virtual-dtor -Wwrite-strings
 
 	# Currently we disable this gcc flag, since it will also warn in cases,
 	# where using GCC_PRINTF (means: __attribute__((format(printf, x, y))))
@@ -54,10 +54,6 @@ ifeq "$(HAVE_ICC)" "1"
 	# 1899: multicharacter character literal (potential portability problem)
 	CXXFLAGS+= -diag-disable 161,1899
 endif
-
-# Warn if global constructors are used. Only available in GCC with LLVM backend
-# (and maybe clang?), hence off by default.
-#CXXFLAGS+= -Wglobal-constructors
 
 #######################################################################
 # Default commands - put the necessary replacements in config.mk      #

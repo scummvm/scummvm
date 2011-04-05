@@ -247,24 +247,11 @@ MusicPlayerMidi::~MusicPlayerMidi() {
 	delete _midiParser;
 
 	// Unload the MIDI Driver
-	if (_driver)
+	if (_driver) {
 		_driver->close();
-	delete _driver;
+		delete _driver;
+	}
 }
-
-int MusicPlayerMidi::open() {
-	// Don't ever call open without first setting the output driver!
-	if (!_driver)
-		return 255;
-
-	int ret = _driver->open();
-	if (ret)
-		return ret;
-
-	return 0;
-}
-
-void MusicPlayerMidi::close() {}
 
 void MusicPlayerMidi::send(uint32 b) {
 	if ((b & 0xFFF0) == 0x07B0) { // Volume change
@@ -292,32 +279,6 @@ void MusicPlayerMidi::metaEvent(byte type, byte *data, uint16 length) {
 			_driver->metaEvent(type, data, length);
 		break;
 	}
-}
-
-void MusicPlayerMidi::setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {
-	if (_driver)
-		_driver->setTimerCallback(timer_param, timer_proc);
-}
-
-uint32 MusicPlayerMidi::getBaseTempo() {
-	if (_driver)
-		return _driver->getBaseTempo();
-	else
-		return 0;
-}
-
-MidiChannel *MusicPlayerMidi::allocateChannel() {
-	if (_driver)
-		return _driver->allocateChannel();
-	else
-		return 0;
-}
-
-MidiChannel *MusicPlayerMidi::getPercussionChannel() {
-	if (_driver)
-		return _driver->getPercussionChannel();
-	else
-		return 0;
 }
 
 void MusicPlayerMidi::updateChanVolume(byte channel) {
@@ -402,8 +363,10 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 
 	// Create the driver
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_driver = createMidi(dev);
-	this->open();
+	_driver = MidiDriver::createMidi(dev);
+	assert(_driver);
+
+	_driver->open();	// TODO: Handle return value != 0 (indicating an error)
 
 	// Set the parser's driver
 	_midiParser->setMidiDriver(this);
@@ -702,8 +665,10 @@ MusicPlayerMac::MusicPlayerMac(GroovieEngine *vm) : MusicPlayerMidi(vm) {
 
 	// Create the driver
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_driver = createMidi(dev);
-	this->open();
+	_driver = MidiDriver::createMidi(dev);
+	assert(_driver);
+
+	_driver->open();	// TODO: Handle return value != 0 (indicating an error)
 
 	// Set the parser's driver
 	_midiParser->setMidiDriver(this);

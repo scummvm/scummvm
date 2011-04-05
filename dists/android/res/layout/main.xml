@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <org.inodes.gus.scummvm.EditableSurfaceView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent" android:layout_height="fill_parent"
-        android:id="@+id/main_surface"
-        android:gravity="center"
-        android:keepScreenOn="true"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/main_surface"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:gravity="center"
+	android:keepScreenOn="true"
+	android:focusable="true"
+	android:focusableInTouchMode="true"
 />
+

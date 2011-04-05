@@ -165,16 +165,24 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 		if (name == "dropLeftStart" || name == "dropRightStart")
 			continue;
 
-		uint32 *var = _vm->getVar(name);
+		uint32 &var = _vm->_vars[name];
+		name.toLowercase();
 
-		*var = rawVariables[i];
-
-		if (name.equalsIgnoreCase("CurrentStackID"))
+		// Handle any special variables here
+		// WORKAROUND: time variables are reset here for one main reason:
+		// The save does not store any start point for the time, so we don't know the real time.
+		// Because of this, in many cases, the original would just give a 'free' Ytram upon saving
+		// since the time would be used in a new (improper) time frame.
+		if (name.equalsIgnoreCase("CurrentStackID"))                  // Remap to our definitions, store for later
 			stackID = mapOldStackIDToNew(rawVariables[i]);
-		else if (name.equalsIgnoreCase("CurrentCardID"))
+		else if (name.equalsIgnoreCase("CurrentCardID"))              // Store for later
 			cardID = rawVariables[i];
-		else if (name.equalsIgnoreCase("ReturnStackID"))
-			*var = mapOldStackIDToNew(rawVariables[i]);
+		else if (name.equalsIgnoreCase("ReturnStackID") && var != 0) // if 0, the game did not use the variable yet
+			var = mapOldStackIDToNew(rawVariables[i]);
+		else if (name.contains("time"))                               // WORKAROUND: See above
+			var = 0;
+		else                                                          // Otherwise, just store it
+			var = rawVariables[i];
 	}
 
 	_vm->changeToStack(stackID);
@@ -216,14 +224,14 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVERSSection() {
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVARSSection() {
 	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
 
-	for (uint32 i = 0; i < _vm->getVarCount(); i++) {
+	for (RivenVariableMap::const_iterator it = _vm->_vars.begin(); it != _vm->_vars.end(); it++) {
 		stream->writeUint32BE(0); // Unknown
 		stream->writeUint32BE(0); // Unknown
 
 		// Remap returnstackid here because we don't actually want to change
 		// our internal returnstackid.
-		uint32 variable = _vm->getGlobalVar(i);
-		if (_vm->getGlobalVarName(i) == "returnstackid")
+		uint32 variable = it->_value;
+		if (it->_key == "returnstackid")
 			variable = mapNewStackIDToOld(variable);
 
 		stream->writeUint32BE(variable);
@@ -235,19 +243,19 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVARSSection() {
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genNAMESection() {
 	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
 
-	stream->writeUint16BE((uint16)_vm->getVarCount());
+	stream->writeUint16BE(_vm->_vars.size());
 
 	uint16 curPos = 0;
-	for (uint16 i = 0; i < _vm->getVarCount(); i++) {
+	for (RivenVariableMap::const_iterator it = _vm->_vars.begin(); it != _vm->_vars.end(); it++) {
 		stream->writeUint16BE(curPos);
-		curPos += _vm->getGlobalVarName(i).size() + 1;
+		curPos += it->_key.size() + 1;
 	}
 
-	for (uint16 i = 0; i < _vm->getVarCount(); i++)
+	for (uint16 i = 0; i < _vm->_vars.size(); i++)
 		stream->writeUint16BE(i);
 
-	for (uint16 i = 0; i < _vm->getVarCount(); i++) {
-		stream->write(_vm->getGlobalVarName(i).c_str(), _vm->getGlobalVarName(i).size());
+	for (RivenVariableMap::const_iterator it = _vm->_vars.begin(); it != _vm->_vars.end(); it++) {
+		stream->write(it->_key.c_str(), it->_key.size());
 		stream->writeByte(0);
 	}
 
@@ -276,8 +284,8 @@ bool RivenSaveLoad::saveGame(Common::String filename) {
 		filename += ".rvn";
 
 	// Convert class variables to variable numbers
-	*_vm->getVar("currentstackid") = mapNewStackIDToOld(_vm->getCurStack());
-	*_vm->getVar("currentcardid") = _vm->getCurCard();
+	_vm->_vars["currentstackid"] = mapNewStackIDToOld(_vm->getCurStack());
+	_vm->_vars["currentcardid"] = _vm->getCurCard();
 
 	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(filename);
 	if (!saveFile)

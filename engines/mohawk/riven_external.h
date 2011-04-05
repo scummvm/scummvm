@@ -41,6 +41,7 @@ public:
 	uint16 getComboDigit(uint32 correctCombo, uint32 digit);
 	uint32 getDomeSliderState() { return _sliderState; }
 	void setDomeSliderState(uint32 state) { _sliderState = state; }
+	void checkYtramCatch(bool playSound);
 
 private:
 	MohawkEngine_Riven *_vm;

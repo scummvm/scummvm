@@ -18,43 +18,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
-#include "mohawk/myst.h"
+#if !defined(BACKEND_EVENTS_OP_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
+#define BACKEND_EVENTS_OP_H
 
-#ifndef MYST_VARS_H
-#define MYST_VARS_H
+#include "backends/events/sdl/sdl-events.h"
 
-namespace Mohawk {
-
-struct MystVarEntry {
-	uint16 refNum;
-	uint16 storage; // Used for Initial Value setting
-	const char *description;
-};
-
-class MystVar {
+/**
+ * Events manager for the OpenPandora.
+ */
+class OPEventSource : public SdlEventSource {
 public:
-	MystVar(MohawkEngine_Myst *vm);
-	~MystVar();
+	OPEventSource();
 
-	// Only for use by Save/Load
-	// All other code should use getVar() / setVar()
-	void loadSetVar(uint16 stack, uint16 v, uint16 value);
-	uint16 saveGetVar(uint16 stack, uint16 v);
+protected:
+	/** Button state for L button modifier */
+	bool _buttonStateL;
 
-	uint16 getVar(uint16 v);
-	void setVar(uint16 v, uint16 value);
+	bool remapKey(SDL_Event &ev, Common::Event &event);
 
-private:
-	MohawkEngine_Myst *_vm;
-
-	Common::Array<MystVarEntry> _unknown;
+//private:
+	bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
+	bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
 };
 
-} // End of namespace Mohawk
-
-#endif
+#endif /* BACKEND_EVENTS_OP_H */

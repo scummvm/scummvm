@@ -101,12 +101,18 @@ MidiDriver_MPU401::MidiDriver_MPU401() :
 	}
 }
 
+MidiDriver_MPU401::~MidiDriver_MPU401() {
+}
+
 void MidiDriver_MPU401::close() {
-	if (_timer_proc)
+	if (_timer_proc) {
 		g_system->getTimerManager()->removeTimerProc(_timer_proc);
-	_timer_proc = 0;
-	for (int i = 0; i < 16; ++i)
-		send(0x7B << 8 | 0xB0 | i);
+		_timer_proc = 0;
+	}
+	if (isOpen()) {
+		for (int i = 0; i < 16; ++i)
+			send(0x7B << 8 | 0xB0 | i);
+	}
 }
 
 uint32 MidiDriver_MPU401::property(int prop, uint32 param) {

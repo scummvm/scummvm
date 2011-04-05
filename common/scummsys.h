@@ -94,6 +94,11 @@
 	#include <stdarg.h>
 	#include <assert.h>
 	#include <ctype.h>
+	// MSVC does not define M_PI, M_SQRT2 and other math defines by default.
+	// _USE_MATH_DEFINES must be defined in order to have these defined, thus
+	// we enable it here. For more information, check:
+	// http://msdn.microsoft.com/en-us/library/4hwaceh6(v=VS.100).aspx
+	#define _USE_MATH_DEFINES
 	#include <math.h>
 
 #endif
@@ -403,10 +408,6 @@
 
 #ifndef STRINGBUFLEN
 #define STRINGBUFLEN 1024
-#endif
-
-#ifndef PI
-#define PI 3.14159265358979323846
 #endif
 
 #ifndef MAXPATHLEN

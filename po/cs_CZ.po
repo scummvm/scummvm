@@ -2,12 +2,12 @@
 # Copyright (C) YEAR ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Zbynìk Schwarz <zbynek.schwarz@gmail.com>, 2011.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-01-19 22:30+0000\n"
+"POT-Creation-Date: 2011-03-22 21:55+0000\n"
 "PO-Revision-Date: 2011-02-06 21:53+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
@@ -68,11 +68,11 @@ msgstr "Zavøít"
 msgid "Mouse click"
 msgstr "Kliknutí my¹í"
 
-#: gui/gui-manager.cpp:112 base/main.cpp:287
+#: gui/gui-manager.cpp:112 base/main.cpp:286
 msgid "Display keyboard"
 msgstr "Zobrazit klávesnici"
 
-#: gui/gui-manager.cpp:115 base/main.cpp:290
+#: gui/gui-manager.cpp:115 base/main.cpp:289
 msgid "Remap keys"
 msgstr "Pøemapovat klávesy"
 
@@ -420,15 +420,15 @@ msgstr "Hledat:"
 msgid "Clear value"
 msgstr "Vyèistit hodnotu"
 
-#: gui/launcher.cpp:622 engines/dialogs.cpp:117 engines/mohawk/myst.cpp:258
-#: engines/mohawk/riven.cpp:669 engines/cruise/menu.cpp:218
+#: gui/launcher.cpp:622 engines/dialogs.cpp:117 engines/mohawk/myst.cpp:255
+#: engines/mohawk/riven.cpp:711 engines/cruise/menu.cpp:218
 msgid "Load game:"
 msgstr "Nahrát hru:"
 
-#: gui/launcher.cpp:622 engines/dialogs.cpp:117 engines/mohawk/myst.cpp:258
-#: engines/mohawk/riven.cpp:669 engines/cruise/menu.cpp:218
-#: backends/platform/wince/CEActionsPocket.cpp:266
-#: backends/platform/wince/CEActionsSmartphone.cpp:229
+#: gui/launcher.cpp:622 engines/dialogs.cpp:117 engines/mohawk/myst.cpp:255
+#: engines/mohawk/riven.cpp:711 engines/cruise/menu.cpp:218
+#: backends/platform/wince/CEActionsPocket.cpp:268
+#: backends/platform/wince/CEActionsSmartphone.cpp:231
 msgid "Load"
 msgstr "Nahrát"
 
@@ -442,16 +442,16 @@ msgstr ""
 
 #: gui/launcher.cpp:732 gui/launcher.cpp:881
 #: backends/events/symbiansdl/symbiansdl-events.cpp:187
-#: backends/platform/wince/CEActionsPocket.cpp:316
-#: backends/platform/wince/CEActionsSmartphone.cpp:276
+#: backends/platform/wince/CEActionsPocket.cpp:330
+#: backends/platform/wince/CEActionsSmartphone.cpp:287
 #: backends/platform/wince/CELauncherDialog.cpp:106
 msgid "Yes"
 msgstr "Ano"
 
 #: gui/launcher.cpp:732 gui/launcher.cpp:881
 #: backends/events/symbiansdl/symbiansdl-events.cpp:187
-#: backends/platform/wince/CEActionsPocket.cpp:316
-#: backends/platform/wince/CEActionsSmartphone.cpp:276
+#: backends/platform/wince/CEActionsPocket.cpp:330
+#: backends/platform/wince/CEActionsSmartphone.cpp:287
 #: backends/platform/wince/CELauncherDialog.cpp:106
 msgid "No"
 msgstr "Ne"
@@ -964,35 +964,35 @@ msgstr "Vykreslovaè s vyhlazenými hranami(16bpp)"
 msgid "Antialiased (16bpp)"
 msgstr "S vyhlazenými hranami (16bpp)"
 
-#: base/main.cpp:207
+#: base/main.cpp:206
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "Jádro nepodporuje úroveò ladìní '%s'"
 
-#: base/main.cpp:275
+#: base/main.cpp:274
 msgid "Menu"
 msgstr "Menu"
 
-#: base/main.cpp:278 backends/platform/symbian/src/SymbianActions.cpp:48
+#: base/main.cpp:277 backends/platform/symbian/src/SymbianActions.cpp:48
 #: backends/platform/wince/CEActionsPocket.cpp:48
 #: backends/platform/wince/CEActionsSmartphone.cpp:49
 msgid "Skip"
 msgstr "Pøeskoèit"
 
-#: base/main.cpp:281 backends/platform/symbian/src/SymbianActions.cpp:53
+#: base/main.cpp:280 backends/platform/symbian/src/SymbianActions.cpp:53
 #: backends/platform/wince/CEActionsPocket.cpp:45
 msgid "Pause"
 msgstr "Pauza"
 
-#: base/main.cpp:284
+#: base/main.cpp:283
 msgid "Skip line"
 msgstr "Pøeskoèit øádek"
 
-#: base/main.cpp:436
+#: base/main.cpp:435
 msgid "Error running game:"
 msgstr "Chyba pøi spu¹tìní hry:"
 
-#: base/main.cpp:460
+#: base/main.cpp:459
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Nelze nalézt ¾ádné jádro schopné vybranou hru spustit"
 
@@ -1100,17 +1100,17 @@ msgid "~R~eturn to Launcher"
 msgstr "~N~ávrat do Spou¹tìèe"
 
 #: engines/dialogs.cpp:119 engines/cruise/menu.cpp:216
-#: engines/sci/engine/kfile.cpp:576
+#: engines/sci/engine/kfile.cpp:577
 msgid "Save game:"
 msgstr "Ulo¾it hru:"
 
 #: engines/dialogs.cpp:119 engines/cruise/menu.cpp:216
-#: engines/sci/engine/kfile.cpp:576
+#: engines/sci/engine/kfile.cpp:577
 #: backends/platform/symbian/src/SymbianActions.cpp:47
 #: backends/platform/wince/CEActionsPocket.cpp:46
-#: backends/platform/wince/CEActionsPocket.cpp:266
+#: backends/platform/wince/CEActionsPocket.cpp:268
 #: backends/platform/wince/CEActionsSmartphone.cpp:48
-#: backends/platform/wince/CEActionsSmartphone.cpp:229
+#: backends/platform/wince/CEActionsSmartphone.cpp:231
 msgid "Save"
 msgstr "Ulo¾it"
 
@@ -1169,17 +1169,23 @@ msgstr "Mezerník"
 msgid "Pause game"
 msgstr "Pozastavit hru"
 
-#: engines/scumm/help.cpp:82
-msgid "Ctrl 0-9"
-msgstr "Ctrl 0-9"
+#: engines/scumm/help.cpp:82 engines/scumm/help.cpp:87
+#: engines/scumm/help.cpp:98 engines/scumm/help.cpp:99
+#: engines/scumm/help.cpp:100 engines/scumm/help.cpp:101
+#: engines/scumm/help.cpp:102 engines/scumm/help.cpp:103
+#: engines/scumm/help.cpp:104 engines/scumm/help.cpp:105
+msgid "Ctrl"
+msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:82
 msgid "Load game state 1-10"
 msgstr "Nahrát stav hry 1-10"
 
-#: engines/scumm/help.cpp:83
-msgid "Alt 0-9"
-msgstr "Alt 0-9"
+#: engines/scumm/help.cpp:83 engines/scumm/help.cpp:87
+#: engines/scumm/help.cpp:89 engines/scumm/help.cpp:103
+#: engines/scumm/help.cpp:104 engines/scumm/help.cpp:105
+msgid "Alt"
+msgstr "Alt"
 
 #: engines/scumm/help.cpp:83
 msgid "Save game state 1-10"
@@ -1192,13 +1198,9 @@ msgstr "Ulo¾it stav hry 1-10"
 msgid "Quit"
 msgstr "Ukonèit"
 
-#: engines/scumm/help.cpp:87
-msgid "Alt x, Ctrl z"
-msgstr "Alt x,Ctrl z"
-
-#: engines/scumm/help.cpp:89
-msgid "Alt Enter"
-msgstr "Alt Enter"
+#: engines/scumm/help.cpp:89 engines/scumm/help.cpp:92
+msgid "Enter"
+msgstr "Enter"
 
 #: engines/scumm/help.cpp:89
 msgid "Toggle fullscreen"
@@ -1211,10 +1213,6 @@ msgstr "Hlasitost hudby nahoru / dolù"
 #: engines/scumm/help.cpp:91
 msgid "Text speed slower / faster"
 msgstr "Zvý¹it / Sní¾it rychlost textu"
-
-#: engines/scumm/help.cpp:92
-msgid "Enter"
-msgstr "Enter"
 
 #: engines/scumm/help.cpp:92
 msgid "Simulate left mouse button"
@@ -1237,64 +1235,32 @@ msgid "Show / Hide console"
 msgstr "Ukázat / Skrýt konzoli"
 
 #: engines/scumm/help.cpp:98
-msgid "Ctrl d"
-msgstr "Ctrl d"
-
-#: engines/scumm/help.cpp:98
 msgid "Start the debugger"
 msgstr "Spustit ladící program"
-
-#: engines/scumm/help.cpp:99
-msgid "Ctrl s"
-msgstr "Ctrl s"
 
 #: engines/scumm/help.cpp:99
 msgid "Show memory consumption"
 msgstr "Zobrazit spotøebu pamìti"
 
 #: engines/scumm/help.cpp:100
-msgid "Ctrl f"
-msgstr "Ctrl f"
-
-#: engines/scumm/help.cpp:100
 msgid "Run in fast mode (*)"
 msgstr "Spustit v rychlém re¾imu (*)"
-
-#: engines/scumm/help.cpp:101
-msgid "Ctrl g"
-msgstr "Ctrl g"
 
 #: engines/scumm/help.cpp:101
 msgid "Run in really fast mode (*)"
 msgstr "Spustit ve velmi rychlém re¾imu (*)"
 
 #: engines/scumm/help.cpp:102
-msgid "Ctrl m"
-msgstr "Ctrl m"
-
-#: engines/scumm/help.cpp:102
 msgid "Toggle mouse capture"
 msgstr "Povolit zachycování my¹i"
-
-#: engines/scumm/help.cpp:103
-msgid "Ctrl Alt 1-8"
-msgstr "Ctrl Alt 1-8"
 
 #: engines/scumm/help.cpp:103
 msgid "Switch between graphics filters"
 msgstr "Pøepínat mezi grafickými filtry"
 
 #: engines/scumm/help.cpp:104
-msgid "Ctrl Alt +, -"
-msgstr "Ctrl Alt +,-"
-
-#: engines/scumm/help.cpp:104
 msgid "Increase / Decrease scale factor"
 msgstr "Zvìt¹it / Zmen¹it faktor zmìny velikosti"
-
-#: engines/scumm/help.cpp:105
-msgid "Ctrl Alt a"
-msgstr "Ctrl Alt a"
 
 #: engines/scumm/help.cpp:105
 msgid "Toggle aspect-ratio correction"
@@ -1693,7 +1659,7 @@ msgstr "Letìt doprava"
 msgid "Fly to lower right"
 msgstr "Letìt doprava dolù"
 
-#: engines/scumm/scumm.cpp:2260 engines/agos/saveload.cpp:192
+#: engines/scumm/scumm.cpp:2256 engines/agos/saveload.cpp:192
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1704,7 +1670,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2267 engines/agos/saveload.cpp:157
+#: engines/scumm/scumm.cpp:2263 engines/agos/saveload.cpp:157
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1715,7 +1681,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2279 engines/agos/saveload.cpp:200
+#: engines/scumm/scumm.cpp:2275 engines/agos/saveload.cpp:200
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1738,11 +1704,11 @@ msgstr "~P~øechody zapnuty"
 msgid "~W~ater Effect Enabled"
 msgstr "~E~fekt Vody Zapnut"
 
-#: engines/sci/engine/kfile.cpp:676
+#: engines/sci/engine/kfile.cpp:680
 msgid "Restore game:"
 msgstr "Obnovit hru"
 
-#: engines/sci/engine/kfile.cpp:676
+#: engines/sci/engine/kfile.cpp:680
 msgid "Restore"
 msgstr "Obnovit"
 
@@ -1895,8 +1861,6 @@ msgid "Touchpad mode disabled."
 msgstr "Touchpad re¾im vypnut"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:47
-#: backends/platform/wince/wince-sdl.cpp:114
-#: backends/platform/wince/wince-sdl.cpp:121
 msgid "Normal (no scaling)"
 msgstr "Normální (bez zmìny veliosti)"
 
@@ -1905,19 +1869,15 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normální (bez zmìny veliosti)"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:117
+#: backends/graphics/opengl/opengl-graphics.cpp:133
 msgid "OpenGL Normal"
 msgstr "OpenGL Normální"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:118
+#: backends/graphics/opengl/opengl-graphics.cpp:134
 msgid "OpenGL Conserve"
 msgstr "OpenGL Zachovávající"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:119
-msgid "OpenGL 4/3"
-msgstr "OpenGL 4/3"
-
-#: backends/graphics/opengl/opengl-graphics.cpp:120
+#: backends/graphics/opengl/opengl-graphics.cpp:135
 msgid "OpenGL Original"
 msgstr "OpenGL Pùvodní"
 
@@ -2177,13 +2137,13 @@ msgstr "©ipka Doleva"
 msgid "Cursor Right"
 msgstr "©ipka Doprava"
 
-#: backends/platform/wince/CEActionsPocket.cpp:266
-#: backends/platform/wince/CEActionsSmartphone.cpp:229
+#: backends/platform/wince/CEActionsPocket.cpp:268
+#: backends/platform/wince/CEActionsSmartphone.cpp:231
 msgid "Do you want to load or save the game?"
 msgstr "Chcete hru nahrát nebo ulo¾it?"
 
-#: backends/platform/wince/CEActionsPocket.cpp:316
-#: backends/platform/wince/CEActionsSmartphone.cpp:276
+#: backends/platform/wince/CEActionsPocket.cpp:330
+#: backends/platform/wince/CEActionsSmartphone.cpp:287
 msgid "   Are you sure you want to quit ?   "
 msgstr "   Jste si jisti, ¾e chcete odejít ?   "
 
@@ -2207,37 +2167,38 @@ msgstr "Displej"
 msgid "Do you want to perform an automatic scan ?"
 msgstr "Chcete provést automatické hledání?"
 
-#: backends/platform/wince/wince-sdl.cpp:981
+#: backends/platform/wince/wince-sdl.cpp:486
 msgid "Map right click action"
 msgstr "Mapovat èinnost pravé kliknutí"
 
-#: backends/platform/wince/wince-sdl.cpp:985
+#: backends/platform/wince/wince-sdl.cpp:490
 msgid "You must map a key to the 'Right Click' action to play this game"
 msgstr ""
 "Musíte namapovat klávesu pro èinnost 'Pravé Kliknutí', abyste tuto hru mohi "
 "hrát"
 
-#: backends/platform/wince/wince-sdl.cpp:994
+#: backends/platform/wince/wince-sdl.cpp:499
 msgid "Map hide toolbar action"
 msgstr "Mapovat èinnost skrýt panel nástrojù"
 
-#: backends/platform/wince/wince-sdl.cpp:998
+#: backends/platform/wince/wince-sdl.cpp:503
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
 msgstr ""
 "Musíte namapovat klávesu pro èinnost 'Skrýt Panel nástrojù', abyste tuto hru "
 "mohli hrát"
 
-#: backends/platform/wince/wince-sdl.cpp:1007
+#: backends/platform/wince/wince-sdl.cpp:512
 msgid "Map Zoom Up action (optional)"
 msgstr "Namapovat èinnost Pøiblí¾it Nahoru (nepovinné)"
 
-#: backends/platform/wince/wince-sdl.cpp:1010
+#: backends/platform/wince/wince-sdl.cpp:515
 msgid "Map Zoom Down action (optional)"
 msgstr "Namapovat èinnost Pøiblí¾it Dolù (nepovinné)"
 
-#: backends/platform/wince/wince-sdl.cpp:1018
+#: backends/platform/wince/wince-sdl.cpp:523
 msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
 "Nezapomeòte namapovat klávesu k èinnosti 'Skrýt Panel Nástrojù, abyste "
 "vidìli celý inventáø"
+

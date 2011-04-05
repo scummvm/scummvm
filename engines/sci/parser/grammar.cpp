@@ -380,7 +380,7 @@ static ParseRuleList *_vocab_clone_rule_list_by_id(ParseRuleList *list, int id) 
 
 ParseRuleList *Vocabulary::buildGNF(bool verbose) {
 	int iterations = 0;
-	int last_termrules, termrules = 0;
+	int termrules = 0;
 	int ntrules_nr;
 	ParseRuleList *ntlist = NULL;
 	ParseRuleList *tlist, *new_tlist;
@@ -405,7 +405,6 @@ ParseRuleList *Vocabulary::buildGNF(bool verbose) {
 	do {
 		ParseRuleList *new_new_tlist = NULL;
 		ParseRuleList *ntseeker, *tseeker;
-		last_termrules = termrules;
 
 		ntseeker = ntlist;
 		while (ntseeker) {

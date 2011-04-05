@@ -90,11 +90,11 @@ Audio::AudioStream *Sound::makeAudioStream(uint16 id, CueList *cueList) {
 		audStream = makeMohawkWaveStream(_vm->getResource(ID_SND, id));
 		break;
 	case GType_LIVINGBOOKSV1:
-		audStream = makeOldMohawkWaveStream(_vm->getResource(ID_WAV, id));
+		audStream = makeLivingBooksWaveStream_v1(_vm->getResource(ID_WAV, id));
 		break;
 	case GType_LIVINGBOOKSV2:
 		if (_vm->getPlatform() == Common::kPlatformMacintosh) {
-			audStream = makeOldMohawkWaveStream(_vm->getResource(ID_WAV, id));
+			audStream = makeLivingBooksWaveStream_v1(_vm->getResource(ID_WAV, id));
 			break;
 		}
 		// fall through
@@ -493,7 +493,7 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 	return NULL;
 }
 
-Audio::AudioStream *Sound::makeOldMohawkWaveStream(Common::SeekableReadStream *stream) {
+Audio::AudioStream *Sound::makeLivingBooksWaveStream_v1(Common::SeekableReadStream *stream) {
 	uint16 header = stream->readUint16BE();
 	uint16 rate = 0;
 	uint32 size = 0;
@@ -572,6 +572,15 @@ bool Sound::isPlaying(uint16 id) {
 	for (uint32 i = 0; i < _handles.size(); i++)
 		if (_handles[i].type == kUsedHandle && _handles[i].id == id)
 			return _vm->_mixer->isSoundHandleActive(_handles[i].handle);
+
+	return false;
+}
+
+bool Sound::isPlaying() {
+	for (uint32 i = 0; i < _handles.size(); i++)
+		if (_handles[i].type == kUsedHandle)
+			if (_vm->_mixer->isSoundHandleActive(_handles[i].handle))
+				return true;
 
 	return false;
 }

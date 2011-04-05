@@ -741,10 +741,14 @@ void ScummEngine_v60he::o60_openFile() {
 void ScummEngine_v60he::o60_closeFile() {
 	int slot = pop();
 	if (0 <= slot && slot < 17) {
-		delete _hInFileTable[slot];
-		delete _hOutFileTable[slot];
+		if (_hOutFileTable[slot]) {
+			_hOutFileTable[slot]->finalize();
+			delete _hOutFileTable[slot];
+			_hOutFileTable[slot] = 0;
+		}
+
+		delete _hInFileTable[slot];		
 		_hInFileTable[slot] = 0;
-		_hOutFileTable[slot] = 0;
 	}
 }
 

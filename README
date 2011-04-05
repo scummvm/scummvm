@@ -137,7 +137,7 @@ Hint: If you want to add multiple games in one go, try pressing and
 holding the shift key before clicking 'Add game' -- its label will
 change to 'Mass Add' and if you press it, you are again asked to select
 a directory, only this time ScummVM will search through all
-subdirectoriess for supported games.
+subdirectories for supported games.
 
 
 2.0) Contact:
@@ -216,7 +216,7 @@ AGI Games by Sierra:
      Space Quest II: Vohaul's Revenge            [sq2]
      Fanmade Games                               [agi-fanmade]
 
-AGOS Games by Adventuresoft / Horrorsoft:
+AGOS Games by Adventuresoft/Horrorsoft:
      Elvira - Mistress of the Dark               [elvira1]
      Elvira II - The Jaws of Cerberus            [elvira2]
      Waxworks                                    [waxworks]
@@ -317,6 +317,22 @@ SCUMM Games by Humongous Entertainment:
      SPY Fox 3: Operation Ozone                  [spyozon]
      SPY Fox in Cheese Chase                     [chase]
      SPY Fox in Hold the Mustard                 [mustard]
+
+Living Books Games:
+     Aesop's Fables: The Tortoise and the Hare   [tortoise]
+     Arthur's Birthday                           [arthurbday]
+     Arthur's Teacher Trouble                    [arthur]
+     Dr. Seuss's ABC                             [seussabc]
+     Green Eggs and Ham                          [greeneggs]
+     Harry and the Haunted House                 [harryhh]
+     Just Grandma and Me                         [grandma]
+     Little Monster at School                    [lilmonster]
+     Ruff's Bone                                 [ruff]
+     Sheila Rae, the Brave                       [sheila]
+     Stellaluna                                  [stellaluna]
+     The Berenstain Bears Get in a Fight         [bearfight]
+     The Berenstain Bears in the Dark            [beardark]
+     The New Kid on the Block                    [newkid]
 
 The following games should load, but are not yet fully playable. Play
 these at your own risk, and please do not file bug reports about them.
@@ -528,7 +544,7 @@ playing the video itself. This remained a fallback until ScummVM 1.0.0,
 but was never the only solution for any stable release.
 
 In ScummVM 0.6.0 we used MPEG, which provided a reasonable trade-off
-between size and quality. In ScummVM 0.10.0 this was superceeded by DXA
+between size and quality. In ScummVM 0.10.0 this was superseded by DXA
 (originally added for AdventureSoft's "The Feeble Files"). This gave us
 a way of providing the cutscenes in the exact same quality as the
 originals, at the cost of being larger.
@@ -1663,7 +1679,7 @@ First, you need to start a daemon:
 
   timidity -ir 7777
 
-Now you can start scummvm and try selection TiMidity music output.  By
+Now you can start ScummVM and try selection TiMidity music output.  By
 default, it will connect to localhost:7777, but you can change host/port
 via the "TIMIDITY_HOST" environment variable. You can also specify
 a "device number" using the "SCUMMVM_MIDIPORT" environment variable.

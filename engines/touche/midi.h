@@ -29,7 +29,7 @@
 #include "common/util.h"
 #include "common/mutex.h"
 
-#include "audio/mididrv.h"
+#include "audio/midiplayer.h"
 
 class MidiParser;
 
@@ -39,50 +39,16 @@ namespace Common {
 
 namespace Touche {
 
-class MidiPlayer : public MidiDriver {
+class MidiPlayer : public Audio::MidiPlayer {
 public:
-
-	enum {
-		NUM_CHANNELS = 16
-	};
-
 	MidiPlayer();
-	~MidiPlayer();
 
 	void play(Common::ReadStream &stream, int size, bool loop = false);
-	void stop();
-	void updateTimer();
 	void adjustVolume(int diff);
 	void setVolume(int volume);
-	int getVolume() const { return _masterVolume; }
-	void setLooping(bool loop) { _isLooping = loop; }
 
-	// MidiDriver interface
-	int open();
-	void close();
-	void send(uint32 b);
-	void metaEvent(byte type, byte *data, uint16 length);
-	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo() { return _driver ? _driver->getBaseTempo() : 0; }
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
-
-private:
-
-	static void timerCallback(void *p);
-
-	MidiDriver *_driver;
-	MidiParser *_parser;
-	uint8 *_midiData;
-	bool _isLooping;
-	bool _isPlaying;
-	int _masterVolume;
-	bool _nativeMT32;
-	MidiChannel *_channelsTable[NUM_CHANNELS];
-	uint8 _channelsVolume[NUM_CHANNELS];
-	Common::Mutex _mutex;
-
-	static const uint8 _gmToRol[];
+	// MidiDriver_BASE interface
+	virtual void send(uint32 b);
 };
 
 } // namespace Touche

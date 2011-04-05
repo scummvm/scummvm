@@ -79,10 +79,6 @@ private:
 };
 
 enum {
-	MAX_SAVE_DIR_SIZE = MAXPATHLEN
-};
-
-enum {
 	MAX_SAVEGAME_NR = 20 /**< Maximum number of savegames */
 };
 
@@ -187,9 +183,10 @@ public:
 	int executionStackBase;
 	bool _executionStackPosChanged;   /**< Set to true if the execution stack position should be re-evaluated by the vm */
 
+	// Registers
 	reg_t r_acc; /**< Accumulator */
-	int16 restAdjust; /**< current &rest register */
 	reg_t r_prev; /**< previous comparison result */
+	int16 r_rest; /**< current &rest register */
 
 	StackPtr stack_base; /**< Pointer to the least stack element */
 	StackPtr stack_top; /**< First invalid stack element */
@@ -230,7 +227,7 @@ public:
 	enum {
 		kMemorySegmentMax = 256
 	};
-	uint _memorySegmentSize;
+	uint16 _memorySegmentSize;
 	byte _memorySegment[kMemorySegmentMax];
 
 	VideoState _videoState;

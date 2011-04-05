@@ -52,51 +52,6 @@ const reg_t TRUE_REG = {0, 1};
 // to an infinite loop). Aids in detecting script bugs such as #3040722.
 //#define ABORT_ON_INFINITE_LOOP
 
-#define SCI_XS_CALLEE_LOCALS ((SegmentId)-1)
-
-/**
- * Adds an entry to the top of the execution stack.
- *
- * @param[in] s				The state with which to execute
- * @param[in] pc			The initial program counter
- * @param[in] sp			The initial stack pointer
- * @param[in] objp			Pointer to the beginning of the current object
- * @param[in] argc			Number of parameters to call with
- * @param[in] argp			Heap pointer to the first parameter
- * @param[in] selector		The selector by which it was called or
- *							NULL_SELECTOR if n.a. For debugging.
- * @param[in] exportId		The exportId by which it was called or
- *							-1 if n.a. For debugging.
- * @param[in] sendp			Pointer to the object which the message was
- * 							sent to. Equal to objp for anything but super.
- * @param[in] origin		Number of the execution stack element this
- * 							entry was created by (usually the current TOS
- * 							number, except for multiple sends).
- * @param[in] local_segment	The segment to use for local variables,
- *							or SCI_XS_CALLEE_LOCALS to use obj's segment.
- * @return 					A pointer to the new exec stack TOS entry
- */
-static ExecStack *add_exec_stack_entry(Common::List<ExecStack> &execStack, reg_t pc, StackPtr sp,
-		reg_t objp, int argc, StackPtr argp, Selector selector, int exportId, int localCallOffset,
-		reg_t sendp, int origin, SegmentId local_segment);
-
-/**
- * Adds one varselector access to the execution stack.
- * This function is called from send_selector only.
- * @param[in] s			The EngineState to use
- * @param[in] objp		Pointer to the object owning the selector
- * @param[in] argc		1 for writing, 0 for reading
- * @param[in] argp		Pointer to the address of the data to write -2
- * @param[in] selector	Selector name
- * @param[in] address	Heap address of the selector
- * @param[in] origin	Stack frame which the access originated from
- * @return 				Pointer to the new exec-TOS element
- */
-static ExecStack *add_exec_stack_varselector(Common::List<ExecStack> &execStack, reg_t objp, int argc,
-		StackPtr argp, Selector selector, const ObjVarRef& address,
-		int origin);
-
-
 // validation functionality
 
 static reg_t &validate_property(EngineState *s, Object *obj, int index) {
@@ -129,10 +84,9 @@ static reg_t &validate_property(EngineState *s, Object *obj, int index) {
 static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 	if (sp >= s->stack_base && sp < s->stack_top)
 		return sp;
-
+	else
 	error("[VM] Stack index %d out of valid range [%d..%d]",
 		(int)(sp - s->stack_base), 0, (int)(s->stack_top - s->stack_base - 1));
-	return 0;
 }
 
 static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int index) {
@@ -167,9 +121,9 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 
 extern const char *opcodeNames[]; // from scriptdebug.cpp
 
-static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, reg_t default_value) {
-	if (validate_variable(r, stack_base, type, max, index)) {
-		if (r[index].segment == 0xffff) {
+static reg_t read_var(EngineState *s, int type, int index) {
+	if (validate_variable(s->variables[type], s->stack_base, type, s->variablesMax[type], index)) {
+		if (s->variables[type][index].segment == 0xffff) {
 			switch (type) {
 			case VAR_TEMP: {
 				// Uninitialized read on a temp
@@ -183,7 +137,7 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 					index, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, 
 					g_sci->getEngineState()->currentRoomNumber(), originReply.localCallOffset);
 
-					r[index] = NULL_REG;
+					s->variables[type][index] = NULL_REG;
 					break;
 #else
 					error("Uninitialized read for temp %d from method %s::%s (script %d, room %d, localCall %x)", 
@@ -192,7 +146,7 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 #endif
 				}
 				assert(solution.type == WORKAROUND_FAKE);
-				r[index] = make_reg(0, solution.value);
+				s->variables[type][index] = make_reg(0, solution.value);
 				break;
 			}
 			case VAR_PARAM:
@@ -204,13 +158,13 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 				break;
 			}
 		}
-		return r[index];
+		return s->variables[type][index];
 	} else
-		return default_value;
+		return s->r_acc;
 }
 
-static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, int index, reg_t value, SegManager *segMan, Kernel *kernel) {
-	if (validate_variable(r, stack_base, type, max, index)) {
+static void write_var(EngineState *s, int type, int index, reg_t value) {
+	if (validate_variable(s->variables[type], s->stack_base, type, s->variablesMax[type], index)) {
 
 		// WORKAROUND: This code is needed to work around a probable script bug, or a
 		// limitation of the original SCI engine, which can be observed in LSL5.
@@ -230,12 +184,12 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 		// done, ego's movement will not be updated properly, so the result is
 		// unpredictable (for example in LSL5, Patti spins around instead of walking).
 		if (index == 0 && type == VAR_GLOBAL && getSciVersion() > SCI_VERSION_0_EARLY) {	// global 0 is ego
-			reg_t stopGroopPos = segMan->findObjectByName("stopGroop");
+			reg_t stopGroopPos = s->_segMan->findObjectByName("stopGroop");
 			if (!stopGroopPos.isNull()) {	// does the game have a stopGroop object?
 				// Find the "client" member variable of the stopGroop object, and update it
 				ObjVarRef varp;
-				if (lookupSelector(segMan, stopGroopPos, SELECTOR(client), &varp, NULL) == kSelectorVariable) {
-					reg_t *clientVar = varp.getPointer(segMan);
+				if (lookupSelector(s->_segMan, stopGroopPos, SELECTOR(client), &varp, NULL) == kSelectorVariable) {
+					reg_t *clientVar = varp.getPointer(s->_segMan);
 					*clientVar = value;
 				}
 			}
@@ -248,7 +202,7 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 		if (type == VAR_TEMP && value.segment == 0xffff)
 			value.segment = 0;
 
-		r[index] = value;
+		s->variables[type][index] = value;
 
 		// If the game is trying to change its speech/subtitle settings, apply the ScummVM audio
 		// options first, if they haven't been applied yet
@@ -259,36 +213,12 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 	}
 }
 
-#define READ_VAR(type, index) validate_read_var(s->variables[type], s->stack_base, type, s->variablesMax[type], index, s->r_acc)
-#define WRITE_VAR(type, index, value) validate_write_var(s->variables[type], s->stack_base, type, s->variablesMax[type], index, value, s->_segMan, g_sci->getKernel())
-#define WRITE_VAR16(type, index, value) WRITE_VAR(type, index, make_reg(0, value));
-
 // Operating on the stack
 // 16 bit:
 #define PUSH(v) PUSH32(make_reg(0, v))
 // 32 bit:
 #define PUSH32(a) (*(validate_stack_addr(s, (s->xs->sp)++)) = (a))
 #define POP32() (*(validate_stack_addr(s, --(s->xs->sp))))
-
-bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
-	if (_debugState._activeBreakpointTypes & BREAK_EXPORT) {
-		uint32 bpaddress;
-
-		bpaddress = (script << 16 | pubfunct);
-
-		Common::List<Breakpoint>::const_iterator bp;
-		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
-			if (bp->type == BREAK_EXPORT && bp->address == bpaddress) {
-				_console->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
-				_debugState.debugging = true;
-				_debugState.breakpointWasHit = true;
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
 
 ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackPtr sp, reg_t calling_obj, uint16 argc, StackPtr argp) {
 	int seg = s->_segMan->getScriptSegment(script);
@@ -319,9 +249,12 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	// Check if a breakpoint is set on this method
 	g_sci->checkExportBreakpoint(script, pubfunct);
 
-	return add_exec_stack_entry(s->_executionStack, make_reg(seg, temp), sp, calling_obj, argc, argp, -1, pubfunct, -1, calling_obj, s->_executionStack.size()-1, seg);
+	ExecStack xstack(calling_obj, calling_obj, sp, argc, argp,
+						seg, make_reg(seg, temp), -1, pubfunct, -1,
+						s->_executionStack.size() - 1, EXEC_STACK_TYPE_CALL);
+	s->_executionStack.push_back(xstack);
+	return &(s->_executionStack.back());
 }
-
 
 static void _exec_varselectors(EngineState *s) {
 	// Executes all varselector read/write ops on the TOS
@@ -342,52 +275,22 @@ static void _exec_varselectors(EngineState *s) {
 	}
 }
 
-/** This struct is used to buffer the list of send calls in send_selector() */
-struct CallsStruct {
-	reg_t addr_func;
-	reg_t varp_objp;
-	union {
-		reg_t func;
-		ObjVarRef var;
-	} address;
-	StackPtr argp;
-	int argc;
-	Selector selector;
-	StackPtr sp; /**< Stack pointer */
-	int type; /**< Same as ExecStack.type */
-};
-
-bool SciEngine::checkSelectorBreakpoint(BreakpointType breakpointType, reg_t send_obj, int selector) {
-	Common::String methodName = _gamestate->_segMan->getObjectName(send_obj);
-	methodName += ("::" + getKernel()->getSelectorName(selector));
-
-	Common::List<Breakpoint>::const_iterator bpIter;
-	for (bpIter = _debugState._breakpoints.begin(); bpIter != _debugState._breakpoints.end(); ++bpIter) {
-		if ((*bpIter).type == breakpointType && (*bpIter).name == methodName) {
-			_console->DebugPrintf("Break on %s (in [%04x:%04x])\n", methodName.c_str(), PRINT_REG(send_obj));
-			_debugState.debugging = true;
-			_debugState.breakpointWasHit = true;
-			return true;
-		}
-	}
-	return false;
-}
+// from scriptdebug.cpp
+extern void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr argp, ObjVarRef &varp, reg_t funcp, SegManager *segMan, SelectorType selectorType);
 
 ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPtr sp, int framesize, StackPtr argp) {
-// send_obj and work_obj are equal for anything but 'super'
-// Returns a pointer to the TOS exec_stack element
+	// send_obj and work_obj are equal for anything but 'super'
+	// Returns a pointer to the TOS exec_stack element
 	assert(s);
 
 	reg_t funcp;
-	int selector;
+	Selector selector;
 	int argc;
-	int origin = s->_executionStack.size()-1; // Origin: Used for debugging
-	// We return a pointer to the new active ExecStack
-
-	// The selector calls we catch are stored below:
-	Common::Stack<CallsStruct> sendCalls;
-
+	int origin = s->_executionStack.size() - 1; // Origin: Used for debugging
 	int activeBreakpointTypes = g_sci->_debugState._activeBreakpointTypes;
+	ObjVarRef varp;
+
+	Common::List<ExecStack>::iterator prevElementIterator = s->_executionStack.end();
 
 	while (framesize > 0) {
 		selector = argp->requireUint16();
@@ -397,286 +300,57 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		if (argc > 0x800)	// More arguments than the stack could possibly accomodate for
 			error("send_selector(): More than 0x800 arguments to function call");
 
-#ifdef VM_DEBUG_SEND
-		debugN("Send to %04x:%04x (%s), selector %04x (%s):", PRINT_REG(send_obj), 
-			s->_segMan->getObjectName(send_obj), selector, 
-			g_sci->getKernel()->getSelectorName(selector).c_str());
-#endif // VM_DEBUG_SEND
-
-		ObjVarRef varp;
-		switch (lookupSelector(s->_segMan, send_obj, selector, &varp, &funcp)) {
-		case kSelectorNone:
+		SelectorType selectorType = lookupSelector(s->_segMan, send_obj, selector, &varp, &funcp);
+		if (selectorType == kSelectorNone)
 			error("Send to invalid selector 0x%x of object at %04x:%04x", 0xffff & selector, PRINT_REG(send_obj));
-			break;
 
-		case kSelectorVariable:
+		ExecStackType stackType = EXEC_STACK_TYPE_VARSELECTOR;
+		StackPtr curSP = NULL;
+		reg_t curFP = NULL_REG;
+		if (selectorType == kSelectorMethod) {
+			stackType = EXEC_STACK_TYPE_CALL;
+			curSP = sp;
+			curFP = funcp;
+			sp = CALL_SP_CARRY; // Destroy sp, as it will be carried over
+		}
 
-#ifdef VM_DEBUG_SEND
-			if (argc)
-				debugN("Varselector: Write %04x:%04x\n", PRINT_REG(argp[1]));
-			else
-				debugN("Varselector: Read\n");
-#endif // VM_DEBUG_SEND
+		if (activeBreakpointTypes || DebugMan.isDebugChannelEnabled(kDebugLevelScripts))
+			debugSelectorCall(send_obj, selector, argc, argp, varp, funcp, s->_segMan, selectorType);
 
-			// argc == 0: read selector
-			// argc != 0: write selector
-			if (!argc) {
-				// read selector
-				if (activeBreakpointTypes & BREAK_SELECTORREAD) {
-					if (g_sci->checkSelectorBreakpoint(BREAK_SELECTORREAD, send_obj, selector))
-						debug("[read selector]\n");
-				}
-			} else {
-				// write selector
-				if (activeBreakpointTypes & BREAK_SELECTORWRITE) {
-					if (g_sci->checkSelectorBreakpoint(BREAK_SELECTORWRITE, send_obj, selector)) {
-						reg_t oldReg = *varp.getPointer(s->_segMan);
-						reg_t newReg = argp[1];
-						warning("[write to selector (%s:%s): change %04x:%04x to %04x:%04x]\n", 
-							s->_segMan->getObjectName(send_obj), g_sci->getKernel()->getSelectorName(selector).c_str(), 
-							PRINT_REG(oldReg), PRINT_REG(newReg));
-					}
-				}
-			}
+		ExecStack xstack(work_obj, send_obj, curSP, argc, argp,
+							0xFFFF, curFP, selector, -1, -1,
+							origin, stackType);
 
-			if (argc > 1) {
-				// argc can indeed be bigger than 1 in some cases, and it's usually the
-				// result of a script bug. Usually these aren't fatal.
+		if (selectorType == kSelectorVariable)
+			xstack.addr.varp = varp;
 
-				const char *objectName = s->_segMan->getObjectName(send_obj);
-
-				reg_t oldReg = *varp.getPointer(s->_segMan);
-				reg_t newReg = argp[1];
-				const char *selectorName = g_sci->getKernel()->getSelectorName(selector).c_str();
-				debug(2, "send_selector(): argc = %d while modifying variable selector "
-						"%x (%s) of object %04x:%04x (%s) from %04x:%04x to %04x:%04x",
-						argc, selector, selectorName, PRINT_REG(send_obj),
-						objectName, PRINT_REG(oldReg), PRINT_REG(newReg));
-			}
-
-			{
-				CallsStruct call;
-				call.address.var = varp; // register the call
-				call.argp = argp;
-				call.argc = argc;
-				call.selector = selector;
-				call.type = EXEC_STACK_TYPE_VARSELECTOR; // Register as a varselector
-				sendCalls.push(call);
-			}
-
-			break;
-
-		case kSelectorMethod:
-
-#ifndef VM_DEBUG_SEND
-			if (activeBreakpointTypes & BREAK_SELECTOREXEC) {
-				if (g_sci->checkSelectorBreakpoint(BREAK_SELECTOREXEC, send_obj, selector)) {
-					debugN("[execute selector]");
-
-					int displaySize = 0;
-					for (int argNr = 1; argNr <= argc; argNr++) {
-						if (argNr == 1)
-							debugN(" - ");
-						reg_t curParam = argp[argNr];
-						if (curParam.isPointer()) {
-							debugN("[%04x:%04x] ", PRINT_REG(curParam));
-							displaySize += 12;
-						} else {
-							debugN("[%04x] ", curParam.offset);
-							displaySize += 7;
-						}
-						if (displaySize > 50) {
-							if (argNr < argc)
-								debugN("...");
-							break;
-						}
-					}
-					debugN("\n");
-				}
-			}
-#else // VM_DEBUG_SEND
-			if (activeBreakpointTypes & BREAK_SELECTOREXEC)
-				g_sci->checkSelectorBreakpoint(BREAK_SELECTOREXEC, send_obj, selector);
-			debugN("Funcselector(");
-			for (int i = 0; i < argc; i++) {
-				debugN("%04x:%04x", PRINT_REG(argp[i+1]));
-				if (i + 1 < argc)
-					debugN(", ");
-			}
-			debugN(") at %04x:%04x\n", PRINT_REG(funcp));
-#endif // VM_DEBUG_SEND
-
-			{
-				CallsStruct call;
-				call.address.func = funcp; // register call
-				call.argp = argp;
-				call.argc = argc;
-				call.selector = selector;
-				call.type = EXEC_STACK_TYPE_CALL;
-				call.sp = sp;
-				sp = CALL_SP_CARRY; // Destroy sp, as it will be carried over
-				sendCalls.push(call);
-			}
-
-			break;
-		} // switch (lookupSelector())
+		// The new stack entries should be put on the stack in reverse order
+		// so that the first one is executed first
+		s->_executionStack.insert(prevElementIterator, xstack);
+		// Decrement the stack end pointer so that it points to our recently
+		// added element, so that the next insert() places it before this one.
+		--prevElementIterator;
 
 		framesize -= (2 + argc);
 		argp += argc + 1;
-	}
-
-	// Iterate over all registered calls in the reverse order. This way, the first call is
-	// placed on the TOS; as soon as it returns, it will cause the second call to be executed.
-	while (!sendCalls.empty()) {
-		CallsStruct call = sendCalls.pop();
-		if (call.type == EXEC_STACK_TYPE_VARSELECTOR) // Write/read variable?
-			add_exec_stack_varselector(s->_executionStack, work_obj, call.argc, call.argp,
-			                                    call.selector, call.address.var, origin);
-		else
-			add_exec_stack_entry(s->_executionStack, call.address.func, call.sp, work_obj,
-			                         call.argc, call.argp,
-			                         call.selector, -1, -1, send_obj, origin, SCI_XS_CALLEE_LOCALS);
-	}
+	}	// while (framesize > 0)
 
 	_exec_varselectors(s);
 
 	return s->_executionStack.empty() ? NULL : &(s->_executionStack.back());
 }
 
-static ExecStack *add_exec_stack_varselector(Common::List<ExecStack> &execStack, reg_t objp, int argc, StackPtr argp, Selector selector, const ObjVarRef& address, int origin) {
-	ExecStack *xstack = add_exec_stack_entry(execStack, NULL_REG, 0, objp, argc, argp, selector, -1, -1, objp, origin, SCI_XS_CALLEE_LOCALS);
-	// Store selector address in sp
-
-	xstack->addr.varp = address;
-	xstack->type = EXEC_STACK_TYPE_VARSELECTOR;
-
-	return xstack;
-}
-
-static ExecStack *add_exec_stack_entry(Common::List<ExecStack> &execStack, reg_t pc, StackPtr sp, reg_t objp, int argc,
-								   StackPtr argp, Selector selector, int exportId, int localCallOffset, reg_t sendp, int origin, SegmentId _localsSegment) {
-	// Returns new TOS element for the execution stack
-	// _localsSegment may be -1 if derived from the called object
-
-	//debug("Exec stack: [%d/%d], origin %d, at %p", s->execution_stack_pos, s->_executionStack.size(), origin, s->execution_stack);
-
-	ExecStack xstack;
-
-	xstack.objp = objp;
-	if (_localsSegment != SCI_XS_CALLEE_LOCALS)
-		xstack.local_segment = _localsSegment;
-	else
-		xstack.local_segment = pc.segment;
-
-	xstack.sendp = sendp;
-	xstack.addr.pc = pc;
-	xstack.fp = xstack.sp = sp;
-	xstack.argc = argc;
-
-	xstack.variables_argp = argp; // Parameters
-
-	*argp = make_reg(0, argc);  // SCI code relies on the zeroeth argument to equal argc
-
-	// Additional debug information
-	xstack.debugSelector = selector;
-	xstack.debugExportId = exportId;
-	xstack.debugLocalCallOffset = localCallOffset;
-	xstack.debugOrigin = origin;
-
-	xstack.type = EXEC_STACK_TYPE_CALL; // Normal call
-
-	execStack.push_back(xstack);
-	return &(execStack.back());
-}
-
 static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int argc, reg_t *argv) {
 	// Add stack frame to indicate we're executing a callk.
 	// This is useful in debugger backtraces if this
 	// kernel function calls a script itself.
-	ExecStack *xstack;
-	xstack = add_exec_stack_entry(s->_executionStack, NULL_REG, NULL, NULL_REG, argc, argv - 1, 0, -1, -1, NULL_REG,
-			  s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
-	xstack->debugSelector = kernelCallNr;
-	xstack->type = EXEC_STACK_TYPE_KERNEL;
+	ExecStack xstack(NULL_REG, NULL_REG, NULL, argc, argv - 1, 0xFFFF, NULL_REG,
+						kernelCallNr, -1, -1, s->_executionStack.size() - 1, EXEC_STACK_TYPE_KERNEL);
+	s->_executionStack.push_back(xstack);
 }
 
-static void	logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *kernelSubCall, EngineState *s, int argc, reg_t *argv, reg_t result) {
-	Kernel *kernel = g_sci->getKernel();
-	if (!kernelSubCall) {
-		debugN("k%s: ", kernelCall->name);
-	} else {
-		int callNameLen = strlen(kernelCall->name);
-		if (strncmp(kernelCall->name, kernelSubCall->name, callNameLen) == 0) {
-			const char *subCallName = kernelSubCall->name + callNameLen;
-			debugN("k%s(%s): ", kernelCall->name, subCallName);
-		} else {
-			debugN("k%s(%s): ", kernelCall->name, kernelSubCall->name);
-		}
-	}
-	for (int parmNr = 0; parmNr < argc; parmNr++) {
-		if (parmNr)
-			debugN(", ");
-		uint16 regType = kernel->findRegType(argv[parmNr]);
-		if (regType & SIG_TYPE_NULL)
-			debugN("0");
-		else if (regType & SIG_TYPE_UNINITIALIZED)
-			debugN("UNINIT");
-		else if (regType & SIG_IS_INVALID)
-			debugN("INVALID");
-		else if (regType & SIG_TYPE_INTEGER)
-			debugN("%d", argv[parmNr].offset);
-		else {
-			debugN("%04x:%04x", PRINT_REG(argv[parmNr]));
-			switch (regType) {
-			case SIG_TYPE_OBJECT:
-				debugN(" (%s)", s->_segMan->getObjectName(argv[parmNr]));
-				break;
-			case SIG_TYPE_REFERENCE:
-			{
-				SegmentObj *mobj = s->_segMan->getSegmentObj(argv[parmNr].segment);
-				switch (mobj->getType()) {
-				case SEG_TYPE_HUNK:
-				{
-					HunkTable *ht = (HunkTable*)mobj;
-					int index = argv[parmNr].offset;
-					if (ht->isValidEntry(index)) {
-						// NOTE: This ", deleted" isn't as useful as it could
-						// be because it prints the status _after_ the kernel
-						// call.
-						debugN(" ('%s' hunk%s)", ht->_table[index].type, ht->_table[index].mem ? "" : ", deleted");
-					} else
-						debugN(" (INVALID hunk ref)");
-					break;
-				}
-				default:
-					// TODO: Any other segment types which could
-					// use special handling?
-
-					if (kernelCall->function == kSaid) {
-						SegmentRef saidSpec = s->_segMan->dereference(argv[parmNr]);
-						if (saidSpec.isRaw) {
-							debugN(" ('");
-							g_sci->getVocabulary()->debugDecipherSaidBlock(saidSpec.raw);
-							debugN("')");
-						} else {
-							debugN(" (non-raw said-spec)");
-						}
-					} else {
-						debugN(" ('%s')", s->_segMan->getString(argv[parmNr]).c_str());
-					}
-					break;
-				}
-			}
-			default:
-				break;
-			}
-		}
-	}
-	if (result.isPointer())
-		debugN(" = %04x:%04x\n", PRINT_REG(result));
-	else
-		debugN(" = %d\n", result.offset);
-}
+// from scriptdebug.cpp
+extern void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *kernelSubCall, EngineState *s, int argc, reg_t *argv, reg_t result);
 
 static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 	Kernel *kernel = g_sci->getKernel();
@@ -878,7 +552,7 @@ void run_vm(EngineState *s) {
 	StackPtr s_temp; // Temporary stack pointer
 	int16 opparams[4]; // opcode parameters
 
-	s->restAdjust = 0;	// &rest adjusts the parameter count by this value
+	s->r_rest = 0;	// &rest adjusts the parameter count by this value
 	// Current execution data:
 	s->xs = &(s->_executionStack.back());
 	ExecStack *xs_new = NULL;
@@ -1151,19 +825,22 @@ void run_vm(EngineState *s) {
 		case op_call: { // 0x20 (32)
 			// Call a script subroutine
 			int argc = (opparams[1] >> 1) // Given as offset, but we need count
-			           + 1 + s->restAdjust;
+			           + 1 + s->r_rest;
 			StackPtr call_base = s->xs->sp - argc;
-			s->xs->sp[1].offset += s->restAdjust;
+			s->xs->sp[1].offset += s->r_rest;
 
 			uint16 localCallOffset = s->xs->addr.pc.offset + opparams[0];
 
-			xs_new = add_exec_stack_entry(s->_executionStack, make_reg(s->xs->addr.pc.segment,
-											localCallOffset),
-											s->xs->sp, s->xs->objp,
-											(call_base->requireUint16()) + s->restAdjust,
-											call_base, NULL_SELECTOR, -1, localCallOffset, s->xs->objp,
-											s->_executionStack.size()-1, s->xs->local_segment);
-			s->restAdjust = 0; // Used up the &rest adjustment
+			ExecStack xstack(s->xs->objp, s->xs->objp, s->xs->sp, 
+							(call_base->requireUint16()) + s->r_rest, call_base,
+							s->xs->local_segment, make_reg(s->xs->addr.pc.segment, localCallOffset),
+							NULL_SELECTOR, -1, localCallOffset, s->_executionStack.size() - 1, 
+							EXEC_STACK_TYPE_CALL);
+
+			s->_executionStack.push_back(xstack);
+			xs_new = &(s->_executionStack.back());
+
+			s->r_rest = 0; // Used up the &rest adjustment
 			s->xs->sp = call_base;
 
 			s->_executionStackPosChanged = true;
@@ -1182,17 +859,17 @@ void run_vm(EngineState *s) {
 
 			bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 			if (!oldScriptHeader)
-				s->xs->sp -= s->restAdjust;
+				s->xs->sp -= s->r_rest;
 
 			int argc = s->xs->sp[0].requireUint16();
 
 			if (!oldScriptHeader)
-				argc += s->restAdjust;
+				argc += s->r_rest;
 
 			callKernelFunc(s, opparams[0], argc);
 
 			if (!oldScriptHeader)
-				s->restAdjust = 0;
+				s->r_rest = 0;
 
 			// Calculate xs again: The kernel function might
 			// have spawned a new VM
@@ -1209,28 +886,28 @@ void run_vm(EngineState *s) {
 
 		case op_callb: // 0x22 (34)
 			// Call base script
-			temp = ((opparams[1] >> 1) + s->restAdjust + 1);
+			temp = ((opparams[1] >> 1) + s->r_rest + 1);
 			s_temp = s->xs->sp;
 			s->xs->sp -= temp;
 
-			s->xs->sp[0].offset += s->restAdjust;
+			s->xs->sp[0].offset += s->r_rest;
 			xs_new = execute_method(s, 0, opparams[0], s_temp, s->xs->objp,
 									s->xs->sp[0].offset, s->xs->sp);
-			s->restAdjust = 0; // Used up the &rest adjustment
+			s->r_rest = 0; // Used up the &rest adjustment
 			if (xs_new)    // in case of error, keep old stack
 				s->_executionStackPosChanged = true;
 			break;
 
 		case op_calle: // 0x23 (35)
 			// Call external script
-			temp = ((opparams[2] >> 1) + s->restAdjust + 1);
+			temp = ((opparams[2] >> 1) + s->r_rest + 1);
 			s_temp = s->xs->sp;
 			s->xs->sp -= temp;
 
-			s->xs->sp[0].offset += s->restAdjust;
+			s->xs->sp[0].offset += s->r_rest;
 			xs_new = execute_method(s, opparams[0], opparams[1], s_temp, s->xs->objp,
 									s->xs->sp[0].offset, s->xs->sp);
-			s->restAdjust = 0; // Used up the &rest adjustment
+			s->r_rest = 0; // Used up the &rest adjustment
 
 			if (xs_new)  // in case of error, keep old stack
 				s->_executionStackPosChanged = true;
@@ -1282,16 +959,16 @@ void run_vm(EngineState *s) {
 		case op_send: // 0x25 (37)
 			// Send for one or more selectors
 			s_temp = s->xs->sp;
-			s->xs->sp -= ((opparams[0] >> 1) + s->restAdjust); // Adjust stack
+			s->xs->sp -= ((opparams[0] >> 1) + s->r_rest); // Adjust stack
 
-			s->xs->sp[1].offset += s->restAdjust;
+			s->xs->sp[1].offset += s->r_rest;
 			xs_new = send_selector(s, s->r_acc, s->r_acc, s_temp,
-									(int)(opparams[0] >> 1) + (uint16)s->restAdjust, s->xs->sp);
+									(int)(opparams[0] >> 1) + (uint16)s->r_rest, s->xs->sp);
 
 			if (xs_new && xs_new != s->xs)
 				s->_executionStackPosChanged = true;
 
-			s->restAdjust = 0;
+			s->r_rest = 0;
 
 			break;
 
@@ -1325,17 +1002,17 @@ void run_vm(EngineState *s) {
 		case op_self: // 0x2a (42)
 			// Send to self
 			s_temp = s->xs->sp;
-			s->xs->sp -= ((opparams[0] >> 1) + s->restAdjust); // Adjust stack
+			s->xs->sp -= ((opparams[0] >> 1) + s->r_rest); // Adjust stack
 
-			s->xs->sp[1].offset += s->restAdjust;
+			s->xs->sp[1].offset += s->r_rest;
 			xs_new = send_selector(s, s->xs->objp, s->xs->objp,
-									s_temp, (int)(opparams[0] >> 1) + (uint16)s->restAdjust,
+									s_temp, (int)(opparams[0] >> 1) + (uint16)s->r_rest,
 									s->xs->sp);
 
 			if (xs_new && xs_new != s->xs)
 				s->_executionStackPosChanged = true;
 
-			s->restAdjust = 0;
+			s->r_rest = 0;
 			break;
 
 		case op_super: // 0x2b (43)
@@ -1346,17 +1023,17 @@ void run_vm(EngineState *s) {
 				error("[VM]: Invalid superclass in object");
 			else {
 				s_temp = s->xs->sp;
-				s->xs->sp -= ((opparams[1] >> 1) + s->restAdjust); // Adjust stack
+				s->xs->sp -= ((opparams[1] >> 1) + s->r_rest); // Adjust stack
 
-				s->xs->sp[1].offset += s->restAdjust;
+				s->xs->sp[1].offset += s->r_rest;
 				xs_new = send_selector(s, r_temp, s->xs->objp, s_temp,
-										(int)(opparams[1] >> 1) + (uint16)s->restAdjust,
+										(int)(opparams[1] >> 1) + (uint16)s->r_rest,
 										s->xs->sp);
 
 				if (xs_new && xs_new != s->xs)
 					s->_executionStackPosChanged = true;
 
-				s->restAdjust = 0;
+				s->r_rest = 0;
 			}
 
 			break;
@@ -1364,7 +1041,7 @@ void run_vm(EngineState *s) {
 		case op_rest: // 0x2c (44)
 			// Pushes all or part of the parameter variable list on the stack
 			temp = (uint16) opparams[0]; // First argument
-			s->restAdjust = MAX<int16>(s->xs->argc - temp + 1, 0); // +1 because temp counts the paramcount while argc doesn't
+			s->r_rest = MAX<int16>(s->xs->argc - temp + 1, 0); // +1 because temp counts the paramcount while argc doesn't
 
 			for (; temp <= s->xs->argc; temp++)
 				PUSH32(s->xs->variables_argp[temp]);
@@ -1522,7 +1199,7 @@ void run_vm(EngineState *s) {
 			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + (opcode >= op_lagi ? s->r_acc.requireSint16() : 0);
-			s->r_acc = READ_VAR(var_type, var_number);
+			s->r_acc = read_var(s, var_type, var_number);
 			break;
 
 		case op_lsg: // 0x44 (68)
@@ -1538,7 +1215,7 @@ void run_vm(EngineState *s) {
 			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + (opcode >= op_lsgi ? s->r_acc.requireSint16() : 0);
-			PUSH32(READ_VAR(var_type, var_number));
+			PUSH32(read_var(s, var_type, var_number));
 			break;
 
 		case op_sag: // 0x50 (80)
@@ -1556,7 +1233,7 @@ void run_vm(EngineState *s) {
 			var_number = opparams[0] + (opcode >= op_sagi ? s->r_acc.requireSint16() : 0);
 			if (opcode >= op_sagi)	// load the actual value to store in the accumulator
 				s->r_acc = POP32();
-			WRITE_VAR(var_type, var_number, s->r_acc);
+			write_var(s, var_type, var_number, s->r_acc);
 			break;
 
 		case op_ssg: // 0x54 (84)
@@ -1572,7 +1249,7 @@ void run_vm(EngineState *s) {
 			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + (opcode >= op_ssgi ? s->r_acc.requireSint16() : 0);
-			WRITE_VAR(var_type, var_number, POP32());
+			write_var(s, var_type, var_number, POP32());
 			break;
 
 		case op_plusag: // 0x60 (96)
@@ -1589,8 +1266,8 @@ void run_vm(EngineState *s) {
 			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + (opcode >= op_plusagi ? s->r_acc.requireSint16() : 0);
-			s->r_acc = READ_VAR(var_type, var_number) + 1;
-			WRITE_VAR(var_type, var_number, s->r_acc);
+			s->r_acc = read_var(s, var_type, var_number) + 1;
+			write_var(s, var_type, var_number, s->r_acc);
 			break;
 
 		case op_plussg: // 0x64 (100)
@@ -1607,9 +1284,9 @@ void run_vm(EngineState *s) {
 			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + (opcode >= op_plussgi ? s->r_acc.requireSint16() : 0);
-			r_temp = READ_VAR(var_type, var_number) + 1;
+			r_temp = read_var(s, var_type, var_number) + 1;
 			PUSH32(r_temp);
-			WRITE_VAR(var_type, var_number, r_temp);
+			write_var(s, var_type, var_number, r_temp);
 			break;
 
 		case op_minusag: // 0x70 (112)
@@ -1626,8 +1303,8 @@ void run_vm(EngineState *s) {
 			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + (opcode >= op_minusagi ? s->r_acc.requireSint16() : 0);
-			s->r_acc = READ_VAR(var_type, var_number) - 1;
-			WRITE_VAR(var_type, var_number, s->r_acc);
+			s->r_acc = read_var(s, var_type, var_number) - 1;
+			write_var(s, var_type, var_number, s->r_acc);
 			break;
 
 		case op_minussg: // 0x74 (116)
@@ -1644,9 +1321,9 @@ void run_vm(EngineState *s) {
 			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + (opcode >= op_minussgi ? s->r_acc.requireSint16() : 0);
-			r_temp = READ_VAR(var_type, var_number) - 1;
+			r_temp = read_var(s, var_type, var_number) - 1;
 			PUSH32(r_temp);
-			WRITE_VAR(var_type, var_number, r_temp);
+			write_var(s, var_type, var_number, r_temp);
 			break;
 
 		default:

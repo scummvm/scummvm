@@ -230,4 +230,33 @@ void TopMenu::handleMouseUp(int x, int y, int button, int clickCount) {
 		Dialog::handleMouseUp(x, y, button, clickCount);
 }
 
+EntryDialog::EntryDialog(const Common::String &title, const Common::String &buttonLabel, const Common::String &defaultValue) : GUI::Dialog(20, 20, 100, 50) {
+	new GUI::StaticTextWidget(this, 0, 0, 10, 10, title, Graphics::kTextAlignCenter);
+	
+	_text = new GUI::EditTextWidget(this, 0, 0, 50, 10, "");
+	_text->setEditString(defaultValue);
+
+	new GUI::ButtonWidget(this, 20, 20, 30, 10, buttonLabel, 0, kCmdButton);
+}
+
+EntryDialog::~EntryDialog() {
+}
+
+void EntryDialog::handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data) {
+	switch (command) {
+	case kCmdButton:
+		close();
+		break;
+	default:
+		Dialog::handleCommand(sender, command, data);
+	}
+}
+
+void EntryDialog::reflowLayout() {
+}
+
+void EntryDialog::init() {
+}
+
+
 } // End of namespace Hugo

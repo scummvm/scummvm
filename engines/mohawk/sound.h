@@ -133,6 +133,7 @@ public:
 	void pauseSound();
 	void resumeSound();
 	bool isPlaying(uint16 id);
+	bool isPlaying();
 	uint getNumSamplesPlayed(uint16 id);
 
 	// Myst-specific sound functions
@@ -158,7 +159,7 @@ private:
 	byte *_midiData;
 
 	static Audio::AudioStream *makeMohawkWaveStream(Common::SeekableReadStream *stream, CueList *cueList = NULL);
-	static Audio::AudioStream *makeOldMohawkWaveStream(Common::SeekableReadStream *stream);
+	static Audio::AudioStream *makeLivingBooksWaveStream_v1(Common::SeekableReadStream *stream);
 	void initMidi();
 
 	Common::Array<SndHandle> _handles;

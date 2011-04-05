@@ -51,7 +51,6 @@ class MidiChannel_MT32 : public MidiChannel_MPU401 {
 
 class MidiDriver_MT32 : public MidiDriver_Emulated {
 private:
-	Audio::SoundHandle _handle;
 	MidiChannel_MT32 _midiChannels[16];
 	uint16 _channelMask;
 	MT32Emu::Synth *_synth;
@@ -336,7 +335,7 @@ int MidiDriver_MT32::open() {
 
 	g_system->updateScreen();
 
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	return 0;
 }
@@ -378,7 +377,7 @@ void MidiDriver_MT32::close() {
 	// Detach the player callback handler
 	setTimerCallback(NULL, NULL);
 	// Detach the mixer callback handler
-	_mixer->stopHandle(_handle);
+	_mixer->stopHandle(_mixerSoundHandle);
 
 	_synth->close();
 	delete _synth;

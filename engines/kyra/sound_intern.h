@@ -219,12 +219,12 @@ public:
 	~MidiDriver_PCSpeaker();
 
 	// MidiDriver interface
-	void close() {}
+	virtual void close() {}
 
-	void send(uint32 data);
+	virtual void send(uint32 data);
 
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
+	virtual MidiChannel *allocateChannel() { return 0; }
+	virtual MidiChannel *getPercussionChannel() { return 0; }
 
 	// MidiDriver_Emulated interface
 	void generateSamples(int16 *buffer, int numSamples);

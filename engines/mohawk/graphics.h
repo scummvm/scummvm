@@ -33,26 +33,14 @@
 #include "graphics/pict.h"
 
 namespace Graphics {
-
-class JPEG;
-
+	class JPEG;
 }
 
 namespace Mohawk {
 
 class MohawkEngine;
-class MohawkEngine_Myst;
-class MohawkEngine_Riven;
 class MohawkEngine_LivingBooks;
-class MohawkEngine_CSTime;
 class MohawkBitmap;
-class MystBitmap;
-
-enum RectState{
-	kRectEnabled,
-	kRectDisabled,
-	kRectUnreachable
-};
 
 class MohawkSurface {
 public:
@@ -118,6 +106,17 @@ private:
 	Common::HashMap<uint16, Common::Array<MohawkSurface*> > _subImageCache;
 };
 
+#ifdef ENABLE_MYST
+
+class MystBitmap;
+class MohawkEngine_Myst;
+
+enum RectState {
+	kRectEnabled,
+	kRectDisabled,
+	kRectUnreachable
+};
+
 class MystGraphics : public GraphicsManager {
 public:
 	MystGraphics(MohawkEngine_Myst*);
@@ -162,17 +161,11 @@ private:
 	Common::Rect _viewport;
 };
 
-struct SFXERecord {
-	// Record values
-	uint16 frameCount;
-	Common::Rect rect;
-	uint16 speed;
-	Common::Array<Common::SeekableReadStream*> frameScripts;
+#endif // ENABLE_MYST
 
-	// Cur frame
-	uint16 curFrame;
-	uint32 lastFrameTime;
-};
+#ifdef ENABLE_RIVEN
+
+class MohawkEngine_Riven;
 
 class RivenGraphics : public GraphicsManager {
 public:
@@ -216,6 +209,17 @@ private:
 	MohawkBitmap *_bitmapDecoder;
 
 	// Water Effects
+	struct SFXERecord {
+		// Record values
+		uint16 frameCount;
+		Common::Rect rect;
+		uint16 speed;
+		Common::Array<Common::SeekableReadStream*> frameScripts;
+
+		// Cur frame
+		uint16 curFrame;
+		uint32 lastFrameTime;
+	};
 	Common::Array<SFXERecord> _waterEffects;
 
 	// Transitions
@@ -237,6 +241,8 @@ private:
 	uint _creditsImage, _creditsPos;
 };
 
+#endif // ENABLE_RIVEN
+
 class LBGraphics : public GraphicsManager {
 public:
 	LBGraphics(MohawkEngine_LivingBooks *vm, uint16 width, uint16 height);
@@ -255,6 +261,10 @@ private:
 	MohawkEngine_LivingBooks *_vm;
 };
 
+#ifdef ENABLE_CSTIME
+
+class MohawkEngine_CSTime;
+
 class CSTimeGraphics : public GraphicsManager {
 public:
 	CSTimeGraphics(MohawkEngine_CSTime *vm);
@@ -271,6 +281,8 @@ private:
 	MohawkBitmap *_bmpDecoder;
 	MohawkEngine_CSTime *_vm;
 };
+
+#endif
 
 } // End of namespace Mohawk
 

@@ -175,7 +175,7 @@ void ObjectHandler::useObject(int16 objId) {
 					// Deselect dragged icon if inventory not active
 					if (_vm->_inventory->getInventoryState() != kInventoryActive)
 						_vm->_screen->resetInventoryObjId();
-					Utils::Box(kBoxAny, "%s", _vm->_text->getTextData(use->dataIndex));
+					Utils::notifyBox(_vm->_text->getTextData(use->dataIndex));
 					return;
 				}
 			}
@@ -353,7 +353,7 @@ void ObjectHandler::showTakeables() {
 		if ((obj->cycling != kCycleInvisible) &&
 		    (obj->screenIndex == *_vm->_screen_p) &&
 		    (((TAKE & obj->genericCmd) == TAKE) || obj->objValue)) {
-			Utils::Box(kBoxAny, "You can also see:\n%s.", _vm->_text->getNoun(obj->nounIndex, LOOK_NAME));
+			Utils::notifyBox(Common::String::format("You can also see:\n%s.", _vm->_text->getNoun(obj->nounIndex, LOOK_NAME)));
 		}
 	}
 }

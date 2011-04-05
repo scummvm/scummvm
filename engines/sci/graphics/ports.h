@@ -32,10 +32,10 @@
 
 namespace Sci {
 
-class SciGui;
 class GfxPaint16;
 class GfxScreen;
 class GfxText16;
+struct WorklistManager;
 
 // window styles
 enum {
@@ -103,6 +103,8 @@ public:
 	void kernelGraphAdjustPriority(int top, int bottom);
 	byte kernelCoordinateToPriority(int16 y);
 	int16 kernelPriorityToCoordinate(byte priority);
+	void processEngineHunkList(WorklistManager &wm);
+	void printWindowList(Console *con);
 
 	Port *_wmgrPort;
 	Window *_picWind;
@@ -115,10 +117,10 @@ public:
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
+private:
 	/** The list of open 'windows' (and ports), in visual order. */
 	PortList _windowList;
 
-private:
 	/** The list of all open 'windows' (and ports), ordered by their id. */
 	PortArray _windowsById;
 

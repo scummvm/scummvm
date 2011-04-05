@@ -556,10 +556,7 @@ void CoktelDecoder::renderBlockSparse2Y(Graphics::Surface &dstSurf, const byte *
 			int16 pixCount = *src++;
 
 			if (pixCount & 0x80) { // Data
-				int16 copyCount;
-
 				pixCount  = MIN((pixCount & 0x7F) + 1, srcRect.width() - pixWritten);
-				copyCount = CLIP<int16>(rect.width() - pixWritten, 0, pixCount);
 				memcpy(dstRow                 , src, pixCount);
 				memcpy(dstRow + dstSurf.pitch, src, pixCount);
 
@@ -1377,12 +1374,13 @@ bool IMDDecoder::renderFrame(Common::Rect &rect) {
 
 		if ((type == 2) && (rect.width() == _surface.w) && (_x == 0)) {
 			// Directly uncompress onto the video surface
-			int offsetX = rect.left * _surface.bytesPerPixel;
-			int offsetY = (_y + rect.top) * _surface.pitch;
+			const int offsetX = rect.left * _surface.bytesPerPixel;
+			const int offsetY = (_y + rect.top) * _surface.pitch;
+			const int offset  = offsetX + offsetY;
 
-			deLZ77((byte *)_surface.pixels + offsetX + offsetY, dataPtr, dataSize,
-					_surface.w * _surface.h * _surface.bytesPerPixel);
-			return true;
+			if (deLZ77((byte *)_surface.pixels + offset, dataPtr, dataSize,
+			           _surface.w * _surface.h * _surface.bytesPerPixel - offset))
+				return true;
 		}
 
 		_videoBufferLen[1] = deLZ77(_videoBuffer[1], dataPtr, dataSize, _videoBufferSize);
@@ -2244,12 +2242,13 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 
 		if ((type == 2) && (rect.width() == _surface.w) && (_x == 0) && (_blitMode == 0)) {
 			// Directly uncompress onto the video surface
-			int offsetX = rect.left * _surface.bytesPerPixel;
-			int offsetY = (_y + rect.top) * _surface.pitch;
+			const int offsetX = rect.left * _surface.bytesPerPixel;
+			const int offsetY = (_y + rect.top) * _surface.pitch;
+			const int offset  = offsetX - offsetY;
 
-			deLZ77((byte *)_surface.pixels + offsetX + offsetY, dataPtr, dataSize,
-					_surface.w * _surface.h * _surface.bytesPerPixel);
-			return true;
+			if (deLZ77((byte *)_surface.pixels + offset, dataPtr, dataSize,
+			           _surface.w * _surface.h * _surface.bytesPerPixel - offset))
+				return true;
 		}
 
 		srcBuffer = 1;

@@ -275,11 +275,31 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 	if (!celBitmap)
 		error("Unable to allocate temporary memory for picture drawing");
 
+	if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2) {
+		// See GfxView::unpackCel() for why this black/white swap is done
+		// This picture swap is only needed in SCI32, not SCI1.1
+		if (clearColor == 0)
+			clearColor = 0xff;
+		else if (clearColor == 0xff)
+			clearColor = 0;
+	}
+
 	if (compression)
 		unpackCelData(inbuffer, celBitmap, clearColor, pixelCount, rlePos, literalPos, _resMan->getViewType(), width, false);
 	else
 		// No compression (some SCI32 pictures)
 		memcpy(celBitmap, rlePtr, pixelCount);
+
+	if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2) {
+		// See GfxView::unpackCel() for why this black/white swap is done
+		// This picture swap is only needed in SCI32, not SCI1.1
+		for (int i = 0; i < pixelCount; i++) {
+			if (celBitmap[i] == 0)
+				celBitmap[i] = 0xff;
+			else if (celBitmap[i] == 0xff)
+				celBitmap[i] = 0;
+		}
+	}
 
 	Common::Rect displayArea = _coordAdjuster->pictureGetDisplayArea();
 
@@ -306,10 +326,11 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 			sourcePixelSkipPerRow = width - (rightX - leftX);
 
 		// Change clearcolor to white, if we dont add to an existing picture. That way we will paint everything on screen
-		//  but white and that wont matter because the screen is supposed to be already white. It seems that most (if not all)
-		//  SCI1.1 games use color 0 as transparency and SCI1 games use color 255 as transparency. Sierra SCI seems to paint
-		//  the whole data to screen and wont skip over transparent pixels. So this will actually make it work like Sierra
-		if (!_addToFlag)
+		// but white and that won't matter because the screen is supposed to be already white. It seems that most (if not all)
+		// SCI1.1 games use color 0 as transparency and SCI1 games use color 255 as transparency. Sierra SCI seems to paint
+		// the whole data to screen and wont skip over transparent pixels. So this will actually make it work like Sierra.
+		// SCI32 doesn't use _addToFlag at all.
+		if (!_addToFlag && _resourceType != SCI_PICTURE_TYPE_SCI32)
 			clearColor = _screen->getColorWhite();
 
 		byte drawMask = priority == 255 ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY;

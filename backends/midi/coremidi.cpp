@@ -56,6 +56,7 @@ public:
 	MidiDriver_CoreMIDI();
 	~MidiDriver_CoreMIDI();
 	int open();
+	bool isOpen() const { return mOutPort != 0 && mDest != 0; }
 	void close();
 	void send(uint32 b);
 	void sysEx(const byte *msg, uint16 length);
@@ -80,7 +81,7 @@ MidiDriver_CoreMIDI::~MidiDriver_CoreMIDI() {
 }
 
 int MidiDriver_CoreMIDI::open() {
-	if (mDest)
+	if (isOpen())
 		return MERR_ALREADY_OPEN;
 
 	OSStatus err = noErr;
@@ -106,7 +107,7 @@ int MidiDriver_CoreMIDI::open() {
 void MidiDriver_CoreMIDI::close() {
 	MidiDriver_MPU401::close();
 
-	if (mOutPort && mDest) {
+	if (isOpen()) {
 		MIDIPortDispose(mOutPort);
 		mOutPort = 0;
 		mDest = 0;
@@ -114,8 +115,7 @@ void MidiDriver_CoreMIDI::close() {
 }
 
 void MidiDriver_CoreMIDI::send(uint32 b) {
-	assert(mOutPort != 0);
-	assert(mDest != 0);
+	assert(isOpen());
 
 	// Extract the MIDI data
 	byte status_byte = (b & 0x000000FF);
@@ -158,8 +158,7 @@ void MidiDriver_CoreMIDI::send(uint32 b) {
 }
 
 void MidiDriver_CoreMIDI::sysEx(const byte *msg, uint16 length) {
-	assert(mOutPort != 0);
-	assert(mDest != 0);
+	assert(isOpen());
 
 	byte buf[384];
 	MIDIPacketList *packetList = (MIDIPacketList *)buf;

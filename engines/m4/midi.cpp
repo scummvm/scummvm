@@ -28,123 +28,34 @@
 
 #include "m4/m4.h"
 #include "m4/midi.h"
+#include "audio/midiparser.h"
+#include "common/config-manager.h"
 #include "common/memstream.h"
 
 namespace M4 {
 
-MidiPlayer::MidiPlayer(MadsM4Engine *vm, MidiDriver *driver) : _vm(vm), _midiData(NULL), _driver(driver), _isPlaying(false), _passThrough(false), _isGM(false) {
-	memset(_channel, 0, sizeof(_channel));
-	_masterVolume = 0;
-	_parser = MidiParser::createParser_SMF();
-	_parser->setMidiDriver(this);
-	_parser->setTimerRate(getBaseTempo());
-	open();
-}
+MidiPlayer::MidiPlayer(MadsM4Engine *vm) : _vm(vm), _isGM(false) {
 
-MidiPlayer::~MidiPlayer() {
-	_driver->setTimerCallback(NULL, NULL);
-	_parser->setMidiDriver(NULL);
-	stopMusic();
-	close();
-	delete _parser;
-	free(_midiData);
-}
-
-void MidiPlayer::setVolume(int volume) {
-	Common::StackLock lock(_mutex);
-
-	if (volume < 0)
-		volume = 0;
-	else if (volume > 255)
-		volume = 255;
-
-	if (_masterVolume == volume)
-		return;
-
-	_masterVolume = volume;
-
-	for (int i = 0; i < 16; ++i) {
-		if (_channel[i]) {
-			_channel[i]->volume(_channelVolume[i] * _masterVolume / 255);
-		}
-	}
-}
-
-int MidiPlayer::open() {
-	// Don't ever call open without first setting the output driver!
-	if (!_driver)
-		return 255;
+	MidiPlayer::createDriver();
 
 	int ret = _driver->open();
-	if (ret)
-		return ret;
-
-	_driver->setTimerCallback(this, &onTimer);
-	return 0;
-}
-
-void MidiPlayer::close() {
-	stopMusic();
-	if (_driver)
-		_driver->close();
-	_driver = 0;
+	if (ret == 0) {
+		_driver->setTimerCallback(this, &timerCallback);
+	}
 }
 
 void MidiPlayer::send(uint32 b) {
-	if (_passThrough) {
-		_driver->send(b);
-		return;
-	}
-
-	byte channel = (byte)(b & 0x0F);
-	if ((b & 0xFFF0) == 0x07B0) {
-		// Adjust volume changes by master volume
-		byte volume = (byte)((b >> 16) & 0x7F);
-		_channelVolume[channel] = volume;
-		volume = volume * _masterVolume / 255;
-		b = (b & 0xFF00FFFF) | (volume << 16);
-	} else if ((b & 0xF0) == 0xC0 && !_isGM && !_nativeMT32) {
+	if ((b & 0xF0) == 0xC0 && !_isGM && !_nativeMT32) {
 		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
 	}
-	else if ((b & 0xFFF0) == 0x007BB0) {
-		//Only respond to All Notes Off if this channel
-		//has currently been allocated
-		if (!_channel[b & 0x0F])
-			return;
-	}
 
-	if (!_channel[channel])
-		_channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
-
-	if (_channel[channel])
-		_channel[channel]->send(b);
-}
-
-void MidiPlayer::metaEvent(byte type, byte *data, uint16 length) {
-	switch (type) {
-	case 0x2F:
-		// End of track. (Not called when auto-looping.)
-		stopMusic();
-		break;
-	case 0x51:
-		// Set tempo. Handled by the standard MIDI parser already.
-		break;
-	default:
-		warning("Unhandled meta event: %02x", type);
-		break;
-	}
-}
-
-void MidiPlayer::onTimer(void *refCon) {
-	MidiPlayer *midi = (MidiPlayer *)refCon;
-	Common::StackLock lock(midi->_mutex);
-
-	if (midi->_isPlaying)
-		midi->_parser->onTimer();
+	Audio::MidiPlayer::send(b);
 }
 
 void MidiPlayer::playMusic(const char *name, int32 vol, bool loop, int32 trigger, int32 scene) {
-	stopMusic();
+	Common::StackLock lock(_mutex);
+
+	stop();
 
 	char fullname[144];
 	_vm->res()->changeExtension(fullname, name, "HMP");
@@ -160,11 +71,10 @@ void MidiPlayer::playMusic(const char *name, int32 vol, bool loop, int32 trigger
 	_vm->res()->purge();
 
 	if (_midiData) {
-		/*
-		FILE *out = fopen("music.mid", "wb");
-		fwrite(_midiData, smfSize, 1, out);
-		fclose(out);
-		*/
+		_parser = MidiParser::createParser_SMF();
+		_parser->setMidiDriver(this);
+		_parser->setTimerRate(_driver->getBaseTempo());
+
 		_parser->loadMusic(_midiData, smfSize);
 		_parser->property(MidiParser::mpAutoLoop, loop);
 	}
@@ -172,20 +82,6 @@ void MidiPlayer::playMusic(const char *name, int32 vol, bool loop, int32 trigger
 	setVolume(255);
 
 	_isPlaying = true;
-}
-
-void MidiPlayer::stopMusic() {
-	Common::StackLock lock(_mutex);
-
-	_isPlaying = false;
-	if (_parser) {
-		_parser->unloadMusic();
-	}
-
-	if (_midiData) {
-		free(_midiData);
-		_midiData = NULL;
-	}
 }
 
 // This function will convert HMP music into type 1 SMF, which our SMF parser

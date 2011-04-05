@@ -53,8 +53,8 @@ GmMusic::~GmMusic() {
 		stopMusic();
 	// Send All Sound Off and All Notes Off (for external synths)
 	for (int i = 0; i < 16; i++) {
-		_midiDrv->send ((120 << 8) | 0xB0 | i);
-		_midiDrv->send ((123 << 8) | 0xB0 | i);
+		_midiDrv->send((120 << 8) | 0xB0 | i);
+		_midiDrv->send((123 << 8) | 0xB0 | i);
 	}
 	_midiDrv->close();
 	delete _midiDrv;

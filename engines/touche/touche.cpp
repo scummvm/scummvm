@@ -44,7 +44,6 @@ namespace Touche {
 
 ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	: Engine(system), _midiPlayer(0), _language(language) {
-
 	_saveLoadCurrentPage = 0;
 	_saveLoadCurrentSlot = 0;
 	_hideInventoryTexts = false;
@@ -103,9 +102,8 @@ Common::Error ToucheEngine::run() {
 
 	_midiPlayer = new MidiPlayer;
 
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	// Setup mixer
+	syncSoundSettings();
 
 	res_openDataFile();
 	res_allocateTables();
@@ -245,10 +243,9 @@ Common::Point ToucheEngine::getMousePos() const {
 }
 
 void ToucheEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
 	readConfigurationSettings();
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 }
 
 void ToucheEngine::mainLoop() {

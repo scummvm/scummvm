@@ -47,7 +47,7 @@ namespace GUI {
 /**
  * Initializes graphics and shows error message.
  */
-void GUIErrorMessage(const Common::String msg);
+void GUIErrorMessage(const Common::String &msg);
 
 
 class Engine {
@@ -163,6 +163,15 @@ public:
 	 * Notify the engine that the sound settings in the config manager may have
 	 * changed and that it hence should adjust any internal volume etc. values
 	 * accordingly.
+	 * The default implementation sets the volume levels of all mixer sound
+	 * types according to the config entries of the active domain.
+	 * When overwriting, call the default implementation first, then adjust the
+	 * volumes further (if required).
+	 *
+	 * @note When setting volume levels, respect the "mute" config entry.
+	 * @note The volume for the plain sound type is reset to the maximum
+	 *       volume. If the engine can associate its own value for this
+	 *       type, it needs to overwrite this member and set it accordingly.
 	 * @todo find a better name for this
 	 */
 	virtual void syncSoundSettings();

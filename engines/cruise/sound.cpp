@@ -283,9 +283,21 @@ void PCSoundDriver::resetChannel(int channel) {
 }
 
 void PCSoundDriver::syncSounds() {
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	bool music_mute = mute;
+	bool sfx_mute = mute;
+
+	if (!mute) {
+		music_mute = ConfMan.getBool("music_mute");
+		sfx_mute = ConfMan.getBool("sfx_mute");
+	}
+
 	// Get the new music and sfx volumes
-	_musicVolume = ConfMan.getBool("music_mute") ? 0 : MIN(255, ConfMan.getInt("music_volume"));
-	_sfxVolume = ConfMan.getBool("sfx_mute") ? 0 : MIN(255, ConfMan.getInt("sfx_volume"));
+	_musicVolume = music_mute ? 0 : MIN(255, ConfMan.getInt("music_volume"));
+	_sfxVolume = sfx_mute ? 0 : MIN(255, ConfMan.getInt("sfx_volume"));
 }
 
 AdLibSoundDriver::AdLibSoundDriver(Audio::Mixer *mixer)

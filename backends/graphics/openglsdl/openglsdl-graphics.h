@@ -48,8 +48,6 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
 
-	virtual void warpMouse(int x, int y);
-
 	virtual bool notifyEvent(const Common::Event &event);
 
 	virtual void updateScreen();
@@ -59,9 +57,6 @@ protected:
 
 	virtual bool loadGFXMode();
 	virtual void unloadGFXMode();
-
-	virtual void setFullscreenMode(bool enable);
-
 	virtual bool isHotkey(const Common::Event &event);
 
 #ifdef USE_RGB_COLOR
@@ -80,11 +75,15 @@ protected:
 	 */
 	virtual void toggleFullScreen(int loop);
 
+	int _activeFullscreenMode;
+
 	/**
 	 * Setup the fullscreen mode.
 	 * @return false if failed finding a mode, true otherwise.
 	 */
 	virtual bool setupFullscreenMode();
+
+	virtual void setInternalMousePosition(int x, int y);
 
 	int _lastFullscreenModeWidth;
 	int _lastFullscreenModeHeight;

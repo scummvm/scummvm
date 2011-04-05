@@ -3,6 +3,7 @@ MODULE := engines/hugo
 MODULE_OBJS := \
 	console.o \
 	detection.o \
+	dialogs.o \
 	display.o \
 	file.o \
 	file_v1d.o \
@@ -13,7 +14,6 @@ MODULE_OBJS := \
 	hugo.o \
 	intro.o \
 	inventory.o \
-	menu.o \
 	mouse.o \
 	object.o \
 	object_v1d.o \

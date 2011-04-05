@@ -47,15 +47,15 @@ namespace Sword25 {
 #define BEZSMOOTHNESS 0.5
 
 // -----------------------------------------------------------------------------
-// SWF Datentypen
+// SWF datatype
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-// Bitstream Hilfsklasse
+// Bitstream helper class
 // -----------------------------------------------------------------------------
-// Das Parsen von SWF-Dateien erfordert sowohl bitweises Auslesen als auch an
-// Bytegrenzen ausgerichtetes Lesen.
-// Diese Klasse ist speziell dafür ausgestattet.
+// The parsing of SWF files requires both bitwise readout and on Byte boundaries
+// oriented reading.
+// This class is specially equipped for this.
 // -----------------------------------------------------------------------------
 
 class VectorImage::SWFBitStream {
@@ -85,10 +85,10 @@ public:
 	}
 
 	inline int32 getSignedBits(uint bitCount) {
-		// Bits einlesen
+		// readout bits
 		uint32 temp = getBits(bitCount);
 
-		// Falls das Sign-Bit gesetzt ist, den Rest des Rückgabewertes mit 1-Bits auffüllen (Sign Extension)
+		// If the sign-bit is set, fill the rest of the return value with 1-bit (sign extension)
 		if (temp & 1 << (bitCount - 1))
 			return (0xffffffff << bitCount) | temp;
 		else
@@ -151,28 +151,28 @@ private:
 
 
 // -----------------------------------------------------------------------------
-// Konstanten und Hilfsfunktionen
+// Constants and utility functions
 // -----------------------------------------------------------------------------
 
 namespace {
 // -----------------------------------------------------------------------------
-// Konstanten
+// Constants
 // -----------------------------------------------------------------------------
 
-const uint32 MAX_ACCEPTED_FLASH_VERSION = 3;   // Die höchste Flash-Dateiversion, die vom Lader akzeptiert wird
+const uint32 MAX_ACCEPTED_FLASH_VERSION = 3;   // The maximum flash file version that is accepted by the loader
 
 
 // -----------------------------------------------------------------------------
-// Konvertiert SWF-Rechteckdaten in einem Bitstrom in Common::Rect-Objekte
+// Converts SWF rectangle data in a bit stream in Common::Rect objects
 // -----------------------------------------------------------------------------
 
 Common::Rect flashRectToBSRect(VectorImage::SWFBitStream &bs) {
 	bs.flushByte();
 
-	// Feststellen mit wie vielen Bits die einzelnen Komponenten kodiert sind
+	// Determines how many bits of the single components are encoded
 	uint32 bitsPerValue = bs.getBits(5);
 
-	// Die einzelnen Komponenten einlesen
+	// Readout the single components
 	int32 xMin = bs.getSignedBits(bitsPerValue);
 	int32 xMax = bs.getSignedBits(bitsPerValue);
 	int32 yMin = bs.getSignedBits(bitsPerValue);
@@ -182,7 +182,7 @@ Common::Rect flashRectToBSRect(VectorImage::SWFBitStream &bs) {
 }
 
 // -----------------------------------------------------------------------------
-// Berechnet die Bounding-Box eines BS_VectorImageElement
+// Calculate the bounding box of a BS_VectorImageElement
 // -----------------------------------------------------------------------------
 
 Common::Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) {
@@ -214,17 +214,17 @@ Common::Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) 
 
 
 // -----------------------------------------------------------------------------
-// Konstruktion
+// Construction
 // -----------------------------------------------------------------------------
 
 VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success, const Common::String &fname) : _pixelData(0), _fname(fname) {
 	success = false;
 
-	// Bitstream-Objekt erzeugen
-	// Im Folgenden werden die Dateidaten aus diesem ausgelesen.
+	// Create bitstream object
+	// In the following the file data will be readout of the bitstream object.
 	SWFBitStream bs(pFileData, fileSize);
 
-	// SWF-Signatur überprüfen
+	// Check SWF signature
 	uint32 signature[3];
 	signature[0] = bs.getByte();
 	signature[1] = bs.getByte();
@@ -236,37 +236,37 @@ VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success, co
 		return;
 	}
 
-	// Versionsangabe überprüfen
+	// Check the version
 	uint32 version = bs.getByte();
 	if (version > MAX_ACCEPTED_FLASH_VERSION) {
 		error("File is of version %d. Highest accepted version is %d.", version, MAX_ACCEPTED_FLASH_VERSION);
 		return;
 	}
 
-	// Dateigröße auslesen und mit der tatsächlichen Größe vergleichen
+	// Readout filesize and compare with the actual size
 	uint32 storedFileSize = bs.getUInt32();
 	if (storedFileSize != fileSize) {
 		error("File is not a valid SWF-file");
 		return;
 	}
 
-	// SWF-Maße auslesen
+	// readout SWF size
 	Common::Rect movieRect = flashRectToBSRect(bs);
 
-	// Framerate und Frameanzahl auslesen
+	// Get frame rate and frame count
 	/* uint32 frameRate = */
 	bs.getUInt16();
 	/* uint32 frameCount = */
 	bs.getUInt16();
 
-	// Tags parsen
-	// Da wir uns nur für das erste DefineShape-Tag interessieren
+	// Parse tags
+	// Because we are only interested in the first DifneShape-Tag...
 	bool keepParsing = true;
 	while (keepParsing) {
-		// Tags beginnen immer an Bytegrenzen
+		// Tags always begin on byte boundaries
 		bs.flushByte();
 
-		// Tagtyp und Länge auslesen
+		// Readout tag type and length
 		uint16 tagTypeAndLength = bs.getUInt16();
 		uint32 tagType = tagTypeAndLength >> 6;
 		uint32 tagLength = tagTypeAndLength & 0x3f;
@@ -286,13 +286,13 @@ VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success, co
 			success = parseDefineShape(3, bs);
 			return;
 		default:
-			// Unbekannte Tags ignorieren
+			// Ignore unknown tags
 			bs.skipBytes(tagLength);
 		}
 	}
 
-	// Die Ausführung darf nicht an dieser Stelle ankommen: Entweder es wird ein Shape gefunden, dann wird die Funktion mit vorher verlassen, oder
-	// es wird keines gefunden, dann tritt eine Exception auf sobald über das Ende der Datei hinaus gelesen wird.
+	// The execution must not arrive at this point: Either a shape is found, then the function will be leaved before, or it is found none, then
+	// an exception occurs as soon as it is read beyond of the end of file.
 	assert(false);
 }
 
@@ -336,13 +336,13 @@ ArtBpath *VectorImage::storeBez(ArtBpath *bez, int lineStyle, int fillStyle0, in
 bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 	/*uint32 shapeID = */bs.getUInt16();
 
-	// Bounding Box auslesen
+	// readout bounding box
 	_boundingBox = flashRectToBSRect(bs);
 
-	// Erstes Image-Element erzeugen
+	// create first image element
 	_elements.resize(1);
 
-	// Styles einlesen
+	// read styles
 	uint numFillBits;
 	uint numLineBits;
 	if (!parseStyles(shapeType, bs, numFillBits, numLineBits))
@@ -352,7 +352,7 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 	uint fillStyle0 = 0;
 	uint fillStyle1 = 0;
 
-	// Shaperecord parsen
+	// parse shaperecord
 	// ------------------
 
 	double curX = 0;
@@ -367,7 +367,7 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 
 		// Non-Edge Record
 		if (typeFlag == 0) {
-			// Feststellen welche Parameter gesetzt werden
+			// Determines which parameters are set
 			uint32 stateNewStyles = bs.getBits(1);
 			uint32 stateLineStyle = bs.getBits(1);
 			uint32 stateFillStyle1 = bs.getBits(1);
@@ -378,10 +378,10 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 			uint prevFillStyle0 = fillStyle0;
 			uint prevFillStyle1 = fillStyle1;
 
-			// End der Shape-Definition erreicht?
+			// End of the shape definition is reached?
 			if (!stateNewStyles && !stateLineStyle && !stateFillStyle0 && !stateFillStyle1 && !stateMoveTo) {
 				endOfShapeDiscovered = true;
-				// Parameter dekodieren
+				// Decode parameters
 			} else {
 				if (stateMoveTo) {
 					uint32 moveToBits = bs.getBits(5);
@@ -410,7 +410,7 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 						numLineBits = 0;
 				}
 
-				// Ein neuen Pfad erzeugen, es sei denn, es wurden nur neue Styles definiert
+				// Create a new path, unless there were only defined new styles
 				if (stateLineStyle || stateFillStyle0 || stateFillStyle1 || stateMoveTo) {
 					// Store previous curve if any
 					if (bezNodes) {
@@ -426,15 +426,15 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 				}
 
 				if (stateNewStyles) {
-					// An dieser Stelle werden in Flash die alten Style-Definitionen verworfen und mit den neuen überschrieben.
-					// Es wird ein neues Element begonnen.
+					// The old style definitions will be discarded and overwritten with the new at this point in Flash.
+					// A new element will be started with a new element.
 					_elements.resize(_elements.size() + 1);
 					if (!parseStyles(shapeType, bs, numFillBits, numLineBits))
 						return false;
 				}
 			}
 		} else {
-			// Edge Record
+			// Edge record
 			uint32 edgeFlag = bs.getBits(1);
 			uint32 numBits = bs.getBits(4) + 2;
 
@@ -499,7 +499,7 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 
 	free(bez);
 
-	// Bounding-Boxes der einzelnen Elemente berechnen
+	// Calculate the bounding boxes of each element
 	Common::Array<VectorImageElement>::iterator it = _elements.begin();
 	for (; it != _elements.end(); ++it)
 		it->_boundingBox = CalculateBoundingBox(*it);
@@ -513,16 +513,16 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 bool VectorImage::parseStyles(uint shapeType, SWFBitStream &bs, uint &numFillBits, uint &numLineBits) {
 	bs.flushByte();
 
-	// Fillstyles parsen
+	// Parse fill styles
 	// -----------------
 
-	// Anzahl an Fillstyles bestimmen
+	// Determine number of fill styles
 	uint fillStyleCount = bs.getByte();
 	if (fillStyleCount == 0xff)
 		fillStyleCount = bs.getUInt16();
 
-	// Alle Fillstyles einlesen, falls ein Fillstyle mit Typ != 0 gefunden wird, wird das Parsen abgebrochen.
-	// Es wird nur "solid fill" (Typ 0) unterstützt.
+	// Readout all fill styles. If a fill style with Typ != 0 is found, the parsing is aborted.
+	// Only "solid fill" (Typ 0) is supported.
 	_elements.back()._fillStyles.reserve(fillStyleCount);
 	for (uint i = 0; i < fillStyleCount; ++i) {
 		byte type = bs.getByte();
@@ -543,15 +543,15 @@ bool VectorImage::parseStyles(uint shapeType, SWFBitStream &bs, uint &numFillBit
 		_elements.back()._fillStyles.push_back(color);
 	}
 
-	// Linestyles parsen
+	// Line styles parsen
 	// -----------------
 
-	// Anzahl an Linestyles bestimmen
+	// Determine number of line styles
 	uint lineStyleCount = bs.getByte();
 	if (lineStyleCount == 0xff)
 		lineStyleCount = bs.getUInt16();
 
-	// Alle Linestyles einlesen
+	// Readout all line styles
 	_elements.back()._lineStyles.reserve(lineStyleCount);
 	for (uint i = 0; i < lineStyleCount; ++i) {
 		double width = bs.getUInt16();
@@ -569,7 +569,7 @@ bool VectorImage::parseStyles(uint shapeType, SWFBitStream &bs, uint &numFillBit
 		_elements.back()._lineStyles.push_back(VectorImageElement::LineStyleType(width, color));
 	}
 
-	// Bitbreite für die folgenden Styleindizes auslesen
+	// Readout the bit width for the following style indices
 	numFillBits = bs.getBits(4);
 	numLineBits = bs.getBits(4);
 
@@ -608,11 +608,11 @@ bool VectorImage::blit(int posX, int posY,
 	static int              oldWidth = -2;
 	static int              oldHeight = -2;
 
-	// Falls Breite oder Höhe 0 sind, muss nichts dargestellt werden.
+	// If width or height to 0, nothing needs to be shown.
 	if (width == 0 || height == 0)
 		return true;
 
-	// Feststellen, ob das alte Bild im Cache nicht wiederbenutzt werden kann und neu Berechnet werden muss
+	// Determine if the old image in the cache can not be reused and must be recalculated
 	if (!(oldThis == this && oldWidth == width && oldHeight == height)) {
 		render(width, height);
 

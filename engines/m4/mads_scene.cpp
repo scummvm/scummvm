@@ -1127,12 +1127,10 @@ bool MadsInterfaceView::handleCheatKey(int32 keycode) {
 		_madsVm->scene()->_showMousePos = !_madsVm->scene()->_showMousePos;
 		break;
 
-	case Common::KEYCODE_t | (Common::KEYCODE_LALT << 24):
-	case Common::KEYCODE_t | (Common::KEYCODE_RALT << 24):
-	{
+	case Common::KEYCODE_t | (Common::KBD_ALT << 24): {
 		// Teleport to room
 		//Scene *sceneView = (Scene *)vm->_viewManager->getView(VIEWID_SCENE);
-
+		// TODO: Implement teleport code
 
 		return true;
 	}

@@ -856,25 +856,8 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	if (cd_num >= 0)
 		_system->getAudioCDManager()->openCD(cd_num);
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	bool native_mt32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
-	//bool adlib = (MidiDriver::getMusicType(dev) == MT_ADLIB);
-
-	_driver = MidiDriver::createMidi(dev);
-	if (native_mt32)
-		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-
-	_midiMusic = new MidiMusicPlayer(_driver);
+	_midiMusic = new MidiMusicPlayer();
 	_pcmMusic = new PCMMusicPlayer();
-	//_midiMusic->setNativeMT32(native_mt32);
-	//_midiMusic->setAdLib(adlib);
-
-	if (native_mt32)
-		_driver->sendMT32Reset();
-	else
-		_driver->sendGMReset();
-
-	_musicVolume = ConfMan.getInt("music_volume");
 
 	_sound = new SoundManager(this);
 
@@ -896,7 +879,6 @@ TinselEngine::~TinselEngine() {
 	delete _midiMusic;
 	delete _pcmMusic;
 	delete _console;
-	delete _driver;
 	_screenSurface.free();
 	FreeSaveScenes();
 	FreeTextBuffer();

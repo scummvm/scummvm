@@ -40,6 +40,7 @@
 #include "sci/sound/music.h"
 #include "sci/sound/drivers/mididriver.h"
 #include "sci/sound/drivers/map-mt32-to-gm.h"
+#include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
@@ -47,6 +48,7 @@
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/ports.h"
 #include "sci/graphics/view.h"
 
 #include "sci/parser/vocabulary.h"
@@ -125,6 +127,10 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("undither",           WRAP_METHOD(Console, cmdUndither));
 	DCmd_Register("pic_visualize",		WRAP_METHOD(Console, cmdPicVisualize));
 	DCmd_Register("play_video",         WRAP_METHOD(Console, cmdPlayVideo));
+	DCmd_Register("animate_list",       WRAP_METHOD(Console, cmdAnimateList));
+	DCmd_Register("al",                 WRAP_METHOD(Console, cmdAnimateList));	// alias
+	DCmd_Register("window_list",        WRAP_METHOD(Console, cmdWindowList));
+	DCmd_Register("wl",                 WRAP_METHOD(Console, cmdWindowList));	// alias
 	// Segments
 	DCmd_Register("segment_table",		WRAP_METHOD(Console, cmdPrintSegmentTable));
 	DCmd_Register("segtable",			WRAP_METHOD(Console, cmdPrintSegmentTable));	// alias
@@ -356,6 +362,8 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" draw_cel - Draws a cel from a view resource\n");
 	DebugPrintf(" pic_visualize - Enables visualization of the drawing process of EGA pictures\n");
 	DebugPrintf(" undither - Enable/disable undithering\n");
+	DebugPrintf(" play_video - Plays a SEQ, AVI, VMD, RBT or DUK video\n");
+	DebugPrintf(" animate_object_list / al - Shows the current list of objects in kAnimate's draw list\n");
 	DebugPrintf("\n");
 	DebugPrintf("Segments:\n");
 	DebugPrintf(" segment_table / segtable - Lists all segments\n");
@@ -625,7 +633,7 @@ bool Console::cmdSetParseNodes(int argc, const char **argv) {
 bool Console::cmdRegisters(int argc, const char **argv) {
 	EngineState *s = _engine->_gamestate;
 	DebugPrintf("Current register values:\n");
-	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(s->r_acc), PRINT_REG(s->r_prev), s->restAdjust);
+	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(s->r_acc), PRINT_REG(s->r_prev), s->r_rest);
 
 	if (!s->_executionStack.empty()) {
 		DebugPrintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n",
@@ -1576,6 +1584,22 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 	}
 }
 
+bool Console::cmdAnimateList(int argc, const char **argv) {
+	if (_engine->_gfxAnimate) {
+		DebugPrintf("Animate list:\n");
+		_engine->_gfxAnimate->printAnimateList(this);
+	}
+	return true;
+}
+
+bool Console::cmdWindowList(int argc, const char **argv) {
+	if (_engine->_gfxPorts) {
+		DebugPrintf("Window list:\n");
+		_engine->_gfxPorts->printWindowList(this);
+	}
+	return true;
+
+}
 bool Console::cmdParseGrammar(int argc, const char **argv) {
 	DebugPrintf("Parse grammar, in strict GNF:\n");
 
@@ -1710,9 +1734,7 @@ bool Console::segmentInfo(int nr) {
 
 		for (uint i = 0; i < ct->_table.size(); i++)
 			if (ct->isValidEntry(i)) {
-				reg_t objpos;
-				objpos.offset = i;
-				objpos.segment = nr;
+				reg_t objpos = make_reg(nr, i);
 				DebugPrintf("  [%04x] %s; copy of ", i, _engine->_gamestate->_segMan->getObjectName(objpos));
 				// Object header
 				const Object *obj = _engine->_gamestate->_segMan->getObject(ct->_table[i].getPos());
@@ -2723,9 +2745,10 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 
 	while (itr != resources->end()) {
 		// Ignore specific leftover scripts, which require other non-existing scripts
-		if ((_engine->getGameId() == GID_HOYLE3 && itr->getNumber() == 995) ||
-		    (_engine->getGameId() == GID_KQ5    && itr->getNumber() == 980) ||
-		    (_engine->getGameId() == GID_SLATER && itr->getNumber() == 947)) {
+		if ((_engine->getGameId() == GID_HOYLE3         && itr->getNumber() == 995) ||
+		    (_engine->getGameId() == GID_KQ5            && itr->getNumber() == 980) ||
+		    (_engine->getGameId() == GID_SLATER         && itr->getNumber() == 947) ||
+			(_engine->getGameId() == GID_MOTHERGOOSE256 && itr->getNumber() == 980)) {
 			itr++;
 			continue;
 		}
@@ -3131,10 +3154,9 @@ bool Console::cmdBreakpointKernel(int argc, const char **argv) {
 }
 
 bool Console::cmdBreakpointFunction(int argc, const char **argv) {
-	// TODO/FIXME: Why does this accept 2 parameters (the high and the low part of the address)?"
 	if (argc != 3) {
 		DebugPrintf("Sets a breakpoint on the execution of the specified exported function.\n");
-		DebugPrintf("Usage: %s <addr1> <addr2>\n", argv[0]);
+		DebugPrintf("Usage: %s <script number> <export number\n", argv[0]);
 		return true;
 	}
 
@@ -3143,6 +3165,7 @@ bool Console::cmdBreakpointFunction(int argc, const char **argv) {
 	   A breakpoint set on an invalid method name will just never trigger. */
 	Breakpoint bp;
 	bp.type = BREAK_EXPORT;
+	// script number, export number
 	bp.address = (atoi(argv[1]) << 16 | atoi(argv[2]));
 
 	_debugState._breakpoints.push_back(bp);

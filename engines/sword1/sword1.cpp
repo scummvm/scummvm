@@ -170,6 +170,8 @@ void SwordEngine::reinitialize() {
 }
 
 void SwordEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
 	uint musicVol = ConfMan.getInt("music_volume");
 	uint sfxVol = ConfMan.getInt("sfx_volume");
 	uint speechVol = ConfMan.getInt("speech_volume");
@@ -228,9 +230,6 @@ void SwordEngine::syncSoundSettings() {
 		_sound->setSpeechVol(speechVolL, speechVolR);
 		_sound->setSfxVol(sfxVolL, sfxVolR);
 	}
-
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, mute ? 0 : ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, mute ? 0 : ConfMan.getInt("speech_volume"));
 }
 
 void SwordEngine::flagsToBool(bool *dest, uint8 flags) {

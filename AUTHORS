@@ -137,8 +137,10 @@ ScummVM Team
        Filippos Karapetis
 
     Mohawk:
+       Bastien Bouclet
        Matthew Hoops
        Filippos Karapetis
+       Alyssa Milburn
        Eugene Sandulenko
        David Turner
 
@@ -253,7 +255,7 @@ ScummVM Team
     Miscellaneous:
        David Corrales-Lopez  - Filesystem access improvements (GSoC 2007
                                task) (retired)
-       Jerome Fisher         - MT-32 emulator (retired)
+       Jerome Fisher         - MT-32 emulator
        Benjamin Haisch       - Heavily improved de-/encoder for DXA videos
        Jochen Hoenicke       - Speaker & PCjr sound support, AdLib work
                                (retired)
@@ -398,6 +400,9 @@ Other contributions
 
     Spanish:
        Tomas Maidagan
+
+    Swedish:
+       Hampus Flink
 
     Ukrainian:
        Lubomyr Lisen

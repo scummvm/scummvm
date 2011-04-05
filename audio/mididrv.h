@@ -38,15 +38,6 @@ namespace Audio {
 namespace Common { class String; }
 
 /**
- * Music Driver Types, used to uniquely identify each music driver.
- *
- * The pseudo drivers are listed first, then all native drivers,
- * then all other MIDI drivers, and finally the non-MIDI drivers.
- *
- * @todo Rename MidiDriverType to MusicDriverType
- */
-
-/**
  * Music types that music drivers can implement and engines can rely on.
  */
 enum MusicType {
@@ -84,8 +75,8 @@ enum MusicType {
  */
 enum MidiDriverFlags {
 	MDT_NONE        = 0,
-	MDT_PCSPK       = 1 << 0,		// PC Speaker: Maps to MD_PCSPK and MD_PCJR
-	MDT_CMS         = 1 << 1,		// Creative Music System / Gameblaster: Maps to MD_CMS
+	MDT_PCSPK       = 1 << 0,		// PC Speaker: Maps to MT_PCSPK and MT_PCJR
+	MDT_CMS         = 1 << 1,		// Creative Music System / Gameblaster: Maps to MT_CMS
 	MDT_PCJR        = 1 << 2,		// Tandy/PC Junior driver
 	MDT_ADLIB       = 1 << 3,		// AdLib: Maps to MT_ADLIB
 	MDT_C64         = 1 << 4,
@@ -99,19 +90,53 @@ enum MidiDriverFlags {
 };
 
 /**
- * Abstract description of a MIDI driver. Used by the config file and command
- * line parsing code, and also to be able to give the user a list of available
- * drivers.
- *
- * @todo Rename MidiDriverType to MusicDriverType
+ * TODO: Document this, give it a better name.
  */
+class MidiDriver_BASE {
+public:
+	virtual ~MidiDriver_BASE() { }
+
+	/**
+	 * Output a packed midi command to the midi stream.
+	 * The 'lowest' byte (i.e. b & 0xFF) is the status
+	 * code, then come (if used) the first and second
+	 * opcode.
+	 */
+	virtual void send(uint32 b) = 0;
+
+	/**
+	 * Output a midi command to the midi stream. Convenience wrapper
+	 * around the usual 'packed' send method.
+	 *
+	 * Do NOT use this for sysEx transmission; instead, use the sysEx()
+	 * method below.
+	 */
+	void send(byte status, byte firstOp, byte secondOp) {
+		send(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
+	}
+
+	/**
+	 * Transmit a sysEx to the midi device.
+	 *
+	 * The given msg MUST NOT contain the usual SysEx frame, i.e.
+	 * do NOT include the leading 0xF0 and the trailing 0xF7.
+	 *
+	 * Furthermore, the maximal supported length of a SysEx
+	 * is 264 bytes. Passing longer buffers can lead to
+	 * undefined behavior (most likely, a crash).
+	 */
+	virtual void sysEx(const byte *msg, uint16 length) { }
+
+	// TODO: Document this.
+	virtual void metaEvent(byte type, byte *data, uint16 length) { }
+};
 
 /**
  * Abstract MIDI Driver Class
  *
  * @todo Rename MidiDriver to MusicDriver
  */
-class MidiDriver {
+class MidiDriver : public MidiDriver_BASE {
 public:
 	/**
 	 * The device handle.
@@ -182,27 +207,13 @@ public:
 	 */
 	virtual int open() = 0;
 
+	/**
+	 * Check whether the midi driver has already been opened.
+	 */
+	virtual bool isOpen() const = 0;
+
 	/** Close the midi driver. */
 	virtual void close() = 0;
-
-	/**
-	 * Output a packed midi command to the midi stream.
-	 * The 'lowest' byte (i.e. b & 0xFF) is the status
-	 * code, then come (if used) the first and second
-	 * opcode.
-	 */
-	virtual void send(uint32 b) = 0;
-
-	/**
-	 * Output a midi command to the midi stream. Convenience wrapper
-	 * around the usual 'packed' send method.
-	 *
-	 * Do NOT use this for sysEx transmission; instead, use the sysEx()
-	 * method below.
-	 */
-	void send(byte status, byte firstOp, byte secondOp) {
-		send(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
-	}
 
 	/** Get or set a property. */
 	virtual uint32 property(int prop, uint32 param) { return 0; }
@@ -230,21 +241,7 @@ public:
 	 */
 	void sendGMReset();
 
-	/**
-	 * Transmit a sysEx to the midi device.
-	 *
-	 * The given msg MUST NOT contain the usual SysEx frame, i.e.
-	 * do NOT include the leading 0xF0 and the trailing 0xF7.
-	 *
-	 * Furthermore, the maximal supported length of a SysEx
-	 * is 264 bytes. Passing longer buffers can lead to
-	 * undefined behavior (most likely, a crash).
-	 */
-	virtual void sysEx(const byte *msg, uint16 length) { }
-
 	virtual void sysEx_customInstrument(byte channel, uint32 type, const byte *instr) { }
-
-	virtual void metaEvent(byte type, byte *data, uint16 length) { }
 
 	// Timing functions - MidiDriver now operates timers
 	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) = 0;

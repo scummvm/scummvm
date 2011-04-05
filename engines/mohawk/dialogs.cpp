@@ -24,13 +24,19 @@
  */
 
 #include "mohawk/mohawk.h"
-#include "mohawk/myst.h"
-#include "mohawk/riven.h"
 #include "mohawk/dialogs.h"
 
 #include "gui/gui-manager.h"
 #include "common/savefile.h"
 #include "common/translation.h"
+
+#ifdef ENABLE_MYST
+#include "mohawk/myst.h"
+#endif
+
+#ifdef ENABLE_RIVEN
+#include "mohawk/riven.h"
+#endif
 
 namespace Mohawk {
 
@@ -77,6 +83,8 @@ enum {
 	kWaterCmd = 'WATR'
 };
 
+#ifdef ENABLE_MYST
+
 MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : GUI::OptionsDialog("", 120, 120, 360, 200), _vm(vm) {
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
 	_transitionsCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, _("~T~ransitions Enabled"), 0, kTransCmd);
@@ -111,6 +119,10 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 	}
 }
 
+#endif
+
+#ifdef ENABLE_RIVEN
+
 RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) : GUI::OptionsDialog("", 120, 120, 360, 200), _vm(vm) {
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
 	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, _("~W~ater Effect Enabled"), 0, kWaterCmd);
@@ -125,17 +137,17 @@ RivenOptionsDialog::~RivenOptionsDialog() {
 void RivenOptionsDialog::open() {
 	Dialog::open();
 
-	_zipModeCheckbox->setState(*_vm->getVar("azip") != 0);
-	_waterEffectCheckbox->setState(*_vm->getVar("waterenabled") != 0);
+	_zipModeCheckbox->setState(_vm->_vars["azip"] != 0);
+	_waterEffectCheckbox->setState(_vm->_vars["waterenabled"] != 0);
 }
 
 void RivenOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kZipCmd:
-		*_vm->getVar("azip") = _zipModeCheckbox->getState() ? 1 : 0;
+		_vm->_vars["azip"] = _zipModeCheckbox->getState() ? 1 : 0;
 		break;
 	case kWaterCmd:
-		*_vm->getVar("waterenabled") = _waterEffectCheckbox->getState() ? 1 : 0;
+		_vm->_vars["waterenabled"] = _waterEffectCheckbox->getState() ? 1 : 0;
 		break;
 	case GUI::kCloseCmd:
 		close();
@@ -144,5 +156,7 @@ void RivenOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, u
 		GUI::OptionsDialog::handleCommand(sender, cmd, data);
 	}
 }
+
+#endif
 
 } // End of namespace Mohawk

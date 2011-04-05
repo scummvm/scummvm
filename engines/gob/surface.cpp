@@ -420,25 +420,25 @@ void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int1
 		return;
 
 	if ((left == 0) && (_width == from._width) && (_width == width) && (transp == -1)) {
-		// If these conditions are met, we can directly use memcpy
+		// If these conditions are met, we can directly use memmove
 
 		// Pointers to the blit destination and source start points
 		      byte *dst =      getData(x   , y);
 		const byte *src = from.getData(left, top);
 
-		memcpy(dst, src, width * height * _bpp);
+		memmove(dst, src, width * height * _bpp);
 		return;
 	}
 
 	if (transp == -1) {
-		// We don't have to look for transparency => we can use memcpy line-wise
+		// We don't have to look for transparency => we can use memmove line-wise
 
 		// Pointers to the blit destination and source start points
 		      byte *dst =      getData(x   , y);
 		const byte *src = from.getData(left, top);
 
 		while (height-- > 0) {
-			memcpy(dst, src, width * _bpp);
+			memmove(dst, src, width * _bpp);
 
 			dst +=      _width *      _bpp;
 			src += from._width * from._bpp;
@@ -521,7 +521,7 @@ void Surface::blitScaled(const Surface &from, int16 left, int16 top, int16 right
 		posW = 0;
 
 		for (uint16 i = 0; i < width; i++, dstRow += _bpp) {
-			memcpy(dstRow, srcRow, _bpp);
+			memmove(dstRow, srcRow, _bpp);
 
 			posW += step;
 			while (posW >= ((frac_t) FRAC_ONE)) {

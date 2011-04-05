@@ -47,7 +47,8 @@
 
 // toggles start
 //#define ANDROID_DEBUG_ENTER
-//#define ANDROID_DEBUG_GL
+#define ANDROID_DEBUG_GL
+//#define ANDROID_DEBUG_GL_CALLS
 // toggles end
 
 extern const char *android_log_tag;
@@ -67,9 +68,23 @@ extern const char *android_log_tag;
 #ifdef ANDROID_DEBUG_GL
 extern void checkGlError(const char *expr, const char *file, int line);
 
+#ifdef ANDROID_DEBUG_GL_CALLS
+#define GLCALLLOG(x, before) \
+	do { \
+		if (before) \
+			LOGD("calling '%s' (%s:%d)", x, __FILE__, __LINE__); \
+		else \
+			LOGD("returned from '%s' (%s:%d)", x, __FILE__, __LINE__); \
+	} while (false)
+#else
+#define GLCALLLOG(x, before) do {  } while (false)
+#endif
+
 #define GLCALL(x) \
 	do { \
+		GLCALLLOG(#x, true); \
 		(x); \
+		GLCALLLOG(#x, false); \
 		checkGlError(#x, __FILE__, __LINE__); \
 	} while (false)
 
@@ -99,6 +114,7 @@ private:
 	int _screen_changeid;
 	int _egl_surface_width;
 	int _egl_surface_height;
+	bool _htc_fail;
 
 	bool _force_redraw;
 
@@ -113,7 +129,7 @@ private:
 
 	// Mouse layer
 	GLESBaseTexture *_mouse_texture;
-	GLESPaletteTexture *_mouse_texture_palette;
+	GLESBaseTexture *_mouse_texture_palette;
 	GLES5551Texture *_mouse_texture_rgb;
 	Common::Point _mouse_hotspot;
 	uint32 _mouse_keycolor;
@@ -124,9 +140,6 @@ private:
 	int _graphicsMode;
 	bool _fullscreen;
 	bool _ar_correction;
-
-	Common::Queue<Common::Event> _event_queue;
-	MutexRef _event_queue_lock;
 
 	pthread_t _main_thread;
 
@@ -146,6 +159,8 @@ private:
 	Common::TimerManager *_timer;
 	FilesystemFactory *_fsFactory;
 	timeval _startTime;
+
+	Common::String getSystemProperty(const char *name) const;
 
 	void initSurface();
 	void deinitSurface();
@@ -205,6 +220,25 @@ public:
 		return this;
 	}
 
+public:
+	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5);
+
+private:
+	Common::Queue<Common::Event> _event_queue;
+	MutexRef _event_queue_lock;
+
+	Common::Point _touch_pt_down, _touch_pt_scroll, _touch_pt_dt;
+	int _eventScaleX;
+	int _eventScaleY;
+	bool _touchpad_mode;
+	int _touchpad_scale;
+	int _trackball_scale;
+	int _dpad_scale;
+
+	void clipMouse(Common::Point &p);
+	void scaleMouse(Common::Point &p, int x, int y, bool deductDrawRect = true);
+	void updateEventScale();
+
 protected:
 	// PaletteManager API
 	virtual void setPalette(const byte *colors, uint start, uint num);
@@ -242,7 +276,6 @@ public:
 	virtual void disableCursorPalette(bool disable);
 
 	virtual bool pollEvent(Common::Event &event);
-	void pushEvent(const Common::Event& event);
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 
@@ -265,6 +298,7 @@ public:
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s,
 											int priority = 0);
+	virtual Common::String getSystemLanguage() const;
 };
 
 #endif

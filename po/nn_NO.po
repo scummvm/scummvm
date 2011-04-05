@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-01-19 22:30+0000\n"
+"POT-Creation-Date: 2011-03-22 21:55+0000\n"
 "PO-Revision-Date: 2010-12-23 00:42+0100\n"
 "Last-Translator: Einar Johan T. Sømåen\n"
 "Language-Team: somaen <einarjohants@gmail.com>\n"
@@ -68,11 +68,11 @@ msgstr "Steng"
 msgid "Mouse click"
 msgstr "Musklikk"
 
-#: gui/gui-manager.cpp:112 base/main.cpp:287
+#: gui/gui-manager.cpp:112 base/main.cpp:286
 msgid "Display keyboard"
 msgstr "Syn Tastatur"
 
-#: gui/gui-manager.cpp:115 base/main.cpp:290
+#: gui/gui-manager.cpp:115 base/main.cpp:289
 msgid "Remap keys"
 msgstr "Omkople tastar"
 
@@ -422,15 +422,15 @@ msgstr "Søk:"
 msgid "Clear value"
 msgstr "Tøm verdi"
 
-#: gui/launcher.cpp:622 engines/dialogs.cpp:117 engines/mohawk/myst.cpp:258
-#: engines/mohawk/riven.cpp:669 engines/cruise/menu.cpp:218
+#: gui/launcher.cpp:622 engines/dialogs.cpp:117 engines/mohawk/myst.cpp:255
+#: engines/mohawk/riven.cpp:711 engines/cruise/menu.cpp:218
 msgid "Load game:"
 msgstr "Åpne spel:"
 
-#: gui/launcher.cpp:622 engines/dialogs.cpp:117 engines/mohawk/myst.cpp:258
-#: engines/mohawk/riven.cpp:669 engines/cruise/menu.cpp:218
-#: backends/platform/wince/CEActionsPocket.cpp:266
-#: backends/platform/wince/CEActionsSmartphone.cpp:229
+#: gui/launcher.cpp:622 engines/dialogs.cpp:117 engines/mohawk/myst.cpp:255
+#: engines/mohawk/riven.cpp:711 engines/cruise/menu.cpp:218
+#: backends/platform/wince/CEActionsPocket.cpp:268
+#: backends/platform/wince/CEActionsSmartphone.cpp:231
 msgid "Load"
 msgstr "Åpne"
 
@@ -442,16 +442,16 @@ msgstr ""
 
 #: gui/launcher.cpp:732 gui/launcher.cpp:881
 #: backends/events/symbiansdl/symbiansdl-events.cpp:187
-#: backends/platform/wince/CEActionsPocket.cpp:316
-#: backends/platform/wince/CEActionsSmartphone.cpp:276
+#: backends/platform/wince/CEActionsPocket.cpp:330
+#: backends/platform/wince/CEActionsSmartphone.cpp:287
 #: backends/platform/wince/CELauncherDialog.cpp:106
 msgid "Yes"
 msgstr "Ja"
 
 #: gui/launcher.cpp:732 gui/launcher.cpp:881
 #: backends/events/symbiansdl/symbiansdl-events.cpp:187
-#: backends/platform/wince/CEActionsPocket.cpp:316
-#: backends/platform/wince/CEActionsSmartphone.cpp:276
+#: backends/platform/wince/CEActionsPocket.cpp:330
+#: backends/platform/wince/CEActionsSmartphone.cpp:287
 #: backends/platform/wince/CELauncherDialog.cpp:106
 msgid "No"
 msgstr "Nei"
@@ -964,35 +964,35 @@ msgstr "Antialiased Teiknar (16bpp)"
 msgid "Antialiased (16bpp)"
 msgstr "Antialiased (16bpp)"
 
-#: base/main.cpp:207
+#: base/main.cpp:206
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "Motoren støttar ikkje debug-nivå '%s'"
 
-#: base/main.cpp:275
+#: base/main.cpp:274
 msgid "Menu"
 msgstr "Meny"
 
-#: base/main.cpp:278 backends/platform/symbian/src/SymbianActions.cpp:48
+#: base/main.cpp:277 backends/platform/symbian/src/SymbianActions.cpp:48
 #: backends/platform/wince/CEActionsPocket.cpp:48
 #: backends/platform/wince/CEActionsSmartphone.cpp:49
 msgid "Skip"
 msgstr "Hopp over"
 
-#: base/main.cpp:281 backends/platform/symbian/src/SymbianActions.cpp:53
+#: base/main.cpp:280 backends/platform/symbian/src/SymbianActions.cpp:53
 #: backends/platform/wince/CEActionsPocket.cpp:45
 msgid "Pause"
 msgstr "Pause"
 
-#: base/main.cpp:284
+#: base/main.cpp:283
 msgid "Skip line"
 msgstr "Hopp over linje"
 
-#: base/main.cpp:436
+#: base/main.cpp:435
 msgid "Error running game:"
 msgstr "Feil under køyring av spel:"
 
-#: base/main.cpp:460
+#: base/main.cpp:459
 #, fuzzy
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Kunne ikkje finne nokon motor som kunne køyre det velde spelet."
@@ -1103,17 +1103,17 @@ msgid "~R~eturn to Launcher"
 msgstr "~T~ilbake til oppstarter"
 
 #: engines/dialogs.cpp:119 engines/cruise/menu.cpp:216
-#: engines/sci/engine/kfile.cpp:576
+#: engines/sci/engine/kfile.cpp:577
 msgid "Save game:"
 msgstr "Lagra spel:"
 
 #: engines/dialogs.cpp:119 engines/cruise/menu.cpp:216
-#: engines/sci/engine/kfile.cpp:576
+#: engines/sci/engine/kfile.cpp:577
 #: backends/platform/symbian/src/SymbianActions.cpp:47
 #: backends/platform/wince/CEActionsPocket.cpp:46
-#: backends/platform/wince/CEActionsPocket.cpp:266
+#: backends/platform/wince/CEActionsPocket.cpp:268
 #: backends/platform/wince/CEActionsSmartphone.cpp:48
-#: backends/platform/wince/CEActionsSmartphone.cpp:229
+#: backends/platform/wince/CEActionsSmartphone.cpp:231
 msgid "Save"
 msgstr "Lagre"
 
@@ -1173,17 +1173,23 @@ msgstr ""
 msgid "Pause game"
 msgstr "Pause spel"
 
-#: engines/scumm/help.cpp:82
-msgid "Ctrl 0-9"
-msgstr "Ctrl 0-9"
+#: engines/scumm/help.cpp:82 engines/scumm/help.cpp:87
+#: engines/scumm/help.cpp:98 engines/scumm/help.cpp:99
+#: engines/scumm/help.cpp:100 engines/scumm/help.cpp:101
+#: engines/scumm/help.cpp:102 engines/scumm/help.cpp:103
+#: engines/scumm/help.cpp:104 engines/scumm/help.cpp:105
+msgid "Ctrl"
+msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:82
 msgid "Load game state 1-10"
 msgstr "Åpne speltilstand 1-10"
 
-#: engines/scumm/help.cpp:83
-msgid "Alt 0-9"
-msgstr "Alt 0-9"
+#: engines/scumm/help.cpp:83 engines/scumm/help.cpp:87
+#: engines/scumm/help.cpp:89 engines/scumm/help.cpp:103
+#: engines/scumm/help.cpp:104 engines/scumm/help.cpp:105
+msgid "Alt"
+msgstr "Alt"
 
 #: engines/scumm/help.cpp:83
 msgid "Save game state 1-10"
@@ -1196,13 +1202,9 @@ msgstr "Lagre speltilstand 1-10"
 msgid "Quit"
 msgstr "Avslutt"
 
-#: engines/scumm/help.cpp:87
-msgid "Alt x, Ctrl z"
-msgstr "Alt x, Ctrl z"
-
-#: engines/scumm/help.cpp:89
-msgid "Alt Enter"
-msgstr "Alt Enter"
+#: engines/scumm/help.cpp:89 engines/scumm/help.cpp:92
+msgid "Enter"
+msgstr "Enter"
 
 #: engines/scumm/help.cpp:89
 msgid "Toggle fullscreen"
@@ -1215,10 +1217,6 @@ msgstr "Musikkvolum opp / ned"
 #: engines/scumm/help.cpp:91
 msgid "Text speed slower / faster"
 msgstr "Tekstfart saktare / fortare"
-
-#: engines/scumm/help.cpp:92
-msgid "Enter"
-msgstr "Enter"
 
 #: engines/scumm/help.cpp:92
 msgid "Simulate left mouse button"
@@ -1241,64 +1239,32 @@ msgid "Show / Hide console"
 msgstr "Vis / Skjul konsoll"
 
 #: engines/scumm/help.cpp:98
-msgid "Ctrl d"
-msgstr "Ctrl d"
-
-#: engines/scumm/help.cpp:98
 msgid "Start the debugger"
 msgstr "Start debuggaren"
-
-#: engines/scumm/help.cpp:99
-msgid "Ctrl s"
-msgstr "Ctrl s"
 
 #: engines/scumm/help.cpp:99
 msgid "Show memory consumption"
 msgstr "Vis minneforbruk"
 
 #: engines/scumm/help.cpp:100
-msgid "Ctrl f"
-msgstr "Ctrl f"
-
-#: engines/scumm/help.cpp:100
 msgid "Run in fast mode (*)"
 msgstr "Køyr i rask modus (*)"
-
-#: engines/scumm/help.cpp:101
-msgid "Ctrl g"
-msgstr "Ctrl g"
 
 #: engines/scumm/help.cpp:101
 msgid "Run in really fast mode (*)"
 msgstr "Køyr i verkeleg rask modus (*)"
 
 #: engines/scumm/help.cpp:102
-msgid "Ctrl m"
-msgstr "Ctrl m"
-
-#: engines/scumm/help.cpp:102
 msgid "Toggle mouse capture"
 msgstr "Veksle muslåsing"
-
-#: engines/scumm/help.cpp:103
-msgid "Ctrl Alt 1-8"
-msgstr "Ctrl Alt 1-8"
 
 #: engines/scumm/help.cpp:103
 msgid "Switch between graphics filters"
 msgstr "Veksle grafikkfiltre"
 
 #: engines/scumm/help.cpp:104
-msgid "Ctrl Alt +, -"
-msgstr "Ctrl Alt +, -"
-
-#: engines/scumm/help.cpp:104
 msgid "Increase / Decrease scale factor"
 msgstr "Øk/Minsk skaleringsfaktor"
-
-#: engines/scumm/help.cpp:105
-msgid "Ctrl Alt a"
-msgstr "Ctrl Alt a"
 
 #: engines/scumm/help.cpp:105
 msgid "Toggle aspect-ratio correction"
@@ -1697,7 +1663,7 @@ msgstr "Fly til høgre"
 msgid "Fly to lower right"
 msgstr "Fly til nedre høgre"
 
-#: engines/scumm/scumm.cpp:2260 engines/agos/saveload.cpp:192
+#: engines/scumm/scumm.cpp:2256 engines/agos/saveload.cpp:192
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1705,7 +1671,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2267 engines/agos/saveload.cpp:157
+#: engines/scumm/scumm.cpp:2263 engines/agos/saveload.cpp:157
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1713,7 +1679,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2279 engines/agos/saveload.cpp:200
+#: engines/scumm/scumm.cpp:2275 engines/agos/saveload.cpp:200
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1733,11 +1699,11 @@ msgstr "~O~vergangar aktivert"
 msgid "~W~ater Effect Enabled"
 msgstr "~V~anneffekt aktivert"
 
-#: engines/sci/engine/kfile.cpp:676
+#: engines/sci/engine/kfile.cpp:680
 msgid "Restore game:"
 msgstr "Gjenopprett spel:"
 
-#: engines/sci/engine/kfile.cpp:676
+#: engines/sci/engine/kfile.cpp:680
 msgid "Restore"
 msgstr "Gjenopprett"
 
@@ -1890,8 +1856,6 @@ msgid "Touchpad mode disabled."
 msgstr ""
 
 #: backends/graphics/sdl/sdl-graphics.cpp:47
-#: backends/platform/wince/wince-sdl.cpp:114
-#: backends/platform/wince/wince-sdl.cpp:121
 msgid "Normal (no scaling)"
 msgstr "Normal (inga skalering)"
 
@@ -1900,19 +1864,15 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal (inga skalering)"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:117
+#: backends/graphics/opengl/opengl-graphics.cpp:133
 msgid "OpenGL Normal"
 msgstr "OpenGL Normal"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:118
+#: backends/graphics/opengl/opengl-graphics.cpp:134
 msgid "OpenGL Conserve"
 msgstr "OpenGL Bevar"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:119
-msgid "OpenGL 4/3"
-msgstr "OpenGL 4/3"
-
-#: backends/graphics/opengl/opengl-graphics.cpp:120
+#: backends/graphics/opengl/opengl-graphics.cpp:135
 msgid "OpenGL Original"
 msgstr "OpenGL Original"
 
@@ -2172,13 +2132,13 @@ msgstr "Peikar venstre"
 msgid "Cursor Right"
 msgstr "Peikar høgre"
 
-#: backends/platform/wince/CEActionsPocket.cpp:266
-#: backends/platform/wince/CEActionsSmartphone.cpp:229
+#: backends/platform/wince/CEActionsPocket.cpp:268
+#: backends/platform/wince/CEActionsSmartphone.cpp:231
 msgid "Do you want to load or save the game?"
 msgstr "Vil du åpne eller lagre spelet?"
 
-#: backends/platform/wince/CEActionsPocket.cpp:316
-#: backends/platform/wince/CEActionsSmartphone.cpp:276
+#: backends/platform/wince/CEActionsPocket.cpp:330
+#: backends/platform/wince/CEActionsSmartphone.cpp:287
 msgid "   Are you sure you want to quit ?   "
 msgstr "Er du sikker på at du vil avslutte?"
 
@@ -2202,34 +2162,35 @@ msgstr "Skjerm"
 msgid "Do you want to perform an automatic scan ?"
 msgstr "Vil du utføre eit automatisk søk?"
 
-#: backends/platform/wince/wince-sdl.cpp:981
+#: backends/platform/wince/wince-sdl.cpp:486
 msgid "Map right click action"
 msgstr "Kople høgreklikkshandling"
 
-#: backends/platform/wince/wince-sdl.cpp:985
+#: backends/platform/wince/wince-sdl.cpp:490
 msgid "You must map a key to the 'Right Click' action to play this game"
 msgstr ""
 "Du må kople ein tast til 'Høgreklikk'-handlinga for å spele dette spelet"
 
-#: backends/platform/wince/wince-sdl.cpp:994
+#: backends/platform/wince/wince-sdl.cpp:499
 msgid "Map hide toolbar action"
 msgstr "Kople skjul-verktøylinje-handlinga"
 
-#: backends/platform/wince/wince-sdl.cpp:998
+#: backends/platform/wince/wince-sdl.cpp:503
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
 msgstr "Du må kople ein tast til 'Skjul verktøylinje' for å spele dette spelet"
 
-#: backends/platform/wince/wince-sdl.cpp:1007
+#: backends/platform/wince/wince-sdl.cpp:512
 msgid "Map Zoom Up action (optional)"
 msgstr "Kople Zoom Opp-handling (valfri)"
 
-#: backends/platform/wince/wince-sdl.cpp:1010
+#: backends/platform/wince/wince-sdl.cpp:515
 msgid "Map Zoom Down action (optional)"
 msgstr "Kople Zoom Ned-handling (valfri)"
 
-#: backends/platform/wince/wince-sdl.cpp:1018
+#: backends/platform/wince/wince-sdl.cpp:523
 msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
 "Ikkje gløym å kople ein tast til 'Skjul verktøylinje' for å se heile "
 "inventaret"
+

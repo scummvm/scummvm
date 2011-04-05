@@ -322,6 +322,8 @@ void GroovieEngine::errorString(const char *buf_input, char *buf_output, int buf
 }
 
 void GroovieEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
 	bool mute = ConfMan.getBool("mute");
 
 	// Set the music volume

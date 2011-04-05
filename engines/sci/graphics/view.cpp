@@ -83,7 +83,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 	_loopCount = 0;
 	_embeddedPal = false;
 	_EGAmapping = NULL;
-	_isSci2Hires = false;
+	_sci2ScaleRes = SCI_VIEW_NATIVERES_NONE;
 	_isScaleable = true;
 
 	// we adjust inside getCelRect for SCI0EARLY (that version didn't have the +1 when calculating bottom)
@@ -202,8 +202,15 @@ void GfxView::initData(GuiResourceId resourceId) {
 		assert(headerSize >= 16);
 		_loopCount = _resourceData[2];
 		assert(_loopCount);
-		_isSci2Hires = _resourceData[5] == 1 ? true : false;
 		palOffset = READ_SCI11ENDIAN_UINT32(_resourceData + 8);
+
+		// For SCI32, this is a scale flag
+		if (getSciVersion() >= SCI_VERSION_2) { 
+			_sci2ScaleRes = (Sci32ViewNativeResolution)_resourceData[5];
+			if (_screen->getUpscaledHires() == GFX_SCREEN_UPSCALED_DISABLED)
+				_sci2ScaleRes = SCI_VIEW_NATIVERES_NONE;
+		}
+
 		// flags is actually a bit-mask
 		//  it seems it was only used for some early sci1.1 games (or even just laura bow 2)
 		//  later interpreters dont support it at all anymore
@@ -283,10 +290,10 @@ void GfxView::initData(GuiResourceId resourceId) {
 		}
 #ifdef ENABLE_SCI32
 		// adjust width/height returned to scripts
-		if (_isSci2Hires) {
+		if (_sci2ScaleRes != SCI_VIEW_NATIVERES_NONE) {
 			for (loopNo = 0; loopNo < _loopCount; loopNo++)
 				for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++)
-					_screen->adjustBackUpscaledCoordinates(_loop[loopNo].cel[celNo].scriptWidth, _loop[loopNo].cel[celNo].scriptHeight);
+					_screen->adjustBackUpscaledCoordinates(_loop[loopNo].cel[celNo].scriptWidth, _loop[loopNo].cel[celNo].scriptHeight, _sci2ScaleRes);
 		} else if (getSciVersion() == SCI_VERSION_2_1) {
 			for (loopNo = 0; loopNo < _loopCount; loopNo++)
 				for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++)
@@ -330,7 +337,7 @@ Palette *GfxView::getPalette() {
 }
 
 bool GfxView::isSci2Hires() {
-	return _isSci2Hires;
+	return _sci2ScaleRes > SCI_VIEW_NATIVERES_320x200;
 }
 
 bool GfxView::isScaleable() {
@@ -715,6 +722,8 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 						// get drawn onto lowres screen.
 						// FIXME(?): we can't read priority directly with the
 						// hires coordinates. May not be needed at all in kq6
+						// FIXME: Handle proper aspect ratio. Some GK1 hires images
+						// are in 640x400 instead of 640x480
 						_screen->putPixelOnDisplay(x2, y2, palette->mapping[color]);
 					}
 				}
@@ -820,6 +829,14 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 			}
 		}
 	}
+}
+
+void GfxView::adjustToUpscaledCoordinates(int16 &y, int16 &x) {
+	_screen->adjustToUpscaledCoordinates(y, x, _sci2ScaleRes);
+}
+
+void GfxView::adjustBackUpscaledCoordinates(int16 &y, int16 &x) {
+	_screen->adjustBackUpscaledCoordinates(y, x, _sci2ScaleRes);
 }
 
 } // End of namespace Sci

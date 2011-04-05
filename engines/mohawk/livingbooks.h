@@ -29,6 +29,7 @@
 #include "mohawk/mohawk.h"
 #include "mohawk/console.h"
 #include "mohawk/graphics.h"
+#include "mohawk/sound.h"
 
 #include "common/config-file.h"
 #include "common/substream.h"
@@ -41,6 +42,17 @@
 #include "livingbooks_code.h"
 
 namespace Mohawk {
+
+#define LBKEY_MOD_CTRL 1
+#define LBKEY_MOD_ALT 2
+#define LBKEY_MOD_SHIFT 4
+
+struct LBKey {
+	byte code;
+	byte modifiers;
+	byte char_;
+	byte repeats;
+};
 
 enum NodeState {
 	kLBNodeDone = 0,
@@ -88,6 +100,7 @@ enum {
 	kLBPaletteAItem = 0x44, // unused?
 	kLBPaletteItem = 0x45,
 	kLBProxyItem = 0x46,
+	kLBMiniGameItem = 666, // EVIL!!!!
 	kLBXDataFileItem = 0x3e9,
 	kLBDiscDectectorItem = 0xfa1
 };
@@ -151,7 +164,7 @@ enum {
 	kLBSetOneShot = 0x6d,    // unused?
 	kLBSetPlayPhase = 0x6e,
 	// from here, 2.x+
-	kLBUnknown6F = 0x6f,
+	kLBSetKeyNotify = 0x6f,
 	kLBCommand = 0x70,
 	kLBPaletteAData = 0x71,  // unused?
 	kLBPaletteXData = 0x72,
@@ -165,10 +178,10 @@ enum {
 	kLBGlobalSetVisible = 0x7a, // unused?
 	kLBSetAmbient = 0x7b,
 	kLBUnknown7C = 0x7c,     // unused?
-	kLBUnknown7D = 0x7d,
+	kLBSetKeyEvent = 0x7d,
 	kLBUnknown7E = 0x7e,     // unused? (rect flag)
 	kLBSetParent = 0x7f,     // unused?
-	kLBUnknown80 = 0x80,      // unused? TODO: sets +36
+	kLBSetHitTest = 0x80,
 	// from here, rugrats
 	kLBUnknown194 = 0x194
 };
@@ -301,7 +314,7 @@ public:
 	void stop();
 
 	void playSound(uint16 resourceId);
-	bool soundPlaying(uint16 resourceId);
+	bool soundPlaying(uint16 resourceId, const Common::String &cue);
 
 	bool transparentAt(int x, int y);
 
@@ -323,7 +336,10 @@ protected:
 	Common::Array<LBAnimationNode *> _nodes;
 
 	uint16 _tempo;
+
 	uint16 _currentSound;
+	CueList _cueList;
+
 	uint32 _lastTime, _currentFrame;
 	bool _running;
 
@@ -364,6 +380,8 @@ public:
 	virtual void notify(uint16 data, uint16 from); // 0x1A
 
 	uint16 getId() { return _itemId; }
+	uint16 getSoundPriority() { return _soundMode; }
+	bool isAmbient() { return _isAmbient; }
 
 protected:
 	MohawkEngine_LivingBooks *_vm;
@@ -387,6 +405,7 @@ protected:
 	Common::Point _relocPoint;
 
 	bool _isAmbient;
+	bool _doHitTest;
 
 	Common::Array<LBScriptEntry *> _scriptEntries;
 	void runScript(uint event, uint16 data = 0, uint16 from = 0);
@@ -423,6 +442,7 @@ public:
 
 	void readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream);
 
+	void destroySelf();
 	void setEnabled(bool enabled);
 	void setGlobalEnabled(bool enabled);
 	bool contains(Common::Point point);
@@ -537,6 +557,14 @@ public:
 	bool togglePlaying(bool playing, bool restart);
 };
 
+class LBMiniGameItem : public LBItem {
+public:
+	LBMiniGameItem(MohawkEngine_LivingBooks *_vm, Common::Rect rect);
+	~LBMiniGameItem();
+
+	bool togglePlaying(bool playing, bool restart);
+};
+
 struct NotifyEvent {
 	NotifyEvent(uint t, uint p) : type(t), param(p) { }
 	uint type;
@@ -588,6 +616,9 @@ public:
 	void notifyAll(uint16 data, uint16 from);
 	void queueDelayedEvent(DelayedEvent event);
 
+	bool playSound(LBItem *source, uint16 resourceId);
+	void lockSound(LBItem *owner, bool lock);
+
 	bool isBigEndian() const { return getGameType() != GType_LIVINGBOOKSV1 || getPlatform() == Common::kPlatformMacintosh; }
 	bool isPreMohawk() const;
 
@@ -622,6 +653,11 @@ private:
 	bool loadPage(LBMode mode, uint page, uint subpage);
 	void updatePage();
 
+	uint16 _lastSoundOwner, _lastSoundId;
+	uint16 _lastSoundPriority;
+	uint16 _soundLockOwner;
+	uint16 _maxSoundPriority;
+
 	uint16 getResourceVersion();
 	void loadBITL(uint16 resourceId);
 	void loadSHP(uint16 resourceId);
@@ -649,14 +685,15 @@ private:
 	bool _alreadyShowedIntro;
 
 	// String Manipulation Functions
-	Common::String removeQuotesFromString(const Common::String &string);
+	Common::String removeQuotesFromString(const Common::String &string, Common::String &leftover);
 	Common::String convertMacFileName(const Common::String &string);
 	Common::String convertWinFileName(const Common::String &string);
 
 	// Configuration File Functions
 	Common::String getStringFromConfig(const Common::String &section, const Common::String &key);
+	Common::String getStringFromConfig(const Common::String &section, const Common::String &key, Common::String &leftover);
 	int getIntFromConfig(const Common::String &section, const Common::String &key);
-	Common::String getFileNameFromConfig(const Common::String &section, const Common::String &key);
+	Common::String getFileNameFromConfig(const Common::String &section, const Common::String &key, Common::String &leftover);
 
 	// Platform/Version functions
 	MohawkArchive *createMohawkArchive() const;

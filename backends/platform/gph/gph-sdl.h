@@ -18,20 +18,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
-#ifndef GPH_SDL_H
-#define GPH_SDL_H
+#ifndef GPH_H
+#define GPH_H
 
+#if defined(GP2XWIZ) || defined(CAANOO)
+
+#include "backends/base-backend.h"
 #include "backends/platform/sdl/sdl.h"
-
-// FIXME: For now keep hacks in this header to save polluting the SDL backend.
-enum {
-    GFX_HALF = 12
-};
+#include "backends/platform/sdl/posix/posix.h"
+#include "backends/graphics/gph/gph-graphics.h"
+#include "backends/events/gph/gph-events.h"
 
 #define __GP2XWIZ__
 #define MIXER_DOUBLE_BUFFERING 1
@@ -40,42 +38,13 @@ enum {
 	#define PATH_MAX 255
 #endif
 
-class OSystem_GPH : public OSystem_SDL {
+class OSystem_GPH : public OSystem_POSIX {
 public:
-	OSystem_GPH() {}
-
-	/* Graphics */
-    void initSize(uint w, uint h);
-    void setGraphicsModeIntern();
-    bool setGraphicsMode(int mode);
-    void internUpdateScreen();
-    const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
-	bool setGraphicsMode(const char *name);
-    int getDefaultGraphicsMode() const;
-    bool loadGFXMode();
-    void drawMouse();
-    void undrawMouse();
-    void showOverlay();
-    void hideOverlay();
-
-	/* Event Stuff */
-	void moveStick();
-	void fillMouseEvent(Common::Event&, int, int);
-	void warpMouse(int, int);
-	bool remapKey(SDL_Event&, Common::Event&);
-
 	/* Platform Setup Stuff */
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 	void initBackend();
 	void quit();
-
-protected:
-	bool _stickBtn[32];
-
-	bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
-	bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
-	bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
-	bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
 };
 
-#endif //GPH_SDL_H
+#endif
+#endif //GPH_H

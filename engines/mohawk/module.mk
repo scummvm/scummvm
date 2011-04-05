@@ -3,11 +3,6 @@ MODULE := engines/mohawk
 MODULE_OBJS = \
 	bitmap.o \
 	console.o \
-	cstime.o \
-	cstime_cases.o \
-	cstime_game.o \
-	cstime_ui.o \
-	cstime_view.o \
 	cursors.o \
 	detection.o \
 	dialogs.o \
@@ -16,20 +11,27 @@ MODULE_OBJS = \
 	livingbooks.o \
 	livingbooks_code.o \
 	mohawk.o \
+	resource.o \
+	sound.o \
+	video.o \
+	view.o
+
+ifdef ENABLE_CSTIME
+MODULE_OBJS += \
+	cstime.o \
+	cstime_cases.o \
+	cstime_game.o \
+	cstime_ui.o \
+	cstime_view.o
+endif
+
+ifdef ENABLE_MYST
+MODULE_OBJS += \
 	myst.o \
 	myst_areas.o \
 	myst_scripts.o \
 	myst_state.o \
-	resource.o \
 	resource_cache.o \
-	riven.o \
-	riven_external.o \
-	riven_saveload.o \
-	riven_scripts.o \
-	riven_vars.o \
-	sound.o \
-	video.o \
-	view.o \
 	myst_stacks/channelwood.o \
 	myst_stacks/credits.o \
 	myst_stacks/demo.o \
@@ -42,6 +44,16 @@ MODULE_OBJS = \
 	myst_stacks/selenitic.o \
 	myst_stacks/slides.o \
 	myst_stacks/stoneship.o
+endif
+
+ifdef ENABLE_RIVEN
+MODULE_OBJS += \
+	riven.o \
+	riven_external.o \
+	riven_saveload.o \
+	riven_scripts.o \
+	riven_vars.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MOHAWK), DYNAMIC_PLUGIN)

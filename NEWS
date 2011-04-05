@@ -8,6 +8,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Urban Runner.
    - Added support for Playtoons: Bambou le Sauveur de la Jungle.
    - Added support for Toonstruck.
+   - Added support for Living Books v1 and v2 games.
 
  General
    - Added support for loadable modules on platforms without a dynamic loader.
@@ -15,7 +16,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added Danish translation.
    - Added Norwegian Bokmaal translation.
    - Added Norwegian Nynorsk translation.
-   - Added Debug Console to Cine, Draci, Gob, MADE, Sword1, Touche and 
+   - Added Swedish translation.
+   - Added Debug Console to Cine, Draci, Gob, MADE, Sword1, Touche and
      Tucker Engines.
    - Closed significant memory leaks. RTL should now be more usable.
 
@@ -50,7 +52,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added several previously missing parts of the game state in saved games,
      such as game played time, script created windows, the script string heap
      and information related to the text parser in old EGA games.
-   - Added support for magnifier cursors.
+   - Added support for SCI1.1 magnifier cursors.
    - Added support for the keypad +/- keys.
    - Added support for the alternative General MIDI tracks in the Windows CD
      versions of Eco Quest, Jones in the Fast Lane, King's Quest 5 and Space
@@ -63,13 +65,23 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Corrected several problems and issues in the Skate-O-Rama rooms in Space
      Quest 4.
    - Corrected several issues in Hoyle Classic Card Games.
-   - Fixed several graphical glitches.
+   - Fixed several graphical glitches (like, for example, parts of the screen
+     that weren't erased correctly under some rare circumstances).
    - Fixed several script bugs.
-   - Fixed several pathfinding related issues and lockups.
-   - Fixed several music related glitches and possible lockups.
+   - Fixed several pathfinding related issues and lockups (like, for example,
+     a lockup in the shower scene of Laura bow 1 and pathfinding in some
+     screens during the chase sequence in Laura Bow 2).
+   - Fixed several music related glitches and possible lockups (like, for
+     example, a rare music lockup that occurred when loading a saved game
+     outside the palace in Quest for Glory 3).
    - Fixed possible problems and lockups in the character import screens of
      Quest for Glory 2 and 3.
-   - Function keys now work correctly when the numlock key is on.
+   - Fixed a bug that caused a lockup in the SCI1 CD version of Mixed Up Mother
+     Goose, after Tommy Tucker's song.
+   - Fixed a script bug in the CD version of King's Quest 5, which caused a
+     lockup under certain circumstances when going outside the witch's house
+     in the dark forest.
+   - Function keys now work correctly when the num lock key is on.
    - Improved support for fanmade game scripts.
    - Improved support for non-English versions of games.
    - Made several enhancements and fixes related to MT-32 music (e.g. reverb).
@@ -92,7 +104,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  Touche:
    - Corrected memory leaks and minor issues.
 
- SDL:
+ Tucker:
+   - Added workarounds for several issues present in the original game.
+
+ SDL ports:
    - Added support for OpenGL. (GSoC Task)
    - Closed memory leaks in Mouse Surfaces.
 
@@ -100,6 +115,15 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Switched to the official NDK toolchain for building.
    - Fixed GFX output for various devices.
    - Fixed various crashes.
+   - Switched to the native screen resolution to improve text readability.
+   - Added support for pause/resume.
+   - Added support for games using 16bit graphics.
+   - Increased the performance significantly.
+   - Added support for the "Fullscreen mode" option. Unchecking this keeps the
+     game's aspect ratio.
+   - Added a new graphics mode for linear filtering.
+   - Overhauled the input system (see README.Android).
+   - Added a MIDI driver based on SONiVOX's Embedded Audio Synthesis (EAS).
 
  Nintendo DS port:
    - Added support for loadable modules.

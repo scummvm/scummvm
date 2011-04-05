@@ -1216,7 +1216,7 @@ int KyraEngine_HoF::seq_finaleFuards(WSAMovie_v2 *wsaObj, int x, int y, int frm)
 	int chatW = 0;
 	int chatFirstFrame = 0;
 	int chatLastFrame = 0;
-	int textCol = 0;
+	//int textCol = 0;
 
 	uint16 voiceIndex = 0;
 
@@ -1257,13 +1257,13 @@ int KyraEngine_HoF::seq_finaleFuards(WSAMovie_v2 *wsaObj, int x, int y, int frm)
 
 		if (_flags.isTalkie) {
 			chatX = 82;
-			textCol = 143;
+			//textCol = 143;
 			chatFirstFrame = 16;
 			chatLastFrame = 21;
 			voiceIndex = 41;
 		} else {
 			chatX = 62;
-			textCol = 137;
+			//textCol = 137;
 			chatFirstFrame = 9;
 			chatLastFrame = 13;
 		}
@@ -1281,7 +1281,7 @@ int KyraEngine_HoF::seq_finaleFuards(WSAMovie_v2 *wsaObj, int x, int y, int frm)
 			if (frm == 16)
 				break;
 			chatX = 64;
-			textCol = 137;
+			//textCol = 137;
 			chatFirstFrame = 9;
 			chatLastFrame = 13;
 			voiceIndex = 42;
@@ -1289,7 +1289,7 @@ int KyraEngine_HoF::seq_finaleFuards(WSAMovie_v2 *wsaObj, int x, int y, int frm)
 			if (frm == 9)
 				break;
 			chatX = 80;
-			textCol = 143;
+			//textCol = 143;
 			chatFirstFrame = 16;
 			chatLastFrame = 21;
 		}

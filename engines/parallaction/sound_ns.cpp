@@ -29,6 +29,7 @@
 
 #include "audio/mixer.h"
 #include "audio/midiparser.h"
+#include "audio/midiplayer.h"
 #include "audio/mods/protracker.h"
 #include "audio/decoders/raw.h"
 
@@ -38,206 +39,75 @@
 
 namespace Parallaction {
 
-class MidiPlayer : public MidiDriver {
+class MidiPlayer : public Audio::MidiPlayer {
 public:
 
-	enum {
-		NUM_CHANNELS = 16
-	};
-
-	MidiPlayer(MidiDriver *driver);
-	~MidiPlayer();
+	MidiPlayer();
 
 	void play(Common::SeekableReadStream *stream);
-	void stop();
 	void pause(bool p);
-	void updateTimer();
-	void adjustVolume(int diff);
-	void setVolume(int volume);
-	int getVolume() const { return _masterVolume; }
-	void setLooping(bool loop) { _isLooping = loop; }
-
-	// MidiDriver interface
-	int open();
-	void close();
-	void send(uint32 b);
-	void metaEvent(byte type, byte *data, uint16 length);
-	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo() { return _driver ? _driver->getBaseTempo() : 0; }
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
+	virtual void onTimer();
 
 private:
-
-	static void timerCallback(void *p);
-
-	MidiDriver *_driver;
-	MidiParser *_parser;
-	uint8 *_midiData;
-	bool _isLooping;
-	bool _isPlaying;
 	bool _paused;
-	int _masterVolume;
-	MidiChannel *_channelsTable[NUM_CHANNELS];
-	uint8 _channelsVolume[NUM_CHANNELS];
-	Common::Mutex _mutex;
 };
 
-MidiPlayer::MidiPlayer(MidiDriver *driver)
-	: _driver(driver), _parser(0), _midiData(0), _isLooping(false), _isPlaying(false), _paused(false), _masterVolume(0) {
+MidiPlayer::MidiPlayer()
+	: _paused(false) {
+
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_driver = MidiDriver::createMidi(dev);
 	assert(_driver);
-	memset(_channelsTable, 0, sizeof(_channelsTable));
-	for (int i = 0; i < NUM_CHANNELS; i++) {
-		_channelsVolume[i] = 127;
+
+	int ret = _driver->open();
+	if (ret == 0) {
+		_driver->setTimerCallback(this, &timerCallback);
 	}
-
-	open();
-}
-
-MidiPlayer::~MidiPlayer() {
-	close();
 }
 
 void MidiPlayer::play(Common::SeekableReadStream *stream) {
-	if (!stream) {
-		stop();
+	Common::StackLock lock(_mutex);
+
+	stop();
+	if (!stream)
 		return;
-	}
 
 	int size = stream->size();
-
 	_midiData = (uint8 *)malloc(size);
 	if (_midiData) {
 		stream->read(_midiData, size);
 		delete stream;
-		_mutex.lock();
+
+		_parser = MidiParser::createParser_SMF();
 		_parser->loadMusic(_midiData, size);
 		_parser->setTrack(0);
+		_parser->setMidiDriver(this);
+		_parser->setTimerRate(_driver->getBaseTempo());
 		_isLooping = true;
 		_isPlaying = true;
-		_mutex.unlock();
 	}
-}
-
-void MidiPlayer::stop() {
-	_mutex.lock();
-	if (_isPlaying) {
-		_isPlaying = false;
-		_parser->unloadMusic();
-		free(_midiData);
-		_midiData = 0;
-	}
-	_mutex.unlock();
 }
 
 void MidiPlayer::pause(bool p) {
 	_paused = p;
 
-	for (int i = 0; i < NUM_CHANNELS; ++i) {
+	for (int i = 0; i < kNumChannels; ++i) {
 		if (_channelsTable[i]) {
 			_channelsTable[i]->volume(_paused ? 0 : _channelsVolume[i] * _masterVolume / 255);
 		}
 	}
 }
 
-void MidiPlayer::updateTimer() {
-	if (_paused) {
-		return;
-	}
+void MidiPlayer::onTimer() {
+	Common::StackLock lock(_mutex);
 
-	_mutex.lock();
-	if (_isPlaying) {
+	if (!_paused && _isPlaying && _parser) {
 		_parser->onTimer();
 	}
-	_mutex.unlock();
 }
 
-void MidiPlayer::adjustVolume(int diff) {
-	setVolume(_masterVolume + diff);
-}
-
-void MidiPlayer::setVolume(int volume) {
-	_masterVolume = CLIP(volume, 0, 255);
-	_mutex.lock();
-	for (int i = 0; i < NUM_CHANNELS; ++i) {
-		if (_channelsTable[i]) {
-			_channelsTable[i]->volume(_channelsVolume[i] * _masterVolume / 255);
-		}
-	}
-	_mutex.unlock();
-}
-
-int MidiPlayer::open() {
-	int ret = _driver->open();
-	if (ret == 0) {
-		_parser = MidiParser::createParser_SMF();
-		_parser->setMidiDriver(this);
-		_parser->setTimerRate(_driver->getBaseTempo());
-		_driver->setTimerCallback(this, &timerCallback);
-	}
-	return ret;
-}
-
-void MidiPlayer::close() {
-	stop();
-	_mutex.lock();
-	_driver->setTimerCallback(NULL, NULL);
-	_driver->close();
-	delete _driver;
-	_driver = 0;
-	_parser->setMidiDriver(NULL);
-	delete _parser;
-	_mutex.unlock();
-}
-
-void MidiPlayer::send(uint32 b) {
-	byte volume, ch = (byte)(b & 0xF);
-	switch (b & 0xFFF0) {
-	case 0x07B0: // volume change
-		volume = (byte)((b >> 16) & 0x7F);
-		_channelsVolume[ch] = volume;
-		volume = volume * _masterVolume / 255;
-		b = (b & 0xFF00FFFF) | (volume << 16);
-		break;
-	case 0x7BB0: // all notes off
-		if (!_channelsTable[ch]) {
-			// channel not yet allocated, no need to send the event
-			return;
-		}
-		break;
-	}
-
-	if (!_channelsTable[ch]) {
-		_channelsTable[ch] = (ch == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
-	}
-	if (_channelsTable[ch]) {
-		_channelsTable[ch]->send(b);
-	}
-}
-
-void MidiPlayer::metaEvent(byte type, byte *data, uint16 length) {
-	switch (type) {
-	case 0x2F: // end of Track
-		if (_isLooping) {
-			_parser->jumpToTick(0);
-		} else {
-			stop();
-		}
-		break;
-	default:
-//		warning("Unhandled meta event: %02x", type);
-		break;
-	}
-}
-
-void MidiPlayer::timerCallback(void *p) {
-	MidiPlayer *player = (MidiPlayer *)p;
-
-	player->updateTimer();
-}
-
-DosSoundMan_ns::DosSoundMan_ns(Parallaction_ns *vm, MidiDriver *midiDriver) : SoundMan_ns(vm), _playing(false) {
-	_midiPlayer = new MidiPlayer(midiDriver);
+DosSoundMan_ns::DosSoundMan_ns(Parallaction_ns *vm) : SoundMan_ns(vm), _playing(false) {
+	_midiPlayer = new MidiPlayer();
 }
 
 DosSoundMan_ns::~DosSoundMan_ns() {

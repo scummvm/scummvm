@@ -39,7 +39,6 @@ int16 currentAdditionalBgIdx = 0, currentAdditionalBgIdx2 = 0;
 
 byte loadCtFW(const char *ctName) {
 	debugC(1, kCineDebugCollision, "loadCtFW(\"%s\")", ctName);
-	uint16 header[32];
 	byte *ptr, *dataPtr;
 
 	int16 foundFileIdx = findFileInBundle(ctName);
@@ -58,12 +57,6 @@ byte loadCtFW(const char *ctName) {
 	loadRelatedPalette(ctName);
 
 	assert(strstr(ctName, ".NEO"));
-
-	Common::MemoryReadStream readS(ptr, 32);
-
-	for (int i = 0; i < 16; i++) {
-		header[i] = readS.readUint16BE();
-	}
 
 	gfxConvertSpriteToRaw(collisionPage, ptr + 0x80, 160, 200);
 

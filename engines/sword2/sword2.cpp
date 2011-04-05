@@ -319,11 +319,10 @@ void Sword2Engine::registerDefaultSettings() {
 }
 
 void Sword2Engine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
 	bool mute = ConfMan.getBool("mute");
 
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, mute ? 0 : ConfMan.getInt("music_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, mute ? 0 : ConfMan.getInt("speech_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, mute ? 0 : ConfMan.getInt("sfx_volume"));
 	setSubtitles(ConfMan.getBool("subtitles"));
 
 	// Our own settings dialog can mute the music, speech and sound effects

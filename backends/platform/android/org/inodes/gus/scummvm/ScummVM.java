@@ -9,14 +9,12 @@ import android.media.AudioTrack;
 
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.egl.EGL10;
-import javax.microedition.khronos.egl.EGL11;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
 import java.io.File;
-import java.util.Map;
 import java.util.LinkedHashMap;
 
 public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
@@ -49,7 +47,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	final public native void setPause(boolean pause);
 	final public native void enableZoning(boolean enable);
 	// Feed an event to ScummVM.  Safe to call from other threads.
-	final public native void pushEvent(Event e);
+	final public native void pushEvent(int type, int arg1, int arg2, int arg3,
+										int arg4, int arg5);
 
 	// Callbacks from C++ peer instance
 	abstract protected void getDPI(float[] values);
@@ -76,6 +75,14 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	// SurfaceHolder callback
 	final public void surfaceChanged(SurfaceHolder holder, int format,
 										int width, int height) {
+		// the orientation may reset on standby mode and the theme manager
+		// could assert when using a portrait resolution. so lets not do that.
+		if (height > width) {
+			Log.d(LOG_TAG, String.format("Ignoring surfaceChanged: %dx%d (%d)",
+											width, height, format));
+			return;
+		}
+
 		Log.d(LOG_TAG, String.format("surfaceChanged: %dx%d (%d)",
 										width, height, format));
 
@@ -144,33 +151,19 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 		_egl.eglInitialize(_egl_display, version);
 
 		int[] num_config = new int[1];
-		_egl.eglChooseConfig(_egl_display, configSpec, null, 0, num_config);
+		_egl.eglGetConfigs(_egl_display, null, 0, num_config);
 
 		final int numConfigs = num_config[0];
 
 		if (numConfigs <= 0)
-			throw new IllegalArgumentException("No configs match configSpec");
+			throw new IllegalArgumentException("No EGL configs");
 
 		EGLConfig[] configs = new EGLConfig[numConfigs];
-		_egl.eglChooseConfig(_egl_display, configSpec, configs, numConfigs,
-								num_config);
-
-		if (false) {
-			Log.d(LOG_TAG, String.format("Found %d EGL configurations.",
-											numConfigs));
-			for (EGLConfig config : configs)
-				dumpEglConfig(config);
-		}
+		_egl.eglGetConfigs(_egl_display, configs, numConfigs, num_config);
 
 		// Android's eglChooseConfig is busted in several versions and
-		// devices so we have to filter/rank the configs again ourselves.
+		// devices so we have to filter/rank the configs ourselves.
 		_egl_config = chooseEglConfig(configs);
-
-		if (false) {
-			Log.d(LOG_TAG, String.format("Chose from %d EGL configs",
-											numConfigs));
-			dumpEglConfig(_egl_config);
-		}
 
 		_egl_context = _egl.eglCreateContext(_egl_display, _egl_config,
 											EGL10.EGL_NO_CONTEXT, null);
@@ -280,121 +273,163 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 		_sample_rate = 0;
 	}
 
-	static final int configSpec[] = {
-		EGL10.EGL_RED_SIZE, 5,
-		EGL10.EGL_GREEN_SIZE, 5,
-		EGL10.EGL_BLUE_SIZE, 5,
-		EGL10.EGL_DEPTH_SIZE, 0,
-		EGL10.EGL_SURFACE_TYPE, EGL10.EGL_WINDOW_BIT,
-		EGL10.EGL_NONE,
+	private static final int[] s_eglAttribs = {
+		EGL10.EGL_CONFIG_ID,
+		EGL10.EGL_BUFFER_SIZE,
+		EGL10.EGL_RED_SIZE,
+		EGL10.EGL_GREEN_SIZE,
+		EGL10.EGL_BLUE_SIZE,
+		EGL10.EGL_ALPHA_SIZE,
+		EGL10.EGL_CONFIG_CAVEAT,
+		EGL10.EGL_DEPTH_SIZE,
+		EGL10.EGL_LEVEL,
+		EGL10.EGL_MAX_PBUFFER_WIDTH,
+		EGL10.EGL_MAX_PBUFFER_HEIGHT,
+		EGL10.EGL_MAX_PBUFFER_PIXELS,
+		EGL10.EGL_NATIVE_RENDERABLE,
+		EGL10.EGL_NATIVE_VISUAL_ID,
+		EGL10.EGL_NATIVE_VISUAL_TYPE,
+		EGL10.EGL_SAMPLE_BUFFERS,
+		EGL10.EGL_SAMPLES,
+		EGL10.EGL_STENCIL_SIZE,
+		EGL10.EGL_SURFACE_TYPE,
+		EGL10.EGL_TRANSPARENT_TYPE,
+		EGL10.EGL_TRANSPARENT_RED_VALUE,
+		EGL10.EGL_TRANSPARENT_GREEN_VALUE,
+		EGL10.EGL_TRANSPARENT_BLUE_VALUE
 	};
 
-	// For debugging
-	private static final Map<String, Integer> attribs;
+	final private class EglAttribs extends LinkedHashMap<Integer, Integer> {
+		public EglAttribs(EGLConfig config) {
+			super(s_eglAttribs.length);
 
-	static {
-		attribs = new LinkedHashMap<String, Integer>();
-		attribs.put("CONFIG_ID", EGL10.EGL_CONFIG_ID);
-		attribs.put("BUFFER_SIZE", EGL10.EGL_BUFFER_SIZE);
-		attribs.put("RED_SIZE", EGL10.EGL_RED_SIZE);
-		attribs.put("GREEN_SIZE", EGL10.EGL_GREEN_SIZE);
-		attribs.put("BLUE_SIZE", EGL10.EGL_BLUE_SIZE);
-		attribs.put("ALPHA_SIZE", EGL10.EGL_ALPHA_SIZE);
-		//attribs.put("BIND_TO_RGB", EGL10.EGL_BIND_TO_TEXTURE_RGB);
-		//attribs.put("BIND_TO_RGBA", EGL10.EGL_BIND_TO_TEXTURE_RGBA);
-		attribs.put("CONFIG_CAVEAT", EGL10.EGL_CONFIG_CAVEAT);
-		attribs.put("DEPTH_SIZE", EGL10.EGL_DEPTH_SIZE);
-		attribs.put("LEVEL", EGL10.EGL_LEVEL);
-		attribs.put("MAX_PBUFFER_WIDTH", EGL10.EGL_MAX_PBUFFER_WIDTH);
-		attribs.put("MAX_PBUFFER_HEIGHT", EGL10.EGL_MAX_PBUFFER_HEIGHT);
-		attribs.put("MAX_PBUFFER_PIXELS", EGL10.EGL_MAX_PBUFFER_PIXELS);
-		//attribs.put("MAX_SWAP_INTERVAL", EGL10.EGL_MAX_SWAP_INTERVAL);
-		//attribs.put("MIN_SWAP_INTERVAL", EGL10.EGL_MIN_SWAP_INTERVAL);
-		attribs.put("NATIVE_RENDERABLE", EGL10.EGL_NATIVE_RENDERABLE);
-		attribs.put("NATIVE_VISUAL_ID", EGL10.EGL_NATIVE_VISUAL_ID);
-		attribs.put("NATIVE_VISUAL_TYPE", EGL10.EGL_NATIVE_VISUAL_TYPE);
-		attribs.put("SAMPLE_BUFFERS", EGL10.EGL_SAMPLE_BUFFERS);
-		attribs.put("SAMPLES", EGL10.EGL_SAMPLES);
-		attribs.put("STENCIL_SIZE", EGL10.EGL_STENCIL_SIZE);
-		attribs.put("SURFACE_TYPE", EGL10.EGL_SURFACE_TYPE);
-		attribs.put("TRANSPARENT_TYPE", EGL10.EGL_TRANSPARENT_TYPE);
-		attribs.put("TRANSPARENT_RED_VALUE", EGL10.EGL_TRANSPARENT_RED_VALUE);
-		attribs.put("TRANSPARENT_GREEN_VALUE", EGL10.EGL_TRANSPARENT_GREEN_VALUE);
-		attribs.put("TRANSPARENT_BLUE_VALUE", EGL10.EGL_TRANSPARENT_BLUE_VALUE);
-	}
+			int[] value = new int[1];
 
-	final private void dumpEglConfig(EGLConfig config) {
-		int[] value = new int[1];
+			for (int i : s_eglAttribs) {
+				_egl.eglGetConfigAttrib(_egl_display, config, i, value);
 
-		for (Map.Entry<String, Integer> entry : attribs.entrySet()) {
-			_egl.eglGetConfigAttrib(_egl_display, config,
-									entry.getValue(), value);
-
-			if (value[0] == EGL10.EGL_NONE)
-				Log.d(LOG_TAG, entry.getKey() + ": NONE");
-			else
-				Log.d(LOG_TAG, String.format("%s: %d", entry.getKey(), value[0]));
-		}
-	}
-
-	final private EGLConfig chooseEglConfig(EGLConfig[] configs) {
-		int best = 0;
-		int bestScore = -1;
-		int[] value = new int[1];
-
-		for (int i = 0; i < configs.length; i++) {
-			EGLConfig config = configs[i];
-			int score = 10000;
-
-			_egl.eglGetConfigAttrib(_egl_display, config,
-									EGL10.EGL_SURFACE_TYPE, value);
-
-			// must have
-			if ((value[0] & EGL10.EGL_WINDOW_BIT) == 0)
-				continue;
-
-			_egl.eglGetConfigAttrib(_egl_display, config,
-									EGL10.EGL_CONFIG_CAVEAT, value);
-
-			if (value[0] != EGL10.EGL_NONE)
-				score -= 1000;
-
-			// Must be at least 555, but then smaller is better
-			final int[] colorBits = { EGL10.EGL_RED_SIZE,
-										EGL10.EGL_GREEN_SIZE,
-										EGL10.EGL_BLUE_SIZE,
-										EGL10.EGL_ALPHA_SIZE
-									};
-
-			for (int component : colorBits) {
-				_egl.eglGetConfigAttrib(_egl_display, config, component, value);
-
-				// boost if >5 bits accuracy
-				if (value[0] >= 5)
-					score += 10;
-
-				// penalize for wasted bits
-				score -= value[0];
+				put(i, value[0]);
 			}
+		}
 
-			_egl.eglGetConfigAttrib(_egl_display, config,
-									EGL10.EGL_DEPTH_SIZE, value);
+		private int weightBits(int attr, int size) {
+			final int value = get(attr);
+
+			int score = 0;
+
+			if (value == size || (size > 0 && value > size))
+				score += 10;
 
 			// penalize for wasted bits
-			score -= value[0];
+			score -= value - size;
+
+			return score;
+		}
+
+		public int weight() {
+			int score = 10000;
+
+			if (get(EGL10.EGL_CONFIG_CAVEAT) != EGL10.EGL_NONE)
+				score -= 1000;
+
+			// less MSAA is better
+			score -= get(EGL10.EGL_SAMPLES) * 100;
+
+			// Must be at least 565, but then smaller is better
+			score += weightBits(EGL10.EGL_RED_SIZE, 5);
+			score += weightBits(EGL10.EGL_GREEN_SIZE, 6);
+			score += weightBits(EGL10.EGL_BLUE_SIZE, 5);
+			score += weightBits(EGL10.EGL_ALPHA_SIZE, 0);
+			score += weightBits(EGL10.EGL_DEPTH_SIZE, 0);
+			score += weightBits(EGL10.EGL_STENCIL_SIZE, 0);
+
+			return score;
+		}
+
+		public String toString() {
+			String s;
+
+			if (get(EGL10.EGL_ALPHA_SIZE) > 0)
+				s = String.format("[%d] RGBA%d%d%d%d",
+									get(EGL10.EGL_CONFIG_ID),
+									get(EGL10.EGL_RED_SIZE),
+									get(EGL10.EGL_GREEN_SIZE),
+									get(EGL10.EGL_BLUE_SIZE),
+									get(EGL10.EGL_ALPHA_SIZE));
+			else
+				s = String.format("[%d] RGB%d%d%d",
+									get(EGL10.EGL_CONFIG_ID),
+									get(EGL10.EGL_RED_SIZE),
+									get(EGL10.EGL_GREEN_SIZE),
+									get(EGL10.EGL_BLUE_SIZE));
+
+			if (get(EGL10.EGL_DEPTH_SIZE) > 0)
+				s += String.format(" D%d", get(EGL10.EGL_DEPTH_SIZE));
+
+			if (get(EGL10.EGL_STENCIL_SIZE) > 0)
+				s += String.format(" S%d", get(EGL10.EGL_STENCIL_SIZE));
+
+			if (get(EGL10.EGL_SAMPLES) > 0)
+				s += String.format(" MSAAx%d", get(EGL10.EGL_SAMPLES));
+
+			if ((get(EGL10.EGL_SURFACE_TYPE) & EGL10.EGL_WINDOW_BIT) > 0)
+				s += " W";
+			if ((get(EGL10.EGL_SURFACE_TYPE) & EGL10.EGL_PBUFFER_BIT) > 0)
+				s += " P";
+			if ((get(EGL10.EGL_SURFACE_TYPE) & EGL10.EGL_PIXMAP_BIT) > 0)
+				s += " X";
+
+			switch (get(EGL10.EGL_CONFIG_CAVEAT)) {
+			case EGL10.EGL_NONE:
+				break;
+
+			case EGL10.EGL_SLOW_CONFIG:
+				s += " SLOW";
+				break;
+
+			case EGL10.EGL_NON_CONFORMANT_CONFIG:
+				s += " NON_CONFORMANT";
+
+			default:
+				s += String.format(" unknown CAVEAT 0x%x",
+									get(EGL10.EGL_CONFIG_CAVEAT));
+			}
+
+			return s;
+		}
+	};
+
+	final private EGLConfig chooseEglConfig(EGLConfig[] configs) {
+		EGLConfig res = configs[0];
+		int bestScore = -1;
+
+		Log.d(LOG_TAG, "EGL configs:");
+
+		for (EGLConfig config : configs) {
+			EglAttribs attr = new EglAttribs(config);
+
+			// must have
+			if ((attr.get(EGL10.EGL_SURFACE_TYPE) & EGL10.EGL_WINDOW_BIT) == 0)
+				continue;
+
+			int score = attr.weight();
+
+			Log.d(LOG_TAG, String.format("%s (%d)", attr.toString(), score));
 
 			if (score > bestScore) {
-				best = i;
+				res = config;
 				bestScore = score;
 			}
 		}
 
-		if (bestScore < 0) {
-			Log.e(LOG_TAG, "Unable to find an acceptable EGL config, expect badness.");
-			return configs[0];
-		}
+		if (bestScore < 0)
+			Log.e(LOG_TAG,
+					"Unable to find an acceptable EGL config, expect badness.");
 
-		return configs[best];
+		Log.d(LOG_TAG, String.format("Chosen EGL config: %s",
+										new EglAttribs(res).toString()));
+
+		return res;
 	}
 
 	static {

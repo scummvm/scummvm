@@ -1,9 +1,8 @@
 MODULE := backends/platform/openpandora
 
 MODULE_OBJS := \
-	op-graphics.o \
-	op-events.o \
 	op-options.o \
+	op-backend.o \
 	op-main.o
 
 MODULE_DIRS += \

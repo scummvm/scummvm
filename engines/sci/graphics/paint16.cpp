@@ -159,8 +159,8 @@ void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 c
 		// adjust curPort to upscaled hires
 		clipRect = celRect;
 		curPortRect = _ports->_curPort->rect;
-		_screen->adjustToUpscaledCoordinates(curPortRect.top, curPortRect.left);
-		_screen->adjustToUpscaledCoordinates(curPortRect.bottom, curPortRect.right);
+		view->adjustToUpscaledCoordinates(curPortRect.top, curPortRect.left);
+		view->adjustToUpscaledCoordinates(curPortRect.bottom, curPortRect.right);
 		curPortRect.bottom++;
 		curPortRect.right++;
 		clipRect.clip(curPortRect);
@@ -170,7 +170,7 @@ void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 c
 		clipRectTranslated = clipRect;
 		if (!upscaledHiresHack) {
 			curPortPos.x = _ports->_curPort->left; curPortPos.y = _ports->_curPort->top;
-			_screen->adjustToUpscaledCoordinates(curPortPos.y, curPortPos.x);
+			view->adjustToUpscaledCoordinates(curPortPos.y, curPortPos.x);
 			clipRectTranslated.top += curPortPos.y; clipRectTranslated.bottom += curPortPos.y;
 			clipRectTranslated.left += curPortPos.x; clipRectTranslated.right += curPortPos.x;
 		}

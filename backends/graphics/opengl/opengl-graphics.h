@@ -39,8 +39,7 @@ namespace OpenGL {
 enum {
 	GFX_NORMAL = 0,
 	GFX_CONSERVE = 1,
-	GFX_4_3 = 2,
-	GFX_ORIGINAL = 3
+	GFX_ORIGINAL = 2
 };
 
 }
@@ -152,11 +151,11 @@ protected:
 		bool setup;
 
 		bool fullscreen;
-		int activeFullscreenMode;
 
 		int mode;
 		int scaleFactor;
 		bool antialiasing;
+		bool aspectRatioCorrection;
 
 		int screenWidth, screenHeight;
 		int overlayWidth, overlayHeight;
@@ -176,7 +175,41 @@ protected:
 	virtual bool loadGFXMode();
 	virtual void unloadGFXMode();
 
-	virtual void setScale(int newScale);
+	/**
+	 * Setup the fullscreen mode state.
+	 */
+	void setFullscreenMode(bool enable);
+
+	/**
+	 * Query the fullscreen state.
+	 */
+	inline bool getFullscreenMode() const { return _videoMode.fullscreen; }
+
+	/**
+	 * Set the scale factor.
+	 * 
+	 * This can only be used in a GFX transaction.
+	 *
+	 * @param newScale New scale factor.
+	 */
+	void setScale(int newScale);
+
+	/**
+	 * Query the scale factor.
+	 */
+	inline int getScale() const { return _videoMode.scaleFactor; }
+
+	/**
+	 * Toggle the antialiasing state of the current video mode.
+	 *
+	 * This can only be used in a GFX transaction.
+	 */
+	void toggleAntialiasing();
+
+	/**
+	 * Query the antialiasing state.
+	 */
+	inline bool getAntialiasingState() const { return _videoMode.antialiasing; }
 
 	// Drawing coordinates for the current display mode and scale
 	int _displayX;
@@ -184,18 +217,10 @@ protected:
 	int _displayWidth;
 	int _displayHeight;
 
-	/**
-	 * Sets the dispaly mode.
-	 * @mode the dispaly mode, if -1 it will switch to next mode. If -2 to previous mode.
-	 */
-	virtual void switchDisplayMode(int mode);
-
 	virtual const char *getCurrentModeName();
 
 	virtual void calculateDisplaySize(int &width, int &height);
 	virtual void refreshDisplaySize();
-
-	bool _aspectRatioCorrection;
 
 	/**
 	 * Returns the current target aspect ratio x 10000
@@ -232,7 +257,7 @@ protected:
 	bool _overlayVisible;
 	bool _overlayNeedsRedraw;
 	Common::Rect _overlayDirtyRect;
-	
+
 	virtual void refreshOverlay();
 
 	//
@@ -272,6 +297,15 @@ protected:
 
 	virtual void refreshCursor();
 	virtual void refreshCursorScale();
+
+	/**
+	 * Set up the mouse position for the (event) system.
+	 *
+	 * @param x X coordinate in native coordinates.
+	 * @param y Y coordinate in native coordinates.
+	 */
+	virtual void setInternalMousePosition(int x, int y) = 0;
+
 	/**
 	 * Adjusts hardware screen coordinates to either overlay or game screen
 	 * coordinates depending on whether the overlay is visible or not.
@@ -280,7 +314,6 @@ protected:
 	 * @param y Y coordinate of the mouse position.
 	 */
 	virtual void adjustMousePosition(int16 &x, int16 &y);
-	virtual void setMousePos(int x, int y);
 
 	//
 	// Misc
@@ -288,6 +321,16 @@ protected:
 	virtual bool saveScreenshot(const char *filename);
 
 #ifdef USE_OSD
+	/**
+	 * The OSD contents.
+	 */
+	Common::Array<Common::String> _osdLines;
+
+	/**
+	 * Update the OSD texture / surface.
+	 */
+	void updateOSD();
+
 	GLTexture *_osdTexture;
 	Graphics::Surface _osdSurface;
 	uint8 _osdAlpha;

@@ -96,7 +96,7 @@ TestExitStatus MidiTests::playMidiMusic() {
 	int errCode = driver->open();
 
 	if (errCode) {
-		Common::String errMsg = driver->getErrorName(errCode);
+		Common::String errMsg = MidiDriver::getErrorName(errCode);
 		Testsuite::writeOnScreen(errMsg, Common::Point(0, 100));
 		Testsuite::logPrintf("Error! %s", errMsg.c_str());
 		return kTestFailed;
