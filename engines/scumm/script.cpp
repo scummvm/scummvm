@@ -261,8 +261,7 @@ void ScummEngine::stopScript(int script) {
 /* Stop an object script 'script'*/
 void ScummEngine::stopObjectScript(int script) {
 	ScriptSlot *ss;
-	NestedScript *nest;
-	int i, num;
+	int i;
 
 	if (script == 0)
 		return;
@@ -282,19 +281,14 @@ void ScummEngine::stopObjectScript(int script) {
 		}
 	}
 
-	nest = vm.nest;
-	num = vm.numNestedScripts;
-
-	while (num > 0) {
-		if (nest->number == script &&
-				(nest->where == WIO_ROOM || nest->where == WIO_INVENTORY || nest->where == WIO_FLOBJECT)) {
-			nukeArrays(nest->slot);
-			nest->number = 0xFF;
-			nest->slot = 0xFF;
-			nest->where = 0xFF;
+	for (i = 0; i < vm.numNestedScripts; ++i) {
+		if (vm.nest[i].number == script &&
+				(vm.nest[i].where == WIO_ROOM || vm.nest[i].where == WIO_INVENTORY || vm.nest[i].where == WIO_FLOBJECT)) {
+			nukeArrays(vm.nest[i].slot);
+			vm.nest[i].number = 0xFF;
+			vm.nest[i].slot = 0xFF;
+			vm.nest[i].where = 0xFF;
 		}
-		nest++;
-		num--;
 	}
 }
 
