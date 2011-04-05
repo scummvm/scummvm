@@ -303,7 +303,7 @@ class Scene9500: public Scene2 {
 
 public:
 	SequenceManager _sequenceManager;
-	SceneObject _object1;
+	SceneObject _candle;
 	SceneObject _object2;
 	SceneObject _object3;
 	Hotspot1 _hotspot1;

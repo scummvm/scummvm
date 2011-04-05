@@ -76,7 +76,6 @@ void Scene9100::dispatch() {
 	
 	if (!_action) {
 		if (_globals->_player._position.x < 25) {
-			warning("There");
 			if (!_globals->getFlag(11)) {
 				scene->_sceneMode = 9106;
 			} else {
@@ -1037,7 +1036,7 @@ void Scene9500::Hotspot3::doAction(int action) {
 		scene->_sceneMode = 9505;
 		_globals->_player.disableControl();
 		_globals->_sceneItems.remove(this);
-		scene->setAction(&scene->_sequenceManager, scene, 9511, &_globals->_player, &scene->_object1, 0);
+		scene->setAction(&scene->_sequenceManager, scene, 9505, &_globals->_player, &scene->_candle, 0);
 	} else {
 		SceneHotspot_3::doAction(action);
 	}
@@ -1047,7 +1046,7 @@ void Scene9500::Hotspot4::doAction(int action) {
 	Scene9500 *scene = (Scene9500 *)_globals->_sceneManager._scene;
 
 	if (action == OBJECT_CANDLE) {
-	_globals->_player.disableControl();
+		_globals->_player.disableControl();
 		if (_globals->_inventory._straw._sceneNumber == 9500) {
 			scene->_sceneMode = 9506;
 			_globals->_sceneItems.remove(&scene->_hotspot5);
@@ -1078,7 +1077,7 @@ void Scene9500::signal() {
 		_globals->_sceneManager.changeScene(9850);
 		break;
 	case 9505:
-		_object1.setStrip(2);
+		_candle.setStrip(2);
 		_globals->_player.enableControl();
 		break;
 	case 9506:
@@ -1130,13 +1129,13 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.postInit();
 	_globals->_soundHandler.startSound(305, 0, 127);
 	
-	_object1.postInit(0);
-	_object1.setVisage(9500);
-	_object1.setStrip(1);
-	_object1.animate(ANIM_MODE_2);
-	_object1.setPosition(Common::Point(30, 105), 0);
+	_candle.postInit(0);
+	_candle.setVisage(9500);
+	_candle.setStrip(1);
+	_candle.animate(ANIM_MODE_2);
+	_candle.setPosition(Common::Point(30, 105), 0);
 	if (_globals->_inventory._candle._sceneNumber != 9500)
-		_object1.setStrip(2);
+		_candle.setStrip(2);
 	
 	_object3.postInit(0);
 	_object3.flag100();
@@ -1181,7 +1180,7 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 	_hotspot7.quickInit(100, 70, 125, 139, 9500, 2, 3);
 
 	if (!_globals->getFlag(85)) {
-		_hotspot5.quickInit(111, 68, 155, 244, 950, 17, -1);
+		_hotspot5.quickInit(111, 68, 155, 244, 9500, 17, -1);
 		_hotspot4.quickInit(57, 71, 120, 126, 9500, 16, -1);
 	}
 	
@@ -1203,8 +1202,8 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 	
 	if ((_globals->_sceneManager._previousScene == 9200) || (_globals->_sceneManager._previousScene != 9850)) {
 		_sceneMode = 0;
-		if (_globals->_inventory._helmet._sceneNumber == 1) {
-			setAction(&_sequenceManager, this, 9501, &_globals->_player, &_object1, 0);
+		if (_globals->_inventory._helmet._sceneNumber != 1) {
+			setAction(&_sequenceManager, this, 9501, &_globals->_player, &_candle, 0);
 		} else {
 			_globals->_inventory._helmet._sceneNumber = 9500;
 			_hotspot2.quickInit(87, 294, 104, 314, 9400, 17, -1);
@@ -1212,7 +1211,7 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 		}
 	} else {
 		_sceneMode = 0;
-		setAction(&_sequenceManager, this, 9502, &_globals->_player, &_object1, 0);
+		setAction(&_sequenceManager, this, 9502, &_globals->_player, &_candle, 0);
 	}
 }
 
