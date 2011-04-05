@@ -234,7 +234,7 @@ void ModelComponent::init() {
 	// by the sharing MainModelComponent
 	// constructor before
 	if (!_obj) {
-		CMap *cm = this->cmap();
+		CMapPtr cm = this->cmap();
 
 		// Get the default colormap if we haven't found
 		// a valid colormap
