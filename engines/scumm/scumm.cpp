@@ -201,7 +201,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_bootParam = 0;
 	_dumpScripts = false;
 	_debugMode = 0;
-	_heV7RoomIntOffsets = NULL;
 	_objectOwnerTable = NULL;
 	_objectRoomTable = NULL;
 	_objectStateTable = NULL;
@@ -789,6 +788,7 @@ ScummEngine_v70he::ScummEngine_v70he(OSystem *syst, const DetectorResult &dr)
 
 	_heV7DiskOffsets = NULL;
 	_heV7RoomOffsets = NULL;
+	_heV7RoomIntOffsets = NULL;
 
 	_heSndSoundId = 0;
 	_heSndOffset = 0;
@@ -805,8 +805,8 @@ ScummEngine_v70he::ScummEngine_v70he(OSystem *syst, const DetectorResult &dr)
 ScummEngine_v70he::~ScummEngine_v70he() {
 	delete _resExtractor;
 	free(_heV7DiskOffsets);
-	free(_heV7RoomIntOffsets);
 	free(_heV7RoomOffsets);
+	free(_heV7RoomIntOffsets);
 	free(_storedFlObjects);
 }
 

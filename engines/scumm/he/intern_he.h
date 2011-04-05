@@ -115,6 +115,7 @@ protected:
 
 	byte *_heV7DiskOffsets;
 	byte *_heV7RoomOffsets;
+	uint32 *_heV7RoomIntOffsets;
 
 	int32 _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndSoundFreq;
 
@@ -130,6 +131,9 @@ public:
 	void restoreBackgroundHE(Common::Rect rect, int dirtybit = 0);
 
 protected:
+	virtual void allocateArrays();
+	virtual int readResTypeList(int id);
+	virtual uint32 getResourceRoomOffset(int type, int idx);
 	virtual void setupOpcodes();
 
 	virtual void setupScummVars();
