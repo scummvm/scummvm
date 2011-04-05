@@ -47,7 +47,7 @@
 
 // toggles start
 //#define ANDROID_DEBUG_ENTER
-//#define ANDROID_DEBUG_GL
+#define ANDROID_DEBUG_GL
 //#define ANDROID_DEBUG_GL_CALLS
 // toggles end
 
