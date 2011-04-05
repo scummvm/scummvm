@@ -440,19 +440,22 @@ int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) {
 		for (jsize i = 0; i < env->GetArrayLength(jpathlist); ++i) {
 			jstring elem = (jstring)env->GetObjectArrayElement(jpathlist, i);
 			const char *p = env->GetStringUTFChars(elem, 0);
-			Common::String thispath = dir;
 
-			if (!thispath.empty())
-				thispath += "/";
+			if (strlen(p)) {
+				Common::String thispath = dir;
 
-			thispath += p;
+				if (!thispath.empty())
+					thispath += "/";
 
-			// Assume files have a . in them, and directories don't
-			if (strchr(p, '.')) {
-				member_list.push_back(getMember(thispath));
-				++count;
-			} else {
-				dirlist.push_back(thispath);
+				thispath += p;
+
+				// Assume files have a . in them, and directories don't
+				if (strchr(p, '.')) {
+					member_list.push_back(getMember(thispath));
+					++count;
+				} else {
+					dirlist.push_back(thispath);
+				}
 			}
 
 			env->ReleaseStringUTFChars(elem, p);
