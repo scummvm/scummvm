@@ -406,7 +406,7 @@ void tglLightModeli(int pname, int param) {
 	p[0].op = TinyGL::OP_LightModel;
 	p[1].i = pname;
 	p[2].f = (float)param;
-	for (i = 0; i < 4; i++)
+	for (i = 0; i < 3; i++)
 		p[3 + i].f = 0;
 
 	TinyGL::gl_add_op(p);

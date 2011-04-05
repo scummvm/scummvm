@@ -66,7 +66,7 @@ void TextObject::setText(const char *text) {
 		// this should be good enough to still be unique
 		// but for debug purposes lets make this crash the program so we know about it
 		strncpy(_textID, text, sizeof(_textID));
-		_textID[sizeof(_textID)] = 0;
+		_textID[sizeof(_textID) - 1] = 0;
 	}
 }
 
