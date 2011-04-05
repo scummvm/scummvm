@@ -145,7 +145,7 @@ struct KeyboardEvent : public BaseEvent {
 		return f == (flags & ~(KBD_NUM|KBD_CAPS|KBD_SCRL));
 	}
 
-	bool operator ==(const KeyboardEvent &x) const {
+	bool operator==(const KeyboardEvent &x) const {
 		return keycode == x.keycode && ascii == x.ascii && flags == x.flags;
 	}
 };
