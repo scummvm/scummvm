@@ -460,7 +460,7 @@ void Actor::walkTo(Graphics::Vector3d p) {
 			Common::List<Sector *> sectors;
 			for (int i = 0; i < g_grim->currScene()->getSectorCount(); ++i) {
 				Sector *s = g_grim->currScene()->getSectorBase(i);
-				if (s->type() >= 0x1000) {
+				if (s->type() >= Sector::WalkType) {
 					sectors.push_back(s);
 				}
 			}
@@ -603,7 +603,7 @@ void Actor::walkForward() {
 
 		// Check for an adjacent sector which can continue
 		// the path
-		currSector = g_grim->currScene()->findPointSector(ei.exitPoint + (float)0.0001 * puckVec, 0x1000);
+		currSector = g_grim->currScene()->findPointSector(ei.exitPoint + (float)0.0001 * puckVec, Sector::WalkType);
 		if (currSector == prevSector)
 			break;
 	}
@@ -629,7 +629,7 @@ Graphics::Vector3d Actor::puckVector() const {
 	float yaw_rad = _yaw * (LOCAL_PI / 180);
 	Graphics::Vector3d forwardVec(-sin(yaw_rad), cos(yaw_rad), 0);
 
-	Sector *sector = g_grim->currScene()->findPointSector(_pos, 0x1000);
+	Sector *sector = g_grim->currScene()->findPointSector(_pos, Sector::WalkType);
 	if (!sector)
 		return forwardVec;
 	else

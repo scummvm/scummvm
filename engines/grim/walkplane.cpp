@@ -51,7 +51,7 @@ void Sector::saveState(SaveGame *savedState) const {
 bool Sector::restoreState(SaveGame *savedState) {
 	_numVertices = savedState->readLESint32();
 	_id          = savedState->readLESint32();
-	_type        = savedState->readLESint32();
+	_type        = (SectorType)savedState->readLESint32();
 	_visible     = savedState->readLESint32();
 	_height      = savedState->readFloat();
 
@@ -87,16 +87,16 @@ void Sector::load(TextSplitter &ts) {
 	ts.scanString(" type %256s", 1, buf);
 
 	if (strstr(buf, "walk"))
-		_type = 0x1000;
+		_type = WalkType;
 
 	else if (strstr(buf, "funnel"))
-		_type = 0x1100;
+		_type = FunnelType;
 	else if (strstr(buf, "camera"))
-		_type = 0x2000;
+		_type = CameraType;
 	else if (strstr(buf, "special"))
-		_type = 0x4000;
+		_type = SpecialType;
 	else if (strstr(buf, "chernobyl"))
-		_type = 0x8000;
+		_type = HotType;
 	else if (gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
 		error("Unknown sector type '%s' in room setup", buf);
 

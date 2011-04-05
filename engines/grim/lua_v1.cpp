@@ -1723,11 +1723,11 @@ static void PutActorAtInterest() {
 
 	for (int i = 0; i < g_grim->currScene()->getSectorCount(); ++i) {
 		Sector *sector = g_grim->currScene()->getSectorBase(i);
-		if (sector->type() != 0x1000 || !sector->visible())
+		if (sector->type() != Sector::WalkType || !sector->visible())
 			continue;
 
 		Graphics::Vector3d closestPt = sector->closestPoint(p);
-		if (g_grim->currScene()->findPointSector(closestPt, 0x8000))
+		if (g_grim->currScene()->findPointSector(closestPt, Sector::HotType))
 			continue;
 		float thisDist = (closestPt - p).magnitude();
 		if (minDist < 0 || thisDist < minDist) {
@@ -2196,16 +2196,16 @@ static void GetPointSector() {
 	lua_Object yObj = lua_getparam(2);
 	lua_Object zObj = lua_getparam(3);
 	lua_Object typeObj = lua_getparam(4);
-	int sectorType;
+	Sector::SectorType sectorType;
 
 	if (!lua_isnumber(xObj) || !lua_isnumber(yObj) || !lua_isnumber(zObj)) {
 		lua_pushnil();
 		return;
 	}
 	if (lua_isnil(typeObj))
-		sectorType = 0x2000;
+		sectorType = Sector::CameraType;
 	else
-		sectorType = (int)lua_getnumber(typeObj);
+		sectorType = (Sector::SectorType)lua_getnumber(typeObj);
 
 	float x = lua_getnumber(xObj);
 	float y = lua_getnumber(yObj);
@@ -2232,7 +2232,7 @@ static void GetActorSector() {
 		return;
 
 	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
-	int sectorType = (int)lua_getnumber(typeObj);
+	Sector::SectorType sectorType = (Sector::SectorType)lua_getnumber(typeObj);
 	Sector *result = g_grim->currScene()->findPointSector(actor->pos(), sectorType);
 	if (result) {
 		lua_pushnumber(result->id());
@@ -4277,15 +4277,15 @@ void register_lua() {
 	lua_setglobal("type");
 
 	// Register constants for box types
-	lua_pushnumber(0);
+	lua_pushnumber(Sector::NoneType);
 	lua_setglobal("NONE");
-	lua_pushnumber(0x1000);
+	lua_pushnumber(Sector::WalkType);
 	lua_setglobal("WALK");
-	lua_pushnumber(0x2000);
+	lua_pushnumber(Sector::CameraType);
 	lua_setglobal("CAMERA");
-	lua_pushnumber(0x4000);
+	lua_pushnumber(Sector::SpecialType);
 	lua_setglobal("SPECIAL");
-	lua_pushnumber(0x8000);
+	lua_pushnumber(Sector::HotType);
 	lua_setglobal("HOT");
 
 	lua_pushobject(lua_setfallback("concat", concatFallback));

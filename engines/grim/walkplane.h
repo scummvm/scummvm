@@ -37,6 +37,15 @@ class TextSplitter;
 
 class Sector {
 public:
+	enum SectorType {
+		NoneType = 0,
+		WalkType = 0x1000,
+		FunnelType = 0x1100,
+		CameraType = 0x2000,
+		SpecialType = 0x4000,
+		HotType = 0x8000
+	};
+
 	Sector() : _vertices(NULL) {}
 	virtual ~Sector() { if (_vertices) delete[] _vertices; }
 
@@ -49,7 +58,7 @@ public:
 
 	const char *name() const { return _name.c_str(); }
 	int id() const { return _id; }
-	int type() const { return _type; } // FIXME: Implement type de-masking
+	SectorType type() const { return _type; } // FIXME: Implement type de-masking
 	bool visible() const { return _visible; }
 	bool isPointInSector(Graphics::Vector3d point) const;
 	bool isAdjacentTo(Sector *sector) const;
@@ -75,7 +84,7 @@ private:
 	int _numVertices, _id;
 
 	Common::String _name;
-	int _type;
+	SectorType _type;
 	bool _visible;
 	Graphics::Vector3d *_vertices;
 	float _height;

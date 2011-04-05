@@ -77,7 +77,7 @@ public:
 		else
 			return NULL;
 	}
-	Sector *findPointSector(Graphics::Vector3d p, int flags);
+	Sector *findPointSector(Graphics::Vector3d p, Sector::SectorType type);
 	void findClosestSector(Graphics::Vector3d p, Sector **sect, Graphics::Vector3d *closestPt);
 
 	void addObjectState(ObjectState *s) {
