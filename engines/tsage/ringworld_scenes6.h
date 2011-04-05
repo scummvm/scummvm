@@ -253,6 +253,80 @@ public:
 	virtual void dispatch();
 };
 
+class Scene5300: public Scene {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action3: public Action {
+	public:
+		virtual void signal();
+	};
+
+	/* Hotspots */
+	class Hotspot1: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot2: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot5: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot6: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot7: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+	class Hotspot8: public SceneObject {
+	public:
+		virtual void doAction(int action);
+	};
+public:
+	SoundHandler _soundHandler;
+	SequenceManager _sequenceManager;
+	SpeakerQR _speakerQR;
+	SpeakerQL _speakerQL;
+	SpeakerQText _speakerQText;
+	SpeakerBatR _speakerBatR;
+	SpeakerBatText _speakerBatText;
+	SpeakerSR _speakerSR;
+	SpeakerSL _speakerSL;
+	SpeakerSText _speakerSText;
+	SpeakerGameText _speakerGameText;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Hotspot1 _hotspot1;
+	Hotspot2 _hotspot2;
+	DisplayHotspot _hotspot3;
+	SceneObject _hotspot4;
+	Hotspot5 _hotspot5;
+	Hotspot6 _hotspot6;
+	Hotspot7 _hotspot7;
+	Hotspot8 _hotspot8;
+	int _field1B0A;
+
+	Scene5300();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void synchronise(Serialiser &s) {
+		Scene::synchronise(s);
+		s.syncAsSint16LE(_field1B0A);
+	}
+};
+
 
 } // End of namespace tSage
 

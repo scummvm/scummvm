@@ -36,7 +36,7 @@ namespace tSage {
 
 class Scene: public StripCallback {
 private:
-	void signalListeners();
+	void drawAltObjects();
 public:
 	int _field12;
 	int _sceneNumber;
@@ -87,7 +87,7 @@ public:
 	Common::Point _sceneBgOffset;
 	int _sceneLoadCount;
 	Rect _scrollerRect;
-	List<EventHandler *> _sceneChangeListeners;
+	SceneObjectList _altSceneObjects;
 public:
 	SceneManager();
 	virtual ~SceneManager();

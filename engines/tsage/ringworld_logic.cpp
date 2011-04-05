@@ -137,6 +137,8 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 5100: return new Scene5100();
 	// Caverns - Throne-room
 	case 5200: return new Scene5200();
+	// Caverns - Pit
+	case 5300: return new Scene5300();
 
 	/* Scene group 8 */
 	// Scene 7000: Landing
@@ -1117,6 +1119,37 @@ void SpeakerFLL::setText(const Common::String &msg) {
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(210, 67));
+	_object2.setAction(&_speakerAction, NULL);
+
+	Speaker::setText(msg);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerBatR::SpeakerBatR() {
+	_speakerName = "BATR";
+	_newSceneNumber = 5360;
+	_textPos = Common::Point(140, 40);
+	_colour1 = 3;
+}
+
+void SpeakerBatR::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(5361);
+	_object1.setStrip2(2);
+	_object1.setPriority2(255);
+	_object1.changeZoom(100);
+	_object1._frame = 1;
+	_object1.setPosition(Common::Point(137, 122));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
+	
+	_object2.postInit(&_objectList);
+	_object2.setVisage(5361);
+	_object2.setStrip2(1);
+	_object2.setPriority2(255);
+	_object2.changeZoom(100);
+	_object2._frame = 1;
+	_object2.setPosition(Common::Point(137, 104));
 	_object2.setAction(&_speakerAction, NULL);
 
 	Speaker::setText(msg);

@@ -2846,7 +2846,7 @@ void Scene6100::Action3::signal() {
 		break;
 	case 1:
 		_globals->_scenePalette.clearListeners();
-		scene->_field_310 = 0;
+		scene->_fadePercent = 0;
 		_globals->_scenePalette.refresh();
 		scene->loadScene(9997);
 		scene->_object1.flag100();
@@ -2900,17 +2900,15 @@ void Scene6100::Action5::dispatch() {
 	FloatSet floatSet = _globals->_floatSet;
 	const double MULTIPLY_FACTOR = 0.01744;
 
-	// TODO: Method backs up 32 bytes at dseg:195Ah
-
-	if (scene->_field_30A) {
-		scene->_field_30C = scene->_field_30A % 360;
+	if (scene->_turnAmount) {
+		scene->_angle = (scene->_turnAmount + scene->_angle) % 360;
 
 		for (int objIndex = 1; objIndex <= 3; ++objIndex) {
 			SceneObject *obj = &scene->_object1;
 			if (objIndex == 2) obj = &scene->_object2;
 			if (objIndex == 3) obj = &scene->_object3;
 
-			obj->_position.x += scene->_field_30A * 2;
+			obj->_position.x += scene->_turnAmount * 2;
 			if (obj->_position.x >= 320)
 				obj->_position.x -= 480;
 			if (obj->_position.x < -160)
@@ -2924,11 +2922,11 @@ void Scene6100::Action5::dispatch() {
 
 	double v2, v3;
 	v2 = scene->_field_30E;
-	v3 = scene->_field_30C * MULTIPLY_FACTOR;
+	v3 = (double)scene->_angle * MULTIPLY_FACTOR;
 	scene->_object5._floats._float1 += sin(v3) * v2;
 
 	v2 = scene->_field_30E;
-	v3 = scene->_field_30C * MULTIPLY_FACTOR;
+	v3 = scene->_angle * MULTIPLY_FACTOR;
 	scene->_object5._floats._float2 += cos(v3) * v2;
 
 	for (int idx = 0; idx < 4; ++idx) {
@@ -2936,7 +2934,7 @@ void Scene6100::Action5::dispatch() {
 		tempSet.add(scene->_object5._floats._float1, scene->_object5._floats._float2,
 			scene->_object5._floats._float3);
 
-		tempSet.proc1(scene->_field_30C * MULTIPLY_FACTOR);
+		tempSet.proc1(scene->_angle * MULTIPLY_FACTOR);
 
 		double sqrtVal = tempSet.sqrt(floatSet);
 		if (sqrtVal != 0.0) {
@@ -2947,7 +2945,7 @@ void Scene6100::Action5::dispatch() {
 		scene->_objList[idx]->_position.x = static_cast<int>(
 			(tempSet._float2 + 330.0) / 330.0 * tempSet._float1 - 160.0);
 
-		if (tempSet._float2 >= 0) {
+		if (tempSet._float2 < 0) {
 			scene->_objList[idx]->_position.y = 300;
 			
 			if (idx != 3) {
@@ -2957,7 +2955,7 @@ void Scene6100::Action5::dispatch() {
 					_globals->_randomSource.getRandomNumber(999) + 750.0;
 
 				scene->_objList[idx]->_floats.proc1(
-					-(scene->_field_30A * 10 + scene->_field_30C) * MULTIPLY_FACTOR);
+					-(scene->_turnAmount * 10 + scene->_angle) * MULTIPLY_FACTOR);
 				
 				scene->_objList[idx]->_floats.add(scene->_object5._floats._float1, 
 					scene->_object5._floats._float2, scene->_object5._floats._float3);
@@ -2973,7 +2971,7 @@ void Scene6100::Action5::dispatch() {
 
 		scene->_objList[idx]->_flags |= OBJFLAG_PANES;
 
-		if ((idx != 3) && (scene->_field_310 == 100) &&
+		if ((idx != 3) && (scene->_fadePercent == 100) &&
 				(tempSet.sqrt(floatSet) < 150.0)) {
 			switch (scene->_field_312++) {
 			case 1:
@@ -3002,7 +3000,7 @@ void Scene6100::Action5::dispatch() {
 			}
 
 			_globals->_scenePalette.clearListeners();
-			scene->_field_310 = 0;
+			scene->_fadePercent = 0;
 		}
 	}
 }
@@ -3012,7 +3010,7 @@ void Scene6100::Action6::signal() {
 
 	switch (_actionIndex++) {
 	case 0: {
-		scene->_field_30A = 0;
+		scene->_turnAmount = 0;
 		Common::Point pt(scene->_object4._position.x, scene->_object4._position.y + 10);
 		NpcMover *mover = new NpcMover();
 		scene->_object5.addMover(mover, &pt, NULL);
@@ -3146,11 +3144,12 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 	}
 
 	_field_30E = 30;
-	_field_310 = 100;
+	_fadePercent = 100;
 	_field_314 = 0;
 	_field_312 = 0;
-	_field_30A = 0;
-	_field_30C = 0;
+	_turnAmount = 0;
+	_angle = 0;
+	_msgActive = false;
 
 	setAction(&_action5);
 	_globals->_scenePalette.addRotation(96, 143, -1);
@@ -3161,15 +3160,78 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 	_globals->_soundHandler.startSound(231);
 }
 
-void Scene6100::showMessage(const Common::String &msg, int colour, Action *action) {
-	static bool msgActive = false;
+void Scene6100::remove() {
+	_globals->_player.disableControl();
+	_globals->_scenePalette.clearListeners();
+	Scene::remove();
+}
 
-	if (msgActive) {
-		msgActive = false;
+void Scene6100::process(Event &event) {
+	Scene::process(event);
+
+	if (event.eventType == EVENT_KEYPRESS) {
+		// Handle incremental turning speeds with arrow keys
+		if ((event.kbd.keycode == Common::KEYCODE_LEFT) || (event.kbd.keycode == Common::KEYCODE_KP4)) {
+			_turnAmount = MAX(_turnAmount - 1, -8);
+		} else if ((event.kbd.keycode == Common::KEYCODE_RIGHT) || (event.kbd.keycode == Common::KEYCODE_KP6)) {
+			_turnAmount = MIN(_turnAmount + 1, -8);
+		}
+	}
+
+	if (_object5._action)
+		_object5._action->process(event);
+}
+
+void Scene6100::dispatch() {
+	Scene::dispatch();
+
+	if (_object5._action)
+		_object5._action->dispatch();
+
+	// Handle mouse controlling the turning
+	int changeAmount = (_globals->_events._mousePos.x - 160) / -20;
+	_turnAmount += (changeAmount - _turnAmount) / 2;
+
+	if (_fadePercent < 100) {
+		_fadePercent += 10;
+		if (_fadePercent >= 100) {
+			_globals->_scenePalette.addRotation(96, 143, -1);
+			_fadePercent = 100;
+		}
+
+		byte adjustData[] = {0xff, 0xff, 0xff, 0};
+		_globals->_scenePalette.fade(adjustData, false, _fadePercent);
+	}
+
+	if (_action != &_action3) {
+		// Display the distance remaining to the target
+		int distance = _object5._floats.sqrt(_object4._floats);
+		Common::String s = Common::String::format("%06lu", distance);
+
+		_sceneText.setPosition(Common::Point(24, 160));
+		_sceneText._fontNumber = 0;
+		_sceneText._colour1 = 35;
+		_sceneText.setup(s);
+	}
+
+	if (_field_314) {
+		if (_action == &_action5) {
+			double distance = _object5._floats.sqrt(_object4._floats);
+			
+			if ((distance >= 300.0) && (distance <= 500.0))
+				setAction(&_action6);
+		}
+	}
+}
+
+void Scene6100::showMessage(const Common::String &msg, int colour, Action *action) {
+	if (_msgActive) {
+		_msgActive = false;
 		_speaker1.removeText();
 	}
 
 	if (!msg.empty()) {
+		_msgActive = true;
 		_speaker1._textPos.x = 20;
 		_speaker1._textWidth = 280;
 		_speaker1._colour1 = colour;

@@ -37,12 +37,10 @@ Scene2::Scene2() {
 }
 
 void Object9350::postInit(SceneObjectList *OwnerList) {
-	warning("Object9350::postInit - Weird cast to be verified");
-	SceneObject::postInit((SceneObjectList*) &_globals->_sceneManager._sceneChangeListeners);
+	_globals->_sceneManager.postInit(&_globals->_sceneManager._altSceneObjects);
 }
 
 void Object9350::draw() {
-	warning("Scene9350::Object1::draw - TODO");
 	reposition();
 	Rect destRect = _bounds;
 	destRect.translate(-_globals->_sceneOffset.x, -_globals->_sceneOffset.y);
