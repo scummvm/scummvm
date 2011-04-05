@@ -308,22 +308,6 @@ enum WhereIsObject {
 	WIO_FLOBJECT = 4
 };
 
-struct AuxBlock {
-	bool visible;
-	Common::Rect r;
-
-	void reset() {
-		visible = false;
-		r.left = r.top = 0;
-		r.right = r.bottom = -1;
-	}
-};
-
-struct AuxEntry {
-	int actorNum;
-	int subIndex;
-};
-
 // TODO: Rename InfoStuff to something more descriptive
 struct InfoStuff {
 	uint32 date;
@@ -971,8 +955,6 @@ public:
 
 	// Generic costume code
 	bool isCostumeInUse(int i) const;
-
-	Common::Rect _actorClipOverride;	// HE specific
 
 protected:
 	/* Should be in Graphics class? */

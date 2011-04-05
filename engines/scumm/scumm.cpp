@@ -320,11 +320,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_V1TalkingActor = 0;
 	_NESStartStrip = 0;
 
-	_actorClipOverride.top = 0;
-	_actorClipOverride.bottom = 480;
-	_actorClipOverride.left = 0;
-	_actorClipOverride.right = 640;
-
 	_skipDrawObject = 0;
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
@@ -767,6 +762,12 @@ ScummEngine_v60he::ScummEngine_v60he(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v6(syst, dr) {
 	memset(_hInFileTable, 0, sizeof(_hInFileTable));
 	memset(_hOutFileTable, 0, sizeof(_hOutFileTable));
+
+	_actorClipOverride.top = 0;
+	_actorClipOverride.bottom = 480;
+	_actorClipOverride.left = 0;
+	_actorClipOverride.right = 640;
+
 	memset(_heTimers, 0, sizeof(_heTimers));
 
 	if (_game.heversion >= 61)

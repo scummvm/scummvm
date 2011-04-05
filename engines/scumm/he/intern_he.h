@@ -31,6 +31,7 @@
 #include "scumm/he/floodfill_he.h"
 #include "scumm/he/wiz_he.h"
 #endif
+#include "scumm/actor_he.h"	// For AuxBlock & AuxEntry
 
 namespace Common {
 class SeekableReadStream;
@@ -55,7 +56,10 @@ public:
 	Common::SeekableReadStream *_hInFileTable[17];
 	Common::WriteStream *_hOutFileTable[17];
 
+	Common::Rect _actorClipOverride;	// HE specific
+
 	int _heTimers[16];
+
 	int getHETimer(int timer);
 	void setHETimer(int timer);
 
