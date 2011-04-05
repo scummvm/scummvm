@@ -466,6 +466,7 @@ begin_credits("Credits");
 	begin_section("Engine Teams");
 	    begin_section("Grim");
 		add_person("James Brown", "ender", "Core developer");
+		add_person("Giulio Camuffo", "giucam", "Core developer");
 		add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Core developer. SMUSH, iMUSE implemention");
 	    end_section();
 

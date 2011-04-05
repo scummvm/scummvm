@@ -9,6 +9,8 @@ static const char *credits[] = {
 "C1""Grim",
 "C0""James Brown",
 "C2""Core developer",
+"C0""Giulio Camuffo",
+"C2""Core developer",
 "C0""Pawel Kolodziejski",
 "C2""Core developer. SMUSH, iMUSE implemention",
 "",
