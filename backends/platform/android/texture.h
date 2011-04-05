@@ -330,6 +330,12 @@ public:
 	virtual ~GLESFakePalette565Texture();
 };
 
+class GLESFakePalette5551Texture : public GLESFakePaletteTexture {
+public:
+	GLESFakePalette5551Texture();
+	virtual ~GLESFakePalette5551Texture();
+};
+
 #endif
 #endif
 

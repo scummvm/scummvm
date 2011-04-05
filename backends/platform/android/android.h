@@ -129,7 +129,7 @@ private:
 
 	// Mouse layer
 	GLESBaseTexture *_mouse_texture;
-	GLESPaletteTexture *_mouse_texture_palette;
+	GLESBaseTexture *_mouse_texture_palette;
 	GLES5551Texture *_mouse_texture_rgb;
 	Common::Point _mouse_hotspot;
 	uint32 _mouse_keycolor;

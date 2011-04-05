@@ -584,5 +584,13 @@ GLESFakePalette565Texture::GLESFakePalette565Texture() :
 GLESFakePalette565Texture::~GLESFakePalette565Texture() {
 }
 
+GLESFakePalette5551Texture::GLESFakePalette5551Texture() :
+	GLESFakePaletteTexture(GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1,
+							GLES5551Texture::pixelFormat()) {
+}
+
+GLESFakePalette5551Texture::~GLESFakePalette5551Texture() {
+}
+
 #endif
 
