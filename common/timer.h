@@ -55,6 +55,26 @@ public:
 	 * and no instance of this callback will be running anymore.
 	 */
 	virtual void removeTimerProc(TimerProc proc) = 0;
+
+	/**
+	 * Start an event timer.
+	 *
+	 * When the timer is called, it will push a custom event of type MESSAGE_TIMER
+	 * into the event queue with the timer id as param1
+	 *
+	 * @param id        the identifier.
+	 * @param interval  the interval in which the timer shall be invoked (in microseconds)
+	 *
+	 * @return	true if the timer was started successfully, false otherwise.
+	 */
+	virtual bool startEventTimer(int32 id, int32 interval) = 0;
+
+	/**
+	 * Stop an event timer.
+	 *
+	 * @param id        the identifier
+	 */
+	virtual void stopEventTimer(int32 id) = 0;
 };
 
 } // End of namespace Common

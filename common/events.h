@@ -29,6 +29,7 @@
 #include "common/keyboard.h"
 #include "common/queue.h"
 #include "common/rect.h"
+#include "common/mutex.h"
 #include "common/noncopyable.h"
 
 #include "common/list.h"
@@ -74,7 +75,8 @@ enum EventType {
 
 enum CustomEventMessage {
 	MESSAGE_INVALID           = 0,
-	MESSAGE_PREDICTIVE_DIALOG = 1    ///< The backend requests the agi engine's predictive dialog to be shown
+	MESSAGE_PREDICTIVE_DIALOG = 1,    ///< The backend requests the agi engine's predictive dialog to be shown
+	MESSAGE_TIMER             = 2
 };
 
 struct BaseEvent {
@@ -234,13 +236,19 @@ public:
 class ArtificialEventSource : public EventSource {
 protected:
 	Common::Queue<Common::Event> _artificialEventQueue;
+	Common::Mutex _mutex;
+
 public:
 	void addEvent(const Common::Event &ev) {
+		Common::StackLock lock(_mutex);
+
 		_artificialEventQueue.push(ev);
 	}
 
 	bool pollEvent(Common::Event &ev) {
-	if (!_artificialEventQueue.empty()) {
+		Common::StackLock lock(_mutex);
+
+		if (!_artificialEventQueue.empty()) {
 			ev = _artificialEventQueue.pop();
 			return true;
 		} else {

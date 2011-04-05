@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "backends/timer/default/default-timer.h"
+#include "common/events.h"
 #include "common/util.h"
 #include "common/system.h"
 
@@ -149,4 +150,42 @@ void DefaultTimerManager::removeTimerProc(TimerProc callback) {
 			slot = slot->next;
 		}
 	}
+}
+
+bool DefaultTimerManager::startEventTimer(int32 id, int32 interval) {
+	// Try to stop existing event timer with that id
+	stopEventTimer(id);
+
+	// Install our event timer procedure, with the id as reference data
+	return installTimerProc(eventTimerCallback, interval, (void *)id);
+}
+
+void DefaultTimerManager::stopEventTimer(int32 id) {
+	// This is almost identical to removeTimerProc:
+	//  - only for our specific event timer callback
+	//  - checks the event id and only remove one callback and not all of them
+	Common::StackLock lock(_mutex);
+
+	TimerSlot *slot = _head;
+
+	while (slot->next) {
+		if (slot->next->callback == &eventTimerCallback && slot->next->refCon == (void *)id) {
+			TimerSlot *next = slot->next->next;
+			delete slot->next;
+			slot->next = next;
+		} else {
+			slot = slot->next;
+		}
+	}
+}
+
+void DefaultTimerManager::eventTimerCallback(void *id) {
+	// Create a custom event with our id
+	Common::Event evt;
+	evt.type = Common::EVENT_CUSTOM;
+	evt.custom.message = Common::MESSAGE_TIMER;
+	evt.custom.param1 = id;
+
+	// Push the event into the event queue
+	g_system->getEventManager()->pushEvent(evt);
 }

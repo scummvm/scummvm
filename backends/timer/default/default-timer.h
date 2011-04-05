@@ -38,11 +38,20 @@ private:
 	void *_timerHandler;
 	TimerSlot *_head;
 
+	/**
+	 * The event timer callback, used by the event timer functions
+	 *
+	 * @param id    the identifier
+	 */
+	static void eventTimerCallback(void *id);
+
 public:
 	DefaultTimerManager();
 	~DefaultTimerManager();
 	bool installTimerProc(TimerProc proc, int32 interval, void *refCon);
 	void removeTimerProc(TimerProc proc);
+	virtual bool startEventTimer(int32 id, int32 interval);
+	virtual void stopEventTimer(int32 id);
 
 	/**
 	 * Timer callback, to be invoked at regular time intervals by the backend.
