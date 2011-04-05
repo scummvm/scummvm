@@ -135,7 +135,10 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_trackball_scale(2) {
 	Common::String fp = getSystemProperty("ro.build.fingerprint");
 
-	LOGI("Running on: [%s] [%s] SDK:%s ABI:%s",
+	LOGI("Running on: [%s] [%s] [%s] [%s] [%s] SDK:%s ABI:%s",
+			getSystemProperty("ro.product.manufacturer").c_str(),
+			getSystemProperty("ro.product.model").c_str(),
+			getSystemProperty("ro.product.brand").c_str(),
 			fp.c_str(),
 			getSystemProperty("ro.build.display.id").c_str(),
 			getSystemProperty("ro.build.version.sdk").c_str(),
