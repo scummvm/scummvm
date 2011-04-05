@@ -434,9 +434,6 @@ void Actor::turnTo(float pitchParam, float yawParam, float rollParam) {
 }
 
 void Actor::walkTo(Graphics::Vector3d p) {
-	// For now, this is just the ignoring-boxes version (which afaict
-	// isn't even in the original).  This will eventually need a
-	// following-boxes version also.
 	if (p == _pos)
 		_walking = false;
 	else {
