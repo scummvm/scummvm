@@ -132,6 +132,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG2,          260,   260,  0,             "abdulS", "changeState",0x2d22,   -1, { WORKAROUND_FAKE,   0 } }, // During the thief's first mission (in the house), just before Abdul is about to enter the house (where you have to hide in the wardrobe), bug #3039891, temps 1 and 2
 	{ GID_QFG2,          260,   260,  0,            "jabbarS", "changeState",0x2d22,   -1, { WORKAROUND_FAKE,   0 } }, // During the thief's first mission (in the house), just before Jabbar is about to enter the house (where you have to hide in the wardrobe), bug #3040469, temps 1 and 2
 	{ GID_QFG2,          500,   500,  0,   "lightNextCandleS", "changeState",    -1,   -1, { WORKAROUND_FAKE,   0 } }, // Inside the last room, while Ad Avis performs the ritual to summon the genie - bug #3148418
+	{ GID_QFG2,           -1,   700,  0,          "alleyRoom", "showSign",       -1,   10, { WORKAROUND_FAKE,   0 } }, // Occurs sometimes when reading a sign - bug #3272735
 	{ GID_QFG3,          510,   510,  0,         "awardPrize", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // Simbani warrior challenge, after throwing the spears and retrieving the ring - bug #3049435
 	{ GID_QFG3,          140,   140,  0,              "rm140", "init",       0x1008,    0, { WORKAROUND_FAKE,   0 } }, // when importing a character and selecting the previous profession - bug #3040460
 	{ GID_QFG3,          330,   330, -1,             "Teller", "doChild",        -1,   -1, { WORKAROUND_FAKE,   0 } }, // when talking to King Rajah about "Rajah" (bug #3036390, temp 1) or "Tarna" (temp 0), or when clicking on yourself and saying "Greet" (bug #3039774, temp 1)
@@ -142,7 +143,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG3,          851,    32, -1,            "ProjObj", "doit",           -1,    1, { WORKAROUND_FAKE,   0 } }, // near the end, when throwing the spear of death, bug #3050122
 	{ GID_QFG4,           -1,    15, -1,     "charInitScreen", "dispatchEvent",  -1,    5, { WORKAROUND_FAKE,   0 } }, // floppy version, when viewing the character screen
 	{ GID_QFG4,           -1, 64917, -1,       "controlPlane", "setBitmap",      -1,    3, { WORKAROUND_FAKE,   0 } }, // floppy version, when entering the game menu
-	{ GID_QFG4,           -1, 64917, -1,              "Plane", "setBitmap",      -1,    3, { WORKAROUND_FAKE,   0 } }, // floppy version, happen sometimes in fights
+	{ GID_QFG4,           -1, 64917, -1,              "Plane", "setBitmap",      -1,    3, { WORKAROUND_FAKE,   0 } }, // floppy version, happens sometimes in fight scenes
 	{ GID_RAMA,           12, 64950, -1,   "InterfaceFeature", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // Demo, right when it starts
 	{ GID_RAMA,           12, 64950, -1,      "hiliteOptText", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // Demo, right when it starts
 	{ GID_RAMA,           12, 64950, -1,               "View", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // Demo, right when it starts

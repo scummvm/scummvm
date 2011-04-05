@@ -430,7 +430,9 @@ void OSystem_Android::updateScreen() {
 	_force_redraw = false;
 
 	// clear pointer leftovers in dead areas
-	if (_show_overlay && !_fullscreen)
+	// also, HTC's GLES drivers are made of fail and don't preserve the buffer
+	// ( http://www.khronos.org/registry/egl/specs/EGLTechNote0001.html )
+	if ((_show_overlay || _htc_fail) && !_fullscreen)
 		clearScreen(kClear);
 
 	GLCALL(glPushMatrix());
@@ -525,14 +527,6 @@ void OSystem_Android::updateScreen() {
 
 	if (!JNI::swapBuffers())
 		LOGW("swapBuffers failed: 0x%x", glGetError());
-
-	// HTC's GLES drivers are made of fail
-	// http://code.google.com/p/android/issues/detail?id=3047
-	if (!_show_overlay && _htc_fail) {
-		const Common::Rect &rect = _game_texture->getDrawRect();
-
-		glScissor(rect.left, rect.top, rect.width(), rect.height());
-	}
 }
 
 Graphics::Surface *OSystem_Android::lockScreen() {
