@@ -171,7 +171,7 @@ void VirtualKeyboard::processAreaClick(const String& area) {
 	switch (evt->type) {
 	case kVKEventKey:
 		// add virtual keypress to queue
-                _keyQueue.insertKey(*(KeyboardEvent*)evt->data);
+		_keyQueue.insertKey(*(KeyboardEvent*)evt->data);
 		break;
 	case kVKEventModifier:
 		_keyQueue.toggleFlags(*(byte*)(evt->data));
@@ -245,10 +245,10 @@ void VirtualKeyboard::show() {
 		assert(eventMan);
 
 		// push keydown & keyup events into the event manager
-                Event evt;
+		Event evt;
 		while (!_keyQueue.empty()) {
-                        evt.kbd = _keyQueue.pop();
-                        evt.kbd.synthetic = false;
+			evt.kbd = _keyQueue.pop();
+			evt.kbd.synthetic = false;
 			evt.type = EVENT_KEYDOWN;
 			eventMan->pushEvent(evt);
 			evt.type = EVENT_KEYUP;
