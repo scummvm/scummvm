@@ -1186,7 +1186,7 @@ SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int 
 	desc.setDeletableFlag(true);
 	desc.setThumbnail(thumbnail);
 
-	InfoStuff infos;
+	SaveStateMetaInfos infos;
 	memset(&infos, 0, sizeof(infos));
 	if (ScummEngine::loadInfosFromSlot(target, slot, &infos)) {
 		int day = (infos.date >> 24) & 0xFF;

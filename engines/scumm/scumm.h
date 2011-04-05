@@ -308,8 +308,7 @@ enum WhereIsObject {
 	WIO_FLOBJECT = 4
 };
 
-// TODO: Rename InfoStuff to something more descriptive
-struct InfoStuff {
+struct SaveStateMetaInfos {
 	uint32 date;
 	uint16 time;
 	uint32 playtime;
@@ -678,11 +677,11 @@ public:
 	}
 	static Graphics::Surface *loadThumbnailFromSlot(const char *target, int slot);
 
-	static bool loadInfosFromSlot(const char *target, int slot, InfoStuff *stuff);
+	static bool loadInfosFromSlot(const char *target, int slot, SaveStateMetaInfos *stuff);
 
 protected:
 	void saveInfos(Common::WriteStream* file);
-	static bool loadInfos(Common::SeekableReadStream *file, InfoStuff *stuff);
+	static bool loadInfos(Common::SeekableReadStream *file, SaveStateMetaInfos *stuff);
 
 protected:
 	/* Script VM - should be in Script class */

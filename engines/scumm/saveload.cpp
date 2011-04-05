@@ -373,7 +373,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// Since version 56 we save additional information about the creation of
 	// the save game and the save time.
 	if (hdr.ver >= VER(56)) {
-		InfoStuff infos;
+		SaveStateMetaInfos infos;
 		if (!loadInfos(in, &infos)) {
 			warning("Info section could not be found");
 			delete in;
@@ -703,7 +703,7 @@ Graphics::Surface *ScummEngine::loadThumbnailFromSlot(const char *target, int sl
 	return thumb;
 }
 
-bool ScummEngine::loadInfosFromSlot(const char *target, int slot, InfoStuff *stuff) {
+bool ScummEngine::loadInfosFromSlot(const char *target, int slot, SaveStateMetaInfos *stuff) {
 	Common::SeekableReadStream *in;
 	SaveGameHeader hdr;
 
@@ -741,8 +741,8 @@ bool ScummEngine::loadInfosFromSlot(const char *target, int slot, InfoStuff *stu
 	return true;
 }
 
-bool ScummEngine::loadInfos(Common::SeekableReadStream *file, InfoStuff *stuff) {
-	memset(stuff, 0, sizeof(InfoStuff));
+bool ScummEngine::loadInfos(Common::SeekableReadStream *file, SaveStateMetaInfos *stuff) {
+	memset(stuff, 0, sizeof(SaveStateMetaInfos));
 
 	SaveInfoSection section;
 	section.type = file->readUint32BE();
