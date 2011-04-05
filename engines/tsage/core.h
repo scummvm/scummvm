@@ -712,12 +712,12 @@ public:
 class SceneObjectList: public SavedObject {
 private:
 	void checkIntersection(Common::Array<SceneObject *> &ObjList, uint ObjIndex, int PaneNum);
-	void sortList(Common::Array<SceneObject *> &ObjList);
 
 	List<SceneObject *> _objList;
 	bool _listAltered;
 public:
 	SceneObjectList() { _listAltered = false; }
+	void sortList(Common::Array<SceneObject *> &ObjList);
 
 	virtual Common::String getClassName() { return "SceneObjectList"; }
 	virtual void synchronise(Serialiser &s);
@@ -944,7 +944,7 @@ public:
 	virtual void process(Event &event);
 	virtual void dispatch();
 
-	static void handleListener(EventHandler *obj);
+	static void dispatchObject(EventHandler *obj);
 	static void saveListener(Serialiser &ser);
 };
 

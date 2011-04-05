@@ -3499,7 +3499,7 @@ void SceneHandler::dispatch() {
 	_globals->_scenePalette.signalListeners();
 
 	// Dispatch to any objects registered in the scene
-	_globals->_sceneObjects->recurse(SceneHandler::handleListener);
+	_globals->_sceneObjects->recurse(SceneHandler::dispatchObject);
 
 	// If a scene is active, then dispatch to it
 	if (_globals->_sceneManager._scene) 
@@ -3521,7 +3521,7 @@ void SceneHandler::dispatch() {
 	_globals->_events.delay(_delayTicks);
 }
 
-void SceneHandler::handleListener(EventHandler *obj) {
+void SceneHandler::dispatchObject(EventHandler *obj) {
 	obj->dispatch();
 }
 

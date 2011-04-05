@@ -54,7 +54,7 @@ void SceneManager::checkScene() {
 		_nextSceneNumber = -1;
 	}
 
-	_globals->_sceneListeners.forEach(SceneHandler::handleListener);
+	_globals->_sceneListeners.forEach(SceneHandler::dispatchObject);
 }
 
 void SceneManager::sceneChange() {
@@ -70,8 +70,13 @@ void SceneManager::sceneChange() {
 		sceneObj->removeObject();
 	}
 
-	// Clear the scene change listeners
-	_globals->_sceneManager._sceneChangeListeners.clear();
+	// Clear the secondary scene object list
+	io = _globals->_sceneManager._altSceneObjects.begin();
+	while (io != _globals->_sceneManager._altSceneObjects.end()) {
+		SceneObject *sceneObj = *io;
+		++io;
+		sceneObj->removeObject();
+	}
 
 	// Clear the hotspot list
 	List<SceneItem *>::iterator ii = _globals->_sceneItems.begin();
@@ -204,7 +209,7 @@ void SceneManager::setBgOffset(const Common::Point &pt, int loadCount) {
 
 void SceneManager::listenerSynchronise(Serialiser &s) {
 	s.validate("SceneManager");
-	_sceneChangeListeners.synchronise(s);
+	_altSceneObjects.synchronise(s);
 	
 	s.syncAsSint32LE(_sceneNumber);
 	if (s.isLoading()) {
@@ -398,12 +403,36 @@ void Scene::refreshBackground(int xAmount, int yAmount) {
 	}
 
 	if (changedFlag) {
-		signalListeners();
+		drawAltObjects();
 	}
 }
 
-void Scene::signalListeners() {
-	// TODO: Figure out method
+void Scene::drawAltObjects() {
+	Common::Array<SceneObject *> objList;
+
+	// Initial loop to set the priority for entries in the list
+	for (List<SceneObject *>::iterator i = _globals->_sceneManager._altSceneObjects.begin();
+		i != _globals->_sceneManager._altSceneObjects.end(); ++i) {
+		SceneObject *obj = *i;
+		objList.push_back(obj);
+
+		// Handle updating object priority
+		if (!(obj->_flags & OBJFLAG_FIXED_PRIORITY)) {
+			obj->_priority = MIN((int)obj->_position.y - 1, 
+				(int)_globals->_sceneManager._scene->_backgroundBounds.bottom);
+		}
+	}
+
+	// Sort the list by priority
+	_globals->_sceneManager._altSceneObjects.sortList(objList);
+
+	// Drawing loop
+	for (uint objIndex = 0; objIndex < objList.size(); ++objIndex) {
+		SceneObject *obj = objList[objIndex];
+
+		obj->reposition();
+		obj->draw();
+	}	
 }
 
 void Scene::setZoomPercents(int yStart, int minPercent, int yEnd, int maxPercent) {

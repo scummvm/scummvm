@@ -37,8 +37,7 @@ Scene2::Scene2() {
 }
 
 void Object9350::postInit(SceneObjectList *OwnerList) {
-	warning("Object9350::postInit - Weird cast to be verified");
-	_globals->_sceneManager.postInit((SceneObjectList*) &_globals->_sceneManager._sceneChangeListeners);
+	_globals->_sceneManager.postInit(&_globals->_sceneManager._altSceneObjects);
 }
 
 void Object9350::draw() {
