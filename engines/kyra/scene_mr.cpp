@@ -36,20 +36,13 @@ void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	_screen->hideMouse();
 
 	showMessage(0, 0xF0, 0xF0);
-	if (_inventoryState) {
+	if (_inventoryState)
 		hideInventory();
-		musicUpdate(0);
-	}
 
-	musicUpdate(0);
 	if (_currentChapter != _currentTalkFile) {
 		_currentTalkFile = _currentChapter;
 		openTalkFile(_currentTalkFile);
 	}
-	musicUpdate(0);
-
-	if (!unk3)
-		musicUpdate(0);
 
 	if (unk1) {
 		int x = _mainCharacter.x1;
@@ -73,11 +66,9 @@ void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 			break;
 		}
 
-		musicUpdate(0);
 		moveCharacter(facing, x, y);
 	}
 
-	musicUpdate(0);
 	uint32 waitUntilTimer = 0;
 	if (_lastMusicCommand != _sceneList[sceneId].sound) {
 		fadeOutMusic(60);
@@ -89,33 +80,23 @@ void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	if (!unk3) {
 		_emc->init(&_sceneScriptState, &_sceneScriptData);
 		_emc->start(&_sceneScriptState, 5);
-		while (_emc->isValid(&_sceneScriptState)) {
+		while (_emc->isValid(&_sceneScriptState))
 			_emc->run(&_sceneScriptState);
-			musicUpdate(0);
-		}
 	}
-
-	musicUpdate(0);
 
 	_specialExitCount = 0;
 	Common::set_to(_specialExitTable, _specialExitTable+ARRAYSIZE(_specialExitTable), 0xFFFF);
 
-	musicUpdate(0);
-
 	_mainCharacter.sceneId = sceneId;
 	_sceneList[sceneId].flags &= ~1;
-	musicUpdate(0);
 	unloadScene();
-	musicUpdate(0);
 
 	for (int i = 0; i < 4; ++i) {
 		if (i != _musicSoundChannel && i != _fadeOutMusicChannel)
 			_soundDigital->stopSound(i);
 	}
 	_fadeOutMusicChannel = -1;
-	musicUpdate(0);
 	loadScenePal();
-	musicUpdate(0);
 
 	if (queryGameFlag(0x1D9)) {
 		char filename[20];
@@ -141,9 +122,7 @@ void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 		resetGameFlag(0x1D9);
 	}
 
-	musicUpdate(0);
 	loadSceneMsc();
-	musicUpdate(0);
 	_sceneExit1 = _sceneList[sceneId].exit1;
 	_sceneExit2 = _sceneList[sceneId].exit2;
 	_sceneExit3 = _sceneList[sceneId].exit3;
@@ -152,9 +131,7 @@ void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	while (_system->getMillis() < waitUntilTimer)
 		_system->delayMillis(10);
 
-	musicUpdate(0);
 	initSceneScript(unk3);
-	musicUpdate(0);
 
 	if (_overwriteSceneFacing) {
 		facing = _mainCharacter.facing;
@@ -162,7 +139,6 @@ void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	}
 
 	enterNewSceneUnk1(facing, unk2, unk3);
-	musicUpdate(0);
 	setCommandLineRestoreTimer(-1);
 	_sceneScriptState.regs[3] = 1;
 	enterNewSceneUnk2(unk3);
@@ -306,13 +282,9 @@ void KyraEngine_MR::enterNewSceneUnk2(int unk1) {
 void KyraEngine_MR::unloadScene() {
 	delete[] _sceneStrings;
 	_sceneStrings = 0;
-	musicUpdate(0);
 	_emc->unload(&_sceneScriptData);
-	musicUpdate(0);
 	freeSceneShapes();
-	musicUpdate(0);
 	freeSceneAnims();
-	musicUpdate(0);
 }
 
 void KyraEngine_MR::freeSceneShapes() {
@@ -356,13 +328,11 @@ void KyraEngine_MR::loadSceneMsc() {
 	height = stream->readSint16LE();
 	delete stream;
 	stream = 0;
-	musicUpdate(0);
 	_maskPageMinY = minY;
 	_maskPageMaxY = minY + height - 1;
 
 	_screen->setShapePages(5, 3, _maskPageMinY, _maskPageMaxY);
 
-	musicUpdate(0);
 	_screen->loadBitmap(filename, 5, 5, 0, true);
 
 	// HACK
@@ -372,12 +342,10 @@ void KyraEngine_MR::loadSceneMsc() {
 	_screen->copyBlockToPage(5, 0, _maskPageMinY, 320, height, data);
 	delete[] data;
 
-	musicUpdate(0);
 }
 
 void KyraEngine_MR::initSceneScript(int unk1) {
 	const SceneDesc &scene = _sceneList[_mainCharacter.sceneId];
-	musicUpdate(0);
 
 	char filename[16];
 	strcpy(filename, scene.filename1);
@@ -400,7 +368,6 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 	if (shapesCount > 0) {
 		strcpy(filename, scene.filename1);
 		strcat(filename, "9.CPS");
-		musicUpdate(0);
 		_screen->loadBitmap(filename, 3, 3, 0);
 		int pageBackUp = _screen->_curPage;
 		_screen->_curPage = 2;
@@ -413,19 +380,15 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 			_sceneShapeDescs[i].drawY = stream->readSint16LE();
 			_sceneShapes[i] = _screen->encodeShape(x, y, w, h, 0);
 			assert(_sceneShapes[i]);
-			musicUpdate(0);
 		}
 		_screen->_curPage = pageBackUp;
-		musicUpdate(0);
 	}
 	delete stream;
 	stream = 0;
-	musicUpdate(0);
 
 	strcpy(filename, scene.filename1);
 	strcat(filename, ".CPS");
 	_screen->loadBitmap(filename, 3, 3, 0);
-	musicUpdate(0);
 
 	Common::set_to(_specialSceneScriptState, _specialSceneScriptState+ARRAYSIZE(_specialSceneScriptState), false);
 	_sceneEnterX1 = 160;
@@ -442,14 +405,12 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 	_emc->init(&_sceneScriptState, &_sceneScriptData);
 	strcpy(filename, scene.filename2);
 	strcat(filename, ".EMC");
-	musicUpdate(0);
 	_res->exists(filename, true);
 	_emc->load(filename, &_sceneScriptData, &_opcodes);
 
 	strcpy(filename, scene.filename2);
 	strcat(filename, ".");
 	loadLanguageFile(filename, _sceneStrings);
-	musicUpdate(0);
 
 	runSceneScript8();
 	_emc->start(&_sceneScriptState, 0);
@@ -459,12 +420,10 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 		_emc->run(&_sceneScriptState);
 
 	_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _gamePlayBuffer);
-	musicUpdate(0);
 
 	for (int i = 0; i < 10; ++i) {
 		_emc->init(&_sceneSpecialScripts[i], &_sceneScriptData);
 		_emc->start(&_sceneSpecialScripts[i], i+9);
-		musicUpdate(0);
 		_sceneSpecialScriptsTimer[i] = 0;
 	}
 
@@ -476,7 +435,6 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 	_sceneEnterY3 &= ~1;
 	_sceneEnterX4 &= ~3;
 	_sceneEnterY4 &= ~1;
-	musicUpdate(0);
 }
 
 void KyraEngine_MR::initSceneAnims(int unk1) {
@@ -789,10 +747,8 @@ void KyraEngine_MR::runSceneScript4(int unk1) {
 
 void KyraEngine_MR::runSceneScript8() {
 	_emc->start(&_sceneScriptState, 8);
-	while (_emc->isValid(&_sceneScriptState)) {
-		musicUpdate(0);
+	while (_emc->isValid(&_sceneScriptState))
 		_emc->run(&_sceneScriptState);
-	}
 }
 
 bool KyraEngine_MR::lineIsPassable(int x, int y) {

@@ -340,10 +340,8 @@ void KyraEngine_MR::objectChatWaitToFinish() {
 			_emc->start(&_chatScriptState, 1);
 
 		_animNeedUpdate = false;
-		while (!_animNeedUpdate && _emc->isValid(&_chatScriptState) && !shouldQuit()) {
-			musicUpdate(0);
+		while (!_animNeedUpdate && _emc->isValid(&_chatScriptState) && !shouldQuit())
 			_emc->run(&_chatScriptState);
-		}
 
 		int curFrame = _animNewFrame;
 		uint32 delayTime = _animDelayTime;

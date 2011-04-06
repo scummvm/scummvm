@@ -336,7 +336,6 @@ void KyraEngine_MR::setupSceneAnimObject(int animId, uint16 flags, int x, int y,
 
 	if (flags & 8) {
 		_sceneAnimMovie[animId]->open(filename, 1, 0);
-		musicUpdate(0);
 		if (_sceneAnimMovie[animId]->opened()) {
 			anim.wsaFlag = 1;
 			if (x2 == -1)

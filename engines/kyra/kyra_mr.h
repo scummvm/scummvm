@@ -122,7 +122,6 @@ private:
 	void snd_playWanderScoreViaMap(int track, int force);
 	void stopMusicTrack();
 
-	int musicUpdate(int forceRestart);
 	void fadeOutMusic(int ticks);
 
 	void snd_playSoundEffect(int item, int volume);

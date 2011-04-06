@@ -857,8 +857,6 @@ int KyraEngine_MR::o3_defineSceneAnim(EMCState *script) {
 	const int animId = stackPos(0);
 	SceneAnim &anim = _sceneAnims[animId];
 
-	musicUpdate(0);
-
 	uint16 flags = anim.flags = stackPos(1);
 	int x = anim.x = stackPos(2);
 	int y = anim.y = stackPos(3);
@@ -875,7 +873,6 @@ int KyraEngine_MR::o3_defineSceneAnim(EMCState *script) {
 
 	if (flags & 8) {
 		_sceneAnimMovie[animId]->open(filename, 1, 0);
-		musicUpdate(0);
 		if (_sceneAnimMovie[animId]->opened()) {
 			anim.wsaFlag = 1;
 			if (x2 == -1)
@@ -899,8 +896,6 @@ int KyraEngine_MR::o3_defineSceneAnim(EMCState *script) {
 			anim.height = h;
 		}
 	}
-
-	musicUpdate(0);
 
 	return 9;
 }
@@ -1080,7 +1075,6 @@ int KyraEngine_MR::o3_setupSceneAnimObject(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setupSceneAnimObject(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %s)", (const void *)script,
 			stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9),
 			stackPos(10), stackPos(11), stackPosString(12));
-	musicUpdate(0);
 	setupSceneAnimObject(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8),
 						stackPos(9), stackPos(10), stackPos(11), stackPosString(12));
 	return 0;

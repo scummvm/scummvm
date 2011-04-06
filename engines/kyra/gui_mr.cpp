@@ -830,8 +830,6 @@ void KyraEngine_MR::processAlbum() {
 		checkInput(buttonList);
 		removeInputTop();
 
-		musicUpdate(0);
-
 		if (_album.curPage != _album.nextPage) {
 			int oldPage = _album.curPage;
 			_album.curPage = _album.nextPage;
@@ -1085,11 +1083,6 @@ void GUI_MR::flagButtonDisable(Button *button) {
 	}
 }
 
-void GUI_MR::getInput() {
-	_vm->musicUpdate(0);
-	GUI_v2::getInput();
-}
-
 const char *GUI_MR::getMenuTitle(const Menu &menu) {
 	if (!menu.menuNameId)
 		return 0;
@@ -1173,8 +1166,6 @@ int GUI_MR::quitGame(Button *caller) {
 int GUI_MR::optionsButton(Button *button) {
 	PauseTimer pause(*_vm->_timer);
 
-	_vm->musicUpdate(0);
-
 	_screen->hideMouse();
 	updateButton(&_vm->_mainButtonData[0]);
 	_screen->showMouse();
@@ -1200,7 +1191,6 @@ int GUI_MR::optionsButton(Button *button) {
 
 	int oldHandItem = _vm->_itemInHand;
 	_screen->setMouseCursor(0, 0, _vm->getShapePtr(0));
-	_vm->musicUpdate(0);
 
 	_displayMenu = true;
 	for (int i = 0; i < 4; ++i) {
@@ -1225,8 +1215,6 @@ int GUI_MR::optionsButton(Button *button) {
 	initMenuLayout(_deathMenu);
 
 	_currentMenu = &_mainMenu;
-
-	_vm->musicUpdate(0);
 
 	if (_vm->_menuDirectlyToLoad) {
 		backUpPage1(_vm->_screenBuffer);
@@ -1256,7 +1244,6 @@ int GUI_MR::optionsButton(Button *button) {
 		_isDeathMenu = false;
 	}
 
-	_vm->musicUpdate(0);
 	backUpPage1(_vm->_screenBuffer);
 	initMenu(*_currentMenu);
 	_madeSave = false;
@@ -1407,7 +1394,6 @@ int GUI_MR::gameOptions(Button *caller) {
 }
 
 void GUI_MR::setupOptionsButtons() {
-	_vm->musicUpdate(0);
 	if (_vm->_configWalkspeed == 3)
 		_gameOptions.item[0].itemId = 28;
 	else
