@@ -426,9 +426,7 @@ void KyraEngine_MR::snd_playWanderScoreViaMap(int track, int force) {
 	if (_musicSoundChannel == -1) {
 		assert(track < _soundListSize && track >= 0);
 
-		char file[13];
-		sprintf(file, "%s", _soundList[track]);
-		_musicSoundChannel = _soundDigital->playSound(file, 0xFF, Audio::Mixer::kMusicSoundType, true);
+		_musicSoundChannel = _soundDigital->playSound(_soundList[track], 0xFF, Audio::Mixer::kMusicSoundType, 255, true);
 	}
 
 	_lastMusicCommand = track;
