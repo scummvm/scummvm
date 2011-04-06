@@ -234,6 +234,7 @@ private:
 	int _touchpad_scale;
 	int _trackball_scale;
 	int _dpad_scale;
+	int _fingersDown;
 
 	void clipMouse(Common::Point &p);
 	void scaleMouse(Common::Point &p, int x, int y, bool deductDrawRect = true);

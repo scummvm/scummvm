@@ -43,7 +43,8 @@ enum {
 	JE_SCROLL = 4,
 	JE_TAP = 5,
 	JE_DOUBLE_TAP = 6,
-	JE_BALL = 7,
+	JE_MULTI = 7,
+	JE_BALL = 8,
 	JE_QUIT = 0x1000
 };
 
@@ -51,7 +52,9 @@ enum {
 enum {
 	JACTION_DOWN = 0,
 	JACTION_UP = 1,
-	JACTION_MULTIPLE = 2
+	JACTION_MULTIPLE = 2,
+	JACTION_POINTER_DOWN = 5,
+	JACTION_POINTER_UP = 6
 };
 
 // system keys
@@ -549,6 +552,11 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		return;
 
 	case JE_TAP:
+		if (_fingersDown > 0) {
+			_fingersDown = 0;
+			return;
+		}
+
 		e.type = Common::EVENT_MOUSEMOVE;
 
 		if (_touchpad_mode) {
@@ -639,6 +647,54 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			e.type = dptype;
 			_event_queue.push(e);
 			unlockMutex(_event_queue_lock);
+		}
+
+		return;
+
+	case JE_MULTI:
+		switch (arg2) {
+		case JACTION_POINTER_DOWN:
+			if (arg1 > _fingersDown)
+				_fingersDown = arg1;
+
+			return;
+
+		case JACTION_POINTER_UP:
+			if (arg1 != _fingersDown)
+				return;
+
+			{
+				Common::EventType up;
+
+				switch (_fingersDown) {
+				case 1:
+					e.type = Common::EVENT_RBUTTONDOWN;
+					up = Common::EVENT_RBUTTONUP;
+					break;
+				case 2:
+					e.type = Common::EVENT_MBUTTONDOWN;
+					up = Common::EVENT_MBUTTONUP;
+					break;
+				default:
+					LOGD("unmapped multi tap: %d", _fingersDown);
+					return;
+				}
+
+				e.mouse = getEventManager()->getMousePos();
+
+				lockMutex(_event_queue_lock);
+
+				_event_queue.push(e);
+				e.type = up;
+				_event_queue.push(e);
+
+				unlockMutex(_event_queue_lock);
+				return;
+
+			default:
+				LOGE("unhandled jaction on multi tap: %d", arg2);
+				return;
+			}
 		}
 
 		return;

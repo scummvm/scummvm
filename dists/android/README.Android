@@ -42,6 +42,11 @@ CONTROLS
     Tap held for >1s without movement: Middle mouse button click
     Double Tap + movement: Drag and drop
 
+    On devices supporting multitouch:
+
+    Two finger tap: Right mouse button click
+    Three finger tap: Middle mouse button click
+
   System keys
 
     Back button: Escape

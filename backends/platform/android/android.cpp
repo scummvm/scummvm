@@ -132,6 +132,7 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_touchpad_mode(true),
 	_touchpad_scale(66),
 	_dpad_scale(4),
+	_fingersDown(0),
 	_trackball_scale(2) {
 	Common::String mf = getSystemProperty("ro.product.manufacturer");
 
