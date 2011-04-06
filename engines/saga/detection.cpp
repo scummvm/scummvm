@@ -372,12 +372,13 @@ Common::Error SagaEngine::saveGameState(int slot, const char *desc) {
 }
 
 bool SagaEngine::canLoadGameStateCurrently() {
-	return !_scene->isInIntro();
+	return !_scene->isInIntro() &&
+		(_interface->getMode() == kPanelMain || _interface->getMode() == kPanelChapterSelection);
 }
 
 bool SagaEngine::canSaveGameStateCurrently() {
 	return !_scene->isInIntro() &&
-		   (_interface->getMode() == kPanelMain || _interface->getMode() == kPanelChapterSelection);
+		(_interface->getMode() == kPanelMain || _interface->getMode() == kPanelChapterSelection);
 }
 
 } // End of namespace Saga

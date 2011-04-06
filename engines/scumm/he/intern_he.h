@@ -31,6 +31,7 @@
 #include "scumm/he/floodfill_he.h"
 #include "scumm/he/wiz_he.h"
 #endif
+#include "scumm/actor_he.h"	// For AuxBlock & AuxEntry
 
 namespace Common {
 class SeekableReadStream;
@@ -55,13 +56,18 @@ public:
 	Common::SeekableReadStream *_hInFileTable[17];
 	Common::WriteStream *_hOutFileTable[17];
 
+	Common::Rect _actorClipOverride;	// HE specific
+
 	int _heTimers[16];
+
 	int getHETimer(int timer);
 	void setHETimer(int timer);
 
 public:
 	ScummEngine_v60he(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v60he();
+
+	virtual Common::String generateFilename(const int room) const;
 
 	virtual void resetScumm();
 
@@ -107,7 +113,9 @@ class ScummEngine_v70he : public ScummEngine_v60he {
 protected:
 	ResExtractor *_resExtractor;
 
+	byte *_heV7DiskOffsets;
 	byte *_heV7RoomOffsets;
+	uint32 *_heV7RoomIntOffsets;
 
 	int32 _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndSoundFreq;
 
@@ -118,9 +126,14 @@ public:
 	ScummEngine_v70he(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v70he();
 
+	virtual Common::String generateFilename(const int room) const;
+
 	void restoreBackgroundHE(Common::Rect rect, int dirtybit = 0);
 
 protected:
+	virtual void allocateArrays();
+	virtual int readResTypeList(int id);
+	virtual uint32 getResourceRoomOffset(int type, int idx);
 	virtual void setupOpcodes();
 
 	virtual void setupScummVars();

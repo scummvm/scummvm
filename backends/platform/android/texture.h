@@ -227,70 +227,6 @@ public:
 	}
 };
 
-class GLESPaletteTexture : public GLESBaseTexture {
-protected:
-	GLESPaletteTexture(GLenum glFormat, GLenum glType,
-						Graphics::PixelFormat palettePixelFormat);
-
-public:
-	virtual ~GLESPaletteTexture();
-
-	virtual void allocBuffer(GLuint w, GLuint h);
-	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
-								const void *buf, int pitch_buf);
-	virtual void fillBuffer(uint32 color);
-
-	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
-
-	virtual const byte *palette_const() const {
-		return _texture;
-	};
-
-	virtual byte *palette() {
-		setDirty();
-		return _texture;
-	};
-
-protected:
-	byte *_texture;
-	size_t _paletteSize;
-};
-
-// RGB888 256-entry paletted texture
-class GLESPalette888Texture : public GLESPaletteTexture {
-public:
-	GLESPalette888Texture();
-	virtual ~GLESPalette888Texture();
-};
-
-// RGBA8888 256-entry paletted texture
-class GLESPalette8888Texture : public GLESPaletteTexture {
-public:
-	GLESPalette8888Texture();
-	virtual ~GLESPalette8888Texture();
-};
-
-// RGB565 256-entry paletted texture
-class GLESPalette565Texture : public GLESPaletteTexture {
-public:
-	GLESPalette565Texture();
-	virtual ~GLESPalette565Texture();
-};
-
-// RGBA4444 256-entry paletted texture
-class GLESPalette4444Texture : public GLESPaletteTexture {
-public:
-	GLESPalette4444Texture();
-	virtual ~GLESPalette4444Texture();
-};
-
-// RGBA5551 256-entry paletted texture
-class GLESPalette5551Texture : public GLESPaletteTexture {
-public:
-	GLESPalette5551Texture();
-	virtual ~GLESPalette5551Texture();
-};
-
 class GLESFakePaletteTexture : public GLESBaseTexture {
 protected:
 	GLESFakePaletteTexture(GLenum glFormat, GLenum glType,
@@ -328,6 +264,12 @@ class GLESFakePalette565Texture : public GLESFakePaletteTexture {
 public:
 	GLESFakePalette565Texture();
 	virtual ~GLESFakePalette565Texture();
+};
+
+class GLESFakePalette5551Texture : public GLESFakePaletteTexture {
+public:
+	GLESFakePalette5551Texture();
+	virtual ~GLESFakePalette5551Texture();
 };
 
 #endif

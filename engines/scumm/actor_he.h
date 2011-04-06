@@ -23,52 +23,69 @@
  *
  */
 
-#ifndef SCUMM_SCRIPT_V3_H
-#define SCUMM_SCRIPT_V3_H
 
-#include "scumm/scumm_v4.h"
+#ifndef SCUMM_ACTOR_HE_H
+#define SCUMM_ACTOR_HE_H
+
+#include "scumm/actor.h"
 
 namespace Scumm {
 
-/**
- * Engine for version 3 SCUMM games; GF_SMALL_NAMES is always set for these.
- */
-class ScummEngine_v3 : public ScummEngine_v4 {
-public:
-	ScummEngine_v3(OSystem *syst, const DetectorResult &dr);
-	~ScummEngine_v3();
+struct AuxBlock {
+	bool visible;
+	Common::Rect r;
 
-	virtual void resetScumm();
-
-protected:
-	virtual void setupOpcodes();
-
-	virtual void readRoomsOffsets();
-	virtual void loadCharset(int no);
-
-	virtual void processKeyboard(Common::KeyState lastKeyHit);
-
-	/* Version 3 script opcodes */
-	void o3_setBoxFlags();
-	void o3_waitForActor();
-	void o3_waitForSentence();
+	void reset() {
+		visible = false;
+		r.left = r.top = 0;
+		r.right = r.bottom = -1;
+	}
 };
 
-/**
- * Engine for old format version 3 SCUMM games; GF_OLD_BUNDLE is always set for these.
- */
-class ScummEngine_v3old : public ScummEngine_v3 {
-public:
-	ScummEngine_v3old(OSystem *syst, const DetectorResult &dr);
-
-protected:
-	virtual int readResTypeList(int id);
-	virtual void readIndexFile();
-	virtual void setupRoomSubBlocks();
-	virtual void resetRoomSubBlocks();
-	virtual void resetRoomObjects();
+struct AuxEntry {
+	int actorNum;
+	int subIndex;
 };
 
+class ActorHE : public Actor {
+public:
+	ActorHE(ScummEngine *scumm, int id) : Actor(scumm, id) {}
+
+	virtual void initActor(int mode);
+
+	virtual void hideActor();
+
+	void drawActorToBackBuf(int x, int y);
+
+	void setHEFlag(int bit, int set);
+
+	void setUserCondition(int slot, int set);
+	bool isUserConditionSet(int slot) const;
+
+	void setTalkCondition(int slot);
+	bool isTalkConditionSet(int slot) const;
+
+public:
+	/** This rect is used to clip actor drawing. */
+	Common::Rect _clipOverride;
+
+	bool _heNoTalkAnimation;
+	bool _heTalking;
+	byte _heFlags;
+
+	AuxBlock _auxBlock;
+
+	struct {
+		int16 posX;
+		int16 posY;
+		int16 color;
+		byte sentence[128];
+	} _heTalkQueue[16];
+
+
+	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
+	virtual void setActorCostume(int c);
+};
 
 } // End of namespace Scumm
 

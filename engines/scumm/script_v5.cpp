@@ -530,11 +530,20 @@ void ScummEngine_v5::o5_actorOps() {
 
 void ScummEngine_v5::o5_setClass() {
 	int obj = getVarOrDirectWord(PARAM_1);
-	int newClass;
+	int cls;
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
-		newClass = getVarOrDirectWord(PARAM_1);
-		if (newClass == 0) {
+		cls = getVarOrDirectWord(PARAM_1);
+
+		// WORKAROUND bug #1668393: Due to a script bug, the wrong opcode is
+		// used to test and set the state of various objects (e.g. the inside
+		// door (object 465) of the of the Hostel on Mars), when opening the
+		// Hostel door from the outside.
+		if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns &&
+		    vm.slot[_currentScript].number == 205 && _currentRoom == 185 &&
+		    (cls == 0 || cls == 1)) {
+			putState(obj, cls);
+		} else if (cls == 0) {
 			// Class '0' means: clean all class data
 			_classData[obj] = 0;
 			if ((_game.features & GF_SMALL_HEADER) && obj <= _numActors) {
@@ -543,7 +552,7 @@ void ScummEngine_v5::o5_setClass() {
 				a->_forceClip = 0;
 			}
 		} else
-			putClass(obj, newClass, (newClass & 0x80) ? true : false);
+			putClass(obj, cls, (cls & 0x80) ? true : false);
 	}
 }
 
@@ -1148,9 +1157,10 @@ void ScummEngine_v5::o5_ifClassOfIs() {
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		cls = getVarOrDirectWord(PARAM_1);
 
-		// WORKAROUND bug #1668393: Due to a script bug, the wrong opcode is used
-		// to check the state of the inside door (object 465) of the Hostel on Mars,
-		// when opening the Hostel door from the outside.
+		// WORKAROUND bug #1668393: Due to a script bug, the wrong opcode is
+		// used to test and set the state of various objects (e.g. the inside
+		// door (object 465) of the of the Hostel on Mars), when opening the
+		// Hostel door from the outside.
 		if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns &&
 		    vm.slot[_currentScript].number == 205 && _currentRoom == 185 &&
 		    obj == 465 && cls == 0) {

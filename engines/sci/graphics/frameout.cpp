@@ -83,10 +83,12 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 	}
 
 	newPlane.object = object;
-	newPlane.pictureId = 0xFFFF;
 	newPlane.priority = readSelectorValue(_segMan, object, SELECTOR(priority));
 	newPlane.lastPriority = 0xFFFF; // hidden
 	newPlane.planeOffsetX = 0;
+	newPlane.pictureId = 0xFFFF;
+	newPlane.planePictureMirrored = false;
+	newPlane.planeBack = 0;
 	_planes.push_back(newPlane);
 
 	kernelUpdatePlane(object);

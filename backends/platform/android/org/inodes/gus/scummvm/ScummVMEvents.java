@@ -25,7 +25,8 @@ public class ScummVMEvents implements
 	public static final int JE_SCROLL = 4;
 	public static final int JE_TAP = 5;
 	public static final int JE_DOUBLE_TAP = 6;
-	public static final int JE_BALL = 7;
+	public static final int JE_MULTI = 7;
+	public static final int JE_BALL = 8;
 	public static final int JE_QUIT = 0x1000;
 
 	final protected Context _context;
@@ -160,6 +161,18 @@ public class ScummVMEvents implements
 
 	// OnTouchListener
 	final public boolean onTouch(View v, MotionEvent e) {
+		final int action = e.getAction();
+
+		// constants from APIv5:
+		// (action & ACTION_POINTER_INDEX_MASK) >> ACTION_POINTER_INDEX_SHIFT
+		final int pointer = (action & 0xff00) >> 8;
+
+		if (pointer > 0) {
+			_scummvm.pushEvent(JE_MULTI, pointer, action & 0xff, // ACTION_MASK
+								(int)e.getX(), (int)e.getY(), 0);
+			return true;
+		}
+
 		return _gd.onTouchEvent(e);
 	}
 
