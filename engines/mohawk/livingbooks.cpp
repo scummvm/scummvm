@@ -1931,6 +1931,11 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 				warning("ignoring target '%s' in script entry", target.c_str());
 				size -= target.size() + 1;
 			}
+
+			if (size % 2 == 1) {
+				stream->skip(1);
+				size--;
+			}
 		}
 
 		if (entry->argc) {
