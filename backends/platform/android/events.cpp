@@ -251,8 +251,8 @@ void OSystem_Android::clipMouse(Common::Point &p) {
 	else
 		tex = _game_texture;
 
-	p.x = CLIP(p.x, int16(0), int16(tex->width()));
-	p.y = CLIP(p.y, int16(0), int16(tex->height()));
+	p.x = CLIP(p.x, int16(0), int16(tex->width() - 1));
+	p.y = CLIP(p.y, int16(0), int16(tex->height() - 1));
 }
 
 void OSystem_Android::scaleMouse(Common::Point &p, int x, int y,
