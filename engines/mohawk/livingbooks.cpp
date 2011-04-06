@@ -1956,17 +1956,19 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 		}
 	}
 
-	if (type == kLBMsgListScript && entry->opcode == 0xfffb) {
-		uint16 u1 = stream->readUint16();
-		uint16 u2 = stream->readUint16();
-		uint16 u3 = stream->readUint16();
-		warning("unknown 0xfffb: %04x, %04x, %04x", u1, u2, u3);
+	if (type == kLBMsgListScript && entry->opcode == kLBOpJumpUnlessExpression) {
+		if (size < 6)
+			error("not enough bytes (%d) in kLBOpJumpUnlessExpression, event 0x%04x", size, entry->event);
+		entry->offset = stream->readUint32();
+		entry->target = stream->readUint16();
+		debug(4, "kLBOpJumpUnlessExpression: offset %08x, target %d", entry->offset, entry->target);
 		size -= 6;
 	}
-	if (type == kLBMsgListScript && entry->opcode == 0xfffd) {
-		uint16 u1 = stream->readUint16();
-		uint16 u2 = stream->readUint16();
-		warning("unknown 0xfffd: %04x, %04x", u1, u2);
+	if (type == kLBMsgListScript && entry->opcode == kLBOpJumpToExpression) {
+		if (size < 4)
+			error("not enough bytes (%d) in kLBOpJumpToExpression, event 0x%04x", size, entry->event);
+		entry->offset = stream->readUint32();
+		debug(4, "kLBOpJumpToExpression: offset %08x", entry->offset);
 		size -= 4;
 	}
 
@@ -2469,9 +2471,9 @@ void LBItem::runScript(uint event, uint16 data, uint16 from) {
 	}
 }
 
-void LBItem::runScriptEntry(LBScriptEntry *entry) {
+int LBItem::runScriptEntry(LBScriptEntry *entry) {
 	if (entry->state == 0xffff)
-		return;
+		return 0;
 
 	uint start = 0;
 	uint count = entry->argc;
@@ -2479,7 +2481,7 @@ void LBItem::runScriptEntry(LBScriptEntry *entry) {
 	if (!count)
 		count = 1;
 
-	switch (entry->param) {
+	if (entry->opcode != kLBOpRunSubentries) switch (entry->param) {
 	case 0xfffe:
 		// Run once (disable self after run).
 		entry->state = 0xffff;
@@ -2496,7 +2498,7 @@ void LBItem::runScriptEntry(LBScriptEntry *entry) {
 			case 0:
 				// Disable..
 				entry->state = 0xffff;
-				return;
+				return 0;
 			case 1:
 				// Stay at the end.
 				entry->state = count - 1;
@@ -2666,7 +2668,22 @@ void LBItem::runScriptEntry(LBScriptEntry *entry) {
 			for (uint i = 0; i < entry->subentries.size(); i++) {
 				LBScriptEntry *subentry = entry->subentries[i];
 
-				runScriptEntry(subentry);
+				int e = runScriptEntry(subentry);
+
+				switch (subentry->opcode) {
+				case kLBOpJumpUnlessExpression:
+					debug(2, "JumpUnless got %d (to %d, on %d, of %d)", e, subentry->target, i, entry->subentries.size());
+					if (!e)
+						i = subentry->target - 1;
+					break;
+				case kLBOpBreakExpression:
+					debug(2, "BreakExpression");
+					i = entry->subentries.size();
+				case kLBOpJumpToExpression:
+					debug(2, "JumpToExpression got %d (on %d, of %d)", e, i, entry->subentries.size());
+					i = e - 1;
+					break;
+				}
 			}
 			break;
 
@@ -2674,11 +2691,24 @@ void LBItem::runScriptEntry(LBScriptEntry *entry) {
 			runCommand(entry->command);
 			break;
 
+		case kLBOpJumpUnlessExpression:
+		case kLBOpBreakExpression:
+		case kLBOpJumpToExpression:
+			if (!_vm->_code)
+				error("no BCOD?");
+			{
+			LBValue r = _vm->_code->runCode(this, entry->offset);
+			// FIXME
+			return r.integer;
+			}
+
 		default:
 			error("Unknown script opcode (type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x, target '%s')",
 				entry->type, entry->event, entry->opcode, entry->param, target->_desc.c_str());
 		}
 	}
+
+	return 0;
 }
 
 void LBItem::setNextTime(uint16 min, uint16 max) {

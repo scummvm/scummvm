@@ -217,6 +217,9 @@ enum {
 	kLBOpScriptEnable = 0x1b,
 	kLBOpUnknown1C = 0x1c,
 	kLBOpSendExpression = 0x1d,
+	kLBOpJumpUnlessExpression = 0xfffb,
+	kLBOpBreakExpression = 0xfffc,
+	kLBOpJumpToExpression = 0xfffd,
 	kLBOpRunSubentries = 0xfffe,
 	kLBOpRunCommand = 0xffff
 };
@@ -264,6 +267,8 @@ struct LBScriptEntry {
 
 	// kLBOpSendExpression
 	uint32 offset;
+	// kLBOpJumpUnlessExpression
+	uint16 target;
 
 	Common::String command;
 	Common::Array<Common::String> conditions;
@@ -409,7 +414,7 @@ protected:
 
 	Common::Array<LBScriptEntry *> _scriptEntries;
 	void runScript(uint event, uint16 data = 0, uint16 from = 0);
-	void runScriptEntry(LBScriptEntry *entry);
+	int runScriptEntry(LBScriptEntry *entry);
 
 	LBValue parseValue(const Common::String &command, uint &pos);
 	void runCommand(const Common::String &command);
