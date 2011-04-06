@@ -23,18 +23,15 @@
  *
  */
 
-#ifndef PLATFORM_SDL_WEBOS_H
-#define PLATFORM_SDL_WEBOS_H
+#ifndef WEBOS_KEYBOARD_H
+#define WEBOS_KEYBOARD_H
 
-#include "common/system.h"
-#include "backends/platform/sdl/posix/posix.h"
+enum {
+	KEYCODE_FORWARD = 229
+};
 
-class OSystem_SDL_WebOS : public OSystem_POSIX {
-public:
-	OSystem_SDL_WebOS();
-
-	virtual void initBackend();
-	virtual Common::HardwareKeySet *getHardwareKeySet();
+enum {
+	ASCII_FORWARD = 229
 };
 
 #endif

@@ -33,7 +33,10 @@
  */
 class WebOSSdlEventSource : public SdlEventSource {
 protected:
+	virtual void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event);
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
+	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
+	virtual bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
 };
 
 #endif

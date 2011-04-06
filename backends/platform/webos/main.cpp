@@ -32,7 +32,6 @@
 #include <unistd.h>
 
 int main(int argc, char* argv[]) {
-
 	g_system = new OSystem_SDL_WebOS();
 	assert(g_system);
 
