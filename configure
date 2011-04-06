@@ -2068,6 +2068,7 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_seq_midi=no
 			_vkeybd=yes
+			_keymapper=yes
 			;;
 		wii)
 			_endian=big
@@ -3132,7 +3133,7 @@ case $_backend in
 		DEFINES="$DEFINES -DSDL_BACKEND"
 		;;
 	webos)
-		INCLUDES="$INCLUDES -I$WEBOS_PDK/include/SDL"
+		INCLUDES="$INCLUDES -I$WEBOS_PDK/include -I$WEBOS_PDK/include/SDL"
 		LIBS="$LIBS -lSDL -lpdl"
 		DEFINES="$DEFINES -DSDL_BACKEND -DWEBOS"
 		MODULES="$MODULES backends/platform/sdl"

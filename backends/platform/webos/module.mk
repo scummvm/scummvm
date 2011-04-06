@@ -2,7 +2,8 @@ MODULE := backends/platform/webos
 
 MODULE_OBJS := \
 	main.o \
-	webos.o
+	webos.o \
+	hardwarekeys.o
 
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
 MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))
