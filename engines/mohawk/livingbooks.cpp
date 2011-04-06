@@ -2690,24 +2690,6 @@ void LBItem::setNextTime(uint16 min, uint16 max, uint32 start) {
 	debug(9, "nextTime is now %d frames away", _nextTime - (uint)(_vm->_system->getMillis() / 16));
 }
 
-bool LBValue::operator==(const LBValue &x) const {
-	if (type != x.type) return false;
-
-	switch (type) {
-	case kLBValueString:
-		return string == x.string;
-
-	case kLBValueInteger:
-		return integer == x.integer;
-	default:
-		error("Unknown type when testing for equality");
-	}
-}
-
-bool LBValue::operator!=(const LBValue &x) const {
-	return !(*this == x);
-}
-
 enum LBTokenType {
 	kLBNoToken,
 	kLBNameToken,
