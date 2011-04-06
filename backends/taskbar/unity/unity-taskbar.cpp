@@ -44,13 +44,6 @@ UnityTaskbarManager::~UnityTaskbarManager() {
 	_loop = NULL;
 }
 
-void UnityTaskbarManager::setOverlayIcon(const Common::String &name, const Common::String &description) {
-	if (_launcher == NULL)
-		return;
-
-	warning("[UnityTaskbarManager::setOverlayIcon] Not implemented");
-}
-
 void UnityTaskbarManager::setProgressValue(int completed, int total) {
 	if (_launcher == NULL)
 		return;

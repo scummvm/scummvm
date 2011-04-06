@@ -39,7 +39,6 @@ public:
 	UnityTaskbarManager();
 	virtual ~UnityTaskbarManager();
 
-	virtual void setOverlayIcon(const Common::String &name, const Common::String &description);
 	virtual void setProgressValue(int completed, int total);
 	virtual void setProgressState(TaskbarProgressState state);
 	virtual void addRecent(const Common::String &name, const Common::String &description);
