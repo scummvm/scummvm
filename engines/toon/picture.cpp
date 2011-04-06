@@ -97,7 +97,7 @@ bool Picture::loadPicture(Common::String file, bool totalPalette /*= false*/) {
 
 		_data = new uint8[decSize];
 
-		rnc.unpackM1(fileData, _data);
+		rnc.unpackM1(fileData, size, _data);
 
 		// size can only be 640x400 or 1280x400
 		if (decSize > TOON_SCREEN_WIDTH * TOON_SCREEN_HEIGHT + 768)
