@@ -24,13 +24,13 @@ pluginspath=/media/internal/ScummVM/Plugins
 vkeybdpath=/media/cryptofs/apps/usr/palm/applications/org.scummvm/share/scummvm
 
 [keymapper]
-keymap_global_VIRT=C+k
-keymap_global_SKCT=A+ESCAPE
-keymap_global_REMP=AT
-keymap_global_MENU=A+FORWARD
-keymap_gui_CLOS=A+ESCAPE
-keymap_gui_CLIK=RETURN  
-keymap_global_PAUS=SPACE
-keymap_global_SKLI=PERIOD
-keymap_gui_VIRT=C+k
-keymap_gui_REMP=AT 
+keymap_global_MEN=FORWARD
+keymap_gui_VIR=C+k
+keymap_global_SKL=PERIOD
+keymap_global_SKC=ESCAPE
+keymap_gui_REM=AT
+keymap_global_PAU=SPACE
+keymap_gui_CLO=ESCAPE
+keymap_gui_CLI=RETURN
+keymap_global_VIR=C+k
+keymap_global_REM=AT
