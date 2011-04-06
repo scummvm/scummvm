@@ -59,6 +59,9 @@ bool OSystem_Android::setGraphicsMode(int mode) {
 	if (_overlay_texture)
 		_overlay_texture->setLinearFilter(mode == 1);
 
+	if (_mouse_texture)
+		_mouse_texture->setLinearFilter(mode == 1);
+
 	_graphicsMode = mode;
 
 	return true;
@@ -684,6 +687,7 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 
 			assert(!_mouse_texture_rgb);
 			_mouse_texture_rgb = new GLES5551Texture();
+			_mouse_texture_rgb->setLinearFilter(_graphicsMode == 1);
 		}
 
 		_mouse_texture = _mouse_texture_rgb;
