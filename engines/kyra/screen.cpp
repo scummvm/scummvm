@@ -2375,7 +2375,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 	if (flags & 1)
 		shapeSize += 16;
 
-	static uint8 table[274];
+	uint8 table[274];
 	int tableIndex = 0;
 
 	uint8 *newShape = 0;
@@ -2397,7 +2397,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 	byte *src = srcPtr;
 	if (flags & 1) {
 		dst += 16;
-		memset(table, 0, sizeof(uint8)*274);
+		memset(table, 0, sizeof(table));
 		tableIndex = 1;
 	}
 
