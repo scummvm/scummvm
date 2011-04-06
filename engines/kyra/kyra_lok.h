@@ -447,6 +447,9 @@ protected:
 	uint16 _currentChatPartnerBackupFrame;
 	uint16 _currentCharAnimFrame;
 
+	int _characterFacingZeroCount[8];
+	int _characterFacingFourCount[8];
+
 	int8 *_sceneAnimTable[50];
 
 	uint8 _itemHtDat[145];
@@ -471,6 +474,7 @@ protected:
 	int8 _charSayUnk2;
 	int8 _charSayUnk3;
 	int8 _currHeadShape;
+	int _currentHeadFrameTableIndex;
 	int8 _disabledTalkAnimObject;
 	int8 _enabledTalkAnimObject;
 	uint8 _currSentenceColor[3];
@@ -497,6 +501,15 @@ protected:
 
 	Button *_buttonList;
 	GUI_LoK *_gui;
+
+	uint16 _malcolmFrame;
+	uint32 _malcolmTimer1;
+	uint32 _malcolmTimer2;
+
+	uint32 _beadStateTimer1;
+	uint32 _beadStateTimer2;
+	BeadState _beadState1;
+	BeadState _beadState2;
 
 	struct KyragemState {
 		uint16 nextOperation;

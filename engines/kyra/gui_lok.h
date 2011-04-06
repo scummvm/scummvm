@@ -166,6 +166,7 @@ private:
 	uint8 _toplevelMenu;
 	int _savegameOffset;
 	char _savegameName[35];
+	char _savegameNames[5][35];
 	const char *_specialSavegameString;
 
 	Button::Callback _scrollUpFunctor;

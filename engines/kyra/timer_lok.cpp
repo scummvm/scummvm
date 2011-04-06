@@ -75,7 +75,6 @@ void KyraEngine_LoK::setupTimers() {
 }
 
 void KyraEngine_LoK::timerUpdateHeadAnims(int timerNum) {
-	static int8 currentFrame = 0;
 	static const int8 frameTable[] = {
 		4, 5, 4, 5, 4, 5, 0, 1,
 		4, 5, 4, 4, 6, 4, 8, 1,
@@ -85,11 +84,11 @@ void KyraEngine_LoK::timerUpdateHeadAnims(int timerNum) {
 	if (_talkingCharNum < 0)
 		return;
 
-	_currHeadShape = frameTable[currentFrame];
-	currentFrame++;
+	_currHeadShape = frameTable[_currentHeadFrameTableIndex];
+	++_currentHeadFrameTableIndex;
 
-	if (frameTable[currentFrame] == -1)
-		currentFrame = 0;
+	if (frameTable[_currentHeadFrameTableIndex] == -1)
+		_currentHeadFrameTableIndex = 0;
 
 	_animator->animRefreshNPC(0);
 	_animator->animRefreshNPC(_talkingCharNum);
