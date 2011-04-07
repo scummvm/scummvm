@@ -34,6 +34,7 @@
 #ifndef VIDEO_QT_DECODER_H
 #define VIDEO_QT_DECODER_H
 
+#include "common/array.h"
 #include "common/scummsys.h"
 #include "common/queue.h"
 #include "common/rational.h"
@@ -156,20 +157,27 @@ private:
 		Common::Rational mediaRate;
 	};
 
-	struct STSDEntry {
-		STSDEntry();
-		~STSDEntry();
+	struct SampleDesc {
+		SampleDesc();
+		virtual ~SampleDesc() {}
 
 		uint32 codecTag;
 		uint16 bitsPerSample;
+	};
 
-		// Video
+	struct VideoSampleDesc : public SampleDesc {
+		VideoSampleDesc();
+		~VideoSampleDesc();
+
 		char codecName[32];
 		uint16 colorTableId;
 		byte *palette;
 		Codec *videoCodec;
+	};
 
-		// Audio
+	struct AudioSampleDesc : public SampleDesc {
+		AudioSampleDesc();
+
 		uint16 channels;
 		uint32 sampleRate;
 		uint32 samplesPerFrame;
@@ -204,8 +212,7 @@ private:
 		uint16 height;
 		CodecType codec_type;
 
-		uint32 stsdEntryCount;
-		STSDEntry *stsdEntries;
+		Common::Array<SampleDesc *> sampleDescs;
 
 		uint32 editCount;
 		EditListEntry *editList;

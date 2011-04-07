@@ -186,7 +186,7 @@ void QuickTimeDecoder::seekToFrame(uint32 frame) {
 		_audioStartOffset = curVideoTime;
 
 		// Re-create the audio stream
-		STSDEntry *entry = &_streams[_audioStreamIndex]->stsdEntries[0];
+		AudioSampleDesc *entry = (AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
 		_audStream = Audio::makeQueuingAudioStream(entry->sampleRate, entry->channels == 2);
 
 		// First, we need to track down what audio sample we need
@@ -318,10 +318,10 @@ void QuickTimeDecoder::pauseVideoIntern(bool pause) {
 }
 
 Codec *QuickTimeDecoder::findDefaultVideoCodec() const {
-	if (_videoStreamIndex < 0 || !_streams[_videoStreamIndex]->stsdEntryCount)
+	if (_videoStreamIndex < 0 || _streams[_videoStreamIndex]->sampleDescs.empty())
 		return 0;
 
-	return _streams[_videoStreamIndex]->stsdEntries[0].videoCodec;
+	return ((VideoSampleDesc *)_streams[_videoStreamIndex]->sampleDescs[0])->videoCodec;
 }
 
 const Graphics::Surface *QuickTimeDecoder::decodeNextFrame() {
@@ -341,11 +341,11 @@ const Graphics::Surface *QuickTimeDecoder::decodeNextFrame() {
 	uint32 descId;
 	Common::SeekableReadStream *frameData = getNextFramePacket(descId);
 
-	if (!frameData || !descId || descId > _streams[_videoStreamIndex]->stsdEntryCount)
+	if (!frameData || !descId || descId > _streams[_videoStreamIndex]->sampleDescs.size())
 		return 0;
 
 	// Find which video description entry we want
-	STSDEntry *entry = &_streams[_videoStreamIndex]->stsdEntries[descId - 1];
+	VideoSampleDesc *entry = (VideoSampleDesc *)_streams[_videoStreamIndex]->sampleDescs[descId - 1];
 
 	if (!entry->videoCodec)
 		return 0;
@@ -500,7 +500,7 @@ void QuickTimeDecoder::init() {
 
 	// Initialize audio, if present
 	if (_audioStreamIndex >= 0) {
-		STSDEntry *entry = &_streams[_audioStreamIndex]->stsdEntries[0];
+		AudioSampleDesc *entry = (AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
 
 		if (checkAudioCodecSupport(entry->codecTag)) {
 			_audStream = Audio::makeQueuingAudioStream(entry->sampleRate, entry->channels == 2);
@@ -518,8 +518,8 @@ void QuickTimeDecoder::init() {
 
 	// Initialize video, if present
 	if (_videoStreamIndex >= 0) {
-		for (uint32 i = 0; i < _streams[_videoStreamIndex]->stsdEntryCount; i++) {
-			STSDEntry *entry = &_streams[_videoStreamIndex]->stsdEntries[i];
+		for (uint32 i = 0; i < _streams[_videoStreamIndex]->sampleDescs.size(); i++) {
+			VideoSampleDesc *entry = (VideoSampleDesc *)_streams[_videoStreamIndex]->sampleDescs[i];
 			entry->videoCodec = createCodec(entry->codecTag, entry->bitsPerSample & 0x1F);
 		}
 
@@ -916,12 +916,10 @@ int QuickTimeDecoder::readSTSD(MOVatom atom) {
 	_fd->readByte(); // version
 	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
 
-	st->stsdEntryCount = _fd->readUint32BE();
-	st->stsdEntries = new STSDEntry[st->stsdEntryCount];
+	uint32 entryCount = _fd->readUint32BE();
+	st->sampleDescs.resize(entryCount);
 
-	for (uint32 i = 0; i < st->stsdEntryCount; i++) { // Parsing Sample description table
-		STSDEntry *entry = &st->stsdEntries[i];
-
+	for (uint32 i = 0; i < entryCount; i++) { // Parsing Sample description table
 		MOVatom a = { 0, 0, 0 };
 		uint32 start_pos = _fd->pos();
 		int size = _fd->readUint32BE(); // size
@@ -933,10 +931,13 @@ int QuickTimeDecoder::readSTSD(MOVatom atom) {
 
 		debug(0, "size=%d 4CC= %s codec_type=%d", size, tag2str(format), st->codec_type);
 
-		entry->codecTag = format;
-
 		if (st->codec_type == CODEC_TYPE_VIDEO) {
 			debug(0, "Video Codec FourCC: \'%s\'", tag2str(format));
+
+			VideoSampleDesc *entry = new VideoSampleDesc();
+			st->sampleDescs[i] = entry;
+
+			entry->codecTag = format;
 
 			_fd->readUint16BE(); // version
 			_fd->readUint16BE(); // revision level
@@ -1024,6 +1025,11 @@ int QuickTimeDecoder::readSTSD(MOVatom atom) {
 			}
 		} else if (st->codec_type == CODEC_TYPE_AUDIO) {
 			debug(0, "Audio Codec FourCC: \'%s\'", tag2str(format));
+
+			AudioSampleDesc *entry = new AudioSampleDesc();
+			st->sampleDescs[i] = entry;
+
+			entry->codecTag = format;
 
 			uint16 stsdVersion = _fd->readUint16BE();
 			_fd->readUint16BE(); // revision level
@@ -1229,7 +1235,7 @@ int QuickTimeDecoder::readWAVE(MOVatom atom) {
 	if (atom.size > (1 << 30))
 		return -1;
 
-	if (st->stsdEntries[0].codecTag == MKID_BE('QDM2')) // Read extradata for QDM2
+	if (st->sampleDescs[0]->codecTag == MKID_BE('QDM2')) // Read extradata for QDM2
 		st->extradata = _fd->readStream(atom.size - 8);
 	else if (atom.size > 8)
 		return readDefault(atom);
@@ -1336,7 +1342,7 @@ Audio::AudioStream *QuickTimeDecoder::createAudioStream(Common::SeekableReadStre
 	if (!stream || _audioStreamIndex < 0)
 		return NULL;
 
-	STSDEntry *entry = &_streams[_audioStreamIndex]->stsdEntries[0];
+	AudioSampleDesc *entry = (AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
 
 	if (entry->codecTag == MKID_BE('twos') || entry->codecTag == MKID_BE('raw ')) {
 		// Fortunately, most of the audio used in Myst videos is raw...
@@ -1381,7 +1387,7 @@ uint32 QuickTimeDecoder::getAudioChunkSampleCount(uint chunk) {
 }
 
 void QuickTimeDecoder::readNextAudioChunk() {
-	STSDEntry *entry = &_streams[_audioStreamIndex]->stsdEntries[0];
+	AudioSampleDesc *entry = (AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
 	Common::MemoryWriteStreamDynamic *wStream = new Common::MemoryWriteStreamDynamic();
 
 	_fd->seek(_streams[_audioStreamIndex]->chunk_offsets[_curAudioChunk]);
@@ -1430,7 +1436,7 @@ void QuickTimeDecoder::updateAudioBuffer() {
 		// If we're on the last frame, make sure all audio remaining is buffered
 		numberOfChunksNeeded = _streams[_audioStreamIndex]->chunk_count;
 	} else {
-		STSDEntry *entry = &_streams[_audioStreamIndex]->stsdEntries[0];
+		AudioSampleDesc *entry = (AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
 
 		// Calculate the amount of chunks we need in memory until the next frame
 		uint32 timeToNextFrame = getTimeToNextFrame();
@@ -1453,22 +1459,28 @@ void QuickTimeDecoder::updateAudioBuffer() {
 		readNextAudioChunk();
 }
 
-QuickTimeDecoder::STSDEntry::STSDEntry() {
+QuickTimeDecoder::SampleDesc::SampleDesc() {
 	codecTag = 0;
 	bitsPerSample = 0;
+}
+
+QuickTimeDecoder::VideoSampleDesc::VideoSampleDesc() : SampleDesc() {
 	memset(codecName, 0, 32);
 	colorTableId = 0;
 	palette = 0;
 	videoCodec = 0;
+}
+
+QuickTimeDecoder::VideoSampleDesc::~VideoSampleDesc() {
+	delete[] palette;
+	delete videoCodec;
+}
+
+QuickTimeDecoder::AudioSampleDesc::AudioSampleDesc() : SampleDesc() {
 	channels = 0;
 	sampleRate = 0;
 	samplesPerFrame = 0;
 	bytesPerFrame = 0;
-}
-
-QuickTimeDecoder::STSDEntry::~STSDEntry() {
-	delete[] palette;
-	delete videoCodec;
 }
 
 QuickTimeDecoder::MOVStreamContext::MOVStreamContext() {
@@ -1488,8 +1500,6 @@ QuickTimeDecoder::MOVStreamContext::MOVStreamContext() {
 	width = 0;
 	height = 0;
 	codec_type = CODEC_TYPE_MOV_OTHER;
-	stsdEntryCount = 0;
-	stsdEntries = 0;
 	editCount = 0;
 	editList = 0;
 	extradata = 0;
@@ -1504,9 +1514,11 @@ QuickTimeDecoder::MOVStreamContext::~MOVStreamContext() {
 	delete[] sample_to_chunk;
 	delete[] sample_sizes;
 	delete[] keyframes;
-	delete[] stsdEntries;
 	delete[] editList;
 	delete extradata;
+
+	for (uint32 i = 0; i < sampleDescs.size(); i++)
+		delete sampleDescs[i];
 }
 
 } // End of namespace Video
