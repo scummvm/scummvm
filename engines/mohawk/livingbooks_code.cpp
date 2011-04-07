@@ -249,7 +249,7 @@ LBValue LBCode::runCode(byte terminator) {
 		if (_currToken == terminator || _currToken == kTokenEndOfFile)
 			break;
 		if (_currToken != kTokenEndOfStatement && _currToken != kTokenEndOfFile)
-			error("missing EOS");
+			error("missing EOS (got %02x)", _currToken);
 		debugN("\n");
 	}
 
@@ -325,12 +325,45 @@ void LBCode::parseComparisons() {
 
 void LBCode::parseConcat() {
 	parseArithmetic1();
-	// FIXME: string concat
+
+	if (_currToken != kTokenConcat)
+		return;
+
+	debugN(" & ");
+	nextToken();
+	parseArithmetic1();
+
+	LBValue val2 = _stack.pop();
+	LBValue val1 = _stack.pop();
+	Common::String result = val1.toString() + val2.toString();
+	debugN(" [--> \"%s\"]", result.c_str());
+	_stack.push(result);
 }
 
 void LBCode::parseArithmetic1() {
 	parseArithmetic2();
-	// FIXME: -/+ math operators
+
+	if (_currToken != kTokenMinus && _currToken != kTokenPlus)
+		return;
+
+	byte op = _currToken;
+	if (op == kTokenMinus)
+		debugN(" - ");
+	else if (op == kTokenPlus)
+		debugN(" + ");
+
+	nextToken();
+	parseArithmetic2();
+
+	LBValue val2 = _stack.pop();
+	LBValue val1 = _stack.pop();
+	LBValue result;
+	// TODO: cope with non-integers
+	if (op == kTokenMinus)
+		result = val1.toInt() - val2.toInt();
+	else
+		result = val1.toInt() + val2.toInt();
+	_stack.push(result);
 }
 
 void LBCode::parseArithmetic2() {
@@ -357,6 +390,7 @@ void LBCode::parseMain() {
 			_stack.push(LBValue(_currSource));
 			if (_currToken == kTokenAssign)
 				error("attempted assignment to self");
+			break;
 		} else if (_currToken == kTokenAssign) {
 			debugN(" = ");
 			nextToken();
@@ -369,7 +403,16 @@ void LBCode::parseMain() {
 		} else {
 			_stack.push(_vm->_variables[varname]);
 		}
-		// FIXME: pre/postincrement
+		// FIXME: pre/postincrement for non-integers
+		if (_currToken == kTokenPlusPlus) {
+			debugN("++");
+			_vm->_variables[varname].integer++;
+			nextToken();
+		} else if (_currToken == kTokenMinusMinus) {
+			debugN("--");
+			_vm->_variables[varname].integer--;
+			nextToken();
+		}
 		}
 		break;
 
@@ -388,6 +431,17 @@ void LBCode::parseMain() {
 		assert(_currValue.type == kLBValueString);
 		debugN("\"%s\"", _currValue.string.c_str());
 		_stack.push(_currValue);
+		nextToken();
+		break;
+
+	case kTokenTrue:
+		debugN("TRUE");
+		_stack.push(true);
+		nextToken();
+		break;
+	case kTokenFalse:
+		debugN("FALSE");
+		_stack.push(false);
 		nextToken();
 		break;
 
