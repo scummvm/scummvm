@@ -34,10 +34,8 @@
 #ifndef VIDEO_QT_DECODER_H
 #define VIDEO_QT_DECODER_H
 
-#include "common/array.h"
+#include "common/quicktime.h"
 #include "common/scummsys.h"
-#include "common/queue.h"
-#include "common/rational.h"
 
 #include "video/video_decoder.h"
 #include "video/codecs/codec.h"
@@ -46,7 +44,6 @@
 #include "audio/mixer.h"
 
 namespace Common {
-	class File;
 	class MacResManager;
 }
 
@@ -59,7 +56,7 @@ namespace Video {
  *  - mohawk
  *  - sci
  */
-class QuickTimeDecoder : public SeekableVideoDecoder {
+class QuickTimeDecoder : public SeekableVideoDecoder, public Common::QuickTimeParser {
 public:
 	QuickTimeDecoder();
 	virtual ~QuickTimeDecoder();
@@ -106,14 +103,7 @@ public:
 	const byte *getPalette() { _dirtyPalette = false; return _palette; }
 	bool hasDirtyPalette() const { return _dirtyPalette; }
 
-	/**
-	 * Set the beginning offset of the video so we can modify the offsets in the stco
-	 * atom of videos inside the Mohawk archives
-	 * @param the beginning offset of the video
-	 */
-	void setChunkBeginOffset(uint32 offset) { _beginOffset = offset; }
-
-	bool isVideoLoaded() const { return _fd != 0; }
+	bool isVideoLoaded() const { return isOpen(); }
 	const Graphics::Surface *decodeNextFrame();
 	bool endOfVideo() const;
 	uint32 getElapsedTime() const;
@@ -125,47 +115,8 @@ public:
 	void seekToTime(Audio::Timestamp time);
 	uint32 getDuration() const { return _duration * 1000 / _timeScale; }
 
-private:
-	// This is the file handle from which data is read from. It can be the actual file handle or a decompressed stream.
-	Common::SeekableReadStream *_fd;
-
-	struct MOVatom {
-		uint32 type;
-		uint32 offset;
-		uint32 size;
-	};
-
-	struct ParseTable {
-		int (QuickTimeDecoder::*func)(MOVatom atom);
-		uint32 type;
-	};
-
-	struct MOVstts {
-		int count;
-		int duration;
-	};
-
-	struct MOVstsc {
-		uint32 first;
-		uint32 count;
-		uint32 id;
-	};
-
-	struct EditListEntry {
-		uint32 trackDuration;
-		int32 mediaTime;
-		Common::Rational mediaRate;
-	};
-
-	struct SampleDesc {
-		SampleDesc();
-		virtual ~SampleDesc() {}
-
-		uint32 codecTag;
-		uint16 bitsPerSample;
-	};
-
-	struct VideoSampleDesc : public SampleDesc {
+protected:
+	struct VideoSampleDesc : public Common::QuickTimeParser::SampleDesc {
 		VideoSampleDesc();
 		~VideoSampleDesc();
 
@@ -175,7 +126,7 @@ private:
 		Codec *videoCodec;
 	};
 
-	struct AudioSampleDesc : public SampleDesc {
+	struct AudioSampleDesc : public Common::QuickTimeParser::SampleDesc {
 		AudioSampleDesc();
 
 		uint16 channels;
@@ -184,62 +135,9 @@ private:
 		uint32 bytesPerFrame;
 	};
 
-	enum CodecType {
-		CODEC_TYPE_MOV_OTHER,
-		CODEC_TYPE_VIDEO,
-		CODEC_TYPE_AUDIO
-	};
+	Common::QuickTimeParser::SampleDesc *readSampleDesc(MOVStreamContext *st, uint32 format);
 
-	struct MOVStreamContext {
-		MOVStreamContext();
-		~MOVStreamContext();
-
-		uint32 chunk_count;
-		uint32 *chunk_offsets;
-		int stts_count;
-		MOVstts *stts_data;
-		uint32 sample_to_chunk_sz;
-		MOVstsc *sample_to_chunk;
-		uint32 sample_size;
-		uint32 sample_count;
-		uint32 *sample_sizes;
-		uint32 keyframe_count;
-		uint32 *keyframes;
-		int32 time_scale;
-		int time_rate;
-
-		uint16 width;
-		uint16 height;
-		CodecType codec_type;
-
-		Common::Array<SampleDesc *> sampleDescs;
-
-		uint32 editCount;
-		EditListEntry *editList;
-
-		Common::SeekableReadStream *extradata;
-
-		uint32 nb_frames;
-		uint32 duration;
-		uint32 start_time;
-		Common::Rational scaleFactorX;
-		Common::Rational scaleFactorY;
-	};
-
-	const ParseTable *_parseTable;
-	bool _foundMOOV;
-	uint32 _timeScale;
-	uint32 _duration;
-	uint32 _numStreams;
-	Common::Rational _scaleFactorX;
-	Common::Rational _scaleFactorY;
-	MOVStreamContext *_streams[20];
-	const byte *_palette;
-	bool _dirtyPalette;
-	uint32 _beginOffset;
-	Common::MacResManager *_resFork;
-
-	void initParseTable();
+private:
 	Audio::AudioStream *createAudioStream(Common::SeekableReadStream *stream);
 	bool checkAudioCodecSupport(uint32 tag);
 	Common::SeekableReadStream *getNextFramePacket(uint32 &descId);
@@ -263,30 +161,15 @@ private:
 	int8 _videoStreamIndex;
 	uint32 findKeyFrame(uint32 frame) const;
 
+	bool _dirtyPalette;
+	const byte *_palette;
+
 	Graphics::Surface *_scaledSurface;
 	const Graphics::Surface *scaleSurface(const Graphics::Surface *frame);
 	Common::Rational getScaleFactorX() const;
 	Common::Rational getScaleFactorY() const;
 
 	void pauseVideoIntern(bool pause);
-
-	int readDefault(MOVatom atom);
-	int readLeaf(MOVatom atom);
-	int readELST(MOVatom atom);
-	int readHDLR(MOVatom atom);
-	int readMDHD(MOVatom atom);
-	int readMOOV(MOVatom atom);
-	int readMVHD(MOVatom atom);
-	int readTKHD(MOVatom atom);
-	int readTRAK(MOVatom atom);
-	int readSTCO(MOVatom atom);
-	int readSTSC(MOVatom atom);
-	int readSTSD(MOVatom atom);
-	int readSTSS(MOVatom atom);
-	int readSTSZ(MOVatom atom);
-	int readSTTS(MOVatom atom);
-	int readCMOV(MOVatom atom);
-	int readWAVE(MOVatom atom);
 };
 
 } // End of namespace Video
