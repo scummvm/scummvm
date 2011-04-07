@@ -56,8 +56,7 @@ GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 	SearchMan.addSubDirectoryMatching(gameDataDir, "system");
 
 	_modeSpeed = kGroovieSpeedNormal;
-	if (ConfMan.hasKey("t7g_speed"))
-	{
+	if (ConfMan.hasKey("t7g_speed")) {
 		Common::String speed = ConfMan.get("t7g_speed");
 		if (speed.equals("im_an_ios"))
 			_modeSpeed = kGroovieSpeediOS;

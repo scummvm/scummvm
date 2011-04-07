@@ -50,11 +50,9 @@ bool VideoPlayer::load(Common::SeekableReadStream *file, uint16 flags) {
 	}
 }
 
-void VideoPlayer::setOverrideSpeed(bool isOverride)
-{
+void VideoPlayer::setOverrideSpeed(bool isOverride) {
 	_overrideSpeed = isOverride;
-	if (_fps != 0)
-	{
+	if (_fps != 0) {
 		if (isOverride)
 			_millisBetweenFrames = 1000 / 26;
 		else

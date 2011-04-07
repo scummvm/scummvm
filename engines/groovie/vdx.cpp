@@ -528,9 +528,7 @@ void VDXPlayer::decodeBlockDelta(uint32 offset, byte *colours, uint16 imageWidth
 
 void VDXPlayer::chunkSound(Common::ReadStream *in) {
 	if (getOverrideSpeed())
-	{
 		setOverrideSpeed(false);
-	}
 
 	if (!_audioStream) {
 		_audioStream = Audio::makeQueuingAudioStream(22050, false);
