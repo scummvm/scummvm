@@ -257,8 +257,29 @@ LBValue LBCode::runCode(byte terminator) {
 }
 
 void LBCode::parseStatement() {
-	// FIXME: logical operators
 	parseComparisons();
+
+	if (_currToken != kTokenAnd && _currToken != kTokenOr)
+		return;
+	byte op = _currToken;
+	if (op == kTokenAnd)
+		debugN(" && ");
+	else
+		debugN(" || ");
+
+	nextToken();
+	parseComparisons();
+
+	LBValue val2 = _stack.pop();
+	LBValue val1 = _stack.pop();
+	bool result;
+	if (op == kTokenAnd)
+		result = !val1.isZero() && !val2.isZero();
+	else
+		result = !val1.isZero() || !val2.isZero();
+
+	debugN(" [--> %s]", result ? "true" : "false");
+	_stack.push(result);
 }
 
 void LBCode::parseComparisons() {
@@ -320,7 +341,7 @@ void LBCode::parseComparisons() {
 	}
 
 	debugN(" [--> %s]", result ? "true" : "false");
-	_stack.push(result ? 1 : 0);
+	_stack.push(result);
 }
 
 void LBCode::parseConcat() {
