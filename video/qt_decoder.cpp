@@ -851,18 +851,16 @@ int QuickTimeDecoder::readHDLR(MOVatom atom) {
 	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
 
 	// component type
-	uint32 ctype = _fd->readUint32LE();
+	uint32 ctype = _fd->readUint32BE();
 	uint32 type = _fd->readUint32BE(); // component subtype
 
 	debug(0, "ctype= %s (0x%08lx)", tag2str(ctype), (long)ctype);
 	debug(0, "stype= %s", tag2str(type));
 
-	if(ctype == MKID_BE('mhlr')) // MOV
+	if (ctype == MKID_BE('mhlr')) // MOV
 		debug(0, "MOV detected");
-	else if(ctype == 0) {
-		warning("MP4 streams are not supported");
-		return -1;
-	}
+	else if (ctype == 0)
+		debug(0, "MPEG-4 detected");
 
 	if (type == MKID_BE('vide'))
 		st->codec_type = CODEC_TYPE_VIDEO;
@@ -1326,7 +1324,10 @@ bool QuickTimeDecoder::checkAudioCodecSupport(uint32 tag) {
 		return true;
 #endif
 
-	warning("Audio Codec Not Supported: \'%s\'", tag2str(tag));
+	if (tag == MKID_BE('mp4a'))
+		warning("No MPEG-4 audio (AAC) support");
+	else
+		warning("Audio Codec Not Supported: \'%s\'", tag2str(tag));
 
 	return false;
 }
