@@ -385,6 +385,7 @@ public:
 	virtual void notify(uint16 data, uint16 from); // 0x1A
 
 	uint16 getId() { return _itemId; }
+	const Common::String &getName() { return _desc; }
 	uint16 getSoundPriority() { return _soundMode; }
 	bool isAmbient() { return _isAmbient; }
 
@@ -615,6 +616,7 @@ public:
 	GUI::Debugger *getDebugger() { return _console; }
 
 	LBItem *getItemById(uint16 id);
+	LBItem *getItemByName(Common::String name);
 
 	void setFocus(LBItem *focus);
 	void setEnableForAll(bool enable, LBItem *except = 0);

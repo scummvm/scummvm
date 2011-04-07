@@ -558,6 +558,14 @@ LBItem *MohawkEngine_LivingBooks::getItemById(uint16 id) {
 	return NULL;
 }
 
+LBItem *MohawkEngine_LivingBooks::getItemByName(Common::String name) {
+	for (uint16 i = 0; i < _items.size(); i++)
+		if (_items[i]->getName() == name)
+			return _items[i];
+
+	return NULL;
+}
+
 void MohawkEngine_LivingBooks::setFocus(LBItem *focus) {
 	_focus = focus;
 }
