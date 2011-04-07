@@ -38,11 +38,6 @@
 #include "common/memstream.h"
 #include "common/util.h"
 
-// Audio codecs
-#include "audio/decoders/adpcm.h"
-#include "audio/decoders/raw.h"
-#include "video/codecs/qdm2.h"
-
 // Video codecs
 #include "video/codecs/cinepak.h"
 #include "video/codecs/mjpeg.h"
@@ -58,7 +53,6 @@ namespace Video {
 ////////////////////////////////////////////
 
 QuickTimeDecoder::QuickTimeDecoder() {
-	_audStream = NULL;
 	_curFrame = -1;
 	_startTime = _nextFrameStartTime = 0;
 	_audHandle = Audio::SoundHandle();
@@ -175,7 +169,7 @@ void QuickTimeDecoder::seekToFrame(uint32 frame) {
 		_audioStartOffset = curVideoTime;
 
 		// Re-create the audio stream
-		AudioSampleDesc *entry = (AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
+		Audio::QuickTimeAudioDecoder::AudioSampleDesc *entry = (Audio::QuickTimeAudioDecoder::AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
 		_audStream = Audio::makeQueuingAudioStream(entry->sampleRate, entry->channels == 2);
 
 		// First, we need to track down what audio sample we need
@@ -216,7 +210,7 @@ void QuickTimeDecoder::seekToFrame(uint32 frame) {
 		}
 		
 		// Reposition the audio stream
-		readNextAudioChunk();
+		queueNextAudioChunk();
 		if (sample != totalSamples) {
 			// HACK: Skip a certain amount of samples from the stream
 			// (There's got to be a better way to do this!)
@@ -232,7 +226,7 @@ void QuickTimeDecoder::seekToFrame(uint32 frame) {
 }
 
 void QuickTimeDecoder::seekToTime(Audio::Timestamp time) {
-	// TODO: Audio-only seeking (or really, have QuickTime sounds)
+	// Use makeQuickTimeStream() instead
 	if (_videoStreamIndex < 0)
 		error("Audio-only seeking not supported");
 
@@ -404,10 +398,7 @@ bool QuickTimeDecoder::loadFile(const Common::String &filename) {
 	if (!Common::QuickTimeParser::loadFile(filename))
 		return false;
 
-	_videoStreamIndex = _audioStreamIndex = -1;
-	_startTime = 0;
 	init();
-
 	return true;
 }
 
@@ -415,39 +406,24 @@ bool QuickTimeDecoder::loadStream(Common::SeekableReadStream *stream) {
 	if (!Common::QuickTimeParser::loadStream(stream))
 		return false;
 
-	_videoStreamIndex = _audioStreamIndex = -1;
-	_startTime = 0;
 	init();
-
 	return true;
 }
 
 void QuickTimeDecoder::init() {
-	Common::QuickTimeParser::init();
+	Audio::QuickTimeAudioDecoder::init();
 
-	// Find audio/video streams
-	for (uint32 i = 0; i < _numStreams; i++) {
+	_videoStreamIndex = -1;
+	_startTime = 0;
+
+	// Find video streams
+	for (uint32 i = 0; i < _numStreams; i++)
 		if (_streams[i]->codec_type == CODEC_TYPE_VIDEO && _videoStreamIndex < 0)
 			_videoStreamIndex = i;
-		else if (_streams[i]->codec_type == CODEC_TYPE_AUDIO && _audioStreamIndex < 0)
-			_audioStreamIndex = i;
-	}
 
-	// Initialize audio, if present
-	if (_audioStreamIndex >= 0) {
-		AudioSampleDesc *entry = (AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
-
-		if (checkAudioCodecSupport(entry->codecTag)) {
-			_audStream = Audio::makeQueuingAudioStream(entry->sampleRate, entry->channels == 2);
-			_curAudioChunk = 0;
-
-			// Make sure the bits per sample transfers to the sample size
-			if (entry->codecTag == MKID_BE('raw ') || entry->codecTag == MKID_BE('twos'))
-				_streams[_audioStreamIndex]->sample_size = (entry->bitsPerSample / 8) * entry->channels;
-
-			startAudio();
-		}
-
+	// Start the audio codec if we've got one that we can handle
+	if (_audStream) {
+		startAudio();
 		_audioStartOffset = Audio::Timestamp(0);
 	}
 
@@ -559,56 +535,10 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(MOVStreamC
 		}
 
 		return entry;
-	} else if (st->codec_type == CODEC_TYPE_AUDIO) {
-		debug(0, "Audio Codec FourCC: \'%s\'", tag2str(format));
-
-		AudioSampleDesc *entry = new AudioSampleDesc();
-		entry->codecTag = format;
-
-		uint16 stsdVersion = _fd->readUint16BE();
-		_fd->readUint16BE(); // revision level
-		_fd->readUint32BE(); // vendor
-
-		entry->channels = _fd->readUint16BE();			 // channel count
-		entry->bitsPerSample = _fd->readUint16BE();	  // sample size
-
-		_fd->readUint16BE(); // compression id = 0
-		_fd->readUint16BE(); // packet size = 0
-
-		entry->sampleRate = (_fd->readUint32BE() >> 16);
-
-		debug(0, "stsd version =%d", stsdVersion);
-		if (stsdVersion == 0) {
-			// Not used, except in special cases. See below.
-			entry->samplesPerFrame = entry->bytesPerFrame = 0;
-		} else if (stsdVersion == 1) {
-			// Read QT version 1 fields. In version 0 these dont exist.
-			entry->samplesPerFrame = _fd->readUint32BE();
-			debug(0, "stsd samples_per_frame =%d",entry->samplesPerFrame);
-			_fd->readUint32BE(); // bytes per packet
-			entry->bytesPerFrame = _fd->readUint32BE();
-			debug(0, "stsd bytes_per_frame =%d", entry->bytesPerFrame);
-			_fd->readUint32BE(); // bytes per sample
-		} else {
-			warning("Unsupported QuickTime STSD audio version %d", stsdVersion);
-			delete entry;
-			return 0;
-		}
-
-		// Version 0 videos (such as the Riven ones) don't have this set,
-		// but we need it later on. Add it in here.
-		if (format == MKID_BE('ima4')) {
-			entry->samplesPerFrame = 64;
-			entry->bytesPerFrame = 34 * entry->channels;
-		}
-
-		if (entry->sampleRate == 0 && st->time_scale > 1)
-			entry->sampleRate = st->time_scale;
-
-		return entry;
 	}
 
-	return 0;
+	// Pass it on up
+	return Audio::QuickTimeAudioDecoder::readSampleDesc(st, format);
 }
 
 void QuickTimeDecoder::close() {
@@ -681,112 +611,6 @@ Common::SeekableReadStream *QuickTimeDecoder::getNextFramePacket(uint32 &descId)
 	return _fd->readStream(_streams[_videoStreamIndex]->sample_sizes[getCurFrame()]);
 }
 
-bool QuickTimeDecoder::checkAudioCodecSupport(uint32 tag) {
-	// Check if the codec is a supported codec
-	if (tag == MKID_BE('twos') || tag == MKID_BE('raw ') || tag == MKID_BE('ima4'))
-		return true;
-
-#ifdef VIDEO_CODECS_QDM2_H
-	if (tag == MKID_BE('QDM2'))
-		return true;
-#endif
-
-	if (tag == MKID_BE('mp4a'))
-		warning("No MPEG-4 audio (AAC) support");
-	else
-		warning("Audio Codec Not Supported: \'%s\'", tag2str(tag));
-
-	return false;
-}
-
-Audio::AudioStream *QuickTimeDecoder::createAudioStream(Common::SeekableReadStream *stream) {
-	if (!stream || _audioStreamIndex < 0)
-		return NULL;
-
-	AudioSampleDesc *entry = (AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
-
-	if (entry->codecTag == MKID_BE('twos') || entry->codecTag == MKID_BE('raw ')) {
-		// Fortunately, most of the audio used in Myst videos is raw...
-		uint16 flags = 0;
-		if (entry->codecTag == MKID_BE('raw '))
-			flags |= Audio::FLAG_UNSIGNED;
-		if (entry->channels == 2)
-			flags |= Audio::FLAG_STEREO;
-		if (entry->bitsPerSample == 16)
-			flags |= Audio::FLAG_16BITS;
-		uint32 dataSize = stream->size();
-		byte *data = (byte *)malloc(dataSize);
-		stream->read(data, dataSize);
-		delete stream;
-		return Audio::makeRawStream(data, dataSize, entry->sampleRate, flags);
-	} else if (entry->codecTag == MKID_BE('ima4')) {
-		// Riven uses this codec (as do some Myst ME videos)
-		return Audio::makeADPCMStream(stream, DisposeAfterUse::YES, stream->size(), Audio::kADPCMApple, entry->sampleRate, entry->channels, 34);
-#ifdef VIDEO_CODECS_QDM2_H
-	} else if (entry->codecTag == MKID_BE('QDM2')) {
-		// Several Myst ME videos use this codec
-		return makeQDM2Stream(stream, _streams[_audioStreamIndex]->extradata);
-#endif
-	}
-
-	error("Unsupported audio codec");
-
-	return NULL;
-}
-
-uint32 QuickTimeDecoder::getAudioChunkSampleCount(uint chunk) {
-	if (_audioStreamIndex < 0)
-		return 0;
-
-	uint32 sampleCount = 0;
-
-	for (uint32 j = 0; j < _streams[_audioStreamIndex]->sample_to_chunk_sz; j++)
-		if (chunk >= _streams[_audioStreamIndex]->sample_to_chunk[j].first)
-			sampleCount = _streams[_audioStreamIndex]->sample_to_chunk[j].count;
-
-	return sampleCount;
-}
-
-void QuickTimeDecoder::readNextAudioChunk() {
-	AudioSampleDesc *entry = (AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
-	Common::MemoryWriteStreamDynamic *wStream = new Common::MemoryWriteStreamDynamic();
-
-	_fd->seek(_streams[_audioStreamIndex]->chunk_offsets[_curAudioChunk]);
-
-	// First, we have to get the sample count
-	uint32 sampleCount = getAudioChunkSampleCount(_curAudioChunk);
-	assert(sampleCount);
-
-	// Then calculate the right sizes
-	while (sampleCount > 0) {
-		uint32 samples = 0, size = 0;
-
-		if (entry->samplesPerFrame >= 160) {
-			samples = entry->samplesPerFrame;
-			size = entry->bytesPerFrame;
-		} else if (entry->samplesPerFrame > 1) {
-			samples = MIN<uint32>((1024 / entry->samplesPerFrame) * entry->samplesPerFrame, sampleCount);
-			size = (samples / entry->samplesPerFrame) * entry->bytesPerFrame;
-		} else {
-			samples = MIN<uint32>(1024, sampleCount);
-			size = samples * _streams[_audioStreamIndex]->sample_size;
-		}
-
-		// Now, we read in the data for this data and output it
-		byte *data = (byte *)malloc(size);
-		_fd->read(data, size);
-		wStream->write(data, size);
-		free(data);
-		sampleCount -= samples;
-	}
-
-	// Now queue the buffer
-	_audStream->queueAudioStream(createAudioStream(new Common::MemoryReadStream(wStream->getData(), wStream->size(), DisposeAfterUse::YES)));
-	delete wStream;
-
-	_curAudioChunk++;
-}
-
 void QuickTimeDecoder::updateAudioBuffer() {
 	if (!_audStream)
 		return;
@@ -797,7 +621,7 @@ void QuickTimeDecoder::updateAudioBuffer() {
 		// If we're on the last frame, make sure all audio remaining is buffered
 		numberOfChunksNeeded = _streams[_audioStreamIndex]->chunk_count;
 	} else {
-		AudioSampleDesc *entry = (AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
+		Audio::QuickTimeAudioDecoder::AudioSampleDesc *entry = (Audio::QuickTimeAudioDecoder::AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
 
 		// Calculate the amount of chunks we need in memory until the next frame
 		uint32 timeToNextFrame = getTimeToNextFrame();
@@ -817,7 +641,7 @@ void QuickTimeDecoder::updateAudioBuffer() {
 
 	// Keep three streams in buffer so that if/when the first two end, it goes right into the next
 	while (_audStream->numQueuedStreams() < numberOfChunksNeeded && _curAudioChunk < _streams[_audioStreamIndex]->chunk_count)
-		readNextAudioChunk();
+		queueNextAudioChunk();
 }
 
 QuickTimeDecoder::VideoSampleDesc::VideoSampleDesc() : Common::QuickTimeParser::SampleDesc() {
@@ -830,13 +654,6 @@ QuickTimeDecoder::VideoSampleDesc::VideoSampleDesc() : Common::QuickTimeParser::
 QuickTimeDecoder::VideoSampleDesc::~VideoSampleDesc() {
 	delete[] palette;
 	delete videoCodec;
-}
-
-QuickTimeDecoder::AudioSampleDesc::AudioSampleDesc() : Common::QuickTimeParser::SampleDesc() {
-	channels = 0;
-	sampleRate = 0;
-	samplesPerFrame = 0;
-	bytesPerFrame = 0;
 }
 
 } // End of namespace Video

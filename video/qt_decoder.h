@@ -34,7 +34,6 @@
 #ifndef VIDEO_QT_DECODER_H
 #define VIDEO_QT_DECODER_H
 
-#include "common/quicktime.h"
 #include "common/scummsys.h"
 
 #include "video/video_decoder.h"
@@ -42,6 +41,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "audio/decoders/quicktime.h"
 
 namespace Common {
 	class MacResManager;
@@ -56,7 +56,7 @@ namespace Video {
  *  - mohawk
  *  - sci
  */
-class QuickTimeDecoder : public SeekableVideoDecoder, public Common::QuickTimeParser {
+class QuickTimeDecoder : public SeekableVideoDecoder, public Audio::QuickTimeAudioDecoder {
 public:
 	QuickTimeDecoder();
 	virtual ~QuickTimeDecoder();
@@ -126,32 +126,17 @@ protected:
 		Codec *videoCodec;
 	};
 
-	struct AudioSampleDesc : public Common::QuickTimeParser::SampleDesc {
-		AudioSampleDesc();
-
-		uint16 channels;
-		uint32 sampleRate;
-		uint32 samplesPerFrame;
-		uint32 bytesPerFrame;
-	};
-
 	Common::QuickTimeParser::SampleDesc *readSampleDesc(MOVStreamContext *st, uint32 format);
 
 private:
-	Audio::AudioStream *createAudioStream(Common::SeekableReadStream *stream);
-	bool checkAudioCodecSupport(uint32 tag);
 	Common::SeekableReadStream *getNextFramePacket(uint32 &descId);
 	uint32 getFrameDuration();
 	void init();
 
-	Audio::QueuingAudioStream *_audStream;
 	void startAudio();
 	void stopAudio();
 	void updateAudioBuffer();
 	void readNextAudioChunk();
-	uint32 getAudioChunkSampleCount(uint chunk);
-	int8 _audioStreamIndex;
-	uint _curAudioChunk;
 	Audio::SoundHandle _audHandle;
 	Audio::Timestamp _audioStartOffset;
 

@@ -23,12 +23,12 @@
  *
  */
 
-#ifndef VIDEO_CODECS_QDM2DATA_H
-#define VIDEO_CODECS_QDM2DATA_H
+#ifndef AUDIO_QDM2DATA_H
+#define AUDIO_QDM2DATA_H
 
 #include "common/scummsys.h"
 
-namespace Video {
+namespace Audio {
 
 /// VLC TABLES
 
@@ -526,6 +526,6 @@ static const float type34_delta[10] = { // FIXME: covers 8 entries..
 	0.138071194291115f,0.333333343267441f,0.60947573184967f,1.0f,0.0f,
 };
 
-} // End of namespace Video
+} // End of namespace Audio
 
 #endif

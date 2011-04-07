@@ -19,6 +19,8 @@ MODULE_OBJS := \
 	decoders/iff_sound.o \
 	decoders/mac_snd.o \
 	decoders/mp3.o \
+	decoders/qdm2.o \
+	decoders/quicktime.o \
 	decoders/raw.o \
 	decoders/vag.o \
 	decoders/voc.o \
