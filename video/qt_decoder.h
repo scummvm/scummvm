@@ -24,7 +24,7 @@
  */
 
 //
-// Heavily based on ffmpeg code.
+// Partially based on ffmpeg code.
 //
 // Copyright (c) 2001 Fabrice Bellard.
 // First version by Francois Revol revol@free.fr
