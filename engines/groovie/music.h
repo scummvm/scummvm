@@ -29,6 +29,7 @@
 #include "common/array.h"
 #include "common/mutex.h"
 #include "audio/mididrv.h"
+#include "audio/mixer.h"
 
 class MidiParser;
 
@@ -167,6 +168,9 @@ public:
 protected:
 	void updateVolume();
 	bool load(uint32 fileref, bool loop);
+
+private:
+	Audio::SoundHandle _handle;
 };
 
 } // End of Groovie namespace

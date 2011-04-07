@@ -31,7 +31,9 @@
 #include "common/config-manager.h"
 #include "common/macresman.h"
 #include "common/memstream.h"
+#include "audio/audiostream.h"
 #include "audio/midiparser.h"
+#include "audio/decoders/quicktime.h"
 
 namespace Groovie {
 
@@ -755,10 +757,26 @@ void MusicPlayerMPEG4::updateVolume() {
 }
 
 bool MusicPlayerMPEG4::load(uint32 fileref, bool loop) {
-	// TODO
+	// Stop any old sound
+	_vm->_system->getMixer()->stopHandle(_handle);
+
+	// Create the audio stream
 	Common::String filename = Common::String::format("gu%d.m4a", fileref & 0x3FF);
-	warning("TODO: Play MPEG-4 sound '%s'", filename.c_str());
-	return false;
+	Audio::AudioStream *audStream = Audio::makeQuickTimeStream(filename);
+
+	if (!audStream) {
+		// MPEG-4 sounds aren't handled yet, so nothing should play here yet
+		warning("Could not play MPEG-4 sound '%s'", filename.c_str());
+		return false;
+	}
+
+	// Loop if requested
+	if (loop)
+		audStream = Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audStream, 0);
+
+	// Play!
+	_vm->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_handle, audStream); 
+	return true;
 }
 
 } // End of Groovie namespace
