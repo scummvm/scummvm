@@ -603,7 +603,7 @@ int QuickTimeDecoder::readDefault(MOVatom atom) {
 		uint32 i = 0;
 
 		for (; _parseTable[i].type != 0 && _parseTable[i].type != a.type; i++)
-			// empty;
+			; // Empty
 
 		if (a.size < 8)
 			break;
