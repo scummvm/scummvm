@@ -610,6 +610,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"carmentqc",
+			"",
+			AD_ENTRY1("Outline.txt", "6a281eefe72987afb0f8fb6cf84553f5"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV5,
+		0,
+		0
+	},
+
+	{
+		{
 			"maggiesfa",
 			"",
 			AD_ENTRY1("Outline", "b7dc6e65fa9e80784a5bb8b557aa37c4"),
