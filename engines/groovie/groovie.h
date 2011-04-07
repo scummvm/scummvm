@@ -75,6 +75,12 @@ enum DebugLevels {
 		// the current limitation is 32 debug levels (1 << 31 is the last one)
 };
 
+enum GameSpeed {
+	kGroovieSpeedNormal,
+	kGroovieSpeediOS,
+	kGroovieSpeedTweaked
+};
+
 struct GroovieGameDescription;
 
 class GroovieEngine : public Engine {
@@ -112,6 +118,8 @@ public:
 	const Graphics::Font *_font;
 
 	Common::MacResManager *_macResFork;
+
+	GameSpeed _modeSpeed;
 
 private:
 	const GroovieGameDescription *_gameDescription;

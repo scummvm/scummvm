@@ -75,6 +75,7 @@ private:
 	Common::RandomSource _random;
 
 	bool _firstbit;
+	uint8 _lastCursor;
 
 	// Script filename (for debugging purposes)
 	Common::String _scriptFile;
