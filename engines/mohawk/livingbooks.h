@@ -386,6 +386,7 @@ public:
 
 	uint16 getId() { return _itemId; }
 	const Common::String &getName() { return _desc; }
+	const Common::Rect &getRect() { return _rect; }
 	uint16 getSoundPriority() { return _soundMode; }
 	bool isAmbient() { return _isAmbient; }
 

@@ -57,6 +57,14 @@ struct LBValue {
 		type = kLBValueString;
 		string = str;
 	}
+	LBValue(const Common::Point &p) {
+		type = kLBValuePoint;
+		point = p;
+	}
+	LBValue(const Common::Rect &r) {
+		type = kLBValueRect;
+		rect = r;
+	}
 	LBValue(LBItem *itm) {
 		type = kLBValueItemPtr;
 		item = itm;
@@ -99,8 +107,11 @@ struct LBValue {
 	bool isNumeric() const;
 	bool isZero() const;
 
+	Common::String toString() const;
 	int toInt() const;
 	double toDouble() const;
+	Common::Point toPoint() const;
+	Common::Rect toRect() const;
 };
 
 enum {

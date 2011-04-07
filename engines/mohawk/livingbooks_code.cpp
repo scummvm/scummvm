@@ -71,12 +71,55 @@ bool LBValue::isZero() const {
 	return toInt() == 0; // FIXME
 }
 
+Common::String LBValue::toString() const {
+	switch (type) {
+	case kLBValueString:
+		return string;
+	case kLBValueInteger:
+		return Common::String::format("%d", integer);
+	case kLBValueReal:
+		return Common::String::format("%f", real);
+	default:
+		return string; // FIXME
+	}
+}
+
 int LBValue::toInt() const {
 	return integer; // FIXME
 }
 
 double LBValue::toDouble() const {
 	return real; // FIXME
+}
+
+Common::Point LBValue::toPoint() const {
+	switch (type) {
+	case kLBValueString:
+		// FIXME
+		return Common::Point();
+	case kLBValueInteger:
+		return Common::Point(integer, integer);
+	case kLBValuePoint:
+		return point;
+	default:
+		error("failed to convert to point");
+	}
+}
+
+Common::Rect LBValue::toRect() const {
+	switch (type) {
+	case kLBValueString:
+		// FIXME
+		return Common::Rect();
+	case kLBValueInteger:
+		return Common::Rect(integer, integer, integer, integer);
+	case kLBValueRect:
+		return rect;
+	case kLBValueItemPtr:
+		return item->getRect();
+	default:
+		error("failed to convert to rect");
+	}
 }
 
 LBCode::LBCode(MohawkEngine_LivingBooks *vm) : _vm(vm) {
