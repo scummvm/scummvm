@@ -785,6 +785,16 @@ void LBCode::runNotifyCommand() {
 		}
 		break;
 
+	case kLBNotifyQuit:
+		{
+		debugN("quit");
+		Common::Array<LBValue> params = readParams();
+		if (params.size() != 0)
+			error("incorrect number of parameters (%d) to quit", params.size());
+		_vm->addNotifyEvent(NotifyEvent(kLBNotifyQuit, 0));
+		}
+		break;
+
 	default:
 		error("unknown notify command %02x in code", commandType);
 	}
