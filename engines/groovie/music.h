@@ -160,6 +160,15 @@ private:
 	Common::SeekableReadStream *decompressMidi(Common::SeekableReadStream *stream);
 };
 
+class MusicPlayerMPEG4 : public MusicPlayer {
+public:
+	MusicPlayerMPEG4(GroovieEngine *vm);
+
+protected:
+	void updateVolume();
+	bool load(uint32 fileref, bool loop);
+};
+
 } // End of Groovie namespace
 
 #endif // GROOVIE_MUSIC_H

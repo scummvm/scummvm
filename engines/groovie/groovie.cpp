@@ -151,10 +151,20 @@ Common::Error GroovieEngine::run() {
 	}
 
 	// Create the music player
-	if (getPlatform() == Common::kPlatformMacintosh)
+	switch (getPlatform()) {
+	case Common::kPlatformMacintosh:
+		// TODO: The 11th Hour Mac uses QuickTime MIDI files
+		// Right now, since the XMIDI are present and it is still detected as
+		// the DOS version, we don't have to do anything here.
 		_musicPlayer = new MusicPlayerMac(this);
-	else
+		break;
+	case Common::kPlatformIOS:
+		_musicPlayer = new MusicPlayerMPEG4(this);
+		break;
+	default:
 		_musicPlayer = new MusicPlayerXMI(this, _gameDescription->version == kGroovieT7G ? "fat" : "sample");
+		break;
+	}
 
 	// Load volume levels
 	syncSoundSettings();

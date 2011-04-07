@@ -747,4 +747,18 @@ Common::SeekableReadStream *MusicPlayerMac::decompressMidi(Common::SeekableReadS
 	return new Common::MemoryReadStream(output, size, DisposeAfterUse::YES);
 }
 
+MusicPlayerMPEG4::MusicPlayerMPEG4(GroovieEngine *vm) : MusicPlayer(vm) {
+}
+
+void MusicPlayerMPEG4::updateVolume() {
+	// TODO: Check if anything has to be done here
+}
+
+bool MusicPlayerMPEG4::load(uint32 fileref, bool loop) {
+	// TODO
+	Common::String filename = Common::String::format("gu%d.m4a", fileref & 0x3FF);
+	warning("TODO: Play MPEG-4 sound '%s'", filename.c_str());
+	return false;
+}
+
 } // End of Groovie namespace
