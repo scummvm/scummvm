@@ -539,6 +539,21 @@ Common::Array<LBValue> LBCode::readParams() {
 	return params;
 }
 
+Common::Rect LBCode::getRectFromParams(const Common::Array<LBValue> &params) {
+	if (params.size() == 0) {
+		assert(_currSource);
+		return _currSource->getRect();
+	} else if (params.size() == 1) {
+		const LBValue &val = params[0];
+		LBItem *item = _vm->getItemByName(val.toString());
+		if (item)
+			return item->getRect();
+		else
+			return val.toRect();
+	} else
+		error("getRectFromParams got called with weird state");
+}
+
 struct CodeCommandInfo {
 	const char *name;
 	typedef void (LBCode::*CommandFunc)(const Common::Array<LBValue> &params);
@@ -554,16 +569,16 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "max", 0 },
 	{ "min", 0 },
 	{ "abs", 0 },
-	{ "getRect", 0 }, // also "makeRect"
+	{ "getRect", &LBCode::cmdGetRect }, // also "makeRect"
 	{ "makePt", 0 }, // also "makePair"
-	{ "topleft", 0 },
-	{ "bottomright", 0 },
+	{ "topLeft", &LBCode::cmdTopLeft },
+	{ "bottomRight", &LBCode::cmdBottomRight },
 	{ "mousePos", 0 },
-	{ "top", 0 },
-	{ "left", 0 },
-	{ "bottom", 0 },
+	{ "top", &LBCode::cmdTop },
+	{ "left", &LBCode::cmdLeft },
+	{ "bottom", &LBCode::cmdBottom },
 	// 0x10
-	{ "right", 0 },
+	{ "right", &LBCode::cmdRight },
 	{ "xpos", 0 },
 	{ "ypos", 0 },
 	{ "playFrom", 0 },
@@ -702,6 +717,67 @@ void LBCode::runGeneralCommand() {
 
 void LBCode::cmdUnimplemented(const Common::Array<LBValue> &params) {
 	warning("unimplemented command called");
+}
+
+void LBCode::cmdGetRect(const Common::Array<LBValue> &params) {
+	if (params.size() < 2) {
+		_stack.push(getRectFromParams(params));
+	} else if (params.size() == 2) {
+		Common::Point p1 = params[0].toPoint();
+		Common::Point p2 = params[1].toPoint();
+		_stack.push(Common::Rect(p1.x, p1.y, p2.x, p2.y));
+	} else if (params.size() == 4) {
+		_stack.push(Common::Rect(params[0].toInt(), params[1].toInt(), params[2].toInt(), params[3].toInt()));
+	} else
+		error("incorrect number of parameters (%d) to getRect", params.size());
+}
+
+void LBCode::cmdTopLeft(const Common::Array<LBValue> &params) {
+	if (params.size() > 1)
+		error("too many parameters (%d) to topLeft", params.size());
+
+	Common::Rect rect = getRectFromParams(params);
+	_stack.push(Common::Point(rect.top, rect.left));
+}
+
+void LBCode::cmdBottomRight(const Common::Array<LBValue> &params) {
+	if (params.size() > 1)
+		error("too many parameters (%d) to bottomRight", params.size());
+
+	Common::Rect rect = getRectFromParams(params);
+	_stack.push(Common::Point(rect.bottom, rect.right));
+}
+
+void LBCode::cmdTop(const Common::Array<LBValue> &params) {
+	if (params.size() > 1)
+		error("too many parameters (%d) to top", params.size());
+
+	Common::Rect rect = getRectFromParams(params);
+	_stack.push(rect.top);
+}
+
+void LBCode::cmdLeft(const Common::Array<LBValue> &params) {
+	if (params.size() > 1)
+		error("too many parameters (%d) to left", params.size());
+
+	Common::Rect rect = getRectFromParams(params);
+	_stack.push(rect.left);
+}
+
+void LBCode::cmdBottom(const Common::Array<LBValue> &params) {
+	if (params.size() > 1)
+		error("too many parameters (%d) to bottom", params.size());
+
+	Common::Rect rect = getRectFromParams(params);
+	_stack.push(rect.bottom);
+}
+
+void LBCode::cmdRight(const Common::Array<LBValue> &params) {
+	if (params.size() > 1)
+		error("too many parameters (%d) to right", params.size());
+
+	Common::Rect rect = getRectFromParams(params);
+	_stack.push(rect.right);
 }
 
 void LBCode::cmdSetPlayParams(const Common::Array<LBValue> &params) {

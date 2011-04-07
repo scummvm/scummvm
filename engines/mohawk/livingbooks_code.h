@@ -210,12 +210,21 @@ protected:
 	void parseMain();
 
 	Common::Array<LBValue> readParams();
+	Common::Rect getRectFromParams(const Common::Array<LBValue> &params);
+
 	void runGeneralCommand();
 	void runItemCommand();
 	void runNotifyCommand();
 
 public:
 	void cmdUnimplemented(const Common::Array<LBValue> &params);
+	void cmdGetRect(const Common::Array<LBValue> &params);
+	void cmdTopLeft(const Common::Array<LBValue> &params);
+	void cmdBottomRight(const Common::Array<LBValue> &params);
+	void cmdTop(const Common::Array<LBValue> &params);
+	void cmdLeft(const Common::Array<LBValue> &params);
+	void cmdBottom(const Common::Array<LBValue> &params);
+	void cmdRight(const Common::Array<LBValue> &params);
 	void cmdSetPlayParams(const Common::Array<LBValue> &params);
 	void cmdSetKeyEvent(const Common::Array<LBValue> &params);
 	void cmdSetHitTest(const Common::Array<LBValue> &params);
