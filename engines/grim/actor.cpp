@@ -457,7 +457,7 @@ void Actor::walkTo(Graphics::Vector3d p) {
 			Common::List<Sector *> sectors;
 			for (int i = 0; i < g_grim->currScene()->getSectorCount(); ++i) {
 				Sector *s = g_grim->currScene()->getSectorBase(i);
-				if (s->type() >= Sector::WalkType) {
+				if (s->type() >= Sector::WalkType && s->visible()) {
 					sectors.push_back(s);
 				}
 			}
