@@ -616,7 +616,7 @@ void Actor::walkForward() {
 		return;
 
 	ei.angleWithEdge += (float)0.1;
-	float turnAmt = g_grim->perSecond(_turnRate);
+	float turnAmt = g_grim->perSecond(_turnRate) * 5.;
 	if (turnAmt > ei.angleWithEdge)
 		turnAmt = ei.angleWithEdge;
 	setYaw(_yaw + turnAmt * turnDir);
@@ -962,7 +962,7 @@ void Actor::update() {
 	}
 
 	if (_turning) {
-		float turnAmt = g_grim->perSecond(_turnRate);
+		float turnAmt = g_grim->perSecond(_turnRate) * 5.f;
 		float dyaw = _destYaw - _yaw;
 		while (dyaw > 180)
 			dyaw -= 360;
@@ -979,7 +979,7 @@ void Actor::update() {
 		else if (dyaw > 0)
 			setYaw(_yaw + turnAmt);
 		else
-			setYaw(_yaw -= turnAmt);
+			setYaw(_yaw - turnAmt);
 		_currTurnDir = (dyaw > 0 ? 1 : -1);
 	}
 
