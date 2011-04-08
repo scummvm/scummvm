@@ -1320,8 +1320,8 @@ void ToonEngine::loadAdditionalPalette(Common::String fileName, int32 mode) {
 		fixPaletteEntries(_additionalPalette2, 23);
 		break;
 	case 2:
-		memcpy(_cutawayPalette, palette, 768);
-		fixPaletteEntries(_cutawayPalette, 256);
+		memcpy(_cutawayPalette, palette, size);
+		fixPaletteEntries(_cutawayPalette, size/3);
 		break;
 	case 3:
 		memcpy(_universalPalette, palette, 96);
@@ -2834,7 +2834,8 @@ void ToonEngine::newGame() {
 		addItemToInventory(67);
 		addItemToInventory(11);
 		addItemToInventory(19);
-		loadScene(_gameState->_currentScene);
+		loadScene(22);
+		//loadScene(_gameState->_currentScene);
 	} else {
 		//loadScene(4);
 		loadScene(_gameState->_currentScene);

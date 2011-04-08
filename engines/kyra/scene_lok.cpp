@@ -314,38 +314,35 @@ void KyraEngine_LoK::setCharacterPositionHelper(int character, int *facingTable)
 		}
 	}
 
-	static uint8 facingIsZero[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-	static uint8 facingIsFour[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-
 	if (facing == 0) {
-		++facingIsZero[character];
+		++_characterFacingZeroCount[character];
 	} else {
 		bool resetTables = false;
 		if (facing != 7) {
 			if (facing - 1 != 0) {
 				if (facing != 4) {
 					if (facing == 3 || facing == 5) {
-						if (facingIsFour[character] > 2)
+						if (_characterFacingFourCount[character] > 2)
 							facing = 4;
 						resetTables = true;
 					}
 				} else {
-					++facingIsFour[character];
+					++_characterFacingFourCount[character];
 				}
 			} else {
-				if (facingIsZero[character] > 2)
+				if (_characterFacingZeroCount[character] > 2)
 					facing = 0;
 				resetTables = true;
 			}
 		} else {
-			if (facingIsZero[character] > 2)
+			if (_characterFacingZeroCount[character] > 2)
 				facing = 0;
 			resetTables = true;
 		}
 
 		if (resetTables) {
-			facingIsZero[character] = 0;
-			facingIsFour[character] = 0;
+			_characterFacingZeroCount[character] = 0;
+			_characterFacingFourCount[character] = 0;
 		}
 	}
 

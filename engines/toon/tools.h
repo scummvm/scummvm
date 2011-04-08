@@ -63,10 +63,12 @@ protected:
 	const uint8 *_srcPtr;
 	uint8 *_dstPtr;
 
+	uint16 _inputByteLeft;
+
 public:
 	RncDecoder();
 	~RncDecoder();
-	int32 unpackM1(const void *input, void *output);
+	int32 unpackM1(const void *input, uint16 inputSize, void *output);
 	int32 unpackM2(const void *input, void *output);
 
 protected:

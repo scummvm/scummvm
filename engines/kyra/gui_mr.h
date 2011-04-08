@@ -50,8 +50,6 @@ public:
 
 	void createScreenThumbnail(Graphics::Surface &dst);
 private:
-	void getInput();
-
 	const char *getMenuTitle(const Menu &menu);
 	const char *getMenuItemTitle(const MenuItem &menuItem);
 	const char *getMenuItemLabel(const MenuItem &menuItem);

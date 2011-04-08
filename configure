@@ -218,10 +218,10 @@ cc_check_no_clean() {
 	echo "$CXX $LDFLAGS $CXXFLAGS $TMPC -o $TMPO$HOSTEXEEXT $@" >> "$TMPLOG"
 	rm -f "$TMPO$HOSTEXEEXT"
 	( $CXX $LDFLAGS $CXXFLAGS "$TMPC" -o "$TMPO$HOSTEXEEXT" "$@" ) >> "$TMPLOG" 2>&1
-	TMP="$?"
-	echo "return code: $TMP" >> "$TMPLOG"
+	TMPR="$?"
+	echo "return code: $TMPR" >> "$TMPLOG"
 	echo >> "$TMPLOG"
-	return "$TMP"
+	return "$TMPR"
 }
 
 cc_check_clean() {
@@ -230,9 +230,9 @@ cc_check_clean() {
 
 cc_check() {
 	cc_check_no_clean "$@"
-	TMP="$?"
+	TMPR="$?"
 	cc_check_clean
-	return "$TMP"
+	return "$TMPR"
 }
 
 cc_check_define() {
@@ -1478,21 +1478,21 @@ EOF
 #
 echo_n "Type with 1 byte... "
 type_1_byte=`find_type_with_size 1`
-TMP="$?"
+TMPR="$?"
 echo "$type_1_byte"
-test $TMP -eq 0 || exit 1	# check exit code of subshell
+test $TMPR -eq 0 || exit 1	# check exit code of subshell
 
 echo_n "Type with 2 bytes... "
 type_2_byte=`find_type_with_size 2`
-TMP="$?"
+TMPR="$?"
 echo "$type_2_byte"
-test $TMP -eq 0 || exit 1	# check exit code of subshell
+test $TMPR -eq 0 || exit 1	# check exit code of subshell
 
 echo_n "Type with 4 bytes... "
 type_4_byte=`find_type_with_size 4`
-TMP="$?"
+TMPR="$?"
 echo "$type_4_byte"
-test $TMP -eq 0 || exit 1	# check exit code of subshell
+test $TMPR -eq 0 || exit 1	# check exit code of subshell
 
 #
 # Check whether we can use x86 asm routines
