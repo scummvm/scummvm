@@ -46,14 +46,14 @@ public :
 	}
 };
 
-class SceneHotspot_3: public SceneHotspot {
+class NamedHotspot: public SceneHotspot {
 public:
 	int _resnum, _lookLineNum, _useLineNum;
-	SceneHotspot_3(): SceneHotspot() {}
+	NamedHotspot(): SceneHotspot() {}
 
 	void quickInit(const int ys, const int xe, const int ye, const int xs, const int resnum, const int lookLineNum, const int useLineNum);
 	virtual void doAction(int action);
-	virtual Common::String getClassName() { return "SceneHotspot_3"; }
+	virtual Common::String getClassName() { return "NamedHotspot"; }
 };
 
 class Object9350: public SceneObject {
@@ -64,7 +64,7 @@ public:
 
 class Scene9100: public Scene {
 	/* Items */
-	class SceneHotspot1: public SceneHotspot_3 {
+	class SceneHotspot1: public NamedHotspot {
 	public:
 		virtual void doAction(int action);
 	};
@@ -77,11 +77,11 @@ public:
 	SceneObject _object5;
 	SceneObject _object6;
 	SceneHotspot1  _sceneHotspot1;
-	SceneHotspot_3 _sceneHotspot2;
-	SceneHotspot_3 _sceneHotspot3;
-	SceneHotspot_3 _sceneHotspot4;
-	SceneHotspot_3 _sceneHotspot5;
-	SceneHotspot_3 _sceneHotspot6;
+	NamedHotspot _sceneHotspot2;
+	NamedHotspot _sceneHotspot3;
+	NamedHotspot _sceneHotspot4;
+	NamedHotspot _sceneHotspot5;
+	NamedHotspot _sceneHotspot6;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
@@ -100,16 +100,16 @@ public:
 	SceneObject _object1;
 	SceneObject _object2;
 	Object3 _object3;
-	SceneHotspot_3 _sceneHotspot1;
-	SceneHotspot_3 _sceneHotspot2;
-	SceneHotspot_3 _sceneHotspot3;
-	SceneHotspot_3 _sceneHotspot4;
-	SceneHotspot_3 _sceneHotspot5;
-	SceneHotspot_3 _sceneHotspot6;
-	SceneHotspot_3 _sceneHotspot7;
-	SceneHotspot_3 _sceneHotspot8;
-	SceneHotspot_3 _sceneHotspot9;
-	SceneHotspot_3 _sceneHotspot10;
+	NamedHotspot _sceneHotspot1;
+	NamedHotspot _sceneHotspot2;
+	NamedHotspot _sceneHotspot3;
+	NamedHotspot _sceneHotspot4;
+	NamedHotspot _sceneHotspot5;
+	NamedHotspot _sceneHotspot6;
+	NamedHotspot _sceneHotspot7;
+	NamedHotspot _sceneHotspot8;
+	NamedHotspot _sceneHotspot9;
+	NamedHotspot _sceneHotspot10;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
@@ -117,7 +117,7 @@ public:
 };
 
 class Scene9200: public Scene2 {
-	class SceneHotspot1: public SceneHotspot_3{
+	class SceneHotspot1: public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
@@ -132,13 +132,13 @@ public:
 	SpeakerQText _speakerQText;
 	SoundHandler _soundHandler;
 	SceneHotspot1 _hotspot1;
-	SceneHotspot_3 _hotspot2;
-	SceneHotspot_3 _hotspot3;
-	SceneHotspot_3 _hotspot4;
-	SceneHotspot_3 _hotspot5;
-	SceneHotspot_3 _hotspot6;
-	SceneHotspot_3 _hotspot7;
-	SceneHotspot_3 _hotspot8;
+	NamedHotspot _hotspot2;
+	NamedHotspot _hotspot3;
+	NamedHotspot _hotspot4;
+	NamedHotspot _hotspot5;
+	NamedHotspot _hotspot6;
+	NamedHotspot _hotspot7;
+	NamedHotspot _hotspot8;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
@@ -151,19 +151,19 @@ public:
 	SequenceManager _sequenceManager;
 	SceneObject _object1;
 	SceneObject _object2;
-	SceneHotspot_3 _hotspot1;
-	SceneHotspot_3 _hotspot2;
-	SceneHotspot_3 _hotspot3;
-	SceneHotspot_3 _hotspot4;
-	SceneHotspot_3 _hotspot5;
-	SceneHotspot_3 _hotspot6;
-	SceneHotspot_3 _hotspot7;
-	SceneHotspot_3 _hotspot8;
-	SceneHotspot_3 _hotspot9;
-	SceneHotspot_3 _hotspot10;
-	SceneHotspot_3 _hotspot11;
-	SceneHotspot_3 _hotspot12;
-	SceneHotspot_3 _hotspot13;
+	NamedHotspot _hotspot1;
+	NamedHotspot _hotspot2;
+	NamedHotspot _hotspot3;
+	NamedHotspot _hotspot4;
+	NamedHotspot _hotspot5;
+	NamedHotspot _hotspot6;
+	NamedHotspot _hotspot7;
+	NamedHotspot _hotspot8;
+	NamedHotspot _hotspot9;
+	NamedHotspot _hotspot10;
+	NamedHotspot _hotspot11;
+	NamedHotspot _hotspot12;
+	NamedHotspot _hotspot13;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
@@ -175,11 +175,11 @@ public:
 	SequenceManager _sequenceManager;
 	Object9350 _object1;
 	SceneObject _object2;
-	SceneHotspot_3 _sceneHotspot1;
-	SceneHotspot_3 _sceneHotspot2;
-	SceneHotspot_3 _sceneHotspot3;
-	SceneHotspot_3 _sceneHotspot4;
-	SceneHotspot_3 _sceneHotspot5;
+	NamedHotspot _sceneHotspot1;
+	NamedHotspot _sceneHotspot2;
+	NamedHotspot _sceneHotspot3;
+	NamedHotspot _sceneHotspot4;
+	NamedHotspot _sceneHotspot5;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
@@ -191,14 +191,14 @@ public:
 	SequenceManager _sequenceManager;
 	Action _action1;
 	Object9350 _object1;
-	SceneHotspot_3 _hotspot1;
-	SceneHotspot_3 _hotspot2;
-	SceneHotspot_3 _hotspot3;
-	SceneHotspot_3 _hotspot4;
-	SceneHotspot_3 _hotspot5;
-	SceneHotspot_3 _hotspot6;
-	SceneHotspot_3 _hotspot7;
-	SceneHotspot_3 _hotspot8;
+	NamedHotspot _hotspot1;
+	NamedHotspot _hotspot2;
+	NamedHotspot _hotspot3;
+	NamedHotspot _hotspot4;
+	NamedHotspot _hotspot5;
+	NamedHotspot _hotspot6;
+	NamedHotspot _hotspot7;
+	NamedHotspot _hotspot8;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
@@ -206,12 +206,12 @@ public:
 };
 
 class Scene9400: public Scene2 {
-	class SceneHotspot7: public SceneHotspot_3{
+	class SceneHotspot7: public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class SceneHotspot8: public SceneHotspot_3{
+	class SceneHotspot8: public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
@@ -225,12 +225,12 @@ public:
 	SpeakerOText _speakerOText;
 	SpeakerOR _speakerOR;
 	SpeakerQText _speakerQText;
-	SceneHotspot_3 _hotspot1;
-	SceneHotspot_3 _hotspot2;
-	SceneHotspot_3 _hotspot3;
-	SceneHotspot_3 _hotspot4;
-	SceneHotspot_3 _hotspot5;
-	SceneHotspot_3 _hotspot6;
+	NamedHotspot _hotspot1;
+	NamedHotspot _hotspot2;
+	NamedHotspot _hotspot3;
+	NamedHotspot _hotspot4;
+	NamedHotspot _hotspot5;
+	NamedHotspot _hotspot6;
 	SoundHandler _soundHandler;
 	int _field1032;
 	SceneHotspot7 _hotspot7;
@@ -252,12 +252,12 @@ class Scene9450: public Scene2 {
 		virtual void dispatch();
 	};
 
-	class Hotspot1: public SceneHotspot_3{
+	class Hotspot1: public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot3: public SceneHotspot_3{
+	class Hotspot3: public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
@@ -269,21 +269,21 @@ public:
 	SequenceManager _sequenceManager3;
 	Object3 _object3;
 	Hotspot1 _hotspot1;
-	SceneHotspot_3 _hotspot2;
+	NamedHotspot _hotspot2;
 	Hotspot3 _hotspot3;
-	SceneHotspot_3 _hotspot4;
-	SceneHotspot_3 _hotspot5;
-	SceneHotspot_3 _hotspot6;
-	SceneHotspot_3 _hotspot7;
-	SceneHotspot_3 _hotspot8;
-	SceneHotspot_3 _hotspot9;
-	SceneHotspot_3 _hotspot10;
-	SceneHotspot_3 _hotspot11;
-	SceneHotspot_3 _hotspot12;
-	SceneHotspot_3 _hotspot13;
-	SceneHotspot_3 _hotspot14;
-	SceneHotspot_3 _hotspot15;
-	SceneHotspot_3 _hotspot16;
+	NamedHotspot _hotspot4;
+	NamedHotspot _hotspot5;
+	NamedHotspot _hotspot6;
+	NamedHotspot _hotspot7;
+	NamedHotspot _hotspot8;
+	NamedHotspot _hotspot9;
+	NamedHotspot _hotspot10;
+	NamedHotspot _hotspot11;
+	NamedHotspot _hotspot12;
+	NamedHotspot _hotspot13;
+	NamedHotspot _hotspot14;
+	NamedHotspot _hotspot15;
+	NamedHotspot _hotspot16;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
@@ -291,22 +291,22 @@ public:
 };
 
 class Scene9500: public Scene2 {
-	class Hotspot1: public SceneHotspot_3{
+	class Hotspot1: public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot2: public SceneHotspot_3{
+	class Hotspot2: public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot3: public SceneHotspot_3{
+	class Hotspot3: public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot4: public SceneHotspot_3{
+	class Hotspot4: public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
@@ -321,21 +321,21 @@ public:
 	Hotspot3 _hotspot3;
 	Hotspot4 _hotspot4;
 	Hotspot4 _hotspot5;
-	SceneHotspot_3 _hotspot6;
-	SceneHotspot_3 _hotspot7;
-	SceneHotspot_3 _hotspot8;
-	SceneHotspot_3 _hotspot9;
-	SceneHotspot_3 _hotspot10;
-	SceneHotspot_3 _hotspot11;
-	SceneHotspot_3 _hotspot12;
-	SceneHotspot_3 _hotspot13;
-	SceneHotspot_3 _hotspot14;
-	SceneHotspot_3 _hotspot15;
-	SceneHotspot_3 _hotspot16;
-	SceneHotspot_3 _hotspot17;
-	SceneHotspot_3 _hotspot18;
-	SceneHotspot_3 _hotspot19;
-	SceneHotspot_3 _hotspot20;
+	NamedHotspot _hotspot6;
+	NamedHotspot _hotspot7;
+	NamedHotspot _hotspot8;
+	NamedHotspot _hotspot9;
+	NamedHotspot _hotspot10;
+	NamedHotspot _hotspot11;
+	NamedHotspot _hotspot12;
+	NamedHotspot _hotspot13;
+	NamedHotspot _hotspot14;
+	NamedHotspot _hotspot15;
+	NamedHotspot _hotspot16;
+	NamedHotspot _hotspot17;
+	NamedHotspot _hotspot18;
+	NamedHotspot _hotspot19;
+	NamedHotspot _hotspot20;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
@@ -346,12 +346,12 @@ public:
 class Scene9700: public Scene2 {
 	SequenceManager _sequenceManager;
 	SceneObject _object1;
-	SceneHotspot_3 _sceneHotspot1;
-	SceneHotspot_3 _sceneHotspot2;
-	SceneHotspot_3 _sceneHotspot3;
-	SceneHotspot_3 _sceneHotspot4;
-	SceneHotspot_3 _sceneHotspot5;
-	SceneHotspot_3 _sceneHotspot6;
+	NamedHotspot _sceneHotspot1;
+	NamedHotspot _sceneHotspot2;
+	NamedHotspot _sceneHotspot3;
+	NamedHotspot _sceneHotspot4;
+	NamedHotspot _sceneHotspot5;
+	NamedHotspot _sceneHotspot6;
 	GfxButton _gfxButton1;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -381,37 +381,37 @@ class Scene9850: public Scene {
 		virtual void doAction(int action);
 	};
 
-	class Hotspot12: public SceneHotspot_3{
+	class Hotspot12: public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot14: public SceneHotspot_3{
+	class Hotspot14: public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot16: public SceneHotspot_3{
+	class Hotspot16: public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot17: public SceneHotspot_3{
+	class Hotspot17: public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot18: public SceneHotspot_3{
+	class Hotspot18: public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot19: public SceneHotspot_3{
+	class Hotspot19: public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot20: public SceneHotspot_3{
+	class Hotspot20: public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
@@ -425,21 +425,21 @@ public:
 	Object6 _objScimitar;
 	Object7 _objSword;
 	SoundHandler _soundHandler;
-	SceneHotspot_3 _hotspot1;
-	SceneHotspot_3 _hotspot2;
-	SceneHotspot_3 _hotspot3;
-	SceneHotspot_3 _hotspot4;
-	SceneHotspot_3 _hotspot5;
-	SceneHotspot_3 _hotspot6;
-	SceneHotspot_3 _hotspot7;
-	SceneHotspot_3 _hotspot8;
-	SceneHotspot_3 _hotspot9;
-	SceneHotspot_3 _hotspot10;
-	SceneHotspot_3 _hotspot11;
+	NamedHotspot _hotspot1;
+	NamedHotspot _hotspot2;
+	NamedHotspot _hotspot3;
+	NamedHotspot _hotspot4;
+	NamedHotspot _hotspot5;
+	NamedHotspot _hotspot6;
+	NamedHotspot _hotspot7;
+	NamedHotspot _hotspot8;
+	NamedHotspot _hotspot9;
+	NamedHotspot _hotspot10;
+	NamedHotspot _hotspot11;
 	Hotspot12 _hotspot12;
-	SceneHotspot_3 _hotspot13;
+	NamedHotspot _hotspot13;
 	Hotspot14 _hotspot14;
-	SceneHotspot_3 _hotspot15;
+	NamedHotspot _hotspot15;
 	Hotspot16 _hotspot16;
 	Hotspot17 _hotspot17;
 	Hotspot18 _hotspot18;

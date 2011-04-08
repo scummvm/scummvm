@@ -38,7 +38,7 @@ Scene2::Scene2() {
 
 /*--------------------------------------------------------------------------*/
 
-void SceneHotspot_3::doAction(int action) {
+void NamedHotspot::doAction(int action) {
 	switch (action) {
 	case CURSOR_WALK:
 		// Nothing
@@ -61,7 +61,7 @@ void SceneHotspot_3::doAction(int action) {
 	}
 }
 
-void SceneHotspot_3::quickInit(const int ys, const int xe, const int ye, const int xs, const int resnum, const int lookLineNum, const int useLineNum) {
+void NamedHotspot::quickInit(const int ys, const int xe, const int ye, const int xs, const int resnum, const int lookLineNum, const int useLineNum) {
 	setBounds(ys, xe, ye, xs);
 	_resnum = resnum;
 	_lookLineNum = lookLineNum;
@@ -102,7 +102,7 @@ void Scene9100::SceneHotspot1::doAction(int action) {
 		}
 		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &_globals->_player, &scene->_object5, &scene->_object6, 0);
 	} else {
-		SceneHotspot_3::doAction(action);
+		NamedHotspot::doAction(action);
 	}
 }
 
@@ -353,7 +353,7 @@ void Scene9200::SceneHotspot1::doAction(int action) {
 		scene->_sceneState = 9214;
 		setAction(&scene->_sequenceManager, scene, 9214, &_globals->_player, &scene->_object2, 0);
 	} else {
-		SceneHotspot_3::doAction(action);
+		NamedHotspot::doAction(action);
 	}
 }
 
@@ -749,7 +749,7 @@ void Scene9400::SceneHotspot7::doAction(int action) {
 		scene->_sceneState = 1;
 		scene->setAction(&scene->_sequenceManager, scene, 9408, &_globals->_player, 0);
 	} else {
-		SceneHotspot_3::doAction(action);
+		NamedHotspot::doAction(action);
 	}
 }
 
@@ -761,7 +761,7 @@ void Scene9400::SceneHotspot8::doAction(int action) {
 		scene->_sceneState = 2;
 		scene->signal();
 	} else {
-		SceneHotspot_3::doAction(action);
+		NamedHotspot::doAction(action);
 	}
 }
 
@@ -877,7 +877,7 @@ void Scene9450::Hotspot1::doAction(int action) {
 		_globals->_player.disableControl();
 		setAction(&scene->_sequenceManager1, scene, 9459, &scene->_object2, &scene->_object1, &scene->_object3, &_globals->_player, 0);
 	} else {
-		SceneHotspot_3::doAction(action);
+		NamedHotspot::doAction(action);
 	}
 }
 
@@ -1047,7 +1047,7 @@ void Scene9500::Hotspot1::doAction(int action) {
 		scene->_hotspot2.quickInit(87, 294, 104, 314, 9400, 17, -1);
 		scene->setAction(&scene->_sequenceManager, scene, 9510, &_globals->_player, &scene->_object2, 0);
 	} else {
-		SceneHotspot_3::doAction(action);
+		NamedHotspot::doAction(action);
 	}
 }
 
@@ -1060,7 +1060,7 @@ void Scene9500::Hotspot2::doAction(int action) {
 		_globals->_sceneItems.remove(this);
 		scene->setAction(&scene->_sequenceManager, scene, 9511, &_globals->_player, &scene->_object2, 0);
 	} else {
-		SceneHotspot_3::doAction(action);
+		NamedHotspot::doAction(action);
 	}
 }
 
@@ -1073,7 +1073,7 @@ void Scene9500::Hotspot3::doAction(int action) {
 		_globals->_sceneItems.remove(this);
 		scene->setAction(&scene->_sequenceManager, scene, 9505, &_globals->_player, &scene->_candle, 0);
 	} else {
-		SceneHotspot_3::doAction(action);
+		NamedHotspot::doAction(action);
 	}
 }
 
@@ -1098,7 +1098,7 @@ void Scene9500::Hotspot4::doAction(int action) {
 		_globals->_inventory._straw._sceneNumber = 9500;
 		scene->setAction(&scene->_sequenceManager, scene, 9512, &_globals->_player, &scene->_object3, 0);
 	} else {
-		SceneHotspot_3::doAction(action);
+		NamedHotspot::doAction(action);
 	}
 }
 
@@ -1403,7 +1403,7 @@ void Scene9850::Hotspot12::doAction(int action) {
 			setAction(&scene->_sequenceManager, scene, 9861, &_globals->_player, &scene->_objTunic2, 0);
 		}
 	} else if ((action != CURSOR_LOOK) || (_globals->_inventory._tunic2._sceneNumber != 1)) {
-		SceneHotspot_3::doAction(action);
+		NamedHotspot::doAction(action);
 	} else {
 		SceneItem::display(9850, 30, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
 	}
@@ -1425,7 +1425,7 @@ void Scene9850::Hotspot14::doAction(int action) {
 			setAction(&scene->_sequenceManager, scene, 9860, &_globals->_player, &scene->_objJacket, 0);
 		}
 	} else if ((action != CURSOR_LOOK) || (_globals->_inventory._jacket._sceneNumber != 1)) {
-		SceneHotspot_3::doAction(action);
+		NamedHotspot::doAction(action);
 	} else {
 		SceneItem::display(9850, 30, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
 	}
@@ -1447,7 +1447,7 @@ void Scene9850::Hotspot16::doAction(int action) {
 			setAction(&scene->_sequenceManager, scene, 9859, &_globals->_player, &scene->_objCloak, 0);
 		}
 	} else if ((action != CURSOR_LOOK) || (_globals->_inventory._cloak._sceneNumber != 1)) {
-		SceneHotspot_3::doAction(action);
+		NamedHotspot::doAction(action);
 	} else {
 		SceneItem::display(9850, 30, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
 	}
@@ -1461,7 +1461,7 @@ void Scene9850::Hotspot17::doAction(int action) {
 	} else {
 		if (action == CURSOR_USE)
 			scene->_soundHandler.startSound(306, 0, 127);
-		SceneHotspot_3::doAction(action);
+		NamedHotspot::doAction(action);
 	}
 }
 
@@ -1473,7 +1473,7 @@ void Scene9850::Hotspot18::doAction(int action) {
 	} else {
 		if (action == CURSOR_USE)
 			scene->_soundHandler.startSound(306, 0, 127);
-		SceneHotspot_3::doAction(action);
+		NamedHotspot::doAction(action);
 	}
 }
 
@@ -1485,7 +1485,7 @@ void Scene9850::Hotspot19::doAction(int action) {
 	} else {
 		if (action == CURSOR_USE)
 			scene->_soundHandler.startSound(313, 0, 127);
-		SceneHotspot_3::doAction(action);
+		NamedHotspot::doAction(action);
 	}
 }
 
@@ -1508,7 +1508,7 @@ void Scene9850::Hotspot20::doAction(int action) {
 		}
 		scene->_objSword._state ^= 1;
 	} else {
-		SceneHotspot_3::doAction(action);
+		NamedHotspot::doAction(action);
 	}
 }
 
