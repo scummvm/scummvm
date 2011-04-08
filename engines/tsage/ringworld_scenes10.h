@@ -360,6 +360,145 @@ public:
 	virtual void dispatch();
 };
 
+class Scene9850: public Scene {
+	class Object6: public SceneObject{
+	public:
+		virtual void doAction(int action);
+	};
+
+	class Object7: public SceneObjectExt{
+	public:
+		virtual void doAction(int action);
+	};
+
+	class Hotspot12: public SceneHotspot_3{
+	public:
+		virtual void doAction(int action);
+	};
+
+	class Hotspot14: public SceneHotspot_3{
+	public:
+		virtual void doAction(int action);
+	};
+
+	class Hotspot16: public SceneHotspot_3{
+	public:
+		virtual void doAction(int action);
+	};
+
+	class Hotspot17: public SceneHotspot_3{
+	public:
+		virtual void doAction(int action);
+	};
+
+	class Hotspot18: public SceneHotspot_3{
+	public:
+		virtual void doAction(int action);
+	};
+
+	class Hotspot19: public SceneHotspot_3{
+	public:
+		virtual void doAction(int action);
+	};
+
+	class Hotspot20: public SceneHotspot_3{
+	public:
+		virtual void doAction(int action);
+	};
+public:
+	SequenceManager _sequenceManager;
+	SceneObject _objDoor;
+	SceneObject _objCloak;
+	SceneObject _objJacket;
+	SceneObject _objTunic2;
+	SceneObject _objLever;
+	Object6 _objScimitar;
+	Object7 _objSword;
+	SoundHandler _soundHandler;
+	SceneHotspot_3 _hotspot1;
+	SceneHotspot_3 _hotspot2;
+	SceneHotspot_3 _hotspot3;
+	SceneHotspot_3 _hotspot4;
+	SceneHotspot_3 _hotspot5;
+	SceneHotspot_3 _hotspot6;
+	SceneHotspot_3 _hotspot7;
+	SceneHotspot_3 _hotspot8;
+	SceneHotspot_3 _hotspot9;
+	SceneHotspot_3 _hotspot10;
+	SceneHotspot_3 _hotspot11;
+	Hotspot12 _hotspot12;
+	SceneHotspot_3 _hotspot13;
+	Hotspot14 _hotspot14;
+	SceneHotspot_3 _hotspot15;
+	Hotspot16 _hotspot16;
+	Hotspot17 _hotspot17;
+	Hotspot18 _hotspot18;
+	Hotspot19 _hotspot19;
+	Hotspot20 _spotLevel;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
+class Scene9900: public Scene {
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+
+	class Action2: public Action {
+	public:
+		virtual void signal();
+		virtual void dispatch();
+	};
+
+	class Action3: public Action {
+	public:
+		virtual void signal();
+	};
+
+	class SceneTextArr1 {
+	public:
+		SceneText _sceneText[2];
+	};
+
+	class SceneTextArr2 {
+	public:
+		SceneText _sceneText[2];
+		int _var1, var2, var3;
+	};
+
+public:
+	SoundHandler _soundHandler;
+	SequenceManager _sequenceManager;
+	SceneObject _object1;
+	SceneObject _object2;
+	SceneObject _object3;
+	SceneObject _object4;
+	SceneObject _object5;
+	SceneObject _object6;
+	SceneObject _object7;
+	SceneObjectExt _object8;
+	Action1 _action1;
+	SceneObject _object9;
+	ScenePalette _palette1;
+	Action2 _action2;
+	SceneTextArr1 _sceneTextArr1;
+	SceneTextArr2 _sceneTextArr2;
+	Action3 _action3;
+	SceneObject _object10;
+	ScenePalette _palette2;
+	ScenePalette _palette3;
+	SpeakerMR _speakerMR;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
+	virtual void process(Event &event);
+};
+
 class Scene9999: public Scene {
 	/* Actions */
 	class Action1: public Action {

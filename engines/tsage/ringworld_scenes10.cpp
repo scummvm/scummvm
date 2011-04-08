@@ -954,7 +954,7 @@ void Scene9450::postInit(SceneObjectList *OwnerList) {
 
 	_object2.postInit();
 	_object1.postInit();
-	_object1.flag100();
+	_object1.hide();
 
 	_globals->_player.disableControl();
 	_sceneMode = 9451;
@@ -972,7 +972,7 @@ void Scene9450::postInit(SceneObjectList *OwnerList) {
 		}
 	} else {
 		_object3.postInit();
-		_object3.flag100();
+		_object3.hide();
 		_object3.setAction(&_sequenceManager2, 0, 9455, &_object2, &_object1, 0);
 	}
 
@@ -1138,11 +1138,11 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 		_candle.setStrip(2);
 	
 	_object3.postInit(0);
-	_object3.flag100();
+	_object3.hide();
 	_object3.setPriority2(150);
 	_object3.setPosition(Common::Point(166, 133));
 	if (_globals->_inventory._straw._sceneNumber == 9500) {
-		_object3.unflag100();
+		_object3.show();
 		_object3.setVisage(5);
 		_object3._strip = 2;
 		_object3._frame = 9;
@@ -1156,9 +1156,9 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 	}
 
 	_object2.postInit(0);
-	_object2.flag100();
+	_object2.hide();
 	if (_globals->getFlag(92)) {
-		_object2.unflag100();
+		_object2.show();
 		_object2.setVisage(9501);
 		_object2.setStrip(1);
 		_object2.setFrame(_object2.getFrameCount());
@@ -1321,6 +1321,381 @@ void Scene9750::postInit(SceneObjectList *OwnerList) {
 	setAction(&_sequenceManager, this, 9751, &_globals->_player, &_object1, &_object2, 0);
 }
 
+
+/*--------------------------------------------------------------------------
+ * Scene 9850
+ *
+ *--------------------------------------------------------------------------*/
+void Scene9850::Object6::doAction(int action) {
+	if ((_flags & OBJFLAG_HIDE) == 0) {
+		if (action == CURSOR_LOOK) {
+			SceneItem::display(9850, 27, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		} else if (action == CURSOR_USE) {
+			_globals->_inventory._scimitar._sceneNumber = 1;
+			hide();
+		} else {
+			SceneHotspot::doAction(action);
+		}
+	}
+}
+void Scene9850::Object7::doAction(int action) {
+	if ((_flags & OBJFLAG_HIDE) == 0) {
+		if (action == CURSOR_LOOK) {
+			SceneItem::display(9850, 28, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		} else if (action == CURSOR_USE) {
+			_globals->_inventory._sword._sceneNumber = 1;
+			hide();
+		} else {
+			SceneHotspot::doAction(action);
+		}
+	}
+}
+
+// Hair covered tunic
+void Scene9850::Hotspot12::doAction(int action) {
+	Scene9850 *scene = (Scene9850 *)_globals->_sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		if (_globals->_inventory._tunic2._sceneNumber != 1) {
+			_globals->_inventory._tunic2._sceneNumber = 1;
+			_globals->_player.disableControl();
+			scene->_sceneMode = 9858;
+			setAction(&scene->_sequenceManager, scene, 9858, &_globals->_player, &scene->_objTunic2, 0);
+		} else {
+			_globals->_inventory._tunic2._sceneNumber = 9850;
+			_globals->_player.disableControl();
+			scene->_sceneMode = 9861;
+			setAction(&scene->_sequenceManager, scene, 9861, &_globals->_player, &scene->_objTunic2, 0);
+		}
+	} else if ((action != CURSOR_LOOK) || (_globals->_inventory._tunic2._sceneNumber != 1)) {
+		SceneHotspot_3::doAction(action);
+	} else {
+		SceneItem::display(9850, 30, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+	}
+}
+
+void Scene9850::Hotspot14::doAction(int action) {
+	Scene9850 *scene = (Scene9850 *)_globals->_sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		if (_globals->_inventory._jacket._sceneNumber != 1) {
+			_globals->_inventory._jacket._sceneNumber = 1;
+			_globals->_player.disableControl();
+			scene->_sceneMode = 9857;
+			setAction(&scene->_sequenceManager, scene, 9857, &_globals->_player, &scene->_objJacket, 0);
+		} else {
+			_globals->_inventory._jacket._sceneNumber = 9850;
+			_globals->_player.disableControl();
+			scene->_sceneMode = 9860;
+			setAction(&scene->_sequenceManager, scene, 9860, &_globals->_player, &scene->_objJacket, 0);
+		}
+	} else if ((action != CURSOR_LOOK) || (_globals->_inventory._jacket._sceneNumber != 1)) {
+		SceneHotspot_3::doAction(action);
+	} else {
+		SceneItem::display(9850, 30, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+	}
+}
+
+void Scene9850::Hotspot16::doAction(int action) {
+	Scene9850 *scene = (Scene9850 *)_globals->_sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		if (_globals->_inventory._cloak._sceneNumber != 1) {
+			_globals->_inventory._cloak._sceneNumber = 1;
+			_globals->_player.disableControl();
+			scene->_sceneMode = 9862;
+			setAction(&scene->_sequenceManager, scene, 9862, &_globals->_player, &scene->_objCloak, 0);
+		} else {
+			_globals->_inventory._cloak._sceneNumber = 9850;
+			_globals->_player.disableControl();
+			scene->_sceneMode = 9859;
+			setAction(&scene->_sequenceManager, scene, 9859, &_globals->_player, &scene->_objCloak, 0);
+		}
+	} else if ((action != CURSOR_LOOK) || (_globals->_inventory._cloak._sceneNumber != 1)) {
+		SceneHotspot_3::doAction(action);
+	} else {
+		SceneItem::display(9850, 30, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+	}
+}
+
+void Scene9850::Hotspot17::doAction(int action) {
+	Scene9850 *scene = (Scene9850 *)_globals->_sceneManager._scene;
+
+	if (action == OBJECT_SCANNER) {
+		SceneItem::display(9850, 32, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+	} else {
+		if (action == CURSOR_USE)
+			scene->_soundHandler.startSound(306, 0, 127);
+		SceneHotspot_3::doAction(action);
+	}
+}
+
+void Scene9850::Hotspot18::doAction(int action) {
+	Scene9850 *scene = (Scene9850 *)_globals->_sceneManager._scene;
+
+	if (action == OBJECT_SCANNER) {
+		SceneItem::display(9850, 32, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+	} else {
+		if (action == CURSOR_USE)
+			scene->_soundHandler.startSound(306, 0, 127);
+		SceneHotspot_3::doAction(action);
+	}
+}
+
+void Scene9850::Hotspot19::doAction(int action) {
+	Scene9850 *scene = (Scene9850 *)_globals->_sceneManager._scene;
+
+	if (action == OBJECT_SCANNER) {
+		SceneItem::display(9850, 31, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+	} else {
+		if (action == CURSOR_USE)
+			scene->_soundHandler.startSound(313, 0, 127);
+		SceneHotspot_3::doAction(action);
+	}
+}
+
+// Arrow on Statue
+void Scene9850::Hotspot20::doAction(int action) {
+	Scene9850 *scene = (Scene9850 *)_globals->_sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		_globals->_player.disableControl();
+		if (scene->_objSword._state == 0) {
+			if (_globals->_inventory._scimitar._sceneNumber == 9850)
+				scene->_objScimitar.show();
+			if (_globals->_inventory._sword._sceneNumber == 9850)
+				scene->_objSword.show();
+			scene->_sceneMode = 11;
+			setAction(&scene->_sequenceManager, scene, 9853, &_globals->_player, &scene->_objDoor, &scene->_objLever, 0);
+		} else {
+			scene->_sceneMode = 10;
+			setAction(&scene->_sequenceManager, scene, 9854, &_globals->_player, &scene->_objDoor, &scene->_objLever, 0);
+		}
+		scene->_objSword._state ^= 1;
+	} else {
+		SceneHotspot_3::doAction(action);
+	}
+}
+
+void Scene9850::signal() {
+	warning("Signal : %d", _sceneMode);
+	switch (_sceneMode ++) {
+	case 10:
+		// Hidden closet closed
+		if (_globals->_inventory._scimitar._sceneNumber == 9850)
+			_objScimitar.hide();
+		if (_globals->_inventory._sword._sceneNumber == 9850)
+			_objSword.hide();
+		_globals->_sceneItems.remove(&_objScimitar);
+		_globals->_sceneItems.remove(&_objSword);
+		_globals->_sceneItems.addItems(&_hotspot19);
+		_globals->_player.enableControl();
+		break;
+	case 11:
+		// Hidden closet opened
+		if (_globals->_inventory._scimitar._sceneNumber == 9850)
+			_globals->_sceneItems.addItems(&_objScimitar);
+		if (_globals->_inventory._sword._sceneNumber == 9850)
+			_globals->_sceneItems.addItems(&_objSword);
+		_globals->_sceneItems.remove(&_hotspot19);
+		_globals->_player.enableControl();
+		break;
+	case 9500:
+		_globals->_sceneManager.changeScene(9500);
+		break;
+	case 0:
+	default:
+		_globals->_player.enableControl();
+		break;
+	}
+}
+
+void Scene9850::process(Event &event) {
+	Scene::process(event);
+	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_4)) {
+		event.handled = true;
+		_globals->_player.disableControl();
+		if (_objSword._state == 0) {
+			_sceneMode = 0;
+			setAction(&_sequenceManager, this, 9853, &_objLever, &_objDoor, &_objScimitar, &_objSword, 0);
+		} else {
+			_sceneMode = 10;
+			setAction(&_sequenceManager, this, 9854, &_objLever, &_objDoor, &_objScimitar, &_objSword, 0);
+		}
+		_objSword._state ^= 1;
+	}
+}
+
+void Scene9850::dispatch() {
+	if (_action) {
+		_action->dispatch();
+	} else if (_globals->_player._position.y >= 198) {
+		_globals->_player.disableControl();
+		_sceneMode = 9500;
+		setAction(&_sequenceManager, this, 9852, &_globals->_player, 0);
+	}
+}
+
+void Scene9850::postInit(SceneObjectList *OwnerList) {
+	Scene::postInit();
+	_objSword._state = 0;
+
+	_objDoor.postInit();
+	_objDoor.setVisage(9850);
+	_objDoor.setStrip(1);
+	_objDoor.setFrame(1);
+	_objDoor.setPosition(Common::Point(28, 118), 0);
+	_objDoor.setPriority2(90);
+
+	_objLever.postInit();
+	_objLever.setVisage(9850);
+	_objLever.setStrip(4);
+	_objLever.setFrame(1);
+	_objLever.setPosition(Common::Point(256, 35), 0);
+
+	_objCloak.postInit();
+	_objCloak.setVisage(9850);
+	_objCloak.setStrip(5);
+	_objCloak.setFrame(1);
+	_objCloak.setPriority2(90);
+	_objCloak.setPosition(Common::Point(157, 81), 0);
+	if (_globals->_inventory._cloak._sceneNumber != 9850)
+		_objCloak.hide();
+
+	_objJacket.postInit();
+	_objJacket.setVisage(9850);
+	_objJacket.setStrip(5);
+	_objJacket.setFrame(2);
+	_objJacket.setPriority2(90);
+	_objJacket.setPosition(Common::Point(201, 84));
+	if (_globals->_inventory._jacket._sceneNumber != 9850)
+		_objJacket.hide();
+
+	_objTunic2.postInit();
+	_objTunic2.setVisage(9850);
+	_objTunic2.setStrip(5);
+	_objTunic2.setFrame(3);
+	_objTunic2.setPriority2(90);
+	_objTunic2.setPosition(Common::Point(295, 90));
+	if (_globals->_inventory._tunic2._sceneNumber != 9850)
+		_objTunic2.hide();
+
+	if (_globals->_inventory._scimitar._sceneNumber == 9850) {
+		_objScimitar.postInit();
+		_objScimitar.setVisage(9850);
+		_objScimitar.setStrip(2);
+		_objScimitar.setFrame(1);
+		_objScimitar.setPosition(Common::Point(55, 83), 0);
+		_objScimitar.setPriority2(80);
+		_objScimitar.hide();
+	}
+
+	if (_globals->_inventory._sword._sceneNumber == 9850) {
+		_objSword.postInit();
+		_objSword.setVisage(9850);
+		_objSword.setStrip(3);
+		_objSword.setFrame(1);
+		_objSword.setPosition(Common::Point(56, 101), 0);
+		_objSword.setPriority2(80);
+		_objSword.hide();
+	}
+
+	_spotLevel.quickInit(30, 251, 45, 270, 9850, 26, -1);
+	_hotspot1.quickInit(123, 0, 200, 320, 9850, 0, 1);
+	_hotspot2.quickInit(107, 87, 133, 308, 9850, 0, 1);
+	_hotspot3.quickInit(2, 28, 53, 80, 9850, 2, 3);
+	_hotspot4.quickInit(13, 0, 55, 27, 9850, 2, 3);
+	_hotspot5.quickInit(8, 74, 27, 91, 9850, 4, 5);
+	_hotspot17.quickInit(61, 0, 125, 28, 9850, 6, 7);
+	_hotspot18.quickInit(51, 95, 105, 145, 9850, 6, 7);
+	_hotspot19.quickInit(56, 28, 115, 97, 9850, 6, 8);
+	_hotspot6.quickInit(0, 223, 115, 257, 9850, 9, 10);
+	_hotspot7.quickInit(15, 254, 33, 268, 9850, 9, -1);
+	_hotspot8.quickInit(17, 218, 37, 233, 9850, 9, 10);
+	_hotspot9.quickInit(8, 113, 26, 221, 9850, 11, 12);
+	_hotspot10.quickInit(14, 94, 53, 112, 9850, 13, 14);
+	_hotspot11.quickInit(5, 269, 29, 303, 9850, 15, 16);
+	_hotspot12.quickInit(43, 278, 91, 317, 9850, 17, 18);
+	_hotspot13.quickInit(47, 263, 112, 282, 9850, 19, 20);
+	_hotspot14.quickInit(43, 188, 86, 224, 9850, 21, 22);
+	_hotspot15.quickInit(43, 162, 92, 191, 9850, 23, 24);
+	_hotspot16.quickInit(40, 146, 90, 169, 9850, 25, -1);
+
+	_globals->_player.postInit();
+	_globals->_player.disableControl();
+	_sceneMode = 0;
+	setAction(&_sequenceManager, this, 9851, &_globals->_player, 0);
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 9900
+ *
+ *--------------------------------------------------------------------------*/
+void Scene9900::Action1::signal() {
+	Scene9900 *scene = (Scene9900 *)_globals->_sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		scene->_soundHandler.startSound(351, 0, 127);
+		scene->_object9.postInit();
+		scene->_object9.setVisage(18);
+		scene->_object9._frame = 1;
+		scene->_object9._strip = 6;
+		scene->_object9.setPosition(Common::Point(171, 59));
+		scene->_object9.animate(ANIM_MODE_5, 0);
+		_globals->_scenePalette.addRotation(67, 111, 1, 1, this);
+		scene->_object2.hide();
+		break;
+	case 1:
+		scene->_palette1.getPalette();
+		warning("TODO sub_1CDF6");
+		break;
+	case 2:
+		scene->_object9.remove();
+		warning("TODO sub_1CDF6");
+		break;
+	case 3:
+		_globals->_soundHandler.startSound(377, 0, 127);
+		setDelay(120);
+		break;
+	case 4:
+		warning("TODO sub_1CDF6");
+		break;
+	case 5:
+		remove();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene9900::Action2::signal() {
+	Scene9900 *scene = (Scene9900 *)_globals->_sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+	case 1:
+		scene->_palette1.getPalette();
+
+	case 2:
+		setDelay(60);
+		_actionIndex = 1;
+		break;
+	case 3:
+		setDelay(7200);
+		break;
+	case 4:
+	default:
+		break;
+	}
+}
+void Scene9900::Action2::dispatch() {}
+void Scene9900::Action3::signal() {}
+
+void Scene9900::postInit(SceneObjectList *OwnerList) {}
+void Scene9900::signal() {}
+void Scene9900::dispatch() {}
+void Scene9900::process(Event &event){}
 /*--------------------------------------------------------------------------
  * Scene 9999
  *
