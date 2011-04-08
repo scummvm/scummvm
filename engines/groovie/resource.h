@@ -36,6 +36,7 @@ struct ResInfo {
 	uint16 gjd;
 	uint32 offset;
 	uint32 size;
+	Common::String filename;
 };
 
 class ResMan {
