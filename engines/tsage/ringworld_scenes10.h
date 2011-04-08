@@ -434,7 +434,7 @@ public:
 	Hotspot17 _hotspot17;
 	Hotspot18 _hotspot18;
 	Hotspot19 _hotspot19;
-	Hotspot20 _spotLevel;
+	Hotspot20 _spotLever;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();

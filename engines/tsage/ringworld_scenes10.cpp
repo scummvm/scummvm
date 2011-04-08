@@ -1600,7 +1600,7 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
 		_objSword.hide();
 	}
 
-	_spotLevel.quickInit(30, 251, 45, 270, 9850, 26, -1);
+	_spotLever.quickInit(30, 251, 45, 270, 9850, 26, -1);
 	_hotspot1.quickInit(123, 0, 200, 320, 9850, 0, 1);
 	_hotspot2.quickInit(107, 87, 133, 308, 9850, 0, 1);
 	_hotspot3.quickInit(2, 28, 53, 80, 9850, 2, 3);
