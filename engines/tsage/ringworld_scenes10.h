@@ -46,6 +46,16 @@ public :
 	}
 };
 
+class SceneHotspot_3: public SceneHotspot {
+public:
+	int _resnum, _lookLineNum, _useLineNum;
+	SceneHotspot_3(): SceneHotspot() {}
+
+	void quickInit(const int ys, const int xe, const int ye, const int xs, const int resnum, const int lookLineNum, const int useLineNum);
+	virtual void doAction(int action);
+	virtual Common::String getClassName() { return "SceneHotspot_3"; }
+};
+
 class Object9350: public SceneObject {
 public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

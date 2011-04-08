@@ -447,16 +447,6 @@ public:
 	virtual Common::String getClassName() { return "SceneHotspot_2"; }
 };
 
-class SceneHotspot_3: public SceneHotspot_2 {
-public:
-	int _field2A;
-	SceneHotspot_3(): SceneHotspot_2() {}
-
-	void quickInit(const int ys, const int xe, const int ye, const int xs, const int val26, const int val28, const int val2A);
-	virtual void doAction(int action);
-	virtual Common::String getClassName() { return "SceneHotspot_3"; }
-};
-
 enum AnimateMode {ANIM_MODE_NONE = 0, ANIM_MODE_1 = 1, ANIM_MODE_2 = 2, ANIM_MODE_3 = 3,
 		ANIM_MODE_4 = 4, ANIM_MODE_5 = 5, ANIM_MODE_6 = 6, ANIM_MODE_7 = 7, ANIM_MODE_8 = 8};
 

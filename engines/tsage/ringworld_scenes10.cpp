@@ -36,6 +36,41 @@ Scene2::Scene2() {
 	_sceneState = 0;
 }
 
+/*--------------------------------------------------------------------------*/
+
+void SceneHotspot_3::doAction(int action) {
+	switch (action) {
+	case CURSOR_WALK:
+		// Nothing
+		break;
+	case CURSOR_LOOK:
+		if (_lookLineNum == -1)
+			SceneHotspot::doAction(action);
+		else
+			SceneItem::display(_resnum, _lookLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		break;
+	case CURSOR_USE:
+		if (_useLineNum == -1)
+			SceneHotspot::doAction(action);
+		else
+			SceneItem::display(_resnum, _useLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+void SceneHotspot_3::quickInit(const int ys, const int xe, const int ye, const int xs, const int resnum, const int lookLineNum, const int useLineNum) {
+	setBounds(ys, xe, ye, xs);
+	_resnum = resnum;
+	_lookLineNum = lookLineNum;
+	_useLineNum = useLineNum;
+	_globals->_sceneItems.addItems(this, NULL);
+}
+
+/*--------------------------------------------------------------------------*/
+
 void Object9350::postInit(SceneObjectList *OwnerList) {
 	_globals->_sceneManager.postInit(&_globals->_sceneManager._altSceneObjects);
 }
@@ -1488,15 +1523,15 @@ void Scene9850::signal() {
 			_objSword.hide();
 		_globals->_sceneItems.remove(&_objScimitar);
 		_globals->_sceneItems.remove(&_objSword);
-		_globals->_sceneItems.addItems(&_hotspot19);
+		_globals->_sceneItems.addItems(&_hotspot19, NULL);
 		_globals->_player.enableControl();
 		break;
 	case 11:
 		// Hidden closet opened
 		if (_globals->_inventory._scimitar._sceneNumber == 9850)
-			_globals->_sceneItems.addItems(&_objScimitar);
+			_globals->_sceneItems.addItems(&_objScimitar, NULL);
 		if (_globals->_inventory._sword._sceneNumber == 9850)
-			_globals->_sceneItems.addItems(&_objSword);
+			_globals->_sceneItems.addItems(&_objSword, NULL);
 		_globals->_sceneItems.remove(&_hotspot19);
 		_globals->_player.enableControl();
 		break;
