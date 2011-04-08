@@ -753,7 +753,8 @@ MusicPlayerMPEG4::MusicPlayerMPEG4(GroovieEngine *vm) : MusicPlayer(vm) {
 }
 
 void MusicPlayerMPEG4::updateVolume() {
-	// TODO: Check if anything has to be done here
+	// Just set the mixer volume for the music sound type
+	_vm->_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _userVolume * _gameVolume / 100);
 }
 
 bool MusicPlayerMPEG4::load(uint32 fileref, bool loop) {
