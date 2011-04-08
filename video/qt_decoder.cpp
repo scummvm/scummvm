@@ -168,58 +168,9 @@ void QuickTimeDecoder::seekToFrame(uint32 frame) {
 	if (_audioStreamIndex >= 0) {
 		_audioStartOffset = curVideoTime;
 
-		// Re-create the audio stream
-		Audio::QuickTimeAudioDecoder::AudioSampleDesc *entry = (Audio::QuickTimeAudioDecoder::AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
-		_audStream = Audio::makeQueuingAudioStream(entry->sampleRate, entry->channels == 2);
+		// Seek to the new audio location
+		setAudioStreamPos(_audioStartOffset);
 
-		// First, we need to track down what audio sample we need
-		Audio::Timestamp curAudioTime(0, _streams[_audioStreamIndex]->time_scale);
-		uint sample = 0;
-		bool done = false;
-		for (int32 i = 0; i < _streams[_audioStreamIndex]->stts_count && !done; i++) {
-			for (int32 j = 0; j < _streams[_audioStreamIndex]->stts_data[i].count; j++) {
-				curAudioTime = curAudioTime.addFrames(_streams[_audioStreamIndex]->stts_data[i].duration);
-
-				if (curAudioTime > curVideoTime) {
-					done = true;
-					break;
-				}
-
-				sample++;
-			}
-		}
-
-		// Now to track down what chunk it's in
-		_curAudioChunk = 0;
-		uint32 totalSamples = 0;
-		for (uint32 i = 0; i < _streams[_audioStreamIndex]->chunk_count; i++, _curAudioChunk++) {
-			int sampleToChunkIndex = -1;
-
-			for (uint32 j = 0; j < _streams[_audioStreamIndex]->sample_to_chunk_sz; j++)
-				if (i >= _streams[_audioStreamIndex]->sample_to_chunk[j].first)
-					sampleToChunkIndex = j;
-
-			assert(sampleToChunkIndex >= 0);
-
-			totalSamples += _streams[_audioStreamIndex]->sample_to_chunk[sampleToChunkIndex].count;
-
-			if (sample < totalSamples) {
-				totalSamples -= _streams[_audioStreamIndex]->sample_to_chunk[sampleToChunkIndex].count;
-				break;
-			}
-		}
-		
-		// Reposition the audio stream
-		queueNextAudioChunk();
-		if (sample != totalSamples) {
-			// HACK: Skip a certain amount of samples from the stream
-			// (There's got to be a better way to do this!)
-			int16 *tempBuffer = new int16[sample - totalSamples];
-			_audStream->readBuffer(tempBuffer, sample - totalSamples);
-			delete[] tempBuffer;
-			debug(3, "Skipping %d audio samples", sample - totalSamples);
-		}
-		
 		// Restart the audio
 		startAudio();
 	}
@@ -282,17 +233,15 @@ Codec *QuickTimeDecoder::createCodec(uint32 codecTag, byte bitsPerPixel) {
 }
 
 void QuickTimeDecoder::startAudio() {
-	if (_audStream) { // No audio/audio not supported
+	if (_audStream) {
 		updateAudioBuffer();
-		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audHandle, _audStream);
-	}
+		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audHandle, _audStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+	} // else no audio or the audio compression is not supported
 }
 
 void QuickTimeDecoder::stopAudio() {
-	if (_audStream) {
+	if (_audStream)
 		g_system->getMixer()->stopHandle(_audHandle);
-		_audStream = NULL; // the mixer automatically frees the stream
-	}
 }
 
 void QuickTimeDecoder::pauseVideoIntern(bool pause) {
@@ -549,9 +498,6 @@ void QuickTimeDecoder::close() {
 		delete _scaledSurface;
 		_scaledSurface = 0;
 	}
-
-	// The audio stream is deleted automatically
-	_audStream = NULL;
 
 	Common::QuickTimeParser::close();
 	SeekableVideoDecoder::reset();

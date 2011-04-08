@@ -43,6 +43,7 @@ QuickTimeAudioDecoder::QuickTimeAudioDecoder() : Common::QuickTimeParser() {
 }
 
 QuickTimeAudioDecoder::~QuickTimeAudioDecoder() {
+	delete _audStream;
 }
 
 bool QuickTimeAudioDecoder::loadFile(const Common::String &filename) {
@@ -245,6 +246,64 @@ void QuickTimeAudioDecoder::queueNextAudioChunk() {
 	_curAudioChunk++;
 }
 
+void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
+	if (!_audStream)
+		return;
+
+	// Re-create the audio stream
+	delete _audStream;
+	Audio::QuickTimeAudioDecoder::AudioSampleDesc *entry = (Audio::QuickTimeAudioDecoder::AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
+	_audStream = Audio::makeQueuingAudioStream(entry->sampleRate, entry->channels == 2);
+
+	// First, we need to track down what audio sample we need
+	Audio::Timestamp curAudioTime(0, _streams[_audioStreamIndex]->time_scale);
+	uint sample = 0;
+	bool done = false;
+	for (int32 i = 0; i < _streams[_audioStreamIndex]->stts_count && !done; i++) {
+		for (int32 j = 0; j < _streams[_audioStreamIndex]->stts_data[i].count; j++) {
+			curAudioTime = curAudioTime.addFrames(_streams[_audioStreamIndex]->stts_data[i].duration);
+
+			if (curAudioTime > where) {
+				done = true;
+				break;
+			}
+
+			sample++;
+		}
+	}
+
+	// Now to track down what chunk it's in
+	_curAudioChunk = 0;
+	uint32 totalSamples = 0;
+	for (uint32 i = 0; i < _streams[_audioStreamIndex]->chunk_count; i++, _curAudioChunk++) {
+		int sampleToChunkIndex = -1;
+
+		for (uint32 j = 0; j < _streams[_audioStreamIndex]->sample_to_chunk_sz; j++)
+			if (i >= _streams[_audioStreamIndex]->sample_to_chunk[j].first)
+				sampleToChunkIndex = j;
+
+		assert(sampleToChunkIndex >= 0);
+
+		totalSamples += _streams[_audioStreamIndex]->sample_to_chunk[sampleToChunkIndex].count;
+
+		if (sample < totalSamples) {
+			totalSamples -= _streams[_audioStreamIndex]->sample_to_chunk[sampleToChunkIndex].count;
+			break;
+		}
+	}
+		
+	// Reposition the audio stream
+	queueNextAudioChunk();
+	if (sample != totalSamples) {
+		// HACK: Skip a certain amount of samples from the stream
+		// (There's got to be a better way to do this!)
+		int16 *tempBuffer = new int16[sample - totalSamples];
+		_audStream->readBuffer(tempBuffer, sample - totalSamples);
+		delete[] tempBuffer;
+		debug(3, "Skipping %d audio samples", sample - totalSamples);
+	}
+}
+
 QuickTimeAudioDecoder::AudioSampleDesc::AudioSampleDesc() : Common::QuickTimeParser::SampleDesc() {
 	channels = 0;
 	sampleRate = 0;
@@ -255,13 +314,10 @@ QuickTimeAudioDecoder::AudioSampleDesc::AudioSampleDesc() : Common::QuickTimePar
 /**
  * A wrapper around QuickTimeAudioDecoder that implements the RewindableAudioStream API
  */
-class QuickTimeAudioStream : public RewindableAudioStream, public QuickTimeAudioDecoder {
+class QuickTimeAudioStream : public SeekableAudioStream, public QuickTimeAudioDecoder {
 public:
 	QuickTimeAudioStream() {}
-
-	~QuickTimeAudioStream() {
-		delete _audStream;
-	}
+	~QuickTimeAudioStream() {}
 
 	bool loadFile(const Common::String &filename) {
 		return QuickTimeAudioDecoder::loadFile(filename) && _audioStreamIndex >= 0 && _audStream;
@@ -285,19 +341,21 @@ public:
 	int getRate() const { return _audStream->getRate(); }
 	bool endOfData() const { return _curAudioChunk >= _streams[_audioStreamIndex]->chunk_count && _audStream->endOfData(); }
 
-	// RewindableAudioStream API
-	bool rewind() {
-		// Reset our parent stream
-		_curAudioChunk = 0;
-		delete _audStream;
+	// SeekableAudioStream API
+	bool seek(const Timestamp &where) {
+		if (where > getLength())
+			return false;
 
-		AudioSampleDesc *entry = (AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
-		_audStream = makeQueuingAudioStream(entry->sampleRate, entry->channels == 2);
+		setAudioStreamPos(where);
 		return true;
+	}
+
+	Timestamp getLength() const {
+		return Timestamp(0, _streams[_audioStreamIndex]->duration, _streams[_audioStreamIndex]->time_scale);
 	}
 };
 
-RewindableAudioStream *makeQuickTimeStream(const Common::String &filename) {
+SeekableAudioStream *makeQuickTimeStream(const Common::String &filename) {
 	QuickTimeAudioStream *audioStream = new QuickTimeAudioStream();
 
 	if (!audioStream->loadFile(filename)) {

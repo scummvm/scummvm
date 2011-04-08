@@ -80,16 +80,18 @@ protected:
 	int8 _audioStreamIndex;
 	uint _curAudioChunk;
 	QueuingAudioStream *_audStream;
+
+	void setAudioStreamPos(const Timestamp &where);
 };
 	
 /**
- * Try to load a QuickTime sound file from the given file name and create a RewindableAudioStream
+ * Try to load a QuickTime sound file from the given file name and create a SeekableAudioStream
  * from that data.
  *
  * @param filename			the filename of the file from which to read the data
- * @return	a new RewindableAudioStream, or NULL, if an error occurred
+ * @return	a new SeekableAudioStream, or NULL, if an error occurred
  */
-RewindableAudioStream *makeQuickTimeStream(const Common::String &filename);
+SeekableAudioStream *makeQuickTimeStream(const Common::String &filename);
 
 } // End of namespace Audio
 
