@@ -232,7 +232,6 @@ Scene::Scene(): _sceneBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
 }
 
 Scene::~Scene() {
-	// TODO: Delete the obj11C object
 }
 
 void Scene::synchronise(Serialiser &s) {
