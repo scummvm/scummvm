@@ -230,11 +230,12 @@ void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int b
 	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
 	              "\t\tSubSystem=\"1\"\n"
 	              "\t\tEntryPointSymbol=\"WinMainCRTStartup\"\n"
+                  "\t\tAdditionalLibraryDirectories=\"$(SCUMMVM_LIBS)\\lib\\" << ((bits == 32) ? "x86" : "x64") << "\"\n"
 	              "\t/>\n"
 	              "\t<Tool\n"
 	              "\t\tName=\"VCResourceCompilerTool\"\n"
 	              "\t\tPreprocessorDefinitions=\"HAS_INCLUDE_SET\"\n"
-	              "\t\tAdditionalIncludeDirectories=\"$(SCUMMVM_LIBS)\\lib\\" << (bits == 32 ? "x86" : "x64") << "\"\n"
+	              "\t\tAdditionalIncludeDirectories=\"" << prefix << "\"\n"
 	              "\t/>\n"
 	              "</VisualStudioPropertySheet>\n";
 
