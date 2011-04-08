@@ -640,7 +640,7 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 				continue;
 
 			Common::Point tempPt;
-			if (sub_F8E5(_globals->_walkRegions._field18[0]._pt1, _globals->_walkRegions._field18[0]._pt1,
+			if (sub_F8E5(_globals->_walkRegions._field18[0]._pt1, _globals->_walkRegions._field18[1]._pt1,
 					_globals->_walkRegions._field18[var10]._pt1, _globals->_walkRegions._field18[var10]._pt2, &tempPt)) {
 				// Add point to the route list
 				_globals->_walkRegions._field18[0]._pt1 = tempPt;
@@ -666,6 +666,7 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 						_globals->_walkRegions._field18[var10]._pt1, 1, objPos);
 				}
 
+				_globals->_walkRegions._field18[0]._pt1 = objPos;
 				*routeList++ = objPos;
 			}
 		}
