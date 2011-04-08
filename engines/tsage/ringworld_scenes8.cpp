@@ -126,7 +126,7 @@ void Scene7000::Action3::signal() {
 		scene->_object4.setPosition(Common::Point(10, 18), 0);
 		scene->_object4.setPriority2(10);
 		scene->_object4.changeZoom(100);
-		scene->_object4.flag100();
+		scene->_object4.hide();
 		break;
 	case 1: {
 		NpcMover *mover = new NpcMover();
@@ -137,7 +137,7 @@ void Scene7000::Action3::signal() {
 	case 2:
 		scene->_object3.setPriority2(10);
 		scene->_object4.setPosition(Common::Point(scene->_object3._position.x, scene->_object3._position.y + 15), 0);
-		scene->_object4.unflag100();
+		scene->_object4.show();
 		setDelay(30);
 		break;
 	case 3: {
@@ -165,12 +165,12 @@ void Scene7000::Action4::signal() {
 		scene->_object1.animate(ANIM_MODE_6, this);
 		break;
 	case 1:
-		scene->_object1.flag100();
+		scene->_object1.hide();
 		setDelay(300);
 		break;
 	case 2:
 		_globals->_soundHandler.startSound(252, 0, 127);
-		scene->_object1.unflag100();
+		scene->_object1.show();
 		scene->_object1.setStrip(3);
 		scene->_object1.setFrame(1);
 		scene->_object1.animate(ANIM_MODE_5, this);

@@ -125,16 +125,16 @@ void Scene9100::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.postInit();
 
 	_object2.postInit();
-	_object2.flag100();
+	_object2.hide();
 
 	_object3.postInit();
-	_object3.flag100();
+	_object3.hide();
 
 	_object4.postInit();
-	_object4.flag100();
+	_object4.hide();
 
 	_object5.postInit();
-	_object5.flag100();
+	_object5.hide();
 
 	if (!_globals->getFlag(23)) {
 		_object6.postInit();
@@ -286,7 +286,7 @@ void Scene9150::postInit(SceneObjectList *OwnerList) {
 		// Walking with the tiger
 		_sceneMode = 9151;
 		_object2.postInit();
-		_object2.flag100();
+		_object2.hide();
 		_object1.postInit();
 		setAction(&_sequenceManager1, this, _sceneMode, &_globals->_player, &_object1, &_object2, 0);
 	}
@@ -393,7 +393,7 @@ void Scene9200::postInit(SceneObjectList *OwnerList) {
 
 	_globals->_player.postInit();
 	_object3.postInit();
-	_object3.flag100();
+	_object3.hide();
 	_object1.postInit();
 	// Water animation
 	_object1.setVisage(9200);
@@ -753,7 +753,7 @@ void Scene9700::postInit(SceneObjectList *OwnerList) {
 	_sceneHotspot6.quickInit(0, 22, 56, 275, 9700, 18, -1);
 
 	_object1.postInit();
-	_object1.flag100();
+	_object1.hide();
 	_globals->_player.postInit();
 	if (_globals->getFlag(97)) {
 		_globals->_player.disableControl();
@@ -794,9 +794,9 @@ void Scene9750::postInit(SceneObjectList *OwnerList) {
 	
 	_globals->_player.postInit();
 	_object1.postInit();
-	_object1.flag100();
+	_object1.hide();
 	_object2.postInit();
-	_object2.flag100();
+	_object2.hide();
 	_globals->_player.disableControl();
 	_sceneMode = 9751;
 	setAction(&_sequenceManager, this, 9751, &_globals->_player, &_object1, &_object2, 0);

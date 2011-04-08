@@ -497,7 +497,7 @@ public:
 };
 
 enum ObjectFlags {OBJFLAG_FIXED_PRIORITY = 1, OBJFLAG_NO_UPDATES = 2, OBJFLAG_ZOOMED = 4, 
-	OBJFLAG_8 = 8, OBJFLAG_100 = 0x100, OBJFLAG_200 = 0x200, OBJFLAG_REMOVE = 0x400, OBJFLAG_800 = 0x800,
+	OBJFLAG_8 = 8, OBJFLAG_HIDE = 0x100, OBJFLAG_200 = 0x200, OBJFLAG_REMOVE = 0x400, OBJFLAG_800 = 0x800,
 	OBJFLAG_1000 = 0x1000, OBJFLAG_PANE_0 = 0x4000, OBJFLAG_PANE_1 = 0x8000, 
 	OBJFLAG_PANES = OBJFLAG_PANE_0 | OBJFLAG_PANE_1
 };
@@ -559,8 +559,8 @@ public:
 	void animate(AnimateMode animMode, ...);
 	SceneObject *clone() const;
 	void checkAngle(const SceneObject *obj);
-	void flag100();
-	void unflag100();
+	void hide();
+	void show();
 	int getSpliceArea(const SceneObject *obj);
 	int getFrameCount();
 

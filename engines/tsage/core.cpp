@@ -1985,15 +1985,15 @@ void SceneObject::checkAngle(const SceneObject *obj) {
 		_objectWrapper->dispatch();
 }
 
-void SceneObject::flag100() {
-	_flags |= OBJFLAG_100;
+void SceneObject::hide() {
+	_flags |= OBJFLAG_HIDE;
 	if (_flags & OBJFLAG_200)
 		_flags |= OBJFLAG_PANES;
 }
 
-void SceneObject::unflag100() {
-	if (_flags & OBJFLAG_100) {
-		_flags &= ~OBJFLAG_100;
+void SceneObject::show() {
+	if (_flags & OBJFLAG_HIDE) {
+		_flags &= ~OBJFLAG_HIDE;
 		_flags |= OBJFLAG_PANES;
 	}
 }
@@ -2069,7 +2069,7 @@ void SceneObject::remove() {
 	if (_globals->_sceneObjects->contains(this))
 		// For objects in the object list, flag the object for removal in the next drawing, so that 
 		// the drawing code has a chance to restore the area previously covered by the object
-		_flags |= OBJFLAG_PANES | OBJFLAG_REMOVE | OBJFLAG_100;
+		_flags |= OBJFLAG_PANES | OBJFLAG_REMOVE | OBJFLAG_HIDE;
 	else
 		// Not in the list, so immediately remove the object
 		removeObject();
@@ -2319,7 +2319,7 @@ void SceneObjectList::draw() {
 			SceneObject *obj = *i;
 			objList.push_back(obj);
 
-			if (!(obj->_flags & OBJFLAG_100))
+			if (!(obj->_flags & OBJFLAG_HIDE))
 				obj->_flags &= ~OBJFLAG_200;
 
 			// Reposition the bounds of the object to match the desired position
@@ -2371,7 +2371,7 @@ redraw:
 		for (uint objIndex = 0; objIndex < objList.size(); ++objIndex) {
 			SceneObject *obj = objList[objIndex];
 
-			if ((obj->_flags & flagMask) && !(obj->_flags & OBJFLAG_100)) {
+			if ((obj->_flags & flagMask) && !(obj->_flags & OBJFLAG_HIDE)) {
 				obj->_paneRects[paneNum] = obj->_bounds;
 				obj->draw();
 			}
@@ -2386,7 +2386,7 @@ redraw:
 		for (uint objIndex = 0; objIndex < objList.size(); ++objIndex) {
 			SceneObject *obj = objList[objIndex];
 
-			if (obj->_flags & OBJFLAG_100)
+			if (obj->_flags & OBJFLAG_HIDE)
 				obj->_flags |= OBJFLAG_200;
 			obj->_flags &= ~flagMask;
 			if (obj->_flags & OBJFLAG_REMOVE) {
@@ -2476,7 +2476,7 @@ void SceneObjectList::activate() {
 	// Replicate all existing objects on the old object list
 	for (i = objectList->begin(); i != objectList->end(); ++i) {
 		SceneObject *sceneObj = (*i)->clone();
-		sceneObj->_flags |= OBJFLAG_100 | OBJFLAG_REMOVE | OBJFLAG_800;
+		sceneObj->_flags |= OBJFLAG_HIDE | OBJFLAG_REMOVE | OBJFLAG_800;
 		push_front(sceneObj);
 	}
 }
@@ -2493,7 +2493,7 @@ void SceneObjectList::deactivate() {
 	for (i = objectList->begin(); i != objectList->end(); ++i) {
 		if (!((*i)->_flags & OBJFLAG_800)) {
 			SceneObject *sceneObj = (*i)->clone();
-			sceneObj->_flags |= OBJFLAG_100 | OBJFLAG_REMOVE | OBJFLAG_800;
+			sceneObj->_flags |= OBJFLAG_HIDE | OBJFLAG_REMOVE | OBJFLAG_800;
 			_globals->_sceneObjects->push_front(sceneObj);
 		}
 	}

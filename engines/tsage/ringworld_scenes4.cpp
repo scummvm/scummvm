@@ -182,7 +182,7 @@ void Scene3700::Action1::signal() {
 		break;
 	case 3:
 		scene->_soundHandler.startSound(196);
-		scene->_viewer.flag100();
+		scene->_viewer.hide();
 
 		scene->_hotspot1.postInit();
 		scene->_hotspot1.setVisage(3710);
@@ -194,7 +194,7 @@ void Scene3700::Action1::signal() {
 		break;
 	case 4:
 		scene->_soundHandler.startSound(197);
-		scene->_hotspot1.flag100();
+		scene->_hotspot1.hide();
 
 		scene->_hotspot2.postInit();
 		scene->_hotspot2.setVisage(3710);
@@ -206,8 +206,8 @@ void Scene3700::Action1::signal() {
 		break;
 	case 5:
 		scene->_soundHandler.startSound(198);
-		scene->_hotspot2.flag100();
-		scene->_hotspot1.unflag100();
+		scene->_hotspot2.hide();
+		scene->_hotspot1.show();
 		setDelay(90);
 		break;
 	case 6:
@@ -218,7 +218,7 @@ void Scene3700::Action1::signal() {
 		break;
 	case 8:
 		scene->_hotspot1.remove();
-		scene->_hotspot2.unflag100();
+		scene->_hotspot2.show();
 		_globals->setFlag(59);
 		setDelay(30);
 		break;

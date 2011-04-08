@@ -53,8 +53,8 @@ void Scene10::Action1::signal() {
 		scene->_stripManager.start(11, this, scene);
 		break;
 	case 3:
-		scene->_object2.flag100();
-		scene->_object3.flag100();
+		scene->_object2.hide();
+		scene->_object3.hide();
 		scene->_object3.setAction(NULL);
 		scene->_object4.animate(ANIM_MODE_5, this);
 		break;
@@ -66,23 +66,23 @@ void Scene10::Action1::signal() {
 		scene->_object2.setStrip(3);
 		scene->_object2.setFrame(1);
 		scene->_object2.setPosition(Common::Point(240, 51));
-		scene->_object2.unflag100();
+		scene->_object2.show();
 		
 		scene->_object3.setStrip(6);
 		scene->_object3.setFrame(1);
 		scene->_object3.setPosition(Common::Point(200, 76));
 		scene->_object3._numFrames = 20;
-		scene->_object3.unflag100();
+		scene->_object3.show();
 
 		scene->_stripManager.start(12, this, scene);
 		break;
 	case 6:
-		scene->_object2.flag100();
-		scene->_object3.flag100();
+		scene->_object2.hide();
+		scene->_object3.hide();
 		scene->_object1.animate(ANIM_MODE_6, this);
 		break;
 	case 7:
-		scene->_object3.unflag100();
+		scene->_object3.show();
 		scene->_object3.setStrip2(5);
 		scene->_object3._numFrames = 10;
 		scene->_object3.setPosition(Common::Point(180, 87));
@@ -91,13 +91,13 @@ void Scene10::Action1::signal() {
 		scene->_object2.setStrip(4);
 		scene->_object2.setFrame(1);
 		scene->_object2.setPosition(Common::Point(204, 59));
-		scene->_object2.unflag100();
+		scene->_object2.show();
 
 		scene->_stripManager.start(13, this, scene);
 		break;
 	case 8:
-		scene->_object2.flag100();
-		scene->_object3.flag100();
+		scene->_object2.hide();
+		scene->_object3.hide();
 		scene->_object4.animate(ANIM_MODE_6, this);
 		break;
 	case 10:
@@ -934,14 +934,14 @@ void Scene40::Action1::signal() {
 		scene->_soundHandler.startSound(25);
 		break;
 	case 3:
-		scene->_doorway.flag100();
+		scene->_doorway.hide();
 		scene->_dyingKzin.setPosition(Common::Point(296, 62));
 		_globals->_player.animate(ANIM_MODE_5, NULL);
 		scene->_object1.setVisage(43);
 		scene->_object1.setStrip(3);
 		scene->_object1.animate(ANIM_MODE_5, NULL);
-		scene->_object2.flag100();
-		scene->_object3.flag100();
+		scene->_object2.hide();
+		scene->_object3.hide();
 		scene->_stripManager.start(45, this);
 		break;
 	case 4:
@@ -955,7 +955,7 @@ void Scene40::Action1::signal() {
 		scene->_soundHandler.startSound(25);
 		break;
 	case 5:
-		scene->_doorway.unflag100();
+		scene->_doorway.show();
 		scene->_doorway.setVisage(42);
 		scene->_doorway.setStrip(3);
 		scene->_doorway.setFrame(1);
@@ -2520,7 +2520,7 @@ void Scene90::Object2::doAction(int action) {
 		scene->_object6.setVisage(90);
 		scene->_object6.setStrip(6);
 		scene->_object6.setPosition(Common::Point(184, 210));
-		scene->_object6.flag100();
+		scene->_object6.hide();
 
 		scene->_sceneMode = 91;
 		scene->_soundHandler1.startSound(59);
@@ -2849,14 +2849,14 @@ void Scene6100::Action3::signal() {
 		scene->_fadePercent = 0;
 		_globals->_scenePalette.refresh();
 		scene->loadScene(9997);
-		scene->_object1.flag100();
-		scene->_object2.flag100();
-		scene->_object3.flag100();
-		scene->_object6.flag100();
-		scene->_object7.flag100();
-		scene->_object8.flag100();
-		scene->_object4.flag100();
-		scene->_sceneText.flag100();
+		scene->_object1.hide();
+		scene->_object2.hide();
+		scene->_object3.hide();
+		scene->_object6.hide();
+		scene->_object7.hide();
+		scene->_object8.hide();
+		scene->_object4.hide();
+		scene->_sceneText.hide();
 
 		_globals->_events.setCursor(CURSOR_WALK);
 		scene->_stripManager.start(8120, this);
@@ -3014,7 +3014,7 @@ void Scene6100::Action6::signal() {
 		Common::Point pt(scene->_object4._position.x, scene->_object4._position.y + 10);
 		NpcMover *mover = new NpcMover();
 		scene->_object5.addMover(mover, &pt, NULL);
-		scene->_object5.unflag100();
+		scene->_object5.show();
 		break;
 	}
 	case 1: {
@@ -3118,7 +3118,7 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 	_object5._floats._float1 = 320.0;
 	_object5._floats._float2 = 0.0;
 	_object5._floats._float3 = 0.0;
-	_object5.flag100();
+	_object5.hide();
 
 	_objList[0] = &_object6;
 	_objList[1] = &_object7;

@@ -108,7 +108,7 @@ void Scene1000::Action3::signal() {
 		setDelay(60);
 		break;
 	case 4:
-		_globals->_player.unflag100();
+		_globals->_player.show();
 		setDelay(240);
 		break;
 	case 5: {
@@ -297,7 +297,7 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 		_globals->_player.setStrip(3);
 		_globals->_player.setPosition(Common::Point(160, 191));
 		_globals->_player._moveDiff.x = 12;
-		_globals->_player.flag100();
+		_globals->_player.hide();
 		_globals->_player.disableControl();
 
 		_globals->_sceneManager._scene->_sceneBounds.centre(_object3._position.x, _object3._position.y);
