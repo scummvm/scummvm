@@ -913,12 +913,6 @@ void Actor::updateWalk() {
 		return;
 	}
 
-	if (_turning) {
-		float dy = _destYaw - _yaw;
-		if (dy > 20 || dy < -20)
-			return;
-	}
-
 	Graphics::Vector3d destPos = _path.back();
 	float y = yawTo(destPos);
 	if (y < 0.f) {
