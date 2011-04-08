@@ -253,6 +253,7 @@ void Scene1000::Action3::zoom(bool up) {
 void Scene1000::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit();
 	setZoomPercents(0, 100, 200, 100);
+	loadScene(1000);
 
 	if (_globals->_sceneManager._previousScene == 2000) {
 		setZoomPercents(150, 10, 180, 100);
@@ -304,8 +305,6 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 
 		setAction(&_action3);
 	}
-
-	loadScene(1000);
 }
 
 /*--------------------------------------------------------------------------

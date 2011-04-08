@@ -3365,8 +3365,8 @@ void SceneHandler::postInit(SceneObjectList *OwnerList) {
 	_globals->_inventory._scanner._sceneNumber = 1;
 	_globals->_inventory._ring._sceneNumber = 1;
 
-	// Currently hardcoded for first game room. Should be scene 1000 for title screen
-	_globals->_sceneManager.setNewScene(30);	
+	// Switch to the title screen
+	_globals->_sceneManager.setNewScene(1000);	
 }
 
 void SceneHandler::process(Event &event) {
