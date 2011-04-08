@@ -481,6 +481,19 @@ void Actor::walkTo(Graphics::Vector3d p) {
 				Sector *sector = node->sect;
 
 				if (sector == endSec) {
+					PathNode *node = closedList.back()->parent;
+					while (node) {
+						_path.push_back(node->pos);
+						node = node->parent;
+					}
+
+					for (Common::List<PathNode *>::iterator j = closedList.begin(); j != closedList.end(); ++j) {
+						delete *j;
+					}
+					for (Common::List<PathNode *>::iterator j = openList.begin(); j != openList.end(); ++j) {
+						delete *j;
+					}
+
 					break;
 				}
 
@@ -518,21 +531,7 @@ void Actor::walkTo(Graphics::Vector3d p) {
 						}
 					}
 				}
-
 			} while (!openList.empty());
-
-			PathNode *node = closedList.back()->parent;
-			while (node) {
-				_path.push_back(node->pos);
-				node = node->parent;
-			}
-
-			for (Common::List<PathNode *>::iterator j = closedList.begin(); j != closedList.end(); ++j) {
-				delete *j;
-			}
-			for (Common::List<PathNode *>::iterator j = openList.begin(); j != openList.end(); ++j) {
-				delete *j;
-			}
 		}
 
 		_path.push_front(_destPos);
