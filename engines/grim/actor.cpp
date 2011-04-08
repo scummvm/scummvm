@@ -487,13 +487,6 @@ void Actor::walkTo(Graphics::Vector3d p) {
 						node = node->parent;
 					}
 
-					for (Common::List<PathNode *>::iterator j = closedList.begin(); j != closedList.end(); ++j) {
-						delete *j;
-					}
-					for (Common::List<PathNode *>::iterator j = openList.begin(); j != openList.end(); ++j) {
-						delete *j;
-					}
-
 					break;
 				}
 
@@ -532,6 +525,13 @@ void Actor::walkTo(Graphics::Vector3d p) {
 					}
 				}
 			} while (!openList.empty());
+
+			for (Common::List<PathNode *>::iterator j = closedList.begin(); j != closedList.end(); ++j) {
+				delete *j;
+			}
+			for (Common::List<PathNode *>::iterator j = openList.begin(); j != openList.end(); ++j) {
+				delete *j;
+			}
 		}
 
 		_path.push_front(_destPos);
