@@ -3,7 +3,7 @@
 PATH_DIST = $(srcdir)/dists/webos
 PATH_RESOURCES = $(PATH_DIST)/mojo
 
-STAGING_DIR=STAGING/org.scummvm
+STAGING_DIR=STAGING/org.scummvm.scummvm
 
 webosrelease:
 	rm -rf $(STAGING_DIR)
