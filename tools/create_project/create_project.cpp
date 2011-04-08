@@ -23,6 +23,12 @@
  *
  */
 
+// HACK to allow building with the SDL backend on MinGW
+// see bug #1800764 "TOOLS: MinGW tools building broken"
+#ifdef main
+#undef main
+#endif // main
+
 #include "create_project.h"
 #include "codeblocks.h"
 
@@ -41,7 +47,11 @@
 #include <cstdlib>
 #include <ctime>
 
-#if defined(_WIN32) || defined(WIN32)
+#if (defined(_WIN32) || defined(WIN32)) && !defined(__GNUC__)
+#define USE_WIN32_API
+#endif
+
+#ifdef USE_WIN32_API
 #include <windows.h>
 #else
 #include <sstream>
@@ -103,7 +113,7 @@ enum ProjectType {
 };
 
 int main(int argc, char *argv[]) {
-#if !(defined(_WIN32) || defined(WIN32))
+#ifndef USE_WIN32_API
 	// Initialize random number generator for UUID creation
 	std::srand(std::time(0));
 #endif
@@ -860,7 +870,7 @@ bool compareNodes(const FileNode *l, const FileNode *r) {
  */
 FileList listDirectory(const std::string &dir) {
 	FileList result;
-#if defined(_WIN32) || defined(WIN32)
+#ifdef USE_WIN32_API
 	WIN32_FIND_DATA fileInformation;
 	HANDLE fileHandle = FindFirstFile((dir + "/*").c_str(), &fileInformation);
 
@@ -1035,7 +1045,7 @@ ProjectProvider::UUIDMap ProjectProvider::createUUIDMap(const BuildSetup &setup)
 }
 
 std::string ProjectProvider::createUUID() const {
-#if defined(_WIN32) || defined(WIN32)
+#ifdef USE_WIN32_API
 	UUID uuid;
 	if (UuidCreate(&uuid) != RPC_S_OK)
 		error("UuidCreate failed");
