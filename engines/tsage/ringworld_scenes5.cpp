@@ -458,7 +458,7 @@ void Scene4000::Action12::signal() {
 		}
 		break;
 	case 4:
-		scene->_hotspot9.flag100();
+		scene->_hotspot9.hide();
 		scene->_stripManager.start(4020, this);
 		break;
 	case 5:
@@ -687,7 +687,7 @@ void Scene4000::Hotspot::doAction(int action) {
 		scene->_hotspot10.setVisage(4000);
 		scene->_hotspot10.setStrip(5);
 		scene->_hotspot10.setPosition(Common::Point(245, 147));
-		scene->_hotspot10.flag100();
+		scene->_hotspot10.hide();
 		_globals->_sceneItems.push_front(&scene->_hotspot10);
 
 		if (_globals->_sceneObjects->contains(&scene->_hotspot8)) {
@@ -1312,14 +1312,14 @@ void Scene4025::Action1::signal() {
 		}
 		break;
 	case 1:
-		scene->_pegPtr->flag100();
+		scene->_pegPtr->hide();
 
 		if (scene->_pegPtr2) {
 			if (scene->_pegPtr->_armStrip == 3)
 				scene->_pegPtr2->_strip = 2;
 
 			scene->_pegPtr2->setPosition(scene->_pegPtr->_position);
-			scene->_pegPtr2->unflag100();
+			scene->_pegPtr2->show();
 			scene->_pegPtr2->_armStrip = scene->_pegPtr->_armStrip;
 		}
 		
@@ -1348,7 +1348,7 @@ void Scene4025::Action2::signal() {
 	case 1:
 		if (!scene->_pegPtr2) {
 			// Getting a peg from a hole
-			scene->_holePtr->_pegPtr->flag100();
+			scene->_holePtr->_pegPtr->hide();
 			scene->_pegPtr = scene->_holePtr->_pegPtr;
 			scene->_pegPtr->_armStrip = 0;
 			scene->_pegPtr->setPosition(Common::Point(-10, -10));
@@ -1358,14 +1358,14 @@ void Scene4025::Action2::signal() {
 			// Placing a peg into a hole
 			scene->_pegPtr2 = NULL;
 			if (scene->_holePtr->_pegPtr) {
-				scene->_holePtr->_pegPtr->flag100();
+				scene->_holePtr->_pegPtr->hide();
 				scene->_pegPtr2 = scene->_holePtr->_pegPtr;
 			}
 
 			assert(scene->_pegPtr);
 			scene->_pegPtr->setPosition(scene->_holePtr->_newPosition);
 			scene->_pegPtr->setStrip(1);
-			scene->_pegPtr->unflag100();
+			scene->_pegPtr->show();
 			scene->_pegPtr->_armStrip = scene->_holePtr->_armStrip;
 			
 			scene->_holePtr->_pegPtr = scene->_pegPtr;
@@ -1511,7 +1511,7 @@ void Scene4025::postInit(SceneObjectList *OwnerList) {
 	_peg5.setVisage(4025);
 	_peg5.setStrip(1);
 	_peg5.setFrame(5);
-	_peg5.flag100();
+	_peg5.hide();
 
 	_hole1.postInit();
 	_hole1.setVisage(4025);
@@ -2769,14 +2769,14 @@ void Scene4150::Action1::signal() {
 		scene->_hotspot1.animate(ANIM_MODE_NONE, NULL);
 		scene->_hotspot1.setStrip(1);
 		scene->_hotspot1.setFrame(1);
-		scene->_hotspot1.unflag100();
+		scene->_hotspot1.show();
 
 		_globals->_player.setVisage(4200);
 		_globals->_player.animate(ANIM_MODE_1, NULL);
 		_globals->_player.setStrip(3);
 		_globals->_player.setPosition(Common::Point(139, 166));
 		_globals->_player._moveDiff = Common::Point(7, 3);
-		_globals->_player.unflag100();
+		_globals->_player.show();
 
 		setDelay(120);
 		break;
@@ -2815,7 +2815,7 @@ void Scene4150::Action2::signal() {
 		_globals->_player.animate(ANIM_MODE_5, NULL);
 		break;
 	case 2:
-		_globals->_player.flag100();
+		_globals->_player.hide();
 		scene->_hotspot1.setVisage(4153);
 		scene->_hotspot1.setStrip(1);
 		scene->_hotspot1.setFrame(1);
@@ -3396,7 +3396,7 @@ void Scene4250::Hotspot6::doAction(int action) {
 				scene->_hotspot2.setVisage(4251);
 				scene->_hotspot2.setFrame(scene->_hotspot2.getFrameCount());
 				scene->_hotspot2.setPosition(Common::Point(267, 172));
-				scene->_hotspot2.flag100();
+				scene->_hotspot2.hide();
 
 				scene->_sceneMode = 4259;
 				scene->setAction(&scene->_sequenceManager, scene, 4259, &_globals->_player, this, &scene->_hotspot2, NULL);
@@ -3517,7 +3517,7 @@ void Scene4250::postInit(tSage::SceneObjectList *OwnerList) {
 		if (_globals->getFlag(98)) {
 			_globals->_sceneItems.push_front(&_hotspot6);
 		} else {
-			_hotspot6.flag100();
+			_hotspot6.hide();
 			if ((_globals->_stripNum == 4300) || (_globals->_stripNum == 4301)) {
 				_globals->setFlag(98);
 				_globals->_player.setVisage(4302);
@@ -3709,7 +3709,7 @@ void Scene4300::Action1::signal() {
 		scene->_hotspot10.animate(ANIM_MODE_5, this);
 		break;
 	case 8:
-		scene->_hotspot13.unflag100();
+		scene->_hotspot13.show();
 		scene->_stripManager.start(8015, this, scene);
 		break;
 	case 9:
@@ -4029,10 +4029,10 @@ void Scene4300::postInit(SceneObjectList *OwnerList) {
 		_hotspot12.setStrip2(3);
 		_hotspot12.setPosition(Common::Point(231, 185));
 		_hotspot12.setPriority2(251);
-		_hotspot12.flag100();
+		_hotspot12.hide();
 
 		_hotspot13.postInit();
-		_hotspot13.flag100();
+		_hotspot13.hide();
 		_hotspot13.setVisage(4302);
 		_hotspot13.setStrip2(2);
 		_hotspot13.setPosition(Common::Point(256, 168));
@@ -4105,11 +4105,11 @@ void Scene4300::postInit(SceneObjectList *OwnerList) {
 void Scene4300::stripCallback(int v) {
 	switch (v) {
 	case 1:
-		_hotspot12.unflag100();
+		_hotspot12.show();
 		_hotspot12.animate(ANIM_MODE_7, 0, NULL);
 		break;
 	case 2:
-		_hotspot12.flag100();
+		_hotspot12.hide();
 		break;
 	}
 }
@@ -4211,7 +4211,7 @@ void Scene4301::Action1::signal() {
 		scene->_hotspot3.setFrame(2);
 		scene->_hotspot3.setPosition(Common::Point(48, 29));
 		scene->_hotspot3.setPriority2(255);
-		scene->_hotspot3.flag100();
+		scene->_hotspot3.hide();
 
 		_field34E = 0;
 		_state = 0;
@@ -4220,10 +4220,10 @@ void Scene4301::Action1::signal() {
 	case 10:
 		_globals->_events.setCursor(CURSOR_NONE);
 		scene->_soundHandler.startSound(337);
-		if (scene->_hotspot3._flags & OBJFLAG_100) 
-			scene->_hotspot3.unflag100();
+		if (scene->_hotspot3._flags & OBJFLAG_HIDE) 
+			scene->_hotspot3.show();
 		else
-			scene->_hotspot3.flag100();
+			scene->_hotspot3.hide();
 		setDelay(20);
 
 		if (_state <= 8)
@@ -4235,7 +4235,7 @@ void Scene4301::Action1::signal() {
 			_buttonList[_state].remove();
 
 		scene->_soundHandler.startSound(338);
-		scene->_hotspot3.flag100();
+		scene->_hotspot3.hide();
 
 		_actionIndex = 2;
 		_state = 0;
@@ -4245,10 +4245,10 @@ void Scene4301::Action1::signal() {
 		_globals->_player.disableControl();
 		scene->_soundHandler.startSound(339);
 		scene->_hotspot3._frame = 3;
-		if (scene->_hotspot3._flags & OBJFLAG_100) 
-			scene->_hotspot3.unflag100();
+		if (scene->_hotspot3._flags & OBJFLAG_HIDE) 
+			scene->_hotspot3.show();
 		else
-			scene->_hotspot3.flag100();
+			scene->_hotspot3.hide();
 		
 		if (_state <= 8)
 			_actionIndex = 20;

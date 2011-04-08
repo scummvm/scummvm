@@ -86,7 +86,7 @@ void SequenceManager::remove() {
 
 void SequenceManager::signal() {
 	if (_globals->_sceneObjects->contains(&_sceneText))
-		_sceneText.flag100();
+		_sceneText.hide();
 
 	bool continueFlag = true;
 	while (continueFlag) {
@@ -189,10 +189,10 @@ void SequenceManager::signal() {
 			_sceneObject->_moveDiff = Common::Point(v1, v2);
 			break;
 		case 17:
-			_sceneObject->flag100();
+			_sceneObject->hide();
 			break;
 		case 18:
-			_sceneObject->unflag100();
+			_sceneObject->show();
 			break;
 		case 19:
 			v1 = getNextValue();
@@ -354,7 +354,7 @@ void SequenceManager::setMessage(int resNum, int lineNum, int colour, const Comm
 	_sceneText.setup(msg);
 	_sceneText.setPosition(Common::Point(textRect.left, textRect.top));
 	_sceneText.setPriority2(255);
-	_sceneText.unflag100();
+	_sceneText.show();
 
 	// Set the delay based on the number of words
 	int numWords = 0;

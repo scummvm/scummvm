@@ -312,15 +312,15 @@ void Scene2000::Action14::signal() {
 		break;
 	case 3:
 		_globals->_soundHandler.startSound(99);
-		scene->_object8.unflag100();
+		scene->_object8.show();
 		scene->_object8.animate(ANIM_MODE_5, this);
 		break;
 	case 4:
 		_globals->_soundHandler.startSound(12);
 		scene->_object8.setStrip(2);
 		scene->_object8.setFrame(1);
-		scene->_object9.unflag100();
-		scene->_object10.unflag100();
+		scene->_object9.show();
+		scene->_object10.show();
 		setDelay(60);
 		break;
 	case 5:
@@ -398,7 +398,7 @@ void Scene2000::postInit(SceneObjectList *OwnerList) {
 	_object8.setVisage(2005);
 	_object8.setPosition(Common::Point(169, 133));
 	_object8.setPriority(133);
-	_object8.flag100();
+	_object8.hide();
 
 	_object9.postInit();
 	_object9.setVisage(2005);
@@ -406,7 +406,7 @@ void Scene2000::postInit(SceneObjectList *OwnerList) {
 	_object9.setFrame(4);
 	_object9.setPosition(Common::Point(136, 86));
 	_object9.setPriority2(190);
-	_object9.flag100();
+	_object9.hide();
 
 	_object10.postInit();
 	_object10.setVisage(2005);
@@ -414,7 +414,7 @@ void Scene2000::postInit(SceneObjectList *OwnerList) {
 	_object10.setFrame(4);
 	_object10.setPosition(Common::Point(202, 86));
 	_object10.setPriority2(195);
-	_object10.flag100();
+	_object10.hide();
 
 	switch (_globals->_sceneManager._previousScene) {
 	case 1000:
@@ -778,7 +778,7 @@ void Scene2100::Action9::signal() {
 		break;
 	case 2:
 		scene->_soundHandler.startSound(99);
-		scene->_object4.unflag100();
+		scene->_object4.show();
 		scene->_object4.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
@@ -793,7 +793,7 @@ void Scene2100::Action9::signal() {
 		scene->_object4.animate(ANIM_MODE_6, this);
 		break;
 	case 5:
-		scene->_object4.flag100();
+		scene->_object4.hide();
 		_globals->_events.setCursor(CURSOR_WALK);
 		scene->_stripManager.start(6010, this);
 		break;
@@ -1095,7 +1095,7 @@ void Scene2100::Action14::signal() {
 		break;
 	case 4:
 		scene->_soundHandler.startSound(99);
-		scene->_object4.unflag100();
+		scene->_object4.show();
 		scene->_object4.animate(ANIM_MODE_5, this);
 		break;
 	case 5:
@@ -1293,7 +1293,7 @@ void Scene2100::Action17::signal() {
 		break;
 	case 4:
 		scene->_soundHandler.startSound(99);
-		scene->_object4.unflag100();
+		scene->_object4.show();
 		scene->_object4.animate(ANIM_MODE_5, this);
 		break;
 	case 5:
@@ -1732,7 +1732,7 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 			_object4.postInit();
 			_object4.setVisage(2102);
 			_object4.setPosition(Common::Point(160, 199));
-			_object4.flag100();
+			_object4.hide();
 
 			setAction(&_action14);
 		} else {
@@ -1776,7 +1776,7 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 		_object4.postInit();
 		_object4.setVisage(2102);
 		_object4.setPosition(Common::Point(160, 199));
-		_object4.flag100();
+		_object4.hide();
 
 		_sceneMode = 2107;
 		setAction(&_sequenceManager, this, 2107, &_object4, NULL);
@@ -1812,7 +1812,7 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 		_object4.postInit();
 		_object4.setVisage(2102);
 		_object4.setPosition(Common::Point(160, 199));
-		_object4.flag100();
+		_object4.hide();
 
 		_globals->_inventory._stasisBox._sceneNumber = 0;
 		setAction(&_action9);
@@ -1828,7 +1828,7 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 			_object4.postInit();
 			_object4.setVisage(2102);
 			_object4.setPosition(Common::Point(160, 199));
-			_object4.flag100();
+			_object4.hide();
 			_globals->clearFlag(15);
 			_globals->clearFlag(109);
 			_globals->clearFlag(72);
@@ -1883,7 +1883,7 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 		_object4.postInit();
 		_object4.setVisage(2102);
 		_object4.setPosition(Common::Point(160, 199));
-		_object4.flag100();
+		_object4.hide();
 
 		_sceneMode = 2103;
 		setAction(&_sequenceManager, this, 2103, &_object4, NULL);
@@ -2046,7 +2046,7 @@ void Scene2120::Action1::dispatch() {
 			if ((scene->_subjectIndex == 27) && _globals->getFlag(70))
 				_globals->setFlag(75);
 
-			scene->_topicArrowHotspot.flag100();
+			scene->_topicArrowHotspot.hide();
 			scene->_prevDbMode = scene->_dbMode;
 			scene->_dbMode = 2;
 			scene->_lineOffset = 0;
@@ -2137,7 +2137,7 @@ void Scene2120::Action1::dispatch() {
 				scene->_dbMode = scene->_prevDbMode;
 				_actionIndex = scene->_prevDbMode + 1;
 
-				scene->_topicArrowHotspot.unflag100();
+				scene->_topicArrowHotspot.show();
 				setDelay(1);
 			}
 
@@ -2716,7 +2716,7 @@ void Scene2200::Action3::signal() {
 		} else {
 			for (List<SceneObject *>::iterator i = _globals->_sceneObjects->begin();
 					i != _globals->_sceneObjects->end(); ++i) {
-				(*i)->flag100();
+				(*i)->hide();
 			}
 
 			_globals->_sceneManager._scene->loadScene(66);
@@ -2753,7 +2753,7 @@ void Scene2200::Action3::signal() {
 	case 7:
 		for (List<SceneObject *>::iterator i = _globals->_sceneObjects->begin();
 				i != _globals->_sceneObjects->end(); ++i)
-			(*i)->unflag100();
+			(*i)->show();
 
 		scene->_hotspot6.remove();
 		_globals->_sceneManager._scene->loadScene(2200);
@@ -4892,7 +4892,7 @@ void Scene2310::signal() {
 		_globals->_sceneObjects->draw();
 		_globals->_events.waitForPress();
 
-		_sceneText.flag100();
+		_sceneText.hide();
 		_globals->_sceneObjects->draw();
 
 		_globals->_sceneManager.changeScene(2200);
@@ -4930,11 +4930,11 @@ void Scene2310::process(Event &event) {
 					idx = findObject(idx);
 			
 				if (idx != 5) {
-					_wireList[idx].flag100();
+					_wireList[idx].hide();
 					_globals->_sceneObjects->draw();
 					_wireList[idx].setFrame(frameNum);
 
-					_wireList[idx].unflag100();
+					_wireList[idx].show();
 					_globals->_sceneObjects->draw();
 				}
 			} else {
@@ -5041,7 +5041,7 @@ void Scene2320::Action2::signal() {
 		break;
 	}
 	case 1:
-		scene->_hotspot13.flag100();
+		scene->_hotspot13.hide();
 		remove();
 		break;
 	}
@@ -5173,7 +5173,7 @@ void Scene2320::Action4::signal() {
 		scene->_hotspot16.setStrip(3);
 		scene->_hotspot16.setPriority2(149);
 		scene->_hotspot16.setPosition(Common::Point(320, 202));
-		scene->_hotspot16.unflag100();
+		scene->_hotspot16.show();
 
 		Common::Point pt(320, 121);
 		NpcMover *mover = new NpcMover();
@@ -5245,7 +5245,7 @@ void Scene2320::Action4::signal() {
 		_globals->_player.setFrame(1);
 		_globals->_player.animate(ANIM_MODE_1, NULL);
 		
-		scene->_hotspot16.unflag100();
+		scene->_hotspot16.show();
 		setDelay(3);
 		break;
 	case 14: {
@@ -5279,7 +5279,7 @@ void Scene2320::Action4::signal() {
 		scene->_hotspot16.remove();
 		scene->_soundHandler.startSound(253);
 
-		scene->_hotspot13.unflag100();
+		scene->_hotspot13.show();
 		Common::Point pt(319, 157);
 		NpcMover *mover = new NpcMover();
 		scene->_hotspot13.addMover(mover, &pt, this);
@@ -5680,7 +5680,7 @@ void Scene2320::Hotspot14::doAction(int action) {
 			scene->_hotspot8.postInit();
 			scene->_hotspot8.setVisage(2345);
 			scene->_hotspot8.setPosition(Common::Point(634, 65));
-			scene->_hotspot8.flag100();
+			scene->_hotspot8.hide();
 
 			_globals->_sceneItems.push_front(&scene->_hotspot8);
 			_globals->_inventory._waldos._sceneNumber = 2320;
@@ -5690,13 +5690,13 @@ void Scene2320::Hotspot14::doAction(int action) {
 			scene->_hotspot9._strip = 6;
 			scene->_hotspot9.setPosition(Common::Point(536, 103));
 			scene->_hotspot9.setPriority2(200);
-			scene->_hotspot9.flag100();
+			scene->_hotspot9.hide();
 
 			scene->_hotspot16.postInit();
 			scene->_hotspot16.setVisage(2345);
 			scene->_hotspot16.setStrip(8);
 			scene->_hotspot16.setPosition(Common::Point(536, 103));
-			scene->_hotspot16.flag100();
+			scene->_hotspot16.hide();
 
 			scene->_sceneMode = 2324;
 			scene->setAction(&scene->_sequenceManager1, scene, 2324, &_globals->_player, &scene->_hotspot7,
@@ -5895,7 +5895,7 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 		_hotspot8.postInit();
 		_hotspot8.setVisage(2345);
 		_hotspot8.setPosition(Common::Point(634, 65));
-		_hotspot8.flag100();
+		_hotspot8.hide();
 
 		_sceneMode = 2325;
 		setAction(&_sequenceManager1, this, 2325, &_globals->_player, &_hotspot6, &_hotspot8, &_hotspot7, NULL);
@@ -5919,7 +5919,7 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 		_hotspot16._strip = 3;
 		_hotspot16.setPriority2(160);
 		_hotspot16.setPosition(Common::Point(320, 202));
-		_hotspot16.flag100();
+		_hotspot16.hide();
 
 		_sceneMode = 2338;
 		setAction(&_sequenceManager1, this, 2338, &_globals->_player, &_hotspot16, &_hotspot13, NULL);
@@ -5954,7 +5954,7 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 			_hotspot8.postInit();
 			_hotspot8.setVisage(2345);
 			_hotspot8.setPosition(Common::Point(634, 65));
-			_hotspot8.flag100();
+			_hotspot8.hide();
 			
 			_sceneMode = 2325;
 			setAction(&_sequenceManager1, this, 2325, &_globals->_player, &_hotspot6, &_hotspot8, &_hotspot7, NULL);
@@ -6058,7 +6058,7 @@ void Scene2400::Action1::signal() {
 		ADD_MOVER(_globals->_player, 87, 338);
 		break;
 	case 5:
-		_globals->_player.flag100();
+		_globals->_player.hide();
 		setDelay(60);
 		break;
 	case 6:
