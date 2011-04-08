@@ -1568,6 +1568,39 @@ void SceneHotspot::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
+void NamedHotspot::doAction(int action) {
+	switch (action) {
+	case CURSOR_WALK:
+		// Nothing
+		break;
+	case CURSOR_LOOK:
+		if (_lookLineNum == -1)
+			SceneHotspot::doAction(action);
+		else
+			SceneItem::display(_resnum, _lookLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		break;
+	case CURSOR_USE:
+		if (_useLineNum == -1)
+			SceneHotspot::doAction(action);
+		else
+			SceneItem::display(_resnum, _useLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		break;
+	default:
+		SceneHotspot::doAction(action);
+		break;
+	}
+}
+
+void NamedHotspot::quickInit(const int ys, const int xe, const int ye, const int xs, const int resnum, const int lookLineNum, const int useLineNum) {
+	setBounds(ys, xe, ye, xs);
+	_resnum = resnum;
+	_lookLineNum = lookLineNum;
+	_useLineNum = useLineNum;
+	_globals->_sceneItems.addItems(this, NULL);
+}
+
+/*--------------------------------------------------------------------------*/
+
 void SceneObjectWrapper::setSceneObject(SceneObject *so) {
 	_sceneObject = so;
 	so->_strip = 1;

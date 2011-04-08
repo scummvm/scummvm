@@ -439,6 +439,16 @@ public:
 	virtual void doAction(int action);
 };
 
+class NamedHotspot: public SceneHotspot {
+public:
+	int _resnum, _lookLineNum, _useLineNum;
+	NamedHotspot(): SceneHotspot() {}
+
+	void quickInit(const int ys, const int xe, const int ye, const int xs, const int resnum, const int lookLineNum, const int useLineNum);
+	virtual void doAction(int action);
+	virtual Common::String getClassName() { return "NamedHotspot"; }
+};
+
 class SceneHotspot_2: public SceneHotspot {
 public:
 	int _field26, _field28;

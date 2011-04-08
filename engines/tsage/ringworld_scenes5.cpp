@@ -3743,37 +3743,6 @@ void Scene4300::Action2::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void HotspotBase4300::doAction(int action) {
-	switch (action) {
-	case CURSOR_WALK:
-		break;
-	case CURSOR_LOOK:
-		if (_lookLine != -1)
-			SceneItem::display2(_resNum, _lookLine);
-		else
-			SceneHotspot::doAction(action);
-		break;
-	case CURSOR_USE:
-		if (_useLine != -1)
-			SceneItem::display2(_resNum, _useLine);
-		else
-			SceneHotspot::doAction(action);
-		break;
-	default:
-		SceneHotspot::doAction(action);
-		break;
-	}
-}
-
-void HotspotBase4300::setup(const Rect &bounds, int resNum, int lookLine, int useLine) {
-	SceneHotspot::setBounds(bounds);
-	_resNum = resNum;
-	_lookLine = lookLine;
-	_useLine = useLine;
-
-	_globals->_sceneItems.push_back(this);
-}
-
 void Scene4300::Hotspot8::doAction(int action) {
 	switch (action) {
 	case CURSOR_LOOK:
@@ -3829,7 +3798,7 @@ void Scene4300::Hotspot9::doAction(int action) {
 			SceneItem::display2(4300, 23);
 		break;
 	default:
-		HotspotBase4300::doAction(action);
+		NamedHotspot::doAction(action);
 		break;
 	}
 }
@@ -3981,7 +3950,7 @@ void Scene4300::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_speakerMText);
 	_stripManager.addSpeaker(&_speakerFLText);
 
-	_hotspot11.setup(Rect(76, 97, 102, 127), 4300, 5, 6);
+	_hotspot11.quickInit(76, 97, 102, 127, 4300, 5, 6);
 
 	_hotspot7.postInit();
 	_hotspot7.setPosition(Common::Point(90, 128));
@@ -3989,7 +3958,7 @@ void Scene4300::postInit(SceneObjectList *OwnerList) {
 	_hotspot7.setPriority2(250);
 	_globals->_sceneItems.push_back(&_hotspot7);
 
-	_hotspot9.setup(Rect(120, 49, 174, 91), 4300, -1, -1);
+	_hotspot9.quickInit(120, 49, 174, 91, 4300, -1, -1);
 
 	_hotspot15.postInit();
 	_hotspot15.setVisage(4300);
@@ -4324,7 +4293,7 @@ void Scene4301::Hotspot4::doAction(int action) {
 		_globals->_player.disableControl();
 		scene->setAction(&scene->_action1);
 	} else {
-		HotspotBase4300::doAction(action);
+		NamedHotspot::doAction(action);
 	}
 }
 
@@ -4358,7 +4327,7 @@ void Scene4301::postInit(SceneObjectList *OwnerList) {
 
 	_field68E = false;
 	_globals->_inventory._stasisBox2._sceneNumber = 1;
-	_hotspot4.setup(Rect(76, 97, 102, 127), 4300, 5, 6);
+	_hotspot4.quickInit(76, 97, 102, 127, 4300, 5, 6);
 
 	_hotspot1.postInit();
 	_hotspot1.setPosition(Common::Point(90, 128));
