@@ -50,13 +50,13 @@ public:
 	 * Load a QuickTime audio file
 	 * @param filename	the filename to load
 	 */
-	bool loadFile(const Common::String &filename);
+	bool loadAudioFile(const Common::String &filename);
 
 	/**
 	 * Load a QuickTime audio file from a SeekableReadStream
 	 * @param stream	the stream to load
 	 */
-	bool loadStream(Common::SeekableReadStream *stream);
+	bool loadAudioStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle);
 
 protected:
 	struct AudioSampleDesc : public Common::QuickTimeParser::SampleDesc {
@@ -92,6 +92,16 @@ protected:
  * @return	a new SeekableAudioStream, or NULL, if an error occurred
  */
 SeekableAudioStream *makeQuickTimeStream(const Common::String &filename);
+
+/**
+ * Try to load a QuickTime sound file from the given seekable stream and create a SeekableAudioStream
+ * from that data.
+ *
+ * @param stream			the SeekableReadStream from which to read the data
+ * @param disposeAfterUse	whether to delete the stream after use
+ * @return	a new SeekableAudioStream, or NULL, if an error occurred
+ */
+SeekableAudioStream *makeQuickTimeStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 } // End of namespace Audio
 

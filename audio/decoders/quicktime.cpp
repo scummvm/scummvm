@@ -46,16 +46,16 @@ QuickTimeAudioDecoder::~QuickTimeAudioDecoder() {
 	delete _audStream;
 }
 
-bool QuickTimeAudioDecoder::loadFile(const Common::String &filename) {
-	if (!Common::QuickTimeParser::loadFile(filename))
+bool QuickTimeAudioDecoder::loadAudioFile(const Common::String &filename) {
+	if (!Common::QuickTimeParser::parseFile(filename))
 		return false;
 
 	init();
 	return true;
 }
 
-bool QuickTimeAudioDecoder::loadStream(Common::SeekableReadStream *stream) {
-	if (!Common::QuickTimeParser::loadStream(stream))
+bool QuickTimeAudioDecoder::loadAudioStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle) {
+	if (!Common::QuickTimeParser::parseStream(stream, disposeFileHandle))
 		return false;
 
 	init();
@@ -319,8 +319,12 @@ public:
 	QuickTimeAudioStream() {}
 	~QuickTimeAudioStream() {}
 
-	bool loadFile(const Common::String &filename) {
-		return QuickTimeAudioDecoder::loadFile(filename) && _audioStreamIndex >= 0 && _audStream;
+	bool openFromFile(const Common::String &filename) {
+		return QuickTimeAudioDecoder::loadAudioFile(filename) && _audioStreamIndex >= 0 && _audStream;
+	}
+
+	bool openFromStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle) {
+		return QuickTimeAudioDecoder::loadAudioStream(stream, disposeFileHandle) && _audioStreamIndex >= 0 && _audStream;
 	}
 
 	// AudioStream API
@@ -358,7 +362,18 @@ public:
 SeekableAudioStream *makeQuickTimeStream(const Common::String &filename) {
 	QuickTimeAudioStream *audioStream = new QuickTimeAudioStream();
 
-	if (!audioStream->loadFile(filename)) {
+	if (!audioStream->openFromFile(filename)) {
+		delete audioStream;
+		return 0;
+	}
+
+	return audioStream;
+}
+
+SeekableAudioStream *makeQuickTimeStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
+	QuickTimeAudioStream *audioStream = new QuickTimeAudioStream();
+
+	if (!audioStream->openFromStream(stream, disposeAfterUse)) {
 		delete audioStream;
 		return 0;
 	}

@@ -52,6 +52,7 @@ QuickTimeParser::QuickTimeParser() {
 	_scaleFactorX = 1;
 	_scaleFactorY = 1;
 	_resFork = new Common::MacResManager();
+	_disposeFileHandle = DisposeAfterUse::YES;
 
 	initParseTable();
 }
@@ -61,12 +62,13 @@ QuickTimeParser::~QuickTimeParser() {
 	delete _resFork;
 }
 
-bool QuickTimeParser::loadFile(const Common::String &filename) {
+bool QuickTimeParser::parseFile(const Common::String &filename) {
 	if (!_resFork->open(filename) || !_resFork->hasDataFork())
 		return false;
 
 	_foundMOOV = false;
 	_numStreams = 0;
+	_disposeFileHandle = DisposeAfterUse::YES;
 
 	MOVatom atom = { 0, 0, 0xffffffff };
 
@@ -98,15 +100,16 @@ bool QuickTimeParser::loadFile(const Common::String &filename) {
 	return true;
 }
 
-bool QuickTimeParser::loadStream(Common::SeekableReadStream *stream) {
+bool QuickTimeParser::parseStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle) {
 	_fd = stream;
 	_foundMOOV = false;
 	_numStreams = 0;
+	_disposeFileHandle = disposeFileHandle;
 
 	MOVatom atom = { 0, 0, 0xffffffff };
 
 	if (readDefault(atom) < 0 || !_foundMOOV) {
-		_fd = 0;
+		close();
 		return false;
 	}
 
@@ -724,7 +727,9 @@ void QuickTimeParser::close() {
 
 	_numStreams = 0;
 
-	delete _fd;
+	if (_disposeFileHandle == DisposeAfterUse::YES)
+		delete _fd;
+
 	_fd = 0;
 }
 

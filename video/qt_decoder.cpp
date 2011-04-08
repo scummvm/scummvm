@@ -344,7 +344,7 @@ uint32 QuickTimeDecoder::getTimeToNextFrame() const {
 }
 
 bool QuickTimeDecoder::loadFile(const Common::String &filename) {
-	if (!Common::QuickTimeParser::loadFile(filename))
+	if (!Common::QuickTimeParser::parseFile(filename))
 		return false;
 
 	init();
@@ -352,7 +352,7 @@ bool QuickTimeDecoder::loadFile(const Common::String &filename) {
 }
 
 bool QuickTimeDecoder::loadStream(Common::SeekableReadStream *stream) {
-	if (!Common::QuickTimeParser::loadStream(stream))
+	if (!Common::QuickTimeParser::parseStream(stream))
 		return false;
 
 	init();

@@ -58,13 +58,14 @@ public:
 	 * Load a QuickTime file
 	 * @param filename	the filename to load
 	 */
-	bool loadFile(const Common::String &filename);
+	bool parseFile(const Common::String &filename);
 
 	/**
 	 * Load a QuickTime file from a SeekableReadStream
 	 * @param stream	the stream to load
+	 * @param disposeFileHandle whether to delete the stream after use
 	 */
-	bool loadStream(Common::SeekableReadStream *stream);
+	bool parseStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle = DisposeAfterUse::YES);
 
 	/**
 	 * Close a QuickTime file
@@ -83,6 +84,8 @@ public:
 protected:
 	// This is the file handle from which data is read from. It can be the actual file handle or a decompressed stream.
 	Common::SeekableReadStream *_fd;
+
+	DisposeAfterUse::Flag _disposeFileHandle;
 
 	struct MOVatom {
 		uint32 type;
