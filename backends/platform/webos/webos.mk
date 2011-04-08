@@ -4,7 +4,7 @@ PATH_DIST = $(srcdir)/dists/webos
 PATH_MOJO = $(PATH_DIST)/mojo
 PATH_THEMES = $(PATH_DIST)/themes
 
-STAGING_DIR=STAGING/org.scummvm
+STAGING_DIR=STAGING/org.scummvm.scummvm
 
 webosrelease:
 	rm -rf $(STAGING_DIR)
