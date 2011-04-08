@@ -761,13 +761,24 @@ bool MusicPlayerMPEG4::load(uint32 fileref, bool loop) {
 	// Stop any old sound
 	_vm->_system->getMixer()->stopHandle(_handle);
 
+	// Find the filename
+	ResInfo info;
+	_vm->_resMan->getResInfo(fileref, info);
+	uint len = info.filename.size();
+	if (len < 4)
+		return false;	// This shouldn't actually occur
+
+	// RL still says xmi, but we're after external m4a
+	info.filename.setChar('m', len-3);
+	info.filename.setChar('4', len-2);
+	info.filename.setChar('a', len-1);
+
 	// Create the audio stream
-	Common::String filename = Common::String::format("gu%d.m4a", fileref & 0x3FF);
-	Audio::AudioStream *audStream = Audio::makeQuickTimeStream(filename);
+	Audio::AudioStream *audStream = Audio::makeQuickTimeStream(info.filename);
 
 	if (!audStream) {
 		// MPEG-4 sounds aren't handled yet, so nothing should play here yet
-		warning("Could not play MPEG-4 sound '%s'", filename.c_str());
+		warning("Could not play MPEG-4 sound '%s'", info.filename.c_str());
 		return false;
 	}
 

@@ -45,10 +45,10 @@ public:
 
 	Common::SeekableReadStream *open(uint32 fileRef);
 	virtual uint16 getRef(Common::String name, Common::String scriptname = "") = 0;
+	virtual bool getResInfo(uint32 fileRef, ResInfo &resInfo) = 0;
 
 protected:
 	Common::Array<Common::String> _gjds;
-	virtual bool getResInfo(uint32 fileRef, ResInfo &resInfo) = 0;
 
 	uint16 _lastGjd;
 };
