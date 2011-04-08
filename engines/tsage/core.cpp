@@ -351,7 +351,7 @@ void ObjectMover::dispatch() {
 void ObjectMover::setup(const Common::Point &destPos) {
 	_sceneObject->calcAngle(destPos);
 
-	if ((_sceneObject->_objectWrapper) && !(_sceneObject->_flags & OBJFLAG_8))
+	if ((_sceneObject->_objectWrapper) && !(_sceneObject->_flags & OBJFLAG_SUPPRESS_DISPATCH))
 		_sceneObject->_objectWrapper->dispatch();
 
 	// Get the difference
@@ -1770,9 +1770,9 @@ void SceneObject::setStrip(int stripNum) {
 
 void SceneObject::setStrip2(int stripNum) {
 	if (stripNum == -1)
-		_flags &= ~OBJFLAG_8;
+		_flags &= ~OBJFLAG_SUPPRESS_DISPATCH;
 	else {
-		_flags |= OBJFLAG_8;
+		_flags |= OBJFLAG_SUPPRESS_DISPATCH;
 		setStrip(stripNum);
 	}
 }
@@ -1888,7 +1888,7 @@ int SceneObject::checkRegion(const Common::Point &pt) {
 
 	List<SceneObject *>::iterator i;
 	for (i = _globals->_sceneObjects->begin(); (regionIndex == 0) && (i != _globals->_sceneObjects->end()); ++i) {
-		if ((*i) && ((*i)->_flags & OBJFLAG_1000)) {
+		if ((*i) && ((*i)->_flags & OBJFLAG_CHECK_REGION)) {
 			int objYDiff = (*i)->_position.y - _yDiff;
 			if ((objYDiff >= yPos) && (objYDiff <= newY) &&
 				((*i)->_xs < tempRect.right) && ((*i)->_xe > tempRect.left)) {
@@ -1987,7 +1987,7 @@ void SceneObject::checkAngle(const SceneObject *obj) {
 
 void SceneObject::hide() {
 	_flags |= OBJFLAG_HIDE;
-	if (_flags & OBJFLAG_200)
+	if (_flags & OBJFLAG_HIDING)
 		_flags |= OBJFLAG_PANES;
 }
 
@@ -2320,7 +2320,7 @@ void SceneObjectList::draw() {
 			objList.push_back(obj);
 
 			if (!(obj->_flags & OBJFLAG_HIDE))
-				obj->_flags &= ~OBJFLAG_200;
+				obj->_flags &= ~OBJFLAG_HIDING;
 
 			// Reposition the bounds of the object to match the desired position
 			obj->reposition();
@@ -2387,7 +2387,7 @@ redraw:
 			SceneObject *obj = objList[objIndex];
 
 			if (obj->_flags & OBJFLAG_HIDE)
-				obj->_flags |= OBJFLAG_200;
+				obj->_flags |= OBJFLAG_HIDING;
 			obj->_flags &= ~flagMask;
 			if (obj->_flags & OBJFLAG_REMOVE) {
 				obj->_flags |= OBJFLAG_PANES;
@@ -2476,7 +2476,7 @@ void SceneObjectList::activate() {
 	// Replicate all existing objects on the old object list
 	for (i = objectList->begin(); i != objectList->end(); ++i) {
 		SceneObject *sceneObj = (*i)->clone();
-		sceneObj->_flags |= OBJFLAG_HIDE | OBJFLAG_REMOVE | OBJFLAG_800;
+		sceneObj->_flags |= OBJFLAG_HIDE | OBJFLAG_REMOVE | OBJFLAG_CLONED;
 		push_front(sceneObj);
 	}
 }
@@ -2491,9 +2491,9 @@ void SceneObjectList::deactivate() {
 
 	List<SceneObject *>::iterator i;
 	for (i = objectList->begin(); i != objectList->end(); ++i) {
-		if (!((*i)->_flags & OBJFLAG_800)) {
+		if (!((*i)->_flags & OBJFLAG_CLONED)) {
 			SceneObject *sceneObj = (*i)->clone();
-			sceneObj->_flags |= OBJFLAG_HIDE | OBJFLAG_REMOVE | OBJFLAG_800;
+			sceneObj->_flags |= OBJFLAG_HIDE | OBJFLAG_REMOVE | OBJFLAG_CLONED;
 			_globals->_sceneObjects->push_front(sceneObj);
 		}
 	}
