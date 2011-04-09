@@ -80,7 +80,6 @@ private:
 	Graphics::Surface *_screenSurfaceP;
 	int _lockSurfaceCtr;
 	bool _screenSurface;
-	bool _freeSurface;
 
 	bool _disableUpdates;
 	Rect _bounds;
@@ -93,7 +92,6 @@ public:
 	~GfxSurface();
 
 	void setScreenSurface();
-	void setSurface(Graphics::Surface *s);
 	Graphics::Surface lockSurface();
 	void unlockSurface();
 	void create(int width, int height);
