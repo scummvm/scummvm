@@ -765,6 +765,10 @@ begin_credits("Credits");
 		  add_person("Lars Persson", "AnotherGuest", "");
 	  end_section();
 
+	  begin_section("WebOS");
+		  add_person("Klaus Reimer", "kayahr", "");
+	  end_section();
+
 	  begin_section("Wii");
 		  add_person("Andre Heider", "dhewg", "");
 	  end_section();
