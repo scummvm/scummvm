@@ -1064,7 +1064,7 @@ void PaletteRotation::signal() {
 		uint32 frameNumber = _globals->_events.getFrameNumber();
 
 		if (frameNumber >= _frameNumber) {
-			_delayCtr -= frameNumber - _frameNumber;
+			_delayCtr = frameNumber - _frameNumber;
 			_frameNumber = frameNumber;
 
 			if (_delayCtr < 0)
@@ -1078,7 +1078,8 @@ void PaletteRotation::signal() {
 	if (_disabled)
 		return;
 
-	bool flag = true;	switch (_rotationMode) {
+	bool flag = true;
+	switch (_rotationMode) {
 	case -1:
 		if (--_currIndex < _start) {
 			flag = decDuration();
@@ -1119,7 +1120,7 @@ void PaletteRotation::signal() {
 		g_system->getPaletteManager()->setPalette((const byte *)&_palette[_currIndex], _start, count);
 
 		if (count2) {
-			g_system->getPaletteManager()->setPalette((const byte *)&_palette[_start], _start, count2);
+			g_system->getPaletteManager()->setPalette((const byte *)&_palette[_start], _start + count, count2);
 		}
 	}
 }
