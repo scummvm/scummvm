@@ -444,7 +444,7 @@ public:
 	int _resnum, _lookLineNum, _useLineNum;
 	NamedHotspot(): SceneHotspot() {}
 
-	void quickInit(const int ys, const int xe, const int ye, const int xs, const int resnum, const int lookLineNum, const int useLineNum);
+	void setup(const int ys, const int xe, const int ye, const int xs, const int resnum, const int lookLineNum, const int useLineNum);
 	virtual void doAction(int action);
 	virtual Common::String getClassName() { return "NamedHotspot"; }
 };
@@ -569,7 +569,7 @@ public:
 	virtual void draw();
 	virtual void proc19() {}
 	virtual void updateScreen();
-	void quickInit(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority);
+	void setup(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority);
 };
 
 class SceneObjectExt: public SceneObject {

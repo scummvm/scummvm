@@ -1591,7 +1591,7 @@ void NamedHotspot::doAction(int action) {
 	}
 }
 
-void NamedHotspot::quickInit(const int ys, const int xe, const int ye, const int xs, const int resnum, const int lookLineNum, const int useLineNum) {
+void NamedHotspot::setup(const int ys, const int xe, const int ye, const int xs, const int resnum, const int lookLineNum, const int useLineNum) {
 	setBounds(ys, xe, ye, xs);
 	_resnum = resnum;
 	_lookLineNum = lookLineNum;
@@ -2241,7 +2241,7 @@ void SceneObject::updateScreen() {
 	}
 }
 
-void SceneObject::quickInit(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority) {
+void SceneObject::setup(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority) {
 	postInit();
 	setVisage(visage);
 	setStrip(stripFrameNum);

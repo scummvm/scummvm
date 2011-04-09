@@ -44,7 +44,7 @@ public:
 		s.syncAsSint16LE(_timer);
 		s.syncAsSint16LE(_signalFlag);
 	}
-	virtual Common::String getClassName() { return "SceneObject4"; }
+	virtual Common::String getClassName() { return "SceneObject9150"; }
 };
 
 class Scene2: public Scene {
