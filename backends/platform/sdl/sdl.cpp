@@ -213,11 +213,11 @@ void OSystem_SDL::initSDL() {
 		uint32 sdlFlags = 0;
 		if (ConfMan.hasKey("disable_sdl_parachute"))
 			sdlFlags |= SDL_INIT_NOPARACHUTE;
-		
-		#ifdef WEBOS
+
+#ifdef WEBOS
 		// WebOS needs this flag or otherwise the application won't start
 		sdlFlags |= SDL_INIT_VIDEO;
-		#endif
+#endif
 
 		// Initialize SDL (SDL Subsystems are initiliazed in the corresponding sdl managers)
 		if (SDL_Init(sdlFlags) == -1)
