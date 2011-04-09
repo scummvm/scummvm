@@ -1917,7 +1917,7 @@ void Scene7700::Object1::doAction(int action) {
 	Scene7700 *scene = (Scene7700 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
-		SceneItem::display(7700, _field88, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7700, _lookLineNum, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
 	} else if (action == CURSOR_USE) {
 		if (_globals->getFlag(78)) {
 			_globals->_player.disableControl();
@@ -1934,10 +1934,10 @@ void Scene7700::Object1::doAction(int action) {
 void Scene7700::SceneHotspot11::doAction(int action) {
 	switch (action) {
 	case CURSOR_LOOK:
-		SceneItem::display(7700, _field28, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7700, _lookLineNum, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
 		break;
 	case CURSOR_USE:
-		SceneItem::display(7701, _field26, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7701, _useLineNum, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
 		break;
 	default:
 		SceneHotspot::doAction(action);
@@ -1948,7 +1948,7 @@ void Scene7700::SceneHotspot11::doAction(int action) {
 void Scene7700::Object1::signal() {
 	if (_state == 0) {
 		_state = 1;
-		SceneItem::display(7701, _field8A, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7701, _defltLineNum, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
 	} else {
 		_state = 0;
 	}
@@ -2333,15 +2333,15 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_object1.postInit();
 	_object1.setVisage(7700);
 	_object1.setPosition(Common::Point(184, 61), 0);
-	_object1._field88 = 18;
-	_object1._field8A = 16;
+	_object1._lookLineNum = 18;
+	_object1._defltLineNum = 16;
 
 	_object2.postInit();
 	_object2.setVisage(7700);
 	_object2.setPosition(Common::Point(184, 70), 0);
 	_object2.setPriority2(60);
-	_object2._field88 = 19;
-	_object2._field8A = 17;
+	_object2._lookLineNum = 19;
+	_object2._defltLineNum = 17;
 
 	_object3.postInit();
 	_object3.setVisage(7703);
@@ -2352,24 +2352,24 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_object4.setVisage(7700);
 	_object4.setPosition(Common::Point(268, 59), 0);
 	_object4.setStrip(2);
-	_object4._field88 = 37;
-	_object4._field8A = 35;
+	_object4._lookLineNum = 37;
+	_object4._defltLineNum = 35;
 
 	_object5.postInit();
 	_object5.setVisage(7700);
 	_object5.setPosition(Common::Point(268, 67), 0);
 	_object5.setPriority2(58);
 	_object5.setStrip2(3);
-	_object5._field88 = 38;
-	_object5._field8A = 36;
+	_object5._lookLineNum = 38;
+	_object5._defltLineNum = 36;
 
 	_object6.postInit();
 	_object6.setVisage(7700);
 	_object6.setPosition(Common::Point(268, 75), 0);
 	_object6.setPriority2(57);
 	_object6.setStrip2(4);
-	_object6._field88 = 40;
-	_object6._field8A = 43;
+	_object6._lookLineNum = 40;
+	_object6._defltLineNum = 43;
 
 	_object8.postInit();
 	_object8.setVisage(7703);
@@ -2405,83 +2405,83 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_sceneItem10.setBounds(0, 320, 200, 0);
 	
 	_sceneHotspot11._sceneRegionId = 57;
-	_sceneHotspot11._field26 = 0;
-	_sceneHotspot11._field28 = 0;
+	_sceneHotspot11._useLineNum = 0;
+	_sceneHotspot11._lookLineNum = 0;
 	_sceneHotspot12._sceneRegionId = 2;
-	_sceneHotspot12._field26 = 2;
-	_sceneHotspot12._field28 = 2;
+	_sceneHotspot12._useLineNum = 2;
+	_sceneHotspot12._lookLineNum = 2;
 	_sceneHotspot13._sceneRegionId = 12;
-	_sceneHotspot13._field26 = 3;
-	_sceneHotspot13._field28 = 3;
+	_sceneHotspot13._useLineNum = 3;
+	_sceneHotspot13._lookLineNum = 3;
 	_sceneHotspot14._sceneRegionId = 18;
-	_sceneHotspot14._field26 = 4;
-	_sceneHotspot14._field28 = 5;
+	_sceneHotspot14._useLineNum = 4;
+	_sceneHotspot14._lookLineNum = 5;
 	_sceneHotspot15.setBounds(0, 55, 50, 8);
-	_sceneHotspot15._field26 = 6;
-	_sceneHotspot15._field28 = 7;
+	_sceneHotspot15._useLineNum = 6;
+	_sceneHotspot15._lookLineNum = 7;
 	_sceneHotspot16.setBounds(0, 130, 34, 103);
-	_sceneHotspot16._field26 = 8;
-	_sceneHotspot16._field28 = 9;
+	_sceneHotspot16._useLineNum = 8;
+	_sceneHotspot16._lookLineNum = 9;
 	_sceneHotspot17.setBounds(41, 180, 46, 170);
-	_sceneHotspot17._field26 = 11;
-	_sceneHotspot17._field28 = 13;
+	_sceneHotspot17._useLineNum = 11;
+	_sceneHotspot17._lookLineNum = 13;
 	_sceneHotspot18.setBounds(38, 187, 46, 180);
-	_sceneHotspot18._field26 = 12;
-	_sceneHotspot18._field28 = 14;
+	_sceneHotspot18._useLineNum = 12;
+	_sceneHotspot18._lookLineNum = 14;
 	_sceneHotspot19._sceneRegionId = 3;
-	_sceneHotspot19._field26 = 14;
-	_sceneHotspot19._field28 = 16;
+	_sceneHotspot19._useLineNum = 14;
+	_sceneHotspot19._lookLineNum = 16;
 	_sceneHotspot20._sceneRegionId = 14;
-	_sceneHotspot20._field26 = 15;
-	_sceneHotspot20._field28 = 17;
+	_sceneHotspot20._useLineNum = 15;
+	_sceneHotspot20._lookLineNum = 17;
 	_sceneHotspot21.setBounds(9, 215, 26, 210);
-	_sceneHotspot21._field26 = 18;
-	_sceneHotspot21._field28 = 20;
+	_sceneHotspot21._useLineNum = 18;
+	_sceneHotspot21._lookLineNum = 20;
 	_sceneHotspot22.setBounds(10, 221, 26, 215);
-	_sceneHotspot22._field26 = 19;
-	_sceneHotspot22._field28 = 21;
+	_sceneHotspot22._useLineNum = 19;
+	_sceneHotspot22._lookLineNum = 21;
 	_sceneHotspot23.setBounds(6, 230, 26, 225);
-	_sceneHotspot23._field26 = 20;
-	_sceneHotspot23._field28 = 22;
+	_sceneHotspot23._useLineNum = 20;
+	_sceneHotspot23._lookLineNum = 22;
 	_sceneHotspot24._sceneRegionId = 13;
-	_sceneHotspot24._field26 = 21;
-	_sceneHotspot24._field28 = 23;
+	_sceneHotspot24._useLineNum = 21;
+	_sceneHotspot24._lookLineNum = 23;
 	_sceneHotspot25._sceneRegionId = 21;
-	_sceneHotspot25._field26 = 22;
-	_sceneHotspot25._field28 = 24;
+	_sceneHotspot25._useLineNum = 22;
+	_sceneHotspot25._lookLineNum = 24;
 	_sceneHotspot26._sceneRegionId = 19;
-	_sceneHotspot26._field26 = 23;
-	_sceneHotspot26._field28 = 25;
+	_sceneHotspot26._useLineNum = 23;
+	_sceneHotspot26._lookLineNum = 25;
 	_sceneHotspot27._sceneRegionId = 27;
-	_sceneHotspot27._field26 = 24;
-	_sceneHotspot27._field28 = 26;
+	_sceneHotspot27._useLineNum = 24;
+	_sceneHotspot27._lookLineNum = 26;
 	_sceneHotspot28._sceneRegionId = 15;
-	_sceneHotspot28._field26 = 25;
-	_sceneHotspot28._field28 = 27;
+	_sceneHotspot28._useLineNum = 25;
+	_sceneHotspot28._lookLineNum = 27;
 	_sceneHotspot29._sceneRegionId = 26;
-	_sceneHotspot29._field26 = 27;
-	_sceneHotspot29._field28 = 29;
+	_sceneHotspot29._useLineNum = 27;
+	_sceneHotspot29._lookLineNum = 29;
 	_sceneHotspot30.setBounds(0, 317, 34, 310);
-	_sceneHotspot30._field26 = 28;
-	_sceneHotspot30._field28 = 30;
+	_sceneHotspot30._useLineNum = 28;
+	_sceneHotspot30._lookLineNum = 30;
 	_sceneHotspot31._sceneRegionId = 17;
-	_sceneHotspot31._field26 = 29;
-	_sceneHotspot31._field28 = 31;
+	_sceneHotspot31._useLineNum = 29;
+	_sceneHotspot31._lookLineNum = 31;
 	_sceneHotspot32._sceneRegionId = 25;
-	_sceneHotspot32._field26 = 30;
-	_sceneHotspot32._field28 = 32;
+	_sceneHotspot32._useLineNum = 30;
+	_sceneHotspot32._lookLineNum = 32;
 	_sceneHotspot33._sceneRegionId = 5;
-	_sceneHotspot33._field26 = 31;
-	_sceneHotspot33._field28 = 33;
+	_sceneHotspot33._useLineNum = 31;
+	_sceneHotspot33._lookLineNum = 33;
 	_sceneHotspot34.setBounds(42, 292, 48, 281);
-	_sceneHotspot34._field26 = 32;
-	_sceneHotspot34._field28 = 35;
+	_sceneHotspot34._useLineNum = 32;
+	_sceneHotspot34._lookLineNum = 35;
 	_sceneHotspot35._sceneRegionId = 24;
-	_sceneHotspot35._field26 = 38;
-	_sceneHotspot35._field28 = 41;
+	_sceneHotspot35._useLineNum = 38;
+	_sceneHotspot35._lookLineNum = 41;
 	_sceneHotspot36._sceneRegionId = 1;
-	_sceneHotspot36._field26 = 39;
-	_sceneHotspot36._field28 = 42;
+	_sceneHotspot36._useLineNum = 39;
+	_sceneHotspot36._lookLineNum = 42;
 
 	_globals->_sceneItems.addItems(&_prof, &_sceneHotspot35, &_object8, &_sceneHotspot34, &_sceneHotspot33, &_sceneHotspot32, NULL);
 	_globals->_sceneItems.addItems(&_sceneHotspot31, &_sceneHotspot30, &_sceneHotspot29, &_sceneHotspot5, &_sceneHotspot28, &_sceneHotspot27, NULL);
@@ -2499,7 +2499,6 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 Scene7700::Scene7700() {
 	_object1._state = 0;
 	_object2._state = 0;
-	_object3._state = 0;
 	_object4._state = 0;
 	_object5._state = 0;
 	_object6._state = 0;

@@ -439,22 +439,14 @@ public:
 	virtual void doAction(int action);
 };
 
-class SceneHotspot_2: public SceneHotspot {
+class NamedHotspot: public SceneHotspot {
 public:
-	int _field26, _field28;
-	SceneHotspot_2(): SceneHotspot() {}
+	int _resnum, _lookLineNum, _useLineNum;
+	NamedHotspot(): SceneHotspot() {}
 
-	virtual Common::String getClassName() { return "SceneHotspot_2"; }
-};
-
-class SceneHotspot_3: public SceneHotspot_2 {
-public:
-	int _field2A;
-	SceneHotspot_3(): SceneHotspot_2() {}
-
-	void quickInit(const int ys, const int xe, const int ye, const int xs, const int val26, const int val28, const int val2A);
+	void setup(const int ys, const int xe, const int ye, const int xs, const int resnum, const int lookLineNum, const int useLineNum);
 	virtual void doAction(int action);
-	virtual Common::String getClassName() { return "SceneHotspot_3"; }
+	virtual Common::String getClassName() { return "NamedHotspot"; }
 };
 
 enum AnimateMode {ANIM_MODE_NONE = 0, ANIM_MODE_1 = 1, ANIM_MODE_2 = 2, ANIM_MODE_3 = 3,
@@ -577,7 +569,7 @@ public:
 	virtual void draw();
 	virtual void proc19() {}
 	virtual void updateScreen();
-	void quickInit(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority);
+	void setup(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority);
 };
 
 class SceneObjectExt: public SceneObject {
@@ -589,30 +581,6 @@ public:
 		s.syncAsSint16LE(_state);
 	}
 	virtual Common::String getClassName() { return "SceneObjectExt"; }
-};
-
-class SceneObject3: public SceneObjectExt {
-public:
-	int _field88, _field8A;
-
-	virtual void synchronise(Serialiser &s) {
-		SceneObject::synchronise(s);
-		s.syncAsSint16LE(_field88);
-		s.syncAsSint16LE(_field8A);
-	}
-	virtual Common::String getClassName() { return "SceneObject3"; }
-};
-
-class SceneObject4: public SceneObject {
-public:
-	int _field88, _field8A;
-
-	virtual void synchronise(Serialiser &s) {
-		SceneObject::synchronise(s);
-		s.syncAsSint16LE(_field88);
-		s.syncAsSint16LE(_field8A);
-	}
-	virtual Common::String getClassName() { return "SceneObject4"; }
 };
 
 class SceneText: public SceneObject {

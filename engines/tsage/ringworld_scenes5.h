@@ -574,16 +574,6 @@ public:
 	virtual void dispatch();
 };
 
-class HotspotBase4300: public SceneObject {
-public:
-	int _resNum;
-	int _lookLine, _useLine;
-
-	virtual void doAction(int action);
-
-	void setup(const Rect &bounds, int resNum, int lookLine, int useLine);
-};
-
 class Scene4300: public Scene {
 	/* Actions */
 	class Action1: public Action {
@@ -600,7 +590,7 @@ class Scene4300: public Scene {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot9: public HotspotBase4300 {
+	class Hotspot9: public NamedHotspot {
 	public:
 		virtual void doAction(int action);
 	};
@@ -638,7 +628,7 @@ public:
 	Hotspot8 _hotspot8;
 	Hotspot9 _hotspot9;
 	Hotspot10 _hotspot10;
-	HotspotBase4300 _hotspot11;
+	NamedHotspot _hotspot11;
 	SceneObject _hotspot12, _hotspot13, _hotspot14;
 	Hotspot15 _hotspot15;
 	Hotspot16 _hotspot16;
@@ -672,11 +662,11 @@ class Scene4301: public Scene {
 	};
 
 	/* Hotspots */
-	class Hotspot4: public HotspotBase4300 {
+	class Hotspot4: public NamedHotspot {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot5: public HotspotBase4300 {
+	class Hotspot5: public NamedHotspot {
 	public:
 		virtual void doAction(int action);
 	};

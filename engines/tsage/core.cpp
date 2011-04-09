@@ -1568,22 +1568,22 @@ void SceneHotspot::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-void SceneHotspot_3::doAction(int action) {
+void NamedHotspot::doAction(int action) {
 	switch (action) {
 	case CURSOR_WALK:
 		// Nothing
 		break;
 	case CURSOR_LOOK:
-		if (_field28 == -1)
+		if (_lookLineNum == -1)
 			SceneHotspot::doAction(action);
 		else
-			SceneItem::display(_field26, _field28, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			SceneItem::display(_resnum, _lookLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
 		break;
 	case CURSOR_USE:
-		if (_field2A == -1)
+		if (_useLineNum == -1)
 			SceneHotspot::doAction(action);
 		else
-			SceneItem::display(_field26, _field2A, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			SceneItem::display(_resnum, _useLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
 		break;
 	default:
 		SceneHotspot::doAction(action);
@@ -1591,11 +1591,11 @@ void SceneHotspot_3::doAction(int action) {
 	}
 }
 
-void SceneHotspot_3::quickInit(const int ys, const int xe, const int ye, const int xs, const int val26, const int val28, const int val2A) {
+void NamedHotspot::setup(const int ys, const int xe, const int ye, const int xs, const int resnum, const int lookLineNum, const int useLineNum) {
 	setBounds(ys, xe, ye, xs);
-	_field26 = val26;
-	_field28 = val28;
-	_field2A = val2A;
+	_resnum = resnum;
+	_lookLineNum = lookLineNum;
+	_useLineNum = useLineNum;
 	_globals->_sceneItems.addItems(this, NULL);
 }
 
@@ -2241,7 +2241,7 @@ void SceneObject::updateScreen() {
 	}
 }
 
-void SceneObject::quickInit(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority) {
+void SceneObject::setup(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority) {
 	postInit();
 	setVisage(visage);
 	setStrip(stripFrameNum);
