@@ -229,6 +229,8 @@ GfxSurface::GfxSurface(): _bounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
 }
 
 GfxSurface::GfxSurface(const GfxSurface &s) {
+	_lockSurfaceCtr = 0;
+	_customSurface = NULL;
 	this->operator =(s);
 }
 
@@ -313,6 +315,11 @@ void GfxSurface::fillRect(const Rect &bounds, int colour) {
 GfxSurface &GfxSurface::operator=(const GfxSurface &s) {
 	assert(_lockSurfaceCtr == 0);
 	assert(s._lockSurfaceCtr == 0);
+
+	if (_customSurface) {
+		_customSurface->free();
+		delete _customSurface;
+	}
 
 	_customSurface = s._customSurface;
 	_screenSurface = s._screenSurface;
