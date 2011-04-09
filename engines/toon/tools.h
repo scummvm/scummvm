@@ -63,7 +63,7 @@ protected:
 	const uint8 *_srcPtr;
 	uint8 *_dstPtr;
 
-	uint16 _inputByteLeft;
+	int16 _inputByteLeft;
 
 public:
 	RncDecoder();
