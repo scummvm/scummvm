@@ -35,6 +35,18 @@
 
 namespace tSage {
 
+class SceneObject9150: public SceneObject {
+public:
+	int _timer, _signalFlag;
+
+	virtual void synchronise(Serialiser &s) {
+		SceneObject::synchronise(s);
+		s.syncAsSint16LE(_timer);
+		s.syncAsSint16LE(_signalFlag);
+	}
+	virtual Common::String getClassName() { return "SceneObject4"; }
+};
+
 class Scene2: public Scene {
 public :
 	int _sceneState;
@@ -79,7 +91,7 @@ public:
 };
 
 class Scene9150: public Scene2 {
-	class Object3: public SceneObject4 {
+	class Object3: public SceneObject9150 {
 	public:
 		virtual void signal();
 		virtual void dispatch();
@@ -237,7 +249,7 @@ class Scene9450: public Scene2 {
 		virtual void signal();
 	};
 
-	class Object3: public SceneObject4 {
+	class Object3: public SceneObject9150 {
 	public:
 		virtual void dispatch();
 	};

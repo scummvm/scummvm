@@ -583,30 +583,6 @@ public:
 	virtual Common::String getClassName() { return "SceneObjectExt"; }
 };
 
-class SceneObject3: public SceneObjectExt {
-public:
-	int _field88, _field8A;
-
-	virtual void synchronise(Serialiser &s) {
-		SceneObject::synchronise(s);
-		s.syncAsSint16LE(_field88);
-		s.syncAsSint16LE(_field8A);
-	}
-	virtual Common::String getClassName() { return "SceneObject3"; }
-};
-
-class SceneObject4: public SceneObject {
-public:
-	int _field88, _field8A;
-
-	virtual void synchronise(Serialiser &s) {
-		SceneObject::synchronise(s);
-		s.syncAsSint16LE(_field88);
-		s.syncAsSint16LE(_field8A);
-	}
-	virtual Common::String getClassName() { return "SceneObject4"; }
-};
-
 class SceneText: public SceneObject {
 public:
 	int _fontNumber;

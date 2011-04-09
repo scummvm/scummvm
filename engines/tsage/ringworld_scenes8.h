@@ -35,12 +35,24 @@
 
 namespace tSage {
 
-	class NamedHotspotMult: public SceneHotspot {
+class NamedHotspotMult: public SceneHotspot {
 public:
 	int _useLineNum, _lookLineNum;
 	NamedHotspotMult(): SceneHotspot() {}
 
 	virtual Common::String getClassName() { return "NamedHotspotMult"; }
+};
+
+class SceneObject7700: public SceneObjectExt {
+public:
+	int _lookLineNum, _defltLineNum;
+
+	virtual void synchronise(Serialiser &s) {
+		SceneObject::synchronise(s);
+		s.syncAsSint16LE(_lookLineNum);
+		s.syncAsSint16LE(_defltLineNum);
+	}
+	virtual Common::String getClassName() { return "SceneObject7700"; }
 };
 
 class Scene7000: public Scene {
@@ -323,12 +335,12 @@ class Scene7700: public Scene {
 		virtual void signal();
 	};
 
-	class Object1: public SceneObject3 {
+	class Object1: public SceneObject7700 {
 	public:
 		virtual void signal();
 		virtual void doAction(int action);
 	};
-	class Object3: public SceneObject3 {
+	class Object3: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};

@@ -1917,7 +1917,7 @@ void Scene7700::Object1::doAction(int action) {
 	Scene7700 *scene = (Scene7700 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
-		SceneItem::display(7700, _field88, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7700, _lookLineNum, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
 	} else if (action == CURSOR_USE) {
 		if (_globals->getFlag(78)) {
 			_globals->_player.disableControl();
@@ -1948,7 +1948,7 @@ void Scene7700::SceneHotspot11::doAction(int action) {
 void Scene7700::Object1::signal() {
 	if (_state == 0) {
 		_state = 1;
-		SceneItem::display(7701, _field8A, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7701, _defltLineNum, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
 	} else {
 		_state = 0;
 	}
@@ -2333,15 +2333,15 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_object1.postInit();
 	_object1.setVisage(7700);
 	_object1.setPosition(Common::Point(184, 61), 0);
-	_object1._field88 = 18;
-	_object1._field8A = 16;
+	_object1._lookLineNum = 18;
+	_object1._defltLineNum = 16;
 
 	_object2.postInit();
 	_object2.setVisage(7700);
 	_object2.setPosition(Common::Point(184, 70), 0);
 	_object2.setPriority2(60);
-	_object2._field88 = 19;
-	_object2._field8A = 17;
+	_object2._lookLineNum = 19;
+	_object2._defltLineNum = 17;
 
 	_object3.postInit();
 	_object3.setVisage(7703);
@@ -2352,24 +2352,24 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_object4.setVisage(7700);
 	_object4.setPosition(Common::Point(268, 59), 0);
 	_object4.setStrip(2);
-	_object4._field88 = 37;
-	_object4._field8A = 35;
+	_object4._lookLineNum = 37;
+	_object4._defltLineNum = 35;
 
 	_object5.postInit();
 	_object5.setVisage(7700);
 	_object5.setPosition(Common::Point(268, 67), 0);
 	_object5.setPriority2(58);
 	_object5.setStrip2(3);
-	_object5._field88 = 38;
-	_object5._field8A = 36;
+	_object5._lookLineNum = 38;
+	_object5._defltLineNum = 36;
 
 	_object6.postInit();
 	_object6.setVisage(7700);
 	_object6.setPosition(Common::Point(268, 75), 0);
 	_object6.setPriority2(57);
 	_object6.setStrip2(4);
-	_object6._field88 = 40;
-	_object6._field8A = 43;
+	_object6._lookLineNum = 40;
+	_object6._defltLineNum = 43;
 
 	_object8.postInit();
 	_object8.setVisage(7703);
@@ -2499,7 +2499,6 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 Scene7700::Scene7700() {
 	_object1._state = 0;
 	_object2._state = 0;
-	_object3._state = 0;
 	_object4._state = 0;
 	_object5._state = 0;
 	_object6._state = 0;

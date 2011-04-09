@@ -183,20 +183,20 @@ void Scene9100::postInit(SceneObjectList *OwnerList) {
  *
  *--------------------------------------------------------------------------*/
 void Scene9150::Object3::signal() {
-	switch (_field8A++) {
+	switch (_signalFlag++) {
 	case 0:
-		_field88 = 10 + _globals->_randomSource.getRandomNumber(90);
+		_timer = 10 + _globals->_randomSource.getRandomNumber(90);
 		break;
 	default:	
 		animate(ANIM_MODE_5, this);
-		_field88 = 0;
+		_signalFlag = 0;
 		break;
 	}
 }
 
 void Scene9150::Object3::dispatch() {
 	SceneObject::dispatch();
-	if ((_field88 != 0) && (--_field88 == 0))
+	if ((_timer != 0) && (--_timer == 0))
 		signal();
 }
 
@@ -223,7 +223,7 @@ void Scene9150::signal() {
 void Scene9150::dispatch() {
 
 	if ((_sceneState != 0) && (_sceneBounds.left == 0)) {
-		_object3._field88 = 0;
+		_object3._timer = 0;
 		_sceneState = 0;
 		_sceneHotspot3.setAction(&_sequenceManager2, 0, 9154, &_object3, 0);
 		_sceneHotspot10.remove();
