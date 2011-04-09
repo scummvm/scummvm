@@ -279,7 +279,7 @@ void ObjectMover::dispatch() {
 	if (dontMove())
 		return;
 
-	_sceneObject->_field6E = 0;
+	_sceneObject->_regionIndex = 0;
 	if (_moveDelta.x >= _moveDelta.y) {
 		int xAmount = _moveSign.x * _sceneObject->_moveDiff.x * _sceneObject->_percent / 100;
 		if (!xAmount)
@@ -333,8 +333,8 @@ void ObjectMover::dispatch() {
 		_majorDiff -= ABS(yAmount);
 	}
 
-//TODO:	_sceneObject->_field6E = _sceneObject->proc1(currPos);
-	if (!_sceneObject->_field6E) {
+	_sceneObject->_regionIndex = _sceneObject->checkRegion(currPos);
+	if (!_sceneObject->_regionIndex) {
 		_sceneObject->setPosition(currPos, yDiff);
 		_sceneObject->getHorizBounds();
 
@@ -433,7 +433,7 @@ void ObjectMover2::startMove(SceneObject *sceneObj, va_list va) {
 }
 
 void ObjectMover2::endMove() {
-	_sceneObject->_field6E = 64;
+	_sceneObject->_regionIndex = 0x40;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -498,7 +498,7 @@ void PlayerMover::endMove() {
 	while (++_routeIndex != 0) {
 		if ((_routeList[_routeIndex].x == ROUTE_END_VAL) ||
 			(_routeList[_routeIndex].y == ROUTE_END_VAL) ||
-			(_sceneObject->_field6E)) {
+			(_sceneObject->_regionIndex)) {
 			// Movement route is completely finished
 			ObjectMover::endMove();
 			return;
@@ -1024,7 +1024,7 @@ void PlayerMover2::startMove(SceneObject *sceneObj, va_list va) {
 }
 
 void PlayerMover2::endMove() {
-	_sceneObject->_field6E = 0x40;
+	_sceneObject->_regionIndex = 0x40;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -2027,7 +2027,7 @@ void SceneObject::synchronise(Serialiser &s) {
 	s.syncAsSint32LE(_field68);
 	s.syncAsSint32LE(_frameChange);
 	s.syncAsSint32LE(_numFrames);
-	s.syncAsSint32LE(_field6E);
+	s.syncAsSint32LE(_regionIndex);
 	SYNC_POINTER(_mover);
 	s.syncAsSint16LE(_moveDiff.x); s.syncAsSint16LE(_moveDiff.y);
 	s.syncAsSint32LE(_field7A);
@@ -2054,7 +2054,7 @@ void SceneObject::postInit(SceneObjectList *OwnerList) {
 		_moveDiff.x = 5;
 		_moveDiff.y = 3;
 		_field7A = 10;
-		_field6E = 64;
+		_regionIndex = 0x40;
 		_numFrames = 10;
 		_regionBitList = 0;
 

@@ -509,7 +509,7 @@ private:
 	int getNewFrame();
 	void animEnded();
 	int changeFrame();
-	bool isNoMover() const { return !_mover || (_field6E > 0); }
+	bool isNoMover() const { return !_mover || (_regionIndex > 0); }
 public:
 	uint32 _updateStartFrame;
 	uint32 _walkStartFrame;
@@ -529,7 +529,7 @@ public:
 	int _field68;
 	int _frameChange;
 	int _numFrames;
-	int _field6E;
+	int _regionIndex;
 	EventHandler *_mover;
 	Common::Point _moveDiff;
 	int _field7A;
