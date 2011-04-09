@@ -33,7 +33,7 @@ using namespace Common;
 
 OSystem_SDL_WebOS::OSystem_SDL_WebOS()
 	:
-	OSystem_POSIX("/media/cryptofs/apps/usr/palm/applications/org.scummvm.scummvm/scummvmrc") {
+	OSystem_POSIX() {
 }
 
 /**
