@@ -145,9 +145,8 @@ InvObjectList::InvObjectList():
 }
 
 void InvObjectList::synchronise(Serialiser &s) {
+	SavedObject::synchronise(s);
 	SYNC_POINTER(_selectedItem);
-
-List<InvObject *> _itemList;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -280,7 +279,7 @@ void ObjectMover::dispatch() {
 	if (dontMove())
 		return;
 
-	_sceneObject->_field6E = NULL;
+	_sceneObject->_regionIndex = 0;
 	if (_moveDelta.x >= _moveDelta.y) {
 		int xAmount = _moveSign.x * _sceneObject->_moveDiff.x * _sceneObject->_percent / 100;
 		if (!xAmount)
@@ -334,8 +333,8 @@ void ObjectMover::dispatch() {
 		_majorDiff -= ABS(yAmount);
 	}
 
-//TODO:	_sceneObject->_field6E = _sceneObject->proc1(currPos);
-	if (!_sceneObject->_field6E) {
+	_sceneObject->_regionIndex = _sceneObject->checkRegion(currPos);
+	if (!_sceneObject->_regionIndex) {
 		_sceneObject->setPosition(currPos, yDiff);
 		_sceneObject->getHorizBounds();
 
@@ -434,7 +433,7 @@ void ObjectMover2::startMove(SceneObject *sceneObj, va_list va) {
 }
 
 void ObjectMover2::endMove() {
-	_sceneObject->_field6E = 64;
+	_sceneObject->_regionIndex = 0x40;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -499,7 +498,7 @@ void PlayerMover::endMove() {
 	while (++_routeIndex != 0) {
 		if ((_routeList[_routeIndex].x == ROUTE_END_VAL) ||
 			(_routeList[_routeIndex].y == ROUTE_END_VAL) ||
-			(_sceneObject->_field6E)) {
+			(_sceneObject->_regionIndex)) {
 			// Movement route is completely finished
 			ObjectMover::endMove();
 			return;
@@ -1025,7 +1024,7 @@ void PlayerMover2::startMove(SceneObject *sceneObj, va_list va) {
 }
 
 void PlayerMover2::endMove() {
-	_sceneObject->_field6E = 0x40;
+	_sceneObject->_regionIndex = 0x40;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1065,7 +1064,7 @@ void PaletteRotation::signal() {
 		uint32 frameNumber = _globals->_events.getFrameNumber();
 
 		if (frameNumber >= _frameNumber) {
-			_delayCtr -= frameNumber - _frameNumber;
+			_delayCtr = frameNumber - _frameNumber;
 			_frameNumber = frameNumber;
 
 			if (_delayCtr < 0)
@@ -1079,7 +1078,8 @@ void PaletteRotation::signal() {
 	if (_disabled)
 		return;
 
-	bool flag = true;	switch (_rotationMode) {
+	bool flag = true;
+	switch (_rotationMode) {
 	case -1:
 		if (--_currIndex < _start) {
 			flag = decDuration();
@@ -1120,7 +1120,7 @@ void PaletteRotation::signal() {
 		g_system->getPaletteManager()->setPalette((const byte *)&_palette[_currIndex], _start, count);
 
 		if (count2) {
-			g_system->getPaletteManager()->setPalette((const byte *)&_palette[_start], _start, count2);
+			g_system->getPaletteManager()->setPalette((const byte *)&_palette[_start], _start + count, count2);
 		}
 	}
 }
@@ -2028,7 +2028,7 @@ void SceneObject::synchronise(Serialiser &s) {
 	s.syncAsSint32LE(_field68);
 	s.syncAsSint32LE(_frameChange);
 	s.syncAsSint32LE(_numFrames);
-	s.syncAsSint32LE(_field6E);
+	s.syncAsSint32LE(_regionIndex);
 	SYNC_POINTER(_mover);
 	s.syncAsSint16LE(_moveDiff.x); s.syncAsSint16LE(_moveDiff.y);
 	s.syncAsSint32LE(_field7A);
@@ -2055,7 +2055,7 @@ void SceneObject::postInit(SceneObjectList *OwnerList) {
 		_moveDiff.x = 5;
 		_moveDiff.y = 3;
 		_field7A = 10;
-		_field6E = 64;
+		_regionIndex = 0x40;
 		_numFrames = 10;
 		_regionBitList = 0;
 
@@ -3513,9 +3513,14 @@ void SceneHandler::dispatch() {
 	while (_globals->_events.getEvent(event))
 		process(event);
 
-	_globals->_sceneManager.checkScene();
-	_globals->_sceneObjects->draw();
+	// Handle drawing the contents of the scene
+	if (_globals->_sceneManager._scene)
+		_globals->_sceneObjects->draw();
 
+	// Check to see if any scene change is required
+	_globals->_sceneManager.checkScene();
+
+	// Signal the ScummVM debugger
 	_vm->_debugger->onFrame();
 
 	// Delay between frames
