@@ -170,6 +170,7 @@ void QuickTimeParser::initParseTable() {
 		{ &QuickTimeParser::readLeaf,    MKID_BE('vmhd') },
 		{ &QuickTimeParser::readCMOV,    MKID_BE('cmov') },
 		{ &QuickTimeParser::readWAVE,    MKID_BE('wave') },
+		{ &QuickTimeParser::readESDS,    MKID_BE('esds') },
 		{ 0, 0 }
 	};
 
@@ -721,6 +722,71 @@ int QuickTimeParser::readWAVE(MOVatom atom) {
 	return 0;
 }
 
+enum {
+	kMP4IODescTag          = 2,
+	kMP4ESDescTag          = 3,
+	kMP4DecConfigDescTag   = 4,
+	kMP4DecSpecificDescTag = 5
+};
+
+static int readMP4DescLength(Common::SeekableReadStream *stream) {
+	int length = 0;
+	int count = 4;
+
+	while (count--) {
+		byte c = stream->readByte();
+		length = (length << 7) | (c & 0x7f);
+
+		if (!(c & 0x80))
+			break;
+	}
+
+	return length;
+}
+
+static void readMP4Desc(Common::SeekableReadStream *stream, byte &tag, int &length) {
+	tag = stream->readByte();
+	length = readMP4DescLength(stream);
+}
+
+int QuickTimeParser::readESDS(MOVatom atom) {
+	if (_numStreams < 1)
+		return 0;
+
+	MOVStreamContext *st = _streams[_numStreams - 1];
+
+	_fd->readUint32BE(); // version + flags
+
+	byte tag;
+	int length;
+	
+	readMP4Desc(_fd, tag, length);
+	_fd->readUint16BE(); // id
+	if (tag == kMP4ESDescTag)
+		_fd->readByte(); // priority
+
+	// Check if we've got the Config MPEG-4 header
+	readMP4Desc(_fd, tag, length);
+	if (tag != kMP4DecConfigDescTag) 
+		return 0;
+
+	st->objectTypeMP4 = _fd->readByte();
+	_fd->readByte();                      // stream type
+	_fd->readUint16BE(); _fd->readByte(); // buffer size
+	_fd->readUint32BE();                  // max bitrate
+	_fd->readUint32BE();                  // avg bitrate
+
+	// Check if we've got the Specific MPEG-4 header
+	readMP4Desc(_fd, tag, length);
+	if (tag != kMP4DecSpecificDescTag)
+		return 0;
+
+	st->extradata = _fd->readStream(length);
+
+	debug(0, "MPEG-4 object type = %02x", st->objectTypeMP4);
+	return 0;
+}
+
 void QuickTimeParser::close() {
 	for (uint32 i = 0; i < _numStreams; i++)
 		delete _streams[i];
@@ -761,6 +827,7 @@ QuickTimeParser::MOVStreamContext::MOVStreamContext() {
 	nb_frames = 0;
 	duration = 0;
 	start_time = 0;
+	objectTypeMP4 = 0;
 }
 
 QuickTimeParser::MOVStreamContext::~MOVStreamContext() {

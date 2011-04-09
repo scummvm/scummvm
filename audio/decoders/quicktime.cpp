@@ -76,7 +76,7 @@ void QuickTimeAudioDecoder::init() {
 	if (_audioStreamIndex >= 0) {
 		AudioSampleDesc *entry = (AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
 
-		if (checkAudioCodecSupport(entry->codecTag)) {
+		if (checkAudioCodecSupport(entry->codecTag, _streams[_audioStreamIndex]->objectTypeMP4)) {
 			_audStream = makeQueuingAudioStream(entry->sampleRate, entry->channels == 2);
 			_curAudioChunk = 0;
 
@@ -140,7 +140,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeAudioDecoder::readSampleDesc(MOVSt
 	return 0;
 }
 
-bool QuickTimeAudioDecoder::checkAudioCodecSupport(uint32 tag) {
+bool QuickTimeAudioDecoder::checkAudioCodecSupport(uint32 tag, byte objectTypeMP4) {
 	// Check if the codec is a supported codec
 	if (tag == MKID_BE('twos') || tag == MKID_BE('raw ') || tag == MKID_BE('ima4'))
 		return true;
@@ -150,9 +150,18 @@ bool QuickTimeAudioDecoder::checkAudioCodecSupport(uint32 tag) {
 		return true;
 #endif
 
-	if (tag == MKID_BE('mp4a'))
-		warning("No MPEG-4 audio (AAC) support");
-	else
+	if (tag == MKID_BE('mp4a')) {
+		Common::String audioType;
+		switch (objectTypeMP4) {
+		case 0x40:
+			audioType = "AAC";
+			break;
+		default:
+			audioType = "Unknown";
+			break;
+		}
+		warning("No MPEG-4 audio (%s) support", audioType.c_str());
+	} else
 		warning("Audio Codec Not Supported: \'%s\'", tag2str(tag));
 
 	return false;

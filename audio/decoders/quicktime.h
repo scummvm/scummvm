@@ -72,7 +72,7 @@ protected:
 	virtual Common::QuickTimeParser::SampleDesc *readSampleDesc(MOVStreamContext *st, uint32 format);
 
 	AudioStream *createAudioStream(Common::SeekableReadStream *stream);
-	bool checkAudioCodecSupport(uint32 tag);
+	bool checkAudioCodecSupport(uint32 tag, byte objectTypeMP4);
 	void init();
 
 	void queueNextAudioChunk();

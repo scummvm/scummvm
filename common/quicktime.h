@@ -163,6 +163,8 @@ protected:
 		uint32 start_time;
 		Common::Rational scaleFactorX;
 		Common::Rational scaleFactorY;
+
+		byte objectTypeMP4;
 	};
 
 	virtual SampleDesc *readSampleDesc(MOVStreamContext *st, uint32 format) = 0;
@@ -198,6 +200,7 @@ protected:
 	int readSTTS(MOVatom atom);
 	int readCMOV(MOVatom atom);
 	int readWAVE(MOVatom atom);
+	int readESDS(MOVatom atom);
 };
 
 } // End of namespace Common
