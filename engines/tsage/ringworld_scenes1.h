@@ -528,12 +528,12 @@ public:
 	SpeakerQR _speakerQR;
 	SpeakerSL _speakerSL;
 	SceneObject _object1, _object2, _object3;
-	Object _object4, _object5, _object6;
-	Object _object7, _object8;
+	Object _rocks, _probe;
+	Object _sunflower1, _sunflower2, _sunflower3;
 	SceneText _sceneText;
 	SceneItem _item1;
 
-	int _turnAmount, _angle, _field_30E, _fadePercent;
+	int _turnAmount, _angle, _speed, _fadePercent;
 	int _field_312, _field_314;
 	Object *_objList[4];
 	bool _msgActive;
