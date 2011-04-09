@@ -3002,7 +3002,7 @@ case $_backend in
 		# than pick up anything unhygenic from the Android libs.
 		LIBS="-Wl,-Bstatic $static_libs"
 		LIBS="$LIBS -Wl,-Bdynamic -lgcc $system_libs -llog -lGLESv1_CM"
-		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
+		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE -DFORCE_RTL"
 		;;
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
