@@ -133,6 +133,7 @@ _zlib=auto
 _mpeg2=no
 _png=auto
 _theoradec=auto
+_faad=auto
 _fluidsynth=auto
 _16bit=auto
 _opengl=auto
@@ -756,6 +757,9 @@ Optional Libraries:
   --with-theoradec-prefix=DIR Prefix where libtheoradec is installed (optional)
   --disable-theoradec      disable Theora decoder [autodetect]
 
+  --with-faad-prefix=DIR   Prefix where libfaad is installed (optional)
+  --disable-faad           disable AAC decoder [autodetect]
+
   --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is
                            installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
@@ -814,6 +818,8 @@ for ac_option in $@; do
 	--enable-png)             _png=yes        ;;
 	--disable-theoradec)      _theoradec=no   ;;
 	--enable-theoradec)       _theoradec=yes  ;;
+	--disable-faad)           _faad=no        ;;
+	--enable-faad)            _faad=yes       ;;
 	--disable-fluidsynth)     _fluidsynth=no  ;;
 	--enable-readline)        _readline=yes   ;;
 	--disable-readline)       _readline=no    ;;
@@ -881,6 +887,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		THEORADEC_CFLAGS="-I$arg/include"
 		THEORADEC_LIBS="-L$arg/lib"
+		;;
+	--with-faad-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		FAAD_CFLAGS="-I$arg/include"
+		FAAD_LIBS="-L$arg/lib"
 		;;
 	--with-zlib-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -2571,6 +2582,25 @@ define_in_config_if_yes "$_theoradec" 'USE_THEORADEC'
 if test ! "$_theoradec" = notsupported ; then
 	echo "$_theoradec"
 fi
+
+#
+# Check for the AAC decoder
+#
+echocheck "libfaad"
+if test "$_faad" = auto ; then
+	_faad=no
+	cat > $TMPC << EOF
+#include <neaacdec.h>
+int main(void) { NeAACDecGetCapabilities(); return 0; }
+EOF
+	cc_check $FAAD_CFLAGS $FAAD_LIBS -lfaad && _faad=yes
+fi
+if test "$_faad" = yes ; then
+	LIBS="$LIBS $FAAD_LIBS -lfaad"
+	INCLUDES="$INCLUDES $FAAD_CFLAGS"
+fi
+define_in_config_if_yes "$_faad" 'USE_FAAD'
+echo "$_faad"
 
 #
 # Check for SEQ MIDI

@@ -106,6 +106,10 @@ ifdef USE_THEORADEC
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libtheoradec.a
 endif
 
+ifdef USE_FAAD
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libfaad.a
+endif
+
 ifdef USE_ZLIB
 OSX_ZLIB ?= -lz
 endif
