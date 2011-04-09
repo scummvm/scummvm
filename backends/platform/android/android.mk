@@ -1,7 +1,7 @@
 # Android specific build targets
 
 # These must be incremented for each market upload
-#ANDROID_VERSIONCODE = 6  Specified in dists/android/AndroidManifest.xml.in
+ANDROID_VERSIONCODE = 6
 ANDROID_PLUGIN_VERSIONCODE = 6
 
 JAVA_FILES = \
@@ -72,7 +72,8 @@ PATH_GEN = $(PATH_GEN_TOP)/$(PATH_REL)
 PATH_CLASSES_MAIN = $(PATH_BUILD_CLASSES_MAIN_TOP)/$(PATH_REL)
 PATH_CLASSES_PLUGIN = $(PATH_BUILD_CLASSES_PLUGIN_TOP)/$(PATH_REL)
 
-FILE_MANIFEST = $(srcdir)/dists/android/AndroidManifest.xml
+FILE_MANIFEST_SRC = $(srcdir)/dists/android/AndroidManifest.xml
+FILE_MANIFEST = $(PATH_BUILD)/AndroidManifest.xml
 FILE_DEX = $(PATH_BUILD)/classes.dex
 FILE_DEX_PLUGIN = $(PATH_BUILD)/plugins/classes.dex
 FILE_RESOURCES = resources.ap_
@@ -86,6 +87,9 @@ CLASSES_PLUGIN = $(addprefix $(PATH_CLASSES_PLUGIN)/, $(JAVA_FILES_PLUGIN:%.java
 
 APK_MAIN = scummvm.apk
 APK_PLUGINS = $(patsubst plugins/lib%.so, scummvm-engine-%.apk, $(PLUGINS))
+
+$(FILE_MANIFEST): $(FILE_MANIFEST_SRC)
+	sed "s/@ANDROID_VERSIONCODE@/$(ANDROID_VERSIONCODE)/" < $< > $@
 
 $(SRC_GEN): $(FILE_MANIFEST) $(filter %.xml,$(RESOURCES)) $(ANDROID_JAR8)
 	@$(MKDIR) -p $(PATH_GEN_TOP)
