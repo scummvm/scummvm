@@ -2965,7 +2965,7 @@ void Scene6100::Action5::dispatch() {
 		}
 
 		scene->_objList[idx]->_flags |= OBJFLAG_PANES;
-
+/*
 		if ((idx != 3) && (scene->_fadePercent == 100) &&
 				(tempSet.sqrt(floatSet) < 150.0)) {
 			switch (scene->_field_312++) {
@@ -2997,6 +2997,7 @@ void Scene6100::Action5::dispatch() {
 			_globals->_scenePalette.clearListeners();
 			scene->_fadePercent = 0;
 		}
+		*/
 	}
 }
 

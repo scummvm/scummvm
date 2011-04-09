@@ -3513,9 +3513,14 @@ void SceneHandler::dispatch() {
 	while (_globals->_events.getEvent(event))
 		process(event);
 
-	_globals->_sceneManager.checkScene();
-	_globals->_sceneObjects->draw();
+	// Handle drawing the contents of the scene
+	if (_globals->_sceneManager._scene)
+		_globals->_sceneObjects->draw();
 
+	// Check to see if any scene change is required
+	_globals->_sceneManager.checkScene();
+
+	// Signal the ScummVM debugger
 	_vm->_debugger->onFrame();
 
 	// Delay between frames
