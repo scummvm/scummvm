@@ -145,9 +145,8 @@ InvObjectList::InvObjectList():
 }
 
 void InvObjectList::synchronise(Serialiser &s) {
+	SavedObject::synchronise(s);
 	SYNC_POINTER(_selectedItem);
-
-List<InvObject *> _itemList;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -280,7 +279,7 @@ void ObjectMover::dispatch() {
 	if (dontMove())
 		return;
 
-	_sceneObject->_field6E = NULL;
+	_sceneObject->_field6E = 0;
 	if (_moveDelta.x >= _moveDelta.y) {
 		int xAmount = _moveSign.x * _sceneObject->_moveDiff.x * _sceneObject->_percent / 100;
 		if (!xAmount)

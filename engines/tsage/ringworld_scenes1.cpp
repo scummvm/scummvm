@@ -2108,11 +2108,6 @@ void Scene60::Object6::doAction(int action) {
 	}	
 }
 
-void Scene60::SceneObjectExt::synchronise(Serialiser &s) {
-	s.syncAsUint16LE(_state);
-}
-
-
 void Scene60::SlaveObject::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 

@@ -368,11 +368,6 @@ class Scene60: public Scene {
 	public:
 		virtual void doAction(int action);
 	};
-	class SceneObjectExt: public SceneObject {
-	public:
-		int _state;
-		virtual void synchronise(Serialiser &s);
-	};
 	class Object8: public SceneObjectExt {
 	public:
 		virtual void doAction(int action);

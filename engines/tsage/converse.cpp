@@ -252,7 +252,7 @@ void SequenceManager::signal() {
 			break;
 		case 30:
 			v1 = getNextValue();
-			_globals->_scrollFollower = (v1 == 0xffff) ? NULL : _objectList[v1];
+			_globals->_scrollFollower = (v1 == -1) ? NULL : _objectList[v1];
 			break;
 		case 31:
 			_sceneObject->setObjectWrapper(new SceneObjectWrapper());
