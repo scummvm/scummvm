@@ -1,6 +1,23 @@
 README for the WebOS port of ScummVM
 ------------------------------------
 
+INSTALLATION
+
+  When starting ScummVM the first time on a WebOS device it creates the
+  following directory structure on the flash drive:
+  
+    ScummVM/
+      Extras/
+      Games/
+      Plugins/
+      Saves/
+      Screenshots/
+      Themes/
+      
+  To install the games switch your WebOS device to USB drive mode and copy
+  the game folders into the ScummVM/Games directory. Then start ScummVM, 
+  click "Add game" and select the game folder.
+
 CONTROLS
 
   Touchscreen
