@@ -16,7 +16,7 @@ webosrelease:
 	cp -f gui/themes/translations.dat $(STAGING_DIR)/share/scummvm
 	cp -f gui/themes/scummmodern.zip $(STAGING_DIR)/share/scummvm
 	cp -f scummvm $(STAGING_DIR)/bin
-	$(WEBOS_PDK)/arm-gcc/bin/arm-none-linux-gnueabi-strip $(STAGING_DIR)/bin/scummvm
+	$(STRIP) $(STAGING_DIR)/bin/scummvm
 	$(WEBOS_SDK)/bin/palm-package $(STAGING_DIR)
 	rm -rf STAGING
 
