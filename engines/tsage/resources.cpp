@@ -178,14 +178,14 @@ void RlbManager::loadSection(uint32 fileOffset) {
 		assert(type <= 1);
 		uint32 offset = _file.readUint32LE();
 
-		ResourceEntry *re = new ResourceEntry();
-		re->id = id;
-		re->fileOffset = offset;
-		re->isCompressed = type != 0;
-		re->size = ((sizeHi & 0xF) << 16) | size;
-		re->uncompressedSize = ((sizeHi & 0xF0) << 12) | uncSize;
+		ResourceEntry re;
+		re.id = id;
+		re.fileOffset = offset;
+		re.isCompressed = type != 0;
+		re.size = ((sizeHi & 0xF) << 16) | size;
+		re.uncompressedSize = ((sizeHi & 0xF0) << 12) | uncSize;
 
-		_resources.push_back(*re);
+		_resources.push_back(re);
 	}
 }
 
@@ -340,12 +340,12 @@ void RlbManager::loadIndex() {
 		fileOffset = READ_LE_UINT16(p + 4);
 		p += 6;
 
-		SectionEntry *se = new SectionEntry();
-		se->resNum = resNum;
-		se->resType = (ResourceType)(configId & 0x1f);
-		se->fileOffset = (((configId >> 5) & 0x7ff) << 16) | fileOffset;
+		SectionEntry se;
+		se.resNum = resNum;
+		se.resType = (ResourceType)(configId & 0x1f);
+		se.fileOffset = (((configId >> 5) & 0x7ff) << 16) | fileOffset;
 
-		_sections.push_back(*se);
+		_sections.push_back(se);
 	}
 
 	_memoryManager.deallocate(pData);

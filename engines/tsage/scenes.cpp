@@ -35,6 +35,7 @@ SceneManager::SceneManager() {
 	_hasPalette = false;
 	_sceneNumber = -1; 
 	_nextSceneNumber = -1;
+	_previousScene = 0;
 	_fadeMode = FADEMODE_GRADUAL;
 	_scrollerRect = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	_saver->addListener(this);

@@ -37,6 +37,7 @@
 namespace tSage {
 
 EventsClass::EventsClass() { 
+	_currentCursor = CURSOR_NONE;
 	_frameNumber = 0;
 	_priorFrameTime = 0;
 	_prevDelayFrame = 0;
