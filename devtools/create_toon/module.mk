@@ -1,4 +1,4 @@
-MODULE := tools/create_toon
+MODULE := devtools/create_toon
 
 MODULE_OBJS := \
 	create_toon.o

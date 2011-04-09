@@ -16,7 +16,7 @@ all: $(EXECUTABLE) plugins
 ######################################################################
 
 PLUGINS :=
-MODULES := test tools base $(MODULES)
+MODULES := test devtools base $(MODULES)
 
 -include $(srcdir)/engines/engines.mk
 

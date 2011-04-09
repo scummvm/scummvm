@@ -1,4 +1,4 @@
-MODULE := tools/create_translations
+MODULE := devtools/create_translations
 
 MODULE_OBJS := \
 	po_parser.o \

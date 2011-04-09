@@ -1,7 +1,7 @@
 # $URL$
 # $Id$
 
-MODULE := tools/create_kyradat
+MODULE := devtools/create_kyradat
 
 MODULE_OBJS := \
 	create_kyradat.o \

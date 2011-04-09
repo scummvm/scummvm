@@ -12,7 +12,7 @@ REM    Root folder
 if "%~1"=="" goto error_input
 
 REM Run the revision script
-@call cscript "%~1/tools/create_project/scripts/revision.vbs" %~1 1>NUL
+@call cscript "%~1/devtools/create_project/scripts/revision.vbs" %~1 1>NUL
 if not %errorlevel% == 0 goto error_script
 goto done
 

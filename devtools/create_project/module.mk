@@ -1,7 +1,7 @@
 # $URL$
 # $Id$
 
-MODULE := tools/create_project
+MODULE := devtools/create_project
 
 MODULE_OBJS := \
 	create_project.o \

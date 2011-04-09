@@ -1,7 +1,7 @@
 # $URL$
 # $Id$
 
-MODULE := tools/skycpt
+MODULE := devtools/skycpt
 
 MODULE_OBJS := \
 	AsciiCptCompile.o \
