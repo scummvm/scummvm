@@ -59,8 +59,6 @@ TSageEngine::~TSageEngine() {
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
 	delete _debugger;
-	delete _dataManager;
-	delete _tSageManager;
 }
 
 bool TSageEngine::hasFeature(EngineFeature f) const {

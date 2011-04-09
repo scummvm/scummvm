@@ -45,27 +45,53 @@ enum ResourceType { RES_LIBRARY, RES_STRIP, RES_IMAGE, RES_PALETTE, RES_VISAGE, 
 		RES_FONT, RES_POINTER, RES_BANK, RES_SND_DRIVER, RES_PRIORITY, RES_CONTROL, RES_WALKRGNS,
 		RES_BITMAP, RES_SAVE, RES_SEQUENCE };
 
-struct MemoryHeader {
+class MemoryHeader {
+public:
 	uint32 id;
 	int16 index;
 	int lockCtr;
 	int criticalCtr;
 	uint8 tag;
 	uint32 size;
+
+	MemoryHeader() {
+		id = 0;
+		index = 0;
+		lockCtr = 0;
+		criticalCtr = 0;
+		tag = 0;
+		size = 0;
+	}
 };
 
-struct SectionEntry {
+class SectionEntry {
+public:
 	ResourceType resType;
 	uint16 resNum;
 	uint32 fileOffset;
+
+	SectionEntry() {
+		resType = RES_LIBRARY;
+		resNum = 0;
+		fileOffset = 0;
+	}
 };
 
-struct ResourceEntry {
+class ResourceEntry {
+public:
 	uint16 id;
 	bool isCompressed;
 	uint32 fileOffset;
 	uint32 size;
 	uint32 uncompressedSize;
+
+	ResourceEntry() {
+		id = 0;
+		isCompressed = false;
+		fileOffset = 0;
+		size = 0;
+		uncompressedSize = 0;
+	}
 };
 
 typedef Common::List<ResourceEntry> ResourceList;
@@ -73,6 +99,10 @@ typedef Common::List<ResourceEntry> ResourceList;
 class SectionList: public Common::List<SectionEntry> {
 public:
 	uint32 fileOffset;
+
+	SectionList() {
+		fileOffset = 0;
+	}
 };
 
 class MemoryManager {
