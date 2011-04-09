@@ -1,0 +1,20 @@
+README for the WebOS port of ScummVM
+------------------------------------
+
+CONTROLS
+
+  Touchscreen
+
+    The touchscreen operates like a touchpad. The mouse cursor is independent
+    of the touched point, it is moved relative to its current position.
+
+    Tap + movement: Mouse movement
+    Tap without movement: Left mouse button click
+    Tap held for >0.5s without movement: Right mouse button click
+    Tap held for >1s without movement: Middle mouse button click
+    Double Tap + movement: Drag and drop
+
+  Gesture area
+
+    Back gesture: Escape
+    Forward gesture: ScummVM menu
