@@ -135,7 +135,7 @@ void SceneManager::changeScene(int newSceneNumber) {
 	// Fade out the scene
 	ScenePalette scenePalette;
 	uint32 adjustData = 0;
-	scenePalette.clearListeners();
+	_globals->_scenePalette.clearListeners();
 	scenePalette.getPalette();
 
 	for (int percent = 100; percent >= 0; percent -= 5) {
