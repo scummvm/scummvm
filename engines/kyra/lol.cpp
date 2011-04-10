@@ -898,7 +898,7 @@ void LoLEngine::startupNew() {
 
 	memset(_globalScriptVars2, 0x100, 8);
 
-	static int selectIds[] = { -9, -1, -8, -5 };
+	static const int selectIds[] = { -9, -1, -8, -5 };
 	addCharacter(selectIds[_charSelection]);
 
 	gui_enableDefaultPlayfieldButtons();
