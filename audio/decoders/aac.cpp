@@ -52,9 +52,6 @@ public:
 	int getRate() const { return _rate; }
 
 private:
-	Common::SeekableReadStream *_stream;
-	DisposeAfterUse::Flag _disposeAfterUse;
-
 	NeAACDecHandle _handle;
 	byte _channels;
 	unsigned long _rate;
@@ -73,8 +70,6 @@ private:
 AACStream::AACStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeStream,
 		Common::SeekableReadStream *extraData, DisposeAfterUse::Flag disposeExtraData) {
 
-	_stream = stream;
-	_disposeAfterUse = disposeStream;
 	_remainingSamples = 0;
 	_inBufferPos = 0;
 
