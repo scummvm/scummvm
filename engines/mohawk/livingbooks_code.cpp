@@ -317,7 +317,7 @@ void LBCode::parseComparisons() {
 		error("comparison didn't get enough values");
 	LBValue val2 = _stack.pop();
 	LBValue val1 = _stack.pop();
-	bool result;
+	bool result = false;
 	// FIXME: should work for non-integers!!
 	switch (comparison) {
 	case kTokenEquals:
