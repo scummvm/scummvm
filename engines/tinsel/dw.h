@@ -42,8 +42,6 @@ typedef int HPOLYGON;
 #define	LF_CHAR			'\x0a'		// line feed
 
 // file names
-#define	SAMPLE_FILE		"english.smp"	// all samples
-#define	SAMPLE_INDEX		"english.idx"	// sample index filename
 #define	MIDI_FILE		"midi.dat"	// all MIDI sequences
 #define	INDEX_FILENAME		"index"		// name of index file
 #define PSX_INDEX_FILENAME	"index.dat" // name of index file in psx version
