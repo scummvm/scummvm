@@ -28,7 +28,6 @@ MODULE_OBJS := \
 	saves/savefile.o \
 	saves/default/default-saves.o \
 	saves/posix/posix-saves.o \
-	saves/psp/psp-saves.o \
 	timer/default/default-timer.o \
 	vkeybd/image-map.o \
 	vkeybd/polygon.o \
