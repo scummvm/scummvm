@@ -53,6 +53,7 @@ public:
 	struct Mesh;
 	struct HierNode {
 		HierNode() : _initialized(false) { }
+		~HierNode();
 		void loadBinary(const char *&data, HierNode *hierNodes, const Geoset *g);
 		void draw() const;
 		void addChild(HierNode *child);

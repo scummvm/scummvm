@@ -213,6 +213,11 @@ Model::Face::~Face() {
 	delete[] _texVertices;
 }
 
+Model::HierNode::~HierNode() {
+	if (_child)
+		_child->_parent = NULL;
+}
+
 void Model::HierNode::loadBinary(const char *&data, Model::HierNode *hierNodes, const Geoset *g) {
 	memcpy(_name, data, 64);
 	_flags = READ_LE_UINT32(data + 64);
