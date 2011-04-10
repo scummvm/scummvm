@@ -3092,7 +3092,7 @@ case $_backend in
 		DEFINES="$DEFINES -DSDL_BACKEND"
 		;;
 	wii)
-		DEFINES="$DEFINES -D__WII__ -DGEKKO -DFORCE_RTL"
+		DEFINES="$DEFINES -D__WII__ -DGEKKO"
 		case $_host_os in
 		gamecube)
 			LIBS="$LIBS -lgxflux -liso9660 -lfat -logc -ldb"
