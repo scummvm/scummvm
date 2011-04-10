@@ -23,29 +23,51 @@
  *
  */
 
-#ifndef BACKEND_PSP_SAVES_H
-#define BACKEND_PSP_SAVES_H
+/**
+ * @file
+ * Sound decoder used in engines:
+ *  - agos
+ *  - kyra
+ *  - m4
+ *  - queen
+ *  - saga
+ *  - scumm
+ *  - sword1
+ *  - sword2
+ *  - touche
+ *  - tucker
+ */
 
-#include "backends/saves/default/default-saves.h"
+#ifndef SOUND_MP3_H
+#define SOUND_MP3_H
+
+#include "common/types.h"
+#include "common/sys.h"
+
+#ifdef USE_MAD
+
+namespace Common {
+	class SeekableReadStream;
+}
+
+namespace Audio {
+
+class AudioStream;
+class SeekableAudioStream;
 
 /**
- * Customization of the DefaultSaveFileManager for the PSP platform.
- * The only two differences are that the default constructor sets
- * up a default savepath, and that checkPath tries to create the savedir,
- * if missing, via the sceIoMkdir() call.
+ * Create a new SeekableAudioStream from the MP3 data in the given stream.
+ * Allows for seeking (which is why we require a SeekableReadStream).
+ *
+ * @param stream			the SeekableReadStream from which to read the MP3 data
+ * @param disposeAfterUse	whether to delete the stream after use
+ * @return	a new SeekableAudioStream, or NULL, if an error occured
  */
-class PSPSaveFileManager : public DefaultSaveFileManager {
-public:
-	PSPSaveFileManager();
-//	PSPSaveFileManager(const Common::String &defaultSavepath);
+SeekableAudioStream *makeMP3Stream(
+	Common::SeekableReadStream *stream,
+	DisposeAfterUse::Flag disposeAfterUse);
 
-protected:
-	/**
-	 * Checks the given path for read access, existence, etc.
-	 * In addition, tries to create a missing savedir, if possible.
-	 * Sets the internal error and error message accordingly.
-	 */
-	virtual void checkPath(const Common::FSNode &dir);
-};
+} // End of namespace Audio
 
-#endif
+#endif // #ifdef USE_MAD
+#endif // #ifndef SOUND_MP3_H

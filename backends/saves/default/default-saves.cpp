@@ -32,7 +32,7 @@
 #include "common/fs.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
-#include "common/libz.h"
+#include "common/zlib.h"
 
 #include <errno.h>	// for removeSavefile()
 

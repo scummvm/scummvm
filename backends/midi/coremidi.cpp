@@ -109,8 +109,8 @@ void MidiDriver_CoreMIDI::close() {
 }
 
 void MidiDriver_CoreMIDI::send(uint32 b) {
-	assert(mOutPort != 0);
-	assert(mDest != 0);
+	assert(mOutPort != NULL);
+	assert(mDest != NULL);
 
 	// Extract the MIDI data
 	byte status_byte = (b & 0x000000FF);
@@ -153,8 +153,8 @@ void MidiDriver_CoreMIDI::send(uint32 b) {
 }
 
 void MidiDriver_CoreMIDI::sysEx(const byte *msg, uint16 length) {
-	assert(mOutPort != 0);
-	assert(mDest != 0);
+	assert(mOutPort != NULL);
+	assert(mDest != NULL);
 
 	byte buf[384];
 	MIDIPacketList *packetList = (MIDIPacketList *)buf;

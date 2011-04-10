@@ -212,6 +212,7 @@ bool OSystem_SDL::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return handleJoyAxisMotion(ev, event);
 
 	case SDL_VIDEOEXPOSE:
+		/* Residual doesn't support this */
 		//_forceFull = true;
 		break;
 
@@ -220,7 +221,7 @@ bool OSystem_SDL::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return true;
 
 	}
-	
+
 	return false;
 }
 
@@ -335,6 +336,7 @@ bool OSystem_SDL::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_MOUSEMOVE;
 	fillMouseEvent(event, ev.motion.x, ev.motion.y);
 
+	/* Residual doesn't support this */
 	//setMousePos(event.mouse.x, event.mouse.y);
 	return true;
 }

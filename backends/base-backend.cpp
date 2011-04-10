@@ -45,6 +45,14 @@ Common::EventManager *BaseBackend::getEventManager() {
 	return s_eventManager;
 }
 
+
+
+/*
+ FIXME: Maybe we should push the default config file loading/saving code below
+ out to all the backends?
+*/
+
+
 #if defined(UNIX)
 #if defined(SAMSUNGTV)
 #define DEFAULT_CONFIG_FILE "/dtv/usb/sda1/.scummvmrc"

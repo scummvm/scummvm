@@ -446,8 +446,6 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 	if (w == 0 || h == 0)
 		return;
 
-	
-	
 /* Residual doesn't support this
 	_mouseCurState.hotX = hotspot_x;
 	_mouseCurState.hotY = hotspot_y;

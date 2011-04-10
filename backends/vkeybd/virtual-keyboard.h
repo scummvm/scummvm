@@ -121,7 +121,7 @@ protected:
 		OverlayColor		displayFontColor;
 
 		Mode() : image(0) {}
-		~Mode() { 
+		~Mode() {
 			if (image) {
 				image->free();
 				delete image;
