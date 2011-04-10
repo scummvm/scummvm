@@ -1046,21 +1046,6 @@ void BMVPlayer::CopyMovieToScreen() {
 }
 
 /**
- * LookAtBuffers
- */
-void BMVPlayer::LookAtBuffers() {
-	// FIXME: What's the point of this function???
-	// Maybe to ensure the relevant data is loaded into cache by the CPU?
-	static int junk;	// FIXME: Avoid non-const global vars
-	int i;
-
-	if (bigBuffer) {
-		for (i = 0; i < NUM_SLOTS; i++)
-			junk += bigBuffer[i*SLOT_SIZE];
-	}
-}
-
-/**
  * Handles playback of any active movie. Called from the foreground 24 times a second.
  */
 void BMVPlayer::FettleBMV() {
@@ -1077,8 +1062,6 @@ void BMVPlayer::FettleBMV() {
 		FinishBMV();
 		return;
 	}
-
-	LookAtBuffers();
 
 	if (!stream.isOpen()) {
 		int i;
