@@ -34,8 +34,11 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/smush/smush.h"
 #include "engines/grim/savegame.h"
+#include "engines/grim/lipsync.h"
+
 #include "engines/grim/lua/luadebug.h"
 #include "engines/grim/lua/lauxlib.h"
+
 #include "engines/grim/imuse/imuse.h"
 
 #include <iostream>
@@ -2206,7 +2209,7 @@ static void GetPointSector() {
 	if (lua_isnil(typeObj))
 		sectorType = Sector::CameraType;
 	else
-		sectorType = (Sector::SectorType)lua_getnumber(typeObj);
+		sectorType = (Sector::SectorType)(int)lua_getnumber(typeObj);
 
 	float x = lua_getnumber(xObj);
 	float y = lua_getnumber(yObj);
@@ -2233,7 +2236,7 @@ static void GetActorSector() {
 		return;
 
 	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
-	Sector::SectorType sectorType = (Sector::SectorType)lua_getnumber(typeObj);
+	Sector::SectorType sectorType = (Sector::SectorType)(int)lua_getnumber(typeObj);
 	Sector *result = g_grim->currScene()->findPointSector(actor->pos(), sectorType);
 	if (result) {
 		lua_pushnumber(result->id());

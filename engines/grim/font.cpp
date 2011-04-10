@@ -29,6 +29,7 @@
 #include "engines/grim/savegame.h"
 #include "engines/grim/font.h"
 #include "engines/grim/lua.h"
+#include "engines/grim/colormap.h"
 
 #include <iostream>
 using namespace std;

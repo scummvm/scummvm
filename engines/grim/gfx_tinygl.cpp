@@ -32,6 +32,7 @@
 #include "engines/grim/font.h"
 #include "engines/grim/gfx_tinygl.h"
 #include "engines/grim/grim.h"
+#include "engines/grim/lipsync.h"
 
 namespace Grim {
 

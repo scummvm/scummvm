@@ -33,6 +33,7 @@
 #include "engines/grim/keyframe.h"
 #include "engines/grim/material.h"
 #include "engines/grim/lua.h"
+#include "engines/grim/lipsync.h"
 
 #include "engines/grim/imuse/imuse.h"
 

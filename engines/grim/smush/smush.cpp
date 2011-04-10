@@ -33,7 +33,9 @@
 #include "sound/raw.h"
 
 #include "engines/grim/smush/smush.h"
+
 #include "engines/grim/grim.h"
+#include "engines/grim/colormap.h"
 
 namespace Grim {
 

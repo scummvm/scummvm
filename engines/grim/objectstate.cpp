@@ -27,6 +27,7 @@
 #include "engines/grim/savegame.h"
 #include "engines/grim/lua.h"
 #include "engines/grim/grim.h"
+#include "engines/grim/colormap.h"
 
 namespace Grim {
 

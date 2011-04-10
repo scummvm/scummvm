@@ -50,6 +50,7 @@
 #include "engines/grim/object.h"
 #include "engines/grim/costume.h"
 #include "engines/grim/material.h"
+#include "engines/grim/lipsync.h"
 
 #include "engines/grim/lua/lualib.h"
 

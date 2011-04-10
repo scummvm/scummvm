@@ -1,8 +1,11 @@
-#include "engines/grim/savegame.h"
-#include "engines/grim/grim.h"
-
 #include "common/endian.h"
 #include "common/debug.h"
+
+#include "engines/grim/savegame.h"
+#include "engines/grim/grim.h"
+#include "engines/grim/actor.h"
+#include "engines/grim/colormap.h"
+#include "engines/grim/lipsync.h"
 
 #include "engines/grim/lua/ltask.h"
 #include "engines/grim/lua/lauxlib.h"
@@ -14,7 +17,6 @@
 #include "engines/grim/lua/lopcodes.h"
 #include "engines/grim/lua/lstring.h"
 #include "engines/grim/lua/lua.h"
-#include "engines/grim/actor.h"
 
 namespace Grim {
 

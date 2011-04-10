@@ -29,6 +29,8 @@
 
 namespace Grim {
 
+template class ObjectPtr<LipSync>;
+
 // A new define that'll be around when theres a configure script :)
 #undef DEBUG_VERBOSE
 

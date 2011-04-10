@@ -25,11 +25,11 @@ Object::~Object() {
 	}
 }
 
-void Object::saveState(SaveGame */*state*/) const {
+void Object::saveState(SaveGame *) const {
 
 }
 
-bool Object::restoreState(SaveGame */*state*/) {
+bool Object::restoreState(SaveGame *) {
 	return false;
 }
 

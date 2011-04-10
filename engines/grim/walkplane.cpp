@@ -29,6 +29,7 @@
 #include "engines/grim/walkplane.h"
 #include "engines/grim/textsplit.h"
 #include "engines/grim/savegame.h"
+#include "engines/grim/colormap.h"
 
 namespace Grim {
 

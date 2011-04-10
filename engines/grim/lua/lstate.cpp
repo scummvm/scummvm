@@ -8,6 +8,8 @@
 
 #include "engines/grim/actor.h"
 #include "engines/grim/grim.h"
+#include "engines/grim/lipsync.h"
+#include "engines/grim/colormap.h"
 
 #include "engines/grim/lua/lbuiltin.h"
 #include "engines/grim/lua/ldo.h"

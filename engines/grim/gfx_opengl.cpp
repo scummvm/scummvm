@@ -38,6 +38,7 @@
 #include "engines/grim/material.h"
 #include "engines/grim/gfx_opengl.h"
 #include "engines/grim/grim.h"
+#include "engines/grim/lipsync.h"
 
 #ifdef USE_OPENGL
 

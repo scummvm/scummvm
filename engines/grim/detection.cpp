@@ -26,6 +26,7 @@
 #include "engines/advancedDetector.h"
 
 #include "engines/grim/grim.h"
+#include "engines/grim/colormap.h"
 
 namespace Grim {
 
