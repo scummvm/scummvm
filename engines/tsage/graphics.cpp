@@ -331,7 +331,7 @@ GfxSurface &GfxSurface::operator=(const GfxSurface &s) {
 	if (_customSurface) {
 		// Surface owns the internal data, so replicate it so new surface owns it's own
 		_customSurface = new Graphics::Surface();
-		_customSurface->create(_bounds.width(), _bounds.height(), 1);
+		_customSurface->create(s._customSurface->w, s._customSurface->h, 1);
 		const byte *srcP = (const byte *)s._customSurface->getBasePtr(0, 0);
 		byte *destP = (byte *)_customSurface->getBasePtr(0, 0);
 

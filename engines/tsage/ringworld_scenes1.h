@@ -494,9 +494,10 @@ class Scene6100: public Scene {
 	public:
 		virtual void dispatch();
 	};
-	class Action6: public Action {
+	class GetBoxAction: public Action {
 	public:
 		virtual void signal();
+		virtual void dispatch();
 	};
 	class Action7: public Action {
 	public:
@@ -521,7 +522,7 @@ public:
 	Action3 _action3;
 	Action4 _action4;
 	Action5 _action5;
-	Action6 _action6;
+	GetBoxAction _getBoxAction;
 	Action7 _action7;
 	SoundHandler _soundHandler;
 	Speaker _speaker1;
@@ -534,7 +535,8 @@ public:
 	SceneItem _item1;
 
 	int _turnAmount, _angle, _speed, _fadePercent;
-	int _field_312, _field_314;
+	int _hitCount;
+	bool _rocksCheck;
 	Object *_objList[4];
 	bool _msgActive;
 

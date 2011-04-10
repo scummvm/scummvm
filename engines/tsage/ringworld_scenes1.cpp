@@ -2929,11 +2929,11 @@ void Scene6100::Action5::dispatch() {
 
 		double sqrtVal = tempSet.sqrt(zeroSet);
 		if (sqrtVal != 0.0) {
-			scene->_objList[idx]->_position.y = static_cast<int>(sqrtVal / 13800.0 + 62.0);
+			scene->_objList[idx]->_position.y = static_cast<int>(13800.0 / sqrtVal + 62.0);
 		}
 
 		scene->_objList[idx]->_position.x = static_cast<int>(
-			 160.0 - ((tempSet._float2 + 330.0) / 330.0 * tempSet._float1));
+			 160.0 - (330.0 / (tempSet._float2 + 330.0) * tempSet._float1));
 
 		if (tempSet._float2 < 0) {
 			scene->_objList[idx]->_position.y = 300;
@@ -2953,17 +2953,14 @@ void Scene6100::Action5::dispatch() {
 		}
 
 		if (idx == 3) {
-			if (((int)tempSet._float1 >= 100) || (tempSet._float2 > 0))
-				scene->_field_314 = 0;
-			else
-				scene->_field_314 = 1;
+			scene->_rocksCheck = (ABS((int)tempSet._float1) < 100) && (tempSet._float2 > 0);
 		}
 
 		scene->_objList[idx]->_flags |= OBJFLAG_PANES;
 /*
 		if ((idx != 3) && (scene->_fadePercent == 100) &&
 				(tempSet.sqrt(floatSet) < 150.0)) {
-			switch (scene->_field_312++) {
+			switch (scene->_hitCount++) {
 			case 1:
 				scene->_soundHandler.startSound(233);
 				scene->showMessage(0, NULL, 0);
@@ -2996,7 +2993,7 @@ void Scene6100::Action5::dispatch() {
 	}
 }
 
-void Scene6100::Action6::signal() {
+void Scene6100::GetBoxAction::signal() {
 	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -3032,6 +3029,26 @@ void Scene6100::Action6::signal() {
 		_globals->_sceneManager.changeScene(2320);
 		remove();
 	}		
+}
+
+void Scene6100::GetBoxAction::dispatch() {
+	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
+	Action::dispatch();
+
+	if (scene->_speed > 0) {
+		scene->_action5.dispatch();
+		scene->_speed = (scene->_speed * 4) / 5;
+
+		if (scene->_speed == 0)
+			setDelay(2);
+	}
+
+	if (scene->_speed == 0) {
+		if (scene->_probe._percent > 4)
+			// Handle the probe disappearing into the rocks
+			scene->_probe._percent = scene->_probe._percent * 7 / 8;
+		scene->_probe._flags |= OBJFLAG_PANES;
+	}
 }
 
 void Scene6100::Action7::signal() {
@@ -3136,8 +3153,8 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 
 	_speed = 30;
 	_fadePercent = 100;
-	_field_314 = 0;
-	_field_312 = 0;
+	_rocksCheck = false;
+	_hitCount = 0;
 	_turnAmount = 0;
 	_angle = 0;
 	_msgActive = false;
@@ -3205,13 +3222,12 @@ void Scene6100::dispatch() {
 		_sceneText.setup(s);
 	}
 
-	if (_field_314) {
-		if (_action == &_action5) {
-			double distance = _probe._floats.sqrt(_rocks._floats);
-			
-			if ((distance >= 300.0) && (distance <= 500.0))
-				setAction(&_action6);
-		}
+	if (_rocksCheck && (_action == &_action5)) {
+		// Check whether the probe is close enough to the rocks
+		double distance = _probe._floats.sqrt(_rocks._floats);
+		
+		if ((distance >= 300.0) && (distance <= 500.0))
+			setAction(&_getBoxAction);
 	}
 }
 
