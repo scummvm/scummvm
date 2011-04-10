@@ -32,8 +32,6 @@
 
 #include "graphics/pixelformat.h"
 
-typedef uint16 OverlayColor;
-
 namespace Audio {
 	class Mixer;
 }

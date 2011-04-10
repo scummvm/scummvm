@@ -61,6 +61,7 @@ bundle: residual-static
 iphonebundle: iphone
 	mkdir -p $(bundle_name)
 	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
+	cp $(DIST_FILES_DOCS) $(bundle_name)/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/
 	#cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/
 	ldid -S residual

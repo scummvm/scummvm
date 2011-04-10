@@ -124,7 +124,6 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		forcecaret = true;
 		break;
 	case Common::KEYCODE_LEFT:
-	case Common::KEYCODE_KP4:
 		if (_caretPos > 0) {
 			dirty = setCaretPos(_caretPos - 1);
 		}
@@ -132,7 +131,6 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		dirty = true;
 		break;
 	case Common::KEYCODE_RIGHT:
-	case Common::KEYCODE_KP6:
 		if (_caretPos < (int)_editString.size()) {
 			dirty = setCaretPos(_caretPos + 1);
 		}
@@ -140,12 +138,10 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		dirty = true;
 		break;
 	case Common::KEYCODE_HOME:
-	case Common::KEYCODE_KP7:
 		dirty = setCaretPos(0);
 		forcecaret = true;
 		break;
 	case Common::KEYCODE_END:
-	case Common::KEYCODE_KP1:
 		dirty = setCaretPos(_editString.size());
 		forcecaret = true;
 		break;

@@ -26,9 +26,8 @@
 #ifndef COMMON_STREAM_H
 #define COMMON_STREAM_H
 
-#include "common/sys.h"
-#include "common/endian.h"
 #include "common/types.h"
+#include "common/endian.h"
 
 namespace Common {
 

@@ -35,42 +35,58 @@ namespace Common {
 
 
 struct DebugChannel {
-	DebugChannel() : level(0), enabled(false) {}
-	DebugChannel(uint32 l, const String &n, const String &d)
-		: name(n), description(d), level(l), enabled(false) {}
+	DebugChannel() : channel(0), enabled(false) {}
+	DebugChannel(uint32 c, const String &n, const String &d)
+		: name(n), description(d), channel(c), enabled(false) {}
 
 	String name;
 	String description;
 
-	uint32 level;
+	uint32 channel;
 	bool enabled;
 };
 
 /**
- * Adds a engine debug level.
- * @param level the level flag (should be OR-able i.e. first one should be 1 than 2,4,...)
+ * Adds a debug channel.
+ *
+ * A debug channel is considered roughly similar to what our debug levels described by
+ * gDebugLevel try to achieve:
+ *
+ *  Debug channels should only affect the display of additional debug output, based on
+ *  their state. That is if they are enabled, channel specific debug messages should
+ *  be shown. If they are disabled on the other hand, those messages will be hidden.
+ *
+ * @see gDebugLevel.
+ *
+ * Note that we have debug* functions which depend both on the debug level set and
+ * specific debug channels. Those functions will only show output, when *both* criteria
+ * are satisfied.
+ *
+ * @param channel the channel flag (should be OR-able i.e. first one should be 1 then 2, 4, etc.)
  * @param name the option name which is used in the debugger/on the command line to enable
- *               this special debug level (case will be ignored)
+ *             this special debug level (case will be ignored)
  * @param description the description which shows up in the debugger
  * @return true on success false on failure
  */
-bool addDebugChannel(uint32 level, const String &name, const String &description);
+bool addDebugChannel(uint32 channel, const String &name, const String &description);
 
 /**
- * Resets all engine debug levels.
+ * Resets all engine specific debug channels.
  */
 void clearAllDebugChannels();
 
 /**
- * Enables an engine debug level.
- * @param name the name of the debug level to enable
+ * Enables an debug channel.
+ *
+ * @param name the name of the debug channel to enable
  * @return true on success, false on failure
  */
 bool enableDebugChannel(const String &name);
 
 /**
- * Disables an engine debug level
- * @param name the name of the debug level to disable
+ * Disables an debug channel.
+ *
+ * @param name the name of the debug channel to disable
  * @return true on success, false on failure
  */
 bool disableDebugChannel(const String &name);
@@ -80,19 +96,20 @@ bool disableDebugChannel(const String &name);
 typedef List<DebugChannel> DebugChannelList;
 
 /**
- * Lists all debug levels
- * @return returns a arry with all debug levels
+ * Lists all engine specific debug channels.
+ *
+ * @return returns a arry with all debug channels
  */
 DebugChannelList listDebugChannels();
 
 
 /**
- * Test whether the given debug level is enabled.
+ * Test whether the given debug channel is enabled.
  */
-bool isDebugChannelEnabled(uint32 level);
+bool isDebugChannelEnabled(uint32 channel);
 
 /**
- * Test whether the given debug level is enabled.
+ * Test whether the given debug channel is enabled.
  */
 bool isDebugChannelEnabled(const String &name);
 
@@ -111,10 +128,10 @@ void setDebugOutputFormatter(OutputFormatter f);
 inline void debug(const char *s, ...) {}
 inline void debug(int level, const char *s, ...) {}
 inline void debugN(int level, const char *s, ...) {}
-inline void debugC(int level, uint32 engine_level, const char *s, ...) {}
-inline void debugC(uint32 engine_level, const char *s, ...) {}
-inline void debugCN(int level, uint32 engine_level, const char *s, ...) {}
-inline void debugCN(uint32 engine_level, const char *s, ...) {}
+inline void debugC(int level, uint32 engineChannel, const char *s, ...) {}
+inline void debugC(uint32 engineChannel, const char *s, ...) {}
+inline void debugCN(int level, uint32 engineChannel, const char *s, ...) {}
+inline void debugCN(uint32 engineChannel, const char *s, ...) {}
 
 
 #else

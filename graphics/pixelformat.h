@@ -51,13 +51,13 @@ struct PixelFormat {
 	byte rShift, gShift, bShift, aShift; /**< Binary left shift of each color component in the pixel value. */
 
 	inline PixelFormat() {
-		bytesPerPixel = 
-		rLoss = gLoss = bLoss = aLoss = 
+		bytesPerPixel =
+		rLoss = gLoss = bLoss = aLoss =
 		rShift = gShift = bShift = aShift = 0;
 	}
 
-	inline PixelFormat(byte BytesPerPixel, 
-						byte RBits, byte GBits, byte BBits, byte ABits, 
+	inline PixelFormat(byte BytesPerPixel,
+						byte RBits, byte GBits, byte BBits, byte ABits,
 						byte RShift, byte GShift, byte BShift, byte AShift) {
 		bytesPerPixel = BytesPerPixel;
 		rLoss = 8 - RBits, gLoss = 8 - GBits, bLoss = 8 - BBits, aLoss = 8 - ABits;

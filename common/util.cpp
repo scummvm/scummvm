@@ -35,8 +35,6 @@ extern bool isSmartphone();
 
 #ifdef __PLAYSTATION2__
 	// for those replaced fopen/fread/etc functions
-	typedef unsigned long	uint64;
-	typedef signed long	int64;
 	#include "backends/platform/ps2/fileio.h"
 
 	#define fputs(str, file)	ps2_fputs(str, file)
@@ -266,7 +264,6 @@ const PlatformDescription g_platforms[] = {
 	{"segacd", "segacd", "sega", "SegaCD", kPlatformSegaCD},
 	{"windows", "win", "win", "Windows", kPlatformWindows},
 	{"playstation", "psx", "psx", "Sony PlayStation", kPlatformPSX},
-	{"playstation2", "ps2", "ps2", "Sony PlayStation 2", kPlatformPS2},
 	{"cdi", "cdi", "cdi", "Phillips CD-i", kPlatformCDi},
 
 	{0, 0, 0, "Default", kPlatformUnknown}

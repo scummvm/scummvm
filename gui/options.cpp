@@ -732,6 +732,11 @@ void GlobalOptionsDialog::open() {
 		if (value == savePeriodValues[i])
 			_autosavePeriodPopUp->setSelected(i);
 	}
+
+	ThemeEngine::GraphicsMode mode = ThemeEngine::findMode(ConfMan.get("gui_renderer"));
+	if (mode == ThemeEngine::kGfxDisabled)
+		mode = ThemeEngine::_defaultRendererMode;
+	_rendererPopUp->setSelectedTag(mode);
 }
 
 void GlobalOptionsDialog::close() {
@@ -761,6 +766,15 @@ void GlobalOptionsDialog::close() {
 #endif
 
 		ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
+
+		GUI::ThemeEngine::GraphicsMode selected = (GUI::ThemeEngine::GraphicsMode)_rendererPopUp->getSelectedTag();
+		const char *cfg = GUI::ThemeEngine::findModeConfigName(selected);
+		if (!ConfMan.get("gui_renderer").equalsIgnoreCase(cfg)) {
+			// FIXME: Actually, any changes (including the theme change) should
+			// only become active *after* the options dialog has closed.
+			g_gui.loadNewTheme(g_gui.theme()->getThemeId(), selected);
+			ConfMan.set("gui_renderer", cfg, _domain);
+		}
 	}
 	OptionsDialog::close();
 }

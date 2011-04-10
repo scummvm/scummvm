@@ -29,9 +29,9 @@
 #include "common/stack.h"
 #include "common/singleton.h"
 #include "graphics/pixelformat.h"
-#ifdef USE_RGB_COLOR
-#include "common/system.h"
-#endif
+//#ifdef USE_RGB_COLOR
+//#include "common/system.h"
+//#endif
 
 namespace Graphics {
 
@@ -70,7 +70,7 @@ public:
 	 * @param keycolor	the color value for the transparent color. This may not exceed
 	 *                  the maximum color value as defined by format.
 	 * @param targetScale	the scale for which the cursor is designed
-	 * @param format	a pointer to the pixel format which the cursor graphic uses, 
+	 * @param format	a pointer to the pixel format which the cursor graphic uses,
 	 *					CLUT8 will be used if this is NULL or not specified.
 	 * @note It is ok for the buffer to be a NULL pointer. It is sometimes
 	 *       useful to push a "dummy" cursor and modify it later. The

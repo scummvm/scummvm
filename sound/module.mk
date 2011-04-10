@@ -3,18 +3,18 @@ MODULE := sound
 MODULE_OBJS := \
 	audiocd.o \
 	audiostream.o \
-	flac.o \
 	fmopl.o \
 	mididrv.o \
 	midiparser.o \
 	mixer.o \
-	mp3.o \
 	mpu401.o \
 	musicplugin.o \
 	null.o \
-	raw.o \
 	timestamp.o \
-	vorbis.o \
+	decoders/flac.o \
+	decoders/mp3.o \
+	decoders/raw.o \
+	decoders/vorbis.o \
 	softsynth/adlib.o \
 	softsynth/opl/dosbox.o \
 	softsynth/opl/mame.o \

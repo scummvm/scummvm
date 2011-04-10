@@ -157,7 +157,7 @@ void Debugger::enter() {
 
 	g_readline_debugger = this;
 	rl_completion_entry_function = &readline_completionFunction;
-	
+
 	char *line_read = 0;
 	do {
 		free(line_read);
@@ -375,7 +375,7 @@ char *Debugger::readlineComplete(const char *input, int state) {
 			char *ret = (char *)malloc(iter->_key.size() + 1);
 			strcpy(ret, iter->_key.c_str());
 			return ret;
-		}	
+		}
 	}
 	return 0;
 }

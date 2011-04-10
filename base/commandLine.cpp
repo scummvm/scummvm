@@ -66,19 +66,23 @@ static const char HELP_STRING[] =
 	"  -c, --config=CONFIG      Use alternate configuration file\n"
 	"  -p, --path=PATH          Path to where the game is installed\n"
 	"  -f, --fullscreen         Force full-screen mode\n"
-	"  -q, --language=LANG      Select language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,\n"
-	"                           hb,ru,cz)\n"
+	"  -F, --no-fullscreen      Force windowed mode\n"
 	"  --gui-theme=THEME        Select GUI theme\n"
 	"  --themepath=PATH         Path to where GUI themes are stored\n"
 	"  --list-themes            Display list of all usable GUI themes\n"
-	"  -e, --music-driver=MODE  Select music driver\n"
+	"  -e, --music-driver=MODE  Select music driver (see README for details)\n"
+	"  -q, --language=LANG      Select language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,\n"
+	"                           hb,ru,cz)\n"
 	"  -m, --music-volume=NUM   Set the music volume, 0-127 (default: 127)\n"
 	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-127 (default: 127)\n"
 	"  -r, --speech-volume=NUM  Set the speech volume, 0-127 (default: 127)\n"
 	"  --speech-mode=NUM        Set the mode of speech 1-Text only, 2-Speech Only, 3-Speech and Text\n"
-	"  --soft-renderer=BOOL     Set the turn on/off software 3D renderer: true/false\n"
+	"  --midi-gain=NUM          Set the gain for MIDI playback, 0-1000 (default:\n"
+	"                           100) (only supported by some MIDI drivers)\n"
 	"  -d, --debuglevel=NUM     Set debug verbosity level\n"
-	"  --debugflags=FLAGS       Enables engine specific debug flags\n"
+	"  --debugflags=FLAGS       Enable engine specific debug flags\n"
+	"                           (separated by commas)\n"
+	"\n"
 	"  --savepath=PATH          Path to where savegames are stored\n"
 	"  --extrapath=PATH         Extra path to additional game data\n"
 	"  --soundfont=FILE         Select the SoundFont for MIDI playback (only\n"
@@ -89,8 +93,10 @@ static const char HELP_STRING[] =
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
 	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame)\n"
 	"  --show-fps=BOOL          Set the turn on/off display FPS info: true/false\n"
-
+	"  --soft-renderer=BOOL     Set the turn on/off software 3D renderer: true/false\n"
 	"\n"
+	"  --dimuse-tempo=NUM       Set internal Digital iMuse tempo (10 - 100) per second\n"
+	"                           (default: 10)\n"
 ;
 #endif
 
@@ -116,26 +122,37 @@ static void usage(const char *s, ...) {
 
 
 void registerDefaults() {
-	ConfMan.registerDefault("platform", Common::kPlatformPC);
-	ConfMan.registerDefault("language", "en");
-	ConfMan.registerDefault("autosave_period", 5 * 60);	// By default, trigger autosave every 5 minutes
+	// Graphics
+	ConfMan.registerDefault("fullscreen", false);
+	ConfMan.registerDefault("soft_renderer", "true");
+	ConfMan.registerDefault("fullscreen", "false");
+	ConfMan.registerDefault("show_fps", "false");
 
+	// Sound & Music
 	ConfMan.registerDefault("music_volume", 127);
 	ConfMan.registerDefault("sfx_volume", 127);
 	ConfMan.registerDefault("speech_volume", 127);
 	ConfMan.registerDefault("speech_mode", "3");
-
 	ConfMan.registerDefault("multi_midi", false);
 	ConfMan.registerDefault("native_mt32", false);
 	ConfMan.registerDefault("enable_gs", false);
 	ConfMan.registerDefault("midi_gain", 100);
 
-	ConfMan.registerDefault("path", ".");
+	// Game specific
+	ConfMan.registerDefault("path", "");
+	ConfMan.registerDefault("platform", Common::kPlatformPC);
+	ConfMan.registerDefault("language", "en");
+	ConfMan.registerDefault("autosave_period", 5 * 60);	// By default, trigger autosave every 5 minutes
 
-	ConfMan.registerDefault("soft_renderer", "true");
-	ConfMan.registerDefault("fullscreen", "false");
-	ConfMan.registerDefault("show_fps", "false");
 
+
+
+
+	ConfMan.registerDefault("dimuse_tempo", 10);
+
+
+
+	// Miscellaneous
 	ConfMan.registerDefault("confirm_exit", false);
 	ConfMan.registerDefault("disable_sdl_parachute", false);
 
@@ -397,10 +414,10 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 
 			DO_LONG_OPTION("text-speed")
 			END_OPTION
-#ifdef ENABLE_SCUMM
+
 			DO_LONG_OPTION_INT("dimuse-tempo")
 			END_OPTION
-#endif
+
 
 			DO_LONG_OPTION("speech-mode")
 			END_OPTION

@@ -53,7 +53,7 @@ bool OPL::init(int rate) {
 	if (_opl)
 		MAME::OPLDestroy(_opl);
 
-	_opl = MAME::makeAdlibOPL(rate);
+	_opl = MAME::makeAdLibOPL(rate);
 	return (_opl != 0);
 }
 
@@ -1208,7 +1208,7 @@ int OPLTimerOver(FM_OPL *OPL, int c) {
 	return OPL->status >> 7;
 }
 
-FM_OPL *makeAdlibOPL(int rate) {
+FM_OPL *makeAdLibOPL(int rate) {
 	// We need to emulate one YM3812 chip
 	int env_bits = FMOPL_ENV_BITS_HQ;
 	int eg_ent = FMOPL_EG_ENT_HQ;

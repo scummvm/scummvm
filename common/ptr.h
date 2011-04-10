@@ -180,15 +180,15 @@ public:
 		_pointer = 0;
 	}
 
-    template<class T2>
-    bool operator==(const Common::SharedPtr<T2> &r) const {
-        return _pointer == r.get();
-    }
+	template<class T2>
+	bool operator==(const Common::SharedPtr<T2> &r) const {
+		return _pointer == r.get();
+	}
 
-    template<class T2>
-    bool operator!=(const Common::SharedPtr<T2> &r) const {
-        return _pointer != r.get();
-    }
+	template<class T2>
+	bool operator!=(const Common::SharedPtr<T2> &r) const {
+		return _pointer != r.get();
+	}
 
 	/**
 	 * Returns the number of references to the assigned pointer.
@@ -216,6 +216,6 @@ private:
 	T *_pointer;
 };
 
-} // end of namespace Common
+} // End of namespace Common
 
 #endif

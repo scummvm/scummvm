@@ -57,10 +57,6 @@ template<typename T> inline T CLIP (T v, T amin, T amax)
  */
 template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 
-#if defined(ARRAYSIZE)
-// VS2005beta2 introduces new stuff in winnt.h
-#undef ARRAYSIZE
-#endif
 /**
  * Macro which determines the number of entries in a fixed size array.
  */
@@ -226,7 +222,6 @@ enum Platform {
 	kPlatformWii,
 	kPlatformPSX,
 	kPlatformCDi,
-	kPlatformPS2,
 
 	kPlatformUnknown = -1
 };

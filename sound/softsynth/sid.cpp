@@ -1275,7 +1275,7 @@ void SID::enable_external_filter(bool enable) {
  * E.g. provided a clock frequency of ~ 1MHz, the sample frequency can not
  * be set lower than ~ 8kHz. A lower sample frequency would make the
  * resampling code overfill its 16k sample ring buffer.
- * 
+ *
  * The end of passband frequency is also limited:
  *   pass_freq <= 0.9*sample_freq/2
  *

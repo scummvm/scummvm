@@ -341,8 +341,10 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 		break;
 	}
 	case Common::KEYCODE_DELETE:
-		killChar();
-		drawLine(pos2line(_currentPos));
+		if (_currentPos < _promptEndPos) {
+			killChar();
+			drawLine(pos2line(_currentPos));
+		}
 		break;
 	case Common::KEYCODE_PAGEUP:
 		if (state.flags == Common::KBD_SHIFT) {
@@ -386,21 +388,17 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 		draw();
 		break;
 	case Common::KEYCODE_UP:
-	case Common::KEYCODE_KP8:
 		historyScroll(+1);
 		break;
 	case Common::KEYCODE_DOWN:
-	case Common::KEYCODE_KP2:
 		historyScroll(-1);
 		break;
 	case Common::KEYCODE_RIGHT:
-	case Common::KEYCODE_KP6:
 		if (_currentPos < _promptEndPos)
 			_currentPos++;
 		drawLine(pos2line(_currentPos));
 		break;
 	case Common::KEYCODE_LEFT:
-	case Common::KEYCODE_KP4:
 		if (_currentPos > _promptStartPos)
 			_currentPos--;
 		drawLine(pos2line(_currentPos));
@@ -472,8 +470,10 @@ void ConsoleDialog::specialKeys(int keycode) {
 void ConsoleDialog::killChar() {
 	for (int i = _currentPos; i < _promptEndPos; i++)
 		buffer(i) = buffer(i + 1);
-	buffer(_promptEndPos) = ' ';
-	_promptEndPos--;
+	if (_promptEndPos > _promptStartPos) {
+		buffer(_promptEndPos) = ' ';
+		_promptEndPos--;
+	}
 }
 
 void ConsoleDialog::killLine() {
@@ -497,8 +497,10 @@ void ConsoleDialog::killLastWord() {
 
 	for (int i = _currentPos; i < _promptEndPos; i++)
 		buffer(i) = buffer(i + cnt);
-	buffer(_promptEndPos) = ' ';
-	_promptEndPos -= cnt;
+	if (_promptEndPos > _promptStartPos) {
+		buffer(_promptEndPos) = ' ';
+		_promptEndPos -= cnt;
+	}
 }
 
 void ConsoleDialog::addToHistory(const char *str) {

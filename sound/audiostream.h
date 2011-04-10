@@ -46,7 +46,7 @@ public:
 
 	/**
 	 * Fill the given buffer with up to numSamples samples. Returns the actual
-	 * number of samples read, or -1 if a critical error occured (note: you
+	 * number of samples read, or -1 if a critical error occurred (note: you
 	 * *must* check if this value is less than what you requested, this can
 	 * happen when the stream is fully used up).
 	 *
@@ -86,7 +86,7 @@ public:
 };
 
 /**
- * A rewindable audio stream. This allows for restting the AudioStream
+ * A rewindable audio stream. This allows for reseting the AudioStream
  * to its initial state. Note that rewinding itself is not required to
  * be working when the stream is being played by Mixer!
  */
@@ -101,7 +101,7 @@ public:
 };
 
 /**
- * A looping audio stream. This object does nothing beides using
+ * A looping audio stream. This object does nothing besides using
  * a RewindableAudioStream to play a stream in a loop.
  */
 class LoopingAudioStream : public AudioStream {
@@ -113,7 +113,7 @@ public:
 	 *
 	 * @param stream Stream to loop
 	 * @param loops How often to loop (0 = infinite)
-	 * @param disposeAfteruse Destroy the stream after the LoopingAudioStream has finished playback.
+	 * @param disposeAfterUse Destroy the stream after the LoopingAudioStream has finished playback.
 	 */
 	LoopingAudioStream(RewindableAudioStream *stream, uint loops, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 	~LoopingAudioStream();
@@ -124,7 +124,7 @@ public:
 	bool isStereo() const { return _parent->isStereo(); }
 	int getRate() const { return _parent->getRate(); }
 
-	/** 
+	/**
 	 * Returns number of loops the stream has played.
 	 * @param numLoops number of loops to play, 0 - infinite
 	 */
@@ -138,16 +138,16 @@ private:
 };
 
 /**
- * Wrapper functionallity to efficiently create a stream, which might be looped.
+ * Wrapper functionality to efficiently create a stream, which might be looped.
  *
  * Note that this function does not return a LoopingAudioStream, because it does
- * not create one, when the loop count is "1". This allows to keep the runtime
- * overhead down, when the code does not require any functionallity only offered
+ * not create one when the loop count is "1". This allows to keep the runtime
+ * overhead down, when the code does not require any functionality only offered
  * by LoopingAudioStream.
  *
  * @param stream Stream to loop (will be automatically destroyed, when the looping is done)
  * @param loops How often to loop (0 = infinite)
- * @return A new AudioStream, which offers the desired functionallity.
+ * @return A new AudioStream, which offers the desired functionality.
  */
 AudioStream *makeLoopingAudioStream(RewindableAudioStream *stream, uint loops);
 
@@ -161,10 +161,10 @@ public:
 	/**
 	 * Tries to load a file by trying all available formats.
 	 * In case of an error, the file handle will be closed, but deleting
-	 * it is still the responsibilty of the caller.
-	 * @param basename	a filename without an extension
-	 * @return	an SeekableAudioStream ready to use in case of success;
-	 *			NULL in case of an error (e.g. invalid/nonexisting file)
+	 * it is still the responsibility of the caller.
+	 * @param basename  a filename without an extension
+	 * @return  an SeekableAudioStream ready to use in case of success;
+	 *          NULL in case of an error (e.g. invalid/nonexisting file)
 	 */
 	static SeekableAudioStream *openStreamFile(const Common::String &basename);
 
@@ -197,21 +197,21 @@ public:
 };
 
 /**
- * Wrapper functionallity to efficiently create a stream, which might be looped
+ * Wrapper functionality to efficiently create a stream, which might be looped
  * in a certain interval.
  *
  * This automatically starts the stream at time "start"!
  *
  * Note that this function does not return a LoopingAudioStream, because it does
- * not create one, when the loop count is "1". This allows to keep the runtime
- * overhead down, when the code does not require any functionallity only offered
+ * not create one when the loop count is "1". This allows to keep the runtime
+ * overhead down, when the code does not require any functionality only offered
  * by LoopingAudioStream.
  *
  * @param stream Stream to loop (will be automatically destroyed, when the looping is done)
  * @param start Starttime of the stream interval to be looped
  * @param end End of the stream interval to be looped (a zero time, means till end)
  * @param loops How often to loop (0 = infinite)
- * @return A new AudioStream, which offers the desired functionallity.
+ * @return A new AudioStream, which offers the desired functionality.
  */
 AudioStream *makeLoopingAudioStream(SeekableAudioStream *stream, Timestamp start, Timestamp end, uint loops);
 
@@ -251,11 +251,12 @@ private:
 	bool _done;
 };
 
+
 /**
  * A SubSeekableAudioStream provides access to a SeekableAudioStream
  * just in the range [start, end).
  * The same caveats apply to SubSeekableAudioStream as do to SeekableAudioStream.
- * 
+ *
  * Manipulating the parent stream directly /will/ mess up a substream.
  *
  * IMPORTANT:
@@ -312,8 +313,8 @@ public:
 	 * Queue a block of raw audio data for playback. This stream
 	 * will play all queued buffers, in the order they were
 	 * queued. After all data contained in them has been played,
-	 * the buffer will be delete[]'d (so make sure to allocate them
-	 * with new[], not with malloc).
+	 * the buffer will be released using free(). So make sure to
+	 * allocate them with malloc(), not with new[]).
 	 */
 	void queueBuffer(byte *data, uint32 size, DisposeAfterUse::Flag disposeAfterUse, byte flags);
 
@@ -336,16 +337,15 @@ public:
  */
 QueuingAudioStream *makeQueuingAudioStream(int rate, bool stereo);
 
-
 /**
- * Calculates the sample, which the timestamp describes in a
- * AudioStream with the given framerate.
+ * Converts a point in time to a precise sample offset
+ * with the given parameters.
  *
- * @param where point in time
- * @param rate rate of the AudioStream
- * @return sample index
+ * @param where Point in time.
+ * @param rate Rate of the stream.
+ * @param isStereo Is the stream a stereo stream?
  */
-uint32 calculateSampleOffset(const Timestamp &where, int rate);
+Timestamp convertTimeToStreamPos(const Timestamp &where, int rate, bool isStereo);
 
 } // End of namespace Audio
 

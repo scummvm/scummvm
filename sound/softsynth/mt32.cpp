@@ -165,6 +165,7 @@ static void drawMessage(int offset, const Common::String &text) {
 	surf.pixels = calloc(surf.w, surf.h);
 	font.drawString(&surf, text, 0, 0, surf.w, color, Graphics::kTextAlignCenter);
 	int y = g_system->getHeight() / 2 - font.getFontHeight() / 2 + offset * (font.getFontHeight() + 1);
+	// TODO implement in Residual
 	//g_system->copyRectToScreen((byte *)surf.pixels, surf.pitch, 0, y, surf.w, surf.h);
 	//g_system->updateScreen();
 	free(surf.pixels);
@@ -282,12 +283,13 @@ int MidiDriver_MT32::open() {
 		171, 0, 0, 0
 	};
 
-	// FIXME
+	// TODO implement in Residual
 	//g_system->setPalette(dummy_palette, 0, 5);
 	drawMessage(-1, "Initialising MT-32 Emulator");
 	if (!_synth->open(prop))
 		return MERR_DEVICE_NOT_AVAILABLE;
 	_initialising = false;
+	// TODO implement in Residual
 	//g_system->fillScreen(0);
 	//g_system->updateScreen();
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);

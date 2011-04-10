@@ -65,6 +65,7 @@ namespace Common {
 enum PluginType {
 	PLUGIN_TYPE_ENGINE = 0,
 	PLUGIN_TYPE_MUSIC,
+	/* PLUGIN_TYPE_SCALER, */	// TODO: Add graphics scaler plugins
 
 	PLUGIN_TYPE_MAX
 };

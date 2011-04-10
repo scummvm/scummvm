@@ -30,19 +30,19 @@
 #include "common/util.h"
 
 #include "sound/audiostream.h"
-#include "sound/flac.h"
+#include "sound/decoders/flac.h"
 #include "sound/mixer.h"
-#include "sound/mp3.h"
-#include "sound/raw.h"
-#include "sound/vorbis.h"
+#include "sound/decoders/mp3.h"
+#include "sound/decoders/raw.h"
+#include "sound/decoders/vorbis.h"
 
 
 namespace Audio {
 
 struct StreamFileFormat {
 	/** Decodername */
-	const char* decoderName;
-	const char* fileExtension;
+	const char *decoderName;
+	const char *fileExtension;
 	/**
 	 * Pointer to a function which tries to open a file of type StreamFormat.
 	 * Return NULL in case of an error (invalid/nonexisting file).
@@ -51,16 +51,16 @@ struct StreamFileFormat {
 };
 
 static const StreamFileFormat STREAM_FILEFORMATS[] = {
-	/* decoderName,		fileExt, openStreamFuntion */
+	/* decoderName,  fileExt, openStreamFuntion */
 #ifdef USE_FLAC
-	{ "Flac",			".flac", makeFlacStream },
-	{ "Flac",			".fla",  makeFlacStream },
+	{ "FLAC",         ".flac", makeFLACStream },
+	{ "FLAC",         ".fla",  makeFLACStream },
 #endif
 #ifdef USE_VORBIS
-	{ "Ogg Vorbis",		".ogg",  makeVorbisStream },
+	{ "Ogg Vorbis",   ".ogg",  makeVorbisStream },
 #endif
 #ifdef USE_MAD
-	{ "MPEG Layer 3",	".mp3",  makeMP3Stream },
+	{ "MPEG Layer 3", ".mp3",  makeMP3Stream },
 #endif
 
 	{ NULL, NULL, NULL } // Terminator
@@ -104,6 +104,9 @@ LoopingAudioStream::~LoopingAudioStream() {
 }
 
 int LoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+	if ((_loops && _completeIterations == _loops) || !numSamples)
+		return 0;
+
 	int samplesRead = _parent->readBuffer(buffer, numSamples);
 
 	if (_parent->endOfStream()) {
@@ -111,7 +114,7 @@ int LoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 		if (_completeIterations == _loops)
 			return samplesRead;
 
-		int remainingSamples = numSamples - samplesRead;
+		const int remainingSamples = numSamples - samplesRead;
 
 		if (!_parent->rewind()) {
 			// TODO: Properly indicate error
@@ -119,7 +122,7 @@ int LoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 			return samplesRead;
 		}
 
-		samplesRead += _parent->readBuffer(buffer + samplesRead, remainingSamples);
+		return samplesRead + readBuffer(buffer + samplesRead, remainingSamples);
 	}
 
 	return samplesRead;
@@ -164,8 +167,8 @@ SubLoopingAudioStream::SubLoopingAudioStream(SeekableAudioStream *stream,
 	                                         DisposeAfterUse::Flag disposeAfterUse)
     : _parent(stream), _disposeAfterUse(disposeAfterUse), _loops(loops),
       _pos(0, getRate() * (isStereo() ? 2 : 1)),
-      _loopStart(loopStart.convertToFramerate(getRate() * (isStereo() ? 2 : 1))),
-      _loopEnd(loopEnd.convertToFramerate(getRate() * (isStereo() ? 2 : 1))),
+      _loopStart(convertTimeToStreamPos(loopStart, getRate(), isStereo())),
+      _loopEnd(convertTimeToStreamPos(loopEnd, getRate(), isStereo())),
       _done(false) {
 	if (!_parent->rewind())
 		_done = true;
@@ -212,9 +215,9 @@ int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 
 SubSeekableAudioStream::SubSeekableAudioStream(SeekableAudioStream *parent, const Timestamp start, const Timestamp end, DisposeAfterUse::Flag disposeAfterUse)
     : _parent(parent), _disposeAfterUse(disposeAfterUse),
-      _start(start.convertToFramerate(getRate())),
+      _start(convertTimeToStreamPos(start, getRate(), isStereo())),
        _pos(0, getRate() * (isStereo() ? 2 : 1)),
-      _length((end - start).convertToFramerate(getRate() * (isStereo() ? 2 : 1))) {
+      _length(convertTimeToStreamPos(end - start, getRate(), isStereo())) {
 
 	assert(_length.totalNumberOfFrames() % (isStereo() ? 2 : 1) == 0);
 	_parent->seek(_start);
@@ -233,7 +236,7 @@ int SubSeekableAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 bool SubSeekableAudioStream::seek(const Timestamp &where) {
-	_pos = where.convertToFramerate(getRate());
+	_pos = convertTimeToStreamPos(where, getRate(), isStereo());
 	if (_pos > _length) {
 		_pos = _length;
 		return false;
@@ -253,7 +256,7 @@ bool SubSeekableAudioStream::seek(const Timestamp &where) {
 
 
 void QueuingAudioStream::queueBuffer(byte *data, uint32 size, DisposeAfterUse::Flag disposeAfterUse, byte flags) {
-	AudioStream *stream = makeRawMemoryStream(data, size, disposeAfterUse, getRate(), flags, 0, 0);
+	AudioStream *stream = makeRawStream(data, size, getRate(), flags, disposeAfterUse);
 	queueAudioStream(stream, DisposeAfterUse::YES);
 }
 
@@ -271,8 +274,8 @@ private:
 		AudioStream *_stream;
 		DisposeAfterUse::Flag _disposeAfterUse;
 		StreamHolder(AudioStream *stream, DisposeAfterUse::Flag disposeAfterUse)
-			: _stream(stream),
-			  _disposeAfterUse(disposeAfterUse) {}
+		    : _stream(stream),
+		      _disposeAfterUse(disposeAfterUse) {}
 	};
 
 	/**
@@ -303,7 +306,7 @@ private:
 
 public:
 	QueuingAudioStreamImpl(int rate, bool stereo)
-		: _rate(rate), _stereo(stereo), _finished(false) {}
+	    : _rate(rate), _stereo(stereo), _finished(false) {}
 	~QueuingAudioStreamImpl();
 
 	// Implement the AudioStream API
@@ -360,12 +363,19 @@ int QueuingAudioStreamImpl::readBuffer(int16 *buffer, const int numSamples) {
 	return samplesDecoded;
 }
 
-
-
 QueuingAudioStream *makeQueuingAudioStream(int rate, bool stereo) {
 	return new QueuingAudioStreamImpl(rate, stereo);
 }
 
+Timestamp convertTimeToStreamPos(const Timestamp &where, int rate, bool isStereo) {
+	Timestamp result(where.convertToFramerate(rate * (isStereo ? 2 : 1)));
 
+	// When the Stream is a stereo stream, we have to assure
+	// that the sample position is an even number.
+	if (isStereo && (result.totalNumberOfFrames() & 1))
+		return result.addFrames(-1); // We cut off one sample here.
+	else
+		return result;
+}
 
 } // End of namespace Audio

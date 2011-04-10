@@ -48,7 +48,7 @@
 extern bool isSmartphone();
 #endif
 
-// FIXME: HACK for MidiEmu & error()
+// FIXME: HACK for error()
 Engine *g_engine = 0;
 
 // Output formatter for debug() and error() which invokes
@@ -260,7 +260,7 @@ void Engine::flipMute() {
 	if (ConfMan.hasKey("mute")) {
 		mute = !ConfMan.getBool("mute");
 	}
-	
+
 	ConfMan.setBool("mute", mute);
 
 	syncSoundSettings();

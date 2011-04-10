@@ -4,23 +4,23 @@ MODULE_OBJS := \
 	archive.o \
 	config-file.o \
 	config-manager.o \
+	textconsole.o \
 	debug.o \
 	EventDispatcher.o \
 	EventRecorder.o \
 	file.o \
 	fs.o \
 	hashmap.o \
-	libz.o \
 	memorypool.o \
 	md5.o \
 	mutex.o \
 	str.o \
 	stream.o \
-	textconsole.o \
 	util.o \
 	system.o \
 	unzip.o \
-	xmlparser.o
+	xmlparser.o \
+	zlib.o
 
 # Include common rules
 include $(srcdir)/rules.mk

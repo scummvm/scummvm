@@ -9,7 +9,7 @@ srcdir      ?= .
 
 DEFINES     := -DHAVE_CONFIG_H
 LDFLAGS     :=
-INCLUDES    := -I. -I$(srcdir)
+INCLUDES    := -I. -I$(srcdir) -I$(srcdir)/engines
 LIBS        :=
 OBJS        :=
 DEPDIR      := .deps
@@ -34,7 +34,7 @@ ifeq "$(HAVE_GCC)" "1"
 	# being helpful.
 	#CXXFLAGS+= -Wmissing-format-attribute
 
-	# Disable RTTI and exceptions, and enabled checking of pointers returned by "new"
+	# Disable RTTI, and enable checking of pointers returned by "new"
 	CXXFLAGS+= -fno-exceptions -fcheck-new
 
 	# There is a nice extra warning that flags variables that are potentially

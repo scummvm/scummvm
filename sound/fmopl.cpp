@@ -43,7 +43,7 @@ const Config::EmulatorDescription Config::_drivers[] = {
 	{ "auto", "<default>", kAuto, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
 	{ "mame", "MAME OPL emulator", kMame, kFlagOpl2 },
 #ifndef DISABLE_DOSBOX_OPL
-	{ "db", "DOSBox OPL emulator (experimental)", kDOSBox, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
+	{ "db", "DOSBox OPL emulator", kDOSBox, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
 #endif
 	{ 0, 0, 0, 0 }
 };
@@ -90,6 +90,8 @@ Config::DriverId Config::detect(OplType type) {
 	}
 
 	// Detect the first matching emulator
+	drv = -1;
+
 	for (int i = 1; _drivers[i].name; ++i) {
 		if (_drivers[i].flags & flags) {
 			drv = _drivers[i].id;
@@ -98,6 +100,10 @@ Config::DriverId Config::detect(OplType type) {
 	}
 
 	return drv;
+}
+
+OPL *Config::create(OplType type) {
+	return create(kAuto, type);
 }
 
 OPL *Config::create(DriverId driver, OplType type) {

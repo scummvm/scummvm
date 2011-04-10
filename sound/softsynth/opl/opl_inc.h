@@ -39,6 +39,13 @@
 #define Bit8u uint8
 #define Bit8s int8
 
+
+/*
+	define attribution that inlines/forces inlining of a function (optional)
+*/
+#define OPL_INLINE INLINE
+
+
 #undef NUM_CHANNELS
 #if defined(OPLTYPE_IS_OPL3)
 #define NUM_CHANNELS	18
@@ -137,7 +144,7 @@ typedef struct operator_struct {
 	Bit32u generator_pos;			// for non-standard sample rates we need to determine how many samples have passed
 	Bits cur_env_step;				// current (standardized) sample position
 	Bits env_step_a,env_step_d,env_step_r;	// number of std samples of one step (for attack/decay/release mode)
-	Bit8u step_skip_pos;			// position of 8-cyclic step skipping (always 2^x to check against mask)
+	Bit8u step_skip_pos_a;			// position of 8-cyclic step skipping (always 2^x to check against mask)
 	Bits env_step_skip_a;			// bitmask that determines if a step is skipped (respective bit is zero then)
 
 #if defined(OPLTYPE_IS_OPL3)
@@ -153,7 +160,7 @@ op_type op[MAXOPERATORS];
 Bits int_samplerate;
 
 Bit8u status;
-Bit32u index;
+Bit32u opl_index;
 #if defined(OPLTYPE_IS_OPL3)
 Bit8u adlibreg[512];	// adlib register set (including second set)
 Bit8u wave_sel[44];		// waveform selection
