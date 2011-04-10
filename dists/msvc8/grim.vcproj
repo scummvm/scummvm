@@ -121,6 +121,8 @@
 		<File RelativePath="..\..\engines\grim\material.h" />
 		<File RelativePath="..\..\engines\grim\model.cpp" />
 		<File RelativePath="..\..\engines\grim\model.h" />
+		<File RelativePath="..\..\engines\grim\object.cpp" />
+		<File RelativePath="..\..\engines\grim\object.h" />
 		<File RelativePath="..\..\engines\grim\objectstate.cpp" />
 		<File RelativePath="..\..\engines\grim\objectstate.h" />
 		<File RelativePath="..\..\engines\grim\primitives.cpp" />
