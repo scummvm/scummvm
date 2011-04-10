@@ -65,10 +65,6 @@ struct SOUND_BUFFER {
 
 // FIXME: Avoid non-const global vars
 
-// get set when music driver is installed
-//static MDI_DRIVER *mDriver;
-//static HSEQUENCE mSeqHandle;
-
 // MIDI buffer
 static SOUND_BUFFER midiBuffer = { 0, 0 };
 
@@ -152,8 +148,6 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 
 	// the index and length of the last tune loaded
 	static uint32 dwLastMidiIndex = 0;	// FIXME: Avoid non-const global vars
-	//static uint32 dwLastSeqLen;
-
 	uint32 dwSeqLen = 0;	// length of the sequence
 
 	// Support for external music from the music enhancement project
