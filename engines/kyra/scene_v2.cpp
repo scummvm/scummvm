@@ -86,15 +86,16 @@ int KyraEngine_v2::findWay(int x, int y, int toX, int toY, int *moveTable, int m
 	x &= ~3; toX &= ~3;
 	y &= ~1; toY &= ~1;
 	int size = KyraEngine_v1::findWay(x, y, toX, toY, moveTable, moveTableSize);
-	static bool usePostProcess = false;
-	if (size && !usePostProcess) {
-		usePostProcess = true;
+
+	if (size && !_smoothingPath) {
+		_smoothingPath = true;
 		int temp = pathfinderInitPositionTable(moveTable);
 		temp = pathfinderInitPositionIndexTable(temp, x, y);
 		pathfinderFinializePath(moveTable, temp, x, y, moveTableSize);
-		usePostProcess = false;
+		_smoothingPath = false;
 	}
-	return usePostProcess ? size : getMoveTableSize(moveTable);
+
+	return _smoothingPath ? size : getMoveTableSize(moveTable);
 }
 
 bool KyraEngine_v2::directLinePassable(int x, int y, int toX, int toY) {

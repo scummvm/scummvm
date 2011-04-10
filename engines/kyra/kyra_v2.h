@@ -269,6 +269,7 @@ protected:
 	// pathfinder
 	int _movFacingTable[600];
 	int _pathfinderFlag;
+	bool _smoothingPath;
 
 	int findWay(int curX, int curY, int dstX, int dstY, int *moveTable, int moveTableSize);
 
