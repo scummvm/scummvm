@@ -788,7 +788,7 @@ int KyraEngine_MR::getCharacterWalkspeed() const {
 	return _mainCharacter.walkspeed;
 }
 
-void KyraEngine_MR::updateCharAnimFrame(int character, int *table) {
+void KyraEngine_MR::updateCharAnimFrame(int *table) {
 	++_mainCharacter.animFrame;
 	int facing = _mainCharacter.facing;
 

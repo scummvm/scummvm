@@ -583,7 +583,7 @@ protected:
 	int _characterFacingCountTable[2];
 
 	int getCharacterWalkspeed() const;
-	void updateCharAnimFrame(int num, int *table);
+	void updateCharAnimFrame(int *table);
 
 	bool checkCharCollision(int x, int y);
 

@@ -340,7 +340,7 @@ protected:
 	uint32 _updateCharPosNextUpdate;
 
 	virtual int getCharacterWalkspeed() const = 0;
-	virtual void updateCharAnimFrame(int num, int *table) = 0;
+	virtual void updateCharAnimFrame(int *table) = 0;
 
 	// chat
 	int _vocHigh;

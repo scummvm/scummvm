@@ -236,7 +236,7 @@ int KyraEngine_v2::updateCharPos(int *table, int force) {
 		return 0;
 	_mainCharacter.x1 += _charAddXPosTable[_mainCharacter.facing];
 	_mainCharacter.y1 += _charAddYPosTable[_mainCharacter.facing];
-	updateCharAnimFrame(0, table);
+	updateCharAnimFrame(table);
 	_updateCharPosNextUpdate = _system->getMillis() + getCharacterWalkspeed() * _tickLength;
 	return 1;
 }

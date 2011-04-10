@@ -386,7 +386,7 @@ private:
 
 	// character
 	int getCharacterWalkspeed() const;
-	void updateCharAnimFrame(int character, int *table);
+	void updateCharAnimFrame(int *table);
 	int8 _characterAnimTable[2];
 	static const uint8 _characterFrameTable[];
 

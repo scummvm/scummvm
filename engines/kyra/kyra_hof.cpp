@@ -1279,14 +1279,14 @@ int KyraEngine_HoF::getCharacterWalkspeed() const {
 	return _timer->getDelay(0);
 }
 
-void KyraEngine_HoF::updateCharAnimFrame(int charId, int *table) {
-	static const int unkTable2[] = { 17, 0 };
-	static const int unkTable3[] = { 10, 0 };
-	static const int unkTable4[] = { 24, 0 };
-	static const int unkTable5[] = { 19, 0 };
-	static const int unkTable6[] = { 21, 0 };
-	static const int unkTable7[] = { 31, 0 };
-	static const int unkTable8[] = { 26, 0 };
+void KyraEngine_HoF::updateCharAnimFrame(int *table) {
+	static const int unkFrame1 = 17;
+	static const int unkFrame2 = 10;
+	static const int unkFrame3 = 24;
+	static const int unkFrame4 = 19;
+	static const int unkFrame5 = 21;
+	static const int unkFrame6 = 31;
+	static const int unkFrame7 = 26;
 
 	Character *character = &_mainCharacter;
 	++character->animFrame;
@@ -1301,46 +1301,46 @@ void KyraEngine_HoF::updateCharAnimFrame(int charId, int *table) {
 	}
 
 	if (!facing) {
-		++_characterFacingCountTable[charId];
+		++_characterFacingCountTable[0];
 	} else if (facing == 4) {
-		++_characterFacingCountTable[charId+1];
+		++_characterFacingCountTable[1];
 	} else if (facing == 7 || facing == 1 || facing == 5 || facing == 3) {
 		if (facing == 7 || facing == 1) {
-			if (_characterFacingCountTable[charId] > 2)
+			if (_characterFacingCountTable[0] > 2)
 				facing = 0;
 		} else {
-			if (_characterFacingCountTable[charId+1] > 2)
+			if (_characterFacingCountTable[1] > 2)
 				facing = 4;
 		}
 
-		_characterFacingCountTable[charId] = 0;
-		_characterFacingCountTable[charId+1] = 0;
+		_characterFacingCountTable[0] = 0;
+		_characterFacingCountTable[1] = 0;
 	}
 
 	if (facing == 0) {
-		if (character->animFrame < unkTable8[charId])
-			character->animFrame = unkTable8[charId];
+		if (character->animFrame < unkFrame7)
+			character->animFrame = unkFrame7;
 
-		if (character->animFrame > unkTable7[charId])
-			character->animFrame = unkTable8[charId];
+		if (character->animFrame > unkFrame6)
+			character->animFrame = unkFrame7;
 	} else if (facing == 4) {
-		if (character->animFrame < unkTable5[charId])
-			character->animFrame = unkTable5[charId];
+		if (character->animFrame < unkFrame4)
+			character->animFrame = unkFrame4;
 
-		if (character->animFrame > unkTable4[charId])
-			character->animFrame = unkTable5[charId];
+		if (character->animFrame > unkFrame3)
+			character->animFrame = unkFrame4;
 	} else {
-		if (character->animFrame > unkTable5[charId])
-			character->animFrame = unkTable6[charId];
+		if (character->animFrame > unkFrame4)
+			character->animFrame = unkFrame5;
 
-		if (character->animFrame == unkTable2[charId])
-			character->animFrame = unkTable3[charId];
+		if (character->animFrame == unkFrame1)
+			character->animFrame = unkFrame2;
 
-		if (character->animFrame > unkTable2[charId])
-			character->animFrame = unkTable3[charId] + 2;
+		if (character->animFrame > unkFrame1)
+			character->animFrame = unkFrame2 + 2;
 	}
 
-	updateCharacterAnim(charId);
+	updateCharacterAnim(0);
 }
 
 bool KyraEngine_HoF::checkCharCollision(int x, int y) {
