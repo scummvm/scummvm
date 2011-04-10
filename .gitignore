@@ -88,6 +88,8 @@ lib*.a
 /doc/*.ps
 /doc/*.toc
 
+/plugins
+
 /test/runner
 /test/runner.cpp
 /test/*.dSYM
