@@ -89,6 +89,7 @@ APK_MAIN = scummvm.apk
 APK_PLUGINS = $(patsubst plugins/lib%.so, scummvm-engine-%.apk, $(PLUGINS))
 
 $(FILE_MANIFEST): $(FILE_MANIFEST_SRC)
+	@$(MKDIR) -p $(@D)
 	sed "s/@ANDROID_VERSIONCODE@/$(ANDROID_VERSIONCODE)/" < $< > $@
 
 $(SRC_GEN): $(FILE_MANIFEST) $(filter %.xml,$(RESOURCES)) $(ANDROID_JAR8)
