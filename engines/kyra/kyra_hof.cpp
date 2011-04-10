@@ -87,7 +87,9 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_pathfinderFlag = 0;
 	_mouseX = _mouseY = 0;
 
+	_nextIdleAnim = 0;
 	_lastIdleScript = -1;
+	_useSceneIdleAnim = false;
 
 	_currentTalkSections.STATim = 0;
 	_currentTalkSections.TLKTim = 0;
@@ -145,6 +147,11 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_menu = 0;
 	_chatIsNote = false;
 	memset(&_npcScriptData, 0, sizeof(_npcScriptData));
+
+	_setCharPalFinal = false;
+	_useCharPal = false;
+
+	memset(_characterFacingCountTable, 0, sizeof(_characterFacingCountTable));
 }
 
 KyraEngine_HoF::~KyraEngine_HoF() {
@@ -1135,8 +1142,6 @@ void KyraEngine_HoF::restorePage0() {
 }
 
 void KyraEngine_HoF::updateCharPal(int unk1) {
-	static bool unkVar1 = false;
-
 	if (!_useCharPal)
 		return;
 
@@ -1152,12 +1157,12 @@ void KyraEngine_HoF::updateCharPal(int unk1) {
 			++src;
 		}
 		_screen->setScreenPalette(_screen->getPalette(0));
-		unkVar1 = true;
+		_setCharPalFinal = true;
 		_charPalEntry = palEntry;
-	} else if (unkVar1 || !unk1) {
+	} else if (_setCharPalFinal || !unk1) {
 		_screen->getPalette(0).copy(_scenePal, palEntry << 4, 16, 112);
 		_screen->setScreenPalette(_screen->getPalette(0));
-		unkVar1 = false;
+		_setCharPalFinal = false;
 	}
 }
 
@@ -1275,7 +1280,6 @@ int KyraEngine_HoF::getCharacterWalkspeed() const {
 }
 
 void KyraEngine_HoF::updateCharAnimFrame(int charId, int *table) {
-	static int unkTable1[] = { 0, 0 };
 	static const int unkTable2[] = { 17, 0 };
 	static const int unkTable3[] = { 10, 0 };
 	static const int unkTable4[] = { 24, 0 };
@@ -1297,20 +1301,20 @@ void KyraEngine_HoF::updateCharAnimFrame(int charId, int *table) {
 	}
 
 	if (!facing) {
-		++unkTable1[charId];
+		++_characterFacingCountTable[charId];
 	} else if (facing == 4) {
-		++unkTable1[charId+1];
+		++_characterFacingCountTable[charId+1];
 	} else if (facing == 7 || facing == 1 || facing == 5 || facing == 3) {
 		if (facing == 7 || facing == 1) {
-			if (unkTable1[charId] > 2)
+			if (_characterFacingCountTable[charId] > 2)
 				facing = 0;
 		} else {
-			if (unkTable1[charId+1] > 2)
+			if (_characterFacingCountTable[charId+1] > 2)
 				facing = 4;
 		}
 
-		unkTable1[charId] = 0;
-		unkTable1[charId+1] = 0;
+		_characterFacingCountTable[charId] = 0;
+		_characterFacingCountTable[charId+1] = 0;
 	}
 
 	if (facing == 0) {
@@ -1393,12 +1397,11 @@ void KyraEngine_HoF::showIdleAnim() {
 	if (queryGameFlag(0x159) && _flags.isTalkie)
 		return;
 
-	static bool scriptAnimation = false;
-	if (!scriptAnimation && _flags.isTalkie) {
-		scriptAnimation = true;
+	if (!_useSceneIdleAnim && _flags.isTalkie) {
+		_useSceneIdleAnim = true;
 		randomSceneChat();
 	} else {
-		scriptAnimation = false;
+		_useSceneIdleAnim = false;
 		if (_characterShapeFile > 8)
 			return;
 
