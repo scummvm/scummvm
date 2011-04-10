@@ -2934,6 +2934,7 @@ void Scene6100::Action5::dispatch() {
 
 		scene->_objList[idx]->_position.x = static_cast<int>(
 			 160.0 - (330.0 / (tempSet._float2 + 330.0) * tempSet._float1));
+		scene->_objList[idx]->dispatch();
 
 		if (tempSet._float2 < 0) {
 			scene->_objList[idx]->_position.y = 300;
@@ -2946,7 +2947,6 @@ void Scene6100::Action5::dispatch() {
 
 				scene->_objList[idx]->_floats.proc1(
 					-(scene->_turnAmount * 10 + scene->_angle) * MULTIPLY_FACTOR);
-				
 				scene->_objList[idx]->_floats.add(scene->_probe._floats._float1, 
 					scene->_probe._floats._float2, scene->_probe._floats._float3);
 			}
