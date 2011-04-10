@@ -174,9 +174,6 @@ uint32 SoundGen2GS::generateOutput() {
 			// triangle wave to modulate the frequency of both oscillators.
 			// In Apple IIGS the vibrato and the envelope are updated at the
 			// same time, so the vibrato speed depends on ENVELOPE_COEF.
-			// Note: None of the instruments in the current mappings from
-			// MIDI program number to instrument use vibrato, but some of
-			// the choices are possibly still wrong.
 			
 			// Advance oscillators
 			int s0 = 0;
@@ -411,6 +408,12 @@ void SoundGen2GS::midiNoteOn(int channel, int note, int velocity) {
 
 	g->seg = 0;
 	g->a   = 0;
+
+	// Print debug messages for instruments with swap mode or vibrato enabled
+	if (g->osc[0].swap || g->osc[1].swap)
+		debugC(2, kDebugLevelSound, "Detected swap mode in a playing instrument. This is rare and is not tested well...");
+	if (i->vibDepth > 0)
+		debugC(2, kDebugLevelSound, "Detected vibrato in a playing instrument. Vibrato is not implemented, playing without...");
 }
 
 double SoundGen2GS::midiKeyToFreq(int key, double finetune) {
@@ -534,8 +537,8 @@ bool IIgsInstrumentHeader::read(Common::SeekableReadStream &stream, bool ignoreA
 
 		// Parse the generator mode byte to separate fields.
 		wave[i][k].halt =   b & 0x1;         // Bit 0     = HALT
-		wave[i][k].loop = !(b & 0x2);        // Bit 1     = LOOP
-		wave[i][k].swap =  (b & 0x3) == 0x3; // HALT|LOOP = SWAP
+		wave[i][k].loop = !(b & 0x2);        // Bit 1     =!LOOP
+		wave[i][k].swap =  (b & 0x6) == 0x6; // Bit 1&2   = SWAP
 		wave[k][k].chn  = (b >> 4) > 0; // Output channel (left or right)
 	}
 
@@ -634,12 +637,38 @@ static const IIgsMidiProgramMapping progToInstMappingV2 = {
 	6
 };
 
-/** Older Apple IIGS AGI instrument set. Used only by Space Quest I (AGI v1.002). */
+// Older Apple IIGS AGI instrument set. Used only by Space Quest I (AGI v1.002).
+//
+// Instrument 0 uses vibrato.
+// Instrument 1 uses vibrato.
+// Instrument 3 uses vibrato.
+// Instrument 5 has swap mode enabled for the first oscillator.
+// Instruemnt 9 uses vibrato.
+// Instrument 10 uses vibrato.
+// Instrument 12 uses vibrato.
+// Instrument 15 uses vibrato.
+// Instrument 16 uses vibrato.
+// Instrument 18 uses vibrato.
 static const IIgsInstrumentSetInfo instSetV1 = {
 	1192, 26, "7ee16bbc135171ffd6b9120cc7ff1af2", "edd3bf8905d9c238e02832b732fb2e18", &progToInstMappingV1
 };
 
-/** Newer Apple IIGS AGI instrument set (AGI v1.003+). Used by all others than Space Quest I. */
+// Newer Apple IIGS AGI instrument set (AGI v1.003+). Used by all others than Space Quest I.
+//
+// Instrument 0 uses vibrato.
+// Instrument 1 uses vibrato.
+// Instrument 3 uses vibrato.
+// Instrument 6 has swap mode enabled for the first oscillator.
+// Instrument 11 uses vibrato.
+// Instrument 12 uses vibrato.
+// Instrument 14 uses vibrato.
+// Instrument 17 uses vibrato.
+// Instrument 18 uses vibrato.
+// Instrument 20 uses vibrato.
+//
+// In KQ1 intro and in LSL intro one (and the same, or at least similar)
+// instrument is using vibrato. In PQ intro there is also one instrument
+// using vibrato.
 static const IIgsInstrumentSetInfo instSetV2 = {
 	1292, 28, "b7d428955bb90721996de1cbca25e768", "c05fb0b0e11deefab58bc68fbd2a3d07", &progToInstMappingV2
 };
