@@ -45,8 +45,6 @@ public:
 	bool isValid() { return _numEntries > 0; }
 	const char *getFilename() const;
 
-    int typeId() const { return 16; }
-
 private:
 	LipEntry *_entries;
 	int _numEntries;
