@@ -32,6 +32,7 @@
 #include "audio/decoders/quicktime.h"
 
 // Codecs
+#include "audio/decoders/aac.h"
 #include "audio/decoders/adpcm.h"
 #include "audio/decoders/qdm2.h"
 #include "audio/decoders/raw.h"
@@ -153,9 +154,13 @@ bool QuickTimeAudioDecoder::checkAudioCodecSupport(uint32 tag, byte objectTypeMP
 	if (tag == MKID_BE('mp4a')) {
 		Common::String audioType;
 		switch (objectTypeMP4) {
-		case 0x40:
+		case 0x40: // AAC
+#ifdef USE_FAAD
+			return true;
+#else
 			audioType = "AAC";
 			break;
+#endif
 		default:
 			audioType = "Unknown";
 			break;
@@ -190,6 +195,12 @@ AudioStream *QuickTimeAudioDecoder::createAudioStream(Common::SeekableReadStream
 	} else if (entry->codecTag == MKID_BE('ima4')) {
 		// Riven uses this codec (as do some Myst ME videos)
 		return makeADPCMStream(stream, DisposeAfterUse::YES, stream->size(), kADPCMApple, entry->sampleRate, entry->channels, 34);
+	} else if (entry->codecTag == MKID_BE('mp4a')) {
+		// The 7th Guest iOS uses an MPEG-4 codec
+#ifdef USE_FAAD
+		if (_streams[_audioStreamIndex]->objectTypeMP4 == 0x40)
+			return makeAACStream(stream, DisposeAfterUse::YES, _streams[_audioStreamIndex]->extradata);
+#endif
 #ifdef AUDIO_QDM2_H
 	} else if (entry->codecTag == MKID_BE('QDM2')) {
 		// Myst ME uses this codec for many videos
@@ -225,27 +236,48 @@ void QuickTimeAudioDecoder::queueNextAudioChunk() {
 	uint32 sampleCount = getAudioChunkSampleCount(_curAudioChunk);
 	assert(sampleCount);
 
-	// Then calculate the right sizes
-	while (sampleCount > 0) {
-		uint32 samples = 0, size = 0;
+	if (_streams[_audioStreamIndex]->stts_count == 1 && _streams[_audioStreamIndex]->stts_data[0].duration == 1) {
+		// Old-style audio demuxing
 
-		if (entry->samplesPerFrame >= 160) {
-			samples = entry->samplesPerFrame;
-			size = entry->bytesPerFrame;
-		} else if (entry->samplesPerFrame > 1) {
-			samples = MIN<uint32>((1024 / entry->samplesPerFrame) * entry->samplesPerFrame, sampleCount);
-			size = (samples / entry->samplesPerFrame) * entry->bytesPerFrame;
-		} else {
-			samples = MIN<uint32>(1024, sampleCount);
-			size = samples * _streams[_audioStreamIndex]->sample_size;
+		// Then calculate the right sizes
+		while (sampleCount > 0) {
+			uint32 samples = 0, size = 0;
+
+			if (entry->samplesPerFrame >= 160) {
+				samples = entry->samplesPerFrame;
+				size = entry->bytesPerFrame;
+			} else if (entry->samplesPerFrame > 1) {
+				samples = MIN<uint32>((1024 / entry->samplesPerFrame) * entry->samplesPerFrame, sampleCount);
+				size = (samples / entry->samplesPerFrame) * entry->bytesPerFrame;
+			} else {
+				samples = MIN<uint32>(1024, sampleCount);
+				size = samples * _streams[_audioStreamIndex]->sample_size;
+			}
+
+			// Now, we read in the data for this data and output it
+			byte *data = (byte *)malloc(size);
+			_fd->read(data, size);
+			wStream->write(data, size);
+			free(data);
+			sampleCount -= samples;
 		}
+	} else {
+		// New-style audio demuxing
 
-		// Now, we read in the data for this data and output it
-		byte *data = (byte *)malloc(size);
-		_fd->read(data, size);
-		wStream->write(data, size);
-		free(data);
-		sampleCount -= samples;
+		// Find our starting sample
+		uint32 startSample = 0;
+		for (uint32 i = 0; i < _curAudioChunk; i++)
+			startSample += getAudioChunkSampleCount(i);
+
+		for (uint32 i = 0; i < sampleCount; i++) {
+			uint32 size = (_streams[_audioStreamIndex]->sample_size != 0) ? _streams[_audioStreamIndex]->sample_size : _streams[_audioStreamIndex]->sample_sizes[i + startSample];
+
+			// Now, we read in the data for this data and output it
+			byte *data = (byte *)malloc(size);
+			_fd->read(data, size);
+			wStream->write(data, size);
+			free(data);
+		}
 	}
 
 	// Now queue the buffer
