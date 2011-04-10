@@ -1668,9 +1668,9 @@ case $_host_os in
 		_unix=yes
 		;;
 	webos)
-		CXXFLAGS="$CXXFLAGS --sysroot=$WEBOS_PDK/arm-gcc/sysroot"
 		LDFLAGS="$LDFLAGS -L$WEBOS_PDK/device/lib -L$WEBOS_PDK/device/usr/lib"
 		LDFLAGS="$LDFLAGS -Wl,--allow-shlib-undefined"
+		LDFLAGS="$LDFLAGS --sysroot=$WEBOS_PDK/arm-gcc/sysroot"
 		add_line_to_config_mk "WEBOS_SDK = $WEBOS_SDK"
 		_unix=yes
 		_seq_midi=no
@@ -2069,7 +2069,6 @@ if test -n "$_host"; then
 			_seq_midi=no
 			_vkeybd=no
 			_keymapper=yes
-			_opengles=yes
 			;;
 		wii)
 			_endian=big
