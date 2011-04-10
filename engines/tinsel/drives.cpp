@@ -74,7 +74,7 @@ int GetCurrentCD() {
 	return (currentCD - '1' + 1);
 }
 
-const uint32 cdFlags[] = { fCd1, fCd2, fCd3, fCd4, fCd5, fCd6, fCd7, fCd8 };
+static const uint32 cdFlags[] = { fCd1, fCd2, fCd3, fCd4, fCd5, fCd6, fCd7, fCd8 };
 
 void SetCD(int flags) {
 	if (flags & cdFlags[currentCD - '1'])
