@@ -1025,7 +1025,6 @@ bool BMVPlayer::DoSoundFrame() {
 void BMVPlayer::CopyMovieToScreen() {
 	// Not if not up and running yet!
 	if (!screenBuffer || (currentFrame == 0)) {
-		ForceEntireRedraw();
 		DrawBackgnd();
 		return;
 	}
