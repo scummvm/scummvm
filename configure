@@ -1669,7 +1669,7 @@ case $_host_os in
 		;;
 	webos)
 		CXXFLAGS="$CXXFLAGS --sysroot=$WEBOS_PDK/arm-gcc/sysroot"
-		LDFLAGS="$LDFLAGS -L$WEBOS_PDK/device/lib"
+		LDFLAGS="$LDFLAGS -L$WEBOS_PDK/device/lib -L$WEBOS_PDK/device/usr/lib"
 		LDFLAGS="$LDFLAGS -Wl,--allow-shlib-undefined"
 		add_line_to_config_mk "WEBOS_SDK = $WEBOS_SDK"
 		_unix=yes
@@ -2069,6 +2069,7 @@ if test -n "$_host"; then
 			_seq_midi=no
 			_vkeybd=no
 			_keymapper=yes
+			_opengles=yes
 			;;
 		wii)
 			_endian=big
@@ -2321,7 +2322,7 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 LIBS            += -ldl
 '
 		;;
-	linux*)
+	linux* | webos)
 _def_plugin='
 #define PLUGIN_PREFIX	"lib"
 #define PLUGIN_SUFFIX	".so"
@@ -3133,7 +3134,7 @@ case $_backend in
 		DEFINES="$DEFINES -DSDL_BACKEND"
 		;;
 	webos)
-		INCLUDES="$INCLUDES -I$WEBOS_PDK/include -I$WEBOS_PDK/include/SDL"
+		INCLUDES="$INCLUDES -I$WEBOS_PDK/include -I$WEBOS_PDK/include/SDL -I$WEBOS_PDK/device/usr/include"
 		LIBS="$LIBS -lSDL -lpdl"
 		DEFINES="$DEFINES -DSDL_BACKEND -DWEBOS"
 		MODULES="$MODULES backends/platform/sdl"
