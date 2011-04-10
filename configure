@@ -3044,7 +3044,7 @@ case $_backend in
 		# than pick up anything unhygenic from the Android libs.
 		LIBS="-Wl,-Bstatic $static_libs"
 		LIBS="$LIBS -Wl,-Bdynamic -lgcc $system_libs -llog -lGLESv1_CM"
-		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
+		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE -DFORCE_RTL"
 		;;
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
@@ -3140,7 +3140,7 @@ case $_backend in
 		MODULES="$MODULES backends/platform/sdl"
 		;;
 	wii)
-		DEFINES="$DEFINES -D__WII__ -DGEKKO"
+		DEFINES="$DEFINES -D__WII__ -DGEKKO -DFORCE_RTL"
 		case $_host_os in
 		gamecube)
 			LIBS="$LIBS -lgxflux -liso9660 -lfat -logc -ldb"

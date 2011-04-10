@@ -1,4 +1,4 @@
-MODULE := tools/create_hugo
+MODULE := devtools/create_hugo
 
 MODULE_OBJS := \
 	create_hugo.o

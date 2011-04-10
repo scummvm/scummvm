@@ -152,7 +152,7 @@ std::string MSVCProvider::getPreBuildEvent() const {
 	cmdLine = "@echo off\n"
 	          "echo Executing Pre-Build script...\n"
 			  "echo.\n"
-			  "@call &quot;$(SolutionDir)../../tools/create_project/scripts/prebuild.cmd&quot; &quot;$(SolutionDir)/../..&quot;\n"
+			  "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/prebuild.cmd&quot; &quot;$(SolutionDir)/../..&quot;\n"
 	          "EXIT /B0";
 
 	return cmdLine;
@@ -164,7 +164,7 @@ std::string MSVCProvider::getPostBuildEvent(bool isWin32) const {
 	cmdLine = "@echo off\n"
 	          "echo Executing Post-Build script...\n"
 	          "echo.\n"
-	          "@call &quot;$(SolutionDir)../../tools/create_project/scripts/postbuild.cmd&quot; &quot;$(SolutionDir)/../..&quot; &quot;$(OutDir)&quot; ";
+	          "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/postbuild.cmd&quot; &quot;$(SolutionDir)/../..&quot; &quot;$(OutDir)&quot; ";
 
 	cmdLine += (isWin32) ? "x86" : "x64";
 

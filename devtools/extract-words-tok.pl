@@ -32,8 +32,8 @@
 #
 # for i in agigames/*/words.tok
 # do
-#   tools/extract-words-tok.pl "$i"
-# done | tools/construct-pred-dict.pl
+#   devtools/extract-words-tok.pl "$i"
+# done | devtools/construct-pred-dict.pl
 #
 
 local $/;

@@ -373,8 +373,21 @@ int32 RncDecoder::unpackM1(const void *input, uint16 inputSize, void *output) {
 				_dstPtr += inputLength;
 				_srcPtr += inputLength;
 				_inputByteLeft -= inputLength;
-				uint16 a = READ_LE_UINT16(_srcPtr);
-				uint16 b = READ_LE_UINT16(_srcPtr + 2);
+				uint16 a; 
+				if (_inputByteLeft <= 0)
+					a = 0;
+				else if (_inputByteLeft == 1)
+					a = *_srcPtr;
+				else
+					a = READ_LE_UINT16(_srcPtr);
+
+				uint16 b;
+				if (_inputByteLeft <= 2)
+					b = 0;
+				else if(_inputByteLeft == 3)
+					b = *(_srcPtr + 2);
+				else
+					b = READ_LE_UINT16(_srcPtr + 2);
 
 				_bitBuffl &= ((1 << _bitCount) - 1);
 				_bitBuffl |= (a << _bitCount);

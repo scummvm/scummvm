@@ -122,8 +122,8 @@ Common::Rect LBValue::toRect() const {
 	}
 }
 
-LBCode::LBCode(MohawkEngine_LivingBooks *vm) : _vm(vm) {
-	Common::SeekableSubReadStreamEndian *bcodStream = _vm->wrapStreamEndian(ID_BCOD, 1000);
+LBCode::LBCode(MohawkEngine_LivingBooks *vm, uint16 baseId) : _vm(vm) {
+	Common::SeekableSubReadStreamEndian *bcodStream = _vm->wrapStreamEndian(ID_BCOD, baseId);
 
 	uint32 totalSize = bcodStream->readUint32();
 	if (totalSize != (uint32)bcodStream->size())

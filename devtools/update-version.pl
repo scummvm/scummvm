@@ -41,6 +41,7 @@ my @subs_files = qw(
 	dists/irix/scummvm.spec
 	dists/wii/meta.xml
 	dists/android/AndroidManifest.xml
+	dists/android/plugin-manifest.xml
 	backends/platform/psp/README.PSP
 	);
 

@@ -1,14 +1,13 @@
 # $URL$
 # $Id$
 
-MODULE := tools/create_lure
+MODULE := devtools/qtable
 
 MODULE_OBJS := \
-	create_lure_dat.o \
-	process_actions.o
+	qtable.o
 
 # Set the name of the executable
-TOOL_EXECUTABLE := create_lure
+TOOL_EXECUTABLE := qtable
 
 # Include common rules
 include $(srcdir)/rules.mk

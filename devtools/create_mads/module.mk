@@ -1,14 +1,14 @@
 # $URL$
 # $Id$
 
-MODULE := tools/create_teenagent
+MODULE := devtools/create_mads
 
 MODULE_OBJS := \
-	create_teenagent.o \
-	md5.o
+	main.o \
+	parser.o
 
 # Set the name of the executable
-TOOL_EXECUTABLE := create_teenagent
+TOOL_EXECUTABLE := create_mads
 
 # Include common rules
 include $(srcdir)/rules.mk

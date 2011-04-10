@@ -180,7 +180,7 @@ enum {
 
 class LBCode {
 public:
-	LBCode(MohawkEngine_LivingBooks *vm);
+	LBCode(MohawkEngine_LivingBooks *vm, uint16 baseId);
 	~LBCode();
 
 	LBValue runCode(LBItem *src, uint32 offset);
