@@ -43,9 +43,10 @@ namespace Common {
 	class MacResManager;
 
 /**
- * Parser for QuickTime files.
+ * Parser for QuickTime/MPEG-4 files.
  *
  * File parser used in engines:
+ *  - groovie
  *  - mohawk
  *  - sci
  */

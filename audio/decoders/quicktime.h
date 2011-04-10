@@ -23,6 +23,14 @@
  *
  */
 
+/**
+ * @file
+ * Sound decoder used in engines:
+ *  - groovie
+ *  - mohawk
+ *  - sci
+ */
+
 #ifndef AUDIO_QUICKTIME_H
 #define AUDIO_QUICKTIME_H
 

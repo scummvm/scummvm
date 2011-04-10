@@ -128,6 +128,7 @@ int AACStream::readBuffer(int16 *buffer, const int numSamples) {
 
 	assert((numSamples % _channels) == 0);
 
+	// Dip into our remaining samples pool if it's available
 	if (_remainingSamples) {
 		samples = MIN<int>(numSamples, _remainingSamplesSize - _remainingSamplesPos);
 	
@@ -140,6 +141,7 @@ int AACStream::readBuffer(int16 *buffer, const int numSamples) {
 		}
 	}
 
+	// Decode until we have enough samples (or there's no more left)
 	while (samples < numSamples && !endOfData()) {
 		NeAACDecFrameInfo frameInfo;
 		uint16 *decodedSamples = (uint16 *)NeAACDecDecode(_handle, &frameInfo, _inBuffer + _inBufferPos, _inBufferSize - _inBufferPos);
@@ -153,6 +155,7 @@ int AACStream::readBuffer(int16 *buffer, const int numSamples) {
 		memcpy(buffer + samples, decodedSamples, copySamples * 2);
 		samples += copySamples;
 
+		// Copy leftover samples for use in a later readBuffer() call
 		if (copySamples != decodedSampleSize) {
 			_remainingSamplesSize = decodedSampleSize - copySamples;
 			_remainingSamples = new int16[_remainingSamplesSize];
