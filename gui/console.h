@@ -178,6 +178,8 @@ protected:
 	void updateScrollBuffer();
 	void scrollToCurrent();
 
+	void defaultKeyDownHandler(Common::KeyState &state);
+
 	// Line editing
 	void specialKeys(int keycode);
 	void nextLine();

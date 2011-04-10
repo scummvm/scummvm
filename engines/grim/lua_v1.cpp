@@ -48,8 +48,8 @@ namespace Grim {
 
 extern Imuse *g_imuse;
 
-Common::StringList g_listfiles;
-Common::StringList::const_iterator g_filesiter;
+Common::StringArray g_listfiles;
+Common::StringArray::const_iterator g_filesiter;
 
 int refSystemTable;
 static int refTypeOverride;

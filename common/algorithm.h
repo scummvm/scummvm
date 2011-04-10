@@ -27,6 +27,7 @@
 
 #include "common/sys.h"
 #include "common/func.h"
+#include "common/util.h"
 
 namespace Common {
 

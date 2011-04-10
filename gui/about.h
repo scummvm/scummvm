@@ -32,11 +32,11 @@
 namespace GUI {
 
 class AboutDialog : public Dialog {
-	typedef Common::StringList StringList;
+	typedef Common::Array<Common::String> StringArray;
 protected:
 	int			_scrollPos;
 	uint32		_scrollTime;
-	StringList	_lines;
+	StringArray	_lines;
 	uint32		_lineHeight;
 	bool		_willClose;
 

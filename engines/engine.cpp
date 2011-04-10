@@ -30,6 +30,10 @@
 #endif
 
 #include "engines/engine.h"
+#include "engines/dialogs.h"
+#include "engines/metaengine.h"
+#include "engines/util.h"
+
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
@@ -37,12 +41,15 @@
 #include "common/timer.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/str.h"
+
 #include "gui/debugger.h"
 #include "gui/message.h"
 #include "gui/GuiManager.h"
+
 #include "sound/mixer.h"
-#include "engines/dialogs.h"
-#include "engines/metaengine.h"
+
+#include "graphics/cursorman.h"
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone();
@@ -57,7 +64,7 @@ static void defaultOutputFormatter(char *dst, const char *src, size_t dstSize) {
 	if (g_engine) {
 		g_engine->errorString(src, dst, dstSize);
 	} else {
-		strncpy(dst, src, dstSize);
+		Common::strlcpy(dst, src, dstSize);
 	}
 }
 
@@ -85,7 +92,6 @@ Engine::Engine(OSystem *syst)
 		_eventMan(_system->getEventManager()),
 		_saveFileMan(_system->getSavefileManager()),
 		_targetName(ConfMan.getActiveDomainName()),
-		_gameDataDir(ConfMan.get("path")),
 		_pauseLevel(0),
 		_mainMenuDialog(NULL) {
 
@@ -94,13 +100,14 @@ Engine::Engine(OSystem *syst)
 	Common::setErrorOutputFormatter(defaultOutputFormatter);
 	Common::setErrorHandler(defaultErrorHandler);
 
-	// FIXME: Get rid of the following again. It is only here temporarily.
-	// We really should never run with a non-working Mixer, so ought to handle
-	// this at a much earlier stage. If we *really* want to support systems
-	// without a working mixer, then we need more work. E.g. we could modify the
-	// Mixer to immediately drop any streams passed to it. This way, at least
-	// we don't crash because heaps of (sound) memory get allocated but never
-	// freed. Of course, there still would be problems with many games...
+	// FIXME: Get rid of the following again. It is only here
+	// temporarily. We really should never run with a non-working Mixer,
+	// so ought to handle this at a much earlier stage. If we *really*
+	// want to support systems without a working mixer, then we need
+	// more work. E.g. we could modify the Mixer to immediately drop any
+	// streams passed to it. This way, at least we don't crash because
+	// heaps of (sound) memory get allocated but never freed. Of course,
+	// there still would be problems with many games...
 	if (!_mixer->isReady())
 		warning("Sound initialization failed. This may cause severe problems in some games.");
 }
@@ -151,12 +158,14 @@ void Engine::checkCD() {
 	char buffer[MAXPATHLEN];
 	int i;
 
-	if (_gameDataDir.getPath().empty()) {
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+
+	if (gameDataDir.getPath().empty()) {
 		// That's it! I give up!
 		if (getcwd(buffer, MAXPATHLEN) == NULL)
 			return;
 	} else
-		strncpy(buffer, _gameDataDir.getPath().c_str(), MAXPATHLEN);
+		Common::strlcpy(buffer, gameDataDir.getPath().c_str(), sizeof(buffer));
 
 	for (i = 0; i < MAXPATHLEN - 1; i++) {
 		if (buffer[i] == '\\')
@@ -195,9 +204,7 @@ bool Engine::shouldPerformAutoSave(int lastSaveTime) {
 }
 
 void Engine::errorString(const char *buf1, char *buf2, int size) {
-	strncpy(buf2, buf1, size);
-	if (size > 0)
-		buf2[size-1] = '\0';
+	Common::strlcpy(buf2, buf1, size);
 }
 
 void Engine::pauseEngine(bool pause) {

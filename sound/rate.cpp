@@ -28,7 +28,7 @@
  * Fabrice original code is part of SoX (http://sox.sourceforge.net).
  * Max Horn adapted that code to the needs of ScummVM and rewrote it partial,
  * in the process removing any use of floating point arithmetic. Various other
- * improvments over the original code were made.
+ * improvements over the original code were made.
  */
 
 #include "sound/audiostream.h"
@@ -199,7 +199,7 @@ LinearRateConverter<stereo, reverseStereo>::LinearRateConverter(st_rate_t inrate
 	// This will overflow if inrate >= 2^16, and underflow if outrate >= 2^16.
 	// Also, if the quotient of the two rate becomes too small / too big, that
 	// would cause problems, but since we rarely scale from 1 to 65536 Hz or vice
-	// versa, I think we can live with that limiation ;-).
+	// versa, I think we can live with that limitation ;-).
 	opos_inc = (inrate << FRAC_BITS) / outrate;
 
 	ilast0 = ilast1 = 0;

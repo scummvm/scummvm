@@ -9,30 +9,30 @@
 # UNIX specific
 #
 install: all
-	$(INSTALL) -d "$(DESTDIR)$(BINDIR)"
-	$(INSTALL) -c -s -m 755 "./$(EXECUTABLE)" "$(DESTDIR)$(BINDIR)/$(EXECUTABLE)"
-	#$(INSTALL) -d "$(DESTDIR)$(MANDIR)/man6/"
-	#$(INSTALL) -c -m 644 "$(srcdir)/dists/residual.6" "$(DESTDIR)$(MANDIR)/man6/residual.6"
-	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/pixmaps/"
-	$(INSTALL) -c -m 644 "$(srcdir)/icons/residual.xpm" "$(DESTDIR)$(PREFIX)/share/pixmaps/residual.xpm"
-	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/doc/residual/"
-	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(PREFIX)/share/doc/residual/"
-	$(INSTALL) -d "$(DESTDIR)$(DATADIR)/residual/"
-	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) "$(DESTDIR)$(DATADIR)/residual/"
-	#$(INSTALL) -c -m 644 $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(DATADIR)/residual/"
+	$(INSTALL) -d "$(DESTDIR)$(bindir)"
+	$(INSTALL) -c -s -m 755 "./$(EXECUTABLE)" "$(DESTDIR)$(bindir)/$(EXECUTABLE)"
+	#$(INSTALL) -d "$(DESTDIR)$(mandir)/man6/"
+	#$(INSTALL) -c -m 644 "$(srcdir)/dists/residual.6" "$(DESTDIR)$(mandir)/man6/residual.6"
+	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/pixmaps/"
+	$(INSTALL) -c -m 644 "$(srcdir)/icons/residual.xpm" "$(DESTDIR)$(datarootdir)/pixmaps/residual.xpm"
+	$(INSTALL) -d "$(DESTDIR)$(docdir)"
+	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(docdir)"
+	$(INSTALL) -d "$(DESTDIR)$(datadir)"
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) "$(DESTDIR)$(datadir)/"
+	#$(INSTALL) -c -m 644 $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
 ifdef DYNAMIC_MODULES
-	$(INSTALL) -d "$(DESTDIR)$(LIBDIR)/residual/"
-	$(INSTALL) -c -s -m 644 $(DIST_FILES_PLUGINS) "$(DESTDIR)$(LIBDIR)/residual/"
+	$(INSTALL) -d "$(DESTDIR)$(libdir)/residual/"
+	$(INSTALL) -c -s -m 644 $(PLUGINS) "$(DESTDIR)$(libdir)/residual/"
 endif
 
 uninstall:
-	rm -f "$(DESTDIR)$(BINDIR)/$(EXECUTABLE)"
-	rm -f "$(DESTDIR)$(MANDIR)/man6/residual.6"
-	rm -f "$(DESTDIR)$(PREFIX)/share/pixmaps/residual.xpm"
-	rm -rf "$(DESTDIR)$(PREFIX)/share/doc/residual/"
-	rm -rf "$(DESTDIR)$(DATADIR)/residual/"
+	rm -f "$(DESTDIR)$(bindir)/$(EXECUTABLE)"
+	rm -f "$(DESTDIR)$(mandir)/man6/residual.6"
+	rm -f "$(DESTDIR)$(datarootdir)/pixmaps/residual.xpm"
+	rm -rf "$(DESTDIR)$(docdir)"
+	rm -rf "$(DESTDIR)$(datadir)"
 ifdef DYNAMIC_MODULES
-	rm -rf "$(DESTDIR)$(LIBDIR)/residual/"
+	rm -rf "$(DESTDIR)$(libdir)/residual/"
 endif
 
 deb:
@@ -158,7 +158,7 @@ win32dist: $(EXECUTABLE)
 	#cp $(DIST_FILES_ENGINEDATA) $(WIN32PATH)
 	cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING $(WIN32PATH)/COPYING.txt
-	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING_LGPL.txt
+	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING.LGPL.txt
 	cp $(srcdir)/NEWS $(WIN32PATH)/NEWS.txt
 	cp $(srcdir)/README $(WIN32PATH)/README.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
@@ -173,7 +173,7 @@ crosswin32dist: $(EXECUTABLE)
 	#cp $(DIST_FILES_ENGINEDATA) ResidualWin32
 	cp $(srcdir)/AUTHORS ResidualWin32/AUTHORS.txt
 	cp $(srcdir)/COPYING ResidualWin32/COPYING.txt
-	cp $(srcdir)/COPYING.LGPL ResidualWin32/COPYING_LGPL.txt
+	cp $(srcdir)/COPYING.LGPL ResidualWin32/COPYING.LGPL.txt
 	cp $(srcdir)/NEWS ResidualWin32/NEWS.txt
 	cp $(srcdir)/README ResidualWin32/README.txt
 	cp $(srcdir)/dists/residual.iss ResidualWin32
@@ -189,8 +189,8 @@ crosswin32dist: $(EXECUTABLE)
 # Special target to create an AmigaOS snapshot installation
 aos4dist: $(EXECUTABLE)
 	mkdir -p $(AOS4PATH)
-	$(STRIP) $(EXECUTABLE) -o $(AOS4PATH)/$(EXECUTABLE)_SVN
-	cp icons/residual.info $(AOS4PATH)/$(EXECUTABLE)_SVN.info
+	$(STRIP) $(EXECUTABLE) -o $(AOS4PATH)/$(EXECUTABLE)
+	cp icons/residual.info $(AOS4PATH)/$(EXECUTABLE).info
 	cp $(DIST_FILES_THEMES) $(AOS4PATH)/themes/
 	#cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)/extras/
 	cp $(srcdir)/AUTHORS $(AOS4PATH)/AUTHORS.txt

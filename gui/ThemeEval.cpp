@@ -28,6 +28,8 @@
 
 #include "graphics/scaler.h"
 
+#include "common/tokenizer.h"
+
 namespace GUI {
 
 ThemeEval::~ThemeEval() {

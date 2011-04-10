@@ -166,7 +166,7 @@ void FilePluginProvider::addCustomDirectories(Common::FSList &dirs) const {
 
 #pragma mark -
 
-DECLARE_SINGLETON(PluginManager);
+DECLARE_SINGLETON(PluginManager)
 
 PluginManager::PluginManager() {
 	// Always add the static plugin provider.
@@ -258,7 +258,7 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 
 #include "engines/metaengine.h"
 
-DECLARE_SINGLETON(EngineManager);
+DECLARE_SINGLETON(EngineManager)
 
 GameDescriptor EngineManager::findGame(const Common::String &gameName, const EnginePlugin **plugin) const {
 	// Find the GameDescriptor for this target
@@ -304,7 +304,7 @@ const EnginePlugin::List &EngineManager::getPlugins() const {
 
 #include "sound/musicplugin.h"
 
-DECLARE_SINGLETON(MusicManager);
+DECLARE_SINGLETON(MusicManager)
 
 const MusicPlugin::List &MusicManager::getPlugins() const {
 	return (const MusicPlugin::List &)PluginManager::instance().getPlugins(PLUGIN_TYPE_MUSIC);

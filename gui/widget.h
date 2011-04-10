@@ -120,8 +120,6 @@ public:
 	virtual bool handleKeyUp(Common::KeyState state) { return false; }	// Return true if the event was handled
 	virtual void handleTickle() {}
 
-	virtual void reflowLayout() { GuiObject::reflowLayout(); }
-
 	void draw();
 	void receivedFocus() { _hasFocus = true; receivedFocusWidget(); }
 	void lostFocus() { _hasFocus = false; lostFocusWidget(); }

@@ -48,11 +48,6 @@
 
 using GUI::CommandSender;
 using GUI::StaticTextWidget;
-using GUI::kCloseCmd;
-using GUI::WIDGET_ENABLED;
-
-typedef GUI::OptionsDialog GUI_OptionsDialog;
-typedef GUI::Dialog GUI_Dialog;
 
 enum {
 	kSaveCmd = 'SAVE',
@@ -129,49 +124,10 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		close();
 		break;
 	case kLoadCmd:
-		{
-		Common::String gameId = ConfMan.get("gameid");
-
-		const EnginePlugin *plugin = 0;
-		EngineMan.findGame(gameId, &plugin);
-
-		int slot = _loadDialog->runModal(plugin, ConfMan.getActiveDomainName());
-
-		if (slot >= 0) {
-			// FIXME: For now we just ignore the return
-			// value, which is quite bad since it could
-			// be a fatal loading error, which renders
-			// the engine unusable.
-			_engine->loadGameState(slot);
-			close();
-		}
-
-		}
+		load();
 		break;
 	case kSaveCmd:
-		{
-		Common::String gameId = ConfMan.get("gameid");
-
-		const EnginePlugin *plugin = 0;
-		EngineMan.findGame(gameId, &plugin);
-
-		int slot = _saveDialog->runModal(plugin, ConfMan.getActiveDomainName());
-
-		if (slot >= 0) {
-			Common::String result(_saveDialog->getResultString());
-			if (result.empty()) {
-				// If the user was lazy and entered no save name, come up with a default name.
-				char buf[20];
-				snprintf(buf, 20, "Save %d", slot + 1);
-				_engine->saveGameState(slot, buf);
-			} else {
-				_engine->saveGameState(slot, result.c_str());
-			}
-
-			close();
-		}
-
-		}
+		save();
 		break;
 	case kOptionsCmd:
 		_optionsDialog->runModal();
@@ -236,9 +192,46 @@ void MainMenuDialog::reflowLayout() {
 	Dialog::reflowLayout();
 }
 
-enum {
-	kOKCmd = 'ok  '
-};
+void MainMenuDialog::save() {
+	Common::String gameId = ConfMan.get("gameid");
+
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+
+	int slot = _saveDialog->runModal(plugin, ConfMan.getActiveDomainName());
+
+	if (slot >= 0) {
+		Common::String result(_saveDialog->getResultString());
+		if (result.empty()) {
+			// If the user was lazy and entered no save name, come up with a default name.
+			char buf[20];
+			snprintf(buf, 20, "Save %d", slot + 1);
+			_engine->saveGameState(slot, buf);
+		} else {
+			_engine->saveGameState(slot, result.c_str());
+		}
+
+		close();
+	}
+}
+
+void MainMenuDialog::load() {
+	Common::String gameId = ConfMan.get("gameid");
+
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+
+	int slot = _loadDialog->runModal(plugin, ConfMan.getActiveDomainName());
+
+	if (slot >= 0) {
+		// FIXME: For now we just ignore the return
+		// value, which is quite bad since it could
+		// be a fatal loading error, which renders
+		// the engine unusable.
+		_engine->loadGameState(slot);
+		close();
+	}
+}
 
 enum {
 	kKeysCmd = 'KEYS'
@@ -270,36 +263,8 @@ enum {
 //  "" as value for the domain, and in fact provide a somewhat better user
 // experience at the same time.
 ConfigDialog::ConfigDialog(bool subtitleControls)
-	: GUI::OptionsDialog("", "ScummConfig") {
-
-	//
-	// Sound controllers
-	//
-
-	addVolumeControls(this, "ScummConfig.");
-	setVolumeSettingsState(true); // could disable controls by GUI options
-
-	//
-	// Subtitle speed and toggle controllers
-	//
-
-	if (subtitleControls) {
-		// Global talkspeed range of 0-255
-		addSubtitleControls(this, "ScummConfig.", 255);
-		setSubtitleSettingsState(true); // could disable controls by GUI options
-	}
-
-	//
-	// Add the buttons
-	//
-
-	new GUI::ButtonWidget(this, "ScummConfig.Ok", "OK", GUI::OptionsDialog::kOKCmd, 'O');
-	new GUI::ButtonWidget(this, "ScummConfig.Cancel", "Cancel", kCloseCmd, 'C');
-
-#ifdef SMALL_SCREEN_DEVICE
-	new GUI::ButtonWidget(this, "ScummConfig.Keys", "Keys", kKeysCmd, 'K');
-	_keysDialog = NULL;
-#endif
+	: GUI::OptionsDialog("", "") {
+	// Not in Residual
 }
 
 ConfigDialog::~ConfigDialog() {
@@ -323,7 +288,7 @@ void ConfigDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 #endif
 		break;
 	default:
-		GUI_OptionsDialog::handleCommand (sender, cmd, data);
+		GUI::OptionsDialog::handleCommand (sender, cmd, data);
 	}
 }
 

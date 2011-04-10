@@ -101,7 +101,7 @@ public:
 	 *
 	 * @return bool true if the node exists, false otherwise.
 	 */
-	virtual bool exists() const;
+	bool exists() const;
 
 	/**
 	 * Create a new node referring to a child node of the current node, which
@@ -128,7 +128,7 @@ public:
 	 *
 	 * @return true if successful, false otherwise (e.g. when the directory does not exist).
 	 */
-	virtual bool getChildren(FSList &fslist, ListMode mode = kListDirectoriesOnly, bool hidden = false) const;
+	bool getChildren(FSList &fslist, ListMode mode = kListDirectoriesOnly, bool hidden = false) const;
 
 	/**
 	 * Return a human readable string for this node, usable for display (e.g.
@@ -161,7 +161,7 @@ public:
 	 *
 	 * @return the 'path' represented by this filesystem node
 	 */
-	virtual String getPath() const;
+	String getPath() const;
 
 	/**
 	 * Get the parent node of this node. If this node has no parent node,
@@ -178,7 +178,7 @@ public:
 	 * Or even replace isDirectory by a getType() method that can return values like
 	 * kDirNodeType, kFileNodeType, kInvalidNodeType.
 	 */
-	virtual bool isDirectory() const;
+	bool isDirectory() const;
 
 	/**
 	 * Indicates whether the object referred by this node can be read from or not.
@@ -191,7 +191,7 @@ public:
 	 *
 	 * @return true if the object can be read, false otherwise.
 	 */
-	virtual bool isReadable() const;
+	bool isReadable() const;
 
 	/**
 	 * Indicates whether the object referred by this node can be written to or not.
@@ -204,7 +204,7 @@ public:
 	 *
 	 * @return true if the object can be written to, false otherwise.
 	 */
-	virtual bool isWritable() const;
+	bool isWritable() const;
 
 	/**
 	 * Creates a SeekableReadStream instance corresponding to the file
@@ -222,7 +222,7 @@ public:
 	 *
 	 * @return pointer to the stream object, 0 in case of a failure
 	 */
-	virtual WriteStream *createWriteStream() const;
+	WriteStream *createWriteStream() const;
 };
 
 /**

@@ -77,7 +77,7 @@ bool EditableWidget::tryInsertChar(byte c, int pos) {
 }
 
 void EditableWidget::handleTickle() {
-	uint32 time = getMillis();
+	uint32 time = g_system->getMillis();
 	if (_caretTime < time) {
 		_caretTime = time + kCaretBlinkTime;
 		drawCaret(_caretVisible);
@@ -100,10 +100,12 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		endEditMode();
 		dirty = true;
 		break;
+
 	case Common::KEYCODE_ESCAPE:
 		abortEditMode();
 		dirty = true;
 		break;
+
 	case Common::KEYCODE_BACKSPACE:
 		if (_caretPos > 0) {
 			_caretPos--;
@@ -114,6 +116,28 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		}
 		forcecaret = true;
 		break;
+
+	// Keypad & special keys
+	//   - if num lock is set, we always go to the default case
+	//   - if num lock is not set, we either fall down to the special key case
+	//     or ignore the key press in case of 0 (INSERT), 2 (DOWN), 3 (PGDWN)
+	//     5, 8 (UP) and 9 (PGUP)
+
+	case Common::KEYCODE_KP0:
+	case Common::KEYCODE_KP2:
+	case Common::KEYCODE_KP3:
+	case Common::KEYCODE_KP5:
+	case Common::KEYCODE_KP8:
+	case Common::KEYCODE_KP9:
+		if (state.flags & Common::KBD_NUM)
+			defaultKeyDownHandler(state, dirty, forcecaret, handled);
+		break;
+
+	case Common::KEYCODE_KP_PERIOD:
+		if (state.flags & Common::KBD_NUM) {
+			defaultKeyDownHandler(state, dirty, forcecaret, handled);
+			break;
+		}
 	case Common::KEYCODE_DELETE:
 		if (_caretPos < (int)_editString.size()) {
 			_editString.deleteChar(_caretPos);
@@ -123,6 +147,22 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		}
 		forcecaret = true;
 		break;
+
+	case Common::KEYCODE_KP1:
+		if (state.flags & Common::KBD_NUM) {
+			defaultKeyDownHandler(state, dirty, forcecaret, handled);
+			break;
+		}
+	case Common::KEYCODE_END:
+		dirty = setCaretPos(_editString.size());
+		forcecaret = true;
+		break;
+
+	case Common::KEYCODE_KP4:
+		if (state.flags & Common::KBD_NUM) {
+			defaultKeyDownHandler(state, dirty, forcecaret, handled);
+			break;
+		}
 	case Common::KEYCODE_LEFT:
 		if (_caretPos > 0) {
 			dirty = setCaretPos(_caretPos - 1);
@@ -130,6 +170,12 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		forcecaret = true;
 		dirty = true;
 		break;
+
+	case Common::KEYCODE_KP6:
+		if (state.flags & Common::KBD_NUM) {
+			defaultKeyDownHandler(state, dirty, forcecaret, handled);
+			break;
+		}
 	case Common::KEYCODE_RIGHT:
 		if (_caretPos < (int)_editString.size()) {
 			dirty = setCaretPos(_caretPos + 1);
@@ -137,24 +183,19 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		forcecaret = true;
 		dirty = true;
 		break;
+
+	case Common::KEYCODE_KP7:
+		if (state.flags & Common::KBD_NUM) {
+			defaultKeyDownHandler(state, dirty, forcecaret, handled);
+			break;
+		}
 	case Common::KEYCODE_HOME:
 		dirty = setCaretPos(0);
 		forcecaret = true;
 		break;
-	case Common::KEYCODE_END:
-		dirty = setCaretPos(_editString.size());
-		forcecaret = true;
-		break;
-	default:
-		if (tryInsertChar((byte)state.ascii, _caretPos)) {
-			_caretPos++;
-			dirty = true;
-			forcecaret = true;
 
-			sendCommand(_cmd, 0);
-		} else {
-			handled = false;
-		}
+	default:
+		defaultKeyDownHandler(state, dirty, forcecaret, handled);
 	}
 
 	if (dirty)
@@ -164,6 +205,18 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		makeCaretVisible();
 
 	return handled;
+}
+
+void EditableWidget::defaultKeyDownHandler(Common::KeyState &state, bool &dirty, bool &forcecaret, bool &handled) {
+	if (state.ascii < 256 && tryInsertChar((byte)state.ascii, _caretPos)) {
+		_caretPos++;
+		dirty = true;
+		forcecaret = true;
+
+		sendCommand(_cmd, 0);
+	} else {
+		handled = false;
+	}
 }
 
 int EditableWidget::getCaretOffset() const {
@@ -195,6 +248,14 @@ void EditableWidget::drawCaret(bool erase) {
 	y += getAbsY();
 
 	g_gui.theme()->drawCaret(Common::Rect(x, y, x + 1, y + editRect.height() - 2), erase);
+
+	if (erase) {
+		if ((uint)_caretPos < _editString.size()) {
+			GUI::EditableWidget::String chr(_editString[_caretPos]);
+			int chrWidth = g_gui.getCharWidth(_editString[_caretPos], _font);
+			g_gui.theme()->drawText(Common::Rect(x, y, x + chrWidth, y + editRect.height() - 2), chr, _state, Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone, 0, false, _font);
+		}
+	}
 
 	_caretVisible = !erase;
 }
@@ -234,7 +295,7 @@ bool EditableWidget::adjustOffset() {
 }
 
 void EditableWidget::makeCaretVisible() {
-	_caretTime = getMillis() + kCaretBlinkTime;
+	_caretTime = g_system->getMillis() + kCaretBlinkTime;
 	_caretVisible = true;
 	drawCaret(false);
 }

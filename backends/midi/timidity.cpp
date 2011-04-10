@@ -38,6 +38,7 @@
 
 #include "common/util.h"
 #include "common/endian.h"
+#include "common/str.h"
 #include "sound/musicplugin.h"
 #include "sound/mpu401.h"
 
@@ -154,11 +155,9 @@ int MidiDriver_TIMIDITY::open() {
 
 	/* get server hostname; if not specified in env, use default */
 	if ((res = getenv("TIMIDITY_HOST")) == NULL)
-		strncpy(timidity_host, DEFAULT_TIMIDITY_HOST, MAXHOSTNAMELEN);
+		Common::strlcpy(timidity_host, DEFAULT_TIMIDITY_HOST, sizeof(timidity_host));
 	else
-		strncpy(timidity_host, res, sizeof(timidity_host));
-
-	timidity_host[sizeof(timidity_host) - 1] = '\0';
+		Common::strlcpy(timidity_host, res, sizeof(timidity_host));
 
 	/* extract control port */
 	if ((res = strrchr(timidity_host, ':')) != NULL) {

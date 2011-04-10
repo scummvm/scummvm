@@ -145,7 +145,7 @@ void Imuse::restoreState(SaveGame *savedState) {
 			track->mixerFlags |= kFlagStereo | kFlagReverseStereo;
 
 		track->stream = Audio::makeQueuingAudioStream(freq, (track->mixerFlags & kFlagStereo) != 0);
-		g_system->getMixer()->playInputStream(track->getType(), &track->handle, track->stream, -1, track->getVol(),
+		g_system->getMixer()->playStream(track->getType(), &track->handle, track->stream, -1, track->getVol(),
 											track->getPan(), DisposeAfterUse::YES, false,
 											(track->mixerFlags & kFlagReverseStereo) != 0);
 		g_system->getMixer()->pauseHandle(track->handle, true);

@@ -35,7 +35,7 @@ class GraphicsWidget;
 
 class SaveLoadChooser : public GUI::Dialog {
 	typedef Common::String String;
-	typedef Common::StringList StringList;
+	typedef Common::Array<Common::String> StringArray;
 protected:
 	GUI::ListWidget		*_list;
 	GUI::ButtonWidget	*_chooseButton;
@@ -65,7 +65,7 @@ public:
 	~SaveLoadChooser();
 
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	void setList(const StringList& list);
+	void setList(const StringArray& list);
 	int runModal(const EnginePlugin *plugin, const String &target);
 	void open();
 

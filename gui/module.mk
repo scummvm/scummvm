@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	debugger.o \
 	dialog.o \
 	editable.o \
+	error.o \
 	EditTextWidget.o \
 	GuiManager.o \
 	launcher.o \

@@ -25,6 +25,8 @@
 
 #include "mt32emu.h"
 
+#include "common/str.h"
+
 #if defined(MACOSX) || defined(SOLARIS) || defined(__MINGW32__)
 // Older versions of Mac OS X didn't supply a powf function, so using it
 // will cause a binary incompatibility when trying to run a binary built
@@ -345,8 +347,7 @@ bool Synth::initRhythmTimbre(int timbreNum, const Bit8u *mem, unsigned int memLe
 	memcpy(&timbre->common, mem, 14);
 	unsigned int memPos = 14;
 	char drumname[11];
-	strncpy(drumname, timbre->common.name, 10);
-	drumname[10] = 0;
+	Common::strlcpy(drumname, timbre->common.name, 11);
 	for (int t = 0; t < 4; t++) {
 		if (((timbre->common.pmute >> t) & 0x1) == 0x1) {
 			if (memPos + 58 >= memLen) {

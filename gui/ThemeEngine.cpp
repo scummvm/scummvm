@@ -23,13 +23,13 @@
  *
  */
 
-#include "common/util.h"
 #include "common/system.h"
 #include "common/events.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/unzip.h"
+#include "common/tokenizer.h"
 
 #include "graphics/colormasks.h"
 #include "graphics/cursorman.h"
@@ -393,11 +393,9 @@ bool ThemeEngine::init() {
 		Common::FSNode node(_themeFile);
 		if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
 #ifdef USE_ZLIB
-			Common::ZipArchive *zipArchive = new Common::ZipArchive(node);
+			Common::Archive *zipArchive = Common::makeZipArchive(node);
 
-			if (!zipArchive || !zipArchive->isOpen()) {
-				delete zipArchive;
-				zipArchive = 0;
+			if (!zipArchive) {
 				warning("Failed to open Zip archive '%s'.", node.getPath().c_str());
 			}
 			_themeArchive = zipArchive;
@@ -1443,10 +1441,18 @@ bool ThemeEngine::themeConfigUsable(const Common::FSNode &node, Common::String &
 
 	if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
 #ifdef USE_ZLIB
-		Common::ZipArchive zipArchive(node);
-		if (zipArchive.hasFile("THEMERC")) {
-			stream.open("THEMERC", zipArchive);
+		Common::Archive *zipArchive = Common::makeZipArchive(node);
+		if (zipArchive && zipArchive->hasFile("THEMERC")) {
+			// Open THEMERC from the ZIP file.
+			stream.open("THEMERC", *zipArchive);
 		}
+		// Delete the ZIP archive again. Note: This only works because
+		// stream.open() only uses ZipArchive::createReadStreamForMember,
+		// and that in turn happens to read all the data for a given
+		// archive member into a memory block. So there will be no dangling
+		// reference to zipArchive anywhere. This could change if we
+		// ever modify ZipArchive::createReadStreamForMember.
+		delete zipArchive;
 #endif
 	} else if (node.isDirectory()) {
 		Common::FSNode headerfile = node.getChild("THEMERC");

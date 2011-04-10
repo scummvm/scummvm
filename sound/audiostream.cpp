@@ -83,9 +83,8 @@ SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &b
 
 	delete fileHandle;
 
-	if (stream == NULL) {
+	if (stream == NULL)
 		debug(1, "SeekableAudioStream::openStreamFile: Could not open compressed AudioFile %s", basename.c_str());
-	}
 
 	return stream;
 }
@@ -161,15 +160,17 @@ AudioStream *makeLoopingAudioStream(SeekableAudioStream *stream, Timestamp start
 #pragma mark -
 
 SubLoopingAudioStream::SubLoopingAudioStream(SeekableAudioStream *stream,
-	                                         uint loops,
-	                                         const Timestamp loopStart,
-	                                         const Timestamp loopEnd,
-	                                         DisposeAfterUse::Flag disposeAfterUse)
+                                             uint loops,
+                                             const Timestamp loopStart,
+                                             const Timestamp loopEnd,
+                                             DisposeAfterUse::Flag disposeAfterUse)
     : _parent(stream), _disposeAfterUse(disposeAfterUse), _loops(loops),
       _pos(0, getRate() * (isStereo() ? 2 : 1)),
       _loopStart(convertTimeToStreamPos(loopStart, getRate(), isStereo())),
       _loopEnd(convertTimeToStreamPos(loopEnd, getRate(), isStereo())),
       _done(false) {
+	assert(loopStart < loopEnd);
+
 	if (!_parent->rewind())
 		_done = true;
 }
@@ -180,11 +181,18 @@ SubLoopingAudioStream::~SubLoopingAudioStream() {
 }
 
 int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+	if (_done)
+		return 0;
+
 	int framesLeft = MIN(_loopEnd.frameDiff(_pos), numSamples);
 	int framesRead = _parent->readBuffer(buffer, framesLeft);
 	_pos = _pos.addFrames(framesRead);
 
-	if (framesLeft < numSamples || framesRead < framesLeft) {
+	if (framesRead < framesLeft && _parent->endOfData()) {
+		// TODO: Proper error indication.
+		_done = true;
+		return framesRead;
+	} else if (_pos == _loopEnd) {
 		if (_loops != 0) {
 			--_loops;
 			if (!_loops) {
@@ -194,19 +202,17 @@ int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 		}
 
 		if (!_parent->seek(_loopStart)) {
+			// TODO: Proper error indication.
 			_done = true;
 			return framesRead;
 		}
 
 		_pos = _loopStart;
 		framesLeft = numSamples - framesLeft;
-		framesRead += _parent->readBuffer(buffer + framesRead, framesLeft);
-
-		if (_parent->endOfStream())
-			_done = true;
+		return framesRead + readBuffer(buffer + framesRead, framesLeft);
+	} else {
+		return framesRead;
 	}
-
-	return framesRead;
 }
 
 #pragma mark -
@@ -338,6 +344,7 @@ QueuingAudioStreamImpl::~QueuingAudioStreamImpl() {
 }
 
 void QueuingAudioStreamImpl::queueAudioStream(AudioStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
+	assert(!_finished);
 	if ((stream->getRate() != getRate()) || (stream->isStereo() != isStereo()))
 		error("QueuingAudioStreamImpl::queueAudioStream: stream has mismatched parameters");
 
@@ -353,7 +360,7 @@ int QueuingAudioStreamImpl::readBuffer(int16 *buffer, const int numSamples) {
 		AudioStream *stream = _queue.front()._stream;
 		samplesDecoded += stream->readBuffer(buffer + samplesDecoded, numSamples - samplesDecoded);
 
-		if (stream->endOfData()	) {
+		if (stream->endOfData()) {
 			StreamHolder tmp = _queue.pop();
 			if (tmp._disposeAfterUse == DisposeAfterUse::YES)
 				delete stream;
@@ -373,9 +380,22 @@ Timestamp convertTimeToStreamPos(const Timestamp &where, int rate, bool isStereo
 	// When the Stream is a stereo stream, we have to assure
 	// that the sample position is an even number.
 	if (isStereo && (result.totalNumberOfFrames() & 1))
-		return result.addFrames(-1); // We cut off one sample here.
-	else
-		return result;
+		result = result.addFrames(-1); // We cut off one sample here.
+
+	// Since Timestamp allows sub-frame-precision it might lead to odd behaviors
+	// when we would just return result.
+	//
+	// An example is when converting the timestamp 500ms to a 11025 Hz based
+	// stream. It would have an internal frame counter of 5512.5. Now when
+	// doing calculations at frame precision, this might lead to unexpected 
+	// results: The frame difference between a timestamp 1000ms and the above
+	// mentioned timestamp (both with 11025 as framerate) would be 5512,
+	// instead of 5513, which is what a frame-precision based code would expect.
+	//
+	// By creating a new Timestamp with the given parameters, we create a
+	// Timestamp with frame-precision, which just drops a sub-frame-precision
+	// information (i.e. rounds down).
+	return Timestamp(result.secs(), result.numberOfFrames(), result.framerate());
 }
 
 } // End of namespace Audio

@@ -38,7 +38,7 @@ Action::Action(Keymap *boss, const char *i,	String des, ActionType typ,
 	assert(i);
 	assert(_boss);
 
-	strncpy(id, i, ACTION_ID_SIZE);
+	Common::strlcpy(id, i, ACTION_ID_SIZE);
 
 	_boss->addAction(this);
 }

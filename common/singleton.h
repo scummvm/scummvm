@@ -91,7 +91,18 @@ protected:
 	typedef T	SingletonBaseType;
 };
 
-#define DECLARE_SINGLETON(T) template<> T *Common::Singleton<T>::_singleton = 0
+/**
+ * Note that you need to use this macro from the global namespace.
+ *
+ * This is because C++ requires initial explicit specialization
+ * to be placed in the same namespace as the template. 
+ * It has to be put in the global namespace to assure the correct
+ * namespace Common is referenced.
+ */
+#define DECLARE_SINGLETON(T) \
+	namespace Common { \
+	template<> T *Singleton<T>::_singleton = 0; \
+	} // End of namespace Common
 
 }	// End of namespace Common
 

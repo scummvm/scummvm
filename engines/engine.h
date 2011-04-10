@@ -27,9 +27,7 @@
 
 #include "common/sys.h"
 #include "common/error.h"
-#include "common/fs.h"
 #include "common/str.h"
-#include "graphics/pixelformat.h"
 
 class OSystem;
 
@@ -45,6 +43,7 @@ namespace GUI {
 	class Debugger;
 	class Dialog;
 }
+
 /**
  * Initializes graphics and shows error message.
  */
@@ -65,8 +64,6 @@ protected:
 	virtual int runDialog(GUI::Dialog &dialog);
 
 	const Common::String _targetName; // target name for saves
-
-	const Common::FSNode _gameDataDir;	// FIXME: Get rid of this
 
 private:
 	/**

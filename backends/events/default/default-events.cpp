@@ -103,7 +103,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_keyRepeatTime = time + kKeyRepeatInitialDelay;
 #endif
 			// Global Main Menu
-			if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == Common::KEYCODE_F5) {
+			if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_F5) {
 				if (g_engine && !g_engine->isPaused()) {
 					Common::Event menuEvent;
 					menuEvent.type = Common::EVENT_MAINMENU;
@@ -135,7 +135,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 				}
 			}
 #ifdef ENABLE_VKEYBD
-			else if (event.kbd.keycode == Common::KEYCODE_F7 && event.kbd.flags == 0) {
+			else if (event.kbd.keycode == Common::KEYCODE_F7 && event.kbd.hasFlags(0)) {
 				if (_vk->isDisplaying()) {
 					_vk->close(true);
 				} else {
@@ -149,7 +149,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			}
 #endif
 #ifdef ENABLE_KEYMAPPER
-			else if (event.kbd.keycode == Common::KEYCODE_F8 && event.kbd.flags == 0) {
+			else if (event.kbd.keycode == Common::KEYCODE_F8 && event.kbd.hasFlags(0)) {
 				if (!_remap) {
 					_remap = true;
 					Common::RemapDialog _remapDialog;

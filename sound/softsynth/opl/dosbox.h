@@ -39,8 +39,6 @@
 namespace OPL {
 namespace DOSBox {
 
-class Handler;
-
 struct Timer {
 	double startTime;
 	double delay;
@@ -69,26 +67,16 @@ struct Chip {
 	uint8 read();
 };
 
-class Handler {
-public:
-	virtual ~Handler() {}
-
-	// Write an address to a chip, returns the address the chip sets
-	virtual uint32 writeAddr(uint32 port, uint8 val) = 0;
-	// Write to a specific register in the chip
-	virtual void writeReg(uint32 addr, uint8 val) = 0;
-	// Generate a certain amount of samples
-	virtual void generate(int16 *chan, uint samples) = 0;
-	// Initialize at a specific sample rate and mode
-	virtual void init(uint rate) = 0;
-};
+namespace DBOPL {
+struct Chip;
+} // end of namespace DBOPL
 
 class OPL : public ::OPL::OPL {
 private:
 	Config::OplType _type;
 	uint _rate;
 
-	Handler *_handler;
+	DBOPL::Chip *_emulator;
 	Chip _chip[2];
 	union {
 		uint16 normal;

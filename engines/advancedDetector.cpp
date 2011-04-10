@@ -29,6 +29,7 @@
 #include "common/util.h"
 #include "common/hash-str.h"
 #include "common/file.h"
+#include "common/macresman.h"
 #include "common/md5.h"
 #include "common/config-manager.h"
 
@@ -52,7 +53,7 @@ typedef Common::Array<const ADGameDescription*> ADGameDescList;
  * @param platform	restrict results to specified platform only
  * @return	list of ADGameDescription (or subclass) pointers corresponding to matched games
  */
-static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &params, Common::Language language, Common::Platform platform, const Common::String extra);
+static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &params, Common::Language language, Common::Platform platform, const Common::String &extra);
 
 
 /**
@@ -264,7 +265,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 		// config file.
 		//
 		// Fixes bug #1544799
-		ConfMan.set("autoadded", "true");
+		ConfMan.setBool("autoadded", true);
 
 		warning("No path was provided. Assuming the data files are in the current directory");
 	}
@@ -339,7 +340,7 @@ static void reportUnknown(const Common::FSNode &path, const SizeMD5Map &filesSiz
 
 static ADGameDescList detectGameFilebased(const FileMap &allFiles, const ADParams &params);
 
-static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &params, Common::Language language, Common::Platform platform, const Common::String extra) {
+static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &params, Common::Language language, Common::Platform platform, const Common::String &extra) {
 	FileMap allFiles;
 	SizeMD5Map filesSizeMD5;
 
@@ -374,24 +375,38 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			Common::String fname = fileDesc->fileName;
-			if (allFiles.contains(fname) && !filesSizeMD5.contains(fname)) {
-				debug(3, "+ %s", fname.c_str());
+			SizeMD5 tmp;
 
-				SizeMD5 tmp;
-				Common::File testFile;
-
-				if (testFile.open(allFiles[fname])) {
-					tmp.size = (int32)testFile.size();
-					if (!md5_file_string(testFile, tmp.md5, params.md5Bytes))
+			if (g->flags & ADGF_MACRESFORK) {
+				Common::MacResManager *macResMan = new Common::MacResManager();
+				
+				if (macResMan->open(parent, fname)) {
+					if (!macResMan->getResForkMD5(tmp.md5, params.md5Bytes))
 						tmp.md5[0] = 0;
-				} else {
-					tmp.size = -1;
-					tmp.md5[0] = 0;
+					tmp.size = macResMan->getResForkSize();
+					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5);
+					filesSizeMD5[fname] = tmp;
 				}
 
-				debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5);
+				delete macResMan;
+			} else {
+				if (allFiles.contains(fname) && !filesSizeMD5.contains(fname)) {
+					debug(3, "+ %s", fname.c_str());
 
-				filesSizeMD5[fname] = tmp;
+					Common::File testFile;
+
+					if (testFile.open(allFiles[fname])) {
+						tmp.size = (int32)testFile.size();
+						if (!md5_file_string(testFile, tmp.md5, params.md5Bytes))
+							tmp.md5[0] = 0;
+					} else {
+						tmp.size = -1;
+						tmp.md5[0] = 0;
+					}
+				
+					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5);
+					filesSizeMD5[fname] = tmp;
+				}
 			}
 		}
 	}

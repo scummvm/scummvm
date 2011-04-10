@@ -50,7 +50,7 @@ ChooserDialog::ChooserDialog(const String &title, String dialogId)
 	_chooseButton->setEnabled(false);
 }
 
-void ChooserDialog::setList(const StringList& list) {
+void ChooserDialog::setList(const StringArray& list) {
 	_list->setList(list);
 }
 

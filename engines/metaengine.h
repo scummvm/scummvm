@@ -29,6 +29,8 @@
 #include "common/error.h"
 
 #include "engines/game.h"
+#include "engines/savestate.h"
+
 #include "base/plugins.h"
 
 class Engine;
@@ -124,7 +126,7 @@ public:
 	 * @param target	name of a config manager target
 	 * @param slot		slot number of the save state to be removed
 	 */
-	virtual void removeSaveState(const char *target, int slot) const {};
+	virtual void removeSaveState(const char *target, int slot) const {}
 
 	/**
 	 * Returns meta infos from the specified save state.

@@ -42,7 +42,7 @@ class SeekableAudioStream;
 
 /**
  * Various flags which can be bit-ORed and then passed to
- * makeRawMemoryStream and some other AudioStream factories
+ * makeRawStream and some other AudioStream factories
  * to control their behavior.
  *
  * Engine authors are advised not to rely on a certain value or

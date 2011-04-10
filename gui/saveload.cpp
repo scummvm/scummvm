@@ -313,7 +313,7 @@ void SaveLoadChooser::close() {
 	_plugin = 0;
 	_target.clear();
 	_saveList.clear();
-	_list->setList(StringList());
+	_list->setList(StringArray());
 
 	Dialog::close();
 }
@@ -323,7 +323,7 @@ void SaveLoadChooser::updateSaveList() {
 
 	int curSlot = 0;
 	int saveSlot = 0;
-	StringList saveNames;
+	StringArray saveNames;
 	ListWidget::ColorList colors;
 	for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x) {
 		// Handle gaps in the list of save games

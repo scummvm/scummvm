@@ -26,6 +26,7 @@
 #define GRAPHICS_FONT_H
 
 #include "common/str.h"
+#include "common/array.h"
 #include "graphics/surface.h"
 
 namespace Common {
@@ -78,7 +79,7 @@ public:
 	 * @param lines	the string list to which the text lines from str are appended
 	 * @return the maximal width of any of the lines added to lines
 	 */
-	int wordWrapText(const Common::String &str, int maxWidth, Common::StringList &lines) const;
+	int wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines) const;
 };
 
 

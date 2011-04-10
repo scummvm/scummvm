@@ -74,12 +74,12 @@ static const int outputRateValues[] = { 0, 8000, 11025, 22050, 44100, 48000, -1 
 
 
 
-OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
+OptionsDialog::OptionsDialog(const Common::String &domain, int x, int y, int w, int h)
 	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _tabWidget(0) {
 	init();
 }
 
-OptionsDialog::OptionsDialog(const String &domain, const String &name)
+OptionsDialog::OptionsDialog(const Common::String &domain, const Common::String &name)
 	: Dialog(name), _domain(domain), _graphicsTabId(-1), _tabWidget(0) {
 	init();
 }
@@ -144,19 +144,6 @@ void OptionsDialog::open() {
 	if (ConfMan.hasKey("guioptions", _domain))
 		_guioptions = parseGameGUIOptions(ConfMan.get("guioptions", _domain));
 
-	// Graphic options
-	if (_fullscreenCheckbox) {
-
-
-#ifdef SMALL_SCREEN_DEVICE
-		_fullscreenCheckbox->setState(true);
-		_fullscreenCheckbox->setEnabled(false);
-#else // !SMALL_SCREEN_DEVICE
-		// Fullscreen setting
-		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
-#endif // SMALL_SCREEN_DEVICE
-	}
-
 	// Audio options
 	if (_midiPopUp) {
 		// Music driver
@@ -189,7 +176,7 @@ void OptionsDialog::open() {
 		// GS extensions setting
 		_enableGSCheckbox->setState(ConfMan.getBool("enable_gs", _domain));
 
-		String soundFont(ConfMan.get("soundfont", _domain));
+		Common::String soundFont(ConfMan.get("soundfont", _domain));
 		if (soundFont.empty() || !ConfMan.hasKey("soundfont", _domain)) {
 			_soundFont->setLabel("None");
 			_soundFontClearButton->setEnabled(false);
@@ -226,16 +213,6 @@ void OptionsDialog::open() {
 
 void OptionsDialog::close() {
 	if (getResult()) {
-
-		// Graphic options
-		if (_fullscreenCheckbox) {
-			if (_enableGraphicSettings) {
-				ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
-			} else {
-				ConfMan.removeKey("fullscreen", _domain);
-			}
-		}
-
 		// Volume options
 		if (_musicVolumeSlider) {
 			if (_enableVolumeSettings) {
@@ -298,7 +275,7 @@ void OptionsDialog::close() {
 				ConfMan.setBool("enable_gs", _enableGSCheckbox->getState(), _domain);
 				ConfMan.setInt("midi_gain", _midiGainSlider->getValue(), _domain);
 
-				String soundFont(_soundFont->getLabel());
+				Common::String soundFont(_soundFont->getLabel());
 				if (!soundFont.empty() && (soundFont != "None"))
 					ConfMan.set("soundfont", soundFont, _domain);
 				else
@@ -373,7 +350,6 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_enableGraphicSettings = enabled;
 
 #ifndef SMALL_SCREEN_DEVICE
-	_fullscreenCheckbox->setEnabled(enabled);
 #endif
 }
 
@@ -460,13 +436,12 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 	_subSpeedLabel->setEnabled(ena);
 }
 
-void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
-	// Fullscreen checkbox
-	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", "Fullscreen mode", 0, 0);
+void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &prefix) {
+
 	_enableGraphicSettings = true;
 }
 
-void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
+void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &prefix) {
 	// The MIDI mode popup & a label
 	_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", "Music driver:");
 	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup");
@@ -500,7 +475,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
 	_enableAudioSettings = true;
 }
 
-void OptionsDialog::addMIDIControls(GuiObject *boss, const String &prefix) {
+void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefix) {
 	// SoundFont
 	_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", "SoundFont:", kChooseSoundFontCmd, 0);
 	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", "None");
@@ -527,7 +502,7 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const String &prefix) {
 
 // The function has an extra slider range parameter, since both the launcher and SCUMM engine
 // make use of the widgets. The launcher range is 0-255. SCUMM's 0-9
-void OptionsDialog::addSubtitleControls(GuiObject *boss, const String &prefix, int maxSliderVal) {
+void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &prefix, int maxSliderVal) {
 
 	_subToggleDesc = new StaticTextWidget(boss, prefix + "subToggleDesc", "Text and Speech:");
 	_subToggleButton = new ButtonWidget(boss, prefix + "subToggleButton", "", kSubtitleToggle, 0);
@@ -542,7 +517,7 @@ void OptionsDialog::addSubtitleControls(GuiObject *boss, const String &prefix, i
 	_enableSubtitleSettings = true;
 }
 
-void OptionsDialog::addVolumeControls(GuiObject *boss, const String &prefix) {
+void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &prefix) {
 
 	// Volume controllers
 	_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", "Music volume:");
@@ -655,6 +630,13 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	new ButtonWidget(tab, "GlobalOptions_Misc.ThemeButton", "Theme:", kChooseThemeCmd, 0);
 	_curTheme = new StaticTextWidget(tab, "GlobalOptions_Misc.CurTheme", g_gui.theme()->getThemeName());
 
+
+	_rendererPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.RendererPopupDesc", "GUI Renderer:");
+	_rendererPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.RendererPopup");
+
+	for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
+		_rendererPopUp->appendEntry(GUI::ThemeEngine::_rendererModes[i].name, GUI::ThemeEngine::_rendererModes[i].mode);
+
 	_autosavePeriodPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.AutosavePeriodPopupDesc", "Autosave:");
 	_autosavePeriodPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.AutosavePeriodPopup");
 
@@ -741,24 +723,24 @@ void GlobalOptionsDialog::open() {
 
 void GlobalOptionsDialog::close() {
 	if (getResult()) {
-		String savePath(_savePath->getLabel());
+		Common::String savePath(_savePath->getLabel());
 		if (!savePath.empty() && (savePath != "None"))
 			ConfMan.set("savepath", savePath, _domain);
 
-		String themePath(_themePath->getLabel());
+		Common::String themePath(_themePath->getLabel());
 		if (!themePath.empty() && (themePath != "None"))
 			ConfMan.set("themepath", themePath, _domain);
 		else
 			ConfMan.removeKey("themepath", _domain);
 
-		String extraPath(_extraPath->getLabel());
+		Common::String extraPath(_extraPath->getLabel());
 		if (!extraPath.empty() && (extraPath != "None"))
 			ConfMan.set("extrapath", extraPath, _domain);
 		else
 			ConfMan.removeKey("extrapath", _domain);
 
 #ifdef DYNAMIC_MODULES
-		String pluginsPath(_pluginsPath->getLabel());
+		Common::String pluginsPath(_pluginsPath->getLabel());
 		if (!pluginsPath.empty() && (pluginsPath != "None"))
 			ConfMan.set("pluginspath", pluginsPath, _domain);
 		else
@@ -829,6 +811,22 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 #endif
+	case kChooseSoundFontCmd: {
+		BrowserDialog browser("Select SoundFont", false);
+		if (browser.runModal() > 0) {
+			// User made his choice...
+			Common::FSNode file(browser.getResult());
+			_soundFont->setLabel(file.getPath());
+
+			if (!file.getPath().empty() && (file.getPath() != "None"))
+				_soundFontClearButton->setEnabled(true);
+			else
+				_soundFontClearButton->setEnabled(false);
+
+			draw();
+		}
+		break;
+	}
 	case kChooseThemeCmd: {
 		ThemeBrowser browser;
 		if (browser.runModal() > 0) {

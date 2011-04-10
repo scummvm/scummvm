@@ -144,7 +144,7 @@ int MidiDriver_FluidSynth::open() {
 	MidiDriver_Emulated::open();
 
 	// The MT-32 emulator uses kSFXSoundType here. I don't know why.
-	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 	return 0;
 }
 

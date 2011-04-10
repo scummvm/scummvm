@@ -52,11 +52,11 @@ enum {
 class ListWidget : public EditableWidget {
 public:
 	typedef Common::String String;
-	typedef Common::StringList StringList;
+	typedef Common::Array<Common::String> StringArray;
 	typedef Common::Array<ThemeEngine::FontColor> ColorList;
 protected:
-	StringList		_list;
-	StringList		_dataList;
+	StringArray		_list;
+	StringArray		_dataList;
 	ColorList		_listColors;
 	Common::Array<int>		_listIndex;
 	bool			_editable;
@@ -93,8 +93,8 @@ public:
 
 	virtual Widget *findWidget(int x, int y);
 
-	void setList(const StringList &list, const ColorList *colors = 0);
-	const StringList &getList()	const			{ return _dataList; }
+	void setList(const StringArray &list, const ColorList *colors = 0);
+	const StringArray &getList()	const			{ return _dataList; }
 
 	void append(const String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
 

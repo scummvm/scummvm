@@ -59,7 +59,7 @@ public:
 
 /**
  * The main audio mixer handles mixing of an arbitrary number of
- * input audio streams (in the form of AudioStream instances).
+ * audio streams (in the form of AudioStream instances).
  */
 class Mixer {
 public:
@@ -96,7 +96,7 @@ public:
 
 
 	/**
-	 * Start playing the given audio input stream.
+	 * Start playing the given audio stream.
 	 *
 	 * Note that the sound id assigned below is unique. At most one stream
 	 * with a given id can play at any given time. Trying to play a sound
@@ -105,7 +105,7 @@ public:
 	 * @param type	the type (voice/sfx/music) of the stream
 	 * @param handle	a SoundHandle which can be used to reference and control
 	 *                  the stream via suitable mixer methods
-	 * @param input	the actual AudioStream to be played
+	 * @param stream	the actual AudioStream to be played
 	 * @param id	a unique id assigned to this stream
 	 * @param volume	the volume with which to play the sound, ranging from 0 to 255
 	 * @param balance	the balance with which to play the sound, ranging from -128 to 127
@@ -115,10 +115,10 @@ public:
 	 *                  not stop this particular stream
 	 * @param reverseStereo	a flag indicating whether left and right channels shall be swapped
 	 */
-	virtual void playInputStream(
+	virtual void playStream(
 		SoundType type,
 		SoundHandle *handle,
-		AudioStream *input,
+		AudioStream *stream,
 		int id = -1,
 		byte volume = kMaxChannelVolume,
 		int8 balance = 0,
@@ -253,8 +253,7 @@ public:
 	virtual int getVolumeForSoundType(SoundType type) const = 0;
 
 	/**
-	 * Query the system's audio output sample rate. This returns
-	 * the same value as OSystem::getOutputSampleRate().
+	 * Query the system's audio output sample rate.
 	 *
 	 * @return the output sample rate in Hz
 	 */

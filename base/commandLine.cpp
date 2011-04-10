@@ -61,12 +61,9 @@ static const char HELP_STRING[] =
 	"  -h, --help               Display a brief help text and exit\n"
 	"  -z, --list-games         Display list of supported games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
-
 	"\n"
 	"  -c, --config=CONFIG      Use alternate configuration file\n"
 	"  -p, --path=PATH          Path to where the game is installed\n"
-	"  -f, --fullscreen         Force full-screen mode\n"
-	"  -F, --no-fullscreen      Force windowed mode\n"
 	"  --gui-theme=THEME        Select GUI theme\n"
 	"  --themepath=PATH         Path to where GUI themes are stored\n"
 	"  --list-themes            Display list of all usable GUI themes\n"
@@ -125,7 +122,6 @@ void registerDefaults() {
 	// Graphics
 	ConfMan.registerDefault("fullscreen", false);
 	ConfMan.registerDefault("soft_renderer", "true");
-	ConfMan.registerDefault("fullscreen", "false");
 	ConfMan.registerDefault("show_fps", "false");
 
 	// Sound & Music
@@ -137,6 +133,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("native_mt32", false);
 	ConfMan.registerDefault("enable_gs", false);
 	ConfMan.registerDefault("midi_gain", 100);
+	ConfMan.registerDefault("cdrom", 0);
 
 	// Game specific
 	ConfMan.registerDefault("path", "");
@@ -144,13 +141,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("language", "en");
 	ConfMan.registerDefault("autosave_period", 5 * 60);	// By default, trigger autosave every 5 minutes
 
-
-
-
-
 	ConfMan.registerDefault("dimuse_tempo", 10);
-
-
 
 	// Miscellaneous
 	ConfMan.registerDefault("confirm_exit", false);
@@ -300,9 +291,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION_INT("output-rate")
 			END_OPTION
 
-			DO_OPTION_BOOL('f', "fullscreen")
-			END_OPTION
-
 			DO_LONG_OPTION("opl-driver")
 			END_OPTION
 
@@ -340,10 +328,10 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 				settings.erase("joystick");
 			END_OPTION
 
-			DO_LONG_OPTION("show-fps")
-			END_OPTION
-
-			DO_LONG_OPTION("soft-renderer")
+			DO_LONG_OPTION("platform")
+				int platform = Common::parsePlatform(option);
+				if (platform == Common::kPlatformUnknown)
+					usage("Unrecognized platform '%s'", option);
 			END_OPTION
 
 			DO_LONG_OPTION("soundfont")
@@ -374,6 +362,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION("gamma")
+			END_OPTION
+
+			DO_LONG_OPTION("soft-renderer")
+			END_OPTION
+
+			DO_LONG_OPTION("show-fps")
 			END_OPTION
 
 			DO_LONG_OPTION("savepath")
@@ -474,7 +468,7 @@ static void listTargets() {
 	ConfigManager::DomainMap::const_iterator iter;
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
 		Common::String name(iter->_key);
-		Common::String description(iter->_value.get("description"));
+		Common::String description(iter->_value.getVal("description"));
 
 		if (description.empty()) {
 			// FIXME: At this point, we should check for a "gameid" override
@@ -517,8 +511,8 @@ static void runDetectorTest() {
 	int success = 0, failure = 0;
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
 		Common::String name(iter->_key);
-		Common::String gameid(iter->_value.get("gameid"));
-		Common::String path(iter->_value.get("path"));
+		Common::String gameid(iter->_value.getVal("gameid"));
+		Common::String path(iter->_value.getVal("path"));
 		printf("Looking at target '%s', gameid '%s', path '%s' ...\n",
 				name.c_str(), gameid.c_str(), path.c_str());
 		if (path.empty()) {
@@ -591,8 +585,8 @@ void upgradeTargets() {
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
 		Common::ConfigManager::Domain &dom = iter->_value;
 		Common::String name(iter->_key);
-		Common::String gameid(dom.get("gameid"));
-		Common::String path(dom.get("path"));
+		Common::String gameid(dom.getVal("gameid"));
+		Common::String path(dom.getVal("path"));
 		printf("Looking at target '%s', gameid '%s' ...\n",
 				name.c_str(), gameid.c_str());
 		if (path.empty()) {
@@ -611,9 +605,9 @@ void upgradeTargets() {
 			continue;
 		}
 
-		Common::Language lang = Common::parseLanguage(dom.get("language"));
-		Common::Platform plat = Common::parsePlatform(dom.get("platform"));
-		Common::String desc(dom.get("description"));
+		Common::Language lang = Common::parseLanguage(dom.getVal("language"));
+		Common::Platform plat = Common::parsePlatform(dom.getVal("platform"));
+		Common::String desc(dom.getVal("description"));
 
 		GameList candidates(EngineMan.detectGames(files));
 		GameDescriptor *g = 0;

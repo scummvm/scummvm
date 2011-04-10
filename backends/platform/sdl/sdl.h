@@ -163,7 +163,7 @@ public:
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
-	virtual void preprocessEvents(SDL_Event *event) {};
+	virtual void preprocessEvents(SDL_Event *event) {}
 
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual FilesystemFactory *getFilesystemFactory();
@@ -196,9 +196,6 @@ protected:
 
 	void closeOverlay();
 
-	// Audio
-	int _samplesPerSec;
-
 	// CD Audio
 	SDL_CD *_cdrom;
 	int _cdTrack, _cdNumLoops, _cdStartFrame, _cdDuration;
@@ -213,6 +210,9 @@ protected:
 	};
 	// mouse
 	KbdMouse _km;
+	// Scroll lock state - since SDL doesn't track it
+	bool _scrollLock;
+	
 	// joystick
 	SDL_Joystick *_joystick;
 #ifdef MIXER_DOUBLE_BUFFERING

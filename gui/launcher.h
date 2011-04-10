@@ -40,7 +40,7 @@ Common::String addGameToConf(const GameDescriptor &result);
 
 class LauncherDialog : public Dialog {
 	typedef Common::String String;
-	typedef Common::StringList StringList;
+	typedef Common::Array<Common::String> StringArray;
 public:
 	LauncherDialog();
 	~LauncherDialog();
@@ -64,7 +64,7 @@ protected:
 #endif
 	StaticTextWidget	*_searchDesc;
 	ButtonWidget	*_searchClearButton;
-	StringList		_domains;
+	StringArray		_domains;
 	BrowserDialog	*_browser;
 	SaveLoadChooser	*_loadDialog;
 

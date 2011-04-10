@@ -33,6 +33,7 @@
 #include "common/archive.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/config-manager.h"
 
 #include "engines/engine.h"
@@ -238,7 +239,7 @@ GrimEngine *g_grim = NULL;
 GfxBase *g_driver = NULL;
 int g_imuseState = -1;
 
-extern Common::StringList::const_iterator g_filesiter;
+extern Common::StringArray::const_iterator g_filesiter;
 
 // hack for access current upated actor to allow access position of actor to sound costume component
 Actor *g_currentUpdatedActor = NULL;
@@ -319,7 +320,8 @@ GrimEngine::GrimEngine(OSystem *syst, int gameFlags, GrimGameType gameType) :
 	blastTextDefaults.justify = TextObject::LJUSTIFY;
 
 	// Add 'movies' subdirectory for the demo
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "movies");
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "movies");
 }
 
 GrimEngine::~GrimEngine() {

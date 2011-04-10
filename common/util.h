@@ -69,32 +69,6 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 namespace Common {
 
 /**
- * A simple non-optimized string tokenizer.
- *
- * Example of use:
- * StringTokenizer("Now, this is a test!", " ,!") gives tokens "Now", "this", "is", "a" and "test" using nextToken().
- */
-class StringTokenizer {
-public:
-	/**
-	 * Creates a StringTokenizer.
-	 * @param str The string to be tokenized.
-	 * @param delimiters String containing all the delimiter characters (i.e. the characters to be ignored).
-	 * @note Uses space, horizontal tab, carriage return, newline, form feed and vertical tab as delimiters by default.
-	 */
-	StringTokenizer(const String &str, const String &delimiters = " \t\r\n\f\v");
-	void reset();       ///< Resets the tokenizer to its initial state
-	bool empty() const; ///< Returns true if there are no more tokens left in the string, false otherwise
-	String nextToken(); ///< Returns the next token from the string (Or an empty string if there are no more tokens)
-
-private:
-	const String _str;        ///< The string to be tokenized
-	const String _delimiters; ///< String containing all the delimiter characters
-	uint         _tokenBegin; ///< Latest found token's begin (Valid after a call to nextToken(), zero otherwise)
-	uint         _tokenEnd;   ///< Latest found token's end (Valid after a call to nextToken(), zero otherwise)
-};
-
-/**
  * Print a hexdump of the data passed in. The number of bytes per line is
  * customizable.
  * @param data	the data to be dumped
@@ -106,52 +80,16 @@ extern void hexdump(const byte * data, int len, int bytesPerLine = 16, int start
 
 
 /**
- * Take a 32 bit value and turn it into a four character string, where each of
- * the four bytes is turned into one character. Most significant byte is printed
- * first.
+ * Parse a string for a boolean value.
+ * The strings "true", "yes", and "1" are interpreted as true.
+ * The strings "false", "no", and "0" are interpreted as false.
+ * This function ignores case.
+ *
+ * @param[in] val			the string to parse
+ * @param[out] valAsBool	the parsing result
+ * @return 	true if the string parsed correctly, false if an error occurred.
  */
-String tag2string(uint32 tag);
-#define tag2str(x)	Common::tag2string(x).c_str()
-
-
-
-
-/**
- * Simple random number generator. Although it is definitely not suitable for
- * cryptographic purposes, it serves our purposes just fine.
- */
-class RandomSource {
-private:
-	uint32 _randSeed;
-
-public:
-	RandomSource();
-	void setSeed(uint32 seed);
-
-	uint32 getSeed() {
-		return _randSeed;
-	}
-
-	/**
-	 * Generates a random unsigned integer in the interval [0, max].
-	 * @param max	the upper bound
-	 * @return	a random number in the interval [0, max]
-	 */
-	uint getRandomNumber(uint max);
-	/**
-	 * Generates a random bit, i.e. either 0 or 1.
-	 * Identical to getRandomNumber(1), but faster, hopefully.
-	 * @return	a random bit, either 0 or 1
-	 */
-	uint getRandomBit();
-	/**
-	 * Generates a random unsigned integer in the interval [min, max].
-	 * @param min	the lower bound
-	 * @param max	the upper bound
-	 * @return	a random number in the interval [min, max]
-	 */
-	uint getRandomNumberRng(uint min, uint max);
-};
+bool parseBool(const Common::String &val, bool &valAsBool);
 
 /**
  * List of game language.
@@ -167,7 +105,7 @@ enum Language {
 	FR_FRA,
 	DE_DEU,
 	GR_GRE,
-	HB_ISR,
+	HE_ISR,
 	HU_HUN,
 	IT_ITA,
 	JA_JPN,

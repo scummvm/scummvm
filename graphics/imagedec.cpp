@@ -25,7 +25,6 @@
 #include "graphics/imagedec.h"
 
 #include "common/file.h"
-//#include "common/system.h"
 
 namespace Graphics {
 //

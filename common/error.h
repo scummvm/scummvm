@@ -66,6 +66,14 @@ enum Error {
 	kUnknownError				///< Catch-all error, used if no other error code matches
 };
 
+/**
+ * Maps an error code to equivalent string description.
+ *
+ * @param error error code to be converted
+ * @return a pointer to string description of the error
+ */
+const char *errorToString(Error error);
+
 } // End of namespace Common
 
 #endif //COMMON_ERROR_H

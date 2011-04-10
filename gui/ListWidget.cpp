@@ -25,6 +25,7 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/frac.h"
+#include "common/tokenizer.h"
 
 #include "gui/ListWidget.h"
 #include "gui/ScrollBarWidget.h"
@@ -152,7 +153,7 @@ ThemeEngine::FontColor ListWidget::getSelectionColor() const {
 		return _listColors[_listIndex[_selectedItem]];
 }
 
-void ListWidget::setList(const StringList &list, const ColorList *colors) {
+void ListWidget::setList(const StringArray &list, const ColorList *colors) {
 	if (_editMode && _caretVisible)
 		drawCaret(true);
 
@@ -286,11 +287,11 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 	bool dirty = false;
 	int oldSelectedItem = _selectedItem;
 
-	if (!_editMode && isprint((unsigned char)state.ascii)) {
+	if (!_editMode && state.keycode <= Common::KEYCODE_z && isprint((unsigned char)state.ascii)) {
 		// Quick selection mode: Go to first list item starting with this key
 		// (or a substring accumulated from the last couple key presses).
 		// Only works in a useful fashion if the list entries are sorted.
-		uint32 time = getMillis();
+		uint32 time = g_system->getMillis();
 		if (_quickSelectTime < time) {
 			_quickSelectStr = (char)state.ascii;
 		} else {
@@ -306,7 +307,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			int newSelectedItem = 0;
 			int bestMatch = 0;
 			bool stop;
-			for (StringList::const_iterator i = _list.begin(); i != _list.end(); ++i) {
+			for (StringArray::const_iterator i = _list.begin(); i != _list.end(); ++i) {
 				const int match = matchingCharsIgnoringCase(i->c_str(), _quickSelectStr.c_str(), stop);
 				if (match > bestMatch || stop) {
 					_selectedItem = newSelectedItem;
@@ -339,8 +340,18 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 					sendCommand(kListItemActivatedCmd, _selectedItem);
 			}
 			break;
-		case Common::KEYCODE_BACKSPACE:
+
+		// Keypad & special keys
+		//   - if num lock is set, we do not handle the keypress
+		//   - if num lock is not set, we either fall down to the special key case
+		//     or ignore the key press for 0, 4, 5 and 6
+
 		case Common::KEYCODE_KP_PERIOD:
+			if (state.flags & Common::KBD_NUM) {
+				handled = false;
+				break;
+			}
+		case Common::KEYCODE_BACKSPACE:
 		case Common::KEYCODE_DELETE:
 			if (_selectedItem >= 0) {
 				if (_editable) {
@@ -350,30 +361,68 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				}
 			}
 			break;
-		case Common::KEYCODE_UP:
-			if (_selectedItem > 0)
-				_selectedItem--;
+
+		case Common::KEYCODE_KP1:
+			if (state.flags & Common::KBD_NUM) {
+				handled = false;
+				break;
+			}
+		case Common::KEYCODE_END:
+			_selectedItem = _list.size() - 1;
 			break;
+
+
+		case Common::KEYCODE_KP2:
+			if (state.flags & Common::KBD_NUM) {
+				handled = false;
+				break;
+			}
 		case Common::KEYCODE_DOWN:
 			if (_selectedItem < (int)_list.size() - 1)
 				_selectedItem++;
 			break;
-		case Common::KEYCODE_PAGEUP:
-			_selectedItem -= _entriesPerPage - 1;
-			if (_selectedItem < 0)
-				_selectedItem = 0;
-			break;
+
+		case Common::KEYCODE_KP3:
+			if (state.flags & Common::KBD_NUM) {
+				handled = false;
+				break;
+			}
 		case Common::KEYCODE_PAGEDOWN:
 			_selectedItem += _entriesPerPage - 1;
 			if (_selectedItem >= (int)_list.size() )
 				_selectedItem = _list.size() - 1;
 			break;
+
+		case Common::KEYCODE_KP7:
+			if (state.flags & Common::KBD_NUM) {
+				handled = false;
+				break;
+			}
 		case Common::KEYCODE_HOME:
 			_selectedItem = 0;
 			break;
-		case Common::KEYCODE_END:
-			_selectedItem = _list.size() - 1;
+
+		case Common::KEYCODE_KP8:
+			if (state.flags & Common::KBD_NUM) {
+				handled = false;
+				break;
+			}
+		case Common::KEYCODE_UP:
+			if (_selectedItem > 0)
+				_selectedItem--;
 			break;
+
+		case Common::KEYCODE_KP9:
+			if (state.flags & Common::KBD_NUM) {
+				handled = false;
+				break;
+			}
+		case Common::KEYCODE_PAGEUP:
+			_selectedItem -= _entriesPerPage - 1;
+			if (_selectedItem < 0)
+				_selectedItem = 0;
+			break;
+
 		default:
 			handled = false;
 		}
@@ -644,7 +693,7 @@ void ListWidget::setFilter(const String &filter, bool redraw) {
 		_list.clear();
 		_listIndex.clear();
 
-		for (StringList::iterator i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
+		for (StringArray::iterator i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
 			tmp = *i;
 			tmp.toLowercase();
 			bool matches = true;

@@ -49,17 +49,17 @@ FSNode::FSNode(const Common::String &p) {
 }
 
 bool FSNode::operator<(const FSNode& node) const {
+	// Directories come before files, i.e., are "lower".
 	if (isDirectory() != node.isDirectory())
 		return isDirectory();
 
+	// If both nodes are of the same type (two files or two dirs),
+	// then sort by name, ignoring case.
 	return getDisplayName().compareToIgnoreCase(node.getDisplayName()) < 0;
 }
 
 bool FSNode::exists() const {
-	if (_realNode == 0)
-		return false;
-
-	return _realNode->exists();
+	return _realNode && _realNode->exists();
 }
 
 FSNode FSNode::getChild(const Common::String &n) const {
@@ -116,24 +116,15 @@ Common::String FSNode::getPath() const {
 }
 
 bool FSNode::isDirectory() const {
-	if (_realNode == 0)
-		return false;
-
-	return _realNode->isDirectory();
+	return _realNode && _realNode->isDirectory();
 }
 
 bool FSNode::isReadable() const {
-	if (_realNode == 0)
-		return false;
-
-	return _realNode->isReadable();
+	return _realNode && _realNode->isReadable();
 }
 
 bool FSNode::isWritable() const {
-	if (_realNode == 0)
-		return false;
-
-	return _realNode->isWritable();
+	return _realNode && _realNode->isWritable();
 }
 
 Common::SeekableReadStream *FSNode::createReadStream() const {
@@ -141,10 +132,10 @@ Common::SeekableReadStream *FSNode::createReadStream() const {
 		return 0;
 
 	if (!_realNode->exists()) {
-		warning("FSNode::createReadStream: FSNode does not exist");
+		warning("FSNode::createReadStream: '%s' does not exist", getName().c_str());
 		return false;
 	} else if (_realNode->isDirectory()) {
-		warning("FSNode::createReadStream: FSNode is a directory");
+		warning("FSNode::createReadStream: '%s' is a directory", getName().c_str());
 		return false;
 	}
 
@@ -156,7 +147,7 @@ Common::WriteStream *FSNode::createWriteStream() const {
 		return 0;
 
 	if (_realNode->isDirectory()) {
-		warning("FSNode::createWriteStream: FSNode is a directory");
+		warning("FSNode::createWriteStream: '%s' is a directory", getName().c_str());
 		return 0;
 	}
 
@@ -224,10 +215,10 @@ ArchiveMemberPtr FSDirectory::getMember(const String &name) {
 	FSNode *node = lookupCache(_fileCache, name);
 
 	if (!node || !node->exists()) {
-		warning("FSDirectory::getMember: FSNode does not exist");
+		warning("FSDirectory::getMember: '%s' does not exist", name.c_str());
 		return ArchiveMemberPtr();
 	} else if (node->isDirectory()) {
-		warning("FSDirectory::getMember: FSNode is a directory");
+		warning("FSDirectory::getMember: '%s' is a directory", name.c_str());
 		return ArchiveMemberPtr();
 	}
 

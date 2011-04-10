@@ -52,9 +52,8 @@ public:
 	virtual ~File();
 
 	/**
-	 * Checks if a given file exists in any of the current default paths
-	 * (those were/are added by addDefaultDirectory and/or
-	 * addDefaultDirectoryRecursive).
+	 * Checks if a given file exists in any of the current default paths,
+	 * as defined by SearchMan.
 	 *
 	 * @param	filename	the file to check for
 	 * @return	true if the file exists, false otherwise

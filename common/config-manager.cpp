@@ -29,7 +29,7 @@
 #include "common/util.h"
 #include "common/system.h"
 
-DECLARE_SINGLETON(Common::ConfigManager);
+DECLARE_SINGLETON(Common::ConfigManager)
 
 static bool isValidDomainName(const Common::String &domName) {
 	const char *p = domName.c_str();
@@ -61,13 +61,18 @@ void ConfigManager::loadDefaultConfigFile() {
 	_filename.clear();	// clear the filename to indicate that we are using the default config file
 
 	// ... load it, if available ...
-	if (stream)
+	if (stream) {
 		loadFromStream(*stream);
 
-	// ... and close it again.
-	delete stream;
+		// ... and close it again.
+		delete stream;
 
-	flushToDisk();
+	} else {
+		// No config file -> create new one!
+		printf("Default configuration file missing, creating a new one\n");
+
+		flushToDisk();
+	}
 }
 
 void ConfigManager::loadConfigFile(const String &filename) {
@@ -221,7 +226,7 @@ void ConfigManager::flushToDisk() {
 	// First write the domains in _domainSaveOrder, in that order.
 	// Note: It's possible for _domainSaveOrder to list domains which
 	// are not present anymore.
-	StringList::const_iterator i;
+	Array<String>::const_iterator i;
 	for (i = _domainSaveOrder.begin(); i != _domainSaveOrder.end(); ++i) {
 		if (kApplicationDomain == *i) {
 			writeDomain(*stream, *i, _appDomain);
@@ -409,10 +414,8 @@ const String & ConfigManager::get(const String &key) const {
 		return (*_activeDomain)[key];
 	else if (_appDomain.contains(key))
 		return _appDomain[key];
-	else if (_defaultsDomain.contains(key))
-		return _defaultsDomain[key];
 
-	return _emptyString;
+	return _defaultsDomain.getVal(key);
 }
 
 const String & ConfigManager::get(const String &key, const String &domName) const {
@@ -431,18 +434,7 @@ const String & ConfigManager::get(const String &key, const String &domName) cons
 	if (domain->contains(key))
 		return (*domain)[key];
 
-	return _defaultsDomain.get(key);
-
-	if (!domain->contains(key)) {
-#if 1
-		return _emptyString;
-#else
-		error("ConfigManager::get(%s,%s) called on non-existent key",
-					key.c_str(), domName.c_str());
-#endif
-	}
-
-	return (*domain)[key];
+	return _defaultsDomain.getVal(key);
 }
 
 int ConfigManager::getInt(const String &key, const String &domName) const {
@@ -476,7 +468,6 @@ bool ConfigManager::getBool(const String &key, const String &domName) const {
 
 	error("ConfigManager::getBool(%s,%s): '%s' is not a valid bool",
 				key.c_str(), domName.c_str(), value.c_str());
-	return false;
 }
 
 
@@ -633,14 +624,6 @@ bool ConfigManager::hasGameDomain(const String &domName) const {
 
 #pragma mark -
 
-
-const String &ConfigManager::Domain::get(const String &key) const {
-	const_iterator iter(find(key));
-	if (iter != end())
-		return iter->_value;
-
-	return ConfMan._emptyString;
-}
 
 void ConfigManager::Domain::setDomainComment(const String &comment) {
 	_domainComment = comment;

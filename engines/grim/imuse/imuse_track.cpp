@@ -140,7 +140,7 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 	}
 
 	track->stream = Audio::makeQueuingAudioStream(freq, track->mixerFlags & kFlagStereo);
-	g_system->getMixer()->playInputStream(track->getType(), &track->handle, track->stream, -1,
+	g_system->getMixer()->playStream(track->getType(), &track->handle, track->stream, -1,
 											track->getVol(), track->getPan(), DisposeAfterUse::YES,
 											false, (track->mixerFlags & kFlagReverseStereo) != 0);
 	track->used = true;
@@ -379,7 +379,7 @@ Track *Imuse::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 
 	// Create an appendable output buffer
 	fadeTrack->stream = Audio::makeQueuingAudioStream(_sound->getFreq(fadeTrack->soundDesc), track->mixerFlags & kFlagStereo);
-	g_system->getMixer()->playInputStream(track->getType(), &fadeTrack->handle, fadeTrack->stream, -1, fadeTrack->getVol(),
+	g_system->getMixer()->playStream(track->getType(), &fadeTrack->handle, fadeTrack->stream, -1, fadeTrack->getVol(),
 											fadeTrack->getPan(), DisposeAfterUse::YES, false,
 											(track->mixerFlags & kFlagReverseStereo) != 0);
 	fadeTrack->used = true;

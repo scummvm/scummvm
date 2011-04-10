@@ -29,9 +29,6 @@
 #include "common/stack.h"
 #include "common/singleton.h"
 #include "graphics/pixelformat.h"
-//#ifdef USE_RGB_COLOR
-//#include "common/system.h"
-//#endif
 
 namespace Graphics {
 

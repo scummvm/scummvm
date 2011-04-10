@@ -62,7 +62,7 @@ class GuiObject : public CommandReceiver {
 protected:
 	int16		_x, _y;
 	uint16		_w, _h;
-	Common::String _name;
+	const Common::String _name;
 
 	Widget		*_firstWidget;
 
@@ -86,10 +86,6 @@ public:
 
 protected:
 	virtual void	releaseFocus() = 0;
-
-	// Convenience alias for OSystem::getMillis().
-	// This is a bit hackish, of course :-).
-	uint32 getMillis();
 };
 
 } // End of namespace GUI

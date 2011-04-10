@@ -26,56 +26,7 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 
-#include <stdarg.h>	// For va_list etc.
-
-#ifdef _WIN32_WCE
-// This is required for the debugger attachment
-extern bool isSmartphone();
-#endif
-
-#ifdef __PLAYSTATION2__
-	// for those replaced fopen/fread/etc functions
-	#include "backends/platform/ps2/fileio.h"
-
-	#define fputs(str, file)	ps2_fputs(str, file)
-#endif
-
-#ifdef __DS__
-	#include "backends/fs/ds/ds-fs.h"
-
-	#define fputs(str, file)	DS::std_fwrite(str, strlen(str), 1, file)
-#endif
-
 namespace Common {
-
-StringTokenizer::StringTokenizer(const String &str, const String &delimiters) : _str(str), _delimiters(delimiters) {
-	reset();
-}
-
-void StringTokenizer::reset() {
-	_tokenBegin = _tokenEnd = 0;
-}
-
-bool StringTokenizer::empty() const {
-	// Search for the next token's start (i.e. the next non-delimiter character)
-	for (uint i = _tokenEnd; i < _str.size(); i++) {
-		if (!_delimiters.contains(_str[i]))
-			return false; // Found a token so the tokenizer is not empty
-	}
-	// Didn't find any more tokens so the tokenizer is empty
-	return true;
-}
-
-String StringTokenizer::nextToken() {
-	// Seek to next token's start (i.e. jump over the delimiters before next token)
-	for (_tokenBegin = _tokenEnd; _tokenBegin < _str.size() && _delimiters.contains(_str[_tokenBegin]); _tokenBegin++)
-		;
-	// Seek to the token's end (i.e. jump over the non-delimiters)
-	for (_tokenEnd = _tokenBegin; _tokenEnd < _str.size() && !_delimiters.contains(_str[_tokenEnd]); _tokenEnd++)
-		;
-	// Return the found token
-	return String(_str.c_str() + _tokenBegin, _tokenEnd - _tokenBegin);
-}
 
 //
 // Print hexdump of the data passed in
@@ -129,51 +80,25 @@ void hexdump(const byte * data, int len, int bytesPerLine, int startOffset) {
 	printf("|\n");
 }
 
-String tag2string(uint32 tag) {
-	char str[5];
-	str[0] = (char)(tag >> 24);
-	str[1] = (char)(tag >> 16);
-	str[2] = (char)(tag >> 8);
-	str[3] = (char)tag;
-	str[4] = '\0';
-	// Replace non-printable chars by dot
-	for (int i = 0; i < 4; ++i) {
-		if (!isprint((unsigned char)str[i]))
-			str[i] = '.';
-	}
-	return Common::String(str);
-}
-
 
 #pragma mark -
 
 
-RandomSource::RandomSource() {
-	// Use system time as RNG seed. Normally not a good idea, if you are using
-	// a RNG for security purposes, but good enough for our purposes.
-	assert(g_system);
-	uint32 seed = g_system->getMillis();
-	setSeed(seed);
-}
+bool parseBool(const Common::String &val, bool &valAsBool) {
+	if (val.equalsIgnoreCase("true") ||
+		val.equalsIgnoreCase("yes") ||
+		val.equals("1")) {
+		valAsBool = true;
+		return true;
+	}
+	if (val.equalsIgnoreCase("false") ||
+		val.equalsIgnoreCase("no") ||
+		val.equals("0")) {
+		valAsBool = false;
+		return true;
+	}
 
-void RandomSource::setSeed(uint32 seed) {
-	_randSeed = seed;
-}
-
-uint RandomSource::getRandomNumber(uint max) {
-	_randSeed = 0xDEADBF03 * (_randSeed + 1);
-	_randSeed = (_randSeed >> 13) | (_randSeed << 19);
-	return _randSeed % (max + 1);
-}
-
-uint RandomSource::getRandomBit() {
-	_randSeed = 0xDEADBF03 * (_randSeed + 1);
-	_randSeed = (_randSeed >> 13) | (_randSeed << 19);
-	return _randSeed & 1;
-}
-
-uint RandomSource::getRandomNumberRng(uint min, uint max) {
-	return getRandomNumber(max - min) + min;
+	return false;
 }
 
 
@@ -191,7 +116,8 @@ const LanguageDescription g_languages[] = {
 	{"fr", "French", FR_FRA},
 	{"de", "German", DE_DEU},
 	{"gr", "Greek", GR_GRE},
-	{"hb", "Hebrew", HB_ISR},
+	{"he", "Hebrew", HE_ISR},
+	{"hb", "Hebrew", HE_ISR}, // Deprecated
 	{"hu", "Hungarian", HU_HUN},
 	{"it", "Italian", IT_ITA},
 	{"jp", "Japanese", JA_JPN},

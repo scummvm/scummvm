@@ -36,12 +36,10 @@ ifeq "$(HAVE_GCC)" "1"
 
 	# Disable RTTI, and enable checking of pointers returned by "new"
 	CXXFLAGS+= -fno-exceptions -fcheck-new
+endif
 
-	# There is a nice extra warning that flags variables that are potentially
-	# used before being initialized. Very handy to catch a certain kind of
-	# bugs. Unfortunately, it only works when optimizations are turned on,
-	# which is why we normally don't use it.
-	#CXXFLAGS+= -O -Wuninitialized
+ifeq "$(HAVE_CLANG)" "1"
+	CXXFLAGS+= -Wno-conversion -Wno-shorten-64-to-32 -Wno-sign-compare -Wno-four-char-constants
 endif
 
 #######################################################################

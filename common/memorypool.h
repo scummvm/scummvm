@@ -154,12 +154,12 @@ public:
  * For details on using placement new for custom allocators, see e.g.
  * <http://www.parashift.com/c++-faq-lite/dtors.html#faq-11.14>
  */
-inline void* operator new(size_t nbytes, Common::MemoryPool& pool) {
+inline void *operator new(size_t nbytes, Common::MemoryPool &pool) {
 	assert(nbytes <= pool.getChunkSize());
 	return pool.allocChunk();
 }
 
-inline void operator delete(void* p, Common::MemoryPool& pool) {
+inline void operator delete(void *p, Common::MemoryPool &pool) {
 	pool.freeChunk(p);
 }
 

@@ -38,7 +38,8 @@ class PopUpWidget;
 
 // Some "common" commands sent to handleCommand()
 enum {
-	kCloseCmd = 'clos'
+	kCloseCmd  = 'clos',
+	kOKCmd     = 'ok  '
 };
 
 class Dialog : public GuiObject {

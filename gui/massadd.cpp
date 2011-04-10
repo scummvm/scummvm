@@ -66,7 +66,7 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	_dirProgressText(0),
 	_gameProgressText(0) {
 
-	Common::StringList l;
+	StringArray l;
 
 	// The dir we start our scan at
 	_scanStack.push(startDir);
@@ -106,7 +106,7 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 		}
 #endif
 
-		Common::String path(iter->_value.get("path"));
+		Common::String path(iter->_value.getVal("path"));
 		// Remove trailing slash, so that "/foo" and "/foo/" match.
 		// This works around a bug in the POSIX FS code (and others?)
 		// where paths are not normalized (so FSNodes refering to identical
@@ -199,8 +199,8 @@ void MassAddDialog::handleTickle() {
 			// Check for existing config entries for this path/gameid/lang/platform combination
 			if (_pathToTargets.contains(path)) {
 				bool duplicate = false;
-				const Common::StringList &targets = _pathToTargets[path];
-				for (Common::StringList::const_iterator iter = targets.begin(); iter != targets.end(); ++iter) {
+				const StringArray &targets = _pathToTargets[path];
+				for (StringArray::const_iterator iter = targets.begin(); iter != targets.end(); ++iter) {
 					// If the gameid, platform and language match -> skip it
 					Common::ConfigManager::Domain *dom = ConfMan.getDomain(*iter);
 					assert(dom);

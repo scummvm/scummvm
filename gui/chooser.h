@@ -39,7 +39,7 @@ class ListWidget;
 
 class ChooserDialog : public Dialog {
 	typedef Common::String String;
-	typedef Common::StringList StringList;
+	typedef Common::Array<Common::String> StringArray;
 protected:
 	ListWidget		*_list;
 	ButtonWidget	*_chooseButton;
@@ -47,7 +47,7 @@ protected:
 public:
 	ChooserDialog(const String &title, String dialogId = "Browser");
 
-	void setList(const StringList& list);
+	void setList(const StringArray& list);
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 };

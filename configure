@@ -94,6 +94,7 @@ _debug_build=auto
 _release_build=auto
 _text_console=no
 _mt32emu=no
+_enable_prof=no
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
@@ -120,7 +121,24 @@ _sdlpath="$PATH"
 _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
-_prefix=/usr/local
+
+# Directories for installing Reesidual.
+# This list is closely based on what GNU autoconf does,
+# although the default value for datadir differs.
+# Like GNU autoconf, we distinguish datadir and datarootdir
+# to make it possible to change e.g. the location of the
+# man pages independently of that of the engine data files,
+# which are placed inside $datadir/residual
+exec_prefix=NONE
+prefix=NONE
+bindir='${exec_prefix}/bin'
+datarootdir='${prefix}/share'
+datadir='${datarootdir}/residual'
+docdir='${datarootdir}/doc/residual'
+libdir='${exec_prefix}/lib'
+#localedir='${datarootdir}/locale'
+mandir='${datarootdir}/man'
+
 # For cross compiling
 _host=""
 _host_cpu=""
@@ -140,16 +158,50 @@ fi
 TMPC=${TMPO}.cpp
 TMPLOG=config.log
 
-cc_check() {
+cc_check_no_clean() {
 	echo >> "$TMPLOG"
 	cat "$TMPC" >> "$TMPLOG"
 	echo >> "$TMPLOG"
-	echo "$CXX $TMPC -o $TMPO$HOSTEXEEXT $@" >> "$TMPLOG"
+	echo "$CXX $LDFLAGS $CXXFLAGS $TMPC -o $TMPO$HOSTEXEEXT $@" >> "$TMPLOG"
 	rm -f "$TMPO$HOSTEXEEXT"
-	( $CXX $CXXFLAGS "$TMPC" -o "$TMPO$HOSTEXEEXT" "$@" ) >> "$TMPLOG" 2>&1
+	( $CXX $LDFLAGS $CXXFLAGS "$TMPC" -o "$TMPO$HOSTEXEEXT" "$@" ) >> "$TMPLOG" 2>&1
 	TMP="$?"
+	echo "return code: $TMP" >> "$TMPLOG"
 	echo >> "$TMPLOG"
 	return "$TMP"
+}
+
+cc_check_clean() {
+	rm -rf $TMPC $TMPO $TMPO.o $TMPO.dSYM $TMPO$HOSTEXEEXT "$@"
+}
+
+cc_check() {
+	cc_check_no_clean "$@"
+	TMP="$?"
+	cc_check_clean
+	return "$TMP"
+}
+
+cc_check_define() {
+cat > $TMPC << EOF
+int main(void) {
+	#ifndef $1
+	syntax error
+	#endif
+	return 0;
+}
+EOF
+	cc_check -c
+	return $?
+}
+
+gcc_get_define() {
+	# Note: The AmigaOS compiler doesn't like the "-" input file, so a real file
+	# is used instead
+	rm -f $TMPC
+	touch $TMPC
+	$CXX -dM -E $TMPC | fgrep "$1" | head -n1 | cut -d ' ' -f 3-
+	rm -f $TMPC
 }
 
 #
@@ -519,14 +571,28 @@ Configuration:
   --backend=BACKEND      backend to build (sdl, null) [sdl]
 
 Installation directories:
-  --prefix=DIR           use this prefix for installing Residual [/usr/local]
-  --bindir=DIR           directory to install the residual binary in [PREFIX/bin]
-  --mandir=DIR           directory to install the manpage in [PREFIX/share/man]
-  --datadir=DIR          directory to install the data files in [PREFIX/share]
-  --libdir=DIR           directory to install the plugins in [PREFIX/lib]
+  --prefix=PREFIX         install architecture-independent files in PREFIX
+                          [/usr/local]
+  --exec-prefix=EPREFIX   install architecture-dependent files in EPREFIX
+                          [PREFIX]
+
+By default, \`make install' will install all the files in
+\`/usr/local/bin', \`/usr/local/lib' etc.  You can specify
+an installation prefix other than \`/usr/local' using \`--prefix',
+for instance \`--prefix=\$HOME'.
+
+For better control, use the options below.
+
+Fine tuning of the installation directories:
+  --bindir=DIR            user executables [EPREFIX/bin]
+  --libdir=DIR            object code libraries [EPREFIX/lib]
+  --datarootdir=DIR       read-only arch.-independent data root [PREFIX/share]
+  --datadir=DIR           read-only architecture-independent data [DATAROOTDIR/scummvm]
+  --mandir=DIR            man documentation [DATAROOTDIR/man]
+  --docdir=DIR            documentation root [DATAROOTDIR/doc/scummvm]
 
 Special configuration feature:
-  --host=HOST            cross-compile to target HOST (arm-linux, ...)
+  --host=HOST             cross-compile to target HOST (arm-linux, ...)
 
 Game engines:
   --enable-all-engines     enable all engines
@@ -535,11 +601,11 @@ $engines_help
 Optional Features:
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
+  --enable-release         enable building in release mode (this activates optimizations)
+  --enable-profiling       enable profiling
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
   --disable-mt32emu        don't enable the integrated MT-32 emulator
-  --enable-profiling       enable building with gprof profile information
-  --enable-release         set flags to build release binary
   --enable-text-console    use text console instead of graphical console
   --enable-verbose-build   enable regular echoing of commands during build process
 
@@ -679,8 +745,7 @@ for ac_option in $@; do
 		_release_build=no
 		;;
 	--enable-profiling)
-		CXXFLAGS="$CXXFLAGS -pg"
-		LDFLAGS="$LDFLAGS -pg"
+		_enable_prof=yes
 		;;
 	--with-sdl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -696,20 +761,26 @@ for ac_option in $@; do
 	--host=*)
 		_host=`echo $ac_option | cut -d '=' -f 2`
 		;;
+	--exec-prefix=*)
+		exec_prefix=`echo $ac_option | cut -d '=' -f 2`
+		;;
 	--prefix=*)
-		_prefix=`echo $ac_option | cut -d '=' -f 2`
+		prefix=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--bindir=*)
-		_bindir=`echo $ac_option | cut -d '=' -f 2`
+		bindir=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--mandir=*)
-		_mandir=`echo $ac_option | cut -d '=' -f 2`
+		mandir=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--datarootdir=*)
+		datarootdir=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--datadir=*)
-		_datadir=`echo $ac_option | cut -d '=' -f 2`
+		datadir=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--libdir=*)
-		_libdir=`echo $ac_option | cut -d '=' -f 2`
+		libdir=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--enable-all-engines)
 		engine_enable_all
@@ -816,7 +887,7 @@ psp)
 	_host_cpu=mipsallegrexel
 	_host_alias=psp
 	if test -z "$PSPDEV"; then
-		PSPDEV=$(psp-config --pspdev-path)
+		PSPDEV=`psp-config --pspdev-path`
 	fi
 	if test -d "$PSPDEV/psp/lib"; then
 		LDFLAGS="$LDFLAGS -L$PSPDEV/psp/lib"
@@ -826,7 +897,7 @@ psp)
 samsungtv)
 	_host_os=linux
 	_host_cpu=arm
-	_host_alias=arm-SamyGO-linux-gnueabi
+	_host_alias=arm-linux-gnueabi
 	;;
 wii)
 	_host_os=wii
@@ -910,7 +981,7 @@ ps2)
 	fi
 	;;
 psp)
-	PSPSDK=$(psp-config --pspsdk-path)
+	PSPSDK=`psp-config --pspsdk-path`
 	if test -z "$PSPSDK"; then
 		echo "Please set the path to PSPSDK in your environment."
 		exit 1
@@ -927,18 +998,20 @@ echo_n "Looking for C++ compiler... "
 
 # Check whether the given command is a working C++ compiler
 test_compiler() {
-	cat <<EOF >tmp_cxx_compiler.cpp
+	cat > tmp_cxx_compiler.cpp << EOF
 	class Foo { int a; };
 	int main(int argc, char **argv) {
 		Foo *a = new Foo(); delete a; return 0;
 	}
 EOF
 
+	echo "testing compiler: $1" >> "$TMPLOG"
+
 	if test -n "$_host"; then
 		# In cross-compiling mode, we cannot run the result
-		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$HOSTEXEEXT -c tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp
+		eval "$1 $CXXFLAGS $LDFLAGS -o $TMPO.o -c tmp_cxx_compiler.cpp" 2> /dev/null && cc_check_clean tmp_cxx_compiler.cpp
 	else
-		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler$HOSTEXEEXT 2> /dev/null" && rm -rf tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.dSYM tmp_cxx_compiler.cpp
+		eval "$1 $CXXFLAGS $LDFLAGS -o $TMPO$HOSTEXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "$TMPO$HOSTEXEEXT 2> /dev/null" && cc_check_clean tmp_cxx_compiler.cpp
 	fi
 }
 
@@ -978,9 +1051,28 @@ LD=$CXX
 echocheck "compiler version"
 
 have_gcc=no
-cxx_version=`( $CXX -dumpversion ) 2>&1`
-if test "$?" -gt 0; then
-	# TODO: Big scary warning about unsupported Compilers
+cc_check_define __GNUC__ && have_gcc=yes
+
+if test "$have_gcc" = yes; then
+	add_line_to_config_mk 'HAVE_GCC = 1'
+	_cxx_major=`gcc_get_define __GNUC__`
+	_cxx_minor=`gcc_get_define __GNUC_MINOR__`
+	cxx_version="`( $CXX -dumpversion ) 2>&1`"
+
+	if test -n "`gcc_get_define __clang__`"; then
+		add_line_to_config_mk 'HAVE_CLANG = 1'
+	fi
+
+	if test "$_cxx_major" -eq 2 && test "$_cxx_minor" -ge 95 || \
+	   test "$_cxx_major" -gt 2 ; then
+		cxx_version="$cxx_version, ok"
+		cxx_verc_fail=no
+	else
+		cxx_version="$cxx_version, bad"
+		cxx_verc_fail=yes
+	fi
+else
+	# TODO: Big scary warning about unsupported compilers
 	cxx_version=`( $CXX -version ) 2>&1`
 	if test "$?" -eq 0; then
 		cxx_version="`echo "${cxx_version}" | sed -ne 's/^.*[^0-9]\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*$/\1/gp'`"
@@ -994,46 +1086,15 @@ if test "$?" -gt 0; then
 		cxx_verc_fail=yes
 		echo found non-gcc compiler version ${cxx_version}
 	fi
-else
-	add_line_to_config_mk 'HAVE_GCC = 1'
-	have_gcc=yes
-fi
 
-if test "$have_gcc" = yes; then
-	case $cxx_version in
-		2.95.[2-9]|2.95.[2-9][-.]*|3.[0-9]|3.[0-9].[0-9]|3.[0-9].[0-9][-.]*|4.[0-9]|4.[0-9].[0-9]|4.[0-9].[0-9][-.]*)
-			_cxx_major=`echo $cxx_version | cut -d '.' -f 1`
-			_cxx_minor=`echo $cxx_version | cut -d '.' -f 2`
-			cxx_version="$cxx_version, ok"
-			cxx_verc_fail=no
-			;;
-		# whacky beos version strings
-		2.9-beos-991026*|2.9-beos-000224*)
-			_cxx_major=2
-			_cxx_minor=95
-			cxx_version="$cxx_version, ok"
-			cxx_verc_fail=no
-			;;
-		3_4)
-			_cxx_major=3
-			_cxx_minor=4
-			;;
-		'not found')
-			cxx_verc_fail=yes
-			;;
-		*)
-			cxx_version="$cxx_version, bad"
-			cxx_verc_fail=yes
-			;;
-	esac
-else
 	case $_host_os in
 		irix*)
 			case $cxx_version in
 				7.4.4*)
-					# We just assume this is SGI MipsPRO
+					# We just assume this is SGI MIPSpro
 					_cxx_major=7
 					_cxx_minor=4
+					cxx_verc_fail=no
 					add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MDupdate "$(*D)/$(DEPDIR)/$(*F).d"'
 					add_line_to_config_mk '-include Makedepend'
 					;;
@@ -1048,7 +1109,6 @@ else
 			cxx_verc_fail=yes
 			;;
 	esac
-
 fi
 
 echo "$cxx_version"
@@ -1064,7 +1124,7 @@ fi
 # Check for endianness
 #
 echo_n "Checking endianness... "
-cat <<EOF >tmp_endianness_check.cpp
+cat > tmp_endianness_check.cpp << EOF
 short ascii_mm[] = { 0x4249, 0x4765, 0x6E44, 0x6961, 0x6E53, 0x7953, 0 };
 short ascii_ii[] = { 0x694C, 0x5454, 0x656C, 0x6E45, 0x6944, 0x6E61, 0 };
 void _ascii() { char* s = (char*) ascii_mm; s = (char*) ascii_ii; }
@@ -1073,21 +1133,21 @@ short ebcdic_mm[] = { 0xC2C9, 0xC785, 0x95C4, 0x8981, 0x95E2, 0xA8E2, 0 };
 void _ebcdic() { char* s = (char*) ebcdic_mm; s = (char*) ebcdic_ii; }
 int main() { _ascii (); _ebcdic (); return 0; }
 EOF
-$CXX $CXXFLAGS -c -o tmp_endianness_check.o tmp_endianness_check.cpp
-if strings tmp_endianness_check.o | grep BIGenDianSyS >/dev/null; then
+$CXX $CXXFLAGS -c -o $TMPO.o tmp_endianness_check.cpp
+if strings $TMPO.o | grep BIGenDianSyS >/dev/null; then
 	_endian=big
 else
 	_endian=little
 fi
 echo $_endian;
-rm -f tmp_endianness_check.o tmp_endianness_check.cpp
+cc_check_clean tmp_endianness_check.cpp
 
 #
 # Determine a data type with the given length
 #
 find_type_with_size() {
-	for datatype in int short char long 'long long' unknown; do
-	cat <<EOF >tmp_find_type_with_size.cpp
+	for datatype in int short char long unknown; do
+		cat > tmp_find_type_with_size.cpp << EOF
 typedef $datatype ac__type_sizeof_;
 int main() {
 	static int test_array [1 - 2 * !(((long int) (sizeof (ac__type_sizeof_))) == $1)];
@@ -1095,7 +1155,7 @@ int main() {
 	return 0;
 }
 EOF
-if $CXX $CXXFLAGS -c -o tmp_find_type_with_size$HOSTEXEEXT tmp_find_type_with_size.cpp 2>/dev/null ; then
+if $CXX $CXXFLAGS -c -o $TMPO.o tmp_find_type_with_size.cpp 2>/dev/null ; then
 	break
 else
 	if test "$datatype" = "unknown"; then
@@ -1105,7 +1165,7 @@ else
 	continue
 fi
 done
-rm -f tmp_find_type_with_size$HOSTEXEEXT tmp_find_type_with_size.cpp
+cc_check_clean tmp_find_type_with_size.cpp
 echo $datatype
 }
 
@@ -1113,16 +1173,16 @@ echo $datatype
 # Determine a size of pointer type
 #
 find_pointer_size() {
-	cat <<EOF >tmp_find_pointer_size.cpp
+	cat > tmp_find_pointer_size.cpp << EOF
 int main() {
 	void *p;
 	int v = (int)p;
 	return 0;
 }
 EOF
-	$CXX $CXXFLAGS -c -o tmp_find_pointer_size$HOSTEXEEXT tmp_find_pointer_size.cpp 2>/dev/null
+	$CXX $CXXFLAGS -c -o $TMPO.o tmp_find_pointer_size.cpp 2>/dev/null
 	status=$?
-	rm -f tmp_find_pointer_size$HOSTEXEEXT tmp_find_pointer_size.cpp
+	cc_check_clean tmp_find_pointer_size.cpp
 	return $status
 }
 
@@ -1202,8 +1262,6 @@ case $_host_os in
 		CFLAGS="-I/boot/home/config/include"
 		CXXFLAGS="$CXXFLAGS -fhuge-objects"
 		LIBS="$LIBS -lbind -lsocket"
-		# FIXME: Please document why 'long' has to be used instead of int
-		#type_4_byte='long'
 		;;
 	bsd* | hpux* | netbsd* | openbsd* | sunos*)
 		DEFINES="$DEFINES -DUNIX -DUSE_OPENGL"
@@ -1239,8 +1297,6 @@ case $_host_os in
 		# Needs -lnetwork for the timidity MIDI driver
 		LIBS="$LIBS -lnetwork"
 		CXXFLAGS="$CXXFLAGS -fhuge-objects"
-		# FIXME: Please document why 'long' has to be used instead of int
-		#type_4_byte='long'
 		;;
 	irix*)
 		DEFINES="$DEFINES -DUNIX -DIRIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -1304,9 +1360,9 @@ esac
 
 if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
-	echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+	echo "Cross-compiling to $_host"
 	case "$_host" in
-		arm-linux|arm*-linux-gnueabi|arm-*-linux|*-angstrom-linux)
+		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			DEFINES="$DEFINES -DUNIX"
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
@@ -1329,17 +1385,16 @@ if test -n "$_host"; then
 			_need_memalign=yes
 			_backend="dc"
 			_build_scalers="no"
-			_build_hq_scalers="no"
 			_mad="yes"
 			_zlib="yes"
-			add_line_to_config_mk 'include $(srcdir)/backends/platform/dc/dreamcast.mk'
+			add_line_to_config_mk 'ronindir = /usr/local/ronin'
+			_port_mk="backends/platform/dc/dreamcast.mk"
 			;;
 		gamecube)
 			_endian=big
 			_need_memalign=yes
 			_backend="wii"
 			_build_scalers="no"
-			_build_hq_scalers="no"
 			_mt32emu="no"
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 1'
@@ -1366,7 +1421,6 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DUNIX -DGP2XWIZ -DNDEBUG"
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
-			LDFLAGS="$LDFLAGS"
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
@@ -1388,8 +1442,6 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 			_endian=big
 			_need_memalign=yes
-			# FIXME: Please document why 'long' has to be used instead of int
-			#type_4_byte='long'
 			_ranlib=m68k-atari-mint-ranlib
 			_ar="m68k-atari-mint-ar cru"
 			;;
@@ -1436,7 +1488,7 @@ if test -n "$_host"; then
 			_backend="nds"
 			_build_hq_scalers="no"
 			_mt32emu="no"
-			add_line_to_config_mk 'include $(srcdir)/backends/platform/ds/ds.mk'
+			_port_mk="backends/platform/ds/ds.mk"
 			# TODO: Enable more ARM optimizations -- requires testing!
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
@@ -1451,8 +1503,6 @@ if test -n "$_host"; then
 		ppc-amigaos)
 			_endian=big
 			_need_memalign=yes
-			# FIXME: Please document why 'long' has to be used instead of int
-			#type_4_byte='long'
 			;;
 		ps2)
 			# TODO: complete this
@@ -1460,7 +1510,6 @@ if test -n "$_host"; then
 			_need_memalign=yes
 			_backend="ps2"
 			_build_scalers="no"
-			_build_hq_scalers="no"
 			_mt32emu="no"
 			# HACK to enable mad & zlib (they are not properly detected due to linker issues).
 			# This trick doesn't work for tremor right now, as the PS2 port the resulting library
@@ -1488,7 +1537,6 @@ if test -n "$_host"; then
 			_need_memalign=yes
 			_backend="psp"
 			_build_scalers="no"
-			_build_hq_scalers="no"
 			_mt32emu="no"
 			_port_mk="backends/platform/psp/psp.mk"
 			;;
@@ -1502,8 +1550,6 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
 			_backend="samsungtv"
 			_mt32emu="no"
-			_build_scalers="yes"
-			_build_hq_scalers="yes"
 			_vkeybd="yes"
 			;;
 		wii)
@@ -1511,7 +1557,6 @@ if test -n "$_host"; then
 			_need_memalign=yes
 			_backend="wii"
 			_build_scalers="no"
-			_build_hq_scalers="no"
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 0'
 			add_line_to_config_h "#define DEBUG_WII_USBGECKO"
@@ -1579,7 +1624,8 @@ int main(int argc, char **argv) {
 }
 EOF
 			_need_memalign=yes
-			cc_check && $TMPO$HOSTEXEEXT && _need_memalign=no
+			cc_check_no_clean && $TMPO$HOSTEXEEXT && _need_memalign=no
+			cc_check_clean
 			;;
 	esac
 	echo "$_need_memalign"
@@ -1769,7 +1815,7 @@ add_to_config_mk_if_yes "$_mt32emu" 'USE_MT32EMU = 1'
 cat > $TMPC << EOF
 int main(void) { return 0; }
 EOF
-cc_check $LDFLAGS $CXXFLAGS -lm && LDFLAGS="$LDFLAGS -lm"
+cc_check -lm && LDFLAGS="$LDFLAGS -lm"
 
 #
 # Check for Ogg Vorbis
@@ -1781,7 +1827,7 @@ if test "$_vorbis" = auto ; then
 #include <vorbis/codec.h>
 int main(void) { vorbis_packet_blocksize(0,0); return 0; }
 EOF
-	cc_check $LDFLAGS $CXXFLAGS $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
+	cc_check $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
 		-lvorbisfile -lvorbis -logg && _vorbis=yes
 fi
 if test "$_vorbis" = yes ; then
@@ -1804,7 +1850,7 @@ if test "$_tremor" = auto ; then
 #include <tremor/ivorbiscodec.h>
 int main(void) { vorbis_info_init(0); return 0; }
 EOF
-	cc_check $LDFLAGS $CXXFLAGS $TREMOR_CFLAGS $TREMOR_LIBS -lvorbisidec && \
+	cc_check $TREMOR_CFLAGS $TREMOR_LIBS -lvorbisidec && \
 	_tremor=yes
 fi
 if test "$_tremor" = yes && test "$_vorbis" = no; then
@@ -1832,10 +1878,10 @@ if test "$_flac" = auto ; then
 int main(void) { return FLAC__STREAM_SYNC_LEN >> 30; /* guaranteed to be 0 */ }
 EOF
 	if test "$_vorbis" = yes ; then
-		cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAC_LIBS $OGG_CFLAGS $OGG_LIBS \
+		cc_check $FLAC_CFLAGS $FLAC_LIBS $OGG_CFLAGS $OGG_LIBS \
 			-lFLAC -logg && _flac=yes
 	else
-		cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAC_LIBS \
+		cc_check $FLAC_CFLAGS $FLAC_LIBS \
 			-lFLAC && _flac=yes
 	fi
 fi
@@ -1863,7 +1909,7 @@ if test "$_mad" = auto ; then
 #include <mad.h>
 int main(void) { return 0; }
 EOF
-	cc_check $LDFLAGS $CXXFLAGS $MAD_CFLAGS $MAD_LIBS -lmad && _mad=yes
+	cc_check $MAD_CFLAGS $MAD_LIBS -lmad && _mad=yes
 fi
 if test "$_mad" = yes ; then
 	_def_mad='#define USE_MAD'
@@ -1885,7 +1931,7 @@ if test "$_alsa" = auto ; then
 #include <alsa/asoundlib.h>
 int main(void) { return (!(SND_LIB_MAJOR==0 && SND_LIB_MINOR==9)); }
 EOF
-	cc_check $LDFLAGS $CXXFLAGS $ALSA_CFLAGS $ALSA_LIBS -lasound && _alsa=yes
+	cc_check $ALSA_CFLAGS $ALSA_LIBS -lasound && _alsa=yes
 fi
 if test "$_alsa" = yes ; then
 	_def_alsa='#define USE_ALSA'
@@ -1901,14 +1947,12 @@ echo "$_alsa"
 #
 echocheck "zlib"
 _zlib=no
-
 cat > $TMPC << EOF
 #include <string.h>
 #include <zlib.h>
 int main(void) { return strcmp(ZLIB_VERSION, zlibVersion()); }
 EOF
-
-cc_check $LDFLAGS $CXXFLAGS $ZLIB_CFLAGS $ZLIB_LIBS -lz && _zlib=yes
+cc_check $ZLIB_CFLAGS $ZLIB_LIBS -lz && _zlib=yes
 
 if test "$_zlib" = yes ; then
 	_def_zlib='#define USE_ZLIB'
@@ -1932,7 +1976,7 @@ if test "$_fluidsynth" = auto ; then
 #include <fluidsynth.h>
 int main(void) { return 0; }
 EOF
-	cc_check $LDFLAGS $CXXFLAGS $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS -lfluidsynth && _fluidsynth=yes
+	cc_check $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS -lfluidsynth && _fluidsynth=yes
 fi
 if test "$_fluidsynth" = yes ; then
 	_def_fluidsynth='#define USE_FLUIDSYNTH'
@@ -1949,7 +1993,6 @@ else
 	_def_fluidsynth='#undef USE_FLUIDSYNTH'
 fi
 echo "$_fluidsynth"
-rm -rf $TMPC $TMPO$HOSTEXEEXT $TMPO.dSYM
 
 #
 # Check for readline if text_console is enabled
@@ -1968,14 +2011,13 @@ int main(void) {
 	char *x = readline("");
 }
 EOF
-		cc_check $LDFLAGS $CXXFLAGS $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
+		cc_check $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
 		if test "$_readline" = no ; then
 			_READLINE_LIBS="-lreadline -ltermcap"
-			cc_check $LDFLAGS $CXXFLAGS $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
+			cc_check $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
 		fi
 	fi
 	echo "$_readline"
-	rm -rf $TMPC $TMPO$HOSTEXEEXT $TMPO.dSYM
 else
 	_readline=no
 	echo "skipping (text console disabled)"
@@ -2008,10 +2050,23 @@ if test "$_have_x86" = yes ; then
 		for path_dir in $_nasmpath; do
 			if test -x "$path_dir/nasm$NATIVEEXEEXT" ; then
 				NASM="$path_dir/nasm$NATIVEEXEEXT"
+				NASMFLAGS="-O1 -g"
 				echo $NASM
 				break
 			fi
 		done
+
+		# fallback to the nasm compatible yasm
+		if test x$NASM = x -o x$NASM = x'"$NASM"'; then
+			for path_dir in $_nasmpath; do
+				if test -x "$path_dir/yasm$NATIVEEXEEXT" ; then
+					NASM="$path_dir/yasm$NATIVEEXEEXT"
+					NASMFLAGS="-a x86 -m x86"
+					echo $NASM
+					break
+				fi
+			done
+		fi
 
 		IFS="$ac_save_ifs"
 
@@ -2021,16 +2076,16 @@ if test "$_have_x86" = yes ; then
 		else
 			case $_host_os in
 				os2-emx*)
-					NASMFLAGS="-f aout"
+					NASMFLAGS="$NASMFLAGS -f aout"
 				;;
 				mingw*)
-					NASMFLAGS="-f win32"
+					NASMFLAGS="$NASMFLAGS -f win32"
 				;;
 				darwin*)
-					NASMFLAGS="-f macho"
+					NASMFLAGS="$NASMFLAGS -f macho"
 				;;
 				*)
-					NASMFLAGS="-f elf"
+					NASMFLAGS="$NASMFLAGS -f elf"
 				;;
 			esac
 			_nasm=yes
@@ -2039,7 +2094,7 @@ if test "$_have_x86" = yes ; then
 fi
 
 add_to_config_h_if_yes $_nasm '#define USE_NASM'
-add_to_config_mk_if_yes $_nasm 'HAVE_NASM = 1'
+add_to_config_mk_if_yes $_nasm 'USE_NASM = 1'
 
 #
 # Enable vkeybd / keymapper
@@ -2054,14 +2109,22 @@ fi
 #
 # Figure out installation directories
 #
-test -z "$_bindir" && _bindir="$_prefix/bin"
-test -z "$_mandir" && _mandir="$_prefix/share/man"
-test -z "$_datadir" && _datadir="$_prefix/share"
-test -z "$_libdir" && _libdir="$_prefix/lib"
+test "x$prefix" = xNONE && prefix=/usr/local
+test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
-DEFINES="$DEFINES -DDATA_PATH=\\\"$_datadir/residual\\\""
+DEFINES="$DEFINES -DDATA_PATH=\\\"$_datadir\\\""
 DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$_libdir/residual\\\""
 
+
+#
+# Set variables for profiling.
+# We need to do it here to prevent mess-ups with the tests e.g. on the PSP
+#
+if test "$_enable_prof" = yes ; then
+	CXXFLAGS="$CXXFLAGS -pg"
+	LDFLAGS="$LDFLAGS -pg"
+	DEFINES="$DEFINES -DENABLE_PROFILING"
+fi
 
 echo_n "Backend... "
 echo_n "$_backend"
@@ -2138,7 +2201,7 @@ case $_backend in
 		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
 		INCLUDES="$INCLUDES -I$PSPDEV/psp/include/SDL"
 		LIBS="$LIBS -lpng -lSDL -Wl,-Map,mapfile.txt"
-		SDLLIBS=$($PSPDEV/psp/bin/sdl-config --libs)
+		SDLLIBS=`$PSPDEV/psp/bin/sdl-config --libs`
 
 		if `echo "$SDLLIBS" | grep ".*-lGL.*" 1>/dev/null 2>&1`
 		then
@@ -2146,12 +2209,11 @@ case $_backend in
 		fi
 		;;
 	samsungtv)
-		_sdlconfig="arm-SamyGO-linux-gnueabi-sdl-config"
 		find_sdlconfig
-		INCLUDES="$INCLUDES `$_sdlconfig --cflags`"
-		LIBS="$LIBS `$_sdlconfig --libs`"
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		DEFINES="$DEFINES -DSDL_BACKEND -DSAMSUNGTV"
-		LDFLAGS="$LDFLAGS -shared -fpic -Wl,-whole-archive"
+		LDFLAGS="$LDFLAGS -shared -fpic"
 		MODULES="$MODULES backends/platform/sdl"
 		;;
 	sdl)
@@ -2198,10 +2260,11 @@ if test "$have_gcc" = yes ; then
 			;;
 		esac
 		add_line_to_config_mk 'HAVE_GCC3 = 1'
-		add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP'
+		add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
 	fi;
 
-	if test "$_cxx_major" -ge "4" && test "$_cxx_minor" -ge "3" ; then
+	if test "$_cxx_major" -eq 4 && test "$_cxx_minor" -ge 3 || \
+	   test "$_cxx_major" -gt 4 ; then
 		CXXFLAGS="$CXXFLAGS -Wno-empty-body"
 	else
 		CXXFLAGS="$CXXFLAGS -Wconversion"
@@ -2370,11 +2433,14 @@ EXEEXT := $HOSTEXEEXT
 NASM := $NASM
 NASMFLAGS := $NASMFLAGS
 
-PREFIX := $_prefix
-BINDIR := $_bindir
-MANDIR := $_mandir
-DATADIR := $_datadir
-LIBDIR := $_libdir
+prefix = $prefix
+exec_prefix = $exec_prefix
+bindir = $bindir
+datarootdir = $datarootdir
+datadir = $datadir
+docdir = $docdir
+libdir = $libdir
+mandir = $mandir
 
 $_config_mk_data
 

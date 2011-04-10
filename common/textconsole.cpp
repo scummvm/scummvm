@@ -25,6 +25,24 @@
 #include "common/textconsole.h"
 #include "common/system.h"
 
+#ifdef _WIN32_WCE
+// This is required for the debugger attachment
+extern bool isSmartphone();
+#endif
+
+#ifdef __PLAYSTATION2__
+	// for those replaced fopen/fread/etc functions
+	#include "backends/platform/ps2/fileio.h"
+
+	#define fputs(str, file)	ps2_fputs(str, file)
+#endif
+
+#ifdef __DS__
+	#include "backends/fs/ds/ds-fs.h"
+
+	#define fputs(str, file)	DS::std_fwrite(str, strlen(str), 1, file)
+#endif
+
 namespace Common {
 
 static OutputFormatter s_errorOutputFormatter = 0;

@@ -164,10 +164,10 @@ void AboutDialog::addLine(const char *str) {
 		Common::String format(str, 2);
 		str += 2;
 
-		Common::StringList wrappedLines;
+		StringArray wrappedLines;
 		g_gui.getFont().wordWrapText(str, _w - 2 * _xOff, wrappedLines);
 
-		for (Common::StringList::const_iterator i = wrappedLines.begin(); i != wrappedLines.end(); ++i) {
+		for (StringArray::const_iterator i = wrappedLines.begin(); i != wrappedLines.end(); ++i) {
 			_lines.push_back(format + *i);
 		}
 	}
@@ -175,7 +175,7 @@ void AboutDialog::addLine(const char *str) {
 
 
 void AboutDialog::open() {
-	_scrollTime = getMillis() + kScrollStartDelay;
+	_scrollTime = g_system->getMillis() + kScrollStartDelay;
 	_scrollPos = 0;
 	_willClose = false;
 
@@ -253,7 +253,7 @@ void AboutDialog::drawDialog() {
 }
 
 void AboutDialog::handleTickle() {
-	const uint32 t = getMillis();
+	const uint32 t = g_system->getMillis();
 	int scrollOffset = ((int)t - (int)_scrollTime) / kScrollMillisPerPixel;
 	if (scrollOffset > 0) {
 		int modifiers = g_system->getEventManager()->getModifierState();

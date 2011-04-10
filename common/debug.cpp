@@ -23,9 +23,8 @@
  */
 
 #include "common/debug.h"
+#include "common/debug-channels.h"
 #include "common/util.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
 
 #include <stdarg.h>	// For va_list etc.
 
@@ -48,24 +47,21 @@
 // TODO: Move gDebugLevel into namespace Common.
 int gDebugLevel = -1;
 
+DECLARE_SINGLETON(Common::DebugManager)
+
 namespace Common {
 
 namespace {
 
-typedef HashMap<String, DebugChannel, IgnoreCase_Hash, IgnoreCase_EqualTo> DebugChannelMap;
-
-static DebugChannelMap gDebugChannels;
-static uint32 gDebugChannelsEnabled = 0;
-
 struct DebugLevelComperator {
-	bool operator()(const DebugChannel &l, const DebugChannel &r) {
+	bool operator()(const DebugManager::DebugChannel &l, const DebugManager::DebugChannel &r) {
 		return (l.name.compareToIgnoreCase(r.name) < 0);
 	}
 };
 
 } // end of anonymous namespace
 
-bool addDebugChannel(uint32 channel, const String &name, const String &description) {
+bool DebugManager::addDebugChannel(uint32 channel, const String &name, const String &description) {
 	if (gDebugChannels.contains(name))
 		warning("Duplicate declaration of engine debug channel '%s'", name.c_str());
 
@@ -74,12 +70,12 @@ bool addDebugChannel(uint32 channel, const String &name, const String &descripti
 	return true;
 }
 
-void clearAllDebugChannels() {
+void DebugManager::clearAllDebugChannels() {
 	gDebugChannelsEnabled = 0;
 	gDebugChannels.clear();
 }
 
-bool enableDebugChannel(const String &name) {
+bool DebugManager::enableDebugChannel(const String &name) {
 	DebugChannelMap::iterator i = gDebugChannels.find(name);
 
 	if (i != gDebugChannels.end()) {
@@ -92,7 +88,7 @@ bool enableDebugChannel(const String &name) {
 	}
 }
 
-bool disableDebugChannel(const String &name) {
+bool DebugManager::disableDebugChannel(const String &name) {
 	DebugChannelMap::iterator i = gDebugChannels.find(name);
 
 	if (i != gDebugChannels.end()) {
@@ -106,7 +102,7 @@ bool disableDebugChannel(const String &name) {
 }
 
 
-DebugChannelList listDebugChannels() {
+DebugManager::DebugChannelList DebugManager::listDebugChannels() {
 	DebugChannelList tmp;
 	for (DebugChannelMap::iterator i = gDebugChannels.begin(); i != gDebugChannels.end(); ++i)
 		tmp.push_back(i->_value);
@@ -115,25 +111,12 @@ DebugChannelList listDebugChannels() {
 	return tmp;
 }
 
-bool isDebugChannelEnabled(uint32 channel) {
+bool DebugManager::isDebugChannelEnabled(uint32 channel) {
 	// Debug level 11 turns on all special debug level messages
 	if (gDebugLevel == 11)
 		return true;
 	else
 		return (gDebugChannelsEnabled & channel) != 0;
-}
-
-bool isDebugChannelEnabled(const String &name) {
-	// Debug level 11 turns on all special debug level messages
-	if (gDebugLevel == 11)
-		return true;
-
-	// Search for the debug level with the given name and check if it is enabled
-	DebugChannelMap::iterator i = gDebugChannels.find(name);
-	if (i != gDebugChannels.end())
-		return i->_value.enabled;
-	else
-		return false;
 }
 
 
@@ -156,7 +139,7 @@ static void debugHelper(const char *s, va_list va, bool caret = true) {
 
 	// Next, give the active engine (if any) a chance to augment the message,
 	// but only if not used from debugN.
-	if (Common::s_debugOutputFormatter) {
+	if (caret && Common::s_debugOutputFormatter) {
 		(*Common::s_debugOutputFormatter)(buf, in_buf, STRINGBUFLEN);
 	} else {
 		strncpy(buf, in_buf, STRINGBUFLEN);
@@ -219,7 +202,7 @@ void debugC(int level, uint32 debugChannels, const char *s, ...) {
 
 	// Debug level 11 turns on all special debug level messages
 	if (gDebugLevel != 11)
-		if (level > gDebugLevel || !(Common::gDebugChannelsEnabled & debugChannels))
+		if (level > gDebugLevel || !(DebugMan.isDebugChannelEnabled(debugChannels)))
 			return;
 
 	va_start(va, s);
@@ -232,7 +215,7 @@ void debugCN(int level, uint32 debugChannels, const char *s, ...) {
 
 	// Debug level 11 turns on all special debug level messages
 	if (gDebugLevel != 11)
-		if (level > gDebugLevel || !(Common::gDebugChannelsEnabled & debugChannels))
+		if (level > gDebugLevel || !(DebugMan.isDebugChannelEnabled(debugChannels)))
 			return;
 
 	va_start(va, s);
@@ -245,7 +228,7 @@ void debugC(uint32 debugChannels, const char *s, ...) {
 
 	// Debug level 11 turns on all special debug level messages
 	if (gDebugLevel != 11)
-		if (!(Common::gDebugChannelsEnabled & debugChannels))
+		if (!(DebugMan.isDebugChannelEnabled(debugChannels)))
 			return;
 
 	va_start(va, s);
@@ -258,7 +241,7 @@ void debugCN(uint32 debugChannels, const char *s, ...) {
 
 	// Debug level 11 turns on all special debug level messages
 	if (gDebugLevel != 11)
-		if (!(Common::gDebugChannelsEnabled & debugChannels))
+		if (!(DebugMan.isDebugChannelEnabled(debugChannels)))
 			return;
 
 	va_start(va, s);

@@ -60,7 +60,7 @@ struct HardwareKey {
 				KeyType typ = kGenericKeyType, ActionType prefAct = kGenericActionType)
 		: key(ky), description(desc), type(typ), preferredAction(prefAct) {
 		assert(i);
-		strncpy(hwKeyId, i, HWKEY_ID_SIZE);
+		Common::strlcpy(hwKeyId, i, HWKEY_ID_SIZE);
 	}
 };
 

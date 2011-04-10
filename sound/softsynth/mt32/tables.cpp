@@ -614,7 +614,7 @@ bool Tables::initNotes(Synth *synth, PCMWaveEntry *pcmWaves, float rate, float m
 
 	File *file = NULL;
 	char header[20];
-	strncpy(header, "MT32WAVE", 8);
+	memcpy(header, "MT32WAVE", 8);
 	int pos = 8;
 	// Version...
 	for (int i = 0; i < 4; i++)

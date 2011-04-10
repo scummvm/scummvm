@@ -25,7 +25,7 @@
 #include "graphics/fontman.h"
 //#include "gui/consolefont.h"
 
-DECLARE_SINGLETON(Graphics::FontManager);
+DECLARE_SINGLETON(Graphics::FontManager)
 
 namespace Graphics {
 

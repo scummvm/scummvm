@@ -79,8 +79,8 @@ sub html_entities_to_ascii {
 
 	$text =~ s/&auml;/a/g;
 	$text =~ s/&uuml;/ue/g;
-	# HACK: Torbj*o*rn but G*oe*ffringmann and R*oe*ver
-	$text =~ s/&ouml;r/or/g;
+	# HACK: Torbj*o*rn but G*oe*ffringmann and R*oe*ver and J*oe*rg
+	$text =~ s/Torbj&ouml;rn/Torbjorn/g;
 	$text =~ s/&ouml;/oe/g;
 
 	$text =~ s/&amp;/&/g;
@@ -92,12 +92,13 @@ sub html_entities_to_ascii {
 sub html_entities_to_cpp {
 	my $text = shift;
 
+	# The numerical values are octal!
 	$text =~ s/&aacute;/\\341/g;
 	$text =~ s/&eacute;/\\351/g;
 	$text =~ s/&oacute;/\\363/g;
 	$text =~ s/&oslash;/\\370/g;
 	$text =~ s/&#322;/l/g;
-	$text =~ s/&Scaron;/\\352/g;
+	$text =~ s/&Scaron;/S/g;
 
 	$text =~ s/&auml;/\\344/g;
 	$text =~ s/&ouml;/\\366/g;
@@ -116,9 +117,11 @@ sub html_entities_to_rtf {
 	$text =~ s/&eacute;/\\'8e/g;
 	$text =~ s/&oacute;/\\'97/g;
 	$text =~ s/&oslash;/\\'bf/g;
+	# The following numerical values are octal!
 	$text =~ s/&#322;/\\uc0\\u322 /g;
-	$text =~ s/&Scaron;/\\uc0\\u352 /g;
+	$text =~ s/&Scaron;/\\uc0\\u540 /g;
 
+	# Back to hex numbers
 	$text =~ s/&auml;/\\'8a/g;
 	$text =~ s/&ouml;/\\'9a/g;
 	$text =~ s/&uuml;/\\'9f/g;
@@ -363,12 +366,13 @@ sub add_person {
 	my $tab;
 
 	if ($mode eq "TEXT") {
+		my $min_name_width = length $desc > 0 ? $max_name_width : 0;
 		$name = $nick if $name eq "";
 		$name = html_entities_to_ascii($name);
 		$desc = html_entities_to_ascii($desc);
 
 		$tab = " " x ($section_level * 2 + 1);
-		printf $tab."%-".$max_name_width.".".$max_name_width."s", $name;
+		printf $tab."%-".$min_name_width.".".$max_name_width."s", $name;
 
 		# Print desc wrapped
 		if (length $desc > 0) {

@@ -32,7 +32,7 @@
 #include "common/util.h"
 #include "common/system.h"
 
-DECLARE_SINGLETON(Audio::AudioCDManager);
+DECLARE_SINGLETON(Audio::AudioCDManager)
 
 namespace Audio {
 
@@ -78,7 +78,7 @@ void AudioCDManager::play(int track, int numLoops, int startFrame, int duration,
 			repetitions. Finally, -1 means infinitely many
 			*/
 			_emulating = true;
-			_mixer->playInputStream(Mixer::kMusicSoundType, &_handle,
+			_mixer->playStream(Mixer::kMusicSoundType, &_handle,
 			                        makeLoopingAudioStream(stream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops));
 		} else {
 			_emulating = false;

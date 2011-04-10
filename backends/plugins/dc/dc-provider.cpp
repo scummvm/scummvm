@@ -97,5 +97,4 @@ bool DCPluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	return true;
 }
 
-
 #endif // defined(DYNAMIC_MODULES) && defined(__DC__)

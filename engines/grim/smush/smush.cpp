@@ -139,7 +139,7 @@ void Smush::handleWave(const byte *src, uint32 size) {
 
 	if (!_stream) {
 		_stream = Audio::makeQueuingAudioStream(_freq, (_channels == 2));
-		g_system->getMixer()->playInputStream(Audio::Mixer::kMusicSoundType, &_soundHandle, _stream);
+		g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, _stream);
 	}
 	if (g_system->getMixer()->isReady()) {
 		_stream->queueBuffer((byte *)dst, size * _channels * 2, DisposeAfterUse::YES, flags);
@@ -304,7 +304,7 @@ void Smush::handleIACT(const byte *src, int32 size) {
 
 				if (!_stream) {
 					_stream = Audio::makeQueuingAudioStream(22050, true);
-					g_system->getMixer()->playInputStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _stream);
+					g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _stream);
 				}
 				_stream->queueBuffer(output_data, 0x1000, DisposeAfterUse::YES, Audio::FLAG_STEREO | Audio::FLAG_16BITS);
 

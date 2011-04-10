@@ -30,18 +30,14 @@
 
 namespace GUI {
 
-GuiObject::GuiObject(const Common::String &name) : _firstWidget(0) {
-	_name = name;
+GuiObject::GuiObject(const Common::String &name)
+	: _x(-1000), _y(-1000), _w(0), _h(0), _name(name), _firstWidget(0) {
 	reflowLayout();
 }
 
 GuiObject::~GuiObject() {
 	delete _firstWidget;
 	_firstWidget = 0;
-}
-
-uint32 GuiObject::getMillis() {
-	return g_system->getMillis();
 }
 
 void GuiObject::reflowLayout() {
@@ -52,16 +48,16 @@ void GuiObject::reflowLayout() {
 
 		if (_x < 0)
 			error("Widget <%s> has x < 0 (%d)", _name.c_str(), _x);
-		if (_x >= g_system->getOverlayWidth())
-			error("Widget <%s> has x > %d (%d)", _name.c_str(), g_system->getOverlayWidth(), _x);
-		if (_x + _w > g_system->getOverlayWidth())
-			error("Widget <%s> has x + w > %d (%d)", _name.c_str(), g_system->getOverlayWidth(), _x + _w);
+		if (_x >= g_gui.getWidth())
+			error("Widget <%s> has x > %d (%d)", _name.c_str(), g_gui.getWidth(), _x);
+		if (_x + _w > g_gui.getWidth())
+			error("Widget <%s> has x + w > %d (%d)", _name.c_str(), g_gui.getWidth(), _x + _w);
 		if (_y < 0)
 			error("Widget <%s> has y < 0 (%d)", _name.c_str(), _y);
-		if (_y >= g_system->getOverlayHeight())
-			error("Widget <%s> has y > %d (%d)", _name.c_str(), g_system->getOverlayHeight(), _y);
-		if (_y + _h > g_system->getOverlayHeight())
-			error("Widget <%s> has y + h > %d (%d)", _name.c_str(), g_system->getOverlayHeight(), _y + _h);
+		if (_y >= g_gui.getHeight())
+			error("Widget <%s> has y > %d (%d)", _name.c_str(), g_gui.getHeight(), _y);
+		if (_y + _h > g_gui.getHeight())
+			error("Widget <%s> has y + h > %d (%d)", _name.c_str(), g_gui.getHeight(), _y + _h);
 	}
 }
 

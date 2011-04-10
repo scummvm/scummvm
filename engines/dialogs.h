@@ -47,6 +47,10 @@ public:
 	virtual void reflowLayout();
 
 protected:
+	void save();
+	void load();
+
+protected:
 	Engine			*_engine;
 
 	GUI::GraphicsWidget *_logo;
