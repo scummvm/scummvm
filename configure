@@ -99,7 +99,7 @@ _enable_prof=no
 _vkeybd=no
 _keymapper=no
 # GUI translation options
-_translation=yes
+_translation=no
 # Default platform settings
 _backend=sdl
 _endian=unknown
