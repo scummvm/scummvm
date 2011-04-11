@@ -51,7 +51,9 @@ bundle: residual-static
 	cp $(srcdir)/icons/residual.icns $(bundle_name)/Contents/Resources/
 	cp $(DIST_FILES_DOCS) $(bundle_name)/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/Contents/Resources/
-	#cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/Contents/Resources/
+ifdef DIST_FILES_ENGINEDATA
+	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/Contents/Resources/
+endif
 	$(srcdir)/tools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
 	chmod 644 $(bundle_name)/Contents/Resources/*
 	cp residual-static $(bundle_name)/Contents/MacOS/residual
@@ -63,8 +65,12 @@ iphonebundle: iphone
 	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
 	cp $(DIST_FILES_DOCS) $(bundle_name)/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/
-	#cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/
+ifdef DIST_FILES_ENGINEDATA
+	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/
+endif
+	$(STRIP) residual
 	ldid -S residual
+	chmod 755 residual
 	cp residual $(bundle_name)/Residual
 	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/icon.png
 	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/Default.png
@@ -100,6 +106,10 @@ endif
 
 ifdef USE_ZLIB
 OSX_ZLIB ?= -lz
+endif
+
+ifdef USE_TERMCONV
+OSX_ICONV ?= -liconv
 endif
 
 # Special target to create a static linked binary for Mac OS X.
@@ -155,7 +165,9 @@ win32dist: $(EXECUTABLE)
 	mkdir -p $(WIN32PATH)
 	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
 	cp $(DIST_FILES_THEMES) $(WIN32PATH)
-	#cp $(DIST_FILES_ENGINEDATA) $(WIN32PATH)
+ifdef DIST_FILES_ENGINEDATA
+	cp $(DIST_FILES_ENGINEDATA) $(WIN32PATH)
+endif
 	cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING $(WIN32PATH)/COPYING.txt
 	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING.LGPL.txt
@@ -170,7 +182,9 @@ crosswin32dist: $(EXECUTABLE)
 	mkdir -p ResidualWin32
 	$(STRIP) $(EXECUTABLE) -o ResidualWin32/$(EXECUTABLE)
 	cp $(DIST_FILES_THEMES) ResidualWin32
-	#cp $(DIST_FILES_ENGINEDATA) ResidualWin32
+ifdef DIST_FILES_ENGINEDATA
+	cp $(DIST_FILES_ENGINEDATA) ResidualWin32
+endif
 	cp $(srcdir)/AUTHORS ResidualWin32/AUTHORS.txt
 	cp $(srcdir)/COPYING ResidualWin32/COPYING.txt
 	cp $(srcdir)/COPYING.LGPL ResidualWin32/COPYING.LGPL.txt
@@ -192,7 +206,9 @@ aos4dist: $(EXECUTABLE)
 	$(STRIP) $(EXECUTABLE) -o $(AOS4PATH)/$(EXECUTABLE)
 	cp icons/residual.info $(AOS4PATH)/$(EXECUTABLE).info
 	cp $(DIST_FILES_THEMES) $(AOS4PATH)/themes/
-	#cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)/extras/
+ifdef DIST_FILES_ENGINEDATA
+	cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)/extras/
+endif
 	cp $(srcdir)/AUTHORS $(AOS4PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING $(AOS4PATH)/COPYING.txt
 	cp $(srcdir)/COPYING.LGPL $(AOS4PATH)/COPYING.LGPL.txt

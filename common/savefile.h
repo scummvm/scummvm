@@ -109,14 +109,14 @@ public:
 	/**
 	 * Open the savefile with the specified name in the given directory for saving.
 	 * @param name	the name of the savefile
-	 * @return pointer to an OutSaveFile, or NULL if an error occured.
+	 * @return pointer to an OutSaveFile, or NULL if an error occurred.
 	 */
 	virtual OutSaveFile *openForSaving(const String &name) = 0;
 
 	/**
 	 * Open the file with the specified name in the given directory for loading.
 	 * @param name	the name of the savefile
-	 * @return pointer to an InSaveFile, or NULL if an error occured.
+	 * @return pointer to an InSaveFile, or NULL if an error occurred.
 	 */
 	virtual InSaveFile *openForLoading(const String &name) = 0;
 

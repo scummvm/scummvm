@@ -222,6 +222,21 @@ void sort(T first, T last) {
 	sort(first, last, Common::Less<typename T::ValueType>());
 }
 
+/**
+ * Euclid's algorithm to compute the greatest common divisor.
+ */
+template<class T>
+T gcd(T a, T b) {
+	if (a <= 0) a = -a;
+	if (b <= 0) b = -b;
+	while (a > 0) {
+		T tmp = a;
+		a = b % a;
+		b = tmp;
+	}
+	return b;
+}
+
 } // End of namespace Common
 #endif
 

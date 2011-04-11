@@ -135,6 +135,8 @@ public:
 	// Quit
 	virtual void quit(); // overloaded by CE backend
 
+	void deinit();
+
 	virtual void getTimeAndDate(TimeDate &t) const;
 	virtual Common::TimerManager *getTimerManager();
 

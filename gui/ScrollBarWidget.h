@@ -73,9 +73,10 @@ public:
 	// should these accessors force a redraw?
 	void recalc();
 
+	void checkBounds(int old_pos);
+
 protected:
 	void drawWidget();
-	void checkBounds(int old_pos);
 };
 
 } // End of namespace GUI

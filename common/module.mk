@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	system.o \
 	textconsole.o \
 	tokenizer.o \
+	translation.o \
 	unzip.o \
 	util.o \
 	xmlparser.o \

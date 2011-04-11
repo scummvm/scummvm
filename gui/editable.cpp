@@ -28,13 +28,13 @@
 
 namespace GUI {
 
-EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd)
- : Widget(boss, x, y, w, h), CommandSender(boss), _cmd(cmd) {
+EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd)
+	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss), _cmd(cmd) {
 	init();
 }
 
-EditableWidget::EditableWidget(GuiObject *boss, const String &name, uint32 cmd)
- : Widget(boss, name), CommandSender(boss), _cmd(cmd) {
+EditableWidget::EditableWidget(GuiObject *boss, const String &name, const char *tooltip, uint32 cmd)
+	: Widget(boss, name, tooltip), CommandSender(boss), _cmd(cmd) {
 	init();
 }
 
@@ -65,7 +65,7 @@ void EditableWidget::setEditString(const String &str) {
 	// TODO: We probably should filter the input string here,
 	// e.g. using tryInsertChar.
 	_editString = str;
-	_caretPos = _editString.size();
+	_caretPos = 0;
 }
 
 bool EditableWidget::tryInsertChar(byte c, int pos) {

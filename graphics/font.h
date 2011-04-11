@@ -67,10 +67,10 @@ public:
 	int getStringWidth(const Common::String &str) const;
 
 	/**
-	 * Take a text (which may contain newlines characters) and word wrap it so thata
+	 * Take a text (which may contain newline characters) and word wrap it so that
 	 * no text line is wider than maxWidth pixels. If necessary, additional line breaks
-	 * are generated, preferably between words (i.e. were whitespaces are).
-	 * The resulting lines are appended to the string list lines.
+	 * are generated, preferably between words (i.e. where whitespaces are).
+	 * The resulting lines are appended to the lines string list.
 	 * It returns the maximal width of any of the new lines (i.e. a value which is less
 	 * or equal to maxWidth).
 	 *

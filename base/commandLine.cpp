@@ -695,7 +695,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 #endif // DISABLE_COMMAND_LINE
 
 
-bool processSettings(Common::String &command, Common::StringMap &settings) {
+Common::Error processSettings(Common::String &command, Common::StringMap &settings) {
 
 #ifndef DISABLE_COMMAND_LINE
 
@@ -704,31 +704,31 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 	// have been loaded.
 	if (command == "list-targets") {
 		listTargets();
-		return false;
+		return Common::kNoError;
 	} else if (command == "list-games") {
 		listGames();
-		return false;
+		return Common::kNoError;
 	} else if (command == "list-themes") {
 		listThemes();
-		return false;
+		return Common::kNoError;
 	} else if (command == "version") {
 		printf("%s\n", gResidualFullVersion);
 		printf("Features compiled in: %s\n", gResidualFeatures);
-		return false;
+		return Common::kNoError;
 	} else if (command == "help") {
 		printf(HELP_STRING, s_appName);
-		return false;
+		return Common::kNoError;
 	}
 #ifdef DETECTOR_TESTING_HACK
 	else if (command == "test-detector") {
 		runDetectorTest();
-		return false;
+		return Common::kNoError;
 	}
 #endif
 #ifdef UPGRADE_ALL_TARGETS_HACK
 	else if (command == "upgrade-targets") {
 		upgradeTargets();
-		return false;
+		return Common::kNoError;
 	}
 #endif
 
@@ -770,7 +770,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 	// environment variable. This is weaker than a --savepath on the
 	// command line, but overrides the default savepath, hence it is
 	// handled here, just before the command line gets parsed.
-#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE) && !defined(PALMOS_MODE) && !defined(__GP32__)
+#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE) && !defined(PALMOS_MODE) && !defined(__GP32__) && !defined(ANDROID)
 	if (!settings.contains("savepath")) {
 		const char *dir = getenv("RESIDUAL_SAVEPATH");
 		if (dir && *dir && strlen(dir) < MAXPATHLEN) {
@@ -800,7 +800,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 		ConfMan.set(key, value, Common::ConfigManager::kTransientDomain);
 	}
 
-	return true;
+	return Common::kArgumentNotProcessed;
 }
 
 } // End of namespace Base

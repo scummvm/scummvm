@@ -230,7 +230,7 @@ FLACStream::FLACStream(Common::SeekableReadStream *inStream, bool dispose)
 		if (processUntilEndOfMetadata() && _streaminfo.channels > 0) {
 			_lastSample = _streaminfo.total_samples + 1;
 			_length = Timestamp(0, _lastSample - 1, getRate());
-			return; // no error occured
+			return; // no error occurred
 		}
 	}
 
@@ -355,7 +355,7 @@ int FLACStream::readBuffer(int16 *buffer, const int numSamples) {
 		break;
 	default:
 		decoderOk = false;
-		warning("FLACStream: An error occured while decoding. DecoderState is: %s",
+		warning("FLACStream: An error occurred while decoding. DecoderState is: %s",
 			FLAC__StreamDecoderStateString[getStreamDecoderState()]);
 	}
 
@@ -668,7 +668,7 @@ inline void FLACStream::callbackMetadata(const ::FLAC__StreamMetadata *metadata)
 }
 inline void FLACStream::callbackError(::FLAC__StreamDecoderErrorStatus status) {
 	// some of these are non-critical-Errors
-	debug(1, "FLACStream: An error occured while decoding. DecoderState is: %s",
+	debug(1, "FLACStream: An error occurred while decoding. DecoderState is: %s",
 			FLAC__StreamDecoderErrorStatusString[status]);
 }
 

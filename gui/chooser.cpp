@@ -23,6 +23,7 @@
  */
 
 #include "common/system.h"
+#include "common/translation.h"
 #include "gui/chooser.h"
 #include "gui/GuiManager.h"
 #include "gui/ListWidget.h"
@@ -45,8 +46,8 @@ ChooserDialog::ChooserDialog(const String &title, String dialogId)
 	_list->setEditable(false);
 
 	// Buttons
-	new ButtonWidget(this, dialogId + ".Cancel", "Cancel", kCloseCmd, 0);
-	_chooseButton = new ButtonWidget(this, dialogId + ".Choose", "Choose", kChooseCmd, 0);
+	new ButtonWidget(this, dialogId + ".Cancel", _("Cancel"), 0, kCloseCmd);
+	_chooseButton = new ButtonWidget(this, dialogId + ".Choose", _("Choose"), 0, kChooseCmd);
 	_chooseButton->setEnabled(false);
 }
 

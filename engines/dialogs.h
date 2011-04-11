@@ -27,7 +27,6 @@
 
 #include "common/str.h"
 #include "gui/dialog.h"
-#include "gui/options.h"
 
 class Engine;
 
@@ -38,6 +37,19 @@ namespace GUI {
 }
 
 class MainMenuDialog : public GUI::Dialog {
+public:
+	enum {
+		kSaveCmd = 'SAVE',
+		kLoadCmd = 'LOAD',
+		kPlayCmd = 'PLAY',
+		kOptionsCmd = 'OPTN',
+		kHelpCmd = 'HELP',
+		kAboutCmd = 'ABOU',
+		kQuitCmd = 'QUIT',
+		kRTLCmd = 'RTL ',
+		kChooseCmd = 'CHOS'
+	};
+
 public:
 	MainMenuDialog(Engine *engine);
 	~MainMenuDialog();
@@ -51,29 +63,20 @@ protected:
 	void load();
 
 protected:
-	Engine			*_engine;
+	Engine *_engine;
 
-	GUI::GraphicsWidget *_logo;
-	GUI::ButtonWidget	*_rtlButton;
-	GUI::ButtonWidget	*_loadButton;
-	GUI::ButtonWidget	*_saveButton;
-	GUI::Dialog		*_aboutDialog;
-	GUI::Dialog		*_optionsDialog;
-	GUI::SaveLoadChooser	*_loadDialog;
-	GUI::SaveLoadChooser	*_saveDialog;
-};
+	GUI::GraphicsWidget  *_logo;
 
-class ConfigDialog : public GUI::OptionsDialog {
-protected:
-#ifdef SMALL_SCREEN_DEVICE
-	GUI::Dialog		*_keysDialog;
-#endif
+	GUI::ButtonWidget    *_rtlButton;
+	GUI::ButtonWidget    *_loadButton;
+	GUI::ButtonWidget    *_saveButton;
+	GUI::ButtonWidget    *_helpButton;
 
-public:
-	ConfigDialog(bool subtitleControls);
-	~ConfigDialog();
+	GUI::Dialog          *_aboutDialog;
+	GUI::Dialog          *_optionsDialog;
 
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	GUI::SaveLoadChooser *_loadDialog;
+	GUI::SaveLoadChooser *_saveDialog;
 };
 
 #endif

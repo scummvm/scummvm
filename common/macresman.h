@@ -45,13 +45,15 @@ class MacResManager {
 public:
 	MacResManager();
 	~MacResManager();
-	
+
 	bool open(Common::String filename);
 	bool open(Common::FSNode path, Common::String filename);
 	void close();
 
 	bool hasDataFork();
 	bool hasResFork();
+
+	static bool isMacBinary(Common::SeekableReadStream &stream);
 
 	/**
 	 * Read resource from the Mac Binary file
@@ -61,11 +63,20 @@ public:
 	 */
 	Common::SeekableReadStream *getResource(uint32 typeID, uint16 resID);
 
+	/**
+	 * Read resource from the Mac Binary file
+	 * @param filename filename of the resource
+	 * @return Pointer to a SeekableReadStream with loaded resource
+	 */
+	Common::SeekableReadStream *getResource(const Common::String &filename);
+
 	Common::SeekableReadStream *getDataFork();
 	Common::String getResName(uint32 typeID, uint16 resID);
 	uint32 getResForkSize();
 	bool getResForkMD5(char *md5str, uint32 length);
-	
+
+	Common::String getBaseFileName() { return _baseFileName; }
+
 	/**
 	 * Convert cursor from crsr format to format suitable for feeding to CursorMan
 	 * @param data Pointer to the cursor data
@@ -114,7 +125,7 @@ private:
 	} _mode;
 
 	void readMap();
-	
+
 	struct ResMap {
 		uint16 resAttr;
 		uint16 typeOffset;
@@ -137,7 +148,7 @@ private:
 	};
 
 	typedef Resource *ResPtr;
-	
+
 	int32 _resForkOffset;
 	uint32 _resForkSize;
 

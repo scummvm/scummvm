@@ -164,6 +164,8 @@ static void drawProgress(float progress) {
 	else
 		col = 2;
 	// TODO implement in Residual
+	//screen->fillRect(r, col);
+
 	//g_system->copyRectToScreen((byte *)surf.pixels, surf.pitch, x, y, surf.w, surf.h);
 	//g_system->updateScreen();
 }
@@ -220,6 +222,7 @@ static void MT32_PrintDebug(void *userData, const char *fmt, va_list list) {
 
 		drawMessage(1, buf);
 	}
+
 	//vdebug(0, fmt, list); // FIXME: Use a higher debug level
 }
 

@@ -48,6 +48,10 @@
 		<def var = 'KeyMapper.LabelWidth' value = '80'/>
 		<def var = 'KeyMapper.ButtonWidth' value = '60'/>
 
+		<def var = 'Tooltip.MaxWidth' value = '70'/>
+		<def var = 'Tooltip.XDelta' value = '9'/> <!-- basically cursor size -->
+		<def var = 'Tooltip.YDelta' value = '18'/>
+
 		<widget name = 'OptionsLabel'
 				size = '100, Globals.Line.Height'
 				textalign = 'right'
@@ -59,6 +63,9 @@
 				size = '-1, 15'
 		/>
 		<widget name = 'Checkbox'
+				size = '-1, Globals.Line.Height'
+		/>
+		<widget name = 'Radiobutton'
 				size = '-1, Globals.Line.Height'
 		/>
 		<widget name = 'ListWidget'
@@ -79,6 +86,9 @@
 		<widget name = 'TabWidget.Tab'
 				size = '45, 16'
 				padding = '0, 0, 2, 0'
+		/>
+		<widget name = 'TabWidget.Body'
+				padding = '0, 0, 0, 0'
 		/>
 		<widget name = 'TabWidget.NavButton'
 				size = '32, 18'
@@ -233,13 +243,18 @@
 						type = 'PopUp'
 				/>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '3' center = 'true'>
 				<widget name = 'subToggleDesc'
 						type = 'OptionsLabel'
 				/>
-				<widget name = 'subToggleButton'
-						width = '128'
-						height = 'Globals.Slider.Height'
+				<widget name = 'subToggleSpeechOnly'
+						type = 'Radiobutton'
+				/>
+				<widget name = 'subToggleSubOnly'
+						type = 'Radiobutton'
+				/>
+				<widget name = 'subToggleSubBoth'
+						type = 'Radiobutton'
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
@@ -389,6 +404,7 @@
 				<widget name = 'RendererPopupDesc'
 						width = '80'
 						height = 'Globals.Line.Height'
+						textalign = 'right'
 				/>
 				<widget name = 'RendererPopup'
 						type = 'PopUp'
@@ -398,8 +414,19 @@
 				<widget name = 'AutosavePeriodPopupDesc'
 						width = '80'
 						height = 'Globals.Line.Height'
+						textalign = 'right'
 				/>
 				<widget name = 'AutosavePeriodPopup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+				<widget name = 'GuiLanguagePopupDesc'
+						width = '80'
+						height = 'Globals.Line.Height'
+						textalign = 'right'
+				/>
+				<widget name = 'GuiLanguagePopup'
 						type = 'PopUp'
 				/>
 			</layout>
@@ -561,7 +588,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalMenu' overlays = 'screen_center'>
-		<layout type = 'vertical' padding = '4, 4, 4, 4' center = 'true'>
+		<layout type = 'vertical' padding = '4, 4, 4, 4' center = 'true' spacing='2'>
 			<widget name = 'Title'
 					width = '160'
 					height = 'Globals.Line.Height'
@@ -581,6 +608,10 @@
 			/>
 			<space size = '2'/>
 			<widget name = 'Options'
+					width = '120'
+					height = 'Globals.Button.Height'
+			/>
+			<widget name = 'Help'
 					width = '120'
 					height = 'Globals.Button.Height'
 			/>
@@ -604,36 +635,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'ScummMain' overlays = 'screen_center'>
-		<layout type = 'vertical' padding = '4, 4, 4, 4'>
-			<widget name = 'Resume'
-					type = 'Button'
-			/>
-			<space size = '8'/>
-			<widget name = 'Load'
-					type = 'Button'
-			/>
-			<widget name = 'Save'
-					type = 'Button'
-			/>
-			<space size = '8'/>
-			<widget name = 'Options'
-					type = 'Button'
-			/>
-			<widget name = 'Help'
-					type = 'Button'
-			/>
-			<widget name = 'About'
-					type = 'Button'
-			/>
-			<space size = '8'/>
-			<widget name = 'Quit'
-					type = 'Button'
-			/>
-		</layout>
-	</dialog>
-
-	<dialog name = 'ScummConfig' overlays = 'screen_center'>
+	<dialog name = 'GlobalConfig' overlays = 'screen_center'>
 		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
 				<widget name = 'vcMusicText'
@@ -676,15 +678,26 @@
 				/>
 			</layout>
 			<space size = '4' />
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+			<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
 				<widget name = 'subToggleDesc'
 						type = 'OptionsLabel'
 				/>
-				<widget name = 'subToggleButton'
-						width = '128'
-						height = 'Globals.Slider.Height'
-				/>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+				  <widget name = 'subToggleSpeechOnly'
+						  type = 'Radiobutton'
+						  width = '90'
+					/>
+				  <widget name = 'subToggleSubOnly'
+						  type = 'Radiobutton'
+						  width = '90'
+						  />
+				  <widget name = 'subToggleSubBoth'
+						  type = 'Radiobutton'
+						  width = '90'
+						  />
+				</layout>
 			</layout>
+			<space size = '4' />
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
 				<widget name = 'subSubtitleSpeedDesc'
 						type = 'OptionsLabel'

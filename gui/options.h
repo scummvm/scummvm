@@ -121,7 +121,10 @@ private:
 	int getSubtitleMode(bool subtitles, bool speech_mute);
 	bool _enableSubtitleSettings;
 	StaticTextWidget *_subToggleDesc;
-	ButtonWidget *_subToggleButton;
+	RadiobuttonGroup *_subToggleGroup;
+	RadiobuttonWidget *_subToggleSubOnly;
+	RadiobuttonWidget *_subToggleSpeechOnly;
+	RadiobuttonWidget *_subToggleSubBoth;
 	int _subMode;
 	static const char *_subModeDesc[];
 	static const char *_lowresSubModeDesc[];
@@ -153,6 +156,7 @@ protected:
 	// Game GUI options
 	//
 	uint32 _guioptions;
+	Common::String _guioptionsString;
 };
 
 
@@ -184,6 +188,8 @@ protected:
 	PopUpWidget *_rendererPopUp;
 	StaticTextWidget *_autosavePeriodPopUpDesc;
 	PopUpWidget *_autosavePeriodPopUp;
+	StaticTextWidget *_guiLanguagePopUpDesc;
+	PopUpWidget *_guiLanguagePopUp;
 };
 
 } // End of namespace GUI

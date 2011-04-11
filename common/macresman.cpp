@@ -61,16 +61,15 @@ void MacResManager::close() {
 	_mode = kResForkNone;
 
 	for (int i = 0; i < _resMap.numTypes; i++) {
-		for (int j = 0; j < _resTypes[i].items; j++) {
-			if (_resLists[i][j].nameOffset != -1) {
-				delete _resLists[i][j].name;
-			}
-		}
-		delete _resLists[i];
+		for (int j = 0; j < _resTypes[i].items; j++)
+			if (_resLists[i][j].nameOffset != -1)
+				delete[] _resLists[i][j].name;
+
+		delete[] _resLists[i];
 	}
 
-	delete _resLists; _resLists = 0;
-	delete _resTypes; _resTypes = 0;
+	delete[] _resLists; _resLists = 0;
+	delete[] _resTypes; _resTypes = 0;
 	delete _stream; _stream = 0;
 }
 
@@ -111,6 +110,7 @@ bool MacResManager::open(Common::String filename) {
 		_baseFileName = filename;
 		return true;
 	}
+	delete macResForkRawStream;
 #endif
 
 	Common::File *file = new Common::File();
@@ -120,26 +120,37 @@ bool MacResManager::open(Common::String filename) {
 		_baseFileName = filename;
 		return true;
 	}
+	file->close();
 
 	// Check .bin too
 	if (file->open(filename + ".bin") && loadFromMacBinary(*file)) {
 		_baseFileName = filename;
 		return true;
 	}
-		
+	file->close();
+
 	// Maybe we have a dumped fork?
 	if (file->open(filename + ".rsrc") && loadFromRawFork(*file)) {
 		_baseFileName = filename;
 		return true;
 	}
+	file->close();
 
 	// Fine, what about just the data fork?
 	if (file->open(filename)) {
 		_baseFileName = filename;
+
+		if (isMacBinary(*file)) {
+			file->seek(0, SEEK_SET);
+			if (loadFromMacBinary(*file))
+				return true;
+		}
+
+		file->seek(0, SEEK_SET);
 		_stream = file;
 		return true;
 	}
-		
+
 	delete file;
 
 	// The file doesn't exist
@@ -158,34 +169,56 @@ bool MacResManager::open(Common::FSNode path, Common::String filename) {
 		_baseFileName = filename;
 		return true;
 	}
+	delete macResForkRawStream;
 #endif
 
 	// First, let's try to see if the Mac converted name exists
 	Common::FSNode fsNode = path.getChild("._" + filename);
-	if (fsNode.exists() && !fsNode.isDirectory() && loadFromAppleDouble(*fsNode.createReadStream())) {
-		_baseFileName = filename;
-		return true;
+	if (fsNode.exists() && !fsNode.isDirectory()) {
+		SeekableReadStream *stream = fsNode.createReadStream();
+		if (loadFromAppleDouble(*stream)) {
+			_baseFileName = filename;
+			return true;
+		}
+		delete stream;
 	}
 
 	// Check .bin too
 	fsNode = path.getChild(filename + ".bin");
-	if (fsNode.exists() && !fsNode.isDirectory() && loadFromMacBinary(*fsNode.createReadStream())) {
-		_baseFileName = filename;
-		return true;
+	if (fsNode.exists() && !fsNode.isDirectory()) {
+		SeekableReadStream *stream = fsNode.createReadStream();
+		if (loadFromMacBinary(*stream)) {
+			_baseFileName = filename;
+			return true;
+		}
+		delete stream;
 	}
-		
+
 	// Maybe we have a dumped fork?
 	fsNode = path.getChild(filename + ".rsrc");
-	if (fsNode.exists() && !fsNode.isDirectory() && loadFromRawFork(*fsNode.createReadStream())) {
-		_baseFileName = filename;
-		return true;
+	if (fsNode.exists() && !fsNode.isDirectory()) {
+		SeekableReadStream *stream = fsNode.createReadStream();
+		if (loadFromRawFork(*stream)) {
+			_baseFileName = filename;
+			return true;
+		}
+		delete stream;
 	}
 
 	// Fine, what about just the data fork?
 	fsNode = path.getChild(filename);
 	if (fsNode.exists() && !fsNode.isDirectory()) {
+		SeekableReadStream *stream = fsNode.createReadStream();
 		_baseFileName = filename;
-		_stream = fsNode.createReadStream();
+
+		if (isMacBinary(*stream)) {
+			stream->seek(0, SEEK_SET);
+			if (loadFromMacBinary(*stream))
+				return true;
+		}
+
+		stream->seek(0, SEEK_SET);
+		_stream = stream;
 		return true;
 	}
 
@@ -216,6 +249,34 @@ bool MacResManager::loadFromAppleDouble(Common::SeekableReadStream &stream) {
 	}
 
 	return false;
+}
+
+bool MacResManager::isMacBinary(Common::SeekableReadStream &stream) {
+	byte infoHeader[MBI_INFOHDR];
+	int resForkOffset = -1;
+
+	stream.read(infoHeader, MBI_INFOHDR);
+
+	if (infoHeader[MBI_ZERO1] == 0 && infoHeader[MBI_ZERO2] == 0 &&
+		infoHeader[MBI_ZERO3] == 0 && infoHeader[MBI_NAMELEN] <= MAXNAMELEN) {
+
+		// Pull out fork lengths
+		uint32 dataSize = READ_BE_UINT32(infoHeader + MBI_DFLEN);
+		uint32 rsrcSize = READ_BE_UINT32(infoHeader + MBI_RFLEN);
+
+		uint32 dataSizePad = (((dataSize + 127) >> 7) << 7);
+		uint32 rsrcSizePad = (((rsrcSize + 127) >> 7) << 7);
+
+		// Length check
+		if (MBI_INFOHDR + dataSizePad + rsrcSizePad == (uint32)stream.size()) {
+			resForkOffset = MBI_INFOHDR + dataSizePad;
+		}
+	}
+
+	if (resForkOffset < 0)
+		return false;
+
+	return true;
 }
 
 bool MacResManager::loadFromMacBinary(Common::SeekableReadStream &stream) {
@@ -275,7 +336,7 @@ bool MacResManager::load(Common::SeekableReadStream &stream) {
 
 	debug(7, "got header: data %d [%d] map %d [%d]",
 		_dataOffset, _dataLength, _mapOffset, _mapLength);
-		
+
 	_stream = &stream;
 
 	readMap();
@@ -378,7 +439,31 @@ Common::SeekableReadStream *MacResManager::getResource(uint32 typeID, uint16 res
 
 	_stream->seek(_dataOffset + _resLists[typeNum][resNum].dataOffset);
 	uint32 len = _stream->readUint32BE();
+
+	// Ignore resources with 0 length
+	if (!len)
+		return 0;
+
 	return _stream->readStream(len);
+}
+
+Common::SeekableReadStream *MacResManager::getResource(const Common::String &filename) {
+	for (uint32 i = 0; i < _resMap.numTypes; i++) {
+		for (uint32 j = 0; j < _resTypes[i].items; j++) {
+			if (_resLists[i][j].nameOffset != -1 && filename.equalsIgnoreCase(_resLists[i][j].name)) {
+				_stream->seek(_dataOffset + _resLists[i][j].dataOffset);
+				uint32 len = _stream->readUint32BE();
+
+				// Ignore resources with 0 length
+				if (!len)
+					return 0;
+
+				return _stream->readStream(len);
+			}
+		}
+	}
+
+	return 0;
 }
 
 void MacResManager::readMap() {

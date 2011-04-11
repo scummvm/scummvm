@@ -47,6 +47,7 @@
 #include "common/fs.h"
 #include "common/system.h"
 #include "common/tokenizer.h"
+#include "common/translation.h"
 
 #include "gui/GuiManager.h"
 #include "gui/message.h"
@@ -101,20 +102,20 @@ static const EnginePlugin *detectPlugin() {
 	ConfMan.set("gameid", gameid);
 
 	// Query the plugins and find one that will handle the specified gameid
-	printf("User picked target '%s' (gameid '%s')...\n", ConfMan.getActiveDomainName().c_str(), gameid.c_str());
-	printf("  Looking for a plugin supporting this gameid... ");
+	printf(_t("User picked target '%s' (gameid '%s')...\n"), ConfMan.getActiveDomainName().c_str(), gameid.c_str());
+	printf("%s", _t("  Looking for a plugin supporting this gameid... "));
 	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
 	if (plugin == 0) {
-		printf("failed\n");
-		warning("%s is an invalid gameid. Use the --list-games option to list supported gameid", gameid.c_str());
+		printf("%s", _t("failed\n"));
+		warning(_t("%s is an invalid gameid. Use the --list-games option to list supported gameid"), gameid.c_str());
 		return 0;
 	} else {
 		printf("%s\n", plugin->getName());
 	}
 
 	// FIXME: Do we really need this one?
-	printf("  Starting '%s'\n", game.description().c_str());
+	printf(_t("  Starting '%s'\n"), game.description().c_str());
 
 	return plugin;
 }
@@ -141,9 +142,9 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 		// Is a separate dialog here still required?
 
 		//GUI::displayErrorDialog("ScummVM could not find any game in the specified directory!");
-		const char *errMsg = Common::errorToString(err);
+		const char *errMsg = _(Common::errorToString(err));
 
-		warning("%s failed to instantiate engine: %s (target '%s', path '%s')",
+		warning(_t("%s failed to instantiate engine: %s (target '%s', path '%s')"),
 			plugin->getName(),
 			errMsg,
 			ConfMan.getActiveDomainName().c_str(),
@@ -200,7 +201,7 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	while (!tokenizer.empty()) {
 		Common::String token = tokenizer.nextToken();
 		if (!DebugMan.enableDebugChannel(token))
-			warning("Engine does not support debug level '%s'", token.c_str());
+			warning(_("Engine does not support debug level '%s'"), token.c_str());
 	}
 
 	// Inform backend that the engine is about to be run
@@ -254,22 +255,22 @@ static void setupKeymapper(OSystem &system) {
 	mapper->registerHardwareKeySet(keySet);
 
 	// Now create the global keymap
-	act = new Action(globalMap, "MENU", "Menu", kGenericActionType, kSelectKeyType);
+	act = new Action(globalMap, "MENU", _("Menu"), kGenericActionType, kSelectKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_F5, ASCII_F5, 0));
 
-	act = new Action(globalMap, "SKCT", "Skip", kGenericActionType, kActionKeyType);
+	act = new Action(globalMap, "SKCT", _("Skip"), kGenericActionType, kActionKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
 
-	act = new Action(globalMap, "PAUS", "Pause", kGenericActionType, kStartKeyType);
+	act = new Action(globalMap, "PAUS", _("Pause"), kGenericActionType, kStartKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_SPACE, ' ', 0));
 
-	act = new Action(globalMap, "SKLI", "Skip line", kGenericActionType, kActionKeyType);
+	act = new Action(globalMap, "SKLI", _("Skip line"), kGenericActionType, kActionKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_PERIOD, '.', 0));
 
-	act = new Action(globalMap, "VIRT", "Display keyboard", kVirtualKeyboardActionType);
+	act = new Action(globalMap, "VIRT", _("Display keyboard"), kVirtualKeyboardActionType);
 	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
 
-	act = new Action(globalMap, "REMP", "Remap keys", kKeyRemapActionType);
+	act = new Action(globalMap, "REMP", _("Remap keys"), kKeyRemapActionType);
 	act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
 
 	mapper->addGlobalKeymap(globalMap);
@@ -305,6 +306,8 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 	// Update the config file
 	ConfMan.set("versioninfo", gResidualVersion, Common::ConfigManager::kApplicationDomain);
 
+	// Enable translation
+	TransMan.setLanguage(ConfMan.get("gui_language").c_str());
 
 	// Load and setup the debuglevel and the debug flags. We do this at the
 	// soonest possible moment to ensure debug output starts early on, if
@@ -326,8 +329,10 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 
 	// Process the remaining command line settings. Must be done after the
 	// config file and the plugins have been loaded.
-	if (!Base::processSettings(command, settings))
-		return 0;
+	Common::Error res;
+
+	if ((res = Base::processSettings(command, settings)) != Common::kArgumentNotProcessed)
+		return res;
 
 	// Init the backend. Must take place after all config data (including
 	// the command line params) was read.
@@ -371,7 +376,7 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 			// Did an error occur ?
 			if (result != Common::kNoError) {
 				// Shows an informative error dialog if starting the selected game failed.
-				GUI::displayErrorDialog(result, "Error running game:");
+				GUI::displayErrorDialog(result, _("Error running game:"));
 			}
 
 			// Quit unless an error occurred, or Return to launcher was requested
@@ -397,8 +402,8 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 		} else {
 			// A dialog would be nicer, but we don't have any
 			// screen to draw on yet.
-			warning("Could not find any engine capable of running the selected game");
-			GUI::displayErrorDialog("Could not find any engine capable of running the selected game");
+			warning("%s", _("Could not find any engine capable of running the selected game"));
+			GUI::displayErrorDialog(_("Could not find any engine capable of running the selected game"));
 		}
 
 		// We will destroy the AudioCDManager singleton here to save some memory.

@@ -42,7 +42,8 @@ struct TextDataInfo {
 static const TextDataInfo kTextDataDefaults[] = {
 	{ kTextDataDefault,			"text_default" },
 	{ kTextDataButton,			"text_button" },
-	{ kTextDataNormalFont,		"text_normal" }
+	{ kTextDataNormalFont,		"text_normal" },
+	{ kTextDataTooltip,			"tooltip_normal" }
 };
 
 

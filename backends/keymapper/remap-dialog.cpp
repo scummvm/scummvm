@@ -31,6 +31,8 @@
 #include "gui/ScrollBarWidget.h"
 #include "gui/ThemeEval.h"
 
+#include "common/translation.h"
+
 namespace Common {
 
 enum {
@@ -44,12 +46,12 @@ RemapDialog::RemapDialog()
 	_keymapper = g_system->getEventManager()->getKeymapper();
 	assert(_keymapper);
 
-	_kmPopUpDesc = new GUI::StaticTextWidget(this, "KeyMapper.PopupDesc", "Keymap:");
+	_kmPopUpDesc = new GUI::StaticTextWidget(this, "KeyMapper.PopupDesc", _("Keymap:"));
 	_kmPopUp = new GUI::PopUpWidget(this, "KeyMapper.Popup");
 
 	_scrollBar = new GUI::ScrollBarWidget(this, 0, 0, 0, 0);
 
-	new GUI::ButtonWidget(this, "KeyMapper.Close", "Close", kCloseCmd);
+	new GUI::ButtonWidget(this, "KeyMapper.Close", _("Close"), 0, kCloseCmd);
 }
 
 RemapDialog::~RemapDialog() {
@@ -61,7 +63,7 @@ void RemapDialog::open() {
 	const Stack<Keymapper::MapRecord> &activeKeymaps = _keymapper->getActiveStack();
 
 	if (!(activeKeymaps.size() > 0)) {
-		_kmPopUp->appendEntry(activeKeymaps.top().keymap->getName() + " (Active)");
+		_kmPopUp->appendEntry(activeKeymaps.top().keymap->getName() + _(" (Active)"));
 		divider = true;
 	}
 
@@ -95,7 +97,7 @@ void RemapDialog::open() {
 		if (divider)
 			_kmPopUp->appendEntry("");
 		for (it = _globalKeymaps->begin(); it != _globalKeymaps->end(); ++it) {
-			_kmPopUp->appendEntry(it->_value->getName() + " (Global)", idx);
+			_kmPopUp->appendEntry(it->_value->getName() + _(" (Global)"), idx);
 			_keymapTable[idx++] = it->_value;
 		}
 		divider = true;
@@ -105,7 +107,7 @@ void RemapDialog::open() {
 		if (divider)
 			_kmPopUp->appendEntry("");
 		for (it = _gameKeymaps->begin(); it != _gameKeymaps->end(); ++it) {
-			_kmPopUp->appendEntry(it->_value->getName() + " (Game)", idx);
+			_kmPopUp->appendEntry(it->_value->getName() + _(" (Game)"), idx);
 			_keymapTable[idx++] = it->_value;
 		}
 	}
@@ -168,7 +170,7 @@ void RemapDialog::reflowLayout() {
 			widg.actionText =
 				new GUI::StaticTextWidget(this, 0, 0, 0, 0, "", Graphics::kTextAlignRight);
 			widg.keyButton =
-				new GUI::ButtonWidget(this, 0, 0, 0, 0, "", kRemapCmd + i);
+				new GUI::ButtonWidget(this, 0, 0, 0, 0, "", 0, kRemapCmd + i);
 			_keymapWidgets.push_back(widg);
 		} else {
 			widg = _keymapWidgets[i];

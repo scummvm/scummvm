@@ -83,6 +83,7 @@ public:
 	void updateDesc(const char *extra = 0);
 
 	void setGUIOptions(uint32 options);
+	void appendGUIOptions(const Common::String &str);
 
 	Common::String &gameid() { return getVal("gameid"); }
 	Common::String &description() { return getVal("description"); }

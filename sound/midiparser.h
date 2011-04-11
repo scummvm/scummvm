@@ -267,13 +267,12 @@ struct NoteTimer {
  * memory block containing the music data.)
  */
 class MidiParser {
-private:
+protected:
 	uint16    _active_notes[128];   ///< Each uint16 is a bit mask for channels that have that note on.
 	NoteTimer _hanging_notes[32];   ///< Maintains expiration info for up to 32 notes.
 	                                ///< Used for "Smart Jump" and MIDI formats that do not include explicit Note Off events.
 	byte      _hanging_notes_count; ///< Count of hanging notes, used to optimize expiration.
 
-protected:
 	MidiDriver *_driver;    ///< The device to which all events will be transmitted.
 	uint32 _timer_rate;     ///< The time in microseconds between onTimer() calls. Obtained from the MidiDriver.
 	uint32 _ppqn;           ///< Pulses Per Quarter Note. (We refer to "pulses" as "ticks".)
@@ -302,6 +301,11 @@ protected:
 	void activeNote(byte channel, byte note, bool active);
 	void hangingNote(byte channel, byte note, uint32 ticks_left, bool recycle = true);
 	void hangAllActiveNotes();
+
+	virtual void sendToDriver(uint32 b);
+	void sendToDriver(byte status, byte firstOp, byte secondOp) {
+		sendToDriver(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
+	}
 
 	/**
 	 * Platform independent BE uint32 read-and-advance.

@@ -171,7 +171,7 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (w && !(w->getFlags() & WIDGET_IGNORE_DRAG))
 		_dragWidget = w;
 
-	// If the click occured inside a widget which is not the currently
+	// If the click occurred inside a widget which is not the currently
 	// focused one, change the focus to that widget.
 	if (w && w != _focusedWidget && w->wantsFocus()) {
 		setFocusWidget(w);

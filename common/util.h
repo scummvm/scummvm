@@ -218,14 +218,23 @@ enum GameGUIOption {
 	GUIO_NOSUBTITLES	= (1 << 0),
 	GUIO_NOMUSIC		= (1 << 1),
 	GUIO_NOSPEECH		= (1 << 2),
-	GUIO_NOSFX		= (1 << 3),
-	GUIO_NOMIDI		= (1 << 4),
-	GUIO_NOLAUNCHLOAD	= (1 << 5)
+	GUIO_NOSFX			= (1 << 3),
+	GUIO_NOMIDI			= (1 << 4),
+	GUIO_NOLAUNCHLOAD	= (1 << 5),
+
+	GUIO_MIDIPCSPK		= (1 << 6),
+	GUIO_MIDICMS		= (1 << 7),
+	GUIO_MIDIPCJR		= (1 << 8),
+	GUIO_MIDIADLIB		= (1 << 9),
+	GUIO_MIDITOWNS	= (1 << 10),
+	GUIO_MIDI				= (1 << 11)
 };
 
 bool checkGameGUIOption(GameGUIOption option, const String &str);
+bool checkGameGUIOptionLanguage(Language lang, const String &str);
 uint32 parseGameGUIOptions(const String &str);
-String getGameGUIOptionsDescription(uint32 options);
+const String getGameGUIOptionsDescription(uint32 options);
+const String getGameGUIOptionsDescriptionLanguage(Language lang);
 
 /**
  * Updates the GUI options of the current config manager
