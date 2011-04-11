@@ -68,9 +68,6 @@ template<class T> class IteratorImpl;
 template<class Key, class Val, class HashFunc = Hash<Key>, class EqualFunc = EqualTo<Key> >
 class HashMap {
 private:
-#if defined (PALMOS_MODE)
-public:
-#endif
 
 	typedef HashMap<Key, Val, HashFunc, EqualFunc> HM_t;
 

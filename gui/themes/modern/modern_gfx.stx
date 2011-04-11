@@ -106,16 +106,28 @@
 
 	<fonts>
 		<font	id = 'text_default'
-				file = 'default'
+				file = 'helvb12.bdf'
+		/>
+		<font	resolution = '320xY, 256x240'
+		   		id = 'text_default'
+				file = 'clR6x12.bdf'
 		/>
 		<font	id = 'text_button'
-				file = 'default'
+				file = 'helvb12.bdf'
+		/>
+		<font	resolution = '320xY, 256x240'
+		   		id = 'text_button'
+				file = 'clR6x12.bdf'
 		/>
 		<font	id = 'text_normal'
-				file = 'helvr12-l1.bdf'
+				file = 'helvb12.bdf'
+		/>
+		<font	resolution = '320xY, 256x240'
+		   		id = 'text_normal'
+				file = 'clR6x12.bdf'
 		/>
 		<font	id = 'tooltip_normal'
-				file = 'builtinConsole'
+				file = 'fixed5x8.bdf'
 		/>
 
 		<text_color	id = 'color_normal'

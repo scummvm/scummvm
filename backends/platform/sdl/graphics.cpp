@@ -25,6 +25,7 @@
 
 #include "backends/platform/sdl/sdl.h"
 #include "common/mutex.h"
+#include "common/translation.h"
 #include "common/util.h"
 #ifdef USE_RGB_COLOR
 #include "common/list.h"
@@ -410,6 +411,10 @@ void OSystem_SDL::warpMouse(int x, int y) {
 /* Residual doesn't support this
 	int y1 = y;
 
+	// Don't change mouse position, when mouse is outside of our window (in case of windowed mode)
+	if (!(SDL_GetAppState( ) & SDL_APPMOUSEFOCUS))
+		return;
+
 	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 		y1 = real2Aspect(y);
 
@@ -499,6 +504,7 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 	_mouseData = (byte *)malloc(w * h);
 	memcpy(_mouseData, buf, w * h);
 #endif
+
 	blitCursor();*/
 }
 

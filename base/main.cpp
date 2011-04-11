@@ -54,6 +54,7 @@
 #include "gui/error.h"
 
 #include "sound/audiocd.h"
+#include "sound/mididrv.h"
 
 #include "backends/keymapper/keymapper.h"
 
@@ -102,20 +103,20 @@ static const EnginePlugin *detectPlugin() {
 	ConfMan.set("gameid", gameid);
 
 	// Query the plugins and find one that will handle the specified gameid
-	printf(_t("User picked target '%s' (gameid '%s')...\n"), ConfMan.getActiveDomainName().c_str(), gameid.c_str());
-	printf("%s", _t("  Looking for a plugin supporting this gameid... "));
+	printf("User picked target '%s' (gameid '%s')...\n", ConfMan.getActiveDomainName().c_str(), gameid.c_str());
+	printf("%s", "  Looking for a plugin supporting this gameid... ");
 	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
 	if (plugin == 0) {
-		printf("%s", _t("failed\n"));
-		warning(_t("%s is an invalid gameid. Use the --list-games option to list supported gameid"), gameid.c_str());
+		printf("failed\n");
+		warning("%s is an invalid gameid. Use the --list-games option to list supported gameid", gameid.c_str());
 		return 0;
 	} else {
 		printf("%s\n", plugin->getName());
 	}
 
 	// FIXME: Do we really need this one?
-	printf(_t("  Starting '%s'\n"), game.description().c_str());
+	printf("  Starting '%s'\n", game.description().c_str());
 
 	return plugin;
 }
@@ -144,7 +145,7 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 		//GUI::displayErrorDialog("ScummVM could not find any game in the specified directory!");
 		const char *errMsg = _(Common::errorToString(err));
 
-		warning(_t("%s failed to instantiate engine: %s (target '%s', path '%s')"),
+		warning("%s failed to instantiate engine: %s (target '%s', path '%s')",
 			plugin->getName(),
 			errMsg,
 			ConfMan.getActiveDomainName().c_str(),
@@ -326,6 +327,16 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 
 	// Load the plugins.
 	PluginManager::instance().loadPlugins();
+
+	// If we received an invalid music parameter via command line we check this here.
+	// We can't check this before loading the music plugins.
+	// On the other hand we cannot load the plugins before we know the file paths (in case of external plugins).
+	if (settings.contains("music-driver")) {
+		if (MidiDriver::getMusicType(MidiDriver::getDeviceHandle(settings["music-driver"])) == MT_INVALID) {
+			warning("Unrecognized music driver '%s'. Switching to default device.", settings["music-driver"].c_str());
+			settings["music-driver"] = "auto";
+		}
+	}
 
 	// Process the remaining command line settings. Must be done after the
 	// config file and the plugins have been loaded.

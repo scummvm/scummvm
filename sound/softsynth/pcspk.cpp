@@ -24,6 +24,7 @@
 */
 
 #include "sound/softsynth/pcspk.h"
+#include "sound/null.h"
 
 namespace Audio {
 
@@ -128,3 +129,59 @@ int8 PCSpeaker::generateTriangle(uint32 x, uint32 oscLength) {
 }
 
 } // End of namespace Audio
+
+
+//	Plugin interface
+//	(This can only create a null driver since pc speaker support is not part of the
+//	midi driver architecture. But we need the plugin for the options menu in the launcher
+//	and for MidiDriver::detectDevice() which is more or less used by all engines.)
+
+class PCSpeakerMusicPlugin : public NullMusicPlugin {
+public:
+	const char *getName() const {
+		return _s("PC Speaker Emulator");
+	}
+
+	const char *getId() const {
+		return "pcspk";
+	}
+
+	MusicDevices getDevices() const;
+};
+
+MusicDevices PCSpeakerMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	devices.push_back(MusicDevice(this, "", MT_PCSPK));
+	return devices;
+}
+
+class PCjrMusicPlugin : public NullMusicPlugin {
+public:
+	const char *getName() const {
+		return _s("IBM PCjr Emulator");
+	}
+
+	const char *getId() const {
+		return "pcjr";
+	}
+
+	MusicDevices getDevices() const;
+};
+
+MusicDevices PCjrMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	devices.push_back(MusicDevice(this, "", MT_PCJR));
+	return devices;
+}
+
+//#if PLUGIN_ENABLED_DYNAMIC(PCSPK)
+	//REGISTER_PLUGIN_DYNAMIC(PCSPK, PLUGIN_TYPE_MUSIC, PCSpeakerMusicPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(PCSPK, PLUGIN_TYPE_MUSIC, PCSpeakerMusicPlugin);
+//#endif
+
+//#if PLUGIN_ENABLED_DYNAMIC(PCJR)
+	//REGISTER_PLUGIN_DYNAMIC(PCJR, PLUGIN_TYPE_MUSIC, PCjrMusicPlugin);
+//#else
+	REGISTER_PLUGIN_STATIC(PCJR, PLUGIN_TYPE_MUSIC, PCjrMusicPlugin);
+//#endif

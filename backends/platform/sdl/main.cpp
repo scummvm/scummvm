@@ -28,6 +28,7 @@
 // otherwise we will get errors about the windows headers redefining
 // "ARRAYSIZE" for example.
 #if defined(WIN32) && !defined(__SYMBIAN32__)
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 // winnt.h defines ARRAYSIZE, but we want our own one...
 #undef ARRAYSIZE

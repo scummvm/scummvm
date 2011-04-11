@@ -704,7 +704,7 @@ void LauncherDialog::addGame() {
 			Common::FSNode dir(_browser->getResult());
 			Common::FSList files;
 			if (!dir.getChildren(files, Common::FSNode::kListAll)) {
-				MessageDialog alert("Residual couldn't open the specified directory!");
+				MessageDialog alert(_("Residual couldn't open the specified directory!"));
 				alert.runModal();
 				return;
 			}

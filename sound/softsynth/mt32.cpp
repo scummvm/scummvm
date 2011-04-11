@@ -39,6 +39,7 @@
 #include "common/system.h"
 #include "common/util.h"
 #include "common/archive.h"
+#include "common/translation.h"
 
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
@@ -166,7 +167,7 @@ static void drawProgress(float progress) {
 	// TODO implement in Residual
 	//screen->fillRect(r, col);
 
-	//g_system->copyRectToScreen((byte *)surf.pixels, surf.pitch, x, y, surf.w, surf.h);
+	//g_system->unlockScreen();
 	//g_system->updateScreen();
 }
 
@@ -326,7 +327,7 @@ int MidiDriver_MT32::open() {
 	}
 
 	_initialising = true;
-	drawMessage(-1, "Initialising MT-32 Emulator");
+	drawMessage(-1, _s("Initialising MT-32 Emulator"));
 	if (!_synth->open(prop))
 		return MERR_DEVICE_NOT_AVAILABLE;
 	_initialising = false;
@@ -541,7 +542,7 @@ void MidiDriver_ThreadedMT32::onTimer() {
 class MT32EmuMusicPlugin : public MusicPluginObject {
 public:
 	const char *getName() const {
-		return "MT-32 Emulator";
+		return _s("MT-32 Emulator");
 	}
 
 	const char *getId() const {
@@ -549,7 +550,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver) const;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
 };
 
 MusicDevices MT32EmuMusicPlugin::getDevices() const {
@@ -558,23 +559,13 @@ MusicDevices MT32EmuMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error MT32EmuMusicPlugin::createInstance(MidiDriver **mididriver) const {
-	*mididriver = new MidiDriver_MT32(g_system->getMixer());
-
-	return Common::kNoError;
-}
-
-MidiDriver *MidiDriver_MT32_create() {
-	// HACK: It will stay here until engine plugin loader overhaul
+Common::Error MT32EmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
 	if (ConfMan.hasKey("extrapath"))
 		SearchMan.addDirectory("extrapath", ConfMan.get("extrapath"));
 
-	MidiDriver *mididriver;
+	*mididriver = new MidiDriver_MT32(g_system->getMixer());
 
-	MT32EmuMusicPlugin p;
-	p.createInstance(&mididriver);
-
-	return mididriver;
+	return Common::kNoError;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(MT32)

@@ -79,6 +79,30 @@
 #include <zlib.h>
 #endif
 
+#else  // !USE_ZLIB
+
+// Even when zlib is not linked in, we can still open ZIP archives and read
+// uncompressed files from them.  Attempted decompression of compressed files
+// will result in an error.
+//
+// Define the constants and types used by zlib.
+#define Z_ERRNO -1
+#define Z_OK 0
+#define Z_DEFLATED 8
+typedef void *voidp;
+typedef unsigned int uInt;
+typedef unsigned long uLong;
+typedef long z_off_t;
+typedef unsigned char Byte;
+typedef Byte Bytef;
+typedef struct {
+    Bytef    *next_in, *next_out;
+    uInt     avail_in, avail_out;
+    uLong    total_out;
+} z_stream;
+
+#endif  // !USE_ZLIB
+
 #include "common/fs.h"
 #include "common/unzip.h"
 #include "common/file.h"
@@ -1044,6 +1068,7 @@ int unzOpenCurrentFile (unzFile file) {
 	pfile_in_zip_read_info->stream.total_out = 0;
 
 	if (!Store) {
+#ifdef USE_ZLIB
 		pfile_in_zip_read_info->stream.zalloc = (alloc_func)0;
 		pfile_in_zip_read_info->stream.zfree = (free_func)0;
 		pfile_in_zip_read_info->stream.opaque = (voidpf)0;
@@ -1058,6 +1083,9 @@ int unzOpenCurrentFile (unzFile file) {
 	 * In unzip, i don't wait absolutely Z_STREAM_END because I known the
 	 * size of both compressed and uncompressed data
 	 */
+#else
+		err=UNZ_BADZIPFILE;
+#endif
 	}
 	pfile_in_zip_read_info->rest_read_compressed = s->cur_file_info.compressed_size;
 	pfile_in_zip_read_info->rest_read_uncompressed = s->cur_file_info.uncompressed_size;
@@ -1068,9 +1096,8 @@ int unzOpenCurrentFile (unzFile file) {
 
 	pfile_in_zip_read_info->stream.avail_in = (uInt)0;
 
-
 	s->pfile_in_zip_read = pfile_in_zip_read_info;
-	return UNZ_OK;
+	return err;
 }
 
 
@@ -1143,9 +1170,11 @@ int unzReadCurrentFile(unzFile file, voidp buf, unsigned len) {
 			for (i=0;i<uDoCopy;i++)
 				*(pfile_in_zip_read_info->stream.next_out+i) = *(pfile_in_zip_read_info->stream.next_in+i);
 
+#ifdef USE_ZLIB
 			pfile_in_zip_read_info->crc32_data = crc32(pfile_in_zip_read_info->crc32_data,
 								pfile_in_zip_read_info->stream.next_out,
 								uDoCopy);
+#endif  // otherwise leave crc32_data as is and it won't be verified at the end
 			pfile_in_zip_read_info->rest_read_uncompressed-=uDoCopy;
 			pfile_in_zip_read_info->stream.avail_in -= uDoCopy;
 			pfile_in_zip_read_info->stream.avail_out -= uDoCopy;
@@ -1154,6 +1183,7 @@ int unzReadCurrentFile(unzFile file, voidp buf, unsigned len) {
 			pfile_in_zip_read_info->stream.total_out += uDoCopy;
 			iRead += uDoCopy;
 		} else {
+#ifdef USE_ZLIB
 			uLong uTotalOutBefore,uTotalOutAfter;
 			const Bytef *bufBefore;
 			uLong uOutThis;
@@ -1184,6 +1214,11 @@ int unzReadCurrentFile(unzFile file, voidp buf, unsigned len) {
 				return (iRead==0) ? UNZ_EOF : iRead;
 			if (err!=Z_OK)
 				break;
+#else
+			// Cannot decompress the file without zlib.
+			err = UNZ_BADZIPFILE;
+			break;
+#endif
 		}
 	}
 
@@ -1302,16 +1337,20 @@ int unzCloseCurrentFile(unzFile file) {
 		return UNZ_PARAMERROR;
 
 
+#ifdef USE_ZLIB
+	// Only verify crc32_data when zlib is linked in, because otherwise crc32() is
+	// not defined.
 	if (pfile_in_zip_read_info->rest_read_uncompressed == 0) {
 		if (pfile_in_zip_read_info->crc32_data != pfile_in_zip_read_info->crc32_wait)
 			err=UNZ_CRCERROR;
 	}
+	if (pfile_in_zip_read_info->stream_initialised)
+		inflateEnd(&pfile_in_zip_read_info->stream);
+#endif
 
 
 	free(pfile_in_zip_read_info->read_buffer);
 	pfile_in_zip_read_info->read_buffer = NULL;
-	if (pfile_in_zip_read_info->stream_initialised)
-		inflateEnd(&pfile_in_zip_read_info->stream);
 
 	pfile_in_zip_read_info->stream_initialised = 0;
 	free(pfile_in_zip_read_info);
@@ -1466,5 +1505,3 @@ Archive *makeZipArchive(SeekableReadStream *stream) {
 }
 
 }	// End of namespace Common
-
-#endif

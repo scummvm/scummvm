@@ -32,8 +32,6 @@
 #include "common/system.h"
 #include "common/fs.h"
 
-#include "sound/mididrv.h"
-
 #include "gui/ThemeEngine.h"
 
 #define DETECTOR_TESTING_HACK
@@ -51,7 +49,7 @@ static const char USAGE_STRING[] =
 ;
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
-#if defined(PALMOS_MODE) || defined(__SYMBIAN32__) || defined(__GP32__)
+#if defined(__SYMBIAN32__) || defined(__GP32__) || defined(ANDROID)
 static const char HELP_STRING[] = "NoUsageString"; // save more data segment space
 #else
 static const char HELP_STRING[] =
@@ -284,8 +282,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_OPTION('e', "music-driver")
-				if (MidiDriver::findMusicDriver(option) == 0)
-					usage("Unrecognized music driver '%s'", option);
 			END_OPTION
 
 			DO_LONG_OPTION_INT("output-rate")

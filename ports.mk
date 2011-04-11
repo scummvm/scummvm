@@ -120,6 +120,7 @@ residual-static: $(OBJS)
 		-framework CoreMIDI \
 		$(OSX_STATIC_LIBS) \
 		$(OSX_ZLIB) \
+		$(OSX_ICONV) \
 		-lSystemStubs
 
 # Special target to create a static linked binary for the iPhone

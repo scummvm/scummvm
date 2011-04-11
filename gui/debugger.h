@@ -43,20 +43,46 @@ public:
 
 	int DebugPrintf(const char *format, ...);
 
+	/**
+	 * The onFrame() method should be invoked by the engine at regular
+	 * intervals (usually once per main loop iteration) whenever the
+	 * debugger is attached.
+	 * This will open up the console and accept user input if certain
+	 * preconditions are met, such as the frame countdown having
+	 * reached zero.
+	 *
+	 * Subclasses can override this to e.g. check for breakpoints being
+	 * triggered.
+	 */
 	virtual void onFrame();
 
+	/**
+	 * 'Attach' the debugger. This ensures that the next time onFrame()
+	 * is invoked, the debugger will activate and accept user input.
+	 */
 	virtual void attach(const char *entry = 0);
-	bool isAttached() const { return _isAttached; }
+
+	/**
+	 * Return true if the debugger is currently active (i.e. executing
+	 * a command or waiting for use input).
+	 */
+	bool isActive() const { return _isActive; }
 
 protected:
 	typedef Common::Functor2<int, const char **, bool> Debuglet;
 
-	// Convenience macro for registering a method of a debugger class
-	// as the current command.
+	/**
+	 * Convenience macro that makes it either to register a method
+	 * of a debugger subclass as a command.
+	 * Usage example:
+	 *   DCmd_Register("COMMAND", WRAP_METHOD(MyDebugger, MyCmd));
+	 * would register the method MyDebugger::MyCmd(int, const char **)
+	 * under the command name "COMMAND".
+	 */
 	#define WRAP_METHOD(cls, method) \
 		new Common::Functor2Mem<int, const char **, bool, cls>(this, &cls::method)
 
-	enum {
+	enum VarType {
 		DVAR_BYTE,
 		DVAR_INT,
 		DVAR_BOOL,
@@ -67,50 +93,100 @@ protected:
 	struct DVar {
 		Common::String name;
 		void *variable;
-		int type;
-		int optional;
+		VarType type;
+		int arraySize;
 	};
 
-	int _frame_countdown;
-	bool _detach_now;
+
+	/**
+	 * Register a variable with the debugger. This allows the user to read and modify
+	 * this variable.
+	 * @param varname	the identifier with which the user may access the variable
+	 * @param variable	pointer to the actual storage of the variable
+	 * @param type		the type of the variable (byte, int, bool, ...)
+	 * @paral arraySize	for type DVAR_INTARRAY this specifies the size of the array
+	 *
+	 * @todo	replace this single method by type safe variants.
+	 */
+	void DVar_Register(const Common::String &varname, void *variable, VarType type, int arraySize);
+	void DCmd_Register(const Common::String &cmdname, Debuglet *debuglet);
+
 
 private:
+	/**
+	 * The frame countdown specifies a number of frames that must pass
+	 * until the console will show up. This value is decremented by one
+	 * each time onFrame() is called, until it reaches 0, at which point
+	 * onFrame() will open the console and handle input into it.
+	 *
+	 * The user can modify this value using the debug_countdown command.
+	 *
+	 * Note: The console must be in *attached* state, otherwise, it
+	 * won't show up (and the countdown won't count down either).
+	 */
+	uint _frameCountdown;
+
 	Common::Array<DVar> _dvars;
 
 	typedef Common::HashMap<Common::String, Common::SharedPtr<Debuglet>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> CommandsMap;
 	CommandsMap _cmds;
 
-	bool _isAttached;
+	/**
+	 * True if the debugger is currently active (i.e. executing
+	 * a command or waiting for use input).
+	 */
+	bool _isActive;
+
 	char *_errStr;
+
+	/**
+	 * Initially true, set to false when Debugger::enter is called
+	 * the first time. We use this flag to show a greeting message
+	 * to the user once, when he opens the debugger for the first
+	 * time.
+	 */
 	bool _firstTime;
+
 #ifndef USE_TEXT_CONSOLE
 	GUI::ConsoleDialog *_debuggerDialog;
 #endif
 
 protected:
-	// Hook for subclasses: Called just before enter() is run
+	/**
+	 * Hook for subclasses which is called just before enter() is run.
+	 * A typical usage example is pausing music and sound effects.
+	 */
 	virtual void preEnter() {}
 
-	// Hook for subclasses: Called just after enter() was run
+	/**
+	 * Hook for subclasses which is called just after enter() was run.
+	 * A typical usage example is resuming music and sound effects.
+	 */
 	virtual void postEnter() {}
 
-	// Hook for subclasses: Process the given command line.
-	// Should return true if and only if argv[0] is a known command and was
-	// handled, false otherwise.
-	virtual bool handleCommand(int argc, const char **argv, bool &keepRunning);
-
+	/**
+	 * Subclasses should invoke the detach() method in their Cmd_FOO methods
+	 * if that command will resume execution of the program (as opposed to
+	 * executing, say, a "single step through code" command).
+	 *
+	 * This currently only hides the virtual keyboard, if any.
+	 */
+	void detach();
 
 private:
-	void detach();
 	void enter();
 
 	bool parseCommand(const char *input);
 	bool tabComplete(const char *input, Common::String &completion) const;
 
-protected:
-	void DVar_Register(const Common::String &varname, void *pointer, int type, int optional);
-	void DCmd_Register(const Common::String &cmdname, Debuglet *debuglet);
+	/**
+	 * Process the given command line.
+	 * Returns true if and only if argv[0] is a known command and was
+	 * handled, false otherwise.
+	 */
+	virtual bool handleCommand(int argc, const char **argv, bool &keepRunning);
 
+protected:
 	bool Cmd_Exit(int argc, const char **argv);
 	bool Cmd_Help(int argc, const char **argv);
 	bool Cmd_DebugFlagsList(int argc, const char **argv);

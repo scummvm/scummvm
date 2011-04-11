@@ -397,17 +397,12 @@ bool ThemeEngine::init() {
 	if (!_themeArchive && !_themeFile.empty()) {
 		Common::FSNode node(_themeFile);
 		if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
-#ifdef USE_ZLIB
 			Common::Archive *zipArchive = Common::makeZipArchive(node);
 
 			if (!zipArchive) {
 				warning("Failed to open Zip archive '%s'.", node.getPath().c_str());
 			}
 			_themeArchive = zipArchive;
-#else
-			warning("Trying to load theme '%s' in a Zip archive without zLib support", _themeFile.c_str());
-			return false;
-#endif
 		} else if (node.isDirectory()) {
 			_themeArchive = new Common::FSDirectory(node);
 		}
@@ -568,10 +563,17 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
 	if (file == "default") {
 		_texts[textId]->_fontPtr = _font;
 	} else {
-		_texts[textId]->_fontPtr = FontMan.getFontByName(file);
+		Common::String localized = genLocalizedFontFilename(file.c_str());
+		// Try built-in fonts
+		_texts[textId]->_fontPtr = FontMan.getFontByName(localized);
 
 		if (!_texts[textId]->_fontPtr) {
-			_texts[textId]->_fontPtr = loadFont(file);
+			// First try to load localized font
+			_texts[textId]->_fontPtr = loadFont(localized);
+
+			// Fallback to non-localized font
+			if (!_texts[textId]->_fontPtr)
+				_texts[textId]->_fontPtr = loadFont(file);
 
 			if (!_texts[textId]->_fontPtr)
 				error("Couldn't load font '%s'", file.c_str());
@@ -1494,6 +1496,34 @@ Common::String ThemeEngine::genCacheFilename(const char *filename) {
 	return Common::String();
 }
 
+Common::String ThemeEngine::genLocalizedFontFilename(const char *filename) {
+#ifndef USE_TRANSLATION
+	return Common::String(filename);
+#else
+
+	Common::String result;
+	bool pointPassed = false;
+
+	for (const char *p = filename; *p != 0; p++) {
+		if (!pointPassed) {
+			if (*p != '.') {
+				result += *p;
+			} else {
+				result += "-";
+				result += TransMan.getCurrentCharset();
+				result += *p;
+
+				pointPassed = true;
+			}
+		} else {
+			result += *p;
+		}
+	}
+
+	return result;
+#endif
+}
+
 
 /**********************************************************
  *	Static Theme XML functions
@@ -1527,7 +1557,6 @@ bool ThemeEngine::themeConfigUsable(const Common::FSNode &node, Common::String &
 	bool foundHeader = false;
 
 	if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
-#ifdef USE_ZLIB
 		Common::Archive *zipArchive = Common::makeZipArchive(node);
 		if (zipArchive && zipArchive->hasFile("THEMERC")) {
 			// Open THEMERC from the ZIP file.
@@ -1540,7 +1569,6 @@ bool ThemeEngine::themeConfigUsable(const Common::FSNode &node, Common::String &
 		// reference to zipArchive anywhere. This could change if we
 		// ever modify ZipArchive::createReadStreamForMember.
 		delete zipArchive;
-#endif
 	} else if (node.isDirectory()) {
 		Common::FSNode headerfile = node.getChild("THEMERC");
 		if (!headerfile.exists() || !headerfile.isReadable() || headerfile.isDirectory())
@@ -1636,7 +1664,6 @@ void ThemeEngine::listUsableThemes(const Common::FSNode &node, Common::List<Them
 	}
 
 	Common::FSList fileList;
-#ifdef USE_ZLIB
 	// Check all files. We need this to find all themes inside ZIP archives.
 	if (!node.getChildren(fileList, Common::FSNode::kListFilesOnly))
 		return;
@@ -1663,7 +1690,6 @@ void ThemeEngine::listUsableThemes(const Common::FSNode &node, Common::List<Them
 	}
 
 	fileList.clear();
-#endif
 
 	// Check if we exceeded the given recursion depth
 	if (depth - 1 == -1)

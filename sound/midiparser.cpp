@@ -333,7 +333,7 @@ void MidiParser::hangAllActiveNotes() {
 
 	uint32 advance_tick = _position._last_event_tick;
 	while (true) {
-		int i, j;
+		int i;
 		for (i = 0; i < 128; ++i)
 			if (temp_active[i] != 0)
 				break;
@@ -349,7 +349,7 @@ void MidiParser::hangAllActiveNotes() {
 		} else if (_next_event.event == 0xFF && _next_event.ext.type == 0x2F) {
 			// warning("MidiParser::hangAllActiveNotes(): Hit End of Track with active notes left");
 			for (i = 0; i < 128; ++i) {
-				for (j = 0; j < 16; ++j) {
+				for (int j = 0; j < 16; ++j) {
 					if (temp_active[i] & (1 << j)) {
 						activeNote(j, i, false);
 						sendToDriver(0x80 | j, i, 0);

@@ -8,57 +8,49 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
  * $Id$
- *
  */
 
+#ifndef SOUND_NULL_H
+#define SOUND_NULL_H
+
 #include "sound/musicplugin.h"
-#include "common/hash-str.h"
+#include "sound/mpu401.h"
 #include "common/translation.h"
 
-MusicDevice::MusicDevice(MusicPluginObject const *musicPlugin, Common::String name, MusicType mt) :
-	_musicDriverName(_(musicPlugin->getName())), _musicDriverId(musicPlugin->getId()),
-	_name(_(name)), _type(mt) {
-}
+/* NULL driver */
+class MidiDriver_NULL : public MidiDriver_MPU401 {
+public:
+	int open() { return 0; }
+	void send(uint32 b) { }
+};
 
-Common::String MusicDevice::getCompleteName() {
-	Common::String name;
 
-	if (_name.empty()) {
-		// Default device, just show the driver name
-		name = _musicDriverName;
-	} else {
-		// Show both device and driver names
-		name = _name;
-		name += " [";
-		name += _musicDriverName;
-		name += "]";
+// Plugin interface
+
+class NullMusicPlugin : public MusicPluginObject {
+public:
+	virtual const char *getName() const {
+		return _s("No music");
 	}
 
-	return name;
-}
-
-Common::String MusicDevice::getCompleteId() {
-	Common::String id = _musicDriverId;
-	if (!_name.empty()) {
-		id += "_";
-		id += _name;
+	virtual const char *getId() const {
+		return "null";
 	}
 
-	return id;
-}
+	virtual MusicDevices getDevices() const;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+};
 
-MidiDriver::DeviceHandle MusicDevice::getHandle() {
-	return (MidiDriver::DeviceHandle)Common::hashit(getCompleteId().c_str());
-}
+#endif

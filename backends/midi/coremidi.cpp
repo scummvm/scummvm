@@ -190,7 +190,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver) const;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
 };
 
 MusicDevices CoreMIDIMusicPlugin::getDevices() const {
@@ -201,19 +201,10 @@ MusicDevices CoreMIDIMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error CoreMIDIMusicPlugin::createInstance(MidiDriver **mididriver) const {
+Common::Error CoreMIDIMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
 	*mididriver = new MidiDriver_CoreMIDI();
 
 	return Common::kNoError;
-}
-
-MidiDriver *MidiDriver_CoreMIDI_create() {
-	MidiDriver *mididriver;
-
-	CoreMIDIMusicPlugin p;
-	p.createInstance(&mididriver);
-
-	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(COREMIDI)

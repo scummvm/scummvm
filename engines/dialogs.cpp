@@ -275,8 +275,36 @@ enum {
 //  "" as value for the domain, and in fact provide a somewhat better user
 // experience at the same time.
 ConfigDialog::ConfigDialog(bool subtitleControls)
-	: GUI::OptionsDialog("", "") {
-	// Not in Residual
+	: GUI::OptionsDialog("", "GlobalConfig") {
+
+	//
+	// Sound controllers
+	//
+
+	addVolumeControls(this, "GlobalConfig.");
+	setVolumeSettingsState(true); // could disable controls by GUI options
+
+	//
+	// Subtitle speed and toggle controllers
+	//
+
+	if (subtitleControls) {
+		// Global talkspeed range of 0-255
+		addSubtitleControls(this, "GlobalConfig.", 255);
+		setSubtitleSettingsState(true); // could disable controls by GUI options
+	}
+
+	//
+	// Add the buttons
+	//
+
+	new GUI::ButtonWidget(this, "GlobalConfig.Ok", _("~O~K"), 0, GUI::kOKCmd);
+	new GUI::ButtonWidget(this, "GlobalConfig.Cancel", _("~C~ancel"), 0, GUI::kCloseCmd);
+
+#ifdef SMALL_SCREEN_DEVICE
+	new GUI::ButtonWidget(this, "GlobalConfig.Keys", _("~K~eys"), 0, kKeysCmd);
+	_keysDialog = NULL;
+#endif
 }
 
 ConfigDialog::~ConfigDialog() {

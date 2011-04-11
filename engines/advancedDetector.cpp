@@ -306,7 +306,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 
 	// If the GUI options were updated, we catch this here and update them in the users config
 	// file transparently.
-	Common::updateGameGUIOptions(agdDesc->guioptions | params.guioptions);
+	Common::updateGameGUIOptions(agdDesc->guioptions | params.guioptions, getGameGUIOptionsDescriptionLanguage(agdDesc->language));
 
 	debug(2, "Running %s", toGameDescriptor(*agdDesc, params.list).description().c_str());
 	if (!createInstance(syst, engine, agdDesc))

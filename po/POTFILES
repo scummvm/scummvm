@@ -16,9 +16,18 @@ gui/ThemeEngine.cpp
 base/main.cpp
 
 common/error.cpp
+common/util.cpp
 
 engines/dialogs.cpp
 
-sound/mididrv.cpp
+sound/fmopl.cpp
+sound/musicplugin.cpp
+sound/null.h
+sound/null.cpp
+sound/softsynth/adlib.cpp
+sound/softsynth/mt32.cpp
+sound/softsynth/pcspk.cpp
+sound/softsynth/ym2612.cpp
 
 backends/keymapper/remap-dialog.cpp
+backends/midi/windows.cpp

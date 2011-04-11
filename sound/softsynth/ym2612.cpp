@@ -27,6 +27,7 @@
 #include "sound/softsynth/ym2612.h"
 #include "common/util.h"
 #include "sound/musicplugin.h"
+#include "common/translation.h"
 
 ////////////////////////////////////////
 //
@@ -758,7 +759,7 @@ void MidiDriver_YM2612::removeLookupTables() {
 class TownsEmuMusicPlugin : public MusicPluginObject {
 public:
 	const char *getName() const {
-		return "FM Towns Emulator";
+		return _s("FM Towns Emulator");
 	}
 
 	const char *getId() const {
@@ -766,7 +767,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver) const;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
 };
 
 MusicDevices TownsEmuMusicPlugin::getDevices() const {
@@ -775,19 +776,10 @@ MusicDevices TownsEmuMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error TownsEmuMusicPlugin::createInstance(MidiDriver **mididriver) const {
+Common::Error TownsEmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
 	*mididriver = new MidiDriver_YM2612(g_system->getMixer());
 
 	return Common::kNoError;
-}
-
-MidiDriver *MidiDriver_YM2612_create() {
-	MidiDriver *mididriver;
-
-	TownsEmuMusicPlugin p;
-	p.createInstance(&mididriver);
-
-	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(TOWNS)

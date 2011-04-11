@@ -182,7 +182,7 @@ void SaveLoadChooser::reflowLayout() {
 			error("Error when loading position data for Save/Load Thumbnails.");
 
 		int thumbW = kThumbnailWidth;
-		int thumbH = ((g_system->getHeight() % 200 && g_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1);
+		int thumbH = kThumbnailHeight2;
 		int thumbX = x + (w >> 1) - (thumbW >> 1);
 		int thumbY = y + kLineHeight;
 

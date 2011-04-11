@@ -256,6 +256,7 @@ bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 		else
 			displayMessageOnOSD("Windowed mode");
 #endif
+
 		return false;
 	}*/
 
@@ -340,6 +341,10 @@ bool OSystem_SDL::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	// Set the scroll lock sticky flag
 	if (_scrollLock)
 		event.kbd.flags |= Common::KBD_SCRL;
+/* Residual doesn't support this
+	if (isScalerHotkey(event))
+		// Swallow these key up events
+		return false;*/
 
 	return true;
 }

@@ -25,8 +25,6 @@
 #ifndef COMMON_UNZIP_H
 #define COMMON_UNZIP_H
 
-#ifdef USE_ZLIB
-
 namespace Common {
 
 class Archive;
@@ -61,7 +59,5 @@ Archive *makeZipArchive(const FSNode &node);
 Archive *makeZipArchive(SeekableReadStream *stream);
 
 }	// End of namespace Common
-
-#endif // USE_ZLIB
 
 #endif

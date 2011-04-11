@@ -150,10 +150,13 @@ int MidiDriver_ALSA::open() {
 }
 
 void MidiDriver_ALSA::close() {
-	_isOpen = false;
-	MidiDriver_MPU401::close();
-	if (seq_handle)
-		snd_seq_close(seq_handle);
+	if (_isOpen) {
+		_isOpen = false;
+		MidiDriver_MPU401::close();
+		if (seq_handle)
+			snd_seq_close(seq_handle);
+	} else
+		warning("MidiDriver_ALSA: Closing the driver before opening it");
 }
 
 void MidiDriver_ALSA::send(uint32 b) {
@@ -269,7 +272,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver) const;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
 };
 
 #define perm_ok(pinfo,bits) ((snd_seq_port_info_get_capability(pinfo) & (bits)) == (bits))
@@ -315,19 +318,10 @@ MusicDevices AlsaMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error AlsaMusicPlugin::createInstance(MidiDriver **mididriver) const {
+Common::Error AlsaMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
 	*mididriver = new MidiDriver_ALSA();
 
 	return Common::kNoError;
-}
-
-MidiDriver *MidiDriver_ALSA_create() {
-	MidiDriver *mididriver;
-
-	AlsaMusicPlugin p;
-	p.createInstance(&mididriver);
-
-	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(ALSA)

@@ -110,7 +110,7 @@
 	<dialog name = 'Launcher' overlays = 'screen'>
 		<layout type = 'vertical' center = 'true' padding = '23, 23, 8, 23'>
 			<widget name = 'Logo'
-					width = '283'
+					width = '287'
 					height = '80'
 			/>
 			<layout type = 'horizontal'  spacing = '5' padding = '10, 0, 0, 0'>
@@ -246,6 +246,22 @@
 						type = 'PopUp'
 				/>
 			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'auPrefMt32PopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'auPrefMt32Popup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'auPrefGmPopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'auPrefGmPopup'
+						type = 'PopUp'
+				/>
+			</layout>			
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'auOPLPopupDesc'
 						type = 'OptionsLabel'

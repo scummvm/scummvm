@@ -39,6 +39,9 @@ namespace Common {
  * Instead, small strings are stored 'inside' the string object (i.e. on
  * the stack, for stack allocated objects), and only for strings exceeding
  * a certain length do we allocate a buffer on the heap.
+ *
+ * The presence of \0 characters in the string will cause undefined
+ * behaviour in some operations.
  */
 class String {
 protected:

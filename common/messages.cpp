@@ -20,101 +20,82 @@ static struct {
 	{ NULL, NULL, NULL }
 };
 
-/* code */
+// code
 
-static struct _po2c_msg * _po2c_lang=NULL;
-static int _po2c_lang_size=0;
-static const char * _po2c_charset=NULL;
+static const PoMessageEntry *_currentTranslation = NULL;
+static int _currentTranslationMessageEntryCount = 0;
+static const char *_currentTranslationCharset = NULL;
 
-void po2c_setlang(const char * lang)
-{
-	int n;
+void po2c_setlang(const char *lang) {
+	_currentTranslation = NULL;
+	_currentTranslationMessageEntryCount = 0;
+	_currentTranslationCharset = NULL;
 
-	_po2c_lang=NULL;
-	_po2c_lang_size=0;
-	_po2c_charset=NULL;
-
-	/* if lang is NULL or "", deactivate it */
-	if(lang == NULL || *lang == '\0')
+	// if lang is NULL or "", deactivate it
+	if (lang == NULL || *lang == '\0')
 		return;
 
-	/* searches for a valid language array */
-	for(n=0;_po2c_lang == NULL && _po2c_langs[n].lang != NULL;n++)
-	{
-		if(strcmp(lang, _po2c_langs[n].lang) == 0) {
-			_po2c_lang=_po2c_langs[n].msgs;
-			_po2c_charset=_po2c_langs[n].charset;
+	// searches for a valid language array
+	for (int i = 0; _currentTranslation == NULL && _translations[i].lang != NULL; ++i) {
+		if (strcmp(lang, _translations[i].lang) == 0) {
+			_currentTranslation = _translations[i].msgs;
+			_currentTranslationCharset = _translations[i].charset;
 		}
 	}
 
-	/* try partial searches */
-	for(n=0;_po2c_lang == NULL && _po2c_langs[n].lang != NULL;n++)
-	{
-		if(strncmp(lang, _po2c_langs[n].lang, 2) == 0) {
-			_po2c_lang=_po2c_langs[n].msgs;
-			_po2c_charset=_po2c_langs[n].charset;
+	// try partial searches
+	for (int i = 0; _currentTranslation == NULL && _translations[i].lang != NULL; ++i) {
+		if (strncmp(lang, _translations[i].lang, 2) == 0) {
+			_currentTranslation = _translations[i].msgs;
+			_currentTranslationCharset = _translations[i].charset;
 		}
 	}
 
-	/* if found, count entries */
-	if(_po2c_lang != NULL)
-	{
-		struct _po2c_msg * m;
-
-		for(m=_po2c_lang;m->msgid != -1;m++)
-			_po2c_lang_size++;
+	// if found, count entries
+	if (_currentTranslation != NULL) {
+		for (const PoMessageEntry *m = _currentTranslation; m->msgid != -1; ++m)
+			++_currentTranslationMessageEntryCount;
 	}
 }
 
-const char * po2c_gettext(const char * msgid)
-{
-	struct _po2c_msg * m;
-	int b, t, n, c;
+const char *po2c_gettext(const char *msgid) {
+	// if no language is set or msgid is empty, return msgid as is
+	if (_currentTranslation == NULL || *msgid == '\0')
+		return msgid;
 
-	/* if no language is set or msgid is empty, return msgid as is */
-	if(_po2c_lang == NULL || *msgid == '\0')
-		return(msgid);
+	// binary-search for the msgid
+	int leftIndex = 0;
+	int rightIndex = _currentTranslationMessageEntryCount - 1;
 
-	/* binary-search for the msgid */
-	b=0; t=_po2c_lang_size - 1;
+	while (rightIndex >= leftIndex) {
+		const int midIndex = (leftIndex + rightIndex) / 2;
+		const PoMessageEntry * const m = &_currentTranslation[midIndex];
 
-	while(t >= b)
-	{
-		n=(b + t) / 2;
-		m=&_po2c_lang[n];
+		const int compareResult = strcmp(msgid, _messageIds[m->msgid]);
 
-		c=strcmp(msgid, _po2c_msgids[m->msgid]);
-
-		if(c == 0)
-			return(m->msgstr);
+		if (compareResult == 0)
+			return m->msgstr;
+		else if (compareResult < 0)
+			rightIndex = midIndex - 1;
 		else
-		if(c < 0)
-			t=n - 1;
-		else
-			b=n + 1;
+			leftIndex = midIndex + 1;
 	}
 
-	return(msgid);
+	return msgid;
 }
 
-const char * po2c_getcharset(void)
-{
-	if (_po2c_charset)
-		return _po2c_charset;
+const char *po2c_getcharset(void) {
+	if (_currentTranslationCharset)
+		return _currentTranslationCharset;
 	else
 		return "ASCII";
 }
 
-int po2c_getnumlangs(void)
-{
-	int n = 0;
-	while (_po2c_langs[n].lang)
-		n++;
-	
-	return n;
+int po2c_getnumlangs(void) {
+	return ARRAYSIZE(_translations) - 1;
 }
 
-const char * po2c_getlang(int num)
-{
-	return _po2c_langs[num].lang;
+const char *po2c_getlang(const int num) {
+	assert(num < ARRAYSIZE(_translations));
+	return _translations[num].lang;
 }

@@ -40,6 +40,7 @@
 #include "graphics/scaler.h"
 
 #include "sound/mididrv.h"
+#include "sound/musicplugin.h"
 #include "sound/mixer.h"
 #include "sound/fmopl.h"
 
@@ -99,6 +100,8 @@ void OptionsDialog::init() {
 	_aspectCheckbox = 0;
 	_enableAudioSettings = false;
 	_midiPopUp = 0;
+	_mt32DevicePopUp = 0;
+	_gmDevicePopUp = 0;
 	_oplPopUp = 0;
 	_outputRatePopUp = 0;
 	_enableMIDISettings = false;
@@ -147,10 +150,25 @@ void OptionsDialog::open() {
 	}
 
 	// Audio options
-	if (_midiPopUp) {
-		// Music driver
-		MidiDriverType id = MidiDriver::parseMusicDriver(ConfMan.get("music_driver", _domain));
-		_midiPopUp->setSelectedTag(id);
+	if (!loadMusicDeviceSetting(_midiPopUp, "music_driver"))
+		_midiPopUp->setSelected(0);
+
+	if (!loadMusicDeviceSetting(_mt32DevicePopUp, "mt32_device")) {
+		if (_domain.equals(Common::ConfigManager::kApplicationDomain)) {
+			if (!loadMusicDeviceSetting(_mt32DevicePopUp, Common::String(), MT_MT32))
+				_mt32DevicePopUp->setSelected(0);
+		} else {
+			_mt32DevicePopUp->setSelected(0);
+		}
+	}
+
+	if (!loadMusicDeviceSetting(_gmDevicePopUp, "gm_device")) {
+		if (_domain.equals(Common::ConfigManager::kApplicationDomain)) {
+			if (!loadMusicDeviceSetting(_gmDevicePopUp, Common::String(), MT_GM))
+				_gmDevicePopUp->setSelected(0);
+		} else {
+			_gmDevicePopUp->setSelected(0);
+		}
 	}
 
 	if (_oplPopUp) {
@@ -231,15 +249,13 @@ void OptionsDialog::close() {
 		// Audio options
 		if (_midiPopUp) {
 			if (_enableAudioSettings) {
-				const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
-				while (md->name && md->id != (int)_midiPopUp->getSelectedTag())
-					md++;
-				if (md->name)
-					ConfMan.set("music_driver", md->name, _domain);
-				else
-					ConfMan.removeKey("music_driver", _domain);
+				saveMusicDeviceSetting(_midiPopUp, "music_driver");
+				saveMusicDeviceSetting(_mt32DevicePopUp, "mt32_device");
+				saveMusicDeviceSetting(_gmDevicePopUp, "gm_device");
 			} else {
 				ConfMan.removeKey("music_driver", _domain);
+				ConfMan.removeKey("mt32_device", _domain);
+				ConfMan.removeKey("gm_device", _domain);
 			}
 		}
 
@@ -346,14 +362,17 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
 	_enableAudioSettings = enabled;
-
 	_midiPopUpDesc->setEnabled(enabled);
 	_midiPopUp->setEnabled(enabled);
+	_mt32DevicePopUpDesc->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
+	_mt32DevicePopUp->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
+	_gmDevicePopUpDesc->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
+	_gmDevicePopUp->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
 
-	uint32 allFlags = MidiDriver::midiDriverFlags2GUIO((uint32)-1);
+	uint32 allFlags = MidiDriver::musicType2GUIO((uint32)-1);
 
 	if (_domain != Common::ConfigManager::kApplicationDomain && // global dialog
-				(_guioptions & allFlags) && // No flags are specified
+			(_guioptions & allFlags) && // No flags are specified
 				!(_guioptions & Common::GUIO_MIDIADLIB)) {
 		_oplPopUpDesc->setEnabled(false);
 		_oplPopUp->setEnabled(false);
@@ -444,19 +463,40 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &prefix) {
 	// The MIDI mode popup & a label
-	_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _("Music driver:"), _("Specifies output sound device or sound card emulator"));
+	_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _domain == Common::ConfigManager::kApplicationDomain ? _("Preferred Device:") : _("Music Device:"), _domain == Common::ConfigManager::kApplicationDomain ? _("Specifies preferred sound device or sound card emulator") : _("Specifies output sound device or sound card emulator"));
 	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", _("Specifies output sound device or sound card emulator"));
 
-	// Populate it
-	const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
-	uint32 allFlags = MidiDriver::midiDriverFlags2GUIO((uint32)-1);
+	_mt32DevicePopUpDesc = new StaticTextWidget(boss, prefix + "auPrefMt32PopupDesc", _("MT-32 Device:"), _("Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"));
+	_mt32DevicePopUp = new PopUpWidget(boss, prefix + "auPrefMt32Popup");
+	_gmDevicePopUpDesc = new StaticTextWidget(boss, prefix + "auPrefGmPopupDesc", _("GM Device:"), _("Specifies default sound device for General MIDI output"));
+	_gmDevicePopUp = new PopUpWidget(boss, prefix + "auPrefGmPopup");
 
-	while (md->name) {
-		if (_domain == Common::ConfigManager::kApplicationDomain || // global dialog
-				!(_guioptions & allFlags) || // No flags are specified
-				_guioptions & (MidiDriver::midiDriverFlags2GUIO(md->flags))) // flag is present
-			_midiPopUp->appendEntry(_(md->description), md->id);
-		md++;
+	// Populate it
+	uint32 allFlags = MidiDriver::musicType2GUIO((uint32)-1);
+
+	const MusicPlugin::List p = MusicMan.getPlugins();
+	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
+		MusicDevices i = (**m)->getDevices();
+		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
+			if ((_domain == Common::ConfigManager::kApplicationDomain && d->getMusicType() != MT_TOWNS) // global dialog - skip useless FM-Towns option there
+			    || (_domain != Common::ConfigManager::kApplicationDomain && !(_guioptions & allFlags)) // No flags are specified
+			    || _guioptions & (MidiDriver::musicType2GUIO(d->getMusicType())) // flag is present
+			    || d->getMusicDriverId() == "auto" || d->getMusicDriverId() == "null") // always add default and null device
+					_midiPopUp->appendEntry(d->getCompleteName(), d->getHandle());
+
+			if (d->getMusicType() >= MT_GM || d->getMusicDriverId() == "auto") {
+				_mt32DevicePopUp->appendEntry(d->getCompleteName(), d->getHandle());
+				if (d->getMusicType() != MT_MT32)
+					_gmDevicePopUp->appendEntry(d->getCompleteName(), d->getHandle());
+			}
+		}
+	}
+
+	if (!_domain.equals(Common::ConfigManager::kApplicationDomain)) {
+		_mt32DevicePopUpDesc->setEnabled(false);
+		_mt32DevicePopUp->setEnabled(false);
+		_gmDevicePopUpDesc->setEnabled(false);
+		_gmDevicePopUp->setEnabled(false);
 	}
 
 	// The OPL emulator popup & a label
@@ -561,6 +601,49 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 	_speechVolumeLabel->setFlags(WIDGET_CLEARBG);
 
 	_enableVolumeSettings = true;
+}
+
+bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MusicType preferredType) {
+	if (!popup || !popup->isEnabled())
+		return true;
+
+	if (_domain != Common::ConfigManager::kApplicationDomain || ConfMan.hasKey(setting, _domain) || preferredType) {
+		const Common::String drv = ConfMan.get(setting, (_domain != Common::ConfigManager::kApplicationDomain && !ConfMan.hasKey(setting, _domain)) ? Common::ConfigManager::kApplicationDomain : _domain); 
+		const MusicPlugin::List p = MusicMan.getPlugins();
+
+		for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
+			MusicDevices i = (**m)->getDevices();
+			for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
+				if (setting.empty() ? (preferredType == d->getMusicType()) : (drv == d->getCompleteId())) {
+					popup->setSelectedTag(d->getHandle());
+					return popup->getSelected() == -1 ? false : true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+void OptionsDialog::saveMusicDeviceSetting(PopUpWidget *popup, Common::String setting) {
+	if (!popup || !_enableAudioSettings)
+		return;
+	
+	const MusicPlugin::List p = MusicMan.getPlugins();
+	bool found = false;
+	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end() && !found; ++m) {
+		MusicDevices i = (**m)->getDevices();
+		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
+			if (d->getHandle() == popup->getSelectedTag()) {
+				ConfMan.set(setting, d->getCompleteId(), _domain);
+				found = true;
+				break;
+			}
+		}
+	}
+
+	if (!found)
+		ConfMan.removeKey(setting, _domain);
 }
 
 int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
@@ -685,7 +768,17 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 		_guiLanguagePopUp->appendEntry(lang->name, lang->id);
 		lang++;
 	}
-	_guiLanguagePopUp->setSelectedTag(TransMan.parseLanguage(ConfMan.get("gui_language").c_str()));
+
+	// Select the currently configured language or default/English if
+	// nothing is specified.
+	if (ConfMan.hasKey("gui_language"))
+		_guiLanguagePopUp->setSelectedTag(TransMan.parseLanguage(ConfMan.get("gui_language")));
+	else
+#ifdef USE_DETECTLANG
+		_guiLanguagePopUp->setSelectedTag(Common::kTranslationAutodetectId);
+#else // !USE_DETECTLANG
+		_guiLanguagePopUp->setSelectedTag(Common::kTranslationBuiltinId);
+#endif // USE_DETECTLANG
 
 #endif // USE_TRANSLATION
 

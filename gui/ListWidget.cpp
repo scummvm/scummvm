@@ -439,11 +439,6 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		_scrollBar->draw();
 	}
 
-#if !defined(PALMOS_MODE)
-	// not done on PalmOS because keyboard is emulated and keyup is not generated
-	_currentKeyDown = state.keycode;
-#endif
-
 	return handled;
 }
 
