@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(GP2XWIZ) || defined(CAANOO)
+#if defined(GPH_DEVICE)
 
 #include "backends/graphics/gph/gph-graphics.h"
 #include "backends/events/gph/gph-events.h"

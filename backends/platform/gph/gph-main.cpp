@@ -24,7 +24,7 @@
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
-#if defined(GP2XWIZ) || defined(CAANOO)
+#if defined(GPH_DEVICE)
 
 int main(int argc, char *argv[]) {
 
