@@ -87,6 +87,7 @@ _tremor=auto
 _flac=auto
 _mad=auto
 _alsa=auto
+_seq_midi=auto
 _fluidsynth=auto
 _readline=auto
 # Default option behaviour yes/no
@@ -95,6 +96,7 @@ _release_build=auto
 _text_console=no
 _mt32emu=no
 _enable_prof=no
+_unix=no
 _global_constructors=no
 # Default vkeybd/keymapper options
 _vkeybd=no
@@ -226,6 +228,10 @@ add_line_to_config_h() {
 '"$1"
 }
 
+# Conditionally add a line of data to config.h. Takes two parameters:
+# The first one can be set to 'no' to "comment out" the line, i.e.
+# make it ineffective, use 'yes' otherwise.
+# The second param is the line to insert.
 add_to_config_h_if_yes() {
 	if test "$1" = yes ; then
 		add_line_to_config_h "$2"
@@ -246,7 +252,7 @@ add_to_config_mk_if_yes() {
 	fi
 }
 
- Conditionally add a '#define' line to config.h. Takes two parameters:
+# Conditionally add a '#define' line to config.h. Takes two parameters:
 # The first one can be set to 'yes' or 'no'. If 'yes' is used, then
 # the line "#define $2" is added to config.h, otherwise "#undef $2".
 define_in_config_h_if_yes() {
