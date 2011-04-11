@@ -75,11 +75,11 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::ThemeEngine::kImageLogoSmall));
 	} else {
-		StaticTextWidget *title = new StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
+		StaticTextWidget *title = new StaticTextWidget(this, "GlobalMenu.Title", "Residual");
 		title->setAlign(Graphics::kTextAlignCenter);
 	}
 #else
-	StaticTextWidget *title = new StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
+	StaticTextWidget *title = new StaticTextWidget(this, "GlobalMenu.Title", "Residual");
 	title->setAlign(Graphics::kTextAlignCenter);
 #endif
 
@@ -106,7 +106,10 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 
 	new GUI::ButtonWidget(this, "GlobalMenu.About", _("~A~bout"), 0, kAboutCmd);
 
-	_rtlButton = new GUI::ButtonWidget(this, "GlobalMenu.RTL", _("~R~eturn to Launcher"), 0, kRTLCmd);
+	if (g_system->getOverlayWidth() > 320)
+		_rtlButton = new GUI::ButtonWidget(this, "GlobalMenu.RTL", _("~R~eturn to Launcher"), 0, kRTLCmd);
+	else
+		_rtlButton = new GUI::ButtonWidget(this, "GlobalMenu.RTL", _c("~R~eturn to Launcher", "lowres"), 0, kRTLCmd);
 	_rtlButton->setEnabled(_engine->hasFeature(Engine::kSupportsRTL));
 
 

@@ -24,8 +24,10 @@
  */
 
 #include "common/sys.h"
-#include "base/internal_version.h"
 #include "base/version.h"
+
+#define INCLUDED_FROM_BASE_VERSION_CPP
+#include "base/internal_version.h"
 
 /*
  * Version string and build date string. These can be used by anything that
@@ -86,12 +88,20 @@ const char *gResidualFeatures = ""
 	"ALSA "
 #endif
 
+#ifdef USE_SEQ_MIDI
+	"SEQ "
+#endif
+
 #ifdef USE_RGB_COLOR
 	"RGB "
 #endif
 
 #ifdef USE_ZLIB
 	"zLib "
+#endif
+
+#ifdef USE_MPEG2
+	"MPEG2 "
 #endif
 
 #ifdef USE_FLUIDSYNTH

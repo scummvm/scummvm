@@ -44,12 +44,6 @@
 #include "gui/ThemeEval.h"
 #include "gui/ThemeParser.h"
 
-#if defined(MACOSX) || defined(IPHONE)
-#include <CoreFoundation/CoreFoundation.h>
-#endif
-
-#define GUI_ENABLE_BUILTIN_THEME
-
 namespace GUI {
 
 const char * const ThemeEngine::kImageLogo = "logo.bmp";
@@ -169,6 +163,7 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 	{kDDMainDialogBackground,		"mainmenu_bg",		true,	kDDNone},
 	{kDDSpecialColorBackground,		"special_bg",		true,	kDDNone},
 	{kDDPlainColorBackground,		"plain_bg",			true,	kDDNone},
+	{kDDTooltipBackground,			"tooltip_bg",		true,	kDDNone},
 	{kDDDefaultBackground,			"default_bg",		true,	kDDNone},
 	{kDDTextSelectionBackground,	"text_selection",	false,	kDDNone},
 	{kDDTextSelectionFocusBackground,	"text_selection_focus",	false,	kDDNone},
@@ -334,10 +329,10 @@ ThemeEngine::~ThemeEngine() {
  *	Rendering mode management
  *********************************************************/
 const ThemeEngine::Renderer ThemeEngine::_rendererModes[] = {
-	{ _s("Disabled GFX"), "none", kGfxDisabled },
-	{ _s("Standard Renderer (16bpp)"), "normal_16bpp", kGfxStandard16bit },
+	{ _s("Disabled GFX"), _sc("Disabled GFX", "lowres"), "none", kGfxDisabled },
+	{ _s("Standard Renderer (16bpp)"), _s("Standard (16bpp)"), "normal_16bpp", kGfxStandard16bit },
 #ifndef DISABLE_FANCY_THEMES
-	{ _s("Antialiased Renderer (16bpp)"), "aa_16bpp", kGfxAntialias16bit }
+	{ _s("Antialiased Renderer (16bpp)"), _s("Antialiased (16bpp)"), "aa_16bpp", kGfxAntialias16bit }
 #endif
 };
 
@@ -396,15 +391,23 @@ bool ThemeEngine::init() {
 	// Try to create a Common::Archive with the files of the theme.
 	if (!_themeArchive && !_themeFile.empty()) {
 		Common::FSNode node(_themeFile);
-		if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
-			Common::Archive *zipArchive = Common::makeZipArchive(node);
-
-			if (!zipArchive) {
-				warning("Failed to open Zip archive '%s'.", node.getPath().c_str());
-			}
-			_themeArchive = zipArchive;
-		} else if (node.isDirectory()) {
+		if (node.isDirectory()) {
 			_themeArchive = new Common::FSDirectory(node);
+		} else if (_themeFile.hasSuffix(".zip")) {
+			// TODO: Also use "node" directly?
+			// Look for the zip file via SearchMan
+			Common::ArchiveMemberPtr member = SearchMan.getMember(_themeFile);
+			if (member) {
+				_themeArchive = Common::makeZipArchive(member->createReadStream());
+				if (!_themeArchive) {
+					warning("Failed to open Zip archive '%s'.", member->getDisplayName().c_str());
+				}
+			} else {
+				_themeArchive = Common::makeZipArchive(node);
+				if (!_themeArchive) {
+					warning("Failed to open Zip archive '%s'.", node.getPath().c_str());
+				}
+			}
 		}
 	}
 
@@ -570,15 +573,27 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
 		if (!_texts[textId]->_fontPtr) {
 			// First try to load localized font
 			_texts[textId]->_fontPtr = loadFont(localized);
+			
+			if (_texts[textId]->_fontPtr)
+				FontMan.assignFontToName(file, _texts[textId]->_fontPtr);
 
-			// Fallback to non-localized font
-			if (!_texts[textId]->_fontPtr)
-				_texts[textId]->_fontPtr = loadFont(file);
+			// Fallback to non-localized font and default translation
+			else {
+				// Try built-in fonts
+				_texts[textId]->_fontPtr = FontMan.getFontByName(file);
+				
+				// Try to load it
+				if (!_texts[textId]->_fontPtr) {
+					_texts[textId]->_fontPtr = loadFont(file);
 
-			if (!_texts[textId]->_fontPtr)
-				error("Couldn't load font '%s'", file.c_str());
-
-			FontMan.assignFontToName(file, _texts[textId]->_fontPtr);
+					if (!_texts[textId]->_fontPtr)
+						error("Couldn't load font '%s'", file.c_str());
+					
+					FontMan.assignFontToName(file, _texts[textId]->_fontPtr);
+				}
+				TransMan.setLanguage("C");
+				warning("Failed to load localized font '%s'. Using non-localized font and default GUI language instead", file.c_str());
+			}
 		}
 	}
 
@@ -697,7 +712,7 @@ bool ThemeEngine::loadDefaultXML() {
 	// file inside the themes directory.
 	// Use the Python script "makedeftheme.py" to convert a normal XML theme
 	// into the "default.inc" file, which is ready to be included in the code.
-#ifdef GUI_ENABLE_BUILTIN_THEME
+#ifndef DISABLE_GUI_BUILTIN_THEME
 	const char *defaultXML =
 #include "themes/default.inc"
 	;
@@ -980,6 +995,10 @@ void ThemeEngine::drawDialogBackground(const Common::Rect &r, DialogBackground b
 		queueDD(kDDPlainColorBackground, r);
 		break;
 
+	case kDialogBackgroundTooltip:
+		queueDD(kDDTooltipBackground, r);
+		break;
+
 	case kDialogBackgroundDefault:
 		queueDD(kDDDefaultBackground, r);
 		break;
@@ -1058,12 +1077,16 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, co
 		if (i == active)
 			continue;
 
+		if (r.left + i * tabWidth > r.right || r.left + (i + 1) * tabWidth > r.right)
+			continue;
+
 		Common::Rect tabRect(r.left + i * tabWidth, r.top, r.left + (i + 1) * tabWidth, r.top + tabHeight);
 		queueDD(kDDTabInactive, tabRect);
 		queueDDText(getTextData(kDDTabInactive), getTextColor(kDDTabInactive), tabRect, tabs[i], false, false, _widgets[kDDTabInactive]->_textAlignH, _widgets[kDDTabInactive]->_textAlignV);
 	}
 
-	if (active >= 0) {
+	if (active >= 0 &&
+			(r.left + active * tabWidth < r.right) && (r.left + (active + 1) * tabWidth < r.right)) {
 		Common::Rect tabRect(r.left + active * tabWidth, r.top, r.left + (active + 1) * tabWidth, r.top + tabHeight);
 		const uint16 tabLeft = active * tabWidth;
 		const uint16 tabRight =  MAX(r.right - tabRect.right, 0);
@@ -1163,70 +1186,6 @@ void ThemeEngine::debugWidgetPosition(const char *name, const Common::Rect &r) {
 	_screen.hLine(r.left, r.bottom, r.right, 0xFFFF);
 	_screen.vLine(r.left, r.top, r.bottom, 0xFFFF);
 	_screen.vLine(r.right, r.top, r.bottom, 0xFFFF);
-}
-
-ThemeEngine::StoredState *ThemeEngine::storeState(const Common::Rect &r) {
-	StoredState *state = new StoredState;
-	byte *dst;
-	byte *src;
-
-	state->r.top = r.top;
-	state->r.bottom = r.bottom;
-	state->r.left = r.left;
-	state->r.right = r.right;
-
-	state->r.clip(_screen.w, _screen.h);
-
-	state->screen.create(state->r.width(), state->r.height(), _screen.bytesPerPixel);
-	state->backBuffer.create(state->r.width(), state->r.height(), _backBuffer.bytesPerPixel);
-
-	src = (byte *)_screen.getBasePtr(state->r.left, state->r.top);
-	dst = (byte *)state->screen.getBasePtr(0, 0);
-
-	for (int i = state->r.height(); i > 0; i--) {
-		memcpy(dst, src, state->r.width() * _screen.bytesPerPixel);
-		src += _screen.pitch;
-		dst += state->screen.pitch;
-	}
-
-	src = (byte *)_backBuffer.getBasePtr(state->r.left, state->r.top);
-	dst = (byte *)state->backBuffer.getBasePtr(0, 0);
-
-	for (int i = state->r.height(); i > 0; i--) {
-		memcpy(dst, src, state->r.width() * _backBuffer.bytesPerPixel);
-		src += _backBuffer.pitch;
-		dst += state->backBuffer.pitch;
-	}
-
-	return state;
-}
-
-void ThemeEngine::restoreState(StoredState *state) {
-	byte *dst;
-	byte *src;
-
-	if (!state)
-		return;
-
-	src = (byte *)state->screen.getBasePtr(0, 0);
-	dst = (byte *)_screen.getBasePtr(state->r.left, state->r.top);
-
-	for (int i = state->r.height(); i > 0; i--) {
-		memcpy(dst, src, state->r.width() * _screen.bytesPerPixel);
-		src += state->screen.pitch;
-		dst += _screen.pitch;
-	}
-
-	src = (byte *)state->backBuffer.getBasePtr(0, 0);
-	dst = (byte *)_backBuffer.getBasePtr(state->r.left, state->r.top);
-
-	for (int i = state->r.height(); i > 0; i--) {
-		memcpy(dst, src, state->r.width() * _backBuffer.bytesPerPixel);
-		src += state->backBuffer.pitch;
-		dst += _backBuffer.pitch;
-	}
-	
-	addDirtyRect(state->r);
 }
 
 /**********************************************************
@@ -1437,6 +1396,20 @@ const Graphics::Font *ThemeEngine::loadFontFromArchive(const Common::String &fil
 	if (_themeArchive)
 		stream = _themeArchive->createReadStreamForMember(filename);
 	if (stream) {
+		font = Graphics::NewFont::loadFont(*stream);
+		delete stream;
+	}
+
+	return font;
+}
+
+const Graphics::Font *ThemeEngine::loadCachedFontFromArchive(const Common::String &filename) {
+	Common::SeekableReadStream *stream = 0;
+	const Graphics::Font *font = 0;
+
+	if (_themeArchive)
+		stream = _themeArchive->createReadStreamForMember(filename);
+	if (stream) {
 		font = Graphics::NewFont::loadFromCache(*stream);
 		delete stream;
 	}
@@ -1450,13 +1423,14 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename) {
 	Common::File fontFile;
 
 	if (!cacheFilename.empty()) {
-		if (fontFile.open(cacheFilename))
+		if (fontFile.open(cacheFilename)) {
 			font = Graphics::NewFont::loadFromCache(fontFile);
+		}
 
 		if (font)
 			return font;
 
-		if ((font = loadFontFromArchive(cacheFilename)))
+		if ((font = loadCachedFontFromArchive(cacheFilename)))
 			return font;
 	}
 
@@ -1471,7 +1445,7 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename) {
 
 	if (font) {
 		if (!cacheFilename.empty()) {
-			if (!Graphics::NewFont::cacheFontData(*(const Graphics::NewFont*)font, cacheFilename)) {
+			if (!Graphics::NewFont::cacheFontData(*(const Graphics::NewFont *)font, cacheFilename)) {
 				warning("Couldn't create cache file for font '%s'", filename.c_str());
 			}
 		}
@@ -1552,6 +1526,28 @@ bool ThemeEngine::themeConfigParseHeader(Common::String header, Common::String &
 	return tok.empty();
 }
 
+bool ThemeEngine::themeConfigUsable(const Common::ArchiveMember &member, Common::String &themeName) {
+	Common::File stream;
+	bool foundHeader = false;
+
+	if (member.getName().hasSuffix(".zip")) {
+		Common::Archive *zipArchive = Common::makeZipArchive(member.createReadStream());
+
+		if (zipArchive && zipArchive->hasFile("THEMERC")) {
+			stream.open("THEMERC", *zipArchive);
+		}
+
+		delete zipArchive;
+	}
+
+	if (stream.isOpen()) {
+		Common::String stxHeader = stream.readLine();
+		foundHeader = themeConfigParseHeader(stxHeader, themeName);
+	}
+
+	return foundHeader;
+}
+
 bool ThemeEngine::themeConfigUsable(const Common::FSNode &node, Common::String &themeName) {
 	Common::File stream;
 	bool foundHeader = false;
@@ -1596,7 +1592,7 @@ struct TDComparator {
 } // end of anonymous namespace
 
 void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
-#ifdef GUI_ENABLE_BUILTIN_THEME
+#ifndef DISABLE_GUI_BUILTIN_THEME
 	ThemeDescriptor th;
 	th.name = "ScummVM Classic Theme (Builtin Version)";
 	th.id = "builtin";
@@ -1607,26 +1603,7 @@ void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
 	if (ConfMan.hasKey("themepath"))
 		listUsableThemes(Common::FSNode(ConfMan.get("themepath")), list);
 
-#ifdef DATA_PATH
-	listUsableThemes(Common::FSNode(DATA_PATH), list);
-#endif
-
-#if defined(MACOSX) || defined(IPHONE)
-	CFURLRef resourceUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
-	if (resourceUrl) {
-		char buf[256];
-		if (CFURLGetFileSystemRepresentation(resourceUrl, true, (UInt8 *)buf, 256)) {
-			Common::FSNode resourcePath(buf);
-			listUsableThemes(resourcePath, list);
-		}
-		CFRelease(resourceUrl);
-	}
-#endif
-
-	if (ConfMan.hasKey("extrapath"))
-		listUsableThemes(Common::FSNode(ConfMan.get("extrapath")), list);
-
-	listUsableThemes(Common::FSNode("."), list, 1);
+	listUsableThemes(SearchMan, list);
 
 	// Now we need to strip all duplicates
 	// TODO: It might not be the best idea to strip duplicates. The user might
@@ -1643,6 +1620,32 @@ void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
 
 	list = output;
 	output.clear();
+}
+
+void ThemeEngine::listUsableThemes(Common::Archive &archive, Common::List<ThemeDescriptor> &list) {
+	ThemeDescriptor td;
+
+	Common::ArchiveMemberList fileList;
+	archive.listMatchingMembers(fileList, "*.zip");
+	for (Common::ArchiveMemberList::iterator i = fileList.begin();
+	     i != fileList.end(); ++i) {
+		td.name.clear();
+		if (themeConfigUsable(**i, td.name)) {
+			td.filename = (*i)->getName();
+			td.id = (*i)->getDisplayName();
+
+			// If the name of the node object also contains
+			// the ".zip" suffix, we will strip it.
+			if (td.id.hasSuffix(".zip")) {
+				for (int j = 0; j < 4; ++j)
+					td.id.deleteLastChar();
+			}
+
+			list.push_back(td);
+		}
+	}
+
+	fileList.clear();
 }
 
 void ThemeEngine::listUsableThemes(const Common::FSNode &node, Common::List<ThemeDescriptor> &list, int depth) {

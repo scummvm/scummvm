@@ -179,7 +179,7 @@ void SaveLoadChooser::reflowLayout() {
 		uint16 w, h;
 
 		if (!g_gui.xmlEval()->getWidgetData("SaveLoadChooser.Thumbnail", x, y, w, h))
-			error("Error when loading position data for Save/Load Thumbnails.");
+			error("Error when loading position data for Save/Load Thumbnails");
 
 		int thumbW = kThumbnailWidth;
 		int thumbH = kThumbnailHeight2;

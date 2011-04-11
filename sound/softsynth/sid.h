@@ -118,15 +118,10 @@ protected:
 	reg12 outputNPST();
 
 	// Sample data for combinations of waveforms.
-	static reg8 wave6581__ST[];
-	static reg8 wave6581_P_T[];
-	static reg8 wave6581_PS_[];
-	static reg8 wave6581_PST[];
-
-	reg8* wave__ST;
-	reg8* wave_P_T;
-	reg8* wave_PS_;
-	reg8* wave_PST;
+	static const reg8 wave6581__ST[];
+	static const reg8 wave6581_P_T[];
+	static const reg8 wave6581_PS_[];
+	static const reg8 wave6581_PST[];
 
 	friend class Voice;
 	friend class SID;

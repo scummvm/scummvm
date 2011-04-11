@@ -307,9 +307,6 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 	// Update the config file
 	ConfMan.set("versioninfo", gResidualVersion, Common::ConfigManager::kApplicationDomain);
 
-	// Enable translation
-	TransMan.setLanguage(ConfMan.get("gui_language").c_str());
-
 	// Load and setup the debuglevel and the debug flags. We do this at the
 	// soonest possible moment to ensure debug output starts early on, if
 	// requested.
@@ -333,7 +330,7 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 	// On the other hand we cannot load the plugins before we know the file paths (in case of external plugins).
 	if (settings.contains("music-driver")) {
 		if (MidiDriver::getMusicType(MidiDriver::getDeviceHandle(settings["music-driver"])) == MT_INVALID) {
-			warning("Unrecognized music driver '%s'. Switching to default device.", settings["music-driver"].c_str());
+			warning("Unrecognized music driver '%s'. Switching to default device", settings["music-driver"].c_str());
 			settings["music-driver"] = "auto";
 		}
 	}

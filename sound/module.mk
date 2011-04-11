@@ -16,9 +16,11 @@ MODULE_OBJS := \
 	decoders/raw.o \
 	decoders/vorbis.o \
 	softsynth/adlib.o \
+	softsynth/cms.o \
 	softsynth/opl/dbopl.o \
 	softsynth/opl/dosbox.o \
 	softsynth/opl/mame.o \
+	softsynth/appleiigs.o \
 	softsynth/ym2612.o \
 	softsynth/fluidsynth.o \
 	softsynth/mt32.o \

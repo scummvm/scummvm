@@ -61,6 +61,7 @@ enum DrawData {
 	kDDMainDialogBackground,
 	kDDSpecialColorBackground,
 	kDDPlainColorBackground,
+	kDDTooltipBackground,
 	kDDDefaultBackground,
 	kDDTextSelectionBackground,
 	kDDTextSelectionFocusBackground,
@@ -162,6 +163,7 @@ public:
 		kDialogBackgroundMain,
 		kDialogBackgroundSpecial,
 		kDialogBackgroundPlain,
+		kDialogBackgroundTooltip,
 		kDialogBackgroundDefault
 	};
 
@@ -236,6 +238,7 @@ public:
 
 	struct Renderer {
 		const char *name;
+		const char *shortname;
 		const char *cfg;
 		GraphicsMode mode;
 	};
@@ -260,17 +263,6 @@ public:
 	void refresh();
 	void enable();
 	void disable();
-
-	struct StoredState {
-		Common::Rect r;
-		Graphics::Surface screen;
-		Graphics::Surface backBuffer;
-
-		StoredState() {}
-	};
-
-	StoredState *storeState(const Common::Rect &r);
-	void restoreState(StoredState *state);
 
 	/**
 	 *	Implementation of the GUI::Theme API. Called when a
@@ -538,6 +530,7 @@ protected:
 
 	const Graphics::Font *loadFont(const Common::String &filename);
 	const Graphics::Font *loadFontFromArchive(const Common::String &filename);
+	const Graphics::Font *loadCachedFontFromArchive(const Common::String &filename);
 	Common::String genCacheFilename(const char *filename);
 	Common::String genLocalizedFontFilename(const char *filename);
 
@@ -583,11 +576,13 @@ public:
 	static void listUsableThemes(Common::List<ThemeDescriptor> &list);
 private:
 	static bool themeConfigUsable(const Common::FSNode &node, Common::String &themeName);
+	static bool themeConfigUsable(const Common::ArchiveMember &member, Common::String &themeName);
 	static bool themeConfigParseHeader(Common::String header, Common::String &themeName);
 
 	static Common::String getThemeFile(const Common::String &id);
 	static Common::String getThemeId(const Common::String &filename);
 	static void listUsableThemes(const Common::FSNode &node, Common::List<ThemeDescriptor> &list, int depth = -1);
+	static void listUsableThemes(Common::Archive &archive, Common::List<ThemeDescriptor> &list);
 
 protected:
 	OSystem *_system; /** Global system object. */

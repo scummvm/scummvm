@@ -3,6 +3,7 @@ POFILES := $(wildcard $(srcdir)/po/*.po)
 
 updatepot:
 	xgettext -f $(srcdir)/po/POTFILES -D $(srcdir) -d residual --c++ -k_ -k_t -k_s -o $(POTFILE) \
+		-kDECLARE_TRANSLATION_ADDITIONAL_CONTEXT:1,2c -o $(POTFILE) \
 		"--copyright-holder=Residual Team" --package-name=Residual \
 		--package-version=$(VERSION) --msgid-bugs-address=residual-devel@lists.sf.net -o $(POTFILE)_
 
@@ -35,9 +36,14 @@ updatepot:
 #$(srcdir)/common/messages.cpp: $(POFILES)
 #	perl $(srcdir)/tools/po2c $^ > $(srcdir)/common/messages.cpp
 
+translations-dat: tools/create_translations
+	tools/create_translations/create_translations $(POFILES)
+	mv translations.dat $(srcdir)/gui/themes/
+ 
+update-translations: updatepot $(POFILES) translations-dat
+
 update-translations: updatepot $(POFILES)
 	@$(foreach file, $(POFILES), echo -n $(notdir $(basename $(file)))": ";msgfmt --statistic $(file);)
 	@rm -f messages.mo
-	perl $(srcdir)/tools/po2c $(POFILES) > $(srcdir)/common/messages.cpp
 
-.PHONY: updatepot update-translations
+.PHONY: updatepot translations-dat update-translations

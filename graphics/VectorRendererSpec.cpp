@@ -164,7 +164,7 @@ inline frac_t fp_sqroot(uint32 x) {
 		x--; px -= pitch; \
 	} \
 	a2 = (T >> 8); \
-	a1 = ~a2; \
+	a1 = ~a2 >> 4;   \
 }
 
 

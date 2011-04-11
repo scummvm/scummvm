@@ -21,7 +21,6 @@ MODULE_OBJS := \
 	midi/timidity.o \
 	midi/dmedia.o \
 	midi/windows.o \
-	plugins/dc/dc-provider.o \
 	plugins/posix/posix-provider.o \
 	plugins/sdl/sdl-provider.o \
 	plugins/win32/win32-provider.o \
@@ -34,6 +33,42 @@ MODULE_OBJS := \
 	vkeybd/virtual-keyboard.o \
 	vkeybd/virtual-keyboard-gui.o \
 	vkeybd/virtual-keyboard-parser.o
+
+ifeq ($(BACKEND),dc)
+MODULE_OBJS += \
+	plugins/dc/dc-provider.o
+endif
+
+ifeq ($(BACKEND),ds)
+MODULE_OBJS += \
+	fs/ds/ds-fs-factory.o \
+	fs/ds/ds-fs.o
+endif
+
+ifeq ($(BACKEND),n64)
+MODULE_OBJS += \
+	fs/n64/n64-fs-factory.o \
+	fs/n64/romfsstream.o
+endif
+
+ifeq ($(BACKEND),ps2)
+MODULE_OBJS += \
+	fs/ps2/ps2-fs-factory.o
+endif
+
+ifeq ($(BACKEND),psp)
+MODULE_OBJS += \
+	fs/psp/psp-fs-factory.o \
+	fs/psp/psp-stream.o \
+	plugins/psp/psp-provider.o \
+	saves/psp/psp-saves.o \
+	timer/psp/timer.o
+endif
+
+ifeq ($(BACKEND),wii)
+MODULE_OBJS += \
+	fs/wii/wii-fs-factory.o
+endif
 
 # Include common rules
 include $(srcdir)/rules.mk

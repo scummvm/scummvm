@@ -766,7 +766,7 @@ Common::Error processSettings(Common::String &command, Common::StringMap &settin
 	// environment variable. This is weaker than a --savepath on the
 	// command line, but overrides the default savepath, hence it is
 	// handled here, just before the command line gets parsed.
-#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE) && !defined(PALMOS_MODE) && !defined(__GP32__) && !defined(ANDROID)
+#if !defined(_WIN32_WCE) && !defined(__GP32__) && !defined(ANDROID)
 	if (!settings.contains("savepath")) {
 		const char *dir = getenv("RESIDUAL_SAVEPATH");
 		if (dir && *dir && strlen(dir) < MAXPATHLEN) {

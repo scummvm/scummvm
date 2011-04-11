@@ -233,6 +233,8 @@ bool MP3Stream::seek(const Timestamp &where) {
 	while (mad_timer_compare(destination, _totalTime) > 0 && _state != MP3_STATE_EOS)
 		readHeader();
 
+	decodeMP3Data();
+
 	return (_state != MP3_STATE_EOS);
 }
 
@@ -349,13 +351,13 @@ int MP3Stream::readBuffer(int16 *buffer, const int numSamples) {
 SeekableAudioStream *makeMP3Stream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse) {
-	
+
 #if defined(__PSP__)
 	SeekableAudioStream *s = 0;
-	
+
 	if (Mp3PspStream::isOkToCreateStream())
 		s = new Mp3PspStream(stream, disposeAfterUse);
-		
+
 	if (!s)	// go to regular MAD mp3 stream if ME fails
 		s = new MP3Stream(stream, disposeAfterUse);
 #else

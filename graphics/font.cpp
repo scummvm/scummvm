@@ -609,8 +609,8 @@ bool NewFont::cacheFontData(const NewFont &font, const Common::String &filename)
 	cacheFile.writeUint16BE(font.desc.height);
 	cacheFile.writeUint16BE(font.desc.fbbw);
 	cacheFile.writeUint16BE(font.desc.fbbh);
-	cacheFile.writeUint16BE(font.desc.fbbx);
-	cacheFile.writeUint16BE(font.desc.fbby);
+	cacheFile.writeSint16BE(font.desc.fbbx);
+	cacheFile.writeSint16BE(font.desc.fbby);
 	cacheFile.writeUint16BE(font.desc.ascent);
 	cacheFile.writeUint16BE(font.desc.firstchar);
 	cacheFile.writeUint16BE(font.desc.size);
@@ -667,8 +667,8 @@ NewFont *NewFont::loadFromCache(Common::SeekableReadStream &stream) {
 	data->height = stream.readUint16BE();
 	data->fbbw = stream.readUint16BE();
 	data->fbbh = stream.readUint16BE();
-	data->fbbx = stream.readUint16BE();
-	data->fbby = stream.readUint16BE();
+	data->fbbx = stream.readSint16BE();
+	data->fbby = stream.readSint16BE();
 	data->ascent = stream.readUint16BE();
 	data->firstchar = stream.readUint16BE();
 	data->size = stream.readUint16BE();

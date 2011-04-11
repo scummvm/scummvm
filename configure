@@ -95,11 +95,12 @@ _release_build=auto
 _text_console=no
 _mt32emu=no
 _enable_prof=no
+_global_constructors=no
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
 # GUI translation options
-_translation=no
+_translation=yes
 # Default platform settings
 _backend=sdl
 _endian=unknown
@@ -151,12 +152,8 @@ _host_alias=""
 _srcdir=`dirname $0`
 _port_mk="ports.mk"
 
-# Determine a tmp file name, using mktemp(1) when available.
-if type mktemp > /dev/null 2>&1 ; then
-	TMPO=`mktemp /tmp/residual-conf.XXXXXXXXXX`
-else
-	TMPO=./residual-conf
-fi
+# Use temp files in the build directory
+TMPO=./residual-conf
 TMPC=${TMPO}.cpp
 TMPLOG=config.log
 
@@ -249,15 +246,28 @@ add_to_config_mk_if_yes() {
 	fi
 }
 
-# Conditionally add a line of data to config.mk. Takes two parameters:
-# The first one can be set to 'yes' to "comment out" the line, i.e.
-# make it ineffective, use 'no' otherwise.
-# The second param is the line to insert.
-add_to_config_mk_if_no() {
-	if test "$1" = no ; then
-		add_line_to_config_mk "$2"
+ Conditionally add a '#define' line to config.h. Takes two parameters:
+# The first one can be set to 'yes' or 'no'. If 'yes' is used, then
+# the line "#define $2" is added to config.h, otherwise "#undef $2".
+define_in_config_h_if_yes() {
+	if test "$1" = yes ; then
+		add_line_to_config_h "#define $2"
 	else
-		add_line_to_config_mk "# $2"
+		add_line_to_config_h "#undef $2"
+	fi
+}
+
+# Conditionally add definitions to config.h and config.mk. Takes two parameters:
+# The first one can be set to 'yes' or 'no'. If 'yes' is used, then
+# the line "#define $2" is added to config.h and "$2 = 1" to config.mk.
+# Otherwise "#undef $2" is added to config.h and "# $2 = 1" to config.mk
+define_in_config_if_yes() {
+	if test "$1" = yes ; then
+		add_line_to_config_h "#define $2"
+		add_line_to_config_mk "$2 = 1"
+	else
+		add_line_to_config_h "#undef $2"
+		add_line_to_config_mk "# $2 = 1"
 	fi
 }
 
@@ -304,15 +314,12 @@ get_system_exe_extension() {
 	case $1 in
 	arm-riscos)
 		_exeext=",ff8"
-		;;
-	dreamcast | gamecube | ds | ps2 | psp | wii)
+		;;	
+	dreamcast | ds | gamecube | n64 | ps2 | psp | wii)
 		_exeext=".elf"
 		;;
-	gp2x-linux)
-		_exeext=".gp2x"
-		;;
-	gp2xwiz-linux)
-		_exeext=".wiz"
+	gph-linux)
+		_exeext=".gph"
 		;;
 	mingw* | *os2-emx | wince)
 		_exeext=".exe"
@@ -589,7 +596,8 @@ Fine tuning of the installation directories:
   --bindir=DIR            user executables [EPREFIX/bin]
   --libdir=DIR            object code libraries [EPREFIX/lib]
   --datarootdir=DIR       read-only arch.-independent data root [PREFIX/share]
-  --datadir=DIR           read-only architecture-independent data [DATAROOTDIR/scummvm]
+  --datadir=DIR           read-only architecture-independent data
+                          [DATAROOTDIR/residual]
   --mandir=DIR            man documentation [DATAROOTDIR/man]
   --docdir=DIR            documentation root [DATAROOTDIR/doc/scummvm]
 
@@ -603,14 +611,16 @@ $engines_help
 Optional Features:
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
-  --enable-release         enable building in release mode (this activates optimizations)
+  --enable-release         enable building in release mode (this activates
+                           optimizations)
   --enable-profiling       enable profiling
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
   --disable-mt32emu        don't enable the integrated MT-32 emulator
   --disable-translation    don't build support for translated messages
   --enable-text-console    use text console instead of graphical console
-  --enable-verbose-build   enable regular echoing of commands during build process
+  --enable-verbose-build   enable regular echoing of commands during build
+                           process
 
 Optional Libraries:
   --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
@@ -630,10 +640,13 @@ Optional Libraries:
   --disable-flac           disable FLAC support [autodetect]
 
   --with-zlib-prefix=DIR   Prefix where zlib is installed (optional)
-  --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is installed (optional)
+
+  --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is 
+                           installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
 
-  --with-sdl-prefix=DIR    Prefix where the sdl-config script is installed (optional)
+  --with-sdl-prefix=DIR    Prefix where the sdl-config script is
+                           installed (optional)
 
   --with-nasm-prefix=DIR   Prefix where nasm executable is installed (optional)
   --disable-nasm           disable assembly language optimizations [autodetect]
@@ -660,6 +673,8 @@ for ac_option in $@; do
 	case "$ac_option" in
 	--enable-alsa)            _alsa=yes       ;;
 	--disable-alsa)           _alsa=no        ;;
+	--enable-seq-midi)        _seq_midi=yes        ;;
+	--disable-seq-midi)       _seq_midi=no         ;;
 	--enable-vorbis)          _vorbis=yes     ;;
 	--disable-vorbis)         _vorbis=no      ;;
 	--enable-tremor)          _tremor=yes     ;;
@@ -810,9 +825,33 @@ get_system_exe_extension $guessed_host
 NATIVEEXEEXT=$_exeext
 
 case $_host in
+android)
+	_host_os=android
+	_host_cpu=arm
+	_host_alias=arm-oe-linux-androideabi
+	;;
 arm-riscos)
 	_host_os=riscos
 	_host_cpu=arm
+	;;
+caanoo)
+	_host_os=gph-linux
+	_host_cpu=arm
+	_host_alias=arm-none-linux-gnueabi
+	if test "$_debug_build" = auto; then
+		# If you want to debug on the Caanoo use '--disable-release --enable-debug'
+		_debug_build=no
+	fi
+
+	if test "$_release_build" = auto; then
+		# Enable release build by default.
+		_release_build=yes
+	fi	
+	;;
+dingux)
+	_host_os=linux
+	_host_cpu=mipsel
+	_host_alias=mipsel-linux
 	;;
 dreamcast)
 	_host_os=dreamcast
@@ -821,20 +860,43 @@ dreamcast)
 	CXXFLAGS="$CXXFLAGS -ml -m4-single-only"
 	LDFLAGS="$LDFLAGS -ml -m4-single-only"
 	;;
+ds)
+	_host_os=ds
+	_host_cpu=arm
+	_host_alias=arm-eabi
+	;;
 gamecube)
 	_host_os=gamecube
 	_host_cpu=ppc
 	_host_alias=powerpc-gekko
 	;;
 gp2x)
-	_host_os=gp2x-linux
+	_host_os=gph-linux
 	_host_cpu=arm
 	_host_alias=arm-open2x-linux
+	if test "$_debug_build" = auto; then
+		# If you want to debug on the GP2X use '--disable-release --enable-debug'
+		_debug_build=no
+	fi
+
+	if test "$_release_build" = auto; then
+		# Enable release build by default.
+		_release_build=yes
+	fi	
 	;;
 gp2xwiz)
-	_host_os=gp2xwiz-linux
+	_host_os=gph-linux
 	_host_cpu=arm
 	_host_alias=arm-open2x-linux
+	if test "$_debug_build" = auto; then
+		# If you want to debug on the GP2XWiz use '--disable-release --enable-debug'
+		_debug_build=no
+	fi
+
+	if test "$_release_build" = auto; then
+		# Enable release build by default.
+		_release_build=yes
+	fi	
 	;;
 i586-mingw32msvc)
 	_host_os=mingw32msvc
@@ -859,14 +921,28 @@ motomagx)
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabi
 	;;
-ds)
-	_host_os=ds
-	_host_cpu=arm
-	_host_alias=arm-eabi
+n64)	
+	_host_os=n64
+	_host_cpu=mips
+	_host_alias=mips64
 	;;
 neuros)
 	_host_os=linux
 	_host_cpu=arm
+	;;
+openpandora)
+	_host_os=linux
+	_host_cpu=arm
+	_host_alias=arm-angstrom-linux-gnueabi
+	if test "$_debug_build" = auto; then
+		# If you want to debug on the OP use '--disable-release --enable-debug'
+		_debug_build=no
+	fi
+
+	if test "$_release_build" = auto; then
+		# Enable release build by default.
+		_release_build=yes
+	fi	
 	;;
 ppc-amigaos)
 	_host_os=amigaos
@@ -913,11 +989,6 @@ wince)
 	_host_os=wince
 	_host_cpu=arm
 	_host_alias=arm-wince-mingw32ce
-	;;
-android)
-	_host_os=android
-	_host_cpu=arm
-	_host_alias=arm-oe-linux-androideabi
 	;;
 *)
 	if test -n "$_host"; then
@@ -980,9 +1051,21 @@ esac
 # Platform specific sanity checks
 #
 case $_host_os in
-gamecube | ds | wii)
+android)
+	if test -z "$ANDROID_SDK"; then
+		echo "Please set ANDROID_SDK in your environment. export ANDROID_SDK=<path to Android SDK>"
+		exit 1
+	fi
+	;;
+ds | gamecube | wii)
 	if test -z "$DEVKITPRO"; then
 		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
+		exit 1
+	fi
+	;;
+n64)
+	if test -z "$N64SDK"; then
+		echo "Please set N64SDK in your environment. export N64SDK=<path to n64 sdk>"
 		exit 1
 	fi
 	;;
@@ -996,12 +1079,6 @@ psp)
 	PSPSDK=`psp-config --pspsdk-path`
 	if test -z "$PSPSDK"; then
 		echo "Please set the path to PSPSDK in your environment."
-		exit 1
-	fi
-	;;
-android)
-	if test -z "$ANDROID_SDK"; then
-		echo "Please set ANDROID_SDK in your environment. export ANDROID_SDK=<path to Android SDK>"
 		exit 1
 	fi
 	;;
@@ -1048,12 +1125,12 @@ else
 	CXX=
 	for compiler in $compilers; do
 		if test_compiler $compiler; then
-			echo "success testing compiler: $1" >> "$TMPLOG"
+			echo "success testing compiler: $compiler" >> "$TMPLOG"
 			CXX=$compiler
 			echo $CXX
 			break
 		else
-			echo "failure testing compiler: $1" >> "$TMPLOG"
+			echo "failure testing compiler: $compiler" >> "$TMPLOG"
 		fi
 	done
 fi
@@ -1140,6 +1217,17 @@ if test "$cxx_verc_fail" = yes ; then
 	echo "Please ensure you are using GCC >= 2.95"
 	exit 1
 fi
+
+echocheck "whether -Wglobal-constructors work"
+cat > $TMPC << EOF
+int main() { return 0; }
+EOF
+cc_check -Wglobal-constructors && _global_constructors=yes
+
+if test "$_global_constructors" = yes; then
+	CXXFLAGS="$CXXFLAGS -Wglobal-constructors"
+fi
+echo $_global_constructors
 
 #
 # Check for endianness
@@ -1276,54 +1364,78 @@ case $_host_os in
 		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
 		type_4_byte='long'
 		;;
+	android)
+		CXXFLAGS="$CXXFLAGS -Os -msoft-float -mtune=xscale -march=armv5te -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5TE__"
+		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
+		_unix=yes
+		_seq_midi=no
+		;;
 	beos*)
-		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		# Needs -lbind -lsocket for the timidity MIDI driver
 		LDFLAGS="-L/boot/home/config/lib"
 		CFLAGS="-I/boot/home/config/include"
 		CXXFLAGS="$CXXFLAGS -fhuge-objects"
 		LIBS="$LIBS -lbind -lsocket"
+		_unix=yes
+		_seq_midi=no
 		;;
 	bsd* | hpux* | netbsd* | openbsd* | sunos*)
-		DEFINES="$DEFINES -DUNIX -DUSE_OPENGL"
+		DEFINES="$DEFINES -DUSE_OPENGL"
 		LIBS="$LIBS -lGL -lGLU -L/usr/X11/lib"
+		_unix=yes
 		;;
 	cygwin*)
 		echo ERROR: Cygwin building is not supported by ScummVM anymore. Consider using MinGW.
 		exit 1
 		;;
 	darwin*)
-		DEFINES="$DEFINES -DUNIX -DMACOSX -DUSE_OPENGL"
+		DEFINES="$DEFINES -DMACOSX -DUSE_OPENGL"
 		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI -framework OpenGL \
 		-dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
 		add_line_to_config_mk 'MACOSX = 1'
+		_unix=yes
 		;;
 	dreamcast)
 		DEFINES="$DEFINES -D__DC__ -DNONSTANDARD_PORT"
 		;;
+	ds)
+		# TODO Nintendo DS
+		DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT"
+		CXXFLAGS="$CXXFLAGS -isystem $DEVKITPRO/libnds/include -isystem $DEVKITPRO/devkitARM/arm-eabi/include"
+		CXXFLAGS="$CXXFLAGS -mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer -mthumb-interwork"
+		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fno-strict-aliasing"
+		LDFLAGS="$LDFLAGS -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections"
+		LDFLAGS="$LDFLAGS -L$DEVKITPRO/libnds/lib"
+		LIBS="$LIBS -lnds9"
+		;;
 	freebsd*)
-		DEFINES="$DEFINES -DUNIX -DUSE_OPENGL"
+		DEFINES="$DEFINES -DUSE_OPENGL"
 		LDFLAGS="$LDFLAGS -L/usr/local/lib"
 		CXXFLAGS="$CXXFLAGS -I/usr/local/include"
 		LIBS="$LIBS -lGL -lGLU -L/usr/X11/lib"
+		_unix=yes
 		;;
 	gamecube)
 		CXXFLAGS="$CXXFLAGS -Os -mogc -mcpu=750 -meabi -mhard-float"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
-		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include -I$DEVKITPRO/cube/include"
+		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
 		# libogc is required to link the cc tests (includes _start())
-		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube -L$DEVKITPRO/cube/lib -logc"
+		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube -logc"
 		;;
 	haiku*)
-		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		# Needs -lnetwork for the timidity MIDI driver
 		LIBS="$LIBS -lnetwork"
 		CXXFLAGS="$CXXFLAGS -fhuge-objects"
+		_unix=yes
+		_seq_midi=no
 		;;
 	irix*)
-		DEFINES="$DEFINES -DUNIX -DIRIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		DEFINES="$DEFINES -DIRIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		LIBS="$LIBS -lmd -lfastm -lm"
 		_ranlib=:
+		_unix=yes
 		;;
 	linux* | uclinux*)
 		# When not cross-compiling, enable large file support, but don't
@@ -1331,8 +1443,9 @@ case $_host_os in
 		if test -z "$_host"; then
 			CXXFLAGS="$CXXFLAGS $(getconf LFS_CFLAGS 2>/dev/null)"
 		fi
-		DEFINES="$DEFINES -DUNIX -DUSE_OPENGL"
+		DEFINES="$DEFINES -DUSE_OPENGL"
 		LIBS="$LIBS -lGL -lGLU -L/usr/X11/lib"
+		_unix=yes
 		;;
 	mingw*)
 		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0 -DUSE_OPENGL"
@@ -1340,19 +1453,16 @@ case $_host_os in
 		OBJS="$OBJS residualico.o"
 		;;
 	mint*)
-		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		_unix=yes
 		;;
-	ds)
-		# TODO Nintendo DS
-		DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT"
-		CXXFLAGS="$CXXFLAGS -isystem $DEVKITPRO/libnds/include -isystem $DEVKITPRO/devkitARM/arm-eabi/include"
-		CXXFLAGS="$CXXFLAGS -mthumb-interwork -ffunction-sections -fdata-sections -fno-strict-aliasing"
-		LDFLAGS="$LDFLAGS -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections"
-		LDFLAGS="$LDFLAGS -L$DEVKITPRO/libnds/lib"
-		LIBS="$LIBS -lnds9"
+	n64)
+		DEFINES="$DEFINES -D__N64__ -DLIMIT_FPS -DNONSTANDARD_PORT"
+		DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_COMMAND_LINE"
+		DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DDISABLE_DOSBOX_OPL -DDISABLE_SID -DDISABLE_NES_APU"
 		;;
 	os2-emx*)
-		DEFINES="$DEFINES -DUNIX"
+		_unix=yes	# FIXME??? Why??
 		;;
 	ps2)
 		# TODO ps2
@@ -1363,31 +1473,27 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -O3 -I$PSPSDK/include -D_PSP_FW_VERSION=150"
 		;;
 	solaris*)
-		DEFINES="$DEFINES -DUNIX -DSOLARIS -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		DEFINES="$DEFINES -DSOLARIS -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		# Needs -lbind -lsocket for the timidity MIDI driver
 		LIBS="$LIBS -lnsl -lsocket"
+		_unix=yes
 		;;
 	wii)
 		CXXFLAGS="$CXXFLAGS -Os -mrvl -mcpu=750 -meabi -mhard-float"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
-		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include -I$DEVKITPRO/wii/include"
+		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
 		# libogc is required to link the cc tests (includes _start())
-		LDFLAGS="$LDFLAGS -mrvl -mcpu=750 -L$DEVKITPRO/libogc/lib/wii -L$DEVKITPRO/wii/lib -logc"
+		LDFLAGS="$LDFLAGS -mrvl -mcpu=750 -L$DEVKITPRO/libogc/lib/wii -logc"
 		;;
 	wince)
 		CXXFLAGS="$CXXFLAGS -O3 -march=armv4 -mtune=xscale"
 		DEFINES="$DEFINES -D_WIN32_WCE=300 -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
 		DEFINES="$DEFINES -DWIN32 -Dcdecl= -D__cdecl__="
 		;;
-	android)
-		DEFINES="$DEFINES -DUNIX"
-		CXXFLAGS="$CXXFLAGS -Os -msoft-float -mtune=xscale -march=armv5te -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5TE__"
-		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
-		;;
 	# given this is a shell script assume some type of unix
 	*)
 		echo "WARNING: could not establish system type, assuming unix like"
-		DEFINES="$DEFINES -DUNIX"
+		_unix=yes
 		;;
 esac
 
@@ -1395,91 +1501,180 @@ if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
 	echo "Cross-compiling to $_host"
 	case "$_host" in
+		android)
+			DEFINES="$DEFINES -DANDROID -DUSE_ARM_SMUSH_ASM"
+			_unix=yes
+			_need_memalign=yes
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			_backend="android"
+			_port_mk="backends/platform/android/android.mk"
+			_seq_midi=no
+			;;
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
-			DEFINES="$DEFINES -DUNIX"
+			_unix=yes
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
 			;;
 		arm-riscos|linupy)
-			DEFINES="$DEFINES -DUNIX -DLINUPY"
+			DEFINES="$DEFINES -DLINUPY"
+			_unix=yes
 			_need_memalign=yes
 			;;
 		bfin*)
 			_need_memalign=yes
 			;;
+		caanoo)
+			DEFINES="$DEFINES -DCAANOO -DREDUCE_MEMORY_USAGE"
+			# Disable DOSBOX OPL for now.
+			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"	
+			if test "$_debug_build" = yes; then
+				DEFINES="$DEFINES -DGPH_DEBUG"
+			else
+				# Use -O3 on the Caanoo for non-debug builds.
+				CXXFLAGS="$CXXFLAGS -O3"
+			fi
+			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
+			ASFLAGS="$ASFLAGS"
+			_unix=yes
+			_need_memalign=yes
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			_backend="gph"
+			_build_hq_scalers=no
+			_mt32emu=no
+			_vkeybd=yes
+			_seq_midi=no
+			_port_mk="backends/platform/gph/caanoo-bundle.mk"
+			;;			
 		*darwin*)
 			_ranlib=$_host-ranlib
 			_strip=$_host-strip
+			;;
+		dingux)
+			DEFINES="$DEFINES -DUNIX -DDINGUX -DDISABLE_DOSBOX_OPL"
+			ASFLAGS="$ASFLAGS"
+			CXXFLAGS="$CXXFLAGS -msoft-float -mips32"
+			_need_memalign=yes
+			_backend="dingux"
+			_mt32emu=no
+			_vkeybd=yes
+			_build_hq_scalers=no
+			_keymapper=no
+			# Force disable vorbis on dingux, it has terrible performance compared to tremor
+			_vorbis=no
+			# Force disable seq on dingux, no way to use it and it would get enabled by default with configure
+			_seq_midi=no
+			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
 		dreamcast)
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
 			CXXFLAGS="$CXXFLAGS -O3 -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks"
 			_need_memalign=yes
 			_backend="dc"
-			_build_scalers="no"
-			_mad="yes"
-			_zlib="yes"
+			_build_scalers=no
+			_mad=yes
+			_zlib=yes
 			add_line_to_config_mk 'ronindir = /usr/local/ronin'
 			_port_mk="backends/platform/dc/dreamcast.mk"
+			;;
+		ds)
+			# TODO: complete this
+			DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555"
+			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
+			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE -DSTREAM_AUDIO_FROM_DISK"
+			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL -DDISABLE_SID -DDISABLE_NES_APU"
+			DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
+			_need_memalign=yes
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_h '#define DISABLE_TEXT_CONSOLE'
+			_backend="ds"
+			_build_scalers=no
+			_mt32emu=no
+			_port_mk="backends/platform/ds/ds.mk"
 			;;
 		gamecube)
 			_endian=big
 			_need_memalign=yes
 			_backend="wii"
-			_build_scalers="no"
-			_mt32emu="no"
+			_build_scalers=no
+			_mt32emu=no
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 1'
+			add_line_to_config_h '#define AUDIO_REVERSE_STEREO'
 			add_line_to_config_h '#define GAMECUBE'
 			add_line_to_config_h "/* #define DEBUG_WII_USBGECKO */"
 			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
+			add_line_to_config_h "#define USE_WII_DI"
 			;;
 		gp2x)
-			DEFINES="$DEFINES -DUNIX -DGP2X -DNDEBUG"
+			DEFINES="$DEFINES -DGP2X -DREDUCE_MEMORY_USAGE"
+			# Disable DOSBOX OPL for now.
+			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"	
+			if test "$_debug_build" = yes; then
+				DEFINES="$DEFINES -DGPH_DEBUG"
+			fi
 			CXXFLAGS="$CXXFLAGS -march=armv4t"
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			LDFLAGS="$LDFLAGS -static"
+			_unix=yes
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
 			_backend="gp2x"
-			_build_hq_scalers="no"
-			_mt32emu="no"
-			_vkeybd="yes"
+			_build_hq_scalers=no
+			_mt32emu=no
+			_vkeybd=yes
+			_seq_midi=no
 			_port_mk="backends/platform/gp2x/gp2x-bundle.mk"
 			;;
 		gp2xwiz)
-			DEFINES="$DEFINES -DUNIX -DGP2XWIZ -DNDEBUG"
+			DEFINES="$DEFINES -DGP2XWIZ -DREDUCE_MEMORY_USAGE"
+			# Disable DOSBOX OPL for now.
+			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
+			if test "$_debug_build" = yes; then
+				DEFINES="$DEFINES -DGPH_DEBUG"
+			fi
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
+			_unix=yes
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			_backend="gp2xwiz"
-			_build_hq_scalers="no"
-			_mt32emu="no"
-			_vkeybd="yes"
-			_port_mk="backends/platform/gp2xwiz/gp2xwiz-bundle.mk"
+			_backend="gph"
+			_build_hq_scalers=no
+			_mt32emu=no
+			_vkeybd=yes
+			_seq_midi=no
+			_port_mk="backends/platform/gph/gp2xwiz-bundle.mk"
 			;;
 		iphone)
-			DEFINES="$DEFINES -DIPHONE -DUNIX"
+			DEFINES="$DEFINES -DIPHONE"
+			_unix=yes
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			_backend="iphone"
-			_build_hq_scalers="no"
+			_build_hq_scalers=no
+			_seq_midi=no
 			;;
 		m68k-atari-mint)
-			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+			DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+			_unix=yes
 			_endian=big
 			_need_memalign=yes
 			_ranlib=m68k-atari-mint-ranlib
 			_ar="m68k-atari-mint-ar cru"
+			_seq_midi=no
 			;;
 		*mingw32*)
 			_sdlconfig=$_host-sdl-config
@@ -1492,54 +1687,90 @@ if test -n "$_host"; then
 			_need_memalign=yes
 			;;
 		motoezx)
-			DEFINES="$DEFINES -DUNIX -DMOTOEZX"
+			DEFINES="$DEFINES -DMOTOEZX"
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
+			_unix=yes
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
 			_backend="linuxmoto"
-			_build_hq_scalers="no"
-			_mt32emu="no"
-			_vkeybd="yes"
+			_build_hq_scalers=no
+			_mt32emu=no
+			_vkeybd=yes
+			_seq_midi=no
 			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
 			;;
 		motomagx)
-			DEFINES="$DEFINES -DUNIX -DMOTOMAGX"
+			DEFINES="$DEFINES -DMOTOMAGX"
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
+			_unix=yes
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
 			_backend="linuxmoto"
-			_build_hq_scalers="no"
-			_mt32emu="no"
-			_vkeybd="yes"
+			_build_hq_scalers=no
+			_mt32emu=no
+			_vkeybd=yes
+			_seq_midi=no
 			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
 			;;
-		ds)
-			# TODO: complete this
-			DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555"
-			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
-			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE -DSTREAM_AUDIO_FROM_DISK"
-			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
-			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
+		n64)
+			CXXFLAGS="$CXXFLAGS -mno-extern-sdata --param max-inline-insns-auto=20 -fomit-frame-pointer"
+			CXXFLAGS="$CXXFLAGS -march=vr4300 -mtune=vr4300 -mhard-float"
+			LDFLAGS="$LDFLAGS -march=vr4300 -mtune=vr4300 -nodefaultlibs -nostartfiles -mno-crt0"
+			LDFLAGS="$LDFLAGS -L$N64SDK/hkz-libn64 -L$N64SDK/lib"
+			LDFLAGS="$LDFLAGS -T n64ld_cpp.x -Xlinker -Map -Xlinker scummvm.map"
+			_backend="n64"
+			_need_memalign=yes
+			_mt32emu=no
+			_build_scalers=no
+			_indeo3=no
+			_translation=no
+			_keymapper=no
+			_text_console=no
+			_vkeybd=yes
+			_dynamic_modules=no
+			_plugins_default=static
+			# Force use of libmad, libtremor and zlib
+			_mad=yes
+			_tremor=yes
+			_zlib=yes
+			_port_mk="backends/platform/n64/n64.mk"
+			;;
+		neuros)
+			DEFINES="$DEFINES -DNEUROS"
+			_unix=yes
+			_need_memalign=yes
+			_backend='null'
+			_build_hq_scalers=no
+			_mt32emu=no
+			;;
+		openpandora)
+			DEFINES="$DEFINES -DOPENPANDORA -DREDUCE_MEMORY_USAGE"
+			# Disable DOSBOX OPL for now.
+			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"			
+			if test "$_release_build" = no; then
+				DEFINES="$DEFINES -DOP_DEBUG"
+			else
+				# Use -O3 on the OpenPandora for non-debug builds.
+				CXXFLAGS="$CXXFLAGS -O3"
+			fi
+			CXXFLAGS="$CXXFLAGS -march=armv7-a -mtune=cortex-a8 -mfpu=neon"
+			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
+			_unix=yes
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			_backend="ds"
-			_build_hq_scalers="no"
-			_mt32emu="no"
-			_port_mk="backends/platform/ds/ds.mk"
-			;;
-		neuros)
-			DEFINES="$DEFINES -DUNIX -DNEUROS"
-			_need_memalign=yes
-			_backend='null'
-			_build_hq_scalers="no"
-			_mt32emu="no"
-			;;
+			_backend="openpandora"
+			_build_hq_scalers=yes
+			_mt32emu=no
+			_vkeybd=no
+			_seq_midi=no
+			_port_mk="backends/platform/openpandora/op-bundle.mk"
+			;;	
 		ppc-amigaos)
 			_endian=big
 			_need_memalign=yes
@@ -1547,16 +1778,17 @@ if test -n "$_host"; then
 		ps2)
 			# TODO: complete this
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
+			DEFINES="$DEFINES -DDISABLE_SID -DDISABLE_NES_APU"
 			_need_memalign=yes
 			_backend="ps2"
-			_build_scalers="no"
-			_mt32emu="no"
+			_build_scalers=no
+			_mt32emu=no
 			# HACK to enable mad & zlib (they are not properly detected due to linker issues).
 			# This trick doesn't work for tremor right now, as the PS2 port the resulting library
 			# libtremor, while our code later on expects it to be called libvorbisidec.
 			# TODO: Enable tremor, e.g. by adding  -ltremor or by renaming the lib.
-			_mad="yes"
-			_zlib="yes"
+			_mad=yes
+			_zlib=yes
 			# HACK to fix compilation of C source files for now.
 			add_line_to_config_mk 'CC = ee-gcc'
 			# HACK to fix linking for now. It seems ee-g++ does not handle linking correctly.
@@ -1576,29 +1808,31 @@ if test -n "$_host"; then
 		psp)
 			_need_memalign=yes
 			_backend="psp"
-			_build_scalers="no"
-			_mt32emu="no"
+			_build_scalers=no
+			_mt32emu=no
 			_port_mk="backends/platform/psp/psp.mk"
 			;;
 		samsungtv)
-			DEFINES="$DEFINES -DUNIX -DSAMSUNGTV -DDISABLE_COMMAND_LINE"
+			DEFINES="$DEFINES -DSAMSUNGTV -DDISABLE_COMMAND_LINE"
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			HOSTEXEEXT=".so"
+			_unix=yes
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
 			_backend="samsungtv"
-			_mt32emu="no"
-			_vkeybd="yes"
+			_mt32emu=no
+			_vkeybd=yes
 			;;
 		wii)
 			_endian=big
 			_need_memalign=yes
 			_backend="wii"
-			_build_scalers="no"
+			_build_scalers=no
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 0'
+			add_line_to_config_h '#define AUDIO_REVERSE_STEREO'
 			add_line_to_config_h "#define DEBUG_WII_USBGECKO"
 			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
@@ -1614,17 +1848,8 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
 			_backend="wince"
-			_mt32emu="no"
+			_mt32emu=no
 			_port_mk="backends/platform/wince/wince.mk"
-			;;
-		android)
-			DEFINES="$DEFINES -DANDROID -DUNIX -DUSE_ARM_SMUSH_ASM"
-			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			_backend="android"
-			_port_mk="backends/platform/android/android.mk"
 			;;
 		*)
 			echo "WARNING: Unknown target, continuing with auto-detected values"
@@ -1701,6 +1926,10 @@ add_to_config_h_if_yes $_have_x86 '#define HAVE_X86'
 
 add_to_config_h_if_yes $_need_memalign '#define SYSTEM_NEED_ALIGNMENT'
 
+if test "$_unix" = yes ; then
+	DEFINES="$DEFINES -DUNIX"
+fi
+
 #
 # Check whether to enable a verbose build
 #
@@ -1769,7 +1998,7 @@ PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
 		;;
-	gp2xwiz*)
+	gph*)
 _def_plugin='
 #define PLUGIN_PREFIX	""
 #define PLUGIN_SUFFIX	".plugin"
@@ -1833,7 +2062,7 @@ PLUGIN_SUFFIX		:= .plg
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
 CXXFLAGS		+= -DDYNAMIC_MODULES
 LDFLAGS			+= -Wl,-T$(srcdir)/backends/platform/psp/main_prog.ld
-PLUGIN_LDFLAGS		= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/psp/plugin.syms,-T$(srcdir)/backends/platform/psp/plugin.ld -lstdc++ -lc -lm -Wl,--wrap,memcpy
+PLUGIN_LDFLAGS		= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/psp/plugin.syms,-T$(srcdir)/backends/platform/psp/plugin.ld -lstdc++ -lc -lm
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '
@@ -1851,12 +2080,9 @@ fi
 #
 # Check whether integrated MT-32 emulator support is requested
 #
-if test "$_mt32emu" = no ; then
-	_def_mt32emu='#undef USE_MT32EMU'
-else
-	_def_mt32emu='#define USE_MT32EMU'
+define_in_config_if_yes "$_mt32emu" 'USE_MT32EMU'
+
 fi
-add_to_config_mk_if_yes "$_mt32emu" 'USE_MT32EMU = 1'
 
 #
 # Check for math lib
@@ -1880,13 +2106,10 @@ EOF
 		-lvorbisfile -lvorbis -logg && _vorbis=yes
 fi
 if test "$_vorbis" = yes ; then
-	_def_vorbis='#define USE_VORBIS'
 	LIBS="$LIBS $OGG_LIBS $VORBIS_LIBS -lvorbisfile -lvorbis -logg"
 	INCLUDES="$INCLUDES $OGG_CFLAGS $VORBIS_CFLAGS"
-else
-	_def_vorbis='#undef USE_VORBIS'
 fi
-add_to_config_mk_if_yes "$_vorbis" 'USE_VORBIS = 1'
+define_in_config_if_yes "$_vorbis" 'USE_VORBIS'
 echo "$_vorbis"
 
 #
@@ -1903,15 +2126,15 @@ EOF
 	_tremor=yes
 fi
 if test "$_tremor" = yes && test "$_vorbis" = no; then
-	_def_tremor='#define USE_TREMOR'
-	_def_vorbis='#define USE_VORBIS'
+	add_line_to_config_h '#define USE_TREMOR'
+	add_line_to_config_h '#define USE_VORBIS'
 	LIBS="$LIBS $TREMOR_LIBS -lvorbisidec"
 	INCLUDES="$INCLUDES $TREMOR_CFLAGS"
 else
 	if test "$_vorbis" = yes; then
 		_tremor="no (Ogg Vorbis/Tremor support is mutually exclusive)"
 	fi
-	_def_tremor='#undef USE_TREMOR'
+	add_line_to_config_h '#undef USE_TREMOR'
 fi
 add_to_config_mk_if_yes "$_tremor" 'USE_TREMOR = 1'
 echo "$_tremor"
@@ -1935,17 +2158,14 @@ EOF
 	fi
 fi
 if test "$_flac" = yes ; then
-	_def_flac='#define USE_FLAC'
 	if test "$_vorbis" = yes ; then
 		LIBS="$LIBS $FLAC_LIBS $OGG_LIBS -lFLAC -logg"
 	else
 		LIBS="$LIBS $FLAC_LIBS -lFLAC"
 	fi
 	INCLUDES="$INCLUDES $FLAC_CFLAGS"
-else
-	_def_flac='#undef USE_FLAC'
 fi
-add_to_config_mk_if_yes "$_flac" 'USE_FLAC = 1'
+define_in_config_if_yes "$_flac" 'USE_FLAC'
 echo "$_flac"
 
 #
@@ -1961,13 +2181,10 @@ EOF
 	cc_check $MAD_CFLAGS $MAD_LIBS -lmad && _mad=yes
 fi
 if test "$_mad" = yes ; then
-	_def_mad='#define USE_MAD'
 	LIBS="$LIBS $MAD_LIBS -lmad"
 	INCLUDES="$INCLUDES $MAD_CFLAGS"
-else
-	_def_mad='#undef USE_MAD'
 fi
-add_to_config_mk_if_yes "$_mad" 'USE_MAD = 1'
+define_in_config_if_yes "$_mad" 'USE_MAD'
 echo "$_mad"
 
 #
@@ -1983,13 +2200,24 @@ EOF
 	cc_check $ALSA_CFLAGS $ALSA_LIBS -lasound && _alsa=yes
 fi
 if test "$_alsa" = yes ; then
-	_def_alsa='#define USE_ALSA'
 	LIBS="$LIBS $ALSA_LIBS -lasound"
 	INCLUDES="$INCLUDES $ALSA_CFLAGS"
-else
-	_def_alsa='#undef USE_ALSA'
 fi
+define_in_config_h_if_yes "$_alsa" 'USE_ALSA'
 echo "$_alsa"
+
+#
+# Check for SEQ MIDI
+#
+echocheck "SEQ MIDI"
+if test "$_seq_midi" = auto ; then
+	# TODO: Test for /dev/sequencer presence? Or maybe just for /dev ?
+	# For now, we just always enable it when "unix" mode is on (backends
+	# that do not want it can disable it by setting _seq_midi=no).
+	_seq_midi="$_unix"
+fi
+define_in_config_h_if_yes "$_seq_midi" 'USE_SEQ_MIDI'
+echo "$_seq_midi"
 
 #
 # Check for ZLib
@@ -2012,7 +2240,7 @@ else
 	echo "zlib library support required"
 	exit 1
 fi
-add_to_config_mk_if_yes "$_zlib" 'USE_ZLIB = 1'
+define_in_config_if_yes "$_zlib" 'USE_ZLIB'
 echo "$_zlib"
 
 #
@@ -2028,7 +2256,6 @@ EOF
 	cc_check $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS -lfluidsynth && _fluidsynth=yes
 fi
 if test "$_fluidsynth" = yes ; then
-	_def_fluidsynth='#define USE_FLUIDSYNTH'
 	case $_host_os in
 		mingw*)
 			LIBS="$LIBS $FLUIDSYNTH_LIBS -lfluidsynth -ldsound -lwinmm"
@@ -2038,9 +2265,8 @@ if test "$_fluidsynth" = yes ; then
 		;;
 	esac
 	INCLUDES="$INCLUDES $FLUIDSYNTH_CFLAGS"
-else
-	_def_fluidsynth='#undef USE_FLUIDSYNTH'
 fi
+define_in_config_h_if_yes "$_fluidsynth" 'USE_FLUIDSYNTH'
 echo "$_fluidsynth"
 
 #
@@ -2060,12 +2286,13 @@ int main(void) {
 	char *x = readline("");
 }
 EOF
-		cc_check $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
+		cc_check_no_clean $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
 		if test "$_readline" = no ; then
 			_READLINE_LIBS="-lreadline -ltermcap"
-			cc_check $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
+			cc_check_no_clean $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
 		fi
 	fi
+	cc_check_clean
 	echo "$_readline"
 else
 	_readline=no
@@ -2073,18 +2300,12 @@ else
 fi
 
 if test "$_readline" = yes ; then
-	_def_readline='#define USE_READLINE'
 	LIBS="$LIBS $READLINE_LIBS $_READLINE_LIBS"
 	INCLUDES="$INCLUDES $READLINE_CFLAGS"
-else
-	_def_readline='#undef USE_READLINE'
 fi
+define_in_config_h_if_yes "$_readline" 'USE_READLINE'
 
-if test "$_text_console" = yes ; then
-	_def_text_console='#define USE_TEXT_CONSOLE'
-else
-	_def_text_console='#undef USE_TEXT_CONSOLE'
-fi
+define_in_config_h_if_yes "$_text_console" 'USE_TEXT_CONSOLE'
 
 #
 # Check for nasm
@@ -2142,8 +2363,7 @@ if test "$_have_x86" = yes ; then
 	fi
 fi
 
-add_to_config_h_if_yes $_nasm '#define USE_NASM'
-add_to_config_mk_if_yes $_nasm 'USE_NASM = 1'
+define_in_config_if_yes $_nasm 'USE_NASM'
 
 #
 # Enable vkeybd / keymapper
@@ -2158,8 +2378,7 @@ fi
 # Check whether to build translation support
 #
 echo_n "Building translation support... "
-add_to_config_mk_if_yes $_translation 'USE_TRANSLATION = 1'
-add_to_config_h_if_yes $_translation '#define USE_TRANSLATION'
+define_in_config_if_yes $_translation 'USE_TRANSLATION'
 if test "$_translation" = no ; then
 	echo "no"
 else
@@ -2172,7 +2391,7 @@ EOF
 	_detectlang=no
 	cc_check $LDFLAGS $CXXFLAGS && _detectlang=yes
 
-	add_to_config_h_if_yes $_detectlang '#define USE_DETECTLANG'
+	define_in_config_h_if_yes $_detectlang 'USE_DETECTLANG'
 	if test "$_detectlang" = yes ; then
 		echo "with runtime language detection)"
 	else
@@ -2228,86 +2447,6 @@ fi
 # Backend related stuff
 #
 case $_backend in
-	dc)
-		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
-		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000 -nostartfiles "'$(ronindir)/lib/crt0.o -L$(ronindir)/lib'
-		LIBS="$LIBS -lronin -lm"
-		;;
-	gp2x)
-		find_sdlconfig
-		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
-		LDFLAGS="$LDFLAGS -static"
-		CXXFLAGS="$CXXFLAGS -march=armv4t"
-		;;
-	gp2xwiz)
-		find_sdlconfig
-		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
-		LDFLAGS="$LDFLAGS"
-		CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
-		;;
-	iphone)
-		OBJCFLAGS="$OBJCFLAGS --std=c99"
-		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES -framework QuartzCore -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
-		;;
-	linuxmoto)
-		find_sdlconfig
-		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
-		DEFINES="$DEFINES -DSDL_BACKEND -DLINUXMOTO"
-		;;
-	ds)
-		# TODO ds
-		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/arm9/source'
-		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/commoninclude'
-		INCLUDES="$INCLUDES "'-Ibackends/platform/ds/arm9/data'
-		;;
-	null)
-		DEFINES="$DEFINES -DUSE_NULL_DRIVER"
-		;;
-	ps2)
-		# TODO ps2
-		DEFINES="$DEFINES -D_EE -DFORCE_RTL"
-		INCLUDES="$INCLUDES -I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2SDK/ports/include"
-		LDFLAGS="$LDFLAGS -mno-crt0 $PS2SDK/ee/startup/crt0.o -T $PS2SDK/ee/startup/linkfile"
-		LDFLAGS="$LDFLAGS -L$PS2SDK/ee/lib -L$PS2SDK/ports/lib"
-		LIBS="$LIBS -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lm -lc -lfileXio -lkernel -lstdc++ "
-		;;
-	psp)
-		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
-		LIBS="$LIBS -lpng -Wl,-Map,mapfile.txt"
-		LDFLAGS="$LDFLAGS -Wl,--wrap,memcpy"
-		;;
-	samsungtv)
-		find_sdlconfig
-		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
-		DEFINES="$DEFINES -DSDL_BACKEND -DSAMSUNGTV"
-		LDFLAGS="$LDFLAGS -shared -fpic"
-		MODULES="$MODULES backends/platform/sdl"
-		;;
-	sdl)
-		find_sdlconfig
-		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
-		DEFINES="$DEFINES -DSDL_BACKEND"
-		;;
-	wii)
-		DEFINES="$DEFINES -D__WII__ -DGEKKO"
-		case $_host_os in
-		gamecube)
-			LIBS="$LIBS -lgxflux -lfat -logc -ldb"
-			;;
-		*)
-			LIBS="$LIBS -lgxflux -ldi -ltinysmb -lfat -lwiiuse -lbte -logc -lwiikeyboard -ldb"
-			;;
-		esac
-		;;
-	wince)
-		INCLUDES="$INCLUDES "'-I$(srcdir) -I$(srcdir)/backends/platform/wince -I$(srcdir)/engines -I$(srcdir)/backends/platform/wince/missing/gcc -I$(srcdir)/backends/platform/wince/CEgui -I$(srcdir)/backends/platform/wince/CEkeys'
-		LIBS="$LIBS -static -lSDL"
-		;;
 	android)
 		static_libs=''
 		system_libs=''
@@ -2340,6 +2479,104 @@ case $_backend in
 		add_line_to_config_mk 'PLUGIN_LDFLAGS += -Lbuild.tmp -lscummvm'
 		add_line_to_config_mk 'PLUGIN_EXTRA_DEPS += build.tmp/libscummvm.so'
 		;;
+	dc)
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
+		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000 -nostartfiles "'$(ronindir)/lib/crt0.o -L$(ronindir)/lib'
+		LIBS="$LIBS -lronin -lm"
+		;;
+	dingux)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND -DDINGUX"
+		LDFLAGS="$LDFLAGS "
+		MODULES="$MODULES backends/platform/sdl"
+		;;
+	ds)
+		# TODO ds
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/arm9/source'
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/commoninclude'
+		INCLUDES="$INCLUDES "'-Ibackends/platform/ds/arm9/data'
+		;;
+	gp2x)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		LDFLAGS="$LDFLAGS"
+		;;
+	gph)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		LDFLAGS="$LDFLAGS"
+		;;
+	iphone)
+		OBJCFLAGS="$OBJCFLAGS --std=c99"
+		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES -framework QuartzCore -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
+		;;
+	linuxmoto)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND -DLINUXMOTO"
+		;;
+	n64)
+		INCLUDES="$INCLUDES "'-I$(N64SDK)/include'
+		INCLUDES="$INCLUDES "'-I$(N64SDK)/mips64/include'
+		INCLUDES="$INCLUDES "'-I$(N64SDK)/hkz-libn64'
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/n64'
+		LIBS="$LIBS -lpakfs -lframfs -ln64 -ln64utils -lromfs -lm -lstdc++ -lc -lgcc -lz -lnosys"
+		;;
+	null)
+		DEFINES="$DEFINES -DUSE_NULL_DRIVER"
+		;;
+	openpandora)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		LDFLAGS="$LDFLAGS"
+		;;
+	ps2)
+		# TODO ps2
+		DEFINES="$DEFINES -D_EE -DFORCE_RTL"
+		INCLUDES="$INCLUDES -I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2SDK/ports/include"
+		LDFLAGS="$LDFLAGS -mno-crt0 $PS2SDK/ee/startup/crt0.o -T $PS2SDK/ee/startup/linkfile"
+		LDFLAGS="$LDFLAGS -L$PS2SDK/ee/lib -L$PS2SDK/ports/lib"
+		LIBS="$LIBS -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lm -lc -lfileXio -lkernel -lstdc++ "
+		;;
+	psp)
+		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
+		LIBS="$LIBS -lpng -Wl,-Map,mapfile.txt"
+		;;
+	samsungtv)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND -DSAMSUNGTV"
+		LDFLAGS="$LDFLAGS -shared -fpic"
+		MODULES="$MODULES backends/platform/sdl"
+		;;
+	sdl)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND"
+		;;
+	wii)
+		DEFINES="$DEFINES -D__WII__ -DGEKKO"
+		case $_host_os in
+		gamecube)
+			LIBS="$LIBS -lgxflux -liso9660 -lfat -logc -ldb"
+			;;
+		*)
+			LIBS="$LIBS -lgxflux -ldi -liso9660 -ltinysmb -lfat -lwiiuse -lbte -logc -lwiikeyboard -ldb"
+			;;
+		esac
+		;;
+	wince)
+		INCLUDES="$INCLUDES "'-I$(srcdir) -I$(srcdir)/backends/platform/wince -I$(srcdir)/engines -I$(srcdir)/backends/platform/wince/missing/gcc -I$(srcdir)/backends/platform/wince/CEgui -I$(srcdir)/backends/platform/wince/CEkeys'
+		LIBS="$LIBS -static -lSDL"
+		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"
 		exit 1
@@ -2355,7 +2592,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__
-		mingw* | dreamcast | wii | gamecube | ds | psp | wince | amigaos* | android)
+		amigaos* | android | ds | dreamcast | gamecube | mingw* | n64 | psp | wii | wince )
 			CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 			;;
 		*)
@@ -2376,7 +2613,7 @@ fi;
 
 # Some platforms use certain GNU extensions in header files
 case $_host_os in
-gamecube | psp | wii | android)
+android | gamecube | psp | wii)
 	;;
 *)
 	CXXFLAGS="$CXXFLAGS -pedantic"

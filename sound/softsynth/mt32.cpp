@@ -184,7 +184,7 @@ static void drawMessage(int offset, const Common::String &text) {
 	uint16 y = g_system->getHeight() / 2 - h / 2 + offset * (h + 1);
 
 	uint32 col;
-	
+
 	if (screenFormat.bytesPerPixel > 1)
 		col = screenFormat.RGBToColor(0, 0, 0);
 	else

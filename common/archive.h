@@ -79,7 +79,8 @@ public:
 
 
 /**
- * Archive allows searches of (file)names into an arbitrary container.
+ * Archive allows managing of member of arbitrary containers in a uniform
+ * fashion, allowing lookup by (file)names.
  * It also supports opening a file and returning an usable input stream.
  */
 class Archive {
@@ -87,24 +88,23 @@ public:
 	virtual ~Archive() { }
 
 	/**
-	 * Check if a name is present in the Archive. Patterns are not allowed,
-	 * as this is meant to be a quick File::exists() replacement.
+	 * Check if a member with the given name is present in the Archive.
+	 * Patterns are not allowed, as this is meant to be a quick File::exists()
+	 * replacement.
 	 */
 	virtual bool hasFile(const String &name) = 0;
 
 	/**
-	 * Add all the names present in the Archive which match pattern to
-	 * list. Returned names can be used as parameters to createReadStreamForMember.
-	 * Must not remove elements from the list.
+	 * Add all members of the Archive matching the specified pattern to list.
+	 * Must only append to list, and not remove elements from it.
 	 *
-	 * @return the number of names added to list
+	 * @return the number of members added to list
 	 */
 	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern);
 
 	/**
-	 * Add all the names present in the Archive to list. Returned
-	 * names can be used as parameters to createReadStreamForMember.
-	 * Must not remove elements from the list.
+	 * Add all members of the Archive to list.
+	 * Must only append to list, and not remove elements from it.
 	 *
 	 * @return the number of names added to list
 	 */
@@ -116,8 +116,8 @@ public:
 	virtual ArchiveMemberPtr getMember(const String &name) = 0;
 
 	/**
-	 * Create a stream bound to a member in the archive. If no member with the
-	 * specified name exists, then 0 is returned.
+	 * Create a stream bound to a member with the specified name in the
+	 * archive. If no member with this name exists, 0 is returned.
 	 * @return the newly created input stream
 	 */
 	virtual SeekableReadStream *createReadStreamForMember(const String &name) const = 0;

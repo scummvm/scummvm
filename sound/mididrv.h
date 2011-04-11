@@ -50,18 +50,21 @@ namespace Common { class String; }
  * Music types that music drivers can implement and engines can rely on.
  */
 enum MusicType {
-	MT_INVALID = -1,    // Invalid output
-	MT_AUTO = 0,        // Auto
-	MT_NULL,            // Null
-	MT_PCSPK,           // PC Speaker
-	MT_PCJR,            // PCjr
-	MT_CMS,             // CMS
-	MT_ADLIB,           // AdLib
-	MT_TOWNS,           // FM-TOWNS
-	MT_PC98,            // PC98
-	MT_GM,              // General MIDI
-	MT_MT32,            // MT-32
-	MT_GS               // Roland GS
+	MT_INVALID = -1,	// Invalid output
+	MT_AUTO = 0,		// Auto
+	MT_NULL,			// Null
+	MT_PCSPK,			// PC Speaker
+	MT_PCJR,			// PCjr
+	MT_CMS,				// CMS
+	MT_ADLIB,			// AdLib
+	MT_C64,				// C64
+	MT_AMIGA,			// Amiga
+	MT_APPLEIIGS,		// Apple IIGS
+	MT_TOWNS,			// FM-TOWNS
+	MT_PC98,			// PC98
+	MT_GM,				// General MIDI
+	MT_MT32,			// MT-32
+	MT_GS				// Roland GS
 };
 
 /**
@@ -75,16 +78,19 @@ enum MusicType {
  * @todo Rename MidiDriverFlags to MusicDriverFlags
  */
 enum MidiDriverFlags {
-	MDT_NONE   = 0,
-	MDT_PCSPK  = 1 << 0,      // PC Speaker: Maps to MD_PCSPK and MD_PCJR
-	MDT_CMS    = 1 << 1,      // Creative Music System / Gameblaster: Maps to MD_CMS
-	MDT_PCJR   = 1 << 2,      // Tandy/PC Junior driver
-	MDT_ADLIB  = 1 << 3,      // AdLib: Maps to MT_ADLIB
-	MDT_TOWNS  = 1 << 4,      // FM-TOWNS: Maps to MT_TOWNS
-	MDT_PC98   = 1 << 5,      // FM-TOWNS: Maps to MT_PC98
-	MDT_MIDI   = 1 << 6,      // Real MIDI
-	MDT_PREFER_MT32 = 1 << 7, // MT-32 output is preferred
-	MDT_PREFER_GM = 1 << 8    // GM output is preferred
+	MDT_NONE        = 0,
+	MDT_PCSPK       = 1 << 0,		// PC Speaker: Maps to MD_PCSPK and MD_PCJR
+	MDT_CMS         = 1 << 1,		// Creative Music System / Gameblaster: Maps to MD_CMS
+	MDT_PCJR        = 1 << 2,		// Tandy/PC Junior driver
+	MDT_ADLIB       = 1 << 3,		// AdLib: Maps to MT_ADLIB
+	MDT_C64         = 1 << 4,
+	MDT_AMIGA       = 1 << 5,
+	MDT_APPLEIIGS   = 1 << 6,
+	MDT_TOWNS       = 1 << 7,		// FM-TOWNS: Maps to MT_TOWNS
+	MDT_PC98        = 1 << 8,		// FM-TOWNS: Maps to MT_PC98
+	MDT_MIDI        = 1 << 9,		// Real MIDI
+	MDT_PREFER_MT32 = 1 << 10,		// MT-32 output is preferred
+	MDT_PREFER_GM   = 1 << 11		// GM output is preferred
 };
 
 /**
@@ -124,7 +130,7 @@ public:
 
 	/** Returns device handle based on the present devices and the flags parameter. */
 	static DeviceHandle detectDevice(int flags);
-		
+	
 	/** Find the music driver matching the given driver name/description. */
 	static DeviceHandle getDeviceHandle(const Common::String &identifier);
 
@@ -208,6 +214,16 @@ public:
 		send(0xB0 | channel, 101, 127);
 		send(0xB0 | channel, 100, 127);
 	}
+
+	/**
+	 * Send a Roland MT-32 reset sysEx to the midi device.
+	 */
+	void sendMT32Reset();
+
+	/**
+	 * Send a General MIDI reset sysEx to the midi device.
+	 */
+	void sendGMReset();
 
 	/**
 	 * Transmit a sysEx to the midi device.

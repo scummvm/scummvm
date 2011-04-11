@@ -106,7 +106,7 @@ void MidiDriver_WIN::sysEx(const byte *msg, uint16 length) {
 		return;
 
 	if (WaitForSingleObject (_streamEvent, 2000) == WAIT_TIMEOUT) {
-		warning ("Could not send SysEx - MMSYSTEM is still trying to send data.");
+		warning ("Could not send SysEx - MMSYSTEM is still trying to send data");
 		return;
 	}
 

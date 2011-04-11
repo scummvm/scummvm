@@ -162,7 +162,7 @@ void NORETURN_PRE error(const char *s, ...) {
 #ifdef __PSP__
 	PspDebugTrace(false, "%s", buf_output);	// write to file
 #endif
-	
+
 	// Finally exit. quit() will terminate the program if g_system is present
 	if (g_system)
 		g_system->quit();

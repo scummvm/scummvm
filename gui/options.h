@@ -68,6 +68,7 @@ protected:
 	void addGraphicControls(GuiObject *boss, const Common::String &prefix);
 	void addAudioControls(GuiObject *boss, const Common::String &prefix);
 	void addMIDIControls(GuiObject *boss, const Common::String &prefix);
+	void addMT32Controls(GuiObject *boss, const Common::String &prefix);
 	void addVolumeControls(GuiObject *boss, const Common::String &prefix);
 	// The default value is the launcher's non-scaled talkspeed value. When SCUMM uses the widget,
 	// it uses its own scale
@@ -76,6 +77,7 @@ protected:
 	void setGraphicSettingsState(bool enabled);
 	void setAudioSettingsState(bool enabled);
 	void setMIDISettingsState(bool enabled);
+	void setMT32SettingsState(bool enabled);
 	void setVolumeSettingsState(bool enabled);
 	void setSubtitleSettingsState(bool enabled);
 
@@ -120,11 +122,16 @@ private:
 	//
 	bool _enableMIDISettings;
 	CheckboxWidget *_multiMidiCheckbox;
-	CheckboxWidget *_mt32Checkbox;
-	CheckboxWidget *_enableGSCheckbox;
 	StaticTextWidget *_midiGainDesc;
 	SliderWidget *_midiGainSlider;
 	StaticTextWidget *_midiGainLabel;
+
+	//
+	// MT-32 controls
+	//
+	bool _enableMT32Settings;
+	CheckboxWidget *_mt32Checkbox;
+	CheckboxWidget *_enableGSCheckbox;
 
 	//
 	// Subtitle controls

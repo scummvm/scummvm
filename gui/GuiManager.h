@@ -33,6 +33,7 @@
 #include "graphics/font.h"
 
 #include "gui/widget.h"
+#include "gui/Tooltip.h"
 #include "gui/ThemeEngine.h"
 
 class OSystem;
@@ -93,8 +94,6 @@ public:
 	 */
 	bool checkScreenChange();
 
-	Tooltip *getTooltip() { return _tooltip; }
-
 protected:
 	enum RedrawStatus {
 		kRedrawDisabled = 0,
@@ -119,13 +118,14 @@ protected:
 	bool		_useStdCursor;
 
 	Tooltip *_tooltip;
+	bool _tooltipCheck;
 
 	// position and time of last mouse click (used to detect double clicks)
 	struct {
 		int16 x, y;	// Position of mouse when the click occurred
 		uint32 time;	// Time
 		int count;	// How often was it already pressed?
-	} _lastClick;
+	} _lastClick, _lastMousePosition;
 
 	// mouse cursor state
 	int		_cursorAnimateCounter;

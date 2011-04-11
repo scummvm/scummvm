@@ -449,11 +449,15 @@ bool ListWidget::handleKeyUp(Common::KeyState state) {
 }
 
 void ListWidget::receivedFocusWidget() {
+	_inversion = ThemeEngine::kTextInversionFocus;
+
 	// Redraw the widget so the selection color will change
 	draw();
 }
 
 void ListWidget::lostFocusWidget() {
+	_inversion = ThemeEngine::kTextInversion;
+
 	// If we lose focus, we simply forget the user changes
 	_editMode = false;
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
@@ -491,12 +495,8 @@ void ListWidget::drawWidget() {
 		ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone;
 
 		// Draw the selected item inverted, on a highlighted background.
-		if (_selectedItem == pos) {
-			if (_hasFocus)
-				inverted = ThemeEngine::kTextInversionFocus;
-			else
-				inverted = ThemeEngine::kTextInversion;
-		}
+		if (_selectedItem == pos)
+			inverted = _inversion;
 
 		Common::Rect r(getEditRect());
 		int pad = _leftPadding;

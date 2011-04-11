@@ -34,13 +34,23 @@ ifeq "$(HAVE_GCC)" "1"
 	# being helpful.
 	#CXXFLAGS+= -Wmissing-format-attribute
 
-	# Disable exceptions, and enable checking of pointers returned by "new"
-	CXXFLAGS+= -fno-exceptions -fcheck-new
+	# Disable RTTI and exceptions
+	CXXFLAGS+= -fno-rtti -fno-exceptions
+
+ifneq "$(HAVE_CLANG)" "1"
+	# enable checking of pointers returned by "new", but only when we do not
+	# build with clang
+	CXXFLAGS+= -fcheck-new
+endif
 endif
 
 ifeq "$(HAVE_CLANG)" "1"
 	CXXFLAGS+= -Wno-conversion -Wno-shorten-64-to-32 -Wno-sign-compare -Wno-four-char-constants
 endif
+
+# Warn if global constructors are used. Only available in GCC with LLVM backend
+# (and maybe clang?), hence off by default.
+#CXXFLAGS+= -Wglobal-constructors
 
 #######################################################################
 # Default commands - put the necessary replacements in config.mk      #

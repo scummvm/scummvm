@@ -95,7 +95,7 @@ protected:
  * Note that you need to use this macro from the global namespace.
  *
  * This is because C++ requires initial explicit specialization
- * to be placed in the same namespace as the template. 
+ * to be placed in the same namespace as the template.
  * It has to be put in the global namespace to assure the correct
  * namespace Common is referenced.
  */

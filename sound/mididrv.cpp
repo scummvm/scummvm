@@ -58,13 +58,17 @@ const byte MidiDriver::_gmToMt32[128] = {
 
 static const uint32 GUIOMapping[] = {
 	MT_PCSPK,		Common::GUIO_MIDIPCSPK,
-	/*MDT_CMS,		Common::GUIO_MIDICMS,*/
+	MT_CMS,			Common::GUIO_MIDICMS,
 	MT_PCJR,		Common::GUIO_MIDIPCJR,
 	MT_ADLIB,		Common::GUIO_MIDIADLIB,
+	MT_C64,		    Common::GUIO_MIDIC64,
+	MT_AMIGA,	    Common::GUIO_MIDIAMIGA,
+	MT_APPLEIIGS,	Common::GUIO_MIDIAPPLEIIGS,
 	MT_TOWNS,		Common::GUIO_MIDITOWNS,
+	MT_PC98,		Common::GUIO_MIDIPC98,
 	MT_GM,			Common::GUIO_MIDIGM,
 	MT_MT32,		Common::GUIO_MIDIMT32,
-	0,		0
+	0,				0
 };
 
 uint32 MidiDriver::musicType2GUIO(uint32 musicType) {
@@ -94,7 +98,7 @@ MusicType MidiDriver::getMusicType(MidiDriver::DeviceHandle handle) {
 			}
 		}
 	}
-	
+
 	return MT_INVALID;
 }
 
@@ -139,7 +143,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		if (flags & MDT_PCJR)
 			return hdl;
 		break;
-	
+
 	case MT_CMS:
 		if (flags & MDT_CMS)
 			return hdl;
@@ -149,7 +153,22 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		if (flags & MDT_ADLIB)
 			return hdl;
 		break;
-		
+
+	case MT_C64:
+		if (flags & MDT_C64)
+			return hdl;
+		break;
+
+	case MT_AMIGA:
+		if (flags & MDT_AMIGA)
+			return hdl;
+		break;        
+
+	case MT_APPLEIIGS:
+		if (flags & MDT_APPLEIIGS)
+			return hdl;
+		break;
+
 	case MT_TOWNS:
 		if (flags & MDT_TOWNS)
 			return hdl;
@@ -224,10 +243,20 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		MusicType tp = MT_AUTO;
 		if (flags & MDT_TOWNS)
 			tp = MT_TOWNS;
+		else if (flags & MDT_PC98)
+			tp = MT_PC98;
 		else if (flags & MDT_ADLIB)
 			tp = MT_ADLIB;
 		else if (flags & MDT_PCSPK)
 			tp = MT_PCSPK;
+		else if (flags & MDT_PCJR)
+			tp = MT_PCJR;
+		else if (flags & MDT_C64)
+			tp = MT_C64;
+		else if (flags & MDT_AMIGA)
+			tp = MT_AMIGA;
+		else if (flags & MDT_APPLEIIGS)
+			tp = MT_APPLEIIGS;
 		else if (l == 0)
 			// if we haven't tried to find a MIDI device yet we do this now.
 			continue;
@@ -261,12 +290,15 @@ MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &ident
 	const MusicPlugin::List p = MusicMan.getPlugins();
 
 	if (p.begin() == p.end())
-		error("Music plugins must be loaded prior to calling this method.");
+		error("Music plugins must be loaded prior to calling this method");
 
 	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
 		MusicDevices i = (**m)->getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
-			if (identifier.equals(d->getCompleteId()) || identifier.equals(d->getCompleteName())) {
+			// The music driver id isn't unique, but it will match
+			// driver's first device. This is useful when selecting
+			// the driver from the command line.
+			if (identifier.equals(d->getMusicDriverId()) || identifier.equals(d->getCompleteId()) || identifier.equals(d->getCompleteName())) {
 				return d->getHandle();
 			}
 		}
@@ -274,3 +306,16 @@ MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &ident
 
 	return 0;
 }
+
+void MidiDriver::sendMT32Reset() {
+	static const byte resetSysEx[] = { 0x41, 0x10, 0x16, 0x12, 0x7F, 0x00, 0x00, 0x01, 0x00 };
+	sysEx(resetSysEx, sizeof(resetSysEx));
+	g_system->delayMillis(100);
+}
+
+void MidiDriver::sendGMReset() {
+	static const byte resetSysEx[] = { 0x7E, 0x7F, 0x09, 0x01 };
+	sysEx(resetSysEx, sizeof(resetSysEx));
+	g_system->delayMillis(100);
+}
+

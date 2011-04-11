@@ -110,6 +110,7 @@ bool MacResManager::open(Common::String filename) {
 		_baseFileName = filename;
 		return true;
 	}
+
 	delete macResForkRawStream;
 #endif
 
@@ -169,6 +170,7 @@ bool MacResManager::open(Common::FSNode path, Common::String filename) {
 		_baseFileName = filename;
 		return true;
 	}
+
 	delete macResForkRawStream;
 #endif
 
@@ -466,6 +468,28 @@ Common::SeekableReadStream *MacResManager::getResource(const Common::String &fil
 	return 0;
 }
 
+Common::SeekableReadStream *MacResManager::getResource(uint32 typeID, const Common::String &filename) {
+	for (uint32 i = 0; i < _resMap.numTypes; i++) {
+		if (_resTypes[i].id != typeID)
+			continue;
+
+		for (uint32 j = 0; j < _resTypes[i].items; j++) {
+			if (_resLists[i][j].nameOffset != -1 && filename.equalsIgnoreCase(_resLists[i][j].name)) {
+				_stream->seek(_dataOffset + _resLists[i][j].dataOffset);
+				uint32 len = _stream->readUint32BE();
+
+				// Ignore resources with 0 length
+				if (!len)
+					return 0;
+
+				return _stream->readStream(len);
+			}
+		}
+	}
+
+	return 0;
+}
+
 void MacResManager::readMap() {
 	_stream->seek(_mapOffset + 22);
 
@@ -557,6 +581,7 @@ void MacResManager::convertCrsrCursor(byte *data, int datasize, byte **cursor, i
 	*hotspot_y = dis.readUint16BE();
 	*hotspot_x = dis.readUint16BE();
 	*w = *h = 16;
+	*keycolor = 0xff;
 
 	// Use b/w cursor on backends which don't support cursor palettes
 	if (!colored)

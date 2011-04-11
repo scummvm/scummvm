@@ -50,7 +50,7 @@ public:
 	 * device name (if it isn't the default one) and the name of the driver.
 	 */
 	Common::String getCompleteName();
-	
+
 	/**
 	 * Returns a user readable string that contains the name of the current
 	 * device name (if it isn't the default one) and the id of the driver.

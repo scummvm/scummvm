@@ -72,8 +72,9 @@ endif
 	ldid -S residual
 	chmod 755 residual
 	cp residual $(bundle_name)/Residual
-	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/icon.png
-	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/Default.png
+	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/
+	cp $(srcdir)/dists/iphone/icon-72.png $(bundle_name)/	
+	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/
 
 # Location of static libs for the iPhone
 ifneq ($(BACKEND), iphone)

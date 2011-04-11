@@ -172,7 +172,7 @@ SVNROOT := https://resisual.svn.sourceforge.net/svnroot/residual/residual/trunk/
 endif
 
 # Define the Subversion revision if available, either autodetected or
-# specified by the user
+# specified by the user, but only for base/version.cpp.
 ifneq ($(origin VER_SVNREV), undefined)
 CXXFLAGS+= -DRESIDUAL_SVN_REVISION=\"$(VER_SVNREV)\"
 endif
@@ -227,7 +227,11 @@ dist-src: \
 DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.LGPL NEWS README)
 
 # Themes files
-DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,modern.zip)
+DIST_FILES_THEMES=modern.zip
+ifdef USE_TRANSLATION
+DIST_FILES_THEMES+=translations.dat
+endif
+DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,$(DIST_FILES_THEMES))
 
 # Engine data files
 DIST_FILES_ENGINEDATA=

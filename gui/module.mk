@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	ThemeEval.o \
 	ThemeLayout.o \
 	ThemeParser.o \
+	Tooltip.o \
 	widget.o
 
 ifdef MACOSX
