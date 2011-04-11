@@ -127,7 +127,7 @@ void Screen::drawGuiImage(int16 x, int16 y, uint resIndex) {
 	int16 height = imageData[3];
 	int16 workWidth = width, workHeight = height;
 	imageData += headerSize;
-	
+
 	byte *dest = _frontScreen + x + (y + _vm->_cameraHeight) * 640;
 
 	//debug(0, "Screen::drawGuiImage() x = %d; y = %d; w = %d; h = %d; resIndex = %d", x, y, width, height, resIndex);
@@ -446,9 +446,8 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 	}
 
 	int16 textDurationMultiplier = item->duration + 8;
-	// TODO: Check sound/text flags
-	if (*textData == 0xFE) {
-		//textDurationMultiplier += 100;
+	if (_vm->_doSpeech && *textData == 0xFE) {
+		textDurationMultiplier += 100;
 	}
 	item->duration = 4 * textDurationMultiplier * durationModifier;
 
@@ -480,7 +479,8 @@ void Screen::addTalkTextItemsToRenderQueue() {
 		if (item->fontNum == -1 || item->duration == 0)
 			continue;
 
-		item->duration -= _vm->_counter01;
+		//item->duration -= _vm->_counter01;
+		item->duration--;
 		if (item->duration < 0)
 			item->duration = 0;
 

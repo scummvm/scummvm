@@ -43,7 +43,12 @@ MoviePlayer::~MoviePlayer() {
 
 void MoviePlayer::playMovie(uint resIndex) {
 
-	uint32 subtitleSlot;
+	const uint32 subtitleSlot = kMaxScriptSlots - 1;
+	int16 savedSceneWidth = _vm->_sceneWidth;
+	int16 savedSceneHeight = _vm->_sceneHeight;
+	int16 savedCameraHeight = _vm->_cameraHeight;
+	int16 savedCameraX = _vm->_cameraX;
+	int16 savedCameraY = _vm->_cameraY;
 	byte moviePalette[768];
 	
 	_vm->_isSaveAllowed = false;
@@ -54,8 +59,6 @@ void MoviePlayer::playMovie(uint resIndex) {
 	_vm->_screen->clearSprites();
 
 	_vm->_arc->openResource(resIndex);
-
-	subtitleSlot = kMaxScriptSlots - 1;
 
 	_frameCount = _vm->_arc->readUint32LE();
 	_chunkCount = _vm->_arc->readUint32LE();
@@ -172,6 +175,12 @@ void MoviePlayer::playMovie(uint resIndex) {
 	
 	debug(0, "playMovie() done");
 
+	_vm->_sceneWidth = savedSceneWidth;
+	_vm->_sceneHeight = savedSceneHeight;
+	_vm->_cameraHeight = savedCameraHeight;
+	_vm->_cameraX = savedCameraX;
+	_vm->_cameraY = savedCameraY;
+
 	_vm->_isSaveAllowed = true;
 
 }
@@ -189,7 +198,7 @@ void MoviePlayer::fetchAudioChunks() {
 		byte chunkType = _vm->_arc->readByte();
 		uint32 chunkSize = _vm->_arc->readUint32LE();
 		if (chunkType == 4) {
-			byte *chunkBuffer = new byte[chunkSize];
+			byte *chunkBuffer = (byte*)malloc(chunkSize);
 			_vm->_arc->read(chunkBuffer, chunkSize);
 			_audioStream->queueBuffer(chunkBuffer, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 			chunkBuffer = NULL;

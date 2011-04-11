@@ -216,7 +216,6 @@ void PictureEngine::requestLoadgame(int slotNum) {
 }
 
 void PictureEngine::loadScene(uint resIndex) {
-	// TODO
 
 	Resource *sceneResource = _res->load(resIndex);
 	byte *scene = sceneResource->data;
@@ -431,6 +430,10 @@ void PictureEngine::setCamera(int16 x, int16 y) {
 	_cameraY = y;
 	_newCameraY = y;
 
+}
+
+bool PictureEngine::getCameraChanged() {
+	return _cameraX != _newCameraX || _cameraY != _newCameraY;
 }
 
 void PictureEngine::scrollCameraUp(int16 delta) {

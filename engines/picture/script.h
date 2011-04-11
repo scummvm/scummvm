@@ -128,6 +128,7 @@ protected:
 	void sfClearPaletteFragments();
 	void sfAddPaletteFragment();
 	void sfSetDeltaAnimPalette();
+	void sfSetUnkPaletteEffect();
 	void sfBuildColorTransTable();
 	void sfSetDeltaMainPalette();
 	void sfLoadScript();
@@ -153,6 +154,7 @@ protected:
 	void sfScrollCameraLeftEx();
 	void sfScrollCameraRightEx();
 	void sfSetCamera();
+	void sfGetCameraChanged();
 	void sfGetRgbModifiertAtPoint();
 	void sfStartAnim();
 	void sfAnimNextFrame();

@@ -75,7 +75,6 @@ void RenderQueue::addSprite(SpriteDrawItem &sprite) {
 
 void RenderQueue::addText(int16 x, int16 y, byte color, uint fontResIndex, byte *text, int len) {
 
-	// TODO: Font caching?
 	Font font(_vm->_res->load(fontResIndex)->data);
 
 	RenderQueueItem item;
@@ -249,8 +248,6 @@ RenderQueueItem *RenderQueue::findItemInQueue(RenderQueueArray *queue, const Ren
 }
 
 bool RenderQueue::hasItemChanged(const RenderQueueItem &item1, const RenderQueueItem &item2) {
-
-	// TODO: Clean up.
 
 	if (item1.type != item1.type)
 		return true;

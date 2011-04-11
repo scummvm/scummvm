@@ -96,7 +96,6 @@ protected:
 	struct Item {
 		Common::Rect rect;
 		ItemID id;
-		//const byte *caption;
 		Common::String caption;
 		byte defaultColor, activeColor;
 		int x, y, w;

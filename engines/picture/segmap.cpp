@@ -38,8 +38,6 @@ SegmentMap::~SegmentMap() {
 
 void SegmentMap::load(byte *source) {
 
-	// TODO: Use MemoryReadStream
-
 	freeSegmapMaskRectSurfaces();
 	_maskRects.clear();
 	_pathRects.clear();

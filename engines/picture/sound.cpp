@@ -53,7 +53,7 @@ void Sound::playSound(int16 resIndex, int16 type, int16 volume) {
 
 	// TODO: Use the right volumes
 
-	debug("playSound(%d, %d, %d)", resIndex, type, volume);
+	debug(0, "playSound(%d, %d, %d)", resIndex, type, volume);
 	
 	if (volume == -1 || type == -2) {
 		if (type == kChannelTypeBackground) {

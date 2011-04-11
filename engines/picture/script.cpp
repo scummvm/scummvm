@@ -68,71 +68,85 @@ typedef Common::Functor0Mem<void, ScriptInterpreter> ScriptFunctionF;
 	_scriptFuncNames.push_back(#x);
 void ScriptInterpreter::setupScriptFunctions() {
 
+	// 0
 	RegisterScriptFunction(sfNop);
 	RegisterScriptFunction(sfNop);
 	RegisterScriptFunction(sfGetGameVar);
 	RegisterScriptFunction(sfSetGameVar);
 	RegisterScriptFunction(sfUpdateScreen);
+	// 5
 	RegisterScriptFunction(sfGetRandomNumber);
 	RegisterScriptFunction(sfDrawGuiTextMulti);
 	RegisterScriptFunction(sfUpdateVerbLine);
 	RegisterScriptFunction(sfSetFontColor);
 	RegisterScriptFunction(sfGetTalkTextDuration);
+	// 10
 	RegisterScriptFunction(sfTalk);
 	RegisterScriptFunction(sfFindPaletteFragment);
 	RegisterScriptFunction(sfClearPaletteFragments);
 	RegisterScriptFunction(sfAddPaletteFragment);
 	RegisterScriptFunction(sfSetDeltaAnimPalette);
-	RegisterScriptFunction(sfNop); // TODO
+	// 15
+	RegisterScriptFunction(sfSetUnkPaletteEffect);
 	RegisterScriptFunction(sfBuildColorTransTable);
 	RegisterScriptFunction(sfSetDeltaMainPalette);
 	RegisterScriptFunction(sfLoadScript);
 	RegisterScriptFunction(sfRegisterFont);
+	// 20
 	RegisterScriptFunction(sfLoadAddPalette);
 	RegisterScriptFunction(sfLoadScene);
 	RegisterScriptFunction(sfSetGuiHeight);
 	RegisterScriptFunction(sfFindMouseInRectIndex1);
 	RegisterScriptFunction(sfFindMouseInRectIndex2);
+	// 25
 	RegisterScriptFunction(sfDrawGuiImage);
 	RegisterScriptFunction(sfAddAnimatedSpriteNoLoop);
 	RegisterScriptFunction(sfAddAnimatedSprite);
 	RegisterScriptFunction(sfAddStaticSprite);
 	RegisterScriptFunction(sfAddAnimatedSpriteScaled);
+	// 30
 	RegisterScriptFunction(sfFindPath);
 	RegisterScriptFunction(sfWalk);
 	RegisterScriptFunction(sfScrollCameraUp);
 	RegisterScriptFunction(sfScrollCameraDown);
 	RegisterScriptFunction(sfScrollCameraLeft);
+	// 35
 	RegisterScriptFunction(sfScrollCameraRight);
 	RegisterScriptFunction(sfScrollCameraUpEx);
 	RegisterScriptFunction(sfScrollCameraDownEx);
 	RegisterScriptFunction(sfScrollCameraLeftEx);
 	RegisterScriptFunction(sfScrollCameraRightEx);
+	// 40
 	RegisterScriptFunction(sfSetCamera);
-	RegisterScriptFunction(sfNop); // TODO
+	RegisterScriptFunction(sfGetCameraChanged);
 	RegisterScriptFunction(sfGetRgbModifiertAtPoint);
 	RegisterScriptFunction(sfStartAnim);
 	RegisterScriptFunction(sfAnimNextFrame);
+	// 45
 	RegisterScriptFunction(sfNop);
 	RegisterScriptFunction(sfGetAnimFrameNumber);
 	RegisterScriptFunction(sfGetAnimStatus);
 	RegisterScriptFunction(sfStartShakeScreen);
 	RegisterScriptFunction(sfStopShakeScreen);
+	// 50
 	RegisterScriptFunction(sfStartSequence);
 	RegisterScriptFunction(sfEndSequence);
 	RegisterScriptFunction(sfSetSequenceVolume);
 	RegisterScriptFunction(sfPlayPositionalSound);
 	RegisterScriptFunction(sfPlaySound2);
+	// 55
 	RegisterScriptFunction(sfClearScreen);
 	RegisterScriptFunction(sfNop);
 	RegisterScriptFunction(sfHandleInput);
 	RegisterScriptFunction(sfRunOptionsScreen);
 	RegisterScriptFunction(sfPrecacheSprites);
+	// 60
 	RegisterScriptFunction(sfPrecacheSounds1);
 	RegisterScriptFunction(sfDeletePrecachedFiles);
 	RegisterScriptFunction(sfPrecacheSounds2);
 	RegisterScriptFunction(sfRestoreStackPtr);
 	RegisterScriptFunction(sfSaveStackPtr);
+	// 65
 	RegisterScriptFunction(sfPlayMovie);
 	RegisterScriptFunction(sfNop);
 
@@ -851,6 +865,11 @@ void ScriptInterpreter::sfSetDeltaAnimPalette() {
 	_vm->_palette->setDeltaPalette(_vm->_palette->getAnimPalette(), arg8(6), (char)arg8(5), arg8(4), arg8(3));
 }
 
+void ScriptInterpreter::sfSetUnkPaletteEffect() {
+	// TODO
+	debug("ScriptInterpreter::sfSetUnkPaletteEffect");
+}
+
 void ScriptInterpreter::sfBuildColorTransTable() {
 	_vm->_palette->buildColorTransTable(arg8(4), (char)arg8(3), arg8(5));
 }
@@ -979,6 +998,10 @@ void ScriptInterpreter::sfSetCamera() {
 	_vm->setCamera(arg16(5), arg16(3));
 }
 
+void ScriptInterpreter::sfGetCameraChanged() {
+	localWrite16(arg16(3), _vm->getCameraChanged() ? 1 : 0);
+}
+
 void ScriptInterpreter::sfGetRgbModifiertAtPoint() {
 	byte *rgb = getSlotData(arg16(11)) + arg16(9);
 	_vm->_segmap->getRgbModifiertAtPoint(arg16(5), arg16(3), arg16(7), rgb[0], rgb[1], rgb[2]);
@@ -1014,15 +1037,21 @@ void ScriptInterpreter::sfStopShakeScreen() {
 
 void ScriptInterpreter::sfStartSequence() {
 	// TODO
-	//_vm->_arc->dump(arg16(3));
+	// DEBUG: Dump music so we know what's in there
+	int16 sequenceResIndex = arg16(3);
+	debug("ScriptInterpreter::sfStartSequence(%d)", sequenceResIndex);
+	if (sequenceResIndex >= 0)
+		_vm->_arc->dump(sequenceResIndex, "music");
 }
 
 void ScriptInterpreter::sfEndSequence() {
 	// TODO
+	debug("ScriptInterpreter::sfEndSequence");
 }
 
 void ScriptInterpreter::sfSetSequenceVolume() {
 	// TODO
+	//debug("ScriptInterpreter::sfSetSequenceVolume");
 }
 
 void ScriptInterpreter::sfPlayPositionalSound() {
@@ -1035,6 +1064,7 @@ void ScriptInterpreter::sfPlaySound2() {
 
 void ScriptInterpreter::sfClearScreen() {
 	// TODO
+	debug("ScriptInterpreter::sfClearScreen");
 }
 
 void ScriptInterpreter::sfHandleInput() {

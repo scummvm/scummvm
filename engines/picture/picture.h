@@ -114,6 +114,7 @@ public:
 	void setGuiHeight(int16 guiHeight);
 
 	void setCamera(int16 x, int16 y);
+	bool getCameraChanged();
 	void scrollCameraUp(int16 delta);
 	void scrollCameraDown(int16 delta);
 	void scrollCameraLeft(int16 delta);
