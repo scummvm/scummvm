@@ -227,17 +227,19 @@ Common::Error GroovieEngine::run() {
 		_script->directGameLoad(slot);
 	}
 
-	// Check that the game files and the audio tracks aren't together run from
-	// the same cd
-	checkCD();
-
 	// Game timer counter
 	uint16 tmr = 0;
 
-	// Initialize the CD
-	int cd_num = ConfMan.getInt("cdrom");
-	if (cd_num >= 0)
-		_system->getAudioCDManager()->openCD(cd_num);
+	// Check that the game files and the audio tracks aren't together run from
+	// the same cd
+	if (getPlatform() != Common::kPlatformIOS) {
+		checkCD();
+
+		// Initialize the CD
+		int cd_num = ConfMan.getInt("cdrom");
+		if (cd_num >= 0)
+			_system->getAudioCDManager()->openCD(cd_num);
+	}
 
 	while (!shouldQuit()) {
 		// Give the debugger a chance to act
