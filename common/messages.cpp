@@ -12,14 +12,6 @@ struct _po2c_msg {
 	const char * msgstr;
 };
 
-static struct _po2c_msg _po2c_lang_ru_RU[] = {
-	{ -1, NULL }
-};
-
-static struct _po2c_msg _po2c_lang_hu_HU[] = {
-	{ -1, NULL }
-};
-
 static struct {
 	const char * lang;
 	const char * charset;
