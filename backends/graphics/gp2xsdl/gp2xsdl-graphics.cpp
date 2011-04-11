@@ -18,14 +18,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/scummsys.h"
 
-#ifdef GP2X
+#if defined(GP2X_OLD)
 
 #include "backends/graphics/gp2xsdl/gp2xsdl-graphics.h"
 #include "graphics/scaler/aspect.h"

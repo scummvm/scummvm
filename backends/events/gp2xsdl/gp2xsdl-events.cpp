@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(GP2X)
+#if defined(GP2X_OLD)
 
 #include "backends/events/gp2xsdl/gp2xsdl-events.h"
 #include "backends/platform/gp2x/gp2x-hw.h"
