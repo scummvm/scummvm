@@ -147,7 +147,6 @@ void AnimationPlayer::saveState(Common::WriteStream *out) {
 }
 
 void AnimationPlayer::loadState(Common::ReadStream *in) {
-
 	_resIndex = in->readUint16LE();
 	_width = in->readUint16LE();
 	_height = in->readUint16LE();
@@ -160,7 +159,6 @@ void AnimationPlayer::loadState(Common::ReadStream *in) {
 	_firstCurFrameSize = in->readUint32LE();
 	_firstNextFrameSize = in->readUint32LE();
 	_firstNextFrameOffset = in->readUint32LE();
-	
 }
 
 } // End of namespace Toltecs

@@ -57,7 +57,6 @@ uint32 ArchiveReader::openResource(uint resIndex) {
 void ArchiveReader::closeResource() {
 }
 
-
 uint32 ArchiveReader::getResourceSize(uint resIndex) {
 	return _offsets[resIndex + 1] - _offsets[resIndex];
 }

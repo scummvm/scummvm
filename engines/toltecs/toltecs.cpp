@@ -214,7 +214,6 @@ void ToltecsEngine::requestLoadgame(int slotNum) {
 }
 
 void ToltecsEngine::loadScene(uint resIndex) {
-	// TODO
 
 	Resource *sceneResource = _res->load(resIndex);
 	byte *scene = sceneResource->data;
@@ -429,6 +428,10 @@ void ToltecsEngine::setCamera(int16 x, int16 y) {
 	_cameraY = y;
 	_newCameraY = y;
 
+}
+
+bool ToltecsEngine::getCameraChanged() {
+	return _cameraX != _newCameraX || _cameraY != _newCameraY;
 }
 
 void ToltecsEngine::scrollCameraUp(int16 delta) {

@@ -34,7 +34,6 @@
 namespace Toltecs {
 
 /* TODO:
-	- Saveload is working so far but only one slot is supported until the game menu is implemented
 	- Save with F7; Load with F9
 	- Saving during an animation (AnimationPlayer) is not working correctly yet
 	- Maybe switch to SCUMM/Tinsel serialization approach?
