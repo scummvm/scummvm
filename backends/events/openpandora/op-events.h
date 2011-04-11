@@ -37,8 +37,6 @@ protected:
 	bool _buttonStateL;
 
 	bool remapKey(SDL_Event &ev, Common::Event &event);
-
-//private:
 	bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
 	bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
 };
