@@ -18,15 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "backends/platform/gp2x/gp2x-common.h"
-#include "backends/plugins/posix/posix-provider.h"
+#include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
+#if defined(GP2X)
 int main(int argc, char *argv[]) {
 
 	// Create our OSystem instance
@@ -37,7 +35,7 @@ int main(int argc, char *argv[]) {
 	((OSystem_GP2X *)g_system)->init();
 
 #ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new POSIXPluginProvider());
+	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
 #endif
 
 	// Invoke the actual ScummVM main entry point:
@@ -48,3 +46,5 @@ int main(int argc, char *argv[]) {
 
 	return res;
 }
+
+#endif

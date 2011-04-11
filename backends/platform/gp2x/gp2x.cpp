@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -31,12 +28,11 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include "backends/platform/sdl/sdl-sys.h"
 #include "backends/platform/gp2x/gp2x-common.h"
 #include "backends/platform/gp2x/gp2x-hw.h"
 #include "backends/platform/gp2x/gp2x-mem.h"
 
-#include "backends/graphics/gp2xsdl/gp2xsdl-graphics.h"
-#include "backends/events/gp2xsdl/gp2xsdl-events.h"
 #include "backends/saves/default/default-saves.h"
 
 #include "common/config-manager.h"
@@ -143,7 +139,7 @@ void OSystem_GP2X::initBackend() {
 	if (_graphicsManager == 0)
 		_graphicsManager = new GP2XSdlGraphicsManager(_eventSource);
 
-	// Call parent implementation of this method
+	/* Pass to POSIX method to do the heavy lifting */
 	OSystem_POSIX::initBackend();
 }
 
