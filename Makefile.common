@@ -177,7 +177,6 @@ ifneq ($(origin VER_SVNREV), undefined)
 CXXFLAGS+= -DRESIDUAL_SVN_REVISION=\"$(VER_SVNREV)\"
 endif
 
-
 ######################################################################
 # Distribution settings
 ######################################################################
