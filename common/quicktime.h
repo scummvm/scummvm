@@ -146,7 +146,6 @@ protected:
 		uint32 keyframe_count;
 		uint32 *keyframes;
 		int32 time_scale;
-		int time_rate;
 
 		uint16 width;
 		uint16 height;

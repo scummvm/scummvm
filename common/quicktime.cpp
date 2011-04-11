@@ -129,18 +129,10 @@ void QuickTimeParser::init() {
 			i++;
 	}
 
-	// Adjust time/duration
-	for (uint32 i = 0; i < _numStreams; i++) {
-		MOVStreamContext *sc = _streams[i];
-
-		if (!sc->time_rate)
-			sc->time_rate = 1;
-
-		if (!sc->time_scale)
-			sc->time_scale = _timeScale;
-
-		sc->duration /= sc->time_rate;
-	}
+	// Adjust time scale
+	for (uint32 i = 0; i < _numStreams; i++)
+		if (!_streams[i]->time_scale)
+			_streams[i]->time_scale = _timeScale;
 }
 
 void QuickTimeParser::initParseTable() {
@@ -637,13 +629,8 @@ int QuickTimeParser::readSTSZ(MOVatom atom) {
 	return 0;
 }
 
-static uint32 ff_gcd(uint32 a, uint32 b) {
-	return b ? ff_gcd(b, a % b) : a;
-}
-
 int QuickTimeParser::readSTTS(MOVatom atom) {
 	MOVStreamContext *st = _streams[_numStreams - 1];
-	uint32 duration = 0;
 	uint32 total_sample_count = 0;
 
 	_fd->readByte(); // version
@@ -654,8 +641,6 @@ int QuickTimeParser::readSTTS(MOVatom atom) {
 
 	debug(0, "track[%i].stts.entries = %i", _numStreams - 1, st->stts_count);
 
-	st->time_rate = 0;
-
 	for (int32 i = 0; i < st->stts_count; i++) {
 		int sample_duration;
 		int sample_count;
@@ -665,18 +650,12 @@ int QuickTimeParser::readSTTS(MOVatom atom) {
 		st->stts_data[i].count = sample_count;
 		st->stts_data[i].duration = sample_duration;
 
-		st->time_rate = ff_gcd(st->time_rate, sample_duration);
-
 		debug(0, "sample_count=%d, sample_duration=%d", sample_count, sample_duration);
 
-		duration += sample_duration * sample_count;
 		total_sample_count += sample_count;
 	}
 
 	st->nb_frames = total_sample_count;
-
-	if (duration)
-		st->duration = duration;
 
 	return 0;
 }
@@ -817,7 +796,6 @@ QuickTimeParser::MOVStreamContext::MOVStreamContext() {
 	keyframe_count = 0;
 	keyframes = 0;
 	time_scale = 0;
-	time_rate = 0;
 	width = 0;
 	height = 0;
 	codec_type = CODEC_TYPE_MOV_OTHER;
