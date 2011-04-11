@@ -768,10 +768,17 @@ bool MusicPlayerMPEG4::load(uint32 fileref, bool loop) {
 	if (len < 4)
 		return false;	// This shouldn't actually occur
 
-	// RL still says xmi, but we're after external m4a
-	info.filename.setChar('m', len-3);
-	info.filename.setChar('4', len-2);
-	info.filename.setChar('a', len-1);
+	// iOS port provides alternative intro sequence music
+	if (info.filename == "gu39.xmi") {
+		info.filename = "intro.m4a";
+	} else if (info.filename == "gu32.xmi") {
+		info.filename = "foyer.m4a";
+	} else {
+		// RL still says xmi, but we're after external m4a
+		info.filename.setChar('m', len-3);
+		info.filename.setChar('4', len-2);
+		info.filename.setChar('a', len-1);
+	}
 
 	// Create the audio stream
 	Audio::AudioStream *audStream = Audio::makeQuickTimeStream(info.filename);
