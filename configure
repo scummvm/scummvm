@@ -2088,7 +2088,6 @@ fi
 #
 define_in_config_if_yes "$_mt32emu" 'USE_MT32EMU'
 
-fi
 
 #
 # Check for math lib
