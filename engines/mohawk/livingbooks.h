@@ -575,7 +575,7 @@ public:
 };
 
 struct NotifyEvent {
-	NotifyEvent(uint t, uint p) : type(t), param(p) { }
+	NotifyEvent(uint t, uint p) : type(t), param(p), newUnknown(0), newMode(0), newPage(0), newSubpage(0) { }
 	uint type;
 	uint param;
 
