@@ -12,10 +12,10 @@ gp2x-bundle: $(EXECUTABLE)
 
 	echo "Please put your save games in this dir" >> "$(bundle_name)/saves/PUT_SAVES_IN_THIS_DIR"
 
-	$(CP) $(srcdir)/backends/platform/gp2x/build/scummvm.gpe $(bundle_name)/
-	$(CP) $(srcdir)/backends/platform/gp2x/build/scummvm.png $(bundle_name)/
-	$(CP) $(srcdir)/backends/platform/gp2x/build/README-GP2X $(bundle_name)/
-	$(CP) $(srcdir)/backends/platform/gp2x/build/mmuhack.o $(bundle_name)/
+	$(CP) $(srcdir)/backends/platform/gph/devices/gp2x/scummvm.gpe $(bundle_name)/
+	$(CP) $(srcdir)/backends/platform/gph/devices/common/scummvm.png $(bundle_name)/
+	$(CP) $(srcdir)/backends/platform/gph/devices/common/README-GPH $(bundle_name)/
+	$(CP) $(srcdir)/backends/platform/gph/devices/gp2x/mmuhack/mmuhack.o $(bundle_name)/
 
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) $(bundle_name)/
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(bundle_name)/
@@ -42,10 +42,10 @@ gp2x-bundle-debug: $(EXECUTABLE)
 
 	echo "Please put your save games in this dir" >> "$(bundle_name)/saves/PUT_SAVES_IN_THIS_DIR"
 
-	$(CP) $(srcdir)/backends/platform/gp2x/build/scummvm.gpe $(bundle_name)/
-	$(CP) $(srcdir)/backends/platform/gp2x/build/scummvm.png $(bundle_name)/
-	$(CP) $(srcdir)/backends/platform/gp2x/build/README-GP2X $(bundle_name)/
-	$(CP) $(srcdir)/backends/platform/gp2x/build/mmuhack.o $(bundle_name)/
+	$(CP) $(srcdir)/backends/platform/gph/devices/gp2x/scummvm.gpe $(bundle_name)/
+	$(CP) $(srcdir)/backends/platform/gph/devices/common/scummvm.png $(bundle_name)/
+	$(CP) $(srcdir)/backends/platform/gph/devices/common/README-GPH $(bundle_name)/
+	$(CP) $(srcdir)/backends/platform/gph/devices/gp2x/mmuhack/mmuhack.o $(bundle_name)/
 
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) $(bundle_name)/
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(bundle_name)/
