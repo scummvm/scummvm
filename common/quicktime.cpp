@@ -631,7 +631,7 @@ int QuickTimeParser::readSTSZ(MOVatom atom) {
 
 int QuickTimeParser::readSTTS(MOVatom atom) {
 	MOVStreamContext *st = _streams[_numStreams - 1];
-	uint32 total_sample_count = 0;
+	uint32 totalSampleCount = 0;
 
 	_fd->readByte(); // version
 	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
@@ -639,24 +639,18 @@ int QuickTimeParser::readSTTS(MOVatom atom) {
 	st->stts_count = _fd->readUint32BE();
 	st->stts_data = new MOVstts[st->stts_count];
 
-	debug(0, "track[%i].stts.entries = %i", _numStreams - 1, st->stts_count);
+	debug(0, "track[%d].stts.entries = %d", _numStreams - 1, st->stts_count);
 
 	for (int32 i = 0; i < st->stts_count; i++) {
-		int sample_duration;
-		int sample_count;
+		st->stts_data[i].count = _fd->readUint32BE();
+		st->stts_data[i].duration = _fd->readUint32BE();
 
-		sample_count = _fd->readUint32BE();
-		sample_duration = _fd->readUint32BE();
-		st->stts_data[i].count = sample_count;
-		st->stts_data[i].duration = sample_duration;
+		debug(1, "\tCount = %d, Duration = %d", st->stts_data[i].count, st->stts_data[i].duration);
 
-		debug(0, "sample_count=%d, sample_duration=%d", sample_count, sample_duration);
-
-		total_sample_count += sample_count;
+		totalSampleCount += st->stts_data[i].count;
 	}
 
-	st->nb_frames = total_sample_count;
-
+	st->nb_frames = totalSampleCount;
 	return 0;
 }
 
