@@ -62,8 +62,8 @@ SoundGen2GS::SoundGen2GS(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMi
 
 SoundGen2GS::~SoundGen2GS() {
 	_mixer->stopHandle(_soundHandle);
-	delete _wavetable;
-	delete _out;
+	delete[] _wavetable;
+	delete[] _out;
 }
 
 int SoundGen2GS::readBuffer(int16 *buffer, const int numSamples) {
