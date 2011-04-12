@@ -115,5 +115,9 @@ const char *gScummVMFeatures = ""
 #ifdef USE_THEORADEC
 	"Theora "
 #endif
+
+#ifdef USE_FAAD
+	"AAC "
+#endif
 	;
 
