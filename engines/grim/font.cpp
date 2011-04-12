@@ -31,9 +31,6 @@
 #include "engines/grim/lua.h"
 #include "engines/grim/colormap.h"
 
-#include <iostream>
-using namespace std;
-
 namespace Grim {
 
 Font::Font(const char *filename, const char *data, int len) : Object() {

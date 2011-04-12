@@ -41,9 +41,6 @@
 
 #include "engines/grim/imuse/imuse.h"
 
-#include <iostream>
-using namespace std;
-
 namespace Grim {
 
 extern Imuse *g_imuse;
@@ -3536,7 +3533,6 @@ static void FreeObjectState() {
 		return;
 	ObjectState *state =  static_cast<ObjectState *>(lua_getuserdata(param));
 	g_grim->currScene()->deleteObjectState(state);
-	cout<<"free "<<state<<endl;
 }
 
 static void SendObjectToBack() {
