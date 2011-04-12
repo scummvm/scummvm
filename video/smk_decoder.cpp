@@ -379,13 +379,13 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	_header.signature = _fileStream->readUint32BE();
 
 	// No BINK support available
-	if (_header.signature == MKID_BE('BIKi')) {
+	if (_header.signature == MKTAG('B','I','K','i')) {
 		delete _fileStream;
 		_fileStream = 0;
 		return false;
 	}
 
-	assert(_header.signature == MKID_BE('SMK2') || _header.signature == MKID_BE('SMK4'));
+	assert(_header.signature == MKTAG('S','M','K','2') || _header.signature == MKTAG('S','M','K','4'));
 
 	uint32 width = _fileStream->readUint32LE();
 	uint32 height = _fileStream->readUint32LE();
@@ -615,7 +615,7 @@ const Graphics::Surface *SmackerDecoder::decodeNextFrame() {
 			break;
 		case SMK_BLOCK_FULL:
 			// Smacker v2 has one mode, Smacker v4 has three
-			if (_header.signature == MKID_BE('SMK2')) {
+			if (_header.signature == MKTAG('S','M','K','2')) {
 				mode = 0;
 			} else {
 				// 00 - mode 0

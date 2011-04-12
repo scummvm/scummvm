@@ -67,12 +67,12 @@ namespace Graphics {
 
 enum PNGChunks {
 	// == Critical chunks =====================================================
-	kChunkIHDR = MKID_BE('IHDR'),	// Image header
-	kChunkIDAT = MKID_BE('IDAT'),	// Image data
-	kChunkPLTE = MKID_BE('PLTE'),	// Palette
-	kChunkIEND = MKID_BE('IEND'),	// Image trailer
+	kChunkIHDR = MKTAG('I','H','D','R'),	// Image header
+	kChunkIDAT = MKTAG('I','D','A','T'),	// Image data
+	kChunkPLTE = MKTAG('P','L','T','E'),	// Palette
+	kChunkIEND = MKTAG('I','E','N','D'),	// Image trailer
 	// == Ancillary chunks ====================================================
-	kChunktRNS = MKID_BE('tRNS')	// Transparency
+	kChunktRNS = MKTAG('t','R','N','S')	// Transparency
 	// All of the other ancillary chunks are ignored. They're added here for
 	// reference only.
 	// cHRM - Primary chromacities and white point

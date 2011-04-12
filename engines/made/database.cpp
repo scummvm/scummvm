@@ -659,7 +659,7 @@ bool GameDatabaseV3::getSavegameDescription(const char *filename, Common::String
 	}
 
 	uint32 header = in->readUint32BE();
-	if (header != MKID_BE('SGAM')) {
+	if (header != MKTAG('S','G','A','M')) {
 		warning("Save game header missing");
 		delete in;
 		return false;
@@ -696,7 +696,7 @@ int16 GameDatabaseV3::savegame(const char *filename, const char *description, in
 		return 6;
 	}
 	strncpy(desc, description, 64);
-	out->writeUint32BE(MKID_BE('SGAM'));
+	out->writeUint32BE(MKTAG('S','G','A','M'));
 	out->writeUint32LE(size);
 	out->writeUint16LE(version);
 	out->write(desc, 64);
@@ -715,7 +715,7 @@ int16 GameDatabaseV3::loadgame(const char *filename, int16 version) {
 	}
 
 	uint32 header = in->readUint32BE();
-	if (header != MKID_BE('SGAM')) {
+	if (header != MKTAG('S','G','A','M')) {
 		warning("Save game header missing");
 		delete in;
 		return 1;

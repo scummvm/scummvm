@@ -170,7 +170,7 @@ Graphics::Surface *CDToonsDecoder::decodeImage(Common::SeekableReadStream *strea
 		nextPos += size;
 
 		switch (tag) {
-		case MKID_BE('Diff'):
+		case MKTAG('D','i','f','f'):
 			{
 			debugN(5, "CDToons: Diff\n");
 			uint16 count = stream->readUint16BE();
@@ -206,7 +206,7 @@ Graphics::Surface *CDToonsDecoder::decodeImage(Common::SeekableReadStream *strea
 			}
 			}
 			break;
-		case MKID_BE('XFrm'):
+		case MKTAG('X','F','r','m'):
 			{
 			debugN(5, "CDToons: XFrm\n");
 			if (!(flags & 0x10))
@@ -229,7 +229,7 @@ Graphics::Surface *CDToonsDecoder::decodeImage(Common::SeekableReadStream *strea
 				dirtyRect2XFrm.left, dirtyRect2XFrm.top, dirtyRect2XFrm.right, dirtyRect2XFrm.bottom);
 			}
 			break;
-		case MKID_BE('Mrks'):
+		case MKTAG('M','r','k','s'):
 			debugN(5, "CDToons: Mrks\n");
 			if (!(flags & 0x2))
 				error("CDToons: useless Mrks?");
@@ -237,14 +237,14 @@ Graphics::Surface *CDToonsDecoder::decodeImage(Common::SeekableReadStream *strea
 			// TODO
 			warning("CDToons: encountered Mrks, not implemented yet");
 			break;
-		case MKID_BE('Scal'):
+		case MKTAG('S','c','a','l'):
 			// TODO
 			warning("CDToons: encountered Scal, not implemented yet");
 			break;
-		case MKID_BE('WrMp'):
+		case MKTAG('W','r','M','p'):
 			warning("CDToons: encountered WrMp, ignoring");
 			break;
-		case MKID_BE('FrtR'):
+		case MKTAG('F','r','t','R'):
 			{
 			debugN(5, "CDToons: FrtR\n");
 			if (!(flags & 0x40))
@@ -259,7 +259,7 @@ Graphics::Surface *CDToonsDecoder::decodeImage(Common::SeekableReadStream *strea
 			}
 			}
 			break;
-		case MKID_BE('BckR'):
+		case MKTAG('B','c','k','R'):
 			{
 			debugN(5, "CDToons: BckR\n");
 			if (!(flags & 0x20))

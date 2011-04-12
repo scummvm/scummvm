@@ -1159,7 +1159,7 @@ void Winnie::saveGame() {
 	if (!(outfile = _vm->getSaveFileMan()->openForSaving(szFile)))
 		return;
 
-	outfile->writeUint32BE(MKID_BE('WINN'));	// header
+	outfile->writeUint32BE(MKTAG('W','I','N','N'));	// header
 	outfile->writeByte(WTP_SAVEGAME_VERSION);
 
 	outfile->writeByte(_game.fSound);
@@ -1195,7 +1195,7 @@ void Winnie::loadGame() {
 	if (!(infile = _vm->getSaveFileMan()->openForLoading(szFile)))
 		return;
 
-	if (infile->readUint32BE() == MKID_BE('WINN')) {
+	if (infile->readUint32BE() == MKTAG('W','I','N','N')) {
 		saveVersion = infile->readByte();
 		if (saveVersion != WTP_SAVEGAME_VERSION)
 			warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, WTP_SAVEGAME_VERSION);

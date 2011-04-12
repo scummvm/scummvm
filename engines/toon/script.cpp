@@ -70,7 +70,7 @@ EMCInterpreter::~EMCInterpreter() {
 
 bool EMCInterpreter::callback(Common::IFFChunk &chunk) {
 	switch (chunk._type) {
-	case MKID_BE('TEXT'):
+	case MKTAG('T','E','X','T'):
 		delete[] _scriptData->text;
 		_scriptData->text = new byte[chunk._size];
 		assert(_scriptData->text);
@@ -78,7 +78,7 @@ bool EMCInterpreter::callback(Common::IFFChunk &chunk) {
 			error("Couldn't read TEXT chunk from file '%s'", _filename);
 		break;
 
-	case MKID_BE('ORDR'):
+	case MKTAG('O','R','D','R'):
 		delete[] _scriptData->ordr;
 		_scriptData->ordr = new uint16[chunk._size >> 1];
 		assert(_scriptData->ordr);
@@ -89,7 +89,7 @@ bool EMCInterpreter::callback(Common::IFFChunk &chunk) {
 			_scriptData->ordr[i] = READ_BE_UINT16(&_scriptData->ordr[i]);
 		break;
 
-	case MKID_BE('DATA'):
+	case MKTAG('D','A','T','A'):
 		delete[] _scriptData->data;
 		_scriptData->data = new uint16[chunk._size >> 1];
 		assert(_scriptData->data);

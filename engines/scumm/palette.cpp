@@ -1029,7 +1029,7 @@ void ScummEngine::setCurrentPalette(int palindex) {
 void ScummEngine::setRoomPalette(int palindex, int room) {
 	const byte *roomptr = getResourceAddress(rtRoom, room);
 	assert(roomptr);
-	const byte *pals = findResource(MKID_BE('PALS'), roomptr);
+	const byte *pals = findResource(MKTAG('P','A','L','S'), roomptr);
 	assert(pals);
 	const byte *rgbs = findPalInPals(pals, palindex);
 	assert(rgbs);
@@ -1040,11 +1040,11 @@ const byte *ScummEngine::findPalInPals(const byte *pal, int idx) {
 	const byte *offs;
 	uint32 size;
 
-	pal = findResource(MKID_BE('WRAP'), pal);
+	pal = findResource(MKTAG('W','R','A','P'), pal);
 	if (pal == NULL)
 		return NULL;
 
-	offs = findResourceData(MKID_BE('OFFS'), pal);
+	offs = findResourceData(MKTAG('O','F','F','S'), pal);
 	if (offs == NULL)
 		return NULL;
 

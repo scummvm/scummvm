@@ -283,7 +283,7 @@ void Gdi::loadTiles(byte *roomptr) {
 
 #ifdef USE_RGB_COLOR
 void GdiPCEngine::loadTiles(byte *roomptr) {
-	decodePCEngineTileData(_vm->findResourceData(MKID_BE('TILE'), roomptr));
+	decodePCEngineTileData(_vm->findResourceData(MKTAG('T','I','L','E'), roomptr));
 }
 #endif
 
@@ -858,7 +858,7 @@ void ScummEngine::initBGBuffers(int height) {
 		_gdi->_numZBuffer = 2;
 	} else if (_game.features & GF_SMALL_HEADER) {
 		int off;
-		ptr = findResourceData(MKID_BE('SMAP'), room);
+		ptr = findResourceData(MKTAG('S','M','A','P'), room);
 		_gdi->_numZBuffer = 0;
 
 		if (_game.features & GF_16COLOR)
@@ -873,13 +873,13 @@ void ScummEngine::initBGBuffers(int height) {
 		}
 	} else if (_game.version == 8) {
 		// in V8 there is no RMIH and num z buffers is in RMHD
-		ptr = findResource(MKID_BE('RMHD'), room);
+		ptr = findResource(MKTAG('R','M','H','D'), room);
 		_gdi->_numZBuffer = READ_LE_UINT32(ptr + 24) + 1;
 	} else if (_game.heversion >= 70) {
-		ptr = findResource(MKID_BE('RMIH'), room);
+		ptr = findResource(MKTAG('R','M','I','H'), room);
 		_gdi->_numZBuffer = READ_LE_UINT16(ptr + 8) + 1;
 	} else {
-		ptr = findResource(MKID_BE('RMIH'), findResource(MKID_BE('RMIM'), room));
+		ptr = findResource(MKTAG('R','M','I','H'), findResource(MKTAG('R','M','I','M'), room));
 		_gdi->_numZBuffer = READ_LE_UINT16(ptr + 8) + 1;
 	}
 	assert(_gdi->_numZBuffer >= 1 && _gdi->_numZBuffer <= 8);
@@ -1647,9 +1647,9 @@ int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9], bool bmapImage)
 	if ((_vm->_game.features & GF_SMALL_HEADER) || _vm->_game.version == 8)
 		zplane_list[0] = ptr;
 	else if (bmapImage)
-		zplane_list[0] = _vm->findResource(MKID_BE('BMAP'), ptr);
+		zplane_list[0] = _vm->findResource(MKTAG('B','M','A','P'), ptr);
 	else
-		zplane_list[0] = _vm->findResource(MKID_BE('SMAP'), ptr);
+		zplane_list[0] = _vm->findResource(MKTAG('S','M','A','P'), ptr);
 
 	if (_zbufferDisabled)
 		numzbuf = 0;
@@ -1692,11 +1692,11 @@ int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9], bool bmapImage)
 			}
 		} else {
 			const uint32 zplane_tags[] = {
-				MKID_BE('ZP00'),
-				MKID_BE('ZP01'),
-				MKID_BE('ZP02'),
-				MKID_BE('ZP03'),
-				MKID_BE('ZP04')
+				MKTAG('Z','P','0','0'),
+				MKTAG('Z','P','0','1'),
+				MKTAG('Z','P','0','2'),
+				MKTAG('Z','P','0','3'),
+				MKTAG('Z','P','0','4')
 			};
 
 			for (i = 1; i < numzbuf; i++) {
@@ -1733,7 +1733,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 		// Skip to the BSTR->WRAP->OFFS chunk
 		smap_ptr = ptr + 24;
 	} else {
-		smap_ptr = _vm->findResource(MKID_BE('SMAP'), ptr);
+		smap_ptr = _vm->findResource(MKTAG('S','M','A','P'), ptr);
 		assert(smap_ptr);
 	}
 
@@ -1741,7 +1741,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 
 	const byte *tmsk_ptr = NULL;
 	if (_vm->_game.heversion >= 72) {
-		tmsk_ptr = _vm->findResource(MKID_BE('TMSK'), ptr);
+		tmsk_ptr = _vm->findResource(MKTAG('T','M','S','K'), ptr);
 	}
 
 	if (y + height > vs->h) {
@@ -2011,7 +2011,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 	byte *mask_ptr;
 	const byte *zplane_list[9];
 
-	const byte *bmap_ptr = _vm->findResourceData(MKID_BE('BMAP'), ptr);
+	const byte *bmap_ptr = _vm->findResourceData(MKTAG('B','M','A','P'), ptr);
 	assert(bmap_ptr);
 
 	byte code = *bmap_ptr++;
@@ -2091,7 +2091,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 }
 
 void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h) {
-	const byte *bmap_ptr = _vm->findResourceData(MKID_BE('BMAP'), ptr);
+	const byte *bmap_ptr = _vm->findResourceData(MKTAG('B','M','A','P'), ptr);
 	assert(bmap_ptr);
 
 	byte code = *bmap_ptr++;
@@ -2828,10 +2828,10 @@ void GdiPCEngine::decodeStrip(const byte *ptr, uint16 *tiles, byte *colors, uint
 void GdiPCEngine::decodePCEngineGfx(const byte *room) {
 	uint16* stripOffsets;
 
-	decodePCEngineTileData(_vm->findResourceData(MKID_BE('TILE'), room));
-	decodePCEngineMaskData(_vm->findResourceData(MKID_BE('ZP00'), room));
+	decodePCEngineTileData(_vm->findResourceData(MKTAG('T','I','L','E'), room));
+	decodePCEngineMaskData(_vm->findResourceData(MKTAG('Z','P','0','0'), room));
 
-	const byte* smap_ptr = _vm->findResourceData(MKID_BE('IM00'), room);
+	const byte* smap_ptr = _vm->findResourceData(MKTAG('I','M','0','0'), room);
 	smap_ptr++; // roomID
 	int numStrips = *smap_ptr++;
 	int numRows = *smap_ptr++;

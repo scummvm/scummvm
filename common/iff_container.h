@@ -35,111 +35,111 @@ namespace Common {
 
 typedef uint32 IFF_ID;
 
-#define ID_FORM     MKID_BE('FORM')
+#define ID_FORM     MKTAG('F','O','R','M')
 /* EA IFF 85 group identifier */
-#define ID_CAT      MKID_BE('CAT ')
+#define ID_CAT      MKTAG('C','A','T',' ')
 /* EA IFF 85 group identifier */
-#define ID_LIST     MKID_BE('LIST')
+#define ID_LIST     MKTAG('L','I','S','T')
 /* EA IFF 85 group identifier */
-#define ID_PROP     MKID_BE('PROP')
+#define ID_PROP     MKTAG('P','R','O','P')
 /* EA IFF 85 group identifier */
-#define ID_END      MKID_BE('END ')
+#define ID_END      MKTAG('E','N','D',' ')
 /* unofficial END-of-FORM identifier (see Amiga RKM Devices Ed.3
 page 376) */
-#define ID_ILBM     MKID_BE('ILBM')
+#define ID_ILBM     MKTAG('I','L','B','M')
 /* EA IFF 85 raster bitmap form */
-#define ID_DEEP     MKID_BE('DEEP')
+#define ID_DEEP     MKTAG('D','E','E','P')
 /* Chunky pixel image files (Used in TV Paint) */
-#define ID_RGB8     MKID_BE('RGB8')
+#define ID_RGB8     MKTAG('R','G','B','8')
 /* RGB image forms, Turbo Silver (Impulse) */
-#define ID_RGBN     MKID_BE('RGBN')
+#define ID_RGBN     MKTAG('R','G','B','N')
 /* RGB image forms, Turbo Silver (Impulse) */
-#define ID_PBM      MKID_BE('PBM ')
+#define ID_PBM      MKTAG('P','B','M',' ')
 /* 256-color chunky format (DPaint 2 ?) */
-#define ID_ACBM     MKID_BE('ACBM')
+#define ID_ACBM     MKTAG('A','C','B','M')
 /* Amiga Contiguous Bitmap (AmigaBasic) */
-#define ID_8SVX     MKID_BE('8SVX')
+#define ID_8SVX     MKTAG('8','S','V','X')
 /* Amiga 8 bits voice */
 
 /* generic */
 
-#define ID_FVER     MKID_BE('FVER')
+#define ID_FVER     MKTAG('F','V','E','R')
 /* AmigaOS version string */
-#define ID_JUNK     MKID_BE('JUNK')
+#define ID_JUNK     MKTAG('J','U','N','K')
 /* always ignore this chunk */
-#define ID_ANNO     MKID_BE('ANNO')
+#define ID_ANNO     MKTAG('A','N','N','O')
 /* EA IFF 85 Generic Annotation chunk */
-#define ID_AUTH     MKID_BE('AUTH')
+#define ID_AUTH     MKTAG('A','U','T','H')
 /* EA IFF 85 Generic Author chunk */
-#define ID_CHRS     MKID_BE('CHRS')
+#define ID_CHRS     MKTAG('C','H','R','S')
 /* EA IFF 85 Generic character string chunk */
-#define ID_NAME     MKID_BE('NAME')
+#define ID_NAME     MKTAG('N','A','M','E')
 /* EA IFF 85 Generic Name of art, music, etc. chunk */
-#define ID_TEXT     MKID_BE('TEXT')
+#define ID_TEXT     MKTAG('T','E','X','T')
 /* EA IFF 85 Generic unformatted ASCII text chunk */
-#define ID_copy     MKID_BE('(c) ')
+#define ID_copy     MKTAG('(','c',')',' ')
 /* EA IFF 85 Generic Copyright text chunk */
 
 /* ILBM chunks */
 
-#define ID_BMHD     MKID_BE('BMHD')
+#define ID_BMHD     MKTAG('B','M','H','D')
 /* ILBM BitmapHeader */
-#define ID_CMAP     MKID_BE('CMAP')
+#define ID_CMAP     MKTAG('C','M','A','P')
 /* ILBM 8bit RGB colormap */
-#define ID_GRAB     MKID_BE('GRAB')
+#define ID_GRAB     MKTAG('G','R','A','B')
 /* ILBM "hotspot" coordiantes */
-#define ID_DEST     MKID_BE('DEST')
+#define ID_DEST     MKTAG('D','E','S','T')
 /* ILBM destination image info */
-#define ID_SPRT     MKID_BE('SPRT')
+#define ID_SPRT     MKTAG('S','P','R','T')
 /* ILBM sprite identifier */
-#define ID_CAMG     MKID_BE('CAMG')
+#define ID_CAMG     MKTAG('C','A','M','G')
 /* Amiga viewportmodes */
-#define ID_BODY     MKID_BE('BODY')
+#define ID_BODY     MKTAG('B','O','D','Y')
 /* ILBM image data */
-#define ID_CRNG     MKID_BE('CRNG')
+#define ID_CRNG     MKTAG('C','R','N','G')
 /* color cycling */
-#define ID_CCRT     MKID_BE('CCRT')
+#define ID_CCRT     MKTAG('C','C','R','T')
 /* color cycling */
-#define ID_CLUT     MKID_BE('CLUT')
+#define ID_CLUT     MKTAG('C','L','U','T')
 /* Color Lookup Table chunk */
-#define ID_DPI      MKID_BE('DPI ')
+#define ID_DPI      MKTAG('D','P','I',' ')
 /* Dots per inch chunk */
-#define ID_DPPV     MKID_BE('DPPV')
+#define ID_DPPV     MKTAG('D','P','P','V')
 /* DPaint perspective chunk (EA) */
-#define ID_DRNG     MKID_BE('DRNG')
+#define ID_DRNG     MKTAG('D','R','N','G')
 /* DPaint IV enhanced color cycle chunk (EA) */
-#define ID_EPSF     MKID_BE('EPSF')
+#define ID_EPSF     MKTAG('E','P','S','F')
 /* Encapsulated Postscript chunk */
-#define ID_CMYK     MKID_BE('CMYK')
+#define ID_CMYK     MKTAG('C','M','Y','K')
 /* Cyan, Magenta, Yellow, & Black color map (Soft-Logik) */
-#define ID_CNAM     MKID_BE('CNAM')
+#define ID_CNAM     MKTAG('C','N','A','M')
 /* Color naming chunk (Soft-Logik) */
-#define ID_PCHG     MKID_BE('PCHG')
+#define ID_PCHG     MKTAG('P','C','H','G')
 /* Line by line palette control information (Sebastiano Vigna) */
-#define ID_PRVW     MKID_BE('PRVW')
+#define ID_PRVW     MKTAG('P','R','V','W')
 /* A mini duplicate ILBM used for preview (Gary Bonham) */
-#define ID_XBMI     MKID_BE('XBMI')
+#define ID_XBMI     MKTAG('X','B','M','I')
 /* eXtended BitMap Information (Soft-Logik) */
-#define ID_CTBL     MKID_BE('CTBL')
+#define ID_CTBL     MKTAG('C','T','B','L')
 /* Newtek Dynamic Ham color chunk */
-#define ID_DYCP     MKID_BE('DYCP')
+#define ID_DYCP     MKTAG('D','Y','C','P')
 /* Newtek Dynamic Ham chunk */
-#define ID_SHAM     MKID_BE('SHAM')
+#define ID_SHAM     MKTAG('S','H','A','M')
 /* Sliced HAM color chunk */
-#define ID_ABIT     MKID_BE('ABIT')
+#define ID_ABIT     MKTAG('A','B','I','T')
 /* ACBM body chunk */
-#define ID_DCOL     MKID_BE('DCOL')
+#define ID_DCOL     MKTAG('D','C','O','L')
 /* unofficial direct color */
-#define ID_DPPS     MKID_BE('DPPS')
+#define ID_DPPS     MKTAG('D','P','P','S')
 /* ? */
-#define ID_TINY     MKID_BE('TINY')
+#define ID_TINY     MKTAG('T','I','N','Y')
 /* ? */
-#define ID_DPPV     MKID_BE('DPPV')
+#define ID_DPPV     MKTAG('D','P','P','V')
 /* ? */
 
 /* 8SVX chunks */
 
-#define ID_VHDR     MKID_BE('VHDR')
+#define ID_VHDR     MKTAG('V','H','D','R')
 /* 8SVX Voice8Header */
 
 

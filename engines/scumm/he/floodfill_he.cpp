@@ -240,7 +240,7 @@ void Wiz::fillWizFlood(const WizParameters *params) {
 			if (params->processFlags & kWPFNewState) {
 				state = params->img.state;
 			}
-			uint8 *wizh = _vm->findWrappedBlock(MKID_BE('WIZH'), dataPtr, state, 0);
+			uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
 			assert(wizh);
 			int c = READ_LE_UINT32(wizh + 0x0);
 			int w = READ_LE_UINT32(wizh + 0x4);
@@ -258,7 +258,7 @@ void Wiz::fillWizFlood(const WizParameters *params) {
 				color = params->fillColor;
 			}
 			if (imageRect.contains(px, py)) {
-				uint8 *wizd = _vm->findWrappedBlock(MKID_BE('WIZD'), dataPtr, state, 0);
+				uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
 				assert(wizd);
 
 				FloodFillState *ffs = new FloodFillState;

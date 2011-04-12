@@ -50,14 +50,14 @@ bool PmvPlayer::play(const char *filename) {
 	uint32 chunkType, chunkSize, prevChunkSize = 0;
 
 	readChunk(chunkType, chunkSize);	// "MOVE"
-	if (chunkType != MKID_BE('MOVE')) {
+	if (chunkType != MKTAG('M','O','V','E')) {
 		warning("Unexpected PMV video header, expected 'MOVE'");
 		delete _fd;
 		return false;
 	}
 
 	readChunk(chunkType, chunkSize);	// "MHED"
-	if (chunkType != MKID_BE('MHED')) {
+	if (chunkType != MKTAG('M','H','E','D')) {
 		warning("Unexpected PMV video header, expected 'MHED'");
 		delete _fd;
 		return false;
@@ -111,7 +111,7 @@ bool PmvPlayer::play(const char *filename) {
 		int32 frameTime = _vm->_system->getMillis();
 
 		readChunk(chunkType, chunkSize);
-		if (chunkType != MKID_BE('MFRM')) {
+		if (chunkType != MKTAG('M','F','R','M')) {
 			warning("Unknown chunk type");
 		}
 

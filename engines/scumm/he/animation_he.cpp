@@ -112,7 +112,7 @@ void MoviePlayer::handleNextFrame() {
 	if (_flags & 2) {
 		uint8 *dstPtr = _vm->getResourceAddress(rtImage, _wizResNum);
 		assert(dstPtr);
-		uint8 *dst = _vm->findWrappedBlock(MKID_BE('WIZD'), dstPtr, 0, 0);
+		uint8 *dst = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dstPtr, 0, 0);
 		assert(dst);
 		copyFrameToBuffer(dst, kDstResource, 0, 0, _vm->_screenWidth * _vm->_bytesPerPixel);
 	} else if (_flags & 1) {

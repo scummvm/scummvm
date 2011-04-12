@@ -53,9 +53,9 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, co
 	fileStream->seek(0, SEEK_SET);
 	uint32 compressionType = fileStream->readUint32BE();
 	switch (compressionType) {
-	case MKID_BE('MP3 '):
-	case MKID_BE('OGG '):
-	case MKID_BE('FLAC'):
+	case MKTAG('M','P','3',' '):
+	case MKTAG('O','G','G',' '):
+	case MKTAG('F','L','A','C'):
 		// Detected a compressed audio volume
 		_audioCompressionType = compressionType;
 		// Now read the whole offset mapping table for later usage
@@ -91,7 +91,7 @@ bool Resource::loadFromWaveFile(Common::SeekableReadStream *file) {
 bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 	// Check for WAVE files here
 	uint32 riffTag = file->readUint32BE();
-	if (riffTag == MKID_BE('RIFF')) {
+	if (riffTag == MKTAG('R','I','F','F')) {
 		_headerSize = 0;
 		size = file->readUint32LE() + 8;
 		file->seek(-8, SEEK_CUR);

@@ -684,7 +684,7 @@ bool MusicPlayerMac::load(uint32 fileref, bool loop) {
 	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Starting the playback of song: %04X", fileref);
 
 	// First try for compressed MIDI
-	Common::SeekableReadStream *file = _vm->_macResFork->getResource(MKID_BE('cmid'), fileref & 0x3FF);
+	Common::SeekableReadStream *file = _vm->_macResFork->getResource(MKTAG('c','m','i','d'), fileref & 0x3FF);
 
 	if (file) {
 		// Found the resource, decompress it
@@ -693,7 +693,7 @@ bool MusicPlayerMac::load(uint32 fileref, bool loop) {
 		file = tmp;
 	} else {
 		// Otherwise, it's uncompressed
-		file = _vm->_macResFork->getResource(MKID_BE('Midi'), fileref & 0x3FF);
+		file = _vm->_macResFork->getResource(MKTAG('M','i','d','i'), fileref & 0x3FF);
 		if (!file)
 			error("Groovie::Music: Couldn't find resource 0x%04X", fileref);
 	}

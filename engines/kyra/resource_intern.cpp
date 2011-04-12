@@ -356,7 +356,7 @@ Common::Archive *ResLoaderPak::load(Common::ArchiveMemberPtr memberFile, Common:
 
 		const uint32 magic = stream.readUint32BE();
 
-		if (magic != MKID_BE('SCVM'))
+		if (magic != MKTAG('S','C','V','M'))
 			error("LINKLIST file does not contain 'SCVM' header");
 
 		const uint32 links = stream.readUint32BE();

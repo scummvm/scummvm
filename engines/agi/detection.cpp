@@ -218,7 +218,7 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 }
 
 SaveStateList AgiMetaEngine::listSaves(const char *target) const {
-	const uint32 AGIflag = MKID_BE('AGI:');
+	const uint32 AGIflag = MKTAG('A','G','I',':');
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	char saveDesc[31];
@@ -257,7 +257,7 @@ void AgiMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	const uint32 AGIflag = MKID_BE('AGI:');
+	const uint32 AGIflag = MKTAG('A','G','I',':');
 	char fileName[MAXPATHLEN];
 	sprintf(fileName, "%s.%03d", target, slot);
 

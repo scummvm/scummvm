@@ -49,16 +49,16 @@ const int kMaxResourceCacheSize = 400 * 1024;
 
 
 enum ResourceType {
-	kResARCH = MKID_BE('ARCH'),
-	kResFREE = MKID_BE('FREE'),
-	kResOMNI = MKID_BE('OMNI'),
-	kResFLEX = MKID_BE('FLEX'),
-	kResSNDS = MKID_BE('SNDS'),
-	kResANIM = MKID_BE('ANIM'),
-	kResMENU = MKID_BE('MENU'),
-	kResFONT = MKID_BE('FONT'),
-	kResXMID = MKID_BE('XMID'),
-	kResMIDI = MKID_BE('MIDI')
+	kResARCH = MKTAG('A','R','C','H'),
+	kResFREE = MKTAG('F','R','E','E'),
+	kResOMNI = MKTAG('O','M','N','I'),
+	kResFLEX = MKTAG('F','L','E','X'),
+	kResSNDS = MKTAG('S','N','D','S'),
+	kResANIM = MKTAG('A','N','I','M'),
+	kResMENU = MKTAG('M','E','N','U'),
+	kResFONT = MKTAG('F','O','N','T'),
+	kResXMID = MKTAG('X','M','I','D'),
+	kResMIDI = MKTAG('M','I','D','I')
 };
 
 struct ResourceSlot;

@@ -44,7 +44,7 @@ class Mouse;
 class Music;
 class Sound;
 
-#define SAVEGAME_HEADER MKID_BE('BS_1')
+#define SAVEGAME_HEADER MKTAG('B','S','_','1')
 #define SAVEGAME_VERSION 2
 
 #define MAX_BUTTONS 16

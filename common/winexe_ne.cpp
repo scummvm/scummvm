@@ -95,7 +95,7 @@ bool NEResources::loadFromCompressedEXE(const String &fileName) {
 		return false;
 
 	// First part of the signature
-	if (file.readUint32BE() != MKID_BE('SZDD'))
+	if (file.readUint32BE() != MKTAG('S','Z','D','D'))
 		return false;
 
 	// Second part of the signature

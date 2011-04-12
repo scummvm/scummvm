@@ -267,28 +267,28 @@ void QuickTimeDecoder::seekToTime(Audio::Timestamp time) {
 }
 
 Codec *QuickTimeDecoder::createCodec(uint32 codecTag, byte bitsPerPixel) {
-	if (codecTag == MKID_BE('cvid')) {
+	if (codecTag == MKTAG('c','v','i','d')) {
 		// Cinepak: As used by most Myst and all Riven videos as well as some Myst ME videos. "The Chief" videos also use this.
 		return new CinepakDecoder(bitsPerPixel);
-	} else if (codecTag == MKID_BE('rpza')) {
+	} else if (codecTag == MKTAG('r','p','z','a')) {
 		// Apple Video ("Road Pizza"): Used by some Myst videos.
 		return new RPZADecoder(getWidth(), getHeight());
-	} else if (codecTag == MKID_BE('rle ')) {
+	} else if (codecTag == MKTAG('r','l','e',' ')) {
 		// QuickTime RLE: Used by some Myst ME videos.
 		return new QTRLEDecoder(getWidth(), getHeight(), bitsPerPixel);
-	} else if (codecTag == MKID_BE('smc ')) {
+	} else if (codecTag == MKTAG('s','m','c',' ')) {
 		// Apple SMC: Used by some Myst videos.
 		return new SMCDecoder(getWidth(), getHeight());
-	} else if (codecTag == MKID_BE('SVQ1')) {
+	} else if (codecTag == MKTAG('S','V','Q','1')) {
 		// Sorenson Video 1: Used by some Myst ME videos.
 		warning("Sorenson Video 1 not yet supported");
-	} else if (codecTag == MKID_BE('SVQ3')) {
+	} else if (codecTag == MKTAG('S','V','Q','3')) {
 		// Sorenson Video 3: Used by some Myst ME videos.
 		warning("Sorenson Video 3 not yet supported");
-	} else if (codecTag == MKID_BE('jpeg')) {
+	} else if (codecTag == MKTAG('j','p','e','g')) {
 		// Motion JPEG: Used by some Myst ME 10th Anniversary videos.
 		return new JPEGDecoder();
-	} else if (codecTag == MKID_BE('QkBk')) {
+	} else if (codecTag == MKTAG('Q','k','B','k')) {
 		// CDToons: Used by most of the Broderbund games.
 		return new CDToonsDecoder(getWidth(), getHeight());
 	} else {
@@ -424,10 +424,10 @@ bool QuickTimeDecoder::loadFile(const Common::String &filename) {
 
 	if (_resFork->hasResFork()) {
 		// Search for a 'moov' resource
-		Common::MacResIDArray idArray = _resFork->getResIDArray(MKID_BE('moov'));
+		Common::MacResIDArray idArray = _resFork->getResIDArray(MKTAG('m','o','o','v'));
 
 		if (!idArray.empty())
-			_fd = _resFork->getResource(MKID_BE('moov'), idArray[0]);
+			_fd = _resFork->getResource(MKTAG('m','o','o','v'), idArray[0]);
 
 		if (_fd) {
 			atom.size = _fd->size();
@@ -507,7 +507,7 @@ void QuickTimeDecoder::init() {
 			_curAudioChunk = 0;
 
 			// Make sure the bits per sample transfers to the sample size
-			if (entry->codecTag == MKID_BE('raw ') || entry->codecTag == MKID_BE('twos'))
+			if (entry->codecTag == MKTAG('r','a','w',' ') || entry->codecTag == MKTAG('t','w','o','s'))
 				_streams[_audioStreamIndex]->sample_size = (entry->bitsPerSample / 8) * entry->channels;
 
 			startAudio();
@@ -533,31 +533,31 @@ void QuickTimeDecoder::init() {
 
 void QuickTimeDecoder::initParseTable() {
 	static const ParseTable p[] = {
-		{ &QuickTimeDecoder::readDefault, MKID_BE('dinf') },
-		{ &QuickTimeDecoder::readLeaf,    MKID_BE('dref') },
-		{ &QuickTimeDecoder::readDefault, MKID_BE('edts') },
-		{ &QuickTimeDecoder::readELST,    MKID_BE('elst') },
-		{ &QuickTimeDecoder::readHDLR,    MKID_BE('hdlr') },
-		{ &QuickTimeDecoder::readDefault, MKID_BE('mdat') },
-		{ &QuickTimeDecoder::readMDHD,    MKID_BE('mdhd') },
-		{ &QuickTimeDecoder::readDefault, MKID_BE('mdia') },
-		{ &QuickTimeDecoder::readDefault, MKID_BE('minf') },
-		{ &QuickTimeDecoder::readMOOV,    MKID_BE('moov') },
-		{ &QuickTimeDecoder::readMVHD,    MKID_BE('mvhd') },
-		{ &QuickTimeDecoder::readLeaf,    MKID_BE('smhd') },
-		{ &QuickTimeDecoder::readDefault, MKID_BE('stbl') },
-		{ &QuickTimeDecoder::readSTCO,    MKID_BE('stco') },
-		{ &QuickTimeDecoder::readSTSC,    MKID_BE('stsc') },
-		{ &QuickTimeDecoder::readSTSD,    MKID_BE('stsd') },
-		{ &QuickTimeDecoder::readSTSS,    MKID_BE('stss') },
-		{ &QuickTimeDecoder::readSTSZ,    MKID_BE('stsz') },
-		{ &QuickTimeDecoder::readSTTS,    MKID_BE('stts') },
-		{ &QuickTimeDecoder::readTKHD,    MKID_BE('tkhd') },
-		{ &QuickTimeDecoder::readTRAK,    MKID_BE('trak') },
-		{ &QuickTimeDecoder::readLeaf,    MKID_BE('udta') },
-		{ &QuickTimeDecoder::readLeaf,    MKID_BE('vmhd') },
-		{ &QuickTimeDecoder::readCMOV,    MKID_BE('cmov') },
-		{ &QuickTimeDecoder::readWAVE,    MKID_BE('wave') },
+		{ &QuickTimeDecoder::readDefault, MKTAG('d','i','n','f') },
+		{ &QuickTimeDecoder::readLeaf,    MKTAG('d','r','e','f') },
+		{ &QuickTimeDecoder::readDefault, MKTAG('e','d','t','s') },
+		{ &QuickTimeDecoder::readELST,    MKTAG('e','l','s','t') },
+		{ &QuickTimeDecoder::readHDLR,    MKTAG('h','d','l','r') },
+		{ &QuickTimeDecoder::readDefault, MKTAG('m','d','a','t') },
+		{ &QuickTimeDecoder::readMDHD,    MKTAG('m','d','h','d') },
+		{ &QuickTimeDecoder::readDefault, MKTAG('m','d','i','a') },
+		{ &QuickTimeDecoder::readDefault, MKTAG('m','i','n','f') },
+		{ &QuickTimeDecoder::readMOOV,    MKTAG('m','o','o','v') },
+		{ &QuickTimeDecoder::readMVHD,    MKTAG('m','v','h','d') },
+		{ &QuickTimeDecoder::readLeaf,    MKTAG('s','m','h','d') },
+		{ &QuickTimeDecoder::readDefault, MKTAG('s','t','b','l') },
+		{ &QuickTimeDecoder::readSTCO,    MKTAG('s','t','c','o') },
+		{ &QuickTimeDecoder::readSTSC,    MKTAG('s','t','s','c') },
+		{ &QuickTimeDecoder::readSTSD,    MKTAG('s','t','s','d') },
+		{ &QuickTimeDecoder::readSTSS,    MKTAG('s','t','s','s') },
+		{ &QuickTimeDecoder::readSTSZ,    MKTAG('s','t','s','z') },
+		{ &QuickTimeDecoder::readSTTS,    MKTAG('s','t','t','s') },
+		{ &QuickTimeDecoder::readTKHD,    MKTAG('t','k','h','d') },
+		{ &QuickTimeDecoder::readTRAK,    MKTAG('t','r','a','k') },
+		{ &QuickTimeDecoder::readLeaf,    MKTAG('u','d','t','a') },
+		{ &QuickTimeDecoder::readLeaf,    MKTAG('v','m','h','d') },
+		{ &QuickTimeDecoder::readCMOV,    MKTAG('c','m','o','v') },
+		{ &QuickTimeDecoder::readWAVE,    MKTAG('w','a','v','e') },
 		{ 0, 0 }
 	};
 
@@ -581,7 +581,7 @@ int QuickTimeDecoder::readDefault(MOVatom atom) {
 
 			// Some QuickTime videos with resource forks have mdat chunks
 			// that are of size 0. Adjust it so it's the correct size.
-			if (a.type == MKID_BE('mdat') && a.size == 0)
+			if (a.type == MKTAG('m','d','a','t') && a.size == 0)
 				a.size = _fd->size();
 		}
 
@@ -654,16 +654,16 @@ int QuickTimeDecoder::readCMOV(MOVatom atom) {
 #ifdef USE_ZLIB
 	// Read in the dcom atom
 	_fd->readUint32BE();
-	if (_fd->readUint32BE() != MKID_BE('dcom'))
+	if (_fd->readUint32BE() != MKTAG('d','c','o','m'))
 		return -1;
-	if (_fd->readUint32BE() != MKID_BE('zlib')) {
+	if (_fd->readUint32BE() != MKTAG('z','l','i','b')) {
 		warning("Unknown cmov compression type");
 		return -1;
 	}
 
 	// Read in the cmvd atom
 	uint32 compressedSize = _fd->readUint32BE() - 12;
-	if (_fd->readUint32BE() != MKID_BE('cmvd'))
+	if (_fd->readUint32BE() != MKTAG('c','m','v','d'))
 		return -1;
 	uint32 uncompressedSize = _fd->readUint32BE();
 
@@ -688,7 +688,7 @@ int QuickTimeDecoder::readCMOV(MOVatom atom) {
 	_fd = new Common::MemoryReadStream(uncompressedData, uncompressedSize, DisposeAfterUse::YES);
 
 	// Read the contents of the uncompressed data
-	MOVatom a = { MKID_BE('moov'), 0, uncompressedSize };
+	MOVatom a = { MKTAG('m','o','o','v'), 0, uncompressedSize };
 	int err = readDefault(a);
 
 	// Assign the file handle back to the original handle
@@ -857,16 +857,16 @@ int QuickTimeDecoder::readHDLR(MOVatom atom) {
 	debug(0, "ctype= %s (0x%08lx)", tag2str(ctype), (long)ctype);
 	debug(0, "stype= %s", tag2str(type));
 
-	if(ctype == MKID_BE('mhlr')) // MOV
+	if(ctype == MKTAG('m','h','l','r')) // MOV
 		debug(0, "MOV detected");
 	else if(ctype == 0) {
 		warning("MP4 streams are not supported");
 		return -1;
 	}
 
-	if (type == MKID_BE('vide'))
+	if (type == MKTAG('v','i','d','e'))
 		st->codec_type = CODEC_TYPE_VIDEO;
-	else if (type == MKID_BE('soun'))
+	else if (type == MKTAG('s','o','u','n'))
 		st->codec_type = CODEC_TYPE_AUDIO;
 
 	_fd->readUint32BE(); // component manufacture
@@ -1058,7 +1058,7 @@ int QuickTimeDecoder::readSTSD(MOVatom atom) {
 
 			// Version 0 videos (such as the Riven ones) don't have this set,
 			// but we need it later on. Add it in here.
-			if (format == MKID_BE('ima4')) {
+			if (format == MKTAG('i','m','a','4')) {
 				entry->samplesPerFrame = 64;
 				entry->bytesPerFrame = 34 * entry->channels;
 			}
@@ -1231,7 +1231,7 @@ int QuickTimeDecoder::readWAVE(MOVatom atom) {
 	if (atom.size > (1 << 30))
 		return -1;
 
-	if (st->stsdEntries[0].codecTag == MKID_BE('QDM2')) // Read extradata for QDM2
+	if (st->stsdEntries[0].codecTag == MKTAG('Q','D','M','2')) // Read extradata for QDM2
 		st->extradata = _fd->readStream(atom.size - 8);
 	else if (atom.size > 8)
 		return readDefault(atom);
@@ -1318,11 +1318,11 @@ Common::SeekableReadStream *QuickTimeDecoder::getNextFramePacket(uint32 &descId)
 
 bool QuickTimeDecoder::checkAudioCodecSupport(uint32 tag) {
 	// Check if the codec is a supported codec
-	if (tag == MKID_BE('twos') || tag == MKID_BE('raw ') || tag == MKID_BE('ima4'))
+	if (tag == MKTAG('t','w','o','s') || tag == MKTAG('r','a','w',' ') || tag == MKTAG('i','m','a','4'))
 		return true;
 
 #ifdef VIDEO_CODECS_QDM2_H
-	if (tag == MKID_BE('QDM2'))
+	if (tag == MKTAG('Q','D','M','2'))
 		return true;
 #endif
 
@@ -1337,10 +1337,10 @@ Audio::AudioStream *QuickTimeDecoder::createAudioStream(Common::SeekableReadStre
 
 	STSDEntry *entry = &_streams[_audioStreamIndex]->stsdEntries[0];
 
-	if (entry->codecTag == MKID_BE('twos') || entry->codecTag == MKID_BE('raw ')) {
+	if (entry->codecTag == MKTAG('t','w','o','s') || entry->codecTag == MKTAG('r','a','w',' ')) {
 		// Fortunately, most of the audio used in Myst videos is raw...
 		uint16 flags = 0;
-		if (entry->codecTag == MKID_BE('raw '))
+		if (entry->codecTag == MKTAG('r','a','w',' '))
 			flags |= Audio::FLAG_UNSIGNED;
 		if (entry->channels == 2)
 			flags |= Audio::FLAG_STEREO;
@@ -1351,11 +1351,11 @@ Audio::AudioStream *QuickTimeDecoder::createAudioStream(Common::SeekableReadStre
 		stream->read(data, dataSize);
 		delete stream;
 		return Audio::makeRawStream(data, dataSize, entry->sampleRate, flags);
-	} else if (entry->codecTag == MKID_BE('ima4')) {
+	} else if (entry->codecTag == MKTAG('i','m','a','4')) {
 		// Riven uses this codec (as do some Myst ME videos)
 		return Audio::makeADPCMStream(stream, DisposeAfterUse::YES, stream->size(), Audio::kADPCMApple, entry->sampleRate, entry->channels, 34);
 #ifdef VIDEO_CODECS_QDM2_H
-	} else if (entry->codecTag == MKID_BE('QDM2')) {
+	} else if (entry->codecTag == MKTAG('Q','D','M','2')) {
 		// Several Myst ME videos use this codec
 		return makeQDM2Stream(stream, _streams[_audioStreamIndex]->extradata);
 #endif

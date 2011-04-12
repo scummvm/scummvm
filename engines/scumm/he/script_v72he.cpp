@@ -2039,7 +2039,7 @@ void ScummEngine_v72he::decodeParseString(int m, int n) {
 	case 0xE1:
 		{
 		byte *dataPtr = getResourceAddress(rtTalkie, pop());
-		byte *text = findWrappedBlock(MKID_BE('TEXT'), dataPtr, 0, 0);
+		byte *text = findWrappedBlock(MKTAG('T','E','X','T'), dataPtr, 0, 0);
 		size = getResourceDataSize(text);
 		memcpy(name, text, size);
 		printString(m, name);

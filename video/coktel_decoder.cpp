@@ -36,7 +36,7 @@
 #include "audio/decoders/raw.h"
 #include "common/memstream.h"
 
-static const uint32 kVideoCodecIndeo3 = MKID_BE('iv32');
+static const uint32 kVideoCodecIndeo3 = MKTAG('i','v','3','2');
 
 namespace Video {
 

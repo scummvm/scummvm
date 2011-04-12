@@ -403,7 +403,7 @@ Common::InSaveFile *QueenEngine::readGameStateHeader(int slot, GameStateHeader *
 	char name[20];
 	makeGameStateName(slot, name);
 	Common::InSaveFile *file = _saveFileMan->openForLoading(name);
-	if (file && file->readUint32BE() == MKID_BE('SCVM')) {
+	if (file && file->readUint32BE() == MKTAG('S','C','V','M')) {
 		gsh->version = file->readUint32BE();
 		gsh->flags = file->readUint32BE();
 		gsh->dataSize = file->readUint32BE();

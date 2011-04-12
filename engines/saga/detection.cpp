@@ -264,7 +264,7 @@ SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int s
 		if (version < 4)
 			warning("This savegame is not endian-safe. There may be problems");
 
-		if (type != MKID_BE('SAGA')) {
+		if (type != MKTAG('S','A','G','A')) {
 			error("SagaEngine::load wrong save game format");
 		}
 

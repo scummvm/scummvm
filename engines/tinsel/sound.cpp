@@ -530,17 +530,17 @@ void SoundManager::openSampleFiles() {
 
 		// Detect format of soundfile by looking at 1st sample-index
 		switch (TO_BE_32(_sampleIndex[0])) {
-		case MKID_BE('MP3 '):
+		case MKTAG('M','P','3',' '):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected MP3 sound-data");
 			_soundMode = kMP3Mode;
 			break;
 
-		case MKID_BE('OGG '):
+		case MKTAG('O','G','G',' '):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected OGG sound-data");
 			_soundMode = kVorbisMode;
 			break;
 
-		case MKID_BE('FLAC'):
+		case MKTAG('F','L','A','C'):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected FLAC sound-data");
 			_soundMode = kFLACMode;
 			break;

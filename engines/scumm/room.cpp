@@ -264,7 +264,7 @@ void ScummEngine::setupRoomSubBlocks() {
 	//
 	// Determine the room dimensions (width/height)
 	//
-	rmhd = (const RoomHeader *)findResourceData(MKID_BE('RMHD'), roomptr);
+	rmhd = (const RoomHeader *)findResourceData(MKTAG('R','M','H','D'), roomptr);
 
 	if (_game.version == 8) {
 		_roomWidth = READ_LE_UINT32(&(rmhd->v8.width));
@@ -286,18 +286,18 @@ void ScummEngine::setupRoomSubBlocks() {
 	if (_game.version == 8) {
 		_IM00_offs = getObjectImage(roomptr, 1) - roomptr;
 	} else if (_game.features & GF_SMALL_HEADER) {
-		_IM00_offs = findResourceData(MKID_BE('IM00'), roomptr) - roomptr;
+		_IM00_offs = findResourceData(MKTAG('I','M','0','0'), roomptr) - roomptr;
 	} else if (_game.heversion >= 70) {
 		byte *roomImagePtr = getResourceAddress(rtRoomImage, _roomResource);
-		_IM00_offs = findResource(MKID_BE('IM00'), roomImagePtr) - roomImagePtr;
+		_IM00_offs = findResource(MKTAG('I','M','0','0'), roomImagePtr) - roomImagePtr;
 	} else {
-		_IM00_offs = findResource(MKID_BE('IM00'), findResource(MKID_BE('RMIM'), roomptr)) - roomptr;
+		_IM00_offs = findResource(MKTAG('I','M','0','0'), findResource(MKTAG('R','M','I','M'), roomptr)) - roomptr;
 	}
 
 	//
 	// Look for an exit script
 	//
-	ptr = findResourceData(MKID_BE('EXCD'), roomResPtr);
+	ptr = findResourceData(MKTAG('E','X','C','D'), roomResPtr);
 	if (ptr)
 		_EXCD_offs = ptr - roomResPtr;
 	if (_dumpScripts && _EXCD_offs)
@@ -306,7 +306,7 @@ void ScummEngine::setupRoomSubBlocks() {
 	//
 	// Look for an entry script
 	//
-	ptr = findResourceData(MKID_BE('ENCD'), roomResPtr);
+	ptr = findResourceData(MKTAG('E','N','C','D'), roomResPtr);
 	if (ptr)
 		_ENCD_offs = ptr - roomResPtr;
 	if (_dumpScripts && _ENCD_offs)
@@ -326,7 +326,7 @@ void ScummEngine::setupRoomSubBlocks() {
 
 	if (_game.features & GF_SMALL_HEADER) {
 		ResourceIterator localScriptIterator(searchptr, true);
-		while ((ptr = localScriptIterator.findNext(MKID_BE('LSCR'))) != NULL) {
+		while ((ptr = localScriptIterator.findNext(MKTAG('L','S','C','R'))) != NULL) {
 			int id = 0;
 			ptr += _resourceHeaderSize;	/* skip tag & size */
 			id = ptr[0];
@@ -341,7 +341,7 @@ void ScummEngine::setupRoomSubBlocks() {
 		}
 	} else if (_game.heversion >= 90) {
 		ResourceIterator localScriptIterator2(searchptr, false);
-		while ((ptr = localScriptIterator2.findNext(MKID_BE('LSC2'))) != NULL) {
+		while ((ptr = localScriptIterator2.findNext(MKTAG('L','S','C','2'))) != NULL) {
 			int id = 0;
 
 			ptr += _resourceHeaderSize;	/* skip tag & size */
@@ -359,7 +359,7 @@ void ScummEngine::setupRoomSubBlocks() {
 		}
 
 		ResourceIterator localScriptIterator(searchptr, false);
-		while ((ptr = localScriptIterator.findNext(MKID_BE('LSCR'))) != NULL) {
+		while ((ptr = localScriptIterator.findNext(MKTAG('L','S','C','R'))) != NULL) {
 			int id = 0;
 
 			ptr += _resourceHeaderSize;	/* skip tag & size */
@@ -376,7 +376,7 @@ void ScummEngine::setupRoomSubBlocks() {
 
 	} else {
 		ResourceIterator localScriptIterator(searchptr, false);
-		while ((ptr = localScriptIterator.findNext(MKID_BE('LSCR'))) != NULL) {
+		while ((ptr = localScriptIterator.findNext(MKTAG('L','S','C','R'))) != NULL) {
 			int id = 0;
 
 			ptr += _resourceHeaderSize;	/* skip tag & size */
@@ -403,18 +403,18 @@ void ScummEngine::setupRoomSubBlocks() {
 	}
 
 	// Locate the EGA palette (currently unused).
-	ptr = findResourceData(MKID_BE('EPAL'), roomptr);
+	ptr = findResourceData(MKTAG('E','P','A','L'), roomptr);
 	if (ptr)
 		_EPAL_offs = ptr - roomptr;
 
 	// Locate the standard room palette (for V3-V5 games).
-	ptr = findResourceData(MKID_BE('CLUT'), roomptr);
+	ptr = findResourceData(MKTAG('C','L','U','T'), roomptr);
 	if (ptr)
 		_CLUT_offs = ptr - roomptr;
 
 	// Locate the standard room palettes (for V6+ games).
 	if (_game.version >= 6) {
-		ptr = findResource(MKID_BE('PALS'), roomptr);
+		ptr = findResource(MKTAG('P','A','L','S'), roomptr);
 		if (ptr) {
 			_PALS_offs = ptr - roomptr;
 		}
@@ -425,7 +425,7 @@ void ScummEngine::setupRoomSubBlocks() {
 	if (_game.version == 8)
 		trans = (byte)READ_LE_UINT32(&(rmhd->v8.transparency));
 	else {
-		ptr = findResourceData(MKID_BE('TRNS'), roomptr);
+		ptr = findResourceData(MKTAG('T','R','N','S'), roomptr);
 		if (ptr)
 			trans = ptr[0];
 		else
@@ -434,7 +434,7 @@ void ScummEngine::setupRoomSubBlocks() {
 
 	// Actor Palette in HE 70 games
 	if (_game.heversion == 70) {
-		ptr = findResourceData(MKID_BE('REMP'), roomptr);
+		ptr = findResourceData(MKTAG('R','E','M','P'), roomptr);
 		if (ptr) {
 			for (i = 0; i < 256; i++)
 				_HEV7ActorPalette[i] = *ptr++;
@@ -485,7 +485,7 @@ void ScummEngine::resetRoomSubBlocks() {
 	_res->nukeResource(rtMatrix, 1);
 	_res->nukeResource(rtMatrix, 2);
 	if (_game.features & GF_SMALL_HEADER) {
-		ptr = findResourceData(MKID_BE('BOXD'), roomptr);
+		ptr = findResourceData(MKTAG('B','O','X','D'), roomptr);
 		if (ptr) {
 			byte numOfBoxes = *ptr;
 			int size;
@@ -506,21 +506,21 @@ void ScummEngine::resetRoomSubBlocks() {
 
 		}
 	} else {
-		ptr = findResourceData(MKID_BE('BOXD'), roomptr);
+		ptr = findResourceData(MKTAG('B','O','X','D'), roomptr);
 		if (ptr) {
 			int size = getResourceDataSize(ptr);
 			_res->createResource(rtMatrix, 2, size);
 			roomptr = getResourceAddress(rtRoom, _roomResource);
-			ptr = findResourceData(MKID_BE('BOXD'), roomptr);
+			ptr = findResourceData(MKTAG('B','O','X','D'), roomptr);
 			memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
 		}
 
-		ptr = findResourceData(MKID_BE('BOXM'), roomptr);
+		ptr = findResourceData(MKTAG('B','O','X','M'), roomptr);
 		if (ptr) {
 			int size = getResourceDataSize(ptr);
 			_res->createResource(rtMatrix, 1, size);
 			roomptr = getResourceAddress(rtRoom, _roomResource);
-			ptr = findResourceData(MKID_BE('BOXM'), roomptr);
+			ptr = findResourceData(MKTAG('B','O','X','M'), roomptr);
 			memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
 		}
 	}
@@ -531,7 +531,7 @@ void ScummEngine::resetRoomSubBlocks() {
 	for (i = 1; i < _res->num[rtScaleTable]; i++)
 		_res->nukeResource(rtScaleTable, i);
 
-	ptr = findResourceData(MKID_BE('SCAL'), roomptr);
+	ptr = findResourceData(MKTAG('S','C','A','L'), roomptr);
 	if (ptr) {
 		int s1, s2, y1, y2;
 		if (_game.version == 8) {
@@ -558,7 +558,7 @@ void ScummEngine::resetRoomSubBlocks() {
 	// Color cycling
 	// HE 7.0 games load resources but don't use them.
 	if (_game.version >= 4 && _game.heversion <= 62) {
-		ptr = findResourceData(MKID_BE('CYCL'), roomptr);
+		ptr = findResourceData(MKTAG('C','Y','C','L'), roomptr);
 		if (ptr) {
 			initCycl(ptr);
 		}
@@ -567,7 +567,7 @@ void ScummEngine::resetRoomSubBlocks() {
 #ifdef ENABLE_HE
 	// Polygons in HE 80+ games
 	if (_game.heversion >= 80) {
-		ptr = findResourceData(MKID_BE('POLD'), roomptr);
+		ptr = findResourceData(MKTAG('P','O','L','D'), roomptr);
 		if (ptr) {
 			((ScummEngine_v71he *)this)->_wiz->polygonLoad(ptr);
 		}

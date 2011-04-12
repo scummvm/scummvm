@@ -49,7 +49,7 @@ bool loadHeader(Common::SeekableReadStream &in, ThumbnailHeader &header, bool ou
 	// We also accept the bad 'BMHT' header here, for the sake of compatibility
 	// with some older savegames which were written incorrectly due to a bug in
 	// ScummVM which wrote the thumb header type incorrectly on LE systems.
-	if (header.type != MKID_BE('THMB') && header.type != MKID_BE('BMHT')) {
+	if (header.type != MKTAG('T','H','M','B') && header.type != MKTAG('B','M','H','T')) {
 		if (outputWarnings)
 			warning("couldn't find thumbnail header type");
 		return false;
@@ -145,7 +145,7 @@ bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
 	}
 
 	ThumbnailHeader header;
-	header.type = MKID_BE('THMB');
+	header.type = MKTAG('T','H','M','B');
 	header.size = ThumbnailHeaderSize + thumb.w*thumb.h*thumb.bytesPerPixel;
 	header.version = THMB_VERSION;
 	header.width = thumb.w;

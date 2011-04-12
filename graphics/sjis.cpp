@@ -362,7 +362,7 @@ bool FontSjisSVM::loadData() {
 	uint32 magic1 = data->readUint32BE();
 	uint32 magic2 = data->readUint32BE();
 
-	if (magic1 != MKID_BE('SCVM') || magic2 != MKID_BE('SJIS')) {
+	if (magic1 != MKTAG('S','C','V','M') || magic2 != MKTAG('S','J','I','S')) {
 		delete data;
 		return false;
 	}

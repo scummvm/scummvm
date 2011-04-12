@@ -1445,21 +1445,21 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 	if (shadow) {
 		dataPtr = _vm->getResourceAddress(rtImage, shadow);
 		assert(dataPtr);
-		xmapPtr = _vm->findResourceData(MKID_BE('XMAP'), dataPtr);
+		xmapPtr = _vm->findResourceData(MKTAG('X','M','A','P'), dataPtr);
 		assert(xmapPtr);
 	}
 
 	dataPtr = _vm->getResourceAddress(rtImage, resNum);
 	assert(dataPtr);
 
-	uint8 *wizh = _vm->findWrappedBlock(MKID_BE('WIZH'), dataPtr, state, 0);
+	uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
 	assert(wizh);
 	uint32 comp   = READ_LE_UINT32(wizh + 0x0);
 	uint32 width  = READ_LE_UINT32(wizh + 0x4);
 	uint32 height = READ_LE_UINT32(wizh + 0x8);
 	debug(3, "wiz_header.comp = %d wiz_header.w = %d wiz_header.h = %d", comp, width, height);
 
-	uint8 *wizd = _vm->findWrappedBlock(MKID_BE('WIZD'), dataPtr, state, 0);
+	uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
 	assert(wizd);
 
 	uint8 *mask = NULL;
@@ -1467,28 +1467,28 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 		uint8 *maskPtr = _vm->getResourceAddress(rtImage, maskNum);
 		assert(maskPtr);
 
-		wizh = _vm->findWrappedBlock(MKID_BE('WIZH'), maskPtr, maskState, 0);
+		wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), maskPtr, maskState, 0);
 		assert(wizh);
 		assert(comp == 2 && READ_LE_UINT32(wizh + 0x0) == 1);
 		width  = READ_LE_UINT32(wizh + 0x4);
 		height = READ_LE_UINT32(wizh + 0x8);
 
-		mask = _vm->findWrappedBlock(MKID_BE('WIZD'), maskPtr, maskState, 0);
+		mask = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), maskPtr, maskState, 0);
 		assert(mask);
 	}
 
 	if (flags & kWIFHasPalette) {
-		uint8 *pal = _vm->findWrappedBlock(MKID_BE('RGBS'), dataPtr, state, 0);
+		uint8 *pal = _vm->findWrappedBlock(MKTAG('R','G','B','S'), dataPtr, state, 0);
 		assert(pal);
 		_vm->setPaletteFromPtr(pal, 256);
 	}
 
 	uint8 *rmap = NULL;
 	if (flags & kWIFRemapPalette) {
-		rmap = _vm->findWrappedBlock(MKID_BE('RMAP'), dataPtr, state, 0);
+		rmap = _vm->findWrappedBlock(MKTAG('R','M','A','P'), dataPtr, state, 0);
 		assert(rmap);
 		if (_vm->_game.heversion <= 80 || READ_BE_UINT32(rmap) != 0x01234567) {
-			uint8 *rgbs = _vm->findWrappedBlock(MKID_BE('RGBS'), dataPtr, state, 0);
+			uint8 *rgbs = _vm->findWrappedBlock(MKTAG('R','G','B','S'), dataPtr, state, 0);
 			assert(rgbs);
 			_vm->remapHEPalette(rgbs, rmap + 4);
 		}
@@ -1526,7 +1526,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 		if (dstResNum) {
 			uint8 *dstPtr = _vm->getResourceAddress(rtImage, dstResNum);
 			assert(dstPtr);
-			dst = _vm->findWrappedBlock(MKID_BE('WIZD'), dstPtr, 0, 0);
+			dst = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dstPtr, 0, 0);
 			assert(dst);
 			getWizImageDim(dstResNum, 0, cw, ch);
 			dstPitch = cw * _vm->_bytesPerPixel;
@@ -1567,7 +1567,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 
 	int transColor = -1;
 	if (_vm->VAR_WIZ_TCOLOR != 0xFF) {
-		uint8 *trns = _vm->findWrappedBlock(MKID_BE('TRNS'), dataPtr, state, 0);
+		uint8 *trns = _vm->findWrappedBlock(MKTAG('T','R','N','S'), dataPtr, state, 0);
 		transColor = (trns == NULL) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : -1;
 	}
 
@@ -1817,7 +1817,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 			assert(_vm->_bytesPerPixel == 1);
 			uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
 			assert(dataPtr);
-			srcWizBuf = _vm->findWrappedBlock(MKID_BE('WIZD'), dataPtr, state, 0);
+			srcWizBuf = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
 			assert(srcWizBuf);
 			freeBuffer = false;
 		}
@@ -1827,7 +1827,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 		} else {
 			uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
 			assert(dataPtr);
-			srcWizBuf = _vm->findWrappedBlock(MKID_BE('WIZD'), dataPtr, state, 0);
+			srcWizBuf = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
 			assert(srcWizBuf);
 			freeBuffer = false;
 		}
@@ -1842,7 +1842,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 	if (dstResNum) {
 		uint8 *dstPtr = _vm->getResourceAddress(rtImage, dstResNum);
 		assert(dstPtr);
-		dst = _vm->findWrappedBlock(MKID_BE('WIZD'), dstPtr, 0, 0);
+		dst = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dstPtr, 0, 0);
 		assert(dst);
 		getWizImageDim(dstResNum, 0, dstw, dsth);
 		dstpitch = dstw * _vm->_bytesPerPixel;
@@ -2185,7 +2185,7 @@ void Wiz::fillWizRect(const WizParameters *params) {
 	}
 	uint8 *dataPtr = _vm->getResourceAddress(rtImage, params->img.resNum);
 	if (dataPtr) {
-		uint8 *wizh = _vm->findWrappedBlock(MKID_BE('WIZH'), dataPtr, state, 0);
+		uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
 		assert(wizh);
 		int c = READ_LE_UINT32(wizh + 0x0);
 		int w = READ_LE_UINT32(wizh + 0x4);
@@ -2210,7 +2210,7 @@ void Wiz::fillWizRect(const WizParameters *params) {
 		}
 		if (areaRect.intersects(imageRect)) {
 			areaRect.clip(imageRect);
-			uint8 *wizd = _vm->findWrappedBlock(MKID_BE('WIZD'), dataPtr, state, 0);
+			uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
 			assert(wizd);
 			int dx = areaRect.width();
 			int dy = areaRect.height();
@@ -2256,7 +2256,7 @@ void Wiz::fillWizLine(const WizParameters *params) {
 		}
 		uint8 *dataPtr = _vm->getResourceAddress(rtImage, params->img.resNum);
 		if (dataPtr) {
-			uint8 *wizh = _vm->findWrappedBlock(MKID_BE('WIZH'), dataPtr, state, 0);
+			uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
 			assert(wizh);
 			int c = READ_LE_UINT32(wizh + 0x0);
 			int w = READ_LE_UINT32(wizh + 0x4);
@@ -2274,7 +2274,7 @@ void Wiz::fillWizLine(const WizParameters *params) {
 			if (params->processFlags & kWPFFillColor) {
 				color = params->fillColor;
 			}
-			uint8 *wizd = _vm->findWrappedBlock(MKID_BE('WIZD'), dataPtr, state, 0);
+			uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
 			assert(wizd);
 			int x1 = params->box2.left;
 			int y1 = params->box2.top;
@@ -2309,7 +2309,7 @@ void Wiz::fillWizPixel(const WizParameters *params) {
 			if (params->processFlags & kWPFNewState) {
 				state = params->img.state;
 			}
-			uint8 *wizh = _vm->findWrappedBlock(MKID_BE('WIZH'), dataPtr, state, 0);
+			uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
 			assert(wizh);
 			int c = READ_LE_UINT32(wizh + 0x0);
 			int w = READ_LE_UINT32(wizh + 0x4);
@@ -2327,7 +2327,7 @@ void Wiz::fillWizPixel(const WizParameters *params) {
 				color = params->fillColor;
 			}
 			if (imageRect.contains(px, py)) {
-				uint8 *wizd = _vm->findWrappedBlock(MKID_BE('WIZD'), dataPtr, state, 0);
+				uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
 				assert(wizd);
 				*(wizd + py * w + px) = color;
 			}
@@ -2342,7 +2342,7 @@ void Wiz::remapWizImagePal(const WizParameters *params) {
 	const uint8 *index = params->remapIndex;
 	uint8 *iwiz = _vm->getResourceAddress(rtImage, params->img.resNum);
 	assert(iwiz);
-	uint8 *rmap = _vm->findWrappedBlock(MKID_BE('RMAP'), iwiz, st, 0);
+	uint8 *rmap = _vm->findWrappedBlock(MKTAG('R','M','A','P'), iwiz, st, 0);
 	assert(rmap);
 	WRITE_BE_UINT32(rmap, 0x01234567);
 	while (num--) {
@@ -2380,7 +2380,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 
 			if (f) {
 				uint32 id = f->readUint32BE();
-				if (id == MKID_BE('AWIZ') || id == MKID_BE('MULT')) {
+				if (id == MKTAG('A','W','I','Z') || id == MKTAG('M','U','L','T')) {
 					uint32 size = f->readUint32BE();
 					f->seek(0, SEEK_SET);
 					byte *p = _vm->_res->createResource(rtImage, params->img.resNum, size);
@@ -2510,7 +2510,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 void Wiz::getWizImageDim(int resNum, int state, int32 &w, int32 &h) {
 	uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
 	assert(dataPtr);
-	uint8 *wizh = _vm->findWrappedBlock(MKID_BE('WIZH'), dataPtr, state, 0);
+	uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
 	assert(wizh);
 	w = READ_LE_UINT32(wizh + 0x4);
 	h = READ_LE_UINT32(wizh + 0x8);
@@ -2519,7 +2519,7 @@ void Wiz::getWizImageDim(int resNum, int state, int32 &w, int32 &h) {
 void Wiz::getWizImageSpot(int resId, int state, int32 &x, int32 &y) {
 	uint8 *dataPtr = _vm->getResourceAddress(rtImage, resId);
 	assert(dataPtr);
-	uint8 *spotPtr = _vm->findWrappedBlock(MKID_BE('SPOT'), dataPtr, state, 0);
+	uint8 *spotPtr = _vm->findWrappedBlock(MKTAG('S','P','O','T'), dataPtr, state, 0);
 	if (spotPtr) {
 		x = READ_LE_UINT32(spotPtr + 0);
 		y = READ_LE_UINT32(spotPtr + 4);
@@ -2537,17 +2537,17 @@ int Wiz::getWizImageData(int resNum, int state, int type) {
 
 	switch (type) {
 	case 0:
-		wizh = _vm->findWrappedBlock(MKID_BE('WIZH'), dataPtr, state, 0);
+		wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
 		assert(wizh);
 		return READ_LE_UINT32(wizh + 0x0);
 	case 1:
-		return (_vm->findWrappedBlock(MKID_BE('RGBS'), dataPtr, state, 0) != NULL) ? 1 : 0;
+		return (_vm->findWrappedBlock(MKTAG('R','G','B','S'), dataPtr, state, 0) != NULL) ? 1 : 0;
 	case 2:
-		return (_vm->findWrappedBlock(MKID_BE('RMAP'), dataPtr, state, 0) != NULL) ? 1 : 0;
+		return (_vm->findWrappedBlock(MKTAG('R','M','A','P'), dataPtr, state, 0) != NULL) ? 1 : 0;
 	case 3:
-		return (_vm->findWrappedBlock(MKID_BE('TRNS'), dataPtr, state, 0) != NULL) ? 1 : 0;
+		return (_vm->findWrappedBlock(MKTAG('T','R','N','S'), dataPtr, state, 0) != NULL) ? 1 : 0;
 	case 4:
-		return (_vm->findWrappedBlock(MKID_BE('XMAP'), dataPtr, state, 0) != NULL) ? 1 : 0;
+		return (_vm->findWrappedBlock(MKTAG('X','M','A','P'), dataPtr, state, 0) != NULL) ? 1 : 0;
 	default:
 		error("getWizImageData: Unknown type %d", type);
 	}
@@ -2556,14 +2556,14 @@ int Wiz::getWizImageData(int resNum, int state, int type) {
 int Wiz::getWizImageStates(int resNum) {
 	const uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
 	assert(dataPtr);
-	if (READ_BE_UINT32(dataPtr) == MKID_BE('MULT')) {
+	if (READ_BE_UINT32(dataPtr) == MKTAG('M','U','L','T')) {
 		const byte *offs, *wrap;
 
-		wrap = _vm->findResource(MKID_BE('WRAP'), dataPtr);
+		wrap = _vm->findResource(MKTAG('W','R','A','P'), dataPtr);
 		if (wrap == NULL)
 			return 1;
 
-		offs = _vm->findResourceData(MKID_BE('OFFS'), wrap);
+		offs = _vm->findResourceData(MKTAG('O','F','F','S'), wrap);
 		if (offs == NULL)
 			return 1;
 
@@ -2577,12 +2577,12 @@ int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags
 	int ret = 0;
 	uint8 *data = _vm->getResourceAddress(rtImage, resNum);
 	assert(data);
-	uint8 *wizh = _vm->findWrappedBlock(MKID_BE('WIZH'), data, state, 0);
+	uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), data, state, 0);
 	assert(wizh);
 	int c = READ_LE_UINT32(wizh + 0x0);
 	int w = READ_LE_UINT32(wizh + 0x4);
 	int h = READ_LE_UINT32(wizh + 0x8);
-	uint8 *wizd = _vm->findWrappedBlock(MKID_BE('WIZD'), data, state, 0);
+	uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), data, state, 0);
 	assert(wizd);
 	if (x >= 0 && x < w && y >= 0 && y < h) {
 		if (flags & kWIFFlipX) {
@@ -2627,12 +2627,12 @@ uint16 Wiz::getWizPixelColor(int resNum, int state, int x, int y) {
 	uint16 color = 0;
 	uint8 *data = _vm->getResourceAddress(rtImage, resNum);
 	assert(data);
-	uint8 *wizh = _vm->findWrappedBlock(MKID_BE('WIZH'), data, state, 0);
+	uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), data, state, 0);
 	assert(wizh);
 	int c = READ_LE_UINT32(wizh + 0x0);
 	int w = READ_LE_UINT32(wizh + 0x4);
 	int h = READ_LE_UINT32(wizh + 0x8);
-	uint8 *wizd = _vm->findWrappedBlock(MKID_BE('WIZD'), data, state, 0);
+	uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), data, state, 0);
 	assert(wizd);
 	switch (c) {
 	case 0:
@@ -2671,13 +2671,13 @@ int ScummEngine_v90he::computeWizHistogram(int resNum, int state, int x, int y, 
 		Common::Rect rCapt(x, y, w + 1, h + 1);
 		uint8 *data = getResourceAddress(rtImage, resNum);
 		assert(data);
-		uint8 *wizh = findWrappedBlock(MKID_BE('WIZH'), data, state, 0);
+		uint8 *wizh = findWrappedBlock(MKTAG('W','I','Z','H'), data, state, 0);
 		assert(wizh);
 		int c = READ_LE_UINT32(wizh + 0x0);
 		w = READ_LE_UINT32(wizh + 0x4);
 		h = READ_LE_UINT32(wizh + 0x8);
 		Common::Rect rWiz(w, h);
-		uint8 *wizd = findWrappedBlock(MKID_BE('WIZD'), data, state, 0);
+		uint8 *wizd = findWrappedBlock(MKTAG('W','I','Z','D'), data, state, 0);
 		assert(wizd);
 		if (rCapt.intersects(rWiz)) {
 			rCapt.clip(rWiz);
