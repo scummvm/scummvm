@@ -1760,9 +1760,10 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="gph"
 			_build_hq_scalers=no
-			_mt32emu=no
 			_vkeybd=yes
 			_seq_midi=no
+			_mt32emu=no
+			_timidity=no
 			_port_mk="backends/platform/gph/caanoo-bundle.mk"
 			;;
 		*darwin*)
@@ -1849,9 +1850,10 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="gph"
 			_build_hq_scalers=no
-			_mt32emu=no
 			_vkeybd=yes
 			_seq_midi=no
+			_mt32emu=no
+			_timidity=no
 			_port_mk="backends/platform/gph/gp2x-bundle.mk"
 			;;
 		gp2xwiz)
@@ -1872,9 +1874,10 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="gph"
 			_build_hq_scalers=no
-			_mt32emu=no
 			_vkeybd=yes
 			_seq_midi=no
+			_mt32emu=no
+			_timidity=no
 			_port_mk="backends/platform/gph/gp2xwiz-bundle.mk"
 			;;
 		iphone)
@@ -1992,8 +1995,8 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="openpandora"
 			_build_hq_scalers=yes
-			_mt32emu=no
 			_vkeybd=no
+			_mt32emu=no
 			_seq_midi=no
 			_port_mk="backends/platform/openpandora/op-bundle.mk"
 			;;
