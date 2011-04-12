@@ -243,11 +243,6 @@
 	// You need to set this manually if necessary
 //	#define SCUMM_NEED_ALIGNMENT
 
-	#if defined(__DECCXX) // Assume alpha architecture
-	#define INVERSE_MKID
-	#define SCUMM_NEED_ALIGNMENT
-	#endif
-
 	// Very BAD hack following, used to avoid triggering an assert in uClibc dingux library
 	// "toupper" when pressing keyboard function keys.
 	#if defined(DINGUX)
