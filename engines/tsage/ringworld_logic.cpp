@@ -165,6 +165,8 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 9700: return new Scene9700();
 	case 9750: return new Scene9750();
 	case 9850: return new Scene9850();
+	// Scene 9900: Ending
+	case 9900: return new Scene9900();
 	case 9999: return new Scene9999();
 
 	default:

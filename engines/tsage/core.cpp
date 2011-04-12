@@ -1182,6 +1182,39 @@ void PaletteRotation::setDelay(int amount) {
 
 /*--------------------------------------------------------------------------*/
 
+void PaletteUnknown::synchronise(Serialiser &s) {
+	PaletteModifier::synchronise(s);
+
+	s.syncAsSint16LE(_step);
+	s.syncAsSint16LE(_percent);
+	s.syncAsSint16LE(_field12);
+	s.syncAsSint16LE(_field14);
+	for (int i = 0; i < 256; ++i)
+		s.syncAsUint32LE(_palette[i]);
+}
+
+void PaletteUnknown::signal() {
+	_percent -= _step;
+	if (_percent > 0) {
+		_scenePalette->fade((byte *)_palette, true /* 256 */, _percent);
+	} else {
+		remove();
+	}
+}
+
+void PaletteUnknown::remove() {
+	for (int i = 0; i < 256; i++)
+		_scenePalette->_palette[i] = _palette[i];
+	_scenePalette->refresh();
+	if (_scenePalette->_listeners.contains(this))
+		_scenePalette->_listeners.remove(this);
+	delete this;
+	if (_action)
+		_action->signal();
+}
+
+/*--------------------------------------------------------------------------*/
+
 ScenePalette::ScenePalette() { 
 	// Set a default gradiant range
 	for (int idx = 0; idx < 256; ++idx)
@@ -1322,6 +1355,21 @@ PaletteRotation *ScenePalette::addRotation(int start, int end, int rotationMode,
 	_listeners.push_back(obj);
 	return obj;
 }
+
+PaletteUnknown *ScenePalette::addUnkPal(byte *arrBufferRGB, int unkNumb, bool disabled, Action *action) {
+	PaletteUnknown *paletteUnk = new PaletteUnknown();
+	paletteUnk->_action = action;
+	for (int i = 0; i < 256; i++) {
+		if (unkNumb <= 1)
+			paletteUnk->_palette[i] = arrBufferRGB[i];
+		else
+			paletteUnk->_palette[i] = arrBufferRGB[0];
+	}
+//	PaletteRotation::setPalette(this, disabled);
+	_globals->_scenePalette._listeners.push_back(paletteUnk);
+	return paletteUnk;
+}
+
 
 void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 	ScenePalette tempPalette;

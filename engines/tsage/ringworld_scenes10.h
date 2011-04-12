@@ -455,19 +455,30 @@ public:
 };
 
 class Scene9900: public Scene {
-	class Action1: public Action {
+	class strAction1: public Action {
 	public:
+		SceneObject _object9;
+		ScenePalette _palette1;
+
 		virtual void signal();
 	};
 
-	class Action2: public Action {
+	class strAction2: public Action {
 	public:
+		SceneText _txtArray1[2];
+		SceneText _txtArray2[2];
+		int var1, _txtArray1Index, var3;
+
 		virtual void signal();
 		virtual void dispatch();
 	};
 
-	class Action3: public Action {
+	class strAction3: public Action {
 	public:
+		SceneObject _object10;
+		ScenePalette _palette2;
+		ScenePalette _palette3;
+
 		virtual void signal();
 	};
 
@@ -493,16 +504,9 @@ public:
 	SceneObject _object6;
 	SceneObject _object7;
 	SceneObjectExt _object8;
-	Action1 _action1;
-	SceneObject _object9;
-	ScenePalette _palette1;
-	Action2 _action2;
-	SceneTextArr1 _sceneTextArr1;
-	SceneTextArr2 _sceneTextArr2;
-	Action3 _action3;
-	SceneObject _object10;
-	ScenePalette _palette2;
-	ScenePalette _palette3;
+	strAction1 _strAction1;
+	strAction2 _strAction2;
+	strAction3 _strAction3;
 	SpeakerMR _speakerMR;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

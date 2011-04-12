@@ -344,6 +344,19 @@ public:
 	void setDelay(int amount);
 };
 
+/*--------------------------------------------------------------------------*/
+
+class PaletteUnknown: public PaletteModifier {
+public:
+	int _step, _percent, _field12, _field14;
+	uint32 _palette[256];
+public:
+	virtual Common::String getClassName() { return "PaletteUnknown"; }
+	virtual void synchronise(Serialiser &s);
+	virtual void signal();
+	virtual void remove();
+};
+
 enum FadeMode {FADEMODE_NONE = 0, FADEMODE_GRADUAL = 1, FADEMODE_IMMEDIATE = 2};
 
 class ScenePalette: public SavedObject {
@@ -372,6 +385,7 @@ public:
 	void clearListeners();
 	void fade(const byte *adjustData, bool fullAdjust, int percent);
 	PaletteRotation *addRotation(int start, int end, int rotationMode, int duration = 0, Action *action = NULL);
+	PaletteUnknown *addUnkPal(byte *arrBufferRGB, int unkNumb, bool disabled, Action *action);
 
 	static void changeBackground(const Rect &bounds, FadeMode fadeMode);
 

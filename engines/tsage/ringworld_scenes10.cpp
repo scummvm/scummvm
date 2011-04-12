@@ -1480,7 +1480,6 @@ void Scene9850::Hotspot20::doAction(int action) {
 }
 
 void Scene9850::signal() {
-	warning("Signal : %d", _sceneMode);
 	switch (_sceneMode ++) {
 	case 10:
 		// Hidden closet closed
@@ -1633,35 +1632,38 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
  * Scene 9900
  *
  *--------------------------------------------------------------------------*/
-void Scene9900::Action1::signal() {
+void Scene9900::strAction1::signal() {
+	static byte mask1[3]= {0xFF, 0xFF, 0xFF};
+	static byte mask2[3]= {0x00, 0x00, 0x00};
+
 	Scene9900 *scene = (Scene9900 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
 		scene->_soundHandler.startSound(351, 0, 127);
-		scene->_object9.postInit();
-		scene->_object9.setVisage(18);
-		scene->_object9._frame = 1;
-		scene->_object9._strip = 6;
-		scene->_object9.setPosition(Common::Point(171, 59));
-		scene->_object9.animate(ANIM_MODE_5, 0);
+		_object9.postInit();
+		_object9.setVisage(18);
+		_object9._frame = 1;
+		_object9._strip = 6;
+		_object9.setPosition(Common::Point(171, 59));
+		_object9.animate(ANIM_MODE_5, 0);
 		_globals->_scenePalette.addRotation(67, 111, 1, 1, this);
 		scene->_object2.hide();
 		break;
 	case 1:
-		scene->_palette1.getPalette();
-		warning("TODO sub_1CDF6");
+		_palette1.getPalette();
+		_globals->_scenePalette.addUnkPal(mask1, 1, true /*10*/, this);
 		break;
 	case 2:
-		scene->_object9.remove();
-		warning("TODO sub_1CDF6");
+		_object9.remove();
+		_globals->_scenePalette.addUnkPal(mask2, 1, true /*5*/, this);
 		break;
 	case 3:
 		_globals->_soundHandler.startSound(377, 0, 127);
 		setDelay(120);
 		break;
 	case 4:
-		warning("TODO sub_1CDF6");
+		_globals->_scenePalette.addUnkPal((byte *)_palette1._palette, 256, 1, this);
 		break;
 	case 5:
 		remove();
@@ -1671,14 +1673,69 @@ void Scene9900::Action1::signal() {
 	}
 }
 
-void Scene9900::Action2::signal() {
-	Scene9900 *scene = (Scene9900 *)_globals->_sceneManager._scene;
-
+void Scene9900::strAction2::signal() {
 	switch (_actionIndex++) {
 	case 0:
-	case 1:
-		scene->_palette1.getPalette();
+		var1 = 0;
+		_txtArray1Index = 0;
+		_txtArray1[0]._position.y = 200;
+		_txtArray1[0]._position.y = 300;
+		_txtArray2[0]._position.y = 400;
+		_txtArray2[0]._position.y = 500;
+		var3 = 0;
+		// No break on purpose
+	case 1: {
+		Common::String msg = _vm->_dataManager->getMessage(8030, var1++);
+		if (!msg.compareTo("LASTCREDIT")) {
+			if (var3 == 0) {
+				// Not used?
+				// int x = _txtArray1[_txtArray1Index].getFrame().getBounds().height();
+				_txtArray1[_txtArray1Index]._moveDiff.y = 10;
 
+				NpcMover *mover = new NpcMover();
+				Common::Point pt(_txtArray1[_txtArray1Index]._moveDiff.x, -100);
+				_txtArray1[_txtArray1Index].addMover(mover, &pt, 0);
+
+				// Not used?
+				// int x = _txtArray2[_txtArray1Index].getFrame().getBounds().height();
+				_txtArray2[_txtArray1Index]._moveDiff.y = 10;
+				_txtArray1Index = (_txtArray1Index++) % 2;
+			}
+			var3 = 1;
+			_txtArray1[_txtArray1Index]._textMode = ALIGN_CENTRE;
+			_txtArray1[_txtArray1Index]._width = 240;
+			_txtArray1[_txtArray1Index]._fontNumber = 2;
+			_txtArray1[_txtArray1Index]._colour1 = 7;
+			_txtArray1[_txtArray1Index].setup(msg);
+			_txtArray1[_txtArray1Index]._field7A = 20;
+			_txtArray1[_txtArray1Index]._moveDiff.y = 2;
+			_txtArray1[_txtArray1Index].setPriority2(255);
+			int frameWidth = _txtArray1[_txtArray1Index].getFrame().getBounds().width();
+			int frameHeight = _txtArray1[_txtArray1Index].getFrame().getBounds().height();
+			_txtArray1[_txtArray1Index].setPosition(Common::Point((320 - frameWidth) / 2, 200));  
+			NpcMover *mover2 = new NpcMover();
+			Common::Point pt2(_txtArray1[_txtArray1Index]._position.x, 100);
+			_txtArray1[_txtArray1Index].addMover(mover2, &pt2, 0);
+			
+			_txtArray2[_txtArray1Index]._textMode = ALIGN_CENTRE;
+			_txtArray2[_txtArray1Index]._width = 240;
+			_txtArray2[_txtArray1Index]._fontNumber = 2;
+			_txtArray2[_txtArray1Index]._colour1 = 23;
+
+			msg = _vm->_dataManager->getMessage(8030, var1++);
+			_txtArray2[_txtArray1Index].setup(msg);
+			_txtArray2[_txtArray1Index]._field7A = 20;
+			_txtArray2[_txtArray1Index]._moveDiff.y = 2;
+			_txtArray2[_txtArray1Index].setPriority2(255);
+			frameWidth = _txtArray2[_txtArray1Index].getFrame().getBounds().width();
+			_txtArray2[_txtArray1Index].setPosition(Common::Point((320 - frameWidth) / 2, 200 + frameHeight));
+		} else {
+			_globals->_player.enableControl();
+			_actionIndex = 3;
+			signal();
+		}
+		break;
+	}
 	case 2:
 		setDelay(60);
 		_actionIndex = 1;
@@ -1687,17 +1744,234 @@ void Scene9900::Action2::signal() {
 		setDelay(7200);
 		break;
 	case 4:
+		_txtArray1[0].remove();
+		_txtArray1[1].remove();
+		_txtArray2[0].remove();
+		_txtArray2[1].remove();
+		remove();
+		break;
 	default:
 		break;
 	}
 }
-void Scene9900::Action2::dispatch() {}
-void Scene9900::Action3::signal() {}
+void Scene9900::strAction2::dispatch() {
+//	if (this->_txtArray1[0]._textSurface != 0) {
+		int frameHeight = _txtArray1[0].getFrame().getBounds().height();
+		_txtArray2[0]._position.y = frameHeight + _txtArray1[0]._position.y;
+		_txtArray2[0]._flags |= OBJFLAG_PANES;
+//	}
+//	if (this->_txtArray1[1]._textSurface != 0) {
+		frameHeight = _txtArray1[1].getFrame().getBounds().height();
+		_txtArray2[1]._position.y = frameHeight + _txtArray1[1]._position.y;
+		_txtArray2[1]._flags |= OBJFLAG_PANES;
+//	}
+	Action::dispatch();
+}
 
-void Scene9900::postInit(SceneObjectList *OwnerList) {}
-void Scene9900::signal() {}
-void Scene9900::dispatch() {}
-void Scene9900::process(Event &event){}
+void Scene9900::strAction3::signal() {
+	static byte mask3[3]= {0xFF, 0x00, 0x00};
+	static byte mask4[3]= {0x00, 0x00, 0x00};
+
+	switch (_actionIndex++) {
+	case 0:
+		_palette2.getPalette();
+		_palette3.loadPalette(2003);
+		_globals->_scenePalette.addUnkPal((byte *)_palette3._palette, 256, true /*5*/, this);
+		break;
+	case 1:
+		_globals->_scenePalette.addUnkPal(mask3, 1, true /*10*/, this);
+		break;
+	case 2:
+		_globals->_scenePalette.addUnkPal(mask4, 1, true /*1*/, this);
+		break;
+	case 3:
+		_palette2.loadPalette(17);
+		_globals->_sceneManager._scene->loadScene(17);
+		_globals->_scenePalette.addUnkPal((byte *)_palette2._palette, 256, true /*5*/, this);
+		break;
+	case 4:
+		_globals->_game.endGame(9900, 61);
+		remove();
+	default:
+		break;
+	}
+}
+
+void Scene9900::signal() {
+	if ((_sceneMode != 9913) && (_sceneMode != 9905) && (_sceneMode != 9904) && (_sceneMode != 9912)) {
+		_object1.hide();
+		_object2.hide();
+		_object3.hide();
+		_object4.hide();
+		_object5.hide();
+		_object6.hide();
+	}
+
+	_object1.animate(ANIM_MODE_NONE, 0);
+	_object2.animate(ANIM_MODE_NONE, 0);
+	_object3.animate(ANIM_MODE_NONE, 0);
+	_object4.animate(ANIM_MODE_NONE, 0);
+	_object5.animate(ANIM_MODE_NONE, 0);
+	_object6.animate(ANIM_MODE_NONE, 0);
+
+	_object1.setObjectWrapper(0);
+	_object2.setObjectWrapper(0);
+	_object3.setObjectWrapper(0);
+	_object4.setObjectWrapper(0);
+	_object5.setObjectWrapper(0);
+	_object6.setObjectWrapper(0);
+
+	_object1.addMover(0);
+	_object2.addMover(0);
+	_object3.addMover(0);
+	_object4.addMover(0);
+	_object5.addMover(0);
+	_object6.addMover(0);
+
+	switch (_sceneMode){
+	case 150:
+		_globals->_soundHandler.startSound(380, 0, 127);
+		_object8.postInit(0);
+		_object8.setVisage(2002);
+		_object8.setStrip(1);
+		_object8.setFrame(1);
+		_object8.setPriority2(200);
+		_object8.setPosition(Common::Point(64, 199));
+		_globals->_player.disableControl();
+		_sceneMode = 9908;
+		setAction(&_sequenceManager, this, 9908, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6);
+		break;
+	case 162:
+		warning("TBC: shutdown();");
+		_globals->_game.quitGame();
+		break;
+	case 9901:
+		_globals->_player.disableControl();
+		_sceneMode = 9906;
+		setAction(&_sequenceManager, this, 9906, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6);
+		_globals->_player._uiEnabled = true;
+		_globals->_events.setCursor(CURSOR_USE);
+		break;
+	case 9902:
+		_globals->_player.disableControl();
+		_sceneMode = 9901;
+		setAction(&_sequenceManager, this, 9901, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6);
+		break;
+	case 9903:
+		_globals->_player.disableControl();
+		_sceneMode = 9902;
+		setAction(&_sequenceManager, this, 9902, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6);
+		break;
+	case 9904:
+		_globals->_soundHandler.startSound(390, 0, 127);
+		_sceneMode = 9912;
+		setAction(&_strAction2, this);
+		break;
+	case 9905:
+		_sceneMode = 150;
+		setAction(&_strAction1, this);
+		break;
+	case 9906:
+		if (_object8._state == 0) {
+			_globals->_player.disableControl();
+			_sceneMode = 9913;
+			setAction(&_sequenceManager, this, 9913, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6);
+		} else {
+			_globals->_player.disableControl();
+			_sceneMode = 9905;
+			setAction(&_sequenceManager, this, 9905, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6);
+		}
+		break;
+	case 9907:
+		_globals->_player.disableControl();
+		_sceneMode = 9903;
+		setAction(&_sequenceManager, this, 9903, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6);
+		break;
+	case 9908:
+		_object8.remove();
+		_globals->_player.disableControl();
+		_sceneMode = 9904;
+		setAction(&_sequenceManager, this, 9904, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6);
+		break;
+	case 9909:
+		_globals->_soundHandler.startSound(375, 0, 127);
+		_globals->_player.disableControl();
+		_sceneMode = 9907;
+		setAction(&_sequenceManager, this, 9907, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6);
+		break;
+	case 9910:
+		_globals->_player.disableControl();
+		_sceneMode = 9911;
+		setAction(&_sequenceManager, this, 9911, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6);
+		break;
+	case 9911:
+		_globals->_soundHandler.startSound(367, 0, 127);
+		_globals->_player.disableControl();
+		_sceneMode = 9909;
+		setAction(&_sequenceManager, this, 9909, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6);
+		break;
+	case 9912:
+		_globals->_player.disableControl();
+		_sceneMode = 9912;
+		setAction(&_sequenceManager, this, 9912, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6);
+		_sceneMode = 162;
+		_globals->_player.enableControl();
+		_globals->_player._canWalk = false;
+		break;
+	case 9913:
+		_sceneMode = 200;
+		setAction(&_strAction3, this);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene9900::process(Event &event) {
+	if (event.handled)
+		return;
+	Scene::process(event);
+	if (_sceneMode != 9906) {
+		if ((event.eventType == EVENT_BUTTON_DOWN) && (_globals->_events.getCursor() == OBJECT_ITEMS)) {
+			_object8._state = 1;
+			_globals->_inventory._items._sceneNumber = 9900;
+			_globals->_events.setCursor(CURSOR_USE);
+		}
+	}
+}
+
+void Scene9900::dispatch() {
+	if (_action)
+		_action->dispatch();
+}
+
+void Scene9900::postInit(SceneObjectList *OwnerList) {
+	_object1.postInit(0);
+	_object1.hide();
+	_object2.postInit(0);
+	_object2.hide();
+	_object3.postInit(0);
+	_object3.hide();
+	_object4.postInit(0);
+	_object4.hide();
+	_object5.postInit(0);
+	_object5.hide();
+	_object6.postInit(0);
+	_object6.hide();
+
+	_object8._state = 0;
+
+	_globals->_inventory._concentrator._sceneNumber = 9900;
+	_globals->_inventory._items._rlbNum = 3;
+	_globals->_inventory._items._cursorNum = 6;
+	_globals->_inventory._items._description = Common::String("One of the items from the stasis ship. The other is on the Lance's bridge.");
+	
+	_stripManager.addSpeaker(&_speakerMR);
+	_globals->_player.disableControl();
+	_sceneMode = 9910;
+	setAction(&_sequenceManager, this, 9910, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6);
+}
+
 /*--------------------------------------------------------------------------
  * Scene 9999
  *
