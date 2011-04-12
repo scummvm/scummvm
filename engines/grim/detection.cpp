@@ -136,7 +136,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1s("local.m4b", "00c4eb73f6b6607ba3d4e8d3f956b37b", 3804862),
 			Common::EN_ANY,
-			Common::kPlatformWindows,//Common::kPlatformPS2,
+			Common::kPlatformPS2,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
