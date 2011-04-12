@@ -43,8 +43,8 @@ SoundGen2GS::SoundGen2GS(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMi
 	// here is to first generate audio for a 1/60th of a second and then
 	// advance the MIDI player by one tick. Thus, make the output buffer
 	// to be a 1/60th of a second in length.
-	_outSize = _sampleRate/60;
-	_out = new int16[2*_outSize]; // stereo
+	_outSize = _sampleRate / 60;
+	_out = new int16[2 * _outSize]; // stereo
 
 	// Initialize player variables
 	_nextGen = 0;
