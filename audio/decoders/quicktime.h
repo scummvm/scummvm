@@ -90,6 +90,7 @@ protected:
 	QueuingAudioStream *_audStream;
 
 	void setAudioStreamPos(const Timestamp &where);
+	bool isOldDemuxing() const;
 };
 	
 /**

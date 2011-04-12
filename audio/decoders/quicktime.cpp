@@ -226,6 +226,11 @@ uint32 QuickTimeAudioDecoder::getAudioChunkSampleCount(uint chunk) {
 	return sampleCount;
 }
 
+bool QuickTimeAudioDecoder::isOldDemuxing() const {
+	assert(_audioStreamIndex >= 0);
+	return _streams[_audioStreamIndex]->stts_count == 1 && _streams[_audioStreamIndex]->stts_data[0].duration == 1;
+}
+
 void QuickTimeAudioDecoder::queueNextAudioChunk() {
 	AudioSampleDesc *entry = (AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
 	Common::MemoryWriteStreamDynamic *wStream = new Common::MemoryWriteStreamDynamic();
@@ -236,7 +241,7 @@ void QuickTimeAudioDecoder::queueNextAudioChunk() {
 	uint32 sampleCount = getAudioChunkSampleCount(_curAudioChunk);
 	assert(sampleCount);
 
-	if (_streams[_audioStreamIndex]->stts_count == 1 && _streams[_audioStreamIndex]->stts_data[0].duration == 1) {
+	if (isOldDemuxing()) {
 		// Old-style audio demuxing
 
 		// Then calculate the right sizes
@@ -297,40 +302,32 @@ void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
 	_audStream = Audio::makeQueuingAudioStream(entry->sampleRate, entry->channels == 2);
 
 	// First, we need to track down what audio sample we need
-	Audio::Timestamp curAudioTime(0, _streams[_audioStreamIndex]->time_scale);
-	uint sample = 0;
-	bool done = false;
-	for (int32 i = 0; i < _streams[_audioStreamIndex]->stts_count && !done; i++) {
-		for (int32 j = 0; j < _streams[_audioStreamIndex]->stts_data[i].count; j++) {
-			curAudioTime = curAudioTime.addFrames(_streams[_audioStreamIndex]->stts_data[i].duration);
+	Audio::Timestamp curAudioTime = where;
+	curAudioTime.convertToFramerate(_streams[_audioStreamIndex]->time_scale);
+	uint32 sample = curAudioTime.totalNumberOfFrames() / entry->channels;
+	uint32 seekSample = sample; 
 
-			if (curAudioTime > where) {
-				done = true;
-				break;
-			}
-
-			sample++;
+	if (!isOldDemuxing()) {
+		// We shouldn't have audio samples that are a different duration
+		// That would be quite bad!
+		if (_streams[_audioStreamIndex]->stts_count != 1) {
+			warning("Failed seeking");
+			return;
 		}
+
+		seekSample /= _streams[_audioStreamIndex]->stts_data[0].duration;
 	}
 
 	// Now to track down what chunk it's in
-	_curAudioChunk = 0;
 	uint32 totalSamples = 0;
+	_curAudioChunk = 0;
 	for (uint32 i = 0; i < _streams[_audioStreamIndex]->chunk_count; i++, _curAudioChunk++) {
-		int sampleToChunkIndex = -1;
+		uint32 chunkSampleCount = getAudioChunkSampleCount(i);
 
-		for (uint32 j = 0; j < _streams[_audioStreamIndex]->sample_to_chunk_sz; j++)
-			if (i >= _streams[_audioStreamIndex]->sample_to_chunk[j].first)
-				sampleToChunkIndex = j;
-
-		assert(sampleToChunkIndex >= 0);
-
-		totalSamples += _streams[_audioStreamIndex]->sample_to_chunk[sampleToChunkIndex].count;
-
-		if (sample < totalSamples) {
-			totalSamples -= _streams[_audioStreamIndex]->sample_to_chunk[sampleToChunkIndex].count;
+		if (seekSample < totalSamples + chunkSampleCount)
 			break;
-		}
+
+		totalSamples += chunkSampleCount;
 	}
 		
 	// Reposition the audio stream
@@ -338,10 +335,11 @@ void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
 	if (sample != totalSamples) {
 		// HACK: Skip a certain amount of samples from the stream
 		// (There's got to be a better way to do this!)
-		int16 *tempBuffer = new int16[sample - totalSamples];
-		_audStream->readBuffer(tempBuffer, sample - totalSamples);
+		int skipSamples = (sample - totalSamples) * ((AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0])->channels;
+
+		int16 *tempBuffer = new int16[skipSamples];
+		_audStream->readBuffer(tempBuffer, skipSamples);
 		delete[] tempBuffer;
-		debug(3, "Skipping %d audio samples", sample - totalSamples);
 	}
 }
 
