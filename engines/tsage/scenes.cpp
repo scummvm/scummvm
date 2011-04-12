@@ -35,6 +35,7 @@ SceneManager::SceneManager() {
 	_hasPalette = false;
 	_sceneNumber = -1; 
 	_nextSceneNumber = -1;
+	_previousScene = 0;
 	_fadeMode = FADEMODE_GRADUAL;
 	_scrollerRect = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	_saver->addListener(this);
@@ -135,7 +136,7 @@ void SceneManager::changeScene(int newSceneNumber) {
 	// Fade out the scene
 	ScenePalette scenePalette;
 	uint32 adjustData = 0;
-	scenePalette.clearListeners();
+	_globals->_scenePalette.clearListeners();
 	scenePalette.getPalette();
 
 	for (int percent = 100; percent >= 0; percent -= 5) {

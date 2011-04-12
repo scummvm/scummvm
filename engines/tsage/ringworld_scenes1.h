@@ -494,9 +494,10 @@ class Scene6100: public Scene {
 	public:
 		virtual void dispatch();
 	};
-	class Action6: public Action {
+	class GetBoxAction: public Action {
 	public:
 		virtual void signal();
+		virtual void dispatch();
 	};
 	class Action7: public Action {
 	public:
@@ -507,6 +508,10 @@ class Scene6100: public Scene {
 	class Object: public SceneObject {
 	public:
 		FloatSet _floats;
+	};
+	class ProbeMover: public NpcMover {
+	public:
+		virtual void dispatch();
 	};
 
 	/* Items */
@@ -521,20 +526,21 @@ public:
 	Action3 _action3;
 	Action4 _action4;
 	Action5 _action5;
-	Action6 _action6;
+	GetBoxAction _getBoxAction;
 	Action7 _action7;
 	SoundHandler _soundHandler;
 	Speaker _speaker1;
 	SpeakerQR _speakerQR;
 	SpeakerSL _speakerSL;
 	SceneObject _object1, _object2, _object3;
-	Object _object4, _object5, _object6;
-	Object _object7, _object8;
+	Object _rocks, _probe;
+	Object _sunflower1, _sunflower2, _sunflower3;
 	SceneText _sceneText;
 	SceneItem _item1;
 
-	int _turnAmount, _angle, _field_30E, _fadePercent;
-	int _field_312, _field_314;
+	int _turnAmount, _angle, _speed, _fadePercent;
+	int _hitCount;
+	bool _rocksCheck;
 	Object *_objList[4];
 	bool _msgActive;
 

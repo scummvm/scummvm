@@ -226,30 +226,16 @@ GfxSurface::GfxSurface(): _bounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
 	_lockSurfaceCtr = 0;
 	_customSurface = NULL;
 	_screenSurfaceP = NULL;
-	_freeSurface = false;
 }
 
 GfxSurface::GfxSurface(const GfxSurface &s) {
-	assert(!s._lockSurfaceCtr);
-	_disableUpdates = false;
 	_lockSurfaceCtr = 0;
-	_screenSurface = s._screenSurface;
-	_screenSurfaceP = s._screenSurfaceP;
-	_customSurface = s._customSurface;
-	_centroid = s._centroid;
-	_transColour = s._transColour;
-	_bounds = s._bounds;
-
-	if (!_screenSurface) {
-		create(s._customSurface->w, s._customSurface->h);
-		Common::copy((const byte *)s._customSurface->pixels, 
-			(const byte *)s._customSurface->pixels + (_bounds.width() * _bounds.height()), 
-			(byte *)_customSurface->pixels);
-	}
+	_customSurface = NULL;
+	this->operator =(s);
 }
 
 GfxSurface::~GfxSurface() {
-	if (_freeSurface) {
+	if (_customSurface) {
 		_customSurface->free();
 		delete _customSurface;
 	}
@@ -265,15 +251,6 @@ void GfxSurface::setScreenSurface() {
 }
 
 /**
- * Specifies the underlying ScummmVM surface that this class should encapsulate
- */
-void GfxSurface::setSurface(Graphics::Surface *s) {
-	_customSurface = s;
-	_screenSurface = false;
-	_lockSurfaceCtr = 0;
-}
-
-/**
  * Specifies that the surface should maintain it's own internal surface
  */
 void GfxSurface::create(int width, int height) {
@@ -281,7 +258,6 @@ void GfxSurface::create(int width, int height) {
 	_screenSurface = false;
 	_customSurface = new Graphics::Surface();
 	_customSurface->create(width, height, 1);
-	_freeSurface = true;
 	_bounds = Rect(0, 0, width, height);
 }
 
@@ -340,18 +316,22 @@ GfxSurface &GfxSurface::operator=(const GfxSurface &s) {
 	assert(_lockSurfaceCtr == 0);
 	assert(s._lockSurfaceCtr == 0);
 
+	if (_customSurface) {
+		_customSurface->free();
+		delete _customSurface;
+	}
+
 	_customSurface = s._customSurface;
 	_screenSurface = s._screenSurface;
-	_freeSurface = s._freeSurface;
 	_disableUpdates = s._disableUpdates;
 	_bounds = s._bounds;
 	_centroid = s._centroid;
 	_transColour = s._transColour;
 
-	if (_freeSurface) {
+	if (_customSurface) {
 		// Surface owns the internal data, so replicate it so new surface owns it's own
 		_customSurface = new Graphics::Surface();
-		_customSurface->create(_bounds.width(), _bounds.height(), 1);
+		_customSurface->create(s._customSurface->w, s._customSurface->h, 1);
 		const byte *srcP = (const byte *)s._customSurface->getBasePtr(0, 0);
 		byte *destP = (byte *)_customSurface->getBasePtr(0, 0);
 

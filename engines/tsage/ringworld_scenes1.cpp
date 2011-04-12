@@ -2836,7 +2836,7 @@ void Scene6100::Action3::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		scene->_field_30E = 0;
+		scene->_speed = 0;
 		setDelay(60);
 		break;
 	case 1:
@@ -2847,10 +2847,10 @@ void Scene6100::Action3::signal() {
 		scene->_object1.hide();
 		scene->_object2.hide();
 		scene->_object3.hide();
-		scene->_object6.hide();
-		scene->_object7.hide();
-		scene->_object8.hide();
-		scene->_object4.hide();
+		scene->_sunflower1.hide();
+		scene->_sunflower2.hide();
+		scene->_sunflower3.hide();
+		scene->_rocks.hide();
 		scene->_sceneText.hide();
 
 		_globals->_events.setCursor(CURSOR_WALK);
@@ -2892,8 +2892,8 @@ void Scene6100::Action4::signal() {
 
 void Scene6100::Action5::dispatch() {
 	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
-	FloatSet floatSet = _globals->_floatSet;
-	const double MULTIPLY_FACTOR = 0.01744;
+	FloatSet zeroSet;
+	const double MULTIPLY_FACTOR = 0.01744;		// 2 * pi / 360
 
 	if (scene->_turnAmount) {
 		scene->_angle = (scene->_turnAmount + scene->_angle) % 360;
@@ -2915,30 +2915,26 @@ void Scene6100::Action5::dispatch() {
 	scene->_object2._flags |= OBJFLAG_PANES;
 	scene->_object3._flags |= OBJFLAG_PANES;
 
-	double v2, v3;
-	v2 = scene->_field_30E;
-	v3 = (double)scene->_angle * MULTIPLY_FACTOR;
-	scene->_object5._floats._float1 += sin(v3) * v2;
-
-	v2 = scene->_field_30E;
-	v3 = scene->_angle * MULTIPLY_FACTOR;
-	scene->_object5._floats._float2 += cos(v3) * v2;
+	double distance = scene->_speed;
+	double angle = (double)scene->_angle * MULTIPLY_FACTOR;
+	scene->_probe._floats._float1 += sin(angle) * distance;
+	scene->_probe._floats._float2 += cos(angle) * distance;
 
 	for (int idx = 0; idx < 4; ++idx) {
 		FloatSet tempSet = scene->_objList[idx]->_floats;
-		tempSet.add(-scene->_object5._floats._float1, -scene->_object5._floats._float2,
-			-scene->_object5._floats._float3);
+		tempSet.add(-scene->_probe._floats._float1, -scene->_probe._floats._float2,
+			-scene->_probe._floats._float3);
 
 		tempSet.proc1(scene->_angle * MULTIPLY_FACTOR);
 
-		double sqrtVal = tempSet.sqrt(floatSet);
+		double sqrtVal = tempSet.sqrt(zeroSet);
 		if (sqrtVal != 0.0) {
-			scene->_objList[idx]->_position.y = static_cast<int>(
-			sqrtVal / 13800.0 + 62.0);
+			scene->_objList[idx]->_position.y = static_cast<int>(13800.0 / sqrtVal + 62.0);
 		}
 
 		scene->_objList[idx]->_position.x = static_cast<int>(
-			 160.0 - ((tempSet._float2 + 330.0) / 330.0 * tempSet._float1));
+			 160.0 - (330.0 / (tempSet._float2 + 330.0) * tempSet._float1));
+		scene->_objList[idx]->dispatch();
 
 		if (tempSet._float2 < 0) {
 			scene->_objList[idx]->_position.y = 300;
@@ -2951,24 +2947,20 @@ void Scene6100::Action5::dispatch() {
 
 				scene->_objList[idx]->_floats.proc1(
 					-(scene->_turnAmount * 10 + scene->_angle) * MULTIPLY_FACTOR);
-				
-				scene->_objList[idx]->_floats.add(scene->_object5._floats._float1, 
-					scene->_object5._floats._float2, scene->_object5._floats._float3);
+				scene->_objList[idx]->_floats.add(scene->_probe._floats._float1, 
+					scene->_probe._floats._float2, scene->_probe._floats._float3);
 			}
 		}
 
 		if (idx == 3) {
-			if (((int)tempSet._float1 >= 100) || (tempSet._float2 > 0))
-				scene->_field_314 = 0;
-			else
-				scene->_field_314 = 1;
+			scene->_rocksCheck = (ABS((int)tempSet._float1) < 100) && (tempSet._float2 > 0);
 		}
 
 		scene->_objList[idx]->_flags |= OBJFLAG_PANES;
 /*
 		if ((idx != 3) && (scene->_fadePercent == 100) &&
 				(tempSet.sqrt(floatSet) < 150.0)) {
-			switch (scene->_field_312++) {
+			switch (scene->_hitCount++) {
 			case 1:
 				scene->_soundHandler.startSound(233);
 				scene->showMessage(0, NULL, 0);
@@ -3001,29 +2993,29 @@ void Scene6100::Action5::dispatch() {
 	}
 }
 
-void Scene6100::Action6::signal() {
+void Scene6100::GetBoxAction::signal() {
 	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0: {
 		scene->_turnAmount = 0;
-		Common::Point pt(scene->_object4._position.x, scene->_object4._position.y + 10);
-		NpcMover *mover = new NpcMover();
-		scene->_object5.addMover(mover, &pt, NULL);
-		scene->_object5.show();
+		Common::Point pt(scene->_rocks._position.x, scene->_rocks._position.y + 10);
+		ProbeMover *mover = new ProbeMover();
+		scene->_probe.addMover(mover, &pt, NULL);
+		scene->_probe.show();
 		break;
 	}
 	case 1: {
 		scene->showMessage(SCENE6100_TAKE_CONTROLS, 35, this);
 		_globals->_scenePalette.clearListeners();
 
-		Common::Point pt(scene->_object4._position.x, scene->_object4._position.y - 10);
+		Common::Point pt(scene->_rocks._position.x, scene->_rocks._position.y - 10);
 		NpcMover *mover = new NpcMover();
-		scene->_object5.addMover(mover, &pt, NULL);
+		scene->_probe.addMover(mover, &pt, NULL);
 		break;
 	}
 	case 2:
-		scene->_object5._percent = 4;
+		scene->_probe._percent = 4;
 		scene->showMessage(SCENE6100_SURPRISE, 13, this);
 		break;
 	case 3:
@@ -3039,6 +3031,24 @@ void Scene6100::Action6::signal() {
 	}		
 }
 
+void Scene6100::GetBoxAction::dispatch() {
+	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
+
+	if (!scene->_probe._mover && (scene->_getBoxAction._actionIndex >= 1)) {
+		if (scene->_getBoxAction._actionIndex == 1) {
+			scene->_speed = 0;
+			scene->_getBoxAction.signal();
+		}
+		
+		if (scene->_probe._percent > 4)
+			// Handle the probe disappearing into the rocks
+			scene->_probe._percent = scene->_probe._percent * 7 / 8;
+		scene->_probe._flags |= OBJFLAG_PANES;
+	}
+
+	Action::dispatch();
+}
+
 void Scene6100::Action7::signal() {
 	switch (_actionIndex++) {
 	case 0:
@@ -3052,6 +3062,21 @@ void Scene6100::Action7::signal() {
 		remove();
 		break;
 	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene6100::ProbeMover::dispatch() {
+	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
+
+	if (!dontMove()) {
+		if (scene->_speed > 0) {
+			scene->_action5.dispatch();
+			scene->_speed = (scene->_speed * 4) / 5;
+		}
+	}
+
+	NpcMover::dispatch();
 }
 
 /*--------------------------------------------------------------------------*/
@@ -3093,33 +3118,33 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 	_object3.setPosition(Common::Point(320, 60));
 	_object3.setPriority2(1);
 
-	_object4.postInit();
-	_object4.setVisage(6100);
-	_object4._frame = 1;
-	_object4._strip = 3;
-	_object4.setPosition(Common::Point(320, 0));
-	_object4.setPriority2(2);
-	_object4.changeZoom(-1);
-	_object4._floats._float1 = 320.0;
-	_object4._floats._float2 = 25000.0;
-	_object4._floats._float3 = 0.0;
+	_rocks.postInit();
+	_rocks.setVisage(6100);
+	_rocks._frame = 1;
+	_rocks._strip = 3;
+	_rocks.setPosition(Common::Point(320, 0));
+	_rocks.setPriority2(2);
+	_rocks.changeZoom(-1);
+	_rocks._floats._float1 = 320.0;
+	_rocks._floats._float2 = 25000.0;
+	_rocks._floats._float3 = 0.0;
 
-	_object5.postInit();
-	_object5._moveDiff = Common::Point(15, 15);
-	_object5.setVisage(6100);
-	_object5._frame = 1;
-	_object5._strip = 5;
-	_object5.setPosition(Common::Point(160, 260));
-	_object5.setPriority2(3);
-	_object5._floats._float1 = 320.0;
-	_object5._floats._float2 = 0.0;
-	_object5._floats._float3 = 0.0;
-	_object5.hide();
+	_probe.postInit();
+	_probe._moveDiff = Common::Point(15, 15);
+	_probe.setVisage(6100);
+	_probe._frame = 1;
+	_probe._strip = 5;
+	_probe.setPosition(Common::Point(160, 260));
+	_probe.setPriority2(3);
+	_probe._floats._float1 = 320.0;
+	_probe._floats._float2 = 0.0;
+	_probe._floats._float3 = 0.0;
+	_probe.hide();
 
-	_objList[0] = &_object6;
-	_objList[1] = &_object7;
-	_objList[2] = &_object8;
-	_objList[3] = &_object4;
+	_objList[0] = &_sunflower1;
+	_objList[1] = &_sunflower2;
+	_objList[2] = &_sunflower3;
+	_objList[3] = &_rocks;
 	
 	int baseVal = 2000;
 	for (int idx = 0; idx < 3; ++idx) {
@@ -3139,10 +3164,10 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 		_objList[idx]->changeZoom(-1);
 	}
 
-	_field_30E = 30;
+	_speed = 30;
 	_fadePercent = 100;
-	_field_314 = 0;
-	_field_312 = 0;
+	_rocksCheck = false;
+	_hitCount = 0;
 	_turnAmount = 0;
 	_angle = 0;
 	_msgActive = false;
@@ -3151,7 +3176,7 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 	_globals->_scenePalette.addRotation(96, 143, -1);
 
 	if (!_globals->getFlag(76))
-		_object5.setAction(&_action4);
+		_probe.setAction(&_action4);
 	
 	_globals->_soundHandler.startSound(231);
 }
@@ -3174,15 +3199,15 @@ void Scene6100::process(Event &event) {
 		}
 	}
 
-	if (_object5._action)
-		_object5._action->process(event);
+	if (_probe._action)
+		_probe._action->process(event);
 }
 
 void Scene6100::dispatch() {
 	Scene::dispatch();
 
-	if (_object5._action)
-		_object5._action->dispatch();
+	if (_probe._action)
+		_probe._action->dispatch();
 
 	// Handle mouse controlling the turning
 	int changeAmount = (_globals->_events._mousePos.x - 160) / -20;
@@ -3201,8 +3226,8 @@ void Scene6100::dispatch() {
 
 	if (_action != &_action3) {
 		// Display the distance remaining to the target
-		int distance = _object5._floats.sqrt(_object4._floats);
-		Common::String s = Common::String::format("%06lu", distance);
+		int distance = _probe._floats.sqrt(_rocks._floats);
+		Common::String s = Common::String::format("%06d", distance);
 
 		_sceneText.setPosition(Common::Point(24, 160));
 		_sceneText._fontNumber = 0;
@@ -3210,13 +3235,12 @@ void Scene6100::dispatch() {
 		_sceneText.setup(s);
 	}
 
-	if (_field_314) {
-		if (_action == &_action5) {
-			double distance = _object5._floats.sqrt(_object4._floats);
-			
-			if ((distance >= 300.0) && (distance <= 500.0))
-				setAction(&_action6);
-		}
+	if (_rocksCheck && (_action == &_action5)) {
+		// Check whether the probe is close enough to the rocks
+		double distance = _probe._floats.sqrt(_rocks._floats);
+		
+		if ((distance >= 300.0) && (distance <= 500.0))
+			setAction(&_getBoxAction);
 	}
 }
 

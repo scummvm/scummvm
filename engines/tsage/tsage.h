@@ -90,6 +90,7 @@ public:
 	Common::String generateSaveName(int slot);
 
 	void initialise();
+	void deinitialise();
 };
 
 extern TSageEngine *_vm;

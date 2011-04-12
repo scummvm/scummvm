@@ -59,8 +59,6 @@ TSageEngine::~TSageEngine() {
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
 	delete _debugger;
-	delete _dataManager;
-	delete _tSageManager;
 }
 
 bool TSageEngine::hasFeature(EngineFeature f) const {
@@ -73,15 +71,21 @@ bool TSageEngine::hasFeature(EngineFeature f) const {
 void TSageEngine::initialise() {
 	_tSageManager = new RlbManager(_memoryManager, "tsage.rlb");
 	_dataManager = new RlbManager(_memoryManager, "ring.rlb");
+
+	_saver = new Saver();
+	_globals = new Globals();
+	_globals->gfxManager().setDefaults();
+}
+
+void TSageEngine::deinitialise() {
+	delete _globals;
+	delete _saver;
+	delete _tSageManager;
+	delete _dataManager;
 }
 
 Common::Error TSageEngine::run() {
 	// Basic initialisation
-	initialise();
-	_saver = new Saver();
-	_globals = new Globals();
-	_globals->gfxManager().setDefaults();
-
 	initialise();
 
 	_globals->_events.showCursor();
@@ -89,8 +93,7 @@ Common::Error TSageEngine::run() {
 	_globals->_sceneHandler.registerHandler();
 	_globals->_game.execute();
 
-	delete _globals;
-	delete _saver;
+	deinitialise();
 	return Common::kNoError;
 }
 

@@ -1127,7 +1127,7 @@ void PaletteRotation::signal() {
 
 void PaletteRotation::remove() {
 	Action *action = _action;
-	g_system->getPaletteManager()->setPalette((const byte *)&_palette[0], _start, _end - _start);
+	g_system->getPaletteManager()->setPalette((const byte *)&_palette[_start], _start, _end - _start);
 
 	if (_scenePalette->_listeners.contains(this))
 		_scenePalette->_listeners.remove(this);
@@ -2527,7 +2527,6 @@ void SceneText::setup(const Common::String &msg) {
 	gfxMan._font._colours2.foreground = _colour3;
 
 	gfxMan.getStringBounds(msg.c_str(), textRect, _width);
-	_bounds = textRect;
 
 	// Set up a new blank surface to hold the text
 	_textSurface.create(textRect.width(), textRect.height());
@@ -2535,6 +2534,7 @@ void SceneText::setup(const Common::String &msg) {
 	_textSurface.fillRect(textRect, _textSurface._transColour);
 
 	// Write the text to the surface
+	gfxMan._bounds = textRect;
 	gfxMan._font.writeLines(msg.c_str(), textRect, _textMode);	
 
 	// Do post-init, which adds this SceneText object to the scene
