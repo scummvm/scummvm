@@ -147,7 +147,7 @@
  * be used for character constants. Hence if one uses multi-byte character
  * constants, a potential portability problem opens up.
  */
-#define MKTAG(a0,a1,a2,a3) ((a0) | ((a1) << 8) | ((a2) << 16) | ((a3) << 24))
+#define MKTAG(a0,a1,a2,a3) ((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24))
 
 // Functions for reading/writing native Integers,
 // this transparently handles the need for alignment
