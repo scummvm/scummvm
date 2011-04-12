@@ -138,10 +138,10 @@ void SoundGen2GS::stop() {
  * @return Number of generated samples
  */
 uint32 SoundGen2GS::generateOutput() {
-	memset(_out, 0, _outSize*2*2);
+	memset(_out, 0, _outSize * 2 * 2);
 
 	if (!_playing || _playingSound == -1)
-		return _outSize*2;
+		return _outSize * 2;
 
 	int16 *p = _out;
 	int n = _outSize;
@@ -207,25 +207,35 @@ uint32 SoundGen2GS::generateOutput() {
 			
 			// Take envelope and MIDI volume information into account.
 			// Also amplify.
-			s0 *= vol * g->vel/127 * 80/256;
-			s1 *= vol * g->vel/127 * 80/256;
+			s0 *= vol * g->vel / 127 * 80 / 256;
+			s1 *= vol * g->vel / 127 * 80 / 256;
 			
-			if (g->osc[0].chn) outl += s0;
-			else               outr += s0;
-			if (g->osc[1].chn) outl += s1;
-			else               outr += s1;
+			// Select output channel.
+			if (g->osc[0].chn)
+				outl += s0;
+			else
+				outr += s0;
+
+			if (g->osc[1].chn)
+				outl += s1;
+			else
+				outr += s1;
 		}
 
-		if (outl > 32768) outl = 32768;
-		if (outl <-32767) outl =-32767;
-		if (outr > 32768) outr = 32768;
-		if (outr <-32767) outr =-32767;
+		if (outl > 32768)
+			outl = 32768;
+		if (outl < -32767)
+			outl = -32767;
+		if (outr > 32768)
+			outr = 32768;
+		if (outr < -32767)
+			outr = -32767;
 
 		*p++ = outl;
 		*p++ = outr;
 	}
 
-	return _outSize*2;
+	return _outSize * 2;
 }
 
 void SoundGen2GS::advancePlayer() {
@@ -388,26 +398,26 @@ void SoundGen2GS::midiNoteOn(int channel, int note, int velocity) {
 		wb++;
 
 	// Prepare the generator.
-	g->osc[0].base = i->wave[0][wa].base;
-	g->osc[0].size = i->wave[0][wa].size;
-	g->osc[0].pd   = doubleToFrac(midiKeyToFreq(note, (double)i->wave[0][wa].tune / 256.0) / (double)_sampleRate);
-	g->osc[0].p    = 0;
-	g->osc[0].halt = i->wave[0][wa].halt;
-	g->osc[0].loop = i->wave[0][wa].loop;
-	g->osc[0].swap = i->wave[0][wa].swap;
-	g->osc[0].chn  = i->wave[0][wa].chn;
+	g->osc[0].base	= i->wave[0][wa].base;
+	g->osc[0].size	= i->wave[0][wa].size;
+	g->osc[0].pd	= doubleToFrac(midiKeyToFreq(note, (double)i->wave[0][wa].tune / 256.0) / (double)_sampleRate);
+	g->osc[0].p		= 0;
+	g->osc[0].halt	= i->wave[0][wa].halt;
+	g->osc[0].loop	= i->wave[0][wa].loop;
+	g->osc[0].swap	= i->wave[0][wa].swap;
+	g->osc[0].chn	= i->wave[0][wa].chn;
 
-	g->osc[1].base = i->wave[1][wb].base;
-	g->osc[1].size = i->wave[1][wb].size;
-	g->osc[1].pd   = doubleToFrac(midiKeyToFreq(note, (double)i->wave[1][wb].tune / 256.0) / (double)_sampleRate);
-	g->osc[1].p    = 0;
-	g->osc[1].halt = i->wave[1][wb].halt;
-	g->osc[1].loop = i->wave[1][wb].loop;
-	g->osc[1].swap = i->wave[1][wb].swap;
-	g->osc[1].chn  = i->wave[1][wb].chn;
+	g->osc[1].base	= i->wave[1][wb].base;
+	g->osc[1].size	= i->wave[1][wb].size;
+	g->osc[1].pd	= doubleToFrac(midiKeyToFreq(note, (double)i->wave[1][wb].tune / 256.0) / (double)_sampleRate);
+	g->osc[1].p		= 0;
+	g->osc[1].halt	= i->wave[1][wb].halt;
+	g->osc[1].loop	= i->wave[1][wb].loop;
+	g->osc[1].swap	= i->wave[1][wb].swap;
+	g->osc[1].chn	= i->wave[1][wb].chn;
 
-	g->seg = 0;
-	g->a   = 0;
+	g->seg	= 0;
+	g->a	= 0;
 
 	// Print debug messages for instruments with swap mode or vibrato enabled
 	if (g->osc[0].swap || g->osc[1].swap)
@@ -442,7 +452,7 @@ void SoundGen2GS::setProgramChangeMapping(const IIgsMidiProgramMapping *mapping)
 IIgsMidi::IIgsMidi(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : AgiSound(manager) {
 	_data = data; // Save the resource pointer
 	_ptr = _data + 2; // Set current position to just after the header
-	_len  = len;  // Save the resource's length
+	_len = len;  // Save the resource's length
 	_type = READ_LE_UINT16(data); // Read sound resource's type
 	_ticks = 0;
 	_isValid = (_type == AGI_SOUND_MIDI) && (_data != NULL) && (_len >= 2);
@@ -505,21 +515,21 @@ IIgsSample::IIgsSample(uint8 *data, uint32 len, int resnum, SoundMgr &manager) :
 
 bool IIgsInstrumentHeader::read(Common::SeekableReadStream &stream, bool ignoreAddr) {
 	for (int i = 0; i < ENVELOPE_SEGMENT_COUNT; i++) {
-		env[i].bp  = intToFrac(stream.readByte());
+		env[i].bp = intToFrac(stream.readByte());
 		env[i].inc = intToFrac(stream.readUint16LE()) >> 8;
 	}
-	seg          = stream.readByte();
-	/*priority   =*/ stream.readByte(); // Not needed. 32 in all tested data.
-	bend         = stream.readByte();
-	vibDepth     = stream.readByte();
-	vibSpeed     = stream.readByte();
+	seg			= stream.readByte();
+	/*priority	=*/ stream.readByte(); // Not needed. 32 in all tested data.
+	bend		= stream.readByte();
+	vibDepth	= stream.readByte();
+	vibSpeed	= stream.readByte();
 	stream.readByte(); // Not needed? 0 in all tested data.
 
 	waveCount[0] = stream.readByte();
 	waveCount[1] = stream.readByte();
 	for (int i = 0; i < 2; i++)
 	for (int k = 0; k < waveCount[i]; k++) {
-		wave[i][k].key  = stream.readByte();
+		wave[i][k].key = stream.readByte();
 		wave[i][k].base = (int8*)(stream.readByte() << 8);
 		wave[i][k].size = 0x100 << (stream.readByte() & 7);
 		uint8 b = stream.readByte();
@@ -536,10 +546,10 @@ bool IIgsInstrumentHeader::read(Common::SeekableReadStream &stream, bool ignoreA
 		}
 
 		// Parse the generator mode byte to separate fields.
-		wave[i][k].halt =   b & 0x1;         // Bit 0     = HALT
-		wave[i][k].loop = !(b & 0x2);        // Bit 1     =!LOOP
-		wave[i][k].swap =  (b & 0x6) == 0x6; // Bit 1&2   = SWAP
-		wave[k][k].chn  = (b >> 4) > 0; // Output channel (left or right)
+		wave[i][k].halt = b & 0x1;			// Bit 0     = HALT
+		wave[i][k].loop = !(b & 0x2);		// Bit 1     =!LOOP
+		wave[i][k].swap = (b & 0x6) == 0x6;	// Bit 1&2   = SWAP
+		wave[k][k].chn = (b >> 4) > 0;		// Output channel (left or right)
 	}
 
 	return !(stream.eos() || stream.err());
@@ -564,13 +574,13 @@ bool IIgsInstrumentHeader::finalize(int8 *wavetable) {
 }
 
 bool IIgsSampleHeader::read(Common::SeekableReadStream &stream) {
-	type             = stream.readUint16LE();
-	pitch            = stream.readByte();
-	unknownByte_Ofs3 = stream.readByte();
-	volume           = stream.readByte();
-	unknownByte_Ofs5 = stream.readByte();
-	instrumentSize   = stream.readUint16LE();
-	sampleSize       = stream.readUint16LE();
+	type				= stream.readUint16LE();
+	pitch				= stream.readByte();
+	unknownByte_Ofs3	= stream.readByte();
+	volume				= stream.readByte();
+	unknownByte_Ofs5	= stream.readByte();
+	instrumentSize		= stream.readUint16LE();
+	sampleSize			= stream.readUint16LE();
 	// Read the instrument header *ignoring* its wave address info
 	return instrument.read(stream, true);
 }
