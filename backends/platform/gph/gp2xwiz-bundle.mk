@@ -1,6 +1,5 @@
 # Special target to create bundles for the GP2X Wiz.
 
-#bundle_name = release/scummvm-wiz-`date '+%Y-%m-%d'`
 bundle_name = release/scummvm-gp2xwiz
 f=$(shell which $(STRIP))
 libloc = $(shell dirname $(f))
