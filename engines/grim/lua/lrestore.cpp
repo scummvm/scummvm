@@ -296,7 +296,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 					int id = restoreUint32();
 					pointer = g_grim->objectState(id);
 				} else {
-					ObjectPtr<Object> p = ObjectManager::restoreObject(g_grim->_savedState);
+					ObjectPtr<Object> p = ObjectMan.restoreObject(g_grim->_savedState);
 					Object *o = p.object();
 					o->reference();
 					pointer = o;

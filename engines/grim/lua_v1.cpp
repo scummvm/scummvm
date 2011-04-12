@@ -45,9 +45,6 @@ namespace Grim {
 
 extern Imuse *g_imuse;
 
-Common::StringArray g_listfiles;
-Common::StringArray::const_iterator g_filesiter;
-
 int refSystemTable;
 static int refTypeOverride;
 static int refOldConcatFallback;
@@ -421,7 +418,7 @@ static void setDefaultObjectParams(TextObjectDefaults *defaults, lua_Object tabl
 static void SetSayLineDefaults() {
 	lua_Object tableObj = lua_getparam(1);
 	if (tableObj && lua_istable(tableObj))
-		setDefaultObjectParams(&sayLineDefaults, tableObj);
+		setDefaultObjectParams(&g_grim->_sayLineDefaults, tableObj);
 }
 
 static void SetActorTalkColor() {
@@ -2129,7 +2126,7 @@ static void PrintLine() {
 
 	if ((lua_isstring(param1Obj) || lua_isnil(param1Obj)) && (lua_istable(param2Obj) || lua_isnil(param2Obj))) {
 		if (lua_istable(param2Obj)) {
-			setDefaultObjectParams(&printLineDefaults, param2Obj);
+			setDefaultObjectParams(&g_grim->_printLineDefaults, param2Obj);
 			parseSayLineTable(param2Obj, &background, &vol, &buffer, &x, &y);
 		}
 		if (lua_isstring(param1Obj)) {
@@ -2686,19 +2683,19 @@ static void PlaySoundAt() {
 }
 
 static void FileFindDispose() {
-	if (g_filesiter)
-		g_filesiter->begin();
-	g_listfiles.clear();
-	g_filesiter = NULL;
+	if (g_grim->_listFilesIter)
+		g_grim->_listFilesIter->begin();
+	g_grim->_listFiles.clear();
+	g_grim->_listFilesIter = NULL;
 }
 
 static void luaFileFindNext() {
-	if (g_filesiter == g_listfiles.end()) {
+	if (g_grim->_listFilesIter == g_grim->_listFiles.end()) {
 		lua_pushnil();
 		FileFindDispose();
 	} else {
-		lua_pushstring(g_filesiter->c_str());
-		g_filesiter++;
+		lua_pushstring(g_grim->_listFilesIter->c_str());
+		g_grim->_listFilesIter++;
 	}
 }
 
@@ -2713,10 +2710,10 @@ static void luaFileFindFirst() {
 
 	const char *extension = lua_getstring(extObj);
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	g_listfiles = saveFileMan->listSavefiles(extension);
-	g_filesiter = g_listfiles.begin();
+	g_grim->_listFiles = saveFileMan->listSavefiles(extension);
+	g_grim->_listFilesIter = g_grim->_listFiles.begin();
 
-	if (g_filesiter == g_listfiles.end())
+	if (g_grim->_listFilesIter == g_grim->_listFiles.end())
 		lua_pushnil();
 	else
 		luaFileFindNext();
@@ -3039,7 +3036,7 @@ static void MakeTextObject() {
 	const char *line = lua_getstring(textObj);
 	Common::String text = line;
 
-	textObject->setDefaults(&blastTextDefaults);
+	textObject->setDefaults(&g_grim->_blastTextDefaults);
 	lua_Object tableObj = lua_getparam(2);
 	if (lua_istable(tableObj))
 		setTextObjectParams(textObject, tableObj);
@@ -3096,7 +3093,7 @@ static void BlastText() {
 	const char *line = lua_getstring(textObj);
 	Common::String text = line;
 
-	textObject->setDefaults(&blastTextDefaults);
+	textObject->setDefaults(&g_grim->_blastTextDefaults);
 	lua_Object tableObj = lua_getparam(2);
 	if (lua_istable(tableObj))
 		setTextObjectParams(textObject, tableObj);

@@ -32,6 +32,7 @@
 #include "common/func.h"
 #include "common/list.h"
 #include "common/debug.h"
+#include "common/singleton.h"
 
 namespace Grim {
 
@@ -169,13 +170,13 @@ private:
 	T *_obj;
 };
 
-class ObjectManager {
+class ObjectManager : public Common::Singleton<ObjectManager> {
 public:
-	static void saveObject(SaveGame *state, Object *object);
-	static ObjectPtr<Object> restoreObject(SaveGame *state);
+	void saveObject(SaveGame *state, Object *object);
+	ObjectPtr<Object> restoreObject(SaveGame *state);
 
 	template<class T>
-	static bool registerType() {
+	bool registerType() {
 		Common::String type = T::staticTypeName();
 		if (_creators.contains(type)) {
 			warning("Type name %s already registered", type.c_str());
@@ -186,17 +187,19 @@ public:
 		return true;
 	}
 
-	static void clearTypes() {
+	void clearTypes() {
 		_creators.clear();
 	}
 
 private:
 	typedef ObjectPtr<Object> (*CreatorFunc)(SaveGame *);
-	static Common::HashMap<Common::String, CreatorFunc> _creators;
+	Common::HashMap<Common::String, CreatorFunc> _creators;
 
 };
 
 } // end of namespace Grim
+
+#define ObjectMan (::Grim::ObjectManager::instance())
 
 #define GRIM_OBJECT(class)						\
 	public:										\

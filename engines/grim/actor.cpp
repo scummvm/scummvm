@@ -779,11 +779,11 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 		_sayLineText = NULL;
 	}
 
-	if (!sayLineDefaults.font)
+	if (!g_grim->_sayLineDefaults.font)
 		return;
 
 	_sayLineText = new TextObject(false, true);
-	_sayLineText->setDefaults(&sayLineDefaults);
+	_sayLineText->setDefaults(&g_grim->_sayLineDefaults);
 	_sayLineText->setText(msg);
 	_sayLineText->setFGColor(&_talkColor);
 	if (g_grim->getMode() == ENGINE_MODE_SMUSH) {

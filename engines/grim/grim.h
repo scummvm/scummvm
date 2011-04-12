@@ -243,6 +243,13 @@ public:
 	const char *_savegameFileName;
 	SaveGame *_savedState;
 
+	Common::StringArray _listFiles;
+	Common::StringArray::const_iterator _listFilesIter;
+
+	TextObjectDefaults _sayLineDefaults;
+	TextObjectDefaults _printLineDefaults;
+	TextObjectDefaults _blastTextDefaults;
+
 private:
 
 	void handleControls(int operation, int key, int keyModifier, uint16 ascii);

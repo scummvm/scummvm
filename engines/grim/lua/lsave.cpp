@@ -259,7 +259,7 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 							saveUint32(g_grim->objectStateId(s));
 						} else {
 							saveUint32(4);
-							ObjectManager::saveObject(g_grim->_savedState, o);
+							ObjectMan.saveObject(g_grim->_savedState, o);
 						}
 					} else {
 						saveUint32(0);

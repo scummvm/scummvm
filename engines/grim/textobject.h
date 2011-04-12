@@ -44,10 +44,6 @@ struct TextObjectDefaults {
 
 #define TEXT_NULL   ' '
 
-extern TextObjectDefaults sayLineDefaults;
-extern TextObjectDefaults printLineDefaults;
-extern TextObjectDefaults blastTextDefaults;
-
 class TextObject : public Object {
 	GRIM_OBJECT(TextObject)
 public:

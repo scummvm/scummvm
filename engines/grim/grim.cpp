@@ -239,8 +239,6 @@ GrimEngine *g_grim = NULL;
 GfxBase *g_driver = NULL;
 int g_imuseState = -1;
 
-extern Common::StringArray::const_iterator g_filesiter;
-
 // hack for access current upated actor to allow access position of actor to sound costume component
 Actor *g_currentUpdatedActor = NULL;
 
@@ -248,12 +246,12 @@ GrimEngine::GrimEngine(OSystem *syst, int gameFlags, GrimGameType gameType) :
 		Engine(syst), _currScene(NULL), _selectedActor(NULL) {
 	g_grim = this;
 
-	ObjectManager::registerType<Color>();
-	ObjectManager::registerType<LuaFile>();
-	//ObjectManager::registerType<Bitmap>();
-	//ObjectManager::registerType<Costume>();
-	ObjectManager::registerType<Font>();
-	//ObjectManager::registerType<Material>();
+	ObjectMan.registerType<Color>();
+	ObjectMan.registerType<LuaFile>();
+	//ObjectMan.registerType<Bitmap>();
+	//ObjectMan.registerType<Costume>();
+	ObjectMan.registerType<Font>();
+	//ObjectMan.registerType<Material>();
 
 	_gameFlags = gameFlags;
 	_gameType = gameType;
@@ -293,31 +291,31 @@ GrimEngine::GrimEngine(OSystem *syst, int gameFlags, GrimGameType gameType) :
 	sprintf(buf, "%d", 1000 / _speedLimitMs);
 	g_registry->set("engine_speed", buf);
 	_refreshDrawNeeded = true;
-	g_filesiter = NULL;
+	_listFilesIter = NULL;
 	_savedState = NULL;
 	_fps[0] = 0;
 
-	printLineDefaults.x = 0;
-	printLineDefaults.y = 100;
-	printLineDefaults.width = 0;
-	printLineDefaults.height = 0;
-	printLineDefaults.font = NULL;
-	printLineDefaults.justify = TextObject::LJUSTIFY;
+	_printLineDefaults.x = 0;
+	_printLineDefaults.y = 100;
+	_printLineDefaults.width = 0;
+	_printLineDefaults.height = 0;
+	_printLineDefaults.font = NULL;
+	_printLineDefaults.justify = TextObject::LJUSTIFY;
 
-	sayLineDefaults.x = 0;
-	sayLineDefaults.y = 100;
-	sayLineDefaults.width = 0;
-	sayLineDefaults.height = 0;
-	sayLineDefaults.font = NULL;
-	sayLineDefaults.justify = TextObject::CENTER;
+	_sayLineDefaults.x = 0;
+	_sayLineDefaults.y = 100;
+	_sayLineDefaults.width = 0;
+	_sayLineDefaults.height = 0;
+	_sayLineDefaults.font = NULL;
+	_sayLineDefaults.justify = TextObject::CENTER;
 
-	blastTextDefaults.x = 0;
-	blastTextDefaults.y = 200;
-	blastTextDefaults.width = 0;
-	blastTextDefaults.height = 0;
-	blastTextDefaults.fgColor._vals[2] = 80;
-	blastTextDefaults.font = NULL;
-	blastTextDefaults.justify = TextObject::LJUSTIFY;
+	_blastTextDefaults.x = 0;
+	_blastTextDefaults.y = 200;
+	_blastTextDefaults.width = 0;
+	_blastTextDefaults.height = 0;
+	_blastTextDefaults.fgColor._vals[2] = 80;
+	_blastTextDefaults.font = NULL;
+	_blastTextDefaults.justify = TextObject::LJUSTIFY;
 
 	// Add 'movies' subdirectory for the demo
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -325,7 +323,7 @@ GrimEngine::GrimEngine(OSystem *syst, int gameFlags, GrimGameType gameType) :
 }
 
 GrimEngine::~GrimEngine() {
-	ObjectManager::clearTypes();
+	ObjectMan.clearTypes();
 
 	delete[] _controlsEnabled;
 	delete[] _controlsState;
@@ -1045,16 +1043,16 @@ void GrimEngine::restoreActors(SaveGame *state) {
 void GrimEngine::restoreTextObjects(SaveGame *state) {
 	state->beginSection('TEXT');
 
-	sayLineDefaults.disabled = state->readLESint32();
-	sayLineDefaults.fgColor.red() = state->readByte();
-	sayLineDefaults.fgColor.green() = state->readByte();
-	sayLineDefaults.fgColor.blue() = state->readByte();
-	sayLineDefaults.font = g_resourceloader->getFont(state->readString().c_str());
-	sayLineDefaults.height = state->readLESint32();
-	sayLineDefaults.justify = state->readLESint32();
-	sayLineDefaults.width = state->readLESint32();
-	sayLineDefaults.x = state->readLESint32();
-	sayLineDefaults.y = state->readLESint32();
+	_sayLineDefaults.disabled = state->readLESint32();
+	_sayLineDefaults.fgColor.red() = state->readByte();
+	_sayLineDefaults.fgColor.green() = state->readByte();
+	_sayLineDefaults.fgColor.blue() = state->readByte();
+	_sayLineDefaults.font = g_resourceloader->getFont(state->readString().c_str());
+	_sayLineDefaults.height = state->readLESint32();
+	_sayLineDefaults.justify = state->readLESint32();
+	_sayLineDefaults.width = state->readLESint32();
+	_sayLineDefaults.x = state->readLESint32();
+	_sayLineDefaults.y = state->readLESint32();
 
 	int32 size = state->readLESint32();
 	for (int32 i = 0; i < size; ++i) {
@@ -1238,16 +1236,16 @@ void GrimEngine::saveActors(SaveGame *state) {
 void GrimEngine::saveTextObjects(SaveGame *state) {
 	state->beginSection('TEXT');
 
-	state->writeLESint32(sayLineDefaults.disabled);
-	state->writeByte(sayLineDefaults.fgColor.red());
-	state->writeByte(sayLineDefaults.fgColor.green());
-	state->writeByte(sayLineDefaults.fgColor.blue());
-	state->writeString(sayLineDefaults.font->getFilename());
-	state->writeLESint32(sayLineDefaults.height);
-	state->writeLESint32(sayLineDefaults.justify);
-	state->writeLESint32(sayLineDefaults.width);
-	state->writeLESint32(sayLineDefaults.x);
-	state->writeLESint32(sayLineDefaults.y);
+	state->writeLESint32(_sayLineDefaults.disabled);
+	state->writeByte(_sayLineDefaults.fgColor.red());
+	state->writeByte(_sayLineDefaults.fgColor.green());
+	state->writeByte(_sayLineDefaults.fgColor.blue());
+	state->writeString(_sayLineDefaults.font->getFilename());
+	state->writeLESint32(_sayLineDefaults.height);
+	state->writeLESint32(_sayLineDefaults.justify);
+	state->writeLESint32(_sayLineDefaults.width);
+	state->writeLESint32(_sayLineDefaults.x);
+	state->writeLESint32(_sayLineDefaults.y);
 
 	state->writeLESint32(_textObjects.size());
 	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); ++i) {

@@ -6,10 +6,9 @@
 
 #include "engines/grim/font.h"
 
-namespace Grim {
+DECLARE_SINGLETON(Grim::ObjectManager)
 
-typedef ObjectPtr<Object> (*CreatorFunc)(SaveGame *);
-Common::HashMap<Common::String, CreatorFunc> ObjectManager::_creators;
+namespace Grim {
 
 Object::Object() : _refCount(0) {
 

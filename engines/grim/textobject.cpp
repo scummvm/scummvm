@@ -35,10 +35,6 @@ int TextObject::s_id = 0;
 
 Common::String parseMsgText(const char *msg, char *msgId);
 
-TextObjectDefaults sayLineDefaults;
-TextObjectDefaults printLineDefaults;
-TextObjectDefaults blastTextDefaults;
-
 TextObject::TextObject(bool blastDraw, bool isSpeech) :
 		Object(), _created(false), _x(0), _y(0), _width(0), _height(0), _justify(0),
 		_numberLines(1), _disabled(false), _font(NULL), _textBitmap(NULL),
