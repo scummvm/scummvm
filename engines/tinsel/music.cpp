@@ -465,7 +465,6 @@ PCMMusicPlayer::PCMMusicPlayer() {
 	_silenceSamples = 0;
 
 	_curChunk = 0;
-	_fileName = 0;
 	_state = S_IDLE;
 	_mState = S_IDLE;
 	_scriptNum = -1;
@@ -488,15 +487,13 @@ PCMMusicPlayer::PCMMusicPlayer() {
 
 PCMMusicPlayer::~PCMMusicPlayer() {
 	_vm->_mixer->stopHandle(_handle);
-
-	delete[] _fileName;
 }
 
 void PCMMusicPlayer::startPlay(int id) {
-	if (!_fileName)
+	if (_filename.empty())
 		return;
 
-	debugC(DEBUG_DETAILED, kTinselDebugMusic, "Playing PCM music %s, index %d", _fileName, id);
+	debugC(DEBUG_DETAILED, kTinselDebugMusic, "Playing PCM music %s, index %d", _filename.c_str(), id);
 
 	Common::StackLock slock(_mutex);
 
@@ -611,8 +608,7 @@ void PCMMusicPlayer::setMusicSceneDetails(SCNHANDLE hScript,
 
 	_hScript = hScript;
 	_hSegment = hSegment;
-	_fileName = new char[strlen(fileName) + 1];
-	strcpy(_fileName, fileName);
+	_filename = fileName;
 
 	// Start scene with music not dimmed
 	_dimmed = false;
@@ -768,19 +764,19 @@ bool PCMMusicPlayer::getNextChunk() {
 		sampleLength = FROM_LE_32(musicSegments[snum].sampleLength);
 		sampleCLength = (((sampleLength + 63) & ~63)*33)/64;
 
-		if (!file.open(_fileName))
-			error(CANNOT_FIND_FILE, _fileName);
+		if (!file.open(_filename))
+			error(CANNOT_FIND_FILE, _filename.c_str());
 
 		file.seek(sampleOffset);
 		if (file.eos() || file.err() || (uint32)file.pos() != sampleOffset)
-			error(FILE_IS_CORRUPT, _fileName);
+			error(FILE_IS_CORRUPT, _filename.c_str());
 
 		buffer = (byte *) malloc(sampleCLength);
 		assert(buffer);
 
 		// read all of the sample
 		if (file.read(buffer, sampleCLength) != sampleCLength)
-			error(FILE_IS_CORRUPT, _fileName);
+			error(FILE_IS_CORRUPT, _filename.c_str());
 
 		debugC(DEBUG_DETAILED, kTinselDebugMusic, "Creating ADPCM music chunk with size %d, "
 				"offset %d (script %d.%d)", sampleCLength, sampleOffset,
