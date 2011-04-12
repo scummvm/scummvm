@@ -3000,7 +3000,7 @@ void Scene6100::GetBoxAction::signal() {
 	case 0: {
 		scene->_turnAmount = 0;
 		Common::Point pt(scene->_rocks._position.x, scene->_rocks._position.y + 10);
-		NpcMover *mover = new NpcMover();
+		ProbeMover *mover = new ProbeMover();
 		scene->_probe.addMover(mover, &pt, NULL);
 		scene->_probe.show();
 		break;
@@ -3033,22 +3033,20 @@ void Scene6100::GetBoxAction::signal() {
 
 void Scene6100::GetBoxAction::dispatch() {
 	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
-	Action::dispatch();
 
-	if (scene->_speed > 0) {
-		scene->_action5.dispatch();
-		scene->_speed = (scene->_speed * 4) / 5;
-
-		if (scene->_speed == 0)
-			setDelay(2);
-	}
-
-	if (scene->_speed == 0) {
+	if (!scene->_probe._mover && (scene->_getBoxAction._actionIndex >= 1)) {
+		if (scene->_getBoxAction._actionIndex == 1) {
+			scene->_speed = 0;
+			scene->_getBoxAction.signal();
+		}
+		
 		if (scene->_probe._percent > 4)
 			// Handle the probe disappearing into the rocks
 			scene->_probe._percent = scene->_probe._percent * 7 / 8;
 		scene->_probe._flags |= OBJFLAG_PANES;
 	}
+
+	Action::dispatch();
 }
 
 void Scene6100::Action7::signal() {
@@ -3064,6 +3062,21 @@ void Scene6100::Action7::signal() {
 		remove();
 		break;
 	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene6100::ProbeMover::dispatch() {
+	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
+
+	if (!dontMove()) {
+		if (scene->_speed > 0) {
+			scene->_action5.dispatch();
+			scene->_speed = (scene->_speed * 4) / 5;
+		}
+	}
+
+	NpcMover::dispatch();
 }
 
 /*--------------------------------------------------------------------------*/

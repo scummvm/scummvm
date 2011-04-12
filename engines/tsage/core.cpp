@@ -1127,7 +1127,7 @@ void PaletteRotation::signal() {
 
 void PaletteRotation::remove() {
 	Action *action = _action;
-	g_system->getPaletteManager()->setPalette((const byte *)&_palette[0], _start, _end - _start);
+	g_system->getPaletteManager()->setPalette((const byte *)&_palette[_start], _start, _end - _start);
 
 	if (_scenePalette->_listeners.contains(this))
 		_scenePalette->_listeners.remove(this);

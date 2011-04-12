@@ -509,6 +509,10 @@ class Scene6100: public Scene {
 	public:
 		FloatSet _floats;
 	};
+	class ProbeMover: public NpcMover {
+	public:
+		virtual void dispatch();
+	};
 
 	/* Items */
 	class Item1: public SceneItem {
