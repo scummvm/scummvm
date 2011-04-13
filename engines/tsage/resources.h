@@ -127,7 +127,7 @@ public:
 	byte *lock(uint32 handle);
 	int indexOf(const byte *p);
 	void deallocate(const byte *p);
-	void deallocate(uint16 handle) { error("TODO: MemoryManager::deallocate(handle)"); }
+	void deallocate(uint16 handle) { warning("TODO: MemoryManager::deallocate(handle)"); }
 	uint32 getSize(const byte *p);
 	void incLocks(const byte *p);
 };
