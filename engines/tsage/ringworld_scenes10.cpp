@@ -1676,18 +1676,18 @@ void Scene9900::strAction1::signal() {
 void Scene9900::strAction2::signal() {
 	switch (_actionIndex++) {
 	case 0:
-		var1 = 0;
+		_lineNum = 0;
 		_txtArray1Index = 0;
 		_txtArray1[0]._position.y = 200;
 		_txtArray1[0]._position.y = 300;
 		_txtArray2[0]._position.y = 400;
 		_txtArray2[0]._position.y = 500;
-		var3 = 0;
+		_var3 = 0;
 		// No break on purpose
 	case 1: {
-		Common::String msg = _vm->_dataManager->getMessage(8030, var1++);
+		Common::String msg = _vm->_dataManager->getMessage(8030, _lineNum++);
 		if (!msg.compareTo("LASTCREDIT")) {
-			if (var3 == 0) {
+			if (_var3 == 0) {
 				// Not used?
 				// int x = _txtArray1[_txtArray1Index].getFrame().getBounds().height();
 				_txtArray1[_txtArray1Index]._moveDiff.y = 10;
@@ -1701,7 +1701,7 @@ void Scene9900::strAction2::signal() {
 				_txtArray2[_txtArray1Index]._moveDiff.y = 10;
 				_txtArray1Index = (_txtArray1Index + 1) % 2;
 			}
-			var3 = 1;
+			_var3 = 1;
 			_txtArray1[_txtArray1Index]._textMode = ALIGN_CENTRE;
 			_txtArray1[_txtArray1Index]._width = 240;
 			_txtArray1[_txtArray1Index]._fontNumber = 2;
@@ -1722,7 +1722,7 @@ void Scene9900::strAction2::signal() {
 			_txtArray2[_txtArray1Index]._fontNumber = 2;
 			_txtArray2[_txtArray1Index]._colour1 = 23;
 
-			msg = _vm->_dataManager->getMessage(8030, var1++);
+			msg = _vm->_dataManager->getMessage(8030, _lineNum++);
 			_txtArray2[_txtArray1Index].setup(msg);
 			_txtArray2[_txtArray1Index]._field7A = 20;
 			_txtArray2[_txtArray1Index]._moveDiff.y = 2;

@@ -467,7 +467,7 @@ class Scene9900 : public Scene {
 	public:
 		SceneText _txtArray1[2];
 		SceneText _txtArray2[2];
-		int var1, _txtArray1Index, var3;
+		int _lineNum, _txtArray1Index, _var3;
 
 		virtual void signal();
 		virtual void dispatch();
@@ -480,17 +480,6 @@ class Scene9900 : public Scene {
 		ScenePalette _palette3;
 
 		virtual void signal();
-	};
-
-	class SceneTextArr1 {
-	public:
-		SceneText _sceneText[2];
-	};
-
-	class SceneTextArr2 {
-	public:
-		SceneText _sceneText[2];
-		int _var1, var2, var3;
 	};
 
 public:
