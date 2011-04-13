@@ -385,7 +385,7 @@ public:
 	void clearListeners();
 	void fade(const byte *adjustData, bool fullAdjust, int percent);
 	PaletteRotation *addRotation(int start, int end, int rotationMode, int duration = 0, Action *action = NULL);
-	PaletteUnknown *addUnkPal(byte *arrBufferRGB, int unkNumb, bool disabled, Action *action);
+	PaletteUnknown *addUnkPal(uint32 *arrBufferRGB, int unkNumb, bool disabled, Action *action);
 
 	static void changeBackground(const Rect &bounds, FadeMode fadeMode);
 

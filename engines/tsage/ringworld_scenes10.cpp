@@ -1633,8 +1633,8 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
  *
  *--------------------------------------------------------------------------*/
 void Scene9900::strAction1::signal() {
-	static byte mask1[3]= {0xFF, 0xFF, 0xFF};
-	static byte mask2[3]= {0x00, 0x00, 0x00};
+	static uint32 mask1 = 0xFFFFFF00;
+	static uint32 mask2 = 0x00000000;
 
 	Scene9900 *scene = (Scene9900 *)_globals->_sceneManager._scene;
 
@@ -1652,18 +1652,18 @@ void Scene9900::strAction1::signal() {
 		break;
 	case 1:
 		_palette1.getPalette();
-		_globals->_scenePalette.addUnkPal(mask1, 1, true /*10*/, this);
+		_globals->_scenePalette.addUnkPal(&mask1, 1, true /*10*/, this);
 		break;
 	case 2:
 		_object9.remove();
-		_globals->_scenePalette.addUnkPal(mask2, 1, true /*5*/, this);
+		_globals->_scenePalette.addUnkPal(&mask2, 1, true /*5*/, this);
 		break;
 	case 3:
 		_globals->_soundHandler.startSound(377, 0, 127);
 		setDelay(120);
 		break;
 	case 4:
-		_globals->_scenePalette.addUnkPal((byte *)_palette1._palette, 256, 1, this);
+		_globals->_scenePalette.addUnkPal(_palette1._palette, 256, 1, this);
 		break;
 	case 5:
 		remove();
@@ -1769,25 +1769,25 @@ void Scene9900::strAction2::dispatch() {
 }
 
 void Scene9900::strAction3::signal() {
-	static byte mask3[3]= {0xFF, 0x00, 0x00};
-	static byte mask4[3]= {0x00, 0x00, 0x00};
+	static uint32 mask3 = 0xFF000000;
+	static uint32 mask4 = 0x00000000;
 
 	switch (_actionIndex++) {
 	case 0:
 		_palette2.getPalette();
 		_palette3.loadPalette(2003);
-		_globals->_scenePalette.addUnkPal((byte *)_palette3._palette, 256, true /*5*/, this);
+		_globals->_scenePalette.addUnkPal(_palette3._palette, 256, true /*5*/, this);
 		break;
 	case 1:
-		_globals->_scenePalette.addUnkPal(mask3, 1, true /*10*/, this);
+		_globals->_scenePalette.addUnkPal(&mask3, 1, true /*10*/, this);
 		break;
 	case 2:
-		_globals->_scenePalette.addUnkPal(mask4, 1, true /*1*/, this);
+		_globals->_scenePalette.addUnkPal(&mask4, 1, true /*1*/, this);
 		break;
 	case 3:
 		_palette2.loadPalette(17);
 		_globals->_sceneManager._scene->loadScene(17);
-		_globals->_scenePalette.addUnkPal((byte *)_palette2._palette, 256, true /*5*/, this);
+		_globals->_scenePalette.addUnkPal(_palette2._palette, 256, true /*5*/, this);
 		break;
 	case 4:
 		_globals->_game.endGame(9900, 61);

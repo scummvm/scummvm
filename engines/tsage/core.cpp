@@ -1203,12 +1203,15 @@ void PaletteUnknown::signal() {
 }
 
 void PaletteUnknown::remove() {
-	for (int i = 0; i < 256; i++)
-		_scenePalette->_palette[i] = _palette[i];
-	_scenePalette->refresh();
-	if (_scenePalette->_listeners.contains(this))
-		_scenePalette->_listeners.remove(this);
-	delete this;
+	if (_scenePalette) {
+		for (int i = 0; i < 256; i++)
+			_scenePalette->_palette[i] = _palette[i];
+		_scenePalette->refresh();
+		if (_scenePalette->_listeners.contains(this))
+			_scenePalette->_listeners.remove(this);
+		delete this;
+	}
+
 	if (_action)
 		_action->signal();
 }
@@ -1356,7 +1359,7 @@ PaletteRotation *ScenePalette::addRotation(int start, int end, int rotationMode,
 	return obj;
 }
 
-PaletteUnknown *ScenePalette::addUnkPal(byte *arrBufferRGB, int unkNumb, bool disabled, Action *action) {
+PaletteUnknown *ScenePalette::addUnkPal(uint32 *arrBufferRGB, int unkNumb, bool disabled, Action *action) {
 	PaletteUnknown *paletteUnk = new PaletteUnknown();
 	paletteUnk->_action = action;
 	for (int i = 0; i < 256; i++) {
