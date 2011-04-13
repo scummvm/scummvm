@@ -61,7 +61,6 @@ protected:
 	} _status;
 
 	virtual void reset();
-	int16 stepAdjust(byte);
 
 public:
 	ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign);
@@ -72,6 +71,16 @@ public:
 	virtual int getRate() const	{ return _rate; }
 
 	virtual bool rewind();
+
+
+	/**
+	 * This table is used by some ADPCM variants (IMA and OKI) to adjust the
+	 * step for use on the next sample.
+	 * The first 8 entries are identical to the second 8 entries. Hence, we
+	 * could half the table in size. But since the lookup index is always a
+	 * 4-bit nibble, it is more efficient to just keep it as it is.
+	 */
+	static const int16 _stepAdjustTable[16];
 };
 
 class Oki_ADPCMStream : public ADPCMStream {
@@ -96,6 +105,12 @@ public:
 	}
 
 	virtual int readBuffer(int16 *buffer, const int numSamples);
+
+
+	/**
+	 * This table is used by decodeIMA.
+	 */
+	static const int16 _imaTable[89];
 };
 
 class Apple_ADPCMStream : public Ima_ADPCMStream {

@@ -110,7 +110,7 @@ int16 Oki_ADPCMStream::decodeOKI(byte code) {
 	samp = CLIP<int16>(samp, -2048, 2047);
 
 	_status.ima_ch[0].last = samp;
-	_status.ima_ch[0].stepIndex += stepAdjust(code);
+	_status.ima_ch[0].stepIndex += _stepAdjustTable[code];
 	_status.ima_ch[0].stepIndex = CLIP<int32>(_status.ima_ch[0].stepIndex, 0, ARRAYSIZE(okiStepSize) - 1);
 
 	// * 16 effectively converts 12-bit input to 16-bit output
@@ -404,14 +404,15 @@ int DK3_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 #pragma mark -
 
 
-// adjust the step for use on the next sample.
-int16 ADPCMStream::stepAdjust(byte code) {
-	static const int16 adjusts[] = {-1, -1, -1, -1, 2, 4, 6, 8};
+// This table is used to adjust the step for use on the next sample.
+// We could half the table, but since the lookup index used is always
+// a 4-bit nibble, it's more efficient to just keep it as it is.
+const int16 ADPCMStream::_stepAdjustTable[16] = {
+	-1, -1, -1, -1, 2, 4, 6, 8,
+	-1, -1, -1, -1, 2, 4, 6, 8
+};
 
-	return adjusts[code & 0x07];
-}
-
-static const uint16 imaStepTable[89] = {
+const int16 Ima_ADPCMStream::_imaTable[89] = {
 		7,    8,    9,   10,   11,   12,   13,   14,
 	   16,   17,   19,   21,   23,   25,   28,   31,
 	   34,   37,   41,   45,   50,   55,   60,   66,
@@ -427,13 +428,13 @@ static const uint16 imaStepTable[89] = {
 };
 
 int16 Ima_ADPCMStream::decodeIMA(byte code, int channel) {
-	int32 E = (2 * (code & 0x7) + 1) * imaStepTable[_status.ima_ch[channel].stepIndex] / 8;
+	int32 E = (2 * (code & 0x7) + 1) * _imaTable[_status.ima_ch[channel].stepIndex] / 8;
 	int32 diff = (code & 0x08) ? -E : E;
 	int32 samp = CLIP<int32>(_status.ima_ch[channel].last + diff, -32768, 32767);
 
 	_status.ima_ch[channel].last = samp;
-	_status.ima_ch[channel].stepIndex += stepAdjust(code);
-	_status.ima_ch[channel].stepIndex = CLIP<int32>(_status.ima_ch[channel].stepIndex, 0, ARRAYSIZE(imaStepTable) - 1);
+	_status.ima_ch[channel].stepIndex += _stepAdjustTable[code];
+	_status.ima_ch[channel].stepIndex = CLIP<int32>(_status.ima_ch[channel].stepIndex, 0, ARRAYSIZE(_imaTable) - 1);
 
 	return samp;
 }
