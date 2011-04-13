@@ -407,7 +407,7 @@ void LBCode::parseMain() {
 		Common::String varname = _currValue.string;
 		debugN("%s", varname.c_str());
 		nextToken();
-		if (varname == "self") {
+		if (varname.equalsIgnoreCase("self")) {
 			_stack.push(LBValue(_currSource));
 			if (_currToken == kTokenAssign)
 				error("attempted assignment to self");
