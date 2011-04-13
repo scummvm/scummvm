@@ -3226,7 +3226,7 @@ void Scene6100::dispatch() {
 
 	if (_action != &_action3) {
 		// Display the distance remaining to the target
-		int distance = _probe._floats.sqrt(_rocks._floats);
+		int distance = (int)_probe._floats.sqrt(_rocks._floats);
 		Common::String s = Common::String::format("%06d", distance);
 
 		_sceneText.setPosition(Common::Point(24, 160));

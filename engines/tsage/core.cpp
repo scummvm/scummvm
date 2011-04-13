@@ -1734,7 +1734,7 @@ SceneObject::SceneObject(): SceneHotspot() {
 	_frameChange = 0;
 }
 
-SceneObject::SceneObject(const SceneObject &so) {
+SceneObject::SceneObject(const SceneObject &so): SceneHotspot() {
 	*this = so;
 	if (_objectWrapper)
 		// Create a fresh object wrapper for this object
