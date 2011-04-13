@@ -103,63 +103,53 @@ public:
  * Derived list class with extra functionality
  */
 template<typename T>
-class List: public Common::List<T> {
+class SynchronisedList : public Common::List<T> {
 public:
-	bool contains(T v) {
-		for (typename List<T>::iterator i = this->begin(); i != this->end(); ++i)
-			if (*i == v)
-				return true;
-		return false;
-	}
-
-	typedef void (*ForEachFn)(T fn);
-	void forEach(ForEachFn Fn) {
-		for (typename List<T>::iterator i = this->begin(); i != this->end(); ++i)
-			Fn(*i);
-	}
-
-	void clear2() {
-		for (typename List<T>::iterator i = this->begin(); i != this->end(); ++i)
-			delete *i;
-		Common::List<T>::clear();
-	}
-
 	void synchronise(Serialiser &s) {
 		int entryCount;
 
 		if (s.isLoading()) {
-			List<T>::clear();
+			this->clear();
 			s.syncAsUint32LE(entryCount);
 
 			for (int idx = 0; idx < entryCount; ++idx) {
-				List<T>::push_back(static_cast<T>((T)NULL));
-				T &obj = List<T>::back();
+				this->push_back(static_cast<T>((T)NULL));
+				T &obj = Common::List<T>::back();
 				s.syncPointer((SavedObject **)&obj);
 			}
 		} else {
 			// Get the list size
-			entryCount = 0;
-			typename List<T>::iterator i;
-			for (i = List<T>::begin(); i != List<T>::end(); ++i, ++entryCount)
-				;
+			entryCount = this->size();
 
 			// Write out list 
 			s.syncAsUint32LE(entryCount);
-			for (i = List<T>::begin(); i != List<T>::end(); ++i) {
+			for (typename Common::List<T>::iterator i = this->begin(); i != this->end(); ++i) {
 				s.syncPointer((SavedObject **)&*i);
 			}
-		}		
+		}
 	}
 };
+
+/**
+ * Search whether an element is contained in a list.
+ *
+ * @param l List to search.
+ * @param v Element to search for.
+ * @return True in case the element is contained, false otherwise.
+ */
+template<typename T>
+inline bool contains(const Common::List<T> &l, const T &v) {
+	return (Common::find(l.begin(), l.end(), v) != l.end());
+}
 
 /**
  * Derived list class for holding function pointers
  */
 template<typename T>
-class FunctionList: public List<void (*)(T)> {
+class FunctionList : public Common::List<void (*)(T)> {
 public:
 	void notify(T v) {
-		for (typename List<void (*)(T)>::iterator i = this->begin(); i != this->end(); ++i) {
+		for (typename Common::List<void (*)(T)>::iterator i = this->begin(); i != this->end(); ++i) {
 			(*i)(v);
 		}
 	}
@@ -180,10 +170,10 @@ typedef SavedObject *(*SavedObjectFactory)(const Common::String &className);
 
 class Saver {
 private:
-	List<SavedObject *> _objList;
+	SynchronisedList<SavedObject *> _objList;
 	FunctionList<bool> _saveNotifiers;
 	FunctionList<bool> _loadNotifiers;
-	List<SaveListener *> _listeners;
+	Common::List<SaveListener *> _listeners;
 
 	Common::List<SavedObjectRef> _unresolvedPtrs;
 	SavedObjectFactory _factoryPtr;

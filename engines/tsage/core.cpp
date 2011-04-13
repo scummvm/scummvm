@@ -537,7 +537,7 @@ void PlayerMover::setDest(const Common::Point &destPos) {
 #define REGION_LIST_SIZE 20
 
 void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Common::Point destPos, RouteEnds routeEnds) {
-	List<int> regionIndexes;
+	Common::List<int> regionIndexes;
 	RouteEnds tempRouteEnds;
 	int routeRegions[REGION_LIST_SIZE];
 	Common::Point objPos;
@@ -687,7 +687,7 @@ int PlayerMover::regionIndexOf(const Common::Point &pt) {
 	return 0;
 }
 
-int PlayerMover::findClosestRegion(Common::Point &pt, List<int> &indexList) {
+int PlayerMover::findClosestRegion(Common::Point &pt, const Common::List<int> &indexList) {
 	int newY = pt.y;
 	int result = 0;
 
@@ -695,35 +695,35 @@ int PlayerMover::findClosestRegion(Common::Point &pt, List<int> &indexList) {
 		int newX = pt.x + idx;
 		result = regionIndexOf(newX, pt.y);
 
-		if ((result == 0) || indexList.contains(result)) {
+		if ((result == 0) || contains(indexList, result)) {
 			newY = pt.y + idx;
 			result = regionIndexOf(newX, newY);
 
-			if ((result == 0) || indexList.contains(result)) {
+			if ((result == 0) || contains(indexList, result)) {
 				newX -= idx;
 				result = regionIndexOf(newX, newY);
 
-				if ((result == 0) || indexList.contains(result)) {
+				if ((result == 0) || contains(indexList, result)) {
 					newX -= idx;
 					result = regionIndexOf(newX, newY);
 
-					if ((result == 0) || indexList.contains(result)) {
+					if ((result == 0) || contains(indexList, result)) {
 						newY -= idx;
 						result = regionIndexOf(newX, newY);
 
-						if ((result == 0) || indexList.contains(result)) {
+						if ((result == 0) || contains(indexList, result)) {
 							newY -= idx;
 							result = regionIndexOf(newX, newY);
 
-							if ((result == 0) || indexList.contains(result)) {
+							if ((result == 0) || contains(indexList, result)) {
 								newX += idx;
 								result = regionIndexOf(newX, newY);
 
-								if ((result == 0) || indexList.contains(result)) {
+								if ((result == 0) || contains(indexList, result)) {
 									newX += idx;
 									result = regionIndexOf(newX, newY);
 
-									if ((result == 0) || indexList.contains(result)) {
+									if ((result == 0) || contains(indexList, result)) {
 										continue;
 									}
 								}
@@ -1132,8 +1132,7 @@ void PaletteRotation::remove() {
 	Action *action = _action;
 	g_system->getPaletteManager()->setPalette((const byte *)&_palette[_start], _start, _end - _start);
 
-	if (_scenePalette->_listeners.contains(this))
-		_scenePalette->_listeners.remove(this);
+	_scenePalette->_listeners.remove(this);
 
 	delete this;
 	if (action)
@@ -1213,8 +1212,7 @@ void PaletteUnknown::remove() {
 		for (int i = 0; i < 256; i++)
 			_scenePalette->_palette[i] = _palette[i];
 		_scenePalette->refresh();
-		if (_scenePalette->_listeners.contains(this))
-			_scenePalette->_listeners.remove(this);
+		_scenePalette->_listeners.remove(this);
 		delete this;
 	}
 
@@ -1312,13 +1310,13 @@ void ScenePalette::getPalette(int start, int count) {
 }
 
 void ScenePalette::signalListeners() {
-	for (List<PaletteModifier *>::iterator i = _listeners.begin(); i != _listeners.end(); ++i) {
+	for (SynchronisedList<PaletteModifier *>::iterator i = _listeners.begin(); i != _listeners.end(); ++i) {
 		(*i)->signal();
 	}
 }
 
 void ScenePalette::clearListeners() {
-	List<PaletteModifier *>::iterator i = _listeners.begin();
+	SynchronisedList<PaletteModifier *>::iterator i = _listeners.begin();
 	while (i != _listeners.end()) {
 		PaletteModifier *obj = *i;
 		++i;
@@ -1377,6 +1375,7 @@ PaletteUnknown *ScenePalette::addUnkPal(RGB8 *arrBufferRGB, int unkNumb, bool di
 
 void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 	ScenePalette tempPalette;
+
 	if (_globals->_sceneManager._hasPalette) {
 		if ((fadeMode == FADEMODE_GRADUAL) || (fadeMode == FADEMODE_IMMEDIATE)) {
 			// Fade out any active palette
@@ -1397,7 +1396,10 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 
 	_globals->_screenSurface.copyFrom(_globals->_sceneManager._scene->_backSurface, 
 		bounds, Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), NULL);
-	tempPalette._listeners.clear2();
+
+	for (SynchronisedList<PaletteModifier *>::iterator i = tempPalette._listeners.begin(); i != tempPalette._listeners.end(); ++i)
+		delete *i;
+	tempPalette._listeners.clear();
 }
 
 void ScenePalette::synchronise(Serialiser &s) {
@@ -1941,7 +1943,7 @@ int SceneObject::checkRegion(const Common::Point &pt) {
 	}
 	newY -= _yDiff;
 
-	List<SceneObject *>::iterator i;
+	SynchronisedList<SceneObject *>::iterator i;
 	for (i = _globals->_sceneObjects->begin(); (regionIndex == 0) && (i != _globals->_sceneObjects->end()); ++i) {
 		if ((*i) && ((*i)->_flags & OBJFLAG_CHECK_REGION)) {
 			int objYDiff = (*i)->_position.y - _yDiff;
@@ -2229,11 +2231,8 @@ void SceneObject::calcAngle(const Common::Point &pt) {
 }
 
 void SceneObject::removeObject() {
-	if (_globals->_sceneItems.contains(this))
-		_globals->_sceneItems.remove(this);
-
-	if (_globals->_sceneObjects->contains(this))
-		_globals->_sceneObjects->remove(this);
+	_globals->_sceneItems.remove(this);
+	_globals->_sceneObjects->remove(this);
 
 	if (_visage) {
 		_vm->_memoryManager.deallocate(_visage);
@@ -2369,7 +2368,7 @@ void SceneObjectList::draw() {
 		uint32 flagMask = (paneNum == 0) ? OBJFLAG_PANE_0 : OBJFLAG_PANE_1;
 
 		// Initial loop to set up object list and update object position, priority, and flags
-		for (List<SceneObject *>::iterator i = _globals->_sceneObjects->begin();
+		for (SynchronisedList<SceneObject *>::iterator i = _globals->_sceneObjects->begin();
 				i != _globals->_sceneObjects->end(); ++i) {
 			SceneObject *obj = *i;
 			objList.push_back(obj);
@@ -2523,7 +2522,7 @@ void SceneObjectList::activate() {
 	_globals->_sceneObjects_queue.push_front(this);
 
 	// Flag all the objects as modified
-	List<SceneObject *>::iterator i;
+	SynchronisedList<SceneObject *>::iterator i;
 	for (i = begin(); i != end(); ++i) {
 		(*i)->_flags |= OBJFLAG_PANES;
 	}
@@ -2544,7 +2543,7 @@ void SceneObjectList::deactivate() {
 	_globals->_sceneObjects_queue.pop_front();
 	_globals->_sceneObjects = *_globals->_sceneObjects_queue.begin();
 
-	List<SceneObject *>::iterator i;
+	SynchronisedList<SceneObject *>::iterator i;
 	for (i = objectList->begin(); i != objectList->end(); ++i) {
 		if (!((*i)->_flags & OBJFLAG_CLONED)) {
 			SceneObject *sceneObj = (*i)->clone();
@@ -3283,9 +3282,9 @@ void WalkRegions::load(int sceneNum) {
  * @param pt		Point to locate
  * @param indexList	List of region indexes that should be ignored
  */
-int WalkRegions::indexOf(const Common::Point &pt, List<int> *indexList) {
+int WalkRegions::indexOf(const Common::Point &pt, const Common::List<int> *indexList) {
 	for (uint idx = 0; idx < _regionList.size(); ++idx) {
-		if ((!indexList || !indexList->contains(idx + 1)) && _regionList[idx].contains(pt))
+		if ((!indexList || contains(*indexList, int(idx + 1))) && _regionList[idx].contains(pt))
 			return idx + 1;
 	}
 
@@ -3511,7 +3510,7 @@ void SceneHandler::process(Event &event) {
 		if (_globals->_player._uiEnabled && (event.eventType == EVENT_BUTTON_DOWN) && 
 				!_globals->_sceneItems.empty()) {
 			// Scan the item list to find one the mouse is within
-			List<SceneItem *>::iterator i = _globals->_sceneItems.begin();
+			SynchronisedList<SceneItem *>::iterator i = _globals->_sceneItems.begin();
 			while ((i != _globals->_sceneItems.end()) && !(*i)->contains(event.mousePos))
 				++i;
 
@@ -3598,7 +3597,7 @@ void Game::execute() {
 	do {
 		// Process all currently atcive game handlers
 		activeFlag = false;
-		for (List<GameHandler *>::iterator i = _handlers.begin(); i != _handlers.end(); ++i) {
+		for (SynchronisedList<GameHandler *>::iterator i = _handlers.begin(); i != _handlers.end(); ++i) {
 			GameHandler *gh = *i;
 			if (gh->_lockCtr.getCtr() == 0) {
 				gh->execute();

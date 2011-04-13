@@ -55,7 +55,7 @@ void SceneManager::checkScene() {
 		_nextSceneNumber = -1;
 	}
 
-	_globals->_sceneListeners.forEach(SceneHandler::dispatchObject);
+	Common::for_each(_globals->_sceneListeners.begin(), _globals->_sceneListeners.end(), SceneHandler::dispatchObject);
 }
 
 void SceneManager::sceneChange() {
@@ -64,7 +64,7 @@ void SceneManager::sceneChange() {
 		_scene->remove();
 
 	// Clear the scene objects
-	List<SceneObject *>::iterator io = _globals->_sceneObjects->begin();
+	SynchronisedList<SceneObject *>::iterator io = _globals->_sceneObjects->begin();
 	while (io != _globals->_sceneObjects->end()) {
 		SceneObject *sceneObj = *io;
 		++io;
@@ -80,7 +80,7 @@ void SceneManager::sceneChange() {
 	}
 
 	// Clear the hotspot list
-	List<SceneItem *>::iterator ii = _globals->_sceneItems.begin();
+	SynchronisedList<SceneItem *>::iterator ii = _globals->_sceneItems.begin();
 	while (ii != _globals->_sceneItems.end()) {
 		SceneItem *sceneItem = *ii;
 		++ii;
@@ -145,7 +145,7 @@ void SceneManager::changeScene(int newSceneNumber) {
 	}
 
 	// Stop any objects that were animating
-	List<SceneObject *>::iterator i;
+	SynchronisedList<SceneObject *>::iterator i;
 	for (i = _globals->_sceneObjects->begin(); i != _globals->_sceneObjects->end(); ++i) {
 		SceneObject *sceneObj = *i;
 		Common::Point pt(0, 0);
@@ -411,7 +411,7 @@ void Scene::drawAltObjects() {
 	Common::Array<SceneObject *> objList;
 
 	// Initial loop to set the priority for entries in the list
-	for (List<SceneObject *>::iterator i = _globals->_sceneManager._altSceneObjects.begin();
+	for (SynchronisedList<SceneObject *>::iterator i = _globals->_sceneManager._altSceneObjects.begin();
 		i != _globals->_sceneManager._altSceneObjects.end(); ++i) {
 		SceneObject *obj = *i;
 		objList.push_back(obj);

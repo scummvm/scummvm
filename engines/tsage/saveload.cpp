@@ -52,7 +52,7 @@ Saver::Saver() {
 Saver::~Saver() {
 	// Internal validation that no saved object is still present
 	int totalLost = 0;
-	for (List<SavedObject *>::iterator i = _saver->_objList.begin(); i != _saver->_objList.end(); ++i) {
+	for (SynchronisedList<SavedObject *>::iterator i = _saver->_objList.begin(); i != _saver->_objList.end(); ++i) {
 		SavedObject *so = *i;
 		if (so)
 			++totalLost;
@@ -128,12 +128,12 @@ Common::Error Saver::save(int slot, const Common::String &saveName) {
 	writeSavegameHeader(saveFile, header);
 
 	// Save out objects that need to come at the start of the savegame
-	for (List<SaveListener *>::iterator i = _listeners.begin(); i != _listeners.end(); ++i) {
+	for (SynchronisedList<SaveListener *>::iterator i = _listeners.begin(); i != _listeners.end(); ++i) {
 		(*i)->listenerSynchronise(serialiser);
 	}
 
 	// Save each registered SaveObject descendant object into the savegame file
-	for (List<SavedObject *>::iterator i = _objList.begin(); i != _objList.end(); ++i) {
+	for (SynchronisedList<SavedObject *>::iterator i = _objList.begin(); i != _objList.end(); ++i) {
 		serialiser.validate((*i)->getClassName());
 		(*i)->synchronise(serialiser);
 	}
@@ -171,12 +171,12 @@ Common::Error Saver::restore(int slot) {
 	delete header.thumbnail;
 
 	// Load in data for objects that need to come at the start of the savegame
-	for (List<SaveListener *>::iterator i = _listeners.begin(); i != _listeners.end(); ++i) {
+	for (Common::List<SaveListener *>::iterator i = _listeners.begin(); i != _listeners.end(); ++i) {
 		(*i)->listenerSynchronise(serialiser);
 	}
 
 	// Loop through each registered object to load in the data
-	for (List<SavedObject *>::iterator i = _objList.begin(); i != _objList.end(); ++i) {
+	for (SynchronisedList<SavedObject *>::iterator i = _objList.begin(); i != _objList.end(); ++i) {
 		serialiser.validate((*i)->getClassName());
 		(*i)->synchronise(serialiser);
 	}
@@ -343,7 +343,7 @@ bool Saver::savegamesExist() const {
  */
 int Saver::blockIndexOf(SavedObject *p) {
 	int objIndex = 1;
-	List<SavedObject *>::iterator iObj;
+	SynchronisedList<SavedObject *>::iterator iObj;
 
 	for (iObj = _objList.begin(); iObj != _objList.end(); ++iObj, ++objIndex) {
 		SavedObject *iObjP = *iObj;
@@ -364,7 +364,7 @@ void Saver::resolveLoadPointers() {
 
 	// Outer loop through the main object list
 	int objIndex = 1;
-	for (List<SavedObject *>::iterator iObj = _objList.begin(); iObj != _objList.end(); ++iObj, ++objIndex) {
+	for (SynchronisedList<SavedObject *>::iterator iObj = _objList.begin(); iObj != _objList.end(); ++iObj, ++objIndex) {
 		Common::List<SavedObjectRef>::iterator iPtr;
 
 		for (iPtr = _unresolvedPtrs.begin(); iPtr != _unresolvedPtrs.end(); ) {

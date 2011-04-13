@@ -285,7 +285,7 @@ void SceneArea::wait() {
 		g_system->delayMillis(10);
 	}
 
-	List<SceneItem *>::iterator ii;
+	SynchronisedList<SceneItem *>::iterator ii;
 	for (ii = _globals->_sceneItems.begin(); ii != _globals->_sceneItems.end(); ++ii) {
 		SceneItem *sceneItem = *ii;
 		if (sceneItem->contains(event.mousePos)) {

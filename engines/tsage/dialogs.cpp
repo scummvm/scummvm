@@ -383,7 +383,7 @@ void InventoryDialog::show(bool allFlag) {
 	if (!allFlag) {
 		// Determine how many items are in the player's inventory
 		int itemCount = 0;
-		List<InvObject *>::iterator i;
+		SynchronisedList<InvObject *>::iterator i;
 		for (i = _globals->_inventory._itemList.begin(); i != _globals->_inventory._itemList.end(); ++i) {
 			if ((*i)->inInventory())
 				++itemCount;
@@ -405,7 +405,7 @@ InventoryDialog::InventoryDialog(bool allFlag) {
 	// Determine the maximum size of the image of any item in the player's inventory
 	int imgWidth = 0, imgHeight = 0;
 
-	List<InvObject *>::iterator i;
+	SynchronisedList<InvObject *>::iterator i;
 	for (i = _globals->_inventory._itemList.begin(); i != _globals->_inventory._itemList.end(); ++i) {
 		InvObject *invObject = *i;
 		if (allFlag || invObject->inInventory()) {

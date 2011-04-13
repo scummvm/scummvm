@@ -39,7 +39,7 @@ class Globals: public SavedObject {
 public:
 	GfxSurface _screenSurface;
 	GfxManager _gfxManagerInstance;
-	List<GfxManager *> _gfxManagers;
+	Common::List<GfxManager *> _gfxManagers;
 	SceneHandler _sceneHandler;
 	Game _game;
 	EventsClass _events;
@@ -49,7 +49,7 @@ public:
 	SceneItemList _sceneItems;
 	SceneObjectList _sceneObjectsInstance;
 	SceneObjectList *_sceneObjects;
-	List<SceneObjectList *> _sceneObjects_queue;
+	SynchronisedList<SceneObjectList *> _sceneObjects_queue;
 	SceneText _sceneText;
 	int _gfxFontNumber;
 	GfxColours _gfxColours;
@@ -57,7 +57,7 @@ public:
 	SoundManager _soundManager;
 	Common::Point _dialogCentre;
 	WalkRegions _walkRegions;
-	List<EventHandler *> _sceneListeners;
+	SynchronisedList<EventHandler *> _sceneListeners;
 	bool _flags[256];
 	Player _player;
 	SoundHandler _soundHandler;

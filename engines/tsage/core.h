@@ -107,7 +107,7 @@ public:
 	InvObject _jar;
 	InvObject _emptyJar;
 
-	List<InvObject *> _itemList;
+	SynchronisedList<InvObject *> _itemList;
 	InvObject *_selectedItem;
 public:
 	InvObjectList();
@@ -264,7 +264,7 @@ protected:
 	void pathfind(Common::Point *routeList, Common::Point srcPos, Common::Point destPos, RouteEnds routeEnds);
 	int regionIndexOf(const Common::Point &pt);
 	int regionIndexOf(int xp, int yp) { return regionIndexOf(Common::Point(xp, yp)); }
-	int findClosestRegion(Common::Point &pt, List<int> &indexList);
+	int findClosestRegion(Common::Point &pt, const Common::List<int> &indexList);
 	int checkMover(Common::Point &srcPos, const Common::Point &destPos);
 	void checkMovement2(const Common::Point &pt1, const Common::Point &pt2, int numSteps, Common::Point &ptOut);
 	int proc1(int *routeList, int srcRegion, int destRegion, int &v);
@@ -363,7 +363,7 @@ class ScenePalette: public SavedObject {
 public:
 	RGB8 _palette[256];
 	GfxColours _colours;
-	List<PaletteModifier *> _listeners;
+	SynchronisedList<PaletteModifier *> _listeners;
 	int _field412;
 
 	uint8 _redColour;
@@ -684,7 +684,7 @@ public:
 	static LineSliceSet mergeSlices(const LineSliceSet &set1, const LineSliceSet &set2);
 };
 
-class SceneRegions: public List<Region> {
+class SceneRegions: public Common::List<Region> {
 public:
 	void load(int sceneNum);
 
@@ -695,7 +695,7 @@ class SceneObjectList: public SavedObject {
 private:
 	void checkIntersection(Common::Array<SceneObject *> &ObjList, uint ObjIndex, int PaneNum);
 
-	List<SceneObject *> _objList;
+	SynchronisedList<SceneObject *> _objList;
 	bool _listAltered;
 public:
 	SceneObjectList() { _listAltered = false; }
@@ -712,15 +712,15 @@ public:
 	void recurse(EventHandlerFn Fn) {
 		// Loop through each object
 		_listAltered = false;
-		for (List<SceneObject *>::iterator i = _objList.begin(); i != _objList.end() && !_listAltered; ) {
+		for (SynchronisedList<SceneObject *>::iterator i = _objList.begin(); i != _objList.end() && !_listAltered; ) {
 			SceneObject *o = *i;
 			++i;
 			Fn(o);
 		}
 	}
-	List<SceneObject *>::iterator begin() { return _objList.begin(); }
-	List<SceneObject *>::iterator end() { return _objList.end(); }
-	bool contains(SceneObject *sceneObj) { return _objList.contains(sceneObj); }
+	SynchronisedList<SceneObject *>::iterator begin() { return _objList.begin(); }
+	SynchronisedList<SceneObject *>::iterator end() { return _objList.end(); }
+	bool contains(SceneObject *sceneObj) { return tSage::contains(_objList, sceneObj); }
 	void push_back(SceneObject *sceneObj) { _objList.push_back(sceneObj); }
 	void push_front(SceneObject *sceneObj) { _objList.push_front(sceneObj); }
 	void remove(SceneObject *sceneObj) { 
@@ -729,7 +729,7 @@ public:
 	}
 };
 
-class ScenePriorities: public List<Region> {
+class ScenePriorities: public Common::List<Region> {
 public:
 	int _resNum;
 	int _field14;
@@ -811,7 +811,7 @@ public:
 
 /*--------------------------------------------------------------------------*/
 
-class SceneItemList: public List<SceneItem *> {
+class SceneItemList: public SynchronisedList<SceneItem *> {
 public:
 	void addItems(SceneItem *first, ...);
 };
@@ -873,7 +873,7 @@ public:
 
 	void clear();
 	void load(int sceneNum);
-	int indexOf(const Common::Point &pt, List<int> *indexList = NULL);
+	int indexOf(const Common::Point &pt, const Common::List<int> *indexList = NULL);
 	WalkRegion &operator[](int idx) {
 		assert((idx >= 1) && (idx <= (int)_regionList.size()));
 		return _regionList[idx - 1];
@@ -934,7 +934,7 @@ public:
 
 class Game {
 private:
-	List<GameHandler *> _handlers;
+	SynchronisedList<GameHandler *> _handlers;
 
 	static bool notLockedFn(GameHandler *g);
 	void restart();

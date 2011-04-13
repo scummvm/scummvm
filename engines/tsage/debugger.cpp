@@ -126,7 +126,7 @@ bool Debugger::Cmd_PriorityRegions(int argc, const char **argv) {
 	// Lock the background surface for access
 	Graphics::Surface destSurface = _globals->_sceneManager._scene->_backSurface.lockSurface();
 
-	List<Region>::iterator i = _globals->_sceneManager._scene->_priorities.begin();
+	Common::List<Region>::iterator i = _globals->_sceneManager._scene->_priorities.begin();
 	Common::String regionsDesc;
 
 	for (; i != _globals->_sceneManager._scene->_priorities.end(); ++i, ++colour, ++count) {

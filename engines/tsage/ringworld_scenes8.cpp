@@ -2239,7 +2239,7 @@ void Scene7700::signal() {
 void Scene7700::process(Event &event) {
 	Scene::process(event);
 
-	if (_globals->_sceneItems.contains(&_sceneItem10)) {
+	if (contains<SceneItem *>(_globals->_sceneItems, &_sceneItem10)) {
 		if (_gfxButton.process(event)) {
 			_sceneItem10.remove();
 			_sceneHotspot15.remove();

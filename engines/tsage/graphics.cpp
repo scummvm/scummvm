@@ -1018,7 +1018,7 @@ void GfxManager::setDefaults() {
 }
 
 void GfxManager::activate() {
-	assert(!_globals->_gfxManagers.contains(this));
+	assert(!contains(_globals->_gfxManagers, this));
 	_globals->_gfxManagers.push_front(this);
 }
 
