@@ -229,7 +229,7 @@ int32 decompressADPCM(byte *compInput, byte *compOutput, int channels) {
 	// Every block starts with a 2 byte word. If that word is
 	// non-zero, it indicates the size of a block of raw audio
 	// data (not encoded) following it. That data we simply copy
-	// to the output buffer and the proceed by decoding the
+	// to the output buffer and then proceed by decoding the
 	// remaining data.
 	//
 	// If on the other hand the word is zero, then what follows
