@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/scene_logic.h $
- * $Id: scene_logic.h 232 2011-02-12 11:56:38Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -35,7 +35,7 @@
 
 namespace tSage {
 
-class SceneObject9150: public SceneObject {
+class SceneObject9150 : public SceneObject {
 public:
 	int _timer, _signalFlag;
 
@@ -47,7 +47,7 @@ public:
 	virtual Common::String getClassName() { return "SceneObject9150"; }
 };
 
-class Scene2: public Scene {
+class Scene2 : public Scene {
 public :
 	int _sceneState;
 
@@ -58,15 +58,15 @@ public :
 	}
 };
 
-class Object9350: public SceneObject {
+class Object9350 : public SceneObject {
 public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void draw();
 };
 
-class Scene9100: public Scene {
+class Scene9100 : public Scene {
 	/* Items */
-	class SceneHotspot1: public NamedHotspot {
+	class SceneHotspot1 : public NamedHotspot {
 	public:
 		virtual void doAction(int action);
 	};
@@ -90,8 +90,8 @@ public:
 	virtual void dispatch();
 };
 
-class Scene9150: public Scene2 {
-	class Object3: public SceneObject9150 {
+class Scene9150 : public Scene2 {
+	class Object3 : public SceneObject9150 {
 	public:
 		virtual void signal();
 		virtual void dispatch();
@@ -118,8 +118,8 @@ public:
 	virtual void dispatch();
 };
 
-class Scene9200: public Scene2 {
-	class SceneHotspot1: public NamedHotspot{
+class Scene9200 : public Scene2 {
+	class SceneHotspot1 : public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
@@ -134,7 +134,7 @@ public:
 	SpeakerQText _speakerQText;
 	SoundHandler _soundHandler;
 	SceneHotspot1 _hotspot1;
-	NamedHotspot _hotspot2; 
+	NamedHotspot _hotspot2;
 	NamedHotspot _hotspot3;
 	NamedHotspot _hotspot4;
 	NamedHotspot _hotspot5;
@@ -148,7 +148,7 @@ public:
 	virtual void process(Event &event);
 };
 
-class Scene9300: public Scene {
+class Scene9300 : public Scene {
 public:
 	SequenceManager _sequenceManager;
 	SceneObject _object1;
@@ -172,7 +172,7 @@ public:
 	virtual void dispatch();
 };
 
-class Scene9350: public Scene2 {
+class Scene9350 : public Scene2 {
 public:
 	SequenceManager _sequenceManager;
 	Object9350 _object1;
@@ -188,7 +188,7 @@ public:
 	virtual void dispatch();
 };
 
-class Scene9360: public Scene2 {
+class Scene9360 : public Scene2 {
 public:
 	SequenceManager _sequenceManager;
 	Action _action1;
@@ -207,13 +207,13 @@ public:
 	virtual void dispatch();
 };
 
-class Scene9400: public Scene2 {
-	class SceneHotspot7: public NamedHotspot{
+class Scene9400 : public Scene2 {
+	class SceneHotspot7 : public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class SceneHotspot8: public NamedHotspot{
+	class SceneHotspot8 : public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
@@ -243,23 +243,23 @@ public:
 	virtual void dispatch();
 };
 
-class Scene9450: public Scene2 {
-	class Object2: public SceneObject {
+class Scene9450 : public Scene2 {
+	class Object2 : public SceneObject {
 	public:
 		virtual void signal();
 	};
 
-	class Object3: public SceneObject9150 {
+	class Object3 : public SceneObject9150 {
 	public:
 		virtual void dispatch();
 	};
 
-	class Hotspot1: public NamedHotspot{
+	class Hotspot1 : public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot3: public NamedHotspot{
+	class Hotspot3 : public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
@@ -292,23 +292,23 @@ public:
 	virtual void dispatch();
 };
 
-class Scene9500: public Scene2 {
-	class Hotspot1: public NamedHotspot{
+class Scene9500 : public Scene2 {
+	class Hotspot1 : public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot2: public NamedHotspot{
+	class Hotspot2 : public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot3: public NamedHotspot{
+	class Hotspot3 : public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot4: public NamedHotspot{
+	class Hotspot4 : public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
@@ -345,7 +345,7 @@ public:
 	virtual void process(Event &event);
 };
 
-class Scene9700: public Scene2 {
+class Scene9700 : public Scene2 {
 	SequenceManager _sequenceManager;
 	SceneObject _object1;
 	NamedHotspot _sceneHotspot1;
@@ -361,7 +361,7 @@ class Scene9700: public Scene2 {
 	virtual void process(Event &event);
 };
 
-class Scene9750: public Scene {
+class Scene9750 : public Scene {
 public:
 	SequenceManager _sequenceManager;
 	SceneObject _object1;
@@ -372,48 +372,48 @@ public:
 	virtual void dispatch();
 };
 
-class Scene9850: public Scene {
-	class Object6: public SceneObject{
+class Scene9850 : public Scene {
+	class Object6 : public SceneObject{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Object7: public SceneObjectExt{
+	class Object7 : public SceneObjectExt{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot12: public NamedHotspot{
+	class Hotspot12 : public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot14: public NamedHotspot{
+	class Hotspot14 : public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot16: public NamedHotspot{
+	class Hotspot16 : public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot17: public NamedHotspot{
+	class Hotspot17 : public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot18: public NamedHotspot{
+	class Hotspot18 : public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot19: public NamedHotspot{
+	class Hotspot19 : public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot20: public NamedHotspot{
+	class Hotspot20 : public NamedHotspot{
 	public:
 		virtual void doAction(int action);
 	};
@@ -454,8 +454,8 @@ public:
 	virtual void dispatch();
 };
 
-class Scene9900: public Scene {
-	class strAction1: public Action {
+class Scene9900 : public Scene {
+	class strAction1 : public Action {
 	public:
 		SceneObject _object9;
 		ScenePalette _palette1;
@@ -463,7 +463,7 @@ class Scene9900: public Scene {
 		virtual void signal();
 	};
 
-	class strAction2: public Action {
+	class strAction2 : public Action {
 	public:
 		SceneText _txtArray1[2];
 		SceneText _txtArray2[2];
@@ -473,7 +473,7 @@ class Scene9900: public Scene {
 		virtual void dispatch();
 	};
 
-	class strAction3: public Action {
+	class strAction3 : public Action {
 	public:
 		SceneObject _object10;
 		ScenePalette _palette2;
@@ -515,13 +515,13 @@ public:
 	virtual void process(Event &event);
 };
 
-class Scene9999: public Scene {
+class Scene9999 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};

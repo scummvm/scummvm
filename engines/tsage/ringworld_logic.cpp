@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/scene_logic.cpp $
- * $Id: scene_logic.cpp 232 2011-02-12 11:56:38Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -423,7 +423,7 @@ void SpeakerOR::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerOText::SpeakerOText(): SpeakerGText() {
+SpeakerOText::SpeakerOText() : SpeakerGText() {
 	_speakerName = "OTEXT";
 	_textWidth = 240;
 	_textPos = Common::Point(130, 10);
@@ -433,7 +433,7 @@ SpeakerOText::SpeakerOText(): SpeakerGText() {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerQText::SpeakerQText(): ScreenSpeaker() {
+SpeakerQText::SpeakerQText() : ScreenSpeaker() {
 	_speakerName = "QTEXT";
 	_textPos = Common::Point(160, 40);
 	_colour1 = 35;
@@ -444,7 +444,7 @@ SpeakerQText::SpeakerQText(): ScreenSpeaker() {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerSText::SpeakerSText(): ScreenSpeaker() {
+SpeakerSText::SpeakerSText() : ScreenSpeaker() {
 	_speakerName = "STEXT";
 	_colour1 = 13;
 	_textWidth = 240;
@@ -454,7 +454,7 @@ SpeakerSText::SpeakerSText(): ScreenSpeaker() {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerPOText::SpeakerPOText(): ScreenSpeaker() {
+SpeakerPOText::SpeakerPOText() : ScreenSpeaker() {
 	_speakerName = "POTEXT";
 	_textWidth = 240;
 	_textMode = ALIGN_CENTRE;
@@ -512,7 +512,7 @@ SpeakerHText::SpeakerHText() {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerSKText::SpeakerSKText(): ScreenSpeaker() {
+SpeakerSKText::SpeakerSKText() : ScreenSpeaker() {
 	_speakerName = "SKTEXT";
 	_textWidth = 240;
 	_textMode = ALIGN_CENTRE;
@@ -571,7 +571,7 @@ SpeakerBatText::SpeakerBatText() {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerSKL::SpeakerSKL(): AnimatedSpeaker() {
+SpeakerSKL::SpeakerSKL() : AnimatedSpeaker() {
 	_speakerName = "SKL";
 	_newSceneNumber = 7011;
 	_textPos = Common::Point(10, 30);
@@ -602,7 +602,7 @@ void SpeakerSKL::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerQL::SpeakerQL(): AnimatedSpeaker() {
+SpeakerQL::SpeakerQL() : AnimatedSpeaker() {
 	_speakerName = "QL";
 	_newSceneNumber = 2610;
 	_textPos = Common::Point(160, 30);

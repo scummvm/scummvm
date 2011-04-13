@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/sound.h $
- * $Id: sound.h 184 2011-02-03 11:31:38Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -31,7 +31,7 @@
 
 namespace tSage {
 
-class SoundManager: public SaveListener {
+class SoundManager : public SaveListener {
 public:
 	void dispatch() {}
 	virtual void listenerSynchronise(Serialiser &s);

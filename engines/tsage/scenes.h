@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/scenes.h $
- * $Id: scenes.h 216 2011-02-08 08:10:46Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -34,7 +34,7 @@
 
 namespace tSage {
 
-class Scene: public StripCallback {
+class Scene : public StripCallback {
 private:
 	void drawAltObjects();
 public:
@@ -72,9 +72,9 @@ public:
 	void loadSceneData(int sceneNum);
 };
 
-class SceneManager: public GameHandler, public SaveListener {
+class SceneManager : public GameHandler, public SaveListener {
 private:
-	void disposeRegions() { warning("TODO"); }
+	void disposeRegions() { warning("TODO: disposeRegions()"); }
 	Scene *getNewScene();
 public:
 	Scene *_scene;
@@ -100,7 +100,7 @@ public:
 	void changeScene(int newSceneNumber);
 	void setBgOffset(const Common::Point &pt, int loadCount);
 
-	void removeAction(Action *action) { 
+	void removeAction(Action *action) {
 		// Not currently implemented because addAction method doesn't seem to have any callers
 	}
 

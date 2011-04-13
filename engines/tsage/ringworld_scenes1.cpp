@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/scene_logic.cpp $
- * $Id: scene_logic.cpp 232 2011-02-12 11:56:38Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -67,7 +67,7 @@ void Scene10::Action1::signal() {
 		scene->_object2.setFrame(1);
 		scene->_object2.setPosition(Common::Point(240, 51));
 		scene->_object2.show();
-		
+
 		scene->_object3.setStrip(6);
 		scene->_object3.setFrame(1);
 		scene->_object3.setPosition(Common::Point(200, 76));
@@ -130,7 +130,7 @@ void Scene10::Action2::signal() {
 void Scene10::postInit(SceneObjectList *OwnerList) {
 	loadScene(10);
 	setZoomPercents(0, 100, 200, 100);
-	
+
 	_stripManager.addSpeaker(&_speakerSText);
 	_stripManager.addSpeaker(&_speakerQText);
 	_speakerSText._speakerName = "STEXT";
@@ -242,7 +242,7 @@ void Scene15::Action1::signal() {
 		SceneItem::display(0, 0);
 		_globals->_sceneManager.changeScene(20);
 		break;
-	}			
+	}
 }
 
 void Scene15::Action1::dispatch() {
@@ -299,7 +299,7 @@ void Scene20::Action2::signal() {
 		setDelay(10);
 		break;
 	case 1:
-		SceneItem::display(20, 1, SET_WIDTH, 200, SET_Y, 20, SET_X, 160, SET_KEEP_ONSCREEN, true, 
+		SceneItem::display(20, 1, SET_WIDTH, 200, SET_Y, 20, SET_X, 160, SET_KEEP_ONSCREEN, true,
 			SET_EXT_BGCOLOUR, 4, LIST_END);
 		setDelay(120);
 		break;
@@ -472,7 +472,7 @@ void Scene20::Action4::signal() {
 		scene->_SceneObjectExt.setStrip(1);
 		scene->_SceneObjectExt.setFrame(1);
 		scene->_SceneObjectExt.animate(ANIM_MODE_5, NULL);
-		
+
 		scene->_SceneObjectExt._moveDiff.x = 4;
 		NpcMover *mover1 = new NpcMover();
 		Common::Point pt(scene->_SceneObjectExt._position.x - 12, scene->_SceneObjectExt._position.y + 5);
@@ -493,7 +493,7 @@ void Scene20::Action4::signal() {
 		scene->_sound.startSound(42);
 		scene->_SceneObjectExt.setStrip(2);
 		scene->_SceneObjectExt.animate(ANIM_MODE_2, NULL);
-		
+
 		scene->_sceneObject5.remove();
 		_globals->_player.setVisage(21);
 		_globals->_player.setStrip(1);
@@ -543,7 +543,7 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 		_SceneObjectExt.setVisage(20);
 		_SceneObjectExt.setPosition(Common::Point(400, 69));
 		_SceneObjectExt.animate(ANIM_MODE_1, NULL);
-		
+
 		_sceneObject3.postInit();
 		_sceneObject3.setVisage(20);
 		_sceneObject3.setPosition(Common::Point(395, 69));
@@ -571,7 +571,7 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 		_speakerQText._textWidth = 260;
 		_speakerGameText.setTextPos(Common::Point(350, 20));
 		_speakerGameText._textWidth = 260;
-		
+
 		_globals->_soundHandler.startSound(8);
 		_sceneBounds = Rect(320, 0, 640, 200);
 	} else {
@@ -594,7 +594,7 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 		_SceneObjectExt.setPosition(Common::Point(595, 79));
 		_SceneObjectExt.animate(ANIM_MODE_1, NULL);
 
-		if ((_globals->getFlag(120) && _globals->getFlag(116)) || 
+		if ((_globals->getFlag(120) && _globals->getFlag(116)) ||
 				(_globals->getFlag(117) && _globals->getFlag(119))) {
 			setAction(&_action3);
 		} else if (_globals->getFlag(104)) {
@@ -725,7 +725,7 @@ void Scene30::RingAction::signal() {
 	Scene30 *scene = (Scene30 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
-	case 0: {	
+	case 0: {
 		_globals->_player.disableControl();
 		scene->_kzin.setAction(NULL);
 		NpcMover *mover = new NpcMover();
@@ -733,7 +733,7 @@ void Scene30::RingAction::signal() {
 		_globals->_player.addMover(mover, &pt, this);
 		break;
 	}
-	
+
 	case 1:
 		_globals->_player.checkAngle(&scene->_kzin);
 		scene->_stripManager.start(32, this);
@@ -831,14 +831,14 @@ void Scene30::KzinObject::doAction(int action) {
 		scene->setAction(&scene->_talkAction);
 		break;
 	default:
-		SceneObject::doAction(action);	
+		SceneObject::doAction(action);
 		break;
 	}
 }
 
 /*--------------------------------------------------------------------------*/
 
-Scene30::Scene30():
+Scene30::Scene30() :
 	_groundHotspot(9, OBJECT_SCANNER, 50, 17, CURSOR_LOOK, 30, 3, CURSOR_USE, 30, 8, LIST_END),
 	_wallsHotspot(8, OBJECT_SCANNER, 50, 13, CURSOR_LOOK, 30, 0, CURSOR_USE, 30, 7, LIST_END),
 	_courtyardHotspot(0, CURSOR_LOOK, 30, 4, LIST_END),
@@ -856,7 +856,7 @@ void Scene30::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_speakerQText);
 	_speakerSText._npc = &_kzin;
 	_speakerQText._npc = &_globals->_player;
-	
+
 
 	// Setup player
 	_globals->_player.postInit();
@@ -885,7 +885,7 @@ void Scene30::postInit(SceneObjectList *OwnerList) {
 	_courtyardHotspot.setBounds(Rect(0, 0, 320, 200));
 
 	// Add the objects and hotspots to the scene
-	_globals->_sceneItems.addItems(&_beam, &_wallsHotspot, &_door, &_treeHotspot, &_groundHotspot, 
+	_globals->_sceneItems.addItems(&_beam, &_wallsHotspot, &_door, &_treeHotspot, &_groundHotspot,
 		&_courtyardHotspot, NULL);
 
 	// Load the scene data
@@ -1179,7 +1179,7 @@ void Scene40::Action5::signal() {
 	Scene40 *scene = (Scene40 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
-	case 0: 
+	case 0:
 		setDelay(_globals->_randomSource.getRandomNumber(120));
 		break;
 	case 1:
@@ -1260,7 +1260,7 @@ void Scene40::Action8::signal() {
 		break;
 	case 1:
 		_globals->_player.disableControl();
-		
+
 		if ((_globals->_player._position.y >= 197) || (_globals->_player._visage)) {
 			_actionIndex = 1;
 			setDelay(30);
@@ -1310,7 +1310,7 @@ void Scene40::DyingKzin::doAction(int action) {
 		SceneItem::display2(40, 43);
 		break;
 	case CURSOR_CROSSHAIRS:
-		SceneItem::display2(40, 44); 
+		SceneItem::display2(40, 44);
 		break;
 	case CURSOR_LOOK:
 		SceneItem::display2(40, 12);
@@ -1415,7 +1415,7 @@ void Scene40::Item6::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene40::Scene40():
+Scene40::Scene40() :
 	_item1(2, OBJECT_SCANNER, 40, 24, CURSOR_CROSSHAIRS, 40, 25, CURSOR_LOOK, 40, 7, CURSOR_USE, 40, 16, LIST_END),
 	_item3(5, OBJECT_SCANNER, 40, 26, CURSOR_CROSSHAIRS, 40, 27, CURSOR_LOOK, 40, 9, CURSOR_USE, 40, 17, LIST_END),
 	_item4(6, OBJECT_SCANNER, 40, 31, CURSOR_CROSSHAIRS, 40, 32, CURSOR_LOOK, 40, 5, CURSOR_USE, 40, 33, LIST_END),
@@ -1452,7 +1452,7 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 	if (_globals->_sceneManager._previousScene == 20) {
 		_globals->_soundHandler.startSound(24);
 		_globals->_player.setVisage(43);
-		
+
 		_object1.postInit();
 		_object1.setVisage(41);
 		_object1.setPosition(Common::Point(105, 220));
@@ -1470,7 +1470,7 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 		_object3.setPosition(Common::Point(110, 186));
 		_object3._numFrames = 2;
 		_object3.animate(ANIM_MODE_8, NULL, NULL);
-		
+
 		_assassin.postInit();
 		_assassin.setPosition(Common::Point(-40, 191));
 		_globals->_sceneItems.push_back(&_assassin);
@@ -1488,7 +1488,7 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 		_doorway.setPosition(Common::Point(148, 74));
 		_doorway.setStrip(2);
 		_doorway.setFrame(_doorway.getFrameCount());
-		
+
 		_dyingKzin.postInit();
 		_dyingKzin.setVisage(40);
 		_dyingKzin.setPosition(Common::Point(205, 183));
@@ -1517,8 +1517,8 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 	_item5.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 	_item6._sceneRegionId = 3;
 	_item2._sceneRegionId = 7;
-	
-	_globals->_sceneItems.addItems(&_dyingKzin, &_item8, &_item1, &_item2, &_item3, &_item4, 
+
+	_globals->_sceneItems.addItems(&_dyingKzin, &_item8, &_item1, &_item2, &_item3, &_item4,
 			&_item6, &_item7, &_item5, NULL);
 }
 
@@ -1611,7 +1611,7 @@ void Scene50::Action3::signal() {
 		remove();
 		break;
 	}
-}		
+}
 
 /*--------------------------------------------------------------------------*/
 
@@ -1623,7 +1623,7 @@ void Scene50::Object1::doAction(int action) {
 		SceneItem::display2(50, 20);
 		break;
 	case OBJECT_SCANNER:
-		SceneItem::display2(50, 19); 
+		SceneItem::display2(50, 19);
 		break;
 	case CURSOR_LOOK:
 		SceneItem::display2(50, 4);
@@ -1650,7 +1650,7 @@ void Scene50::Object2::doAction(int action) {
 		SceneItem::display2(50, 11);
 		break;
 	case OBJECT_SCANNER:
-		SceneItem::display2(50, 10); 
+		SceneItem::display2(50, 10);
 		break;
 	case CURSOR_LOOK:
 		SceneItem::display2(50, 1);
@@ -1674,7 +1674,7 @@ void Scene50::Object3::doAction(int action) {
 		SceneItem::display2(50, 11);
 		break;
 	case OBJECT_SCANNER:
-		SceneItem::display2(50, 10); 
+		SceneItem::display2(50, 10);
 		break;
 	case CURSOR_LOOK:
 		SceneItem::display2(50, 1);
@@ -1702,7 +1702,7 @@ void Scene50::Object4::doAction(int action) {
 		SceneItem::display2(50, 11);
 		break;
 	case OBJECT_SCANNER:
-		SceneItem::display2(50, 10); 
+		SceneItem::display2(50, 10);
 		break;
 	case CURSOR_LOOK:
 		SceneItem::display2(50, 1);
@@ -1722,7 +1722,7 @@ void Scene50::Object4::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene50::Scene50(): 
+Scene50::Scene50() :
 		_item0(0, CURSOR_LOOK, 50, 3, LIST_END),
 		_item1(0, OBJECT_SCANNER, 50, 15, CURSOR_USE, 50, 16, CURSOR_LOOK, 50, 3, LIST_END),
 		_item2(0, CURSOR_LOOK, 50, 7, LIST_END),
@@ -1738,7 +1738,7 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 
 	_stripManager.addSpeaker(&_speakerQText);
 	_stripManager.addSpeaker(&_speakerSText);
-	
+
 	_globals->_player.postInit();
 	_globals->_player.setVisage(0);
 	_globals->_player.animate(ANIM_MODE_1, NULL);
@@ -1940,7 +1940,7 @@ void Scene60::Action1::signal() {
 
 		scene->_object8.setFrame(1);
 		scene->_object8._state = 0;
-		
+
 		_globals->clearFlag(103);
 		_globals->clearFlag(!_globals->_stripNum ? 116 : 119);
 		break;
@@ -2008,7 +2008,7 @@ void Scene60::Object3::doAction(int action) {
 		}
 	} else {
 		SceneHotspot::doAction(action);
-	}	
+	}
 }
 
 void Scene60::Object4::doAction(int action) {
@@ -2040,7 +2040,7 @@ void Scene60::Object4::doAction(int action) {
 		scene->_object8.setVisage(60);
 		scene->_object8.setStrip(8);
 		scene->_object8.setPosition(Common::Point(143, 105));
-		
+
 		_globals->_sceneItems.push_front(&scene->_object8);
 		_globals->_sceneItems.push_front(&scene->_slaveButton);
 
@@ -2071,7 +2071,7 @@ void Scene60::Object4::doAction(int action) {
 		scene->signal();
 	} else {
 		SceneHotspot::doAction(action);
-	}	
+	}
 }
 
 void Scene60::Object5::doAction(int action) {
@@ -2084,7 +2084,7 @@ void Scene60::Object5::doAction(int action) {
 		_globals->setFlag(83);
 	} else {
 		SceneHotspot::doAction(action);
-	}	
+	}
 }
 
 void Scene60::Object6::doAction(int action) {
@@ -2105,7 +2105,7 @@ void Scene60::Object6::doAction(int action) {
 		}
 	} else {
 		SceneHotspot::doAction(action);
-	}	
+	}
 }
 
 void Scene60::SlaveObject::doAction(int action) {
@@ -2114,7 +2114,7 @@ void Scene60::SlaveObject::doAction(int action) {
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 8);
 	} else if (action == CURSOR_USE) {
-		if (scene->_object8._state) 
+		if (scene->_object8._state)
 			scene->_sceneMode = 19;
 		else if (_state) {
 			scene->_soundHandler3.proc3();
@@ -2135,7 +2135,7 @@ void Scene60::SlaveObject::doAction(int action) {
 		setAction(&scene->_sequenceManager, scene, 62, NULL);
 	} else {
 		SceneHotspot::doAction(action);
-	}	
+	}
 }
 
 void Scene60::Object8::doAction(int action) {
@@ -2144,7 +2144,7 @@ void Scene60::Object8::doAction(int action) {
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 7);
 	} else if (action == CURSOR_USE) {
-		if (!scene->_object8._state) 
+		if (!scene->_object8._state)
 			scene->_sceneMode = 14;
 		else if (_state) {
 			scene->_soundHandler3.proc3();
@@ -2165,7 +2165,7 @@ void Scene60::Object8::doAction(int action) {
 		setAction(&scene->_sequenceManager, scene, 62, NULL);
 	} else {
 		SceneHotspot::doAction(action);
-	}	
+	}
 }
 
 void Scene60::Object9::doAction(int action) {
@@ -2178,7 +2178,7 @@ void Scene60::Object9::doAction(int action) {
 		scene->setAction(&scene->_action1);
 	} else {
 		SceneHotspot::doAction(action);
-	}	
+	}
 }
 
 /*--------------------------------------------------------------------------*/
@@ -2241,7 +2241,7 @@ void Scene60::Item::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene60::Scene60():
+Scene60::Scene60() :
 		_item2(0, 12, 12),
 		_item3(8, 22, 23),
 		_item4(9, 24, 25),
@@ -2269,7 +2269,7 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 	_object8.setStrip(8);
 	_object8.setPosition(Common::Point(143, 105));
 	_object8._state = 0;
-	
+
 	_globals->_sceneItems.push_back(&_object8);
 	_globals->_sceneItems.push_back(&_slaveButton);
 
@@ -2343,7 +2343,7 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 			_object10.setPosition(Common::Point(199, 186));
 			_object10.animate(ANIM_MODE_8, 0, NULL);
 			_object10._numFrames = 5;
-			
+
 			_soundHandler1.startSound(35);
 
 			if (!_globals->getFlag(83)) {
@@ -2473,7 +2473,7 @@ void Scene90::Action1::signal() {
 		_globals->_soundHandler.startSound(68);
 		scene->_object3.animate(ANIM_MODE_6, NULL);
 
-		SceneItem::display(90, _globals->getFlag(104) ? 15 : 14, 
+		SceneItem::display(90, _globals->getFlag(104) ? 15 : 14,
 			SET_EXT_BGCOLOUR, 13, SET_KEEP_ONSCREEN, -1, SET_X, 120, SET_Y, 20, LIST_END);
 		break;
 	case 12:
@@ -2537,7 +2537,7 @@ void Scene90::Object2::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene90::Scene90():
+Scene90::Scene90() :
 		_item1(0, CURSOR_LOOK, 90, 9, LIST_END),
 		_item2(0, CURSOR_LOOK, 90, 10, LIST_END),
 		_item3(0, CURSOR_LOOK, 90, 11, LIST_END),
@@ -2613,7 +2613,7 @@ void Scene90::postInit(SceneObjectList *OwnerList) {
 	_object3.setPosition(Common::Point(196, 181));
 	_object3.setPriority2(175);
 	_globals->_sceneItems.push_back(&_object3);
-	
+
 	_globals->_player.disableControl();
 	_globals->_soundHandler.startSound(55);
 	_soundHandler1.startSound(52);
@@ -2691,7 +2691,7 @@ void Scene95::Action1::signal() {
 	}
 	case 3: {
 		scene->_soundHandler.startSound(21);
-		
+
 		Common::Point pt1(235, 72);
 		PlayerMover *mover1 = new PlayerMover();
 		_globals->_player.addMover(mover1, &pt1, NULL);
@@ -2787,7 +2787,7 @@ void Scene95::postInit(SceneObjectList *OwnerList) {
 	_object3.postInit();
 	_object3.setVisage(96);
 	_object3.setPosition(Common::Point(29, 198));
-	
+
 	_soundHandler.startSound(67);
 	setAction(&_action1);
 }
@@ -2938,16 +2938,16 @@ void Scene6100::Action5::dispatch() {
 
 		if (tempSet._float2 < 0) {
 			scene->_objList[idx]->_position.y = 300;
-			
+
 			if (idx != 3) {
-				scene->_objList[idx]->_floats._float1 = 
+				scene->_objList[idx]->_floats._float1 =
 					_globals->_randomSource.getRandomNumber(199);
 				scene->_objList[idx]->_floats._float2 =
 					_globals->_randomSource.getRandomNumber(999) + 750.0;
 
 				scene->_objList[idx]->_floats.proc1(
 					-(scene->_turnAmount * 10 + scene->_angle) * MULTIPLY_FACTOR);
-				scene->_objList[idx]->_floats.add(scene->_probe._floats._float1, 
+				scene->_objList[idx]->_floats.add(scene->_probe._floats._float1,
 					scene->_probe._floats._float2, scene->_probe._floats._float3);
 			}
 		}
@@ -3028,7 +3028,7 @@ void Scene6100::GetBoxAction::signal() {
 		scene->showMessage(NULL, 0, NULL);
 		_globals->_sceneManager.changeScene(2320);
 		remove();
-	}		
+	}
 }
 
 void Scene6100::GetBoxAction::dispatch() {
@@ -3039,7 +3039,7 @@ void Scene6100::GetBoxAction::dispatch() {
 			scene->_speed = 0;
 			scene->_getBoxAction.signal();
 		}
-		
+
 		if (scene->_probe._percent > 4)
 			// Handle the probe disappearing into the rocks
 			scene->_probe._percent = scene->_probe._percent * 7 / 8;
@@ -3145,7 +3145,7 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 	_objList[1] = &_sunflower2;
 	_objList[2] = &_sunflower3;
 	_objList[3] = &_rocks;
-	
+
 	int baseVal = 2000;
 	for (int idx = 0; idx < 3; ++idx) {
 		_objList[idx]->_floats._float1 = _globals->_randomSource.getRandomNumber(999);
@@ -3177,7 +3177,7 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 
 	if (!_globals->getFlag(76))
 		_probe.setAction(&_action4);
-	
+
 	_globals->_soundHandler.startSound(231);
 }
 
@@ -3238,7 +3238,7 @@ void Scene6100::dispatch() {
 	if (_rocksCheck && (_action == &_action5)) {
 		// Check whether the probe is close enough to the rocks
 		double distance = _probe._floats.sqrt(_rocks._floats);
-		
+
 		if ((distance >= 300.0) && (distance <= 500.0))
 			setAction(&_getBoxAction);
 	}

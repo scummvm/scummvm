@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/staticres.h $
- * $Id: staticres.h 213 2011-02-07 10:02:58Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 

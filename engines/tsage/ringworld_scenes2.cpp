@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/scene_logic.cpp $
- * $Id: scene_logic.cpp 232 2011-02-12 11:56:38Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -210,7 +210,7 @@ void Scene1000::Action3::signal() {
 		scene->_object3.setStrip(5);
 		scene->_object3.setFrame(1);
 		scene->_object3.setPosition(Common::Point(292, 192));
-		
+
 		zoom(true);
 		setDelay(300);
 		break;
@@ -227,7 +227,7 @@ void Scene1000::Action3::signal() {
 		break;
 	default:
 		break;
-	}		
+	}
 }
 
 void Scene1000::Action3::zoom(bool up) {
@@ -268,7 +268,7 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 
 		_globals->_sceneManager._scene->_sceneBounds.centre(_object1._position.x, _object1._position.y);
 		_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
-		
+
 		_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
 		_globals->_soundHandler.startSound(114);
 	} else if (_globals->_sceneManager._previousScene == 2222) {
@@ -279,7 +279,7 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 		_object1.animate(ANIM_MODE_2, 0);
 		_object1._moveDiff = Common::Point(2, 2);
 		_object1.setPosition(Common::Point(120, 180));
-		
+
 		_globals->_sceneManager._scene->_sceneBounds.centre(_object1._position.x, _object1._position.y);
 		_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
 		_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
@@ -292,7 +292,7 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 		_object3.setVisage(1050);
 		_object3.changeZoom(-1);
 		_object3.setPosition(Common::Point(158, 0));
-		
+
 		_globals->_player.postInit();
 		_globals->_player.setVisage(1050);
 		_globals->_player.setStrip(3);
@@ -314,7 +314,7 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 
 void Scene1001::Action1::signal() {
 	Scene1001 *scene = (Scene1001 *)_globals->_sceneManager._scene;
-	
+
 	switch (_actionIndex++) {
 	case 0:
 		setDelay(10);
@@ -377,7 +377,7 @@ void Scene1001::Action1::signal() {
 		scene->_object1.setFrame(1);
 		scene->_object1.setPosition(Common::Point(-75, 87));
 		scene->_object1.animate(ANIM_MODE_2, NULL);
-		
+
 		Common::Point pt(0, 100);
 		NpcMover *mover = new NpcMover();
 		scene->_object1.addMover(mover, &pt, this);
@@ -447,7 +447,7 @@ void Scene1001::Action1::signal() {
 		NpcMover *mover = new NpcMover();
 		scene->_object6.addMover(mover, &pt, this);
 		break;
-	}		
+	}
 	case 17: {
 		scene->_soundHandler1.startSound(90);
 		scene->_object6.remove();
@@ -465,7 +465,7 @@ void Scene1001::Action1::signal() {
 		NpcMover *mover = new NpcMover();
 		scene->_object7.addMover(mover, &pt, this);
 		break;
-	}		
+	}
 	case 18:
 		scene->_object7.remove();
 
@@ -534,13 +534,13 @@ void Scene1001::postInit(SceneObjectList *OwnerList) {
 
 
 /*--------------------------------------------------------------------------
- * Scene 1250 - 
+ * Scene 1250 -
  *
  *--------------------------------------------------------------------------*/
 
 void Scene1250::Action1::signal() {
 	Scene1250 *scene = (Scene1250 *)_globals->_sceneManager._scene;
-	
+
 	switch (_actionIndex++) {
 	case 0:
 		setDelay(_globals->_randomSource.getRandomNumber(120) + 60);
@@ -554,7 +554,7 @@ void Scene1250::Action1::signal() {
 
 void Scene1250::Action2::signal() {
 	Scene1250 *scene = (Scene1250 *)_globals->_sceneManager._scene;
-	
+
 	switch (_actionIndex++) {
 	case 0:
 		switch (_globals->_randomSource.getRandomNumber(2)) {
@@ -580,7 +580,7 @@ void Scene1250::Action2::signal() {
 
 void Scene1250::Action3::signal() {
 	Scene1250 *scene = (Scene1250 *)_globals->_sceneManager._scene;
-	
+
 	switch (_actionIndex++) {
 	case 0:
 		setDelay(30);
@@ -599,7 +599,7 @@ void Scene1250::Action3::signal() {
 
 void Scene1250::Action4::signal() {
 	Scene1250 *scene = (Scene1250 *)_globals->_sceneManager._scene;
-	
+
 	switch (_actionIndex++) {
 	case 0:
 		setDelay(3);
@@ -641,7 +641,7 @@ void Scene1250::postInit(SceneObjectList *OwnerList) {
 	_object2.setPriority2(255);
 	_object2._frame = 1;
 	_object2.setAction(&_action2);
-	
+
 	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
 	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
 
@@ -791,7 +791,7 @@ void Scene1400::postInit(SceneObjectList *OwnerList) {
 
 void Scene1500::Action1::signal() {
 	Scene1500 *scene = (Scene1500 *)_globals->_sceneManager._scene;
-	
+
 	switch (_actionIndex++) {
 	case 0: {
 		scene->_object1.postInit();
@@ -866,7 +866,7 @@ void Scene1500::Action1::signal() {
 
 void Scene1500::Action2::signal() {
 	Scene1500 *scene = (Scene1500 *)_globals->_sceneManager._scene;
-	
+
 	switch (_actionIndex++) {
 	case 0:
 		setDelay(6);

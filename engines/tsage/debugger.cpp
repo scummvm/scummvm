@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/debugger.cpp $
- * $Id: debugger.cpp 223 2011-02-09 13:03:31Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -32,7 +32,7 @@
 
 namespace tSage {
 
-Debugger::Debugger(): GUI::Debugger() {
+Debugger::Debugger() : GUI::Debugger() {
 	DCmd_Register("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("scene",			WRAP_METHOD(Debugger, Cmd_Scene));
 	DCmd_Register("walk_regions",	WRAP_METHOD(Debugger, Cmd_WalkRegions));
@@ -67,7 +67,7 @@ bool Debugger::Cmd_Scene(int argc, const char **argv) {
 		if (argc == 3)
 			_globals->_sceneManager._sceneNumber = strToInt(argv[2]);
 
-		_globals->_sceneManager.changeScene(strToInt(argv[1]));		
+		_globals->_sceneManager.changeScene(strToInt(argv[1]));
 		return false;
 	}
 }
@@ -82,7 +82,7 @@ bool Debugger::Cmd_WalkRegions(int argc, const char **argv) {
 	}
 
 	// Colour index to use for the first walk region
-	int colour = 16;	
+	int colour = 16;
 
 	// Lock the background surface for access
 	Graphics::Surface destSurface = _globals->_sceneManager._scene->_backSurface.lockSurface();
@@ -120,7 +120,7 @@ bool Debugger::Cmd_PriorityRegions(int argc, const char **argv) {
 		regionNum = strToInt(argv[1]);
 
 	// Colour index to use for the first priority region
-	int colour = 16;	
+	int colour = 16;
 	int count = 0;
 
 	// Lock the background surface for access
@@ -145,7 +145,7 @@ bool Debugger::Cmd_PriorityRegions(int argc, const char **argv) {
 			}
 		}
 
-		regionsDesc += Common::String::format("Region Priority = %d bounds=%d,%d,%d,%d\n", 
+		regionsDesc += Common::String::format("Region Priority = %d bounds=%d,%d,%d,%d\n",
 			r._regionId, r._bounds.left, r._bounds.top, r._bounds.right, r._bounds.bottom);
 	}
 

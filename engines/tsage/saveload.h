@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/saveload.h $
- * $Id: saveload.h 209 2011-02-06 00:46:36Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -58,15 +58,15 @@ struct tSageSavegameHeader {
 /**
  * Derived serialiser class with extra synchronisation types
  */
-class Serialiser: public Common::Serializer {
+class Serialiser : public Common::Serializer {
 public:
-	Serialiser(Common::SeekableReadStream *in, Common::WriteStream *out): Common::Serializer(in, out) {}
+	Serialiser(Common::SeekableReadStream *in, Common::WriteStream *out) : Common::Serializer(in, out) {}
 
-	void syncPointer(SavedObject **ptr, Common::Serializer::Version minVersion = 0, 
+	void syncPointer(SavedObject **ptr, Common::Serializer::Version minVersion = 0,
 		Common::Serializer::Version maxVersion = kLastVersion);
-	void validate(const Common::String &s, Common::Serializer::Version minVersion = 0, 
+	void validate(const Common::String &s, Common::Serializer::Version minVersion = 0,
 		Common::Serializer::Version maxVersion = kLastVersion);
-	void validate(int v, Common::Serializer::Version minVersion = 0, 
+	void validate(int v, Common::Serializer::Version minVersion = 0,
 		Common::Serializer::Version maxVersion = kLastVersion);
 };
 
@@ -86,7 +86,7 @@ public:
 
 /*--------------------------------------------------------------------------*/
 
-class SavedObject: public Serialisable {
+class SavedObject : public Serialisable {
 public:
 	SavedObject();
 	virtual ~SavedObject();
@@ -121,7 +121,7 @@ public:
 			// Get the list size
 			entryCount = this->size();
 
-			// Write out list 
+			// Write out list
 			s.syncAsUint32LE(entryCount);
 			for (typename Common::List<T>::iterator i = this->begin(); i != this->end(); ++i) {
 				s.syncPointer((SavedObject **)&*i);
@@ -162,8 +162,8 @@ public:
 	SavedObject **_savedObject;
 	int _objIndex;
 
-	SavedObjectRef(): _savedObject(NULL), _objIndex(-1) {}
-	SavedObjectRef(SavedObject **so, int objIndex): _savedObject(so),  _objIndex(objIndex) {}
+	SavedObjectRef() : _savedObject(NULL), _objIndex(-1) {}
+	SavedObjectRef(SavedObject **so, int objIndex) : _savedObject(so),  _objIndex(objIndex) {}
 };
 
 typedef SavedObject *(*SavedObjectFactory)(const Common::String &className);
@@ -198,7 +198,7 @@ public:
 	void addObject(SavedObject *obj);
 	void removeObject(SavedObject *obj);
 	void addFactory(SavedObjectFactory fn) { _factoryPtr = fn; }
-	void addSavedObjectPtr(SavedObject **ptr, int objIndex) { 
+	void addSavedObjectPtr(SavedObject **ptr, int objIndex) {
 		_unresolvedPtrs.push_back(SavedObjectRef(ptr, objIndex));
 	}
 

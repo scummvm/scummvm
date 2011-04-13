@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/converse.h $
- * $Id: converse.h 230 2011-02-12 06:57:31Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -31,12 +31,12 @@
 
 namespace tSage {
 
-class StripCallback: public Action {
+class StripCallback : public Action {
 public:
 	virtual void stripCallback(int v) = 0;
 };
 
-class SequenceManager: public Action {
+class SequenceManager : public Action {
 private:
 	void setup();
 	uint16 getNextValue();
@@ -66,7 +66,7 @@ public:
 };
 
 
-class Speaker: public EventHandler {
+class Speaker : public EventHandler {
 public:
 	Rect _fieldA;
 	Action *_field18;
@@ -95,14 +95,14 @@ public:
 	void setTextPos(const Common::Point &pt) { _textPos = pt; }
 };
 
-class SpeakerGameText: public Speaker {
+class SpeakerGameText : public Speaker {
 public:
 	SpeakerGameText();
 
 	virtual Common::String getClassName() { return "SpeakerGameText"; }
 };
 
-class ScreenSpeaker: public Speaker {
+class ScreenSpeaker : public Speaker {
 public:
 	SceneItem *_npc;
 public:
@@ -112,14 +112,14 @@ public:
 	virtual void setText(const Common::String &msg);
 };
 
-class SpeakerAction: public Action {
+class SpeakerAction : public Action {
 public:
 	virtual void signal();
 
 	virtual Common::String getClassName() { return "SpeakerAction"; }
 };
 
-class AnimatedSpeaker: public Speaker {
+class AnimatedSpeaker : public Speaker {
 public:
 	SceneObject _object1;
 	SceneObject _object2;
@@ -135,13 +135,13 @@ public:
 	Rect _bounds;
 
 	ChoiceEntry() {}
-	ChoiceEntry(const Common::String &msg, const Rect &bounds) { 
+	ChoiceEntry(const Common::String &msg, const Rect &bounds) {
 		_msg = msg;
 		_bounds = bounds;
 	}
 };
 
-class ConversationChoiceDialog: public ModalDialog {
+class ConversationChoiceDialog : public ModalDialog {
 public:
 	int _stdColour;
 	int _highlightColour;
@@ -163,12 +163,12 @@ public:
 	virtual void draw();
 };
 
-class Obj0A: public Serialisable {
+class Obj0A : public Serialisable {
 public:
 	int _id;
 	uint _scriptOffset;
 
-	virtual void synchronise(Serialiser &s) { 
+	virtual void synchronise(Serialiser &s) {
 		s.syncAsSint32LE(_id);
 		s.syncAsUint32LE(_scriptOffset);
 	}
@@ -176,7 +176,7 @@ public:
 
 #define OBJ44_LIST_SIZE 5
 
-class Obj44: public Serialisable {
+class Obj44 : public Serialisable {
 public:
 	int _id;
 	int _field2[OBJ44_LIST_SIZE];
@@ -187,7 +187,7 @@ public:
 	virtual void synchronise(Serialiser &s);
 };
 
-class StripManager: public Action {
+class StripManager : public Action {
 private:
 	void reset();
 	void load();

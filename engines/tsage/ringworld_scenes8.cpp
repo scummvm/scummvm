@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/scene_logic.cpp $
- * $Id: scene_logic.cpp 232 2011-02-12 11:56:38Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -445,7 +445,7 @@ void Scene7000::Object1::doAction(int action) {
 
 void Scene7000::dispatch() {
 	Scene7000 *scene = (Scene7000 *)_globals->_sceneManager._scene;
-	
+
 	if (!_action) {
 		if (_globals->_sceneRegions.indexOf(_globals->_player._position) == 8) {
 			if (!_globals->getFlag(13)) {
@@ -519,7 +519,7 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 		_object3.setPosition(Common::Point(107, 92), 0);
 		_object3.changeZoom(100);
 		_object3.setPriority2(10);
-		
+
 		_object1.postInit();
 		_object1.setVisage(7003);
 		if (_globals->getFlag(81))
@@ -576,7 +576,7 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 		if (!_globals->getFlag(81)) {
 			_object1.setPosition(Common::Point(151, 182), 0);
 			_object1.changeZoom(100);
-		} 
+		}
 		_object8.remove();
 		_object9.remove();
 	} else if (_globals->_sceneManager._previousScene == 2320) {
@@ -816,7 +816,7 @@ void Scene7100::Action8::signal() {
 		scene->_object17.setStrip2(4);
 		scene->_object18.setStrip2(4);
 		scene->_object19.setStrip2(4);
-		
+
 		Common::Point pt1(482, 153);
 		NpcMover *mover1 = new NpcMover();
 		scene->_object17.addMover(mover1, &pt1, this);
@@ -852,7 +852,7 @@ void Scene7100::Action8::signal() {
 		scene->_object17.setStrip2(4);
 		scene->_object18.setStrip2(4);
 		scene->_object19.setStrip2(4);
-		
+
 		Common::Point pt1(386, 167);
 		NpcMover *mover1 = new NpcMover();
 		scene->_object17.addMover(mover1, &pt1, this);
@@ -1642,7 +1642,7 @@ void Scene7700::Action3::signal() {
 		scene->_sceneHotspot9.remove();
 		scene->_object19.remove();
 		setDelay(60);
-		// No break on purpose! 
+		// No break on purpose!
 	case 2:
 		scene->_soundHandler.startSound(260, 0, 127);
 		scene->_object8.setVisage(7703);
@@ -1770,7 +1770,7 @@ void Scene7700::SceneHotspot3::doAction(int action) {
 		} else if (_globals->_inventory._key._sceneNumber == 7700) {
 			_globals->_player.disableControl();
 			scene->_sceneMode = 7705;
-			scene->setAction(&scene->_sequenceManager, scene, 7705, &_globals->_player, 0); 
+			scene->setAction(&scene->_sequenceManager, scene, 7705, &_globals->_player, 0);
 		}
 		break;
 	default:
@@ -1980,7 +1980,7 @@ void Scene7700::Object3::doAction(int action) {
 
 void Scene7700::Object7::doAction(int action) {
 	Scene7700 *scene = (Scene7700 *)_globals->_sceneManager._scene;
-	
+
 	switch (action) {
 	case CURSOR_LOOK:
 		if (_globals->getFlag(78))
@@ -2019,7 +2019,7 @@ void Scene7700::Object7::doAction(int action) {
 			_globals->_player.disableControl();
 			scene->_sceneMode = 7704;
 			scene->setAction(&scene->_sequenceManager, scene, 7704, &_globals->_player, this, 0);
-		} 
+		}
 		break;
 	default:
 		SceneHotspot::doAction(action);
@@ -2124,7 +2124,7 @@ void Scene7700::Object10::doAction(int action) {
 		scene->_object14.remove();
 		scene->_object9.remove();
 		remove();
-	} else { 
+	} else {
 		SceneHotspot::doAction(action);
 	}
 }
@@ -2403,7 +2403,7 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 
 	_sceneItem7.setBounds(0, 320, 200, 0);
 	_sceneItem10.setBounds(0, 320, 200, 0);
-	
+
 	_sceneHotspot11._sceneRegionId = 57;
 	_sceneHotspot11._useLineNum = 0;
 	_sceneHotspot11._lookLineNum = 0;

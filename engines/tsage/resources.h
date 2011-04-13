@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/resources.h $
- * $Id: resources.h 145 2011-01-08 11:41:39Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -106,7 +106,7 @@ public:
 
 typedef Common::List<ResourceEntry> ResourceList;
 
-class SectionList: public Common::List<SectionEntry> {
+class SectionList : public Common::List<SectionEntry> {
 public:
 	uint32 fileOffset;
 
@@ -138,8 +138,8 @@ private:
 	uint8 _remainder, _bitsLeft;
 	byte readByte() { return _stream.eos() ? 0 : _stream.readByte(); }
 public:
-	BitReader(Common::ReadStream &s): _stream(s) { 
-		numBits = 9; 
+	BitReader(Common::ReadStream &s) : _stream(s) {
+		numBits = 9;
 		_remainder = 0;
 		_bitsLeft = 0;
 	}

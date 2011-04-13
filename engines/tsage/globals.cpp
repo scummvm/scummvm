@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/globals.cpp $
- * $Id: globals.cpp 229 2011-02-12 06:50:14Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -40,13 +40,13 @@ static SavedObject *classFactoryProc(const Common::String &className) {
 	if (className == "ObjectMover2") return new ObjectMover2();
 	if (className == "ObjectMover3") return new ObjectMover3();
 	if (className == "PlayerMover") return new PlayerMover();
-	
+
 	return NULL;
 }
 
 /*--------------------------------------------------------------------------*/
 
-Globals::Globals(): 
+Globals::Globals() :
 		_dialogCentre(160, 140),
 		_gfxManagerInstance(_screenSurface) {
 	reset();
@@ -56,7 +56,7 @@ Globals::Globals():
 	_gfxColours.foreground = 18;
 	_fontColours.background = 51;
 	_fontColours.foreground = 54;
-	
+
 	_screenSurface.setScreenSurface();
 	_gfxManagers.push_back(&_gfxManagerInstance);
 

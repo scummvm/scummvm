@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/core.cpp $
- * $Id: core.cpp 229 2011-02-12 06:50:14Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -43,7 +43,7 @@ namespace tSage {
 
 /*--------------------------------------------------------------------------*/
 
-InvObject::InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType cursorId, const Common::String description):
+InvObject::InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType cursorId, const Common::String description) :
 		_sceneNumber(sceneNumber), _rlbNum(rlbNum), _cursorNum(cursorNum), _cursorId(cursorId),
 		_description(description) {
 	_displayResNum = 3;
@@ -63,7 +63,7 @@ void InvObject::setCursor() {
 
 	if (_iconResNum != -1) {
 		GfxSurface s = surfaceFromRes(_iconResNum, _rlbNum, _cursorNum);
-		
+
 		Graphics::Surface src = s.lockSurface();
 		_globals->_events.setCursor(src, s._transColour, s._centroid, _cursorId);
 	}
@@ -71,7 +71,7 @@ void InvObject::setCursor() {
 
 /*--------------------------------------------------------------------------*/
 
-InvObjectList::InvObjectList():
+InvObjectList::InvObjectList() :
 		_stunner(2280, 1, 2, OBJECT_STUNNER, "This is your stunner."),
 		_scanner(1, 1, 3, OBJECT_SCANNER, "A combination scanner comm unit."),
 		_stasisBox(5200, 1, 4, OBJECT_STASIS_BOX, "A stasis box."),
@@ -151,7 +151,7 @@ void InvObjectList::synchronise(Serialiser &s) {
 
 /*--------------------------------------------------------------------------*/
 
-void EventHandler::dispatch() {  
+void EventHandler::dispatch() {
 	if (_action) _action->dispatch();
 }
 
@@ -254,7 +254,7 @@ ObjectMover::~ObjectMover() {
 
 void ObjectMover::synchronise(Serialiser &s) {
 	EventHandler::synchronise(s);
-	
+
 	s.syncAsSint16LE(_destPosition.x); s.syncAsSint16LE(_destPosition.y);
 	s.syncAsSint16LE(_moveDelta.x); s.syncAsSint16LE(_moveDelta.y);
 	s.syncAsSint16LE(_moveSign.x); s.syncAsSint16LE(_moveSign.y);
@@ -285,7 +285,7 @@ void ObjectMover::dispatch() {
 		if (!xAmount)
 			xAmount = _moveSign.x;
 		currPos.x += xAmount;
-		
+
 		int yAmount = ABS(_destPosition.y - currPos.y);
 		int yChange = _majorDiff / ABS(xAmount);
 		int ySign;
@@ -299,7 +299,7 @@ void ObjectMover::dispatch() {
 				++v;
 				_field1A -= yChange;
 			}
-			
+
 			ySign = _moveSign.y * v;
 		}
 
@@ -311,7 +311,7 @@ void ObjectMover::dispatch() {
 		if (!yAmount)
 			yAmount = _moveSign.y;
 		currPos.y += yAmount;
-		
+
 		int xAmount = ABS(_destPosition.x - currPos.x);
 		int xChange = _majorDiff / ABS(yAmount);
 		int xSign;
@@ -325,7 +325,7 @@ void ObjectMover::dispatch() {
 				++v;
 				_field1A -= xChange;
 			}
-			
+
 			xSign = _moveSign.x * v;
 		}
 
@@ -360,7 +360,7 @@ void ObjectMover::setup(const Common::Point &destPos) {
 	int ySign = (diffY < 0) ? -1 : (diffY > 0 ? 1 : 0);
 	diffX = ABS(diffX);
 	diffY = ABS(diffY);
-	
+
 	if (diffX < diffY) {
 		_minorDiff = diffX / 2;
 		_majorDiff = diffY;
@@ -394,7 +394,7 @@ void ObjectMover::endMove() {
 
 /*--------------------------------------------------------------------------*/
 
-ObjectMover2::ObjectMover2(): ObjectMover() {
+ObjectMover2::ObjectMover2() : ObjectMover() {
 	_destObject = NULL;
 }
 
@@ -490,7 +490,7 @@ void PlayerMover::startMove(SceneObject *sceneObj, va_list va) {
 	Common::Point *pt = va_arg(va, Common::Point *);
 	_finalDest = *pt;
 	_action = va_arg(va, Action *);
-	
+
 	setDest(_finalDest);
 }
 
@@ -560,7 +560,7 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 			// Source is outside walkable areas
 			tempRouteEnds = routeEnds;
 			objPos = _sceneObject->_position;
-			
+
 			Common::Point newPos;
 			findLinePoint(&tempRouteEnds, &objPos, 1, &newPos);
 			int srcId = _globals->_walkRegions.indexOf(newPos);
@@ -610,19 +610,19 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 		tempList[0] = 0;
 		int endIndex = 0;
 		int idx = 1;
-	
+
 		do {
 			int breakEntry = routeRegions[idx];
 			int breakEntry2 = routeRegions[idx + 1];
 
-			int listIndex = 0; 
+			int listIndex = 0;
 			while (_globals->_walkRegions._idxList[_globals->_walkRegions[breakEntry]._idxListIndex + listIndex] !=
 					breakEntry2)
 				++listIndex;
 
-			tempList[idx] = _globals->_walkRegions._idxList2[_globals->_walkRegions[breakEntry]._idxList2Index 
+			tempList[idx] = _globals->_walkRegions._idxList2[_globals->_walkRegions[breakEntry]._idxList2Index
 				+ listIndex];
-			
+
 			++endIndex;
 		} while (routeRegions[++idx] != destRegion);
 
@@ -645,23 +645,23 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 				_globals->_walkRegions._field18[0]._pt1 = tempPt;
 				*routeList++ = tempPt;
 			} else {
-				int v16 = 
+				int v16 =
 					(findDistance(_globals->_walkRegions._field18[0]._pt1, _globals->_walkRegions._field18[var10]._pt1) << 1) +
 					(findDistance(_globals->_walkRegions._field18[var10]._pt1, _globals->_walkRegions._field18[1]._pt1) << 1) +
 					findDistance(_globals->_walkRegions._field18[var10]._pt1, _globals->_walkRegions._field18[var12]._pt1) +
 					findDistance(_globals->_walkRegions._field18[var10]._pt1, _globals->_walkRegions._field18[var12]._pt2);
-				
-				int v1A = 
+
+				int v1A =
 					(findDistance(_globals->_walkRegions._field18[0]._pt1, _globals->_walkRegions._field18[var10]._pt2) << 1) +
 					(findDistance(_globals->_walkRegions._field18[var10]._pt2, _globals->_walkRegions._field18[1]._pt2) << 1) +
 					findDistance(_globals->_walkRegions._field18[var10]._pt2, _globals->_walkRegions._field18[var12]._pt1) +
 					findDistance(_globals->_walkRegions._field18[var10]._pt2, _globals->_walkRegions._field18[var12]._pt2);
 
 				if (v16 < v1A) {
-					checkMovement2(_globals->_walkRegions._field18[var10]._pt1, 
+					checkMovement2(_globals->_walkRegions._field18[var10]._pt1,
 						_globals->_walkRegions._field18[var10]._pt2, 1, objPos);
 				} else {
-					checkMovement2(_globals->_walkRegions._field18[var10]._pt2, 
+					checkMovement2(_globals->_walkRegions._field18[var10]._pt2,
 						_globals->_walkRegions._field18[var10]._pt1, 1, objPos);
 				}
 
@@ -793,7 +793,7 @@ int PlayerMover::checkMover(Common::Point &srcPos, const Common::Point &destPos)
 
 	NpcMover *mover = new NpcMover();
 	_sceneObject->addMover(mover, &destPos, NULL);
-	
+
 	// Handle automatic movement of the player until a walkable region is reached,
 	// or the end point of the movement is
 	do {
@@ -840,7 +840,7 @@ void PlayerMover::checkMovement2(const Common::Point &srcPos, const Common::Poin
 
 	if (_sceneObject->_mover)
 		_sceneObject->_mover->remove();
-	
+
 	_sceneObject->_mover = this;
 }
 
@@ -864,7 +864,7 @@ int PlayerMover::proc1(int *routeList, int srcRegion, int destRegion, int &v) {
 	WalkRegion &srcWalkRegion = _globals->_walkRegions[srcRegion];
 	int distance;
 	if (!routeList[0]) {
-		// No route 
+		// No route
 		distance = 0;
 	} else {
 		WalkRegion &region = _globals->_walkRegions[routeList[*routeList]];
@@ -883,7 +883,7 @@ int PlayerMover::proc1(int *routeList, int srcRegion, int destRegion, int &v) {
 		return distance;
 	} else {
 		int foundIndex = 0;
-		int idx = 0; 
+		int idx = 0;
 		int currDest;
 		while ((currDest = _globals->_walkRegions._idxList[srcWalkRegion._idxListIndex + idx]) != 0) {
 			if (currDest == destRegion) {
@@ -897,10 +897,10 @@ int PlayerMover::proc1(int *routeList, int srcRegion, int destRegion, int &v) {
 		int resultOffset = 31990;
 		while (((currDest = _globals->_walkRegions._idxList[srcWalkRegion._idxListIndex + foundIndex]) != 0) && (v == 0)) {
 			int newDistance = proc1(tempList, currDest, destRegion, v);
-			
+
 			if ((newDistance <= resultOffset) || v) {
 				routeList[0] = newIndex - 1;
-				
+
 				for (int i = newIndex; i <= tempList[0]; ++i) {
 					routeList[i] = tempList[i];
 					++routeList[0];
@@ -948,7 +948,7 @@ bool PlayerMover::sub_F8E5(const Common::Point &pt1, const Common::Point &pt2, c
 
 	if (var8 == var10)
 		return false;
-	
+
 	double var48, var50;
 	if (diff1 == 0) {
 		if (diff3 == 0)
@@ -1019,7 +1019,7 @@ void PlayerMover2::startMove(SceneObject *sceneObj, va_list va) {
 	_field7E = va_arg(va, int);
 	_minArea = va_arg(va, int);
 	_destObject = va_arg(va, SceneObject *);
-	
+
 	PlayerMover::setDest(_destObject->_position);
 }
 
@@ -1036,7 +1036,7 @@ PaletteModifier::PaletteModifier() {
 
 /*--------------------------------------------------------------------------*/
 
-PaletteRotation::PaletteRotation(): PaletteModifier() {
+PaletteRotation::PaletteRotation() : PaletteModifier() {
 	_disabled = false;
 	_delayFrames = 0;
 	_delayCtr = 0;
@@ -1159,7 +1159,7 @@ void PaletteRotation::set(ScenePalette *palette, int start, int end, int rotatio
 	default:
 		_currIndex = _start;
 		break;
-	}		
+	}
 }
 
 void PaletteRotation::setPalette(ScenePalette *palette, bool disabled) {
@@ -1222,7 +1222,7 @@ void PaletteUnknown::remove() {
 
 /*--------------------------------------------------------------------------*/
 
-ScenePalette::ScenePalette() { 
+ScenePalette::ScenePalette() {
 	// Set a default gradiant range
 	for (int idx = 0; idx < 256; ++idx)
 		_palette[idx].r = _palette[idx].g = _palette[idx].b = idx;
@@ -1230,8 +1230,8 @@ ScenePalette::ScenePalette() {
 	_field412 = 0;
 }
 
-ScenePalette::ScenePalette(int paletteNum) { 
-	loadPalette(paletteNum); 
+ScenePalette::ScenePalette(int paletteNum) {
+	loadPalette(paletteNum);
 }
 
 bool ScenePalette::loadPalette(int paletteNum) {
@@ -1289,7 +1289,7 @@ uint8 ScenePalette::indexOf(uint r, uint g, uint b, int threshold) {
 		int rDiff = abs(_palette[i].r - (int)r);
 		int gDiff = abs(_palette[i].g - (int)g);
 		int bDiff = abs(_palette[i].b - (int)b);
-		
+
 		int idxThreshold = rDiff * rDiff + gDiff * gDiff + bDiff * bDiff;
 		if (idxThreshold <= threshold) {
 			threshold = idxThreshold;
@@ -1394,7 +1394,7 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 		}
 	}
 
-	_globals->_screenSurface.copyFrom(_globals->_sceneManager._scene->_backSurface, 
+	_globals->_screenSurface.copyFrom(_globals->_sceneManager._scene->_backSurface,
 		bounds, Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), NULL);
 
 	for (SynchronisedList<PaletteModifier *>::iterator i = tempPalette._listeners.begin(); i != tempPalette._listeners.end(); ++i)
@@ -1417,7 +1417,7 @@ void ScenePalette::synchronise(Serialiser &s) {
 	s.syncAsByte(_blueColour);
 	s.syncAsByte(_aquaColour);
 	s.syncAsByte(_purpleColour);
-	s.syncAsByte(_limeColour);	
+	s.syncAsByte(_limeColour);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1458,7 +1458,7 @@ void SceneItem::doAction(int action) {
 		msg = DEFAULT_SCENE_HOTSPOT;
 		break;
 	}
-	
+
 	GUIErrorMessage(msg);
 }
 
@@ -1467,8 +1467,8 @@ bool SceneItem::contains(const Common::Point &pt) {
 
 	if (_sceneRegionId == 0)
 		return _bounds.contains(pt.x + sceneBounds.left, pt.y + sceneBounds.top);
-	else 
-		return _globals->_sceneRegions.indexOf(Common::Point(pt.x + sceneBounds.left, 
+	else
+		return _globals->_sceneRegions.indexOf(Common::Point(pt.x + sceneBounds.left,
 			pt.y + sceneBounds.top)) == _sceneRegionId;
 }
 
@@ -1486,7 +1486,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 	int maxWidth = 120;
 	bool keepOnscreen = false;
 	bool centreText = true;
-	
+
 	if (resNum) {
 		va_list va;
 		va_start(va, lineNum);
@@ -1561,7 +1561,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 
 		va_end(va);
 	}
-	
+
 	if (resNum) {
 		// Get required bounding size
 		_globals->gfxManager().getStringBounds(msg.c_str(), textRect, maxWidth);
@@ -1715,7 +1715,7 @@ void SceneObjectWrapper::dispatch() {
 
 /*--------------------------------------------------------------------------*/
 
-SceneObject::SceneObject(): SceneHotspot() {
+SceneObject::SceneObject() : SceneHotspot() {
 	_endAction = NULL;
 	_mover = NULL;
 	_objectWrapper = NULL;
@@ -1736,7 +1736,7 @@ SceneObject::SceneObject(): SceneHotspot() {
 	_frameChange = 0;
 }
 
-SceneObject::SceneObject(const SceneObject &so): SceneHotspot() {
+SceneObject::SceneObject(const SceneObject &so) : SceneHotspot() {
 	*this = so;
 	if (_objectWrapper)
 		// Create a fresh object wrapper for this object
@@ -1882,7 +1882,7 @@ void SceneObject::setObjectWrapper(SceneObjectWrapper *objWrapper) {
 }
 
 void SceneObject::addMover(ObjectMover *mover, ...) {
-	if (_mover) 
+	if (_mover)
 		_mover->remove();
 	_mover = mover;
 
@@ -1921,7 +1921,7 @@ int SceneObject::checkRegion(const Common::Point &pt) {
 	// Temporarily change the position
 	Common::Point savedPos = _position;
 	_position = pt;
-	
+
 	int regIndex = _globals->_sceneRegions.indexOf(pt);
 	if (_regionBitList & (1 << regIndex))
 		regionIndex = regIndex;
@@ -2026,7 +2026,7 @@ void SceneObject::animate(AnimateMode animMode, ...) {
 		_endFrame = getFrameCount();
 		if (_frame == _endFrame)
 			setFrame(getNewFrame());
-		break;		
+		break;
 	}
 }
 
@@ -2058,7 +2058,7 @@ void SceneObject::show() {
 int SceneObject::getSpliceArea(const SceneObject *obj) {
 	int xd = ABS(_position.x - obj->_position.x);
 	int yd = ABS(_position.y - obj->_position.y);
-	
+
 	return (xd * xd + yd) / 2;
 }
 
@@ -2090,7 +2090,7 @@ void SceneObject::synchronise(Serialiser &s) {
 	s.syncAsSint16LE(_moveDiff.x); s.syncAsSint16LE(_moveDiff.y);
 	s.syncAsSint32LE(_field7A);
 	SYNC_POINTER(_endAction);
-	s.syncAsUint32LE(_regionBitList);	
+	s.syncAsUint32LE(_regionBitList);
 }
 
 void SceneObject::postInit(SceneObjectList *OwnerList) {
@@ -2124,7 +2124,7 @@ void SceneObject::postInit(SceneObjectList *OwnerList) {
 void SceneObject::remove() {
 	SceneItem::remove();
 	if (_globals->_sceneObjects->contains(this))
-		// For objects in the object list, flag the object for removal in the next drawing, so that 
+		// For objects in the object list, flag the object for removal in the next drawing, so that
 		// the drawing code has a chance to restore the area previously covered by the object
 		_flags |= OBJFLAG_PANES | OBJFLAG_REMOVE | OBJFLAG_HIDE;
 	else
@@ -2206,7 +2206,7 @@ void SceneObject::dispatch() {
 			} else {
 				setFrame(changeFrame());
 			}
-			
+
 			break;
 
 		default:
@@ -2268,15 +2268,15 @@ void SceneObject::reposition() {
  */
 void SceneObject::draw() {
 	Rect destRect = _bounds;
-	destRect.translate(-_globals->_sceneManager._scene->_sceneBounds.left, 
+	destRect.translate(-_globals->_sceneManager._scene->_sceneBounds.left,
 		-_globals->_sceneManager._scene->_sceneBounds.top);
 	Region *priorityRegion = _globals->_sceneManager._scene->_priorities.find(_priority);
 	GfxSurface frame = getFrame();
-	_globals->gfxManager().copyFrom(frame, destRect, priorityRegion); 
+	_globals->gfxManager().copyFrom(frame, destRect, priorityRegion);
 }
 
 /**
- * Refreshes the background around the area of a scene object prior to it's being redrawn, 
+ * Refreshes the background around the area of a scene object prior to it's being redrawn,
  * in case it is moving
  */
 void SceneObject::updateScreen() {
@@ -2381,7 +2381,7 @@ void SceneObjectList::draw() {
 
 			// Handle updating object priority
 			if (!(obj->_flags & OBJFLAG_FIXED_PRIORITY)) {
-				obj->_priority = MIN((int)obj->_position.y - 1, 
+				obj->_priority = MIN((int)obj->_position.y - 1,
 					(int)_globals->_sceneManager._scene->_backgroundBounds.bottom);
 			}
 
@@ -2411,7 +2411,7 @@ void SceneObjectList::draw() {
 		} else {
 			for (uint objIndex = 0; objIndex < objList.size(); ++objIndex) {
 				SceneObject *obj = objList[objIndex];
-				
+
 				if ((obj->_flags & flagMask) && obj->_paneRects[paneNum].isValidRect())
 					obj->updateScreen();
 			}
@@ -2445,7 +2445,7 @@ redraw:
 			obj->_flags &= ~flagMask;
 			if (obj->_flags & OBJFLAG_REMOVE) {
 				obj->_flags |= OBJFLAG_PANES;
-				
+
 				checkIntersection(objList, objIndex, CURRENT_PANENUM);
 
 				obj->updateScreen();
@@ -2559,7 +2559,7 @@ void SceneObjectList::synchronise(Serialiser &s) {
 
 /*--------------------------------------------------------------------------*/
 
-SceneText::SceneText(): SceneObject() {
+SceneText::SceneText() : SceneObject() {
 	_fontNumber = 2;
 	_width = 160;
 	_textMode = ALIGN_LEFT;
@@ -2574,7 +2574,7 @@ void SceneText::setup(const Common::String &msg) {
 	GfxManager gfxMan(_textSurface);
 	gfxMan.activate();
 	Rect textRect;
-	
+
 	gfxMan._font.setFontNumber(_fontNumber);
 	gfxMan._font._colours.foreground = _colour1;
 	gfxMan._font._colours2.background = _colour2;
@@ -2589,7 +2589,7 @@ void SceneText::setup(const Common::String &msg) {
 
 	// Write the text to the surface
 	gfxMan._bounds = textRect;
-	gfxMan._font.writeLines(msg.c_str(), textRect, _textMode);	
+	gfxMan._font.writeLines(msg.c_str(), textRect, _textMode);
 
 	// Do post-init, which adds this SceneText object to the scene
 	postInit();
@@ -2702,7 +2702,7 @@ void Player::enableControl() {
 }
 
 void Player::process(Event &event) {
-	if (!event.handled && (event.eventType == EVENT_BUTTON_DOWN) && 
+	if (!event.handled && (event.eventType == EVENT_BUTTON_DOWN) &&
 			(_globals->_events.getCursor() == CURSOR_WALK) && _globals->_player._canWalk &&
 			(_position != event.mousePos) && _globals->_sceneObjects->contains(this)) {
 
@@ -2805,7 +2805,7 @@ void Region::setRect(int xs, int ys, int xe, int ye) {
 	} else {
 		_regionSize = 22;
 		_bounds.set(xs, ys, xe, ye);
-		
+
 		LineSliceSet sliceSet;
 		sliceSet.load2(1, xs, xe);
 
@@ -2814,7 +2814,7 @@ void Region::setRect(int xs, int ys, int xe, int ye) {
 }
 
 const LineSliceSet &Region::getLineSlices(int yp) {
-	return _ySlices[(_regionSize == 22) ? 0 : yp - _bounds.top];	
+	return _ySlices[(_regionSize == 22) ? 0 : yp - _bounds.top];
 }
 
 LineSliceSet Region::sectPoints(int yp, const LineSliceSet &sliceSet) {
@@ -2838,7 +2838,7 @@ LineSliceSet Region::mergeSlices(const LineSliceSet &set1, const LineSliceSet &s
 		} else {
 			bool set1Flag = set1.items[set1Index].xs >= set2.items[set2Index].xs;
 			const LineSlice &slice = set1Flag ? set1.items[set1Index] : set2.items[set2Index];
-						
+
 			result.add(slice.xs, MIN(set1.items[set1Index].xe, set2.items[set2Index].xe));
 			if (set1Flag)
 				++set1Index;
@@ -2861,13 +2861,13 @@ void Region::draw() {
 		LineSliceSet tempSet;
 		tempSet.add(sceneBounds.left, sceneBounds.right);
 		LineSliceSet newSet = sectPoints(yp, tempSet);
-		
+
 		// Loop through the calculated slices
 		for (uint idx = 0; idx < newSet.items.size(); ++idx) {
 			Rect rect1(newSet.items[idx].xs, yp, newSet.items[idx].xe, yp + 1);
 			rect1.left &= ~3;
 			rect1.right = (rect1.right + 3) & ~3;
-			
+
 			Rect rect2 = rect1;
 			rect1.translate(-_globals->_sceneOffset.x, -_globals->_sceneOffset.y);
 			rect2.translate(-sceneBounds.left, -sceneBounds.top);
@@ -2880,7 +2880,7 @@ void Region::draw() {
 
 void Region::uniteLine(int yp, LineSliceSet &sliceSet) {
 	// TODO: More properly implement like the original
-	
+
 	// First expand the bounds as necessary to fit in the row
 	if (_ySlices.empty()) {
 		_bounds = Rect(sliceSet.items[0].xs, yp, sliceSet.items[sliceSet.items.size() - 1].xe, yp + 1);
@@ -2941,7 +2941,7 @@ void SceneRegions::load(int sceneNum) {
 	clear();
 
 	byte *regionData = _vm->_dataManager->getResource(RES_CONTROL, sceneNum, 9999, true);
-	
+
 	if (regionData) {
 		int regionCount = READ_LE_UINT16(regionData);
 		for (int regionCtr = 0; regionCtr < regionCount; ++regionCtr) {
@@ -3061,7 +3061,7 @@ void WalkRegion::loadRegion(byte *dataP, int size) {
 		process3(yp, dataCount, processIndex, idx2);
 		process4(yp, processIndex, idx2, count);
 
-		loadRecords(yp, count, processIndex); 
+		loadRecords(yp, count, processIndex);
 	}
 }
 
@@ -3080,7 +3080,7 @@ void WalkRegion::loadProcessList(byte *dataP, int dataSize, int &dataIndex, int 
 			int v;
 			if (idx == (dataSize - 1))
 				v = READ_LE_UINT16(dataP + 2);
-			else 
+			else
 				v = process1(idx, dataP, dataSize);
 			warning("TODO: v not used? - %d", v);
 			*/
@@ -3117,7 +3117,7 @@ void WalkRegion::process2(int dataIndex, int x1, int y1, int x2, int y2) {
 	int yDiff = ABS(y2 - y1);
 	int halfDiff = MAX(xDiff, yDiff) / 2;
 	int yMax = MIN(y1, y2);
-	
+
 	while (dataIndex && (_processList[dataIndex - 1]._yp > yMax)) {
 		_processList[dataIndex] = _processList[dataIndex - 1];
 		--dataIndex;
@@ -3227,7 +3227,7 @@ void WalkRegions::load(int sceneNum) {
 	}
 
 	DEALLOCATE(dataP);
-	
+
 	// Load the idx list
 	dataP = _vm->_dataManager->getResource(RES_WALKRGNS, sceneNum, 3);
 	dataSize = _vm->_memoryManager.getSize(dataP);
@@ -3298,7 +3298,7 @@ void ScenePriorities::load(int resNum) {
 	clear();
 
 	byte *regionData = _vm->_dataManager->getResource(RES_PRIORITY, resNum, 9999, true);
-	
+
 	if (regionData) {
 		int regionCount = READ_LE_UINT16(regionData);
 		for (int regionCtr = 0; regionCtr < regionCount; ++regionCtr) {
@@ -3360,7 +3360,7 @@ double FloatSet::sqrt(FloatSet &floatSet) {
 
 /*--------------------------------------------------------------------------*/
 
-GameHandler::GameHandler(): EventHandler() { 
+GameHandler::GameHandler() : EventHandler() {
 	_nextWaitCtr = 1;
 	_waitCtr.setCtr(1);
 	_field14 = 10;
@@ -3420,7 +3420,7 @@ void SceneHandler::postInit(SceneObjectList *OwnerList) {
 	_globals->_inventory._ring._sceneNumber = 1;
 
 	// Switch to the title screen
-	_globals->_sceneManager.setNewScene(1000);	
+	_globals->_sceneManager.setNewScene(1000);
 }
 
 void SceneHandler::process(Event &event) {
@@ -3447,7 +3447,7 @@ void SceneHandler::process(Event &event) {
 			_globals->_game.quitGame();
 			event.handled = false;
 			break;
-			
+
 		case Common::KEYCODE_F4:
 			// F4 - Restart
 			_globals->_game.restartGame();
@@ -3475,7 +3475,7 @@ void SceneHandler::process(Event &event) {
 	}
 
 	// Check for displaying right-click dialog
-	if ((event.eventType == EVENT_BUTTON_DOWN) && (event.btnState == BTNSHIFT_RIGHT) && 
+	if ((event.eventType == EVENT_BUTTON_DOWN) && (event.btnState == BTNSHIFT_RIGHT) &&
 			_globals->_player._uiEnabled) {
 		RightClickDialog *dlg = new RightClickDialog();
 		dlg->execute();
@@ -3507,7 +3507,7 @@ void SceneHandler::process(Event &event) {
 		}
 
 		// Mouse press handling
-		if (_globals->_player._uiEnabled && (event.eventType == EVENT_BUTTON_DOWN) && 
+		if (_globals->_player._uiEnabled && (event.eventType == EVENT_BUTTON_DOWN) &&
 				!_globals->_sceneItems.empty()) {
 			// Scan the item list to find one the mouse is within
 			SynchronisedList<SceneItem *>::iterator i = _globals->_sceneItems.begin();
@@ -3557,11 +3557,11 @@ void SceneHandler::dispatch() {
 	_globals->_sceneObjects->recurse(SceneHandler::dispatchObject);
 
 	// If a scene is active, then dispatch to it
-	if (_globals->_sceneManager._scene) 
+	if (_globals->_sceneManager._scene)
 		_globals->_sceneManager._scene->dispatch();
 
 	//TODO: Figure out purpose of the given list
-	//_globals->_regions.forEach(SceneHandler::handleListener);	
+	//_globals->_regions.forEach(SceneHandler::handleListener);
 
 	Event event;
 	while (_globals->_events.getEvent(event))
@@ -3655,7 +3655,7 @@ void Game::handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName
 void Game::restart() {
 	_globals->_scenePalette.clearListeners();
 	_globals->_soundHandler.proc3();
-	
+
 	// Reset the flags
 	_globals->reset();
 	_globals->setFlag(34);

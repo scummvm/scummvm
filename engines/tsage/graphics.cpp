@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/graphics.cpp $
- * $Id: graphics.cpp 225 2011-02-10 11:00:11Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -115,7 +115,7 @@ GfxSurface surfaceFromRes(const byte *imgData) {
 			assert(width == 0);
 		}
 	}
-	
+
 	s.unlockSurface();
 	return s;
 }
@@ -220,7 +220,7 @@ void Rect::synchronise(Serialiser &s) {
 
 /*--------------------------------------------------------------------------*/
 
-GfxSurface::GfxSurface(): _bounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
+GfxSurface::GfxSurface() : _bounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
 	_disableUpdates = false;
 	_screenSurface = false;
 	_lockSurfaceCtr = 0;
@@ -276,7 +276,7 @@ Graphics::Surface GfxSurface::lockSurface() {
 		src = _customSurface;
 	assert(src);
 
-	// Setup the returned surface either as one pointing to the same pixels as the source, or 
+	// Setup the returned surface either as one pointing to the same pixels as the source, or
 	// as a subset of the source one based on the currently set bounds
 	Graphics::Surface result;
 	result.w = _bounds.width();
@@ -425,7 +425,7 @@ static int *scaleLine(int size, int srcSize) {
 			distCtr -= 100;
 		}
 	}
-	
+
 	return v;
 }
 
@@ -481,13 +481,13 @@ void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Regi
 
 		srcImage.create(srcBounds.width(), srcBounds.height());
 		Graphics::Surface destSurface = srcImage.lockSurface();
-		
+
 		const byte *srcP = (const byte *)srcSurface.getBasePtr(srcBounds.left, srcBounds.top);
 		byte *destP = (byte *)destSurface.pixels;
 		for (int yp = srcBounds.top; yp < srcBounds.bottom; ++yp, srcP += srcSurface.pitch, destP += destSurface.pitch) {
 			Common::copy(srcP, srcP + srcBounds.width(), destP);
 		}
-		
+
 		srcImage.unlockSurface();
 		src.unlockSurface();
 	}
@@ -578,11 +578,11 @@ void GfxElement::setDefaults() {
  * Highlights the specified graphics element
  */
 void GfxElement::highlight() {
-	// Get a lock on the surface 
+	// Get a lock on the surface
 	GfxManager &gfxManager = _globals->gfxManager();
 	Graphics::Surface surface = gfxManager.lockSurface();
 
-	// Scan through the contents of the element, switching any occurances of the foreground 
+	// Scan through the contents of the element, switching any occurances of the foreground
 	// colour with the background colour and vice versa
 	Rect tempRect(_bounds);
 	tempRect.collapse(2, 2);
@@ -684,7 +684,7 @@ bool GfxElement::focusedEvent(Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-GfxImage::GfxImage(): GfxElement() {
+GfxImage::GfxImage() : GfxElement() {
 	_resNum = 0;
 	_rlbNum = 0;
 	_cursorNum = 0;
@@ -705,7 +705,7 @@ void GfxImage::setDefaults() {
 	byte *imgData = _vm->_dataManager->getSubResource(_resNum, _rlbNum, _cursorNum, &size);
 	_surface = surfaceFromRes(imgData);
 	DEALLOCATE(imgData);
-	
+
 	// Set up the display bounds
 	Rect imgBounds = _surface.getBounds();
 	imgBounds.moveTo(_bounds.left, _bounds.top);
@@ -716,12 +716,12 @@ void GfxImage::draw() {
 	Rect tempRect = _bounds;
 	tempRect.translate(_globals->gfxManager()._topLeft.x, _globals->gfxManager()._topLeft.y);
 
-	_globals->gfxManager().copyFrom(_surface, tempRect); 
+	_globals->gfxManager().copyFrom(_surface, tempRect);
 }
 
 /*--------------------------------------------------------------------------*/
 
-GfxMessage::GfxMessage(): GfxElement() {
+GfxMessage::GfxMessage() : GfxElement() {
 	_textAlign = ALIGN_LEFT;
 	_width = 0;
 }
@@ -743,7 +743,7 @@ void GfxMessage::setDefaults() {
 
 	gfxManager._font.setFontNumber(this->_fontNumber);
 	gfxManager.getStringBounds(_message.c_str(), tempRect, _width);
-	
+
 	tempRect.collapse(-1, -1);
 	tempRect.moveTo(_bounds.left, _bounds.top);
 	_bounds = tempRect;
@@ -906,14 +906,14 @@ void GfxDialog::draw() {
 	_gfxManager.deactivate();
 }
 
-void GfxDialog::add(GfxElement *element) { 
-	_elements.push_back(element); 
+void GfxDialog::add(GfxElement *element) {
+	_elements.push_back(element);
 	element->_owner = this;
 }
 
 void GfxDialog::addElements(GfxElement *ge, ...) {
 	va_list va;
-	va_start(va, ge); 
+	va_start(va, ge);
 	GfxElement *gfxElement = ge;
 	while (gfxElement) {
 		add(gfxElement);
@@ -994,13 +994,13 @@ void GfxDialog::setPalette() {
 
 /*--------------------------------------------------------------------------*/
 
-GfxManager::GfxManager(): _surface(_globals->_screenSurface), _oldManager(NULL) {
+GfxManager::GfxManager() : _surface(_globals->_screenSurface), _oldManager(NULL) {
 	_font.setOwner(this);
 	_font._fillFlag = false;
 	_bounds = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
-GfxManager::GfxManager(GfxSurface &s): _surface(s), _oldManager(NULL) {
+GfxManager::GfxManager(GfxSurface &s) : _surface(s), _oldManager(NULL) {
 	_font.setOwner(this);
 	_font._fillFlag = false;
 }
@@ -1037,7 +1037,7 @@ int GfxManager::getStringWidth(const char *s) {
 }
 
 void GfxManager::getStringBounds(const char *s, Rect &bounds, int maxWidth) {
-	_font.getStringBounds(s, bounds, maxWidth);	
+	_font.getStringBounds(s, bounds, maxWidth);
 }
 
 void GfxManager::fillArea(int xp, int yp, int colour) {
@@ -1121,7 +1121,7 @@ void GfxFont::setFontNumber(uint32 fontNumber) {
 	DEALLOCATE(_fontData);
 
 	_fontNumber = fontNumber;
-	
+
 	_fontData = _vm->_tSageManager->getResource(RES_FONT, _fontNumber, 0, true);
 	if (!_fontData)
 		_fontData = _vm->_dataManager->getResource(RES_FONT, _fontNumber, 0);
@@ -1204,11 +1204,11 @@ int GfxFont::getStringFit(const char *&s, int maxWidth) {
 			}
 			break;
 		}
-			
-		++numChars;
-	} 
 
-	int totalChars = s - sStart;	
+		++numChars;
+	}
+
+	int totalChars = s - sStart;
 	if (nextChar == '\0')
 		--s;
 	if ((nextChar == ' ') || (nextChar == '\r') || (nextChar == '\0'))
@@ -1218,7 +1218,7 @@ int GfxFont::getStringFit(const char *&s, int maxWidth) {
 }
 
 /**
- * Fills out the passed rect with the dimensions of a given string word-wrapped to a 
+ * Fills out the passed rect with the dimensions of a given string word-wrapped to a
  * maximum specified width
  *
  * @s Message to be analysed

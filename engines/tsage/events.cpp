@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/events.cpp $
- * $Id: events.cpp 224 2011-02-10 10:58:52Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -36,7 +36,7 @@
 
 namespace tSage {
 
-EventsClass::EventsClass() { 
+EventsClass::EventsClass() {
 	_currentCursor = CURSOR_NONE;
 	_frameNumber = 0;
 	_priorFrameTime = 0;
@@ -137,7 +137,7 @@ bool EventsClass::getEvent(Event &evt, int eventMask) {
  */
 void EventsClass::setCursor(CursorType cursorType) {
 	_globals->clearFlag(122);
-	
+
 	if ((_currentCursor == cursorType) && CursorMan.isVisible())
 		return;
 
@@ -146,7 +146,7 @@ void EventsClass::setCursor(CursorType cursorType) {
 			CursorMan.showMouse(false);
 		return;
 	}
-	
+
 	CursorMan.showMouse(true);
 
 	const byte *cursor;
@@ -159,7 +159,7 @@ void EventsClass::setCursor(CursorType cursorType) {
 		cursor = _vm->_dataManager->getSubResource(4, 1, 6, &size);
 		_globals->setFlag(122);
 		break;
-	
+
 	case CURSOR_LOOK:
 		// Look cursor
 		cursor = _vm->_dataManager->getSubResource(4, 1, 5, &size);
@@ -230,7 +230,7 @@ void EventsClass::hideCursor() {
  */
 void EventsClass::delay(int numFrames) {
 	while (_frameNumber < (_prevDelayFrame + numFrames)) {
-		uint32 delayAmount = CLIP(_priorFrameTime + GAME_FRAME_TIME - g_system->getMillis(), 
+		uint32 delayAmount = CLIP(_priorFrameTime + GAME_FRAME_TIME - g_system->getMillis(),
 			(uint32)0, (uint32)GAME_FRAME_TIME);
 		if (delayAmount > 0)
 			g_system->delayMillis(delayAmount);

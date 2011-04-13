@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/dialogs.cpp $
- * $Id: dialogs.cpp 215 2011-02-07 12:06:13Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -39,8 +39,8 @@ namespace tSage {
 /**
  * This dialog class provides a simple message display with support for either one or two buttons.
  */
-MessageDialog::MessageDialog(const Common::String &message, const Common::String &btn1Message, 
-							 const Common::String &btn2Message): GfxDialog() {
+MessageDialog::MessageDialog(const Common::String &message, const Common::String &btn1Message,
+							 const Common::String &btn2Message) : GfxDialog() {
 	// Set up the message
 	addElements(&_msg, &_btn1, NULL);
 
@@ -98,7 +98,7 @@ int MessageDialog::show2(const Common::String &message, const Common::String &bt
 
 /*--------------------------------------------------------------------------*/
 
-ConfigDialog::ConfigDialog(): GUI::OptionsDialog("", "GlobalConfig") {
+ConfigDialog::ConfigDialog() : GUI::OptionsDialog("", "GlobalConfig") {
 	//
 	// Sound controllers
 	//
@@ -119,7 +119,7 @@ ConfigDialog::ConfigDialog(): GUI::OptionsDialog("", "GlobalConfig") {
 #define BUTTON_WIDTH 28
 #define BUTTON_HEIGHT 29
 
-RightClickButton::RightClickButton(int buttonIndex, int xp, int yp): GfxButton() {
+RightClickButton::RightClickButton(int buttonIndex, int xp, int yp) : GfxButton() {
 	_buttonIndex = buttonIndex;
 	this->_bounds.left = xp;
 	this->_bounds.top = yp;
@@ -143,7 +143,7 @@ void RightClickButton::highlight() {
 
 		GfxSurface btnSelected = surfaceFromRes(imgData);
 		_globals->gfxManager().copyFrom(btnSelected, _bounds.left, _bounds.top);
-	
+
 		DEALLOCATE(imgData);
 	}
 }
@@ -153,7 +153,7 @@ void RightClickButton::highlight() {
 /**
  * This dialog implements the right-click dialog
  */
-RightClickDialog::RightClickDialog(): GfxDialog(),
+RightClickDialog::RightClickDialog() : GfxDialog(),
 		_walkButton(1, 48, 12), _lookButton(2, 31, 29), _useButton(3, 65, 29),
 		_talkButton(4, 14, 47), _inventoryButton(5, 48, 47), _optionsButton(6, 83, 47) {
 	Rect rectArea, dialogRect;
@@ -173,7 +173,7 @@ RightClickDialog::RightClickDialog(): GfxDialog(),
 	Rect screenRect = _globals->gfxManager()._bounds;
 	screenRect.collapse(4, 4);
 	dialogRect.contain(screenRect);
-	
+
 	_bounds = dialogRect;
 	_gfxManager._bounds = _bounds;
 
@@ -332,7 +332,7 @@ void ModalDialog::drawFrame() {
 	for (int xp = _bounds.left + 10; xp < (_bounds.right - 20); xp += 10)
 		surface.draw(Common::Point(xp, _bounds.top));
 	surface.draw(Common::Point(_bounds.right - 20, _bounds.top));
-	
+
 	surface = surfaceFromRes(8, 1, 1);
 	surface.draw(Common::Point(_bounds.left, _bounds.top));
 
@@ -474,7 +474,7 @@ void InventoryDialog::execute() {
 			;
 		if (_vm->getEventManager()->shouldQuit())
 			return;
-		
+
 		hiliteObj = NULL;
 		if ((event.eventType == EVENT_BUTTON_DOWN) && !_bounds.contains(event.mousePos))
 			break;
@@ -495,7 +495,7 @@ void InventoryDialog::execute() {
 				break;
 			}
 		}
-			
+
 		if (hiliteObj == &_btnOk) {
 			// Ok button clicked
 			if (lookFlag)
@@ -581,7 +581,7 @@ OptionsDialog::OptionsDialog() {
 	// Set all the buttons to the widest button
 	GfxButton *btnList[6] = {&_btnRestore, &_btnSave, &_btnRestart, &_btnQuit, &_btnSound, &_btnResume};
 	int16 btnWidth = 0;
-	for (int idx = 0; idx < 6; ++idx) 
+	for (int idx = 0; idx < 6; ++idx)
 		btnWidth = MAX(btnWidth, btnList[idx]->_bounds.width());
 	for (int idx = 0; idx < 6; ++idx)
 		btnList[idx]->_bounds.setWidth(btnWidth);

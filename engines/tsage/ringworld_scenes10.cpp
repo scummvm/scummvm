@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/scene_logic.cpp $
- * $Id: scene_logic.cpp 232 2011-02-12 11:56:38Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -47,7 +47,7 @@ void Object9350::draw() {
 	destRect.translate(-_globals->_sceneOffset.x, -_globals->_sceneOffset.y);
 	Region *priorityRegion = _globals->_sceneManager._scene->_priorities.find(_globals->_sceneManager._scene->_stripManager._stripNum);
 	GfxSurface frame = getFrame();
-	_globals->gfxManager().copyFrom(frame, destRect, priorityRegion); 
+	_globals->gfxManager().copyFrom(frame, destRect, priorityRegion);
 }
 
 /*--------------------------------------------------------------------------
@@ -74,7 +74,7 @@ void Scene9100::SceneHotspot1::doAction(int action) {
 
 void Scene9100::dispatch() {
 	Scene9100 *scene = (Scene9100 *)_globals->_sceneManager._scene;
-	
+
 	if (!_action) {
 		if (_globals->_player._position.x < 25) {
 			if (!_globals->getFlag(11)) {
@@ -186,7 +186,7 @@ void Scene9150::Object3::signal() {
 	case 0:
 		_timer = 10 + _globals->_randomSource.getRandomNumber(90);
 		break;
-	default:	
+	default:
 		animate(ANIM_MODE_5, this);
 		_signalFlag = 0;
 		break;
@@ -227,7 +227,7 @@ void Scene9150::dispatch() {
 		_sceneHotspot3.setAction(&_sequenceManager2, 0, 9154, &_object3, 0);
 		_sceneHotspot10.remove();
 	}
-	
+
 	if (_action) {
 		_action->dispatch();
 	} else {
@@ -386,7 +386,7 @@ void Scene9200::dispatch() {
 					_globals->_player.disableControl();
 					_sceneState = 9207;
 					setAction(&_sequenceManager, this, 9207, &_globals->_player, &_object2, &_object3, 0);
-				} 
+				}
 			}
 		}
 	}
@@ -849,7 +849,7 @@ void Scene9450::Hotspot1::doAction(int action) {
 
 void Scene9450::Hotspot3::doAction(int action) {
 	Scene9450 *scene = (Scene9450 *)_globals->_sceneManager._scene;
-	
+
 	switch (action) {
 	case OBJECT_CLOAK:
 	case OBJECT_JACKET:
@@ -1129,7 +1129,7 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 
 	_globals->_player.postInit();
 	_globals->_soundHandler.startSound(305, 0, 127);
-	
+
 	_candle.postInit(0);
 	_candle.setVisage(9500);
 	_candle.setStrip(1);
@@ -1137,7 +1137,7 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 	_candle.setPosition(Common::Point(30, 105), 0);
 	if (_globals->_inventory._candle._sceneNumber != 9500)
 		_candle.setStrip(2);
-	
+
 	_object3.postInit(0);
 	_object3.hide();
 	_object3.setPriority2(150);
@@ -1174,7 +1174,7 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 	} else {
 		_hotspot1.setup(105, 295, 134, 313, 9500, 9, 10);
 	}
-	
+
 	_hotspot17.setup(101, 293, 135, 315, 9500, 9, 10);
 	_hotspot3.setup(84, 12, 107, 47, 9500, 15, 15);
 	_hotspot6.setup(93, 11, 167, 46, 9500, 0, 1);
@@ -1184,7 +1184,7 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 		_hotspot5.setup(111, 68, 155, 244, 9500, 17, -1);
 		_hotspot4.setup(57, 71, 120, 126, 9500, 16, -1);
 	}
-	
+
 	_hotspot8.setup(60, 24, 90, 53, 9500, 4, 5);
 	_hotspot9.setup(72, 143, 93, 163, 9500, 4, 5);
 	_hotspot10.setup(70, 205, 92, 228, 9500, 4, 5);
@@ -1197,10 +1197,10 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 	_hotspot19.setup(101, 207, 120, 225, 9500, 9, 10);
 	_hotspot18.setup(98, 144, 117, 162, 9500, 9, 10);
 	_hotspot20.setup(102, 27, 132, 50, 9500, 9, 10);
-	
+
 	_globals->_events.setCursor(CURSOR_WALK);
 	_globals->_player.disableControl();
-	
+
 	if ((_globals->_sceneManager._previousScene == 9200) || (_globals->_sceneManager._previousScene != 9850)) {
 		_sceneMode = 0;
 		if (_globals->_inventory._helmet._sceneNumber != 1) {
@@ -1297,7 +1297,7 @@ void Scene9750::signal() {
 		_globals->_soundHandler.proc1(this);
 		break;
 	case 9752:
-		_globals->_sceneManager.changeScene(2100);		
+		_globals->_sceneManager.changeScene(2100);
 	default:
 		break;
 	}
@@ -1311,7 +1311,7 @@ void Scene9750::postInit(SceneObjectList *OwnerList) {
 	loadScene(9750);
 	Scene::postInit();
 	setZoomPercents(0, 100, 200, 100);
-	
+
 	_globals->_player.postInit();
 	_object1.postInit();
 	_object1.hide();
@@ -1712,11 +1712,11 @@ void Scene9900::strAction2::signal() {
 			_txtArray1[_txtArray1Index].setPriority2(255);
 			int frameWidth = _txtArray1[_txtArray1Index].getFrame().getBounds().width();
 			int frameHeight = _txtArray1[_txtArray1Index].getFrame().getBounds().height();
-			_txtArray1[_txtArray1Index].setPosition(Common::Point((320 - frameWidth) / 2, 200));  
+			_txtArray1[_txtArray1Index].setPosition(Common::Point((320 - frameWidth) / 2, 200));
 			NpcMover *mover2 = new NpcMover();
 			Common::Point pt2(_txtArray1[_txtArray1Index]._position.x, 100);
 			_txtArray1[_txtArray1Index].addMover(mover2, &pt2, 0);
-			
+
 			_txtArray2[_txtArray1Index]._textMode = ALIGN_CENTRE;
 			_txtArray2[_txtArray1Index]._width = 240;
 			_txtArray2[_txtArray1Index]._fontNumber = 2;
@@ -1966,7 +1966,7 @@ void Scene9900::postInit(SceneObjectList *OwnerList) {
 	_globals->_inventory._items._rlbNum = 3;
 	_globals->_inventory._items._cursorNum = 6;
 	_globals->_inventory._items._description = Common::String("One of the items from the stasis ship. The other is on the Lance's bridge.");
-	
+
 	_stripManager.addSpeaker(&_speakerMR);
 	_globals->_player.disableControl();
 	_sceneMode = 9910;
@@ -2014,12 +2014,12 @@ void Scene9999::postInit(SceneObjectList *OwnerList) {
 	loadScene(9998);
 	Scene::postInit();
 	setZoomPercents(0, 100, 200, 100);
-	
+
 	_object1.postInit();
 	_object1.setVisage(1303);
 	_object1.setStrip2(3);
 	_object1.setPosition(Common::Point(160, 152), 0);
-	
+
 	_globals->_player.postInit();
 	_globals->_player.setVisage(1303);
 	_globals->_player.setStrip2(1);

@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/core.h $
- * $Id: core.h 227 2011-02-11 22:13:54Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -49,7 +49,7 @@ class ObjectMover;
 class Action;
 class Serialiser;
 
-class InvObject: public SavedObject {
+class InvObject : public SavedObject {
 public:
 	int _sceneNumber;
 	int _displayResNum;
@@ -71,7 +71,7 @@ public:
 	}
 };
 
-class InvObjectList: public SavedObject {
+class InvObjectList : public SavedObject {
 public:
 	InvObject _stunner;
 	InvObject _scanner;
@@ -121,7 +121,7 @@ public:
 /**
  * Basic reference counter class
  */
-class RefCounter: public Serialisable {
+class RefCounter : public Serialisable {
 private:
 	int _ctr;
 public:
@@ -142,11 +142,11 @@ public:
 	virtual void synchronise(Serialiser &s) { s.syncAsSint16LE(_ctr); }
 };
 
-class EventHandler: public SavedObject {
+class EventHandler : public SavedObject {
 public:
 	Action *_action;
 
-	EventHandler(): SavedObject() { _action = NULL; }
+	EventHandler() : SavedObject() { _action = NULL; }
 	virtual ~EventHandler() { destroy(); }
 
 	virtual void synchronise(Serialiser &s) { SYNC_POINTER(_action); }
@@ -161,7 +161,7 @@ public:
 	virtual void destroy() {};
 };
 
-class Action: public EventHandler {
+class Action : public EventHandler {
 public:
 	EventHandler *_owner;
 	int _actionIndex;
@@ -178,7 +178,7 @@ public:
 	virtual void process(Event &event);
 	virtual void dispatch();
 	virtual void attached(EventHandler *newOwner, EventHandler *fmt, va_list va);
-	
+
 	void attach(EventHandler *newOwner, EventHandler *fmt, ...) {
 		va_list va;
 		va_start(va, fmt);
@@ -190,12 +190,12 @@ public:
 	void setDelay(int numFrames);
 };
 
-class ActionExt: public Action {
+class ActionExt : public Action {
 public:
 	int _state;
 };
 
-class ObjectMover: public EventHandler {
+class ObjectMover : public EventHandler {
 public:
 	Common::Point _destPosition;
 	Common::Point _moveDelta;
@@ -219,7 +219,7 @@ public:
 	virtual void endMove();
 };
 
-class ObjectMover2: public ObjectMover {
+class ObjectMover2 : public ObjectMover {
 public:
 	SceneObject *_destObject;
 	int _minArea;
@@ -235,7 +235,7 @@ public:
 	virtual void endMove();
 };
 
-class ObjectMover3: public ObjectMover2 {
+class ObjectMover3 : public ObjectMover2 {
 public:
 	virtual Common::String getClassName() { return "ObjectMover3"; }
 	virtual void dispatch();
@@ -243,7 +243,7 @@ public:
 	virtual void endMove();
 };
 
-class NpcMover: public ObjectMover {
+class NpcMover : public ObjectMover {
 public:
 	virtual Common::String getClassName() { return "NpcMover"; }
 	virtual void startMove(SceneObject *sceneObj, va_list va);
@@ -258,7 +258,7 @@ public:
 	Common::Point moveDest;
 };
 
-class PlayerMover: public NpcMover {
+class PlayerMover : public NpcMover {
 protected:
 	void setDest(const Common::Point &destPos);
 	void pathfind(Common::Point *routeList, Common::Point srcPos, Common::Point destPos, RouteEnds routeEnds);
@@ -284,12 +284,12 @@ public:
 	virtual void endMove();
 };
 
-class PlayerMover2: public PlayerMover {
+class PlayerMover2 : public PlayerMover {
 public:
 	SceneObject *_destObject;
 	int _field7E;
 	int _minArea;
-	PlayerMover2(): PlayerMover() { _destObject = NULL; }
+	PlayerMover2() : PlayerMover() { _destObject = NULL; }
 
 	virtual void synchronise(Serialiser &s);
 	virtual Common::String getClassName() { return "PlayerMover2"; }
@@ -302,7 +302,7 @@ public:
 
 class ScenePalette;
 
-class PaletteModifier: public SavedObject {
+class PaletteModifier : public SavedObject {
 public:
 	ScenePalette *_scenePalette;
 	Action *_action;
@@ -317,7 +317,7 @@ public:
 	virtual void remove() = 0;
 };
 
-class PaletteRotation: public PaletteModifier {
+class PaletteRotation : public PaletteModifier {
 public:
 	bool _disabled;
 	int _delayFrames;
@@ -346,7 +346,7 @@ public:
 
 /*--------------------------------------------------------------------------*/
 
-class PaletteUnknown: public PaletteModifier {
+class PaletteUnknown : public PaletteModifier {
 public:
 	int _step, _percent, _field12, _field14;
 	RGB8 _palette[256];
@@ -359,7 +359,7 @@ public:
 
 enum FadeMode {FADEMODE_NONE = 0, FADEMODE_GRADUAL = 1, FADEMODE_IMMEDIATE = 2};
 
-class ScenePalette: public SavedObject {
+class ScenePalette : public SavedObject {
 public:
 	RGB8 _palette[256];
 	GfxColours _colours;
@@ -407,7 +407,7 @@ const int SET_POS_MODE = 9;
 const int SET_TEXT_MODE = 10;
 const int LIST_END = -999;
 
-class SceneItem: public EventHandler {
+class SceneItem : public EventHandler {
 public:
 	Rect _bounds;
 	Common::String _msg;
@@ -416,7 +416,7 @@ public:
 	int _yDiff;
 	int _sceneRegionId;
 public:
-	SceneItem(): EventHandler() { _msg = "Feature"; _action = NULL; _sceneRegionId = 0; }
+	SceneItem() : EventHandler() { _msg = "Feature"; _action = NULL; _sceneRegionId = 0; }
 
 	virtual void synchronise(Serialiser &s);
 	virtual Common::String getClassName() { return "SceneItem"; }
@@ -434,7 +434,7 @@ public:
 	}
 };
 
-class SceneItemExt: public SceneItem {
+class SceneItemExt : public SceneItem {
 public:
 	int _state;
 
@@ -445,18 +445,18 @@ public:
 	}
 };
 
-class SceneHotspot: public SceneItem {
+class SceneHotspot : public SceneItem {
 public:
-	SceneHotspot(): SceneItem() {}
+	SceneHotspot() : SceneItem() {}
 
 	virtual Common::String getClassName() { return "SceneHotspot"; }
 	virtual void doAction(int action);
 };
 
-class NamedHotspot: public SceneHotspot {
+class NamedHotspot : public SceneHotspot {
 public:
 	int _resnum, _lookLineNum, _useLineNum;
-	NamedHotspot(): SceneHotspot() {}
+	NamedHotspot() : SceneHotspot() {}
 
 	void setup(const int ys, const int xe, const int ye, const int xs, const int resnum, const int lookLineNum, const int useLineNum);
 	virtual void doAction(int action);
@@ -485,7 +485,7 @@ public:
 	Visage &operator=(const Visage &s);
 };
 
-class SceneObjectWrapper: public EventHandler {
+class SceneObjectWrapper : public EventHandler {
 private:
 	Visage _visageImages;
 public:
@@ -502,13 +502,13 @@ public:
 	virtual void dispatch();
 };
 
-enum ObjectFlags {OBJFLAG_FIXED_PRIORITY = 1, OBJFLAG_NO_UPDATES = 2, OBJFLAG_ZOOMED = 4, 
-	OBJFLAG_SUPPRESS_DISPATCH = 8, OBJFLAG_HIDE = 0x100, OBJFLAG_HIDING = 0x200, OBJFLAG_REMOVE = 0x400, 
-	OBJFLAG_CLONED = 0x800, OBJFLAG_CHECK_REGION = 0x1000, OBJFLAG_PANE_0 = 0x4000, OBJFLAG_PANE_1 = 0x8000, 
+enum ObjectFlags {OBJFLAG_FIXED_PRIORITY = 1, OBJFLAG_NO_UPDATES = 2, OBJFLAG_ZOOMED = 4,
+	OBJFLAG_SUPPRESS_DISPATCH = 8, OBJFLAG_HIDE = 0x100, OBJFLAG_HIDING = 0x200, OBJFLAG_REMOVE = 0x400,
+	OBJFLAG_CLONED = 0x800, OBJFLAG_CHECK_REGION = 0x1000, OBJFLAG_PANE_0 = 0x4000, OBJFLAG_PANE_1 = 0x8000,
 	OBJFLAG_PANES = OBJFLAG_PANE_0 | OBJFLAG_PANE_1
 };
 
-class SceneObject: public SceneHotspot {
+class SceneObject : public SceneHotspot {
 private:
 	Visage _visageImages;
 
@@ -586,7 +586,7 @@ public:
 	void setup(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority);
 };
 
-class SceneObjectExt: public SceneObject {
+class SceneObjectExt : public SceneObject {
 public:
 	int _state;
 
@@ -597,7 +597,7 @@ public:
 	virtual Common::String getClassName() { return "SceneObjectExt"; }
 };
 
-class SceneText: public SceneObject {
+class SceneText : public SceneObject {
 public:
 	int _fontNumber;
 	int _width;
@@ -617,13 +617,13 @@ public:
 	virtual GfxSurface getFrame() { return _textSurface; }
 };
 
-class Player: public SceneObject {
+class Player : public SceneObject {
 public:
 	bool _canWalk;
 	bool _uiEnabled;
 	int _field8C;
 public:
-	Player(): SceneObject() {}
+	Player() : SceneObject() {}
 
 	virtual Common::String getClassName() { return "Player"; }
 	virtual void synchronise(Serialiser &s);
@@ -652,7 +652,7 @@ public:
 			int xs = va_arg(va, int);
 			int xe = va_arg(va, int);
 			items.push_back(LineSlice(xs, xe));
-		}			
+		}
 	}
 
 	void add(LineSlice &slice) { items.push_back(slice); }
@@ -684,14 +684,14 @@ public:
 	static LineSliceSet mergeSlices(const LineSliceSet &set1, const LineSliceSet &set2);
 };
 
-class SceneRegions: public Common::List<Region> {
+class SceneRegions : public Common::List<Region> {
 public:
 	void load(int sceneNum);
 
 	int indexOf(const Common::Point &pt);
 };
 
-class SceneObjectList: public SavedObject {
+class SceneObjectList : public SavedObject {
 private:
 	void checkIntersection(Common::Array<SceneObject *> &ObjList, uint ObjIndex, int PaneNum);
 
@@ -723,13 +723,13 @@ public:
 	bool contains(SceneObject *sceneObj) { return tSage::contains(_objList, sceneObj); }
 	void push_back(SceneObject *sceneObj) { _objList.push_back(sceneObj); }
 	void push_front(SceneObject *sceneObj) { _objList.push_front(sceneObj); }
-	void remove(SceneObject *sceneObj) { 
-		_objList.remove(sceneObj); 
+	void remove(SceneObject *sceneObj) {
+		_objList.remove(sceneObj);
 		_listAltered = true;
 	}
 };
 
-class ScenePriorities: public Common::List<Region> {
+class ScenePriorities : public Common::List<Region> {
 public:
 	int _resNum;
 	int _field14;
@@ -772,7 +772,7 @@ public:
 	}
 };
 
-class SoundHandler: public EventHandler {
+class SoundHandler : public EventHandler {
 public:
 	GameSoundHandler _sound;
 	Action *_action;
@@ -811,7 +811,7 @@ public:
 
 /*--------------------------------------------------------------------------*/
 
-class SceneItemList: public SynchronisedList<SceneItem *> {
+class SceneItemList : public SynchronisedList<SceneItem *> {
 public:
 	void addItems(SceneItem *first, ...);
 };
@@ -833,7 +833,7 @@ public:
 
 #define PROCESS_LIST_SIZE 100
 
-class WalkRegion: public Region {
+class WalkRegion : public Region {
 private:
 	static RegionSupportRec _processList[PROCESS_LIST_SIZE];
 	void loadProcessList(byte *dataP, int dataSize, int &dataIndex, int &regionHeight);
@@ -894,14 +894,14 @@ public:
 
 /*--------------------------------------------------------------------------*/
 
-class GameHandler: public EventHandler {
+class GameHandler : public EventHandler {
 public:
 	RefCounter _lockCtr;
 	RefCounter _waitCtr;
 	int _nextWaitCtr;
 	int _field14;
 public:
-	GameHandler(); 
+	GameHandler();
 	virtual ~GameHandler();
 	void execute();
 
@@ -911,7 +911,7 @@ public:
 	virtual void dispatch() {}
 };
 
-class SceneHandler: public GameHandler {
+class SceneHandler : public GameHandler {
 public:
 	int _saveGameSlot;
 	int _loadGameSlot;

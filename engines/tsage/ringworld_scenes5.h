@@ -33,67 +33,67 @@
 
 namespace tSage {
 
-class Scene4000: public Scene {
+class Scene4000 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action4: public Action {
+	class Action4 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action5: public Action {
+	class Action5 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action6: public Action {
+	class Action6 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action7: public Action {
+	class Action7 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action8: public Action {
+	class Action8 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action9: public Action {
+	class Action9 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action10: public Action {
+	class Action10 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action11: public Action {
+	class Action11 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action12: public Action {
+	class Action12 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action13: public Action {
+	class Action13 : public Action {
 	public:
 		virtual void signal();
 	};
 
 	/* Hotspots */
-	class Hotspot7: public SceneObject {
+	class Hotspot7 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot8: public SceneObject {
+	class Hotspot8 : public SceneObject {
 	private:
 		int _ctr;
 	public:
@@ -103,35 +103,35 @@ class Scene4000: public Scene {
 		}
 		virtual void doAction(int action);
 	};
-	class Hotspot9: public SceneObject {
+	class Hotspot9 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot10: public SceneObject {
+	class Hotspot10 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot12: public SceneObject {
+	class Hotspot12 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot13: public SceneObject {
+	class Hotspot13 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot: public SceneObject {
+	class Hotspot : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot17: public SceneObject {
+	class Hotspot17 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot18: public SceneObject {
+	class Hotspot18 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot23: public SceneObject {
+	class Hotspot23 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -186,7 +186,7 @@ public:
 	virtual void dispatch();
 };
 
-class Scene4010: public Scene {
+class Scene4010 : public Scene {
 public:
 	SequenceManager _sequenceManager;
 	SpeakerQText _speakerQText;
@@ -194,15 +194,15 @@ public:
 	SpeakerMText _speakerMText;
 	SceneObject _hotspot1, _hotspot2;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);	
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 };
 
-class Scene4025: public Scene {
+class Scene4025 : public Scene {
 	/* Custom classes */
 	class Peg;
 
-	class Hole: public SceneObject {
+	class Hole : public SceneObject {
 	public:
 		Peg *_pegPtr;
 		int _armStrip;
@@ -211,26 +211,26 @@ class Scene4025: public Scene {
 		virtual void synchronise(Serialiser &s);
 		virtual void doAction(int action);
 	};
-	class Peg: public SceneObject {
+	class Peg : public SceneObject {
 	public:
 		int _field88;
 		int _armStrip;
 
-		Peg(): SceneObject() { _field88 = 0; _armStrip = 3; }
+		Peg() : SceneObject() { _field88 = 0; _armStrip = 3; }
 		virtual void synchronise(Serialiser &s);
 		virtual void doAction(int action);
 	};
 
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		virtual void signal();
 	};
@@ -255,31 +255,31 @@ public:
 	virtual void dispatch();
 };
 
-class Scene4045: public Scene {
+class Scene4045 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		virtual void signal();
 	};
 
 	/* Hotspots */
-	class Hotspot1: public SceneObject {
+	class Hotspot1 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot2: public SceneObject {
+	class Hotspot2 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot6: public SceneObject {
+	class Hotspot6 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -310,35 +310,35 @@ public:
 	virtual void dispatch();
 };
 
-class Scene4050: public Scene {
+class Scene4050 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action4: public Action {
+	class Action4 : public Action {
 	public:
 		virtual void signal();
 	};
 
 	/* Hotspots */
-	class Hotspot14: public SceneObject {
+	class Hotspot14 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot17: public SceneObject {
+	class Hotspot17 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-public:	
+public:
 	SpeakerPText _speakerPText;
 	SpeakerQText _speakerQText;
 	SpeakerGameText _speakerGameText;
@@ -359,55 +359,55 @@ public:
 	virtual void dispatch();
 };
 
-class Scene4100: public Scene {
+class Scene4100 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action4: public Action {
+	class Action4 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action5: public Action {
+	class Action5 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action6: public Action {
+	class Action6 : public Action {
 	public:
 		virtual void signal();
 	};
 
 	/* Hotspots */
-	class Hotspot1: public SceneObject {
+	class Hotspot1 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot2: public SceneObject {
+	class Hotspot2 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot5: public SceneObject {
+	class Hotspot5 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot6: public SceneObject {
+	class Hotspot6 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot14: public SceneObject {
+	class Hotspot14 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-public:	
+public:
 	SequenceManager _sequenceManager;
 	SpeakerMText _speakerMText;
 	SpeakerML _speakerML;
@@ -437,36 +437,36 @@ public:
 	virtual void dispatch();
 };
 
-class Scene4150: public Scene {
+class Scene4150 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		virtual void signal();
 	};
 
 	/* Hotspots */
-	class HotspotGroup1: public SceneObject {
+	class HotspotGroup1 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class HotspotGroup3: public SceneObject {
+	class HotspotGroup3 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class HotspotGroup6: public SceneObject {
+	class HotspotGroup6 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
 
-	class Hotspot3: public SceneObject {
+	class Hotspot3 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -496,47 +496,47 @@ public:
 	virtual void dispatch();
 };
 
-class Scene4250: public Scene {
+class Scene4250 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action4: public Action {
+	class Action4 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action5: public Action {
+	class Action5 : public Action {
 	public:
 		virtual void signal();
 	};
 
 	/* Hotspots */
-	class Hotspot1: public SceneObject {
+	class Hotspot1 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot2: public SceneObject {
+	class Hotspot2 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot4: public SceneObject {
+	class Hotspot4 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot6: public SceneObject {
+	class Hotspot6 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot8: public SceneObject {
+	class Hotspot8 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -574,43 +574,43 @@ public:
 	virtual void dispatch();
 };
 
-class Scene4300: public Scene {
+class Scene4300 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
 
 	/* Hotspots */
-	class Hotspot8: public SceneObject {
+	class Hotspot8 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot9: public NamedHotspot {
+	class Hotspot9 : public NamedHotspot {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot10: public SceneObject {
+	class Hotspot10 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot15: public SceneObject {
+	class Hotspot15 : public SceneObject {
 	public:
 		virtual void signal();
 	};
-	class Hotspot16: public SceneObject {
+	class Hotspot16 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot17: public SceneObject {
+	class Hotspot17 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot19: public SceneObject {
+	class Hotspot19 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -647,9 +647,9 @@ public:
 	virtual void process(Event &event);
 };
 
-class Scene4301: public Scene {
+class Scene4301 : public Scene {
 	/* Actions */
-	class Action1: public ActionExt {
+	class Action1 : public ActionExt {
 	public:
 		SceneObject _buttonList[6];
 		int _field34E;
@@ -662,11 +662,11 @@ class Scene4301: public Scene {
 	};
 
 	/* Hotspots */
-	class Hotspot4: public NamedHotspot {
+	class Hotspot4 : public NamedHotspot {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot5: public NamedHotspot {
+	class Hotspot5 : public NamedHotspot {
 	public:
 		virtual void doAction(int action);
 	};
@@ -683,7 +683,7 @@ public:
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void dispatch();
-	virtual void synchronise(Serialiser &s) { 
+	virtual void synchronise(Serialiser &s) {
 		Scene::synchronise(s);
 		s.syncAsSint16LE(_field68E);
 	}

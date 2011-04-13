@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/tsage.h $
- * $Id: tsage.h 212 2011-02-06 10:19:01Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 

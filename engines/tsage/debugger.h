@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/debugger.h $
- * $Id: debugger.h 176 2011-01-25 11:33:33Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 

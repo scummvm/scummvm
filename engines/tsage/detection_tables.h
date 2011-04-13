@@ -29,7 +29,7 @@ static const tSageGameDescription gameDescriptions[] = {
 
 	// Ringworld English CD version
 	{
-		{ 
+		{
 			"ring",
 			"CD",
 			AD_ENTRY1s("ring.rlb", "466f0e6492d9d0f34d35c5cd088de90f", 37847618),
@@ -43,7 +43,7 @@ static const tSageGameDescription gameDescriptions[] = {
 	},
 	// Ringworld First Wave English CD version
 	{
-		{ 
+		{
 			"ring",
 			"CD",
 			AD_ENTRY1s("ring.rlb", "0a25b4ee58d44a54425c0b47e5096bbc", 37847618),

@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/globals.h $
- * $Id: globals.h 229 2011-02-12 06:50:14Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -35,7 +35,7 @@
 
 namespace tSage {
 
-class Globals: public SavedObject {
+class Globals : public SavedObject {
 public:
 	GfxSurface _screenSurface;
 	GfxManager _gfxManagerInstance;

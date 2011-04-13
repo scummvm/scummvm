@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/resources.cpp $
- * $Id: resources.cpp 145 2011-01-08 11:41:39Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -48,11 +48,11 @@ MemoryManager::~MemoryManager() {
 
 uint16 MemoryManager::allocate(uint32 size) {
 	int idx = 0;
-	while ((idx < MEMORY_POOL_SIZE) && (_memoryPool[idx] != NULL)) 
+	while ((idx < MEMORY_POOL_SIZE) && (_memoryPool[idx] != NULL))
 		++idx;
 	if (idx == MEMORY_POOL_SIZE)
 		error("Out of memory handles");
-	
+
 	// Create the new entry
 	_memoryPool[idx] = (MemoryHeader *)malloc(sizeof(MemoryHeader) + size);
 	_memoryPool[idx]->id = MEMORY_ENTRY_ID;
@@ -134,7 +134,7 @@ uint16 BitReader::readToken() {
 
 /*-------------------------------------------------------------------------*/
 
-RlbManager::RlbManager(MemoryManager &memManager, const Common::String filename): 
+RlbManager::RlbManager(MemoryManager &memManager, const Common::String filename) :
 		_memoryManager(memManager) {
 
 	// If the resource strings list isn't yet loaded, load them
@@ -233,7 +233,7 @@ byte *RlbManager::getResource(uint16 id, bool suppressErrors) {
 	byte *dataOut = _memoryManager.allocate2(re->uncompressedSize);
 	byte *destP = dataOut;
 	uint bytesWritten = 0;
-	
+
 	uint16 ctrCurrent = 0x102, ctrMax = 0x200;
 	uint16 word_48050 = 0, currentToken = 0, word_48054 =0;
 	byte byte_49068 = 0, byte_49069 = 0;
@@ -242,7 +242,7 @@ byte *RlbManager::getResource(uint16 id, bool suppressErrors) {
 
 	for (;;) {
 		// Get the next decode token
-		uint16 token = bitReader.readToken();		
+		uint16 token = bitReader.readToken();
 
 		// Handle the token
 		if (token == 0x101) {
@@ -297,7 +297,7 @@ byte *RlbManager::getResource(uint16 id, bool suppressErrors) {
 				ctrMax <<= 1;
 			}
 		}
-	}		
+	}
 
 	assert(bytesWritten == re->uncompressedSize);
 	delete compStream;
@@ -331,7 +331,7 @@ void RlbManager::loadIndex() {
 	// Get the single resource from it
 	const byte *pData = getResource(0);
 	const byte *p = pData;
-	
+
 	_sections.clear();
 
 	// Loop through reading the entries
@@ -379,7 +379,7 @@ byte *RlbManager::getSubResource(int resNum, int rlbNum, int index, uint *size) 
 
 	int numEntries = READ_LE_UINT16(dataIn);
 	uint32 entryOffset = READ_LE_UINT32(dataIn + 2 + (index - 1) * 4);
-	uint32 nextOffset = (index == numEntries) ? 
+	uint32 nextOffset = (index == numEntries) ?
 			_memoryManager.getSize(dataIn) : READ_LE_UINT32(dataIn + 2 + index * 4);
 	*size = nextOffset - entryOffset;
 	assert(*size < (1024 * 1024));
@@ -399,7 +399,7 @@ Common::String RlbManager::getMessage(int resNum, int lineNum) {
 	assert(msgData);
 
 	const char *srcP = (const char *)msgData;
-	while (lineNum-- > 0) 
+	while (lineNum-- > 0)
 		srcP += strlen(srcP) + 1;
 
 	Common::String result(srcP);

@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/scene_logic.h $
- * $Id: scene_logic.h 232 2011-02-12 11:56:38Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -35,17 +35,17 @@
 
 namespace tSage {
 
-class Scene1000: public Scene {
+class Scene1000 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	private:
 		void zoom(bool up);
 	public:
@@ -61,9 +61,9 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
-class Scene1001: public Scene {
+class Scene1001 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
@@ -80,22 +80,22 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
-class Scene1250: public Scene {
+class Scene1250 : public Scene {
 public:
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action4: public Action {
+	class Action4 : public Action {
 	public:
 		virtual void signal();
 	};
@@ -110,10 +110,10 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
-class Scene1400: public Scene {
+class Scene1400 : public Scene {
 public:
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 		virtual void dispatch();
@@ -125,14 +125,14 @@ public:
 
 };
 
-class Scene1500: public Scene {
+class Scene1500 : public Scene {
 public:
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};

@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/sound.cpp $
- * $Id: sound.cpp 204 2011-02-05 12:23:20Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 

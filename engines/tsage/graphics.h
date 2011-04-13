@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/graphics.h $
- * $Id: graphics.h 184 2011-02-03 11:31:38Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -41,10 +41,10 @@ class Region;
 /**
  * Extended Rect class with extra support methods
  */
-class Rect: public Common::Rect, public Serialisable {
+class Rect : public Common::Rect, public Serialisable {
 public:
-	Rect(): Common::Rect() {};
-	Rect(int16 x1, int16 y1, int16 x2, int16 y2): Common::Rect(x1, y1, x2, y2) {};
+	Rect() : Common::Rect() {};
+	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : Common::Rect(x1, y1, x2, y2) {};
 
 	void set(int16 x1, int16 y1, int16 x2, int16 y2);
 	void collapse(int dx, int dy);
@@ -63,13 +63,13 @@ public:
 	uint8 foreground;
 	uint8 background;
 
-	GfxColours(): foreground(0), background(0) {};
+	GfxColours() : foreground(0), background(0) {};
 };
 
 class LineSlice {
 public:
 	int xs, xe;
-	
+
 	LineSlice() { xs = 0; xe = 0; }
 	LineSlice(int xStart, int xEnd) { xs = xStart; xe = xEnd; }
 };
@@ -195,7 +195,7 @@ public:
 	virtual bool focusedEvent(Event &event);
 };
 
-class GfxImage: public GfxElement {
+class GfxImage : public GfxElement {
 public:
 	GfxSurface _surface;
 	int _resNum;
@@ -211,7 +211,7 @@ public:
 	virtual bool process(Event &event) { return false; }
 };
 
-class GfxMessage: public GfxElement {
+class GfxMessage : public GfxElement {
 public:
 	Common::String _message;
 	TextAlign _textAlign;
@@ -226,13 +226,13 @@ public:
 	virtual void draw();
 };
 
-class GfxButton: public GfxElement {
+class GfxButton : public GfxElement {
 private:
 	void setFocus();
 public:
 	Common::String _message;
 public:
-	GfxButton(): GfxElement() {};
+	GfxButton() : GfxElement() {};
 	virtual ~GfxButton() {}
 
 	void setText(const Common::String &s) {
@@ -270,7 +270,7 @@ public:
 	void getStringBounds(const char *s, Rect &bounds, int maxWidth);
 
 	void setDialogPalette();
-	Graphics::Surface lockSurface() { 
+	Graphics::Surface lockSurface() {
 		_surface.setBounds(_bounds);
 		return _surface.lockSurface();
 	}
@@ -312,7 +312,7 @@ public:
 
 typedef Common::List<GfxElement *> GfxElementList;
 
-class GfxDialog: public GfxElement {
+class GfxDialog : public GfxElement {
 public:
 	GfxManager _gfxManager;
 	GfxElementList _elements;
@@ -326,9 +326,9 @@ public:
 	void addElements(GfxElement *ge, ...);
 	void setTopLeft(int xp, int yp);
 	void setCentre(int xp, int yp);
-	void frame() { 
+	void frame() {
 		setDefaults();
-		_bounds.collapse(6, 6); 
+		_bounds.collapse(6, 6);
 	}
 	GfxButton *execute(GfxButton *defaultButton = NULL);
 

@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/scene_logic.h $
- * $Id: scene_logic.h 232 2011-02-12 11:56:38Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -33,13 +33,13 @@
 
 namespace tSage {
 
-class Scene3500: public Scene {
+class Scene3500 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
@@ -53,9 +53,9 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
-class Scene3700: public Scene {
+class Scene3700 : public Scene {
 	/* Custom classes */
-	class Viewer: public SceneObject {
+	class Viewer : public SceneObject {
 	public:
 		Visage _images1;
 		Visage _images2;
@@ -74,7 +74,7 @@ class Scene3700: public Scene {
 	};
 
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};

@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/scenes.cpp $
- * $Id: scenes.cpp 229 2011-02-12 06:50:14Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -30,10 +30,10 @@
 
 namespace tSage {
 
-SceneManager::SceneManager() { 
+SceneManager::SceneManager() {
 	_scene = NULL;
 	_hasPalette = false;
-	_sceneNumber = -1; 
+	_sceneNumber = -1;
 	_nextSceneNumber = -1;
 	_previousScene = 0;
 	_fadeMode = FADEMODE_GRADUAL;
@@ -86,7 +86,7 @@ void SceneManager::sceneChange() {
 		++ii;
 		sceneItem->remove();
 	}
-		
+
 	// TODO: Clear _list_45BAA list
 
 	// If there is an active scene, deactivate it
@@ -211,7 +211,7 @@ void SceneManager::setBgOffset(const Common::Point &pt, int loadCount) {
 void SceneManager::listenerSynchronise(Serialiser &s) {
 	s.validate("SceneManager");
 	_altSceneObjects.synchronise(s);
-	
+
 	s.syncAsSint32LE(_sceneNumber);
 	if (s.isLoading()) {
 		changeScene(_sceneNumber);
@@ -226,7 +226,7 @@ void SceneManager::listenerSynchronise(Serialiser &s) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene::Scene(): _sceneBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 
+Scene::Scene() : _sceneBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
 			_backgroundBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
 	_sceneMode = 0;
 	_oldSceneBounds = Rect(4000, 4000, 4100, 4100);
@@ -272,7 +272,7 @@ void Scene::loadScene(int sceneNum) {
 	_sceneNumber = sceneNum;
 	if (_globals->_scenePalette.loadPalette(sceneNum))
 		_globals->_sceneManager._hasPalette = true;
-	
+
 	loadSceneData(sceneNum);
 }
 
@@ -337,7 +337,7 @@ void Scene::loadBackground(int xAmount, int yAmount) {
 	if ((_backgroundBounds.height() / 100) == 3)
 		_globals->_sceneOffset.y = 0;
 
-	if ((_globals->_sceneOffset.x != _globals->_prevSceneOffset.x) || 
+	if ((_globals->_sceneOffset.x != _globals->_prevSceneOffset.x) ||
 		(_globals->_sceneOffset.y != _globals->_prevSceneOffset.y)) {
 		// Change has happend, so refresh background
 		_globals->_prevSceneOffset = _globals->_sceneOffset;
@@ -386,17 +386,17 @@ void Scene::refreshBackground(int xAmount, int yAmount) {
 						int ySectionDest = yp - yHalfOffset;
 						int xSectionSrc = _enabledSections[xp * 16 + yp] >> 4;
 						int ySectionSrc = _enabledSections[xp * 16 + yp] & 0xf;
-				
-						Rect srcBounds(xSectionSrc * 160, ySectionSrc * 100, 
+
+						Rect srcBounds(xSectionSrc * 160, ySectionSrc * 100,
 								(xSectionSrc + 1) * 160, (ySectionSrc + 1) * 100);
-						Rect destBounds(xSectionDest * 160, ySectionDest * 100, 
+						Rect destBounds(xSectionDest * 160, ySectionDest * 100,
 								(xSectionDest + 1) * 160, (ySectionDest + 1) * 100);
 
-						_backSurface.copyFrom(_backSurface, srcBounds, destBounds);	
+						_backSurface.copyFrom(_backSurface, srcBounds, destBounds);
 					}
 				}
 
-				_enabledSections[xp * 16 + yp] = 
+				_enabledSections[xp * 16 + yp] =
 					((xp - xHalfOffset) << 4) | (yp - yHalfOffset);
 			}
 		}
@@ -418,7 +418,7 @@ void Scene::drawAltObjects() {
 
 		// Handle updating object priority
 		if (!(obj->_flags & OBJFLAG_FIXED_PRIORITY)) {
-			obj->_priority = MIN((int)obj->_position.y - 1, 
+			obj->_priority = MIN((int)obj->_position.y - 1,
 				(int)_globals->_sceneManager._scene->_backgroundBounds.bottom);
 		}
 	}
@@ -432,7 +432,7 @@ void Scene::drawAltObjects() {
 
 		obj->reposition();
 		obj->draw();
-	}	
+	}
 }
 
 void Scene::setZoomPercents(int yStart, int minPercent, int yEnd, int maxPercent) {
@@ -462,7 +462,7 @@ void Scene::setZoomPercents(int yStart, int minPercent, int yEnd, int maxPercent
                         ++minPercent;
                 }
         }
-	}       
+	}
 
 	while (yEnd < 256)
 		_zoomPercents[yEnd++] = minPercent;

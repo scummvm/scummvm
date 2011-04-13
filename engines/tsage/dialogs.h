@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/dialogs.h $
- * $Id: dialogs.h 215 2011-02-07 12:06:13Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -35,7 +35,7 @@
 
 namespace tSage {
 
-class MessageDialog: public GfxDialog {
+class MessageDialog : public GfxDialog {
 public:
 	GfxButton _btn1, _btn2;
 	GfxDialog _dialog;
@@ -52,7 +52,7 @@ public:
 	ConfigDialog();
 };
 
-class RightClickButton: public GfxButton {
+class RightClickButton : public GfxButton {
 private:
 	GfxSurface *_savedButton;
 public:
@@ -64,7 +64,7 @@ public:
 	virtual void highlight();
 };
 
-class RightClickDialog: public GfxDialog {
+class RightClickDialog : public GfxDialog {
 private:
 	GfxSurface _surface;
 	RightClickButton *_highlightedButton;
@@ -83,7 +83,7 @@ public:
 
 /*--------------------------------------------------------------------------*/
 
-class ModalDialog: public GfxDialog {
+class ModalDialog : public GfxDialog {
 protected:
 	void drawFrame();
 public:
@@ -92,18 +92,18 @@ public:
 
 /*--------------------------------------------------------------------------*/
 
-class GfxInvImage: public GfxImage {
+class GfxInvImage : public GfxImage {
 public:
 	InvObject *_invObject;
 public:
-	GfxInvImage(): GfxImage(), _invObject(NULL) {}
+	GfxInvImage() : GfxImage(), _invObject(NULL) {}
 
 	virtual bool process(Event &event);
 };
 
 #define MAX_INVOBJECT_DISPLAY 20
 
-class InventoryDialog: public ModalDialog {
+class InventoryDialog : public ModalDialog {
 private:
 	Common::Array<GfxInvImage> _images;
 	GfxButton _btnOk, _btnLook;
@@ -117,7 +117,7 @@ public:
 
 /*--------------------------------------------------------------------------*/
 
-class OptionsDialog: public ModalDialog {
+class OptionsDialog : public ModalDialog {
 private:
 	GfxButton _btnSave, _btnRestore, _btnRestart;
 	GfxButton _btnQuit, _btnResume;

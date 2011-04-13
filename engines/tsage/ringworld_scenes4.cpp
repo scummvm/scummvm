@@ -130,7 +130,7 @@ void Scene3700::Viewer::dispatch() {
 
 			for (int idx = 3; idx > 1; --idx)
 				_frameList[idx] = _frameList[idx - 1];
-			
+
 			int newFrame;
 			do {
 				newFrame = _globals->_randomSource.getRandomNumber(4) + 1;
@@ -154,13 +154,13 @@ void Scene3700::Viewer::draw() {
 
 		GfxSurface img = v.getFrame(_frameList[idx]);
 		Rect destRect = img.getBounds();
-		destRect.resize(img, (_position.x - _globals->_sceneOffset.x), 
+		destRect.resize(img, (_position.x - _globals->_sceneOffset.x),
 			(_position.y  - _globals->_sceneOffset.y - _yDiff), _percentList[idx]);
 
-		destRect.translate(-_globals->_sceneManager._scene->_sceneBounds.left, 
+		destRect.translate(-_globals->_sceneManager._scene->_sceneBounds.left,
 			-_globals->_sceneManager._scene->_sceneBounds.top);
 
-		_globals->gfxManager().copyFrom(img, destRect, priorityRegion); 
+		_globals->gfxManager().copyFrom(img, destRect, priorityRegion);
 	}
 }
 

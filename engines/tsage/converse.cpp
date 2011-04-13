@@ -18,13 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/converse.cpp $
- * $Id: converse.cpp 230 2011-02-12 06:57:31Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
 #include "common/str-array.h"
- 
+
 #include "tsage/tsage.h"
 #include "tsage/globals.h"
 #include "tsage/staticres.h"
@@ -34,7 +34,7 @@ namespace tSage {
 #define STRIP_WORD_DELAY 30
 
 
-SequenceManager::SequenceManager(): Action() {
+SequenceManager::SequenceManager() : Action() {
 	Common::set_to(&_objectList[0], &_objectList[6], (SceneObject *)NULL);
 	_sequenceData.clear();
 	_field24 = 0;
@@ -172,7 +172,7 @@ void SequenceManager::signal() {
 			v2 = getNextValue();
 			NpcMover *mover = new NpcMover();
 			Common::Point destPos(v1, v3);
-			_sceneObject->addMover(mover, &destPos, v2 ? this : NULL);			
+			_sceneObject->addMover(mover, &destPos, v2 ? this : NULL);
 			break;
 		}
 		case 14:
@@ -239,7 +239,7 @@ void SequenceManager::signal() {
 			v2 = getNextValue();
 			PlayerMover *mover = new PlayerMover();
 			Common::Point destPos(v1, v3);
-			_sceneObject->addMover(mover, &destPos, v2 ? this : NULL);			
+			_sceneObject->addMover(mover, &destPos, v2 ? this : NULL);
 			break;
 		}
 		case 28:
@@ -277,7 +277,7 @@ void SequenceManager::signal() {
 			int objIndex3 = getNextValue();
 			int objIndex4 = getNextValue();
 			int objIndex5 = getNextValue();
-			
+
 			setAction(globalManager(), v2 ? this : NULL, v1, _objectList[objIndex1], _objectList[objIndex2],
 				_objectList[objIndex3], _objectList[objIndex4], _objectList[objIndex5]);
 			break;
@@ -349,7 +349,7 @@ void SequenceManager::setMessage(int resNum, int lineNum, int colour, const Comm
 
 	// Get the needed rect, and move it to the desired position
 	Rect textRect;
-	_globals->gfxManager().getStringBounds(msg.c_str(), textRect, width);	
+	_globals->gfxManager().getStringBounds(msg.c_str(), textRect, width);
 	Rect sceneBounds = _globals->_sceneManager._scene->_sceneBounds;
 	sceneBounds.collapse(4, 2);
 	textRect.moveTo(pt);
@@ -416,7 +416,7 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 	// Event handling loop
 	Event event;
 	while (!_vm->getEventManager()->shouldQuit()) {
-		while (!_globals->_events.getEvent(event, EVENT_KEYPRESS | EVENT_BUTTON_DOWN | EVENT_MOUSE_MOVE) && 
+		while (!_globals->_events.getEvent(event, EVENT_KEYPRESS | EVENT_BUTTON_DOWN | EVENT_MOUSE_MOVE) &&
 				!_vm->getEventManager()->shouldQuit())
 			;
 		if (_vm->getEventManager()->shouldQuit())
@@ -444,7 +444,7 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 				if (_selectedIndex != _choiceList.size()) {
 					// De-highlight previously selected item
 					_gfxManager._font._colours.foreground = _stdColour;
-					_gfxManager._font.writeLines(_choiceList[_selectedIndex]._msg.c_str(), 
+					_gfxManager._font.writeLines(_choiceList[_selectedIndex]._msg.c_str(),
 						_choiceList[_selectedIndex]._bounds, ALIGN_LEFT);
 				}
 
@@ -483,7 +483,7 @@ void ConversationChoiceDialog::draw() {
 	// Loop through writing the conversation choices
 	for (uint idx = 0; idx < _choiceList.size(); ++idx) {
 		Common::String strNum = Common::String::format("%d", idx + 1);
-		
+
 		// Write the choice number
 		_gfxManager._font.setPosition(13, _choiceList[idx]._bounds.top);
 		_gfxManager._font.writeString(strNum.c_str());
@@ -572,7 +572,7 @@ void StripManager::load() {
 	Common::copy(script, script + scriptSize, &_script[0]);
 
 	DEALLOCATE(script);
-	
+
 	// Get the object list
 	byte *obj44List = _vm->_dataManager->getResource(RES_STRIP, _stripNum, 1);
 	int dataSize = _vm->_memoryManager.getSize(obj44List);
@@ -584,7 +584,7 @@ void StripManager::load() {
 		obj.load(dataP);
 		_obj44List.push_back(obj);
 	}
-	
+
 	DEALLOCATE(obj44List);
 }
 
@@ -654,14 +654,14 @@ void StripManager::signal() {
 		EventHandler *owner = _fmt;
 		int stripNum = ABS(_obj44Index);
 		remove();
-		
+
 		start(stripNum, owner);
 		return;
 	} else if (_obj44Index == 10000) {
 		// Reached end of strip
 		remove();
 		return;
-	} 
+	}
 
 	// Run strip
 
@@ -712,7 +712,7 @@ void StripManager::signal() {
 			for (idx = 0; idx < OBJ44_LIST_SIZE; ++idx) {
 				if (!obj44._field2[idx])
 					break;
-				
+
 				_callbackObject->stripCallback(obj44._field2[idx]);
 			}
 		}
@@ -775,7 +775,7 @@ Speaker *StripManager::getSpeaker(const char *speakerName) {
 int StripManager::getNewIndex(int id) {
 	if (id == 10000)
 		return id;
-	
+
 	for (uint idx = 0; idx < _obj44List.size(); ++idx) {
 		if (_obj44List[idx]._id == id) {
 			return (id == 0) ? 10001 : idx;
@@ -787,7 +787,7 @@ int StripManager::getNewIndex(int id) {
 
 /*--------------------------------------------------------------------------*/
 
-Speaker::Speaker(): EventHandler() {
+Speaker::Speaker() : EventHandler() {
 	_newSceneNumber = -1;
 	_hideObjects = true;
 	_field18 = 0;
@@ -873,7 +873,7 @@ void Speaker::removeText() {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerGameText::SpeakerGameText(): Speaker() {
+SpeakerGameText::SpeakerGameText() : Speaker() {
 	_speakerName = "GAMETEXT";
 	_textPos = Common::Point(40, 40);
 	_textMode = ALIGN_CENTRE;
@@ -884,7 +884,7 @@ SpeakerGameText::SpeakerGameText(): Speaker() {
 
 /*--------------------------------------------------------------------------*/
 
-ScreenSpeaker::ScreenSpeaker(): Speaker() {
+ScreenSpeaker::ScreenSpeaker() : Speaker() {
 	_npc = NULL;
 	_textMode = ALIGN_CENTRE;
 }
@@ -894,12 +894,12 @@ void ScreenSpeaker::setText(const Common::String &msg) {
 	gfxMan.activate();
 	gfxMan._font.setFontNumber(_fontNumber);
 	Rect textRect;
-	
+
 	_globals->gfxManager().getStringBounds(msg.c_str(), textRect, _textWidth);
 	if (_npc) {
 		textRect.centre(_npc->_position.x, _npc->_bounds.top - (textRect.height() / 2 + 10));
 	} else {
-		textRect.centre(_globals->_sceneManager._scene->_sceneBounds.left + 
+		textRect.centre(_globals->_sceneManager._scene->_sceneBounds.left +
 			(_globals->_sceneManager._scene->_sceneBounds.width() / 2),
 			_globals->_sceneManager._scene->_sceneBounds.top);
 	}

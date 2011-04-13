@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/scene_logic.h $
- * $Id: scene_logic.h 232 2011-02-12 11:56:38Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -36,13 +36,13 @@
 
 namespace tSage {
 
-class Scene10: public Scene {
+class Scene10 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
@@ -58,9 +58,9 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
-class Scene15: public Scene {
+class Scene15 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 		virtual void dispatch();
@@ -73,21 +73,21 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
-class Scene20: public Scene {
+class Scene20 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action4: public Action {
+	class Action4 : public Action {
 	public:
 		virtual void signal();
 	};
@@ -109,10 +109,10 @@ public:
 	virtual void signal();
 };
 
-class Scene30: public Scene {
+class Scene30 : public Scene {
 	/* Scene objects */
 	// Doorway beam sensor
-	class BeamObject: public SceneObject {
+	class BeamObject : public SceneObject {
 	public:
 		virtual void doAction(int action) {
 			if (action == OBJECT_SCANNER)
@@ -128,7 +128,7 @@ class Scene30: public Scene {
 	};
 
 	// Doorway object
-	class DoorObject: public SceneObject {
+	class DoorObject : public SceneObject {
 	public:
 		virtual void doAction(int action) {
 			if (action == OBJECT_SCANNER)
@@ -143,25 +143,25 @@ class Scene30: public Scene {
 	};
 
 	// Kzin object
-	class KzinObject: public SceneObject {
+	class KzinObject : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
 
 	/* Actions */
-	class BeamAction: public Action {
+	class BeamAction : public Action {
 	public:
 		virtual void signal();
 	};
-	class KzinAction: public Action {
+	class KzinAction : public Action {
 	public:
 		virtual void signal();
 	};
-	class RingAction: public Action {
+	class RingAction : public Action {
 	public:
 		virtual void signal();
 	};
-	class TalkAction: public Action {
+	class TalkAction : public Action {
 	public:
 		virtual void signal();
 	};
@@ -191,61 +191,61 @@ public:
 	virtual void signal();
 };
 
-class Scene40: public Scene {
+class Scene40 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action4: public Action {
+	class Action4 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action5: public Action {
+	class Action5 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action6: public Action {
+	class Action6 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action7: public Action {
+	class Action7 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action8: public Action {
+	class Action8 : public Action {
 	public:
 		virtual void signal();
 	};
 
 	/* Objects */
-	class DyingKzin: public SceneObject {
+	class DyingKzin : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Assassin: public SceneObject {
+	class Assassin : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
 
 	/* Items */
-	class Item2: public SceneItem {
+	class Item2 : public SceneItem {
 	public:
 		virtual void doAction(int action);
 	};
-	class Item6: public SceneItem {
+	class Item6 : public SceneItem {
 	public:
 		virtual void doAction(int action);
 	};
-	class Item8: public SceneItem {
+	class Item8 : public SceneItem {
 	public:
 		virtual void doAction(int action);
 	};
@@ -281,35 +281,35 @@ public:
 	virtual void dispatch();
 };
 
-class Scene50: public Scene {
+class Scene50 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		virtual void signal();
 	};
 	
 	/* Objects */
-	class Object1: public SceneObject {
+	class Object1 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object2: public SceneObject {
+	class Object2 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object3: public SceneObject {
+	class Object3 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object4: public SceneObject {
+	class Object4 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -335,52 +335,52 @@ public:
 	virtual void dispatch();
 };
 
-class Scene60: public Scene {	
-	class Action1: public Action {
+class Scene60 : public Scene {	
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Object2: public SceneObject {
+	class Object2 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object3: public SceneObject {
+	class Object3 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object4: public SceneObject {
+	class Object4 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object5: public SceneObject {
+	class Object5 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object6: public SceneObject {
+	class Object6 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class SlaveObject: public SceneObjectExt {
+	class SlaveObject : public SceneObjectExt {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object8: public SceneObjectExt {
+	class Object8 : public SceneObjectExt {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object9: public SceneObject {
+	class Object9 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Item1: public SceneHotspot {
+	class Item1 : public SceneHotspot {
 	public:
 		virtual void doAction(int action);
 	};
-	class Item: public SceneHotspot {
+	class Item : public SceneHotspot {
 	public:
 		int _messageNum, _sceneMode;
 
@@ -421,16 +421,16 @@ public:
 	virtual void process(Event &event);
 };
 
-class Scene90: public Scene {
-	class Action1: public Action {
+class Scene90 : public Scene {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Object1: public SceneObject {
+	class Object1 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object2: public SceneObject {
+	class Object2 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -456,8 +456,8 @@ public:
 	virtual void signal();
 };
 
-class Scene95: public Scene {
-	class Action1: public ActionExt {
+class Scene95 : public Scene {
+	class Action1 : public ActionExt {
 	public:
 		virtual void signal();
 	};
@@ -472,50 +472,50 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList);
 };
 
-class Scene6100: public Scene {
+class Scene6100 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action4: public Action {
+	class Action4 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action5: public Action {
+	class Action5 : public Action {
 	public:
 		virtual void dispatch();
 	};
-	class GetBoxAction: public Action {
+	class GetBoxAction : public Action {
 	public:
 		virtual void signal();
 		virtual void dispatch();
 	};
-	class Action7: public Action {
+	class Action7 : public Action {
 	public:
 		virtual void signal();
 	};
 
 	/* Objects */
-	class Object: public SceneObject {
+	class Object : public SceneObject {
 	public:
 		FloatSet _floats;
 	};
-	class ProbeMover: public NpcMover {
+	class ProbeMover : public NpcMover {
 	public:
 		virtual void dispatch();
 	};
 
 	/* Items */
-	class Item1: public SceneItem {
+	class Item1 : public SceneItem {
 	public:
 		virtual void doAction(int action);
 	};

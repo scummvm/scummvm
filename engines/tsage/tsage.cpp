@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/tsage.cpp $
- * $Id: tsage.cpp 211 2011-02-06 06:59:31Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -41,7 +41,7 @@ namespace tSage {
 
 TSageEngine *_vm = NULL;
 
-TSageEngine::TSageEngine(OSystem *system, const tSageGameDescription *gameDesc): Engine(system),
+TSageEngine::TSageEngine(OSystem *system, const tSageGameDescription *gameDesc) : Engine(system),
 		_gameDescription(gameDesc) {
 	_vm = this;
 	DebugMan.addDebugChannel(kRingDebugScripts, "scripts", "Scripts debugging");

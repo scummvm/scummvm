@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/detection.cpp $
- * $Id: detection.cpp 209 2011-02-06 00:46:36Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 

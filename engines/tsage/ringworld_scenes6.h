@@ -35,44 +35,44 @@
 
 namespace tSage {
 
-class Scene5000: public Scene {
+class Scene5000 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 		virtual void dispatch();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action4: public Action {
+	class Action4 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action5: public Action {
+	class Action5 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action6: public Action {
+	class Action6 : public Action {
 	public:
 		virtual void signal();
 	};
 
 	/* Hotspots */
-	class Hotspot7: public SceneObject {
+	class Hotspot7 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot8: public SceneObject {
+	class Hotspot8 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class HotspotGroup1: public SceneObject {
+	class HotspotGroup1 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -101,66 +101,66 @@ public:
 	virtual void dispatch();
 };
 
-class Scene5100: public Scene {
+class Scene5100 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action4: public Action {
+	class Action4 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action5: public Action {
+	class Action5 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action6: public Action {
+	class Action6 : public Action {
 	public:
 		virtual void signal();
 	};
 
 	/* Hotspots */
-	class HotspotGroup1: public SceneObject {
+	class HotspotGroup1 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class HotspotGroup2: public SceneObject {
+	class HotspotGroup2 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot4: public SceneObject {
+	class Hotspot4 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot9: public SceneObject {
+	class Hotspot9 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot17: public SceneObject {
+	class Hotspot17 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot18: public SceneHotspot {
+	class Hotspot18 : public SceneHotspot {
 	public:
 		int _index1;
 		int _index2;
 
 		virtual void doAction(int action);
 	};
-	class Hotspot19: public SceneObject {
+	class Hotspot19 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot20: public SceneObject {
+	class Hotspot20 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -196,35 +196,35 @@ public:
 	virtual void dispatch();
 };
 
-class Scene5200: public Scene {
+class Scene5200 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action4: public Action {
+	class Action4 : public Action {
 	public:
 		virtual void signal();
 	};
 
 	/* Hotspots */
-	class Hotspot9: public SceneItemExt {
+	class Hotspot9 : public SceneItemExt {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot10: public SceneItemExt {
+	class Hotspot10 : public SceneItemExt {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot14: public SceneObject {
+	class Hotspot14 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -253,43 +253,43 @@ public:
 	virtual void dispatch();
 };
 
-class Scene5300: public Scene {
+class Scene5300 : public Scene {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		virtual void signal();
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		virtual void signal();
 	};
 
 	/* Hotspots */
-	class Hotspot1: public SceneObject {
+	class Hotspot1 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot2: public SceneObject {
+	class Hotspot2 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot5: public SceneObject {
+	class Hotspot5 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot6: public SceneObject {
+	class Hotspot6 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot7: public SceneObject {
+	class Hotspot7 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot8: public SceneObject {
+	class Hotspot8 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};

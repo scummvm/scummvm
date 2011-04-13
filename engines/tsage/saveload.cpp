@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-misc.svn.sourceforge.net/svnroot/scummvm-misc/trunk/engines/tsage/saveload.cpp $
- * $Id: saveload.cpp 209 2011-02-06 00:46:36Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -64,7 +64,7 @@ Saver::~Saver() {
 
 /*--------------------------------------------------------------------------*/
 
-void Serialiser::syncPointer(SavedObject **ptr, Common::Serializer::Version minVersion, 
+void Serialiser::syncPointer(SavedObject **ptr, Common::Serializer::Version minVersion,
 		Common::Serializer::Version maxVersion) {
 	int idx;
 	assert(ptr);
@@ -88,7 +88,7 @@ void Serialiser::syncPointer(SavedObject **ptr, Common::Serializer::Version minV
 	}
 }
 
-void Serialiser::validate(const Common::String &s, Common::Serializer::Version minVersion, 
+void Serialiser::validate(const Common::String &s, Common::Serializer::Version minVersion,
 		Common::Serializer::Version maxVersion) {
 	Common::String tempStr = s;
 	syncString(tempStr, minVersion, maxVersion);
@@ -97,7 +97,7 @@ void Serialiser::validate(const Common::String &s, Common::Serializer::Version m
 		error("Savegame is corrupt");
 }
 
-void Serialiser::validate(int v, Common::Serializer::Version minVersion, 
+void Serialiser::validate(int v, Common::Serializer::Version minVersion,
 		Common::Serializer::Version maxVersion) {
 	int tempVal = v;
 	syncAsUint32LE(tempVal, minVersion, maxVersion);
@@ -378,7 +378,7 @@ void Saver::resolveLoadPointers() {
 			}
 		}
 	}
-		
+
 	// At this point, all the unresolved pointers should have been resolved and removed
 	if (_unresolvedPtrs.size() > 0)
 		error("Could not resolve savegame block pointers");
