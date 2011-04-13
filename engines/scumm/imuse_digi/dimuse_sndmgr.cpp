@@ -34,8 +34,9 @@
 #include "scumm/scumm.h"
 #include "scumm/util.h"
 #include "scumm/imuse_digi/dimuse.h"
-#include "scumm/imuse_digi/dimuse_sndmgr.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
+#include "scumm/imuse_digi/dimuse_codecs.h"
+#include "scumm/imuse_digi/dimuse_sndmgr.h"
 
 namespace Scumm {
 

@@ -28,6 +28,7 @@
 #include "scumm/util.h"
 #include "scumm/file.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
+#include "scumm/imuse_digi/dimuse_codecs.h"
 
 namespace Scumm {
 

@@ -29,6 +29,7 @@
 #include "scumm/scumm.h"	// For DEBUG_SMUSH
 #include "scumm/util.h"
 #include "scumm/smush/channel.h"
+#include "scumm/imuse_digi/dimuse_codecs.h"	// for decode12BitsSample
 
 namespace Scumm {
 
@@ -171,28 +172,10 @@ void ImuseChannel::decode() {
 		}
 	}
 
-	// FIXME: Code duplication! See decode12BitsSample() in imuse_digi/dimuse_codecs.cpp
-
-	int loop_size = _sbufferSize / 3;
-	int new_size = loop_size * 4;
-	byte *keep, *decoded;
-	uint32 value;
-	keep = decoded = (byte *)malloc(new_size);
-	assert(keep);
-	unsigned char * source = _sbuffer;
-
-	while (loop_size--) {
-		byte v1 = *source++;
-		byte v2 = *source++;
-		byte v3 = *source++;
-		value = ((((v2 & 0x0f) << 8) | v1) << 4) - 0x8000;
-		WRITE_BE_UINT16(decoded, value); decoded += 2;
-		value = ((((v2 & 0xf0) << 4) | v3) << 4) - 0x8000;
-		WRITE_BE_UINT16(decoded, value); decoded += 2;
-	}
+	byte *keep;
+	_sbufferSize = BundleCodecs::decode12BitsSample(_sbuffer, &keep, _sbufferSize);
 	free(_sbuffer);
 	_sbuffer = (byte *)keep;
-	_sbufferSize = new_size;
 }
 
 bool ImuseChannel::handleSubTags(int32 &offset) {

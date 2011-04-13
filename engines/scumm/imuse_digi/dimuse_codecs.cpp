@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/util.h"
+#include "scumm/imuse_digi/dimuse_codecs.h"
 
 namespace Scumm {
 
