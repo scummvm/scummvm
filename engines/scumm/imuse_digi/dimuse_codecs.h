@@ -32,8 +32,10 @@ namespace Scumm {
 namespace BundleCodecs {
 
 uint32 decode12BitsSample(const byte *src, byte **dst, uint32 size);
-void initializeImcTables();
 int32 decompressCodec(int32 codec, byte *compInput, byte *compOutput, int32 inputSize);
+
+void initializeImcTables();
+void releaseImcTables();
 
 } // End of namespace BundleCodecs
 

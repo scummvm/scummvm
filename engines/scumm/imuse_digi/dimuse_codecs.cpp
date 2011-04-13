@@ -60,7 +60,8 @@ uint32 decode12BitsSample(const byte *src, byte **dst, uint32 size) {
  * varies the size of each "packet" between 2 and 7 bits.
  */
 
-static byte _imcTableEntryBitCount[89];
+static byte *_destImcTable = NULL;
+static uint32 *_destImcTable2 = NULL;
 
 static const int16 imcTable[89] = {
 		7,	  8,	9,	 10,   11,	 12,   13,	 14,
@@ -117,23 +118,47 @@ static const byte imxOtherTable[6][64] = {
 	}
 };
 
+void releaseImcTables() {
+	free(_destImcTable);
+	free(_destImcTable2);
+}
+
 void initializeImcTables() {
 	int pos;
 
-	for (pos = 0; pos < ARRAYSIZE(imcTable); ++pos) {
-		byte put = 0;
+	if (!_destImcTable) _destImcTable = (byte *)calloc(89, sizeof(byte));
+	if (!_destImcTable2) _destImcTable2 = (uint32 *)calloc(89 * 64, sizeof(uint32));
+
+	for (pos = 0; pos <= 88; ++pos) {
+		byte put = 1;
 		int32 tableValue = ((imcTable[pos] * 4) / 7) / 2;
 		while (tableValue != 0) {
 			tableValue /= 2;
 			put++;
 		}
-		if (put < 2) {
-			put = 2;
+		if (put < 3) {
+			put = 3;
 		}
-		if (put > 7) {
-			put = 7;
+		if (put > 8) {
+			put = 8;
 		}
-		_imcTableEntryBitCount[pos] = put;
+		_destImcTable[pos] = put - 1;
+	}
+
+	for (int n = 0; n < 64; n++) {
+		for (pos = 0; pos <= 88; ++pos) {
+			int32 count = 32;
+			int32 put = 0;
+			int32 tableValue = imcTable[pos];
+			do {
+				if ((count & n) != 0) {
+					put += tableValue;
+				}
+				count /= 2;
+				tableValue /= 2;
+			} while (count != 0);
+			_destImcTable2[n + pos * 64] = put;
+		}
 	}
 }
 
@@ -196,7 +221,7 @@ int32 decompressADPCM(byte *compInput, byte *compOutput, int channels) {
 	int32 destPos;
 	int16 firstWord;
 	byte initialTablePos[MAX_CHANNELS] = {0, 0};
-	//int32 initialimcTableEntry[MAX_CHANNELS] = {7, 7};
+	int32 initialimcTableEntry[MAX_CHANNELS] = {7, 7};
 	int32 initialOutputWord[MAX_CHANNELS] = {0, 0};
 	int32 totalBitOffset, curTablePos, outputWord;
 	byte *dst;
@@ -235,7 +260,7 @@ int32 decompressADPCM(byte *compInput, byte *compOutput, int channels) {
 		for (i = 0; i < channels; i++) {
 			initialTablePos[i] = *src;
 			src += 1;
-			//initialimcTableEntry[i] = READ_BE_UINT32(src);
+			initialimcTableEntry[i] = READ_BE_UINT32(src);
 			src += 4;
 			initialOutputWord[i] = READ_BE_UINT32(src);
 			src += 4;
@@ -262,7 +287,7 @@ int32 decompressADPCM(byte *compInput, byte *compOutput, int channels) {
 								: outputSamplesLeft / 2);
 		for (i = 0; i < bound; ++i) {
 			// Determine the size (in bits) of the next data packet
-			const int32 curTableEntryBitCount = _imcTableEntryBitCount[curTablePos];
+			const int32 curTableEntryBitCount = _destImcTable[curTablePos];
 			assert(2 <= curTableEntryBitCount && curTableEntryBitCount <= 7);
 
 			// Read the next data packet
@@ -278,7 +303,9 @@ int32 decompressADPCM(byte *compInput, byte *compOutput, int channels) {
 			const byte dataBitMask = (signBitMask - 1);
 			const byte data = (packet & dataBitMask);
 
-			int32 delta = imcTable[curTablePos] * (2 * data + 1) >> (curTableEntryBitCount - 1);
+			const int32 tmpA = (data << (7 - curTableEntryBitCount));
+			const int32 imcTableEntry = imcTable[curTablePos] >> (curTableEntryBitCount - 1);
+			int32 delta = imcTableEntry + _destImcTable2[tmpA + (curTablePos * 64)];
 
 			// The topmost bit in the data packet tells is a sign bit
 			if ((packet & signBitMask) != 0) {
@@ -307,7 +334,6 @@ int32 decompressADPCM(byte *compInput, byte *compOutput, int channels) {
 
 	return 0x2000;
 }
-
 
 int32 decompressCodec(int32 codec, byte *compInput, byte *compOutput, int32 inputSize) {
 	int32 outputSize;

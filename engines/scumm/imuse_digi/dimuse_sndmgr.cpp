@@ -57,6 +57,7 @@ ImuseDigiSndMgr::~ImuseDigiSndMgr() {
 	}
 
 	delete _cacheBundleDir;
+	BundleCodecs::releaseImcTables();
 }
 
 void ImuseDigiSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps, int &numSyncs, int &numMarkers) {
