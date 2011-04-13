@@ -173,6 +173,7 @@ public:
 protected:
 	void updateVolume();
 	bool load(uint32 fileref, bool loop);
+	void unload();
 
 private:
 	Audio::SoundHandle _handle;

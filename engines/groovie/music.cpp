@@ -777,11 +777,14 @@ void MusicPlayerMPEG4::updateVolume() {
 	_vm->_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _userVolume * _gameVolume / 100);
 }
 
-bool MusicPlayerMPEG4::load(uint32 fileref, bool loop) {
-	// Stop any old sound
-	_vm->_system->getMixer()->stopHandle(_handle);
+void MusicPlayerMPEG4::unload() {
+	MusicPlayer::unload();
 
-	// Find the filename
+	_vm->_system->getMixer()->stopHandle(_handle);
+}
+
+bool MusicPlayerMPEG4::load(uint32 fileref, bool loop) {
+	// Find correct filename
 	ResInfo info;
 	_vm->_resMan->getResInfo(fileref, info);
 	uint len = info.filename.size();
@@ -804,7 +807,6 @@ bool MusicPlayerMPEG4::load(uint32 fileref, bool loop) {
 	Audio::AudioStream *audStream = Audio::makeQuickTimeStream(info.filename);
 
 	if (!audStream) {
-		// MPEG-4 sounds aren't handled yet, so nothing should play here yet
 		warning("Could not play MPEG-4 sound '%s'", info.filename.c_str());
 		return false;
 	}
