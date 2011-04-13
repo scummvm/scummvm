@@ -925,7 +925,7 @@ int PlayerMover::findDistance(const Common::Point &pt1, const Common::Point &pt2
 	double yy = diff * 8.0 / 7.0;
 	yy *= yy;
 
-	return (int)sqrtf(xx + yy);
+	return (int)sqrt(xx + yy);
 }
 
 bool PlayerMover::sub_F8E5(const Common::Point &pt1, const Common::Point &pt2, const Common::Point &pt3,
