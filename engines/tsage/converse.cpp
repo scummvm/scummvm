@@ -320,7 +320,12 @@ void SequenceManager::attached(EventHandler *newOwner, EventHandler *fmt, va_lis
 	}
 
 	setup();
-	Action::attached(newOwner, fmt, NULL);
+	// TODO: This is not particulary nice, since dummy is uninitialized.
+	// Since the default Action implementation does not access the va_list
+	// parameter it should be fine though. Still it would be nice to find
+	// a better solution to this.
+	va_list dummy;
+	Action::attached(newOwner, fmt, dummy);
 }
 
 /**
