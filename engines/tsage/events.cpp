@@ -127,6 +127,9 @@ bool EventsClass::getEvent(Event &evt, int eventMask) {
 			return true;
 	}
 
+	evt.handled = false;
+	evt.eventType = EVENT_NONE;
+
 	return false;
 }
 
