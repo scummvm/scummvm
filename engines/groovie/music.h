@@ -63,6 +63,11 @@ private:
 
 	uint16 _backgroundDelay;
 
+	// T7G iOS credits mp3 stream
+	void playCreditsIOS();
+	void stopCreditsIOS();
+	Audio::SoundHandle _handleCreditsIOS;
+
 	// Volume fading
 	uint32 _fadingStartTime;
 	uint16 _fadingStartVolume;

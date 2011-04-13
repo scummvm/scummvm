@@ -33,6 +33,7 @@
 #include "common/memstream.h"
 #include "audio/audiostream.h"
 #include "audio/midiparser.h"
+#include "audio/decoders/mp3.h"
 #include "audio/decoders/quicktime.h"
 
 namespace Groovie {
@@ -94,6 +95,7 @@ void MusicPlayer::playCD(uint8 track) {
 	} else if ((track == 98) && (_prevCDtrack == 3)) {
 		// Track 98 is used as a hack to stop the credits song
 		g_system->getAudioCDManager()->stop();
+		stopCreditsIOS();
 		return;
 	}
 
@@ -126,6 +128,8 @@ void MusicPlayer::playCD(uint8 track) {
 				playSong((19 << 10) | 36); // XMI.GJD, file 36
 		} else if (track == 3) {
 			// TODO: Credits MIDI fallback
+			if (_vm->getPlatform() == Common::kPlatformIOS)
+				playCreditsIOS();
 		}
 	}
 }
@@ -226,6 +230,22 @@ void MusicPlayer::unload() {
 	_isPlaying = false;
 }
 
+void MusicPlayer::playCreditsIOS() {
+#ifdef USE_MAD
+	Common::File *f = new Common::File();
+	f->open("7th_Guest_Dolls_from_Hell_OC_ReMix.mp3");
+	Audio::AudioStream *stream = Audio::makeMP3Stream(f, DisposeAfterUse::YES);
+	_vm->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_handleCreditsIOS, stream);
+#else
+	warning("MAD library required for credits music");
+#endif
+}
+
+void MusicPlayer::stopCreditsIOS() {
+#ifdef USE_MAD
+	_vm->_system->getMixer()->stopHandle(_handleCreditsIOS);
+#endif
+}
 
 // MusicPlayerMidi
 
