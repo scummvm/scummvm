@@ -23,11 +23,11 @@
  *
  */
 
+#ifdef WEBOS
+
 #include "common/scummsys.h"
 #include "sys/time.h"
 #include "time.h"
-
-#ifdef WEBOS
 
 #include "backends/events/webossdl/webossdl-events.h"
 #include "gui/message.h"
