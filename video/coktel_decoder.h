@@ -431,8 +431,6 @@ private:
 
 	// Tables for the audio decompressors
 	static const uint16 _tableDPCM[128];
-	static const int32  _tableADPCM[];
-	static const int32  _tableADPCMStep[];
 
 	Common::SeekableReadStream *_stream;
 
