@@ -114,34 +114,13 @@ class Scene30 : public Scene {
 	// Doorway beam sensor
 	class BeamObject : public SceneObject {
 	public:
-		virtual void doAction(int action) {
-			if (action == OBJECT_SCANNER)
-				display(30, 14, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
-			else if (action == CURSOR_LOOK)
-				display(30, 2, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
-			else if (action == CURSOR_USE) {
-				Scene30 *parent = (Scene30 *)_globals->_sceneManager._scene;
-				parent->setAction(&parent->_beamAction);
-			} else
-				SceneObject::doAction(action);
-		}
+		virtual void doAction(int action);
 	};
-
 	// Doorway object
 	class DoorObject : public SceneObject {
 	public:
-		virtual void doAction(int action) {
-			if (action == OBJECT_SCANNER)
-				display(30, 13, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
-			else if (action == CURSOR_LOOK)
-				display(30, 1, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
-			else if (action == CURSOR_USE)
-				display(30, 7, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
-			else
-				SceneObject::doAction(action);
-		}
+		virtual void doAction(int action);
 	};
-
 	// Kzin object
 	class KzinObject : public SceneObject {
 	public:

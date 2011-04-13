@@ -622,6 +622,29 @@ void Scene20::signal() {
  *
  *--------------------------------------------------------------------------*/
 
+void Scene30::BeamObject::doAction(int action) {
+	if (action == OBJECT_SCANNER)
+		display(30, 14, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+	else if (action == CURSOR_LOOK)
+		display(30, 2, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+	else if (action == CURSOR_USE) {
+		Scene30 *parent = (Scene30 *)_globals->_sceneManager._scene;
+		parent->setAction(&parent->_beamAction);
+	} else
+		SceneObject::doAction(action);
+}
+
+void Scene30::DoorObject::doAction(int action) {
+	if (action == OBJECT_SCANNER)
+		display(30, 13, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+	else if (action == CURSOR_LOOK)
+		display(30, 1, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+	else if (action == CURSOR_USE)
+		display(30, 7, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+	else
+		SceneObject::doAction(action);
+}
+
 void Scene30::BeamAction::signal() {
 	Scene30 *scene = (Scene30 *)_globals->_sceneManager._scene;
 
