@@ -2201,7 +2201,7 @@ static void GetPointSector() {
 		return;
 	}
 	if (lua_isnil(typeObj))
-		sectorType = Sector::CameraType;
+		sectorType = Sector::WalkType;
 	else
 		sectorType = (Sector::SectorType)(int)lua_getnumber(typeObj);
 
