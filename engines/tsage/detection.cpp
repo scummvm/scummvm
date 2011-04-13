@@ -73,7 +73,7 @@ static const ADParams detectionParams = {
 	0,
 	"tsage",
 	NULL,
-	NULL,
+	0,
 	Common::GUIO_NONE,
 	0,
 	NULL
