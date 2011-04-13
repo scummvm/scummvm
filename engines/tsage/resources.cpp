@@ -356,22 +356,18 @@ void RlbManager::loadIndex() {
  *
  * @paletteNum Specefies the palette number
  */
-void RlbManager::getPalette(int paletteNum, uint8 *palData, uint *startNum, uint *numEntries) {
+void RlbManager::getPalette(int paletteNum, RGB8 *palData, uint *startNum, uint *numEntries) {
 	// Get the specified palette
 	byte *dataIn = getResource(RES_PALETTE, 0, paletteNum);
 	assert(dataIn);
 
 	*startNum = READ_LE_UINT16(dataIn);
 	*numEntries = READ_LE_UINT16(dataIn + 2);
+	RGB8 *srcPal = (RGB8 *)(dataIn + 6);
 	assert((*startNum < 256) && ((*startNum + *numEntries) <= 256));
 
 	// Copy over the data
-	for (uint i = 0; i < *numEntries; ++i) {
-		*palData++ = dataIn[6 + i * 3];
-		*palData++ = dataIn[7 + i * 3];
-		*palData++ = dataIn[8 + i * 3];
-		*palData++ = 0;
-	}
+	Common::copy(&srcPal[0], &srcPal[*numEntries], palData);
 
 	_memoryManager.deallocate(dataIn);
 }

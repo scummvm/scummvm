@@ -1055,8 +1055,11 @@ void PaletteRotation::synchronise(Serialiser &s) {
 	s.syncAsSint32LE(_end);
 	s.syncAsSint32LE(_rotationMode);
 	s.syncAsSint32LE(_duration);
-	for (int i = 0; i < 256; ++i)
-		s.syncAsUint32LE(_palette[i]);
+	for (int i = 0; i < 256; ++i) {
+		s.syncAsByte(_palette[i].r);
+		s.syncAsByte(_palette[i].g);
+		s.syncAsByte(_palette[i].b);
+	}
 }
 
 void PaletteRotation::signal() {
@@ -1189,8 +1192,11 @@ void PaletteUnknown::synchronise(Serialiser &s) {
 	s.syncAsSint16LE(_percent);
 	s.syncAsSint16LE(_field12);
 	s.syncAsSint16LE(_field14);
-	for (int i = 0; i < 256; ++i)
-		s.syncAsUint32LE(_palette[i]);
+	for (int i = 0; i < 256; ++i) {
+		s.syncAsByte(_palette[i].r);
+		s.syncAsByte(_palette[i].g);
+		s.syncAsByte(_palette[i].b);
+	}
 }
 
 void PaletteUnknown::signal() {
@@ -1221,7 +1227,7 @@ void PaletteUnknown::remove() {
 ScenePalette::ScenePalette() { 
 	// Set a default gradiant range
 	for (int idx = 0; idx < 256; ++idx)
-		_palette[idx] = idx | (idx << 8) | (idx << 16);
+		_palette[idx].r = _palette[idx].g = _palette[idx].b = idx;
 
 	_field412 = 0;
 }
@@ -1239,12 +1245,10 @@ bool ScenePalette::loadPalette(int paletteNum) {
 	int palSize = READ_LE_UINT16(palData + 2);
 	assert(palSize <= 256);
 
-	uint32 *destP = &_palette[palStart];
-	byte *srcP = palData + 6;
+	RGB8 *destP = &_palette[palStart];
+	RGB8 *srcP = (RGB8 *)(palData + 6);
 
-
-	for (int i = 0; i < palSize; ++i, srcP += 3, ++destP)
-		*destP = *srcP | (*(srcP + 1) << 8) | (*(srcP + 2) << 16);
+	Common::copy(&srcP[0], &srcP[palSize], destP);
 
 	DEALLOCATE(palData);
 	return true;
@@ -1284,12 +1288,9 @@ uint8 ScenePalette::indexOf(uint r, uint g, uint b, int threshold) {
 	int palIndex = -1;
 
 	for (int i = 0; i < 256; ++i) {
-		int ir = _palette[i] & 0xff;
-		int ig = (_palette[i] >> 8) & 0xff;
-		int ib = (_palette[i] >> 16) & 0xff;
-		int rDiff = abs(ir - (int)r);
-		int gDiff = abs(ig - (int)g);
-		int bDiff = abs(ib - (int)b);
+		int rDiff = abs(_palette[i].r - (int)r);
+		int gDiff = abs(_palette[i].g - (int)g);
+		int bDiff = abs(_palette[i].b - (int)b);
 		
 		int idxThreshold = rDiff * rDiff + gDiff * gDiff + bDiff * bDiff;
 		if (idxThreshold <= threshold) {
@@ -1326,14 +1327,14 @@ void ScenePalette::clearListeners() {
 }
 
 void ScenePalette::fade(const byte *adjustData, bool fullAdjust, int percent) {
-	uint32 tempPalette[256];
+	RGB8 tempPalette[256];
 
 	// Ensure the percent adjustment is within 0 - 100%
 	percent = CLIP(percent, 0, 100);
 
 	for (int palIndex = 0; palIndex < 256; ++palIndex) {
 		const byte *srcP = (const byte *)&_palette[palIndex];
-		byte *destP = (byte *)&tempPalette[palIndex];
+		byte *destP = (byte *)&tempPalette[palIndex].r;
 
 		for (int rgbIndex = 0; rgbIndex < 3; ++rgbIndex, ++srcP, ++destP) {
 			*destP = *srcP - ((*srcP - adjustData[rgbIndex]) * (100 - percent)) / 100;
@@ -1359,7 +1360,7 @@ PaletteRotation *ScenePalette::addRotation(int start, int end, int rotationMode,
 	return obj;
 }
 
-PaletteUnknown *ScenePalette::addUnkPal(uint32 *arrBufferRGB, int unkNumb, bool disabled, Action *action) {
+PaletteUnknown *ScenePalette::addUnkPal(RGB8 *arrBufferRGB, int unkNumb, bool disabled, Action *action) {
 	PaletteUnknown *paletteUnk = new PaletteUnknown();
 	paletteUnk->_action = action;
 	for (int i = 0; i < 256; i++) {
@@ -1400,8 +1401,11 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 }
 
 void ScenePalette::synchronise(Serialiser &s) {
-	for (int i = 0; i < 256; ++i)
-		s.syncAsUint32LE(_palette[i]);
+	for (int i = 0; i < 256; ++i) {
+		s.syncAsByte(_palette[i].r);
+		s.syncAsByte(_palette[i].g);
+		s.syncAsByte(_palette[i].b);
+	}
 	s.syncAsSint32LE(_colours.foreground);
 	s.syncAsSint32LE(_colours.background);
 

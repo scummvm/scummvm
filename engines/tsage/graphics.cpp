@@ -1061,9 +1061,9 @@ void GfxManager::fillRect2(int xs, int ys, int width, int height, int colour) {
  */
 void GfxManager::setDialogPalette() {
 	// Get the main palette information
-	uint32 palData[256];
+	RGB8 palData[256];
 	uint count, start;
-	_vm->_dataManager->getPalette(0, (byte *)&palData[0], &start, &count);
+	_vm->_dataManager->getPalette(0, &palData[0], &start, &count);
 	g_system->getPaletteManager()->setPalette((byte *)&palData[0], start, count);
 
 	// Miscellaneous

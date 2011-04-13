@@ -1633,8 +1633,9 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
  *
  *--------------------------------------------------------------------------*/
 void Scene9900::strAction1::signal() {
-	static uint32 mask1 = 0xFFFFFF00;
-	static uint32 mask2 = 0x00000000;
+	RGB8 mask1, mask2;
+	mask1.r = mask1.g = mask1.b = 0xff;
+	mask2.r = mask2.g = mask2.b = 0;
 
 	Scene9900 *scene = (Scene9900 *)_globals->_sceneManager._scene;
 
@@ -1769,8 +1770,9 @@ void Scene9900::strAction2::dispatch() {
 }
 
 void Scene9900::strAction3::signal() {
-	static uint32 mask3 = 0xFF000000;
-	static uint32 mask4 = 0x00000000;
+	RGB8 mask3, mask4;
+	mask3.r = 0xff; mask3.g = mask3.b = 0;
+	mask4.r = mask4.g = mask4.b = 0;
 
 	switch (_actionIndex++) {
 	case 0:
