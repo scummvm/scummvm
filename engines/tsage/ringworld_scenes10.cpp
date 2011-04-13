@@ -31,8 +31,7 @@
 
 namespace tSage {
 
-Scene2::Scene2() {
-	Scene::Scene();
+Scene2::Scene2() : Scene() {
 	_sceneState = 0;
 }
 
@@ -1700,7 +1699,7 @@ void Scene9900::strAction2::signal() {
 				// Not used?
 				// int x = _txtArray2[_txtArray1Index].getFrame().getBounds().height();
 				_txtArray2[_txtArray1Index]._moveDiff.y = 10;
-				_txtArray1Index = (_txtArray1Index++) % 2;
+				_txtArray1Index = (_txtArray1Index + 1) % 2;
 			}
 			var3 = 1;
 			_txtArray1[_txtArray1Index]._textMode = ALIGN_CENTRE;
