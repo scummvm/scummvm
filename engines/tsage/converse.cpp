@@ -512,10 +512,10 @@ void Obj44::load(const byte *dataP) {
 
 void Obj44::synchronise(Serialiser &s) {
 	s.syncAsSint32LE(_id);
-	for (int i = 0; i < OBJ44_LIST_SIZE; ++i)
-		s.syncAsSint32LE(_field2[i]);
-	for (int i = 0; i < OBJ44_LIST_SIZE; ++i)
-		_list[OBJ44_LIST_SIZE].synchronise(s);
+	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
+		s.syncAsSint32LE(_field2[idx]);
+	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
+		_list[idx].synchronise(s);
 	s.syncAsUint32LE(_speakerOffset);
 }
 
