@@ -38,6 +38,7 @@
 #include "common/file.h"
 #include "common/memstream.h"
 
+#include "tinsel/adpcm.h"
 #include "tinsel/config.h"
 #include "tinsel/sound.h"
 #include "tinsel/music.h"
@@ -785,8 +786,8 @@ bool PCMMusicPlayer::getNextChunk() {
 		sampleStream = new Common::MemoryReadStream(buffer, sampleCLength, DisposeAfterUse::YES);
 
 		delete _curChunk;
-		_curChunk = makeADPCMStream(sampleStream, DisposeAfterUse::YES, sampleCLength,
-				Audio::kADPCMTinsel8, 22050, 1, 32);
+		_curChunk = new Tinsel8_ADPCMStream(sampleStream, DisposeAfterUse::YES, sampleCLength,
+				22050, 1, 32);
 
 		_state = S_MID;
 		return true;

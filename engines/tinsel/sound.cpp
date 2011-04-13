@@ -26,6 +26,7 @@
 
 #include "tinsel/sound.h"
 
+#include "tinsel/adpcm.h"
 #include "tinsel/dw.h"
 #include "tinsel/config.h"
 #include "tinsel/music.h"
@@ -319,7 +320,7 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 #endif
 		break;
 	default:
-		sampleStream = Audio::makeADPCMStream(compressedStream, DisposeAfterUse::YES, sampleLen, Audio::kADPCMTinsel6, 22050, 1, 24);
+		sampleStream = new Tinsel6_ADPCMStream(compressedStream, DisposeAfterUse::YES, sampleLen, 22050, 1, 24);
 		break;
 	}
 
