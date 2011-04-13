@@ -1997,13 +1997,14 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 			debug(4, "%d targets with targeting type %04x", count, targetingType);
 
 			// FIXME: targeting by name
+			uint oldAlign = size % 2;
 			for (uint i = 0; i < count; i++) {
 				Common::String target = _vm->readString(stream);
 				warning("ignoring target '%s' in script entry", target.c_str());
 				size -= target.size() + 1;
 			}
 
-			if (size % 2 == 1) {
+			if (size % 2 != oldAlign) {
 				stream->skip(1);
 				size--;
 			}
