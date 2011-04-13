@@ -27,6 +27,8 @@
 #include "common/util.h"
 #include "scumm/imuse_digi/dimuse_codecs.h"
 
+#include "audio/decoders/adpcm_intern.h"
+
 namespace Scumm {
 
 namespace BundleCodecs {
@@ -63,21 +65,7 @@ uint32 decode12BitsSample(const byte *src, byte **dst, uint32 size) {
 static byte *_destImcTable = NULL;
 static uint32 *_destImcTable2 = NULL;
 
-static const int16 imcTable[89] = {
-		7,	  8,	9,	 10,   11,	 12,   13,	 14,
-	   16,	 17,   19,	 21,   23,	 25,   28,	 31,
-	   34,	 37,   41,	 45,   50,	 55,   60,	 66,
-	   73,	 80,   88,	 97,  107,	118,  130,	143,
-	  157,	173,  190,	209,  230,	253,  279,	307,
-	  337,	371,  408,	449,  494,	544,  598,	658,
-	  724,	796,  876,	963, 1060, 1166, 1282, 1411,
-	 1552, 1707, 1878, 2066, 2272, 2499, 2749, 3024,
-	 3327, 3660, 4026, 4428, 4871, 5358, 5894, 6484,
-	 7132, 7845, 8630, 9493,10442,11487,12635,13899,
-	15289,16818,18500,20350,22385,24623,27086,29794,
-	32767
-};
-
+// This table is the "big brother" of Audio::ADPCMStream::_stepAdjustTable.
 static const byte imxOtherTable[6][64] = {
 	{
 		0xFF,
@@ -131,7 +119,7 @@ void initializeImcTables() {
 
 	for (pos = 0; pos <= 88; ++pos) {
 		byte put = 1;
-		int32 tableValue = ((imcTable[pos] * 4) / 7) / 2;
+		int32 tableValue = ((Audio::Ima_ADPCMStream::_imaTable[pos] * 4) / 7) / 2;
 		while (tableValue != 0) {
 			tableValue /= 2;
 			put++;
@@ -149,7 +137,7 @@ void initializeImcTables() {
 		for (pos = 0; pos <= 88; ++pos) {
 			int32 count = 32;
 			int32 put = 0;
-			int32 tableValue = imcTable[pos];
+			int32 tableValue = Audio::Ima_ADPCMStream::_imaTable[pos];
 			do {
 				if ((count & n) != 0) {
 					put += tableValue;
@@ -304,7 +292,7 @@ int32 decompressADPCM(byte *compInput, byte *compOutput, int channels) {
 			const byte data = (packet & dataBitMask);
 
 			const int32 tmpA = (data << (7 - curTableEntryBitCount));
-			const int32 imcTableEntry = imcTable[curTablePos] >> (curTableEntryBitCount - 1);
+			const int32 imcTableEntry = Audio::Ima_ADPCMStream::_imaTable[curTablePos] >> (curTableEntryBitCount - 1);
 			int32 delta = imcTableEntry + _destImcTable2[tmpA + (curTablePos * 64)];
 
 			// The topmost bit in the data packet tells is a sign bit
@@ -316,19 +304,13 @@ int32 decompressADPCM(byte *compInput, byte *compOutput, int channels) {
 			outputWord += delta;
 
 			// Clip outputWord to 16 bit signed, and write it into the destination stream
-			if (outputWord > 0x7fff)
-				outputWord = 0x7fff;
-			if (outputWord < -0x8000)
-				outputWord = -0x8000;
+			outputWord = CLIP<int32>(outputWord, -0x8000, 0x7fff);
 			WRITE_BE_UINT16(dst + destPos, outputWord);
 			destPos += channels << 1;
 
 			// Adjust the curTablePos
 			curTablePos += (int8)imxOtherTable[curTableEntryBitCount - 2][data];
-			if (curTablePos < 0)
-				curTablePos = 0;
-			else if (curTablePos >= ARRAYSIZE(imcTable))
-				curTablePos = ARRAYSIZE(imcTable) - 1;
+			curTablePos = CLIP<int32>(curTablePos, 0, ARRAYSIZE(Audio::Ima_ADPCMStream::_imaTable) - 1);
 		}
 	}
 
