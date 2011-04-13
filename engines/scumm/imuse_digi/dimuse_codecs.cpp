@@ -183,8 +183,133 @@ static int32 compDecode(byte *src, byte *dst) {
 }
 #undef NextBit
 
+int32 decompressADPCM(byte *compInput, byte *compOutput, int channels) {
+	byte *src;
+
+	// Decoder for the the IMA ADPCM variants used in COMI.
+	// Contrary to regular IMA ADPCM, this codec uses a variable
+	// bitsize for the encoded data.
+
+	const int MAX_CHANNELS = 2;
+	int32 outputSamplesLeft;
+	int32 destPos;
+	int16 firstWord;
+	byte initialTablePos[MAX_CHANNELS] = {0, 0};
+	//int32 initialimcTableEntry[MAX_CHANNELS] = {7, 7};
+	int32 initialOutputWord[MAX_CHANNELS] = {0, 0};
+	int32 totalBitOffset, curTablePos, outputWord;
+	byte *dst;
+	int i;
+
+	// We only support mono and stereo
+	assert(channels == 1 || channels == 2);
+
+	src = compInput;
+	dst = compOutput;
+	outputSamplesLeft = 0x1000;
+
+	// Every data packet contains 0x2000 bytes of audio data
+	// when extracted. In order to encode bigger data sets,
+	// one has to split the data into multiple blocks.
+	//
+	// Every block starts with a 2 byte word. If that word is
+	// non-zero, it indicates the size of a block of raw audio
+	// data (not encoded) following it. That data we simply copy
+	// to the output buffer and the proceed by decoding the
+	// remaining data.
+	//
+	// If on the other hand the word is zero, then what follows
+	// are 7*channels bytes containing seed data for the decoder.
+	firstWord = READ_BE_UINT16(src);
+	src += 2;
+	if (firstWord != 0) {
+		// Copy raw data
+		memcpy(dst, src, firstWord);
+		dst += firstWord;
+		src += firstWord;
+		assert((firstWord & 1) == 0);
+		outputSamplesLeft -= firstWord / 2;
+	} else {
+		// Read the seed values for the decoder.
+		for (i = 0; i < channels; i++) {
+			initialTablePos[i] = *src;
+			src += 1;
+			//initialimcTableEntry[i] = READ_BE_UINT32(src);
+			src += 4;
+			initialOutputWord[i] = READ_BE_UINT32(src);
+			src += 4;
+		}
+	}
+
+	totalBitOffset = 0;
+	// The channels are encoded separately.
+	for (int chan = 0; chan < channels; chan++) {
+		// Read initial state (this makes it possible for the data stream
+		// to be split & spread across multiple data chunks.
+		curTablePos = initialTablePos[chan];
+		//imcTableEntry = initialimcTableEntry[chan];
+		outputWord = initialOutputWord[chan];
+
+		// We need to interleave the channels in the output; we achieve
+		// that by using a variables dest offset:
+		destPos = chan * 2;
+
+		const int bound = (channels == 1)
+							? outputSamplesLeft
+							: ((chan == 0)
+								? (outputSamplesLeft+1) / 2
+								: outputSamplesLeft / 2);
+		for (i = 0; i < bound; ++i) {
+			// Determine the size (in bits) of the next data packet
+			const int32 curTableEntryBitCount = _imcTableEntryBitCount[curTablePos];
+			assert(2 <= curTableEntryBitCount && curTableEntryBitCount <= 7);
+
+			// Read the next data packet
+			const byte *readPos = src + (totalBitOffset >> 3);
+			const uint16 readWord = (uint16)(READ_BE_UINT16(readPos) << (totalBitOffset & 7));
+			const byte packet = (byte)(readWord >> (16 - curTableEntryBitCount));
+
+			// Advance read position to the next data packet
+			totalBitOffset += curTableEntryBitCount;
+
+			// Decode the data packet into a delta value for the output signal.
+			const byte signBitMask = (1 << (curTableEntryBitCount - 1));
+			const byte dataBitMask = (signBitMask - 1);
+			const byte data = (packet & dataBitMask);
+
+			int32 delta = imcTable[curTablePos] * (2 * data + 1) >> (curTableEntryBitCount - 1);
+
+			// The topmost bit in the data packet tells is a sign bit
+			if ((packet & signBitMask) != 0) {
+				delta = -delta;
+			}
+
+			// Accumulate the delta onto the output data
+			outputWord += delta;
+
+			// Clip outputWord to 16 bit signed, and write it into the destination stream
+			if (outputWord > 0x7fff)
+				outputWord = 0x7fff;
+			if (outputWord < -0x8000)
+				outputWord = -0x8000;
+			WRITE_BE_UINT16(dst + destPos, outputWord);
+			destPos += channels << 1;
+
+			// Adjust the curTablePos
+			curTablePos += (int8)imxOtherTable[curTableEntryBitCount - 2][data];
+			if (curTablePos < 0)
+				curTablePos = 0;
+			else if (curTablePos >= ARRAYSIZE(imcTable))
+				curTablePos = ARRAYSIZE(imcTable) - 1;
+		}
+	}
+
+	return 0x2000;
+}
+
+
 int32 decompressCodec(int32 codec, byte *compInput, byte *compOutput, int32 inputSize) {
-	int32 outputSize, channels;
+	int32 outputSize;
 	int32 offset1, offset2, offset3, length, k, c, s, j, r, t, z;
 	byte *src, *t_table, *p, *ptr;
 	byte t_tmp1, t_tmp2;
@@ -506,132 +631,7 @@ int32 decompressCodec(int32 codec, byte *compInput, byte *compOutput, int32 inpu
 
 	case 13:
 	case 15:
-		if (codec == 13) {
-			channels = 1;
-		} else {
-			channels = 2;
-		}
-
-		{
-			// Decoder for the the IMA ADPCM variants used in COMI.
-			// Contrary to regular IMA ADPCM, this codec uses a variable
-			// bitsize for the encoded data.
-
-			const int MAX_CHANNELS = 2;
-			int32 outputSamplesLeft;
-			int32 destPos;
-			int16 firstWord;
-			byte initialTablePos[MAX_CHANNELS] = {0, 0};
-			//int32 initialimcTableEntry[MAX_CHANNELS] = {7, 7};
-			int32 initialOutputWord[MAX_CHANNELS] = {0, 0};
-			int32 totalBitOffset, curTablePos, outputWord;
-			byte *dst;
-			int i;
-
-			// We only support mono and stereo
-			assert(channels == 1 || channels == 2);
-
-			src = compInput;
-			dst = compOutput;
-			outputSize = 0x2000;
-			outputSamplesLeft = 0x1000;
-
-			// Every data packet contains 0x2000 bytes of audio data
-			// when extracted. In order to encode bigger data sets,
-			// one has to split the data into multiple blocks.
-			//
-			// Every block starts with a 2 byte word. If that word is
-			// non-zero, it indicates the size of a block of raw audio
-			// data (not encoded) following it. That data we simply copy
-			// to the output buffer and the proceed by decoding the
-			// remaining data.
-			//
-			// If on the other hand the word is zero, then what follows
-			// are 7*channels bytes containing seed data for the decoder.
-			firstWord = READ_BE_UINT16(src);
-			src += 2;
-			if (firstWord != 0) {
-				// Copy raw data
-				memcpy(dst, src, firstWord);
-				dst += firstWord;
-				src += firstWord;
-				assert((firstWord & 1) == 0);
-				outputSamplesLeft -= firstWord / 2;
-			} else {
-				// Read the seed values for the decoder.
-				for (i = 0; i < channels; i++) {
-					initialTablePos[i] = *src;
-					src += 1;
-					//initialimcTableEntry[i] = READ_BE_UINT32(src);
-					src += 4;
-					initialOutputWord[i] = READ_BE_UINT32(src);
-					src += 4;
-				}
-			}
-
-			totalBitOffset = 0;
-			// The channels are encoded separately.
-			for (int chan = 0; chan < channels; chan++) {
-				// Read initial state (this makes it possible for the data stream
-				// to be split & spread across multiple data chunks.
-				curTablePos = initialTablePos[chan];
-				//imcTableEntry = initialimcTableEntry[chan];
-				outputWord = initialOutputWord[chan];
-
-				// We need to interleave the channels in the output; we achieve
-				// that by using a variables dest offset:
-				destPos = chan * 2;
-
-				const int bound = (channels == 1)
-									? outputSamplesLeft
-									: ((chan == 0)
-										? (outputSamplesLeft+1) / 2
-										: outputSamplesLeft / 2);
-				for (i = 0; i < bound; ++i) {
-					// Determine the size (in bits) of the next data packet
-					const int32 curTableEntryBitCount = _imcTableEntryBitCount[curTablePos];
-					assert(2 <= curTableEntryBitCount && curTableEntryBitCount <= 7);
-
-					// Read the next data packet
-					const byte *readPos = src + (totalBitOffset >> 3);
-					const uint16 readWord = (uint16)(READ_BE_UINT16(readPos) << (totalBitOffset & 7));
-					const byte packet = (byte)(readWord >> (16 - curTableEntryBitCount));
-
-					// Advance read position to the next data packet
-					totalBitOffset += curTableEntryBitCount;
-
-					// Decode the data packet into a delta value for the output signal.
-					const byte signBitMask = (1 << (curTableEntryBitCount - 1));
-					const byte dataBitMask = (signBitMask - 1);
-					const byte data = (packet & dataBitMask);
-
-					int32 delta = imcTable[curTablePos] * (2 * data + 1) >> (curTableEntryBitCount - 1);
-
-					// The topmost bit in the data packet tells is a sign bit
-					if ((packet & signBitMask) != 0) {
-						delta = -delta;
-					}
-
-					// Accumulate the delta onto the output data
-					outputWord += delta;
-
-					// Clip outputWord to 16 bit signed, and write it into the destination stream
-					if (outputWord > 0x7fff)
-						outputWord = 0x7fff;
-					if (outputWord < -0x8000)
-						outputWord = -0x8000;
-					WRITE_BE_UINT16(dst + destPos, outputWord);
-					destPos += channels << 1;
-
-					// Adjust the curTablePos
-					curTablePos += (int8)imxOtherTable[curTableEntryBitCount - 2][data];
-					if (curTablePos < 0)
-						curTablePos = 0;
-					else if (curTablePos >= ARRAYSIZE(imcTable))
-						curTablePos = ARRAYSIZE(imcTable) - 1;
-				}
-			}
-		}
+		outputSize = decompressADPCM(compInput, compOutput, (codec == 13) ? 1 : 2);
 		break;
 
 	default:
