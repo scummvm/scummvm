@@ -58,7 +58,7 @@ enum typesADPCM {
 	kADPCMMSIma,               // Microsoft IMA ADPCM
 	kADPCMMSImaLastExpress,    // Microsoft IMA ADPCM (with inverted samples)
 	kADPCMMS,                  // Microsoft ADPCM
-	kADPCMIma,                 // Standard IMA ADPCM
+	kADPCMDVI,                 // Intel DVI IMA ADPCM
 	kADPCMApple,               // Apple QuickTime IMA ADPCM
 	kADPCMDK3                  // Duck DK3 IMA ADPCM
 };

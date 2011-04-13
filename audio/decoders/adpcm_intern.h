@@ -104,13 +104,18 @@ public:
 		memset(&_status, 0, sizeof(_status));
 	}
 
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-
-
 	/**
 	 * This table is used by decodeIMA.
 	 */
 	static const int16 _imaTable[89];
+};
+
+class DVI_ADPCMStream : public Ima_ADPCMStream {
+public:
+	DVI_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
+		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {}
+
+	virtual int readBuffer(int16 *buffer, const int numSamples);
 };
 
 class Apple_ADPCMStream : public Ima_ADPCMStream {

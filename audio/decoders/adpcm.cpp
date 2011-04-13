@@ -121,7 +121,7 @@ int16 Oki_ADPCMStream::decodeOKI(byte code) {
 #pragma mark -
 
 
-int Ima_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
+int DVI_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples;
 	byte data;
 
@@ -453,8 +453,8 @@ RewindableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, Dispo
 		return new MSIma_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign, true);
 	case kADPCMMS:
 		return new MS_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
-	case kADPCMIma:
-		return new Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
+	case kADPCMDVI:
+		return new DVI_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
 	case kADPCMApple:
 		return new Apple_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
 	case kADPCMDK3:
