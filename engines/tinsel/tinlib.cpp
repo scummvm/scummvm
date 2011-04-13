@@ -84,7 +84,7 @@ extern bool bNoPause;
 
 // In DOS_MAIN.C
 // TODO/FIXME: From dos_main.c: "Only used on PSX so far"
-int clRunMode = 0;
+//int clRunMode = 0;
 
 //----------------- EXTERNAL FUNCTIONS ---------------------
 
@@ -2490,7 +2490,7 @@ void ResumeLastGame() {
  * Returns the current run mode
  */
 static int RunMode() {
-	return clRunMode;
+	return 0;	//clRunMode;
 }
 
 /**
