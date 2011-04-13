@@ -19,8 +19,10 @@ lib*.a
 /MT32_CONTROL.ROM
 /MT32_PCM.ROM
 /ScummVM.app
+/*.ipk
 /.project
 /.cproject
+/.settings
 
 /backends/platform/dc/gui
 /backends/platform/dc/graphics
@@ -86,24 +88,26 @@ lib*.a
 /doc/*.ps
 /doc/*.toc
 
+/plugins
+
 /test/runner
 /test/runner.cpp
 /test/*.dSYM
 
-/tools/convbdf
-/tools/md5table
-/tools/make-scumm-fontdata
-/tools/create_drascula/create_drascula
-/tools/create_hugo/create_hugo
-/tools/create_kyradat/create_kyradat
-/tools/create_lure/create_lure
-/tools/create_mads/create_mads
-/tools/create_project/create_project
-/tools/create_teenagent/create_teenagent
-/tools/create_toon/create_toon
-/tools/create_translations/create_translations
-/tools/qtable/qtable
-/tools/skycpt/skycpt
+/devtools/convbdf
+/devtools/md5table
+/devtools/make-scumm-fontdata
+/devtools/create_drascula/create_drascula
+/devtools/create_hugo/create_hugo
+/devtools/create_kyradat/create_kyradat
+/devtools/create_lure/create_lure
+/devtools/create_mads/create_mads
+/devtools/create_project/create_project
+/devtools/create_teenagent/create_teenagent
+/devtools/create_toon/create_toon
+/devtools/create_translations/create_translations
+/devtools/qtable/qtable
+/devtools/skycpt/skycpt
 
 #ignore thumbnails created by windows
 Thumbs.db

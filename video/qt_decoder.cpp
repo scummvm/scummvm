@@ -201,28 +201,28 @@ void QuickTimeDecoder::seekToTime(Audio::Timestamp time) {
 }
 
 Codec *QuickTimeDecoder::createCodec(uint32 codecTag, byte bitsPerPixel) {
-	if (codecTag == MKID_BE('cvid')) {
+	if (codecTag == MKTAG('c','v','i','d')) {
 		// Cinepak: As used by most Myst and all Riven videos as well as some Myst ME videos. "The Chief" videos also use this.
 		return new CinepakDecoder(bitsPerPixel);
-	} else if (codecTag == MKID_BE('rpza')) {
+	} else if (codecTag == MKTAG('r','p','z','a')) {
 		// Apple Video ("Road Pizza"): Used by some Myst videos.
 		return new RPZADecoder(getWidth(), getHeight());
-	} else if (codecTag == MKID_BE('rle ')) {
+	} else if (codecTag == MKTAG('r','l','e',' ')) {
 		// QuickTime RLE: Used by some Myst ME videos.
 		return new QTRLEDecoder(getWidth(), getHeight(), bitsPerPixel);
-	} else if (codecTag == MKID_BE('smc ')) {
+	} else if (codecTag == MKTAG('s','m','c',' ')) {
 		// Apple SMC: Used by some Myst videos.
 		return new SMCDecoder(getWidth(), getHeight());
-	} else if (codecTag == MKID_BE('SVQ1')) {
+	} else if (codecTag == MKTAG('S','V','Q','1')) {
 		// Sorenson Video 1: Used by some Myst ME videos.
 		warning("Sorenson Video 1 not yet supported");
-	} else if (codecTag == MKID_BE('SVQ3')) {
+	} else if (codecTag == MKTAG('S','V','Q','3')) {
 		// Sorenson Video 3: Used by some Myst ME videos.
 		warning("Sorenson Video 3 not yet supported");
-	} else if (codecTag == MKID_BE('jpeg')) {
+	} else if (codecTag == MKTAG('j','p','e','g')) {
 		// Motion JPEG: Used by some Myst ME 10th Anniversary videos.
 		return new JPEGDecoder();
-	} else if (codecTag == MKID_BE('QkBk')) {
+	} else if (codecTag == MKTAG('Q','k','B','k')) {
 		// CDToons: Used by most of the Broderbund games.
 		return new CDToonsDecoder(getWidth(), getHeight());
 	} else {

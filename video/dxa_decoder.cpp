@@ -73,7 +73,7 @@ bool DXADecoder::loadStream(Common::SeekableReadStream *stream) {
 	_fileStream = stream;
 
 	uint32 tag = _fileStream->readUint32BE();
-	assert(tag == MKID_BE('DEXA'));
+	assert(tag == MKTAG('D','E','X','A'));
 
 	uint8 flags = _fileStream->readByte();
 	_frameCount = _fileStream->readUint16BE();
@@ -136,7 +136,7 @@ bool DXADecoder::loadStream(Common::SeekableReadStream *stream) {
 			switch (tag) {
 				case 0: // No more tags
 					break;
-				case MKID_BE('MAXD'):
+				case MKTAG('M','A','X','D'):
 					assert(size == 4);
 					_decompBufferSize = _fileStream->readUint32BE();
 					break;
@@ -479,13 +479,13 @@ void DXADecoder::decode13(int size) {
 
 const Graphics::Surface *DXADecoder::decodeNextFrame() {
 	uint32 tag = _fileStream->readUint32BE();
-	if (tag == MKID_BE('CMAP')) {
+	if (tag == MKTAG('C','M','A','P')) {
 		_fileStream->read(_palette, 256 * 3);
 		_dirtyPalette = true;
 	}
 
 	tag = _fileStream->readUint32BE();
-	if (tag == MKID_BE('FRAM')) {
+	if (tag == MKTAG('F','R','A','M')) {
 		byte type = _fileStream->readByte();
 		uint32 size = _fileStream->readUint32BE();
 		if ((_inBuffer == NULL) || (_inBufferSize < size)) {

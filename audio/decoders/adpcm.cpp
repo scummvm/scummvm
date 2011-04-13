@@ -26,43 +26,11 @@
 #include "common/endian.h"
 
 #include "audio/decoders/adpcm.h"
+#include "audio/decoders/adpcm_intern.h"
 #include "audio/audiostream.h"
 
 
 namespace Audio {
-
-class ADPCMStream : public RewindableAudioStream {
-protected:
-	Common::SeekableReadStream *_stream;
-	const DisposeAfterUse::Flag _disposeAfterUse;
-	const int32 _startpos;
-	const int32 _endpos;
-	const int _channels;
-	const uint32 _blockAlign;
-	uint32 _blockPos[2];
-	const int _rate;
-
-	struct {
-		// OKI/IMA
-		struct {
-			int32 last;
-			int32 stepIndex;
-		} ima_ch[2];
-	} _status;
-
-	virtual void reset();
-	int16 stepAdjust(byte);
-
-public:
-	ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign);
-	~ADPCMStream();
-
-	virtual bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos); }
-	virtual bool isStereo() const	{ return _channels == 2; }
-	virtual int getRate() const	{ return _rate; }
-
-	virtual bool rewind();
-};
 
 // Routines to convert 12 bit linear samples to the
 // Dialogic or Oki ADPCM coding format aka VOX.
@@ -107,17 +75,6 @@ bool ADPCMStream::rewind() {
 #pragma mark -
 
 
-class Oki_ADPCMStream : public ADPCMStream {
-public:
-	Oki_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {}
-
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-
-protected:
-	int16 decodeOKI(byte);
-};
-
 int Oki_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples;
 	byte data;
@@ -153,7 +110,7 @@ int16 Oki_ADPCMStream::decodeOKI(byte code) {
 	samp = CLIP<int16>(samp, -2048, 2047);
 
 	_status.ima_ch[0].last = samp;
-	_status.ima_ch[0].stepIndex += stepAdjust(code);
+	_status.ima_ch[0].stepIndex += _stepAdjustTable[code];
 	_status.ima_ch[0].stepIndex = CLIP<int32>(_status.ima_ch[0].stepIndex, 0, ARRAYSIZE(okiStepSize) - 1);
 
 	// * 16 effectively converts 12-bit input to 16-bit output
@@ -164,20 +121,7 @@ int16 Oki_ADPCMStream::decodeOKI(byte code) {
 #pragma mark -
 
 
-class Ima_ADPCMStream : public ADPCMStream {
-protected:
-	int16 decodeIMA(byte code, int channel = 0); // Default to using the left channel/using one channel
-
-public:
-	Ima_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
-		memset(&_status, 0, sizeof(_status));
-	}
-
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-};
-
-int Ima_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
+int DVI_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples;
 	byte data;
 
@@ -193,34 +137,6 @@ int Ima_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 
 #pragma mark -
 
-
-class Apple_ADPCMStream : public Ima_ADPCMStream {
-protected:
-	// Apple QuickTime IMA ADPCM
-	int32 _streamPos[2];
-	int16 _buffer[2][2];
-	uint8 _chunkPos[2];
-
-	void reset() {
-		Ima_ADPCMStream::reset();
-		_chunkPos[0] = 0;
-		_chunkPos[1] = 0;
-		_streamPos[0] = 0;
-		_streamPos[1] = _blockAlign;
-	}
-
-public:
-	Apple_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
-		_chunkPos[0] = 0;
-		_chunkPos[1] = 0;
-		_streamPos[0] = 0;
-		_streamPos[1] = _blockAlign;
-	}
-
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-
-};
 
 int Apple_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	// Need to write at least one samples per channel
@@ -287,28 +203,6 @@ int Apple_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 
 #pragma mark -
 
-
-class MSIma_ADPCMStream : public Ima_ADPCMStream {
-public:
-	MSIma_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign, bool invertSamples = false)
-		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign), _invertSamples(invertSamples) {
-		if (blockAlign == 0)
-			error("ADPCMStream(): blockAlign isn't specified for MS IMA ADPCM");
-	}
-
-	virtual int readBuffer(int16 *buffer, const int numSamples) {
-		if (_channels == 1)
-			return readBufferMSIMA1(buffer, numSamples);
-		else
-			return readBufferMSIMA2(buffer, numSamples);
-	}
-
-	int readBufferMSIMA1(int16 *buffer, const int numSamples);
-	int readBufferMSIMA2(int16 *buffer, const int numSamples);
-
-private:
-	bool _invertSamples;    // Some implementations invert the way samples are decoded
-};
 
 int MSIma_ADPCMStream::readBufferMSIMA1(int16 *buffer, const int numSamples) {
 	int samples = 0;
@@ -382,41 +276,6 @@ static const int MSADPCMAdaptationTable[] = {
 };
 
 
-class MS_ADPCMStream : public ADPCMStream {
-protected:
-	struct ADPCMChannelStatus {
-		byte predictor;
-		int16 delta;
-		int16 coeff1;
-		int16 coeff2;
-		int16 sample1;
-		int16 sample2;
-	};
-
-	struct {
-		// MS ADPCM
-		ADPCMChannelStatus ch[2];
-	} _status;
-
-	void reset() {
-		ADPCMStream::reset();
-		memset(&_status, 0, sizeof(_status));
-	}
-
-public:
-	MS_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
-		if (blockAlign == 0)
-			error("MS_ADPCMStream(): blockAlign isn't specified for MS ADPCM");
-		memset(&_status, 0, sizeof(_status));
-	}
-
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-
-protected:
-	int16 decodeMS(ADPCMChannelStatus *c, byte);
-};
-
 int16 MS_ADPCMStream::decodeMS(ADPCMChannelStatus *c, byte code) {
 	int32 predictor;
 
@@ -478,245 +337,8 @@ int MS_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 
-
 #pragma mark -
 
-
-class Tinsel_ADPCMStream : public ADPCMStream {
-protected:
-	struct {
-		// Tinsel
-		double predictor;
-		double K0, K1;
-		double d0, d1;
-	} _status;
-
-	void reset() {
-		ADPCMStream::reset();
-		memset(&_status, 0, sizeof(_status));
-	}
-
-	int16 decodeTinsel(int16, double);
-	void readBufferTinselHeader();
-
-public:
-	Tinsel_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
-
-		if (blockAlign == 0)
-			error("Tinsel_ADPCMStream(): blockAlign isn't specified");
-
-		if (channels != 1)
-			error("Tinsel_ADPCMStream(): Tinsel ADPCM only supports mono");
-
-		memset(&_status, 0, sizeof(_status));
-	}
-
-};
-
-static const double TinselFilterTable[4][2] = {
-	{0, 0 },
-	{0.9375, 0},
-	{1.796875, -0.8125},
-	{1.53125, -0.859375}
-};
-
-void Tinsel_ADPCMStream::readBufferTinselHeader() {
-	uint8 start = _stream->readByte();
-	uint8 filterVal = (start & 0xC0) >> 6;
-
-	if ((start & 0x20) != 0) {
-		//Lower 6 bit are negative
-
-		// Negate
-		start = ~(start | 0xC0) + 1;
-
-		_status.predictor = 1 << start;
-	} else {
-		// Lower 6 bit are positive
-
-		// Truncate
-		start &= 0x1F;
-
-		_status.predictor = ((double) 1.0) / (1 << start);
-	}
-
-	_status.K0 = TinselFilterTable[filterVal][0];
-	_status.K1 = TinselFilterTable[filterVal][1];
-}
-
-int16 Tinsel_ADPCMStream::decodeTinsel(int16 code, double eVal) {
-	double sample;
-
-	sample = (double) code;
-	sample *= eVal * _status.predictor;
-	sample += (_status.d0 * _status.K0) + (_status.d1 * _status.K1);
-
-	_status.d1 = _status.d0;
-	_status.d0 = sample;
-
-	return (int16) CLIP<double>(sample, -32768.0, 32767.0);
-}
-
-class Tinsel4_ADPCMStream : public Tinsel_ADPCMStream {
-public:
-	Tinsel4_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: Tinsel_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {}
-
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-};
-
-int Tinsel4_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
-	int samples;
-	uint16 data;
-	const double eVal = 1.142822265;
-
-	samples = 0;
-
-	assert(numSamples % 2 == 0);
-
-	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
-		if (_blockPos[0] == _blockAlign) {
-			readBufferTinselHeader();
-			_blockPos[0] = 0;
-		}
-
-		for (; samples < numSamples && _blockPos[0] < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2, _blockPos[0]++) {
-			// Read 1 byte = 8 bits = two 4 bit blocks
-			data = _stream->readByte();
-			buffer[samples] = decodeTinsel((data << 8) & 0xF000, eVal);
-			buffer[samples+1] = decodeTinsel((data << 12) & 0xF000, eVal);
-		}
-	}
-
-	return samples;
-}
-
-class Tinsel6_ADPCMStream : public Tinsel_ADPCMStream {
-protected:
-	uint8 _chunkPos;
-	uint16 _chunkData;
-
-	void reset() {
-		ADPCMStream::reset();
-		_chunkPos = 0;
-		_chunkData = 0;
-	}
-
-public:
-	Tinsel6_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: Tinsel_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
-		_chunkPos = 0;
-		_chunkData = 0;
-	}
-
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-};
-
-int Tinsel6_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
-	int samples;
-	const double eVal = 1.032226562;
-
-	samples = 0;
-
-	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
-		if (_blockPos[0] == _blockAlign) {
-			readBufferTinselHeader();
-			_blockPos[0] = 0;
-			_chunkPos = 0;
-		}
-
-		for (; samples < numSamples && _blockPos[0] < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples++, _chunkPos = (_chunkPos + 1) % 4) {
-
-			switch (_chunkPos) {
-			case 0:
-				_chunkData = _stream->readByte();
-				buffer[samples] = decodeTinsel((_chunkData << 8) & 0xFC00, eVal);
-				break;
-			case 1:
-				_chunkData = (_chunkData << 8) | (_stream->readByte());
-				buffer[samples] = decodeTinsel((_chunkData << 6) & 0xFC00, eVal);
-				_blockPos[0]++;
-				break;
-			case 2:
-				_chunkData = (_chunkData << 8) | (_stream->readByte());
-				buffer[samples] = decodeTinsel((_chunkData << 4) & 0xFC00, eVal);
-				_blockPos[0]++;
-				break;
-			case 3:
-				_chunkData = (_chunkData << 8);
-				buffer[samples] = decodeTinsel((_chunkData << 2) & 0xFC00, eVal);
-				_blockPos[0]++;
-				break;
-			}
-
-		}
-
-	}
-
-	return samples;
-}
-
-class Tinsel8_ADPCMStream : public Tinsel_ADPCMStream {
-public:
-	Tinsel8_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: Tinsel_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {}
-
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-};
-
-int Tinsel8_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
-	int samples;
-	byte data;
-	const double eVal = 1.007843258;
-
-	samples = 0;
-
-	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
-		if (_blockPos[0] == _blockAlign) {
-			readBufferTinselHeader();
-			_blockPos[0] = 0;
-		}
-
-		for (; samples < numSamples && _blockPos[0] < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples++, _blockPos[0]++) {
-			// Read 1 byte = 8 bits = one 8 bit block
-			data = _stream->readByte();
-			buffer[samples] = decodeTinsel(data << 8, eVal);
-		}
-	}
-
-	return samples;
-}
-
-
-#pragma mark -
-
-// Duck DK3 IMA ADPCM Decoder
-// Based on FFmpeg's decoder and http://wiki.multimedia.cx/index.php?title=Duck_DK3_IMA_ADPCM
-
-class DK3_ADPCMStream : public Ima_ADPCMStream {
-protected:
-
-	void reset() {
-		Ima_ADPCMStream::reset();
-		_topNibble = false;
-	}
-
-public:
-	DK3_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
-
-		// DK3 only works as a stereo stream
-		assert(channels == 2);
-		_topNibble = false;
-	}
-
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-
-private:
-	byte _nibble, _lastByte;
-	bool _topNibble;
-};
 
 #define DK3_READ_NIBBLE() \
 do { \
@@ -782,14 +404,15 @@ int DK3_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 #pragma mark -
 
 
-// adjust the step for use on the next sample.
-int16 ADPCMStream::stepAdjust(byte code) {
-	static const int16 adjusts[] = {-1, -1, -1, -1, 2, 4, 6, 8};
+// This table is used to adjust the step for use on the next sample.
+// We could half the table, but since the lookup index used is always
+// a 4-bit nibble, it's more efficient to just keep it as it is.
+const int16 ADPCMStream::_stepAdjustTable[16] = {
+	-1, -1, -1, -1, 2, 4, 6, 8,
+	-1, -1, -1, -1, 2, 4, 6, 8
+};
 
-	return adjusts[code & 0x07];
-}
-
-static const uint16 imaStepTable[89] = {
+const int16 Ima_ADPCMStream::_imaTable[89] = {
 		7,    8,    9,   10,   11,   12,   13,   14,
 	   16,   17,   19,   21,   23,   25,   28,   31,
 	   34,   37,   41,   45,   50,   55,   60,   66,
@@ -805,13 +428,13 @@ static const uint16 imaStepTable[89] = {
 };
 
 int16 Ima_ADPCMStream::decodeIMA(byte code, int channel) {
-	int32 E = (2 * (code & 0x7) + 1) * imaStepTable[_status.ima_ch[channel].stepIndex] / 8;
+	int32 E = (2 * (code & 0x7) + 1) * _imaTable[_status.ima_ch[channel].stepIndex] / 8;
 	int32 diff = (code & 0x08) ? -E : E;
 	int32 samp = CLIP<int32>(_status.ima_ch[channel].last + diff, -32768, 32767);
 
 	_status.ima_ch[channel].last = samp;
-	_status.ima_ch[channel].stepIndex += stepAdjust(code);
-	_status.ima_ch[channel].stepIndex = CLIP<int32>(_status.ima_ch[channel].stepIndex, 0, ARRAYSIZE(imaStepTable) - 1);
+	_status.ima_ch[channel].stepIndex += _stepAdjustTable[code];
+	_status.ima_ch[channel].stepIndex = CLIP<int32>(_status.ima_ch[channel].stepIndex, 0, ARRAYSIZE(_imaTable) - 1);
 
 	return samp;
 }
@@ -830,14 +453,8 @@ RewindableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, Dispo
 		return new MSIma_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign, true);
 	case kADPCMMS:
 		return new MS_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
-	case kADPCMTinsel4:
-		return new Tinsel4_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
-	case kADPCMTinsel6:
-		return new Tinsel6_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
-	case kADPCMTinsel8:
-		return new Tinsel8_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
-	case kADPCMIma:
-		return new Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
+	case kADPCMDVI:
+		return new DVI_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
 	case kADPCMApple:
 		return new Apple_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
 	case kADPCMDK3:

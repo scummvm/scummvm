@@ -1,0 +1,10 @@
+{
+	"id": "org.scummvm.scummvm",
+	"version": "1.3.0001",
+	"vendor": "ScummVM Team",
+	"type": "pdk",
+	"main": "start",
+	"title": "ScummVM",
+	"icon": "icon.png",
+	"requiredMemory": 64
+}

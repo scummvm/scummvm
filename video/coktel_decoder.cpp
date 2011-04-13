@@ -34,9 +34,10 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "audio/decoders/adpcm_intern.h"
 #include "common/memstream.h"
 
-static const uint32 kVideoCodecIndeo3 = MKID_BE('iv32');
+static const uint32 kVideoCodecIndeo3 = MKTAG('i','v','3','2');
 
 namespace Video {
 
@@ -1516,26 +1517,6 @@ const uint16 VMDDecoder::_tableDPCM[128] = {
 	0x0F00, 0x1000, 0x1400, 0x1800, 0x1C00, 0x2000, 0x3000, 0x4000
 };
 
-const int32 VMDDecoder::_tableADPCM[] = {
-			7,     8,     9,    10,    11,    12,    13,    14,
-		 16,    17,    19,    21,    23,    25,    28,    31,
-		 34,    37,    41,    45,    50,    55,    60,    66,
-		 73,    80,    88,    97,   107,   118,   130,   143,
-		157,   173,   190,   209,   230,   253,   279,   307,
-		337,   371,   408,   449,   494,   544,   598,   658,
-		724,   796,   876,   963,  1060,  1166,  1282,  1411,
-	 1552,  1707,  1878,  2066,  2272,  2499,  2749,  3024,
-	 3327,  3660,  4026,  4428,  4871,  5358,  5894,  6484,
-	 7132,  7845,  8630,  9493, 10442, 11487, 12635, 13899,
-	15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794,
-	32767,     0
-};
-
-const int32 VMDDecoder::_tableADPCMStep[] = {
-	-1, -1, -1, -1, 2,  4,  6,  8,
-	-1, -1, -1, -1, 2,  4,  6,  8
-};
-
 VMDDecoder::VMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) : CoktelDecoder(mixer, soundType),
 	_stream(0), _version(0), _flags(0), _frameInfoOffset(0), _partsPerFrame(0), _frames(0),
 	_soundFlags(0), _soundFreq(0), _soundSliceSize(0), _soundSlicesCount(0),
@@ -2617,7 +2598,7 @@ byte *VMDDecoder::deADPCM(const byte *data, uint32 &size, int32 init, int32 inde
 
 	index = CLIP<int32>(index, 0, 88);
 
-	int32 predictor = _tableADPCM[index];
+	int32 predictor = Audio::Ima_ADPCMStream::_imaTable[index];
 
 	uint32 dataByte = 0;
 	bool newByte = true;
@@ -2634,7 +2615,7 @@ byte *VMDDecoder::deADPCM(const byte *data, uint32 &size, int32 init, int32 inde
 
 		newByte = !newByte;
 
-		index += _tableADPCMStep[code];
+		index += Audio::ADPCMStream::_stepAdjustTable[code];
 		index  = CLIP<int32>(index, 0, 88);
 
 		int32 value = predictor / 8;
@@ -2653,7 +2634,7 @@ byte *VMDDecoder::deADPCM(const byte *data, uint32 &size, int32 init, int32 inde
 
 		init = CLIP<int32>(init, -32768, 32767);
 
-		predictor = _tableADPCM[index];
+		predictor = Audio::Ima_ADPCMStream::_imaTable[index];
 
 		*out++ = TO_BE_16(init);
 	}

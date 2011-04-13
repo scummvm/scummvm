@@ -39,9 +39,6 @@ namespace Tinsel {
 // current background
 const BACKGND *pCurBgnd = NULL;
 
-// FIXME: Not yet used
-static bool bEntireRedraw;
-
 /**
  * Called to initialise a background.
  * @param pBgnd			Pointer to data struct for current background
@@ -256,10 +253,5 @@ void DrawBackgnd() {
 	// delete all the clipping rectangles
 	ResetClipRect();
 }
-
-void ForceEntireRedraw() {
-	bEntireRedraw = true;
-}
-
 
 } // End of namespace Tinsel

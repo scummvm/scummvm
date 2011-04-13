@@ -151,7 +151,6 @@ private:
 	bool MaintainBuffer();
 	bool DoBMVFrame();
 	bool DoSoundFrame();
-	void LookAtBuffers();
 };
 
 

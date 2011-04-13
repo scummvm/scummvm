@@ -843,19 +843,19 @@ void Display::decodeLBM(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dst
 		uint32 size = READ_BE_UINT32(src + 4);
 		src += 8;
 		switch (type) {
-		case MKID_BE('BMHD'): {
+		case MKTAG('B','M','H','D'): {
 				*w = READ_BE_UINT16(src + 0);
 				*h = READ_BE_UINT16(src + 2);
 				planeCount = src[8];
 				planePitch = ((*w + 15) >> 4) * 2;
 			}
 			break;
-		case MKID_BE('CMAP'): {
+		case MKTAG('C','M','A','P'): {
 				assert(palStart <= palEnd && palEnd <= size / 3);
 				memcpy(pal, src + palStart * 3, (palEnd - palStart) * 3);
 			}
 			break;
-		case MKID_BE('BODY'): {
+		case MKTAG('B','O','D','Y'): {
 				uint32 planarSize = (*h) * planeCount * planePitch;
 				uint8 *planarBuf = new uint8[planarSize];
 				uint8 *dstPlanar = planarBuf;

@@ -57,7 +57,7 @@ PictureResource::~PictureResource() {
 }
 
 void PictureResource::load(byte *source, int size) {
-	if (READ_BE_UINT32(source) == MKID_BE('Flex')) {
+	if (READ_BE_UINT32(source) == MKTAG('F','l','e','x')) {
 		loadChunked(source, size);
 	} else {
 		loadRaw(source, size);
@@ -126,13 +126,13 @@ void PictureResource::loadChunked(byte *source, int size) {
 
 		debug(0, "chunkType = %08X; chunkSize = %d", chunkType, chunkSize);
 
-		if (chunkType == MKID_BE('Rect')) {
+		if (chunkType == MKTAG('R','e','c','t')) {
 			debug(0, "Rect");
 			sourceS->skip(4);
 			height = sourceS->readUint16BE();
 			width = sourceS->readUint16BE();
 			debug(0, "width = %d; height = %d", width, height);
-		} else if (chunkType == MKID_BE('fMap')) {
+		} else if (chunkType == MKTAG('f','M','a','p')) {
 			debug(0, "fMap");
 			lineSize = sourceS->readUint16BE();
 			sourceS->skip(11);
@@ -140,21 +140,21 @@ void PictureResource::loadChunked(byte *source, int size) {
 			cmdOffs = sourceS->pos();
 			sourceS->skip(chunkSize - 14);
 			debug(0, "lineSize = %d; cmdFlags = %d; cmdOffs = %04X", lineSize, cmdFlags, cmdOffs);
-		} else if (chunkType == MKID_BE('fLCo')) {
+		} else if (chunkType == MKTAG('f','L','C','o')) {
 			debug(0, "fLCo");
 			sourceS->skip(9);
 			pixelFlags = sourceS->readByte();
 			pixelOffs = sourceS->pos();
 			sourceS->skip(chunkSize - 10);
 			debug(0, "pixelFlags = %d; pixelOffs = %04X", pixelFlags, pixelOffs);
-		} else if (chunkType == MKID_BE('fPix')) {
+		} else if (chunkType == MKTAG('f','P','i','x')) {
 			debug(0, "fPix");
 			sourceS->skip(9);
 			maskFlags = sourceS->readByte();
 			maskOffs = sourceS->pos();
 			sourceS->skip(chunkSize - 10);
 			debug(0, "maskFlags = %d; maskOffs = %04X", maskFlags, maskOffs);
-		} else if (chunkType == MKID_BE('fGCo')) {
+		} else if (chunkType == MKTAG('f','G','C','o')) {
 			debug(0, "fGCo");
 			_hasPalette = true;
 			_paletteColorCount = chunkSize / 3;

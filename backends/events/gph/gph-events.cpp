@@ -26,7 +26,7 @@
  * GPH: Device Specific Event Handling.
  */
 
-#if defined(GP2XWIZ) || defined(CAANOO)
+#if defined(GPH_DEVICE)
 
 #include "backends/events/gph/gph-events.h"
 #include "backends/graphics/gph/gph-graphics.h"
@@ -78,7 +78,9 @@ int BUTTON_STATE_L					=	false;
 		BUTTON_SELECT		= 62
 	};
 
-#else
+#endif
+
+#if defined(GP2XWIZ)
 
 	/* Wiz: Main Joystick Mappings */
 	enum {
@@ -112,6 +114,42 @@ int BUTTON_STATE_L					=	false;
 		BUTTON_HELP			= 54,
 		BUTTON_HELP2		= 55
 	};
+
+#endif
+
+#if defined(GP2X)
+
+enum {
+	/* DPAD/Stick */
+	BUTTON_UP			= 0,
+	BUTTON_UPLEFT		= 1,
+	BUTTON_LEFT			= 2,
+	BUTTON_DOWNLEFT		= 3,
+	BUTTON_DOWN			= 4,
+	BUTTON_DOWNRIGHT	= 5,
+	BUTTON_RIGHT		= 6,
+	BUTTON_UPRIGHT		= 7,
+	/* Joystick Buttons */
+	BUTTON_MENU			= 8,	// Start on F100 GP2X
+	BUTTON_SELECT		= 9,
+	BUTTON_L			= 10,
+	BUTTON_R			= 11,
+	BUTTON_A			= 12,
+	BUTTON_B			= 13,
+	BUTTON_X			= 14,
+	BUTTON_Y			= 15,
+	BUTTON_VOLUP		= 16,
+	BUTTON_VOLDOWN		= 17,
+	BUTTON_CLICK		= 18
+};
+
+enum {
+	/* Unused Joystick Buttons on the GP2X */
+	BUTTON_HOME			= 51,
+	BUTTON_HOLD			= 52,
+	BUTTON_HELP			= 53,
+	BUTTON_HELP2		= 54
+};
 
 #endif
 

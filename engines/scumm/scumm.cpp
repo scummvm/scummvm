@@ -1577,7 +1577,7 @@ void ScummEngine_v3::resetScumm() {
 		// Load tile set and palette for the distaff
 		byte *roomptr = getResourceAddress(rtRoom, 90);
 		assert(roomptr);
-		const byte *palPtr = findResourceData(MKID_BE('CLUT'), roomptr);
+		const byte *palPtr = findResourceData(MKTAG('C','L','U','T'), roomptr);
 		assert(palPtr - 4);
 		setPCEPaletteFromPtr(palPtr);
 		_gdi->_distaff = true;

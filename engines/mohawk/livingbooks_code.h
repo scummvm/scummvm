@@ -57,6 +57,14 @@ struct LBValue {
 		type = kLBValueString;
 		string = str;
 	}
+	LBValue(const Common::Point &p) {
+		type = kLBValuePoint;
+		point = p;
+	}
+	LBValue(const Common::Rect &r) {
+		type = kLBValueRect;
+		rect = r;
+	}
 	LBValue(LBItem *itm) {
 		type = kLBValueItemPtr;
 		item = itm;
@@ -99,8 +107,11 @@ struct LBValue {
 	bool isNumeric() const;
 	bool isZero() const;
 
+	Common::String toString() const;
 	int toInt() const;
 	double toDouble() const;
+	Common::Point toPoint() const;
+	Common::Rect toRect() const;
 };
 
 enum {
@@ -169,7 +180,7 @@ enum {
 
 class LBCode {
 public:
-	LBCode(MohawkEngine_LivingBooks *vm);
+	LBCode(MohawkEngine_LivingBooks *vm, uint16 baseId);
 	~LBCode();
 
 	LBValue runCode(LBItem *src, uint32 offset);
@@ -199,12 +210,21 @@ protected:
 	void parseMain();
 
 	Common::Array<LBValue> readParams();
+	Common::Rect getRectFromParams(const Common::Array<LBValue> &params);
+
 	void runGeneralCommand();
 	void runItemCommand();
 	void runNotifyCommand();
 
 public:
 	void cmdUnimplemented(const Common::Array<LBValue> &params);
+	void cmdGetRect(const Common::Array<LBValue> &params);
+	void cmdTopLeft(const Common::Array<LBValue> &params);
+	void cmdBottomRight(const Common::Array<LBValue> &params);
+	void cmdTop(const Common::Array<LBValue> &params);
+	void cmdLeft(const Common::Array<LBValue> &params);
+	void cmdBottom(const Common::Array<LBValue> &params);
+	void cmdRight(const Common::Array<LBValue> &params);
 	void cmdSetPlayParams(const Common::Array<LBValue> &params);
 	void cmdSetKeyEvent(const Common::Array<LBValue> &params);
 	void cmdSetHitTest(const Common::Array<LBValue> &params);

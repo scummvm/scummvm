@@ -53,7 +53,7 @@
 
 namespace Agi {
 
-static const uint32 AGIflag = MKID_BE('AGI:');
+static const uint32 AGIflag = MKTAG('A','G','I',':');
 
 int AgiEngine::saveGame(const char *fileName, const char *description) {
 	char gameIDstring[8] = "gameIDX";

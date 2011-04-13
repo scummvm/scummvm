@@ -82,7 +82,7 @@ void QuickTimeAudioDecoder::init() {
 			_curAudioChunk = 0;
 
 			// Make sure the bits per sample transfers to the sample size
-			if (entry->codecTag == MKID_BE('raw ') || entry->codecTag == MKID_BE('twos'))
+			if (entry->codecTag == MKTAG('r', 'a', 'w', ' ') || entry->codecTag == MKTAG('t', 'w', 'o', 's'))
 				_streams[_audioStreamIndex]->sample_size = (entry->bitsPerSample / 8) * entry->channels;
 		}
 	}
@@ -127,7 +127,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeAudioDecoder::readSampleDesc(MOVSt
 
 		// Version 0 videos (such as the Riven ones) don't have this set,
 		// but we need it later on. Add it in here.
-		if (format == MKID_BE('ima4')) {
+		if (format == MKTAG('i', 'm', 'a', '4')) {
 			entry->samplesPerFrame = 64;
 			entry->bytesPerFrame = 34 * entry->channels;
 		}
@@ -143,15 +143,15 @@ Common::QuickTimeParser::SampleDesc *QuickTimeAudioDecoder::readSampleDesc(MOVSt
 
 bool QuickTimeAudioDecoder::checkAudioCodecSupport(uint32 tag, byte objectTypeMP4) {
 	// Check if the codec is a supported codec
-	if (tag == MKID_BE('twos') || tag == MKID_BE('raw ') || tag == MKID_BE('ima4'))
+	if (tag == MKTAG('t', 'w', 'o', 's') || tag == MKTAG('r', 'a', 'w', ' ') || tag == MKTAG('i', 'm', 'a', '4'))
 		return true;
 
 #ifdef AUDIO_QDM2_H
-	if (tag == MKID_BE('QDM2'))
+	if (tag == MKTAG('Q', 'D', 'M', '2'))
 		return true;
 #endif
 
-	if (tag == MKID_BE('mp4a')) {
+	if (tag == MKTAG('m', 'p', '4', 'a')) {
 		Common::String audioType;
 		switch (objectTypeMP4) {
 		case 0x40: // AAC
@@ -178,10 +178,10 @@ AudioStream *QuickTimeAudioDecoder::createAudioStream(Common::SeekableReadStream
 
 	AudioSampleDesc *entry = (AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
 
-	if (entry->codecTag == MKID_BE('twos') || entry->codecTag == MKID_BE('raw ')) {
+	if (entry->codecTag == MKTAG('t', 'w', 'o', 's') || entry->codecTag == MKTAG('r', 'a', 'w', ' ')) {
 		// Fortunately, most of the audio used in Myst videos is raw...
 		uint16 flags = 0;
-		if (entry->codecTag == MKID_BE('raw '))
+		if (entry->codecTag == MKTAG('r', 'a', 'w', ' '))
 			flags |= FLAG_UNSIGNED;
 		if (entry->channels == 2)
 			flags |= FLAG_STEREO;
@@ -192,17 +192,17 @@ AudioStream *QuickTimeAudioDecoder::createAudioStream(Common::SeekableReadStream
 		stream->read(data, dataSize);
 		delete stream;
 		return makeRawStream(data, dataSize, entry->sampleRate, flags);
-	} else if (entry->codecTag == MKID_BE('ima4')) {
+	} else if (entry->codecTag == MKTAG('i', 'm', 'a', '4')) {
 		// Riven uses this codec (as do some Myst ME videos)
 		return makeADPCMStream(stream, DisposeAfterUse::YES, stream->size(), kADPCMApple, entry->sampleRate, entry->channels, 34);
-	} else if (entry->codecTag == MKID_BE('mp4a')) {
+	} else if (entry->codecTag == MKTAG('m', 'p', '4', 'a')) {
 		// The 7th Guest iOS uses an MPEG-4 codec
 #ifdef USE_FAAD
 		if (_streams[_audioStreamIndex]->objectTypeMP4 == 0x40)
 			return makeAACStream(stream, DisposeAfterUse::YES, _streams[_audioStreamIndex]->extradata);
 #endif
 #ifdef AUDIO_QDM2_H
-	} else if (entry->codecTag == MKID_BE('QDM2')) {
+	} else if (entry->codecTag == MKTAG('Q', 'D', 'M', '2')) {
 		// Myst ME uses this codec for many videos
 		return makeQDM2Stream(stream, _streams[_audioStreamIndex]->extradata);
 #endif

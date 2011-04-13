@@ -190,7 +190,7 @@ static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_enc
 	theFile.read(filebuffer, length);
 	filebuffer[length] = 0;
 
-	if (is_encoded && READ_BE_UINT32(filebuffer) == MKID_BE('ETRS')) {
+	if (is_encoded && READ_BE_UINT32(filebuffer) == MKTAG('E','T','R','S')) {
 		assert(length > ETRS_HEADER_LENGTH);
 		length -= ETRS_HEADER_LENGTH;
 		for (int i = 0; i < length; ++i) {
@@ -507,7 +507,7 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 
 	const char *str;
 	char *string = NULL, *string2 = NULL;
-	if (subType == MKID_BE('TEXT')) {
+	if (subType == MKTAG('T','E','X','T')) {
 		string = (char *)malloc(subSize - 16);
 		str = string;
 		b.read(string, subSize - 16);
@@ -845,40 +845,40 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 		const int32 subSize = b.readUint32BE();
 		const int32 subOffset = b.pos();
 		switch (subType) {
-		case MKID_BE('NPAL'):
+		case MKTAG('N','P','A','L'):
 			handleNewPalette(subSize, b);
 			break;
-		case MKID_BE('FOBJ'):
+		case MKTAG('F','O','B','J'):
 			handleFrameObject(subSize, b);
 			break;
 #ifdef USE_ZLIB
-		case MKID_BE('ZFOB'):
+		case MKTAG('Z','F','O','B'):
 			handleZlibFrameObject(subSize, b);
 			break;
 #endif
-		case MKID_BE('PSAD'):
+		case MKTAG('P','S','A','D'):
 			if (!_compressedFileMode)
 				handleSoundFrame(subSize, b);
 			break;
-		case MKID_BE('TRES'):
+		case MKTAG('T','R','E','S'):
 			handleTextResource(subType, subSize, b);
 			break;
-		case MKID_BE('XPAL'):
+		case MKTAG('X','P','A','L'):
 			handleDeltaPalette(subSize, b);
 			break;
-		case MKID_BE('IACT'):
+		case MKTAG('I','A','C','T'):
 			handleIACT(subSize, b);
 			break;
-		case MKID_BE('STOR'):
+		case MKTAG('S','T','O','R'):
 			handleStore(subSize, b);
 			break;
-		case MKID_BE('FTCH'):
+		case MKTAG('F','T','C','H'):
 			handleFetch(subSize, b);
 			break;
-		case MKID_BE('SKIP'):
+		case MKTAG('S','K','I','P'):
 			_vm->_insane->procSKIP(subSize, b);
 			break;
-		case MKID_BE('TEXT'):
+		case MKTAG('T','E','X','T'):
 			handleTextResource(subType, subSize, b);
 			break;
 		default:
@@ -990,7 +990,7 @@ void SmushPlayer::parseNextFrame() {
 				const uint32 subType = _base->readUint32BE();
 				const int32 subSize = _base->readUint32BE();
 				const int32 subOffset = _base->pos();
-				assert(subType == MKID_BE('AHDR'));
+				assert(subType == MKTAG('A','H','D','R'));
 				handleAnimHeader(subSize, *_base);
 				_base->seek(subOffset + subSize, SEEK_SET);
 
@@ -1029,10 +1029,10 @@ void SmushPlayer::parseNextFrame() {
 	debug(3, "Chunk: %s at %x", tag2str(subType), subOffset);
 
 	switch (subType) {
-	case MKID_BE('AHDR'): // FT INSANE may seek file to the beginning
+	case MKTAG('A','H','D','R'): // FT INSANE may seek file to the beginning
 		handleAnimHeader(subSize, *_base);
 		break;
-	case MKID_BE('FRME'):
+	case MKTAG('F','R','M','E'):
 		handleFrame(subSize, *_base);
 		break;
 	default:

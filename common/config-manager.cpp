@@ -120,7 +120,7 @@ void ConfigManager::addDomain(const Common::String &domainName, const ConfigMana
 	if (domainName == kApplicationDomain) {
 		_appDomain = domain;
 #ifdef ENABLE_KEYMAPPER
-	} else if (domain == kKeymapperDomain) {
+	} else if (domainName == kKeymapperDomain) {
 		_keymapperDomain = domain;
 #endif
 	} else if (domain.contains("gameid")) {

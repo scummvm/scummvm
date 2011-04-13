@@ -611,7 +611,7 @@ void MidiPlayer_Midi::readMt32DrvData() {
 		int size = f.size();
 
 		// Skip before-SysEx text
-		if (size == 1773 || size == 1759)	// XMAS88 / KQ4 early
+		if (size == 1773 || size == 1759 || size == 1747)	// XMAS88 / KQ4 early (0.000.253 / 0.000.274)
 			f.seek(0x59);
 		else if (size == 2771)				// LSL2 early
 			f.seek(0x29);

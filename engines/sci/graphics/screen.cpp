@@ -360,7 +360,6 @@ byte GfxScreen::isFillMatch(int16 x, int16 y, byte screenMask, byte t_color, byt
 	int offset = y * _width + x;
 	byte match = 0;
 
-	// FIXME:
 	if (screenMask & GFX_SCREEN_MASK_VISUAL) {
 		if (!isEGA) {
 			if (*(_visualScreen + offset) == t_color)

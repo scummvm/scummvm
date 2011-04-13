@@ -29,6 +29,7 @@
 #include "scumm/scumm.h"	// For DEBUG_SMUSH
 #include "scumm/util.h"
 #include "scumm/smush/channel.h"
+#include "scumm/imuse_digi/dimuse_codecs.h"	// for decode12BitsSample
 
 namespace Scumm {
 
@@ -64,7 +65,7 @@ bool ImuseChannel::appendData(Common::SeekableReadStream &b, int32 size) {
 		assert(size > 8);
 		uint32 imus_type = b.readUint32BE();
 		/*uint32 imus_size =*/ b.readUint32BE();
-		if (imus_type != MKID_BE('iMUS'))
+		if (imus_type != MKTAG('i','M','U','S'))
 			error("Invalid Chunk for imuse_channel");
 		size -= 8;
 		_tbufferSize = size;
@@ -115,7 +116,7 @@ bool ImuseChannel::handleMap(byte *data) {
 		size -= 8;
 
 		switch (subType) {
-		case MKID_BE('FRMT'):
+		case MKTAG('F','R','M','T'):
 			if (subSize != 20)
 				error("invalid size for FRMT Chunk");
 			//uint32 imuse_start = READ_BE_UINT32(data);
@@ -125,14 +126,14 @@ bool ImuseChannel::handleMap(byte *data) {
 			_channels = READ_BE_UINT32(data+16);
 			assert(_channels == 1 || _channels == 2);
 			break;
-		case MKID_BE('TEXT'):
+		case MKTAG('T','E','X','T'):
 			// Ignore this
 			break;
-		case MKID_BE('REGN'):
+		case MKTAG('R','E','G','N'):
 			if (subSize != 8)
 				error("invalid size for REGN Chunk");
 			break;
-		case MKID_BE('STOP'):
+		case MKTAG('S','T','O','P'):
 			if (subSize != 4)
 				error("invalid size for STOP Chunk");
 			break;
@@ -171,28 +172,10 @@ void ImuseChannel::decode() {
 		}
 	}
 
-	// FIXME: Code duplication! See decode12BitsSample() in imuse_digi/dimuse_codecs.cpp
-
-	int loop_size = _sbufferSize / 3;
-	int new_size = loop_size * 4;
-	byte *keep, *decoded;
-	uint32 value;
-	keep = decoded = (byte *)malloc(new_size);
-	assert(keep);
-	unsigned char * source = _sbuffer;
-
-	while (loop_size--) {
-		byte v1 = *source++;
-		byte v2 = *source++;
-		byte v3 = *source++;
-		value = ((((v2 & 0x0f) << 8) | v1) << 4) - 0x8000;
-		WRITE_BE_UINT16(decoded, value); decoded += 2;
-		value = ((((v2 & 0xf0) << 4) | v3) << 4) - 0x8000;
-		WRITE_BE_UINT16(decoded, value); decoded += 2;
-	}
+	byte *keep;
+	_sbufferSize = BundleCodecs::decode12BitsSample(_sbuffer, &keep, _sbufferSize);
 	free(_sbuffer);
 	_sbuffer = (byte *)keep;
-	_sbufferSize = new_size;
 }
 
 bool ImuseChannel::handleSubTags(int32 &offset) {
@@ -201,13 +184,13 @@ bool ImuseChannel::handleSubTags(int32 &offset) {
 		uint32 size = READ_BE_UINT32(_tbuffer + offset + 4);
 		uint32 available_size = _tbufferSize - offset;
 		switch (type) {
-		case MKID_BE('MAP '):
+		case MKTAG('M','A','P',' '):
 			_inData = false;
 			if (available_size >= (size + 8)) {
 				handleMap((byte *)_tbuffer + offset);
 			}
 			break;
-		case MKID_BE('DATA'):
+		case MKTAG('D','A','T','A'):
 			_inData = true;
 			_dataSize = size;
 			offset += 8;

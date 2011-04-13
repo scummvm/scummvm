@@ -192,7 +192,7 @@ void ScummEngine_v90he::setHEPaletteFromCostume(int palSlot, int resId) {
 	assertRange(1, palSlot, _numPalettes, "palette");
 	const uint8 *data = getResourceAddress(rtCostume, resId);
 	assert(data);
-	const uint8 *rgbs = findResourceData(MKID_BE('RGBS'), data);
+	const uint8 *rgbs = findResourceData(MKTAG('R','G','B','S'), data);
 	assert(rgbs);
 	setHEPaletteFromPtr(palSlot, rgbs);
 }
@@ -202,7 +202,7 @@ void ScummEngine_v90he::setHEPaletteFromImage(int palSlot, int resId, int state)
 	assertRange(1, palSlot, _numPalettes, "palette");
 	uint8 *data = getResourceAddress(rtImage, resId);
 	assert(data);
-	const uint8 *rgbs = findWrappedBlock(MKID_BE('RGBS'), data, state, 0);
+	const uint8 *rgbs = findWrappedBlock(MKTAG('R','G','B','S'), data, state, 0);
 	if (rgbs)
 		setHEPaletteFromPtr(palSlot, rgbs);
 }
@@ -212,7 +212,7 @@ void ScummEngine_v90he::setHEPaletteFromRoom(int palSlot, int resId, int state) 
 	assertRange(1, palSlot, _numPalettes, "palette");
 	const uint8 *data = getResourceAddress(rtRoom, resId);
 	assert(data);
-	const uint8 *pals = findResourceData(MKID_BE('PALS'), data);
+	const uint8 *pals = findResourceData(MKTAG('P','A','L','S'), data);
 	assert(pals);
 	const uint8 *rgbs = findPalInPals(pals, state);
 	assert(rgbs);

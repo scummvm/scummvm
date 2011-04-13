@@ -1769,14 +1769,14 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadS
 
 	tmp = extraData->readUint32BE();
 	debug(1, "QDM2Stream::QDM2Stream() extraTag: %d", tmp);
-	if (tmp != MKID_BE('frma'))
+	if (tmp != MKTAG('f','r','m','a'))
 		warning("QDM2Stream::QDM2Stream() extraTag mismatch");
 
 	tmp = extraData->readUint32BE();
 	debug(1, "QDM2Stream::QDM2Stream() extraType: %d", tmp);
-	if (tmp == MKID_BE('QDMC'))
+	if (tmp == MKTAG('Q','D','M','C'))
 		warning("QDM2Stream::QDM2Stream() QDMC stream type not supported");
-	else if (tmp != MKID_BE('QDM2'))
+	else if (tmp != MKTAG('Q','D','M','2'))
 		error("QDM2Stream::QDM2Stream() Unsupported stream type");
 
 	tmp_s = extraData->readSint32BE();
@@ -1786,7 +1786,7 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadS
 
 	tmp = extraData->readUint32BE();
 	debug(1, "QDM2Stream::QDM2Stream() extraTag2: %d", tmp);
-	if (tmp != MKID_BE('QDCA'))
+	if (tmp != MKTAG('Q','D','C','A'))
 		warning("QDM2Stream::QDM2Stream() extraTag2 mismatch");
 
 	if (extraData->readUint32BE() != 1)
@@ -1818,7 +1818,7 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadS
 
 		tmp = extraData->readUint32BE();
 		debug(1, "QDM2Stream::QDM2Stream() extraTag3: %d", tmp);
-		if (tmp != MKID_BE('QDCP'))
+		if (tmp != MKTAG('Q','D','C','P'))
 			warning("QDM2Stream::QDM2Stream() extraTag3 mismatch");
 
 		if ((float)extraData->readUint32BE() != 1.0)

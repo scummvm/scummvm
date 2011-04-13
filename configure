@@ -115,6 +115,7 @@ add_engine testbed "TestBed: the Testing framework" no
 add_engine tinsel "Tinsel" yes
 add_engine toon "Toonstruck" yes
 add_engine touche "Touche: The Adventures of the Fifth Musketeer" yes
+add_engine tsage "Ringworld: Revenge Of The Patriarch" no
 add_engine tucker "Bud Tucker in Double Trouble" yes
 
 
@@ -219,10 +220,10 @@ cc_check_no_clean() {
 	echo "$CXX $LDFLAGS $CXXFLAGS $TMPC -o $TMPO$HOSTEXEEXT $@" >> "$TMPLOG"
 	rm -f "$TMPO$HOSTEXEEXT"
 	( $CXX $LDFLAGS $CXXFLAGS "$TMPC" -o "$TMPO$HOSTEXEEXT" "$@" ) >> "$TMPLOG" 2>&1
-	TMP="$?"
-	echo "return code: $TMP" >> "$TMPLOG"
+	TMPR="$?"
+	echo "return code: $TMPR" >> "$TMPLOG"
 	echo >> "$TMPLOG"
-	return "$TMP"
+	return "$TMPR"
 }
 
 cc_check_clean() {
@@ -231,9 +232,9 @@ cc_check_clean() {
 
 cc_check() {
 	cc_check_no_clean "$@"
-	TMP="$?"
+	TMPR="$?"
 	cc_check_clean
-	return "$TMP"
+	return "$TMPR"
 }
 
 cc_check_define() {
@@ -656,7 +657,7 @@ Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (android, dc, dingux, ds, gp2x, gph,
                           iphone, linuxmoto, maemo, n64, null, openpandora, ps2,
-                          psp, samsungtv, sdl, symbian, wii, wince) [sdl]
+                          psp, samsungtv, sdl, symbian, webos, wii, wince) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -699,6 +700,7 @@ Special configuration feature:
                                            ps2 for PlayStation 2
                                            psp for PlayStation Portable
                                            samsungtv for Samsung TV
+                                           webos for HP Palm WebOS
                                            wii for Nintendo Wii
                                            wince for Windows CE
 
@@ -1145,6 +1147,11 @@ samsungtv)
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabi
 	;;
+webos)
+	_host_os=webos
+	_host_cpu=arm
+	_host_alias=arm-none-linux-gnueabi
+	;;
 wii)
 	_host_os=wii
 	_host_cpu=ppc
@@ -1249,6 +1256,16 @@ psp)
 	PSPSDK=`psp-config --pspsdk-path`
 	if test -z "$PSPSDK"; then
 		echo "Please set the path to PSPSDK in your environment."
+		exit 1
+	fi
+	;;
+webos)
+	if test -z "$WEBOS_SDK"; then
+		echo "Please set WEBOS_SDK in your environment. export WEBOS_SDK=<path to WebOS SDK>"
+		exit 1
+	fi
+	if test -z "$WEBOS_PDK"; then
+		echo "Please set WEBOS_PDK in your environment. export WEBOS_PDK=<path to WebOS PDK>"
 		exit 1
 	fi
 	;;
@@ -1473,21 +1490,21 @@ EOF
 #
 echo_n "Type with 1 byte... "
 type_1_byte=`find_type_with_size 1`
-TMP="$?"
+TMPR="$?"
 echo "$type_1_byte"
-test $TMP -eq 0 || exit 1	# check exit code of subshell
+test $TMPR -eq 0 || exit 1	# check exit code of subshell
 
 echo_n "Type with 2 bytes... "
 type_2_byte=`find_type_with_size 2`
-TMP="$?"
+TMPR="$?"
 echo "$type_2_byte"
-test $TMP -eq 0 || exit 1	# check exit code of subshell
+test $TMPR -eq 0 || exit 1	# check exit code of subshell
 
 echo_n "Type with 4 bytes... "
 type_4_byte=`find_type_with_size 4`
-TMP="$?"
+TMPR="$?"
 echo "$type_4_byte"
-test $TMP -eq 0 || exit 1	# check exit code of subshell
+test $TMPR -eq 0 || exit 1	# check exit code of subshell
 
 #
 # Check whether we can use x86 asm routines
@@ -1662,6 +1679,14 @@ case $_host_os in
 		LIBS="$LIBS -lnsl -lsocket"
 		_unix=yes
 		;;
+	webos)
+		LDFLAGS="$LDFLAGS -L$WEBOS_PDK/device/lib -L$WEBOS_PDK/device/usr/lib"
+		LDFLAGS="$LDFLAGS -Wl,--allow-shlib-undefined"
+		LDFLAGS="$LDFLAGS --sysroot=$WEBOS_PDK/arm-gcc/sysroot"
+		add_line_to_config_mk "WEBOS_SDK = $WEBOS_SDK"
+		_unix=yes
+		_seq_midi=no
+		;;
 	wii)
 		CXXFLAGS="$CXXFLAGS -Os -mrvl -mcpu=750 -meabi -mhard-float"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
@@ -1747,9 +1772,10 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="gph"
 			_build_hq_scalers=no
-			_mt32emu=no
 			_vkeybd=yes
 			_seq_midi=no
+			_mt32emu=no
+			_timidity=no
 			_port_mk="backends/platform/gph/caanoo-bundle.mk"
 			;;
 		*darwin*)
@@ -1834,12 +1860,13 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
-			_backend="gp2x"
+			_backend="gph"
 			_build_hq_scalers=no
-			_mt32emu=no
 			_vkeybd=yes
 			_seq_midi=no
-			_port_mk="backends/platform/gp2x/gp2x-bundle.mk"
+			_mt32emu=no
+			_timidity=no
+			_port_mk="backends/platform/gph/gp2x-bundle.mk"
 			;;
 		gp2xwiz)
 			# This uses the GPH backend.
@@ -1859,9 +1886,10 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="gph"
 			_build_hq_scalers=no
-			_mt32emu=no
 			_vkeybd=yes
 			_seq_midi=no
+			_mt32emu=no
+			_timidity=no
 			_port_mk="backends/platform/gph/gp2xwiz-bundle.mk"
 			;;
 		iphone)
@@ -1979,8 +2007,8 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="openpandora"
 			_build_hq_scalers=yes
-			_mt32emu=no
 			_vkeybd=no
+			_mt32emu=no
 			_seq_midi=no
 			_port_mk="backends/platform/openpandora/op-bundle.mk"
 			;;
@@ -2039,6 +2067,23 @@ if test -n "$_host"; then
 			_backend="samsungtv"
 			_mt32emu=no
 			_vkeybd=yes
+			;;
+		webos)
+			_unix=yes
+			_need_memalign=yes
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_backend="webos"
+			_port_mk="backends/platform/webos/webos.mk"
+			_build_scalers=no
+			_timidity=no
+			_mt32emu=no
+			_seq_midi=no
+			_vkeybd=no
+			_keymapper=yes
 			;;
 		wii)
 			_endian=big
@@ -2126,7 +2171,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	android | dingux | dreamcast | gph | openpandora | psp | samsungtv | sdl | wii)
+	android | dingux | dreamcast | gph | openpandora | psp | samsungtv | sdl | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -2291,7 +2336,7 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 LIBS            += -ldl
 '
 		;;
-	linux*)
+	linux* | webos)
 _def_plugin='
 #define PLUGIN_PREFIX	"lib"
 #define PLUGIN_SUFFIX	".so"
@@ -3120,6 +3165,12 @@ case $_backend in
 		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		DEFINES="$DEFINES -DSDL_BACKEND"
+		;;
+	webos)
+		INCLUDES="$INCLUDES -I$WEBOS_PDK/include -I$WEBOS_PDK/include/SDL -I$WEBOS_PDK/device/usr/include"
+		LIBS="$LIBS -lSDL -lpdl"
+		DEFINES="$DEFINES -DSDL_BACKEND -DWEBOS"
+		MODULES="$MODULES backends/platform/sdl"
 		;;
 	wii)
 		DEFINES="$DEFINES -D__WII__ -DGEKKO"

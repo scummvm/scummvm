@@ -26,6 +26,7 @@
 
 #include "tinsel/sound.h"
 
+#include "tinsel/adpcm.h"
 #include "tinsel/dw.h"
 #include "tinsel/config.h"
 #include "tinsel/music.h"
@@ -319,7 +320,7 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 #endif
 		break;
 	default:
-		sampleStream = Audio::makeADPCMStream(compressedStream, DisposeAfterUse::YES, sampleLen, Audio::kADPCMTinsel6, 22050, 1, 24);
+		sampleStream = new Tinsel6_ADPCMStream(compressedStream, DisposeAfterUse::YES, sampleLen, 22050, 1, 24);
 		break;
 	}
 
@@ -530,17 +531,17 @@ void SoundManager::openSampleFiles() {
 
 		// Detect format of soundfile by looking at 1st sample-index
 		switch (TO_BE_32(_sampleIndex[0])) {
-		case MKID_BE('MP3 '):
+		case MKTAG('M','P','3',' '):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected MP3 sound-data");
 			_soundMode = kMP3Mode;
 			break;
 
-		case MKID_BE('OGG '):
+		case MKTAG('O','G','G',' '):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected OGG sound-data");
 			_soundMode = kVorbisMode;
 			break;
 
-		case MKID_BE('FLAC'):
+		case MKTAG('F','L','A','C'):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected FLAC sound-data");
 			_soundMode = kFLACMode;
 			break;

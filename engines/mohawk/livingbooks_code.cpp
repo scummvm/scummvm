@@ -71,6 +71,19 @@ bool LBValue::isZero() const {
 	return toInt() == 0; // FIXME
 }
 
+Common::String LBValue::toString() const {
+	switch (type) {
+	case kLBValueString:
+		return string;
+	case kLBValueInteger:
+		return Common::String::format("%d", integer);
+	case kLBValueReal:
+		return Common::String::format("%f", real);
+	default:
+		return string; // FIXME
+	}
+}
+
 int LBValue::toInt() const {
 	return integer; // FIXME
 }
@@ -79,8 +92,38 @@ double LBValue::toDouble() const {
 	return real; // FIXME
 }
 
-LBCode::LBCode(MohawkEngine_LivingBooks *vm) : _vm(vm) {
-	Common::SeekableSubReadStreamEndian *bcodStream = _vm->wrapStreamEndian(ID_BCOD, 1000);
+Common::Point LBValue::toPoint() const {
+	switch (type) {
+	case kLBValueString:
+		// FIXME
+		return Common::Point();
+	case kLBValueInteger:
+		return Common::Point(integer, integer);
+	case kLBValuePoint:
+		return point;
+	default:
+		error("failed to convert to point");
+	}
+}
+
+Common::Rect LBValue::toRect() const {
+	switch (type) {
+	case kLBValueString:
+		// FIXME
+		return Common::Rect();
+	case kLBValueInteger:
+		return Common::Rect(integer, integer, integer, integer);
+	case kLBValueRect:
+		return rect;
+	case kLBValueItemPtr:
+		return item->getRect();
+	default:
+		error("failed to convert to rect");
+	}
+}
+
+LBCode::LBCode(MohawkEngine_LivingBooks *vm, uint16 baseId) : _vm(vm) {
+	Common::SeekableSubReadStreamEndian *bcodStream = _vm->wrapStreamEndian(ID_BCOD, baseId);
 
 	uint32 totalSize = bcodStream->readUint32();
 	if (totalSize != (uint32)bcodStream->size())
@@ -206,7 +249,7 @@ LBValue LBCode::runCode(byte terminator) {
 		if (_currToken == terminator || _currToken == kTokenEndOfFile)
 			break;
 		if (_currToken != kTokenEndOfStatement && _currToken != kTokenEndOfFile)
-			error("missing EOS");
+			error("missing EOS (got %02x)", _currToken);
 		debugN("\n");
 	}
 
@@ -214,8 +257,29 @@ LBValue LBCode::runCode(byte terminator) {
 }
 
 void LBCode::parseStatement() {
-	// FIXME: logical operators
 	parseComparisons();
+
+	if (_currToken != kTokenAnd && _currToken != kTokenOr)
+		return;
+	byte op = _currToken;
+	if (op == kTokenAnd)
+		debugN(" && ");
+	else
+		debugN(" || ");
+
+	nextToken();
+	parseComparisons();
+
+	LBValue val2 = _stack.pop();
+	LBValue val1 = _stack.pop();
+	bool result;
+	if (op == kTokenAnd)
+		result = !val1.isZero() && !val2.isZero();
+	else
+		result = !val1.isZero() || !val2.isZero();
+
+	debugN(" [--> %s]", result ? "true" : "false");
+	_stack.push(result);
 }
 
 void LBCode::parseComparisons() {
@@ -253,7 +317,7 @@ void LBCode::parseComparisons() {
 		error("comparison didn't get enough values");
 	LBValue val2 = _stack.pop();
 	LBValue val1 = _stack.pop();
-	bool result;
+	bool result = false;
 	// FIXME: should work for non-integers!!
 	switch (comparison) {
 	case kTokenEquals:
@@ -277,17 +341,50 @@ void LBCode::parseComparisons() {
 	}
 
 	debugN(" [--> %s]", result ? "true" : "false");
-	_stack.push(result ? 1 : 0);
+	_stack.push(result);
 }
 
 void LBCode::parseConcat() {
 	parseArithmetic1();
-	// FIXME: string concat
+
+	if (_currToken != kTokenConcat)
+		return;
+
+	debugN(" & ");
+	nextToken();
+	parseArithmetic1();
+
+	LBValue val2 = _stack.pop();
+	LBValue val1 = _stack.pop();
+	Common::String result = val1.toString() + val2.toString();
+	debugN(" [--> \"%s\"]", result.c_str());
+	_stack.push(result);
 }
 
 void LBCode::parseArithmetic1() {
 	parseArithmetic2();
-	// FIXME: -/+ math operators
+
+	if (_currToken != kTokenMinus && _currToken != kTokenPlus)
+		return;
+
+	byte op = _currToken;
+	if (op == kTokenMinus)
+		debugN(" - ");
+	else if (op == kTokenPlus)
+		debugN(" + ");
+
+	nextToken();
+	parseArithmetic2();
+
+	LBValue val2 = _stack.pop();
+	LBValue val1 = _stack.pop();
+	LBValue result;
+	// TODO: cope with non-integers
+	if (op == kTokenMinus)
+		result = val1.toInt() - val2.toInt();
+	else
+		result = val1.toInt() + val2.toInt();
+	_stack.push(result);
 }
 
 void LBCode::parseArithmetic2() {
@@ -310,10 +407,11 @@ void LBCode::parseMain() {
 		Common::String varname = _currValue.string;
 		debugN("%s", varname.c_str());
 		nextToken();
-		if (varname == "self") {
+		if (varname.equalsIgnoreCase("self")) {
 			_stack.push(LBValue(_currSource));
 			if (_currToken == kTokenAssign)
 				error("attempted assignment to self");
+			break;
 		} else if (_currToken == kTokenAssign) {
 			debugN(" = ");
 			nextToken();
@@ -326,7 +424,16 @@ void LBCode::parseMain() {
 		} else {
 			_stack.push(_vm->_variables[varname]);
 		}
-		// FIXME: pre/postincrement
+		// FIXME: pre/postincrement for non-integers
+		if (_currToken == kTokenPlusPlus) {
+			debugN("++");
+			_vm->_variables[varname].integer++;
+			nextToken();
+		} else if (_currToken == kTokenMinusMinus) {
+			debugN("--");
+			_vm->_variables[varname].integer--;
+			nextToken();
+		}
 		}
 		break;
 
@@ -345,6 +452,17 @@ void LBCode::parseMain() {
 		assert(_currValue.type == kLBValueString);
 		debugN("\"%s\"", _currValue.string.c_str());
 		_stack.push(_currValue);
+		nextToken();
+		break;
+
+	case kTokenTrue:
+		debugN("TRUE");
+		_stack.push(true);
+		nextToken();
+		break;
+	case kTokenFalse:
+		debugN("FALSE");
+		_stack.push(false);
 		nextToken();
 		break;
 
@@ -442,6 +560,21 @@ Common::Array<LBValue> LBCode::readParams() {
 	return params;
 }
 
+Common::Rect LBCode::getRectFromParams(const Common::Array<LBValue> &params) {
+	if (params.size() == 0) {
+		assert(_currSource);
+		return _currSource->getRect();
+	} else if (params.size() == 1) {
+		const LBValue &val = params[0];
+		LBItem *item = _vm->getItemByName(val.toString());
+		if (item)
+			return item->getRect();
+		else
+			return val.toRect();
+	} else
+		error("getRectFromParams got called with weird state");
+}
+
 struct CodeCommandInfo {
 	const char *name;
 	typedef void (LBCode::*CommandFunc)(const Common::Array<LBValue> &params);
@@ -457,16 +590,16 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "max", 0 },
 	{ "min", 0 },
 	{ "abs", 0 },
-	{ "getRect", 0 }, // also "makeRect"
+	{ "getRect", &LBCode::cmdGetRect }, // also "makeRect"
 	{ "makePt", 0 }, // also "makePair"
-	{ "topleft", 0 },
-	{ "bottomright", 0 },
+	{ "topLeft", &LBCode::cmdTopLeft },
+	{ "bottomRight", &LBCode::cmdBottomRight },
 	{ "mousePos", 0 },
-	{ "top", 0 },
-	{ "left", 0 },
-	{ "bottom", 0 },
+	{ "top", &LBCode::cmdTop },
+	{ "left", &LBCode::cmdLeft },
+	{ "bottom", &LBCode::cmdBottom },
 	// 0x10
-	{ "right", 0 },
+	{ "right", &LBCode::cmdRight },
 	{ "xpos", 0 },
 	{ "ypos", 0 },
 	{ "playFrom", 0 },
@@ -605,6 +738,67 @@ void LBCode::runGeneralCommand() {
 
 void LBCode::cmdUnimplemented(const Common::Array<LBValue> &params) {
 	warning("unimplemented command called");
+}
+
+void LBCode::cmdGetRect(const Common::Array<LBValue> &params) {
+	if (params.size() < 2) {
+		_stack.push(getRectFromParams(params));
+	} else if (params.size() == 2) {
+		Common::Point p1 = params[0].toPoint();
+		Common::Point p2 = params[1].toPoint();
+		_stack.push(Common::Rect(p1.x, p1.y, p2.x, p2.y));
+	} else if (params.size() == 4) {
+		_stack.push(Common::Rect(params[0].toInt(), params[1].toInt(), params[2].toInt(), params[3].toInt()));
+	} else
+		error("incorrect number of parameters (%d) to getRect", params.size());
+}
+
+void LBCode::cmdTopLeft(const Common::Array<LBValue> &params) {
+	if (params.size() > 1)
+		error("too many parameters (%d) to topLeft", params.size());
+
+	Common::Rect rect = getRectFromParams(params);
+	_stack.push(Common::Point(rect.top, rect.left));
+}
+
+void LBCode::cmdBottomRight(const Common::Array<LBValue> &params) {
+	if (params.size() > 1)
+		error("too many parameters (%d) to bottomRight", params.size());
+
+	Common::Rect rect = getRectFromParams(params);
+	_stack.push(Common::Point(rect.bottom, rect.right));
+}
+
+void LBCode::cmdTop(const Common::Array<LBValue> &params) {
+	if (params.size() > 1)
+		error("too many parameters (%d) to top", params.size());
+
+	Common::Rect rect = getRectFromParams(params);
+	_stack.push(rect.top);
+}
+
+void LBCode::cmdLeft(const Common::Array<LBValue> &params) {
+	if (params.size() > 1)
+		error("too many parameters (%d) to left", params.size());
+
+	Common::Rect rect = getRectFromParams(params);
+	_stack.push(rect.left);
+}
+
+void LBCode::cmdBottom(const Common::Array<LBValue> &params) {
+	if (params.size() > 1)
+		error("too many parameters (%d) to bottom", params.size());
+
+	Common::Rect rect = getRectFromParams(params);
+	_stack.push(rect.bottom);
+}
+
+void LBCode::cmdRight(const Common::Array<LBValue> &params) {
+	if (params.size() > 1)
+		error("too many parameters (%d) to right", params.size());
+
+	Common::Rect rect = getRectFromParams(params);
+	_stack.push(rect.right);
 }
 
 void LBCode::cmdSetPlayParams(const Common::Array<LBValue> &params) {
@@ -782,6 +976,16 @@ void LBCode::runNotifyCommand() {
 		if (params.size() != 0)
 			error("incorrect number of parameters (%d) to startphasemain", params.size());
 		_vm->addNotifyEvent(NotifyEvent(kLBNotifyIntroDone, 1));
+		}
+		break;
+
+	case kLBNotifyQuit:
+		{
+		debugN("quit");
+		Common::Array<LBValue> params = readParams();
+		if (params.size() != 0)
+			error("incorrect number of parameters (%d) to quit", params.size());
+		_vm->addNotifyEvent(NotifyEvent(kLBNotifyQuit, 0));
 		}
 		break;
 

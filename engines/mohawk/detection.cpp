@@ -121,6 +121,7 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"csworld", "Where in the World is Carmen Sandiego?"},
 	{"csamtrak", "Where in America is Carmen Sandiego? (The Great Amtrak Train Adventure)"},
 	{"carmentq", "Carmen Sandiego's ThinkQuick Challenge"},
+	{"carmentqc", "Carmen Sandiego's ThinkQuick Challenge Custom Question Creator"},
 	{"maggiesfa", "Maggie's Farmyard Adventure"},
 	{"jamesmath", "James Discovers/Explores Math"},
 	{"treehouse", "The Treehouse"},

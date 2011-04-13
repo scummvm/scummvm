@@ -74,6 +74,9 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 
 	_pauseStart = 0;
 
+	_pathfinderFlag = 0;
+	_smoothingPath = false;
+
 	_lang = 0;
 	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
 	if (lang == _flags.fanLang && _flags.replacedLang != Common::UNK_LANG)
@@ -236,7 +239,7 @@ int KyraEngine_v2::updateCharPos(int *table, int force) {
 		return 0;
 	_mainCharacter.x1 += _charAddXPosTable[_mainCharacter.facing];
 	_mainCharacter.y1 += _charAddYPosTable[_mainCharacter.facing];
-	updateCharAnimFrame(0, table);
+	updateCharAnimFrame(table);
 	_updateCharPosNextUpdate = _system->getMillis() + getCharacterWalkspeed() * _tickLength;
 	return 1;
 }

@@ -3,7 +3,7 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 		package="org.inodes.gus.scummvm"
-		android:versionCode="6"
+		android:versionCode="@ANDROID_VERSIONCODE@"
 		android:versionName="1.3.0git"
 		android:installLocation="preferExternal">
 

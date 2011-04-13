@@ -240,7 +240,7 @@ void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {
 		room = getObjectRoom(img);
 
 	findObjectInRoom(&foir, foCodeHeader | foImageHeader | foCheckAlreadyLoaded, img, room);
-	imhd = (const ImageHeader *)findResourceData(MKID_BE('IMHD'), foir.obim);
+	imhd = (const ImageHeader *)findResourceData(MKTAG('I','M','H','D'), foir.obim);
 
 	if (_game.version == 8) {
 		setCursorHotspot(READ_LE_UINT32(&imhd->v8.hotspot[0].x),
@@ -270,7 +270,7 @@ void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {
 		if (size > sizeof(_grabbedCursor))
 			error("setCursorFromImg: Cursor image too large");
 
-		bomp = findResource(MKID_BE('BOMP'), dataptr);
+		bomp = findResource(MKTAG('B','O','M','P'), dataptr);
 	}
 
 	if (bomp != NULL)

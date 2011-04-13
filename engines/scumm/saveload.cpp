@@ -154,7 +154,7 @@ void ScummEngine::requestLoad(int slot) {
 }
 
 static bool saveSaveGameHeader(Common::OutSaveFile *out, SaveGameHeader &hdr) {
-	hdr.type = MKID_BE('SCVM');
+	hdr.type = MKTAG('S','C','V','M');
 	hdr.size = 0;
 	hdr.ver = CURRENT_VER;
 
@@ -308,7 +308,7 @@ static bool loadSaveGameHeader(Common::SeekableReadStream *in, SaveGameHeader &h
 	hdr.size = in->readUint32LE();
 	hdr.ver = in->readUint32LE();
 	in->read(hdr.name, sizeof(hdr.name));
-	return !in->err() && hdr.type == MKID_BE('SCVM');
+	return !in->err() && hdr.type == MKTAG('S','C','V','M');
 }
 
 bool ScummEngine::loadState(int slot, bool compat) {
@@ -746,7 +746,7 @@ bool ScummEngine::loadInfos(Common::SeekableReadStream *file, SaveStateMetaInfos
 
 	SaveInfoSection section;
 	section.type = file->readUint32BE();
-	if (section.type != MKID_BE('INFO')) {
+	if (section.type != MKTAG('I','N','F','O')) {
 		return false;
 	}
 
@@ -793,7 +793,7 @@ bool ScummEngine::loadInfos(Common::SeekableReadStream *file, SaveStateMetaInfos
 
 void ScummEngine::saveInfos(Common::WriteStream* file) {
 	SaveInfoSection section;
-	section.type = MKID_BE('INFO');
+	section.type = MKTAG('I','N','F','O');
 	section.version = INFOSECTION_VERSION;
 	section.size = SaveInfoSectionSize;
 

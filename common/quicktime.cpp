@@ -74,10 +74,10 @@ bool QuickTimeParser::parseFile(const Common::String &filename) {
 
 	if (_resFork->hasResFork()) {
 		// Search for a 'moov' resource
-		Common::MacResIDArray idArray = _resFork->getResIDArray(MKID_BE('moov'));
+		Common::MacResIDArray idArray = _resFork->getResIDArray(MKTAG('m', 'o', 'o', 'v'));
 
 		if (!idArray.empty())
-			_fd = _resFork->getResource(MKID_BE('moov'), idArray[0]);
+			_fd = _resFork->getResource(MKTAG('m', 'o', 'o', 'v'), idArray[0]);
 
 		if (_fd) {
 			atom.size = _fd->size();
@@ -137,32 +137,32 @@ void QuickTimeParser::init() {
 
 void QuickTimeParser::initParseTable() {
 	static const ParseTable p[] = {
-		{ &QuickTimeParser::readDefault, MKID_BE('dinf') },
-		{ &QuickTimeParser::readLeaf,    MKID_BE('dref') },
-		{ &QuickTimeParser::readDefault, MKID_BE('edts') },
-		{ &QuickTimeParser::readELST,    MKID_BE('elst') },
-		{ &QuickTimeParser::readHDLR,    MKID_BE('hdlr') },
-		{ &QuickTimeParser::readDefault, MKID_BE('mdat') },
-		{ &QuickTimeParser::readMDHD,    MKID_BE('mdhd') },
-		{ &QuickTimeParser::readDefault, MKID_BE('mdia') },
-		{ &QuickTimeParser::readDefault, MKID_BE('minf') },
-		{ &QuickTimeParser::readMOOV,    MKID_BE('moov') },
-		{ &QuickTimeParser::readMVHD,    MKID_BE('mvhd') },
-		{ &QuickTimeParser::readLeaf,    MKID_BE('smhd') },
-		{ &QuickTimeParser::readDefault, MKID_BE('stbl') },
-		{ &QuickTimeParser::readSTCO,    MKID_BE('stco') },
-		{ &QuickTimeParser::readSTSC,    MKID_BE('stsc') },
-		{ &QuickTimeParser::readSTSD,    MKID_BE('stsd') },
-		{ &QuickTimeParser::readSTSS,    MKID_BE('stss') },
-		{ &QuickTimeParser::readSTSZ,    MKID_BE('stsz') },
-		{ &QuickTimeParser::readSTTS,    MKID_BE('stts') },
-		{ &QuickTimeParser::readTKHD,    MKID_BE('tkhd') },
-		{ &QuickTimeParser::readTRAK,    MKID_BE('trak') },
-		{ &QuickTimeParser::readLeaf,    MKID_BE('udta') },
-		{ &QuickTimeParser::readLeaf,    MKID_BE('vmhd') },
-		{ &QuickTimeParser::readCMOV,    MKID_BE('cmov') },
-		{ &QuickTimeParser::readWAVE,    MKID_BE('wave') },
-		{ &QuickTimeParser::readESDS,    MKID_BE('esds') },
+		{ &QuickTimeParser::readDefault, MKTAG('d', 'i', 'n', 'f') },
+		{ &QuickTimeParser::readLeaf,    MKTAG('d', 'r', 'e', 'f') },
+		{ &QuickTimeParser::readDefault, MKTAG('e', 'd', 't', 's') },
+		{ &QuickTimeParser::readELST,    MKTAG('e', 'l', 's', 't') },
+		{ &QuickTimeParser::readHDLR,    MKTAG('h', 'd', 'l', 'r') },
+		{ &QuickTimeParser::readDefault, MKTAG('m', 'd', 'a', 't') },
+		{ &QuickTimeParser::readMDHD,    MKTAG('m', 'd', 'h', 'd') },
+		{ &QuickTimeParser::readDefault, MKTAG('m', 'd', 'i', 'a') },
+		{ &QuickTimeParser::readDefault, MKTAG('m', 'i', 'n', 'f') },
+		{ &QuickTimeParser::readMOOV,    MKTAG('m', 'o', 'o', 'v') },
+		{ &QuickTimeParser::readMVHD,    MKTAG('m', 'v', 'h', 'd') },
+		{ &QuickTimeParser::readLeaf,    MKTAG('s', 'm', 'h', 'd') },
+		{ &QuickTimeParser::readDefault, MKTAG('s', 't', 'b', 'l') },
+		{ &QuickTimeParser::readSTCO,    MKTAG('s', 't', 'c', 'o') },
+		{ &QuickTimeParser::readSTSC,    MKTAG('s', 't', 's', 'c') },
+		{ &QuickTimeParser::readSTSD,    MKTAG('s', 't', 's', 'd') },
+		{ &QuickTimeParser::readSTSS,    MKTAG('s', 't', 's', 's') },
+		{ &QuickTimeParser::readSTSZ,    MKTAG('s', 't', 's', 'z') },
+		{ &QuickTimeParser::readSTTS,    MKTAG('s', 't', 't', 's') },
+		{ &QuickTimeParser::readTKHD,    MKTAG('t', 'k', 'h', 'd') },
+		{ &QuickTimeParser::readTRAK,    MKTAG('t', 'r', 'a', 'k') },
+		{ &QuickTimeParser::readLeaf,    MKTAG('u', 'd', 't', 'a') },
+		{ &QuickTimeParser::readLeaf,    MKTAG('v', 'm', 'h', 'd') },
+		{ &QuickTimeParser::readCMOV,    MKTAG('c', 'm', 'o', 'v') },
+		{ &QuickTimeParser::readWAVE,    MKTAG('w', 'a', 'v', 'e') },
+		{ &QuickTimeParser::readESDS,    MKTAG('e', 's', 'd', 's') },
 		{ 0, 0 }
 	};
 
@@ -186,7 +186,7 @@ int QuickTimeParser::readDefault(MOVatom atom) {
 
 			// Some QuickTime videos with resource forks have mdat chunks
 			// that are of size 0. Adjust it so it's the correct size.
-			if (a.type == MKID_BE('mdat') && a.size == 0)
+			if (a.type == MKTAG('m', 'd', 'a', 't') && a.size == 0)
 				a.size = _fd->size();
 		}
 
@@ -259,16 +259,16 @@ int QuickTimeParser::readCMOV(MOVatom atom) {
 #ifdef USE_ZLIB
 	// Read in the dcom atom
 	_fd->readUint32BE();
-	if (_fd->readUint32BE() != MKID_BE('dcom'))
+	if (_fd->readUint32BE() != MKTAG('d', 'c', 'o', 'm'))
 		return -1;
-	if (_fd->readUint32BE() != MKID_BE('zlib')) {
+	if (_fd->readUint32BE() != MKTAG('z', 'l', 'i', 'b')) {
 		warning("Unknown cmov compression type");
 		return -1;
 	}
 
 	// Read in the cmvd atom
 	uint32 compressedSize = _fd->readUint32BE() - 12;
-	if (_fd->readUint32BE() != MKID_BE('cmvd'))
+	if (_fd->readUint32BE() != MKTAG('c', 'm', 'v', 'd'))
 		return -1;
 	uint32 uncompressedSize = _fd->readUint32BE();
 
@@ -293,7 +293,7 @@ int QuickTimeParser::readCMOV(MOVatom atom) {
 	_fd = new Common::MemoryReadStream(uncompressedData, uncompressedSize, DisposeAfterUse::YES);
 
 	// Read the contents of the uncompressed data
-	MOVatom a = { MKID_BE('moov'), 0, uncompressedSize };
+	MOVatom a = { MKTAG('m', 'o', 'o', 'v'), 0, uncompressedSize };
 	int err = readDefault(a);
 
 	// Assign the file handle back to the original handle
@@ -462,14 +462,14 @@ int QuickTimeParser::readHDLR(MOVatom atom) {
 	debug(0, "ctype= %s (0x%08lx)", tag2str(ctype), (long)ctype);
 	debug(0, "stype= %s", tag2str(type));
 
-	if (ctype == MKID_BE('mhlr')) // MOV
+	if (ctype == MKTAG('m', 'h', 'l', 'r')) // MOV
 		debug(0, "MOV detected");
 	else if (ctype == 0)
 		debug(0, "MPEG-4 detected");
 
-	if (type == MKID_BE('vide'))
+	if (type == MKTAG('v', 'i', 'd', 'e'))
 		st->codec_type = CODEC_TYPE_VIDEO;
-	else if (type == MKID_BE('soun'))
+	else if (type == MKTAG('s', 'o', 'u', 'n'))
 		st->codec_type = CODEC_TYPE_AUDIO;
 
 	_fd->readUint32BE(); // component manufacture
@@ -685,7 +685,7 @@ int QuickTimeParser::readWAVE(MOVatom atom) {
 	if (atom.size > (1 << 30))
 		return -1;
 
-	if (st->sampleDescs[0]->codecTag == MKID_BE('QDM2')) // Read extradata for QDM2
+	if (st->sampleDescs[0]->codecTag == MKTAG('Q', 'D', 'M', '2')) // Read extradata for QDM2
 		st->extradata = _fd->readStream(atom.size - 8);
 	else if (atom.size > 8)
 		return readDefault(atom);

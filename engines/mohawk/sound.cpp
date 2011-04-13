@@ -479,7 +479,7 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 		return Audio::makeRawStream(dataChunk.audioData, dataChunk.sampleRate, flags);
 	} else if (dataChunk.encoding == kCodecADPCM) {
 		uint32 blockAlign = dataChunk.channels * dataChunk.bitsPerSample / 8;
-		return Audio::makeADPCMStream(dataChunk.audioData, DisposeAfterUse::YES, dataSize, Audio::kADPCMIma, dataChunk.sampleRate, dataChunk.channels, blockAlign);
+		return Audio::makeADPCMStream(dataChunk.audioData, DisposeAfterUse::YES, dataSize, Audio::kADPCMDVI, dataChunk.sampleRate, dataChunk.channels, blockAlign);
 	} else if (dataChunk.encoding == kCodecMPEG2) {
 #ifdef USE_MAD
 		return Audio::makeMP3Stream(dataChunk.audioData, DisposeAfterUse::YES);

@@ -226,7 +226,7 @@ bool JPEG::read(Common::SeekableReadStream *stream) {
 bool JPEG::readJFIF() {
 	uint16 length = _stream->readUint16BE();
 	uint32 tag = _stream->readUint32BE();
-	if (tag != MKID_BE('JFIF')) {
+	if (tag != MKTAG('J','F','I','F')) {
 		warning("JPEG::readJFIF() tag mismatch");
 		return false;
 	}

@@ -332,7 +332,7 @@ int ScummEngine_v72he::getSoundResourceSize(int id) {
 		if (!ptr)
 			return 0;
 
-		if (READ_BE_UINT32(ptr) == MKID_BE('RIFF')) {
+		if (READ_BE_UINT32(ptr) == MKTAG('R','I','F','F')) {
 			byte flags;
 			int rate;
 
@@ -344,11 +344,11 @@ int ScummEngine_v72he::getSoundResourceSize(int id) {
 			}
 		} else {
 			ptr += 8 + READ_BE_UINT32(ptr + 12);
-			if (READ_BE_UINT32(ptr) == MKID_BE('SBNG')) {
+			if (READ_BE_UINT32(ptr) == MKTAG('S','B','N','G')) {
 				ptr += READ_BE_UINT32(ptr + 4);
 			}
 
-			assert(READ_BE_UINT32(ptr) == MKID_BE('SDAT'));
+			assert(READ_BE_UINT32(ptr) == MKTAG('S','D','A','T'));
 			size = READ_BE_UINT32(ptr + 4) - 8;
 		}
 	}

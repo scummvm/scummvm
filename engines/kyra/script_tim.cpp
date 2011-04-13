@@ -115,14 +115,14 @@ TIMInterpreter::~TIMInterpreter() {
 
 bool TIMInterpreter::callback(Common::IFFChunk &chunk) {
 	switch (chunk._type) {
-	case MKID_BE('TEXT'):
+	case MKTAG('T','E','X','T'):
 		_tim->text = new byte[chunk._size];
 		assert(_tim->text);
 		if (chunk._stream->read(_tim->text, chunk._size) != chunk._size)
 			error("Couldn't read TEXT chunk from file '%s'", _filename);
 		break;
 
-	case MKID_BE('AVTL'):
+	case MKTAG('A','V','T','L'):
 		_avtlChunkSize = chunk._size >> 1;
 		_tim->avtl = new uint16[_avtlChunkSize];
 		assert(_tim->avtl);

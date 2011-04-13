@@ -269,6 +269,7 @@ protected:
 	// pathfinder
 	int _movFacingTable[600];
 	int _pathfinderFlag;
+	bool _smoothingPath;
 
 	int findWay(int curX, int curY, int dstX, int dstY, int *moveTable, int moveTableSize);
 
@@ -340,7 +341,7 @@ protected:
 	uint32 _updateCharPosNextUpdate;
 
 	virtual int getCharacterWalkspeed() const = 0;
-	virtual void updateCharAnimFrame(int num, int *table) = 0;
+	virtual void updateCharAnimFrame(int *table) = 0;
 
 	// chat
 	int _vocHigh;

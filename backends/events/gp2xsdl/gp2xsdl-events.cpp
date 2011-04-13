@@ -18,22 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/scummsys.h"
 
-#if defined(GP2X)
+#if defined(GP2X_OLD)
 
 #include "backends/events/gp2xsdl/gp2xsdl-events.h"
-#if defined(GP2X)
 #include "backends/platform/gp2x/gp2x-hw.h"
 #include "backends/graphics/gp2xsdl/gp2xsdl-graphics.h"
-#else
-#include "backends/platform/gp2xwiz/gp2xwiz-hw.h"
-#endif
 
 #include "backends/platform/sdl/sdl.h"
 
@@ -88,7 +81,6 @@ enum {
 
 GP2XSdlEventSource::GP2XSdlEventSource()
 	: _buttonStateL(false){
-
 }
 
 void GP2XSdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
@@ -467,6 +459,5 @@ bool GP2XSdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event
 bool GP2XSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	return false;
 }
-
 
 #endif

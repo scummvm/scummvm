@@ -85,7 +85,7 @@ bool Indeo3Decoder::isIndeo3(Common::SeekableReadStream &stream) {
 		return false;
 
 	// These 4 uint32s XOR'd need to spell "FRMH"
-	if ((id0 ^ id1 ^ id2 ^ id3) != MKID_BE('FRMH'))
+	if ((id0 ^ id1 ^ id2 ^ id3) != MKTAG('F','R','M','H'))
 		return false;
 
 	return true;

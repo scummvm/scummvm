@@ -91,7 +91,7 @@ NSArchive::NSArchive(Common::SeekableReadStream *stream, Common::Platform platfo
 		if (features & GF_DEMO) {
 			isSmallArchive = stream->size() == SIZEOF_SMALL_ARCHIVE;
 		} else if (features & GF_LANG_MULT) {
-			isSmallArchive = (stream->readUint32BE() != MKID_BE('NDOS'));
+			isSmallArchive = (stream->readUint32BE() != MKTAG('N','D','O','S'));
 		}
 	}
 
@@ -801,7 +801,7 @@ void AmigaDisk_ns::unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 b
 	uint16 planeSize = bytesPerPlane * height;
 
 	for (uint32 i = 0; i < numFrames; i++) {
-		if (READ_BE_UINT32(src) == MKID_BE('DLTA')) {
+		if (READ_BE_UINT32(src) == MKTAG('D','L','T','A')) {
 
 			uint size = READ_BE_UINT32(src + 4);
 

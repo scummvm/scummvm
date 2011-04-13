@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	events/samsungtvsdl/samsungtvsdl-events.o \
 	events/sdl/sdl-events.o \
 	events/symbiansdl/symbiansdl-events.o \
+	events/webossdl/webossdl-events.o \
 	events/wincesdl/wincesdl-events.o \
 	fs/abstract-fs.o \
 	fs/stdiostream.o \

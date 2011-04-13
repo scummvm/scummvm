@@ -78,7 +78,7 @@ bool PEResources::loadFromEXE(SeekableReadStream *stream) {
 
 	stream->seek(peOffset);
 
-	if (stream->readUint32BE() != MKID_BE('PE\0\0'))
+	if (stream->readUint32BE() != MKTAG('P','E',0,0))
 		return false;
 
 	stream->skip(2);

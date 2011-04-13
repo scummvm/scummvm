@@ -1499,7 +1499,7 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 		}
 		imptr = getObjectImage(obim, 1);
 	} else {
-		const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKID_BE('IMHD'), obim);
+		const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKTAG('I','M','H','D'), obim);
 		if (_game.version >= 7) {
 			imgw = READ_LE_UINT16(&imhd->v7.width) / 8;
 			imgh = READ_LE_UINT16(&imhd->v7.height) / 8;

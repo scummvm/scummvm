@@ -23,7 +23,7 @@
 #ifndef GPH_H
 #define GPH_H
 
-#if defined(GP2XWIZ) || defined(CAANOO)
+#if defined(GPH_DEVICE)
 
 #include "backends/base-backend.h"
 #include "backends/platform/sdl/sdl.h"

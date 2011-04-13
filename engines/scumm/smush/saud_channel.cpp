@@ -50,7 +50,7 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 		uint32 available_size = _tbufferSize - offset;
 
 		switch (type) {
-		case MKID_BE('STRK'):
+		case MKTAG('S','T','R','K'):
 			_inData = false;
 			if (available_size >= (size + 8)) {
 				int32 subSize = READ_BE_UINT32((byte *)_tbuffer + offset + 4);
@@ -60,14 +60,14 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 			} else
 				return false;
 			break;
-		case MKID_BE('SMRK'):
+		case MKTAG('S','M','R','K'):
 			_inData = false;
 			if (available_size >= (size + 8))
 				_markReached = true;
 			else
 				return false;
 			break;
-		case MKID_BE('SHDR'):
+		case MKTAG('S','H','D','R'):
 			_inData = false;
 			if (available_size >= (size + 8)) {
 				int32 subSize = READ_BE_UINT32((byte *)_tbuffer + offset + 4);
@@ -76,7 +76,7 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 			} else
 				return false;
 			break;
-		case MKID_BE('SDAT'):
+		case MKTAG('S','D','A','T'):
 			_inData = true;
 			_dataSize = size;
 			offset += 8;
@@ -123,7 +123,7 @@ bool SaudChannel::appendData(Common::SeekableReadStream &b, int32 size) {
 		assert(size > 8);
 		uint32 saud_type = b.readUint32BE();
 		/*uint32 saud_size =*/ b.readUint32BE();
-		if (saud_type != MKID_BE('SAUD'))
+		if (saud_type != MKTAG('S','A','U','D'))
 			error("Invalid Chunk for SaudChannel : %X", saud_type);
 		size -= 8;
 		_dataSize = -2;

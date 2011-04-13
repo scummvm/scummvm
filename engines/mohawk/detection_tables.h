@@ -610,6 +610,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"carmentqc",
+			"",
+			AD_ENTRY1("Outline.txt", "6a281eefe72987afb0f8fb6cf84553f5"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV5,
+		0,
+		0
+	},
+
+	{
+		{
 			"maggiesfa",
 			"",
 			AD_ENTRY1("Outline", "b7dc6e65fa9e80784a5bb8b557aa37c4"),
@@ -869,6 +884,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"TORTOISE.EXE"
 	},
 
+	// From Scarlatti in bug #3275626
+	{
+		{
+			"tortoise",
+			"Demo v1.1",
+			AD_ENTRY1("TORTOISE.512", "14400a3358a3f1148e4d4b47bc3523c9"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"TORTOISE.EXE"
+	},
+
 	{
 		{
 			"tortoise",
@@ -919,6 +950,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"arthur",
 			"Demo v1.1",
 			AD_ENTRY1("ARTHUR.512", "f19e824e0a2f2745ed698e6aaf44f838"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"ARTHUR.EXE"
+	},
+
+	// From Scarlatti in bug #3275626
+	{
+		{
+			"arthur",
+			"Demo v1.1",
+			AD_ENTRY1("ARTHUR.512", "dabdd466dea26ab5ecb9415cf73f8601"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
@@ -1006,6 +1053,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"GRANDMA.EXE"
 	},
 
+	// From Scarlatti in bug #3275626
+	{
+		{
+			"grandma",
+			"Demo v1.1",
+			AD_ENTRY1("GRANDMA.512", "4f616647245bb4e37e6dab7557dad304"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"GRANDMA.EXE"
+	},
+
 	{
 		{
 			"grandma",
@@ -1036,11 +1099,44 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Living Books Player"
 	},
 
+	// Ruff's Bone 1.0
+	// From pacifist
+	{
+		{
+			"ruff",
+			"",
+			AD_ENTRY1("RUFF.512", "3dbda0de6f47a64d1714d89f5a5f60d1"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"RUFF.EXE"
+	},
+
 	{
 		{
 			"ruff",
 			"Demo",
 			AD_ENTRY1("RUFF.512", "2ba1aa65177c816e156db648c398d362"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"RUFF.EXE"
+	},
+
+	// From Scarlatti in bug #3275626
+	{
+		{
+			"ruff",
+			"Demo",
+			AD_ENTRY1("RUFF.512", "07b9d013e2400d61ca268892a76de4d2"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
@@ -1066,23 +1162,6 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Living Books Player"
 	},
 
-	// Ruff's Bone 1.0
-	// From pacifist
-	{
-		{
-			"ruff",
-			"",
-			AD_ENTRY1("RUFF.512", "3dbda0de6f47a64d1714d89f5a5f60d1"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
-		},
-		GType_LIVINGBOOKSV1,
-		0,
-		"RUFF.EXE"
-	},
-
 	{
 		{
 			"newkid",
@@ -1103,6 +1182,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"newkid",
 			"Demo v1.1",
 			AD_ENTRY1("NEWKID.512", "41e975b7390c626f8d1058a34f9d9b2e"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"NEWKID.EXE"
+	},
+
+	// From Scarlatti in bug #3275626
+	{
+		{
+			"newkid",
+			"Demo v1.1",
+			AD_ENTRY1("NEWKID.512", "de576f3481f62e84eda03b4d2307492b"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
@@ -1174,6 +1269,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"BIRTHDAY.EXE"
 	},
 
+	// From Scarlatti in bug #3275626
+	{
+		{
+			"arthurbday",
+			"Demo",
+			AD_ENTRY1("BIRTHDAY.512", "2946b1e06f59ea607b8b29dfc6ba8976"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"BIRTHDAY.EXE"
+	},
+
 	{
 		{
 			"arthurbday",
@@ -1217,6 +1328,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GType_LIVINGBOOKSV1,
 		0,
 		"Little Monster at School"
+	},
+
+	// From Scarlatti in bug #3275626
+	{
+		{
+			"lilmonster",
+			"Demo",
+			AD_ENTRY1("MONSTER.512", "029e57f1fc8dd1f93f6623a1841f0df2"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"MONSTER.EXE"
 	},
 
 	{

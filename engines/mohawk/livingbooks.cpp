@@ -72,6 +72,48 @@ Common::Rect MohawkEngine_LivingBooks::readRect(Common::SeekableSubReadStreamEnd
 	return rect;
 }
 
+LBPage::LBPage(MohawkEngine_LivingBooks *vm) : _vm(vm) {
+	_code = NULL;
+	_mhk = NULL;
+
+	_baseId = 0;
+	_cascade = false;
+}
+
+void LBPage::open(MohawkArchive *mhk, uint16 baseId) {
+	_mhk = mhk;
+	_baseId = baseId;
+
+	_vm->addArchive(_mhk);
+	if (_vm->hasResource(ID_BCOD, baseId))
+		_code = new LBCode(_vm, baseId);
+
+	loadBITL(baseId);
+	for (uint i = 0; i < _items.size(); i++)
+		_vm->addItem(_items[i]);
+
+	for (uint32 i = 0; i < _items.size(); i++)
+		_items[i]->init();
+}
+
+void LBPage::itemDestroyed(LBItem *item) {
+	for (uint i = 0; i < _items.size(); i++)
+		if (item == _items[i]) {
+			_items.remove_at(i);
+			return;
+		}
+	error("itemDestroyed didn't find item");
+}
+
+LBPage::~LBPage() {
+	delete _code;
+	_vm->removeItems(_items);
+	for (uint i = 0; i < _items.size(); i++)
+		delete _items[i];
+	_vm->removeArchive(_mhk);
+	delete _mhk;
+}
+
 MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
 	_needsUpdate = false;
 	_needsRedraw = false;
@@ -82,10 +124,10 @@ MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGa
 
 	_alreadyShowedIntro = false;
 
-	_code = NULL;
-
 	_rnd = new Common::RandomSource();
 	g_eventRec.registerRandomSource(*_rnd, "livingbooks");
+
+	_page = NULL;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	// Rugrats
@@ -281,16 +323,9 @@ void MohawkEngine_LivingBooks::destroyPage() {
 
 	_eventQueue.clear();
 
-	delete _code;
-	_code = NULL;
-
-	for (uint32 i = 0; i < _items.size(); i++)
-		delete _items[i];
-	_items.clear();
-
-	for (uint32 i = 0; i < _mhk.size(); i++)
-		delete _mhk[i];
-	_mhk.clear();
+	delete _page;
+	assert(_items.empty());
+	_page = NULL;
 
 	_notifyEvents.clear();
 
@@ -342,7 +377,8 @@ bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 
 	MohawkArchive *pageArchive = createMohawkArchive();
 	if (!filename.empty() && pageArchive->open(filename)) {
-		_mhk.push_back(pageArchive);
+		_page = new LBPage(this);
+		_page->open(pageArchive, 1000);
 	} else {
 		delete pageArchive;
 		debug(2, "Could not find page %d.%d for '%s'", page, subpage, name.c_str());
@@ -360,7 +396,7 @@ bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 		}
 	}
 
-	debug(1, "Stack Version: %d", getResourceVersion());
+	debug(1, "Page Version: %d", _page->getResourceVersion());
 
 	_curMode = mode;
 	_curPage = page;
@@ -369,13 +405,6 @@ bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 	_cursor->showCursor();
 
 	_gfx->setPalette(1000);
-
-	if (hasResource(ID_BCOD, 1000))
-		_code = new LBCode(this);
-
-	loadBITL(1000);
-	for (uint32 i = 0; i < _items.size(); i++)
-		_items[i]->init();
 
 	_phase = 0;
 	_introDone = false;
@@ -523,6 +552,7 @@ void MohawkEngine_LivingBooks::updatePage() {
 				_items.remove_at(i);
 				i--;
 				delete delayedEvent.item;
+				_page->itemDestroyed(delayedEvent.item);
 				if (_focus == delayedEvent.item)
 					_focus = NULL;
 				break;
@@ -550,9 +580,50 @@ void MohawkEngine_LivingBooks::updatePage() {
 	}
 }
 
+void MohawkEngine_LivingBooks::addArchive(MohawkArchive *archive) {
+	_mhk.push_back(archive);
+}
+
+void MohawkEngine_LivingBooks::removeArchive(MohawkArchive *archive) {
+	for (uint i = 0; i < _mhk.size(); i++) {
+		if (archive != _mhk[i])
+			continue;
+		_mhk.remove_at(i);
+		return;
+	}
+
+	error("removeArchive didn't find archive");
+}
+
+void MohawkEngine_LivingBooks::addItem(LBItem *item) {
+	_items.push_back(item);
+}
+
+void MohawkEngine_LivingBooks::removeItems(const Common::Array<LBItem *> &items) {
+	for (uint i = 0; i < items.size(); i++) {
+		bool found = false;
+		for (uint16 j = 0; j < _items.size(); j++) {
+			if (items[i] != _items[j])
+				continue;
+			found = true;
+			_items.remove_at(j);
+			break;
+		}
+		assert(found);
+	}
+}
+
 LBItem *MohawkEngine_LivingBooks::getItemById(uint16 id) {
 	for (uint16 i = 0; i < _items.size(); i++)
 		if (_items[i]->getId() == id)
+			return _items[i];
+
+	return NULL;
+}
+
+LBItem *MohawkEngine_LivingBooks::getItemByName(Common::String name) {
+	for (uint16 i = 0; i < _items.size(); i++)
+		if (_items[i]->getName() == name)
 			return _items[i];
 
 	return NULL;
@@ -624,9 +695,9 @@ void MohawkEngine_LivingBooks::lockSound(LBItem *owner, bool lock) {
 	}
 }
 
-// Only 1 VSRN resource per stack, Id 1000
-uint16 MohawkEngine_LivingBooks::getResourceVersion() {
-	Common::SeekableReadStream *versionStream = getResource(ID_VRSN, 1000);
+// Only 1 VSRN resource per page
+uint16 LBPage::getResourceVersion() {
+	Common::SeekableReadStream *versionStream = _vm->getResource(ID_VRSN, _baseId);
 
 	// FIXME: some V2 games have very strange version entries
 	if (versionStream->size() != 2)
@@ -638,43 +709,43 @@ uint16 MohawkEngine_LivingBooks::getResourceVersion() {
 	return version;
 }
 
-void MohawkEngine_LivingBooks::loadBITL(uint16 resourceId) {
-	Common::SeekableSubReadStreamEndian *bitlStream = wrapStreamEndian(ID_BITL, resourceId);
+void LBPage::loadBITL(uint16 resourceId) {
+	Common::SeekableSubReadStreamEndian *bitlStream = _vm->wrapStreamEndian(ID_BITL, resourceId);
 
 	while (true) {
-		Common::Rect rect = readRect(bitlStream);
+		Common::Rect rect = _vm->readRect(bitlStream);
 		uint16 type = bitlStream->readUint16();
 
 		LBItem *res;
 		switch (type) {
 		case kLBPictureItem:
-			res = new LBPictureItem(this, rect);
+			res = new LBPictureItem(_vm, this, rect);
 			break;
 		case kLBAnimationItem:
-			res = new LBAnimationItem(this, rect);
+			res = new LBAnimationItem(_vm, this, rect);
 			break;
 		case kLBPaletteItem:
-			res = new LBPaletteItem(this, rect);
+			res = new LBPaletteItem(_vm, this, rect);
 			break;
 		case kLBGroupItem:
-			res = new LBGroupItem(this, rect);
+			res = new LBGroupItem(_vm, this, rect);
 			break;
 		case kLBSoundItem:
-			res = new LBSoundItem(this, rect);
+			res = new LBSoundItem(_vm, this, rect);
 			break;
 		case kLBLiveTextItem:
-			res = new LBLiveTextItem(this, rect);
+			res = new LBLiveTextItem(_vm, this, rect);
 			break;
 		case kLBMovieItem:
-			res = new LBMovieItem(this, rect);
+			res = new LBMovieItem(_vm, this, rect);
 			break;
 		case kLBMiniGameItem:
-			res = new LBMiniGameItem(this, rect);
+			res = new LBMiniGameItem(_vm, this, rect);
 			break;
 		default:
 			warning("Unknown item type %04x", type);
 		case 3: // often used for buttons
-			res = new LBItem(this, rect);
+			res = new LBItem(_vm, this, rect);
 			break;
 		}
 
@@ -1802,7 +1873,7 @@ LBScriptEntry::~LBScriptEntry() {
 		delete subentries[i];
 }
 
-LBItem::LBItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : _vm(vm), _rect(rect) {
+LBItem::LBItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : _vm(vm), _page(page), _rect(rect) {
 	_phase = 0;
 
 	_loopMode = 0;
@@ -1926,13 +1997,14 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 			debug(4, "%d targets with targeting type %04x", count, targetingType);
 
 			// FIXME: targeting by name
+			uint oldAlign = size % 2;
 			for (uint i = 0; i < count; i++) {
 				Common::String target = _vm->readString(stream);
 				warning("ignoring target '%s' in script entry", target.c_str());
 				size -= target.size() + 1;
 			}
 
-			if (size % 2 == 1) {
+			if (size % 2 != oldAlign) {
 				stream->skip(1);
 				size--;
 			}
@@ -2190,9 +2262,9 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 		{
 		assert(size == 4);
 		uint offset = stream->readUint32();
-		if (!_vm->_code)
+		if (!_page->_code)
 			error("no BCOD?");
-		_vm->_code->runCode(this, offset);
+		_page->_code->runCode(this, offset);
 		}
 		break;
 
@@ -2659,9 +2731,9 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 			break;
 
 		case kLBOpSendExpression:
-			if (!_vm->_code)
+			if (!_page->_code)
 				error("no BCOD?");
-			_vm->_code->runCode(this, entry->offset);
+			_page->_code->runCode(this, entry->offset);
 			break;
 
 		case kLBOpRunSubentries:
@@ -2694,10 +2766,10 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 		case kLBOpJumpUnlessExpression:
 		case kLBOpBreakExpression:
 		case kLBOpJumpToExpression:
-			if (!_vm->_code)
+			if (!_page->_code)
 				error("no BCOD?");
 			{
-			LBValue r = _vm->_code->runCode(this, entry->offset);
+			LBValue r = _page->_code->runCode(this, entry->offset);
 			// FIXME
 			return r.integer;
 			}
@@ -2973,7 +3045,7 @@ bool LBItem::checkCondition(const Common::String &condition) {
 	return false; // unreachable
 }
 
-LBSoundItem::LBSoundItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
+LBSoundItem::LBSoundItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	debug(3, "new LBSoundItem");
 	_running = false;
 }
@@ -3019,7 +3091,7 @@ void LBSoundItem::stop() {
 	LBItem::stop();
 }
 
-LBGroupItem::LBGroupItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
+LBGroupItem::LBGroupItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	debug(3, "new LBGroupItem");
 	_starting = false;
 }
@@ -3134,7 +3206,7 @@ void LBGroupItem::stop() {
 	}
 }
 
-LBPaletteItem::LBPaletteItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
+LBPaletteItem::LBPaletteItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	debug(3, "new LBPaletteItem");
 
 	_fadeInStart = 0;
@@ -3219,7 +3291,7 @@ void LBPaletteItem::update() {
 	LBItem::update();
 }
 
-LBLiveTextItem::LBLiveTextItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
+LBLiveTextItem::LBLiveTextItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	_currentPhrase = 0xFFFF;
 	_currentWord = 0xFFFF;
 	debug(3, "new LBLiveTextItem");
@@ -3466,7 +3538,7 @@ void LBLiveTextItem::notify(uint16 data, uint16 from) {
 	LBItem::notify(data, from);
 }
 
-LBPictureItem::LBPictureItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
+LBPictureItem::LBPictureItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	debug(3, "new LBPictureItem");
 }
 
@@ -3509,7 +3581,7 @@ void LBPictureItem::draw() {
 	_vm->_gfx->copyAnimImageToScreen(_resourceId, _rect.left, _rect.top);
 }
 
-LBAnimationItem::LBAnimationItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
+LBAnimationItem::LBAnimationItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	_anim = NULL;
 	_running = false;
 	debug(3, "new LBAnimationItem");
@@ -3608,7 +3680,7 @@ void LBAnimationItem::draw() {
 	_anim->draw();
 }
 
-LBMovieItem::LBMovieItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
+LBMovieItem::LBMovieItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	debug(3, "new LBMovieItem");
 }
 
@@ -3637,7 +3709,7 @@ bool LBMovieItem::togglePlaying(bool playing, bool restart) {
 	return LBItem::togglePlaying(playing, restart);
 }
 
-LBMiniGameItem::LBMiniGameItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
+LBMiniGameItem::LBMiniGameItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	debug(3, "new LBMiniGameItem");
 }
 

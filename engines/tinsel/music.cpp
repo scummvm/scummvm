@@ -38,6 +38,7 @@
 #include "common/file.h"
 #include "common/memstream.h"
 
+#include "tinsel/adpcm.h"
 #include "tinsel/config.h"
 #include "tinsel/sound.h"
 #include "tinsel/music.h"
@@ -64,10 +65,6 @@ struct SOUND_BUFFER {
 };
 
 // FIXME: Avoid non-const global vars
-
-// get set when music driver is installed
-//static MDI_DRIVER *mDriver;
-//static HSEQUENCE mSeqHandle;
 
 // MIDI buffer
 static SOUND_BUFFER midiBuffer = { 0, 0 };
@@ -152,8 +149,6 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 
 	// the index and length of the last tune loaded
 	static uint32 dwLastMidiIndex = 0;	// FIXME: Avoid non-const global vars
-	//static uint32 dwLastSeqLen;
-
 	uint32 dwSeqLen = 0;	// length of the sequence
 
 	// Support for external music from the music enhancement project
@@ -471,7 +466,6 @@ PCMMusicPlayer::PCMMusicPlayer() {
 	_silenceSamples = 0;
 
 	_curChunk = 0;
-	_fileName = 0;
 	_state = S_IDLE;
 	_mState = S_IDLE;
 	_scriptNum = -1;
@@ -494,15 +488,13 @@ PCMMusicPlayer::PCMMusicPlayer() {
 
 PCMMusicPlayer::~PCMMusicPlayer() {
 	_vm->_mixer->stopHandle(_handle);
-
-	delete[] _fileName;
 }
 
 void PCMMusicPlayer::startPlay(int id) {
-	if (!_fileName)
+	if (_filename.empty())
 		return;
 
-	debugC(DEBUG_DETAILED, kTinselDebugMusic, "Playing PCM music %s, index %d", _fileName, id);
+	debugC(DEBUG_DETAILED, kTinselDebugMusic, "Playing PCM music %s, index %d", _filename.c_str(), id);
 
 	Common::StackLock slock(_mutex);
 
@@ -617,8 +609,7 @@ void PCMMusicPlayer::setMusicSceneDetails(SCNHANDLE hScript,
 
 	_hScript = hScript;
 	_hSegment = hSegment;
-	_fileName = new char[strlen(fileName) + 1];
-	strcpy(_fileName, fileName);
+	_filename = fileName;
 
 	// Start scene with music not dimmed
 	_dimmed = false;
@@ -774,19 +765,19 @@ bool PCMMusicPlayer::getNextChunk() {
 		sampleLength = FROM_LE_32(musicSegments[snum].sampleLength);
 		sampleCLength = (((sampleLength + 63) & ~63)*33)/64;
 
-		if (!file.open(_fileName))
-			error(CANNOT_FIND_FILE, _fileName);
+		if (!file.open(_filename))
+			error(CANNOT_FIND_FILE, _filename.c_str());
 
 		file.seek(sampleOffset);
 		if (file.eos() || file.err() || (uint32)file.pos() != sampleOffset)
-			error(FILE_IS_CORRUPT, _fileName);
+			error(FILE_IS_CORRUPT, _filename.c_str());
 
 		buffer = (byte *) malloc(sampleCLength);
 		assert(buffer);
 
 		// read all of the sample
 		if (file.read(buffer, sampleCLength) != sampleCLength)
-			error(FILE_IS_CORRUPT, _fileName);
+			error(FILE_IS_CORRUPT, _filename.c_str());
 
 		debugC(DEBUG_DETAILED, kTinselDebugMusic, "Creating ADPCM music chunk with size %d, "
 				"offset %d (script %d.%d)", sampleCLength, sampleOffset,
@@ -795,8 +786,8 @@ bool PCMMusicPlayer::getNextChunk() {
 		sampleStream = new Common::MemoryReadStream(buffer, sampleCLength, DisposeAfterUse::YES);
 
 		delete _curChunk;
-		_curChunk = makeADPCMStream(sampleStream, DisposeAfterUse::YES, sampleCLength,
-				Audio::kADPCMTinsel8, 22050, 1, 32);
+		_curChunk = new Tinsel8_ADPCMStream(sampleStream, DisposeAfterUse::YES, sampleCLength,
+				22050, 1, 32);
 
 		_state = S_MID;
 		return true;

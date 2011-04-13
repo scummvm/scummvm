@@ -68,14 +68,14 @@ EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm) : _vm(vm), _scriptData(0), _fi
 
 bool EMCInterpreter::callback(Common::IFFChunk &chunk) {
 	switch (chunk._type) {
-	case MKID_BE('TEXT'):
+	case MKTAG('T','E','X','T'):
 		_scriptData->text = new byte[chunk._size];
 		assert(_scriptData->text);
 		if (chunk._stream->read(_scriptData->text, chunk._size) != chunk._size)
 			error("Couldn't read TEXT chunk from file '%s'", _filename);
 		break;
 
-	case MKID_BE('ORDR'):
+	case MKTAG('O','R','D','R'):
 		_scriptData->ordr = new uint16[chunk._size >> 1];
 		assert(_scriptData->ordr);
 		if (chunk._stream->read(_scriptData->ordr, chunk._size) != chunk._size)
@@ -85,7 +85,7 @@ bool EMCInterpreter::callback(Common::IFFChunk &chunk) {
 			_scriptData->ordr[i] = READ_BE_UINT16(&_scriptData->ordr[i]);
 		break;
 
-	case MKID_BE('DATA'):
+	case MKTAG('D','A','T','A'):
 		_scriptData->data = new uint16[chunk._size >> 1];
 		assert(_scriptData->data);
 		if (chunk._stream->read(_scriptData->data, chunk._size) != chunk._size)

@@ -221,7 +221,7 @@ void MacCursorManager::setCursor(uint16 id) {
 	}
 
 	// Try a color cursor first
-	Common::SeekableReadStream *stream = _resFork->getResource(MKID_BE('crsr'), id);
+	Common::SeekableReadStream *stream = _resFork->getResource(MKTAG('c','r','s','r'), id);
 
 	if (stream) {
 		byte *cursor, *palette;
@@ -239,7 +239,7 @@ void MacCursorManager::setCursor(uint16 id) {
 	}
 
 	// Fall back to b&w cursors
-	stream = _resFork->getResource(MKID_BE('CURS'), id);
+	stream = _resFork->getResource(MKTAG('C','U','R','S'), id);
 
 	if (stream) {
 		setMacXorCursor(stream);

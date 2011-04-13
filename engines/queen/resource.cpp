@@ -132,7 +132,7 @@ void Resource::loadTextFile(const char *filename, Common::StringArray &stringLis
 bool Resource::detectVersion(DetectedGameVersion *ver, Common::File *f) {
 	memset(ver, 0, sizeof(DetectedGameVersion));
 
-	if (f->readUint32BE() == MKID_BE('QTBL')) {
+	if (f->readUint32BE() == MKTAG('Q','T','B','L')) {
 		f->read(ver->str, 6);
 		f->skip(2);
 		ver->compression = f->readByte();
@@ -269,7 +269,7 @@ void Resource::seekResourceFile(int num, uint32 offset) {
 void Resource::readTableFile(uint8 version, uint32 offset) {
 	Common::File tableFile;
 	tableFile.open(_tableFilename);
-	if (tableFile.isOpen() && tableFile.readUint32BE() == MKID_BE('QTBL')) {
+	if (tableFile.isOpen() && tableFile.readUint32BE() == MKTAG('Q','T','B','L')) {
 		uint32 tableVersion = tableFile.readUint32BE();
 		if (version > tableVersion) {
 			error("The game you are trying to play requires version %d of queen.tbl, "

@@ -45,35 +45,35 @@ namespace M4 {
 
 // Conversation chunks
 // Header
-#define  HEAD_CONV MKID_BE('CONV')		// conversation
-#define CHUNK_DECL MKID_BE('DECL')		// declaration
-#define CHUNK_NODE MKID_BE('NODE')		// node
-#define CHUNK_LNOD MKID_BE('LNOD')		// linear node
-#define CHUNK_ETRY MKID_BE('ETRY')		// entry
-#define CHUNK_TEXT MKID_BE('TEXT')		// text
-#define CHUNK_MESG MKID_BE('MESG')		// message
+#define  HEAD_CONV MKTAG('C','O','N','V')		// conversation
+#define CHUNK_DECL MKTAG('D','E','C','L')		// declaration
+#define CHUNK_NODE MKTAG('N','O','D','E')		// node
+#define CHUNK_LNOD MKTAG('L','N','O','D')		// linear node
+#define CHUNK_ETRY MKTAG('E','T','R','Y')		// entry
+#define CHUNK_TEXT MKTAG('T','E','X','T')		// text
+#define CHUNK_MESG MKTAG('M','E','S','G')		// message
 // Conversation chunks - entry related (unconditional)
-#define CHUNK_RPLY MKID_BE('RPLY')		// reply
-#define CHUNK_HIDE MKID_BE('HIDE')		// hide entry
-#define CHUNK_UHID MKID_BE('UHID')		// unhide entry
-#define CHUNK_DSTR MKID_BE('DSTR')		// destroy entry
+#define CHUNK_RPLY MKTAG('R','P','L','Y')		// reply
+#define CHUNK_HIDE MKTAG('H','I','D','E')		// hide entry
+#define CHUNK_UHID MKTAG('U','H','I','D')		// unhide entry
+#define CHUNK_DSTR MKTAG('D','S','T','R')		// destroy entry
 // Conversation chunks - entry related (conditional)
-#define CHUNK_CRPL MKID_BE('CRPL')		// reply
-#define CHUNK_CHDE MKID_BE('CHDE')		// hide entry
-#define CHUNK_CUHD MKID_BE('CUHD')		// unhide entry
-#define CHUNK_CDST MKID_BE('DDTS')		// destroy entry
+#define CHUNK_CRPL MKTAG('C','R','P','L')		// reply
+#define CHUNK_CHDE MKTAG('C','H','D','E')		// hide entry
+#define CHUNK_CUHD MKTAG('C','U','H','D')		// unhide entry
+#define CHUNK_CDST MKTAG('D','D','T','S')		// destroy entry
 // Conversation chunks - branching and logic (unconditional)
-#define CHUNK_ASGN MKID_BE('ASGN')		// assign
-#define CHUNK_GOTO MKID_BE('GOTO')		// goto chunk
-#define CHUNK_EXIT MKID_BE('EXIT')		// exit/return from goto
+#define CHUNK_ASGN MKTAG('A','S','G','N')		// assign
+#define CHUNK_GOTO MKTAG('G','O','T','O')		// goto chunk
+#define CHUNK_EXIT MKTAG('E','X','I','T')		// exit/return from goto
 // Conversation chunks - branching and logic (conditional)
-#define CHUNK_CASN MKID_BE('CASN')		// assign
-#define CHUNK_CCGO MKID_BE('CCGO')		// goto chunk
-#define CHUNK_CEGO MKID_BE('CEGO')		// exit/return from goto
+#define CHUNK_CASN MKTAG('C','A','S','N')		// assign
+#define CHUNK_CCGO MKTAG('C','C','G','O')		// goto chunk
+#define CHUNK_CEGO MKTAG('C','E','G','O')		// exit/return from goto
 // Others
-#define CHUNK_FALL MKID_BE('FALL')		// fallthrough
-#define CHUNK_WRPL MKID_BE('WRPL')		// weighted reply chunk
-#define CHUNK_WPRL MKID_BE('WPRL')		// weighted preply chunk
+#define CHUNK_FALL MKTAG('F','A','L','L')		// fallthrough
+#define CHUNK_WRPL MKTAG('W','R','P','L')		// weighted reply chunk
+#define CHUNK_WPRL MKTAG('W','P','R','L')		// weighted preply chunk
 
 
 ConversationView::ConversationView(MadsM4Engine *vm): View(vm, Common::Rect(0,

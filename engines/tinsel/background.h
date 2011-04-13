@@ -110,8 +110,6 @@ OBJECT *GetBgObject();
 
 SCNHANDLE BgPal();
 
-void ForceEntireRedraw();
-
 int BgWidth();
 
 int BgHeight();
