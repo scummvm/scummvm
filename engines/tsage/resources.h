@@ -45,16 +45,6 @@ enum ResourceType { RES_LIBRARY, RES_STRIP, RES_IMAGE, RES_PALETTE, RES_VISAGE, 
 		RES_FONT, RES_POINTER, RES_BANK, RES_SND_DRIVER, RES_PRIORITY, RES_CONTROL, RES_WALKRGNS,
 		RES_BITMAP, RES_SAVE, RES_SEQUENCE };
 
-#include "common/pack-start.h"	// START STRUCT PACKING
-
-struct RGB8 {
-	uint8 r;
-	uint8 g;
-	uint8 b;
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"	// END STRUCT PACKING
-
 class MemoryHeader {
 public:
 	uint32 id;
@@ -165,7 +155,7 @@ public:
 
 	byte *getResource(uint16 id, bool suppressErrors = false);
 	byte *getResource(ResourceType resType, uint16 resNum, uint16 rlbNum, bool suppressErrors = false);
-	void getPalette(int paletteNum, RGB8 *palData, uint *startNum, uint *numEntries);
+	void getPalette(int paletteNum, byte *palData, uint *startNum, uint *numEntries);
 	byte *getSubResource(int resNum, int rlbNum, int index, uint *size);
 	Common::String getMessage(int resNum, int lineNum);
 };

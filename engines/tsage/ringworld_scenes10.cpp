@@ -1632,9 +1632,8 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
  *
  *--------------------------------------------------------------------------*/
 void Scene9900::strAction1::signal() {
-	RGB8 mask1, mask2;
-	mask1.r = mask1.g = mask1.b = 0xff;
-	mask2.r = mask2.g = mask2.b = 0;
+	const byte mask1[3] = {0xff, 0xff, 0xff};
+	const byte mask2[3] = {0, 0, 0};
 
 	Scene9900 *scene = (Scene9900 *)_globals->_sceneManager._scene;
 
@@ -1652,11 +1651,11 @@ void Scene9900::strAction1::signal() {
 		break;
 	case 1:
 		_palette1.getPalette();
-		_globals->_scenePalette.addFader(&mask1, 1, 10, this);
+		_globals->_scenePalette.addFader(&mask1[0], 1, 10, this);
 		break;
 	case 2:
 		_object9.remove();
-		_globals->_scenePalette.addFader(&mask2, 1, 5, this);
+		_globals->_scenePalette.addFader(&mask2[0], 1, 5, this);
 		break;
 	case 3:
 		_globals->_soundHandler.startSound(377, 0, 127);
@@ -1769,9 +1768,8 @@ void Scene9900::strAction2::dispatch() {
 }
 
 void Scene9900::strAction3::signal() {
-	RGB8 mask3, mask4;
-	mask3.r = 0xff; mask3.g = mask3.b = 0;
-	mask4.r = mask4.g = mask4.b = 0;
+	const byte mask3[3] = {0xff, 0, 0};
+	const byte mask4[3] = {0, 0, 0};
 
 	switch (_actionIndex++) {
 	case 0:
@@ -1780,10 +1778,10 @@ void Scene9900::strAction3::signal() {
 		_globals->_scenePalette.addFader(_palette3._palette, 256, 5, this);
 		break;
 	case 1:
-		_globals->_scenePalette.addFader(&mask3, 1, 10, this);
+		_globals->_scenePalette.addFader(&mask3[0], 1, 10, this);
 		break;
 	case 2:
-		_globals->_scenePalette.addFader(&mask4, 1, 1, this);
+		_globals->_scenePalette.addFader(&mask4[0], 1, 1, this);
 		break;
 	case 3:
 		_palette2.loadPalette(17);

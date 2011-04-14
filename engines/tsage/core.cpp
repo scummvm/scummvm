@@ -1072,11 +1072,7 @@ void PaletteRotation::synchronise(Serialiser &s) {
 	s.syncAsSint32LE(_end);
 	s.syncAsSint32LE(_rotationMode);
 	s.syncAsSint32LE(_duration);
-	for (int i = 0; i < 256; ++i) {
-		s.syncAsByte(_palette[i].r);
-		s.syncAsByte(_palette[i].g);
-		s.syncAsByte(_palette[i].b);
-	}
+	s.syncBytes(&_palette[0], 256 * 3);
 }
 
 void PaletteRotation::signal() {
@@ -1137,17 +1133,17 @@ void PaletteRotation::signal() {
 	if (flag) {
 		int count2 = _currIndex - _start;
 		int count = _end - _currIndex;
-		g_system->getPaletteManager()->setPalette((const byte *)&_palette[_currIndex], _start, count);
+		g_system->getPaletteManager()->setPalette((const byte *)&_palette[_currIndex * 3], _start, count);
 
 		if (count2) {
-			g_system->getPaletteManager()->setPalette((const byte *)&_palette[_start], _start + count, count2);
+			g_system->getPaletteManager()->setPalette((const byte *)&_palette[_start * 3], _start + count, count2);
 		}
 	}
 }
 
 void PaletteRotation::remove() {
 	Action *action = _action;
-	g_system->getPaletteManager()->setPalette((const byte *)&_palette[_start], _start, _end - _start);
+	g_system->getPaletteManager()->setPalette((const byte *)&_palette[_start * 3], _start, _end - _start);
 
 	_scenePalette->_listeners.remove(this);
 
@@ -1162,7 +1158,7 @@ void PaletteRotation::set(ScenePalette *palette, int start, int end, int rotatio
 	_action = action;
 	_scenePalette = palette;
 
-	Common::copy(&palette->_palette[0], &palette->_palette[256], &_palette[0]);
+	Common::copy(&palette->_palette[0], &palette->_palette[256 * 3], &_palette[0]);
 
 	_start = start;
 	_end = end + 1;
@@ -1200,11 +1196,7 @@ void PaletteFader::synchronise(Serialiser &s) {
 
 	s.syncAsSint16LE(_step);
 	s.syncAsSint16LE(_percent);
-	for (int i = 0; i < 256; ++i) {
-		s.syncAsByte(_palette[i].r);
-		s.syncAsByte(_palette[i].g);
-		s.syncAsByte(_palette[i].b);
-	}
+	s.syncBytes(&_palette[0], 256 * 3);
 }
 
 void PaletteFader::signal() {
@@ -1220,8 +1212,7 @@ void PaletteFader::remove() {
 	// Save of a copy of the object's action, since it will be used after the object is destroyed
 	Action *action = _action;
 
-	for (int i = 0; i < 256; i++)
-		_scenePalette->_palette[i] = _palette[i];
+	Common::copy(&_palette[0], &_palette[256 * 3], &_scenePalette->_palette[0]);
 	_scenePalette->refresh();
 	_scenePalette->_listeners.remove(this);
 	delete this;
@@ -1234,8 +1225,12 @@ void PaletteFader::remove() {
 
 ScenePalette::ScenePalette() {
 	// Set a default gradiant range
-	for (int idx = 0; idx < 256; ++idx)
-		_palette[idx].r = _palette[idx].g = _palette[idx].b = idx;
+	byte *palData = &_palette[0];
+	for (int idx = 0; idx < 256; ++idx) {
+		*palData++ = idx;
+		*palData++ = idx;
+		*palData++ = idx;
+	}
 
 	_field412 = 0;
 }
@@ -1253,10 +1248,10 @@ bool ScenePalette::loadPalette(int paletteNum) {
 	int palSize = READ_LE_UINT16(palData + 2);
 	assert(palSize <= 256);
 
-	RGB8 *destP = &_palette[palStart];
-	RGB8 *srcP = (RGB8 *)(palData + 6);
+	byte *destP = &_palette[palStart * 3];
+	byte *srcP = palData + 6;
 
-	Common::copy(&srcP[0], &srcP[palSize], destP);
+	Common::copy(&srcP[0], &srcP[palSize * 3], destP);
 
 	DEALLOCATE(palData);
 	return true;
@@ -1281,7 +1276,7 @@ void ScenePalette::refresh() {
  * Loads a section of the palette into the game palette
  */
 void ScenePalette::setPalette(int index, int count) {
-	g_system->getPaletteManager()->setPalette((const byte *)&_palette[index], index, count);
+	g_system->getPaletteManager()->setPalette((const byte *)&_palette[index * 3], index, count);
 }
 
 /**
@@ -1294,11 +1289,15 @@ void ScenePalette::setPalette(int index, int count) {
  */
 uint8 ScenePalette::indexOf(uint r, uint g, uint b, int threshold) {
 	int palIndex = -1;
+	byte *palData = &_palette[0];
 
 	for (int i = 0; i < 256; ++i) {
-		int rDiff = abs(_palette[i].r - (int)r);
-		int gDiff = abs(_palette[i].g - (int)g);
-		int bDiff = abs(_palette[i].b - (int)b);
+		byte ir = *palData++;
+		byte ig = *palData++;
+		byte ib = *palData++;
+		int rDiff = abs(ir - (int)r);
+		int gDiff = abs(ig - (int)g);
+		int bDiff = abs(ib - (int)b);
 
 		int idxThreshold = rDiff * rDiff + gDiff * gDiff + bDiff * bDiff;
 		if (idxThreshold <= threshold) {
@@ -1335,14 +1334,14 @@ void ScenePalette::clearListeners() {
 }
 
 void ScenePalette::fade(const byte *adjustData, bool fullAdjust, int percent) {
-	RGB8 tempPalette[256];
+	byte tempPalette[256 * 3];
 
 	// Ensure the percent adjustment is within 0 - 100%
 	percent = CLIP(percent, 0, 100);
 
 	for (int palIndex = 0; palIndex < 256; ++palIndex) {
-		const byte *srcP = (const byte *)&_palette[palIndex];
-		byte *destP = (byte *)&tempPalette[palIndex].r;
+		const byte *srcP = (const byte *)&_palette[palIndex * 3];
+		byte *destP = &tempPalette[palIndex * 3];
 
 		for (int rgbIndex = 0; rgbIndex < 3; ++rgbIndex, ++srcP, ++destP) {
 			*destP = *srcP - ((*srcP - adjustData[rgbIndex]) * (100 - percent)) / 100;
@@ -1368,14 +1367,16 @@ PaletteRotation *ScenePalette::addRotation(int start, int end, int rotationMode,
 	return obj;
 }
 
-PaletteFader *ScenePalette::addFader(RGB8 *arrBufferRGB, int palSize, int percent, Action *action) {
+PaletteFader *ScenePalette::addFader(const byte *arrBufferRGB, int palSize, int percent, Action *action) {
 	PaletteFader *fader = new PaletteFader();
 	fader->_action = action;
-	for (int i = 0; i < 256; i++) {
-		fader->_palette[i] = *arrBufferRGB;
+	for (int i = 0; i < 256 * 3; i += 3) {
+		fader->_palette[i] = *(arrBufferRGB + 0);
+		fader->_palette[i + 1] = *(arrBufferRGB + 1);
+		fader->_palette[i + 2] = *(arrBufferRGB + 2);
 
 		if (palSize > 1)
-			++arrBufferRGB;			
+			arrBufferRGB += 3;
 	}
 
 	fader->setPalette(this, percent);
@@ -1414,11 +1415,7 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 }
 
 void ScenePalette::synchronise(Serialiser &s) {
-	for (int i = 0; i < 256; ++i) {
-		s.syncAsByte(_palette[i].r);
-		s.syncAsByte(_palette[i].g);
-		s.syncAsByte(_palette[i].b);
-	}
+	s.syncBytes(_palette, 256 * 3);
 	s.syncAsSint32LE(_colors.foreground);
 	s.syncAsSint32LE(_colors.background);
 

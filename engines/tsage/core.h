@@ -319,7 +319,7 @@ public:
 
 class PaletteModifierCached: public PaletteModifier {
 public:
-	RGB8 _palette[256];
+	byte _palette[256 * 3];
 	int _step;
 	int _percent;
 
@@ -355,7 +355,7 @@ public:
 
 class PaletteFader: public PaletteModifierCached {
 public:
-	RGB8 _palette[256];
+	byte _palette[256 * 3];
 public:
 	virtual Common::String getClassName() { return "PaletteFader"; }
 	virtual void synchronise(Serialiser &s);
@@ -369,7 +369,7 @@ enum FadeMode {FADEMODE_NONE = 0, FADEMODE_GRADUAL = 1, FADEMODE_IMMEDIATE = 2};
 
 class ScenePalette : public SavedObject {
 public:
-	RGB8 _palette[256];
+	byte _palette[256 * 3];
 	GfxColors _colors;
 	SynchronisedList<PaletteModifier *> _listeners;
 	int _field412;
@@ -393,7 +393,7 @@ public:
 	void clearListeners();
 	void fade(const byte *adjustData, bool fullAdjust, int percent);
 	PaletteRotation *addRotation(int start, int end, int rotationMode, int duration = 0, Action *action = NULL);
-	PaletteFader *addFader(RGB8 *arrBufferRGB, int palSize, int percent, Action *action);
+	PaletteFader *addFader(const byte *arrBufferRGB, int palSize, int percent, Action *action);
 
 	static void changeBackground(const Rect &bounds, FadeMode fadeMode);
 
