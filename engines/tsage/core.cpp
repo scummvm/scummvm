@@ -2654,7 +2654,7 @@ GfxSurface Visage::getFrame(int frameNum) {
 	if (frameNum > 0)
 		--frameNum;
 
-	int offset = READ_UINT32(_data + 2 + frameNum * 4);
+	int offset = READ_LE_UINT32(_data + 2 + frameNum * 4);
 	byte *frameData = _data + offset;
 
 	return surfaceFromRes(frameData);
