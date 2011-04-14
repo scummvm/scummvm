@@ -173,10 +173,8 @@ bool Text::doRender() {
 			Common::Rect curRect = fontPtr->getCharacterRect((byte)(*iter).text[i]);
 
 			Common::Rect renderRect(curX, curY, curX + curRect.width(), curY + curRect.height());
-			int renderX = curX + (renderRect.left - renderRect.left);
-			int renderY = curY + (renderRect.top - renderRect.top);
 			renderRect.translate(curRect.left - curX, curRect.top - curY);
-			result = charMapPtr->blit(renderX, renderY, Image::FLIP_NONE, &renderRect, _modulationColor);
+			result = charMapPtr->blit(curX, curY, Image::FLIP_NONE, &renderRect, _modulationColor);
 			if (!result)
 				break;
 
