@@ -267,7 +267,7 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 			out = outo;
 			in = ino;
 			for (int j = 0; j < img->w; j++) {
-				uint32 pix = *(uint32*)in;
+				uint32 pix = *(uint32 *)in;
 				int b = (pix >> 0) & 0xff;
 				int g = (pix >> 8) & 0xff;
 				int r = (pix >> 16) & 0xff;
