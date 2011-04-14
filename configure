@@ -1574,6 +1574,7 @@ case $_host_os in
 		DEFINES="$DEFINES -D__N64__ -DLIMIT_FPS -DNONSTANDARD_PORT"
 		DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_COMMAND_LINE"
 		DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DDISABLE_DOSBOX_OPL -DDISABLE_SID -DDISABLE_NES_APU"
+		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 		;;
 	os2-emx*)
 		_unix=yes	# FIXME??? Why??
@@ -1681,6 +1682,8 @@ if test -n "$_host"; then
 			_build_hq_scalers=no
 			_vkeybd=yes
 			_seq_midi=no
+			_mt32emu=no
+			_timidity=no
 			_port_mk="backends/platform/gph/caanoo-bundle.mk"
 			;;
 		*darwin*)
@@ -2073,9 +2076,9 @@ case $_endian in
 		;;
 esac
 
-add_to_config_h_if_yes $_have_x86 'HAVE_X86'
+define_in_config_h_if_yes $_have_x86 'HAVE_X86'
 
-add_to_config_h_if_yes $_need_memalign '#define SYSTEM_NEED_ALIGNMENT'
+define_in_config_h_if_yes $_need_memalign '#define SYSTEM_NEED_ALIGNMENT'
 
 if test "$_unix" = yes ; then
 	DEFINES="$DEFINES -DUNIX"
