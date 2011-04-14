@@ -2064,12 +2064,12 @@ fi
 #
 case $_endian in
 	big)
-		add_line_to_config_h '#undef SYSTEM_LITTLE_ENDIAN */'
+		add_line_to_config_h '#undef SYSTEM_LITTLE_ENDIAN'
 		add_line_to_config_h '#define SYSTEM_BIG_ENDIAN'
 		;;
 	little)
 		add_line_to_config_h '#define SYSTEM_LITTLE_ENDIAN'
-		add_line_to_config_h '/* #define SYSTEM_BIG_ENDIAN */'
+		add_line_to_config_h '#undef SYSTEM_BIG_ENDIAN'
 		;;
 	*)
 		exit 1
@@ -2078,7 +2078,7 @@ esac
 
 define_in_config_h_if_yes $_have_x86 'HAVE_X86'
 
-define_in_config_h_if_yes $_need_memalign '#define SYSTEM_NEED_ALIGNMENT'
+define_in_config_h_if_yes $_need_memalign 'SYSTEM_NEED_ALIGNMENT'
 
 if test "$_unix" = yes ; then
 	DEFINES="$DEFINES -DUNIX"
