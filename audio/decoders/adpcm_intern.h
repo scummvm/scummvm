@@ -24,7 +24,7 @@
  */
 
 /**
- * Internal interfaces to the ADPCM encoders.
+ * Internal interfaces to the ADPCM decoders.
  *
  * These can be used to make custom ADPCM decoder subclasses,
  * or to at least share some common data tables between various
