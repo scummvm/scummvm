@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "common/sys.h"
 
 #ifdef MACOSX
 

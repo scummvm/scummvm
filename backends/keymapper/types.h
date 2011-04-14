@@ -26,7 +26,7 @@
 #ifndef KEYMAPPER_TYPES_H
 #define KEYMAPPER_TYPES_H
 
-#include "common/scummsys.h"
+#include "common/sys.h"
 
 #ifdef ENABLE_KEYMAPPER
 

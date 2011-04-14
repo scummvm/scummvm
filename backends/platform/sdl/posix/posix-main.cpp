@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "common/sys.h"
 
 #if defined(UNIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA)
 

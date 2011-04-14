@@ -29,7 +29,7 @@
 #ifdef ENABLE_VKEYBD
 
 #include "backends/vkeybd/virtual-keyboard.h"
-#include "common/scummsys.h"
+#include "common/sys.h"
 #include "common/rect.h"
 #include "common/system.h"
 #include "graphics/font.h"

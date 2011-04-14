@@ -26,7 +26,7 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "common/scummsys.h"
+#include "common/sys.h"
 
 #ifdef MACOSX
 
