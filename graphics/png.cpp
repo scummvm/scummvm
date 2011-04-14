@@ -170,10 +170,11 @@ Graphics::Surface *PNG::getSurface(const PixelFormat &format) {
 		}
 	} else {
 		byte index, r, g, b;
-		bool otherPixel = false;
 
 		// Convert the indexed surface to the target pixel format
 		for (uint16 i = 0; i < output->h; i++) {
+			bool otherPixel = false;
+
 			for (uint16 j = 0; j < output->w; j++) {
 				if (_header.bitDepth != 4)
 					index = *src;
@@ -196,8 +197,9 @@ Graphics::Surface *PNG::getSurface(const PixelFormat &format) {
 					src++;
 				otherPixel = !otherPixel;
 			}
+			// The surface is a whole scanline wide, skip the rest of it.
 			if (_header.bitDepth == 4)
-				src += output->w/2;
+				src += output->w / 2;
 		}
 	}
 
