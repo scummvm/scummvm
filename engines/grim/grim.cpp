@@ -299,23 +299,34 @@ GrimEngine::GrimEngine(OSystem *syst, int gameFlags, GrimGameType gameType) :
 	_printLineDefaults.y = 100;
 	_printLineDefaults.width = 0;
 	_printLineDefaults.height = 0;
+	_printLineDefaults.fgColor._vals[0] = 0;
+	_printLineDefaults.fgColor._vals[1] = 0;
+	_printLineDefaults.fgColor._vals[2] = 0;
 	_printLineDefaults.font = NULL;
 	_printLineDefaults.justify = TextObject::LJUSTIFY;
+	_printLineDefaults.disabled = false;
 
 	_sayLineDefaults.x = 0;
 	_sayLineDefaults.y = 100;
 	_sayLineDefaults.width = 0;
 	_sayLineDefaults.height = 0;
+	_sayLineDefaults.fgColor._vals[0] = 0;
+	_sayLineDefaults.fgColor._vals[1] = 0;
+	_sayLineDefaults.fgColor._vals[2] = 0;
 	_sayLineDefaults.font = NULL;
 	_sayLineDefaults.justify = TextObject::CENTER;
+	_sayLineDefaults.disabled = false;
 
 	_blastTextDefaults.x = 0;
 	_blastTextDefaults.y = 200;
 	_blastTextDefaults.width = 0;
 	_blastTextDefaults.height = 0;
+	_blastTextDefaults.fgColor._vals[0] = 0;
+	_blastTextDefaults.fgColor._vals[1] = 0;
 	_blastTextDefaults.fgColor._vals[2] = 80;
 	_blastTextDefaults.font = NULL;
 	_blastTextDefaults.justify = TextObject::LJUSTIFY;
+	_blastTextDefaults.disabled = false;
 
 	// Add 'movies' subdirectory for the demo
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
