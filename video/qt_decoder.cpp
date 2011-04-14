@@ -563,7 +563,10 @@ void QuickTimeDecoder::updateAudioBuffer() {
 
 	uint32 numberOfChunksNeeded = 0;
 
-	if (_curFrame == (int32)_streams[_videoStreamIndex]->nb_frames - 1) {
+	if (_videoStreamIndex < 0 || _curFrame == (int32)_streams[_videoStreamIndex]->nb_frames - 1) {
+		// If we have no video, there's nothing to base our buffer against
+		// However, one must ask why a QuickTimeDecoder is being used instead of the nice makeQuickTimeStream() function
+
 		// If we're on the last frame, make sure all audio remaining is buffered
 		numberOfChunksNeeded = _streams[_audioStreamIndex]->chunk_count;
 	} else {
