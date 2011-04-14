@@ -170,11 +170,18 @@ Graphics::Surface *PNG::getSurface(const PixelFormat &format) {
 		}
 	} else {
 		byte index, r, g, b;
+		bool otherPixel = false;
 
 		// Convert the indexed surface to the target pixel format
 		for (uint16 i = 0; i < output->h; i++) {
 			for (uint16 j = 0; j < output->w; j++) {
-				index = *src;
+				if (_header.bitDepth != 4)
+					index = *src;
+				else if (!otherPixel)
+					index = (*src) >> 4;
+				else
+					index = (*src) & 0xf;
+
 				r = _palette[index * 4 + 0];
 				g = _palette[index * 4 + 1];
 				b = _palette[index * 4 + 2];
@@ -185,8 +192,12 @@ Graphics::Surface *PNG::getSurface(const PixelFormat &format) {
 				else
 					*((uint32 *)output->getBasePtr(j, i)) = format.ARGBToColor(a, r, g, b);
 
-				src++;
+				if (_header.bitDepth != 4 || otherPixel)
+					src++;
+				otherPixel = !otherPixel;
 			}
+			if (_header.bitDepth == 4)
+				src += output->w/2;
 		}
 	}
 
