@@ -2064,7 +2064,7 @@ fi
 #
 case $_endian in
 	big)
-		add_line_to_config_h '/* #define SYSTEM_LITTLE_ENDIAN */'
+		add_line_to_config_h '#undef SYSTEM_LITTLE_ENDIAN */'
 		add_line_to_config_h '#define SYSTEM_BIG_ENDIAN'
 		;;
 	little)
