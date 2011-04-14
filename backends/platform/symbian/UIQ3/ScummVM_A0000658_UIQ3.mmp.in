@@ -64,8 +64,8 @@ START BITMAP    ScummVM.mbm
 TARGETPATH              \Resource\Apps
 SOURCEPATH              ..\res
 // Source Color-depth Source-bitmap-list
-// c denotes whether the bitmap is a colour bitmap and the digits represent the
-// colour-depth of the bitmap and the bitmap mask respectively
+// c denotes whether the bitmap is a color bitmap and the digits represent the
+// color-depth of the bitmap and the bitmap mask respectively
 SOURCE  c24             ScummSmall.bmp
 SOURCE  8               ScummSmallMask.bmp
 SOURCE  c24             ScummLarge.bmp

@@ -381,7 +381,7 @@ void PrimeBackground() {
 
 	// structure for background
 	static const BACKGND backgnd = {
-		BLACK,			// sky colour
+		BLACK,			// sky color
 		Common::Point(0, 0),	// initial world pos
 		Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),	// scroll limits
 		0,				// no background update process

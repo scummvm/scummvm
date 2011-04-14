@@ -58,7 +58,7 @@ bool WalkingMap::isWalkable(const Common::Point &p) const {
 	return getPixel(p.x / _deltaX, p.y / _deltaY);
 }
 
-Sprite *WalkingMap::newOverlayFromMap(byte colour) const {
+Sprite *WalkingMap::newOverlayFromMap(byte color) const {
 	// HACK: Create a visible overlay from the walking map so we can test it
 	byte *wlk = new byte[_realWidth * _realHeight];
 	memset(wlk, 255, _realWidth * _realHeight);
@@ -66,7 +66,7 @@ Sprite *WalkingMap::newOverlayFromMap(byte colour) const {
 	for (int i = 0; i < _mapWidth; ++i) {
 		for (int j = 0; j < _mapHeight; ++j) {
 			if (getPixel(i, j)) {
-				drawOverlayRectangle(Common::Point(i, j), colour, wlk);
+				drawOverlayRectangle(Common::Point(i, j), color, wlk);
 			}
 		}
 	}
@@ -285,7 +285,7 @@ void WalkingMap::obliquePath(const WalkingPath& path, WalkingPath *obliquedPath)
 	while (managedToOblique(obliquedPath)) {}
 }
 
-Sprite *WalkingMap::newOverlayFromPath(const WalkingPath &path, byte colour) const {
+Sprite *WalkingMap::newOverlayFromPath(const WalkingPath &path, byte color) const {
 	// HACK: Create a visible overlay from the walking map so we can test it
 	byte *wlk = new byte[_realWidth * _realHeight];
 	memset(wlk, 255, _realWidth * _realHeight);
@@ -297,14 +297,14 @@ Sprite *WalkingMap::newOverlayFromPath(const WalkingPath &path, byte colour) con
 		// Draw only points in the interval [v1, v2).  These half-open
 		// half-closed intervals connect all the way to the last point.
 		for (int step = 0; step < steps; ++step) {
-			drawOverlayRectangle(interpolate(v1, v2, step, steps), colour, wlk);
+			drawOverlayRectangle(interpolate(v1, v2, step, steps), color, wlk);
 		}
 	}
 	// Draw the last point.  This works also when the path has no segment,
 	// but just one point.
 	if (path.size() > 0) {
 		const Common::Point &vLast = path[path.size()-1];
-		drawOverlayRectangle(vLast, colour, wlk);
+		drawOverlayRectangle(vLast, color, wlk);
 	}
 
 	Sprite *ov = new Sprite(_realWidth, _realHeight, wlk, 0, 0, false);
@@ -313,10 +313,10 @@ Sprite *WalkingMap::newOverlayFromPath(const WalkingPath &path, byte colour) con
 	return ov;
 }
 
-void WalkingMap::drawOverlayRectangle(const Common::Point &p, byte colour, byte *buf) const {
+void WalkingMap::drawOverlayRectangle(const Common::Point &p, byte color, byte *buf) const {
 	for (int i = 0; i < _deltaX; ++i) {
 		for (int j = 0; j < _deltaY; ++j) {
-			buf[(p.y * _deltaY + j) * _realWidth + (p.x * _deltaX + i)] = colour;
+			buf[(p.y * _deltaY + j) * _realWidth + (p.x * _deltaX + i)] = color;
 		}
 	}
 }

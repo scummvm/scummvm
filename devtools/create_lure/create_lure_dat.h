@@ -125,7 +125,7 @@ struct HotspotResource {
 	uint16 yCorrection;
 	uint16 tickTimeout;
 	uint16 animOffset;
-	byte colourOffset;
+	byte colorOffset;
 	uint16 hotspotScriptOffset;
 	byte unused1[7];
 	uint16 talkScriptOffset;
@@ -166,7 +166,7 @@ struct HotspotResourceOutput {
 	uint16 walkY;
 	int8 talkX;
 	int8 talkY;
-	uint16 colourOffset;
+	uint16 colorOffset;
 	uint16 animRecordId;
 	uint16 hotspotScriptOffset;
 	uint16 talkScriptOffset;

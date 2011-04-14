@@ -37,7 +37,7 @@ namespace Tinsel {
 
 /** structure used by the "FadeProcess" process */
 struct FADE {
-	const long *pColourMultTable;	// list of fixed point colour multipliers - terminated with negative entry
+	const long *pColorMultTable;	// list of fixed point color multipliers - terminated with negative entry
 	PALQ *pPalQ;		// palette queue entry to fade
 };
 
@@ -46,42 +46,42 @@ struct FADE {
 //const long fadein[] = {0, 0x1000, 0x3000, 0x5000, 0x7000, 0x9000, 0xb000, 0xd000, 0x10000L, -1};
 
 /**
- * Scale 'colour' by the fixed point colour multiplier 'colourMult'
- * @param colour			Colour to scale
- * @param colourMult		Fixed point multiplier
+ * Scale 'color' by the fixed point color multiplier 'colorMult'
+ * @param color			Color to scale
+ * @param colorMult		Fixed point multiplier
  */
-static COLORREF ScaleColour(COLORREF colour, uint32 colourMult)	{
+static COLORREF ScaleColor(COLORREF color, uint32 colorMult)	{
 	// apply multiplier to RGB components
-	uint32 red   = ((TINSEL_GetRValue(colour) * colourMult) << 8) >> 24;
-	uint32 green = ((TINSEL_GetGValue(colour) * colourMult) << 8) >> 24;
-	uint32 blue  = ((TINSEL_GetBValue(colour) * colourMult) << 8) >> 24;
+	uint32 red   = ((TINSEL_GetRValue(color) * colorMult) << 8) >> 24;
+	uint32 green = ((TINSEL_GetGValue(color) * colorMult) << 8) >> 24;
+	uint32 blue  = ((TINSEL_GetBValue(color) * colorMult) << 8) >> 24;
 
-	// return new colour
+	// return new color
 	return TINSEL_RGB(red, green, blue);
 }
 
 /**
- * Applies the fixed point multiplier 'mult' to all colours in
- * 'pOrig' to produce 'pNew'. Each colour in the palette will be
+ * Applies the fixed point multiplier 'mult' to all colors in
+ * 'pOrig' to produce 'pNew'. Each color in the palette will be
  * multiplied by 'mult'.
  * @param pNew				Pointer to new palette
  * @param pOrig				Pointer to original palette
- * @param numColours		Number of colours in the above palettes
+ * @param numColors		Number of colors in the above palettes
  * @param mult				Fixed point multiplier
  */
-static void FadePalette(COLORREF *pNew, COLORREF *pOrig, int numColours, uint32 mult) {
-	for (int i = 0; i < numColours; i++, pNew++, pOrig++) {
+static void FadePalette(COLORREF *pNew, COLORREF *pOrig, int numColors, uint32 mult) {
+	for (int i = 0; i < numColors; i++, pNew++, pOrig++) {
 		if (!TinselV2)
 			// apply multiplier to RGB components
-			*pNew = ScaleColour(*pOrig, mult);
-		else if (i == (TalkColour() - 1)) {
-			*pNew = GetTalkColourRef();
-			*pNew = ScaleColour(*pNew, mult);
-		} else if (SysVar(SV_TAGCOLOUR) && i == (SysVar(SV_TAGCOLOUR) - 1)) {
+			*pNew = ScaleColor(*pOrig, mult);
+		else if (i == (TalkColor() - 1)) {
+			*pNew = GetTalkColorRef();
+			*pNew = ScaleColor(*pNew, mult);
+		} else if (SysVar(SV_TAGCOLOR) && i == (SysVar(SV_TAGCOLOR) - 1)) {
 			*pNew = GetTagColorRef();
-			*pNew = ScaleColour(*pNew, mult);
+			*pNew = ScaleColor(*pNew, mult);
 		} else {
-			*pNew = ScaleColour(*pOrig, mult);
+			*pNew = ScaleColor(*pOrig, mult);
 		}
 	}
 }
@@ -94,8 +94,8 @@ static void FadePalette(COLORREF *pNew, COLORREF *pOrig, int numColours, uint32 
 static void FadeProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		COLORREF fadeRGB[MAX_COLOURS];	// local copy of palette
-		const long *pColMult;			// pointer to colour multiplier table
+		COLORREF fadeRGB[MAX_COLORS];	// local copy of palette
+		const long *pColMult;			// pointer to color multiplier table
 		PALETTE *pPalette;		// pointer to palette
 	CORO_END_CONTEXT(_ctx);
 
@@ -111,19 +111,19 @@ static void FadeProcess(CORO_PARAM, const void *param) {
 	// get pointer to palette - reduce pointer indirection a bit
 	_ctx->pPalette = (PALETTE *)LockMem(pFade->pPalQ->hPal);
 
-	for (_ctx->pColMult = pFade->pColourMultTable; *_ctx->pColMult >= 0; _ctx->pColMult++) {
+	for (_ctx->pColMult = pFade->pColorMultTable; *_ctx->pColMult >= 0; _ctx->pColMult++) {
 		// go through all multipliers in table - until a negative entry
 
 		// fade palette using next multiplier
 		if (TinselV2)
 			FadePalette(_ctx->fadeRGB, pFade->pPalQ->palRGB,
-				pFade->pPalQ->numColours, (uint32) *_ctx->pColMult);
+				pFade->pPalQ->numColors, (uint32) *_ctx->pColMult);
 		else
 			FadePalette(_ctx->fadeRGB, _ctx->pPalette->palRGB,
-				FROM_LE_32(_ctx->pPalette->numColours), (uint32) *_ctx->pColMult);
+				FROM_LE_32(_ctx->pPalette->numColors), (uint32) *_ctx->pColMult);
 
 		// send new palette to video DAC
-		UpdateDACqueue(pFade->pPalQ->posInDAC, FROM_LE_32(_ctx->pPalette->numColours), _ctx->fadeRGB);
+		UpdateDACqueue(pFade->pPalQ->posInDAC, FROM_LE_32(_ctx->pPalette->numColors), _ctx->fadeRGB);
 
 		// allow time for video DAC to be updated
 		CORO_SLEEP(1);
@@ -139,7 +139,7 @@ static void FadeProcess(CORO_PARAM, const void *param) {
 /**
  * Generic palette fader/unfader. Creates a 'FadeProcess' process
  * for each palette that is to fade.
- * @param multTable			Fixed point colour multiplier table
+ * @param multTable			Fixed point color multiplier table
  * @param noFadeTable		List of palettes not to fade
  */
 static void Fader(const long multTable[], SCNHANDLE noFadeTable[]) {
@@ -175,7 +175,7 @@ static void Fader(const long multTable[], SCNHANDLE noFadeTable[]) {
 			FADE fade;
 
 			// fill in FADE struct
-			fade.pColourMultTable	= multTable;
+			fade.pColorMultTable	= multTable;
 			fade.pPalQ		= pPal;
 
 			// create a fader process for this palette
@@ -210,7 +210,7 @@ void FadeOutFast(SCNHANDLE noFadeTable[]) {
 }
 
 /**
- * Fades a list of palettes from black to their current colours.
+ * Fades a list of palettes from black to their current colors.
  * 'noFadeTable' is a NULL terminated list of palettes not to fade.
  */
 void FadeInMedium(SCNHANDLE noFadeTable[]) {
@@ -223,7 +223,7 @@ void FadeInMedium(SCNHANDLE noFadeTable[]) {
 }
 
 /**
- * Fades a list of palettes from black to their current colours.
+ * Fades a list of palettes from black to their current colors.
  * @param noFadeTable		A NULL terminated list of palettes not to fade.
  */
 void FadeInFast(SCNHANDLE noFadeTable[]) {
@@ -234,10 +234,10 @@ void FadeInFast(SCNHANDLE noFadeTable[]) {
 	Fader(fadein, noFadeTable);
 }
 
-void PokeInTagColour() {
-	if (SysVar(SV_TAGCOLOUR)) {
+void PokeInTagColor() {
+	if (SysVar(SV_TAGCOLOR)) {
 		const COLORREF c = GetActorRGB(-1);
-		UpdateDACqueue(SysVar(SV_TAGCOLOUR), c);
+		UpdateDACqueue(SysVar(SV_TAGCOLOR), c);
 	}
 }
 

@@ -73,7 +73,7 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_hotspotScriptOffset = res->hotspotScriptOffset;
 	_frameCtr = res->tickTimeout;
 	_tempDest.counter = 0;
-	_colourOffset = isEGA ? 0 : res->colourOffset;
+	_colorOffset = isEGA ? 0 : res->colorOffset;
 
 	_override = resources.getHotspotOverride(res->hotspotId);
 	setAnimation(_data->animRecordId);
@@ -103,7 +103,7 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 	_persistant = false;
 	_hotspotId = 0xffff;
 	_override = NULL;
-	_colourOffset = 0;
+	_colorOffset = 0;
 	_destHotspotId = character->hotspotId();
 	_blockedOffset = 0;
 	_exitCtr = 0;
@@ -174,7 +174,7 @@ Hotspot::Hotspot(): _pathFinder(NULL) {
 	_persistant = false;
 	_hotspotId = 0xffff;
 	_override = NULL;
-	_colourOffset = 0;
+	_colorOffset = 0;
 	_destHotspotId = 0;
 	_blockedOffset = 0;
 	_exitCtr = 0;
@@ -303,7 +303,7 @@ void Hotspot::setAnimation(HotspotAnimData *newRecord) {
 		_frames = new Surface(_width * _numFrames, _height);
 		_frameStartsUsed = false;
 	}
-	_frames->data().setBytes(_colourOffset, 0, _frames->data().size());
+	_frames->data().setBytes(_colorOffset, 0, _frames->data().size());
 
 	byte *pSrc = dest->data() + 0x40;
 	byte *pDest;
@@ -353,13 +353,13 @@ void Hotspot::setAnimation(HotspotAnimData *newRecord) {
 			xStart = frameNumCtr * _width;
 		}
 
-		// Copy over the frame, applying the colour offset to each nibble
+		// Copy over the frame, applying the color offset to each nibble
 		for (uint16 yPos = 0; yPos < tempHeight; ++yPos) {
 			pDest = mDest.data() + yPos * _frames->width() + xStart;
 
 			for (uint16 xPos = 0; xPos < tempWidth / 2; ++xPos) {
-				*pDest++ = _colourOffset + (*pSrc >> 4);
-				*pDest++ = _colourOffset + (*pSrc & 0xf);
+				*pDest++ = _colorOffset + (*pSrc >> 4);
+				*pDest++ = _colorOffset + (*pSrc & 0xf);
 				++pSrc;
 			}
 		}
@@ -421,7 +421,7 @@ void Hotspot::copyTo(Surface *dest) {
 	if ((r.top >= r.bottom) || (r.left >= r.right))
 		return;
 
-	_frames->copyTo(dest, r, (uint16) xPos, (uint16) yPos, _colourOffset);
+	_frames->copyTo(dest, r, (uint16) xPos, (uint16) yPos, _colorOffset);
 }
 
 void Hotspot::incFrameNumber() {
@@ -2313,7 +2313,7 @@ void Hotspot::saveToStream(Common::WriteStream *stream) {
 	stream->writeUint16LE(_talkY);
 	stream->writeByte(_layer);
 	stream->writeUint16LE(_hotspotScriptOffset);
-	stream->writeByte(_colourOffset);
+	stream->writeByte(_colorOffset);
 	stream->writeByte((byte)_direction);
 	stream->writeUint16LE(_animId);
 	stream->writeUint16LE(_frameNumber);
@@ -2358,7 +2358,7 @@ void Hotspot::loadFromStream(Common::ReadStream *stream) {
 	_talkY = stream->readUint16LE();
 	_layer = stream->readByte();
 	_hotspotScriptOffset = stream->readUint16LE();
-	_colourOffset = stream->readByte();
+	_colorOffset = stream->readByte();
 	_direction = (Direction)stream->readByte();
 	setAnimation(stream->readUint16LE());
 	setFrameNumber(stream->readUint16LE());
@@ -3505,10 +3505,10 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 			screen.screen().fillRect(r, 0);
 
 			// Display line
-			byte colour = LureEngine::getReference().isEGA() ?
-				((lineNum + 1 == selectedLine) ? EGA_DIALOG_WHITE_COLOUR : EGA_DIALOG_TEXT_COLOUR) :
-				((lineNum + 1 == selectedLine) ? VGA_DIALOG_WHITE_COLOUR : VGA_DIALOG_TEXT_COLOUR);
-			screen.screen().writeString(r.left, r.top, buffer, false, colour);
+			byte color = LureEngine::getReference().isEGA() ?
+				((lineNum + 1 == selectedLine) ? EGA_DIALOG_WHITE_COLOR : EGA_DIALOG_TEXT_COLOR) :
+				((lineNum + 1 == selectedLine) ? VGA_DIALOG_WHITE_COLOR : VGA_DIALOG_TEXT_COLOR);
+			screen.screen().writeString(r.left, r.top, buffer, false, color);
 		}
 
 		if (mouse.mButton() || mouse.rButton()) {

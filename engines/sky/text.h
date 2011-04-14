@@ -59,7 +59,7 @@ public:
 	void fnTextModule(uint32 textInfoId, uint32 textNo);
 	void fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY);
 	void logicCursor(Compact *textCompact, uint16 mouseX, uint16 mouseY);
-	void changeTextSpriteColour(uint8 *sprData, uint8 newCol);
+	void changeTextSpriteColor(uint8 *sprData, uint8 newCol);
 	uint32 giveCurrentCharSet();
 
 	uint32 _numLetters;	//no of chars in message

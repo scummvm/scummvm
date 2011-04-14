@@ -60,7 +60,7 @@ struct PLAYFIELD {
 
 /** multi-playfield background structure - a backgnd is a container of playfields */
 struct BACKGND {
-	COLORREF rgbSkyColour;	///< background sky colour
+	COLORREF rgbSkyColor;	///< background sky color
 	Common::Point ptInitWorld;		///< initial world position
 	Common::Rect rcScrollLimits;	///< scroll limits
 	int refreshRate;		///< background update process refresh rate

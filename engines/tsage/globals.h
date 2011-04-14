@@ -52,8 +52,8 @@ public:
 	SynchronisedList<SceneObjectList *> _sceneObjects_queue;
 	SceneText _sceneText;
 	int _gfxFontNumber;
-	GfxColours _gfxColours;
-	GfxColours _fontColours;
+	GfxColors _gfxColors;
+	GfxColors _fontColors;
 	SoundManager _soundManager;
 	Common::Point _dialogCentre;
 	WalkRegions _walkRegions;

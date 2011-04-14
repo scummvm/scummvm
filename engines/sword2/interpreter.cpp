@@ -147,7 +147,7 @@ void Logic::setupOpcodes() {
 		OPCODE(fnSetScrollLeftMouse),
 		OPCODE(fnSetScrollRightMouse),
 		/* 4C */
-		OPCODE(fnColour),
+		OPCODE(fnColor),
 		OPCODE(fnFlash),
 		OPCODE(fnPreFetch),
 		OPCODE(fnGetPlayerSaveData),

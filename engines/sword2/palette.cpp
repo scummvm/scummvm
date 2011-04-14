@@ -107,8 +107,8 @@ void Screen::setFullPalette(int32 palRes) {
 
 		pal += ResHeader::size();
 
-		// always set colour 0 to black because most background screen
-		// palettes have a bright colour 0 although it should come out
+		// always set color 0 to black because most background screen
+		// palettes have a bright color 0 although it should come out
 		// as black in the game!
 
 		_palette[0] = 0;
@@ -144,11 +144,11 @@ void Screen::setFullPalette(int32 palRes) {
 }
 
 /**
- * Matches a colour triplet to a palette index.
- * @param r red colour component
- * @param g green colour component
- * @param b blue colour component
- * @return the palette index of the closest matching colour in the palette
+ * Matches a color triplet to a palette index.
+ * @param r red color component
+ * @param g green color component
+ * @param b blue color component
+ * @return the palette index of the closest matching color in the palette
  */
 
 // FIXME: This used to be inlined - probably a good idea - but the
@@ -160,16 +160,16 @@ uint8 Screen::quickMatch(uint8 r, uint8 g, uint8 b) {
 
 /**
  * Sets the palette.
- * @param startEntry the first colour entry to set
- * @param noEntries the number of colour entries to set
- * @param colourTable the new colour entries
+ * @param startEntry the first color entry to set
+ * @param noEntries the number of color entries to set
+ * @param colorTable the new color entries
  * @param fadeNow whether to perform the change immediately or delayed
  */
 
-void Screen::setPalette(int16 startEntry, int16 noEntries, byte *colourTable, uint8 fadeNow) {
+void Screen::setPalette(int16 startEntry, int16 noEntries, byte *colorTable, uint8 fadeNow) {
 	assert(noEntries > 0);
 
-	memmove(&_palette[3 * startEntry], colourTable, noEntries * 3);
+	memmove(&_palette[3 * startEntry], colorTable, noEntries * 3);
 
 	if (fadeNow == RDPAL_INSTANT) {
 		setSystemPalette(_palette, startEntry, noEntries);

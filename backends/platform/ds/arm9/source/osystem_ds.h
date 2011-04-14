@@ -183,7 +183,7 @@ public:
 	Common::WriteStream *createConfigWriteStream();
 	Common::SeekableReadStream *createConfigReadStream();
 
-	u16 applyGamma(u16 colour);
+	u16 applyGamma(u16 color);
 	void setGammaValue(int gamma) { _gammaValue = gamma; }
 
 	void engineDone();

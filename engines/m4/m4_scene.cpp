@@ -41,7 +41,7 @@ namespace M4 {
 M4Scene::M4Scene(M4Engine *vm): _sceneResources(), Scene(vm, &_sceneResources) {
 	_vm = vm;
 	_sceneSprites = NULL;
-	_inverseColourTable = NULL;
+	_inverseColorTable = NULL;
 
 	_sceneResources.hotspots = new HotSpotList();
 	_sceneResources.parallax = new HotSpotList();
@@ -110,15 +110,15 @@ void M4Scene::loadSceneResources(int sceneNumber) {
 	}
 }
 
-void M4Scene::loadSceneInverseColourTable(int sceneNumber) {
+void M4Scene::loadSceneInverseColorTable(int sceneNumber) {
 	char filename[kM4MaxFilenameSize];
 	Common::SeekableReadStream *iplS;
 
 	sprintf(filename, "%i.ipl", sceneNumber);
 	iplS = _vm->res()->openFile(filename);
-	delete[] _inverseColourTable;
-	_inverseColourTable = new byte[iplS->size()];
-	iplS->read(_inverseColourTable, iplS->size());
+	delete[] _inverseColorTable;
+	_inverseColorTable = new byte[iplS->size()];
+	iplS->read(_inverseColorTable, iplS->size());
 	_vm->res()->toss(filename);
 }
 
@@ -163,7 +163,7 @@ void M4Scene::loadScene(int sceneNumber) {
 	loadSceneCodes(sceneNumber);
 
 	// Load inverse color table file (*.IPL)
-	loadSceneInverseColourTable(sceneNumber);
+	loadSceneInverseColorTable(sceneNumber);
 
 	if (_vm->getGameType() != GType_Burger) {
 		// Load scene sprites file (*.SSB)
@@ -202,7 +202,7 @@ void M4Scene::leaveScene() {
 	_sceneResources.parallax->clear();
 
 	delete _sceneResources.parallax;
-	delete[] _inverseColourTable;
+	delete[] _inverseColorTable;
 
 	Scene::leaveScene();
 }

@@ -62,8 +62,8 @@ public:
 	Font(MadsM4Engine *vm, const char *filename);
 	~Font();
 
-	void setColour(uint8 colour);
-	void setColours(uint8 col1, uint8 col2, uint8 col3);
+	void setColor(uint8 color);
+	void setColors(uint8 col1, uint8 col2, uint8 col3);
 
 	int32 getWidth(const char *text, int spaceWidth = -1);
 	int32 getHeight() const { return _maxHeight; }

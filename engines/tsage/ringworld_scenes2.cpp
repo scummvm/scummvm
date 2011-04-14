@@ -76,8 +76,8 @@ void Scene1000::Action2::signal() {
 		setDelay(10);
 		break;
 	case 1:
-		SceneItem::display(1000, 0, SET_Y, 20, SET_FONT, 2, SET_BG_COLOUR, -1,
-				SET_EXT_BGCOLOUR, 35, SET_WIDTH, 200, SET_KEEP_ONSCREEN, 1, LIST_END);
+		SceneItem::display(1000, 0, SET_Y, 20, SET_FONT, 2, SET_BG_COLOR, -1,
+				SET_EXT_BGCOLOR, 35, SET_WIDTH, 200, SET_KEEP_ONSCREEN, 1, LIST_END);
 		setDelay(180);
 		break;
 	case 2:
@@ -521,7 +521,7 @@ void Scene1001::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_speakerCText);
 	_stripManager.addSpeaker(&_speakerCR);
 	_stripManager.addSpeaker(&_speakerSL);
-	_speakerQText._colour1 = 11;
+	_speakerQText._color1 = 11;
 
 	_object3.postInit();
 	_object3.setVisage(16);
@@ -666,7 +666,7 @@ void Scene1400::Action1::signal() {
 		setDelay(5);
 		break;
 	case 1: {
-		SceneItem::display(1400, 0, SET_X, 120, SET_Y, 610, SET_FONT, 2, SET_EXT_BGCOLOUR, 23, SET_KEEP_ONSCREEN, -1, LIST_END);
+		SceneItem::display(1400, 0, SET_X, 120, SET_Y, 610, SET_FONT, 2, SET_EXT_BGCOLOR, 23, SET_KEEP_ONSCREEN, -1, LIST_END);
 
 		Common::Point pt(160, 700);
 		NpcMover *mover = new NpcMover();
@@ -687,7 +687,7 @@ void Scene1400::Action1::signal() {
 	}
 	case 3:
 		SceneItem::display(1400, 2, SET_X, 60, SET_Y, _globals->_sceneManager._scene->_sceneBounds.bottom - 80,
-			SET_FONT, 2, SET_FG_COLOUR, 13, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
+			SET_FONT, 2, SET_FG_COLOR, 13, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
 		setDelay(420);
 		break;
 	case 4:
@@ -696,7 +696,7 @@ void Scene1400::Action1::signal() {
 		break;
 	case 5:
 		SceneItem::display(1400, 3, SET_X, 60, SET_Y, _globals->_sceneManager._scene->_sceneBounds.bottom - 80,
-			SET_FONT, 2, SET_FG_COLOUR, 23, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
+			SET_FONT, 2, SET_FG_COLOR, 23, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
 		setDelay(360);
 		break;
 	case 6:
@@ -722,7 +722,7 @@ void Scene1400::Action1::signal() {
 		_globals->_player.animate(ANIM_MODE_2, NULL);
 
 		SceneItem::display(1400, 4, SET_X, 30, SET_Y, _globals->_player._position.y + 10, SET_FONT, 2,
-			SET_FG_COLOUR, 13, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
+			SET_FG_COLOR, 13, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
 		setDelay(300);
 		break;
 	case 9: {

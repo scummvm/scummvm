@@ -32,7 +32,7 @@
 
 namespace Sword2 {
 
-// Output colour for character border - should be be black but note that we
+// Output color for character border - should be be black but note that we
 // have to use a different pen number during sequences
 
 #define BORDER_PEN 194
@@ -92,7 +92,7 @@ private:
 				// for overlap
 	int8 _charSpacing;	// no. of pixels to separate characters along
 				// each line - negative for overlap
-	uint8 _borderPen;	// output pen colour of character borders
+	uint8 _borderPen;	// output pen color of character borders
 
 	uint16 analyseSentence(byte *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line);
 	byte *buildTextSprite(byte *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines);

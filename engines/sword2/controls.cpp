@@ -465,7 +465,7 @@ void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) 
 		break;
 	case RLE16:
 		spriteType |= RDSPR_RLE256;
-		// Points to just after last cdt_entry, i.e. start of colour
+		// Points to just after last cdt_entry, i.e. start of color
 		// table
 		colTablePtr = _vm->fetchAnimHeader(file) + AnimHeader::size()
 			+ anim_head.noAnimFrames * CdtEntry::size();

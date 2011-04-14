@@ -1433,7 +1433,7 @@ void Mouse::refreshInventory() {
 	// Can reset this now
 	_vm->_logic->writeVar(COMBINE_BASE, 0);
 
-	// Cause 'object_held' icon to be greyed. The rest are coloured.
+	// Cause 'object_held' icon to be greyed. The rest are colored.
 	_examiningMenuIcon = true;
 	buildMenu();
 	_examiningMenuIcon = false;

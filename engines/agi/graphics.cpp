@@ -685,14 +685,14 @@ void GfxMgr::drawFrame(int x1, int y1, int x2, int y2, int c1, int c2) {
 	}
 }
 
-void GfxMgr::drawBox(int x1, int y1, int x2, int y2, int colour1, int colour2, int m) {
+void GfxMgr::drawBox(int x1, int y1, int x2, int y2, int color1, int color2, int m) {
 	x1 += m;
 	y1 += m;
 	x2 -= m;
 	y2 -= m;
 
-	drawRectangle(x1, y1, x2, y2, colour1);
-	drawFrame(x1 + 2, y1 + 2, x2 - 2, y2 - 2, colour2, colour2);
+	drawRectangle(x1, y1, x2, y2, color1);
+	drawFrame(x1 + 2, y1 + 2, x2 - 2, y2 - 2, color2, color2);
 	flushBlock(x1, y1, x2, y2);
 }
 
@@ -752,7 +752,7 @@ void GfxMgr::rawDrawButton(int x, int y, const char *s, int fgcolor, int bgcolor
 
 	// Draw a filled rectangle that's larger than the button. Used for drawing
 	// a border around the button as the button itself is drawn after this.
-	drawRectangle(x1, y1, x2, y2, border ? BUTTON_BORDER : MSG_BOX_COLOUR);
+	drawRectangle(x1, y1, x2, y2, border ? BUTTON_BORDER : MSG_BOX_COLOR);
 
 	while (*s) {
 		putTextCharacter(0, x + textOffset, y + textOffset, *s++, fgcolor, bgcolor);

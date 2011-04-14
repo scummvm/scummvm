@@ -855,13 +855,13 @@ MadsInterfaceView::~MadsInterfaceView() {
 void MadsInterfaceView::setFontMode(InterfaceFontMode newMode) {
 	switch (newMode) {
 	case ITEM_NORMAL:
-		_vm->_font->current()->setColours(4, 4, 0xff);
+		_vm->_font->current()->setColors(4, 4, 0xff);
 		break;
 	case ITEM_HIGHLIGHTED:
-		_vm->_font->current()->setColours(5, 5, 0xff);
+		_vm->_font->current()->setColors(5, 5, 0xff);
 		break;
 	case ITEM_SELECTED:
-		_vm->_font->current()->setColours(6, 6, 0xff);
+		_vm->_font->current()->setColors(6, 6, 0xff);
 		break;
 	}
 }
@@ -939,7 +939,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 	int actionIndex = 0;
 	for (int x = 0; x < 2; ++x) {
 		for (int y = 0; y < 5; ++y, ++actionIndex) {
-			// Determine the font colour depending on whether an item is selected. Note that the first action,
+			// Determine the font color depending on whether an item is selected. Note that the first action,
 			// 'Look', is always 'selected', even when another action is clicked on
 			setFontMode((_highlightedElement == actionIndex) ? ITEM_HIGHLIGHTED :
 				((actionIndex == 0) ? ITEM_SELECTED : ITEM_NORMAL));
@@ -994,7 +994,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 		// Display object sprite. Note that the frame number isn't used directly, because it would result
 		// in too fast an animation
 		M4Sprite *spr = _objectSprites->getFrame(_objectFrameNumber / INV_ANIM_FRAME_SPEED);
-		spr->copyTo(destSurface, INVENTORY_X, INVENTORY_Y, TRANSPARENT_COLOUR_INDEX);
+		spr->copyTo(destSurface, INVENTORY_X, INVENTORY_Y, TRANSPARENT_COLOR_INDEX);
 
 		if (!_madsVm->globals()->_config.invObjectsStill && !dialogVisible) {
 			// If objects need to be animated, move to the next frame

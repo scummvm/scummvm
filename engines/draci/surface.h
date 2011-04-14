@@ -43,18 +43,18 @@ public:
 	void markDirty();
 	void markClean();
 	bool needsFullUpdate() const { return _fullUpdate; }
-	uint getTransparentColour() const { return _transparentColour; }
-	void setTransparentColour(uint colour) { _transparentColour = colour; }
-	void fill(uint colour);
+	uint getTransparentColor() const { return _transparentColor; }
+	void setTransparentColor(uint color) { _transparentColor = color; }
+	void fill(uint color);
 	uint putAboveY(int y, int height) const;
 	uint centerOnX(int x, int width) const;
 	Common::Rect getDimensions() const { return Common::Rect(w, h); }
 
 private:
-	/** The current transparent colour of the surface. See getTransparentColour() and
-	 *  setTransparentColour().
+	/** The current transparent color of the surface. See getTransparentColor() and
+	 *  setTransparentColor().
 	 */
-	uint _transparentColour;
+	uint _transparentColor;
 
 	/** Set when the surface is scheduled for a full update.
 	 *  See markDirty(), markClean(). Accessed via needsFullUpdate().

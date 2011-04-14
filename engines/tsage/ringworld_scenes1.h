@@ -527,7 +527,7 @@ public:
 	virtual void remove();
 	virtual void process(Event &event);
 	virtual void dispatch();
-	void showMessage(const Common::String &msg, int colour, Action *action);
+	void showMessage(const Common::String &msg, int color, Action *action);
 
 };
 

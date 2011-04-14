@@ -312,7 +312,7 @@ void OSystem_IPHONE::drawMouseCursorOnRectUpdate(const Common::Rect& updatedRect
 		uint16 *dst = &_fullscreen[top * _screenWidth + left];
 		for (int y = displayHeight; y > srcY; y--) {
 			for (int x = displayWidth; x > srcX; x--) {
-				if (*src != _mouseKeyColour)
+				if (*src != _mouseKeyColor)
 					*dst = _palette[*src];
 				dst++;
 				src++;
@@ -497,7 +497,7 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 	_mouseHotspotX = hotspotX;
 	_mouseHotspotY = hotspotY;
 
-	_mouseKeyColour = (byte)keycolor;
+	_mouseKeyColor = (byte)keycolor;
 
 	memcpy(_mouseBuf, buf, w * h);
 

@@ -124,7 +124,7 @@ void M4Sprite::loadMadsSprite(Common::SeekableReadStream* source) {
 	bool spriteEnd = false;
 
 	// Set entire sprite contents to transparent pixels
-	fillRect(bounds(), TRANSPARENT_COLOUR_INDEX);
+	fillRect(bounds(), TRANSPARENT_COLOR_INDEX);
 
 	// Major line loop
 	for (int yp = 0; yp < h; ++yp) {
@@ -153,7 +153,7 @@ void M4Sprite::loadMadsSprite(Common::SeekableReadStream* source) {
 				byte v = source->readByte();
 				while (cmd-- > 0) {
 					if (x2 < w)
-						*destP++ = (v == 0xFD) ? TRANSPARENT_COLOUR_INDEX : v;
+						*destP++ = (v == 0xFD) ? TRANSPARENT_COLOR_INDEX : v;
 					++x2;
 				}
 			}
@@ -173,13 +173,13 @@ void M4Sprite::loadMadsSprite(Common::SeekableReadStream* source) {
 					byte v = source->readByte();
 					while (cmd-- > 0) {
 						if (x2 < w) {
-							*destP++ = (v == 0xFD) ? TRANSPARENT_COLOUR_INDEX : v;
+							*destP++ = (v == 0xFD) ? TRANSPARENT_COLOR_INDEX : v;
 						}
 						++x2;
 					}
 				} else {
 					// Handle writing out single pixel
-					*destP++ = (cmd == 0xFD) ? TRANSPARENT_COLOUR_INDEX : cmd;
+					*destP++ = (cmd == 0xFD) ? TRANSPARENT_COLOR_INDEX : cmd;
 					++x2;
 				}
 			}
@@ -203,7 +203,7 @@ void M4Sprite::loadMadsSprite(Common::SeekableReadStream* source) {
 }
 
 byte M4Sprite::getTransparencyIndex() const {
-		return TRANSPARENT_COLOUR_INDEX;
+		return TRANSPARENT_COLOR_INDEX;
 }
 
 } // End of namespace M4

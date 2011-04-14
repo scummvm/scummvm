@@ -81,7 +81,7 @@ protected:
 
 	bool _mouseVisible;
 	byte *_mouseBuf;
-	byte _mouseKeyColour;
+	byte _mouseKeyColor;
 	uint _mouseWidth, _mouseHeight;
 	uint _mouseX, _mouseY;
 	int _mouseHotspotX, _mouseHotspotY;

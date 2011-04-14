@@ -601,7 +601,7 @@ void PictureMgr::drawPicture() {
 			_patCode = nextByte();
 			plotBrush();
 			break;
-		case 0xf0:	// set colour on screen (AGI pic v2)
+		case 0xf0:	// set color on screen (AGI pic v2)
 			if (_pictureVersion == AGIPIC_V15)
 				break;
 
@@ -615,7 +615,7 @@ void PictureMgr::drawPicture() {
 				_scrColor &= 0xF;	// for v3 drawing diff
 				_scrOn = true;
 				_priOn = false;
-			} else if (_pictureVersion == AGIPIC_V15) {	// set colour on screen
+			} else if (_pictureVersion == AGIPIC_V15) {	// set color on screen
 				_scrColor = nextByte();
 				_scrColor &= 0xF;
 				_scrOn = true;
@@ -623,7 +623,7 @@ void PictureMgr::drawPicture() {
 				_scrOn = false;
 			}
 			break;
-		case 0xf2:	// set colour on priority (AGI pic v2)
+		case 0xf2:	// set color on priority (AGI pic v2)
 			if (_pictureVersion == AGIPIC_V15)
 				break;
 

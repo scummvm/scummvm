@@ -290,26 +290,26 @@ void MenuButton::onRefresh() {
 	case OBJTYPE_SL_TEXT:
 		switch (_objectState) {
 		case OS_MOUSEOVER:
-			_vm->_font->current()->setColours(TEXT_COLOR_MOUSEOVER_SHADOW, TEXT_COLOR_MOUSEOVER_FOREGROUND,
+			_vm->_font->current()->setColors(TEXT_COLOR_MOUSEOVER_SHADOW, TEXT_COLOR_MOUSEOVER_FOREGROUND,
 				TEXT_COLOR_MOUSEOVER_HILIGHT);
 			sprite = sprites[SL_LINE_MOUSEOVER];
 			break;
 
 		case OS_PRESSED:
-			_vm->_font->current()->setColours(TEXT_COLOR_PRESSED_SHADOW, TEXT_COLOR_PRESSED_FOREGROUND,
+			_vm->_font->current()->setColors(TEXT_COLOR_PRESSED_SHADOW, TEXT_COLOR_PRESSED_FOREGROUND,
 				TEXT_COLOR_PRESSED_HILIGHT);
 			sprite = sprites[SL_LINE_PRESSED];
 			break;
 
 		case OS_GREYED:
-			_vm->_font->current()->setColours(TEXT_COLOR_GREYED_SHADOW, TEXT_COLOR_GREYED_FOREGROUND,
+			_vm->_font->current()->setColors(TEXT_COLOR_GREYED_SHADOW, TEXT_COLOR_GREYED_FOREGROUND,
 				TEXT_COLOR_GREYED_HILIGHT);
 			sprite = sprites[SL_LINE_NORMAL];
 			break;
 
 		default:
 		case OS_NORMAL:
-			_vm->_font->current()->setColours(TEXT_COLOR_NORMAL_SHADOW, TEXT_COLOR_NORMAL_FOREGROUND,
+			_vm->_font->current()->setColors(TEXT_COLOR_NORMAL_SHADOW, TEXT_COLOR_NORMAL_FOREGROUND,
 				TEXT_COLOR_NORMAL_HILIGHT);
 			sprite = sprites[SL_LINE_NORMAL];
 			break;
@@ -955,7 +955,7 @@ void MenuTextField::onRefresh() {
 	// Draw the text
 
 	_vm->_font->setFont(FONT_MENU);
-	_vm->_font->current()->setColours(TEXT_COLOR_NORMAL_SHADOW, TEXT_COLOR_NORMAL_FOREGROUND,
+	_vm->_font->current()->setColors(TEXT_COLOR_NORMAL_SHADOW, TEXT_COLOR_NORMAL_FOREGROUND,
 		TEXT_COLOR_NORMAL_HILIGHT);
 	int xp = _bounds.left + 4;
 
@@ -1140,7 +1140,7 @@ GUITextField::GUITextField(View *owner, const Common::Rect &bounds): GUIRect(own
 
 void GUITextField::onRefresh() {
 	_parent->fillRect(_bounds, _vm->_palette->BLACK);
-	_vm->_font->current()->setColours(3, 3, 3);
+	_vm->_font->current()->setColors(3, 3, 3);
 	_vm->_font->setFont(FONT_INTERFACE);
 	_vm->_font->current()->writeString(_parent, _text.c_str(), _bounds.left, _bounds.top, 0, 1);
 }

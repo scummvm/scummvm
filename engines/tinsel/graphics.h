@@ -43,7 +43,7 @@ struct DRAWOBJECT {
 	int transOffset;	// transparent character offset
 	int flags;		// object flags - see above for list
 	PALQ *pPal;		// objects palette Q position
-	int constant;		// which colour in palette for monochrome objects
+	int constant;		// which color in palette for monochrome objects
 	int width;		// width of object
 	int height;		// height of object
 	SCNHANDLE hBits;	// image bitmap handle

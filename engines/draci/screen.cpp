@@ -36,12 +36,12 @@ namespace Draci {
 
 Screen::Screen(DraciEngine *vm) : _vm(vm) {
 	_surface = new Surface(kScreenWidth, kScreenHeight);
-	_palette = new byte[3 * kNumColours];
-	_blackPalette = new byte[3 * kNumColours];
-	for (int i = 0; i < 3 * kNumColours; ++i) {
+	_palette = new byte[3 * kNumColors];
+	_blackPalette = new byte[3 * kNumColors];
+	for (int i = 0; i < 3 * kNumColors; ++i) {
 		_blackPalette[i] = 0;
 	}
-	setPalette(NULL, 0, kNumColours);
+	setPalette(NULL, 0, kNumColors);
 	this->clearScreen();
 }
 
@@ -54,11 +54,11 @@ Screen::~Screen() {
 /**
  * @brief Sets a part of the palette
  * @param data Pointer to a buffer containing new palette data
- *        start Index of the colour where replacement should start
- *        num Number of colours to replace
+ *        start Index of the color where replacement should start
+ *        num Number of colors to replace
  */
 void Screen::setPalette(const byte *data, uint16 start, uint16 num) {
-	Common::MemoryReadStream pal(data ? data : _blackPalette, 3 * kNumColours);
+	Common::MemoryReadStream pal(data ? data : _blackPalette, 3 * kNumColors);
 	pal.seek(start * 3);
 
 	// Copy the palette
@@ -78,8 +78,8 @@ void Screen::setPalette(const byte *data, uint16 start, uint16 num) {
 }
 
 void Screen::interpolatePalettes(const byte *first, const byte *second, uint16 start, uint16 num, int index, int number) {
-	Common::MemoryReadStream firstPal(first ? first : _blackPalette, 3 * kNumColours);
-	Common::MemoryReadStream secondPal(second ? second : _blackPalette, 3 * kNumColours);
+	Common::MemoryReadStream firstPal(first ? first : _blackPalette, 3 * kNumColors);
+	Common::MemoryReadStream secondPal(second ? second : _blackPalette, 3 * kNumColors);
 	firstPal.seek(start * 3);
 	secondPal.seek(start * 3);
 

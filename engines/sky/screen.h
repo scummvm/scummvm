@@ -44,8 +44,8 @@ struct Compact;
 struct DataFileHeader;
 
 #define SCROLL_JUMP		16
-#define VGA_COLOURS		256
-#define GAME_COLOURS		240
+#define VGA_COLORS		256
+#define GAME_COLORS		240
 
 #define FORE 1
 #define BACK 0
@@ -100,8 +100,8 @@ private:
 	OSystem *_system;
 	Disk *_skyDisk;
 	SkyCompact *_skyCompact;
-	static uint8 _top16Colours[16 * 3];
-	uint8 _palette[VGA_COLOURS * 3];
+	static uint8 _top16Colors[16 * 3];
+	uint8 _palette[VGA_COLORS * 3];
 	uint32 _currentPalette;
 	uint8 _seqGrid[20 * 12];
 

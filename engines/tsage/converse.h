@@ -40,7 +40,7 @@ class SequenceManager : public Action {
 private:
 	void setup();
 	uint16 getNextValue();
-	void setMessage(int resNum, int lineNum, int colour, const Common::Point &pt, int width);
+	void setMessage(int resNum, int lineNum, int color, const Common::Point &pt, int width);
 	SequenceManager *globalManager();
 public:
 	SceneText _sceneText;
@@ -80,7 +80,7 @@ public:
 	Common::Point _textPos;
 	int _fontNumber;
 	TextAlign _textMode;
-	int _colour1, _colour2, _colour3;
+	int _color1, _color2, _color3;
 	bool _hideObjects;
 public:
 	Speaker();
@@ -143,19 +143,19 @@ public:
 
 class ConversationChoiceDialog : public ModalDialog {
 public:
-	int _stdColour;
-	int _highlightColour;
+	int _stdColor;
+	int _highlightColor;
 	int _fontNumber;
-	int _savedFgColour;
+	int _savedFgColor;
 	int _savedFontNumber;
 	Common::Array<ChoiceEntry> _choiceList;
 	uint _selectedIndex;
 public:
 	ConversationChoiceDialog();
 
-	void setColours(int stdColour, int highlightColour) {
-		_stdColour = stdColour;
-		_highlightColour = highlightColour;
+	void setColors(int stdColor, int highlightColor) {
+		_stdColor = stdColor;
+		_highlightColor = highlightColor;
 	}
 	void setFontNumber(int fontNum) { _fontNumber = fontNum; }
 	int execute(const Common::StringArray &choiceList);
@@ -219,7 +219,7 @@ public:
 
 	void start(int stripNum, EventHandler *owner, StripCallback *callback = NULL);
 	void setCallback(StripCallback *callback) { _callbackObject = callback; }
-	void setColours(int stdColour, int highlightColour) { _choiceDialog.setColours(stdColour, highlightColour); }
+	void setColors(int stdColor, int highlightColor) { _choiceDialog.setColors(stdColor, highlightColor); }
 	void setFontNumber(int fontNum) { _choiceDialog.setFontNumber(fontNum); }
 	void addSpeaker(Speaker *speaker);
 };

@@ -642,8 +642,8 @@ int AgiEngine::selectSlot() {
 			for (i = 0; i < NUM_VISIBLE_SLOTS; i++) {
 				sprintf(dstr, "[%2d. %-28.28s]", i + _firstSlot, desc[i]);
 				printText(dstr, 0, hm + 1, vm + 4 + i,
-						(40 - 2 * hm) - 1, i == active ? MSG_BOX_COLOUR : MSG_BOX_TEXT,
-						i == active ? MSG_BOX_TEXT : MSG_BOX_COLOUR);
+						(40 - 2 * hm) - 1, i == active ? MSG_BOX_COLOR : MSG_BOX_TEXT,
+						i == active ? MSG_BOX_TEXT : MSG_BOX_COLOR);
 			}
 
 			char upArrow[] = "^";
@@ -651,11 +651,11 @@ int AgiEngine::selectSlot() {
 			char scrollBar[] = " ";
 
 			for (i = 1; i < NUM_VISIBLE_SLOTS - 1; i++)
-				printText(scrollBar, 35, hm + 1, vm + 4 + i, 1, MSG_BOX_COLOUR, 7, true);
+				printText(scrollBar, 35, hm + 1, vm + 4 + i, 1, MSG_BOX_COLOR, 7, true);
 
 			printText(upArrow, 35, hm + 1, vm + 4, 1, 8, 7);
 			printText(downArrow, 35, hm + 1, vm + 4 + NUM_VISIBLE_SLOTS - 1, 1, 8, 7);
-			printText(scrollBar, 35, hm + 1, vm + 4 + sbPos, 1, MSG_BOX_COLOUR, MSG_BOX_TEXT);
+			printText(scrollBar, 35, hm + 1, vm + 4 + sbPos, 1, MSG_BOX_COLOR, MSG_BOX_TEXT);
 
 			oldActive = active;
 			oldFirstSlot = _firstSlot;
@@ -808,7 +808,7 @@ int AgiEngine::saveGameDialog() {
 	do {
 		drawWindow(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);
 		printText("Select a slot in which you wish to\nsave the game:",
-				0, hm + 1, vm + 1, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
+				0, hm + 1, vm + 1, w, MSG_BOX_TEXT, MSG_BOX_COLOR);
 		slot = selectSlot();
 		if (slot + _firstSlot == 0)
 			messageBox("That slot is for Autosave only.");
@@ -819,7 +819,7 @@ int AgiEngine::saveGameDialog() {
 	drawWindow(hp, vp + 5 * CHAR_LINES, GFX_WIDTH - hp,
 			GFX_HEIGHT - vp - 9 * CHAR_LINES);
 	printText("Enter a description for this game:",
-			0, hm + 1, vm + 6, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
+			0, hm + 1, vm + 6, w, MSG_BOX_TEXT, MSG_BOX_COLOR);
 	_gfx->drawRectangle(3 * CHAR_COLS, 11 * CHAR_LINES - 1,
 			37 * CHAR_COLS, 12 * CHAR_LINES, MSG_BOX_TEXT);
 	_gfx->flushBlock(3 * CHAR_COLS, 11 * CHAR_LINES - 1,
@@ -844,7 +844,7 @@ int AgiEngine::saveGameDialog() {
 	for (numChars = 0; numChars < 28 && name[numChars]; numChars++)
 		handleGetstring(name[numChars]);
 
-	_gfx->printCharacter(numChars + 3, 11, _game.cursorChar, MSG_BOX_COLOUR, MSG_BOX_TEXT);
+	_gfx->printCharacter(numChars + 3, 11, _game.cursorChar, MSG_BOX_COLOR, MSG_BOX_TEXT);
 	do {
 		mainCycle();
 	} while (_game.inputMode == INPUT_GETSTRING);
@@ -902,7 +902,7 @@ int AgiEngine::loadGameDialog() {
 
 	drawWindow(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);
 	printText("Select a game which you wish to\nrestore:",
-			0, hm + 1, vm + 1, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
+			0, hm + 1, vm + 1, w, MSG_BOX_TEXT, MSG_BOX_COLOR);
 
 	slot = selectSlot();
 

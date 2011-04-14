@@ -300,7 +300,7 @@ void M4Surface::drawSprite(int x, int y, SpriteInfo &info, const Common::Rect &c
 							r = CLIP((info.palette[destPixel].r * pixel) >> 10, 0, 31);
 							g = CLIP((info.palette[destPixel].g * pixel) >> 10, 0, 31);
 							b = CLIP((info.palette[destPixel].b * pixel) >> 10, 0, 31);
-							pixel = info.inverseColourTable[(b << 10) | (g << 5) | r];
+							pixel = info.inverseColorTable[(b << 10) | (g << 5) | r];
 						}
 					}
 
@@ -361,7 +361,7 @@ void M4Surface::fillRect(const Common::Rect &r, uint8 color) {
 }
 
 void M4Surface::copyFrom(M4Surface *src, const Common::Rect &srcBounds, int destX, int destY,
-						 int transparentColour) {
+						 int transparentColor) {
 	// Validation of the rectangle and position
 	if ((destX >= w) || (destY >= h))
 		return;
@@ -390,13 +390,13 @@ void M4Surface::copyFrom(M4Surface *src, const Common::Rect &srcBounds, int dest
 	byte *destPtr = (byte *)pixels + (destY * width()) + destX;
 
 	for (int rowCtr = 0; rowCtr < copyRect.height(); ++rowCtr) {
-		if (transparentColour == -1)
+		if (transparentColor == -1)
 			// No transparency, so copy line over
 			Common::copy(srcPtr, srcPtr + copyRect.width(), destPtr);
 		else {
 			// Copy each byte one at a time checking for the transparency color
 			for (int xCtr = 0; xCtr < copyRect.width(); ++xCtr)
-				if (srcPtr[xCtr] != transparentColour) destPtr[xCtr] = srcPtr[xCtr];
+				if (srcPtr[xCtr] != transparentColor) destPtr[xCtr] = srcPtr[xCtr];
 		}
 
 		srcPtr += src->width();
@@ -411,7 +411,7 @@ void M4Surface::copyFrom(M4Surface *src, const Common::Rect &srcBounds, int dest
  * the specified depth requirement on a secondary surface contain depth information
  */
 void M4Surface::copyFrom(M4Surface *src, int destX, int destY, int depth, 
-						 M4Surface *depthsSurface, int scale, int transparentColour) {
+						 M4Surface *depthsSurface, int scale, int transparentColor) {
 
 	if (scale == 100) {
 		// Copy the specified area
@@ -443,7 +443,7 @@ void M4Surface::copyFrom(M4Surface *src, int destX, int destY, int depth,
 		for (int rowCtr = 0; rowCtr < copyRect.height(); ++rowCtr) {
 			// Copy each byte one at a time checking against the depth
 			for (int xCtr = 0; xCtr < copyRect.width(); ++xCtr) {
-				if ((depth <= (depthsPtr[xCtr] & 0x7f)) && (srcPtr[xCtr] != transparentColour))
+				if ((depth <= (depthsPtr[xCtr] & 0x7f)) && (srcPtr[xCtr] != transparentColor))
 					destPtr[xCtr] = srcPtr[xCtr];
 			}
 
@@ -557,7 +557,7 @@ void M4Surface::copyFrom(M4Surface *src, int destX, int destY, int depth,
 				// Not a display pixel
 				continue;
 
-			if ((*srcP != transparentColour) && (depth <= (*depthP & 0x7f)))
+			if ((*srcP != transparentColor) && (depth <= (*depthP & 0x7f)))
 				*destP = *srcP;
 
 			++destP;
@@ -933,7 +933,7 @@ void M4Surface::translate(RGBList *list, bool isTransparent) {
 	byte *palIndexes = list->palIndexes();
 
 	for (int i = 0; i < width() * height(); ++i, ++p) {
-		if (!isTransparent || (*p != TRANSPARENT_COLOUR_INDEX)) {
+		if (!isTransparent || (*p != TRANSPARENT_COLOR_INDEX)) {
 			if (*p < list->size())
 				*p = palIndexes[*p];
 			else

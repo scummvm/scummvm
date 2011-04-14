@@ -226,8 +226,8 @@ void Scene2000::Action10::signal() {
 		error("Old stuff");
 		break;
 	case 2:
-		SceneItem::display(2000, 17, SET_Y, 20, SET_X, 110, SET_FONT, 2, SET_BG_COLOUR, -1,
-			SET_FG_COLOUR, 17, SET_WIDTH, 200, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, 1, LIST_END);
+		SceneItem::display(2000, 17, SET_Y, 20, SET_X, 110, SET_FONT, 2, SET_BG_COLOR, -1,
+			SET_FG_COLOR, 17, SET_WIDTH, 200, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, 1, LIST_END);
 		break;
 	case 3:
 		SceneItem::display(0, 0);
@@ -1995,12 +1995,12 @@ void Scene2120::Action1::signal() {
 		break;
 	case 1:
 		// First page of index
-		SceneItem::display(2120, 0, SET_X, 120, SET_FONT, 1, SET_EXT_BGCOLOUR, 7, SET_BG_COLOUR, -1,
+		SceneItem::display(2120, 0, SET_X, 120, SET_FONT, 1, SET_EXT_BGCOLOR, 7, SET_BG_COLOR, -1,
 			SET_WIDTH, 200, SET_KEEP_ONSCREEN, -1, SET_TEXT_MODE, 0, LIST_END);
 		break;
 	case 2:
 		// Second page of index
-		SceneItem::display(2120, 1, SET_X, 120, SET_FONT, 1, SET_EXT_BGCOLOUR, 7, SET_BG_COLOUR, -1,
+		SceneItem::display(2120, 1, SET_X, 120, SET_FONT, 1, SET_EXT_BGCOLOR, 7, SET_BG_COLOR, -1,
 			SET_WIDTH, 200, SET_KEEP_ONSCREEN, -1, SET_TEXT_MODE, 0, LIST_END);
 		break;
 	case 3:
@@ -2016,7 +2016,7 @@ void Scene2120::Action1::signal() {
 	case 4:
 		// Display page of text
 		SceneItem::display(2121, _entries[scene->_subjectIndex]._lineNum + scene->_lineOffset,
-			SET_X, 130, SET_FONT, 1, SET_EXT_BGCOLOUR, 7, SET_BG_COLOUR, -1, SET_WIDTH, 200,
+			SET_X, 130, SET_FONT, 1, SET_EXT_BGCOLOR, 7, SET_BG_COLOR, -1, SET_WIDTH, 200,
 			SET_KEEP_ONSCREEN, -1, SET_TEXT_MODE, 0, LIST_END);
 		_actionIndex = 4;
 		break;
@@ -2731,7 +2731,7 @@ void Scene2200::Action3::signal() {
 			scene->_hotspot7.setFrame(1);
 			scene->_hotspot7.setPosition(Common::Point(145, 165));
 
-			SceneItem::display(60, 1, SET_Y, 40, SET_X, 25, SET_FONT, 75, SET_BG_COLOUR, -1, SET_FG_COLOUR, 34,
+			SceneItem::display(60, 1, SET_Y, 40, SET_X, 25, SET_FONT, 75, SET_BG_COLOR, -1, SET_FG_COLOR, 34,
 				SET_POS_MODE, 0, SET_WIDTH, 280, SET_KEEP_ONSCREEN, 1, LIST_END);
 			_state = 1;
 			setDelay(1800);
@@ -2740,7 +2740,7 @@ void Scene2200::Action3::signal() {
 	case 3:
 	case 4:
 	case 5:
-		SceneItem::display(60, _actionIndex - 2, SET_Y, 40, SET_X, 25, SET_FONT, 75, SET_BG_COLOUR, -1, SET_FG_COLOUR, 34,
+		SceneItem::display(60, _actionIndex - 2, SET_Y, 40, SET_X, 25, SET_FONT, 75, SET_BG_COLOR, -1, SET_FG_COLOR, 34,
 			SET_POS_MODE, 0, SET_WIDTH, 280, SET_KEEP_ONSCREEN, 1, LIST_END);
 		setDelay(1800);
 		break;
@@ -4876,7 +4876,7 @@ void Scene2310::signal() {
 
 		_sceneText._width = 280;
 		_sceneText._textMode = ALIGN_CENTRE;
-		_sceneText._colour1 = 35;
+		_sceneText._color1 = 35;
 		_sceneText._fontNumber = 2;
 		_sceneText.setup(msg);
 		_sceneText.setPriority2(255);

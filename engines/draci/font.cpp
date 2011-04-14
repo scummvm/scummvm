@@ -125,7 +125,7 @@ uint8 Font::getCharWidth(uint8 chr) const {
  * @param ty    Vertical offset on the surface
  */
 
-void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_colour) const {
+void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_color) const {
 	assert(dst != NULL);
 	assert(tx >= 0);
 	assert(ty >= 0);
@@ -147,39 +147,39 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_colour) co
 	int ySpaceLeft = dst->h - ty - 1;
 	int yPixelsToDraw = (_fontHeight < ySpaceLeft) ? _fontHeight : ySpaceLeft;
 
-	int _transparent = dst->getTransparentColour();
+	int _transparent = dst->getTransparentColor();
 
 	for (int y = 0; y < yPixelsToDraw; ++y) {
 		for (int x = 0; x <= xPixelsToDraw; ++x) {
 
 			int curr = y * _maxCharWidth + x;
-			int colour = _charData[charOffset + curr];
+			int color = _charData[charOffset + curr];
 
 			// If pixel is transparent, skip it
-			if (colour == _transparent)
+			if (color == _transparent)
 				continue;
 
-			// Replace colour with font colours
-			switch (colour) {
+			// Replace color with font colors
+			switch (color) {
 			case 254:
-				colour = with_colour;
+				color = with_color;
 				break;
 
 			case 253:
-				colour = kFontColour2;
+				color = kFontColor2;
 				break;
 
 			case 252:
-				colour = kFontColour3;
+				color = kFontColor3;
 				break;
 
 			case 251:
-				colour = kFontColour4;
+				color = kFontColor4;
 				break;
 			}
 
 			// Paint the pixel
-			ptr[x] = colour;
+			ptr[x] = color;
 		}
 
 		// Advance to next row
@@ -198,8 +198,8 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_colour) co
  * @param spacing   Space to leave between individual characters. Defaults to 0.
  */
 void Font::drawString(Surface *dst, const byte *str, uint len,
-	                  int x, int y, int with_colour, int spacing, bool markDirty) const {
-	drawString(dst, Common::String((const char *)str, len), x, y, with_colour, spacing, markDirty);
+	                  int x, int y, int with_color, int spacing, bool markDirty) const {
+	drawString(dst, Common::String((const char *)str, len), x, y, with_color, spacing, markDirty);
 }
 
 /**
@@ -213,7 +213,7 @@ void Font::drawString(Surface *dst, const byte *str, uint len,
  */
 
 void Font::drawString(Surface *dst, const Common::String &str,
-	                  int x, int y, int with_colour, int spacing, bool markDirty) const {
+	                  int x, int y, int with_color, int spacing, bool markDirty) const {
 	assert(dst != NULL);
 	assert(x >= 0);
 	assert(y >= 0);
@@ -238,7 +238,7 @@ void Font::drawString(Surface *dst, const Common::String &str,
 			break;
 		}
 
-		drawChar(dst, str[i], curx, cury, with_colour);
+		drawChar(dst, str[i], curx, cury, with_color);
 		curx += getCharWidth(str[i]) + spacing;
 	}
 

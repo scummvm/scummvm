@@ -118,10 +118,10 @@ void FettleFontPal(SCNHANDLE fontPal) {
 	else
 		pImg->hImgPal = 0;
 
-	if (TinselV2 && SysVar(SV_TAGCOLOUR)) {
+	if (TinselV2 && SysVar(SV_TAGCOLOR)) {
 		const COLORREF c = GetActorRGB(-1);
 		SetTagColorRef(c);
-		UpdateDACqueue(SysVar(SV_TAGCOLOUR), c);
+		UpdateDACqueue(SysVar(SV_TAGCOLOR), c);
 	}
 }
 

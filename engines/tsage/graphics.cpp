@@ -72,7 +72,7 @@ GfxSurface surfaceFromRes(const byte *imgData) {
 	s.create(r.width(), r.height());
 	s._centroid.x = READ_LE_UINT16(imgData + 4);
 	s._centroid.y = READ_LE_UINT16(imgData + 6);
-	s._transColour = *(imgData + 8);
+	s._transColor = *(imgData + 8);
 
 	bool rleEncoded = (imgData[9] & 2) != 0;
 
@@ -83,7 +83,7 @@ GfxSurface surfaceFromRes(const byte *imgData) {
 	if (!rleEncoded) {
 		Common::copy(srcP, srcP + (r.width() * r.height()), destP);
 	} else {
-		Common::set_to(destP, destP + (r.width() * r.height()), s._transColour);
+		Common::set_to(destP, destP + (r.width() * r.height()), s._transColor);
 
 		for (int yp = 0; yp < r.height(); ++yp) {
 			int width = r.width();
@@ -301,14 +301,14 @@ void GfxSurface::unlockSurface() {
 }
 
 /**
- * Fills a specified rectangle on the surface with the specified colour
+ * Fills a specified rectangle on the surface with the specified color
  *
  * @bounds Area to fill
- * @colour Colour to use
+ * @color Color to use
  */
-void GfxSurface::fillRect(const Rect &bounds, int colour) {
+void GfxSurface::fillRect(const Rect &bounds, int color) {
 	Graphics::Surface surface = lockSurface();
-	surface.fillRect(bounds, colour);
+	surface.fillRect(bounds, color);
 	unlockSurface();
 }
 
@@ -326,7 +326,7 @@ GfxSurface &GfxSurface::operator=(const GfxSurface &s) {
 	_disableUpdates = s._disableUpdates;
 	_bounds = s._bounds;
 	_centroid = s._centroid;
-	_transColour = s._transColour;
+	_transColor = s._transColor;
 
 	if (_customSurface) {
 		// Surface owns the internal data, so replicate it so new surface owns it's own
@@ -348,8 +348,8 @@ bool GfxSurface::displayText(const Common::String &msg, const Common::Point &pt)
 	// Set up a new graphics manager
 	GfxManager gfxManager;
 	gfxManager.activate();
-	gfxManager._font._colours.background = 0;
-	gfxManager._font._colours.foreground = 7;
+	gfxManager._font._colors.background = 0;
+	gfxManager._font._colors.foreground = 7;
 	gfxManager._font.setFontNumber(2);
 
 	// Get the area for text display
@@ -519,7 +519,7 @@ void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Regi
 
 		for (int y = 0; y < destBounds.height(); ++y, pSrc += srcSurface.pitch, pDest += destSurface.pitch) {
 
-			if (!priorityRegion && (src._transColour == -1))
+			if (!priorityRegion && (src._transColor == -1))
 				Common::copy(pSrc, pSrc + destBounds.width(), pDest);
 			else {
 				const byte *tempSrc = pSrc;
@@ -530,7 +530,7 @@ void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Regi
 					if (!priorityRegion || !priorityRegion->contains(Common::Point(
 							xp + _globals->_sceneManager._scene->_sceneBounds.left,
 							destBounds.top + y + _globals->_sceneManager._scene->_sceneBounds.top))) {
-						if (*tempSrc != src._transColour)
+						if (*tempSrc != src._transColor)
 							*tempDest = *tempSrc;
 					}
 					++tempSrc;
@@ -570,8 +570,8 @@ GfxElement::GfxElement() {
 void GfxElement::setDefaults() {
 	_flags = 0;
 	_fontNumber = _globals->_gfxFontNumber;
-	_colours = _globals->_gfxColours;
-	_fontColours = _globals->_fontColours;
+	_colors = _globals->_gfxColors;
+	_fontColors = _globals->_fontColors;
 }
 
 /**
@@ -583,15 +583,15 @@ void GfxElement::highlight() {
 	Graphics::Surface surface = gfxManager.lockSurface();
 
 	// Scan through the contents of the element, switching any occurances of the foreground
-	// colour with the background colour and vice versa
+	// color with the background color and vice versa
 	Rect tempRect(_bounds);
 	tempRect.collapse(2, 2);
 
 	for (int yp = tempRect.top; yp < tempRect.bottom; ++yp) {
 		byte *lineP = (byte *)surface.getBasePtr(tempRect.left, yp);
 		for (int xp = tempRect.left; xp < tempRect.right; ++xp, ++lineP) {
-			if (*lineP == _colours.background) *lineP = _colours.foreground;
-			else if (*lineP == _colours.foreground) *lineP = _colours.background;
+			if (*lineP == _colors.background) *lineP = _colors.foreground;
+			else if (*lineP == _colors.foreground) *lineP = _colors.background;
 		}
 	}
 
@@ -607,31 +607,31 @@ void GfxElement::drawFrame() {
 	GfxManager &gfxManager = _globals->gfxManager();
 	gfxManager.lockSurface();
 
-	uint8 bgColour, fgColour;
+	uint8 bgColor, fgColor;
 	if (_flags & GFXFLAG_THICK_FRAME) {
-		bgColour = 0;
-		fgColour = 0;
+		bgColor = 0;
+		fgColor = 0;
 	} else {
-		bgColour = _fontColours.background;
-		fgColour = _fontColours.foreground;
+		bgColor = _fontColors.background;
+		fgColor = _fontColors.foreground;
 	}
 
 	Rect tempRect = _bounds;
 	tempRect.collapse(3, 3);
 	tempRect.collapse(-1, -1);
-	gfxManager.fillRect(tempRect, _colours.background);
+	gfxManager.fillRect(tempRect, _colors.background);
 
 	--tempRect.bottom; --tempRect.right;
-	gfxManager.fillArea(tempRect.left, tempRect.top, bgColour);
-	gfxManager.fillArea(tempRect.left, tempRect.bottom, fgColour);
-	gfxManager.fillArea(tempRect.right, tempRect.top, fgColour);
-	gfxManager.fillArea(tempRect.right, tempRect.bottom, fgColour);
+	gfxManager.fillArea(tempRect.left, tempRect.top, bgColor);
+	gfxManager.fillArea(tempRect.left, tempRect.bottom, fgColor);
+	gfxManager.fillArea(tempRect.right, tempRect.top, fgColor);
+	gfxManager.fillArea(tempRect.right, tempRect.bottom, fgColor);
 
 	tempRect.collapse(-1, -1);
-	gfxManager.fillRect2(tempRect.left + 1, tempRect.top, tempRect.width() - 1, 1, bgColour);
-	gfxManager.fillRect2(tempRect.left, tempRect.top + 1, 1, tempRect.height() - 1, bgColour);
-	gfxManager.fillRect2(tempRect.left + 1, tempRect.bottom, tempRect.width() - 1, 1, fgColour);
-	gfxManager.fillRect2(tempRect.right, tempRect.top + 1, 1, tempRect.height() - 1, fgColour);
+	gfxManager.fillRect2(tempRect.left + 1, tempRect.top, tempRect.width() - 1, 1, bgColor);
+	gfxManager.fillRect2(tempRect.left, tempRect.top + 1, 1, tempRect.height() - 1, bgColor);
+	gfxManager.fillRect2(tempRect.left + 1, tempRect.bottom, tempRect.width() - 1, 1, fgColor);
+	gfxManager.fillRect2(tempRect.right, tempRect.top + 1, 1, tempRect.height() - 1, fgColor);
 
 	gfxManager.fillArea(tempRect.left, tempRect.top, 0);
 	gfxManager.fillArea(tempRect.left, tempRect.bottom, 0);
@@ -753,10 +753,10 @@ void GfxMessage::draw() {
 	GfxFontBackup font;
 	GfxManager &gfxManager = _globals->gfxManager();
 
-	// Set the font and colour
+	// Set the font and color
 	gfxManager.setFillFlag(false);
 	gfxManager._font.setFontNumber(_fontNumber);
-	gfxManager._font._colours.foreground = this->_colours.foreground;
+	gfxManager._font._colors.foreground = this->_colors.foreground;
 
 	// Display the text
 	gfxManager._font.writeLines(_message.c_str(), _bounds, _textAlign);
@@ -791,9 +791,9 @@ void GfxButton::draw() {
 	// Draw a basic frame for the button
 	drawFrame();
 
-	// Set the font and colour
+	// Set the font and color
 	gfxManager._font.setFontNumber(_fontNumber);
-	gfxManager._font._colours.foreground = this->_colours.foreground;
+	gfxManager._font._colors.foreground = this->_colors.foreground;
 
 	// Display the button's text
 	Rect tempRect(_bounds);
@@ -986,9 +986,9 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 void GfxDialog::setPalette() {
 	_globals->_scenePalette.loadPalette(0);
 	_globals->_scenePalette.setPalette(0, 1);
-	_globals->_scenePalette.setPalette(_globals->_scenePalette._colours.foreground, 1);
-	_globals->_scenePalette.setPalette(_globals->_fontColours.background, 1);
-	_globals->_scenePalette.setPalette(_globals->_fontColours.foreground, 1);
+	_globals->_scenePalette.setPalette(_globals->_scenePalette._colors.foreground, 1);
+	_globals->_scenePalette.setPalette(_globals->_fontColors.background, 1);
+	_globals->_scenePalette.setPalette(_globals->_fontColors.foreground, 1);
 	_globals->_scenePalette.setPalette(255, 1);
 }
 
@@ -1013,7 +1013,7 @@ void GfxManager::setDefaults() {
 	_pane0Rect4 = screenBounds;
 
 	_font._edgeSize = Common::Point(1, 1);
-	_font._colours = _globals->_fontColours;
+	_font._colors = _globals->_fontColors;
 	_font.setFontNumber(_globals->_gfxFontNumber);
 }
 
@@ -1040,20 +1040,20 @@ void GfxManager::getStringBounds(const char *s, Rect &bounds, int maxWidth) {
 	_font.getStringBounds(s, bounds, maxWidth);
 }
 
-void GfxManager::fillArea(int xp, int yp, int colour) {
+void GfxManager::fillArea(int xp, int yp, int color) {
 	_surface.setBounds(_bounds);
 	Rect tempRect(xp, yp, xp + _font._edgeSize.x, yp + _font._edgeSize.y);
-	_surface.fillRect(tempRect, colour);
+	_surface.fillRect(tempRect, color);
 }
 
-void GfxManager::fillRect(const Rect &bounds, int colour) {
+void GfxManager::fillRect(const Rect &bounds, int color) {
 	_surface.setBounds(_bounds);
-	_surface.fillRect(bounds, colour);
+	_surface.fillRect(bounds, color);
 }
 
-void GfxManager::fillRect2(int xs, int ys, int width, int height, int colour) {
+void GfxManager::fillRect2(int xs, int ys, int width, int height, int color) {
 	_surface.setBounds(_bounds);
-	_surface.fillRect(Rect(xs, ys, xs + width, ys + height), colour);
+	_surface.fillRect(Rect(xs, ys, xs + width, ys + height), color);
 }
 
 /**
@@ -1268,7 +1268,7 @@ int GfxFont::writeChar(const char ch) {
 	charRect.translate(_topLeft.x + _position.x, _topLeft.y + _position.y + yOffset);
 
 	if (_fillFlag)
-		surfacePtr.fillRect(charRect, _colours.background);
+		surfacePtr.fillRect(charRect, _colors.background);
 
 	charRect.bottom = charRect.top + charHeight;
 
@@ -1279,7 +1279,7 @@ int GfxFont::writeChar(const char ch) {
 		byte *destP = (byte *)surfacePtr.getBasePtr(charRect.left, yp);
 
 		for (int xs = 0; xs < charRect.width(); ++xs, ++destP) {
-			// Get the next colour index to use
+			// Get the next color index to use
 			if ((bitCtr % 8) == 0) v = *dataP++;
 			int colIndex = 0;
 			for (int subCtr = 0; subCtr < _bpp; ++subCtr, ++bitCtr) {
@@ -1288,10 +1288,10 @@ int GfxFont::writeChar(const char ch) {
 			}
 
 			switch (colIndex) {
-			//case 0: *destP = _colours.background; break;
-			case 1: *destP = _colours.foreground; break;
-			case 2: *destP = _colours2.background; break;
-			case 3: *destP = _colours2.foreground; break;
+			//case 0: *destP = _colors.background; break;
+			case 1: *destP = _colors.foreground; break;
+			case 2: *destP = _colors2.background; break;
+			case 3: *destP = _colors2.foreground; break;
 			}
 		}
 	}
@@ -1415,7 +1415,7 @@ void GfxFont::writeLines(const char *s, const Rect &bounds, TextAlign align) {
 GfxFontBackup::GfxFontBackup() {
 	_edgeSize = _globals->gfxManager()._font._edgeSize;
 	_position = _globals->gfxManager()._font._position;
-	_colours = _globals->gfxManager()._font._colours;
+	_colors = _globals->gfxManager()._font._colors;
 	_fontNumber = _globals->gfxManager()._font._fontNumber;
 }
 
@@ -1423,7 +1423,7 @@ GfxFontBackup::~GfxFontBackup() {
 	_globals->gfxManager()._font.setFontNumber(_fontNumber);
 	_globals->gfxManager()._font._edgeSize = _edgeSize;
 	_globals->gfxManager()._font._position = _position;
-	_globals->gfxManager()._font._colours = _colours;
+	_globals->gfxManager()._font._colors = _colors;
 }
 
 

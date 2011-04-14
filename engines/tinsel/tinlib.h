@@ -48,7 +48,7 @@ void TinGetVersion(WHICH_VER which, char *buffer, int length);
 // Library functions in TINLIB.C
 
 void ActorBrightness(int actor, int brightness);
-void ActorPalette(int actor, int startColour, int length);
+void ActorPalette(int actor, int startColor, int length);
 void Control(int param);
 void HookScene(SCNHANDLE scene, int entrance, int transition);
 void NewScene(CORO_PARAM, SCNHANDLE scene, int entrance, int transition);

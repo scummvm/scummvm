@@ -52,10 +52,10 @@ Globals::Globals() :
 	reset();
 	_stripNum = 0;
 	_gfxFontNumber = 50;
-	_gfxColours.background = 53;
-	_gfxColours.foreground = 18;
-	_fontColours.background = 51;
-	_fontColours.foreground = 54;
+	_gfxColors.background = 53;
+	_gfxColors.foreground = 18;
+	_fontColors.background = 51;
+	_fontColors.foreground = 54;
 
 	_screenSurface.setScreenSurface();
 	_gfxManagers.push_back(&_gfxManagerInstance);
@@ -84,10 +84,10 @@ void Globals::synchronise(Serialiser &s) {
 	SYNC_POINTER(_sceneObjects);
 	_sceneObjects_queue.synchronise(s);
 	s.syncAsSint32LE(_gfxFontNumber);
-	s.syncAsSint32LE(_gfxColours.background);
-	s.syncAsSint32LE(_gfxColours.foreground);
-	s.syncAsSint32LE(_fontColours.background);
-	s.syncAsSint32LE(_fontColours.foreground);
+	s.syncAsSint32LE(_gfxColors.background);
+	s.syncAsSint32LE(_gfxColors.foreground);
+	s.syncAsSint32LE(_fontColors.background);
+	s.syncAsSint32LE(_fontColors.foreground);
 
 	s.syncAsSint16LE(_dialogCentre.x); s.syncAsSint16LE(_dialogCentre.y);
 	_sceneListeners.synchronise(s);

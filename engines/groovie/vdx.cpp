@@ -70,7 +70,7 @@ uint16 VDXPlayer::loadInternal() {
 	}
 	// Flags:
 	// - 1 Puzzle piece? Skip palette, don't redraw full screen, draw still to b/ack buffer
-	// - 2 Transparent colour is 0xFF
+	// - 2 Transparent color is 0xFF
 	// - 5 Skip still chunks
 	// - 7
 	// - 8 Just show the first frame
@@ -251,26 +251,26 @@ void VDXPlayer::getDelta(Common::ReadStream *in) {
 	uint16 currentLine = 0;
 	uint32 offset = 0;
 	while (!in->eos()) {
-		byte colours[16];
+		byte colors[16];
 		if (currOpCode < 0x60) {
 			param1 = in->readByte();
 			param2 = in->readByte();
-			expandColourMap(colours, vdxBlockMapLookup[currOpCode], param1, param2);
-			decodeBlockDelta(offset, colours, 640);
+			expandColorMap(colors, vdxBlockMapLookup[currOpCode], param1, param2);
+			decodeBlockDelta(offset, colors, 640);
 			offset += TILE_SIZE;
 		} else if (currOpCode > 0x7f) {
 			param1 = in->readByte();
 			param2 = in->readByte();
 			param3 = in->readByte();
-			expandColourMap(colours, (param1 << 8) + currOpCode, param2, param3);
-			decodeBlockDelta(offset, colours, 640);
+			expandColorMap(colors, (param1 << 8) + currOpCode, param2, param3);
+			decodeBlockDelta(offset, colors, 640);
 			offset += TILE_SIZE;
 		} else switch (currOpCode) {
-			case 0x60: /* Fill tile with the 16 colours given as parameters */
+			case 0x60: /* Fill tile with the 16 colors given as parameters */
 				for (l = 0; l < 16; l++) {
-					colours[l] = in->readByte();
+					colors[l] = in->readByte();
 				}
-				decodeBlockDelta(offset, colours, 640);
+				decodeBlockDelta(offset, colors, 640);
 				offset += TILE_SIZE;
 				break;
 			case 0x61: /* Skip to the end of this line, next block is start of next */
@@ -299,14 +299,14 @@ void VDXPlayer::getDelta(Common::ReadStream *in) {
 			case 0x72:
 			case 0x73:
 			case 0x74:
-			case 0x75: /* Next param1 blocks are filled with colour param2 */
+			case 0x75: /* Next param1 blocks are filled with color param2 */
 				param1 = currOpCode - 0x6b;
 				param2 = in->readByte();
 				for (l = 0; l < 16; l++) {
-					colours[l] = param2;
+					colors[l] = param2;
 				}
 				for (k = 0; k < param1; k++) {
-					decodeBlockDelta(offset, colours, 640);
+					decodeBlockDelta(offset, colors, 640);
 					offset += TILE_SIZE;
 				}
 				break;
@@ -319,14 +319,14 @@ void VDXPlayer::getDelta(Common::ReadStream *in) {
 			case 0x7c:
 			case 0x7d:
 			case 0x7e:
-			case 0x7f: /* Next bytes contain colours to fill the next param1 blocks in the current line*/
+			case 0x7f: /* Next bytes contain colors to fill the next param1 blocks in the current line*/
 				param1 = currOpCode - 0x75;
 				for (k = 0; k < param1; k++) {
 					param2 = in->readByte();
 					for (l = 0; l < 16; l++) {
-						colours[l] = param2;
+						colors[l] = param2;
 					}
-					decodeBlockDelta(offset, colours, 640);
+					decodeBlockDelta(offset, colors, 640);
 					offset += TILE_SIZE;
 				}
 				break;
@@ -344,8 +344,8 @@ void VDXPlayer::getStill(Common::ReadStream *in) {
 	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::VDX: numYTiles=%d", numYTiles);
 
 	// It's skipped in the original:
-	uint16 colourDepth = in->readUint16LE();
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::VDX: colourDepth=%d", colourDepth);
+	uint16 colorDepth = in->readUint16LE();
+	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::VDX: colorDepth=%d", colorDepth);
 
 	uint16 imageWidth = TILE_SIZE * numXTiles;
 
@@ -378,15 +378,15 @@ void VDXPlayer::getStill(Common::ReadStream *in) {
 	// Skip the frame when flag 5 is set, unless flag 1 is set
 	if (!_flagFive || _flagOne) {
 
-		byte colours[16];
+		byte colors[16];
 		for (uint16 j = 0; j < numYTiles; j++) {
 			byte *currentTile = buf + j * TILE_SIZE * imageWidth;
 			for (uint16 i = numXTiles; i; i--) {
-				uint8 colour1 = in->readByte();
-				uint8 colour0 = in->readByte();
-				uint16 colourMap = in->readUint16LE();
-				expandColourMap(colours, colourMap, colour1, colour0);
-				decodeBlockStill(currentTile, colours, 640, mask);
+				uint8 color1 = in->readByte();
+				uint8 color0 = in->readByte();
+				uint16 colorMap = in->readUint16LE();
+				expandColorMap(colors, colorMap, color1, color0);
+				decodeBlockStill(currentTile, colors, 640, mask);
 
 				currentTile += TILE_SIZE;
 			}
@@ -425,22 +425,22 @@ void VDXPlayer::getStill(Common::ReadStream *in) {
 	}
 }
 
-void VDXPlayer::expandColourMap(byte *out, uint16 colourMap, uint8 colour1, uint8 colour0) {
+void VDXPlayer::expandColorMap(byte *out, uint16 colorMap, uint8 color1, uint8 color0) {
 	// It's a bit faster to start from the end
 	out += 16;
 	for (int i = 16; i; i--) {
-		// Set the corresponding colour
+		// Set the corresponding color
 		// The following is an optimized version of:
-		// *--out = (colourMap & 1) ? colour1 : colour0;
-		uint8 selector = -(colourMap & 1);
-		*--out = (selector & colour1) | (~selector & colour0);
+		// *--out = (colorMap & 1) ? color1 : color0;
+		uint8 selector = -(colorMap & 1);
+		*--out = (selector & color1) | (~selector & color0);
 
-		// Update the flag map to test the next colour
-		colourMap >>= 1;
+		// Update the flag map to test the next color
+		colorMap >>= 1;
 	}
 }
 
-void VDXPlayer::decodeBlockStill(byte *buf, byte *colours, uint16 imageWidth, uint8 mask) {
+void VDXPlayer::decodeBlockStill(byte *buf, byte *colors, uint16 imageWidth, uint8 mask) {
 	assert(TILE_SIZE == 4);
 
 	for (int y = TILE_SIZE; y; y--) {
@@ -448,15 +448,15 @@ void VDXPlayer::decodeBlockStill(byte *buf, byte *colours, uint16 imageWidth, ui
 			// TODO: optimize with bit logic?
 			for (int x = 0; x < TILE_SIZE; x++) {
 				// 0xff pixels don't modify the buffer
-				if (*colours != 0xff) {
-					// Write the colour
-					*buf = *colours | mask;
+				if (*colors != 0xff) {
+					// Write the color
+					*buf = *colors | mask;
 					// Note: if the mask is 0, it paints the image
 					// else, it paints the image's mask using 0xff
 				}
 
-				// Point to the next colour
-				colours++;
+				// Point to the next color
+				colors++;
 
 				// Point to the next pixel
 				buf++;
@@ -465,8 +465,8 @@ void VDXPlayer::decodeBlockStill(byte *buf, byte *colours, uint16 imageWidth, ui
 			// Point to the start of the next line
 			buf += imageWidth - TILE_SIZE;
 		} else {
-			*((uint32 *)buf) = *((uint32 *)colours);
-			colours += 4;
+			*((uint32 *)buf) = *((uint32 *)colors);
+			colors += 4;
 
 			// Point to the start of the next line
 			buf += imageWidth;
@@ -474,7 +474,7 @@ void VDXPlayer::decodeBlockStill(byte *buf, byte *colours, uint16 imageWidth, ui
 	}
 }
 
-void VDXPlayer::decodeBlockDelta(uint32 offset, byte *colours, uint16 imageWidth) {
+void VDXPlayer::decodeBlockDelta(uint32 offset, byte *colors, uint16 imageWidth) {
 	assert(TILE_SIZE == 4);
 
 	byte *dest;
@@ -501,19 +501,19 @@ void VDXPlayer::decodeBlockDelta(uint32 offset, byte *colours, uint16 imageWidth
 			for (int x = 0; x < TILE_SIZE; x++) {
 				// TODO: this can probably be optimized with bit logic
 				if (fgBuf[x] != 0xff) {
-					if (*colours == 0xff) {
+					if (*colors == 0xff) {
 						dest[x] = fgBuf[x];
 					} else {
-						dest[x] = *colours;
+						dest[x] = *colors;
 					}
 				}
-				colours++;
+				colors++;
 			}
 			fgBuf += imageWidth;
 		} else {
 			// Paint directly
-			*((uint32 *)dest) = *((uint32 *)colours);
-			colours += 4;
+			*((uint32 *)dest) = *((uint32 *)colors);
+			colors += 4;
 		}
 
 		// Move to the next line

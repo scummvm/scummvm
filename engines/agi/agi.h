@@ -92,7 +92,7 @@ typedef signed int Err;
 #define	CRYPT_KEY_SIERRA	"Avis Durgan"
 #define CRYPT_KEY_AGDS		"Alex Simkin"
 
-#define	MSG_BOX_COLOUR	0x0f	// White
+#define	MSG_BOX_COLOR	0x0f	// White
 #define MSG_BOX_TEXT	0x00	// Black
 #define MSG_BOX_LINE	0x04	// Red
 #define BUTTON_BORDER	0x00	// Black

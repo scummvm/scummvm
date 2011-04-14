@@ -74,7 +74,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 	{
 		{
 			"cruise",
-			"16 colours",
+			"16 colors",
 			AD_ENTRY1("D1", "cd29a4cd9162076e9a18495fe56a48f3"),
 			Common::EN_GRB,
 			Common::kPlatformPC,

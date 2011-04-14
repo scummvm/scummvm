@@ -82,7 +82,7 @@ public:
 	CursorType _currentCursor;
 
 	void setCursor(CursorType cursorType);
-	void setCursor(Graphics::Surface &cursor, int transColour, const Common::Point &hotspot, CursorType cursorId);
+	void setCursor(Graphics::Surface &cursor, int transColor, const Common::Point &hotspot, CursorType cursorId);
 	void setCursorFromFlag();
 	CursorType getCursor() const { return _currentCursor; }
 	void showCursor();

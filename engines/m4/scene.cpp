@@ -163,7 +163,7 @@ void Scene::showCodes() {
 
 		// Show all the scene's walk nodes
 		SceneNodeList &nodeList = _madsVm->scene()->getSceneResources()._nodes;
-		_backgroundSurface->setColour(_madsVm->_palette->WHITE);
+		_backgroundSurface->setColor(_madsVm->_palette->WHITE);
 		for (uint i = 0; i < nodeList.size() - 2; ++i) {
 			// Draw a little cross at the node's position
 			_backgroundSurface->hLine(nodeList[i].pt.x - 2, nodeList[i].pt.x + 2, nodeList[i].pt.y);

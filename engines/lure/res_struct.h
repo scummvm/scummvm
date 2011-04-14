@@ -88,7 +88,7 @@ struct HotspotResource {
 	uint16 walkY;
 	int8 talkX;
 	int8 talkY;
-	uint16 colourOffset;
+	uint16 colorOffset;
 	uint16 animRecordId;
 	uint16 hotspotScriptOffset;
 	uint16 talkScriptOffset;
@@ -538,7 +538,7 @@ public:
 	uint16 walkY;
 	int8 talkX;
 	int8 talkY;
-	uint16 colourOffset;
+	uint16 colorOffset;
 	uint16 animRecordId;
 	uint16 hotspotScriptOffset;
 	uint16 talkScriptOffset;

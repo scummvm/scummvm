@@ -370,16 +370,16 @@ enum FadeMode {FADEMODE_NONE = 0, FADEMODE_GRADUAL = 1, FADEMODE_IMMEDIATE = 2};
 class ScenePalette : public SavedObject {
 public:
 	RGB8 _palette[256];
-	GfxColours _colours;
+	GfxColors _colors;
 	SynchronisedList<PaletteModifier *> _listeners;
 	int _field412;
 
-	uint8 _redColour;
-	uint8 _greenColour;
-	uint8 _blueColour;
-	uint8 _aquaColour;
-	uint8 _purpleColour;
-	uint8 _limeColour;
+	uint8 _redColor;
+	uint8 _greenColor;
+	uint8 _blueColor;
+	uint8 _aquaColor;
+	uint8 _purpleColor;
+	uint8 _limeColor;
 public:
 	ScenePalette();
 	ScenePalette(int paletteNum);
@@ -406,11 +406,11 @@ const int SET_WIDTH = 0;
 const int SET_X = 1;
 const int SET_Y = 2;
 const int SET_FONT = 3;
-const int SET_BG_COLOUR = 4;
-const int SET_FG_COLOUR = 5;
+const int SET_BG_COLOR = 4;
+const int SET_FG_COLOR = 5;
 const int SET_KEEP_ONSCREEN = 6;
-const int SET_EXT_BGCOLOUR = 7;
-const int SET_EXT_FGCOLOUR = 8;
+const int SET_EXT_BGCOLOR = 7;
+const int SET_EXT_FGCOLOR = 8;
 const int SET_POS_MODE = 9;
 const int SET_TEXT_MODE = 10;
 const int LIST_END = -999;
@@ -438,7 +438,7 @@ public:
 	void setBounds(const int ys, const int xe, const int ye, const int xs) { _bounds = Rect(MIN(xs, xe), MIN(ys, ye), MAX(xs, xe), MAX(ys, ye)); }
 	static void display(int resNum, int lineNum, ...);
 	static void display2(int resNum, int lineNum) {
-		display(resNum, lineNum, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		display(resNum, lineNum, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	}
 };
 
@@ -610,9 +610,9 @@ public:
 	int _fontNumber;
 	int _width;
 	TextAlign _textMode;
-	int _colour1;
-	int _colour2;
-	int _colour3;
+	int _color1;
+	int _color2;
+	int _color3;
 	GfxSurface _textSurface;
 public:
 	SceneText();

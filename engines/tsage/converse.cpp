@@ -150,11 +150,11 @@ void SequenceManager::signal() {
 		case 10: {
 			int resNum= getNextValue();
 			int lineNum = getNextValue();
-			int colour = getNextValue();
+			int color = getNextValue();
 			int xp = getNextValue();
 			int yp = getNextValue();
 			int width = getNextValue();
-			setMessage(resNum, lineNum, colour, Common::Point(xp, yp), width);
+			setMessage(resNum, lineNum, color, Common::Point(xp, yp), width);
 			break;
 		}
 		case 11:
@@ -332,10 +332,10 @@ uint16 SequenceManager::getNextValue() {
 	return result;
 }
 
-void SequenceManager::setMessage(int resNum, int lineNum, int colour, const Common::Point &pt, int width) {
-	_sceneText._colour1 = colour;
-	_sceneText._colour2 = 0;
-	_sceneText._colour3 = 0;
+void SequenceManager::setMessage(int resNum, int lineNum, int color, const Common::Point &pt, int width) {
+	_sceneText._color1 = color;
+	_sceneText._color2 = 0;
+	_sceneText._color3 = 0;
 	_sceneText._fontNumber = 2;
 	_sceneText._width = width;
 
@@ -374,8 +374,8 @@ SequenceManager *SequenceManager::globalManager() {
 /*--------------------------------------------------------------------------*/
 
 ConversationChoiceDialog::ConversationChoiceDialog() {
-	_stdColour = 23;
-	_highlightColour = _globals->_scenePalette._colours.background;
+	_stdColor = 23;
+	_highlightColor = _globals->_scenePalette._colors.background;
 	_fontNumber = 1;
 }
 
@@ -438,7 +438,7 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 			if (idx != _selectedIndex) {
 				if (_selectedIndex != _choiceList.size()) {
 					// De-highlight previously selected item
-					_gfxManager._font._colours.foreground = _stdColour;
+					_gfxManager._font._colors.foreground = _stdColor;
 					_gfxManager._font.writeLines(_choiceList[_selectedIndex]._msg.c_str(),
 						_choiceList[_selectedIndex]._bounds, ALIGN_LEFT);
 				}
@@ -447,7 +447,7 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 
 				if (_selectedIndex != _choiceList.size()) {
 					// Highlight the new item
-					_gfxManager._font._colours.foreground = _highlightColour;
+					_gfxManager._font._colors.foreground = _highlightColor;
 					_gfxManager._font.writeLines(_choiceList[idx]._msg.c_str(), _choiceList[idx]._bounds, ALIGN_LEFT);
 				}
 
@@ -472,7 +472,7 @@ void ConversationChoiceDialog::draw() {
 	drawFrame();
 
 	_gfxManager._bounds = tempRect;
-	_gfxManager._font._colours.foreground = _stdColour;
+	_gfxManager._font._colors.foreground = _stdColor;
 	_gfxManager.activate();
 
 	// Loop through writing the conversation choices
@@ -790,7 +790,7 @@ Speaker::Speaker() : EventHandler() {
 	_textPos = Common::Point(10, 20);
 	_fontNumber = 2;
 	_textMode = ALIGN_LEFT;
-	_colour1 = _colour2 = _colour3 = _globals->_scenePalette._colours.foreground;
+	_color1 = _color2 = _color3 = _globals->_scenePalette._colors.foreground;
 	_action = NULL;
 	_speakerName = "SPEAKER";
 }
@@ -806,9 +806,9 @@ void Speaker::synchronise(Serialiser &s) {
 	s.syncAsSint16LE(_textPos.x); s.syncAsSint16LE(_textPos.y);
 	s.syncAsSint32LE(_fontNumber);
 	SYNC_ENUM(_textMode, TextAlign);
-	s.syncAsSint16LE(_colour1);
-	s.syncAsSint16LE(_colour2);
-	s.syncAsSint16LE(_colour3);
+	s.syncAsSint16LE(_color1);
+	s.syncAsSint16LE(_color2);
+	s.syncAsSint16LE(_color3);
 	s.syncAsByte(_hideObjects);
 }
 
@@ -839,9 +839,9 @@ void Speaker::proc12(Action *action) {
 void Speaker::setText(const Common::String &msg) {
 	_globals->_sceneObjects->draw();
 
-	_sceneText._colour1 = _colour1;
-	_sceneText._colour2 = _colour2;
-	_sceneText._colour3 = _colour3;
+	_sceneText._color1 = _color1;
+	_sceneText._color2 = _color2;
+	_sceneText._color3 = _color3;
 	_sceneText._width = _textWidth;
 	_sceneText._fontNumber = _fontNumber;
 	_sceneText._textMode = _textMode;
@@ -872,7 +872,7 @@ SpeakerGameText::SpeakerGameText() : Speaker() {
 	_speakerName = "GAMETEXT";
 	_textPos = Common::Point(40, 40);
 	_textMode = ALIGN_CENTRE;
-	_colour1 = 7;
+	_color1 = 7;
 	_textWidth = 230;
 	_hideObjects = false;
 }

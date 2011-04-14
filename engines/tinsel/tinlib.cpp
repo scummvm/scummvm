@@ -426,11 +426,11 @@ static void ScrollMonitorProcess(CORO_PARAM, const void *param) {
 /**
  * NOT A LIBRARY FUNCTION
  *
- * Poke supplied colour into the DAC queue.
+ * Poke supplied color into the DAC queue.
  */
 void SetTextPal(COLORREF col) {
-	SetTalkColourRef(col);
-	UpdateDACqueue(TalkColour(), col);
+	SetTalkColorRef(col);
+	UpdateDACqueue(TalkColor(), col);
 }
 
 /**
@@ -522,7 +522,7 @@ void TinGetVersion(WHICH_VER which, char *buffer, int length) {
 
 /**
  * Set actor's attributes.
- * - currently only the text colour.
+ * - currently only the text color.
  */
 static void ActorAttr(int actor, int r1, int g1, int b1) {
 	storeActorAttr(actor, r1, g1, b1);
@@ -553,11 +553,11 @@ static int ActorDirection(int actor) {
 /**
  * Set actor's palette details for path brightnesses
  */
-void ActorPalette(int actor, int startColour, int length) {
+void ActorPalette(int actor, int startColor, int length) {
 	PMOVER pMover = GetMover(actor);
 	assert(pMover);
 
-	StoreMoverPalette(pMover, startColour, length);
+	StoreMoverPalette(pMover, startColor, length);
 }
 
 /**
@@ -568,10 +568,10 @@ static void ActorPriority(int actor, int zFactor) {
 }
 
 /**
- * Set actor's text colour.
+ * Set actor's text color.
  */
-static void ActorRGB(int actor, COLORREF colour) {
-	SetActorRGB(actor, colour);
+static void ActorRGB(int actor, COLORREF color) {
+	SetActorRGB(actor, color);
 }
 
 /**
@@ -1196,9 +1196,9 @@ static int GetInvLimit(int invno) {
 /**
  * Ghost
  */
-static void Ghost(int actor, int tColour, int tPalOffset) {
+static void Ghost(int actor, int tColor, int tPalOffset) {
 	SetSysVar(ISV_GHOST_ACTOR, actor);
-	SetSysVar(ISV_GHOST_COLOUR,  tColour);
+	SetSysVar(ISV_GHOST_COLOR,  tColor);
 	SetSysVar(ISV_GHOST_BASE, tPalOffset);
 	CreateGhostPalette(BgPal());
 }
@@ -3595,12 +3595,12 @@ static void TalkPaletteIndex(unsigned index) {
 /**
  * Set talk font's palette entry.
  */
-static void TalkRGB(COLORREF colour, int myescEvent) {
+static void TalkRGB(COLORREF color, int myescEvent) {
 	// Don't do it if it's not wanted
 	if (myescEvent && myescEvent != GetEscEvents())
 		return;
 
-	SetTextPal(colour);
+	SetTextPal(color);
 }
 
 /**

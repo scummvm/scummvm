@@ -47,9 +47,9 @@ static const char *dialoguePath = "ROZH";
 static double real_to_double(byte real[6]);
 
 enum {
-	kWalkingMapOverlayColour = 2,
-	kWalkingShortestPathOverlayColour = 120,
-	kWalkingObliquePathOverlayColour = 73
+	kWalkingMapOverlayColor = 2,
+	kWalkingShortestPathOverlayColor = 120,
+	kWalkingObliquePathOverlayColor = 73
 };
 
 Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
@@ -69,7 +69,7 @@ Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
 	for (i = 0; i < numPersons; ++i) {
 		_persons[i]._x = personData.readUint16LE();
 		_persons[i]._y = personData.readUint16LE();
-		_persons[i]._fontColour = personData.readByte();
+		_persons[i]._fontColor = personData.readByte();
 	}
 
 	// Read in dialogue offsets
@@ -217,12 +217,12 @@ void Game::init() {
 
 	// Initialize animation for object / room titles
 	_titleAnim = new Animation(_vm, kTitleText, 257, true);
-	_titleAnim->addFrame(new Text("", _vm->_smallFont, kTitleColour, 0, 0, 0), NULL);
+	_titleAnim->addFrame(new Text("", _vm->_smallFont, kTitleColor, 0, 0, 0), NULL);
 	_vm->_anims->insert(_titleAnim, false);
 
 	// Initialize animation for speech text
 	Animation *speechAnim = new Animation(_vm, kSpeechText, 257, true);
-	speechAnim->addFrame(new Text("", _vm->_bigFont, kFontColour1, 0, 0, 0), NULL);
+	speechAnim->addFrame(new Text("", _vm->_bigFont, kFontColor1, 0, 0, 0), NULL);
 	_vm->_anims->insert(speechAnim, false);
 
 	// Initialize inventory animation.  _iconsArchive is never flushed.
@@ -236,7 +236,7 @@ void Game::init() {
 
 	for (uint i = 0; i < kDialogueLines; ++i) {
 		_dialogueAnims[i] = new Animation(_vm, kDialogueLinesID - i, 254, true);
-		_dialogueAnims[i]->addFrame(new Text("", _vm->_smallFont, kLineInactiveColour, 0, 0, 0), NULL);
+		_dialogueAnims[i]->addFrame(new Text("", _vm->_smallFont, kLineInactiveColor, 0, 0, 0), NULL);
 
 		_dialogueAnims[i]->setRelative(1,
 		                      kScreenHeight - (i + 1) * _vm->_smallFont->getFontHeight());
@@ -418,9 +418,9 @@ void Game::handleDialogueLoop() {
 		text = reinterpret_cast<Text *>(_dialogueAnims[i]->getCurrentFrame());
 
 		if (_animUnderCursor == _dialogueAnims[i]) {
-			text->setColour(kLineActiveColour);
+			text->setColor(kLineActiveColor);
 		} else {
-			text->setColour(kLineInactiveColour);
+			text->setColor(kLineInactiveColor);
 		}
 	}
 
@@ -442,7 +442,7 @@ void Game::fadePalette(bool fading_out) {
 	}
 	for (int i = 1; i <= kBlackFadingIterations; ++i) {
 		_vm->_system->delayMillis(kBlackFadingTimeUnit);
-		_vm->_screen->interpolatePalettes(startPal, endPal, 0, kNumColours, i, kBlackFadingIterations);
+		_vm->_screen->interpolatePalettes(startPal, endPal, 0, kNumColors, i, kBlackFadingIterations);
 		_vm->_screen->copyToScreen();
 	}
 }
@@ -454,7 +454,7 @@ void Game::advanceAnimationsAndTestLoopExit() {
 		--_fadePhase;
 		const byte *startPal = _currentRoom._palette >= 0 ? _vm->_paletteArchive->getFile(_currentRoom._palette)->_data : NULL;
 		const byte *endPal = getScheduledPalette() >= 0 ? _vm->_paletteArchive->getFile(getScheduledPalette())->_data : NULL;
-		_vm->_screen->interpolatePalettes(startPal, endPal, 0, kNumColours, _fadePhases - _fadePhase, _fadePhases);
+		_vm->_screen->interpolatePalettes(startPal, endPal, 0, kNumColors, _fadePhases - _fadePhase, _fadePhases);
 		if (_fadePhase == 0) {
 			if (_loopSubstatus == kInnerWhileFade) {
 				setExitLoop(true);
@@ -997,7 +997,7 @@ int Game::dialogueDraw() {
 			dialogueLine = reinterpret_cast<Text *>(anim->getCurrentFrame());
 			dialogueLine->setText(_dialogueBlocks[i]._title);
 
-			dialogueLine->setColour(kLineInactiveColour);
+			dialogueLine->setColor(kLineInactiveColor);
 			_lines[_dialogueLinesNum] = i;
 			_dialogueLinesNum++;
 		}
@@ -1114,8 +1114,8 @@ int Game::playHeroAnimation(int anim_index) {
 	return anim->currentFrameNum();
 }
 
-void Game::redrawWalkingPath(Animation *anim, byte colour, const WalkingPath &path) {
-	Sprite *ov = _walkingMap.newOverlayFromPath(path, colour);
+void Game::redrawWalkingPath(Animation *anim, byte color, const WalkingPath &path) {
+	Sprite *ov = _walkingMap.newOverlayFromPath(path, color);
 	delete anim->getFrame(0);
 	anim->replaceFrame(0, ov, NULL);
 	anim->markDirtyRect(_vm->_screen->getSurface());
@@ -1148,8 +1148,8 @@ void Game::walkHero(int x, int y, SightDirection dir) {
 	_walkingMap.obliquePath(shortestPath, &obliquePath);
 	debugC(2, kDraciWalkingDebugLevel, "Walking path lengths: shortest=%d oblique=%d", shortestPath.size(), obliquePath.size());
 	if (_vm->_showWalkingMap) {
-		redrawWalkingPath(_walkingShortestPathOverlay, kWalkingShortestPathOverlayColour, shortestPath);
-		redrawWalkingPath(_walkingObliquePathOverlay, kWalkingObliquePathOverlayColour, obliquePath);
+		redrawWalkingPath(_walkingShortestPathOverlay, kWalkingShortestPathOverlayColor, shortestPath);
+		redrawWalkingPath(_walkingObliquePathOverlay, kWalkingObliquePathOverlayColor, obliquePath);
 	}
 
 	// Start walking.  Walking will be gradually advanced by
@@ -1211,7 +1211,7 @@ void Game::loadWalkingMap(int mapID) {
 	f = _vm->_walkingMapsArchive->getFile(mapID);
 	_walkingMap.load(f->_data, f->_length);
 
-	Sprite *ov = _walkingMap.newOverlayFromMap(kWalkingMapOverlayColour);
+	Sprite *ov = _walkingMap.newOverlayFromMap(kWalkingMapOverlayColor);
 	delete _walkingMapOverlay->getFrame(0);
 	_walkingMapOverlay->replaceFrame(0, ov, NULL);
 	_walkingMapOverlay->markDirtyRect(_vm->_screen->getSurface());
@@ -1385,7 +1385,7 @@ void Game::enterNewRoom() {
 	loadOverlays();
 
 	// Draw the scene with the black palette and slowly fade into the right palette.
-	_vm->_screen->setPalette(NULL, 0, kNumColours);
+	_vm->_screen->setPalette(NULL, 0, kNumColors);
 	_vm->_anims->drawScene(_vm->_screen->getSurface());
 	_vm->_screen->copyToScreen();
 	fadePalette(false);

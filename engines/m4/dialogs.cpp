@@ -452,7 +452,7 @@ void Dialog::draw() {
 
 	// Set up the dialog
 	fillRect(Common::Rect(0, 0, width(), height()), 3);
-	setColour(2);
+	setColor(2);
 	hLine(1, width() - 1, height() - 2);	// Bottom edge
 	hLine(0, width(), height() - 1);
 	vLine(width() - 2, 2, height());		// Right edge
@@ -480,8 +480,8 @@ void Dialog::draw() {
 	}
 
 	// Handle drawing the text contents
-	_vm->_font->current()->setColours(7, 7, 7);
-	setColour(7);
+	_vm->_font->current()->setColors(7, 7, 7);
+	setColor(7);
 
 	for (uint lineCtr = 0, yp = 5; lineCtr < _lines.size(); ++lineCtr, yp += _vm->_font->current()->getHeight() + 1) {
 

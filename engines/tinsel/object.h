@@ -87,7 +87,7 @@ struct OBJECT {
 	Common::Rect rcPrev;		///< previous screen coordinates of object bounding rectangle
 	int flags;			///< object flags - see above for list
 	PALQ *pPal;			///< objects palette Q position
-	int constant;		///< which colour in palette for monochrome objects
+	int constant;		///< which color in palette for monochrome objects
 	int width;			///< width of object
 	int height;			///< height of object
 	SCNHANDLE hBits;	///< image bitmap handle
@@ -184,7 +184,7 @@ void HideObject(		// Hides a object by giving it a "NullImage" image pointer
 
 OBJECT *RectangleObject(	// create a rectangle object of the given dimensions
 	SCNHANDLE hPal,		// palette for the rectangle object
-	int colour,		// which colour offset from the above palette
+	int color,		// which color offset from the above palette
 	int width,		// width of rectangle
 	int height);		// height of rectangle
 

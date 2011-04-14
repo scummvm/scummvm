@@ -859,13 +859,13 @@ void Scene9450::Hotspot3::doAction(int action) {
 		setAction(&scene->_sequenceManager1, scene, 9460, &_globals->_player, &scene->_object2, &scene->_object1, 0);
 		break;
 	case OBJECT_TUNIC:
-		SceneItem::display(9450, 49, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(9450, 49, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_WALK:
 		// nothing
 		break;
 	case CURSOR_LOOK:
-		SceneItem::display(9450, 41, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(9450, 41, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_USE:
 	case CURSOR_TALK:
@@ -876,7 +876,7 @@ void Scene9450::Hotspot3::doAction(int action) {
 			_globals->_player.disableControl();
 			setAction(&scene->_sequenceManager1, scene, 9459, &scene->_object2, &scene->_object1, &scene->_object3, &_globals->_player, 0);
 		} else if ((_globals->_inventory._cloak._sceneNumber != 1) && (_globals->_inventory._jacket._sceneNumber != 1) && (_globals->_inventory._tunic2._sceneNumber != 1)) {
-			SceneItem::display(9450, 38, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			SceneItem::display(9450, 38, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		} else {
 			scene->_sceneMode = 9460;
 			_globals->_player.disableControl();
@@ -884,7 +884,7 @@ void Scene9450::Hotspot3::doAction(int action) {
 		}
 		break;
 	default:
-		SceneItem::display(9450, 45, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(9450, 45, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	}
 }
@@ -1330,7 +1330,7 @@ void Scene9750::postInit(SceneObjectList *OwnerList) {
 void Scene9850::Object6::doAction(int action) {
 	if ((_flags & OBJFLAG_HIDE) == 0) {
 		if (action == CURSOR_LOOK) {
-			SceneItem::display(9850, 27, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			SceneItem::display(9850, 27, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		} else if (action == CURSOR_USE) {
 			_globals->_inventory._scimitar._sceneNumber = 1;
 			hide();
@@ -1342,7 +1342,7 @@ void Scene9850::Object6::doAction(int action) {
 void Scene9850::Object7::doAction(int action) {
 	if ((_flags & OBJFLAG_HIDE) == 0) {
 		if (action == CURSOR_LOOK) {
-			SceneItem::display(9850, 28, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			SceneItem::display(9850, 28, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		} else if (action == CURSOR_USE) {
 			_globals->_inventory._sword._sceneNumber = 1;
 			hide();
@@ -1371,7 +1371,7 @@ void Scene9850::Hotspot12::doAction(int action) {
 	} else if ((action != CURSOR_LOOK) || (_globals->_inventory._tunic2._sceneNumber != 1)) {
 		NamedHotspot::doAction(action);
 	} else {
-		SceneItem::display(9850, 30, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(9850, 30, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	}
 }
 
@@ -1393,7 +1393,7 @@ void Scene9850::Hotspot14::doAction(int action) {
 	} else if ((action != CURSOR_LOOK) || (_globals->_inventory._jacket._sceneNumber != 1)) {
 		NamedHotspot::doAction(action);
 	} else {
-		SceneItem::display(9850, 30, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(9850, 30, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	}
 }
 
@@ -1415,7 +1415,7 @@ void Scene9850::Hotspot16::doAction(int action) {
 	} else if ((action != CURSOR_LOOK) || (_globals->_inventory._cloak._sceneNumber != 1)) {
 		NamedHotspot::doAction(action);
 	} else {
-		SceneItem::display(9850, 30, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(9850, 30, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	}
 }
 
@@ -1423,7 +1423,7 @@ void Scene9850::Hotspot17::doAction(int action) {
 	Scene9850 *scene = (Scene9850 *)_globals->_sceneManager._scene;
 
 	if (action == OBJECT_SCANNER) {
-		SceneItem::display(9850, 32, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(9850, 32, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	} else {
 		if (action == CURSOR_USE)
 			scene->_soundHandler.startSound(306, 0, 127);
@@ -1435,7 +1435,7 @@ void Scene9850::Hotspot18::doAction(int action) {
 	Scene9850 *scene = (Scene9850 *)_globals->_sceneManager._scene;
 
 	if (action == OBJECT_SCANNER) {
-		SceneItem::display(9850, 32, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(9850, 32, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	} else {
 		if (action == CURSOR_USE)
 			scene->_soundHandler.startSound(306, 0, 127);
@@ -1447,7 +1447,7 @@ void Scene9850::Hotspot19::doAction(int action) {
 	Scene9850 *scene = (Scene9850 *)_globals->_sceneManager._scene;
 
 	if (action == OBJECT_SCANNER) {
-		SceneItem::display(9850, 31, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(9850, 31, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	} else {
 		if (action == CURSOR_USE)
 			scene->_soundHandler.startSound(313, 0, 127);
@@ -1705,7 +1705,7 @@ void Scene9900::strAction2::signal() {
 			_txtArray1[_txtArray1Index]._textMode = ALIGN_CENTRE;
 			_txtArray1[_txtArray1Index]._width = 240;
 			_txtArray1[_txtArray1Index]._fontNumber = 2;
-			_txtArray1[_txtArray1Index]._colour1 = 7;
+			_txtArray1[_txtArray1Index]._color1 = 7;
 			_txtArray1[_txtArray1Index].setup(msg);
 			_txtArray1[_txtArray1Index]._field7A = 20;
 			_txtArray1[_txtArray1Index]._moveDiff.y = 2;
@@ -1720,7 +1720,7 @@ void Scene9900::strAction2::signal() {
 			_txtArray2[_txtArray1Index]._textMode = ALIGN_CENTRE;
 			_txtArray2[_txtArray1Index]._width = 240;
 			_txtArray2[_txtArray1Index]._fontNumber = 2;
-			_txtArray2[_txtArray1Index]._colour1 = 23;
+			_txtArray2[_txtArray1Index]._color1 = 23;
 
 			msg = _vm->_dataManager->getMessage(8030, _lineNum++);
 			_txtArray2[_txtArray1Index].setup(msg);
@@ -1999,7 +1999,7 @@ void Scene9999::Action2::signal() {
 		setDelay(10);
 		break;
 	case 1:
-		SceneItem::display(9999, 0, SET_Y, 10, SET_X, 30, SET_FONT, 2, SET_BG_COLOUR, -1, SET_EXT_BGCOLOUR, 23, SET_WIDTH, 260, SET_KEEP_ONSCREEN, 1, LIST_END);
+		SceneItem::display(9999, 0, SET_Y, 10, SET_X, 30, SET_FONT, 2, SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 23, SET_WIDTH, 260, SET_KEEP_ONSCREEN, 1, LIST_END);
 		setDelay(300);
 		break;
 	case 2:

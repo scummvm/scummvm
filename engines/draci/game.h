@@ -145,7 +145,7 @@ public:
 
 struct Person {
 	uint _x, _y;
-	byte _fontColour;
+	byte _fontColor;
 };
 
 struct Dialogue {
@@ -348,7 +348,7 @@ private:
 	void enterNewRoom();
 	void initWalkingOverlays();
 	void loadRoomObjects();
-	void redrawWalkingPath(Animation *anim, byte colour, const WalkingPath &path);
+	void redrawWalkingPath(Animation *anim, byte color, const WalkingPath &path);
 
 	DraciEngine *_vm;
 

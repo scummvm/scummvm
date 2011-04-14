@@ -48,7 +48,7 @@ void Scene10::Action1::signal() {
 		break;
 	case 2:
 		scene->_speakerSText.setTextPos(Common::Point(20, 20));
-		scene->_speakerSText._colour1 = 10;
+		scene->_speakerSText._color1 = 10;
 		scene->_speakerSText._textWidth = 160;
 		scene->_stripManager.start(11, this, scene);
 		break;
@@ -138,10 +138,10 @@ void Scene10::postInit(SceneObjectList *OwnerList) {
 	_speakerSText._hideObjects = false;
 	_speakerQText._hideObjects = false;
 	_speakerQText.setTextPos(Common::Point(140, 120));
-	_speakerQText._colour1 = 4;
+	_speakerQText._color1 = 4;
 	_speakerQText._textWidth = 160;
 	_speakerSText.setTextPos(Common::Point(20, 20));
-	_speakerSText._colour1 = 7;
+	_speakerSText._color1 = 7;
 	_speakerSText._textWidth = 320;
 
 	_stripManager.setCallback(this);
@@ -221,12 +221,12 @@ void Scene15::Action1::signal() {
 		setDelay(60);
 		break;
 	case 1:
-		SceneItem::display(15, 0, SET_Y, 20, SET_FONT, 2, SET_BG_COLOUR, -1, SET_EXT_BGCOLOUR, 7,
+		SceneItem::display(15, 0, SET_Y, 20, SET_FONT, 2, SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 7,
 				SET_WIDTH, 320, SET_KEEP_ONSCREEN, 1, LIST_END);
 		setDelay(300);
 		break;
 	case 2: {
-		SceneItem::display(15, 1, SET_Y, 20, SET_FONT, 2, SET_BG_COLOUR, -1, SET_EXT_BGCOLOUR, 7,
+		SceneItem::display(15, 1, SET_Y, 20, SET_FONT, 2, SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 7,
 				SET_WIDTH, 320, SET_KEEP_ONSCREEN, 1, LIST_END);
 		scene->_object1.postInit();
 		scene->_object1.setVisage(15);
@@ -300,7 +300,7 @@ void Scene20::Action2::signal() {
 		break;
 	case 1:
 		SceneItem::display(20, 1, SET_WIDTH, 200, SET_Y, 20, SET_X, 160, SET_KEEP_ONSCREEN, true,
-			SET_EXT_BGCOLOUR, 4, LIST_END);
+			SET_EXT_BGCOLOR, 4, LIST_END);
 		setDelay(120);
 		break;
 	case 2: {
@@ -624,9 +624,9 @@ void Scene20::signal() {
 
 void Scene30::BeamObject::doAction(int action) {
 	if (action == OBJECT_SCANNER)
-		display(30, 14, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		display(30, 14, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	else if (action == CURSOR_LOOK)
-		display(30, 2, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		display(30, 2, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	else if (action == CURSOR_USE) {
 		Scene30 *parent = (Scene30 *)_globals->_sceneManager._scene;
 		parent->setAction(&parent->_beamAction);
@@ -636,11 +636,11 @@ void Scene30::BeamObject::doAction(int action) {
 
 void Scene30::DoorObject::doAction(int action) {
 	if (action == OBJECT_SCANNER)
-		display(30, 13, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		display(30, 13, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	else if (action == CURSOR_LOOK)
-		display(30, 1, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		display(30, 1, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	else if (action == CURSOR_USE)
-		display(30, 7, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		display(30, 7, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	else
 		SceneObject::doAction(action);
 }
@@ -1460,7 +1460,7 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_speakerSText);
 	_stripManager.addSpeaker(&_speakerGameText);
 
-	_speakerGameText._colour1 = 9;
+	_speakerGameText._color1 = 9;
 	_speakerGameText.setTextPos(Common::Point(160, 30));
 	_speakerQText._npc = &_globals->_player;
 	_speakerSText._npc = &_object1;
@@ -1936,7 +1936,7 @@ void Scene60::Action1::signal() {
 	case 6:
 	case 7:
 		SceneItem::display(60, _actionIndex - 4, SET_Y, 40, SET_X, 25, SET_FONT, 75,
-			SET_EXT_BGCOLOUR, -1, SET_FG_COLOUR, 34, SET_POS_MODE, 0,
+			SET_EXT_BGCOLOR, -1, SET_FG_COLOR, 34, SET_POS_MODE, 0,
 			SET_WIDTH, 280, SET_KEEP_ONSCREEN, 1, LIST_END);
 		_globals->_events.setCursor(CURSOR_USE);
 		break;
@@ -2497,7 +2497,7 @@ void Scene90::Action1::signal() {
 		scene->_object3.animate(ANIM_MODE_6, NULL);
 
 		SceneItem::display(90, _globals->getFlag(104) ? 15 : 14,
-			SET_EXT_BGCOLOUR, 13, SET_KEEP_ONSCREEN, -1, SET_X, 120, SET_Y, 20, LIST_END);
+			SET_EXT_BGCOLOR, 13, SET_KEEP_ONSCREEN, -1, SET_X, 120, SET_Y, 20, LIST_END);
 		break;
 	case 12:
 		SceneItem::display(0, 0);
@@ -2690,7 +2690,7 @@ void Scene95::Action1::signal() {
 	case 1:
 		if (_state) {
 			SceneItem::display(95, _state % 2, SET_FONT, 2,
-				SET_EXT_BGCOLOUR, -1, SET_EXT_BGCOLOUR, 20,
+				SET_EXT_BGCOLOR, -1, SET_EXT_BGCOLOR, 20,
 				SET_WIDTH, 200, SET_KEEP_ONSCREEN, 1, SET_TEXT_MODE, 1, LIST_END);
 			--_state;
 			_actionIndex = 1;
@@ -2724,7 +2724,7 @@ void Scene95::Action1::signal() {
 		scene->_object1.addMover(mover2, &pt2, NULL);
 
 		SceneItem::display(95, 2, SET_Y, 45, SET_FONT, 2,
-			SET_BG_COLOUR, -1, SET_EXT_BGCOLOUR, 13, SET_WIDTH, 200,
+			SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 13, SET_WIDTH, 200,
 			SET_KEEP_ONSCREEN, 1, LIST_END);
 		setDelay(240);
 		break;
@@ -2733,13 +2733,13 @@ void Scene95::Action1::signal() {
 		scene->_object3.remove();
 
 		SceneItem::display(95, 3, SET_Y, 45, SET_FONT, 2,
-			SET_BG_COLOUR, -1, SET_EXT_BGCOLOUR, 35, SET_WIDTH, 200,
+			SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 35, SET_WIDTH, 200,
 			SET_KEEP_ONSCREEN, 1, LIST_END);
 		setDelay(240);
 		break;
 	case 5:
 		SceneItem::display(95, 4, SET_Y, 45, SET_FONT, 2,
-			SET_BG_COLOUR, -1, SET_EXT_BGCOLOUR, 35, SET_WIDTH, 200,
+			SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 35, SET_WIDTH, 200,
 			SET_KEEP_ONSCREEN, 1, LIST_END);
 		setDelay(240);
 		break;
@@ -3254,7 +3254,7 @@ void Scene6100::dispatch() {
 
 		_sceneText.setPosition(Common::Point(24, 160));
 		_sceneText._fontNumber = 0;
-		_sceneText._colour1 = 35;
+		_sceneText._color1 = 35;
 		_sceneText.setup(s);
 	}
 
@@ -3267,7 +3267,7 @@ void Scene6100::dispatch() {
 	}
 }
 
-void Scene6100::showMessage(const Common::String &msg, int colour, Action *action) {
+void Scene6100::showMessage(const Common::String &msg, int color, Action *action) {
 	if (_msgActive) {
 		_msgActive = false;
 		_speaker1.removeText();
@@ -3277,7 +3277,7 @@ void Scene6100::showMessage(const Common::String &msg, int colour, Action *actio
 		_msgActive = true;
 		_speaker1._textPos.x = 20;
 		_speaker1._textWidth = 280;
-		_speaker1._colour1 = colour;
+		_speaker1._color1 = color;
 		_speaker1._action = action;
 		_speaker1.setText(msg);
 	}

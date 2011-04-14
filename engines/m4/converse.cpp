@@ -97,7 +97,7 @@ void ConversationView::setNode(int32 nodeIndex) {
 	_vm->_font->setFont(FONT_CONVERSATION);
 
 	// TODO: Conversation styles and colors
-	_vm->_font->current()->setColours(2, 1, 3);
+	_vm->_font->current()->setColors(2, 1, 3);
 
 	_currentNodeIndex = nodeIndex;
 
@@ -164,7 +164,7 @@ void ConversationView::onRefresh(RectList *rects, M4Surface *destSurface) {
 			if (i > CONV_MAX_SHOWN_ENTRIES - 1)
 				break;
 
-			_vm->_font->current()->setColour((_highlightedIndex == i) ? CONVERSATION_ENTRY_HIGHLIGHTED :
+			_vm->_font->current()->setColor((_highlightedIndex == i) ? CONVERSATION_ENTRY_HIGHLIGHTED :
 				CONVERSATION_ENTRY_NORMAL);
 
 			_vm->_font->current()->writeString(this, _activeItems[i]->text, CONV_ENTRIES_X_OFFSET,

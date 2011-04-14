@@ -60,7 +60,7 @@ TextviewView::TextviewView(MadsM4Engine *vm):
 	_vm->_palette->setPalette(&palData[0], 4, 3);
 	_vm->_palette->blockRange(4, 3);
 
-	_vm->_font->current()->setColours(5, 6, 4);
+	_vm->_font->current()->setColors(5, 6, 4);
 
 	clear();
 	_bgSurface.clear();

@@ -60,8 +60,8 @@ static MOVER Movers[MAX_MOVERS];	// FIXME: Avoid non-const global vars
 /**
  * Called from ActorPalette(), normally once just after the beginning of time.
  */
-void StoreMoverPalette(PMOVER pMover, int startColour, int length) {
-	pMover->startColour = startColour;
+void StoreMoverPalette(PMOVER pMover, int startColor, int length) {
+	pMover->startColor = startColor;
 	pMover->paletteLength = length;
 }
 
@@ -88,7 +88,7 @@ static void CheckBrightness(PMOVER pMover) {
 			pMover->brightness--;			// ramp down
 
 		DimPartPalette(BgPal(),
-				pMover->startColour,
+				pMover->startColor,
 				pMover->paletteLength,
 				pMover->brightness);
 	}
@@ -107,7 +107,7 @@ void MoverBrightness(PMOVER pMover, int brightness) {
 	assert(BgPal());
 
 	// Do it all immediately
-	DimPartPalette(BgPal(), pMover->startColour, pMover->paletteLength, brightness);
+	DimPartPalette(BgPal(), pMover->startColor, pMover->paletteLength, brightness);
 
 	// The actor is probably hidden at this point,
 	pMover->brightness = brightness;
@@ -924,7 +924,7 @@ void SaveMovers(SAVED_MOVER *sMoverInfo) {
 		if (TinselV2) {
 			sMoverInfo[i].bHidden = Movers[i].bHidden;
 			sMoverInfo[i].brightness = Movers[i].brightness;
-			sMoverInfo[i].startColour = Movers[i].startColour;
+			sMoverInfo[i].startColor = Movers[i].startColor;
 			sMoverInfo[i].paletteLength = Movers[i].paletteLength;
 		}
 

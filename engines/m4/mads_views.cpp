@@ -244,10 +244,10 @@ void MadsAction::refresh() {
 			}
 
 			// Add a new text display entry to display the status text at the bottom of the screen area
-			uint colours = (_vm->getGameType() == GType_DragonSphere) ? 0x0300 : 0x0003;
+			uint colors = (_vm->getGameType() == GType_DragonSphere) ? 0x0300 : 0x0003;
 
 			_statusTextIndex = _owner._textDisplay.add(160 - (strWidth / 2), 
-				MADS_SURFACE_HEIGHT + _owner._posAdjust.y - 13, colours, textSpacing, _statusText, font);
+				MADS_SURFACE_HEIGHT + _owner._posAdjust.y - 13, colors, textSpacing, _statusText, font);
 		}
 	}
 
@@ -616,7 +616,7 @@ void MadsTextDisplay::clear() {
 		_entries[i].active = false;
 }
 
-int MadsTextDisplay::add(int xp, int yp, uint fontColour, int charSpacing, const char *msg, Font *font) {
+int MadsTextDisplay::add(int xp, int yp, uint fontColor, int charSpacing, const char *msg, Font *font) {
 	int usedSlot = -1;
 
 	for (int idx = 0; idx < TEXT_DISPLAY_SIZE; ++idx) {
@@ -629,8 +629,8 @@ int MadsTextDisplay::add(int xp, int yp, uint fontColour, int charSpacing, const
 			_entries[idx].msg = msg;
 			_entries[idx].bounds.setWidth(font->getWidth(msg, charSpacing));
 			_entries[idx].bounds.setHeight(font->getHeight());
-			_entries[idx].colour1 = fontColour & 0xff;
-			_entries[idx].colour2 = fontColour >> 8;
+			_entries[idx].color1 = fontColor & 0xff;
+			_entries[idx].color2 = fontColor >> 8;
 			_entries[idx].spacing = charSpacing;
 			_entries[idx].expire = 1;
 			_entries[idx].active = true;
@@ -666,7 +666,7 @@ void MadsTextDisplay::setDirtyAreas2() {
 void MadsTextDisplay::draw(M4Surface *view) {
 	for (uint idx = 0; idx < _entries.size(); ++idx) {
 		if (_entries[idx].active && (_entries[idx].expire >= 0)) {
-			_entries[idx].font->setColours(_entries[idx].colour1, _entries[idx].colour2, 0);
+			_entries[idx].font->setColors(_entries[idx].color1, _entries[idx].color2, 0);
 			_entries[idx].font->writeString(view, _entries[idx].msg, 
 				_entries[idx].bounds.left, _entries[idx].bounds.top, _entries[idx].bounds.width(),
 				_entries[idx].spacing);
@@ -707,7 +707,7 @@ void MadsKernelMessageList::clear() {
 	_talkFont = _vm->_font->getFont(FONT_CONVERSATION_MADS);
 }
 
-int MadsKernelMessageList::add(const Common::Point &pt, uint fontColour, uint8 flags, uint8 abortTimers, uint32 timeout, const char *msg) {
+int MadsKernelMessageList::add(const Common::Point &pt, uint fontColor, uint8 flags, uint8 abortTimers, uint32 timeout, const char *msg) {
 	// Find a free slot
 	uint idx = 0;
 	while ((idx < _entries.size()) && ((_entries[idx].flags & KMSG_ACTIVE) != 0))
@@ -722,8 +722,8 @@ int MadsKernelMessageList::add(const Common::Point &pt, uint fontColour, uint8 f
 	MadsKernelMessageEntry &rec = _entries[idx];
 	strcpy(rec.msg, msg);
 	rec.flags = flags | KMSG_ACTIVE;
-	rec.colour1 = fontColour & 0xff;
-	rec.colour2 = fontColour >> 8;
+	rec.color1 = fontColor & 0xff;
+	rec.color2 = fontColor >> 8;
 	rec.position = pt;
 	rec.textDisplayIndex = -1;
 	rec.timeout = timeout;
@@ -918,7 +918,7 @@ void MadsKernelMessageList::processText(int msgIndex) {
 
 	if (msg.textDisplayIndex < 0) {
 		// Need to create a new text display entry for this message
-		int idx = _owner._textDisplay.add(x1, y1, msg.colour1 | (msg.colour2 << 8), _owner._textSpacing, msg.msg, _talkFont);
+		int idx = _owner._textDisplay.add(x1, y1, msg.color1 | (msg.color2 << 8), _owner._textSpacing, msg.msg, _talkFont);
 		if (idx >= 0)
 			msg.textDisplayIndex = idx;
 	}

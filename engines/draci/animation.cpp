@@ -359,7 +359,7 @@ void AnimationManager::insert(Animation *anim, bool allocateIndex) {
 }
 
 void AnimationManager::drawScene(Surface *surf) {
-	// Fill the screen with colour zero since some rooms may rely on the screen being black
+	// Fill the screen with color zero since some rooms may rely on the screen being black
 	_vm->_screen->getSurface()->fill(0);
 
 	sortAnimations();
@@ -498,8 +498,8 @@ const Animation *AnimationManager::getTopAnimation(int x, int y) const {
 
 	Animation *retval = NULL;
 
-	// Get transparent colour for the current screen
-	const int transparent = _vm->_screen->getSurface()->getTransparentColour();
+	// Get transparent color for the current screen
+	const int transparent = _vm->_screen->getSurface()->getTransparentColor();
 
 	for (it = _animations.reverse_begin(); it != _animations.end(); --it) {
 

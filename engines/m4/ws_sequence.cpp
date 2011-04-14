@@ -291,7 +291,7 @@ void Sequence::draw(M4Surface *surface, const Common::Rect &clipRect, Common::Re
 	info.hotX = _curFrame->xOffset;
 	info.hotY = _curFrame->yOffset;
 	info.encoding = _curFrame->encoding;
-	info.inverseColourTable = _m4Vm->scene()->getInverseColourTable();
+	info.inverseColorTable = _m4Vm->scene()->getInverseColorTable();
 	info.palette = _ws->getMainPalette();
 	info.width = _curFrame->width();
 	info.height = _curFrame->height();

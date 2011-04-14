@@ -183,7 +183,7 @@ static void syncSavedMover(Common::Serializer &s, SAVED_MOVER &sm) {
 		s.syncAsByte(sm.bHidden);
 
 		s.syncAsSint32LE(sm.brightness);
-		s.syncAsSint32LE(sm.startColour);
+		s.syncAsSint32LE(sm.startColor);
 		s.syncAsSint32LE(sm.paletteLength);
 	}
 }

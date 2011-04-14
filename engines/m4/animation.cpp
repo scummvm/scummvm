@@ -426,7 +426,7 @@ void MadsAnimation::update() {
 			// Start displaying the message
 			AnimMessage &me = _messages[idx];
 
-			// The colour index to use is dependant on how many messages are currently on-screen
+			// The color index to use is dependant on how many messages are currently on-screen
 			uint8 colIndex;
 			switch (_messageCtr) {
 			case 1:

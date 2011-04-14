@@ -482,11 +482,11 @@ void AnimateObject(OBJECT *pAniObj, SCNHANDLE hNewImg) {
  * Creates a rectangle object of the given dimensions and returns
  * a pointer to the object.
  * @param hPal			Palette for the rectangle object
- * @param colour		Which colour offset from the above palette
+ * @param color		Which color offset from the above palette
  * @param width			Width of rectangle
  * @param height		Height of rectangle
  */
-OBJECT *RectangleObject(SCNHANDLE hPal, int colour, int width, int height) {
+OBJECT *RectangleObject(SCNHANDLE hPal, int color, int width, int height) {
 	// template for initialising the rectangle object
 	static const OBJ_INIT rectObj = {0, DMA_CONST, OID_EFFECTS, 0, 0, 0};
 	PALQ *pPalQ;		// palette queue pointer
@@ -503,8 +503,8 @@ OBJECT *RectangleObject(SCNHANDLE hPal, int colour, int width, int height) {
 	// assign palette to object
 	pRect->pPal = pPalQ;
 
-	// set colour in the palette
-	pRect->constant = colour;
+	// set color in the palette
+	pRect->constant = color;
 
 	// set rectangle width
 	pRect->width = width;

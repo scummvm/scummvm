@@ -38,7 +38,7 @@
 
 namespace Sky {
 
-uint8 Screen::_top16Colours[16*3] = {
+uint8 Screen::_top16Colors[16*3] = {
 	0, 0, 0,
 	38, 38, 38,
 	63, 63, 63,
@@ -63,7 +63,7 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 	_skyCompact = skyCompact;
 
 	int i;
-	uint8 tmpPal[VGA_COLOURS * 3];
+	uint8 tmpPal[VGA_COLORS * 3];
 
 	_gameGrid = (uint8 *)malloc(GRID_X * GRID_Y * 2);
 	forceRefresh();
@@ -72,17 +72,17 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 	_scrollScreen = NULL;
 
 	//blank the first 240 colors of the palette
-	memset(tmpPal, 0, GAME_COLOURS * 3);
+	memset(tmpPal, 0, GAME_COLORS * 3);
 
 	//set the remaining colors
-	for (i = 0; i < (VGA_COLOURS-GAME_COLOURS); i++) {
-		tmpPal[3 * GAME_COLOURS + i * 3 + 0] = (_top16Colours[i * 3 + 0] << 2) + (_top16Colours[i * 3 + 0] >> 4);
-		tmpPal[3 * GAME_COLOURS + i * 3 + 1] = (_top16Colours[i * 3 + 1] << 2) + (_top16Colours[i * 3 + 1] >> 4);
-		tmpPal[3 * GAME_COLOURS + i * 3 + 2] = (_top16Colours[i * 3 + 2] << 2) + (_top16Colours[i * 3 + 2] >> 4);
+	for (i = 0; i < (VGA_COLORS-GAME_COLORS); i++) {
+		tmpPal[3 * GAME_COLORS + i * 3 + 0] = (_top16Colors[i * 3 + 0] << 2) + (_top16Colors[i * 3 + 0] >> 4);
+		tmpPal[3 * GAME_COLORS + i * 3 + 1] = (_top16Colors[i * 3 + 1] << 2) + (_top16Colors[i * 3 + 1] >> 4);
+		tmpPal[3 * GAME_COLORS + i * 3 + 2] = (_top16Colors[i * 3 + 2] << 2) + (_top16Colors[i * 3 + 2] >> 4);
 	}
 
 	//set the palette
-	_system->getPaletteManager()->setPalette(tmpPal, 0, VGA_COLOURS);
+	_system->getPaletteManager()->setPalette(tmpPal, 0, VGA_COLORS);
 	_currentPalette = 0;
 
 	_seqInfo.nextFrame = _seqInfo.framesLeft = 0;
@@ -109,32 +109,32 @@ void Screen::setFocusRectangle(const Common::Rect& rect) {
 //set a new palette, pal is a pointer to dos vga rgb components 0..63
 void Screen::setPalette(uint8 *pal) {
 	convertPalette(pal, _palette);
-	_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLOURS);
+	_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLORS);
 	_system->updateScreen();
 }
 
 void Screen::setPaletteEndian(uint8 *pal) {
 #ifdef SCUMM_BIG_ENDIAN
-	uint8 endPalette[VGA_COLOURS * 3];
-	for (uint16 cnt = 0; cnt < VGA_COLOURS * 3; cnt++)
+	uint8 endPalette[VGA_COLORS * 3];
+	for (uint16 cnt = 0; cnt < VGA_COLORS * 3; cnt++)
 		endPalette[cnt] = pal[cnt ^ 1];
 	convertPalette(endPalette, _palette);
 #else
 	convertPalette(pal, _palette);
 #endif
-	_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLOURS);
+	_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLORS);
 	_system->updateScreen();
 }
 
 void Screen::halvePalette() {
-	uint8 halfPalette[VGA_COLOURS * 3];
+	uint8 halfPalette[VGA_COLORS * 3];
 
-	for (uint8 cnt = 0; cnt < GAME_COLOURS; cnt++) {
+	for (uint8 cnt = 0; cnt < GAME_COLORS; cnt++) {
 		halfPalette[cnt * 3 + 0] = _palette[cnt * 3 + 0] >> 1;
 		halfPalette[cnt * 3 + 1] = _palette[cnt * 3 + 1] >> 1;
 		halfPalette[cnt * 3 + 2] = _palette[cnt * 3 + 2] >> 1;
 	}
-	_system->getPaletteManager()->setPalette(halfPalette, 0, GAME_COLOURS);
+	_system->getPaletteManager()->setPalette(halfPalette, 0, GAME_COLORS);
 }
 
 void Screen::setPalette(uint16 fileNum) {
@@ -168,7 +168,7 @@ void Screen::showScreen(uint8 *pScreen) {
 void Screen::convertPalette(uint8 *inPal, uint8* outPal) {
 	int i;
 
-	for (i = 0; i < VGA_COLOURS; i++) {
+	for (i = 0; i < VGA_COLORS; i++) {
 		outPal[3 * i + 0] = (inPal[3 * i + 0] << 2) + (inPal[3 * i + 0] >> 4);
 		outPal[3 * i + 1] = (inPal[3 * i + 1] << 2) + (inPal[3 * i + 1] >> 4);
 		outPal[3 * i + 2] = (inPal[3 * i + 2] << 2) + (inPal[3 * i + 2] >> 4);
@@ -247,8 +247,8 @@ void Screen::fnFadeDown(uint32 scroll) {
 		uint32 delayTime = _system->getMillis();
 		for (uint8 cnt = 0; cnt < 32; cnt++) {
 			delayTime += 20;
-			palette_fadedown_helper(_palette, GAME_COLOURS);
-			_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLOURS);
+			palette_fadedown_helper(_palette, GAME_COLORS);
+			_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLORS);
 			_system->updateScreen();
 			int32 waitTime = (int32)delayTime - _system->getMillis();
 			if (waitTime < 0)
@@ -296,7 +296,7 @@ void Screen::paletteFadeUp(uint16 fileNr) {
 }
 
 void Screen::paletteFadeUp(uint8 *pal) {
-	byte tmpPal[VGA_COLOURS * 3];
+	byte tmpPal[VGA_COLORS * 3];
 
 	convertPalette(pal, tmpPal);
 
@@ -304,13 +304,13 @@ void Screen::paletteFadeUp(uint8 *pal) {
 	for (uint8 cnt = 1; cnt <= 32; cnt++) {
 		delayTime += 20;
 
-		for (uint8 colCnt = 0; colCnt < GAME_COLOURS; colCnt++) {
+		for (uint8 colCnt = 0; colCnt < GAME_COLORS; colCnt++) {
 			_palette[colCnt * 3 + 0] = (tmpPal[colCnt * 3 + 0] * cnt) >> 5;
 			_palette[colCnt * 3 + 1] = (tmpPal[colCnt * 3 + 1] * cnt) >> 5;
 			_palette[colCnt * 3 + 2] = (tmpPal[colCnt * 3 + 2] * cnt) >> 5;
 		}
 
-		_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLOURS);
+		_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLORS);
 		_system->updateScreen();
 
 		int32 waitTime = (int32)delayTime - _system->getMillis();
@@ -331,8 +331,8 @@ void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
 		if (palette == NULL)
 			error("Screen::fnFadeUp: can't fetch compact %X", palNum);
 #ifdef SCUMM_BIG_ENDIAN
-		byte tmpPal[VGA_COLOURS * 3];
-		for (uint16 cnt = 0; cnt < VGA_COLOURS * 3; cnt++)
+		byte tmpPal[VGA_COLORS * 3];
+		for (uint16 cnt = 0; cnt < VGA_COLORS * 3; cnt++)
 			tmpPal[cnt] = palette[cnt ^ 1];
 		paletteFadeUp(tmpPal);
 #else

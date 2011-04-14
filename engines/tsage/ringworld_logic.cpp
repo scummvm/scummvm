@@ -196,7 +196,7 @@ DisplayHotspot::DisplayHotspot(int regionId, ...) {
 bool DisplayHotspot::performAction(int action) {
 	for (uint i = 0; i < _actions.size(); i += 3) {
 		if (_actions[i] == action) {
-			display(_actions[i + 1], _actions[i + 2], SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			display(_actions[i + 1], _actions[i + 2], SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 			return true;
 		}
 	}
@@ -223,7 +223,7 @@ DisplayObject::DisplayObject(int firstAction, ...) {
 bool DisplayObject::performAction(int action) {
 	for (uint i = 0; i < _actions.size(); i += 3) {
 		if (_actions[i] == action) {
-			display(_actions[i + 1], _actions[i + 2], SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			display(_actions[i + 1], _actions[i + 2], SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 			return true;
 		}
 	}
@@ -313,7 +313,7 @@ SpeakerGText::SpeakerGText() {
 	_speakerName = "GTEXT";
 	_textWidth = 160;
 	_textPos = Common::Point(130, 10);
-	_colour1 = 42;
+	_color1 = 42;
 	_hideObjects = false;
 }
 
@@ -347,7 +347,7 @@ SpeakerPOR::SpeakerPOR() {
 	_speakerName = "POR";
 	_newSceneNumber = 7221;
 	_textPos = Common::Point(10, 30);
-	_colour1 = 41;
+	_color1 = 41;
 }
 
 void SpeakerPOR::SpeakerAction1::signal(){
@@ -395,7 +395,7 @@ SpeakerOR::SpeakerOR() {
 	_speakerName = "OR";
 	_newSceneNumber = 9430;
 	_textPos = Common::Point(8, 36);
-	_colour1 = 42;
+	_color1 = 42;
 	_textWidth = 136;
 }
 
@@ -427,7 +427,7 @@ SpeakerOText::SpeakerOText() : SpeakerGText() {
 	_speakerName = "OTEXT";
 	_textWidth = 240;
 	_textPos = Common::Point(130, 10);
-	_colour1 = 42;
+	_color1 = 42;
 	_hideObjects = false;
 }
 
@@ -436,7 +436,7 @@ SpeakerOText::SpeakerOText() : SpeakerGText() {
 SpeakerQText::SpeakerQText() : ScreenSpeaker() {
 	_speakerName = "QTEXT";
 	_textPos = Common::Point(160, 40);
-	_colour1 = 35;
+	_color1 = 35;
 	_textWidth = 240;
 	_textMode = ALIGN_CENTRE;
 	_hideObjects = false;
@@ -446,7 +446,7 @@ SpeakerQText::SpeakerQText() : ScreenSpeaker() {
 
 SpeakerSText::SpeakerSText() : ScreenSpeaker() {
 	_speakerName = "STEXT";
-	_colour1 = 13;
+	_color1 = 13;
 	_textWidth = 240;
 	_textMode = ALIGN_CENTRE;
 	_hideObjects = false;
@@ -458,7 +458,7 @@ SpeakerPOText::SpeakerPOText() : ScreenSpeaker() {
 	_speakerName = "POTEXT";
 	_textWidth = 240;
 	_textMode = ALIGN_CENTRE;
-	_colour1 = 41;
+	_color1 = 41;
 	_hideObjects = false;
 }
 
@@ -466,7 +466,7 @@ SpeakerPOText::SpeakerPOText() : ScreenSpeaker() {
 
 SpeakerMText::SpeakerMText() {
 	_speakerName = "MTEXT";
-	_colour1 = 11;
+	_color1 = 11;
 	_textWidth = 160;
 	_textMode = ALIGN_CENTRE;
 	_hideObjects = false;
@@ -476,7 +476,7 @@ SpeakerMText::SpeakerMText() {
 
 SpeakerCText::SpeakerCText() {
 	_speakerName = "CTEXT";
-	_colour1 = 4;
+	_color1 = 4;
 	_textWidth = 240;
 	_textMode = ALIGN_CENTRE;
 	_hideObjects = false;
@@ -487,7 +487,7 @@ SpeakerCText::SpeakerCText() {
 SpeakerEText::SpeakerEText() {
 	_speakerName = "ETEXT";
 	_textPos = Common::Point(20, 20);
-	_colour1 = 22;
+	_color1 = 22;
 	_hideObjects = false;
 }
 
@@ -498,7 +498,7 @@ SpeakerGR::SpeakerGR() {
 	_newSceneNumber = 9220;
 	_textWidth = 136;
 	_textPos = Common::Point(168, 36);
-	_colour1 = 14;
+	_color1 = 14;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -506,7 +506,7 @@ SpeakerGR::SpeakerGR() {
 SpeakerHText::SpeakerHText() {
 	_speakerName = "HTEXT";
 	_textPos = Common::Point(160, 40);
-	_colour1 = 52;
+	_color1 = 52;
 	_hideObjects = false;
 }
 
@@ -516,7 +516,7 @@ SpeakerSKText::SpeakerSKText() : ScreenSpeaker() {
 	_speakerName = "SKTEXT";
 	_textWidth = 240;
 	_textMode = ALIGN_CENTRE;
-	_colour1 = 5;
+	_color1 = 5;
 	_hideObjects = false;
 }
 
@@ -526,7 +526,7 @@ SpeakerPText::SpeakerPText() {
 	_speakerName = "PTEXT";
 	_textWidth = 240;
 	_textMode = ALIGN_CENTRE;
-	_colour1 = 5;
+	_color1 = 5;
 	_hideObjects = false;
 }
 
@@ -536,7 +536,7 @@ SpeakerCHFText::SpeakerCHFText() {
 	_speakerName = "CHFTEXT";
 	_textWidth = 240;
 	_textMode = ALIGN_CENTRE;
-	_colour1 = 56;
+	_color1 = 56;
 	_hideObjects = false;
 }
 
@@ -546,7 +546,7 @@ SpeakerCDRText::SpeakerCDRText() {
 	_speakerName = "CDRTEXT";
 	_textWidth = 240;
 	_textMode = ALIGN_CENTRE;
-	_colour1 = 52;
+	_color1 = 52;
 	_hideObjects = false;
 }
 
@@ -555,7 +555,7 @@ SpeakerCDRText::SpeakerCDRText() {
 SpeakerFLText::SpeakerFLText() {
 	_speakerName = "FLTEXT";
 	_textPos = Common::Point(10, 40);
-	_colour1 = 17;
+	_color1 = 17;
 	_hideObjects = false;
 }
 
@@ -565,7 +565,7 @@ SpeakerBatText::SpeakerBatText() {
 	_speakerName = "BATTEXT";
 	_textWidth = 240;
 	_textMode = ALIGN_CENTRE;
-	_colour1 = 3;
+	_color1 = 3;
 	_hideObjects = false;
 }
 
@@ -575,7 +575,7 @@ SpeakerSKL::SpeakerSKL() : AnimatedSpeaker() {
 	_speakerName = "SKL";
 	_newSceneNumber = 7011;
 	_textPos = Common::Point(10, 30);
-	_colour1 = 10;
+	_color1 = 10;
 }
 
 void SpeakerSKL::setText(const Common::String &msg) {
@@ -606,7 +606,7 @@ SpeakerQL::SpeakerQL() : AnimatedSpeaker() {
 	_speakerName = "QL";
 	_newSceneNumber = 2610;
 	_textPos = Common::Point(160, 30);
-	_colour1 = 35;
+	_color1 = 35;
 	_textMode = ALIGN_CENTRE;
 }
 
@@ -638,7 +638,7 @@ SpeakerSR::SpeakerSR() {
 	_speakerName = "SR";
 	_newSceneNumber = 2811;
 	_textPos = Common::Point(10, 30);
-	_colour1 = 13;
+	_color1 = 13;
 	_textMode = ALIGN_CENTRE;
 }
 
@@ -679,7 +679,7 @@ SpeakerSL::SpeakerSL() {
 	_newSceneNumber = 2810;
 	_textPos = Common::Point(140, 30);
 	_textWidth = 160;
-	_colour1 = 13;
+	_color1 = 13;
 	_textMode = ALIGN_CENTRE;
 }
 
@@ -711,7 +711,7 @@ SpeakerQR::SpeakerQR() {
 	_speakerName = "QR";
 	_newSceneNumber = 2611;
 	_textPos = Common::Point(10, 30);
-	_colour1 = 13;
+	_color1 = 13;
 	_textMode = ALIGN_CENTRE;
 }
 
@@ -743,7 +743,7 @@ SpeakerQU::SpeakerQU() {
 	_speakerName = "QU";
 	_newSceneNumber = 7020;
 	_textPos = Common::Point(160, 30);
-	_colour1 = 35;
+	_color1 = 35;
 	_textMode = ALIGN_CENTRE;
 }
 
@@ -775,7 +775,7 @@ SpeakerCR::SpeakerCR() {
 	_speakerName = "CR";
 	_newSceneNumber = 9010;
 	_textPos = Common::Point(20, 40);
-	_colour1 = 4;
+	_color1 = 4;
 }
 
 void SpeakerCR::setText(const Common::String &msg) {
@@ -802,7 +802,7 @@ SpeakerMR::SpeakerMR() {
 	_speakerName = "MR";
 	_newSceneNumber = 2711;
 	_textPos = Common::Point(40, 10);
-	_colour1 = 22;
+	_color1 = 22;
 }
 
 void SpeakerMR::setText(const Common::String &msg) {
@@ -832,7 +832,7 @@ SpeakerSAL::SpeakerSAL() {
 	_speakerName = "SAL";
 	_newSceneNumber = 2851;
 	_textPos = Common::Point(10, 30);
-	_colour1 = 13;
+	_color1 = 13;
 	_textMode = ALIGN_CENTRE;
 }
 
@@ -863,7 +863,7 @@ SpeakerML::SpeakerML() {
 	_speakerName = "ML";
 	_newSceneNumber = 2710;
 	_textPos = Common::Point(160, 40);
-	_colour1 = 22;
+	_color1 = 22;
 }
 
 void SpeakerML::setText(const Common::String &msg) {
@@ -893,7 +893,7 @@ SpeakerCHFL::SpeakerCHFL() {
 	_speakerName = "CHFL";
 	_newSceneNumber = 4111;
 	_textPos = Common::Point(10, 40);
-	_colour1 = 56;
+	_color1 = 56;
 }
 
 void SpeakerCHFL::setText(const Common::String &msg) {
@@ -923,7 +923,7 @@ SpeakerCHFR::SpeakerCHFR() {
 	_speakerName = "CHFR";
 	_newSceneNumber = 4110;
 	_textPos = Common::Point(160, 40);
-	_colour1 = 56;
+	_color1 = 56;
 }
 
 void SpeakerCHFR::setText(const Common::String &msg) {
@@ -953,7 +953,7 @@ SpeakerPL::SpeakerPL() {
 	_speakerName = "PL";
 	_newSceneNumber = 4060;
 	_textPos = Common::Point(160, 40);
-	_colour1 = 5;
+	_color1 = 5;
 }
 
 void SpeakerPL::setText(const Common::String &msg) {
@@ -996,7 +996,7 @@ SpeakerPR::SpeakerPR() {
 	_speakerName = "PR";
 	_newSceneNumber = 4061;
 	_textPos = Common::Point(10, 40);
-	_colour1 = 5;
+	_color1 = 5;
 }
 
 void SpeakerPR::setText(const Common::String &msg) {
@@ -1041,7 +1041,7 @@ SpeakerCDR::SpeakerCDR() {
 	_speakerName = "CDR";
 	_newSceneNumber = 4161;
 	_textPos = Common::Point(10, 40);
-	_colour1 = 52;
+	_color1 = 52;
 }
 
 void SpeakerCDR::setText(const Common::String &msg) {
@@ -1072,7 +1072,7 @@ SpeakerCDL::SpeakerCDL() {
 	_speakerName = "CDL";
 	_newSceneNumber = 4160;
 	_textPos = Common::Point(160, 40);
-	_colour1 = 52;
+	_color1 = 52;
 }
 
 void SpeakerCDL::setText(const Common::String &msg) {
@@ -1103,7 +1103,7 @@ SpeakerFLL::SpeakerFLL() {
 	_speakerName = "FLL";
 	_newSceneNumber = 5221;
 	_textPos = Common::Point(10, 40);
-	_colour1 = 17;
+	_color1 = 17;
 }
 
 void SpeakerFLL::setText(const Common::String &msg) {
@@ -1134,7 +1134,7 @@ SpeakerBatR::SpeakerBatR() {
 	_speakerName = "BATR";
 	_newSceneNumber = 5360;
 	_textPos = Common::Point(140, 40);
-	_colour1 = 3;
+	_color1 = 3;
 }
 
 void SpeakerBatR::setText(const Common::String &msg) {

@@ -81,14 +81,14 @@ bool Debugger::Cmd_WalkRegions(int argc, const char **argv) {
 		return true;
 	}
 
-	// Colour index to use for the first walk region
-	int colour = 16;
+	// Color index to use for the first walk region
+	int color = 16;
 
 	// Lock the background surface for access
 	Graphics::Surface destSurface = _globals->_sceneManager._scene->_backSurface.lockSurface();
 
-	// Loop through drawing each walk region in a different colour to the background surface
-	for (uint regionIndex = 0; regionIndex < _globals->_walkRegions._regionList.size(); ++regionIndex, ++colour) {
+	// Loop through drawing each walk region in a different color to the background surface
+	for (uint regionIndex = 0; regionIndex < _globals->_walkRegions._regionList.size(); ++regionIndex, ++color) {
 		WalkRegion &wr = _globals->_walkRegions._regionList[regionIndex];
 
 		for (int yp = wr._bounds.top; yp < wr._bounds.bottom; ++yp) {
@@ -96,7 +96,7 @@ bool Debugger::Cmd_WalkRegions(int argc, const char **argv) {
 
 			for (uint idx = 0; idx < sliceSet.items.size(); ++idx)
 				destSurface.hLine(sliceSet.items[idx].xs - _globals->_sceneOffset.x, yp,
-				sliceSet.items[idx].xe - _globals->_sceneOffset.x, colour);
+				sliceSet.items[idx].xe - _globals->_sceneOffset.x, color);
 		}
 	}
 
@@ -119,8 +119,8 @@ bool Debugger::Cmd_PriorityRegions(int argc, const char **argv) {
 	if (argc == 2)
 		regionNum = strToInt(argv[1]);
 
-	// Colour index to use for the first priority region
-	int colour = 16;
+	// Color index to use for the first priority region
+	int color = 16;
 	int count = 0;
 
 	// Lock the background surface for access
@@ -129,7 +129,7 @@ bool Debugger::Cmd_PriorityRegions(int argc, const char **argv) {
 	Common::List<Region>::iterator i = _globals->_sceneManager._scene->_priorities.begin();
 	Common::String regionsDesc;
 
-	for (; i != _globals->_sceneManager._scene->_priorities.end(); ++i, ++colour, ++count) {
+	for (; i != _globals->_sceneManager._scene->_priorities.end(); ++i, ++color, ++count) {
 		Region &r = *i;
 
 		if ((regionNum == 0) || (regionNum == (count + 1))) {
@@ -139,7 +139,7 @@ bool Debugger::Cmd_PriorityRegions(int argc, const char **argv) {
 				for (int x = 0; x < destSurface.w; ++x) {
 					if (r.contains(Common::Point(_globals->_sceneManager._scene->_sceneBounds.left + x,
 							_globals->_sceneManager._scene->_sceneBounds.top + y)))
-						*destP = colour;
+						*destP = color;
 					++destP;
 				}
 			}

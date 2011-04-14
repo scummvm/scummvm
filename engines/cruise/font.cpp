@@ -266,13 +266,13 @@ int32 prepareWordRender(int32 inRightBorder_X, int16 wordSpacingWidth,
 	return counter;
 }
 
-void drawString(int32 x, int32 y, const char *string, uint8 *buffer, uint8 fontColour, int32 rightBorder_X) {
+void drawString(int32 x, int32 y, const char *string, uint8 *buffer, uint8 fontColor, int32 rightBorder_X) {
 
 	// Get the rendered text to display
 	gfxEntryStruct *s = renderText(rightBorder_X, string);
 
 	// Draw the message
-	drawMessage(s, x, y, rightBorder_X - x, fontColour, buffer);
+	drawMessage(s, x, y, rightBorder_X - x, fontColor, buffer);
 
 	// Free the data
 	delete s->imagePtr;

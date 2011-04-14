@@ -119,7 +119,7 @@ struct MOVER {
 	int32		zOverride;
 	bool		bHidden;
 	int			brightness;	// Current brightness
-	int			startColour;
+	int			startColor;
 	int			paletteLength;
 	HPOLYGON	hRpath;		// Recent path
 };
@@ -140,7 +140,7 @@ void MoverProcessCreate(int X, int Y, int id, PMOVER pMover);
 
 enum AR_FUNCTION { AR_NORMAL, AR_PUSHREEL, AR_POPREEL, AR_WALKREEL };
 
-void StoreMoverPalette(PMOVER pMover, int startColour, int length);
+void StoreMoverPalette(PMOVER pMover, int startColor, int length);
 
 void MoverBrightness(PMOVER pMover, int brightness);
 
@@ -204,7 +204,7 @@ struct SAVED_MOVER {
 	bool	bActive;
 	bool	bHidden;
 	int		brightness;
-	int		startColour;
+	int		startColor;
 	int		paletteLength;
 };
 

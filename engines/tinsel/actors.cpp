@@ -108,7 +108,7 @@ struct ACTORINFO {
 	bool		bEscOn;
 	int			escEvent;
 
-	COLORREF	textColour;	// Text colour
+	COLORREF	textColor;	// Text color
 
 	SCNHANDLE	playFilm;	// revert to this after talks
 	SCNHANDLE	talkFilm;	// this be deleted in the future!
@@ -140,7 +140,7 @@ typedef TAGACTOR *PTAGACTOR;
 
 static ACTORINFO *actorInfo = NULL;
 
-static COLORREF defaultColour = 0;		// Text colour
+static COLORREF defaultColor = 0;		// Text color
 
 static bool bActorsOn = false;
 
@@ -479,13 +479,13 @@ void DropActors() {
 
 	for (int i = 0; i < NumActors; i++) {
 		if (TinselV2) {
-			// Save text colour
-			COLORREF tColour = actorInfo[i].textColour;
+			// Save text color
+			COLORREF tColor = actorInfo[i].textColor;
 
 			memset(&actorInfo[i], 0, sizeof(ACTORINFO));
 
-			// Restor text colour
-			actorInfo[i].textColour = tColour;
+			// Restor text color
+			actorInfo[i].textColor = tColor;
 
 			// Clear extra arrays
 			memset(zFactors, 0, NumActors);
@@ -1278,7 +1278,7 @@ void SetMoverZ(PMOVER pMover, int y, int32 zFactor) {
 
 /**
  * Stores actor's attributes.
- * Currently only the speech colours.
+ * Currently only the speech colors.
  */
 void storeActorAttr(int ano, int r1, int g1, int b1) {
 	assert((ano > 0 && ano <= NumActors) || ano == -1); // illegal actor number
@@ -1288,36 +1288,36 @@ void storeActorAttr(int ano, int r1, int g1, int b1) {
 	if (b1 > MAX_INTENSITY)	b1 = MAX_INTENSITY;	// }
 
 	if (ano == -1)
-		defaultColour = TINSEL_RGB(r1, g1, b1);
+		defaultColor = TINSEL_RGB(r1, g1, b1);
 	else
-		actorInfo[ano - 1].textColour = TINSEL_RGB(r1, g1, b1);
+		actorInfo[ano - 1].textColor = TINSEL_RGB(r1, g1, b1);
 }
 
 /**
- * Called from ActorRGB() - Stores actor's speech colour.
+ * Called from ActorRGB() - Stores actor's speech color.
  */
 
-void SetActorRGB(int ano, COLORREF colour) {
+void SetActorRGB(int ano, COLORREF color) {
 	assert(ano >= 0 && ano <= NumActors);
 
 	if (ano)
-		actorInfo[ano - 1].textColour = TO_LE_32(colour);
+		actorInfo[ano - 1].textColor = TO_LE_32(color);
 	else
-		defaultColour = TO_LE_32(colour);
+		defaultColor = TO_LE_32(color);
 }
 
 /**
- * Get the actor's stored speech colour.
+ * Get the actor's stored speech color.
  * @param ano			Actor Id
  */
 COLORREF GetActorRGB(int ano) {
 	// Not used in JAPAN version
 	assert((ano >= -1) && (ano <= NumActors)); // illegal actor number
 
-	if ((ano == -1) || !actorInfo[ano - 1].textColour)
-		return defaultColour;
+	if ((ano == -1) || !actorInfo[ano - 1].textColor)
+		return defaultColor;
 	else
-		return actorInfo[ano - 1].textColour;
+		return actorInfo[ano - 1].textColor;
 }
 
 /**

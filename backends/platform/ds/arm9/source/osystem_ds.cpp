@@ -259,13 +259,13 @@ bool OSystem_DS::grabRawScreen(Graphics::Surface *surf) {
 	return true;
 }
 
-void OSystem_DS::grabPalette(unsigned char *colours, uint start, uint num) {
+void OSystem_DS::grabPalette(unsigned char *colors, uint start, uint num) {
 //	consolePrintf("Grabpalette");
 
 	for (unsigned int r = start; r < start + num; r++) {
-		*colours++ = (BG_PALETTE[r] & 0x001F) << 3;
-		*colours++ = (BG_PALETTE[r] & 0x03E0) >> 5 << 3;
-		*colours++ = (BG_PALETTE[r] & 0x7C00) >> 10 << 3;
+		*colors++ = (BG_PALETTE[r] & 0x001F) << 3;
+		*colors++ = (BG_PALETTE[r] & 0x03E0) >> 5 << 3;
+		*colors++ = (BG_PALETTE[r] & 0x7C00) >> 10 << 3;
 	}
 }
 
@@ -849,16 +849,16 @@ Common::WriteStream *OSystem_DS::createConfigWriteStream() {
 	return file.createWriteStream();
 }
 
-u16 OSystem_DS::applyGamma(u16 colour) {
+u16 OSystem_DS::applyGamma(u16 color) {
 	// Attempt to do gamma correction (or something like it) to palette entries
 	// to improve the contrast of the image on the original DS screen.
 
-	// Split the colour into it's component channels
-	int r = colour & 0x001F;
-	int g = (colour & 0x03E0) >> 5;
-	int b = (colour & 0x7C00) >> 10;
+	// Split the color into it's component channels
+	int r = color & 0x001F;
+	int g = (color & 0x03E0) >> 5;
+	int b = (color & 0x7C00) >> 10;
 
-	// Caluclate the scaling factor for this colour based on it's brightness
+	// Caluclate the scaling factor for this color based on it's brightness
 	int scale = ((23 - ((r + g + b) >> 2)) * _gammaValue) >> 3;
 
 	// Scale the three components by the scaling factor, with clamping
@@ -871,7 +871,7 @@ u16 OSystem_DS::applyGamma(u16 colour) {
 	b = b + ((b * scale) >> 4);
 	if (b > 31) b = 31;
 
-	// Stick them back together into a 555 colour value
+	// Stick them back together into a 555 color value
 	return 0x8000 | r | (g << 5) | (b << 10);
 }
 

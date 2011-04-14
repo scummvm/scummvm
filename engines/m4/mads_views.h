@@ -174,8 +174,8 @@ public:
 	int expire;
 	int spacing;
 	Common::Rect bounds;
-	uint8 colour1;
-	uint8 colour2;
+	uint8 color1;
+	uint8 color2;
 	Font *font;
 	const char *msg;
 
@@ -201,7 +201,7 @@ public:
 		_entries[idx].expire = -1;
 	}
 
-	int add(int xp, int yp, uint fontColour, int charSpacing, const char *msg, Font *font);
+	int add(int xp, int yp, uint fontColor, int charSpacing, const char *msg, Font *font);
 	void clear();
 	void draw(M4Surface *view);
 	void setDirtyAreas();
@@ -221,8 +221,8 @@ public:
 	int sequenceIndex;
 	char asciiChar;
 	char asciiChar2;
-	int colour1;
-	int colour2;
+	int color1;
+	int color2;
 	Common::Point position;
 	int textDisplayIndex;
 	int msgOffset;
@@ -251,7 +251,7 @@ public:
 	MadsKernelMessageList(MadsView &owner);
 
 	void clear();
-	int add(const Common::Point &pt, uint fontColour, uint8 flags, uint8 abortTimers, uint32 timeout, const char *msg);
+	int add(const Common::Point &pt, uint fontColor, uint8 flags, uint8 abortTimers, uint32 timeout, const char *msg);
 	int addQuote(int quoteId, int abortTimers, uint32 timeout);
 	void scrollMessage(int msgIndex, int numTicks, bool quoted);
 	void setSeqIndex(int msgIndex, int seqIndex);

@@ -65,7 +65,7 @@ void InvObject::setCursor() {
 		GfxSurface s = surfaceFromRes(_iconResNum, _rlbNum, _cursorNum);
 
 		Graphics::Surface src = s.lockSurface();
-		_globals->_events.setCursor(src, s._transColour, s._centroid, _cursorId);
+		_globals->_events.setCursor(src, s._transColor, s._centroid, _cursorId);
 	}
 }
 
@@ -1263,15 +1263,15 @@ bool ScenePalette::loadPalette(int paletteNum) {
 }
 
 void ScenePalette::refresh() {
-	// Set indexes for standard colours to closest colour in the palette
-	_colours.background = indexOf(255, 255, 255);	// White background
-	_colours.foreground = indexOf(0, 0, 0);			// Black foreground
-	_redColour = indexOf(180, 0, 0);				// Red-ish
-	_greenColour = indexOf(0, 180, 0);				// Green-ish
-	_blueColour = indexOf(0, 0, 180);				// Blue-ish
-	_aquaColour = indexOf(0, 180, 180);				// Aqua
-	_purpleColour = indexOf(180, 0, 180);			// Purple
-	_limeColour = indexOf(180, 180, 0);				// Lime
+	// Set indexes for standard colors to closest color in the palette
+	_colors.background = indexOf(255, 255, 255);	// White background
+	_colors.foreground = indexOf(0, 0, 0);			// Black foreground
+	_redColor = indexOf(180, 0, 0);				// Red-ish
+	_greenColor = indexOf(0, 180, 0);				// Green-ish
+	_blueColor = indexOf(0, 0, 180);				// Blue-ish
+	_aquaColor = indexOf(0, 180, 180);				// Aqua
+	_purpleColor = indexOf(180, 0, 180);			// Purple
+	_limeColor = indexOf(180, 180, 0);				// Lime
 
 	// Refresh the palette
 	g_system->getPaletteManager()->setPalette((const byte *)&_palette[0], 0, 256);
@@ -1285,12 +1285,12 @@ void ScenePalette::setPalette(int index, int count) {
 }
 
 /**
- * Returns the palette index with the closest matching colour to that specified
+ * Returns the palette index with the closest matching color to that specified
  * @param r			R component
  * @param g			G component
  * @param b			B component
  * @param threshold	Closeness threshold.
- * @remarks	A threshold may be provided to specify how close the matching colour must be
+ * @remarks	A threshold may be provided to specify how close the matching color must be
  */
 uint8 ScenePalette::indexOf(uint r, uint g, uint b, int threshold) {
 	int palIndex = -1;
@@ -1419,16 +1419,16 @@ void ScenePalette::synchronise(Serialiser &s) {
 		s.syncAsByte(_palette[i].g);
 		s.syncAsByte(_palette[i].b);
 	}
-	s.syncAsSint32LE(_colours.foreground);
-	s.syncAsSint32LE(_colours.background);
+	s.syncAsSint32LE(_colors.foreground);
+	s.syncAsSint32LE(_colors.background);
 
 	s.syncAsSint32LE(_field412);
-	s.syncAsByte(_redColour);
-	s.syncAsByte(_greenColour);
-	s.syncAsByte(_blueColour);
-	s.syncAsByte(_aquaColour);
-	s.syncAsByte(_purpleColour);
-	s.syncAsByte(_limeColour);
+	s.syncAsByte(_redColor);
+	s.syncAsByte(_greenColor);
+	s.syncAsByte(_blueColor);
+	s.syncAsByte(_aquaColor);
+	s.syncAsByte(_purpleColor);
+	s.syncAsByte(_limeColor);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1526,35 +1526,35 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 				_globals->_sceneText._fontNumber = va_arg(va, int);
 				_globals->gfxManager()._font.setFontNumber(_globals->_sceneText._fontNumber);
 				break;
-			case SET_BG_COLOUR: {
-				// Set the background colour
-				int bgColour = va_arg(va, int);
-				_globals->gfxManager()._font._colours.background = bgColour;
-				if (!bgColour)
+			case SET_BG_COLOR: {
+				// Set the background color
+				int bgColor = va_arg(va, int);
+				_globals->gfxManager()._font._colors.background = bgColor;
+				if (!bgColor)
 					_globals->gfxManager().setFillFlag(false);
 				break;
 			}
-			case SET_FG_COLOUR:
-				// Set the foreground colour
-				_globals->_sceneText._colour1 = va_arg(va, int);
-				_globals->gfxManager()._font._colours.foreground = _globals->_sceneText._colour1;
+			case SET_FG_COLOR:
+				// Set the foreground color
+				_globals->_sceneText._color1 = va_arg(va, int);
+				_globals->gfxManager()._font._colors.foreground = _globals->_sceneText._color1;
 				break;
 			case SET_KEEP_ONSCREEN:
 				// Suppresses immediate display
 				keepOnscreen = va_arg(va, int) != 0;
 				break;
-			case SET_EXT_BGCOLOUR: {
-				// Set secondary bg colour
+			case SET_EXT_BGCOLOR: {
+				// Set secondary bg color
 				int v = va_arg(va, int);
-				_globals->_sceneText._colour2 = v;
-				_globals->gfxManager()._font._colours2.background = v;
+				_globals->_sceneText._color2 = v;
+				_globals->gfxManager()._font._colors2.background = v;
 				break;
 			}
-			case SET_EXT_FGCOLOUR: {
-				// Set secondary fg colour
+			case SET_EXT_FGCOLOR: {
+				// Set secondary fg color
 				int v = va_arg(va, int);
-				_globals->_sceneText._colour3 = v;
-				_globals->gfxManager()._font._colours.foreground = v;
+				_globals->_sceneText._color3 = v;
+				_globals->gfxManager()._font._colors.foreground = v;
 				break;
 			}
 			case SET_POS_MODE:
@@ -1580,9 +1580,9 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 
 		textRect.contain(_globals->gfxManager()._bounds);
 		if (centreText) {
-			_globals->_sceneText._colour1 = _globals->_sceneText._colour2;
-			_globals->_sceneText._colour2 = 0;
-			_globals->_sceneText._colour3 = 0;
+			_globals->_sceneText._color1 = _globals->_sceneText._color2;
+			_globals->_sceneText._color2 = 0;
+			_globals->_sceneText._color3 = 0;
 		}
 
 		_globals->_sceneText.setup(msg);
@@ -1618,18 +1618,18 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 void SceneHotspot::doAction(int action) {
 	switch ((int)action) {
 	case CURSOR_LOOK:
-		display(1, 0, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		display(1, 0, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_USE:
-		display(1, 5, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		display(1, 5, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_TALK:
-		display(1, 15, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		display(1, 15, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_WALK:
 		break;
 	default:
-		display(2, action, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		display(2, action, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	}
 }
@@ -1645,13 +1645,13 @@ void NamedHotspot::doAction(int action) {
 		if (_lookLineNum == -1)
 			SceneHotspot::doAction(action);
 		else
-			SceneItem::display(_resnum, _lookLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			SceneItem::display(_resnum, _lookLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_USE:
 		if (_useLineNum == -1)
 			SceneHotspot::doAction(action);
 		else
-			SceneItem::display(_resnum, _useLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			SceneItem::display(_resnum, _useLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	default:
 		SceneHotspot::doAction(action);
@@ -2574,8 +2574,8 @@ SceneText::SceneText() : SceneObject() {
 	_fontNumber = 2;
 	_width = 160;
 	_textMode = ALIGN_LEFT;
-	_colour2 = 0;
-	_colour3 = 0;
+	_color2 = 0;
+	_color3 = 0;
 }
 
 SceneText::~SceneText() {
@@ -2587,16 +2587,16 @@ void SceneText::setup(const Common::String &msg) {
 	Rect textRect;
 
 	gfxMan._font.setFontNumber(_fontNumber);
-	gfxMan._font._colours.foreground = _colour1;
-	gfxMan._font._colours2.background = _colour2;
-	gfxMan._font._colours2.foreground = _colour3;
+	gfxMan._font._colors.foreground = _color1;
+	gfxMan._font._colors2.background = _color2;
+	gfxMan._font._colors2.foreground = _color3;
 
 	gfxMan.getStringBounds(msg.c_str(), textRect, _width);
 
 	// Set up a new blank surface to hold the text
 	_textSurface.create(textRect.width(), textRect.height());
-	_textSurface._transColour = 0xff;
-	_textSurface.fillRect(textRect, _textSurface._transColour);
+	_textSurface._transColor = 0xff;
+	_textSurface.fillRect(textRect, _textSurface._transColor);
 
 	// Write the text to the surface
 	gfxMan._bounds = textRect;
@@ -2612,9 +2612,9 @@ void SceneText::synchronise(Serialiser &s) {
 
 	s.syncAsSint16LE(_fontNumber);
 	s.syncAsSint16LE(_width);
-	s.syncAsSint16LE(_colour1);
-	s.syncAsSint16LE(_colour2);
-	s.syncAsSint16LE(_colour3);
+	s.syncAsSint16LE(_color1);
+	s.syncAsSint16LE(_color2);
+	s.syncAsSint16LE(_color3);
 	SYNC_ENUM(_textMode, TextAlign);
 }
 

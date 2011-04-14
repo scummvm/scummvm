@@ -449,7 +449,7 @@ static bool bMoveOnUnHide;	// Set before start of conversation
 
 //----- Data pertinant to configure (incl. load/save game) -----
 
-#define COL_MAINBOX	TBLUE1		// Base blue colour
+#define COL_MAINBOX	TBLUE1		// Base blue color
 #define COL_BOX		TBLUE1
 #define COL_HILIGHT	TBLUE4
 
@@ -1639,7 +1639,7 @@ static void Select(int i, bool force) {
 	switch (cd.box[i].boxType) {
 	case RGROUP:
 		iconArray[HL2] = RectangleObject(BgPal(),
-			(TinselV2 ? HighlightColour() : COL_HILIGHT), cd.box[i].w, cd.box[i].h);
+			(TinselV2 ? HighlightColor() : COL_HILIGHT), cd.box[i].w, cd.box[i].h);
 		MultiInsertObject(GetPlayfieldList(FIELD_STATUS), iconArray[HL2]);
 		MultiSetAniXY(iconArray[HL2],
 		InvD[ino].inventoryX + cd.box[i].xpos,
@@ -2277,7 +2277,7 @@ static void InvBoxes(bool InBody, int curX, int curY) {
 		    cd.box[cd.pointBox].boxType == AATBUT ||
 		    cd.box[cd.pointBox].boxType == AABUT) {
 			iconArray[HL1] = RectangleObject(BgPal(),
-				(TinselV2 ? HighlightColour() : COL_HILIGHT),
+				(TinselV2 ? HighlightColor() : COL_HILIGHT),
 				cd.box[cd.pointBox].w, cd.box[cd.pointBox].h);
 			MultiInsertObject(GetPlayfieldList(FIELD_STATUS), iconArray[HL1]);
 			MultiSetAniXY(iconArray[HL1],
@@ -2736,7 +2736,7 @@ static void AddBox(int *pi, const int i) {
 			break;
 
 		// Give us a box
-		iconArray[*pi] = RectangleObject(BgPal(), TinselV2 ? BoxColour() : COL_BOX,
+		iconArray[*pi] = RectangleObject(BgPal(), TinselV2 ? BoxColor() : COL_BOX,
 			cd.box[i].w, cd.box[i].h);
 		MultiInsertObject(GetPlayfieldList(FIELD_STATUS), iconArray[*pi]);
 		MultiSetAniXY(iconArray[*pi], x, y);

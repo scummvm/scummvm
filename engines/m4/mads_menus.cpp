@@ -695,7 +695,7 @@ void RexDialogView::updateState() {
 void RexDialogView::onRefresh(RectList *rects, M4Surface *destSurface) {
 	// Draw the framed base area
 	fillRect(this->bounds(), _madsVm->_palette->BLACK);
-	setColour(2);
+	setColor(2);
 	hLine(0, width(), MADS_Y_OFFSET - 2);
 	hLine(0, width(), MADS_Y_OFFSET + MADS_SURFACE_HEIGHT + 2);
 
@@ -943,20 +943,20 @@ void RexDialogView::refreshText() {
 		if (!_dialogText[i].in_use)
 			continue;
 
-		// Get the item's colours
-		uint colour;
+		// Get the item's colors
+		uint color;
 		if (_dialogText[i].state == STATE_DESELECTED)
-			colour = 0xB0A;
+			color = 0xB0A;
 		else if (_dialogText[i].state == STATE_SELECTED)
-			colour = 0xD0C;
+			color = 0xD0C;
 		else
-			colour = 0xF0E;
+			color = 0xF0E;
 
-		// If there's an associated text display entry, check to see if it's colour needs to change
+		// If there's an associated text display entry, check to see if it's color needs to change
 		if (_dialogText[i].textDisplay_index >= 0) {
 			MadsTextDisplayEntry &tdEntry = _textDisplay[_dialogText[i].textDisplay_index];
 
-			if ((tdEntry.colour1 == (colour & 0xff)) && (tdEntry.colour2 == (colour >> 8)))
+			if ((tdEntry.color1 == (color & 0xff)) && (tdEntry.color2 == (color >> 8)))
 				// It's still the same, so no further action needed
 				continue;
 
@@ -967,7 +967,7 @@ void RexDialogView::refreshText() {
 
 		// Create a new text display entry for the dialog text line
 		_dialogText[i].textDisplay_index = _textDisplay.add(_dialogText[i].pos.x, _dialogText[i].pos.y,
-			colour, _dialogText[i].widthAdjust, _dialogText[i].text, _dialogText[i].font);
+			color, _dialogText[i].widthAdjust, _dialogText[i].text, _dialogText[i].font);
 	}
 }
 

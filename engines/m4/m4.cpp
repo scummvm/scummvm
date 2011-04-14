@@ -416,7 +416,7 @@ Common::Error M4Engine::run() {
 			_scene->loadScene(_kernel->currentRoom);
 
 			_ws->setBackgroundSurface(_scene->getBackgroundSurface());
-			_ws->setInverseColourTable(scene()->getInverseColourTable());
+			_ws->setInverseColorTable(scene()->getInverseColorTable());
 
 			_kernel->loadSectionScriptFunctions();
 			_kernel->loadRoomScriptFunctions();
@@ -554,7 +554,7 @@ Common::Error MadsEngine::run() {
 		_scene->show();
 
 		_font->setFont(FONT_MAIN_MADS);
-		_font->current()->setColours(2, 1, 3);
+		_font->current()->setColors(2, 1, 3);
 		_font->current()->writeString(_scene->getBackgroundSurface(), "Testing the M4/MADS ScummVM engine", 5, 160, 310, 2);
 		_font->current()->writeString(_scene->getBackgroundSurface(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 5, 180, 310, 2);
 

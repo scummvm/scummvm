@@ -201,16 +201,16 @@ void EventsClass::setCursor(CursorType cursorType) {
 
 	Graphics::Surface surface = s.lockSurface();
 	const byte *cursorData = (const byte *)surface.getBasePtr(0, 0);
-	CursorMan.replaceCursor(cursorData, surface.w, surface.h, s._centroid.x, s._centroid.y, s._transColour);
+	CursorMan.replaceCursor(cursorData, surface.w, surface.h, s._centroid.x, s._centroid.y, s._transColor);
 	s.unlockSurface();
 
 	if (delFlag)
 		DEALLOCATE(cursor);
 }
 
-void EventsClass::setCursor(Graphics::Surface &cursor, int transColour, const Common::Point &hotspot, CursorType cursorId) {
+void EventsClass::setCursor(Graphics::Surface &cursor, int transColor, const Common::Point &hotspot, CursorType cursorId) {
 	const byte *cursorData = (const byte *)cursor.getBasePtr(0, 0);
-	CursorMan.replaceCursor(cursorData, cursor.w, cursor.h, hotspot.x, hotspot.y, transColour);
+	CursorMan.replaceCursor(cursorData, cursor.w, cursor.h, hotspot.x, hotspot.y, transColor);
 
 	_currentCursor = cursorId;
 }

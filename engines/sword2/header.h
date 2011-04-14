@@ -114,7 +114,7 @@ enum {
 // standard file header
 // animation header
 // a string of CDT entries (one per frame of the anim)
-// a 16-byte colour table ONLY if (runTimeComp==RLE16)
+// a 16-byte color table ONLY if (runTimeComp==RLE16)
 // a string of groups of (frame header + frame data)
 
 // Animation Header
@@ -147,11 +147,11 @@ struct AnimHeader {
 
 enum {
 	NONE	= 0,		// No frame compression
-	RLE256	= 1,		// James's RLE for 256-colour sprites
-	RLE16	= 2		// James's RLE for 16- or 17-colour sprites
-				// (raw blocks have max 16 colours for 2 pixels
+	RLE256	= 1,		// James's RLE for 256-color sprites
+	RLE16	= 2		// James's RLE for 16- or 17-color sprites
+				// (raw blocks have max 16 colors for 2 pixels
 				// per byte, so '0's are encoded only as FLAT
-				// for 17-colour sprites eg. George's mega-set)
+				// for 17-color sprites eg. George's mega-set)
 };
 
 // CDT Entry

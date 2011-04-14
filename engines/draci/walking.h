@@ -45,12 +45,12 @@ public:
 	bool getPixel(int x, int y) const;
 	bool isWalkable(const Common::Point &p) const;
 
-	Sprite *newOverlayFromMap(byte colour) const;
+	Sprite *newOverlayFromMap(byte color) const;
 	Common::Point findNearestWalkable(int x, int y) const;
 
 	bool findShortestPath(Common::Point p1, Common::Point p2, WalkingPath *path) const;
 	void obliquePath(const WalkingPath& path, WalkingPath *obliquedPath);
-	Sprite *newOverlayFromPath(const WalkingPath &path, byte colour) const;
+	Sprite *newOverlayFromPath(const WalkingPath &path, byte color) const;
 	Common::Point getDelta() const { return Common::Point(_deltaX, _deltaY); }
 
 	static int pointsBetween(const Common::Point &p1, const Common::Point &p2);
@@ -68,7 +68,7 @@ private:
 	// 4 possible directions to walk from a pixel.
 	static const int kDirections[][2];
 
-	void drawOverlayRectangle(const Common::Point &p, byte colour, byte *buf) const;
+	void drawOverlayRectangle(const Common::Point &p, byte color, byte *buf) const;
 	bool lineIsCovered(const Common::Point &p1, const Common::Point &p2) const;
 
 	// Returns true if the number of vertices on the path was decreased.

@@ -1859,15 +1859,15 @@ int32 Logic::fnSetScrollRightMouse(int32 *params) {
 	return IR_CONT;
 }
 
-int32 Logic::fnColour(int32 *params) {
-	// set border colour - useful during script development
-	// eg. set to colour during a timer situation, then black when timed
+int32 Logic::fnColor(int32 *params) {
+	// set border color - useful during script development
+	// eg. set to color during a timer situation, then black when timed
 	// out
 
-	// params	0: colour (see defines above)
+	// params	0: color (see defines above)
 
 #ifdef SWORD2_DEBUG
-	// what colour?
+	// what color?
 	switch (params[0]) {
 	case BLACK:
 		_vm->_screen->setPalette(0, 1, black, RDPAL_INSTANT);
@@ -1905,14 +1905,14 @@ static const uint8 blue[3]	= {   0,   0, 255 };
 #endif
 
 int32 Logic::fnFlash(int32 *params) {
-	// flash colour 0 (ie. border) - useful during script development
+	// flash color 0 (ie. border) - useful during script development
 	// eg. fnFlash(BLUE) where a text line is missed; RED when some code
 	// missing, etc
 
-	// params:	0 colour to flash
+	// params:	0 color to flash
 
 #ifdef SWORD2_DEBUG
-	// what colour?
+	// what color?
 	switch (params[0]) {
 	case WHITE:
 		_vm->_screen->setPalette(0, 1, white, RDPAL_INSTANT);

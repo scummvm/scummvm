@@ -77,7 +77,7 @@ static int systemVars[SV_TOPVALID] = {
 		2,		// Speech Delay
 		2,		// Music dim factor
 
-		0,		// if set, default actor's text colour gets poked in here
+		0,		// if set, default actor's text color gets poked in here
 
 		0,		// user 1
 		0,		// user 2
@@ -103,7 +103,7 @@ static int systemVars[SV_TOPVALID] = {
 
 		0,		// ISV_GHOST_ACTOR
 		0,		// ISV_GHOST_BASE
-		0		// ISV_GHOST_COLOUR
+		0		// ISV_GHOST_COLOR
 };
 
 static SCNHANDLE systemStrings[SS_MAX_VALID];	// FIXME: Avoid non-const global vars

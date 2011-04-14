@@ -51,8 +51,8 @@ void InitBackground(const BACKGND *pBgnd) {
 	// set current background
 	pCurBgnd = pBgnd;
 
-	// init background sky colour
-	SetBgndColour(pBgnd->rgbSkyColour);
+	// init background sky color
+	SetBgndColor(pBgnd->rgbSkyColor);
 
 	// start of playfield array
 	pPlayfield = pBgnd->fieldArray;

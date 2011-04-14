@@ -503,7 +503,7 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)  {
 			r->tickSequenceOffset = entry.tickSequenceOffset;
 
 			r->layer = entry.layer;
-			r->colourOffset = entry.colourOffset;
+			r->colorOffset = entry.colorOffset;
 			r->hotspotScriptOffset = entry.hotspotScriptOffset;
 			r->talkScriptOffset = entry.talkScriptOffset;
 			r->flags = entry.flags;

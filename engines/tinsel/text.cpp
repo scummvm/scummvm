@@ -100,14 +100,14 @@ int JustifyText(char *szStr, int xPos, const FONT *pFont, int mode) {
  * of the list is returned.
  * @param pList			Object list to add text to
  * @param szStr			String to output
- * @param colour		Colour for monochrome text
+ * @param color		Color for monochrome text
  * @param xPos			X position of string
  * @param yPos			Y position of string
  * @param hFont			Which font to use
  * @param mode			Mode flags for the string
  * @param sleepTime		Sleep time between each character (if non-zero)
  */
-OBJECT *ObjectTextOut(OBJECT *pList, char *szStr, int colour,
+OBJECT *ObjectTextOut(OBJECT *pList, char *szStr, int color,
 					  int xPos, int yPos, SCNHANDLE hFont, int mode, int sleepTime) {
 	int xJustify;	// x position of text after justification
 	int yOffset;	// offset to next line of text
@@ -183,8 +183,8 @@ OBJECT *ObjectTextOut(OBJECT *pList, char *szStr, int colour,
 				if (mode & TXT_ABSOLUTE)
 					pChar->flags |= DMA_ABS;
 
-				// set characters colour - only effective for mono fonts
-				pChar->constant = colour;
+				// set characters color - only effective for mono fonts
+				pChar->constant = color;
 
 				// get Y animation offset
 				GetAniOffset(hImg, pChar->flags, &aniX, &aniY);

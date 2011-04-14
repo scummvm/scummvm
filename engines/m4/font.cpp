@@ -159,14 +159,14 @@ Font::~Font() {
 	}
 }
 
-void Font::setColour(uint8 colour) {
+void Font::setColor(uint8 color) {
 	if (_sysFont)
-		_fontColors[1] = colour;
+		_fontColors[1] = color;
 	else
-		_fontColors[3] = colour;
+		_fontColors[3] = color;
 }
 
-void Font::setColours(uint8 col1, uint8 col2, uint8 col3) {
+void Font::setColors(uint8 col1, uint8 col2, uint8 col3) {
 	if (_sysFont)
 		_fontColors[1] = col3;
 	else {

@@ -340,7 +340,7 @@ void Scene7000::Action7::signal() {
 
 void Scene7000::SceneItem1::doAction(int action) {
 	if (action == CURSOR_LOOK)
-		SceneItem::display(7000, 2, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7000, 2, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 
 	SceneItem::doAction(action);
 }
@@ -406,9 +406,9 @@ void Scene7000::Object1::doAction(int action) {
 		break;
 	case CURSOR_LOOK:
 		if (_globals->getFlag(81))
-			SceneItem::display(7000, 1, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			SceneItem::display(7000, 1, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		else
-			SceneItem::display(7000, 0, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			SceneItem::display(7000, 0, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_USE:
 		if (_globals->getFlag(81)) {
@@ -416,7 +416,7 @@ void Scene7000::Object1::doAction(int action) {
 			_globals->_player.disableControl();
 			scene->setAction(&scene->_action5);
 		} else {
-			SceneItem::display(7000, 5, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			SceneItem::display(7000, 5, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		}
 		break;
 	case CURSOR_TALK:
@@ -451,7 +451,7 @@ void Scene7000::dispatch() {
 			if (!_globals->getFlag(13)) {
 				_globals->_player.disableControl();
 				_globals->_player.addMover(0);
-				SceneItem::display(7000, 3, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+				SceneItem::display(7000, 3, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 				_sceneMode = 7001;
 				setAction(&scene->_sequenceManager, this, 7001, &_globals->_player, NULL);
 			} else if (!_globals->getFlag(52)) {
@@ -1677,7 +1677,7 @@ void Scene7700::Action4::signal() {
 		break;
 	case 3:
 		CursorMan.showMouse(true);
-		SceneItem::display(7700, 11, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7700, 11, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		_globals->_player.enableControl();
 		remove();
 		break;
@@ -1737,14 +1737,14 @@ void Scene7700::Action6::signal() {
 
 void Scene7700::SceneHotspot1::doAction(int action) {
 	if (action == CURSOR_LOOK)
-		SceneItem::display(7700, 4, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7700, 4, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	else
 		SceneHotspot::doAction(action);
 }
 
 void Scene7700::SceneHotspot2::doAction(int action) {
 	if (action == CURSOR_LOOK)
-		SceneItem::display(7700, 6, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7700, 6, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	else
 		SceneHotspot::doAction(action);
 }
@@ -1754,14 +1754,14 @@ void Scene7700::SceneHotspot3::doAction(int action) {
 
 	switch (action) {
 	case OBJECT_KEY:
-		SceneItem::display(7702, 3, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7702, 3, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		_globals->_inventory._key._sceneNumber = 7700;
 		break;
 	case CURSOR_LOOK:
 		if (_globals->_inventory._key._sceneNumber == 7700)
 			scene->setAction(&scene->_action4, 0);
 		else
-			SceneItem::display(7700, 53, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			SceneItem::display(7700, 53, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_USE:
 		if (!_globals->getFlag(78)) {
@@ -1784,14 +1784,14 @@ void Scene7700::SceneHotspot4::doAction(int action) {
 
 	switch (action) {
 	case CURSOR_LOOK:
-		SceneItem::display(7700, 12, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7700, 12, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_USE:
 		if (!_globals->getFlag(78)) {
 			scene->_sceneMode = 7712;
 			scene->setAction(&scene->_sequenceManager, scene, 7715, 0);
 		} else {
-			SceneItem::display(7700, 12, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			SceneItem::display(7700, 12, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		}
 		break;
 	default:
@@ -1805,7 +1805,7 @@ void Scene7700::SceneHotspot5::doAction(int action) {
 
 	switch (action) {
 	case CURSOR_LOOK:
-		SceneItem::display(7700, 28, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7700, 28, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_USE:
 		if (_globals->getFlag(78)) {
@@ -1828,10 +1828,10 @@ void Scene7700::SceneHotspot5::doAction(int action) {
 void Scene7700::SceneHotspot6::doAction(int action) {
 	switch (action) {
 	case CURSOR_LOOK:
-		SceneItem::display(7700, 43, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7700, 43, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_USE:
-		SceneItem::display(7700, 56, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7700, 56, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	default:
 		SceneHotspot::doAction(action);
@@ -1841,7 +1841,7 @@ void Scene7700::SceneHotspot6::doAction(int action) {
 
 void Scene7700::SceneItem7::doAction(int action) {
 	if (action == CURSOR_LOOK)
-		SceneItem::display(7700, 51, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7700, 51, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 }
 
 void Scene7700::SceneHotspot8::doAction(int action) {
@@ -1849,7 +1849,7 @@ void Scene7700::SceneHotspot8::doAction(int action) {
 
 	switch (action) {
 	case CURSOR_LOOK:
-		SceneItem::display(7700, 48, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7700, 48, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_USE:
 		scene->_sceneMode = 7709;
@@ -1875,7 +1875,7 @@ void Scene7700::SceneHotspot9::doAction(int action) {
 
 	switch (action) {
 	case CURSOR_LOOK:
-		SceneItem::display(7700, 48, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7700, 48, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_USE:
 		scene->_sceneMode = 7709;
@@ -1917,7 +1917,7 @@ void Scene7700::Object1::doAction(int action) {
 	Scene7700 *scene = (Scene7700 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
-		SceneItem::display(7700, _lookLineNum, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7700, _lookLineNum, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	} else if (action == CURSOR_USE) {
 		if (_globals->getFlag(78)) {
 			_globals->_player.disableControl();
@@ -1934,10 +1934,10 @@ void Scene7700::Object1::doAction(int action) {
 void Scene7700::SceneHotspot11::doAction(int action) {
 	switch (action) {
 	case CURSOR_LOOK:
-		SceneItem::display(7700, _lookLineNum, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7700, _lookLineNum, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_USE:
-		SceneItem::display(7701, _useLineNum, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7701, _useLineNum, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	default:
 		SceneHotspot::doAction(action);
@@ -1948,7 +1948,7 @@ void Scene7700::SceneHotspot11::doAction(int action) {
 void Scene7700::Object1::signal() {
 	if (_state == 0) {
 		_state = 1;
-		SceneItem::display(7701, _defltLineNum, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7701, _defltLineNum, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	} else {
 		_state = 0;
 	}
@@ -1959,7 +1959,7 @@ void Scene7700::Object3::doAction(int action) {
 	Scene7700 *scene = (Scene7700 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
-		SceneItem::display(7700, 34, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7700, 34, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	} else if (action == CURSOR_USE) {
 		if (_globals->getFlag(78)) {
 			if (scene->_object3._frame == 1) {
@@ -1967,7 +1967,7 @@ void Scene7700::Object3::doAction(int action) {
 				scene->_sceneMode = 7707;
 				scene->setAction(&scene->_sequenceManager, scene, 7707, &_globals->_player, this, 0);
 			} else {
-				SceneItem::display(7700, 60, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+				SceneItem::display(7700, 60, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 			}
 		} else {
 			scene->_sceneMode = 7712;
@@ -1984,13 +1984,13 @@ void Scene7700::Object7::doAction(int action) {
 	switch (action) {
 	case CURSOR_LOOK:
 		if (_globals->getFlag(78))
-			SceneItem::display(7700, 45, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			SceneItem::display(7700, 45, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		else
-			SceneItem::display(7700, 44, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			SceneItem::display(7700, 44, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_USE:
 		if (_globals->getFlag(78)) {
-			SceneItem::display(7701, 41, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			SceneItem::display(7701, 41, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		} else {
 			scene->_sceneMode = 7712;
 			scene->setAction(&scene->_sequenceManager, scene, 7714, 0);
@@ -1998,7 +1998,7 @@ void Scene7700::Object7::doAction(int action) {
 		break;
 	case CURSOR_TALK:
 		if (_globals->getFlag(78)) {
-			SceneItem::display(7702, 1, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			SceneItem::display(7702, 1, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		} else {
 			_globals->_player.disableControl();
 			if (_state == 0) {
@@ -2084,13 +2084,13 @@ void Scene7700::Object9::doAction(int action) {
 
 	switch (action) {
 		case CURSOR_LOOK:
-			SceneItem::display(7700, 49, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			SceneItem::display(7700, 49, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 			break;
 		case CURSOR_USE:
-			SceneItem::display(7701, 42, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			SceneItem::display(7701, 42, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 			break;
 		case CURSOR_TALK:
-			SceneItem::display(7702, 4, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+			SceneItem::display(7702, 4, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 			break;
 		case OBJECT_KEY:
 			if (_frame == 1) {
@@ -2116,7 +2116,7 @@ void Scene7700::Object10::doAction(int action) {
 	Scene7700 *scene = (Scene7700 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
-		SceneItem::display(7700, 50, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7700, 50, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	} else if (action == CURSOR_USE) {
 		_globals->setFlag(80);
 		scene->_sceneItem10.remove();
@@ -2135,19 +2135,19 @@ void Scene7700::Object11::doAction(int action) {
 	switch (action) {
 		case OBJECT_SCANNER:
 			if (_frame != 1)
-				SceneItem::display(7701, 44, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+				SceneItem::display(7701, 44, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 			else
 				SceneItem::doAction(action);
 			break;
 		case CURSOR_LOOK:
 			if (_frame != 1)
-				SceneItem::display(7700, 9, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+				SceneItem::display(7700, 9, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 			else
-				SceneItem::display(7700, 52, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+				SceneItem::display(7700, 52, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 			break;
 		case CURSOR_USE:
 			if (_frame != 1) {
-				SceneItem::display(7701, 8, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+				SceneItem::display(7701, 8, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 			} else {
 				_globals->setFlag(49);
 				_globals->_player.disableControl();
@@ -2171,7 +2171,7 @@ void Scene7700::Object12::doAction(int action) {
 	Scene7700 *scene = (Scene7700 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
-		SceneItem::display(7700, 15, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7700, 15, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	} else if (action == CURSOR_USE) {
 		if (_globals->getFlag(78)) {
 			scene->_sceneMode = 7713;
@@ -2225,7 +2225,7 @@ void Scene7700::signal() {
 		break;
 	case 7710:
 		_globals->_player.enableControl();
-		SceneItem::display(7700, 62, SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
+		SceneItem::display(7700, 62, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case 7713:
 		_emptyJar.remove();

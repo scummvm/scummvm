@@ -52,8 +52,8 @@ void Sword2Engine::fetchPalette(byte *screenFile, byte *palBuffer) {
 		palette = screenFile + ResHeader::size() + mscreenHeader.palette;
 	}
 
-	// Always set colour 0 to black, because while most background screen
-	// palettes have a bright colour 0 it should come out as black in the
+	// Always set color 0 to black, because while most background screen
+	// palettes have a bright color 0 it should come out as black in the
 	// game.
 
 	palBuffer[0] = 0;

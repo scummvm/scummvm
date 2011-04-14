@@ -75,7 +75,7 @@ Graphics::Surface *CDToonsDecoder::decodeImage(Common::SeekableReadStream *strea
 	uint16 blocksValidUntil = stream->readUint16BE();
 	byte u6 = stream->readByte();
 	byte backgroundColor = stream->readByte();
-	debugN(5, "CDToons frame %d, size %d, unknown %04x (at 0), blocks valid until %d, unknown 6 is %02x, bkg colour is %02x\n",
+	debugN(5, "CDToons frame %d, size %d, unknown %04x (at 0), blocks valid until %d, unknown 6 is %02x, bkg color is %02x\n",
 		frameId, stream->size(), u0, blocksValidUntil, u6, backgroundColor);
 
 	Common::Rect clipRect = readRect(stream);

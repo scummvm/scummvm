@@ -309,7 +309,7 @@ void Menu::buildMenu() {
 		if (Logic::_scriptVars[MENU_LOOKING] || _subjectBarStatus == MENU_OPEN) { // either we're in the chooser or we're doing a 'LOOK AT'
 			if ((!objHeld) || (objHeld == _menuList[menuSlot]))
 				_objects[menuSlot]->setSelect(true);
-		} else if (Logic::_scriptVars[SECOND_ITEM]) { // clicked luggage onto 2nd icon - we need to colour-highlight the 2 relevant icons & grey out the rest
+		} else if (Logic::_scriptVars[SECOND_ITEM]) { // clicked luggage onto 2nd icon - we need to color-highlight the 2 relevant icons & grey out the rest
 			if ((_menuList[menuSlot] == objHeld) || (_menuList[menuSlot] == Logic::_scriptVars[SECOND_ITEM]))
 				_objects[menuSlot]->setSelect(true);
 		} else { // this object is selected - ie. GREYED OUT

@@ -405,7 +405,7 @@ DisplayedText Text::lowTextManager(uint32 textNum, uint16 width, uint16 logicNum
 	return textInfo;
 }
 
-void Text::changeTextSpriteColour(uint8 *sprData, uint8 newCol) {
+void Text::changeTextSpriteColor(uint8 *sprData, uint8 newCol) {
 	DataFileHeader *header = (DataFileHeader *)sprData;
 	sprData += sizeof(DataFileHeader);
 	for (uint16 cnt = 0; cnt < header->s_sp_size; cnt++)
