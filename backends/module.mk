@@ -1,7 +1,6 @@
 MODULE := backends
 
 MODULE_OBJS := \
-	base-backend.o \
 	modular-backend.o \
 	audiocd/default/default-audiocd.o \
 	audiocd/sdl/sdl-audiocd.o \

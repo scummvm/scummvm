@@ -48,12 +48,12 @@ SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *sdlEventSource)
 	_overlayVisible(false),
 	_overlayscreen(0),
 	_overlayWidth(0), _overlayHeight(0),
-	_overlayDirty(true), _overlayNumTex(0)
+	_overlayDirty(true)
 #ifdef USE_OPENGL
-	, _overlayTexIds(0) {
-#else
-	{
+	, _overlayNumTex(0), _overlayTexIds(0)
 #endif
+	{
+
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
