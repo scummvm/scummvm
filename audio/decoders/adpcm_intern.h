@@ -52,7 +52,7 @@ protected:
 	uint32 _blockPos[2];
 	const int _rate;
 
-	struct {
+	struct ADPCMStatus {
 		// OKI/IMA
 		struct {
 			int32 last;
