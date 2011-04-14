@@ -47,7 +47,7 @@ static SavedObject *classFactoryProc(const Common::String &className) {
 /*--------------------------------------------------------------------------*/
 
 Globals::Globals() :
-		_dialogCentre(160, 140),
+		_dialogCenter(160, 140),
 		_gfxManagerInstance(_screenSurface) {
 	reset();
 	_stripNum = 0;
@@ -89,7 +89,7 @@ void Globals::synchronise(Serialiser &s) {
 	s.syncAsSint32LE(_fontColors.background);
 	s.syncAsSint32LE(_fontColors.foreground);
 
-	s.syncAsSint16LE(_dialogCentre.x); s.syncAsSint16LE(_dialogCentre.y);
+	s.syncAsSint16LE(_dialogCenter.x); s.syncAsSint16LE(_dialogCenter.y);
 	_sceneListeners.synchronise(s);
 	for (int i = 0; i < 256; ++i)
 		s.syncAsByte(_flags[i]);

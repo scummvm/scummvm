@@ -259,7 +259,7 @@ enum PARTS_INDEX {
 #define MD_XLBUTR	(TinselV2 ? 26 : 10)
 #define MD_XRBUTL	(TinselV2 ? 173 : 105)
 #define MD_XRBUTR	(TinselV2 ? 195 : 114)
-#define ROTX1 60	// Rotate button's offsets from the centre
+#define ROTX1 60	// Rotate button's offsets from the center
 
 // Number of objects that makes up an empty window
 #define MAX_WCOMP	21		// 4 corners + (3+3) sides + (2+2) extra sides
@@ -2239,7 +2239,7 @@ static int WhichMenuBox(int curX, int curY, bool bSlides) {
 /***/
 /**************************************************************************/
 
-#define ROTX1 60	// Rotate button's offsets from the centre
+#define ROTX1 60	// Rotate button's offsets from the center
 
 /**
  * InvBoxes
@@ -2638,14 +2638,14 @@ static void AddBackground(OBJECT **rect, OBJECT **title, int extraH, int extraV,
 		LoadStringRes(InvD[ino].hInvTitle, TextBufferAddr(), TBUFSZ);
 		*title = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
 					InvD[ino].inventoryX + width/2, InvD[ino].inventoryY + M_TOFF,
-					GetTagFontHandle(), TXT_CENTRE);
+					GetTagFontHandle(), TXT_CENTER);
 		assert(*title); // Inventory title string produced NULL text
 		MultiSetZPosition(*title, Z_INV_HTEXT);
 	} else if (textFrom == FROM_STRING && cd.ixHeading != NO_HEADING) {
 		LoadStringRes(configStrings[cd.ixHeading], TextBufferAddr(), TBUFSZ);
 		*title = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
 					InvD[ino].inventoryX + width/2, InvD[ino].inventoryY + M_TOFF,
-					GetTagFontHandle(), TXT_CENTRE);
+					GetTagFontHandle(), TXT_CENTER);
 		assert(*title); // Inventory title string produced NULL text
 		MultiSetZPosition(*title, Z_INV_HTEXT);
 	}
@@ -2669,7 +2669,7 @@ static void AddTitle(POBJECT *title, int extraH) {
 		LoadStringRes(InvD[ino].hInvTitle, TextBufferAddr(), TBUFSZ);
 		*title = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
 					InvD[ino].inventoryX + (width/2)+NM_BG_POS_X, InvD[ino].inventoryY + NM_TOFF,
-					GetTagFontHandle(), TXT_CENTRE, 0);
+					GetTagFontHandle(), TXT_CENTER, 0);
 		assert(*title);
 		MultiSetZPosition(*title, Z_INV_HTEXT);
 	}
@@ -2758,9 +2758,9 @@ static void AddBox(int *pi, const int i) {
 					iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), cd.box[i].boxText, 0,
 #ifdef JAPAN
 // Note: it never seems to go here!
-							x + cd.box[i].w/2, y+2, GetTagFontHandle(), TXT_CENTRE);
+							x + cd.box[i].w/2, y+2, GetTagFontHandle(), TXT_CENTER);
 #else
-							x + cd.box[i].w / 2, y + TYOFF, GetTagFontHandle(), TXT_CENTRE);
+							x + cd.box[i].w / 2, y + TYOFF, GetTagFontHandle(), TXT_CENTER);
 #endif
 				}
 
@@ -2787,9 +2787,9 @@ static void AddBox(int *pi, const int i) {
 				iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 					TextBufferAddr(), 0,
 #ifdef JAPAN
-					x + cd.box[i].w/2, y+2, GetTagFontHandle(), TXT_CENTRE);
+					x + cd.box[i].w/2, y+2, GetTagFontHandle(), TXT_CENTER);
 #else
-					x + cd.box[i].w / 2, y + TYOFF, GetTagFontHandle(), TXT_CENTRE);
+					x + cd.box[i].w / 2, y + TYOFF, GetTagFontHandle(), TXT_CENTER);
 #endif
 			MultiSetZPosition(iconArray[*pi], Z_INV_ITEXT);
 			*pi += 1;
@@ -2870,7 +2870,7 @@ static void AddBox(int *pi, const int i) {
 		if (cd.box[i].boxType == TOGGLE2) {
 			iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 				TextBufferAddr(), 0, x + cd.box[i].w / 2, y + TOG2_YOFF,
-				GetTagFontHandle(), TXT_CENTRE, 0);
+				GetTagFontHandle(), TXT_CENTER, 0);
 		} else {
 			iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 				TextBufferAddr(), 0, x + MDTEXT_XOFF, y + MDTEXT_YOFF,
@@ -2934,7 +2934,7 @@ static void AddBox(int *pi, const int i) {
 			LoadStringRes(SysString(cd.box[i].ixText), TextBufferAddr(), TBUFSZ);
 			iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 				TextBufferAddr(), 0, x + cd.box[i].w / 2, y + TOG2_YOFF,
-				GetTagFontHandle(), TXT_CENTRE, 0);
+				GetTagFontHandle(), TXT_CENTER, 0);
 			MultiSetZPosition(iconArray[*pi], Z_INV_ITEXT);
 			*pi += 1;
 		}
@@ -2945,7 +2945,7 @@ static void AddBox(int *pi, const int i) {
 
 		LoadStringRes(LanguageDesc(displayedLanguage), TextBufferAddr(), TBUFSZ);
 		iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
-				x + cd.box[i].w / 2, y + ROT_YOFF, GetTagFontHandle(), TXT_CENTRE, 0);
+				x + cd.box[i].w / 2, y + ROT_YOFF, GetTagFontHandle(), TXT_CENTER, 0);
 		MultiSetZPosition(iconArray[*pi], Z_INV_ITEXT);
 		*pi += 1;
 
@@ -3683,15 +3683,15 @@ extern void HideConversation(bool bHide) {
 				/*
 				 * First time, position it appropriately
 				 */
-				int left, centre;
+				int left, center;
 				int x, y, deltay;
 
 				// Only do it once per conversation
 				bMoveOnUnHide = false;
 
-				// Current centre of the window
+				// Current center of the window
 				left = MultiLeftmost(RectObject);
-				centre = (MultiRightmost(RectObject) + left) / 2;
+				center = (MultiRightmost(RectObject) + left) / 2;
 
 				// Get the x-offset for the conversation window
 				if (thisConvActor) {
@@ -3731,12 +3731,12 @@ extern void HideConversation(bool bHide) {
 
 				// Move it all
 				for (i = 0; objArray[i] && i < MAX_WCOMP; i++) {
-					MultiMoveRelXY(objArray[i], x - centre, deltay);
+					MultiMoveRelXY(objArray[i], x - center, deltay);
 				}
 				for (i = 0; iconArray[i] && i < MAX_ICONS; i++) {
-					MultiMoveRelXY(iconArray[i], x - centre, deltay);
+					MultiMoveRelXY(iconArray[i], x - center, deltay);
 				}
-				InvD[INV_CONV].inventoryX += x - centre;
+				InvD[INV_CONV].inventoryX += x - center;
 
 				/*
 				 * Now positioned as worked out

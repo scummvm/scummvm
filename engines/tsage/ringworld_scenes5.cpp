@@ -1594,7 +1594,7 @@ void Scene4025::signal() {
 	if (_sceneMode != 4027) {
 		if (_sceneMode != 4028) {
 			_gfxButton.setText(EXIT_MSG);
-			_gfxButton._bounds.centre(144, 107);
+			_gfxButton._bounds.center(144, 107);
 			_gfxButton.draw();
 			_gfxButton._bounds.expandPanes();
 		}
@@ -4108,7 +4108,7 @@ void Scene4300::signal() {
 		_hotspot14.setPosition(Common::Point(60, 199));
 
 		_gfxButton.setText(EXIT_MSG);
-		_gfxButton._bounds.centre(60, 193);
+		_gfxButton._bounds.center(60, 193);
 		_gfxButton.draw();
 		_gfxButton._bounds.expandPanes();
 

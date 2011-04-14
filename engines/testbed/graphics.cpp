@@ -606,7 +606,7 @@ TestExitStatus GFXtests::mouseMovements() {
 
 	Common::String info = "Testing Automated Mouse movements.\n"
 						"You should expect cursor hotspot(top-left corner) to automatically move from (0, 0) to (100, 100).\n"
-						"There we have a rectangle drawn, finally the cursor would lie centred in that rectangle.";
+						"There we have a rectangle drawn, finally the cursor would lie centerd in that rectangle.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Mouse Movements\n");
@@ -637,7 +637,7 @@ TestExitStatus GFXtests::mouseMovements() {
 	g_system->delayMillis(1500);
 	CursorMan.showMouse(false);
 
-	if (Testsuite::handleInteractiveInput("Was the cursor centred in the rectangle at (100, 100)?", "Yes", "No", kOptionRight)) {
+	if (Testsuite::handleInteractiveInput("Was the cursor centerd in the rectangle at (100, 100)?", "Yes", "No", kOptionRight)) {
 		return kTestFailed;
 	}
 
@@ -654,7 +654,7 @@ TestExitStatus GFXtests::copyRectToScreen() {
 
 	Testsuite::clearScreen();
 	Common::String info = "Testing Blitting a Bitmap to screen.\n"
-		"You should expect to see a 20x40 yellow horizontal rectangle centred at the screen.";
+		"You should expect to see a 20x40 yellow horizontal rectangle centerd at the screen.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Blitting Bitmap\n");
@@ -1113,7 +1113,7 @@ TestExitStatus GFXtests::pixelFormats() {
 
 		Graphics::Surface *screen = g_system->lockScreen();
 
-		// Draw 6 rectangles centred at (50, 160), piled over one another
+		// Draw 6 rectangles centerd at (50, 160), piled over one another
 		// each with color in colors[]
 		for (int i = 0; i < 6; i++) {
 			screen->fillRect(Common::Rect::center(160, 20 + i * 10, 100, 10), colors[i]);

@@ -52,9 +52,9 @@ class Text {
 public:
 	Text(Disk *skyDisk, SkyCompact *skyCompact);
 	~Text();
-	struct DisplayedText displayText(uint32 textNum, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);
-	struct DisplayedText displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);
-	struct DisplayedText lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool centre);
+	struct DisplayedText displayText(uint32 textNum, uint8 *dest, bool center, uint16 pixelWidth, uint8 color);
+	struct DisplayedText displayText(char *textPtr, uint8 *dest, bool center, uint16 pixelWidth, uint8 color);
+	struct DisplayedText lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool center);
 	void fnSetFont(uint32 fontNr);
 	void fnTextModule(uint32 textInfoId, uint32 textNo);
 	void fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY);

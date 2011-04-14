@@ -100,7 +100,7 @@ void RhythmPart::setBend(unsigned int midiBend) {
 }
 
 void Part::setBend(unsigned int midiBend) {
-	// FIXME:KG: Slightly unbalanced increments, but I wanted min -1.0, centre 0.0 and max 1.0
+	// FIXME:KG: Slightly unbalanced increments, but I wanted min -1.0, center 0.0 and max 1.0
 	if (midiBend <= 0x2000) {
 		bend = ((signed int)midiBend - 0x2000) / (float)0x2000;
 	} else {
@@ -413,7 +413,7 @@ void RhythmPart::setPan(unsigned int midiPan)
 }
 
 void Part::setPan(unsigned int midiPan) {
-	// FIXME:KG: Tweaked this a bit so that we have a left 100%, centre and right 100%
+	// FIXME:KG: Tweaked this a bit so that we have a left 100%, center and right 100%
 	// (But this makes the range somewhat skewed)
 	// Check against the real thing
 	// NOTE: Panning is inverted compared to GM.

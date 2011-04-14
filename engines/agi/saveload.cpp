@@ -597,7 +597,7 @@ int AgiEngine::selectSlot() {
 	int hm = 1, vm = 3;	// box margins
 	int xmin, xmax, slotClicked;
 	char desc[NUM_VISIBLE_SLOTS][40];
-	int textCentre, buttonLength, buttonX[2], buttonY;
+	int textCenter, buttonLength, buttonX[2], buttonY;
 	const char *buttonText[] = { "  OK  ", "Cancel", NULL };
 
 	_noSaveLoadAllowed = true;
@@ -606,10 +606,10 @@ int AgiEngine::selectSlot() {
 		getSavegameDescription(_firstSlot + i, desc[i]);
 	}
 
-	textCentre = GFX_WIDTH / CHAR_LINES / 2;
+	textCenter = GFX_WIDTH / CHAR_LINES / 2;
 	buttonLength = 6;
-	buttonX[0] = (textCentre - 3 * buttonLength / 2) * CHAR_COLS;
-	buttonX[1] = (textCentre + buttonLength / 2) * CHAR_COLS;
+	buttonX[0] = (textCenter - 3 * buttonLength / 2) * CHAR_COLS;
+	buttonX[1] = (textCenter + buttonLength / 2) * CHAR_COLS;
 	buttonY = (vm + 17) * CHAR_LINES;
 
 	for (i = 0; i < 2; i++)

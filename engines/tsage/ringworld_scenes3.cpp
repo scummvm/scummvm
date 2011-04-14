@@ -3118,7 +3118,7 @@ void Scene2222::postInit(SceneObjectList *OwnerList) {
 	}
 
 	_soundHandler.startSound(116);
-	_globals->_sceneManager._scene->_sceneBounds.centre(_hotspot1._position);
+	_globals->_sceneManager._scene->_sceneBounds.center(_hotspot1._position);
 
 	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
 	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
@@ -4875,7 +4875,7 @@ void Scene2310::signal() {
 		Common::String msg = Common::String::format(fmtString.c_str(), _pageList[_pageIndex]._pageNumber);
 
 		_sceneText._width = 280;
-		_sceneText._textMode = ALIGN_CENTRE;
+		_sceneText._textMode = ALIGN_CENTER;
 		_sceneText._color1 = 35;
 		_sceneText._fontNumber = 2;
 		_sceneText.setup(msg);
@@ -5971,7 +5971,7 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 	}
 
 	_globals->_stripNum = 0;
-	_globals->_sceneManager._scene->_sceneBounds.centre(_globals->_player._position);
+	_globals->_sceneManager._scene->_sceneBounds.center(_globals->_player._position);
 	loadScene(2320);
 
 	_hotspot14._sceneRegionId = 8;
@@ -6088,7 +6088,7 @@ void Scene2400::postInit(SceneObjectList *OwnerList) {
 
 	setAction(&_action1);
 
-	_globals->_sceneManager._scene->_sceneBounds.centre(_globals->_player._position.x, _globals->_player._position.y);
+	_globals->_sceneManager._scene->_sceneBounds.center(_globals->_player._position.x, _globals->_player._position.y);
 	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
 	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
 

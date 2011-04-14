@@ -1496,7 +1496,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 	Rect textRect;
 	int maxWidth = 120;
 	bool keepOnscreen = false;
-	bool centreText = true;
+	bool centerText = true;
 
 	if (resNum) {
 		va_list va;
@@ -1559,7 +1559,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 			}
 			case SET_POS_MODE:
 				// Set whether a custom x/y is used
-				centreText = va_arg(va, int) != 0;
+				centerText = va_arg(va, int) != 0;
 				break;
 			case SET_TEXT_MODE:
 				// Set the text mode
@@ -1576,17 +1576,17 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 	if (resNum) {
 		// Get required bounding size
 		_globals->gfxManager().getStringBounds(msg.c_str(), textRect, maxWidth);
-		textRect.centre(pos.x, pos.y);
+		textRect.center(pos.x, pos.y);
 
 		textRect.contain(_globals->gfxManager()._bounds);
-		if (centreText) {
+		if (centerText) {
 			_globals->_sceneText._color1 = _globals->_sceneText._color2;
 			_globals->_sceneText._color2 = 0;
 			_globals->_sceneText._color3 = 0;
 		}
 
 		_globals->_sceneText.setup(msg);
-		if (centreText) {
+		if (centerText) {
 			_globals->_sceneText.setPosition(Common::Point(
 				_globals->_sceneManager._scene->_sceneBounds.left + textRect.left,
 				_globals->_sceneManager._scene->_sceneBounds.top + textRect.top), 0);

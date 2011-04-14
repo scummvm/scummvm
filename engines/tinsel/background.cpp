@@ -127,11 +127,11 @@ void PlayfieldGetPos(int which, int *pXpos, int *pYpos) {
 }
 
 /**
- * Returns the x position of the centre of the specified playfield
+ * Returns the x position of the center of the specified playfield
  * @param which			Which playfield
  */
 
-int PlayfieldGetCentreX(int which) {
+int PlayfieldGetCenterX(int which) {
 	PLAYFIELD *pPlayfield; // pointer to relavent playfield
 
 	// make sure there is a background

@@ -1228,7 +1228,7 @@ void Scene9700::signal() {
 	case 9701:
 	case 9702:
 		_gfxButton1.setText(EXIT_MSG);
-		_gfxButton1._bounds.centre(50, 190);
+		_gfxButton1._bounds.center(50, 190);
 		_gfxButton1.draw();
 		_gfxButton1._bounds.expandPanes();
 		_globals->_player.enableControl();
@@ -1702,7 +1702,7 @@ void Scene9900::strAction2::signal() {
 				_txtArray1Index = (_txtArray1Index + 1) % 2;
 			}
 			_var3 = 1;
-			_txtArray1[_txtArray1Index]._textMode = ALIGN_CENTRE;
+			_txtArray1[_txtArray1Index]._textMode = ALIGN_CENTER;
 			_txtArray1[_txtArray1Index]._width = 240;
 			_txtArray1[_txtArray1Index]._fontNumber = 2;
 			_txtArray1[_txtArray1Index]._color1 = 7;
@@ -1717,7 +1717,7 @@ void Scene9900::strAction2::signal() {
 			Common::Point pt2(_txtArray1[_txtArray1Index]._position.x, 100);
 			_txtArray1[_txtArray1Index].addMover(mover2, &pt2, 0);
 
-			_txtArray2[_txtArray1Index]._textMode = ALIGN_CENTRE;
+			_txtArray2[_txtArray1Index]._textMode = ALIGN_CENTER;
 			_txtArray2[_txtArray1Index]._width = 240;
 			_txtArray2[_txtArray1Index]._fontNumber = 2;
 			_txtArray2[_txtArray1Index]._color1 = 23;
@@ -2048,7 +2048,7 @@ void Scene9999::postInit(SceneObjectList *OwnerList) {
 	else
 		setAction(&_action1);
 
-	_globals->_sceneManager._scene->_sceneBounds.centre(_globals->_player._position.x, _globals->_player._position.y);
+	_globals->_sceneManager._scene->_sceneBounds.center(_globals->_player._position.x, _globals->_player._position.y);
 	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
 	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
 

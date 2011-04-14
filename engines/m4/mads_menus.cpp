@@ -699,7 +699,7 @@ void RexDialogView::onRefresh(RectList *rects, M4Surface *destSurface) {
 	hLine(0, width(), MADS_Y_OFFSET - 2);
 	hLine(0, width(), MADS_Y_OFFSET + MADS_SURFACE_HEIGHT + 2);
 
-	// Add in the loaded background vertically centred
+	// Add in the loaded background vertically centerd
 	_backgroundSurface->copyTo(this, 0, (height() - MADS_SURFACE_HEIGHT) / 2);
 
 	// Check whether any of the dialog text entries need to be refreshed

@@ -78,8 +78,8 @@ int StringLengthPix(char *szStr, const FONT *pFont) {
  * @param mode			Mode flags for the string
  */
 int JustifyText(char *szStr, int xPos, const FONT *pFont, int mode) {
-	if (mode & TXT_CENTRE) {
-		// centre justify the text
+	if (mode & TXT_CENTER) {
+		// center justify the text
 
 		// adjust x positioning by half the length of line in pixels
 		xPos -= StringLengthPix(szStr, pFont) / 2;

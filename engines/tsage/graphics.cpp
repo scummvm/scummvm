@@ -147,22 +147,22 @@ void Rect::collapse(int dx, int dy) {
 }
 
 /**
- * Centres the rectangle at a given position
+ * Centers the rectangle at a given position
  *
- * @xp x position for new centre
- * @yp y position for new centre
+ * @xp x position for new center
+ * @yp y position for new center
  */
-void Rect::centre(int xp, int yp) {
+void Rect::center(int xp, int yp) {
 	moveTo(xp - (width() / 2), yp - (height() / 2));
 }
 
 /**
- * Centres the rectangle at the centre of a second passed rectangle
+ * Centers the rectangle at the center of a second passed rectangle
  *
- * @r Second rectangle whose centre to use
+ * @r Second rectangle whose center to use
  */
-void Rect::centre(const Rect &r) {
-	centre(r.left + (r.width() / 2), r.top + (r.height() / 2));
+void Rect::center(const Rect &r) {
+	center(r.left + (r.width() / 2), r.top + (r.height() / 2));
 }
 
 /*
@@ -355,7 +355,7 @@ bool GfxSurface::displayText(const Common::String &msg, const Common::Point &pt)
 	// Get the area for text display
 	Rect textRect;
 	gfxManager.getStringBounds(msg.c_str(), textRect, 200);
-	textRect.centre(pt.x, pt.y);
+	textRect.center(pt.x, pt.y);
 
 	// Make a backup copy of the area the text will occupy
 	Rect saveRect = textRect;
@@ -798,7 +798,7 @@ void GfxButton::draw() {
 	// Display the button's text
 	Rect tempRect(_bounds);
 	tempRect.collapse(3, 3);
-	gfxManager._font.writeLines(_message.c_str(), tempRect, ALIGN_CENTRE);
+	gfxManager._font.writeLines(_message.c_str(), tempRect, ALIGN_CENTER);
 
 	gfxManager.unlockSurface();
 }
@@ -928,7 +928,7 @@ void GfxDialog::setTopLeft(int xp, int yp) {
 	_bounds.moveTo(xp - 6, yp - 6);
 }
 
-void GfxDialog::setCentre(int xp, int yp) {
+void GfxDialog::setCenter(int xp, int yp) {
 	setTopLeft(xp - (_bounds.width() / 2), yp - (_bounds.height() / 2));
 }
 
@@ -1355,7 +1355,7 @@ void GfxFont::writeLines(const char *s, const Rect &bounds, TextAlign align) {
 			writeString(s, numChars);
 			break;
 
-		case ALIGN_CENTRE:
+		case ALIGN_CENTER:
 			// Center aligned text
 			_position.x = bounds.left + (bounds.width() / 2) - (getStringWidth(s, numChars) / 2);
 			writeString(s, numChars);

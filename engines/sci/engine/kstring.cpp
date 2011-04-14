@@ -175,7 +175,7 @@ reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 #define ALIGN_NONE 0
 #define ALIGN_RIGHT 1
 #define ALIGN_LEFT -1
-#define ALIGN_CENTRE 2
+#define ALIGN_CENTER 2
 
 /*  Format(targ_address, textresnr, index_inside_res, ...)
 ** or
@@ -246,7 +246,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 				if (xfer == '0')
 					fillchar = '0';
 				else if (xfer == '=')
-					align = ALIGN_CENTRE;
+					align = ALIGN_CENTER;
 				else if (isdigit(xfer) || (xfer == '-'))
 					source--; // Go to start of length argument
 
@@ -258,7 +258,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 				if (str_leng < 0) {
 					align = ALIGN_LEFT;
 					str_leng = -str_leng;
-				} else if (align != ALIGN_CENTRE)
+				} else if (align != ALIGN_CENTER)
 					align = ALIGN_RIGHT;
 
 				xfer = *source++;
@@ -298,7 +298,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 						*target++ = ' '; /* Format into the text */
 					break;
 
-				case ALIGN_CENTRE: {
+				case ALIGN_CENTER: {
 					int half_extralen = extralen >> 1;
 					while (half_extralen-- > 0)
 						*target++ = ' '; /* Format into the text */
@@ -315,7 +315,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 				switch (align) {
 
-				case ALIGN_CENTRE: {
+				case ALIGN_CENTER: {
 					int half_extralen;
 					align = 0;
 					half_extralen = extralen - (extralen >> 1);

@@ -605,7 +605,7 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 			setAction(&_action4);
 		}
 
-		_sceneBounds.centre(_globals->_player._position.x, _globals->_player._position.y);
+		_sceneBounds.center(_globals->_player._position.x, _globals->_player._position.y);
 	}
 
 	_globals->_player.disableControl();
@@ -2397,7 +2397,7 @@ void Scene60::signal() {
 			_globals->_events.setCursor(CURSOR_USE);
 
 			_gfxButton.setText(EXIT_MSG);
-			_gfxButton._bounds.centre(160, 193);
+			_gfxButton._bounds.center(160, 193);
 			_gfxButton.draw();
 			_gfxButton._bounds.expandPanes();
 		} else {

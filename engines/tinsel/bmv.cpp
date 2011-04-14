@@ -519,7 +519,7 @@ void BMVPlayer::MovieText(CORO_PARAM, int stringId, int x, int y, int fontId, CO
 						0,
 						x, y,
 						hFont,
-						TXT_CENTRE, 0);
+						TXT_CENTER, 0);
 	KeepOnScreen(texts[index].pText, &x, &y);
 }
 

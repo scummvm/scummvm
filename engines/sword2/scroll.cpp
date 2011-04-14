@@ -73,7 +73,7 @@ void Screen::setScrolling() {
 		return;
 	}
 
-	// George's offset from the centre - the desired position for him
+	// George's offset from the center - the desired position for him
 
 	int16 offset_x = _thisScreen.player_feet_x - _thisScreen.feet_x;
 	int16 offset_y = _thisScreen.player_feet_y - _thisScreen.feet_y;

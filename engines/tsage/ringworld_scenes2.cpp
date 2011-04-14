@@ -266,7 +266,7 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 
 		setAction(&_action2);
 
-		_globals->_sceneManager._scene->_sceneBounds.centre(_object1._position.x, _object1._position.y);
+		_globals->_sceneManager._scene->_sceneBounds.center(_object1._position.x, _object1._position.y);
 		_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
 
 		_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
@@ -280,7 +280,7 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 		_object1._moveDiff = Common::Point(2, 2);
 		_object1.setPosition(Common::Point(120, 180));
 
-		_globals->_sceneManager._scene->_sceneBounds.centre(_object1._position.x, _object1._position.y);
+		_globals->_sceneManager._scene->_sceneBounds.center(_object1._position.x, _object1._position.y);
 		_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
 		_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
 
@@ -301,7 +301,7 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 		_globals->_player.hide();
 		_globals->_player.disableControl();
 
-		_globals->_sceneManager._scene->_sceneBounds.centre(_object3._position.x, _object3._position.y);
+		_globals->_sceneManager._scene->_sceneBounds.center(_object3._position.x, _object3._position.y);
 
 		setAction(&_action3);
 	}
@@ -776,7 +776,7 @@ void Scene1400::postInit(SceneObjectList *OwnerList) {
 
 	_globals->_player._moveDiff = Common::Point(4, 2);
 	_globals->_player.setPosition(Common::Point(160, 800));
-	_globals->_sceneManager._scene->_sceneBounds.centre(_globals->_player._position);
+	_globals->_sceneManager._scene->_sceneBounds.center(_globals->_player._position);
 	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
 	_globals->_sceneOffset.y = (_globals->_sceneManager._scene->_sceneBounds.top / 100) * 100;
 

@@ -48,9 +48,9 @@ public:
 
 	void set(int16 x1, int16 y1, int16 x2, int16 y2);
 	void collapse(int dx, int dy);
-	void centre(int dx, int dy);
-	void centre(const Rect &r);
-	void centre(const Common::Point &pt) { centre(pt.x, pt.y); }
+	void center(int dx, int dy);
+	void center(const Rect &r);
+	void center(const Common::Point &pt) { center(pt.x, pt.y); }
 	void contain(const Rect &r);
 	void resize(const GfxSurface &surface, int xp, int yp, int percent);
 	void expandPanes();
@@ -115,7 +115,7 @@ public:
 	static bool displayText(const Common::String &msg, const Common::Point &pt = Common::Point(160, 100));
 };
 
-enum TextAlign {ALIGN_LEFT = 0, ALIGN_CENTRE = 1, ALIGN_RIGHT = 2, ALIGN_JUSTIFIED = 3};
+enum TextAlign {ALIGN_LEFT = 0, ALIGN_CENTER = 1, ALIGN_RIGHT = 2, ALIGN_JUSTIFIED = 3};
 
 class GfxFont {
 	friend class GfxFontBackup;
@@ -325,7 +325,7 @@ public:
 	void add(GfxElement *element);
 	void addElements(GfxElement *ge, ...);
 	void setTopLeft(int xp, int yp);
-	void setCentre(int xp, int yp);
+	void setCenter(int xp, int yp);
 	void frame() {
 		setDefaults();
 		_bounds.collapse(6, 6);

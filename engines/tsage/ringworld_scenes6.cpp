@@ -1277,7 +1277,7 @@ void Scene5100::postInit(SceneObjectList *OwnerList) {
 	_hotspot15.setPosition(Common::Point(977, 173));
 	_hotspot15.setPriority2(1);
 
-	_globals->_sceneManager._scene->_sceneBounds.centre(_globals->_player._position);
+	_globals->_sceneManager._scene->_sceneBounds.center(_globals->_player._position);
 	loadScene(5100);
 	_globals->_soundHandler.startSound(205);
 }
@@ -1703,7 +1703,7 @@ void Scene5200::postInit(SceneObjectList *OwnerList) {
 	_hotspot10._sceneRegionId = 9;
 
 	_globals->_sceneItems.addItems(&_hotspot12, &_hotspot13, &_hotspot9, &_hotspot10, &_hotspot11, NULL);
-	_globals->_sceneManager._scene->_sceneBounds.centre(_globals->_player._position);
+	_globals->_sceneManager._scene->_sceneBounds.center(_globals->_player._position);
 	loadScene(5200);
 }
 

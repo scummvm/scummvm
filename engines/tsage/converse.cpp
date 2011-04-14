@@ -871,7 +871,7 @@ void Speaker::removeText() {
 SpeakerGameText::SpeakerGameText() : Speaker() {
 	_speakerName = "GAMETEXT";
 	_textPos = Common::Point(40, 40);
-	_textMode = ALIGN_CENTRE;
+	_textMode = ALIGN_CENTER;
 	_color1 = 7;
 	_textWidth = 230;
 	_hideObjects = false;
@@ -881,7 +881,7 @@ SpeakerGameText::SpeakerGameText() : Speaker() {
 
 ScreenSpeaker::ScreenSpeaker() : Speaker() {
 	_npc = NULL;
-	_textMode = ALIGN_CENTRE;
+	_textMode = ALIGN_CENTER;
 }
 
 void ScreenSpeaker::setText(const Common::String &msg) {
@@ -892,9 +892,9 @@ void ScreenSpeaker::setText(const Common::String &msg) {
 
 	_globals->gfxManager().getStringBounds(msg.c_str(), textRect, _textWidth);
 	if (_npc) {
-		textRect.centre(_npc->_position.x, _npc->_bounds.top - (textRect.height() / 2 + 10));
+		textRect.center(_npc->_position.x, _npc->_bounds.top - (textRect.height() / 2 + 10));
 	} else {
-		textRect.centre(_globals->_sceneManager._scene->_sceneBounds.left +
+		textRect.center(_globals->_sceneManager._scene->_sceneBounds.left +
 			(_globals->_sceneManager._scene->_sceneBounds.width() / 2),
 			_globals->_sceneManager._scene->_sceneBounds.top);
 	}

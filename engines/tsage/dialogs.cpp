@@ -64,8 +64,8 @@ MessageDialog::MessageDialog(const Common::String &message, const Common::String
 	// Do post setup for the dialog
 	setDefaults();
 
-	// Set the dialog's centre
-	setCentre(_globals->_dialogCentre.x, _globals->_dialogCentre.y);
+	// Set the dialog's center
+	setCenter(_globals->_dialogCenter.x, _globals->_dialogCenter.y);
 }
 
 int MessageDialog::show(const Common::String &message, const Common::String &btn1Message, const Common::String &btn2Message) {
@@ -167,7 +167,7 @@ RightClickDialog::RightClickDialog() : GfxDialog(),
 
 	// Set the dialog position
 	dialogRect.resize(_surface, 0, 0, 100);
-	dialogRect.centre(_globals->_events._mousePos.x, _globals->_events._mousePos.y);
+	dialogRect.center(_globals->_events._mousePos.x, _globals->_events._mousePos.y);
 
 	// Ensure the dialog will be entirely on-screen
 	Rect screenRect = _globals->gfxManager()._bounds;
@@ -457,7 +457,7 @@ InventoryDialog::InventoryDialog(bool allFlag) {
 	addElements(&_btnLook, &_btnOk, NULL);
 
 	frame();
-	setCentre(SCREEN_CENTRE_X, SCREEN_CENTRE_Y);
+	setCenter(SCREEN_CENTER_X, SCREEN_CENTER_Y);
 }
 
 void InventoryDialog::execute() {
@@ -591,7 +591,7 @@ OptionsDialog::OptionsDialog() {
 
 	// Set the dialog size and position
 	frame();
-	setCentre(160, 100);
+	setCenter(160, 100);
 }
 
 

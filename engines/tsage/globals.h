@@ -55,7 +55,7 @@ public:
 	GfxColors _gfxColors;
 	GfxColors _fontColors;
 	SoundManager _soundManager;
-	Common::Point _dialogCentre;
+	Common::Point _dialogCenter;
 	WalkRegions _walkRegions;
 	SynchronisedList<EventHandler *> _sceneListeners;
 	bool _flags[256];

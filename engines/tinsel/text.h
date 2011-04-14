@@ -34,7 +34,7 @@ namespace Tinsel {
 
 /** text mode flags - defaults to left justify */
 enum {
-	TXT_CENTRE		= 0x0001,	///< centre justify text
+	TXT_CENTER		= 0x0001,	///< center justify text
 	TXT_RIGHT		= 0x0002,	///< right justify text
 	TXT_SHADOW		= 0x0004,	///< shadow each character
 	TXT_ABSOLUTE	= 0x0008	///< position of text is absolute (only for object text)

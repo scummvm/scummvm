@@ -61,8 +61,8 @@ struct tSageGameDescription;
 
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
-#define SCREEN_CENTRE_X 160
-#define SCREEN_CENTRE_Y 100
+#define SCREEN_CENTER_X 160
+#define SCREEN_CENTER_Y 100
 
 class TSageEngine : public Engine {
 private:

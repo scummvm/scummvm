@@ -98,10 +98,10 @@ struct POLYGON {
 
 	/*
 	 * Internal derived data for speed and conveniance
-	 * set up by PseudoCentre()
+	 * set up by PseudoCenter()
 	 */
-	int	pcentrex;	// Pseudo-centre
-	int	pcentrey;	//
+	int	pcenterx;	// Pseudo-center
+	int	pcentery;	//
 
 	/**
 	 * List of adjacent polygons. For Path polygons only.
@@ -1624,34 +1624,34 @@ static PPOLYGON CommonInits(PTYPE polyType, int pno, const Poly &ptp, bool bRest
 }
 
 /**
- * Calculate a point approximating to the centre of a polygon.
+ * Calculate a point approximating to the center of a polygon.
  * Not very sophisticated.
  */
-static void PseudoCentre(POLYGON *p) {
-	p->pcentrex = (p->cx[0] + p->cx[1] + p->cx[2] + p->cx[3])/4;
-	p->pcentrey = (p->cy[0] + p->cy[1] + p->cy[2] + p->cy[3])/4;
+static void PseudoCenter(POLYGON *p) {
+	p->pcenterx = (p->cx[0] + p->cx[1] + p->cx[2] + p->cx[3])/4;
+	p->pcentery = (p->cy[0] + p->cy[1] + p->cy[2] + p->cy[3])/4;
 
-	if (!IsInPolygon(p->pcentrex, p->pcentrey, PolygonIndex(p))) {
+	if (!IsInPolygon(p->pcenterx, p->pcentery, PolygonIndex(p))) {
 		int i, top = 0, bot = 0;
 
 		for (i = p->ptop; i <= p->pbottom; i++) {
-			if (IsInPolygon(p->pcentrex, i, PolygonIndex(p))) {
+			if (IsInPolygon(p->pcenterx, i, PolygonIndex(p))) {
 				top = i;
 				break;
 			}
 		}
 		for (i = p->pbottom; i >= p->ptop; i--) {
-			if (IsInPolygon(p->pcentrex, i, PolygonIndex(p))) {
+			if (IsInPolygon(p->pcenterx, i, PolygonIndex(p))) {
 				bot = i;
 				break;
 			}
 		}
-		p->pcentrex = (top+bot)/2;
+		p->pcenterx = (top+bot)/2;
 	}
 #ifdef DEBUG
-	//	assert(IsInPolygon(p->pcentrex, p->pcentrey, PolygonIndex(p)));  // Pseudo-centre is not in path
-	if (!IsInPolygon(p->pcentrex, p->pcentrey, PolygonIndex(p))) {
-		sprintf(TextBufferAddr(), "Pseudo-centre is not in path (starting (%d, %d)) - polygon reversed?",
+	//	assert(IsInPolygon(p->pcenterx, p->pcentery, PolygonIndex(p)));  // Pseudo-center is not in path
+	if (!IsInPolygon(p->pcenterx, p->pcentery, PolygonIndex(p))) {
+		sprintf(TextBufferAddr(), "Pseudo-center is not in path (starting (%d, %d)) - polygon reversed?",
 			p->cx[0], p->cy[0]);
 		error(TextBufferAddr());
 	}
@@ -1673,7 +1673,7 @@ static void InitPath(const Poly &ptp, bool NodePath, int pno, bool bRestart) {
 
 	p->subtype = NodePath ? NODE : NORMAL;
 
-	PseudoCentre(p);
+	PseudoCenter(p);
 }
 
 
@@ -1918,16 +1918,16 @@ int PolySubtype(HPOLYGON hp) {
 	return Polys[hp]->subtype;
 }
 
-int PolyCentreX(HPOLYGON hp) {
+int PolyCenterX(HPOLYGON hp) {
 	CHECK_HP(hp, "Out of range polygon handle (27)");
 
-	return Polys[hp]->pcentrex;
+	return Polys[hp]->pcenterx;
 }
 
-int PolyCentreY(HPOLYGON hp) {
+int PolyCenterY(HPOLYGON hp) {
 	CHECK_HP(hp, "Out of range polygon handle (28)");
 
-	return Polys[hp]->pcentrey;
+	return Polys[hp]->pcentery;
 }
 
 int PolyCornerX(HPOLYGON hp, int n) {

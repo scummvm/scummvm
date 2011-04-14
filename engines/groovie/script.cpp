@@ -717,7 +717,7 @@ void Script::o_hotspot_center() {
 
 	debugScript(5, true, "HOTSPOT-CENTER @0x%04X", address);
 
-	// Mark the centremost 240 pixels of the game area
+	// Mark the centermost 240 pixels of the game area
 	Common::Rect rect(200, 80, 440, 400);
 	hotspot(rect, address, 0);
 }

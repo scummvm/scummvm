@@ -71,7 +71,7 @@ void VirtualKeyboard::reset() {
 	deleteEvents();
 	_modes.clear();
 	_initialMode = _currentMode = 0;
-	_hAlignment = kAlignCentre;
+	_hAlignment = kAlignCenter;
 	_vAlignment = kAlignBottom;
 	_keyQueue.clear();
 	_loaded = false;

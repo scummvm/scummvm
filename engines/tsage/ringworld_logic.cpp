@@ -331,7 +331,7 @@ void SpeakerGText::setText(const Common::String &msg) {
 	// Set the text
 	Rect textRect;
 	_globals->gfxManager()._font.getStringBounds(msg.c_str(), textRect, _textWidth);
-	textRect.centre(_sceneObject._position.x, _sceneObject._position.y);
+	textRect.center(_sceneObject._position.x, _sceneObject._position.y);
 	_textPos.x = textRect.left;
 	Speaker::setText(msg);
 }
@@ -438,7 +438,7 @@ SpeakerQText::SpeakerQText() : ScreenSpeaker() {
 	_textPos = Common::Point(160, 40);
 	_color1 = 35;
 	_textWidth = 240;
-	_textMode = ALIGN_CENTRE;
+	_textMode = ALIGN_CENTER;
 	_hideObjects = false;
 }
 
@@ -448,7 +448,7 @@ SpeakerSText::SpeakerSText() : ScreenSpeaker() {
 	_speakerName = "STEXT";
 	_color1 = 13;
 	_textWidth = 240;
-	_textMode = ALIGN_CENTRE;
+	_textMode = ALIGN_CENTER;
 	_hideObjects = false;
 }
 
@@ -457,7 +457,7 @@ SpeakerSText::SpeakerSText() : ScreenSpeaker() {
 SpeakerPOText::SpeakerPOText() : ScreenSpeaker() {
 	_speakerName = "POTEXT";
 	_textWidth = 240;
-	_textMode = ALIGN_CENTRE;
+	_textMode = ALIGN_CENTER;
 	_color1 = 41;
 	_hideObjects = false;
 }
@@ -468,7 +468,7 @@ SpeakerMText::SpeakerMText() {
 	_speakerName = "MTEXT";
 	_color1 = 11;
 	_textWidth = 160;
-	_textMode = ALIGN_CENTRE;
+	_textMode = ALIGN_CENTER;
 	_hideObjects = false;
 }
 
@@ -478,7 +478,7 @@ SpeakerCText::SpeakerCText() {
 	_speakerName = "CTEXT";
 	_color1 = 4;
 	_textWidth = 240;
-	_textMode = ALIGN_CENTRE;
+	_textMode = ALIGN_CENTER;
 	_hideObjects = false;
 }
 
@@ -515,7 +515,7 @@ SpeakerHText::SpeakerHText() {
 SpeakerSKText::SpeakerSKText() : ScreenSpeaker() {
 	_speakerName = "SKTEXT";
 	_textWidth = 240;
-	_textMode = ALIGN_CENTRE;
+	_textMode = ALIGN_CENTER;
 	_color1 = 5;
 	_hideObjects = false;
 }
@@ -525,7 +525,7 @@ SpeakerSKText::SpeakerSKText() : ScreenSpeaker() {
 SpeakerPText::SpeakerPText() {
 	_speakerName = "PTEXT";
 	_textWidth = 240;
-	_textMode = ALIGN_CENTRE;
+	_textMode = ALIGN_CENTER;
 	_color1 = 5;
 	_hideObjects = false;
 }
@@ -535,7 +535,7 @@ SpeakerPText::SpeakerPText() {
 SpeakerCHFText::SpeakerCHFText() {
 	_speakerName = "CHFTEXT";
 	_textWidth = 240;
-	_textMode = ALIGN_CENTRE;
+	_textMode = ALIGN_CENTER;
 	_color1 = 56;
 	_hideObjects = false;
 }
@@ -545,7 +545,7 @@ SpeakerCHFText::SpeakerCHFText() {
 SpeakerCDRText::SpeakerCDRText() {
 	_speakerName = "CDRTEXT";
 	_textWidth = 240;
-	_textMode = ALIGN_CENTRE;
+	_textMode = ALIGN_CENTER;
 	_color1 = 52;
 	_hideObjects = false;
 }
@@ -564,7 +564,7 @@ SpeakerFLText::SpeakerFLText() {
 SpeakerBatText::SpeakerBatText() {
 	_speakerName = "BATTEXT";
 	_textWidth = 240;
-	_textMode = ALIGN_CENTRE;
+	_textMode = ALIGN_CENTER;
 	_color1 = 3;
 	_hideObjects = false;
 }
@@ -607,7 +607,7 @@ SpeakerQL::SpeakerQL() : AnimatedSpeaker() {
 	_newSceneNumber = 2610;
 	_textPos = Common::Point(160, 30);
 	_color1 = 35;
-	_textMode = ALIGN_CENTRE;
+	_textMode = ALIGN_CENTER;
 }
 
 void SpeakerQL::setText(const Common::String &msg) {
@@ -639,7 +639,7 @@ SpeakerSR::SpeakerSR() {
 	_newSceneNumber = 2811;
 	_textPos = Common::Point(10, 30);
 	_color1 = 13;
-	_textMode = ALIGN_CENTRE;
+	_textMode = ALIGN_CENTER;
 }
 
 void SpeakerSR::setText(const Common::String &msg) {
@@ -680,7 +680,7 @@ SpeakerSL::SpeakerSL() {
 	_textPos = Common::Point(140, 30);
 	_textWidth = 160;
 	_color1 = 13;
-	_textMode = ALIGN_CENTRE;
+	_textMode = ALIGN_CENTER;
 }
 
 void SpeakerSL::setText(const Common::String &msg) {
@@ -712,7 +712,7 @@ SpeakerQR::SpeakerQR() {
 	_newSceneNumber = 2611;
 	_textPos = Common::Point(10, 30);
 	_color1 = 13;
-	_textMode = ALIGN_CENTRE;
+	_textMode = ALIGN_CENTER;
 }
 
 void SpeakerQR::setText(const Common::String &msg) {
@@ -744,7 +744,7 @@ SpeakerQU::SpeakerQU() {
 	_newSceneNumber = 7020;
 	_textPos = Common::Point(160, 30);
 	_color1 = 35;
-	_textMode = ALIGN_CENTRE;
+	_textMode = ALIGN_CENTER;
 }
 
 void SpeakerQU::setText(const Common::String &msg) {
@@ -833,7 +833,7 @@ SpeakerSAL::SpeakerSAL() {
 	_newSceneNumber = 2851;
 	_textPos = Common::Point(10, 30);
 	_color1 = 13;
-	_textMode = ALIGN_CENTRE;
+	_textMode = ALIGN_CENTER;
 }
 
 void SpeakerSAL::setText(const Common::String &msg) {

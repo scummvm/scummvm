@@ -528,13 +528,13 @@ uint32 FontRenderer::buildNewBloc(byte *ascii, int16 x, int16 y, uint16 width, u
 		frame_head.read(_blocList[i].text_mem);
 
 		switch (justification) {
-		case POSITION_AT_CENTRE_OF_BASE:
+		case POSITION_AT_CENTER_OF_BASE:
 			// This one is always used for SPEECH TEXT; possibly
 			// also for pointer text
 			x -= (frame_head.width / 2);
 			y -= frame_head.height;
 			break;
-		case POSITION_AT_CENTRE_OF_TOP:
+		case POSITION_AT_CENTER_OF_TOP:
 			x -= (frame_head.width / 2);
 			break;
 		case POSITION_AT_LEFT_OF_TOP:
@@ -550,10 +550,10 @@ uint32 FontRenderer::buildNewBloc(byte *ascii, int16 x, int16 y, uint16 width, u
 			x -= frame_head.width;
 			y -= frame_head.height;
 			break;
-		case POSITION_AT_LEFT_OF_CENTRE:
+		case POSITION_AT_LEFT_OF_CENTER:
 			y -= (frame_head.height / 2);
 			break;
-		case POSITION_AT_RIGHT_OF_CENTRE:
+		case POSITION_AT_RIGHT_OF_CENTER:
 			x -= frame_head.width;
 			y -= (frame_head.height) / 2;
 			break;

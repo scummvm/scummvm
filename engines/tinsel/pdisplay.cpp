@@ -59,8 +59,8 @@ extern int newestString;	// The overrun counter, in STRRES.C
 
 #define LPOSX	295		// X-co-ord of lead actor's position display
 #define CPOSX	24		// X-co-ord of cursor's position display
-#define OPOSX	SCRN_CENTRE_X	// X-co-ord of overrun counter's display
-#define SPOSX	SCRN_CENTRE_X	// X-co-ord of string numbner's display
+#define OPOSX	SCRN_CENTER_X	// X-co-ord of overrun counter's display
+#define SPOSX	SCRN_CENTER_X	// X-co-ord of string numbner's display
 
 #define POSY	0		// Y-co-ord of these position displays
 
@@ -158,7 +158,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 			// New text objects
 			sprintf(PositionString, "%d %d", aniX + Loffset, aniY + Toffset);
 			_ctx->cpText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), PositionString,
-						0, CPOSX, POSY, GetTagFontHandle(), TXT_CENTRE);
+						0, CPOSX, POSY, GetTagFontHandle(), TXT_CENTER);
 			if (DispPath) {
 				HPOLYGON hp = InPolygon(aniX + Loffset, aniY + Toffset, PATH);
 				if (hp == NOPOLY)
@@ -190,7 +190,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 
 			sprintf(PositionString, "%d", Overrun);
 			_ctx->opText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), PositionString,
-						0, OPOSX, POSY, GetTagFontHandle(), TXT_CENTRE);
+						0, OPOSX, POSY, GetTagFontHandle(), TXT_CENTER);
 
 			// update previous value
 			_ctx->prevOver = Overrun;
@@ -216,7 +216,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 				// create new text object list
 				sprintf(PositionString, "%d %d", aniX, aniY);
 				_ctx->rpText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), PositionString,
-								0, LPOSX, POSY,	GetTagFontHandle(), TXT_CENTRE);
+								0, LPOSX, POSY,	GetTagFontHandle(), TXT_CENTER);
 
 				// update previous position
 				_ctx->prevlX = aniX;
@@ -235,7 +235,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 
 			sprintf(PositionString, "String: %d", newestString);
 			_ctx->spText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), PositionString,
-						0, SPOSX, POSY+10, GetTalkFontHandle(), TXT_CENTRE);
+						0, SPOSX, POSY+10, GetTalkFontHandle(), TXT_CENTER);
 
 			// update previous value
 			_ctx->prevString = newestString;
@@ -411,7 +411,7 @@ static bool ActorTag(int curX, int curY, HotSpotTag *pTag, OBJECT **ppText) {
 				// May have buggered cursor
 				EndCursorFollowed();
 				*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), tagBuffer,
-						0, tagX, tagY, GetTagFontHandle(), TXT_CENTRE, 0);
+						0, tagX, tagY, GetTagFontHandle(), TXT_CENTER, 0);
 				assert(*ppText);
 				MultiSetZPosition(*ppText, Z_TAG_TEXT);
 			} else
@@ -456,7 +456,7 @@ static bool ActorTag(int curX, int curY, HotSpotTag *pTag, OBJECT **ppText) {
 				PlayfieldGetPos(FIELD_WORLD, &tagX, &tagY);
 				LoadStringRes(GetActorTag(ano), TextBufferAddr(), TBUFSZ);
 				*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
-							0, xtext - tagX, ytext - tagY, GetTagFontHandle(), TXT_CENTRE);
+							0, xtext - tagX, ytext - tagY, GetTagFontHandle(), TXT_CENTER);
 				assert(*ppText); // Actor tag string produced NULL text
 				MultiSetZPosition(*ppText, Z_TAG_TEXT);
 			} else {
@@ -561,7 +561,7 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 
 					*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 							TextBufferAddr(), 0, tagx - Loffset, tagy - Toffset,
-							GetTagFontHandle(), TXT_CENTRE, 0);
+							GetTagFontHandle(), TXT_CENTER, 0);
 				} else if (TinselV2) {
 					// Bugger cursor
 					const char *tagPtr = TextBufferAddr();
@@ -570,12 +570,12 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 
 					GetCursorXYNoWait(&curX, &curY, false);
 					*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
-							0, curX, curY, GetTagFontHandle(), TXT_CENTRE, 0);
+							0, curX, curY, GetTagFontHandle(), TXT_CENTER, 0);
 				} else {
 					// Handle displaying the tag text on-screen
 					*ppText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
 							0, tagx - Loffset, tagy - Toffset,
-							GetTagFontHandle(), TXT_CENTRE);
+							GetTagFontHandle(), TXT_CENTER);
 					assert(*ppText); // Polygon tag string produced NULL text
 				}
 

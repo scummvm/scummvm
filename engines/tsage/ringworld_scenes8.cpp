@@ -1578,7 +1578,7 @@ void Scene7600::postInit(SceneObjectList *OwnerList) {
 		_globals->_player.setPosition(Common::Point(-50, 195));
 		setAction(&_action1);
 	}
-	_sceneBounds.centre(_globals->_player._position.x, _globals->_player._position.y);
+	_sceneBounds.center(_globals->_player._position.x, _globals->_player._position.y);
 	loadScene(7600);
 	_soundHandler2.startSound(255);
 	_soundHandler1.startSound(251);
@@ -2045,7 +2045,7 @@ void Scene7700::Object8::doAction(int action) {
 			scene->_object14.setPosition(Common::Point(139, 151), 0);
 
 			scene->_gfxButton.setText(EXIT_MSG);
-			scene->_gfxButton._bounds.centre(140, 189);
+			scene->_gfxButton._bounds.center(140, 189);
 			scene->_gfxButton.draw();
 			scene->_gfxButton._bounds.expandPanes();
 
@@ -2059,7 +2059,7 @@ void Scene7700::Object8::doAction(int action) {
 			scene->_object15.setPriority2(200);
 
 			scene->_gfxButton.setText(EXIT_MSG);
-			scene->_gfxButton._bounds.centre(140, 186);
+			scene->_gfxButton._bounds.center(140, 186);
 			scene->_gfxButton.draw();
 			scene->_gfxButton._bounds.expandPanes();
 

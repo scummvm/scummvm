@@ -935,7 +935,7 @@ public:
 private:
 	// Some submethods of testIfCode
 	uint8 testObjRight(uint8, uint8, uint8, uint8, uint8);
-	uint8 testObjCentre(uint8, uint8, uint8, uint8, uint8);
+	uint8 testObjCenter(uint8, uint8, uint8, uint8, uint8);
 	uint8 testObjInBox(uint8, uint8, uint8, uint8, uint8);
 	uint8 testPosn(uint8, uint8, uint8, uint8, uint8);
 	uint8 testSaid(uint8, uint8 *);

@@ -1270,8 +1270,8 @@ void Mouse::createPointerText(uint32 text_id, uint32 pointer_res) {
 			// Above right
 			justification = POSITION_AT_LEFT_OF_BASE;
 		} else {
-			// Above centre
-			justification = POSITION_AT_CENTRE_OF_BASE;
+			// Above center
+			justification = POSITION_AT_CENTER_OF_BASE;
 		}
 	} else if (yOffset > 0) {
 		// Below pointer
@@ -1282,20 +1282,20 @@ void Mouse::createPointerText(uint32 text_id, uint32 pointer_res) {
 			// Below right
 			justification = POSITION_AT_LEFT_OF_TOP;
 		} else {
-			// Below centre
-			justification = POSITION_AT_CENTRE_OF_TOP;
+			// Below center
+			justification = POSITION_AT_CENTER_OF_TOP;
 		}
 	} else {
 		// Same y-coord as pointer
 		if (xOffset < 0) {
-			// Centre left
-			justification = POSITION_AT_RIGHT_OF_CENTRE;
+			// Center left
+			justification = POSITION_AT_RIGHT_OF_CENTER;
 		} else if (xOffset > 0) {
-			// Centre right
-			justification = POSITION_AT_LEFT_OF_CENTRE;
+			// Center right
+			justification = POSITION_AT_LEFT_OF_CENTER;
 		} else {
-			// Centre centre - shouldn't happen anyway!
-			justification = POSITION_AT_LEFT_OF_CENTRE;
+			// Center center - shouldn't happen anyway!
+			justification = POSITION_AT_LEFT_OF_CENTER;
 		}
 	}
 
