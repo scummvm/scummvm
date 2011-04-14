@@ -909,7 +909,7 @@ void AdLibDriver::unkOutput2(uint8 chan) {
 	// including the two most significant frequency bit, and the octave -
 	// set to zero.
 	//
-	// This is very strange behaviour, and causes problems with the ancient
+	// This is very strange behavior, and causes problems with the ancient
 	// FMOPL code we borrowed from AdPlug. I've added a workaround. See
 	// fmopl.cpp for more details.
 	//
@@ -984,7 +984,7 @@ void AdLibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
 
 	uint16 freq = _unkTable[note] + channel.baseFreq;
 
-	// When called from callback 41, the behaviour is slightly different:
+	// When called from callback 41, the behavior is slightly different:
 	// We adjust the frequency, even when channel.unk16 is 0.
 
 	if (channel.unk16 || flag) {
@@ -1093,12 +1093,12 @@ void AdLibDriver::adjustVolume(Channel &channel) {
 // tree) and turning Kallak to stone. Related functions and variables:
 //
 // update_setupPrimaryEffect1()
-//    - Initialises unk29, unk30 and unk31
+//    - Initializes unk29, unk30 and unk31
 //    - unk29 is not further modified
 //    - unk30 is not further modified, except by update_removePrimaryEffect1()
 //
 // update_removePrimaryEffect1()
-//    - Deinitialises unk30
+//    - Deinitializes unk30
 //
 // unk29 - determines how often the notes are played
 // unk30 - modifies the frequency
@@ -1115,7 +1115,7 @@ void AdLibDriver::primaryEffect1(Channel &channel) {
 	if (channel.unk31 >= temp)
 		return;
 
-	// Initialise unk1 to the current frequency
+	// Initialize unk1 to the current frequency
 	uint16 unk1 = ((channel.regBx & 3) << 8) | channel.regAx;
 
 	// This is presumably to shift the "note on" bit so far to the left
@@ -1167,10 +1167,10 @@ void AdLibDriver::primaryEffect1(Channel &channel) {
 // and leaving Kallak's hut. Related functions and variables:
 //
 // update_setupPrimaryEffect2()
-//    - Initialises unk32, unk33, unk34, unk35 and unk36
+//    - Initializes unk32, unk33, unk34, unk35 and unk36
 //    - unk32 is not further modified
 //    - unk33 is not further modified
-//    - unk34 is a countdown that gets reinitialised to unk35 on zero
+//    - unk34 is a countdown that gets reinitialized to unk35 on zero
 //    - unk35 is based on unk34 and not further modified
 //    - unk36 is not further modified
 //
@@ -1182,13 +1182,13 @@ void AdLibDriver::primaryEffect1(Channel &channel) {
 // unk32 - determines how often the notes are played
 // unk33 - modifies the frequency
 // unk34 - countdown, updates frequency on zero
-// unk35 - initialiser for unk34 countdown
-// unk36 - initialiser for unk38 countdown
+// unk35 - initializer for unk34 countdown
+// unk36 - initializer for unk38 countdown
 // unk37 - frequency
 // unk38 - countdown, begins playing on zero
 // unk41 - determines how often the notes are played
 //
-// Note that unk41 is never initialised. Not that it should matter much, but it
+// Note that unk41 is never initialized. Not that it should matter much, but it
 // is a bit sloppy.
 
 void AdLibDriver::primaryEffect2(Channel &channel) {
