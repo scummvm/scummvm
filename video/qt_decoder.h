@@ -41,7 +41,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
-#include "audio/decoders/quicktime.h"
+#include "audio/decoders/quicktime_intern.h"
 
 namespace Common {
 	class MacResManager;

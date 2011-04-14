@@ -30,6 +30,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/quicktime.h"
+#include "audio/decoders/quicktime_intern.h"
 
 // Codecs
 #include "audio/decoders/aac.h"

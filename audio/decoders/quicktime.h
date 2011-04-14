@@ -34,7 +34,6 @@
 #ifndef AUDIO_QUICKTIME_H
 #define AUDIO_QUICKTIME_H
 
-#include "common/quicktime.h"
 #include "common/scummsys.h"
 #include "common/types.h"
 
@@ -45,53 +44,7 @@ namespace Common {
 
 namespace Audio {
 
-class AudioStream;
-class RewindableAudioStream;
-class QueuingAudioStream;
-
-class QuickTimeAudioDecoder : public Common::QuickTimeParser {
-public:
-	QuickTimeAudioDecoder();
-	virtual ~QuickTimeAudioDecoder();
-
-	/**
-	 * Load a QuickTime audio file
-	 * @param filename	the filename to load
-	 */
-	bool loadAudioFile(const Common::String &filename);
-
-	/**
-	 * Load a QuickTime audio file from a SeekableReadStream
-	 * @param stream	the stream to load
-	 */
-	bool loadAudioStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle);
-
-protected:
-	struct AudioSampleDesc : public Common::QuickTimeParser::SampleDesc {
-		AudioSampleDesc();
-
-		uint16 channels;
-		uint32 sampleRate;
-		uint32 samplesPerFrame;
-		uint32 bytesPerFrame;
-	};
-
-	// Common::QuickTimeParser API
-	virtual Common::QuickTimeParser::SampleDesc *readSampleDesc(MOVStreamContext *st, uint32 format);
-
-	AudioStream *createAudioStream(Common::SeekableReadStream *stream);
-	bool checkAudioCodecSupport(uint32 tag, byte objectTypeMP4);
-	void init();
-
-	void queueNextAudioChunk();
-	uint32 getAudioChunkSampleCount(uint chunk);
-	int8 _audioStreamIndex;
-	uint _curAudioChunk;
-	QueuingAudioStream *_audStream;
-
-	void setAudioStreamPos(const Timestamp &where);
-	bool isOldDemuxing() const;
-};
+class SeekableAudioStream;
 	
 /**
  * Try to load a QuickTime sound file from the given file name and create a SeekableAudioStream
