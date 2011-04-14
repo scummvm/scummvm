@@ -95,10 +95,8 @@ Kernel::Kernel() :
 	_geometry = new Geometry(this);
 	assert(_geometry);
 
-#ifdef USE_THEORADEC
 	_fmv = new MoviePlayer(this);
 	assert(_fmv);
-#endif
 
 	_initSuccess = true;
 }
@@ -121,10 +119,8 @@ Kernel::~Kernel() {
 	delete _geometry;
 	_geometry = 0;
 
-#ifdef USE_THEORADEC
 	delete _fmv;
 	_fmv = 0;
-#endif
 
 	delete _script;
 	_script = 0;
