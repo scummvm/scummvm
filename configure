@@ -92,8 +92,8 @@ _timidity=auto
 _zlib=auto
 _theoradec=auto
 _fluidsynth=auto
-_opengl=auto
-_opengles=auto
+_opengl=no
+_opengles=no
 _readline=auto
 # Default option behaviour yes/no
 _debug_build=auto
