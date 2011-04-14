@@ -25,29 +25,14 @@
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/util.h"
+#include "common/system.h"
 
 #include <stdarg.h>	// For va_list etc.
-
-
-#ifdef __PLAYSTATION2__
-	// for those replaced fopen/fread/etc functions
-	#include "backends/platform/ps2/fileio.h"
-
-	#define fputs(str, file)	ps2_fputs(str, file)
-	#define fflush(a)			ps2_fflush(a)
-#endif
-
-#ifdef __DS__
-	#include "backends/fs/ds/ds-fs.h"
-
-	#define fputs(str, file)	DS::std_fwrite(str, strlen(str), 1, file)
-	#define fflush(file)		DS::std_fflush(file)
-#endif
 
 // TODO: Move gDebugLevel into namespace Common.
 int gDebugLevel = -1;
 
-DECLARE_SINGLETON(Common::DebugManager)
+DECLARE_SINGLETON(Common::DebugManager);
 
 namespace Common {
 
@@ -119,31 +104,15 @@ bool DebugManager::isDebugChannelEnabled(uint32 channel) {
 		return (gDebugChannelsEnabled & channel) != 0;
 }
 
-
-
-static OutputFormatter s_debugOutputFormatter = 0;
-
-void setDebugOutputFormatter(OutputFormatter f) {
-	s_debugOutputFormatter = f;
-}
-
 }	// End of namespace Common
 
 
 #ifndef DISABLE_TEXT_CONSOLE
 
 static void debugHelper(const char *s, va_list va, bool caret = true) {
-	char in_buf[STRINGBUFLEN];
 	char buf[STRINGBUFLEN];
-	vsnprintf(in_buf, STRINGBUFLEN, s, va);
 
-	// Next, give the active engine (if any) a chance to augment the message,
-	// but only if not used from debugN.
-	if (caret && Common::s_debugOutputFormatter) {
-		(*Common::s_debugOutputFormatter)(buf, in_buf, STRINGBUFLEN);
-	} else {
-		strncpy(buf, in_buf, STRINGBUFLEN);
-	}
+	vsnprintf(buf, STRINGBUFLEN, s, va);
 	buf[STRINGBUFLEN-1] = '\0';
 
 	if (caret) {
@@ -151,19 +120,10 @@ static void debugHelper(const char *s, va_list va, bool caret = true) {
 		strcat(buf, "\n");
 	}
 
-	fputs(buf, stdout);
-
-#if defined( USE_WINDBG )
-#if defined( _WIN32_WCE )
-	TCHAR buf_unicode[1024];
-	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
-	OutputDebugString(buf_unicode);
-#else
-	OutputDebugString(buf);
-#endif
-#endif
-
-	fflush(stdout);
+	if (g_system)
+		g_system->logMessage(LogMessageType::kDebug, buf);
+	// TODO: Think of a good fallback in case we do not have
+	// any OSystem yet.
 }
 
 void debug(const char *s, ...) {
@@ -184,6 +144,14 @@ void debug(int level, const char *s, ...) {
 	debugHelper(s, va);
 	va_end(va);
 
+}
+
+void debugN(const char *s, ...) {
+	va_list va;
+
+	va_start(va, s);
+	debugHelper(s, va, false);
+	va_end(va);
 }
 
 void debugN(int level, const char *s, ...) {

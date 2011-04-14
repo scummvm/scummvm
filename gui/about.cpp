@@ -30,7 +30,7 @@
 #include "common/translation.h"
 #include "common/util.h"
 #include "gui/about.h"
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 #include "gui/widget.h"
 
 #include "gui/ThemeEval.h"
@@ -93,7 +93,7 @@ AboutDialog::AboutDialog()
 	version += gResidualVersion;
 	_lines.push_back(version);
 
-	Common::String date = Common::String::printf(_("(built on %s)"), gResidualBuildDate);
+	Common::String date = Common::String::format(_("(built on %s)"), gResidualBuildDate);
 	_lines.push_back("C2" + date);
 
 	for (i = 0; i < ARRAYSIZE(copyright_text); i++)

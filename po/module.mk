@@ -2,9 +2,9 @@ POTFILE := $(srcdir)/po/residual.pot
 POFILES := $(wildcard $(srcdir)/po/*.po)
 
 updatepot:
-	xgettext -f $(srcdir)/po/POTFILES -D $(srcdir) -d residual --c++ -k_ -k_t -k_s -o $(POTFILE) \
+	xgettext -f $(srcdir)/po/POTFILES -D $(srcdir) -d residual --c++ -k_ -k_s -k_c:1,2c -k_sc:1,2c \
 		-kDECLARE_TRANSLATION_ADDITIONAL_CONTEXT:1,2c -o $(POTFILE) \
-		"--copyright-holder=Residual Team" --package-name=Residual \
+		--copyright-holder="Residual Team" --package-name=Residual \
 		--package-version=$(VERSION) --msgid-bugs-address=residual-devel@lists.sf.net -o $(POTFILE)_
 
 	sed -e 's/SOME DESCRIPTIVE TITLE/LANGUAGE translation for Residual/' \
@@ -33,13 +33,10 @@ updatepot:
 		mv -f $@.new $@; \
 	fi;
 
-#$(srcdir)/common/messages.cpp: $(POFILES)
-#	perl $(srcdir)/tools/po2c $^ > $(srcdir)/common/messages.cpp
-
-translations-dat: tools/create_translations
-	tools/create_translations/create_translations $(POFILES)
+translations-dat: devtools/create_translations
+	devtools/create_translations/create_translations $(POFILES)
 	mv translations.dat $(srcdir)/gui/themes/
- 
+
 update-translations: updatepot $(POFILES) translations-dat
 
 update-translations: updatepot $(POFILES)

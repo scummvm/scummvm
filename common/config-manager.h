@@ -137,19 +137,32 @@ public:
 	void				addGameDomain(const String &domName);
 	void				removeGameDomain(const String &domName);
 	void				renameGameDomain(const String &oldName, const String &newName);
+
+	void				addMiscDomain(const String &domName);
+	void				removeMiscDomain(const String &domName);
+	void				renameMiscDomain(const String &oldName, const String &newName);
+
 	bool				hasGameDomain(const String &domName) const;
+	bool				hasMiscDomain(const String &domName) const;
+
 	const DomainMap &	getGameDomains() const { return _gameDomains; }
 	DomainMap &			getGameDomains() { return _gameDomains; }
 
+	static void			defragment();	// move in memory to reduce fragmentation
+	void 				copyFrom(ConfigManager &source);
+	
 private:
 	friend class Singleton<SingletonBaseType>;
 	ConfigManager();
 
 	void			loadFromStream(SeekableReadStream &stream);
+	void			addDomain(const Common::String &domainName, const Domain &domain);
 	void			writeDomain(WriteStream &stream, const String &name, const Domain &domain);
+	void			renameDomain(const String &oldName, const String &newName, DomainMap &map);
 
 	Domain			_transientDomain;
 	DomainMap		_gameDomains;
+	DomainMap		_miscDomains;		// Any other domains
 	Domain			_appDomain;
 	Domain			_defaultsDomain;
 

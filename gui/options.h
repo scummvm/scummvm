@@ -26,9 +26,8 @@
 #define OPTIONS_DIALOG_H
 
 #include "gui/dialog.h"
-#include "gui/TabWidget.h"
 #include "common/str.h"
-#include "sound/musicplugin.h"
+#include "audio/musicplugin.h"
 
 #ifdef SMALL_SCREEN_DEVICE
 #include "gui/KeysDialog.h"
@@ -42,11 +41,13 @@ class PopUpWidget;
 class SliderWidget;
 class StaticTextWidget;
 class ListWidget;
+class TabWidget;
 
 class OptionsDialog : public Dialog {
 public:
 	OptionsDialog(const Common::String &domain, int x, int y, int w, int h);
 	OptionsDialog(const Common::String &domain, const Common::String &name);
+	~OptionsDialog();
 
 	void init();
 
@@ -96,6 +97,7 @@ private:
 	PopUpWidget *_gfxPopUp;
 	CheckboxWidget *_fullscreenCheckbox;
 	CheckboxWidget *_aspectCheckbox;
+	CheckboxWidget *_disableDitheringCheckbox;
 	StaticTextWidget *_renderModePopUpDesc;
 	PopUpWidget *_renderModePopUp;
 
@@ -114,8 +116,6 @@ private:
 	PopUpWidget *_mt32DevicePopUp;
 	StaticTextWidget *_gmDevicePopUpDesc;
 	PopUpWidget *_gmDevicePopUp;
-
-
 
 	//
 	// MIDI controls

@@ -29,27 +29,45 @@
 #ifndef COMMON_HASHMAP_H
 #define COMMON_HASHMAP_H
 
+/**
+ * @def DEBUG_HASH_COLLISIONS
+ * Enable the following #define if you want to check how many collisions the
+ * code produces (many collisions indicate either a bad hash function, or a
+ * hash table that is too small).
+ */
+//#define DEBUG_HASH_COLLISIONS
+
+/**
+ * @def USE_HASHMAP_MEMORY_POOL
+ * Enable the following define to let HashMaps use a memory pool for the
+ nodes they contain. * This increases memory usage, but also can improve
+ speed quite a bit.
+ */
+#define USE_HASHMAP_MEMORY_POOL
+
+
 #include "common/func.h"
 #include "common/str.h"
 #include "common/util.h"
 
-#define USE_HASHMAP_MEMORY_POOL
+#ifdef DEBUG_HASH_COLLISIONS
+#include "common/debug.h"
+#endif
+
 #ifdef USE_HASHMAP_MEMORY_POOL
 #include "common/memorypool.h"
 #endif
+
+
 
 namespace Common {
 
 // The sgi IRIX MIPSpro Compiler has difficulties with nested templates.
 // This and the other __sgi conditionals below work around these problems.
-#if defined(__sgi) && !defined(__GNUC__)
+// The Intel C++ Compiler suffers from the same problems.
+#if (defined(__sgi) && !defined(__GNUC__)) || defined(__INTEL_COMPILER)
 template<class T> class IteratorImpl;
 #endif
-
-// Enable the following #define if you want to check how many collisions the
-// code produces (many collisions indicate either a bad hash function, or a
-// hash table that is too small).
-//#define DEBUG_HASH_COLLISIONS
 
 
 /**
@@ -124,8 +142,8 @@ private:
 	}
 
 	void assign(const HM_t &map);
-	int lookup(const Key &key) const;
-	int lookupAndCreateIfMissing(const Key &key);
+	uint lookup(const Key &key) const;
+	uint lookupAndCreateIfMissing(const Key &key);
 	void expandStorage(uint newCapacity);
 
 #if !defined(__sgi) || defined(__GNUC__)
@@ -138,7 +156,7 @@ private:
 	template<class NodeType>
 	class IteratorImpl {
 		friend class HashMap;
-#if defined(__sgi) && !defined(__GNUC__)
+#if (defined(__sgi) && !defined(__GNUC__)) || defined(__INTEL_COMPILER)
 		template<class T> friend class Common::IteratorImpl;
 #else
 		template<class T> friend class IteratorImpl;
@@ -222,6 +240,7 @@ public:
 
 	void clear(bool shrinkArray = 0);
 
+	void erase(iterator entry);
 	void erase(const Key &key);
 
 	uint size() const { return _size; }
@@ -437,7 +456,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::expandStorage(uint newCapacity) {
 }
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
-int HashMap<Key, Val, HashFunc, EqualFunc>::lookup(const Key &key) const {
+uint HashMap<Key, Val, HashFunc, EqualFunc>::lookup(const Key &key) const {
 	const uint hash = _hash(key);
 	uint ctr = hash & _mask;
 	for (uint perturb = hash; ; perturb >>= HASHMAP_PERTURB_SHIFT) {
@@ -459,7 +478,7 @@ int HashMap<Key, Val, HashFunc, EqualFunc>::lookup(const Key &key) const {
 
 #ifdef DEBUG_HASH_COLLISIONS
 	_lookups++;
-	fprintf(stderr, "collisions %d, dummies hit %d, lookups %d, ratio %f in HashMap %p; size %d num elements %d\n",
+	debug("collisions %d, dummies hit %d, lookups %d, ratio %f in HashMap %p; size %d num elements %d",
 		_collisions, _dummyHits, _lookups, ((double) _collisions / (double)_lookups),
 		(const void *)this, _mask+1, _size);
 #endif
@@ -468,7 +487,7 @@ int HashMap<Key, Val, HashFunc, EqualFunc>::lookup(const Key &key) const {
 }
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
-int HashMap<Key, Val, HashFunc, EqualFunc>::lookupAndCreateIfMissing(const Key &key) {
+uint HashMap<Key, Val, HashFunc, EqualFunc>::lookupAndCreateIfMissing(const Key &key) {
 	const uint hash = _hash(key);
 	uint ctr = hash & _mask;
 	const uint NONE_FOUND = _mask + 1;
@@ -497,7 +516,7 @@ int HashMap<Key, Val, HashFunc, EqualFunc>::lookupAndCreateIfMissing(const Key &
 
 #ifdef DEBUG_HASH_COLLISIONS
 	_lookups++;
-	fprintf(stderr, "collisions %d, dummies hit %d, lookups %d, ratio %f in HashMap %p; size %d num elements %d\n",
+	debug("collisions %d, dummies hit %d, lookups %d, ratio %f in HashMap %p; size %d num elements %d",
 		_collisions, _dummyHits, _lookups, ((double) _collisions / (double)_lookups),
 		(const void *)this, _mask+1, _size);
 #endif
@@ -570,6 +589,23 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::setVal(const Key &key, const Val &v
 	uint ctr = lookupAndCreateIfMissing(key);
 	assert(_storage[ctr] != NULL);
 	_storage[ctr]->_value = val;
+}
+
+template<class Key, class Val, class HashFunc, class EqualFunc>
+void HashMap<Key, Val, HashFunc, EqualFunc>::erase(iterator entry) {
+	// Check whether we have a valid iterator
+	assert(entry._hashmap == this);
+	const uint ctr = entry._idx;
+	assert(ctr <= _mask);
+	Node * const node = _storage[ctr];
+	assert(node != NULL);
+	assert(node != HASHMAP_DUMMY_NODE);
+
+	// If we remove a key, we replace it with a dummy node.
+	freeNode(node);
+	_storage[ctr] = HASHMAP_DUMMY_NODE;
+	_size--;
+	_deleted++;
 }
 
 template<class Key, class Val, class HashFunc, class EqualFunc>

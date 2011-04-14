@@ -6,27 +6,27 @@ MODULE_OBJS := \
 	console.o \
 	debugger.o \
 	dialog.o \
-	editable.o \
 	error.o \
-	EditTextWidget.o \
-	GuiManager.o \
+	gui-manager.o \
 	launcher.o \
-	ListWidget.o \
 	massadd.o \
 	message.o \
 	object.o \
 	options.o \
-	PopUpWidget.o \
 	saveload.o \
-	ScrollBarWidget.o \
-	TabWidget.o \
 	themebrowser.o \
 	ThemeEngine.o \
 	ThemeEval.o \
 	ThemeLayout.o \
 	ThemeParser.o \
 	Tooltip.o \
-	widget.o
+	widget.o \
+	widgets/editable.o \
+	widgets/edittext.o \
+	widgets/list.o \
+	widgets/popup.o \
+	widgets/scrollbar.o \
+	widgets/tab.o
 
 ifdef MACOSX
 MODULE_OBJS += \

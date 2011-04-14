@@ -8,7 +8,7 @@
 #
 # UNIX specific
 #
-install: all
+install:
 	$(INSTALL) -d "$(DESTDIR)$(bindir)"
 	$(INSTALL) -c -s -m 755 "./$(EXECUTABLE)" "$(DESTDIR)$(bindir)/$(EXECUTABLE)"
 	#$(INSTALL) -d "$(DESTDIR)$(mandir)/man6/"
@@ -73,7 +73,7 @@ endif
 	chmod 755 residual
 	cp residual $(bundle_name)/Residual
 	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/
-	cp $(srcdir)/dists/iphone/icon-72.png $(bundle_name)/	
+	cp $(srcdir)/dists/iphone/icon-72.png $(bundle_name)/
 	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/
 
 # Location of static libs for the iPhone
@@ -103,6 +103,14 @@ endif
 
 ifdef USE_MPEG2
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmpeg2.a
+endif
+
+ifdef USE_PNG
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libpng.a
+endif
+
+ifdef USE_THEORADEC
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libtheoradec.a
 endif
 
 ifdef USE_ZLIB
@@ -211,11 +219,7 @@ aos4dist: $(EXECUTABLE)
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)/extras/
 endif
-	cp $(srcdir)/AUTHORS $(AOS4PATH)/AUTHORS.txt
-	cp $(srcdir)/COPYING $(AOS4PATH)/COPYING.txt
-	cp $(srcdir)/COPYING.LGPL $(AOS4PATH)/COPYING.LGPL.txt
-	cp $(srcdir)/NEWS $(AOS4PATH)/NEWS.txt
-	cp $(srcdir)/README $(AOS4PATH)/README.txt
+	cp $(DIST_FILES_DOCS) $(AOS4PATH)
 
 # Mark special targets as phony
 .PHONY: deb bundle osxsnap win32dist install uninstall

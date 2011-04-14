@@ -40,7 +40,7 @@ Model::Model(const char *filename, const char *data, int len, CMap *cmap) :
 	_fname = filename;
 	_headNode = NULL;
 
-	if (len >= 4 && READ_BE_UINT32(data) == MKID_BE('LDOM'))
+	if (len >= 4 && READ_BE_UINT32(data) == MKTAG('L','D','O','M'))
 		loadBinary(data, cmap);
 	else {
 		TextSplitter ts(data, len);

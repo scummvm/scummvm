@@ -52,6 +52,7 @@ namespace Common {
 	class HardwareKeySet;
 }
 
+class AudioCDManager;
 class FilesystemFactory;
 
 /**
@@ -72,8 +73,25 @@ struct TimeDate {
 	int tm_year;    ///< year - 1900
 };
 
+namespace LogMessageType {
+
+enum Type {
+	kError,
+	kWarning,
+	kDebug
+};
+
+} // End of namespace LogMessageType
+
 /**
- * Interface for Residual backends.
+ * Interface for ScummVM backends. If you want to port ScummVM to a system
+ * which is not currently covered by any of our backends, this is the place
+ * to start. ScummVM will create an instance of a subclass of this interface
+ * and use it to interact with the system.
+ *
+ * In particular, a backend provides a video surface for ScummVM to draw in;
+ * methods to create timers, to handle user input events,
+ * control audio CD playback, and sound output.
  */
 class OSystem : Common::NonCopyable {
 protected:
@@ -120,21 +138,6 @@ public:
 		 * then this feature flag can be used to switch between the two.
 		 */
 		kFeatureFullscreenMode,
-
-		/**
-		 * Control aspect ratio correction. Aspect ratio correction is used to
-		 * correct games running at 320x200 (i.e with an aspect ratio of 8:5),
-		 * but which on their original hardware were displayed with the
-		 * standard 4:3 ratio (that is, the original graphics used non-square
-		 * pixels). When the backend support this, then games running at
-		 * 320x200 pixels should be scaled up to 320x240 pixels. For all other
-		 * resolutions, ignore this feature flag.
-		 * @note You can find utility functions in common/scaler.h which can
-		 *       be used to implement aspect ratio correction. In particular,
-		 *       stretch200To240() can stretch a rect, including (very fast)
-		 *       interpolation, and works in-place.
-		 */
-		kFeatureAspectRatioCorrection,
 
 		/**
 		 * Determine whether a virtual keyboard is too be shown or not.
@@ -468,46 +471,14 @@ public:
 
 
 
-	/**
-	 * @name Audio CD
-	 * The methods in this group deal with Audio CD playback.
-	 * The default implementation simply does nothing.
-	 * This is the lower level implementation as provided by the
-	 * backends. The engines should use the Audio::AudioCDManager
-	 * class instead of using it directly.
-	 */
+	/** @name Audio CD */
 	//@{
 
 	/**
-	 * Initialise the specified CD drive for audio playback.
-	 * @return true if the CD drive was inited succesfully
+	 * Return the audio cd manager. For more information, refer to the
+	 * AudioCDManager documentation.
 	 */
-	virtual bool openCD(int drive);
-
-	/**
-	 * Poll CD status.
-	 * @return true if CD audio is playing
-	 */
-	virtual bool pollCD();
-
-	/**
-	 * Start audio CD playback.
-	 * @param track			the track to play.
-	 * @param num_loops		how often playback should be repeated (-1 = infinitely often).
-	 * @param start_frame	the frame at which playback should start (75 frames = 1 second).
-	 * @param duration		the number of frames to play.
-	 */
-	virtual void playCD(int track, int num_loops, int start_frame, int duration) {}
-
-	/**
-	 * Stop audio CD playback.
-	 */
-	virtual void stopCD() {}
-
-	/**
-	 * Update cdrom audio status.
-	 */
-	virtual void updateCD() {}
+	virtual AudioCDManager *getAudioCDManager() = 0;
 
 	//@}
 
@@ -519,6 +490,13 @@ public:
 	virtual void quit() = 0;
 
 	/**
+	 * Signals that a fatal error inside the client code has happened.
+	 *
+	 * This should quit the application.
+	 */
+	virtual void fatalError();
+
+	/**
 	 * Set a window caption or any other comparable status display to the
 	 * given value. The caption must be a pure ISO LATIN 1 string. Passing a
 	 * string with a different encoding may lead to unexpected behavior,
@@ -527,6 +505,22 @@ public:
 	 * @param caption	the window caption to use, as an ISO LATIN 1 string
 	 */
 	virtual void setWindowCaption(const char *caption) {}
+
+	/**
+	 * Display a message in an 'on screen display'. That is, display it in a
+	 * fashion where it is visible on or near the screen (e.g. in a transparent
+	 * rectangle over the regular screen content; or in a message box beneath
+	 * it; etc.).
+	 *
+	 * Currently, only pure ASCII messages can be expected to show correctly.
+	 *
+	 * @note There is a default implementation in BaseBackend which uses a
+	 *       TimedMessageDialog to display the message. Hence implementing
+	 *       this is optional.
+	 *
+	 * @param msg	the message to display on screen
+	 */
+	virtual void displayMessageOnOSD(const char *msg) = 0;
 
 	/**
 	 * Return the SaveFileManager, used to store and load savestates
@@ -569,6 +563,38 @@ public:
 	 * May return 0 to indicate that writing to config file is not possible.
 	 */
 	virtual Common::WriteStream *createConfigWriteStream() = 0;
+
+	/**
+	 * Logs a given message.
+	 *
+	 * It is up to the backend where to log the different messages.
+	 * The backend should aim at using a non-buffered output for it
+	 * so that no log data is lost in case of a crash.
+	 *
+	 * The default implementation outputs them on stdout/stderr.
+	 *
+	 * @param type    the type of the message
+	 * @param message the message itself
+	 */
+	virtual void logMessage(LogMessageType::Type type, const char *message);
+
+	/**
+	 * Returns the locale of the system.
+	 *
+	 * This returns the currently set up locale of the system, on which
+	 * ScummVM is run.
+	 *
+	 * The format of the locale is language_country. These should match
+	 * the POSIX locale values.
+	 *
+	 * For information about POSIX locales read here:
+	 * http://en.wikipedia.org/wiki/Locale#POSIX-type_platforms
+	 *
+	 * The default implementation returns "en_US".
+	 *
+	 * @return locale of the system
+	 */
+	virtual Common::String getSystemLanguage() const;
 
 	//@}
 };

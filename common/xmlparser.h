@@ -27,7 +27,7 @@
 #define XML_PARSER_H
 
 #include "common/sys.h"
-#include "common/stream.h"
+#include "common/types.h"
 
 #include "common/list.h"
 #include "common/hashmap.h"
@@ -38,14 +38,7 @@
 namespace Common {
 
 class FSNode;
-
-/*
-	XMLParser.cpp/h -- Generic XML Parser
-	=====================================
-
-	External documentation available at:
-		http://www.smartlikearoboc.com/scummvm_doc/xmlparser_doc.html
-*/
+class SeekableReadStream;
 
 #define MAX_XML_DEPTH 8
 
@@ -103,19 +96,7 @@ public:
 	 */
 	XMLParser() : _XMLkeys(0), _stream(0) {}
 
-	virtual ~XMLParser() {
-		while (!_activeKey.empty())
-			freeNode(_activeKey.pop());
-
-		delete _XMLkeys;
-		delete _stream;
-
-		for (Common::List<XMLKeyLayout*>::iterator i = _layoutList.begin();
-			i != _layoutList.end(); ++i)
-			delete *i;
-
-		_layoutList.clear();
-	}
+	virtual ~XMLParser();
 
 	/** Active state for the parser */
 	enum ParserState {
@@ -133,16 +114,16 @@ public:
 	struct XMLKeyLayout;
 	struct ParserNode;
 
-	typedef Common::HashMap<Common::String, XMLParser::XMLKeyLayout*, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ChildMap;
+	typedef HashMap<String, XMLParser::XMLKeyLayout*, IgnoreCase_Hash, IgnoreCase_EqualTo> ChildMap;
 
 	/** nested struct representing the layout of the XML file */
 	struct XMLKeyLayout {
 		struct XMLKeyProperty {
-			Common::String name;
+			String name;
 			bool required;
 		};
 
-		Common::List<XMLKeyProperty> properties;
+		List<XMLKeyProperty> properties;
 		ChildMap children;
 
 		virtual bool doCallback(XMLParser *parent, ParserNode *node) = 0;
@@ -156,8 +137,8 @@ public:
 
 	/** Struct representing a parsed node */
 	struct ParserNode {
-		Common::String name;
-		Common::StringMap values;
+		String name;
+		StringMap values;
 		bool ignore;
 		bool header;
 		int depth;
@@ -181,7 +162,7 @@ public:
 	 *
 	 * @param filename Name of the file to load.
 	 */
-	bool loadFile(const Common::String &filename);
+	bool loadFile(const String &filename);
 
 	bool loadFile(const FSNode &node);
 
@@ -198,7 +179,7 @@ public:
 	 */
 	bool loadBuffer(const byte *buffer, uint32 size, DisposeAfterUse::Flag disposable = DisposeAfterUse::NO);
 
-	bool loadStream(Common::SeekableReadStream *stream);
+	bool loadStream(SeekableReadStream *stream);
 
 	void close();
 
@@ -283,7 +264,7 @@ protected:
 	/**
 	 * Parses the value of a given key. There's no reason to overload this.
 	 */
-	bool parseKeyValue(Common::String keyName);
+	bool parseKeyValue(String keyName);
 
 	/**
 	 * Called once a key has been parsed. It handles the closing/cleanup of the
@@ -293,65 +274,22 @@ protected:
 
 	/**
 	 * Prints an error message when parsing fails and stops the parser.
-	 * Parser error always returns "false" so we can pass the return value directly
-	 * and break down the parsing.
+	 * Parser error always returns "false" so we can pass the return value
+	 * directly and break down the parsing.
 	 */
 	bool parserError(const char *errorString, ...) GCC_PRINTF(2, 3);
 
 	/**
-	 * Skips spaces/whitelines etc. Returns true if any spaces were skipped.
+	 * Skips spaces/whitelines etc.
+	 * @return true if any spaces were skipped.
 	 */
-	bool skipSpaces() {
-		if (!isspace(_char))
-			return false;
-
-		while (_char && isspace(_char))
-			_char = _stream->readByte();
-
-		return true;
-	}
+	bool skipSpaces();
 
 	/**
 	 * Skips comment blocks and comment lines.
-	 * Returns true if any comments were skipped.
-	 * Overload this if you want to disable comments on your XML syntax
-	 * or to change the commenting syntax.
+	 * @return true if any comments were skipped.
 	 */
-	virtual bool skipComments() {
-		if (_char == '<') {
-			_char = _stream->readByte();
-
-			if (_char != '!') {
-				_stream->seek(-1, SEEK_CUR);
-				_char = '<';
-				return false;
-			}
-
-			if (_stream->readByte() != '-' || _stream->readByte() != '-')
-				return parserError("Malformed comment syntax.");
-
-			_char = _stream->readByte();
-
-			while (_char) {
-				if (_char == '-') {
-					if (_stream->readByte() == '-') {
-
-						if (_stream->readByte() != '>')
-							return parserError("Malformed comment (double-hyphen inside comment body).");
-
-						_char = _stream->readByte();
-						return true;
-					}
-				}
-
-				_char = _stream->readByte();
-			}
-
-			return parserError("Comment has no closure.");
-		}
-
-		return false;
-	}
+	bool skipComments();
 
 	/**
 	 * Check if a given character can be part of a KEY or VALUE name.
@@ -364,18 +302,8 @@ protected:
 
 	/**
 	 * Parses a the first textual token found.
-	 * There's no reason to overload this.
 	 */
-	bool parseToken() {
-		_token.clear();
-
-		while (isValidNameChar(_char)) {
-			_token += _char;
-			_char = _stream->readByte();
-		}
-
-		return isspace(_char) != 0 || _char == '>' || _char == '=' || _char == '/';
-	}
+	bool parseToken();
 
 	/**
 	 * Parses the values inside an integer key.
@@ -395,32 +323,9 @@ protected:
 	 *            by reference.
 	 * @returns True if the parsing succeeded.
 	 */
-	bool parseIntegerKey(const char *key, int count, ...) {
-		char *parseEnd;
-		int *num_ptr;
-
-		va_list args;
-		va_start(args, count);
-
-		while (count--) {
-			while (isspace(*key))
-				key++;
-
-			num_ptr = va_arg(args, int*);
-			*num_ptr = strtol(key, &parseEnd, 10);
-
-			key = parseEnd;
-
-			while (isspace(*key))
-				key++;
-
-			if (count && *key++ != ',')
-				return false;
-		}
-
-		va_end(args);
-		return (*key == 0);
-	}
+	bool parseIntegerKey(const char *key, int count, ...);
+	bool parseIntegerKey(const String &keyStr, int count, ...);
+	bool vparseIntegerKey(const char *key, int count, va_list args);
 
 	bool parseXMLHeader(ParserNode *node);
 
@@ -431,21 +336,21 @@ protected:
 	 */
 	virtual void cleanup() {}
 
-	Common::List<XMLKeyLayout*> _layoutList;
+	List<XMLKeyLayout*> _layoutList;
 
 private:
 	char _char;
 	SeekableReadStream *_stream;
-	Common::String _fileName;
+	String _fileName;
 
 	ParserState _state; /** Internal state of the parser */
 
-	Common::String _error; /** Current error message */
-	Common::String _token; /** Current text token */
+	String _error; /** Current error message */
+	String _token; /** Current text token */
 
-	Common::Stack<ParserNode*> _activeKey; /** Node stack of the parsed keys */
+	Stack<ParserNode*> _activeKey; /** Node stack of the parsed keys */
 };
 
-}
+} // End of namespace Common
 
 #endif

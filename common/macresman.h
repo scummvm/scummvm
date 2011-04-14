@@ -23,6 +23,15 @@
  *
  */
 
+/**
+ * @file
+ * Macintosh resource fork manager used in engines:
+ * - groovie
+ * - mohawk
+ * - sci
+ * - scumm
+ */
+
 #include "common/array.h"
 #include "common/file.h"
 
@@ -33,12 +42,12 @@ namespace Common {
 
 class FSNode;
 
-typedef Common::Array<uint16> MacResIDArray;
-typedef Common::Array<uint32> MacResTagArray;
+typedef Array<uint16> MacResIDArray;
+typedef Array<uint32> MacResTagArray;
 
 /**
- * Class for reading Mac Binary files.
- * Is able to read dumped resource forks too.
+ * Class for handling Mac data and resource forks.
+ * It can read from raw, MacBinary, and AppleDouble formats.
  */
 class MacResManager {
 
@@ -46,56 +55,112 @@ public:
 	MacResManager();
 	~MacResManager();
 
-	bool open(Common::String filename);
-	bool open(Common::FSNode path, Common::String filename);
-	void close();
-
-	bool hasDataFork();
-	bool hasResFork();
-
-	static bool isMacBinary(Common::SeekableReadStream &stream);
+	/**
+	 * Open a Mac data/resource fork pair.
+	 * @param filename The base file name of the file
+	 * @note This will check for the raw resource fork, MacBinary, and AppleDouble formats.
+	 * @return True on success
+	 */
+	bool open(String filename);
 
 	/**
-	 * Read resource from the Mac Binary file
+	 * Open a Mac data/resource fork pair.
+	 * @param path The path that holds the forks
+	 * @param filename The base file name of the file
+	 * @note This will check for the raw resource fork, MacBinary, and AppleDouble formats.
+	 * @return True on success
+	 */
+	bool open(FSNode path, String filename);
+
+	/**
+	 * Close the Mac data/resource fork pair.
+	 */
+	void close();
+
+	/**
+	 * Query whether or not we have a data fork present.
+	 * @return True if the data fork is present
+	 */
+	bool hasDataFork() const;
+
+	/**
+	 * Query whether or not we have a data fork present.
+	 * @return True if the resource fork is present
+	 */
+	bool hasResFork() const;
+
+	/**
+	 * Check if the given stream is in the MacBinary format.
+	 * @param stream The stream we're checking
+	 */
+	static bool isMacBinary(SeekableReadStream &stream);
+
+	/**
+	 * Read resource from the MacBinary file
 	 * @param typeID FourCC of the type
 	 * @param resID Resource ID to fetch
 	 * @return Pointer to a SeekableReadStream with loaded resource
 	 */
-	Common::SeekableReadStream *getResource(uint32 typeID, uint16 resID);
+	SeekableReadStream *getResource(uint32 typeID, uint16 resID);
 
 	/**
-	 * Read resource from the Mac Binary file
+	 * Read resource from the MacBinary file
 	 * @note This will take the first resource that matches this name, regardless of type
-	 * @param filename filename of the resource
+	 * @param filename file name of the resource
 	 * @return Pointer to a SeekableReadStream with loaded resource
 	 */
-	Common::SeekableReadStream *getResource(const Common::String &filename);
+	SeekableReadStream *getResource(const String &filename);
 
 	/**
-	 * Read resource from the Mac Binary file
+	 * Read resource from the MacBinary file
 	 * @param typeID FourCC of the type
-	 * @param filename filename of the resource
+	 * @param filename file name of the resource
 	 * @return Pointer to a SeekableReadStream with loaded resource
 	 */
-	Common::SeekableReadStream *getResource(uint32 typeID, const Common::String &filename);
+	SeekableReadStream *getResource(uint32 typeID, const String &filename);
 
-	Common::SeekableReadStream *getDataFork();
-	Common::String getResName(uint32 typeID, uint16 resID);
-	uint32 getResForkSize();
-	bool getResForkMD5(char *md5str, uint32 length);
+	/**
+	 * Retrieve the data fork
+	 * @return The stream if present, 0 otherwise
+	 */
+	SeekableReadStream *getDataFork();
 
-	Common::String getBaseFileName() { return _baseFileName; }
+	/**
+	 * Get the name of a given resource
+	 * @param typeID FourCC of the type
+	 * @param resID Resource ID to fetch
+	 * @return The name of a given resource and an empty string if not present
+	 */
+	String getResName(uint32 typeID, uint16 resID) const;
+
+	/**
+	 * Get the size of the data portion of the resource fork
+	 * @return The size of the data portion of the resource fork
+	 */
+	uint32 getResForkDataSize() const;
+
+	/**
+	 * Calculate the MD5 checksum of the resource fork
+	 * @param length The maximum length to compute for
+	 * @return The MD5 checksum of the resource fork
+	 */
+	String computeResForkMD5AsString(uint32 length = 0) const;
+
+	/**
+	 * Get the base file name of the data/resource fork pair
+	 * @return The base file name of the data/resource fork pair
+	 */
+	String getBaseFileName() const { return _baseFileName; }
 
 	/**
 	 * Convert cursor from crsr format to format suitable for feeding to CursorMan
-	 * @param data Pointer to the cursor data
-	 * @param datasize Size of the cursor data
+	 * @param data Pointer to the cursor datax
 	 * @param cursor Pointer to memory where result cursor will be stored. The memory
 	 *               block will be malloc()'ed
 	 * @param w Pointer to int where the cursor width will be stored
 	 * @param h Pointer to int where the cursor height will be stored
-	 * @param hotspot_x Storage for cursor hotspot X coordinate
-	 * @param hotspot_Y Storage for cursor hotspot Y coordinate
+	 * @param hotspotX Storage for cursor hotspot X coordinate
+	 * @param hotspotY Storage for cursor hotspot Y coordinate
 	 * @param keycolor Pointer to int where the transpared color value will be stored
 	 * @param colored If set to true then colored cursor will be returned (if any).
 	 *                b/w version will be used otherwise
@@ -103,8 +168,8 @@ public:
 	 *                The memory will be malloc()'ed
 	 * @param palSize Pointer to integer where the palette size will be stored.
 	 */
-	static void convertCrsrCursor(byte *data, int datasize, byte **cursor, int *w, int *h,
-					  int *hotspot_x, int *hotspot_y, int *keycolor, bool colored, byte **palette, int *palSize);
+	static void convertCrsrCursor(SeekableReadStream *data, byte **cursor, int &w, int &h, int &hotspotX,
+			int &hotspotY, int &keycolor, bool colored, byte **palette, int &palSize);
 
 	/**
 	 * Return list of resource IDs with specified type ID
@@ -117,14 +182,14 @@ public:
 	MacResTagArray getResTagArray();
 
 private:
-	Common::SeekableReadStream *_stream;
-	Common::String _baseFileName;
+	SeekableReadStream *_stream;
+	String _baseFileName;
 
-	bool load(Common::SeekableReadStream &stream);
+	bool load(SeekableReadStream &stream);
 
-	bool loadFromRawFork(Common::SeekableReadStream &stream);
-	bool loadFromMacBinary(Common::SeekableReadStream &stream);
-	bool loadFromAppleDouble(Common::SeekableReadStream &stream);
+	bool loadFromRawFork(SeekableReadStream &stream);
+	bool loadFromMacBinary(SeekableReadStream &stream);
+	bool loadFromAppleDouble(SeekableReadStream &stream);
 
 	enum {
 		kResForkNone = 0,

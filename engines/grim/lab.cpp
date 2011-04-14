@@ -42,7 +42,7 @@ bool Lab::open(const Common::String &filename) {
 	if (!_f->open(filename))
 		return false;
 
-	if (_f->readUint32BE() != MKID_BE('LABN')) {
+	if (_f->readUint32BE() != MKTAG('L','A','B','N')) {
 		close();
 		return false;
 	}

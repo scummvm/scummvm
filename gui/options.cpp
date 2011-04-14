@@ -26,11 +26,11 @@
 #include "gui/themebrowser.h"
 #include "gui/chooser.h"
 #include "gui/message.h"
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
 #include "gui/options.h"
-#include "gui/PopUpWidget.h"
-#include "gui/TabWidget.h"
+#include "gui/widgets/popup.h"
+#include "gui/widgets/tab.h"
 
 #include "common/fs.h"
 #include "common/config-manager.h"
@@ -39,10 +39,10 @@
 
 #include "graphics/scaler.h"
 
-#include "sound/mididrv.h"
-#include "sound/musicplugin.h"
-#include "sound/mixer.h"
-#include "sound/fmopl.h"
+#include "audio/mididrv.h"
+#include "audio/musicplugin.h"
+#include "audio/mixer.h"
+#include "audio/fmopl.h"
 
 namespace GUI {
 
@@ -80,8 +80,6 @@ static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1
 static const char *outputRateLabels[] = { _s("<default>"), _s("8 kHz"), _s("11kHz"), _s("22 kHz"), _s("44 kHz"), _s("48 kHz"), 0 };
 static const int outputRateValues[] = { 0, 8000, 11025, 22050, 44100, 48000, -1 };
 
-
-
 OptionsDialog::OptionsDialog(const Common::String &domain, int x, int y, int w, int h)
 	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _tabWidget(0) {
 	init();
@@ -92,22 +90,40 @@ OptionsDialog::OptionsDialog(const Common::String &domain, const Common::String 
 	init();
 }
 
+OptionsDialog::~OptionsDialog() {
+	delete _subToggleGroup;
+}
+
 void OptionsDialog::init() {
 	_enableGraphicSettings = false;
 	_gfxPopUp = 0;
+	_gfxPopUpDesc = 0;
 	_renderModePopUp = 0;
+	_renderModePopUpDesc = 0;
 	_fullscreenCheckbox = 0;
 	_aspectCheckbox = 0;
+	_disableDitheringCheckbox = 0;
 	_enableAudioSettings = false;
 	_midiPopUp = 0;
+	_midiPopUpDesc = 0;
 	_oplPopUp = 0;
+	_oplPopUpDesc = 0;
 	_outputRatePopUp = 0;
+	_outputRatePopUpDesc = 0;
 	_enableMIDISettings = false;
 	_gmDevicePopUp = 0;
+	_gmDevicePopUpDesc = 0;
+	_soundFont = 0;
+	_soundFontButton = 0;
+	_soundFontClearButton = 0;
 	_multiMidiCheckbox = 0;
+	_midiGainDesc = 0;
+	_midiGainSlider = 0;
+	_midiGainLabel = 0;
 	_enableMT32Settings = false;
 	_mt32Checkbox = 0;
 	_mt32DevicePopUp = 0;
+	_mt32DevicePopUpDesc = 0;
 	_enableGSCheckbox = 0;
 	_enableVolumeSettings = false;
 	_musicVolumeDesc = 0;
@@ -169,14 +185,8 @@ void OptionsDialog::open() {
 	}
 
 	if (_multiMidiCheckbox) {
-		if (!loadMusicDeviceSetting(_gmDevicePopUp, "gm_device")) {
-			if (_domain.equals(Common::ConfigManager::kApplicationDomain)) {
-				if (!loadMusicDeviceSetting(_gmDevicePopUp, Common::String(), MT_GM))
-					_gmDevicePopUp->setSelected(0);
-			} else {
-				_gmDevicePopUp->setSelected(0);
-			}
-		}
+		if (!loadMusicDeviceSetting(_gmDevicePopUp, "gm_device"))
+			_gmDevicePopUp->setSelected(0);
 
 		// Multi midi setting
 		_multiMidiCheckbox->setState(ConfMan.getBool("multi_midi", _domain));
@@ -200,14 +210,8 @@ void OptionsDialog::open() {
 
 	// MT-32 options
 	if (_mt32DevicePopUp) {
-		if (!loadMusicDeviceSetting(_mt32DevicePopUp, "mt32_device")) {
-			if (_domain.equals(Common::ConfigManager::kApplicationDomain)) {
-				if (!loadMusicDeviceSetting(_mt32DevicePopUp, Common::String(), MT_MT32))
-					_mt32DevicePopUp->setSelected(0);
-			} else {
-				_mt32DevicePopUp->setSelected(0);
-			}
-		}
+		if (!loadMusicDeviceSetting(_mt32DevicePopUp, "mt32_device"))
+			_mt32DevicePopUp->setSelected(0);
 
 		// Native mt32 setting
 		_mt32Checkbox->setState(ConfMan.getBool("native_mt32", _domain));
@@ -484,7 +488,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 	if (g_system->getOverlayWidth() > 320)
 		_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _domain == Common::ConfigManager::kApplicationDomain ? _("Preferred Device:") : _("Music Device:"), _domain == Common::ConfigManager::kApplicationDomain ? _("Specifies preferred sound device or sound card emulator") : _("Specifies output sound device or sound card emulator"));
 	else
-		_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _domain == Common::ConfigManager::kApplicationDomain ? _c("Preferred Device:", "lowres") : _c("Music Device:", "lowres"), _domain == Common::ConfigManager::kApplicationDomain ? _("Specifies preferred sound device or sound card emulator") : _("Specifies output sound device or sound card emulator"));
+		_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _domain == Common::ConfigManager::kApplicationDomain ? _c("Preferred Dev.:", "lowres") : _c("Music Device:", "lowres"), _domain == Common::ConfigManager::kApplicationDomain ? _("Specifies preferred sound device or sound card emulator") : _("Specifies output sound device or sound card emulator"));
 	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", _("Specifies output sound device or sound card emulator"));
 
 	// Populate it
@@ -497,7 +501,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 			const uint32 deviceGuiOption = MidiDriver::musicType2GUIO(d->getMusicType());
 
 			if ((_domain == Common::ConfigManager::kApplicationDomain && d->getMusicType() != MT_TOWNS  // global dialog - skip useless FM-Towns, C64, Amiga, AppleIIGS options there
-				 && d->getMusicType() != MT_C64 && d->getMusicType() != MT_AMIGA && d->getMusicType() != MT_APPLEIIGS)
+				 && d->getMusicType() != MT_C64 && d->getMusicType() != MT_AMIGA && d->getMusicType() != MT_APPLEIIGS && d->getMusicType() != MT_PC98)
 				|| (_domain != Common::ConfigManager::kApplicationDomain && !(_guioptions & allFlags)) // No flags are specified
 				|| (_guioptions & deviceGuiOption) // flag is present
 				// HACK/FIXME: For now we have to show GM devices, even when the game only has GUIO_MIDIMT32 set,
@@ -537,13 +541,25 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 
 	// Populate
 	const MusicPlugin::List p = MusicMan.getPlugins();
+	// Make sure the null device is the first one in the list to avoid undesired
+	// auto detection for users who don't have a saved setting yet.
 	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
 		MusicDevices i = (**m)->getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
-			if (d->getMusicType() >= MT_GM || d->getMusicDriverId() == "auto") {
+			if (d->getMusicDriverId() == "null")
+				_gmDevicePopUp->appendEntry(_("Don't use General MIDI music"), d->getHandle());
+		}
+	}
+	// Now we add the other devices.
+	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
+		MusicDevices i = (**m)->getDevices();
+		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
+			if (d->getMusicType() >= MT_GM) {
 				if (d->getMusicType() != MT_MT32)
 					_gmDevicePopUp->appendEntry(d->getCompleteName(), d->getHandle());
-			}
+			} else if (d->getMusicDriverId() == "auto") {
+				_gmDevicePopUp->appendEntry(_("Use first available device"), d->getHandle());
+			}		
 		}
 	}
 
@@ -581,18 +597,29 @@ void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefi
 	if (g_system->getOverlayWidth() > 320)
 		_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", _("True Roland MT-32 (disable GM emulation)"), _("Check if you want to use your real hardware Roland-compatible sound device connected to your computer"));
 	else
-		_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", _c("True Roland MT-32 (disable GM emulation)", "lowres"), _("Check if you want to use your real hardware Roland-compatible sound device connected to your computer"));
+		_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", _c("True Roland MT-32 (no GM emulation)", "lowres"), _("Check if you want to use your real hardware Roland-compatible sound device connected to your computer"));
 
 	// GS Extensions setting
 	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", _("Enable Roland GS Mode"), _("Turns off General MIDI mapping for games with Roland MT-32 soundtrack"));
 
 	const MusicPlugin::List p = MusicMan.getPlugins();
+	// Make sure the null device is the first one in the list to avoid undesired
+	// auto detection for users who don't have a saved setting yet.
+	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
+		MusicDevices i = (**m)->getDevices();		
+		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
+			if (d->getMusicDriverId() == "null")
+				_mt32DevicePopUp->appendEntry(_("Don't use Roland MT-32 music"), d->getHandle());
+		}
+	}
+	// Now we add the other devices.
 	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
 		MusicDevices i = (**m)->getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
-			if (d->getMusicType() >= MT_GM || d->getMusicDriverId() == "auto") {
+			if (d->getMusicType() >= MT_GM)
 				_mt32DevicePopUp->appendEntry(d->getCompleteName(), d->getHandle());
-			}
+			else if (d->getMusicDriverId() == "auto")
+				_mt32DevicePopUp->appendEntry(_("Use first available device"), d->getHandle());
 		}
 	}
 
@@ -616,7 +643,7 @@ void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &p
 		_subToggleSpeechOnly = new RadiobuttonWidget(boss, prefix + "subToggleSpeechOnly", _subToggleGroup, kSubtitlesSpeech, _("Speech"));
 		_subToggleSubOnly = new RadiobuttonWidget(boss, prefix + "subToggleSubOnly", _subToggleGroup, kSubtitlesSubs, _("Subtitles"));
 		_subToggleSubBoth = new RadiobuttonWidget(boss, prefix + "subToggleSubBoth", _subToggleGroup, kSubtitlesBoth, _("Both"));
-		
+
 		_subSpeedDesc = new StaticTextWidget(boss, prefix + "subSubtitleSpeedDesc", _("Subtitle speed:"));
 	} else {
 		_subToggleDesc = new StaticTextWidget(boss, prefix + "subToggleDesc", _c("Text and Speech:", "lowres"));
@@ -626,7 +653,7 @@ void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &p
 		_subToggleSpeechOnly = new RadiobuttonWidget(boss, prefix + "subToggleSpeechOnly", _subToggleGroup, kSubtitlesSpeech, _("Spch"), _("Speech"));
 		_subToggleSubOnly = new RadiobuttonWidget(boss, prefix + "subToggleSubOnly", _subToggleGroup, kSubtitlesSubs, _("Subs"), _("Subtitles"));
 		_subToggleSubBoth = new RadiobuttonWidget(boss, prefix + "subToggleSubBoth", _subToggleGroup, kSubtitlesBoth, _c("Both", "lowres"), _("Show subtitles and play speech"));
-		
+
 		_subSpeedDesc = new StaticTextWidget(boss, prefix + "subSubtitleSpeedDesc", _c("Subtitle speed:", "lowres"));
 	}
 
@@ -810,10 +837,10 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	_themePath = new StaticTextWidget(tab, "GlobalOptions_Paths.ThemePath", _c("None", "path"));
 
 	if (g_system->getOverlayWidth() > 320)
-		new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _("Extra Path:"), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
+		new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _("Extra Path:"), _("Specifies path to additional data used by all games or Residual"), kChooseExtraDirCmd);
 	else
-		new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _c("Extra Path:", "lowres"), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
-	_extraPath = new StaticTextWidget(tab, "GlobalOptions_Paths.ExtraPath", _c("None", "path"), _("Specifies path to additional data used by all games or ScummVM"));
+		new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _c("Extra Path:", "lowres"), _("Specifies path to additional data used by all games or Residual"), kChooseExtraDirCmd);
+	_extraPath = new StaticTextWidget(tab, "GlobalOptions_Paths.ExtraPath", _c("None", "path"), _("Specifies path to additional data used by all games or Residual"));
 
 #ifdef DYNAMIC_MODULES
 	if (g_system->getOverlayWidth() > 320)
@@ -865,7 +892,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 
 #ifdef USE_TRANSLATION
-	_guiLanguagePopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.GuiLanguagePopupDesc", _("GUI Language:"), _("Language of ScummVM GUI"));
+	_guiLanguagePopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.GuiLanguagePopupDesc", _("GUI Language:"), _("Language of Residual GUI"));
 	_guiLanguagePopUp = new PopUpWidget(tab, "GlobalOptions_Misc.GuiLanguagePopup");
 #ifdef USE_DETECTLANG
 	_guiLanguagePopUp->appendEntry(_("<default>"), Common::kTranslationAutodetectId);
@@ -1014,7 +1041,7 @@ void GlobalOptionsDialog::close() {
 			// only become active *after* the options dialog has closed.
 			g_gui.loadNewTheme(g_gui.theme()->getThemeId(), ThemeEngine::kGfxDisabled, true);
 #else
-			MessageDialog error(_("You have to restart ScummVM to take the effect."));
+			MessageDialog error(_("You have to restart Residual to take the effect."));
 			error.runModal();
 #endif
 		}
@@ -1097,9 +1124,12 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			Common::String theme = browser.getSelected();
 			// FIXME: Actually, any changes (including the theme change) should
 			// only become active *after* the options dialog has closed.
+#ifdef USE_TRANSLATION
 			Common::String lang = TransMan.getCurrentLanguage();
+#endif
 			Common::String oldTheme = g_gui.theme()->getThemeId();
 			if (g_gui.loadNewTheme(theme)) {
+#ifdef USE_TRANSLATION
 				// If the charset has changed, it means the font were not found for the
 				// new theme. Since for the moment we do not support change of translation
 				// language without restarting, we let the user know about this.
@@ -1109,9 +1139,12 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 					MessageDialog error(_("The theme you selected does not support your current language. If you want to use this theme you need to switch to another language first."));
 					error.runModal();
 				} else {
+#endif
 					_curTheme->setLabel(g_gui.theme()->getThemeName());
 					ConfMan.set("gui_theme", theme);
+#ifdef USE_TRANSLATION
 				}
+#endif
 			}
 			draw();
 		}

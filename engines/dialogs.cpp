@@ -33,9 +33,10 @@
 #include "graphics/scaler.h"
 
 #include "gui/about.h"
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 #include "gui/launcher.h"
-#include "gui/ListWidget.h"
+#include "gui/widgets/list.h"
+#include "gui/message.h"
 #include "gui/options.h"
 #include "gui/saveload.h"
 #include "gui/ThemeEval.h"
@@ -47,9 +48,6 @@
 #ifdef SMALL_SCREEN_DEVICE
 #include "gui/KeysDialog.h"
 #endif
-
-using GUI::CommandSender;
-using GUI::StaticTextWidget;
 
 class ConfigDialog : public GUI::OptionsDialog {
 protected:
@@ -75,15 +73,15 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::ThemeEngine::kImageLogoSmall));
 	} else {
-		StaticTextWidget *title = new StaticTextWidget(this, "GlobalMenu.Title", "Residual");
+		GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "Residual");
 		title->setAlign(Graphics::kTextAlignCenter);
 	}
 #else
-	StaticTextWidget *title = new StaticTextWidget(this, "GlobalMenu.Title", "Residual");
+	GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "Residual");
 	title->setAlign(Graphics::kTextAlignCenter);
 #endif
 
-	StaticTextWidget *version = new StaticTextWidget(this, "GlobalMenu.Version", gResidualVersionDate);
+	GUI::StaticTextWidget *version = new GUI::StaticTextWidget(this, "GlobalMenu.Version", gResidualVersionDate);
 	version->setAlign(Graphics::kTextAlignCenter);
 
 	new GUI::ButtonWidget(this, "GlobalMenu.Resume", _("~R~esume"), 0, kPlayCmd, 'P');
@@ -102,7 +100,6 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	// To enable "Help", an engine needs to use a subclass of MainMenuDialog
 	// (at least for now, we might change how this works in the future).
 	_helpButton = new GUI::ButtonWidget(this, "GlobalMenu.Help", _("~H~elp"), 0, kHelpCmd);
-	_helpButton->setEnabled(false);
 
 	new GUI::ButtonWidget(this, "GlobalMenu.About", _("~A~bout"), 0, kAboutCmd);
 
@@ -130,7 +127,7 @@ MainMenuDialog::~MainMenuDialog() {
 	delete _saveDialog;
 }
 
-void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kPlayCmd:
 		close();
@@ -147,8 +144,13 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kAboutCmd:
 		_aboutDialog->runModal();
 		break;
-	case kHelpCmd:
-		// Not handled here -- needs to be handled by a subclass (for now)
+	case kHelpCmd: {
+		GUI::MessageDialog dialog(
+					"Sorry, this engine does not currently provide in-game help. "
+					"Please consult the README for basic information, and for "
+					"instructions on how to obtain further assistance.");
+		dialog.runModal();
+		}
 		break;
 	case kRTLCmd: {
 		Common::Event eventRTL;
@@ -174,6 +176,15 @@ void MainMenuDialog::reflowLayout() {
 		_loadButton->setEnabled(_engine->canLoadGameStateCurrently());
 	if (_engine->hasFeature(Engine::kSupportsSavingDuringRuntime))
 		_saveButton->setEnabled(_engine->canSaveGameStateCurrently());
+	
+	// Overlay size might have changed since the construction of the dialog.
+	// Update labels when it might be needed
+	// FIXME: it might be better to declare GUI::StaticTextWidget::setLabel() virtual
+	// and to reimplement it in GUI::ButtonWidget to handle the hotkey.
+	if (g_system->getOverlayWidth() > 320)
+		_rtlButton->setLabel(_rtlButton->cleanupHotkey(_("~R~eturn to Launcher")));
+	else
+		_rtlButton->setLabel(_rtlButton->cleanupHotkey(_c("~R~eturn to Launcher", "lowres")));
 
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowGlobalMenuLogo", 0) == 1 && g_gui.theme()->supportsImages()) {
@@ -182,16 +193,16 @@ void MainMenuDialog::reflowLayout() {
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::ThemeEngine::kImageLogoSmall));
 
-		GUI::StaticTextWidget *title = (StaticTextWidget *)findWidget("GlobalMenu.Title");
+		GUI::StaticTextWidget *title = (GUI::StaticTextWidget *)findWidget("GlobalMenu.Title");
 		if (title) {
 			removeWidget(title);
 			title->setNext(0);
 			delete title;
 		}
 	} else {
-		GUI::StaticTextWidget *title = (StaticTextWidget *)findWidget("GlobalMenu.Title");
+		GUI::StaticTextWidget *title = (GUI::StaticTextWidget *)findWidget("GlobalMenu.Title");
 		if (!title) {
-			title = new StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
+			title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "Residual");
 			title->setAlign(Graphics::kTextAlignCenter);
 		}
 
@@ -208,12 +219,12 @@ void MainMenuDialog::reflowLayout() {
 }
 
 void MainMenuDialog::save() {
-	Common::String gameId = ConfMan.get("gameid");
+	const Common::String gameId = ConfMan.get("gameid");
 
 	const EnginePlugin *plugin = 0;
 	EngineMan.findGame(gameId, &plugin);
 
-	int slot = _saveDialog->runModal(plugin, ConfMan.getActiveDomainName());
+	int slot = _saveDialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 
 	if (slot >= 0) {
 		Common::String result(_saveDialog->getResultString());
@@ -231,12 +242,12 @@ void MainMenuDialog::save() {
 }
 
 void MainMenuDialog::load() {
-	Common::String gameId = ConfMan.get("gameid");
+	const Common::String gameId = ConfMan.get("gameid");
 
 	const EnginePlugin *plugin = 0;
 	EngineMan.findGame(gameId, &plugin);
 
-	int slot = _loadDialog->runModal(plugin, ConfMan.getActiveDomainName());
+	int slot = _loadDialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 
 	if (slot >= 0) {
 		// FIXME: For now we just ignore the return
@@ -316,7 +327,7 @@ ConfigDialog::~ConfigDialog() {
 #endif
 }
 
-void ConfigDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+void ConfigDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kKeysCmd:
 

@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/sys.h"
+
 #ifdef ENABLE_VKEYBD
 
 #include "backends/vkeybd/virtual-keyboard.h"

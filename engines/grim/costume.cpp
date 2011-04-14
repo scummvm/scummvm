@@ -918,25 +918,25 @@ void Costume::Chore::update() {
 }
 
 Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *parent, int parentID, const char *name, Costume::Component *prevComponent) {
-	if (FROM_BE_32(tag) == MKID_BE('MMDL'))
+	if (FROM_BE_32(tag) == MKTAG('M','M','D','L'))
 		return new MainModelComponent(parent, parentID, name, prevComponent, tag);
-	else if (FROM_BE_32(tag) == MKID_BE('MODL'))
+	else if (FROM_BE_32(tag) == MKTAG('M','O','D','L'))
 		return new ModelComponent(parent, parentID, name, prevComponent, tag);
-	else if (FROM_BE_32(tag) == MKID_BE('CMAP'))
+	else if (FROM_BE_32(tag) == MKTAG('C','M','A','P'))
 		return new ColormapComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKID_BE('KEYF'))
+	else if (FROM_BE_32(tag) == MKTAG('K','E','Y','F'))
 		return new KeyframeComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKID_BE('MESH'))
+	else if (FROM_BE_32(tag) == MKTAG('M','E','S','H'))
 		return new MeshComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKID_BE('LUAV'))
+	else if (FROM_BE_32(tag) == MKTAG('L','U','A','V'))
 		return new LuaVarComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKID_BE('IMLS'))
+	else if (FROM_BE_32(tag) == MKTAG('I','M','L','S'))
 		return new SoundComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKID_BE('BKND'))
+	else if (FROM_BE_32(tag) == MKTAG('B','K','N','D'))
 		return new BitmapComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKID_BE('MAT '))
+	else if (FROM_BE_32(tag) == MKTAG('M','A','T',' '))
 		return new MaterialComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKID_BE('SPRT'))
+	else if (FROM_BE_32(tag) == MKTAG('S','P','R','T'))
 		return NULL;// new SpriteComponent(parent, parentID, name);
 
 	char t[4];
@@ -951,7 +951,7 @@ Model::HierNode *Costume::getModelNodes() {
 			continue;
 		// Needs to handle Main Models (pigeons) and normal Models
 		// (when Manny climbs the rope)
-		if (FROM_BE_32(_components[i]->tag()) == MKID_BE('MMDL'))
+		if (FROM_BE_32(_components[i]->tag()) == MKTAG('M','M','D','L'))
 			return dynamic_cast<ModelComponent *>(_components[i])->hierarchy();
 	}
 	return NULL;
@@ -1230,12 +1230,12 @@ void Costume::saveState(SaveGame *state) const {
 			state->writeLESint32(c->_visible);
 			state->writeVector3d(c->_matrix._pos);
 
-			if (FROM_BE_32(c->_tag) == MKID_BE('KEYF')) {
+			if (FROM_BE_32(c->_tag) == MKTAG('K','E','Y','F')) {
 				KeyframeComponent *f = static_cast<KeyframeComponent *>(c);
 				state->writeLESint32(f->_active);
 				state->writeLESint32(f->_repeatMode);
 				state->writeLESint32(f->_currTime);
-			} else if (FROM_BE_32(c->_tag) == MKID_BE('MESH')) {
+			} else if (FROM_BE_32(c->_tag) == MKTAG('M','E','S','H')) {
 				state->writeLESint32(static_cast<MeshComponent *>(c)->node()->_meshVisible);
 			}
 		}
@@ -1270,15 +1270,15 @@ bool Costume::restoreState(SaveGame *state) {
 		if (c) {
 			c->_visible = state->readLESint32();
 			c->_matrix._pos = state->readVector3d();
-			if (FROM_BE_32(c->_tag) == MKID_BE('MODL') || FROM_BE_32(c->_tag) == MKID_BE('MMDL')) {
+			if (FROM_BE_32(c->_tag) == MKTAG('M','O','D','L') || FROM_BE_32(c->_tag) == MKTAG('M','M','D','L')) {
 				ModelComponent *m = static_cast<ModelComponent *>(c);
 				m->hierarchy()->_hierVisible = c->_visible;
-			} else if (FROM_BE_32(c->_tag) == MKID_BE('KEYF')) {
+			} else if (FROM_BE_32(c->_tag) == MKTAG('K','E','Y','F')) {
 				KeyframeComponent *f = static_cast<KeyframeComponent *>(c);
 				f->_active = state->readLESint32();
 				f->_repeatMode = state->readLESint32();
 				f->_currTime = state->readLESint32();
-			} else if (FROM_BE_32(c->_tag) == MKID_BE('MESH')) {
+			} else if (FROM_BE_32(c->_tag) == MKTAG('M','E','S','H')) {
 				static_cast<MeshComponent *>(c)->node()->_meshVisible = state->readLESint32();
 			}
 		}

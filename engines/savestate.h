@@ -127,6 +127,11 @@ public:
 	 * Sets the 'play_time' key properly, based on the given values.
 	 */
 	void setPlayTime(int hours, int minutes);
+
+	/**
+	 * Sets the 'play_time' key properly, based on the given value.
+	 */
+	void setPlayTime(uint32 msecs);
 };
 
 /** List of savestates. */

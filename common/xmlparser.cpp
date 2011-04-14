@@ -27,10 +27,25 @@
 #include "common/util.h"
 #include "common/archive.h"
 #include "common/fs.h"
+#include "common/memstream.h"
 
 namespace Common {
 
-bool XMLParser::loadFile(const Common::String &filename) {
+XMLParser::~XMLParser() {
+	while (!_activeKey.empty())
+		freeNode(_activeKey.pop());
+
+	delete _XMLkeys;
+	delete _stream;
+
+	for (List<XMLKeyLayout*>::iterator i = _layoutList.begin();
+		i != _layoutList.end(); ++i)
+		delete *i;
+
+	_layoutList.clear();
+}
+
+bool XMLParser::loadFile(const String &filename) {
 	_stream = SearchMan.createReadStreamForMember(filename);
 	if (!_stream)
 		return false;
@@ -54,7 +69,7 @@ bool XMLParser::loadBuffer(const byte *buffer, uint32 size, DisposeAfterUse::Fla
 	return true;
 }
 
-bool XMLParser::loadStream(Common::SeekableReadStream *stream) {
+bool XMLParser::loadStream(SeekableReadStream *stream) {
 	_stream = stream;
 	_fileName = "File Stream";
 	return true;
@@ -158,10 +173,10 @@ bool XMLParser::parseActiveKey(bool closed) {
 	if (layout->children.contains(key->name)) {
 		key->layout = layout->children[key->name];
 
-		Common::StringMap localMap = key->values;
+		StringMap localMap = key->values;
 		int keyCount = localMap.size();
 
-		for (Common::List<XMLKeyLayout::XMLKeyProperty>::const_iterator i = key->layout->properties.begin(); i != key->layout->properties.end(); ++i) {
+		for (List<XMLKeyLayout::XMLKeyProperty>::const_iterator i = key->layout->properties.begin(); i != key->layout->properties.end(); ++i) {
 			if (i->required && !localMap.contains(i->name))
 				return parserError("Missing required property '%s' inside key '%s'", i->name.c_str(), key->name.c_str());
 			else if (localMap.contains(i->name))
@@ -198,7 +213,7 @@ bool XMLParser::parseActiveKey(bool closed) {
 	return true;
 }
 
-bool XMLParser::parseKeyValue(Common::String keyName) {
+bool XMLParser::parseKeyValue(String keyName) {
 	assert(_activeKey.empty() == false);
 
 	if (_activeKey.top()->values.contains(keyName))
@@ -227,6 +242,47 @@ bool XMLParser::parseKeyValue(Common::String keyName) {
 
 	_activeKey.top()->values[keyName] = _token;
 	return true;
+}
+
+bool XMLParser::parseIntegerKey(const char *key, int count, ...) {
+	bool result;
+	va_list args;
+	va_start(args, count);
+	result = vparseIntegerKey(key, count, args);
+	va_end(args);
+	return result;
+}
+
+bool XMLParser::parseIntegerKey(const String &key, int count, ...) {
+	bool result;
+	va_list args;
+	va_start(args, count);
+	result = vparseIntegerKey(key.c_str(), count, args);
+	va_end(args);
+	return result;
+}
+
+bool XMLParser::vparseIntegerKey(const char *key, int count, va_list args) {
+	char *parseEnd;
+	int *num_ptr;
+
+	while (count--) {
+		while (isspace(*key))
+			key++;
+
+		num_ptr = va_arg(args, int*);
+		*num_ptr = strtol(key, &parseEnd, 10);
+
+		key = parseEnd;
+
+		while (isspace(*key))
+			key++;
+
+		if (count && *key++ != ',')
+			return false;
+	}
+
+	return (*key == 0);
 }
 
 bool XMLParser::closeKey() {
@@ -410,5 +466,61 @@ bool XMLParser::parse() {
 	return true;
 }
 
+bool XMLParser::skipSpaces() {
+	if (!isspace(_char))
+		return false;
+
+	while (_char && isspace(_char))
+		_char = _stream->readByte();
+
+	return true;
 }
 
+bool XMLParser::skipComments() {
+	if (_char == '<') {
+		_char = _stream->readByte();
+
+		if (_char != '!') {
+			_stream->seek(-1, SEEK_CUR);
+			_char = '<';
+			return false;
+		}
+
+		if (_stream->readByte() != '-' || _stream->readByte() != '-')
+			return parserError("Malformed comment syntax.");
+
+		_char = _stream->readByte();
+
+		while (_char) {
+			if (_char == '-') {
+				if (_stream->readByte() == '-') {
+
+					if (_stream->readByte() != '>')
+						return parserError("Malformed comment (double-hyphen inside comment body).");
+
+					_char = _stream->readByte();
+					return true;
+				}
+			}
+
+			_char = _stream->readByte();
+		}
+
+		return parserError("Comment has no closure.");
+	}
+
+	return false;
+}
+
+bool XMLParser::parseToken() {
+	_token.clear();
+
+	while (isValidNameChar(_char)) {
+		_token += _char;
+		_char = _stream->readByte();
+	}
+
+	return isspace(_char) != 0 || _char == '>' || _char == '=' || _char == '/';
+}
+
+} // End of namespace Common

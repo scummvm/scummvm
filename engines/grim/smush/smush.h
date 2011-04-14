@@ -37,8 +37,8 @@
 #include "engines/grim/smush/blocky8.h"
 #include "engines/grim/smush/blocky16.h"
 
-#include "sound/mixer.h"
-#include "sound/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/audiostream.h"
 
 namespace Grim {
 

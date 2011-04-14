@@ -25,8 +25,8 @@
 #include "common/system.h"
 #include "common/translation.h"
 #include "gui/chooser.h"
-#include "gui/GuiManager.h"
-#include "gui/ListWidget.h"
+#include "gui/gui-manager.h"
+#include "gui/widgets/list.h"
 
 namespace GUI {
 

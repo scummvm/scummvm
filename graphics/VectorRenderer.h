@@ -20,6 +20,7 @@
  *
  * $URL$
  * $Id$
+ *
  */
 
 #ifndef VECTOR_RENDERER_H

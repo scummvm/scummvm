@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/sys.h"
+
 #if defined(UNIX) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
 #include "backends/saves/posix/posix-saves.h"

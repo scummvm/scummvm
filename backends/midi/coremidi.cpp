@@ -22,12 +22,17 @@
  * $Id$
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include "common/sys.h"
+
 #ifdef MACOSX
 
 #include "common/config-manager.h"
 #include "common/util.h"
-#include "sound/musicplugin.h"
-#include "sound/mpu401.h"
+#include "audio/musicplugin.h"
+#include "audio/mpu401.h"
 
 #include <CoreMIDI/CoreMIDI.h>
 
@@ -51,6 +56,7 @@ public:
 	MidiDriver_CoreMIDI();
 	~MidiDriver_CoreMIDI();
 	int open();
+	bool isOpen() const { return mOutPort != 0 && mDest != 0; }
 	void close();
 	void send(uint32 b);
 	void sysEx(const byte *msg, uint16 length);
@@ -65,7 +71,7 @@ MidiDriver_CoreMIDI::MidiDriver_CoreMIDI()
 	: mClient(0), mOutPort(0), mDest(0) {
 
 	OSStatus err;
-	err = MIDIClientCreate(CFSTR("ScummVM MIDI Driver for OS X"), NULL, NULL, &mClient);
+	err = MIDIClientCreate(CFSTR("Residual MIDI Driver for OS X"), NULL, NULL, &mClient);
 }
 
 MidiDriver_CoreMIDI::~MidiDriver_CoreMIDI() {
@@ -75,7 +81,7 @@ MidiDriver_CoreMIDI::~MidiDriver_CoreMIDI() {
 }
 
 int MidiDriver_CoreMIDI::open() {
-	if (mDest)
+	if (isOpen())
 		return MERR_ALREADY_OPEN;
 
 	OSStatus err = noErr;
@@ -86,7 +92,7 @@ int MidiDriver_CoreMIDI::open() {
 	if (dests > 0 && mClient) {
 		mDest = MIDIGetDestination(0);
 		err = MIDIOutputPortCreate( mClient,
-									CFSTR("scummvm_output_port"),
+									CFSTR("residual_output_port"),
 									&mOutPort);
 	} else {
 		return MERR_DEVICE_NOT_AVAILABLE;
@@ -101,7 +107,7 @@ int MidiDriver_CoreMIDI::open() {
 void MidiDriver_CoreMIDI::close() {
 	MidiDriver_MPU401::close();
 
-	if (mOutPort && mDest) {
+	if (isOpen()) {
 		MIDIPortDispose(mOutPort);
 		mOutPort = 0;
 		mDest = 0;
@@ -109,8 +115,7 @@ void MidiDriver_CoreMIDI::close() {
 }
 
 void MidiDriver_CoreMIDI::send(uint32 b) {
-	assert(mOutPort != 0);
-	assert(mDest != 0);
+	assert(isOpen());
 
 	// Extract the MIDI data
 	byte status_byte = (b & 0x000000FF);
@@ -153,8 +158,7 @@ void MidiDriver_CoreMIDI::send(uint32 b) {
 }
 
 void MidiDriver_CoreMIDI::sysEx(const byte *msg, uint16 length) {
-	assert(mOutPort != 0);
-	assert(mDest != 0);
+	assert(isOpen());
 
 	byte buf[384];
 	MIDIPacketList *packetList = (MIDIPacketList *)buf;

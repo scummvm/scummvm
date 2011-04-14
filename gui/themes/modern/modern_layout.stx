@@ -23,7 +23,7 @@
  - $Id$
  -
  -->
-<layout_info resolution = '-320xY, -256x240, -Xx272, -Xx350'>
+<layout_info resolution = 'y>399'>
 	<globals>
 		<def var = 'Line.Height' value = '16' />
 		<def var = 'Font.Height' value = '16' />
@@ -233,6 +233,9 @@
 			<widget name = 'grFullscreenCheckbox'
 					type = 'Checkbox'
 			/>
+			<widget name = 'grDisableDitheringCheckbox'
+					type = 'Checkbox'
+			/>
 		</layout>
 	</dialog>
 
@@ -344,7 +347,7 @@
 				<widget name = 'auPrefGmPopup'
 						type = 'PopUp'
 				/>
-			</layout>			
+			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'mcFontButton'
 						type = 'Button'

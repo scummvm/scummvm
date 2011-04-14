@@ -30,6 +30,7 @@
 #include "common/error.h"
 #include "common/singleton.h"
 #include "common/util.h"
+//#include "backends/plugins/elf/version.h"
 
 namespace Common {
 	class FSList;
@@ -72,7 +73,7 @@ enum PluginType {
 };
 
 // TODO: Make the engine API version depend on ScummVM's version
-// because of the backlinking (posibly from the SVN revision)
+// because of the backlinking (posibly from the checkout revision)
 #define PLUGIN_TYPE_ENGINE_VERSION 1
 #define PLUGIN_TYPE_MUSIC_VERSION 1
 
@@ -89,6 +90,21 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 
 #define PLUGIN_ENABLED_DYNAMIC(ID) \
 	(ENABLE_##ID && (ENABLE_##ID == DYNAMIC_PLUGIN) && DYNAMIC_MODULES)
+
+// see comments in backends/plugins/elf/elf-provider.cpp
+#if defined(USE_ELF_LOADER) && defined(ELF_LOADER_CXA_ATEXIT)
+#define PLUGIN_DYNAMIC_DSO_HANDLE \
+	uint32 __dso_handle __attribute__((visibility("hidden"))) = 0;
+#else
+#define PLUGIN_DYNAMIC_DSO_HANDLE
+#endif
+
+#ifdef USE_ELF_LOADER
+#define PLUGIN_DYNAMIC_BUILD_DATE \
+	PLUGIN_EXPORT const char *PLUGIN_getBuildDate() { return gResidualPluginBuildDate; }
+#else
+#define PLUGIN_DYNAMIC_BUILD_DATE
+#endif
 
 /**
  * REGISTER_PLUGIN_STATIC is a convenience macro which is used to declare
@@ -119,6 +135,8 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
  */
 #define REGISTER_PLUGIN_DYNAMIC(ID,TYPE,PLUGINCLASS) \
 	extern "C" { \
+		PLUGIN_DYNAMIC_DSO_HANDLE \
+		PLUGIN_DYNAMIC_BUILD_DATE \
 		PLUGIN_EXPORT int32 PLUGIN_getVersion() { return PLUGIN_VERSION; } \
 		PLUGIN_EXPORT int32 PLUGIN_getType() { return TYPE; } \
 		PLUGIN_EXPORT int32 PLUGIN_getTypeVersion() { return TYPE##_VERSION; } \
@@ -134,11 +152,11 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 // Abstract plugins
 
 /**
- * Abstract base class for the plugin objects which handle plugins
- * instantiation. Subclasses for this may be used for engine plugins
- * and other types of plugins.
- *
- * FIXME: This class needs better documentation, esp. how it differs from class Plugin
+ * Abstract base class for the plugin objects which handle plugins 
+ * instantiation. Subclasses for this may be used for engine plugins and other
+ * types of plugins. An existing PluginObject refers to an executable file
+ * loaded in memory and ready to run. The plugin, on the other hand, is just
+ * a handle to the file/object, whether it's loaded in memory or not.
  */
 class PluginObject {
 public:
@@ -151,9 +169,8 @@ public:
 /**
  * Abstract base class for the plugin system.
  * Subclasses for this can be used to wrap both static and dynamic
- * plugins.
- *
- * FIXME: This class needs better documentation, esp. how it differs from class PluginObject
+ * plugins. This class refers to a plugin which may or may not be loaded in
+ * memory.
  */
 class Plugin {
 protected:
@@ -171,8 +188,19 @@ public:
 	virtual bool loadPlugin() = 0;	// TODO: Rename to load() ?
 	virtual void unloadPlugin() = 0;	// TODO: Rename to unload() ?
 
+	/**
+	 * The following functions query information from the plugin object once
+	 * it's loaded into memory.
+	 **/
 	PluginType getType() const;
 	const char *getName() const;
+
+	/**
+	 * The getFileName() function gets the name of the plugin file for those
+	 * plugins that have files (ie. not static). It doesn't require the plugin
+	 * object to be loaded into memory, unlike getName()
+	 **/
+	virtual const char *getFileName() const { return 0; }
 };
 
 /** List of Plugin instances. */
@@ -212,6 +240,11 @@ public:
 	 * @return a list of Plugin instances
 	 */
 	virtual PluginList getPlugins() = 0;
+
+	/**
+	 * @return whether or not object is a FilePluginProvider.
+	 */
+	virtual bool isFilePluginProvider() { return false; }
 };
 
 #ifdef DYNAMIC_MODULES
@@ -233,6 +266,11 @@ public:
 	 * @return a list of Plugin instances
 	 */
 	virtual PluginList getPlugins();
+
+	/**
+	 * @return whether or not object is a FilePluginProvider.
+	 */
+	bool isFilePluginProvider() { return true; }
 
 protected:
 	/**
@@ -266,31 +304,70 @@ protected:
 
 #endif // DYNAMIC_MODULES
 
+#define PluginMan PluginManager::instance()
+
 /**
  * Singleton class which manages all plugins, including loading them,
  * managing all Plugin class instances, and unloading them.
  */
-class PluginManager : public Common::Singleton<PluginManager> {
+class PluginManager {
+protected:
 	typedef Common::Array<PluginProvider *> ProviderList;
-private:
-	PluginList _plugins[PLUGIN_TYPE_MAX];
+
+	PluginList _pluginsInMem[PLUGIN_TYPE_MAX];
 	ProviderList _providers;
 
 	bool tryLoadPlugin(Plugin *plugin);
-
-	friend class Common::Singleton<SingletonBaseType>;
+	void addToPluginsInMemList(Plugin *plugin);
+	
+	static PluginManager *_instance;
 	PluginManager();
 
 public:
-	~PluginManager();
+	virtual ~PluginManager();
+
+	static void destroy() { delete _instance; _instance = 0; }
+	static PluginManager &instance();
 
 	void addPluginProvider(PluginProvider *pp);
 
-	void loadPlugins();
-	void unloadPlugins();
-	void unloadPluginsExcept(PluginType type, const Plugin *plugin);
+	// Functions used by the uncached PluginManager
+	virtual void init()	{}
+	virtual void loadFirstPlugin() {}
+	virtual bool loadNextPlugin() { return false; }
+	virtual bool loadPluginFromGameId(const Common::String &gameId) { return false; } 
+	virtual void updateConfigWithFileName(const Common::String &gameId) {} 
+	
+	// Functions used only by the cached PluginManager
+	virtual void loadAllPlugins();
+	void unloadAllPlugins();
 
-	const PluginList &getPlugins(PluginType t) { return _plugins[t]; }
+	void unloadPluginsExcept(PluginType type, const Plugin *plugin, bool deletePlugin = true);
+
+	const PluginList &getPlugins(PluginType t) { return _pluginsInMem[t]; }
+};
+
+/** 
+ *  Uncached version of plugin manager
+ *  Keeps only one dynamic plugin in memory at a time
+ **/
+class PluginManagerUncached : public PluginManager {
+protected:
+	friend class PluginManager;
+	PluginList _allEnginePlugins;
+	PluginList::iterator _currentPlugin;
+
+	PluginManagerUncached() {}
+	bool loadPluginByFileName(const Common::String &filename); 
+
+public:
+	virtual void init();
+	virtual void loadFirstPlugin();
+	virtual bool loadNextPlugin();
+	virtual bool loadPluginFromGameId(const Common::String &gameId); 
+	virtual void updateConfigWithFileName(const Common::String &gameId); 
+	
+	virtual void loadAllPlugins() {} 	// we don't allow this
 };
 
 #endif

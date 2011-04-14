@@ -34,7 +34,7 @@ struct TimerSlot {
 	uint32 interval;	// in microseconds
 
 	uint32 nextFireTime;	// in milliseconds
-	uint32 nextFireTimeMicro;	// mircoseconds part of nextFire
+	uint32 nextFireTimeMicro;	// microseconds part of nextFire
 
 	TimerSlot *next;
 };

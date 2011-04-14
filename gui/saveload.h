@@ -33,7 +33,7 @@ namespace GUI {
 class ListWidget;
 class GraphicsWidget;
 
-class SaveLoadChooser : public GUI::Dialog {
+class SaveLoadChooser : GUI::Dialog {
 	typedef Common::String String;
 	typedef Common::Array<Common::String> StringArray;
 protected:
@@ -66,7 +66,7 @@ public:
 
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	void setList(const StringArray& list);
-	int runModal(const EnginePlugin *plugin, const String &target);
+	int runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target);
 	void open();
 
 	const Common::String &getResultString() const;

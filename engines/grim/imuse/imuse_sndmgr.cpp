@@ -53,28 +53,28 @@ void ImuseSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps) {
 	do {
 		tag = READ_BE_UINT32(ptr); ptr += 4;
 		switch(tag) {
-		case MKID_BE('TEXT'):
-		case MKID_BE('STOP'):
-		case MKID_BE('FRMT'):
-		case MKID_BE('DATA'):
+		case MKTAG('T','E','X','T'):
+		case MKTAG('S','T','O','P'):
+		case MKTAG('F','R','M','T'):
+		case MKTAG('D','A','T','A'):
 			size = READ_BE_UINT32(ptr); ptr += size + 4;
 			break;
-		case MKID_BE('REGN'):
+		case MKTAG('R','E','G','N'):
 			numRegions++;
 			size = READ_BE_UINT32(ptr); ptr += size + 4;
 			break;
-		case MKID_BE('JUMP'):
+		case MKTAG('J','U','M','P'):
 			numJumps++;
 			size = READ_BE_UINT32(ptr); ptr += size + 4;
 			break;
 		default:
 			error("ImuseSndMgr::countElements() Unknown MAP tag '%s'", Common::tag2string(tag).c_str());
 		}
-	} while (tag != MKID_BE('DATA'));
+	} while (tag != MKTAG('D','A','T','A'));
 }
 
 void ImuseSndMgr::parseSoundHeader(byte *ptr, SoundDesc *sound, int &headerSize) {
-	if (READ_BE_UINT32(ptr) == MKID_BE('RIFF')) {
+	if (READ_BE_UINT32(ptr) == MKTAG('R','I','F','F')) {
 		sound->region = new Region[1];
 		sound->jump = new Jump[1];
 		sound->numJumps = 0;
@@ -85,7 +85,7 @@ void ImuseSndMgr::parseSoundHeader(byte *ptr, SoundDesc *sound, int &headerSize)
 		sound->freq = READ_LE_UINT32(ptr + 24);
 		sound->channels = *(ptr + 22);
 		headerSize = 44;
-	} else if (READ_BE_UINT32(ptr) == MKID_BE('iMUS')) {
+	} else if (READ_BE_UINT32(ptr) == MKTAG('i','M','U','S')) {
 		uint32 tag;
 		int32 size = 0;
 		byte *s_ptr = ptr;
@@ -103,23 +103,23 @@ void ImuseSndMgr::parseSoundHeader(byte *ptr, SoundDesc *sound, int &headerSize)
 		do {
 			tag = READ_BE_UINT32(ptr); ptr += 4;
 			switch(tag) {
-			case MKID_BE('FRMT'):
+			case MKTAG('F','R','M','T'):
 				ptr += 12;
 				sound->bits = READ_BE_UINT32(ptr); ptr += 4;
 				sound->freq = READ_BE_UINT32(ptr); ptr += 4;
 				sound->channels = READ_BE_UINT32(ptr); ptr += 4;
 				break;
-			case MKID_BE('TEXT'):
-			case MKID_BE('STOP'):
+			case MKTAG('T','E','X','T'):
+			case MKTAG('S','T','O','P'):
 				size = READ_BE_UINT32(ptr); ptr += size + 4;
 				break;
-			case MKID_BE('REGN'):
+			case MKTAG('R','E','G','N'):
 				ptr += 4;
 				sound->region[curIndexRegion].offset = READ_BE_UINT32(ptr); ptr += 4;
 				sound->region[curIndexRegion].length = READ_BE_UINT32(ptr); ptr += 4;
 				curIndexRegion++;
 				break;
-			case MKID_BE('JUMP'):
+			case MKTAG('J','U','M','P'):
 				ptr += 4;
 				sound->jump[curIndexJump].offset = READ_BE_UINT32(ptr); ptr += 4;
 				sound->jump[curIndexJump].dest = READ_BE_UINT32(ptr); ptr += 4;
@@ -127,13 +127,13 @@ void ImuseSndMgr::parseSoundHeader(byte *ptr, SoundDesc *sound, int &headerSize)
 				sound->jump[curIndexJump].fadeDelay = READ_BE_UINT32(ptr); ptr += 4;
 				curIndexJump++;
 				break;
-			case MKID_BE('DATA'):
+			case MKTAG('D','A','T','A'):
 				ptr += 4;
 				break;
 			default:
 				error("ImuseSndMgr::prepareSound(%s) Unknown MAP tag '%s'", sound->name, Common::tag2string(tag).c_str());
 			}
-		} while (tag != MKID_BE('DATA'));
+		} while (tag != MKTAG('D','A','T','A'));
 		headerSize = ptr - s_ptr;
 		int i;
 		for (i = 0; i < sound->numRegions; i++) {

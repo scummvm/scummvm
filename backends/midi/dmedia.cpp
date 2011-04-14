@@ -27,13 +27,18 @@
  *    some code liberated from seq.cpp and coremidi.cpp
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include "common/sys.h"
+
 #if defined(IRIX)
 
 #include "common/sys.h"
 #include "common/util.h"
 #include "common/config-manager.h"
-#include "sound/musicplugin.h"
-#include "sound/mpu401.h"
+#include "audio/musicplugin.h"
+#include "audio/mpu401.h"
 
 #include <dmedia/midi.h>
 #include <sys/types.h>
@@ -52,6 +57,7 @@ class MidiDriver_DMEDIA : public MidiDriver_MPU401 {
 public:
 	MidiDriver_DMEDIA();
 	int open();
+	bool isOpen() const { return _isOpen; }
 	void close();
 	void send(uint32 b);
 	void sysEx(const byte *msg, uint16 length);
@@ -87,8 +93,8 @@ int MidiDriver_DMEDIA::open() {
 		return -1;
 	}
 
-	if (getenv("SCUMMVM_MIDIPORT")) {
-		_deviceNum = atoi(getenv("SCUMMVM_MIDIPORT"));
+	if (getenv("RESIDUAL_MIDIPORT")) {
+		_deviceNum = atoi(getenv("RESIDUAL_MIDIPORT"));
 		_midiportName = mdGetName(_deviceNum);
 	} else {
 		var = ConfMan.get("dmedia_port").c_str();
@@ -174,7 +180,7 @@ void MidiDriver_DMEDIA::sysEx (const byte *msg, uint16 length) {
 	memcpy(buf, msg, length);
 	buf[length] = MD_EOX;
 	event.sysexmsg = buf;
-        event.msglen = length;
+	event.msglen = length;
 	event.msg[0] = MD_SYSEX;
 	event.msg[1] = 0;
 	event.msg[2] = 0;

@@ -22,14 +22,17 @@
  * $Id$
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/sys.h"
 
 #if defined(__amigaos4__)
 
 #include "common/endian.h"
 #include "common/util.h"
-#include "sound/musicplugin.h"
-#include "sound/mpu401.h"
+#include "audio/musicplugin.h"
+#include "audio/mpu401.h"
 
 #include <proto/camd.h>
 #include <proto/exec.h>
@@ -43,6 +46,7 @@ class MidiDriver_CAMD : public MidiDriver_MPU401 {
 public:
 	MidiDriver_CAMD();
 	int open();
+	bool isOpen() const { return _isOpen; }
 	void close();
 	void send(uint32 b);
 	void sysEx(const byte *msg, uint16 length);
@@ -79,7 +83,7 @@ int MidiDriver_CAMD::open() {
 	}
 
 	struct MidiNode *midi_node;
-	midi_node = _ICamd->CreateMidi(MIDI_MsgQueue, 0L, MIDI_SysExSize, 4096L, MIDI_Name, "scummvm", TAG_END);
+	midi_node = _ICamd->CreateMidi(MIDI_MsgQueue, 0L, MIDI_SysExSize, 4096L, MIDI_Name, "residual", TAG_END);
 	if (!midi_node) {
 		closeAll();
 		error("Could not create CAMD MIDI node");

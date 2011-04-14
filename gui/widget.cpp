@@ -26,7 +26,7 @@
 #include "graphics/fontman.h"
 #include "gui/widget.h"
 #include "gui/dialog.h"
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 
 #include "gui/ThemeEval.h"
 
@@ -215,7 +215,7 @@ uint8 Widget::parseHotkey(const Common::String &label) {
 Common::String Widget::cleanupHotkey(const Common::String &label) {
 	Common::String res;
 
-	for (uint i = 0; i < label.size() ; i++)
+	for (uint i = 0; i < label.size(); i++)
 		if (label[i] != '~')
 			res = res + label[i];
 
@@ -299,6 +299,58 @@ void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 
 void ButtonWidget::drawWidget() {
 	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state, getFlags());
+}
+
+#pragma mark -
+
+PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd, uint8 hotkey)
+	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss),
+	  _cmd(cmd), _hotkey(hotkey), _gfx(), _alpha(256), _transparency(false) {
+
+	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
+	_type = kButtonWidget;
+}
+
+PicButtonWidget::PicButtonWidget(GuiObject *boss, const Common::String &name, const char *tooltip, uint32 cmd, uint8 hotkey)
+	: Widget(boss, name, tooltip), CommandSender(boss),
+	  _cmd(cmd), _gfx(), _alpha(256), _transparency(false) {
+	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
+	_type = kButtonWidget;
+}
+
+PicButtonWidget::~PicButtonWidget() {
+	_gfx.free();
+}
+
+void PicButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
+	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h)
+		sendCommand(_cmd, 0);
+}
+
+void PicButtonWidget::setGfx(const Graphics::Surface *gfx) {
+	_gfx.free();
+
+	if (!gfx || !gfx->pixels)
+		return;
+
+	if (gfx->w > _w || gfx->h > _h) {
+		warning("PicButtonWidget has size %dx%d, but a surface with %dx%d is to be set", _w, _h, gfx->w, gfx->h);
+		return;
+	}
+
+	// TODO: add conversion to OverlayColor
+	_gfx.copyFrom(*gfx);
+}
+
+void PicButtonWidget::drawWidget() {
+	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x+_w, _y+_h), "", _state, getFlags());
+
+	if (sizeof(OverlayColor) == _gfx.bytesPerPixel && _gfx.pixels) {
+		const int x = _x + (_w - _gfx.w) / 2;
+		const int y = _y + (_h - _gfx.h) / 2;
+
+		g_gui.theme()->drawSurface(Common::Rect(x, y, x + _gfx.w,  y + _gfx.h), _gfx, _state, _alpha, _transparency);
+	}
 }
 
 #pragma mark -

@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/sys.h"
+
 #if !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
 #include "backends/saves/default/default-saves.h"
@@ -34,8 +36,9 @@
 #include "common/config-manager.h"
 #include "common/zlib.h"
 
+#ifndef _WIN32_WCE
 #include <errno.h>	// for removeSavefile()
-
+#endif
 
 DefaultSaveFileManager::DefaultSaveFileManager() {
 }

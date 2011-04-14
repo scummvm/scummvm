@@ -150,7 +150,7 @@ public:
 		insert_aux(_storage + idx, &element, &element + 1);
 	}
 
-	void insert_at(int idx, const Array<T> &array) { 
+	void insert_at(int idx, const Array<T> &array) {
 		assert(idx >= 0 && (uint)idx <= _size);
 		insert_aux(_storage + idx, array.begin(), array.end());
 	}

@@ -23,8 +23,9 @@
  */
 
 #include "gui/themebrowser.h"
-#include "gui/ListWidget.h"
+#include "gui/widgets/list.h"
 #include "gui/widget.h"
+#include "gui/gui-manager.h"
 
 #include "common/translation.h"
 

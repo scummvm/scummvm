@@ -40,7 +40,7 @@
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
-#include "common/debug-channels.h"
+#include "common/debug-channels.h" /* for debug manager */
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/file.h"
@@ -49,12 +49,12 @@
 #include "common/tokenizer.h"
 #include "common/translation.h"
 
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 #include "gui/message.h"
 #include "gui/error.h"
 
-#include "sound/audiocd.h"
-#include "sound/mididrv.h"
+#include "audio/mididrv.h"
+#include "audio/musicplugin.h"  /* for music manager */
 
 #include "backends/keymapper/keymapper.h"
 
@@ -105,7 +105,8 @@ static const EnginePlugin *detectPlugin() {
 	// Query the plugins and find one that will handle the specified gameid
 	printf("User picked target '%s' (gameid '%s')...\n", ConfMan.getActiveDomainName().c_str(), gameid.c_str());
 	printf("%s", "  Looking for a plugin supporting this gameid... ");
-	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
+
+ 	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
 	if (plugin == 0) {
 		printf("failed\n");
@@ -214,11 +215,11 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	// Inform backend that the engine finished
 	system.engineDone();
 
-	// We clear all debug levels again even though the engine should do it
-	DebugMan.clearAllDebugChannels();
-
 	// Free up memory
 	delete engine;
+
+	// We clear all debug levels again even though the engine should do it
+	DebugMan.clearAllDebugChannels();
 
 	// Reset the file/directory mappings
 	SearchMan.clear();
@@ -238,6 +239,9 @@ static void setupGraphics(OSystem &system) {
 
 	// Set initial window caption
 	system.setWindowCaption(gResidualFullVersion);
+
+	// Clear the main screen
+	//system.fillScreen(0);
 }
 
 static void setupKeymapper(OSystem &system) {
@@ -296,7 +300,7 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 	Common::StringMap settings;
 	command = Base::parseCommandLine(settings, argc, argv);
 
-	// Load the config file (possibly overriden via command line):
+	// Load the config file (possibly overridden via command line):
 	if (settings.contains("config")) {
 		ConfMan.loadConfigFile(settings["config"]);
 		settings.erase("config");
@@ -322,9 +326,9 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 		settings.erase("debugflags");
 	}
 
-	// Load the plugins.
-	PluginManager::instance().loadPlugins();
-
+	PluginManager::instance().init();
+ 	PluginManager::instance().loadAllPlugins(); // load plugins for cached plugin manager
+	
 	// If we received an invalid music parameter via command line we check this here.
 	// We can't check this before loading the music plugins.
 	// On the other hand we cannot load the plugins before we know the file paths (in case of external plugins).
@@ -339,6 +343,7 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 	// config file and the plugins have been loaded.
 	Common::Error res;
 
+	// TODO: deal with settings that require plugins to be loaded
 	if ((res = Base::processSettings(command, settings)) != Common::kArgumentNotProcessed)
 		return res;
 
@@ -348,6 +353,12 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 
 	setupGraphics(system);
 
+	// Init the different managers that are used by the engines.
+	// Do it here to prevent fragmentation later
+	system.getAudioCDManager();
+	MusicManager::instance();
+	Common::DebugManager::instance();
+	
 	// Init the event manager. As the virtual keyboard is loaded here, it must
 	// take place after the backend is initiated and the screen has been setup
 	system.getEventManager()->init();
@@ -381,6 +392,13 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 			// Try to run the game
 			Common::Error result = runGame(plugin, system, specialDebug);
 
+		#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
+			// do our best to prevent fragmentation by unloading as soon as we can
+			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
+			// reallocate the config manager to get rid of any fragmentation
+			ConfMan.defragment();
+		#endif	
+			
 			// Did an error occur ?
 			if (result != Common::kNoError) {
 				// Shows an informative error dialog if starting the selected game failed.
@@ -405,33 +423,24 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 			// Clear the active config domain
 			ConfMan.setActiveDomain("");
 
-			// PluginManager::instance().unloadPlugins();
-			PluginManager::instance().loadPlugins();
+			PluginManager::instance().loadAllPlugins(); // only for cached manager
+
 		} else {
-			// A dialog would be nicer, but we don't have any
-			// screen to draw on yet.
-			warning("%s", _("Could not find any engine capable of running the selected game"));
 			GUI::displayErrorDialog(_("Could not find any engine capable of running the selected game"));
 		}
-
-		// We will destroy the AudioCDManager singleton here to save some memory.
-		// This will not make the CD audio stop, one would have to enable this:
-		//AudioCD.stop();
-		// but the engine is responsible for stopping CD playback anyway and
-		// this way we catch engines not doing it properly. For some more
-		// information about why AudioCDManager::destroy does not stop the CD
-		// playback read the FIXME in sound/audiocd.h
-		Audio::AudioCDManager::destroy();
 
 		// reset the graphics to default
 		setupGraphics(system);
 		launcherDialog();
 	}
-	PluginManager::instance().unloadPlugins();
+	PluginManager::instance().unloadAllPlugins();
 	PluginManager::destroy();
+	GUI::GuiManager::destroy();
 	Common::ConfigManager::destroy();
 	Common::SearchManager::destroy();
-	GUI::GuiManager::destroy();
+#ifdef USE_TRANSLATION
+	Common::TranslationManager::destroy();
+#endif
 
 	return 0;
 }

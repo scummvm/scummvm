@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Residual
+Comment=Interpreter for several 3D games
 Exec=residual
 Icon=residual
 Terminal=false

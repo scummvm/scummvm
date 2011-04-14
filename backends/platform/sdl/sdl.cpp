@@ -23,234 +23,166 @@
  *
  */
 
-#if defined(WIN32)
+#ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-// winnt.h defines ARRAYSIZE, but we want our own one... - this is needed before including util.h
-#undef ARRAYSIZE
+#undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
 #endif
 
 #include "backends/platform/sdl/sdl.h"
-#include "common/archive.h"
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/EventRecorder.h"
-#include "common/util.h"
 
-#ifdef UNIX
-  #include "backends/saves/posix/posix-saves.h"
-#else
-  #include "backends/saves/default/default-saves.h"
-#endif
-#include "backends/timer/default/default-timer.h"
-#include "sound/mixer_intern.h"
+#include "backends/saves/default/default-saves.h"
+#include "backends/audiocd/sdl/sdl-audiocd.h"
+#include "backends/events/sdl/sdl-events.h"
+#include "backends/mutex/sdl/sdl-mutex.h"
+#include "backends/timer/sdl/sdl-timer.h"
+#include "backends/graphics/sdl/sdl-graphics.h"
 
 #include "icons/residual.xpm"
 
 #include <time.h>	// for getTimeAndDate()
 
-//#define SAMPLES_PER_SEC 11025
-#define SAMPLES_PER_SEC 22050
-//#define SAMPLES_PER_SEC 44100
-
-
-/*
- * Include header files needed for the getFilesystemFactory() method.
- */
-#if defined(__amigaos4__)
-	#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
-#elif defined(UNIX)
-	#include "backends/fs/posix/posix-fs-factory.h"
-#elif defined(WIN32)
-	#include "backends/fs/windows/windows-fs-factory.h"
+#ifdef USE_DETECTLANG
+#ifndef WIN32
+#include <locale.h>
+#endif // !WIN32
 #endif
 
+OSystem_SDL::OSystem_SDL()
+	:
+	_inited(false),
+	_initedSDL(false),
+	_logger(0),
+	_mixerManager(0),
+	_eventSource(0) {
 
-#if defined(UNIX)
-#ifdef MACOSX
-#define DEFAULT_CONFIG_FILE "Library/Preferences/Residual Preferences"
-#elif defined(SAMSUNGTV)
-#define DEFAULT_CONFIG_FILE "/dtv/usb/sda1/.residualrc"
-#else
-#define DEFAULT_CONFIG_FILE ".residualrc"
-#endif
-#else
-#define DEFAULT_CONFIG_FILE "residual.ini"
-#endif
+}
 
-#if defined(MACOSX) || defined(IPHONE)
-#include "CoreFoundation/CoreFoundation.h"
-#endif
+OSystem_SDL::~OSystem_SDL() {
+	SDL_ShowCursor(SDL_ENABLE);
+
+	// Delete the various managers here. Note that the ModularBackend
+	// destructor would also take care of this for us. However, various
+	// of our managers must be deleted *before* we call SDL_Quit().
+	// Hence, we perform the destruction on our own.
+	delete _savefileManager;
+	_savefileManager = 0;
+	delete _graphicsManager;
+	_graphicsManager = 0;
+	delete _eventManager;
+	_eventManager = 0;
+	delete _eventSource;
+	_eventSource = 0;
+	delete _audiocdManager;
+	_audiocdManager = 0;
+	delete _mixerManager;
+	_mixerManager = 0;
+	delete _timerManager;
+	_timerManager = 0;
+	delete _mutexManager;
+	_mutexManager = 0;
+
+	delete _logger;
+	_logger = 0;
+
+	SDL_Quit();
+}
+
+void OSystem_SDL::init() {
+	// Initialize SDL
+	initSDL();
+
+	if (!_logger)
+		_logger = new Backends::Log::Log(this);
+
+	if (_logger) {
+		Common::WriteStream *logFile = createLogFile();
+		if (logFile)
+			_logger->open(logFile);
+	}
 
 
-static Uint32 timer_handler(Uint32 interval, void *param) {
-	((DefaultTimerManager *)param)->handler();
-	return interval;
+	// Creates the early needed managers, if they don't exist yet
+	// (we check for this to allow subclasses to provide their own).
+	if (_mutexManager == 0)
+		_mutexManager = new SdlMutexManager();
+
+	if (_timerManager == 0)
+		_timerManager = new SdlTimerManager();
 }
 
 void OSystem_SDL::initBackend() {
+	// Check if backend has not been initialized
 	assert(!_inited);
 
-	int joystick_num = ConfMan.getInt("joystick_num");
-	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
+	// Create the default event source, in case a custom backend
+	// manager didn't provide one yet.
+	if (_eventSource == 0)
+		_eventSource = new SdlEventSource();
 
-	if (ConfMan.hasKey("disable_sdl_parachute"))
-		sdlFlags |= SDL_INIT_NOPARACHUTE;
+	int graphicsManagerType = 0;
 
-#ifdef _WIN32_WCE
-	if (ConfMan.hasKey("use_GDI") && ConfMan.getBool("use_GDI")) {
-		SDL_VideoInit("windib", 0);
-		sdlFlags ^= SDL_INIT_VIDEO;
-	}
-#endif
-
-	if (joystick_num > -1)
-		sdlFlags |= SDL_INIT_JOYSTICK;
-
-	if (SDL_Init(sdlFlags) == -1) {
-		error("Could not initialize SDL: %s", SDL_GetError());
+	if (_graphicsManager == 0) {
+		if (_graphicsManager == 0) {
+			_graphicsManager = new SdlGraphicsManager(_eventSource);
+			graphicsManagerType = 0;
+		}
 	}
 
-	// disabled for now in Residual
-	//SDL_ShowCursor(SDL_DISABLE);
+	// Creates the backend managers, if they don't exist yet (we check
+	// for this to allow subclasses to provide their own).
+	if (_eventManager == 0)
+		_eventManager = new DefaultEventManager(_eventSource);
 
-	// Enable unicode support if possible
-	SDL_EnableUNICODE(1);
+	// We have to initialize the graphics manager before the event manager
+	// so the virtual keyboard can be initialized, but we have to add the
+	// graphics manager as an event observer after initializing the event
+	// manager.
+	if (graphicsManagerType == 0)
+		((SdlGraphicsManager *)_graphicsManager)->initEventObserver();
 
-#if !defined(MACOSX) && !defined(__SYMBIAN32__)
+	if (_savefileManager == 0)
+		_savefileManager = new DefaultSaveFileManager();
+
+	if (_mixerManager == 0) {
+		_mixerManager = new SdlMixerManager();
+
+		// Setup and start mixer
+		_mixerManager->init();
+	}
+
+	if (_audiocdManager == 0)
+		_audiocdManager = new SdlAudioCDManager();
 
 	// Setup a custom program icon.
-	// Don't set icon on OS X, as we use a nicer external icon there.
-	// Don't for Symbian: it uses the EScummVM.aif file for the icon.
 	setupIcon();
-#endif
-
-	// enable joystick
-	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
-		printf("Using joystick: %s\n", SDL_JoystickName(0));
-		_joystick = SDL_JoystickOpen(joystick_num);
-	}
-
-
-	// Create the savefile manager, if none exists yet (we check for this to
-	// allow subclasses to provide their own).
-	if (_savefile == 0) {
-#ifdef UNIX
-	_savefile = new POSIXSaveFileManager();
-#else
-	_savefile = new DefaultSaveFileManager();
-#endif
-	}
-
-	// Create and hook up the mixer, if none exists yet (we check for this to
-	// allow subclasses to provide their own).
-	if (_mixer == 0) {
-		setupMixer();
-	}
-
-	// Create and hook up the timer manager, if none exists yet (we check for
-	// this to allow subclasses to provide their own).
-	if (_timer == 0) {
-		// Note: We could implement a custom SDLTimerManager by using
-		// SDL_AddTimer. That might yield better timer resolution, but it would
-		// also change the semantics of a timer: Right now, ScummVM timers
-		// *never* run in parallel, due to the way they are implemented. If we
-		// switched to SDL_AddTimer, each timer might run in a separate thread.
-		// However, not all our code is prepared for that, so we can't just
-		// switch. Still, it's a potential future change to keep in mind.
-		_timer = new DefaultTimerManager();
-		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
-	}
-
-	// Invoke parent implementation of this method
-	OSystem::initBackend();
 
 	_inited = true;
 }
 
-OSystem_SDL::OSystem_SDL()
-	:
-	_screen(0),
-	_overlayVisible(false),
-	_overlayscreen(0),
-	_overlayWidth(0), _overlayHeight(0),
-	_overlayDirty(true), _overlayNumTex(0),
-#ifdef USE_OPENGL
-	_overlayTexIds(0),
+void OSystem_SDL::initSDL() {
+	// Check if SDL has not been initialized
+	if (!_initedSDL) {
+		uint32 sdlFlags = 0;
+		if (ConfMan.hasKey("disable_sdl_parachute"))
+			sdlFlags |= SDL_INIT_NOPARACHUTE;
+
+#ifdef WEBOS
+		// WebOS needs this flag or otherwise the application won't start
+		sdlFlags |= SDL_INIT_VIDEO;
 #endif
-	_cdrom(0),
 
-	_joystick(0),
-#if MIXER_DOUBLE_BUFFERING
-	_soundMutex(0), _soundCond(0), _soundThread(0),
-	_soundThreadIsRunning(false), _soundThreadShouldQuit(false),
-#endif
-	_fsFactory(0),
-	_savefile(0),
-	_mixer(0),
-	_timer(0) {
+		// Initialize SDL (SDL Subsystems are initiliazed in the corresponding sdl managers)
+		if (SDL_Init(sdlFlags) == -1)
+			error("Could not initialize SDL: %s", SDL_GetError());
 
-	// reset mouse state
-	memset(&_km, 0, sizeof(_km));
+		// Enable unicode support if possible
+		SDL_EnableUNICODE(1);
 
-	_inited = false;
-
-
-	#if defined(__amigaos4__)
-		_fsFactory = new AmigaOSFilesystemFactory();
-	#elif defined(UNIX)
-		_fsFactory = new POSIXFilesystemFactory();
-	#elif defined(WIN32)
-		_fsFactory = new WindowsFilesystemFactory();
-	#elif defined(__SYMBIAN32__)
-		// Do nothing since its handled by the Symbian SDL inheritance
-	#else
-		#error Unknown and unsupported FS backend
-	#endif
-}
-
-OSystem_SDL::~OSystem_SDL() {
-	SDL_RemoveTimer(_timerID);
-	closeMixer();
-	closeOverlay();
-	delete _savefile;
-	delete _timer;
-}
-
-uint32 OSystem_SDL::getMillis() {
-	uint32 millis = SDL_GetTicks();
-	g_eventRec.processMillis(millis);
-	return millis;
-}
-
-void OSystem_SDL::delayMillis(uint msecs) {
-	SDL_Delay(msecs);
-}
-
-void OSystem_SDL::getTimeAndDate(TimeDate &td) const {
-	time_t curTime = time(0);
-	struct tm t = *localtime(&curTime);
-	td.tm_sec = t.tm_sec;
-	td.tm_min = t.tm_min;
-	td.tm_hour = t.tm_hour;
-	td.tm_mday = t.tm_mday;
-	td.tm_mon = t.tm_mon;
-	td.tm_year = t.tm_year;
-}
-
-Common::TimerManager *OSystem_SDL::getTimerManager() {
-	assert(_timer);
-	return _timer;
-}
-
-Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
-	assert(_savefile);
-	return _savefile;
-}
-
-FilesystemFactory *OSystem_SDL::getFilesystemFactory() {
-	assert(_fsFactory);
-	return _fsFactory;
+		_initedSDL = true;
+	}
 }
 
 void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
@@ -264,88 +196,10 @@ void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) 
 	}
 #endif
 
-#ifdef MACOSX
-	// Get URL of the Resource directory of the .app bundle
-	CFURLRef fileUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
-	if (fileUrl) {
-		// Try to convert the URL to an absolute path
-		UInt8 buf[MAXPATHLEN];
-		if (CFURLGetFileSystemRepresentation(fileUrl, true, buf, sizeof(buf))) {
-			// Success: Add it to the search path
-			Common::String bundlePath((const char *)buf);
-			s.add("__OSX_BUNDLE__", new Common::FSDirectory(bundlePath), priority);
-		}
-		CFRelease(fileUrl);
-	}
-
-#endif
-
 }
 
-
-static Common::String getDefaultConfigFileName() {
-	char configFile[MAXPATHLEN];
-#if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-	OSVERSIONINFO win32OsVersion;
-	ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
-	win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&win32OsVersion);
-	// Check for non-9X version of Windows.
-	if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
-		// Use the Application Data directory of the user profile.
-		if (win32OsVersion.dwMajorVersion >= 5) {
-			if (!GetEnvironmentVariable("APPDATA", configFile, sizeof(configFile)))
-				error("Unable to access application data directory");
-		} else {
-			if (!GetEnvironmentVariable("USERPROFILE", configFile, sizeof(configFile)))
-				error("Unable to access user profile directory");
-
-			strcat(configFile, "\\Application Data");
-			CreateDirectory(configFile, NULL);
-		}
-
-		strcat(configFile, "\\Residual");
-		CreateDirectory(configFile, NULL);
-		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
-
-		FILE *tmp = NULL;
-		if ((tmp = fopen(configFile, "r")) == NULL) {
-			// Check windows directory
-			char oldConfigFile[MAXPATHLEN];
-			GetWindowsDirectory(oldConfigFile, MAXPATHLEN);
-			strcat(oldConfigFile, "\\" DEFAULT_CONFIG_FILE);
-			if ((tmp = fopen(oldConfigFile, "r"))) {
-				strcpy(configFile, oldConfigFile);
-
-				fclose(tmp);
-			}
-		} else {
-			fclose(tmp);
-		}
-	} else {
-		// Check windows directory
-		GetWindowsDirectory(configFile, MAXPATHLEN);
-		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
-	}
-#elif defined(UNIX)
-	// On UNIX type systems, by default we store the config file inside
-	// to the HOME directory of the user.
-	//
-	// GP2X is Linux based but Home dir can be read only so do not use
-	// it and put the config in the executable dir.
-	//
-	// On the iPhone, the home dir of the user when you launch the app
-	// from the Springboard, is /. Which we don't want.
-	const char *home = getenv("HOME");
-	if (home != NULL && strlen(home) < MAXPATHLEN)
-		snprintf(configFile, MAXPATHLEN, "%s/%s", home, DEFAULT_CONFIG_FILE);
-	else
-		strcpy(configFile, DEFAULT_CONFIG_FILE);
-#else
-	strcpy(configFile, DEFAULT_CONFIG_FILE);
-#endif
-
-	return configFile;
+Common::String OSystem_SDL::getDefaultConfigFileName() {
+	return "residual.ini";
 }
 
 Common::SeekableReadStream *OSystem_SDL::createConfigReadStream() {
@@ -376,81 +230,102 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 	SDL_WM_SetCaption(cap.c_str(), cap.c_str());
 }
 
-bool OSystem_SDL::hasFeature(Feature f) {
-	return
-#ifdef USE_OPENGL
-		(f == kFeatureOpenGL);
-#else
-	false;
-#endif
-}
-
-void OSystem_SDL::setFeatureState(Feature f, bool enable) {
-	switch (f) {
-	case kFeatureFullscreenMode:
-		//setFullscreenMode(enable);
-		break;
-/*	case kFeatureAspectRatioCorrection:
-		//setAspectRatioCorrection(enable);
-		break;
-	case kFeatureAutoComputeDirtyRects:
-		if (enable)
-			_modeFlags |= DF_WANT_RECT_OPTIM;
-		else
-			_modeFlags &= ~DF_WANT_RECT_OPTIM;
-		break;
-	case kFeatureIconifyWindow:
-		if (enable)
-			SDL_WM_IconifyWindow();*/
-		break;
-	default:
-		break;
-	}
-}
-
-bool OSystem_SDL::getFeatureState(Feature f) {
-	switch (f) {
-	case kFeatureFullscreenMode:
-		return _fullscreen;
-/*	case kFeatureAspectRatioCorrection:
-		return _videoMode.aspectRatioCorrection;
-	case kFeatureAutoComputeDirtyRects:
-		return _modeFlags & DF_WANT_RECT_OPTIM;*/
-	default:
-		return false;
-	}
-}
-
-void OSystem_SDL::deinit() {
-	if (_cdrom) {
-		SDL_CDStop(_cdrom);
-		SDL_CDClose(_cdrom);
-	}
-	if (_joystick)
-		SDL_JoystickClose(_joystick);
-
-	SDL_ShowCursor(SDL_ENABLE);
-
-	SDL_RemoveTimer(_timerID);
-	closeMixer();
-
-
-	delete _timer;
-
-	SDL_Quit();
-
-	// Event Manager requires save manager for storing
-	// recorded events
-	delete getEventManager();
-	delete _savefile;
-}
-
 void OSystem_SDL::quit() {
-	deinit();
-
-#if !defined(SAMSUNGTV)
+	delete this;
 	exit(0);
+}
+
+void OSystem_SDL::fatalError() {
+	delete this;
+	exit(1);
+}
+
+
+void OSystem_SDL::logMessage(LogMessageType::Type type, const char *message) {
+	ModularBackend::logMessage(type, message);
+	if (_logger)
+		_logger->print(message);
+
+#if defined( USE_WINDBG )
+#if defined( _WIN32_WCE )
+	TCHAR buf_unicode[1024];
+	MultiByteToWideChar(CP_ACP, 0, message, strlen(message) + 1, buf_unicode, sizeof(buf_unicode));
+	OutputDebugString(buf_unicode);
+
+	if (type == LogMessageType::kError) {
+#ifndef DEBUG
+		drawError(message);
+#else
+		int cmon_break_into_the_debugger_if_you_please = *(int *)(message + 1);	// bus error
+		printf("%d", cmon_break_into_the_debugger_if_you_please);			// don't optimize the int out
 #endif
+	}
+
+#else
+	OutputDebugString(message);
+#endif
+#endif
+}
+
+Common::String OSystem_SDL::getSystemLanguage() const {
+#ifdef USE_DETECTLANG
+#ifdef WIN32
+	// We can not use "setlocale" (at least not for MSVC builds), since it
+	// will return locales like: "English_USA.1252", thus we need a special
+	// way to determine the locale string for Win32.
+	char langName[9];
+	char ctryName[9];
+
+	const LCID languageIdentifier = GetThreadLocale();
+
+	// GetLocalInfo is only supported starting from Windows 2000, according to this:
+	// http://msdn.microsoft.com/en-us/library/dd318101%28VS.85%29.aspx
+	// On the other hand the locale constants used, seem to exist on Windows 98 too,
+	// check this for that: http://msdn.microsoft.com/en-us/library/dd464799%28v=VS.85%29.aspx
+	//
+	// I am not exactly sure what is the truth now, it might be very well that this breaks
+	// support for systems older than Windows 2000....
+	//
+	// TODO: Check whether this (or ScummVM at all ;-) works on a system with Windows 98 for
+	// example and if it does not and we still want Windows 9x support, we should definitly
+	// think of another solution.
+	if (GetLocaleInfo(languageIdentifier, LOCALE_SISO639LANGNAME, langName, sizeof(langName)) != 0 &&
+		GetLocaleInfo(languageIdentifier, LOCALE_SISO3166CTRYNAME, ctryName, sizeof(ctryName)) != 0) {
+		Common::String localeName = langName;
+		localeName += "_";
+		localeName += ctryName;
+
+		return localeName;
+	} else {
+		return ModularBackend::getSystemLanguage();
+	}
+#else // WIN32
+	// Activating current locale settings
+	const char *locale = setlocale(LC_ALL, "");
+
+	// Detect the language from the locale
+	if (!locale) {
+		return ModularBackend::getSystemLanguage();
+	} else {
+		int length = 0;
+
+		// Strip out additional information, like
+		// ".UTF-8" or the like. We do this, since
+		// our translation languages are usually
+		// specified without any charset information.
+		for (int i = 0; locale[i]; ++i, ++length) {
+			// TODO: Check whether "@" should really be checked
+			// here.
+			if (locale[i] == '.' || locale[i] == ' ' || locale[i] == '@')
+				break;
+		}
+
+		return Common::String(locale, length);
+	}
+#endif // WIN32
+#else // USE_DETECTLANG
+	return ModularBackend::getSystemLanguage();
+#endif // USE_DETECTLANG
 }
 
 void OSystem_SDL::setupIcon() {
@@ -505,289 +380,34 @@ void OSystem_SDL::setupIcon() {
 	free(icon);
 }
 
-OSystem::MutexRef OSystem_SDL::createMutex() {
-	return (MutexRef) SDL_CreateMutex();
+uint32 OSystem_SDL::getMillis() {
+	uint32 millis = SDL_GetTicks();
+	g_eventRec.processMillis(millis);
+	return millis;
 }
 
-void OSystem_SDL::lockMutex(MutexRef mutex) {
-	SDL_mutexP((SDL_mutex *) mutex);
+void OSystem_SDL::delayMillis(uint msecs) {
+	SDL_Delay(msecs);
 }
 
-void OSystem_SDL::unlockMutex(MutexRef mutex) {
-	SDL_mutexV((SDL_mutex *) mutex);
-}
-
-void OSystem_SDL::deleteMutex(MutexRef mutex) {
-	SDL_DestroyMutex((SDL_mutex *) mutex);
-}
-
-#pragma mark -
-#pragma mark --- Audio ---
-#pragma mark -
-
-#if MIXER_DOUBLE_BUFFERING
-
-void OSystem_SDL::mixerProducerThread() {
-	byte nextSoundBuffer;
-
-	SDL_LockMutex(_soundMutex);
-	while (true) {
-		// Wait till we are allowed to produce data
-		SDL_CondWait(_soundCond, _soundMutex);
-
-		if (_soundThreadShouldQuit)
-			break;
-
-		// Generate samples and put them into the next buffer
-		nextSoundBuffer = _activeSoundBuf ^ 1;
-		_mixer->mixCallback(_soundBuffers[nextSoundBuffer], _soundBufSize);
-
-		// Swap buffers
-		_activeSoundBuf = nextSoundBuffer;
-	}
-	SDL_UnlockMutex(_soundMutex);
-}
-
-int SDLCALL OSystem_SDL::mixerProducerThreadEntry(void *arg) {
-	OSystem_SDL *this_ = (OSystem_SDL *)arg;
-	assert(this_);
-	this_->mixerProducerThread();
-	return 0;
-}
-
-
-void OSystem_SDL::initThreadedMixer(Audio::MixerImpl *mixer, uint bufSize) {
-	_soundThreadIsRunning = false;
-	_soundThreadShouldQuit = false;
-
-	// Create mutex and condition variable
-	_soundMutex = SDL_CreateMutex();
-	_soundCond = SDL_CreateCond();
-
-	// Create two sound buffers
-	_activeSoundBuf = 0;
-	_soundBufSize = bufSize;
-	_soundBuffers[0] = (byte *)calloc(1, bufSize);
-	_soundBuffers[1] = (byte *)calloc(1, bufSize);
-
-	_soundThreadIsRunning = true;
-
-	// Finally start the thread
-	_soundThread = SDL_CreateThread(mixerProducerThreadEntry, this);
-}
-
-void OSystem_SDL::deinitThreadedMixer() {
-	// Kill thread?? _soundThread
-
-	if (_soundThreadIsRunning) {
-		// Signal the producer thread to end, and wait for it to actually finish.
-		_soundThreadShouldQuit = true;
-		SDL_CondBroadcast(_soundCond);
-		SDL_WaitThread(_soundThread, NULL);
-
-		// Kill the mutex & cond variables.
-		// Attention: AT this point, the mixer callback must not be running
-		// anymore, else we will crash!
-		SDL_DestroyMutex(_soundMutex);
-		SDL_DestroyCond(_soundCond);
-
-		_soundThreadIsRunning = false;
-
-		free(_soundBuffers[0]);
-		free(_soundBuffers[1]);
-	}
-}
-
-
-void OSystem_SDL::mixCallback(void *arg, byte *samples, int len) {
-	OSystem_SDL *this_ = (OSystem_SDL *)arg;
-	assert(this_);
-	assert(this_->_mixer);
-
-	assert((int)this_->_soundBufSize == len);
-
-	// Lock mutex, to ensure our data is not overwritten by the producer thread
-	SDL_LockMutex(this_->_soundMutex);
-
-	// Copy data from the current sound buffer
-	memcpy(samples, this_->_soundBuffers[this_->_activeSoundBuf], len);
-
-	// Unlock mutex and wake up the produced thread
-	SDL_UnlockMutex(this_->_soundMutex);
-	SDL_CondSignal(this_->_soundCond);
-}
-
-#else
-
-void OSystem_SDL::mixCallback(void *sys, byte *samples, int len) {
-	OSystem_SDL *this_ = (OSystem_SDL *)sys;
-	assert(this_);
-	assert(this_->_mixer);
-
-	this_->_mixer->mixCallback(samples, len);
-}
-
-#endif
-
-void OSystem_SDL::setupMixer() {
-	SDL_AudioSpec desired;
-
-	// Determine the desired output sampling frequency.
-	uint32 samplesPerSec = 0;
-	if (ConfMan.hasKey("output_rate"))
-		samplesPerSec = ConfMan.getInt("output_rate");
-	if (samplesPerSec <= 0)
-		samplesPerSec = SAMPLES_PER_SEC;
-
-	// Determine the sample buffer size. We want it to store enough data for
-	// at least 1/16th of a second (though at most 8192 samples). Note
-	// that it must be a power of two. So e.g. at 22050 Hz, we request a
-	// sample buffer size of 2048.
-	uint32 samples = 8192;
-	while (samples * 16 > samplesPerSec * 2)
-		samples >>= 1;
-
-	memset(&desired, 0, sizeof(desired));
-	desired.freq = samplesPerSec;
-	desired.format = AUDIO_S16SYS;
-	desired.channels = 2;
-	desired.samples = (uint16)samples;
-	desired.callback = mixCallback;
-	desired.userdata = this;
-
-	assert(!_mixer);
-	if (SDL_OpenAudio(&desired, &_obtainedRate) != 0) {
-		warning("Could not open audio device: %s", SDL_GetError());
-		_mixer = new Audio::MixerImpl(this, samplesPerSec);
-		assert(_mixer);
-		_mixer->setReady(false);
-	} else {
-		// Note: This should be the obtained output rate, but it seems that at
-		// least on some platforms SDL will lie and claim it did get the rate
-		// even if it didn't. Probably only happens for "weird" rates, though.
-		samplesPerSec = _obtainedRate.freq;
-		debug(1, "Output sample rate: %d Hz", samplesPerSec);
-
-		// Create the mixer instance and start the sound processing
-		_mixer = new Audio::MixerImpl(this, samplesPerSec);
-		assert(_mixer);
-		_mixer->setReady(true);
-
-#if MIXER_DOUBLE_BUFFERING
-		initThreadedMixer(_mixer, _obtainedRate.samples * 4);
-#endif
-
-		// start the sound system
-		SDL_PauseAudio(0);
-	}
-}
-
-void OSystem_SDL::closeMixer() {
-	if (_mixer)
-		_mixer->setReady(false);
-
-	SDL_CloseAudio();
-
-	delete _mixer;
-	_mixer = 0;
-
-#if MIXER_DOUBLE_BUFFERING
-	deinitThreadedMixer();
-#endif
-
+void OSystem_SDL::getTimeAndDate(TimeDate &td) const {
+	time_t curTime = time(0);
+	struct tm t = *localtime(&curTime);
+	td.tm_sec = t.tm_sec;
+	td.tm_min = t.tm_min;
+	td.tm_hour = t.tm_hour;
+	td.tm_mday = t.tm_mday;
+	td.tm_mon = t.tm_mon;
+	td.tm_year = t.tm_year;
 }
 
 Audio::Mixer *OSystem_SDL::getMixer() {
-	assert(_mixer);
-	return _mixer;
+	assert(_mixerManager);
+	return _mixerManager->getMixer();
 }
 
-#pragma mark -
-#pragma mark --- CD Audio ---
-#pragma mark -
-
-bool OSystem_SDL::openCD(int drive) {
-	if (SDL_InitSubSystem(SDL_INIT_CDROM) == -1)
-		_cdrom = NULL;
-	else {
-		_cdrom = SDL_CDOpen(drive);
-		// Did it open? Check if _cdrom is NULL
-		if (!_cdrom) {
-			warning("Couldn't open drive: %s", SDL_GetError());
-		} else {
-			_cdNumLoops = 0;
-			_cdStopTime = 0;
-			_cdEndTime = 0;
-		}
-	}
-
-	return (_cdrom != NULL);
+SdlMixerManager *OSystem_SDL::getMixerManager() {
+	assert(_mixerManager);
+	return _mixerManager;
 }
 
-void OSystem_SDL::stopCD() {	/* Stop CD Audio in 1/10th of a second */
-	_cdStopTime = SDL_GetTicks() + 100;
-	_cdNumLoops = 0;
-}
-
-void OSystem_SDL::playCD(int track, int num_loops, int start_frame, int duration) {
-	if (!num_loops && !start_frame)
-		return;
-
-	if (!_cdrom)
-		return;
-
-	if (duration > 0)
-		duration += 5;
-
-	_cdTrack = track;
-	_cdNumLoops = num_loops;
-	_cdStartFrame = start_frame;
-
-	SDL_CDStatus(_cdrom);
-	if (start_frame == 0 && duration == 0)
-		SDL_CDPlayTracks(_cdrom, track, 0, 1, 0);
-	else
-		SDL_CDPlayTracks(_cdrom, track, start_frame, 0, duration);
-	_cdDuration = duration;
-	_cdStopTime = 0;
-	_cdEndTime = SDL_GetTicks() + _cdrom->track[track].length * 1000 / CD_FPS;
-}
-
-bool OSystem_SDL::pollCD() {
-	if (!_cdrom)
-		return false;
-
-	return (_cdNumLoops != 0 && (SDL_GetTicks() < _cdEndTime || SDL_CDStatus(_cdrom) == CD_PLAYING));
-}
-
-void OSystem_SDL::updateCD() {
-	if (!_cdrom)
-		return;
-
-	if (_cdStopTime != 0 && SDL_GetTicks() >= _cdStopTime) {
-		SDL_CDStop(_cdrom);
-		_cdNumLoops = 0;
-		_cdStopTime = 0;
-		return;
-	}
-
-	if (_cdNumLoops == 0 || SDL_GetTicks() < _cdEndTime)
-		return;
-
-	if (_cdNumLoops != 1 && SDL_CDStatus(_cdrom) != CD_STOPPED) {
-		// Wait another second for it to be done
-		_cdEndTime += 1000;
-		return;
-	}
-
-	if (_cdNumLoops > 0)
-		_cdNumLoops--;
-
-	if (_cdNumLoops != 0) {
-		if (_cdStartFrame == 0 && _cdDuration == 0)
-			SDL_CDPlayTracks(_cdrom, _cdTrack, 0, 1, 0);
-		else
-			SDL_CDPlayTracks(_cdrom, _cdTrack, _cdStartFrame, 0, _cdDuration);
-		_cdEndTime = SDL_GetTicks() + _cdrom->track[_cdTrack].length * 1000 / CD_FPS;
-	}
-}

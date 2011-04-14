@@ -22,9 +22,10 @@
  * $Id$
  */
 
+// Disable symbol overrides so that we can use system headers
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "gui/browser.h"
-#include "gui/GuiManager.h"
-#include "gui/ListWidget.h"
 
 #include "common/config-manager.h"
 #include "common/system.h"

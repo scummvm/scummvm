@@ -4,7 +4,7 @@ gui/about.cpp
 gui/browser.cpp
 gui/chooser.cpp
 gui/error.cpp
-gui/GuiManager.cpp
+gui/gui-manager.cpp
 gui/KeysDialog.h
 gui/KeysDialog.cpp
 gui/launcher.cpp
@@ -21,16 +21,16 @@ common/util.cpp
 
 engines/dialogs.cpp
 
-sound/fmopl.cpp
-sound/musicplugin.cpp
-sound/null.h
-sound/null.cpp
-sound/softsynth/adlib.cpp
-sound/softsynth/appleiigs.cpp
-sound/softsynth/sid.cpp
-sound/softsynth/mt32.cpp
-sound/softsynth/pcspk.cpp
-sound/softsynth/ym2612.cpp
+audio/fmopl.cpp
+audio/musicplugin.cpp
+audio/null.h
+audio/null.cpp
+audio/softsynth/adlib.cpp
+audio/softsynth/appleiigs.cpp
+audio/softsynth/sid.cpp
+audio/softsynth/mt32.cpp
+audio/softsynth/pcspk.cpp
+audio/softsynth/ym2612.cpp
 
 backends/keymapper/remap-dialog.cpp
 backends/midi/windows.cpp

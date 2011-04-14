@@ -242,13 +242,20 @@ void sort(T first, T last) {
  */
 template<class T>
 T gcd(T a, T b) {
-	if (a <= 0) a = -a;
-	if (b <= 0) b = -b;
+	// Note: We check for <= instead of < to avoid spurious compiler
+	// warnings if T is an unsigned type, i.e. warnings like "comparison
+	// of unsigned expression < 0 is always false".
+	if (a <= 0)
+		a = -a;
+	if (b <= 0)
+		b = -b;
+
 	while (a > 0) {
 		T tmp = a;
 		a = b % a;
 		b = tmp;
 	}
+
 	return b;
 }
 

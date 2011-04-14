@@ -16,22 +16,22 @@ all: $(EXECUTABLE) plugins
 ######################################################################
 
 PLUGINS :=
-MODULES := base $(MODULES)
+MODULES := devtools base $(MODULES)
 
 -include $(srcdir)/engines/engines.mk
 
 # After the game specific modules follow the shared modules
 MODULES += \
 	gui \
-	sound \
 	backends \
 	engines \
 	graphics \
+	audio \
 	common \
 	po
 
 ifdef USE_MT32EMU
-MODULES += sound/softsynth/mt32
+MODULES += audio/softsynth/mt32
 endif
 
 ######################################################################
@@ -53,6 +53,10 @@ DEPFILES =
 # changed, it causes version.cpp to be recompiled. This in turn ensures that
 # the build date in gScummVMBuildDate is correct.
 base/version.o: $(filter-out base/libbase.a,$(OBJS))
+
+ifdef USE_ELF_LOADER
+backends/plugins/elf/version.o: $(filter-out base/libbase.a,$(filter-out backends/libbackends.a,$(OBJS)))
+endif
 
 # Replace regular output with quiet messages
 ifneq ($(findstring $(MAKEFLAGS),s),s)
@@ -158,34 +162,36 @@ VER_EXTRA = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c2-)
 
 
 ######################################################################
-# Get Subversion's working copy information
+# Get git's working copy information
 ######################################################################
 
-ifneq ($(shell svn info $(srcdir) 1>/dev/null 2>&1 || echo "error"),error)
-SVNROOT := $(srcdir)
-ifeq ($(origin VER_SVNREV), undefined)
+ifneq ($(shell cd $(srcdir); git rev-parse --verify HEAD 1>/dev/null 2>&1 || echo "error"),error)
+GITROOT := $(srcdir)
+ifeq ($(origin VER_REV), undefined)
+# Are there uncommitted changes? (describe --dirty is only available since 1.6.6)
+VER_DIRTY := $(shell cd $(srcdir); git update-index --refresh --unmerged 1>/dev/null 2>&1; git diff-index --quiet HEAD || echo "-dirty")
 # Get the working copy base revision
-VER_SVNREV := $(shell LANG=C svn info $(SVNROOT) | grep "^Revision" | cut -d ' ' -f 2)
+VER_REV := $(shell cd $(srcdir); git describe --match desc/\* | cut -d '-' -f 2-)$(VER_DIRTY)
 endif
 else
-SVNROOT := https://resisual.svn.sourceforge.net/svnroot/residual/residual/trunk/
+GITROOT := git://github.com/residual/residual.git
 endif
 
 # Define the Subversion revision if available, either autodetected or
 # specified by the user, but only for base/version.cpp.
-ifneq ($(origin VER_SVNREV), undefined)
-CXXFLAGS+= -DRESIDUAL_SVN_REVISION=\"$(VER_SVNREV)\"
+ifneq ($(origin VER_REV), undefined)
+base/version.o: CXXFLAGS:=$(CXXFLAGS) -DRESIDUAL_REVISION=\"$(VER_REV)\"
 endif
 
 ######################################################################
 # Distribution settings
 ######################################################################
 
-ifeq ($(VER_EXTRA),svn)
-ifeq ($(origin VER_SVNREV), undefined)
+ifeq ($(VER_EXTRA),git)
+ifeq ($(origin VER_REV), undefined)
 DISTVERSION = $(shell date '+%Y-%m-%d')
 else
-DISTVERSION = svn$(VER_SVNREV)
+DISTVERSION = git$(VER_REV)
 endif
 else
 DISTVERSION = $(VERSION)
@@ -195,14 +201,15 @@ DISTNAME := residual-$(DISTVERSION)
 DISTDIR := dist
 VERFILE := $(DISTDIR)/$(DISTNAME)/base/internal_version.h
 
+# TODO git via $(GITROOT)
 $(VERFILE): $(srcdir)/base/internal_version.h
 	@$(RM_REC) $(DISTDIR)
 	@$(MKDIR) $(DISTDIR)
 	svn export $(SVNROOT) $(DISTDIR)/$(DISTNAME)
-ifneq ($(origin VER_SVNREV), undefined)
+ifneq ($(origin VER_REV), undefined)
 	@# Use the current SVN revision as a default for the snapshot sources
 	@svn cat $(SVNROOT)/base/internal_version.h | sed -e \
-		"s/^#define RESIDUAL_SVN_REVISION$$/#define RESIDUAL_SVN_REVISION \"$(VER_SVNREV)\"/g" \
+		"s/^#define RESIDUAL_REVISION$$/#define RESIDUAL_REVISION \"$(VER_REV)\"/g" \
 		> $(VERFILE)
 endif
 

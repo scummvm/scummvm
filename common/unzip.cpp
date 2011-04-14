@@ -106,6 +106,7 @@ typedef struct {
 #include "common/fs.h"
 #include "common/unzip.h"
 #include "common/file.h"
+#include "common/memstream.h"
 
 #include "common/hashmap.h"
 #include "common/hash-str.h"
@@ -373,7 +374,7 @@ typedef struct {
 	unz_file_info_internal cur_file_info_internal;	/* private info about it*/
 } cached_file_in_zip;
 
-typedef Common::HashMap<Common::String, cached_file_in_zip, Common::IgnoreCase_Hash, 
+typedef Common::HashMap<Common::String, cached_file_in_zip, Common::IgnoreCase_Hash,
 	Common::IgnoreCase_EqualTo> ZipHash;
 
 /* unz_s contain internal information about the zipfile
@@ -401,7 +402,7 @@ typedef struct {
 /* ===========================================================================
      Read a byte from a gz_stream; update next_in and avail_in. Return EOF
    for end of file.
-   IN assertion: the stream s has been sucessfully opened for reading.
+   IN assertion: the stream s has been successfully opened for reading.
 */
 
 
@@ -1147,7 +1148,7 @@ int unzReadCurrentFile(unzFile file, voidp buf, unsigned len) {
 		return UNZ_PARAMERROR;
 
 
-	if ((pfile_in_zip_read_info->read_buffer == NULL))
+	if (pfile_in_zip_read_info->read_buffer == NULL)
 		return UNZ_END_OF_LIST_OF_FILE;
 	if (len==0)
 		return 0;

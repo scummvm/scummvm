@@ -1,0 +1,594 @@
+#!/usr/bin/perl
+#
+# This tools is kind of a hack to be able to maintain the credits list of
+# Residual in a single central location. We then generate the various versions
+# of the credits in other places from this source. In particular:
+# - The AUTHORS file
+# - The gui/credits.h header file
+# - The credits.xml file, part of the DocBook manual
+# - Finally, credits.xml, for use on the website (different format than the DocBook one)
+# And maybe in the future, also "doc/10.tex", the LaTeX version of the README.
+# Although that might soon be obsolete, if the manual evolves enough.
+#
+# Initial version written by Fingolfin in December 2004.
+#
+
+
+use strict;
+use Text::Wrap;
+
+if ($Text::Wrap::VERSION < 2001.0929) {
+	die "Text::Wrap version >= 2001.0929 is required. You have $Text::Wrap::VERSION\n";
+}
+
+my $mode = "";
+my $max_name_width;
+
+# Count the level in the section hierarchy, i.e. how deep we are currently nested
+# in terms of 'sections'.
+my $section_level = 0;
+
+# Count how many sections there have been on this level already
+my @section_count = ( 0, 0, 0 );
+
+if ($#ARGV >= 0) {
+	$mode = "TEXT" if ($ARGV[0] eq "--text");	# AUTHORS file
+	$mode = "XML-WEB" if ($ARGV[0] eq "--xml-website");	# credits.xml (for use on the website)
+	$mode = "CPP" if ($ARGV[0] eq "--cpp");		# credits.h (for use by about.cpp)
+	$mode = "XML-DOC" if ($ARGV[0] eq "--xml-docbook");		# credits.xml (DocBook)
+	$mode = "RTF" if ($ARGV[0] eq "--rtf");		# Credits.rtf (Mac OS X About box)
+	$mode = "TEX" if ($ARGV[0] eq "--tex");		# 10.tex (LaTeX)
+}
+
+if ($mode eq "") {
+	print STDERR "Usage: $0 [--text | --xml-website | --cpp | --xml-docbook | --rtf]\n";
+	print STDERR " Just pass --text / --xml-website / --cpp / --xml-docbook / --rtf as parameter, and credits.pl\n";
+	print STDERR " will print out the corresponding version of the credits to stdout.\n";
+	exit 1;
+}
+
+$Text::Wrap::unexpand = 0;
+if ($mode eq "TEXT") {
+	$Text::Wrap::columns = 78;
+	$max_name_width = 21; # The maximal width of a name.
+} elsif ($mode eq "CPP") {
+	$Text::Wrap::columns = 48;	# Approx.
+}
+
+# Convert HTML entities to ASCII for the plain text mode
+sub html_entities_to_ascii {
+	my $text = shift;
+
+	# For now we hardcode these mappings
+	# &aacute;  -> a
+	# &eacute;  -> e
+	# &igrave;  -> i
+	# &oacute;  -> o
+	# &oslash;  -> o
+	# &ouml;    -> o / oe
+	# &auml;    -> a
+	# &uuml;    -> ue
+	# &aring;   -> aa
+	# &amp;     -> &
+	# &#322;    -> l
+	# &Scaron;  -> S
+	$text =~ s/&aacute;/a/g;
+	$text =~ s/&eacute;/e/g;
+	$text =~ s/&igrave;/i/g;
+	$text =~ s/&oacute;/o/g;
+	$text =~ s/&oslash;/o/g;
+	$text =~ s/&#322;/l/g;
+	$text =~ s/&Scaron;/S/g;
+	$text =~ s/&aring;/aa/g;
+
+	$text =~ s/&auml;/a/g;
+	$text =~ s/&uuml;/ue/g;
+	# HACK: Torbj*o*rn but G*oe*ffringmann and R*oe*ver and J*oe*rg
+	$text =~ s/Torbj&ouml;rn/Torbjorn/g;
+	$text =~ s/&ouml;/oe/g;
+
+	$text =~ s/&amp;/&/g;
+
+	return $text;
+}
+
+# Convert HTML entities to C++ characters
+sub html_entities_to_cpp {
+	my $text = shift;
+
+	# The numerical values are octal!
+	$text =~ s/&aacute;/\\341/g;
+	$text =~ s/&eacute;/\\351/g;
+	$text =~ s/&igrave;/\\354/g;
+	$text =~ s/&oacute;/\\363/g;
+	$text =~ s/&oslash;/\\370/g;
+	$text =~ s/&#322;/l/g;
+	$text =~ s/&Scaron;/S/g;
+	$text =~ s/&aring;/\\345/g;
+
+	$text =~ s/&auml;/\\344/g;
+	$text =~ s/&ouml;/\\366/g;
+	$text =~ s/&uuml;/\\374/g;
+
+	$text =~ s/&amp;/&/g;
+
+	return $text;
+}
+
+# Convert HTML entities to RTF codes
+# This is using the Mac OS Roman encoding
+sub html_entities_to_rtf {
+	my $text = shift;
+
+	$text =~ s/&aacute;/\\'87/g;
+	$text =~ s/&eacute;/\\'8e/g;
+	$text =~ s/&igrave;/\\'93/g;
+	$text =~ s/&oacute;/\\'97/g;
+	$text =~ s/&oslash;/\\'bf/g;
+	$text =~ s/&aring;/\\'8c/g;
+	# The following numerical values are octal!
+	$text =~ s/&#322;/\\uc0\\u322 /g;
+	$text =~ s/&Scaron;/\\uc0\\u540 /g;
+
+	# Back to hex numbers
+	$text =~ s/&auml;/\\'8a/g;
+	$text =~ s/&ouml;/\\'9a/g;
+	$text =~ s/&uuml;/\\'9f/g;
+
+	$text =~ s/&amp;/&/g;
+
+	return $text;
+}
+
+# Convert HTML entities to TeX codes
+sub html_entities_to_tex {
+	my $text = shift;
+
+	$text =~ s/&aacute;/\\'a/g;
+	$text =~ s/&eacute;/\\'e/g;
+	$text =~ s/&igrave;/\\`\\i/g;
+	$text =~ s/&oacute;/\\'o/g;
+	$text =~ s/&oslash;/{\\o}/g;
+	$text =~ s/&aring;/\\aa /g;
+	$text =~ s/&#322;/{\\l}/g;
+	$text =~ s/&Scaron;/{\\v S}/g;
+
+	$text =~ s/&auml;/\\"a/g;
+	$text =~ s/&ouml;/\\"o/g;
+	$text =~ s/&uuml;/\\"u/g;
+
+	$text =~ s/&amp;/\\&/g;
+
+	return $text;
+}
+
+#
+# Small reference of the RTF commands used here:
+#
+#  \fs28   switches to 14 point font (28 = 2 * 14)
+#  \pard   reset to default paragraph properties
+#
+#  \ql     left-aligned text
+#  \qr     right-aligned text
+#  \qc     centered text
+#  \qj     justified text
+#
+#  \b      turn on bold
+#  \b0     turn off bold
+#
+# For more information: <http://latex2rtf.sourceforge.net/rtfspec.html>
+#
+
+sub begin_credits {
+	my $title = shift;
+
+	if ($mode eq "TEXT") {
+		#print html_entities_to_ascii($title)."\n";
+	} elsif ($mode eq "TEX") {
+		print "% This file was generated by credits.pl. Do not edit by hand!\n";
+		print '\section{Credits}' . "\n";
+		print '\begin{trivlist}' . "\n";
+	} elsif ($mode eq "RTF") {
+		print '{\rtf1\mac\ansicpg10000' . "\n";
+		print '{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;}' . "\n";
+		print '{\colortbl;\red255\green255\blue255;\red0\green128\blue0;\red128\green128\blue128;}' . "\n";
+		print '\vieww6920\viewh15480\viewkind0' . "\n";
+		print "\n";
+	} elsif ($mode eq "CPP") {
+		print "// This file was generated by credits.pl. Do not edit by hand!\n";
+		print "static const char *credits[] = {\n";
+	} elsif ($mode eq "XML-DOC") {
+		print "<?xml version='1.0'?>\n";
+		print "<!-- This file was generated by credits.pl. Do not edit by hand! -->\n";
+		print "<!DOCTYPE appendix PUBLIC '-//OASIS//DTD DocBook XML V4.2//EN'\n";
+		print "       'http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd'>\n";
+		print "<appendix id='credits'>\n";
+		print "  <title>" . $title . "</title>\n";
+		print "  <informaltable frame='none'>\n";
+		print "  <tgroup cols='3' align='left' colsep='0' rowsep='0'>\n";
+		print "  <colspec colname='start' colwidth='0.5cm'/>\n";
+		print "  <colspec colname='name' colwidth='4cm'/>\n";
+		print "  <colspec colname='job'/>\n";
+		print "  <tbody>\n";
+	} elsif ($mode eq "XML-WEB") {
+		print "<?xml version='1.0'?>\n";
+		print "<!-- This file was generated by credits.pl. Do not edit by hand! -->\n";
+		print "<credits>\n";
+	}
+}
+
+sub end_credits {
+	if ($mode eq "TEXT") {
+	} elsif ($mode eq "TEX") {
+		print '\end{trivlist}' . "\n";
+		print "\n";
+	} elsif ($mode eq "RTF") {
+		print "}\n";
+	} elsif ($mode eq "CPP") {
+		print "};\n";
+	} elsif ($mode eq "XML-DOC") {
+		print "  </tbody>\n";
+		print "  </tgroup>\n";
+		print "  </informaltable>\n";
+		print "</appendix>\n";
+	} elsif ($mode eq "XML-WEB") {
+		print "</credits>\n";
+	}
+}
+
+sub begin_section {
+	my $title = shift;
+
+	if ($mode eq "TEXT") {
+		$title = html_entities_to_ascii($title);
+
+		if ($section_level >= 2) {
+			$title .= ":"
+		}
+
+		print "  " x $section_level . $title."\n";
+		if ($section_level eq 0) {
+			print "  " x $section_level . "*" x (length $title)."\n";
+		} elsif ($section_level eq 1) {
+			print "  " x $section_level . "-" x (length $title)."\n";
+		}
+	} elsif ($mode eq "TEX") {
+		print '\item \textbf{';
+		if ($section_level eq 0) {
+			print '\LARGE';
+		} elsif ($section_level eq 1) {
+			print '\large';
+		}
+		print " " . html_entities_to_tex($title) . "}\n";
+		print '\begin{list}{}{\setlength{\leftmargin}{0.2cm}}' . "\n";
+	} elsif ($mode eq "RTF") {
+		$title = html_entities_to_rtf($title);
+
+		# Center text
+		print '\pard\qc' . "\n";
+		print '\f0\b';
+		if ($section_level eq 0) {
+			print '\fs40 ';
+		} elsif ($section_level eq 1) {
+			print '\fs32 ';
+		}
+
+		# Insert an empty line before this section header, *unless*
+		# this is the very first section header in the file.
+		if ($section_level > 0 || @section_count[0] > 0) {
+			print "\\\n";
+		}
+		print '\cf2 ' . $title . "\n";
+		print '\f1\b0\fs24 \cf0 \\' . "\n";
+	} elsif ($mode eq "CPP") {
+		if ($section_level eq 0) {
+		  # TODO: Would be nice to have a 'fat' or 'large' mode for
+		  # headlines...
+		  $title = html_entities_to_cpp($title);
+		  print '"C1""'.$title.'",' . "\n";
+		  print '"",' . "\n";
+		} else {
+		  $title = html_entities_to_cpp($title);
+		  print '"C1""'.$title.'",' . "\n";
+		}
+	} elsif ($mode eq "XML-DOC") {
+		print "  <row><entry namest='start' nameend='job'>";
+		print "<emphasis role='bold'>" . $title . ":</emphasis>";
+		print "</entry></row>\n";
+	} elsif ($mode eq "XML-WEB") {
+		if ($section_level eq 0) {
+			print "\t<section>\n";
+			print "\t\t<title>" . $title . "</title>\n";
+		} elsif ($section_level eq 1) {
+			print "\t\t<subsection>\n";
+			print "\t\t\t<title>" . $title . "</title>\n";
+		} else {
+			#print "\t\t\t<group>" . $title . "</group>\n";
+			#print "\t\t\t\t<name>" . $title . "</name>\n";
+		}
+	}
+
+	# Implicit start of person list on section level 2
+	if ($section_level >= 2) {
+		begin_persons($title);
+	}
+	@section_count[$section_level]++;
+	$section_level++;
+	@section_count[$section_level] = 0;
+}
+
+sub end_section {
+	$section_level--;
+
+	# Implicit end of person list on section level 2
+	if ($section_level >= 2) {
+		end_persons();
+	}
+
+	if ($mode eq "TEXT") {
+		# nothing
+	} elsif ($mode eq "TEX") {
+		print '\end{list}' . "\n";
+	} elsif ($mode eq "RTF") {
+		# nothing
+	} elsif ($mode eq "CPP") {
+		print '"",' . "\n";
+	} elsif ($mode eq "XML-DOC") {
+		print "  <row><entry namest='start' nameend='job'> </entry></row>\n\n";
+	} elsif ($mode eq "XML-WEB") {
+		if ($section_level eq 0) {
+			print "\t</section>\n";
+		} elsif ($section_level eq 1) {
+			print "\t\t</subsection>\n";
+		} else {
+			#print "\t\t\t</group>\n";
+		}
+	}
+}
+
+sub begin_persons {
+	my $title = shift;
+	if ($mode eq "XML-WEB") {
+		print "\t\t\t<group>\n";
+		print "\t\t\t\t<name>" . $title . "</name>\n";
+		#print "\t\t\t\t<persons>\n";
+	} elsif ($mode eq "TEX") {
+		print '\item  \begin{tabular}[h]{p{0.3\linewidth}p{0.6\linewidth}}' . "\n";
+	}
+}
+
+sub end_persons {
+	if ($mode eq "TEXT") {
+		print "\n";
+	} elsif ($mode eq "TEX") {
+		print '  \end{tabular}' . "\n";
+	} elsif ($mode eq "RTF") {
+		# nothing
+	} elsif ($mode eq "XML-WEB") {
+		#print "\t\t\t\t</persons>\n";
+		print "\t\t\t</group>\n";
+	}
+}
+
+sub add_person {
+	my $name = shift;
+	my $nick = shift;
+	my $desc = shift;
+	my $tab;
+
+	if ($mode eq "TEXT") {
+		my $min_name_width = length $desc > 0 ? $max_name_width : 0;
+		$name = $nick if $name eq "";
+		$name = html_entities_to_ascii($name);
+		$desc = html_entities_to_ascii($desc);
+
+		$tab = " " x ($section_level * 2 + 1);
+		printf $tab."%-".$min_name_width.".".$max_name_width."s", $name;
+
+		# Print desc wrapped
+		if (length $desc > 0) {
+		  my $inner_indent = ($section_level * 2 + 1) + $max_name_width + 3;
+		  my $multitab = " " x $inner_indent;
+		  print " - " . substr(wrap($multitab, $multitab, $desc), $inner_indent);
+		}
+		print "\n";
+	} elsif ($mode eq "TEX") {
+		$name = $nick if $name eq "";
+		$name = html_entities_to_tex($name);
+		$desc = html_entities_to_tex($desc);
+
+		print "    $name & \\textit{$desc}\\\\\n";
+	} elsif ($mode eq "RTF") {
+		$name = $nick if $name eq "";
+		$name = html_entities_to_rtf($name);
+
+		# Center text
+		print '\pard\qc' . "\n";
+		# Activate 1.5 line spacing mode
+		print '\sl360\slmult1';
+		# The name
+		print $name . "\\\n";
+		# Description using italics
+		if (length $desc > 0) {
+			$desc = html_entities_to_rtf($desc);
+			print '\pard\qc' . "\n";
+			print "\\cf3\\i " . $desc . "\\i0\\cf0\\\n";
+		}
+	} elsif ($mode eq "CPP") {
+		$name = $nick if $name eq "";
+		$name = html_entities_to_cpp($name);
+
+		print '"C0""'.$name.'",' . "\n";
+
+		# Print desc wrapped
+		if (length $desc > 0) {
+			$desc = html_entities_to_cpp($desc);
+			print '"C2""'.$desc.'",' . "\n";
+		}
+	} elsif ($mode eq "XML-DOC") {
+		$name = $nick if $name eq "";
+		print "  <row><entry namest='name'>" . $name . "</entry>";
+		print "<entry>" . $desc . "</entry></row>\n";
+	} elsif ($mode eq "XML-WEB") {
+		$name = "???" if $name eq "";
+		print "\t\t\t\t<person>\n";
+		print "\t\t\t\t\t<name>" . $name . "</name>\n";
+		print "\t\t\t\t\t<alias>" . $nick . "</alias>\n";
+		print "\t\t\t\t\t<description>" . $desc . "</description>\n";
+		print "\t\t\t\t</person>\n";
+	}
+}
+
+sub add_paragraph {
+	my $text = shift;
+	my $tab;
+
+	if ($mode eq "TEXT") {
+		$tab = " " x ($section_level * 2 + 1);
+		print wrap($tab, $tab, html_entities_to_ascii($text))."\n";
+		print "\n";
+	} elsif ($mode eq "TEX") {
+		$text = html_entities_to_tex($text);
+		print '\item' . "\n";
+		print $text;
+		print "\n";
+	} elsif ($mode eq "RTF") {
+		$text = html_entities_to_rtf($text);
+		# Center text
+		print '\pard\qc' . "\n";
+		print "\\\n";
+		print $text . "\\\n";
+	} elsif ($mode eq "CPP") {
+		$text = html_entities_to_ascii($text);
+		my $line_start = '"C0""';
+		my $line_end = '",';
+		print $line_start . $text . $line_end . "\n";
+		print $line_start . $line_end . "\n";
+	} elsif ($mode eq "XML-DOC") {
+		print "  <row><entry namest='start' nameend='job'>" . $text . "</entry></row>\n";
+		print "  <row><entry namest='start' nameend='job'> </entry></row>\n\n";
+	} elsif ($mode eq "XML-WEB") {
+		print "\t\t<paragraph>" . $text . "</paragraph>\n";
+	}
+}
+
+#
+# Now follows the actual credits data! The format should be clear, I hope.
+# Note that people are sorted by their last name in most cases; in the
+# 'Team' section, they are first grouped by category (Engine; porter; misc).
+#
+
+begin_credits("Credits");
+    begin_section("Residual Team");
+	begin_section("Project Leader");
+	    begin_persons();
+		add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
+	    end_persons();
+	end_section();
+
+	begin_section("Engine Teams");
+	    begin_section("Grim");
+		add_person("James Brown", "ender", "Core developer");
+		add_person("Giulio Camuffo", "giucam", "Core developer");
+		add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Core developer. SMUSH, iMUSE implemention");
+	    end_section();
+
+	    begin_section("Grim Contributors");
+		add_paragraph(
+		"If you have contributed to this engine then you deserve to be on this ".
+		"list. Contact us and we'll add you.");
+		add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "Various code fixes");
+		add_person("Ori Avtalion", "salty-horse", "Lipsync, LAF support");
+		add_person("Marcus Comstedt", "marcus_c", "Initial Dreamcast port");
+		add_person("Andrea Corna", "Yak Bizzarro", "Improved font support, patch extractor");
+		add_person("Jonathan Gray", "khalek", "Various code fixes");
+		add_person("Yaron Tausky", "yaront", "Fixes to subtitles");
+		add_person("Vincent Hamm", "yazoo", "Various engine code");
+		add_person("Erich Hoover", "Compholio", "x86-64 fixes, various fixes and comments, menu support, improved state support");
+		add_person("Travis Howell", "Kirben", "Various code fixes, Windows port");
+		add_person("Joost Peters", "joostp", "Various code fixes");
+		add_person("Christian Neumair", "mannythegnome", "Various optimisation patches");
+		add_person("Daniel Schepler", "", "Initial engine codebase, LUA support");
+		add_person("Pino Toscano", "pinotree", "Debian GNU/Linux package files");
+		add_person("Lionel Ulmer", "bbrox", "OpenGL optimisations");
+	    end_section();
+
+	end_section();
+    end_section();
+
+    begin_section("ScummVM code");
+	  add_paragraph(
+	  "Residual use some ScummVM code. ".
+	  "Copyrights for this code belongs to persons listed below. ".
+	  "If you are missed in this list contact us and we'll add you.");
+	  begin_persons();
+		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+		  add_person("Chris Apers", "chrilith", "");
+		  add_person("Bertrand Augereau", "", "");
+		  add_person("Yotam Barnoy", "bluddy", "");
+		  add_person("James Brown", "ender", "");
+		  add_person("Jamieson Christian", "jamieson630", "");
+		  add_person("David Corrales-Lopez", "david_corrales", "");
+		  add_person("Oystein Eftevaag", "vinterstum", "");
+		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "");
+		  add_person("Paul Gilbert", "dreammaster", "");
+		  add_person("Jonathan Gray", "khalek", "");
+		  add_person("Vincent Hamm", "yazoo", "");
+		  add_person("R&uuml;diger Hanke", "", "");
+		  add_person("Sven Hesse", "DrMcCoy", "");
+		  add_person("Matthew Hoops", "clone2727", "");
+		  add_person("Max Horn", "Fingolfin", "");
+		  add_person("Florian Kagerer", "athrxx", "");
+		  add_person("Filippos Karapetis", "[md5]", "");
+		  add_person("Oliver Kiehl", "olki", "");
+		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
+		  add_person("Andrew Kurushin", "ajax16384", "");
+		  add_person("Vicent Marti", "tanoku", "");
+		  add_person("Claudio Matsuoka", "", "");
+		  add_person("Gregory Montoir", "cyx", "");
+		  add_person("Kostas Nakos", "Jubanka", "");
+		  add_person("Chris Page", "cp88", "");
+		  add_person("Willem Jan Palenstijn", "wjp", "");
+		  add_person("Lars Persson", "AnotherGuest", "");
+		  add_person("Joost Peters", "joostp", "");
+		  add_person("Jordi Vilalta Prat", "jvprat", "");
+		  add_person("Kari Salminen", "Buddha^", "");
+		  add_person("Eugene Sandulenko", "sev", "");
+		  add_person("Johannes Schickel", "LordHoto", "");
+		  add_person("Ludvig Strigeus", "ludde", "");
+		  add_person("Lionel Ulmer", "bbrox", "");
+		  add_person("Jody Northup", "Upthorn", "");
+		  add_person("Jordi Vilalta", "", "");
+		  add_person("Robin Watts", "robinwatts", "");
+		  add_person("", "agent-q", "");
+		  add_person("", "arisme", "");
+		  add_person("", "peres", "");
+	  end_persons();
+    end_section();
+
+  begin_section("Website (code)");
+	begin_persons();
+		add_person("Fredrik Wendel", "", "");
+	end_persons();
+  end_section();
+
+  # HACK!
+  $max_name_width = 16;
+
+  begin_section("Special thanks to");
+
+	  add_paragraph(
+	  "The LUA developers, for creating a nice compact script interpreter. ");
+
+	  add_paragraph(
+	  "Tim Schafer, for obvious reasons, and everybody else who helped make ".
+	  "Grim Fandango a brilliant game; and the EMI team for giving it their ".
+	  "best try.");
+
+	  add_paragraph(
+	  "Bret Mogilefsky, for managing to create a SPUTM-style 3D LUA engine, ".
+	  "and avoiding the horrible hack it could have been.");
+
+  end_section();
+
+end_credits();

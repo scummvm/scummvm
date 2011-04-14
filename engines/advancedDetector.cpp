@@ -226,7 +226,7 @@ bool cleanupPirated(ADGameDescList &matched) {
 
 		// We ruled out all variants and now have nothing
 		if (matched.empty()) {
-			
+
 			warning("Illegitimate copy of the game detected. We give no support in such cases %d", matched.size());
 
 			return true;
@@ -244,18 +244,21 @@ GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {
 	if (cleanupPirated(matches))
 		return detectedGames;
 
-	// Use fallback detector if there were no matches by other means
 	if (matches.empty()) {
+		// Use fallback detector if there were no matches by other means
 		const ADGameDescription *fallbackDesc = fallbackDetect(fslist);
 		if (fallbackDesc != 0) {
 			GameDescriptor desc(toGameDescriptor(*fallbackDesc, params.list));
 			updateGameDescriptor(desc, fallbackDesc, params);
 			detectedGames.push_back(desc);
 		}
-	} else for (uint i = 0; i < matches.size(); i++) { // Otherwise use the found matches
-		GameDescriptor desc(toGameDescriptor(*matches[i], params.list));
-		updateGameDescriptor(desc, matches[i], params);
-		detectedGames.push_back(desc);
+	} else {
+		// Otherwise use the found matches
+		for (uint i = 0; i < matches.size(); i++) {
+			GameDescriptor desc(toGameDescriptor(*matches[i], params.list));
+			updateGameDescriptor(desc, matches[i], params);
+			detectedGames.push_back(desc);
+		}
 	}
 
 	return detectedGames;
@@ -354,7 +357,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 
 struct SizeMD5 {
 	int size;
-	char md5[32+1];
+	Common::String md5;
 };
 
 typedef Common::HashMap<Common::String, SizeMD5, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SizeMD5Map;
@@ -371,7 +374,7 @@ static void reportUnknown(const Common::FSNode &path, const SizeMD5Map &filesSiz
 	printf("of the game you tried to add and its version/language/etc.:\n");
 
 	for (SizeMD5Map::const_iterator file = filesSizeMD5.begin(); file != filesSizeMD5.end(); ++file)
-		printf("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5, file->_value.size);
+		printf("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5.c_str(), file->_value.size);
 
 	printf("\n");
 }
@@ -400,7 +403,7 @@ static void composeFileHashMap(const Common::FSList &fslist, FileMap &allFiles, 
 					matched = true;
 					break;
 				}
-					
+
 			if (!matched)
 				continue;
 
@@ -446,34 +449,37 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 			Common::String fname = fileDesc->fileName;
 			SizeMD5 tmp;
 
+			if (filesSizeMD5.contains(fname))
+				continue;
+
+			// FIXME/TODO: We don't handle the case that a file is listed as a regular
+			// file and as one with resource fork.
+
 			if (g->flags & ADGF_MACRESFORK) {
 				Common::MacResManager *macResMan = new Common::MacResManager();
-				
+
 				if (macResMan->open(parent, fname)) {
-					if (!macResMan->getResForkMD5(tmp.md5, params.md5Bytes))
-						tmp.md5[0] = 0;
-					tmp.size = macResMan->getResForkSize();
-					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5);
+					tmp.md5 = macResMan->computeResForkMD5AsString(params.md5Bytes);
+					tmp.size = macResMan->getResForkDataSize();
+					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5.c_str());
 					filesSizeMD5[fname] = tmp;
 				}
 
 				delete macResMan;
 			} else {
-				if (allFiles.contains(fname) && !filesSizeMD5.contains(fname)) {
+				if (allFiles.contains(fname)) {
 					debug(3, "+ %s", fname.c_str());
 
 					Common::File testFile;
 
 					if (testFile.open(allFiles[fname])) {
 						tmp.size = (int32)testFile.size();
-						if (!md5_file_string(testFile, tmp.md5, params.md5Bytes))
-							tmp.md5[0] = 0;
+						tmp.md5 = Common::computeStreamMD5AsString(testFile, params.md5Bytes);
 					} else {
 						tmp.size = -1;
-						tmp.md5[0] = 0;
 					}
-				
-					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5);
+
+					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5.c_str());
 					filesSizeMD5[fname] = tmp;
 				}
 			}
@@ -502,6 +508,7 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 			continue;
 
 		bool allFilesPresent = true;
+		int curFilesMatched = 0;
 
 		// Try to match all files for this game
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
@@ -513,8 +520,8 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 				break;
 			}
 
-			if (fileDesc->md5 != NULL && 0 != strcmp(fileDesc->md5, filesSizeMD5[tstr].md5)) {
-				debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesSizeMD5[tstr].md5);
+			if (fileDesc->md5 != NULL && fileDesc->md5 != filesSizeMD5[tstr].md5) {
+				debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesSizeMD5[tstr].md5.c_str());
 				fileMissing = true;
 				break;
 			}
@@ -526,12 +533,13 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 			}
 
 			debug(3, "Matched file: %s", tstr.c_str());
+			curFilesMatched++;
 		}
 
 		// We found at least one entry with all required files present.
 		// That means that we got new variant of the game.
 		//
-		// Wihtout this check we would have errorneous checksum display
+		// Without this check we would have erroneous checksum display
 		// where only located files will be enlisted.
 		//
 		// Potentially this could rule out variants where some particular file
@@ -544,22 +552,11 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 			debug(2, "Found game: %s (%s %s/%s) (%d)", g->gameid, g->extra,
 			 getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
 
-			// Count the number of matching files. Then, only keep those
-			// entries which match a maximal amount of files.
-			int curFilesMatched = 0;
-			for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++)
-				curFilesMatched++;
-
 			if (curFilesMatched > maxFilesMatched) {
 				debug(2, " ... new best match, removing all previous candidates");
 				maxFilesMatched = curFilesMatched;
 
-				for (uint j = 0; j < matched.size();) {
-					if (matched[j]->flags & ADGF_KEEPMATCH)
-						 ++j;
-					else
-						matched.remove_at(j);
-				}
+				matched.clear();	// Remove any prior, lower ranked matches.
 				matched.push_back(g);
 			} else if (curFilesMatched == maxFilesMatched) {
 				matched.push_back(g);
@@ -622,7 +619,7 @@ static ADGameDescList detectGameFilebased(const FileMap &allFiles, const ADParam
 				matchedDesc = agdesc;
 				maxNumMatchedFiles = numMatchedFiles;
 
-				debug(4, "and overriden");
+				debug(4, "and overridden");
 			}
 		}
 	}

@@ -64,7 +64,7 @@ Localizer::Localizer() {
 	data[filesize] = '\0';
 	f.close();
 
-	if (filesize < 4 || READ_BE_UINT32(data) != MKID_BE('RCNE'))
+	if (filesize < 4 || READ_BE_UINT32(data) != MKTAG('R','C','N','E'))
 		error("Invalid magic reading grim.tab");
 
 	// Decode the data

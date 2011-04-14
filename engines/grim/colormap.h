@@ -40,7 +40,7 @@ public:
 	CMap(const char *fileName, const char *data, int len) :
 		Object() {
 		_fname = fileName;
-		if (len < 4 || READ_BE_UINT32(data) != MKID_BE('CMP '))
+		if (len < 4 || READ_BE_UINT32(data) != MKTAG('C','M','P',' '))
 			error("Invalid magic loading colormap");
 		memcpy(_colors, data + 64, sizeof(_colors));
 	}

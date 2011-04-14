@@ -28,16 +28,20 @@
  *    both the QuickTime support and (vkeybd http://www.alsa-project.org/~iwai/alsa.html)
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/sys.h"
 
 #if defined(USE_SEQ_MIDI)
 
 #include "common/util.h"
-#include "sound/musicplugin.h"
-#include "sound/mpu401.h"
+#include "audio/musicplugin.h"
+#include "audio/mpu401.h"
 
 #include <fcntl.h>
 #include <unistd.h>
+#include <errno.h>
 
 ////////////////////////////////////////
 //
@@ -51,6 +55,7 @@ class MidiDriver_SEQ : public MidiDriver_MPU401 {
 public:
 	MidiDriver_SEQ();
 	int open();
+	bool isOpen() const { return _isOpen; }
 	void close();
 	void send(uint32 b);
 	void sysEx(const byte *msg, uint16 length);
@@ -75,14 +80,14 @@ int MidiDriver_SEQ::open() {
 	_isOpen = true;
 	device = 0;
 
-	device_name = getenv("SCUMMVM_MIDI");
+	device_name = getenv("RESIDUAL_MIDI");
 
 	if (device_name == NULL) {
-		warning("SCUMMVM_MIDI environment variable not set, using /dev/sequencer");
+		warning("RESIDUAL_MIDI environment variable not set, using /dev/sequencer");
 		device_name = dev_seq;
 	}
 
-	device = (::open((device_name), O_RDWR, 0));
+	device = ::open((device_name), O_RDWR, 0);
 
 	if ((device_name == NULL) || (device < 0)) {
 		if (device_name == NULL)
@@ -95,8 +100,8 @@ int MidiDriver_SEQ::open() {
 			error("Cannot open /dev/null to dump midi output");
 	}
 
-	if (getenv("SCUMMVM_MIDIPORT"))
-		_device_num = atoi(getenv("SCUMMVM_MIDIPORT"));
+	if (getenv("RESIDUAL_MIDIPORT"))
+		_device_num = atoi(getenv("RESIDUAL_MIDIPORT"));
 	return 0;
 }
 
@@ -144,10 +149,11 @@ void MidiDriver_SEQ::send(uint32 b) {
 		warning("MidiDriver_SEQ::send: unknown : %08x", (int)b);
 		break;
 	}
-	(void)write(device, buf, position);
+	if (write(device, buf, position) == -1)
+		warning("MidiDriver_SEQ::send: write failed (%s)", strerror(errno));
 }
 
-void MidiDriver_SEQ::sysEx (const byte *msg, uint16 length) {
+void MidiDriver_SEQ::sysEx(const byte *msg, uint16 length) {
 	unsigned char buf [266*4];
 	int position = 0;
 	const byte *chr = msg;
@@ -169,7 +175,8 @@ void MidiDriver_SEQ::sysEx (const byte *msg, uint16 length) {
 	buf[position++] = _device_num;
 	buf[position++] = 0;
 
-	(void)write(device, buf, position);
+	if (write(device, buf, position) == -1)
+		warning("MidiDriver_SEQ::send: write failed (%s)", strerror(errno));
 }
 
 

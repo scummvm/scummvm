@@ -28,9 +28,9 @@
 #include "common/file.h"
 #include "common/events.h"
 
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
-#include "sound/decoders/raw.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/decoders/raw.h"
 
 #include "engines/grim/smush/smush.h"
 
@@ -171,7 +171,7 @@ void Smush::handleFrame() {
 	}
 
 	tag = _file.readUint32BE();
-	if (tag == MKID_BE('ANNO')) {
+	if (tag == MKTAG('A','N','N','O')) {
 		char *anno;
 		byte *data;
 
@@ -203,16 +203,16 @@ void Smush::handleFrame() {
 		tag = _file.readUint32BE();
 	}
 
-	assert(tag == MKID_BE('FRME'));
+	assert(tag == MKTAG('F','R','M','E'));
 	size = _file.readUint32BE();
 	byte *frame = new byte[size];
 	_file.read(frame, size);
 
 	do {
-		if (READ_BE_UINT32(frame + pos) == MKID_BE('Bl16')) {
+		if (READ_BE_UINT32(frame + pos) == MKTAG('B','l','1','6')) {
 			_blocky16.decode(_internalBuffer, frame + pos + 8);
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
-		} else if (READ_BE_UINT32(frame + pos) == MKID_BE('Wave')) {
+		} else if (READ_BE_UINT32(frame + pos) == MKTAG('W','a','v','e')) {
 			int decompressed_size = READ_BE_UINT32(frame + pos + 8);
 			if (decompressed_size < 0)
 				handleWave(frame + pos + 8 + 4 + 8, READ_BE_UINT32(frame + pos + 8 + 8));
@@ -339,13 +339,13 @@ void Smush::handleFrameDemo() {
 	}
 
 	tag = _f.readUint32BE();
-	assert(tag == MKID_BE('FRME'));
+	assert(tag == MKTAG('F','R','M','E'));
 	size = _f.readUint32BE();
 	byte *frame = new byte[size];
 	_f.read(frame, size);
 
 	do {
-		if (READ_BE_UINT32(frame + pos) == MKID_BE('FOBJ')) {
+		if (READ_BE_UINT32(frame + pos) == MKTAG('F','O','B','J')) {
 			_x = READ_LE_UINT16(frame + pos + 10);
 			_y = READ_LE_UINT16(frame + pos + 12);
 			int width = READ_LE_UINT16(frame + pos + 14);
@@ -361,13 +361,13 @@ void Smush::handleFrameDemo() {
 			}
 			_blocky8.decode(_internalBuffer, frame + pos + 8 + 14);
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
-		} else if (READ_BE_UINT32(frame + pos) == MKID_BE('IACT')) {
+		} else if (READ_BE_UINT32(frame + pos) == MKTAG('I','A','C','T')) {
 			handleIACT(frame + pos + 8, READ_BE_UINT32(frame + pos + 4));
 			int offset = READ_BE_UINT32(frame + pos + 4) + 8;
 			if (offset & 1)
 				offset += 1;
 			pos += offset;
-		} else if (READ_BE_UINT32(frame + pos) == MKID_BE('XPAL')) {
+		} else if (READ_BE_UINT32(frame + pos) == MKTAG('X','P','A','L')) {
 			handleDeltaPalette(frame + pos + 8, READ_BE_UINT32(frame + pos + 4));
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
 		} else {
@@ -399,15 +399,15 @@ void Smush::handleFramesHeader() {
 	int pos = 0;
 
 	tag = _file.readUint32BE();
-	assert(tag == MKID_BE('FLHD'));
+	assert(tag == MKTAG('F','L','H','D'));
 	size = _file.readUint32BE();
 	byte *f_header = new byte[size];
 	_file.read(f_header, size);
 
 	do {
-		if (READ_BE_UINT32(f_header + pos) == MKID_BE('Bl16')) {
+		if (READ_BE_UINT32(f_header + pos) == MKTAG('B','l','1','6')) {
 			pos += READ_BE_UINT32(f_header + pos + 4) + 8;
-		} else if (READ_BE_UINT32(f_header + pos) == MKID_BE('Wave')) {
+		} else if (READ_BE_UINT32(f_header + pos) == MKTAG('W','a','v','e')) {
 			_freq = READ_LE_UINT32(f_header + pos + 8);
 			_channels = READ_LE_UINT32(f_header + pos + 12);
 			pos += 20;
@@ -426,11 +426,11 @@ bool Smush::setupAnimDemo(const char *file) {
 		return false;
 
 	tag = _f.readUint32BE();
-	assert(tag == MKID_BE('ANIM'));
+	assert(tag == MKTAG('A','N','I','M'));
 	size = _f.readUint32BE();
 
 	tag = _f.readUint32BE();
-	assert(tag == MKID_BE('AHDR'));
+	assert(tag == MKTAG('A','H','D','R'));
 	size = _f.readUint32BE();
 
 	_f.readUint16BE(); // version
@@ -466,11 +466,11 @@ bool Smush::setupAnim(const char *file, bool looping, int x, int y) {
 		return false;
 
 	tag = _file.readUint32BE();
-	assert(tag == MKID_BE('SANM'));
+	assert(tag == MKTAG('S','A','N','M'));
 	size = _file.readUint32BE();
 
 	tag = _file.readUint32BE();
-	assert(tag == MKID_BE('SHDR'));
+	assert(tag == MKTAG('S','H','D','R'));
 	size = _file.readUint32BE();
 	byte *s_header = new byte[size];
 	_file.read(s_header, size);

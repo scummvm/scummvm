@@ -30,6 +30,7 @@
 #ifdef _WIN32_WCE
 	#include "backends/platform/wince/CEActionsPocket.h"
 	#include "backends/platform/wince/CEActionsSmartphone.h"
+	#include "backends/platform/wince/CEDevice.h"
 #elif defined(__SYMBIAN32__)
 	#include "backends/platform/symbian/src/SymbianActions.h"
 #endif
@@ -41,8 +42,7 @@ Actions* Actions::Instance() {
 }
 
 Actions::Actions() :
-	_mapping_active(false), _initialized(false)
-{
+	_mapping_active(false), _initialized(false) {
 }
 
 
@@ -94,7 +94,7 @@ bool Actions::mappingActive() {
 bool Actions::performMapped(unsigned int keyCode, bool pushed) {
 	int i;
 
-	for (i=0; i<size(); i++) {
+	for (i = 0; i < size(); ++i) {
 		if (_action_mapping[i] == keyCode && _action_enabled[i])
 				return perform((ActionType)i, pushed);
 	}
@@ -111,7 +111,7 @@ bool Actions::loadMapping() {
 		return false;
 	tempo = ConfMan.get("action_mapping", domain()).c_str();
 	if (tempo && strlen(tempo)) {
-		for (i=0; i<size(); i++) {
+		for (i = 0; i < size(); ++i) {
 			char x[7];
 			int j;
 			memset(x, 0, sizeof(x));
@@ -120,8 +120,7 @@ bool Actions::loadMapping() {
 			_action_mapping[i] = j;
 		}
 		return true;
-	}
-	else
+	} else
 		return false;
 }
 
@@ -130,7 +129,7 @@ bool Actions::saveMapping() {
 	int i;
 	tempo[0] = '\0';
 	ConfMan.setInt("action_mapping_version", version(), domain());
-	for (i=0; i<size(); i++) {
+	for (i = 0; i < size(); ++i) {
 		char x[10];
 		sprintf(x, "%.4x ", _action_mapping[i]);
 		strcat(tempo, x);
@@ -148,7 +147,7 @@ unsigned int Actions::getMapping(ActionType action) {
 void Actions::setMapping(ActionType action, unsigned int keyCode) {
 	int i;
 
-	for (i=0; i<size(); i++) {
+	for (i = 0; i < size(); ++i) {
 		if (_action_mapping[i] == keyCode)
 			_action_mapping[i] = 0;
 	}
@@ -156,8 +155,7 @@ void Actions::setMapping(ActionType action, unsigned int keyCode) {
 	_action_mapping[action] = keyCode;
 }
 
-Key& Actions::getKeyAction(ActionType action)
-{
+Key& Actions::getKeyAction(ActionType action) {
 	return _key_action[action];
 }
 

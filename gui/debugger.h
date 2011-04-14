@@ -41,7 +41,7 @@ public:
 	Debugger();
 	virtual ~Debugger();
 
-	int DebugPrintf(const char *format, ...);
+	int DebugPrintf(const char *format, ...) GCC_PRINTF(2, 3);
 
 	/**
 	 * The onFrame() method should be invoked by the engine at regular
@@ -155,14 +155,18 @@ protected:
 	/**
 	 * Hook for subclasses which is called just before enter() is run.
 	 * A typical usage example is pausing music and sound effects.
+	 *
+	 * The default implementation invokes Engine::pauseEngine(true).
 	 */
-	virtual void preEnter() {}
+	virtual void preEnter();
 
 	/**
 	 * Hook for subclasses which is called just after enter() was run.
 	 * A typical usage example is resuming music and sound effects.
+	 *
+	 * The default implementation invokes Engine::pauseEngine(false).
 	 */
-	virtual void postEnter() {}
+	virtual void postEnter();
 
 	/**
 	 * Subclasses should invoke the detach() method in their Cmd_FOO methods

@@ -38,18 +38,18 @@
 #include "gui/launcher.h"
 #include "gui/massadd.h"
 #include "gui/message.h"
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 #include "gui/options.h"
 #include "gui/saveload.h"
-#include "gui/EditTextWidget.h"
-#include "gui/ListWidget.h"
-#include "gui/TabWidget.h"
-#include "gui/PopUpWidget.h"
+#include "gui/widgets/edittext.h"
+#include "gui/widgets/list.h"
+#include "gui/widgets/tab.h"
+#include "gui/widgets/popup.h"
 #include "gui/ThemeEval.h"
 
 #include "graphics/cursorman.h"
 
-#include "sound/mididrv.h"
+#include "audio/mididrv.h"
 
 
 using Common::ConfigManager;
@@ -188,8 +188,8 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	// Language popup
 	_langPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.LangPopupDesc", _("Language:"), _("Language of the game. This will not turn your Spanish game version into English"));
 	_langPopUp = new PopUpWidget(tab, "GameOptions_Game.LangPopup", _("Language of the game. This will not turn your Spanish game version into English"));
-	_langPopUp->appendEntry(_("<default>"), 0);
-	_langPopUp->appendEntry("", 0);
+	_langPopUp->appendEntry(_("<default>"), (uint32)Common::UNK_LANG);
+	_langPopUp->appendEntry("", (uint32)Common::UNK_LANG);
 	const Common::LanguageDescription *l = Common::g_languages;
 	for (; l->code; ++l) {
 		if (checkGameGUIOptionLanguage(l->id, _guioptionsString))
@@ -294,7 +294,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	if (g_system->getOverlayWidth() > 320)
 		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _("Game Path:"), 0, kCmdGameBrowser);
 	else
-		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _c("Game Path:", "context"), 0, kCmdGameBrowser);
+		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _c("Game Path:", "lowres"), 0, kCmdGameBrowser);
 	_gamePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.GamepathText", gamePath);
 
 	// GUI:  Button + Label for the additional path
@@ -341,7 +341,8 @@ void EditGameDialog::open() {
 	e = ConfMan.hasKey("gfx_mode", _domain) ||
 		ConfMan.hasKey("render_mode", _domain) ||
 		ConfMan.hasKey("fullscreen", _domain) ||
-		ConfMan.hasKey("aspect_ratio", _domain);
+		ConfMan.hasKey("aspect_ratio", _domain) ||
+		ConfMan.hasKey("disable_dithering", _domain);
 	_globalGraphicsOverride->setState(e);
 
 	e = ConfMan.hasKey("music_driver", _domain) ||
@@ -371,6 +372,8 @@ void EditGameDialog::open() {
 
 	if (ConfMan.hasKey("language", _domain)) {
 		_langPopUp->setSelectedTag(lang);
+	} else {
+		_langPopUp->setSelectedTag((uint32)Common::UNK_LANG);
 	}
 
 	if (_langPopUp->numEntries() <= 3) { // If only one language is avaliable
@@ -921,6 +924,7 @@ void LauncherDialog::loadGame(int item) {
 		gameId = _domains[item];
 
 	const EnginePlugin *plugin = 0;
+	
 	EngineMan.findGame(gameId, &plugin);
 
 	String target = _domains[item];
@@ -929,7 +933,7 @@ void LauncherDialog::loadGame(int item) {
 	if (plugin) {
 		if ((*plugin)->hasFeature(MetaEngine::kSupportsListSaves) &&
 			(*plugin)->hasFeature(MetaEngine::kSupportsLoadingDuringStartup)) {
-			int slot = _loadDialog->runModal(plugin, target);
+			int slot = _loadDialog->runModalWithPluginAndTarget(plugin, target);
 			if (slot >= 0) {
 				ConfMan.setActiveDomain(_domains[item]);
 				ConfMan.setInt("save_slot", slot, Common::ConfigManager::kTransientDomain);
@@ -1053,7 +1057,7 @@ void LauncherDialog::updateButtons() {
 	int modifiers = g_system->getEventManager()->getModifierState();
 	const bool massAdd = (modifiers & Common::KBD_SHIFT) != 0;
 	const bool lowRes = g_system->getOverlayWidth() <= 320;
-	
+
 	const char *newAddButtonLabel = massAdd
 		? (lowRes ? _c("Mass Add...", "lowres") : _("Mass Add..."))
 		: (lowRes ? _c("Add Game...", "lowres") : _("Add Game..."));

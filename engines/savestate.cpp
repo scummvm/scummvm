@@ -70,3 +70,9 @@ void SaveStateDescriptor::setPlayTime(int hours, int minutes) {
 	snprintf(buffer, 32, "%.2d:%.2d", hours, minutes);
 	setVal("play_time", buffer);
 }
+
+void SaveStateDescriptor::setPlayTime(uint32 msecs) {
+	uint minutes = msecs / 60000;
+	setPlayTime(minutes / 60, minutes % 60);
+}
+

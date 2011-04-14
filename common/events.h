@@ -81,30 +81,6 @@ enum EventType {
 /**
  * Data structure for an event. A pointer to an instance of Event
  * can be passed to pollEvent.
- * @todo Rework/document this structure. It should be made 100% clear which
- *       field is valid for which event type.
- *       Implementation wise, we might want to use the classic
- *       union-of-structs trick. It goes roughly like this:
- *       struct BasicEvent {
- *          EventType type;
- *       };
- *       struct MouseMovedEvent : BasicEvent {
- *          Common::Point pos;
- *       };
- *       struct MouseButtonEvent : MouseMovedEvent {
- *          int button;
- *       };
- *       struct KeyEvent : BasicEvent {
- *          ...
- *       };
- *       ...
- *       union Event {
- *          EventType type;
- *          MouseMovedEvent mouse;
- *          MouseButtonEvent button;
- *          KeyEvent key;
- *          ...
- *       };
  */
 struct Event {
 	/** The type of the event. */
@@ -354,8 +330,8 @@ public:
 
 	/**
 	 * Return a bitmask with the button states:
-	 * - bit 0: left button up=1, down=0
-	 * - bit 1: right button up=1, down=0
+	 * - bit 0: left button up=0, down=1
+	 * - bit 1: right button up=0, down=1
 	 */
 	virtual int getButtonState() const = 0;
 

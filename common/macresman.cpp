@@ -30,6 +30,8 @@
 #include "common/fs.h"
 #include "common/macresman.h"
 #include "common/md5.h"
+#include "common/substream.h"
+#include "common/memstream.h"
 
 #ifdef MACOSX
 #include "common/config-manager.h"
@@ -73,38 +75,43 @@ void MacResManager::close() {
 	delete _stream; _stream = 0;
 }
 
-bool MacResManager::hasDataFork() {
+bool MacResManager::hasDataFork() const {
 	return !_baseFileName.empty();
 }
 
-bool MacResManager::hasResFork() {
+bool MacResManager::hasResFork() const {
 	return !_baseFileName.empty() && _mode != kResForkNone;
 }
 
-uint32 MacResManager::getResForkSize() {
+uint32 MacResManager::getResForkDataSize() const {
 	if (!hasResFork())
 		return 0;
 
-	return _resForkSize;
+	_stream->seek(_resForkOffset + 4);
+	return _stream->readUint32BE();
 }
 
-bool MacResManager::getResForkMD5(char *md5str, uint32 length) {
+String MacResManager::computeResForkMD5AsString(uint32 length) const {
 	if (!hasResFork())
-		return false;
+		return String();
 
-	ReadStream *stream = new SeekableSubReadStream(_stream, _resForkOffset, _resForkOffset + _resForkSize);
-	bool retVal = md5_file_string(*stream, md5str, MIN<uint32>(length, _resForkSize));
-	delete stream;
-	return retVal;
+	_stream->seek(_resForkOffset);
+	uint32 dataOffset = _stream->readUint32BE() + _resForkOffset;
+	/* uint32 mapOffset = */ _stream->readUint32BE();
+	uint32 dataLength = _stream->readUint32BE();
+
+
+	SeekableSubReadStream resForkStream(_stream, dataOffset, dataOffset + dataLength);
+	return computeStreamMD5AsString(resForkStream, MIN<uint32>(length, _resForkSize));
 }
 
-bool MacResManager::open(Common::String filename) {
+bool MacResManager::open(String filename) {
 	close();
 
 #ifdef MACOSX
 	// Check the actual fork on a Mac computer
-	Common::String fullPath = ConfMan.get("path") + "/" + filename + "/..namedfork/rsrc";
-	Common::SeekableReadStream *macResForkRawStream = StdioStream::makeFromPath(fullPath, false);
+	String fullPath = ConfMan.get("path") + "/" + filename + "/..namedfork/rsrc";
+	SeekableReadStream *macResForkRawStream = StdioStream::makeFromPath(fullPath, false);
 
 	if (macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
 		_baseFileName = filename;
@@ -114,7 +121,7 @@ bool MacResManager::open(Common::String filename) {
 	delete macResForkRawStream;
 #endif
 
-	Common::File *file = new Common::File();
+	File *file = new File();
 
 	// First, let's try to see if the Mac converted name exists
 	if (file->open("._" + filename) && loadFromAppleDouble(*file)) {
@@ -158,13 +165,13 @@ bool MacResManager::open(Common::String filename) {
 	return false;
 }
 
-bool MacResManager::open(Common::FSNode path, Common::String filename) {
+bool MacResManager::open(FSNode path, String filename) {
 	close();
 
 #ifdef MACOSX
 	// Check the actual fork on a Mac computer
-	Common::String fullPath = path.getPath() + "/" + filename + "/..namedfork/rsrc";
-	Common::SeekableReadStream *macResForkRawStream = StdioStream::makeFromPath(fullPath, false);
+	String fullPath = path.getPath() + "/" + filename + "/..namedfork/rsrc";
+	SeekableReadStream *macResForkRawStream = StdioStream::makeFromPath(fullPath, false);
 
 	if (macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
 		_baseFileName = filename;
@@ -175,7 +182,7 @@ bool MacResManager::open(Common::FSNode path, Common::String filename) {
 #endif
 
 	// First, let's try to see if the Mac converted name exists
-	Common::FSNode fsNode = path.getChild("._" + filename);
+	FSNode fsNode = path.getChild("._" + filename);
 	if (fsNode.exists() && !fsNode.isDirectory()) {
 		SeekableReadStream *stream = fsNode.createReadStream();
 		if (loadFromAppleDouble(*stream)) {
@@ -228,7 +235,7 @@ bool MacResManager::open(Common::FSNode path, Common::String filename) {
 	return false;
 }
 
-bool MacResManager::loadFromAppleDouble(Common::SeekableReadStream &stream) {
+bool MacResManager::loadFromAppleDouble(SeekableReadStream &stream) {
 	if (stream.readUint32BE() != 0x00051607) // tag
 		return false;
 
@@ -241,8 +248,8 @@ bool MacResManager::loadFromAppleDouble(Common::SeekableReadStream &stream) {
 		uint32 offset = stream.readUint32BE();
 		uint32 length = stream.readUint32BE(); // length
 
-		if (id == 1) {
-			// Found the data fork!
+		if (id == 2) {
+			// Found the resource fork!
 			_resForkOffset = offset;
 			_mode = kResForkAppleDouble;
 			_resForkSize = length;
@@ -253,7 +260,7 @@ bool MacResManager::loadFromAppleDouble(Common::SeekableReadStream &stream) {
 	return false;
 }
 
-bool MacResManager::isMacBinary(Common::SeekableReadStream &stream) {
+bool MacResManager::isMacBinary(SeekableReadStream &stream) {
 	byte infoHeader[MBI_INFOHDR];
 	int resForkOffset = -1;
 
@@ -281,7 +288,7 @@ bool MacResManager::isMacBinary(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-bool MacResManager::loadFromMacBinary(Common::SeekableReadStream &stream) {
+bool MacResManager::loadFromMacBinary(SeekableReadStream &stream) {
 	byte infoHeader[MBI_INFOHDR];
 	stream.read(infoHeader, MBI_INFOHDR);
 
@@ -310,14 +317,14 @@ bool MacResManager::loadFromMacBinary(Common::SeekableReadStream &stream) {
 	return load(stream);
 }
 
-bool MacResManager::loadFromRawFork(Common::SeekableReadStream &stream) {
+bool MacResManager::loadFromRawFork(SeekableReadStream &stream) {
 	_mode = kResForkRaw;
 	_resForkOffset = 0;
 	_resForkSize = stream.size();
 	return load(stream);
 }
 
-bool MacResManager::load(Common::SeekableReadStream &stream) {
+bool MacResManager::load(SeekableReadStream &stream) {
 	if (_mode == kResForkNone)
 		return false;
 
@@ -345,7 +352,7 @@ bool MacResManager::load(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-Common::SeekableReadStream *MacResManager::getDataFork() {
+SeekableReadStream *MacResManager::getDataFork() {
 	if (!_stream)
 		return NULL;
 
@@ -355,7 +362,7 @@ Common::SeekableReadStream *MacResManager::getDataFork() {
 		return new SeekableSubReadStream(_stream, MBI_INFOHDR, MBI_INFOHDR + dataSize);
 	}
 
-	Common::File *file = new Common::File();
+	File *file = new File();
 	if (file->open(_baseFileName))
 		return file;
 	delete file;
@@ -368,7 +375,7 @@ MacResIDArray MacResManager::getResIDArray(uint32 typeID) {
 	MacResIDArray res;
 
 	for (int i = 0; i < _resMap.numTypes; i++)
-		if (_resTypes[i].id ==  typeID) {
+		if (_resTypes[i].id == typeID) {
 			typeNum = i;
 			break;
 		}
@@ -398,7 +405,7 @@ MacResTagArray MacResManager::getResTagArray() {
 	return tagArray;
 }
 
-Common::String MacResManager::getResName(uint32 typeID, uint16 resID) {
+String MacResManager::getResName(uint32 typeID, uint16 resID) const {
 	int typeNum = -1;
 
 	for (int i = 0; i < _resMap.numTypes; i++)
@@ -417,7 +424,7 @@ Common::String MacResManager::getResName(uint32 typeID, uint16 resID) {
 	return "";
 }
 
-Common::SeekableReadStream *MacResManager::getResource(uint32 typeID, uint16 resID) {
+SeekableReadStream *MacResManager::getResource(uint32 typeID, uint16 resID) {
 	int typeNum = -1;
 	int resNum = -1;
 
@@ -449,7 +456,7 @@ Common::SeekableReadStream *MacResManager::getResource(uint32 typeID, uint16 res
 	return _stream->readStream(len);
 }
 
-Common::SeekableReadStream *MacResManager::getResource(const Common::String &filename) {
+SeekableReadStream *MacResManager::getResource(const String &filename) {
 	for (uint32 i = 0; i < _resMap.numTypes; i++) {
 		for (uint32 j = 0; j < _resTypes[i].items; j++) {
 			if (_resLists[i][j].nameOffset != -1 && filename.equalsIgnoreCase(_resLists[i][j].name)) {
@@ -468,7 +475,7 @@ Common::SeekableReadStream *MacResManager::getResource(const Common::String &fil
 	return 0;
 }
 
-Common::SeekableReadStream *MacResManager::getResource(uint32 typeID, const Common::String &filename) {
+SeekableReadStream *MacResManager::getResource(uint32 typeID, const String &filename) {
 	for (uint32 i = 0; i < _resMap.numTypes; i++) {
 		if (_resTypes[i].id != typeID)
 			continue;
@@ -543,120 +550,110 @@ void MacResManager::readMap() {
 	}
 }
 
-void MacResManager::convertCrsrCursor(byte *data, int datasize, byte **cursor, int *w, int *h,
-				int *hotspot_x, int *hotspot_y, int *keycolor, bool colored, byte **palette, int *palSize) {
-	Common::MemoryReadStream dis(data, datasize);
-	int i, b;
-	byte imageByte;
-	byte *iconData;
-	int pixelsPerByte, bpp;
-	int ctSize;
-	byte bitmask;
-	int iconRowBytes, iconBounds[4];
-	int iconDataSize;
+void MacResManager::convertCrsrCursor(SeekableReadStream *data, byte **cursor, int &w, int &h, int &hotspotX,
+			int &hotspotY, int &keycolor, bool colored, byte **palette, int &palSize) {
 
-	dis.readUint16BE(); // type
-	dis.readUint32BE(); // offset to pixel map
-	dis.readUint32BE(); // offset to pixel data
-	dis.readUint32BE(); // expanded cursor data
-	dis.readUint16BE(); // expanded data depth
-	dis.readUint32BE(); // reserved
+	data->readUint16BE(); // type
+	data->readUint32BE(); // offset to pixel map
+	data->readUint32BE(); // offset to pixel data
+	data->readUint32BE(); // expanded cursor data
+	data->readUint16BE(); // expanded data depth
+	data->readUint32BE(); // reserved
 
 	// Grab B/W icon data
-	*cursor = (byte *)malloc(16 * 16);
-	for (i = 0; i < 32; i++) {
-		imageByte = dis.readByte();
-		for (b = 0; b < 8; b++)
-			cursor[0][i*8+b] = (byte)((imageByte & (0x80 >> b)) > 0? 0x0F: 0x00);
+	*cursor = new byte[16 * 16];
+	for (int i = 0; i < 32; i++) {
+		byte imageByte = data->readByte();
+		for (int b = 0; b < 8; b++)
+			cursor[0][i * 8 + b] = (byte)((imageByte & (0x80 >> b)) > 0 ? 0x0F : 0x00);
 	}
 
 	// Apply mask data
-	for (i = 0; i < 32; i++) {
-		imageByte = dis.readByte();
-		for (b = 0; b < 8; b++)
+	for (int i = 0; i < 32; i++) {
+		byte imageByte = data->readByte();
+		for (int b = 0; b < 8; b++)
 			if ((imageByte & (0x80 >> b)) == 0)
-				cursor[0][i*8+b] = 0xff;
+				cursor[0][i * 8 + b] = 0xff;
 	}
 
-	*hotspot_y = dis.readUint16BE();
-	*hotspot_x = dis.readUint16BE();
-	*w = *h = 16;
-	*keycolor = 0xff;
+	hotspotY = data->readUint16BE();
+	hotspotX = data->readUint16BE();
+	w = h = 16;
+	keycolor = 0xff;
 
 	// Use b/w cursor on backends which don't support cursor palettes
 	if (!colored)
 		return;
 
-	dis.readUint32BE(); // reserved
-	dis.readUint32BE(); // cursorID
+	data->readUint32BE(); // reserved
+	data->readUint32BE(); // cursorID
 
 	// Color version of cursor
-	dis.readUint32BE(); // baseAddr
+	data->readUint32BE(); // baseAddr
 
 	// Keep only lowbyte for now
-	dis.readByte();
-	iconRowBytes = dis.readByte();
+	data->readByte();
+	int iconRowBytes = data->readByte();
 
 	if (!iconRowBytes)
 		return;
 
-	iconBounds[0] = dis.readUint16BE();
-	iconBounds[1] = dis.readUint16BE();
-	iconBounds[2] = dis.readUint16BE();
-	iconBounds[3] = dis.readUint16BE();
+	int iconBounds[4];
+	iconBounds[0] = data->readUint16BE();
+	iconBounds[1] = data->readUint16BE();
+	iconBounds[2] = data->readUint16BE();
+	iconBounds[3] = data->readUint16BE();
 
-	dis.readUint16BE(); // pmVersion
-	dis.readUint16BE(); // packType
-	dis.readUint32BE(); // packSize
+	data->readUint16BE(); // pmVersion
+	data->readUint16BE(); // packType
+	data->readUint32BE(); // packSize
 
-	dis.readUint32BE(); // hRes
-	dis.readUint32BE(); // vRes
+	data->readUint32BE(); // hRes
+	data->readUint32BE(); // vRes
 
-	dis.readUint16BE(); // pixelType
-	dis.readUint16BE(); // pixelSize
-	dis.readUint16BE(); // cmpCount
-	dis.readUint16BE(); // cmpSize
+	data->readUint16BE(); // pixelType
+	data->readUint16BE(); // pixelSize
+	data->readUint16BE(); // cmpCount
+	data->readUint16BE(); // cmpSize
 
-	dis.readUint32BE(); // planeByte
-	dis.readUint32BE(); // pmTable
-	dis.readUint32BE(); // reserved
+	data->readUint32BE(); // planeByte
+	data->readUint32BE(); // pmTable
+	data->readUint32BE(); // reserved
 
 	// Pixel data for cursor
-	iconDataSize =  iconRowBytes * (iconBounds[3] - iconBounds[1]);
-	iconData = (byte *)malloc(iconDataSize);
-	dis.read(iconData, iconDataSize);
+	int iconDataSize =  iconRowBytes * (iconBounds[3] - iconBounds[1]);
+	byte *iconData = new byte[iconDataSize];
+	data->read(iconData, iconDataSize);
 
 	// Color table
-	dis.readUint32BE(); // ctSeed
-	dis.readUint16BE(); // ctFlag
-	ctSize = dis.readUint16BE() + 1;
+	data->readUint32BE(); // ctSeed
+	data->readUint16BE(); // ctFlag
+	uint16 ctSize = data->readUint16BE() + 1;
 
-	*palette = (byte *)malloc(ctSize * 4);
+	*palette = new byte[ctSize * 3];
 
 	// Read just high byte of 16-bit color
 	for (int c = 0; c < ctSize; c++) {
 		// We just use indices 0..ctSize, so ignore color ID
-		dis.readUint16BE(); // colorID[c]
+		data->readUint16BE(); // colorID[c]
 
-		palette[0][c * 4 + 0] = dis.readByte();
-		dis.readByte();
+		palette[0][c * 3 + 0] = data->readByte();
+		data->readByte();
 
-		palette[0][c * 4 + 1] = dis.readByte();
-		dis.readByte();
+		palette[0][c * 3 + 1] = data->readByte();
+		data->readByte();
 
-		palette[0][c * 4 + 2] = dis.readByte();
-		dis.readByte();
-
-		palette[0][c * 4 + 3] = 0;
+		palette[0][c * 3 + 2] = data->readByte();
+		data->readByte();
 	}
 
-	*palSize = ctSize;
+	palSize = ctSize;
 
-	pixelsPerByte = (iconBounds[2] - iconBounds[0]) / iconRowBytes;
-	bpp           = 8 / pixelsPerByte;
+	int pixelsPerByte = (iconBounds[2] - iconBounds[0]) / iconRowBytes;
+	int bpp           = 8 / pixelsPerByte;
 
 	// build a mask to make sure the pixels are properly shifted out
-	bitmask = 0;
+	int bitmask = 0;
 	for (int m = 0; m < bpp; m++) {
 		bitmask <<= 1;
 		bitmask  |= 1;
@@ -664,16 +661,16 @@ void MacResManager::convertCrsrCursor(byte *data, int datasize, byte **cursor, i
 
 	// Extract pixels from bytes
 	for (int j = 0; j < iconDataSize; j++)
-		for (b = 0; b < pixelsPerByte; b++) {
+		for (int b = 0; b < pixelsPerByte; b++) {
 			int idx = j * pixelsPerByte + (pixelsPerByte - 1 - b);
 
 			if (cursor[0][idx] != 0xff) // if mask is not there
 				cursor[0][idx] = (byte)((iconData[j] >> (b * bpp)) & bitmask);
 		}
 
-	free(iconData);
+	delete[] iconData;
 
-	assert(datasize - dis.pos() == 0);
+	assert(data->size() - data->pos() == 0);
 }
 
 } // End of namespace Common

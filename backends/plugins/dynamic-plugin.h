@@ -37,7 +37,12 @@ protected:
 
 	virtual VoidFunc findSymbol(const char *symbol) = 0;
 
+	const Common::String _filename;
+
 public:
+	DynamicPlugin(const Common::String &filename) :
+		_filename(filename) {}
+
 	virtual bool loadPlugin() {
 		// Validate the plugin API version
 		IntFunc verFunc = (IntFunc)findSymbol("PLUGIN_getVersion");
@@ -96,6 +101,10 @@ public:
 
 	virtual void unloadPlugin() {
 		delete _pluginObject;
+	}
+
+	virtual const char *getFileName() const {
+		return _filename.c_str();
 	}
 };
 

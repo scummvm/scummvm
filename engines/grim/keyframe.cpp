@@ -36,7 +36,7 @@ KeyframeAnim::KeyframeAnim(const char *fname, const char *data, int len) :
 	Object() {
 	_fname = fname;
 
-	if (len >= 4 && READ_BE_UINT32(data) == MKID_BE('FYEK'))
+	if (len >= 4 && READ_BE_UINT32(data) == MKTAG('F','Y','E','K'))
 		loadBinary(data, len);
 	else {
 		TextSplitter ts(data, len);

@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/sys.h"
+
 #if defined(DYNAMIC_MODULES) && defined(_WIN32)
 
 #include "backends/plugins/win32/win32-provider.h"
@@ -49,7 +51,6 @@ private:
 
 protected:
 	void *_dlHandle;
-	Common::String _filename;
 
 	virtual VoidFunc findSymbol(const char *symbol) {
 		#ifndef _WIN32_WCE
@@ -65,7 +66,7 @@ protected:
 
 public:
 	Win32Plugin(const Common::String &filename)
-		: _dlHandle(0), _filename(filename) {}
+		: DynamicPlugin(filename), _dlHandle(0) {}
 
 	bool loadPlugin() {
 		assert(!_dlHandle);

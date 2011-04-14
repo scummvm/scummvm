@@ -23,13 +23,15 @@
 *
 */
 
+#include "common/sys.h"
+
 #ifdef ENABLE_VKEYBD
 
 #include "backends/vkeybd/virtual-keyboard-gui.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 
 namespace Common {
 

@@ -29,6 +29,11 @@
 #include "common/textconsole.h"
 #include "common/str.h"
 
+#ifdef WIN32
+#ifdef ARRAYSIZE
+#undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
+#endif
+#endif
 
 /**
  * Check whether a given pointer is aligned correctly.
@@ -61,6 +66,21 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
  * Macro which determines the number of entries in a fixed size array.
  */
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
+
+
+/**
+ * @def SCUMMVM_CURRENT_FUNCTION
+ * This macro evaluates to the current function's name on compilers supporting this.
+ */
+#if defined(__GNUC__)
+# define SCUMMVM_CURRENT_FUNCTION __PRETTY_FUNCTION__
+#elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901)
+#  define SCUMMVM_CURRENT_FUNCTION	__func__
+#elif defined(_MSC_VER) && _MSC_VER >= 1300
+#  define SCUMMVM_CURRENT_FUNCTION __FUNCTION__
+#else
+#  define SCUMMVM_CURRENT_FUNCTION "<unknown>"
+#endif
 
 #ifndef round
 #define round(x) ((x > 0.0) ? floor((x) + 0.5) : ceil((x) - 0.5))
@@ -122,6 +142,7 @@ enum Language {
 
 struct LanguageDescription {
 	const char *code;
+	//const char *unixLocale;
 	const char *description;
 	Common::Language id;
 };
@@ -133,6 +154,10 @@ extern const LanguageDescription g_languages[];
 extern Language parseLanguage(const String &str);
 extern const char *getLanguageCode(Language id);
 extern const char *getLanguageDescription(Language id);
+
+// locale <-> Language conversion is disabled, since it is not used currently
+/*extern const char *getLanguageLocale(Language id);
+extern Language parseLanguageFromLocale(const char *locale);*/
 
 /**
  * List of game platforms. Specifying a platform for a target can be used to

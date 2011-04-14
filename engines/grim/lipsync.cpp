@@ -40,7 +40,7 @@ LipSync::LipSync(const char *filename, const char *data, int len) :
 	uint16 readPhoneme;
 	int j;
 
-	if (READ_BE_UINT32(data) != MKID_BE('LIP!')) {
+	if (READ_BE_UINT32(data) != MKTAG('L','I','P','!')) {
 		error("Invalid file format in %s", filename);
 	} else {
 		_numEntries = (len - 8) / 4;

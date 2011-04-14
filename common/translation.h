@@ -27,10 +27,13 @@
 
 #include "common/singleton.h"
 #include "common/str-array.h"
-#include "common/file.h"
-#include "common/fs.h"
+
+#ifdef USE_TRANSLATION
 
 namespace Common {
+
+class File;
+class FSNode;
 
 enum TranslationIDs {
 	kTranslationAutodetectId = 0,
@@ -73,7 +76,7 @@ public:
 	 * @param id Id of the language
 	 * @return the matching string description of the language
 	 */
-	const char *getLangById(int id);
+	String getLangById(int id) const;
 
 	/**
 	 * Sets the current translation language to the one specified in the
@@ -82,7 +85,7 @@ public:
 	 *
 	 * @param lang Language to setup.
 	 */
-	void setLanguage(const char *lang);
+	void setLanguage(const String &lang);
 
 	/**
 	 * Sets the current translation language to the one specified by the
@@ -101,22 +104,22 @@ public:
 	 * @return id of the language or kTranslationBuiltinId in case the
 	 *         language could not be found.
 	 */
-	int parseLanguage(const String lang);
+	int parseLanguage(const String &lang) const;
 
 	/**
 	 * Returns the translation into the current language of the parameter
 	 * message. In case the message isn't found in the translation catalog,
 	 * it returns the original untranslated message.
 	 */
-	const char *getTranslation(const char *message);
+	const char *getTranslation(const char *message) const;
 
 	/**
 	 * Returns the translation into the current language of the parameter
 	 * message. In case the message isn't found in the translation catalog,
 	 * it returns the original untranslated message.
 	 */
-	String getTranslation(const String &message);
-	
+	String getTranslation(const String &message) const;
+
 	/**
 	 * Returns the translation into the current language of the parameter
 	 * message. In case the message isn't found in the translation catalog,
@@ -126,8 +129,8 @@ public:
 	 * translation, otherwise it will look for a translation for the same
 	 * massage without a context or with a different context.
 	 */
-	const char *getTranslation(const char *message, const char *context);
-	
+	const char *getTranslation(const char *message, const char *context) const;
+
 	/**
 	 * Returns the translation into the current language of the parameter
 	 * message. In case the message isn't found in the translation catalog,
@@ -137,7 +140,7 @@ public:
 	 * translation, otherwise it will look for a translation for the same
 	 * massage without a context or with a different context.
 	 */
-	String getTranslation(const String &message, const String &context);
+	String getTranslation(const String &message, const String &context) const;
 
 	/**
 	 * Returns a list of supported languages.
@@ -149,15 +152,23 @@ public:
 	/**
 	 * Returns charset specified by selected translation language
 	 */
-	const char *getCurrentCharset();
+	String getCurrentCharset() const;
 
 	/**
 	 * Returns currently selected translation language
 	 */
-	const char *getCurrentLanguage();
+	String getCurrentLanguage() const;
 
 private:
-#ifdef USE_TRANSLATION
+	/**
+	 * Tries to find the given language or a derivate of it.
+	 *
+	 * @param lang Language string
+	 * @return id of the language or -1 in case no matching language could
+	 *         be found.
+	 */
+	int32 findMatchingLanguage(const String &lang);
+
 	/**
 	 * Find the translations.dat file. It looks first using the SearchMan and
 	 * then if needed using the Themepath. If found it opens the given File
@@ -188,7 +199,6 @@ private:
 	 */
 	bool checkHeader(File &in);
 
-	String _syslang;
 	StringArray _langs;
 	StringArray _langNames;
 
@@ -196,23 +206,24 @@ private:
 	Array<PoMessageEntry> _currentTranslationMessages;
 	String _currentCharset;
 	int _currentLang;
-#endif
 };
 
 } // End of namespace Common
 
 #define TransMan Common::TranslationManager::instance()
 
-#ifdef USE_TRANSLATION
 #define _(str) TransMan.getTranslation(str)
 #define _c(str, context) TransMan.getTranslation(str, context)
-#else
+
+#else // !USE_TRANSLATION
+
 #define _(str) str
 #define _c(str, context) str
-#endif
+
+#endif // USE_TRANSLATION
 
 #define _s(str) str
 #define _sc(str, ctxt) str
-#define DECLARE_TRANSLATION_ADDITIONAL_CONTEXT(str, ctxt) 
+#define DECLARE_TRANSLATION_ADDITIONAL_CONTEXT(str, ctxt)
 
-#endif
+#endif // COMMON_TRANSLATION_H

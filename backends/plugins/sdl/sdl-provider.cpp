@@ -23,20 +23,19 @@
  *
  */
 
+#include "common/sys.h"
+
 #if defined(DYNAMIC_MODULES) && defined(SDL_BACKEND)
 
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
 #include "common/fs.h"
 
-#include "SDL.h"
-#include "SDL_loadso.h"
-
+#include "backends/platform/sdl/sdl-sys.h"
 
 class SDLPlugin : public DynamicPlugin {
 protected:
 	void *_dlHandle;
-	Common::String _filename;
 
 	virtual VoidFunc findSymbol(const char *symbol) {
 		void *func = SDL_LoadFunction(_dlHandle, symbol);
@@ -55,7 +54,7 @@ protected:
 
 public:
 	SDLPlugin(const Common::String &filename)
-		: _dlHandle(0), _filename(filename) {}
+		: DynamicPlugin(filename), _dlHandle(0) {}
 
 	bool loadPlugin() {
 		assert(!_dlHandle);

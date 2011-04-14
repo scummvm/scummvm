@@ -243,7 +243,7 @@ public:
 	operator bool() const { return _pointer != 0; }
 
 	~ScopedPtr() {
-		delete _pointer;
+		delete _pointer;		
 	}
 
 	/**
@@ -276,7 +276,6 @@ public:
 private:
 	PointerType _pointer;
 };
-
 
 } // End of namespace Common
 

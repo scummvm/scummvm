@@ -47,7 +47,7 @@ namespace GUI {
 /**
  * Initializes graphics and shows error message.
  */
-void GUIErrorMessage(const Common::String msg);
+void GUIErrorMessage(const Common::String &msg);
 
 
 class Engine {
@@ -73,6 +73,17 @@ private:
 	 * to nest code which pauses the engine.
 	 */
 	int _pauseLevel;
+
+	/**
+	 * The time when the pause was started.
+	 */
+	uint32 _pauseStartTime;
+
+	/**
+	 * The time when the engine was started. This value is used to calculate
+	 * the current play time of the game running.
+	 */
+	int32 _engineStartTime;
 
 public:
 
@@ -152,6 +163,15 @@ public:
 	 * Notify the engine that the sound settings in the config manager may have
 	 * changed and that it hence should adjust any internal volume etc. values
 	 * accordingly.
+	 * The default implementation sets the volume levels of all mixer sound
+	 * types according to the config entries of the active domain.
+	 * When overwriting, call the default implementation first, then adjust the
+	 * volumes further (if required).
+	 *
+	 * @note When setting volume levels, respect the "mute" config entry.
+	 * @note The volume for the plain sound type is reset to the maximum
+	 *       volume. If the engine can associate its own value for this
+	 *       type, it needs to overwrite this member and set it accordingly.
 	 * @todo find a better name for this
 	 */
 	virtual void syncSoundSettings();
@@ -233,6 +253,24 @@ public:
 	 * Run the Global Main Menu Dialog
 	 */
 	void openMainMenuDialog();
+
+	/**
+	 * Get the total play time.
+	 *
+	 * @return How long the player has been playing in ms.
+	 */
+	uint32 getTotalPlayTime() const;
+
+	/**
+	 * Set the game time counter to the specified time.
+	 *
+	 * This can be used to set the play time counter after loading a savegame
+	 * for example. Another use case is in case the engine wants to exclude
+	 * time from the counter the user spent in original engine dialogs.
+	 *
+	 * @param time Play time to set up in ms.
+	 */
+	void setTotalPlayTime(uint32 time = 0);
 
 	inline Common::TimerManager *getTimerManager() { return _timer; }
 	inline Common::EventManager *getEventManager() { return _eventMan; }

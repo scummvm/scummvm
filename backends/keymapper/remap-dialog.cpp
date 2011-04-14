@@ -26,9 +26,9 @@
 
 #ifdef ENABLE_KEYMAPPER
 
-#include "gui/GuiManager.h"
-#include "gui/PopUpWidget.h"
-#include "gui/ScrollBarWidget.h"
+#include "gui/gui-manager.h"
+#include "gui/widgets/popup.h"
+#include "gui/widgets/scrollbar.h"
 #include "gui/ThemeEval.h"
 
 #include "common/translation.h"

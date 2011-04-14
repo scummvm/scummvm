@@ -25,6 +25,7 @@
 
 #include "common/zlib.h"
 #include "common/util.h"
+#include "common/stream.h"
 
 #if defined(USE_ZLIB)
   #ifdef __SYMBIAN32__

@@ -25,10 +25,11 @@
 #include "common/config-manager.h"
 #include "common/translation.h"
 
-#include "gui/ListWidget.h"
+#include "gui/widgets/list.h"
 #include "gui/message.h"
 #include "gui/saveload.h"
 #include "gui/ThemeEval.h"
+#include "gui/gui-manager.h"
 
 #include "graphics/scaler.h"
 
@@ -78,7 +79,7 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 SaveLoadChooser::~SaveLoadChooser() {
 }
 
-int SaveLoadChooser::runModal(const EnginePlugin *plugin, const String &target) {
+int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target) {
 	if (_gfxWidget)
 		_gfxWidget->setGfx(0);
 

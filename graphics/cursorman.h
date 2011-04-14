@@ -130,7 +130,7 @@ public:
 	 * The palette entries from 'start' till (start+num-1) will be replaced
 	 * so a full palette updated is accomplished via start=0, num=256.
 	 *
-	 * The palette data is specified in the same interleaved RGBA format as
+	 * The palette data is specified in the same interleaved RGB format as
 	 * used by all backends.
 	 *
 	 * @param colors	the new palette data, in interleaved RGB format

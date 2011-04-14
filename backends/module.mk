@@ -2,16 +2,22 @@ MODULE := backends
 
 MODULE_OBJS := \
 	base-backend.o \
+	modular-backend.o \
+	audiocd/default/default-audiocd.o \
+	audiocd/sdl/sdl-audiocd.o \
 	events/default/default-events.o \
+	events/sdl/sdl-events.o \
 	fs/abstract-fs.o \
 	fs/stdiostream.o \
 	fs/amigaos4/amigaos4-fs-factory.o \
 	fs/posix/posix-fs-factory.o \
 	fs/windows/windows-fs-factory.o \
+	graphics/sdl/sdl-graphics.o \
 	keymapper/action.o \
 	keymapper/keymap.o \
 	keymapper/keymapper.o \
 	keymapper/remap-dialog.o \
+	log/log.o \
 	midi/alsa.o \
 	midi/camd.o \
 	midi/coreaudio.o \
@@ -21,6 +27,9 @@ MODULE_OBJS := \
 	midi/timidity.o \
 	midi/dmedia.o \
 	midi/windows.o \
+	mixer/doublebuffersdl/doublebuffersdl-mixer.o \
+	mixer/sdl/sdl-mixer.o \
+	mutex/sdl/sdl-mutex.o \
 	plugins/posix/posix-provider.o \
 	plugins/sdl/sdl-provider.o \
 	plugins/win32/win32-provider.o \
@@ -28,6 +37,7 @@ MODULE_OBJS := \
 	saves/default/default-saves.o \
 	saves/posix/posix-saves.o \
 	timer/default/default-timer.o \
+	timer/sdl/sdl-timer.o \
 	vkeybd/image-map.o \
 	vkeybd/polygon.o \
 	vkeybd/virtual-keyboard.o \
@@ -42,7 +52,8 @@ endif
 ifeq ($(BACKEND),ds)
 MODULE_OBJS += \
 	fs/ds/ds-fs-factory.o \
-	fs/ds/ds-fs.o
+	fs/ds/ds-fs.o \
+	plugins/ds/ds-provider.o
 endif
 
 ifeq ($(BACKEND),n64)
@@ -53,7 +64,8 @@ endif
 
 ifeq ($(BACKEND),ps2)
 MODULE_OBJS += \
-	fs/ps2/ps2-fs-factory.o
+	fs/ps2/ps2-fs-factory.o \
+	plugins/ps2/ps2-provider.o
 endif
 
 ifeq ($(BACKEND),psp)
@@ -67,7 +79,8 @@ endif
 
 ifeq ($(BACKEND),wii)
 MODULE_OBJS += \
-	fs/wii/wii-fs-factory.o
+	fs/wii/wii-fs-factory.o \
+	plugins/wii/wii-provider.o
 endif
 
 # Include common rules

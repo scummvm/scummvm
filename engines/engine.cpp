@@ -46,9 +46,9 @@
 
 #include "gui/debugger.h"
 #include "gui/message.h"
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 #include "graphics/cursorman.h"
 
@@ -94,10 +94,11 @@ Engine::Engine(OSystem *syst)
 		_saveFileMan(_system->getSavefileManager()),
 		_targetName(ConfMan.getActiveDomainName()),
 		_pauseLevel(0),
+		_pauseStartTime(0),
+		_engineStartTime(_system->getMillis()),
 		_mainMenuDialog(NULL) {
 
 	g_engine = this;
-	Common::setDebugOutputFormatter(defaultOutputFormatter);
 	Common::setErrorOutputFormatter(defaultOutputFormatter);
 	Common::setErrorHandler(defaultErrorHandler);
 
@@ -121,7 +122,7 @@ Engine::~Engine() {
 }
 
 
-void GUIErrorMessage(const Common::String msg) {
+void GUIErrorMessage(const Common::String &msg) {
 	g_system->setWindowCaption("Error");
 	g_system->launcherInitSize(640, 400);
 	GUI::MessageDialog dialog(msg);
@@ -217,9 +218,12 @@ void Engine::pauseEngine(bool pause) {
 		_pauseLevel--;
 
 	if (_pauseLevel == 1 && pause) {
+		_pauseStartTime = _system->getMillis();
 		pauseEngineIntern(true);
 	} else if (_pauseLevel == 0) {
 		pauseEngineIntern(false);
+		_engineStartTime += _system->getMillis() - _pauseStartTime;
+		_pauseStartTime = 0;
 	}
 }
 
@@ -235,6 +239,24 @@ void Engine::openMainMenuDialog() {
 	syncSoundSettings();
 }
 
+uint32 Engine::getTotalPlayTime() const {
+	if (!_pauseLevel)
+		return _system->getMillis() - _engineStartTime;
+	else
+		return _pauseStartTime - _engineStartTime;
+}
+
+void Engine::setTotalPlayTime(uint32 time) {
+	const uint32 currentTime = _system->getMillis();
+
+	// We need to reset the pause start time here in case the engine is already
+	// paused to avoid any incorrect play time counting.
+	if (_pauseLevel > 0)
+		_pauseStartTime = currentTime;
+
+	_engineStartTime = currentTime - time;
+}
+
 int Engine::runDialog(GUI::Dialog &dialog) {
 	pauseEngine(true);
 	int result = dialog.runModal();
@@ -244,7 +266,6 @@ int Engine::runDialog(GUI::Dialog &dialog) {
 }
 
 void Engine::syncSoundSettings() {
-
 	// Sync the engine with the config manager
 	int soundVolumeMusic = ConfMan.getInt("music_volume");
 	int soundVolumeSFX = ConfMan.getInt("sfx_volume");
@@ -254,6 +275,7 @@ void Engine::syncSoundSettings() {
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
 
+	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, (mute ? 0 : Audio::Mixer::kMaxMixerVolume));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, (mute ? 0 : soundVolumeMusic));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, (mute ? 0 : soundVolumeSFX));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, (mute ? 0 : soundVolumeSpeech));

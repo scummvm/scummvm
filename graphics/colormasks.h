@@ -20,6 +20,7 @@
  *
  * $URL$
  * $Id$
+ *
  */
 
 #ifndef GRAPHICS_COLORMASKS_H

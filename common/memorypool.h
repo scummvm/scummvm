@@ -66,7 +66,7 @@ public:
 	 * Constructor for a memory pool with the given chunk size.
 	 * @param chunkSize		the chunk size of this memory pool
 	 */
-	MemoryPool(size_t chunkSize);
+	explicit MemoryPool(size_t chunkSize);
 	~MemoryPool();
 
 	/**

@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	fonts/newfont_big.o \
 	fonts/newfont.o \
 	fonts/scummfont.o \
+	fonts/winfont.o \
 	imagedec.o \
 	primitives.o \
 	surface.o \

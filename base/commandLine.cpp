@@ -117,6 +117,7 @@ static void usage(const char *s, ...) {
 
 
 void registerDefaults() {
+
 	// Graphics
 	ConfMan.registerDefault("fullscreen", false);
 	ConfMan.registerDefault("soft_renderer", "true");
@@ -131,6 +132,10 @@ void registerDefaults() {
 	ConfMan.registerDefault("native_mt32", false);
 	ConfMan.registerDefault("enable_gs", false);
 	ConfMan.registerDefault("midi_gain", 100);
+
+	ConfMan.registerDefault("mt32_device", "null");
+	ConfMan.registerDefault("gm_device", "null");
+
 	ConfMan.registerDefault("cdrom", 0);
 
 	// Game specific
@@ -149,6 +154,14 @@ void registerDefaults() {
 	ConfMan.registerDefault("record_file_name", "record.bin");
 	ConfMan.registerDefault("record_temp_file_name", "record.tmp");
 	ConfMan.registerDefault("record_time_file_name", "record.time");
+
+#if 0
+	// NEW CODE TO HIDE CONSOLE FOR WIN32
+#ifdef WIN32
+	// console hiding for win32
+	ConfMan.registerDefault("show_console", false);
+#endif
+#endif
 }
 
 //
@@ -430,6 +443,15 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 #endif
 
+#if 0
+	// NEW CODE TO HIDE CONSOLE FOR WIN32
+#ifdef WIN32
+			// console hiding for win32
+			DO_LONG_OPTION_BOOL("show-console")
+			END_OPTION
+#endif
+#endif
+
 unknownOption:
 			// If we get till here, the option is unhandled and hence unknown.
 			usage("Unrecognized option '%s'", argv[i]);
@@ -462,6 +484,10 @@ static void listTargets() {
 	using namespace Common;
 	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
 	ConfigManager::DomainMap::const_iterator iter;
+
+	Common::Array<Common::String> targets;
+	targets.reserve(domains.size());
+
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
 		Common::String name(iter->_key);
 		Common::String description(iter->_value.getVal("description"));
@@ -476,9 +502,13 @@ static void listTargets() {
 				description = g.description();
 		}
 
-		printf("%-20s %s\n", name.c_str(), description.c_str());
-
+		targets.push_back(Common::String::format("%-20s %s", name.c_str(), description.c_str()));
 	}
+
+	Common::sort(targets.begin(), targets.end());
+
+	for (Common::Array<Common::String>::const_iterator i = targets.begin(), end = targets.end(); i != end; ++i)
+		printf("%s\n", i->c_str());
 }
 
 /** Lists all usable themes */

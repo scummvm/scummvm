@@ -27,7 +27,7 @@
 #include "common/system.h"
 #include "common/stack.h"
 
-DECLARE_SINGLETON(Graphics::CursorManager)
+DECLARE_SINGLETON(Graphics::CursorManager);
 
 namespace Graphics {
 
@@ -186,7 +186,7 @@ CursorManager::Cursor::~Cursor() {
 CursorManager::Palette::Palette(const byte *colors, uint start, uint num) {
 	_start = start;
 	_num = num;
-	_size = 4 * num;
+	_size = 3 * num;
 
 	if (num) {
 		_data = new byte[_size];

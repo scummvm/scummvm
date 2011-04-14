@@ -34,13 +34,18 @@
  *
  */
 
-#if defined (UNIX)
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include "common/sys.h"
+
+#if defined(USE_TIMIDITY)
 
 #include "common/util.h"
 #include "common/endian.h"
 #include "common/str.h"
-#include "sound/musicplugin.h"
-#include "sound/mpu401.h"
+#include "audio/musicplugin.h"
+#include "audio/mpu401.h"
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -87,49 +92,50 @@ class MidiDriver_TIMIDITY : public MidiDriver_MPU401 {
 public:
 	MidiDriver_TIMIDITY();
 
-	int	open();
-	void	close();
-	void	send(uint32 b);
-	void	sysEx(const byte *msg, uint16 length);
+	int open();
+	bool isOpen() const { return _isOpen; }
+	void close();
+	void send(uint32 b);
+	void sysEx(const byte *msg, uint16 length);
 
 private:
 	/* standart routine to extract ip address from a string */
-	in_addr_t	host_to_addr(const char* address);
+	in_addr_t host_to_addr(const char* address);
 
 	/* creates a tcp connection to TiMidity server, returns filedesc (like open()) */
-	int	connect_to_server(const char* hostname, unsigned short tcp_port);
+	int connect_to_server(const char* hostname, unsigned short tcp_port);
 
 	/* send command to the server; printf-like; returns reply string */
-	char	*timidity_ctl_command(const char *fmt, ...) GCC_PRINTF(2, 3);
+	char *timidity_ctl_command(const char *fmt, ...) GCC_PRINTF(2, 3);
 
 	/* timidity data socket-related stuff */
-	void	timidity_meta_seq(int p1, int p2, int p3);
-	int	timidity_sync(int centsec);
-	int	timidity_eot();
+	void timidity_meta_seq(int p1, int p2, int p3);
+	int timidity_sync(int centsec);
+	int timidity_eot();
 
 	/* write() analogue for any midi data */
-	void	timidity_write_data(const void *buf, size_t nbytes);
+	void timidity_write_data(const void *buf, size_t nbytes);
 
 	/* get single line of server reply on control connection */
-	int	fdgets(char *buff, size_t buff_size);
+	int fdgets(char *buff, size_t buff_size);
 
 	/* teardown connection to server */
-	void	teardown();
+	void teardown();
 
 	/* close (if needed) and nullify both control and data filedescs */
-	void	close_all();
+	void close_all();
 
 private:
-	bool	_isOpen;
-	int	_device_num;
+	bool _isOpen;
+	int _device_num;
 
-	int	_control_fd;
-	int	_data_fd;
+	int _control_fd;
+	int _data_fd;
 
 	/* buffer for partial data read from _control_fd - from timidity-io.c, see fdgets() */
-	char	_controlbuffer[BUFSIZ];
-	int	_controlbuffer_count;	/* beginning of read pointer */
-	int	_controlbuffer_size;	/* end of read pointer */
+	char _controlbuffer[BUFSIZ];
+	int _controlbuffer_count;	/* beginning of read pointer */
+	int _controlbuffer_size;	/* end of read pointer */
 };
 
 MidiDriver_TIMIDITY::MidiDriver_TIMIDITY() {
@@ -144,9 +150,9 @@ MidiDriver_TIMIDITY::MidiDriver_TIMIDITY() {
 }
 
 int MidiDriver_TIMIDITY::open() {
-	char	*res;
-	char	timidity_host[MAXHOSTNAMELEN];
-	int	timidity_port, data_port, i;
+	char *res;
+	char timidity_host[MAXHOSTNAMELEN];
+	int timidity_port, data_port, i;
 
 	/* count ourselves open */
 	if (_isOpen)
@@ -228,8 +234,8 @@ int MidiDriver_TIMIDITY::open() {
 	/*
 	 * From seq.cpp
 	 */
-	if (getenv("SCUMMVM_MIDIPORT"))
-		_device_num = atoi(getenv("SCUMMVM_MIDIPORT"));
+	if (getenv("RESIDUAL_MIDIPORT"))
+		_device_num = atoi(getenv("RESIDUAL_MIDIPORT"));
 
 	return 0;
 }
@@ -332,7 +338,11 @@ char *MidiDriver_TIMIDITY::timidity_ctl_command(const char *fmt, ...) {
 			buff[len++] = '\n';
 
 		/* write command to control socket */
-		(void)write(_control_fd, buff, len);
+		if (write(_control_fd, buff, len) == -1) {
+			warning("TiMidity: CONTROL WRITE FAILED (%s)", strerror(errno));
+			// TODO: Disable output?
+			//close_all();
+		}
 	}
 
 	while (1) {
@@ -418,10 +428,9 @@ void MidiDriver_TIMIDITY::timidity_write_data(const void *buf, size_t nbytes) {
 }
 
 int MidiDriver_TIMIDITY::fdgets(char *buff, size_t buff_size) {
-	int n, len, count, size;
+	int n, count, size;
 	char *buff_endp = buff + buff_size - 1, *pbuff, *beg;
 
-	len = 0;
 	count = _controlbuffer_count;
 	size = _controlbuffer_size;
 	pbuff = _controlbuffer;

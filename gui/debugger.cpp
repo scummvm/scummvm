@@ -23,9 +23,14 @@
  *
  */
 
+// NB: This is really only necessary if USE_READLINE is defined
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/system.h"
+
+#include "engines/engine.h"
 
 #include "gui/debugger.h"
 #ifndef USE_TEXT_CONSOLE
@@ -78,12 +83,20 @@ int Debugger::DebugPrintf(const char *format, ...) {
 	va_start(argptr, format);
 	int count;
 #ifndef USE_TEXT_CONSOLE
-	count = _debuggerDialog->vprintf(format, argptr);
+	count = _debuggerDialog->vprintFormat(1, format, argptr);
 #else
 	count = ::vprintf(format, argptr);
 #endif
 	va_end (argptr);
 	return count;
+}
+
+void Debugger::preEnter() {
+	g_engine->pauseEngine(true);
+}
+
+void Debugger::postEnter() {
+	g_engine->pauseEngine(false);
 }
 
 void Debugger::attach(const char *entry) {
