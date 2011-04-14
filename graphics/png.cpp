@@ -99,8 +99,6 @@ enum PNGFilters {
 	kFilterPaeth   = 4
 };
 
-#define PNG_HEADER(a, b, c, d) CONSTANT_LE_32(d | (c << 8) | (b << 16) | (a << 24))
-
 PNG::PNG() : _compressedBuffer(0), _compressedBufferSize(0), 
 			_unfilteredSurface(0), _transparentColorSpecified(false) {
 }
@@ -200,11 +198,11 @@ bool PNG::read(Common::SeekableReadStream *str) {
 	_stream = str;
 
 	// First, check the PNG signature
-	if (_stream->readUint32BE() != PNG_HEADER(0x89, 0x50, 0x4e, 0x47)) {
+	if (_stream->readUint32BE() != MKTAG(0x89, 0x50, 0x4e, 0x47)) {
 		delete _stream;
 		return false;
 	}
-	if (_stream->readUint32BE() != PNG_HEADER(0x0d, 0x0a, 0x1a, 0x0a)) {
+	if (_stream->readUint32BE() != MKTAG(0x0d, 0x0a, 0x1a, 0x0a)) {
 		delete _stream;
 		return false;
 	}
