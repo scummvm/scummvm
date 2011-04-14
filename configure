@@ -653,7 +653,6 @@ Optional Libraries:
 
   --with-zlib-prefix=DIR   Prefix where zlib is installed (optional)
 
-  --with-opengl-prefix=DIR Prefix where OpenGL (ES) is installed (optional)
   --disable-opengl         disable OpenGL (ES) support [autodetect]
 
   --with-theoradec-prefix=DIR Prefix where libtheoradec is installed (optional)
@@ -774,11 +773,6 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		READLINE_CFLAGS="-I$arg/include"
 		READLINE_LIBS="-L$arg/lib"
-		;;
-	--with-opengl-prefix=*)
-		arg=`echo $ac_option | cut -d '=' -f 2`
-		OPENGL_CFLAGS="-I$arg/include"
-		OPENGL_LIBS="-L$arg/lib"
 		;;
 	--backend=*)
 		_backend=`echo $ac_option | cut -d '=' -f 2`
@@ -2557,29 +2551,32 @@ define_in_config_h_if_yes "$_text_console" 'USE_TEXT_CONSOLE'
 # Check for OpenGL (ES)
 #
 echocheck "OpenGL"
-if test "$_opengl" = auto ; then
+if test "$_opengl" = auto || test "$_opengl" = yes ; then
 	_opengl=no
-	if test "$_backend" = "sdl" ; then
-		# Try different header filenames
-		# 1) GL/gl.h         This is usually used on POSIX and Windows systems
-		# 2) OpenGL/gl.h     This is used on Mac OS X
-		# 3) GLES/gl.h       This is used for OpenGL ES 1.x
-		for i in "GL/gl.h" "OpenGL/gl.h" "GLES/gl.h"; do
-			# Test the current header for OpenGL
-			cat > $TMPC << EOF
+
+	case $_host_os in
+		amigaos*)
+			$OPENGL_CFLAGS="--DMINIGL"
+			;;
+		*)
+			;;
+	esac
+
+	for i in "GL/gl.h" "OpenGL/gl.h" "GLES/gl.h"; do
+		# Test the current header for OpenGL
+		cat > $TMPC << EOF
 #include <$i>
 int main(void) { return GL_VERSION_1_1; }
 EOF
-			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && break
+		cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && break
 
-			# Test the current header for OpenGL ES
-			cat > $TMPC << EOF
+		# Test the current header for OpenGL ES
+		cat > $TMPC << EOF
 #include <$i>
 int main(void) { return GL_OES_VERSION_1_1; }
 EOF
-			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && _opengles=yes && break
-		done
-	fi
+		cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && _opengles=yes && break
+	done
 fi
 if test "$_opengl" = yes ; then
 	# Our simple test case
@@ -2604,21 +2601,22 @@ EOF
 			fi
 		done
 	else
-		# 1) -framework OpenGL  This is used on Mac OS X
-		# 2) GL                 This is usually used on POSIX systems
-		# 3) opengl32           This is used on Windows
-		#
-		# We try "-framework OpenGL" first here to assure it will always be
-		# picked up by the configure script on Mac OS X, even when a libGL
-		# exists.
-		for lib in "-framework OpenGL" "-lGL" "-lopengl32"; do
-			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
-				then
-				_opengl=yes
-				OPENGL_LIBS="$OPENGL_LIBS $lib -lglu"
-				break
-			fi
-		done
+		case $_host_os in
+		darwin*)
+			OPENGL_LIBS="-framework OpenGL"
+			;;
+		mingw*)
+			OPENGL_LIBS="-lopengl32 -lglu32"
+			;;
+		*)
+			OPENGL_LIBS="-lGL -lGLU"
+			;;
+		esac
+		if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS
+			then
+			_opengl=yes
+			break
+		fi
 	fi
 	cc_check_clean
 
