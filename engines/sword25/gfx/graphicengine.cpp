@@ -206,6 +206,7 @@ bool GraphicEngine::fill(const Common::Rect *fillRectPtr, uint color) {
 			for (int i = rect.top; i < rect.bottom; i++) {
 				out = outo;
 				for (int j = rect.left; j < rect.right; j++) {
+#if defined(SCUMM_LITTLE_ENDIAN)
 					*out += (byte)(((cb - *out) * ca) >> 8);
 					out++;
 					*out += (byte)(((cg - *out) * ca) >> 8);
@@ -214,6 +215,16 @@ bool GraphicEngine::fill(const Common::Rect *fillRectPtr, uint color) {
 					out++;
 					*out = 255;
 					out++;
+#else
+					*out = 255;
+					out++;
+					*out += (byte)(((cr - *out) * ca) >> 8);
+					out++;
+					*out += (byte)(((cg - *out) * ca) >> 8);
+					out++;
+					*out += (byte)(((cb - *out) * ca) >> 8);
+					out++;
+#endif
 				}
 
 				outo += _backSurface.pitch;
