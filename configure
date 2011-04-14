@@ -438,6 +438,10 @@ get_engine_sub() {
 
 # Enable *all* engines
 engine_enable_all() {
+	if test "$_release_build" == "yes"; then
+		echo "error: cannot enable all engines for release build!"
+		exit 1
+	fi
 	for engine in $_engines; do
 		set_var _engine_${engine}_build "yes"
 	done
@@ -785,6 +789,19 @@ EOF
 		exit 0
 	fi
 done # for parm in ...
+
+for ac_option in $@; do
+	case "$ac_option" in
+	--enable-release)
+		_release_build=yes
+		;;
+	--disable-release)
+		_release_build=no
+		;;
+	*)
+		;;
+	esac;
+done;
 
 for ac_option in $@; do
 	case "$ac_option" in
