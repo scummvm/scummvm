@@ -317,10 +317,21 @@ public:
 	virtual void remove() = 0;
 };
 
-class PaletteRotation : public PaletteModifier {
+class PaletteModifierCached: public PaletteModifier {
 public:
-	bool _disabled;
-	int _delayFrames;
+	RGB8 _palette[256];
+	int _step;
+	int _percent;
+
+	PaletteModifierCached();
+
+	void setPalette(ScenePalette *palette, int step);
+	virtual Common::String getClassName() { return "PaletteModifierCached"; }
+	virtual void synchronise(Serialiser &s);
+};
+
+class PaletteRotation: public PaletteModifierCached {
+public:
 	int _delayCtr;
 	uint32 _frameNumber;
 	int _currIndex;
@@ -328,7 +339,6 @@ public:
 	int _end;
 	int _rotationMode;
 	int _duration;
-	RGB8 _palette[256];
 public:
 	PaletteRotation();
 
@@ -337,25 +347,23 @@ public:
 	virtual void signal();
 	virtual void remove();
 
-	void setDisabled(bool v) { _disabled = v; }
+	void setStep(int step) { _step = step; }
 	void set(ScenePalette *palette, int start, int end, int rotationMode, int duration, Action *action);
-	void setPalette(ScenePalette *palette, bool disabled);
 	bool decDuration();
 	void setDelay(int amount);
 };
 
-/*--------------------------------------------------------------------------*/
-
-class PaletteUnknown : public PaletteModifier {
+class PaletteFader: public PaletteModifierCached {
 public:
-	int _step, _percent, _field12, _field14;
 	RGB8 _palette[256];
 public:
-	virtual Common::String getClassName() { return "PaletteUnknown"; }
+	virtual Common::String getClassName() { return "PaletteFader"; }
 	virtual void synchronise(Serialiser &s);
 	virtual void signal();
 	virtual void remove();
 };
+
+/*--------------------------------------------------------------------------*/
 
 enum FadeMode {FADEMODE_NONE = 0, FADEMODE_GRADUAL = 1, FADEMODE_IMMEDIATE = 2};
 
@@ -385,7 +393,7 @@ public:
 	void clearListeners();
 	void fade(const byte *adjustData, bool fullAdjust, int percent);
 	PaletteRotation *addRotation(int start, int end, int rotationMode, int duration = 0, Action *action = NULL);
-	PaletteUnknown *addUnkPal(RGB8 *arrBufferRGB, int unkNumb, bool disabled, Action *action);
+	PaletteFader *addFader(RGB8 *arrBufferRGB, int palSize, int percent, Action *action);
 
 	static void changeBackground(const Rect &bounds, FadeMode fadeMode);
 

@@ -1036,18 +1036,35 @@ PaletteModifier::PaletteModifier() {
 
 /*--------------------------------------------------------------------------*/
 
-PaletteRotation::PaletteRotation() : PaletteModifier() {
-	_disabled = false;
-	_delayFrames = 0;
+PaletteModifierCached::PaletteModifierCached(): PaletteModifier() {
+	_step = 0;
+	_percent = 0;
+}
+
+void PaletteModifierCached::setPalette(ScenePalette *palette, int step) {
+	_scenePalette = palette;
+	_step = step;
+	_percent = 100;
+}
+
+void PaletteModifierCached::synchronise(Serialiser &s) {
+	PaletteModifier::synchronise(s);
+
+	s.syncAsByte(_step);
+	s.syncAsSint32LE(_percent);
+}
+
+/*--------------------------------------------------------------------------*/
+
+PaletteRotation::PaletteRotation() : PaletteModifierCached() {
+	_percent = 0;
 	_delayCtr = 0;
 	_frameNumber = _globals->_events.getFrameNumber();
 }
 
 void PaletteRotation::synchronise(Serialiser &s) {
-	PaletteModifier::synchronise(s);
+	PaletteModifierCached::synchronise(s);
 
-	s.syncAsByte(_disabled);
-	s.syncAsSint32LE(_delayFrames);
 	s.syncAsSint32LE(_delayCtr);
 	s.syncAsUint32LE(_frameNumber);
 	s.syncAsSint32LE(_currIndex);
@@ -1077,8 +1094,8 @@ void PaletteRotation::signal() {
 
 	if (_delayCtr)
 		return;
-	_delayCtr = _delayFrames;
-	if (_disabled)
+	_delayCtr = _percent;
+	if (_step)
 		return;
 
 	bool flag = true;
@@ -1141,7 +1158,7 @@ void PaletteRotation::remove() {
 
 void PaletteRotation::set(ScenePalette *palette, int start, int end, int rotationMode, int duration, Action *action) {
 	_duration = duration;
-	_disabled = false;
+	_step = false;
 	_action = action;
 	_scenePalette = palette;
 
@@ -1162,12 +1179,6 @@ void PaletteRotation::set(ScenePalette *palette, int start, int end, int rotatio
 	}
 }
 
-void PaletteRotation::setPalette(ScenePalette *palette, bool disabled) {
-	_scenePalette = palette;
-	_disabled = disabled;
-	_delayFrames = 100;
-}
-
 bool PaletteRotation::decDuration() {
 	if (_duration) {
 		if (--_duration == 0) {
@@ -1179,18 +1190,16 @@ bool PaletteRotation::decDuration() {
 }
 
 void PaletteRotation::setDelay(int amount) {
-	_delayFrames = _delayCtr = amount;
+	_percent = _delayCtr = amount;
 }
 
 /*--------------------------------------------------------------------------*/
 
-void PaletteUnknown::synchronise(Serialiser &s) {
-	PaletteModifier::synchronise(s);
+void PaletteFader::synchronise(Serialiser &s) {
+	PaletteModifierCached::synchronise(s);
 
 	s.syncAsSint16LE(_step);
 	s.syncAsSint16LE(_percent);
-	s.syncAsSint16LE(_field12);
-	s.syncAsSint16LE(_field14);
 	for (int i = 0; i < 256; ++i) {
 		s.syncAsByte(_palette[i].r);
 		s.syncAsByte(_palette[i].g);
@@ -1198,7 +1207,7 @@ void PaletteUnknown::synchronise(Serialiser &s) {
 	}
 }
 
-void PaletteUnknown::signal() {
+void PaletteFader::signal() {
 	_percent -= _step;
 	if (_percent > 0) {
 		_scenePalette->fade((byte *)_palette, true /* 256 */, _percent);
@@ -1207,17 +1216,18 @@ void PaletteUnknown::signal() {
 	}
 }
 
-void PaletteUnknown::remove() {
-	if (_scenePalette) {
-		for (int i = 0; i < 256; i++)
-			_scenePalette->_palette[i] = _palette[i];
-		_scenePalette->refresh();
-		_scenePalette->_listeners.remove(this);
-		delete this;
-	}
+void PaletteFader::remove() {
+	// Save of a copy of the object's action, since it will be used after the object is destroyed
+	Action *action = _action;
 
-	if (_action)
-		_action->signal();
+	for (int i = 0; i < 256; i++)
+		_scenePalette->_palette[i] = _palette[i];
+	_scenePalette->refresh();
+	_scenePalette->_listeners.remove(this);
+	delete this;
+
+	if (action)
+		action->signal();
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1358,18 +1368,19 @@ PaletteRotation *ScenePalette::addRotation(int start, int end, int rotationMode,
 	return obj;
 }
 
-PaletteUnknown *ScenePalette::addUnkPal(RGB8 *arrBufferRGB, int unkNumb, bool disabled, Action *action) {
-	PaletteUnknown *paletteUnk = new PaletteUnknown();
-	paletteUnk->_action = action;
+PaletteFader *ScenePalette::addFader(RGB8 *arrBufferRGB, int palSize, int percent, Action *action) {
+	PaletteFader *fader = new PaletteFader();
+	fader->_action = action;
 	for (int i = 0; i < 256; i++) {
-		if (unkNumb <= 1)
-			paletteUnk->_palette[i] = arrBufferRGB[i];
-		else
-			paletteUnk->_palette[i] = arrBufferRGB[0];
+		fader->_palette[i] = *arrBufferRGB;
+
+		if (palSize > 1)
+			++arrBufferRGB;			
 	}
-//	PaletteRotation::setPalette(this, disabled);
-	_globals->_scenePalette._listeners.push_back(paletteUnk);
-	return paletteUnk;
+
+	fader->setPalette(this, percent);
+	_globals->_scenePalette._listeners.push_back(fader);
+	return fader;
 }
 
 
