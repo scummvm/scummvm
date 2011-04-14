@@ -92,7 +92,7 @@ _timidity=auto
 _zlib=auto
 _theoradec=auto
 _fluidsynth=auto
-_opengl=no
+_opengl=auto
 _opengles=no
 _readline=auto
 # Default option behaviour yes/no
@@ -1433,8 +1433,6 @@ echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
 	amigaos*)
-		DEFINES="$DEFINES -DMINIGL -DUSE_OPENGL"
-		LIBS="$LIBS -lGL -lGLU"
 		CXXFLAGS="$CXXFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
 		LDFLAGS="$LDFLAGS -mcrt=newlib -use-dynld -L/sdk/local/newlib/lib"
 		# We have to use 'long' for our 4 byte typedef because AmigaOS already typedefs (u)int32
@@ -1482,8 +1480,6 @@ case $_host_os in
 		_seq_midi=no
 		;;
 	bsd* | hpux* | netbsd* | openbsd* | sunos*)
-		DEFINES="$DEFINES -DUSE_OPENGL"
-		LIBS="$LIBS -lGL -lGLU -L/usr/X11/lib"
 		_unix=yes
 		;;
 	cygwin*)
@@ -1491,9 +1487,8 @@ case $_host_os in
 		exit 1
 		;;
 	darwin*)
-		DEFINES="$DEFINES -DMACOSX -DUSE_OPENGL"
-		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI -framework OpenGL \
-		-dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
+		DEFINES="$DEFINES -DMACOSX"
+		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
 		add_line_to_config_mk 'MACOSX = 1'
 		_unix=yes
 		;;
@@ -1519,8 +1514,6 @@ case $_host_os in
 		LIBS="$LIBS -lnds9"
 		;;
 	freebsd*)
-		DEFINES="$DEFINES -DUSE_OPENGL"
-		LIBS="$LIBS -lGL -lGLU -L/usr/X11/lib"
 		LDFLAGS="$LDFLAGS -L/usr/local/lib"
 		CXXFLAGS="$CXXFLAGS -I/usr/local/include"
 		_unix=yes
@@ -1557,12 +1550,11 @@ case $_host_os in
 			CXXFLAGS="$CXXFLAGS $(getconf LFS_CFLAGS 2>/dev/null)"
 		fi
 		_unix=yes
-		DEFINES="$DEFINES -DUSE_OPENGL"
-		LIBS="$LIBS -lGL -lGLU -L/usr/X11/lib"
+		DEFINES="$DEFINES -DLUA_USE_POSIX"
 		;;
 	mingw*)
-		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0 -DUSE_OPENGL"
-		LIBS="$LIBS -lmingw32 -lwinmm -lopengl32 -lglu32"
+		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0"
+		LIBS="$LIBS -lmingw32 -lwinmm"
 		OBJS="$OBJS residualico.o"
 		add_line_to_config_mk 'WIN32 = 1'
 		;;
