@@ -695,6 +695,11 @@ begin_credits("Credits");
 		  add_person("Gregory Montoir", "cyx", "");
 	  end_section();
 
+	  begin_section("TsAGE");
+		  add_person("Paul Gilbert", "dreammaster", "");
+		  add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+	  end_section();
+
 	  begin_section("Tucker");
 		  add_person("Gregory Montoir", "cyx", "");
 	  end_section();
