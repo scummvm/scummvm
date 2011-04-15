@@ -864,16 +864,23 @@ void GfxTinyGL::drawLine(PrimitiveObject *primitive) {
 	int y1 = primitive->getP1().y;
 	int x2 = primitive->getP2().x;
 	int y2 = primitive->getP2().y;
-	float m = (y2 - y1) / (x2 - x1);
-	int b = (int)(-m * x1 + y1);
 
 	Color color = primitive->getColor();
 	uint16 c = ((color.red() & 0xF8) << 8) | ((color.green() & 0xFC) << 3) | (color.blue() >> 3);
 
-	for (int x = x1; x <= x2; x++) {
-		int y = (int)(m * x) + b;
-		if (x >= 0 && x < 640 && y >= 0 && y < 480)
-			WRITE_LE_UINT16(dst + 640 * y + x, c);
+	if (x2 == x1) {
+		for (int y = y1; y <= y2; y++) {
+			if (x1 >= 0 && x1 < 640 && y >= 0 && y < 480)
+				WRITE_LE_UINT16(dst + 640 * y + x1, c);
+		}
+	} else {
+		float m = (y2 - y1) / (x2 - x1);
+		int b = (int)(-m * x1 + y1);
+		for (int x = x1; x <= x2; x++) {
+			int y = (int)(m * x) + b;
+			if (x >= 0 && x < 640 && y >= 0 && y < 480)
+				WRITE_LE_UINT16(dst + 640 * y + x, c);
+		}
 	}
 }
 
