@@ -218,7 +218,41 @@ ResMan_v2::ResMan_v2() {
 }
 
 uint32 ResMan_v2::getRef(Common::String name, Common::String scriptname) {
-	return 0;
+	// Open the RL file
+	Common::File rlFile;
+	if (!rlFile.open("dir.rl")) {
+		error("Groovie::Resource: Couldn't open dir.rl");
+		return false;
+	}
+
+	uint32 resNum;
+	bool found = false;
+	for (resNum = 0; !found && !rlFile.err() && !rlFile.eos(); resNum++) {
+		// Seek past metadata
+		rlFile.seek(14, SEEK_CUR);
+
+		// Read the resource name
+		char readname[18];
+		rlFile.read(readname, 18);
+
+		// Test whether it's the resource we're searching
+		Common::String resname(readname, 18);
+		if (resname.hasPrefix(name.c_str())) {
+			debugC(2, kGroovieDebugResource | kGroovieDebugAll, "Groovie::Resource: Resource %12s matches %s", readname, name.c_str());
+			found = true;
+		}
+	}
+
+	// Close the RL file
+	rlFile.close();
+
+	// Verify we really found the resource
+	if (!found) {
+		error("Groovie::Resource: Couldn't find resource %s", name.c_str());
+		return (uint32)-1;
+	}
+
+	return resNum;
 }
 
 bool ResMan_v2::getResInfo(uint32 fileRef, ResInfo &resInfo) {
