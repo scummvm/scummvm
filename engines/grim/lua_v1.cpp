@@ -3490,6 +3490,17 @@ static void BlastRect() {
 	delete p;
 }
 
+static void KillPrimitive() {
+	lua_Object primObj = lua_getparam(1);
+
+	if (!lua_isuserdata(primObj) || lua_tag(primObj) != MKTAG('P','R','I','M'))
+		return;
+
+	PrimitiveObject *prim = static_cast<PrimitiveObject *>(lua_getuserdata(primObj));
+	g_grim->killPrimitiveObject(prim);
+	delete prim;
+}
+
 static void DimScreen() {
 	g_driver->dimScreen();
 }
@@ -3924,7 +3935,6 @@ STUB_FUNC(SetActorTimeScale)
 STUB_FUNC(SetActorScale)
 STUB_FUNC(GetTranslationMode)
 STUB_FUNC(SetTranslationMode)
-STUB_FUNC(KillPrimitive)
 STUB_FUNC(WalkActorToAvoiding)
 STUB_FUNC(GetActorChores)
 STUB_FUNC(SetCameraPosition)
