@@ -4,7 +4,7 @@
 # calls "make deb".  It adds a changelog entry to the top of debian/changelog
 # so that the version number is correct.
 
-VERSION=`sed -n -e 's/svn//g' -e 's/^#define RESIDUAL_VERSION "\(.*\)"/\1/p' engine/internal_version.h`-0svn`date +%Y%m%d`
+VERSION=`cat base/internal_version.h | grep RESIDUAL_VERSION | cut -d\" -f2`-`date +%Y%m%d`
 USERNAME=`whoami`
 GECOS=`getent passwd $USERNAME | awk '-F[,:]' '{print $5}'`
 DOMAIN=`hostname --fqdn`
@@ -19,16 +19,15 @@ cat debian/changelog > $TMP
 cat << __eof > debian/changelog
 residual ($VERSION) experimental; urgency=low
 
-  * SVN snapshot.
+  * GIT snapshot.
 
-    Builder:    $GECOS <$USERNAME@$DOMAIN>
     Build-date: $DATE
 
     Please don't file bugs you find in this package in the Debian Bug Tracking
     system, use the Residual team's own bug tracker instead.  You can find this
     tracker at <http://sourceforge.net/tracker/?group_id=37116>.
 
- -- Pino Toscano <pino@kde.org>  $DATE
+ -- Pawel Kolodziejski <aquadran@scummvm.org>  $DATE
 
 __eof
 
