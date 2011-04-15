@@ -624,9 +624,9 @@ void Scene20::signal() {
 
 void Scene30::BeamObject::doAction(int action) {
 	if (action == OBJECT_SCANNER)
-		display(30, 14, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
+		display2(30, 14);
 	else if (action == CURSOR_LOOK)
-		display(30, 2, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
+		display2(30, 2);
 	else if (action == CURSOR_USE) {
 		Scene30 *parent = (Scene30 *)_globals->_sceneManager._scene;
 		parent->setAction(&parent->_beamAction);
@@ -636,11 +636,11 @@ void Scene30::BeamObject::doAction(int action) {
 
 void Scene30::DoorObject::doAction(int action) {
 	if (action == OBJECT_SCANNER)
-		display(30, 13, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
+		display2(30, 13);
 	else if (action == CURSOR_LOOK)
-		display(30, 1, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
+		display2(30, 1);
 	else if (action == CURSOR_USE)
-		display(30, 7, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
+		display2(30, 7);
 	else
 		SceneObject::doAction(action);
 }
@@ -1330,10 +1330,10 @@ void Scene40::Action8::signal() {
 void Scene40::DyingKzin::doAction(int action) {
 	switch (action) {
 	case OBJECT_STUNNER:
-		SceneItem::display2(40, 43);
-		break;
-	case CURSOR_CROSSHAIRS:
 		SceneItem::display2(40, 44);
+		break;
+	case OBJECT_SCANNER:
+		SceneItem::display2(40, 43);
 		break;
 	case CURSOR_LOOK:
 		SceneItem::display2(40, 12);
@@ -1351,7 +1351,7 @@ void Scene40::Assassin::doAction(int action) {
 	Scene40 *scene = (Scene40 *)_globals->_sceneManager._scene;
 
 	switch (action) {
-	case CURSOR_CROSSHAIRS:
+	case OBJECT_STUNNER:
 		if (scene->_assassin._visage == 44)
 			SceneItem::display2(40, 21);
 		else {
@@ -1393,7 +1393,7 @@ void Scene40::Assassin::doAction(int action) {
 
 void Scene40::Item2::doAction(int action) {
 	switch (action) {
-	case CURSOR_CROSSHAIRS:
+	case OBJECT_STUNNER:
 		SceneItem::display2(40, 35);
 		_globals->_events.setCursor(CURSOR_WALK);
 		break;
@@ -1417,7 +1417,7 @@ void Scene40::Item2::doAction(int action) {
 
 void Scene40::Item6::doAction(int action) {
 	switch (action) {
-	case CURSOR_CROSSHAIRS:
+	case OBJECT_STUNNER:
 		SceneItem::display2(40, 25);
 		_globals->_events.setCursor(CURSOR_WALK);
 		break;
@@ -1439,12 +1439,12 @@ void Scene40::Item6::doAction(int action) {
 /*--------------------------------------------------------------------------*/
 
 Scene40::Scene40() :
-	_item1(2, OBJECT_SCANNER, 40, 24, CURSOR_CROSSHAIRS, 40, 25, CURSOR_LOOK, 40, 7, CURSOR_USE, 40, 16, LIST_END),
-	_item3(5, OBJECT_SCANNER, 40, 26, CURSOR_CROSSHAIRS, 40, 27, CURSOR_LOOK, 40, 9, CURSOR_USE, 40, 17, LIST_END),
-	_item4(6, OBJECT_SCANNER, 40, 31, CURSOR_CROSSHAIRS, 40, 32, CURSOR_LOOK, 40, 5, CURSOR_USE, 40, 33, LIST_END),
+	_item1(2, OBJECT_SCANNER, 40, 24, OBJECT_STUNNER, 40, 25, CURSOR_LOOK, 40, 7, CURSOR_USE, 40, 16, LIST_END),
+	_item3(5, OBJECT_SCANNER, 40, 26, OBJECT_STUNNER, 40, 27, CURSOR_LOOK, 40, 9, CURSOR_USE, 40, 17, LIST_END),
+	_item4(6, OBJECT_SCANNER, 40, 31, OBJECT_STUNNER, 40, 32, CURSOR_LOOK, 40, 5, CURSOR_USE, 40, 33, LIST_END),
 	_item5(0, CURSOR_LOOK, 40, 11, LIST_END),
-	_item7(4, OBJECT_SCANNER, 40, 26, CURSOR_CROSSHAIRS, 40, 27, CURSOR_LOOK, 40, 9, CURSOR_USE, 40, 17, LIST_END),
-	_item8(8, OBJECT_SCANNER, 40, 39, CURSOR_CROSSHAIRS, 40, 40, CURSOR_LOOK, 40, 3, CURSOR_USE, 40, 41, LIST_END) {
+	_item7(4, OBJECT_SCANNER, 40, 26, OBJECT_STUNNER, 40, 27, CURSOR_LOOK, 40, 9, CURSOR_USE, 40, 17, LIST_END),
+	_item8(8, OBJECT_SCANNER, 40, 39, OBJECT_STUNNER, 40, 40, CURSOR_LOOK, 40, 3, CURSOR_USE, 40, 41, LIST_END) {
 }
 
 void Scene40::postInit(SceneObjectList *OwnerList) {
