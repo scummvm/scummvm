@@ -174,6 +174,11 @@ protected:
 	//
 	uint32 _guioptions;
 	Common::String _guioptionsString;
+
+	//
+	//Theme Options
+	//
+	Common::String _oldTheme;
 };
 
 
