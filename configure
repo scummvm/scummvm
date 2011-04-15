@@ -704,7 +704,8 @@ Special configuration feature:
                                            wince for Windows CE
 
 Game engines:
-  --enable-all-engines     enable all engines
+  --enable-all-engines     enable all engines, including those which are
+                           broken or unsupported
   --disable-all-engines    disable all engines
 $engines_help
 Optional Features:
