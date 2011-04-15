@@ -137,7 +137,7 @@ private:
 	uint16 readScript8or16bits();
 	uint8 readScriptChar(bool allow7C, bool limitVal, bool limitVar);
 	uint8 readScriptVar();
-	uint16 getVideoRefString();
+	uint32 getVideoRefString();
 
 	bool hotspot(Common::Rect rect, uint16 addr, uint8 cursor);
 

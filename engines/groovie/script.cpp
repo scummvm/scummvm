@@ -320,7 +320,7 @@ uint8 Script::readScriptChar(bool allow7C, bool limitVal, bool limitVar) {
 	return result;
 }
 
-uint16 Script::getVideoRefString() {
+uint32 Script::getVideoRefString() {
 	Common::String str;
 	byte c;
 
@@ -1015,7 +1015,7 @@ void Script::o_add() {
 
 void Script::o_videofromstring1() {
 	uint16 instStart = _currentInstruction;
-	uint16 fileref = getVideoRefString();
+	uint32 fileref = getVideoRefString();
 
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {
@@ -1031,7 +1031,7 @@ void Script::o_videofromstring1() {
 
 void Script::o_videofromstring2() {
 	uint16 instStart = _currentInstruction;
-	uint16 fileref = getVideoRefString();
+	uint32 fileref = getVideoRefString();
 
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {

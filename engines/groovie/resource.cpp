@@ -92,7 +92,7 @@ ResMan_t7g::ResMan_t7g(Common::MacResManager *macResFork) : _macResFork(macResFo
 	}
 }
 
-uint16 ResMan_t7g::getRef(Common::String name, Common::String scriptname) {
+uint32 ResMan_t7g::getRef(Common::String name, Common::String scriptname) {
 	// Get the name of the RL file
 	Common::String rlFileName(t7g_gjds[_lastGjd]);
 	rlFileName += ".rl";
@@ -110,7 +110,7 @@ uint16 ResMan_t7g::getRef(Common::String name, Common::String scriptname) {
 	if (!rlFile)
 		error("Groovie::Resource: Couldn't open %s", rlFileName.c_str());
 
-	uint16 resNum;
+	uint32 resNum;
 	bool found = false;
 	for (resNum = 0; !found && !rlFile->err() && !rlFile->eos(); resNum++) {
 		// Read the resource name
@@ -134,7 +134,7 @@ uint16 ResMan_t7g::getRef(Common::String name, Common::String scriptname) {
 	// Verify we really found the resource
 	if (!found) {
 		error("Groovie::Resource: Couldn't find resource %s in %s", name.c_str(), rlFileName.c_str());
-		return (uint16)-1;
+		return (uint32)-1;
 	}
 
 	return (_lastGjd << 10) | (resNum - 1);
@@ -217,7 +217,7 @@ ResMan_v2::ResMan_v2() {
 	indexfile.close();
 }
 
-uint16 ResMan_v2::getRef(Common::String name, Common::String scriptname) {
+uint32 ResMan_v2::getRef(Common::String name, Common::String scriptname) {
 	return 0;
 }
 

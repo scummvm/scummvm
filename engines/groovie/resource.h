@@ -43,7 +43,7 @@ public:
 	virtual ~ResMan() {}
 
 	Common::SeekableReadStream *open(uint32 fileRef);
-	virtual uint16 getRef(Common::String name, Common::String scriptname = "") = 0;
+	virtual uint32 getRef(Common::String name, Common::String scriptname = "") = 0;
 
 protected:
 	Common::Array<Common::String> _gjds;
@@ -57,7 +57,7 @@ public:
 	ResMan_t7g(Common::MacResManager *macResFork = 0);
 	~ResMan_t7g() {}
 
-	uint16 getRef(Common::String name, Common::String scriptname);
+	uint32 getRef(Common::String name, Common::String scriptname);
 	bool getResInfo(uint32 fileRef, ResInfo &resInfo);
 
 private:
@@ -69,7 +69,7 @@ public:
 	ResMan_v2();
 	~ResMan_v2() {}
 
-	uint16 getRef(Common::String name, Common::String scriptname);
+	uint32 getRef(Common::String name, Common::String scriptname);
 	bool getResInfo(uint32 fileRef, ResInfo &resInfo);
 };
 
