@@ -1207,7 +1207,7 @@ void Scene40::Action5::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		setDelay(_globals->_randomSource.getRandomNumber(120));
+		setDelay(_globals->_randomSource.getRandomNumber(119) + 120);
 		break;
 	case 1:
 		scene->_object2.animate(ANIM_MODE_8, 1, this);
@@ -1223,12 +1223,13 @@ void Scene40::Action6::signal() {
 		scene->_object1.postInit();
 		scene->_object1.setVisage(16);
 		scene->_object1.setStrip2(6);
+		scene->_object1._moveDiff = Common::Point(40, 40);
 		scene->_object1.setPosition(Common::Point(313, 53));
 		scene->_object1._field7A = 60;
 
 		Common::Point pt(141, 194);
 		NpcMover *mover = new NpcMover();
-		scene->_object1.addMover(mover, &pt, this);
+		scene->_object1.addMover(mover, &pt, NULL);
 		scene->_object1.animate(ANIM_MODE_5, NULL);
 
 		scene->_doorway.postInit();
@@ -1256,6 +1257,7 @@ void Scene40::Action7::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
+		// TODO: check if it's rand(500) or rand(499)+500
 		setDelay(_globals->_randomSource.getRandomNumber(500));
 		break;
 	case 1:
@@ -1269,6 +1271,8 @@ void Scene40::Action7::signal() {
 			scene->_object7.setPosition(Common::Point(305, 61));
 			scene->_object7.setFrame(15);
 		}
+		scene->_object7.animate(ANIM_MODE_5, this);
+		scene->_soundHandler.startSound(25);
 		break;
 	case 2:
 		scene->_object7.remove();
@@ -1363,6 +1367,7 @@ void Scene40::Assassin::doAction(int action) {
 			Common::Point pt(230, 187);
 			NpcMover *mover = new NpcMover();
 			addMover(mover, &pt, NULL);
+			scene->setAction(&scene->_action2);
 		}
 		break;
 	case OBJECT_SCANNER:
