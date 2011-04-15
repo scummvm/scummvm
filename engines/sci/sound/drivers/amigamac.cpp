@@ -132,6 +132,7 @@ private:
 	};
 
 	bool _isSci1;
+	bool _isSci1Early;	// KQ1 Amiga, patch 5
 	bool _playSwitch;
 	int _masterVolume;
 	int _frequency;
@@ -557,6 +558,7 @@ uint32 MidiDriver_AmigaMac::property(int prop, uint32 param) {
 
 int MidiDriver_AmigaMac::open() {
 	_isSci1 = false;
+	_isSci1Early = false;
 
 	for (int i = 0; i < 48; i++)
 		_freqTable[i] = pow(2, i / (double)48);
@@ -589,9 +591,15 @@ int MidiDriver_AmigaMac::open() {
 	} else {
 		ResourceManager *resMan = g_sci->getResMan();
 
-		Resource *resource = resMan->findResource(ResourceId(kResourceTypePatch, 7), false);
+		Resource *resource = resMan->findResource(ResourceId(kResourceTypePatch, 7), false);	// Mac
 		if (!resource)
-			resource = resMan->findResource(ResourceId(kResourceTypePatch, 9), false);
+			resource = resMan->findResource(ResourceId(kResourceTypePatch, 9), false);	// Amiga
+
+		if (!resource) {
+			resource = resMan->findResource(ResourceId(kResourceTypePatch, 5), false);	// KQ1 Amiga
+			if (resource)
+				_isSci1Early = true;
+		}
 
 		// If we have a patch by this point, it's SCI1
 		if (resource)
@@ -896,6 +904,9 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI0Mac(Common::SeekableReadStream &fil
 bool MidiDriver_AmigaMac::loadInstrumentsSCI1(Common::SeekableReadStream &file) {
 	_bank.size = 128;
 
+	if (_isSci1Early)
+		file.skip(4);	// TODO: What is this offset for?
+
 	Common::Array<uint32> instrumentOffsets;
 	instrumentOffsets.resize(_bank.size);
 	_bank.instruments.resize(_bank.size);
@@ -908,10 +919,16 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI1(Common::SeekableReadStream &file) 
 		if (instrumentOffsets[i] == 0)
 			continue;
 
-		file.seek(instrumentOffsets[i]);
+		file.seek(instrumentOffsets[i] + (_isSci1Early ? 4 : 0));
 
 		// Read in the instrument name
 		file.read(_bank.instruments[i].name, 10); // last two bytes are always 0
+
+		// TODO: Finish off support of SCI1 early patches (patch.005 - KQ1 Amiga)
+		if (_isSci1Early) {
+			warning("Music patch 5 isn't supported yet - ignoring instrument %d", i);
+			continue;
+		}
 
 		for (uint32 j = 0; ; j++) {
 			InstrumentSample *sample = new InstrumentSample;
