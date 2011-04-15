@@ -411,7 +411,8 @@ reg_t kMacPlatform(EngineState *s, int argc, reg_t *argv) {
 		return kIconBar(s, argc - 1, argv + 1);
 	case 7: // Unknown, but always return -1
 		return SIGNAL_REG;
-	case 1:	// Unknown, calls QuickDraw region functions (KQ5, QFG1VGA)
+	case 1:	// Unknown, calls QuickDraw region functions (KQ5, QFG1VGA, Dr. Brain 1)
+		break;	// removed warning, as it produces a lot of spam in the console
 	case 2: // Unknown, "UseNextWaitEvent" (Various)
 	case 3: // Unknown, "ProcessOpenDocuments" (Various)
 	case 5: // Unknown, plays a sound (KQ7)
