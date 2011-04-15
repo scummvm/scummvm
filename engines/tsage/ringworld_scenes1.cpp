@@ -533,6 +533,7 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 	_speakerQText._npc = &_globals->_player;
 
 	if (_globals->_sceneManager._previousScene == 30) {
+		// Cut scene: Assassins are coming
 		_globals->_player.postInit();
 		_globals->_player.setVisage(20);
 		_globals->_player.setPosition(Common::Point(405, 69));
@@ -558,6 +559,41 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 
 		_sceneBounds = Rect(320, 0, 640, 200);
 	} else if (_globals->_sceneManager._previousScene == 60) {
+		// Evasion
+		_sound.startSound(30);
+		_globals->_player.postInit();
+		_globals->_player.setVisage(20);
+		_globals->_player.setPosition(Common::Point(588, 79));
+		_globals->_player._moveDiff = Common::Point(5, 5);
+		_globals->_player.setPriority2(50);
+		_globals->_player.animate(ANIM_MODE_1, NULL);
+
+		_SceneObjectExt.postInit();
+		_SceneObjectExt.setVisage(20);
+		_SceneObjectExt.setPosition(Common::Point(583, 79));
+		_SceneObjectExt.animate(ANIM_MODE_1, NULL);
+
+		_sceneObject3.postInit();
+		_sceneObject3.setVisage(20);
+		_sceneObject3.setStrip2(2);
+		_sceneObject3.setPosition(Common::Point(595, 79));
+		_sceneObject3.animate(ANIM_MODE_1, NULL);
+
+		if ((_globals->getFlag(120) && _globals->getFlag(116)) ||
+				(_globals->getFlag(117) && _globals->getFlag(119))) {
+			// Successful evasion
+			setAction(&_action3);
+		} else if (_globals->getFlag(104)) {
+			_sceneMode = 21;
+			setAction(&_sequenceManager, this, 21, &_globals->_player, &_SceneObjectExt, NULL);
+		} else {
+			// Failed evasion
+			_sceneObject3._moveDiff = Common::Point(8, 8);
+			setAction(&_action4);
+		}
+		_sceneBounds.center(_globals->_player._position.x, _globals->_player._position.y);
+	} else {
+		// Intro: Quinn looking at the monaster
 		_globals->_player.postInit();
 		_globals->_player.setVisage(2640);
 		_globals->_player.animate(ANIM_MODE_NONE, NULL);
@@ -574,38 +610,6 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 
 		_globals->_soundHandler.startSound(8);
 		_sceneBounds = Rect(320, 0, 640, 200);
-	} else {
-		_sound.startSound(30);
-		_globals->_player.postInit();
-		_globals->_player.setVisage(20);
-		_globals->_player.setPosition(Common::Point(588, 79));
-		_globals->_player._moveDiff = Common::Point(5, 5);
-		_globals->_player.setPriority2(50);
-		_globals->_player.animate(ANIM_MODE_1, NULL);
-
-		_SceneObjectExt.postInit();
-		_SceneObjectExt.setVisage(20);
-		_SceneObjectExt.setPosition(Common::Point(583, 79));
-		_SceneObjectExt.animate(ANIM_MODE_1, NULL);
-
-		_sceneObject3.postInit();
-		_sceneObject3.setVisage(20);
-		_sceneObject3.setStrip(2);
-		_SceneObjectExt.setPosition(Common::Point(595, 79));
-		_SceneObjectExt.animate(ANIM_MODE_1, NULL);
-
-		if ((_globals->getFlag(120) && _globals->getFlag(116)) ||
-				(_globals->getFlag(117) && _globals->getFlag(119))) {
-			setAction(&_action3);
-		} else if (_globals->getFlag(104)) {
-			_sceneMode = 21;
-			setAction(&_sequenceManager, this, 21, &_globals->_player, &_SceneObjectExt, NULL);
-		} else {
-			_sceneObject3._moveDiff = Common::Point(8, 8);
-			setAction(&_action4);
-		}
-
-		_sceneBounds.center(_globals->_player._position.x, _globals->_player._position.y);
 	}
 
 	_globals->_player.disableControl();
