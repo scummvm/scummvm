@@ -511,8 +511,10 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		close();
 		break;
 	case kCloseCmd:
+        if (g_gui.theme()->getThemeId() != _oldTheme ) {
 		g_gui.loadNewTheme(_oldTheme);
 		ConfMan.set("gui_theme", _oldTheme);
+        }
 		close();
 		break;
 	default:
