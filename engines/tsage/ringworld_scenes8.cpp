@@ -48,7 +48,7 @@ void Scene7000::Action1::signal() {
 		setAction(&scene->_action6, this);
 		break;
 	case 2:
-		scene->_soundHandler.startSound(252, 0, 127);
+		scene->_soundHandler.startSound(252);
 		scene->_object8.remove();
 		scene->_object1.postInit();
 		scene->_object1.setVisage(7003);
@@ -169,7 +169,7 @@ void Scene7000::Action4::signal() {
 		setDelay(300);
 		break;
 	case 2:
-		_globals->_soundHandler.startSound(252, 0, 127);
+		_globals->_soundHandler.startSound(252);
 		scene->_object1.show();
 		scene->_object1.setStrip(3);
 		scene->_object1.setFrame(1);
@@ -199,7 +199,7 @@ void Scene7000::Action5::signal() {
 	}
 	case 1:
 		_globals->_player.checkAngle(&scene->_object1);
-		_globals->_soundHandler.startSound(252, 0, 127);
+		_globals->_soundHandler.startSound(252);
 		scene->_object1.setStrip(2);
 		scene->_stripManager.start(7015, this);
 		break;
@@ -532,7 +532,7 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 		_object1.animate(ANIM_MODE_8, 0, 0);
 		_globals->_sceneItems.addItems(&_object1, 0);
 	}
-	_soundHandler.startSound(251, 0, 127);
+	_soundHandler.startSound(251);
 	if (_globals->_sceneManager._previousScene == 2100) {
 		if (_globals->getFlag(72)) {
 			_globals->_player.postInit();
@@ -550,7 +550,7 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 				setAction(&_action1);
 			}
 		} else {
-			_globals->_soundHandler.startSound(250, 0, 127);
+			_globals->_soundHandler.startSound(250);
 			_globals->setFlag(72);
 
 			_object3.postInit();
@@ -597,9 +597,9 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 		_object3.setVisage(5001);
 		_object3.setStrip2(1);
 		_object3.setPosition(Common::Point(307, 0), 0);
-		_soundHandler.startSound(151, 0, 127);
+		_soundHandler.startSound(151);
 		_soundHandler.proc5(1);
-		_globals->_soundHandler.startSound(250, 0, 127);
+		_globals->_soundHandler.startSound(250);
 		setAction(&_action3);
 	}
 }
@@ -1114,9 +1114,9 @@ void Scene7100::postInit(SceneObjectList *OwnerList) {
 	_object1.setPosition(Common::Point(100, 100), 0);
 
 	setAction(&_action11);
-	_soundHandler1.startSound(270, 0, 127);
-	_soundHandler2.startSound(275, 0, 127);
-	_globals->_soundHandler.startSound(270, 0, 127);
+	_soundHandler1.startSound(270);
+	_soundHandler2.startSound(275);
+	_globals->_soundHandler.startSound(270);
 }
 /*--------------------------------------------------------------------------
  * Scene 7200
@@ -1281,7 +1281,7 @@ void Scene7200::postInit(SceneObjectList *OwnerList) {
 	_swimmer.setPosition(Common::Point(-8, 16), 0);
 
 	setAction(&_action1);
-	_soundHandler.startSound(271, 0, 127);
+	_soundHandler.startSound(271);
 }
 
 /*--------------------------------------------------------------------------
@@ -1476,7 +1476,7 @@ void Scene7300::postInit(SceneObjectList *OwnerList) {
 	_object8._numFrames = 2;
 
 	setAction(&_action1);
-	_globals->_soundHandler.startSound(272, 0, 127);
+	_globals->_soundHandler.startSound(272);
 }
 
 /*--------------------------------------------------------------------------
@@ -1644,7 +1644,7 @@ void Scene7700::Action3::signal() {
 		setDelay(60);
 		// No break on purpose!
 	case 2:
-		scene->_soundHandler.startSound(260, 0, 127);
+		scene->_soundHandler.startSound(260);
 		scene->_object8.setVisage(7703);
 		scene->_object8.setPosition(Common::Point(177, 97), 0);
 		scene->_object8.setStrip2(3);
@@ -1853,7 +1853,7 @@ void Scene7700::SceneHotspot8::doAction(int action) {
 		break;
 	case CURSOR_USE:
 		scene->_sceneMode = 7709;
-		scene->_soundHandler.startSound(259, 0, 127);
+		scene->_soundHandler.startSound(259);
 		scene->_object15.setFrame(scene->_object15.getFrameCount());
 		scene->_object15.animate(ANIM_MODE_6, scene);
 		if ((scene->_field977 == 2) && (scene->_field97B == 0)) {
@@ -1879,7 +1879,7 @@ void Scene7700::SceneHotspot9::doAction(int action) {
 		break;
 	case CURSOR_USE:
 		scene->_sceneMode = 7709;
-		scene->_soundHandler.startSound(259, 0, 127);
+		scene->_soundHandler.startSound(259);
 		scene->_object15.setFrame(1);
 		scene->_object15.animate(ANIM_MODE_5, scene);
 		if (scene->_field977 > 2) {
@@ -2102,7 +2102,7 @@ void Scene7700::Object9::doAction(int action) {
 					_globals->_sceneItems.push_front(&scene->_object10);
 					scene->_object10.setPriority2(240);
 				}
-				scene->_soundHandler.startSound(262, 0, 127);
+				scene->_soundHandler.startSound(262);
 				scene->_object14.animate(ANIM_MODE_5, 0);
 			}
 			_globals->_events.setCursor(CURSOR_WALK);
@@ -2209,7 +2209,7 @@ void Scene7700::signal() {
 		_globals->_player.enableControl();
 		break;
 	case 7704:
-		_globals->_soundHandler.startSound(256, 0, 127);
+		_globals->_soundHandler.startSound(256);
 		_prof.setStrip2(4);
 		_prof.setFrame2(1);
 		_prof.setPosition(Common::Point(159, 87), 0);
@@ -2493,7 +2493,7 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 
 	_sceneMode = 7701;
 	setAction(&_sequenceManager, this, 7701, &_globals->_player, 0);
-	_soundHandler.startSound(256, 0, 127);
+	_soundHandler.startSound(256);
 }
 
 Scene7700::Scene7700() {

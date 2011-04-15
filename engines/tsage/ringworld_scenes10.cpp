@@ -155,7 +155,7 @@ void Scene9100::postInit(SceneObjectList *OwnerList) {
 	_sceneHotspot5.setup(69, 36, 121, 272, 9100, 45, 46);
 	_sceneHotspot6.setup(127, 0, 200, 52, 9100, 47, 48);
 
-	_globals->_soundHandler.startSound(251, 0, 127);
+	_globals->_soundHandler.startSound(251);
 	if (_globals->_sceneManager._previousScene == 9150) {
 		if (_globals->getFlag(20)) {
 			_globals->_player.disableControl();
@@ -240,7 +240,7 @@ void Scene9150::dispatch() {
 		} else {
 			_globals->_player.disableControl();
 			if (_globals->getFlag(11)) {
-				_globals->_soundHandler.startSound(286, 0, 127);
+				_globals->_soundHandler.startSound(286);
 				_sceneMode = 9153;
 			} else {
 				_sceneMode = 9156;
@@ -274,7 +274,7 @@ void Scene9150::postInit(SceneObjectList *OwnerList) {
 	_sceneHotspot8.setup(133, 584, 142, 640, 9150, 57, -1);
 	_sceneHotspot10.setup(83, 304, 103, 323, 9150, 58, 59);
 
-	_globals->_soundHandler.startSound(285, 0, 127);
+	_globals->_soundHandler.startSound(285);
 	_globals->_player.disableControl();
 
 	if (_globals->getFlag(20)) {
@@ -406,7 +406,7 @@ void Scene9200::postInit(SceneObjectList *OwnerList) {
 	_object1.animate(ANIM_MODE_2, 0);
 	_object1.setPosition(Common::Point(132, 114), 0);
 	_object1.setPriority2(140);
-	_soundHandler.startSound(297, 0, 127);
+	_soundHandler.startSound(297);
 	_stripManager.addSpeaker(&_speakerQText);
 	_stripManager.addSpeaker(&_speakerGR);
 	_stripManager.addSpeaker(&_speakerGText);
@@ -479,7 +479,7 @@ void Scene9300::signal() {
 		_globals->setFlag(84);
 		// No break on purpose
 	case 9303:
-		_globals->_soundHandler.startSound(295, 0, 127);
+		_globals->_soundHandler.startSound(295);
 		_globals->_sceneManager.changeScene(9350);
 		break;
 	case 9302:
@@ -509,7 +509,7 @@ void Scene9300::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.changeZoom(-1);
 	_object1.postInit();
 	_object2.postInit();
-	_globals->_soundHandler.startSound(289, 0, 127);
+	_globals->_soundHandler.startSound(289);
 
 	_hotspot1.setup(35, 142, 76, 212, 9300, 0, 1);
 	_hotspot2.setup(28, 90, 81, 143, 9300, 2, 3);
@@ -763,7 +763,7 @@ void Scene9400::signal() {
 void Scene9400::dispatch() {
 	if ((_object1._animateMode == 2) && (_object1._strip == 1) && (_object1._frame == 4)){
 		if (_field1032 == 0) {
-			_soundHandler.startSound(296, 0, 127);
+			_soundHandler.startSound(296);
 			_field1032 = 1;
 		}
 	} else {
@@ -1072,7 +1072,7 @@ void Scene9500::signal() {
 	switch (_sceneMode) {
 	case 9503:
 		_globals->_sceneManager.changeScene(9200);
-		_globals->_soundHandler.startSound(295, 0, 127);
+		_globals->_soundHandler.startSound(295);
 		break;
 	case 9504:
 		_globals->_sceneManager.changeScene(9850);
@@ -1128,7 +1128,7 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 	setZoomPercents(110, 75, 200, 150);
 
 	_globals->_player.postInit();
-	_globals->_soundHandler.startSound(305, 0, 127);
+	_globals->_soundHandler.startSound(305);
 
 	_candle.postInit(0);
 	_candle.setVisage(9500);
@@ -1236,7 +1236,7 @@ void Scene9700::signal() {
 		_globals->_events.setCursor(CURSOR_USE);
 		break;
 	case 9704:
-		_globals->_soundHandler.startSound(323, 0, 127);
+		_globals->_soundHandler.startSound(323);
 		_globals->_sceneManager.changeScene(9750);
 		break;
 	}
@@ -1426,7 +1426,7 @@ void Scene9850::Hotspot17::doAction(int action) {
 		SceneItem::display(9850, 32, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	} else {
 		if (action == CURSOR_USE)
-			scene->_soundHandler.startSound(306, 0, 127);
+			scene->_soundHandler.startSound(306);
 		NamedHotspot::doAction(action);
 	}
 }
@@ -1438,7 +1438,7 @@ void Scene9850::Hotspot18::doAction(int action) {
 		SceneItem::display(9850, 32, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	} else {
 		if (action == CURSOR_USE)
-			scene->_soundHandler.startSound(306, 0, 127);
+			scene->_soundHandler.startSound(306);
 		NamedHotspot::doAction(action);
 	}
 }
@@ -1450,7 +1450,7 @@ void Scene9850::Hotspot19::doAction(int action) {
 		SceneItem::display(9850, 31, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	} else {
 		if (action == CURSOR_USE)
-			scene->_soundHandler.startSound(313, 0, 127);
+			scene->_soundHandler.startSound(313);
 		NamedHotspot::doAction(action);
 	}
 }
@@ -1639,7 +1639,7 @@ void Scene9900::strAction1::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		scene->_soundHandler.startSound(351, 0, 127);
+		scene->_soundHandler.startSound(351);
 		_object9.postInit();
 		_object9.setVisage(18);
 		_object9._frame = 1;
@@ -1658,7 +1658,7 @@ void Scene9900::strAction1::signal() {
 		_globals->_scenePalette.addFader(&mask2[0], 1, 5, this);
 		break;
 	case 3:
-		_globals->_soundHandler.startSound(377, 0, 127);
+		_globals->_soundHandler.startSound(377);
 		setDelay(120);
 		break;
 	case 4:
@@ -1829,7 +1829,7 @@ void Scene9900::signal() {
 
 	switch (_sceneMode){
 	case 150:
-		_globals->_soundHandler.startSound(380, 0, 127);
+		_globals->_soundHandler.startSound(380);
 		_object8.postInit(0);
 		_object8.setVisage(2002);
 		_object8.setStrip(1);
@@ -1862,7 +1862,7 @@ void Scene9900::signal() {
 		setAction(&_sequenceManager, this, 9902, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6);
 		break;
 	case 9904:
-		_globals->_soundHandler.startSound(390, 0, 127);
+		_globals->_soundHandler.startSound(390);
 		_sceneMode = 9912;
 		setAction(&_strAction2, this);
 		break;
@@ -1893,7 +1893,7 @@ void Scene9900::signal() {
 		setAction(&_sequenceManager, this, 9904, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6);
 		break;
 	case 9909:
-		_globals->_soundHandler.startSound(375, 0, 127);
+		_globals->_soundHandler.startSound(375);
 		_globals->_player.disableControl();
 		_sceneMode = 9907;
 		setAction(&_sequenceManager, this, 9907, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6);
@@ -1904,7 +1904,7 @@ void Scene9900::signal() {
 		setAction(&_sequenceManager, this, 9911, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6);
 		break;
 	case 9911:
-		_globals->_soundHandler.startSound(367, 0, 127);
+		_globals->_soundHandler.startSound(367);
 		_globals->_player.disableControl();
 		_sceneMode = 9909;
 		setAction(&_sequenceManager, this, 9909, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6);
@@ -2055,7 +2055,7 @@ void Scene9999::postInit(SceneObjectList *OwnerList) {
 	else
 		_globals->_stripNum = 2121;
 
-	_globals->_soundHandler.startSound(118, 0, 127);
+	_globals->_soundHandler.startSound(118);
 
 }
 
