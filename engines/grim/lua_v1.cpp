@@ -3333,7 +3333,7 @@ static void ChangePrimitive() {
 	lua_Object layer = lua_gettable();
 	if (lua_isnumber(layer)) {
 		// TODO pmodify->setLayer(lua_getnumber(layer));
-		assert(0);
+		warning("Not implemented: PrimitiveObject::setLayer. Layer: %d", (int)lua_getnumber(layer));
 	}
 
 	lua_pushobject(tableObj);
