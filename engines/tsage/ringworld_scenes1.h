@@ -339,7 +339,7 @@ class Scene60 : public Scene {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object6 : public SceneObject {
+	class ControlObject : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -347,7 +347,7 @@ class Scene60 : public Scene {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object8 : public SceneObjectExt {
+	class MasterObject : public SceneObjectExt {
 	public:
 		virtual void doAction(int action);
 	};
@@ -383,9 +383,9 @@ public:
 	Object3 _object3;
 	Object4 _object4;
 	Object5 _object5;
-	Object6 _object6;
+	ControlObject _controlButton;
 	SlaveObject _slaveButton;
-	Object8 _object8;
+	MasterObject _masterButton;
 	Object9 _object9;
 	SceneObject _object10;
 	Item1 _item1;
