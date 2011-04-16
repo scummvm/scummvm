@@ -1012,6 +1012,7 @@ void ProjectProvider::createProject(const BuildSetup &setup) {
 	in.push_back(setup.srcDir + "/AUTHORS");
 	in.push_back(setup.srcDir + "/COPYING");
 	in.push_back(setup.srcDir + "/COPYING.LGPL");
+	in.push_back(setup.srcDir + "/COPYRIGHT");
 	in.push_back(setup.srcDir + "/NEWS");
 	in.push_back(setup.srcDir + "/README");
 	in.push_back(setup.srcDir + "/TODO");

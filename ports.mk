@@ -149,6 +149,7 @@ osxsnap: bundle
 	cp $(srcdir)/AUTHORS ./Residual-snapshot/Authors
 	cp $(srcdir)/COPYING ./Residual-snapshot/License\ \(GPL\)
 	cp $(srcdir)/COPYING.LGPL ./Residual-snapshot/License\ \(LGPL\)
+	cp $(srcdir)/COPYRIGHT ./Residual-snapshot/Copyright\ Holders
 	cp $(srcdir)/NEWS ./Residual-snapshot/News
 	cp $(srcdir)/README ./Residual-snapshot/Residual\ ReadMe
 	/Developer/Tools/SetFile -t ttro -c ttxt ./Residual-snapshot/*
@@ -181,6 +182,7 @@ endif
 	cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING $(WIN32PATH)/COPYING.txt
 	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING.LGPL.txt
+	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
 	cp $(srcdir)/NEWS $(WIN32PATH)/NEWS.txt
 	cp $(srcdir)/README $(WIN32PATH)/README.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
@@ -198,6 +200,7 @@ endif
 	cp $(srcdir)/AUTHORS ResidualWin32/AUTHORS.txt
 	cp $(srcdir)/COPYING ResidualWin32/COPYING.txt
 	cp $(srcdir)/COPYING.LGPL ResidualWin32/COPYING.LGPL.txt
+	cp $(srcdir)/COPYRIGHT ResidualWin32/COPYRIGHT.txt
 	cp $(srcdir)/NEWS ResidualWin32/NEWS.txt
 	cp $(srcdir)/README ResidualWin32/README.txt
 	cp $(srcdir)/dists/residual.iss ResidualWin32
