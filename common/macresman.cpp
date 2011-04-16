@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/debug.h"
 #include "common/util.h"
 #include "common/file.h"

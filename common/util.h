@@ -25,7 +25,7 @@
 #ifndef COMMON_UTIL_H
 #define COMMON_UTIL_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/textconsole.h"
 #include "common/str.h"
 

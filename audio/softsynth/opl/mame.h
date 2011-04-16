@@ -29,7 +29,7 @@
 #ifndef SOUND_SOFTSYNTH_OPL_MAME_H
 #define SOUND_SOFTSYNTH_OPL_MAME_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/util.h"
 #include "common/random.h"
 

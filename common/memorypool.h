@@ -26,7 +26,7 @@
 #ifndef COMMON_MEMORYPOOL_H
 #define COMMON_MEMORYPOOL_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/array.h"
 
 

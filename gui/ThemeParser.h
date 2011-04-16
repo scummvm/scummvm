@@ -26,7 +26,7 @@
 #ifndef THEME_PARSER_H
 #define THEME_PARSER_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/xmlparser.h"
 
 namespace GUI {

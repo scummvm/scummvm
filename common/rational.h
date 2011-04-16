@@ -25,7 +25,7 @@
 #ifndef COMMON_RATIONAL_H
 #define COMMON_RATIONAL_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/frac.h"
 
 namespace Common {

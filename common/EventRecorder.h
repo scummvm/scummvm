@@ -26,7 +26,7 @@
 #ifndef COMMON_EVENTRECORDER_H
 #define COMMON_EVENTRECORDER_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/events.h"
 #include "common/singleton.h"
 #include "common/mutex.h"

@@ -25,7 +25,7 @@
 #ifndef COMMON_STRING_H
 #define COMMON_STRING_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 namespace Common {
 

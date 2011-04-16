@@ -26,7 +26,7 @@
 #ifndef COMMON_HARDWARE_KEY_H
 #define COMMON_HARDWARE_KEY_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 #ifdef ENABLE_KEYMAPPER
 

@@ -26,7 +26,7 @@
 #ifndef SOUND_RAW_H
 #define SOUND_RAW_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/types.h"
 
 #include "common/list.h"

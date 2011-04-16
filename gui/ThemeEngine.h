@@ -26,7 +26,7 @@
 #ifndef GUI_THEME_ENGINE_H
 #define GUI_THEME_ENGINE_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 #include "common/fs.h"
 #include "graphics/surface.h"

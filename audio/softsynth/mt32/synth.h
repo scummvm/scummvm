@@ -22,7 +22,7 @@
 #ifndef MT32EMU_SYNTH_H
 #define MT32EMU_SYNTH_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 class revmodel;
 

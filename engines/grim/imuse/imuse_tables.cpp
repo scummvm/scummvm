@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 #include "engines/grim/imuse/imuse_tables.h"
 

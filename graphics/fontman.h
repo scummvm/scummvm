@@ -25,7 +25,7 @@
 #ifndef GRAPHICS_FONTMAN_H
 #define GRAPHICS_FONTMAN_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/singleton.h"
 #include "common/str.h"
 #include "common/hashmap.h"

@@ -26,7 +26,7 @@
 #ifndef GUI_KEY_H
 #define GUI_KEY_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 
 namespace GUI {

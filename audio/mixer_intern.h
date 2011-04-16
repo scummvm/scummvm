@@ -26,7 +26,7 @@
 #ifndef SOUND_MIXER_INTERN_H
 #define SOUND_MIXER_INTERN_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/mutex.h"
 #include "audio/mixer.h"
 

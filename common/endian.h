@@ -26,7 +26,7 @@
 #ifndef COMMON_ENDIAN_H
 #define COMMON_ENDIAN_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 /**
  *  \file endian.h

@@ -21,7 +21,7 @@
 #ifndef SOUND_SOFTSYNTH_OPL_DBOPL_H
 #define SOUND_SOFTSYNTH_OPL_DBOPL_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 #ifndef DISABLE_DOSBOX_OPL
 

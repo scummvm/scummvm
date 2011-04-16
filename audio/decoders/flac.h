@@ -43,7 +43,7 @@
 #ifndef SOUND_FLAC_H
 #define SOUND_FLAC_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/types.h"
 
 #ifdef USE_FLAC

@@ -26,7 +26,7 @@
 #ifndef BACKENDS_AUDIOCD_ABSTRACT_H
 #define BACKENDS_AUDIOCD_ABSTRACT_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/noncopyable.h"
 
 /**

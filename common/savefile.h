@@ -27,7 +27,7 @@
 #define COMMON_SAVEFILE_H
 
 #include "common/noncopyable.h"
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/stream.h"
 #include "common/str-array.h"
 #include "common/error.h"

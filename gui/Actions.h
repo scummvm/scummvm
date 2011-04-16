@@ -26,7 +26,7 @@
 #ifndef GUI_ACTIONS_H
 #define GUI_ACTIONS_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 #include "gui/Key.h"
 

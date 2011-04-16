@@ -26,7 +26,7 @@
 #ifndef COMMON_FILE_H
 #define COMMON_FILE_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/noncopyable.h"
 #include "common/str.h"
 #include "common/stream.h"

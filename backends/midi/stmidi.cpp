@@ -37,7 +37,7 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 #if defined __MINT__
 

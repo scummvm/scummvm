@@ -26,7 +26,7 @@
 #ifndef GUI_THEME_EVAL_H
 #define GUI_THEME_EVAL_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/stack.h"

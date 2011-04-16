@@ -27,7 +27,7 @@
 #define SOUND_AUDIOSTREAM_H
 
 #include "common/util.h"
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/types.h"
 
 #include "audio/timestamp.h"

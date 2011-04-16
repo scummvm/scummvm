@@ -25,7 +25,7 @@
 #ifndef ENGINES_METAENGINE_H
 #define ENGINES_METAENGINE_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/error.h"
 
 #include "engines/game.h"

@@ -26,7 +26,7 @@
 #ifndef COMMON_FRAC_H
 #define COMMON_FRAC_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 /**
  * The precision of the fractional (fixed point) type we define below.

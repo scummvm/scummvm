@@ -25,7 +25,7 @@
 #ifndef SOUND_SOFTSYNTH_Y2612_H
 #define SOUND_SOFTSYNTH_Y2612_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 #include "audio/softsynth/emumidi.h"
 

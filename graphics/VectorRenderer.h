@@ -26,7 +26,7 @@
 #ifndef VECTOR_RENDERER_H
 #define VECTOR_RENDERER_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 
 #include "graphics/surface.h"

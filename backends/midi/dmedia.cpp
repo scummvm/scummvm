@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
- * $Id: dmedia.cpp$
+ * $Id$
  */
 
 /*
@@ -30,11 +30,11 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 #if defined(IRIX)
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/util.h"
 #include "common/config-manager.h"
 #include "audio/musicplugin.h"

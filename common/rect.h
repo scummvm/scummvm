@@ -26,7 +26,7 @@
 #ifndef COMMON_RECT_H
 #define COMMON_RECT_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/util.h"
 #include "common/debug.h"
 

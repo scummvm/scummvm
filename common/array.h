@@ -25,7 +25,7 @@
 #ifndef COMMON_ARRAY_H
 #define COMMON_ARRAY_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/algorithm.h"
 
 namespace Common {

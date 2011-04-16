@@ -25,7 +25,7 @@
 #ifndef SOUND_SOFTSYNTH_CMS_H
 #define SOUND_SOFTSYNTH_CMS_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 /* this structure defines a channel */
 struct saa1099_channel {

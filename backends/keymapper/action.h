@@ -26,7 +26,7 @@
 #ifndef COMMON_ACTION_H
 #define COMMON_ACTION_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 #ifdef ENABLE_KEYMAPPER
 

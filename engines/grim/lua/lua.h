@@ -7,7 +7,7 @@
 ** See Copyright Notice at the end of this file
 */
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 #include "engines/grim/object.h"
 

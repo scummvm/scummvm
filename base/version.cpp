@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "base/version.h"
 
 #define INCLUDED_FROM_BASE_VERSION_CPP

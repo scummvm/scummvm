@@ -30,7 +30,7 @@
 
 class OSystem;
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/events.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"

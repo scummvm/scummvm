@@ -25,7 +25,7 @@
 #ifndef COMMON_TYPES_H
 #define COMMON_TYPES_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 namespace DisposeAfterUse {
 	enum Flag { NO, YES };

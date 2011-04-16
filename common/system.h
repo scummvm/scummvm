@@ -26,7 +26,7 @@
 #ifndef COMMON_SYSTEM_H
 #define COMMON_SYSTEM_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/noncopyable.h"
 #include "common/rect.h"
 #include "common/list.h" // For OSystem::getSupportedFormats()

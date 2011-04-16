@@ -26,7 +26,7 @@
 #ifndef BACKENDS_LOG_LOG_H
 #define BACKENDS_LOG_LOG_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 class OSystem;
 

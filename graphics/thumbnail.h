@@ -25,7 +25,7 @@
 #ifndef GRAPHICS_THUMBNAIL_H
 #define GRAPHICS_THUMBNAIL_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 namespace Common{
 class SeekableReadStream;

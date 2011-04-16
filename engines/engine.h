@@ -25,7 +25,7 @@
 #ifndef ENGINES_ENGINE_H
 #define ENGINES_ENGINE_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/error.h"
 #include "common/str.h"
 

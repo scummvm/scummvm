@@ -25,7 +25,7 @@
 #ifndef ENGINES_UTIL_H
 #define ENGINES_UTIL_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/list.h"
 #include "graphics/pixelformat.h"
 

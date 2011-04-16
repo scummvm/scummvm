@@ -26,7 +26,7 @@
 #ifndef GRIM_BLOCKY16_H
 #define GRIM_BLOCKY16_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 namespace Grim {
 

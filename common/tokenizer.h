@@ -25,7 +25,7 @@
 #ifndef COMMON_TOKENIZER_H
 #define COMMON_TOKENIZER_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 
 namespace Common {

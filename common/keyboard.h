@@ -26,7 +26,7 @@
 #ifndef COMMON_KEYBOARD_H
 #define COMMON_KEYBOARD_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 #if defined(__amigaos4__)
 // KEYCODE_LESS and KEYCODE_GREATER are already defined in AmigaOS, inside

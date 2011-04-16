@@ -25,7 +25,7 @@
 #ifndef GRAPHICS_VECTOR3D_H
 #define GRAPHICS_VECTOR3D_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/endian.h"
 
 namespace Graphics {

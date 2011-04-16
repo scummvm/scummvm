@@ -28,7 +28,7 @@
 
 #ifdef ENABLE_VKEYBD
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
 

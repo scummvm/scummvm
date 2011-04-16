@@ -35,7 +35,7 @@
 #include "dbopl.h"
 
 #include "common/system.h"
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 #include <math.h>
 #include <string.h>

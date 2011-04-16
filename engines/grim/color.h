@@ -26,7 +26,7 @@
 #ifndef GRIM_COLOR_H
 #define GRIM_COLOR_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/object.h"
 

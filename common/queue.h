@@ -25,7 +25,7 @@
 #ifndef COMMON_QUEUE_H
 #define COMMON_QUEUE_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/list.h"
 
 namespace Common {

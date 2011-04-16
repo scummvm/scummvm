@@ -25,7 +25,7 @@
 #ifndef COMMON_DEBUG_H
 #define COMMON_DEBUG_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 #ifdef DISABLE_TEXT_CONSOLE
 

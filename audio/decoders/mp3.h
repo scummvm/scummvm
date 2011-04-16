@@ -44,7 +44,7 @@
 #ifndef SOUND_MP3_H
 #define SOUND_MP3_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/types.h"
 
 #ifdef USE_MAD

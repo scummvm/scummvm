@@ -26,7 +26,7 @@
 #ifndef BASE_MAIN_H
 #define BASE_MAIN_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 //
 // The residual main entry point, to be invoked by ports

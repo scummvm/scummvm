@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 #if defined(DYNAMIC_MODULES) && defined(_WIN32)
 

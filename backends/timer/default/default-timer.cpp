@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "backends/timer/default/default-timer.h"
 #include "common/util.h"
 #include "common/system.h"

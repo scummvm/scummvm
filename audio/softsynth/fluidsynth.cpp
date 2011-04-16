@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 #ifdef USE_FLUIDSYNTH
 

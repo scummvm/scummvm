@@ -24,7 +24,7 @@
  *
  */
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 #if defined(SDL_BACKEND)
 

@@ -26,7 +26,7 @@
 #ifndef SOUND_TIMESTAMP_H
 #define SOUND_TIMESTAMP_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 namespace Audio {
 

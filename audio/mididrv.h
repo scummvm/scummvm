@@ -26,7 +26,7 @@
 #ifndef SOUND_MIDIDRV_H
 #define SOUND_MIDIDRV_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/timer.h"
 
 class MidiChannel;

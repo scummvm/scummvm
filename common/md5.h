@@ -25,7 +25,7 @@
 #ifndef COMMON_MD5_H
 #define COMMON_MD5_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 
 namespace Common {

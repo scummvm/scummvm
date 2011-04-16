@@ -25,7 +25,7 @@
 #ifndef COMMON_LIST_INTERN_H
 #define COMMON_LIST_INTERN_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 namespace Common {
 

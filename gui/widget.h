@@ -25,7 +25,7 @@
 #ifndef GUI_WIDGET_H
 #define GUI_WIDGET_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 #include "common/str-array.h"
 #include "common/keyboard.h"

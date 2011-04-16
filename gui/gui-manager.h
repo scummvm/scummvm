@@ -25,7 +25,7 @@
 #ifndef GUIMANAGER_H
 #define GUIMANAGER_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/singleton.h"
 #include "common/stack.h"
 #include "common/str.h"

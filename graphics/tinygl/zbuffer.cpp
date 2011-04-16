@@ -1,7 +1,7 @@
 
 // Z buffer: 16,32 bits Z / 16 bits color
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 #include "graphics/tinygl/zbuffer.h"
 

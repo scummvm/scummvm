@@ -32,7 +32,7 @@
 // a FILE pointer in one place, which conflicts with common/forbidden.h.
 
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 // Remove FILE override from common/forbidden.h, and replace
 // it with an alternate slightly less unfriendly override.

@@ -25,7 +25,7 @@
 #ifndef COMMON_FUNC_H
 #define COMMON_FUNC_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 namespace Common {
 

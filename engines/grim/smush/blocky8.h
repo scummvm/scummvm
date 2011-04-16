@@ -26,7 +26,7 @@
 #ifndef SMUSH_BLOCKY8_H
 #define SMUSH_BLOCKY8_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 namespace Grim {
 

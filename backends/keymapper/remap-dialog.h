@@ -25,7 +25,7 @@
 #ifndef REMAP_DIALOG_H
 #define REMAP_DIALOG_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 #ifdef ENABLE_KEYMAPPER
 

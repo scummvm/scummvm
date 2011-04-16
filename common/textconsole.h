@@ -25,7 +25,7 @@
 #ifndef COMMON_CONSOLE_H
 #define COMMON_CONSOLE_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 namespace Common {
 

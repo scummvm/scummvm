@@ -7,7 +7,7 @@
 #ifndef GRIM_LMEM_H
 #define GRIM_LEME_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 namespace Grim {
 

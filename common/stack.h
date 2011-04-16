@@ -25,7 +25,7 @@
 #ifndef COMMON_STACK_H
 #define COMMON_STACK_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/array.h"
 
 namespace Common {

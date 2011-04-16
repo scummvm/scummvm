@@ -25,7 +25,7 @@
 #ifndef COMMON_PTR_H
 #define COMMON_PTR_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/noncopyable.h"
 
 namespace Common {

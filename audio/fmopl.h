@@ -25,7 +25,7 @@
 #ifndef SOUND_FMOPL_H
 #define SOUND_FMOPL_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 
 namespace OPL {

@@ -25,7 +25,7 @@
 #ifndef GUI_DIALOG_H
 #define GUI_DIALOG_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 
 #include "gui/object.h"

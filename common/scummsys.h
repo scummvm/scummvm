@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef COMMON_SYS_H
-#define COMMON_SYS_H
+#ifndef COMMON_SCUMMSYS_H
+#define COMMON_SCUMMSYS_H
 
 
 #if defined(_WIN32_WCE) && _WIN32_WCE < 300

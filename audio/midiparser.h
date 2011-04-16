@@ -28,7 +28,7 @@
 #ifndef SOUND_MIDIPARSER_H
 #define SOUND_MIDIPARSER_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/endian.h"
 
 class MidiParser;

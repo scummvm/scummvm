@@ -22,7 +22,7 @@
 #ifndef MT32EMU_FILE_H
 #define MT32EMU_FILE_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 namespace MT32Emu {
 

@@ -26,7 +26,7 @@
 #ifndef COMMON_MUTEX_H
 #define COMMON_MUTEX_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 
 namespace Common {

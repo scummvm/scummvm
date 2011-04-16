@@ -69,7 +69,7 @@
       ftp://ftp.pkware.com/probdesc.zip */
 
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 #ifdef USE_ZLIB
 

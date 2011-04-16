@@ -25,7 +25,7 @@
 #ifndef COMMON_ALGORITHM_H
 #define COMMON_ALGORITHM_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/func.h"
 #include "common/util.h"
 

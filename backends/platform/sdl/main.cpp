@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 // Several SDL based ports use a custom main, and hence do not want to compile
 // of this file. The following "#if" ensures that.

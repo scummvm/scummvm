@@ -26,7 +26,7 @@
 #ifndef COMMON_ZLIB_H
 #define COMMON_ZLIB_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 namespace Common {
 

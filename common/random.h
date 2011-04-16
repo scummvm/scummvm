@@ -25,7 +25,7 @@
 #ifndef COMMON_RANDOM_H
 #define COMMON_RANDOM_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 namespace Common {
 

@@ -1,5 +1,5 @@
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 
 #include "graphics/tinygl/zmath.h"
 

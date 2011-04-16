@@ -43,7 +43,7 @@
 #ifndef SOUND_VORBIS_H
 #define SOUND_VORBIS_H
 
-#include "common/sys.h"
+#include "common/scummsys.h"
 #include "common/types.h"
 
 #ifdef USE_VORBIS
