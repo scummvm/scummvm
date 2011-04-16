@@ -1538,10 +1538,8 @@ void Scheduler_v1d::promptAction(act *action) {
 	char resp[256];
 	strncpy(resp, response.c_str(), 256);
 
-	if (action->a3.encodedFl) {
-		warning("Encrypted flag set");
+	if (action->a3.encodedFl)
 		decodeString(resp);
-	}
 
 	if (strstr(resp, _vm->_file->fetchString(action->a3.responsePtr[0])))
 		insertActionList(action->a3.actPassIndex);
