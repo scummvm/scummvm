@@ -1,7 +1,7 @@
 /* Residual - A 3D game interpreter
  *
  * Residual is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the AUTHORS
+ * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
  * This library is free software; you can redistribute it and/or
