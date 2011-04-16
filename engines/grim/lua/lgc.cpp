@@ -38,8 +38,11 @@ int32 luaC_ref(TObject *o, int32 lock) {
 		{
 			int32 oldSize = refSize;
 			refSize = luaM_growvector(&refArray, refSize, struct ref, refEM, MAX_WORD);
-			for (ref = oldSize; ref < refSize; ref++)
+			for (ref = oldSize; ref < refSize; ref++) {
 				refArray[ref].status = FREE;
+				refArray[ref].o.ttype = LUA_T_NIL;
+				refArray[ref].o.value.ts = NULL;
+			}
 			ref = oldSize;
 		}
 found:
@@ -50,8 +53,11 @@ found:
 }
 
 void lua_unref(int32 ref) {
-	if (ref >= 0 && ref < refSize)
+	if (ref >= 0 && ref < refSize) {
 		refArray[ref].status = FREE;
+		refArray[ref].o.ttype = LUA_T_NIL;
+		refArray[ref].o.value.ts = NULL;
+	}
 }
 
 TObject* luaC_getref(int32 ref) {
