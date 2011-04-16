@@ -162,19 +162,11 @@ private:
 
 
 MixerImpl::MixerImpl(OSystem *system, uint sampleRate)
-	: _syst(system), _sampleRate(sampleRate), _mixerReady(false), _handleSeed(0) {
+	: _syst(system), _mutex(), _sampleRate(sampleRate), _mixerReady(false), _handleSeed(0), _soundTypeSettings() {
 
 	assert(sampleRate > 0);
 
-	int i;
-
-	for (i = 0; i < ARRAYSIZE(_mute); ++i)
-		_mute[i] = false;
-
-	for (i = 0; i < ARRAYSIZE(_volumeForSoundType); i++)
-		_volumeForSoundType[i] = kMaxMixerVolume;
-
-	for (i = 0; i != NUM_CHANNELS; i++)
+	for (int i = 0; i != NUM_CHANNELS; i++)
 		_channels[i] = 0;
 }
 
@@ -326,8 +318,8 @@ void MixerImpl::stopHandle(SoundHandle handle) {
 }
 
 void MixerImpl::muteSoundType(SoundType type, bool mute) {
-	assert(0 <= type && type < ARRAYSIZE(_mute));
-	_mute[type] = mute;
+	assert(0 <= type && type < ARRAYSIZE(_soundTypeSettings));
+	_soundTypeSettings[type].mute = mute;
 
 	for (int i = 0; i != NUM_CHANNELS; ++i) {
 		if (_channels[i] && _channels[i]->getType() == type)
@@ -336,8 +328,8 @@ void MixerImpl::muteSoundType(SoundType type, bool mute) {
 }
 
 bool MixerImpl::isSoundTypeMuted(SoundType type) const {
-	assert(0 <= type && type < ARRAYSIZE(_mute));
-	return _mute[type];
+	assert(0 <= type && type < ARRAYSIZE(_soundTypeSettings));
+	return _soundTypeSettings[type].mute;
 }
 
 void MixerImpl::setChannelVolume(SoundHandle handle, byte volume) {
@@ -435,7 +427,7 @@ bool MixerImpl::hasActiveChannelOfType(SoundType type) {
 }
 
 void MixerImpl::setVolumeForSoundType(SoundType type, int volume) {
-	assert(0 <= type && type < ARRAYSIZE(_volumeForSoundType));
+	assert(0 <= type && type < ARRAYSIZE(_soundTypeSettings));
 
 	// Check range
 	if (volume > kMaxMixerVolume)
@@ -447,7 +439,7 @@ void MixerImpl::setVolumeForSoundType(SoundType type, int volume) {
 	// scaling? See also Player_V2::setMasterVolume
 
 	Common::StackLock lock(_mutex);
-	_volumeForSoundType[type] = volume;
+	_soundTypeSettings[type].volume = volume;
 
 	for (int i = 0; i != NUM_CHANNELS; ++i) {
 		if (_channels[i] && _channels[i]->getType() == type)
@@ -456,9 +448,9 @@ void MixerImpl::setVolumeForSoundType(SoundType type, int volume) {
 }
 
 int MixerImpl::getVolumeForSoundType(SoundType type) const {
-	assert(0 <= type && type < ARRAYSIZE(_volumeForSoundType));
+	assert(0 <= type && type < ARRAYSIZE(_soundTypeSettings));
 
-	return _volumeForSoundType[type];
+	return _soundTypeSettings[type].volume;
 }
 
 

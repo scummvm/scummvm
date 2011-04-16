@@ -64,8 +64,14 @@ private:
 	bool _mixerReady;
 	uint32 _handleSeed;
 
-	bool _mute[4];
-	int _volumeForSoundType[4];
+	struct SoundTypeSettings {
+		SoundTypeSettings() : mute(false), volume(kMaxMixerVolume) {}
+
+		bool mute;
+		int volume;
+	};
+
+	SoundTypeSettings _soundTypeSettings[4];
 	Channel *_channels[NUM_CHANNELS];
 
 
