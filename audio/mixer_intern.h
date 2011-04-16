@@ -98,8 +98,8 @@ public:
 
 	virtual bool isSoundHandleActive(SoundHandle handle);
 
-	virtual void setMuteForSoundType(SoundType type, bool mute);
-	virtual bool getMuteForSoundType(SoundType type) const;
+	virtual void muteSoundType(SoundType type, bool mute);
+	virtual bool isSoundTypeMuted(SoundType type) const;
 
 	virtual void setChannelVolume(SoundHandle handle, byte volume);
 	virtual void setChannelBalance(SoundHandle handle, int8 balance);

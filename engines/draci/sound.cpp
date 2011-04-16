@@ -422,8 +422,8 @@ void Sound::setVolume() {
 		_muteSound = _muteVoice = true;
 	}
 
-	_mixer->setMuteForSoundType(Audio::Mixer::kSFXSoundType, _muteSound);
-	_mixer->setMuteForSoundType(Audio::Mixer::kSpeechSoundType, _muteVoice);
+	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, _muteSound);
+	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, _muteVoice);
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));

@@ -439,10 +439,10 @@ void Engine::syncSoundSettings() {
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
 
-	_mixer->setMuteForSoundType(Audio::Mixer::kPlainSoundType, mute);
-	_mixer->setMuteForSoundType(Audio::Mixer::kMusicSoundType, mute);
-	_mixer->setMuteForSoundType(Audio::Mixer::kSFXSoundType, mute);
-	_mixer->setMuteForSoundType(Audio::Mixer::kSpeechSoundType, mute);
+	_mixer->muteSoundType(Audio::Mixer::kPlainSoundType, mute);
+	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, mute);
+	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, mute);
+	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, mute);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, Audio::Mixer::kMaxMixerVolume);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);

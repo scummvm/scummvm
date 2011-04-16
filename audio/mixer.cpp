@@ -325,7 +325,7 @@ void MixerImpl::stopHandle(SoundHandle handle) {
 	_channels[index] = 0;
 }
 
-void MixerImpl::setMuteForSoundType(SoundType type, bool mute) {
+void MixerImpl::muteSoundType(SoundType type, bool mute) {
 	assert(0 <= type && type < ARRAYSIZE(_mute));
 	_mute[type] = mute;
 
@@ -335,7 +335,7 @@ void MixerImpl::setMuteForSoundType(SoundType type, bool mute) {
 	}
 }
 
-bool MixerImpl::getMuteForSoundType(SoundType type) const {
+bool MixerImpl::isSoundTypeMuted(SoundType type) const {
 	assert(0 <= type && type < ARRAYSIZE(_mute));
 	return _mute[type];
 }
@@ -504,7 +504,7 @@ void Channel::updateChannelVolumes() {
 	// volume is in the range 0 - kMaxMixerVolume.
 	// Hence, the vol_l/vol_r values will be in that range, too
 
-	if (!_mixer->getMuteForSoundType(_type)) {
+	if (!_mixer->isSoundTypeMuted(_type)) {
 		int vol = _mixer->getVolumeForSoundType(_type) * _volume;
 
 		if (_balance == 0) {
