@@ -1004,7 +1004,8 @@ void Scene40::Action1::signal() {
 		break;
 	case 9: {
 		scene->_dyingKzin.setStrip(1);
-		scene->_dyingKzin.setFrame(1);
+		//Workaround: The original uses setFrame(1) but it's completely wrong.
+		scene->_dyingKzin.setFrame(2);
 		scene->_dyingKzin._moveDiff.y = 15;
 		scene->_dyingKzin.animate(ANIM_MODE_5, NULL);
 		Common::Point pt(223, 186);
