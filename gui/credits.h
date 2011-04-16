@@ -653,7 +653,7 @@ static const char *credits[] = {
 "C0""",
 "C0""Emilio de Paz Aragon from Alcachofa Soft for sharing the source code of Drascula: The Vampire Strikes Back with us and his generosity with freewaring the game.",
 "C0""",
-"C0""David P. Gray from Gray Design Associate for sharing the source code of the Hugo trilogy.",
+"C0""David P. Gray from Gray Design Associates for sharing the source code of the Hugo trilogy.",
 "C0""",
 "C0""Broken Sword 2.5 team for providing sources of their engine and their great support.",
 "C0""",
