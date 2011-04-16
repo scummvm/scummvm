@@ -60,7 +60,7 @@ int MSBuildProvider::getVisualStudioVersion() {
 
 #define OUTPUT_CONFIGURATION_TYPE_MSBUILD(config) \
 	(project << "\t<PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "'\" Label=\"Configuration\">\n" \
-	           "\t\t<ConfigurationType>" << (name == "scummvm" ? "Application" : "StaticLibrary") << "</ConfigurationType>\n" \
+	           "\t\t<ConfigurationType>" << (name == "residual" ? "Application" : "StaticLibrary") << "</ConfigurationType>\n" \
 	           "\t</PropertyGroup>\n")
 
 #define OUTPUT_PROPERTIES_MSBUILD(config, properties) \
@@ -110,12 +110,12 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	           "\t<ImportGroup Label=\"ExtensionSettings\">\n"
 	           "\t</ImportGroup>\n";
 
-	OUTPUT_PROPERTIES_MSBUILD("Release|Win32",  "ScummVM_Release.props");
-	OUTPUT_PROPERTIES_MSBUILD("Analysis|Win32", "ScummVM_Analysis.props");
-	OUTPUT_PROPERTIES_MSBUILD("Debug|Win32",    "ScummVM_Debug.props");
-	OUTPUT_PROPERTIES_MSBUILD("Release|x64",    "ScummVM_Release64.props");
-	OUTPUT_PROPERTIES_MSBUILD("Analysis|x64",   "ScummVM_Analysis64.props");
-	OUTPUT_PROPERTIES_MSBUILD("Debug|x64",      "ScummVM_Debug64.props");
+	OUTPUT_PROPERTIES_MSBUILD("Release|Win32",  "Residual_Release.props");
+	OUTPUT_PROPERTIES_MSBUILD("Analysis|Win32", "Residual_Analysis.props");
+	OUTPUT_PROPERTIES_MSBUILD("Debug|Win32",    "Residual_Debug.props");
+	OUTPUT_PROPERTIES_MSBUILD("Release|x64",    "Residual_Release64.props");
+	OUTPUT_PROPERTIES_MSBUILD("Analysis|x64",   "Residual_Analysis64.props");
+	OUTPUT_PROPERTIES_MSBUILD("Debug|x64",      "Residual_Debug64.props");
 
 	project << "\t<PropertyGroup Label=\"UserMacros\" />\n";
 
@@ -141,7 +141,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);
 
 	// Output references for scummvm project
-	if (name == "scummvm")
+	if (name == "residual")
 		writeReferences(project);
 
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.targets\" />\n"
@@ -212,7 +212,7 @@ void MSBuildProvider::writeReferences(std::ofstream &output) {
 	output << "\t<ItemGroup>\n";
 
 	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
-		if (i->first == "scummvm")
+		if (i->first == "residual")
 			continue;
 
 		output << "\t<ProjectReference Include=\"" << i->first << ".vcxproj\">\n"
@@ -230,7 +230,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	std::map<std::string, StringList>::iterator warningsIterator = _projectWarnings.find(name);
 
 	// Nothing to add here, move along!
-	if (name != "scummvm" && name != "sword25" && name != "tinsel" && warningsIterator == _projectWarnings.end())
+	if (name != "residual" && warningsIterator == _projectWarnings.end())
 		return;
 
 	std::string warnings = "";
@@ -242,7 +242,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	           "\t\t<ClCompile>\n";
 
 	// Compile configuration
-	if (name == "scummvm" || name == "sword25") {
+	if (name == "residual") {
 		project << "\t\t\t<DisableLanguageExtensions>false</DisableLanguageExtensions>\n";
 	} else {
 		if (name == "tinsel" && !isRelease)
@@ -255,14 +255,14 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	project << "\t\t</ClCompile>\n";
 
 	// Link configuration for scummvm project
-	if (name == "scummvm") {
+	if (name == "residual") {
 		std::string libraries;
 
 		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
 			libraries += *i + ".lib;";
 
 		project << "\t\t<Link>\n"
-		           "\t\t\t<OutputFile>$(OutDir)scummvm.exe</OutputFile>\n"
+		           "\t\t\t<OutputFile>$(OutDir)residual.exe</OutputFile>\n"
 		           "\t\t\t<AdditionalDependencies>" << libraries << "%(AdditionalDependencies)</AdditionalDependencies>\n"
 		           "\t\t</Link>\n";
 
@@ -300,10 +300,10 @@ void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, 
 	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	              "\t<PropertyGroup>\n"
 	              "\t\t<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>\n"
-	              "\t\t<_PropertySheetDisplayName>ScummVM_Global</_PropertySheetDisplayName>\n"
-	              "\t\t<ExecutablePath>$(SCUMMVM_LIBS)\\bin;$(ExecutablePath)</ExecutablePath>\n"
-	              "\t\t<LibraryPath>$(SCUMMVM_LIBS)\\lib\\" << (bits == 32 ? "x86" : "x64") << ";$(LibraryPath)</LibraryPath>\n"
-	              "\t\t<IncludePath>$(SCUMMVM_LIBS)\\include;$(IncludePath)</IncludePath>\n"
+	              "\t\t<_PropertySheetDisplayName>Residual_Global</_PropertySheetDisplayName>\n"
+	              "\t\t<ExecutablePath>$(RESIDUAL_LIBS)\\bin;$(ExecutablePath)</ExecutablePath>\n"
+	              "\t\t<LibraryPath>$(RESIDUAL_LIBS)\\lib\\" << (bits == 32 ? "x86" : "x64") << ";$(LibraryPath)</LibraryPath>\n"
+	              "\t\t<IncludePath>$(RESIDUAL_LIBS)\\include;$(IncludePath)</IncludePath>\n"
 	              "\t\t<OutDir>$(Configuration)" << bits << "\\</OutDir>\n"
 	              "\t\t<IntDir>$(Configuration)" << bits << "/$(ProjectName)\\</IntDir>\n"
 	              "\t</PropertyGroup>\n"
@@ -311,7 +311,7 @@ void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, 
 	              "\t\t<ClCompile>\n"
 	              "\t\t\t<DisableLanguageExtensions>true</DisableLanguageExtensions>\n"
 	              "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n"
-	              "\t\t\t<AdditionalIncludeDirectories>$(SCUMMVM_LIBS)\\include;" << prefix << ";" << prefix << "\\engines;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
+	              "\t\t\t<AdditionalIncludeDirectories>$(RESIDUAL_LIBS)\\include;" << prefix << ";" << prefix << "\\engines;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
 	              "\t\t\t<PreprocessorDefinitions>" << definesList << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
 	              "\t\t\t<ExceptionHandling></ExceptionHandling>\n"
 	              "\t\t\t<RuntimeTypeInfo>false</RuntimeTypeInfo>\n"
@@ -338,18 +338,18 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 	const std::string outputType = (enableAnalysis ? "Analysis" : (isRelease ? "Release" : "Debug"));
 	const std::string outputBitness = (isWin32 ? "32" : "64");
 
-	std::ofstream properties((setup.outputDir + '/' + "ScummVM_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension()).c_str());
+	std::ofstream properties((setup.outputDir + '/' + "Residual_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension()).c_str());
 	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension() + "\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + "Residual_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension() + "\" for writing");
 
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	              "\t<ImportGroup Label=\"PropertySheets\">\n"
-	              "\t\t<Import Project=\"ScummVM_Global" << (isWin32 ? "" : "64") << ".props\" />\n"
+	              "\t\t<Import Project=\"Residual_Global" << (isWin32 ? "" : "64") << ".props\" />\n"
 	              "\t</ImportGroup>\n"
 	              "\t<PropertyGroup>\n"
 	              "\t\t<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>\n"
-	              "\t\t<_PropertySheetDisplayName>ScummVM_" << outputType << outputBitness << "</_PropertySheetDisplayName>\n"
+	              "\t\t<_PropertySheetDisplayName>Residual_" << outputType << outputBitness << "</_PropertySheetDisplayName>\n"
 	              "\t\t<LinkIncremental>" << (isRelease ? "false" : "true") << "</LinkIncremental>\n"
 	              "\t</PropertyGroup>\n"
 	              "\t<ItemDefinitionGroup>\n"
@@ -440,7 +440,7 @@ void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream 
 				               "\t\t\t<ObjectFileName>$(IntDir)" << (*entry).prefix << "%(Filename).obj</ObjectFileName>\n";
 
 				if (hasEnding((*entry).path, "base\\version.cpp"))
-					projectFile <<  "\t\t\t<PreprocessorDefinitions Condition=\"'$(Configuration)'=='Debug'\">SCUMMVM_REVISION#&quot; $(SCUMMVM_REVISION_STRING)&quot;;%(PreprocessorDefinitions)</PreprocessorDefinitions>\n";
+					projectFile <<  "\t\t\t<PreprocessorDefinitions Condition=\"'$(Configuration)'=='Debug'\">RESIDUAL_REVISION#&quot; $(RESIDUAL_REVISION_STRING)&quot;;%(PreprocessorDefinitions)</PreprocessorDefinitions>\n";
 
 				projectFile << "\t\t</ClCompile>\n";
 			} else {

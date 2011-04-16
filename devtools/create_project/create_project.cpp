@@ -1,6 +1,6 @@
 /* Residual - A 3D game interpreter
  *
- * Residual is the legal property of its developers, whose names
+ * ScummVM and Residual is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
@@ -150,7 +150,7 @@ int main(int argc, char *argv[]) {
 	using std::cout;
 	for (int i = 2; i < argc; ++i) {
 		if (!std::strcmp(argv[i], "--list-engines")) {
-			cout << " The following enables are available in the ScummVM source distribution\n"
+			cout << " The following enables are available in the Residual source distribution\n"
 			        " located at \"" << srcDir << "\":\n";
 
 			cout << "   state  |       name      |     description\n\n";
@@ -456,7 +456,7 @@ void displayHelp(const char *exe) {
 	cout << "Usage:\n"
 	     << exe << " path\\to\\source [optional options]\n"
 	     << "\n"
-	     << " Creates project files for the ScummVM source located at \"path\\to\\source\".\n"
+	     << " Creates project files for the Residual source located at \"path\\to\\source\".\n"
 	        " The project files will be created in the directory where tool is run from and\n"
 	        " will include \"path\\to\\source\" for relative file paths, thus be sure that you\n"
 	        " pass a relative file path like \"..\\..\\trunk\".\n"
@@ -482,14 +482,14 @@ void displayHelp(const char *exe) {
 	        " --build-events           Run custom build events as part of the build\n"
 	        "                          (default: false)\n"
 	        "\n"
-	        "ScummVM engine settings:\n"
+	        "Residual engine settings:\n"
 	        " --list-engines           list all available engines and their default state\n"
 	        " --enable-engine          enable building of the engine with the name \"engine\"\n"
 	        " --disable-engine         disable building of the engine with the name \"engine\"\n"
 	        " --enable-all-engines     enable building of all engines\n"
 	        " --disable-all-engines    disable building of all engines\n"
 	        "\n"
-	        "ScummVM optional feature settings:\n"
+	        "Residual optional feature settings:\n"
 	        " --enable-name            enable inclusion of the feature \"name\"\n"
 	        " --disable-name           disable inclusion of the feature \"name\"\n"
 	        "\n"
@@ -690,18 +690,12 @@ const Feature s_features[] = {
 	{     "mad",         "USE_MAD", "libmad", true, "libmad (MP3) support" },
 	{  "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static libogg_static", true, "Ogg Vorbis support" },
 	{    "flac",        "USE_FLAC", "libFLAC_static", true, "FLAC support" },
-	{   "png",           "USE_PNG", "libpng", true, "libpng support" },
 	{   "theora",  "USE_THEORADEC", "libtheora_static", true, "Theora decoding support" },
-	{   "mpeg2",       "USE_MPEG2", "libmpeg2", false, "mpeg2 codec for cutscenes" },
 
-	// ScummVM feature flags
-	{     "scalers",     "USE_SCALERS", "", true, "Scalers" },
-	{   "hqscalers",  "USE_HQ_SCALERS", "", true, "HQ scalers" },
-	{       "16bit",   "USE_RGB_COLOR", "", true, "16bit color support" },
+	// Residual feature flags
 	{     "mt32emu",     "USE_MT32EMU", "", true, "integrated MT-32 emulator" },
 	{        "nasm",        "USE_NASM", "", true, "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
 	{      "opengl",      "USE_OPENGL", "opengl32", true, "OpenGL support" },
-	{      "indeo3",      "USE_INDEO3", "", true, "Indeo3 codec support"},
 	{ "translation", "USE_TRANSLATION", "", true, "Translation support" },
 	{  "langdetect",  "USE_DETECTLANG", "", true, "System language detection support" } // This feature actually depends on "translation", there
 	                                                                                    // is just no current way of properly detecting this...
@@ -977,7 +971,7 @@ void ProjectProvider::createProject(const BuildSetup &setup) {
 	_uuidMap = createUUIDMap(setup);
 
 	// We also need to add the UUID of the main project file.
-	const std::string svmUUID = _uuidMap["scummvm"] = createUUID();
+	const std::string svmUUID = _uuidMap["residual"] = createUUID();
 
 	// Create Solution/Workspace file
 	createWorkspace(setup);
@@ -986,7 +980,7 @@ void ProjectProvider::createProject(const BuildSetup &setup) {
 
 	// Create engine project files
 	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
-		if (i->first == "scummvm")
+		if (i->first == "residual")
 			continue;
 
 		in.clear(); ex.clear();
@@ -1009,23 +1003,21 @@ void ProjectProvider::createProject(const BuildSetup &setup) {
 	createModuleList(setup.srcDir + "/gui", setup.defines, in, ex);
 	createModuleList(setup.srcDir + "/audio", setup.defines, in, ex);
 	createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/video", setup.defines, in, ex);
 
 	// Resource files
-	in.push_back(setup.srcDir + "/icons/scummvm.ico");
-	in.push_back(setup.srcDir + "/dists/scummvm.rc");
+	in.push_back(setup.srcDir + "/icons/residual.ico");
+	in.push_back(setup.srcDir + "/dists/residual.rc");
 
 	// Various text files
 	in.push_back(setup.srcDir + "/AUTHORS");
 	in.push_back(setup.srcDir + "/COPYING");
 	in.push_back(setup.srcDir + "/COPYING.LGPL");
-	in.push_back(setup.srcDir + "/COPYRIGHT");
 	in.push_back(setup.srcDir + "/NEWS");
 	in.push_back(setup.srcDir + "/README");
 	in.push_back(setup.srcDir + "/TODO");
 
 	// Create the scummvm project file.
-	createProjectFile("scummvm", svmUUID, setup, setup.srcDir, in, ex);
+	createProjectFile("residual", svmUUID, setup, setup.srcDir, in, ex);
 
 	// Create other misc. build files
 	createOtherBuildFiles(setup);
