@@ -293,8 +293,4 @@ void EntryDialog::handleCommand(GUI::CommandSender *sender, uint32 command, uint
 	}
 }
 
-void EntryDialog::init() {
-}
-
-
 } // End of namespace Hugo

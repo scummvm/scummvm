@@ -110,8 +110,6 @@ public:
 	const Common::String &getEditString() const	{ return _text->getEditString(); }
 
 protected:
-	void init();
-
 	GUI::EditTextWidget *_text;
 };
 
