@@ -67,7 +67,8 @@ enum {
 	kCmdInvent = 'INVT',
 
 	// EntryDialog commands
-	kCmdButton = 'BTNP'
+	kCmdButton = 'BTNP',
+	kCmdFinishEdit = 'FNSH'
 };
 
 class TopMenu : public GUI::Dialog {

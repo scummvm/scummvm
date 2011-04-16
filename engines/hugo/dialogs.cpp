@@ -269,7 +269,7 @@ EntryDialog::EntryDialog(const Common::String &title, const Common::String &butt
 								lines[i], Graphics::kTextAlignCenter);
 	}
 
-	_text = new GUI::EditTextWidget(this, 10, 10 + lineCount * (kLineHeight + 1), _w - 20, kLineHeight, "");
+	_text = new GUI::EditTextWidget(this, 10, 10 + lineCount * (kLineHeight + 1), _w - 20, kLineHeight, "", "", 0, kCmdFinishEdit);
 	_text->setEditString(defaultValue);
 
 	_h += kLineHeight + 5;
@@ -286,6 +286,7 @@ EntryDialog::~EntryDialog() {
 void EntryDialog::handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data) {
 	switch (command) {
 	case kCmdButton:
+	case kCmdFinishEdit:
 		close();
 		break;
 	default:
