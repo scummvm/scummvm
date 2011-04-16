@@ -1529,28 +1529,24 @@ void Scheduler_v1d::runScheduler() {
 }
 
 void Scheduler_v1d::promptAction(act *action) {
-	Utils::promptBox(_vm->_file->fetchString(action->a3.promptIndex));
+	Common::String response;
 
-	warning("STUB: doAction(act3)");
-	// TODO: The answer of the player is not handled currently! Once it'll be read in the messageBox, uncomment this block
-#if 0
-	char response[256];
-	// TODO: Put user input in response
+	response = Utils::promptBox(_vm->_file->fetchString(action->a3.promptIndex));
 
-	Utils::strlwr(response);
+	response.toLowercase();
+
+	char resp[256];
+	strncpy(resp, response.c_str(), 256);
+
 	if (action->a3.encodedFl) {
 		warning("Encrypted flag set");
-		decodeString(response);
+		decodeString(resp);
 	}
 
-	if (strstr(response, _vm->_file->fetchString(action->a3.responsePtr[0]))
+	if (strstr(resp, _vm->_file->fetchString(action->a3.responsePtr[0])))
 		insertActionList(action->a3.actPassIndex);
 	else
 		insertActionList(action->a3.actFailIndex);
-#endif
-
-	// HACK: As the answer is not read, currently it's always considered correct
-	insertActionList(action->a3.actPassIndex);
 }
 
 /**
@@ -1578,19 +1574,22 @@ const char *Scheduler_v2d::getCypher() const {
 }
 
 void Scheduler_v2d::promptAction(act *action) {
-	Utils::promptBox(_vm->_file->fetchString(action->a3.promptIndex));
-	warning("STUB: doAction(act3), expecting answer %s", _vm->_file->fetchString(action->a3.responsePtr[0]));
+	Common::String response;
 
-	// TODO: The answer of the player is not handled currently! Once it'll be read in the messageBox, uncomment this block
-#if 0
-	char *response = Utils::Box(BOX_PROMPT, "%s", _vm->_file->fetchString(action->a3.promptIndex));
+	response = Utils::promptBox(_vm->_file->fetchString(action->a3.promptIndex));
+	response.toLowercase();
+
+	debug(1, "doAction(act3), expecting answer %s", _vm->_file->fetchString(action->a3.responsePtr[0]));
 
 	bool  found = false;
-	char *tmpStr;                                   // General purpose string ptr
+	const char *tmpStr;                                   // General purpose string ptr
 
-	for (dx = 0; !found && (action->a3.responsePtr[dx] != -1); dx++) {
+	char resp[256];
+	strncpy(resp, response.c_str(), 256);
+
+	for (int dx = 0; !found && (action->a3.responsePtr[dx] != -1); dx++) {
 		tmpStr = _vm->_file->fetchString(action->a3.responsePtr[dx]);
-		if (strstr(Utils::strlwr(response) , tmpStr))
+		if (strstr(Utils::strlwr(resp), tmpStr))
 			found = true;
 	}
 
@@ -1598,10 +1597,6 @@ void Scheduler_v2d::promptAction(act *action) {
 		insertActionList(action->a3.actPassIndex);
 	else
 		insertActionList(action->a3.actFailIndex);
-#endif
-
-	// HACK: As the answer is not read, currently it's always considered correct
-	insertActionList(action->a3.actPassIndex);
 }
 
 /**

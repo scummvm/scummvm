@@ -104,6 +104,9 @@ Common::String promptBox(const Common::String &msg) {
 		return Common::String();
 
 	EntryDialog dialog(msg, "OK", "");
+
+	dialog.runModal();
+
 	return dialog.getEditString();
 }
 

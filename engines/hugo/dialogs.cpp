@@ -26,6 +26,7 @@
 #include "common/substream.h"
 #include "graphics/imagedec.h"
 #include "gui/gui-manager.h"
+#include "gui/ThemeEval.h"
 
 #include "hugo/hugo.h"
 #include "hugo/display.h"
@@ -231,12 +232,52 @@ void TopMenu::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 EntryDialog::EntryDialog(const Common::String &title, const Common::String &buttonLabel, const Common::String &defaultValue) : GUI::Dialog(20, 20, 100, 50) {
-	new GUI::StaticTextWidget(this, 0, 0, 10, 10, title, Graphics::kTextAlignCenter);
-	
-	_text = new GUI::EditTextWidget(this, 0, 0, 50, 10, "");
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+
+	int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 0);
+	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
+
+	// First, determine the size the dialog needs. For this we have to break
+	// down the string into lines, and taking the maximum of their widths.
+	// Using this, and accounting for the space the button(s) need, we can set
+	// the real size of the dialog
+	Common::Array<Common::String> lines;
+	int lineCount, buttonPos;
+	int maxlineWidth = g_gui.getFont().wordWrapText(title, screenW - 2 * 30, lines);
+
+	// Calculate the desired dialog size (maxing out at 300*180 for now)
+	_w = MAX(maxlineWidth, buttonWidth) + 20;
+
+	lineCount = lines.size();
+
+	_h = 16 + buttonHeight + 8;
+
+	// Limit the number of lines so that the dialog still fits on the screen.
+	if (lineCount > (screenH - 20 - _h) / kLineHeight) {
+		lineCount = (screenH - 20 - _h) / kLineHeight;
+	}
+	_h += lineCount * kLineHeight;
+
+	// Center the dialog
+	_x = (screenW - _w) / 2;
+	_y = (screenH - _h) / 2;
+
+	// Each line is represented by one static text item.
+	for (int i = 0; i < lineCount; i++) {
+		new GUI::StaticTextWidget(this, 10, 10 + i * kLineHeight, maxlineWidth, kLineHeight,
+								lines[i], Graphics::kTextAlignCenter);
+	}
+
+	_text = new GUI::EditTextWidget(this, 10, 10 + lineCount * (kLineHeight + 1), _w - 20, kLineHeight, "");
 	_text->setEditString(defaultValue);
 
-	new GUI::ButtonWidget(this, 20, 20, 30, 10, buttonLabel, 0, kCmdButton);
+	_h += kLineHeight + 5;
+
+	buttonPos = (_w - buttonWidth) / 2;
+
+	new GUI::ButtonWidget(this, buttonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, buttonLabel, 0, kCmdButton, Common::ASCII_RETURN);	// Confirm dialog
+
 }
 
 EntryDialog::~EntryDialog() {
