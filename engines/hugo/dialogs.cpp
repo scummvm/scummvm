@@ -293,9 +293,6 @@ void EntryDialog::handleCommand(GUI::CommandSender *sender, uint32 command, uint
 	}
 }
 
-void EntryDialog::reflowLayout() {
-}
-
 void EntryDialog::init() {
 }
 

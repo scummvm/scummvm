@@ -105,7 +105,6 @@ public:
 	EntryDialog(const Common::String &title, const Common::String &buttonLabel, const Common::String &defaultValue);
 	virtual ~EntryDialog();
 
-	void reflowLayout();
 	void handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data);
 
 	const Common::String &getEditString() const	{ return _text->getEditString(); }
