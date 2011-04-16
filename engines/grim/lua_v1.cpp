@@ -1326,6 +1326,33 @@ static void StopActorChore() {
 	}
 }
 
+static void FadeOutChore() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object costumeObj = lua_getparam(2);
+	lua_Object choreObj = lua_getparam(3);
+// 	lua_Object timeObj = lua_getparam(4);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+
+	Costume *costume;
+	if (!findCostume(costumeObj, actor, &costume))
+		return;
+
+	if (!costume)
+		return;
+
+	if (lua_isnumber(choreObj)) {
+		warning("FadeOutChore() only partially implemented");
+
+		int chore = (int)lua_getnumber(choreObj);
+// 		int time = (int)lua_getnumber(timeObj);
+		costume->stopChore(chore); //TODO: actually implement fading
+	}
+}
+
 static void IsActorChoring() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object choreObj = lua_getparam(2);
@@ -3905,7 +3932,6 @@ STUB_FUNC(DetachFromResources)
 STUB_FUNC(IrisUp)
 STUB_FUNC(IrisDown)
 STUB_FUNC(FadeInChore)
-STUB_FUNC(FadeOutChore)
 STUB_FUNC(SetActorClipPlane)
 STUB_FUNC(SetActorClipActive)
 STUB_FUNC(SetActorCollisionScale)
