@@ -1118,7 +1118,7 @@ begin_credits("Credits");
   "freewaring the game.");
 
   add_paragraph(
-  "David P. Gray from Gray Design Associate for sharing the source code ".
+  "David P. Gray from Gray Design Associates for sharing the source code ".
   "of the Hugo trilogy.");
 
   add_paragraph(
