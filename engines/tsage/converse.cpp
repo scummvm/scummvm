@@ -530,7 +530,7 @@ void StripManager::start(int stripNum, EventHandler *owner, StripCallback *callb
 
 	_stripNum = stripNum;
 	_callbackObject = callback;
-	_sceneNumber = _globals->_sceneManager._sceneNumber;
+	_sceneNumber = _globals->_sceneManager._scene->_sceneNumber;
 	_sceneBounds = _globals->_sceneManager._scene->_sceneBounds;
 	_script.clear();
 
