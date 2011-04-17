@@ -4546,7 +4546,7 @@ void Scene2300::Action2::signal() {
 	case 7:
 		scene->_hotspot7._strip = 2;
 		scene->_hotspot7._frame = 1;
-		scene->_hotspot7.animate(ANIM_MODE_7, this);
+		scene->_hotspot7.animate(ANIM_MODE_5, this);
 		break;
 	case 8:
 		scene->_hotspot2.animate(ANIM_MODE_6, this);
@@ -4672,7 +4672,7 @@ void Scene2300::Hotspot5::doAction(int action) {
 	}
 }
 
-void Scene2300::Hotspot6::doAction(int action) {
+void Scene2300::Hotspot7::doAction(int action) {
 	Scene2300 *scene = (Scene2300 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -4707,7 +4707,7 @@ void Scene2300::postInit(SceneObjectList *OwnerList) {
 	setZoomPercents(0, 100, 200, 100);
 
 	_stripManager.addSpeaker(&_speakerSL);
-	_stripManager.addSpeaker(&_speakerML);
+	_stripManager.addSpeaker(&_speakerMText);
 	_stripManager.addSpeaker(&_speakerQText);
 	_stripManager.addSpeaker(&_speakerSText);
 
