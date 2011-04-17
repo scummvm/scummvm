@@ -107,10 +107,10 @@ bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface &to) {
 		return false;
 	}
 
-	to.create(header.width, header.height, sizeof(OverlayColor));
+	Graphics::PixelFormat format = g_system->getOverlayFormat();
+	to.create(header.width, header.height, format);
 
 	OverlayColor *pixels = (OverlayColor *)to.pixels;
-	Graphics::PixelFormat format = g_system->getOverlayFormat();
 	for (int y = 0; y < to.h; ++y) {
 		for (int x = 0; x < to.w; ++x) {
 			uint8 r, g, b;

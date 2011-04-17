@@ -209,7 +209,7 @@ void PictDecoder::decodeDirectBitsRect(Common::SeekableReadStream *stream, bool 
 		bytesPerPixel = directBitsData.pixMap.pixelSize / 8;
 
 	_outputSurface = new Graphics::Surface();
-	_outputSurface->create(width, height, (bytesPerPixel == 1) ? 1 : _pixelFormat.bytesPerPixel);
+	_outputSurface->create(width, height, (bytesPerPixel == 1) ? PixelFormat::createFormatCLUT8() : _pixelFormat);
 	byte *buffer = new byte[width * height * bytesPerPixel];
 
 	// Read in amount of data per row

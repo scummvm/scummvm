@@ -104,7 +104,7 @@ static bool grabScreen565(Graphics::Surface *surf) {
 
 	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
 
-	surf->create(screen->w, screen->h, 2);
+	surf->create(screen->w, screen->h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 
 	byte *palette = 0;
 	if (screenFormat.bytesPerPixel == 1) {
@@ -146,7 +146,7 @@ static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 
 		// center MM NES screen
 		Graphics::Surface newscreen;
-		newscreen.create(width, in.h, in.bytesPerPixel);
+		newscreen.create(width, in.h, in.format);
 
 		uint8 *dst = (uint8 *)newscreen.getBasePtr((320 - in.w) / 2, 0);
 		const uint8 *src = (const uint8 *)in.getBasePtr(0, 0);
@@ -171,7 +171,7 @@ static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 
 		// cut off menu and so on..
 		Graphics::Surface newscreen;
-		newscreen.create(width, 400, in.bytesPerPixel);
+		newscreen.create(width, 400, in.format);
 
 		uint8 *dst = (uint8 *)newscreen.getBasePtr(0, (400 - 240) / 2);
 		const uint8 *src = (const uint8 *)in.getBasePtr(41, 28);
@@ -190,7 +190,7 @@ static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 		inHeight = 480;
 
 		Graphics::Surface newscreen;
-		newscreen.create(width, 480, in.bytesPerPixel);
+		newscreen.create(width, 480, in.format);
 
 		memcpy(newscreen.getBasePtr(0, 0), in.getBasePtr(0, 0), width * 440 * in.bytesPerPixel);
 
@@ -200,7 +200,7 @@ static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 
 	uint16 newHeight = !(inHeight % 240) ? kThumbnailHeight2 : kThumbnailHeight1;
 
-	out.create(kThumbnailWidth, newHeight, sizeof(uint16));
+	out.create(kThumbnailWidth, newHeight, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 	createThumbnail((const uint8 *)in.pixels, width * sizeof(uint16), (uint8 *)out.pixels, out.pitch, width, inHeight);
 
 	in.free();
@@ -223,7 +223,7 @@ bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h,
 	assert(surf);
 
 	Graphics::Surface screen;
-	screen.create(w, h, 2);
+	screen.create(w, h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 
 	for (uint y = 0; y < screen.h; ++y) {
 		for (uint x = 0; x < screen.w; ++x) {

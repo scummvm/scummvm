@@ -112,7 +112,7 @@ PNG::~PNG() {
 
 Graphics::Surface *PNG::getSurface(const PixelFormat &format) {
 	Graphics::Surface *output = new Graphics::Surface();
-	output->create(_unfilteredSurface->w, _unfilteredSurface->h, format.bytesPerPixel);
+	output->create(_unfilteredSurface->w, _unfilteredSurface->h, format);
 	byte *src = (byte *)_unfilteredSurface->pixels;
 	byte a = 0xFF;
 
@@ -388,7 +388,8 @@ void PNG::constructImage() {
 		delete _unfilteredSurface;
 	}
 	_unfilteredSurface = new Graphics::Surface();
-	_unfilteredSurface->create(_header.width, _header.height, (getNumColorChannels() * _header.bitDepth + 7) / 8);
+	// TODO/FIXME: It seems we can not properly determine the format here. But maybe there is a way...
+	_unfilteredSurface->create(_header.width, _header.height, PixelFormat((getNumColorChannels() * _header.bitDepth + 7) / 8, 0, 0, 0, 0, 0, 0, 0, 0));
 	scanLine = new byte[_unfilteredSurface->pitch];
 	dest = (byte *)_unfilteredSurface->getBasePtr(0, 0);
 
