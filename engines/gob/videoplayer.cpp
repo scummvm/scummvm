@@ -720,7 +720,7 @@ bool VideoPlayer::copyFrame(int slot, Surface &dest,
 	if (!surface)
 		return false;
 
-	Surface src(surface->w, surface->h, surface->bytesPerPixel, (byte *)surface->pixels);
+	Surface src(surface->w, surface->h, surface->format.bytesPerPixel, (byte *)surface->pixels);
 
 	dest.blit(src, left, top, left + width - 1, top + height - 1, x, y, transp);
 	return true;
