@@ -135,8 +135,12 @@ Common::Array<MohawkSurface *> MohawkBitmap::decodeImages(Common::SeekableReadSt
 
 Graphics::Surface *MohawkBitmap::createSurface(uint16 width, uint16 height) {
 	Graphics::Surface *surface = new Graphics::Surface();
-	byte bytesPerPixel = (getBitsPerPixel() <= 8) ? 1 : g_system->getScreenFormat().bytesPerPixel;
-	surface->create(width, height, bytesPerPixel);
+	Graphics::PixelFormat format;
+	if (getBitsPerPixel() <= 8)
+		format = Graphics::PixelFormat::createFormatCLUT8();
+	else
+		format = g_system->getScreenFormat();
+	surface->create(width, height, format);
 	return surface;
 }
 

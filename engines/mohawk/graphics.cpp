@@ -77,7 +77,7 @@ void MohawkSurface::convertToTrueColor() {
 
 	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
 	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(_surface->w, _surface->h, pixelFormat.bytesPerPixel);
+	surface->create(_surface->w, _surface->h, pixelFormat);
 
 	for (uint16 i = 0; i < _surface->h; i++) {
 		for (uint16 j = 0; j < _surface->w; j++) {
@@ -292,7 +292,7 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 
 	// Initialize our buffer
 	_backBuffer = new Graphics::Surface();
-	_backBuffer->create(_vm->_system->getWidth(), _vm->_system->getHeight(), _pixelFormat.bytesPerPixel);
+	_backBuffer->create(_vm->_system->getWidth(), _vm->_system->getHeight(), _pixelFormat);
 }
 
 MystGraphics::~MystGraphics() {
@@ -646,7 +646,7 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm
 	// The actual game graphics only take up the first 392 rows. The inventory
 	// occupies the rest of the screen and we don't use the buffer to hold that.
 	_mainScreen = new Graphics::Surface();
-	_mainScreen->create(608, 392, _pixelFormat.bytesPerPixel);
+	_mainScreen->create(608, 392, _pixelFormat);
 
 	_updatesEnabled = true;
 	_scheduledTransition = -1;	// no transition

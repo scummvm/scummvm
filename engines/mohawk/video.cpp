@@ -228,7 +228,7 @@ bool VideoManager::updateMovies() {
 						const byte *palette = _videoStreams[i]->getPalette();
 						assert(palette);
 
-						convertedFrame->create(frame->w, frame->h, pixelFormat.bytesPerPixel);
+						convertedFrame->create(frame->w, frame->h, pixelFormat);
 
 						for (uint16 j = 0; j < frame->h; j++) {
 							for (uint16 k = 0; k < frame->w; k++) {
