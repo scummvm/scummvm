@@ -328,8 +328,11 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 		_prevBuf->free();
 
 		// Allocate new buffers
-		_currBuf->create(width, height, 3);
-		_prevBuf->create(width, height, 3);
+		// TODO: According to the comment below these are actually YUV
+		// surfaces, thus we can not setup a proper PixelFormat here.
+		// Think of a proper way to indicate that it is YUV data.
+		_currBuf->create(width, height, Graphics::PixelFormat(3, 0, 0, 0, 0, 0, 0, 0, 0));
+		_prevBuf->create(width, height, Graphics::PixelFormat(3, 0, 0, 0, 0, 0, 0, 0, 0));
 
 		// Clear the buffers with black YUV values
 		byte *ptr1 = (byte *)_currBuf->getBasePtr(0, 0);
