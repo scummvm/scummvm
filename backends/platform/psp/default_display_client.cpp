@@ -200,6 +200,7 @@ Graphics::Surface *Screen::lockAndGetForEditing() {
 	_frameBuffer.h = _buffer.getSourceHeight();
 	_frameBuffer.pitch = _buffer.getBytesPerPixel() * _buffer.getWidth();
 	_frameBuffer.bytesPerPixel = _buffer.getBytesPerPixel();
+	_frameBuffer.format = _pixelFormat;
 	// We'll set to dirty once we unlock the screen
 
 	return &_frameBuffer;

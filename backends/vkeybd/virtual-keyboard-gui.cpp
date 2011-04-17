@@ -36,7 +36,7 @@
 namespace Common {
 
 static void blit(Graphics::Surface *surf_dst, Graphics::Surface *surf_src, int16 x, int16 y, OverlayColor transparent) {
-	if (surf_dst->bytesPerPixel != sizeof(OverlayColor) || surf_src->bytesPerPixel != sizeof(OverlayColor))
+	if (surf_dst->format.bytesPerPixel != sizeof(OverlayColor) || surf_src->format.bytesPerPixel != sizeof(OverlayColor))
 		return;
 
 	const OverlayColor *src = (const OverlayColor *)surf_src->pixels;

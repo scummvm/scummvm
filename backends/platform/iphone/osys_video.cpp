@@ -335,6 +335,7 @@ Graphics::Surface *OSystem_IPHONE::lockScreen() {
 	_framebuffer.h = _screenHeight;
 	_framebuffer.pitch = _screenWidth;
 	_framebuffer.bytesPerPixel = 1;
+	_framebuffer.format = Graphics::PixelFormat::createFormatCLUT8();
 
 	return &_framebuffer;
 }

@@ -628,13 +628,13 @@ void OSystem_Android::grabOverlay(OverlayColor *buf, int pitch) {
 	GLTHREADCHECK;
 
 	const Graphics::Surface *surface = _overlay_texture->surface_const();
-	assert(surface->bytesPerPixel == sizeof(buf[0]));
+	assert(surface->format.bytesPerPixel == sizeof(buf[0]));
 
 	const byte *src = (const byte *)surface->pixels;
 	uint h = surface->h;
 
 	do {
-		memcpy(buf, src, surface->w * surface->bytesPerPixel);
+		memcpy(buf, src, surface->w * surface->format.bytesPerPixel);
 		src += surface->pitch;
 		// This 'pitch' is pixels not bytes
 		buf += pitch;
