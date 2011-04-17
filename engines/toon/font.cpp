@@ -81,7 +81,7 @@ void FontRenderer::renderText(int32 x, int32 y, Common::String origText, int32 m
 		x -= xx / 2;
 	}
 
-	_vm->addDirtyRect(x, y, x + xx, y + yy);
+	_vm->addDirtyRect(x, y, x + xx + 2, y + yy);
 
 	int32 curX = x;
 	int32 curY = y;
@@ -214,7 +214,7 @@ void FontRenderer::renderMultiLineText(int32 x, int32 y, Common::String origText
 				curChar = textToFont(curChar);
 
 			int width = _currentFont->getFrameWidth(curChar);
-			curWidth += width - 2;
+			curWidth += MAX<int32>(width - 2, 0);
 			it++;
 			curLetterNr++;
 		}
@@ -275,12 +275,12 @@ void FontRenderer::renderMultiLineText(int32 x, int32 y, Common::String origText
 	for (int32 i = 0; i < numLines; i++) {
 		const byte *line = lines[i];
 		curX = x - lineSize[i] / 2;
-		_vm->addDirtyRect(curX + _vm->state()->_currentScrollValue, y, curX + lineSize[i] + _vm->state()->_currentScrollValue, curY + height);
+		_vm->addDirtyRect(curX + _vm->state()->_currentScrollValue, curY, curX + lineSize[i] + _vm->state()->_currentScrollValue + 2, curY + height);
 
 		while (*line) {
 			byte curChar = textToFont(*line);
 			if (curChar != 32) _currentFont->drawFontFrame(_vm->getMainSurface(), curChar, curX + _vm->state()->_currentScrollValue, curY, _currentFontColor);
-			curX = curX + _currentFont->getFrameWidth(curChar) - 2;
+			curX = curX + MAX<int32>(_currentFont->getFrameWidth(curChar) - 2, 0);
 			//height = MAX(height, _currentFont->getFrameHeight(curChar));
 			line++;
 		}
