@@ -466,8 +466,8 @@ SpeakerPOText::SpeakerPOText() : ScreenSpeaker() {
 
 SpeakerMText::SpeakerMText() {
 	_speakerName = "MTEXT";
-	_color1 = 11;
-	_textWidth = 160;
+	_color1 = 22;
+	_textWidth = 230;
 	_textMode = ALIGN_CENTER;
 	_hideObjects = false;
 }
