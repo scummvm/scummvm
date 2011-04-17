@@ -169,7 +169,7 @@ bool PmvPlayer::play(const char *filename) {
 
 		if (!_surface) {
 			_surface = new Graphics::Surface();
-			_surface->create(width, height, 1);
+			_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		}
 
 		decompressMovieImage(imageData, *_surface, cmdOffs, pixelOffs, maskOffs, lineSize);
