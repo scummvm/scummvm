@@ -322,10 +322,10 @@ const Graphics::Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *
 
 				const uint32 color = _pixelFormat.RGBToColor(r, g, b);
 
-				for (uint32 sW = 0; sW < scaleWidth; sW++, rowDest += _surface->bytesPerPixel) {
-					if      (_surface->bytesPerPixel == 1)
+				for (uint32 sW = 0; sW < scaleWidth; sW++, rowDest += _surface->format.bytesPerPixel) {
+					if      (_surface->format.bytesPerPixel == 1)
 						*((uint8 *)rowDest) = (uint8)color;
-					else if (_surface->bytesPerPixel == 2)
+					else if (_surface->format.bytesPerPixel == 2)
 						*((uint16 *)rowDest) = (uint16)color;
 				}
 			}
