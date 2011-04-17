@@ -843,6 +843,7 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_backupPalette = NULL;
 	_additionalPalette1 = NULL;
 	_additionalPalette2 = NULL;
+	_additionalPalette2Present = false;
 	_cutawayPalette = NULL;
 	_universalPalette = NULL;
 	_fluxPalette = NULL;
@@ -1148,6 +1149,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	strcat(temp, ".NPP");
 	loadAdditionalPalette(temp, 0);
 
+	_additionalPalette2Present = false;
 	strcpy(temp, state()->_locations[SceneId]._name);
 	strcat(temp, ".NP2");
 	loadAdditionalPalette(temp, 1);
@@ -1318,6 +1320,7 @@ void ToonEngine::loadAdditionalPalette(Common::String fileName, int32 mode) {
 	case 1:
 		memcpy(_additionalPalette2, palette, 69);
 		fixPaletteEntries(_additionalPalette2, 23);
+		_additionalPalette2Present = true;
 		break;
 	case 2:
 		memcpy(_cutawayPalette, palette, size);
@@ -1786,7 +1789,8 @@ void ToonEngine::flipScreens() {
 	if (_gameState->_inCloseUp) {
 		_gameState->_currentScrollValue = TOON_SCREEN_WIDTH;
 		setPaletteEntries(_cutawayPalette, 1, 128);
-		setPaletteEntries(_additionalPalette2, 232, 23);
+		if (_additionalPalette2Present)
+			setPaletteEntries(_additionalPalette2, 232, 23);
 	} else {
 		_gameState->_currentScrollValue = 0;
 		_currentPicture->setupPalette();
