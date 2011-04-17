@@ -195,7 +195,7 @@ void TextObject::createBitmap() {
 	// The maximum width for any line of text is determined by the justification
 	// mode. Note that there are no left/right margins -- this is consistent
 	// with GrimE.
-	int maxWidth;
+	int maxWidth = 0;
 	if (_justify == CENTER) {
 		maxWidth = 2 * MIN(_x, SCREEN_WIDTH - _x);
 	} else if (_justify == LJUSTIFY) {
