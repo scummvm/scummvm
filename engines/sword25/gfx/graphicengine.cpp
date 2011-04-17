@@ -112,8 +112,10 @@ bool GraphicEngine::init(int width, int height, int bitDepth, int backbufferCoun
 	_screenRect.right = _width;
 	_screenRect.bottom = _height;
 
-	_backSurface.create(width, height, 4);
-	_frameBuffer.create(width, height, 4);
+	const Graphics::PixelFormat format = g_system->getScreenFormat();
+
+	_backSurface.create(width, height, format);
+	_frameBuffer.create(width, height, format);
 
 	// Standardm‰ﬂig ist Vsync an.
 	setVsync(true);

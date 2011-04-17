@@ -134,7 +134,7 @@ Common::SeekableReadStream *Screenshot::createThumbnail(Graphics::Surface *data)
 
 	// Buffer for the output thumbnail
 	Graphics::Surface thumbnail;
-	thumbnail.create(200, 125, 4);
+	thumbnail.create(200, 125, g_system->getScreenFormat());
 
 	// Über das Zielbild iterieren und einen Pixel zur Zeit berechnen.
 	uint x, y;

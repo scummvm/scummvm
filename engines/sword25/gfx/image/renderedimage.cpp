@@ -409,7 +409,7 @@ void RenderedImage::copyDirectly(int posX, int posY) {
  */
 Graphics::Surface *RenderedImage::scale(const Graphics::Surface &srcImage, int xSize, int ySize) {
 	Graphics::Surface *s = new Graphics::Surface();
-	s->create(xSize, ySize, srcImage.bytesPerPixel);
+	s->create(xSize, ySize, srcImage.format);
 
 	int *horizUsage = scaleLine(xSize, srcImage.w);
 	int *vertUsage = scaleLine(ySize, srcImage.h);

@@ -289,7 +289,7 @@ bool TheoraDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	_surface = new Graphics::Surface();
 
-	_surface->create(_theoraInfo.frame_width, _theoraInfo.frame_height, 4);
+	_surface->create(_theoraInfo.frame_width, _theoraInfo.frame_height, g_system->getScreenFormat());
 
 	return true;
 }
