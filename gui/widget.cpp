@@ -345,7 +345,7 @@ void PicButtonWidget::setGfx(const Graphics::Surface *gfx) {
 void PicButtonWidget::drawWidget() {
 	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x+_w, _y+_h), "", _state, getFlags());
 
-	if (sizeof(OverlayColor) == _gfx.bytesPerPixel && _gfx.pixels) {
+	if (sizeof(OverlayColor) == _gfx.format.bytesPerPixel && _gfx.pixels) {
 		const int x = _x + (_w - _gfx.w) / 2;
 		const int y = _y + (_h - _gfx.h) / 2;
 
@@ -588,7 +588,7 @@ void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
 }
 
 void GraphicsWidget::drawWidget() {
-	if (sizeof(OverlayColor) == _gfx.bytesPerPixel && _gfx.pixels) {
+	if (sizeof(OverlayColor) == _gfx.format.bytesPerPixel && _gfx.pixels) {
 		const int x = _x + (_w - _gfx.w) / 2;
 		const int y = _y + (_h - _gfx.h) / 2;
 
