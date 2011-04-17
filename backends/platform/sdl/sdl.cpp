@@ -378,7 +378,11 @@ void OSystem_SDL::setupIcon() {
 	unsigned int rgba[256];
 	unsigned int *icon;
 
-	sscanf(scummvm_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes);
+	if (sscanf(scummvm_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes) != 4) {
+		warning("Wrong format of scummvm_icon[0] (%s)", scummvm_icon[0]);
+		
+		return;
+	}
 	if ((w > 512) || (h > 512) || (ncols > 255) || (nbytes > 1)) {
 		warning("Could not load the built-in icon (%d %d %d %d)", w, h, ncols, nbytes);
 		return;
@@ -393,13 +397,17 @@ void OSystem_SDL::setupIcon() {
 		unsigned char code;
 		char color[32];
 		unsigned int col;
-		sscanf(scummvm_icon[1 + i], "%c c %s", &code, color);
+		if (sscanf(scummvm_icon[1 + i], "%c c %s", &code, color) != 2) {
+			warning("Wrong format of scummvm_icon[%d] (%s)", 1 + i, scummvm_icon[1 + i]);
+		}
 		if (!strcmp(color, "None"))
 			col = 0x00000000;
 		else if (!strcmp(color, "black"))
 			col = 0xFF000000;
 		else if (color[0] == '#') {
-			sscanf(color + 1, "%06x", &col);
+			if (sscanf(color + 1, "%06x", &col) != 1) {
+				warning("Wrong format of color (%s)", color + 1);
+			}
 			col |= 0xFF000000;
 		} else {
 			warning("Could not load the built-in icon (%d %s - %s) ", code, color, scummvm_icon[1 + i]);
