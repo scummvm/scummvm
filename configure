@@ -1395,6 +1395,8 @@ if test $TMPR -eq 0; then
 	_def_64bit_type_signed="typedef signed $type_8_byte int64;"
 	_def_64bit_type_unsigned="typedef unsigned $type_8_byte uint64;"
 fi
+# force cleanup after check for 8 bytes type
+cc_check_clean tmp_find_type_with_size.cpp
 
 echo_n "Target 64 bits... "
 find_pointer_size
