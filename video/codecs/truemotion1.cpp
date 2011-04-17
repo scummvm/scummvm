@@ -92,8 +92,7 @@ TrueMotion1Decoder::TrueMotion1Decoder(uint16 width, uint16 height) {
 	_width = width;
 	_height = height;
 
-	// TODO: Use correct PixelFormat
-	_surface->create(width, height, Graphics::PixelFormat(2, 0, 0, 0, 0, 0, 0, 0, 0));
+	_surface->create(width, height, getPixelFormat());
 
 	// there is a vertical predictor for each pixel in a line; each vertical
 	// predictor is 0 to start with
