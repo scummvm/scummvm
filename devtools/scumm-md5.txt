@@ -466,6 +466,7 @@ fbear	Fatty Bear's Birthday Surprise
 fbpack	Fatty Bear's Fun Pack
 	e01acc8c12ef44e8f778fe87e5f90f4e	-1	en	3DO	-	-	-	sev
 	c9717ee6059f1e43b768b464493d2fba	-1	jp	3DO	-	-	-	clone2727
+	4cfd3fda4a4e6e64a1fc488eba973b7a	-1	en	DOS	-	-	-	velocity37
 	f06e66fd45b2f8b0f4a2833ff4476050	-1	he	DOS	-	-	-	sev
 
 freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
