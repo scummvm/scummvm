@@ -4864,7 +4864,10 @@ void Scene2310::postInit(SceneObjectList *OwnerList) {
 	_globals->_events.setCursor(CURSOR_WALK);
 
 	_wireIndex = 5;
-	_pageIndex = _globals->_randomSource.getRandomNumber(19) + 1;
+	if (_vm->getFeatures() & GF_CD)
+		_pageIndex = _globals->_randomSource.getRandomNumber(14) + 2;
+	else
+		_pageIndex = _globals->_randomSource.getRandomNumber(19) + 1;
 	signal();
 }
 
@@ -4966,10 +4969,7 @@ void Scene2310::process(Event &event) {
 }
 
 void Scene2310::dispatch() {
-	if ((_vm->getFeatures() & GF_CD) && !ConfMan.getBool("copy_protection")) {
-		// CD version of Ringworld has the copy protection disabled
-		signal();
-	} else if (_wireIndex != 5) {
+	if (_wireIndex != 5) {
 		for (int idx = 0; idx < 5; ++idx) {
 			if (_rectList[idx].contains(_globals->_events._mousePos)) {
 				_wireList[_wireIndex].setFrame(idx + 2);

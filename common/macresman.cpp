@@ -623,6 +623,11 @@ void MacResManager::convertCrsrCursor(SeekableReadStream *data, byte **cursor, i
 	// Pixel data for cursor
 	int iconDataSize =  iconRowBytes * (iconBounds[3] - iconBounds[1]);
 	byte *iconData = new byte[iconDataSize];
+
+	if (!iconData) {
+		error("Cannot allocate iconData in macresman.cpp");
+	}
+
 	data->read(iconData, iconDataSize);
 
 	// Color table

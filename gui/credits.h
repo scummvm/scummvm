@@ -476,7 +476,7 @@ static const char *credits[] = {
 "C0""Raina",
 "C2""ScummVM forum buttons",
 "C0""William Claydon",
-"C2""Skins for doxygen and wiki",
+"C2""Skins for doxygen, buildbot and wiki",
 "",
 "C1""Code contributions",
 "C0""Ori Avtalion",
