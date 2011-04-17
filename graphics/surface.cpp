@@ -53,10 +53,24 @@ void Surface::create(uint16 width, uint16 height, uint8 bytesPP) {
 
 	w = width;
 	h = height;
-	bytesPerPixel = bytesPP;
+	format = PixelFormat();
+	format.bytesPerPixel = bytesPerPixel = bytesPP;
 	pitch = w * bytesPP;
 
 	pixels = calloc(width * height, bytesPP);
+	assert(pixels);
+}
+
+void Surface::create(uint16 width, uint16 height, const PixelFormat &f) {
+	free();
+
+	w = width;
+	h = height;
+	format = f;
+	bytesPerPixel = format.bytesPerPixel;
+	pitch = w * bytesPerPixel;
+
+	pixels = calloc(width * height, bytesPerPixel);
 	assert(pixels);
 }
 
@@ -69,6 +83,7 @@ void Surface::free() {
 
 void Surface::copyFrom(const Surface &surf) {
 	create(surf.w, surf.h, surf.bytesPerPixel);
+	format = surf.format;
 	memcpy(pixels, surf.pixels, h * pitch);
 }
 

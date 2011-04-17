@@ -28,6 +28,8 @@
 #include "common/scummsys.h"
 #include "common/rect.h"
 
+#include "graphics/pixelformat.h"
+
 namespace Graphics {
 
 /**
@@ -70,9 +72,14 @@ struct Surface {
 	uint8 bytesPerPixel;
 
 	/**
+	 * The pixel format of the surface.
+	 */
+	PixelFormat format;
+
+	/**
 	 * Construct a simple Surface object.
 	 */
-	Surface() : w(0), h(0), pitch(0), pixels(0), bytesPerPixel(0) {
+	Surface() : w(0), h(0), pitch(0), pixels(0), bytesPerPixel(0), format() {
 	}
 
 	/**
@@ -108,6 +115,18 @@ struct Surface {
 	 * @param bytePP The number of bytes a single pixel uses.
 	 */
 	void create(uint16 width, uint16 height, uint8 bytesPP);
+
+	/**
+	 * Allocate memory for the pixel data of the surface.
+	 *
+	 * Note that you are responsible for calling free yourself.
+	 * @see free
+	 *
+	 * @param width Width of the surface object.
+	 * @param height Height of the surface object.
+	 * @param format The pixel format the surface should use.
+	 */
+	void create(uint16 width, uint16 height, const PixelFormat &format);
 
 	/**
 	 * Release the memory used by the pixels memory of this surface. This is the
