@@ -37,6 +37,10 @@ Debugger::Debugger() : GUI::Debugger() {
 	DCmd_Register("scene",			WRAP_METHOD(Debugger, Cmd_Scene));
 	DCmd_Register("walk_regions",	WRAP_METHOD(Debugger, Cmd_WalkRegions));
 	DCmd_Register("priority_regions",	WRAP_METHOD(Debugger, Cmd_PriorityRegions));
+	DCmd_Register("setflag",		WRAP_METHOD(Debugger, Cmd_SetFlag));
+	DCmd_Register("getflag",		WRAP_METHOD(Debugger, Cmd_GetFlag));
+	DCmd_Register("clearflag",		WRAP_METHOD(Debugger, Cmd_ClearFlag));
+
 	DCmd_Register("item",			WRAP_METHOD(Debugger, Cmd_Item));
 }
 
@@ -161,6 +165,51 @@ bool Debugger::Cmd_PriorityRegions(int argc, const char **argv) {
 	return true;
 }
 
+/*
+ * This command sets a flag
+ */
+bool Debugger::Cmd_SetFlag(int argc, const char **argv) {
+	// Check for a flag to set
+	if (argc != 2) {
+		DebugPrintf("Usage: %s <flag number>\n", argv[0]);
+		return true;
+	}
+
+	int flagNum = strToInt(argv[1]);
+	_globals->setFlag(flagNum);
+	return true;
+}
+
+/*
+ * This command gets the value of a flag
+ */
+bool Debugger::Cmd_GetFlag(int argc, const char **argv) {
+	// Check for an flag to display
+	if (argc != 2) {
+		DebugPrintf("Usage: %s <flag number>\n", argv[0]);
+		return true;
+	}
+
+	int flagNum = strToInt(argv[1]);
+	DebugPrintf("Value: %d\n", _globals->getFlag(flagNum));
+	return true;
+}
+
+/*
+ * This command clears a flag
+ */
+bool Debugger::Cmd_ClearFlag(int argc, const char **argv) {
+	// Check for a flag to clear
+	if (argc != 2) {
+		DebugPrintf("Usage: %s <flag number>\n", argv[0]);
+		return true;
+	}
+
+	int flagNum = strToInt(argv[1]);
+	_globals->clearFlag(flagNum);
+	return true;
+}
+
 /**
  * Give a specified item to the player
  */
@@ -168,5 +217,6 @@ bool Debugger::Cmd_Item(int argc, const char **argv) {
 	_globals->_inventory._infoDisk._sceneNumber = 1;
 	return true;
 }
+
 
 } // End of namespace tSage
