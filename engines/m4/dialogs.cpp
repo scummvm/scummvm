@@ -444,7 +444,7 @@ void Dialog::draw() {
 	int dialogY = (_vm->_screen->height() - dlgHeight) / 2;
 
 	// Create the surface for the dialog
-	create(dlgWidth, dlgHeight, 1);
+	create(dlgWidth, dlgHeight, Graphics::PixelFormat::createFormatCLUT8());
 	_coords.left = dialogX;
 	_coords.top = dialogY;
 	_coords.right = dialogX + dlgWidth + 1;

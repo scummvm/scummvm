@@ -105,13 +105,13 @@ private:
 	void m4LoadBackground(Common::SeekableReadStream *source);
 public:
 	M4Surface(bool isScreen = false) {
-		create(g_system->getWidth(), isScreen ? g_system->getHeight() : MADS_SURFACE_HEIGHT, 1);
+		create(g_system->getWidth(), isScreen ? g_system->getHeight() : MADS_SURFACE_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 		_isScreen = isScreen;
 		_rgbList = NULL;
 		_ownsData = true;
 	}
 	M4Surface(int width_, int height_) {
-		create(width_, height_, 1);
+		create(width_, height_, Graphics::PixelFormat::createFormatCLUT8());
 		_isScreen = false;
 		_rgbList = NULL;
 		_ownsData = true;
@@ -157,7 +157,7 @@ public:
 	inline int width() const { return w; }
 	inline int height() const { return h; }
 	inline int getPitch() const { return pitch; }
-	void setSize(int sizeX, int sizeY) { create(sizeX, sizeY, 1); }
+	void setSize(int sizeX, int sizeY) { create(sizeX, sizeY, Graphics::PixelFormat::createFormatCLUT8()); }
 	inline byte *getBasePtr() {
 		return (byte *)pixels;
 	}
