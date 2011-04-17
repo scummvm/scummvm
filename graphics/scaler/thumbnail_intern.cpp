@@ -99,7 +99,7 @@ static bool grabScreen565(Graphics::Surface *surf) {
 	if (!screen)
 		return false;
 
-	assert(screen->bytesPerPixel == 1 || screen->bytesPerPixel == 2);
+	assert(screen->format.bytesPerPixel == 1 || screen->format.bytesPerPixel == 2);
 	assert(screen->pixels != 0);
 
 	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
@@ -177,7 +177,7 @@ static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 		const uint8 *src = (const uint8 *)in.getBasePtr(41, 28);
 
 		for (int y = 0; y < 240; ++y) {
-			memcpy(dst, src, 640 * in.bytesPerPixel);
+			memcpy(dst, src, 640 * in.format.bytesPerPixel);
 			dst += newscreen.pitch;
 			src += in.pitch;
 		}
@@ -192,7 +192,7 @@ static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 		Graphics::Surface newscreen;
 		newscreen.create(width, 480, in.format);
 
-		memcpy(newscreen.getBasePtr(0, 0), in.getBasePtr(0, 0), width * 440 * in.bytesPerPixel);
+		memcpy(newscreen.getBasePtr(0, 0), in.getBasePtr(0, 0), width * 440 * in.format.bytesPerPixel);
 
 		in.free();
 		in = newscreen;

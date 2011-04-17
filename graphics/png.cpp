@@ -118,23 +118,23 @@ Graphics::Surface *PNG::getSurface(const PixelFormat &format) {
 
 	if (_header.colorType != kIndexed) {
 		if (_header.colorType == kTrueColor || _header.colorType == kTrueColorWithAlpha) {
-			if (_unfilteredSurface->bytesPerPixel != 3 && _unfilteredSurface->bytesPerPixel != 4)
+			if (_unfilteredSurface->format.bytesPerPixel != 3 && _unfilteredSurface->format.bytesPerPixel != 4)
 				error("Unsupported truecolor PNG format");
 		} else if (_header.colorType == kGrayScale || _header.colorType == kGrayScaleWithAlpha) {
-			if (_unfilteredSurface->bytesPerPixel != 1 && _unfilteredSurface->bytesPerPixel != 2)
+			if (_unfilteredSurface->format.bytesPerPixel != 1 && _unfilteredSurface->format.bytesPerPixel != 2)
 				error("Unsupported grayscale PNG format");
 		}
 
 		for (uint16 i = 0; i < output->h; i++) {
 			for (uint16 j = 0; j < output->w; j++) {
 				if (format.bytesPerPixel == 2) {
-					if (_unfilteredSurface->bytesPerPixel == 1) {		// Grayscale
+					if (_unfilteredSurface->format.bytesPerPixel == 1) {		// Grayscale
 						if (_transparentColorSpecified)
 							a = (src[0] == _transparentColor[0]) ? 0 : 0xFF;
 						*((uint16 *)output->getBasePtr(j, i)) = format.ARGBToColor(    a, src[0], src[0], src[0]);
-					} else if (_unfilteredSurface->bytesPerPixel == 2) {	// Grayscale + alpha
+					} else if (_unfilteredSurface->format.bytesPerPixel == 2) {	// Grayscale + alpha
 						*((uint16 *)output->getBasePtr(j, i)) = format.ARGBToColor(src[1], src[0], src[0], src[0]);
-					} else if (_unfilteredSurface->bytesPerPixel == 3) {	// RGB
+					} else if (_unfilteredSurface->format.bytesPerPixel == 3) {	// RGB
 						if (_transparentColorSpecified) {
 							bool isTransparentColor = (src[0] == _transparentColor[0] &&
 													   src[1] == _transparentColor[1] &&
@@ -142,17 +142,17 @@ Graphics::Surface *PNG::getSurface(const PixelFormat &format) {
 							a = isTransparentColor ? 0 : 0xFF;
 						}
 						*((uint16 *)output->getBasePtr(j, i)) = format.ARGBToColor(     a, src[0], src[1], src[2]);
-					} else if (_unfilteredSurface->bytesPerPixel == 4) {	// RGBA
+					} else if (_unfilteredSurface->format.bytesPerPixel == 4) {	// RGBA
 						*((uint16 *)output->getBasePtr(j, i)) = format.ARGBToColor(src[3], src[0], src[1], src[2]);
 					}
 				} else {
-					if (_unfilteredSurface->bytesPerPixel == 1) {		// Grayscale
+					if (_unfilteredSurface->format.bytesPerPixel == 1) {		// Grayscale
 						if (_transparentColorSpecified)
 							a = (src[0] == _transparentColor[0]) ? 0 : 0xFF;
 						*((uint32 *)output->getBasePtr(j, i)) = format.ARGBToColor(     a, src[0], src[0], src[0]);
-					} else if (_unfilteredSurface->bytesPerPixel == 2) {	// Grayscale + alpha
+					} else if (_unfilteredSurface->format.bytesPerPixel == 2) {	// Grayscale + alpha
 						*((uint32 *)output->getBasePtr(j, i)) = format.ARGBToColor(src[1], src[0], src[0], src[0]);
-					} else if (_unfilteredSurface->bytesPerPixel == 3) {	// RGB
+					} else if (_unfilteredSurface->format.bytesPerPixel == 3) {	// RGB
 						if (_transparentColorSpecified) {
 							bool isTransparentColor = (src[0] == _transparentColor[0] &&
 													   src[1] == _transparentColor[1] &&
@@ -160,12 +160,12 @@ Graphics::Surface *PNG::getSurface(const PixelFormat &format) {
 							a = isTransparentColor ? 0 : 0xFF;
 						}
 						*((uint32 *)output->getBasePtr(j, i)) = format.ARGBToColor(     a, src[0], src[1], src[2]);
-					} else if (_unfilteredSurface->bytesPerPixel == 4) {	// RGBA
+					} else if (_unfilteredSurface->format.bytesPerPixel == 4) {	// RGBA
 						*((uint32 *)output->getBasePtr(j, i)) = format.ARGBToColor(src[3], src[0], src[1], src[2]);
 					}
 				}
 
-				src += _unfilteredSurface->bytesPerPixel;
+				src += _unfilteredSurface->format.bytesPerPixel;
 			}
 		}
 	} else {
@@ -398,7 +398,7 @@ void PNG::constructImage() {
 		for (uint16 y = 0; y < _unfilteredSurface->h; y++) {
 			filterType = _imageData->readByte();
 			_imageData->read(scanLine, scanLineWidth);
-			unfilterScanLine(dest, scanLine, prevLine, _unfilteredSurface->bytesPerPixel, filterType, scanLineWidth);
+			unfilterScanLine(dest, scanLine, prevLine, _unfilteredSurface->format.bytesPerPixel, filterType, scanLineWidth);
 			prevLine = dest;
 			dest += _unfilteredSurface->pitch;
 		}

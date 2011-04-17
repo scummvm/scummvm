@@ -90,7 +90,7 @@ struct Surface {
 	 * @return Pointer to the pixel.
 	 */
 	inline const void *getBasePtr(int x, int y) const {
-		return (const byte *)(pixels) + y * pitch + x * bytesPerPixel;
+		return (const byte *)(pixels) + y * pitch + x * format.bytesPerPixel;
 	}
 
 	/**
@@ -101,7 +101,7 @@ struct Surface {
 	 * @return Pointer to the pixel.
 	 */
 	inline void *getBasePtr(int x, int y) {
-		return static_cast<byte *>(pixels) + y * pitch + x * bytesPerPixel;
+		return static_cast<byte *>(pixels) + y * pitch + x * format.bytesPerPixel;
 	}
 
 	/**

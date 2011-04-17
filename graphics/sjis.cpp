@@ -57,7 +57,7 @@ FontSJIS *FontSJIS::createFont(const Common::Platform platform) {
 }
 
 void FontSJIS::drawChar(Graphics::Surface &dst, uint16 ch, int x, int y, uint32 c1, uint32 c2) const {
-	drawChar(dst.getBasePtr(x, y), ch, dst.pitch, dst.bytesPerPixel, c1, c2, dst.w - x, dst.h - y);
+	drawChar(dst.getBasePtr(x, y), ch, dst.pitch, dst.format.bytesPerPixel, c1, c2, dst.w - x, dst.h - y);
 }
 
 template<typename Color>

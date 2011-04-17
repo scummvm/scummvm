@@ -139,18 +139,18 @@ bool saveThumbnail(Common::WriteStream &out) {
 }
 
 bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
-	if (thumb.bytesPerPixel != 2) {
+	if (thumb.format.bytesPerPixel != 2) {
 		warning("trying to save thumbnail with bpp different than 2");
 		return false;
 	}
 
 	ThumbnailHeader header;
 	header.type = MKTAG('T','H','M','B');
-	header.size = ThumbnailHeaderSize + thumb.w*thumb.h*thumb.bytesPerPixel;
+	header.size = ThumbnailHeaderSize + thumb.w*thumb.h*thumb.format.bytesPerPixel;
 	header.version = THMB_VERSION;
 	header.width = thumb.w;
 	header.height = thumb.h;
-	header.bpp = thumb.bytesPerPixel;
+	header.bpp = thumb.format.bytesPerPixel;
 
 	out.writeUint32BE(header.type);
 	out.writeUint32BE(header.size);

@@ -40,9 +40,9 @@ static void plotPoint(int x, int y, int color, void *data) {
 }
 
 void Surface::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
-	if (bytesPerPixel == 1)
+	if (format.bytesPerPixel == 1)
 		Graphics::drawLine(x0, y0, x1, y1, color, plotPoint<byte>, this);
-	else if (bytesPerPixel == 2)
+	else if (format.bytesPerPixel == 2)
 		Graphics::drawLine(x0, y0, x1, y1, color, plotPoint<uint16>, this);
 	else
 		error("Surface::drawLine: bytesPerPixel must be 1 or 2");
@@ -68,9 +68,9 @@ void Surface::create(uint16 width, uint16 height, const PixelFormat &f) {
 	h = height;
 	format = f;
 	bytesPerPixel = format.bytesPerPixel;
-	pitch = w * bytesPerPixel;
+	pitch = w * format.bytesPerPixel;
 
-	pixels = calloc(width * height, bytesPerPixel);
+	pixels = calloc(width * height, format.bytesPerPixel);
 	assert(pixels);
 }
 
@@ -78,11 +78,12 @@ void Surface::free() {
 	::free(pixels);
 	pixels = 0;
 	w = h = pitch = 0;
+	format = PixelFormat();
 	bytesPerPixel = 0;
 }
 
 void Surface::copyFrom(const Surface &surf) {
-	create(surf.w, surf.h, surf.bytesPerPixel);
+	create(surf.w, surf.h, surf.format.bytesPerPixel);
 	format = surf.format;
 	memcpy(pixels, surf.pixels, h * pitch);
 }
@@ -103,10 +104,10 @@ void Surface::hLine(int x, int y, int x2, uint32 color) {
 	if (x2 < x)
 		return;
 
-	if (bytesPerPixel == 1) {
+	if (format.bytesPerPixel == 1) {
 		byte *ptr = (byte *)getBasePtr(x, y);
 		memset(ptr, (byte)color, x2-x+1);
-	} else if (bytesPerPixel == 2) {
+	} else if (format.bytesPerPixel == 2) {
 		uint16 *ptr = (uint16 *)getBasePtr(x, y);
 		Common::set_to(ptr, ptr + (x2-x+1), (uint16)color);
 	} else {
@@ -127,13 +128,13 @@ void Surface::vLine(int x, int y, int y2, uint32 color) {
 	if (y2 >= h)
 		y2 = h - 1;
 
-	if (bytesPerPixel == 1) {
+	if (format.bytesPerPixel == 1) {
 		byte *ptr = (byte *)getBasePtr(x, y);
 		while (y++ <= y2) {
 			*ptr = (byte)color;
 			ptr += pitch;
 		}
-	} else if (bytesPerPixel == 2) {
+	} else if (format.bytesPerPixel == 2) {
 		uint16 *ptr = (uint16 *)getBasePtr(x, y);
 		while (y++ <= y2) {
 			*ptr = (uint16)color;
@@ -155,13 +156,13 @@ void Surface::fillRect(Common::Rect r, uint32 color) {
 	int height = r.height();
 	bool useMemset = true;
 
-	if (bytesPerPixel == 2) {
+	if (format.bytesPerPixel == 2) {
 		lineLen *= 2;
 		if ((uint16)color != ((color & 0xff) | (color & 0xff) << 8))
 			useMemset = false;
-	} else if (bytesPerPixel == 4) {
+	} else if (format.bytesPerPixel == 4) {
 		useMemset = false;
-	} else if (bytesPerPixel != 1) {
+	} else if (format.bytesPerPixel != 1) {
 		error("Surface::fillRect: bytesPerPixel must be 1, 2 or 4");
 	}
 
@@ -172,7 +173,7 @@ void Surface::fillRect(Common::Rect r, uint32 color) {
 			ptr += pitch;
 		}
 	} else {
-		if (bytesPerPixel == 2) {
+		if (format.bytesPerPixel == 2) {
 			uint16 *ptr = (uint16 *)getBasePtr(r.left, r.top);
 			while (height--) {
 				Common::set_to(ptr, ptr + width, (uint16)color);
@@ -200,7 +201,7 @@ void Surface::move(int dx, int dy, int height) {
 	if ((dx == 0 && dy == 0) || height <= 0)
 		return;
 
-	if (bytesPerPixel != 1 && bytesPerPixel != 2)
+	if (format.bytesPerPixel != 1 && format.bytesPerPixel != 2)
 		error("Surface::move: bytesPerPixel must be 1 or 2");
 
 	byte *src, *dst;
@@ -230,37 +231,37 @@ void Surface::move(int dx, int dy, int height) {
 	// horizontal movement
 	if (dx > 0) {
 		// move right - copy from right to left
-		dst = (byte *)pixels + (pitch - bytesPerPixel);
-		src = dst - (dx * bytesPerPixel);
+		dst = (byte *)pixels + (pitch - format.bytesPerPixel);
+		src = dst - (dx * format.bytesPerPixel);
 		for (y = 0; y < height; y++) {
 			for (x = dx; x < w; x++) {
-				if (bytesPerPixel == 1) {
+				if (format.bytesPerPixel == 1) {
 					*dst-- = *src--;
-				} else if (bytesPerPixel == 2) {
+				} else if (format.bytesPerPixel == 2) {
 					*(uint16 *)dst = *(const uint16 *)src;
 					src -= 2;
 					dst -= 2;
 				}
 			}
-			src += pitch + (pitch - dx * bytesPerPixel);
-			dst += pitch + (pitch - dx * bytesPerPixel);
+			src += pitch + (pitch - dx * format.bytesPerPixel);
+			dst += pitch + (pitch - dx * format.bytesPerPixel);
 		}
 	} else if (dx < 0)  {
 		// move left - copy from left to right
 		dst = (byte *)pixels;
-		src = dst - (dx * bytesPerPixel);
+		src = dst - (dx * format.bytesPerPixel);
 		for (y = 0; y < height; y++) {
 			for (x = -dx; x < w; x++) {
-				if (bytesPerPixel == 1) {
+				if (format.bytesPerPixel == 1) {
 					*dst++ = *src++;
-				} else if (bytesPerPixel == 2) {
+				} else if (format.bytesPerPixel == 2) {
 					*(uint16 *)dst = *(const uint16 *)src;
 					src += 2;
 					dst += 2;
 				}
 			}
-			src += pitch - (pitch + dx * bytesPerPixel);
-			dst += pitch - (pitch + dx * bytesPerPixel);
+			src += pitch - (pitch + dx * format.bytesPerPixel);
+			dst += pitch - (pitch + dx * format.bytesPerPixel);
 		}
 	}
 }
