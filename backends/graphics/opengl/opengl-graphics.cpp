@@ -617,7 +617,7 @@ void OpenGLGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int 
 	// Allocate space for cursor data
 	if (_cursorData.w != w || _cursorData.h != h ||
 			_cursorData.bytesPerPixel != _cursorFormat.bytesPerPixel)
-		_cursorData.create(w, h, _cursorFormat.bytesPerPixel);
+		_cursorData.create(w, h, _cursorFormat);
 
 	// Save cursor data
 	memcpy(_cursorData.pixels, buf, h * _cursorData.pitch);
@@ -1175,9 +1175,9 @@ void OpenGLGraphicsManager::loadTextures() {
 			_oldVideoMode.screenHeight != _videoMode.screenHeight)
 		_screenData.create(_videoMode.screenWidth, _videoMode.screenHeight,
 #ifdef USE_RGB_COLOR
-			_screenFormat.bytesPerPixel
+			_screenFormat
 #else
-			1
+			Graphics::PixelFormat::createFormatCLUT8()
 #endif
 			);
 
@@ -1185,7 +1185,7 @@ void OpenGLGraphicsManager::loadTextures() {
 	if (_oldVideoMode.overlayWidth != _videoMode.overlayWidth ||
 		_oldVideoMode.overlayHeight != _videoMode.overlayHeight)
 		_overlayData.create(_videoMode.overlayWidth, _videoMode.overlayHeight,
-			_overlayFormat.bytesPerPixel);
+			_overlayFormat);
 
 	_screenNeedsRedraw = true;
 	_overlayNeedsRedraw = true;
@@ -1387,7 +1387,7 @@ void OpenGLGraphicsManager::updateOSD() {
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kOSDFont);
 
 	if (_osdSurface.w != _osdTexture->getWidth() || _osdSurface.h != _osdTexture->getHeight())
-		_osdSurface.create(_osdTexture->getWidth(), _osdTexture->getHeight(), 2);
+		_osdSurface.create(_osdTexture->getWidth(), _osdTexture->getHeight(), _overlayFormat);
 	else
 		// Clear everything
 		memset(_osdSurface.pixels, 0, _osdSurface.h * _osdSurface.pitch);

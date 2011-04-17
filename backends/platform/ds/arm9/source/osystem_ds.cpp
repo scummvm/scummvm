@@ -243,7 +243,7 @@ void OSystem_DS::setCursorPalette(const byte *colors, uint start, uint num) {
 }
 
 bool OSystem_DS::grabRawScreen(Graphics::Surface *surf) {
-	surf->create(DS::getGameWidth(), DS::getGameHeight(), 1);
+	surf->create(DS::getGameWidth(), DS::getGameHeight(), Graphics::PixelFormat::createFormatCLUT8());
 
 	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
 

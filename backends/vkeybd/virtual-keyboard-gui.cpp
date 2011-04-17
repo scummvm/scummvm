@@ -133,7 +133,7 @@ void VirtualKeyboardGUI::setupDisplayArea(Rect& r, OverlayColor forecolor) {
 	_dispI = 0;
 	_dispForeColor = forecolor;
 	_dispBackColor = _dispForeColor + 0xFF;
-	_dispSurface.create(r.width(), _dispFont->getFontHeight(), sizeof(OverlayColor));
+	_dispSurface.create(r.width(), _dispFont->getFontHeight(), _system->getOverlayFormat());
 	_dispSurface.fillRect(Rect(_dispSurface.w, _dispSurface.h), _dispBackColor);
 	_displayEnabled = true;
 }
@@ -163,7 +163,7 @@ void VirtualKeyboardGUI::run() {
 		_system->showOverlay();
 		_system->clearOverlay();
 	}
-	_overlayBackup.create(_screenW, _screenH, sizeof(OverlayColor));
+	_overlayBackup.create(_screenW, _screenH, _system->getOverlayFormat());
 	_system->grabOverlay((OverlayColor*)_overlayBackup.pixels, _overlayBackup.w);
 
 	setupCursor();
@@ -265,7 +265,7 @@ void VirtualKeyboardGUI::screenChanged() {
 		_screenW = newScreenW;
 		_screenH = newScreenH;
 
-		_overlayBackup.create(_screenW, _screenH, sizeof(OverlayColor));
+		_overlayBackup.create(_screenW, _screenH, _system->getOverlayFormat());
 		_system->grabOverlay((OverlayColor*)_overlayBackup.pixels, _overlayBackup.w);
 
 		if (!_kbd->checkModeResolutions()) {
@@ -358,7 +358,7 @@ void VirtualKeyboardGUI::redraw() {
 	if (w <= 0 || h <= 0) return;
 
 	Graphics::Surface surf;
-	surf.create(w, h, sizeof(OverlayColor));
+	surf.create(w, h, _system->getOverlayFormat());
 
 	OverlayColor *dst = (OverlayColor *)surf.pixels;
 	const OverlayColor *src = (OverlayColor *) _overlayBackup.getBasePtr(_dirtyRect.left, _dirtyRect.top);
