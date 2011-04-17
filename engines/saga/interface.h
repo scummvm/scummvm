@@ -288,6 +288,8 @@ public:
 
 	int32 getProtectHash() { return _protectHash; }
 
+	void resetSaveReminder();
+
 private:
 	void handleMainUpdate(const Point& mousePoint);					// main panel update
 	void handleMainClick(const Point& mousePoint);					// main panel click

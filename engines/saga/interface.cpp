@@ -1379,9 +1379,7 @@ void Interface::setSave(PanelButton *panelButton) {
 				fileName = _vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
 				_vm->save(fileName, _textInputString);
 			}
-			_vm->getTimerManager()->removeTimerProc(&saveReminderCallback);
-			_vm->getTimerManager()->installTimerProc(&saveReminderCallback, TIMETOSAVE, this);
-			setSaveReminderState(1);
+			resetSaveReminder();
 
 			_textInput = false;
 			setMode(kPanelOption);
@@ -1391,6 +1389,12 @@ void Interface::setSave(PanelButton *panelButton) {
 			setMode(kPanelOption);
 			break;
 	}
+}
+
+void Interface::resetSaveReminder() {
+	_vm->getTimerManager()->removeTimerProc(&saveReminderCallback);
+	_vm->getTimerManager()->installTimerProc(&saveReminderCallback, TIMETOSAVE, this);
+	setSaveReminderState(1);
 }
 
 void Interface::handleOptionUpdate(const Point& mousePoint) {
