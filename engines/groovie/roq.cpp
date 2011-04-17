@@ -175,7 +175,7 @@ void ROQPlayer::buildShowBuf() {
 			// Skip to the next pixel
 			out += _vm->_pixelFormat.bytesPerPixel;
 			if (!(x % _scaleX))
-				in += _currBuf->bytesPerPixel;
+				in += _currBuf->format.bytesPerPixel;
 		}
 #ifdef DITHER
 		_dither->nextLine();
@@ -700,7 +700,7 @@ void ROQPlayer::copy(byte size, int destx, int desty, int offx, int offy) {
 
 	for (int i = 0; i < size; i++) {
 		// Copy the current line
-		memcpy(dst, src, size * _currBuf->bytesPerPixel);
+		memcpy(dst, src, size * _currBuf->format.bytesPerPixel);
 
 		// Move to the beginning of the next line
 		dst += _currBuf->pitch;
