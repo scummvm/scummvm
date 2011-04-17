@@ -133,7 +133,7 @@ void TopMenu::loadBmpArr(Common::SeekableReadStream &in) {
 		Common::SeekableSubReadStream stream(&in, filPos, filPos + bmpSize);
 		arrayBmp[i * 2] = Graphics::ImageDecoder::loadFile(stream, g_system->getOverlayFormat());
 		arrayBmp[i * 2 + 1] = new Graphics::Surface();
-		arrayBmp[i * 2 + 1]->create(arrayBmp[i * 2]->w * 2, arrayBmp[i * 2]->h * 2, arrayBmp[i * 2]->bytesPerPixel);
+		arrayBmp[i * 2 + 1]->create(arrayBmp[i * 2]->w * 2, arrayBmp[i * 2]->h * 2, g_system->getOverlayFormat());
 		byte *src = (byte *)arrayBmp[i * 2]->pixels;
 		byte *dst = (byte *)arrayBmp[i * 2 + 1]->pixels;
 		
