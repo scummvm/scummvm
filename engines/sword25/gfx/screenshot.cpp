@@ -127,7 +127,7 @@ Common::SeekableReadStream *Screenshot::createThumbnail(Graphics::Surface *data)
 	// generates a pixel of the target image. Finally, the result as a PNG file is stored as a file.
 
 	// The source image must be 800x600.
-	if (data->w != 800 || data->h != 600 || data->bytesPerPixel != 4) {
+	if (data->w != 800 || data->h != 600 || data->format.bytesPerPixel != 4) {
 		error("The sreenshot dimensions have to be 800x600 in order to be saved as a thumbnail.");
 		return false;
 	}
