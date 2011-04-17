@@ -283,6 +283,7 @@ Graphics::Surface GfxSurface::lockSurface() {
 	result.h = _bounds.height();
 	result.pitch = src->pitch;
 	result.bytesPerPixel = src->bytesPerPixel;
+	result.format = src->format;
 	result.pixels = src->getBasePtr(_bounds.left, _bounds.top);
 
 	return result;
