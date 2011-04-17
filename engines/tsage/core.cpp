@@ -2243,7 +2243,6 @@ void SceneObject::removeObject() {
 	_globals->_sceneObjects->remove(this);
 
 	if (_visage) {
-		_vm->_memoryManager.deallocate(_visage);
 		_visage = 0;
 	}
 
