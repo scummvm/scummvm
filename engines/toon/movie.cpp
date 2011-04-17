@@ -50,7 +50,7 @@ bool ToonstruckSmackerDecoder::loadFile(const Common::String &filename) {
 				delete _surface;
 			}
 			_surface = new Graphics::Surface();
-			_surface->create(640, 400, 1);
+			_surface->create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 			_header.flags = 4;
 		}
 
