@@ -265,7 +265,7 @@ bool Debugger::Cmd_MoveObject(int argc, const char **argv) {
 	// Check for a flag to clear
 	if ((argc < 2) || (argc > 3)){
 		DebugPrintf("Usage: %s <object number> [<scene number>]\n", argv[0]);
-		DebugPrintf("If no scene is specified, the object will be added to inventory\n", argv[0]);
+		DebugPrintf("If no scene is specified, the object will be added to inventory\n");
 		return true;
 	}
 
