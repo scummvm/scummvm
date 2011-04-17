@@ -379,7 +379,7 @@ void Scene::init(int id, const Common::Point &pos) {
 		custom_animation[i].free();
 
 	if (background.pixels == NULL)
-		background.create(320, 200, 1);
+		background.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 
 	warp(pos);
 
