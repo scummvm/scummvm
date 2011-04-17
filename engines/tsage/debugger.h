@@ -40,11 +40,13 @@ protected:
 	bool Cmd_Scene(int argc, const char **argv);
 	bool Cmd_WalkRegions(int argc, const char **argv);
 	bool Cmd_PriorityRegions(int argc, const char **argv);
-	bool Cmd_Item(int argc, const char **argv);
 	bool Cmd_SetFlag(int argc, const char **argv);
 	bool Cmd_GetFlag(int argc, const char **argv);
 	bool Cmd_ClearFlag(int argc, const char **argv);
+	bool Cmd_ListObjects(int argc, const char **argv);
+	bool Cmd_MoveObject(int argc, const char **argv);
 
+	bool Cmd_Item(int argc, const char **argv);
 };
 
 } // End of namespace tSage
