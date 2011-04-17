@@ -32,13 +32,14 @@ namespace LastExpress {
 #define COLOR_KEY  0xFFFF
 
 GraphicsManager::GraphicsManager() : _changed(false) {
-	_screen.create(640, 480, 2);
+	const Graphics::PixelFormat format = g_system->getScreenFormat();
+	_screen.create(640, 480, format);
 
 	// Create the game surfaces
-	_backgroundA.create(640, 480, 2);
-	_backgroundC.create(640, 480, 2);
-	_overlay.create(640, 480, 2);
-	_inventory.create(640, 480, 2);
+	_backgroundA.create(640, 480, format);
+	_backgroundC.create(640, 480, format);
+	_overlay.create(640, 480, format);
+	_inventory.create(640, 480, format);
 
 	clear(kBackgroundAll);
 }

@@ -266,7 +266,7 @@ void Animation::play() {
 		if (_changed) {
 			// Create a temporary surface to merge the overlay with the background
 			Graphics::Surface *s = new Graphics::Surface;
-			s->create(640, 480, 2);
+			s->create(640, 480, g_system->getScreenFormat());
 
 			draw(s);
 
