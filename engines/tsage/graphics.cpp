@@ -410,19 +410,20 @@ void GfxSurface::loadScreenSection(Graphics::Surface &dest, int xHalf, int yHalf
  * included in a scaled image
  */
 static int *scaleLine(int size, int srcSize) {
-	int scale = 100 * size / srcSize;
+	const int PRECISION_FACTOR = 1000;
+	int scale = PRECISION_FACTOR * size / srcSize;
 	assert(scale >= 0);
 	int *v = new int[size];
-	Common::set_to(v, &v[size], 0);
+	Common::set_to(v, &v[size], -1);
 
 	int distCtr = 0;
 	int *destP = v;
 	for (int distIndex = 0; distIndex < srcSize; ++distIndex) {
 		distCtr += scale;
-		while (distCtr >= 100) {
+		while (distCtr >= PRECISION_FACTOR) {
 			assert(destP < &v[size]);
 			*destP++ = distIndex;
-			distCtr -= 100;
+			distCtr -= PRECISION_FACTOR;
 		}
 	}
 
@@ -436,7 +437,7 @@ static int *scaleLine(int size, int srcSize) {
  * @param NewHeight		New height for scaled image
  * @remarks Caller is responsible for freeing the returned surface
  */
-static GfxSurface ResizeSurface(GfxSurface &src, int xSize, int ySize) {
+static GfxSurface ResizeSurface(GfxSurface &src, int xSize, int ySize, int transIndex) {
 	GfxSurface s;
 	s.create(xSize, ySize);
 
@@ -448,12 +449,22 @@ static GfxSurface ResizeSurface(GfxSurface &src, int xSize, int ySize) {
 
 	// Loop to create scaled version
 	for (int yp = 0; yp < ySize; ++yp) {
-		const byte *srcP = (const byte *)srcImage.getBasePtr(0, vertUsage[yp]);
 		byte *destP = (byte *)destImage.getBasePtr(0, yp);
 
-		for (int xp = 0; xp < xSize; ++xp) {
-			const byte *tempSrcP = srcP + horizUsage[xp];
-			*destP++ = *tempSrcP++;
+		if (vertUsage[yp] == -1) {
+			Common::set_to(destP, destP + xSize, transIndex);
+		} else {
+			const byte *srcP = (const byte *)srcImage.getBasePtr(0, vertUsage[yp]);
+
+			for (int xp = 0; xp < xSize; ++xp) {
+				if (horizUsage[xp] != -1) {
+					const byte *tempSrcP = srcP + horizUsage[xp];
+					*destP++ = *tempSrcP++;
+				} else {
+					// Pixel overrun at the end of the line
+					*destP++ = transIndex;
+				}
+			}
 		}
 	}
 
@@ -493,7 +504,7 @@ void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Regi
 	}
 
 	if ((destBounds.width() != srcBounds.width()) || (destBounds.height() != srcBounds.height()))
-		srcImage = ResizeSurface(srcImage, destBounds.width(), destBounds.height());
+		srcImage = ResizeSurface(srcImage, destBounds.width(), destBounds.height(), src._transColor);
 
 	Graphics::Surface srcSurface = srcImage.lockSurface();
 	Graphics::Surface destSurface = lockSurface();
