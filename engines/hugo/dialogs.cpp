@@ -141,12 +141,12 @@ void TopMenu::loadBmpArr(Common::SeekableReadStream &in) {
 			src = (byte *)arrayBmp[i * 2]->getBasePtr(0, j);
 			dst = (byte *)arrayBmp[i * 2 + 1]->getBasePtr(0, j * 2);
 			for (int k = arrayBmp[i * 2]->w; k > 0; k--) {
-				for (int m = arrayBmp[i * 2]->bytesPerPixel; m > 0; m--) {
+				for (int m = arrayBmp[i * 2]->format.bytesPerPixel; m > 0; m--) {
 					*dst++ = *src++;
 				}
-				src -= arrayBmp[i * 2]->bytesPerPixel;
+				src -= arrayBmp[i * 2]->format.bytesPerPixel;
 
-				for (int m = arrayBmp[i * 2]->bytesPerPixel; m > 0; m--) {
+				for (int m = arrayBmp[i * 2]->format.bytesPerPixel; m > 0; m--) {
 					*dst++ = *src++;
 				}
 			}
