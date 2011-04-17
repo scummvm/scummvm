@@ -147,7 +147,6 @@ void GLESBaseTexture::setLinearFilter(bool value) {
 void GLESBaseTexture::allocBuffer(GLuint w, GLuint h) {
 	_surface.w = w;
 	_surface.h = h;
-	_surface.bytesPerPixel = _pixelFormat.bytesPerPixel;
 	_surface.format = _pixelFormat;
 
 	if (w == _texture_width && h == _texture_height)
@@ -374,7 +373,6 @@ void GLESFakePaletteTexture::allocBuffer(GLuint w, GLuint h) {
 
 	GLESBaseTexture::allocBuffer(w, h);
 
-	_surface.bytesPerPixel = 1;
 	_surface.format = Graphics::PixelFormat::createFormatCLUT8();
 	_surface.pitch = w;
 

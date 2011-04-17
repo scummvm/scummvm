@@ -101,7 +101,6 @@ bool DXADecoder::loadStream(Common::SeekableReadStream *stream) {
 	}
 
 	_surface = new Graphics::Surface();
-	_surface->bytesPerPixel = 1;
 	_surface->format = Graphics::PixelFormat::createFormatCLUT8();
 
 	debug(2, "flags 0x0%x framesCount %d width %d height %d rate %d", flags, getFrameCount(), getWidth(), getHeight(), getFrameRate().toInt());

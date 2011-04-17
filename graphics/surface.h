@@ -67,11 +67,6 @@ struct Surface {
 	void *pixels;
 
 	/**
-	 * How many bytes a single pixel occupies.
-	 */
-	uint8 bytesPerPixel;
-
-	/**
 	 * The pixel format of the surface.
 	 */
 	PixelFormat format;
@@ -79,7 +74,7 @@ struct Surface {
 	/**
 	 * Construct a simple Surface object.
 	 */
-	Surface() : w(0), h(0), pitch(0), pixels(0), bytesPerPixel(0), format() {
+	Surface() : w(0), h(0), pitch(0), pixels(0), format() {
 	}
 
 	/**
@@ -103,18 +98,6 @@ struct Surface {
 	inline void *getBasePtr(int x, int y) {
 		return static_cast<byte *>(pixels) + y * pitch + x * format.bytesPerPixel;
 	}
-
-	/**
-	 * Allocate memory for the pixel data of the surface.
-	 *
-	 * Note that you are responsible for calling free yourself.
-	 * @see free
-	 *
-	 * @param width Width of the surface object.
-	 * @param height Height of the surface object.
-	 * @param bytePP The number of bytes a single pixel uses.
-	 */
-	void create(uint16 width, uint16 height, uint8 bytesPP);
 
 	/**
 	 * Allocate memory for the pixel data of the surface.

@@ -756,7 +756,6 @@ Graphics::Surface *OSystem_DS::createTempFrameBuffer() {
 		_framebuffer.w = DS::getGameWidth();
 		_framebuffer.h = DS::getGameHeight();
 		_framebuffer.pitch = DS::getGameWidth();
-		_framebuffer.bytesPerPixel = 1;
 		_framebuffer.format = Graphics::PixelFormat::createFormatCLUT8();
 
 	} else {
@@ -782,7 +781,6 @@ Graphics::Surface *OSystem_DS::createTempFrameBuffer() {
 		_framebuffer.w = width;
 		_framebuffer.h = height;
 		_framebuffer.pitch = width;
-		_framebuffer.bytesPerPixel = 1;
 		_framebuffer.format = Graphics::PixelFormat::createFormatCLUT8();
 
 	}

@@ -187,7 +187,6 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 
 	// Create an encapsulating surface for the data
 	Graphics::Surface srcImage;
-	srcImage.bytesPerPixel = 4;
 	// TODO: Is the data really in the screen format?
 	srcImage.format = g_system->getScreenFormat();
 	srcImage.pitch = _width * 4;

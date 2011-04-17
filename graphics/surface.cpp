@@ -48,26 +48,12 @@ void Surface::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
 		error("Surface::drawLine: bytesPerPixel must be 1 or 2");
 }
 
-void Surface::create(uint16 width, uint16 height, uint8 bytesPP) {
-	free();
-
-	w = width;
-	h = height;
-	format = PixelFormat();
-	format.bytesPerPixel = bytesPerPixel = bytesPP;
-	pitch = w * bytesPP;
-
-	pixels = calloc(width * height, bytesPP);
-	assert(pixels);
-}
-
 void Surface::create(uint16 width, uint16 height, const PixelFormat &f) {
 	free();
 
 	w = width;
 	h = height;
 	format = f;
-	bytesPerPixel = format.bytesPerPixel;
 	pitch = w * format.bytesPerPixel;
 
 	pixels = calloc(width * height, format.bytesPerPixel);
@@ -79,12 +65,10 @@ void Surface::free() {
 	pixels = 0;
 	w = h = pitch = 0;
 	format = PixelFormat();
-	bytesPerPixel = 0;
 }
 
 void Surface::copyFrom(const Surface &surf) {
-	create(surf.w, surf.h, surf.format.bytesPerPixel);
-	format = surf.format;
+	create(surf.w, surf.h, surf.format);
 	memcpy(pixels, surf.pixels, h * pitch);
 }
 

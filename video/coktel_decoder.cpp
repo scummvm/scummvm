@@ -96,7 +96,6 @@ void CoktelDecoder::setSurfaceMemory(void *mem, uint16 width, uint16 height, uin
 	_surface.h      = height;
 	_surface.pitch  = width * bpp;
 	_surface.pixels = mem;
-	_surface.bytesPerPixel = bpp;
 	// TODO: Check whether it is fine to assume we want the setup PixelFormat.
 	_surface.format = getPixelFormat();
 
@@ -140,7 +139,6 @@ void CoktelDecoder::freeSurface() {
 		_surface.h      = 0;
 		_surface.pitch  = 0;
 		_surface.pixels = 0;
-		_surface.bytesPerPixel = 0;
 		_surface.format = Graphics::PixelFormat();
 	} else
 		_surface.free();
@@ -1813,7 +1811,6 @@ bool VMDDecoder::assessVideoProperties() {
 			_8bppSurface[i].h      = _height;
 			_8bppSurface[i].pitch  = _width * _bytesPerPixel;
 			_8bppSurface[i].pixels = _videoBuffer[i];
-			_8bppSurface[i].bytesPerPixel = 1;
 			_8bppSurface[i].format = Graphics::PixelFormat::createFormatCLUT8();
 		}
 	}

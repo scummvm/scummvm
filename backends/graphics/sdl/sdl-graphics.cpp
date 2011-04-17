@@ -1287,10 +1287,8 @@ Graphics::Surface *SdlGraphicsManager::lockScreen() {
 	_framebuffer.h = _screen->h;
 	_framebuffer.pitch = _screen->pitch;
 #ifdef USE_RGB_COLOR
-	_framebuffer.bytesPerPixel = _screenFormat.bytesPerPixel;
 	_framebuffer.format = _screenFormat;
 #else
-	_framebuffer.bytesPerPixel = 1;
 	_framebuffer.format = Graphics::PixelFormat::createFormatCLUT8();
 #endif
 
@@ -2056,7 +2054,6 @@ void SdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 	dst.w = _osdSurface->w;
 	dst.h = _osdSurface->h;
 	dst.pitch = _osdSurface->pitch;
-	dst.bytesPerPixel = _osdSurface->format->BytesPerPixel;
 	dst.format = Graphics::PixelFormat(_osdSurface->format->BytesPerPixel,
 	                                   8 - _osdSurface->format->Rloss, 8 - _osdSurface->format->Gloss,
 	                                   8 - _osdSurface->format->Bloss, 8 - _osdSurface->format->Aloss,

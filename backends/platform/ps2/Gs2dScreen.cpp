@@ -398,7 +398,6 @@ Graphics::Surface *Gs2dScreen::lockScreen() {
 	_framebuffer.w = _width;
 	_framebuffer.h = _height;
 	_framebuffer.pitch = _width; // -not- _pitch; ! It's EE mem, not Tex
-	_framebuffer.bytesPerPixel = 1;
 	_framebuffer.format = Graphics::PixelFormat::createFormatCLUT8();
 
 	return &_framebuffer;

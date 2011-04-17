@@ -93,7 +93,6 @@ void intro_v1d::introInit() {
 	surf.h = 200;
 	surf.pixels = _vm->_screen->getFrontBuffer();
 	surf.pitch = 320;
-	surf.bytesPerPixel = 1;
 	surf.format = Graphics::PixelFormat::createFormatCLUT8();
 	_vm->_screen->displayList(kDisplayInit);
 }
@@ -248,7 +247,6 @@ void intro_v2d::introInit() {
 	surf.h = 200;
 	surf.pixels = _vm->_screen->getFrontBuffer();
 	surf.pitch = 320;
-	surf.bytesPerPixel = 1;
 	surf.format = Graphics::PixelFormat::createFormatCLUT8();
 
 	char buffer[128];
@@ -295,7 +293,6 @@ void intro_v3d::introInit() {
 	surf.h = 200;
 	surf.pixels = _vm->_screen->getFrontBuffer();
 	surf.pitch = 320;
-	surf.bytesPerPixel = 1;
 	surf.format = Graphics::PixelFormat::createFormatCLUT8();
 
 	char buffer[128];
