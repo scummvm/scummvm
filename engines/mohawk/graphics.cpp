@@ -70,7 +70,7 @@ MohawkSurface::~MohawkSurface() {
 void MohawkSurface::convertToTrueColor() {
 	assert(_surface);
 
-	if (_surface->bytesPerPixel > 1)
+	if (_surface->format.bytesPerPixel > 1)
 		return;
 
 	assert(_palette);
@@ -486,7 +486,7 @@ void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, 
 	debug(3, "\theight: %d", height);
 
 	for (uint16 i = 0; i < height; i++)
-		memcpy(_backBuffer->getBasePtr(dest.left, i + dest.top), surface->getBasePtr(src.left, top + i), width * surface->bytesPerPixel);
+		memcpy(_backBuffer->getBasePtr(dest.left, i + dest.top), surface->getBasePtr(src.left, top + i), width * surface->format.bytesPerPixel);
 }
 
 void MystGraphics::copyImageToScreen(uint16 image, Common::Rect dest) {
@@ -677,7 +677,7 @@ void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uin
 		surface->w = 608 - left;
 
 	for (uint16 i = 0; i < surface->h; i++)
-		memcpy(_mainScreen->getBasePtr(left, i + top), surface->getBasePtr(0, i), surface->w * surface->bytesPerPixel);
+		memcpy(_mainScreen->getBasePtr(left, i + top), surface->getBasePtr(0, i), surface->w * surface->format.bytesPerPixel);
 
 	_dirtyScreen = true;
 }
@@ -972,7 +972,7 @@ void RivenGraphics::drawImageRect(uint16 id, Common::Rect srcRect, Common::Rect 
 	assert(srcRect.width() == dstRect.width() && srcRect.height() == dstRect.height());
 
 	for (uint16 i = 0; i < srcRect.height(); i++)
-		memcpy(_mainScreen->getBasePtr(dstRect.left, i + dstRect.top), surface->getBasePtr(srcRect.left, i + srcRect.top), srcRect.width() * surface->bytesPerPixel);
+		memcpy(_mainScreen->getBasePtr(dstRect.left, i + dstRect.top), surface->getBasePtr(srcRect.left, i + srcRect.top), srcRect.width() * surface->format.bytesPerPixel);
 
 	_dirtyScreen = true;
 }

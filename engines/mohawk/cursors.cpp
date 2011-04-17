@@ -148,7 +148,7 @@ void MystCursorManager::setCursor(uint16 id) {
 	delete clrcStream;
 
 	// Myst ME stores some cursors as 24bpp images instead of 8bpp
-	if (surface->bytesPerPixel == 1) {
+	if (surface->format.bytesPerPixel == 1) {
 		CursorMan.replaceCursor((byte *)surface->pixels, surface->w, surface->h, hotspotX, hotspotY, 0);
 		CursorMan.replaceCursorPalette(mhkSurface->getPalette(), 0, 256);
 	} else {

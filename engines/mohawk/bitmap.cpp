@@ -573,7 +573,7 @@ void MohawkBitmap::drawRaw(Graphics::Surface *surface) {
 				byte b = _data->readByte();
 				byte g = _data->readByte();
 				byte r = _data->readByte();
-				if (surface->bytesPerPixel == 2)
+				if (surface->format.bytesPerPixel == 2)
 					*((uint16 *)surface->getBasePtr(x, y)) = pixelFormat.RGBToColor(r, g, b);
 				else
 					*((uint32 *)surface->getBasePtr(x, y)) = pixelFormat.RGBToColor(r, g, b);
@@ -861,7 +861,7 @@ MohawkSurface *DOSBitmap::decodeImage(Common::SeekableReadStream *stream) {
 }
 
 void DOSBitmap::expandMonochromePlane(Graphics::Surface *surface, Common::SeekableReadStream *rawStream) {
-	assert(surface->bytesPerPixel == 1);
+	assert(surface->format.bytesPerPixel == 1);
 
 	byte *dst = (byte *)surface->pixels;
 
@@ -887,7 +887,7 @@ void DOSBitmap::expandMonochromePlane(Graphics::Surface *surface, Common::Seekab
 	*(dst + j * 4 + dstPixel) = (*(dst + j * 4 + dstPixel) >> 1) | (((temp >> srcBit) & 1) << 3)
 
 void DOSBitmap::expandEGAPlanes(Graphics::Surface *surface, Common::SeekableReadStream *rawStream) {
-	assert(surface->bytesPerPixel == 1);
+	assert(surface->format.bytesPerPixel == 1);
 
 	// Note that the image is in EGA planar form and not just standard 4bpp
 	// This seems to contradict the PoP specs which seem to do

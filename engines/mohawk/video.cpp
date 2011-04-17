@@ -219,7 +219,7 @@ bool VideoManager::updateMovies() {
 				// Convert from 8bpp to the current screen format if necessary
 				Graphics::PixelFormat pixelFormat = _vm->_system->getScreenFormat();
 
-				if (frame->bytesPerPixel == 1) {
+				if (frame->format.bytesPerPixel == 1) {
 					if (pixelFormat.bytesPerPixel == 1) {
 						if (_videoStreams[i]->hasDirtyPalette())
 							_videoStreams[i]->setSystemPalette();
