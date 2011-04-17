@@ -118,6 +118,7 @@ public:
 	}
 	M4Surface(int width_, int height_, byte *srcPixels, int pitch_) {
 		bytesPerPixel = 1;
+		format = Graphics::PixelFormat::createFormatCLUT8();
 		w = width_;
 		h = height_;
 		pitch = pitch_;
