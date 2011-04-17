@@ -386,6 +386,7 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 		// s.h = 17 for FM-TOWNS Loom Japanese. Fixes bug #1166917
 		assert(s.w <= 16 && s.h <= 17);
 		s.bytesPerPixel = 1;
+		s.format = Graphics::PixelFormat::createFormatCLUT8();
 
 		_charset->drawChar(chr, s, 0, 0);
 
