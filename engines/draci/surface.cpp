@@ -29,7 +29,7 @@
 namespace Draci {
 
 Surface::Surface(int width, int height) {
-	this->create(width, height, 1);
+	this->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	this->markClean();
 	_transparentColor = kDefaultTransparent;
 }
