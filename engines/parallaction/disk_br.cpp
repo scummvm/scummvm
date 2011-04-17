@@ -227,7 +227,7 @@ void DosDisk_br::loadBitmap(Common::SeekableReadStream &stream, Graphics::Surfac
 		stream.skip(768);
 	}
 
-	surf.create(width, height, 1);
+	surf.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	stream.read(surf.pixels, width * height);
 }
 
