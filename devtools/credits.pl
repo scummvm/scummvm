@@ -977,7 +977,7 @@ begin_credits("Credits");
 		  add_person("David Jensen", "Tyst", "SVG logo conversion");
 		  add_person("Jean Marc Gimenez", "", "ScummVM logo");
 		  add_person("", "Raina", "ScummVM forum buttons");
-		  add_person("William Claydon", "billwashere", "Skins for doxygen and wiki");
+		  add_person("William Claydon", "billwashere", "Skins for doxygen, buildbot and wiki");
 	  end_persons();
 	end_section();
 
