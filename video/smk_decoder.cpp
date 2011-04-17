@@ -483,7 +483,7 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	_surface = new Graphics::Surface();
 
 	// Height needs to be doubled if we have flags (Y-interlaced or Y-doubled)
-	_surface->create(width, height * (_header.flags ? 2 : 1), 1);
+	_surface->create(width, height * (_header.flags ? 2 : 1), Graphics::PixelFormat::createFormatCLUT8());
 
 	memset(_palette, 0, 3 * 256);
 	return true;

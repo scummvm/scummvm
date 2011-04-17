@@ -51,7 +51,7 @@ Indeo3Decoder::Indeo3Decoder(uint16 width, uint16 height) : _ModPred(0), _correc
 	_pixelFormat = g_system->getScreenFormat();
 
 	_surface = new Graphics::Surface;
-	_surface->create(width, height, _pixelFormat.bytesPerPixel);
+	_surface->create(width, height, _pixelFormat);
 
 	buildModPred();
 	allocFrames();

@@ -526,7 +526,7 @@ void QuickTimeDecoder::init() {
 		if (getScaleFactorX() != 1 || getScaleFactorY() != 1) {
 			// We have to initialize the scaled surface
 			_scaledSurface = new Graphics::Surface();
-			_scaledSurface->create(getWidth(), getHeight(), getPixelFormat().bytesPerPixel);
+			_scaledSurface->create(getWidth(), getHeight(), getPixelFormat());
 		}
 	}
 }

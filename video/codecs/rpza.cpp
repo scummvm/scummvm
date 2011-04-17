@@ -44,7 +44,7 @@ RPZADecoder::RPZADecoder(uint16 width, uint16 height) : Codec() {
 	debug(2, "RPZA corrected width: %d", width);
 
 	_surface = new Graphics::Surface();
-	_surface->create(width, height, _pixelFormat.bytesPerPixel);
+	_surface->create(width, height, _pixelFormat);
 }
 
 RPZADecoder::~RPZADecoder() {

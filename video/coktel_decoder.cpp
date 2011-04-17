@@ -127,7 +127,7 @@ void CoktelDecoder::createSurface() {
 		return;
 
 	if ((_width > 0) && (_height > 0))
-		_surface.create(_width, _height, getPixelFormat().bytesPerPixel);
+		_surface.create(_width, _height, getPixelFormat());
 
 	_ownSurface = true;
 }

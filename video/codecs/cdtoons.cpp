@@ -54,7 +54,7 @@ CDToonsDecoder::CDToonsDecoder(uint16 width, uint16 height) {
 	debugN(5, "CDToons: width %d, height %d\n", width, height);
 
 	_surface = new Graphics::Surface();
-	_surface->create(width, height, 1);
+	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 	_currentPaletteId = 0;
 	memset(_palette, 0, 256 * 3);
