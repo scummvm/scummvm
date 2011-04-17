@@ -4864,7 +4864,10 @@ void Scene2310::postInit(SceneObjectList *OwnerList) {
 	_globals->_events.setCursor(CURSOR_WALK);
 
 	_wireIndex = 5;
-	_pageIndex = _globals->_randomSource.getRandomNumber(19) + 1;
+	if (_vm->getFeatures() & GF_CD)
+		_pageIndex = _globals->_randomSource.getRandomNumber(14) + 2;
+	else
+		_pageIndex = _globals->_randomSource.getRandomNumber(19) + 1;
 	signal();
 }
 
