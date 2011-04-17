@@ -558,7 +558,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 		}
 		int32 countTasks = restoreSint32();
 		if (countTasks) {
-			lua_Task *task;
+			lua_Task *task = NULL;
 			for (i = 0; i < countTasks; i++) {
 				if (i == 0) {
 					task = state->task = luaM_new(lua_Task);
