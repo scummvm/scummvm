@@ -3096,7 +3096,7 @@ void Scene2222::postInit(SceneObjectList *OwnerList) {
 	_hotspot5.postInit();
 	_hotspot5.setVisage(3401);
 	_hotspot5.setStrip2(2);
-	_hotspot5._frame = 5;
+	_hotspot5.setFrame(5);
 	_hotspot5.animate(ANIM_MODE_2, 0);
 
 	if (_globals->_sceneManager._previousScene == 2100) {

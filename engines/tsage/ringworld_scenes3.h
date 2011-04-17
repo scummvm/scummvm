@@ -462,8 +462,6 @@ class Scene2222 : public Scene {
 		virtual void signal();
 	};
 
-	/* Hotspots */
-
 public:
 	SoundHandler _soundHandler;
 	SpeakerSText _speakerSText;
