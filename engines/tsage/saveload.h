@@ -51,7 +51,13 @@ struct tSageSavegameHeader {
 
 /*--------------------------------------------------------------------------*/
 
-#define SYNC_POINTER(x) s.syncPointer((SavedObject **)&x)
+// FIXME: workaround to supress spurious strict-alias warnings on older GCC
+// versions. this should be resolved with the savegame rewrite
+#define SYNC_POINTER(x) do { \
+	SavedObject *y = (SavedObject *)x; \
+	s.syncPointer(&y); \
+} while (false)
+
 #define SYNC_ENUM(FIELD, TYPE) int v_##FIELD = (int)FIELD; s.syncAsUint16LE(v_##FIELD); \
 	if (s.isLoading()) FIELD = (TYPE)v_##FIELD;
 
