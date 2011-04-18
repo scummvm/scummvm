@@ -66,7 +66,7 @@ enum ErrorCode {
 	kWritingFailed,				///< Failure to write data -- disk full?
 
 	// The following are used by --list-saves
-	kPluginNotFound,			///< Failed to find plugin to handle tager
+	kPluginNotFound,			///< Failed to find plugin to handle target
 	kPluginNotSupportSaves,		///< Failed if plugin does not support saves
 	kNoSavesError,				///< There are no saves to show
 
