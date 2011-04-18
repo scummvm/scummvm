@@ -1162,7 +1162,7 @@ Common::Error ScummEngine::init() {
 				warning("Starting game without the required 16bit color support.\nYou may experience color glitches");
 				initGraphics(screenWidth, screenHeight, (screenWidth > 320));
 			} else {
-				error("16bit color support is required for this game");
+				return Common::Error(Common::kUnsupportedColorMode, "16bit color support is required for this game");
 			}
 #endif
 		} else {
