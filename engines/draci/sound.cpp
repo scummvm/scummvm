@@ -417,15 +417,16 @@ void Sound::setVolume() {
 	} else {
 		_muteSound = _muteVoice = true;
 	}
+
 	if (ConfMan.getBool("mute")) {
 		_muteSound = _muteVoice = true;
 	}
 
-	const int soundVolume = _muteSound ? 0: ConfMan.getInt("sfx_volume");
-	const int speechVolume = _muteVoice ? 0 : ConfMan.getInt("speech_volume");
+	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, _muteSound);
+	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, _muteVoice);
 
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolume);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, speechVolume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 }
 
 } // End of namespace Draci
