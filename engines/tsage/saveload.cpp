@@ -261,16 +261,8 @@ void Saver::writeSavegameHeader(Common::OutSaveFile *out, tSageSavegameHeader &h
 	out->write(header.saveName.c_str(), header.saveName.size() + 1);
 
 	// Get the active palette
-	uint32 workPal[256];
 	uint8 thumbPalette[256 * 3];
-	const byte *srcP = (const byte *)&workPal[0];
-	byte *destP = &thumbPalette[0];
-	g_system->getPaletteManager()->grabPalette((byte *)workPal, 0, 256);
-	for (int idx = 0; idx < 256; ++idx, ++srcP) {
-		*destP++ = *srcP++;
-		*destP++ = *srcP++;
-		*destP++ = *srcP++;
-	}
+	g_system->getPaletteManager()->grabPalette(thumbPalette, 0, 256);
 
 	// Create a thumbnail and save it
 	Graphics::Surface *thumb = new Graphics::Surface();
