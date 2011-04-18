@@ -141,32 +141,47 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 5300: return new Scene5300();
 
 	/* Scene group 8 */
-	// Scene 7000: Landing
+	// Landing near beach
 	case 7000: return new Scene7000();
-	// Scene 7100: swimming under water
+	// Underwater: swimming
 	case 7100: return new Scene7100();
-	// Scene 7200: Entering the underwater cave
+	// Underwater: Entering the cave
 	case 7200: return new Scene7200();
-	// Scene 7300: Discussion with Lord Poria
+	// Underwater: Lord Poria
 	case 7300: return new Scene7300();
+	// Floating Buildings: Outside
 	case 7600: return new Scene7600();
+	// Floating Buildings: In the lab
 	case 7700: return new Scene7700();
 
 	/* Scene group 10 */
+	// Near beach: Slave washing clothes
 	case 9100: return new Scene9100();
+	// Castle: Outside the bulwarks
 	case 9150: return new Scene9150();
+	// Castle: Near the fountain
 	case 9200: return new Scene9200();
+	// Castle: In front of a large guarded door
 	case 9300: return new Scene9300();
+	// Castle: In a hallway
 	case 9350: return new Scene9350();
+	// Castle: In a hallway
 	case 9360: return new Scene9360();
+	// Castle: Black-Smith room
 	case 9400: return new Scene9400();
+	// Castle: Dining room
 	case 9450: return new Scene9450();
+	// Castle: Bedroom
 	case 9500: return new Scene9500();
+	// Castle: Balcony
 	case 9700: return new Scene9700();
+	// Castle: In the garden
 	case 9750: return new Scene9750();
+	// Castle: Dressing room
 	case 9850: return new Scene9850();
-	// Scene 9900: Ending
+	// Ending
 	case 9900: return new Scene9900();
+	// Space travel
 	case 9999: return new Scene9999();
 
 	default:
