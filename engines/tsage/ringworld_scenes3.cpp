@@ -5798,7 +5798,7 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 		_globals->_sceneItems.push_back(&_hotspot8);
 	}
 
-	_area1.setup(2100, 2, 1, 2150);
+	_area1.setup(2100, 2, 1, 2100);
 	_area1._pt = Common::Point(200, 31);
 	_area2.setup(2153, 3, 1, 2150);
 	_area2._pt = Common::Point(200, 50);
@@ -5812,13 +5812,16 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 		_hotspot11.setVisage(2705);
 		_hotspot11._strip = 3;
 		_hotspot11.setPosition(Common::Point(510, 156));
+		_globals->_sceneItems.push_back(&_hotspot11);
 		_hotspot11._state = 0;
 		_hotspot11.setAction(&_action1);
-
-		_globals->_sceneItems.push_back(&_hotspot11);
 	}
 
 	_globals->_player.postInit();
+	if (_globals->getFlag(13))
+		_globals->_player.setVisage(2170);
+	else
+		_globals->_player.setVisage(0);
 	_globals->_player.animate(ANIM_MODE_1, NULL);
 	_globals->_player.setObjectWrapper(new SceneObjectWrapper());
 	_globals->_player.setPosition(Common::Point(320, 79));
