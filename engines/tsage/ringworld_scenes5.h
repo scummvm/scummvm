@@ -89,7 +89,7 @@ class Scene4000 : public Scene {
 	};
 
 	/* Hotspots */
-	class Hotspot7 : public SceneObject {
+	class Miranda : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -103,15 +103,15 @@ class Scene4000 : public Scene {
 		}
 		virtual void doAction(int action);
 	};
-	class Hotspot9 : public SceneObject {
+	class GuardRock : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot10 : public SceneObject {
+	class Ladder : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot12 : public SceneObject {
+	class TheTech : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -151,13 +151,13 @@ public:
 	SpeakerCHFR _speakerCHFR;
 	SpeakerQL _speakerQL;
 	SpeakerCHFText _speakerCHFText;
-	SceneObject _hotspot1, _hotspot2, _hotspot3, _hotspot4, _hotspot5, _hotspot6;
-	Hotspot7 _hotspot7;
+	SceneObject _smoke1, _hotspot2, _lander, _olo, _hotspot5, _rope;
+	Miranda _miranda;
 	Hotspot8 _hotspot8;
-	Hotspot9 _hotspot9;
-	Hotspot10 _hotspot10;
+	GuardRock _guardRock;
+	Ladder _ladder;
 	DisplayHotspot _hotspot11;
-	Hotspot12 _hotspot12;
+	TheTech _theTech;
 	Hotspot13 _hotspot13;
 	Hotspot _hotspot14, _hotspot15, _hotspot16;
 	Hotspot17 _hotspot17;
@@ -165,7 +165,7 @@ public:
 	DisplayHotspot _hotspot19, _hotspot20, _hotspot21, _hotspot22;
 	Hotspot23 _hotspot23;
 	DisplayHotspot _hotspot24, _hotspot25, _hotspot26;
-	SceneObject _hotspot27;
+	SceneObject _smoke2;
 	Action1 _action1;
 	Action2 _action2;
 	Action3 _action3;
