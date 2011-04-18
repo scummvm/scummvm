@@ -84,7 +84,7 @@ Error::Error(ErrorCode code)
 }
 
 Error::Error(ErrorCode code, const String &desc)
-	: _code(code), _desc(errorToString(code) + ": " + desc) {
+	: _code(code), _desc(errorToString(code) + " (" + desc + ")") {
 }
 
 

@@ -93,8 +93,8 @@ public:
 
 	/**
 	 * Construct a new Error with the specified error code and an augmented
-	 * error message. Specifically, the provided extra text is appended
-	 * to the default message, with ": " inserted in between.
+	 * error message. Specifically, the provided extra text is suitably
+	 * appended to the default message.
 	 */
 	Error(ErrorCode code, const String &extra);
 
