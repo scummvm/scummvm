@@ -271,15 +271,15 @@ class Scene4045 : public Scene {
 	};
 
 	/* Hotspots */
-	class Hotspot1 : public SceneObject {
+	class OlloStand : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot2 : public SceneObject {
+	class Miranda : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot6 : public SceneObject {
+	class Necklace : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -292,11 +292,11 @@ public:
 	SpeakerPText _speakerPText;
 	SpeakerQText _speakerQText;
 	SpeakerQL _speakerQL;
-	Hotspot1 _hotspot1;
-	Hotspot2 _hotspot2;
-	DisplayHotspot _hotspot3;
-	SceneObject _hotspot4, _hotspot5;
-	Hotspot6 _hotspot6;
+	OlloStand _olloStand;
+	Miranda _miranda;
+	DisplayHotspot _flame;
+	SceneObject _hotspot4, _olloFace;
+	Necklace _necklace;
 	DisplayHotspot _hotspot7, _hotspot8, _hotspot9, _hotspot10;
 	DisplayHotspot _hotspot11, _hotspot12, _hotspot13, _hotspot14;
 	Action1 _action1;

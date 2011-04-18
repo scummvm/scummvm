@@ -1642,7 +1642,7 @@ void Scene4045::Action1::signal() {
 		scene->_stripManager.start(4040, this, scene);
 		break;
 	case 2:
-		scene->_hotspot5.animate(ANIM_MODE_NONE, NULL);
+		scene->_olloFace.animate(ANIM_MODE_NONE, NULL);
 		scene->_hotspot4.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
@@ -1674,7 +1674,7 @@ void Scene4045::Action2::signal() {
 		scene->_stripManager.start(_globals->_stripNum, this, scene);
 		break;
 	case 2:
-		scene->_hotspot5.animate(ANIM_MODE_NONE, NULL);
+		scene->_olloFace.animate(ANIM_MODE_NONE, NULL);
 		setDelay(10);
 		break;
 	case 3:
@@ -1705,7 +1705,7 @@ void Scene4045::Action3::signal() {
 		break;
 	case 2:
 		scene->_hotspot4.animate(ANIM_MODE_6, NULL);
-		scene->_hotspot5.animate(ANIM_MODE_NONE, NULL);
+		scene->_olloFace.animate(ANIM_MODE_NONE, NULL);
 		ADD_MOVER(_globals->_player, 91, 1264);
 		break;
 	case 3:
@@ -1717,7 +1717,7 @@ void Scene4045::Action3::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene4045::Hotspot1::doAction(int action) {
+void Scene4045::OlloStand::doAction(int action) {
 	Scene4045 *scene = (Scene4045 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -1759,7 +1759,7 @@ void Scene4045::Hotspot1::doAction(int action) {
 	}
 }
 
-void Scene4045::Hotspot2::doAction(int action) {
+void Scene4045::Miranda::doAction(int action) {
 	Scene4045 *scene = (Scene4045 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -1777,7 +1777,7 @@ void Scene4045::Hotspot2::doAction(int action) {
 	}
 }
 
-void Scene4045::Hotspot6::doAction(int action) {
+void Scene4045::Necklace::doAction(int action) {
 	Scene4045 *scene = (Scene4045 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -1793,7 +1793,7 @@ void Scene4045::Hotspot6::doAction(int action) {
 		} else {
 			scene->_sceneMode = 4047;
 			_globals->_player.disableControl();
-			scene->setAction(&scene->_sequenceManager, scene, 4047, &_globals->_player, &scene->_hotspot1, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 4047, &_globals->_player, &scene->_olloStand, NULL);
 		}
 		break;
 	default:
@@ -1805,15 +1805,15 @@ void Scene4045::Hotspot6::doAction(int action) {
 /*--------------------------------------------------------------------------*/
 
 Scene4045::Scene4045() :
-		_hotspot3(0, CURSOR_LOOK, 4045, 1, CURSOR_USE, 4100, 21, LIST_END),
-		_hotspot7(9, CURSOR_LOOK, 4045, 0, CURSOR_USE, 4045, 15, LIST_END),
-		_hotspot8(10, CURSOR_LOOK, 4045, 2, LIST_END),
-		_hotspot9(11, CURSOR_LOOK, 4045, 3, CURSOR_USE, 4045, 15, LIST_END),
-		_hotspot10(12, CURSOR_LOOK, 4045, 4, CURSOR_USE, 4045, 19, LIST_END),
-		_hotspot11(13, CURSOR_LOOK, 4045, 6, CURSOR_USE, 4045, 15, LIST_END),
-		_hotspot12(14, CURSOR_LOOK, 4045, 7, CURSOR_USE, 4045, 29, LIST_END),
-		_hotspot13(15, CURSOR_LOOK, 4045, 8, CURSOR_USE, 4045, 19, LIST_END),
-		_hotspot14(0, CURSOR_LOOK, 4045, 10, LIST_END) {
+	_flame(0, CURSOR_LOOK, 4045, 1, CURSOR_USE, 4100, 21, LIST_END),
+	_hotspot7(9, CURSOR_LOOK, 4045, 0, CURSOR_USE, 4045, 15, LIST_END),
+	_hotspot8(10, CURSOR_LOOK, 4045, 2, LIST_END),
+	_hotspot9(11, CURSOR_LOOK, 4045, 3, CURSOR_USE, 4045, 15, LIST_END),
+	_hotspot10(12, CURSOR_LOOK, 4045, 4, CURSOR_USE, 4045, 19, LIST_END),
+	_hotspot11(13, CURSOR_LOOK, 4045, 6, CURSOR_USE, 4045, 15, LIST_END),
+	_hotspot12(14, CURSOR_LOOK, 4045, 7, CURSOR_USE, 4045, 29, LIST_END),
+	_hotspot13(15, CURSOR_LOOK, 4045, 8, CURSOR_USE, 4045, 19, LIST_END),
+	_hotspot14(0, CURSOR_LOOK, 4045, 10, LIST_END) {
 
 	_hotspot14.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 }
@@ -1833,12 +1833,12 @@ void Scene4045::postInit(SceneObjectList *OwnerList) {
 
 	_speakerQText._textPos.y = 140;
 
-	_hotspot3.postInit();
-	_hotspot3.setVisage(4045);
-	_hotspot3.setPosition(Common::Point(47, 111));
-	_hotspot3.animate(ANIM_MODE_2, NULL);
-	_hotspot3.setPriority2(156);
-	_globals->_sceneItems.push_back(&_hotspot3);
+	_flame.postInit();
+	_flame.setVisage(4045);
+	_flame.setPosition(Common::Point(47, 111));
+	_flame.animate(ANIM_MODE_2, NULL);
+	_flame.setPriority2(156);
+	_globals->_sceneItems.push_back(&_flame);
 
 	_globals->_player.postInit();
 	_globals->_player.setVisage(4200);
@@ -1846,65 +1846,67 @@ void Scene4045::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.animate(ANIM_MODE_1, NULL);
 	_globals->_player._moveDiff = Common::Point(7, 4);
 
-	_hotspot1.postInit();
-	_hotspot1.setVisage(4051);
+	_olloStand.postInit();
+	_olloStand.setVisage(4051);
 
-	_hotspot5.postInit();
-	_hotspot5.setVisage(4051);
-	_hotspot5.setStrip(4);
-	_hotspot5.setPriority2(152);
+	_olloFace.postInit();
+	_olloFace.setVisage(4051);
+	_olloFace.setStrip(4);
+	_olloFace.setPriority2(152);
 
 	if(_globals->_sceneManager._previousScene == 4050) {
 		_globals->_soundHandler.startSound(155);
 		_globals->_player.setPosition(Common::Point(72, 128));
 		_globals->_player.enableControl();
 
-		_hotspot1.setStrip(5);
-		_hotspot1.setPosition(Common::Point(173, 99));
-		_hotspot1._numFrames = 1;
-		_hotspot1.animate(ANIM_MODE_2, NULL);
+		_olloStand.setStrip(5);
+		_olloStand.setPosition(Common::Point(173, 99));
+		_olloStand._numFrames = 1;
+		_olloStand.animate(ANIM_MODE_2, NULL);
 
-		_hotspot5.setPosition(Common::Point(177, 40));
+		_olloFace.setPosition(Common::Point(177, 40));
 
 		if (_globals->_inventory._peg._sceneNumber == 4045) {
-			_hotspot6.postInit();
-			_hotspot6.setVisage(4045);
-			_hotspot6.setStrip(2);
-			_hotspot6.setPosition(Common::Point(108, 82));
-			_globals->_sceneItems.push_back(&_hotspot6);
+			_necklace.postInit();
+			_necklace.setVisage(4045);
+			_necklace.setStrip(2);
+			_necklace.setPosition(Common::Point(108, 82));
+			_globals->_sceneItems.push_back(&_necklace);
 		}
 	} else {
 		_globals->_player.setPosition(Common::Point(108, 192));
 		_globals->_player.setStrip(4);
 
 		if (!_globals->getFlag(36) && !_globals->getFlag(43)) {
-			_hotspot2.postInit();
-			_hotspot2.setVisage(4102);
-			_hotspot2.animate(ANIM_MODE_NONE, NULL);
-			_hotspot2.setStrip(3);
-			_hotspot2.changeZoom(-1);
-			_hotspot2.setPosition(Common::Point(66, 209));
-			_globals->_sceneItems.push_back(&_hotspot2);
+			_miranda.postInit();
+			_miranda.setVisage(4102);
+			_miranda.animate(ANIM_MODE_NONE, NULL);
+			_miranda.setStrip(3);
+			_miranda.setFrame(2);
+			_miranda.changeZoom(-1);
+			
+			_miranda.setPosition(Common::Point(66, 209));
+			_globals->_sceneItems.push_back(&_miranda);
 		}
 
 		if (_globals->getFlag(31)) {
-			_hotspot1.setVisage(4051);
-			_hotspot1.setStrip(5);
-			_hotspot1.setPosition(Common::Point(173, 99));
-			_hotspot1._numFrames = 1;
-			_hotspot1.animate(ANIM_MODE_2, NULL);
+			_olloStand.setVisage(4051);
+			_olloStand.setStrip(5);
+			_olloStand.setPosition(Common::Point(173, 99));
+			_olloStand._numFrames = 1;
+			_olloStand.animate(ANIM_MODE_2, NULL);
 
-			_hotspot5.setPosition(Common::Point(177, 40));
+			_olloFace.setPosition(Common::Point(177, 40));
 
 			if (_globals->_inventory._peg._sceneNumber == 4045) {
-				_hotspot6.postInit();
-				_hotspot6.setVisage(4045);
-				_hotspot6.setStrip(2);
-				_hotspot6.setPosition(Common::Point(108, 82));
-				_globals->_sceneItems.push_back(&_hotspot6);
+				_necklace.postInit();
+				_necklace.setVisage(4045);
+				_necklace.setStrip(2);
+				_necklace.setPosition(Common::Point(108, 82));
+				_globals->_sceneItems.push_back(&_necklace);
 			}
 		} else {
-			_hotspot1.setPosition(Common::Point(186, 149));
+			_olloStand.setPosition(Common::Point(186, 149));
 
 			_hotspot4.postInit();
 			_hotspot4.setVisage(4051);
@@ -1912,7 +1914,7 @@ void Scene4045::postInit(SceneObjectList *OwnerList) {
 			_hotspot4.setPriority2(152);
 			_hotspot4.setPosition(Common::Point(202, 80));
 
-			_hotspot5.setPosition(Common::Point(192, 77));
+			_olloFace.setPosition(Common::Point(192, 77));
 			_globals->setFlag(31);
 			setAction(&_action1);
 
@@ -1920,17 +1922,17 @@ void Scene4045::postInit(SceneObjectList *OwnerList) {
 		}
 	}
 
-	_globals->_sceneItems.addItems(&_hotspot1, &_hotspot7, &_hotspot8, &_hotspot9, &_hotspot10,
+	_globals->_sceneItems.addItems(&_olloStand, &_hotspot7, &_hotspot8, &_hotspot9, &_hotspot10,
 		&_hotspot13, &_hotspot11, &_hotspot12, &_hotspot14, NULL);
 }
 
 void Scene4045::stripCallback(int v) {
 	switch (v) {
 	case 1:
-		_hotspot5.animate(ANIM_MODE_7, 0, NULL);
+		_olloFace.animate(ANIM_MODE_7, 0, NULL);
 		break;
 	case 2:
-		_hotspot5.animate(ANIM_MODE_NONE, NULL);
+		_olloFace.animate(ANIM_MODE_NONE, NULL);
 		break;
 	}
 }
@@ -1939,7 +1941,7 @@ void Scene4045::signal() {
 	switch (_sceneMode) {
 	case 4046:
 	case 4047:
-		_hotspot5.animate(ANIM_MODE_NONE, NULL);
+		_olloFace.animate(ANIM_MODE_NONE, NULL);
 		break;
 	case 4050:
 		_globals->_sceneManager.changeScene(4000);
@@ -1954,11 +1956,11 @@ void Scene4045::dispatch() {
 	if (!_action) {
 		if (_globals->_player.getRegionIndex() == 8) {
 			_globals->_player.addMover(NULL);
-			if (_hotspot1._strip == 1) {
+			if (_olloStand._strip == 1) {
 				_globals->_player.disableControl();
 				_sceneMode = 4046;
-				_hotspot1._numFrames = 10;
-				setAction(&_sequenceManager, this, 4046, &_globals->_player, &_hotspot1, NULL);
+				_olloStand._numFrames = 10;
+				setAction(&_sequenceManager, this, 4046, &_globals->_player, &_olloStand, NULL);
 			} else {
 				setAction(&_action3);
 			}
