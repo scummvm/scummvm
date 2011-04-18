@@ -108,11 +108,11 @@ private:
 	Common::Array<GfxInvImage> _images;
 	GfxButton _btnOk, _btnLook;
 public:
-	InventoryDialog(bool allFlag = false);
+	InventoryDialog();
 	virtual ~InventoryDialog() {}
 	void execute();
 
-	static void show(bool allFlag = false);
+	static void show();
 };
 
 /*--------------------------------------------------------------------------*/
