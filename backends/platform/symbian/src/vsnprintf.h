@@ -1,8 +1,11 @@
 /*
- * This is the vsnprintf for scummvm/symbian implementation from the original snprintf.c,
- * all support functions has been removed and vsnprintf renamed to symbian_vsnprintf
+ * This is the vsnprintf for scummvm/symbian implementation from the original
+ * snprintf.c, all support functions has been removed and vsnprintf renamed to
+ * symbian_vsnprintf
+ * According to the homepage this function may be licensed under either the
+ * Frontier Artistic License or the GPL.
+ *
  * snprintf.c - a portable implementation of snprintf
- * According to the homepage this function could be licensed as either Frontier Aritistic or GPL.
  *
  * AUTHOR
  *   Mark Martinec <mark.martinec@ijs.si>, April 1999.
