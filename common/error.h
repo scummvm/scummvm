@@ -39,11 +39,10 @@ namespace Common {
 /**
  * Error codes which may be reported by plugins under various circumstances.
  *
- * @todo Clarify the names; add more codes, resp. verify all existing ones are acutally useful.
- *       Also, try to avoid overlap.
- * @todo Maybe introduce a naming convention? E.g. k-NOUN/ACTION-CONDITION-Error, so
- *       kPathInvalidError would be correct, but these would not be: kInvalidPath,
- *       kPathInvalid, kPathIsInvalid, kInvalidPathError
+ * @note Error names should follow the pattern k-NOUN/ACTION-CONDITION-Error.
+ *       So kPathInvalidError would be correct, but these would not be:
+ *       kInvalidPath, kPathInvalid, kPathIsInvalid, kInvalidPathError.
+ * @todo Adjust all error codes to comply with these conventions.
  */
 enum ErrorCode {
 	kNoError = 0,				///< No error occurred
@@ -69,6 +68,7 @@ enum ErrorCode {
 	kNoSavesError,				///< There are no saves to show
 
 	kArgumentNotProcessed,		///< Used in command line parsing
+
 	kUnknownError				///< Catch-all error, used if no other error code matches
 };
 
