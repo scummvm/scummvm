@@ -41,13 +41,13 @@ static String errorToString(ErrorCode errorCode) {
 	case kNoError:
 		return _s("No error");
 	case kInvalidPathError:
-		return _s("Invalid Path");
+		return _s("Invalid path");
 	case kNoGameDataFoundError:
-		return _s("Game Data not found");
+		return _s("Game data not found");
 	case kUnsupportedGameidError:
-		return _s("Game Id not supported");
+		return _s("Game id not supported");
 	case kUnsupportedColorMode:
-		return _s("Unsupported Color Mode");
+		return _s("Unsupported color mode");
 
 	case kReadPermissionDenied:
 		return _s("Read permission denied");
@@ -56,7 +56,7 @@ static String errorToString(ErrorCode errorCode) {
 
 	// The following three overlap a bit with kInvalidPathError and each other. Which to keep?
 	case kPathDoesNotExist:
-		return _s("Path not exists");
+		return _s("Path does not exist");
 	case kPathNotDirectory:
 		return _s("Path not a directory");
 	case kPathNotFile:
@@ -65,7 +65,7 @@ static String errorToString(ErrorCode errorCode) {
 	case kCreatingFileFailed:
 		return _s("Cannot create file");
 	case kReadingFailed:
-		return _s("Reading failed");
+		return _s("Reading data failed");
 	case kWritingFailed:
 		return _s("Writing data failed");
 
@@ -75,7 +75,7 @@ static String errorToString(ErrorCode errorCode) {
 	case kNoSavesError:
 	case kArgumentNotProcessed:
 	default:
-		return _s("Unknown Error");
+		return _s("Unknown error");
 	}
 }
 
