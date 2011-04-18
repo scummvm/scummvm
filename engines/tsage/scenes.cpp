@@ -232,6 +232,7 @@ Scene::Scene() : _sceneBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
 			_backgroundBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
 	_sceneMode = 0;
 	_oldSceneBounds = Rect(4000, 4000, 4100, 4100);
+	Common::set_to(&_zoomPercents[0], &_zoomPercents[256], 0);
 }
 
 Scene::~Scene() {
