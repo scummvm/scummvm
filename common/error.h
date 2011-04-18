@@ -26,6 +26,8 @@
 #ifndef COMMON_ERROR_H
 #define COMMON_ERROR_H
 
+#include "common/str.h"
+
 namespace Common {
 
 /**
@@ -43,7 +45,7 @@ namespace Common {
  *       kPathInvalidError would be correct, but these would not be: kInvalidPath,
  *       kPathInvalid, kPathIsInvalid, kInvalidPathError
  */
-enum Error {
+enum ErrorCode {
 	kNoError = 0,				///< No error occurred
 	kInvalidPathError,			///< Engine initialization: Invalid game path was passed
 	kNoGameDataFoundError,		///< Engine initialization: No game data was found in the specified location
@@ -73,12 +75,39 @@ enum Error {
 };
 
 /**
- * Maps an error code to equivalent string description.
- *
- * @param error error code to be converted
- * @return a pointer to string description of the error
+ * An Error instance pairs an error code with string description providing more
+ * details about the error. For every error code, a default description is
+ * provided, but it is possible to optionally augment that description with
+ * extra information when creating a new Error instance.
  */
-const char *errorToString(Error error);
+class Error {
+protected:
+	ErrorCode _code;
+	String _desc;
+public:
+	/**
+	 * Construct a new Error with the specified error code and the default
+	 * error message.
+	 */
+	Error(ErrorCode code = kUnknownError);
+
+	/**
+	 * Construct a new Error with the specified error code and an augmented
+	 * error message. Specifically, the provided extra text is appended
+	 * to the default message, with ": " inserted in between.
+	 */
+	Error(ErrorCode code, const String &extra);
+
+	/**
+	 * Get the description of this error.
+	 */
+	const String &getDesc() const { return _desc; }
+
+	/**
+	 * Get the error code of this error.
+	 */
+	ErrorCode getCode() const { return _code; }
+};
 
 } // End of namespace Common
 

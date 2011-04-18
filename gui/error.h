@@ -36,7 +36,7 @@ namespace GUI {
  * @param error error code
  * @param extraText extra text to be displayed in addition to default string description(optional)
  */
-void displayErrorDialog(Common::Error error, const char *extraText = "");
+void displayErrorDialog(const Common::Error &error, const char *extraText = "");
 
 /**
  * Displays an error dialog for a given message.

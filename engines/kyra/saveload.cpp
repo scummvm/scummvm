@@ -257,7 +257,9 @@ void KyraEngine_v1::checkAutosave() {
 }
 
 void KyraEngine_v1::loadGameStateCheck(int slot) {
-	if (loadGameState(slot) != Common::kNoError) {
+	// FIXME: Instead of throwing away the error returned by
+	// loadGameState, we should use it / augment it.
+	if (loadGameState(slot).getCode() != Common::kNoError) {
 		const char *filename = getSavegameFilename(slot);
 		Common::String errorMessage = "Could not load savegame: '";
 		errorMessage += filename;

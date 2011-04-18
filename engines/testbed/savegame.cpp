@@ -138,9 +138,9 @@ TestExitStatus SaveGametests::testListingSavefile() {
 
 	Common::Error error = saveFileMan->getError();
 
-	if (error != Common::kNoError) {
+	if (error.getCode() != Common::kNoError) {
 		// Abort. Some Error in writing files
-		Testsuite::logDetailedPrintf("Error while creating savefiles: %s\n", Common::errorToString(error));
+		Testsuite::logDetailedPrintf("Error while creating savefiles: %s\n", error.getDesc().c_str());
 		return kTestFailed;
 	}
 
@@ -177,7 +177,7 @@ TestExitStatus SaveGametests::testErrorMessages() {
 	readAndVerifyData("tBedSomeNonExistentSaveFile.0", "File doesn't exists!");
 
 	Common::Error error = saveFileMan->getError();
-	if (error == Common::kNoError) {
+	if (error.getCode() == Common::kNoError) {
 		// blunder! how come?
 		Testsuite::logDetailedPrintf("SaveFileMan.getError() failed\n");
 		return kTestFailed;

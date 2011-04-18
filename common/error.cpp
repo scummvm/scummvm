@@ -31,44 +31,61 @@
 namespace Common {
 
 /**
- * Error Table: Maps error codes to their default descriptions
+ * Maps an error code to equivalent string description.
+ *
+ * @param errorCode error code to be converted
+ * @return a pointer to string description of the error
  */
+static String errorToString(ErrorCode errorCode) {
+	switch (errorCode) {
+	case kNoError:
+		return _s("No error");
+	case kInvalidPathError:
+		return _s("Invalid Path");
+	case kNoGameDataFoundError:
+		return _s("Game Data not found");
+	case kUnsupportedGameidError:
+		return _s("Game Id not supported");
+	case kUnsupportedColorMode:
+		return _s("Unsupported Color Mode");
 
-struct ErrorMessage {
-	Error error;
-	const char *errMsg;
-};
-
-static const ErrorMessage _errMsgTable[] = {
-	{ kInvalidPathError, _s("Invalid Path") },
-	{ kNoGameDataFoundError, _s("Game Data not found") },
-	{ kUnsupportedGameidError, _s("Game Id not supported") },
-	{ kUnsupportedColorMode, _s("Unsupported Color Mode") },
-
-	{ kReadPermissionDenied, _s("Read permission denied") },
-	{ kWritePermissionDenied, _s("Write permission denied") },
+	case kReadPermissionDenied:
+		return _s("Read permission denied");
+	case kWritePermissionDenied:
+		return _s("Write permission denied");
 
 	// The following three overlap a bit with kInvalidPathError and each other. Which to keep?
-	{ kPathDoesNotExist, _s("Path not exists") },
-	{ kPathNotDirectory, _s("Path not a directory") },
-	{ kPathNotFile, _s("Path not a file") },
+	case kPathDoesNotExist:
+		return _s("Path not exists");
+	case kPathNotDirectory:
+		return _s("Path not a directory");
+	case kPathNotFile:
+		return _s("Path not a file");
 
-	{ kCreatingFileFailed, _s("Cannot create file") },
-	{ kReadingFailed, _s("Reading failed") },
-	{ kWritingFailed, _s("Writing data failed") },
+	case kCreatingFileFailed:
+		return _s("Cannot create file");
+	case kReadingFailed:
+		return _s("Reading failed");
+	case kWritingFailed:
+		return _s("Writing data failed");
 
-	{ kUnknownError, _s("Unknown Error") }
-};
-
-const char *errorToString(Error error) {
-
-	for (int i = 0; i < ARRAYSIZE(_errMsgTable); i++) {
-		if (error == _errMsgTable[i].error) {
-			return _errMsgTable[i].errMsg;
-		}
+	case kUnknownError:
+	case kPluginNotFound:
+	case kPluginNotSupportSaves:
+	case kNoSavesError:
+	case kArgumentNotProcessed:
+	default:
+		return _s("Unknown Error");
 	}
-
-	return _("Unknown Error");
 }
+
+Error::Error(ErrorCode code)
+	: _code(code), _desc(errorToString(code)) {
+}
+
+Error::Error(ErrorCode code, const String &desc)
+	: _code(code), _desc(errorToString(code) + ": " + desc) {
+}
+
 
 } // End of namespace Common

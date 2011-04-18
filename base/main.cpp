@@ -134,21 +134,17 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 		err = Common::kInvalidPathError;
 
 	// Create the game engine
-	if (err == Common::kNoError)
+	if (err.getCode() == Common::kNoError)
 		err = (*plugin)->createInstance(&system, &engine);
 
 	// Check for errors
-	if (!engine || err != Common::kNoError) {
+	if (!engine || err.getCode() != Common::kNoError) {
 
-		// TODO: An errorDialog for this and engine related errors is displayed already in the scummvm_main function
-		// Is a separate dialog here still required?
-
-		//GUI::displayErrorDialog("ScummVM could not find any game in the specified directory!");
-		const char *errMsg = _(Common::errorToString(err));
-
+		// Print a warning; note that scummvm_main will also
+		// display an error dialog, so we don't have to do this here.
 		warning("%s failed to instantiate engine: %s (target '%s', path '%s')",
 			plugin->getName(),
-			errMsg,
+			err.getDesc().c_str(),
 			ConfMan.getActiveDomainName().c_str(),
 			dir.getPath().c_str()
 			);
@@ -355,8 +351,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	Common::Error res;
 
 	// TODO: deal with settings that require plugins to be loaded
-	if ((res = Base::processSettings(command, settings)) != Common::kArgumentNotProcessed)
-		return res;
+	res = Base::processSettings(command, settings);
+	if (res.getCode() != Common::kArgumentNotProcessed)
+		return res.getCode();
 
 	// Init the backend. Must take place after all config data (including
 	// the command line params) was read.
@@ -430,14 +427,14 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		#endif	
 			
 			// Did an error occur ?
-			if (result != Common::kNoError) {
+			if (result.getCode() != Common::kNoError) {
 				// Shows an informative error dialog if starting the selected game failed.
 				GUI::displayErrorDialog(result, _("Error running game:"));
 			}
 
 			// Quit unless an error occurred, or Return to launcher was requested
 			#ifndef FORCE_RTL
-			if (result == 0 && !g_system->getEventManager()->shouldRTL())
+			if (result.getCode() == Common::kNoError && !g_system->getEventManager()->shouldRTL())
 				break;
 			#endif
 			// Reset RTL flag in case we want to load another engine

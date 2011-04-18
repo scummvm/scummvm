@@ -247,7 +247,7 @@ protected:
 		Common::Error err;
 		registerDefaultSettings();
 		err = init();
-		if (err != Common::kNoError)
+		if (err.getCode() != Common::kNoError)
 			return err;
 		return go();
 	}

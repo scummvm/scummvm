@@ -3547,7 +3547,10 @@ void SceneHandler::dispatch() {
 	if (_saveGameSlot != -1) {
 		int saveSlot = _saveGameSlot;
 		_saveGameSlot = -1;
-		if (_saver->save(saveSlot, _saveName) != Common::kNoError)
+		Common::Error err = _saver->save(saveSlot, _saveName);
+		// FIXME: Make use of the description string in err to enhance
+		// the error reported to the user.
+		if (err.getCode() != Common::kNoError)
 			GUIErrorMessage(SAVE_ERROR_MSG);
 	}
 	if (_loadGameSlot != -1) {

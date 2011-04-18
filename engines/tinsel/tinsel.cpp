@@ -972,7 +972,7 @@ Common::Error TinselEngine::run() {
 	// errors when loading the save state.
 
 	if (ConfMan.hasKey("save_slot")) {
-		if (loadGameState(ConfMan.getInt("save_slot")) == Common::kNoError)
+		if (loadGameState(ConfMan.getInt("save_slot")).getCode() == Common::kNoError)
 			loadingFromGMM = true;
 	}
 

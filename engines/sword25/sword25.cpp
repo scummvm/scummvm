@@ -73,10 +73,10 @@ Sword25Engine::~Sword25Engine() {
 
 Common::Error Sword25Engine::run() {
 	// Engine initialisation
-	Common::Error errorCode = appStart();
-	if (errorCode != Common::kNoError) {
+	Common::Error error = appStart();
+	if (error.getCode() != Common::kNoError) {
 		appEnd();
-		return errorCode;
+		return error;
 	}
 
 	// Run the game
