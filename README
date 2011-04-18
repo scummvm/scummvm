@@ -4,7 +4,7 @@ What is Residual?
 -----------------
 Residual allow to play 3D games such as Grim Fandango.
 
-Residual utilizes OpenGL for 3d graphics hardware acceleration.
+Residual utilizes OpenGL for 3D graphics hardware acceleration.
 A software renderer is also included for machines without hardware OpenGL.
 
 Which games does it support?
@@ -34,7 +34,10 @@ What is the state of Residual?
 Basic gameplay works, including cutscenes. Parts of the game are playable,
 but many features are either missing or unstable. Crashes are likely.
 
-Game currently playable to around Year 2.
+Grim Fandango currently playable to around the end of Year 2.
+
+Also beware that since Residual is currently in an alpha-state, there is
+no guarantee that your saves will continue to work with newer builds.
 
 For more information, see the page on Residual at the wiki page:
 https://apps.sourceforge.net/mediawiki/residual
@@ -102,6 +105,13 @@ By default, the configuration file is saved in, and loaded from:
 
         Others:
         residual.ini in the current directory
+
+How do I enable debug-keys?
+---------------------------
+To enable debug-keys, you will have to add the following to your configuration file
+under your Grim Fandango-entry:
+
+grim_devel_mode=true
 
 How do I report bugs?
 ---------------------
