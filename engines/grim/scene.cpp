@@ -40,6 +40,8 @@ Scene::Scene(const char *sceneName, const char *buf, int len) :
 		_locked(false), _name(sceneName), _enableLights(false) {
 	TextSplitter ts(buf, len);
 	char tempBuf[256];
+	++s_id;
+	_id = s_id;
 
 	ts.expectString("section: colormaps");
 	ts.scanString(" numcolormaps %d", 1, &_numCmaps);
@@ -108,9 +110,6 @@ Scene::Scene(const char *sceneName, const char *buf, int len) :
         _sectors[i] = new Sector();
 		_sectors[i]->load(ts);
 	}
-
-	++s_id;
-	_id = s_id;
 }
 
 Scene::Scene() :
