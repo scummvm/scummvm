@@ -994,7 +994,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	Common::FSList fslist;
 	Common::FSNode dir(ConfMan.get("path"));
 	if (!dir.isDirectory())
-		return Common::kInvalidPathError;
+		return Common::kPathNotDirectory;
 	if (!dir.getChildren(fslist, Common::FSNode::kListFilesOnly))
 		return Common::kNoGameDataFoundError;
 

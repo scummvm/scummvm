@@ -40,8 +40,6 @@ static String errorToString(ErrorCode errorCode) {
 	switch (errorCode) {
 	case kNoError:
 		return _s("No error");
-	case kInvalidPathError:
-		return _s("Invalid path");
 	case kNoGameDataFoundError:
 		return _s("Game data not found");
 	case kUnsupportedGameidError:
@@ -54,7 +52,6 @@ static String errorToString(ErrorCode errorCode) {
 	case kWritePermissionDenied:
 		return _s("Write permission denied");
 
-	// The following three overlap a bit with kInvalidPathError and each other. Which to keep?
 	case kPathDoesNotExist:
 		return _s("Path does not exist");
 	case kPathNotDirectory:
