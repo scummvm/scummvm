@@ -210,9 +210,12 @@ void Actor::saveState(SaveGame *savedState) const {
 		savedState->writeVector3d(shadow.pos);
 
 		savedState->writeLESint32(shadow.planeList.size());
+		// Cannot use g_grim->currScene() here because an actor can have walk planes
+		// from other scenes. It happens e.g. when Membrillo calls Velasco to tell him
+		// Naranja is dead.
+		Scene *s = g_grim->findScene(_setName.c_str());
 		for (SectorListType::iterator j = shadow.planeList.begin(); j != shadow.planeList.end(); ++j) {
 			Sector *sec = *j;
-			Scene *s = g_grim->currScene();
 			for (int k = 0; k < s->getSectorCount(); ++k) {
 				if (s->getSectorBase(k) == sec) {
 					savedState->writeLEUint32(k);
@@ -370,10 +373,11 @@ bool Actor::restoreState(SaveGame *savedState) {
 		shadow.pos = savedState->readVector3d();
 
 		size = savedState->readLESint32();
+		Scene *scene = g_grim->findScene(_setName.c_str());
 		shadow.planeList.clear();
 		for (int j = 0; j < size; ++j) {
 			int32 id = savedState->readLEUint32();
-			Sector *s = g_grim->currScene()->getSectorBase(id);
+			Sector *s = scene->getSectorBase(id);
 			shadow.planeList.push_back(s);
 		}
 
