@@ -608,13 +608,12 @@ void MohawkBitmap::drawRLE8(Graphics::Surface *surface, bool isLE) {
 
 			if (code & 0x80) {
 				byte val = _data->readByte();
-				for (uint16 j = 0; j < runLen; j++)
-					*dst++ = val;
+				memset(dst, val, runLen);
 			} else {
-				for (uint16 j = 0; j < runLen; j++)
-					*dst++ = _data->readByte();
+				_data->read(dst, runLen);
 			}
 
+			dst += runLen;
 			remaining -= runLen;
 		}
 
