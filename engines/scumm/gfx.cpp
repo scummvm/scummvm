@@ -385,9 +385,10 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 	vs->hasTwoBuffers = twobufs;
 	vs->xstart = 0;
 	vs->backBuf = NULL;
-	// TODO: This should really rather setup the correct format instead of
-	// only setting the bytes per pixel.
-	vs->format.bytesPerPixel = (_game.features & GF_16BIT_COLOR) ? 2 : 1;
+	if (_game.features & GF_16BIT_COLOR)
+		vs->format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+	else
+		vs->format = Graphics::PixelFormat::createFormatCLUT8();
 	vs->pitch = width * vs->format.bytesPerPixel;
 
 	if (_game.version >= 7) {
