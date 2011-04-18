@@ -33,6 +33,15 @@
 
 namespace Grim {
 
+Sector::Sector(const Sector &other) {
+	*this = other;
+}
+
+Sector::~Sector() {
+	if (_vertices)
+		delete[] _vertices;
+}
+
 void Sector::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_numVertices);
 	savedState->writeLESint32(_id);
@@ -281,6 +290,37 @@ void Sector::getExitInfo(Graphics::Vector3d start, Graphics::Vector3d dir, struc
 
 	Graphics::Vector3d edgeNormal(result->edgeDir.y(), -result->edgeDir.x(), 0);
 	result->exitPoint = start + (dot(_vertices[i] - start, edgeNormal) / dot(dir, edgeNormal)) * dir;
+}
+
+Sector &Sector::operator=(const Sector &other) {
+	_numVertices = other._numVertices;
+	_id = other._id;
+	_name = other._name;
+	_type = other._type;
+	_visible = other._visible;
+	_vertices = new Graphics::Vector3d[_numVertices + 1];
+	for (int i = 0; i < _numVertices + 1; ++i) {
+		_vertices[i] = other._vertices[i];
+	}
+	_height = other._height;
+	_normal = other._normal;
+
+	return *this;
+}
+
+bool Sector::operator==(const Sector &other) const {
+	bool ok = _numVertices == other._numVertices &&
+	_id == other._id &&
+	_name == other._name &&
+	_type == other._type &&
+	_visible == other._visible;
+	for (int i = 0; i < _numVertices + 1; ++i) {
+		ok = ok && _vertices[i] == other._vertices[i];
+	}
+	ok = ok && _height == other._height &&
+	_normal == other._normal;
+
+	return ok;
 }
 
 } // end of namespace Grim

@@ -217,7 +217,7 @@ void Actor::saveState(SaveGame *savedState) const {
 		for (SectorListType::iterator j = shadow.planeList.begin(); j != shadow.planeList.end(); ++j) {
 			Sector *sec = *j;
 			for (int k = 0; k < s->getSectorCount(); ++k) {
-				if (s->getSectorBase(k) == sec) {
+				if (*s->getSectorBase(k) == *sec) {
 					savedState->writeLEUint32(k);
 					break;
 				}
@@ -377,7 +377,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 		shadow.planeList.clear();
 		for (int j = 0; j < size; ++j) {
 			int32 id = savedState->readLEUint32();
-			Sector *s = scene->getSectorBase(id);
+			Sector *s = new Sector(*scene->getSectorBase(id));
 			shadow.planeList.push_back(s);
 		}
 
@@ -1139,7 +1139,11 @@ void Actor::addShadowPlane(const char *n) {
 	int numSectors = g_grim->currScene()->getSectorCount();
 
 	for (int i = 0; i < numSectors; i++) {
-		Sector *sector = g_grim->currScene()->getSectorBase(i);
+		// Create a copy so we are sure it will not be deleted by the Scene destructor
+		// behind our back. This is important when Membrillo phones Velasco to tell him
+		// Naranja is dead, because the scene changes back and forth few times and so
+		// the scenes' sectors are deleted while they are still keeped by the actors.
+		Sector *sector = new Sector(*g_grim->currScene()->getSectorBase(i));
 		if (strmatch(sector->name(), n)) {
 			_shadowArray[_activeShadowSlot].planeList.push_back(sector);
 			g_grim->flagRefreshShadowMask(true);
@@ -1178,6 +1182,7 @@ void Actor::clearShadowPlanes() {
 	for (int i = 0; i < 5; i++) {
 		Shadow *shadow = &_shadowArray[i];
 		while (!shadow->planeList.empty()) {
+			delete shadow->planeList.back();
 			shadow->planeList.pop_back();
 		}
 		delete[] shadow->shadowMask;

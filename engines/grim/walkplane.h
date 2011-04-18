@@ -47,7 +47,8 @@ public:
 	};
 
 	Sector() : _vertices(NULL) {}
-	virtual ~Sector() { if (_vertices) delete[] _vertices; }
+	Sector(const Sector &other);
+	virtual ~Sector();
 
 	void saveState(SaveGame *savedState) const;
 	bool restoreState(SaveGame *savedState);
@@ -79,6 +80,9 @@ public:
 	int getNumVertices() { return _numVertices; }
 	Graphics::Vector3d *getVertices() { return _vertices; }
 	Graphics::Vector3d getNormal() { return _normal; }
+
+	Sector &operator=(const Sector &other);
+	bool operator==(const Sector &other) const;
 
 private:
 	int _numVertices, _id;
