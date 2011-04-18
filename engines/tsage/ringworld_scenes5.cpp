@@ -1956,7 +1956,7 @@ void Scene4045::dispatch() {
 	if (!_action) {
 		if (_globals->_player.getRegionIndex() == 8) {
 			_globals->_player.addMover(NULL);
-			if (_olloStand._strip == 1) {
+			if (_olloStand._strip != 1) {
 				_globals->_player.disableControl();
 				_sceneMode = 4046;
 				_olloStand._numFrames = 10;
