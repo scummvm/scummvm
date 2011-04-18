@@ -66,11 +66,15 @@ static String errorToString(ErrorCode errorCode) {
 	case kWritingFailed:
 		return _s("Writing data failed");
 
-	case kUnknownError:
-	case kPluginNotFound:
-	case kPluginNotSupportSaves:
-	case kNoSavesError:
+	case kEnginePluginNotFound:
+		return _s("Could not find suitable engine plugin");
+	case kEnginePluginNotSupportSaves:
+		return _s("Engine plugin does not support save states");
+
 	case kArgumentNotProcessed:
+		return _s("Command line argument not processed");
+
+	case kUnknownError:
 	default:
 		return _s("Unknown error");
 	}

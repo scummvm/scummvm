@@ -111,13 +111,12 @@ static const EnginePlugin *detectPlugin() {
 	if (plugin == 0) {
 		printf("failed\n");
 		warning("%s is an invalid gameid. Use the --list-games option to list supported gameid", gameid.c_str());
-		return 0;
 	} else {
 		printf("%s\n", plugin->getName());
-	}
 
-	// FIXME: Do we really need this one?
-	printf("  Starting '%s'\n", game.description().c_str());
+		// FIXME: Do we really need this one?
+		printf("  Starting '%s'\n", game.description().c_str());
+	}
 
 	return plugin;
 }
@@ -352,8 +351,10 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	// TODO: deal with settings that require plugins to be loaded
 	res = Base::processSettings(command, settings);
-	if (res.getCode() != Common::kArgumentNotProcessed)
+	if (res.getCode() != Common::kArgumentNotProcessed) {
+		warning("%s", res.getDesc().c_str());
 		return res.getCode();
+	}
 
 	// Init the backend. Must take place after all config data (including
 	// the command line params) was read.
