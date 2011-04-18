@@ -897,7 +897,7 @@ void Scene1500::Action2::signal() {
 	case 3:
 		scene->_soundHandler.proc4();
 		_globals->_stripNum = 1505;
-		_globals->_sceneManager.changeScene(1505);
+		_globals->_sceneManager.changeScene(2400);
 		break;
 	}
 }
