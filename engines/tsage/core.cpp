@@ -3707,6 +3707,7 @@ void Game::restart() {
 	_globals->_inventory._bone._sceneNumber = 5300;
 	_globals->_inventory._jar._sceneNumber = 7700;
 	_globals->_inventory._emptyJar._sceneNumber = 7700;
+	_globals->_inventory._selectedItem = NULL;
 
 	// Change to the first game scene
 	_globals->_sceneManager.changeScene(30);
