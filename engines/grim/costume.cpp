@@ -266,6 +266,10 @@ void ModelComponent::init() {
 		else if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Parent of model %s wasn't a mesh", _filename.c_str());
 	}
+
+	// Default the visibility to false. Without this when going in the land of the livings
+	// a shady thing attached to Manny will appear.
+	reset();
 }
 
 void ModelComponent::setKey(int val) {
