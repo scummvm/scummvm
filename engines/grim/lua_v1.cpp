@@ -702,13 +702,15 @@ static void GetAngleBetweenActors() {
 
 	Graphics::Vector3d vec1 = actor1->puckVector();
 	Graphics::Vector3d vec2 = actor2->pos();
-	vec1 -= actor1->pos();
+	vec2 -= actor1->pos();
 	vec1.z() = 0;
 	vec2.z() = 0;
 	vec1.normalize();
 	vec2.normalize();
 	float dot = vec1.dotProduct(vec2.x(), vec2.y(), 0);
-	float angle = 90.0f - (180.0f * acos(dot)) / LOCAL_PI;
+	float angle = 90.0f - (180.0f * asin(dot)) / LOCAL_PI;
+	if (angle < 0)
+		angle = -angle;
 	lua_pushnumber(angle);
 }
 
