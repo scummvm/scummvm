@@ -350,12 +350,7 @@ int Saver::blockIndexOf(SavedObject *p) {
  * Returns the number of objects in the object list registry
  */
 int Saver::getObjectCount() const {
-	int count = 0;
-	Common::List<SavedObject *>::const_iterator i;
-
-	for (i = _objList.begin(); i != _objList.end(); ++i, ++count)
-		;
-	return count;
+	return _objList.size();
 }
 
 /**
