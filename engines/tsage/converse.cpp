@@ -530,7 +530,7 @@ void StripManager::start(int stripNum, EventHandler *owner, StripCallback *callb
 
 	_stripNum = stripNum;
 	_callbackObject = callback;
-	_sceneNumber = _globals->_sceneManager._scene->_sceneNumber;
+	_sceneNumber = _globals->_sceneManager._scene->_screenNumber;
 	_sceneBounds = _globals->_sceneManager._scene->_sceneBounds;
 	_script.clear();
 
@@ -631,7 +631,7 @@ void StripManager::remove() {
 	if (_activeSpeaker)
 		_activeSpeaker->remove();
 
-	if (_sceneNumber != _globals->_sceneManager._scene->_sceneNumber) {
+	if (_sceneNumber != _globals->_sceneManager._scene->_screenNumber) {
 		_globals->_sceneManager._scene->_sceneBounds = _sceneBounds;
 		_globals->_sceneManager._scene->loadScene(_sceneNumber);
 	}
@@ -695,7 +695,7 @@ void StripManager::signal() {
 				_activeSpeaker->remove();
 			_activeSpeaker = speakerP;
 
-			if ((_activeSpeaker->_newSceneNumber == -1) && (_globals->_sceneManager._scene->_sceneNumber != _sceneNumber)) {
+			if ((_activeSpeaker->_newSceneNumber == -1) && (_globals->_sceneManager._scene->_screenNumber != _sceneNumber)) {
 				_globals->_sceneManager._scene->_sceneBounds = _sceneBounds;
 				_globals->_sceneManager._scene->loadScene(_sceneNumber);
 			}

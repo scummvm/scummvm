@@ -2424,7 +2424,7 @@ void Scene60::signal() {
 void Scene60::process(Event &event) {
 	Scene::process(event);
 
-	if (_sceneNumber == 60) {
+	if (_screenNumber == 60) {
 		if (_gfxButton.process(event))
 			_globals->_sceneManager.changeScene(50);
 	}

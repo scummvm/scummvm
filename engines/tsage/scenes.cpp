@@ -248,7 +248,7 @@ Scene::~Scene() {
 
 void Scene::synchronise(Serialiser &s) {
 	s.syncAsSint32LE(_field12);
-	s.syncAsSint32LE(_sceneNumber);
+	s.syncAsSint32LE(_screenNumber);
 	s.syncAsSint32LE(_activeScreenNumber);
 	s.syncAsSint32LE(_sceneMode);
 	_backgroundBounds.synchronise(s);
@@ -281,7 +281,7 @@ void Scene::dispatch() {
 
 void Scene::loadScene(int sceneNum) {
 	warning("loadScene(%d)", sceneNum);
-	_sceneNumber = sceneNum;
+	_screenNumber = sceneNum;
 	if (_globals->_scenePalette.loadPalette(sceneNum))
 		_globals->_sceneManager._hasPalette = true;
 
