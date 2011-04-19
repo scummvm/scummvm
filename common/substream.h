@@ -59,7 +59,7 @@ public:
 			delete _parentStream;
 	}
 
-	virtual bool eos() const { return _eos; }
+	virtual bool eos() const { return _eos | _parentStream->eos(); }
 	virtual bool err() const { return _parentStream->err(); }
 	virtual void clearErr() { _eos = false; _parentStream->clearErr(); }
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
