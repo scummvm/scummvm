@@ -426,6 +426,12 @@ void Actor::setRot(float pitchParam, float yawParam, float rollParam) {
 	_pitch = pitchParam;
 	setYaw(yawParam);
 	_roll = rollParam;
+	_turning = false;
+}
+
+void Actor::setPos(Graphics::Vector3d position) {
+	_walking = false;
+	_pos = position;
 }
 
 void Actor::turnTo(float pitchParam, float yawParam, float rollParam) {
