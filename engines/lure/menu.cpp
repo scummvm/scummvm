@@ -34,7 +34,7 @@
 #include "lure/events.h"
 #include "lure/lure.h"
 
-#if defined(_WIN32_WCE) || defined(__SYMBIAN32__)
+#if defined(_WIN32_WCE) || defined(__SYMBIAN32__) || defined(WEBOS)
 #define LURE_CLICKABLE_MENUS
 #endif
 
