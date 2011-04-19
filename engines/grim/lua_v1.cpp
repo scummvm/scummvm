@@ -700,7 +700,7 @@ static void GetAngleBetweenActors() {
 		return;
 	}
 
-	Graphics::Vector3d vec1 = actor1->getLookAtVector();
+	Graphics::Vector3d vec1 = actor1->puckVector();
 	Graphics::Vector3d vec2 = actor2->pos();
 	vec1 -= actor1->pos();
 	vec1.z() = 0;
