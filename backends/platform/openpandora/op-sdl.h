@@ -32,7 +32,6 @@
 #include "backends/graphics/openpandora/op-graphics.h"
 
 #define __OPENPANDORA__
-#define MIXER_DOUBLE_BUFFERING 1
 
 #ifndef PATH_MAX
 	#define PATH_MAX 255
