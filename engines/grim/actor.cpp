@@ -565,7 +565,7 @@ bool Actor::isTurning() const {
 
 void Actor::walkForward() {
 	float dist = g_grim->perSecond(_walkRate);
-	float yaw_rad = _yaw * (LOCAL_PI / 180), pitch_rad = _pitch * (LOCAL_PI / 180);
+	float yaw_rad = _yaw * (LOCAL_PI / 180.f), pitch_rad = _pitch * (LOCAL_PI / 180.f);
 	//float yaw;
 	Graphics::Vector3d forwardVec(-sin(yaw_rad) * cos(pitch_rad),
 		cos(yaw_rad) * cos(pitch_rad), sin(pitch_rad));
@@ -615,7 +615,7 @@ void Actor::walkForward() {
 			break;
 	}
 
-	ei.angleWithEdge *= (float)(180 / LOCAL_PI);
+	ei.angleWithEdge *= (float)(180.f / LOCAL_PI);
 	int turnDir = 1;
 	if (ei.angleWithEdge > 90) {
 		ei.angleWithEdge = 180 - ei.angleWithEdge;
@@ -633,7 +633,7 @@ void Actor::walkForward() {
 }
 
 Graphics::Vector3d Actor::puckVector() const {
-	float yaw_rad = _yaw * (LOCAL_PI / 180);
+	float yaw_rad = _yaw * (LOCAL_PI / 180.f);
 	Graphics::Vector3d forwardVec(-sin(yaw_rad), cos(yaw_rad), 0);
 
 	Sector *sector = g_grim->currScene()->findPointSector(_pos, Sector::WalkType);
@@ -717,12 +717,12 @@ void Actor::turn(int dir) {
 }
 
 float Actor::angleTo(const Actor &a) const {
-	float yaw_rad = _yaw * (LOCAL_PI / 180);
+	float yaw_rad = _yaw * (LOCAL_PI / 180.f);
 	Graphics::Vector3d forwardVec(-sin(yaw_rad), cos(yaw_rad), 0);
 	Graphics::Vector3d delta = a.pos() - _pos;
 	delta.z() = 0;
 
-	return angle(forwardVec, delta) * (180 / LOCAL_PI);
+	return angle(forwardVec, delta) * (180.f / LOCAL_PI);
 }
 
 float Actor::yawTo(Graphics::Vector3d p) const {
@@ -731,7 +731,7 @@ float Actor::yawTo(Graphics::Vector3d p) const {
 	if (dpos.x() == 0 && dpos.y() == 0)
 		return 0;
 	else
-		return atan2(-dpos.x(), dpos.y()) * (180 / LOCAL_PI);
+		return atan2(-dpos.x(), dpos.y()) * (180.f / LOCAL_PI);
 }
 
 void Actor::sayLine(const char *msg, const char *msgId) {
