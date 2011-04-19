@@ -2420,14 +2420,14 @@ void Scene4100::Action5::signal() {
 	case 1:
 		if (_globals->_inventory._ladder._sceneNumber == 4100) {
 			_globals->_inventory._ladder._sceneNumber = 1;
-			scene->_hotspot6.remove();
+			scene->_ladder.remove();
 		} else {
-			scene->_hotspot6.postInit();
-			scene->_hotspot6.setVisage(4101);
-			scene->_hotspot6.setPosition(Common::Point(49, 144));
+			scene->_ladder.postInit();
+			scene->_ladder.setVisage(4101);
+			scene->_ladder.setPosition(Common::Point(49, 144));
 
 			_globals->_inventory._ladder._sceneNumber = 4100;
-			_globals->_sceneItems.push_front(&scene->_hotspot6);
+			_globals->_sceneItems.push_front(&scene->_ladder);
 		}
 
 		_globals->_player.enableControl();
@@ -2511,7 +2511,7 @@ void Scene4100::Hotspot2::doAction(int action)  {
 	}
 }
 
-void Scene4100::Hotspot5::doAction(int action)  {
+void Scene4100::Miranda::doAction(int action)  {
 	Scene4100 *scene = (Scene4100 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -2528,7 +2528,7 @@ void Scene4100::Hotspot5::doAction(int action)  {
 	}
 }
 
-void Scene4100::Hotspot6::doAction(int action)  {
+void Scene4100::Ladder::doAction(int action)  {
 	Scene4100 *scene = (Scene4100 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -2621,26 +2621,26 @@ void Scene4100::postInit(SceneObjectList *OwnerList) {
 	_hotspot4.setStrip2(2);
 	_hotspot4.setPosition(Common::Point(152, 167));
 
-	if (_globals->getFlag(36)) {
+	if (!_globals->getFlag(36)) {
 		_hotspot1.setVisage(4105);
 		_hotspot1.setStrip(1);
 		_hotspot1.setFrame(4);
 	} else if (!_globals->getFlag(43)) {
-		_hotspot5.postInit();
-		_hotspot5.setVisage(4102);
-		_hotspot5.setStrip2(3);
-		_hotspot5.setFrame(2);
-		_hotspot5.setPosition(Common::Point(65, 188));
+		_miranda.postInit();
+		_miranda.setVisage(4102);
+		_miranda.setStrip2(3);
+		_miranda.setFrame(2);
+		_miranda.setPosition(Common::Point(65, 188));
 
-		_globals->_sceneItems.push_back(&_hotspot5);
+		_globals->_sceneItems.push_back(&_miranda);
 	}
 
 	if (_globals->_inventory._ladder._sceneNumber == 4100) {
-		_hotspot6.postInit();
-		_hotspot6.setVisage(4101);
-		_hotspot6.setPosition(Common::Point(49, 144));
+		_ladder.postInit();
+		_ladder.setVisage(4101);
+		_ladder.setPosition(Common::Point(49, 144));
 
-		_globals->_sceneItems.push_back(&_hotspot6);
+		_globals->_sceneItems.push_back(&_ladder);
 	}
 
 	_hotspot14.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));

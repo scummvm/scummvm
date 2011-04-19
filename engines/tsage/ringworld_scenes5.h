@@ -395,11 +395,11 @@ class Scene4100 : public Scene {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot5 : public SceneObject {
+	class Miranda : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot6 : public SceneObject {
+	class Ladder : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -425,8 +425,8 @@ public:
 	Hotspot1 _hotspot1;
 	Hotspot2 _hotspot2;
 	DisplayHotspot _hotspot3, _hotspot4;
-	Hotspot5 _hotspot5;
-	Hotspot6 _hotspot6;
+	Miranda _miranda;
+	Ladder _ladder;
 	DisplayHotspot _hotspot7, _hotspot8, _hotspot9, _hotspot10;
 	DisplayHotspot _hotspot11, _hotspot12, _hotspot13;
 	Hotspot14 _hotspot14;
