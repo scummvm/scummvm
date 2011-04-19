@@ -26,23 +26,22 @@
 #include "backends/platform/sdl/sdl-sys.h"
 
 // #include "backends/platform/gph/gph-options.h"
-#include "backends/platform/gph/gph-sdl.h"
+#include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
 #include "backends/platform/gph/gph-hw.h"
+#include "backends/platform/gph/gph-sdl.h"
 #include "backends/plugins/posix/posix-provider.h"
+#include "backends/saves/default/default-saves.h"
+#include "backends/timer/default/default-timer.h"
+
 #include "base/main.h"
 
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "common/util.h"
 
-#include "common/file.h"
-#include "base/main.h"
-
-#include "backends/saves/default/default-saves.h"
-
-#include "backends/timer/default/default-timer.h"
 #include "audio/mixer_intern.h"
 
 #include <stdio.h>
@@ -65,6 +64,14 @@ void OSystem_GPH::initBackend() {
 	// Create the graphics manager
 	if (_graphicsManager == 0) {
 		_graphicsManager = new GPHGraphicsManager(_eventSource);
+	}
+
+	// Create the mixer manager
+	if (_mixer == 0) {
+		_mixerManager = new DoubleBufferSDLMixerManager();
+
+		// Setup and start mixer
+		_mixerManager->init();
 	}
 
 	/* Setup default save path to be workingdir/saves */
