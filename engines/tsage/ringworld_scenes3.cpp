@@ -5068,7 +5068,7 @@ void Scene2320::Action3::signal() {
 		break;
 	}
 	case 3:
-		scene->_hotspot6.setPriority2(scene->_hotspot6._priority - 1);
+		_globals->_player.setPriority2(scene->_hotspot6._priority - 1);
 		_globals->_player._strip = 3;
 		setDelay(10);
 		break;
@@ -5798,7 +5798,7 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 		_globals->_sceneItems.push_back(&_hotspot8);
 	}
 
-	_area1.setup(2100, 2, 1, 2100);
+	_area1.setup(2153, 2, 1, 2100);
 	_area1._pt = Common::Point(200, 31);
 	_area2.setup(2153, 3, 1, 2150);
 	_area2._pt = Common::Point(200, 50);

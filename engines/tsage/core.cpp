@@ -2388,8 +2388,8 @@ void SceneObjectList::draw() {
 
 			// Handle updating object priority
 			if (!(obj->_flags & OBJFLAG_FIXED_PRIORITY)) {
-				obj->_priority = MIN((int)obj->_position.y - 1,
-					(int)_globals->_sceneManager._scene->_backgroundBounds.bottom);
+				obj->_priority = MIN((int)obj->_position.y,
+					(int)_globals->_sceneManager._scene->_backgroundBounds.bottom - 1);
 			}
 
 			if ((_globals->_paneRefreshFlag[paneNum] != 0) || !_globals->_paneRegions[paneNum].empty()) {
