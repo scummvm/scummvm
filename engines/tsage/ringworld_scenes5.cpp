@@ -2364,7 +2364,8 @@ void Scene4100::Action3::signal() {
 		scene->_stripManager.start(4505, this);
 		break;
 	case 2:
-		scene->setAction(&scene->_action2);
+		setAction(&scene->_action2, this);
+		break;
 	case 3:
 		scene->_stripManager.start(4510, this);
 		break;
@@ -2373,6 +2374,8 @@ void Scene4100::Action3::signal() {
 		break;
 	case 5:
 		_globals->_sceneManager.changeScene(4150);
+		break;
+	default:
 		break;
 	}
 }
@@ -2456,11 +2459,15 @@ void Scene4100::Hotspot1::doAction(int action)  {
 	Scene4100 *scene = (Scene4100 *)_globals->_sceneManager._scene;
 
 	switch (action) {
-	case CURSOR_LOOK:
-		SceneItem::display2(4100, _globals->getFlag(42) ? 24 : 12);
-		break;
 	case OBJECT_STUNNER:
 		SceneItem::display2(4100, 16);
+		break;
+	case OBJECT_ALE:
+		_globals->_player.disableControl();
+		scene->setAction(&scene->_action3);
+		break;
+	case CURSOR_LOOK:
+		SceneItem::display2(4100, _globals->getFlag(42) ? 24 : 12);
 		break;
 	case CURSOR_USE:
 		SceneItem::display2(4100, 22);
@@ -2468,8 +2475,10 @@ void Scene4100::Hotspot1::doAction(int action)  {
 	case CURSOR_TALK:
 		if (_globals->_inventory._peg._sceneNumber == 1) {
 			_globals->_player.disableControl();
+			scene->_sceneMode = 4109;
 			scene->setAction(&scene->_sequenceManager, scene, 4109, NULL);
 		} else if (_globals->getFlag(42)) {
+			scene->_sceneMode = 4102;
 			scene->setAction(&scene->_sequenceManager, scene, 4102, NULL);
 		} else {
 			if (_globals->getFlag(33))
