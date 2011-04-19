@@ -362,7 +362,7 @@ void Saver::listObjects() {
 
 	for (i = _objList.begin(); i != _objList.end(); ++i, ++count)
 		debug("%d - %s", count, (*i)->getClassName().c_str());
-	debug("");
+	debugN("\n");
 }
 
 /**
