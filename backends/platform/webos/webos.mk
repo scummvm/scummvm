@@ -17,7 +17,7 @@ webosrelease:
 	cp -f gui/themes/scummmodern.zip $(STAGING_DIR)/share/scummvm
 	cp -f scummvm $(STAGING_DIR)/bin
 	$(STRIP) $(STAGING_DIR)/bin/scummvm
-	$(WEBOS_SDK)/bin/palm-package $(STAGING_DIR)
+	$(WEBOS_SDK)/bin/palm-package --use-v1-format $(STAGING_DIR)
 	rm -rf STAGING
 
 .PHONY: webosrelease
