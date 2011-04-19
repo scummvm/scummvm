@@ -250,7 +250,7 @@ loop:
 						lua_Task *t, *m;
 						for (t = lua_state->task; t != NULL;) {
 							m = t->next;
-							delete t;
+							luaM_free(t);
 							t = m;
 						}
 						flag = 0;

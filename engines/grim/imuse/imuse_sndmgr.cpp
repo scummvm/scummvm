@@ -340,7 +340,7 @@ int32 ImuseSndMgr::getDataFromRegion(SoundDesc *sound, int region, byte **buf, i
 	if (sound->mcmpData) {
 		size = sound->mcmpMgr->decompressSample(region_offset + offset, size, buf);
 	} else {
-		*buf = new byte[size];
+		*buf = (byte *)malloc(sizeof(byte) * size);
 		memcpy(*buf, sound->resPtr + region_offset + offset, size);
 	}
 
