@@ -1106,13 +1106,22 @@ void Costume::moveHead() {
 		if (b < 0.0f)
 			yaw = 360.0f - yaw;
 
-		_joint1Node->_animYaw = (- 90 + yaw - _matrix._rot.getYaw()) * _joint1Node->_totalWeight;
+		float bodyYaw = _matrix._rot.getYaw();
+		p = _joint1Node->_parent;
+		while (p) {
+			bodyYaw += p->_animYaw;
+			p = p->_parent;
+		}
+
+		_joint1Node->_animYaw = (- 90 + yaw - bodyYaw) * _joint1Node->_totalWeight;
 		if (_joint1Node->_animYaw < -180.) {
 			_joint1Node->_animYaw += 360;
 		}
 		if (_joint1Node->_animYaw > 180.) {
 			_joint1Node->_animYaw -= 360;
 		}
+		_joint2Node->_animYaw = 0;
+		_joint3Node->_animYaw = 0;
 
 		if (_joint1Node->_animYaw > _head.maxYaw)
 			_joint1Node->_animYaw = _head.maxYaw;
