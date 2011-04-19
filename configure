@@ -67,8 +67,12 @@ get_var() {
 # Add an engine: id name build subengines
 add_engine() {
 	_engines="${_engines} ${1}"
+	if test "${3}" == "no" ; then
+		set_var _wip_engines "${_wip_engines} ${1}"
+	fi
 	set_var _engine_${1}_name "${2}"
 	set_var _engine_${1}_build "${3}"
+	set_var _engine_${1}_build_default "${3}"
 	set_var _engine_${1}_subengines "${4}"
 	for sub in ${4}; do
 		set_var _engine_${sub}_sub "yes"
@@ -424,6 +428,11 @@ get_engine_build() {
 	get_var _engine_$1_build
 }
 
+# Was this engine set to be built by default?
+get_engine_build_default() {
+	get_var _engine_$1_build_default
+}
+
 # Get the subengines
 get_engine_subengines() {
 	get_var _engine_$1_subengines
@@ -543,12 +552,19 @@ prepare_engine_build_strings() {
 	if test -n "$string" ; then
 		_engines_skipped="${_engines_skipped}#$string@"
 	fi
+
+	string=`get_engine_build_string $1 wip`
+	if test -n "$string" ; then
+		_engines_built_wip="${_engines_built_wip}#$string@"
+	fi
+
 }
 
 # Get the string about building an engine
 get_engine_build_string() {
 	engine_string=""
 	engine_build=`get_engine_build $1`
+	engine_build_default=`get_engine_build_default $1`
 	show=no
 
 	# Check if the current engine should be shown for the current status
@@ -564,11 +580,24 @@ get_engine_build_string() {
 				fi
 			done
 		fi
+		# Test for enabled wip sub-engines
+		if test $2 = wip ; then
+			for subeng in `get_engine_subengines $1` ; do
+				if test `get_engine_build $subeng` != no -a `get_engine_build_default $subeng` = no ; then
+					show=yes
+				fi
+			done
+		fi
 	fi
 
 	# Convert static/dynamic to yes to ease the check of subengines
 	if test $engine_build != no ; then
 		engine_build=yes
+	fi
+
+	# Check if it is a wip engine
+	if test "$2" = "wip" -a "$engine_build" != "no" -a  "$engine_build_default" = no; then
+		show=yes
 	fi
 
 	# The engine should be shown, build the string
@@ -577,7 +606,7 @@ get_engine_build_string() {
 		if ( type $build_string_func | grep function ) 2> /dev/null > /dev/null ; then
 			engine_string=`$build_string_func $1 $engine_build`
 		else
-			engine_string=`get_subengines_build_string $1 $engine_build`
+			engine_string=`get_subengines_build_string $1 $engine_build "" $2`
 		fi
 
 		engine_string="`get_engine_name $1` $engine_string"
@@ -589,14 +618,29 @@ get_engine_build_string() {
 # Get the string about building subengines
 get_subengines_build_string() {
 	all=yes
+	parent_engine=$1
 	subengine_string=$3
-	for subeng in `get_engine_subengines $1` ; do
-		if test `get_engine_build $subeng` = $2 ; then
+	parent_status=$4
+	parent_engine_build_default=`get_engine_build_default $parent_engine`
+
+	for subeng in `get_engine_subengines $parent_engine` ; do
+		subengine_build=`get_engine_build $subeng`
+		subengine_build_default=`get_engine_build_default $subeng`
+		if test $subengine_build = $2 ; then
 			subengine_string="$subengine_string [`get_engine_name $subeng`]"
 		else
 			all=no
 		fi
+
+		# handle engines that are on by default and have a single subengine that is off by default
+		if test "$parent_status" = wip ; then
+			if test $parent_engine_build_default = yes -a subengine ; then
+				all=no
+			fi
+		fi
+
 	done
+
 	if test $2 != no ; then
 		if test -n "$subengine_string" ; then
 			if test $all = yes ; then
@@ -3257,6 +3301,12 @@ if test -n "$_engines_skipped" ; then
 s/#/    /g'
 fi
 
+if test -n "$_engines_built_wip" ; then
+	echo "WARNING: This ScummVM build contains the following UNSTABLE engines:"
+	echo $_engines_built_wip | sed 's/@/\
+/g
+s/#/    /g'
+fi
 
 echo
 echo "Creating config.h"
