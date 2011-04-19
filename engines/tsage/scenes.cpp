@@ -27,6 +27,7 @@
 #include "tsage/globals.h"
 #include "tsage/ringworld_logic.h"
 #include "tsage/tsage.h"
+#include "tsage/saveload.h"
 
 namespace tSage {
 
@@ -39,6 +40,7 @@ SceneManager::SceneManager() {
 	_fadeMode = FADEMODE_GRADUAL;
 	_scrollerRect = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	_saver->addListener(this);
+	_objectCount = 0;
 }
 
 SceneManager::~SceneManager() {
@@ -106,6 +108,12 @@ void SceneManager::sceneChange() {
 
 	// Free any regions
 	disposeRegions();
+
+	// Ensure that the same number of objects are registered now as when the scene started
+	if (_objectCount > 0) {
+		assert(_objectCount == _saver->getObjectCount());
+	}
+	_objectCount = _saver->getObjectCount();
 
 	// Instantiate and set the new scene
 	_scene = getNewScene();

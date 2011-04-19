@@ -88,6 +88,7 @@ public:
 	int _sceneLoadCount;
 	Rect _scrollerRect;
 	SceneObjectList _altSceneObjects;
+	int _objectCount;
 public:
 	SceneManager();
 	virtual ~SceneManager();

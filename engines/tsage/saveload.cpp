@@ -151,13 +151,13 @@ Common::Error Saver::save(int slot, const Common::String &saveName) {
 }
 
 Common::Error Saver::restore(int slot) {
-	assert(!getMacroSaveFlag());
+	assert(!getMacroRestoreFlag());
 
 	// Signal any objects registered for notification
 	_loadNotifiers.notify(false);
 
 	// Set fields
-	_macroSaveFlag = true;
+	_macroRestoreFlag = true;
 	_saveSlot = slot;
 	_unresolvedPtrs.clear();
 
@@ -335,7 +335,7 @@ bool Saver::savegamesExist() const {
  */
 int Saver::blockIndexOf(SavedObject *p) {
 	int objIndex = 1;
-	SynchronisedList<SavedObject *>::iterator iObj;
+	Common::List<SavedObject *>::iterator iObj;
 
 	for (iObj = _objList.begin(); iObj != _objList.end(); ++iObj, ++objIndex) {
 		SavedObject *iObjP = *iObj;
@@ -344,6 +344,30 @@ int Saver::blockIndexOf(SavedObject *p) {
 	}
 
 	return 0;
+}
+
+/**
+ * Returns the number of objects in the object list registry
+ */
+int Saver::getObjectCount() const {
+	int count = 0;
+	Common::List<SavedObject *>::const_iterator i;
+
+	for (i = _objList.begin(); i != _objList.end(); ++i, ++count)
+		;
+	return count;
+}
+
+/**
+ * List any currently active objects
+ */
+void Saver::listObjects() {
+	Common::List<SavedObject *>::iterator i;
+	int count = 1;
+
+	for (i = _objList.begin(); i != _objList.end(); ++i, ++count)
+		debug("%d - %s", count, (*i)->getClassName().c_str());
+	debug("");
 }
 
 /**
@@ -358,12 +382,14 @@ void Saver::resolveLoadPointers() {
 	int objIndex = 1;
 	for (SynchronisedList<SavedObject *>::iterator iObj = _objList.begin(); iObj != _objList.end(); ++iObj, ++objIndex) {
 		Common::List<SavedObjectRef>::iterator iPtr;
+		SavedObject *pObj = *iObj;
 
 		for (iPtr = _unresolvedPtrs.begin(); iPtr != _unresolvedPtrs.end(); ) {
 			SavedObjectRef &r = *iPtr;
 			if (r._objIndex == objIndex) {
 				// Found an unresolved pointer to this object
-				*r._savedObject = *iObj;
+				SavedObject **objPP = r._savedObject;
+				*objPP = pObj;
 				iPtr = _unresolvedPtrs.erase(iPtr);
 			} else {
 				++iPtr;
