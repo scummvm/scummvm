@@ -96,11 +96,11 @@ SOURCEPATH ..\..\..\..\gui
 //SOURCE Actions.cpp
 
 SOURCEPATH ..\..\..\..\audio
-//START_AUTO_OBJECTS_SOUND_//
+//START_AUTO_OBJECTS_AUDIO_//
 
 	// empty base file, will be updated by Perl build scripts
 
-//STOP_AUTO_OBJECTS_SOUND_//
+//STOP_AUTO_OBJECTS_AUDIO_//
 SOURCE softsynth\fmtowns_pc98\towns_pc98_fmsynth.cpp // Included since its excluded by filter
 
 #if defined (WINS)
