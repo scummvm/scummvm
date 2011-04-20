@@ -2357,7 +2357,7 @@ void Scene4100::Action3::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		_globals->clearFlag(43);
-		_globals->clearFlag(36);
+		_globals->setFlag(36);
 		setDelay(15);
 		break;
 	case 1:
@@ -2399,6 +2399,7 @@ void Scene4100::Action4::signal() {
 		_globals->clearFlag(43);
 		_globals->setFlag(42);
 		scene->_stripManager.start(4119, this);
+		break;
 	case 4:
 		setDelay(15);
 		break;
