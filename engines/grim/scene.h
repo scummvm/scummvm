@@ -55,6 +55,7 @@ public:
 	void setupLights();
 
 	void setSoundPosition(const char *soundName, Graphics::Vector3d pos);
+	void setSoundPosition(const char *soundName, Graphics::Vector3d pos, int minVol, int maxVol);
 	void setSoundParameters(int minVolume, int maxVolume);
 	void getSoundParameters(int *minVolume, int *maxVolume);
 

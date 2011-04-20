@@ -475,14 +475,18 @@ ObjectState *Scene::findState(const char *filename) {
 }
 
 void Scene::setSoundPosition(const char *soundName, Graphics::Vector3d pos) {
+	setSoundPosition(soundName, pos, _minVolume, _maxVolume);
+}
+
+void Scene::setSoundPosition(const char *soundName, Graphics::Vector3d pos, int minVol, int maxVol) {
 	Graphics::Vector3d cameraPos = _currSetup->_pos;
 	Graphics::Vector3d vector, vector2;
 	vector.set(fabs(cameraPos.x() - pos.x()), fabs(cameraPos.y() - pos.y()), fabs(cameraPos.z() - pos.z()));
 	float distance = vector.magnitude();
 	float maxDistance = 8.0f;
-	int diffVolume = _maxVolume - _minVolume;
+	int diffVolume = maxVol - minVol;
 	int newVolume = (int)(diffVolume * (1.0 - (distance / maxDistance)));
-	newVolume += _minVolume;
+	newVolume += minVol;
 	g_imuse->setVolume(soundName, newVolume);
 
 	//TODO

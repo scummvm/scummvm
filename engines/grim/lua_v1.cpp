@@ -2724,8 +2724,7 @@ static void SetSoundPosition() {
 			error("SetSoundPosition: number is not yet supported");
 		else {
 			const char *soundName = lua_getstring(nameObj);
-			g_grim->currScene()->setSoundParameters(minVolume, maxVolume);
-			g_grim->currScene()->setSoundPosition(soundName, pos);
+			g_grim->currScene()->setSoundPosition(soundName, pos, minVolume, maxVolume);
 		}
 	}
 }
