@@ -580,14 +580,15 @@ bool Script::playvideofromref(uint32 fileref) {
 
 		if (_videoFile) {
 			_videoRef = fileref;
-			if (_lastCursor == 7)
+			// If teeth cursor, and in main script, mark video prefer low-speed
+			// filename check as sometimes teeth used for puzzle movements (bishops)
+			if (_version == kGroovieT7G && _lastCursor == 7 && _scriptFile == "script.grv")
 				_bitflags |= (1 << 15);
 			_vm->_videoPlayer->load(_videoFile, _bitflags);
 		} else {
 			error("Couldn't open file");
 			return true;
 		}
-		_lastCursor = 0xff;
 
 		_bitflags = 0;
 
