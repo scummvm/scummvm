@@ -2293,6 +2293,38 @@ static void IsActorInSector() {
 	lua_pushnil();
 }
 
+static void IsPointInSector() {
+	lua_Object xObj = lua_getparam(1);
+	lua_Object yObj = lua_getparam(2);
+	lua_Object zObj = lua_getparam(3);
+	lua_Object nameObj = lua_getparam(4);
+
+	if (!lua_isstring(nameObj)) {
+		lua_pushnil();
+		return;
+	}
+
+	const char *name = lua_getstring(nameObj);
+	float x = lua_getnumber(xObj);
+	float y = lua_getnumber(yObj);
+	float z = lua_getnumber(zObj);
+	Graphics::Vector3d pos(x, y, z);
+
+	int numSectors = g_grim->currScene()->getSectorCount();
+	for (int i = 0; i < numSectors; i++) {
+		Sector *sector = g_grim->currScene()->getSectorBase(i);
+		if (strmatch(sector->name(), name)) {
+			if (sector->isPointInSector(pos)) {
+				lua_pushnumber(sector->id());
+				lua_pushstring(sector->name());
+				lua_pushnumber(sector->type());
+				return;
+			}
+		}
+	}
+	lua_pushnil();
+}
+
 static void MakeSectorActive() {
 	lua_Object sectorObj = lua_getparam(1);
 
@@ -3950,7 +3982,6 @@ STUB_FUNC(PreviousSetup)
 STUB_FUNC(NextSetup)
 STUB_FUNC(WorldToScreen)
 STUB_FUNC(SetActorRoll)
-STUB_FUNC(IsPointInSector)
 STUB_FUNC(SetActorFrustrumCull)
 STUB_FUNC(DriveActorTo)
 STUB_FUNC(GetActorRect)
