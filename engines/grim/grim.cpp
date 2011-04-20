@@ -915,6 +915,13 @@ void GrimEngine::mainLoop() {
 				return;
 			if (event.type == Common::EVENT_SCREEN_CHANGED)
 				_refreshDrawNeeded = true;
+
+			// Allow lua to react to the event.
+			// Without this lua_update switching the entries in the menu is slow because
+			// if the button is not kept pressed the KEYUP will arrive just after the KEYDOWN
+			// and it will break the lua scripts that checks for the state of the button
+			// with GetControlState()
+			luaUpdate();
 		}
 
 		luaUpdate();
