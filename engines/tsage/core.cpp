@@ -1300,7 +1300,7 @@ uint8 ScenePalette::indexOf(uint r, uint g, uint b, int threshold) {
 		int bDiff = abs(ib - (int)b);
 
 		int idxThreshold = rDiff * rDiff + gDiff * gDiff + bDiff * bDiff;
-		if (idxThreshold <= threshold) {
+		if (idxThreshold < threshold) {
 			threshold = idxThreshold;
 			palIndex = i;
 		}
