@@ -791,6 +791,7 @@ Speaker::Speaker() : EventHandler() {
 	_fontNumber = 2;
 	_textMode = ALIGN_LEFT;
 	_color1 = _color2 = _color3 = _globals->_scenePalette._colors.foreground;
+	_color2 = _color3 = 0;
 	_action = NULL;
 	_speakerName = "SPEAKER";
 }
