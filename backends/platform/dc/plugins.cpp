@@ -25,16 +25,15 @@
 
 #include "common/scummsys.h"
 
-#if defined(DYNAMIC_MODULES) && defined(__DC__)
+#if defined(DYNAMIC_MODULES)
 
-#include "backends/plugins/dc/dc-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
 #include "common/fs.h"
 
 #include "dcloader.h"
 
 
-class DCPlugin : public DynamicPlugin {
+class OSystem_Dreamcast::DCPlugin : public DynamicPlugin {
 protected:
 	void *_dlHandle;
 
@@ -85,11 +84,11 @@ public:
 };
 
 
-Plugin* DCPluginProvider::createPlugin(const Common::FSNode &node) const {
+Plugin* OSystem_Dreamcast::createPlugin(const Common::FSNode &node) const {
 	return new DCPlugin(node.getPath());
 }
 
-bool DCPluginProvider::isPluginFilename(const Common::FSNode &node) const {
+bool OSystem_Dreamcast::isPluginFilename(const Common::FSNode &node) const {
 	// Check the plugin suffix
 	Common::String filename = node.getName();
 	if (!filename.hasSuffix(".PLG"))
@@ -98,4 +97,4 @@ bool DCPluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	return true;
 }
 
-#endif // defined(DYNAMIC_MODULES) && defined(__DC__)
+#endif // defined(DYNAMIC_MODULES)
