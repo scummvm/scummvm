@@ -2254,8 +2254,9 @@ void SceneObject::removeObject() {
 		_mover->remove();
 		_mover = NULL;
 	}
-	if (_flags & 0x800)
-		destroy();
+	if (_flags & OBJFLAG_CLONED)
+		// Cloned temporary object, so delete it
+		delete this;
 }
 
 GfxSurface SceneObject::getFrame() {
