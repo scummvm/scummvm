@@ -35,6 +35,11 @@
 #include <e32std.h>
 #include <math.h>
 
+/* define pi */
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif  /*  M_PI  */
+
 #define DISABLE_COMMAND_LINE
 
 #if defined(USE_TREMOR) && !defined(USE_VORBIS)
