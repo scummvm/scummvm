@@ -790,6 +790,34 @@ bool MusicPlayerMPEG4::load(uint32 fileref, bool loop) {
 	uint len = info.filename.size();
 	if (len < 4)
 		return false;	// This shouldn't actually occur
+	/*
+	19462 door
+	19463 ??
+	19464 ??
+	19465 puzzle?
+	19466 cake
+	19467 maze
+	19468 ambient  (but not 69, amb b.  odd)
+	19470 puzzle
+	19471
+	19473 
+	19475 coffins or blood pump
+	19476 blood pump or coffins
+	19493
+	19499 chapel
+	19509 downstair ambient
+	19510 bedroom 'skip 3 and 5' puzzle (should loop from partway?)
+	19514 
+	19515 bathroom drain teeth
+	*/
+	if ((fileref >= 19462 && fileref <= 19468) || 
+		fileref == 19470 || fileref == 19471 ||
+		fileref == 19473 || fileref == 19475 ||
+		fileref == 19476 || fileref == 19493 ||
+		fileref == 19499 || fileref == 19509 ||
+		fileref == 19510 || fileref == 19514 ||
+		fileref == 19515)
+		loop = true; // XMIs for these refs self-loop
 
 	// iOS port provides alternative intro sequence music
 	if (info.filename == "gu39.xmi") {
