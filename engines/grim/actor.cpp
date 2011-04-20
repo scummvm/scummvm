@@ -1261,7 +1261,7 @@ void Actor::costumeMarkerCallback(Footstep step)
 	int time = g_system->getMillis();
 	float rate = 400;
 	if (_running)
-		rate = 800;
+		rate = 300;
 
 	if (_lastStepTime != 0 && time - _lastStepTime < rate)
 		return;
