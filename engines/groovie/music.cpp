@@ -770,6 +770,11 @@ Common::SeekableReadStream *MusicPlayerMac::decompressMidi(Common::SeekableReadS
 }
 
 MusicPlayerMPEG4::MusicPlayerMPEG4(GroovieEngine *vm) : MusicPlayer(vm) {
+	vm->getTimerManager()->installTimerProc(&onTimer, 50 * 1000, this);
+}
+
+MusicPlayerMPEG4::~MusicPlayerMPEG4() {
+	_vm->getTimerManager()->removeTimerProc(&onTimer);
 }
 
 void MusicPlayerMPEG4::updateVolume() {

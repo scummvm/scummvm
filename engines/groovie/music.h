@@ -169,6 +169,7 @@ private:
 class MusicPlayerMPEG4 : public MusicPlayer {
 public:
 	MusicPlayerMPEG4(GroovieEngine *vm);
+	~MusicPlayerMPEG4();
 
 protected:
 	void updateVolume();
