@@ -100,6 +100,7 @@ public:
 
 	bool inSet(const char *setName) const;
 	void walkForward();
+	void setRunning(bool running);
 	void setReflection(float angle) { _reflectionAngle = angle; }
 	Graphics::Vector3d puckVector() const;
 	void turn(int dir);
@@ -171,6 +172,16 @@ public:
 	bool _toClean;
 
 private:
+	enum Footstep {
+		LeftWalk = 10,
+		RightWalk = 15,
+		LeftRun = 20,
+		RightRun = 25,
+		LeftTurn = 30,
+		RightTurn = 35
+	};
+
+	void costumeMarkerCallback(Footstep step);
 	void updateWalk();
 
 	Common::String _name;
@@ -204,6 +215,9 @@ private:
 	Costume *_walkCostume;
 	int _walkChore;
 	bool _walkedLast, _walkedCur;
+	bool _lastWasLeft;
+	int _lastStepTime;
+	bool _running;
 
 	Costume *_turnCostume;
 	int _leftTurnChore, _rightTurnChore;

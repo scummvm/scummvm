@@ -1040,21 +1040,16 @@ static void GetActorNodeLocation() {
 	lua_pushnumber(pos.z());
 }
 
-/* This function is called to stop walking actions that
- * are in progress, it is unknown whether it should start
- * walking actions that are not in progress.
- */
 static void SetActorWalkDominate() {
 	lua_Object actorObj = lua_getparam(1);
-//	lua_Object modeObj = lua_getparam(2);
+	lua_Object modeObj = lua_getparam(2);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
 
-/*	bool mode = lua_isnil(modeObj) != 0;
+	bool mode = lua_isnil(modeObj) != 0;
 	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
-*/	// TODO implement missing function
-	//actor->setWalkDominate(mode);
+	actor->setRunning(mode);
 }
 
 static void SetActorColormap() {

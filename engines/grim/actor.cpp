@@ -60,6 +60,9 @@ Actor::Actor(const char *actorName) :
 	_winX1 = _winY1 = 1000;
 	_winX2 = _winY2 = -1000;
 	_toClean = false;
+	_lastWasLeft = false;
+	_lastStepTime = 0;
+	_running = false;
 
 	for (int i = 0; i < 5; i++) {
 		_shadowArray[i].active = false;
@@ -86,6 +89,9 @@ Actor::Actor() :
 	_winX1 = _winY1 = 1000;
 	_winX2 = _winY2 = -1000;
 	_toClean = false;
+	_lastWasLeft = false;
+	_lastStepTime = 0;
+	_running = false;
 
 	for (int i = 0; i < 5; i++) {
 		_shadowArray[i].active = false;
@@ -571,6 +577,17 @@ void Actor::walkForward() {
 		cos(yaw_rad) * cos(pitch_rad), sin(pitch_rad));
 	Graphics::Vector3d destPos = _pos + forwardVec * dist;
 
+	if (_lastWasLeft)
+		if (_running)
+			costumeMarkerCallback(RightRun);
+		else
+			costumeMarkerCallback(RightWalk);
+	else
+		if (_running)
+			costumeMarkerCallback(LeftRun);
+		else
+			costumeMarkerCallback(LeftWalk);
+
 	if (! _constrain) {
 		_pos += forwardVec * dist;
 		_walkedCur = true;
@@ -630,6 +647,10 @@ void Actor::walkForward() {
 	if (turnAmt > ei.angleWithEdge)
 		turnAmt = ei.angleWithEdge;
 	setYaw(_yaw + turnAmt * turnDir);
+}
+
+void Actor::setRunning(bool running) {
+	_running = running;
 }
 
 Graphics::Vector3d Actor::puckVector() const {
@@ -714,6 +735,11 @@ void Actor::turn(int dir) {
 	float delta = g_grim->perSecond(_turnRate) * dir;
 	setYaw(_yaw + delta);
 	_currTurnDir = dir;
+
+	if (_lastWasLeft)
+		costumeMarkerCallback(RightTurn);
+	else
+		costumeMarkerCallback(LeftTurn);
 }
 
 float Actor::angleTo(const Actor &a) const {
@@ -955,6 +981,17 @@ void Actor::updateWalk() {
 	}
 
 	_walkedCur = true;
+
+	if (_lastWasLeft)
+		if (_running)
+			costumeMarkerCallback(RightRun);
+		else
+			costumeMarkerCallback(RightWalk);
+	else
+		if (_running)
+			costumeMarkerCallback(LeftRun);
+		else
+			costumeMarkerCallback(LeftWalk);
 }
 
 void Actor::update() {
@@ -985,6 +1022,11 @@ void Actor::update() {
 		else
 			setYaw(_yaw - turnAmt);
 		_currTurnDir = (dyaw > 0 ? 1 : -1);
+
+		if (_lastWasLeft)
+			costumeMarkerCallback(RightTurn);
+		else
+			costumeMarkerCallback(LeftTurn);
 	}
 
 	if (_walking) {
@@ -999,6 +1041,7 @@ void Actor::update() {
 	if (_walkChore >= 0) {
 		if (_walkedCur) {
 			if (_walkCostume->isChoring(_walkChore, false) < 0)
+				_lastStepTime = 0;
 				_walkCostume->playChoreLooping(_walkChore);
 		} else {
 			if (_walkCostume->isChoring(_walkChore, false) >= 0)
@@ -1209,6 +1252,46 @@ void Actor::freeCostumeChore(Costume *toFree, Costume *&cost, int &chore) {
 		cost = NULL;
 		chore = -1;
 	}
+}
+
+extern int refSystemTable;
+
+void Actor::costumeMarkerCallback(Footstep step)
+{
+	int time = g_system->getMillis();
+	float rate = 400;
+	if (_running)
+		rate = 800;
+
+	if (_lastStepTime != 0 && time - _lastStepTime < rate)
+		return;
+
+	_lastStepTime = time;
+	_lastWasLeft = !_lastWasLeft;
+
+	lua_beginblock();
+
+	lua_pushobject(lua_getref(refSystemTable));
+	lua_pushstring("costumeMarkerHandler");
+	lua_Object table = lua_gettable();
+
+	if (lua_istable(table)) {
+		lua_pushobject(table);
+		lua_pushstring("costumeMarkerHandler");
+		lua_Object func = lua_gettable();
+		if (lua_isfunction(func)) {
+			lua_pushobject(func);
+			lua_pushusertag(this, MKTAG('A','C','T','R'));
+			lua_pushnumber(step);
+			lua_callfunction(func);
+		}
+	} else if (lua_isfunction(table)) {
+		lua_pushusertag(this, MKTAG('A','C','T','R'));
+		lua_pushnumber(step);
+		lua_callfunction(table);
+	}
+
+	lua_endblock();
 }
 
 } // end of namespace Grim
