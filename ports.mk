@@ -161,8 +161,8 @@ osxsnap: bundle
 # Windows specific
 #
 
-scummvmico.o: $(srcdir)/icons/scummvm.ico
-	$(WINDRES) $(WINDRESFLAGS) -I$(srcdir) $(srcdir)/dists/scummvm.rc scummvmico.o
+scummvmwinres.o: $(srcdir)/icons/scummvm.ico $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(srcdir)/dists/scummvm.rc
+	$(WINDRES) -DHAVE_CONFIG_H $(WINDRESFLAGS) $(DEFINES) -I. -I$(srcdir) $(srcdir)/dists/scummvm.rc scummvmwinres.o
 
 # Special target to create a win32 snapshot binary
 win32dist: $(EXECUTABLE)
