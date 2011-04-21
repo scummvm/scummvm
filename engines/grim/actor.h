@@ -66,15 +66,7 @@ public:
 	void setTalkColor(const Color& c) { _talkColor = c; }
 	Color talkColor() const { return _talkColor; }
 	void setPos(Graphics::Vector3d position);
-	// When the actor is walking report where the actor is going to and
-	// not the actual current position, this fixes some scene change
-	// change issues with the Bone Wagon (along with other fixes)
-	Graphics::Vector3d pos() const {
-		if (_walking)
-			return _destPos;
-		else
-			return _pos;
-	}
+	Graphics::Vector3d pos() const;
 	void walkTo(Graphics::Vector3d p);
 	void stopWalking() { _walking = false; }
 	bool isWalking() const;

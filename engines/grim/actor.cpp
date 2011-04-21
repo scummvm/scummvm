@@ -440,6 +440,22 @@ void Actor::setPos(Graphics::Vector3d position) {
 	_pos = position;
 }
 
+// When the actor is walking report where the actor is going to and
+// not the actual current position, this fixes some scene change
+// change issues with the Bone Wagon (along with other fixes)
+Graphics::Vector3d Actor::pos() const {
+	// NOTE: These commented out lines break the "su" set, like explained
+	// at https://github.com/residual/residual/issues/11 . According to the
+	// above comment they however fix some issues. Since i don't know what
+	// issues is it talking about, i'm commenting them anyway and we'll
+	// see what happens.
+
+// 	if (_walking)
+// 		return _destPos;
+// 	else
+		return _pos;
+}
+
 void Actor::turnTo(float pitchParam, float yawParam, float rollParam) {
 	_pitch = pitchParam;
 	_roll = rollParam;
