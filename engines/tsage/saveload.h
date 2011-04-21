@@ -54,8 +54,8 @@ struct tSageSavegameHeader {
 // FIXME: workaround to supress spurious strict-alias warnings on older GCC
 // versions. this should be resolved with the savegame rewrite
 #define SYNC_POINTER(x) do { \
-	SavedObject *y = (SavedObject *)x; \
-	s.syncPointer(&y); \
+	SavedObject **y = (SavedObject **)((void *)&x); \
+	s.syncPointer(y); \
 } while (false)
 
 #define SYNC_ENUM(FIELD, TYPE) int v_##FIELD = (int)FIELD; s.syncAsUint16LE(v_##FIELD); \
@@ -176,7 +176,7 @@ typedef SavedObject *(*SavedObjectFactory)(const Common::String &className);
 
 class Saver {
 private:
-	SynchronisedList<SavedObject *> _objList;
+	Common::List<SavedObject *> _objList;
 	FunctionList<bool> _saveNotifiers;
 	FunctionList<bool> _loadNotifiers;
 	Common::List<SaveListener *> _listeners;
@@ -212,6 +212,8 @@ public:
 	bool getMacroSaveFlag() const { return _macroSaveFlag; }
 	bool getMacroRestoreFlag() const { return _macroRestoreFlag; }
 	int blockIndexOf(SavedObject *p);
+	int getObjectCount() const;
+	void listObjects();
 };
 
 extern Saver *_saver;

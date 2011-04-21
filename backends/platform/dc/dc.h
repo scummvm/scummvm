@@ -31,6 +31,9 @@
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/fs/fs-factory.h"
 #include "audio/mixer_intern.h"
+#ifdef DYNAMIC_MODULES
+#include "backends/plugins/dynamic-plugin.h"
+#endif
 
 #define NUM_BUFFERS 4
 #define SOUND_BUFFER_SHIFT 3
@@ -69,7 +72,11 @@ class DCCDManager : public DefaultAudioCDManager {
   void updateCD();
 };
 
-class OSystem_Dreamcast : private DCHardware, public BaseBackend, public PaletteManager, public FilesystemFactory {
+class OSystem_Dreamcast : private DCHardware, public BaseBackend, public PaletteManager, public FilesystemFactory
+#ifdef DYNAMIC_MODULES
+  , public FilePluginProvider
+#endif
+ {
 
  public:
   OSystem_Dreamcast();
@@ -250,6 +257,14 @@ public:
 
   void logMessage(LogMessageType::Type type, const char *message);
   Common::String getSystemLanguage() const;
+
+#ifdef DYNAMIC_MODULES
+  class DCPlugin;
+
+ protected:
+  Plugin* createPlugin(const Common::FSNode &node) const;
+  bool isPluginFilename(const Common::FSNode &node) const;
+#endif
 };
 
 

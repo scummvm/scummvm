@@ -1866,33 +1866,33 @@ void Scene60::Action1::signal() {
 		setDelay(3);
 		break;
 	case 1:
-		scene->_object9.postInit();
-		scene->_object9.setVisage(60);
-		scene->_object9.setStrip(7);
-		scene->_object9.setPosition(Common::Point(136, 65));
-		scene->_object9.animate(ANIM_MODE_5, this);
+		scene->_floppyDrive.postInit();
+		scene->_floppyDrive.setVisage(60);
+		scene->_floppyDrive.setStrip(7);
+		scene->_floppyDrive.setPosition(Common::Point(136, 65));
+		scene->_floppyDrive.animate(ANIM_MODE_5, this);
 
 		scene->_soundHandler1.startSound(35);
 		break;
 	case 2:
-		scene->_object10.postInit();
-		scene->_object10.setVisage(60);
-		scene->_object10.setPosition(Common::Point(199, 186));
-		scene->_object10.animate(ANIM_MODE_8, 0, NULL);
-		scene->_object10._numFrames = 5;
+		scene->_redLights.postInit();
+		scene->_redLights.setVisage(60);
+		scene->_redLights.setPosition(Common::Point(199, 186));
+		scene->_redLights.animate(ANIM_MODE_8, 0, NULL);
+		scene->_redLights._numFrames = 5;
 
 		scene->_controlButton.animate(ANIM_MODE_2, NULL);
 
 		if (!_globals->getFlag(83)) {
-			scene->_object5.postInit();
-			scene->_object5.setVisage(60);
-			scene->_object5.setStrip2(3);
-			scene->_object5.setFrame(2);
-			scene->_object5.setPosition(Common::Point(148, 85));
-			scene->_object5.animate(ANIM_MODE_2, NULL);
-			scene->_object5._numFrames = 5;
+			scene->_message.postInit();
+			scene->_message.setVisage(60);
+			scene->_message.setStrip2(3);
+			scene->_message.setFrame(2);
+			scene->_message.setPosition(Common::Point(148, 85));
+			scene->_message.animate(ANIM_MODE_2, NULL);
+			scene->_message._numFrames = 5;
 
-			_globals->_sceneItems.push_front(&scene->_object5);
+			_globals->_sceneItems.push_front(&scene->_message);
 			scene->_soundHandler2.startSound(38);
 		}
 
@@ -1901,10 +1901,10 @@ void Scene60::Action1::signal() {
 	case 3:
 		scene->_soundHandler2.startSound(37);
 		scene->loadScene(65);
-		scene->_object5.remove();
+		scene->_message.remove();
 
-		if (_globals->_sceneObjects->contains(&scene->_object10))
-			scene->_object10.remove();
+		if (_globals->_sceneObjects->contains(&scene->_redLights))
+			scene->_redLights.remove();
 
 		scene->_controlButton.remove();
 		scene->_slaveButton.remove();
@@ -1912,29 +1912,29 @@ void Scene60::Action1::signal() {
 		scene->_item1.remove();
 		scene->_item2.remove();
 
-		scene->_object3.postInit();
-		scene->_object3.setVisage(65);
-		scene->_object3.setPosition(Common::Point(118, 197));
+		scene->_nextButton.postInit();
+		scene->_nextButton.setVisage(65);
+		scene->_nextButton.setPosition(Common::Point(118, 197));
 
-		scene->_object2.postInit();
-		scene->_object2.setVisage(65);
-		scene->_object2.setStrip(2);
-		scene->_object2.setPosition(Common::Point(160, 197));
+		scene->_prevButton.postInit();
+		scene->_prevButton.setVisage(65);
+		scene->_prevButton.setStrip(2);
+		scene->_prevButton.setPosition(Common::Point(160, 197));
 
-		scene->_object4.postInit();
-		scene->_object4.setVisage(65);
-		scene->_object4.setStrip(3);
-		scene->_object4.setPosition(Common::Point(202, 197));
+		scene->_exitButton.postInit();
+		scene->_exitButton.setVisage(65);
+		scene->_exitButton.setStrip(3);
+		scene->_exitButton.setPosition(Common::Point(202, 197));
 
-		scene->_object1.postInit();
-		scene->_object1.setVisage(65);
-		scene->_object1.setStrip(4);
-		scene->_object1.setFrame(1);
-		scene->_object1.setPosition(Common::Point(145, 165));
+		scene->_rose.postInit();
+		scene->_rose.setVisage(65);
+		scene->_rose.setStrip(4);
+		scene->_rose.setFrame(1);
+		scene->_rose.setPosition(Common::Point(145, 165));
 
-		_globals->_sceneItems.push_front(&scene->_object3);
-		_globals->_sceneItems.push_front(&scene->_object2);
-		_globals->_sceneItems.push_front(&scene->_object4);
+		_globals->_sceneItems.push_front(&scene->_nextButton);
+		_globals->_sceneItems.push_front(&scene->_prevButton);
+		_globals->_sceneItems.push_front(&scene->_exitButton);
 		setDelay(10);
 
 		_globals->_events.setCursor(CURSOR_USE);
@@ -1954,19 +1954,19 @@ void Scene60::Action1::signal() {
 		_globals->_player._uiEnabled = false;
 		_globals->_inventory._infoDisk._sceneNumber = 1;
 
-		if (_globals->_sceneObjects->contains(&scene->_object5))
-			scene->_object5.remove();
+		if (_globals->_sceneObjects->contains(&scene->_message))
+			scene->_message.remove();
 
 		scene->_controlButton.animate(ANIM_MODE_NONE);
 		scene->_controlButton.setFrame(1);
-		scene->_object10.remove();
+		scene->_redLights.remove();
 
-		scene->_object9.postInit();
-		scene->_object9.setVisage(60);
-		scene->_object9.setStrip(7);
-		scene->_object9.setPosition(Common::Point(136, 65));
-		scene->_object9.setFrame(scene->_object9.getFrameCount());
-		scene->_object9.animate(ANIM_MODE_6, this);
+		scene->_floppyDrive.postInit();
+		scene->_floppyDrive.setVisage(60);
+		scene->_floppyDrive.setStrip(7);
+		scene->_floppyDrive.setPosition(Common::Point(136, 65));
+		scene->_floppyDrive.setFrame(scene->_floppyDrive.getFrameCount());
+		scene->_floppyDrive.animate(ANIM_MODE_6, this);
 
 		scene->_soundHandler1.startSound(35);
 		scene->_soundHandler3.proc3();
@@ -1982,7 +1982,7 @@ void Scene60::Action1::signal() {
 		break;
 	case 11:
 		_globals->_player._uiEnabled = true;
-		scene->_object9.remove();
+		scene->_floppyDrive.remove();
 		remove();
 		break;
 	case 8:
@@ -2010,7 +2010,7 @@ void Scene60::Action2::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene60::Object2::doAction(int action) {
+void Scene60::PrevObject::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -2028,7 +2028,7 @@ void Scene60::Object2::doAction(int action) {
 	}
 }
 
-void Scene60::Object3::doAction(int action) {
+void Scene60::NextObject::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -2045,7 +2045,7 @@ void Scene60::Object3::doAction(int action) {
 	}
 }
 
-void Scene60::Object4::doAction(int action) {
+void Scene60::ExitObject::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -2053,16 +2053,17 @@ void Scene60::Object4::doAction(int action) {
 	} else if (action == CURSOR_USE) {
 		scene->_soundHandler3.startSound(36);
 		animate(ANIM_MODE_8, 1, NULL);
-		scene->_object3.remove();
-		scene->_object2.remove();
-		scene->_object4.remove();
-		scene->_object1.remove();
+		scene->_nextButton.remove();
+		scene->_prevButton.remove();
+		scene->_exitButton.remove();
+		scene->_rose.remove();
 
 		SceneItem::display(0, 0);
 		scene->loadScene(60);
 
 		scene->_controlButton.postInit();
 		scene->_controlButton.setVisage(60);
+		scene->_controlButton.setStrip(5);
 		scene->_controlButton.setPosition(Common::Point(233, 143));
 		scene->_controlButton.animate(ANIM_MODE_2, NULL);
 
@@ -2079,12 +2080,12 @@ void Scene60::Object4::doAction(int action) {
 		_globals->_sceneItems.push_front(&scene->_masterButton);
 		_globals->_sceneItems.push_front(&scene->_slaveButton);
 
-		scene->_object10.postInit();
-		scene->_object10.setVisage(60);
-		scene->_object10.setPosition(Common::Point(199, 186));
-		scene->_object10.animate(ANIM_MODE_8, 0, NULL);
-		scene->_object10._numFrames = 5;
-		scene->_object10.setAction(&scene->_sequenceManager, scene, 61, NULL);
+		scene->_redLights.postInit();
+		scene->_redLights.setVisage(60);
+		scene->_redLights.setPosition(Common::Point(199, 186));
+		scene->_redLights.animate(ANIM_MODE_8, 0, NULL);
+		scene->_redLights._numFrames = 5;
+		scene->_redLights.setAction(&scene->_sequenceManager, scene, 61, NULL);
 
 		if (scene->_slaveButton._state)
 			scene->_slaveButton.setFrame(2);
@@ -2109,7 +2110,7 @@ void Scene60::Object4::doAction(int action) {
 	}
 }
 
-void Scene60::Object5::doAction(int action) {
+void Scene60::MessageObject::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -2205,7 +2206,7 @@ void Scene60::MasterObject::doAction(int action) {
 	}
 }
 
-void Scene60::Object9::doAction(int action) {
+void Scene60::FloppyDrive::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -2341,22 +2342,22 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 		if (_globals->getFlag(118)) {
 			_controlButton.animate(ANIM_MODE_2, NULL);
 
-			_object10.postInit();
-			_object10.setVisage(60);
-			_object10.setPosition(Common::Point(199, 186));
-			_object10.animate(ANIM_MODE_8, 0, NULL);
+			_redLights.postInit();
+			_redLights.setVisage(60);
+			_redLights.setPosition(Common::Point(199, 186));
+			_redLights.animate(ANIM_MODE_8, 0, NULL);
 
 			_soundHandler1.startSound(35);
 
 			if (!_globals->getFlag(83)) {
-				_object5.postInit();
-				_object5.setVisage(60);
-				_object5.setStrip2(3);
-				_object5.setFrame(2);
-				_object5.setPosition(Common::Point(148, 85));
-				_object5.animate(ANIM_MODE_2, NULL);
-				_object5._numFrames = 5;
-				_globals->_sceneItems.push_front(&_object5);
+				_message.postInit();
+				_message.setVisage(60);
+				_message.setStrip2(3);
+				_message.setFrame(2);
+				_message.setPosition(Common::Point(148, 85));
+				_message.animate(ANIM_MODE_2, NULL);
+				_message._numFrames = 5;
+				_globals->_sceneItems.push_front(&_message);
 
 				_soundHandler2.startSound(38);
 			}
@@ -2375,23 +2376,23 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 		if (_globals->getFlag(121)) {
 			_controlButton.animate(ANIM_MODE_2, NULL);
 
-			_object10.postInit();
-			_object10.setVisage(60);
-			_object10.setPosition(Common::Point(199, 186));
-			_object10.animate(ANIM_MODE_8, 0, NULL);
-			_object10._numFrames = 5;
+			_redLights.postInit();
+			_redLights.setVisage(60);
+			_redLights.setPosition(Common::Point(199, 186));
+			_redLights.animate(ANIM_MODE_8, 0, NULL);
+			_redLights._numFrames = 5;
 
 			_soundHandler1.startSound(35);
 
 			if (!_globals->getFlag(83)) {
-				_object5.postInit();
-				_object5.setVisage(60);
-				_object5.setStrip2(3);
-				_object5.setFrame(2);
-				_object5.setPosition(Common::Point(148, 85));
-				_object5.animate(ANIM_MODE_2, NULL);
-				_object5._numFrames = 5;
-				_globals->_sceneItems.push_front(&_object5);
+				_message.postInit();
+				_message.setVisage(60);
+				_message.setStrip2(3);
+				_message.setFrame(2);
+				_message.setPosition(Common::Point(148, 85));
+				_message.animate(ANIM_MODE_2, NULL);
+				_message._numFrames = 5;
+				_globals->_sceneItems.push_front(&_message);
 
 				_soundHandler2.startSound(38);
 			}
@@ -2424,7 +2425,7 @@ void Scene60::signal() {
 void Scene60::process(Event &event) {
 	Scene::process(event);
 
-	if (_sceneNumber == 60) {
+	if (_screenNumber == 60) {
 		if (_gfxButton.process(event))
 			_globals->_sceneManager.changeScene(50);
 	}

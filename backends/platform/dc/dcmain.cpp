@@ -33,7 +33,6 @@
 #include <common/config-manager.h>
 #include <common/memstream.h>
 
-#include "backends/plugins/dc/dc-provider.h"
 #include "audio/mixer_intern.h"
 
 
@@ -336,7 +335,7 @@ int main()
   g_system = &osys_dc;
 
 #ifdef DYNAMIC_MODULES
-  PluginManager::instance().addPluginProvider(new DCPluginProvider());
+  PluginManager::instance().addPluginProvider(&osys_dc);
 #endif
 
   scummvm_main(argc, argv);

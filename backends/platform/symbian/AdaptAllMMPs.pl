@@ -111,7 +111,8 @@ ParseModule("_base",	"base",		\@section_empty); # now in ./TRG/ScummVM_TRG.mmp, 
 ParseModule("_base",	"common",	\@section_empty);
 ParseModule("_base",	"gui",		\@section_empty,		\@excludes_gui);
 ParseModule("_base",	"graphics",	\@section_empty,		\@excludes_graphics);
-ParseModule("_base",	"sound",	\@section_empty,		\@excludes_snd);
+ParseModule("_base",	"audio",	\@section_empty,		\@excludes_snd);
+ParseModule("_base",	"video",	\@section_empty);
 
 chdir("engines/");
 ParseModule("_scumm",	"scumm",	\@sections_scumm,		\@excludes_scumm );

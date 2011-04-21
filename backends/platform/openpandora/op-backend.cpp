@@ -26,20 +26,17 @@
 #include "backends/platform/openpandora/op-sdl.h"
 #include "base/main.h"
 
+#include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
 #include "backends/saves/default/default-saves.h"
+#include "backends/timer/default/default-timer.h"
 
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "common/util.h"
 
-#include "common/file.h"
-#include "base/main.h"
-
-#include "backends/saves/default/default-saves.h"
-
-#include "backends/timer/default/default-timer.h"
 #include "audio/mixer_intern.h"
 
 #include <stdio.h>
@@ -77,6 +74,14 @@ void OSystem_OP::initBackend() {
 //		error("Could not initialize SDL: %s", SDL_GetError());
 //	}
 //
+
+	// Create the mixer manager
+	if (_mixer == 0) {
+		_mixerManager = new DoubleBufferSDLMixerManager();
+
+		// Setup and start mixer
+		_mixerManager->init();
+	}
 
 	/* Setup default save path to be workingdir/saves */
 

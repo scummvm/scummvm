@@ -32,7 +32,6 @@
 #include "backends/events/gph/gph-events.h"
 
 #define __GP2XWIZ__
-#define MIXER_DOUBLE_BUFFERING 1
 
 #ifndef PATH_MAX
 	#define PATH_MAX 255

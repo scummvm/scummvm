@@ -87,6 +87,7 @@ void Parser::readCmd(Common::ReadStream &in, cmd &curCmd) {
  */
 void Parser::loadCmdList(Common::ReadStream &in) {
 	cmd tmpCmd;
+	memset(&tmpCmd, 0, sizeof(tmpCmd));
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		uint16 numElem = in.readUint16BE();
 		if (varnt == _vm->_gameVariant) {
@@ -119,6 +120,7 @@ void Parser::readBG(Common::ReadStream &in, background_t &curBG) {
  */
 void Parser::loadBackgroundObjects(Common::ReadStream &in) {
 	background_t tmpBG;
+	memset(&tmpBG, 0, sizeof(tmpBG));
 
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		uint16 numElem = in.readUint16BE();
@@ -145,6 +147,7 @@ void Parser::loadBackgroundObjects(Common::ReadStream &in) {
 void Parser::loadCatchallList(Common::ReadStream &in) {
 	background_t *wrkCatchallList = 0;
 	background_t tmpBG;
+	memset(&tmpBG, 0, sizeof(tmpBG));
 
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		uint16 numElem = in.readUint16BE();

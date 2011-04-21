@@ -323,19 +323,19 @@ class Scene60 : public Scene {
 	public:
 		virtual void signal();
 	};
-	class Object2 : public SceneObject {
+	class PrevObject : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object3 : public SceneObject {
+	class NextObject : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object4 : public SceneObject {
+	class ExitObject : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object5 : public SceneObject {
+	class MessageObject : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -351,7 +351,7 @@ class Scene60 : public Scene {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object9 : public SceneObject {
+	class FloppyDrive : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -378,16 +378,16 @@ public:
 	SpeakerSText _speakerSText;
 	Action1 _action1;
 	Action2 _action2;
-	SceneObject _object1;
-	Object2 _object2;
-	Object3 _object3;
-	Object4 _object4;
-	Object5 _object5;
+	SceneObject _rose;
+	PrevObject _prevButton;
+	NextObject _nextButton;
+	ExitObject _exitButton;
+	MessageObject _message;
 	ControlObject _controlButton;
 	SlaveObject _slaveButton;
 	MasterObject _masterButton;
-	Object9 _object9;
-	SceneObject _object10;
+	FloppyDrive _floppyDrive;
+	SceneObject _redLights;
 	Item1 _item1;
 	Item _item2, _item3, _item4, _item5, _item6;
 	SoundHandler _soundHandler1;

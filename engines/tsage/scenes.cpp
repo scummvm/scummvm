@@ -27,6 +27,7 @@
 #include "tsage/globals.h"
 #include "tsage/ringworld_logic.h"
 #include "tsage/tsage.h"
+#include "tsage/saveload.h"
 
 namespace tSage {
 
@@ -39,6 +40,7 @@ SceneManager::SceneManager() {
 	_fadeMode = FADEMODE_GRADUAL;
 	_scrollerRect = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	_saver->addListener(this);
+	_objectCount = 0;
 }
 
 SceneManager::~SceneManager() {
@@ -106,6 +108,12 @@ void SceneManager::sceneChange() {
 
 	// Free any regions
 	disposeRegions();
+
+	// Ensure that the same number of objects are registered now as when the scene started
+	if (_objectCount > 0) {
+		assert(_objectCount == _saver->getObjectCount());
+	}
+	_objectCount = _saver->getObjectCount();
 
 	// Instantiate and set the new scene
 	_scene = getNewScene();
@@ -240,7 +248,7 @@ Scene::~Scene() {
 
 void Scene::synchronise(Serialiser &s) {
 	s.syncAsSint32LE(_field12);
-	s.syncAsSint32LE(_sceneNumber);
+	s.syncAsSint32LE(_screenNumber);
 	s.syncAsSint32LE(_activeScreenNumber);
 	s.syncAsSint32LE(_sceneMode);
 	_backgroundBounds.synchronise(s);
@@ -273,7 +281,7 @@ void Scene::dispatch() {
 
 void Scene::loadScene(int sceneNum) {
 	warning("loadScene(%d)", sceneNum);
-	_sceneNumber = sceneNum;
+	_screenNumber = sceneNum;
 	if (_globals->_scenePalette.loadPalette(sceneNum))
 		_globals->_sceneManager._hasPalette = true;
 

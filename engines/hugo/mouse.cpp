@@ -363,6 +363,7 @@ void MouseHandler::readHotspot(Common::ReadStream &in, hotspot_t &hotspot) {
 void MouseHandler::loadHotspots(Common::ReadStream &in) {
 	hotspot_t *wrkHotspots = 0;
 	hotspot_t tmp;
+	memset(&tmp, 0, sizeof(tmp));
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		int numRows = in.readUint16BE();
 		if (varnt == _vm->_gameVariant)

@@ -39,7 +39,7 @@ private:
 	void drawAltObjects();
 public:
 	int _field12;
-	int _sceneNumber;
+	int _screenNumber;
 	int _activeScreenNumber;
 	int _sceneMode;
 	StripManager _stripManager;
@@ -88,6 +88,7 @@ public:
 	int _sceneLoadCount;
 	Rect _scrollerRect;
 	SceneObjectList _altSceneObjects;
+	int _objectCount;
 public:
 	SceneManager();
 	virtual ~SceneManager();

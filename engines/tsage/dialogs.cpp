@@ -464,6 +464,7 @@ void InventoryDialog::execute() {
 
 	GfxElement *hiliteObj;
 	bool lookFlag = false;
+	_gfxManager.activate();
 
 	while (!_vm->getEventManager()->shouldQuit()) {
 		// Get events
@@ -511,9 +512,7 @@ void InventoryDialog::execute() {
 				_globals->_events.setCursor(CURSOR_WALK);
 			}
 
-			_gfxManager.activate();
 			hiliteObj->draw();
-			_gfxManager.deactivate();
 		} else if (hiliteObj) {
 			// Inventory item selected
 			InvObject *invObject = static_cast<GfxInvImage *>(hiliteObj)->_invObject;
@@ -525,6 +524,8 @@ void InventoryDialog::execute() {
 			}
 		}
 	}
+
+	_gfxManager.deactivate();
 }
 
 /*--------------------------------------------------------------------------*/

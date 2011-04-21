@@ -785,7 +785,7 @@ void Scene9400::dispatch() {
 
 void Scene9400::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit();
-	_sceneNumber = 9400;
+	_screenNumber = 9400;
 	setZoomPercents(0, 100, 200, 100);
 	_globals->_player.postInit();
 	_object1.postInit(0);

@@ -1300,7 +1300,7 @@ uint8 ScenePalette::indexOf(uint r, uint g, uint b, int threshold) {
 		int bDiff = abs(ib - (int)b);
 
 		int idxThreshold = rDiff * rDiff + gDiff * gDiff + bDiff * bDiff;
-		if (idxThreshold <= threshold) {
+		if (idxThreshold < threshold) {
 			threshold = idxThreshold;
 			palIndex = i;
 		}
@@ -2254,8 +2254,9 @@ void SceneObject::removeObject() {
 		_mover->remove();
 		_mover = NULL;
 	}
-	if (_flags & 0x800)
-		destroy();
+	if (_flags & OBJFLAG_CLONED)
+		// Cloned temporary object, so delete it
+		delete this;
 }
 
 GfxSurface SceneObject::getFrame() {
@@ -2388,8 +2389,8 @@ void SceneObjectList::draw() {
 
 			// Handle updating object priority
 			if (!(obj->_flags & OBJFLAG_FIXED_PRIORITY)) {
-				obj->_priority = MIN((int)obj->_position.y - 1,
-					(int)_globals->_sceneManager._scene->_backgroundBounds.bottom);
+				obj->_priority = MIN((int)obj->_position.y,
+					(int)_globals->_sceneManager._scene->_backgroundBounds.bottom - 1);
 			}
 
 			if ((_globals->_paneRefreshFlag[paneNum] != 0) || !_globals->_paneRegions[paneNum].empty()) {
