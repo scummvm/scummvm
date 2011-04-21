@@ -706,7 +706,7 @@ void GrimEngine::drawPrimitives() {
 }
 
 void GrimEngine::luaUpdate() {
-	if (_savegameLoadRequest)
+	if (_savegameLoadRequest || _savegameSaveRequest)
 		return;
 
 	// Update timing information
