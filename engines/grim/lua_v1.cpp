@@ -3877,6 +3877,29 @@ static void SetLightIntensity() {
 	}
 }
 
+static void SetLightPosition() {
+	lua_Object lightObj = lua_getparam(1);
+	lua_Object xObj = lua_getparam(2);
+	lua_Object yObj = lua_getparam(3);
+	lua_Object zObj = lua_getparam(4);
+
+	if (!lua_isnumber(xObj) || !lua_isnumber(yObj) || !lua_isnumber(zObj))
+		return;
+
+	float x = lua_getnumber(xObj);
+	float y = lua_getnumber(yObj);
+	float z = lua_getnumber(zObj);
+	Graphics::Vector3d vec(x, y, z);
+
+	if (lua_isnumber(lightObj)) {
+		int light = (int)lua_getnumber(lightObj);
+		g_grim->currScene()->setLightPosition(light, vec);
+	} else if (lua_isstring(lightObj)) {
+		const char *light = lua_getstring(lightObj);
+		g_grim->currScene()->setLightPosition(light, vec);
+	}
+}
+
 static void RenderModeUser() {
 	lua_Object param1 = lua_getparam(1);
 	if (!lua_isnil(param1) && g_grim->getMode() != ENGINE_MODE_DRAW) {
@@ -4030,7 +4053,6 @@ STUB_FUNC(SetActorCollisionScale)
 STUB_FUNC(SetActorCollisionMode)
 STUB_FUNC(FlushControls)
 STUB_FUNC(LightMgrStartup)
-STUB_FUNC(SetLightPosition)
 STUB_FUNC(TurnLightOn)
 STUB_FUNC(GetCameraLookVector)
 STUB_FUNC(SetCameraRoll)

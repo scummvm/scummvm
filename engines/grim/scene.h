@@ -66,6 +66,8 @@ public:
 	}
 	void setLightIntensity(const char *light, float intensity);
 	void setLightIntensity(int light, float intensity);
+	void setLightPosition(const char *light, Graphics::Vector3d pos);
+	void setLightPosition(int light, Graphics::Vector3d pos);
 
 	void setSetup(int num);
 	int setup() const { return _currSetup - _setups; }

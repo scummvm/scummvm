@@ -488,6 +488,21 @@ void Scene::setLightIntensity(int light, float intensity) {
 	l._intensity = intensity;
 }
 
+void Scene::setLightPosition(const char *light, Graphics::Vector3d pos) {
+	printf("%s\n",light);
+	for (int i = 0; i < _numLights; ++i) {
+		Light &l = _lights[i];
+		if (l._name == light) {
+			l._pos = pos;
+		}
+	}
+}
+
+void Scene::setLightPosition(int light, Graphics::Vector3d pos) {
+	Light &l = _lights[light];
+	l._pos = pos;
+}
+
 void Scene::setSoundPosition(const char *soundName, Graphics::Vector3d pos) {
 	setSoundPosition(soundName, pos, _minVolume, _maxVolume);
 }
