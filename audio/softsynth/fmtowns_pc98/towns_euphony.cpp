@@ -40,6 +40,7 @@ TownsEuphonyDriver::~TownsEuphonyDriver() {
 	delete[] _activeChannels;
 	delete[] _sustainChannels;
 	delete[] _assignedChannels;
+	delete[] _eventBuffer;
 	delete[] _tEnable;
 	delete[] _tMode;
 	delete[] _tOrdr;
@@ -50,6 +51,16 @@ TownsEuphonyDriver::~TownsEuphonyDriver() {
 bool TownsEuphonyDriver::init() {
 	if (!_intf->init())
 		return false;
+
+	delete[] _activeChannels;
+	delete[] _sustainChannels;
+	delete[] _assignedChannels;
+	delete[] _eventBuffer;
+	delete[] _tEnable;
+	delete[] _tMode;
+	delete[] _tOrdr;
+	delete[] _tLevel;
+	delete[] _tTranspose;
 
 	_activeChannels = new int8[16];
 	_sustainChannels = new int8[16];
