@@ -165,7 +165,7 @@ void luaD_callTM(TObject *f, int32 nParams, int32 nResults) {
 	lua_state->state_counter1--;
 }
 
-int32 luaD_call(StkId base, int nResults) {
+int32 luaD_call(StkId base, int32 nResults) {
 	lua_Task *tmpTask = lua_state->task;
 	if (!lua_state->task || lua_state->state_counter2) {
 		lua_Task *t = luaM_new(lua_Task);

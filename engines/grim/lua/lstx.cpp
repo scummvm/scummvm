@@ -443,7 +443,7 @@ static void pushupvalue (TaggedString *n)
 }
 
 
-void luaY_codedebugline (int line)
+void luaY_codedebugline (int32 line)
 {
 	if (lua_debug && line != lua_state->lexstate->lastline) {
 		code_oparg(SETLINE, 0, line, 0);
