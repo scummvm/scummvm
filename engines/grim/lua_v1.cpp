@@ -714,6 +714,52 @@ static void GetAngleBetweenActors() {
 	lua_pushnumber(angle);
 }
 
+static void GetAngleBetweenVectors() {
+	lua_Object vec1Obj = lua_getparam(1);
+	lua_Object vec2Obj = lua_getparam(2);
+
+	if (!lua_istable(vec1Obj) || !lua_istable(vec2Obj)) {
+		lua_pushnil();
+		return;
+	}
+
+	lua_pushobject(vec1Obj);
+	lua_pushstring("x");
+	lua_Object table = lua_gettable();
+	float x1 = lua_getnumber(table);
+	lua_pushobject(vec1Obj);
+	lua_pushstring("y");
+	table = lua_gettable();
+	float y1 = lua_getnumber(table);
+	lua_pushobject(vec1Obj);
+	lua_pushstring("z");
+	table = lua_gettable();
+	float z1 = lua_getnumber(table);
+	lua_pushobject(vec2Obj);
+	lua_pushstring("x");
+	table = lua_gettable();
+	float x2 = lua_getnumber(table);
+	lua_pushobject(vec2Obj);
+	lua_pushstring("y");
+	table = lua_gettable();
+	float y2 = lua_getnumber(table);
+	lua_pushobject(vec2Obj);
+	lua_pushstring("z");
+	table = lua_gettable();
+	float z2 = lua_getnumber(table);
+
+	Graphics::Vector3d vec1(x1, y1, z1);
+	Graphics::Vector3d vec2(x2, y2, z2);
+	vec1.normalize();
+	vec2.normalize();
+
+	float dot = vec1.dotProduct(vec2.x(), vec2.y(), vec2.z());
+	float angle = 90.0f - (180.0f * asin(dot)) / LOCAL_PI;
+	if (angle < 0)
+		angle = -angle;
+	lua_pushnumber(angle);
+}
+
 static void GetActorYawToPoint() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object pointObj = lua_getparam(2);
@@ -3986,7 +4032,6 @@ STUB_FUNC(FlushControls)
 STUB_FUNC(LightMgrStartup)
 STUB_FUNC(SetLightPosition)
 STUB_FUNC(TurnLightOn)
-STUB_FUNC(GetAngleBetweenVectors)
 STUB_FUNC(GetCameraLookVector)
 STUB_FUNC(SetCameraRoll)
 STUB_FUNC(SetCameraInterest)
