@@ -1637,7 +1637,8 @@ static void WalkActorVector() {
 /* RotateVector takes a vector and rotates it around
  * the point (0,0,0) by the requested number of degrees.
  * This function is used to calculate the locations for
- * getting on and off of the Bone Wagon.
+ * getting on and off of the Bone Wagon and for going up
+ * and down the slide with the chain at the end of the world.
  */
 static void RotateVector() {
 	lua_Object vecObj = lua_getparam(1);
@@ -1673,16 +1674,25 @@ static void RotateVector() {
 	z = lua_getnumber(lua_gettable());
 	rot.set(x, y, z);
 
-	// TODO implement proper code
-	float rotate, currAngle, newAngle;
-	rotate = rot.y();
-	Graphics::Vector3d baseVector(sin(0.0f), cos(0.0f), 0);
-	currAngle = angle(baseVector, vec) * (180 / LOCAL_PI);
-	newAngle = (currAngle - rotate) * (LOCAL_PI / 180);
-	Graphics::Vector3d vec2(sin(newAngle), cos(newAngle), 0);
-	vec2 *= vec.magnitude();
-	vec = vec2;
+	// FIXME: Is this really right?
+	float xAngle = x * LOCAL_PI / 180.f;
+	float yAngle = z * LOCAL_PI / 180.f;
+	float zAngle = y * LOCAL_PI / 180.f;
 
+	x = vec.x() * cos(zAngle) - vec.y() * sin(zAngle);
+	y = vec.x() * sin(zAngle) + vec.y() * cos(zAngle);
+	vec.x() = x;
+	vec.y() = y;
+
+	y = vec.y() * cos(xAngle) - vec.z() * sin(xAngle);
+	z = vec.y() * sin(xAngle) + vec.z() * cos(xAngle);
+	vec.y() = y;
+	vec.z() = z;
+
+	x = vec.x() * cos(yAngle) - vec.z() * sin(yAngle);
+	z = vec.x() * sin(yAngle) + vec.z() * cos(yAngle);
+	vec.x() = x;
+	vec.z() = z;
 
 	resObj = lua_createtable();
 	lua_pushobject(resObj);
