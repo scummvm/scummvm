@@ -706,6 +706,9 @@ void GrimEngine::drawPrimitives() {
 }
 
 void GrimEngine::luaUpdate() {
+	if (_savegameLoadRequest)
+		return;
+
 	// Update timing information
 	unsigned newStart = g_system->getMillis();
 	if (newStart < _frameStart) {
