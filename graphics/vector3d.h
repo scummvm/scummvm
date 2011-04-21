@@ -114,7 +114,7 @@ public:
 		float len = sqrt(dotProduct(x(), y(), z()));
 		if (len != 0.0f) {
 			float t = 1.0f / len;
-			set(x() * t, y() * t, y() * t);
+			set(x() * t, y() * t, z() * t);
 		}
 	}
 
