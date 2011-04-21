@@ -64,6 +64,8 @@ public:
 	void setLightEnableState(bool state) {
 		_enableLights = state;
 	}
+	void setLightIntensity(const char *light, float intensity);
+	void setLightIntensity(int light, float intensity);
 
 	void setSetup(int num);
 	int setup() const { return _currSetup - _setups; }

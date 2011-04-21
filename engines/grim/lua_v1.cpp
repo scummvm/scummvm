@@ -3813,6 +3813,24 @@ static void SetAmbientLight() {
 	}
 }
 
+static void SetLightIntensity() {
+	lua_Object lightObj = lua_getparam(1);
+	lua_Object intensityObj = lua_getparam(2);
+
+	if (!lua_isnumber(intensityObj))
+		return;
+
+	float intensity = lua_getnumber(intensityObj);
+
+	if (lua_isnumber(lightObj)) {
+		int light = (int)lua_getnumber(lightObj);
+		g_grim->currScene()->setLightIntensity(light, intensity);
+	} else if (lua_isstring(lightObj)) {
+		const char *light = lua_getstring(lightObj);
+		g_grim->currScene()->setLightIntensity(light, intensity);
+	}
+}
+
 static void RenderModeUser() {
 	lua_Object param1 = lua_getparam(1);
 	if (!lua_isnil(param1) && g_grim->getMode() != ENGINE_MODE_DRAW) {
@@ -3966,7 +3984,6 @@ STUB_FUNC(SetActorCollisionScale)
 STUB_FUNC(SetActorCollisionMode)
 STUB_FUNC(FlushControls)
 STUB_FUNC(LightMgrStartup)
-STUB_FUNC(SetLightIntensity)
 STUB_FUNC(SetLightPosition)
 STUB_FUNC(TurnLightOn)
 STUB_FUNC(GetAngleBetweenVectors)

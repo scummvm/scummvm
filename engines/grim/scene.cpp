@@ -474,6 +474,20 @@ ObjectState *Scene::findState(const char *filename) {
 	return NULL;
 }
 
+void Scene::setLightIntensity(const char *light, float intensity) {
+	for (int i = 0; i < _numLights; ++i) {
+		Light &l = _lights[i];
+		if (l._name == light) {
+			l._intensity = intensity;
+		}
+	}
+}
+
+void Scene::setLightIntensity(int light, float intensity) {
+	Light &l = _lights[light];
+	l._intensity = intensity;
+}
+
 void Scene::setSoundPosition(const char *soundName, Graphics::Vector3d pos) {
 	setSoundPosition(soundName, pos, _minVolume, _maxVolume);
 }
