@@ -29,6 +29,7 @@
 #include "common/keyboard.h"
 #include "common/queue.h"
 #include "common/rect.h"
+#include "common/mutex.h"
 #include "common/noncopyable.h"
 
 #include "common/list.h"
@@ -154,13 +155,19 @@ public:
 class ArtificialEventSource : public EventSource {
 protected:
 	Common::Queue<Common::Event> _artificialEventQueue;
+	Common::Mutex                _mutex;
+
 public:
 	void addEvent(const Common::Event &ev) {
+		Common::StackLock lock(_mutex);
+
 		_artificialEventQueue.push(ev);
 	}
 
 	bool pollEvent(Common::Event &ev) {
-	if (!_artificialEventQueue.empty()) {
+		Common::StackLock lock(_mutex);
+
+		if (!_artificialEventQueue.empty()) {
 			ev = _artificialEventQueue.pop();
 			return true;
 		} else {
