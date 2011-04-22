@@ -113,7 +113,7 @@ void Mouse::setCursorType(CursorType cur) {
 
 void Mouse::loadItemCursor(const GameItem *item, bool highlighted) {
 	const int itemID = item->_absNum;
-	const int archiveIndex = 2 * itemID + highlighted;
+	const int archiveIndex = 2 * itemID + (highlighted ? 1 : 0);
 	CursorType newCursor = static_cast<CursorType> (kItemCursor + archiveIndex);
 	if (newCursor == getCursorType()) {
 		return;
