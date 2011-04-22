@@ -43,7 +43,7 @@ protected:
 
 	void writeReferences(std::ofstream &output);
 
-	void outputGlobalPropFile(std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix);
+	void outputGlobalPropFile(std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents);
 
 	void createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32, bool enableAnalysis);
 

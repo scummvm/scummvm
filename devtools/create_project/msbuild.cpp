@@ -283,7 +283,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	project << "\t</ItemDefinitionGroup>\n";
 }
 
-void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix) {
+void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents) {
 
 	std::string warnings;
 	for (StringList::const_iterator i = _globalWarnings.begin(); i != _globalWarnings.end(); ++i)
@@ -292,6 +292,10 @@ void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, 
 	std::string definesList;
 	for (StringList::const_iterator i = defines.begin(); i != defines.end(); ++i)
 		definesList += *i + ';';
+
+	// Add define to include external_version.h
+	if (runBuildEvents)
+		definesList += "SCUMMVM_EXTERNAL_REVISION;";
 
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
@@ -308,7 +312,7 @@ void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, 
 	              "\t\t<ClCompile>\n"
 	              "\t\t\t<DisableLanguageExtensions>true</DisableLanguageExtensions>\n"
 	              "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n"
-	              "\t\t\t<AdditionalIncludeDirectories>$(SCUMMVM_LIBS)\\include;" << prefix << ";" << prefix << "\\engines;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
+	              "\t\t\t<AdditionalIncludeDirectories>$(SCUMMVM_LIBS)\\include;" << prefix << ";" << prefix << "\\engines;$(TargetDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
 	              "\t\t\t<PreprocessorDefinitions>" << definesList << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
 	              "\t\t\t<ExceptionHandling></ExceptionHandling>\n"
 	              "\t\t\t<RuntimeTypeInfo>false</RuntimeTypeInfo>\n"
@@ -435,9 +439,6 @@ void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream 
 			if (isDuplicate) {
 				projectFile << "\t\t<ClCompile Include=\"" << (*entry).path << "\">\n"
 				               "\t\t\t<ObjectFileName>$(IntDir)" << (*entry).prefix << "%(Filename).obj</ObjectFileName>\n";
-
-				if (hasEnding((*entry).path, "base\\version.cpp"))
-					projectFile <<  "\t\t\t<PreprocessorDefinitions Condition=\"'$(Configuration)'=='Debug'\">SCUMMVM_REVISION#&quot; $(SCUMMVM_REVISION_STRING)&quot;;%(PreprocessorDefinitions)</PreprocessorDefinitions>\n";
 
 				projectFile << "\t\t</ClCompile>\n";
 			} else {

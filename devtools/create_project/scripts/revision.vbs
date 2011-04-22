@@ -35,6 +35,7 @@ Dim WshShell : Set WshShell = CreateObject("WScript.Shell")
 
 ' Folders
 Dim rootFolder : rootFolder = ""
+Dim targetFolder : targetFolder = ""
 
 ' Info variables
 Dim tool : tool = ""
@@ -385,8 +386,8 @@ End Function
 Function ParseCommandLine()
 	ParseCommandLine = True
 
-	If Wscript.Arguments.Count <> 1 Then
-		Wscript.StdErr.WriteLine "[Error] Invalid number of arguments (was: " & Wscript.Arguments.Count & ", expected: 1)"
+	If Wscript.Arguments.Count <> 2 Then
+		Wscript.StdErr.WriteLine "[Error] Invalid number of arguments (was: " & Wscript.Arguments.Count & ", expected: 2)"
 
 		ParseCommandLine = False
 		Exit Function
@@ -394,6 +395,7 @@ Function ParseCommandLine()
 
 	' Get our arguments
 	rootFolder = Wscript.Arguments.Item(0)
+	targetFolder = Wscript.Arguments.Item(1)
 
 	' Check that the folders are valid
 	If Not FSO.FolderExists(rootFolder) Then
@@ -403,8 +405,16 @@ Function ParseCommandLine()
 		Exit Function
 	End If
 
-	' Set absolute path
+	If Not FSO.FolderExists(targetFolder) Then
+		Wscript.StdErr.WriteLine "[Error] Invalid target folder (" & targetFolder & ")"
+
+		ParseCommandLine = False
+		Exit Function
+	End If
+
+	' Set absolute paths
 	rootFolder = FSO.GetAbsolutePathName(rootFolder)
+	targetFolder = FSO.GetAbsolutePathName(targetFolder)
 End Function
 
 Function ReadRegistryKey(shive, subkey, valuename, architecture)

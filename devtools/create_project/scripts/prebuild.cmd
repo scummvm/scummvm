@@ -9,15 +9,20 @@ REM
 REM Expected parameters
 REM    Root folder
 
-if "%~1"=="" goto error_input
+if "%~1"=="" goto error_root
+if "%~2"=="" goto error_target
 
 REM Run the revision script
-@call cscript "%~1/devtools/create_project/scripts/revision.vbs" %~1 1>NUL
+@call cscript "%~1/devtools/create_project/scripts/revision.vbs" %~1 %~2 1>NUL
 if not %errorlevel% == 0 goto error_script
 goto done
 
-:error_output
+:error_root
 echo Invalid root folder (%~1)!
+goto done
+
+:error_target
+echo Invalid target folder (%~2)!
 goto done
 
 :error_script:

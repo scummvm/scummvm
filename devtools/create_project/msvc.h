@@ -59,8 +59,9 @@ protected:
 	 * @param bits Number of bits the platform supports.
 	 * @param defines Defines the platform needs to have set.
 	 * @param prefix File prefix, used to add additional include paths.
+	 * @param runBuildEvents true if generating a revision number, false otherwise
 	 */
-	virtual void outputGlobalPropFile(std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix) = 0;
+	virtual void outputGlobalPropFile(std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents) = 0;
 
 	/**
 	 * Generates the project properties for debug and release settings.
