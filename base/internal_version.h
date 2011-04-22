@@ -2,9 +2,10 @@
 #error This file may only be included by base/version.cpp
 #endif
 
-// Loads revision number from an external file
-#ifdef SCUMMVM_EXTERNAL_REVISION
-#include "external_version.h"
+// Reads revision number from file
+// (this is used when building with Visual Studio)
+#ifdef SCUMMVM_INTERNAL_REVISION
+#include "internal_revision.h"
 #endif
 
 #ifdef RELEASE_BUILD

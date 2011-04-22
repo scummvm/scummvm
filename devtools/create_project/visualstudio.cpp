@@ -205,9 +205,9 @@ void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int b
 		definesList += *i;
 	}
 
-	// Add define to include external_version.h
+	// Add define to include revision header
 	if (runBuildEvents)
-		definesList += "SCUMMVM_EXTERNAL_REVISION;";
+		definesList += "SCUMMVM_INTERNAL_REVISION;";
 
 	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
 	              "<VisualStudioPropertySheet\n"

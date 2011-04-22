@@ -94,15 +94,17 @@ Sub DetermineRevision()
 
 	' If we are not on trunk, add the branch name to the revision string
 	If (branch <> "trunk" And branch <> "master" And branch <> "") Then
-		revisionString = revisionString & " (" & branch & ")"
+		revisionString = revisionString & "(" & branch & ")"
 	End If
 
-	' Add the DVCS name at the end
-	'revisionString = revisionString & " - " & tool
+	' Add the DVCS name at the end (when not git)
+	If (tool <> "git") Then
+		revisionString = revisionString & "-" & tool
+	End If
 
-	' Output external_version.h file
-	FSO.CopyFile rootFolder & "\\base\\external_version.h.in", targetFolder & "\\external_version.h"
-	FindReplaceInFile targetFolder & "\\external_version.h", "@REVISION@", revisionString	
+	' Output revision header file
+	FSO.CopyFile rootFolder & "\\base\\internal_revision.h.in", targetFolder & "\\internal_revision.h"
+	FindReplaceInFile targetFolder & "\\internal_revision.h", "@REVISION@", revisionString
 End Sub
 
 Function DetermineTortoiseSVNVersion()
@@ -283,26 +285,6 @@ Function DetermineGitVersion()
 			branch = line
 		End If
 	End If
-
-'	' Check for svn clones
-'	Set oExec = WshShell.Exec(gitPath & "log --pretty=format:%s --grep=" & Chr(34) & "^(svn r[0-9]*)" & Chr(34) & " -1 " & rootFolder)
-'	if Err.Number = 0 Then
-'		revision = Mid(oExec.StdOut.ReadLine(), 7)
-'		revision = Mid(revision, 1, InStr(revision, ")") - 1)
-'		tool = "svn-git"
-'	End If
-
-'	' No revision? Maybe it is a custom git-svn clone
-'	If revision = "" Then
-'		Err.Clear
-'		Set oExec = WshShell.Exec(gitPath & "log --pretty=format:%b --grep=" & Chr(34) & "git-svn-id:.*@[0-9]*" & Chr(34) & " -1 " & rootFolder)
-'		If Err.Number = 0 Then
-'			revision = oExec.StdOut.ReadLine()
-'			revision = Mid(revision, InStr(revision, "@") + 1)
-'			revision = Mid(revision, 1, InStr(revision, " ") - 1)
-'			tool = "svn-git"
-'		End If
-'	End If
 
 	' Fallback to abbreviated revision number
 	If revision = "" Then

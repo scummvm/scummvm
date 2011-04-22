@@ -293,9 +293,9 @@ void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, 
 	for (StringList::const_iterator i = defines.begin(); i != defines.end(); ++i)
 		definesList += *i + ';';
 
-	// Add define to include external_version.h
+	// Add define to include revision header
 	if (runBuildEvents)
-		definesList += "SCUMMVM_EXTERNAL_REVISION;";
+		definesList += "SCUMMVM_INTERNAL_REVISION;";
 
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
