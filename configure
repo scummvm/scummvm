@@ -125,6 +125,7 @@ add_engine tucker "Bud Tucker in Double Trouble" yes
 # Default lib behaviour yes/no/auto
 _vorbis=auto
 _tremor=auto
+_tremolo=no
 _flac=auto
 _mad=auto
 _alsa=auto
@@ -146,6 +147,7 @@ _text_console=no
 _mt32emu=yes
 _build_scalers=yes
 _build_hq_scalers=yes
+_arm_asm=no
 _indeo3=auto
 _enable_prof=no
 _unix=no
@@ -1712,13 +1714,9 @@ if test -n "$_host"; then
 			LDFLAGS="$LDFLAGS -shared -Wl,-Bsymbolic,--no-undefined"
 			HOSTEXEPRE=lib
 			HOSTEXEEXT=.so
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			_backend="android"
 			_port_mk="backends/platform/android/android.mk"
+			_arm_asm=yes
 			_build_scalers=no
 			_seq_midi=no
 			_mt32emu=no
@@ -1727,11 +1725,7 @@ if test -n "$_host"; then
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
 			;;
 		arm-riscos|linupy)
 			DEFINES="$DEFINES -DLINUPY"
@@ -1755,11 +1749,7 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
 			_backend="gph"
 			_build_hq_scalers=no
 			_vkeybd=yes
@@ -1807,11 +1797,7 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL -DDISABLE_SID -DDISABLE_NES_APU"
 			DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
 			add_line_to_config_h '#define DISABLE_TEXT_CONSOLE'
 			_backend="ds"
 			_build_scalers=no
@@ -1845,11 +1831,7 @@ if test -n "$_host"; then
 			LDFLAGS="$LDFLAGS -static"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
 			_backend="gph"
 			_build_hq_scalers=no
 			_vkeybd=yes
@@ -1869,11 +1851,7 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
 			_backend="gph"
 			_build_hq_scalers=no
 			_vkeybd=yes
@@ -1886,8 +1864,7 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DIPHONE"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			_arm_asm=yes
 			_backend="iphone"
 			_build_hq_scalers=no
 			_seq_midi=no
@@ -1918,11 +1895,7 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
 			_backend="linuxmoto"
 			_build_hq_scalers=no
 			_mt32emu=no
@@ -1935,11 +1908,7 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
 			_backend="linuxmoto"
 			_build_hq_scalers=no
 			_mt32emu=no
@@ -1990,11 +1959,7 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
 			_backend="openpandora"
 			_build_hq_scalers=yes
 			_vkeybd=no
@@ -2049,11 +2014,7 @@ if test -n "$_host"; then
 			HOSTEXEEXT=".so"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
 			_backend="samsungtv"
 			_mt32emu=no
 			_vkeybd=yes
@@ -2061,11 +2022,7 @@ if test -n "$_host"; then
 		webos)
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
 			_backend="webos"
 			_port_mk="backends/platform/webos/webos.mk"
 			_build_scalers=no
@@ -2093,12 +2050,8 @@ if test -n "$_host"; then
 		wince)
 			LDFLAGS="$LDFLAGS -Wl,-Map,scummvm.exe.map -Wl,--stack,65536"
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_TREMOLO = 1'
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
+			_tremolo=yes
 			_backend="wince"
 			_mt32emu=no
 			_port_mk="backends/platform/wince/wince.mk"
@@ -2428,6 +2381,15 @@ define_in_config_if_yes "$_build_scalers" 'USE_SCALERS'
 define_in_config_if_yes "$_build_hq_scalers" 'USE_HQ_SCALERS'
 
 #
+# Check whether to use optimized ARM asm
+#
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_SCALER_ASM'
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_SOUND_ASM'
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_SMUSH_ASM'
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_GFX_ASM'
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_COSTUME_ASM'
+
+#
 # Check whether to compile the Indeo3 decoder
 #
 if test "$_indeo3" = auto ; then
@@ -2472,6 +2434,10 @@ echo "$_vorbis"
 # Check for Tremor
 #
 echocheck "Tremor"
+if test "$_tremolo" = yes ; then
+	_tremor=yes
+fi
+
 if test "$_tremor" = auto ; then
 	_tremor=no
 	cat > $TMPC << EOF
@@ -2484,7 +2450,12 @@ fi
 if test "$_tremor" = yes && test "$_vorbis" = no; then
 	add_line_to_config_h '#define USE_TREMOR'
 	add_line_to_config_h '#define USE_VORBIS'
-	LIBS="$LIBS $TREMOR_LIBS -lvorbisidec"
+	if test "$_tremolo" = yes ; then
+		add_line_to_config_h '#define USE_TREMOLO'
+		LIBS="$LIBS $TREMOR_LIBS -ltremolo"
+	else
+		LIBS="$LIBS $TREMOR_LIBS -lvorbisidec"
+	fi
 	INCLUDES="$INCLUDES $TREMOR_CFLAGS"
 else
 	if test "$_vorbis" = yes; then
