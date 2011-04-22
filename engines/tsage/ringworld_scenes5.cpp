@@ -284,9 +284,9 @@ void Scene4000::Action6::signal() {
 		ADD_MOVER_NULL(scene->_guardRock, 292, 138);
 		ADD_PLAYER_MOVER(283, 147);
 
-		if (!_globals->getFlag(36)) {
+		if (!_globals->getFlag(36))
 			ADD_PLAYER_MOVER_NULL(scene->_miranda, 280, 150);
-		}
+		_globals->_inventory._ale._sceneNumber = 4100;
 		break;
 	case 5:
 		_globals->_sceneManager.changeScene(4100);
@@ -416,7 +416,7 @@ void Scene4000::Action11::signal() {
 		break;
 	case 5:
 		scene->_soundHandler1.proc3();
-		scene->_hotspot11.remove();
+		scene->_forceField.remove();
 
 		ADD_MOVER(_globals->_player, 340, 163);
 		ADD_MOVER_NULL(scene->_miranda, 340, 169);
@@ -756,7 +756,7 @@ void Scene4000::Hotspot23::doAction(int action) {
 /*--------------------------------------------------------------------------*/
 
 Scene4000::Scene4000() :
-	_hotspot11(0, CURSOR_LOOK, 4000, 14, CURSOR_USE, 4000, 32, OBJECT_STUNNER, 4000, 33,
+	_forceField(0, CURSOR_LOOK, 4000, 14, CURSOR_USE, 4000, 32, OBJECT_STUNNER, 4000, 33,
 		OBJECT_SCANNER, 4000, 19, LIST_END),
 	_hotspot19(0, CURSOR_LOOK, 4000, 7, LIST_END),
 	_hotspot20(0, CURSOR_LOOK, 4000, 3, LIST_END),
@@ -793,7 +793,7 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 	_speakerQText._npc = &_globals->_player;
 
 	_hotspot13.setBounds(Rect(263, 41, 278, 55));
-	_hotspot14.setBounds(Rect(140, 177, 140 /*96*/, 204));
+	_hotspot14.setBounds(Rect(96 /*140*/, 177, 140 /*96*/, 204));
 	_hotspot15.setBounds(Rect(227, 101, 264, 143));
 	_hotspot16.setBounds(Rect(306, 100, 319, 148));
 	_hotspot17.setBounds(Rect(231, 53, 254, 60));
@@ -844,14 +844,14 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 	if (_globals->getFlag(34)) {
 		_soundHandler1.startSound(156);
 
-		_hotspot11.postInit();
-		_hotspot11.setVisage(4000);
-		_hotspot11.setStrip(4);
-		_hotspot11.setPosition(Common::Point(312, 174));
-		_hotspot11.setPriority2(200);
-		_hotspot11.animate(ANIM_MODE_8, 0, NULL);
+		_forceField.postInit();
+		_forceField.setVisage(4000);
+		_forceField.setStrip(4);
+		_forceField.setPosition(Common::Point(312, 174));
+		_forceField.setPriority2(200);
+		_forceField.animate(ANIM_MODE_8, 0, NULL);
 
-		_globals->_sceneItems.push_back(&_hotspot11);
+		_globals->_sceneItems.push_back(&_forceField);
 	}
 
 	_globals->_player.postInit();
@@ -860,6 +860,7 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.setObjectWrapper(new SceneObjectWrapper());
 	_globals->_player.setPosition(Common::Point(-28, 86));
 
+	warning("flag 36 & 43: %d %d", _globals->getFlag(36), _globals->getFlag(43));
 	if (!_globals->getFlag(36) && !_globals->getFlag(43)) {
 		_miranda.postInit();
 		_miranda.setVisage(2701);
@@ -936,7 +937,7 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 
 		if (_globals->_stripNum == 4025) {
 			_soundHandler1.startSound(182);
-			_hotspot11.remove();
+			_forceField.remove();
 
 			_hotspot5.postInit();
 			_hotspot5.setVisage(2801);
@@ -1076,12 +1077,12 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 
 			_soundHandler1.startSound(156);
 
-			_hotspot11.postInit();
-			_hotspot11.setVisage(4000);
-			_hotspot11.setStrip(4);
-			_hotspot11.setPosition(Common::Point(312, 174));
-			_hotspot11.setPriority2(200);
-			_hotspot11.animate(ANIM_MODE_8, 0, NULL);
+			_forceField.postInit();
+			_forceField.setVisage(4000);
+			_forceField.setStrip(4);
+			_forceField.setPosition(Common::Point(312, 174));
+			_forceField.setPriority2(200);
+			_forceField.animate(ANIM_MODE_8, 0, NULL);
 		} else {
 			if (!_globals->getFlag(37)) {
 				_hotspot2.postInit();
@@ -2382,6 +2383,7 @@ void Scene4100::Action3::signal() {
 }
 
 void Scene4100::Action4::signal() {
+	// Rock getting drunk
 	Scene4100 *scene = (Scene4100 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {

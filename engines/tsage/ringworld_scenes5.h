@@ -156,7 +156,7 @@ public:
 	Hotspot8 _hotspot8;
 	GuardRock _guardRock;
 	Ladder _ladder;
-	DisplayHotspot _hotspot11;
+	DisplayHotspot _forceField;
 	TheTech _theTech;
 	Hotspot13 _hotspot13;
 	Hotspot _hotspot14, _hotspot15, _hotspot16;
