@@ -185,6 +185,7 @@ _sdlpath="$PATH"
 _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
+_tainted_build=no
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -3235,6 +3236,9 @@ for engine in $_engines; do
 		if test `get_engine_build $engine` = no ; then
 			isbuilt=no
 		else
+			if test `get_engine_build_default $engine` = no; then
+				set_var _tainted_build "yes"
+			fi
 			# If dynamic plugins aren't supported, mark
 			# all the engines as static
 			if test $_dynamic_modules = no ; then
@@ -3264,6 +3268,9 @@ for engine in $_engines; do
 			isbuilt=no
 		else
 			isbuilt=1
+			if test `get_engine_build_default $engine` = no; then
+				set_var _tainted_build "yes"
+			fi
 		fi
 	fi
 
@@ -3275,6 +3282,8 @@ for engine in $_engines; do
 		add_line_to_config_mk "$defname = $isbuilt"
 	fi
 done
+
+add_to_config_h_if_yes `get_var _tainted_build` '#define TAINTED_BUILD'
 
 #
 # Show which engines ("frontends") are to be built
