@@ -37,7 +37,11 @@
 #ifndef USE_TREMOR
 #include <vorbis/vorbisfile.h>
 #else
+#ifdef USE_TREMOLO
+#include <tremolo/ivorbisfile.h>
+#else
 #include <tremor/ivorbisfile.h>
+#endif
 #endif
 #endif
 
