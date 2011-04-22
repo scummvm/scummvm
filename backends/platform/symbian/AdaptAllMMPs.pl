@@ -36,6 +36,7 @@ chdir("../../../");
 	"mmp/scummvm_hugo.mmp",
 	"mmp/scummvm_toon.mmp",
 	"mmp/scummvm_lastexpress.mmp",
+	"mmp/scummvm_tsage.mmp",
 	# Target Platform Project Files
 	"S60/ScummVM_S60.mmp",
 	"S60v3/ScummVM_S60v3.mmp",
@@ -143,6 +144,7 @@ ParseModule("_mohawk"   ,"mohawk",	\@section_empty);
 ParseModule("_hugo"     ,"hugo",	\@section_empty);
 ParseModule("_toon"     ,"toon",	\@section_empty);
 ParseModule("_lastexpress","lastexpress",	\@section_empty);
+ParseModule("_tsage","tsage",	\@section_empty);
 print "
 =======================================================================================
 Done. Enjoy :P
