@@ -57,13 +57,24 @@ int VisualStudioProvider::getVisualStudioVersion() {
 	error("Unsupported version passed to createScummVMSolution");
 }
 
-#define OUTPUT_CONFIGURATION_SCUMMVM(config, platform, props) { \
+#define OUTPUT_BUILD_EVENTS(isWin32) \
+	if (setup.runBuildEvents) { \
+		project << "\t\t\t<Tool\tName=\"VCPreBuildEventTool\"\n" \
+		           "\t\t\t\tCommandLine=\"" << getPreBuildEvent() << "\"\n" \
+		           "\t\t\t/>\n" \
+		           "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n" \
+		           "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32) << "\"\n" \
+		           "\t\t\t/>\n"; \
+	}
+
+#define OUTPUT_CONFIGURATION_SCUMMVM(config, platform, props, isWin32) { \
 	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\ScummVM_" << config << props << ".vsprops\">\n" \
 	           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n" \
 	           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/scummvm.exe\"\n" \
 	           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n" \
-	           "\t\t\t/>\n" \
-	           "\t\t</Configuration>\n"; \
+	           "\t\t\t/>\n"; \
+	OUTPUT_BUILD_EVENTS(isWin32) \
+	project << "\t\t</Configuration>\n"; \
 }
 
 #define OUTPUT_CONFIGURATION_SCUMMVM_DEBUG(config, platform, props, isWin32) { \
@@ -72,14 +83,7 @@ int VisualStudioProvider::getVisualStudioVersion() {
 	           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/scummvm.exe\"\n" \
 	           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n" \
 	           "\t\t\t/>\n"; \
-	if (setup.runBuildEvents) { \
-		project << "\t\t\t<Tool\tName=\"VCPreBuildEventTool\"\n" \
-				   "\t\t\t\tCommandLine=\"" << getPreBuildEvent() << "\"\n" \
-				   "\t\t\t/>\n" \
-				   "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n" \
-				   "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32) << "\"\n" \
-				   "\t\t\t/>\n"; \
-	} \
+	OUTPUT_BUILD_EVENTS(isWin32) \
 	project << "\t\t</Configuration>\n"; \
 }
 
@@ -127,15 +131,15 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		// Win32
 		OUTPUT_CONFIGURATION_SCUMMVM_DEBUG("Debug", "Win32", "", true);
 		OUTPUT_CONFIGURATION_SCUMMVM_DEBUG("Analysis", "Win32", "", true);
-		OUTPUT_CONFIGURATION_SCUMMVM("Release", "Win32", "");
+		OUTPUT_CONFIGURATION_SCUMMVM("Release", "Win32", "", true);
 
 		// x64
 		// For 'x64' we must disable NASM support. Usually we would need to disable the "nasm" feature for that and
 		// re-create the library list, BUT since NASM doesn't link any additional libraries, we can just use the
 		// libraries list created for IA-32. If that changes in the future, we need to adjust this part!
-		OUTPUT_CONFIGURATION_SCUMMVM_DEBUG("Debug", "x64", "64", true);
-		OUTPUT_CONFIGURATION_SCUMMVM_DEBUG("Analysis", "x64", "64", true);
-		OUTPUT_CONFIGURATION_SCUMMVM("Release", "x64", "64");
+		OUTPUT_CONFIGURATION_SCUMMVM_DEBUG("Debug", "x64", "64", false);
+		OUTPUT_CONFIGURATION_SCUMMVM_DEBUG("Analysis", "x64", "64", false);
+		OUTPUT_CONFIGURATION_SCUMMVM("Release", "x64", "64", false);
 
 	} else {
 		std::string warnings = "";

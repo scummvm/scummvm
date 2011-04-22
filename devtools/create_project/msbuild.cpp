@@ -267,13 +267,10 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 		           "\t\t</Link>\n";
 
 		if (setup.runBuildEvents) {
-			// Only generate revision number in debug builds
-			if (!isRelease) {
-				project << "\t\t<PreBuildEvent>\n"
-						   "\t\t\t<Message>Generate internal_version.h</Message>\n"
-						   "\t\t\t<Command>" << getPreBuildEvent() << "</Command>\n"
-						   "\t\t</PreBuildEvent>\n";
-			}
+			project << "\t\t<PreBuildEvent>\n"
+			           "\t\t\t<Message>Generate internal_version_build.h</Message>\n"
+			           "\t\t\t<Command>" << getPreBuildEvent() << "</Command>\n"
+			           "\t\t</PreBuildEvent>\n";
 
 			// Copy data files to the build folder
 			project << "\t\t<PostBuildEvent>\n"
