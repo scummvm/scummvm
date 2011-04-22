@@ -2004,7 +2004,7 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 				size -= target.size() + 1;
 			}
 
-			if (size % 2 != oldAlign) {
+			if ((uint)(size % 2) != oldAlign) {
 				stream->skip(1);
 				size--;
 			}
