@@ -824,6 +824,7 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 	_smoke2.animate(ANIM_MODE_2, NULL);
 
 	if (_globals->_inventory._ladder._sceneNumber != 4000) {
+	// if ladder is not in the scene, activate the hotspot on the wall
 		_hotspot8.postInit();
 		_hotspot8.setVisage(4018);
 		_hotspot8.setObjectWrapper(new SceneObjectWrapper());
@@ -2551,7 +2552,9 @@ void Scene4100::Ladder::doAction(int action)  {
 	}
 }
 
-
+/**
+ Exit hotspot, South
+ */
 void Scene4100::Hotspot14::doAction(int action)  {
 	Scene4100 *scene = (Scene4100 *)_globals->_sceneManager._scene;
 
@@ -2622,7 +2625,7 @@ void Scene4100::postInit(SceneObjectList *OwnerList) {
 	_hotspot4.setStrip2(2);
 	_hotspot4.setPosition(Common::Point(152, 167));
 
-	if (!_globals->getFlag(36)) {
+	if (_globals->getFlag(36)) {
 		_hotspot1.setVisage(4105);
 		_hotspot1.setStrip(1);
 		_hotspot1.setFrame(4);
