@@ -2494,7 +2494,7 @@ void ScummEngine_v90he::runBootscript() {
 
 void ScummEngine::startManiac() {
 	debug(0, "stub startManiac()");
-	displayMessage(0, "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' directory inside the Tentacle game directory.");
+	displayMessage(0, _("Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' directory inside the Tentacle game directory."));
 }
 
 #pragma mark -
