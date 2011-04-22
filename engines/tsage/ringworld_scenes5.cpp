@@ -860,7 +860,6 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.setObjectWrapper(new SceneObjectWrapper());
 	_globals->_player.setPosition(Common::Point(-28, 86));
 
-	warning("flag 36 & 43: %d %d", _globals->getFlag(36), _globals->getFlag(43));
 	if (!_globals->getFlag(36) && !_globals->getFlag(43)) {
 		_miranda.postInit();
 		_miranda.setVisage(2701);

@@ -5345,7 +5345,7 @@ void Scene2320::Action5::signal() {
 			NpcMover *mover = new NpcMover();
 			scene->_hotspot11.addMover(mover, &pt, NULL);
 
-			_globals->clearFlag(53);
+			_globals->clearFlag(43);
 			scene->_stripManager.start(2325, this);
 		}
 		break;
