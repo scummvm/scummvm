@@ -27,8 +27,10 @@
 #include "common/util.h"
 #include "common/system.h"
 
+#define TIMER_DEFAULT_ID 0xFFFFFFFF
 
 struct TimerSlot {
+	uint32 id;
 	Common::TimerManager::TimerProc callback;
 	void *refCon;
 	uint32 interval;	// in microseconds
@@ -112,27 +114,52 @@ void DefaultTimerManager::handler() {
 	}
 }
 
-bool DefaultTimerManager::installTimerProc(TimerProc callback, int32 interval, void *refCon) {
+bool DefaultTimerManager::installTimer(uint32 id, TimerProc callback, int32 interval, void *refCon) {
+	// Remove existing timers with the same id (ignoring timers with no id)
+	if (id != TIMER_DEFAULT_ID)
+		removeTimer(id);
+
 	assert(interval > 0);
 	Common::StackLock lock(_mutex);
 
 	TimerSlot *slot = new TimerSlot;
+	slot->id       = id;
 	slot->callback = callback;
-	slot->refCon = refCon;
+	slot->refCon   = refCon;
 	slot->interval = interval;
 	slot->nextFireTime = g_system->getMillis() + interval / 1000;
 	slot->nextFireTimeMicro = interval % 1000;
 	slot->next = 0;
 
+	insertPrioQueue(_head, slot);
+
+	return true;
+}
+
+void DefaultTimerManager::removeTimer(uint32 id) {
+	Common::StackLock lock(_mutex);
+
+	TimerSlot *slot = _head;
+
+	while (slot->next) {
+		if (slot->next->id == id) {
+			TimerSlot *next = slot->next->next;
+			delete slot->next;
+			slot->next = next;
+		} else {
+			slot = slot->next;
+		}
+	}
+}
+
+bool DefaultTimerManager::installTimerProc(TimerProc callback, int32 interval, void *refCon) {
 	// FIXME: It seems we do allow the client to add one callback multiple times over here,
 	// but "removeTimerProc" will remove *all* added instances. We should either prevent
 	// multiple additions of a timer proc OR we should change removeTimerProc to only remove
 	// a specific timer proc entry.
 	// Probably we can safely just allow a single addition of a specific function once
 	// and just update our Timer documentation accordingly.
-	insertPrioQueue(_head, slot);
-
-	return true;
+	return installTimer(TIMER_DEFAULT_ID, callback, interval, refCon);
 }
 
 void DefaultTimerManager::removeTimerProc(TimerProc callback) {
