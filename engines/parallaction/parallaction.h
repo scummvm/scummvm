@@ -253,6 +253,7 @@ public:
 
 protected:		// members
 	bool detectGame();
+	virtual bool isWIP() const { return ENGINE_WIP_PARALLACTION; };
 
 private:
 	const PARALLACTIONGameDescription *_gameDescription;

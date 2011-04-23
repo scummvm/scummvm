@@ -77,6 +77,7 @@ protected:
 	virtual void errorString(const char *buf_input, char *buf_output, int buf_output_size);
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual Debugger *getDebugger() { return _debugger; }
+	virtual bool isWIP() const { return ENGINE_WIP_LASTEXPRESS; };
 
 public:
 	LastExpressEngine(OSystem *syst, const ADGameDescription *gd);

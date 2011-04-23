@@ -229,6 +229,7 @@ public:
 	bool canSaveGameStateCurrently();
 	void syncSoundSettings();
 	void syncIngameAudioOptions();
+	virtual bool isWIP() const { return ENGINE_WIP_SCI; }
 
 	const SciGameId &getGameId() const { return _gameId; }
 	const char *getGameIdStr() const;

@@ -494,6 +494,8 @@ public:
 	void syncSoundSettings();
 	void pauseEngineIntern(bool pause);
 
+	virtual bool isWIP() const { return ENGINE_WIP_SAGA; };
+
 	GUI::Debugger *getDebugger();
 
 	SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc);

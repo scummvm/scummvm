@@ -321,6 +321,7 @@ class DrasculaEngine : public Engine {
 protected:
 	// Engine APIs
 	virtual Common::Error run();
+	virtual bool isWIP() const { return ENGINE_WIP_DRASCULA; };
 
 public:
 	DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gameDesc);

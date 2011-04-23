@@ -98,6 +98,8 @@ protected:
 
 	virtual Debugger *getDebugger() { return _debugger; }
 
+	virtual bool isWIP() const { return ENGINE_WIP_GROOVIE; };
+
 public:
 	void waitForInput();
 

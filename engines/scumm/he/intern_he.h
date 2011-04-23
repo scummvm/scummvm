@@ -622,6 +622,7 @@ public:
 	~ScummEngine_vCUPhe();
 
 	virtual Common::Error run();
+	virtual bool isWIP() const { return ENGINE_WIP_HE; };
 
 	void parseEvents();
 

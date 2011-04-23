@@ -479,6 +479,8 @@ public:
 
 	virtual void pauseEngineIntern(bool pause);
 
+	virtual bool isWIP() const { return ENGINE_WIP_SCUMM; };
+
 protected:
 	virtual void setupScumm();
 	virtual void resetScumm();

@@ -71,6 +71,7 @@ public:
 	TSageEngine(OSystem *system, const tSageGameDescription *gameDesc);
 	~TSageEngine();
 	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool isWIP() const { return ENGINE_WIP_TSAGE; };
 
 	MemoryManager _memoryManager;
 	Debugger *_debugger;

@@ -93,6 +93,7 @@ protected:
 
 	// Engine APIs
 	virtual Common::Error run();
+	virtual bool isWIP() const { return ENGINE_WIP_MADE; };
 
 public:
 	MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc);

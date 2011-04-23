@@ -148,6 +148,8 @@ protected:
 
 	void shutdown();
 
+	virtual bool isWIP() const { return ENGINE_WIP_M4; };
+
 	MidiPlayer *_midi;
 
 public:

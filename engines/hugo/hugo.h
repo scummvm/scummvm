@@ -325,6 +325,7 @@ protected:
 
 	// Engine APIs
 	Common::Error run();
+	virtual bool isWIP() const { return ENGINE_WIP_HUGO; };
 
 private:
 	static const int kTurboTps = 16;                // This many in turbo mode

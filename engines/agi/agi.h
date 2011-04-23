@@ -735,6 +735,8 @@ protected:
 
 	virtual void initialize() = 0;
 
+	virtual bool isWIP() const { return ENGINE_WIP_AGI; };
+
 public:
 	GfxMgr *_gfx;
 

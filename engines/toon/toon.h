@@ -112,6 +112,8 @@ public:
 
 	Common::Error run();
 	GUI::Debugger *getDebugger() { return _console; }
+	virtual bool isWIP() const { return ENGINE_WIP_TOON; };
+
 	bool showMainmenu(bool &loadedGame);
 	void init();
 	bool loadToonDat();

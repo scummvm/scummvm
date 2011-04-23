@@ -385,6 +385,7 @@ public:
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
 	GUI::Debugger *getDebugger() { return _console; }
+	virtual bool isWIP() const { return ENGINE_WIP_TOUCHE; };
 
 protected:
 
