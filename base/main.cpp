@@ -161,6 +161,11 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 		return err;
 	}
 
+	#if defined(TAINTED_BUILD)
+		if(engine->isWIP())
+			GUI::displayErrorDialog(_("WARNING: This engine is UNSTABLE"));
+	#endif
+
 	// Set the window caption to the game name
 	Common::String caption(ConfMan.get("description"));
 
