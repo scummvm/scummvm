@@ -116,6 +116,8 @@ void ToonEngine::init() {
 	_drew = _characters[0];
 	_flux = _characters[1];
 
+	
+
 	// preload walk anim for flux and drew
 	_drew->loadWalkAnimation("STNDWALK.CAF");
 	_drew->setupPalette();
@@ -134,6 +136,9 @@ void ToonEngine::init() {
 
 	memset(_sceneAnimations, 0, sizeof(_sceneAnimations));
 	memset(_sceneAnimationScripts, 0, sizeof(_sceneAnimationScripts));
+
+	_drew->setVisible(false);
+	_flux->setVisible(false);
 
 	_gameState->_currentChapter = 1;
 	initChapter();
