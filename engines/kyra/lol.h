@@ -306,6 +306,7 @@ friend class HistoryPlayer;
 public:
 	LoLEngine(OSystem *system, const GameFlags &flags);
 	~LoLEngine();
+	virtual bool isWIP() const { return ENGINE_WIP_LOL; };
 
 	Screen *screen();
 	GUI *gui() const;
