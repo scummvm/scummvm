@@ -680,7 +680,7 @@ void Scene4000::Hotspot::doAction(int action) {
 	case OBJECT_STUNNER:
 		SceneItem::display2(4000, 18);
 		break;
-	case OBJECT_LADDER:
+	case OBJECT_LADDER: {
 		_globals->_player.disableControl();
 
 		scene->_ladder.postInit();
@@ -692,12 +692,16 @@ void Scene4000::Hotspot::doAction(int action) {
 
 		if (_globals->_sceneObjects->contains(&scene->_hotspot8)) {
 			scene->_hotspot8.setAction(NULL);
-			ADD_MOVER_NULL(scene->_hotspot8, 118, 145);
+//			ADD_MOVER_NULL(scene->_hotspot8, 118, 145);
+			Common::Point pt(118, 145);
+			NpcMover *mover = new NpcMover();
+			scene->_hotspot18.addMover(mover, &pt, NULL);
 		}
 
 		scene->_sceneMode = 4004;
 		scene->setAction(&scene->_sequenceManager1, scene, 4011, &_globals->_player, &scene->_ladder, NULL);
 		break;
+	}
 	default:
 		SceneHotspot::doAction(action);
 		break;
@@ -918,7 +922,7 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 		break;
 
 	case 4025:
-		if (_globals->_inventory._ladder._sceneNumber != 4000)
+		if (_globals->_inventory._ladder._sceneNumber == 4000)
 			_hotspot8.remove();
 
 		_globals->_player.setPosition(Common::Point(260, 185));
@@ -1136,6 +1140,7 @@ void Scene4000::signal() {
 		_globals->_inventory._ladder._sceneNumber = 4000;
 		// Deliberate fall-through
 	case 4007:
+		_globals->_player._uiEnabled = true;
 		_globals->_events.setCursor(CURSOR_USE);
 		_globals->setFlag(40);
 		break;
@@ -1223,7 +1228,7 @@ void Scene4000::dispatch() {
 		if (_globals->_player.getRegionIndex() == 15)
 			_globals->_sceneManager.changeScene(4100);
 
-		if ((_globals->_player._position.x > 5) && (_globals->_player._position.y < 100)) {
+		if ((_globals->_player._position.x <= 5) && (_globals->_player._position.y < 100)) {
 			_globals->_player.disableControl();
 
 			if (!_globals->_sceneObjects->contains(&_miranda) || (_miranda._position.y <= 100)) {
