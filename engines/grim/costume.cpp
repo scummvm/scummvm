@@ -261,15 +261,16 @@ void ModelComponent::init() {
 	if (_parent) {
 		MeshComponent *mc = dynamic_cast<MeshComponent *>(_parent);
 
+		// Default the visibility to false. Without this when going in the land of the livings
+		// a shady thing attached to Manny will appear. It must do this only if _parent is not
+		// NULL, though, otherwise bruno will be invisible in the "td" set.
+		reset();
+
 		if (mc)
 			mc->node()->addChild(_hier);
 		else if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Parent of model %s wasn't a mesh", _filename.c_str());
 	}
-
-	// Default the visibility to false. Without this when going in the land of the livings
-	// a shady thing attached to Manny will appear.
-	reset();
 }
 
 void ModelComponent::setKey(int val) {
