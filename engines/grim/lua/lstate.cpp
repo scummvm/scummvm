@@ -82,6 +82,7 @@ void lua_stateinit(LState *state) {
 	state->id = globalTaskSerialId++;
 	state->task = NULL;
 	state->some_task = NULL;
+	state->taskFunc.ttype = LUA_T_NIL;
 
 	state->stack.stack = luaM_newvector(STACK_UNIT, TObject);
 	state->stack.top = state->stack.stack;
