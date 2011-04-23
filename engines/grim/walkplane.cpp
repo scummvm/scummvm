@@ -289,7 +289,11 @@ void Sector::getExitInfo(Graphics::Vector3d start, Graphics::Vector3d dir, struc
 	result->angleWithEdge = angle(dir, result->edgeDir);
 
 	Graphics::Vector3d edgeNormal(result->edgeDir.y(), -result->edgeDir.x(), 0);
-	result->exitPoint = start + (dot(_vertices[i] - start, edgeNormal) / dot(dir, edgeNormal)) * dir;
+	float d = dot(dir, edgeNormal);
+	// This is 0 for the albinizod monster in the at set
+	if (!d)
+		d = 1.f;
+	result->exitPoint = start + (dot(_vertices[i] - start, edgeNormal) / d ) * dir;
 }
 
 Sector &Sector::operator=(const Sector &other) {
