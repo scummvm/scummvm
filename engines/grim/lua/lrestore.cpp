@@ -640,7 +640,8 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 
 		state->id = restoreSint32();
 		restoreObjectValue(&state->taskFunc, restoreSint32, restoreUint32);
-		recreateObj(&state->taskFunc);
+		if (state->taskFunc.ttype == LUA_T_PROTO || state->taskFunc.ttype == LUA_T_CPROTO)
+			recreateObj(&state->taskFunc);
 	}
 
 	for (; currentState; currentState--)
