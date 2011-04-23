@@ -224,6 +224,8 @@ void registerDefaults() {
 	ConfMan.registerDefault("record_temp_file_name", "record.tmp");
 	ConfMan.registerDefault("record_time_file_name", "record.time");
 
+	ConfMan.registerDefault("display_wip_engine_warning", "true");
+
 #if 0
 	// NEW CODE TO HIDE CONSOLE FOR WIN32
 #ifdef WIN32

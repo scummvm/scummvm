@@ -162,7 +162,7 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	}
 
 	#if defined(TAINTED_BUILD)
-		if(engine->isWIP())
+		if(engine->isWIP() && ConfMan.get("display_wip_engine_warning").compareTo("false") != 0)
 			GUI::displayErrorDialog(_("WARNING: This engine is UNSTABLE"));
 	#endif
 
