@@ -3236,9 +3236,6 @@ for engine in $_engines; do
 		if test `get_engine_build $engine` = no ; then
 			isbuilt=no
 		else
-			if test `get_engine_build_default $engine` = no; then
-				set_var _tainted_build "yes"
-			fi
 			# If dynamic plugins aren't supported, mark
 			# all the engines as static
 			if test $_dynamic_modules = no ; then
@@ -3268,9 +3265,6 @@ for engine in $_engines; do
 			isbuilt=no
 		else
 			isbuilt=1
-			if test `get_engine_build_default $engine` = no; then
-				set_var _tainted_build "yes"
-			fi
 		fi
 	fi
 
@@ -3281,6 +3275,21 @@ for engine in $_engines; do
 	else
 		add_line_to_config_mk "$defname = $isbuilt"
 	fi
+done
+
+#
+# Detection of WIP/unstable engines
+#
+for engine in $_engines; do
+	engine_build=`get_engine_build $engine`
+	engine_build_default=`get_engine_build_default $engine`
+	engine_wip=false
+	if test $engine_build != no -a $engine_build_default = no ; then
+		engine_wip=true
+		set_var _tainted_build "yes"
+	fi
+	engine_wip_defname="ENGINE_WIP_`echo $engine | tr '[a-z]' '[A-Z]'`"
+	add_line_to_config_h "#define $engine_wip_defname $engine_wip"
 done
 
 add_to_config_h_if_yes `get_var _tainted_build` '#define TAINTED_BUILD'
