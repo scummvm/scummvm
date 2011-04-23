@@ -402,10 +402,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// Now as the event manager is created, setup the keymapper
 	setupKeymapper(system);
 
-	#if defined(TAINTED_BUILD)
-		GUI::displayErrorDialog(_("WARNING: This ScummVM build contains UNSTABLE engines"));
-	#endif
-
 	// Unless a game was specified, show the launcher dialog
 	if (0 == ConfMan.getActiveDomain())
 		launcherDialog();
