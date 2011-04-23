@@ -419,6 +419,11 @@ void ClassicCostumeRenderer::procC64(Codec1 &v1, int actor) {
 #undef MASK_AT
 
 #ifdef USE_ARM_COSTUME_ASM
+
+#ifndef IPHONE
+#define ClassicProc3RendererShadowARM _ClassicProc3RendererShadowARM
+#endif
+
 extern "C" int ClassicProc3RendererShadowARM(int _scaleY,
                                         ClassicCostumeRenderer::Codec1 *v1,
                                         Graphics::Surface *_out,

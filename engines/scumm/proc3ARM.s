@@ -25,7 +25,7 @@
 
 	.text
 
-	.global	ClassicProc3RendererShadowARM
+	.global	_ClassicProc3RendererShadowARM
 
 
 .set	_scaleIndexY	,	112
@@ -71,7 +71,7 @@
 	@ <> = _palette
 	@ <> = _numstrips
 	@ <> = _scaleIndexY
-ClassicProc3RendererShadowARM:
+_ClassicProc3RendererShadowARM:
 	@ shadow20 = false
 	@ shadowed = true
 	@ unscaled = false

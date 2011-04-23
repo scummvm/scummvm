@@ -36,6 +36,12 @@
 #include "scumm/util.h"
 
 #ifdef USE_ARM_GFX_ASM
+
+#ifndef IPHONE
+#define asmDrawStripToScreen _asmDrawStripToScreen
+#define asmCopy8Col _asmCopy8Col
+#endif
+
 extern "C" void asmDrawStripToScreen(int height, int width, void const* text, void const* src, byte* dst,
 	int vsPitch, int vmScreenWidth, int textSurfacePitch);
 extern "C" void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height, uint8 bitDepth);
