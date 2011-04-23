@@ -80,7 +80,7 @@ public:
 	bool visible() const { return _visible; }
 	// The set should change immediately, otherwise a very rapid set change
 	// for an actor will be recognized incorrectly and the actor will be lost.
-	void putInSet(const char *setName) { _setName = setName; }
+	void putInSet(const char *setName);
 	void setTurnRate(float rate) { _turnRate = rate; }
 	float turnRate() const { return _turnRate; }
 	void setWalkRate(float rate) { _walkRate = rate; }

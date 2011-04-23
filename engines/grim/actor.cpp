@@ -1259,6 +1259,17 @@ void Actor::clearShadowPlanes() {
 	}
 }
 
+void Actor::putInSet(const char *setName) {
+	_setName = setName;
+
+	// In the set "td" there is bruno inside his coffin. Its actor, "/lrtx001/",
+	// is added to the set but its visibility is kept false, and so it needs
+	// to be made visible manually.
+	if (strcmp("", setName)) {
+		_visible = true;
+	}
+}
+
 bool Actor::inSet(const char *setName) const {
 	return _setName == setName;
 }
