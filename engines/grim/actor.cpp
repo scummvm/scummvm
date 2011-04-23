@@ -857,10 +857,18 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 
 bool Actor::talking() {
 	// If there's no sound file then we're obviously not talking
-    if (strlen(_talkSoundName.c_str()) == 0)
+	if (strlen(_talkSoundName.c_str()) == 0 || !g_imuse->getSoundStatus(_talkSoundName.c_str())) {
+		// If we're not talking and _sayLinetext exists delete it.
+		// Without this sometimes after reaping Bruno, his "nice bathrob" isn't deleted
+		// and lives through all the cutscene.
+		if (_sayLineText) {
+			g_grim->killTextObject(_sayLineText);
+			_sayLineText = NULL;
+		}
 		return false;
+	}
 
-	return g_imuse->getSoundStatus(_talkSoundName.c_str());
+	return true;
 }
 
 void Actor::shutUp() {
