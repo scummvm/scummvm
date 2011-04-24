@@ -101,6 +101,7 @@ xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\codeblocks\</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\codeblocks.h" />
+    <ClInclude Include="..\config.h" />
     <ClInclude Include="..\create_project.h" />
     <ClInclude Include="..\msbuild.h" />
     <ClInclude Include="..\msvc.h" />

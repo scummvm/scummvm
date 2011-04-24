@@ -11,10 +11,12 @@ REM Expected parameters
 REM    Root folder
 REM    Output folder
 REM    Architecture
+REM    Libs folder
 
 if "%~1"=="" goto error_root
 if "%~2"=="" goto error_output
 if "%~3"=="" goto error_arch
+if "%~4"=="" goto error_libs
 
 echo Copying data files
 echo.
@@ -26,7 +28,7 @@ xcopy /F /Y "%~1/dists/engine-data/*.cpt" %~2 > NUL 2>&1
 xcopy /F /Y "%~1/dists/engine-data/README" %~2 > NUL 2>&1
 xcopy /F /Y "%~1/gui/themes/*.zip" %~2 > NUL 2>&1
 xcopy /F /Y "%~1/gui/themes/translations.dat" %~2 > NUL 2>&1
-xcopy /F /Y "%SCUMMVM_LIBS%/lib/%~3/SDL.dll" %~2 > NUL 2>&1
+xcopy /F /Y "%~4/lib/%~3/SDL.dll" %~2 > NUL 2>&1
 goto done
 
 :error_root
@@ -39,6 +41,10 @@ goto done
 
 :error_arch
 echo Invalid arch parameter (was: %~3, allowed: x86, x64)!
+goto done
+
+:error_libs
+echo Invalid libs folder (%~4)!
 goto done
 
 :done

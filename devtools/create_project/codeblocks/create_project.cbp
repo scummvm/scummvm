@@ -36,6 +36,7 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="..\config.h" />
 		<Unit filename="..\codeblocks.cpp" />
 		<Unit filename="..\codeblocks.h" />
 		<Unit filename="..\create_project.cpp" />
