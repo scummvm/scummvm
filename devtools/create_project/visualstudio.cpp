@@ -193,7 +193,7 @@ void VisualStudioProvider::writeReferences(std::ofstream &output) {
 	output << "\tEndProjectSection\n";
 }
 
-void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix) {
+void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents) {
 	std::string warnings;
 	for (StringList::const_iterator i = _globalWarnings.begin(); i != _globalWarnings.end(); ++i)
 		warnings +=  *i + ';';
@@ -204,6 +204,10 @@ void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int b
 			definesList += ';';
 		definesList += *i;
 	}
+
+	// Add define to include revision header
+	if (runBuildEvents)
+		definesList += "SCUMMVM_INTERNAL_REVISION;";
 
 	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
 	              "<VisualStudioPropertySheet\n"
@@ -217,7 +221,7 @@ void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int b
 	              "\t\tName=\"VCCLCompilerTool\"\n"
 	              "\t\tDisableLanguageExtensions=\"true\"\n"
 	              "\t\tDisableSpecificWarnings=\"" << warnings << "\"\n"
-	              "\t\tAdditionalIncludeDirectories=\"" << prefix << ";" << prefix << "\\engines;$(SCUMMVM_LIBS)\\include\"\n"
+	              "\t\tAdditionalIncludeDirectories=\"" << prefix << ";" << prefix << "\\engines;$(SCUMMVM_LIBS)\\include;$(TargetDir)\"\n"
 	              "\t\tPreprocessorDefinitions=\"" << definesList << "\"\n"
 	              "\t\tExceptionHandling=\"0\"\n"
 	              "\t\tRuntimeTypeInfo=\"false\"\n"

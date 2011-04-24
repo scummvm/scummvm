@@ -124,7 +124,7 @@ void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
 	if (!properties)
 		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Global" + getPropertiesExtension() + "\" for writing");
 
-	outputGlobalPropFile(properties, 32, setup.defines, convertPathToWin(setup.filePrefix));
+	outputGlobalPropFile(properties, 32, setup.defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
 	properties.close();
 
 	properties.open((setup.outputDir + '/' + "ScummVM_Global64" + getPropertiesExtension()).c_str());
@@ -143,7 +143,7 @@ void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
 	x64Defines.push_back("WIN32");
 	x64Defines.push_back("SDL_BACKEND");
 
-	outputGlobalPropFile(properties, 64, x64Defines, convertPathToWin(setup.filePrefix));
+	outputGlobalPropFile(properties, 64, x64Defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
 }
 
 std::string MSVCProvider::getPreBuildEvent() const {
@@ -152,7 +152,7 @@ std::string MSVCProvider::getPreBuildEvent() const {
 	cmdLine = "@echo off\n"
 	          "echo Executing Pre-Build script...\n"
 			  "echo.\n"
-			  "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/prebuild.cmd&quot; &quot;$(SolutionDir)/../..&quot;\n"
+			  "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/prebuild.cmd&quot; &quot;$(SolutionDir)/../..&quot;  &quot;$(TargetDir)&quot;\n"
 	          "EXIT /B0";
 
 	return cmdLine;

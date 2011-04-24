@@ -12,7 +12,7 @@ REM    Root folder
 REM    Output folder
 REM    Architecture
 
-if "%~1"=="" goto error_input
+if "%~1"=="" goto error_root
 if "%~2"=="" goto error_output
 if "%~3"=="" goto error_arch
 
@@ -29,7 +29,7 @@ xcopy /F /Y "%~1/gui/themes/translations.dat" %~2 > NUL 2>&1
 xcopy /F /Y "%SCUMMVM_LIBS%/lib/%~3/SDL.dll" %~2 > NUL 2>&1
 goto done
 
-:error_output
+:error_root
 echo Invalid root folder (%~1)!
 goto done
 
