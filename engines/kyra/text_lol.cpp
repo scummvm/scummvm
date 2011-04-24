@@ -30,6 +30,8 @@
 #include "kyra/timer.h"
 #include "kyra/util.h"
 
+#include "common/system.h"
+
 namespace Kyra {
 
 TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *vm, Screen_LoL *screen) : _vm(vm), _screen(screen),

@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 
 #include "agos/intern.h"
 #include "agos/agos.h"

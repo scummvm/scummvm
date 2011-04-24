@@ -31,6 +31,7 @@
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 
 #include <stdio.h>
 #include <string.h>

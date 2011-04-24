@@ -23,6 +23,7 @@
  */
 
 #include "graphics/imagedec.h"
+#include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
 #include "common/file.h"

@@ -32,7 +32,9 @@
 #ifndef SOUND_MODS_SOUNDFX_H
 #define SOUND_MODS_SOUNDFX_H
 
-#include "common/stream.h"
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Audio {
 

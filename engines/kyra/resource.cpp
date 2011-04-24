@@ -27,11 +27,7 @@
 #include "kyra/resource_intern.h"
 
 #include "common/config-manager.h"
-#include "common/endian.h"
-#include "common/file.h"
 #include "common/fs.h"
-#include "common/func.h"
-#include "common/system.h"
 
 namespace Kyra {
 

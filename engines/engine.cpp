@@ -32,25 +32,25 @@
 
 #include "engines/engine.h"
 #include "engines/dialogs.h"
-#include "engines/metaengine.h"
-#include "engines/util.h"
 
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/events.h"
-#include "common/file.h"
-#include "common/timer.h"
-#include "common/savefile.h"
 #include "common/system.h"
 #include "common/str.h"
+#include "common/error.h"
+#include "common/list.h"
+#include "common/list_intern.h"
+#include "common/scummsys.h"
+#include "common/textconsole.h"
 
 #include "gui/debugger.h"
+#include "gui/dialog.h"
 #include "gui/message.h"
-#include "gui/gui-manager.h"
 
 #include "audio/mixer.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/pixelformat.h"
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone();

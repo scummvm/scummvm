@@ -25,8 +25,9 @@
 
 #include "drascula/drascula.h"
 #include "graphics/surface.h"
-#include "common/stream.h"
 
+#include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace Drascula {
 

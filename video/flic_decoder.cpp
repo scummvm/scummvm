@@ -24,10 +24,11 @@
  */
 
 #include "video/flic_decoder.h"
-#include "common/archive.h"
-#include "common/stream.h"
 #include "common/endian.h"
+#include "common/rect.h"
+#include "common/stream.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Video {
 

@@ -34,6 +34,7 @@
 #include "m4/staticres.h"
 
 #include "common/algorithm.h"
+#include "common/textconsole.h"
 
 namespace M4 {
 

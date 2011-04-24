@@ -32,6 +32,11 @@
 
 #ifndef HUGO_PARSER_H
 #define HUGO_PARSER_H
+
+namespace Common {
+struct Event;
+}
+
 namespace Hugo {
 
 enum seqTextParser {

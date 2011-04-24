@@ -23,11 +23,12 @@
  *
  */
 
-#include "common/file.h"
-#include "common/endian.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "common/ptr.h"
+#include "common/textconsole.h"
+
+#include "graphics/palette.h"
 
 #include "m4/globals.h"
 #include "m4/graphics.h"

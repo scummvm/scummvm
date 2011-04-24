@@ -27,6 +27,7 @@
 #include "common/fs.h"
 #include "common/memstream.h"
 #include "common/substream.h"
+#include "common/textconsole.h"
 #include "parallaction/parser.h"
 #include "parallaction/parallaction.h"
 

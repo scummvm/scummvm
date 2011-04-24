@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "common/endian.h"
 #include "tsage/core.h"
 #include "tsage/globals.h"
 #include "tsage/debugger.h"

@@ -31,7 +31,7 @@
 #include "kyra/sound.h"
 #include "kyra/resource.h"
 
-#include "common/savefile.h"
+#include "common/system.h"
 
 #include "graphics/scaler.h"
 

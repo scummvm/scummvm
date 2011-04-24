@@ -29,6 +29,7 @@
 #include "common/file.h"
 #include "common/str.h"
 #include "common/substream.h"
+#include "common/textconsole.h"
 #include "common/memstream.h"
 #include "common/unzip.h"
 

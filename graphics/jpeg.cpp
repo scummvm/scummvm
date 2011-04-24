@@ -27,9 +27,10 @@
 #include "graphics/jpeg.h"
 #include "graphics/pixelformat.h"
 
+#include "common/debug.h"
 #include "common/endian.h"
-#include "common/util.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace Graphics {
 

@@ -32,6 +32,7 @@
 #include "common/list.h"
 #include "common/str.h"
 #include "common/str-array.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 #include "graphics/surface.h"
 

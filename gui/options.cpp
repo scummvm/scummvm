@@ -24,10 +24,8 @@
 
 #include "gui/browser.h"
 #include "gui/themebrowser.h"
-#include "gui/chooser.h"
 #include "gui/message.h"
 #include "gui/gui-manager.h"
-#include "gui/ThemeEval.h"
 #include "gui/options.h"
 #include "gui/widgets/popup.h"
 #include "gui/widgets/tab.h"
@@ -35,9 +33,8 @@
 #include "common/fs.h"
 #include "common/config-manager.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "common/translation.h"
-
-#include "graphics/scaler.h"
 
 #include "audio/mididrv.h"
 #include "audio/musicplugin.h"

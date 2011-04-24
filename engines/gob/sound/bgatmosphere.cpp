@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/system.h"
-#include "common/events.h"
 #include "common/EventRecorder.h"
 
 #include "gob/sound/bgatmosphere.h"

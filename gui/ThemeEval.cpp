@@ -24,10 +24,10 @@
  */
 
 #include "gui/ThemeEval.h"
-#include "gui/widget.h"
 
 #include "graphics/scaler.h"
 
+#include "common/system.h"
 #include "common/tokenizer.h"
 
 namespace GUI {

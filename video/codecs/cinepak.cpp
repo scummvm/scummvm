@@ -25,7 +25,13 @@
 
 #include "video/codecs/cinepak.h"
 
+#include "common/debug.h"
+#include "common/stream.h"
 #include "common/system.h"
+#include "common/textconsole.h"
+#include "common/util.h"
+
+#include "graphics/surface.h"
 
 // Code here partially based off of ffmpeg ;)
 

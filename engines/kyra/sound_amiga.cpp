@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/system.h"
-#include "common/mutex.h"
 #include "kyra/resource.h"
 #include "kyra/sound_intern.h"
 

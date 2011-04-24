@@ -23,6 +23,9 @@
  *
  */
 
+#include "common/iff_container.h"
+#include "common/textconsole.h"
+
 #include "parallaction/disk.h"
 #include "parallaction/graphics.h"
 

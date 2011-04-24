@@ -25,7 +25,11 @@
 #include "common/stream.h"
 #include "common/file.h"
 #include "common/endian.h"
+#include "common/array.h"
+#include "common/textconsole.h"
+#include "common/util.h"
 #include "graphics/font.h"
+#include "graphics/surface.h"
 
 namespace Graphics {
 

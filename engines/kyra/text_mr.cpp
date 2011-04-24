@@ -27,6 +27,8 @@
 #include "kyra/screen_mr.h"
 #include "kyra/resource.h"
 
+#include "common/system.h"
+
 namespace Kyra {
 
 TextDisplayer_MR::TextDisplayer_MR(KyraEngine_MR *vm, Screen_MR *screen)

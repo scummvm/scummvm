@@ -32,7 +32,8 @@
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/mechanical.h"
 
-#include "gui/message.h"
+#include "common/events.h"
+#include "common/system.h"
 
 namespace Mohawk {
 namespace MystStacks {

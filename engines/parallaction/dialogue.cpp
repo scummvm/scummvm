@@ -25,6 +25,7 @@
 
 #include "common/events.h"
 #include "common/debug-channels.h"
+#include "common/textconsole.h"
 #include "parallaction/exec.h"
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"

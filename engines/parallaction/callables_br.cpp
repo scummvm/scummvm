@@ -25,6 +25,8 @@
 
 #include "parallaction/parallaction.h"
 
+#include "common/textconsole.h"
+
 namespace Parallaction {
 
 void Parallaction_br::_c_null(void*) {

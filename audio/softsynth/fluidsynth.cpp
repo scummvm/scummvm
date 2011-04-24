@@ -27,6 +27,9 @@
 #ifdef USE_FLUIDSYNTH
 
 #include "common/config-manager.h"
+#include "common/error.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"
 #include "audio/softsynth/emumidi.h"

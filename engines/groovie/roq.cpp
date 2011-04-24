@@ -30,7 +30,11 @@
 #include "groovie/graphics.h"
 #include "groovie/groovie.h"
 
+#include "common/debug.h"
+#include "common/textconsole.h"
+
 #include "graphics/jpeg.h"
+#include "graphics/palette.h"
 
 #ifdef USE_RGB_COLOR
 // Required for the YUV to RGB conversion

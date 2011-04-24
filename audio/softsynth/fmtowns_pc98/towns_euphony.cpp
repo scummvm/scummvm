@@ -25,6 +25,8 @@
 
 #include "audio/softsynth/fmtowns_pc98/towns_euphony.h"
 #include "common/endian.h"
+#include "common/util.h"
+#include "common/textconsole.h"
 
 TownsEuphonyDriver::TownsEuphonyDriver(Audio::Mixer *mixer) : _activeChannels(0), _sustainChannels(0),
 	_assignedChannels(0), _paraCount(0), _command(0), _tEnable(0), _tMode(0), _tOrdr(0), _tLevel(0),

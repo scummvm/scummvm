@@ -23,8 +23,6 @@
  *
  */
 
-#include "base/plugins.h"
-
 #include "common/debug.h"
 #include "common/util.h"
 #include "common/hash-str.h"
@@ -32,6 +30,7 @@
 #include "common/macresman.h"
 #include "common/md5.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
 #include "engines/advancedDetector.h"
 

@@ -26,6 +26,8 @@
 
 #include "common/system.h"
 #include "common/file.h"
+#include "common/textconsole.h"
+#include "graphics/palette.h"
 #include "graphics/primitives.h"
 #include "engines/util.h"
 

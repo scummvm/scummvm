@@ -23,10 +23,9 @@
  *
  */
 
-#include "common/endian.h"
-#include "common/file.h"
 #include "common/stream.h"
-#include "common/events.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"

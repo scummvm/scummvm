@@ -29,6 +29,10 @@
 #include "kyra/lol.h"
 #include "kyra/resource.h"
 
+#include "common/system.h"
+
+#include "graphics/palette.h"
+
 namespace Kyra {
 
 Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen_v2(vm, system), _vm(vm) {

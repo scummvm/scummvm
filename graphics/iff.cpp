@@ -25,6 +25,10 @@
 #include "graphics/iff.h"
 #include "graphics/surface.h"
 
+#include "common/endian.h"
+#include "common/func.h"
+#include "common/iff_container.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 namespace Graphics {

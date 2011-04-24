@@ -37,6 +37,7 @@
 #include "audio/audiostream.h"
 #include "common/endian.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 
 namespace Audio {

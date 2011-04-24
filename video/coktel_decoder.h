@@ -35,14 +35,25 @@
 
 #include "common/list.h"
 #include "common/array.h"
-#include "common/rect.h"
+#include "common/rational.h"
+#include "common/str.h"
+
+#include "graphics/surface.h"
 
 #include "video/video_decoder.h"
 
 #include "audio/mixer.h"
 
+namespace Common {
+struct Rect;
+class SeekableReadStream;
+}
 namespace Audio {
 class QueuingAudioStream;
+}
+
+namespace Graphics {
+struct PixelFormat;
 }
 
 namespace Video {

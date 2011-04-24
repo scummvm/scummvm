@@ -39,19 +39,31 @@
 #include "common/memstream.h"
 #include "common/util.h"
 #include "common/zlib.h"
+#include "common/stream.h"
+#include "common/system.h"
+#include "common/textconsole.h"
+#include "common/types.h"
+
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
+
+
+#include "audio/audiostream.h"
 
 // Audio codecs
 #include "audio/decoders/adpcm.h"
 #include "audio/decoders/raw.h"
-#include "video/codecs/qdm2.h"
 
 // Video codecs
+#include "video/codecs/codec.h"
 #include "video/codecs/cinepak.h"
 #include "video/codecs/mjpeg.h"
+#include "video/codecs/qdm2.h"
 #include "video/codecs/qtrle.h"
 #include "video/codecs/rpza.h"
 #include "video/codecs/smc.h"
 #include "video/codecs/cdtoons.h"
+
 
 namespace Video {
 

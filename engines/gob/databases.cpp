@@ -24,6 +24,7 @@
  */
 
 #include "common/file.h"
+#include "common/textconsole.h"
 
 #include "gob/databases.h"
 

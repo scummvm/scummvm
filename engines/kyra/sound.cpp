@@ -24,9 +24,6 @@
  */
 
 
-#include "common/system.h"
-#include "common/config-manager.h"
-
 #include "kyra/resource.h"
 #include "kyra/sound.h"
 

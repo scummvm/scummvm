@@ -23,7 +23,10 @@
  */
 
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "common/util.h"
+
+#include "graphics/palette.h"
 
 #include "scumm/resource.h"
 #include "scumm/scumm.h"

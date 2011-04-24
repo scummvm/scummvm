@@ -23,11 +23,12 @@
  *
  */
 
-#include "common/endian.h"
+#include "common/stream.h"
+#include "common/textconsole.h"
+#include "common/util.h"
 
 #include "audio/decoders/adpcm.h"
 #include "audio/decoders/adpcm_intern.h"
-#include "audio/audiostream.h"
 
 
 namespace Audio {

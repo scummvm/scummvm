@@ -28,7 +28,9 @@
 #include "mohawk/livingbooks.h"
 
 #include "common/substream.h"
+#include "common/system.h"
 #include "engines/util.h"
+#include "graphics/palette.h"
 #include "graphics/primitives.h"
 #include "gui/message.h"
 

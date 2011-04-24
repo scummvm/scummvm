@@ -27,6 +27,7 @@
 
 #include "video/codecs/msvideo1.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace Video {
 

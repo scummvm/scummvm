@@ -32,6 +32,7 @@
 #include "draci/surface.h"
 
 #include "common/memstream.h"
+#include "common/system.h"
 
 namespace Draci {
 

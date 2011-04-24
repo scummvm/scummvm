@@ -34,7 +34,6 @@
 #include "kyra/text.h"
 
 #include "common/system.h"
-#include "common/savefile.h"
 
 namespace Kyra {
 

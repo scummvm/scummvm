@@ -26,6 +26,7 @@
 
 #include "common/endian.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 #include "scumm/util.h"
 #include "scumm/smush/channel.h"

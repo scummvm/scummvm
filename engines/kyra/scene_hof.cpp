@@ -30,6 +30,7 @@
 #include "kyra/resource.h"
 
 #include "common/func.h"
+#include "common/system.h"
 
 namespace Kyra {
 

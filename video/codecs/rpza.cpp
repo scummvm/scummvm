@@ -27,8 +27,10 @@
 
 #include "video/codecs/rpza.h"
 
+#include "common/debug.h"
 #include "common/system.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 #include "graphics/colormasks.h"
 
 namespace Video {

@@ -27,6 +27,7 @@
 
 #include "common/config-manager.h"
 #include "common/fs.h"
+#include "common/textconsole.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/parser.h"
 

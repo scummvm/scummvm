@@ -29,6 +29,8 @@
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 
+#include "common/system.h"
+
 #ifdef ENABLE_CSTIME
 #include "mohawk/cstime.h"
 #endif

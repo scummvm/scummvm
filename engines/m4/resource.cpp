@@ -28,6 +28,7 @@
 #include "m4/events.h"
 
 #include "common/substream.h"
+#include "common/textconsole.h"
 
 namespace M4 {
 

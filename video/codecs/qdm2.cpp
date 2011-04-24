@@ -34,8 +34,9 @@
 #include "video/codecs/qdm2data.h"
 
 #include "common/array.h"
+#include "common/debug.h"
 #include "common/stream.h"
-#include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Video {
 

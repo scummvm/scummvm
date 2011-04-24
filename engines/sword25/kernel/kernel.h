@@ -48,6 +48,7 @@
 #include "common/scummsys.h"
 #include "common/random.h"
 #include "common/stack.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 #include "engines/engine.h"
 

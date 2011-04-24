@@ -35,6 +35,10 @@
 #include "common/array.h"
 #include "common/list.h"
 
+namespace Common {
+class Event;
+}
+
 namespace TeenAgent {
 
 class TeenAgentEngine;

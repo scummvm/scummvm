@@ -26,6 +26,8 @@
 #include "common/memstream.h"
 #include "common/system.h"
 
+#include "graphics/palette.h"
+
 #include "draci/draci.h"
 #include "draci/screen.h"
 #include "draci/surface.h"

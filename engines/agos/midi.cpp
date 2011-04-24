@@ -28,6 +28,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "agos/agos.h"
 

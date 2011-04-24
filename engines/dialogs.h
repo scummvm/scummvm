@@ -25,13 +25,13 @@
 #ifndef GLOBAL_DIALOGS_H
 #define GLOBAL_DIALOGS_H
 
-#include "common/str.h"
 #include "gui/dialog.h"
 
 class Engine;
 
 namespace GUI {
 class ButtonWidget;
+class CommandSender;
 class GraphicsWidget;
 class SaveLoadChooser;
 }

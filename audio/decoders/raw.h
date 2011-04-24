@@ -38,7 +38,6 @@ class SeekableReadStream;
 
 namespace Audio {
 
-class AudioStream;
 class SeekableAudioStream;
 
 /**

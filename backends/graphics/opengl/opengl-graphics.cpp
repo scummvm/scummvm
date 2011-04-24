@@ -32,6 +32,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/mutex.h"
+#include "common/textconsole.h"
 #include "common/translation.h"
 #ifdef USE_OSD
 #include "common/tokenizer.h"

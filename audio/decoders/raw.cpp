@@ -25,9 +25,10 @@
 
 #include "common/endian.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
+#include "common/util.h"
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 
 namespace Audio {

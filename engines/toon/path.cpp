@@ -23,6 +23,8 @@
 *
 */
 
+#include "common/debug.h"
+
 #include "toon/path.h"
 
 namespace Toon {

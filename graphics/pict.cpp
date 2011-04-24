@@ -23,9 +23,12 @@
  *
  */
 
+#include "common/debug.h"
+#include "common/endian.h"
+#include "common/stream.h"
 #include "common/substream.h"
+#include "common/textconsole.h"
 
-#include "graphics/conversion.h"
 #include "graphics/jpeg.h"
 #include "graphics/pict.h"
 #include "graphics/surface.h"

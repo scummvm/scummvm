@@ -26,7 +26,6 @@
 #define SOUND_SOFTSYNTH_PCSPK_H
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "common/mutex.h"
 
 namespace Audio {

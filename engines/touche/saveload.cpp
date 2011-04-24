@@ -24,6 +24,7 @@
  */
 
 
+#include "common/textconsole.h"
 #include "common/savefile.h"
 
 #include "touche/graphics.h"

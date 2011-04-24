@@ -32,10 +32,11 @@
 #ifndef COMMON_UNARJ_H
 #define COMMON_UNARJ_H
 
+#include "common/str.h"
+
 namespace Common {
 
 class Archive;
-class String;
 
 /**
  * This factory method creates an Archive instance corresponding to the content

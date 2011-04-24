@@ -28,9 +28,12 @@
 
 #include "video/video_decoder.h"
 #include "common/list.h"
-#include "common/rect.h"
+#include "common/rational.h"
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 
 namespace Common {
+struct Rect;
 class SeekableReadStream;
 }
 

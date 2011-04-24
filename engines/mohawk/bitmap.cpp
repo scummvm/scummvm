@@ -31,6 +31,7 @@
 #include "common/memstream.h"
 #include "common/substream.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Mohawk {
 

@@ -47,7 +47,6 @@ class SeekableReadStream;
 
 namespace Audio {
 
-class AudioStream;
 class RewindableAudioStream;
 
 // There are several types of ADPCM encoding, only some are supported here

@@ -24,6 +24,7 @@
  */
 
 #include "common/savefile.h"
+#include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "tsage/globals.h"

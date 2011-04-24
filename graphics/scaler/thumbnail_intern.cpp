@@ -30,6 +30,7 @@
 #include "graphics/colormasks.h"
 #include "graphics/scaler.h"
 #include "graphics/scaler/intern.h"
+#include "graphics/palette.h"
 
 template<int bitFormat>
 uint16 quadBlockInterpolate(const uint8 *src, uint32 srcPitch) {

@@ -24,6 +24,13 @@
  */
 
 #include "common/scummsys.h"
+#include "common/rect.h"
+#include "common/endian.h"
+#include "common/stream.h"
+#include "common/system.h"
+#include "common/textconsole.h"
+#include "common/types.h"
+#include "common/util.h"
 
 #include "video/coktel_decoder.h"
 

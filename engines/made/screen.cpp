@@ -28,6 +28,8 @@
 #include "made/resource.h"
 #include "made/database.h"
 
+#include "graphics/palette.h"
+
 namespace Made {
 
 Screen::Screen(MadeEngine *vm) : _vm(vm) {

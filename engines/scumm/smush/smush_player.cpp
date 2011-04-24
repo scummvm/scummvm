@@ -31,6 +31,7 @@
 #include "common/util.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/palette.h"
 
 #include "scumm/bomp.h"
 #include "scumm/file.h"

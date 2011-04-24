@@ -29,6 +29,8 @@
 #include "kyra/screen_lol.h"
 #include "kyra/timer.h"
 
+#include "common/system.h"
+
 namespace Kyra {
 
 #define TimerV2(x) new Common::Functor1Mem<int, void, LoLEngine>(this, &LoLEngine::x)

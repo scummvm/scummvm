@@ -28,6 +28,7 @@
 #include "common/endian.h"
 #include "common/system.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace Graphics {
 

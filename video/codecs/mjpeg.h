@@ -26,11 +26,17 @@
 #ifndef VIDEO_CODECS_MJPEG_H
 #define VIDEO_CODECS_MJPEG_H
 
-#include "common/scummsys.h"
-
 #include "video/codecs/codec.h"
-#include "graphics/jpeg.h"
 #include "graphics/pixelformat.h"
+
+namespace Common {
+class SeekableReadStream;
+}
+
+namespace Graphics {
+class JPEG;
+struct Surface;
+}
 
 namespace Video {
 

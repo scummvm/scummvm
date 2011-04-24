@@ -25,9 +25,8 @@
 
 #include "common/endian.h"
 #include "common/rect.h"
-#include "common/events.h"
 #include "common/EventRecorder.h"
-#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "sky/autoroute.h"
 #include "sky/compact.h"

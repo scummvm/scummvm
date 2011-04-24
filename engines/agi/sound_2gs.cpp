@@ -28,6 +28,7 @@
 #include "common/md5.h"
 #include "common/memstream.h"
 #include "common/str-array.h"
+#include "common/textconsole.h"
 
 #include "agi/agi.h"
 #include "agi/sound_2gs.h"

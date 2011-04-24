@@ -25,7 +25,10 @@
 
 
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "common/util.h"
+
+#include "graphics/palette.h"
 
 #include "sword1/screen.h"
 #include "sword1/logic.h"

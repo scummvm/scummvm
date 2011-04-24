@@ -32,6 +32,7 @@
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
 #include "common/EventRecorder.h"
+#include "common/textconsole.h"
 
 #include "backends/saves/default/default-saves.h"
 #include "backends/audiocd/sdl/sdl-audiocd.h"

@@ -24,6 +24,7 @@
 
 #include "common/textconsole.h"
 #include "common/system.h"
+#include "common/str.h"
 
 namespace Common {
 

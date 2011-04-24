@@ -62,6 +62,8 @@
 #include "tinsel/tinsel.h"		// For engine access
 #include "tinsel/token.h"
 
+#include "common/textconsole.h"
+
 namespace Tinsel {
 
 //----------------- EXTERNAL GLOBAL DATA --------------------

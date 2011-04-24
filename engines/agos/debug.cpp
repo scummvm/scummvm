@@ -27,6 +27,7 @@
 
 
 #include "common/file.h"
+#include "common/textconsole.h"
 
 #include "agos/debug.h"
 #include "agos/agos.h"

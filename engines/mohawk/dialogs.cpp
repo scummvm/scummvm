@@ -27,7 +27,9 @@
 #include "mohawk/dialogs.h"
 
 #include "gui/gui-manager.h"
-#include "common/savefile.h"
+#include "gui/ThemeEngine.h"
+#include "gui/widget.h"
+#include "common/system.h"
 #include "common/translation.h"
 
 #ifdef ENABLE_MYST

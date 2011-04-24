@@ -30,6 +30,7 @@
 #include "lastexpress/debug.h"
 
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace LastExpress {
 

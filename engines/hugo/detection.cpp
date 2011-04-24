@@ -26,6 +26,7 @@
 #include "engines/advancedDetector.h"
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 

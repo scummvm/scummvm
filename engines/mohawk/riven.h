@@ -35,6 +35,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/random.h"
+#include "common/rect.h"
 
 namespace Mohawk {
 

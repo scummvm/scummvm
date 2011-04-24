@@ -29,6 +29,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 

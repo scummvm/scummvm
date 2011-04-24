@@ -24,9 +24,15 @@
  */
 
 #include "common/system.h"
-#include "graphics/conversion.h" // For YUV2RGB
+#include "common/textconsole.h"
+#include "graphics/jpeg.h"
+#include "graphics/surface.h"
 
 #include "video/codecs/mjpeg.h"
+
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Video {
 

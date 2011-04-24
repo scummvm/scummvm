@@ -25,6 +25,7 @@
 
 #include "scumm/util.h"
 #include "common/util.h"
+#include "common/textconsole.h"
 
 namespace Scumm {
 

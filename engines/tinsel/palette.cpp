@@ -32,6 +32,8 @@
 #include "tinsel/tinsel.h"
 
 #include "common/system.h"
+#include "common/textconsole.h"
+#include "graphics/palette.h"
 
 namespace Tinsel {
 

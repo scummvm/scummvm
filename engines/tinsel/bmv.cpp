@@ -44,6 +44,8 @@
 
 #include "audio/decoders/raw.h"
 
+#include "common/textconsole.h"
+
 namespace Tinsel {
 
 //----------------- LOCAL DEFINES ----------------------------

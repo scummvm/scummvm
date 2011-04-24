@@ -27,12 +27,18 @@
 #define VIDEO_CODECS_CINEPAK_H
 
 #include "common/scummsys.h"
-#include "common/stream.h"
 #include "common/rect.h"
-#include "graphics/surface.h"
 #include "graphics/pixelformat.h"
 
 #include "video/codecs/codec.h"
+
+namespace Common {
+class SeekableReadStream;
+}
+
+namespace Graphics {
+struct Surface;
+}
 
 namespace Video {
 

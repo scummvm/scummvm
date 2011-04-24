@@ -25,8 +25,11 @@
 
 #include "video/video_decoder.h"
 
+#include "common/rational.h"
 #include "common/file.h"
 #include "common/system.h"
+
+#include "graphics/palette.h"
 
 namespace Video {
 

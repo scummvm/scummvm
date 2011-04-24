@@ -32,13 +32,17 @@
  *
  */
 
+#include "common/debug.h"
+#include "common/system.h"
+#include "common/textconsole.h"
+#include "common/util.h"
+
 #include "sword25/sword25.h"	// for kDebugScript
 #include "sword25/fmv/movieplayer.h"
 #include "sword25/gfx/graphicengine.h"
 #include "sword25/gfx/panel.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/package/packagemanager.h"
-#include "sword25/sfx/soundengine.h"
 
 namespace Sword25 {
 

@@ -25,6 +25,7 @@
 
 #include "common/debug.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 
 #include "cine/cine.h"
 #include "cine/bg_list.h"

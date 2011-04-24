@@ -27,6 +27,7 @@
 #include "common/events.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -37,6 +38,7 @@
 #include "audio/decoders/raw.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/palette.h"
 #include "graphics/thumbnail.h"
 
 #include "teenagent/console.h"

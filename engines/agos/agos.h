@@ -29,6 +29,7 @@
 #include "engines/engine.h"
 
 #include "common/array.h"
+#include "common/error.h"
 #include "common/keyboard.h"
 #include "common/random.h"
 #include "common/rect.h"

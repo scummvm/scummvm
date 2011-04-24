@@ -26,11 +26,11 @@
 #define COMMON_MD5_H
 
 #include "common/scummsys.h"
-#include "common/str.h"
 
 namespace Common {
 
 class ReadStream;
+class String;
 
 /**
  * Compute the MD5 checksum of the content of the given ReadStream.

@@ -32,7 +32,9 @@
 
 // This module contains all the scheduling and timing stuff
 
+#include "common/debug.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "hugo/hugo.h"
 #include "hugo/schedule.h"

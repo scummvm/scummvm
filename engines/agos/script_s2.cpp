@@ -27,6 +27,8 @@
 
 #include "agos/agos.h"
 
+#include "common/textconsole.h"
+
 namespace AGOS {
 
 #define OPCODE(x)	_OPCODE(AGOSEngine_Simon2, x)

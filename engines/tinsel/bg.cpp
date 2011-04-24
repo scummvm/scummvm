@@ -40,6 +40,7 @@
 #include "tinsel/tinlib.h"		// For Control()
 #include "tinsel/tinsel.h"
 
+#include "common/textconsole.h"
 #include "common/util.h"
 
 namespace Tinsel {

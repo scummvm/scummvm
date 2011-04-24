@@ -28,10 +28,10 @@
  * this program is licensed under the GPL.
  */
 
-#include "common/file.h"
-#include "common/fs.h"
 #include "common/md5.h"
 #include "common/endian.h"
+#include "common/str.h"
+#include "common/stream.h"
 
 namespace Common {
 

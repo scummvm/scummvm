@@ -30,12 +30,8 @@
  *
  */
 
-#include "common/system.h"
 #include "common/events.h"
-
-#include "common/random.h"
-#include "common/EventRecorder.h"
-#include "common/debug-channels.h"
+#include "common/textconsole.h"
 
 #include "hugo/hugo.h"
 #include "hugo/display.h"

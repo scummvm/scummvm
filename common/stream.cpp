@@ -26,9 +26,7 @@
 #include "common/stream.h"
 #include "common/memstream.h"
 #include "common/substream.h"
-#include "common/bufferedstream.h"
 #include "common/str.h"
-#include "common/util.h"
 
 namespace Common {
 

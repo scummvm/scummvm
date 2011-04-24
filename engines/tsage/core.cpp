@@ -25,6 +25,7 @@
 
 #include "common/system.h"
 #include "engines/engine.h"
+#include "graphics/palette.h"
 #include "tsage/tsage.h"
 #include "tsage/core.h"
 #include "tsage/dialogs.h"

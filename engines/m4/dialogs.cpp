@@ -25,6 +25,7 @@
 
 #include "m4/dialogs.h"
 #include "common/file.h"
+#include "common/textconsole.h"
 
 namespace M4 {
 

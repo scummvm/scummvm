@@ -24,6 +24,8 @@
  */
 
 
+#include "common/textconsole.h"
+
 #include "scumm/smush/channel.h"
 
 namespace Scumm {

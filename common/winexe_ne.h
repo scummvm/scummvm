@@ -26,15 +26,14 @@
 #ifndef COMMON_WINEXE_NE_H
 #define COMMON_WINEXE_NE_H
 
-#include "common/array.h"
 #include "common/list.h"
+#include "common/str.h"
 #include "common/winexe.h"
 
 namespace Common {
 
-class MemoryReadStream;
+template<class T> class Array;
 class SeekableReadStream;
-class String;
 
 /** The default Windows resources. */
 enum NEResourceType {

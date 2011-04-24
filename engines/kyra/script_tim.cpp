@@ -36,6 +36,7 @@
 
 #include "common/iff_container.h"
 #include "common/endian.h"
+#include "common/system.h"
 
 namespace Kyra {
 

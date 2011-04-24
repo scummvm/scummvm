@@ -29,11 +29,11 @@
 
 #include "video/smk_decoder.h"
 
-#include "common/archive.h"
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/stream.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"

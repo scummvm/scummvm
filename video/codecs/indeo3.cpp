@@ -35,8 +35,8 @@
 
 #include "common/system.h"
 #include "common/endian.h"
-#include "common/frac.h"
-#include "common/file.h"
+#include "common/stream.h"
+#include "common/textconsole.h"
 
 #include "graphics/conversion.h"
 

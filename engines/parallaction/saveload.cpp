@@ -25,6 +25,7 @@
 
 #include "common/savefile.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
 #include "gui/dialog.h"
 #include "gui/saveload.h"

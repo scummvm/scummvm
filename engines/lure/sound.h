@@ -30,6 +30,7 @@
 #include "lure/disk.h"
 #include "lure/memory.h"
 
+#include "common/mutex.h"
 #include "common/singleton.h"
 #include "common/ptr.h"
 #include "audio/mididrv.h"

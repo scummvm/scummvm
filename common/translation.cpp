@@ -32,11 +32,11 @@
 #define TRANSLATIONS_DAT_VER 2
 
 #include "common/translation.h"
-#include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #ifdef USE_TRANSLATION
 

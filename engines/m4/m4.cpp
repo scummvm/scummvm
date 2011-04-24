@@ -30,7 +30,6 @@
 #include "m4/burger_data.h"
 #include "m4/m4.h"
 #include "m4/resource.h"
-#include "m4/sprite.h"
 #include "m4/hotspot.h"
 #include "m4/font.h"
 #include "m4/rails.h"
@@ -50,17 +49,15 @@
 #include "m4/mads_anim.h"
 #include "m4/mads_menus.h"
 
+#include "common/error.h"
 #include "common/file.h"
 #include "common/fs.h"
-#include "common/events.h"
 #include "common/EventRecorder.h"
-#include "common/endian.h"
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/textconsole.h"
 #include "engines/util.h"
-#include "graphics/surface.h"
-#include "audio/mididrv.h"
 
 namespace M4 {
 

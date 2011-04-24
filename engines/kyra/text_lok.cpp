@@ -30,6 +30,8 @@
 #include "kyra/sprites.h"
 #include "kyra/timer.h"
 
+#include "common/system.h"
+
 namespace Kyra {
 
 void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const char *chatStr, uint8 charNum, const bool printText) {

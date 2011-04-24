@@ -23,9 +23,7 @@
  *
  */
 
-#include "common/endian.h"
 #include "common/savefile.h"
-#include "common/system.h"
 
 #include "kyra/kyra_lok.h"
 #include "kyra/animator_lok.h"

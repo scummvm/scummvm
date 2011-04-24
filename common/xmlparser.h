@@ -29,6 +29,7 @@
 #include "common/scummsys.h"
 #include "common/types.h"
 
+#include "common/fs.h"
 #include "common/list.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
@@ -37,7 +38,6 @@
 
 namespace Common {
 
-class FSNode;
 class SeekableReadStream;
 
 #define MAX_XML_DEPTH 8

@@ -25,12 +25,13 @@
 #ifndef COMMON_UNZIP_H
 #define COMMON_UNZIP_H
 
+#include "common/str.h"
+
 namespace Common {
 
 class Archive;
 class FSNode;
 class SeekableReadStream;
-class String;
 
 /**
  * This factory method creates an Archive instance corresponding to the content

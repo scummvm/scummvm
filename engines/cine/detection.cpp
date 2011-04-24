@@ -27,6 +27,7 @@
 
 #include "engines/advancedDetector.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "cine/cine.h"
 #include "cine/various.h"

@@ -23,7 +23,16 @@
 *
 */
 
+#include "common/debug.h"
+#include "common/events.h"
+#include "common/keyboard.h"
+#include "common/stream.h"
+#include "common/system.h"
+#include "graphics/surface.h"
+
+#include "toon/audio.h"
 #include "toon/movie.h"
+#include "toon/toon.h"
 
 namespace Toon {
 

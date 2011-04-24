@@ -26,12 +26,12 @@
 #ifndef COMMON_STREAM_H
 #define COMMON_STREAM_H
 
-#include "common/types.h"
 #include "common/endian.h"
+#include "common/scummsys.h"
+#include "common/str.h"
 
 namespace Common {
 
-class String;
 class SeekableReadStream;
 
 /**

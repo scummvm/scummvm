@@ -24,8 +24,6 @@
  */
 
 #include "tsage/debugger.h"
-#include "common/config-manager.h"
-#include "common/endian.h"
 #include "tsage/globals.h"
 #include "tsage/graphics.h"
 #include "tsage/ringworld_logic.h"

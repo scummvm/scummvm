@@ -32,6 +32,8 @@
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/selenitic.h"
 
+#include "common/system.h"
+#include "common/textconsole.h"
 #include "gui/message.h"
 
 namespace Mohawk {

@@ -28,7 +28,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
-#include "common/list.h"
+#include "common/mutex.h"
 
 #ifdef __DS__
 /* This disables the rhythm channel when emulating the PC-98 type 86 sound card.

@@ -24,6 +24,7 @@
  */
 
 #include "common/array.h"
+#include "common/textconsole.h"
 
 #include "drascula/drascula.h"
 

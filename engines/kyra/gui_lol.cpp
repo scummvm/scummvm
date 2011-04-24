@@ -32,6 +32,7 @@
 #include "kyra/util.h"
 
 #include "common/savefile.h"
+#include "common/system.h"
 #include "common/config-manager.h"
 #include "graphics/scaler.h"
 

@@ -26,6 +26,9 @@
 #include "common/debug.h"
 #include "common/algorithm.h"
 #include "common/ptr.h"
+#include "common/textconsole.h"
+
+#include "graphics/palette.h"
 
 #include "teenagent/scene.h"
 #include "teenagent/resources.h"

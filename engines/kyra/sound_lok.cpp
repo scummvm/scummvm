@@ -26,6 +26,8 @@
 #include "kyra/sound.h"
 #include "kyra/kyra_lok.h"
 
+#include "common/system.h"
+
 namespace Kyra {
 
 void KyraEngine_LoK::snd_playSoundEffect(int track, int volume) {

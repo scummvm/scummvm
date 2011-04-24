@@ -23,6 +23,7 @@
  */
 
 #include "graphics/conversion.h"
+#include "graphics/pixelformat.h"
 
 namespace Graphics {
 

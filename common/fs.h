@@ -27,6 +27,8 @@
 
 #include "common/array.h"
 #include "common/archive.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/ptr.h"
 #include "common/str.h"
 

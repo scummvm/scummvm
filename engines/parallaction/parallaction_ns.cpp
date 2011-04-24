@@ -25,6 +25,7 @@
 
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
 #include "parallaction/parallaction.h"
 #include "parallaction/exec.h"

@@ -25,10 +25,12 @@
 #ifndef ENGINES_ADVANCED_DETECTOR_H
 #define ENGINES_ADVANCED_DETECTOR_H
 
-#include "common/fs.h"
-#include "common/error.h"
-
 #include "engines/metaengine.h"
+
+namespace Common {
+class Error;
+class FSList;
+}
 
 
 struct ADGameFileDescription {

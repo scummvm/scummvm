@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/textconsole.h"
 
 #include "queen/walk.h"
 

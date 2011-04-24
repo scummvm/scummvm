@@ -31,6 +31,8 @@
 
 #include "base/version.h"
 
+#include "common/system.h"
+
 namespace Kyra {
 
 #pragma mark - Intro

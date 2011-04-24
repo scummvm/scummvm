@@ -30,6 +30,8 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/stack.h"
+#include "common/str.h"
+#include "common/textconsole.h"
 #include "graphics/font.h"
 
 #include "gui/ThemeLayout.h"

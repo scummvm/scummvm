@@ -29,21 +29,13 @@
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/keyboard.h"
-#include "common/file.h"
 #include "common/fs.h"
-#include "common/savefile.h"
 #include "common/config-manager.h"
 #include "common/serializer.h"
-#include "common/stream.h"
 
 #include "backends/audiocd/audiocd.h"
 
 #include "engines/util.h"
-
-#include "graphics/cursorman.h"
-
-#include "base/plugins.h"
-#include "base/version.h"
 
 #include "tinsel/actors.h"
 #include "tinsel/background.h"

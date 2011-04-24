@@ -36,6 +36,7 @@ namespace Kyra {
 
 class WSAMovie_v2;
 class Screen_v2;
+class Movie;
 class LoLEngine;
 
 class TimAnimator {

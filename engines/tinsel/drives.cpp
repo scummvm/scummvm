@@ -24,9 +24,7 @@
  * CD/drive handling functions
  */
 
-#include "common/config-manager.h"
-#include "common/substream.h"
-#include "gui/message.h"
+#include "common/textconsole.h"
 #include "tinsel/drives.h"
 #include "tinsel/scene.h"
 #include "tinsel/tinsel.h"

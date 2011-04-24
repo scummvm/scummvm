@@ -32,6 +32,8 @@
 #include "tinsel/tinsel.h"
 #include "tinsel/scn.h"
 
+#include "common/textconsole.h"
+
 namespace Tinsel {
 
 //----------------- LOCAL DEFINES --------------------

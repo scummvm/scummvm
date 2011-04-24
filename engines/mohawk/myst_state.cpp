@@ -27,7 +27,9 @@
 #include "mohawk/myst.h"
 #include "mohawk/myst_state.h"
 
+#include "common/debug.h"
 #include "common/serializer.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 namespace Mohawk {

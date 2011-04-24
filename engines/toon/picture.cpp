@@ -25,6 +25,9 @@
 
 #include "toon/picture.h"
 #include "toon/tools.h"
+
+#include "common/debug.h"
+#include "common/rect.h"
 #include "common/stack.h"
 
 namespace Toon {

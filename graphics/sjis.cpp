@@ -31,6 +31,7 @@
 #include "common/archive.h"
 #include "common/endian.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 #include "graphics/surface.h"
 

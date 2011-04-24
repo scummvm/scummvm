@@ -28,6 +28,7 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/macresman.h"
+#include "common/textconsole.h"
 
 #include "sci/resource.h"
 #include "sci/resource_intern.h"

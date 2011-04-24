@@ -23,9 +23,10 @@
  *
  */
 
+#include "common/array.h"
 #include "common/debug.h"
+#include "common/endian.h"
 #include "common/file.h"
-#include "common/memstream.h"
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/winexe_pe.h"

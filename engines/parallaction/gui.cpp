@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/textconsole.h"
+
 #include "parallaction/gui.h"
 
 namespace Parallaction {

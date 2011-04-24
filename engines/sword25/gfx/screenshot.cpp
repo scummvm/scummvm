@@ -36,6 +36,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/memstream.h"
+#include "common/textconsole.h"
 #include "sword25/gfx/screenshot.h"
 #include "sword25/kernel/filesystemutil.h"
 #include <png.h>

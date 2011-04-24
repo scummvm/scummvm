@@ -27,6 +27,7 @@
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 
 namespace Audio {
 

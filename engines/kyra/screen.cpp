@@ -31,6 +31,7 @@
 #include "engines/util.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/palette.h"
 #include "graphics/sjis.h"
 
 #include "kyra/screen.h"

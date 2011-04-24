@@ -30,6 +30,7 @@
 #include "kyra/wsamovie.h"
 
 #include "common/savefile.h"
+#include "common/system.h"
 
 namespace Kyra {
 

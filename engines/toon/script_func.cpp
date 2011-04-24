@@ -23,6 +23,9 @@
 *
 */
 
+#include "common/debug.h"
+#include "common/system.h"
+
 #include "toon/script_func.h"
 #include "toon/script.h"
 #include "toon/state.h"

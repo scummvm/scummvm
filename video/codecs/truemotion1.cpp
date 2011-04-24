@@ -32,6 +32,7 @@
 
 #include "video/codecs/truemotion1data.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace Video {
 

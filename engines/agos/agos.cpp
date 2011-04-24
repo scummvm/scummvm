@@ -25,9 +25,9 @@
 
 #include "common/config-manager.h"
 #include "common/EventRecorder.h"
-#include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/textconsole.h"
 #include "common/system.h"
 
 #include "engines/util.h"
@@ -35,14 +35,12 @@
 #include "agos/debugger.h"
 #include "agos/intern.h"
 #include "agos/agos.h"
-#include "agos/vga.h"
 
 #include "backends/audiocd/audiocd.h"
 
 #include "graphics/surface.h"
 
 #include "audio/mididrv.h"
-#include "audio/mods/protracker.h"
 
 namespace AGOS {
 

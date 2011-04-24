@@ -24,6 +24,7 @@
  */
 
 #include "common/debug.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 #include "sword1/router.h"

@@ -26,7 +26,6 @@
 #define ENGINES_ENGINE_H
 
 #include "common/scummsys.h"
-#include "common/error.h"
 #include "common/str.h"
 
 class OSystem;
@@ -35,6 +34,7 @@ namespace Audio {
 class Mixer;
 }
 namespace Common {
+class Error;
 class EventManager;
 class SaveFileManager;
 class TimerManager;

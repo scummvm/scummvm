@@ -26,6 +26,7 @@
 #include "cruise/cruise_main.h"
 #include "common/endian.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 
 namespace Cruise {
 

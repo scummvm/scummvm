@@ -24,13 +24,14 @@
  */
 
 #include "common/endian.h"
+#include "common/error.h"
+#include "common/rect.h"
+#include "common/util.h"
 
 #include "kyra/kyra_lok.h"
 #include "kyra/screen.h"
 #include "kyra/animator_lok.h"
 #include "kyra/sprites.h"
-
-#include "common/system.h"
 
 namespace Kyra {
 Animator_LoK::Animator_LoK(KyraEngine_LoK *vm, OSystem *system) {

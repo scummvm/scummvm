@@ -32,7 +32,9 @@
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/channelwood.h"
 
-#include "gui/message.h"
+#include "common/events.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Mohawk {
 namespace MystStacks {

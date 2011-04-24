@@ -26,12 +26,14 @@
 #ifndef COMMON_CONFIG_FILE_H
 #define COMMON_CONFIG_FILE_H
 
-#include "common/config-manager.h"
+#include "common/hash-str.h"
 #include "common/list.h"
 #include "common/str.h"
-#include "common/stream.h"
 
 namespace Common {
+
+class SeekableReadStream;
+class WriteStream;
 
 /**
  * This class allows reading/writing INI style config files.

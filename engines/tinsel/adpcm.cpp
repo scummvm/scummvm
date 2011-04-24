@@ -23,6 +23,9 @@
  *
  */
 
+#include "common/stream.h"
+#include "common/util.h"
+
 #include "tinsel/adpcm.h"
 
 namespace Tinsel {

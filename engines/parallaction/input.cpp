@@ -25,6 +25,7 @@
 
 #include "common/events.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "graphics/cursorman.h"
 
 #include "parallaction/exec.h"

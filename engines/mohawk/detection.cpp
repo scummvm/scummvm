@@ -26,9 +26,8 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
-#include "common/config-manager.h"
-#include "common/file.h"
 #include "common/savefile.h"
+#include "common/system.h"
 
 #include "mohawk/livingbooks.h"
 

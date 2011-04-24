@@ -40,7 +40,6 @@ class SeekableReadStream;
 
 namespace Audio {
 
-class AudioStream;
 class RewindableAudioStream;
 
 /**

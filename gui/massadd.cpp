@@ -24,14 +24,13 @@
 
 #include "engines/metaengine.h"
 #include "common/algorithm.h"
-#include "common/events.h"
-#include "common/func.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
+#include "common/system.h"
 #include "common/translation.h"
 
 #include "gui/launcher.h"	// For addGameToConf()
 #include "gui/massadd.h"
-#include "gui/gui-manager.h"
 #include "gui/widget.h"
 #include "gui/widgets/list.h"
 

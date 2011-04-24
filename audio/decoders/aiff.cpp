@@ -32,12 +32,10 @@
  */
 
 #include "common/endian.h"
-#include "common/util.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 #include "audio/decoders/aiff.h"
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 
 namespace Audio {

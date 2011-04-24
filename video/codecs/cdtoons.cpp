@@ -24,9 +24,9 @@
  */
 
 #include "video/codecs/cdtoons.h"
+#include "common/rect.h"
 #include "common/stream.h"
-
-#include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Video {
 

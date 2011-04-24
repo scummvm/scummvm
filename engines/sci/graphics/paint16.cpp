@@ -23,11 +23,6 @@
  *
  */
 
-#include "common/util.h"
-#include "common/stack.h"
-#include "common/system.h"
-#include "graphics/primitives.h"
-
 #include "sci/sci.h"
 #include "sci/engine/features.h"
 #include "sci/engine/state.h"

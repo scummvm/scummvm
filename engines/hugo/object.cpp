@@ -30,8 +30,7 @@
  *
  */
 
-#include "common/system.h"
-#include "common/random.h"
+#include "common/debug.h"
 
 #include "hugo/hugo.h"
 #include "hugo/game.h"

@@ -25,8 +25,8 @@
 
 #include "common/archive.h"
 #include "common/fs.h"
-#include "common/util.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Common {
 

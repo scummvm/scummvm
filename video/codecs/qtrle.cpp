@@ -28,9 +28,11 @@
 
 #include "video/codecs/qtrle.h"
 
+#include "common/debug.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 

@@ -41,6 +41,7 @@
 
 #ifdef USE_THEORADEC
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "graphics/conversion.h"
 #include "audio/decoders/raw.h"
 #include "sword25/kernel/common.h"

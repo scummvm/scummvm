@@ -31,8 +31,10 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "agos/animation.h"

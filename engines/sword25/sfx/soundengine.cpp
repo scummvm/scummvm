@@ -39,6 +39,8 @@
 
 #include "audio/decoders/vorbis.h"
 
+#include "common/system.h"
+
 namespace Sword25 {
 
 class SoundResource : public Resource {

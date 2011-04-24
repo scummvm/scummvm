@@ -27,8 +27,15 @@
 #include "mohawk/resource.h"
 #include "mohawk/video.h"
 
+#include "common/debug.h"
 #include "common/events.h"
+#include "common/textconsole.h"
+#include "common/system.h"
+
+#include "graphics/surface.h"
+
 #include "video/qt_decoder.h"
+
 
 namespace Mohawk {
 

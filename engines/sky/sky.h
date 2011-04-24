@@ -27,7 +27,8 @@
 #define SKY_H
 
 
-#include "common/events.h"
+#include "common/error.h"
+#include "common/keyboard.h"
 #include "engines/engine.h"
 
 /**
@@ -52,7 +53,6 @@ struct SystemVars {
 	bool paused;
 };
 
-struct Compact;
 class Sound;
 class Disk;
 class Text;

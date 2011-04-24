@@ -32,6 +32,7 @@
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
 #include "common/mutex.h"
+#include "common/textconsole.h"
 #include "common/translation.h"
 #include "common/util.h"
 #ifdef USE_RGB_COLOR

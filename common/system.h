@@ -28,25 +28,23 @@
 
 #include "common/scummsys.h"
 #include "common/noncopyable.h"
-#include "common/rect.h"
 #include "common/list.h" // For OSystem::getSupportedFormats()
-
-#include "graphics/palette.h" // for PaletteManager
-#include "graphics/pixelformat.h"
 
 namespace Audio {
 class Mixer;
 }
 
 namespace Graphics {
+struct PixelFormat;
 struct Surface;
 }
 
 namespace Common {
-struct Event;
 class EventManager;
+struct Rect;
 class SaveFileManager;
 class SearchSet;
+class String;
 class TimerManager;
 class SeekableReadStream;
 class WriteStream;

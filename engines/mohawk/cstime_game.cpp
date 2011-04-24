@@ -29,6 +29,8 @@
 #include "mohawk/resource.h"
 #include "mohawk/sound.h"
 #include "common/events.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Mohawk {
 

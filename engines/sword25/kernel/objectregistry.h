@@ -37,6 +37,7 @@
 
 #include "common/func.h"
 #include "common/hashmap.h"
+#include "common/textconsole.h"
 #include "sword25/kernel/common.h"
 
 namespace Sword25 {

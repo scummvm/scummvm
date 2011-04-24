@@ -31,8 +31,6 @@
 #ifndef GRAPHICS_PNG_H
 #define GRAPHICS_PNG_H
 
-#include "graphics/surface.h"
-
 // PNG decoder, based on the W3C specs:
 // http://www.w3.org/TR/PNG/
 // Parts of the code have been adapted from LodePNG, by Lode Vandevenne:
@@ -54,11 +52,16 @@
 // is a bit unclear. For now, these won't be supported, until a suitable sample
 // is found.
 
+#include "common/scummsys.h"
+#include "common/textconsole.h"
+
 namespace Common {
 class SeekableReadStream;
 }
 
 namespace Graphics {
+
+struct Surface;
 
 enum PNGColorType {
 	kGrayScale          = 0,	// bit depths: 1, 2, 4, 8, 16

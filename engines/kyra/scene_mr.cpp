@@ -29,6 +29,8 @@
 #include "kyra/sound.h"
 #include "kyra/resource.h"
 
+#include "common/system.h"
+
 namespace Kyra {
 
 void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2, int unk3) {

@@ -27,9 +27,10 @@
 #define AGI_H
 
 #include "common/scummsys.h"
-#include "common/endian.h"
+#include "common/error.h"
 #include "common/util.h"
 #include "common/file.h"
+#include "common/rect.h"
 #include "common/stack.h"
 #include "common/system.h"
 
@@ -695,7 +696,6 @@ public:
 class GfxMgr;
 class SpritesMgr;
 class Menu;
-class SearchTree;
 
 // Image stack support
 struct ImageStackElement {

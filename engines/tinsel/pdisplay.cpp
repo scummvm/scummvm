@@ -44,6 +44,8 @@
 #include "tinsel/text.h"
 #include "tinsel/tinsel.h"
 
+#include "common/textconsole.h"
+
 namespace Tinsel {
 
 //----------------- EXTERNAL GLOBAL DATA --------------------

@@ -27,6 +27,7 @@
 
 #include "video/codecs/smc.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace Video {
 

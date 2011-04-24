@@ -41,13 +41,13 @@
 
 #if defined(USE_TIMIDITY)
 
-#include "common/util.h"
 #include "common/endian.h"
+#include "common/error.h"
 #include "common/str.h"
+#include "common/textconsole.h"
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"
 
-#include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>

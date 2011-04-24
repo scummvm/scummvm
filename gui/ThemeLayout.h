@@ -26,11 +26,12 @@
 #ifndef THEME_LAYOUT_H
 #define THEME_LAYOUT_H
 
+#include "common/array.h"
 #include "common/rect.h"
+#include "graphics/font.h"
 
 #ifdef LAYOUT_DEBUG_DIALOG
 namespace Graphics {
-class Font;
 class Surface;
 }
 #endif

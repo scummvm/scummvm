@@ -26,7 +26,17 @@
 #ifndef SCI_VIDEO_SEQ_DECODER_H
 #define SCI_VIDEO_SEQ_DECODER_H
 
+#include "common/rational.h"
+#include "graphics/pixelformat.h"
 #include "video/video_decoder.h"
+
+namespace Common {
+class SeekableReadStream;
+}
+
+namespace Graphics {
+struct Surface;
+}
 
 namespace Sci {
 

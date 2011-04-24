@@ -25,7 +25,9 @@
 
 #include "lastexpress/graphics.h"
 
+#include "common/rect.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 namespace LastExpress {
 

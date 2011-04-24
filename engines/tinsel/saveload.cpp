@@ -36,6 +36,7 @@
 
 #include "common/serializer.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 
 #include "gui/message.h"
 

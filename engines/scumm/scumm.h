@@ -35,6 +35,7 @@
 #include "common/random.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "common/textconsole.h"
 #include "graphics/surface.h"
 #include "graphics/sjis.h"
 

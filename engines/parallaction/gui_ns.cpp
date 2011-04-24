@@ -25,6 +25,7 @@
 
 #include "common/system.h"
 #include "common/hashmap.h"
+#include "common/textconsole.h"
 
 #include "parallaction/gui.h"
 #include "parallaction/input.h"

@@ -23,6 +23,8 @@
 *
 */
 
+#include "common/debug.h"
+
 #include "toon/text.h"
 
 namespace Toon {

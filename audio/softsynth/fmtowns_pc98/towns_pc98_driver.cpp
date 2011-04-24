@@ -25,6 +25,7 @@
 
 #include "audio/softsynth/fmtowns_pc98/towns_pc98_driver.h"
 #include "common/endian.h"
+#include "common/textconsole.h"
 
 class TownsPC98_MusicChannel {
 public:

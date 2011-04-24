@@ -36,6 +36,7 @@
 #include "tinsel/tinlib.h"	// Library routines
 #include "tinsel/tinsel.h"
 
+#include "common/textconsole.h"
 #include "common/util.h"
 
 namespace Tinsel {

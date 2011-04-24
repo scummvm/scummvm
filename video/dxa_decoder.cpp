@@ -25,10 +25,11 @@
 
 #include "common/debug.h"
 #include "common/endian.h"
-#include "common/archive.h"
 #include "common/system.h"
 #include "common/stream.h"
-#include "common/util.h"
+#include "common/textconsole.h"
+
+#include "graphics/surface.h"
 
 #include "video/dxa_decoder.h"
 

@@ -32,7 +32,9 @@
 
 // sound.c - sound effects and music support
 
+#include "common/debug.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "common/config-manager.h"
 
 #include "audio/decoders/raw.h"

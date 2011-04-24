@@ -72,9 +72,15 @@
 #include "lastexpress/shared.h"
 
 #include "common/array.h"
+#include "common/rect.h"
 
 namespace Common {
 class SeekableReadStream;
+class String;
+}
+
+namespace Graphics {
+struct Surface;
 }
 
 namespace LastExpress {

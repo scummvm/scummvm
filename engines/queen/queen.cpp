@@ -32,6 +32,7 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/EventRecorder.h"
+#include "common/textconsole.h"
 
 #include "engines/util.h"
 

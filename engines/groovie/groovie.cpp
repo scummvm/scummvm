@@ -35,7 +35,9 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "common/macresman.h"
+#include "common/textconsole.h"
 
 #include "backends/audiocd/audiocd.h"
 #include "engines/util.h"

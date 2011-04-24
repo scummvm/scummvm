@@ -28,8 +28,10 @@
 
 #include "lastexpress/shared.h"
 
+#include "common/rect.h"
 #include "common/serializer.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 namespace LastExpress {
 

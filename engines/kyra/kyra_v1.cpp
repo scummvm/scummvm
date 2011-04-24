@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/error.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/EventRecorder.h"
@@ -36,7 +37,6 @@
 #include "kyra/screen.h"
 #include "kyra/text.h"
 #include "kyra/timer.h"
-#include "kyra/script.h"
 #include "kyra/debugger.h"
 
 namespace Kyra {

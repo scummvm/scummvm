@@ -30,6 +30,7 @@
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/preview.h"
 
+#include "common/system.h"
 #include "gui/message.h"
 
 namespace Mohawk {

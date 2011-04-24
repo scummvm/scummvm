@@ -24,6 +24,7 @@
  */
 
 #include "common/rect.h"
+#include "common/textconsole.h"
 
 #include "m4/globals.h"
 #include "m4/graphics.h"
