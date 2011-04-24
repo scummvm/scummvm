@@ -2311,7 +2311,11 @@ static void GetActorSector() {
 
 	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
 	Sector::SectorType sectorType = (Sector::SectorType)(int)lua_getnumber(typeObj);
-	Sector *result = g_grim->currScene()->findPointSector(actor->pos(), sectorType);
+	Graphics::Vector3d pos = actor->pos();
+	if (actor->isWalking()) {
+		pos = actor->destPos();
+	}
+	Sector *result = g_grim->currScene()->findPointSector(pos, sectorType);
 	if (result) {
 		lua_pushnumber(result->id());
 		lua_pushstring(const_cast<char *>(result->name()));

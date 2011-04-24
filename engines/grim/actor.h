@@ -68,6 +68,7 @@ public:
 	void setPos(Graphics::Vector3d position);
 	Graphics::Vector3d pos() const;
 	void walkTo(Graphics::Vector3d p);
+	Graphics::Vector3d destPos() const;
 	void stopWalking() { _walking = false; }
 	bool isWalking() const;
 	void setRot(float pitch, float yaw, float roll);
