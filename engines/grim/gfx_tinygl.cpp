@@ -447,6 +447,12 @@ void GfxTinyGL::setShadowColor(byte r, byte g, byte b) {
 	_shadowColorB = b;
 }
 
+void GfxTinyGL::getShadowColor(byte *r, byte *g, byte *b) {
+	*r = _shadowColorR;
+	*g = _shadowColorG;
+	*b = _shadowColorB;
+}
+
 void GfxTinyGL::drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) {
 	tglNormal3fv(const_cast<float *>(face->_normal._coords));
 	tglBegin(TGL_POLYGON);

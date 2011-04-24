@@ -330,6 +330,12 @@ void GfxOpenGL::setShadowColor(byte r, byte g, byte b) {
 	_shadowColorB = b;
 }
 
+void GfxOpenGL::getShadowColor(byte *r, byte *g, byte *b) {
+	*r = _shadowColorR;
+	*g = _shadowColorG;
+	*b = _shadowColorB;
+}
+
 void GfxOpenGL::set3DMode() {
 	glMatrixMode(GL_MODELVIEW);
 	glEnable(GL_DEPTH_TEST);

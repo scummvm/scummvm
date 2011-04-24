@@ -65,6 +65,7 @@ byte *setupScreen(int screenW, int screenH, bool fullscreen);
 	void setShadowMode();
 	void clearShadowMode();
 	void setShadowColor(byte r, byte g, byte b);
+	void getShadowColor(byte *r, byte *g, byte *b);
 
 	void set3DMode();
 

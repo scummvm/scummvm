@@ -33,6 +33,7 @@
 namespace Grim {
 
 struct Shadow;
+class SaveGame;
 
 class GfxBase {
 public:
@@ -66,6 +67,7 @@ public:
 	virtual void setShadowMode() = 0;
 	virtual void clearShadowMode() = 0;
 	virtual void setShadowColor(byte r, byte g, byte b) = 0;
+	virtual void getShadowColor(byte *r, byte *g, byte *b) = 0;
 
 	virtual void set3DMode() = 0;
 
@@ -109,6 +111,9 @@ public:
 	virtual void releaseSmushFrame() = 0;
 
 	virtual const char *getVideoDeviceName() = 0;
+
+	virtual void saveState(SaveGame *state);
+	virtual void restoreState(SaveGame *state);
 
 protected:
 	int _screenWidth, _screenHeight, _screenBPP;

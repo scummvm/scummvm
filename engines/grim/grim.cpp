@@ -1012,6 +1012,8 @@ void GrimEngine::savegameRestore() {
 	restorePrimitives(_savedState);
 	restoreActors(_savedState);
 
+	g_driver->restoreState(_savedState);
+
 	//Chore_Restore(_savedState);
 	//Resource_Restore(_savedState);
 	//Text_Restore(_savedState);
@@ -1212,6 +1214,8 @@ void GrimEngine::savegameSave() {
 	saveTextObjects(_savedState);
 	savePrimitives(_savedState);
 	saveActors(_savedState);
+
+	g_driver->saveState(_savedState);
 
 	//Chore_Save(_savedState);
 	//Resource_Save(_savedState);
