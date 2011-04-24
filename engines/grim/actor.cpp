@@ -254,6 +254,11 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_winY1);
 	savedState->writeLESint32(_winX2);
 	savedState->writeLESint32(_winY2);
+
+	savedState->writeLESint32(_path.size());
+	for (Common::List<Graphics::Vector3d>::const_iterator i = _path.begin(); i != _path.end(); ++i) {
+		savedState->writeVector3d(*i);
+	}
 }
 
 bool Actor::restoreState(SaveGame *savedState) {
@@ -413,6 +418,11 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_winY1 = savedState->readLESint32();
 	_winX2 = savedState->readLESint32();
 	_winY2 = savedState->readLESint32();
+
+	size = savedState->readLESint32();
+	for (int i = 0; i < size; ++i) {
+		_path.push_back(savedState->readVector3d());
+	}
 
 	return true;
 }
