@@ -53,7 +53,7 @@ HugoEngine *HugoEngine::s_Engine = 0;
 
 HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(syst), _gameDescription(gd),
 	_hero(0), _heroImage(0), _defltTunes(0), _numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0),
-	_screenStates(0), _score(0), _maxscore(0), _lastTime(0), _curTime(0), _episode(0)
+	_screenStates(0), _numStates(0), _score(0), _maxscore(0), _lastTime(0), _curTime(0), _episode(0)
 {
 	_system = syst;
 	DebugMan.addDebugChannel(kDebugSchedule, "Schedule", "Script Schedule debug level");
@@ -463,6 +463,7 @@ bool HugoEngine::loadHugoDat() {
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
 		if (varnt == _gameVariant) {
+			_numStates = numElem;
 			_screenStates = (byte *)malloc(sizeof(byte) * numElem);
 			memset(_screenStates, 0, sizeof(_screenStates));
 		}

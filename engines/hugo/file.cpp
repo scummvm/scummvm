@@ -400,7 +400,7 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 	out->writeByte((gameStatus.gameOverFl) ? 1 : 0);
 
 	// Save screen states
-	for (int i = 0; i < _vm->_numScreens; i++)
+	for (int i = 0; i < _vm->_numStates; i++)
 		out->writeByte(_vm->_screenStates[i]);
 
 	_vm->_scheduler->saveSchedulerData(out);
@@ -497,7 +497,7 @@ bool FileManager::restoreGame(const int16 slot) {
 	gameStatus.storyModeFl = (in->readByte() == 1);
 	_vm->_mouse->setJumpExitFl(in->readByte() == 1);
 	gameStatus.gameOverFl = (in->readByte() == 1);
-	for (int i = 0; i < _vm->_numScreens; i++)
+	for (int i = 0; i < _vm->_numStates; i++)
 		_vm->_screenStates[i] = in->readByte();
 
 	_vm->_scheduler->restoreSchedulerData(in);

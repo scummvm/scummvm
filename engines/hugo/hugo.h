@@ -238,6 +238,7 @@ public:
 	int8   _soundTest;
 	int8   _tunesNbr;
 	uint16 _numScreens;
+	uint16 _numStates;
 	int8   _normalTPS;                              // Number of ticks (frames) per second.
 	                                                // 8 for Win versions, 9 for DOS versions
 	object_t *_hero;
