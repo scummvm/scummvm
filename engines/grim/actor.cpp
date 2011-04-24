@@ -532,7 +532,7 @@ void Actor::walkTo(Graphics::Vector3d p) {
 				Sector *sector = node->sect;
 
 				if (sector == endSec) {
-					PathNode *n = closedList.back()->parent;
+					PathNode *n = closedList.back();
 					while (n) {
 						_path.push_back(n->pos);
 						n = n->parent;
