@@ -132,7 +132,8 @@ static int eatSystemEvents() {
 }
 
 static void drawProgress(float progress) {
-	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kOSDFont));
+	// TODO implement in Residual
+	/*const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kOSDFont));
 	Graphics::Surface *screen = g_system->lockScreen();
 
 	assert(screen);
@@ -163,15 +164,17 @@ static void drawProgress(float progress) {
 		col = screenFormat.RGBToColor(171, 0, 0);
 	else
 		col = 2;
-	// TODO implement in Residual
-	//screen->fillRect(r, col);
 
-	//g_system->unlockScreen();
-	//g_system->updateScreen();
+	screen->fillRect(r, col);
+
+	g_system->unlockScreen();
+	g_system->updateScreen();
+	*/
 }
 
 static void drawMessage(int offset, const Common::String &text) {
-	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kOSDFont));
+	// TODO implement in Residual
+	/* const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kOSDFont));
 	Graphics::Surface *screen = g_system->lockScreen();
 
 	assert(screen);
@@ -199,9 +202,9 @@ static void drawMessage(int offset, const Common::String &text) {
 
 	font.drawString(screen, text, 0, y, screen->w, col, Graphics::kTextAlignCenter);
 
-	// TODO implement in Residual
-	//g_system->unlockScreen();
-	//g_system->updateScreen();
+	g_system->unlockScreen();
+	g_system->updateScreen();
+	*/
 }
 
 static MT32Emu::File *MT32_OpenFile(void *userData, const char *filename, MT32Emu::File::OpenMode mode) {
@@ -311,7 +314,8 @@ int MidiDriver_MT32::open() {
 
 	_synth = new MT32Emu::Synth();
 
-	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
+	// TODO implement in Residual
+	Graphics::PixelFormat screenFormat; /*= g_system->getScreenFormat();*/
 
 	if (screenFormat.bytesPerPixel == 1) {
 		const byte dummy_palette[] = {

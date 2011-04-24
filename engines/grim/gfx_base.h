@@ -26,6 +26,7 @@
 #ifndef GRIM_GFX_BASE_H
 #define GRIM_GFX_BASE_H
 
+#include "engines/grim/colormap.h"
 #include "engines/grim/model.h"
 #include "engines/grim/scene.h"
 #include "engines/grim/primitives.h"
