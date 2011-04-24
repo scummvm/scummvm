@@ -1254,6 +1254,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// From zerep in bug #3287894
+	{
+		{
+			"arthurbday",
+			"",
+			AD_ENTRY1("BIRTHDAY.512", "874f80ff363214d63593864e58c4a130"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"BIRTHDAY.EXE"
+	},
+
 	{
 		{
 			"arthurbday",
