@@ -26,9 +26,13 @@
 #ifndef TOOLS_CREATE_PROJECT_CONFIG_H
 #define TOOLS_CREATE_PROJECT_CONFIG_H
 
-#define PROJECT_DESCRIPTION "ScummVM"    // Used in console output and build configuration
-#define PROJECT_NAME "scummvm"           // Used for folders, icons, resources and project/solution name
-#define LIBS_DEFINE "SCUMMVM_LIBS" // Name of the include environment variable
-#define REVISION_DEFINE "SCUMMVM_INTERNAL_REVISION"
+#define PROJECT_DESCRIPTION "Residual"    // Used in console output and build configuration
+#define PROJECT_NAME "residual"           // Used for folders, icons, resources and project/solution name
+#define LIBS_DEFINE "RESIDUAL_LIBS"       // Name of the include environment variable
+#define REVISION_DEFINE "RESIDUAL_INTERNAL_REVISION"
+
+#define HAS_VIDEO_FOLDER 0
+#define ADDITIONAL_LIBRARY "glu32"
+#define NEEDS_RTTI 1
 
 #endif // TOOLS_CREATE_PROJECT_CONFIG_H

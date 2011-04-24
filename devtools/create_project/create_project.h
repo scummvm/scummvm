@@ -105,13 +105,13 @@ struct EngineDesc {
 typedef std::list<EngineDesc> EngineDescList;
 
 /**
- * This function parses the ScummVM configure file and creates a list
+ * This function parses the project configure file and creates a list
  * of available engines.
  *
  * It will also automatically setup the default build state (enabled
  * or disabled) to the state specified in the "configure" file.
  *
- * @param srcDir Path to the root of the ScummVM source.
+ * @param srcDir Path to the root of the project source.
  * @return List of available engines.
  */
 EngineDescList parseConfigure(const std::string &srcDir);
@@ -206,11 +206,11 @@ bool setFeatureBuildState(const std::string &name, FeatureList &features, bool e
  * Structure to describe a build setup.
  *
  * This includes various information about which engines to
- * enable, which features should be built into ScummVM.
- * It also contains the path to the ScummVM souce root.
+ * enable, which features should be built into the main executable.
+ * It also contains the path to the project source root.
  */
 struct BuildSetup {
-	std::string srcDir;     ///< Path to the ScummVM sources.
+	std::string srcDir;     ///< Path to the sources.
 	std::string filePrefix; ///< Prefix for the relative path arguments in the project files.
 	std::string outputDir;  ///< Path where to put the MSVC project files.
 

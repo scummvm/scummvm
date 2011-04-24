@@ -35,6 +35,7 @@ Dim WshShell : Set WshShell = CreateObject("WScript.Shell")
 
 ' Folders
 Dim rootFolder : rootFolder = ""
+Dim targetFolder : targetFolder = ""
 
 ' Info variables
 Dim tool : tool = ""
@@ -85,23 +86,25 @@ Sub DetermineRevision()
 	Wscript.StdErr.WriteLine "Found revision " & revision & " on branch " & branch & vbCrLf
 
 	' Setup our revision string
-	Dim revisionString : revisionString = "r" & revision
+	Dim revisionString : revisionString = revision
 
 	If (modified) Then
-		revisionString = revisionString & " M"
+		revisionString = revisionString & "-dirty"
 	End If
 
 	' If we are not on trunk, add the branch name to the revision string
-	If (branch <> "trunk" And branch <> "") Then
-		revisionString = revisionString & " (" & branch & ")"
+	If (branch <> "trunk" And branch <> "master" And branch <> "") Then
+		revisionString = revisionString & "(" & branch & ")"
 	End If
 
-	' Add the DVCS name at the end
-	revisionString = revisionString & " - " & tool
+	' Add the DVCS name at the end (when not git)
+	If (tool <> "git") Then
+		revisionString = revisionString & "-" & tool
+	End If
 
-	' Setup an environment variable with the revision string
-	Dim Env: Set Env = WshShell.Environment("User")
-	Env.item("RESIDUAL_REVISION_STRING") = revisionString
+	' Output revision header file
+	FSO.CopyFile rootFolder & "\\base\\internal_revision.h.in", targetFolder & "\\internal_revision.h"
+	FindReplaceInFile targetFolder & "\\internal_revision.h", "@REVISION@", revisionString
 End Sub
 
 Function DetermineTortoiseSVNVersion()
@@ -283,29 +286,9 @@ Function DetermineGitVersion()
 		End If
 	End If
 
-	' Check for svn clones
-	Set oExec = WshShell.Exec(gitPath & "log --pretty=format:%s --grep=" & Chr(34) & "^(svn r[0-9]*)" & Chr(34) & " -1 " & rootFolder)
-	if Err.Number = 0 Then
-		revision = Mid(oExec.StdOut.ReadLine(), 7)
-		revision = Mid(revision, 1, InStr(revision, ")") - 1)
-		tool = "svn-git"
-	End If
-
-	' No revision? Maybe it is a custom git-svn clone
-	If revision = "" Then
-		Err.Clear
-		Set oExec = WshShell.Exec(gitPath & "log --pretty=format:%b --grep=" & Chr(34) & "git-svn-id:.*@[0-9]*" & Chr(34) & " -1 " & rootFolder)
-		If Err.Number = 0 Then
-			revision = oExec.StdOut.ReadLine()
-			revision = Mid(revision, InStr(revision, "@") + 1)
-			revision = Mid(revision, 1, InStr(revision, " ") - 1)
-			tool = "svn-git"
-		End If
-	End If
-
 	' Fallback to abbreviated revision number
 	If revision = "" Then
-		revision = Mid(hash, 1, 8)
+		revision = Mid(hash, 1, 7)
 	End If
 
 	DetermineGitVersion = True
@@ -385,8 +368,8 @@ End Function
 Function ParseCommandLine()
 	ParseCommandLine = True
 
-	If Wscript.Arguments.Count <> 1 Then
-		Wscript.StdErr.WriteLine "[Error] Invalid number of arguments (was: " & Wscript.Arguments.Count & ", expected: 1)"
+	If Wscript.Arguments.Count <> 2 Then
+		Wscript.StdErr.WriteLine "[Error] Invalid number of arguments (was: " & Wscript.Arguments.Count & ", expected: 2)"
 
 		ParseCommandLine = False
 		Exit Function
@@ -394,6 +377,7 @@ Function ParseCommandLine()
 
 	' Get our arguments
 	rootFolder = Wscript.Arguments.Item(0)
+	targetFolder = Wscript.Arguments.Item(1)
 
 	' Check that the folders are valid
 	If Not FSO.FolderExists(rootFolder) Then
@@ -403,8 +387,16 @@ Function ParseCommandLine()
 		Exit Function
 	End If
 
-	' Set absolute path
+	If Not FSO.FolderExists(targetFolder) Then
+		Wscript.StdErr.WriteLine "[Error] Invalid target folder (" & targetFolder & ")"
+
+		ParseCommandLine = False
+		Exit Function
+	End If
+
+	' Set absolute paths
 	rootFolder = FSO.GetAbsolutePathName(rootFolder)
+	targetFolder = FSO.GetAbsolutePathName(targetFolder)
 End Function
 
 Function ReadRegistryKey(shive, subkey, valuename, architecture)
@@ -443,3 +435,14 @@ Function ReadRegistryKey(shive, subkey, valuename, architecture)
 
 	ReadRegistryKey = Outparams.SValue
 End Function
+
+Sub FindReplaceInFile(filename, to_find, replacement)
+	Dim file, data
+	Set file = FSO.OpenTextFile(filename, 1, 0, 0)
+	data = file.ReadAll
+	file.Close
+	data = Replace(data, to_find, replacement)
+	Set file = FSO.CreateTextFile(filename, -1, 0)
+	file.Write data
+	file.Close
+End Sub

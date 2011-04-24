@@ -23,10 +23,10 @@
  *
  */
 
+#include "config.h"
 #include "msvc.h"
 
 #include <fstream>
-
 #include <algorithm>
 
 namespace CreateProjectTool {
@@ -39,23 +39,23 @@ MSVCProvider::MSVCProvider(StringList &global_warnings, std::map<std::string, St
 }
 
 void MSVCProvider::createWorkspace(const BuildSetup &setup) {
-	UUIDMap::const_iterator svmUUID = _uuidMap.find("residual");
+	UUIDMap::const_iterator svmUUID = _uuidMap.find(PROJECT_NAME);
 	if (svmUUID == _uuidMap.end())
-		error("No UUID for \"residual\" project created");
+		error("No UUID for \"" PROJECT_NAME "\" project created");
 
 	const std::string svmProjectUUID = svmUUID->second;
 	assert(!svmProjectUUID.empty());
 
 	std::string solutionUUID = createUUID();
 
-	std::ofstream solution((setup.outputDir + '/' + "residual.sln").c_str());
+	std::ofstream solution((setup.outputDir + '/' + PROJECT_NAME ".sln").c_str());
 	if (!solution)
-		error("Could not open \"" + setup.outputDir + '/' + "residual.sln\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + PROJECT_NAME ".sln\" for writing");
 
 	solution << "Microsoft Visual Studio Solution File, Format Version " << _version + 1 << ".00\n";
 	solution << "# Visual Studio " << getVisualStudioVersion() << "\n";
 
-	solution << "Project(\"{" << solutionUUID << "}\") = \"residual\", \"residual" << getProjectExtension() << "\", \"{" << svmProjectUUID << "}\"\n";
+	solution << "Project(\"{" << solutionUUID << "}\") = \"" << PROJECT_NAME << "\", \"" << PROJECT_NAME << getProjectExtension() << "\", \"{" << svmProjectUUID << "}\"\n";
 
 	// Project dependencies are moved to vcxproj files in Visual Studio 2010
 	if (_version < 10)
@@ -65,7 +65,7 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 
 	// Note we assume that the UUID map only includes UUIDs for enabled engines!
 	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
-		if (i->first == "residual")
+		if (i->first == PROJECT_NAME)
 			continue;
 
 		solution << "Project(\"{" << solutionUUID << "}\") = \"" << i->first << "\", \"" << i->first << getProjectExtension() << "\", \"{" << i->second << "}\"\n"
@@ -120,16 +120,16 @@ void MSVCProvider::createOtherBuildFiles(const BuildSetup &setup) {
 }
 
 void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
-	std::ofstream properties((setup.outputDir + '/' + "Residual_Global" + getPropertiesExtension()).c_str());
+	std::ofstream properties((setup.outputDir + '/' + PROJECT_DESCRIPTION "_Global" + getPropertiesExtension()).c_str());
 	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + "Residual_Global" + getPropertiesExtension() + "\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + PROJECT_DESCRIPTION "_Global" + getPropertiesExtension() + "\" for writing");
 
-	outputGlobalPropFile(properties, 32, setup.defines, convertPathToWin(setup.filePrefix));
+	outputGlobalPropFile(properties, 32, setup.defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
 	properties.close();
 
-	properties.open((setup.outputDir + '/' + "Residual_Global64" + getPropertiesExtension()).c_str());
+	properties.open((setup.outputDir + '/' + PROJECT_DESCRIPTION "_Global64" + getPropertiesExtension()).c_str());
 	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + "Residual_Global64" + getPropertiesExtension() + "\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + PROJECT_DESCRIPTION "_Global64" + getPropertiesExtension() + "\" for writing");
 
 	// HACK: We must disable the "nasm" feature for x64. To achieve that we must duplicate the feature list and
 	// recreate a define list.
@@ -143,7 +143,7 @@ void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
 	x64Defines.push_back("WIN32");
 	x64Defines.push_back("SDL_BACKEND");
 
-	outputGlobalPropFile(properties, 64, x64Defines, convertPathToWin(setup.filePrefix));
+	outputGlobalPropFile(properties, 64, x64Defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
 }
 
 std::string MSVCProvider::getPreBuildEvent() const {
@@ -152,7 +152,7 @@ std::string MSVCProvider::getPreBuildEvent() const {
 	cmdLine = "@echo off\n"
 	          "echo Executing Pre-Build script...\n"
 			  "echo.\n"
-			  "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/prebuild.cmd&quot; &quot;$(SolutionDir)/../..&quot;\n"
+			  "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/prebuild.cmd&quot; &quot;$(SolutionDir)/../..&quot;  &quot;$(TargetDir)&quot;\n"
 	          "EXIT /B0";
 
 	return cmdLine;
@@ -167,6 +167,8 @@ std::string MSVCProvider::getPostBuildEvent(bool isWin32) const {
 	          "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/postbuild.cmd&quot; &quot;$(SolutionDir)/../..&quot; &quot;$(OutDir)&quot; ";
 
 	cmdLine += (isWin32) ? "x86" : "x64";
+
+	cmdLine += " %SCUMMVM_LIBS%";
 
 	cmdLine += "\n"
 	           "EXIT /B0";

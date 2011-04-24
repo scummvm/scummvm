@@ -23,10 +23,10 @@
  *
  */
 
+#include "config.h"
 #include "visualstudio.h"
 
 #include <fstream>
-
 #include <algorithm>
 
 namespace CreateProjectTool {
@@ -54,37 +54,41 @@ int VisualStudioProvider::getVisualStudioVersion() {
 	if (_version == 8)
 		return 2005;
 
-	error("Unsupported version passed to createResidualSolution");
+	error("Unsupported version passed to getVisualStudioVersion");
 }
 
-#define OUTPUT_CONFIGURATION_RESIDUAL(config, platform, props) { \
-	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\Residual_" << config << props << ".vsprops\">\n" \
-	           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n" \
-	           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/residual.exe\"\n" \
-	           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n" \
-	           "\t\t\t/>\n" \
-	           "\t\t</Configuration>\n"; \
-}
-
-#define OUTPUT_CONFIGURATION_RESIDUAL_DEBUG(config, platform, props, isWin32) { \
-	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\Residual_" << config << props << ".vsprops\">\n" \
-	           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n" \
-	           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/residual.exe\"\n" \
-	           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n" \
-	           "\t\t\t/>\n"; \
+#define OUTPUT_BUILD_EVENTS(isWin32) \
 	if (setup.runBuildEvents) { \
 		project << "\t\t\t<Tool\tName=\"VCPreBuildEventTool\"\n" \
-				   "\t\t\t\tCommandLine=\"" << getPreBuildEvent() << "\"\n" \
-				   "\t\t\t/>\n" \
-				   "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n" \
-				   "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32) << "\"\n" \
-				   "\t\t\t/>\n"; \
-	} \
+		           "\t\t\t\tCommandLine=\"" << getPreBuildEvent() << "\"\n" \
+		           "\t\t\t/>\n" \
+		           "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n" \
+		           "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32) << "\"\n" \
+		           "\t\t\t/>\n"; \
+	}
+
+#define OUTPUT_CONFIGURATION_MAIN(config, platform, props, isWin32) { \
+	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\" << PROJECT_DESCRIPTION << "_" << config << props << ".vsprops\">\n" \
+	           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n" \
+	           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/" << PROJECT_NAME << "\"\n" \
+	           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n" \
+	           "\t\t\t/>\n"; \
+	OUTPUT_BUILD_EVENTS(isWin32) \
+	project << "\t\t</Configuration>\n"; \
+}
+
+#define OUTPUT_CONFIGURATION_DEBUG(config, platform, props, isWin32) { \
+	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\" << PROJECT_DESCRIPTION << "_" << config << props << ".vsprops\">\n" \
+	           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n" \
+	           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/" << PROJECT_NAME << ".exe\"\n" \
+	           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n" \
+	           "\t\t\t/>\n"; \
+	OUTPUT_BUILD_EVENTS(isWin32) \
 	project << "\t\t</Configuration>\n"; \
 }
 
 #define OUTPUT_CONFIGURATION(config, platform, props) { \
-	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\Residual_" << config << props << ".vsprops\">\n" \
+	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\" << PROJECT_DESCRIPTION << "_" << config << props << ".vsprops\">\n" \
 	           "\t\t\t<Tool Name=\"VCCLCompilerTool\" "<< toolConfig << "/>\n" \
 	           "\t\t</Configuration>\n"; \
 }
@@ -118,24 +122,24 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 	// Check for project-specific warnings:
 	std::map< std::string, std::list<std::string> >::iterator warningsIterator = _projectWarnings.find(name);
 
-	if (name == "residual") {
+	if (name == PROJECT_NAME) {
 		std::string libraries;
 
 		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
 			libraries += ' ' + *i + ".lib";
 
 		// Win32
-		OUTPUT_CONFIGURATION_RESIDUAL_DEBUG("Debug", "Win32", "", true);
-		OUTPUT_CONFIGURATION_RESIDUAL_DEBUG("Analysis", "Win32", "", true);
-		OUTPUT_CONFIGURATION_RESIDUAL("Release", "Win32", "");
+		OUTPUT_CONFIGURATION_DEBUG("Debug", "Win32", "", true);
+		OUTPUT_CONFIGURATION_DEBUG("Analysis", "Win32", "", true);
+		OUTPUT_CONFIGURATION_MAIN("Release", "Win32", "", true);
 
 		// x64
 		// For 'x64' we must disable NASM support. Usually we would need to disable the "nasm" feature for that and
 		// re-create the library list, BUT since NASM doesn't link any additional libraries, we can just use the
 		// libraries list created for IA-32. If that changes in the future, we need to adjust this part!
-		OUTPUT_CONFIGURATION_RESIDUAL_DEBUG("Debug", "x64", "64", true);
-		OUTPUT_CONFIGURATION_RESIDUAL_DEBUG("Analysis", "x64", "64", true);
-		OUTPUT_CONFIGURATION_RESIDUAL("Release", "x64", "64");
+		OUTPUT_CONFIGURATION_DEBUG("Debug", "x64", "64", false);
+		OUTPUT_CONFIGURATION_DEBUG("Analysis", "x64", "64", false);
+		OUTPUT_CONFIGURATION_MAIN("Release", "x64", "64", false);
 
 	} else {
 		std::string warnings = "";
@@ -147,6 +151,7 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		toolConfig  = (!warnings.empty() ? "DisableSpecificWarnings=\"" + warnings + "\"" : "");
 		toolConfig += (name == "tinsel" ? "DebugInformationFormat=\"3\" " : "");
 		toolConfig += (name == "sword25" ? "DisableLanguageExtensions=\"false\" " : "");
+		toolConfig += (name == "grim" ? "DisableLanguageExtensions=\"false\" " : "");
 
 		// Win32
 		OUTPUT_CONFIGURATION("Debug", "Win32", "");
@@ -180,7 +185,7 @@ void VisualStudioProvider::writeReferences(std::ofstream &output) {
 	output << "\tProjectSection(ProjectDependencies) = postProject\n";
 
 	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
-		if (i->first == "residual")
+		if (i->first == PROJECT_NAME)
 			continue;
 
 		output << "\t\t{" << i->second << "} = {" << i->second << "}\n";
@@ -189,7 +194,7 @@ void VisualStudioProvider::writeReferences(std::ofstream &output) {
 	output << "\tEndProjectSection\n";
 }
 
-void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix) {
+void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents) {
 	std::string warnings;
 	for (StringList::const_iterator i = _globalWarnings.begin(); i != _globalWarnings.end(); ++i)
 		warnings +=  *i + ';';
@@ -201,11 +206,15 @@ void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int b
 		definesList += *i;
 	}
 
+	// Add define to include revision header
+	if (runBuildEvents)
+		definesList += REVISION_DEFINE ";";
+
 	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
 	              "<VisualStudioPropertySheet\n"
 	              "\tProjectType=\"Visual C++\"\n"
 	              "\tVersion=\"8.00\"\n"
-	              "\tName=\"Residual_Global\"\n"
+	              "\tName=\"" << PROJECT_DESCRIPTION << "_Global\"\n"
 	              "\tOutputDirectory=\"$(ConfigurationName)" << bits << "\"\n"
 	              "\tIntermediateDirectory=\"$(ConfigurationName)" << bits << "/$(ProjectName)\"\n"
 	              "\t>\n"
@@ -213,10 +222,17 @@ void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int b
 	              "\t\tName=\"VCCLCompilerTool\"\n"
 	              "\t\tDisableLanguageExtensions=\"true\"\n"
 	              "\t\tDisableSpecificWarnings=\"" << warnings << "\"\n"
-	              "\t\tAdditionalIncludeDirectories=\"" << prefix << ";" << prefix << "\\engines;$(RESIDUAL_LIBS)\\include\"\n"
+	              "\t\tAdditionalIncludeDirectories=\"" << prefix << ";" << prefix << "\\engines;$(" << LIBS_DEFINE << ")\\include;$(TargetDir)\"\n"
 	              "\t\tPreprocessorDefinitions=\"" << definesList << "\"\n"
-	              "\t\tExceptionHandling=\"0\"\n"
-	              "\t\tRuntimeTypeInfo=\"false\"\n"
+	              "\t\tExceptionHandling=\"0\"\n";
+
+#if NEEDS_RTTI
+	properties << "\t\tRuntimeTypeInfo=\"true\"\n";
+#else
+	properties << "\t\tRuntimeTypeInfo=\"false\"\n";
+#endif
+
+	properties << "\t\tRuntimeTypeInfo=\"false\"\n"
 	              "\t\tWarningLevel=\"4\"\n"
 	              "\t\tWarnAsError=\"false\"\n"
 	              "\t\tCompileAs=\"0\"\n"
@@ -230,7 +246,7 @@ void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int b
 	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
 	              "\t\tSubSystem=\"1\"\n"
 	              "\t\tEntryPointSymbol=\"WinMainCRTStartup\"\n"
-	              "\t\tAdditionalLibraryDirectories=\"$(RESIDUAL_LIBS)\\lib\\" << ((bits == 32) ? "x86" : "x64") << "\"\n"
+	              "\t\tAdditionalLibraryDirectories=\"$(" << LIBS_DEFINE << ")\\lib\\" << ((bits == 32) ? "x86" : "x64") << "\"\n"
 	              "\t/>\n"
 	              "\t<Tool\n"
 	              "\t\tName=\"VCResourceCompilerTool\"\n"
@@ -246,16 +262,16 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 	const std::string outputType = (enableAnalysis ? "Analysis" : (isRelease ? "Release" : "Debug"));
 	const std::string outputBitness = (isWin32 ? "32" : "64");
 
-	std::ofstream properties((setup.outputDir + '/' + "Residual_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension()).c_str());
+	std::ofstream properties((setup.outputDir + '/' + PROJECT_DESCRIPTION "_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension()).c_str());
 	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + "Residual_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension() + "\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + PROJECT_DESCRIPTION "_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension() + "\" for writing");
 
 	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
 	              "<VisualStudioPropertySheet\n"
 	              "\tProjectType=\"Visual C++\"\n"
 	              "\tVersion=\"8.00\"\n"
-	              "\tName=\"Residual_" << outputType << outputBitness << "\"\n"
-	              "\tInheritedPropertySheets=\".\\Residual_Global" << (isWin32 ? "" : "64") << ".vsprops\"\n"
+	              "\tName=\"" << PROJECT_DESCRIPTION << "_" << outputType << outputBitness << "\"\n"
+	              "\tInheritedPropertySheets=\".\\" << PROJECT_DESCRIPTION << "_Global" << (isWin32 ? "" : "64") << ".vsprops\"\n"
 	              "\t>\n"
 	              "\t<Tool\n"
 	              "\t\tName=\"VCCLCompilerTool\"\n";
