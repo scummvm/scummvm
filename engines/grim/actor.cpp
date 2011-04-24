@@ -468,7 +468,10 @@ Graphics::Vector3d Actor::pos() const {
 }
 
 Graphics::Vector3d Actor::destPos() const {
-	return _destPos;
+	if (_walking)
+		return _destPos;
+	else
+		return _pos;
 }
 
 void Actor::turnTo(float pitchParam, float yawParam, float rollParam) {
