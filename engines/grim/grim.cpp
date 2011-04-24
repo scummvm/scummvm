@@ -823,20 +823,6 @@ void GrimEngine::updateDisplayScene() {
 
 		_currScene->setupLights();
 
-		// Update actor costumes & sets
-// 		for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); ++i) {
-// 			Actor *a = i->_value;
-//
-// 			// Update the actor's costumes & chores
-// 			g_currentUpdatedActor = i->_value;
-// 			// Note that the actor need not be visible to update chores, for example:
-// 			// when Manny has just brought Meche back he is offscreen several times
-// 			// when he needs to perform certain chores
-// 			if (a->inSet(_currScene->name()))
-// 				a->update();
-// 		}
-// 		g_currentUpdatedActor = NULL;
-
 		// Draw actors
 		for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); ++i) {
 			Actor *a = i->_value;
