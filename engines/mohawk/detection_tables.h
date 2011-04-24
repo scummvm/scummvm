@@ -1561,6 +1561,55 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Bears Get in a Fight"
 	},
 
+	// From bkennimer in bug #3284930
+	{
+		{
+			"beardark",
+			"",
+			AD_ENTRY1("DARK.LB", "81d1e6eaf88d54bd29836a133935c0d4"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	// From bkennimer in bug #3284930
+	// 32-bit version of the previous entry
+	{
+		{
+			"beardark",
+			"",
+			AD_ENTRY1("DARK32.LB", "28abbf5498aeb29e78e5e0dec969ebe2"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	// From bkennimer in bug #3284930
+	{
+		{
+			"beardark",
+			"",
+			AD_ENTRY1("BookOutline", "95b2e43778ca9cfaee37bdde843e7681"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
 	{
 		{
 			"arthurcomp",
