@@ -298,7 +298,11 @@ sound_pt FileManager::getSound(const int16 sound, uint16 *size) {
 	}
 
 	if (!has_read_header) {
-		if (fp.read(s_hdr, sizeof(s_hdr)) != sizeof(s_hdr))
+		for (int i = 0; i < kMaxSounds; i++) {
+			s_hdr[i].size = fp.readUint16LE();
+			s_hdr[i].offset = fp.readUint32LE();
+		}
+		if (fp.err())
 			error("Wrong sound file format");
 		has_read_header = true;
 	}
