@@ -507,6 +507,9 @@ void Screen::drawStatusText() {
 
 	sdx = stringLength(_vm->_scoreLine);
 	posY = 0;
+
+	//Display a black behind the score line
+	_vm->_screen->drawRectangle(true, 0, 0, kXPix, 8, _TBLACK);
 	writeStr(posX, posY, _vm->_scoreLine, _TCYAN);
 	displayList(kDisplayAdd, posX, posY, sdx, sdy);
 }
