@@ -1064,9 +1064,10 @@ void Actor::update() {
 
 	if (_walkChore >= 0) {
 		if (_walkedCur) {
-			if (_walkCostume->isChoring(_walkChore, false) < 0)
+			if (_walkCostume->isChoring(_walkChore, false) < 0) {
 				_lastStepTime = 0;
 				_walkCostume->playChoreLooping(_walkChore);
+			}
 		} else {
 			if (_walkCostume->isChoring(_walkChore, false) >= 0)
 				_walkCostume->stopChore(_walkChore);
