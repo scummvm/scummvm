@@ -493,6 +493,8 @@ void Actor::walkTo(Graphics::Vector3d p) {
 		_path.clear();
 
 		if (_constrain) {
+			g_grim->currScene()->findClosestSector(p, NULL, &_destPos);
+
 			Common::List<PathNode *> openList;
 			Common::List<PathNode *> closedList;
 
