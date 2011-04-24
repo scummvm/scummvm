@@ -111,7 +111,7 @@ How do I enable debug-keys?
 To enable debug-keys, you will have to add the following to your configuration file
 under your Grim Fandango-entry:
 
-grim_devel_mode=true
+game_devel_mode=true
 
 How do I report bugs?
 ---------------------
