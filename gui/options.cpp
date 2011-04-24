@@ -311,8 +311,14 @@ void OptionsDialog::close() {
 	if (getResult()) {
 
 		// Graphic options
+		bool graphicsModeChanged = false;
 		if (_fullscreenCheckbox) {
 			if (_enableGraphicSettings) {
+				if (ConfMan.getBool("fullscreen", _domain) != _fullscreenCheckbox->getState())
+					graphicsModeChanged = true;
+				if (ConfMan.getBool("aspect_ratio", _domain) != _aspectCheckbox->getState())
+					graphicsModeChanged = true;
+
 				ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
 				ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
 				ConfMan.setBool("disable_dithering", _disableDitheringCheckbox->getState(), _domain);
@@ -324,6 +330,8 @@ void OptionsDialog::close() {
 
 					while (gm->name) {
 						if (gm->id == (int)_gfxPopUp->getSelectedTag()) {
+							if (ConfMan.get("gfx_mode", _domain) != gm->name)
+								graphicsModeChanged = true;
 							ConfMan.set("gfx_mode", gm->name, _domain);
 							isSet = true;
 							break;
@@ -343,6 +351,19 @@ void OptionsDialog::close() {
 				ConfMan.removeKey("gfx_mode", _domain);
 				ConfMan.removeKey("render_mode", _domain);
 			}
+		}
+		
+		// Setup graphics again if needed
+		if (_domain == Common::ConfigManager::kApplicationDomain && graphicsModeChanged) {
+			g_system->beginGFXTransaction();
+			g_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+			g_system->initSize(320, 200);
+			
+			if (ConfMan.hasKey("aspect_ratio"))
+				g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
+			if (ConfMan.hasKey("fullscreen"))
+				g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
+			g_system->endGFXTransaction();
 		}
 
 		// Volume options
