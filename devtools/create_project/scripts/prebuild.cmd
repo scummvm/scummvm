@@ -4,10 +4,11 @@ REM ---------------------------------------------------------------
 REM -- Pre-Build Script
 REM ---------------------------------------------------------------
 REM
-REM Generate file with proper revision number
+REM Generate file with revision number
 REM
 REM Expected parameters
-REM    Root folder
+REM    Root folder (the source root folder)
+REM    Target folder (the build output folder, will be used to copy internal_revision.h)
 
 if "%~1"=="" goto error_root
 if "%~2"=="" goto error_target
