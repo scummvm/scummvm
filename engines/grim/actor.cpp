@@ -42,8 +42,9 @@ Actor::Actor(const char *actorName) :
 		Object(), _name(actorName), _setName(""), _talkColor(255, 255, 255), _pos(0, 0, 0),
 		// Some actors don't set walk and turn rates, so we default the
 		// _turnRate so Doug at the cat races can turn and we set the
-		// _walkRate so Glottis at the demon beaver entrance can walk
-		_pitch(0), _yaw(0), _roll(0), _walkRate(1.0f), _turnRate(100.0f),
+		// _walkRate so Glottis at the demon beaver entrance can walk and
+		// so Chepito in su.set
+		_pitch(0), _yaw(0), _roll(0), _walkRate(0.3f), _turnRate(100.0f),
 		_reflectionAngle(80),
 		_visible(true), _lipSync(NULL), _turning(false), _walking(false),
 		_restCostume(NULL), _restChore(-1),
