@@ -47,7 +47,10 @@ void Scene4000::Action1::signal() {
 		scene->_hotspot5.animate(ANIM_MODE_1, NULL);
 		scene->_hotspot5.setPosition(Common::Point(116, 160));
 
-		ADD_PLAYER_MOVER_NULL(scene->_hotspot5, 208, 169);
+//		ADD_PLAYER_MOVER_NULL(scene->_hotspot5, 208, 169);
+		Common::Point pt(208, 169);
+		NpcMover *mover = new NpcMover();
+		scene->_hotspot5.addMover(mover, &pt, this);
 
 		_globals->_inventory._ale._sceneNumber = 0;
 		_globals->clearFlag(42);
@@ -62,6 +65,7 @@ void Scene4000::Action1::signal() {
 		scene->_guardRock.animate(ANIM_MODE_1, NULL);
 		scene->_guardRock.setObjectWrapper(new SceneObjectWrapper());
 		scene->_guardRock.setPosition(Common::Point(314, 132));
+		scene->_guardRock._moveDiff = Common::Point(4, 2);
 
 		ADD_PLAYER_MOVER_NULL(scene->_guardRock, 288, 167);
 
@@ -80,7 +84,9 @@ void Scene4000::Action1::signal() {
 		scene->_miranda._moveDiff = Common::Point(4, 2);
 		scene->_miranda.setPosition(Common::Point(300, 135));
 
-		ADD_PLAYER_MOVER_NULL(_globals->_player, 266, 169);
+		ADD_PLAYER_MOVER_THIS(scene->_miranda, 266, 169);
+
+		ADD_PLAYER_MOVER_NULL(_globals->_player, 241, 155);
 		break;
 	}
 	case 2:
@@ -203,7 +209,7 @@ void Scene4000::Action4::signal() {
 		ADD_MOVER(_globals->_player, 257, 57);
 		break;
 	case 1:
-		_globals->_player.setVisage(4000);
+		_globals->_player.setVisage(4008);
 		_globals->_player.setPosition(Common::Point(258, 83));
 		_globals->_player._frame = 1;
 		_globals->_player._strip = 3;
@@ -295,6 +301,7 @@ void Scene4000::Action6::signal() {
 }
 
 void Scene4000::Action7::signal() {
+	// Climb down left Chimney using a rope
 	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -649,6 +656,7 @@ void Scene4000::TheTech::doAction(int action) {
 }
 
 void Scene4000::Hotspot13::doAction(int action) {
+	// Rock
 	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -709,6 +717,7 @@ void Scene4000::Hotspot::doAction(int action) {
 }
 
 void Scene4000::Hotspot17::doAction(int action) {
+	// Left Chimney
 	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -728,6 +737,7 @@ void Scene4000::Hotspot17::doAction(int action) {
 }
 
 void Scene4000::Hotspot18::doAction(int action) {
+	// Right Chimney
 	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -874,6 +884,8 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 
 		_globals->_sceneItems.push_back(&_miranda);
 	}
+
+	_globals->clearFlag(40);
 
 	switch (_globals->_sceneManager._previousScene) {
 	case 2320:
@@ -1896,6 +1908,7 @@ void Scene4045::postInit(SceneObjectList *OwnerList) {
 		}
 
 		if (_globals->getFlag(31)) {
+			// Olo asleep
 			_olloStand.setVisage(4051);
 			_olloStand.setStrip(5);
 			_olloStand.setPosition(Common::Point(173, 99));
@@ -2051,7 +2064,6 @@ void Scene4050::Action2::signal() {
 		_globals->_player.setPosition(Common::Point(210, 185));
 		_globals->_player.setPriority2(-1);
 		_globals->_player.enableControl();
-
 		remove();
 		break;
 	}
@@ -2222,6 +2234,7 @@ void Scene4050::postInit(SceneObjectList *OwnerList) {
 	switch (_globals->_sceneManager._previousScene) {
 	case 4000:
 		if (_globals->getFlag(41)) {
+			// Using a rope
 			_hotspot15.postInit();
 			_hotspot15.setVisage(4054);
 			_hotspot15.setPosition(Common::Point(206, 103));
@@ -2236,6 +2249,7 @@ void Scene4050::postInit(SceneObjectList *OwnerList) {
 			setAction(&_action2);
 			_globals->_soundHandler.startSound(175);
 		} else {
+			// Without the rope
 			_globals->_player.setVisage(5315);
 			_globals->_player.setPosition(Common::Point(189, 83));
 			_globals->_player.changeZoom(130);
@@ -2293,11 +2307,22 @@ void Scene4050::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene4050::signal() {
-
+	if (_sceneMode == 4050)
+		_globals->_sceneManager.changeScene(4045);
 }
 
 void Scene4050::dispatch() {
+	if (!_action) {
+		if ((_globals->_player._canWalk) && (_globals->_player._position.y > 196)) {
+			_sceneMode = 4050;
+			_globals->_player.disableControl();
 
+			Common::Point pt(160, 275);
+			NpcMover *mover = new NpcMover();
+			_globals->_player.addMover(mover, &pt, this);
+		}
+	}
+	Scene::dispatch();
 }
 
 /*--------------------------------------------------------------------------
