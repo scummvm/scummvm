@@ -3288,11 +3288,6 @@ for engine in $_engines; do
 		engine_wip=true
 		set_var _tainted_build "yes"
 	fi
-	for subengine in `get_engine_subengines $engine` ; do
-		if test `get_engine_build $subengine` != no -a `get_engine_build_default $subengine` = no ; then
-			engine_wip=true
-		fi
-	done
 	engine_wip_defname="ENGINE_WIP_`echo $engine | tr '[a-z]' '[A-Z]'`"
 	add_line_to_config_h "#define $engine_wip_defname $engine_wip"
 done
