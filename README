@@ -32,10 +32,10 @@ Currently it supports the GrimE-engine, but only Grim Fandango.
 
 2.1.1 . GrimE-games support 
 -----------------------------------
-Escape From Monkey Island 	 - Not supported*
+Escape From Monkey Island        - Not supported*
 Escape From Monkey Island (demo) - Not supported*
-Grim Fandango 			 - Completable with glitches
-Grim Fandango (demo) 		 - Completable with glitches
+Grim Fandango                    - Completable with glitches
+Grim Fandango (demo)             - Completable with glitches
 
 Specifics can be found at
 http://residual.sourceforge.net/compatibility/
@@ -133,22 +133,22 @@ however some of them might not work with your current build. And
 some of them might make residual crash, or behave in weird ways.
 
 |-------------------|-------------|-----------------------------------------------------|
-|Setting	    | Values      | Effect						|
+|Setting            | Values      | Effect                                              |
 |-------------------|-------------|-----------------------------------------------------|
-|soft_render	    |[true/false] | If true, then the software renderer will be used	|
-|		    |		  | otherwise, Residual will try to use HW-rendering.	|
+|soft_render        |[true/false] | If true, then the software renderer will be used    |
+|                   |             | otherwise, Residual will try to use HW-rendering.   |
 |-------------------|-------------|-----------------------------------------------------|
-|fullscreen	    |[true/false] | If true, then Residual will attempt to run in	|
-|		    |		  | fullscreen-mode, otherwise it will use a window.	|
+|fullscreen         |[true/false] | If true, then Residual will attempt to run in       |
+|                   |             | fullscreen-mode, otherwise it will use a window.    |
 |-------------------|-------------|-----------------------------------------------------|
-|show_fps	    |[true/false] | If true, then Residual will show the current	|
-|		    |		  | FPS-rate, while you play				|
+|show_fps           |[true/false] | If true, then Residual will show the current        |
+|                   |             | FPS-rate, while you play                            |
 |-------------------|-------------|-----------------------------------------------------|
-|last_set	    |[set-name]	  | The set you were last on, Residual will try to 	|
-|		    |		  | continue from there					|
+|last_set           |[set-name]   | The set you were last on, Residual will try to      |
+|                   |             | continue from there                                 |
 |-------------------|-------------|-----------------------------------------------------|
-|last_save	    |[save-number]| The save you last saved, Residual will have that 	|
-|		    |		  | selected the next time you try to load a game.	|
+|last_save          |[save-number]| The save you last saved, Residual will have that    |
+|                   |             | selected the next time you try to load a game.      |
 |-------------------|-------------|-----------------------------------------------------|
 
 
@@ -250,9 +250,4 @@ Home       : Go to default position in current set
 j          : Enter jump number
 
 Note that these are only available after enabling debug-mode.
-
-
-
-
-
 
