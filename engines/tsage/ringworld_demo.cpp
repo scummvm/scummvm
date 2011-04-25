@@ -43,7 +43,7 @@ void RingworldDemoScene::signal() {
 	_soundHandler.startSound(4);
 	_actor1.postInit();
 	_actor2.postInit();
-	_actor1.postInit();
+	_actor3.postInit();
 	_actor4.postInit();
 	_actor5.postInit();
 	_actor6.postInit();

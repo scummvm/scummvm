@@ -244,6 +244,7 @@ void SequenceManager::signal() {
 		}
 		case 28:
 			_objectIndex = getNextValue();
+			assert((_objectIndex >= 0) && (_objectIndex < 6));
 			_sceneObject = _objectList[_objectIndex];
 			assert(_sceneObject);
 			break;
@@ -272,14 +273,15 @@ void SequenceManager::signal() {
 		case 34: {
 			v1 = getNextValue();
 			v2 = getNextValue();
-			int objIndex1 = getNextValue();
-			int objIndex2 = getNextValue();
-			int objIndex3 = getNextValue();
-			int objIndex4 = getNextValue();
-			int objIndex5 = getNextValue();
+			int objIndex1 = getNextValue() - 1;
+			int objIndex2 = getNextValue() - 1;
+			int objIndex3 = getNextValue() - 1;
+			int objIndex4 = getNextValue() - 1;
+			int objIndex5 = getNextValue() - 1;
+			int objIndex6 = getNextValue() - 1;
 
 			setAction(globalManager(), v2 ? this : NULL, v1, _objectList[objIndex1], _objectList[objIndex2],
-				_objectList[objIndex3], _objectList[objIndex4], _objectList[objIndex5]);
+				_objectList[objIndex3], _objectList[objIndex4], _objectList[objIndex5], _objectList[objIndex6], NULL);
 			break;
 		}
 		default:
