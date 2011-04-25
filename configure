@@ -3294,7 +3294,7 @@ for engine in $_engines; do
 		fi
 	done
 	engine_wip_defname="ENGINE_WIP_`echo $engine | tr '[a-z]' '[A-Z]'`"
-	add_line_to_config_mk "$engine_wip_defname = $engine_wip"
+	add_line_to_config_h "#define $engine_wip_defname $engine_wip"
 done
 
 add_to_config_h_if_yes `get_var _tainted_build` '#define TAINTED_BUILD'
