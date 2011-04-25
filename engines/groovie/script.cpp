@@ -39,6 +39,8 @@
 #include "common/EventRecorder.h"
 #include "common/macresman.h"
 
+#include "gui/message.h"
+
 #define NUM_OPCODES 90
 
 namespace Groovie {
@@ -410,6 +412,13 @@ void Script::savegame(uint slot) {
 	char save[15];
 	char newchar;
 	Common::OutSaveFile *file = SaveLoad::openForSaving(ConfMan.getActiveDomainName(), slot);
+
+	if (!file) {
+		debugC(9, kGroovieDebugScript, "Save file pointer is null");
+		GUI::MessageDialog dialog("Failed to save game", "OK");
+		dialog.runModal();
+		return;
+	}
 
 	// Saving the variables. It is endian safe because they're byte variables
 	file->write(_variables, 0x400);
