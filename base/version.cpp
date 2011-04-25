@@ -60,6 +60,11 @@ const char *gScummVMBuildDate = __DATE__ " " __TIME__;
 const char *gScummVMVersionDate = SCUMMVM_VERSION " (" __DATE__ " " __TIME__ ")";
 const char *gScummVMFullVersion = "ScummVM " SCUMMVM_VERSION " (" __DATE__ " " __TIME__ ")";
 const char *gScummVMFeatures = ""
+#ifdef TAINTED_BUILD
+	// TAINTED means the build contains engines/subengines not enabled by default
+	"TAINTED "
+#endif
+
 #ifdef USE_TREMOR
 #ifdef USE_TREMOLO
 	// libTremolo is used on WinCE for better ogg performance
