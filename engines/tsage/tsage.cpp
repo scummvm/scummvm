@@ -46,7 +46,6 @@ TSageEngine::TSageEngine(OSystem *system, const tSageGameDescription *gameDesc) 
 	_vm = this;
 	DebugMan.addDebugChannel(kRingDebugScripts, "scripts", "Scripts debugging");
 	_debugger = new Debugger();
-	_dataManager = NULL;
 }
 
 Common::Error TSageEngine::init() {
@@ -69,19 +68,25 @@ bool TSageEngine::hasFeature(EngineFeature f) const {
 }
 
 void TSageEngine::initialise() {
-	_tSageManager = new RlbManager(_memoryManager, "tsage.rlb");
-	_dataManager = new RlbManager(_memoryManager, "ring.rlb");
-
 	_saver = new Saver();
+
+	// Set up the resource manager
+	_resourceManager = new ResourceManager();
+	if (_vm->getFeatures() & GF_DEMO) {
+		_resourceManager->addLib("DEMORING.RLB");
+	} else {
+		_resourceManager->addLib("RING.RLB");
+		_resourceManager->addLib("TSAGE.RLB");
+	}
+
 	_globals = new Globals();
 	_globals->gfxManager().setDefaults();
 }
 
 void TSageEngine::deinitialise() {
 	delete _globals;
+	delete _resourceManager;
 	delete _saver;
-	delete _tSageManager;
-	delete _dataManager;
 }
 
 Common::Error TSageEngine::run() {

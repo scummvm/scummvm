@@ -74,8 +74,6 @@ public:
 
 	MemoryManager _memoryManager;
 	Debugger *_debugger;
-	RlbManager *_tSageManager;
-	RlbManager *_dataManager;
 
 	const char *getGameId() const;
 	uint32 getGameID() const;

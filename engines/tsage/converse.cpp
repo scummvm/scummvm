@@ -304,7 +304,7 @@ void SequenceManager::attached(EventHandler *newOwner, EventHandler *fmt, va_lis
 	// Get the sequence number to use
 	_resNum = va_arg(va, int);
 
-	byte *seqData = _vm->_dataManager->getResource(RES_SEQUENCE, _resNum, 0);
+	byte *seqData = _resourceManager->getResource(RES_SEQUENCE, _resNum, 0);
 	uint seqSize = _vm->_memoryManager.getSize(seqData);
 
 	_sequenceData.resize(seqSize);
@@ -340,7 +340,7 @@ void SequenceManager::setMessage(int resNum, int lineNum, int color, const Commo
 	_sceneText._width = width;
 
 	// Get the display message
-	Common::String msg = _vm->_dataManager->getMessage(resNum, lineNum);
+	Common::String msg = _resourceManager->getMessage(resNum, lineNum);
 
 	// Get the needed rect, and move it to the desired position
 	Rect textRect;
@@ -560,7 +560,7 @@ void StripManager::reset() {
 
 void StripManager::load() {
 	// Get the script
-	byte *script = _vm->_dataManager->getResource(RES_STRIP, _stripNum, 2);
+	byte *script = _resourceManager->getResource(RES_STRIP, _stripNum, 2);
 	uint scriptSize = _vm->_memoryManager.getSize(script);
 
 	_script.resize(scriptSize);
@@ -569,7 +569,7 @@ void StripManager::load() {
 	DEALLOCATE(script);
 
 	// Get the object list
-	byte *obj44List = _vm->_dataManager->getResource(RES_STRIP, _stripNum, 1);
+	byte *obj44List = _resourceManager->getResource(RES_STRIP, _stripNum, 1);
 	int dataSize = _vm->_memoryManager.getSize(obj44List);
 	assert((dataSize % 0x44) == 0);
 

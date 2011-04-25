@@ -95,6 +95,10 @@ public:
 
 extern Globals *_globals;
 
+// Note: Currently this can't be part of the _globals structure, since it needs to be constructed
+// prior to many of the fields in Globals execute their constructors
+extern ResourceManager *_resourceManager;
+
 } // End of namespace tSage
 
 #endif

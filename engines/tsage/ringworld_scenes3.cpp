@@ -4874,7 +4874,7 @@ void Scene2310::postInit(SceneObjectList *OwnerList) {
 void Scene2310::signal() {
 	switch (_sceneMode++) {
 	case 0: {
-		Common::String fmtString = _vm->_dataManager->getMessage(2300, 22);
+		Common::String fmtString = _resourceManager->getMessage(2300, 22);
 		Common::String msg = Common::String::format(fmtString.c_str(), _pageList[_pageIndex]._pageNumber);
 
 		_sceneText._width = 280;
@@ -4887,7 +4887,7 @@ void Scene2310::signal() {
 		break;
 	}
 	case 1: {
-		Common::String msg = _vm->_dataManager->getMessage(2300, 23);
+		Common::String msg = _resourceManager->getMessage(2300, 23);
 		_sceneText.setup(msg);
 		_sceneText.setPriority2(255);
 		_sceneText.setPosition(Common::Point(30, 170));

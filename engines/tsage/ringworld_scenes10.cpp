@@ -1684,7 +1684,7 @@ void Scene9900::strAction2::signal() {
 		_var3 = 0;
 		// No break on purpose
 	case 1: {
-		Common::String msg = _vm->_dataManager->getMessage(8030, _lineNum++);
+		Common::String msg = _resourceManager->getMessage(8030, _lineNum++);
 		if (!msg.compareTo("LASTCREDIT")) {
 			if (_var3 == 0) {
 				// Not used?
@@ -1721,7 +1721,7 @@ void Scene9900::strAction2::signal() {
 			_txtArray2[_txtArray1Index]._fontNumber = 2;
 			_txtArray2[_txtArray1Index]._color1 = 23;
 
-			msg = _vm->_dataManager->getMessage(8030, _lineNum++);
+			msg = _resourceManager->getMessage(8030, _lineNum++);
 			_txtArray2[_txtArray1Index].setup(msg);
 			_txtArray2[_txtArray1Index]._field7A = 20;
 			_txtArray2[_txtArray1Index]._moveDiff.y = 2;

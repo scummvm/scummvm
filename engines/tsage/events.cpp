@@ -159,25 +159,25 @@ void EventsClass::setCursor(CursorType cursorType) {
 	switch (cursorType) {
 	case CURSOR_CROSSHAIRS:
 		// Crosshairs cursor
-		cursor = _vm->_dataManager->getSubResource(4, 1, 6, &size);
+		cursor = _resourceManager->getSubResource(4, 1, 6, &size);
 		_globals->setFlag(122);
 		break;
 
 	case CURSOR_LOOK:
 		// Look cursor
-		cursor = _vm->_dataManager->getSubResource(4, 1, 5, &size);
+		cursor = _resourceManager->getSubResource(4, 1, 5, &size);
 		_currentCursor = CURSOR_LOOK;
 		break;
 
 	case CURSOR_USE:
 		// Use cursor
-		cursor = _vm->_dataManager->getSubResource(4, 1, 4, &size);
+		cursor = _resourceManager->getSubResource(4, 1, 4, &size);
 		_currentCursor = CURSOR_USE;
 		break;
 
 	case CURSOR_TALK:
 		// Talk cursor
-		cursor = _vm->_dataManager->getSubResource(4, 1, 3, &size);
+		cursor = _resourceManager->getSubResource(4, 1, 3, &size);
 		_currentCursor = CURSOR_TALK;
 		break;
 

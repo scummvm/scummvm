@@ -292,7 +292,7 @@ void Scene::loadSceneData(int sceneNum) {
 	_globals->_sceneManager._scene->_activeScreenNumber = sceneNum;
 
 	// Get the basic scene size
-	byte *data = _vm->_dataManager->getResource(RES_BITMAP, sceneNum, 9999);
+	byte *data = _resourceManager->getResource(RES_BITMAP, sceneNum, 9999);
 	_backgroundBounds = Rect(0, 0, READ_LE_UINT16(data), READ_LE_UINT16(data + 2));
 	_globals->_sceneManager._scene->_sceneBounds.contain(_backgroundBounds);
 	DEALLOCATE(data);

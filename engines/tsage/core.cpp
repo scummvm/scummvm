@@ -51,7 +51,7 @@ InvObject::InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType curs
 
 	// Decode the image for the inventory item to get it's display bounds
 	uint size;
-	byte *imgData = _vm->_dataManager->getSubResource(_displayResNum, _rlbNum, _cursorNum, &size);
+	byte *imgData = _resourceManager->getSubResource(_displayResNum, _rlbNum, _cursorNum, &size);
 	GfxSurface s = surfaceFromRes(imgData);
 	_bounds = s.getBounds();
 
@@ -1240,7 +1240,7 @@ ScenePalette::ScenePalette(int paletteNum) {
 }
 
 bool ScenePalette::loadPalette(int paletteNum) {
-	byte *palData = _vm->_dataManager->getResource(RES_PALETTE, paletteNum, 0, true);
+	byte *palData = _resourceManager->getResource(RES_PALETTE, paletteNum, 0, true);
 	if (!palData)
 		return false;
 
@@ -1481,7 +1481,7 @@ bool SceneItem::contains(const Common::Point &pt) {
 }
 
 void SceneItem::display(int resNum, int lineNum, ...) {
-	Common::String msg = !resNum ? Common::String() : _vm->_dataManager->getMessage(resNum, lineNum);
+	Common::String msg = !resNum ? Common::String() : _resourceManager->getMessage(resNum, lineNum);
 
 	if (_globals->_sceneObjects->contains(&_globals->_sceneText)) {
 		_globals->_sceneText.remove();
@@ -2646,7 +2646,7 @@ void Visage::setVisage(int resNum, int rlbNum) {
 		_resNum = resNum;
 		_rlbNum = rlbNum;
 		DEALLOCATE(_data);
-		_data = _vm->_dataManager->getResource(RES_VISAGE, resNum, rlbNum);
+		_data = _resourceManager->getResource(RES_VISAGE, resNum, rlbNum);
 		assert(_data);
 	}
 }
@@ -2736,7 +2736,7 @@ void Player::synchronise(Serialiser &s) {
 Region::Region(int resNum, int rlbNum, ResourceType ctlType) {
 	_regionId = rlbNum;
 
-	byte *regionData = _vm->_dataManager->getResource(ctlType, resNum, rlbNum);
+	byte *regionData = _resourceManager->getResource(ctlType, resNum, rlbNum);
 	assert(regionData);
 
 	// Set the region bounds
@@ -2948,7 +2948,7 @@ void Region::uniteRect(const Rect &rect) {
 void SceneRegions::load(int sceneNum) {
 	clear();
 
-	byte *regionData = _vm->_dataManager->getResource(RES_CONTROL, sceneNum, 9999, true);
+	byte *regionData = _resourceManager->getResource(RES_CONTROL, sceneNum, 9999, true);
 
 	if (regionData) {
 		int regionCount = READ_LE_UINT16(regionData);
@@ -3212,7 +3212,7 @@ void WalkRegions::load(int sceneNum) {
 	clear();
 
 	_resNum = sceneNum;
-	byte *regionData = _vm->_dataManager->getResource(RES_WALKRGNS, sceneNum, 1, true);
+	byte *regionData = _resourceManager->getResource(RES_WALKRGNS, sceneNum, 1, true);
 	if (!regionData) {
 		// No data, so return
 		_resNum = -1;
@@ -3223,7 +3223,7 @@ void WalkRegions::load(int sceneNum) {
 	int dataSize;
 
 	// Load the field 18 list
-	dataP = _vm->_dataManager->getResource(RES_WALKRGNS, sceneNum, 2);
+	dataP = _resourceManager->getResource(RES_WALKRGNS, sceneNum, 2);
 	dataSize = _vm->_memoryManager.getSize(dataP);
 	assert(dataSize % 10 == 0);
 
@@ -3237,7 +3237,7 @@ void WalkRegions::load(int sceneNum) {
 	DEALLOCATE(dataP);
 
 	// Load the idx list
-	dataP = _vm->_dataManager->getResource(RES_WALKRGNS, sceneNum, 3);
+	dataP = _resourceManager->getResource(RES_WALKRGNS, sceneNum, 3);
 	dataSize = _vm->_memoryManager.getSize(dataP);
 	assert(dataSize % 2 == 0);
 
@@ -3248,7 +3248,7 @@ void WalkRegions::load(int sceneNum) {
 	DEALLOCATE(dataP);
 
 	// Load the secondary idx list
-	dataP = _vm->_dataManager->getResource(RES_WALKRGNS, sceneNum, 4);
+	dataP = _resourceManager->getResource(RES_WALKRGNS, sceneNum, 4);
 	dataSize = _vm->_memoryManager.getSize(dataP);
 	assert(dataSize % 2 == 0);
 
@@ -3259,7 +3259,7 @@ void WalkRegions::load(int sceneNum) {
 	DEALLOCATE(dataP);
 
 	// Handle the loading of the actual regions themselves
-	dataP = _vm->_dataManager->getResource(RES_WALKRGNS, sceneNum, 5);
+	dataP = _resourceManager->getResource(RES_WALKRGNS, sceneNum, 5);
 
 	byte *pWalkRegion = regionData + 16;
 	byte *srcP = dataP;
@@ -3305,7 +3305,7 @@ void ScenePriorities::load(int resNum) {
 	_resNum = resNum;
 	clear();
 
-	byte *regionData = _vm->_dataManager->getResource(RES_PRIORITY, resNum, 9999, true);
+	byte *regionData = _resourceManager->getResource(RES_PRIORITY, resNum, 9999, true);
 
 	if (regionData) {
 		int regionCount = READ_LE_UINT16(regionData);
@@ -3719,7 +3719,7 @@ void Game::restart() {
 
 void Game::endGame(int resNum, int lineNum) {
 	_globals->_events.setCursor(CURSOR_WALK);
-	Common::String msg = _vm->_dataManager->getMessage(resNum, lineNum);
+	Common::String msg = _resourceManager->getMessage(resNum, lineNum);
 	bool savesExist = _saver->savegamesExist();
 
 	if (!savesExist) {

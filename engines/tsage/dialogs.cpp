@@ -139,7 +139,7 @@ void RightClickButton::highlight() {
 		_savedButton = Surface_getArea(_globals->gfxManager().getSurface(), _bounds);
 
 		uint size;
-		byte *imgData = _vm->_dataManager->getSubResource(7, 2, _buttonIndex, &size);
+		byte *imgData = _resourceManager->getSubResource(7, 2, _buttonIndex, &size);
 
 		GfxSurface btnSelected = surfaceFromRes(imgData);
 		_globals->gfxManager().copyFrom(btnSelected, _bounds.left, _bounds.top);

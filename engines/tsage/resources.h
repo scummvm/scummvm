@@ -27,6 +27,7 @@
 #define RING_RESOURCES_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/file.h"
 #include "common/list.h"
 #include "common/str.h"
@@ -138,7 +139,7 @@ public:
 	int numBits;
 };
 
-class RlbManager {
+class TLib {
 private:
 	Common::StringArray _resStrings;
 	MemoryManager &_memoryManager;
@@ -150,14 +151,29 @@ private:
 	void loadSection(uint32 fileOffset);
 	void loadIndex();
 public:
-	RlbManager(MemoryManager &memManager, const Common::String filename);
-	~RlbManager();
+	TLib(MemoryManager &memManager, const Common::String &filename);
+	~TLib();
 
 	byte *getResource(uint16 id, bool suppressErrors = false);
 	byte *getResource(ResourceType resType, uint16 resNum, uint16 rlbNum, bool suppressErrors = false);
-	void getPalette(int paletteNum, byte *palData, uint *startNum, uint *numEntries);
-	byte *getSubResource(int resNum, int rlbNum, int index, uint *size);
-	Common::String getMessage(int resNum, int lineNum);
+	bool getPalette(int paletteNum, byte *palData, uint *startNum, uint *numEntries);
+	byte *getSubResource(int resNum, int rlbNum, int index, uint *size, bool suppressErrors = false);
+	Common::String getMessage(int resNum, int lineNum, bool suppressErrors = false);
+};
+
+class ResourceManager {
+private:
+	Common::Array<TLib *> _libList;
+public:
+	~ResourceManager();
+
+	void addLib(const Common::String &libName);
+
+	byte *getResource(uint16 id, bool suppressErrors = false);
+	byte *getResource(ResourceType resType, uint16 resNum, uint16 rlbNum, bool suppressErrors = false);
+	void getPalette(int paletteNum, byte *palData, uint *startNum, uint *numEntries, bool suppressErrors = false);
+	byte *getSubResource(int resNum, int rlbNum, int index, uint *size, bool suppressErrors = false);
+	Common::String getMessage(int resNum, int lineNum, bool suppressErrors = false);
 };
 
 

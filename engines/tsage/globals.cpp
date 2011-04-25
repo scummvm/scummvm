@@ -24,10 +24,12 @@
  */
 
 #include "tsage/globals.h"
+#include "tsage/tsage.h"
 
 namespace tSage {
 
 Globals *_globals = NULL;
+ResourceManager *_resourceManager = NULL;
 
 /*--------------------------------------------------------------------------*/
 

@@ -122,7 +122,7 @@ GfxSurface surfaceFromRes(const byte *imgData) {
 
 GfxSurface surfaceFromRes(int resNum, int rlbNum, int subNum) {
 	uint size;
-	byte *imgData = _vm->_dataManager->getSubResource(resNum, rlbNum, subNum, &size);
+	byte *imgData = _resourceManager->getSubResource(resNum, rlbNum, subNum, &size);
 	GfxSurface surface = surfaceFromRes(imgData);
 	DEALLOCATE(imgData);
 
@@ -390,7 +390,7 @@ void GfxSurface::loadScreenSection(Graphics::Surface &dest, int xHalf, int yHalf
 
 	if (xSection < xHalfCount && ySection < yHalfCount) {
 		int rlbNum = xSection * yHalfCount + ySection;
-		byte *data = _vm->_dataManager->getResource(RES_BITMAP, screenNum, rlbNum);
+		byte *data = _resourceManager->getResource(RES_BITMAP, screenNum, rlbNum);
 
 		for (int y = 0; y < updateRect.height(); ++y) {
 			byte *pSrc = data + y * 160;
@@ -713,7 +713,7 @@ void GfxImage::setDefaults() {
 
 	// Decode the image
 	uint size;
-	byte *imgData = _vm->_dataManager->getSubResource(_resNum, _rlbNum, _cursorNum, &size);
+	byte *imgData = _resourceManager->getSubResource(_resNum, _rlbNum, _cursorNum, &size);
 	_surface = surfaceFromRes(imgData);
 	DEALLOCATE(imgData);
 
@@ -1074,7 +1074,7 @@ void GfxManager::setDialogPalette() {
 	// Get the main palette information
 	byte palData[256 * 3];
 	uint count, start;
-	_vm->_dataManager->getPalette(0, &palData[0], &start, &count);
+	_resourceManager->getPalette(0, &palData[0], &start, &count);
 	g_system->getPaletteManager()->setPalette(&palData[0], start, count);
 
 	// Miscellaneous
@@ -1133,9 +1133,9 @@ void GfxFont::setFontNumber(uint32 fontNumber) {
 
 	_fontNumber = fontNumber;
 
-	_fontData = _vm->_tSageManager->getResource(RES_FONT, _fontNumber, 0, true);
+	_fontData = _resourceManager->getResource(RES_FONT, _fontNumber, 0, true);
 	if (!_fontData)
-		_fontData = _vm->_dataManager->getResource(RES_FONT, _fontNumber, 0);
+		_fontData = _resourceManager->getResource(RES_FONT, _fontNumber, 0);
 
 	_numChars = READ_LE_UINT16(_fontData + 4);
 	_fontSize.y = READ_LE_UINT16(_fontData + 6);
