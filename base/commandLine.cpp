@@ -183,6 +183,8 @@ void registerDefaults() {
 
 	ConfMan.registerDefault("cdrom", 0);
 
+	ConfMan.registerDefault("display_wip_engine_warning", "true");
+
 	// Game specific
 	ConfMan.registerDefault("path", "");
 	ConfMan.registerDefault("platform", Common::kPlatformPC);
