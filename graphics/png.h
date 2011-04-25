@@ -121,9 +121,13 @@ public:
 	 *
 	 * Note that the palette's format is RGBA.
 	 */
-	void getPalette(byte *palette, uint16 &entries) {
+	void getPalette(byte *&palette, uint16 &entries) {
 		if (_header.colorType != kIndexed)
 			error("Palette requested for a non-indexed PNG");
+		// TODO: It might be that this should really return a copy of the
+		// palette, but since the implementation was like this I changed
+		// the palette pointer to be a reference instead of a value copy.
+		// Someone should check this code and verify this is as intended.
 		palette = _palette;
 		entries = _paletteEntries;
 	}
