@@ -56,7 +56,6 @@ class RewindableAudioStream;
 enum typesADPCM {
 	kADPCMOki,                 // Dialogic/Oki ADPCM (aka VOX)
 	kADPCMMSIma,               // Microsoft IMA ADPCM
-	kADPCMMSImaLastExpress,    // Microsoft IMA ADPCM (with inverted samples)
 	kADPCMMS,                  // Microsoft ADPCM
 	kADPCMDVI,                 // Intel DVI IMA ADPCM
 	kADPCMApple,               // Apple QuickTime IMA ADPCM
