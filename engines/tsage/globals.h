@@ -41,7 +41,7 @@ public:
 	GfxManager _gfxManagerInstance;
 	Common::List<GfxManager *> _gfxManagers;
 	SceneHandler _sceneHandler;
-	Game _game;
+	Game *_game;
 	EventsClass _events;
 	SceneManager _sceneManager;
 	ScenePalette _scenePalette;
@@ -61,7 +61,7 @@ public:
 	bool _flags[256];
 	Player _player;
 	SoundHandler _soundHandler;
-	InvObjectList _inventory;
+	InvObjectList *_inventory;
 	Region _paneRegions[2];
 	int _paneRefreshFlag[2];
 	Common::Point _sceneOffset;

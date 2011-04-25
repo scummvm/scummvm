@@ -83,6 +83,20 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_Ringworld,
 		GF_FLOPPY | GF_DEMO
 	},
+	// Ringworld English Floppy Demo Alt version
+	{
+		{
+			"ring",
+			"Floppy Demo",
+			AD_ENTRY1s("tsage.rlb", "bf4e8525d0cab84b08b57126092eeacd", 833453),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_Ringworld,
+		GF_FLOPPY | GF_DEMO
+	},
 
 	// Blue Force
 	{

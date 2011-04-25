@@ -1158,7 +1158,7 @@ void Scene5100::postInit(SceneObjectList *OwnerList) {
 		}
 	}
 
-	if (_globals->getFlag(60) && (_globals->_inventory._stasisBox._sceneNumber == 1) &&
+	if (_globals->getFlag(60) && (RING_INVENTORY._stasisBox._sceneNumber == 1) &&
 			_globals->getFlag(107) && _globals->getFlag(67)) {
 		_hotspot8.postInit();
 		_hotspot8.setVisage(2806);
@@ -1256,7 +1256,7 @@ void Scene5100::postInit(SceneObjectList *OwnerList) {
 			_hotspot6.setStrip(6);
 			_hotspot6.setFrame(1);
 			_globals->_sceneItems.push_back(&_hotspot6);
-		} else if (_globals->_inventory._vial._sceneNumber != 5100) {
+		} else if (RING_INVENTORY._vial._sceneNumber != 5100) {
 			_hotspot6.postInit();
 			_hotspot6.setVisage(5362);
 			_hotspot6.setPosition(Common::Point(1152, 70));
@@ -1312,7 +1312,7 @@ void Scene5100::signal() {
 	case 5108:
 		if (!_globals->getFlag(60))
 			_globals->_player.enableControl();
-		else if (_globals->_inventory._stasisBox._sceneNumber == 1)
+		else if (RING_INVENTORY._stasisBox._sceneNumber == 1)
 			setAction(&_action2);
 		else
 			setAction(&_action5);
@@ -1329,7 +1329,7 @@ void Scene5100::signal() {
 		_globals->_player.setPriority2(-1);
 		_globals->_player.animate(ANIM_MODE_1, NULL);
 
-		if ((_globals->_inventory._vial._sceneNumber != 5100) && !_globals->getFlag(108)) {
+		if ((RING_INVENTORY._vial._sceneNumber != 5100) && !_globals->getFlag(108)) {
 			_globals->setFlag(108);
 			_sceneMode = 5130;
 			_globals->_player.disableControl();
@@ -1344,7 +1344,7 @@ void Scene5100::signal() {
 		break;
 	case 5116:
 		_globals->setFlag(105);
-		_globals->_inventory._bone._sceneNumber = 0;
+		RING_INVENTORY._bone._sceneNumber = 0;
 
 		_globals->_player.setObjectWrapper(new SceneObjectWrapper());
 		_globals->_player.setVisage(0);
@@ -1388,7 +1388,7 @@ void Scene5100::dispatch() {
 		_sceneMode = 5150;
 		_soundHandler.startSound(208);
 
-		if (_globals->_inventory._vial._sceneNumber == 5100) {
+		if (RING_INVENTORY._vial._sceneNumber == 5100) {
 			_globals->_player.addMover(NULL);
 			_globals->_player.disableControl();
 			SceneItem::display2(5100, 39);
@@ -1462,7 +1462,7 @@ void Scene5200::Action2::signal() {
 		scene->_soundHandler.proc3();
 		scene->_hotspot14.remove();
 
-		_globals->_inventory._stasisBox._sceneNumber = 1;
+		RING_INVENTORY._stasisBox._sceneNumber = 1;
 		_globals->_player.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
@@ -1611,7 +1611,7 @@ void Scene5200::postInit(SceneObjectList *OwnerList) {
 	_speakerFLText._textPos.x = 160;
 	_speakerQText._textPos.x = 20;
 
-	if (_globals->_inventory._stasisBox._sceneNumber == 5200) {
+	if (RING_INVENTORY._stasisBox._sceneNumber == 5200) {
 		_soundHandler.startSound(216);
 		_soundHandler.proc5(true);
 
@@ -1762,7 +1762,7 @@ void Scene5300::Action1::signal() {
 		scene->_stripManager.start(5316, this);
 		break;
 	case 5:
-		if (!_globals->getFlag(106) || !_globals->getFlag(107) || (_globals->_inventory._stasisBox._sceneNumber != 1)) {
+		if (!_globals->getFlag(106) || !_globals->getFlag(107) || (RING_INVENTORY._stasisBox._sceneNumber != 1)) {
 			_globals->_player.enableControl();
 			remove();
 		} else {
@@ -1793,7 +1793,7 @@ void Scene5300::Action2::signal() {
 		scene->_stripManager.start(5328, this);
 		break;
 	case 2:
-		if (_globals->_inventory._stasisBox._sceneNumber == 1) {
+		if (RING_INVENTORY._stasisBox._sceneNumber == 1) {
 			_globals->_stripNum = 5303;
 			setDelay(5);
 		} else {
@@ -1871,7 +1871,7 @@ void Scene5300::Hotspot2::doAction(int action) {
 		} else {
 			_globals->_player.disableControl();
 
-			if (_globals->_inventory._stasisBox._sceneNumber != 1) {
+			if (RING_INVENTORY._stasisBox._sceneNumber != 1) {
 				scene->setAction(&scene->_sequenceManager, scene, 5316, NULL);
 			} else {
 				_globals->setFlag(60);
@@ -1898,7 +1898,7 @@ void Scene5300::Hotspot2::doAction(int action) {
 		if (_globals->getFlag(107)) {
 			SceneItem::display2(5300, 8);
 		} else {
-			_globals->_inventory._vial._sceneNumber = 5300;
+			RING_INVENTORY._vial._sceneNumber = 5300;
 			_globals->setFlag(107);
 			_globals->_player.disableControl();
 			scene->_sceneMode = 5304;
@@ -1920,7 +1920,7 @@ void Scene5300::Hotspot5::doAction(int action) {
 		SceneItem::display2(5300, 27);
 		break;
 	case CURSOR_USE:
-		_globals->_inventory._bone._sceneNumber = 1;
+		RING_INVENTORY._bone._sceneNumber = 1;
 		_globals->_player.disableControl();
 
 		scene->_sceneMode = 5309;
@@ -1937,20 +1937,20 @@ void Scene5300::Hotspot6::doAction(int action) {
 
 	switch (action) {
 	case CURSOR_LOOK:
-		if (!_globals->getFlag(105) || (_globals->_inventory._vial._sceneNumber == 1))
+		if (!_globals->getFlag(105) || (RING_INVENTORY._vial._sceneNumber == 1))
 			SceneItem::display2(5300, 4);
 		else
 			SceneItem::display2(5300, 26);
 		break;
 	case CURSOR_USE:
-		if (!_globals->getFlag(105) || (_globals->_inventory._vial._sceneNumber != 5100)) {
+		if (!_globals->getFlag(105) || (RING_INVENTORY._vial._sceneNumber != 5100)) {
 			_globals->_player.disableControl();
 			scene->_sceneMode = 5301;
 			scene->setAction(&scene->_sequenceManager, scene, 5301, &_globals->_player, NULL);
 		} else {
 			_globals->_player.disableControl();
 			scene->_sceneMode = 5307;
-			_globals->_inventory._vial._sceneNumber = 1;
+			RING_INVENTORY._vial._sceneNumber = 1;
 
 			scene->setAction(&scene->_sequenceManager, scene, 5307, &scene->_hotspot1, &_globals->_player,
 				&scene->_hotspot4, NULL);
@@ -2091,7 +2091,7 @@ void Scene5300::postInit(SceneObjectList *OwnerList) {
 	}
 
 	_field1B0A = 1;
-	if (_globals->_inventory._bone._sceneNumber == 5300) {
+	if (RING_INVENTORY._bone._sceneNumber == 5300) {
 		_hotspot5.postInit();
 		_hotspot5.setVisage(5301);
 		_hotspot5.setStrip(2);
@@ -2143,7 +2143,7 @@ void Scene5300::signal() {
 		_globals->clearFlag(67);
 		_globals->_player.setStrip2(-1);
 
-		if ((_globals->_inventory._vial._sceneNumber == 1) || (_globals->_inventory._vial._sceneNumber == 5300))
+		if ((RING_INVENTORY._vial._sceneNumber == 1) || (RING_INVENTORY._vial._sceneNumber == 5300))
 			_stripManager.start(5303, this);
 		else
 			_stripManager.start(5302, this);

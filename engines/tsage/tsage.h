@@ -78,6 +78,7 @@ public:
 	const char *getGameId() const;
 	uint32 getGameID() const;
 	uint32 getFeatures() const;
+	Common::String getPrimaryFilename() const;
 
 	virtual Common::Error init();
 	virtual Common::Error run();

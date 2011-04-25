@@ -23,10 +23,14 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/translation.h"
+#include "gui/saveload.h"
 #include "tsage/ringworld_logic.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
+#include "tsage/ringworld_demo.h"
 #include "tsage/ringworld_scenes1.h"
 #include "tsage/ringworld_scenes2.h"
 #include "tsage/ringworld_scenes3.h"
@@ -39,6 +43,9 @@
 namespace tSage {
 
 Scene *SceneFactory::createScene(int sceneNumber) {
+	if (_vm->getFeatures() & GF_DEMO)
+		return new RingworldDemoScene();
+
 	switch (sceneNumber) {
 	/* Scene group 1 */
 	// Kziniti Palace (Introduction)
@@ -1172,6 +1179,237 @@ void SpeakerBatR::setText(const Common::String &msg) {
 	_object2.setAction(&_speakerAction, NULL);
 
 	Speaker::setText(msg);
+}
+
+/*--------------------------------------------------------------------------*/
+
+RingworldInvObjectList::RingworldInvObjectList() :
+		_stunner(2280, 1, 2, OBJECT_STUNNER, "This is your stunner."),
+		_scanner(1, 1, 3, OBJECT_SCANNER, "A combination scanner comm unit."),
+		_stasisBox(5200, 1, 4, OBJECT_STASIS_BOX, "A stasis box."),
+		_infoDisk(40, 1, 1, OBJECT_INFODISK, "The infodisk you took from the assassin."),
+		_stasisNegator(0, 2, 2, OBJECT_STASIS_NEGATOR, "The stasis field negator."),
+		_keyDevice(4250, 1, 6, OBJECT_KEY_DEVICE, "A magnetic key device."),
+		_medkit(2280, 1, 7, OBJECT_MEDKIT,  "Your medkit."),
+		_ladder(4100, 1, 8, OBJECT_LADDER, "The chief's ladder."),
+		_rope(4150, 1, 9, OBJECT_ROPE, "The chief's rope."),
+		_key(7700, 1, 11, OBJECT_KEY, "A key."),
+		_translator(7700, 1, 13, OBJECT_TRANSLATOR,  "The dolphin translator box."),
+		_ale(2150, 1, 10, OBJECT_ALE, "A bottle of ale."),
+		_paper(7700, 1, 12, OBJECT_PAPER, "A slip of paper with the numbers 2,4, and 3 written on it."),
+		_waldos(0, 1, 14, OBJECT_WALDOS, "A pair of waldos from the ruined probe."),
+		_stasisBox2(8100, 1, 4, OBJECT_STASIS_BOX2, "A stasis box."),
+		_ring(8100, 2, 5, OBJECT_RING, "This is a signet ring sent to you by Louis Wu."),
+		_cloak(9850, 2, 6, OBJECT_CLOAK, "A fine silk cloak."),
+		_tunic(9450, 2, 7, OBJECT_TUNIC, "The patriarch's soiled tunic."),
+		_candle(9500, 2, 8, OBJECT_CANDLE, "A tallow candle."),
+		_straw(9400, 2, 9, OBJECT_STRAW, "Clean, dry straw."),
+		_scimitar(9850, 1, 18, OBJECT_SCIMITAR, "A scimitar from the Patriarch's closet."),
+		_sword(9850, 1, 17, OBJECT_SWORD, "A short sword from the Patriarch's closet."),
+		_helmet(9500, 2, 4, OBJECT_HELMET, "Some type of helmet."),
+		_items(4300, 2, 10, OBJECT_ITEMS, "Two interesting items from the Tnuctipun vessel."),
+		_concentrator(4300, 2, 11, OBJECT_CONCENTRATOR, "The Tnuctipun anti-matter concentrator contained in a stasis field."),
+		_nullifier(5200, 2, 12, OBJECT_NULLIFIER, "A purported neural wave nullifier."),
+		_peg(4045, 2, 16, OBJECT_PEG, "A peg with a symbol."),
+		_vial(5100, 2, 17, OBJECT_VIAL, "A vial of the bat creatures anti-pheromone drug."),
+		_jacket(9850, 3, 1, OBJECT_JACKET, "A natty padded jacket."),
+		_tunic2(9850, 3, 2, OBJECT_TUNIC2, "A very hairy tunic."),
+		_bone(5300, 3, 5, OBJECT_BONE, "A very sharp bone."),
+		_jar(7700, 3, 4, OBJECT_JAR, "An jar filled with a green substance."),
+		_emptyJar(7700, 3, 3, OBJECT_EMPTY_JAR, "An empty jar.") {
+
+	// Add the items to the list
+	_itemList.push_back(&_stunner);
+	_itemList.push_back(&_scanner);
+	_itemList.push_back(&_stasisBox);
+	_itemList.push_back(&_infoDisk);
+	_itemList.push_back(&_stasisNegator);
+	_itemList.push_back(&_keyDevice);
+	_itemList.push_back(&_medkit);
+	_itemList.push_back(&_ladder);
+	_itemList.push_back(&_rope);
+	_itemList.push_back(&_key);
+	_itemList.push_back(&_translator);
+	_itemList.push_back(&_ale);
+	_itemList.push_back(&_paper);
+	_itemList.push_back(&_waldos);
+	_itemList.push_back(&_stasisBox2);
+	_itemList.push_back(&_ring);
+	_itemList.push_back(&_cloak);
+	_itemList.push_back(&_tunic);
+	_itemList.push_back(&_candle);
+	_itemList.push_back(&_straw);
+	_itemList.push_back(&_scimitar);
+	_itemList.push_back(&_sword);
+	_itemList.push_back(&_helmet);
+	_itemList.push_back(&_items);
+	_itemList.push_back(&_concentrator);
+	_itemList.push_back(&_nullifier);
+	_itemList.push_back(&_peg);
+	_itemList.push_back(&_vial);
+	_itemList.push_back(&_jacket);
+	_itemList.push_back(&_tunic2);
+	_itemList.push_back(&_bone);
+	_itemList.push_back(&_jar);
+	_itemList.push_back(&_emptyJar);
+
+	_selectedItem = NULL;
+}
+
+/*--------------------------------------------------------------------------*/
+
+void RingworldGame::restartGame() {
+	if (MessageDialog::show(RESTART_MSG, CANCEL_BTN_STRING, RESTART_BTN_STRING) == 1)
+		_globals->_game->restart();
+}
+
+void RingworldGame::saveGame() {
+	if (_globals->getFlag(50))
+		MessageDialog::show(SAVING_NOT_ALLOWED_MSG, OK_BTN_STRING);
+	else {
+		// Show the save dialog
+		handleSaveLoad(true, _globals->_sceneHandler._saveGameSlot, _globals->_sceneHandler._saveName);
+	}
+}
+
+void RingworldGame::restoreGame() {
+	if (_globals->getFlag(50))
+		MessageDialog::show(RESTORING_NOT_ALLOWED_MSG, OK_BTN_STRING);
+	else {
+		// Show the load dialog
+		handleSaveLoad(false, _globals->_sceneHandler._loadGameSlot, _globals->_sceneHandler._saveName);
+	}
+}
+
+void RingworldGame::quitGame() {
+	if (MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING) == 1)
+		_vm->quitGame();
+}
+
+void RingworldGame::handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName) {
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(_vm->getGameId(), &plugin);
+	GUI::SaveLoadChooser *dialog;
+	if (saveFlag)
+		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"));
+	else
+		dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"));
+
+	dialog->setSaveMode(saveFlag);
+
+	saveSlot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+	saveName = dialog->getResultString();
+
+	delete dialog;
+}
+
+void RingworldGame::start() {
+	// Set some default flags and cursor
+	_globals->setFlag(12);
+	_globals->setFlag(34);
+	_globals->_events.setCursor(CURSOR_WALK);
+
+	// Set the screen to scroll in response to the player moving off-screen
+	_globals->_scrollFollower = &_globals->_player;
+
+	// Set the object's that will be in the player's inventory by default
+	RING_INVENTORY._stunner._sceneNumber = 1;
+	RING_INVENTORY._scanner._sceneNumber = 1;
+	RING_INVENTORY._ring._sceneNumber = 1;
+
+	// Switch to the title screen
+	_globals->_sceneManager.setNewScene(1000);
+}
+
+void RingworldGame::restart() {
+	_globals->_scenePalette.clearListeners();
+	_globals->_soundHandler.proc3();
+
+	// Reset the flags
+	_globals->reset();
+	_globals->setFlag(34);
+
+	// Clear save/load slots
+	_globals->_sceneHandler._saveGameSlot = -1;
+	_globals->_sceneHandler._loadGameSlot = -1;
+
+	_globals->_stripNum = 0;
+	_globals->_events.setCursor(CURSOR_WALK);
+
+	// Reset item properties
+	RING_INVENTORY._stunner._sceneNumber = 1;
+	RING_INVENTORY._scanner._sceneNumber = 1;
+	RING_INVENTORY._stasisBox._sceneNumber = 5200;
+	RING_INVENTORY._infoDisk._sceneNumber = 40;
+	RING_INVENTORY._stasisNegator._sceneNumber = 0;
+	RING_INVENTORY._keyDevice._sceneNumber = 0;
+	RING_INVENTORY._medkit._sceneNumber = 2280;
+	RING_INVENTORY._ladder._sceneNumber = 4100;
+	RING_INVENTORY._rope._sceneNumber = 4150;
+	RING_INVENTORY._key._sceneNumber = 7700;
+	RING_INVENTORY._translator._sceneNumber = 2150;
+	RING_INVENTORY._paper._sceneNumber = 7700;
+	RING_INVENTORY._waldos._sceneNumber = 0;
+	RING_INVENTORY._ring._sceneNumber = 1;
+	RING_INVENTORY._stasisBox2._sceneNumber = 8100;
+	RING_INVENTORY._cloak._sceneNumber = 9850;
+	RING_INVENTORY._tunic._sceneNumber = 9450;
+	RING_INVENTORY._candle._sceneNumber = 9500;
+	RING_INVENTORY._straw._sceneNumber = 9400;
+	RING_INVENTORY._scimitar._sceneNumber = 9850;
+	RING_INVENTORY._sword._sceneNumber = 9850;
+	RING_INVENTORY._helmet._sceneNumber = 9500;
+	RING_INVENTORY._items._sceneNumber = 4300;
+	RING_INVENTORY._concentrator._sceneNumber = 4300;
+	RING_INVENTORY._nullifier._sceneNumber = 4300;
+	RING_INVENTORY._peg._sceneNumber = 4045;
+	RING_INVENTORY._vial._sceneNumber = 5100;
+	RING_INVENTORY._jacket._sceneNumber = 9850;
+	RING_INVENTORY._tunic2._sceneNumber = 9850;
+	RING_INVENTORY._bone._sceneNumber = 5300;
+	RING_INVENTORY._jar._sceneNumber = 7700;
+	RING_INVENTORY._emptyJar._sceneNumber = 7700;
+	RING_INVENTORY._selectedItem = NULL;
+
+	// Change to the first game scene
+	_globals->_sceneManager.changeScene(30);
+}
+
+void RingworldGame::endGame(int resNum, int lineNum) {
+	_globals->_events.setCursor(CURSOR_WALK);
+	Common::String msg = _resourceManager->getMessage(resNum, lineNum);
+	bool savesExist = _saver->savegamesExist();
+
+	if (!savesExist) {
+		// No savegames exist, so prompt the user to restart or quit
+		if (MessageDialog::show(msg, QUIT_BTN_STRING, RESTART_BTN_STRING) == 0)
+			_vm->quitGame();
+		else
+			restart();
+	} else {
+		// Savegames exist, so prompt for Restore/Restart
+		bool breakFlag;
+		do {
+			if (MessageDialog::show(msg, RESTART_BTN_STRING, RESTORE_BTN_STRING) == 0) {
+				breakFlag = true;
+			} else {
+				handleSaveLoad(false, _globals->_sceneHandler._loadGameSlot, _globals->_sceneHandler._saveName);
+				breakFlag = _globals->_sceneHandler._loadGameSlot > 0;
+			}
+		} while (!breakFlag);
+	}
+
+	_globals->_events.setCursorFromFlag();
+}
+
+/*--------------------------------------------------------------------------*/
+
+void RingworldDemoGame::start() {
+	// Start the demo's single scene
+	_globals->_sceneManager.changeScene(1);
+}
+
+void RingworldDemoGame::restart() {
 }
 
 } // End of namespace tSage

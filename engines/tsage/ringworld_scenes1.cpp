@@ -512,7 +512,7 @@ void Scene20::Action4::signal() {
 		scene->_sound.startSound(77, this, 127);
 		break;
 	case 8:
-		_globals->_game.endGame(20, 0);
+		_globals->_game->endGame(20, 0);
 		break;
 	default:
 		break;
@@ -844,7 +844,7 @@ void Scene30::KzinObject::doAction(int action) {
 		display2(30, 11);
 		break;
 	case OBJECT_RING:
-		_globals->_inventory._ring._sceneNumber = 30;
+		RING_INVENTORY._ring._sceneNumber = 30;
 		scene->setAction(&scene->_ringAction);
 		break;
 	case CURSOR_LOOK:
@@ -1063,7 +1063,7 @@ void Scene40::Action1::signal() {
 		_globals->_soundHandler.startSound(77, this);
 		break;
 	case 17:
-		_globals->_game.endGame(40, 20);
+		_globals->_game->endGame(40, 20);
 		remove();
 		break;
 	}
@@ -1107,7 +1107,7 @@ void Scene40::Action2::signal() {
 		scene->_assassin._frame = 1;
 		scene->_assassin.animate(ANIM_MODE_5, this);
 		scene->_soundHandler.startSound(29);
-		_globals->_inventory._infoDisk._sceneNumber = 40;
+		RING_INVENTORY._infoDisk._sceneNumber = 40;
 		break;
 	case 4:
 		_globals->_player.animate(ANIM_MODE_6, this);
@@ -1174,7 +1174,7 @@ void Scene40::Action3::signal() {
 	case 2:
 		scene->_assassin.setStrip(2);
 		scene->_assassin.setFrame(1);
-		_globals->_inventory._infoDisk._sceneNumber = 1;
+		RING_INVENTORY._infoDisk._sceneNumber = 1;
 		_globals->_player.animate(ANIM_MODE_6, this);
 		break;
 	case 3:
@@ -1328,7 +1328,7 @@ void Scene40::Action8::signal() {
 		_globals->_soundHandler.startSound(77, this);
 		break;
 	case 4:
-		_globals->_game.endGame(40, 45);
+		_globals->_game->endGame(40, 45);
 		remove();
 		break;
 	}
@@ -1378,12 +1378,12 @@ void Scene40::Assassin::doAction(int action) {
 		if (scene->_assassin._visage != 44)
 			SceneItem::display2(40, 13);
 		else
-			SceneItem::display2(40, (_globals->_inventory._infoDisk._sceneNumber == 1) ? 19 : 14);
+			SceneItem::display2(40, (RING_INVENTORY._infoDisk._sceneNumber == 1) ? 19 : 14);
 		break;
 	case CURSOR_USE:
 		if (scene->_assassin._visage != 44)
 			SceneItem::display2(40, 15);
-		else if (_globals->_inventory._infoDisk._sceneNumber == 1)
+		else if (RING_INVENTORY._infoDisk._sceneNumber == 1)
 			SceneItem::display2(40, 19);
 		else {
 			_globals->_player.disableControl();
@@ -1534,7 +1534,7 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 		_assassin.setPosition(Common::Point(230, 187));
 		_assassin.setAction(&_action8);
 
-		if (_globals->_inventory._infoDisk._sceneNumber == 40) {
+		if (RING_INVENTORY._infoDisk._sceneNumber == 40) {
 			_assassin.setStrip(1);
 			_assassin.setFrame(_assassin.getFrameCount());
 		} else {
@@ -1952,7 +1952,7 @@ void Scene60::Action1::signal() {
 		break;
 	case 9:
 		_globals->_player._uiEnabled = false;
-		_globals->_inventory._infoDisk._sceneNumber = 1;
+		RING_INVENTORY._infoDisk._sceneNumber = 1;
 
 		if (_globals->_sceneObjects->contains(&scene->_message))
 			scene->_message.remove();
@@ -2226,7 +2226,7 @@ void Scene60::Item1::doAction(int action) {
 
 	switch (action) {
 	case OBJECT_INFODISK:
-		_globals->_inventory._infoDisk._sceneNumber = 60;
+		RING_INVENTORY._infoDisk._sceneNumber = 60;
 		_globals->setFlag(!_globals->_stripNum ? 118 : 121);
 		scene->_sceneMode = 0;
 		scene->setAction(&scene->_action1);
@@ -2235,7 +2235,7 @@ void Scene60::Item1::doAction(int action) {
 		SceneItem::display2(60, 10);
 		break;
 	case CURSOR_USE:
-		if (_globals->_inventory._infoDisk._sceneNumber == 60) {
+		if (RING_INVENTORY._infoDisk._sceneNumber == 60) {
 			if (_globals->getFlag(118) && !_globals->_stripNum) {
 				_globals->clearFlag(118);
 				scene->setAction(&scene->_action1);
@@ -2248,7 +2248,7 @@ void Scene60::Item1::doAction(int action) {
 				scene->_action1.setActionIndex(9);
 				scene->_action1.setDelay(1);
 			}
-		} else if (_globals->_inventory._infoDisk._sceneNumber == 1) {
+		} else if (RING_INVENTORY._infoDisk._sceneNumber == 1) {
 			scene->_sceneMode = 0;
 			setAction(&scene->_sequenceManager, scene, 62, NULL);
 		} else {
@@ -2674,7 +2674,7 @@ void Scene90::signal() {
 		break;
 	case 92:
 		_globals->_scenePalette.clearListeners();
-		_globals->_game.endGame(90, 6);
+		_globals->_game->endGame(90, 6);
 		break;
 	case 96:
 		_globals->_player.enableControl();

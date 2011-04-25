@@ -73,7 +73,8 @@ void TSageEngine::initialise() {
 	// Set up the resource manager
 	_resourceManager = new ResourceManager();
 	if (_vm->getFeatures() & GF_DEMO) {
-		_resourceManager->addLib("DEMORING.RLB");
+		// Add the single library file associated with the demo
+		_resourceManager->addLib(getPrimaryFilename());
 	} else {
 		_resourceManager->addLib("RING.RLB");
 		_resourceManager->addLib("TSAGE.RLB");
@@ -96,7 +97,7 @@ Common::Error TSageEngine::run() {
 	_globals->_events.showCursor();
 
 	_globals->_sceneHandler.registerHandler();
-	_globals->_game.execute();
+	_globals->_game->execute();
 
 	deinitialise();
 	return Common::kNoError;

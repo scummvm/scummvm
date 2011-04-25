@@ -31,6 +31,7 @@
 #include "tsage/core.h"
 #include "tsage/staticres.h"
 #include "tsage/globals.h"
+#include "tsage/ringworld_logic.h"
 
 namespace tSage {
 
@@ -383,7 +384,7 @@ void InventoryDialog::show() {
 	// Determine how many items are in the player's inventory
 	int itemCount = 0;
 	SynchronisedList<InvObject *>::iterator i;
-	for (i = _globals->_inventory._itemList.begin(); i != _globals->_inventory._itemList.end(); ++i) {
+	for (i = RING_INVENTORY._itemList.begin(); i != RING_INVENTORY._itemList.end(); ++i) {
 		if ((*i)->inInventory())
 			++itemCount;
 	}
@@ -404,7 +405,7 @@ InventoryDialog::InventoryDialog() {
 	int imgWidth = 0, imgHeight = 0;
 
 	SynchronisedList<InvObject *>::iterator i;
-	for (i = _globals->_inventory._itemList.begin(); i != _globals->_inventory._itemList.end(); ++i) {
+	for (i = RING_INVENTORY._itemList.begin(); i != RING_INVENTORY._itemList.end(); ++i) {
 		InvObject *invObject = *i;
 		if (invObject->inInventory()) {
 			// Get the image for the item
@@ -459,8 +460,8 @@ InventoryDialog::InventoryDialog() {
 }
 
 void InventoryDialog::execute() {
-	if ((_globals->_inventory._selectedItem) && _globals->_inventory._selectedItem->inInventory())
-		_globals->_inventory._selectedItem->setCursor();
+	if ((RING_INVENTORY._selectedItem) && RING_INVENTORY._selectedItem->inInventory())
+		RING_INVENTORY._selectedItem->setCursor();
 
 	GfxElement *hiliteObj;
 	bool lookFlag = false;
@@ -519,7 +520,7 @@ void InventoryDialog::execute() {
 			if (lookFlag) {
 				_globals->_screenSurface.displayText(invObject->_description);
 			} else {
-				_globals->_inventory._selectedItem = invObject;
+				RING_INVENTORY._selectedItem = invObject;
 				invObject->setCursor();
 			}
 		}
@@ -543,15 +544,15 @@ void OptionsDialog::show() {
 		}
 	} else if (btn == &dlg->_btnRestart) {
 		// Restart game
-		_globals->_game.restartGame();
+		_globals->_game->restartGame();
 	} else if (btn == &dlg->_btnSound) {
 		// Sound dialog
 	} else if (btn == &dlg->_btnSave) {
 		// Save button
-		_globals->_game.saveGame();
+		_globals->_game->saveGame();
 	} else if (btn == &dlg->_btnRestore) {
 		// Restore button
-		_globals->_game.restoreGame();
+		_globals->_game->restoreGame();
 	}
 
 	dlg->remove();

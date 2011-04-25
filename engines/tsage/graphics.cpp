@@ -1109,7 +1109,7 @@ int GfxManager::getAngle(const Common::Point &p1, const Common::Point &p2) {
 
 
 GfxFont::GfxFont() {
-	_fontNumber = 50;
+	_fontNumber = (_vm->getFeatures() & GF_DEMO) ? 0 : 50;
 	_numChars = 0;
 	_bpp = 0;
 	_fontData = NULL;

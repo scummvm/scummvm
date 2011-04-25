@@ -73,43 +73,9 @@ public:
 
 class InvObjectList : public SavedObject {
 public:
-	InvObject _stunner;
-	InvObject _scanner;
-	InvObject _stasisBox;
-	InvObject _infoDisk;
-	InvObject _stasisNegator;
-	InvObject _keyDevice;
-	InvObject _medkit;
-	InvObject _ladder;
-	InvObject _rope;
-	InvObject _key;
-	InvObject _translator;
-	InvObject _ale;
-	InvObject _paper;
-	InvObject _waldos;
-	InvObject _stasisBox2;
-	InvObject _ring;
-	InvObject _cloak;
-	InvObject _tunic;
-	InvObject _candle;
-	InvObject _straw;
-	InvObject _scimitar;
-	InvObject _sword;
-	InvObject _helmet;
-	InvObject _items;
-	InvObject _concentrator;
-	InvObject _nullifier;
-	InvObject _peg;
-	InvObject _vial;
-	InvObject _jacket;
-	InvObject _tunic2;
-	InvObject _bone;
-	InvObject _jar;
-	InvObject _emptyJar;
-
 	SynchronisedList<InvObject *> _itemList;
 	InvObject *_selectedItem;
-public:
+
 	InvObjectList();
 
 	virtual Common::String getClassName() { return "InvObjectList"; }
@@ -942,22 +908,23 @@ public:
 /*--------------------------------------------------------------------------*/
 
 class Game {
-private:
+protected:
 	SynchronisedList<GameHandler *> _handlers;
 
 	static bool notLockedFn(GameHandler *g);
-	void restart();
-	void handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName);
+	virtual void handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName) {}
 public:
 	void addHandler(GameHandler *entry) { _handlers.push_back(entry); }
 	void removeHandler(GameHandler *entry) { _handlers.remove(entry); }
 
 	void execute();
-	void restartGame();
-	void saveGame();
-	void restoreGame();
-	void quitGame();
-	void endGame(int resNum, int lineNum);
+	virtual void start() = 0;
+	virtual void restart() {}
+	virtual void restartGame() {}
+	virtual void saveGame() {}
+	virtual void restoreGame() {}
+	virtual void quitGame() {}
+	virtual void endGame(int resNum, int lineNum) {}
 };
 
 } // End of namespace tSage

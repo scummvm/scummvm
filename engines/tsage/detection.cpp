@@ -54,6 +54,10 @@ uint32 TSageEngine::getFeatures() const {
 	return _gameDescription->features;
 }
 
+Common::String TSageEngine::getPrimaryFilename() const {
+	return Common::String(_gameDescription->desc.filesDescriptions[0].fileName);
+}
+
 } // End of namespace tSage
 
 static const PlainGameDescriptor tSageGameTitles[] = {

@@ -397,6 +397,77 @@ public:
 	virtual void setText(const Common::String &msg);
 };
 
+/*--------------------------------------------------------------------------*/
+
+class RingworldInvObjectList : public InvObjectList {
+public:
+	InvObject _stunner;
+	InvObject _scanner;
+	InvObject _stasisBox;
+	InvObject _infoDisk;
+	InvObject _stasisNegator;
+	InvObject _keyDevice;
+	InvObject _medkit;
+	InvObject _ladder;
+	InvObject _rope;
+	InvObject _key;
+	InvObject _translator;
+	InvObject _ale;
+	InvObject _paper;
+	InvObject _waldos;
+	InvObject _stasisBox2;
+	InvObject _ring;
+	InvObject _cloak;
+	InvObject _tunic;
+	InvObject _candle;
+	InvObject _straw;
+	InvObject _scimitar;
+	InvObject _sword;
+	InvObject _helmet;
+	InvObject _items;
+	InvObject _concentrator;
+	InvObject _nullifier;
+	InvObject _peg;
+	InvObject _vial;
+	InvObject _jacket;
+	InvObject _tunic2;
+	InvObject _bone;
+	InvObject _jar;
+	InvObject _emptyJar;
+public:
+	RingworldInvObjectList();
+
+	virtual Common::String getClassName() { return "RingworldInvObjectList"; }
+};
+
+#define RING_INVENTORY (*((RingworldInvObjectList *)_globals->_inventory))
+
+class RingworldGame: public Game {
+protected:
+	virtual void handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName);
+public:
+	virtual void start();
+	virtual void restart();
+	virtual void restartGame();
+	virtual void saveGame();
+	virtual void restoreGame();
+	virtual void quitGame();
+	virtual void endGame(int resNum, int lineNum);
+};
+
+class RingworldDemoGame: public Game {
+protected:
+	virtual void restart();
+public:
+	virtual void start();
+	virtual void restartGame() {}
+	virtual void saveGame() {}
+	virtual void restoreGame() {}
+	virtual void quitGame() {}
+	virtual void endGame(int resNum, int lineNum) {}
+};
+
+
 } // End of namespace tSage
 
 #endif

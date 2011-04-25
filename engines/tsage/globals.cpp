@@ -25,6 +25,7 @@
 
 #include "tsage/globals.h"
 #include "tsage/tsage.h"
+#include "tsage/ringworld_logic.h"
 
 namespace tSage {
 
@@ -53,7 +54,7 @@ Globals::Globals() :
 		_gfxManagerInstance(_screenSurface) {
 	reset();
 	_stripNum = 0;
-	_gfxFontNumber = 50;
+	_gfxFontNumber = (_vm->getFeatures() & GF_DEMO) ? 0 : 50;
 	_gfxColors.background = 53;
 	_gfxColors.foreground = 18;
 	_fontColors.background = 51;
@@ -68,6 +69,16 @@ Globals::Globals() :
 	_prevSceneOffset = Common::Point(-1, -1);
 	_sceneListeners.push_back(&_soundHandler);
 	_sceneListeners.push_back(&_sequenceManager._soundHandler);
+
+	_scrollFollower = NULL;
+	_inventory = NULL;
+
+	if (!(_vm->getFeatures() & GF_DEMO)) {
+		_inventory = new RingworldInvObjectList();
+		_game = new RingworldGame();
+	} else {
+		_game = new RingworldDemoGame();
+	}
 }
 
 Globals::~Globals() {

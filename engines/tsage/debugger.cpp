@@ -28,7 +28,7 @@
 #include "common/endian.h"
 #include "tsage/globals.h"
 #include "tsage/graphics.h"
-
+#include "tsage/ringworld_logic.h"
 
 namespace tSage {
 
@@ -276,103 +276,103 @@ bool Debugger::Cmd_MoveObject(int argc, const char **argv) {
 
 	switch (objNum) {
 	case OBJECT_STUNNER:
-		_globals->_inventory._stunner._sceneNumber = sceneNum;
+		RING_INVENTORY._stunner._sceneNumber = sceneNum;
 		break;
 	case OBJECT_SCANNER:
-		_globals->_inventory._scanner._sceneNumber = sceneNum;
+		RING_INVENTORY._scanner._sceneNumber = sceneNum;
 		break;
 	case OBJECT_STASIS_BOX:
-		_globals->_inventory._stasisBox._sceneNumber = sceneNum;
+		RING_INVENTORY._stasisBox._sceneNumber = sceneNum;
 		break;
 	case OBJECT_INFODISK:
-		_globals->_inventory._infoDisk._sceneNumber = sceneNum;
+		RING_INVENTORY._infoDisk._sceneNumber = sceneNum;
 		break;
 	case OBJECT_STASIS_NEGATOR:
-		_globals->_inventory._stasisNegator._sceneNumber = sceneNum;
+		RING_INVENTORY._stasisNegator._sceneNumber = sceneNum;
 		break;
 	case OBJECT_KEY_DEVICE:
-		_globals->_inventory._keyDevice._sceneNumber = sceneNum;
+		RING_INVENTORY._keyDevice._sceneNumber = sceneNum;
 		break;
 	case OBJECT_MEDKIT:
-		_globals->_inventory._medkit._sceneNumber = sceneNum;
+		RING_INVENTORY._medkit._sceneNumber = sceneNum;
 		break;
 	case OBJECT_LADDER:
-		_globals->_inventory._ladder._sceneNumber = sceneNum;
+		RING_INVENTORY._ladder._sceneNumber = sceneNum;
 		break;
 	case OBJECT_ROPE:
-		_globals->_inventory._rope._sceneNumber = sceneNum;
+		RING_INVENTORY._rope._sceneNumber = sceneNum;
 		break;
 	case OBJECT_KEY:
-		_globals->_inventory._key._sceneNumber = sceneNum;
+		RING_INVENTORY._key._sceneNumber = sceneNum;
 		break;
 	case OBJECT_TRANSLATOR:
-		_globals->_inventory._translator._sceneNumber = sceneNum;
+		RING_INVENTORY._translator._sceneNumber = sceneNum;
 		break;
 	case OBJECT_ALE:
-		_globals->_inventory._ale._sceneNumber = sceneNum;
+		RING_INVENTORY._ale._sceneNumber = sceneNum;
 		break;
 	case OBJECT_PAPER:
-		_globals->_inventory._paper._sceneNumber = sceneNum;
+		RING_INVENTORY._paper._sceneNumber = sceneNum;
 		break;
 	case OBJECT_WALDOS:
-		_globals->_inventory._waldos._sceneNumber = sceneNum;
+		RING_INVENTORY._waldos._sceneNumber = sceneNum;
 		break;
 	case OBJECT_STASIS_BOX2:
-		_globals->_inventory._stasisBox2._sceneNumber = sceneNum;
+		RING_INVENTORY._stasisBox2._sceneNumber = sceneNum;
 		break;
 	case OBJECT_RING:
-		_globals->_inventory._ring._sceneNumber = sceneNum;
+		RING_INVENTORY._ring._sceneNumber = sceneNum;
 		break;
 	case OBJECT_CLOAK:
-		_globals->_inventory._cloak._sceneNumber = sceneNum;
+		RING_INVENTORY._cloak._sceneNumber = sceneNum;
 		break;
 	case OBJECT_TUNIC:
-		_globals->_inventory._tunic._sceneNumber = sceneNum;
+		RING_INVENTORY._tunic._sceneNumber = sceneNum;
 		break;
 	case OBJECT_CANDLE:
-		_globals->_inventory._candle._sceneNumber = sceneNum;
+		RING_INVENTORY._candle._sceneNumber = sceneNum;
 		break;
 	case OBJECT_STRAW:
-		_globals->_inventory._straw._sceneNumber = sceneNum;
+		RING_INVENTORY._straw._sceneNumber = sceneNum;
 		break;
 	case OBJECT_SCIMITAR:
-		_globals->_inventory._scimitar._sceneNumber = sceneNum;
+		RING_INVENTORY._scimitar._sceneNumber = sceneNum;
 		break;
 	case OBJECT_SWORD:
-		_globals->_inventory._sword._sceneNumber = sceneNum;
+		RING_INVENTORY._sword._sceneNumber = sceneNum;
 		break;
 	case OBJECT_HELMET:
-		_globals->_inventory._helmet._sceneNumber = sceneNum;
+		RING_INVENTORY._helmet._sceneNumber = sceneNum;
 		break;
 	case OBJECT_ITEMS:
-		_globals->_inventory._items._sceneNumber = sceneNum;
+		RING_INVENTORY._items._sceneNumber = sceneNum;
 		break;
 	case OBJECT_CONCENTRATOR:
-		_globals->_inventory._concentrator._sceneNumber = sceneNum;
+		RING_INVENTORY._concentrator._sceneNumber = sceneNum;
 		break;
 	case OBJECT_NULLIFIER:
-		_globals->_inventory._nullifier._sceneNumber = sceneNum;
+		RING_INVENTORY._nullifier._sceneNumber = sceneNum;
 		break;
 	case OBJECT_PEG:
-		_globals->_inventory._peg._sceneNumber = sceneNum;
+		RING_INVENTORY._peg._sceneNumber = sceneNum;
 		break;
 	case OBJECT_VIAL:
-		_globals->_inventory._vial._sceneNumber = sceneNum;
+		RING_INVENTORY._vial._sceneNumber = sceneNum;
 		break;
 	case OBJECT_JACKET:
-		_globals->_inventory._jacket._sceneNumber = sceneNum;
+		RING_INVENTORY._jacket._sceneNumber = sceneNum;
 		break;
 	case OBJECT_TUNIC2:
-		_globals->_inventory._tunic2._sceneNumber = sceneNum;
+		RING_INVENTORY._tunic2._sceneNumber = sceneNum;
 		break;
 	case OBJECT_BONE:
-		_globals->_inventory._bone._sceneNumber = sceneNum;
+		RING_INVENTORY._bone._sceneNumber = sceneNum;
 		break;
 	case OBJECT_EMPTY_JAR:
-		_globals->_inventory._emptyJar._sceneNumber = sceneNum;
+		RING_INVENTORY._emptyJar._sceneNumber = sceneNum;
 		break;
 	case OBJECT_JAR:
-		_globals->_inventory._jar._sceneNumber = sceneNum;
+		RING_INVENTORY._jar._sceneNumber = sceneNum;
 		break;
 	default:
 		DebugPrintf("Invlid object Id %s\n", argv[1]);
@@ -385,7 +385,7 @@ bool Debugger::Cmd_MoveObject(int argc, const char **argv) {
  * Give a specified item to the player
  */
 bool Debugger::Cmd_Item(int argc, const char **argv) {
-	_globals->_inventory._infoDisk._sceneNumber = 1;
+	RING_INVENTORY._infoDisk._sceneNumber = 1;
 	return true;
 }
 
