@@ -1502,6 +1502,12 @@ Common::String ThemeEngine::genLocalizedFontFilename(const Common::String &filen
  *********************************************************/
 
 bool ThemeEngine::themeConfigParseHeader(Common::String header, Common::String &themeName) {
+	// Check that header is not corrupted
+	if (header[0] < 0 || header[0] > 127) {
+		warning("Corrupted theme header found");
+		return false;
+	}
+
 	header.trim();
 
 	if (header.empty())
