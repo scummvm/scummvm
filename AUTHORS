@@ -27,6 +27,7 @@ Residual Team
        Joost Peters          - Various code fixes
        Christian Neumair     - Various optimisation patches
        Daniel Schepler       - Initial engine codebase, LUA support
+       Einar Johan T. Somaen - A lot of play-testing
        Yaron Tausky          - Fixes to subtitles
        Pino Toscano          - Debian GNU/Linux package files
        Lionel Ulmer          - OpenGL optimisations

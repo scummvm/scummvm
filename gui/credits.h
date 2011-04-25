@@ -39,6 +39,8 @@ static const char *credits[] = {
 "C2""Various optimisation patches",
 "C0""Daniel Schepler",
 "C2""Initial engine codebase, LUA support",
+"C0""Einar Johan T. S\370m\345en",
+"C2""A lot of play-testing",
 "C0""Yaron Tausky",
 "C2""Fixes to subtitles",
 "C0""Pino Toscano",

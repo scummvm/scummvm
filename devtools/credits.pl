@@ -508,6 +508,7 @@ begin_credits("Credits");
 		add_person("Joost Peters", "joostp", "Various code fixes");
 		add_person("Christian Neumair", "mannythegnome", "Various optimisation patches");
 		add_person("Daniel Schepler", "", "Initial engine codebase, LUA support");
+		add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "A lot of play-testing");
 		add_person("Yaron Tausky", "yaront", "Fixes to subtitles");
 		add_person("Pino Toscano", "pinotree", "Debian GNU/Linux package files");
 		add_person("Lionel Ulmer", "bbrox", "OpenGL optimisations");
