@@ -411,6 +411,7 @@ public:
 	KeyframeComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag);
 	void init();
 	void setKey(int val);
+	void setFade(float fade);
 	void update();
 	void reset();
 	~KeyframeComponent() {}
@@ -422,6 +423,7 @@ private:
 	bool _active;
 	int _repeatMode;
 	int _currTime;
+	float _fade;
 	Common::String _fname;
 
 	friend class Costume;
@@ -460,6 +462,10 @@ void KeyframeComponent::setKey(int val) {
 	}
 }
 
+void KeyframeComponent::setFade(float fade) {
+	_fade = fade;
+}
+
 void KeyframeComponent::reset() {
 	_active = false;
 }
@@ -494,7 +500,7 @@ void KeyframeComponent::update() {
 					warning("Unknown repeat mode %d for keyframe %s", _repeatMode, _keyf->filename());
 		}
 	}
-	_keyf->animate(_hier, _currTime / 1000.0f, _priority1, _priority2);
+	_keyf->animate(_hier, _currTime / 1000.0f, _priority1, _priority2, _fade);
 }
 
 void KeyframeComponent::init() {
@@ -722,8 +728,10 @@ void Costume::load(const char *filename, const char *data, int len, Costume *pre
 	delete[] tags;
 
 	for (int i = 0; i < _numComponents; i++)
-		if (_components[i])
+		if (_components[i]) {
 			_components[i]->init();
+			_components[i]->setFade(1.f);
+		}
 
 	ts.expectString("section chores");
 	ts.scanString(" numchores %d", 1, &_numChores);
@@ -811,7 +819,7 @@ void Costume::Component::setParent(Component *newParent) {
 
 // Should initialize the status variables so the chore can't play unexpectedly
 Costume::Chore::Chore() : _hasPlayed(false), _playing(false), _looping(false), _currTime(-1),
-                          _tracks(NULL) {
+                          _tracks(NULL), _fadeMode(None) {
 }
 
 Costume::Chore::~Chore() {
@@ -860,6 +868,7 @@ void Costume::Chore::stop() {
 
 	_playing = false;
 	_hasPlayed = false;
+	_fadeMode = None;
 
 	for (int i = 0; i < _numTracks; i++) {
 		Component *comp = _owner->_components[_tracks[i].compID];
@@ -873,6 +882,12 @@ void Costume::Chore::setKeys(int startTime, int stopTime) {
 		Component *comp = _owner->_components[_tracks[i].compID];
 		if (!comp)
 			continue;
+
+		if (_fadeMode == FadeIn) {
+			comp->setFade((float)_fadeCurrTime / (float)_fadeLength);
+		} else if (_fadeMode == FadeOut) {
+			comp->setFade(1.f - ((float)_fadeCurrTime / (float)_fadeLength));
+		}
 
 		for (int j = 0; j < _tracks[i].numKeys; j++) {
 			if (_tracks[i].keys[j].time > stopTime)
@@ -895,6 +910,7 @@ void Costume::Chore::setLastFrame() {
 	_looping = false;
 	setKeys(-1, _currTime);
 	_currTime = -1;
+	_fadeMode = None;
 }
 
 void Costume::Chore::update() {
@@ -906,6 +922,17 @@ void Costume::Chore::update() {
 		newTime = 0; // For first time through
 	else
 		newTime = _currTime + g_grim->frameTime();
+
+	if (_fadeMode != None) {
+		_fadeCurrTime += g_grim->frameTime();
+
+		if (_fadeCurrTime > _fadeLength) {
+			if (_fadeMode == FadeOut)
+				stop();
+
+			_fadeMode = None;
+		}
+	}
 
 	setKeys(_currTime, newTime);
 
@@ -920,6 +947,12 @@ void Costume::Chore::update() {
 		}
 	}
 	_currTime = newTime;
+}
+
+void Costume::Chore::fade(Costume::Chore::FadeMode mode, int msecs) {
+	_fadeMode = mode;
+	_fadeLength = msecs;
+	_fadeCurrTime = 0;
 }
 
 Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *parent, int parentID, const char *name, Costume::Component *prevComponent) {
@@ -995,6 +1028,15 @@ void Costume::stopChores() {
 		_chores[i].stop();
 }
 
+void Costume::fadeChoreIn(int chore, int msecs) {
+	_chores[chore].play();
+	_chores[chore].fade(Chore::FadeIn, msecs);
+}
+
+void Costume::fadeChoreOut(int chore, int msecs) {
+	_chores[chore].fade(Chore::FadeOut, msecs);
+}
+
 int Costume::isChoring(const char *name, bool excludeLooping) {
 	for (int i = 0; i < _numChores; i++) {
 		if (!strcmp(_chores[i]._name, name) && _chores[i]._playing && !(excludeLooping && _chores[i]._looping))
@@ -1038,6 +1080,7 @@ void Costume::update() {
 		if (_components[i]) {
 			_components[i]->setMatrix(_matrix);
 			_components[i]->update();
+			_components[i]->setFade(1.f);
 		}
 	}
 }

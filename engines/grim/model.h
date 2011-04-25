@@ -71,7 +71,8 @@ public:
 		Graphics::Vector3d _animPos;
 		float _animPitch, _animYaw, _animRoll;
 		bool _meshVisible, _hierVisible;
-		int _priority, _totalWeight;
+		int _priority;
+		float _totalWeight;
 		bool _initialized;
 		Graphics::Matrix4 _matrix;
 		Graphics::Matrix4 _localMatrix;

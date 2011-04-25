@@ -145,7 +145,7 @@ KeyframeAnim::~KeyframeAnim() {
 	g_resourceloader->uncacheKeyframe(this);
 }
 
-void KeyframeAnim::animate(Model::HierNode *nodes, float time, int priority1, int priority2) const {
+void KeyframeAnim::animate(Model::HierNode *nodes, float time, int priority1, int priority2, float fade) const {
 	float frame = time * _fps;
 
 	if (frame > _numFrames)
@@ -153,7 +153,7 @@ void KeyframeAnim::animate(Model::HierNode *nodes, float time, int priority1, in
 
 	for (int i = 0; i < _numJoints; i++) {
 		if (_nodes[i])
-			_nodes[i]->animate(nodes[i], frame, ((_type & nodes[i]._type) != 0 ? priority2 : priority1));
+			_nodes[i]->animate(nodes[i], frame, ((_type & nodes[i]._type) != 0 ? priority2 : priority1), fade);
 	}
 }
 
@@ -212,7 +212,7 @@ KeyframeAnim::KeyframeNode::~KeyframeNode() {
 	delete[] _entries;
 }
 
-void KeyframeAnim::KeyframeNode::animate(Model::HierNode &node, float frame, int priority) const {
+void KeyframeAnim::KeyframeNode::animate(Model::HierNode &node, float frame, int priority, float fade) const {
 	if (_numEntries == 0)
 		return;
 	if (priority < node._priority)
@@ -244,16 +244,16 @@ void KeyframeAnim::KeyframeNode::animate(Model::HierNode &node, float frame, int
 	if (priority > node._priority) {
 		node._priority = priority;
 		node._totalWeight = 1;
-		node._animPos = pos;
-		node._animPitch = pitch;
-		node._animYaw = yaw;
-		node._animRoll = roll;
+		node._animPos = node._animPos + (pos - node._animPos) * fade;
+		node._animPitch = node._animPitch + (pitch - node._animPitch) * fade;
+		node._animYaw = node._animYaw + (yaw - node._animYaw) * fade;
+		node._animRoll = node._animRoll + (roll - node._animRoll) * fade;
 	} else { // priority == node._priority
-		node._totalWeight++;
-		node._animPos += pos;
-		node._animPitch += pitch;
-		node._animYaw += yaw;
-		node._animRoll += roll;
+		node._totalWeight += fade;
+		node._animPos += pos * fade;
+		node._animPitch += pitch * fade;
+		node._animYaw += yaw * fade;
+		node._animRoll += roll * fade;
 	}
 
 	// node

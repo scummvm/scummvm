@@ -52,6 +52,8 @@ public:
 	void setChoreLastFrame(int num) { _chores[num].setLastFrame(); }
 	void setChoreLooping(int num, bool val) { _chores[num].setLooping(val); }
 	void stopChore(int num) { _chores[num].stop(); }
+	void fadeChoreIn(int chore, int msecs);
+	void fadeChoreOut(int chore, int msecs);
 	Model::HierNode *getModelNodes();
 	Model *getModel();
 	void setColormap(const char *map);
@@ -87,6 +89,7 @@ public:
 		virtual void init() { }
 		virtual void setKey(int) { }
 		virtual void setMapName(char *) { }
+		virtual void setFade(float fade) { }
 		virtual void update() { }
 		virtual void setupTexture() { }
 		virtual void draw() { }
@@ -138,6 +141,12 @@ private:
 
 	class Chore {
 	public:
+		enum FadeMode {
+			None,
+			FadeIn,
+			FadeOut
+		};
+
 		Chore();
 		~Chore();
 		void load(Costume *owner, TextSplitter &ts);
@@ -147,6 +156,7 @@ private:
 		void stop();
 		void update();
 		void setLastFrame();
+		void fade(FadeMode mode, int msecs);
 
 	private:
 		Costume *_owner;
@@ -158,6 +168,9 @@ private:
 
 		bool _hasPlayed, _playing, _looping;
 		int _currTime;
+
+		int _fadeLength, _fadeCurrTime;
+		FadeMode _fadeMode;
 
 		void setKeys(int startTime, int stopTime);
 
