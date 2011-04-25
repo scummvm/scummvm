@@ -45,8 +45,8 @@
 #include "audio/mixer.h"
 
 namespace Common {
-	class File;
-	class MacResManager;
+class File;
+class MacResManager;
 }
 
 namespace Video {

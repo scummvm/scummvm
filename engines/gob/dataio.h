@@ -33,7 +33,7 @@
 #include "common/file.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Gob {

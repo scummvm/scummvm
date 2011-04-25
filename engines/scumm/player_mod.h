@@ -31,7 +31,7 @@
 #include "audio/mixer.h"
 
 namespace Audio {
-	class RateConverter;
+class RateConverter;
 }
 
 namespace Scumm {

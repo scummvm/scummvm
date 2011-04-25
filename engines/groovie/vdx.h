@@ -29,7 +29,7 @@
 #include "groovie/player.h"
 
 namespace Common {
-	class ReadStream;
+class ReadStream;
 }
 
 namespace Groovie {

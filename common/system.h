@@ -35,7 +35,7 @@
 #include "graphics/pixelformat.h"
 
 namespace Audio {
-	class Mixer;
+class Mixer;
 }
 
 namespace Graphics {
@@ -43,14 +43,14 @@ namespace Graphics {
 }
 
 namespace Common {
-	struct Event;
-	class EventManager;
-	class SaveFileManager;
-	class SearchSet;
-	class TimerManager;
-	class SeekableReadStream;
-	class WriteStream;
-	class HardwareKeySet;
+struct Event;
+class EventManager;
+class SaveFileManager;
+class SearchSet;
+class TimerManager;
+class SeekableReadStream;
+class WriteStream;
+class HardwareKeySet;
 }
 
 class AudioCDManager;

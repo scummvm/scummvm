@@ -56,12 +56,12 @@
 #endif
 
 namespace GUI {
-	class Dialog;
+class Dialog;
 }
 using GUI::Dialog;
 namespace Common {
-	class SeekableReadStream;
-	class WriteStream;
+class SeekableReadStream;
+class WriteStream;
 }
 
 /**

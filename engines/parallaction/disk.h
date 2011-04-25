@@ -34,7 +34,7 @@
 #include "graphics/iff.h"
 
 namespace Common {
-	class FSDirectory;
+class FSDirectory;
 }
 
 

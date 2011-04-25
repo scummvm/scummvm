@@ -33,9 +33,11 @@ class MidiChannel;
 class MusicDevice;
 
 namespace Audio {
-	class Mixer;
+class Mixer;
 }
-namespace Common { class String; }
+namespace Common {
+class String;
+}
 
 /**
  * Music types that music drivers can implement and engines can rely on.

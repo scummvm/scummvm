@@ -28,8 +28,8 @@
 #include "graphics/font.h"
 
 namespace Common {
-	class SeekableReadStream;
-	class String;
+class SeekableReadStream;
+class String;
 }
 
 namespace Graphics {

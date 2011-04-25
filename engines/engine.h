@@ -32,16 +32,16 @@
 class OSystem;
 
 namespace Audio {
-	class Mixer;
+class Mixer;
 }
 namespace Common {
-	class EventManager;
-	class SaveFileManager;
-	class TimerManager;
+class EventManager;
+class SaveFileManager;
+class TimerManager;
 }
 namespace GUI {
-	class Debugger;
-	class Dialog;
+class Debugger;
+class Dialog;
 }
 
 /**

@@ -42,7 +42,7 @@
 #include "audio/mixer.h"
 
 namespace Audio {
-	class QueuingAudioStream;
+class QueuingAudioStream;
 }
 
 namespace Video {

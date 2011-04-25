@@ -32,8 +32,9 @@
 #include "common/list.h"
 
 
-namespace Common { class SeekableReadStream; }
-
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Audio {
 

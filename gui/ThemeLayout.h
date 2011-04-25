@@ -30,8 +30,8 @@
 
 #ifdef LAYOUT_DEBUG_DIALOG
 namespace Graphics {
-	class Font;
-	class Surface;
+class Font;
+class Surface;
 }
 #endif
 

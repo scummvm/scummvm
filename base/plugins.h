@@ -33,8 +33,8 @@
 #include "backends/plugins/elf/version.h"
 
 namespace Common {
-	class FSList;
-	class FSNode;
+class FSList;
+class FSNode;
 }
 
 

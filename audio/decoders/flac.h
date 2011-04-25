@@ -49,7 +49,7 @@
 #ifdef USE_FLAC
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Audio {

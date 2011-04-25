@@ -30,7 +30,7 @@
 #include "audio/mixer.h"
 
 namespace Audio {
-	class AudioStream;
+class AudioStream;
 }
 
 namespace Cine {

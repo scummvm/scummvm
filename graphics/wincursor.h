@@ -30,9 +30,9 @@
 #include "common/winexe.h"
 
 namespace Common {
-	class NEResources;
-	class PEResources;
-	class SeekableReadStream;
+class NEResources;
+class PEResources;
+class SeekableReadStream;
 }
 
 namespace Graphics {

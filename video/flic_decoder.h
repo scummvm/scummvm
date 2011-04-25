@@ -31,7 +31,7 @@
 #include "common/rect.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Video {

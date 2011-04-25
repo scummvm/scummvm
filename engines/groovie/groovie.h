@@ -33,7 +33,7 @@
 #include "graphics/pixelformat.h"
 
 namespace Common {
-	class MacResManager;
+class MacResManager;
 }
 
 /**

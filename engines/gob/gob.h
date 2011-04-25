@@ -35,7 +35,7 @@
 #include "gob/console.h"
 
 namespace GUI {
-	class StaticTextWidget;
+class StaticTextWidget;
 }
 
 /**

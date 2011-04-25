@@ -34,7 +34,7 @@
 #include "made/resource.h"
 
 namespace Audio {
-	class PCSpeaker;
+class PCSpeaker;
 }
 
 namespace Made {

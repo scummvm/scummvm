@@ -37,7 +37,7 @@
 
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Video {

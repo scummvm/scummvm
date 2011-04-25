@@ -34,7 +34,7 @@
 #define MAX_FILES_IN_LIST 60
 
 namespace Common {
-	class File;
+class File;
 }
 
 namespace Sky {

@@ -45,7 +45,9 @@
 #include "agi/sound.h"
 
 
-namespace Common { class RandomSource; }
+namespace Common {
+class RandomSource;
+}
 
 /**
  * This is the namespace of the AGI engine.

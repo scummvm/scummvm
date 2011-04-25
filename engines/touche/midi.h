@@ -34,7 +34,7 @@
 class MidiParser;
 
 namespace Common {
-	class ReadStream;
+class ReadStream;
 }
 
 namespace Touche {

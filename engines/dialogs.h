@@ -31,9 +31,9 @@
 class Engine;
 
 namespace GUI {
-	class ButtonWidget;
-	class GraphicsWidget;
-	class SaveLoadChooser;
+class ButtonWidget;
+class GraphicsWidget;
+class SaveLoadChooser;
 }
 
 class MainMenuDialog : public GUI::Dialog {
