@@ -85,7 +85,6 @@ class CursorManager;
 class MohawkEngine : public ::Engine {
 protected:
 	virtual Common::Error run();
-	virtual bool isWIP() const { return ENGINE_WIP_MOHAWK; };
 
 public:
 	MohawkEngine(OSystem *syst, const MohawkGameDescription *gamedesc);

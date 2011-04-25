@@ -176,8 +176,6 @@ private:
 
 	bool initGraphics();
 
-	virtual bool isWIP() const { return ENGINE_WIP_GOB; };
-
 public:
 	static const Common::Language _gobToScummVMLang[];
 

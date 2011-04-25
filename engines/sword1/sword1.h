@@ -107,15 +107,12 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
 
-	virtual bool isWIP() const { return ENGINE_WIP_SWORD1; };
-
 	GUI::Debugger *getDebugger() { return _console; }
 
 	Common::Error loadGameState(int slot);
 	bool canLoadGameStateCurrently();
 	Common::Error saveGameState(int slot, const char *desc);
 	bool canSaveGameStateCurrently();
-
 
 private:
 	void delay(int32 amount);

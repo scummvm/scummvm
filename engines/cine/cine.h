@@ -113,8 +113,6 @@ protected:
 
 	bool initGame();
 
-	virtual bool isWIP() const { return ENGINE_WIP_CINE; };
-
 public:
 	CineEngine(OSystem *syst, const CINEGameDescription *gameDesc);
 	virtual ~CineEngine();

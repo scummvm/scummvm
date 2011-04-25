@@ -150,7 +150,6 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
 	virtual void pauseEngineIntern(bool pause);
-	virtual bool isWIP() const { return ENGINE_WIP_SWORD2; };
 
 public:
 	Sword2Engine(OSystem *syst);

@@ -281,7 +281,6 @@ public:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 	GUI::Debugger *getDebugger() { return _console; }
-	virtual bool isWIP() const { return ENGINE_WIP_TUCKER; };
 
 protected:
 

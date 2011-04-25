@@ -194,11 +194,6 @@ public:
 	virtual bool canLoadGameStateCurrently();
 
 	/**
-	 * Returns whether the engine is unstable
-	 */
-	virtual bool isWIP() const = 0;
-
-	/**
 	 * Save a game state.
 	 * @param slot	the slot into which the savestate should be stored
 	 * @param desc	a description for the savestate, entered by the user

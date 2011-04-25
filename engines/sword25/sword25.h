@@ -82,7 +82,6 @@ protected:
 // 	Common::Error saveGameState(int slot, const char *desc);	// TODO: Implement this?
 // 	bool canLoadGameStateCurrently();	// TODO: Implement this?
 // 	bool canSaveGameStateCurrently();	// TODO: Implement this?
-	virtual bool isWIP() const { return ENGINE_WIP_SWORD25; };
 
 	GUI::Debugger *getDebugger() { return _console; }
 

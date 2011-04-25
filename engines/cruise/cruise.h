@@ -86,8 +86,6 @@ protected:
 
 	bool initGame();
 
-	virtual bool isWIP() const { return ENGINE_WIP_CRUISE; };
-
 public:
 	CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc);
 	virtual ~ CruiseEngine();

@@ -112,7 +112,6 @@ protected:
 	}
 	virtual GUI::Debugger *getDebugger();
 	virtual bool hasFeature(EngineFeature f) const;
-	virtual bool isWIP() const { return ENGINE_WIP_SKY; };
 
 	byte _fastMode;
 

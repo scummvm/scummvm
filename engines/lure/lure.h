@@ -106,8 +106,6 @@ public:
 	virtual void syncSoundSettings();
 	virtual void pauseEngineIntern(bool pause);
 
-	virtual bool isWIP() const { return ENGINE_WIP_LURE; };
-
 	Disk &disk() { return *_disk; }
 
 	Common::RandomSource &rnd() { return _rnd; }

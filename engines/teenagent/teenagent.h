@@ -63,7 +63,6 @@ public:
 	virtual bool canLoadGameStateCurrently() { return true; }
 	virtual bool canSaveGameStateCurrently() { return !scene_busy; }
 	virtual bool hasFeature(EngineFeature f) const;
-	virtual bool isWIP() const { return ENGINE_WIP_TEENAGENT; };
 
 	void init();
 	void deinit();

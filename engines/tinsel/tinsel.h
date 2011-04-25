@@ -178,7 +178,6 @@ protected:
 #if 0
 	bool canSaveGameStateCurrently();
 #endif
-	virtual bool isWIP() const { return ENGINE_WIP_TINSEL; };
 
 public:
 	TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc);

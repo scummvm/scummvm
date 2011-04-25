@@ -256,8 +256,6 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void pauseEngineIntern(bool pause);
 
-	virtual bool isWIP() const { return ENGINE_WIP_KYRA; };
-
 	// intern
 	Resource *_res;
 	Sound *_sound;

@@ -143,7 +143,6 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
 
-	virtual bool isWIP() const { return ENGINE_WIP_QUEEN; };
 
 	int _talkSpeed;
 	bool _subtitles;

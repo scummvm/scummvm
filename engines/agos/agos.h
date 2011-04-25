@@ -194,7 +194,6 @@ class AGOSEngine : public Engine {
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
 	virtual void pauseEngineIntern(bool pause);
-	virtual bool isWIP() const { return ENGINE_WIP_AGOS; };
 
 public:
 	virtual void setupOpcodes();

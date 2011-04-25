@@ -49,8 +49,6 @@ public:
 
 	virtual Common::Error run();
 
-	virtual bool isWIP() const { return ENGINE_WIP_TESTBED; };
-
 	/**
 	 * Invokes configured testsuites.
 	 */
