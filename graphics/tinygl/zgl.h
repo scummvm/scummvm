@@ -34,7 +34,7 @@ enum {
 #define MAX_TEXTURE_STACK_DEPTH		8
 #define MAX_NAME_STACK_DEPTH		64
 #define MAX_TEXTURE_LEVELS			11
-#define T_MAX_LIGHTS				16
+#define T_MAX_LIGHTS				32
 
 #define VERTEX_HASH_SIZE 1031
 
