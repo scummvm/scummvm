@@ -442,7 +442,7 @@ ResourceType parseResourceType(const char *resid) {
 }
 
 bool Console::cmdGetVersion(int argc, const char **argv) {
-	const char *viewTypeDesc[] = { "Unknown", "EGA", "VGA", "VGA SCI1.1", "Amiga" };
+	const char *viewTypeDesc[] = { "Unknown", "EGA", "Amiga ECS 32 colors", "Amiga AGA 64 colors", "VGA", "VGA SCI1.1" };
 
 	bool hasVocab997 = g_sci->getResMan()->testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS)) ? true : false;
 	Common::String gameVersion = "N/A";
