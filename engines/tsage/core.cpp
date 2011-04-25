@@ -83,17 +83,17 @@ void EventHandler::dispatch() {
 	if (_action) _action->dispatch();
 }
 
-void EventHandler::setAction(Action *action, EventHandler *fmt, ...) {
+void EventHandler::setAction(Action *action, EventHandler *endHandler, ...) {
 	if (_action) {
-		_action->_fmt = NULL;
+		_action->_endHandler = NULL;
 		_action->remove();
 	}
 
 	_action = action;
 	if (action) {
 		va_list va;
-		va_start(va, fmt);
-		_action->attached(this, fmt, va);
+		va_start(va, endHandler);
+		_action->attached(this, endHandler, va);
 		va_end(va);
 	}
 }
@@ -103,7 +103,8 @@ void EventHandler::setAction(Action *action, EventHandler *fmt, ...) {
 Action::Action() {
 	_actionIndex = 0;
 	_owner = NULL;
-	_fmt = NULL;
+	_endHandler = NULL;
+	_attached = false;
 }
 
 void Action::synchronise(Serialiser &s) {
@@ -115,8 +116,8 @@ void Action::synchronise(Serialiser &s) {
 	s.syncAsSint32LE(_actionIndex);
 	s.syncAsSint32LE(_delayFrames);
 	s.syncAsUint32LE(_startFrame);
-	s.syncAsSint16LE(_field16);
-	SYNC_POINTER(_fmt);
+	s.syncAsByte(_attached);
+	SYNC_POINTER(_endHandler);
 }
 
 void Action::remove() {
@@ -130,9 +131,9 @@ void Action::remove() {
 		_globals->_sceneManager.removeAction(this);
 	}
 
-	_field16 = 0;
-	if (_fmt)
-		_fmt->signal();
+	_attached = false;
+	if (_endHandler)
+		_endHandler->signal();
 }
 
 void Action::process(Event &event) {
@@ -158,13 +159,13 @@ void Action::dispatch() {
 	}
 }
 
-void Action::attached(EventHandler *newOwner, EventHandler *fmt, va_list va) {
+void Action::attached(EventHandler *newOwner, EventHandler *endHandler, va_list va) {
 	_actionIndex = 0;
 	_delayFrames = 0;
 	_startFrame = _globals->_events.getFrameNumber();
 	_owner = newOwner;
-	_fmt = fmt;
-	_field16 = 1;
+	_endHandler = endHandler;
+	_attached = true;
 	signal();
 }
 
@@ -188,7 +189,7 @@ void ObjectMover::synchronise(Serialiser &s) {
 	s.syncAsSint16LE(_moveSign.x); s.syncAsSint16LE(_moveSign.y);
 	s.syncAsSint32LE(_minorDiff);
 	s.syncAsSint32LE(_majorDiff);
-	s.syncAsSint32LE(_field1A);
+	s.syncAsSint32LE(_changeCtr);
 	SYNC_POINTER(_action);
 	SYNC_POINTER(_sceneObject);
 }
@@ -222,10 +223,10 @@ void ObjectMover::dispatch() {
 			ySign = _moveSign.y;
 		else {
 			int v = yAmount / yChange;
-			_field1A += yAmount % yChange;
-			if (_field1A >= yChange) {
+			_changeCtr += yAmount % yChange;
+			if (_changeCtr >= yChange) {
 				++v;
-				_field1A -= yChange;
+				_changeCtr -= yChange;
 			}
 
 			ySign = _moveSign.y * v;
@@ -248,10 +249,10 @@ void ObjectMover::dispatch() {
 			xSign = _moveSign.x;
 		else {
 			int v = xAmount / xChange;
-			_field1A += xAmount % xChange;
-			if (_field1A >= xChange) {
+			_changeCtr += xAmount % xChange;
+			if (_changeCtr >= xChange) {
 				++v;
-				_field1A -= xChange;
+				_changeCtr -= xChange;
 			}
 
 			xSign = _moveSign.x * v;
@@ -301,7 +302,7 @@ void ObjectMover::setup(const Common::Point &destPos) {
 	_destPosition = destPos;
 	_moveDelta = Common::Point(diffX, diffY);
 	_moveSign = Common::Point(xSign, ySign);
-	_field1A = 0;
+	_changeCtr = 0;
 
 	if (!diffX && !diffY)
 		// Object is already at the correct destination
@@ -927,7 +928,7 @@ bool PlayerMover::sub_F8E5(const Common::Point &pt1, const Common::Point &pt2, c
 
 void PlayerMover2::synchronise(Serialiser &s) {
 	SYNC_POINTER(_destObject);
-	s.syncAsSint16LE(_field7E);
+	s.syncAsSint16LE(_maxArea);
 	s.syncAsSint16LE(_minArea);
 }
 
@@ -944,7 +945,7 @@ void PlayerMover2::dispatch() {
 
 void PlayerMover2::startMove(SceneObject *sceneObj, va_list va) {
 	_sceneObject = sceneObj;
-	_field7E = va_arg(va, int);
+	_maxArea = va_arg(va, int);
 	_minArea = va_arg(va, int);
 	_destObject = va_arg(va, SceneObject *);
 
@@ -1663,7 +1664,7 @@ SceneObject::SceneObject() : SceneHotspot() {
 	_moveDiff.y = 3;
 	_numFrames = 10;
 	_numFrames = 10;
-	_field7A = 10;
+	_moveRate = 10;
 	_regionBitList = 0;
 	_sceneRegionId = 0;
 	_percent = 100;
@@ -1825,8 +1826,8 @@ void SceneObject::addMover(ObjectMover *mover, ...) {
 	if (mover) {
 		// Set up the assigned mover
 		_walkStartFrame = _globals->_events.getFrameNumber();
-		if (_field7A != 0)
-			_walkStartFrame = 60 / _field7A;
+		if (_moveRate != 0)
+			_walkStartFrame = 60 / _moveRate;
 
 		// Signal the mover that movement is beginning
 		va_list va;
@@ -2024,7 +2025,7 @@ void SceneObject::synchronise(Serialiser &s) {
 	s.syncAsSint32LE(_regionIndex);
 	SYNC_POINTER(_mover);
 	s.syncAsSint16LE(_moveDiff.x); s.syncAsSint16LE(_moveDiff.y);
-	s.syncAsSint32LE(_field7A);
+	s.syncAsSint32LE(_moveRate);
 	SYNC_POINTER(_endAction);
 	s.syncAsUint32LE(_regionBitList);
 }
@@ -2047,7 +2048,7 @@ void SceneObject::postInit(SceneObjectList *OwnerList) {
 		_yDiff = 0;
 		_moveDiff.x = 5;
 		_moveDiff.y = 3;
-		_field7A = 10;
+		_moveRate = 10;
 		_regionIndex = 0x40;
 		_numFrames = 10;
 		_regionBitList = 0;
@@ -2074,8 +2075,8 @@ void SceneObject::dispatch() {
 		_action->dispatch();
 
 	if (_mover && (_walkStartFrame <= currTime)) {
-		if (_field7A) {
-			int frameInc = 60 / _field7A;
+		if (_moveRate) {
+			int frameInc = 60 / _moveRate;
 			_walkStartFrame = currTime + frameInc;
 		}
 		_mover->dispatch();

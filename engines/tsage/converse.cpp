@@ -181,7 +181,7 @@ void SequenceManager::signal() {
 			break;
 		case 15:
 			v1 = getNextValue();
-			_sceneObject->_field7A = v1;
+			_sceneObject->_moveRate = v1;
 			break;
 		case 16:
 			v1 = getNextValue();
@@ -302,7 +302,7 @@ void SequenceManager::process(Event &event) {
 }
 
 
-void SequenceManager::attached(EventHandler *newOwner, EventHandler *fmt, va_list va) {
+void SequenceManager::attached(EventHandler *newOwner, EventHandler *endHandler, va_list va) {
 	// Get the sequence number to use
 	_resNum = va_arg(va, int);
 
@@ -322,7 +322,7 @@ void SequenceManager::attached(EventHandler *newOwner, EventHandler *fmt, va_lis
 	}
 
 	setup();
-	Action::attached(newOwner, fmt, va);
+	Action::attached(newOwner, endHandler, va);
 }
 
 /**
@@ -544,7 +544,7 @@ void StripManager::reset() {
 	_actionIndex = 0;
 	_delayFrames = 0;
 	_owner = NULL;
-	_fmt = NULL;
+	_endHandler = NULL;
 	_field2E6 = false;
 	_stripNum = -1;
 	_obj44Index = 0;
@@ -648,7 +648,7 @@ void StripManager::signal() {
 	}
 
 	if (_obj44Index < 0) {
-		EventHandler *owner = _fmt;
+		EventHandler *owner = _endHandler;
 		int stripNum = ABS(_obj44Index);
 		remove();
 

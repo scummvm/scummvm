@@ -62,7 +62,7 @@ public:
 	virtual void remove();
 	virtual void signal();
 	virtual void process(Event &event);
-	virtual void attached(EventHandler *newOwner, EventHandler *fmt, va_list va);
+	virtual void attached(EventHandler *newOwner, EventHandler *endHandler, va_list va);
 };
 
 

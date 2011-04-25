@@ -1424,7 +1424,7 @@ void Scene7300::postInit(SceneObjectList *OwnerList) {
 	_object3._numFrames = 2;
 	_object3._moveDiff = Common::Point(1, 1);
 	_object3.animate(ANIM_MODE_8, 0, 0);
-	_object3._field7A = 2;
+	_object3._moveRate = 2;
 	_object3.setAction(&_action2);
 
 	_globals->_player.postInit();
@@ -1438,7 +1438,7 @@ void Scene7300::postInit(SceneObjectList *OwnerList) {
 	_object1.animate(ANIM_MODE_1, 0);
 	_object1._moveDiff = Common::Point(1, 1);
 	_object1.setPosition(Common::Point(76, 78), 0);
-	_object1._field7A = 1;
+	_object1._moveRate = 1;
 	_object1.setAction(&_action3);
 
 	_object2.postInit();
@@ -1590,7 +1590,7 @@ void Scene7600::postInit(SceneObjectList *OwnerList) {
  *--------------------------------------------------------------------------*/
 
 void Scene7700::Action1::signal() {
-	SceneObject *fmtObj = (SceneObject *) _fmt;
+	SceneObject *fmtObj = (SceneObject *) _endHandler;
 	switch (_actionIndex++) {
 	case 0: {
 		PlayerMover *mover1 = new PlayerMover();
@@ -2327,7 +2327,7 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_cloud.setPriority2(1);
 	_cloud.setPosition(Common::Point(133, 160), 0);
 	_cloud._moveDiff.x = 1;
-	_cloud._field7A = 7;
+	_cloud._moveRate = 7;
 	_cloud.setAction(&_action5);
 
 	_object1.postInit();

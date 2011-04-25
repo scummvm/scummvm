@@ -123,7 +123,7 @@ public:
 	virtual void process(Event &event) {}
 	virtual void dispatch();
 	virtual void setAction(Action *action) { setAction(action, NULL); }
-	virtual void setAction(Action *action, EventHandler *fmt, ...);
+	virtual void setAction(Action *action, EventHandler *endHandler, ...);
 	virtual void destroy() {};
 };
 
@@ -133,8 +133,8 @@ public:
 	int _actionIndex;
 	int _delayFrames;
 	uint32 _startFrame;
-	int _field16;
-	EventHandler *_fmt;
+	bool _attached;
+	EventHandler *_endHandler;
 
 	Action();
 
@@ -143,12 +143,12 @@ public:
 	virtual void remove();
 	virtual void process(Event &event);
 	virtual void dispatch();
-	virtual void attached(EventHandler *newOwner, EventHandler *fmt, va_list va);
+	virtual void attached(EventHandler *newOwner, EventHandler *endHandler, va_list va);
 
-	void attach(EventHandler *newOwner, EventHandler *fmt, ...) {
+	void attach(EventHandler *newOwner, EventHandler *endHandler, ...) {
 		va_list va;
-		va_start(va, fmt);
-		attached(newOwner, fmt, va);
+		va_start(va, endHandler);
+		attached(newOwner, endHandler, va);
 		va_end(va);
 	}
 	int getActionIndex() const { return _actionIndex; }
@@ -168,7 +168,7 @@ public:
 	Common::Point _moveSign;
 	int _minorDiff;
 	int _majorDiff;
-	int _field1A;
+	int _changeCtr;
 	Action *_action;
 	SceneObject *_sceneObject;
 public:
@@ -253,7 +253,7 @@ public:
 class PlayerMover2 : public PlayerMover {
 public:
 	SceneObject *_destObject;
-	int _field7E;
+	int _maxArea;
 	int _minArea;
 	PlayerMover2() : PlayerMover() { _destObject = NULL; }
 
@@ -512,7 +512,7 @@ public:
 	int _regionIndex;
 	EventHandler *_mover;
 	Common::Point _moveDiff;
-	int _field7A;
+	int _moveRate;
 	Action *_endAction;
 	uint32 _regionBitList;
 public:

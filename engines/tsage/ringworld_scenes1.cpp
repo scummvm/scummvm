@@ -1093,7 +1093,7 @@ void Scene40::Action2::signal() {
 		scene->_doorway.setPriority2(200);
 		scene->_doorway.setPosition(Common::Point(159, 191));
 		scene->_doorway._moveDiff = Common::Point(40, 40);
-		scene->_doorway._field7A = 60;
+		scene->_doorway._moveRate = 60;
 		scene->_doorway.animate(ANIM_MODE_5, NULL);
 
 		Common::Point pt(271, 165);
@@ -1226,7 +1226,7 @@ void Scene40::Action6::signal() {
 		scene->_object1.setStrip2(6);
 		scene->_object1._moveDiff = Common::Point(40, 40);
 		scene->_object1.setPosition(Common::Point(313, 53));
-		scene->_object1._field7A = 60;
+		scene->_object1._moveRate = 60;
 
 		Common::Point pt(141, 194);
 		NpcMover *mover = new NpcMover();
@@ -1301,7 +1301,7 @@ void Scene40::Action8::signal() {
 			scene->_doorway.setVisage(16);
 			scene->_doorway.setStrip2(6);
 			scene->_doorway.setPriority2(200);
-			scene->_doorway._field7A = 60;
+			scene->_doorway._moveRate = 60;
 
 			if (_globals->_player._position.x >= 145) {
 				scene->_doorway.setPriority2(-1);

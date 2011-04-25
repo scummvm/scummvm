@@ -1706,7 +1706,7 @@ void Scene9900::strAction2::signal() {
 			_txtArray1[_txtArray1Index]._fontNumber = 2;
 			_txtArray1[_txtArray1Index]._color1 = 7;
 			_txtArray1[_txtArray1Index].setup(msg);
-			_txtArray1[_txtArray1Index]._field7A = 20;
+			_txtArray1[_txtArray1Index]._moveRate = 20;
 			_txtArray1[_txtArray1Index]._moveDiff.y = 2;
 			_txtArray1[_txtArray1Index].setPriority2(255);
 			int frameWidth = _txtArray1[_txtArray1Index].getFrame().getBounds().width();
@@ -1723,7 +1723,7 @@ void Scene9900::strAction2::signal() {
 
 			msg = _resourceManager->getMessage(8030, _lineNum++);
 			_txtArray2[_txtArray1Index].setup(msg);
-			_txtArray2[_txtArray1Index]._field7A = 20;
+			_txtArray2[_txtArray1Index]._moveRate = 20;
 			_txtArray2[_txtArray1Index]._moveDiff.y = 2;
 			_txtArray2[_txtArray1Index].setPriority2(255);
 			frameWidth = _txtArray2[_txtArray1Index].getFrame().getBounds().width();
