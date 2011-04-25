@@ -914,6 +914,8 @@ protected:
 	static bool notLockedFn(GameHandler *g);
 	virtual void handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName) {}
 public:
+	virtual ~Game() {}
+
 	void addHandler(GameHandler *entry) { _handlers.push_back(entry); }
 	void removeHandler(GameHandler *entry) { _handlers.remove(entry); }
 
