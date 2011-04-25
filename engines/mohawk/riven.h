@@ -111,7 +111,6 @@ typedef Common::HashMap<Common::String, uint32, Common::IgnoreCase_Hash, Common:
 class MohawkEngine_Riven : public MohawkEngine {
 protected:
 	Common::Error run();
-	virtual bool isWIP() const { return ENGINE_WIP_RIVEN; };
 
 public:
 	MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc);

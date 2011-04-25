@@ -66,7 +66,6 @@ public:
 public:
 	ScummEngine_v60he(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v60he();
-	virtual bool isWIP() const { return ENGINE_WIP_HE; };
 
 	virtual Common::String generateFilename(const int room) const;
 

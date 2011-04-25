@@ -1890,8 +1890,6 @@ public:
 	AGOSEngine_Feeble(OSystem *system);
 	~AGOSEngine_Feeble();
 
-	virtual bool isWIP() const { return ENGINE_WIP_AGOS2; };
-
 	virtual void setupGame();
 	virtual void setupOpcodes();
 	virtual void setupVideoOpcodes(VgaOpcodeProc *op);

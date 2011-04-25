@@ -145,7 +145,6 @@ struct MystCursorHint {
 class MohawkEngine_Myst : public MohawkEngine {
 protected:
 	Common::Error run();
-	virtual bool isWIP() const { return ENGINE_WIP_MYST; };
 
 public:
 	MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription *gamedesc);

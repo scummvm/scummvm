@@ -134,7 +134,6 @@ enum CSTimeState {
 class MohawkEngine_CSTime : public MohawkEngine {
 protected:
 	Common::Error run();
-	virtual bool isWIP() const { return ENGINE_WIP_CSTIME; };
 
 public:
 	MohawkEngine_CSTime(OSystem *syst, const MohawkGameDescription *gamedesc);

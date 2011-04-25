@@ -42,7 +42,6 @@ class ScummEngine_v7 : public ScummEngine_v6 {
 public:
 	ScummEngine_v7(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v7();
-	virtual bool isWIP() const { return ENGINE_WIP_SCUMM_7_8; };
 
 
 protected:
