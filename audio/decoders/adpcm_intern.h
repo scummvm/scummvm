@@ -43,7 +43,7 @@ namespace Audio {
 class ADPCMStream : public RewindableAudioStream {
 protected:
 	Common::DisposablePtr<Common::SeekableReadStream> _stream;
-	const int32 _startpos;
+	int32 _startpos;
 	const int32 _endpos;
 	const int _channels;
 	const uint32 _blockAlign;
@@ -97,9 +97,7 @@ protected:
 
 public:
 	Ima_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
-		memset(&_status, 0, sizeof(_status));
-	}
+		: ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {}
 
 	/**
 	 * This table is used by decodeIMA.
