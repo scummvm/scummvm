@@ -18,7 +18,7 @@ title 'Escape from Monkey Island' may be supported in the distant future.
 How do I run Residual?
 ----------------------
 As Residual is not yet stable, easy to use, or complete.
-Some technical ability is required.
+Some technical ability might be required.
 
 It runs really slow !
 ----------------------------------------
@@ -34,7 +34,9 @@ What is the state of Residual?
 Basic gameplay works, including cutscenes. Parts of the game are playable,
 but many features are either missing or unstable. Crashes are likely.
 
-Grim Fandango currently playable to around the end of Year 2.
+Grim Fandango currently playable to the end. (With quite a few glitches)
+
+Some puzzles might be hard to complete currently.
 
 Also beware that since Residual is currently in an alpha-state, there is
 no guarantee that your saves will continue to work with newer builds.
@@ -81,6 +83,16 @@ F3         : Toggle sector editor
 Home       : Go to default position in current set
 j          : Enter jump number
 
+Note that these are only available after enabling debug-mode.
+
+
+How do I enable debug-keys?
+---------------------------
+To enable debug-keys, you will have to add the following to your configuration file
+under your Grim Fandango-entry:
+
+game_devel_mode=true
+
 Configuration file:
 -------------------
 By default, the configuration file is saved in, and loaded from:
@@ -106,13 +118,16 @@ By default, the configuration file is saved in, and loaded from:
         Others:
         residual.ini in the current directory
 
-How do I enable debug-keys?
----------------------------
-To enable debug-keys, you will have to add the following to your configuration file
-under your Grim Fandango-entry:
-
-game_devel_mode=true
-
 How do I report bugs?
 ---------------------
-Don't. Residual is very alpha and we KNOW it doesn't work right.
+You can report bugs at our github-issue-tracker:
+https://www.github.com/residual/residual/issues
+
+Please read the Wiki regarding how to report bugs properly first though:
+https://sourceforge.net/apps/mediawiki/residual/index.php?title=Reporting_Bugs
+
+Remember to always have the following information in your bug reports:
+* Bug details, including instructions on reproducing it
+* Language of game (English, German, ...)
+* Platform and Compiler (Win32, Linux, MacOS, ...)
+* Preferably also a link to a save game right before the bug happened.
