@@ -263,7 +263,12 @@ GrimEngine::GrimEngine(OSystem *syst, int gameFlags, GrimGameType gameType) :
 	g_imuse = NULL;
 
 	_showFps = (tolower(g_registry->get("show_fps", "false")[0]) == 't');
+
+#ifdef USE_OPENGL
 	_softRenderer = (tolower(g_registry->get("soft_renderer", "false")[0]) == 't');
+#else
+	_softRenderer = true;
+#endif
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
@@ -379,17 +384,16 @@ Common::Error GrimEngine::run() {
 
 	bool fullscreen = (tolower(g_registry->get("fullscreen", "false")[0]) == 't');
 
-	if (!_softRenderer && !g_system->hasFeature(OSystem::kFeatureOpenGL))
-		error("gfx backend doesn't support hardware rendering");
+	if (!_softRenderer && !g_system->hasFeature(OSystem::kFeatureOpenGL)){
+		warning("gfx backend doesn't support hardware rendering");
+		_softRenderer=true;
+	}
 
 	if (_softRenderer)
 		g_driver = new GfxTinyGL();
 #ifdef USE_OPENGL
 	else
 		g_driver = new GfxOpenGL();
-#else
-	else
-		error("gfx backend doesn't support hardware rendering");
 #endif
 
 	g_driver->setupScreen(640, 480, fullscreen);
