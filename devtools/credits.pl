@@ -520,7 +520,7 @@ begin_credits("Credits");
     begin_section("ScummVM code");
 	  add_paragraph(
 	  "Residual use a lot of ScummVM code. ".
-	  "For list of authors look into COPYRIGHT file. ");
+	  "For a list of authors look into COPYRIGHT file. ");
     end_section();
 
   begin_section("Website code");
