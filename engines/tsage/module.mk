@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	globals.o \
 	graphics.o \
 	resources.o \
+	ringworld_demo.o \
 	ringworld_logic.o \
 	ringworld_scenes1.o \
 	ringworld_scenes2.o \
