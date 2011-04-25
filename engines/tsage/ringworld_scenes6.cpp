@@ -384,7 +384,7 @@ void Scene5000::Hotspot7::doAction(int action) {
 		SceneItem::display2(5000, 12);
 		break;
 	case CURSOR_TALK:
-		setAction(&scene->_action6);
+		scene->setAction(&scene->_action6);
 		break;
 	default:
 		SceneHotspot::doAction(action);
@@ -403,7 +403,7 @@ void Scene5000::Hotspot8::doAction(int action) {
 		SceneItem::display2(5000, 14);
 		break;
 	case OBJECT_SCANNER:
-		setAction(&scene->_action5);
+		scene->setAction(&scene->_action5);
 		break;
 	default:
 		SceneHotspot::doAction(action);
