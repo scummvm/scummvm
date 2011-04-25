@@ -7,8 +7,8 @@ IDI_ICON               ICON    DISCARDABLE     "../../icons/residual.ico"
 #endif
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION     0,0,6,0
- PRODUCTVERSION  0,0,6,0
+ FILEVERSION     0,0,7,0
+ PRODUCTVERSION  0,0,7,0
  FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
 #ifdef _DEBUG
  FILEFLAGS       VS_FF_DEBUG
@@ -25,12 +25,12 @@ BEGIN
         BEGIN
             VALUE "Comments", "\0"
             VALUE "FileDescription", "http://residual.sourceforge.net/\0"
-            VALUE "FileVersion", "0.0.6git\0"
+            VALUE "FileVersion", "0.0.7git\0"
             VALUE "InternalName", "residual\0"
             VALUE "LegalCopyright", "Copyrights information are in AUTHORS file\0"
             VALUE "OriginalFilename", "residual.exe\0"
             VALUE "ProductName", "Residual\0"
-            VALUE "ProductVersion", "0.0.6git\0"
+            VALUE "ProductVersion", "0.0.7git\0"
         END
     END
 
