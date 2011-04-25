@@ -2667,6 +2667,17 @@ Region::Region(int resNum, int rlbNum, ResourceType ctlType) {
 	byte *regionData = _resourceManager->getResource(ctlType, resNum, rlbNum);
 	assert(regionData);
 
+	load(regionData);
+
+	DEALLOCATE(regionData);
+}
+
+Region::Region(int regionId, const byte *regionData) {
+	_regionId = regionId;
+	load(regionData);
+}
+
+void Region::load(const byte *regionData) {
 	// Set the region bounds
 	_bounds.top = READ_LE_UINT16(regionData + 6);
 	_bounds.left = READ_LE_UINT16(regionData + 8);
@@ -2689,8 +2700,6 @@ Region::Region(int resNum, int rlbNum, ResourceType ctlType) {
 
 		_ySlices.push_back(sliceSet);
 	}
-
-	DEALLOCATE(regionData);
 }
 
 /**
@@ -3233,18 +3242,27 @@ void ScenePriorities::load(int resNum) {
 	_resNum = resNum;
 	clear();
 
-	byte *regionData = _resourceManager->getResource(RES_PRIORITY, resNum, 9999, true);
+	bool altMode = (_vm->getFeatures() & GF_ALT_REGIONS) != 0;
+	byte *regionData = _resourceManager->getResource(RES_PRIORITY, resNum, altMode ? 1 : 9999, true);
+	if (!regionData)
+		return;
 
-	if (regionData) {
-		int regionCount = READ_LE_UINT16(regionData);
-		for (int regionCtr = 0; regionCtr < regionCount; ++regionCtr) {
+	int regionCount = READ_LE_UINT16(regionData);
+	for (int regionCtr = 0; regionCtr < regionCount; ++regionCtr) {
+		if (altMode) {
+			// Region data is embedded within the resource
+			uint16 regionId = READ_LE_UINT16(regionData + regionCtr * 6 + 2);
+			uint32 dataOffset = READ_LE_UINT32(regionData + regionCtr * 6 + 4);
+			push_back(Region(regionId, regionData + dataOffset));
+		} else {
+			// The data contains the index of another resource containing the region data
 			int rlbNum = READ_LE_UINT16(regionData + regionCtr * 6 + 2);
 
 			push_back(Region(resNum, rlbNum, RES_PRIORITY));
 		}
-
-		DEALLOCATE(regionData);
 	}
+
+	DEALLOCATE(regionData);
 }
 
 Region *ScenePriorities::find(int priority) {
@@ -3255,7 +3273,7 @@ Region *ScenePriorities::find(int priority) {
 	if (priority > 255)
 		priority = 255;
 
-	// Loop through the regions to find the closest for the givne priority level
+	// Loop through the regions to find the closest for the given priority level
 	int minRegionId = 9998;
 	Region *region = NULL;
 	for (ScenePriorities::iterator i = begin(); i != end(); ++i) {
