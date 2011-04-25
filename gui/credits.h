@@ -52,7 +52,7 @@ static const char *credits[] = {
 "",
 "C1""ScummVM code",
 "",
-"C0""Residual use a lot of ScummVM code. For list of authors look into COPYRIGHT file. ",
+"C0""Residual use a lot of ScummVM code. For a list of authors look into COPYRIGHT file. ",
 "C0""",
 "",
 "C1""Website code",
