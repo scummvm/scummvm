@@ -403,6 +403,14 @@ void Engine::openMainMenuDialog() {
 	syncSoundSettings();
 }
 
+void Engine::warnUserAboutWIPGame() {
+	if(ConfMan.get("display_wip_engine_warning").compareTo("false") != 0)
+	{
+		GUI::MessageDialog alert("WARNING: This game is UNSTABLE");
+		alert.runModal();
+	}
+}
+
 uint32 Engine::getTotalPlayTime() const {
 	if (!_pauseLevel)
 		return _system->getMillis() - _engineStartTime;

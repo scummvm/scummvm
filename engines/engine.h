@@ -255,6 +255,11 @@ public:
 	void openMainMenuDialog();
 
 	/**
+	 * Display a warning to the user that the game is still unstable.
+	 */
+	void warnUserAboutWIPGame();
+
+	/**
 	 * Get the total play time.
 	 *
 	 * @return How long the player has been playing in ms.
