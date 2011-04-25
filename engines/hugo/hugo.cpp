@@ -298,6 +298,10 @@ Common::Error HugoEngine::run() {
 				break;
 			}
 		}
+		if (_status.helpFl) {
+			_status.helpFl = false;
+			_file->instructions();
+		}
 	
 		_mouse->mouseHandler();                     // Mouse activity - adds to display list
 		_screen->displayList(kDisplayDisplay);      // Blit the display list to screen
@@ -323,9 +327,6 @@ void HugoEngine::initMachine() {
  */
 void HugoEngine::runMachine() {
 	status_t &gameStatus = getGameStatus();
-	// Don't process if we're in a textbox
-	if (gameStatus.textBoxFl)
-		return;
 
 	// Don't process if gameover
 	if (gameStatus.gameOverFl)
@@ -531,13 +532,13 @@ void HugoEngine::initStatus() {
 	debugC(1, kDebugEngine, "initStatus");
 	_status.storyModeFl   = false;                  // Not in story mode
 	_status.gameOverFl    = false;                  // Hero not knobbled yet
-	_status.textBoxFl     = false;                  // Not processing a text box
 	_status.lookFl        = false;                  // Toolbar "look" button
 	_status.recallFl      = false;                  // Toolbar "recall" button
 	_status.newScreenFl   = false;                  // Screen not just loaded
 	_status.godModeFl     = false;                  // No special cheats allowed
 	_status.doQuitFl      = false;
 	_status.skipIntroFl   = false;
+	_status.helpFl        = false;
 
 	// Initialize every start of new game
 	_status.tick            = 0;                    // Tick count
@@ -554,6 +555,7 @@ void HugoEngine::initStatus() {
 //	_status.screenWidth   = 0;                      // Desktop screen width
 //	_status.saveTick      = 0;                      // Time of last save
 //	_status.saveSlot      = 0;                      // Slot to save/restore game
+//	_status.textBoxFl     = false;                  // Not processing a text box
 }
 
 /**

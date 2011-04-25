@@ -340,7 +340,7 @@ void Parser::keyHandler(Common::Event event) {
 		break;
 	case Common::KEYCODE_F1:                        // User Help (DOS)
 		if (_checkDoubleF1Fl)
-			_vm->_file->instructions();
+			gameStatus.helpFl = true;
 		else
 			_vm->_screen->userHelp();
 		_checkDoubleF1Fl = !_checkDoubleF1Fl;

@@ -165,7 +165,8 @@ void TopMenu::handleCommand(GUI::CommandSender *sender, uint32 command, uint32 d
 	switch (command) {
 	case kCmdWhat:
 		close();
-		_vm->_file->instructions();
+		_vm->getGameStatus().helpFl = true;
+
 		break;
 	case kCmdMusic:
 		_vm->_sound->toggleMusic();
