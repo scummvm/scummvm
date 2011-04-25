@@ -123,7 +123,6 @@ void Parser_v3d::lineHandler() {
 
 	// SAVE/RESTORE
 	if (!strcmp("save", _vm->_line)) {
-		_vm->_config.soundFl = false;
 		if (gameStatus.gameOverFl)
 			_vm->gameOverMsg();
 		else
@@ -132,7 +131,6 @@ void Parser_v3d::lineHandler() {
 	}
 
 	if (!strcmp("restore", _vm->_line)) {
-		_vm->_config.soundFl = false;
 		_vm->_file->restoreGame(-1);
 		return;
 	}
