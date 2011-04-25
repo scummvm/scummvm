@@ -1,42 +1,43 @@
 Residual: A 3D game interpreter
 
-What is Residual?
------------------
-Residual allow to play 3D games such as Grim Fandango.
+Contents:
+1. What is Residual?
+2. Current level of support
+3. Running Residual
+4. Keys
+5. Configuration
+6. Troubleshooting
+7. Bug Reports
+8. Debugging
+
+1. What is Residual?
+--------------------
+Residual is a game engine reimplementation that allows you 
+to play 3D adventure games such as Grim Fandango.
 
 Residual utilizes OpenGL for 3D graphics hardware acceleration.
 A software renderer is also included for machines without hardware OpenGL.
 
-Which games does it support?
-----------------------------
 Residual is a fairly slow developing project and is still very much considered
-alpha. Currently it contains limited support for Grim Fandango.
+alpha. 
+
+2. Current level of support
+---------------------------
+
+
+2.1 - Which games does it support?
+----------------------------------
+Currently it supports Grim Fandango through to the end.
 
 It is possible, but far from promised, that the other LucasArts LUA-based
 title 'Escape from Monkey Island' may be supported in the distant future.
 
-How do I run Residual?
-----------------------
-As Residual is not yet stable, easy to use, or complete.
-Some technical ability might be required.
-
-It runs really slow !
-----------------------------------------
-Some gfx cards do not have a fast glDrawPixels access to zbuffer
-implementation in the system driver.
-
-Unix users may be able to achieve playable framerates by using Mesa 5.0 or
-above, but people unable to upgrade or Windows users must use software
-renderer. Software renderer is generally faster on modern platform.
-
-What is the state of Residual? 
-------------------------------
+2.2 - What is the state of Residual? 
+------------------------------------
 Basic gameplay works, including cutscenes. Parts of the game are playable,
 but many features are either missing or unstable. Crashes are likely.
 
 Grim Fandango currently playable to the end. (With quite a few glitches)
-
-Some puzzles might be hard to complete currently.
 
 Also beware that since Residual is currently in an alpha-state, there is
 no guarantee that your saves will continue to work with newer builds.
@@ -44,13 +45,25 @@ no guarantee that your saves will continue to work with newer builds.
 For more information, see the page on Residual at the wiki page:
 http://apps.sourceforge.net/mediawiki/residual
 
-Which datafiles are needed?
----------------------------
+
+3. Running Residual
+-------------------
+As Residual is not yet stable, easy to use, or complete.
+Some technical ability might be required.
+
+You will need the data files for Grim Fandango, as well as the patch,
+if your game is an older release.
+
+Specifically you need these files from your Grim CDs:
 *.LAB
 GRIM.TAB
 
-What are the default keys?
---------------------------
+Copy them to a folder on your Hard Drive, and then start residual. Then choose
+Add game, and select the folder you copied to. Then select it and press Start Game
+
+
+4. Default Keyboard-settings
+----------------------------
 e,u,p,i    : Examine, Use, Pickup, Inventory
 Arrow keys : Movement
 Shift      : Hold to run
@@ -61,40 +74,15 @@ Ctrl + c   : Force Quit (from command-line)
 Alt + x    : Quit (ingame)
 F1         : Menu
 
-Development/debug keys from the original game
----------------------------------------------
-Ctrl + e   : Enter lua string to execute
-Ctrl + g   : Jump to set
-Ctrl + i   : Toggle walk boxes
-Ctrl + l   : Toggle lighting
-Ctrl + n   : Display background name
-Ctrl + o   : Create a door
-Ctrl + p   : Execute patch file
-Ctrl + s   : Turn on cursor
-Ctrl + u   : Create a new object
-Ctrl + v   : Print the value of a variable
-Alt + n    : Next viewpoint
-Apt + p    : Prev viewpoint
-Alt + s    : Run lua script
-Shift + n  : Next set
-Shift + p  : Prev set
-Shift + o  : Toggle object names
-F3         : Toggle sector editor
-Home       : Go to default position in current set
-j          : Enter jump number
+5. Configuration
+----------------
+Currently, not all the settings for residual are available through the GUI,
+if you have problems with getting anything to work, first try to pass the settings
+from the command line, then, if that doesn't work, try to change your configuration file
+manually
 
-Note that these are only available after enabling debug-mode.
-
-
-How do I enable debug-keys?
----------------------------
-To enable debug-keys, you will have to add the following to your configuration file
-under your Grim Fandango-entry:
-
-game_devel_mode=true
-
-Configuration file:
--------------------
+5.2 - Location of configuration file
+------------------------------------
 By default, the configuration file is saved in, and loaded from:
 
         Windows Vista/7:
@@ -118,6 +106,29 @@ By default, the configuration file is saved in, and loaded from:
         Others:
         residual.ini in the current directory
 
+
+6. Troubleshooting
+------------------
+
+It runs really slow !
+----------------------------------------
+Some gfx cards do not have a fast glDrawPixels access to zbuffer
+implementation in the system driver.
+
+Unix users may be able to achieve playable framerates by using Mesa 5.0 or
+above, but people unable to upgrade or Windows users must use software
+renderer. Software renderer is generally faster on modern platform.
+
+I played a bit, but can't start a new game!
+-------------------------------------------
+This is because the last save and visited scene is stored in your configuration
+file, either delete grim-fandango from the Residual-menu, and readd it, or 
+go to your configuration file, and clean out the last-save and last-set entries.
+
+
+7. Bug Reports
+--------------
+
 How do I report bugs?
 ---------------------
 You can report bugs at our github-issue-tracker:
@@ -131,3 +142,44 @@ Remember to always have the following information in your bug reports:
 * Language of game (English, German, ...)
 * Platform and Compiler (Win32, Linux, MacOS, ...)
 * Preferably also a link to a save game right before the bug happened.
+
+8. Debugging
+------------
+WARNING: This section contains information about the various tools that
+are included for debugging residual, this should not be necessary for
+normal play at all. But the curious might like to know how.
+
+8.1 Development/debug keys from the original game
+-------------------------------------------------
+Ctrl + e   : Enter lua string to execute
+Ctrl + g   : Jump to set
+Ctrl + i   : Toggle walk boxes
+Ctrl + l   : Toggle lighting
+Ctrl + n   : Display background name
+Ctrl + o   : Create a door
+Ctrl + p   : Execute patch file
+Ctrl + s   : Turn on cursor
+Ctrl + u   : Create a new object
+Ctrl + v   : Print the value of a variable
+Alt + n    : Next viewpoint
+Apt + p    : Prev viewpoint
+Alt + s    : Run lua script
+Shift + n  : Next set
+Shift + p  : Prev set
+Shift + o  : Toggle object names
+F3         : Toggle sector editor
+Home       : Go to default position in current set
+j          : Enter jump number
+
+Note that these are only available after enabling debug-mode.
+
+
+8.2 How do I enable debug-keys?
+-------------------------------
+To enable debug-keys, you will have to add the following to your configuration file
+under your Grim Fandango-entry:
+
+game_devel_mode=true
+
+
+
