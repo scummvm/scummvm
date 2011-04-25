@@ -39,7 +39,7 @@ class Mixer;
 }
 
 namespace Graphics {
-	struct Surface;
+struct Surface;
 }
 
 namespace Common {
