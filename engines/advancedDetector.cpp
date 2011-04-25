@@ -51,7 +51,13 @@ static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGa
 		extra = g.extra;
 	}
 
-	GameDescriptor gd(g.gameid, title, g.language, g.platform);
+	GameSupportLevel gsl = kStableGame;
+	if (g.flags & ADGF_UNSTABLE)
+		gsl = kUnstableGame;
+	else if (g.flags & ADGF_TESTING)
+		gsl = kTestingGame;
+
+	GameDescriptor gd(g.gameid, title, g.language, g.platform, 0, gsl);
 	gd.updateDesc(extra);
 	return gd;
 }
@@ -253,8 +259,21 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 
 	Common::updateGameGUIOptions(agdDesc->guioptions | _guioptions, lang);
 
+	GameDescriptor gameDescriptor = toGameDescriptor(*agdDesc, _gameids);
 
-	debug(2, "Running %s", toGameDescriptor(*agdDesc, _gameids).description().c_str());
+	bool showTestingWarning = false;
+
+#ifdef RELEASE_BUILD
+	showTestingWarning = true;
+#endif
+
+	if (((gameDescriptor.getSupportLevel() == kUnstableGame
+			|| (gameDescriptor.getSupportLevel() == kTestingGame
+					&& showTestingWarning)))
+			&& !Engine::warnUserAboutUnsupportedGame())
+		return Common::kUserCanceled;
+
+	debug(2, "Running %s", gameDescriptor.description().c_str());
 	if (!createInstance(syst, engine, agdDesc))
 		return Common::kNoGameDataFoundError;
 	else

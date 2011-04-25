@@ -252,6 +252,13 @@ public:
 	void openMainMenuDialog();
 
 	/**
+	 * Display a warning to the user that the game is not fully supported.
+	 *
+	 * @return true if the user chose to start anyway, false otherwise
+	 */
+	static bool warnUserAboutUnsupportedGame();
+
+	/**
 	 * Get the total play time.
 	 *
 	 * @return How long the player has been playing in ms.
