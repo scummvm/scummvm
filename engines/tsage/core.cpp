@@ -3148,9 +3148,20 @@ void WalkRegions::clear() {
 
 void WalkRegions::load(int sceneNum) {
 	clear();
-
 	_resNum = sceneNum;
-	byte *regionData = _resourceManager->getResource(RES_WALKRGNS, sceneNum, 1, true);
+
+	if (_vm->getFeatures() & GF_ALT_REGIONS) {
+		loadRevised();
+	} else {
+		loadOriginal();
+	}
+}
+
+/**
+ * This version handles loading walk regions for Ringworld floppy version and Demo #1
+ */
+void WalkRegions::loadOriginal() {
+	byte *regionData = _resourceManager->getResource(RES_WALKRGNS, _resNum, 1, true);
 	if (!regionData) {
 		// No data, so return
 		_resNum = -1;
@@ -3161,7 +3172,7 @@ void WalkRegions::load(int sceneNum) {
 	int dataSize;
 
 	// Load the field 18 list
-	dataP = _resourceManager->getResource(RES_WALKRGNS, sceneNum, 2);
+	dataP = _resourceManager->getResource(RES_WALKRGNS, _resNum, 2);
 	dataSize = _vm->_memoryManager.getSize(dataP);
 	assert(dataSize % 10 == 0);
 
@@ -3175,7 +3186,7 @@ void WalkRegions::load(int sceneNum) {
 	DEALLOCATE(dataP);
 
 	// Load the idx list
-	dataP = _resourceManager->getResource(RES_WALKRGNS, sceneNum, 3);
+	dataP = _resourceManager->getResource(RES_WALKRGNS, _resNum, 3);
 	dataSize = _vm->_memoryManager.getSize(dataP);
 	assert(dataSize % 2 == 0);
 
@@ -3186,7 +3197,7 @@ void WalkRegions::load(int sceneNum) {
 	DEALLOCATE(dataP);
 
 	// Load the secondary idx list
-	dataP = _resourceManager->getResource(RES_WALKRGNS, sceneNum, 4);
+	dataP = _resourceManager->getResource(RES_WALKRGNS, _resNum, 4);
 	dataSize = _vm->_memoryManager.getSize(dataP);
 	assert(dataSize % 2 == 0);
 
@@ -3197,7 +3208,7 @@ void WalkRegions::load(int sceneNum) {
 	DEALLOCATE(dataP);
 
 	// Handle the loading of the actual regions themselves
-	dataP = _resourceManager->getResource(RES_WALKRGNS, sceneNum, 5);
+	dataP = _resourceManager->getResource(RES_WALKRGNS, _resNum, 5);
 
 	byte *pWalkRegion = regionData + 16;
 	byte *srcP = dataP;
@@ -3210,7 +3221,7 @@ void WalkRegions::load(int sceneNum) {
 		wr._idxListIndex = READ_LE_UINT32(pWalkRegion + 4);
 		wr._idxList2Index = READ_LE_UINT32(pWalkRegion + 8);
 
-		// Region in the region data
+		// Read in the region data
 		int size = READ_LE_UINT16(srcP);
 		srcP += 2;
 		wr.loadRegion(srcP, size);
@@ -3220,6 +3231,74 @@ void WalkRegions::load(int sceneNum) {
 	}
 
 	DEALLOCATE(dataP);
+	DEALLOCATE(regionData);
+}
+
+/**
+ * This version handles loading walk regions for Ringworld CD version and Demo #2. Given it's the newer
+ * version, it may also be used by future game titles
+ */
+void WalkRegions::loadRevised() {
+	byte *regionData = _resourceManager->getResource(RES_WALKRGNS, _resNum, 2, true);
+	if (!regionData) {
+		// No data, so return
+		_resNum = -1;
+		return;
+	}
+
+	byte *data1P = regionData + READ_LE_UINT32(regionData);
+	byte *data2P = regionData + READ_LE_UINT32(regionData + 4);
+	byte *data3P = regionData + READ_LE_UINT32(regionData + 8);
+	byte *data4P = regionData + READ_LE_UINT32(regionData + 12);
+	byte *regionOffset = regionData + 16;
+	int dataSize;
+
+	// Load the field 18 list
+	dataSize = READ_LE_UINT32(regionData + 8) - READ_LE_UINT32(regionData + 4);
+	assert(dataSize % 10 == 0);
+
+	byte *p = data2P;
+	for (int idx = 0; idx < (dataSize / 10); ++idx, p += 10) {
+		WRField18 rec;
+		rec.load(p);
+		_field18.push_back(rec);
+	}
+
+	// Load the idx list
+	dataSize = READ_LE_UINT32(regionData + 12) - READ_LE_UINT32(regionData + 8);
+	assert(dataSize % 2 == 0);
+
+	p = data3P;
+	for (int idx = 0; idx < (dataSize / 2); ++idx, p += 2)
+		_idxList.push_back(READ_LE_UINT16(p));
+
+	// Load the secondary idx list
+	dataSize = READ_LE_UINT32(regionData + 16) - READ_LE_UINT32(regionData + 12);
+	assert(dataSize % 2 == 0);
+
+	p = data4P;
+	for (int idx = 0; idx < (dataSize / 2); ++idx, p += 2)
+		_idxList2.push_back(READ_LE_UINT16(p));
+
+	// Handle the loading of the actual regions themselves
+	byte *pWalkRegion = data1P + 16;
+	for (; (int16)READ_LE_UINT16(pWalkRegion) != -20000; pWalkRegion += 16, regionOffset += 4) {
+		WalkRegion wr;
+		byte *srcP = regionData + READ_LE_UINT32(regionOffset);
+
+		// Set the Walk region specific fields
+		wr._pt.x = (int16)READ_LE_UINT16(pWalkRegion);
+		wr._pt.y = (int16)READ_LE_UINT16(pWalkRegion + 2);
+		wr._idxListIndex = READ_LE_UINT32(pWalkRegion + 4);
+		wr._idxList2Index = READ_LE_UINT32(pWalkRegion + 8);
+
+		// Read in the region data
+		wr._regionId = 0;
+		wr.load(srcP);
+
+		_regionList.push_back(wr);
+	}
+
 	DEALLOCATE(regionData);
 }
 

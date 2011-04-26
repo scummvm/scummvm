@@ -635,8 +635,6 @@ public:
 };
 
 class Region {
-private:
-	void load(const byte *regionData);
 public:
 	int _regionSize;
 	int _regionId;
@@ -647,6 +645,7 @@ public:
 	Region(int resNum, int rlbNum, ResourceType ctlType = RES_CONTROL);
 	Region(int regionId, const byte *regionData);
 
+	void load(const byte *regionData);
 	bool contains(const Common::Point &pt);
 	bool empty() const;
 	void clear();
@@ -839,6 +838,9 @@ public:
 };
 
 class WalkRegions {
+private:
+	void loadOriginal();
+	void loadRevised();
 public:
 	int _resNum;
 	RouteEnds _routeEnds;
