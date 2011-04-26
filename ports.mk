@@ -180,7 +180,19 @@ endif
 	cp $(srcdir)/README $(WIN32PATH)/README.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
-	u2d $(WIN32PATH)/*.txt
+	unix2dos $(WIN32PATH)/*.txt
+
+# Special target to create a win32 installer
+# (extensions for text files are removed, as they are read
+#  as-is by the setup script and renamed there)
+win32setup: win32dist
+	mv $(WIN32PATH)/AUTHORS.txt $(WIN32PATH)/AUTHORS
+	mv $(WIN32PATH)/COPYING.txt $(WIN32PATH)/COPYING
+	mv $(WIN32PATH)/COPYING.LGPL.txt $(WIN32PATH)/COPYING.LGPL
+	mv $(WIN32PATH)/COPYRIGHT.txt $(WIN32PATH)/COPYRIGHT
+	mv $(WIN32PATH)/NEWS.txt $(WIN32PATH)/NEWS
+	mv $(WIN32PATH)/README.txt $(WIN32PATH)/README
+	makensis -V2 -Dtop_srcdir="../../$(srcdir)" -Dtext_dir="../../$(WIN32PATH)" -Dbuild_dir="../../$(WIN32PATH)" $(srcdir)/dists/nsis/scummvm.nsi
 
 #
 # AmigaOS specific
