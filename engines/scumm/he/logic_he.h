@@ -41,9 +41,9 @@ public:
 	int getFromArray(int arg0, int idx2, int idx1);
 	void putInArray(int arg0, int idx2, int idx1, int val);
 
-	void beforeBootScript() {}
-	void initOnce() {}
-	void startOfFrame() {}
+	virtual void beforeBootScript() {}
+	virtual void initOnce() {}
+	virtual int startOfFrame() { return 1; }
 	void endOfFrame() {}
 	void processKeyStroke(int keyPressed) {}
 
@@ -111,25 +111,39 @@ private:
 
 class LogicHEsoccer : public LogicHE {
 private:
+	byte *_userData;
 	double *_userDataD;
 
 public:
 	LogicHEsoccer(ScummEngine_v90he *vm);
+	~LogicHEsoccer();
 
 	int versionID();
 	int32 dispatch(int op, int numArgs, int32 *args);
+
+	void beforeBootScript();
+	void initOnce();
+	int startOfFrame();
 
 private:
 	int op_1001(int32 *args);
 	int op_1002(int32 *args);
 	int op_1003(int32 *args);
 	int op_1004(int32 *args);
-	int op_1006(int32 *args);
+	// op_1006 can be called from other opcodes!
+	int op_1006(int32 a1, int32 a2, int32 a3, int32 a4);
 	int op_1007(int32 *args);
 	int op_1008(int32 *args);
+	// op_1011 can be called from other opcodes!
+	int op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5);
+	void op_1011_sub(int32 a1, int32 a2, int32 a3, int32 a4);
 	int op_1012(int32 *args);
+	// op_1013 can be called from other opcodes!
+	int op_1013(int32 a1, int32 a2, int32 a3);
 	int op_1014(int32 *args);
 	int op_1019(int32 *args);
+	// op_1020 can be called from other opcodes!
+	int op_1020();
 	int op_1021(int32 *args);
 };
 

@@ -823,8 +823,12 @@ int LogicHEsoccer::versionID() {
 }
 
 LogicHEsoccer::LogicHEsoccer(ScummEngine_v90he *vm) : LogicHE(vm) {
-	// Originally it used 0x1b0d bytes
-	_userDataD = (double *)calloc(1732, sizeof(double));
+	_userData = (byte *)calloc(6921, 1); // Allocate user data
+	_userDataD = (double *)_userData;
+}
+
+LogicHEsoccer::~LogicHEsoccer() {
+	free(_userData);
 }
 
 int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
@@ -843,6 +847,27 @@ int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 		res = op_1004(args);
 		break;
 
+	case 1006:
+		res = op_1006(args[0], args[1], args[2], args[3]);
+		break;
+
+	case 1011:
+		// args[4] is ignored!
+		res = op_1011(args[0], args[1], args[2], args[3], args[5]);
+		break;
+
+	case 1012:
+		res = op_1012(args);
+		break;
+
+	case 1013:
+		res = op_1013(args[0], args[1], args[2]);
+		break;
+
+	case 1020:
+		res = op_1020();
+		break;
+
 	case 8221968:
 		// Someone had a fun and used his birthday as opcode number
 		res = getFromArray(args[0], args[1], args[2]);
@@ -852,6 +877,30 @@ int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 		// original range is 1001 - 1021
 		LogicHE::dispatch(op, numArgs, args);
 	}
+
+	return res;
+}
+
+void LogicHEsoccer::beforeBootScript() {
+	if (_userData[6869])
+		op_1020();
+
+	_userDataD[530] = 0;
+}
+
+void LogicHEsoccer::initOnce() {
+	// The original sets some paths here that we don't need to worry about
+	_userData[6881] = 0;
+	_userDataD[530] = 0;
+}
+
+int LogicHEsoccer::startOfFrame() {
+	// This variable is some sort of flag that activates this mode
+	int res = (int)_userDataD[530];
+
+	// _userDataD[535] is not used!
+	if (res)
+		res = op_1011((int)_userDataD[531], (int)_userDataD[532], (int)_userDataD[533], (int)_userDataD[534], (int)_userDataD[536]);
 
 	return res;
 }
@@ -901,16 +950,16 @@ int LogicHEsoccer::op_1004(int32 *args) {
 	return 1;
 }
 
-int LogicHEsoccer::op_1006(int32 *args) {
-	double a1 = args[1] * 0.01;
-	double a2 = args[2] * 0.01;
-	double a3 = args[3] * 0.01;
+int LogicHEsoccer::op_1006(int32 a1, int32 a2, int32 a3, int32 a4) {
+	double v1 = a1 * 0.01;
+	double v2 = a2 * 0.01;
+	double v3 = a3 * 0.01;
 	double var108, var109;
 
-	_userDataD[529] = args[4];
+	_userDataD[529] = a4;
 
-	var108 = atan2(a1, a3) * _userDataD[523] - args[4];
-	var109 = _userDataD[526] - _userDataD[528] + (_userDataD[521] - atan2(_userDataD[524] - a2, a3)) * _userDataD[522];
+	var108 = atan2(v1, v3) * _userDataD[523] - a4;
+	var109 = _userDataD[526] - _userDataD[528] + (_userDataD[521] - atan2(_userDataD[524] - v2, v3)) * _userDataD[522];
 
 	writeScummVar(108, (int32)var108);
 	writeScummVar(109, (int32)var109);
@@ -920,9 +969,46 @@ int LogicHEsoccer::op_1006(int32 *args) {
 
 int LogicHEsoccer::op_1007(int32 *args) {
 	// TODO: Used when the HE logo is shown
+	// This initializes the _userDataD fields that are used in op_1006/op_1011
+
+	long double v14 = (long double)args[0] * 0.01;
+	_userData[6873] = 0;
+	long double v13 = (long double)args[2] * 0.01;
+	_userDataD[524] = v14;
+	long double v12 = atan2(v13, v14);
+	_userDataD[520] = v12;
+	long double v15 = atan2(v13 - (long double)args[4] * 0.01, (long double)args[3] * 0.01);
+	long double v19 = v15 * 2.0;
+	long double v17 = atan2(v13 - (long double)args[4] * 0.01, v14);
+	_userDataD[519] = v19;
+	_userDataD[521] = v17;
+	_userDataD[525] = (v17 - v12) * 2.0;
+	_userDataD[527] = (long double)args[5];
+	_userDataD[526] = (long double)args[6];
+	_userDataD[528] = (long double)args[7];
+	_userDataD[522] = _userDataD[526] / _userDataD[525];
+	_userDataD[523] = _userDataD[527] / _userDataD[519];
+	_userDataD[518] = v13;
+
+	*((uint32 *)_userData[6857]) = 0;
+	memset(_userData + 2737, 0, 4 * 1024);
+	for (int i = 0; i < 146; i++)
+		_userDataD[538 + i] = 0;
+	_userData[2736] = 0;
+
+	if (*((uint32 *)_userData[6885]) == 0 )
+		op_1013(4, args[8], args[9]);
 
 	return 1;
 }
+
+#if 0
+// TODO: Used by several opcodes
+// Returns the square root of the sum of the squares of the arguments
+static inline double fsqrtSquare(double a1, double a2, double a3) {
+	return sqrt(a1 * a1 + a2 * a2 + a3 * a3);
+}
+#endif
 
 int LogicHEsoccer::op_1008(int32 *args) {
 	// TODO: Used during a match (kicking?)
@@ -930,8 +1016,184 @@ int LogicHEsoccer::op_1008(int32 *args) {
 	return 1;
 }
 
+int LogicHEsoccer::op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5) {
+	// This is called on each frame by startOfFrame() if activated by op_1012.
+	// This seems to do player placement!
+
+	float v28;
+
+	for (int i = 0; i < 18; i++) {
+		// These seem to be some sort of percent? of angles?
+		int v32 = getFromArray(a1, i, 0);
+		int v6 = getFromArray(a1, i, 1);
+		int v30 = getFromArray(a1, i, 2);
+
+		float v29 = (double)v32 / 100.0;
+		v28 = (double)v6 / 100.0;
+		float v31 = (double)v30 / 100.0;
+
+		if (i < 13) {
+			int v25 = ((v32 + 2760) / 500 >= 0) ? ((v32 + 2750) / 500) : 0;
+			int v24 = 10;
+
+			if (v25 <= 10) {
+				int v23 = 0;
+				if ((v32 + 2750) / 500 >= 0)
+					v23 = (v32 + 2750) / 500;
+
+				v24 = v23;
+			}
+
+			int v22 = 0;
+			if ((9219 - v30) / 500 >= 0)
+				v22 = (9219 - v30) / 500;
+
+			int v21 = 6;
+			if (v22 <= 6) {
+				int v20 = 0;
+				if ((9219 - v30) / 500 >= 0)
+					v20 = (9219 - v30) / 500;
+				v21 = v20;
+			}
+
+			if (a5)
+				putInArray(a5, 0, i, v24 + 11 * v21);
+		}
+
+		float v7 = atan2(_userDataD[524] - v28, v31);
+		int v8 = (int)(_userDataD[526] - (_userDataD[521] - v7) * _userDataD[522] + 300.0);
+
+		double v9 = atan2(_userDataD[523], v31);
+		// x/y position?
+		putInArray(a2, i, 0, (int32)(v29 * v9 + 640.0));
+		putInArray(a2, i, 1, v8);
+
+		double v10 = atan2(_userDataD[524], v31);
+		int v12 = (int)(_userDataD[526] - (_userDataD[521] - (float)v10) * _userDataD[522] + 300.0);
+		double v13 = _userDataD[523];
+
+		v29 = atan2(v29, v31);
+		// x/y position?
+		putInArray(a2, i + 22, 0, (int32)(v29 * v13 + 640.0));
+		putInArray(a2, i + 22, 1, v12);
+	}
+
+	for (int i = 18; i < 22; i++) {
+		int v14 = getFromArray(a2, i, 0);
+		int v15 = getFromArray(a2, i, 1);
+
+		// This retains v28 from (i == 17)?
+		float v16 = _userDataD[524] - v28;
+		float v17 = v16 / tan((_userDataD[528] + v15 - _userDataD[526]) / (_userDataD[522] + _userDataD[521]));
+		double v18 = tan((double)(v14 - 640) / _userDataD[523]) * v17;
+		putInArray(a1, i, 0, (int)(v18 * 100.0));
+		putInArray(a1, i, 2, (int)(v17 * 100.0));
+	}
+
+	op_1011_sub(a1, a3, a4, a4);
+
+	return 1;
+}
+
+static inline int distance(int a1, int a2, int a3, int a4) {
+	return (int)sqrt((double)((a4 - a3) * (a4 - a3) + (a2 - a1) * (a2 - a1)));
+}
+
+void LogicHEsoccer::op_1011_sub(int32 a1, int32 a2, int32 a3, int32 a4) {
+	// As you can guess, this is called from op_1011
+	// This seems to be checking distances between the players and the ball
+	// and which distance is the shortest.
+
+	int v6[13];
+	int v7[13];
+	int v8[13];
+	int v18[195];
+
+	for (int i = 0; i < 13; i++) {
+		v6[i] = 0;
+		v7[i] = getFromArray(a1, i, 0);
+		v8[i] = getFromArray(a1, i, 2);
+	}
+
+	// 12 here, 13 up there
+	// Probably 12 for players, 13 for players+ball
+	for (int i = 0; i < 12; i++) {
+		int v22 = a4;
+		for (int j = i + 1; j < 13; j++) {
+			v18[i * 15 + j] = distance(v7[i], v7[j], v8[i], v8[j]);
+			putInArray(a2, i, j, v18[i * 15 + j]);
+			putInArray(a2, j, i, v18[i * 15 + j]);
+			if (v18[i * 15 + j] < v22) {
+				v22 = v18[i * 15 + j];
+				v6[i] = j + 1;
+				v6[j] = i + 1;
+			}
+		}
+	}
+
+	int v9 = getFromArray(a1, 20, 0);
+	int v10 = getFromArray(a1, 20, 2);
+	int v11 = getFromArray(a1, 21, 0);
+	int v12 = getFromArray(a1, 21, 2);
+	int v13 = getFromArray(a1, 18, 0);
+	int v14 = getFromArray(a1, 18, 2);
+	int v15 = getFromArray(a1, 19, 0);
+	int v16 = getFromArray(a1, 19, 2);
+	int v19[15];
+	int v20[15];
+
+	for (int i = 0; i < 6; i++) {
+		v20[i] = distance(v9, v7[i], v10, v8[i]);
+		v19[i] = distance(v13, v7[i], v14, v8[i]);
+	}
+
+	for (int i = 6; i < 13; i++) {
+		v20[i] = distance(v11, v7[i], v12, v8[i]);
+		v19[i] = distance(v15, v7[i], v16, v8[i]);
+	}
+
+	for (int i = 0; i < 13; i++) {
+		putInArray(a2, 14, i, v20[i]);
+		putInArray(a2, i, 14, v20[i]);
+		putInArray(a2, 13, i, v19[i]);
+		putInArray(a2, i, 13, v19[i]);
+		putInArray(a3, 0, i, v6[i]);
+	}
+}
+
 int LogicHEsoccer::op_1012(int32 *args) {
-	// TODO: Used after op_1019
+	// Used after op_1019
+	// This function activates startOfFrame() to call op_1011
+
+	_userDataD[530] = (args[0] != 0) ? 1 : 0;
+	_userDataD[531] = args[1];
+	_userDataD[532] = args[2];
+	_userDataD[533] = args[3];
+	_userDataD[534] = args[4];
+	_userDataD[535] = args[5]; // unused!!!
+	_userDataD[536] = args[6];
+
+	return 1;
+}
+
+#if 0
+// TODO: Used by op_1013
+// Some strange power operation, ignores negative exponents
+static inline double u32Pow(float a1, int a2) {
+	if (a2 < 0)
+		return 0.0;
+
+	float v4 = 1.0;
+
+	for (int i = 1; i <= a2; i++)
+		v4 *= a1;
+
+	return v4;
+}
+#endif
+
+int LogicHEsoccer::op_1013(int32 a1, int32 a2, int32 a3) {
+	// TODO: Called by op_1007
 
 	return 1;
 }
@@ -944,6 +1206,12 @@ int LogicHEsoccer::op_1014(int32 *args) {
 
 int LogicHEsoccer::op_1019(int32 *args) {
 	// TODO: Used at the beginning of a match
+
+	return 1;
+}
+
+int LogicHEsoccer::op_1020() {
+	// TODO: Called by several other opcodes. Possibly "stop play"?
 
 	return 1;
 }
