@@ -89,7 +89,8 @@ MODULE_OBJS += \
 	fs/windows/windows-fs.o \
 	fs/windows/windows-fs-factory.o \
 	midi/windows.o \
-	plugins/win32/win32-provider.o
+	plugins/win32/win32-provider.o \
+	taskbar/win32/win32-taskbar.o
 endif
 
 ifdef AMIGAOS

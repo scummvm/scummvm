@@ -36,6 +36,7 @@
 
 #include "backends/platform/sdl/win32/win32.h"
 #include "backends/fs/windows/windows-fs-factory.h"
+#include "backends/taskbar/win32/win32-taskbar.h"
 
 #include "common/memstream.h"
 
@@ -81,8 +82,11 @@ void OSystem_Win32::init() {
 	}
 #endif
 
-	// Initialze File System Factory
+	// Initialize File System Factory
 	_fsFactory = new WindowsFilesystemFactory();
+
+	// Initialize task bar manager
+	_taskbarManager = new Win32TaskbarManager();
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
