@@ -1436,6 +1436,7 @@ case $_host_os in
 		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
 		type_4_byte='long'
 		add_line_to_config_mk 'AMIGAOS = 1'
+		_opengl=no
 		;;
 	android)
 		case $_host in
