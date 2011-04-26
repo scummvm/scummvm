@@ -297,6 +297,11 @@ void GfxPaint16::bitsShow(const Common::Rect &rect) {
 		return;
 
 	_ports->offsetRect(workerRect);
+
+	// We adjust the left/right coordinates to even coordinates
+	workerRect.left &= 0xFFFE; // round down
+	workerRect.right = (workerRect.right + 1) & 0xFFFE; // round up
+
 	_screen->copyRectToScreen(workerRect);
 }
 
