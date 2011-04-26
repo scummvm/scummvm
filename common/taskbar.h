@@ -29,6 +29,17 @@
 
 namespace Common {
 
+/**
+ * The TaskbarManager allows interaction with the ScummVM icon in the taskbar.
+ *
+ * This allows the application to set a progress bar, an overlay icon and count
+ * as well as add the started engine to the recent items list (so that the user
+ * can start the engine directly in one click)
+ *
+ * @note functionality will vary between supported platforms (due to API limitations)
+ *       and some of the methods will just be no-ops or approximate the functionality
+ *       as best as possible
+ */
 class TaskbarManager {
 public:
 	/**
