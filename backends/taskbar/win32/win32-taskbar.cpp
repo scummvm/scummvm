@@ -21,19 +21,22 @@
  * $URL$
  * $Id$
  *
- * Original code from EcWin7 - Copyright (C) 2010 Emanuele Colombo
- * https://code.google.com/p/dukto/
  */
 
-#ifdef WIN32
+#if defined(WIN32)
 
 // Needed for taskbar functions
-#include <SDKDDKVer.h>
+#if defined(__GNUC__)
+#ifdef __MINGW32__
+    #include "backends/taskbar/win32/mingw-compat.h"
+#else
+    #error Only compilation with MingW is supported
+#endif
+#else
+    // Default MSVC headers for ITaskbarList3 and IShellLink
+    #include <SDKDDKVer.h>
+#endif
 #include <shlobj.h>
-
-// For Bitmap and overlay icons
-#include <gdiplus.h>
-using namespace Gdiplus;
 
 // For HWND
 #include <SDL_syswm.h>
@@ -85,6 +88,8 @@ void Win32TaskbarManager::init() {
 }
 
 void Win32TaskbarManager::setOverlayIcon(const Common::String &name, const Common::String &description) {
+	//warning("[Win32TaskbarManager::setOverlayIcon] Setting overlay icon to: %s (%s)", name.c_str(), description.c_str());
+
 	if (_taskbar == NULL)
 		return;
 
@@ -99,6 +104,10 @@ void Win32TaskbarManager::setOverlayIcon(const Common::String &name, const Commo
 		return;
 
 	HICON pIcon = (HICON)::LoadImage(NULL, path.c_str(), IMAGE_ICON, 16, 16, LR_LOADFROMFILE);
+	if (!pIcon) {
+	    warning("[Win32TaskbarManager::setOverlayIcon] Cannot load icon!");
+	    return;
+	}
 
 	// Sets the overlay icon
 	LPWSTR desc = ansiToUnicode(description.c_str());
@@ -124,6 +133,8 @@ void Win32TaskbarManager::setProgressState(TaskbarProgressState state) {
 }
 
 void Win32TaskbarManager::addRecent(const Common::String &name, const Common::String &description) {
+	//warning("[Win32TaskbarManager::addRecent] Adding recent list entry: %s (%s)", name.c_str(), description.c_str());
+
 	if (_taskbar == NULL)
 		return;
 
@@ -135,7 +146,7 @@ void Win32TaskbarManager::addRecent(const Common::String &name, const Common::St
 	GetModuleFileNameW(NULL, path, MAX_PATH);
 
 	// Create a shell link.
-	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC, IID_PPV_ARGS(&link)))) {
+	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC, IID_IShellLinkW, reinterpret_cast<void**> (&link)))) {
 		// Convert game name and description to Unicode.
 		LPWSTR game = ansiToUnicode(name.c_str());
 		LPWSTR desc = ansiToUnicode(description.c_str());
@@ -157,7 +168,7 @@ void Win32TaskbarManager::addRecent(const Common::String &name, const Common::St
 
 		// The link's display name must be set via property store.
 		IPropertyStore* propStore;
-		HRESULT hr = link->QueryInterface(&propStore);
+		HRESULT hr = link->QueryInterface(IID_IPropertyStore, reinterpret_cast<void**> (&(propStore)));
 		if (SUCCEEDED(hr)) {
 			PROPVARIANT pv;
 			pv.vt = VT_LPWSTR;
@@ -169,8 +180,7 @@ void Win32TaskbarManager::addRecent(const Common::String &name, const Common::St
 			propStore->Release();
 		}
 
-		// SHAddToRecentDocs will cause the games to be added to the Recent list, allowing the
-		// user to pin them.
+		// SHAddToRecentDocs will cause the games to be added to the Recent list, allowing the user to pin them.
 		SHAddToRecentDocs(SHARD_LINK, link);
 		link->Release();
 		delete[] game;
@@ -183,7 +193,6 @@ Common::String Win32TaskbarManager::getIconPath(Common::String target) {
 	Common::String extra = ConfMan.get("extrapath");
 
 	Common::String filename = target + ".ico";
-	Common::String path = extra + filename;
 
 	if (!Common::File::exists(filename)) {
 		// Try with the game id instead of the domain name

@@ -21,14 +21,12 @@
  * $URL$
  * $Id$
  *
- * Original code from EcWin7 - Copyright (C) 2010 Emanuele Colombo
- * https://code.google.com/p/dukto/
  */
 
 #ifndef BACKEND_WIN32_TASKBAR_H
 #define BACKEND_WIN32_TASKBAR_H
 
-#ifdef WIN32
+#if defined(WIN32)
 
 #include "common/str.h"
 #include "common/taskbar.h"
