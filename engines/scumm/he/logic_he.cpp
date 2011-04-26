@@ -971,21 +971,21 @@ int LogicHEsoccer::op_1007(int32 *args) {
 	// TODO: Used when the HE logo is shown
 	// This initializes the _userDataD fields that are used in op_1006/op_1011
 
-	long double v14 = (long double)args[0] * 0.01;
+	double v14 = (double)args[0] * 0.01;
 	_userData[6873] = 0;
-	long double v13 = (long double)args[2] * 0.01;
+	double v13 = (double)args[2] * 0.01;
 	_userDataD[524] = v14;
-	long double v12 = atan2(v13, v14);
+	double v12 = atan2(v13, v14);
 	_userDataD[520] = v12;
-	long double v15 = atan2(v13 - (long double)args[4] * 0.01, (long double)args[3] * 0.01);
-	long double v19 = v15 * 2.0;
-	long double v17 = atan2(v13 - (long double)args[4] * 0.01, v14);
+	double v15 = atan2(v13 - (double)args[4] * 0.01, (double)args[3] * 0.01);
+	double v19 = v15 * 2.0;
+	double v17 = atan2(v13 - (double)args[4] * 0.01, v14);
 	_userDataD[519] = v19;
 	_userDataD[521] = v17;
 	_userDataD[525] = (v17 - v12) * 2.0;
-	_userDataD[527] = (long double)args[5];
-	_userDataD[526] = (long double)args[6];
-	_userDataD[528] = (long double)args[7];
+	_userDataD[527] = (double)args[5];
+	_userDataD[526] = (double)args[6];
+	_userDataD[528] = (double)args[7];
 	_userDataD[522] = _userDataD[526] / _userDataD[525];
 	_userDataD[523] = _userDataD[527] / _userDataD[519];
 	_userDataD[518] = v13;
