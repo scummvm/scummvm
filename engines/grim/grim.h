@@ -109,7 +109,7 @@ public:
 	// perSecond should allow rates of zero, some actors will accelerate
 	// up to their normal speed (such as the bone wagon) so handling
 	// a walking rate of zero should happen in the default actor creation
-	float perSecond(float rate) const { return rate * _frameTime / 1000; }
+	float perSecond(float rate) const;
 
 	int getTextSpeed() { return _textSpeed; }
 	void setTextSpeed(int speed);
@@ -276,6 +276,7 @@ private:
 	unsigned _speedLimitMs;
 	bool _showFps;
 	bool _softRenderer;
+	bool _discardLoop;
 
 	bool *_controlsEnabled;
 	bool *_controlsState;

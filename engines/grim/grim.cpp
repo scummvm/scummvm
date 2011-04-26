@@ -885,6 +885,8 @@ void GrimEngine::mainLoop() {
 	_savegameSaveRequest = false;
 	_savegameFileName = NULL;
 	_refreshShadowMask = false;
+	_discardLoop = true;
+	int counter = 0;
 
 	for (;;) {
 		uint32 startTime = g_system->getMillis();
@@ -944,6 +946,18 @@ void GrimEngine::mainLoop() {
 		if (g_imuseState != -1) {
 			g_imuse->setMusicState(g_imuseState);
 			g_imuseState = -1;
+		}
+
+		// This is a trick to make the first two loops pass by without having
+		// perSecond return enormous numbers, since the _frameTime for them is big,
+		// few seconds. This is important for the set "ly", since unicycle_man
+		// uses walkForward to move as soon as the set starts and without this trick
+		// it would result in him making big steps and jumping over his destination point.
+		if (_discardLoop) {
+			if (counter == 1)
+				_discardLoop = false;
+
+			++counter;
 		}
 
 		uint32 endTime = g_system->getMillis();
@@ -1437,6 +1451,13 @@ float GrimEngine::getControlAxis(int num) {
 
 bool GrimEngine::getControlState(int num) {
 	return _controlsState[num];
+}
+
+float GrimEngine::perSecond(float rate) const {
+	if (_discardLoop)
+		return 0;
+
+	return rate * _frameTime / 1000;
 }
 
 void GrimEngine::registerTextObject(TextObject *t) {
