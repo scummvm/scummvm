@@ -17,8 +17,8 @@ void ZB_fillTriangleFlat(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBuffe
 #define PUT_PIXEL(_a) {						\
 	zz = z >> ZB_POINT_Z_FRAC_BITS;			\
 	if ((ZCMP(zz, pz[_a])) && (ZCMP(z, pz_2[_a]))) {	\
-      pp[_a] = color;						\
-      pz_2[_a] = z;							\
+	pp[_a] = color;						\
+	pz_2[_a] = z;							\
 	}										\
 	z += dzdx;								\
 }
