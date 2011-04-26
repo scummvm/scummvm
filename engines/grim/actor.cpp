@@ -221,13 +221,15 @@ void Actor::saveState(SaveGame *savedState) const {
 		// Cannot use g_grim->currScene() here because an actor can have walk planes
 		// from other scenes. It happens e.g. when Membrillo calls Velasco to tell him
 		// Naranja is dead.
-		Scene *s = g_grim->findScene(_setName.c_str());
-		for (SectorListType::iterator j = shadow.planeList.begin(); j != shadow.planeList.end(); ++j) {
-			Sector *sec = *j;
-			for (int k = 0; k < s->getSectorCount(); ++k) {
-				if (*s->getSectorBase(k) == *sec) {
-					savedState->writeLEUint32(k);
-					break;
+		if (_setName != "") {
+			Scene *s = g_grim->findScene(_setName.c_str());
+			for (SectorListType::iterator j = shadow.planeList.begin(); j != shadow.planeList.end(); ++j) {
+				Sector *sec = *j;
+				for (int k = 0; k < s->getSectorCount(); ++k) {
+					if (*s->getSectorBase(k) == *sec) {
+						savedState->writeLEUint32(k);
+						break;
+					}
 				}
 			}
 		}
@@ -386,12 +388,14 @@ bool Actor::restoreState(SaveGame *savedState) {
 		shadow.pos = savedState->readVector3d();
 
 		size = savedState->readLESint32();
-		Scene *scene = g_grim->findScene(_setName.c_str());
-		shadow.planeList.clear();
-		for (int j = 0; j < size; ++j) {
-			int32 id = savedState->readLEUint32();
-			Sector *s = new Sector(*scene->getSectorBase(id));
-			shadow.planeList.push_back(s);
+		if (_setName != "") {
+			Scene *scene = g_grim->findScene(_setName.c_str());
+			shadow.planeList.clear();
+			for (int j = 0; j < size; ++j) {
+				int32 id = savedState->readLEUint32();
+				Sector *s = new Sector(*scene->getSectorBase(id));
+				shadow.planeList.push_back(s);
+			}
 		}
 
 		shadow.shadowMaskSize = savedState->readLESint32();
