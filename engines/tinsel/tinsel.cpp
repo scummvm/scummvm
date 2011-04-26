@@ -911,10 +911,10 @@ Common::Error TinselEngine::run() {
 #else
 		initGraphics(640, 432, true);
 #endif
-		_screenSurface.create(640, 432, 1);
+		_screenSurface.create(640, 432, Graphics::PixelFormat::createFormatCLUT8());
 	} else {
 		initGraphics(320, 200, false);
-		_screenSurface.create(320, 200, 1);
+		_screenSurface.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
 	g_eventRec.registerRandomSource(_random, "tinsel");

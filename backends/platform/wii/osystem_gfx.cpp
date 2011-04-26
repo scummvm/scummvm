@@ -537,10 +537,10 @@ Graphics::Surface *OSystem_Wii::lockScreen() {
 	_surface.h = _gameHeight;
 #ifdef USE_RGB_COLOR
 	_surface.pitch = _gameWidth * _pfGame.bytesPerPixel;
-	_surface.bytesPerPixel = _pfGame.bytesPerPixel;
+	_surface.format = _pfGame;
 #else
 	_surface.pitch = _gameWidth;
-	_surface.bytesPerPixel = 1;
+	_surface.format = Graphics::PixelFormat::createFormatCLUT8();
 #endif
 
 	return &_surface;

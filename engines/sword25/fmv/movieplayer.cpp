@@ -121,7 +121,7 @@ void MoviePlayer::update() {
 		const Graphics::Surface *s = _decoder.decodeNextFrame();
 		if (s) {
 			// Transfer the next frame
-			assert(s->bytesPerPixel == 4);
+			assert(s->format.bytesPerPixel == 4);
 
 #ifdef THEORA_INDIRECT_RENDERING
 			byte *frameData = (byte *)s->getBasePtr(0, 0);

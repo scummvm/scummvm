@@ -381,7 +381,7 @@ const Graphics::Surface *QuickTimeDecoder::scaleSurface(const Graphics::Surface 
 
 	for (int32 j = 0; j < _scaledSurface->h; j++)
 		for (int32 k = 0; k < _scaledSurface->w; k++)
-			memcpy(_scaledSurface->getBasePtr(k, j), frame->getBasePtr((k * getScaleFactorX()).toInt() , (j * getScaleFactorY()).toInt()), frame->bytesPerPixel);
+			memcpy(_scaledSurface->getBasePtr(k, j), frame->getBasePtr((k * getScaleFactorX()).toInt() , (j * getScaleFactorY()).toInt()), frame->format.bytesPerPixel);
 
 	return _scaledSurface;
 }
@@ -526,7 +526,7 @@ void QuickTimeDecoder::init() {
 		if (getScaleFactorX() != 1 || getScaleFactorY() != 1) {
 			// We have to initialize the scaled surface
 			_scaledSurface = new Graphics::Surface();
-			_scaledSurface->create(getWidth(), getHeight(), getPixelFormat().bytesPerPixel);
+			_scaledSurface->create(getWidth(), getHeight(), getPixelFormat());
 		}
 	}
 }

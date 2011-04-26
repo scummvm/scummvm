@@ -48,7 +48,7 @@ QTRLEDecoder::QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) : Cod
 	debug(2, "QTRLE corrected width: %d", width);
 
 	_surface = new Graphics::Surface();
-	_surface->create(width, height, _bitsPerPixel <= 8 ? 1 : _pixelFormat.bytesPerPixel);
+	_surface->create(width, height, _bitsPerPixel <= 8 ? Graphics::PixelFormat::createFormatCLUT8() : _pixelFormat);
 }
 
 #define CHECK_STREAM_PTR(n) \

@@ -521,7 +521,7 @@ void Gfx::invertBackground(const Common::Rect& r) {
 
 
 void setupLabelSurface(Graphics::Surface &surf, uint w, uint h) {
-	surf.create(w, h, 1);
+	surf.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 	surf.fillRect(Common::Rect(w,h), LABEL_TRANSPARENT_COLOR);
 }
 
@@ -857,7 +857,7 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 		int height = CLIP(info->height, (int)_vm->_screenHeight, info->height);
 
 		if (width != _backBuffer.w || height != _backBuffer.h) {
-			_backBuffer.create(width, height, 1);
+			_backBuffer.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		}
 	}
 

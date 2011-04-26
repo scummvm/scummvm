@@ -32,7 +32,7 @@ namespace Video {
 
 MSRLEDecoder::MSRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) {
 	_surface = new Graphics::Surface();
-	_surface->create(width, height, 1);
+	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	_bitsPerPixel = bitsPerPixel;
 }
 

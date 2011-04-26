@@ -95,7 +95,7 @@ Surface *JPEG::getSurface(const PixelFormat &format) {
 	Graphics::Surface *vComponent = getComponent(3);
 
 	Graphics::Surface *output = new Graphics::Surface();
-	output->create(yComponent->w, yComponent->h, format.bytesPerPixel);
+	output->create(yComponent->w, yComponent->h, format);
 
 	for (uint16 i = 0; i < output->h; i++) {
 		for (uint16 j = 0; j < output->w; j++) {
@@ -443,7 +443,7 @@ bool JPEG::readSOS() {
 
 	// Initialize the scan surfaces
 	for (uint16 c = 0; c < _numScanComp; c++) {
-		_scanComp[c]->surface.create(xMCU * _maxFactorH * 8, yMCU * _maxFactorV * 8, 1);
+		_scanComp[c]->surface.create(xMCU * _maxFactorH * 8, yMCU * _maxFactorV * 8, PixelFormat::createFormatCLUT8());
 	}
 
 	bool ok = true;

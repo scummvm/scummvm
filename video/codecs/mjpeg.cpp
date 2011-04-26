@@ -53,7 +53,7 @@ const Graphics::Surface *JPEGDecoder::decodeImage(Common::SeekableReadStream* st
 
 	if (!_surface) {
 		_surface = new Graphics::Surface();
-		_surface->create(_jpeg->getWidth(), _jpeg->getHeight(), _pixelFormat.bytesPerPixel);
+		_surface->create(_jpeg->getWidth(), _jpeg->getHeight(), _pixelFormat);
 	}
 
 	Graphics::Surface *frame = _jpeg->getSurface(_pixelFormat);

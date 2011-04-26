@@ -126,7 +126,7 @@ bool RobotDecoder::loadStream(Common::SeekableReadStream *stream) {
 	readPaletteChunk(_header.paletteDataSize);
 	readFrameSizesChunk();
 	calculateVideoDimensions();
-	_surface->create(_width, _height, 1);
+	_surface->create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
 
 	return true;
 }

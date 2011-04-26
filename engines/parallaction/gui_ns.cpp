@@ -474,7 +474,7 @@ class SelectCharacterInputState_NS : public MenuInputState {
 public:
 	SelectCharacterInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("selectcharacter", helper), _vm(vm) {
 		_keys = (_vm->getPlatform() == Common::kPlatformAmiga && (_vm->getFeatures() & GF_LANG_MULT)) ? _amigaKeys : _pcKeys;
-		_block.create(BLOCK_WIDTH, BLOCK_HEIGHT, 1);
+		_block.create(BLOCK_WIDTH, BLOCK_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 		_labels[0] = 0;
 		_labels[1] = 0;
 		
@@ -625,7 +625,7 @@ public:
 		_vm->_soundManI->stopMusic();
 		_vm->showSlide("password");
 
-		_emptySlots.create(BLOCK_WIDTH * 8, BLOCK_HEIGHT, 1);
+		_emptySlots.create(BLOCK_WIDTH * 8, BLOCK_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 		Common::Rect rect(SLOT_X, SLOT_Y, SLOT_X + BLOCK_WIDTH * 8, SLOT_Y + BLOCK_HEIGHT);
 		_vm->_gfx->grabBackground(rect, _emptySlots);
 

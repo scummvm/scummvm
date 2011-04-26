@@ -483,7 +483,7 @@ public:
 		_y = 90;
 
 		Graphics::Surface *surf = new Graphics::Surface;
-		surf->create(w, 110, 1);
+		surf->create(w, 110, Graphics::PixelFormat::createFormatCLUT8());
 		surf->fillRect(Common::Rect(0, 0, w, 110), 12);
 		surf->fillRect(Common::Rect(10, 10, w-10, 100), 15);
 

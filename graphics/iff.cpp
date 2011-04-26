@@ -204,7 +204,7 @@ struct PBMLoader {
 
 		case ID_BODY:
 			if (_surface) {
-				_surface->create(_decoder._header.width, _decoder._header.height, 1);
+				_surface->create(_decoder._header.width, _decoder._header.height, PixelFormat::createFormatCLUT8());
 				_decoder.loadBitmap((byte*)_surface->pixels, chunk._stream);
 			}
 			return true;	// stop the parser

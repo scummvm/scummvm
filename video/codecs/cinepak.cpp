@@ -89,7 +89,7 @@ const Graphics::Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream 
 
 	if (!_curFrame.surface) {
 		_curFrame.surface = new Graphics::Surface();
-		_curFrame.surface->create(_curFrame.width, _curFrame.height, _pixelFormat.bytesPerPixel);
+		_curFrame.surface->create(_curFrame.width, _curFrame.height, _pixelFormat);
 	}
 
 	// Reset the y variable.

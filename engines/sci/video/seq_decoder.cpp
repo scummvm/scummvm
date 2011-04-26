@@ -61,7 +61,7 @@ bool SeqDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	_fileStream = stream;
 	_surface = new Graphics::Surface();
-	_surface->create(SEQ_SCREEN_WIDTH, SEQ_SCREEN_HEIGHT, 1);
+	_surface->create(SEQ_SCREEN_WIDTH, SEQ_SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
 	_frameCount = _fileStream->readUint16LE();
 
