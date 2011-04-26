@@ -33,6 +33,7 @@
 ModularBackend::ModularBackend()
 	:
 	_mutexManager(0),
+	_taskbarManager(0),
 	_graphicsManager(0),
 	_mixer(0) {
 
@@ -43,6 +44,8 @@ ModularBackend::~ModularBackend() {
 	_graphicsManager = 0;
 	delete _mixer;
 	_mixer = 0;
+	delete _taskbarManager;
+	_taskbarManager = 0;
 	delete _mutexManager;
 	_mutexManager = 0;
 }
