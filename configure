@@ -2951,6 +2951,7 @@ if test "$_unity" = yes ; then
 	INCLUDES="$INCLUDES $UNITY_CFLAGS"
 fi
 define_in_config_h_if_yes "$_unity" 'USE_TASKBAR'
+define_in_config_h_if_yes "$_unity" 'USE_TASKBAR_UNITY'
 echo "$_unity"
 
 #

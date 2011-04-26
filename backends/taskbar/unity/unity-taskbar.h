@@ -26,7 +26,7 @@
 #ifndef BACKEND_UNITY_TASKBAR_H
 #define BACKEND_UNITY_TASKBAR_H
 
-#if defined(UNIX) && defined(USE_TASKBAR)
+#if defined(UNIX) && defined(USE_TASKBAR) && defined(USE_TASKBAR_UNITY)
 
 #include "common/events.h"
 #include "common/str.h"

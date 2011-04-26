@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(UNIX) && defined(USE_TASKBAR)
+#if defined(UNIX) && defined(USE_TASKBAR) && defined(USE_TASKBAR_UNITY)
 
 #include "backends/taskbar/unity/unity-taskbar.h"
 
