@@ -512,7 +512,7 @@ void Scene5000::postInit(SceneObjectList *OwnerList) {
 	_hotspot13.setBounds(Rect(0, 164, 135, 200));
 	_hotspot14.setBounds(Rect(0, 0, 105, 140));
 	_hotspot15.setBounds(Rect(266, 70, 291, 85));
-	_hotspot16.setBounds(Rect(0, 86, 3219, 200));
+	_hotspot16.setBounds(Rect(0, 86, 319, 200));
 	_hotspot12.setBounds(Rect(230, 143, 244, 150));
 
 	_globals->_sceneItems.addItems(&_hotspot9, &_hotspot10, &_hotspot11, &_hotspot8, &_hotspot13,
