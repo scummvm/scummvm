@@ -364,6 +364,11 @@ int main(int argc, char *argv[]) {
 
 		provider = new CreateProjectTool::CodeBlocksProvider(globalWarnings, projectWarnings);
 
+
+		// Those libraries are automatically added by MSVC, but we need to add them manually with mingw
+		setup.libraries.push_back("ole32");
+		setup.libraries.push_back("uuid");
+
 		break;
 
 	case kProjectMSVC:
