@@ -153,8 +153,7 @@ endif
 # Get the current version information
 ######################################################################
 
-# AmigaOS4's grep has a problem with "./" in pathnames, so use cat.
-VERSION = $(shell cat "${srcdir}/base/internal_version.h" | grep RESIDUAL_VERSION | cut -d\" -f2)
+VERSION = VERSION = $(shell grep RESIDUAL_VERSION "${srcdir}/base/internal_version.h" | cut -d\" -f2)
 VER_MAJOR = $(shell echo $(VERSION) | cut -d. -f 1)
 VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
 VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)
