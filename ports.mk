@@ -192,6 +192,7 @@ win32setup: win32dist
 	mv $(WIN32PATH)/COPYRIGHT.txt $(WIN32PATH)/COPYRIGHT
 	mv $(WIN32PATH)/NEWS.txt $(WIN32PATH)/NEWS
 	mv $(WIN32PATH)/README.txt $(WIN32PATH)/README
+	mv $(WIN32PATH)/README-SDL.txt $(WIN32PATH)/README-SDL
 	makensis -V2 -Dtop_srcdir="../../$(srcdir)" -Dtext_dir="../../$(WIN32PATH)" -Dbuild_dir="../../$(WIN32PATH)" $(srcdir)/dists/nsis/scummvm.nsi
 
 #
