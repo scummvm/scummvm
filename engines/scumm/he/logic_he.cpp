@@ -1020,7 +1020,7 @@ int LogicHEsoccer::op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5) {
 	// This is called on each frame by startOfFrame() if activated by op_1012.
 	// This seems to do player placement!
 
-	float v28;
+	float v28 = 0.0;
 
 	for (int i = 0; i < 18; i++) {
 		// These seem to be some sort of percent? of angles?
@@ -1060,15 +1060,15 @@ int LogicHEsoccer::op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5) {
 				putInArray(a5, 0, i, v24 + 11 * v21);
 		}
 
-		float v7 = atan2(_userDataD[524] - v28, v31);
+		float v7 = atan2(_userDataD[524] - v28, (double)v31);
 		int v8 = (int)(_userDataD[526] - (_userDataD[521] - v7) * _userDataD[522] + 300.0);
 
-		double v9 = atan2(_userDataD[523], v31);
+		double v9 = atan2(_userDataD[523], (double)v31);
 		// x/y position?
 		putInArray(a2, i, 0, (int32)(v29 * v9 + 640.0));
 		putInArray(a2, i, 1, v8);
 
-		double v10 = atan2(_userDataD[524], v31);
+		double v10 = atan2(_userDataD[524], (double)v31);
 		int v12 = (int)(_userDataD[526] - (_userDataD[521] - (float)v10) * _userDataD[522] + 300.0);
 		double v13 = _userDataD[523];
 
