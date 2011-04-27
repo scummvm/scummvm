@@ -95,7 +95,7 @@ ShowUninstDetails show
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME StartMenuGroup
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER      $(^Name)
 
-# Finish page 
+# Finish page
 !define MUI_FINISHPAGE_RUN        "$INSTDIR\scummvm.exe"
 !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\README.txt"
 !define MUI_FINISHPAGE_RUN_NOTCHECKED
@@ -113,8 +113,8 @@ ShowUninstDetails show
 Var StartMenuGroup
 
 ;Remember the installer language
-!define MUI_LANGDLL_REGISTRY_ROOT      HKCU 
-!define MUI_LANGDLL_REGISTRY_KEY       ${REGKEY} 
+!define MUI_LANGDLL_REGISTRY_ROOT      HKCU
+!define MUI_LANGDLL_REGISTRY_KEY       ${REGKEY}
 !define MUI_LANGDLL_REGISTRY_VALUENAME "InstallerLanguage"
 
 !insertmacro MUI_PAGE_WELCOME
@@ -205,13 +205,14 @@ Section "ScummVM" SecMain
 	File /oname=COPYRIGHT.txt    "${text_dir}\COPYRIGHT"
 	File /oname=NEWS.txt         "${text_dir}\NEWS"
 	File /oname=README.txt       "${text_dir}\README"
+	File /oname=README-SDL.txt   "${text_dir}\README-SDL"
 
 	# Engine data
 	File "${engine_data}\drascula.dat"
 	File "${engine_data}\hugo.dat"
 	File "${engine_data}\kyra.dat"
 	File "${engine_data}\lure.dat"
-	File "${engine_data}\m4.dat"    
+	File "${engine_data}\m4.dat"
 	File "${engine_data}\queen.tbl"
 	File "${engine_data}\sky.cpt"
 	File "${engine_data}\teenagent.dat"
@@ -227,7 +228,7 @@ Section "ScummVM" SecMain
 	# Main exe and dlls
 	File "${build_dir}\scummvm.exe"
 	File "${build_dir}\SDL.dll"
-	
+
 	WriteRegStr HKCU "${REGKEY}" InstallPath "$INSTDIR"    ; Store installation folder
 SectionEnd
 
@@ -253,7 +254,7 @@ SectionEnd
 # Installer functions
 Function .onInit
 	!insertmacro MUI_LANGDLL_DISPLAY
-	
+
 !ifdef _DEBUG
 	LogSet on    ; Will write a log file to the install folder (when using the special NSIS logging build)
 !endif
@@ -270,7 +271,7 @@ Section /o -un.Main SecUninstall
 	Delete /REBOOTOK $INSTDIR\NEWS.txt
 	Delete /REBOOTOK $INSTDIR\README.txt
 	Delete /REBOOTOK $INSTDIR\README-SDL.txt
-	
+
 	Delete /REBOOTOK $INSTDIR\drascula.dat
 	Delete /REBOOTOK $INSTDIR\hugo.dat
 	Delete /REBOOTOK $INSTDIR\kyra.dat
@@ -280,13 +281,13 @@ Section /o -un.Main SecUninstall
 	Delete /REBOOTOK $INSTDIR\sky.cpt
 	Delete /REBOOTOK $INSTDIR\teenagent.dat
 	Delete /REBOOTOK $INSTDIR\toon.dat
-	
+
 	Delete /REBOOTOK $INSTDIR\pred.dic
-	
+
 	Delete /REBOOTOK $INSTDIR\scummclassic.zip
 	Delete /REBOOTOK $INSTDIR\scummmodern.zip
 	Delete /REBOOTOK $INSTDIR\translations.dat
-	
+
 	Delete /REBOOTOK $INSTDIR\scummvm.exe
 	Delete /REBOOTOK $INSTDIR\SDL.dll
 SectionEnd
