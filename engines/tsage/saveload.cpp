@@ -181,8 +181,11 @@ Common::Error Saver::restore(int slot) {
 		// Fixes loading in scene 5000.
 		// TODO/FIXME: Add a more proper handling for these objects
 		if ((*i)->getClassName() == "PlayerMover") {
-			warning("HACK: PlayerMover object found, skipping synchronization");
-			continue;
+			warning("HACK: PlayerMover object found, removing it");
+			// Remove that object from the list
+			i = _objList.erase(i);
+			assert(i ==  _objList.end());
+			break;
 		}
 		serialiser.validate((*i)->getClassName());
 		(*i)->synchronise(serialiser);
