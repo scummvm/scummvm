@@ -56,93 +56,191 @@ void SoundManager::listenerSynchronize(Serializer &s) {
 
 /*--------------------------------------------------------------------------*/
 
-void ASound::play(int soundNum, Action *action, int volume) {
-	
-}
-
-void ASound::stop() {
+void Sound::play(int soundNum, int volume) {
 
 }
 
-void ASound::prime(int v, Action *action) {
+void Sound::stop() {
 
 }
 
-void ASound::unPrime() {
+void Sound::prime(int soundNum) {
 
 }
 
-void ASound::go() {
+void Sound::prime(int soundNum, int v2) {
 
 }
 
-void ASound::hault(void) {
-}
-
-int ASound::getSoundNum() const { return 0; }
-bool ASound::isPlaying() const { return false; }
-bool ASound::isPaused() const { return false; }
-bool ASound::isMuted() const { return false; }
-
-void ASound::pause() {
+void Sound::_unPrime() {
 
 }
 
-void ASound::mute() {
+void Sound::unPrime() {
 
 }
 
-void ASound::fadeIn() {
+void Sound::go() {
 
 }
 
-void ASound::fadeOut(EventHandler *evtHandler) {
+void Sound::halt(void) {
 
 }
 
-void ASound::fade(int v1, int v2, int v3, int v4, EventHandler *evtHandler) {
-
-}
-
-void ASound::setTimeIndex(uint32 timeIndex) {
-
-}
-
-uint32 ASound::getTimeIndex() const { 
-	return 0; 
-}
-
-void ASound::setPri(int v) {
-
-}
-
-void ASound::setLoop(bool flag) {
-
-}
-
-int ASound::getPri() const { 
-	return 0; 
-}
-
-bool ASound::getLoop() { 
-	return false; 
-}
-
-void ASound::setVolume(int volume) {
-
-}
-
-int ASound::getVol() const {
+int Sound::getSoundNum() const {
 	return 0;
 }
 
-void ASound::holdAt(int v) {
+bool Sound::isPlaying() const {
+	return false;
+}
+
+bool Sound::isPrimed() const {
+	return false;
+}
+
+bool Sound::isPaused() const {
+	return false;
+}
+
+bool Sound::isMuted() const {
+	return false;
+}
+
+void Sound::pause() {
 
 }
 
-void ASound::release() {
+void Sound::mute() {
 
 }
 
+void Sound::fadeIn() {
+
+}
+
+void Sound::fadeOut(EventHandler *evtHandler) {
+
+}
+
+void Sound::fade(int v1, int v2, int v3, int v4) {
+
+}
+
+void Sound::setTimeIndex(uint32 timeIndex) {
+
+}
+
+uint32 Sound::getTimeIndex() const {
+	return 0;
+}
+
+bool Sound::getCueValue() const {
+	return false;
+}
+
+void Sound::setCueValue(bool flag) {
+
+}
+
+void Sound::setVol(int volume) {
+
+}
+
+int Sound::getVol() const {
+	return 0;
+}
+
+void Sound::setPri(int v) {
+
+}
+
+void Sound::setLoop(bool flag) {
+
+}
+
+int Sound::getPri() const {
+	return 0;
+}
+
+bool Sound::getLoop() {
+	return false;
+}
+
+void Sound::holdAt(int v) {
+
+}
+
+void Sound::release() {
+
+}
+
+
+/*--------------------------------------------------------------------------*/
+
+ASound::ASound(): EventHandler() {
+	_action = NULL;
+	_cueFlag = false;
+}
+
+void ASound::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
+	SYNC_POINTER(_action);
+	s.syncAsByte(_cueFlag);
+}
+
+void ASound::dispatch() {
+	EventHandler::dispatch();
+
+	if (!_sound.getCueValue()) {
+		_cueFlag = false;
+		_sound.setCueValue(true);
+
+		if (_action)
+			_action->signal();
+	}
+
+	if (!_cueFlag) {
+		if (!_sound.isPrimed()) {
+			_cueFlag = true;
+			if (_action) {
+				_action->signal();
+				_action = NULL;
+			}
+		}
+	}
+}
+
+void ASound::play(int soundNum, Action *action, int volume) {
+	_action = action;
+	_cueFlag = false;
+	
+	setVol(volume);
+	_sound.play(soundNum);
+}
+
+void ASound::stop() {
+	_sound.stop();
+	_action = NULL;
+}
+
+void ASound::prime(int soundNum, Action *action) {
+	_action = action;
+	_cueFlag = false;
+	_sound.prime(soundNum);
+}
+
+void ASound::unPrime() {
+	_sound.unPrime();
+	_action = NULL;
+}
+
+void ASound::fade(int v1, int v2, int v3, int v4, Action *action) {
+	if (action)
+		_action = action;
+
+	_sound.fade(v1, v2, v3, v4);
+}
 
 } // End of namespace tSage

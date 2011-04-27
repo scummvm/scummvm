@@ -2945,24 +2945,6 @@ int SceneRegions::indexOf(const Common::Point &pt) {
 
 /*--------------------------------------------------------------------------*/
 
-ASound::ASound() {
-	_action = NULL;
-	_field280 = -1;
-}
-
-void ASound::synchronize(Serializer &s) {
-	EventHandler::synchronize(s);
-
-	SYNC_POINTER(_action);
-	s.syncAsSint16LE(_field280);
-}
-
-void ASound::dispatch() {
-	
-}
-
-/*--------------------------------------------------------------------------*/
-
 void SceneItemList::addItems(SceneItem *first, ...) {
 	va_list va;
 	va_start(va, first);
