@@ -938,7 +938,12 @@ void Costume::Chore::update() {
 
 	if (newTime > _length) {
 		if (!_looping) {
-			_playing = false;
+			if (_fadeMode == None) {
+				_playing = false;
+			} else {
+				_currTime = _length;
+				return;
+			}
 		} else {
 			do {
 				newTime -= _length;
@@ -950,6 +955,7 @@ void Costume::Chore::update() {
 }
 
 void Costume::Chore::fade(Costume::Chore::FadeMode mode, int msecs) {
+	_playing = true;
 	_fadeMode = mode;
 	_fadeLength = msecs;
 	_fadeCurrTime = 0;
