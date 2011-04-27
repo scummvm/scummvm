@@ -20,6 +20,8 @@
 
 #!define _DEBUG
 
+Name ScummVM
+
 # Included files
 !include MUI2.nsh
 
@@ -35,67 +37,73 @@
 #########################################################################################
 # General Symbol Definitions
 #########################################################################################
-!define REGKEY "Software\$(^Name)\$(^Name)"
-!define VERSION "@VERSION@"
-!define COMPANY "ScummVM Team"
-!define URL "http://scummvm.org/"
+!define REGKEY      "Software\$(^Name)\$(^Name)"
+!define VERSION     "@VERSION@"
+!define COMPANY     "ScummVM Team"
+!define URL         "http://scummvm.org/"
 !define DESCRIPTION "ScummVM Installer. Look! A three headed monkey (TM)!"
-!define COPYRIGHT "Copyright © 2001-2011 The ScummVM Team"
+!define COPYRIGHT   "Copyright © 2001-2011 The ScummVM Team"
 
 #########################################################################################
 # Installer configuration
 #########################################################################################
-Name ScummVM
-OutFile ${build_dir}\scummvm-${VERSION}-win32.exe
-InstallDir $PROGRAMFILES\ScummVM                 ; default installation folder
-; Get installation folder from registry if available
-InstallDirRegKey HKCU "Software\ScummVM\ScummVM" "InstallPath"    ; The application name needs to be refered directly instead of through ${REGKEY}
+OutFile          ${build_dir}\scummvm-${VERSION}-win32.exe
+InstallDir       $PROGRAMFILES\ScummVM                            ; Default installation folder
+InstallDirRegKey HKCU "Software\ScummVM\ScummVM" "InstallPath"    ; Get installation folder from registry if available
+                                                                  ; The application name needs to be refered directly instead of through ${REGKEY}
                                                                   ; because lang strings aren't initialized at the point InstallDirRegKey is called
 
 CRCCheck on
-XPStyle on
+XPStyle  on
 #TargetMinimalOS 5.0    ; Minimal version of windows for installer: Windows 2000 or more recent
                         ; (will build unicode installer with NSIS 2.50+)
 
 VIProductVersion @VER_MAJOR@.@VER_MINOR@.@VER_PATCH@.0
-VIAddVersionKey ProductName $(^Name)
-VIAddVersionKey ProductVersion "${VERSION}"
-VIAddVersionKey CompanyName "${COMPANY}"
-VIAddVersionKey CompanyWebsite "${URL}"
-VIAddVersionKey FileVersion "${VERSION}"
-VIAddVersionKey FileDescription "${DESCRIPTION}"
-VIAddVersionKey LegalCopyright "${COPYRIGHT}"
+VIAddVersionKey  ProductName      $(^Name)
+VIAddVersionKey  ProductVersion  "${VERSION}"
+VIAddVersionKey  CompanyName     "${COMPANY}"
+VIAddVersionKey  CompanyWebsite  "${URL}"
+VIAddVersionKey  FileVersion     "${VERSION}"
+VIAddVersionKey  FileDescription "${DESCRIPTION}"
+VIAddVersionKey  LegalCopyright  "${COPYRIGHT}"
 
-BrandingText "$(^Name) ${VERSION}"    ; Appears as branding on the installer
+BrandingText "$(^Name) ${VERSION}"   ; Change branding text on the installer to show our name and version instead of NSIS's
 
-ShowInstDetails show
+# Show Details when installing/uninstalling files
+ShowInstDetails   show
 ShowUninstDetails show
 
 !ifdef _DEBUG
-	SetCompress off    ;for debugging the installer, lzma takes forever
+	SetCompress off                      ; for debugging the installer, lzma takes forever
 	RequestExecutionLevel user
 !else
 	SetCompressor /FINAL /SOLID lzma
 	SetCompressorDictSize 64
-	RequestExecutionLevel admin                      ; for installation into program files folders
+	RequestExecutionLevel admin          ; for installation into program files folders
 !endif
 
 #########################################################################################
 # MUI Symbol Definitions
 #########################################################################################
 !define MUI_WELCOMEFINISHPAGE_BITMAP "graphics\left.bmp"
-!define MUI_ICON "graphics\scummvm-install.ico"
-!define MUI_FINISHPAGE_NOAUTOCLOSE
-!define MUI_LICENSEPAGE_RADIOBUTTONS
-!define MUI_STARTMENUPAGE_REGISTRY_ROOT HKCU
-!define MUI_STARTMENUPAGE_REGISTRY_KEY ${REGKEY}
+!define MUI_ICON                     "graphics\scummvm-install.ico"
+!define MUI_UNICON                   "graphics\scummvm-install.ico"
+
+#Start menu
+!define MUI_STARTMENUPAGE_REGISTRY_ROOT      HKCU
+!define MUI_STARTMENUPAGE_REGISTRY_KEY       ${REGKEY}
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME StartMenuGroup
-!define MUI_STARTMENUPAGE_DEFAULTFOLDER ScummVM
-!define MUI_FINISHPAGE_RUN "$INSTDIR\scummvm.exe"
-!define MUI_FINISHPAGE_RUN_NOTCHECKED
+!define MUI_STARTMENUPAGE_DEFAULTFOLDER      $(^Name)
+
+# Finish page 
+!define MUI_FINISHPAGE_RUN        "$INSTDIR\scummvm.exe"
 !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\README.txt"
+!define MUI_FINISHPAGE_RUN_NOTCHECKED
 !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
-!define MUI_UNICON "graphics\scummvm-install.ico"
+
+!define MUI_LICENSEPAGE_RADIOBUTTONS
+
+!define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 
 #########################################################################################
@@ -105,8 +113,8 @@ ShowUninstDetails show
 Var StartMenuGroup
 
 ;Remember the installer language
-!define MUI_LANGDLL_REGISTRY_ROOT "HKCU" 
-!define MUI_LANGDLL_REGISTRY_KEY "${REGKEY}" 
+!define MUI_LANGDLL_REGISTRY_ROOT      HKCU 
+!define MUI_LANGDLL_REGISTRY_KEY       ${REGKEY} 
 !define MUI_LANGDLL_REGISTRY_VALUENAME "InstallerLanguage"
 
 !insertmacro MUI_PAGE_WELCOME
@@ -191,12 +199,12 @@ Section "ScummVM" SecMain
 	SetOverwrite on
 
 	# Text files
-	File /oname=AUTHORS.txt "${top_srcdir}\AUTHORS"
-	File /oname=COPYING.LGPL.txt "${top_srcdir}\COPYING.LGPL"
-	File /oname=COPYING.txt "${top_srcdir}\COPYING"
-	File /oname=COPYRIGHT.txt "${top_srcdir}\COPYRIGHT"
-	File /oname=NEWS.txt "${top_srcdir}\NEWS"
-	File /oname=README.txt "${top_srcdir}\README"
+	File /oname=AUTHORS.txt      "${text_dir}\AUTHORS"
+	File /oname=COPYING.LGPL.txt "${text_dir}\COPYING.LGPL"
+	File /oname=COPYING.txt      "${text_dir}\COPYING"
+	File /oname=COPYRIGHT.txt    "${text_dir}\COPYRIGHT"
+	File /oname=NEWS.txt         "${text_dir}\NEWS"
+	File /oname=README.txt       "${text_dir}\README"
 
 	# Engine data
 	File "${engine_data}\drascula.dat"
@@ -223,21 +231,21 @@ Section "ScummVM" SecMain
 	WriteRegStr HKCU "${REGKEY}" InstallPath "$INSTDIR"    ; Store installation folder
 SectionEnd
 
+# Write Start menu entries and uninstaller
 Section -post SecMainPost
-	; Write Start menu entries and uninstaller
 	SetOutPath $INSTDIR
 	WriteUninstaller $INSTDIR\uninstall.exe
 	!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-	CreateShortCut "$SMPROGRAMS\$StartMenuGroup\$(^Name).lnk" "$INSTDIR\$(^Name).exe" "" "$INSTDIR\$(^Name).exe" 0
+	CreateShortCut "$SMPROGRAMS\$StartMenuGroup\$(^Name).lnk" "$INSTDIR\$(^Name).exe" "" "$INSTDIR\$(^Name).exe" 0    ; Create shortcut with icon
 	CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk" $INSTDIR\uninstall.exe
 	!insertmacro MUI_STARTMENU_WRITE_END
-	WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayName "$(^Name)"
-	WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayVersion "${VERSION}"
-	WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" Publisher "${COMPANY}"
-	WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" URLInfoAbout "${URL}"
-	WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayIcon $INSTDIR\uninstall.exe
-	WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" UninstallString $INSTDIR\uninstall.exe
-	WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" InstallLocation $INSTDIR
+	WriteRegStr   HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayName "$(^Name)"
+	WriteRegStr   HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayVersion "${VERSION}"
+	WriteRegStr   HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" Publisher "${COMPANY}"
+	WriteRegStr   HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" URLInfoAbout "${URL}"
+	WriteRegStr   HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayIcon $INSTDIR\uninstall.exe
+	WriteRegStr   HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" UninstallString $INSTDIR\uninstall.exe
+	WriteRegStr   HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" InstallLocation $INSTDIR
 	WriteRegDWORD HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoModify 1
 	WriteRegDWORD HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoRepair 1
 SectionEnd
@@ -247,7 +255,7 @@ Function .onInit
 	!insertmacro MUI_LANGDLL_DISPLAY
 	
 !ifdef _DEBUG
-	LogSet on
+	LogSet on    ; Will write a log file to the install folder (when using the special NSIS logging build)
 !endif
 FunctionEnd
 
@@ -255,34 +263,38 @@ FunctionEnd
 # Uninstaller sections
 #########################################################################################
 Section /o -un.Main SecUninstall
-	Delete /REBOOTOK $INSTDIR\translations.dat
-	Delete /REBOOTOK $INSTDIR\toon.dat
-	Delete /REBOOTOK $INSTDIR\teenagent.dat
-	Delete /REBOOTOK $INSTDIR\sky.cpt
-	Delete /REBOOTOK $INSTDIR\SDL.dll
-	Delete /REBOOTOK $INSTDIR\scummvm.exe
-	Delete /REBOOTOK $INSTDIR\scummmodern.zip
-	Delete /REBOOTOK $INSTDIR\scummclassic.zip
-	Delete /REBOOTOK $INSTDIR\README-SDL.txt
-	Delete /REBOOTOK $INSTDIR\README.txt
-	Delete /REBOOTOK $INSTDIR\queen.tbl
-	Delete /REBOOTOK $INSTDIR\pred.dic
-	Delete /REBOOTOK $INSTDIR\NEWS.txt
-	Delete /REBOOTOK $INSTDIR\m4.dat
-	Delete /REBOOTOK $INSTDIR\lure.dat
-	Delete /REBOOTOK $INSTDIR\kyra.dat
-	Delete /REBOOTOK $INSTDIR\hugo.dat
-	Delete /REBOOTOK $INSTDIR\drascula.dat
-	Delete /REBOOTOK $INSTDIR\COPYRIGHT.txt
+	Delete /REBOOTOK $INSTDIR\AUTHORS.txt
 	Delete /REBOOTOK $INSTDIR\COPYING.txt
 	Delete /REBOOTOK $INSTDIR\COPYING.LGPL.txt
-	Delete /REBOOTOK $INSTDIR\AUTHORS.txt
+	Delete /REBOOTOK $INSTDIR\COPYRIGHT.txt
+	Delete /REBOOTOK $INSTDIR\NEWS.txt
+	Delete /REBOOTOK $INSTDIR\README.txt
+	Delete /REBOOTOK $INSTDIR\README-SDL.txt
+	
+	Delete /REBOOTOK $INSTDIR\drascula.dat
+	Delete /REBOOTOK $INSTDIR\hugo.dat
+	Delete /REBOOTOK $INSTDIR\kyra.dat
+	Delete /REBOOTOK $INSTDIR\lure.dat
+	Delete /REBOOTOK $INSTDIR\m4.dat
+	Delete /REBOOTOK $INSTDIR\queen.tbl
+	Delete /REBOOTOK $INSTDIR\sky.cpt
+	Delete /REBOOTOK $INSTDIR\teenagent.dat
+	Delete /REBOOTOK $INSTDIR\toon.dat
+	
+	Delete /REBOOTOK $INSTDIR\pred.dic
+	
+	Delete /REBOOTOK $INSTDIR\scummclassic.zip
+	Delete /REBOOTOK $INSTDIR\scummmodern.zip
+	Delete /REBOOTOK $INSTDIR\translations.dat
+	
+	Delete /REBOOTOK $INSTDIR\scummvm.exe
+	Delete /REBOOTOK $INSTDIR\SDL.dll
 SectionEnd
 
 Section -un.post SecUninstallPost
 	DeleteRegKey HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
 	Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk"
-	Delete /REBOOTOK $INSTDIR\uninstall.exe
+	Delete /REBOOTOK  $INSTDIR\uninstall.exe
 	DeleteRegValue HKCU "${REGKEY}" StartMenuGroup
 	DeleteRegValue HKCU "${REGKEY}" InstallPath
 	DeleteRegValue HKCU "${REGKEY}" InstallerLanguage
@@ -292,7 +304,6 @@ Section -un.post SecUninstallPost
 	Push $R0
 	StrCpy $R0 $StartMenuGroup 1
 	StrCmp $R0 ">" no_smgroup
-	
 no_smgroup:
 	Pop $R0
 SectionEnd
@@ -300,6 +311,6 @@ SectionEnd
 # Uninstaller functions
 Function un.onInit
 	!insertmacro MUI_UNGETLANGUAGE
-	ReadRegStr $INSTDIR HKCU "${REGKEY}" InstallPath
+	ReadRegStr   $INSTDIR HKCU "${REGKEY}" InstallPath
 	!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
 FunctionEnd
