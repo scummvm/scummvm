@@ -78,7 +78,7 @@ class Scene5000 : public Scene {
 	};
 public:
 	SequenceManager _sequenceManager;
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	SpeakerSText _speakerSText;
 	SpeakerQText _speakerQText;
 	Action1 _action1;
@@ -166,7 +166,7 @@ class Scene5100 : public Scene {
 	};
 public:
 	SequenceManager _sequenceManager;
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	SpeakerMText _speakerMText;
 	SpeakerQText _speakerQText;
 	SpeakerSText _speakerSText;
@@ -229,7 +229,7 @@ class Scene5200 : public Scene {
 		virtual void doAction(int action);
 	};
 public:
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	SpeakerFLL _speakerFLL;
 	SpeakerFLText _speakerFLText;
 	SpeakerQL _speakerQL;
@@ -294,7 +294,7 @@ class Scene5300 : public Scene {
 		virtual void doAction(int action);
 	};
 public:
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	SequenceManager _sequenceManager;
 	SpeakerQR _speakerQR;
 	SpeakerQL _speakerQL;

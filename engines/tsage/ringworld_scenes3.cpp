@@ -132,11 +132,11 @@ void Scene2000::Action6::signal() {
 		setDelay(130);
 		break;
 	case 1:
-		scene->_soundHandler2.startSound(79);
+		scene->_soundHandler2.play(79);
 		scene->_stripManager.start(2000, this);
 		break;
 	case 2:
-		_globals->_soundHandler.startSound(81);
+		_globals->_soundHandler.play(81);
 		scene->_object6.postInit();
 		scene->_object6.setVisage(2003);
 		scene->_object6.setAction(NULL);
@@ -151,7 +151,7 @@ void Scene2000::Action6::signal() {
 		scene->_object6.animate(ANIM_MODE_6, this);
 		break;
 	case 5:
-		_globals->_soundHandler.startSound(80);
+		_globals->_soundHandler.play(80);
 		scene->_object6.remove();
 		_globals->_sceneManager.changeScene(1001);
 		break;
@@ -311,12 +311,12 @@ void Scene2000::Action14::signal() {
 		setDelay(60);
 		break;
 	case 3:
-		_globals->_soundHandler.startSound(99);
+		_globals->_soundHandler.play(99);
 		scene->_object8.show();
 		scene->_object8.animate(ANIM_MODE_5, this);
 		break;
 	case 4:
-		_globals->_soundHandler.startSound(12);
+		_globals->_soundHandler.play(12);
 		scene->_object8.setStrip(2);
 		scene->_object8.setFrame(1);
 		scene->_object9.show();
@@ -327,7 +327,7 @@ void Scene2000::Action14::signal() {
 		scene->_stripManager.start(2001, this, scene);
 		break;
 	case 6:
-		_globals->_soundHandler.proc1(0/* was false */);
+		_globals->_soundHandler.fadeOut(0/* was false */);
 		scene->_object8.setStrip(1);
 		scene->_object8.setFrame(scene->_object8.getFrameCount());
 		scene->_object8.animate(ANIM_MODE_6, this);
@@ -336,7 +336,7 @@ void Scene2000::Action14::signal() {
 		scene->_object10.remove();
 		break;
 	case 7:
-		_globals->_soundHandler.startSound(111);
+		_globals->_soundHandler.play(111);
 		scene->_object8.remove();
 		setDelay(5);
 		break;
@@ -428,11 +428,11 @@ void Scene2000::postInit(SceneObjectList *OwnerList) {
 		setAction(&_action13);
 		break;
 	case 2200:
-		_globals->_soundHandler.startSound(111);
+		_globals->_soundHandler.play(111);
 		setAction(&_action14);
 		break;
 	case 2222:
-		_globals->_soundHandler.startSound(115);
+		_globals->_soundHandler.play(115);
 		setAction(&_action8);
 		break;
 	case 3500:
@@ -440,12 +440,12 @@ void Scene2000::postInit(SceneObjectList *OwnerList) {
 		break;
 	default:
 		_object6.remove();
-		_globals->_soundHandler.startSound(80);
+		_globals->_soundHandler.play(80);
 		setAction(&_action6);
 		break;
 	}
 
-	_soundHandler1.startSound(78);
+	_soundHandler1.play(78);
 	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
 	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
 }
@@ -505,7 +505,7 @@ void Scene2100::Action1::signal() {
 		break;
 	}
 	case 2:
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 3: {
@@ -554,7 +554,7 @@ void Scene2100::Action1::signal() {
 			}
 		}
 
-		scene->_soundHandler.startSound(161);
+		scene->_soundHandler.play(161);
 		scene->_area1.restore();
 		scene->_area2.restore();
 		scene->_area3.restore();
@@ -563,7 +563,7 @@ void Scene2100::Action1::signal() {
 		if (_state == 2100) {
 			setDelay(1);
 		} else {
-			scene->_soundHandler.startSound(162);
+			scene->_soundHandler.play(162);
 			scene->_object1.animate(ANIM_MODE_6, this);
 		}
 		break;
@@ -579,7 +579,7 @@ void Scene2100::Action1::signal() {
 		break;
 	case 7:
 		_globals->_player.setPriority2(-1);
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_object1.animate(ANIM_MODE_6, this);
 		break;
 	case 8:
@@ -777,17 +777,17 @@ void Scene2100::Action9::signal() {
 		scene->_stripManager.start(6050, this);
 		break;
 	case 2:
-		scene->_soundHandler.startSound(99);
+		scene->_soundHandler.play(99);
 		scene->_object4.show();
 		scene->_object4.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
-		scene->_soundHandler.startSound(12);
+		scene->_soundHandler.play(12);
 		scene->_object4.setStrip(2);
 		scene->_stripManager.start(6051, this, scene);
 		break;
 	case 4:
-		scene->_soundHandler.proc1(0/* was false */);
+		scene->_soundHandler.fadeOut(0/* was false */);
 		scene->_object4.setStrip(1);
 		scene->_object4.setFrame(scene->_object4.getFrameCount());
 		scene->_object4.animate(ANIM_MODE_6, this);
@@ -848,7 +848,7 @@ void Scene2100::Action10::signal() {
 		break;
 	}
 	case 5:
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 6: {
@@ -881,7 +881,7 @@ void Scene2100::Action10::signal() {
 		setDelay(45);
 		break;
 	case 9:
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_object1.animate(ANIM_MODE_6, this);
 		break;
 	case 10:
@@ -924,7 +924,7 @@ void Scene2100::Action11::signal() {
 		break;
 	}
 	case 3:
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 4: {
@@ -945,7 +945,7 @@ void Scene2100::Action11::signal() {
 		setDelay(45);
 		break;
 	case 6:
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_object1.animate(ANIM_MODE_6, this);
 		break;
 	case 7:
@@ -970,7 +970,7 @@ void Scene2100::Action12::signal() {
 		scene->_stripManager.start(6000, this);
 		break;
 	case 2:
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 3: {
@@ -984,7 +984,7 @@ void Scene2100::Action12::signal() {
 		break;
 	}
 	case 4: {
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_object1.animate(ANIM_MODE_6, NULL);
 
 		_globals->_player.setPriority2(-1);
@@ -1094,7 +1094,7 @@ void Scene2100::Action14::signal() {
 		scene->_stripManager.start(6008, this);
 		break;
 	case 4:
-		scene->_soundHandler.startSound(99);
+		scene->_soundHandler.play(99);
 		scene->_object4.show();
 		scene->_object4.animate(ANIM_MODE_5, this);
 		break;
@@ -1103,7 +1103,7 @@ void Scene2100::Action14::signal() {
 		scene->_stripManager.start(6009, this, scene);
 		break;
 	case 6:
-		scene->_soundHandler.proc1(0/* was false */);
+		scene->_soundHandler.fadeOut(0/* was false */);
 		scene->_object4.setStrip(1);
 		scene->_object4.setFrame(scene->_object4.getFrameCount());
 		scene->_object4.animate(ANIM_MODE_6, this);
@@ -1134,7 +1134,7 @@ void Scene2100::Action14::signal() {
 		break;
 	}
 	case 10:
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 11: {
@@ -1148,7 +1148,7 @@ void Scene2100::Action14::signal() {
 		setDelay(30);
 	case 13:
 		scene->_object3.setPriority2(1);
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_object1.animate(ANIM_MODE_6, this);
 		break;
 	case 14:
@@ -1177,7 +1177,7 @@ void Scene2100::Action15::signal() {
 		scene->_object3.setPriority2(1);
 		scene->_object3.changeZoom(-1);
 
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2: {
@@ -1188,7 +1188,7 @@ void Scene2100::Action15::signal() {
 		break;
 	}
 	case 3: {
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_object1.animate(ANIM_MODE_6, this);
 
 		Common::Point pt(272, 140);
@@ -1248,7 +1248,7 @@ void Scene2100::Action16::signal() {
 		break;
 	}
 	case 5:
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 6: {
@@ -1263,7 +1263,7 @@ void Scene2100::Action16::signal() {
 		setDelay(45);
 		break;
 	case 8:
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_object1.animate(ANIM_MODE_6, this);
 		break;
 	case 9:
@@ -1292,17 +1292,17 @@ void Scene2100::Action17::signal() {
 		scene->_stripManager.start(7070, this);
 		break;
 	case 4:
-		scene->_soundHandler.startSound(99);
+		scene->_soundHandler.play(99);
 		scene->_object4.show();
 		scene->_object4.animate(ANIM_MODE_5, this);
 		break;
 	case 5:
-		scene->_soundHandler.startSound(12);
+		scene->_soundHandler.play(12);
 		scene->_object4.setStrip(2);
 		scene->_stripManager.start(7071, this, scene);
 		break;
 	case 6:
-		scene->_soundHandler.proc1(NULL);
+		scene->_soundHandler.fadeOut(NULL);
 		scene->_object4.setStrip(1);
 		scene->_object4.setFrame(scene->_object4.getFrameCount());
 		scene->_object4.animate(ANIM_MODE_6, this);
@@ -1676,8 +1676,8 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 
 	switch (_globals->_sceneManager._previousScene) {
 	case 2120:
-		_globals->_soundHandler.startSound(160);
-		_globals->_soundHandler.proc5(true);
+		_globals->_soundHandler.play(160);
+		_globals->_soundHandler.holdAt(true);
 		_object1.setPriority2(-1);
 		_globals->_player.setPriority2(-1);
 		_globals->_player.setPosition(Common::Point(80, 66));
@@ -1744,8 +1744,8 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 		}
 		break;
 	case 3700:
-		_globals->_soundHandler.startSound(160);
-		_globals->_soundHandler.proc5(true);
+		_globals->_soundHandler.play(160);
+		_globals->_soundHandler.holdAt(true);
 		Scene::setZoomPercents(80, 75, 100, 90);
 
 		if (_globals->_sceneObjects->contains(&_object2))
@@ -1763,8 +1763,8 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 		setAction(&_sequenceManager, this, 2105, &_object3, NULL);
 		break;
 	case 4250:
-		_globals->_soundHandler.startSound(160);
-		_globals->_soundHandler.proc5(true);
+		_globals->_soundHandler.play(160);
+		_globals->_soundHandler.holdAt(true);
 		_globals->clearFlag(43);
 
 		_globals->_player.setVisage(2104);
@@ -1782,8 +1782,8 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 		setAction(&_sequenceManager, this, 2107, &_object4, NULL);
 		break;
 	case 5000:
-		_globals->_soundHandler.startSound(160);
-		_globals->_soundHandler.proc5(true);
+		_globals->_soundHandler.play(160);
+		_globals->_soundHandler.holdAt(true);
 
 		if (_globals->_sceneObjects->contains(&_object2))
 			_object2.remove();
@@ -1799,8 +1799,8 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 		setAction(&_action5);
 		break;
 	case 5100:
-		_globals->_soundHandler.startSound(160);
-		_globals->_soundHandler.proc5(true);
+		_globals->_soundHandler.play(160);
+		_globals->_soundHandler.holdAt(true);
 		_globals->_player.setVisage(2104);
 		_globals->_player.setFrame(1);
 		_globals->_player.setPosition(Common::Point(65, 149));
@@ -1818,8 +1818,8 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 		setAction(&_action9);
 		break;
 	case 7000:
-		_globals->_soundHandler.startSound(160);
-		_globals->_soundHandler.proc5(true);
+		_globals->_soundHandler.play(160);
+		_globals->_soundHandler.holdAt(true);
 
 		if (RING_INVENTORY._stasisBox2._sceneNumber == 1) {
 			_globals->_player.setPriority2(1);
@@ -1846,8 +1846,8 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 		}
 		break;
 	case 7600:
-		_globals->_soundHandler.startSound(160);
-		_globals->_soundHandler.proc5(true);
+		_globals->_soundHandler.play(160);
+		_globals->_soundHandler.holdAt(true);
 
 		if (_globals->_sceneObjects->contains(&_object2))
 			_object2.remove();
@@ -1858,8 +1858,8 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 		setAction(&_action8);
 		break;
 	case 8100:
-		_globals->_soundHandler.startSound(160);
-		_globals->_soundHandler.proc5(true);
+		_globals->_soundHandler.play(160);
+		_globals->_soundHandler.holdAt(true);
 
 		_globals->_player.setVisage(2104);
 		_globals->_player.setFrame(1);
@@ -1871,8 +1871,8 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 		setAction(&_sequenceManager, this, 2106, NULL);
 		break;
 	case 9750:
-		_globals->_soundHandler.startSound(160);
-		_globals->_soundHandler.proc5(true);
+		_globals->_soundHandler.play(160);
+		_globals->_soundHandler.holdAt(true);
 
 		_globals->_player.setVisage(2104);
 		_globals->_player.setFrame(1);
@@ -1889,8 +1889,8 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 		setAction(&_sequenceManager, this, 2103, &_object4, NULL);
 		break;
 	default:
-		_globals->_soundHandler.startSound(160);
-		_globals->_soundHandler.proc5(true);
+		_globals->_soundHandler.play(160);
+		_globals->_soundHandler.holdAt(true);
 
 		_globals->_player._uiEnabled = true;
 		break;
@@ -2053,7 +2053,7 @@ void Scene2120::Action1::dispatch() {
 
 			_actionIndex = !_entries[scene->_subjectIndex]._visage ? 4 : 3;
 			setDelay(30);
-			scene->_soundHandler.startSound(159);
+			scene->_soundHandler.play(159);
 		}
 
 		// Next Page button handling
@@ -2084,7 +2084,7 @@ void Scene2120::Action1::dispatch() {
 				setDelay(30);
 			}
 
-			scene->_soundHandler.startSound(159);
+			scene->_soundHandler.play(159);
 		}
 
 		// Previous Page button handling
@@ -2111,7 +2111,7 @@ void Scene2120::Action1::dispatch() {
 				break;
 			}
 
-			scene->_soundHandler.startSound(159);
+			scene->_soundHandler.play(159);
 		}
 
 		// Exit button handling
@@ -2141,7 +2141,7 @@ void Scene2120::Action1::dispatch() {
 				setDelay(1);
 			}
 
-			scene->_soundHandler.startSound(159);
+			scene->_soundHandler.play(159);
 		}
 	}
 
@@ -2209,7 +2209,7 @@ void Scene2150::Action1::signal() {
 		break;
 	}
 	case 1:
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_hotspot1.animate(ANIM_MODE_5, this);
 		break;
 	case 2: {
@@ -2259,7 +2259,7 @@ void Scene2150::Action1::signal() {
 			}
 		}
 
-		scene->_soundHandler.startSound(161);
+		scene->_soundHandler.play(161);
 		scene->_area1.restore();
 		scene->_area2.restore();
 		scene->_area3.restore();
@@ -2268,7 +2268,7 @@ void Scene2150::Action1::signal() {
 		if (_state == 2150) {
 			setDelay(1);
 		} else {
-			scene->_soundHandler.startSound(162);
+			scene->_soundHandler.play(162);
 			scene->_hotspot1.animate(ANIM_MODE_6, this);
 		}
 		break;
@@ -2283,7 +2283,7 @@ void Scene2150::Action1::signal() {
 		}
 		break;
 	case 6:
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_hotspot1.animate(ANIM_MODE_6, this);
 		break;
 	case 7:
@@ -2310,10 +2310,10 @@ void Scene2150::Action2::signal() {
 		_globals->_player.setStrip(8);
 		_globals->_player.animate(ANIM_MODE_8, 1, this);
 
-		scene->_soundHandler.startSound(163);
+		scene->_soundHandler.play(163);
 		break;
 	case 2:
-		scene->_soundHandler.startSound(164);
+		scene->_soundHandler.play(164);
 		scene->_hotspot10.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
@@ -2338,7 +2338,7 @@ void Scene2150::Action2::signal() {
 		_globals->_player.animate(ANIM_MODE_5, this);
 		break;
 	case 5:
-		scene->_soundHandler.startSound(164);
+		scene->_soundHandler.play(164);
 		scene->_hotspot10.animate(ANIM_MODE_6, NULL);
 		scene->_hotspot14.remove();
 
@@ -2537,8 +2537,8 @@ void Scene2150::postInit(SceneObjectList *OwnerList) {
 
 	switch (_globals->_sceneManager._previousScene) {
 	case 2120:
-		_globals->_soundHandler.startSound(160);
-		_globals->_soundHandler.proc5(true);
+		_globals->_soundHandler.play(160);
+		_globals->_soundHandler.holdAt(true);
 		_globals->_player.setPosition(Common::Point(108, 99));
 		break;
 	case 2200:
@@ -2687,7 +2687,7 @@ void Scene2200::Action3::signal() {
 
 	switch (_actionIndex++) {
 	case 0: {
-		scene->_soundHandler2.startSound(103);
+		scene->_soundHandler2.play(103);
 
 		scene->_hotspot4.setStrip(4);
 		scene->_hotspot4.animate(ANIM_MODE_NONE, NULL);
@@ -2704,7 +2704,7 @@ void Scene2200::Action3::signal() {
 		break;
 	}
 	case 1:
-		scene->_soundHandler2.startSound(104);
+		scene->_soundHandler2.play(104);
 		scene->_hotspot4.setStrip(2);
 		scene->_hotspot4.setFrame(2);
 		setDelay(120);
@@ -2860,7 +2860,7 @@ void Scene2200::Hotspot9::doAction(int action) {
 		break;
 	case OBJECT_INFODISK:
 		if (_globals->_sceneManager._previousScene == 2310) {
-			scene->_soundHandler2.startSound(35);
+			scene->_soundHandler2.play(35);
 			_globals->_player.disableControl();
 			scene->setAction(&scene->_action3);
 		}
@@ -2921,8 +2921,8 @@ void Scene2200::postInit(SceneObjectList *OwnerList) {
 		_hotspot8.remove();
 		break;
 	case 4000:
-		_globals->_soundHandler.startSound(100);
-		_globals->_soundHandler.proc5(true);
+		_globals->_soundHandler.play(100);
+		_globals->_soundHandler.holdAt(true);
 		_globals->_player.remove();
 		_hotspot5.remove();
 		_hotspot8.remove();
@@ -2962,9 +2962,9 @@ void Scene2200::postInit(SceneObjectList *OwnerList) {
 		_hotspot4.setPriority2(255);
 		_globals->_sceneItems.push_back(&_hotspot4);
 
-		_soundHandler1.startSound(101);
-		_soundHandler2.startSound(100);
-		_globals->_soundHandler.proc5(true);
+		_soundHandler1.play(101);
+		_soundHandler2.play(100);
+		_globals->_soundHandler.holdAt(true);
 
 		_globals->_sceneItems.push_back(&_hotspot5);
 		setAction(&_action2);
@@ -3117,7 +3117,7 @@ void Scene2222::postInit(SceneObjectList *OwnerList) {
 		setAction(&_action1);
 	}
 
-	_soundHandler.startSound(116);
+	_soundHandler.play(116);
 	_globals->_sceneManager._scene->_sceneBounds.center(_hotspot1._position);
 
 	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
@@ -3203,7 +3203,7 @@ void Scene2230::Action2::signal() {
 		_globals->_player.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
-		scene->_soundHandler.startSound(157);
+		scene->_soundHandler.play(157);
 		_globals->_player._moveDiff = Common::Point(1, 1);
 		_globals->_player.setAction(&scene->_action4);
 		_globals->_player._uiEnabled = true;
@@ -3227,7 +3227,7 @@ void Scene2230::Action3::signal() {
 		NpcMover *mover = new NpcMover();
 		_globals->_player.addMover(mover, &pt, this);
 
-		scene->_soundHandler.proc3();
+		scene->_soundHandler.stop();
 		break;
 	}
 	case 1:
@@ -3346,7 +3346,7 @@ void Scene2230::Action7::signal() {
 		break;
 	}
 	case 2: {
-		scene->_soundHandler.startSound(158);
+		scene->_soundHandler.play(158);
 		scene->_hotspot8.setStrip2(2);
 
 		Common::Point pt(scene->_hotspot8._position.x, 97);
@@ -3429,7 +3429,7 @@ void Scene2230::Action8::signal() {
 		scene->_hotspot2.animate(ANIM_MODE_6, this);
 		break;
 	case 4: {
-		scene->_soundHandler.startSound(158);
+		scene->_soundHandler.play(158);
 		scene->_hotspot2.remove();
 		scene->_hotspot8._frame = 1;
 
@@ -3752,7 +3752,7 @@ void Scene2280::Action1::signal() {
 		break;
 	}
 	case 1:
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_hotspot16.animate(ANIM_MODE_5, this);
 		break;
 	case 2: {
@@ -3767,7 +3767,7 @@ void Scene2280::Action1::signal() {
 		break;
 	case 4:
 		_globals->_player.setPriority2(1);
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_hotspot16.animate(ANIM_MODE_6, this);
 		break;
 	case 5:
@@ -3788,7 +3788,7 @@ void Scene2280::Action2::signal() {
 		break;
 	}
 	case 1:
-		scene->_soundHandler.startSound(265);
+		scene->_soundHandler.play(265);
 
 		_globals->_player.setVisage(2162);
 		_globals->_player._frame = 1;
@@ -3808,7 +3808,7 @@ void Scene2280::Action2::signal() {
 		scene->_hotspot12.remove();
 		break;
 	case 4:
-		scene->_soundHandler.startSound(266);
+		scene->_soundHandler.play(266);
 		_globals->_player.setVisage(2170);
 		_globals->_player._frame = 1;
 		_globals->_player._strip = 4;
@@ -3836,7 +3836,7 @@ void Scene2280::Action3::signal() {
 		break;
 	}
 	case 1:
-		scene->_soundHandler.startSound(265);
+		scene->_soundHandler.play(265);
 
 		_globals->_player.setVisage(2162);
 		_globals->_player._frame = 6;
@@ -4316,8 +4316,8 @@ void Scene2280::postInit(SceneObjectList *OwnerList) {
 		_sceneMode = 2281;
 		setAction(&_sequenceManager, this, 2281, &_globals->_player, &_hotspot16, NULL);
 
-		_globals->_soundHandler.startSound(160);
-		_globals->_soundHandler.proc5(true);
+		_globals->_soundHandler.play(160);
+		_globals->_soundHandler.holdAt(true);
 	}
 
 	_globals->_sceneItems.addItems(&_hotspot13, &_hotspot11, &_hotspot9, &_hotspot14, &_hotspot7,
@@ -4367,7 +4367,7 @@ void Scene2300::Action1::signal() {
 	}
 	case 2: {
 		scene->_hotspot8.setAction(&scene->_action4);
-		scene->_soundHandler2.startSound(21);
+		scene->_soundHandler2.play(21);
 
 		Common::Point pt1(95, scene->_hotspot5._position.y);
 		NpcMover *mover1 = new NpcMover();
@@ -4405,7 +4405,7 @@ void Scene2300::Action1::signal() {
 		break;
 	}
 	case 6:
-		scene->_soundHandler1.startSound(28);
+		scene->_soundHandler1.play(28);
 		_globals->_player.disableControl();
 
 		scene->_hotspot2.setVisage(40);
@@ -4419,7 +4419,7 @@ void Scene2300::Action1::signal() {
 		_globals->_player.animate(ANIM_MODE_5, this);
 		break;
 	case 7:
-		_globals->_soundHandler.startSound(77, this);
+		_globals->_soundHandler.play(77, this);
 		break;
 	case 8:
 		_globals->_game->endGame(2300, 0);
@@ -4446,7 +4446,7 @@ void Scene2300::Action1::signal() {
 		_globals->_player.animate(ANIM_MODE_5, this);
 		break;
 	case 11:
-		scene->_soundHandler1.startSound(28);
+		scene->_soundHandler1.play(28);
 
 		scene->_hotspot5._strip = 2;
 		scene->_hotspot6._strip = 2;
@@ -4463,7 +4463,7 @@ void Scene2300::Action1::signal() {
 		_globals->_player.animate(ANIM_MODE_6, this);
 		break;
 	case 12:
-		scene->_soundHandler1.startSound(77);
+		scene->_soundHandler1.play(77);
 		_globals->_player.setVisage(0);
 		_globals->_player.animate(ANIM_MODE_1, NULL);
 		_globals->_player.setStrip(4);
@@ -4540,8 +4540,8 @@ void Scene2300::Action2::signal() {
 		scene->_hotspot2.setFrame(1);
 		scene->_hotspot2.animate(ANIM_MODE_5, this);
 
-		scene->_soundHandler1.startSound(28);
-		scene->_soundHandler2.startSound(97);
+		scene->_soundHandler1.play(28);
+		scene->_soundHandler2.play(97);
 		break;
 	case 7:
 		scene->_hotspot7._strip = 2;
@@ -4584,8 +4584,8 @@ void Scene2300::Action3::signal() {
 		_globals->_player.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
-		scene->_soundHandler1.startSound(97);
-		scene->_soundHandler2.startSound(28);
+		scene->_soundHandler1.play(97);
+		scene->_soundHandler2.play(28);
 
 		scene->_hotspot7._strip = 2;
 		scene->_hotspot7._frame = 1;
@@ -4597,7 +4597,7 @@ void Scene2300::Action3::signal() {
 		_globals->_player.animate(ANIM_MODE_6, NULL);
 		break;
 	case 4:
-		scene->_soundHandler2.startSound(97);
+		scene->_soundHandler2.play(97);
 		_globals->_player.setVisage(0);
 		_globals->_player.animate(ANIM_MODE_1, NULL);
 		_globals->_player.setStrip(1);
@@ -4618,7 +4618,7 @@ void Scene2300::Action4::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		scene->_hotspot8.animate(ANIM_MODE_5, this);
-		scene->_soundHandler1.startSound(11);
+		scene->_soundHandler1.play(11);
 		break;
 	case 1:
 		scene->_hotspot9.postInit();
@@ -4628,7 +4628,7 @@ void Scene2300::Action4::signal() {
 		scene->_hotspot9.setPosition(Common::Point(273, 199));
 		scene->_hotspot9.setPriority2(19);
 		scene->_hotspot9.animate(ANIM_MODE_5, this);
-		scene->_soundHandler1.startSound(11);
+		scene->_soundHandler1.play(11);
 		break;
 	case 2:
 		scene->_hotspot8.remove();
@@ -4639,10 +4639,10 @@ void Scene2300::Action4::signal() {
 		scene->_hotspot10.setFrame(4);
 		scene->_hotspot10.setPosition(Common::Point(292, 113));
 		scene->_hotspot10.animate(ANIM_MODE_5, this);
-		scene->_soundHandler1.startSound(11);
+		scene->_soundHandler1.play(11);
 		break;
 	case 3:
-		scene->_soundHandler1.startSound(13);
+		scene->_soundHandler1.play(13);
 		remove();
 		break;
 	}
@@ -4718,7 +4718,7 @@ void Scene2300::postInit(SceneObjectList *OwnerList) {
 	_hotspot8.setVisage(2301);
 	_hotspot8.setPosition(Common::Point(288, 74));
 
-	_globals->_soundHandler.startSound(96);
+	_globals->_soundHandler.play(96);
 	if (_globals->_sceneManager._previousScene == 2000) {
 		_hotspot8.remove();
 
@@ -4749,8 +4749,8 @@ void Scene2300::postInit(SceneObjectList *OwnerList) {
 		_hotspot7.setPosition(Common::Point(229, 125));
 		_hotspot7._numFrames = 5;
 
-		_soundHandler1.startSound(95);
-		_soundHandler2.startSound(96);
+		_soundHandler1.play(95);
+		_soundHandler2.play(96);
 		_globals->_sceneItems.push_back(&_hotspot7);
 
 		setAction(&_action2);
@@ -5032,7 +5032,7 @@ void Scene2320::Action2::signal() {
 
 	switch (_actionIndex++) {
 	case 0: {
-		scene->_soundHandler.startSound(253);
+		scene->_soundHandler.play(253);
 		scene->_hotspot13.setPriority2(99);
 
 		Common::Point pt(scene->_hotspot13._position.x, 200);
@@ -5058,7 +5058,7 @@ void Scene2320::Action3::signal() {
 		break;
 	}
 	case 1:
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_hotspot6.animate(ANIM_MODE_5, this);
 		break;
 	case 2: {
@@ -5107,7 +5107,7 @@ void Scene2320::Action3::signal() {
 			}
 		}
 
-		scene->_soundHandler.startSound(161);
+		scene->_soundHandler.play(161);
 		scene->_area1.restore();
 		scene->_area2.restore();
 		scene->_area3.restore();
@@ -5116,7 +5116,7 @@ void Scene2320::Action3::signal() {
 		if (_state == 2320) {
 			setDelay(10);
 		} else {
-			scene->_soundHandler.startSound(162);
+			scene->_soundHandler.play(162);
 			scene->_hotspot6.animate(ANIM_MODE_6, this);
 		}
 		break;
@@ -5132,7 +5132,7 @@ void Scene2320::Action3::signal() {
 		break;
 	}
 	case 6:
-		scene->_soundHandler.startSound(162);
+		scene->_soundHandler.play(162);
 		scene->_hotspot6.animate(ANIM_MODE_6, this);
 		break;
 	case 7:
@@ -5217,8 +5217,8 @@ void Scene2320::Action4::signal() {
 		break;
 	case 10:
 		if (_globals->getFlag(109)) {
-			_globals->_soundHandler.startSound(40);
-			_globals->_soundHandler.proc5(true);
+			_globals->_soundHandler.play(40);
+			_globals->_soundHandler.holdAt(true);
 
 			Common::Point pt(303, 240);
 			NpcMover *mover = new NpcMover();
@@ -5277,7 +5277,7 @@ void Scene2320::Action4::signal() {
 	}
 	case 19: {
 		scene->_hotspot16.remove();
-		scene->_soundHandler.startSound(253);
+		scene->_soundHandler.play(253);
 
 		scene->_hotspot13.show();
 		Common::Point pt(319, 157);
@@ -5428,7 +5428,7 @@ void Scene2320::Action7::signal() {
 		setDelay(30);
 		break;
 	case 1:
-		_globals->_soundHandler.startSound(162);
+		_globals->_soundHandler.play(162);
 		scene->_hotspot6.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
@@ -5857,8 +5857,8 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 
 	switch (_globals->_sceneManager._previousScene) {
 	case 2120:
-		_globals->_soundHandler.startSound(160);
-		_globals->_soundHandler.proc5(true);
+		_globals->_soundHandler.play(160);
+		_globals->_soundHandler.holdAt(true);
 
 		_globals->_player.setPriority2(-1);
 		_globals->_player.setPosition(Common::Point(389, 72));
@@ -5875,8 +5875,8 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 	case 4250:
 	case 5000:
 	case 7000:
-		_globals->_soundHandler.startSound(160);
-		_globals->_soundHandler.proc5(true);
+		_globals->_soundHandler.play(160);
+		_globals->_soundHandler.holdAt(true);
 		if ((_globals->_sceneManager._previousScene == 7000) && !_globals->getFlag(80))
 			_globals->setFlag(36);
 
@@ -5892,8 +5892,8 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 		setAction(&_action6);
 		break;
 	case 6100:
-		_globals->_soundHandler.startSound(160);
-		_globals->_soundHandler.proc5(true);
+		_globals->_soundHandler.play(160);
+		_globals->_soundHandler.holdAt(true);
 
 		_hotspot8.postInit();
 		_hotspot8.setVisage(2345);
@@ -5904,9 +5904,9 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 		setAction(&_sequenceManager1, this, 2325, &_globals->_player, &_hotspot6, &_hotspot8, &_hotspot7, NULL);
 		break;
 	case 7600:
-		_globals->_soundHandler.startSound(160);
-		_globals->_soundHandler.proc5(true);
-		_soundHandler.startSound(21);
+		_globals->_soundHandler.play(160);
+		_globals->_soundHandler.holdAt(true);
+		_soundHandler.play(21);
 
 		_globals->_player.setVisage(2323);
 		_globals->_player.setStrip(2);
@@ -5963,8 +5963,8 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 			setAction(&_sequenceManager1, this, 2325, &_globals->_player, &_hotspot6, &_hotspot8, &_hotspot7, NULL);
 			break;
 		default:
-			_globals->_soundHandler.startSound(160);
-			_globals->_soundHandler.proc5(true);
+			_globals->_soundHandler.play(160);
+			_globals->_soundHandler.holdAt(true);
 			_sceneMode = 2321;
 
 			_globals->_player.setStrip(3);
@@ -6095,7 +6095,7 @@ void Scene2400::postInit(SceneObjectList *OwnerList) {
 	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
 	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
 
-	_globals->_soundHandler.startSound(153);
+	_globals->_soundHandler.play(153);
 }
 
 } // End of namespace tSage

@@ -132,7 +132,7 @@ public:
 	SpeakerGText _speakerGText;
 	SpeakerGR _speakerGR;
 	SpeakerQText _speakerQText;
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	SceneHotspot1 _hotspot1;
 	NamedHotspot _hotspot2;
 	NamedHotspot _hotspot3;
@@ -233,7 +233,7 @@ public:
 	NamedHotspot _hotspot4;
 	NamedHotspot _hotspot5;
 	NamedHotspot _hotspot6;
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	int _field1032;
 	SceneHotspot7 _hotspot7;
 	SceneHotspot8 _hotspot8;
@@ -426,7 +426,7 @@ public:
 	SceneObject _objLever;
 	Object6 _objScimitar;
 	Object7 _objSword;
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	NamedHotspot _hotspot1;
 	NamedHotspot _hotspot2;
 	NamedHotspot _hotspot3;
@@ -483,7 +483,7 @@ class Scene9900 : public Scene {
 	};
 
 public:
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	SequenceManager _sequenceManager;
 	SceneObject _object1;
 	SceneObject _object2;

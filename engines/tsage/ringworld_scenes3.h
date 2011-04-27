@@ -117,7 +117,7 @@ public:
 	Action14 _action14;
 	SceneObject _object1, _object2, _object3, _object4, _object5;
 	SceneObject _object6, _object7, _object8, _object9, _object10;
-	SoundHandler _soundHandler1, _soundHandler2;
+	ASound _soundHandler1, _soundHandler2;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void stripCallback(int v);
@@ -235,7 +235,7 @@ class Scene2100 : public Scene {
 	};
 public:
 	SequenceManager _sequenceManager;
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	SpeakerMText _speakerMText;
 	SpeakerMR _speakerMR;
 	SpeakerQL _speakerQL;
@@ -313,7 +313,7 @@ class Scene2120 : public Scene {
 	};
 
 public:
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	SceneObject _topicArrowHotspot, _arrowHotspot, _visageHotspot;
 	SceneObject _subjectButton, _nextPageButton, _previousPageButton, _exitButton;
 	Action1 _action1;
@@ -360,7 +360,7 @@ class Scene2150 : public Scene {
 		virtual void doAction(int action);
 	};
 public:
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	SequenceManager _sequenceManager;
 	SpeakerGameText _speakerGameText;
 
@@ -441,7 +441,7 @@ public:
 	DisplayHotspot _hotspot10;
 	SceneObject _hotspot2, _hotspot4;
 	SceneObject _hotspot6, _hotspot7, _hotspot8;
-	SoundHandler _soundHandler1, _soundHandler2;
+	ASound _soundHandler1, _soundHandler2;
 
 	Scene2200();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -463,7 +463,7 @@ class Scene2222 : public Scene {
 	};
 
 public:
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	SpeakerSText _speakerSText;
 	SpeakerMText _speakerMText;
 	SpeakerQText _speakerQText;
@@ -553,7 +553,7 @@ class Scene2230 : public Scene {
 		virtual void doAction(int action);
 	};
 public:
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	Action1 _action1;
 	Action2 _action2;
 	Action3 _action3;
@@ -653,7 +653,7 @@ class Scene2280 : public Scene {
 	};
 
 public:
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	SequenceManager _sequenceManager;
 	Rect _exitRect;
 	Action1 _action1;
@@ -713,7 +713,7 @@ class Scene2300 : public Scene {
 		virtual void doAction(int action);
 	};
 public:
-	SoundHandler _soundHandler1, _soundHandler2;
+	ASound _soundHandler1, _soundHandler2;
 	SpeakerSL _speakerSL;
 	SpeakerMText _speakerMText;
 	SpeakerQText _speakerQText;
@@ -835,7 +835,7 @@ class Scene2320 : public Scene {
 		virtual void doAction(int action);
 	};
 public:
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	SequenceManager _sequenceManager1, _sequenceManager2;
 	SpeakerMText _speakerMText;
 	SpeakerMR _speakerMR;

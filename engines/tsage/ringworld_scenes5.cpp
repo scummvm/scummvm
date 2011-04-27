@@ -105,7 +105,7 @@ void Scene4000::Action1::signal() {
 		ADD_MOVER(scene->_hotspot5, -40, 86);
 		break;
 	case 5:
-		_globals->_soundHandler.startSound(155);
+		_globals->_soundHandler.play(155);
 		_globals->setFlag(43);
 		_globals->setFlag(114);
 		scene->_stripManager.start(4430, this);
@@ -349,14 +349,14 @@ void Scene4000::Action8::signal() {
 		setDelay(60);
 		break;
 	case 3:
-		_globals->_soundHandler.startSound(170);
+		_globals->_soundHandler.play(170);
 		scene->_smoke2.setVisage(4000);
 		scene->_smoke2.setStrip(6);
 		scene->_smoke2.animate(ANIM_MODE_2, NULL);
 		setDelay(60);
 		break;
 	case 4:
-		_globals->_soundHandler.startSound(77, this);
+		_globals->_soundHandler.play(77, this);
 		break;
 	case 5:
 		_globals->_game->endGame(4000, 15);
@@ -422,7 +422,7 @@ void Scene4000::Action11::signal() {
 		scene->_olo.animate(ANIM_MODE_1, NULL);
 		break;
 	case 5:
-		scene->_soundHandler1.proc3();
+		scene->_soundHandler1.stop();
 		scene->_forceField.remove();
 
 		ADD_MOVER(_globals->_player, 340, 163);
@@ -485,12 +485,12 @@ void Scene4000::Action13::signal() {
 		setDelay(3);
 		break;
 	case 1:
-		scene->_soundHandler2.startSound(151);
-		scene->_soundHandler2.proc5(true);
+		scene->_soundHandler2.play(151);
+		scene->_soundHandler2.holdAt(true);
 		ADD_MOVER(scene->_lander, -30, 70);
 		break;
 	case 2:
-		scene->_soundHandler2.proc4();
+		scene->_soundHandler2.release();
 		_globals->_sceneManager.changeScene(4010);
 		break;
 	}
@@ -856,7 +856,7 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 	_theTech.setPosition(Common::Point(281, 176));
 
 	if (_globals->getFlag(34)) {
-		_soundHandler1.startSound(156);
+		_soundHandler1.play(156);
 
 		_forceField.postInit();
 		_forceField.setVisage(4000);
@@ -889,7 +889,7 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 
 	switch (_globals->_sceneManager._previousScene) {
 	case 2320:
-		_globals->_soundHandler.startSound(155);
+		_globals->_soundHandler.play(155);
 
 		if (RING_INVENTORY._ale._sceneNumber == 1) {
 			_guardRock.postInit();
@@ -951,7 +951,7 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 		}
 
 		if (_globals->_stripNum == 4025) {
-			_soundHandler1.startSound(182);
+			_soundHandler1.play(182);
 			_forceField.remove();
 
 			_hotspot5.postInit();
@@ -1029,7 +1029,7 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 		break;
 
 	case 4050:
-		_globals->_soundHandler.startSound(155);
+		_globals->_soundHandler.play(155);
 		_globals->_player.disableControl();
 
 		if (_globals->_stripNum == 4050) {
@@ -1066,7 +1066,7 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 		break;
 
 	default:
-		_globals->_soundHandler.startSound(155);
+		_globals->_soundHandler.play(155);
 
 		_lander.postInit();
 		_lander.setVisage(4002);
@@ -1090,7 +1090,7 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 			RING_INVENTORY._ladder._sceneNumber = 4100;
 			RING_INVENTORY._rope._sceneNumber = 4150;
 
-			_soundHandler1.startSound(156);
+			_soundHandler1.play(156);
 
 			_forceField.postInit();
 			_forceField.setVisage(4000);
@@ -1229,8 +1229,8 @@ void Scene4000::dispatch() {
 		if ((RING_INVENTORY._peg._sceneNumber == 1) && _globals->getFlag(34) &&
 				_globals->getFlag(37) && !_globals->getFlag(40)) {
 			_globals->_player.disableControl();
-			_soundHandler1.startSound(177);
-			_globals->_soundHandler.startSound(178);
+			_soundHandler1.play(177);
+			_globals->_soundHandler.play(178);
 
 			setAction(&_action1);
 		}
@@ -1873,7 +1873,7 @@ void Scene4045::postInit(SceneObjectList *OwnerList) {
 	_olloFace.setPriority2(152);
 
 	if(_globals->_sceneManager._previousScene == 4050) {
-		_globals->_soundHandler.startSound(155);
+		_globals->_soundHandler.play(155);
 		_globals->_player.setPosition(Common::Point(72, 128));
 		_globals->_player.enableControl();
 
@@ -2247,7 +2247,7 @@ void Scene4050::postInit(SceneObjectList *OwnerList) {
 			_globals->_player.setStrip(2);
 
 			setAction(&_action2);
-			_globals->_soundHandler.startSound(175);
+			_globals->_soundHandler.play(175);
 		} else {
 			// Without the rope
 			_globals->_player.setVisage(5315);
@@ -2258,7 +2258,7 @@ void Scene4050::postInit(SceneObjectList *OwnerList) {
 			_globals->_player.animate(ANIM_MODE_2, NULL);
 
 			setAction(&_action4);
-			_globals->_soundHandler.startSound(176);
+			_globals->_soundHandler.play(176);
 		}
 		break;
 	case 4045:
@@ -2272,7 +2272,7 @@ void Scene4050::postInit(SceneObjectList *OwnerList) {
 		_globals->_player.setObjectWrapper(new SceneObjectWrapper());
 		_globals->_player.setPosition(Common::Point(193, 193));
 
-		_globals->_soundHandler.startSound(175);
+		_globals->_soundHandler.play(175);
 		break;
 	default:
 		break;
@@ -2691,7 +2691,7 @@ void Scene4100::postInit(SceneObjectList *OwnerList) {
 		&_hotspot11, &_hotspot9, &_hotspot7, &_hotspot10, &_hotspot8, &_hotspot14, NULL);
 
 	if (_globals->_sceneManager._previousScene == 4150) {
-		_globals->_soundHandler.startSound(155);
+		_globals->_soundHandler.play(155);
 
 		if (!_globals->getFlag(42)) {
 			_hotspot1.setVisage(4104);
@@ -3065,8 +3065,8 @@ void Scene4150::postInit(SceneObjectList *OwnerList) {
 		&_hotspot10, &_hotspot9, &_hotspot8, &_hotspot7, &_hotspot6, &_hotspot2,
 		&_hotspot5, NULL);
 
-	_globals->_soundHandler.startSound(165);
-	_soundHandler.startSound(311);
+	_globals->_soundHandler.play(165);
+	_soundHandler.play(311);
 }
 
 void Scene4150::signal() {
@@ -3080,7 +3080,7 @@ void Scene4150::dispatch() {
 	Scene::dispatch();
 
 	if (!_action && (_globals->_player._position.x >= 316)) {
-		_globals->_soundHandler.proc1(NULL);
+		_globals->_soundHandler.fadeOut(NULL);
 		_globals->_player.disableControl();
 		_sceneMode = 4152;
 		setAction(&_sequenceManager, this, 4152, &_globals->_player, NULL);
@@ -3382,7 +3382,7 @@ void Scene4250::Hotspot6::doAction(int action) {
 		SceneItem::display2(4250, (RING_INVENTORY._helmet._sceneNumber == 4250) ? 20 : 3);
 		break;
 	case OBJECT_HELMET:
-		_globals->_soundHandler.startSound(354);
+		_globals->_soundHandler.play(354);
 		_globals->_player.disableControl();
 		RING_INVENTORY._helmet._sceneNumber = 4250;
 
@@ -3410,7 +3410,7 @@ void Scene4250::Hotspot6::doAction(int action) {
 		break;
 	case OBJECT_NULLIFIER:
 		if (RING_INVENTORY._helmet._sceneNumber == 4250) {
-			_globals->_soundHandler.startSound(353);
+			_globals->_soundHandler.play(353);
 			_globals->_player.disableControl();
 			RING_INVENTORY._helmet._sceneNumber = 1;
 
@@ -3618,7 +3618,7 @@ void Scene4250::postInit(tSage::SceneObjectList *OwnerList) {
 
 	_hotspot7.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 	_globals->_sceneItems.push_back(&_hotspot7);
-	_globals->_soundHandler.startSound(185);
+	_globals->_soundHandler.play(185);
 }
 
 void Scene4250::signal() {
@@ -3654,7 +3654,7 @@ void Scene4250::signal() {
 	case 4263:
 		break;
 	case 4259:
-		_globals->_soundHandler.startSound(360);
+		_globals->_soundHandler.play(360);
 		_globals->_sceneManager.changeScene(9900);
 		break;
 	case 4261:
@@ -3717,36 +3717,36 @@ void Scene4300::Action1::signal() {
 		_globals->setFlag(56);
 		_globals->_scenePalette.addRotation(240, 254, -1);
 		scene->_hotspot7.animate(ANIM_MODE_6, this);
-		_globals->_soundHandler.startSound(164);
+		_globals->_soundHandler.play(164);
 		break;
 	case 1:
-		_globals->_soundHandler.startSound(340);
-		scene->_soundHandler1.startSound(341);
+		_globals->_soundHandler.play(340);
+		scene->_soundHandler1.play(341);
 		scene->_hotspot1.remove();
 		setDelay(3);
 		break;
 	case 2:
-		scene->_soundHandler1.startSound(341);
+		scene->_soundHandler1.play(341);
 		scene->_hotspot2.remove();
 		setDelay(6);
 		break;
 	case 3:
-		scene->_soundHandler1.startSound(341);
+		scene->_soundHandler1.play(341);
 		scene->_hotspot3.remove();
 		setDelay(6);
 		break;
 	case 4:
-		scene->_soundHandler1.startSound(341);
+		scene->_soundHandler1.play(341);
 		scene->_hotspot4.remove();
 		setDelay(12);
 		break;
 	case 5:
-		scene->_soundHandler1.startSound(341);
+		scene->_soundHandler1.play(341);
 		scene->_hotspot5.remove();
 		setDelay(12);
 		break;
 	case 6:
-		scene->_soundHandler1.startSound(341);
+		scene->_soundHandler1.play(341);
 		scene->_hotspot6.remove();
 		setDelay(60);
 		break;
@@ -3759,7 +3759,7 @@ void Scene4300::Action1::signal() {
 		scene->_stripManager.start(8015, this, scene);
 		break;
 	case 9:
-		_globals->_soundHandler.startSound(350);
+		_globals->_soundHandler.play(350);
 		_globals->_sceneManager._fadeMode = FADEMODE_GRADUAL;
 		_globals->_events.setCursor(CURSOR_USE);
 		_globals->_player.enableControl();
@@ -3881,7 +3881,7 @@ void Scene4300::Hotspot10::doAction(int action) {
 void Scene4300::Hotspot15::signal() {
 	Scene4300 *scene = (Scene4300 *)_globals->_sceneManager._scene;
 
-	scene->_soundHandler2.startSound(345);
+	scene->_soundHandler2.play(345);
 
 	_strip = (_globals->_randomSource.getRandomNumber(6) < 2) ? 2 : 1;
 	if ((RING_INVENTORY._stasisBox2._sceneNumber == 4300) ||
@@ -3947,7 +3947,7 @@ void Scene4300::Hotspot17::doAction(int action) {
 		SceneItem::display2(4300, 26);
 		break;
 	case OBJECT_STASIS_BOX2:
-		scene->_soundHandler1.startSound(352);
+		scene->_soundHandler1.play(352);
 		_globals->_events.setCursor(CURSOR_USE);
 		scene->_sceneMode = 4303;
 
@@ -4206,11 +4206,11 @@ void Scene4301::Action1::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		scene->_soundHandler.startSound(164);
+		scene->_soundHandler.play(164);
 		scene->_hotspot1.animate(ANIM_MODE_5, this);
 		break;
 	case 1:
-		_globals->_soundHandler.startSound(335);
+		_globals->_soundHandler.play(335);
 		_globals->_events.setCursor(CURSOR_USE);
 
 		scene->_hotspot2.postInit();
@@ -4234,7 +4234,7 @@ void Scene4301::Action1::signal() {
 		break;
 	case 10:
 		_globals->_events.setCursor(CURSOR_NONE);
-		scene->_soundHandler.startSound(337);
+		scene->_soundHandler.play(337);
 		if (scene->_hotspot3._flags & OBJFLAG_HIDE)
 			scene->_hotspot3.show();
 		else
@@ -4249,7 +4249,7 @@ void Scene4301::Action1::signal() {
 		for (_state = 0; _state < 6; ++_state)
 			_buttonList[_state].remove();
 
-		scene->_soundHandler.startSound(338);
+		scene->_soundHandler.play(338);
 		scene->_hotspot3.hide();
 
 		_actionIndex = 2;
@@ -4258,7 +4258,7 @@ void Scene4301::Action1::signal() {
 		break;
 	case 20:
 		_globals->_player.disableControl();
-		scene->_soundHandler.startSound(339);
+		scene->_soundHandler.play(339);
 		scene->_hotspot3._frame = 3;
 		if (scene->_hotspot3._flags & OBJFLAG_HIDE)
 			scene->_hotspot3.show();
@@ -4291,7 +4291,7 @@ void Scene4301::Action1::process(Event &event) {
 
 	if ((event.eventType == EVENT_BUTTON_DOWN) && buttonsRect.contains(event.mousePos)) {
 		event.handled = true;
-		scene->_soundHandler.startSound(336);
+		scene->_soundHandler.play(336);
 
 		int buttonIndex = ((event.mousePos.y - buttonsRect.top) / 33) * 3 +
 			((event.mousePos.x - buttonsRect.left) / 33);

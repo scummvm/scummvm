@@ -28,6 +28,7 @@
 
 #include "tsage/core.h"
 #include "tsage/dialogs.h"
+#include "tsage/sound.h"
 
 namespace tSage {
 
@@ -53,7 +54,7 @@ public:
 	int _objectIndex;
 	SceneObject *_sceneObject;
 	SceneObject *_objectList[6];
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 public:
 	SequenceManager();
 

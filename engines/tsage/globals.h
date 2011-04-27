@@ -31,6 +31,7 @@
 #include "tsage/dialogs.h"
 #include "tsage/scenes.h"
 #include "tsage/events.h"
+#include "tsage/sound.h"
 #include "tsage/saveload.h"
 
 namespace tSage {
@@ -60,7 +61,7 @@ public:
 	SynchronisedList<EventHandler *> _sceneListeners;
 	bool _flags[256];
 	Player _player;
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	InvObjectList *_inventory;
 	Region _paneRegions[2];
 	int _paneRefreshFlag[2];

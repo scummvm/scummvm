@@ -75,7 +75,7 @@ public:
 	Action1 _action1;
 	SceneObject _object1, _object2, _object3, _object4;
 	SceneObject _object5, _object6, _object7;
-	SoundHandler _soundHandler1, _soundHandler2;
+	ASound _soundHandler1, _soundHandler2;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
@@ -137,7 +137,7 @@ public:
 		virtual void signal();
 	};
 public:
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	Action1 _action1;
 	Action2 _action2;
 	SceneObject _object1, _object2, _object3;

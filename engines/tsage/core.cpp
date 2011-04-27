@@ -32,6 +32,7 @@
 #include "tsage/scenes.h"
 #include "tsage/staticres.h"
 #include "tsage/globals.h"
+#include "tsage/sound.h"
 
 namespace tSage {
 
@@ -2911,52 +2912,21 @@ int SceneRegions::indexOf(const Common::Point &pt) {
 
 /*--------------------------------------------------------------------------*/
 
-SoundHandler::SoundHandler() {
+ASound::ASound() {
 	_action = NULL;
 	_field280 = -1;
-	if (_globals)
-		_globals->_sceneListeners.push_back(this);
 }
 
-SoundHandler::~SoundHandler() {
-	if (_globals)
-		_globals->_sceneListeners.remove(this);
+void ASound::synchronise(Serialiser &s) {
+	EventHandler::synchronise(s);
+
+	SYNC_POINTER(_action);
+	s.syncAsSint16LE(_field280);
 }
 
-void SoundHandler::dispatch() {
-	EventHandler::dispatch();
-	int v = _sound.proc12();
-
-	if (v != -1) {
-		_field280 = v;
-		_sound.proc2(-1);
-
-		if (_action)
-			_action->signal();
-	}
-
-	if (_field280 != -1) {
-		// FIXME: Hardcoded to only flag a sound ended if an action has been set
-		if (_action) {
-//		if (!_sound.proc3()) {
-			_field280 = -1;
-			if (_action) {
-				_action->signal();
-				_action = NULL;
-			}
-		}
-	}
+void ASound::dispatch() {
+	
 }
-
-void SoundHandler::startSound(int soundNum, Action *action, int volume) {
-	_action = action;
-	_field280 = 0;
-	setVolume(volume);
-	_sound.startSound(soundNum);
-
-	warning("TODO: SoundHandler::startSound");
-}
-
 
 /*--------------------------------------------------------------------------*/
 

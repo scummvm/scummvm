@@ -137,7 +137,7 @@ class Scene4000 : public Scene {
 	};
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3;
-	SoundHandler _soundHandler1, _soundHandler2;
+	ASound _soundHandler1, _soundHandler2;
 	SpeakerQR _speakerQR;
 	SpeakerML _speakerML;
 	SpeakerMR _speakerMR;
@@ -473,7 +473,7 @@ class Scene4150 : public Scene {
 
 public:
 	SequenceManager _sequenceManager;
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	SpeakerQText _speakerQText;
 	SpeakerQR _speakerQR;
 	SpeakerCDL _speakerCDL;
@@ -543,7 +543,7 @@ class Scene4250 : public Scene {
 
 public:
 	SequenceManager _sequenceManager;
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	SpeakerSR _speakerSR;
 	SpeakerSL _speakerSL;
 	SpeakerSText _speakerSText;
@@ -615,7 +615,7 @@ class Scene4300 : public Scene {
 		virtual void doAction(int action);
 	};
 public:
-	SoundHandler _soundHandler1, _soundHandler2;
+	ASound _soundHandler1, _soundHandler2;
 	SequenceManager _sequenceManager;
 	GfxButton _gfxButton;
 	SpeakerQText _speakerQText;
@@ -674,7 +674,7 @@ class Scene4301 : public Scene {
 public:
 	Common::List<int> _list1;
 	SequenceManager _sequenceManager;
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	Action1 _action1;
 	SceneObject _hotspot1, _hotspot2, _hotspot3;
 	Hotspot4 _hotspot4;

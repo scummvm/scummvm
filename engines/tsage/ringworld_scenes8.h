@@ -100,7 +100,7 @@ class Scene7000 : public Scene {
 	};
 
 public:
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	SequenceManager _sequenceManager;
 	SpeakerSKText _speakerSKText;
 	SpeakerSKL _speakerSKL;
@@ -171,8 +171,8 @@ class Scene7100 : public Scene {
 	};
 
 public:
-	SoundHandler _soundHandler1;
-	SoundHandler _soundHandler2;
+	ASound _soundHandler1;
+	ASound _soundHandler2;
 	SceneObject _object1;
 	SceneObject _object2;
 	SceneObject _object3;
@@ -236,7 +236,7 @@ public:
 	SceneObject _object7;
 	SceneObject _object8;
 	SceneObject _object9;
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
@@ -302,8 +302,8 @@ public:
 	SceneObject _object4;
 	SceneObject _object5;
 	SceneObject _object6;
-	SoundHandler _soundHandler1;
-	SoundHandler _soundHandler2;
+	ASound _soundHandler1;
+	ASound _soundHandler2;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
@@ -415,7 +415,7 @@ class Scene7700 : public Scene {
 		virtual void doAction(int action);
 	};
 public:
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	SequenceManager _sequenceManager;
 	GfxButton _gfxButton;
 	SpeakerEText _speakerEText;
