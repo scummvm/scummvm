@@ -108,6 +108,7 @@ xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\codeblocks\</Command>
     <ClInclude Include="..\visualstudio.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\scripts\installer.vbs" />
     <None Include="..\scripts\postbuild.cmd" />
     <None Include="..\scripts\prebuild.cmd" />
     <None Include="..\scripts\revision.vbs" />

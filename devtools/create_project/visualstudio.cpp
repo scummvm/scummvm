@@ -63,7 +63,7 @@ int VisualStudioProvider::getVisualStudioVersion() {
 		           "\t\t\t\tCommandLine=\"" << getPreBuildEvent() << "\"\n" \
 		           "\t\t\t/>\n" \
 		           "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n" \
-		           "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32) << "\"\n" \
+		           "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32, setup.createInstaller) << "\"\n" \
 		           "\t\t\t/>\n"; \
 	}
 

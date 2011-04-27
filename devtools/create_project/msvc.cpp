@@ -158,7 +158,7 @@ std::string MSVCProvider::getPreBuildEvent() const {
 	return cmdLine;
 }
 
-std::string MSVCProvider::getPostBuildEvent(bool isWin32) const {
+std::string MSVCProvider::getPostBuildEvent(bool isWin32, bool createInstaller) const {
 	std::string cmdLine = "";
 
 	cmdLine = "@echo off\n"
@@ -168,7 +168,10 @@ std::string MSVCProvider::getPostBuildEvent(bool isWin32) const {
 
 	cmdLine += (isWin32) ? "x86" : "x64";
 
-	cmdLine += " %SCUMMVM_LIBS%";
+	cmdLine += " %SCUMMVM_LIBS% ";
+
+	// Specify if installer needs to be built or not
+	cmdLine += (createInstaller ? "1" : "0");
 
 	cmdLine += "\n"
 	           "EXIT /B0";
