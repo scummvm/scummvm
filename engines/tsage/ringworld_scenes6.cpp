@@ -36,6 +36,7 @@ namespace tSage {
  *--------------------------------------------------------------------------*/
 
 void Scene5000::Action1::signal() {
+	// Ship landing
 	Scene5000 *scene = (Scene5000 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -345,6 +346,7 @@ void Scene5000::Action5::signal() {
 }
 
 void Scene5000::Action6::signal() {
+	// Discussion between the hero and Seeker, then the hero goes back to the lander
 	Scene5000 *scene = (Scene5000 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -393,6 +395,7 @@ void Scene5000::Hotspot7::doAction(int action) {
 }
 
 void Scene5000::Hotspot8::doAction(int action) {
+	// Cave
 	Scene5000 *scene = (Scene5000 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -929,7 +932,7 @@ void Scene5100::Hotspot9::doAction(int action) {
 	case OBJECT_BONE:
 		_globals->_player.disableControl();
 		scene->_sceneMode = 5116;
-		scene->setAction(&scene->_sequenceManager, scene, 5116, &_globals->_player, &scene->_hotspot10,
+		scene->setAction(&scene->_sequenceManager, scene, 5116, &_globals->_player, this, &scene->_hotspot10,
 				&scene->_hotspot4, NULL);
 		break;
 	default:
@@ -1324,7 +1327,7 @@ void Scene5100::signal() {
 		break;
 	case 5111:
 		_globals->_player.setObjectWrapper(new SceneObjectWrapper());
-		_globals->_player.setVisage(6);
+		_globals->_player.setVisage(0);
 		_globals->_player.setStrip(6);
 		_globals->_player.setPriority2(-1);
 		_globals->_player.animate(ANIM_MODE_1, NULL);
