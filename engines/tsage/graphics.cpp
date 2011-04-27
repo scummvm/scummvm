@@ -207,7 +207,7 @@ void Rect::expandPanes() {
 }
 
 /**
- * Serialises the given rect
+ * Serializes the given rect
  */
 void Rect::synchronize(Serializer &s) {
 	s.syncAsSint16LE(left);

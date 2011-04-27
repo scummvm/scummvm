@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "tsage/saveload.h"
+#include "tsage/core.h"
 
 namespace tSage {
 
@@ -39,6 +40,48 @@ public:
 	void saveNotifierProc(bool postFlag);
 	static void loadNotifier(bool postFlag);
 	void loadNotifierProc(bool postFlag);
+};
+
+class Sound: public EventHandler {
+public:
+
+};
+
+class ASound: public Sound {
+public:
+	Sound _sound;
+	Action *_action;
+	int _field280;
+
+	ASound();
+	virtual void synchronize(Serializer &s);
+	virtual void dispatch();
+
+	void play(int soundNum, Action *action = NULL, int volume = 127);
+	void stop();
+	void prime(int v, Action *action = NULL);
+	void unPrime();
+	void go();
+	void hault(void);
+	int getSoundNum() const;
+	bool isPlaying() const;
+	bool isPaused() const;
+	bool isMuted() const;
+	void pause();
+	void mute();
+	void fadeIn();
+	void fadeOut(EventHandler *evtHandler);
+	void fade(int v1, int v2, int v3, int v4, EventHandler *evtHandler);
+	void setTimeIndex(uint32 timeIndex);
+	uint32 getTimeIndex() const;
+	void setPri(int v);
+	void setLoop(bool flag);
+	int getPri() const;
+	bool getLoop();
+	void setVolume(int volume);
+	int getVol() const;
+	void holdAt(int v);
+	void release();
 };
 
 } // End of namespace tSage
