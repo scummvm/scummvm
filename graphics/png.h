@@ -117,18 +117,18 @@ public:
 	}
 
 	/**
-	 * Returns the palette of the specified PNG8 image.
-	 *
-	 * Note that the palette's format is RGBA.
+	 * Returns the palette of the specified PNG8 image, given a pointer to
+	 * an RGBA palette array (4 x 256).
 	 */
-	void getPalette(byte *&palette, uint16 &entries) {
+	void getPalette(byte *palette, uint16 &entries) {
 		if (_header.colorType != kIndexed)
 			error("Palette requested for a non-indexed PNG");
-		// TODO: It might be that this should really return a copy of the
-		// palette, but since the implementation was like this I changed
-		// the palette pointer to be a reference instead of a value copy.
-		// Someone should check this code and verify this is as intended.
-		palette = _palette;
+		for (int i = 0; i < 256; i++) {
+			palette[0 + i * 4] = _palette[0 + i * 4];	// R
+			palette[1 + i * 4] = _palette[1 + i * 4];	// G
+			palette[2 + i * 4] = _palette[2 + i * 4];	// B
+			palette[3 + i * 4] = _palette[3 + i * 4];	// A
+		}
 		entries = _paletteEntries;
 	}
 
