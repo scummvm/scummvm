@@ -356,13 +356,12 @@ void OptionsDialog::close() {
 		// Setup graphics again if needed
 		if (_domain == Common::ConfigManager::kApplicationDomain && graphicsModeChanged) {
 			g_system->beginGFXTransaction();
-			g_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
-			g_system->initSize(320, 200);
+			g_system->setGraphicsMode(ConfMan.get("gfx_mode", _domain).c_str());
 			
 			if (ConfMan.hasKey("aspect_ratio"))
-				g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
+				g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio", _domain));
 			if (ConfMan.hasKey("fullscreen"))
-				g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
+				g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen", _domain));
 			g_system->endGFXTransaction();
 		}
 
