@@ -127,13 +127,14 @@ Graphics::Surface *PNG::getSurface(const PixelFormat &format) {
 
 		for (uint16 i = 0; i < output->h; i++) {
 			for (uint16 j = 0; j < output->w; j++) {
-				if (format.bytesPerPixel == 2) {
+				if (format.bytesPerPixel == 2) {	// 2bpp
+					uint16 *dest = ((uint16 *)output->getBasePtr(j, i));
 					if (_unfilteredSurface->bytesPerPixel == 1) {		// Grayscale
 						if (_transparentColorSpecified)
 							a = (src[0] == _transparentColor[0]) ? 0 : 0xFF;
-						*((uint16 *)output->getBasePtr(j, i)) = format.ARGBToColor(    a, src[0], src[0], src[0]);
+						*dest = format.ARGBToColor(    a, src[0], src[0], src[0]);
 					} else if (_unfilteredSurface->bytesPerPixel == 2) {	// Grayscale + alpha
-						*((uint16 *)output->getBasePtr(j, i)) = format.ARGBToColor(src[1], src[0], src[0], src[0]);
+						*dest = format.ARGBToColor(src[1], src[0], src[0], src[0]);
 					} else if (_unfilteredSurface->bytesPerPixel == 3) {	// RGB
 						if (_transparentColorSpecified) {
 							bool isTransparentColor = (src[0] == _transparentColor[0] &&
@@ -141,17 +142,18 @@ Graphics::Surface *PNG::getSurface(const PixelFormat &format) {
 													   src[2] == _transparentColor[2]);
 							a = isTransparentColor ? 0 : 0xFF;
 						}
-						*((uint16 *)output->getBasePtr(j, i)) = format.ARGBToColor(     a, src[0], src[1], src[2]);
+						*dest = format.ARGBToColor(     a, src[0], src[1], src[2]);
 					} else if (_unfilteredSurface->bytesPerPixel == 4) {	// RGBA
-						*((uint16 *)output->getBasePtr(j, i)) = format.ARGBToColor(src[3], src[0], src[1], src[2]);
+						*dest = format.ARGBToColor(src[3], src[0], src[1], src[2]);
 					}
-				} else {
+				} else {	// 4bpp
+					uint32 *dest = ((uint32 *)output->getBasePtr(j, i));
 					if (_unfilteredSurface->bytesPerPixel == 1) {		// Grayscale
 						if (_transparentColorSpecified)
 							a = (src[0] == _transparentColor[0]) ? 0 : 0xFF;
-						*((uint32 *)output->getBasePtr(j, i)) = format.ARGBToColor(     a, src[0], src[0], src[0]);
+						*dest = format.ARGBToColor(     a, src[0], src[0], src[0]);
 					} else if (_unfilteredSurface->bytesPerPixel == 2) {	// Grayscale + alpha
-						*((uint32 *)output->getBasePtr(j, i)) = format.ARGBToColor(src[1], src[0], src[0], src[0]);
+						*dest = format.ARGBToColor(src[1], src[0], src[0], src[0]);
 					} else if (_unfilteredSurface->bytesPerPixel == 3) {	// RGB
 						if (_transparentColorSpecified) {
 							bool isTransparentColor = (src[0] == _transparentColor[0] &&
@@ -159,9 +161,9 @@ Graphics::Surface *PNG::getSurface(const PixelFormat &format) {
 													   src[2] == _transparentColor[2]);
 							a = isTransparentColor ? 0 : 0xFF;
 						}
-						*((uint32 *)output->getBasePtr(j, i)) = format.ARGBToColor(     a, src[0], src[1], src[2]);
+						*dest = format.ARGBToColor(     a, src[0], src[1], src[2]);
 					} else if (_unfilteredSurface->bytesPerPixel == 4) {	// RGBA
-						*((uint32 *)output->getBasePtr(j, i)) = format.ARGBToColor(src[3], src[0], src[1], src[2]);
+						*dest = format.ARGBToColor(src[3], src[0], src[1], src[2]);
 					}
 				}
 
