@@ -30,11 +30,20 @@
 namespace Common {
 
 /**
- * The TaskbarManager allows interaction with the ScummVM icon in the taskbar.
+ * The TaskbarManager allows interaction with the ScummVM application icon:
+ *  - in the taskbar on Windows 7 and later
+ *  - in the launcher for Unity
+ *  - in the dock on MacOSX
+ *  - ...
  *
- * This allows the application to set a progress bar, an overlay icon and count
- * as well as add the started engine to the recent items list (so that the user
- * can start the engine directly in one click)
+ * This allows GUI code and engines to display a progress bar, an overlay icon and/or count
+ * associated with the ScummVM icon as well as add the started engine to the recent items
+ * list (so that the user can start the engine directly in one click).
+ *
+ * Examples of use:
+ *  - Track search progress and found engines when running the Mass Add dialog
+ *  - Add an entry to the recent items when starting an engine
+ *  - Show the current running engine icon as an overlay
  *
  * @note functionality will vary between supported platforms (due to API limitations)
  *       and some of the methods will just be no-ops or approximate the functionality
