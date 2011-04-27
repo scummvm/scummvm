@@ -1354,6 +1354,7 @@ void Scene5100::signal() {
 		_globals->_player.setStrip(6);
 		_globals->_player.setPriority2(-1);
 		_globals->_player.animate(ANIM_MODE_1, NULL);
+		_globals->_player.enableControl();	// TODO: verify that this is supposed to occur here
 		break;
 	case 5117:
 		_globals->_player.enableControl();
@@ -1401,9 +1402,9 @@ void Scene5100::dispatch() {
 		_hotspot3.setStrip2(2);
 
 		ObjectMover3 *mover1 = new ObjectMover3();
-		_hotspot2.addMover(mover1, 20, this);
+		_hotspot2.addMover(mover1, &_globals->_player, 20, this);
 		ObjectMover3 *mover2 = new ObjectMover3();
-		_hotspot3.addMover(mover2, 20, this);
+		_hotspot3.addMover(mover2, &_globals->_player, 20, this);
 	}
 
 	if (!_action) {
@@ -2154,6 +2155,7 @@ void Scene5300::signal() {
 		break;
 	case 5307:
 		_soundHandler.proc1(NULL);
+		_globals->_player.enableControl();	// TODO: verify that this is supposed to occur here
 		break;
 	case 5309:
 		_hotspot5.remove();
