@@ -47,14 +47,43 @@ public:
 
 class Sound: public EventHandler {
 public:
-
+	void play(int soundNum, int volume = 127);
+	void stop();
+	void prime(int soundNum);
+	void prime(int soundNum, int v2);
+	void _unPrime();
+	void unPrime();
+	void go();
+	void halt(void);
+	int getSoundNum() const;
+	bool isPlaying() const;
+	bool isPrimed() const;
+	bool isPaused() const;
+	bool isMuted() const;
+	void pause();
+	void mute();
+	void fadeIn();
+	void fadeOut(EventHandler *evtHandler);
+	void fade(int v1, int v2, int v3, int v4);
+	void setTimeIndex(uint32 timeIndex);
+	uint32 getTimeIndex() const;
+	bool getCueValue() const;
+	void setCueValue(bool flag);
+	void setVol(int volume);
+	int getVol() const;
+	void setPri(int v);
+	void setLoop(bool flag);
+	int getPri() const;
+	bool getLoop();
+	void holdAt(int v);
+	void release();
 };
 
-class ASound: public Sound {
+class ASound: public EventHandler {
 public:
 	Sound _sound;
 	Action *_action;
-	int _field280;
+	bool _cueFlag;
 
 	ASound();
 	virtual void synchronise(Serialiser &s);
@@ -62,29 +91,29 @@ public:
 
 	void play(int soundNum, Action *action = NULL, int volume = 127);
 	void stop();
-	void prime(int v, Action *action = NULL);
+	void prime(int soundNum, Action *action = NULL);
 	void unPrime();
-	void go();
-	void hault(void);
-	int getSoundNum() const;
-	bool isPlaying() const;
-	bool isPaused() const;
-	bool isMuted() const;
-	void pause();
-	void mute();
-	void fadeIn();
-	void fadeOut(EventHandler *evtHandler);
-	void fade(int v1, int v2, int v3, int v4, EventHandler *evtHandler);
-	void setTimeIndex(uint32 timeIndex);
-	uint32 getTimeIndex() const;
-	void setPri(int v);
-	void setLoop(bool flag);
-	int getPri() const;
-	bool getLoop();
-	void setVolume(int volume);
-	int getVol() const;
-	void holdAt(int v);
-	void release();
+	void go() { _sound.go(); }
+	void hault(void) { _sound.halt(); }
+	int getSoundNum() const { return _sound.getSoundNum(); }
+	bool isPlaying() const { return _sound.isPlaying(); }
+	bool isPaused() const { return _sound.isPaused(); }
+	bool isMuted() const { return _sound.isMuted(); }
+	void pause() { _sound.pause(); }
+	void mute() { _sound.mute(); }
+	void fadeIn() { fade(127, 5, 10, 0, NULL); }
+	void fadeOut(Action *action) { fade(0, 5, 10, 1, action); }
+	void fade(int v1, int v2, int v3, int v4, Action *action); 
+	void setTimeIndex(uint32 timeIndex) { _sound.setTimeIndex(timeIndex); }
+	uint32 getTimeIndex() const { return _sound.getTimeIndex(); }
+	void setPri(int v) { _sound.setPri(v); }
+	void setLoop(bool flag) { _sound.setLoop(flag); }
+	int getPri() const { return _sound.getPri(); }
+	bool getLoop() { return _sound.getLoop(); }
+	void setVol(int volume) { _sound.setVol(volume); }
+	int getVol() const { return _sound.getVol(); }
+	void holdAt(int v) { _sound.holdAt(v); }
+	void release() { _sound.release(); }
 };
 
 } // End of namespace tSage
