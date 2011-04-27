@@ -230,7 +230,7 @@ void lua_close() {
 	refArray = NULL;
 	lua_rootState = lua_state = NULL;
 
-#ifdef DEBUG
+#ifdef LUA_DEBUG
 	printf("total de blocos: %ld\n", numblocks);
 	printf("total de memoria: %ld\n", totalmem);
 #endif

@@ -8,7 +8,7 @@
 #ifndef GRIM_LZIO_H
 #define GRIM_LZIO_H
 
-#include <common/scummsys.h>
+#include "common/scummsys.h"
 
 namespace Common {
 	class File;
