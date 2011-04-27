@@ -2003,6 +2003,7 @@ void Scene4045::dispatch() {
  *--------------------------------------------------------------------------*/
 
 void Scene4050::Action1::signal() {
+	// "Map" on the wall
 	Scene4050 *scene = (Scene4050 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -2010,9 +2011,12 @@ void Scene4050::Action1::signal() {
 		_globals->_player.disableControl();
 		setDelay(3);
 		break;
-	case 1:
-		ADD_PLAYER_MOVER(204, 152);
+	case 1: {
+		Common::Point pt(204, 152);
+		PlayerMover *mover = new PlayerMover();
+		_globals->_player.addMover(mover, &pt, this);
 		break;
+	}
 	case 2:
 		_globals->_player.checkAngle(&scene->_hotspot17);
 
@@ -2021,6 +2025,7 @@ void Scene4050::Action1::signal() {
 		scene->_hotspot14.setStrip(2);
 		scene->_hotspot14.setPosition(Common::Point(91, 154));
 		scene->_hotspot14.setPriority2(200);
+		setDelay(10);
 		break;
 	case 3:
 		_globals->_events.waitForPress();
@@ -2034,6 +2039,7 @@ void Scene4050::Action1::signal() {
 }
 
 void Scene4050::Action2::signal() {
+	// Climb down the rope
 	switch (_actionIndex++) {
 	case 0:
 		_globals->_player.disableControl();
