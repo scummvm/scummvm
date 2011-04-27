@@ -611,6 +611,18 @@ bool Actor::isTurning() const {
 
 void Actor::walkForward() {
 	float dist = g_grim->perSecond(_walkRate);
+
+	// HACK: Limit the speed of the movement. Find a better way??
+	// When the game starts or the scene changes the value of g_grim->frameRate() can
+	// be big (seconds), and so perSecond().
+	// This is a problem for the set "ly", since unicycle_man
+	// uses walkForward to move as soon as the set starts and without this trick
+	// it would result in him making big steps and jumping over his destination point.
+	float maxDist = _walkRate / 3.f;
+	if ((_walkRate > 0 && dist > maxDist) || (_walkRate < 0 && dist < maxDist)) {
+		dist = maxDist;
+	}
+
 	float yaw_rad = _yaw * (LOCAL_PI / 180.f), pitch_rad = _pitch * (LOCAL_PI / 180.f);
 	//float yaw;
 	Graphics::Vector3d forwardVec(-sin(yaw_rad) * cos(pitch_rad),

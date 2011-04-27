@@ -276,7 +276,6 @@ private:
 	unsigned _speedLimitMs;
 	bool _showFps;
 	bool _softRenderer;
-	bool _discardLoop;
 
 	bool *_controlsEnabled;
 	bool *_controlsState;
