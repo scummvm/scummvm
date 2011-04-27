@@ -798,9 +798,10 @@ bool producesObjectFile(const std::string &fileName) {
  * Checks whether the give file in the specified directory is present in the given
  * file list.
  *
- * This function does as special match against the file list. It will not take file
- * extensions into consideration, when the extension of a file in the specified
- * directory is one of "h", "cpp", "c" or "asm".
+ * This function does as special match against the file list. Object files (.o) are
+ * excluded by default and it will not take file extensions into consideration,
+ * when the extension of a file in the specified directory is one of "h", "cpp",
+ * "c" or "asm".
  *
  * @param dir Parent directory of the file.
  * @param fileName File name to match.
@@ -830,7 +831,9 @@ bool isInList(const std::string &dir, const std::string &fileName, const StringL
 		}
 
 		const std::string lastPathComponent = getLastPathComponent(*i);
-		if (!producesObjectFile(fileName) && extensionName != "h") {
+		if (extensionName == "o") {
+			return false;
+		} else if (!producesObjectFile(fileName) && extensionName != "h") {
 			if (fileName == lastPathComponent)
 				return true;
 		} else {
