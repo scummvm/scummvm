@@ -709,6 +709,7 @@ const Feature s_features[] = {
 	{      "opengl",      "USE_OPENGL", "opengl32", true, "OpenGL support" },
 	{      "indeo3",      "USE_INDEO3",         "", true, "Indeo3 codec support"},
 	{ "translation", "USE_TRANSLATION",         "", true, "Translation support" },
+	{      "vkeybd",   "ENABLE_VKEYBD",         "", false, "Virtual keyboard support"},
 	{  "langdetect",  "USE_DETECTLANG",         "", true, "System language detection support" } // This feature actually depends on "translation", there
 	                                                                                            // is just no current way of properly detecting this...
 };
