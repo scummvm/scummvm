@@ -62,8 +62,8 @@ struct ADGameDescription {
 	Common::Platform platform;
 
 	/**
-	 * A bitmask of extra flags. The top 8 bits are reserved for generic flags
-	 * defined in the ADGameFlags. This leaves 24 flags to be used by client
+	 * A bitmask of extra flags. The top 16 bits are reserved for generic flags
+	 * defined in the ADGameFlags. This leaves 16 bits to be used by client
 	 * code.
 	 */
 	uint32 flags;
