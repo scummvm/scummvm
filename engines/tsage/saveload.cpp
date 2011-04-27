@@ -177,6 +177,13 @@ Common::Error Saver::restore(int slot) {
 
 	// Loop through each registered object to load in the data
 	for (SynchronisedList<SavedObject *>::iterator i = _objList.begin(); i != _objList.end(); ++i) {
+		// Saved games can contain PlayerMover objects, but these aren't synchronized.
+		// Fixes loading in scene 5000.
+		// TODO/FIXME: Add a more proper handling for these objects
+		if ((*i)->getClassName() == "PlayerMover") {
+			warning("HACK: PlayerMover object found, skipping synchronization");
+			continue;
+		}
 		serialiser.validate((*i)->getClassName());
 		(*i)->synchronise(serialiser);
 	}
