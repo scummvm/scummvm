@@ -63,6 +63,7 @@
 #include "backends/mixer/wincesdl/wincesdl-mixer.h"
 
 #ifdef DYNAMIC_MODULES
+#include <malloc.h>
 #include "backends/plugins/win32/win32-provider.h"
 #endif
 

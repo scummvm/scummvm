@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(DYNAMIC_MODULES) && defined(SDL_BACKEND)
+#if defined(DYNAMIC_MODULES) && defined(SDL_BACKEND) && !defined(_WIN32_WCE)
 
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "backends/plugins/dynamic-plugin.h"

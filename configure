@@ -1697,8 +1697,8 @@ case $_host_os in
 		fi
 		;;
 	wince)
-		CXXFLAGS="$CXXFLAGS -O3 -fno-inline-functions -march=armv4 -mtune=xscale"
-		DEFINES="$DEFINES -D_WIN32_WCE=300 -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
+		CXXFLAGS="$CXXFLAGS -O3 -fno-inline-functions -march=armv4 -mtune=xscale -D_WIN32_WCE=300 "
+		DEFINES="$DEFINES -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
 		DEFINES="$DEFINES -DWIN32 -Dcdecl= -D__cdecl__="
 		;;
 	# given this is a shell script assume some type of unix
@@ -2054,7 +2054,7 @@ if test -n "$_host"; then
 			add_line_to_config_h "#define USE_WII_KBD"
 			;;
 		wince)
-			LDFLAGS="$LDFLAGS -Wl,-Map,scummvm.exe.map -Wl,--stack,65536"
+			LDFLAGS="$LDFLAGS -Wl,--stack,65536"
 			_need_memalign=yes
 			_arm_asm=yes
 			_tremolo=yes
@@ -2317,6 +2317,24 @@ CXXFLAGS			+= -DDYNAMIC_MODULES
 PLUGIN_LDFLAGS		:= -Wl,--enable-auto-import -shared ./libscummvm.a
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
+'
+		;;
+	wince)
+		DEFINES="$DEFINES -DUNCACHED_PLUGINS"
+		HOSTEXEEXT=".dll"
+_def_plugin='
+#define PLUGIN_PREFIX	""
+#define PLUGIN_SUFFIX	".dll"
+'
+_mak_plugins='
+DYNAMIC_MODULES		:= 1
+PLUGIN_PREFIX		:=
+PLUGIN_SUFFIX		:= .dll
+PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
+CXXFLAGS			+= -DDYNAMIC_MODULES
+PLUGIN_LDFLAGS		:= -shared -lscummvm -L.
+PRE_OBJS_FLAGS		:= -Wl,--whole-archive
+POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a -shared
 '
 		;;
 	ps2)

@@ -70,8 +70,15 @@ public:
 		#ifndef _WIN32_WCE
 		_dlHandle = LoadLibrary(_filename.c_str());
 		#else
-		if (!_filename.hasSuffix("scummvm.dll"))	// skip loading the core scummvm module
+		if (!_filename.hasSuffix("scummvm.dll") &&
+			!_filename.hasSuffix("libstdc++-6.dll") &&
+			!_filename.hasSuffix("libgcc_s_sjlj-1.dll")) {
+			// skip loading the core scummvm module and runtime dlls
 			_dlHandle = LoadLibrary(toUnicode(_filename.c_str()));
+		} else {
+			// do not generate misleading error message
+			return false;
+		}
 		#endif
 
 		if (!_dlHandle) {
