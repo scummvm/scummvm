@@ -2960,7 +2960,7 @@ void Scene4150::Hotspot3::doAction(int action) {
 /*--------------------------------------------------------------------------*/
 
 Scene4150::Scene4150() :
-		_hotspot1(0, CURSOR_LOOK, 4000, 17, CURSOR_USE, 4150, 21, CURSOR_TALK, 4150, 21,
+		_hotspot1(0, CURSOR_LOOK, 4150, 17, CURSOR_USE, 4150, 21, CURSOR_TALK, 4150, 21,
 				OBJECT_SCANNER, 4150, 22, OBJECT_STUNNER, 4150, 23, LIST_END),
 		_hotspot2(0, CURSOR_LOOK, 4150, 4, CURSOR_USE, 4150, 24, LIST_END),
 		_hotspot7(0, CURSOR_LOOK, 4150, 1, CURSOR_USE, 4150, 25, OBJECT_ROPE, 4150, 26, LIST_END),
