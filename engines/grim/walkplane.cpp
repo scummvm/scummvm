@@ -193,7 +193,10 @@ bool Sector::isAdjacentTo(Sector *sector) const {
 	for (int j = 0; j < _numVertices; ++j) {
 		Graphics::Vector3d &vect = _vertices[j];
 		for (int k = 0; k < sector->getNumVertices(); ++k) {
-			if (vect == sectorVertices[k] && j != vertices[0] && j != vertices[1]) {
+			// We're not using "vect == sectorvertices[k]" here because sometimes
+			// that isn't true even for edjacent sectors, and breaks a walkTo like
+			// explained at https://github.com/residual/residual/issues/34
+			if ((vect - sectorVertices[k]).magnitude() < 0.1 && j != vertices[0] && j != vertices[1]) {
 				if (vertices[0] > -1) {
 					vertices[1] = j;
 					return true;
