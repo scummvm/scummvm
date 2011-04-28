@@ -22,6 +22,8 @@
  * $Id$
  *
  */
+ 
+#include "common/scummsys.h"
 
 #if defined(WIN32) && defined(USE_TASKBAR)
 
