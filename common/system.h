@@ -29,13 +29,13 @@
 #include "common/scummsys.h"
 #include "common/noncopyable.h"
 #include "common/list.h" // For OSystem::getSupportedFormats()
+#include "graphics/pixelformat.h"
 
 namespace Audio {
 class Mixer;
 }
 
 namespace Graphics {
-struct PixelFormat;
 struct Surface;
 }
 
