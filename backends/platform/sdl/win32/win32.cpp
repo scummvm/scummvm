@@ -27,6 +27,8 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/scummsys.h"
+#include "common/error.h"
+#include "common/textconsole.h"
 
 #ifdef WIN32
 
