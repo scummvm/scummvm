@@ -187,7 +187,7 @@ bool Sector::isPointInSector(Graphics::Vector3d point) const {
 	return true;
 }
 
-bool Sector::isAdjacentTo(Sector *sector) const {
+bool Sector::isAdjacentTo(Sector *sector, Graphics::Line3d *line) const {
 	int vertices[2] = {-1, -1};
 	Graphics::Vector3d *sectorVertices = sector->getVertices();
 	for (int j = 0; j < _numVertices; ++j) {
@@ -199,6 +199,9 @@ bool Sector::isAdjacentTo(Sector *sector) const {
 			if ((vect - sectorVertices[k]).magnitude() < 0.1 && j != vertices[0] && j != vertices[1]) {
 				if (vertices[0] > -1) {
 					vertices[1] = j;
+					if (line) {
+						*line = Graphics::Line3d(_vertices[vertices[0]], _vertices[vertices[1]]);
+					}
 					return true;
 				} else {
 					vertices[0] = j;

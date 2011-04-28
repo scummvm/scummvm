@@ -23,6 +23,8 @@
  *
  */
 
+#include "graphics/line3d.h"
+
 #include "engines/grim/actor.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/colormap.h"
@@ -556,7 +558,8 @@ void Actor::walkTo(Graphics::Vector3d p) {
 							break;
 						}
 					}
-					if (!inClosed && sector->isAdjacentTo(s)) {
+					Graphics::Line3d line;
+					if (!inClosed && sector->isAdjacentTo(s, &line)) {
 						PathNode *n = NULL;
 						for (Common::List<PathNode *>::iterator j = openList.begin(); j != openList.end(); ++j) {
 							if ((*j)->sect == s) {
@@ -574,7 +577,11 @@ void Actor::walkTo(Graphics::Vector3d p) {
 							n = new PathNode;
 							n->parent = node;
 							n->sect = s;
-							n->pos = (s->closestPoint(_destPos) + s->closestPoint(node->pos)) / 2.f;
+							n->pos = s->closestPoint(_destPos);
+							Graphics::Line3d l(node->pos, n->pos);
+							if (!line.intersectLine2d(l, &n->pos)) {
+								n->pos = line.middle();
+							}
 							n->dist = (n->pos - _destPos).magnitude();
 							n->cost = node->cost + (n->pos - node->pos).magnitude();
 							openList.push_back(n);

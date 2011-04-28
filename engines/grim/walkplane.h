@@ -29,6 +29,7 @@
 #include "common/str.h"
 
 #include "graphics/vector3d.h"
+#include "graphics/line3d.h"
 
 namespace Grim {
 
@@ -62,7 +63,7 @@ public:
 	SectorType type() const { return _type; } // FIXME: Implement type de-masking
 	bool visible() const { return _visible; }
 	bool isPointInSector(Graphics::Vector3d point) const;
-	bool isAdjacentTo(Sector *sector) const;
+	bool isAdjacentTo(Sector *sector, Graphics::Line3d *line) const;
 
 	Graphics::Vector3d projectToPlane(Graphics::Vector3d point) const;
 	Graphics::Vector3d projectToPuckVector(Graphics::Vector3d v) const;
