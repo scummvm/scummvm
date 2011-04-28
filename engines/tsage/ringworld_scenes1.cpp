@@ -2879,7 +2879,7 @@ void Scene6100::Action3::signal() {
 		break;
 	case 1:
 		_globals->_scenePalette.clearListeners();
-		scene->_fadePercent = 0;
+		scene->_fadePercent = 100;
 		_globals->_scenePalette.refresh();
 		scene->loadScene(9997);
 		scene->_object1.hide();
@@ -2890,7 +2890,7 @@ void Scene6100::Action3::signal() {
 		scene->_sunflower3.hide();
 		scene->_rocks.hide();
 		scene->_sceneText.hide();
-
+	
 		_globals->_events.setCursor(CURSOR_WALK);
 		scene->_stripManager.start(8120, this);
 		break;
@@ -2995,23 +2995,24 @@ void Scene6100::Action5::dispatch() {
 		}
 
 		scene->_objList[idx]->_flags |= OBJFLAG_PANES;
-/*
+
 		if ((idx != 3) && (scene->_fadePercent == 100) &&
-				(tempSet.sqrt(floatSet) < 150.0)) {
+				(tempSet.sqrt(zeroSet) < 150.0)) {
 			switch (scene->_hitCount++) {
 			case 1:
 				scene->_soundHandler.startSound(233);
 				scene->showMessage(0, NULL, 0);
 
 				if (!_globals->getFlag(76))
-					scene->_object5.setAction(&scene->_action2);
+					scene->_probe.setAction(&scene->_action2);
+				break;
 
 			case 2:
 				scene->_soundHandler.startSound(234);
 				scene->showMessage(0, NULL, 0);
 
 				if (!_globals->getFlag(76))
-					scene->_object5.setAction(NULL);
+					scene->_probe.setAction(NULL);
 				scene->setAction(&scene->_action3);
 				break;
 
@@ -3020,14 +3021,13 @@ void Scene6100::Action5::dispatch() {
 				scene->showMessage(0, NULL, 0);
 
 				if (!_globals->getFlag(76))
-					scene->_object5.setAction(&scene->_action1);
+					scene->_probe.setAction(&scene->_action1);
 				break;
 			}
 
 			_globals->_scenePalette.clearListeners();
 			scene->_fadePercent = 0;
 		}
-		*/
 	}
 }
 
@@ -3129,6 +3129,7 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 	loadScene(6100);
 	Scene::postInit();
 	setZoomPercents(62, 2, 200, 425);
+	_globals->_sceneHandler._delayTicks = 8;
 
 	_globals->_player.disableControl();
 	_globals->_events.setCursor(CURSOR_WALK);
