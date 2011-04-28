@@ -36,6 +36,7 @@
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "graphics/colormasks.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "audio/mixer_intern.h"
 

@@ -26,6 +26,7 @@
 #include <ogc/lwp_watchdog.h>
 
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 #include "backends/fs/wii/wii-fs-factory.h"
 
 #include "osystem.h"
