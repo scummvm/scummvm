@@ -265,7 +265,7 @@ FunctionEnd
 #########################################################################################
 # Uninstaller sections
 #########################################################################################
-Section /o -un.Main SecUninstall
+Section -un.Main SecUninstall
 	Delete /REBOOTOK $INSTDIR\AUTHORS.txt
 	Delete /REBOOTOK $INSTDIR\COPYING.txt
 	Delete /REBOOTOK $INSTDIR\COPYING.LGPL.txt
