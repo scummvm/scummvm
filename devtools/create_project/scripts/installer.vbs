@@ -21,6 +21,20 @@
 '
 '/
 
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' This script calls the makensis tool to generate a NSIS Windows installer for ScummVM
+'
+' It tries to read the NSIS installation folder from the registry and then calls the
+' command line script compiler to create the installer.
+'
+' This is called from the postbuild.cmd batch file
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+'================================================================
+' TODO: Reduce duplication with revision.vbs script 
+'       (ReadRegistryKey and ParseCommandLine are identical)
+'================================================================
+
 Option Explicit
 
 Dim FSO : Set FSO = CreateObject("Scripting.FileSystemObject")

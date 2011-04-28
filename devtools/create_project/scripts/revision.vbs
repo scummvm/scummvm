@@ -23,6 +23,21 @@
 '
 '/
 
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' This script tries to determine a revision number based on the current working tree
+' by trying revision control tools in the following order:
+'   - git (with hg-git detection)
+'   - mercurial
+'   - TortoiseSVN
+'   - SVN
+'
+' It then writes a new header file to be included during build, with the revision
+' information, the current branch, the revision control system (when not git) and
+' a flag when the tree is dirty.
+'
+' This is called from the prebuild.cmd batch file
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
 Option Explicit
 
 ' Working copy check priority:
@@ -216,7 +231,7 @@ Function DetermineGitVersion()
 	Wscript.StdErr.Write "   Git...           "
 	tool = "git"
 
-	' First check if we have both a .git & .svn folders (in case hg-git has been set up to have the git folder at the working copy level)
+	' First check if we have both a .git & .hg folders (in case hg-git has been set up to have the git folder at the working copy level)
 	If FSO.FolderExists(rootFolder & "/.git") And FSO.FolderExists(rootFolder & "/.hg") Then
 		Wscript.StdErr.WriteLine "Mercurial clone with git repository in tree!"
 		Exit Function
