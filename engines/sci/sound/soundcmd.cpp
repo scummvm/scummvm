@@ -345,8 +345,9 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 			musicSlot->fadeStep = volume > musicSlot->fadeTo ? -5 : 5;
 		musicSlot->fadeTickerStep = argv[2].toUint16() * 16667 / _music->soundGetTempo();
 		musicSlot->fadeTicker = 0;
-		// TODO: We only handle zero and non-zero parameters, but this parameter
-		// can have other values as well (e.g. it's 3 in KQ6).
+		// TODO: We handle this as a bit field (i.e. containing values 0 and 1),
+		// but some games pass other values here as well (e.g. some KQ6 scripts
+		// pass 3 here)
 		musicSlot->stopAfterFading = (argc == 5) ? (argv[4].toUint16() != 0) : false;
 
 		// WORKAROUND/HACK: In the labyrinth in KQ6, when falling in the pit and
