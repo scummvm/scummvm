@@ -3449,8 +3449,7 @@ void SceneHandler::process(Event &event) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_F1:
 			// F1 - Help
-			_globals->_events.setCursor(CURSOR_ARROW);
-			MessageDialog::show(HELP_MSG, OK_BTN_STRING);
+			MessageDialog::show((_vm->getFeatures() & GF_DEMO) ? DEMO_HELP_MSG : HELP_MSG, OK_BTN_STRING);
 			break;
 
 		case Common::KEYCODE_F2: {

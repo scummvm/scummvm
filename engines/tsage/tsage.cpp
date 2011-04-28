@@ -94,8 +94,6 @@ Common::Error TSageEngine::run() {
 	// Basic initialisation
 	initialise();
 
-	_globals->_events.showCursor();
-
 	_globals->_sceneHandler.registerHandler();
 	_globals->_game->execute();
 

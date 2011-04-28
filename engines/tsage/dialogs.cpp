@@ -71,17 +71,12 @@ MessageDialog::MessageDialog(const Common::String &message, const Common::String
 
 int MessageDialog::show(const Common::String &message, const Common::String &btn1Message, const Common::String &btn2Message) {
 	// Ensure that the cursor is the arrow
-	CursorType currentCursor = _globals->_events.getCursor();
-	if (currentCursor != CURSOR_ARROW)
-		_globals->_events.setCursor(CURSOR_ARROW);
+	_globals->_events.pushCursor(CURSOR_ARROW);
 	_globals->_events.showCursor();
 
 	int result = show2(message, btn1Message, btn2Message);
 
-	// If the cursor was changed, change it back
-	if (currentCursor != CURSOR_ARROW)
-		_globals->_events.setCursor(currentCursor);
-
+	_globals->_events.popCursor();
 	return result;
 }
 
@@ -95,7 +90,6 @@ int MessageDialog::show2(const Common::String &message, const Common::String &bt
 	delete dlg;
 	return result;
 }
-
 
 /*--------------------------------------------------------------------------*/
 
