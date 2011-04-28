@@ -237,7 +237,9 @@ Section -post SecMainPost
 	SetOutPath $INSTDIR
 	WriteUninstaller $INSTDIR\uninstall.exe
 	!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-	CreateShortCut "$SMPROGRAMS\$StartMenuGroup\$(^Name).lnk" "$INSTDIR\$(^Name).exe" "" "$INSTDIR\$(^Name).exe" 0    ; Create shortcut with icon
+	CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
+	CreateShortCut "$SMPROGRAMS\$StartMenuGroup\$(^Name).lnk"           $INSTDIR\$(^Name).exe
+	CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Readme.lnk"             $INSTDIR\README.txt
 	CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk" $INSTDIR\uninstall.exe
 	!insertmacro MUI_STARTMENU_WRITE_END
 	WriteRegStr   HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayName "$(^Name)"
@@ -255,7 +257,7 @@ SectionEnd
 Function .onInit
 	!insertmacro MUI_LANGDLL_DISPLAY
 
-!ifdef _DEBUG
+!ifdef _DEBUG && NSIS_CONFIG_LOG
 	LogSet on    ; Will write a log file to the install folder (when using the special NSIS logging build)
 !endif
 FunctionEnd
