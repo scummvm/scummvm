@@ -23,16 +23,12 @@
  *
  */
 
-#include "kyra/kyra_lok.h"
-#include "kyra/screen.h"
-#include "kyra/script.h"
-#include "kyra/text.h"
-#include "kyra/animator_lok.h"
-#include "kyra/sound.h"
 #include "kyra/gui_lok.h"
+#include "kyra/kyra_lok.h"
+#include "kyra/animator_lok.h"
+#include "kyra/text.h"
 #include "kyra/timer.h"
 #include "kyra/util.h"
-#include "kyra/item.h"
 
 #include "common/savefile.h"
 #include "common/system.h"

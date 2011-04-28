@@ -23,9 +23,8 @@
  *
  */
 
-#include "kyra/kyra_lok.h"
-#include "kyra/screen_lok.h"
 #include "kyra/text.h"
+#include "kyra/kyra_lok.h"
 #include "kyra/animator_lok.h"
 #include "kyra/sprites.h"
 #include "kyra/timer.h"

@@ -26,9 +26,7 @@
 #include "kyra/gui_mr.h"
 #include "kyra/kyra_mr.h"
 #include "kyra/text_mr.h"
-#include "kyra/wsamovie.h"
 #include "kyra/resource.h"
-#include "kyra/sound.h"
 #include "kyra/timer.h"
 
 #include "common/system.h"

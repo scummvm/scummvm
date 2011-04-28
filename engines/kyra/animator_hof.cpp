@@ -26,7 +26,6 @@
 #include "kyra/kyra_hof.h"
 #include "kyra/wsamovie.h"
 
-#include "common/endian.h"
 #include "common/system.h"
 
 namespace Kyra {

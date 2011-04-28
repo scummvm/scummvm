@@ -23,12 +23,11 @@
  *
  */
 
-#include "kyra/resource.h"
 #include "kyra/sound_intern.h"
+#include "kyra/resource.h"
 
 #include "audio/mixer.h"
 #include "audio/mods/maxtrax.h"
-#include "audio/audiostream.h"
 
 namespace Kyra {
 

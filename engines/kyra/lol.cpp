@@ -28,17 +28,13 @@
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
 #include "kyra/resource.h"
-
-#include "kyra/sound.h"
 #include "kyra/timer.h"
 #include "kyra/util.h"
 #include "kyra/debugger.h"
 
-#include "audio/decoders/voc.h"
 #include "audio/audiostream.h"
 
 #include "common/config-manager.h"
-#include "common/endian.h"
 #include "common/system.h"
 
 namespace Kyra {

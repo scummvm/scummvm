@@ -25,7 +25,6 @@
 
 #include "kyra/gui.h"
 
-#include "kyra/screen.h"
 #include "kyra/text.h"
 #include "kyra/wsamovie.h"
 

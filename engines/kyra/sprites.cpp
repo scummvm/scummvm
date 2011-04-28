@@ -23,18 +23,12 @@
  *
  */
 
-
-#include "common/endian.h"
-#include "common/stream.h"
-#include "common/util.h"
-#include "common/system.h"
-#include "common/EventRecorder.h"
-
-#include "kyra/screen.h"
-#include "kyra/kyra_lok.h"
 #include "kyra/sprites.h"
 #include "kyra/resource.h"
 #include "kyra/animator_lok.h"
+
+#include "common/system.h"
+#include "common/EventRecorder.h"
 
 namespace Kyra {
 

@@ -23,12 +23,12 @@
  *
  */
 
+#include "kyra/kyra_v2.h"
+#include "kyra/screen_v2.h"
+
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/system.h"
-
-#include "kyra/kyra_v2.h"
-#include "kyra/screen_v2.h"
 
 namespace Kyra {
 

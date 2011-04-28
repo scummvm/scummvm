@@ -26,7 +26,6 @@
 #ifdef ENABLE_LOL
 
 #include "kyra/lol.h"
-#include "kyra/screen_lol.h"
 #include "kyra/timer.h"
 
 #include "common/system.h"

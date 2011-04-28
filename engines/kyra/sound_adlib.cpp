@@ -40,10 +40,11 @@
  */
 
 
+#include "kyra/sound_intern.h"
+#include "kyra/resource.h"
+
 #include "common/system.h"
 #include "common/mutex.h"
-#include "kyra/resource.h"
-#include "kyra/sound_intern.h"
 
 #include "audio/mixer.h"
 #include "audio/fmopl.h"

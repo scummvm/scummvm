@@ -23,12 +23,11 @@
  *
  */
 
-#include "kyra/kyra_lok.h"
 #include "kyra/screen_lok.h"
+#include "kyra/kyra_lok.h"
 
 #include "common/system.h"
 
-#include "graphics/cursorman.h"
 #include "graphics/palette.h"
 
 namespace Kyra {

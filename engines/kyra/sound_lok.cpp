@@ -23,8 +23,8 @@
  *
  */
 
-#include "kyra/sound.h"
 #include "kyra/kyra_lok.h"
+#include "kyra/sound.h"
 
 #include "common/system.h"
 

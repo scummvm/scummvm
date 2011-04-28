@@ -24,10 +24,7 @@
  */
 
 #include "kyra/script_tim.h"
-#include "kyra/script.h"
 #include "kyra/resource.h"
-#include "kyra/sound.h"
-#include "kyra/wsamovie.h"
 
 #ifdef ENABLE_LOL
 #include "kyra/lol.h"
@@ -35,7 +32,6 @@
 #endif // ENABLE_LOL
 
 #include "common/iff_container.h"
-#include "common/endian.h"
 #include "common/system.h"
 
 namespace Kyra {

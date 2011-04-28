@@ -24,7 +24,6 @@
  */
 
 #include "kyra/kyra_v2.h"
-#include "kyra/screen.h"
 
 #include "common/system.h"
 

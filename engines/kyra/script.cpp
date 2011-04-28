@@ -23,15 +23,11 @@
  *
  */
 
-
-#include "common/endian.h"
-#include "common/stream.h"
-#include "common/util.h"
-#include "common/system.h"
-
+#include "kyra/script.h"
 #include "kyra/kyra_v1.h"
 #include "kyra/resource.h"
-#include "kyra/script.h"
+
+#include "common/endian.h"
 
 namespace Kyra {
 EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm) : _vm(vm), _scriptData(0), _filename(0) {

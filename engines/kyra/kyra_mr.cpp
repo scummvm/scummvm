@@ -23,14 +23,10 @@
  *
  */
 
-#include "kyra/kyra_v1.h"
 #include "kyra/kyra_mr.h"
-#include "kyra/screen_mr.h"
 #include "kyra/wsamovie.h"
-#include "kyra/sound.h"
 #include "kyra/text_mr.h"
 #include "kyra/vqa.h"
-#include "kyra/gui.h"
 #include "kyra/timer.h"
 #include "kyra/debugger.h"
 #include "kyra/gui_mr.h"

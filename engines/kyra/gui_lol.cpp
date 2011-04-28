@@ -25,9 +25,9 @@
 
 #ifdef ENABLE_LOL
 
+#include "kyra/gui_lol.h"
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
-#include "kyra/gui_lol.h"
 #include "kyra/resource.h"
 #include "kyra/util.h"
 

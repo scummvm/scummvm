@@ -30,7 +30,6 @@
 #include "kyra/timer.h"
 #include "kyra/resource.h"
 
-#include "common/endian.h"
 #include "common/system.h"
 
 namespace Kyra {

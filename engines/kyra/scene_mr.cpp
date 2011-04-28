@@ -25,7 +25,6 @@
 
 #include "kyra/kyra_mr.h"
 #include "kyra/screen_mr.h"
-#include "kyra/wsamovie.h"
 #include "kyra/sound.h"
 #include "kyra/resource.h"
 

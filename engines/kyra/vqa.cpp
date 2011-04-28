@@ -33,15 +33,13 @@
 
 
 #include "kyra/vqa.h"
+#include "kyra/resource.h"
 
 #include "common/system.h"
+
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
-
-#include "kyra/sound.h"
-#include "kyra/screen.h"
-#include "kyra/resource.h"
 
 namespace Kyra {
 

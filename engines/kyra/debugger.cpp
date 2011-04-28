@@ -23,17 +23,14 @@
  *
  */
 
-
-#include "common/config-manager.h"
-#include "common/system.h"
 #include "kyra/debugger.h"
 #include "kyra/kyra_lok.h"
-#include "kyra/kyra_v2.h"
 #include "kyra/kyra_hof.h"
-#include "kyra/screen.h"
 #include "kyra/timer.h"
 #include "kyra/resource.h"
 #include "kyra/lol.h"
+
+#include "common/system.h"
 
 namespace Kyra {
 
