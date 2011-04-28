@@ -5,7 +5,7 @@ REM -- Post-Build Script
 REM ---------------------------------------------------------------
 REM
 REM Copy engine data, themes, translation and required dlls to the
-REM output folder and optionnaly create an installer
+REM output folder and optionally create an installer
 REM
 REM Expected parameters
 REM    Root folder
@@ -23,13 +23,13 @@ if "%~5"=="" goto error_installer
 echo Copying data files
 echo.
 
-xcopy /F /Y "%~1/AUTHORS" %~2     > NUL 2>&1
-xcopy /F /Y "%~1/COPYING.GPL" %~2 > NUL 2>&1
-xcopy /F /Y "%~1/COPYING" %~2     > NUL 2>&1
-xcopy /F /Y "%~1/COPYING.LGPL" %~2     > NUL 2>&1
-xcopy /F /Y "%~1/COPYRIGHT" %~2   > NUL 2>&1
-xcopy /F /Y "%~1/NEWS" %~2        > NUL 2>&1
-xcopy /F /Y "%~1/README" %~2      > NUL 2>&1
+xcopy /F /Y "%~1/AUTHORS" %~2       > NUL 2>&1
+xcopy /F /Y "%~1/COPYING.GPL" %~2   > NUL 2>&1
+xcopy /F /Y "%~1/COPYING" %~2       > NUL 2>&1
+xcopy /F /Y "%~1/COPYING.LGPL" %~2  > NUL 2>&1
+xcopy /F /Y "%~1/COPYRIGHT" %~2     > NUL 2>&1
+xcopy /F /Y "%~1/NEWS" %~2          > NUL 2>&1
+xcopy /F /Y "%~1/README" %~2        > NUL 2>&1
 
 xcopy /F /Y "%~1/dists/engine-data/*.dat" %~2     > NUL 2>&1
 xcopy /F /Y "%~1/dists/engine-data/*.tbl" %~2     > NUL 2>&1
@@ -37,6 +37,7 @@ xcopy /F /Y "%~1/dists/engine-data/*.cpt" %~2     > NUL 2>&1
 xcopy /F /Y "%~1/gui/themes/*.zip" %~2            > NUL 2>&1
 xcopy /F /Y "%~1/gui/themes/translations.dat" %~2 > NUL 2>&1
 xcopy /F /Y "%~4/lib/%~3/SDL.dll" %~2             > NUL 2>&1
+xcopy /F /Y "%~4/README-SDL" %~2                  > NUL 2>&1
 
 if "%~5"=="0" goto done
 

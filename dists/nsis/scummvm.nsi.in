@@ -205,7 +205,7 @@ Section "ScummVM" SecMain
 	File /oname=COPYRIGHT.txt    "${text_dir}\COPYRIGHT"
 	File /oname=NEWS.txt         "${text_dir}\NEWS"
 	File /oname=README.txt       "${text_dir}\README"
-	File /oname=README-SDL.txt   "${text_dir}\README-SDL"
+	File /oname=README-SDL.txt   "${build_dir}\README-SDL"
 
 	# Engine data
 	File "${engine_data}\drascula.dat"
