@@ -912,6 +912,7 @@ void Scene5100::HotspotGroup2::doAction(int action) {
 }
 
 void Scene5100::Hotspot9::doAction(int action) {
+	// Rope
 	Scene5100 *scene = (Scene5100 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -1354,8 +1355,7 @@ void Scene5100::signal() {
 		_globals->_player.setStrip(6);
 		_globals->_player.setPriority2(-1);
 		_globals->_player.animate(ANIM_MODE_1, NULL);
-		_globals->_player.enableControl();	// TODO: verify that this is supposed to occur here
-		break;
+	// No break on purpose
 	case 5117:
 		_globals->_player.enableControl();
 		break;
@@ -1412,8 +1412,9 @@ void Scene5100::dispatch() {
 			_globals->_player._canWalk = false;
 			_globals->_player.addMover(NULL);
 
+			Common::Point pt(20, 25);
 			PlayerMover2 *mover = new PlayerMover2();
-			_hotspot3.addMover(mover, 20, 25, &_globals->_player);
+			_hotspot3.addMover(mover, &pt, &_globals->_player);
 			setAction(&_action4);
 		}
 
@@ -1937,6 +1938,7 @@ void Scene5300::Hotspot5::doAction(int action) {
 }
 
 void Scene5300::Hotspot6::doAction(int action) {
+	// Left Hole
 	Scene5300 *scene = (Scene5300 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -2117,6 +2119,9 @@ void Scene5300::signal() {
 		_globals->_stripNum = 5300;
 		_globals->_sceneManager.changeScene(5100);
 		break;
+	case 5307:
+		_soundHandler.proc1(NULL);
+	// No break on purpose
 	case 5302:
 	case 5308:
 	case 5316:
@@ -2152,10 +2157,6 @@ void Scene5300::signal() {
 		else
 			_stripManager.start(5302, this);
 		_sceneMode = 5302;
-		break;
-	case 5307:
-		_soundHandler.proc1(NULL);
-		_globals->_player.enableControl();	// TODO: verify that this is supposed to occur here
 		break;
 	case 5309:
 		_hotspot5.remove();
