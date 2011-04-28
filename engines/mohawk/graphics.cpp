@@ -32,7 +32,6 @@
 #include "common/textconsole.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
-#include "graphics/palette.h"
 #include "graphics/primitives.h"
 #include "gui/message.h"
 
