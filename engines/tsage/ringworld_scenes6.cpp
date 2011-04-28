@@ -1497,6 +1497,7 @@ void Scene5200::Action2::signal() {
 
 void Scene5200::Action3::signal() {
 	switch (_actionIndex++) {
+	case 0:
 		_globals->_player.disableControl();
 		setDelay(5);
 		break;
@@ -1637,7 +1638,7 @@ void Scene5200::postInit(SceneObjectList *OwnerList) {
 		_globals->_sceneItems.push_back(&_hotspot14);
 	}
 
-	if (_globals->_stripNum == 1111) {
+	if (_globals->_stripNum == 5111) {
 		_globals->_soundHandler.startSound(205);
 		_globals->_player.disableControl();
 
