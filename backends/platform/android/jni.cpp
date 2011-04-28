@@ -28,6 +28,7 @@
 #include "base/main.h"
 #include "base/version.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 #include "engines/engine.h"
 
 #include "backends/platform/android/android.h"
