@@ -30,6 +30,7 @@
 #include "backends/graphics/linuxmotosdl/linuxmotosdl-graphics.h"
 #include "backends/events/linuxmotosdl/linuxmotosdl-events.h"
 #include "common/mutex.h"
+#include "common/textconsole.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/scaler.h"

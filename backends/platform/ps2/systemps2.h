@@ -28,6 +28,7 @@
 
 #include "common/system.h"
 #include "backends/base-backend.h"
+#include "graphics/palette.h"
 
 class DefaultTimerManager;
 class DefaultSaveFileManager;

@@ -31,6 +31,7 @@
 #include "backends/events/dinguxsdl/dinguxsdl-events.h"
 #include "graphics/scaler/aspect.h"
 #include "common/mutex.h"
+#include "common/textconsole.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", "Standard", GFX_NORMAL},
