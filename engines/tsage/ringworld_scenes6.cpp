@@ -1377,7 +1377,13 @@ void Scene5100::signal() {
 }
 
 void Scene5100::dispatch() {
-	if (_hotspot15._bounds.contains(_globals->_player._position) && !_globals->_player._visage) {
+	// Flesheater trap
+	//if (_hotspot15._bounds.contains(_globals->_player._position) && !_globals->_player._visage) {
+	// HACK: don't enable the flesheater trap if the player has the stasis box in the inventory.
+	// This ensures that Quinn does not fall in the trap during the cutscene where he escapes the
+	// caves with the Seeker.
+	if (_hotspot15._bounds.contains(_globals->_player._position) && !_globals->_player._visage &&
+		RING_INVENTORY._stasisBox._sceneNumber != 1) {
 		_globals->_player.disableControl();
 		_globals->_player.addMover(NULL);
 
@@ -1453,6 +1459,7 @@ void Scene5200::Action1::signal() {
 }
 
 void Scene5200::Action2::signal() {
+	// Quinn obtains the stasis box from the flesheater throne room
 	Scene5200 *scene = (Scene5200 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -1491,6 +1498,13 @@ void Scene5200::Action2::signal() {
 	case 5:
 		_globals->_player.enableControl();
 		remove();
+
+		// HACK: Change scene here. Basically, perform the code that's
+		// in Scene5200::dispatch(), as PlayerMover::proc1() gets stuck
+		// when exiting the scene via the right exit
+		_globals->_stripNum = 5200;
+		_globals->_sceneManager.changeScene(5100);
+
 		break;
 	}
 }
@@ -1639,6 +1653,9 @@ void Scene5200::postInit(SceneObjectList *OwnerList) {
 	}
 
 	if (_globals->_stripNum == 5111) {
+		// Happens when the player enters the throne room via the secret passage,
+		// after talking with the bat. No NPCs are around and the player can
+		// obtain the stasis box.
 		_globals->_soundHandler.startSound(205);
 		_globals->_player.disableControl();
 
@@ -1653,6 +1670,7 @@ void Scene5200::postInit(SceneObjectList *OwnerList) {
 
 		setAction(&_action3);
 	} else {
+		// Happens when the player is captured by the flesh eaters the first time.
 		_globals->_player.postInit();
 		_globals->_player.setVisage(2640);
 		_globals->_player._strip = 1;
