@@ -237,8 +237,9 @@ Section -post SecMainPost
 	SetOutPath $INSTDIR
 	WriteUninstaller $INSTDIR\uninstall.exe
 	!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+	SetShellVarContext all     ; Create shortcuts in the all-users folder
 	CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
-	CreateShortCut "$SMPROGRAMS\$StartMenuGroup\$(^Name).lnk"           $INSTDIR\$(^Name).exe
+	CreateShortCut "$SMPROGRAMS\$StartMenuGroup\$(^Name).lnk"           $INSTDIR\$(^Name).exe "" "$INSTDIR\$(^Name).exe" 0    ; Create shortcut with icon
 	CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Readme.lnk"             $INSTDIR\README.txt
 	CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk" $INSTDIR\uninstall.exe
 	!insertmacro MUI_STARTMENU_WRITE_END
@@ -295,15 +296,22 @@ Section -un.Main SecUninstall
 SectionEnd
 
 Section -un.post SecUninstallPost
-	DeleteRegKey HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
+	# Remove start menu entries
+	SetShellVarContext all
+	Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\$(^Name).lnk"
+	Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\Readme.lnk"
 	Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk"
-	Delete /REBOOTOK  $INSTDIR\uninstall.exe
+	RmDir  /REBOOTOK  $SMPROGRAMS\$StartMenuGroup
+
+	Delete /REBOOTOK $INSTDIR\uninstall.exe
+
+	DeleteRegKey HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
 	DeleteRegValue HKCU "${REGKEY}" StartMenuGroup
 	DeleteRegValue HKCU "${REGKEY}" InstallPath
 	DeleteRegValue HKCU "${REGKEY}" InstallerLanguage
 	DeleteRegKey /IfEmpty HKCU "${REGKEY}"
-	RmDir /REBOOTOK $SMPROGRAMS\$StartMenuGroup
-	RmDir /REBOOTOK $INSTDIR    ; will only remove if empty (pass /r flag for recursive behavior)
+
+	RmDir $INSTDIR    ; will only remove if empty (pass /r flag for recursive behavior)
 	Push $R0
 	StrCpy $R0 $StartMenuGroup 1
 	StrCmp $R0 ">" no_smgroup
