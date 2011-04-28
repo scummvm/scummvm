@@ -700,7 +700,6 @@ void Scene4000::Hotspot::doAction(int action) {
 
 		if (_globals->_sceneObjects->contains(&scene->_hotspot8)) {
 			scene->_hotspot8.setAction(NULL);
-//			ADD_MOVER_NULL(scene->_hotspot8, 118, 145);
 			Common::Point pt(118, 145);
 			NpcMover *mover = new NpcMover();
 			scene->_hotspot18.addMover(mover, &pt, NULL);
@@ -1531,6 +1530,7 @@ void Scene4025::postInit(SceneObjectList *OwnerList) {
 	_peg5.setFrame(5);
 	_peg5.hide();
 
+	// Hole N-W
 	_hole1.postInit();
 	_hole1.setVisage(4025);
 	_hole1.setStrip(1);
@@ -1540,6 +1540,7 @@ void Scene4025::postInit(SceneObjectList *OwnerList) {
 	_hole1._newPosition = Common::Point(123, 44);
 	_hole1._armStrip = 8;
 
+	// Hole N-E
 	_hole2.postInit();
 	_hole2.setVisage(4025);
 	_hole2.setStrip(1);
@@ -1549,6 +1550,7 @@ void Scene4025::postInit(SceneObjectList *OwnerList) {
 	_hole2._newPosition = Common::Point(166, 44);
 	_hole2._armStrip = 7;
 
+	// Hole Center
 	_hole3.postInit();
 	_hole3.setVisage(4025);
 	_hole3.setStrip(1);
@@ -1558,15 +1560,17 @@ void Scene4025::postInit(SceneObjectList *OwnerList) {
 	_hole3._newPosition = Common::Point(145, 60);
 	_hole3._armStrip = 6;
 
+	// Hole S-W
 	_hole4.postInit();
 	_hole4.setVisage(4025);
 	_hole4.setStrip(1);
-	_hole4.setFrame2(6);
+	_hole4.setFrame2(9);
 	_hole4.setPosition(Common::Point(123, 87));
 	_hole4._pegPtr = NULL;
 	_hole4._newPosition = Common::Point(123, 80);
 	_hole4._armStrip = 5;
 
+	// Hole S-E
 	_hole5.postInit();
 	_hole5.setVisage(4025);
 	_hole5.setStrip(1);
