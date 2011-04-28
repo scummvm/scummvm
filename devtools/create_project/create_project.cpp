@@ -295,19 +295,6 @@ int main(int argc, char *argv[]) {
 	setup.libraries.push_back(ADDITIONAL_LIBRARY);
 #endif
 
-// Initialize global & project-specific warnings
-#define SET_GLOBAL_WARNINGS(...) \
-	{ \
-		std::string global[PP_NARG(__VA_ARGS__)] = { __VA_ARGS__ }; \
-		globalWarnings.assign(global, global + (sizeof(global) / sizeof(global[0]))); \
-	}
-
-#define SET_WARNINGS(name, ...) \
-	{ \
-		std::string project[PP_NARG(__VA_ARGS__)] = { __VA_ARGS__ }; \
-		projectWarnings[name].assign(project, project + (sizeof(project) / sizeof(project[0]))); \
-	}
-
 	// List of global warnings and map of project-specific warnings
 	StringList globalWarnings;
 	std::map<std::string, StringList> projectWarnings;
@@ -342,9 +329,23 @@ int main(int argc, char *argv[]) {
 		//
 		////////////////////////////////////////////////////////////////////////////
 
-		SET_GLOBAL_WARNINGS("-Wall", "-Wno-long-long", "-Wno-multichar", "-Wno-unknown-pragmas", "-Wno-reorder",
-		                    "-Wpointer-arith", "-Wcast-qual", "-Wcast-align", "-Wshadow", "-Wimplicit",
-		                    "-Wnon-virtual-dtor", "-Wwrite-strings", "-fno-rtti", "-fno-exceptions", "-fcheck-new");
+		globalWarnings.push_back("-Wall");
+		globalWarnings.push_back("-Wno-long-long");
+		globalWarnings.push_back("-Wno-multichar");
+		globalWarnings.push_back("-Wno-unknown-pragmas");
+		globalWarnings.push_back("-Wno-reorder");
+		globalWarnings.push_back("-Wpointer-arith");
+		globalWarnings.push_back("-Wcast-qual");
+		globalWarnings.push_back("-Wcast-align");
+		globalWarnings.push_back("-Wshadow");
+		globalWarnings.push_back("-Wimplicit");
+		globalWarnings.push_back("-Wnon-virtual-dtor");
+		globalWarnings.push_back("-Wwrite-strings");
+		// The following are not warnings at all... We should consider adding them to
+		// a different list of parameters.
+		globalWarnings.push_back("-fno-rtti");
+		globalWarnings.push_back("-fno-exceptions");
+		globalWarnings.push_back("-fcheck-new");
 
 		provider = new CreateProjectTool::CodeBlocksProvider(globalWarnings, projectWarnings);
 
@@ -421,12 +422,35 @@ int main(int argc, char *argv[]) {
 		//
 		////////////////////////////////////////////////////////////////////////////
 
-		SET_GLOBAL_WARNINGS("4068", "4100", "4103", "4127", "4244", "4250", "4310", "4351", "4512", "4702", "4706", "4800", "4996", "6204", "6211", "6385", "6386");
-		SET_WARNINGS("agi", "4510", "4610");
-		SET_WARNINGS("agos", "4511");
-		SET_WARNINGS("lure", "4189", "4355");
-		SET_WARNINGS("kyra", "4355");
-		SET_WARNINGS("m4", "4355");
+		globalWarnings.push_back("4068");
+		globalWarnings.push_back("4100");
+		globalWarnings.push_back("4103");
+		globalWarnings.push_back("4127");
+		globalWarnings.push_back("4244");
+		globalWarnings.push_back("4250");
+		globalWarnings.push_back("4310");
+		globalWarnings.push_back("4351");
+		globalWarnings.push_back("4512");
+		globalWarnings.push_back("4702");
+		globalWarnings.push_back("4706");
+		globalWarnings.push_back("4800");
+		globalWarnings.push_back("4996");
+		globalWarnings.push_back("6204");
+		globalWarnings.push_back("6211");
+		globalWarnings.push_back("6385");
+		globalWarnings.push_back("6386");
+
+		projectWarnings["agi"].push_back("4510");
+		projectWarnings["agi"].push_back("4610");
+
+		projectWarnings["agos"].push_back("4511");
+
+		projectWarnings["lure"].push_back("4189");
+		projectWarnings["lure"].push_back("4355");
+
+		projectWarnings["kyra"].push_back("4355");
+
+		projectWarnings["m4"].push_back("4355");
 
 		if (msvcVersion == 8 || msvcVersion == 9)
 			provider = new CreateProjectTool::VisualStudioProvider(globalWarnings, projectWarnings, msvcVersion);
