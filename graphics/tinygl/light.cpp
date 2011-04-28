@@ -6,7 +6,7 @@ namespace TinyGL {
 void glopMaterial(GLContext *c, GLParam *p) {
 	int mode = p[1].i;
 	int type = p[2].i;
-	float *v = &p[3].f;
+	float v[4] = { p[3].f, p[4].f, p[5].f, p[6].f };
 	int i;
 	GLMaterial *m;
 
@@ -27,7 +27,7 @@ void glopMaterial(GLContext *c, GLParam *p) {
 		break;
 	case TGL_AMBIENT:
 		for (i = 0; i < 4; i++)
-		m->ambient.v[i] = v[i];
+			m->ambient.v[i] = v[i];
 		break;
 	case TGL_DIFFUSE:
 		for (i = 0; i < 4; i++)
@@ -83,7 +83,7 @@ void glopLight(GLContext *c, GLParam *p) {
 		break;
 	case TGL_SPECULAR:
 		l->specular = v;
-    break;
+		break;
 	case TGL_POSITION:
 		{
 			V4 pos;
@@ -135,7 +135,7 @@ void glopLight(GLContext *c, GLParam *p) {
   
 void glopLightModel(GLContext *c, GLParam *p) {
 	int pname = p[1].i;
-	float *v = &p[2].f;
+	float v[4] = { p[2].f, p[3].f, p[4].f, p[5].f };
 	int i;
 
 	switch (pname) {
