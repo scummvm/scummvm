@@ -1781,9 +1781,10 @@ case $_host_os in
 	mingw*)
 		DEFINES="$DEFINES -DWIN32"
 		DEFINES="$DEFINES -D__USE_MINGW_ANSI_STDIO=0"
-		LIBS="$LIBS -lmingw32 -lwinmm"
+		LIBS="$LIBS -lmingw32 -lwinmm -lole32 -luuid"
 		OBJS="$OBJS scummvmwinres.o"
 		add_line_to_config_mk 'WIN32 = 1'
+		add_line_to_config_h "#define USE_TASKBAR"
 		;;
 	mint*)
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -2935,6 +2936,9 @@ define_in_config_h_if_yes "$_text_console" 'USE_TEXT_CONSOLE_FOR_DEBUGGER'
 # Check for Unity if taskbar integration is enabled
 #
 echocheck "unity"
+if test "$_unix" = no ; then
+	_unity=no
+else
 if test "$_unity" = auto ; then
 	# Unity has a lots of dependency, update the libs and cflags var with them
 	UNITY_LIBS="$UNITY_LIBS $(pkg-config --libs unity)"
@@ -2952,6 +2956,7 @@ if test "$_unity" = yes ; then
 fi
 define_in_config_h_if_yes "$_unity" 'USE_TASKBAR'
 define_in_config_h_if_yes "$_unity" 'USE_TASKBAR_UNITY'
+fi
 echo "$_unity"
 
 #
