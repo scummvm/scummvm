@@ -29,6 +29,7 @@
 #include "kyra/timer.h"
 #include "kyra/debugger.h"
 #include "kyra/util.h"
+#include "kyra/sound.h"
 
 #include "common/system.h"
 #include "common/config-manager.h"

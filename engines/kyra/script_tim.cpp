@@ -25,6 +25,7 @@
 
 #include "kyra/script_tim.h"
 #include "kyra/resource.h"
+#include "kyra/sound.h"
 
 #ifdef ENABLE_LOL
 #include "kyra/lol.h"

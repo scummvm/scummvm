@@ -31,6 +31,7 @@
 #include "kyra/debugger.h"
 #include "kyra/gui_mr.h"
 #include "kyra/resource.h"
+#include "kyra/sound.h"
 
 #include "common/system.h"
 #include "common/config-manager.h"

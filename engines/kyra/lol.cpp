@@ -31,6 +31,7 @@
 #include "kyra/timer.h"
 #include "kyra/util.h"
 #include "kyra/debugger.h"
+#include "kyra/sound.h"
 
 #include "audio/audiostream.h"
 

@@ -27,6 +27,7 @@
 #include "kyra/kyra_hof.h"
 #include "kyra/timer.h"
 #include "kyra/resource.h"
+#include "kyra/sound.h"
 
 #include "common/system.h"
 

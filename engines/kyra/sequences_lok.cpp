@@ -30,6 +30,7 @@
 #include "kyra/wsamovie.h"
 #include "kyra/animator_lok.h"
 #include "kyra/timer.h"
+#include "kyra/sound.h"
 
 #include "common/system.h"
 #include "common/savefile.h"

@@ -25,6 +25,7 @@
 
 #include "kyra/seqplayer.h"
 #include "kyra/resource.h"
+#include "kyra/sound.h"
 
 #include "common/system.h"
 
