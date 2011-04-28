@@ -1,4 +1,5 @@
 
+#include "common/endian.h"
 #include "graphics/tinygl/zbuffer.h"
 
 namespace TinyGL {
@@ -370,7 +371,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 							unsigned ttt = (t & 0x003FC000) >> (9 - PSZSH);
 							unsigned sss = (s & 0x003FC000) >> (17 - PSZSH);
 							char *ptr = (char *)(texture) + (((ttt | sss) >> 1) * 3);
-							PIXEL pixel = *(PIXEL *)ptr;
+							PIXEL pixel = READ_UINT16(ptr);
 							char alpha = *(ptr + 2);
 							if (alpha == '\xff') {
 								tmp = rgb & 0xF81F07E0;
@@ -420,7 +421,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 							unsigned ttt = (t & 0x003FC000) >> (9 - PSZSH);
 							unsigned sss = (s & 0x003FC000) >> (17 - PSZSH);
 							char *ptr = (char *)(texture) + (((ttt | sss) >> 1) * 3);
-							PIXEL pixel = *(PIXEL *)ptr;
+							PIXEL pixel = READ_UINT16(ptr);
 							char alpha = *(ptr + 2);
 							if (alpha == '\xff') {
 								tmp = rgb & 0xF81F07E0;
