@@ -296,6 +296,11 @@ int main(int argc, char *argv[]) {
 #endif
 
 	// List of global warnings and map of project-specific warnings
+	// FIXME: As shown below these two structures have different behavior for
+	// Code::Blocks and MSVC. In Code::Blocks this is used to enable *and*
+	// disable certain warnings (and some other not warning related flags
+	// actually...). While in MSVC this is solely for disabling warnings.
+	// That is really not nice. We should consider a nicer way of doing this.
 	StringList globalWarnings;
 	std::map<std::string, StringList> projectWarnings;
 
