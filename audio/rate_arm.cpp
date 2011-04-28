@@ -48,6 +48,7 @@
 #include "audio/rate.h"
 #include "audio/mixer.h"
 #include "common/util.h"
+#include "common/textconsole.h"
 
 //#define DEBUG_RATECONV
 
