@@ -832,6 +832,7 @@ void Scene5100::Action5::signal() {
 /*--------------------------------------------------------------------------*/
 
 void Scene5100::HotspotGroup1::doAction(int action) {
+	// Flesh Eaters
 	Scene5100 *scene = (Scene5100 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -884,11 +885,12 @@ void Scene5100::Hotspot4::doAction(int action) {
 }
 
 void Scene5100::HotspotGroup2::doAction(int action) {
+	// Bat
 	Scene5100 *scene = (Scene5100 *)_globals->_sceneManager._scene;
 
 	switch (action) {
 	case CURSOR_LOOK:
-		SceneItem::display2(5100, _globals->getFlag(62) ? 47 : 23);
+		SceneItem::display2(5100, _globals->getFlag(108) ? 47 : 23);
 		break;
 	case CURSOR_USE:
 		SceneItem::display2(5100, 29);
@@ -1008,6 +1010,7 @@ void Scene5100::Hotspot18::doAction(int action) {
 }
 
 void Scene5100::Hotspot19::doAction(int action) {
+	// Pillar
 	Scene5100 *scene = (Scene5100 *)_globals->_sceneManager._scene;
 
 	switch (action) {
