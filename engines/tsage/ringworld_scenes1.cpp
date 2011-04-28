@@ -3001,7 +3001,7 @@ void Scene6100::Action5::dispatch() {
 			switch (scene->_hitCount++) {
 			case 1:
 				scene->_soundHandler.startSound(233);
-				scene->showMessage(0, NULL, 0);
+				scene->showMessage(NULL, 0, NULL);
 
 				if (!_globals->getFlag(76))
 					scene->_probe.setAction(&scene->_action2);
@@ -3009,7 +3009,7 @@ void Scene6100::Action5::dispatch() {
 
 			case 2:
 				scene->_soundHandler.startSound(234);
-				scene->showMessage(0, NULL, 0);
+				scene->showMessage(NULL, 0, NULL);
 
 				if (!_globals->getFlag(76))
 					scene->_probe.setAction(NULL);
@@ -3018,7 +3018,7 @@ void Scene6100::Action5::dispatch() {
 
 			default:
 				scene->_soundHandler.startSound(233);
-				scene->showMessage(0, NULL, 0);
+				scene->showMessage(NULL, 0, NULL);
 
 				if (!_globals->getFlag(76))
 					scene->_probe.setAction(&scene->_action1);
