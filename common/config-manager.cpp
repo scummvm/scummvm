@@ -328,12 +328,7 @@ void ConfigManager::writeDomain(WriteStream &stream, const String &name, const D
 	stream.writeByte('[');
 	stream.writeString(name);
 	stream.writeByte(']');
-#ifdef _WIN32
-	stream.writeByte('\r');
 	stream.writeByte('\n');
-#else
-	stream.writeByte('\n');
-#endif
 
 	// Write all key/value pairs in this domain, including comments
 	Domain::const_iterator x;
@@ -348,20 +343,10 @@ void ConfigManager::writeDomain(WriteStream &stream, const String &name, const D
 			stream.writeString(x->_key);
 			stream.writeByte('=');
 			stream.writeString(x->_value);
-#ifdef _WIN32
-			stream.writeByte('\r');
 			stream.writeByte('\n');
-#else
-			stream.writeByte('\n');
-#endif
 		}
 	}
-#ifdef _WIN32
-	stream.writeByte('\r');
 	stream.writeByte('\n');
-#else
-	stream.writeByte('\n');
-#endif
 }
 
 

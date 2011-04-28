@@ -115,11 +115,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			// in a nice fashion (a "isMustard" parameter is *not* a nice
 			// solution).
 			comment += line;
-#ifdef _WIN32
-			comment += "\r\n";
-#else
 			comment += "\n";
-#endif
 		} else if (line[0] == '[') {
 			// It's a new section which begins here.
 			const char *p = line.c_str() + 1;
@@ -225,12 +221,7 @@ bool ConfigFile::saveToStream(WriteStream &stream) {
 		stream.writeByte('[');
 		stream.writeString(i->name);
 		stream.writeByte(']');
-#ifdef _WIN32
-		stream.writeByte('\r');
 		stream.writeByte('\n');
-#else
-		stream.writeByte('\n');
-#endif
 
 		// Write out the key/value pairs
 		for (List<KeyValue>::iterator kv = i->keys.begin(); kv != i->keys.end(); ++kv) {
@@ -242,12 +233,7 @@ bool ConfigFile::saveToStream(WriteStream &stream) {
 			stream.writeString(kv->key);
 			stream.writeByte('=');
 			stream.writeString(kv->value);
-#ifdef _WIN32
-			stream.writeByte('\r');
 			stream.writeByte('\n');
-#else
-			stream.writeByte('\n');
-#endif
 		}
 	}
 
