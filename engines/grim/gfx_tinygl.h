@@ -51,7 +51,7 @@ public:
 
 	void getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, int *x2, int *y2);
 
-	void startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, float roll);
+	void startActorDraw(Graphics::Vector3d pos, float scale, float yaw, float pitch, float roll);
 	void finishActorDraw();
 	void setShadow(Shadow *shadow);
 	void drawShadowPlanes();

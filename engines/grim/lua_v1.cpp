@@ -606,6 +606,22 @@ static void SetActorVisibility() {
 	actor->setVisibility(val);
 }
 
+static void SetActorScale() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object scaleObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	float scale = 1.f;
+
+	if (lua_isnumber(scaleObj))
+		scale = lua_getnumber(scaleObj);
+
+	actor->setScale(scale);
+}
+
 static void PutActorAt() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object xObj = lua_getparam(2);
@@ -4104,7 +4120,6 @@ STUB_FUNC(SetActorFrustrumCull)
 STUB_FUNC(DriveActorTo)
 STUB_FUNC(GetActorRect)
 STUB_FUNC(SetActorTimeScale)
-STUB_FUNC(SetActorScale)
 STUB_FUNC(GetTranslationMode)
 STUB_FUNC(SetTranslationMode)
 STUB_FUNC(WalkActorToAvoiding)

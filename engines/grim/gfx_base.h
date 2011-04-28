@@ -61,7 +61,7 @@ public:
 	virtual void flipBuffer() = 0;
 
 	virtual void getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, int *x2, int *y2) = 0;
-	virtual void startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, float roll) = 0;
+	virtual void startActorDraw(Graphics::Vector3d pos, float scale, float yaw, float pitch, float roll) = 0;
 	virtual void finishActorDraw() = 0;
 	virtual void setShadow(Shadow *shadow) = 0;
 	virtual void drawShadowPlanes() = 0;

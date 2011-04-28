@@ -66,6 +66,7 @@ Actor::Actor(const char *actorName) :
 	_lastWasLeft = false;
 	_lastStepTime = 0;
 	_running = false;
+	_scale = 1.f;
 
 	for (int i = 0; i < 5; i++) {
 		_shadowArray[i].active = false;
@@ -95,6 +96,7 @@ Actor::Actor() :
 	_lastWasLeft = false;
 	_lastStepTime = 0;
 	_running = false;
+	_scale = 1.f;
 
 	for (int i = 0; i < 5; i++) {
 		_shadowArray[i].active = false;
@@ -130,6 +132,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeFloat(_reflectionAngle);
 	savedState->writeLESint32(_visible);
 	savedState->writeLESint32(_lookingMode),
+	//TODO: save _scale
 
 	savedState->writeString(_talkSoundName);
 
@@ -1003,6 +1006,10 @@ void Actor::setHead(int joint1, int joint2, int joint3, float maxRoll, float max
 	}
 }
 
+void Actor::setScale(float scale) {
+	_scale = scale;
+}
+
 Costume *Actor::findCostume(const char *n) {
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		if (strcasecmp((*i)->getFilename(), n) == 0)
@@ -1201,19 +1208,19 @@ void Actor::draw() {
 					continue;
 				g_driver->setShadow(&_shadowArray[l]);
 				g_driver->setShadowMode();
-				g_driver->startActorDraw(_pos, _yaw, _pitch, _roll);
+				g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
 				costume->draw();
 				g_driver->finishActorDraw();
 				g_driver->clearShadowMode();
 				g_driver->setShadow(NULL);
 			}
 			// normal draw actor
-			g_driver->startActorDraw(_pos, _yaw, _pitch, _roll);
+			g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
 			costume->draw();
 			g_driver->finishActorDraw();
 		} else {
 			// normal draw actor
-			g_driver->startActorDraw(_pos, _yaw, _pitch, _roll);
+			g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
 			costume->draw();
 			g_driver->finishActorDraw();
 
@@ -1223,7 +1230,7 @@ void Actor::draw() {
 				g_driver->setShadow(&_shadowArray[l]);
 				g_driver->setShadowMode();
 				g_driver->drawShadowPlanes();
-				g_driver->startActorDraw(_pos, _yaw, _pitch, _roll);
+				g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
 				costume->draw();
 				g_driver->finishActorDraw();
 				g_driver->clearShadowMode();

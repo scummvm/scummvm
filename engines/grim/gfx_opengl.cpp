@@ -242,7 +242,7 @@ void GfxOpenGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, in
 	*y2 = (int)bottom;
 }
 
-void GfxOpenGL::startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, float roll) {
+void GfxOpenGL::startActorDraw(Graphics::Vector3d pos, float scale, float yaw, float pitch, float roll) {
 	glEnable(GL_TEXTURE_2D);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
@@ -262,6 +262,7 @@ void GfxOpenGL::startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, f
 		glShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
 	glTranslatef(pos.x(), pos.y(), pos.z());
+	glScalef(scale, scale, scale);
 	glRotatef(yaw, 0, 0, 1);
 	glRotatef(pitch, 1, 0, 0);
 	glRotatef(roll, 0, 1, 0);

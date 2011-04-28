@@ -79,6 +79,7 @@ public:
 	float roll() const { return _roll; }
 	void setVisibility(bool val) { _visible = val; }
 	bool visible() const { return _visible; }
+	void setScale(float scale);
 	// The set should change immediately, otherwise a very rapid set change
 	// for an actor will be recognized incorrectly and the actor will be lost.
 	void putInSet(const char *setName);
@@ -188,6 +189,7 @@ private:
 	bool _constrain;	// Constrain to walkboxes
 	float _reflectionAngle;	// Maximum angle to turn by at walls
 	bool _visible;
+	float _scale;
 	bool _lookingMode;
 	Common::String _talkSoundName;
 	LipSyncPtr _lipSync;

@@ -348,7 +348,7 @@ void GfxTinyGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, in
 	}*/
 }
 
-void GfxTinyGL::startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, float roll) {
+void GfxTinyGL::startActorDraw(Graphics::Vector3d pos, float scale, float yaw, float pitch, float roll) {
 	tglEnable(TGL_TEXTURE_2D);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
@@ -368,6 +368,7 @@ void GfxTinyGL::startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, f
 	}
 
 	tglTranslatef(pos.x(), pos.y(), pos.z());
+	tglScalef(scale, scale, scale);
 	tglRotatef(yaw, 0, 0, 1);
 	tglRotatef(pitch, 1, 0, 0);
 	tglRotatef(roll, 0, 1, 0);
