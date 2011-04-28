@@ -28,6 +28,7 @@
 #include "engines/advancedDetector.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "mohawk/livingbooks.h"
 
