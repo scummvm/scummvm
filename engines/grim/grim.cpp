@@ -846,12 +846,14 @@ void GrimEngine::updateDisplayScene() {
 		g_driver->storeDisplay();
 		drawPrimitives();
 	} else if (_mode == ENGINE_MODE_DRAW) {
-		if (_refreshDrawNeeded) {
+		// Adding line below and comment out rest solve flickering, also in tripple buffering mode too
+		_doFlip = false;
+/*		if (_refreshDrawNeeded) {
 			handleUserPaint();
 			g_driver->flipBuffer();
 		}
 		_refreshDrawNeeded = false;
-		return;
+		return;*/
 	}
 }
 
