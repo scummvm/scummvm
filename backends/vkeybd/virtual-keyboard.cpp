@@ -33,6 +33,7 @@
 #include "backends/vkeybd/virtual-keyboard-parser.h"
 #include "backends/vkeybd/keycode-descriptions.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 #include "common/unzip.h"
 
 #define KEY_START_CHAR ('[')
