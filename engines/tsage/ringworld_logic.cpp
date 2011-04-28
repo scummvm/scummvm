@@ -1319,6 +1319,8 @@ void RingworldGame::start() {
 
 	// Switch to the title screen
 	_globals->_sceneManager.setNewScene(1000);
+
+	_globals->_events.showCursor();
 }
 
 void RingworldGame::restart() {
@@ -1407,6 +1409,8 @@ void RingworldGame::endGame(int resNum, int lineNum) {
 void RingworldDemoGame::start() {
 	// Start the demo's single scene
 	_globals->_sceneManager.changeScene(1);
+	
+	_globals->_events.setCursor(CURSOR_NONE);
 }
 
 void RingworldDemoGame::restart() {
