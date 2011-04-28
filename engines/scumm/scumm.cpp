@@ -1648,6 +1648,8 @@ void ScummEngine_v90he::resetScumm() {
 			break;
 
 		case GID_SOCCER:
+		case GID_SOCCERMLS:
+		case GID_SOCCER2004:
 			_logicHE = new LogicHEsoccer(this);
 			break;
 
