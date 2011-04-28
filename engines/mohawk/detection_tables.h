@@ -1023,6 +1023,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Just Grandma and Me 1.0
+	// From scoriae
+	{
+		{
+			"grandma",
+			"v1.0",
+			AD_ENTRY1("PAGES.512", "e694ac10f957dd2e20611350bf968da3"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_LB_10,
+		"GRANDMA.EXE"
+	},
+
 	{
 		{
 			"grandma",
