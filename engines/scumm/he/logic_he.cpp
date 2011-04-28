@@ -859,6 +859,8 @@ int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 
 	case 1011:
 		// args[4] is ignored!
+		// soccer passes the argument, but then ends up not using it
+		// Makes sense that they removed it for soccermls
 		res = op_1011(args[0], args[1], args[2], args[3], args[5]);
 		break;
 
@@ -913,6 +915,8 @@ int LogicHEsoccer::startOfFrame() {
 	int res = (int)_userDataD[530];
 
 	// _userDataD[535] is not used!
+	// soccer passes the argument, but then ends up not using it
+	// Makes sense that they removed it for soccermls
 	if (res)
 		res = op_1011((int)_userDataD[531], (int)_userDataD[532], (int)_userDataD[533], (int)_userDataD[534], (int)_userDataD[536]);
 
@@ -1087,7 +1091,12 @@ int LogicHEsoccer::op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5) {
 		putInArray(a2, i + 22, 1, v12);
 	}
 
-	for (int i = 18; i < 22; i++) {
+	// soccer only uses one array here
+	// soccermls/soccer2004 use four
+	int start = (_vm->_game.id == GID_SOCCER) ? 19 : 18;
+	int end = (_vm->_game.id == GID_SOCCER) ? 19 : 21;
+
+	for (int i = start; i <= end; i++) {
 		int v14 = getFromArray(a2, i, 0);
 		int v15 = getFromArray(a2, i, 1);
 
@@ -1140,10 +1149,6 @@ void LogicHEsoccer::op_1011_sub(int32 a1, int32 a2, int32 a3, int32 a4) {
 		}
 	}
 
-	int v9 = getFromArray(a1, 20, 0);
-	int v10 = getFromArray(a1, 20, 2);
-	int v11 = getFromArray(a1, 21, 0);
-	int v12 = getFromArray(a1, 21, 2);
 	int v13 = getFromArray(a1, 18, 0);
 	int v14 = getFromArray(a1, 18, 2);
 	int v15 = getFromArray(a1, 19, 0);
@@ -1151,14 +1156,29 @@ void LogicHEsoccer::op_1011_sub(int32 a1, int32 a2, int32 a3, int32 a4) {
 	int v19[15];
 	int v20[15];
 
-	for (int i = 0; i < 6; i++) {
-		v20[i] = distance(v9, v7[i], v10, v8[i]);
-		v19[i] = distance(v13, v7[i], v14, v8[i]);
-	}
+	if (_vm->_game.id == GID_SOCCER) {
+		// soccer gets to be different
+		for (int i = 0; i < 13; i++)
+			v20[i] = distance(v13, v7[i], v14, v8[i]);
 
-	for (int i = 6; i < 13; i++) {
-		v20[i] = distance(v11, v7[i], v12, v8[i]);
-		v19[i] = distance(v15, v7[i], v16, v8[i]);
+		for (int i = 0; i < 13; i++)
+			v19[i] = distance(v15, v7[i], v16, v8[i]);
+	} else {
+		// soccermls and soccer2004 use two other arrays here
+		int v9 = getFromArray(a1, 20, 0);
+		int v10 = getFromArray(a1, 20, 2);
+		int v11 = getFromArray(a1, 21, 0);
+		int v12 = getFromArray(a1, 21, 2);
+
+		for (int i = 0; i < 6; i++) {
+			v20[i] = distance(v9, v7[i], v10, v8[i]);
+			v19[i] = distance(v13, v7[i], v14, v8[i]);
+		}
+
+		for (int i = 6; i < 13; i++) {
+			v20[i] = distance(v11, v7[i], v12, v8[i]);
+			v19[i] = distance(v15, v7[i], v16, v8[i]);
+		}
 	}
 
 	for (int i = 0; i < 13; i++) {
