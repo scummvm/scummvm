@@ -43,11 +43,6 @@ static SavedObject *classFactoryProc(const Common::String &className) {
 	if (className == "ObjectMover2") return new ObjectMover2();
 	if (className == "ObjectMover3") return new ObjectMover3();
 	if (className == "PlayerMover") return new PlayerMover();
-	// The following is needed, as saved games can contain SceneObjectWrapper
-	// objects (e.g. scene 4050 and 5000).
-	// FIXME: Since SceneObjectWrapper objects are contained within other
-	// objects, I'm not quite sure if this is the best solution (however, saved
-	// games do work with this). If this is correct, please remove this FIXME.
 	if (className == "SceneObjectWrapper") return new SceneObjectWrapper();
 
 	return NULL;

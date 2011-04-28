@@ -117,7 +117,11 @@ void SceneManager::sceneChange() {
 
 	// Instantiate and set the new scene
 	_scene = getNewScene();
-	_scene->postInit();
+
+	if (!_saver->getMacroRestoreFlag())
+		_scene->postInit();
+	else
+		_scene->loadScene(_sceneNumber);
 }
 
 Scene *SceneManager::getNewScene() {
@@ -289,7 +293,7 @@ void Scene::loadScene(int sceneNum) {
 }
 
 void Scene::loadSceneData(int sceneNum) {
-	_globals->_sceneManager._scene->_activeScreenNumber = sceneNum;
+	_activeScreenNumber = sceneNum;
 
 	// Get the basic scene size
 	byte *data = _resourceManager->getResource(RES_BITMAP, sceneNum, 9999);
