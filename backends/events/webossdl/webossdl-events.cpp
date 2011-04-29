@@ -26,6 +26,7 @@
 #ifdef WEBOS
 
 #include "common/scummsys.h"
+#include "common/system.h"
 #include "sys/time.h"
 #include "time.h"
 
