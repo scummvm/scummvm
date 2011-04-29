@@ -26,10 +26,8 @@
 
 namespace Scumm {
 
-Player_Towns::Player_Towns(ScummEngine *vm, bool isVersion2) : _vm(vm), _v2(isVersion2), _numSoundMax(isVersion2 ? 256 : 200) {
+Player_Towns::Player_Towns(ScummEngine *vm, bool isVersion2) : _vm(vm), _v2(isVersion2), _intf(0), _numSoundMax(isVersion2 ? 256 : 200), _unkFlags(0x33) {
 	memset(_pcmCurrentSound, 0, sizeof(_pcmCurrentSound));
-	_unkFlags = 0x33;
-	_intf = 0;
 }
 
 void Player_Towns::setSfxVolume(int vol) {
@@ -576,15 +574,16 @@ void Player_Towns_v1::playCdaTrack(int sound, const uint8 *data, bool skipTrackV
 	_cdaCurrentSound = sound;
 }
 
-Player_Towns_v2::Player_Towns_v2(ScummEngine *vm, IMuse *imuse, Audio::Mixer *mixer, bool disposeIMuse) : Player_Towns(vm, true), _imuse(imuse), _imuseDispose(disposeIMuse) {
+Player_Towns_v2::Player_Towns_v2(ScummEngine *vm, IMuse *imuse, Audio::Mixer *mixer, MidiDriver_TOWNS *driver, bool disposeIMuse, bool disposeDriver) : Player_Towns(vm, true), _imuse(imuse), _driver(driver), _imuseDispose(disposeIMuse), _driverDispose(disposeDriver), _sblData(0) {
 	_soundOverride = new SoundOvrParameters[_numSoundMax];
 	memset(_soundOverride, 0, _numSoundMax * sizeof(SoundOvrParameters));
-	_sblData = 0;
-	_intf = new TownsAudioInterface(mixer, 0);
+	if (_driver)
+		_intf = _driver->intf();
 }
 
 Player_Towns_v2::~Player_Towns_v2() {
-	delete _intf;
+	if (_driverDispose)
+		delete _driver;
 
 	if (_imuseDispose)
 		delete _imuse;

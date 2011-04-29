@@ -26,6 +26,7 @@
 #include "scumm/scumm.h"
 #include "scumm/imuse/imuse.h"
 #include "audio/softsynth/fmtowns_pc98/towns_euphony.h"
+#include "audio/softsynth/fmtowns_pc98/towns_midi.h"
 
 namespace Scumm {
 
@@ -141,7 +142,7 @@ private:
 
 class Player_Towns_v2 : public Player_Towns {
 public:
-	Player_Towns_v2(ScummEngine *vm, IMuse *imuse, Audio::Mixer *mixer, bool disposeIMuse);
+	Player_Towns_v2(ScummEngine *vm, IMuse *imuse, Audio::Mixer *mixer, MidiDriver_TOWNS *driver, bool disposeIMuse, bool disposeDriver);
 	~Player_Towns_v2();
 
 	bool init();
@@ -170,7 +171,10 @@ private:
 
 	uint8 *_sblData;
 	IMuse *_imuse;
+	MidiDriver_TOWNS *_driver;
+
 	const bool _imuseDispose;
+	const bool _driverDispose;
 };
 
 } // End of namespace Scumm
