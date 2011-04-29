@@ -215,6 +215,247 @@ const ExtractFilename extractFilenames[] = {
 	{ k3ItemMagicTable, k3TypeRaw16to8, false },
 	{ k3ItemStringMap, kTypeRawData, false },
 
+	// EYE OF THE BEHOLDER COMMON
+	{ kEobBaseChargenStrings1, kTypeStringList, true },
+	{ kEobBaseChargenStrings2, kTypeStringList, true },
+	{ kEobBaseChargenStartLevels, kTypeRawData, false },
+	{ kEobBaseChargenStatStrings, kTypeStringList, true},
+	{ kEobBaseChargenRaceSexStrings, kTypeStringList, true },
+	{ kEobBaseChargenClassStrings, kTypeStringList, true },
+	{ kEobBaseChargenAlignmentStrings, kTypeStringList, true },
+	{ kEobBaseChargenEnterGameStrings, kTypeStringList, true },
+	{ kEobBaseChargenClassMinStats, k3TypeRaw16to8, false },
+	{ kEobBaseChargenRaceMinStats, k3TypeRaw16to8, false },
+	{ kEobBaseChargenRaceMaxStats, kLolTypeRaw16, false },
+
+	{ kEobBaseConstModTable1, kTypeRawData, false },
+	{ kEobBaseConstModTable2, kTypeRawData, false },
+	{ kEobBaseConstModTable3, kTypeRawData, false },
+	{ kEobBaseConstModTable4, kTypeRawData, false },
+	{ kEobBaseConstModLvlIndex, kTypeRawData, false },
+	{ kEobBaseConstModDiv, kTypeRawData, false },
+	{ kEobBaseConstModExt, kTypeRawData, false },
+
+	{ kEobBasePryDoorStrings, kTypeStringList, true },
+	{ kEobBaseWarningStrings, kTypeStringList, true },
+	{ kEobBaseItemSuffixStrings, kTypeStringList, true },
+	{ kEobBaseItemExtraStrings, kTypeStringList, true },
+	{ kEobBaseTakenStrings, kTypeStringList, true },
+	{ kEobBasePotionEffectStrings, kTypeStringList, true },
+
+	{ kEobBaseYesNoStrings, kTypeStringList, true },
+	{ kLolEobCommonMoreStrings, kTypeStringList, true },
+	{ kEobBaseNpcMaxStrings, kTypeStringList, true },
+	{ kEobBaseOkStrings, kTypeStringList, true },
+	{ kEobBaseNpcJoinStrings, kTypeStringList, true },
+	{ kEobBaseCancelStrings, kTypeStringList, true },
+	{ kEobBaseAbortStrings, kTypeStringList, true },
+
+	{ kEobBaseCharGuiStringsHp, kTypeStringList, true },
+	{ kEobBaseCharGuiStringsWp1, kTypeStringList, true },
+	{ kEobBaseCharGuiStringsWp2, kTypeStringList, true },
+	{ kEobBaseCharGuiStringsWr, kTypeStringList, true },
+	{ kEobBaseCharGuiStringsSt1, kTypeStringList, true },
+	{ kEobBaseCharGuiStringsSt2, kTypeStringList, true },
+	{ kEobBaseCharGuiStringsIn, kTypeStringList, true },
+
+	{ kEobBaseCharStatusStrings7, kTypeStringList, true },
+	{ kEobBaseCharStatusStrings81, kTypeStringList, true },
+	{ kEobBaseCharStatusStrings82, kTypeStringList, true },
+	{ kEobBaseCharStatusStrings9, kTypeStringList, true },
+	{ kEobBaseCharStatusStrings12, kTypeStringList, true },
+	{ kEobBaseCharStatusStrings131, kTypeStringList, true },
+	{ kEobBaseCharStatusStrings132, kTypeStringList, true },
+
+	{ kEobBaseLevelGainStrings, kTypeStringList, true },
+	{ kEobBaseExperienceTable0, kLolTypeRaw32, false },
+	{ kEobBaseExperienceTable1, kLolTypeRaw32, false },
+	{ kEobBaseExperienceTable2, kLolTypeRaw32, false },
+	{ kEobBaseExperienceTable3, kLolTypeRaw32, false },
+	{ kEobBaseExperienceTable4, kLolTypeRaw32, false },
+
+	{ kEobBaseWllFlagPreset, kTypeRawData, false },
+	{ kEobBaseDscShapeCoords, kLolTypeRaw16, false },
+	{ kEobBaseDscDoorScaleOffs, kTypeRawData, false },
+	{ kEobBaseDscDoorScaleMult1, kTypeRawData, false },
+	{ kEobBaseDscDoorScaleMult2, kTypeRawData, false },
+	{ kEobBaseDscDoorScaleMult3, kTypeRawData, false },
+	{ kEobBaseDscDoorScaleMult4, kTypeRawData, false },
+	{ kEobBaseDscDoorScaleMult5, kTypeRawData, false },
+	{ kEobBaseDscDoorScaleMult6, kTypeRawData, false },
+	{ kEobBaseDscDoorType5Offs, kTypeRawData, false },
+	{ kEobBaseDscDoorY1, kTypeRawData, false },
+	{ kEobBaseDscDoorY3, kTypeRawData, false },
+	{ kEobBaseDscDoorY4, kTypeRawData, false },
+	{ kEobBaseDscDoorY5, kTypeRawData, false },
+	{ kEobBaseDscDoorY6, kTypeRawData, false },
+	{ kEobBaseDscDoorCoordsExt, kLolTypeRaw16, false },
+
+	{ kEobBaseDscItemPosIndex, kTypeRawData, false },
+	{ kEobBaseDscItemShpX, kLolTypeRaw16, false },
+	{ kEobBaseDscItemPosUnk, kTypeRawData, false },
+	{ kEobBaseDscItemTileIndex, kTypeRawData, false },
+	{ kEobBaseDscItemShapeMap, kTypeRawData, false },
+	{ kEobBaseDscTelptrShpCoords, kTypeRawData, false },
+
+	{ kEobBaseDscMonsterFrmOffsTbl1, kTypeRawData, false },
+	{ kEobBaseDscMonsterFrmOffsTbl2, kTypeRawData, false },
+
+	{ kEobBaseInvSlotX, kLolTypeRaw16, false },
+	{ kEobBaseInvSlotY, kTypeRawData, false },
+	{ kEobBaseSlotValidationFlags, kLolTypeRaw16, false },
+	{ kEobBaseDrawObjPosIndex, kTypeRawData, false },
+	{ kEobBaseFlightObjFlipIndex, kTypeRawData, false },
+	{ kEobBaseFlightObjShpMap, kTypeRawData, false },
+	{ kEobBaseFlightObjSclIndex, kTypeRawData, false },
+
+	{ kEobBaseBookNumbers, kTypeStringList, true },
+	{ kEobBaseMageSpellsList, kTypeStringList, true },
+	{ kEobBaseClericSpellsList, kTypeStringList, true },
+	{ kEobBaseSpellNames, kTypeStringList, true },
+
+	{ kEobBaseMagicStrings1, kTypeStringList, true },
+	{ kEobBaseMagicStrings2, kTypeStringList, true },
+	{ kEobBaseMagicStrings3, kTypeStringList, true },
+	{ kEobBaseMagicStrings4, kTypeStringList, true },
+	{ kEobBaseMagicStrings5, kTypeStringList, false },
+	{ kEobBaseMagicStrings6, kTypeStringList, true },
+	{ kEobBaseMagicStrings7, kTypeStringList, true },
+	{ kEobBaseMagicStrings8, kTypeStringList, true },
+
+	{ kEobBaseSparkDefSteps, kTypeRawData, false },
+	{ kEobBaseSparkDefSubSteps, kTypeRawData, false },
+	{ kEobBaseSparkDefShift, kTypeRawData, false },
+	{ kEobBaseSparkDefAdd, kTypeRawData, false },
+	{ kEobBaseSparkDefX, k3TypeRaw16to8, false },
+	{ kEobBaseSparkDefY, kTypeRawData, false },
+	{ kEobBaseSparkOfFlags1, kLolTypeRaw32, false },
+	{ kEobBaseSparkOfFlags2, kLolTypeRaw32, false },
+	{ kEobBaseSparkOfShift, kTypeRawData, false },
+	{ kEobBaseSparkOfX, kTypeRawData, false },
+	{ kEobBaseSparkOfY, kTypeRawData, false },
+	{ kEobBaseSpellProperties, kTypeRawData, false },
+	{ kEobBaseMagicFlightProps, kTypeRawData, false },
+
+	// EYE OF THE BEHOLDER I
+	{ kEob1MainMenuStrings, kTypeStringList, true },
+	{ kEob1DoorShapeDefs, kTypeRawData, false },
+	{ kEob1DoorSwitchShapeDefs, kTypeRawData, false },
+	{ kEob1DoorSwitchCoords, kTypeRawData, false },
+	{ kEob1MonsterProperties, kTypeRawData, false },
+	{ kEob1MonsterDistAttType10, kTypeRawData, false },
+	{ kEob1MonsterDistAttSfx10, kTypeRawData, false },
+	{ kEob1MonsterDistAttType17, kTypeRawData, false },
+	{ kEob1MonsterDistAttSfx17, kTypeRawData, false },
+
+	// EYE OF THE BEHOLDER II
+	{ kEob2MainMenuStrings, kTypeStringList, true },
+
+	{ kEob2IntroStrings, k2TypeSfxList, true },
+	{ kEob2IntroCPSFiles, kTypeStringList, true },
+	{ kEob2IntroSeqData00, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData01, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData02, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData03, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData04, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData05, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData06, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData07, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData08, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData09, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData10, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData11, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData12, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData13, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData14, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData15, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData16, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData17, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData18, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData19, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData20, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData21, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData22, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData23, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData24, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData25, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData26, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData27, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData28, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData29, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData30, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData31, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData32, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData33, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData34, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData35, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData36, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData37, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData38, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData39, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData40, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData41, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData42, kEob2TypeSeqData, false },
+ 	{ kEob2IntroSeqData43, kEob2TypeSeqData, false },
+	{ kEob2IntroShapes00, kEob2TypeShapeData, false },
+ 	{ kEob2IntroShapes01, kEob2TypeShapeData, false },
+ 	{ kEob2IntroShapes04, kEob2TypeShapeData, false },
+ 	{ kEob2IntroShapes07, kEob2TypeShapeData, false },
+
+	{ kEob2FinaleStrings, k2TypeSfxList, true },
+	{ kEob2CreditsData, kTypeRawData, true },
+	{ kEob2FinaleCPSFiles, kTypeStringList, true },
+	{ kEob2FinaleSeqData00, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData01, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData02, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData03, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData04, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData05, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData06, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData07, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData08, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData09, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData10, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData11, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData12, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData13, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData14, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData15, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData16, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData17, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData18, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData19, kEob2TypeSeqData, false },
+ 	{ kEob2FinaleSeqData20, kEob2TypeSeqData, false },
+	{ kEob2FinaleShapes00, kEob2TypeShapeData, false },
+ 	{ kEob2FinaleShapes03, kEob2TypeShapeData, false },
+ 	{ kEob2FinaleShapes07, kEob2TypeShapeData, false },
+ 	{ kEob2FinaleShapes09, kEob2TypeShapeData, false },
+ 	{ kEob2FinaleShapes10, kEob2TypeShapeData, false },
+	{ kEob2NpcShapeData, kTypeRawData, false },
+	{ kEobBaseClassModifierFlags, kTypeRawData, false },
+	{ kEobBaseMonsterStepTable01, kTypeRawData, false },
+	{ kEobBaseMonsterStepTable02, kTypeRawData, false },
+	{ kEobBaseMonsterStepTable1, kTypeRawData, false },
+	{ kEobBaseMonsterStepTable2, k3TypeRaw16to8, false },
+	{ kEobBaseMonsterStepTable3, k3TypeRaw16to8, false },
+	{ kEobBaseMonsterCloseAttPosTable1, kTypeRawData, false },
+	{ kEobBaseMonsterCloseAttPosTable21, kTypeRawData, false },
+	{ kEobBaseMonsterCloseAttPosTable22, kTypeRawData, false },
+	{ kEobBaseMonsterCloseAttUnkTable, kTypeRawData, false },
+	{ kEobBaseMonsterCloseAttChkTable1, kTypeRawData, false },
+	{ kEobBaseMonsterCloseAttChkTable2, kTypeRawData, false },
+	{ kEobBaseMonsterCloseAttDstTable1, kTypeRawData, false },
+	{ kEobBaseMonsterCloseAttDstTable2, kTypeRawData, false },
+	{ kEobBaseMonsterProximityTable, kTypeRawData, false },
+	{ kEobBaseFindBlockMonstersTable, kTypeRawData, false },
+	{ kEobBaseMonsterDirChangeTable, kTypeRawData, false },
+	{ kEobBaseMonsterDistAttStrings, kTypeStringList, true },
+	{ kEobBaseEncodeMonsterDefs, kLolTypeRaw16, false },
+	{ kEobBaseNpcPresets, kEobTypeNpcData, false },
+	{ kEob2Npc1Strings, kTypeStringList, true },
+	{ kEob2Npc2Strings, kTypeStringList, true },
+	{ kEob2MonsterDustStrings, kTypeStringList, true },
+
 	// LANDS OF LORE
 
 	// Ingame
@@ -251,25 +492,25 @@ const ExtractFilename extractFilenames[] = {
 	{ kLolItemPrices, kLolTypeRaw16, false },
 	{ kLolStashSetup, kTypeRawData, false },
 
-	{ kLolDscUnk1, kTypeRawData, false },
-	{ kLolDscShapeIndex, kTypeRawData, false },
+	{ kLolDscWalls, kTypeRawData, false },
+	{ kLolEobCommonDscShapeIndex, kTypeRawData, false },
 	{ kLolDscOvlMap, kTypeRawData, false },
 	{ kLolDscScaleWidthData, kLolTypeRaw16, false },
 	{ kLolDscScaleHeightData, kLolTypeRaw16, false },
-	{ kLolDscX, kLolTypeRaw16, false },
+	{ kLolEobCommonDscX, kLolTypeRaw16, false },
 	{ kLolDscY, kTypeRawData, false },
-	{ kLolDscTileIndex, kTypeRawData, false },
-	{ kLolDscUnk2, kTypeRawData, false },
-	{ kLolDscDoorShapeIndex, kTypeRawData, false },
-	{ kLolDscDimData1, kTypeRawData, false },
-	{ kLolDscDimData2, kTypeRawData, false },
-	{ kLolDscBlockMap, kTypeRawData, false },
-	{ kLolDscDimMap, kTypeRawData, false },
+	{ kLolEobCommonDscTileIndex, kTypeRawData, false },
+	{ kLolEobCommonDscUnk2, kTypeRawData, false },
+	{ kLolEobCommonDscDoorShapeIndex, kTypeRawData, false },
+	{ kLolEobCommonDscDimData1, kTypeRawData, false },
+	{ kLolEobCommonDscDimData2, kTypeRawData, false },
+	{ kLolEobCommonDscBlockMap, kTypeRawData, false },
+	{ kLolEobCommonDscDimMap, kTypeRawData, false },
 	{ kLolDscDoorScale, kLolTypeRaw16, false },
 	{ kLolDscOvlIndex, k3TypeRaw16to8, false },
-	{ kLolDscBlockIndex, kTypeRawData, false },
+	{ kLolEobCommonDscBlockIndex, kTypeRawData, false },
 	{ kLolDscDoor4, kLolTypeRaw16, false },
-	{ kLolDscDoor1, kTypeRawData, false },
+	{ kLolEobCommonDscDoorY2, kTypeRawData, false },
 	{ kLolDscDoorX, kLolTypeRaw16, false },
 	{ kLolDscDoorY, kLolTypeRaw16, false },
 
@@ -326,7 +567,9 @@ const TypeTable gameTable[] = {
 	{ kKyra1, 0 },
 	{ kKyra2, 1 },
 	{ kKyra3, 2 },
-	{ kLol, 3 },
+	{ kEob1, 3 },
+	{ kEob2, 4 },
+	{ kLol, 5 },
 	{ -1, -1 }
 };
 
@@ -980,6 +1223,445 @@ const char *getIdString(const int id) {
 		return "k3ItemMagicTable";
 	case k3ItemStringMap:
 		return "k3ItemStringMap";
+	case kEobBaseChargenStrings1:
+		return "kEobBaseChargenStrings1";
+	case kEobBaseChargenStrings2:
+		return "kEobBaseChargenStrings2";
+	case kEobBaseChargenStartLevels:
+		return "kEobBaseChargenStartLevels";
+	case kEobBaseChargenStatStrings:
+		return "kEobBaseChargenStatStrings";
+	case kEobBaseChargenRaceSexStrings:
+		return "kEobBaseChargenRaceSexStrings";
+	case kEobBaseChargenClassStrings:
+		return "kEobBaseChargenClassStrings";
+	case kEobBaseChargenAlignmentStrings:
+		return "kEobBaseChargenAlignmentStrings";
+	case kEobBaseChargenEnterGameStrings:
+		return "kEobBaseChargenEnterGameStrings";
+	case kEobBaseChargenClassMinStats:
+		return "kEobBaseChargenClassMinStats";
+	case kEobBaseChargenRaceMinStats:
+		return "kEobBaseChargenRaceMinStats";
+	case kEobBaseChargenRaceMaxStats:
+		return "kEobBaseChargenRaceMaxStats";
+	case kEobBaseConstModTable1:
+		return "kEobBaseConstModTable1";
+	case kEobBaseConstModTable2:
+		return "kEobBaseConstModTable2";
+	case kEobBaseConstModTable3:
+		return "kEobBaseConstModTable3";
+	case kEobBaseConstModTable4:
+		return "kEobBaseConstModTable4";
+	case kEobBaseConstModLvlIndex:
+		return "kEobBaseConstModLvlIndex";
+	case kEobBaseConstModDiv:
+		return "kEobBaseConstModDiv";
+	case kEobBaseConstModExt:
+		return "kEobBaseConstModExt";
+	case kEobBasePryDoorStrings:
+		return "kEobBasePryDoorStrings";
+	case kEobBaseWarningStrings:
+		return "kEobBaseWarningStrings";
+	case kEobBaseItemSuffixStrings:
+		return "kEobBaseItemSuffixStrings";
+	case kEobBaseItemExtraStrings:
+		return "kEobBaseItemExtraStrings";
+	case kEobBaseTakenStrings:
+		return "kEobBaseTakenStrings";
+	case kEobBasePotionEffectStrings:
+		return "kEobBasePotionEffectStrings";
+	case kEobBaseYesNoStrings:
+		return "kEobBaseYesNoStrings";
+	case kLolEobCommonMoreStrings:
+		return "kLolEobCommonMoreStrings";
+	case kEobBaseNpcMaxStrings:
+		return "kEobBaseNpcMaxStrings";
+	case kEobBaseOkStrings:
+		return "kEobBaseOkStrings";
+	case kEobBaseNpcJoinStrings:
+		return "kEobBaseNpcJoinStrings";		
+	case kEobBaseCancelStrings:
+		return "kEobBaseCancelStrings";
+	case kEobBaseAbortStrings:
+		return "kEobBaseAbortStrings";
+	case kEobBaseCharGuiStringsHp:
+		return "kEobBaseCharGuiStringsHp";
+	case kEobBaseCharGuiStringsWp1:
+		return "kEobBaseCharGuiStringsWp1";
+	case kEobBaseCharGuiStringsWp2:
+		return "kEobBaseCharGuiStringsWp2";
+	case kEobBaseCharGuiStringsWr:
+		return "kEobBaseCharGuiStringsWr";
+	case kEobBaseCharGuiStringsSt1:
+		return "kEobBaseCharGuiStringsSt1";
+	case kEobBaseCharGuiStringsSt2:
+		return "kEobBaseCharGuiStringsSt2";
+	case kEobBaseCharGuiStringsIn:
+		return "kEobBaseCharGuiStringsIn";
+	case kEobBaseCharStatusStrings7:
+		return "kEobBaseCharStatusStrings7";
+	case kEobBaseCharStatusStrings81:
+		return "kEobBaseCharStatusStrings81";
+	case kEobBaseCharStatusStrings82:
+		return "kEobBaseCharStatusStrings82";
+	case kEobBaseCharStatusStrings9:
+		return "kEobBaseCharStatusStrings9";
+	case kEobBaseCharStatusStrings12:
+		return "kEobBaseCharStatusStrings12";
+	case kEobBaseCharStatusStrings131:
+		return "kEobBaseCharStatusStrings131";
+	case kEobBaseCharStatusStrings132:
+		return "kEobBaseCharStatusStrings132";
+	case kEobBaseLevelGainStrings:
+		return "kEobBaseLevelGainStrings";
+	case kEobBaseExperienceTable0:
+		return "kEobBaseExperienceTable0";
+	case kEobBaseExperienceTable1:
+		return "kEobBaseExperienceTable1";
+	case kEobBaseExperienceTable2:
+		return "kEobBaseExperienceTable2";
+	case kEobBaseExperienceTable3:
+		return "kEobBaseExperienceTable3";
+	case kEobBaseExperienceTable4:
+		return "kEobBaseExperienceTable4";
+	case kEobBaseWllFlagPreset:
+		return "kEobBaseWllFlagPreset";
+	case kEobBaseDscShapeCoords:
+		return "kEobBaseDscShapeCoords";
+	case kEobBaseDscDoorScaleOffs:
+		return "kEobBaseDscDoorScaleOffs";
+	case kEobBaseDscDoorScaleMult1:
+		return "kEobBaseDscDoorScaleMult1";
+	case kEobBaseDscDoorScaleMult2:
+		return "kEobBaseDscDoorScaleMult2";
+	case kEobBaseDscDoorScaleMult3:
+		return "kEobBaseDscDoorScaleMult3";
+	case kEobBaseDscDoorScaleMult4:
+		return "kEobBaseDscDoorScaleMult4";
+	case kEobBaseDscDoorScaleMult5:
+		return "kEobBaseDscDoorScaleMult5";
+	case kEobBaseDscDoorScaleMult6:
+		return "kEobBaseDscDoorScaleMult6";
+	case kEobBaseDscDoorType5Offs:
+		return "kEobBaseDscDoorType5Offs";
+	case kEobBaseDscDoorY1:
+		return "kEobBaseDscDoorY1";
+	case kEobBaseDscDoorY3:
+		return "kEobBaseDscDoorY3";
+	case kEobBaseDscDoorY4:
+		return "kEobBaseDscDoorY4";
+	case kEobBaseDscDoorY5:
+		return "kEobBaseDscDoorY5";
+	case kEobBaseDscDoorY6:
+		return "kEobBaseDscDoorY6";
+	case kEobBaseDscDoorCoordsExt:
+		return "kEobBaseDscDoorCoordsExt";
+	case kEobBaseDscItemPosIndex:
+		return "kEobBaseDscItemPosIndex";
+	case kEobBaseDscItemShpX:
+		return "kEobBaseDscItemShpX";
+	case kEobBaseDscItemPosUnk:
+		return "kEobBaseDscItemPosUnk";
+	case kEobBaseDscItemTileIndex:
+		return "kEobBaseDscItemTileIndex";
+	case kEobBaseDscItemShapeMap:
+		return "kEobBaseDscItemShapeMap";
+	case kEobBaseDscMonsterFrmOffsTbl1:
+		return "kEobBaseDscMonsterFrmOffsTbl1";
+	case kEobBaseDscMonsterFrmOffsTbl2:
+		return "kEobBaseDscMonsterFrmOffsTbl2";
+	case kEobBaseInvSlotX:
+		return "kEobBaseInvSlotX";
+	case kEobBaseInvSlotY:
+		return "kEobBaseInvSlotY";
+	case kEobBaseSlotValidationFlags:
+		return "kEobBaseSlotValidationFlags";
+	case kEobBaseDrawObjPosIndex:
+		return "kEobBaseDrawObjPosIndex";
+	case kEobBaseFlightObjFlipIndex:
+		return "kEobBaseFlightObjFlipIndex";
+	case kEobBaseFlightObjShpMap:
+		return "kEobBaseFlightObjShpMap";
+	case kEobBaseFlightObjSclIndex:
+		return "kEobBaseFlightObjSclIndex";
+	case kEobBaseDscTelptrShpCoords:
+		return "kEobBaseDscTelptrShpCoords";	
+	case kEobBaseBookNumbers:
+		return "kEobBaseBookNumbers";
+	case kEobBaseMageSpellsList:
+		return "kEobBaseMageSpellsList";
+	case kEobBaseClericSpellsList:
+		return "kEobBaseClericSpellsList";
+	case kEobBaseSpellNames:
+		return "kEobBaseSpellNames";
+
+	case kEobBaseMagicStrings1:
+		return "kEobBaseMagicStrings1";
+	case kEobBaseMagicStrings2:
+		return "kEobBaseMagicStrings2";
+	case kEobBaseMagicStrings3:
+		return "kEobBaseMagicStrings3";
+	case kEobBaseMagicStrings4:
+		return "kEobBaseMagicStrings4";
+	case kEobBaseMagicStrings5:
+		return "kEobBaseMagicStrings5";
+	case kEobBaseMagicStrings6:
+		return "kEobBaseMagicStrings6";
+	case kEobBaseMagicStrings7:
+		return "kEobBaseMagicStrings7";
+	case kEobBaseMagicStrings8:
+		return "kEobBaseMagicStrings8";
+	case kEobBaseSparkDefSteps:
+		return "kEobBaseSparkDefSteps";
+	case kEobBaseSparkDefSubSteps:
+		return "kEobBaseSparkDefSubSteps";
+	case kEobBaseSparkDefShift:
+		return "kEobBaseSparkDefShift";
+	case kEobBaseSparkDefAdd:
+		return "kEobBaseSparkDefAdd";
+	case kEobBaseSparkDefX:
+		return "kEobBaseSparkDefX";
+	case kEobBaseSparkDefY:
+		return "kEobBaseSparkDefY";
+	case kEobBaseSparkOfFlags1:
+		return "kEobBaseSparkOfFlags1";
+	case kEobBaseSparkOfFlags2:
+		return "kEobBaseSparkOfFlags2";
+	case kEobBaseSparkOfShift:
+		return "kEobBaseSparkOfShift";
+	case kEobBaseSparkOfX:
+		return "kEobBaseSparkOfX";
+	case kEobBaseSparkOfY:
+		return "kEobBaseSparkOfY";
+	case kEobBaseSpellProperties:
+		return "kEobBaseSpellProperties";
+	case kEobBaseMagicFlightProps:
+		return "kEobBaseMagicFlightProps";
+	case kEob1MainMenuStrings:
+		return "kEob1MainMenuStrings";
+	case kEob1DoorShapeDefs:
+		return "kEob1DoorShapeDefs";
+	case kEob1DoorSwitchCoords:
+		return "kEob1DoorSwitchCoords";
+	case kEob1MonsterProperties:
+		return "kEob1MonsterProperties";
+	case kEob1MonsterDistAttType10:
+		return "kEob1MonsterDistAttType10";
+	case kEob1MonsterDistAttSfx10:
+		return "kEob1MonsterDistAttSfx10";
+	case kEob1MonsterDistAttType17:
+		return "kEob1MonsterDistAttType17";
+	case kEob1MonsterDistAttSfx17:
+		return "kEob1MonsterDistAttSfx17";
+	case kEob2MainMenuStrings:
+		return "kEob2MainMenuStrings";
+	case kEob2IntroStrings:
+		return "kEob2IntroStrings";
+	case kEob2IntroCPSFiles:
+		return "kEob2IntroCPSFiles";
+	case kEob2IntroSeqData00:
+		return "kEob2IntroSeqData00";
+ 	case kEob2IntroSeqData01:
+		return "kEob2IntroSeqData01";
+ 	case kEob2IntroSeqData02:
+		return "kEob2IntroSeqData02";
+ 	case kEob2IntroSeqData03:
+		return "kEob2IntroSeqData03";
+ 	case kEob2IntroSeqData04:
+		return "kEob2IntroSeqData04";
+ 	case kEob2IntroSeqData05:
+		return "kEob2IntroSeqData05";
+ 	case kEob2IntroSeqData06:
+		return "kEob2IntroSeqData06";
+ 	case kEob2IntroSeqData07:
+		return "kEob2IntroSeqData07";
+ 	case kEob2IntroSeqData08:
+		return "kEob2IntroSeqData08";
+ 	case kEob2IntroSeqData09:
+		return "kEob2IntroSeqData09";
+ 	case kEob2IntroSeqData10:
+		return "kEob2IntroSeqData10";
+ 	case kEob2IntroSeqData11:
+		return "kEob2IntroSeqData11";
+ 	case kEob2IntroSeqData12:
+		return "kEob2IntroSeqData12";
+ 	case kEob2IntroSeqData13:
+		return "kEob2IntroSeqData13";
+ 	case kEob2IntroSeqData14:
+		return "kEob2IntroSeqData14";
+ 	case kEob2IntroSeqData15:
+		return "kEob2IntroSeqData15";
+ 	case kEob2IntroSeqData16:
+		return "kEob2IntroSeqData16";
+ 	case kEob2IntroSeqData17:
+		return "kEob2IntroSeqData17";
+ 	case kEob2IntroSeqData18:
+		return "kEob2IntroSeqData18";
+ 	case kEob2IntroSeqData19:
+		return "kEob2IntroSeqData19";
+ 	case kEob2IntroSeqData20:
+		return "kEob2IntroSeqData20";
+ 	case kEob2IntroSeqData21:
+		return "kEob2IntroSeqData21";
+ 	case kEob2IntroSeqData22:
+		return "kEob2IntroSeqData22";
+ 	case kEob2IntroSeqData23:
+		return "kEob2IntroSeqData23";
+ 	case kEob2IntroSeqData24:
+		return "kEob2IntroSeqData24";
+ 	case kEob2IntroSeqData25:
+		return "kEob2IntroSeqData25";
+ 	case kEob2IntroSeqData26:
+		return "kEob2IntroSeqData26";
+ 	case kEob2IntroSeqData27:
+		return "kEob2IntroSeqData27";
+ 	case kEob2IntroSeqData28:
+		return "kEob2IntroSeqData28";
+ 	case kEob2IntroSeqData29:
+		return "kEob2IntroSeqData29";
+ 	case kEob2IntroSeqData30:
+		return "kEob2IntroSeqData30";
+ 	case kEob2IntroSeqData31:
+		return "kEob2IntroSeqData31";
+ 	case kEob2IntroSeqData32:
+		return "kEob2IntroSeqData32";
+ 	case kEob2IntroSeqData33:
+		return "kEob2IntroSeqData33";
+ 	case kEob2IntroSeqData34:
+		return "kEob2IntroSeqData34";
+ 	case kEob2IntroSeqData35:
+		return "kEob2IntroSeqData35";
+ 	case kEob2IntroSeqData36:
+		return "kEob2IntroSeqData36";
+ 	case kEob2IntroSeqData37:
+		return "kEob2IntroSeqData37";
+ 	case kEob2IntroSeqData38:
+		return "kEob2IntroSeqData38";
+ 	case kEob2IntroSeqData39:
+		return "kEob2IntroSeqData39";
+ 	case kEob2IntroSeqData40:
+		return "kEob2IntroSeqData40";
+ 	case kEob2IntroSeqData41:
+		return "kEob2IntroSeqData41";
+ 	case kEob2IntroSeqData42:
+		return "kEob2IntroSeqData42";
+ 	case kEob2IntroSeqData43:
+		return "kEob2IntroSeqData43";
+ 	case kEob2IntroShapes00:
+		return "kEob2IntroShapes00";
+ 	case kEob2IntroShapes01:
+		return "kEob2IntroShapes01";
+ 	case kEob2IntroShapes04:
+		return "kEob2IntroShapes04";
+ 	case kEob2IntroShapes07:
+		return "kEob2IntroShapes07";
+	case kEob2FinaleStrings:
+		return "kEob2FinaleStrings";
+	case kEob2CreditsData:
+		return "kEob2CreditsData";
+	case kEob2FinaleCPSFiles:
+		return "kEob2FinaleCPSFiles";		
+ 	case kEob2FinaleSeqData00:
+		return "kEob2FinaleSeqData00";
+ 	case kEob2FinaleSeqData01:
+		return "kEob2FinaleSeqData01";
+ 	case kEob2FinaleSeqData02:
+		return "kEob2FinaleSeqData02";
+ 	case kEob2FinaleSeqData03:
+		return "kEob2FinaleSeqData03";
+ 	case kEob2FinaleSeqData04:
+		return "kEob2FinaleSeqData04";
+ 	case kEob2FinaleSeqData05:
+		return "kEob2FinaleSeqData05";
+ 	case kEob2FinaleSeqData06:
+		return "kEob2FinaleSeqData06";
+ 	case kEob2FinaleSeqData07:
+		return "kEob2FinaleSeqData07";
+ 	case kEob2FinaleSeqData08:
+		return "kEob2FinaleSeqData08";
+ 	case kEob2FinaleSeqData09:
+		return "kEob2FinaleSeqData09";
+ 	case kEob2FinaleSeqData10:
+		return "kEob2FinaleSeqData10";
+ 	case kEob2FinaleSeqData11:
+		return "kEob2FinaleSeqData11";
+ 	case kEob2FinaleSeqData12:
+		return "kEob2FinaleSeqData12";
+ 	case kEob2FinaleSeqData13:
+		return "kEob2FinaleSeqData13";
+ 	case kEob2FinaleSeqData14:
+		return "kEob2FinaleSeqData14";
+ 	case kEob2FinaleSeqData15:
+		return "kEob2FinaleSeqData15";
+ 	case kEob2FinaleSeqData16:
+		return "kEob2FinaleSeqData16";
+ 	case kEob2FinaleSeqData17:
+		return "kEob2FinaleSeqData17";
+ 	case kEob2FinaleSeqData18:
+		return "kEob2FinaleSeqData18";
+ 	case kEob2FinaleSeqData19:
+		return "kEob2FinaleSeqData19";
+ 	case kEob2FinaleSeqData20:
+		return "kEob2FinaleSeqData20";	
+ 	case kEob2FinaleShapes00:
+		return "kEob2FinaleShapes00";
+ 	case kEob2FinaleShapes03:
+		return "kEob2FinaleShapes03";
+ 	case kEob2FinaleShapes07:
+		return "kEob2FinaleShapes07";
+ 	case kEob2FinaleShapes09:
+		return "kEob2FinaleShapes09";
+ 	case kEob2FinaleShapes10:
+		return "kEob2FinaleShapes10";
+	case kEob2NpcShapeData:
+		return "kEob2NpcShapeData";
+	case kEobBaseClassModifierFlags:
+		return "kEobBaseClassModifierFlags";
+	case kEobBaseMonsterStepTable01:
+		return "kEobBaseMonsterStepTable01";
+	case kEobBaseMonsterStepTable02:
+		return "kEobBaseMonsterStepTable02";
+	case kEobBaseMonsterStepTable1:
+		return "kEobBaseMonsterStepTable1";
+	case kEobBaseMonsterStepTable2:
+		return "kEobBaseMonsterStepTable2";
+	case kEobBaseMonsterStepTable3:
+		return "kEobBaseMonsterStepTable3";
+	case kEobBaseMonsterCloseAttPosTable1:
+		return "kEobBaseMonsterCloseAttPosTable1";
+	case kEobBaseMonsterCloseAttPosTable21:
+		return "kEobBaseMonsterCloseAttPosTable21";
+	case kEobBaseMonsterCloseAttPosTable22:
+		return "kEobBaseMonsterCloseAttPosTable22";
+	case kEobBaseMonsterCloseAttUnkTable:
+		return "kEobBaseMonsterCloseAttUnkTable";
+	case kEobBaseMonsterCloseAttChkTable1:
+		return "kEobBaseMonsterCloseAttChkTable1";
+	case kEobBaseMonsterCloseAttChkTable2:
+		return "kEobBaseMonsterCloseAttChkTable2";
+	case kEobBaseMonsterCloseAttDstTable1:
+		return "kEobBaseMonsterCloseAttDstTable1";
+	case kEobBaseMonsterCloseAttDstTable2:
+		return "kEobBaseMonsterCloseAttDstTable2";
+	case kEobBaseMonsterProximityTable:
+		return "kEobBaseMonsterProximityTable";
+	case kEobBaseFindBlockMonstersTable:
+		return "kEobBaseFindBlockMonstersTable";
+	case kEobBaseMonsterDirChangeTable:
+		return "kEobBaseMonsterDirChangeTable";
+	case kEobBaseMonsterDistAttStrings:
+		return "kEobBaseMonsterDistAttStrings";
+	case kEobBaseEncodeMonsterDefs:
+		return "kEobBaseEncodeMonsterDefs";
+	case kEobBaseNpcPresets:
+		return "kEobBaseNpcPresets";
+	case kEob2Npc1Strings:
+		return "kEob2Npc1Strings";
+	case kEob2Npc2Strings:
+		return "kEob2Npc2Strings";
+	case kEob2MonsterDustStrings:
+		return "kEob2MonsterDustStrings";
 	case kLolIngamePakFiles:
 		return "kLolIngamePakFiles";
 	case kLolCharacterDefs:
@@ -1042,40 +1724,40 @@ const char *getIdString(const int id) {
 		return "kLolItemPrices";
 	case kLolStashSetup:
 		return "kLolStashSetup";
-	case kLolDscUnk1:
-		return "kLolDscUnk1";
-	case kLolDscShapeIndex:
-		return "kLolDscShapeIndex";
+	case kLolDscWalls:
+		return "kLolDscWalls";
+	case kLolEobCommonDscShapeIndex:
+		return "kLolEobCommonDscShapeIndex";
 	case kLolDscOvlMap:
 		return "kLolDscOvlMap";
 	case kLolDscScaleWidthData:
 		return "kLolDscScaleWidthData";
 	case kLolDscScaleHeightData:
 		return "kLolDscScaleHeightData";
-	case kLolDscX:
-		return "kLolDscX";
+	case kLolEobCommonDscX:
+		return "kLolEobCommonDscX";
 	case kLolDscY:
 		return "kLolDscY";
-	case kLolDscTileIndex:
-		return "kLolDscTileIndex";
-	case kLolDscUnk2:
-		return "kLolDscUnk2";
-	case kLolDscDoorShapeIndex:
-		return "kLolDscDoorShapeIndex";
-	case kLolDscDimData1:
-		return "kLolDscDimData1";
-	case kLolDscDimData2:
-		return "kLolDscDimData2";
-	case kLolDscBlockMap:
-		return "kLolDscBlockMap";
-	case kLolDscDimMap:
-		return "kLolDscDimMap";
+	case kLolEobCommonDscTileIndex:
+		return "kLolEobCommonDscTileIndex";
+	case kLolEobCommonDscUnk2:
+		return "kLolEobCommonDscUnk2";
+	case kLolEobCommonDscDoorShapeIndex:
+		return "kLolEobCommonDscDoorShapeIndex";
+	case kLolEobCommonDscDimData1:
+		return "kLolEobCommonDscDimData1";
+	case kLolEobCommonDscDimData2:
+		return "kLolEobCommonDscDimData2";
+	case kLolEobCommonDscBlockMap:
+		return "kLolEobCommonDscBlockMap";
+	case kLolEobCommonDscDimMap:
+		return "kLolEobCommonDscDimMap";
 	case kLolDscOvlIndex:
 		return "kLolDscOvlIndex";
-	case kLolDscBlockIndex:
-		return "kLolDscBlockIndex";
-	case kLolDscDoor1:
-		return "kLolDscDoor1";
+	case kLolEobCommonDscBlockIndex:
+		return "kLolEobCommonDscBlockIndex";
+	case kLolEobCommonDscDoorY2:
+		return "kLolEobCommonDscDoorY2";
 	case kLolDscDoorScale:
 		return "kLolDscDoorScale";
 	case kLolDscDoor4:

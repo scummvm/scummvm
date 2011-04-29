@@ -53,7 +53,11 @@ enum kExtractType {
 	kLolTypeCharData,
 	kLolTypeSpellData,
 	kLolTypeCompassData,
-	kLolTypeFlightShpData
+	kLolTypeFlightShpData,
+
+	kEob2TypeSeqData,
+	kEob2TypeShapeData,
+	kEobTypeNpcData
 };
 
 struct ExtractInformation {

@@ -52,6 +52,9 @@ bool extractRaw16(PAKFile &out, const ExtractInformation *info, const byte *data
 bool extractRaw32(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 bool extractLolButtonDefs(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 
+bool extractEob2SeqData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractEob2ShapeData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractEobNpcData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 // Extraction type table
 
 const ExtractType extractTypeTable[] = {
@@ -80,6 +83,10 @@ const ExtractType extractTypeTable[] = {
 	{ kLolTypeRaw16, extractRaw16 },
 	{ kLolTypeRaw32, extractRaw32 },
 	{ kLolTypeButtonDef, extractLolButtonDefs },
+
+	{ kEob2TypeSeqData, extractEob2SeqData },
+	{ kEob2TypeShapeData, extractEob2ShapeData },
+	{ kEobTypeNpcData, extractEobNpcData },
 
 	{ -1, 0 }
 };
@@ -111,6 +118,9 @@ const TypeTable typeTable[] = {
 	{ kLolTypeSpellData, 9 },
 	{ kLolTypeCompassData, 10 },
 	{ kLolTypeFlightShpData, 11 },
+	{ kEob2TypeSeqData, 15 },
+	{ kEob2TypeShapeData, 16 },
+	{ kEobTypeNpcData, 17},
 	{ -1, 1 }
 };
 
@@ -1032,6 +1042,124 @@ bool extractLolButtonDefs(PAKFile &out, const ExtractInformation *info, const by
 		src += 2; dst += 2;
 		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
 		src += 2; dst += 2;
+	}
+
+	return out.addFile(filename, buffer, outsize);
+}
+
+bool extractEob2SeqData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
+	int num = size / 11;
+	uint8 *buffer = new uint8[size];
+	const uint8 *src = data;
+	uint8 *dst = buffer;
+
+	for (int i = 0; i < num; i++) {
+		memcpy(dst, src, 2);
+		src += 2; dst += 2;
+		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+		src += 2; dst += 2;
+		memcpy(dst, src, 7);
+		src += 7; dst += 7;
+	}
+
+	return out.addFile(filename, buffer, size);
+}
+
+bool extractEob2ShapeData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
+	int num = size / 6;
+	uint8 *buffer = new uint8[size];
+	const uint8 *src = data;
+	uint8 *dst = buffer;
+
+	for (int i = 0; i < num; i++) {
+		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+		src += 2; dst += 2;
+		memcpy(dst, src, 4);
+		src += 4; dst += 4;
+	}
+
+	return out.addFile(filename, buffer, size);
+}
+
+bool extractEobNpcData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
+	// We use one extraction routine for both EOB 1 and EOB 2 (in spite of the data format differences)
+	// since it is easy enough to generate a common output usable by both engines
+	
+	uint8 *buffer = 0;
+	uint32 outsize = 0;
+	
+	if (info->game == kEob1) {
+		uint16 num = size / 243;
+		outsize = num * 111 + 2;
+		buffer = new uint8[outsize];
+		const uint8 *src = data;
+		uint8 *dst = buffer;
+
+		WRITE_BE_UINT16(dst, num);
+		dst += 2;
+
+		for (int i = 0; i < num; i++) {
+			memcpy(dst, src, 27);
+			src += 27; dst += 27;
+			WRITE_BE_UINT16(dst, *src++);
+			dst += 2;
+			WRITE_BE_UINT16(dst, *src++);
+			dst += 2;
+			memcpy(dst, src, 10);
+			src += 10; dst += 10;
+			WRITE_BE_UINT32(dst, READ_LE_UINT32(src));
+			src += 4; dst += 4;
+			WRITE_BE_UINT32(dst, READ_LE_UINT32(src));
+			src += 4; dst += 4;
+			WRITE_BE_UINT32(dst, READ_LE_UINT32(src));
+			src += 4; dst += 4;
+			// skipping lots of zero space
+			src += 60;
+			WRITE_BE_UINT32(dst, READ_LE_UINT32(src));
+			src += 4; dst += 4;
+			for (int ii = 0; ii < 27; ii++) {
+				WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+				src += 2; dst += 2;
+			}			
+			// skipping more zero space
+			src += 70;
+		}
+	} else {
+		uint16 num = size / 345;
+		outsize = num * 111 + 2;
+		buffer = new uint8[outsize];
+		const uint8 *src = data;
+		uint8 *dst = buffer;
+
+		WRITE_BE_UINT16(dst, num);
+		dst += 2;
+
+		for (int i = 0; i < num; i++) {
+			memcpy(dst, src, 27);
+			src += 27; dst += 27;
+			WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+			src += 2; dst += 2;
+			WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+			src += 2; dst += 2;
+			memcpy(dst, src, 10);
+			src += 10; dst += 10;
+			WRITE_BE_UINT32(dst, READ_LE_UINT32(src));
+			src += 4; dst += 4;
+			WRITE_BE_UINT32(dst, READ_LE_UINT32(src));
+			src += 4; dst += 4;
+			WRITE_BE_UINT32(dst, READ_LE_UINT32(src));
+			src += 4; dst += 4;
+			// skipping lots of zero space
+			src += 164;
+			WRITE_BE_UINT32(dst, READ_LE_UINT32(src));
+			src += 4; dst += 4;
+			for (int ii = 0; ii < 27; ii++) {
+				WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+				src += 2; dst += 2;
+			}
+			// skipping more zero space
+			src += 70;
+		}
 	}
 
 	return out.addFile(filename, buffer, outsize);
