@@ -2946,7 +2946,10 @@ if test "$_unity" = auto ; then
 	_unity=no
 	cat > $TMPC << EOF
 #include <unity.h>
-int main(void) { return 0; }
+int main(void) {
+	unity_launcher_entry_get_for_desktop_id("scummvm.desktop");
+	return 0;
+}
 EOF
 	cc_check $UNITY_CFLAGS $UNITY_LIBS -lunity && _unity=yes
 fi
