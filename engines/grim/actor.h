@@ -107,6 +107,7 @@ public:
 	bool talking();
 
 	void setRestChore(int choreNumber, Costume *cost);
+	int restChore() const { return _restChore; }
 	void setWalkChore(int choreNumber, Costume *cost);
 	void setTurnChores(int left_chore, int right_chore, Costume *cost);
 	void setTalkChore(int index, int choreNumber, Costume *cost);

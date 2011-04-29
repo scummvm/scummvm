@@ -149,7 +149,7 @@ private:
 
 		Chore();
 		~Chore();
-		void load(Costume *owner, TextSplitter &ts);
+		void load(int id, Costume *owner, TextSplitter &ts);
 		void play();
 		void playLooping();
 		void setLooping(bool val) { _looping = val; }
@@ -161,6 +161,7 @@ private:
 	private:
 		Costume *_owner;
 
+		int _id;
 		int _length;
 		int _numTracks;
 		ChoreTrack *_tracks;

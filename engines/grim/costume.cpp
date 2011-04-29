@@ -412,6 +412,7 @@ public:
 	void init();
 	void setKey(int val);
 	void setFade(float fade);
+	void setLowPriority(bool lowPriority);
 	void update();
 	void reset();
 	~KeyframeComponent() {}
@@ -421,6 +422,7 @@ private:
 	int _priority1, _priority2;
 	Model::HierNode *_hier;
 	bool _active;
+	bool _lowPriority;
 	int _repeatMode;
 	int _currTime;
 	float _fade;
@@ -430,7 +432,7 @@ private:
 };
 
 KeyframeComponent::KeyframeComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
-		Costume::Component(p, parentID, t), _priority1(1), _priority2(5), _hier(NULL), _active(false) {
+		Costume::Component(p, parentID, t), _priority1(1), _priority2(5), _hier(NULL), _active(false), _lowPriority(false) {
 	_fname = filename;
 	const char *comma = strchr(filename, ',');
 	if (comma) {
@@ -464,6 +466,10 @@ void KeyframeComponent::setKey(int val) {
 
 void KeyframeComponent::setFade(float fade) {
 	_fade = fade;
+}
+
+void KeyframeComponent::setLowPriority(bool lowPriority) {
+	_lowPriority = lowPriority;
 }
 
 void KeyframeComponent::reset() {
@@ -500,7 +506,13 @@ void KeyframeComponent::update() {
 					warning("Unknown repeat mode %d for keyframe %s", _repeatMode, _keyf->filename());
 		}
 	}
-	_keyf->animate(_hier, _currTime / 1000.0f, _priority1, _priority2, _fade);
+
+	if (_lowPriority) {
+		// Force 0 priority. Used for rest chores.
+		_keyf->animate(_hier, _currTime / 1000.0f, 0, 0, _fade);
+	} else {
+		_keyf->animate(_hier, _currTime / 1000.0f, _priority1, _priority2, _fade);
+	}
 }
 
 void KeyframeComponent::init() {
@@ -751,7 +763,7 @@ void Costume::load(const char *filename, const char *data, int len, Costume *pre
 	for (int i = 0; i < _numChores; i++) {
 		int which;
 		ts.scanString("chore %d", 1, &which);
-		_chores[which].load(this, ts);
+		_chores[which].load(i, this, ts);
 	}
 }
 
@@ -832,10 +844,11 @@ Costume::Chore::~Chore() {
 	}
 }
 
-void Costume::Chore::load(Costume *owner, TextSplitter &ts) {
+void Costume::Chore::load(int id, Costume *owner, TextSplitter &ts) {
 	_owner = owner;
 	_tracks = new ChoreTrack[_numTracks];
 	_hasPlayed = _playing = false;
+	_id = id;
 	for (int i = 0; i < _numTracks; i++) {
 		int compID, numKeys;
 		ts.scanString(" %d %d", 2, &compID, &numKeys);
@@ -887,6 +900,14 @@ void Costume::Chore::setKeys(int startTime, int stopTime) {
 			comp->setFade((float)_fadeCurrTime / (float)_fadeLength);
 		} else if (_fadeMode == FadeOut) {
 			comp->setFade(1.f - ((float)_fadeCurrTime / (float)_fadeLength));
+		}
+
+		if (FROM_BE_32(comp->_tag) == MKTAG('K','E','Y','F')) {
+			KeyframeComponent *f = static_cast<KeyframeComponent *>(comp);
+			if (g_currentUpdatedActor && g_currentUpdatedActor->restChore() == _id)
+				f->setLowPriority(true);
+			else
+				f->setLowPriority(false);
 		}
 
 		for (int j = 0; j < _tracks[i].numKeys; j++) {
