@@ -2080,6 +2080,7 @@ void Scene4050::Action2::signal() {
 }
 
 void Scene4050::Action3::signal() {
+	// Climb up the rope
 	switch (_actionIndex++) {
 	case 0:
 		ADD_PLAYER_MOVER(210, 185);
@@ -2179,7 +2180,7 @@ void Scene4050::Action4::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene4050::Hotspot14::doAction(int action) {
+void Scene4050::Hotspot15::doAction(int action) {
 	Scene4050 *scene = (Scene4050 *)_globals->_sceneManager._scene;
 
 	switch (action) {
