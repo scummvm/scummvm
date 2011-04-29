@@ -4545,4 +4545,26 @@ int bundle_dofile(const char *filename) {
 	return result;
 }
 
+int single_dofile(const char *filename) {
+	Common::File *f = new Common::File();
+
+	if (!f->open(filename)) {
+		delete f;
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
+			warning("Cannot find script %s", filename);
+
+		return 2;
+	}
+
+	int32 size = f->size();
+	char *data = new char[size];
+	f->read(data, size);
+
+	int result = lua_dobuffer(data, size, const_cast<char *>(filename));
+	delete f;
+	delete data;
+
+	return result;
+}
+
 } // end of namespace Grim

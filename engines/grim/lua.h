@@ -40,6 +40,8 @@ void register_lua();
 // Like dofile, except it loads the file to execute from a bundle file
 int bundle_dofile(const char *filename);
 
+int single_dofile(const char *filename);
+
 // Set system.frameTime
 void setFrameTime(float frameTime);
 
