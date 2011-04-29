@@ -126,16 +126,18 @@ public:
 
 	virtual SaveStateList listSaves(const char *target) const {
 		Common::String pattern = target;
-		pattern += ".*";
+		pattern += ".???";
 
 		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
+		sort(filenames.begin(), filenames.end());
 		tSage::tSageSavegameHeader header;
 
 		SaveStateList saveList;
 		for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-			int slot;
 			const char *ext = strrchr(file->c_str(), '.');
-			if (ext && (slot = atoi(ext + 1)) >= 0 && slot < MAX_SAVES) {
+			int slot = ext ? atoi(ext + 1) : -1;
+
+			if (slot >= 0 && slot < MAX_SAVES) {
 				Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 
 				if (in) {
