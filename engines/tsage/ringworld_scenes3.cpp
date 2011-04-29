@@ -5165,7 +5165,7 @@ void Scene2320::Action4::signal() {
 		break;
 	case 3:
 		_globals->_player.animate(ANIM_MODE_6, NULL);
-		scene->setAction(&scene->_action2);
+		setAction(&scene->_action2, this);
 		break;
 	case 4: {
 		scene->_hotspot16.postInit();
