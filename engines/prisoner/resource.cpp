@@ -24,6 +24,7 @@
  */
 
 #include "common/file.h"
+#include "common/textconsole.h"
 
 #include "common/stream.h"
 #include "common/zlib.h"

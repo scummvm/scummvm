@@ -27,6 +27,7 @@
 #define PRISONER_OBJECTSTORAGE_H
 
 #include "common/array.h"
+#include "common/textconsole.h"
 
 namespace Prisoner {
 

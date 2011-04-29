@@ -24,6 +24,7 @@
  */
 
 #include "common/debug.h"
+#include "common/textconsole.h"
 #include "common/zlib.h"
 
 #include "prisoner/kroarchive.h"

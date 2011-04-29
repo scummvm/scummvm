@@ -1,6 +1,7 @@
 #include "common/rect.h"
 
 #include "graphics/primitives.h"
+#include "graphics/palette.h"
 
 #include "prisoner/prisoner.h"
 #include "prisoner/screen.h"
