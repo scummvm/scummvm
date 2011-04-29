@@ -361,7 +361,7 @@ public:
 
 	/**
 	 * Determine which graphics mode is currently active.
-	 * @return the active graphics mode
+	 * @return the ID of the active graphics mode
 	 */
 	virtual int getGraphicsMode() const = 0;
 
