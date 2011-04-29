@@ -42,13 +42,61 @@ public:
 	void loadNotifierProc(bool postFlag);
 };
 
+#define SOUND_ARR_SIZE 16
+
+struct trackInfoStruct {
+	int count;
+	int rlbList[32];
+	uint32 handleList[75];
+};
+
 class Sound: public EventHandler {
+private:
+	void _prime(int soundNum, int v2);
+	void _unPrime();
+public:
+	int _field6;
+	int _soundNum;
+	int _fieldA;
+	int _fieldE;
+	int _priority2;
+	int _field10;
+	bool _loopFlag2;
+	int _priority;
+	int _volume;
+	bool _loopFlag;
+	int _pauseCtr;
+	int _muteCtr;
+	int _holdAt;
+	bool _cueValue;
+	int _field1E;
+	int _field1F;
+	int _field20;
+	int _field21;
+	int _field22;
+	uint _timeIndex;
+	int _field26;
+	int _field28[SOUND_ARR_SIZE];
+	int _field38[SOUND_ARR_SIZE];
+	int _field48[SOUND_ARR_SIZE];
+	int _field58[SOUND_ARR_SIZE];
+	int _field68[SOUND_ARR_SIZE];
+	int _field78[SOUND_ARR_SIZE];
+	int _field98[SOUND_ARR_SIZE];
+	int _fieldA8[SOUND_ARR_SIZE];
+	int _fieldB8[SOUND_ARR_SIZE];
+	int _fieldC8[SOUND_ARR_SIZE];
+	int _fieldE8[SOUND_ARR_SIZE];
+	trackInfoStruct _trackInfo;
+	int _field266;
+	int _field268;
+	bool _primed;
+	int _field26C;
+	int _field26E;
 public:
 	void play(int soundNum, int volume = 127);
 	void stop();
 	void prime(int soundNum);
-	void prime(int soundNum, int v2);
-	void _unPrime();
 	void unPrime();
 	void go();
 	void halt(void);
