@@ -312,7 +312,6 @@ void OptionsDialog::close() {
 
 		// Graphic options
 		bool graphicsModeChanged = false;
-		Common::String oldGfxMode = ConfMan.get("gfx_mode", _domain);
 		if (_fullscreenCheckbox) {
 			if (_enableGraphicSettings) {
 				if (ConfMan.getBool("fullscreen", _domain) != _fullscreenCheckbox->getState())
@@ -331,7 +330,7 @@ void OptionsDialog::close() {
 
 					while (gm->name) {
 						if (gm->id == (int)_gfxPopUp->getSelectedTag()) {
-							if (oldGfxMode != gm->name)
+							if (ConfMan.get("gfx_mode", _domain) != gm->name)
 								graphicsModeChanged = true;
 							ConfMan.set("gfx_mode", gm->name, _domain);
 							isSet = true;
@@ -365,26 +364,31 @@ void OptionsDialog::close() {
 				g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen", _domain));
 			OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 			if (gfxError != OSystem::kTransactionSuccess) {
-				// Try to revert to old settings. If this fails gracefully close the application.
+				// Revert ConfMan to what OSystem is using.
 				Common::String message = "Failed to apply some of the graphic options changes:";
-				g_system->beginGFXTransaction();
+
 				if (gfxError & OSystem::kTransactionModeSwitchFailed) {
-					ConfMan.set("gfx_mode", oldGfxMode, _domain);
-					g_system->setGraphicsMode(oldGfxMode.c_str());
+					const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
+					while (gm->name) {
+						if (gm->id == g_system->getGraphicsMode()) {
+							ConfMan.set("gfx_mode", gm->name, _domain);
+							break;
+						}
+						gm++;
+					}
 					message += "\nthe video mode could not be changed.";
 				}
+			
 				if (gfxError & OSystem::kTransactionAspectRatioFailed) {
-					ConfMan.setBool("aspect_ratio", !_aspectCheckbox->getState(), _domain);
-					g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, !_aspectCheckbox->getState());
+					ConfMan.setBool("aspect_ratio", g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection), _domain);
 					message += "\nthe fullscreen setting could not be changed";
 				}
+
 				if (gfxError & OSystem::kTransactionFullscreenFailed) {
-					ConfMan.setBool("fullscreen", !_fullscreenCheckbox->getState(), _domain);
-					g_system->setFeatureState(OSystem::kFeatureFullscreenMode, !_fullscreenCheckbox->getState());
+					ConfMan.setBool("fullscreen", g_system->getFeatureState(OSystem::kFeatureFullscreenMode), _domain);
 					message += "\nthe aspect ratio setting could not be changed";
 				}
-				if (g_system->endGFXTransaction() != OSystem::kTransactionSuccess)
-					error("%s", message.c_str());
+
 				// And display the error
 				GUI::MessageDialog dialog(message);
 				dialog.runModal();
