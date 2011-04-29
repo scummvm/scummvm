@@ -32,6 +32,7 @@
 #include "backends/platform/wince/wince-sdl.h"
 #include "backends/mixer/wincesdl/wincesdl-mixer.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #ifdef USE_VORBIS
 #ifndef USE_TREMOR
