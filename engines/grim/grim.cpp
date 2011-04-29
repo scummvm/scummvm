@@ -1039,7 +1039,7 @@ void GrimEngine::savegameRestore() {
 	//  unlock resources
 	delete _savedState;
 
-	if (!bundle_dofile("patch05.bin"))
+	if (bundle_dofile("patch05.bin") == 2)
 		single_dofile("patch05.bin");
 
 	g_imuse->pause(false);
