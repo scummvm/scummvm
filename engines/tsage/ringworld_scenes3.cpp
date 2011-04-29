@@ -5454,10 +5454,6 @@ void Scene2320::Action7::signal() {
 	case 6:
 		ADD_MOVER_NULL(scene->_hotspot10, 491, 160);
 		ADD_MOVER(_globals->_player, 391, 88);
-
-		_globals->_player.setStrip(1);
-		_globals->_player.setFrame(1);
-		_globals->_player.animate(ANIM_MODE_6, this);
 		break;
 	case 7:
 		ADD_PLAYER_MOVER(462, 182);
