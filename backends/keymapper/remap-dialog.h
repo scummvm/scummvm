@@ -33,8 +33,10 @@
 #include "gui/dialog.h"
 
 namespace GUI {
-class PopupWidget;
+class ButtonWidget;
+class PopUpWidget;
 class ScrollBarWidget;
+class StaticTextWidget;
 }
 
 namespace Common {
