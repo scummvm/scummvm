@@ -43,6 +43,7 @@ Font::Font(const char *filename, const char *data, int len) : Object() {
 	_baseOffsetY = READ_LE_UINT32(data + 12);
 	_firstChar = READ_LE_UINT32(data + 24);
 	_lastChar = READ_LE_UINT32(data + 28);
+	int8 available_height = _height - _baseOffsetY;
 
 	data += 32;
 
@@ -67,6 +68,12 @@ Font::Font(const char *filename, const char *data, int len) : Object() {
 		_charHeaders[i].startingLine = *(int8 *)(data + 6);
 		_charHeaders[i].dataWidth = READ_LE_UINT32(data + 8);
 		_charHeaders[i].dataHeight = READ_LE_UINT32(data + 12);
+		int8 overflow = (_charHeaders[i].dataHeight + _charHeaders[i].startingLine) - available_height;
+		if (overflow > 0) {
+		    warning("Font %s, char 0x%02x exceeds font height by %d, increasing font height", filename, i, overflow);
+		    available_height += overflow;
+		    _height += overflow;
+		}
 		data += 16;
 	}
 	// Read font data
