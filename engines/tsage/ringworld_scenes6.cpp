@@ -692,9 +692,9 @@ void Scene5100::Action2::signal() {
 		break;
 	case 3:
 		if (_globals->_player._position.x >= 966) {
-			ADD_PLAYER_MOVER(1215, 155);
+			ADD_PLAYER_MOVER_NULL(scene->_hotspot8, 1215, 155);
 		} else {
-			ADD_PLAYER_MOVER_THIS(scene->_hotspot8, 966, 185);
+			ADD_PLAYER_MOVER_NULL(scene->_hotspot8, 966, 185);
 		}
 
 		if (_globals->_player._position.x >= 966) {
@@ -704,7 +704,7 @@ void Scene5100::Action2::signal() {
 		}
 		break;
 	case 4:
-		ADD_PLAYER_MOVER_THIS(scene->_hotspot8, 1215, 155);
+		ADD_PLAYER_MOVER_NULL(scene->_hotspot8, 1215, 155);
 		ADD_PLAYER_MOVER(1215, 155);
 		break;
 	case 5:
@@ -1378,12 +1378,7 @@ void Scene5100::signal() {
 
 void Scene5100::dispatch() {
 	// Flesheater trap
-	//if (_hotspot15._bounds.contains(_globals->_player._position) && !_globals->_player._visage) {
-	// HACK: don't enable the flesheater trap if the player has the stasis box in the inventory.
-	// This ensures that Quinn does not fall in the trap during the cutscene where he escapes the
-	// caves with the Seeker.
-	if (_hotspot15._bounds.contains(_globals->_player._position) && !_globals->_player._visage &&
-		RING_INVENTORY._stasisBox._sceneNumber != 1) {
+	if (_hotspot15._bounds.contains(_globals->_player._position) && !_globals->_player._visage) {
 		_globals->_player.disableControl();
 		_globals->_player.addMover(NULL);
 
