@@ -25,7 +25,10 @@
 #ifndef COMMON_TASKBAR_MANAGER_H
 #define COMMON_TASKBAR_MANAGER_H
 
+#include "common/scummsys.h"
 #include "common/str.h"
+
+#if defined(USE_TASKBAR)
 
 namespace Common {
 
@@ -124,5 +127,7 @@ public:
 };
 
 }	// End of namespace Common
+
+#endif
 
 #endif // COMMON_TASKBAR_MANAGER_H

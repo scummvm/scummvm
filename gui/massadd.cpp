@@ -132,9 +132,11 @@ struct GameDescLess {
 
 
 void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+#if defined(USE_TASKBAR)
 	// Remove progress bar and count from taskbar
 	g_system->getTaskbarManager()->setProgressState(Common::TaskbarManager::kTaskbarNoProgress);
 	g_system->getTaskbarManager()->setCount(0);
+#endif
 
 	// FIXME: It's a really bad thing that we use two arbitrary constants
 	if (cmd == kOkCmd) {
@@ -239,8 +241,10 @@ void MassAddDialog::handleTickle() {
 
 		_dirsScanned++;
 
+#if defined(USE_TASKBAR)
 		g_system->getTaskbarManager()->setProgressValue(_dirsScanned, _dirTotal);
 		g_system->getTaskbarManager()->setCount(_games.size());
+#endif
 	}
 
 

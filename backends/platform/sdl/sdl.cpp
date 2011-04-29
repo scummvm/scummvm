@@ -126,8 +126,10 @@ void OSystem_SDL::init() {
 	if (_timerManager == 0)
 		_timerManager = new SdlTimerManager();
 
+#if defined(USE_TASKBAR)
 	if (_taskbarManager == 0)
 		_taskbarManager = new Common::TaskbarManager();
+#endif
 
 #ifdef USE_OPENGL
 	// Setup a list with both SDL and OpenGL graphics modes
@@ -213,6 +215,7 @@ void OSystem_SDL::initBackend() {
 	ModularBackend::initBackend();
 }
 
+#if defined(USE_TASKBAR)
 void OSystem_SDL::engineInit() {
 	// Add the started engine to the list of recent tasks
 	_taskbarManager->addRecent(ConfMan.getActiveDomainName(), ConfMan.get("description"));
@@ -225,6 +228,7 @@ void OSystem_SDL::engineDone() {
 	// Remove overlay icon
 	_taskbarManager->setOverlayIcon("", "");
 }
+#endif
 
 void OSystem_SDL::initSDL() {
 	// Check if SDL has not been initialized

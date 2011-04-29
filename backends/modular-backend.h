@@ -134,7 +134,9 @@ public:
 	//@{
 
 	virtual void quit();
+#if defined(USE_TASKBAR)
 	virtual TaskbarManager *getTaskbarManager();
+#endif
 	virtual void displayMessageOnOSD(const char *msg);
 
 	//@}
@@ -143,7 +145,9 @@ protected:
 	/** @name Managers variables */
 	//@{
 
+#if defined(USE_TASKBAR)
 	TaskbarManager *_taskbarManager;
+#endif
 	MutexManager *_mutexManager;
 	GraphicsManager *_graphicsManager;
 	Audio::Mixer *_mixer;
