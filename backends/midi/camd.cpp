@@ -29,6 +29,8 @@
 
 #if defined(__amigaos4__)
 
+#include "common/textconsole.h"
+#include "common/error.h"
 #include "common/endian.h"
 #include "common/util.h"
 #include "audio/musicplugin.h"
