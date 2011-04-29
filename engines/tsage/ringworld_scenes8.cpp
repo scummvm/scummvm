@@ -2217,7 +2217,7 @@ void Scene7700::signal() {
 		break;
 	case 7705:
 	case 7708:
-		RING_INVENTORY._key._sceneNumber = 1;
+		RING_INVENTORY._paper._sceneNumber = 1;
 		_globals->_player.enableControl();
 		break;
 	case 7709:
