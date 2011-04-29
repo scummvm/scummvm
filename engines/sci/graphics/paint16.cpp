@@ -467,6 +467,7 @@ void GfxPaint16::kernelGraphRedrawBox(Common::Rect rect) {
 #define SCI_DISPLAY_RESTOREUNDER		108
 #define SCI_DISPLAY_DUMMY1				114 // used in longbow demo/qfg1 ega demo, not supported in sierra sci - no parameters
 #define SCI_DISPLAY_DUMMY2				115 // used in longbow demo, not supported in sierra sci - has 1 parameter
+#define SCI_DISPLAY_DUMMY3				117 // used in qfg1 ega demo, not supported in sierra sci - no parameters
 #define SCI_DISPLAY_DONTSHOWBITS		121
 
 reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
@@ -537,9 +538,10 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 			break;
 
 		// 2 Dummy functions, longbow-demo is using those several times but sierra sci doesn't support them at all
-		// The Quest for Glory 1 EGA demo also calls kDisplay(114)
+		// The Quest for Glory 1 EGA demo also calls kDisplay(114) and kDisplay(117)
 		case SCI_DISPLAY_DUMMY1:
 		case SCI_DISPLAY_DUMMY2:
+		case SCI_DISPLAY_DUMMY3:
 			if (!g_sci->isDemo() || (g_sci->getGameId() != GID_LONGBOW && g_sci->getGameId() != GID_QFG1))
 				error("Unknown kDisplay argument %d", displayArg.offset);
 			if (displayArg.offset == SCI_DISPLAY_DUMMY2) {
