@@ -1029,7 +1029,21 @@ void Actor::updateWalk() {
 	if (y < 0.f) {
 		y += 360.f;
 	}
-	if (_pos.x() != destPos.x() || _pos.y() != destPos.y()) {
+	float a = y;
+	while (a > 90) {
+		a -= 180;
+	}
+	while (a < -90) {
+		a += 180;
+	}
+	float b = _yaw;
+	while (b > 90) {
+		b -= 180;
+	}
+	while (b < -90) {
+		b += 180;
+	}
+	if (a - b > 15 || a - b < -15) {
 		turnTo(_pitch, y, _roll);
 	}
 
