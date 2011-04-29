@@ -699,14 +699,14 @@ void Scene2100::Action6::signal() {
 
 		Common::Point pt(130, 116);
 		NpcMover *mover = new NpcMover();
-		scene->_object2.addMover(mover, &pt, NULL);
+		scene->_object2.addMover(mover, &pt, this);
 		break;
 	}
 	case 1: {
 		scene->_object2.setPriority2(-1);
 		Common::Point pt(153, 67);
 		NpcMover *mover = new NpcMover();
-		scene->_object2.addMover(mover, &pt, NULL);
+		scene->_object2.addMover(mover, &pt, this);
 		break;
 	}
 	case 2:
