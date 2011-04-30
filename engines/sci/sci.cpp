@@ -288,10 +288,6 @@ Common::Error SciEngine::run() {
 		//  without this games would be pretty badly broken
 	}
 
-	// FIXME: all SCI32 games are currently in-development
-	if (getSciVersion() >= SCI_VERSION_2)
-		warnUserAboutWIPGame();
-
 	// Show any special warnings for buggy scripts with severe game bugs, 
 	// which have been patched by Sierra
 	if (getGameId() == GID_LONGBOW) {
