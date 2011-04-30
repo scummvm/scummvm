@@ -45,7 +45,7 @@ namespace LastExpress {
 
 Inventory::Inventory(LastExpressEngine *engine) : _engine(engine), _selectedItem(kItemNone), _highlightedItem(kItemNone), _itemsShown(0),
 	_showingHourGlass(false), _blinkingEgg(false), _blinkingTime(0), _blinkingInterval(_defaultBlinkingInterval), _blinkingBrightness(1),
-	_useMagnifier(false), _flag1(false), _isOpened(false), _eggHightlighted(false), _itemScene(NULL) {
+	_useMagnifier(false), _portraitHighlighted(false), _isOpened(false), _eggHightlighted(false), _itemScene(NULL) {
 
 	_inventoryRect = Common::Rect(0, 0, 32, 32);
 	_menuRect = Common::Rect(608, 448, 640, 480);
@@ -143,6 +143,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 				drawItem((CursorStyle)(getMenu()->getGameId() + 39), 608, 448, 1);
 				askForRedraw();
 			}
+
 			_eggHightlighted = false;
 		}
 	} else {
@@ -159,7 +160,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 		// If clicked, show the menu
 		if (ev.type == Common::EVENT_LBUTTONDOWN) {
 			_eggHightlighted = false;
-			_flag1 = false;
+			_portraitHighlighted = false;
 			_isOpened = false;
 
 			getSound()->playSoundWithSubtitles("LIB039.SND", SoundManager::kFlagMenuClock, kEntityPlayer);
@@ -178,14 +179,95 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 
 	// Selected item
 	if (ev.mouse.x >= 32) {
-		// TODO
+		if (_isOpened) {
+			// If clicked
+			if (ev.type == Common::EVENT_LBUTTONDOWN) {
+				if (_highlightedItem != kItemNone) {
+					error("[Inventory::handleMouseEvent] Click on highlighted item not implemented");
+				}
+			} else {
+				error("[Inventory::handleMouseEvent] Default handling of open menu not implemented");
+			}
+		} else {
+			if (_portraitHighlighted) {
+				drawItem((CursorStyle)getProgress().portrait, 0, 0, 1);
+				askForRedraw();
+				_portraitHighlighted = false;
+			}
+
+			if (_selectedItem != kItemNone) {
+				error("[Inventory::handleMouseEvent] Default handling of selected item not implemented");
+			}
+		}
 
 		return;
 	}
 
 	// Opened inventory
 	if (ev.mouse.y >= 32) {
-		// TODO
+		if (!_isOpened) {
+			if (_portraitHighlighted) {
+				drawItem((CursorStyle)getProgress().portrait, 0, 0, 1);
+				askForRedraw();
+				_portraitHighlighted = false;
+			}
+
+			return;
+		}
+
+		if (ev.type == Common::EVENT_LBUTTONDOWN) {
+			error("[Inventory::handleMouseEvent] Click on open inventory item not implemented");
+
+			return;
+		}
+
+		uint32 index = 0;
+		if (_highlightedItem != kItemNone) {
+			error("[Inventory::handleMouseEvent] Computing of open inventory clicked item not implemented");
+		}
+
+		drawItem((CursorStyle)getProgress().portrait, 0, 0, 1);
+
+		// TODO clear items on inventory surface before redraw
+
+		// Load the scene if an item has been selected
+		if (index) {
+			error("[Inventory::handleMouseEvent] Loading of item scene not implemented");
+
+			_isOpened = false;
+
+			return;
+		}
+
+		// Draw the selected item if any
+		if (!_selectedItem || get(_selectedItem)->manualSelect) {
+			_selectedItem = getFirstExaminableItem();
+
+			if (_selectedItem) {
+				drawItem(get(_selectedItem)->cursor, 44, 0);
+			} else {
+				clearSelectedItem();
+			}
+			askForRedraw();
+		}
+
+		// Stop processing if we are not looking at an item already
+		if (!getState()->sceneUseBackup) {
+			_isOpened = false;
+			return;
+		}
+
+		SceneIndex scene = kSceneNone;
+		if (getState()->sceneBackup2) {
+			scene = getState()->sceneBackup2;
+			getState()->sceneBackup2 = kSceneNone;
+		} else {
+			error("[Inventory::handleMouseEvent] Processing of item scene not implemented");
+		}
+
+		getScenes()->loadScene(scene);
+
+		_isOpened = false;
 
 		return;
 	}
@@ -202,9 +284,9 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 			return;
 		}
 
-		if (!_flag1 && !_isOpened) {
+		if (!_portraitHighlighted && !_isOpened) {
 			drawItem((CursorStyle)getProgress().portrait, 0, 0);
-			_flag1 = true;
+			_portraitHighlighted = true;
 		} else if (!_isOpened || (ev.type == Common::EVENT_LBUTTONDOWN || ev.type == Common::EVENT_LBUTTONUP)) {
 			// Do nothing
 		} else if (_isOpened) {
@@ -239,7 +321,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 				}
 			}
 
-			_flag1 = true;
+			_portraitHighlighted = true;
 		}
 
 		// Draw highlighted item
@@ -511,9 +593,13 @@ void Inventory::drawItem(CursorStyle id, uint16 x, uint16 y, int16 brightnessInd
 	_engine->getGraphicsManager()->draw(&icon, GraphicsManager::kBackgroundInventory);
 }
 
+void Inventory::clearSelectedItem() {
+	_engine->getGraphicsManager()->clear(GraphicsManager::kBackgroundInventory, Common::Rect(44, 0, 44 + 32, 32));
+}
+
 // Close inventory: clear items and reset icon
 void Inventory::open() {
-	_flag1 = false;
+	_portraitHighlighted = false;
 	_isOpened = true;
 
 	// Draw highlighted portrait

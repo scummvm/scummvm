@@ -120,7 +120,7 @@ public:
 
 	// State
 	bool isMagnifierInUse() { return _useMagnifier; }
-	bool isFlag1() { return _flag1; }
+	bool isPortraitHighlighted() { return _portraitHighlighted; }
 	bool isOpened() { return _isOpened; }
 	bool isEggHighlighted() { return _eggHightlighted; }
 
@@ -154,7 +154,7 @@ private:
 
 	// Flags
 	bool _useMagnifier;
-	bool _flag1;
+	bool _portraitHighlighted;
 	bool _isOpened;
 	bool _eggHightlighted;
 
@@ -175,6 +175,7 @@ private:
 	bool isItemSceneParameter(InventoryItem item) const;
 
 	void drawItem(CursorStyle id, uint16 x, uint16 y, int16 brighnessIndex = -1);
+	void clearSelectedItem();
 };
 
 } // End of namespace LastExpress
