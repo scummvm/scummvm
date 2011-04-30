@@ -144,11 +144,25 @@ static const GrimGameDescription gameDescriptions[] = {
 		GType_GRIM
 	},
 	{
+		// Escape from Monkey Island English
+		{
+			"monkey4",
+			"",
+			AD_ENTRY1s("lip.m4b", "b0df2038f43c5fcb29942abd6ff2a8ba", 1614261),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		0,
+		GType_MONKEY4
+	},
+	{
 		// Escape from Monkey Island English PS2
 		{
 			"monkey4",
 			"",
-			AD_ENTRY1s("local.m4b", "00c4eb73f6b6607ba3d4e8d3f956b37b", 3804862),
+			AD_ENTRY1s("lip.m4b", "", 0),
 			Common::EN_ANY,
 			Common::kPlatformPS2,
 			ADGF_NO_FLAGS,
