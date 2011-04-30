@@ -529,9 +529,9 @@ void GfxTinyGL::setupLight(Scene::Light *light, int lightId) {
 		tglEnable(TGL_LIGHT0 + lightId);
 	} else if (strcmp(light->_type.c_str(), "direct") == 0) {
 		tglDisable(TGL_LIGHT0 + lightId);
-		lightPos[0] = -light->_dir.x();
-		lightPos[1] = -light->_dir.y();
-		lightPos[2] = -light->_dir.z();
+		lightPos[0] = light->_dir.x();
+		lightPos[1] = light->_dir.y();
+		lightPos[2] = light->_dir.z();
 		lightPos[3] = 0;
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_DIFFUSE, lightColor);
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_POSITION, lightPos);

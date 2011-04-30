@@ -424,9 +424,9 @@ void GfxOpenGL::setupLight(Scene::Light *light, int lightId) {
 		glEnable(GL_LIGHT0 + lightId);
 	} else if (strcmp(light->_type.c_str(), "direct") == 0) {
 		glDisable(GL_LIGHT0 + lightId);
-		lightPos[0] = -light->_dir.x();
-		lightPos[1] = -light->_dir.y();
-		lightPos[2] = -light->_dir.z();
+		lightPos[0] = light->_dir.x();
+		lightPos[1] = light->_dir.y();
+		lightPos[2] = light->_dir.z();
 		lightPos[3] = 0;
 		glLightfv(GL_LIGHT0 + lightId, GL_DIFFUSE, lightColor);
 		glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
