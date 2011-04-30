@@ -36,7 +36,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("MYST.DAT", "ae3258c9c90128d274aa6a790b3ad181"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_MYST,
@@ -54,7 +54,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("DEMO.DAT", "c39303dd53fb5c4e7f3c23231c606cd0"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_MYST,
@@ -72,7 +72,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("MYST.DAT", "4beb3366ed3f3b9bfb6e81a14a43bdcc"),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_MYST,
@@ -90,7 +90,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("MYST.DAT", "e0937cca1ab125e48e30dc3cd5046ddf"),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_MYST,
@@ -108,7 +108,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("MYST.DAT", "f7e7d7ca69934f1351b5acd4fe4d44c2"),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_MYST,
@@ -126,7 +126,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("MYST.DAT", "032c88e3b7e8db4ca475e7b7db9a66bb"),
 			Common::JA_JPN,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_MYST,
@@ -144,7 +144,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("MYST.DAT", "d631d42567a941c67c78f2e491f4ea58"),
 			Common::FR_FRA,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_MYST,
@@ -162,7 +162,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("MAKING.DAT", "f6387e8f0f7b8a3e42c95294315d6a0e"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_MAKINGOF,
@@ -180,7 +180,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("MAKING.DAT", "03ff62607e64419ab2b6ebf7b7bcdf63"),
 			Common::JA_JPN,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_MAKINGOF,
@@ -198,7 +198,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("MYST.DAT", "c4cae9f143b5947262e6cb2397e1617e"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_MYST,
@@ -216,7 +216,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("MYST.DAT", "c4cae9f143b5947262e6cb2397e1617e"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_MYST,
@@ -234,7 +234,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("MYST.DAT", "f88e0ace66dbca78eebdaaa1d3314ceb"),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_MYST,
@@ -252,7 +252,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("MYST.DAT", "aea81633b2d2ae498f09072fb87263b6"),
 			Common::FR_FRA,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_MYST,
@@ -270,7 +270,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("a_Data.MHK", "71145fdecbd68a0cfc292c2fbddf8e08"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_RIVEN,
@@ -288,7 +288,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("a_Data.MHK", "d8ccae34a0e3c709135a73f449b783be"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_RIVEN,
@@ -306,7 +306,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("a_Data.MHK", "249e8c995d191b03ee94c892c0eac775"),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_RIVEN,
@@ -324,7 +324,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("a_Data.MHK", "08fcaa5d5a2a01d7a5a6960f497212fe"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_RIVEN,
@@ -342,7 +342,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("a_Data.MHK", "a5fe1c91a6033eb6ee54b287578b74b9"),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_RIVEN,
@@ -360,7 +360,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("a_Data.MHK", "aff2a384aaa9a0e0ec51010f708c5c04"),
 			Common::FR_FRA,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_RIVEN,
@@ -378,7 +378,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("a_Data.MHK", "bae6b03bd8d6eb350d35fd13f0e3139f"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_RIVEN,
@@ -393,7 +393,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("signin.mhk", "410b4ce8d1a8702971e4d1ffba9b965d"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_CSTIME,
@@ -408,7 +408,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("iface.mhk", "5c1203712a16513bd158dc3c1b6cebd7"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_CSTIME,
@@ -1624,7 +1624,7 @@ static const MohawkGameDescription fallbackDescs[] = {
 			AD_ENTRY1(0, 0),
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_MYST,
@@ -1639,7 +1639,7 @@ static const MohawkGameDescription fallbackDescs[] = {
 			AD_ENTRY1(0, 0),
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_MAKINGOF,
@@ -1654,7 +1654,7 @@ static const MohawkGameDescription fallbackDescs[] = {
 			AD_ENTRY1(0, 0),
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_MYST,
@@ -1669,7 +1669,7 @@ static const MohawkGameDescription fallbackDescs[] = {
 			AD_ENTRY1(0, 0),
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_RIVEN,
@@ -1684,7 +1684,7 @@ static const MohawkGameDescription fallbackDescs[] = {
 			AD_ENTRY1(0, 0),
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_RIVEN,
