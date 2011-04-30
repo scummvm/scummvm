@@ -194,7 +194,7 @@ const ControlDescriptor controls[] = {
 	{ "KEY_NP2", Common::KEYCODE_KP2 },
 	{ "KEY_NP1", Common::KEYCODE_KP1 },
 	{ "KEY_NP0", Common::KEYCODE_KP0 },
-	{ "KEY_NPENTER", Common::KEYCODE_KPENTER },
+	{ "KEY_NPENTER", Common::KEYCODE_KP_ENTER },
 	{ "KEY_PAGEUP", Common::KEYCODE_PAGEUP },
 	{ "KEY_PAGEDOWN", Common::KEYCODE_PAGEDOWN },
 	{ "KEY_SCROLL", Common::KEYCODE_SCROLLOCK },
