@@ -130,7 +130,7 @@ void Smush::deinit() {
 }
 
 void Smush::handleWave(const byte *src, uint32 size) {
-	int16 *dst = new int16[size * _channels];
+	int16 *dst = (int16 *) malloc(size * _channels * sizeof(int16));
 	decompressVima(src, dst, size * _channels * 2, smushDestTable);
 
 	int flags = Audio::FLAG_16BITS;
@@ -144,7 +144,7 @@ void Smush::handleWave(const byte *src, uint32 size) {
 	if (g_system->getMixer()->isReady()) {
 		_stream->queueBuffer((byte *)dst, size * _channels * 2, DisposeAfterUse::YES, flags);
 	} else {
-		delete[] dst;
+		free(dst);
 	}
 }
 
