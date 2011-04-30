@@ -576,14 +576,14 @@ void TinyGLBlit(byte *dst, byte *src, int x, int y, int width, int height, bool 
 		return;
 
 	if (x < 0) {
-		x = 0;
 		srcX = -x;
+		x = 0;
 	} else {
 		srcX = 0;
 	}
 	if (y < 0) {
-		y = 0;
 		srcY = -y;
+		y = 0;
 	} else {
 		srcY = 0;
 	}
