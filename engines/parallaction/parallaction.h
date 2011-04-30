@@ -32,6 +32,7 @@
 #include "common/func.h"
 #include "common/random.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 
 #include "engines/engine.h"
 
