@@ -25,6 +25,8 @@
 
 // TODO: Clean up game variable handling and move it to PictureEngine
 
+#include "common/error.h"
+
 #include "graphics/cursorman.h"
 
 #include "picture/picture.h"

@@ -26,6 +26,8 @@
 #include "common/EventRecorder.h"
 #include "common/config-manager.h"
 #include "common/str.h"
+#include "common/error.h"
+#include "common/textconsole.h"
 
 #include "base/plugins.h"
 #include "base/version.h"

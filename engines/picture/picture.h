@@ -32,6 +32,7 @@
 #include "common/file.h"
 #include "common/keyboard.h"
 #include "common/random.h"
+#include "common/textconsole.h"
 
 #include "engines/engine.h"
 

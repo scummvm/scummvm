@@ -23,6 +23,8 @@
  *
  */
 
+#include "graphics/palette.h"
+
 #include "picture/picture.h"
 #include "picture/palette.h"
 #include "picture/resource.h"
