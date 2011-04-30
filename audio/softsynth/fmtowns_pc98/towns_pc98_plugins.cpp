@@ -26,6 +26,7 @@
 #include "audio/musicplugin.h"
 #include "common/translation.h"
 #include "common/error.h"
+#include "common/system.h"
 
 
 class TownsEmuMusicPlugin : public MusicPluginObject {
