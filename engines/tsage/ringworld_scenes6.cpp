@@ -128,7 +128,7 @@ void Scene5000::Action2::signal() {
 	case 2:
 		if (!_globals->getFlag(59))
 			setAction(&scene->_action3, this);
-		_globals->_player.setPriority2(15);
+		_globals->_player.fixPriority(15);
 		ADD_MOVER(_globals->_player, 208, 100);
 		break;
 	case 3:
@@ -146,7 +146,7 @@ void Scene5000::Action2::signal() {
 		break;
 	case 7:
 		_globals->_player.changeZoom(-1);
-		_globals->_player.setPriority2(35);
+		_globals->_player.fixPriority(35);
 		ADD_MOVER(_globals->_player, 201, 166);
 		break;
 	case 8:
@@ -155,7 +155,7 @@ void Scene5000::Action2::signal() {
 		break;
 	case 9:
 		_globals->_player.changeZoom(-1);
-		_globals->_player.setPriority2(50);
+		_globals->_player.fixPriority(50);
 		ADD_MOVER(_globals->_player, 220, 182);
 		break;
 	case 10:
@@ -165,7 +165,7 @@ void Scene5000::Action2::signal() {
 	case 11:
 		_globals->_player.changeZoom(-1);
 		_globals->_player.setStrip2(-1);
-		_globals->_player.setPriority2(-1);
+		_globals->_player.fixPriority(-1);
 		ADD_MOVER(_globals->_player, 208, 175);
 		break;
 	case 12:
@@ -201,7 +201,7 @@ void Scene5000::Action3::signal() {
 		scene->_hotspot7.setPosition(Common::Point(217, 76));
 		scene->_hotspot7.changeZoom(10);
 		scene->_hotspot7.setStrip2(3);
-		scene->_hotspot7.setPriority2(200);
+		scene->_hotspot7.fixPriority(200);
 		scene->_hotspot7._moveDiff.y = 2;
 		scene->_hotspot7.animate(ANIM_MODE_1, NULL);
 		ADD_MOVER(scene->_hotspot7, 214, 89);
@@ -210,14 +210,14 @@ void Scene5000::Action3::signal() {
 		break;
 	case 2:
 		scene->_hotspot7.changeZoom(-1);
-		scene->_hotspot7.setPriority2(14);
+		scene->_hotspot7.fixPriority(14);
 		ADD_MOVER(scene->_hotspot7, 208, 100);
 		break;
 	case 3:
 		ADD_MOVER(scene->_hotspot7, 213, 98);
 		break;
 	case 4:
-		scene->_hotspot7.setPriority2(19);
+		scene->_hotspot7.fixPriority(19);
 		ADD_MOVER(scene->_hotspot7, 213, 98);
 		break;
 	case 5:
@@ -229,7 +229,7 @@ void Scene5000::Action3::signal() {
 		break;
 	case 7:
 		scene->_hotspot7.changeZoom(-1);
-		scene->_hotspot7.setPriority2(34);
+		scene->_hotspot7.fixPriority(34);
 		ADD_MOVER(scene->_hotspot7, 201, 166);
 		break;
 	case 8:
@@ -238,7 +238,7 @@ void Scene5000::Action3::signal() {
 		break;
 	case 9:
 		scene->_hotspot7.changeZoom(-1);
-		scene->_hotspot7.setPriority2(49);
+		scene->_hotspot7.fixPriority(49);
 		ADD_MOVER(scene->_hotspot7, 210, 182);
 		break;
 	case 10:
@@ -248,7 +248,7 @@ void Scene5000::Action3::signal() {
 	case 11:
 		scene->_hotspot7.changeZoom(-1);
 		scene->_hotspot7.setStrip2(-1);
-		scene->_hotspot7.setPriority2(-1);
+		scene->_hotspot7.fixPriority(-1);
 		ADD_MOVER(scene->_hotspot7, 175, 166);
 		break;
 	case 12:
@@ -269,7 +269,7 @@ void Scene5000::Action4::signal() {
 		setDelay(1);
 		break;
 	case 1:
-		_globals->_player.setPriority2(50);
+		_globals->_player.fixPriority(50);
 		_globals->_player.setStrip2(4);
 		ADD_MOVER(_globals->_player, 210, 182);
 		break;
@@ -277,14 +277,14 @@ void Scene5000::Action4::signal() {
 		ADD_MOVER(_globals->_player, 205, 146);
 		break;
 	case 3:
-		_globals->_player.setPriority2(35);
+		_globals->_player.fixPriority(35);
 		ADD_MOVER(_globals->_player, 201, 166);
 		break;
 	case 4:
 		ADD_MOVER(_globals->_player, 229, 115);
 		break;
 	case 5:
-		_globals->_player.setPriority2(20);
+		_globals->_player.fixPriority(20);
 		_globals->_player.changeZoom(47);
 		ADD_MOVER(_globals->_player, 220, 125);
 		break;
@@ -296,7 +296,7 @@ void Scene5000::Action4::signal() {
 		ADD_MOVER(_globals->_player, 213, 98);
 		break;
 	case 8:
-		_globals->_player.setPriority2(15);
+		_globals->_player.fixPriority(15);
 		ADD_MOVER(_globals->_player, 208, 100);
 		break;
 	case 9:
@@ -366,7 +366,7 @@ void Scene5000::Action6::signal() {
 		ADD_PLAYER_MOVER(208, 163);
 		break;
 	case 4:
-		_globals->_player.setPriority2(50);
+		_globals->_player.fixPriority(50);
 		_globals->_player.setStrip2(4);
 		ADD_MOVER(_globals->_player, 210, 182);
 		break;
@@ -458,14 +458,14 @@ void Scene5000::postInit(SceneObjectList *OwnerList) {
 	_hotspot1.setVisage(5001);
 	_hotspot1.setFrame2(1);
 	_hotspot1._moveDiff = Common::Point(5, 5);
-	_hotspot1.setPriority2(10);
+	_hotspot1.fixPriority(10);
 	_hotspot1.changeZoom(10);
 
 	_hotspot4.postInit();
 	_hotspot4.setVisage(5001);
 	_hotspot4.setStrip2(2);
 	_hotspot4._moveDiff = Common::Point(5, 1);
-	_hotspot4.setPriority2(10);
+	_hotspot4.fixPriority(10);
 	_hotspot4.changeZoom(100);
 	_hotspot4.animate(ANIM_MODE_8, 0, NULL);
 	_hotspot4.hide();
@@ -487,13 +487,13 @@ void Scene5000::postInit(SceneObjectList *OwnerList) {
 	_hotspot5.setVisage(5001);
 	_hotspot5.setStrip2(4);
 	_hotspot5._numFrames = 5;
-	_hotspot5.setPriority2(15);
+	_hotspot5.fixPriority(15);
 	_hotspot5.setPosition(Common::Point(218, 76));
 	_hotspot5.hide();
 
 	_hotspot9.postInit();
 	_hotspot9.setVisage(5002);
-	_hotspot9.setPriority2(80);
+	_hotspot9.fixPriority(80);
 	_hotspot9.setPosition(Common::Point(71, 174));
 
 	_hotspot10.postInit();
@@ -647,7 +647,7 @@ void Scene5100::Action1::signal() {
 		scene->_hotspot5.setPosition(Common::Point(1160, 34));
 		scene->_hotspot5.setStrip2(2);
 		scene->_hotspot5.animate(ANIM_MODE_1, NULL);
-		scene->_hotspot5.setPriority2(10);
+		scene->_hotspot5.fixPriority(10);
 
 		_globals->_sceneItems.push_front(&scene->_hotspot5);
 		ADD_MOVER(scene->_hotspot5, 999, 14);
@@ -1089,14 +1089,14 @@ void Scene5100::postInit(SceneObjectList *OwnerList) {
 		_hotspot14.postInit();
 		_hotspot14.setVisage(5101);
 		_hotspot14.setPosition(Common::Point(498, 147));
-		_hotspot14.setPriority2(200);
+		_hotspot14.fixPriority(200);
 		_hotspot14._moveDiff.y = 10;
 	}
 
 	_hotspot17.postInit();
 	_hotspot17.setVisage(5101);
 	_hotspot17._strip = 2;
-	_hotspot17.setPriority2(200);
+	_hotspot17.fixPriority(200);
 
 	if (_globals->getFlag(67))
 		_hotspot17.setPosition(Common::Point(554, 192));
@@ -1185,7 +1185,7 @@ void Scene5100::postInit(SceneObjectList *OwnerList) {
 	case 5200:
 		if (_globals->_stripNum == 5200) {
 			_globals->_player.setVisage(5101);
-			_globals->_player.setPriority2(200);
+			_globals->_player.fixPriority(200);
 			_globals->_player.setStrip(5);
 			_globals->_player.setFrame(1);
 			_globals->_player.setPosition(Common::Point(513, 199));
@@ -1234,7 +1234,7 @@ void Scene5100::postInit(SceneObjectList *OwnerList) {
 
 			_globals->_player.setVisage(5101);
 			_globals->_player.setStrip(6);
-			_globals->_player.setPriority2(170);
+			_globals->_player.fixPriority(170);
 			_globals->_player.setPosition(Common::Point(1168, 110));
 
 			setAction(&_sequenceManager, this, 5111, &_globals->_player, NULL);
@@ -1267,7 +1267,7 @@ void Scene5100::postInit(SceneObjectList *OwnerList) {
 			_hotspot6.postInit();
 			_hotspot6.setVisage(5362);
 			_hotspot6.setPosition(Common::Point(1152, 70));
-			_hotspot6.setPriority2(170);
+			_hotspot6.fixPriority(170);
 			_hotspot6.setStrip(6);
 			_hotspot6.setFrame(1);
 			_globals->_sceneItems.push_back(&_hotspot6);
@@ -1282,7 +1282,7 @@ void Scene5100::postInit(SceneObjectList *OwnerList) {
 	_hotspot15.setVisage(5140);
 	_hotspot15.setStrip(3);
 	_hotspot15.setPosition(Common::Point(977, 173));
-	_hotspot15.setPriority2(1);
+	_hotspot15.fixPriority(1);
 
 	_globals->_sceneManager._scene->_sceneBounds.center(_globals->_player._position);
 	loadScene(5100);
@@ -1333,7 +1333,7 @@ void Scene5100::signal() {
 		_globals->_player.setObjectWrapper(new SceneObjectWrapper());
 		_globals->_player.setVisage(0);
 		_globals->_player.setStrip(6);
-		_globals->_player.setPriority2(-1);
+		_globals->_player.fixPriority(-1);
 		_globals->_player.animate(ANIM_MODE_1, NULL);
 
 		if ((RING_INVENTORY._vial._sceneNumber != 5100) && !_globals->getFlag(108)) {
@@ -1356,7 +1356,7 @@ void Scene5100::signal() {
 		_globals->_player.setObjectWrapper(new SceneObjectWrapper());
 		_globals->_player.setVisage(0);
 		_globals->_player.setStrip(6);
-		_globals->_player.setPriority2(-1);
+		_globals->_player.fixPriority(-1);
 		_globals->_player.animate(ANIM_MODE_1, NULL);
 	// No break on purpose
 	case 5117:
@@ -1630,13 +1630,13 @@ void Scene5200::postInit(SceneObjectList *OwnerList) {
 		_hotspot14.setVisage(5202);
 		_hotspot14._strip = 3;
 		_hotspot14.setPosition(Common::Point(105, 52));
-		_hotspot14.setPriority2(90);
+		_hotspot14.fixPriority(90);
 
 		_hotspot8.postInit();
 		_hotspot8.setVisage(5202);
 		_hotspot8._strip = 1;
 		_hotspot8.setPosition(Common::Point(96, 53));
-		_hotspot8.setPriority2(90);
+		_hotspot8.fixPriority(90);
 		_globals->_sceneItems.push_back(&_hotspot14);
 	}
 
@@ -1680,7 +1680,7 @@ void Scene5200::postInit(SceneObjectList *OwnerList) {
 		_hotspot7.setVisage(5210);
 		_hotspot7._frame = 1;
 		_hotspot7._strip = 4;
-		_hotspot7.setPriority2(168);
+		_hotspot7.fixPriority(168);
 		_hotspot7.setPosition(Common::Point(186, 106));
 
 		_hotspot1.postInit();
@@ -1692,20 +1692,20 @@ void Scene5200::postInit(SceneObjectList *OwnerList) {
 		_hotspot2.setVisage(5212);
 		_hotspot2._strip = 3;
 		_hotspot2.setPosition(Common::Point(148, 141));
-		_hotspot2.setPriority2(90);
+		_hotspot2.fixPriority(90);
 
 		_hotspot3.postInit();
 		_hotspot3.setVisage(5212);
 		_hotspot3._strip = 2;
 		_hotspot3.setPosition(Common::Point(62, 109));
-		_hotspot3.setPriority2(138);
+		_hotspot3.fixPriority(138);
 		_hotspot3.setAction(&_action1);
 
 		_hotspot4.postInit();
 		_hotspot4.setVisage(5212);
 		_hotspot4._strip = 4;
 		_hotspot4.setPosition(Common::Point(146, 110));
-		_hotspot4.setPriority2(90);
+		_hotspot4.fixPriority(90);
 
 		_globals->_player.disableControl();
 		_globals->setFlag(61);
@@ -1716,6 +1716,8 @@ void Scene5200::postInit(SceneObjectList *OwnerList) {
 	_hotspot11.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 	_hotspot9._sceneRegionId = 11;
 	_hotspot10._sceneRegionId = 9;
+	_hotspot12._sceneRegionId = 10;
+	_hotspot13._sceneRegionId = 8;
 
 	_globals->_sceneItems.addItems(&_hotspot12, &_hotspot13, &_hotspot9, &_hotspot10, &_hotspot11, NULL);
 	_globals->_sceneManager._scene->_sceneBounds.center(_globals->_player._position);
@@ -1769,7 +1771,7 @@ void Scene5300::Action1::signal() {
 		ADD_MOVER(_globals->_player, 85, 170);
 		break;
 	case 3:
-		scene->_hotspot2.setPriority2(-1);
+		scene->_hotspot2.fixPriority(-1);
 		_globals->_player.checkAngle(&scene->_hotspot2);
 		setAction(&scene->_sequenceManager, this, 5305, &scene->_hotspot2, NULL);
 		break;
@@ -2049,7 +2051,7 @@ void Scene5300::postInit(SceneObjectList *OwnerList) {
 		_hotspot2.setVisage(5310);
 		_hotspot2.setPosition(Common::Point(63, 170));
 		_hotspot2.animate(ANIM_MODE_1, NULL);
-		_hotspot2.setPriority2(98);
+		_hotspot2.fixPriority(98);
 	}
 
 	_hotspot1.postInit();
@@ -2091,7 +2093,7 @@ void Scene5300::postInit(SceneObjectList *OwnerList) {
 		_hotspot3.postInit();
 		_hotspot3.setVisage(5301);
 		_hotspot3.setPosition(Common::Point(172, 32));
-		_hotspot3.setPriority2(1);
+		_hotspot3.fixPriority(1);
 		_hotspot3.animate(ANIM_MODE_NONE, NULL);
 
 		_globals->_player.postInit();
@@ -2173,7 +2175,7 @@ void Scene5300::signal() {
 		_globals->_player.enableControl();
 		break;
 	case 5310:
-		_hotspot2.setPriority2(41);
+		_hotspot2.fixPriority(41);
 		_sceneMode = 5315;
 
 		setAction(&_sequenceManager, this, 5315, &_hotspot2, NULL);

@@ -149,20 +149,20 @@ void Scene10::postInit(SceneObjectList *OwnerList) {
 	_object1.postInit();
 	_object1.setVisage(10);
 	_object1.setPosition(Common::Point(232, 90));
-	_object1.setPriority2(1);
+	_object1.fixPriority(1);
 
 	_object2.postInit();
 	_object2.setVisage(10);
 	_object2.setStrip(4);
 	_object2.setFrame(1);
 	_object2.setPosition(Common::Point(204, 59));
-	_object2.setPriority2(198);
+	_object2.fixPriority(198);
 
 	_object3.postInit();
 	_object3.setVisage(10);
 	_object3.setStrip2(5);
 	_object3.setPosition(Common::Point(180, 87));
-	_object3.setPriority2(196);
+	_object3.fixPriority(196);
 	_object3.setAction(&_action2);
 
 	_object4.postInit();
@@ -565,7 +565,7 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 		_globals->_player.setVisage(20);
 		_globals->_player.setPosition(Common::Point(588, 79));
 		_globals->_player._moveDiff = Common::Point(5, 5);
-		_globals->_player.setPriority2(50);
+		_globals->_player.fixPriority(50);
 		_globals->_player.animate(ANIM_MODE_1, NULL);
 
 		_SceneObjectExt.postInit();
@@ -599,7 +599,7 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 		_globals->_player.animate(ANIM_MODE_NONE, NULL);
 		_globals->_player.setStrip2(1);
 		_globals->_player.setFrame2(4);
-		_globals->_player.setPriority2(200);
+		_globals->_player.fixPriority(200);
 		_globals->_player.setPosition(Common::Point(425, 233));
 
 		setAction(&_action1);
@@ -901,7 +901,7 @@ void Scene30::postInit(SceneObjectList *OwnerList) {
 	_beam.setVisage(31);
 	_beam.setStrip(2);
 	_beam.setPosition(Common::Point(124, 178));
-	_beam.setPriority2(188);
+	_beam.fixPriority(188);
 
 	// Set up door object
 	_door.postInit();
@@ -927,7 +927,7 @@ void Scene30::signal() {
 		_beam.setVisage(31);
 		_beam.setStrip(2);
 		_beam.setPosition(Common::Point(124, 178));
-		_beam.setPriority2(188);
+		_beam.fixPriority(188);
 		_globals->_sceneItems.push_front(&_beam);
 		_globals->_player.enableControl();
 	} else if (_sceneMode == 32) {
@@ -1090,7 +1090,7 @@ void Scene40::Action2::signal() {
 		scene->_doorway.postInit();
 		scene->_doorway.setVisage(16);
 		scene->_doorway.setStrip2(6);
-		scene->_doorway.setPriority2(200);
+		scene->_doorway.fixPriority(200);
 		scene->_doorway.setPosition(Common::Point(159, 191));
 		scene->_doorway._moveDiff = Common::Point(40, 40);
 		scene->_doorway._moveRate = 60;
@@ -1300,11 +1300,11 @@ void Scene40::Action8::signal() {
 			scene->_doorway.postInit();
 			scene->_doorway.setVisage(16);
 			scene->_doorway.setStrip2(6);
-			scene->_doorway.setPriority2(200);
+			scene->_doorway.fixPriority(200);
 			scene->_doorway._moveRate = 60;
 
 			if (_globals->_player._position.x >= 145) {
-				scene->_doorway.setPriority2(-1);
+				scene->_doorway.fixPriority(-1);
 				scene->_doorway.setPosition(Common::Point(6, 157));
 			} else {
 				scene->_doorway.setPosition(Common::Point(313, 53));
@@ -1492,14 +1492,14 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 		_object2.postInit();
 		_object2.setVisage(41);
 		_object2.setStrip(6);
-		_object2.setPriority2(200);
+		_object2.fixPriority(200);
 		_object2.setPosition(Common::Point(94, 189));
 		_object2.setAction(&_action5);
 
 		_object3.postInit();
 		_object3.setVisage(41);
 		_object3.setStrip(5);
-		_object3.setPriority2(205);
+		_object3.fixPriority(205);
 		_object3.setPosition(Common::Point(110, 186));
 		_object3._numFrames = 2;
 		_object3.animate(ANIM_MODE_8, NULL, NULL);
@@ -1512,7 +1512,7 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 		_dyingKzin.setVisage(40);
 		_dyingKzin.setStrip(6);
 		_dyingKzin.setPosition(Common::Point(-90, 65));
-		_dyingKzin.setPriority2(170);
+		_dyingKzin.fixPriority(170);
 
 		setAction(&_action1);
 	} else {
@@ -1525,7 +1525,7 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 		_dyingKzin.postInit();
 		_dyingKzin.setVisage(40);
 		_dyingKzin.setPosition(Common::Point(205, 183));
-		_dyingKzin.setPriority2(170);
+		_dyingKzin.fixPriority(170);
 		_dyingKzin._frame = 9;
 		_dyingKzin.setAction(&_action7);
 
@@ -1792,19 +1792,19 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 	_object2.setVisage(2331);
 	_object2.setStrip(6);
 	_object2.setPosition(Common::Point(136, 192));
-	_object2.setPriority2(200);
+	_object2.fixPriority(200);
 
 	_object3.postInit();
 	_object3.setVisage(2337);
 	_object3.setStrip(6);
 	_object3.setPosition(Common::Point(260, 180));
-	_object3.setPriority2(200);
+	_object3.fixPriority(200);
 
 	_object4.postInit();
 	_object4.setVisage(2331);
 	_object4.setStrip(6);
 	_object4.setPosition(Common::Point(295, 144));
-	_object4.setPriority2(178);
+	_object4.fixPriority(178);
 
 	_globals->_sceneItems.addItems(&_object2, &_object3, &_object4, NULL);
 
@@ -2649,7 +2649,7 @@ void Scene90::postInit(SceneObjectList *OwnerList) {
 	_object3.setVisage(90);
 	_object3.animate(ANIM_MODE_1, NULL);
 	_object3.setPosition(Common::Point(196, 181));
-	_object3.setPriority2(175);
+	_object3.fixPriority(175);
 	_globals->_sceneItems.push_back(&_object3);
 
 	_globals->_player.disableControl();
@@ -3141,28 +3141,28 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 	_object1._frame = 1;
 	_object1._strip = 4;
 	_object1.setPosition(Common::Point(0, 60));
-	_object1.setPriority2(1);
+	_object1.fixPriority(1);
 
 	_object2.postInit();
 	_object2.setVisage(6100);
 	_object2._frame = 1;
 	_object2._strip = 4;
 	_object2.setPosition(Common::Point(160, 60));
-	_object2.setPriority2(1);
+	_object2.fixPriority(1);
 
 	_object3.postInit();
 	_object3.setVisage(6100);
 	_object3._frame = 1;
 	_object3._strip = 4;
 	_object3.setPosition(Common::Point(320, 60));
-	_object3.setPriority2(1);
+	_object3.fixPriority(1);
 
 	_rocks.postInit();
 	_rocks.setVisage(6100);
 	_rocks._frame = 1;
 	_rocks._strip = 3;
 	_rocks.setPosition(Common::Point(320, 0));
-	_rocks.setPriority2(2);
+	_rocks.fixPriority(2);
 	_rocks.changeZoom(-1);
 	_rocks._floats._float1 = 320.0;
 	_rocks._floats._float2 = 25000.0;
@@ -3174,7 +3174,7 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 	_probe._frame = 1;
 	_probe._strip = 5;
 	_probe.setPosition(Common::Point(160, 260));
-	_probe.setPriority2(3);
+	_probe.fixPriority(3);
 	_probe._floats._float1 = 320.0;
 	_probe._floats._float2 = 0.0;
 	_probe._floats._float3 = 0.0;
@@ -3199,7 +3199,7 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 
 		_objList[idx]->setPosition(Common::Point(
 			_globals->_randomSource.getRandomNumber(319), 60));
-		_objList[idx]->setPriority2(1);
+		_objList[idx]->fixPriority(1);
 		_objList[idx]->changeZoom(-1);
 	}
 

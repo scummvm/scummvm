@@ -208,7 +208,7 @@ void SequenceManager::signal() {
 			break;
 		case 22:
 			v1 = getNextValue();
-			_sceneObject->setPriority2(v1);
+			_sceneObject->fixPriority(v1);
 			break;
 		case 23:
 			v1 = getNextValue();
@@ -355,7 +355,7 @@ void SequenceManager::setMessage(int resNum, int lineNum, int color, const Commo
 	// Set the text message
 	_sceneText.setup(msg);
 	_sceneText.setPosition(Common::Point(textRect.left, textRect.top));
-	_sceneText.setPriority2(255);
+	_sceneText.fixPriority(255);
 	_sceneText.show();
 
 	// Set the delay based on the number of words
@@ -849,7 +849,7 @@ void Speaker::setText(const Common::String &msg) {
 	_sceneText._textMode = _textMode;
 	_sceneText.setup(msg);
 	_sceneText.setPosition(_textPos);
-	_sceneText.setPriority2(256);
+	_sceneText.fixPriority(256);
 
 	// Count the number of words (by spaces) in the string
 	const char *msgP = msg.c_str();

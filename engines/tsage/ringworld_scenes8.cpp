@@ -54,7 +54,7 @@ void Scene7000::Action1::signal() {
 		scene->_object1.setVisage(7003);
 		scene->_object1.animate(ANIM_MODE_5, this);
 		scene->_object1.setPosition(Common::Point(151, 182), 0);
-		scene->_object1.setPriority2(205);
+		scene->_object1.fixPriority(205);
 		_globals->_sceneItems.push_front(&scene->_object1);
 		break;
 	case 3:
@@ -124,7 +124,7 @@ void Scene7000::Action3::signal() {
 		scene->_object4.setStrip2(2);
 		scene->_object4.animate(ANIM_MODE_8, 0, 0);
 		scene->_object4.setPosition(Common::Point(10, 18), 0);
-		scene->_object4.setPriority2(10);
+		scene->_object4.fixPriority(10);
 		scene->_object4.changeZoom(100);
 		scene->_object4.hide();
 		break;
@@ -135,7 +135,7 @@ void Scene7000::Action3::signal() {
 		break;
 	}
 	case 2:
-		scene->_object3.setPriority2(10);
+		scene->_object3.fixPriority(10);
 		scene->_object4.setPosition(Common::Point(scene->_object3._position.x, scene->_object3._position.y + 15), 0);
 		scene->_object4.show();
 		setDelay(30);
@@ -222,7 +222,7 @@ void Scene7000::Action5::signal() {
 		break;
 	}
 	case 5: {
-		_globals->_player.setPriority2(10);
+		_globals->_player.fixPriority(10);
 		NpcMover *mover = new NpcMover();
 		Common::Point pt(11, 89);
 		_globals->_player.addMover(mover, &pt, this);
@@ -268,7 +268,7 @@ void Scene7000::Action6::signal() {
 		NpcMover *mover = new NpcMover();
 		Common::Point pt(31, 96);
 		_globals->_player.addMover(mover, &pt, this);
-		_globals->_player.setPriority2(-1);
+		_globals->_player.fixPriority(-1);
 		break;
 	}
 	case 4: {
@@ -315,7 +315,7 @@ void Scene7000::Action7::signal() {
 		break;
 	}
 	case 4: {
-		_globals->_player.setPriority2(10);
+		_globals->_player.fixPriority(10);
 		NpcMover *mover = new NpcMover();
 		Common::Point pt(11, 89);
 		_globals->_player.addMover(mover, &pt, this);
@@ -488,28 +488,28 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 	_object5.setStrip2(1);
 	_object5.animate(ANIM_MODE_2, 0);
 	_object5.setPosition(Common::Point(49, 147), 0);
-	_object5.setPriority2(1);
+	_object5.fixPriority(1);
 
 	_object6.postInit();
 	_object6.setVisage(7001);
 	_object6.setStrip2(2);
 	_object6.animate(ANIM_MODE_2, 0);
 	_object6.setPosition(Common::Point(160, 139), 0);
-	_object6.setPriority2(1);
+	_object6.fixPriority(1);
 
 	_object7.postInit();
 	_object7.setVisage(7001);
 	_object7.setStrip2(3);
 	_object7.animate(ANIM_MODE_2, 0);
 	_object7.setPosition(Common::Point(272, 129), 0);
-	_object7.setPriority2(1);
+	_object7.fixPriority(1);
 
 	_object8.postInit();
 	_object8.setVisage(7001);
 	_object8.setStrip2(4);
 	_object8.animate(ANIM_MODE_2, 0);
 	_object8.setPosition(Common::Point(176, 175), 0);
-	_object8.setPriority2(1);
+	_object8.fixPriority(1);
 
 	if (_globals->getFlag(72)) {
 		_object3.postInit();
@@ -518,7 +518,7 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 		_object3.animate(ANIM_MODE_2, 0);
 		_object3.setPosition(Common::Point(107, 92), 0);
 		_object3.changeZoom(100);
-		_object3.setPriority2(10);
+		_object3.fixPriority(10);
 
 		_object1.postInit();
 		_object1.setVisage(7003);
@@ -542,7 +542,7 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 			_globals->_player.setObjectWrapper(wrapper);
 			_globals->_player.setPosition(Common::Point(57, 94), 0);
 			_globals->_player.changeZoom(-1);
-			_globals->_player.setPriority2(10);
+			_globals->_player.fixPriority(10);
 			if (_globals->getFlag(81)) {
 				setAction(&_action4);
 			} else {
@@ -569,7 +569,7 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 		_globals->_player.setObjectWrapper(wrapper);
 		_globals->_player.setPosition(Common::Point(57, 94), 0);
 		_globals->_player.changeZoom(-1);
-		_globals->_player.setPriority2(10);
+		_globals->_player.fixPriority(10);
 		_globals->_player.disableControl();
 		_sceneMode = 7001;
 		setAction(&_action6, this);
@@ -587,7 +587,7 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 		_globals->_player.setObjectWrapper(wrapper);
 		_globals->_player.setPosition(Common::Point(57, 94), 0);
 		_globals->_player.changeZoom(-1);
-		_globals->_player.setPriority2(10);
+		_globals->_player.fixPriority(10);
 		_sceneMode = 7001;
 		setAction(&_action6, this);
 	} else {
@@ -709,7 +709,7 @@ void Scene7100::Action5::signal() {
 	}
 	case 3: {
 		scene->_object9.setStrip2(2);
-		scene->_object9.setPriority2(180);
+		scene->_object9.fixPriority(180);
 		Common::Point pt(8, 181);
 		NpcMover *mover = new NpcMover();
 		scene->_object9.addMover(mover, &pt, this);
@@ -728,13 +728,13 @@ void Scene7100::Action6::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		setDelay(1);
-		scene->_object10.setPriority2(8);
+		scene->_object10.fixPriority(8);
 		scene->_object10.setPosition(Common::Point(155, 187), 0);
 
-		scene->_object11.setPriority2(8);
+		scene->_object11.fixPriority(8);
 		scene->_object11.setPosition(Common::Point(155, 190), 0);
 
-		scene->_object12.setPriority2(8);
+		scene->_object12.fixPriority(8);
 		scene->_object12.setPosition(Common::Point(151, 193), 0);
 		break;
 	case 1: {
@@ -758,13 +758,13 @@ void Scene7100::Action6::signal() {
 		scene->_object10.addMover(mover1, &pt1, this);
 
 		scene->_object11.setStrip2(6);
-		scene->_object11.setPriority2(50);
+		scene->_object11.fixPriority(50);
 		Common::Point pt2(89, 185);
 		NpcMover *mover2 = new NpcMover();
 		scene->_object11.addMover(mover2, &pt2, 0);
 
 		scene->_object12.setStrip2(6);
-		scene->_object12.setPriority2(50);
+		scene->_object12.fixPriority(50);
 		Common::Point pt3(87, 183);
 		NpcMover *mover3 = new NpcMover();
 		scene->_object12.addMover(mover3, &pt3, 0);
@@ -919,7 +919,7 @@ void Scene7100::Action9::signal() {
 	}
 	case 2: {
 		scene->_object24.setStrip2(2);
-		scene->_object24.setPriority2(160);
+		scene->_object24.fixPriority(160);
 		Common::Point pt(34, 159);
 		NpcMover *mover = new NpcMover();
 		scene->_object24.addMover(mover, &pt, this);
@@ -934,7 +934,7 @@ void Scene7100::Action9::signal() {
 	}
 	case 4: {
 		scene->_object24.setStrip2(2);
-		scene->_object24.setPriority2(180);
+		scene->_object24.fixPriority(180);
 		Common::Point pt(-12, 182);
 		NpcMover *mover = new NpcMover();
 		scene->_object24.addMover(mover, &pt, this);
@@ -1006,7 +1006,7 @@ void Scene7100::postInit(SceneObjectList *OwnerList) {
 	_object2.animate(ANIM_MODE_2, 0);
 	_object2.setPosition(Common::Point(10, 140), 0);
 	_object2._numFrames = 1;
-	_object2.setPriority2(180);
+	_object2.fixPriority(180);
 	_object2.setAction(&_action1, 0);
 
 	_object3.postInit();
@@ -1014,7 +1014,7 @@ void Scene7100::postInit(SceneObjectList *OwnerList) {
 	_object3.animate(ANIM_MODE_2, 0);
 	_object3.setPosition(Common::Point(34, 115), 0);
 	_object3._numFrames = 1;
-	_object3.setPriority2(180);
+	_object3.fixPriority(180);
 	_object3.setAction(&_action2, 0);
 
 	_object4.postInit();
@@ -1022,7 +1022,7 @@ void Scene7100::postInit(SceneObjectList *OwnerList) {
 	_object4.animate(ANIM_MODE_2, 0);
 	_object4.setPosition(Common::Point(-10, 159), 0);
 	_object4._numFrames = 2;
-	_object4.setPriority2(250);
+	_object4.fixPriority(250);
 	_object4.setAction(&_action3, 0);
 
 	_object5.postInit();
@@ -1038,7 +1038,7 @@ void Scene7100::postInit(SceneObjectList *OwnerList) {
 	_object9.animate(ANIM_MODE_2, 0);
 	_object9.setPosition(Common::Point(110, 168), 0);
 	_object9._numFrames = 2;
-	_object9.setPriority2(16);
+	_object9.fixPriority(16);
 	_object9.setAction(&_action5, 0);
 
 	_object13.postInit();
@@ -1047,7 +1047,7 @@ void Scene7100::postInit(SceneObjectList *OwnerList) {
 	_object13.animate(ANIM_MODE_2, 0);
 	_object13.setPosition(Common::Point(524, 104), 0);
 	_object13._numFrames = 5;
-	_object13.setPriority2(250);
+	_object13.fixPriority(250);
 	_object13.setAction(&_action7, 0);
 
 	_object17.postInit();
@@ -1084,7 +1084,7 @@ void Scene7100::postInit(SceneObjectList *OwnerList) {
 	_object24.animate(ANIM_MODE_2, 0);
 	_object24.setPosition(Common::Point(-12, 182), 0);
 	_object24._numFrames = 4;
-	_object24.setPriority2(180);
+	_object24.fixPriority(180);
 	_object24.setAction(&_action9, 0);
 
 	_object25.postInit();
@@ -1092,7 +1092,7 @@ void Scene7100::postInit(SceneObjectList *OwnerList) {
 	_object25.animate(ANIM_MODE_2, 0);
 	_object25.setPosition(Common::Point(551, 145), 0);
 	_object25._numFrames = 5;
-	_object25.setPriority2(160);
+	_object25.fixPriority(160);
 	_object25.setAction(&_action10, 0);
 
 	// Swimmer 1
@@ -1102,7 +1102,7 @@ void Scene7100::postInit(SceneObjectList *OwnerList) {
 	_globals->_player._moveDiff.x = 4;
 	_globals->_player._moveDiff.y = 2;
 	_globals->_player.setPosition(Common::Point(135, 135), 0);
-	_globals->_player.setPriority2(200);
+	_globals->_player.fixPriority(200);
 	_globals->_player.disableControl();
 
 	// Swimmer 2
@@ -1158,9 +1158,9 @@ void Scene7200::Action2::signal() {
 		setDelay(3);
 		break;
 	case 1: {
-		scene->_object2.setPriority2(25);
-		scene->_object3.setPriority2(25);
-		scene->_object4.setPriority2(25);
+		scene->_object2.fixPriority(25);
+		scene->_object3.fixPriority(25);
+		scene->_object4.fixPriority(25);
 		scene->_object2.setStrip(1);
 		scene->_object3.setStrip(1);
 		scene->_object4.setStrip(1);
@@ -1176,9 +1176,9 @@ void Scene7200::Action2::signal() {
 		break;
 	}
 	case 2: {
-		scene->_object2.setPriority2(160);
-		scene->_object3.setPriority2(160);
-		scene->_object4.setPriority2(160);
+		scene->_object2.fixPriority(160);
+		scene->_object3.fixPriority(160);
+		scene->_object4.fixPriority(160);
 		scene->_object2.setStrip(2);
 		scene->_object3.setStrip(2);
 		scene->_object4.setStrip(2);
@@ -1446,7 +1446,7 @@ void Scene7300::postInit(SceneObjectList *OwnerList) {
 	_object2.setStrip(2);
 	_object2.animate(ANIM_MODE_2, 0);
 	_object2.setPosition(Common::Point(77, 47), 0);
-	_object2.setPriority2(190);
+	_object2.fixPriority(190);
 
 	_object5.postInit();
 	_object5.setVisage(7300);
@@ -1532,35 +1532,35 @@ void Scene7600::postInit(SceneObjectList *OwnerList) {
 	_object2.setStrip(1);
 	_object2.animate(ANIM_MODE_2, 0);
 	_object2.setPosition(Common::Point(48, 135));
-	_object2.setPriority2(1);
+	_object2.fixPriority(1);
 
 	_object3.postInit();
 	_object3.setVisage(7601);
 	_object3.setStrip(2);
 	_object3.animate(ANIM_MODE_2, 0);
 	_object3.setPosition(Common::Point(158, 136));
-	_object3.setPriority2(1);
+	_object3.fixPriority(1);
 
 	_object4.postInit();
 	_object4.setVisage(7601);
 	_object4.setStrip(3);
 	_object4.animate(ANIM_MODE_2, 0);
 	_object4.setPosition(Common::Point(293, 141));
-	_object4.setPriority2(1);
+	_object4.fixPriority(1);
 
 	_object5.postInit();
 	_object5.setVisage(7601);
 	_object5.setStrip(4);
 	_object5.animate(ANIM_MODE_2, 0);
 	_object5.setPosition(Common::Point(405, 143));
-	_object5.setPriority2(1);
+	_object5.fixPriority(1);
 
 	_object6.postInit();
 	_object6.setVisage(7601);
 	_object6.setStrip(5);
 	_object6.animate(ANIM_MODE_2, 0);
 	_object6.setPosition(Common::Point(379, 191));
-	_object6.setPriority2(1);
+	_object6.fixPriority(1);
 
 	_globals->_player.postInit();
 	_globals->_player.setVisage(2333);
@@ -2036,12 +2036,12 @@ void Scene7700::Object8::doAction(int action) {
 			scene->_object9.setVisage(7701);
 			scene->_object9.setStrip2(3);
 			scene->_object9.setPosition(Common::Point(91, 166), 0);
-			scene->_object9.setPriority2(200);
+			scene->_object9.fixPriority(200);
 
 			scene->_object14.postInit();
 			scene->_object14.setVisage(7701);
 			scene->_object14.setStrip(2);
-			scene->_object14.setPriority2(250);
+			scene->_object14.fixPriority(250);
 			scene->_object14.setPosition(Common::Point(139, 151), 0);
 
 			scene->_gfxButton.setText(EXIT_MSG);
@@ -2056,7 +2056,7 @@ void Scene7700::Object8::doAction(int action) {
 			scene->_object15.postInit();
 			scene->_object15.setVisage(7701);
 			scene->_object15.setPosition(Common::Point(140, 165), 0);
-			scene->_object15.setPriority2(200);
+			scene->_object15.fixPriority(200);
 
 			scene->_gfxButton.setText(EXIT_MSG);
 			scene->_gfxButton._bounds.center(140, 186);
@@ -2100,7 +2100,7 @@ void Scene7700::Object9::doAction(int action) {
 					scene->_object10.setStrip(4);
 					scene->_object10.setPosition(Common::Point(159, 136));
 					_globals->_sceneItems.push_front(&scene->_object10);
-					scene->_object10.setPriority2(240);
+					scene->_object10.fixPriority(240);
 				}
 				scene->_soundHandler.startSound(262);
 				scene->_object14.animate(ANIM_MODE_5, 0);
@@ -2188,7 +2188,7 @@ void Scene7700::Object12::doAction(int action) {
 void Scene7700::signal() {
 	switch (_sceneMode) {
 	case 7701:
-		_globals->_player.setPriority2(-1);
+		_globals->_player.fixPriority(-1);
 		_globals->_player.setStrip2(-1);
 		if (_globals->getFlag(78)) {
 			_globals->_player.enableControl();
@@ -2259,7 +2259,7 @@ void Scene7700::process(Event &event) {
 			_easterEgg1.postInit();
 			_easterEgg1.setVisage(7708);
 			_easterEgg1.setPosition(Common::Point(163, 50), 0);
-			_easterEgg1.setPriority2(1);
+			_easterEgg1.fixPriority(1);
 			_easterEgg1.animate(ANIM_MODE_2, 0);
 			_easterEgg1.setAction(&_action6);
 		}
@@ -2301,7 +2301,7 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.setObjectWrapper(wrapper);
 	_globals->_player.setPosition(Common::Point(-19, 68), 0);
 	_globals->_player.setStrip2(7);
-	_globals->_player.setPriority2(95);
+	_globals->_player.fixPriority(95);
 	_globals->_player.changeZoom(80);
 	_globals->_player._moveDiff.x = 6;
 	_globals->_player._moveDiff.y = 3;
@@ -2312,7 +2312,7 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 
 	if (_globals->getFlag(78)) {
 		_prof.setStrip2(4);
-		_prof.setPriority2(80);
+		_prof.fixPriority(80);
 		_prof.setPosition(Common::Point(159, 87), 0);
 	} else {
 		_prof.setPosition(Common::Point(203, 87), 0);
@@ -2324,7 +2324,7 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_cloud.postInit();
 	_cloud.setVisage(7700);
 	_cloud.setStrip2(5);
-	_cloud.setPriority2(1);
+	_cloud.fixPriority(1);
 	_cloud.setPosition(Common::Point(133, 160), 0);
 	_cloud._moveDiff.x = 1;
 	_cloud._moveRate = 7;
@@ -2339,7 +2339,7 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_object2.postInit();
 	_object2.setVisage(7700);
 	_object2.setPosition(Common::Point(184, 70), 0);
-	_object2.setPriority2(60);
+	_object2.fixPriority(60);
 	_object2._lookLineNum = 19;
 	_object2._defltLineNum = 17;
 
@@ -2358,7 +2358,7 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_object5.postInit();
 	_object5.setVisage(7700);
 	_object5.setPosition(Common::Point(268, 67), 0);
-	_object5.setPriority2(58);
+	_object5.fixPriority(58);
 	_object5.setStrip2(3);
 	_object5._lookLineNum = 38;
 	_object5._defltLineNum = 36;
@@ -2366,7 +2366,7 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_object6.postInit();
 	_object6.setVisage(7700);
 	_object6.setPosition(Common::Point(268, 75), 0);
-	_object6.setPriority2(57);
+	_object6.fixPriority(57);
 	_object6.setStrip2(4);
 	_object6._lookLineNum = 40;
 	_object6._defltLineNum = 43;
@@ -2375,7 +2375,7 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_object8.setVisage(7703);
 	_object8.setPosition(Common::Point(203, 91), 0);
 	_object8.setStrip2(4);
-	_object8.setPriority2(86);
+	_object8.fixPriority(86);
 
 	_sceneHotspot8.setBounds(82, 141, 161, 92);
 	_sceneHotspot9.setBounds(82, 187, 161, 141);

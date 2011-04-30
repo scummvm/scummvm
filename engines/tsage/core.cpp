@@ -1521,7 +1521,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 			_globals->_sceneText.setPosition(pos, 0);
 		}
 
-		_globals->_sceneText.setPriority2(255);
+		_globals->_sceneText.fixPriority(255);
 		_globals->_sceneObjects->draw();
 	}
 
@@ -1795,7 +1795,7 @@ void SceneObject::setPriority(int priority) {
 	}
 }
 
-void SceneObject::setPriority2(int priority) {
+void SceneObject::fixPriority(int priority) {
 	if (priority == -1) {
 		_flags &= ~OBJFLAG_FIXED_PRIORITY;
 	} else {
@@ -2239,7 +2239,7 @@ void SceneObject::setup(int visage, int stripFrameNum, int frameNum, int posX, i
 	setStrip(stripFrameNum);
 	setFrame(frameNum);
 	setPosition(Common::Point(posX, posY), 0);
-	setPriority2(priority);
+	fixPriority(priority);
 }
 
 /*--------------------------------------------------------------------------*/

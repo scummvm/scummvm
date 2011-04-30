@@ -529,7 +529,7 @@ public:
 	void setFrame(int frameNum);
 	void setFrame2(int frameNum);
 	void setPriority(int priority);
-	void setPriority2(int priority);
+	void fixPriority(int priority);
 	void setVisage(int visage);
 	void setObjectWrapper(SceneObjectWrapper *objWrapper);
 	void addMover(ObjectMover *mover, ...);

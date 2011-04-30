@@ -125,7 +125,7 @@ void Scene9100::postInit(SceneObjectList *OwnerList) {
 	_object1._numFrames = 6;
 	_object1.setPosition(Common::Point(297, 132), 0);
 	_object1.animate(ANIM_MODE_2, 0);
-	_object1.setPriority2(10);
+	_object1.fixPriority(10);
 
 	_globals->_player.postInit();
 
@@ -405,7 +405,7 @@ void Scene9200::postInit(SceneObjectList *OwnerList) {
 	_object1._strip = 3;
 	_object1.animate(ANIM_MODE_2, 0);
 	_object1.setPosition(Common::Point(132, 114), 0);
-	_object1.setPriority2(140);
+	_object1.fixPriority(140);
 	_soundHandler.startSound(297);
 	_stripManager.addSpeaker(&_speakerQText);
 	_stripManager.addSpeaker(&_speakerGR);
@@ -967,7 +967,7 @@ void Scene9450::postInit(SceneObjectList *OwnerList) {
 		} else {
 			_object2.setPosition(Common::Point(184, 144), 0);
 			_object2.setVisage(9451);
-			_object2.setPriority2(250);
+			_object2.fixPriority(250);
 			_object2._strip = 5;
 			_object2._frame = 10;
 		}
@@ -1140,7 +1140,7 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 
 	_object3.postInit(0);
 	_object3.hide();
-	_object3.setPriority2(150);
+	_object3.fixPriority(150);
 	_object3.setPosition(Common::Point(166, 133));
 	if (RING_INVENTORY._straw._sceneNumber == 9500) {
 		_object3.show();
@@ -1164,7 +1164,7 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 		_object2.setStrip(1);
 		_object2.setFrame(_object2.getFrameCount());
 		_object2.setPosition(Common::Point(303, 130));
-		_object2.setPriority2(132);
+		_object2.fixPriority(132);
 		if (RING_INVENTORY._helmet._sceneNumber == 1) {
 			_hotspot2.setup(87, 294, 104, 314, 9400, 17, -1);
 		} else {
@@ -1545,7 +1545,7 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
 	_objDoor.setStrip(1);
 	_objDoor.setFrame(1);
 	_objDoor.setPosition(Common::Point(28, 118), 0);
-	_objDoor.setPriority2(90);
+	_objDoor.fixPriority(90);
 
 	_objLever.postInit();
 	_objLever.setVisage(9850);
@@ -1557,7 +1557,7 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
 	_objCloak.setVisage(9850);
 	_objCloak.setStrip(5);
 	_objCloak.setFrame(1);
-	_objCloak.setPriority2(90);
+	_objCloak.fixPriority(90);
 	_objCloak.setPosition(Common::Point(157, 81), 0);
 	if (RING_INVENTORY._cloak._sceneNumber != 9850)
 		_objCloak.hide();
@@ -1566,7 +1566,7 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
 	_objJacket.setVisage(9850);
 	_objJacket.setStrip(5);
 	_objJacket.setFrame(2);
-	_objJacket.setPriority2(90);
+	_objJacket.fixPriority(90);
 	_objJacket.setPosition(Common::Point(201, 84));
 	if (RING_INVENTORY._jacket._sceneNumber != 9850)
 		_objJacket.hide();
@@ -1575,7 +1575,7 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
 	_objTunic2.setVisage(9850);
 	_objTunic2.setStrip(5);
 	_objTunic2.setFrame(3);
-	_objTunic2.setPriority2(90);
+	_objTunic2.fixPriority(90);
 	_objTunic2.setPosition(Common::Point(295, 90));
 	if (RING_INVENTORY._tunic2._sceneNumber != 9850)
 		_objTunic2.hide();
@@ -1586,7 +1586,7 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
 		_objScimitar.setStrip(2);
 		_objScimitar.setFrame(1);
 		_objScimitar.setPosition(Common::Point(55, 83), 0);
-		_objScimitar.setPriority2(80);
+		_objScimitar.fixPriority(80);
 		_objScimitar.hide();
 	}
 
@@ -1596,7 +1596,7 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
 		_objSword.setStrip(3);
 		_objSword.setFrame(1);
 		_objSword.setPosition(Common::Point(56, 101), 0);
-		_objSword.setPriority2(80);
+		_objSword.fixPriority(80);
 		_objSword.hide();
 	}
 
@@ -1708,7 +1708,7 @@ void Scene9900::strAction2::signal() {
 			_txtArray1[_txtArray1Index].setup(msg);
 			_txtArray1[_txtArray1Index]._moveRate = 20;
 			_txtArray1[_txtArray1Index]._moveDiff.y = 2;
-			_txtArray1[_txtArray1Index].setPriority2(255);
+			_txtArray1[_txtArray1Index].fixPriority(255);
 			int frameWidth = _txtArray1[_txtArray1Index].getFrame().getBounds().width();
 			int frameHeight = _txtArray1[_txtArray1Index].getFrame().getBounds().height();
 			_txtArray1[_txtArray1Index].setPosition(Common::Point((320 - frameWidth) / 2, 200));
@@ -1725,7 +1725,7 @@ void Scene9900::strAction2::signal() {
 			_txtArray2[_txtArray1Index].setup(msg);
 			_txtArray2[_txtArray1Index]._moveRate = 20;
 			_txtArray2[_txtArray1Index]._moveDiff.y = 2;
-			_txtArray2[_txtArray1Index].setPriority2(255);
+			_txtArray2[_txtArray1Index].fixPriority(255);
 			frameWidth = _txtArray2[_txtArray1Index].getFrame().getBounds().width();
 			_txtArray2[_txtArray1Index].setPosition(Common::Point((320 - frameWidth) / 2, 200 + frameHeight));
 		} else {
@@ -1834,7 +1834,7 @@ void Scene9900::signal() {
 		_object8.setVisage(2002);
 		_object8.setStrip(1);
 		_object8.setFrame(1);
-		_object8.setPriority2(200);
+		_object8.fixPriority(200);
 		_object8.setPosition(Common::Point(64, 199));
 		_globals->_player.disableControl();
 		_sceneMode = 9908;
@@ -2021,7 +2021,7 @@ void Scene9999::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.postInit();
 	_globals->_player.setVisage(1303);
 	_globals->_player.setStrip2(1);
-	_globals->_player.setPriority2(250);
+	_globals->_player.fixPriority(250);
 	_globals->_player.animate(ANIM_MODE_2, 0);
 	_globals->_player.setPosition(Common::Point(194, 98), 0);
 	_globals->_player._numFrames = 20;
@@ -2030,13 +2030,13 @@ void Scene9999::postInit(SceneObjectList *OwnerList) {
 	_object2.postInit();
 	_object2.setVisage(1303);
 	_object2.setStrip2(2);
-	_object2.setPriority2(2);
+	_object2.fixPriority(2);
 	_object2.setPosition(Common::Point(164, 149), 0);
 
 	_object3.postInit();
 	_object3.setVisage(1303);
 	_object3.setStrip2(2);
-	_object3.setPriority2(2);
+	_object3.fixPriority(2);
 	_object3.setFrame(2);
 	_object3.setPosition(Common::Point(292, 149), 0);
 	_object3.setAction(&_action3);

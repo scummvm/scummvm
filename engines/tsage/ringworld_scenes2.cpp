@@ -437,7 +437,7 @@ void Scene1001::Action1::signal() {
 		scene->_object6.setStrip2(6);
 		scene->_object6.setFrame2(2);
 		scene->_object6._moveDiff = Common::Point(20, 20);
-		scene->_object6.setPriority2(20);
+		scene->_object6.fixPriority(20);
 		scene->_object6.setPosition(Common::Point(scene->_object2._position.x - 6, scene->_object2._position.y + 7));
 		scene->_object6.animate(ANIM_MODE_5, NULL);
 
@@ -456,7 +456,7 @@ void Scene1001::Action1::signal() {
 		scene->_object7.setFrame2(1);
 		scene->_object7._moveDiff = Common::Point(20, 20);
 		scene->_object7.setPosition(Common::Point(scene->_object3._position.x - 28, scene->_object3._position.y - 11));
-		scene->_object7.setPriority2(200);
+		scene->_object7.fixPriority(200);
 		scene->_object7.animate(ANIM_MODE_5, NULL);
 
 		Common::Point pt(scene->_object7._position.x - 70, scene->_object7._position.y - 70);
@@ -471,7 +471,7 @@ void Scene1001::Action1::signal() {
 		scene->_object5.setVisage(16);
 		scene->_object5.setPosition(Common::Point(306, 93));
 		scene->_object5._strip = 3;
-		scene->_object5.setPriority2(200);
+		scene->_object5.fixPriority(200);
 		scene->_object5.animate(ANIM_MODE_2, NULL);
 		setDelay(30);
 		break;
@@ -636,7 +636,7 @@ void Scene1250::postInit(SceneObjectList *OwnerList) {
 	_object2.setVisage(1250);
 	_object2.setPosition(Common::Point(126, 69));
 	_object2.setStrip2(2);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2._frame = 1;
 	_object2.setAction(&_action2);
 
@@ -769,7 +769,7 @@ void Scene1400::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.setVisage(1401);
 	_globals->_player.animate(ANIM_MODE_2, 0);
 	_globals->_player.setStrip2(4);
-	_globals->_player.setPriority2(4);
+	_globals->_player.fixPriority(4);
 	_globals->_player.disableControl();
 
 	_globals->_player._moveDiff = Common::Point(4, 2);
@@ -872,7 +872,7 @@ void Scene1500::Action2::signal() {
 	case 1: {
 		scene->_object2.postInit();
 		scene->_object2.setVisage(1502);
-		scene->_object2.setPriority2(255);
+		scene->_object2.fixPriority(255);
 		scene->_object2.changeZoom(5);
 		scene->_object2._frame = 1;
 		scene->_object2._moveDiff = Common::Point(1, 1);
