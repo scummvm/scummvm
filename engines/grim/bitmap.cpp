@@ -53,7 +53,7 @@ Bitmap::Bitmap(const char *fname, const char *data, int len) :
 	_y = READ_LE_UINT32(data + 24);
 //  _transparentColor = READ_LE_UINT32(data + 28);
 	_format = READ_LE_UINT32(data + 32);
-//  _numBits = READ_LE_UINT32(data + 36);
+	_bpp = READ_LE_UINT32(data + 36);
 //  _blueBits = READ_LE_UINT32(data + 40);
 //  _greenBits = READ_LE_UINT32(data + 44);
 //  _redBits = READ_LE_UINT32(data + 48);
@@ -67,10 +67,10 @@ Bitmap::Bitmap(const char *fname, const char *data, int len) :
 	_data = new char *[_numImages];
 	int pos = 0x88;
 	for (int i = 0; i < _numImages; i++) {
-		_data[i] = new char[2 * _width * _height];
+		_data[i] = new char[_bpp/8 * _width * _height];
 		if (codec == 0) {
-			memcpy(_data[i], data + pos, 2 * _width * _height);
-			pos += 2 * _width * _height + 8;
+			memcpy(_data[i], data + pos, _bpp/8 * _width * _height);
+			pos += _bpp/8 * _width * _height + 8;
 		} else if (codec == 3) {
 			int compressed_len = READ_LE_UINT32(data + pos);
 			decompress_codec3(data + pos + 4, _data[i]);
@@ -88,7 +88,7 @@ Bitmap::Bitmap(const char *fname, const char *data, int len) :
 	g_driver->createBitmap(this);
 }
 
-Bitmap::Bitmap(const char *data, int w, int h, const char *fname) : Object() {
+Bitmap::Bitmap(const char *data, int w, int h, int bpp, const char *fname) : Object() {
 	_fname = fname;
 	if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
 		printf("New bitmap loaded: %s\n", fname);
@@ -102,10 +102,11 @@ Bitmap::Bitmap(const char *data, int w, int h, const char *fname) : Object() {
 	_format = 1;
 	_numTex = 0;
 	_texIds = NULL;
+	_bpp = bpp;
 	_hasTransparency = false;
 	_data = new char *[_numImages];
-	_data[0] = new char[2 * _width * _height];
-	memcpy(_data[0], data, 2 * _width * _height);
+	_data[0] = new char[_bpp/8 * _width * _height];
+	memcpy(_data[0], data, _bpp/8 * _width * _height);
 	g_driver->createBitmap(this);
 }
 

@@ -461,26 +461,34 @@ void GfxOpenGL::createBitmap(Bitmap *bitmap) {
 		textures = (GLuint *)bitmap->_texIds;
 		glGenTextures(bitmap->_numTex * bitmap->_numImages, textures);
 
-		byte *texData = new byte[4 * bitmap->_width * bitmap->_height];
+		byte *texData = 0;
+		byte *texOut = 0;
 
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
-			// Convert data to 32-bit RGBA format
-			byte *texDataPtr = texData;
-			uint16 *bitmapData = reinterpret_cast<uint16 *>(bitmap->_data[pic]);
-			for (int i = 0; i < bitmap->_width * bitmap->_height; i++, texDataPtr += 4, bitmapData++) {
-				uint16 pixel = *bitmapData;
-				int r = pixel >> 11;
-				texDataPtr[0] = (r << 3) | (r >> 2);
-				int g = (pixel >> 5) & 0x3f;
-				texDataPtr[1] = (g << 2) | (g >> 4);
-				int b = pixel & 0x1f;
-				texDataPtr[2] = (b << 3) | (b >> 2);
-				if (pixel == 0xf81f) { // transparent
-					texDataPtr[3] = 0;
-					bitmap->_hasTransparency = true;
-				} else {
-					texDataPtr[3] = 255;
+			if (bitmap->_bpp == 16) {
+				if (texData == 0)
+					texData = new byte[4 * bitmap->_width * bitmap->_height];
+				// Convert data to 32-bit RGBA format
+				byte *texDataPtr = texData;
+				uint16 *bitmapData = reinterpret_cast<uint16 *>(bitmap->_data[pic]);
+				for (int i = 0; i < bitmap->_width * bitmap->_height; i++, texDataPtr += 4, bitmapData++) {
+					uint16 pixel = *bitmapData;
+					int r = pixel >> 11;
+					texDataPtr[0] = (r << 3) | (r >> 2);
+					int g = (pixel >> 5) & 0x3f;
+					texDataPtr[1] = (g << 2) | (g >> 4);
+					int b = pixel & 0x1f;
+					texDataPtr[2] = (b << 3) | (b >> 2);
+					if (pixel == 0xf81f) { // transparent
+						texDataPtr[3] = 0;
+						bitmap->_hasTransparency = true;
+					} else {
+						texDataPtr[3] = 255;
+					}
 				}
+				texOut = texData;
+			} else {
+				texOut = (byte *)bitmap->_data[pic];
 			}
 
 			for (int i = 0; i < bitmap->_numTex; i++) {
@@ -505,7 +513,7 @@ void GfxOpenGL::createBitmap(Bitmap *bitmap) {
 					textures = (GLuint *)bitmap->_texIds;
 					glBindTexture(GL_TEXTURE_2D, textures[cur_tex_idx]);
 					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE,
-						texData + (y * 4 * bitmap->_width) + (4 * x));
+						texOut + (y * 4 * bitmap->_width) + (4 * x));
 					cur_tex_idx++;
 				}
 			}

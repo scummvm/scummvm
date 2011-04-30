@@ -153,7 +153,7 @@ public:
 		return b;
 	}
 	Bitmap *registerBitmap(const char *data, int width, int height, const char *filename) {
-		Bitmap *b = new Bitmap(data, width, height, filename);
+		Bitmap *b = new Bitmap(data, width, height, 16, filename);
 		_bitmaps.push_back(b);
 		return b;
 	}

@@ -36,7 +36,7 @@ class Bitmap : public Object {
 public:
 	// Construct a bitmap from the given data.
 	Bitmap(const char *filename, const char *data, int len);
-	Bitmap(const char *data, int width, int height, const char *filename);
+	Bitmap(const char *data, int width, int height, int bpp, const char *filename);
 	Bitmap();
 
 	const char *filename() const { return _fname.c_str(); }
@@ -69,6 +69,7 @@ public:
 	int _width, _height, _x, _y;
 	int _format;
 	int _numTex;
+	int _bpp;
 	void *_texIds;
 	bool _hasTransparency;
 	char _filename[32];
