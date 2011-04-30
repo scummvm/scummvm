@@ -55,7 +55,7 @@ GameDescriptor::GameDescriptor(const PlainGameDescriptorGUIOpts &pgd) {
 		setVal("guioptions", Common::getGameGUIOptionsDescription(pgd.guioptions));
 }
 
-GameDescriptor::GameDescriptor(const Common::String &g, const Common::String &d, Common::Language l, Common::Platform p, uint32 guioptions) {
+GameDescriptor::GameDescriptor(const Common::String &g, const Common::String &d, Common::Language l, Common::Platform p, uint32 guioptions, bool wip) {
 	setVal("gameid", g);
 	setVal("description", d);
 	if (l != Common::UNK_LANG)
@@ -64,6 +64,8 @@ GameDescriptor::GameDescriptor(const Common::String &g, const Common::String &d,
 		setVal("platform", Common::getPlatformCode(p));
 	if (guioptions != 0)
 		setVal("guioptions", Common::getGameGUIOptionsDescription(guioptions));
+
+	setWIP(wip);
 }
 
 void GameDescriptor::setGUIOptions(uint32 guioptions) {

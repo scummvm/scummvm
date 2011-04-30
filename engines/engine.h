@@ -257,7 +257,7 @@ public:
 	/**
 	 * Display a warning to the user that the game is still unstable.
 	 */
-	void warnUserAboutWIPGame();
+	static void warnUserAboutWIPGame();
 
 	/**
 	 * Get the total play time.

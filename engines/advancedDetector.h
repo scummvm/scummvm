@@ -29,7 +29,7 @@
 #include "common/error.h"
 
 #include "engines/metaengine.h"
-
+#include "engines/engine.h"
 
 struct ADGameFileDescription {
 	const char *fileName;
@@ -51,7 +51,8 @@ enum ADGameFlags {
 	ADGF_USEEXTRAASTITLE = (1 << 26), // Extra field value will be used as main game title, not gameid
 	ADGF_DROPLANGUAGE = (1 << 28), // don't add language to gameid
 	ADGF_CD = (1 << 29),    	// add "-cd" to gameid
-	ADGF_DEMO = (1 << 30)   	// add "-demo" to gameid
+	ADGF_DEMO = (1 << 30),   	// add "-demo" to gameid
+	ADGF_WIP = (1 << 31)    	// flag to designate not yet officially-supported games
 };
 
 struct ADGameDescription {

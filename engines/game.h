@@ -74,7 +74,8 @@ public:
 	              const Common::String &description,
 	              Common::Language language = Common::UNK_LANG,
 				  Common::Platform platform = Common::kPlatformUnknown,
-				  uint32 guioptions = 0);
+				  uint32 guioptions = 0,
+				  bool wip = false);
 
 	/**
 	 * Update the description string by appending (LANG/PLATFORM/EXTRA) to it.
@@ -83,6 +84,9 @@ public:
 
 	void setGUIOptions(uint32 options);
 	void appendGUIOptions(const Common::String &str);
+
+	bool isWIP() const { return contains("wip"); };
+	void setWIP(bool wip) { if (wip) setVal("wip", "true"); else clear("wip"); };
 
 	Common::String &gameid() { return getVal("gameid"); }
 	Common::String &description() { return getVal("description"); }
