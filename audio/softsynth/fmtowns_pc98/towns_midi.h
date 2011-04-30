@@ -28,9 +28,12 @@
 #include "audio/softsynth/fmtowns_pc98/towns_audio.h"
 #include "audio/mididrv.h"
 
-class MidiChannel_TOWNS;
+class TownsMidiOutputChannel;
+class TownsMidiInputChannel;
+
 class MidiDriver_TOWNS : public MidiDriver, public TownsAudioInterfacePluginDriver {
-friend class MidiChannel_TOWNS;
+friend class TownsMidiInputChannel;
+friend class TownsMidiOutputChannel;
 public:
 	MidiDriver_TOWNS(Audio::Mixer *mixer);
 	~MidiDriver_TOWNS();
@@ -53,7 +56,10 @@ public:
 	TownsAudioInterface *intf() { return _intf; }
 	
 private:
-	MidiChannel_TOWNS **_channels;
+	TownsMidiOutputChannel *allocateOutputChannel(int pri);
+
+	TownsMidiInputChannel **_channels;
+	TownsMidiOutputChannel **_out;	
 
 	Common::TimerManager::TimerProc _timerBproc;
 	void *_timerBpara;
