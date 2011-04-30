@@ -129,11 +129,11 @@ static void glShadowProjection(Graphics::Vector3d light, Graphics::Vector3d plan
 	float mat[16];
 	float nx, ny, nz, lx, ly, lz, px, py, pz;
 
+	nx = normal.x();
+	ny = normal.y();
+	nz = normal.z();
 	// for some unknown for me reason normal need negation
-	nx = -normal.x();
-	ny = -normal.y();
-	nz = -normal.z();
-	if (dontNegate) {
+	if (!dontNegate) {
 		nx = -nx;
 		ny = -ny;
 		nz = -nz;
