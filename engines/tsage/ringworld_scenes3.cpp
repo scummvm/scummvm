@@ -1022,6 +1022,8 @@ void Scene2100::Action12::signal() {
 	case 10:
 		if (_globals->getFlag(74))
 			setDelay(1);
+		else
+			setAction(&scene->_sequenceManager, this, 2101, &_globals->_player, NULL);
 		break;
 	case 11:
 		scene->_stripManager.start(2170, this);
