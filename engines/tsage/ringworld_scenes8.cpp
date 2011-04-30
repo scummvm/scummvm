@@ -64,12 +64,13 @@ void Scene7000::Action1::signal() {
 		_globals->_sceneItems.push_front(&scene->_object1);
 		break;
 	case 3:
-		scene->_object1.setStrip(4);
-		scene->_object1.animate(ANIM_MODE_8, 0, 0);
+		scene->_object1._numFrames = 4;
+		scene->_object1.setStrip(2);
+		scene->_object1.animate(ANIM_MODE_8, 0, NULL);
 		scene->_stripManager.start(7005, this);
 		break;
 	case 4:
-		scene->_object1.animate(ANIM_MODE_2, 0);
+		scene->_object1.animate(ANIM_MODE_2, NULL);
 		setDelay(3);
 		break;
 	case 5:
@@ -113,7 +114,7 @@ void Scene7000::Action3::dispatch() {
 
 	Action::dispatch();
 	if (_actionIndex == 4)
-		scene->_object4.setPosition(Common::Point(scene->_object3._position.x, scene->_object3._position.y));
+		scene->_object4.setPosition(scene->_object3._position, 0);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -128,7 +129,7 @@ void Scene7000::Action3::signal() {
 		scene->_object4.postInit();
 		scene->_object4.setVisage(5001);
 		scene->_object4.setStrip2(2);
-		scene->_object4.animate(ANIM_MODE_8, 0, 0);
+		scene->_object4.animate(ANIM_MODE_8, 0, NULL);
 		scene->_object4.setPosition(Common::Point(10, 18), 0);
 		scene->_object4.fixPriority(10);
 		scene->_object4.changeZoom(100);
@@ -141,6 +142,7 @@ void Scene7000::Action3::signal() {
 		break;
 	}
 	case 2:
+		scene->_object3._moveDiff.y = 1;
 		scene->_object3.fixPriority(10);
 		scene->_object4.setPosition(Common::Point(scene->_object3._position.x, scene->_object3._position.y + 15), 0);
 		scene->_object4.show();
@@ -456,8 +458,8 @@ void Scene7000::dispatch() {
 		if (_globals->_sceneRegions.indexOf(_globals->_player._position) == 8) {
 			if (!_globals->getFlag(13)) {
 				_globals->_player.disableControl();
-				_globals->_player.addMover(0);
-				SceneItem::display(7000, 3, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
+				_globals->_player.addMover(NULL);
+				SceneItem::display2(7000, 3);
 				_sceneMode = 7001;
 				setAction(&scene->_sequenceManager, this, 7001, &_globals->_player, NULL);
 			} else if (!_globals->getFlag(52)) {
@@ -465,7 +467,7 @@ void Scene7000::dispatch() {
 			} else {
 				_globals->_player.disableControl();
 				_sceneMode = 7003;
-				setAction(&scene->_sequenceManager, this, 7003, &_globals->_player, 0);
+				setAction(&scene->_sequenceManager, this, 7003, &_globals->_player, NULL);
 			}
 		}
 		if (_globals->_sceneRegions.indexOf(_globals->_player._position) == 9)
@@ -492,28 +494,28 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 	_object5.postInit();
 	_object5.setVisage(7001);
 	_object5.setStrip2(1);
-	_object5.animate(ANIM_MODE_2, 0);
+	_object5.animate(ANIM_MODE_2, NULL);
 	_object5.setPosition(Common::Point(49, 147), 0);
 	_object5.fixPriority(1);
 
 	_object6.postInit();
 	_object6.setVisage(7001);
 	_object6.setStrip2(2);
-	_object6.animate(ANIM_MODE_2, 0);
+	_object6.animate(ANIM_MODE_2, NULL);
 	_object6.setPosition(Common::Point(160, 139), 0);
 	_object6.fixPriority(1);
 
 	_object7.postInit();
 	_object7.setVisage(7001);
 	_object7.setStrip2(3);
-	_object7.animate(ANIM_MODE_2, 0);
+	_object7.animate(ANIM_MODE_2, NULL);
 	_object7.setPosition(Common::Point(272, 129), 0);
 	_object7.fixPriority(1);
 
 	_object8.postInit();
 	_object8.setVisage(7001);
 	_object8.setStrip2(4);
-	_object8.animate(ANIM_MODE_2, 0);
+	_object8.animate(ANIM_MODE_2, NULL);
 	_object8.setPosition(Common::Point(176, 175), 0);
 	_object8.fixPriority(1);
 
@@ -521,7 +523,6 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 		_object3.postInit();
 		_object3.setVisage(5001);
 		_object3.setStrip2(1);
-		_object3.animate(ANIM_MODE_2, 0);
 		_object3.setPosition(Common::Point(107, 92), 0);
 		_object3.changeZoom(100);
 		_object3.fixPriority(10);
@@ -535,15 +536,15 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 		_object1.setPosition(Common::Point(87, 129), 0);
 		_object1._numFrames = 4;
 		_object1.changeZoom(45);
-		_object1.animate(ANIM_MODE_8, 0, 0);
-		_globals->_sceneItems.addItems(&_object1, 0);
+		_object1.animate(ANIM_MODE_8, 0, NULL);
+		_globals->_sceneItems.push_back(&_object1);
 	}
 	_soundHandler.startSound(251);
 	if (_globals->_sceneManager._previousScene == 2100) {
 		if (_globals->getFlag(72)) {
 			_globals->_player.postInit();
 			_globals->_player.setVisage(0);
-			_globals->_player.animate(ANIM_MODE_1, 0);
+			_globals->_player.animate(ANIM_MODE_1, NULL);
 			SceneObjectWrapper *wrapper = new SceneObjectWrapper();
 			_globals->_player.setObjectWrapper(wrapper);
 			_globals->_player.setPosition(Common::Point(57, 94), 0);
@@ -553,6 +554,7 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 				setAction(&_action4);
 			} else {
 				_object1.setPosition(Common::Point(151, 182), 0);
+				_object1.changeZoom(100);
 				setAction(&_action1);
 			}
 		} else {
@@ -562,7 +564,7 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 			_object3.postInit();
 			_object3.setVisage(5001);
 			_object3.setStrip2(1);
-			_object3.animate(ANIM_MODE_1, 0);
+			_object3.animate(ANIM_MODE_1, NULL);
 			_object3.setPosition(Common::Point(307, 0), 0);
 			_object3.changeZoom(-1);
 			setAction(&_action3);
@@ -570,9 +572,8 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 	} else if (_globals->_sceneManager._previousScene == 2280) {
 		_globals->_player.postInit();
 		_globals->_player.setVisage(2170);
-		_globals->_player.animate(ANIM_MODE_1, 0);
-		SceneObjectWrapper *wrapper = new SceneObjectWrapper();
-		_globals->_player.setObjectWrapper(wrapper);
+		_globals->_player.animate(ANIM_MODE_1, NULL);
+		_globals->_player.setObjectWrapper(new SceneObjectWrapper());
 		_globals->_player.setPosition(Common::Point(57, 94), 0);
 		_globals->_player.changeZoom(-1);
 		_globals->_player.fixPriority(10);
