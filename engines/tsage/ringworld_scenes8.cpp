@@ -2420,8 +2420,8 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_sceneHotspot15._useLineNum = 6;
 	_sceneHotspot15._lookLineNum = 7;
 	_sceneHotspot16.setBounds(0, 130, 34, 103);
-	_sceneHotspot16._useLineNum = 8;
-	_sceneHotspot16._lookLineNum = 9;
+	_sceneHotspot16._useLineNum = 7;
+	_sceneHotspot16._lookLineNum = 8;
 	_sceneHotspot17.setBounds(41, 180, 46, 170);
 	_sceneHotspot17._useLineNum = 11;
 	_sceneHotspot17._lookLineNum = 13;
