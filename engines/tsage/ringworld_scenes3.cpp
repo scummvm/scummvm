@@ -1555,7 +1555,7 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 	_object1.setVisage(2100);
 	_object1.animate(ANIM_MODE_NONE, NULL);
 	_object1.setPosition(Common::Point(157, 57));
-	_object1.setPriority(5);
+	_object1.setPriority2(5);
 
 	_hotspot3.postInit();
 	_hotspot3.setVisage(2101);
@@ -1613,7 +1613,7 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 	_hotspot2.postInit();
 	_hotspot2.setVisage(2101);
 	_hotspot2._frame = 1;
-	_hotspot2._strip = 7;
+	_hotspot2._strip = 8;
 	_hotspot2.animate(ANIM_MODE_8, 0, NULL);
 	_hotspot2.setPosition(Common::Point(88, 41));
 	_hotspot2.changeZoom(100);
@@ -1666,7 +1666,14 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 	_area4._pt = Common::Point(237, 77);
 
 	_globals->_player.postInit();
-	_globals->_player.setVisage(_globals->getFlag(13) ? 2170 : 0);
+	if (_globals->getFlag(13)) {
+		_globals->_player.setVisage(2170);
+		_globals->_player._moveDiff.y = 1;
+	} else {
+		_globals->_player.setVisage(0);
+		_globals->_player._moveDiff.y = 3;
+	}
+
 	_globals->_player.setObjectWrapper(new SceneObjectWrapper());
 	_globals->_player.animate(ANIM_MODE_1, NULL);
 	_globals->_player._moveDiff.x = 4;
