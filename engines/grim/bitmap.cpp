@@ -67,10 +67,10 @@ Bitmap::Bitmap(const char *fname, const char *data, int len) :
 	_data = new char *[_numImages];
 	int pos = 0x88;
 	for (int i = 0; i < _numImages; i++) {
-		_data[i] = new char[_bpp/8 * _width * _height];
+		_data[i] = new char[_bpp / 8 * _width * _height];
 		if (codec == 0) {
-			memcpy(_data[i], data + pos, _bpp/8 * _width * _height);
-			pos += _bpp/8 * _width * _height + 8;
+			memcpy(_data[i], data + pos, _bpp / 8 * _width * _height);
+			pos += _bpp / 8 * _width * _height + 8;
 		} else if (codec == 3) {
 			int compressed_len = READ_LE_UINT32(data + pos);
 			decompress_codec3(data + pos + 4, _data[i]);
@@ -105,8 +105,8 @@ Bitmap::Bitmap(const char *data, int w, int h, int bpp, const char *fname) : Obj
 	_bpp = bpp;
 	_hasTransparency = false;
 	_data = new char *[_numImages];
-	_data[0] = new char[_bpp/8 * _width * _height];
-	memcpy(_data[0], data, _bpp/8 * _width * _height);
+	_data[0] = new char[_bpp / 8 * _width * _height];
+	memcpy(_data[0], data, _bpp / 8 * _width * _height);
 	g_driver->createBitmap(this);
 }
 
