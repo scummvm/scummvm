@@ -23,6 +23,8 @@
 
 // TODO: Clean up game variable handling and move it to ToltecsEngine
 
+#include "common/error.h"
+
 #include "graphics/cursorman.h"
 
 #include "toltecs/toltecs.h"

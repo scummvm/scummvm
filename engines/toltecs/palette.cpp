@@ -21,6 +21,8 @@
  *
  */
 
+#include "graphics/palette.h"
+
 #include "toltecs/toltecs.h"
 #include "toltecs/palette.h"
 #include "toltecs/resource.h"
