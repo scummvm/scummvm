@@ -52,7 +52,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("data.b25c", "f8b6e03ada2d2f6cf27fbc11ad1572e9", 654310588),
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
-		ADGF_NO_FLAGS,
+		ADGF_WIP,
 		Common::GUIO_NONE
 	},
 	{
@@ -64,7 +64,7 @@ static const ADGameDescription gameDescriptions[] = {
 		 AD_LISTEND},
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
-		GF_EXTRACTED,
+		GF_EXTRACTED | ADGF_WIP,
 		Common::GUIO_NONE
 	},
 	AD_TABLE_END_MARKER
