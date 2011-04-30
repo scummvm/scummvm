@@ -1574,7 +1574,7 @@ void Scene5200::Hotspot10::doAction(int action) {
 		}
 		break;
 	default:
-		SceneItem::doAction(action);
+		SceneObject::doAction(action);
 		break;
 	}
 }
@@ -1590,7 +1590,7 @@ void Scene5200::Hotspot14::doAction(int action) {
 		scene->setAction(&scene->_action2);
 		break;
 	default:
-		SceneItem::doAction(action);
+		SceneObject::doAction(action);
 		break;
 	}
 }
