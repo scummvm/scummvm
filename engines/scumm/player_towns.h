@@ -142,7 +142,7 @@ private:
 
 class Player_Towns_v2 : public Player_Towns {
 public:
-	Player_Towns_v2(ScummEngine *vm, IMuse *imuse, Audio::Mixer *mixer, MidiDriver_TOWNS *driver, bool disposeIMuse, bool disposeDriver);
+	Player_Towns_v2(ScummEngine *vm, Audio::Mixer *mixer, IMuse *imuse, bool disposeIMuse);
 	~Player_Towns_v2();
 
 	bool init();
@@ -170,11 +170,9 @@ private:
 	SoundOvrParameters *_soundOverride;
 
 	uint8 *_sblData;
+	
 	IMuse *_imuse;
-	MidiDriver_TOWNS *_driver;
-
 	const bool _imuseDispose;
-	const bool _driverDispose;
 };
 
 } // End of namespace Scumm

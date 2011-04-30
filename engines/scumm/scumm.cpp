@@ -1828,24 +1828,26 @@ void ScummEngine::setupMusic(int midi) {
 		MidiDriver *nativeMidiDriver = 0;
 		MidiDriver *adlibMidiDriver = 0;
 
-		if (_musicType != MDT_ADLIB)
+		if (_musicType != MDT_ADLIB && _musicType != MDT_TOWNS)
 			nativeMidiDriver = MidiDriver::createMidi(dev);
 		if (nativeMidiDriver != NULL && _native_mt32)
 			nativeMidiDriver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 		bool multi_midi = ConfMan.getBool("multi_midi") && _musicType != MDT_NONE && (midi & MDT_ADLIB);
-		if (_musicType == MDT_ADLIB || (multi_midi && _musicType != MDT_TOWNS)) {
+		if (_musicType == MDT_ADLIB || multi_midi) {
 			adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(MDT_ADLIB));
+			adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
+		}
+		if (_musicType == MDT_TOWNS) {
+			adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(MDT_TOWNS));
 			adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
 		}
 
 		_imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);
 		
 		if (_game.platform == Common::kPlatformFMTowns) {
-			MidiDriver *townsDriver = 0;
-			townsDriver = (_musicType == MDT_TOWNS) ? nativeMidiDriver : MidiDriver::createMidi(MidiDriver::detectDevice(MDT_TOWNS));
-			_musicEngine = _townsPlayer = new Player_Towns_v2(this, _imuse, _mixer, (MidiDriver_TOWNS*)townsDriver, true, (_musicType != MDT_TOWNS));
+			_musicEngine = _townsPlayer = new Player_Towns_v2(this, _mixer, _imuse, true);
 			if (!_townsPlayer->init())
-				error("Failed to initialize FM-Towns audio driver");
+				error("ScummEngine::setupMusic(): Failed to initialize FM-Towns audio driver");
 		} else {
 			_musicEngine = _imuse;
 		}
@@ -1857,7 +1859,6 @@ void ScummEngine::setupMusic(int midi) {
 			_imuse->property(IMuse::PROP_GAME_ID, _game.id);
 			if (ConfMan.hasKey("tempo"))
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
-			// YM2162 driver can't handle midi->getPercussionChannel(), NULL shouldn't init MT-32/GM/GS
 			if (midi != MDT_NONE) {
 				_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
 				if (MidiDriver::getMusicType(dev) != MT_MT32) // MT-32 Emulation shouldn't be GM/GS initialized

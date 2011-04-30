@@ -25,8 +25,8 @@
 #ifndef TOWNS_MIDI_H
 #define TOWNS_MIDI_H
 
-#include "audio/mididrv.h"
 #include "audio/softsynth/fmtowns_pc98/towns_audio.h"
+#include "audio/mididrv.h"
 
 class MidiChannel_TOWNS;
 class MidiDriver_TOWNS : public MidiDriver, public TownsAudioInterfacePluginDriver {

@@ -574,16 +574,15 @@ void Player_Towns_v1::playCdaTrack(int sound, const uint8 *data, bool skipTrackV
 	_cdaCurrentSound = sound;
 }
 
-Player_Towns_v2::Player_Towns_v2(ScummEngine *vm, IMuse *imuse, Audio::Mixer *mixer, MidiDriver_TOWNS *driver, bool disposeIMuse, bool disposeDriver) : Player_Towns(vm, true), _imuse(imuse), _driver(driver), _imuseDispose(disposeIMuse), _driverDispose(disposeDriver), _sblData(0) {
+Player_Towns_v2::Player_Towns_v2(ScummEngine *vm, Audio::Mixer *mixer, IMuse *imuse, bool disposeIMuse) : Player_Towns(vm, true), _imuse(imuse), _imuseDispose(disposeIMuse), _sblData(0) {
 	_soundOverride = new SoundOvrParameters[_numSoundMax];
 	memset(_soundOverride, 0, _numSoundMax * sizeof(SoundOvrParameters));
-	if (_driver)
-		_intf = _driver->intf();
+	_intf = new TownsAudioInterface(mixer, 0);
 }
 
 Player_Towns_v2::~Player_Towns_v2() {
-	if (_driverDispose)
-		delete _driver;
+	delete _intf;
+	_intf = 0;
 
 	if (_imuseDispose)
 		delete _imuse;
