@@ -1493,13 +1493,6 @@ void Scene5200::Action2::signal() {
 	case 5:
 		_globals->_player.enableControl();
 		remove();
-
-		// HACK: Change scene here. Basically, perform the code that's
-		// in Scene5200::dispatch(), as PlayerMover::proc1() gets stuck
-		// when exiting the scene via the right exit
-		_globals->_stripNum = 5200;
-		_globals->_sceneManager.changeScene(5100);
-
 		break;
 	}
 }
