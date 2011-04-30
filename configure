@@ -605,7 +605,7 @@ get_engine_build_string() {
 	if test $show = yes ; then
 		build_string_func=get_${1}_build_string
 		if ( type $build_string_func | grep function ) 2> /dev/null > /dev/null ; then
-			engine_string=`$build_string_func $1 $engine_build`
+			engine_string=`$build_string_func $1 $engine_build $2`
 		else
 			engine_string=`get_subengines_build_string $1 $engine_build "" $2`
 		fi
@@ -627,7 +627,7 @@ get_subengines_build_string() {
 	for subeng in `get_engine_subengines $parent_engine` ; do
 		subengine_build=`get_engine_build $subeng`
 		subengine_build_default=`get_engine_build_default $subeng`
-		if test $subengine_build = $2 ; then
+		if test \( $subengine_build = $2 -a "$parent_status" != wip \) -o \( "$parent_status" = wip -a $subengine_build != no -a "$subengine_build_default" = no \) ; then
 			subengine_string="$subengine_string [`get_engine_name $subeng`]"
 		else
 			all=no
@@ -656,19 +656,19 @@ get_subengines_build_string() {
 # Engine specific build strings
 get_scumm_build_string() {
 	if test `get_engine_build $1` != no ; then
-		if test $2 != no ; then
+		if test $2 != no -a "$3" != wip ; then
 			base="[v0-v6 games]"
 		fi
-		get_subengines_build_string $1 $2 "$base"
+		get_subengines_build_string $1 $2 "$base" $3
 	fi
 }
 
 get_saga_build_string() {
 	if test `get_engine_build $1` != no ; then
-		if test $2 != no ; then
+		if test $2 != no -a "$3" != wip; then
 			base="[ITE]"
 		fi
-		get_subengines_build_string $1 $2 "$base"
+		get_subengines_build_string $1 $2 "$base" $3
 	fi
 }
 
