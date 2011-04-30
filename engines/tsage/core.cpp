@@ -3310,7 +3310,7 @@ void WalkRegions::loadRevised() {
  */
 int WalkRegions::indexOf(const Common::Point &pt, const Common::List<int> *indexList) {
 	for (uint idx = 0; idx < _regionList.size(); ++idx) {
-		if ((!indexList || contains(*indexList, int(idx + 1))) && _regionList[idx].contains(pt))
+		if ((!indexList || !contains(*indexList, int(idx + 1))) && _regionList[idx].contains(pt))
 			return idx + 1;
 	}
 
