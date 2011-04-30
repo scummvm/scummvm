@@ -557,7 +557,6 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 		} while (routeRegions[++idx] != destRegion);
 
 		tempList[idx] = 1;
-		idx = 0;
 		for (int listIndex = 1; listIndex <= endIndex; ++listIndex) {
 			int var10 = tempList[listIndex];
 			int var12 = tempList[listIndex + 1];

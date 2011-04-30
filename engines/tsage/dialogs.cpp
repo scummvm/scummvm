@@ -487,7 +487,7 @@ void InventoryDialog::execute() {
 		if (!event.handled && event.eventType == EVENT_KEYPRESS) {
 			if ((event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
 				// Exit the dialog
-				hiliteObj = &_btnOk;
+				//hiliteObj = &_btnOk;
 				break;
 			}
 		}
