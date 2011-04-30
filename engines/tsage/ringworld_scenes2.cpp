@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "tsage/ringworld_scenes2.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
@@ -112,20 +113,22 @@ void Scene1000::Action3::signal() {
 		setDelay(240);
 		break;
 	case 5: {
-		// WORKAROUND: At this point, the original used the presence of a file called 'Intro.txt'
-		// to determine whether the introduction has been played the first time the game was started.
-		// In ScummVM, we don't like creating any files that aren't explicitly savegames, so the
-		// game startup will always show the Start Play / Introduction buttons, even when the game
-		// is played for the first time
-
-		// Prompt user for whether to start play or watch introduction
-		_globals->_player.enableControl();
-
-		if (MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING) == 0) {
-			_actionIndex = 20;
-			_globals->_soundHandler.proc1(this);
-		} else {
+		const char *SEEN_INTRO = "seen_intro";
+		if (!ConfMan.hasKey(SEEN_INTRO) || !ConfMan.getBool(SEEN_INTRO)) {
+			// First time being played, so show the introduction
+			ConfMan.setBool(SEEN_INTRO, true);
+			ConfMan.flushToDisk();
 			setDelay(1);
+		} else {
+			// Prompt user for whether to start play or watch introduction
+			_globals->_player.enableControl();
+
+			if (MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING) == 0) {
+				_actionIndex = 20;
+				_globals->_soundHandler.proc1(this);
+			} else {
+				setDelay(1);
+			}
 		}
 
 		_globals->_player.disableControl();
