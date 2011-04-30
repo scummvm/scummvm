@@ -41,6 +41,7 @@ public:
 	NamedHotspotMult() : SceneHotspot() {}
 
 	virtual Common::String getClassName() { return "NamedHotspotMult"; }
+	virtual void synchronise(Serialiser &s);
 };
 
 class SceneObject7700 : public SceneObjectExt {

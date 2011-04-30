@@ -31,6 +31,12 @@
 
 namespace tSage {
 
+void NamedHotspotMult::synchronise(Serialiser &s) {
+	SceneHotspot::synchronise(s);
+	s.syncAsSint16LE(_useLineNum);
+	s.syncAsSint16LE(_lookLineNum);
+}
+
 /*--------------------------------------------------------------------------
  * Scene 7000
  *
@@ -2049,10 +2055,10 @@ void Scene7700::Object8::doAction(int action) {
 			scene->_gfxButton.draw();
 			scene->_gfxButton._bounds.expandPanes();
 
-			_globals->_sceneItems.push_front(&scene->_object10);
+			_globals->_sceneItems.push_front(&scene->_sceneItem10);
 			_globals->_sceneItems.push_front(&scene->_object9);
 			_globals->_player._canWalk = false;
-		} else {
+		} else if (_globals->getFlag(78)) {
 			scene->_object15.postInit();
 			scene->_object15.setVisage(7701);
 			scene->_object15.setPosition(Common::Point(140, 165), 0);
@@ -2068,11 +2074,13 @@ void Scene7700::Object8::doAction(int action) {
 			scene->_object19.setStrip(6);
 			scene->_object19.setPosition(Common::Point(140, 192), 0);
 
-			_globals->_sceneItems.push_front(&scene->_object10);
-			_globals->_sceneItems.push_front(&scene->_object8);
-			_globals->_sceneItems.push_front(&scene->_object9);
+			_globals->_sceneItems.push_front(&scene->_sceneItem10);
+			_globals->_sceneItems.push_front(&scene->_sceneHotspot8);
+			_globals->_sceneItems.push_front(&scene->_sceneHotspot9);
 			_globals->_events.setCursor(CURSOR_WALK);
 			_globals->_player._canWalk = false;
+		} else {
+			scene->setAction(&scene->_sequenceManager, scene, 7715, NULL);
 		}
 	} else {
 		SceneHotspot::doAction(action);
@@ -2242,8 +2250,8 @@ void Scene7700::process(Event &event) {
 	if (contains<SceneItem *>(_globals->_sceneItems, &_sceneItem10)) {
 		if (_gfxButton.process(event)) {
 			_sceneItem10.remove();
-			_sceneHotspot15.remove();
-			_sceneHotspot9.remove();
+			_object15.remove();
+			_object9.remove();
 			if (_globals->_sceneObjects->contains(&_object10))
 				_object10.remove();
 			if (_globals->_sceneObjects->contains(&_object14))
