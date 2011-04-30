@@ -968,7 +968,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_DROPLANGUAGE | ADGF_CD,
+			ADGF_DROPLANGUAGE | ADGF_CD | ADGF_WIP,
 			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
 		},
 		LOL_CD_FLAGS
@@ -985,7 +985,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_DROPLANGUAGE | ADGF_CD,
+			ADGF_DROPLANGUAGE | ADGF_CD | ADGF_WIP,
 			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
 		},
 		LOL_CD_FLAGS
@@ -1002,7 +1002,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformPC,
-			ADGF_DROPLANGUAGE | ADGF_CD,
+			ADGF_DROPLANGUAGE | ADGF_CD | ADGF_WIP,
 			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
 		},
 		LOL_CD_FLAGS
@@ -1019,7 +1019,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_DROPLANGUAGE | ADGF_CD,
+			ADGF_DROPLANGUAGE | ADGF_CD | ADGF_WIP,
 			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
 		},
 		LOL_CD_FLAGS
@@ -1036,7 +1036,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_DROPLANGUAGE | ADGF_CD,
+			ADGF_DROPLANGUAGE | ADGF_CD | ADGF_WIP,
 			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
 		},
 		LOL_CD_FLAGS
@@ -1053,7 +1053,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformPC,
-			ADGF_DROPLANGUAGE | ADGF_CD,
+			ADGF_DROPLANGUAGE | ADGF_CD | ADGF_WIP,
 			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
 		},
 		LOL_CD_FLAGS
@@ -1069,7 +1069,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
 		},
 		LOL_FLOPPY_CMP_FLAGS
@@ -1085,7 +1085,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
 		},
 		LOL_FLOPPY_CMP_FLAGS
@@ -1101,7 +1101,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
 		},
 		LOL_FLOPPY_CMP_FLAGS
@@ -1118,7 +1118,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
 		},
 		LOL_FLOPPY_FLAGS
@@ -1135,7 +1135,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
 		},
 		LOL_FLOPPY_FLAGS
@@ -1152,7 +1152,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
 		},
 		LOL_FLOPPY_FLAGS
@@ -1169,7 +1169,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
 		},
 		LOL_FLOPPY_FLAGS
@@ -1186,7 +1186,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::JA_JPN,
 			Common::kPlatformPC98,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NOSPEECH | Common::GUIO_MIDIPC98
 		},
 		LOL_PC98_SJIS_FLAGS
@@ -1203,7 +1203,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_WIP,
 			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
 		},
 		LOL_DEMO_FLAGS
@@ -1219,7 +1219,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_WIP,
 			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
 		},
 		LOL_KYRA2_DEMO_FLAGS
