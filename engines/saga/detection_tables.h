@@ -824,7 +824,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			GUIO_NONE
 		},
 		GID_DINO,
@@ -854,7 +854,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			GUIO_NONE
 		},
 		GID_FTA2,
