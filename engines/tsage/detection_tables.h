@@ -35,7 +35,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ring.rlb", "466f0e6492d9d0f34d35c5cd088de90f", 37847618),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_Ringworld,
@@ -49,7 +49,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ring.rlb", "0a25b4ee58d44a54425c0b47e5096bbc", 37847618),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_Ringworld,
@@ -63,7 +63,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ring.rlb", "61f78f68a56832ae95fe06748c403234", 8438770),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_Ringworld,
@@ -78,7 +78,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("blue.rlb", "467da43c848cc0e800b547c59d84ccb1", 10032614),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_BlueForce,
