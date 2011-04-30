@@ -1776,7 +1776,7 @@ void Scene7700::SceneHotspot3::doAction(int action) {
 		} else if (RING_INVENTORY._key._sceneNumber == 7700) {
 			_globals->_player.disableControl();
 			scene->_sceneMode = 7705;
-			scene->setAction(&scene->_sequenceManager, scene, 7705, &_globals->_player, 0);
+			scene->setAction(&scene->_sequenceManager, scene, 7705, &_globals->_player, NULL);
 		}
 		break;
 	default:
@@ -2053,7 +2053,6 @@ void Scene7700::Object8::doAction(int action) {
 			scene->_gfxButton.setText(EXIT_MSG);
 			scene->_gfxButton._bounds.center(140, 189);
 			scene->_gfxButton.draw();
-			scene->_gfxButton._bounds.expandPanes();
 
 			_globals->_sceneItems.push_front(&scene->_sceneItem10);
 			_globals->_sceneItems.push_front(&scene->_object9);
@@ -2126,6 +2125,8 @@ void Scene7700::Object10::doAction(int action) {
 	if (action == CURSOR_LOOK) {
 		SceneItem::display(7700, 50, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	} else if (action == CURSOR_USE) {
+		_globals->_player._canWalk = true;
+		RING_INVENTORY._translator._sceneNumber = 1;
 		_globals->setFlag(80);
 		scene->_sceneItem10.remove();
 		scene->_gfxButton._bounds.expandPanes();
@@ -2224,6 +2225,9 @@ void Scene7700::signal() {
 		_globals->_player.enableControl();
 		break;
 	case 7705:
+		RING_INVENTORY._key._sceneNumber = 1;
+		_globals->_player.enableControl();
+		break;
 	case 7708:
 		RING_INVENTORY._paper._sceneNumber = 1;
 		_globals->_player.enableControl();
