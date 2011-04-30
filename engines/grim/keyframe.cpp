@@ -241,7 +241,7 @@ void KeyframeAnim::KeyframeNode::animate(Model::HierNode &node, float frame, int
 	if (roll > 180)
 		roll -= 360;
 
-	if (priority > node._priority) {
+	if (priority > node._priority || _entries[low]._flags >= node._flags) {
 		node._priority = priority;
 		node._totalWeight = 1;
 		node._animPos = node._animPos + (pos - node._animPos) * fade;
