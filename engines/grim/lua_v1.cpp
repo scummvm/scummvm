@@ -4562,7 +4562,7 @@ int single_dofile(const char *filename) {
 
 	int result = lua_dobuffer(data, size, const_cast<char *>(filename));
 	delete f;
-	delete data;
+	delete[] data;
 
 	return result;
 }
