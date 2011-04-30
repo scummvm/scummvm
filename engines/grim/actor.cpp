@@ -476,7 +476,7 @@ Graphics::Vector3d Actor::pos() const {
 		return _pos;
 }
 
-Graphics::Vector3d Actor::destPos() const {
+Graphics::Vector3d Actor::getDestPos() const {
 	if (_walking)
 		return _destPos;
 	else
