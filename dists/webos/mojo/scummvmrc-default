@@ -17,11 +17,7 @@ aspect_ratio=false
 speech_mute=false
 enable_gs=false
 browser_lastpath=/media/internal/ScummVM/Games
-themepath=/media/internal/ScummVM/Themes
 savepath=/media/internal/ScummVM/Saves
-extrapath=/media/internal/ScummVM/Extras
-pluginspath=/media/internal/ScummVM/Plugins
-vkeybdpath=/media/cryptofs/apps/usr/palm/applications/org.scummvm.scummvm/share/scummvm
 
 [keymapper]
 keymap_global_MEN=FORWARD
