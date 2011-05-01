@@ -47,6 +47,9 @@ LuaFile *g_stdin;
 LuaFile *g_stdout;
 LuaFile *g_stderr;
 
+static int32 s_id = 0;
+static Common::HashMap<int32, LuaFile *> _files;
+
 LuaFile::LuaFile() : _in(NULL), _out(NULL), _stdin(false), _stdout(false), _stderr(false) {
 }
 
@@ -101,48 +104,6 @@ void LuaFile::seek(int32 pos, int whence) {
 		assert(0);
 }
 
-void LuaFile::saveState(SaveGame *state) const {
-	state->writeString(_name);
-	state->writeString(_filename);
-
-	if (_in) {
-		state->writeLESint32(1);
-	} else {
-		state->writeLESint32(0);
-	}
-	if (_out) {
-		state->writeLESint32(1);
-	} else {
-		state->writeLESint32(0);
-	}
-
-	state->writeLESint32(_stdin);
-	state->writeLESint32(_stdout);
-	state->writeLESint32(_stderr);
-}
-
-ObjectPtr<Object> LuaFile::restoreObject(SaveGame *state) {
-	LuaFile *l = new LuaFile();
-
-	l->_name = state->readString();
-	l->_filename = state->readString();
-
-	if (state->readLESint32()) {
-		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-		l->_in = saveFileMan->openForLoading(l->_filename.c_str());
-	}
-	if (state->readLESint32()) {
-		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-		l->_out = saveFileMan->openForSaving(l->_filename.c_str());
-	}
-
-	l->_stdin = state->readLESint32();
-	l->_stdout = state->readLESint32();
-	l->_stderr = state->readLESint32();
-
-	return ObjectPtr<Object>(l);
-}
-
 static int32 gettag(int32 i) {
 	return (int32)lua_getnumber(lua_getparam(i));
 }
@@ -169,14 +130,14 @@ static LuaFile *getfile(const char *name) {
 	lua_Object f = lua_getglobal(name);
 	if (!ishandler(f))
 		luaL_verror("global variable `%.50s' is not a file handle", name);
-	return (LuaFile *)lua_getuserdata(f);
+	return _files[(int32)lua_getuserdata(f)];
 }
 
 static LuaFile *getfileparam(const char *name, int32 *arg) {
 	lua_Object f = lua_getparam(*arg);
 	if (ishandler(f)) {
 		(*arg)++;
-		return (LuaFile *)lua_getuserdata(f);
+		return _files[(int32)lua_getuserdata(f)];
 	} else
 		return getfile(name);
 }
@@ -188,29 +149,37 @@ static void closefile(const char *name) {
 	lua_settag(gettag(CLOSEDTAG));
 }
 
-static void setfile(LuaFile *f, const char *name, int32 tag) {
-	lua_pushusertag(f, tag);
+static void setfile(int32 id, const char *name, int32 tag) {
+	lua_pushusertag((void *)id, tag);
 	lua_setglobal(name);
 }
 
-static void setreturn(LuaFile *f, const char *name) {
+static void setreturn(int32 id, const char *name) {
 	int32 tag = gettag(IOTAG);
-	setfile(f, name, tag);
-	lua_pushusertag(f, tag);
+	setfile(id, name, tag);
+	lua_pushusertag((void *)id, tag);
+}
+
+static int32 addfile(LuaFile *f) {
+	++s_id;
+	_files[s_id] = f;
+
+	return s_id;
 }
 
 static void io_readfrom() {
 	lua_Object f = lua_getparam(FIRSTARG);
 	if (f == LUA_NOOBJECT) {
 		closefile(FINPUT);
-		setreturn(g_fin, FINPUT);
+		setreturn(1, FINPUT);
 	} else if (lua_tag(f) == gettag(IOTAG)) {
-		LuaFile *current = (LuaFile *)lua_getuserdata(f);
+		int32 id = (int32)lua_getuserdata(f);
+		LuaFile *current = _files[id];
 		if (!current) {
 			pushresult(0);
 			return;
 		}
-		setreturn(current, FINPUT);
+		setreturn(id, FINPUT);
 	} else {
 		const char *s = luaL_check_string(FIRSTARG);
 		LuaFile *current;
@@ -227,9 +196,9 @@ static void io_readfrom() {
 		if (!current) {
 			delete current;
 			pushresult(0);
-			return;
+		} else {
+			setreturn(addfile(current), FINPUT);
 		}
-		setreturn(current, FINPUT);
 	}
 }
 
@@ -237,14 +206,15 @@ static void io_writeto() {
 	lua_Object f = lua_getparam(FIRSTARG);
 	if (f == LUA_NOOBJECT) {
 		closefile(FOUTPUT);
-		setreturn(g_fout, FOUTPUT);
+		setreturn(2, FOUTPUT);
 	} else if (lua_tag(f) == gettag(IOTAG)) {
-		LuaFile *current = (LuaFile *)lua_getuserdata(f);
+		int32 id = (int32)lua_getuserdata(f);
+		LuaFile *current = _files[id];
 		if (!current->isOpen()) {
 			pushresult(0);
 			return;
 		}
-		setreturn(current, FOUTPUT);
+		setreturn(id, FOUTPUT);
 	} else {
 		const char *s = luaL_check_string(FIRSTARG);
 		if (Common::String(s).hasSuffix("\\bino.txt")) {
@@ -262,7 +232,7 @@ static void io_writeto() {
 		current = new LuaFile();
 		current->_out = outFile;
 		current->_filename = s;
-		setreturn(current, FOUTPUT);
+		setreturn(addfile(current), FOUTPUT);
 	}
 }
 
@@ -289,7 +259,7 @@ static void io_appendto() {
 		LuaFile *current = new LuaFile();
 		current->_out = outFile;
 		current->_filename = s;
-		setreturn(current, FOUTPUT);
+		setreturn(addfile(current), FOUTPUT);
 	}
 	delete[] buf;
 }
@@ -458,23 +428,23 @@ static void openwithtags() {
 
 	g_fin = new LuaFile();
 	g_fin->_stdin = true;
-	setfile(g_fin, FINPUT, iotag);
+	setfile(addfile(g_fin), FINPUT, iotag);
 
 	g_fout = new LuaFile();
 	g_fout->_stdout = true;
-	setfile(g_fout, FOUTPUT, iotag);
+	setfile(addfile(g_fout), FOUTPUT, iotag);
 
 	g_stdin = new LuaFile();
 	g_stdin->_stdin = true;
-	setfile(g_stdin, "_STDIN", iotag);
+	setfile(addfile(g_stdin), "_STDIN", iotag);
 
 	g_stdout = new LuaFile();
 	g_stdout->_stdout = true;
-	setfile(g_stdout, "_STDOUT", iotag);
+	setfile(addfile(g_stdout), "_STDOUT", iotag);
 
 	g_stderr = new LuaFile();
 	g_stderr->_stderr = true;
-	setfile(g_stderr, "_STDERR", iotag);
+	setfile(addfile(g_stderr), "_STDERR", iotag);
 }
 
 void lua_iolibopen() {

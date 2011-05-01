@@ -33,7 +33,6 @@
 namespace Grim {
 
 class Material : public Object {
-	GRIM_OBJECT(Material)
 public:
 	Material() { _width = 0; }
 	// Load a texture from the given data.

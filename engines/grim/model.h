@@ -35,7 +35,6 @@ namespace Grim {
 class TextSplitter;
 
 class Model : public Object {
-	GRIM_OBJECT(Model)
 public:
 	// Construct a 3D model from the given data.
 	Model(const char *filename, const char *data, int len, CMap *cmap);

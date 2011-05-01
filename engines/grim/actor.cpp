@@ -36,12 +36,10 @@
 
 namespace Grim {
 
-int Actor::s_id = 0;
-
 int g_winX1, g_winY1, g_winX2, g_winY2;
 
 Actor::Actor(const char *actorName) :
-		Object(), _name(actorName), _setName(""), _talkColor(255, 255, 255), _pos(0, 0, 0),
+		Object(), _name(actorName), _setName(""), _talkColor(NULL), _pos(0, 0, 0),
 		// Some actors don't set walk and turn rates, so we default the
 		// _turnRate so Doug at the cat races can turn and we set the
 		// _walkRate so Glottis at the demon beaver entrance can walk and
@@ -80,9 +78,6 @@ Actor::Actor(const char *actorName) :
 		_talkChore[i] = -1;
 	}
 
-	++s_id;
-	_id = s_id;
-
 	g_grim->registerActor(this);
 }
 
@@ -119,7 +114,11 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeString(_name);
 	savedState->writeString(_setName);
 
-	savedState->writeColor(_talkColor);
+	if (_talkColor) {
+		savedState->writeLEUint32(_talkColor->id());
+	} else {
+		savedState->writeLEUint32(0);
+	}
 
 	savedState->writeVector3d(_pos);
 
@@ -132,7 +131,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeFloat(_reflectionAngle);
 	savedState->writeLESint32(_visible);
 	savedState->writeLESint32(_lookingMode),
-	//TODO: save _scale
+	savedState->writeLESint32(_scale);
 
 	savedState->writeString(_talkSoundName);
 
@@ -249,7 +248,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_activeShadowSlot);
 
 	if (_sayLineText) {
-		savedState->writeLEUint32(g_grim->textObjectId(_sayLineText));
+		savedState->writeLEUint32(_sayLineText->id());
 	} else {
 		savedState->writeLEUint32(0);
 	}
@@ -278,7 +277,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_name = savedState->readString();
 	_setName = savedState->readString();
 
-	_talkColor          = savedState->readColor();
+	_talkColor = g_grim->color(savedState->readLEUint32());
 
 	_pos                = savedState->readVector3d();
 	_pitch              = savedState->readFloat();
@@ -290,6 +289,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_reflectionAngle    = savedState->readFloat();
 	_visible            = savedState->readLESint32();
 	_lookingMode        = savedState->readLESint32();
+	_scale              = savedState->readLESint32();
 
 	_talkSoundName 		= savedState->readString();
 
@@ -884,7 +884,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	_sayLineText = new TextObject(false, true);
 	_sayLineText->setDefaults(&g_grim->_sayLineDefaults);
 	_sayLineText->setText(msg);
-	_sayLineText->setFGColor(&_talkColor);
+	_sayLineText->setFGColor(_talkColor);
 	if (g_grim->getMode() == ENGINE_MODE_SMUSH) {
 		_sayLineText->setX(640 / 2);
 		_sayLineText->setY(456);

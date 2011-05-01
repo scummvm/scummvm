@@ -32,7 +32,6 @@
 namespace Grim {
 
 class KeyframeAnim : public Object {
-	GRIM_OBJECT(KeyFrameAnim)
 public:
 	KeyframeAnim(const char *filename, const char *data, int len);
 	~KeyframeAnim();

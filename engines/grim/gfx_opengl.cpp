@@ -1051,7 +1051,7 @@ void GfxOpenGL::drawRectangle(PrimitiveObject *primitive) {
 	int x2 = primitive->getP2().x;
 	int y2 = primitive->getP2().y;
 
-	Color color = primitive->getColor();
+	const Color &color = *primitive->getColor();
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -1090,7 +1090,7 @@ void GfxOpenGL::drawLine(PrimitiveObject *primitive) {
 	int x2 = primitive->getP2().x;
 	int y2 = primitive->getP2().y;
 
-	Color color = primitive->getColor();
+	const Color &color = *primitive->getColor();
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -1126,7 +1126,7 @@ void GfxOpenGL::drawPolygon(PrimitiveObject *primitive) {
 	int x4 = primitive->getP4().x;
 	int y4 = primitive->getP4().y;
 
-	Color color = primitive->getColor();
+	const Color &color = *primitive->getColor();
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();

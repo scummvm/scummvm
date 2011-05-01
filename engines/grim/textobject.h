@@ -34,18 +34,17 @@ namespace Grim {
 class SaveGame;
 
 struct TextObjectDefaults {
-	Color fgColor;
+	Color *fgColor;
 	int x, y;
 	int width, height;
 	int justify;
 	bool disabled;
-	FontPtr font;
+	Font *font;
 };
 
 #define TEXT_NULL   ' '
 
 class TextObject : public Object {
-	GRIM_OBJECT(TextObject)
 public:
 	TextObject(bool blastDraw, bool isSpeech = false);
 	TextObject();
@@ -93,21 +92,18 @@ public:
 
 protected:
 	bool _created;
-	Color _fgColor;
+	Color *_fgColor;
 	int _x, _y;
 	int _width, _height;
 	int _justify, _numberLines;
 	bool _disabled;
 	bool _blastDraw;
 	bool _isSpeech;
-	FontPtr _font;
+	Font *_font;
 	char _textID[256];
 	uint8 *_textBitmap;
 	int *_bitmapWidthPtr;
 	GfxBase::TextObjectHandle **_textObjectHandle;
-
-	int _id;
-	static int s_id;
 
 	friend class GrimEngine;
 };

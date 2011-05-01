@@ -32,7 +32,6 @@
 namespace Grim {
 
 class Bitmap : public Object {
-	GRIM_OBJECT(Bitmap)
 public:
 	// Construct a bitmap from the given data.
 	Bitmap(const char *filename, const char *data, int len);

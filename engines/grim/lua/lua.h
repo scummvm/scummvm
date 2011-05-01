@@ -9,7 +9,6 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "engines/grim/object.h"
 
 #ifndef GRIM_LUA_H
 #define GRIM_LUA_H
@@ -42,8 +41,7 @@ struct PointerId {
 PointerId makeIdFromPointer(void *ptr);
 void *makePointerFromId(PointerId ptr);
 
-class LuaFile : public Object {
-	GRIM_OBJECT(LuaFile)
+class LuaFile {
 public:
 	Common::String _name;
 	Common::String _filename;
@@ -54,9 +52,6 @@ public:
 public:
 	LuaFile();
 	~LuaFile();
-
-	void saveState(SaveGame *state) const;
-	static ObjectPtr<Object> restoreObject(SaveGame *state);
 
 	void close();
 	bool isOpen() const;

@@ -74,6 +74,10 @@ protected:
 
 public:
 
+	typedef Common::HashMap<int32, Bitmap *> BitmapListType;
+	typedef Common::HashMap<int32, Font *> FontListType;
+	typedef Common::HashMap<int32, Color *> ColorListType;
+
 	GrimEngine(OSystem *syst, int gameFlags, GrimGameType gameType);
 	virtual ~GrimEngine();
 
@@ -149,18 +153,18 @@ public:
 
 	Bitmap *registerBitmap(const char *filename, const char *data, int len) {
 		Bitmap *b = new Bitmap(filename, data, len);
-		_bitmaps.push_back(b);
+		registerBitmap(b);
 		return b;
 	}
 	Bitmap *registerBitmap(const char *data, int width, int height, const char *filename) {
 		Bitmap *b = new Bitmap(data, width, height, 16, filename);
-		_bitmaps.push_back(b);
+		registerBitmap(b);
 		return b;
 	}
-	void registerBitmap(Bitmap *bitmap) {
-        _bitmaps.push_back(bitmap);
-	}
-	void killBitmap(Bitmap *b) { _bitmaps.remove(b); }
+	void registerBitmap(Bitmap *bitmap);
+	void killBitmap(Bitmap *b);
+	void killBitmaps();
+	Bitmap *bitmap(int32 id) const;
 
 	// Actor registration
 	typedef Common::HashMap<int, Actor *> ActorListType;
@@ -172,7 +176,6 @@ public:
 	}
 	void registerActor(Actor *a);
 	void killActor(Actor *a);
-	int actorId(Actor *a) const;
 	Actor *actor(int id) const;
 
 	void setSelectedActor(Actor *a) { _selectedActor = a; }
@@ -180,7 +183,7 @@ public:
 	void killActors();
 
 	// Text Object Registration
-	typedef Common::HashMap<int, TextObject *> TextListType;
+	typedef Common::HashMap<int32, TextObject *> TextListType;
 	TextListType::const_iterator textsBegin() const {
 		return _textObjects.begin();
 	}
@@ -190,7 +193,6 @@ public:
 	void registerTextObject(TextObject *a);
 	void killTextObject(TextObject *a);
 	void killTextObjects();
-	int textObjectId(TextObject *t) const;
 	TextObject *textObject(int id) const;
 
 	// Primitives Object Registration
@@ -205,14 +207,23 @@ public:
 	void registerPrimitiveObject(PrimitiveObject *a);
 	void killPrimitiveObject(PrimitiveObject *a);
 	void killPrimitiveObjects();
-	int primitiveObjectId(PrimitiveObject *p) const;
 	PrimitiveObject *primitiveObject(int id) const;
 
+	typedef Common::HashMap<int32, ObjectState *> StateListType;
 	void registerObjectState(ObjectState *o);
 	void killObjectState(ObjectState *o);
 	void killObjectStates();
-	int objectStateId(ObjectState *o) const;
 	ObjectState *objectState(int id) const;
+
+	void registerFont(Font *f);
+	void killFont(Font *f);
+	void killFonts();
+	Font *font(int32 id) const;
+
+	void registerColor(Color *c);
+	void killColor(Color *c);
+	void killColors();
+	Color *color(int32 id) const;
 
 	void savegameSave();
 	void saveActors(SaveGame *savedState);
@@ -220,6 +231,9 @@ public:
 	void savePrimitives(SaveGame *savedState);
 	void saveScenes(SaveGame *savedState);
 	void saveObjectStates(SaveGame *savedState);
+	void saveBitmaps(SaveGame *savedState);
+	void saveFonts(SaveGame *savedState);
+	void saveColors(SaveGame *savedState);
 
 	void savegameRestore();
 	void restoreActors(SaveGame *savedState);
@@ -227,6 +241,9 @@ public:
 	void restorePrimitives(SaveGame *savedState);
 	void restoreScenes(SaveGame *savedState);
 	void restoreObjectStates(SaveGame *savedState);
+	void restoreBitmaps(SaveGame *savedState);
+	void restoreFonts(SaveGame *savedState);
+	void restoreColors(SaveGame *savedState);
 
 	void savegameCallback();
 	static void savegameReadStream(void *data, int32 size);
@@ -280,13 +297,16 @@ private:
 	bool *_controlsEnabled;
 	bool *_controlsState;
 
+	Actor *_selectedActor;
+
 	SceneListType _scenes;
 	ActorListType _actors;
-	Actor *_selectedActor;
 	TextListType _textObjects;
 	PrimitiveListType _primitiveObjects;
-	Common::List<Bitmap *> _bitmaps;
-	Common::HashMap<int, ObjectState *> _objectStates;
+	BitmapListType _bitmaps;
+	StateListType _objectStates;
+	FontListType _fonts;
+	ColorListType _colors;
 
 	int _gameFlags;
 	GrimGameType _gameType;

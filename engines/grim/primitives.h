@@ -35,7 +35,6 @@ namespace Grim {
 class SaveGame;
 
 class PrimitiveObject : public Object {
-	GRIM_OBJECT(PrimitiveObject)
 public:
 	PrimitiveObject();
 	~PrimitiveObject();
@@ -47,17 +46,17 @@ public:
 		POLYGON
 	} PrimType;
 
-	void createRectangle(Common::Point p1, Common::Point p2, Color color, bool filled);
+	void createRectangle(Common::Point p1, Common::Point p2, Color *color, bool filled);
 	void createBitmap(Bitmap *bitmap, Common::Point p, bool transparent);
-	void createLine(Common::Point p1, Common::Point p2, Color color);
-	void createPolygon(Common::Point p1, Common::Point p2, Common::Point p3, Common::Point p4, Color color);
+	void createLine(Common::Point p1, Common::Point p2, Color *color);
+	void createPolygon(Common::Point p1, Common::Point p2, Common::Point p3, Common::Point p4, Color *color);
 	Common::Point getP1() { return _p1; }
 	Common::Point getP2() { return _p2; }
 	Common::Point getP3() { return _p3; }
 	Common::Point getP4() { return _p4; }
 	void setPos(int x, int y);
-	void setColor(Color color) { _color = color; }
-	Color getColor() { return _color; }
+	void setColor(Color *color) { _color = color; }
+	Color *getColor() { return _color; }
 	bool isFilled() { return _filled; }
 	void draw();
 	bool isBitmap() { return _type == BITMAP; }
@@ -67,13 +66,10 @@ public:
 
 private:
 	Common::Point _p1, _p2, _p3, _p4;
-	Color _color;
+	Color *_color;
 	bool _filled;
 	int _type;
 	BitmapPtr _bitmap;
-
-	int _id;
-	static int s_id;
 
 	friend class GrimEngine;
 };

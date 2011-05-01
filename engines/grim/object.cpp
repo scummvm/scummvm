@@ -30,30 +30,21 @@
 #include "engines/grim/object.h"
 
 
-DECLARE_SINGLETON(Grim::ObjectManager);
-
 namespace Grim {
 
-Object::Object() : _refCount(0) {
+int32 Object::s_id = 0;
 
+Object::Object() :
+	_refCount(0) {
+
+	++s_id;
+	_id = s_id;
 }
 
 Object::~Object() {
-	if (lua_isopen()) {
-		luaO_resetObject(this);	//after climbing the ties rope an ObjectState gets deleted but not removed
-	}							//from the lua's userdata list, resulting in a dangling pointer
-								//that breaks the saving. We need to reset to NULL the pointer manually.
 	for (Common::List<Pointer *>::iterator i = _pointers.begin(); i != _pointers.end(); ++i) {
 		(*i)->resetPointer();
 	}
-}
-
-void Object::saveState(SaveGame *) const {
-
-}
-
-bool Object::restoreState(SaveGame *) {
-	return false;
 }
 
 void Object::reference() {
@@ -71,31 +62,8 @@ void Object::dereference() {
 	}
 }
 
-
-void ObjectManager::saveObject(SaveGame *state, Object *object) {
-	const char *str = object->typeName();
-	int32 len = strlen(str);
-
-	state->writeLEUint32(len);
-	state->write(str, len);
-
-	object->saveState(state);
-}
-
-ObjectPtr<Object> ObjectManager::restoreObject(SaveGame *state) {
-	const char *str = state->readCharString();
-
-	ObjectPtr<Object> ptr;
-	Common::String type = str;
-	delete[] str;
-	if (_creators.contains(type)) {
-		CreatorFunc func = _creators.getVal(type);
-		ptr = (func)(state);
-	} else {
-		error("Type name \"%s\" not registered", type.c_str());
-	}
-
-	return ptr;
+int32 Object::id() {
+	return _id;
 }
 
 }

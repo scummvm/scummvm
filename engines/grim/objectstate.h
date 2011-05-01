@@ -34,7 +34,6 @@ namespace Grim {
 class SaveGame;
 
 class ObjectState : public Object {
-	GRIM_OBJECT(ObjectState)
 public:
 	enum Position {
 		OBJSTATE_BACKGROUND = 0,
@@ -83,9 +82,6 @@ private:
 	int _setupID;
 	Position _pos;
 	BitmapPtr _bitmap, _zbitmap;
-
-	int _id;
-	static int s_id;
 
 	friend class GrimEngine;
 };

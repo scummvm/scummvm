@@ -45,18 +45,18 @@ public:
 	Object();
 	virtual ~Object();
 
-	virtual const char *typeName() const { return ""; }
-
-	virtual void saveState(SaveGame *state) const;
-	virtual bool restoreState(SaveGame *state);
-
 	void reference();
 	void dereference();
+
+	int32 id();
 
 private:
 	int _refCount;
 	Common::List<Pointer *> _pointers;
+	int32 _id;
+	static int32 s_id;
 
+	friend class GrimEngine;
 	friend class Pointer;
 };
 
@@ -171,44 +171,6 @@ private:
 	T *_obj;
 };
 
-class ObjectManager : public Common::Singleton<ObjectManager> {
-public:
-	void saveObject(SaveGame *state, Object *object);
-	ObjectPtr<Object> restoreObject(SaveGame *state);
-
-	template<class T>
-	bool registerType() {
-		Common::String type = T::staticTypeName();
-		if (_creators.contains(type)) {
-			warning("Type name %s already registered", type.c_str());
-			return false;
-		}
-		_creators.setVal(type, T::restoreObject);
-
-		return true;
-	}
-
-	void clearTypes() {
-		_creators.clear();
-	}
-
-private:
-	typedef ObjectPtr<Object> (*CreatorFunc)(SaveGame *);
-	Common::HashMap<Common::String, CreatorFunc> _creators;
-
-};
-
-} // end of namespace Grim
-
-#define ObjectMan (::Grim::ObjectManager::instance())
-
-#define GRIM_OBJECT(class)						\
-	public:										\
-		static const char *staticTypeName() {	\
-			return #class;						\
-		}										\
-		const char *typeName() const {			\
-			return staticTypeName();			\
-		}
+}
 
 #endif

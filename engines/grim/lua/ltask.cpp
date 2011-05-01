@@ -6,6 +6,8 @@
 #include "engines/grim/lua/ldo.h"
 #include "engines/grim/lua/lvm.h"
 
+#include "common/textconsole.h"
+
 namespace Grim {
 
 void lua_taskinit(lua_Task *task, lua_Task *next, StkId tbase, int results) {

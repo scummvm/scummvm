@@ -28,19 +28,16 @@
 #include "engines/grim/savegame.h"
 #include "engines/grim/lua.h"
 #include "engines/grim/colormap.h"
+#include "engines/grim/grim.h"
 
 namespace Grim {
 
-int PrimitiveObject::s_id = 0;
-
 PrimitiveObject::PrimitiveObject() :
 	Object() {
-// 	memset(&_color, 0, sizeof(Color));
 	_filled = false;
 	_type = 0;
 	_bitmap = NULL;
-	++s_id;
-	_id = s_id;
+	_color = NULL;
 }
 
 PrimitiveObject::~PrimitiveObject() {
@@ -51,11 +48,16 @@ PrimitiveObject::~PrimitiveObject() {
 void PrimitiveObject::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_type);
 
-	savedState->writeColor(_color);
+	savedState->writeLEUint32(_color->id());
 
 	savedState->writeLEUint32(_filled);
 
-	savedState->writeCharString(_bitmap->filename());
+	if (_bitmap) {
+		savedState->writeLEUint32(1);
+		savedState->writeCharString(_bitmap->filename());
+	} else {
+		savedState->writeLEUint32(0);
+	}
 
 	savedState->writeLEUint32(_p1.x);
 	savedState->writeLEUint32(_p1.y);
@@ -70,13 +72,17 @@ void PrimitiveObject::saveState(SaveGame *savedState) const {
 bool PrimitiveObject::restoreState(SaveGame *savedState) {
 	_type = savedState->readLESint32();
 
-	_color = savedState->readColor();
+	_color = g_grim->color(savedState->readLEUint32());
 
 	_filled = savedState->readLEUint32();
 
-	const char *name = savedState->readCharString();
-	_bitmap = g_resourceloader->getBitmap(name);
-	delete[] name;
+	if (savedState->readLEUint32()) {
+		const char *name = savedState->readCharString();
+		_bitmap = g_resourceloader->getBitmap(name);
+		delete[] name;
+	} else {
+		_bitmap = NULL;
+	}
 
 	_p1.x = savedState->readLEUint32();
 	_p1.y = savedState->readLEUint32();
@@ -90,7 +96,7 @@ bool PrimitiveObject::restoreState(SaveGame *savedState) {
 	return true;
 }
 
-void PrimitiveObject::createRectangle(Common::Point p1, Common::Point p2, Color color, bool filled) {
+void PrimitiveObject::createRectangle(Common::Point p1, Common::Point p2, Color *color, bool filled) {
 	_type = RECTANGLE;
 	_p1 = p1;
 	_p2 = p2;
@@ -107,14 +113,14 @@ void PrimitiveObject::createBitmap(Bitmap *bitmap, Common::Point p, bool /*trans
 	g_driver->createBitmap(bitmap);
 }
 
-void PrimitiveObject::createLine(Common::Point p1, Common::Point p2, Color color) {
+void PrimitiveObject::createLine(Common::Point p1, Common::Point p2, Color *color) {
 	_type = LINE;
 	_p1 = p1;
 	_p2 = p2;
 	_color = color;
 }
 
-void PrimitiveObject::createPolygon(Common::Point p1, Common::Point p2, Common::Point p3, Common::Point p4, Color color) {
+void PrimitiveObject::createPolygon(Common::Point p1, Common::Point p2, Common::Point p3, Common::Point p4, Color *color) {
 	_type = POLYGON;
 	_p1 = p1;
 	_p2 = p2;

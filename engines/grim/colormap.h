@@ -34,7 +34,6 @@
 namespace Grim {
 
 class CMap : public Object {
-	GRIM_OBJECT(ColorMap)
 public:
 	// Load a colormap from the given data.
 	CMap(const char *fileName, const char *data, int len) :

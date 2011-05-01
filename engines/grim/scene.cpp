@@ -145,7 +145,7 @@ void Scene::saveState(SaveGame *savedState) const {
 
 	savedState->writeLEUint32(_states.size());
 	for (StateList::const_iterator i = _states.begin(); i != _states.end(); ++i) {
-		savedState->writeLEUint32(g_grim->objectStateId(*i));
+		savedState->writeLEUint32((*i)->id());
 	}
 
 	//Setups

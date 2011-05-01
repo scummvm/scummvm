@@ -287,31 +287,10 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 			tempString->globalval = obj;
 		} else {
 			PointerId ptr;
-			lua_Type tag = (lua_Type)restoreSint32();
+			int32 tag = restoreSint32();
 			ptr.low = restoreUint32();
 			ptr.hi = restoreUint32();
-			void *pointer = 0;
-			if (restoreUint32()) {
-				int x = restoreUint32();
-				if (x == 1) {
-					int id = restoreUint32();
-					pointer = g_grim->actor(id);
-				} else if (x == 2) {
-					int id = restoreUint32();
-					pointer = g_grim->textObject(id);
-				} else if (x == 3) {
-					int id = restoreUint32();
-					pointer = g_grim->objectState(id);
-				} else {
-					ObjectPtr<Object> p = ObjectMan.restoreObject(g_grim->_savedState);
-					Object *o = p.object();
-					o->reference();
-					pointer = o;
-				}
-				if (!pointer) {
-					pointer = makePointerFromId(ptr);
-				}
-			}
+			void *pointer = makePointerFromId(ptr);
 
 			if (tag == 0)
 				tempString = luaS_createudata(pointer, LUA_ANYTAG);

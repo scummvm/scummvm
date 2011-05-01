@@ -201,8 +201,7 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 		putIntoCache(fname, b);
 	}
 
-	Bitmap *result = g_grim->registerBitmap(filename, b->data(), b->len());
-	_bitmaps.push_back(result);
+	Bitmap *result = new Bitmap(filename, b->data(), b->len());
 
 	return result;
 }
@@ -252,7 +251,6 @@ Font *ResourceLoader::loadFont(const char *filename) {
 	}
 
 	Font *result = new Font(filename, b->data(), b->len());
-	_fonts.push_back(result);
 
 	return result;
 }
@@ -401,7 +399,10 @@ BitmapPtr ResourceLoader::getBitmap(const char *fname) {
 		}
 	}
 
-	return loadBitmap(fname);
+	Bitmap *b = loadBitmap(fname);
+	if (b)
+		_bitmaps.push_back(b);
+	return b;
 }
 
 ModelPtr ResourceLoader::getModel(const char *fname, CMap *c) {
@@ -445,7 +446,10 @@ FontPtr ResourceLoader::getFont(const char *fname) {
 		}
 	}
 
-	return loadFont(fname);
+	Font *f = loadFont(fname);
+	_fonts.push_back(f);
+
+	return f;
 }
 
 LipSyncPtr ResourceLoader::getLipSync(const char *fname) {

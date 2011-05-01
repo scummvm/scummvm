@@ -37,7 +37,6 @@ namespace Grim {
 typedef uint32 tag32;
 
 class Costume : public Object {
-	GRIM_OBJECT(Costume)
 public:
 	Costume(const char *filename, const char *data, int len, Costume *prevCost);
     Costume() : Object() { _chores = 0; }

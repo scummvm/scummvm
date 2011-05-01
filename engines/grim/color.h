@@ -33,7 +33,6 @@
 namespace Grim {
 
 class Color : public Object {
-	GRIM_OBJECT(Color)
 public:
 	byte _vals[3];
 
@@ -61,22 +60,6 @@ public:
 	Color& operator =(Color *c) {
 		_vals[0] = c->_vals[0]; _vals[1] = c->_vals[1]; _vals[2] = c->_vals[2];
 		return *this;
-	}
-
-	void saveState(SaveGame *state) const {
-		state->writeByte(_vals[0]);
-		state->writeByte(_vals[1]);
-		state->writeByte(_vals[2]);
-	}
-
-	static ObjectPtr<Object> restoreObject(SaveGame *state) {
-		Color *c = new Color();
-		ObjectPtr<Object> ptr(c);
-		c->_vals[0] = state->readByte();
-		c->_vals[1] = state->readByte();
-		c->_vals[2] = state->readByte();
-
-		return ptr;
 	}
 };
 

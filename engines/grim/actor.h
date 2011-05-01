@@ -52,7 +52,6 @@ struct Shadow {
 };
 
 class Actor : public Object {
-	GRIM_OBJECT(Actor)
 public:
 	Actor(const char *name);
 	Actor();
@@ -63,8 +62,8 @@ public:
 
 	const char *name() const { return _name.c_str(); }
 
-	void setTalkColor(const Color& c) { _talkColor = c; }
-	Color talkColor() const { return _talkColor; }
+	void setTalkColor(Color *c) { _talkColor = c; }
+	Color *talkColor() const { return _talkColor; }
 	void setPos(Graphics::Vector3d position);
 	Graphics::Vector3d pos() const;
 	void walkTo(Graphics::Vector3d p);
@@ -182,7 +181,7 @@ private:
 	Common::String _name;
 	Common::String _setName;    // The actual current set
 
-	Color _talkColor;
+	Color *_talkColor;
 	Graphics::Vector3d _pos;
 	float _pitch, _yaw, _roll;
 	float _walkRate, _turnRate;
@@ -246,9 +245,6 @@ private:
 	float _lookAtRate;
 
 	int _winX1, _winY1, _winX2, _winY2;
-
-	int _id;
-	static int s_id;
 
 	// struct used for path finding
 	struct PathNode {

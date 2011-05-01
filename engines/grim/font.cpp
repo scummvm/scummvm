@@ -99,19 +99,6 @@ Font::~Font() {
 	}
 }
 
-void Font::saveState(SaveGame *savedState) const {
-	savedState->writeCharString(_fname.c_str());
-}
-
-ObjectPtr<Object> Font::restoreObject(SaveGame *state) {
-	const char *fname = state->readCharString();
-	FontPtr font = g_resourceloader->getFont(fname);
-	delete[] fname;
-	ObjectPtr<Object> ptr = font.object();
-
-	return ptr;
-}
-
 uint16 Font::getCharIndex(unsigned char c) {
 	uint16 c2 = uint16(c);
 
@@ -141,6 +128,10 @@ uint16 Font::getCharIndex(unsigned char c) {
 	// the first character in the font so that something
 	// gets loaded to prevent the game from crashing
 	return 0;
+}
+
+const char *Font::filename() const {
+	return _filename.c_str();
 }
 
 // Hardcoded default font for GUI, etc

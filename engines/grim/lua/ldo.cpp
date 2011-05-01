@@ -22,6 +22,7 @@
 #include "engines/grim/lua/lzio.h"
 
 #include "common/file.h"
+#include "common/textconsole.h"
 
 namespace Grim {
 

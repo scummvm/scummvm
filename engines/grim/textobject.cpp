@@ -31,8 +31,6 @@
 
 namespace Grim {
 
-int TextObject::s_id = 0;
-
 Common::String parseMsgText(const char *msg, char *msgId);
 
 TextObject::TextObject(bool blastDraw, bool isSpeech) :
@@ -40,14 +38,9 @@ TextObject::TextObject(bool blastDraw, bool isSpeech) :
 		_numberLines(1), _disabled(false), _font(NULL), _textBitmap(NULL),
 		_bitmapWidthPtr(NULL), _textObjectHandle(NULL) {
 	memset(_textID, 0, sizeof(_textID));
-	_fgColor._vals[0] = 0;
-	_fgColor._vals[1] = 0;
-	_fgColor._vals[2] = 0;
+	_fgColor = NULL;
 	_blastDraw = blastDraw;
 	_isSpeech = isSpeech;
-
-	++s_id;
-	_id = s_id;
 }
 
 TextObject::TextObject() :
@@ -72,7 +65,7 @@ TextObject::~TextObject() {
 }
 
 void TextObject::saveState(SaveGame *state) const {
-	state->writeColor(_fgColor);
+	state->writeLEUint32(_fgColor->id());
 
 	state->writeLESint32(_x);
 	state->writeLESint32(_y);
@@ -86,7 +79,7 @@ void TextObject::saveState(SaveGame *state) const {
 	state->writeLESint32(_isSpeech);
 	state->writeLESint32(_created);
 
-	state->writeString(_font->getFilename());
+	state->writeLEUint32(_font->id());
 
 	state->write(_textID, 256);
 }
@@ -94,7 +87,7 @@ void TextObject::saveState(SaveGame *state) const {
 bool TextObject::restoreState(SaveGame *state) {
 	destroyBitmap();
 
-	_fgColor = state->readColor();
+	_fgColor = g_grim->color(state->readLEUint32());
 
 	_x = state->readLESint32();
 	_y = state->readLESint32();
@@ -108,7 +101,7 @@ bool TextObject::restoreState(SaveGame *state) {
 	_isSpeech = state->readLESint32();
 	_created = state->readLESint32();
 
-	_font = g_resourceloader->getFont(state->readString().c_str());
+	_font = g_grim->font(state->readLEUint32());
 
 	state->read(_textID, 256);
 
@@ -300,7 +293,7 @@ void TextObject::createBitmap() {
 			startOffset += charWidth;
 		}
 
-		_textObjectHandle[j] = g_driver->createTextBitmap(_textBitmap, _bitmapWidthPtr[j] + 1, _font->getHeight(), _fgColor);
+		_textObjectHandle[j] = g_driver->createTextBitmap(_textBitmap, _bitmapWidthPtr[j] + 1, _font->getHeight(), *_fgColor);
 		delete[] _textBitmap;
 		for (int count = 0; count < cutLen; count++)
 			message.deleteChar(0);

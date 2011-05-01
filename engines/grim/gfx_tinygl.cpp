@@ -837,7 +837,7 @@ void GfxTinyGL::drawRectangle(PrimitiveObject *primitive) {
 	int x2 = primitive->getP2().x;
 	int y2 = primitive->getP2().y;
 
-	Color color = primitive->getColor();
+	const Color &color = *primitive->getColor();
 	uint16 c = ((color.red() & 0xF8) << 8) | ((color.green() & 0xFC) << 3) | (color.blue() >> 3);
 
 	if (primitive->isFilled()) {
@@ -873,7 +873,7 @@ void GfxTinyGL::drawLine(PrimitiveObject *primitive) {
 	int x2 = primitive->getP2().x;
 	int y2 = primitive->getP2().y;
 
-	Color color = primitive->getColor();
+	const Color &color = *primitive->getColor();
 	uint16 c = ((color.red() & 0xF8) << 8) | ((color.green() & 0xFC) << 3) | (color.blue() >> 3);
 
 	if (x2 == x1) {
@@ -905,7 +905,7 @@ void GfxTinyGL::drawPolygon(PrimitiveObject *primitive) {
 	float m;
 	int b;
 
-	Color color = primitive->getColor();
+	const Color &color = *primitive->getColor();
 	uint16 c = ((color.red() & 0xF8) << 8) | ((color.green() & 0xFC) << 3) | (color.blue() >> 3);
 
 	m = (y2 - y1) / (x2 - x1);
