@@ -727,7 +727,7 @@ void OSystem_PS2::msgPrintf(int millis, const char *format, ...) {
 	int maxWidth = 0;
 
 	Graphics::Surface surf;
-	surf.create(300, 200, 1);
+	surf.create(300, 200, Graphics::PixelFormat::createFormatCLUT8());
 
 	char *lnSta = resStr;
 	while (*lnSta && (posY < 180)) {

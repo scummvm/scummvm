@@ -777,7 +777,7 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 		(ignoreCharsetMask || !vs->hasTwoBuffers)) {
 		dst = vs->getPixels(_left, drawTop);
 		if (charPtr)
-			drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight, vs->bytesPerPixel);
+			drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight, vs->format.bytesPerPixel);
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		else if (_vm->_cjkFont)
 			_vm->_cjkFont->drawChar(vs, chr, _left, drawTop, _color, _shadowColor);
@@ -785,7 +785,7 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 	} else {
 		dst = (byte *)_vm->_textSurface.getBasePtr(_left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier);
 		if (charPtr)
-			drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight, _vm->_textSurface.bytesPerPixel, (_vm->_textSurfaceMultiplier == 2 && !is2byte));
+			drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight, _vm->_textSurface.format.bytesPerPixel, (_vm->_textSurfaceMultiplier == 2 && !is2byte));
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		else if (_vm->_cjkFont)
 			_vm->_cjkFont->drawChar(_vm->_textSurface, chr, _left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier, _color, _shadowColor);
@@ -834,7 +834,7 @@ void CharsetRendererV3::drawChar(int chr, Graphics::Surface &s, int x, int y) {
 		height = 8;
 	}
 	dst = (byte *)s.pixels + y * s.pitch + x;
-	drawBits1(s, dst, charPtr, y, width, height, s.bytesPerPixel);
+	drawBits1(s, dst, charPtr, y, width, height, s.format.bytesPerPixel);
 }
 
 void CharsetRenderer::translateColor() {
@@ -1096,7 +1096,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 		} else
 #endif
 		if (is2byte) {
-			drawBits1(dstSurface, dstPtr, charPtr, drawTop, origWidth, origHeight, dstSurface.bytesPerPixel);
+			drawBits1(dstSurface, dstPtr, charPtr, drawTop, origWidth, origHeight, dstSurface.format.bytesPerPixel);
 		} else {
 			drawBitsN(dstSurface, dstPtr, charPtr, *_fontPtr, drawTop, origWidth, origHeight, _vm->_textSurfaceMultiplier == 2);
 		}
@@ -1173,7 +1173,7 @@ void CharsetRendererClassic::drawChar(int chr, Graphics::Surface &s, int x, int 
 	dst = (byte *)s.pixels + y * s.pitch + x;
 
 	if (is2byte) {
-		drawBits1(s, dst, charPtr, y, width, height, s.bytesPerPixel);
+		drawBits1(s, dst, charPtr, y, width, height, s.format.bytesPerPixel);
 	} else {
 		drawBitsN(s, dst, charPtr, *_fontPtr, y, width, height);
 	}
@@ -1519,10 +1519,10 @@ void CharsetRendererNES::printChar(int chr, bool ignoreCharsetMask) {
 
 	if (ignoreCharsetMask || !vs->hasTwoBuffers) {
 		dst = vs->getPixels(_left, drawTop);
-		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight, vs->bytesPerPixel);
+		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight, vs->format.bytesPerPixel);
 	} else {
 		dst = (byte *)_vm->_textSurface.pixels + _top * _vm->_textSurface.pitch + _left;
-		drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight, _vm->_textSurface.bytesPerPixel);
+		drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight, _vm->_textSurface.format.bytesPerPixel);
 	}
 
 	if (_str.left > _left)
@@ -1552,7 +1552,7 @@ void CharsetRendererNES::drawChar(int chr, Graphics::Surface &s, int x, int y) {
 	height = 8;
 
 	dst = (byte *)s.pixels + y * s.pitch + x;
-	drawBits1(s, dst, charPtr, y, width, height, s.bytesPerPixel);
+	drawBits1(s, dst, charPtr, y, width, height, s.format.bytesPerPixel);
 }
 
 void CharsetRendererNES::drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth, bool scalex) {

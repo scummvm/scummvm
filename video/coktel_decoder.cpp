@@ -99,11 +99,12 @@ void CoktelDecoder::setSurfaceMemory(void *mem, uint16 width, uint16 height, uin
 	assert(bpp == getPixelFormat().bytesPerPixel);
 
 	// Create a surface over this memory
-	_surface.w             = width;
-	_surface.h             = height;
-	_surface.pitch         = width * bpp;
-	_surface.pixels        = mem;
-	_surface.bytesPerPixel = bpp;
+	_surface.w      = width;
+	_surface.h      = height;
+	_surface.pitch  = width * bpp;
+	_surface.pixels = mem;
+	// TODO: Check whether it is fine to assume we want the setup PixelFormat.
+	_surface.format = getPixelFormat();
 
 	_ownSurface = false;
 }
@@ -134,18 +135,18 @@ void CoktelDecoder::createSurface() {
 		return;
 
 	if ((_width > 0) && (_height > 0))
-		_surface.create(_width, _height, getPixelFormat().bytesPerPixel);
+		_surface.create(_width, _height, getPixelFormat());
 
 	_ownSurface = true;
 }
 
 void CoktelDecoder::freeSurface() {
 	if (!_ownSurface) {
-		_surface.w             = 0;
-		_surface.h             = 0;
-		_surface.pitch         = 0;
-		_surface.pixels        = 0;
-		_surface.bytesPerPixel = 0;
+		_surface.w      = 0;
+		_surface.h      = 0;
+		_surface.pitch  = 0;
+		_surface.pixels = 0;
+		_surface.format = Graphics::PixelFormat();
 	} else
 		_surface.free();
 
@@ -456,11 +457,11 @@ void CoktelDecoder::renderBlockWhole(Graphics::Surface &dstSurf, const byte *src
 
 	rect.clip(dstSurf.w, dstSurf.h);
 
-	byte *dst = (byte *)dstSurf.pixels + (rect.top * dstSurf.pitch) + rect.left * dstSurf.bytesPerPixel;
+	byte *dst = (byte *)dstSurf.pixels + (rect.top * dstSurf.pitch) + rect.left * dstSurf.format.bytesPerPixel;
 	for (int i = 0; i < rect.height(); i++) {
-		memcpy(dst, src, rect.width() * dstSurf.bytesPerPixel);
+		memcpy(dst, src, rect.width() * dstSurf.format.bytesPerPixel);
 
-		src += srcRect.width() * dstSurf.bytesPerPixel;
+		src += srcRect.width() * dstSurf.format.bytesPerPixel;
 		dst += dstSurf.pitch;
 	}
 }
@@ -1382,12 +1383,12 @@ bool IMDDecoder::renderFrame(Common::Rect &rect) {
 
 		if ((type == 2) && (rect.width() == _surface.w) && (_x == 0)) {
 			// Directly uncompress onto the video surface
-			const int offsetX = rect.left * _surface.bytesPerPixel;
+			const int offsetX = rect.left * _surface.format.bytesPerPixel;
 			const int offsetY = (_y + rect.top) * _surface.pitch;
 			const int offset  = offsetX + offsetY;
 
 			if (deLZ77((byte *)_surface.pixels + offset, dataPtr, dataSize,
-			           _surface.w * _surface.h * _surface.bytesPerPixel - offset))
+			           _surface.w * _surface.h * _surface.format.bytesPerPixel - offset))
 				return true;
 		}
 
@@ -1813,11 +1814,11 @@ bool VMDDecoder::assessVideoProperties() {
 			_videoBuffer[i] = new byte[_videoBufferSize];
 			memset(_videoBuffer[i], 0, _videoBufferSize);
 
-			_8bppSurface[i].w             = _width * _bytesPerPixel;
-			_8bppSurface[i].h             = _height;
-			_8bppSurface[i].pitch         = _width * _bytesPerPixel;
-			_8bppSurface[i].pixels        = _videoBuffer[i];
-			_8bppSurface[i].bytesPerPixel = 1;
+			_8bppSurface[i].w      = _width * _bytesPerPixel;
+			_8bppSurface[i].h      = _height;
+			_8bppSurface[i].pitch  = _width * _bytesPerPixel;
+			_8bppSurface[i].pixels = _videoBuffer[i];
+			_8bppSurface[i].format = Graphics::PixelFormat::createFormatCLUT8();
 		}
 	}
 
@@ -2230,12 +2231,12 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 
 		if ((type == 2) && (rect.width() == _surface.w) && (_x == 0) && (_blitMode == 0)) {
 			// Directly uncompress onto the video surface
-			const int offsetX = rect.left * _surface.bytesPerPixel;
+			const int offsetX = rect.left * _surface.format.bytesPerPixel;
 			const int offsetY = (_y + rect.top) * _surface.pitch;
 			const int offset  = offsetX - offsetY;
 
 			if (deLZ77((byte *)_surface.pixels + offset, dataPtr, dataSize,
-			           _surface.w * _surface.h * _surface.bytesPerPixel - offset))
+			           _surface.w * _surface.h * _surface.format.bytesPerPixel - offset))
 				return true;
 		}
 
@@ -2345,13 +2346,13 @@ void VMDDecoder::blit16(const Graphics::Surface &srcSurf, Common::Rect &rect) {
 	const byte *src = (byte *)srcSurf.pixels +
 		(srcRect.top * srcSurf.pitch) + srcRect.left * _bytesPerPixel;
 	byte *dst = (byte *)_surface.pixels +
-		((_y + rect.top) * _surface.pitch) + (_x + rect.left) * _surface.bytesPerPixel;
+		((_y + rect.top) * _surface.pitch) + (_x + rect.left) * _surface.format.bytesPerPixel;
 
 	for (int i = 0; i < rect.height(); i++) {
 		const byte *srcRow = src;
 		      byte *dstRow = dst;
 
-		for (int j = 0; j < rect.width(); j++, srcRow += 2, dstRow += _surface.bytesPerPixel) {
+		for (int j = 0; j < rect.width(); j++, srcRow += 2, dstRow += _surface.format.bytesPerPixel) {
 			uint16 data = READ_LE_UINT16(srcRow);
 
 			byte r = ((data & 0x7C00) >> 10) << 3;
@@ -2362,7 +2363,7 @@ void VMDDecoder::blit16(const Graphics::Surface &srcSurf, Common::Rect &rect) {
 			if ((r == 0) && (g == 0) && (b == 0))
 				c = 0;
 
-			if (_surface.bytesPerPixel == 2)
+			if (_surface.format.bytesPerPixel == 2)
 				*((uint16 *)dstRow) = (uint16) c;
 		}
 
@@ -2383,13 +2384,13 @@ void VMDDecoder::blit24(const Graphics::Surface &srcSurf, Common::Rect &rect) {
 	const byte *src = (byte *)srcSurf.pixels +
 		(srcRect.top * srcSurf.pitch) + srcRect.left * _bytesPerPixel;
 	byte *dst = (byte *)_surface.pixels +
-		((_y + rect.top) * _surface.pitch) + (_x + rect.left) * _surface.bytesPerPixel;
+		((_y + rect.top) * _surface.pitch) + (_x + rect.left) * _surface.format.bytesPerPixel;
 
 	for (int i = 0; i < rect.height(); i++) {
 		const byte *srcRow = src;
 		      byte *dstRow = dst;
 
-		for (int j = 0; j < rect.width(); j++, srcRow += 3, dstRow += _surface.bytesPerPixel) {
+		for (int j = 0; j < rect.width(); j++, srcRow += 3, dstRow += _surface.format.bytesPerPixel) {
 			byte r = srcRow[2];
 			byte g = srcRow[1];
 			byte b = srcRow[0];
@@ -2398,7 +2399,7 @@ void VMDDecoder::blit24(const Graphics::Surface &srcSurf, Common::Rect &rect) {
 			if ((r == 0) && (g == 0) && (b == 0))
 				c = 0;
 
-			if (_surface.bytesPerPixel == 2)
+			if (_surface.format.bytesPerPixel == 2)
 				*((uint16 *)dstRow) = (uint16) c;
 		}
 

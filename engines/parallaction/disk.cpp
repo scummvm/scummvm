@@ -39,7 +39,7 @@ void ILBMLoader::setupBuffer(uint32 w, uint32 h) {
 			_surf = new Graphics::Surface;
 			assert(_surf);
 		}
-		_surf->create(w, h, 1);
+		_surf->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 		_mode  = Graphics::ILBMDecoder::ILBM_UNPACK_PLANES;
 		_intBuffer = (byte*)_surf->pixels;
 		break;
