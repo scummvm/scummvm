@@ -1335,7 +1335,7 @@ void Scene7300::Action1::signal() {
 		break;
 	case 7:
 		setDelay(3);
-		_globals->_soundHandler.proc1(0);
+		_globals->_soundHandler.proc1(NULL);
 		break;
 	case 8:
 		_globals->_sceneManager.changeScene(2280);
@@ -1354,7 +1354,7 @@ void Scene7300::Action2::signal() {
 		break;
 	case 1:
 		NpcMover *mover1 = new NpcMover();
-		Common::Point pt(_globals->_randomSource.getRandomNumber(203), _globals->_randomSource.getRandomNumber(96));
+		Common::Point pt(_globals->_randomSource.getRandomNumber(3) + 203, _globals->_randomSource.getRandomNumber(3) + 96);
 		scene->_object3.addMover(mover1, &pt, this);
 		_actionIndex = 0;
 		break;
@@ -1372,7 +1372,7 @@ void Scene7300::Action3::signal() {
 		break;
 	case 1:
 		NpcMover *mover1 = new NpcMover();
-		Common::Point pt(_globals->_randomSource.getRandomNumber(76), _globals->_randomSource.getRandomNumber(78));
+		Common::Point pt(_globals->_randomSource.getRandomNumber(5) + 76, _globals->_randomSource.getRandomNumber(5) + 78);
 		scene->_object1.addMover(mover1, &pt, this);
 		_actionIndex = 0;
 		break;
