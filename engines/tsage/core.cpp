@@ -1593,6 +1593,13 @@ void NamedHotspot::setup(const int ys, const int xe, const int ye, const int xs,
 	_globals->_sceneItems.addItems(this, NULL);
 }
 
+void NamedHotspot::synchronise(Serialiser &s) {
+	SceneHotspot::synchronise(s);
+	s.syncAsSint16LE(_resnum);
+	s.syncAsSint16LE(_lookLineNum);
+	s.syncAsSint16LE(_useLineNum);
+}
+
 /*--------------------------------------------------------------------------*/
 
 void SceneObjectWrapper::setSceneObject(SceneObject *so) {
