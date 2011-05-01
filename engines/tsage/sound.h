@@ -27,12 +27,37 @@
 #define TSAGE_SOUND_H
 
 #include "common/scummsys.h"
+#include "common/list.h"
 #include "tsage/saveload.h"
 #include "tsage/core.h"
 
 namespace tSage {
 
+class Sound;
+
+struct trackInfoStruct {
+	int count;
+	int rlbList[32];
+	byte *handleList[75];
+};
+
 class SoundManager : public SaveListener {
+public:
+	int _minVersion, _maxVersion;
+	Common::List<Sound *> _playList;
+	void *driverList2[16];
+	int _field89[16];
+	int _fieldA9[16];
+	int _fieldE9[16];
+	int _field109[16];
+	uint32 _groupMask;
+	int volume;
+	int _disableCtr;
+	int _suspendCtr;
+	int _field153;
+	Common::List<Sound *> _soundList;
+	Common::List<void *> _driverList;
+	int _field16D;
 public:
 	void dispatch() {}
 	virtual void listenerSynchronise(Serialiser &s);
@@ -43,27 +68,54 @@ public:
 	void saveNotifierProc(bool postFlag);
 	static void loadNotifier(bool postFlag);
 	void loadNotifierProc(bool postFlag);
+
+	void checkResVersion(const byte *soundData);
+	int determineGroup(const byte *soundData);
+	int extractPriority(const byte *soundData);
+	int extractLoop(const byte *soundData);
+	void addToSoundList(Sound *sound);
+	void removeFromSoundList(Sound *sound);
+	void addToPlayList(Sound *sound);
+	void removeFromPlayList(Sound *sound);
+	bool isOnPlayList(Sound *sound);
+	void extractTrackInfo(trackInfoStruct *data, const byte *soundData, int groupNum);
+	void suspendSoundServer();
+	void rethinkVoiceTypes();
+	void restartSoundServer();
+	void updateSoundVol(Sound *sound);
+	void updateSoundPri(Sound *sound);
+	void updateSoundLoop(Sound *sound);
+
+	// _so methods
+	static void _soSetTimeIndex(int timeIndex);
+	static int _sfDetermineGroup(const byte *soundData);
+	static void _sfAddToPlayList(Sound *sound);
+	static void _sfRemoveFromPlayList(Sound *sound);
+	static bool _sfIsOnPlayList(Sound *sound);
+	static void _sfRethinkVoiceTypes();
+	static void _sfUpdateVolume(Sound *sound);
+	static void _sfDereferenceAll();
+	static void sub_233EE(Sound *sound);
+	static void _sfUpdatePriority(Sound *sound);
+	static void _sfUpdateLoop(Sound *sound);
+
 };
 
 #define SOUND_ARR_SIZE 16
 
-struct trackInfoStruct {
-	int count;
-	int rlbList[32];
-	uint32 handleList[75];
-};
-
 class Sound: public EventHandler {
 private:
-	void _prime(int soundNum, int v2);
+	void _prime(int soundNum, bool queFlag);
 	void _unPrime();
+	void orientAfterDriverChange();
+	void orientAfterRestore();
 public:
 	int _field6;
 	int _soundNum;
-	int _fieldA;
-	int _fieldE;
+	int _groupNum;
+	int _soundPriority;
 	int _priority2;
-	int _field10;
+	int _loop;
 	bool _loopFlag2;
 	int _priority;
 	int _volume;
@@ -71,10 +123,10 @@ public:
 	int _pauseCtr;
 	int _muteCtr;
 	int _holdAt;
-	bool _cueValue;
-	int _field1E;
+	int _cueValue;
+	int _volume1;
 	int _field1F;
-	int _field20;
+	int _volume2;
 	int _field21;
 	int _field22;
 	uint _timeIndex;
@@ -95,35 +147,35 @@ public:
 	int _field268;
 	bool _primed;
 	int _field26C;
-	int _field26E;
+	byte *_field26E;
 public:
-	void play(int soundNum, int volume = 127);
+	Sound();
+
+	void play(int soundNum);
 	void stop();
 	void prime(int soundNum);
 	void unPrime();
 	void go();
 	void halt(void);
+	bool isPlaying();
 	int getSoundNum() const;
-	bool isPlaying() const;
 	bool isPrimed() const;
 	bool isPaused() const;
 	bool isMuted() const;
-	void pause();
-	void mute();
-	void fadeIn();
-	void fadeOut(EventHandler *evtHandler);
+	void pause(bool flag);
+	void mute(bool flag);
 	void fade(int v1, int v2, int v3, int v4);
 	void setTimeIndex(uint32 timeIndex);
 	uint32 getTimeIndex() const;
-	bool getCueValue() const;
-	void setCueValue(bool flag);
+	int getCueValue() const;
+	void setCueValue(int cueValue);
 	void setVol(int volume);
 	int getVol() const;
-	void setPri(int v);
+	void setPri(int priority);
 	void setLoop(bool flag);
 	int getPri() const;
 	bool getLoop();
-	void holdAt(int v);
+	void holdAt(int amount);
 	void release();
 };
 
@@ -143,12 +195,12 @@ public:
 	void unPrime();
 	void go() { _sound.go(); }
 	void hault(void) { _sound.halt(); }
+	bool isPlaying() { return _sound.isPlaying(); }
 	int getSoundNum() const { return _sound.getSoundNum(); }
-	bool isPlaying() const { return _sound.isPlaying(); }
 	bool isPaused() const { return _sound.isPaused(); }
 	bool isMuted() const { return _sound.isMuted(); }
-	void pause() { _sound.pause(); }
-	void mute() { _sound.mute(); }
+	void pause(bool flag) { _sound.pause(flag); }
+	void mute(bool flag) { _sound.mute(flag); }
 	void fadeIn() { fade(127, 5, 10, 0, NULL); }
 	void fadeOut(Action *action) { fade(0, 5, 10, 1, action); }
 	void fade(int v1, int v2, int v3, int v4, Action *action); 
