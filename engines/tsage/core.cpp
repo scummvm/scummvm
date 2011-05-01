@@ -1585,7 +1585,7 @@ void NamedHotspot::doAction(int action) {
 	}
 }
 
-void NamedHotspot::setup(const int ys, const int xe, const int ye, const int xs, const int resnum, const int lookLineNum, const int useLineNum) {
+void NamedHotspot::setup(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum) {
 	setBounds(ys, xe, ye, xs);
 	_resnum = resnum;
 	_lookLineNum = lookLineNum;
