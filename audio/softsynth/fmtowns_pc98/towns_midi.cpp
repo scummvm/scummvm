@@ -49,7 +49,7 @@ public:
 private:
 	void keyOn();
 	void keyOff();
-	void internKeyOnFrq(uint16 frq);
+	void internKeySetFreq(uint16 frq);
 	void out(uint8 reg, uint8 val);
 
 	TownsMidiInputChannel *_midi;
@@ -158,24 +158,29 @@ TownsMidiOutputChannel::~TownsMidiOutputChannel() {
 void TownsMidiOutputChannel::noteOn(uint8 msb, uint16 lsb) {
 	_freq = (msb << 7) + lsb;
 	_freqAdjust = 0;
-	internKeyOnFrq(_freq);
+	internKeySetFreq(_freq);
 }
 
 void TownsMidiOutputChannel::noteOnAdjust(uint8 msb, uint16 lsb) {
 	_freq = (msb << 7) + lsb;
-	internKeyOnFrq(_freq + _freqAdjust);
+	internKeySetFreq(_freq + _freqAdjust);
 }
 
 void TownsMidiOutputChannel::setupProgram(const uint8 *data, uint8 vol1, uint8 vol2) {
+	// This driver uses only 2 operators and 2 algorithms (algorithm 5 and 7),
+	// since it is just a modified AdLib driver. It also uses AdLib programs.
+	// There are no FM-TOWNS specific programs. This is the reason for the FM-TOWNS
+	// music being so bad compared to AdLib (unsuitable data is just forced into the
+	// wrong audio device).
+
 	static const uint8 mul[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 12, 12, 15, 15 };
-	const uint8 *pos = data;
 	uint8 chan = _chanMap[_chan];	
-	
-	uint8 mulAmsFms1 = _driver->_chanState[chan].mulAmsFms = *pos++;
-	uint8 tl1 = _driver->_chanState[chan].tl = (*pos++ | 0x3f) - vol1;
-	uint8 attDec1 = _driver->_chanState[chan].attDec = !(*pos++);
-	uint8 sus1 = _driver->_chanState[chan].sus = !(*pos++);
-	uint8 unk1 = _driver->_chanState[chan].unk = *pos++;
+
+	uint8 mulAmsFms1 = _driver->_chanState[chan].mulAmsFms = data[0];
+	uint8 tl1 = _driver->_chanState[chan].tl = (data[1] | 0x3f) - vol1;
+	uint8 attDec1 = _driver->_chanState[chan].attDec = ~data[2];
+	uint8 sus1 = _driver->_chanState[chan].sus = ~data[3];
+	uint8 unk1 = _driver->_chanState[chan].unk = data[4];
 	chan += 3;
 
 	out(0x30, mul[mulAmsFms1 & 0x0f]);
@@ -185,11 +190,11 @@ void TownsMidiOutputChannel::setupProgram(const uint8 *data, uint8 vol1, uint8 v
 	out(0x70, (mulAmsFms1 & 0x20) ^ 0x20 ? ((sus1 & 0x0f) << 1) | 1: 0);
 	out(0x80, sus1);
 
-	uint8 mulAmsFms2 = _driver->_chanState[chan].mulAmsFms = *pos++;
-	uint8 tl2 = _driver->_chanState[chan].tl = (*pos++ | 0x3f) - vol2;
-	uint8 attDec2 = _driver->_chanState[chan].attDec = !(*pos++);
-	uint8 sus2 = _driver->_chanState[chan].sus = !(*pos++);
-	uint8 unk2 = _driver->_chanState[chan].unk = *pos++;
+	uint8 mulAmsFms2 = _driver->_chanState[chan].mulAmsFms = data[5];
+	uint8 tl2 = _driver->_chanState[chan].tl = (data[6] | 0x3f) - vol2;
+	uint8 attDec2 = _driver->_chanState[chan].attDec = ~data[7];
+	uint8 sus2 = _driver->_chanState[chan].sus = ~data[8];
+	uint8 unk2 = _driver->_chanState[chan].unk = data[9];
 
 	uint8 mul2 = mul[mulAmsFms2 & 0x0f];
 	tl2 = (tl2 & 0x3f) + 15;
@@ -206,9 +211,11 @@ void TownsMidiOutputChannel::setupProgram(const uint8 *data, uint8 vol1, uint8 v
 		out(0x80 + i, sus2);
 	}
 
-	uint8 t = _driver->_chanState[chan /*_chan*/ /*???*/].fgAlg = *pos;
-	out(0xb0, ((t & 0x0e) << 2) | (((t & 1) << 1) + 5));
-	t = mulAmsFms1 | mulAmsFms2;
+	_driver->_chanState[chan].fgAlg = data[10];
+	uint8 alg = 5 + 2 * (data[10] & 1);
+	uint8 fb = 4 * (data[10] & 0x0e);
+	out(0xb0, fb | alg);
+	uint8 t = mulAmsFms1 | mulAmsFms2;
 	out(0xb4, 0xc0 | ((t & 0x80) >> 3) | ((t & 0x40) >> 5));
 }
 
@@ -253,20 +260,30 @@ int TownsMidiOutputChannel::checkPriority(int pri) {
 }
 
 void TownsMidiOutputChannel::keyOn() {
-	out(0x28, 0xf0/*0x30*/ /*???*/);
+	// This driver uses only 2 operators and 2 algorithms (algorithm 5 and 7),
+	// since it is just a modified AdLib driver. It also uses AdLib programs.
+	// There are no FM-TOWNS specific programs. This is the reason for the FM-TOWNS
+	// music being so bad compared to AdLib (unsuitable data is just forced into the
+	// wrong audio device).
+	out(0x28, 0x30);
 }
 
 void TownsMidiOutputChannel::keyOff() {
 	out(0x28, 0);
 }
 
-void TownsMidiOutputChannel::internKeyOnFrq(uint16 frq) {
+void TownsMidiOutputChannel::internKeySetFreq(uint16 frq) {
 	uint8 t = (frq << 1) >> 8;	
-	frq = (_freqMSB[t] << 3) | _freqLSB[t] ;
+	frq = (_freqMSB[t] << 11) | _freqLSB[t] ;
 	out(0xa4, frq >> 8);
 	out(0xa0, frq & 0xff);
 	out(0x28, 0);
-	out(0x28, 0xf0/*0x30*/ /*???*/);
+	// This driver uses only 2 operators and 2 algorithms (algorithm 5 and 7),
+	// since it is just a modified AdLib driver. It also uses AdLib programs.
+	// There are no FM-TOWNS specific programs. This is the reason for the FM-TOWNS
+	// music being so bad compared to AdLib (unsuitable data is just forced into the
+	// wrong audio device).
+	out(0x28, 0x30);
 }
 
 void TownsMidiOutputChannel::out(uint8 reg, uint8 val) {
@@ -574,7 +591,7 @@ void MidiDriver_TOWNS::timerCallback(int timerId) {
 			_tickCounter += 10000;
 			while (_tickCounter >= 4167) {
 				_tickCounter -= 4167;
-				//_timerBproc(_timerBpara);
+				_timerBproc(_timerBpara);
 			}
 		}
 		break;
