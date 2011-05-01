@@ -609,6 +609,9 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 		_globals->_soundHandler.startSound(250);
 		setAction(&_action3);
 	}
+
+	_sceneItem1.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	_globals->_sceneItems.push_back(&_sceneItem1);
 }
 
 /*--------------------------------------------------------------------------*/
