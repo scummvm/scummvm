@@ -32,9 +32,10 @@ public:
 	~TownsMidiOutputChannel();
 
 	void noteOn(uint8 msb, uint16 lsb);
-	void noteOnAdjust(uint8 msb, uint16 lsb);
+	void noteOnPitchBend(uint8 msb, uint16 lsb);
 	void setupProgram(const uint8 *data, uint8 vol1, uint8 vol2);
 	void noteOnSubSubSub_s1(int index, uint8 c, const uint8 *instr);
+	void setModWheel(uint8 value);
 	
 	void connect(TownsMidiInputChannel *chan);
 	void disconnect();
@@ -60,7 +61,7 @@ private:
 	uint8 _note;
 	uint8 _tl2;
 	uint8 _tl1;
-	uint8 _noteOffMarker;
+	uint8 _sustainNoteOff;
 	uint32 _duration;
 	uint8 _fld_13;
 	uint8 _prg;	
@@ -69,7 +70,9 @@ private:
 	int16 _freqAdjust;
 
 	struct StateA {
-		uint8 a[50];
+		uint8 active;
+		uint8 a[48];
+		uint8 modWheel;
 	} *_stateA;
 
 	struct StateB {
@@ -78,7 +81,7 @@ private:
 		uint8 b3;
 		uint8 b4;
 		uint8 b5;
-		uint8 b6;
+		uint8 mwu;
 		uint8 b7;
 		uint8 b8;
 		uint8 b9;
@@ -113,9 +116,15 @@ public:
 	void controlChange(byte control, byte value);
 	void pitchBendFactor(byte value);
 	void priority(byte value);
-	void sysEx_customInstrument(uint32 type, const byte *instr);
+	void sysEx_customInstrument(uint32 type, const byte *instr);	
 
 private:
+	void controlModulationWheel(byte value);
+	void controlVolume(byte value);
+	void controlPanPos(byte value);
+	void controlSustain(byte value);
+	void controlRelease();
+
 	TownsMidiOutputChannel *_outChan;
 	//TownsMidiInputChannel *_prev;
 	//TownsMidiInputChannel *_next;
@@ -125,14 +134,18 @@ private:
 	uint8 _chanIndex;
 	uint8 _effectLevel;
 	uint8 _priority;
-	uint8 _vol;
+	uint8 _ctrlVolume;
 	uint8 _tl;
 	uint8 _pan;
 	uint8 _panEff;
-	int8 _transpose;
 	uint8 _percS;
-	uint8 _fld_22;
+	int8 _transpose;
+	uint8 _fld_1f;
+	int8 _detune;
+	uint8 _modWheel;
+	uint8 _sustain;
 	uint8 _pitchBendFactor;
+	int16 _pitchBend;
 	uint16 _freqLSB;
 
 	bool _allocated;
@@ -143,7 +156,7 @@ private:
 };
 
 TownsMidiOutputChannel::TownsMidiOutputChannel(MidiDriver_TOWNS *driver, int chanIndex) : _driver(driver), _chan(chanIndex),
-	_midi(0), _prev(0), _next(0), _fld_c(0), _tl2(0), _note(0), _tl1(0), _noteOffMarker(0), _duration(0), _fld_13(0), _prg(0), _freq(0), _freqAdjust(0) {
+	_midi(0), _prev(0), _next(0), _fld_c(0), _tl2(0), _note(0), _tl1(0), _sustainNoteOff(0), _duration(0), _fld_13(0), _prg(0), _freq(0), _freqAdjust(0) {
 	_stateA = new StateA[2];
 	memset(_stateA, 0, 2 * sizeof(StateA));
 	_stateB = new StateB[2];
@@ -161,7 +174,7 @@ void TownsMidiOutputChannel::noteOn(uint8 msb, uint16 lsb) {
 	internKeySetFreq(_freq);
 }
 
-void TownsMidiOutputChannel::noteOnAdjust(uint8 msb, uint16 lsb) {
+void TownsMidiOutputChannel::noteOnPitchBend(uint8 msb, uint16 lsb) {
 	_freq = (msb << 7) + lsb;
 	internKeySetFreq(_freq + _freqAdjust);
 }
@@ -222,6 +235,14 @@ void TownsMidiOutputChannel::setupProgram(const uint8 *data, uint8 vol1, uint8 v
 void TownsMidiOutputChannel::noteOnSubSubSub_s1(int index, uint8 c, const uint8 *instr) {
 	StateA *a = &_stateA[index];
 	StateB *b = &_stateB[index];
+}
+
+void TownsMidiOutputChannel::setModWheel(uint8 value) {
+	if (_stateA[0].active && _stateB[0].mwu)
+		_stateA[0].modWheel = value >> 2;
+
+	if (_stateA[1].active && _stateB[1].mwu)
+		_stateA[1].modWheel = value >> 2;
 }
 
 void TownsMidiOutputChannel::connect(TownsMidiInputChannel *chan) {
@@ -341,7 +362,8 @@ const uint16 TownsMidiOutputChannel::_freqLSB[] = {
 };
 
 TownsMidiInputChannel::TownsMidiInputChannel(MidiDriver_TOWNS *driver, int chanIndex) : MidiChannel(), _driver(driver), _outChan(0), _prg(0), _chanIndex(chanIndex),
-	_effectLevel(0), _priority(0), _vol(0), _tl(0), _pan(0), _panEff(0), _transpose(0), _percS(0), _pitchBendFactor(0), _fld_22(0), _freqLSB(0), _allocated(false) {
+	_effectLevel(0), _priority(0), _ctrlVolume(0), _tl(0), _pan(0), _panEff(0), _transpose(0), _percS(0), _pitchBendFactor(0), _pitchBend(0), _sustain(0), _freqLSB(0),
+	_fld_1f(0), _detune(0), _modWheel(0), _allocated(false) {
 	_instrument = new uint8[30];
 	memset(_instrument, 0, 30);
 }
@@ -372,8 +394,8 @@ void TownsMidiInputChannel::noteOff(byte note) {
 	if (_outChan->_note != note)
 		return;
 
-	if (_fld_22)
-		_outChan->_noteOffMarker = 1;
+	if (_sustain)
+		_outChan->_sustainNoteOff = 1;
 	else
 		_outChan->disconnect();
 }
@@ -388,7 +410,7 @@ void TownsMidiInputChannel::noteOn(byte note, byte velocity) {
 
 	oc->_fld_c = _instrument[10] & 1;
 	oc->_note = note;
-	oc->_noteOffMarker = 0;
+	oc->_sustainNoteOff = 0;
 	oc->_duration = _instrument[29] * 72;
 	
 	oc->_tl1 = (_instrument[1] & 0x3f) + _driver->_chanOutputLevel[((velocity >> 1) << 5) + (_instrument[4] >> 2)];
@@ -405,28 +427,49 @@ void TownsMidiInputChannel::noteOn(byte note, byte velocity) {
 	if (_instrument[11] & 0x80)
 		oc->noteOnSubSubSub_s1(0, _instrument[11], &_instrument[12]);
 	else
-		oc->_stateA[0].a[0] = 0;
+		oc->_stateA[0].active = 0;
 
 	if (_instrument[20] & 0x80)
 		oc->noteOnSubSubSub_s1(1, _instrument[20], &_instrument[21]);
 	else
-		oc->_stateA[1].a[0] = 0;	
+		oc->_stateA[1].active = 0;	
 }
 
 void TownsMidiInputChannel::programChange(byte program) {
-
+	// Dysfunctional since this is all done inside the imuse code 
 }
 
 void TownsMidiInputChannel::pitchBend(int16 bend) {
-
+	_pitchBend = bend;
+	_freqLSB = ((_pitchBend * _pitchBendFactor) >> 6) + _detune;
+	for (TownsMidiOutputChannel *oc = _outChan; oc; oc = oc->_next)
+		oc->noteOnPitchBend(oc->_note + oc->_midi->_transpose, _freqLSB);
 }
 
 void TownsMidiInputChannel::controlChange(byte control, byte value) {
-
+	switch (control) {
+	case 1:
+		controlModulationWheel(value);
+		break;
+	case 7:
+		controlVolume(value);
+		break;
+	case 10:
+		controlPanPos(value);
+		break;
+	case 64:
+		controlSustain(value);
+		break;
+	default:
+		break;
+	}
 }
 
 void TownsMidiInputChannel::pitchBendFactor(byte value) {
-
+	_pitchBendFactor = value;
+	_freqLSB = ((_pitchBend * _pitchBendFactor) >> 6) + _detune;
+	for (TownsMidiOutputChannel *oc = _outChan; oc; oc = oc->_next)
+		oc->noteOnPitchBend(oc->_note + oc->_midi->_transpose, _freqLSB);
 }
 
 void TownsMidiInputChannel::priority(byte value) {
@@ -435,6 +478,47 @@ void TownsMidiInputChannel::priority(byte value) {
 
 void TownsMidiInputChannel::sysEx_customInstrument(uint32 type, const byte *instr) {
 	memcpy(_instrument, instr, 30);
+}
+
+void TownsMidiInputChannel::controlModulationWheel(byte value) {
+	_modWheel = value;
+	for (TownsMidiOutputChannel *oc = _outChan; oc; oc = oc->_next)
+		oc->setModWheel(value);
+}
+
+void TownsMidiInputChannel::controlVolume(byte value) {
+	/* This is all done inside the imuse code
+
+	uint16 v1 = _ctrlVolume + 1;
+	uint16 v2 = value;
+	if (_chanIndex != 16) {
+		_ctrlVolume = value;
+		v2 = value;
+	}
+	_tl = (v1 * v2) >> 7;*/
+
+	_tl = value;
+	
+	/* nullsub
+	_outChan->setVolume(_tl);
+	*/
+}
+
+void TownsMidiInputChannel::controlPanPos(byte value) {
+	// not supported
+}
+
+void TownsMidiInputChannel::controlSustain(byte value) {
+	_sustain = value;
+	if (!value)
+		controlRelease();
+}
+
+void TownsMidiInputChannel::controlRelease() {
+	for (TownsMidiOutputChannel *oc = _outChan; oc; oc = oc->_next) {
+		if (oc->_sustainNoteOff)
+			oc->disconnect();
+	}
 }
 
 const uint8 TownsMidiInputChannel::_programAdjustLevel[] = {
@@ -521,10 +605,6 @@ void MidiDriver_TOWNS::send(uint32 b) {
 	byte param1 = (b >> 8) & 0xFF;
 	byte cmd = b & 0xF0;
 
-	/*AdLibPart *part;
-	if (chan == 9)
-		part = &_percussion;
-	else**/
 	TownsMidiInputChannel *c = _channels[b & 0x0F];
 
 	switch (cmd) {
@@ -538,14 +618,12 @@ void MidiDriver_TOWNS::send(uint32 b) {
 			c->noteOff(param1);
 		break;
 	case 0xB0:
-		// supported: 1, 7, 0x40
 		c->controlChange(param1, param2);
 		break;
 	case 0xC0:
 		c->programChange(param1);
 		break;
 	case 0xE0:
-		//part->pitchBend((param1 | (param2 << 7)) - 0x2000);
 		c->pitchBend((param1 | (param2 << 7)) - 0x2000);
 		break;
 	case 0xF0:
@@ -577,7 +655,7 @@ MidiChannel *MidiDriver_TOWNS::allocateChannel() {
 }
 
 MidiChannel *MidiDriver_TOWNS::getPercussionChannel() {
-	return 0;
+	return 0;//_channels[16];
 }
 
 void MidiDriver_TOWNS::timerCallback(int timerId) {
