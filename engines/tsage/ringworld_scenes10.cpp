@@ -587,7 +587,7 @@ void Scene9350::postInit(SceneObjectList *OwnerList) {
 	setZoomPercents(95, 80, 200, 100);
 	_globals->_player.postInit();
 
-	_object1.setup(9350, 1, 3, 139, 97, 0);
+	_object1.setup(9351, 1, 3, 139, 97, 0);
 	_sceneHotspot1.setup(42, 0, 97, 60, 9350, 0, -1);
 	_sceneHotspot2.setup(37, 205, 82, 256, 9350, 0, -1);
 	_sceneHotspot3.setup(29, 93, 92, 174, 9350, 1, -1);
@@ -600,22 +600,22 @@ void Scene9350::postInit(SceneObjectList *OwnerList) {
 	if (_globals->_sceneManager._previousScene == 9360) {
 		_globals->_player.disableControl();
 		_sceneState = 9352;
-		setAction(&_sequenceManager, this, 9352, &_globals->_player, &_object2, 0);
+		setAction(&_sequenceManager, this, 9352, &_globals->_player, &_object2, NULL);
 	} else if (_globals->_sceneManager._previousScene == 9400) {
 		_globals->_player.disableControl();
 		_sceneState = 9353;
-		setAction(&_sequenceManager, this, 9353, &_globals->_player, &_object2, 0);
+		setAction(&_sequenceManager, this, 9353, &_globals->_player, &_object2, NULL);
 	} else {
-		if (!_globals->getFlag(84)) {
+		if (_globals->getFlag(84)) {
 			_globals->clearFlag(84);
 			_object2.postInit();
 			_globals->_player.disableControl();
 			_sceneState = 9359;
-			setAction(&_sequenceManager, this, 9359, &_globals->_player, &_object2, 0);
+			setAction(&_sequenceManager, this, 9359, &_globals->_player, &_object2, NULL);
 		} else {
 			_globals->_player.disableControl();
 			_sceneState = 9354;
-			setAction(&_sequenceManager, this, 9354, &_globals->_player, &_object2, 0);
+			setAction(&_sequenceManager, this, 9354, &_globals->_player, &_object2, NULL);
 		}
 	}
 }
@@ -711,6 +711,7 @@ void Scene9400::SceneHotspot7::doAction(int action) {
 
 	if ((action == CURSOR_USE) && (RING_INVENTORY._straw._sceneNumber != 1)) {
 		scene->_sceneState = 1;
+		RING_INVENTORY._straw._sceneNumber = 1;
 		scene->setAction(&scene->_sequenceManager, scene, 9408, &_globals->_player, 0);
 	} else {
 		NamedHotspot::doAction(action);
