@@ -1964,7 +1964,7 @@ if test -n "$_host"; then
 			;;
 		ppc-amigaos)
 			_endian=big
-+			# AmigaOS exec allocates memory always in an aligned way
+			# AmigaOS exec allocates memory always in an aligned way
 			_need_memalign=yes
 			;;
 		ps2)
