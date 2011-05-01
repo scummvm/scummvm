@@ -79,7 +79,7 @@ static void saveObjectValue(TObject *object, SaveSint32 saveSint32, SaveUint32 s
 			{
 				byte *udata = (byte *)(&object->value.n);
 				uint32 v;
-#if defined(SYSTEM_LITTLE_ENDIAN)
+#if defined(SCUMM_LITTLE_ENDIAN)
 				byte b[4];
 				b[0] = udata[3];
 				b[1] = udata[2];

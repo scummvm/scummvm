@@ -31,7 +31,7 @@ static void restoreObjectValue(TObject *object, RestoreSint32 restoreSint32, Res
 				byte *udata = (byte *)(&object->value.n);
 				uint32 v = restoreUint32();
 				restoreUint32();
-#if defined(SYSTEM_LITTLE_ENDIAN)
+#if defined(SCUMM_LITTLE_ENDIAN)
 				byte b[4];
 				*(uint32 *)&b = v;
 				udata[0] = b[3];
