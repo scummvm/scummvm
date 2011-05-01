@@ -83,7 +83,11 @@ static void pushobject(int id, int32 tag) {
 }
 
 static int getobject(lua_Object obj) {
-	return (int)lua_getuserdata(obj);
+#ifdef TARGET_64BITS
+	return (int64)lua_getuserdata(obj);
+#else
+	return (int32)lua_getuserdata(obj);
+#endif
 }
 
 static Actor *getactor(lua_Object obj) {
