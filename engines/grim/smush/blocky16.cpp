@@ -31,7 +31,7 @@
 
 namespace Grim {
 
-#if defined(SYSTEM_NEED_ALIGNMENT)
+#if defined(SCUMM_NEED_ALIGNMENT)
 
 #define COPY_4X1_LINE(dst, src)			\
 	do {					\
@@ -41,7 +41,7 @@ namespace Grim {
 		(dst)[3] = (src)[3];	\
 	} while (0)
 
-#if defined(SYSTEM_BIG_ENDIAN)
+#if defined(SCUMM_BIG_ENDIAN)
 
 #define WRITE_2X1_LINE(dst, v)		\
 	do {				\
@@ -57,7 +57,7 @@ namespace Grim {
 		(dst)[3] = (byte)((v >>  0) & 0xFF);	\
 	} while (0)
 
-#else /* SYSTEM_BIG_ENDIAN */
+#else /* SCUMM_BIG_ENDIAN */
 
 #define WRITE_2X1_LINE(dst, v)		\
 	do {				\
@@ -75,7 +75,7 @@ namespace Grim {
 
 #endif
 
-#else /* SYSTEM_NEED_ALIGNMENT */
+#else /* SCUMM_NEED_ALIGNMENT */
 
 #define COPY_4X1_LINE(dst, src)			\
 	*(uint32 *)(dst) = *(const uint32 *)(src);
@@ -719,7 +719,7 @@ static void bompDecodeMain(byte *dst, const byte *src, int size) {
 	size /= 2;
 	bompInit(src);
 	while (size--) {
-#ifdef SYSTEM_BIG_ENDIAN
+#ifdef SCUMM_BIG_ENDIAN
 		*(dst + 1) = bompDecode();
 		*(dst + 0) = bompDecode();
 #else
@@ -759,7 +759,7 @@ void Blocky16::decode(byte *dst, const byte *src) {
 
 	switch(src[18]) {
 	case 0:
-#if defined(SYSTEM_BIG_ENDIAN)
+#if defined(SCUMM_BIG_ENDIAN)
 		for (int i = 0; i < _width * _height; i++) {
 			((uint16 *)_curBuf)[i] = READ_LE_UINT16(gfx_data + i * 2);
 		}

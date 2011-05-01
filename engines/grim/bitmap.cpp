@@ -77,7 +77,7 @@ Bitmap::Bitmap(const char *fname, const char *data, int len) :
 			pos += compressed_len + 12;
 		}
 
-#ifdef SYSTEM_BIG_ENDIAN
+#ifdef SCUMM_BIG_ENDIAN
 		if (_format == 1)
 			for (int j = 0; j < _width * _height; ++j) {
 				((uint16 *)_data[i])[j] = SWAP_BYTES_16(((uint16 *)_data[i])[j]);
