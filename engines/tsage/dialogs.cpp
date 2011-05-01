@@ -412,10 +412,11 @@ InventoryDialog::InventoryDialog() {
 			imgHeight = MAX(imgHeight, (int)itemSurface.getBounds().height());
 
 			// Add the item to the display list
-			_images.push_back(GfxInvImage());
-			_images[_images.size() - 1].setDetails(invObject->_displayResNum, invObject->_rlbNum, invObject->_cursorNum);
-			_images[_images.size() - 1]._invObject = invObject;
-			add(&_images[_images.size() - 1]);
+			GfxInvImage *img = new GfxInvImage();
+			_images.push_back(img);
+			img->setDetails(invObject->_displayResNum, invObject->_rlbNum, invObject->_cursorNum);
+			img->_invObject = invObject;
+			add(img);
 		}
 	}
 	assert(_images.size() > 0);
@@ -437,7 +438,7 @@ InventoryDialog::InventoryDialog() {
 			cellX = 0;
 		}
 
-		_images[idx]._bounds.moveTo(pt.x, pt.y);
+		_images[idx]->_bounds.moveTo(pt.x, pt.y);
 
 		pt.x += imgWidth + 2;
 		++cellX;
@@ -453,6 +454,11 @@ InventoryDialog::InventoryDialog() {
 
 	frame();
 	setCenter(SCREEN_CENTER_X, SCREEN_CENTER_Y);
+}
+
+InventoryDialog::~InventoryDialog() {
+	for (uint idx = 0; idx < _images.size(); ++idx)
+		delete _images[idx];
 }
 
 void InventoryDialog::execute() {
