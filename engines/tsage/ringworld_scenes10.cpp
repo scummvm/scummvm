@@ -825,7 +825,7 @@ void Scene9400::postInit(SceneObjectList *OwnerList) {
 void Scene9450::Object2::signal() {
 	Scene9450 *scene = (Scene9450 *)_globals->_sceneManager._scene;
 
-	this->setAction(&scene->_sequenceManager3, this, 9458, &scene->_object1, 0);
+	this->setAction(&scene->_sequenceManager3, this, 9458, this, &scene->_object1, 0);
 }
 
 void Scene9450::Object3::dispatch() {
@@ -841,7 +841,7 @@ void Scene9450::Hotspot1::doAction(int action) {
 			scene->_object2._action->remove();
 		scene->_sceneMode = 9459;
 		_globals->_player.disableControl();
-		setAction(&scene->_sequenceManager1, scene, 9459, &scene->_object2, &scene->_object1, &scene->_object3, &_globals->_player, 0);
+		scene->setAction(&scene->_sequenceManager1, scene, 9459, &scene->_object2, &scene->_object1, &scene->_object3, &_globals->_player, 0);
 	} else {
 		NamedHotspot::doAction(action);
 	}
@@ -918,7 +918,9 @@ void Scene9450::signal() {
 		_globals->_sceneManager.changeScene(9360);
 		break;
 	case 9459:
+		RING_INVENTORY._tunic._sceneNumber = 1;
 		_object2.signal();
+		_globals->_player.enableControl();
 		_globals->_events.setCursor(CURSOR_WALK);
 		_hotspot1.remove();
 		break;
