@@ -77,16 +77,16 @@ void Scene9100::dispatch() {
 
 	if (!_action) {
 		if (_globals->_player._position.x < 25) {
-			if (!_globals->getFlag(11)) {
-				scene->_sceneMode = 9106;
-			} else {
-				scene->_sceneMode = 9108;
+			_globals->_player.disableControl();
+			if (!_globals->getFlag(23) || _globals->getFlag(11))
+				_sceneMode = 9106;
+			else {
+				_sceneMode = 9108;
 				_globals->setFlag(11);
 			}
-		} else {
-			scene->_sceneMode = 9106;
+
+			scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &_globals->_player, NULL);
 		}
-		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &_globals->_player, 0);
 	} else {
 		Scene::dispatch();
 	}
@@ -115,8 +115,6 @@ void Scene9100::signal() {
 }
 
 void Scene9100::postInit(SceneObjectList *OwnerList) {
-	Scene9100 *scene = (Scene9100 *)_globals->_sceneManager._scene;
-
 	Scene::postInit();
 	setZoomPercents(0, 100, 200, 100);
 	_object1.postInit();
@@ -146,7 +144,7 @@ void Scene9100::postInit(SceneObjectList *OwnerList) {
 		_object6.setVisage(9111);
 		_object6.setStrip(6);
 		_object6.setFrame(1);
-		_object6.setPosition(Common::Point(138, 166), 0);
+		_object6.setPosition(Common::Point(138, 166));
 		_sceneHotspot3.setup(145, 125, 166, 156, 9100, 40, 43);
 	}
 	_sceneHotspot1.setup(140, 176, 185, 215, 9100, 36, 37);
@@ -163,17 +161,17 @@ void Scene9100::postInit(SceneObjectList *OwnerList) {
 				_sceneMode = 9107;
 			else
 				_sceneMode = 9109;
-			setAction(&scene->_sequenceManager, scene, _sceneMode, &_globals->_player, &_object5, 0);
+			setAction(&_sequenceManager, this, _sceneMode, &_globals->_player, &_object5, NULL);
 		} else {
 			_sceneMode = 9103;
 			_globals->_player.disableControl();
-			setAction(&scene->_sequenceManager, scene, _sceneMode, &_globals->_player, &_object2, &_object3, &_object4, &_object5, 0);
+			setAction(&_sequenceManager, this, _sceneMode, &_globals->_player, &_object2, &_object3, &_object4, &_object5, NULL);
 			_globals->setFlag(20);
 		}
 	} else {
 		_sceneMode = 9102;
 		_globals->_player.disableControl();
-		setAction(&scene->_sequenceManager, scene, _sceneMode, &_globals->_player, &_object2, &_object3, &_object4, &_object5, 0);
+		setAction(&_sequenceManager, this, _sceneMode, &_globals->_player, &_object2, &_object3, &_object4, &_object5, NULL);
 	}
 }
 
