@@ -1081,6 +1081,7 @@ void Scene9500::signal() {
 		break;
 	case 9505:
 		_candle.setStrip(2);
+		RING_INVENTORY._candle._sceneNumber = 1;
 		_globals->_player.enableControl();
 		break;
 	case 9506:
@@ -1088,6 +1089,7 @@ void Scene9500::signal() {
 		_globals->_player.enableControl();
 		break;
 	case 9511:
+		RING_INVENTORY._helmet._sceneNumber = 1;
 		_globals->_player.enableControl();
 		if (!_globals->getFlag(51)) {
 			_globals->setFlag(51);
