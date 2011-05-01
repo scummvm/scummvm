@@ -76,43 +76,43 @@ Registry::Registry() : _dirty(true) {
 }
 
 const char *Registry::get(const char *key, const char *defval) const {
-	if (strcasecmp("good_times", key) == 0 || strcasecmp("GrimDeveloper", key) == 0) {
+	if (scumm_stricmp("good_times", key) == 0 || scumm_stricmp("GrimDeveloper", key) == 0) {
 		return _develMode.c_str();
-	} else if (strcasecmp("GrimDataDir", key) == 0) {
+	} else if (scumm_stricmp("GrimDataDir", key) == 0) {
 		return _dataPath.c_str();
-	} else if (strcasecmp("savepath", key) == 0) {
+	} else if (scumm_stricmp("savepath", key) == 0) {
 		return _savePath.c_str();
-	} else if (strcasecmp("GrimLastSet", key) == 0) {
+	} else if (scumm_stricmp("GrimLastSet", key) == 0) {
 		return _lastSet.c_str();
-	} else if (strcasecmp("MusicVolume", key) == 0) {
+	} else if (scumm_stricmp("MusicVolume", key) == 0) {
 		return _musicVolume.c_str();
-	} else if (strcasecmp("SfxVolume", key) == 0) {
+	} else if (scumm_stricmp("SfxVolume", key) == 0) {
 		return _sfxVolume.c_str();
-	} else if (strcasecmp("VoiceVolume", key) == 0) {
+	} else if (scumm_stricmp("VoiceVolume", key) == 0) {
 		return _voiceVolume.c_str();
-	} else if (strcasecmp("LastSavedGame", key) == 0) {
+	} else if (scumm_stricmp("LastSavedGame", key) == 0) {
 		return _lastSavedGame.c_str();
-	} else if (strcasecmp("Gamma", key) == 0 || strcasecmp("GammaCorrection", key) == 0) {
+	} else if (scumm_stricmp("Gamma", key) == 0 || scumm_stricmp("GammaCorrection", key) == 0) {
 		return "";//_gamma.c_str();
-	} else if (strcasecmp("VoiceEffects", key) == 0) {
+	} else if (scumm_stricmp("VoiceEffects", key) == 0) {
 		return _voiceEffects.c_str();
-	} else if (strcasecmp("TextSpeed", key) == 0) {
+	} else if (scumm_stricmp("TextSpeed", key) == 0) {
 		return _textSpeed.c_str();
-	} else if (strcasecmp("TextMode", key) == 0) {
+	} else if (scumm_stricmp("TextMode", key) == 0) {
 		return _speechMode.c_str();
-	} else if (strcasecmp("MovementMode", key) == 0) {
+	} else if (scumm_stricmp("MovementMode", key) == 0) {
 		return _movement.c_str();
-	} else if (strcasecmp("JoystickEnabled", key) == 0) {
+	} else if (scumm_stricmp("JoystickEnabled", key) == 0) {
 		return _joystick.c_str();
-	} else if (strcasecmp("SpewOnError", key) == 0) {
+	} else if (scumm_stricmp("SpewOnError", key) == 0) {
 		return _spewOnError.c_str();
-	} else if (strcasecmp("show_fps", key) == 0) {
+	} else if (scumm_stricmp("show_fps", key) == 0) {
 		return _showFps.c_str();
-	} else if (strcasecmp("soft_renderer", key) == 0) {
+	} else if (scumm_stricmp("soft_renderer", key) == 0) {
 		return _softRenderer.c_str();
-	} else if (strcasecmp("fullscreen", key) == 0) {
+	} else if (scumm_stricmp("fullscreen", key) == 0) {
 		return _fullscreen.c_str();
-	} else if (strcasecmp("engine_speed", key) == 0) {
+	} else if (scumm_stricmp("engine_speed", key) == 0) {
 		return _engineSpeed.c_str();
 	}
 
@@ -123,61 +123,61 @@ void Registry::set(const char *key, const char *val) {
 	_dirty = true;
 	assert(val);
 
-	if (strcasecmp("good_times", key) == 0 || strcasecmp("GrimDeveloper", key) == 0) {
+	if (scumm_stricmp("good_times", key) == 0 || scumm_stricmp("GrimDeveloper", key) == 0) {
 		_develMode = val;
 		return;
-	} else if (strcasecmp("GrimDataDir", key) == 0) {
+	} else if (scumm_stricmp("GrimDataDir", key) == 0) {
 		_dataPath = val;
 		return;
-	} else if (strcasecmp("savepath", key) == 0) {
+	} else if (scumm_stricmp("savepath", key) == 0) {
 		_savePath = val;
 		return;
-	} else if (strcasecmp("GrimLastSet", key) == 0) {
+	} else if (scumm_stricmp("GrimLastSet", key) == 0) {
 		_lastSet = val;
 		return;
-	} else if (strcasecmp("MusicVolume", key) == 0) {
+	} else if (scumm_stricmp("MusicVolume", key) == 0) {
 		_musicVolume = val;
 		return;
-	} else if (strcasecmp("SfxVolume", key) == 0) {
+	} else if (scumm_stricmp("SfxVolume", key) == 0) {
 		_sfxVolume = val;
 		return;
-	} else if (strcasecmp("VoiceVolume", key) == 0) {
+	} else if (scumm_stricmp("VoiceVolume", key) == 0) {
 		_voiceVolume = val;
 		return;
-	} else if (strcasecmp("LastSavedGame", key) == 0) {
+	} else if (scumm_stricmp("LastSavedGame", key) == 0) {
 		_lastSavedGame = val;
 		return;
-	} else if (strcasecmp("Gamma", key) == 0 || strcasecmp("GammaCorrection", key) == 0) {
+	} else if (scumm_stricmp("Gamma", key) == 0 || scumm_stricmp("GammaCorrection", key) == 0) {
 		_gamma = "";//val;
 		return;
-	} else if (strcasecmp("VoiceEffects", key) == 0) {
+	} else if (scumm_stricmp("VoiceEffects", key) == 0) {
 		_voiceEffects = val;
 		return;
-	} else if (strcasecmp("TextSpeed", key) == 0) {
+	} else if (scumm_stricmp("TextSpeed", key) == 0) {
 		_textSpeed = val;
 		return;
-	} else if (strcasecmp("TextMode", key) == 0) {
+	} else if (scumm_stricmp("TextMode", key) == 0) {
 		_speechMode = val;
 		return;
-	} else if (strcasecmp("MovementMode", key) == 0) {
+	} else if (scumm_stricmp("MovementMode", key) == 0) {
 		_movement = val;
 		return;
-	} else if (strcasecmp("JoystickEnabled", key) == 0) {
+	} else if (scumm_stricmp("JoystickEnabled", key) == 0) {
 		_joystick = val;
 		return;
-	} else if (strcasecmp("SpewOnError", key) == 0) {
+	} else if (scumm_stricmp("SpewOnError", key) == 0) {
 		_spewOnError = val;
 		return;
-	} else if (strcasecmp("show_fps", key) == 0) {
+	} else if (scumm_stricmp("show_fps", key) == 0) {
 		_showFps = val;
 		return;
-	} else if (strcasecmp("soft_renderer", key) == 0) {
+	} else if (scumm_stricmp("soft_renderer", key) == 0) {
 		_softRenderer = val;
 		return;
-	} else if (strcasecmp("fullscreen", key) == 0) {
+	} else if (scumm_stricmp("fullscreen", key) == 0) {
 		_fullscreen = val;
 		return;
-	} else if (strcasecmp("engine_speed", key) == 0) {
+	} else if (scumm_stricmp("engine_speed", key) == 0) {
 		_engineSpeed = val;
 		return;
 	}

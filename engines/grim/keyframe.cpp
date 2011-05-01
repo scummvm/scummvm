@@ -113,7 +113,7 @@ void KeyframeAnim::loadText(TextSplitter &ts) {
 	ts.scanString("fps %f", 1, &_fps);
 	ts.scanString("joints %d", 1, &_numJoints);
 
-	if (strcasecmp(ts.currentLine(), "section: markers") == 0) {
+	if (scumm_stricmp(ts.currentLine(), "section: markers") == 0) {
 		ts.nextLine();
 		ts.scanString("markers %d", 1, &_numMarkers);
 		_markers = new Marker[_numMarkers];

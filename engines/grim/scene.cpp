@@ -100,7 +100,7 @@ Scene::Scene(const char *sceneName, const char *buf, int len) :
 	// cases where they count up, see hh.set for example)
 	while (!ts.eof()) {
 		ts.scanString(" %s", 1, tempBuf);
-		if (!strcasecmp(tempBuf, "sector"))
+		if (!scumm_stricmp(tempBuf, "sector"))
 			_numSectors++;
 	}
 	// Allocate and fill an array of sector info
@@ -465,7 +465,7 @@ ObjectState *Scene::findState(const char *filename) {
 
 		if (strcmp(file, filename) == 0)
 			return *i;
-		if (strcasecmp(file, filename) == 0) {
+		if (scumm_stricmp(file, filename) == 0) {
 			if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 				warning("State object request '%s' matches object '%s' but is the wrong case", filename, file);
 			return *i;

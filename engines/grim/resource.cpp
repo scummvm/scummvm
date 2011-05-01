@@ -100,7 +100,7 @@ const Lab *ResourceLoader::getLab(const char *filename) const {
 }
 
 static int sortCallback(const void *entry1, const void *entry2) {
-	return strcasecmp(((ResourceLoader::ResourceCache *)entry1)->fname, ((ResourceLoader::ResourceCache *)entry2)->fname);
+	return scumm_stricmp(((ResourceLoader::ResourceCache *)entry1)->fname, ((ResourceLoader::ResourceCache *)entry2)->fname);
 }
 
 Block *ResourceLoader::getFileFromCache(const char *filename) {

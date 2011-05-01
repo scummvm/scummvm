@@ -82,7 +82,7 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 	// instead of starting a new copy of the track
 	for (i = 0; i < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; i++) {
 		// Filenames are case insensitive, see findTrack
-		if (!strcasecmp(_track[i]->soundName, soundName)) {
+		if (!scumm_stricmp(_track[i]->soundName, soundName)) {
 			if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
 				printf("Imuse::startSound(): Track '%s' already playing.\n", soundName);
 			return true;
@@ -156,7 +156,7 @@ Track *Imuse::findTrack(const char *soundName) {
 		// two ways: keyboard.IMU and keyboard.imu, make a case insensitive
 		// search for the track to make sure we can find it
 		if (track->used && !track->toBeRemoved
-				&& strlen(track->soundName) != 0 && strcasecmp(track->soundName, soundName) == 0) {
+				&& strlen(track->soundName) != 0 && scumm_stricmp(track->soundName, soundName) == 0) {
 			return track;
 		}
 	}
@@ -231,7 +231,7 @@ int Imuse::getCountPlayedTracks(const char *soundName) {
 
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && !track->toBeRemoved && (strcasecmp(track->soundName, soundName) == 0)) {
+		if (track->used && !track->toBeRemoved && (scumm_stricmp(track->soundName, soundName) == 0)) {
 			count++;
 		}
 	}

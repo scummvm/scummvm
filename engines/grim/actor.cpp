@@ -1012,7 +1012,7 @@ void Actor::setScale(float scale) {
 
 Costume *Actor::findCostume(const char *n) {
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
-		if (strcasecmp((*i)->getFilename(), n) == 0)
+		if (scumm_stricmp((*i)->getFilename(), n) == 0)
 			return *i;
 	}
 

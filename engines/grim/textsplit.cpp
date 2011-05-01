@@ -105,7 +105,7 @@ bool TextSplitter::checkString(const char *needle) {
 void TextSplitter::expectString(const char *expected) {
 	if (!_currLine)
 		error("Expected `%s', got EOF", expected);
-	if (strcasecmp(currentLine(), expected) != 0)
+	if (scumm_stricmp(currentLine(), expected) != 0)
 		error("Expected `%s', got '%s'", expected, currentLine());
 	nextLine();
 }
