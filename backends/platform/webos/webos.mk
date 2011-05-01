@@ -1,15 +1,27 @@
 # WebOS specific build targets
 # ============================================================================
 #
-# Run "make webosrelease" to create a release package to be uploaded to the
-# Palm app catalog.
+# Build instructions:
 #
-# Run "make webosbeta" to create a beta package to be uploaded to the Palm
-# Beta app catalog.
+# 1. Install the WebOS SDK and PDK and setup the environment variables
+#    WEBOS_SDK and WEBOS_PDK accordingly.
 #
-# Before calling these targets the ScummVM source must be configured for a
-# WebOS build.  See
-# http://wiki.scummvm.org/index.php/Compiling_ScummVM/WebOS for details.
+# 2. Cross-compile zlib, flac, mad and tremor and install it into the PDK.
+#
+# 3. Prepare the ScummVM source for a webOS build:
+#    $ ./configure --host=webos --enable-plugins --default-dynamic \
+#          --enable-release
+#
+# 4. Create the package:
+#    $ make package
+#
+# The package is now in the "portdist" folder.
+#
+# See http://wiki.scummvm.org/index.php/Compiling_ScummVM/WebOS for
+# more detailed build instructions.
+#
+#
+# Palm App catalog instructions:
 #
 # VER_PACKAGE must be set to a number which is higher than the currently
 # used package version in the app catalog.  So when creating an updated
@@ -25,46 +37,55 @@
 # to use a user-specific app name when submitting the created package to the
 # Palm app catalog.  Use "ScummVM (<username>)" instead of "ScummVM" and
 # "ScummVM Beta (<username>)" instead of "ScummVM Beta".
+#
+# The app id is automatically parsed from the installation prefix.  So add a
+# configure parameter like this to prepare a build of a package for the Palm
+# App Catalog:
+#
+#   --prefix=/media/cryptofs/apps/usr/palm/applications/com.github.kayahr.scummvm
+#
+# To build a package for the Palm Beta App Catalog add "-beta" to the prefix:
+#
+#   --prefix=/media/cryptofs/apps/usr/palm/applications/com.github.kayahr.scummvm-beta
+# ============================================================================
+
+# Increment this number when the packaging of the app has been changed while
+# ScummVM itself has the same version as before. The number can be reset to 
+# 1 when the ScummVM version is increased.
+VER_PACKAGE = 5
 
 PATH_DIST = $(srcdir)/dists/webos
 PATH_MOJO = $(PATH_DIST)/mojo
-BASE_APP_ID = org.scummvm
-APP_ID = $(BASE_APP_ID).scummvm
-BETA_APP_ID = $(APP_ID)-beta
+APP_ID = $(shell basename $(prefix))
 APP_VERSION = $(shell printf "%d.%d.%02d%02d" $(VER_MAJOR) $(VER_MINOR) $(VER_PATCH) $(VER_PACKAGE))
-STAGING_DIR=STAGING/$(APP_ID)
+DESTDIR ?= portdist
 
-webosprepare: all
-	$(QUIET)if [ "$(VER_PACKAGE)" = "" ]; \
-	then \
-	    echo "ERROR: VER_PACKAGE is not set"; \
-            echo "Example: export VER_PACKAGE=1"; \
-	    exit 1; \
-	fi
-	$(QUIET)$(RM_REC) $(STAGING_DIR)
-	$(QUIET)$(MKDIR) $(STAGING_DIR)
-	$(QUIET)$(MKDIR) $(STAGING_DIR)/bin
-	$(QUIET)$(MKDIR) $(STAGING_DIR)/lib
-	$(QUIET)$(MKDIR) $(STAGING_DIR)/share/scummvm
-	$(QUIET)$(CP) $(PATH_MOJO)/* $(STAGING_DIR)
-	$(QUIET)$(CP) gui/themes/translations.dat $(STAGING_DIR)/share/scummvm
-	$(QUIET)$(CP) gui/themes/scummmodern.zip $(STAGING_DIR)/share/scummvm
-	$(QUIET)$(CP) scummvm $(STAGING_DIR)/bin
-	$(QUIET)$(STRIP) $(STAGING_DIR)/bin/scummvm
-	$(QUIET)sed -i s/'APP_VERSION'/'$(APP_VERSION)'/ $(STAGING_DIR)/appinfo.json
+install: all
+	$(QUIET)$(INSTALL) -d "$(DESTDIR)$(prefix)"
+	$(QUIET)$(INSTALL) -m 0644 -t "$(DESTDIR)$(prefix)/" "$(PATH_MOJO)/"*
+	$(QUIET)$(INSTALL) -m 0755 "$(PATH_MOJO)/start" "$(DESTDIR)$(prefix)/"
+	$(QUIET)$(INSTALL) -d "$(DESTDIR)$(bindir)"
+	$(QUIET)$(INSTALL) -c -m 755 "./$(EXECUTABLE)" "$(DESTDIR)$(bindir)/$(EXECUTABLE)"
+	$(QUIET)$(STRIP) "$(DESTDIR)$(bindir)/$(EXECUTABLE)"
+	$(QUIET)$(INSTALL) -d "$(DESTDIR)$(docdir)"
+	$(QUIET)$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(docdir)"
+	$(QUIET)$(INSTALL) -d "$(DESTDIR)$(datadir)"
+	$(QUIET)$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
+ifdef DYNAMIC_MODULES
+	$(QUIET)$(INSTALL) -d "$(DESTDIR)$(libdir)/"
+	$(QUIET)$(INSTALL) -c -m 644 $(PLUGINS) "$(DESTDIR)$(libdir)/"
+	$(QUIET)$(STRIP) "$(DESTDIR)$(libdir)/"*
+endif
+	$(QUIET)sed -i s/'APP_VERSION'/'$(APP_VERSION)'/ "$(DESTDIR)$(prefix)/appinfo.json"
+	$(QUIET)sed -i s/'APP_ID'/'$(APP_ID)'/ "$(DESTDIR)$(prefix)/appinfo.json"
+ifneq (,$(findstring -beta,$(APP_ID)))
+	$(QUIET)sed -i s/'APP_TITLE'/'ScummVM Beta'/ "$(DESTDIR)$(prefix)/appinfo.json"
+else
+	$(QUIET)sed -i s/'APP_TITLE'/'ScummVM'/ "$(DESTDIR)$(prefix)/appinfo.json"
+endif
 
-webosrelease: webosprepare
-	$(QUIET)$(RM) $(APP_ID)_*.ipk
-	$(QUIET)sed -i s/'APP_ID'/'$(APP_ID)'/ $(STAGING_DIR)/appinfo.json
-	$(QUIET)sed -i s/'APP_TITLE'/'ScummVM'/ $(STAGING_DIR)/appinfo.json
-	$(QUIET)$(WEBOS_SDK)/bin/palm-package --use-v1-format $(STAGING_DIR)
-	$(QUIET)$(RM_REC) STAGING
+uninstall:
+	$(QUIET)$(RM_REC) "$(DESTDIR)$(prefix)"
 
-webosbeta: webosprepare
-	$(QUIET)$(RM) $(BETA_APP_ID)_*.ipk
-	$(QUIET)sed -i s/'APP_ID'/'$(BETA_APP_ID)'/ $(STAGING_DIR)/appinfo.json
-	$(QUIET)sed -i s/'APP_TITLE'/'ScummVM Beta'/ $(STAGING_DIR)/appinfo.json
-	$(QUIET)$(WEBOS_SDK)/bin/palm-package --use-v1-format $(STAGING_DIR)
-	$(QUIET)$(RM_REC) STAGING
-
-.PHONY: webosrelease webosbeta
+package: install
+	$(QUIET)$(WEBOS_SDK)/bin/palm-package --use-v1-format "$(DESTDIR)$(prefix)" -o "$(DESTDIR)"
