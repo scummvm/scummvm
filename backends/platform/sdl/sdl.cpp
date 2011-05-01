@@ -335,7 +335,7 @@ void OSystem_SDL::setupIcon() {
 	unsigned int *icon;
 
 	if (sscanf(residual_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes) != 4) {
-		warning("Wrong format of residual_icon[0] (%s)", scummvm_icon[0]);
+		warning("Wrong format of residual_icon[0] (%s)", residual_icon[0]);
 		
 		return;
 	}
