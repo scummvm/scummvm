@@ -307,16 +307,16 @@ void Scene9200::SceneHotspot1::doAction(int action) {
 		_globals->_player.disableControl();
 		if (_globals->getFlag(93)) {
 			scene->_sceneState = 9214;
-			setAction(&scene->_sequenceManager, scene, 9214, &_globals->_player, &scene->_object2, 0);
+			scene->setAction(&scene->_sequenceManager, scene, 9214, &_globals->_player, &scene->_object2, 0);
 		} else {
 			_globals->setFlag(93);
 			scene->_sceneState = 9213;
-			setAction(&scene->_sequenceManager, scene, 9213, &_globals->_player, &scene->_object2, 0);
+			scene->setAction(&scene->_sequenceManager, scene, 9213, &_globals->_player, &scene->_object2, 0);
 		}
 	} else if (action <= 100) {
 		_globals->_player.disableControl();
 		scene->_sceneState = 9214;
-		setAction(&scene->_sequenceManager, scene, 9214, &_globals->_player, &scene->_object2, 0);
+		scene->setAction(&scene->_sequenceManager, scene, 9214, &_globals->_player, &scene->_object2, 0);
 	} else {
 		NamedHotspot::doAction(action);
 	}
