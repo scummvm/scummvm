@@ -35,7 +35,7 @@ namespace Grim {
 
 #define SAVEGAME_HEADERTAG	'RSAV'
 #define SAVEGAME_FOOTERTAG	'ESAV'
-#define SAVEGAME_VERSION		7
+#define SAVEGAME_VERSION		8
 
 // Constructor. Should create/open a saved game
 SaveGame::SaveGame(const char *filename, bool saving) :
