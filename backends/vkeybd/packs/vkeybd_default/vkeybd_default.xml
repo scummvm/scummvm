@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<keyboard initial_mode="lowercase" v_align="bottom" h_align="centre">
+<keyboard initial_mode="lowercase" v_align="bottom" h_align="center">
 <!-- coords key = "start x, start y, end x, end y" -->
   <!-- Lowercase -->
   <mode name="lowercase" resolutions="320x240,640x480">

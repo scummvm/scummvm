@@ -23,6 +23,7 @@
  */
 
 #include "graphics/font.h"
+#include "graphics/surface.h"
 
 namespace Graphics {
 

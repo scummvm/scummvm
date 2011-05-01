@@ -6,6 +6,23 @@
 lib*.a
 .deps
 
+/config.log
+/residual
+/residual-static
+/config.h
+/config.mk
+/.gdb_history
+/dumps
+/Credits.rtf
+/*.mshark
+/*.dSYM
+/MT32_CONTROL.ROM
+/MT32_PCM.ROM
+/Residual.app
+/*.ipk
+/.project
+/.cproject
+/.settings
 /dists/codeblocks/*.cbp
 /dists/codeblocks/*.depend
 /dists/codeblocks/*.layout
@@ -18,6 +35,7 @@ lib*.a
 /dists/msvc*/*.dat
 /dists/msvc*/*.dll
 
+/plugins
 /devtools/create_project/create_project
 
 #ignore thumbnails created by windows

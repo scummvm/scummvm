@@ -29,6 +29,8 @@ xcopy /F /Y "%~1/dists/engine-data/README" %~2 > NUL 2>&1
 xcopy /F /Y "%~1/gui/themes/*.zip" %~2 > NUL 2>&1
 xcopy /F /Y "%~1/gui/themes/translations.dat" %~2 > NUL 2>&1
 xcopy /F /Y "%~4/lib/%~3/SDL.dll" %~2 > NUL 2>&1
+
+xcopy /F /Y "%~1/backends/vkeybd/packs/vkeybd_default.zip" %~2 > NUL 2>&1
 goto done
 
 :error_root

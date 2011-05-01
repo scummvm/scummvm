@@ -30,7 +30,6 @@
 #include "common/hashmap.h"
 #include "common/stack.h"
 #include "common/str.h"
-#include "common/hash-str.h"
 
 namespace GUI {
 

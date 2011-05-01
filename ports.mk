@@ -40,7 +40,6 @@ deb:
 	debian/prepare
 	fakeroot debian/rules binary
 
-
 # Special target to create a application wrapper for Mac OS X
 bundle_name = Residual.app
 bundle: residual-static
@@ -226,24 +225,4 @@ endif
 
 # Mark special targets as phony
 .PHONY: deb bundle osxsnap win32dist install uninstall
-
-#
-# ARM specific
-#
-ifdef USE_TREMOLO
-DEFINES += -DUSE_TREMOR -DUSE_VORBIS -DUSE_TREMOLO
-LIBS += -ltremolo
-endif
-
-ifdef USE_ARM_SMUSH_ASM
-DEFINES += -DUSE_ARM_SMUSH_ASM
-endif
-
-ifdef USE_ARM_SOUND_ASM
-DEFINES += -DUSE_ARM_SOUND_ASM
-endif
-
-ifdef USE_ARM_GFX_ASM
-DEFINES += -DUSE_ARM_GFX_ASM
-endif
 

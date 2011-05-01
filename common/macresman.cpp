@@ -31,7 +31,7 @@
 #include "common/macresman.h"
 #include "common/md5.h"
 #include "common/substream.h"
-#include "common/memstream.h"
+#include "common/textconsole.h"
 
 #ifdef MACOSX
 #include "common/config-manager.h"
@@ -623,6 +623,11 @@ void MacResManager::convertCrsrCursor(SeekableReadStream *data, byte **cursor, i
 	// Pixel data for cursor
 	int iconDataSize =  iconRowBytes * (iconBounds[3] - iconBounds[1]);
 	byte *iconData = new byte[iconDataSize];
+
+	if (!iconData) {
+		error("Cannot allocate iconData in macresman.cpp");
+	}
+
 	data->read(iconData, iconDataSize);
 
 	// Color table

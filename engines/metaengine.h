@@ -37,8 +37,8 @@ class Engine;
 class OSystem;
 
 namespace Common {
-	class FSList;
-	class String;
+class FSList;
+class String;
 }
 
 /**

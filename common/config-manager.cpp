@@ -24,10 +24,11 @@
  */
 
 #include "common/config-manager.h"
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/fs.h"
-#include "common/util.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 DECLARE_SINGLETON(Common::ConfigManager);
 
@@ -179,11 +180,7 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 			// of a new domain, or a key-value-pair, we associate the value
 			// of the 'comment' variable with that entity.
 			comment += line;
-#ifdef _WIN32
-			comment += "\r\n";
-#else
 			comment += "\n";
-#endif
 		} else if (line[0] == '[') {
 			// It's a new domain which begins here.
 			// Determine where the previously accumulated domain goes, if we accumulated anything.

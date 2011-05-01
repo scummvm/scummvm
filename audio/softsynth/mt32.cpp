@@ -34,15 +34,19 @@
 
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/error.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "common/archive.h"
+#include "common/textconsole.h"
 #include "common/translation.h"
 
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
+#include "graphics/pixelformat.h"
+#include "graphics/font.h"
 
 class MidiChannel_MT32 : public MidiChannel_MPU401 {
 	void effectLevel(byte value) { }

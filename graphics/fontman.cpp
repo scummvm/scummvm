@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#include "graphics/font.h"
 #include "graphics/fontman.h"
 
 DECLARE_SINGLETON(Graphics::FontManager);
@@ -76,7 +77,7 @@ const struct {
 
 const Font *FontManager::getFontByName(const Common::String &name) const {
 	for (int i = 0; builtinFontNames[i].name; i++)
-		if (!strcasecmp(name.c_str(), builtinFontNames[i].name))
+		if (!scumm_stricmp(name.c_str(), builtinFontNames[i].name))
 			return getFontByUsage(builtinFontNames[i].id);
 
 	if (!_fontMap.contains(name))

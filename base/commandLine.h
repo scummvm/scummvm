@@ -23,12 +23,15 @@
  *
  */
 
-#ifndef BASE_OPTIONS_H
-#define BASE_OPTIONS_H
+#ifndef COMMON_COMMAND_LINE_H
+#define COMMON_COMMAND_LINE_H
 
-#include "common/str.h"
-#include "common/error.h"
-#include "common/config-manager.h"
+#include "common/hash-str.h"
+
+namespace Common {
+class Error;
+class String;
+}
 
 namespace Base {
 

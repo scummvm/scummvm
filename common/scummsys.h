@@ -120,13 +120,13 @@
 // which can't use our "configure" tool and hence don't use config.h.
 //
 // Some #defines that occur here frequently:
-// SYSTEM_LITTLE_ENDIAN
+// SCUMM_LITTLE_ENDIAN
 //    - Define this on a little endian target
-// SYSTEM_BIG_ENDIAN
+// SCUMM_BIG_ENDIAN
 //    - Define this on a big endian target
-// SYSTEM_NEED_ALIGNMENT
+// SCUMM_NEED_ALIGNMENT
 //    - Define this if your system has problems reading e.g. an int32 from an odd address
-// SYSTEM_DONT_DEFINE_TYPES
+// SCUMMVM_DONT_DEFINE_TYPES
 //    - Define this if you need to provide your own typedefs, e.g. because your
 //      system headers conflict with our typenames, or because you have odd
 //      type requirements.
@@ -137,7 +137,7 @@
 // We define all types in config.h, so we don't want to typedef those types
 // here again!
 #ifdef HAVE_CONFIG_H
-#define SYSTEM_DONT_DEFINE_TYPES
+#define SCUMMVM_DONT_DEFINE_TYPES
 #endif
 
 
@@ -152,22 +152,25 @@
 // If neither is possible, tough luck. Try to contact the team, maybe we can
 // come up with a solution, though I wouldn't hold my breath on it :-/.
 //
-#define SYSTEM_USE_PRAGMA_PACK
+#define SCUMMVM_USE_PRAGMA_PACK
 
 
 #if defined(__SYMBIAN32__)
 
-	#define SYSTEM_LITTLE_ENDIAN
-	#define SYSTEM_NEED_ALIGNMENT
+	#define scumm_stricmp strcasecmp
+	#define scumm_strnicmp strncasecmp
+
+	#define SCUMM_LITTLE_ENDIAN
+	#define SCUMM_NEED_ALIGNMENT
 
 	#define SMALL_SCREEN_DEVICE
 
 	// Enable Symbians own datatypes
 	// This is done for two reasons
 	// a) uint is already defined by Symbians libc component
-	// b) Symbian is using its "own" datatyping, and the Residual port
+	// b) Symbian is using its "own" datatyping, and the Scummvm port
 	//    should follow this to ensure the best compability possible.
-	#define SYSTEM_DONT_DEFINE_TYPES
+	#define SCUMMVM_DONT_DEFINE_TYPES
 	typedef unsigned char byte;
 
 	typedef unsigned char uint8;
@@ -181,11 +184,11 @@
 
 #elif defined(_WIN32_WCE)
 
-	#define strcasecmp stricmp
-	#define strncasecmp strnicmp
+	#define scumm_stricmp stricmp
+	#define scumm_strnicmp _strnicmp
 	#define snprintf _snprintf
 
-	#define SYSTEM_LITTLE_ENDIAN
+	#define SCUMM_LITTLE_ENDIAN
 
 	#ifndef __GNUC__
 		#define FORCEINLINE __forceinline
@@ -199,11 +202,11 @@
 
 #elif defined(_MSC_VER)
 
-	#define strcasecmp stricmp
-	#define strncasecmp strnicmp
+	#define scumm_stricmp stricmp
+	#define scumm_strnicmp _strnicmp
 	#define snprintf _snprintf
 
-	#define SYSTEM_LITTLE_ENDIAN
+	#define SCUMM_LITTLE_ENDIAN
 
 	#define FORCEINLINE __forceinline
 	#define NORETURN_PRE __declspec(noreturn)
@@ -212,14 +215,17 @@
 
 #elif defined(__MINGW32__)
 
-	#define strcasecmp stricmp
-	#define strncasecmp strnicmp
+	#define scumm_stricmp stricmp
+	#define scumm_strnicmp strnicmp
 
-	#define SYSTEM_LITTLE_ENDIAN
+	#define SCUMM_LITTLE_ENDIAN
 
 	#define PLUGIN_EXPORT __declspec(dllexport)
 
 #elif defined(UNIX)
+
+	#define scumm_stricmp strcasecmp
+	#define scumm_strnicmp strncasecmp
 
 	#ifndef CONFIG_H
 		/* need this for the SDL_BYTEORDER define */
@@ -235,7 +241,7 @@
 	#endif
 
 	// You need to set this manually if necessary
-//	#define SYSTEM_NEED_ALIGNMENT
+//	#define SCUMM_NEED_ALIGNMENT
 
 	// Very BAD hack following, used to avoid triggering an assert in uClibc dingux library
 	// "toupper" when pressing keyboard function keys.
@@ -246,19 +252,22 @@
 
 #elif defined(__DC__)
 
-	#define SYSTEM_LITTLE_ENDIAN
-	#define SYSTEM_NEED_ALIGNMENT
+	#define scumm_stricmp strcasecmp
+	#define scumm_strnicmp strncasecmp
+
+	#define SCUMM_LITTLE_ENDIAN
+	#define SCUMM_NEED_ALIGNMENT
 
 #elif defined(__GP32__)
 
-	#define strcasecmp stricmp
-	#define strncasecmp strnicmp
+	#define scumm_stricmp stricmp
+	#define scumm_strnicmp strnicmp
 
-	#define SYSTEM_LITTLE_ENDIAN
-	#define SYSTEM_NEED_ALIGNMENT
+	#define SCUMM_LITTLE_ENDIAN
+	#define SCUMM_NEED_ALIGNMENT
 
 	// Override typenames. uint is already defined by system header files.
-	#define SYSTEM_DONT_DEFINE_TYPES
+	#define SCUMMVM_DONT_DEFINE_TYPES
 	typedef unsigned char byte;
 
 	typedef unsigned char uint8;
@@ -272,16 +281,23 @@
 
 #elif defined(__PLAYSTATION2__)
 
-	#define SYSTEM_LITTLE_ENDIAN
-	#define SYSTEM_NEED_ALIGNMENT
+	#define scumm_stricmp strcasecmp
+	#define scumm_strnicmp strncasecmp
+
+	#define SCUMM_LITTLE_ENDIAN
+	#define SCUMM_NEED_ALIGNMENT
+
 #elif defined(__N64__)
 
-	#define SYSTEM_BIG_ENDIAN
-	#define SYSTEM_NEED_ALIGNMENT
+	#define scumm_stricmp strcasecmp
+	#define scumm_strnicmp strncasecmp
+
+	#define SCUMM_BIG_ENDIAN
+	#define SCUMM_NEED_ALIGNMENT
 
 	#define STRINGBUFLEN 256
 
-	#define SYSTEM_DONT_DEFINE_TYPES
+	#define SCUMMVM_DONT_DEFINE_TYPES
 	typedef unsigned char byte;
 
 	typedef unsigned char uint8;
@@ -301,31 +317,43 @@
 	#include <malloc.h>
 	#include "backends/platform/psp/memory.h"
 
-	#define	SYSTEM_LITTLE_ENDIAN
-	#define	SYSTEM_NEED_ALIGNMENT
+	#define scumm_stricmp strcasecmp
+	#define scumm_strnicmp strncasecmp
+
+	#define	SCUMM_LITTLE_ENDIAN
+	#define	SCUMM_NEED_ALIGNMENT
+
+	/* to make an efficient, inlined memcpy implementation */
+	#define memcpy(dst, src, size)   psp_memcpy(dst, src, size)
 
 #elif defined(__amigaos4__)
 
-	#define	SYSTEM_BIG_ENDIAN
-	#define	SYSTEM_NEED_ALIGNMENT
+	#define	scumm_stricmp strcasecmp
+	#define	scumm_strnicmp strncasecmp
+
+	#define	SCUMM_BIG_ENDIAN
+	#define	SCUMM_NEED_ALIGNMENT
 
 #elif defined (__DS__)
 
-	#define strcasecmp stricmp
-	#define strncasecmp strnicmp
+	#define scumm_stricmp stricmp
+	#define scumm_strnicmp strnicmp
 
-	#define SYSTEM_NEED_ALIGNMENT
-	#define SYSTEM_LITTLE_ENDIAN
+	#define SCUMM_NEED_ALIGNMENT
+	#define SCUMM_LITTLE_ENDIAN
 
-	#define SYSTEM_DONT_DEFINE_TYPES
+	#define SCUMMVM_DONT_DEFINE_TYPES
 
 	#define STRINGBUFLEN 256
 //	#define printf(fmt, ...)					consolePrintf(fmt, ##__VA_ARGS__)
 
 #elif defined(__WII__)
 
-	#define	SYSTEM_BIG_ENDIAN
-	#define	SYSTEM_NEED_ALIGNMENT
+	#define scumm_stricmp strcasecmp
+	#define scumm_strnicmp strncasecmp
+
+	#define	SCUMM_BIG_ENDIAN
+	#define	SCUMM_NEED_ALIGNMENT
 
 #else
 	#error No system type defined
@@ -387,9 +415,9 @@
 
 
 //
-// Typedef our system types unless SYSTEM_DONT_DEFINE_TYPES is set.
+// Typedef our system types unless SCUMMVM_DONT_DEFINE_TYPES is set.
 //
-#ifndef SYSTEM_DONT_DEFINE_TYPES
+#ifndef SCUMMVM_DONT_DEFINE_TYPES
 	typedef unsigned char byte;
 	typedef unsigned char uint8;
 	typedef signed char int8;

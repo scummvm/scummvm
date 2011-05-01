@@ -75,6 +75,9 @@ private:
 
 	void computeFileList(const FileNode &dir, const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix);
 	void createFiltersFile(const BuildSetup &setup, const std::string &name);
+
+	void outputFilter(std::ostream &filters, const FileEntries &files, const std::string &action);
+	void outputFiles(std::ostream &projectFile, const FileEntries &files, const std::string &action);
 };
 
 } // End of CreateProjectTool namespace

@@ -27,15 +27,9 @@
 #define BASE_PLUGINS_H
 
 #include "common/array.h"
-#include "common/error.h"
-#include "common/singleton.h"
-#include "common/util.h"
+#include "common/fs.h"
+#include "common/str.h"
 //#include "backends/plugins/elf/version.h"
-
-namespace Common {
-	class FSList;
-	class FSNode;
-}
 
 
 /**

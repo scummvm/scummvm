@@ -27,7 +27,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "common/util.h"
+#include "common/textconsole.h"
 
 #define MAXLINELEN 256
 
@@ -101,11 +101,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			// of the 'comment' variable with that entity. The semicolon and
 			// C++-style comments are used for Living Books games in Mohawk.
 			comment += line;
-#ifdef _WIN32
-			comment += "\r\n";
-#else
 			comment += "\n";
-#endif
 		} else if (line[0] == '(') {
 			// HACK: The following is a hack added by Kirben to support the
 			// "map.ini" used in the HE SCUMM game "SPY Fox in Hold the Mustard".

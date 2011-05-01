@@ -23,8 +23,6 @@
  *
  */
 
-#include "base/plugins.h"
-
 #include "common/debug.h"
 #include "common/util.h"
 #include "common/hash-str.h"
@@ -32,6 +30,7 @@
 #include "common/macresman.h"
 #include "common/md5.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
 #include "engines/advancedDetector.h"
 
@@ -66,7 +65,7 @@ static GameList gameIDList(const ADParams &params) {
 
 		const PlainGameDescriptor *g = params.list;
 		while (g->gameid) {
-			if (0 == strcasecmp(params.singleid, g->gameid)) {
+			if (0 == scumm_stricmp(params.singleid, g->gameid)) {
 				gl.push_back(GameDescriptor(g->gameid, g->description));
 
 				return gl;
@@ -124,7 +123,7 @@ GameDescriptor findGameID(
 	if (obsoleteList != 0) {
 		const ADObsoleteGameID *o = obsoleteList;
 		while (o->from) {
-			if (0 == strcasecmp(gameid, o->from)) {
+			if (0 == scumm_stricmp(gameid, o->from)) {
 				g = findPlainGameDescriptor(o->to, list);
 				if (g && g->description)
 					return GameDescriptor(gameid, "Obsolete game ID (" + Common::String(g->description) + ")");
@@ -150,7 +149,7 @@ static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGa
 		extra = "";
 	} else {
 		while (sg->gameid) {
-			if (!strcasecmp(g.gameid, sg->gameid))
+			if (!scumm_stricmp(g.gameid, sg->gameid))
 				title = sg->description;
 			sg++;
 		}

@@ -57,42 +57,6 @@ int VisualStudioProvider::getVisualStudioVersion() {
 	error("Unsupported version passed to getVisualStudioVersion");
 }
 
-#define OUTPUT_BUILD_EVENTS(isWin32) \
-	if (setup.runBuildEvents) { \
-		project << "\t\t\t<Tool\tName=\"VCPreBuildEventTool\"\n" \
-		           "\t\t\t\tCommandLine=\"" << getPreBuildEvent() << "\"\n" \
-		           "\t\t\t/>\n" \
-		           "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n" \
-		           "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32) << "\"\n" \
-		           "\t\t\t/>\n"; \
-	}
-
-#define OUTPUT_CONFIGURATION_MAIN(config, platform, props, isWin32) { \
-	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\" << PROJECT_DESCRIPTION << "_" << config << props << ".vsprops\">\n" \
-	           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n" \
-	           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/" << PROJECT_NAME << "\"\n" \
-	           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n" \
-	           "\t\t\t/>\n"; \
-	OUTPUT_BUILD_EVENTS(isWin32) \
-	project << "\t\t</Configuration>\n"; \
-}
-
-#define OUTPUT_CONFIGURATION_DEBUG(config, platform, props, isWin32) { \
-	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\" << PROJECT_DESCRIPTION << "_" << config << props << ".vsprops\">\n" \
-	           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n" \
-	           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/" << PROJECT_NAME << ".exe\"\n" \
-	           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n" \
-	           "\t\t\t/>\n"; \
-	OUTPUT_BUILD_EVENTS(isWin32) \
-	project << "\t\t</Configuration>\n"; \
-}
-
-#define OUTPUT_CONFIGURATION(config, platform, props) { \
-	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\" << PROJECT_DESCRIPTION << "_" << config << props << ".vsprops\">\n" \
-	           "\t\t\t<Tool Name=\"VCCLCompilerTool\" "<< toolConfig << "/>\n" \
-	           "\t\t</Configuration>\n"; \
-}
-
 void VisualStudioProvider::createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
                                              const StringList &includeList, const StringList &excludeList) {
 	const std::string projectFile = setup.outputDir + '/' + name + getProjectExtension();
@@ -129,17 +93,17 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 			libraries += ' ' + *i + ".lib";
 
 		// Win32
-		OUTPUT_CONFIGURATION_DEBUG("Debug", "Win32", "", true);
-		OUTPUT_CONFIGURATION_DEBUG("Analysis", "Win32", "", true);
-		OUTPUT_CONFIGURATION_MAIN("Release", "Win32", "", true);
+		outputConfiguration(project, setup, libraries, "Debug", "Win32", "", true);
+		outputConfiguration(project, setup, libraries, "Analysis", "Win32", "", true);
+		outputConfiguration(project, setup, libraries, "Release", "Win32", "", true);
 
 		// x64
 		// For 'x64' we must disable NASM support. Usually we would need to disable the "nasm" feature for that and
 		// re-create the library list, BUT since NASM doesn't link any additional libraries, we can just use the
 		// libraries list created for IA-32. If that changes in the future, we need to adjust this part!
-		OUTPUT_CONFIGURATION_DEBUG("Debug", "x64", "64", false);
-		OUTPUT_CONFIGURATION_DEBUG("Analysis", "x64", "64", false);
-		OUTPUT_CONFIGURATION_MAIN("Release", "x64", "64", false);
+		outputConfiguration(project, setup, libraries, "Debug", "x64", "64", false);
+		outputConfiguration(project, setup, libraries, "Analysis", "x64", "64", false);
+		outputConfiguration(project, setup, libraries, "Release", "x64", "64", false);
 
 	} else {
 		std::string warnings = "";
@@ -154,12 +118,12 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		toolConfig += (name == "grim" ? "DisableLanguageExtensions=\"false\" " : "");
 
 		// Win32
-		OUTPUT_CONFIGURATION("Debug", "Win32", "");
-		OUTPUT_CONFIGURATION("Analysis", "Win32", "");
-		OUTPUT_CONFIGURATION("Release", "Win32", "");
-		OUTPUT_CONFIGURATION("Debug", "x64", "64");
-		OUTPUT_CONFIGURATION("Analysis", "x64", "64");
-		OUTPUT_CONFIGURATION("Release", "x64", "64");
+		outputConfiguration(project, toolConfig, "Debug", "Win32", "");
+		outputConfiguration(project, toolConfig, "Analysis", "Win32", "");
+		outputConfiguration(project, toolConfig, "Release", "Win32", "");
+		outputConfiguration(project, toolConfig, "Debug", "x64", "64");
+		outputConfiguration(project, toolConfig, "Analysis", "x64", "64");
+		outputConfiguration(project, toolConfig, "Release", "x64", "64");
 	}
 
 	project << "\t</Configurations>\n"
@@ -179,6 +143,33 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 
 	project << "\t</Files>\n"
 	           "</VisualStudioProject>\n";
+}
+
+void VisualStudioProvider::outputConfiguration(std::ostream &project, const BuildSetup &setup, const std::string &libraries, const std::string &config, const std::string &platform, const std::string &props, const bool isWin32) {
+	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\" << PROJECT_DESCRIPTION << "_" << config << props << ".vsprops\">\n"
+	           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n"
+	           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/" << PROJECT_NAME << "\"\n"
+	           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
+	           "\t\t\t/>\n";
+	outputBuildEvents(project, setup, isWin32);
+	project << "\t\t</Configuration>\n";
+}
+
+void VisualStudioProvider::outputConfiguration(std::ostream &project, const std::string &toolConfig, const std::string &config, const std::string &platform, const std::string &props) {
+	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\" << PROJECT_DESCRIPTION << "_" << config << props << ".vsprops\">\n"
+	           "\t\t\t<Tool Name=\"VCCLCompilerTool\" "<< toolConfig << "/>\n"
+	           "\t\t</Configuration>\n";
+}
+
+void VisualStudioProvider::outputBuildEvents(std::ostream &project, const BuildSetup &setup, const bool isWin32) {
+	if (setup.runBuildEvents) {
+		project << "\t\t\t<Tool\tName=\"VCPreBuildEventTool\"\n"
+		           "\t\t\t\tCommandLine=\"" << getPreBuildEvent() << "\"\n"
+		           "\t\t\t/>\n"
+		           "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n"
+		           "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32) << "\"\n"
+		           "\t\t\t/>\n";
+	}
 }
 
 void VisualStudioProvider::writeReferences(std::ofstream &output) {
@@ -298,7 +289,7 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 		              "\t\tRuntimeLibrary=\"1\"\n"
 		              "\t\tEnableFunctionLevelLinking=\"true\"\n"
 		              "\t\tWarnAsError=\"false\"\n"
-		              "\t\tDebugInformationFormat=\"" << (isWin32 ? "4" : "3") << "\"\n"	// For x64 format "4" (Edit and continue) is not supported, thus we default to "3"
+		              "\t\tDebugInformationFormat=\"" << (isWin32 ? "4" : "3") << "\"\n" // For x64 format "4" (Edit and continue) is not supported, thus we default to "3"
 		              "\t\tAdditionalOption=\"" << (enableAnalysis ? "/analyze" : "") << "\"\n"
 		              "\t/>\n"
 		              "\t<Tool\n"

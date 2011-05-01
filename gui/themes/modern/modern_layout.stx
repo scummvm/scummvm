@@ -1,8 +1,8 @@
 <?xml version = "1.0"?>
-<!-- Residual - A 3D game interpreter
+<!-- ScummVM - Graphic Adventure Engine
  -
- - Residual is the legal property of its developers, whose names
- - are too numerous to list here. Please refer to the AUTHORS
+ - ScummVM is the legal property of its developers, whose names
+ - are too numerous to list here. Please refer to the COPYRIGHT
  - file distributed with this source distribution.
  -
  - This program is free software; you can redistribute it and/or
@@ -128,7 +128,7 @@
 				/>
 				<space />
 				<widget name = 'Version'
-						width = '247'
+						width = '310'
 						height = 'Globals.Line.Height'
 						textalign = 'center'
 				/>

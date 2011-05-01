@@ -33,14 +33,13 @@
  */
 
 #include "common/array.h"
-#include "common/file.h"
+#include "common/fs.h"
+#include "common/str.h"
 
 #ifndef COMMON_MACRESMAN_H
 #define COMMON_MACRESMAN_H
 
 namespace Common {
-
-class FSNode;
 
 typedef Array<uint16> MacResIDArray;
 typedef Array<uint32> MacResTagArray;

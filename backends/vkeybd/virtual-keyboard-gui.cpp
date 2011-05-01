@@ -203,7 +203,7 @@ void VirtualKeyboardGUI::moveToDefaultPosition()
 		case VirtualKeyboard::kAlignLeft:
 			x = 0;
 			break;
-		case VirtualKeyboard::kAlignCentre:
+		case VirtualKeyboard::kAlignCenter:
 			x = (_screenW - kbdW) / 2;
 			break;
 		case VirtualKeyboard::kAlignRight:

@@ -27,14 +27,14 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/keyboard.h"
 
 #include "gui/object.h"
-#include "gui/widget.h"
+#include "gui/ThemeEngine.h"
 
 namespace GUI {
 
-class GuiManager;
-class PopUpWidget;
+class Widget;
 
 // Some "common" commands sent to handleCommand()
 enum {

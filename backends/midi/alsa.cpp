@@ -30,6 +30,8 @@
 #if defined(USE_ALSA)
 
 #include "common/config-manager.h"
+#include "common/error.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"

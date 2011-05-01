@@ -28,6 +28,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/system.h"
+#include "common/str.h"
 
 #ifdef __PLAYSTATION2__
 	// for those replaced fopen/fread/etc functions

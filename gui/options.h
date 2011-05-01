@@ -27,7 +27,7 @@
 
 #include "gui/dialog.h"
 #include "common/str.h"
-#include "audio/musicplugin.h"
+#include "audio/mididrv.h"
 
 #ifdef SMALL_SCREEN_DEVICE
 #include "gui/KeysDialog.h"
@@ -35,13 +35,16 @@
 
 namespace GUI {
 
-class BrowserDialog;
 class CheckboxWidget;
 class PopUpWidget;
 class SliderWidget;
 class StaticTextWidget;
-class ListWidget;
 class TabWidget;
+class ButtonWidget;
+class CommandSender;
+class GuiObject;
+class RadiobuttonGroup;
+class RadiobuttonWidget;
 
 class OptionsDialog : public Dialog {
 public:
@@ -174,6 +177,11 @@ protected:
 	//
 	uint32 _guioptions;
 	Common::String _guioptionsString;
+
+	//
+	//Theme Options
+	//
+	Common::String _oldTheme;
 };
 
 

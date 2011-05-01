@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(MACOSX) || defined(GP2X)
+#if defined(MACOSX) || defined(GP2X) || defined(CAANOO) || defined(GP2XWIZ)
 
 #include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
 

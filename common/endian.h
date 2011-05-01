@@ -48,7 +48,7 @@
  */
 
 // Sanity check
-#if !defined(SYSTEM_LITTLE_ENDIAN) && !defined(SYSTEM_BIG_ENDIAN)
+#if !defined(SCUMM_LITTLE_ENDIAN) && !defined(SCUMM_BIG_ENDIAN)
 #	error No endianness defined
 #endif
 
@@ -152,7 +152,7 @@
 // Functions for reading/writing native Integers,
 // this transparently handles the need for alignment
 
-#if !defined(SYSTEM_NEED_ALIGNMENT)
+#if !defined(SCUMM_NEED_ALIGNMENT)
 
 	FORCEINLINE uint16 READ_UINT16(const void *ptr) {
 		return *(const uint16 *)(ptr);
@@ -197,7 +197,7 @@
 // use software fallback by loading each byte explicitely
 #else
 
-#	if defined(SYSTEM_LITTLE_ENDIAN)
+#	if defined(SCUMM_LITTLE_ENDIAN)
 
 		inline uint16 READ_UINT16(const void *ptr) {
 			const uint8 *b = (const uint8 *)ptr;
@@ -220,7 +220,7 @@
 			b[3] = (uint8)(value >> 24);
 		}
 
-#	elif defined(SYSTEM_BIG_ENDIAN)
+#	elif defined(SCUMM_BIG_ENDIAN)
 
 		inline uint16 READ_UINT16(const void *ptr) {
 			const uint8 *b = (const uint8 *)ptr;
@@ -249,7 +249,7 @@
 
 
 //  Map Funtions for reading/writing BE/LE integers depending on native endianess
-#if defined(SYSTEM_LITTLE_ENDIAN)
+#if defined(SCUMM_LITTLE_ENDIAN)
 
 	#define READ_LE_UINT16(a) READ_UINT16(a)
 	#define READ_LE_UINT32(a) READ_UINT32(a)
@@ -276,7 +276,7 @@
 	#define CONSTANT_BE_16(a) SWAP_CONSTANT_16(a)
 
 // if the unaligned load and the byteswap take alot instructions its better to directly read and invert
-#	if defined(SYSTEM_NEED_ALIGNMENT) && !defined(__mips__)
+#	if defined(SCUMM_NEED_ALIGNMENT) && !defined(__mips__)
 
 		inline uint16 READ_BE_UINT16(const void *ptr) {
 			const uint8 *b = (const uint8 *)ptr;
@@ -313,9 +313,9 @@
 			WRITE_UINT32(ptr, SWAP_BYTES_32(value));
 		}
 
-#	endif	// if defined(SYSTEM_NEED_ALIGNMENT)
+#	endif	// if defined(SCUMM_NEED_ALIGNMENT)
 
-#elif defined(SYSTEM_BIG_ENDIAN)
+#elif defined(SCUMM_BIG_ENDIAN)
 
 	#define READ_BE_UINT16(a) READ_UINT16(a)
 	#define READ_BE_UINT32(a) READ_UINT32(a)
@@ -342,7 +342,7 @@
 	#define CONSTANT_BE_16(a) ((uint16)(a))
 
 // if the unaligned load and the byteswap take alot instructions its better to directly read and invert
-#	if defined(SYSTEM_NEED_ALIGNMENT) && !defined(__mips__)
+#	if defined(SCUMM_NEED_ALIGNMENT) && !defined(__mips__)
 
 	inline uint16 READ_LE_UINT16(const void *ptr) {
 		const uint8 *b = (const uint8 *)ptr;
@@ -379,9 +379,9 @@
 		WRITE_UINT32(ptr, SWAP_BYTES_32(value));
 	}
 
-#	endif	// if defined(SYSTEM_NEED_ALIGNMENT)
+#	endif	// if defined(SCUMM_NEED_ALIGNMENT)
 
-#endif	// if defined(SYSTEM_LITTLE_ENDIAN)
+#endif	// if defined(SCUMM_LITTLE_ENDIAN)
 
 inline uint32 READ_LE_UINT24(const void *ptr) {
 	const uint8 *b = (const uint8 *)ptr;
@@ -393,7 +393,7 @@ inline uint32 READ_BE_UINT24(const void *ptr) {
 	return (b[0] << 16) | (b[1] << 8) | (b[2]);
 }
 
-#if defined(SYSTEM_BIG_ENDIAN)
+#if defined(SCUMM_BIG_ENDIAN)
 
 inline float get_float(const char *data) {
 	const unsigned char *udata = reinterpret_cast<const unsigned char *>(data);

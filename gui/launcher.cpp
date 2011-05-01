@@ -28,7 +28,6 @@
 #include "common/events.h"
 #include "common/fs.h"
 #include "common/util.h"
-#include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
 
@@ -48,9 +47,6 @@
 #include "gui/ThemeEval.h"
 
 #include "graphics/cursorman.h"
-
-#include "audio/mididrv.h"
-
 
 using Common::ConfigManager;
 
@@ -701,7 +697,7 @@ void LauncherDialog::updateListing() {
 			// Insert the game into the launcher list
 			int pos = 0, size = l.size();
 
-			while (pos < size && (strcasecmp(description.c_str(), l[pos].c_str()) > 0))
+			while (pos < size && (scumm_stricmp(description.c_str(), l[pos].c_str()) > 0))
 				pos++;
 			l.insert_at(pos, description);
 			_domains.insert_at(pos, iter->_key);

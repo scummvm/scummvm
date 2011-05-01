@@ -24,7 +24,6 @@
  */
 
 #include "common/system.h"
-#include "common/events.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
@@ -32,14 +31,13 @@
 #include "common/tokenizer.h"
 #include "common/translation.h"
 
-#include "graphics/colormasks.h"
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
 #include "graphics/imagedec.h"
 #include "graphics/surface.h"
 #include "graphics/VectorRenderer.h"
 
-#include "gui/launcher.h"
+#include "gui/widget.h"
 #include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
 #include "gui/ThemeParser.h"
@@ -791,6 +789,7 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeId) {
 }
 
 
+
 /**********************************************************
  * Drawing Queue management
  *********************************************************/
@@ -1500,6 +1499,12 @@ Common::String ThemeEngine::genLocalizedFontFilename(const Common::String &filen
  *********************************************************/
 
 bool ThemeEngine::themeConfigParseHeader(Common::String header, Common::String &themeName) {
+	// Check that header is not corrupted
+	if ((byte)header[0] > 127) {
+		warning("Corrupted theme header found");
+		return false;
+	}
+
 	header.trim();
 
 	if (header.empty())

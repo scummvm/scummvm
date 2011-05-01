@@ -27,20 +27,13 @@
 #define SOUND_MIXER_H
 
 #include "common/types.h"
-#include "common/mutex.h"
 #include "common/noncopyable.h"
-
-#include "audio/timestamp.h"
-
-class OSystem;
-
 
 namespace Audio {
 
 class AudioStream;
 class Channel;
-class Mixer;
-class MixerImpl;
+class Timestamp;
 
 /**
  * A SoundHandle instances corresponds to a specific sound
@@ -197,6 +190,20 @@ public:
 	virtual bool isSoundHandleActive(SoundHandle handle) = 0;
 
 
+	/**
+	 * Set the mute state for a given sound type.
+	 *
+	 * @param type the sound type
+	 * @param mute Whether to mute (= true) or not (= false).
+	 */
+	virtual void muteSoundType(SoundType type, bool mute) = 0;
+
+	/**
+	 * Query the mute state for a given sound type.
+	 *
+	 * @param type the sound type
+	 */
+	virtual bool isSoundTypeMuted(SoundType type) const = 0;
 
 	/**
 	 * Set the channel volume for the given handle.

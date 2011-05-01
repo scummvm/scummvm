@@ -22,10 +22,12 @@
  * $Id$
  */
 
-#include "common/util.h"
-#include "graphics/fontman.h"
+#include "common/scummsys.h"
+#include "common/system.h"
+#include "common/rect.h"
+#include "common/textconsole.h"
+#include "graphics/pixelformat.h"
 #include "gui/widget.h"
-#include "gui/dialog.h"
 #include "gui/gui-manager.h"
 
 #include "gui/ThemeEval.h"

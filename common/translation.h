@@ -25,6 +25,9 @@
 #ifndef COMMON_TRANSLATION_H
 #define COMMON_TRANSLATION_H
 
+#include "common/array.h"
+#include "common/fs.h"
+#include "common/str.h"
 #include "common/singleton.h"
 #include "common/str-array.h"
 
@@ -33,7 +36,6 @@
 namespace Common {
 
 class File;
-class FSNode;
 
 enum TranslationIDs {
 	kTranslationAutodetectId = 0,

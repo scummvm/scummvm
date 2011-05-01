@@ -27,10 +27,8 @@
 #include "gui/ThemeEval.h"
 #include "gui/gui-manager.h"
 
-#include "engines/engine.h"
 #include "base/version.h"
 
-#include "common/events.h"
 #include "common/system.h"
 
 #include "graphics/fontman.h"

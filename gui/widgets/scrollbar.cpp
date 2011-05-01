@@ -22,11 +22,12 @@
  * $Id$
  */
 
-#include "gui/widgets/scrollbar.h"
-#include "gui/dialog.h"
-#include "gui/gui-manager.h"
-
+#include "common/rect.h"
+#include "common/system.h"
 #include "common/timer.h"
+#include "gui/widgets/scrollbar.h"
+#include "gui/gui-manager.h"
+#include "gui/ThemeEngine.h"
 
 namespace GUI {
 

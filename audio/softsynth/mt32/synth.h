@@ -29,7 +29,6 @@ class revmodel;
 namespace MT32Emu {
 
 class File;
-class TableInitialiser;
 class Partial;
 class PartialManager;
 class Part;

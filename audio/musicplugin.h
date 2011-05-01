@@ -29,6 +29,10 @@
 #include "audio/mididrv.h"
 #include "common/list.h"
 
+namespace Common {
+class Error;
+}
+
 class MusicPluginObject;
 
 /**

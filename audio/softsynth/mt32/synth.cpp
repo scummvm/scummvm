@@ -25,8 +25,6 @@
 
 #include "mt32emu.h"
 
-#include "common/str.h"
-
 #if defined(MACOSX) || defined(SOLARIS) || defined(__MINGW32__)
 // Older versions of Mac OS X didn't supply a powf function, so using it
 // will cause a binary incompatibility when trying to run a binary built

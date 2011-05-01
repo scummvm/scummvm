@@ -563,7 +563,7 @@ int String::compareToIgnoreCase(const String &x) const {
 
 int String::compareToIgnoreCase(const char *x) const {
 	assert(x != 0);
-	return strcasecmp(c_str(), x);
+	return scumm_stricmp(c_str(), x);
 }
 
 #pragma mark -

@@ -27,12 +27,24 @@
 #define GUI_THEME_ENGINE_H
 
 #include "common/scummsys.h"
-#include "common/system.h"
 #include "common/fs.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/list.h"
+#include "common/str.h"
+
 #include "graphics/surface.h"
 #include "graphics/font.h"
+#include "graphics/pixelformat.h"
+
 
 #define RESIDUAL_THEME_VERSION_STR "RESIDUAL_STX0.8.3"
+
+class OSystem;
+
+namespace Common {
+struct Rect;
+}
 
 namespace Graphics {
 struct DrawStep;
@@ -42,8 +54,6 @@ class VectorRenderer;
 namespace GUI {
 
 struct WidgetDrawData;
-struct DrawDataInfo;
-struct TextDataInfo;
 struct TextDrawData;
 struct TextColorData;
 class Dialog;

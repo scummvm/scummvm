@@ -27,7 +27,11 @@
 #include "audio/softsynth/ym2612.h"
 #include "common/util.h"
 #include "audio/musicplugin.h"
+#include "common/error.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/types.h"
 
 ////////////////////////////////////////
 //

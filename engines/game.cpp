@@ -24,13 +24,12 @@
  */
 
 #include "engines/game.h"
-#include "base/plugins.h"
 
 
 const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list) {
 	const PlainGameDescriptor *g = list;
 	while (g->gameid) {
-		if (0 == strcasecmp(gameid, g->gameid))
+		if (0 == scumm_stricmp(gameid, g->gameid))
 			return g;
 		g++;
 	}

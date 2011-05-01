@@ -30,6 +30,8 @@
 
 namespace GUI {
 
+class CommandSender;
+
 enum {
 	kMessageOK = 1,
 	kMessageCancel = 0

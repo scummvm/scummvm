@@ -34,8 +34,6 @@
 //
 ////////////////////////////////////////
 
-class MidiDriver_MPU401;
-
 class MidiChannel_MPU401 : public MidiChannel {
 
 private:

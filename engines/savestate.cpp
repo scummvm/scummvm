@@ -25,6 +25,7 @@
 
 #include "engines/savestate.h"
 #include "graphics/surface.h"
+#include "common/textconsole.h"
 
 void SaveStateDescriptor::setThumbnail(Graphics::Surface *t) {
 	if (_thumbnail.get() == t)

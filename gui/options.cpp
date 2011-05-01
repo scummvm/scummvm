@@ -24,10 +24,8 @@
 
 #include "gui/browser.h"
 #include "gui/themebrowser.h"
-#include "gui/chooser.h"
 #include "gui/message.h"
 #include "gui/gui-manager.h"
-#include "gui/ThemeEval.h"
 #include "gui/options.h"
 #include "gui/widgets/popup.h"
 #include "gui/widgets/tab.h"
@@ -35,9 +33,8 @@
 #include "common/fs.h"
 #include "common/config-manager.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "common/translation.h"
-
-#include "graphics/scaler.h"
 
 #include "audio/mididrv.h"
 #include "audio/musicplugin.h"
@@ -144,6 +141,7 @@ void OptionsDialog::init() {
 	_subSpeedDesc = 0;
 	_subSpeedSlider = 0;
 	_subSpeedLabel = 0;
+	_oldTheme = ConfMan.get("gui_theme");
 
 	// Retrieve game GUI options
 	_guioptions = 0;
@@ -361,6 +359,13 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		break;
 	case kOKCmd:
 		setResult(1);
+		close();
+		break;
+	case kCloseCmd:
+		if (g_gui.theme()->getThemeId() != _oldTheme) {
+			g_gui.loadNewTheme(_oldTheme);
+			ConfMan.set("gui_theme", _oldTheme);
+		}
 		close();
 		break;
 	default:
@@ -1127,7 +1132,6 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 #ifdef USE_TRANSLATION
 			Common::String lang = TransMan.getCurrentLanguage();
 #endif
-			Common::String oldTheme = g_gui.theme()->getThemeId();
 			if (g_gui.loadNewTheme(theme)) {
 #ifdef USE_TRANSLATION
 				// If the charset has changed, it means the font were not found for the
@@ -1135,7 +1139,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 				// language without restarting, we let the user know about this.
 				if (lang != TransMan.getCurrentLanguage()) {
 					TransMan.setLanguage(lang.c_str());
-					g_gui.loadNewTheme(oldTheme);
+					g_gui.loadNewTheme(_oldTheme);
 					MessageDialog error(_("The theme you selected does not support your current language. If you want to use this theme you need to switch to another language first."));
 					error.runModal();
 				} else {

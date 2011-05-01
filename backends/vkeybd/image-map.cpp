@@ -27,6 +27,8 @@
 
 #ifdef ENABLE_VKEYBD
 
+#include "common/textconsole.h"
+
 #include "backends/vkeybd/image-map.h"
 #include "backends/vkeybd/polygon.h"
 

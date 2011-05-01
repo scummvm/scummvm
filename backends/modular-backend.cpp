@@ -26,12 +26,14 @@
 #include "backends/modular-backend.h"
 
 #include "backends/fs/fs-factory.h"
-#include "backends/events/default/default-events.h"
-#include "backends/audiocd/default/default-audiocd.h"
-#include "backends/mutex/mutex.h"
+#include "backends/audiocd/audiocd.h"
 #include "backends/graphics/graphics.h"
+#include "backends/mutex/mutex.h"
 
+#include "audio/mixer.h"
+#include "common/events.h"
 #include "gui/message.h"
+#include "graphics/pixelformat.h"
 
 ModularBackend::ModularBackend()
 	:

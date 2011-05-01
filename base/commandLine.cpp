@@ -30,6 +30,7 @@
 
 #include "common/config-manager.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "common/fs.h"
 
 #include "gui/ThemeEngine.h"
@@ -59,9 +60,12 @@ static const char HELP_STRING[] =
 	"  -h, --help               Display a brief help text and exit\n"
 	"  -z, --list-games         Display list of supported games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
+	"  --list-saves=TARGET      Display a list of savegames for the game (TARGET) specified\n"
 	"\n"
 	"  -c, --config=CONFIG      Use alternate configuration file\n"
 	"  -p, --path=PATH          Path to where the game is installed\n"
+	"  -f, --fullscreen         Force full-screen mode\n"
+	"  -F, --no-fullscreen      Force windowed mode\n"
 	"  --gui-theme=THEME        Select GUI theme\n"
 	"  --themepath=PATH         Path to where GUI themes are stored\n"
 	"  --list-themes            Display list of all usable GUI themes\n"
@@ -147,6 +151,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("dimuse_tempo", 10);
 
 	// Miscellaneous
+	ConfMan.registerDefault("joystick_num", -1);
 	ConfMan.registerDefault("confirm_exit", false);
 	ConfMan.registerDefault("disable_sdl_parachute", false);
 
@@ -193,7 +198,7 @@ void registerDefaults() {
 #define DO_OPTION_INT(shortCmd, longCmd) \
 	DO_OPTION(shortCmd, longCmd) \
 	char *endptr = 0; \
-	int intValue; intValue = (int)strtol(option, &endptr, 0); \
+	strtol(option, &endptr, 0); \
 	if (endptr == NULL || *endptr != 0) usage("--%s: Invalid number '%s'", longCmd, option);
 
 // Use this for boolean options; this distinguishes between "-x" and "-X",
@@ -285,6 +290,13 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 #endif
 
+			DO_LONG_OPTION("list-saves")
+				// FIXME: Need to document this.
+				// TODO: Make the argument optional. If no argument is given, list all savegames
+				// for all configured targets.
+				return "list-saves";
+			END_OPTION
+
 			DO_OPTION('c', "config")
 			END_OPTION
 
@@ -298,6 +310,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION_INT("output-rate")
+			END_OPTION
+
+			DO_OPTION_BOOL('f', "fullscreen")
 			END_OPTION
 
 			DO_LONG_OPTION("opl-driver")
@@ -511,6 +526,67 @@ static void listTargets() {
 		printf("%s\n", i->c_str());
 }
 
+/** List all saves states for the given target. */
+static Common::Error listSaves(const char *target) {
+	Common::Error result = Common::kNoError;
+
+	// FIXME HACK
+	g_system->initBackend();
+
+	// Grab the "target" domain, if any
+	const Common::ConfigManager::Domain *domain = ConfMan.getDomain(target);
+
+	// Set up the game domain as newly active domain, so
+	// target specific savepath will be checked
+	Common::String oldDomain = ConfMan.getActiveDomainName();
+	ConfMan.setActiveDomain(target);
+
+	// Grab the gameid from the domain resp. use the target as gameid
+	Common::String gameid;
+	if (domain)
+		gameid = domain->getVal("gameid");
+	if (gameid.empty())
+		gameid = target;
+	gameid.toLowercase();	// Normalize it to lower case
+
+	// Find the plugin that will handle the specified gameid
+	const EnginePlugin *plugin = 0;
+	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
+
+	if (!plugin) {
+		return Common::Error(Common::kEnginePluginNotFound,
+						Common::String::format("target '%s', gameid '%s", target, gameid.c_str()));
+	}
+
+	if (!(*plugin)->hasFeature(MetaEngine::kSupportsListSaves)) {
+		// TODO: Include more info about the target (desc, engine name, ...) ???
+		return Common::Error(Common::kEnginePluginNotSupportSaves,
+						Common::String::format("target '%s', gameid '%s", target, gameid.c_str()));
+	} else {
+		// Query the plugin for a list of savegames
+		SaveStateList saveList = (*plugin)->listSaves(target);
+
+		if (saveList.size() > 0) {
+			// TODO: Include more info about the target (desc, engine name, ...) ???
+			printf("Save states for target '%s' (gameid '%s'):\n", target, gameid.c_str());
+			printf("  Slot Description                                           \n"
+				   "  ---- ------------------------------------------------------\n");
+
+			for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
+				printf("  %-4s %s\n", x->save_slot().c_str(), x->description().c_str());
+				// TODO: Could also iterate over the full hashmap, printing all key-value pairs
+			}
+		} else {
+			printf("There are no save states for target '%s' (gameid '%s'):\n", target, gameid.c_str());
+		}
+	}
+
+	// Revert to the old active domain
+	ConfMan.setActiveDomain(oldDomain);
+
+	return result;
+}
+
 /** Lists all usable themes */
 static void listThemes() {
 	typedef Common::List<GUI::ThemeEngine::ThemeDescriptor> ThList;
@@ -560,7 +636,7 @@ static void runDetectorTest() {
 		bool gameidDiffers = false;
 		GameList::iterator x;
 		for (x = candidates.begin(); x != candidates.end(); ++x) {
-			gameidDiffers |= (strcasecmp(gameid.c_str(), x->gameid().c_str()) != 0);
+			gameidDiffers |= (scumm_stricmp(gameid.c_str(), x->gameid().c_str()) != 0);
 		}
 
 		if (candidates.empty()) {
@@ -734,6 +810,8 @@ Common::Error processSettings(Common::String &command, Common::StringMap &settin
 	} else if (command == "list-games") {
 		listGames();
 		return Common::kNoError;
+	} else if (command == "list-saves") {
+		return listSaves(settings["list-saves"].c_str());
 	} else if (command == "list-themes") {
 		listThemes();
 		return Common::kNoError;

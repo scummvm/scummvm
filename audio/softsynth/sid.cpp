@@ -32,7 +32,6 @@
 
 #include "sid.h"
 #include "audio/null.h"
-#include <math.h>
 
 namespace Resid {
 

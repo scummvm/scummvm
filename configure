@@ -84,12 +84,14 @@ add_engine grim "Grim" yes
 # Default lib behaviour yes/no/auto
 _vorbis=auto
 _tremor=auto
+_tremolo=no
 _flac=auto
 _mad=auto
 _alsa=auto
 _seq_midi=auto
 _timidity=auto
 _zlib=auto
+_mpeg2=no
 _theoradec=auto
 _fluidsynth=auto
 _opengl=auto
@@ -100,6 +102,7 @@ _debug_build=auto
 _release_build=auto
 _text_console=no
 _mt32emu=no
+_arm_asm=no
 _enable_prof=no
 _unix=no
 _global_constructors=no
@@ -648,6 +651,8 @@ Optional Libraries:
 
   --with-zlib-prefix=DIR   Prefix where zlib is installed (optional)
 
+  --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
+  --enable-mpeg2           enable mpeg2 codec for cutscenes [no]
   --disable-opengl         disable OpenGL (ES) support [autodetect]
 
   --with-theoradec-prefix=DIR Prefix where libtheoradec is installed (optional)
@@ -699,6 +704,7 @@ for ac_option in $@; do
 	--disable-mad)            _mad=no         ;;
 	--enable-nasm)            _nasm=yes       ;;
 	--disable-nasm)           _nasm=no        ;;
+	--enable-mpeg2)           _mpeg2=yes      ;;
 	--disable-theoradec)      _theoradec=no   ;;
 	--enable-theoradec)       _theoradec=yes  ;;
 	--disable-fluidsynth)     _fluidsynth=no  ;;
@@ -723,6 +729,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		FLUIDSYNTH_CFLAGS="-I$arg/include"
 		FLUIDSYNTH_LIBS="-L$arg/lib"
+		;;
+	--with-mpeg2-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		MPEG2_CFLAGS="-I$arg/include"
+		MPEG2_LIBS="-L$arg/lib"
 		;;
 	--with-alsa-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1576,6 +1587,8 @@ case $_host_os in
 		_unix=yes
 		;;
 	webos)
+		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/include -I$WEBOS_PDK/include/SDL -I$WEBOS_PDK/device/usr/include"
+		CXXFLAGS="$CXXFLAGS -mcpu=arm1136jf-s -mfpu=vfp -mfloat-abi=softfp"
 		LDFLAGS="$LDFLAGS -L$WEBOS_PDK/device/lib -L$WEBOS_PDK/device/usr/lib"
 		LDFLAGS="$LDFLAGS -Wl,--allow-shlib-undefined"
 		LDFLAGS="$LDFLAGS --sysroot=$WEBOS_PDK/arm-gcc/sysroot"
@@ -1618,11 +1631,9 @@ if test -n "$_host"; then
 			LDFLAGS="$LDFLAGS -shared -Wl,-Bsymbolic,--no-undefined"
 			HOSTEXEPRE=lib
 			HOSTEXEEXT=.so
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
 			_backend="android"
 			_port_mk="backends/platform/android/android.mk"
+			_arm_asm=yes
 			_build_scalers=no
 			_seq_midi=no
 			_mt32emu=no
@@ -1631,9 +1642,7 @@ if test -n "$_host"; then
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			_arm_asm=yes
 			;;
 		arm-riscos|linupy)
 			DEFINES="$DEFINES -DLINUPY"
@@ -1657,9 +1666,7 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			_arm_asm=yes
 			_backend="gph"
 			_build_hq_scalers=no
 			_vkeybd=yes
@@ -1707,9 +1714,7 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL -DDISABLE_SID -DDISABLE_NES_APU"
 			DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			_arm_asm=yes
 			add_line_to_config_h '#define DISABLE_TEXT_CONSOLE'
 			_backend="ds"
 			_build_scalers=no
@@ -1743,9 +1748,7 @@ if test -n "$_host"; then
 			LDFLAGS="$LDFLAGS -static"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			_arm_asm=yes
 			_backend="gph"
 			_build_hq_scalers=no
 			_vkeybd=yes
@@ -1765,9 +1768,7 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			_arm_asm=yes
 			_backend="gph"
 			_build_hq_scalers=no
 			_vkeybd=yes
@@ -1780,8 +1781,7 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DIPHONE"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			_arm_asm=yes
 			_backend="iphone"
 			_build_hq_scalers=no
 			_seq_midi=no
@@ -1812,9 +1812,7 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			_arm_asm=yes
 			_backend="linuxmoto"
 			_build_hq_scalers=no
 			_mt32emu=no
@@ -1827,9 +1825,7 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			_arm_asm=yes
 			_backend="linuxmoto"
 			_build_hq_scalers=no
 			_mt32emu=no
@@ -1880,9 +1876,7 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			_arm_asm=yes
 			_backend="openpandora"
 			_build_hq_scalers=yes
 			_vkeybd=no
@@ -1892,6 +1886,7 @@ if test -n "$_host"; then
 			;;
 		ppc-amigaos)
 			_endian=big
+			# AmigaOS exec allocates memory always in an aligned way
 			_need_memalign=yes
 			;;
 		ps2)
@@ -1937,9 +1932,7 @@ if test -n "$_host"; then
 			HOSTEXEEXT=".so"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			_arm_asm=yes
 			_backend="samsungtv"
 			_mt32emu=no
 			_vkeybd=yes
@@ -1947,11 +1940,7 @@ if test -n "$_host"; then
 		webos)
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
 			_backend="webos"
 			_port_mk="backends/platform/webos/webos.mk"
 			_build_scalers=no
@@ -1979,10 +1968,8 @@ if test -n "$_host"; then
 		wince)
 			LDFLAGS="$LDFLAGS -Wl,-Map,scummvm.exe.map -Wl,--stack,65536"
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_TREMOLO = 1'
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			_arm_asm=yes
+			_tremolo=yes
 			_backend="wince"
 			_mt32emu=no
 			_port_mk="backends/platform/wince/wince.mk"
@@ -2046,12 +2033,12 @@ fi
 #
 case $_endian in
 	big)
-		add_line_to_config_h '#undef SYSTEM_LITTLE_ENDIAN'
-		add_line_to_config_h '#define SYSTEM_BIG_ENDIAN'
+		add_line_to_config_h '#undef SCUMM_LITTLE_ENDIAN'
+		add_line_to_config_h '#define SCUMM_BIG_ENDIAN'
 		;;
 	little)
-		add_line_to_config_h '#define SYSTEM_LITTLE_ENDIAN'
-		add_line_to_config_h '#undef SYSTEM_BIG_ENDIAN'
+		add_line_to_config_h '#define SCUMM_LITTLE_ENDIAN'
+		add_line_to_config_h '#undef SCUMM_BIG_ENDIAN'
 		;;
 	*)
 		exit 1
@@ -2060,7 +2047,7 @@ esac
 
 define_in_config_h_if_yes $_have_x86 'HAVE_X86'
 
-define_in_config_h_if_yes $_need_memalign 'SYSTEM_NEED_ALIGNMENT'
+define_in_config_h_if_yes $_need_memalign 'SCUMM_NEED_ALIGNMENT'
 
 if test "$_unix" = yes ; then
 	DEFINES="$DEFINES -DUNIX"
@@ -2280,6 +2267,13 @@ fi
 define_in_config_if_yes "$_mt32emu" 'USE_MT32EMU'
 
 
+#
+# Check whether to use optimized ARM asm
+#
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_SOUND_ASM'
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_SMUSH_ASM'
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_GFX_ASM'
+
 
 #
 # Check for math lib
@@ -2313,6 +2307,10 @@ echo "$_vorbis"
 # Check for Tremor
 #
 echocheck "Tremor"
+if test "$_tremolo" = yes ; then
+	_tremor=yes
+fi
+
 if test "$_tremor" = auto ; then
 	_tremor=no
 	cat > $TMPC << EOF
@@ -2325,7 +2323,12 @@ fi
 if test "$_tremor" = yes && test "$_vorbis" = no; then
 	add_line_to_config_h '#define USE_TREMOR'
 	add_line_to_config_h '#define USE_VORBIS'
-	LIBS="$LIBS $TREMOR_LIBS -lvorbisidec"
+	if test "$_tremolo" = yes ; then
+		add_line_to_config_h '#define USE_TREMOLO'
+		LIBS="$LIBS $TREMOR_LIBS -ltremolo"
+	else
+		LIBS="$LIBS $TREMOR_LIBS -lvorbisidec"
+	fi
 	INCLUDES="$INCLUDES $TREMOR_CFLAGS"
 else
 	if test "$_vorbis" = yes; then
@@ -2478,6 +2481,49 @@ else
 fi
 define_in_config_if_yes "$_zlib" 'USE_ZLIB'
 echo "$_zlib"
+
+#
+# Check for LibMPEG2
+#
+echocheck "libmpeg2 >= 0.3.2"
+if test "$_mpeg2" = auto ; then
+	_mpeg2=no
+	cat > $TMPC << EOF
+typedef signed $type_1_byte int8_t;
+typedef signed $type_2_byte int16_t;
+typedef signed $type_4_byte int32_t;
+
+typedef unsigned $type_1_byte uint8_t;
+typedef unsigned $type_2_byte uint16_t;
+typedef unsigned $type_4_byte uint32_t;
+
+#include <mpeg2dec/mpeg2.h>
+int main(void) {
+	/* mpeg2_state_t first appears in 0.4.0 */
+	mpeg2_state_t state;
+
+		#ifdef MPEG2_RELEASE
+		if (MPEG2_RELEASE >= MPEG2_VERSION(0, 3, 2))
+			return 0;
+	#endif
+	return 1;
+}
+EOF
+
+	if test -n "$_host"; then
+		# don't execute while cross compiling
+		cc_check $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && _mpeg2=yes
+	else
+		cc_check_no_clean $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && $TMPO$HOSTEXEEXT && _mpeg2=yes
+		cc_check_clean
+	fi
+fi
+if test "$_mpeg2" = yes ; then
+	INCLUDES="$INCLUDES $MPEG2_CFLAGS"
+	LIBS="$LIBS $MPEG2_LIBS -lmpeg2"
+fi
+define_in_config_if_yes "$_mpeg2" 'USE_MPEG2'
+echo "$_mpeg2"
 
 #
 # Check for libfluidsynth
@@ -2897,7 +2943,6 @@ case $_backend in
 		DEFINES="$DEFINES -DSDL_BACKEND"
 		;;
 	webos)
-		INCLUDES="$INCLUDES -I$WEBOS_PDK/include -I$WEBOS_PDK/include/SDL -I$WEBOS_PDK/device/usr/include"
 		LIBS="$LIBS -lSDL -lpdl"
 		DEFINES="$DEFINES -DSDL_BACKEND -DWEBOS"
 		MODULES="$MODULES backends/platform/sdl"

@@ -47,8 +47,6 @@
 
 
 #include "common/func.h"
-#include "common/str.h"
-#include "common/util.h"
 
 #ifdef DEBUG_HASH_COLLISIONS
 #include "common/debug.h"

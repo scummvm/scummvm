@@ -26,6 +26,8 @@
 #ifndef COMMON_ERROR_H
 #define COMMON_ERROR_H
 
+#include "common/str.h"
+
 namespace Common {
 
 /**
@@ -37,15 +39,13 @@ namespace Common {
 /**
  * Error codes which may be reported by plugins under various circumstances.
  *
- * @todo Clarify the names; add more codes, resp. verify all existing ones are acutally useful.
- *       Also, try to avoid overlap.
- * @todo Maybe introduce a naming convention? E.g. k-NOUN/ACTION-CONDITION-Error, so
- *       kPathInvalidError would be correct, but these would not be: kInvalidPath,
- *       kPathInvalid, kPathIsInvalid, kInvalidPathError
+ * @note Error names should follow the pattern k-NOUN/ACTION-CONDITION-Error.
+ *       So kPathInvalidError would be correct, but these would not be:
+ *       kInvalidPath, kPathInvalid, kPathIsInvalid, kInvalidPathError.
+ * @todo Adjust all error codes to comply with these conventions.
  */
-enum Error {
+enum ErrorCode {
 	kNoError = 0,				///< No error occurred
-	kInvalidPathError,			///< Engine initialization: Invalid game path was passed
 	kNoGameDataFoundError,		///< Engine initialization: No game data was found in the specified location
 	kUnsupportedGameidError,	///< Engine initialization: Gameid not supported by this (Meta)Engine
 	kUnsupportedColorMode,		///< Engine initialization: Engine does not support backend's color mode
@@ -54,7 +54,6 @@ enum Error {
 	kReadPermissionDenied,		///< Unable to read data due to missing read permission
 	kWritePermissionDenied,		///< Unable to write data due to missing write permission
 
-	// The following three overlap a bit with kInvalidPathError and each other. Which to keep?
 	kPathDoesNotExist,			///< The specified path does not exist
 	kPathNotDirectory,			///< The specified path does not point to a directory
 	kPathNotFile,				///< The specified path does not point to a file
@@ -64,21 +63,48 @@ enum Error {
 	kWritingFailed,				///< Failure to write data -- disk full?
 
 	// The following are used by --list-saves
-	kPluginNotFound,			///< Failed to find plugin to handle tager
-	kPluginNotSupportSaves,		///< Failed if plugin does not support saves
-	kNoSavesError,				///< There are no saves to show
+	kEnginePluginNotFound,		///< Failed to find plugin to handle target
+	kEnginePluginNotSupportSaves,	///< Failed if plugin does not support listing save states
 
 	kArgumentNotProcessed,		///< Used in command line parsing
+
 	kUnknownError				///< Catch-all error, used if no other error code matches
 };
 
 /**
- * Maps an error code to equivalent string description.
- *
- * @param error error code to be converted
- * @return a pointer to string description of the error
+ * An Error instance pairs an error code with string description providing more
+ * details about the error. For every error code, a default description is
+ * provided, but it is possible to optionally augment that description with
+ * extra information when creating a new Error instance.
  */
-const char *errorToString(Error error);
+class Error {
+protected:
+	ErrorCode _code;
+	String _desc;
+public:
+	/**
+	 * Construct a new Error with the specified error code and the default
+	 * error message.
+	 */
+	Error(ErrorCode code = kUnknownError);
+
+	/**
+	 * Construct a new Error with the specified error code and an augmented
+	 * error message. Specifically, the provided extra text is suitably
+	 * appended to the default message.
+	 */
+	Error(ErrorCode code, const String &extra);
+
+	/**
+	 * Get the description of this error.
+	 */
+	const String &getDesc() const { return _desc; }
+
+	/**
+	 * Get the error code of this error.
+	 */
+	ErrorCode getCode() const { return _code; }
+};
 
 } // End of namespace Common
 

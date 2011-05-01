@@ -31,10 +31,13 @@
 namespace GUI {
 
 class BrowserDialog;
+class CommandSender;
 class ListWidget;
+class ButtonWidget;
 class GraphicsWidget;
-class SaveLoadChooser;
+class StaticTextWidget;
 class EditTextWidget;
+class SaveLoadChooser;
 
 Common::String addGameToConf(const GameDescriptor &result);
 

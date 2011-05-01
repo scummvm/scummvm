@@ -25,6 +25,7 @@
 
 #include "common/util.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "audio/mixer_intern.h"
 #include "audio/rate.h"
@@ -162,16 +163,11 @@ private:
 
 
 MixerImpl::MixerImpl(OSystem *system, uint sampleRate)
-	: _syst(system), _sampleRate(sampleRate), _mixerReady(false), _handleSeed(0) {
+	: _syst(system), _mutex(), _sampleRate(sampleRate), _mixerReady(false), _handleSeed(0), _soundTypeSettings() {
 
 	assert(sampleRate > 0);
 
-	int i;
-
-	for (i = 0; i < ARRAYSIZE(_volumeForSoundType); i++)
-		_volumeForSoundType[i] = kMaxMixerVolume;
-
-	for (i = 0; i != NUM_CHANNELS; i++)
+	for (int i = 0; i != NUM_CHANNELS; i++)
 		_channels[i] = 0;
 }
 
@@ -322,6 +318,21 @@ void MixerImpl::stopHandle(SoundHandle handle) {
 	_channels[index] = 0;
 }
 
+void MixerImpl::muteSoundType(SoundType type, bool mute) {
+	assert(0 <= type && type < ARRAYSIZE(_soundTypeSettings));
+	_soundTypeSettings[type].mute = mute;
+
+	for (int i = 0; i != NUM_CHANNELS; ++i) {
+		if (_channels[i] && _channels[i]->getType() == type)
+			_channels[i]->notifyGlobalVolChange();
+	}
+}
+
+bool MixerImpl::isSoundTypeMuted(SoundType type) const {
+	assert(0 <= type && type < ARRAYSIZE(_soundTypeSettings));
+	return _soundTypeSettings[type].mute;
+}
+
 void MixerImpl::setChannelVolume(SoundHandle handle, byte volume) {
 	Common::StackLock lock(_mutex);
 
@@ -417,7 +428,7 @@ bool MixerImpl::hasActiveChannelOfType(SoundType type) {
 }
 
 void MixerImpl::setVolumeForSoundType(SoundType type, int volume) {
-	assert(0 <= type && type < ARRAYSIZE(_volumeForSoundType));
+	assert(0 <= type && type < ARRAYSIZE(_soundTypeSettings));
 
 	// Check range
 	if (volume > kMaxMixerVolume)
@@ -429,7 +440,7 @@ void MixerImpl::setVolumeForSoundType(SoundType type, int volume) {
 	// scaling? See also Player_V2::setMasterVolume
 
 	Common::StackLock lock(_mutex);
-	_volumeForSoundType[type] = volume;
+	_soundTypeSettings[type].volume = volume;
 
 	for (int i = 0; i != NUM_CHANNELS; ++i) {
 		if (_channels[i] && _channels[i]->getType() == type)
@@ -438,9 +449,9 @@ void MixerImpl::setVolumeForSoundType(SoundType type, int volume) {
 }
 
 int MixerImpl::getVolumeForSoundType(SoundType type) const {
-	assert(0 <= type && type < ARRAYSIZE(_volumeForSoundType));
+	assert(0 <= type && type < ARRAYSIZE(_soundTypeSettings));
 
-	return _volumeForSoundType[type];
+	return _soundTypeSettings[type].volume;
 }
 
 
@@ -486,17 +497,21 @@ void Channel::updateChannelVolumes() {
 	// volume is in the range 0 - kMaxMixerVolume.
 	// Hence, the vol_l/vol_r values will be in that range, too
 
-	int vol = _mixer->getVolumeForSoundType(_type) * _volume;
+	if (!_mixer->isSoundTypeMuted(_type)) {
+		int vol = _mixer->getVolumeForSoundType(_type) * _volume;
 
-	if (_balance == 0) {
-		_volL = vol / Mixer::kMaxChannelVolume;
-		_volR = vol / Mixer::kMaxChannelVolume;
-	} else if (_balance < 0) {
-		_volL = vol / Mixer::kMaxChannelVolume;
-		_volR = ((127 + _balance) * vol) / (Mixer::kMaxChannelVolume * 127);
+		if (_balance == 0) {
+			_volL = vol / Mixer::kMaxChannelVolume;
+			_volR = vol / Mixer::kMaxChannelVolume;
+		} else if (_balance < 0) {
+			_volL = vol / Mixer::kMaxChannelVolume;
+			_volR = ((127 + _balance) * vol) / (Mixer::kMaxChannelVolume * 127);
+		} else {
+			_volL = ((127 - _balance) * vol) / (Mixer::kMaxChannelVolume * 127);
+			_volR = vol / Mixer::kMaxChannelVolume;
+		}
 	} else {
-		_volL = ((127 - _balance) * vol) / (Mixer::kMaxChannelVolume * 127);
-		_volR = vol / Mixer::kMaxChannelVolume;
+		_volL = _volR = 0;
 	}
 }
 

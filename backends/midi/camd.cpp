@@ -29,6 +29,8 @@
 
 #if defined(__amigaos4__)
 
+#include "common/textconsole.h"
+#include "common/error.h"
 #include "common/endian.h"
 #include "common/util.h"
 #include "audio/musicplugin.h"
@@ -135,8 +137,8 @@ void MidiDriver_CAMD::sysEx(const byte *msg, uint16 length) {
 char *MidiDriver_CAMD::getDevice() {
 	char *retname = NULL;
 
-	APTR key;
-	if (key = _ICamd->LockCAMD(CD_Linkages)) {
+	APTR key = _ICamd->LockCAMD(CD_Linkages);
+	if (key != NULL) {
 		struct MidiCluster *cluster = _ICamd->NextCluster(NULL);
 
 		while (cluster && !retname) {

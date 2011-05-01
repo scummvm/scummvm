@@ -26,14 +26,8 @@
 #define COMMON_UTIL_H
 
 #include "common/scummsys.h"
-#include "common/textconsole.h"
 #include "common/str.h"
 
-#ifdef WIN32
-#ifdef ARRAYSIZE
-#undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
-#endif
-#endif
 
 /**
  * Check whether a given pointer is aligned correctly.

@@ -31,6 +31,7 @@
 #include "backends/platform/sdl/sdl.h"
 #include "backends/graphics/graphics.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
 // FIXME move joystick defines out and replace with confile file options
 // we should really allow users to map any key to a joystick button

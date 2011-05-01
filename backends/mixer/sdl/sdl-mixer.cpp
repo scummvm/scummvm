@@ -26,8 +26,10 @@
 #if defined(SDL_BACKEND)
 
 #include "backends/mixer/sdl/sdl-mixer.h"
+#include "common/debug.h"
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
 #ifdef GP2X
 #define SAMPLES_PER_SEC 11025

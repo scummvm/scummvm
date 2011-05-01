@@ -25,6 +25,7 @@ MODULES += \
 	gui \
 	backends \
 	engines \
+	video \
 	graphics \
 	audio \
 	common \

@@ -32,6 +32,10 @@ namespace GUI {
 
 class ListWidget;
 class GraphicsWidget;
+class ButtonWidget;
+class CommandSender;
+class ContainerWidget;
+class StaticTextWidget;
 
 class SaveLoadChooser : GUI::Dialog {
 	typedef Common::String String;

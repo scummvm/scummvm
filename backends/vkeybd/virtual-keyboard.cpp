@@ -33,6 +33,7 @@
 #include "backends/vkeybd/virtual-keyboard-parser.h"
 #include "backends/vkeybd/keycode-descriptions.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 #include "common/unzip.h"
 
 #define KEY_START_CHAR ('[')
@@ -71,7 +72,7 @@ void VirtualKeyboard::reset() {
 	deleteEvents();
 	_modes.clear();
 	_initialMode = _currentMode = 0;
-	_hAlignment = kAlignCentre;
+	_hAlignment = kAlignCenter;
 	_vAlignment = kAlignBottom;
 	_keyQueue.clear();
 	_loaded = false;

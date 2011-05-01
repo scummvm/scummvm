@@ -25,12 +25,14 @@
 #ifndef CHOOSER_DIALOG_H
 #define CHOOSER_DIALOG_H
 
+#include "common/array.h"
 #include "common/str.h"
 #include "gui/dialog.h"
 
 namespace GUI {
 
 class ButtonWidget;
+class CommandSender;
 class ListWidget;
 
 /*

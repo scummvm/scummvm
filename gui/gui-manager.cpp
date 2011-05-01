@@ -27,7 +27,8 @@
 #include "common/util.h"
 #include "common/config-manager.h"
 #include "common/algorithm.h"
-#include "common/timer.h"
+#include "common/rect.h"
+#include "common/textconsole.h"
 #include "common/translation.h"
 
 #include "backends/keymapper/keymapper.h"
@@ -37,6 +38,7 @@
 #include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
 #include "gui/Tooltip.h"
+#include "gui/widget.h"
 
 #include "graphics/cursorman.h"
 
