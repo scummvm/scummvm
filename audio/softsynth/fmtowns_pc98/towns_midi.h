@@ -61,6 +61,15 @@ private:
 	TownsMidiInputChannel **_channels;
 	TownsMidiOutputChannel **_out;	
 
+	struct ChanState {
+		uint8 mulAmsFms;
+		uint8 tl;
+		uint8 attDec;
+		uint8 sus;
+		uint8 fgAlg;
+		uint8 unk;
+	} *_chanState;
+
 	Common::TimerManager::TimerProc _timerBproc;
 	void *_timerBpara;
 
@@ -70,6 +79,8 @@ private:
 	uint8 _curChan;
 	
 	bool _open;
+
+	uint8 *_chanOutputLevel;
 };
 
 #endif
