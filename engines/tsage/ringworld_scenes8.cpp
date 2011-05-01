@@ -418,7 +418,7 @@ void Scene7000::Object1::doAction(int action) {
 		break;
 	case CURSOR_USE:
 		if (_globals->getFlag(81)) {
-			RING_INVENTORY._stasisBox._sceneNumber = 1;
+			RING_INVENTORY._stasisBox2._sceneNumber = 1;
 			_globals->_player.disableControl();
 			scene->setAction(&scene->_action5);
 		} else {
