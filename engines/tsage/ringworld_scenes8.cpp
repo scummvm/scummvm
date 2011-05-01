@@ -184,8 +184,8 @@ void Scene7000::Action4::signal() {
 		scene->_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
-		scene->_object1.setStrip(1);
-		scene->_object1.animate(ANIM_MODE_8, 0, 0);
+		scene->_object1.setStrip(4);
+		scene->_object1.animate(ANIM_MODE_8, 0, NULL);
 		_globals->setFlag(81);
 		_globals->_player.enableControl();
 		remove();
