@@ -29,7 +29,7 @@
 #include "common/file.h"
 #include "common/system.h"
 
-#include "graphics/palette.h"
+//#include "graphics/palette.h"
 
 namespace Video {
 
@@ -53,7 +53,7 @@ uint32 VideoDecoder::getElapsedTime() const {
 }
 
 void VideoDecoder::setSystemPalette() {
-	g_system->getPaletteManager()->setPalette(getPalette(), 0, 256);
+//	g_system->getPaletteManager()->setPalette(getPalette(), 0, 256);
 }
 
 bool VideoDecoder::needsUpdate() const {

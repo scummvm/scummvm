@@ -33,6 +33,7 @@
 #include "common/list.h"
 #include "common/debug.h"
 #include "common/singleton.h"
+#include "common/textconsole.h"
 
 namespace Grim {
 

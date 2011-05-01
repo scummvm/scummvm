@@ -26,6 +26,8 @@
 #ifndef GRIM_IMUSE_H
 #define GRIM_IMUSE_H
 
+#include "common/mutex.h"
+
 #include "engines/grim/imuse/imuse_track.h"
 
 namespace Grim {

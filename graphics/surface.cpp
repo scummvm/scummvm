@@ -25,6 +25,7 @@
 #include "common/algorithm.h"
 #include "common/util.h"
 #include "common/endian.h"
+#include "common/textconsole.h"
 #include "graphics/primitives.h"
 #include "graphics/surface.h"
 

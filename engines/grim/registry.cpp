@@ -27,6 +27,8 @@
 
 #include "base/commandLine.h"
 
+#include "common/config-manager.h"
+
 namespace Grim {
 
 Registry *g_registry = NULL;

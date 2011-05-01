@@ -24,6 +24,7 @@
  */
 
 #include "common/util.h"
+#include "common/textconsole.h"
 
 #include "engines/grim/textsplit.h"
 

@@ -26,6 +26,7 @@
 #include "common/util.h"
 #include "common/system.h"
 #include "common/events.h"
+#include "common/textconsole.h"
 
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"

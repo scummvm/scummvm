@@ -27,6 +27,7 @@
 #include "common/timer.h"
 #include "common/file.h"
 #include "common/events.h"
+#include "common/system.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"

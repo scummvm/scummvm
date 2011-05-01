@@ -30,6 +30,7 @@
 #include "base/version.h"
 
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "graphics/fontman.h"
 

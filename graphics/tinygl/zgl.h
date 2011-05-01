@@ -2,6 +2,7 @@
 #define _tgl_zgl_h_
 
 #include "common/util.h"
+#include "common/textconsole.h"
 
 #include "graphics/tinygl/gl.h"
 #include "graphics/tinygl/zbuffer.h"

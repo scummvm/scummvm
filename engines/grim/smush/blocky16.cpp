@@ -25,6 +25,7 @@
 
 #include "common/endian.h"
 #include "common/util.h"
+#include "common/textconsole.h"
 
 #include "engines/grim/smush/blocky16.h"
 

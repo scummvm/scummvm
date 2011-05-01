@@ -29,6 +29,7 @@
 #include "common/system.h"
 #include "common/translation.h"
 #include "common/util.h"
+#include "common/textconsole.h"
 #include "gui/about.h"
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"

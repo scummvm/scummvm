@@ -24,6 +24,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/textconsole.h"
 
 #if defined(SDL_BACKEND)
 
