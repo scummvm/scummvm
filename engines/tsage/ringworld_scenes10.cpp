@@ -1247,7 +1247,7 @@ void Scene9700::signal() {
 }
 
 void Scene9700::process(Event &event) {
-	if ((event.eventType == EVENT_BUTTON_DOWN) && (event.kbd.keycode == 0)) {
+	if ((event.eventType == EVENT_BUTTON_DOWN) && !_action) {
 		if (_gfxButton1.process(event)) {
 			_globals->_sceneManager.changeScene(9200);
 		} else if (_globals->_events._currentCursor == OBJECT_SCANNER) {
