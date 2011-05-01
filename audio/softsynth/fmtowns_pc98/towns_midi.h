@@ -28,8 +28,10 @@
 #include "audio/softsynth/fmtowns_pc98/towns_audio.h"
 #include "audio/mididrv.h"
 
+
 class TownsMidiOutputChannel;
 class TownsMidiInputChannel;
+struct ChanState;
 
 class MidiDriver_TOWNS : public MidiDriver, public TownsAudioInterfacePluginDriver {
 friend class TownsMidiInputChannel;
@@ -61,14 +63,7 @@ private:
 	TownsMidiInputChannel **_channels;
 	TownsMidiOutputChannel **_out;	
 
-	struct ChanState {
-		uint8 mulAmsFms;
-		uint8 tl;
-		uint8 attDec;
-		uint8 sus;
-		uint8 fgAlg;
-		uint8 unk;
-	} *_chanState;
+	ChanState *_chanState;
 
 	Common::TimerManager::TimerProc _timerBproc;
 	void *_timerBpara;
