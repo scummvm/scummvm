@@ -222,7 +222,7 @@ void Scene9150::dispatch() {
 	if ((_sceneState != 0) && (_sceneBounds.left == 0)) {
 		_object3._timer = 0;
 		_sceneState = 0;
-		_sceneHotspot3.setAction(&_sequenceManager2, 0, 9154, &_object3, 0);
+		_object3.setAction(&_sequenceManager2, NULL, 9154, &_object3, NULL);
 		_sceneHotspot10.remove();
 	}
 
