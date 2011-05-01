@@ -224,7 +224,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			GUIO_NONE
 		},
-		GF_DEMO,
+		EMI_DEMO,
 		GType_MONKEY4
 	},
 
