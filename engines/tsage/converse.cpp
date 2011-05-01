@@ -296,6 +296,8 @@ void SequenceManager::process(Event &event) {
 		!event.handled && _globals->_sceneObjects->contains(&_sceneText)) {
 		// Remove the text item
 		_sceneText.remove();
+		setDelay(2);
+		event.handled = true;
 	} else {
 		Action::process(event);
 	}
