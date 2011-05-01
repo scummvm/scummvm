@@ -35,58 +35,90 @@ namespace tSage {
 
 class Sound;
 
+#define SOUND_ARR_SIZE 16
+
 struct trackInfoStruct {
 	int count;
-	int rlbList[32];
-	byte *handleList[75];
+	int rlbList[SOUND_ARR_SIZE];
+	int arr2[SOUND_ARR_SIZE];
+};
+
+class SoundDriverEntry {
+public:
+
+};
+
+class SoundDriver {
+private:
+	Common::String _shortDescription, _longDescription;
+public:
+	const Common::String &getShortDriverDescription() { return _shortDescription; }
+	const Common::String &getLongDriverDescription() { return _longDescription; }
+
+	virtual void setVolume(int volume) = 0;
 };
 
 class SoundManager : public SaveListener {
+private:
+	void unInstallDriver(SoundDriver *driver);
 public:
+	bool __sndmgrReady;
 	int _minVersion, _maxVersion;
 	Common::List<Sound *> _playList;
-	void *driverList2[16];
-	int _field89[16];
-	int _fieldA9[16];
-	int _fieldE9[16];
 	int _field109[16];
 	uint32 _groupMask;
-	int volume;
+	int _volume;
 	int _disableCtr;
 	int _suspendCtr;
 	int _field153;
 	Common::List<Sound *> _soundList;
-	Common::List<void *> _driverList;
+	Common::List<SoundDriverEntry> _driverList;
+
+	Common::List<SoundDriver *> _installedDrivers;
+	int _field89[16];
+	int _fieldA9[16];
+	int _fieldE9[16];
+
 	int _field16D;
 public:
+	SoundManager();
+	~SoundManager();
+
 	void dispatch() {}
 	virtual void listenerSynchronise(Serialiser &s);
 	virtual void postInit();
 
-	void proc2() {}
 	static void saveNotifier(bool postFlag);
 	void saveNotifierProc(bool postFlag);
 	static void loadNotifier(bool postFlag);
 	void loadNotifierProc(bool postFlag);
 
+	Common::List<SoundDriverEntry> &buildDriverList(bool flag);
+	Common::List<SoundDriverEntry> &getDriverList(bool flag);
+	void dumpDriverList();
 	void checkResVersion(const byte *soundData);
 	int determineGroup(const byte *soundData);
 	int extractPriority(const byte *soundData);
 	int extractLoop(const byte *soundData);
+	bool isOnPlayList(Sound *sound);
+	void extractTrackInfo(trackInfoStruct *trackInfo, const byte *soundData, int groupNum);
 	void addToSoundList(Sound *sound);
 	void removeFromSoundList(Sound *sound);
 	void addToPlayList(Sound *sound);
 	void removeFromPlayList(Sound *sound);
-	bool isOnPlayList(Sound *sound);
-	void extractTrackInfo(trackInfoStruct *data, const byte *soundData, int groupNum);
 	void suspendSoundServer();
 	void rethinkVoiceTypes();
 	void restartSoundServer();
 	void updateSoundVol(Sound *sound);
 	void updateSoundPri(Sound *sound);
 	void updateSoundLoop(Sound *sound);
+	void setMasterVol(int volume);
+	int getMasterVol() const;
+	void loadSound(int soundNum, bool showErrors);
+	void unloadSound(int soundNum);
 
 	// _so methods
+	static void _sfTerminate();
 	static void _soSetTimeIndex(int timeIndex);
 	static int _sfDetermineGroup(const byte *soundData);
 	static void _sfAddToPlayList(Sound *sound);
@@ -98,10 +130,9 @@ public:
 	static void sub_233EE(Sound *sound);
 	static void _sfUpdatePriority(Sound *sound);
 	static void _sfUpdateLoop(Sound *sound);
-
+	static void _sfSetMasterVol(int volume);
+	static void _sfExtractTrackInfo(trackInfoStruct *trackInfo, const byte *soundData, int groupNum);
 };
-
-#define SOUND_ARR_SIZE 16
 
 class Sound: public EventHandler {
 private:
@@ -143,6 +174,7 @@ public:
 	int _fieldC8[SOUND_ARR_SIZE];
 	int _fieldE8[SOUND_ARR_SIZE];
 	trackInfoStruct _trackInfo;
+	byte *_handleList[75];
 	int _field266;
 	int _field268;
 	bool _primed;

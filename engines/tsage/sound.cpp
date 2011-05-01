@@ -33,10 +33,39 @@
 
 namespace tSage {
 
+SoundManager::SoundManager() {
+	__sndmgrReady = false;
+	_minVersion = 0x102;
+	_maxVersion = 0x10A;
+
+	for (int i = 0; i < 16; ++i)
+		_field109[i] = 0;
+
+	_groupMask = 0;
+	_volume = 127;
+	_suspendCtr = 0;
+	_disableCtr = 0;
+	_field153 = 0;
+	_field16D = 0;
+}
+
+SoundManager::~SoundManager() {
+	if (__sndmgrReady) {
+		for (Common::List<Sound *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
+			(*i)->stop();
+		for (Common::List<SoundDriver *>::iterator i = _installedDrivers.begin(); i != _installedDrivers.end(); ++i)
+			unInstallDriver(*i);
+		_sfTerminate();
+	}
+}
+
 void SoundManager::postInit() {
-	_saver->addSaveNotifier(&SoundManager::saveNotifier);
-	_saver->addLoadNotifier(&SoundManager::loadNotifier);
-	_saver->addListener(this);
+	if (!__sndmgrReady) {
+		_saver->addSaveNotifier(&SoundManager::saveNotifier);
+		_saver->addLoadNotifier(&SoundManager::loadNotifier);
+		_saver->addListener(this);
+		__sndmgrReady = true;
+	}
 }
 
 void SoundManager::saveNotifier(bool postFlag) {
@@ -60,8 +89,6 @@ void SoundManager::listenerSynchronise(Serialiser &s) {
 	warning("TODO: SoundManager listenerSynchronise");
 }
 
-/*--------------------------------------------------------------------------*/
-
 void SoundManager::checkResVersion(const byte *soundData) {
 	int minVersion = READ_LE_UINT16(soundData + 4);
 	int maxVersion = READ_LE_UINT16(soundData + 6);
@@ -70,6 +97,57 @@ void SoundManager::checkResVersion(const byte *soundData) {
 		error("Attempt to play/prime sound resource that is too new");
 	if (_globals->_soundManager._minVersion > minVersion)
 		error("Attempt to play/prime sound resource that is too old");
+}
+
+/*--------------------------------------------------------------------------*/
+
+void SoundManager::suspendSoundServer() {
+	++_globals->_soundManager._suspendCtr;
+}
+
+
+void SoundManager::restartSoundServer() {
+	if (_globals->_soundManager._suspendCtr > 0)
+		--_globals->_soundManager._suspendCtr;
+}
+
+void SoundManager::unInstallDriver(SoundDriver *driver) {
+	
+}
+
+Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool flag) {
+	assert(__sndmgrReady);
+	_driverList.clear();
+
+	warning("TODO: SoundManager::buildDriverList");
+	return _driverList;
+}
+
+Common::List<SoundDriverEntry> &SoundManager::getDriverList(bool flag) {
+	if (flag)
+		return _driverList;
+	else
+		return buildDriverList(false);
+}
+
+void SoundManager::dumpDriverList() {
+	_driverList.clear();
+}
+
+void SoundManager::setMasterVol(int volume) {
+	_sfSetMasterVol(volume);
+}
+
+int SoundManager::getMasterVol() const {
+	return _volume;
+}
+
+void SoundManager::loadSound(int soundNum, bool showErrors) {
+	// This method preloaded the data associated with a given sound, so is now redundant
+}
+
+void SoundManager::unloadSound(int soundNum) {
+	// This method signalled the resource manager to unload the data for a sound, and is now redundant
 }
 
 int SoundManager::determineGroup(const byte *soundData) {
@@ -82,6 +160,10 @@ int SoundManager::extractPriority(const byte *soundData) {
 
 int SoundManager::extractLoop(const byte *soundData) {
 	return READ_LE_UINT16(soundData + 14);
+}
+
+void SoundManager::extractTrackInfo(trackInfoStruct *trackInfo, const byte *soundData, int groupNum) {
+	_sfExtractTrackInfo(trackInfo, soundData, groupNum);
 }
 
 void SoundManager::addToSoundList(Sound *sound) {
@@ -105,23 +187,6 @@ bool SoundManager::isOnPlayList(Sound *sound) {
 	return _sfIsOnPlayList(sound);
 }
 
-void SoundManager::extractTrackInfo(trackInfoStruct *data, const byte *soundData, int groupNum) {
-
-}
-
-void SoundManager::suspendSoundServer() {
-	++_globals->_soundManager._suspendCtr;
-}
-
-void SoundManager::rethinkVoiceTypes() {
-	_sfRethinkVoiceTypes();
-}
-
-void SoundManager::restartSoundServer() {
-	if (_globals->_soundManager._suspendCtr > 0)
-		--_globals->_soundManager._suspendCtr;
-}
-
 void SoundManager::updateSoundVol(Sound *sound) {
 	_sfUpdateVolume(sound);
 }
@@ -132,6 +197,10 @@ void SoundManager::updateSoundPri(Sound *sound) {
 
 void SoundManager::updateSoundLoop(Sound *sound) {
 	_sfUpdateLoop(sound);
+}
+
+void SoundManager::rethinkVoiceTypes() {
+	_sfRethinkVoiceTypes();
 }
 
 /*--------------------------------------------------------------------------*/
@@ -191,6 +260,51 @@ void SoundManager::_sfUpdatePriority(Sound *sound) {
 }
 
 void SoundManager::_sfUpdateLoop(Sound *sound) {
+
+}
+
+void SoundManager::_sfSetMasterVol(int volume) {
+	if (volume > 127)
+		volume = 127;
+
+	if (volume != _globals->_soundManager._volume) {
+		_globals->_soundManager._volume = volume;
+
+		for (Common::List<SoundDriver *>::iterator i = _globals->_soundManager._installedDrivers.begin(); 
+				i != _globals->_soundManager._installedDrivers.end(); ++i) {
+			(*i)->setVolume(volume);
+		}
+	}
+}
+
+void SoundManager::_sfExtractTrackInfo(trackInfoStruct *trackInfo, const byte *soundData, int groupNum) {
+	trackInfo->count = 0;
+
+	const byte *p = soundData + READ_LE_UINT16(soundData + 8);
+	uint32 v;
+	while ((v = READ_LE_UINT32(p)) != 0) {
+		while ((v == 0x80000000) || (v == (uint)groupNum)) {
+			int count = READ_LE_UINT16(p + 4);
+			p += 6;
+
+			for (int idx = 0; idx < count; ++idx) {
+				if (trackInfo->count == 16) {
+					trackInfo->count = -1;
+					return;
+				}
+
+				trackInfo->rlbList[trackInfo->count] = READ_LE_UINT16(p);
+				trackInfo->arr2[trackInfo->count] = READ_LE_UINT16(p + 2);
+				++trackInfo->count;
+				p += 4;
+			} 
+		}
+
+		p = soundData + 6 + (READ_LE_UINT16(p + 4) * 4);
+	}
+}
+
+void SoundManager::_sfTerminate() {
 
 }
 
@@ -260,7 +374,7 @@ void Sound::_prime(int soundNum, bool queFlag) {
 		_globals->_soundManager.extractTrackInfo(&_trackInfo, soundData, _groupNum);
 
 		for (int idx = 0; idx < _trackInfo.count; ++idx) {
-			_trackInfo.handleList[idx] = _resourceManager->getResource(RES_SOUND, soundNum, _trackInfo.rlbList[idx]);
+			_handleList[idx] = _resourceManager->getResource(RES_SOUND, soundNum, _trackInfo.rlbList[idx]);
 		}
 
 		DEALLOCATE(soundData);
@@ -270,7 +384,7 @@ void Sound::_prime(int soundNum, bool queFlag) {
 		_soundPriority = 0;
 		_loop = 0;
 		_trackInfo.count = 0;
-		_trackInfo.handleList[0] = ALLOCATE(200);
+		_handleList[0] = ALLOCATE(200);
 		_field26E = ALLOCATE(200);
 	}
 
@@ -283,12 +397,12 @@ void Sound::_prime(int soundNum, bool queFlag) {
 void Sound::_unPrime() {
 	if (_primed) {
 		if (_field26C) {
-			DEALLOCATE(_trackInfo.handleList[0]);
+			DEALLOCATE(_handleList[0]);
 			DEALLOCATE(_field26E);
 			_field26E = NULL;
 		} else {
 			for (int idx = 0; idx < _trackInfo.count; ++idx) {
-				DEALLOCATE(_trackInfo.handleList[idx]);
+				DEALLOCATE(_handleList[idx]);
 			}
 		}
 
@@ -305,7 +419,7 @@ void Sound::orientAfterDriverChange() {
 		int timeIndex = getTimeIndex();
 
 		for (int idx = 0; idx < _trackInfo.count; ++idx)
-			DEALLOCATE(_trackInfo.handleList[idx]);
+			DEALLOCATE(_handleList[idx]);
 		
 		_trackInfo.count = 0;
 		_primed = false;
