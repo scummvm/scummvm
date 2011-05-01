@@ -362,22 +362,19 @@ void Scene7000::Object1::doAction(int action) {
 	case OBJECT_TRANSLATOR:
 		_globals->_player.disableControl();
 		RING_INVENTORY._translator._sceneNumber = 7000;
-		if (RING_INVENTORY._waldos._sceneNumber == 7000) {
-			if (RING_INVENTORY._jar._sceneNumber == 7000) {
-				scene->_sceneMode = 7012;
-				scene->setAction(&scene->_sequenceManager, scene, 7010, &_globals->_player, &scene->_object1, 0, 0);
-			} else {
-				scene->_sceneMode = 7015;
-				scene->setAction(&scene->_sequenceManager, scene, 7017, &_globals->_player, 0, 0);
-			}
+
+		if ((RING_INVENTORY._waldos._sceneNumber != 7000) && (RING_INVENTORY._jar._sceneNumber != 7000)) {
+			scene->_sceneMode = 7004;
+			scene->setAction(&scene->_sequenceManager, scene, 7004, &_globals->_player, this, NULL);
+		} else if (RING_INVENTORY._waldos._sceneNumber != 7000) {
+			scene->_sceneMode = 7011;
+			scene->setAction(&scene->_sequenceManager, scene, 7010, &_globals->_player, &scene->_object1, NULL);
+		} else if (RING_INVENTORY._jar._sceneNumber != 7000) {
+			scene->_sceneMode = 7012;
+			scene->setAction(&scene->_sequenceManager, scene, 7010, &_globals->_player, &scene->_object1, NULL);
 		} else {
-			if (RING_INVENTORY._jar._sceneNumber == 7000) {
-				scene->_sceneMode = 7011;
-				scene->setAction(&scene->_sequenceManager, scene, 7010, &_globals->_player, &scene->_object1, 0, 0);
-			} else {
-				scene->_sceneMode = 7004;
-				scene->setAction(&scene->_sequenceManager, scene, 7004, &_globals->_player, this, 0, 0);
-			}
+			scene->_sceneMode = 7015;
+			scene->setAction(&scene->_sequenceManager, scene, 7017, &_globals->_player, NULL);
 		}
 		break;
 	case OBJECT_WALDOS:
@@ -386,30 +383,31 @@ void Scene7000::Object1::doAction(int action) {
 		if (RING_INVENTORY._translator._sceneNumber == 7000) {
 			if (RING_INVENTORY._jar._sceneNumber == 7000) {
 				scene->_sceneMode = 7015;
-				scene->setAction(&scene->_sequenceManager, scene, 7015, &_globals->_player, 0, 0);
+				scene->setAction(&scene->_sequenceManager, scene, 7015, &_globals->_player, NULL);
 			} else {
 				scene->_sceneMode = 7006;
-				scene->setAction(&scene->_sequenceManager, scene, 7006, &_globals->_player, 0, 0);
+				scene->setAction(&scene->_sequenceManager, scene, 7006, &_globals->_player, NULL);
 			}
 		} else {
 			scene->_sceneMode = 7009;
-			scene->setAction(&scene->_sequenceManager, scene, 7009, &_globals->_player, 0, 0);
+			scene->setAction(&scene->_sequenceManager, scene, 7009, &_globals->_player, NULL);
 		}
 		break;
 	case OBJECT_JAR:
 		_globals->_player.disableControl();
 		RING_INVENTORY._jar._sceneNumber = 7000;
+
 		if (RING_INVENTORY._translator._sceneNumber == 7000) {
-			if (RING_INVENTORY._waldos._sceneNumber == 7000) {
+			if (RING_INVENTORY._waldos._sceneNumber != 7000) {
 				scene->_sceneMode = 7007;
-				scene->setAction(&scene->_sequenceManager, scene, 7007, &_globals->_player, &scene->_object1, 0, 0);
+				scene->setAction(&scene->_sequenceManager, scene, 7007, &_globals->_player, &scene->_object1, NULL);
 			} else {
 				scene->_sceneMode = 7015;
-				scene->setAction(&scene->_sequenceManager, scene, 7016, &_globals->_player, 0, 0);
+				scene->setAction(&scene->_sequenceManager, scene, 7016, &_globals->_player, NULL);
 			}
 		} else {
 			scene->_sceneMode = 7008;
-			scene->setAction(&scene->_sequenceManager, scene, 7008, &_globals->_player, 0, 0);
+			scene->setAction(&scene->_sequenceManager, scene, 7008, &_globals->_player, NULL);
 		}
 		break;
 	case CURSOR_LOOK:
@@ -622,6 +620,10 @@ void Scene7000::signal() {
 	case 7001:
 	case 7002:
 	case 7004:
+	case 7005:
+	case 7006:
+	case 7007:
+	case 7008:
 	case 7009:
 		_globals->_player.enableControl();
 		break;
