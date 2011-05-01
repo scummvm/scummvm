@@ -115,7 +115,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeString(_setName);
 
 	if (_talkColor) {
-		savedState->writeLEUint32(_talkColor->id());
+		savedState->writeLEUint32(_talkColor->getId());
 	} else {
 		savedState->writeLEUint32(0);
 	}
@@ -131,7 +131,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeFloat(_reflectionAngle);
 	savedState->writeLESint32(_visible);
 	savedState->writeLESint32(_lookingMode),
-	savedState->writeLESint32(_scale);
+	savedState->writeLESint32((int32)_scale);
 
 	savedState->writeString(_talkSoundName);
 
@@ -248,7 +248,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_activeShadowSlot);
 
 	if (_sayLineText) {
-		savedState->writeLEUint32(_sayLineText->id());
+		savedState->writeLEUint32(_sayLineText->getId());
 	} else {
 		savedState->writeLEUint32(0);
 	}

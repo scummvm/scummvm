@@ -48,7 +48,6 @@ LuaFile *g_stdout;
 LuaFile *g_stderr;
 
 static int32 s_id = 0;
-static Common::HashMap<int32, LuaFile *> _files;
 
 LuaFile::LuaFile() : _in(NULL), _out(NULL), _stdin(false), _stdout(false), _stderr(false) {
 }
@@ -131,9 +130,9 @@ static LuaFile *getfile(const char *name) {
 	if (!ishandler(f))
 		luaL_verror("global variable `%.50s' is not a file handle", name);
 #ifdef TARGET_64BITS
-	return _files[(int64)lua_getuserdata(f)];
+	return g_grim->_files[(int64)lua_getuserdata(f)];
 #else
-	return _files[(int32)lua_getuserdata(f)];
+	return g_grim->_files[(int32)lua_getuserdata(f)];
 #endif
 }
 
@@ -142,9 +141,9 @@ static LuaFile *getfileparam(const char *name, int32 *arg) {
 	if (ishandler(f)) {
 		(*arg)++;
 #ifdef TARGET_64BITS
-		return _files[(int64)lua_getuserdata(f)];
+		return g_grim->_files[(int64)lua_getuserdata(f)];
 #else
-		return _files[(int32)lua_getuserdata(f)];
+		return g_grim->_files[(int32)lua_getuserdata(f)];
 #endif
 	} else
 		return getfile(name);
@@ -170,7 +169,7 @@ static void setreturn(int32 id, const char *name) {
 
 static int32 addfile(LuaFile *f) {
 	++s_id;
-	_files[s_id] = f;
+	g_grim->_files[s_id] = f;
 
 	return s_id;
 }
@@ -186,7 +185,7 @@ static void io_readfrom() {
 #else
 		int32 id = (int32)lua_getuserdata(f);
 #endif
-		LuaFile *current = _files[id];
+		LuaFile *current = g_grim->_files[id];
 		if (!current) {
 			pushresult(0);
 			return;
@@ -225,7 +224,7 @@ static void io_writeto() {
 #else
 		int32 id = (int32)lua_getuserdata(f);
 #endif
-		LuaFile *current = _files[id];
+		LuaFile *current = g_grim->_files[id];
 		if (!current->isOpen()) {
 			pushresult(0);
 			return;

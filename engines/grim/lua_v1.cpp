@@ -99,7 +99,7 @@ static TextObject *gettextobject(lua_Object obj) {
 }
 
 static Font *getfont(lua_Object obj) {
-	return g_grim->font(getobject(obj));
+	return g_grim->getFont(getobject(obj));
 }
 
 static Color *getcolor(lua_Object obj) {
@@ -246,7 +246,7 @@ static void MakeColor() {
 
 	Color *c = new Color (r, g ,b);
 	g_grim->registerColor(c);
-	pushobject(c->id(), MKTAG('C','O','L','R'));
+	pushobject(c->getId(), MKTAG('C','O','L','R'));
 }
 
 static void GetColorComponents() {
@@ -300,7 +300,7 @@ static void LoadActor() {
 	else
 		name = lua_getstring(nameObj);
 	Actor *a = new Actor(name);
-	pushobject(a->id(), MKTAG('A','C','T','R'));
+	pushobject(a->getId(), MKTAG('A','C','T','R'));
 }
 
 static void GetActorTimeScale() {
@@ -329,7 +329,7 @@ static void SetSelectedActor() {
 static void GetCameraActor() {
 	// TODO verify what is going on with selected actor
 	Actor *actor = g_grim->selectedActor();
-	pushobject(actor->id(), MKTAG('A','C','T','R'));
+	pushobject(actor->getId(), MKTAG('A','C','T','R'));
 }
 
 
@@ -474,7 +474,7 @@ static void GetActorTalkColor() {
 		return;
 	}
 	Actor *actor = getactor(actorObj);
-	pushobject(actor->talkColor()->id(), MKTAG('C','O','L','R'));
+	pushobject(actor->talkColor()->getId(), MKTAG('C','O','L','R'));
 }
 
 static bool findCostume(lua_Object costumeObj, Actor *actor, Costume **costume) {
@@ -2974,6 +2974,7 @@ void GetControlState() {
 	}
 }
 
+#if 0
 static void killBitmapPrimitives(Bitmap *bitmap) {
 	for (GrimEngine::PrimitiveListType::const_iterator i = g_grim->primitivesBegin(); i != g_grim->primitivesEnd(); ++i) {
 		PrimitiveObject *p = i->_value;
@@ -2983,6 +2984,7 @@ static void killBitmapPrimitives(Bitmap *bitmap) {
 		}
 	}
 }
+#endif
 
 static void GetImage() {
 	lua_Object nameObj = lua_getparam(1);
@@ -2993,14 +2995,14 @@ static void GetImage() {
 	const char *bitmapName = lua_getstring(nameObj);
 	Bitmap *b = g_resourceloader->loadBitmap(bitmapName);
 	g_grim->registerBitmap(b);
-	pushobject(b->id(), MKTAG('V','B','U','F'));
+	pushobject(b->getId(), MKTAG('V','B','U','F'));
 }
 
 static void FreeImage() {
 	lua_Object param = lua_getparam(1);
 	if (!lua_isuserdata(param) || lua_tag(param) != MKTAG('V','B','U','F'))
 		return;
-	Bitmap *bitmap = g_grim->bitmap(getobject(param));
+	Bitmap *bitmap = g_grim->getBitmap(getobject(param));
 	g_grim->killBitmap(bitmap);
 }
 
@@ -3008,7 +3010,7 @@ static void BlastImage() {
 	lua_Object param = lua_getparam(1);
 	if (!lua_isuserdata(param) || lua_tag(param) != MKTAG('V','B','U','F'))
 		return;
-	Bitmap *bitmap = g_grim->bitmap(getobject(param));
+	Bitmap *bitmap = g_grim->getBitmap(getobject(param));
 	lua_Object xObj = lua_getparam(2);
 	lua_Object yObj = lua_getparam(3);
 	if (!lua_isnumber(xObj) || !lua_isnumber(yObj))
@@ -3228,7 +3230,7 @@ static void MakeTextObject() {
 		textObject->createBitmap();
 	g_grim->registerTextObject(textObject);
 
-	pushobject(textObject->id(), MKTAG('T', 'E', 'X', 'T'));
+	pushobject(textObject->getId(), MKTAG('T', 'E', 'X', 'T'));
 	if (!(g_grim->getGameFlags() & GF_DEMO)) {
 		lua_pushnumber(textObject->getBitmapWidth());
 		lua_pushnumber(textObject->getBitmapHeight());
@@ -3428,7 +3430,7 @@ static void DrawPolygon() {
 	PrimitiveObject *p = new PrimitiveObject();
 	p->createPolygon(p1, p2, p3, p4, color);
 	g_grim->registerPrimitiveObject(p);
-	pushobject(p->id(), MKTAG('P','R','I','M'));
+	pushobject(p->getId(), MKTAG('P','R','I','M'));
 }
 
 static void DrawLine() {
@@ -3468,7 +3470,7 @@ static void DrawLine() {
 	PrimitiveObject *p = new PrimitiveObject();
 	p->createLine(p1, p2, color); // TODO Add layer support
 	g_grim->registerPrimitiveObject(p);
-	pushobject(p->id(), MKTAG('P','R','I','M'));
+	pushobject(p->getId(), MKTAG('P','R','I','M'));
 }
 
 static void ChangePrimitive() {
@@ -3616,7 +3618,7 @@ static void DrawRectangle() {
 	PrimitiveObject *p = new PrimitiveObject();
 	p->createRectangle(p1, p2, color, filled);
 	g_grim->registerPrimitiveObject(p);
-	pushobject(p->id(), MKTAG('P','R','I','M')); // FIXME: we use PRIM usetag here
+	pushobject(p->getId(), MKTAG('P','R','I','M')); // FIXME: we use PRIM usetag here
 }
 
 static void BlastRect() {
@@ -3701,7 +3703,7 @@ static void NewObjectState() {
 	ObjectState *state = new ObjectState(setupID, pos, bitmap, zbitmap, transparency);
 	g_grim->registerObjectState(state);
 	g_grim->currScene()->addObjectState(state);
-	pushobject(state->id(), MKTAG('S','T','A','T'));
+	pushobject(state->getId(), MKTAG('S','T','A','T'));
 }
 
 static void FreeObjectState() {
@@ -3751,7 +3753,7 @@ static void ScreenShot() {
 	Bitmap *screenshot = g_driver->getScreenshot(width, height);
 	g_grim->setMode(mode);
 	if (screenshot) {
-		pushobject(screenshot->id(), MKTAG('V','B','U','F'));
+		pushobject(screenshot->getId(), MKTAG('V','B','U','F'));
 	} else {
 		lua_pushnil();
 	}
@@ -3779,7 +3781,7 @@ static void GetSaveGameImage() {
 	savedState->read(data, dataSize);
 	screenshot = g_grim->registerBitmap(data, width, height, "screenshot");
 	if (screenshot) {
-		pushobject(screenshot->id(), MKTAG('V','B','U','F'));
+		pushobject(screenshot->getId(), MKTAG('V','B','U','F'));
 	} else {
 		lua_pushnil();
 		warning("Could not restore screenshot from file");
@@ -3898,7 +3900,7 @@ static void LockFont() {
 		Font *result = g_resourceloader->loadFont(fontName);
 		if (result) {
 			g_grim->registerFont(result);
-			pushobject(result->id(), MKTAG('F','O','N','T'));
+			pushobject(result->getId(), MKTAG('F','O','N','T'));
 			return;
 		}
 	}

@@ -62,7 +62,7 @@ void Object::dereference() {
 	}
 }
 
-int32 Object::id() {
+int32 Object::getId() {
 	return _id;
 }
 

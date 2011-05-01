@@ -130,10 +130,6 @@ uint16 Font::getCharIndex(unsigned char c) {
 	return 0;
 }
 
-const char *Font::filename() const {
-	return _filename.c_str();
-}
-
 // Hardcoded default font for GUI, etc
 const uint8 Font::emerFont[][13] = {
 {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},

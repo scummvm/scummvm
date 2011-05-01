@@ -164,7 +164,7 @@ public:
 	void registerBitmap(Bitmap *bitmap);
 	void killBitmap(Bitmap *b);
 	void killBitmaps();
-	Bitmap *bitmap(int32 id) const;
+	Bitmap *getBitmap(int32 id) const;
 
 	// Actor registration
 	typedef Common::HashMap<int, Actor *> ActorListType;
@@ -218,7 +218,7 @@ public:
 	void registerFont(Font *f);
 	void killFont(Font *f);
 	void killFonts();
-	Font *font(int32 id) const;
+	Font *getFont(int32 id) const;
 
 	void registerColor(Color *c);
 	void killColor(Color *c);
@@ -266,6 +266,8 @@ public:
 	TextObjectDefaults _sayLineDefaults;
 	TextObjectDefaults _printLineDefaults;
 	TextObjectDefaults _blastTextDefaults;
+
+	Common::HashMap<int32, LuaFile *> _files;
 
 private:
 

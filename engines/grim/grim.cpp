@@ -1103,7 +1103,7 @@ void GrimEngine::restoreTextObjects(SaveGame *state) {
 
 	_sayLineDefaults.disabled = state->readLESint32();
 	_sayLineDefaults.fgColor = color(state->readLEUint32());
-	_sayLineDefaults.font = font(state->readLEUint32());
+	_sayLineDefaults.font = getFont(state->readLEUint32());
 	_sayLineDefaults.height = state->readLESint32();
 	_sayLineDefaults.justify = state->readLESint32();
 	_sayLineDefaults.width = state->readLESint32();
@@ -1357,7 +1357,7 @@ void GrimEngine::saveActors(SaveGame *state) {
 	}
 
 	if (_selectedActor) {
-		state->writeLEUint32(_selectedActor->id());
+		state->writeLEUint32(_selectedActor->getId());
 	} else {
 		state->writeLEUint32(0);
 	}
@@ -1369,8 +1369,8 @@ void GrimEngine::saveTextObjects(SaveGame *state) {
 	state->beginSection('TEXT');
 
 	state->writeLESint32(_sayLineDefaults.disabled);
-	state->writeLEUint32(_sayLineDefaults.fgColor->id());
-	state->writeLEUint32(_sayLineDefaults.font->id());
+	state->writeLEUint32(_sayLineDefaults.fgColor->getId());
+	state->writeLEUint32(_sayLineDefaults.font->getId());
 	state->writeLESint32(_sayLineDefaults.height);
 	state->writeLESint32(_sayLineDefaults.justify);
 	state->writeLESint32(_sayLineDefaults.width);
@@ -1451,7 +1451,7 @@ void GrimEngine::saveFonts(SaveGame *state) {
 	state->writeLESint32(_fonts.size());
 	for (FontListType::iterator i = _fonts.begin(); i != _fonts.end(); ++i) {
 		state->writeLEUint32(i->_key);
-		state->writeCharString(i->_value->filename());
+		state->writeCharString(i->_value->getFilename().c_str());
 	}
 
 	state->endSection();
@@ -1586,11 +1586,11 @@ float GrimEngine::perSecond(float rate) const {
 }
 
 void GrimEngine::registerTextObject(TextObject *t) {
-	_textObjects[t->id()] = t;
+	_textObjects[t->getId()] = t;
 }
 
 void GrimEngine::killTextObject(TextObject *t) {
-	_textObjects.erase(t->id());
+	_textObjects.erase(t->getId());
 	delete t;
 }
 
@@ -1605,11 +1605,11 @@ TextObject *GrimEngine::textObject(int id) const {
 }
 
 void GrimEngine::registerActor(Actor *a) {
-	_actors[a->id()] = a;
+	_actors[a->getId()] = a;
 }
 
 void GrimEngine::killActor(Actor *a) {
-	_actors.erase(a->id());
+	_actors.erase(a->getId());
 }
 
 void GrimEngine::killActors() {
@@ -1629,11 +1629,11 @@ Actor *GrimEngine::actor(int id) const {
 }
 
 void GrimEngine::registerBitmap(Bitmap *bitmap) {
-	_bitmaps[bitmap->id()] = bitmap;
+	_bitmaps[bitmap->getId()] = bitmap;
 }
 
 void GrimEngine::killBitmap(Bitmap *b) {
-	_bitmaps.erase(b->id());
+	_bitmaps.erase(b->getId());
 	delete b;
 }
 
@@ -1643,7 +1643,7 @@ void GrimEngine::killBitmaps() {
 	}
 }
 
-Bitmap *GrimEngine::bitmap(int32 id) const {
+Bitmap *GrimEngine::getBitmap(int32 id) const {
 	if (_bitmaps.contains(id)) {
 		return _bitmaps[id];
 	}
@@ -1652,11 +1652,11 @@ Bitmap *GrimEngine::bitmap(int32 id) const {
 }
 
 void GrimEngine::registerFont(Font *font) {
-	_fonts[font->id()] = font;
+	_fonts[font->getId()] = font;
 }
 
 void GrimEngine::killFont(Font *f) {
-	_fonts.erase(f->id());
+	_fonts.erase(f->getId());
 	delete f;
 }
 
@@ -1666,7 +1666,7 @@ void GrimEngine::killFonts() {
 	}
 }
 
-Font *GrimEngine::font(int32 id) const {
+Font *GrimEngine::getFont(int32 id) const {
 	if (_fonts.contains(id)) {
 		return _fonts[id];
 	}
@@ -1675,11 +1675,11 @@ Font *GrimEngine::font(int32 id) const {
 }
 
 void GrimEngine::registerColor(Color *c) {
-	_colors[c->id()] = c;
+	_colors[c->getId()] = c;
 }
 
 void GrimEngine::killColor(Color *c) {
-	_colors.erase(c->id());
+	_colors.erase(c->getId());
 	delete c;
 }
 

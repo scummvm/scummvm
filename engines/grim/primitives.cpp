@@ -48,7 +48,7 @@ PrimitiveObject::~PrimitiveObject() {
 void PrimitiveObject::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_type);
 
-	savedState->writeLEUint32(_color->id());
+	savedState->writeLEUint32(_color->getId());
 
 	savedState->writeLEUint32(_filled);
 

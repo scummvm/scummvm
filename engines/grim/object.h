@@ -48,7 +48,7 @@ public:
 	void reference();
 	void dereference();
 
-	int32 id();
+	int32 getId();
 
 private:
 	int _refCount;

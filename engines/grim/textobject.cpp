@@ -65,7 +65,7 @@ TextObject::~TextObject() {
 }
 
 void TextObject::saveState(SaveGame *state) const {
-	state->writeLEUint32(_fgColor->id());
+	state->writeLEUint32(_fgColor->getId());
 
 	state->writeLESint32(_x);
 	state->writeLESint32(_y);
@@ -79,7 +79,7 @@ void TextObject::saveState(SaveGame *state) const {
 	state->writeLESint32(_isSpeech);
 	state->writeLESint32(_created);
 
-	state->writeLEUint32(_font->id());
+	state->writeLEUint32(_font->getId());
 
 	state->write(_textID, 256);
 }
@@ -101,7 +101,7 @@ bool TextObject::restoreState(SaveGame *state) {
 	_isSpeech = state->readLESint32();
 	_created = state->readLESint32();
 
-	_font = g_grim->font(state->readLEUint32());
+	_font = g_grim->getFont(state->readLEUint32());
 
 	state->read(_textID, 256);
 
