@@ -14,6 +14,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Amiga SCI games (except Conquests of the Longbow).
    - Added support for Macintosh SCI1 games.
 
+ New Ports:
+   - Added WebOS port.
+
  General
    - Added support for loadable modules on platforms without a dynamic
      loader (GSoC Task).
