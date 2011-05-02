@@ -234,29 +234,48 @@ void KeyframeAnim::KeyframeNode::animate(Model::HierNode &node, float frame, int
 	float pitch = _entries[low]._pitch + dt * _entries[low]._dpitch;
 	float yaw = _entries[low]._yaw + dt * _entries[low]._dyaw;
 	float roll = _entries[low]._roll + dt * _entries[low]._droll;
-	if (pitch > 180)
-		pitch -= 360;
-	if (yaw > 180)
-		yaw -= 360;
-	if (roll > 180)
-		roll -= 360;
 
 	if (priority > node._priority || _entries[low]._flags >= node._flags) {
 		node._priority = priority;
-		node._totalWeight = 1;
-		node._animPos = node._animPos + (pos - node._animPos) * fade;
-		node._animPitch = node._animPitch + (pitch - node._animPitch) * fade;
-		node._animYaw = node._animYaw + (yaw - node._animYaw) * fade;
-		node._animRoll = node._animRoll + (roll - node._animRoll) * fade;
-	} else { // priority == node._priority
-		node._totalWeight += fade;
-		node._animPos += pos * fade;
-		node._animPitch += pitch * fade;
-		node._animYaw += yaw * fade;
-		node._animRoll += roll * fade;
+		if (node._totalWeight > 0) {
+			node._animPos = node._animPos * (1 - fade) / node._totalWeight;
+			node._animPitch = node._animPitch * (1 - fade) / node._totalWeight;
+			node._animYaw = node._animYaw * (1 - fade) / node._totalWeight;
+			node._animRoll = node._animRoll * (1 - fade) / node._totalWeight;
+			node._totalWeight = 1 - fade;
+		} else {
+			node._animPos.set(0,0,0);
+			node._animPitch = 0;
+			node._animYaw = 0;
+			node._animRoll = 0;
+			node._totalWeight = 0;
+		}
 	}
 
-	// node
+	node._animPos += (pos - node._pos) * fade;
+
+	float dpitch = pitch - node._pitch;
+	while (dpitch > 180)
+		dpitch -= 360;
+	while (dpitch < -180)
+		dpitch += 360;
+	node._animPitch += dpitch * fade;
+
+	float dyaw = yaw - node._yaw;
+	while (dyaw > 180)
+		dyaw -= 360;
+	while (dyaw < -180)
+		dyaw += 360;
+	node._animYaw += dyaw * fade;
+
+	float droll = roll - node._roll;
+	while (droll > 180)
+		droll -= 360;
+	while (droll < -180)
+		droll += 360;
+	node._animRoll += droll * fade;
+
+	node._totalWeight += fade;
 }
 
 } // end of namespace Grim

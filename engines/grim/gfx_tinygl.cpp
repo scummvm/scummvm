@@ -482,7 +482,15 @@ void GfxTinyGL::translateViewpointFinish() {
 }
 
 void GfxTinyGL::drawHierachyNode(const Model::HierNode *node) {
-	translateViewpointStart(node->_animPos / node->_totalWeight, node->_animPitch / node->_totalWeight, node->_animYaw / node->_totalWeight, node->_animRoll / node->_totalWeight);
+	if (node->_totalWeight > 0) {
+		Graphics::Vector3d animPos = node->_pos + node->_animPos / node->_totalWeight;
+		float animPitch = node->_pitch + node->_animPitch / node->_totalWeight;
+		float animYaw = node->_yaw + node->_animYaw / node->_totalWeight;
+		float animRoll = node->_roll + node->_animRoll / node->_totalWeight;
+		translateViewpointStart(animPos, animPitch, animYaw, animRoll);
+	} else {
+		translateViewpointStart(node->_pos, node->_pitch, node->_yaw, node->_roll);
+	}
 	if (node->_hierVisible) {
 		if (node->_mesh && node->_meshVisible) {
 			tglPushMatrix();
