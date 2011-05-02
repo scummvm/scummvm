@@ -430,19 +430,23 @@ void Scene9200::postInit(SceneObjectList *OwnerList) {
 		if (_globals->getFlag(85)) {
 			if (RING_INVENTORY._helmet._sceneNumber == 1) {
 				_globals->setFlag(86);
+				_globals->_player.disableControl();
 				_sceneState = 9210;
-				setAction(&_sequenceManager, this, 9210, &_globals->_player, &_object2, &_object3, 0);
+				setAction(&_sequenceManager, this, 9210, &_globals->_player, &_object2, &_object3, NULL);
 			} else {
+				_globals->_player.disableControl();
 				_sceneState = 9212;
-				setAction(&_sequenceManager, this, 9212, &_globals->_player, &_object2, &_object3, 0);
+				setAction(&_sequenceManager, this, 9212, &_globals->_player, &_object2, &_object3, NULL);
 			}
 		} else {
 			if (RING_INVENTORY._helmet._sceneNumber == 1) {
+				_globals->_player.disableControl();
 				_sceneState = 9211;
-				setAction(&_sequenceManager, this, 9211, &_globals->_player, &_object2, &_object3, 0);
+				setAction(&_sequenceManager, this, 9211, &_globals->_player, &_object2, &_object3, NULL);
 			} else {
+				_globals->_player.disableControl();
 				_sceneState = 9202;
-				setAction(&_sequenceManager, this, 9202, &_globals->_player, &_object2, &_object3, 0);
+				setAction(&_sequenceManager, this, 9202, &_globals->_player, &_object2, &_object3, NULL);
 			}
 		}
 		break;
@@ -1387,12 +1391,12 @@ void Scene9850::Hotspot14::doAction(int action) {
 			RING_INVENTORY._jacket._sceneNumber = 1;
 			_globals->_player.disableControl();
 			scene->_sceneMode = 9857;
-			setAction(&scene->_sequenceManager, scene, 9857, &_globals->_player, &scene->_objJacket, 0);
+			setAction(&scene->_sequenceManager, scene, 9857, &_globals->_player, &scene->_objJacket, NULL);
 		} else {
 			RING_INVENTORY._jacket._sceneNumber = 9850;
 			_globals->_player.disableControl();
 			scene->_sceneMode = 9860;
-			setAction(&scene->_sequenceManager, scene, 9860, &_globals->_player, &scene->_objJacket, 0);
+			setAction(&scene->_sequenceManager, scene, 9860, &_globals->_player, &scene->_objJacket, NULL);
 		}
 	} else if ((action != CURSOR_LOOK) || (RING_INVENTORY._jacket._sceneNumber != 1)) {
 		NamedHotspot::doAction(action);
@@ -1505,7 +1509,7 @@ void Scene9850::signal() {
 		_globals->_player.enableControl();
 		break;
 	case 9500:
-		_globals->_sceneManager.changeScene(9500);
+		_globals->_sceneManager.changeScene(_sceneMode - 1);
 		break;
 	case 0:
 	default:
@@ -1548,21 +1552,21 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
 	_objDoor.setVisage(9850);
 	_objDoor.setStrip(1);
 	_objDoor.setFrame(1);
-	_objDoor.setPosition(Common::Point(28, 118), 0);
+	_objDoor.setPosition(Common::Point(28, 118));
 	_objDoor.fixPriority(90);
 
 	_objLever.postInit();
 	_objLever.setVisage(9850);
 	_objLever.setStrip(4);
 	_objLever.setFrame(1);
-	_objLever.setPosition(Common::Point(256, 35), 0);
+	_objLever.setPosition(Common::Point(256, 35));
 
 	_objCloak.postInit();
 	_objCloak.setVisage(9850);
 	_objCloak.setStrip(5);
 	_objCloak.setFrame(1);
 	_objCloak.fixPriority(90);
-	_objCloak.setPosition(Common::Point(157, 81), 0);
+	_objCloak.setPosition(Common::Point(157, 81));
 	if (RING_INVENTORY._cloak._sceneNumber != 9850)
 		_objCloak.hide();
 
@@ -1589,7 +1593,7 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
 		_objScimitar.setVisage(9850);
 		_objScimitar.setStrip(2);
 		_objScimitar.setFrame(1);
-		_objScimitar.setPosition(Common::Point(55, 83), 0);
+		_objScimitar.setPosition(Common::Point(55, 83));
 		_objScimitar.fixPriority(80);
 		_objScimitar.hide();
 	}
@@ -1599,7 +1603,7 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
 		_objSword.setVisage(9850);
 		_objSword.setStrip(3);
 		_objSword.setFrame(1);
-		_objSword.setPosition(Common::Point(56, 101), 0);
+		_objSword.setPosition(Common::Point(56, 101));
 		_objSword.fixPriority(80);
 		_objSword.hide();
 	}
