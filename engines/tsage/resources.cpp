@@ -200,11 +200,11 @@ struct DecodeReference {
  */
 byte *TLib::getResource(uint16 id, bool suppressErrors) {
 	// Scan for an entry for the given Id
-	ResourceEntry *re= NULL;
-	ResourceList::iterator i;
-	for (i = _resources.begin(); i != _resources.end(); ++i) {
-		if ((*i).id == id) {
-			re = &(*i);
+	ResourceEntry *re = NULL;
+	ResourceList::iterator iter;
+	for (iter = _resources.begin(); iter != _resources.end(); ++iter) {
+		if ((*iter).id == id) {
+			re = &(*iter);
 			break;
 		}
 	}
