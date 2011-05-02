@@ -3554,7 +3554,6 @@ void Scene4250::postInit(tSage::SceneObjectList *OwnerList) {
 		_hotspot1.setPosition(Common::Point(197, 173));
 		_hotspot1.changeZoom(70);
 
-		_globals->_player.setObjectWrapper(new SceneObjectWrapper());
 		_globals->_player.setPosition(Common::Point(252, 176));
 		_globals->_player.changeZoom(70);
 
@@ -3586,7 +3585,7 @@ void Scene4250::postInit(tSage::SceneObjectList *OwnerList) {
 				_sceneMode = 4253;
 				_globals->_sceneItems.push_front(&_hotspot6);
 
-				setAction(&_sequenceManager, this, 4253, &_globals->_player, NULL);
+				setAction(&_sequenceManager, this, 4253, &_globals->_player, &_hotspot6, &_hotspot4, NULL);
 			}
 		}
 	} else if (_globals->_stripNum == 9000) {
