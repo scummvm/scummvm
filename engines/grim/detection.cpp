@@ -214,6 +214,48 @@ static const GrimGameDescription gameDescriptions[] = {
 		GType_MONKEY4
 	},
 	{
+		// Escape from Monkey Island Italian PS2
+		{
+			"monkey4",
+			"",
+			AD_ENTRY1s("voiceAll.m4b", "342fc0288a7d0e25a7284a04b98ede83", 18128960),
+			Common::IT_ITA,
+			Common::kPlatformPS2,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		0,
+		GType_MONKEY4
+	},
+	{
+		// Escape from Monkey Island Spanish PS2
+		{
+			"monkey4",
+			"",
+			AD_ENTRY1s("voiceAll.m4b", "782ca7d9357577a4c5eefc37974661cc", 15789184),
+			Common::ES_ESP,
+			Common::kPlatformPS2,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		0,
+		GType_MONKEY4
+	},
+	{
+		// Escape from Monkey Island French PS2
+		{
+			"monkey4",
+			"",
+			AD_ENTRY1s("voiceAll.m4b", "ef0905bc590e1afbe2eef1535bde7a6b", 16768512),
+			Common::FR_FRA,
+			Common::kPlatformPS2,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		0,
+		GType_MONKEY4
+	},
+	{
 		// Escape from Monkey Island demo
 		{
 			"monkey4",
