@@ -142,8 +142,6 @@ int32 luaO_redimension(int32 oldsize);
 int luaO_findstring(const char *name, const char *list[]);
 void luaO_insertlist(GCnode *root, GCnode *node);
 
-void luaO_resetObject(void *o);
-
 #define luaO_memup(d, s, n)		memmove(d, s, n)
 #define luaO_memdown(d, s, n)	memmove(d, s, n)
 
