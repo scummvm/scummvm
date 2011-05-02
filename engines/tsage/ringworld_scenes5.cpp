@@ -3404,6 +3404,7 @@ void Scene4250::Hotspot6::doAction(int action) {
 			} else {
 				_globals->setFlag(115);
 				_globals->_events.setCursor(CURSOR_WALK);
+				scene->_sceneMode = 4256;
 				scene->setAction(&scene->_sequenceManager, scene, 4256, this, NULL);
 			}
 		} else if (RING_INVENTORY._keyDevice._sceneNumber == 1) {
