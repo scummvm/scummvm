@@ -1209,8 +1209,6 @@ void Costume::moveHead() {
 		if (_joint1Node->_animYaw > 180.) {
 			_joint1Node->_animYaw -= 360;
 		}
-		_joint2Node->_animYaw = 0;
-		_joint3Node->_animYaw = 0;
 
 		if (_joint1Node->_animYaw > _head.maxYaw)
 			_joint1Node->_animYaw = _head.maxYaw;
