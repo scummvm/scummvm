@@ -1296,7 +1296,7 @@ int Player_SID::readBuffer(int16 *buffer, const int numSamples) {
 			_cpuCyclesLeft = timingProps[_videoSystem].cyclesPerFrame;
 		}
 		// fetch samples
-		int sampleCount = _sid->clock(_cpuCyclesLeft, (short*)buffer, samplesLeft);
+		int sampleCount = _sid->updateClock(_cpuCyclesLeft, (short*)buffer, samplesLeft);
 		samplesLeft -= sampleCount;
 		buffer += sampleCount;
 	}

@@ -60,7 +60,7 @@ public:
 
 	void set_sync_source(WaveformGenerator*);
 
-	void clock(cycle_count delta_t);
+	void updateClock(cycle_count delta_t);
 	void synchronize();
 	void reset();
 
@@ -133,7 +133,7 @@ public:
 
 	void enable_filter(bool enable);
 
-	void clock(cycle_count delta_t,
+	void updateClock(cycle_count delta_t,
 		sound_sample voice1, sound_sample voice2, sound_sample voice3);
 	void reset();
 
@@ -201,7 +201,7 @@ public:
 
 	enum State { ATTACK, DECAY_SUSTAIN, RELEASE };
 
-	void clock(cycle_count delta_t);
+	void updateClock(cycle_count delta_t);
 	void reset();
 
 	void writeCONTROL_REG(reg8);
@@ -246,7 +246,7 @@ public:
 	void enable_filter(bool enable);
 	void set_sampling_parameter(double pass_freq);
 
-	void clock(cycle_count delta_t, sound_sample Vi);
+	void updateClock(cycle_count delta_t, sound_sample Vi);
 	void reset();
 
 	// Audio output (20 bits).
@@ -312,8 +312,8 @@ public:
 		double sample_freq, double pass_freq = -1,
 		double filter_scale = 0.97);
 
-	void clock(cycle_count delta_t);
-	int clock(cycle_count& delta_t, short* buf, int n, int interleave = 1);
+	void updateClock(cycle_count delta_t);
+	int updateClock(cycle_count& delta_t, short* buf, int n, int interleave = 1);
 	void reset();
 
 	// Read/write registers.
