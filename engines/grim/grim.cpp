@@ -1419,7 +1419,7 @@ void GrimEngine::saveObjectStates(SaveGame *state) {
 	state->beginSection('STAT');
 
 	state->writeLESint32(_objectStates.size());
-	for (Common::HashMap<int, ObjectState *>::iterator i = _objectStates.begin(); i != _objectStates.end(); ++i) {
+	for (StateListType::iterator i = _objectStates.begin(); i != _objectStates.end(); ++i) {
 		ObjectState *o = i->_value;
 		state->writeLEUint32(o->_id);
 		o->saveState(state);
