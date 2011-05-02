@@ -427,7 +427,7 @@ void Scene7000::Object1::doAction(int action) {
 		break;
 	case CURSOR_TALK:
 		if (_globals->getFlag(81)) {
-			RING_INVENTORY._stasisBox._sceneNumber = 1;
+			RING_INVENTORY._stasisBox2._sceneNumber = 1;
 			_globals->_player.disableControl();
 			scene->setAction(&scene->_action5);
 		} else if (_globals->getFlag(52)) {
@@ -1542,41 +1542,41 @@ void Scene7600::postInit(SceneObjectList *OwnerList) {
 	_object2.postInit();
 	_object2.setVisage(7601);
 	_object2.setStrip(1);
-	_object2.animate(ANIM_MODE_2, 0);
+	_object2.animate(ANIM_MODE_2, NULL);
 	_object2.setPosition(Common::Point(48, 135));
 	_object2.fixPriority(1);
 
 	_object3.postInit();
 	_object3.setVisage(7601);
 	_object3.setStrip(2);
-	_object3.animate(ANIM_MODE_2, 0);
+	_object3.animate(ANIM_MODE_2, NULL);
 	_object3.setPosition(Common::Point(158, 136));
 	_object3.fixPriority(1);
 
 	_object4.postInit();
 	_object4.setVisage(7601);
 	_object4.setStrip(3);
-	_object4.animate(ANIM_MODE_2, 0);
+	_object4.animate(ANIM_MODE_2, NULL);
 	_object4.setPosition(Common::Point(293, 141));
 	_object4.fixPriority(1);
 
 	_object5.postInit();
 	_object5.setVisage(7601);
 	_object5.setStrip(4);
-	_object5.animate(ANIM_MODE_2, 0);
+	_object5.animate(ANIM_MODE_2, NULL);
 	_object5.setPosition(Common::Point(405, 143));
 	_object5.fixPriority(1);
 
 	_object6.postInit();
 	_object6.setVisage(7601);
 	_object6.setStrip(5);
-	_object6.animate(ANIM_MODE_2, 0);
+	_object6.animate(ANIM_MODE_2, NULL);
 	_object6.setPosition(Common::Point(379, 191));
 	_object6.fixPriority(1);
 
 	_globals->_player.postInit();
 	_globals->_player.setVisage(2333);
-	_globals->_player.animate(ANIM_MODE_1, 0);
+	_globals->_player.animate(ANIM_MODE_1, NULL);
 	_globals->_player.setObjectWrapper(new SceneObjectWrapper());
 	_globals->_player.setStrip(1);
 	_globals->_player._moveDiff = Common::Point(16, 16);
