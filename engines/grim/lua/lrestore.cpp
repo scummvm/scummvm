@@ -214,14 +214,7 @@ static void recreateObj(TObject *obj) {
 		case LUA_T_PROTO:
 			tmpId.idObj = makeIdFromPointer(obj->value.tf);
 			found = (ArrayIDObj *)bsearch(&tmpId, arrayProtoFuncs, arrayProtoFuncsCount, sizeof(ArrayIDObj), sortCallback);
-// 			assert(found);	//FIXME: this assert is temporarily commented out because i don't
-							// want to break all the savegames somaen put on the bug tracker.
-							// Once they will not be needed anymore it should be decommented
-							// and the if removed.
-			if (!found) {
-				warning("Cannot recreate object (type LUA_T_PROTO) - lrestore.cpp:222");
-				break;
-			}
+			assert(found);
 			obj->value.tf = (TProtoFunc *)found->object;
 			break;
 		case LUA_T_CLOSURE:
