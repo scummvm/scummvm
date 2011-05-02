@@ -33,8 +33,12 @@ SoundManager::SoundManager() {
 	_minVersion = 0x102;
 	_maxVersion = 0x10A;
 
-	for (int i = 0; i < 16; ++i)
+	for (int i = 0; i < SOUND_ARR_SIZE; ++i) {
+		_field89[i] = 0;
+		_groupList[i] = 0;
+		_fieldE9[i] = 0;
 		_field109[i] = 0;
+	}
 
 	_groupMask = 0;
 	_volume = 127;
@@ -85,12 +89,12 @@ void SoundManager::listenerSynchronize(Serializer &s) {
 }
 
 void SoundManager::checkResVersion(const byte *soundData) {
-	int minVersion = READ_LE_UINT16(soundData + 4);
-	int maxVersion = READ_LE_UINT16(soundData + 6);
+	int maxVersion = READ_LE_UINT16(soundData + 4);
+	int minVersion = READ_LE_UINT16(soundData + 6);
 
-	if (_globals->_soundManager._minVersion >= maxVersion)
+	if (_globals->_soundManager._minVersion < minVersion)
 		error("Attempt to play/prime sound resource that is too new");
-	if (_globals->_soundManager._minVersion > minVersion)
+	if (_globals->_soundManager._minVersion > maxVersion)
 		error("Attempt to play/prime sound resource that is too old");
 }
 
@@ -211,7 +215,7 @@ int SoundManager::_sfDetermineGroup(const byte *soundData) {
 		if ((v & _globals->_soundManager._groupMask) == v)
 			return v;
 
-		p = soundData + 6 + (READ_LE_UINT16(p + 4) * 4);
+		p += 6 + (READ_LE_UINT16(p + 4) * 4);
 	}
 
 	return 0;
@@ -295,12 +299,20 @@ void SoundManager::_sfExtractTrackInfo(trackInfoStruct *trackInfo, const byte *s
 			} 
 		}
 
-		p = soundData + 6 + (READ_LE_UINT16(p + 4) * 4);
+		p += 6 + (READ_LE_UINT16(p + 4) * 4);
 	}
 }
 
 void SoundManager::_sfTerminate() {
 
+}
+
+void SoundManager::_sfExtractGroupMask() {
+	uint32 mask = 0;
+	for (int idx = 0; idx < SOUND_ARR_SIZE; ++idx)
+		mask |= _globals->_soundManager._groupList[idx];
+
+	_globals->_soundManager._groupMask = mask;
 }
 
 /*--------------------------------------------------------------------------*/

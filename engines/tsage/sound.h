@@ -62,7 +62,7 @@ public:
 	bool __sndmgrReady;
 	int _minVersion, _maxVersion;
 	Common::List<Sound *> _playList;
-	int _field109[16];
+	int _field109[SOUND_ARR_SIZE];
 	uint32 _groupMask;
 	int _volume;
 	int _disableCtr;
@@ -72,9 +72,9 @@ public:
 	Common::List<SoundDriverEntry> _driverList;
 
 	Common::List<SoundDriver *> _installedDrivers;
-	int _field89[16];
-	int _fieldA9[16];
-	int _fieldE9[16];
+	int _field89[SOUND_ARR_SIZE];
+	uint16 _groupList[SOUND_ARR_SIZE];
+	int _fieldE9[SOUND_ARR_SIZE];
 
 	int _field16D;
 public:
@@ -129,6 +129,7 @@ public:
 	static void _sfUpdateLoop(Sound *sound);
 	static void _sfSetMasterVol(int volume);
 	static void _sfExtractTrackInfo(trackInfoStruct *trackInfo, const byte *soundData, int groupNum);
+	static void _sfExtractGroupMask();
 };
 
 class Sound: public EventHandler {
