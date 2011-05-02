@@ -187,7 +187,8 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 
 	// Create an encapsulating surface for the data
 	Graphics::Surface srcImage;
-	srcImage.bytesPerPixel = 4;
+	// TODO: Is the data really in the screen format?
+	srcImage.format = g_system->getScreenFormat();
 	srcImage.pitch = _width * 4;
 	srcImage.w = _width;
 	srcImage.h = _height;
@@ -409,7 +410,7 @@ void RenderedImage::copyDirectly(int posX, int posY) {
  */
 Graphics::Surface *RenderedImage::scale(const Graphics::Surface &srcImage, int xSize, int ySize) {
 	Graphics::Surface *s = new Graphics::Surface();
-	s->create(xSize, ySize, srcImage.bytesPerPixel);
+	s->create(xSize, ySize, srcImage.format);
 
 	int *horizUsage = scaleLine(xSize, srcImage.w);
 	int *vertUsage = scaleLine(ySize, srcImage.h);
@@ -420,8 +421,8 @@ Graphics::Surface *RenderedImage::scale(const Graphics::Surface &srcImage, int x
 		byte *destP = (byte *)s->getBasePtr(0, yp);
 
 		for (int xp = 0; xp < xSize; ++xp) {
-			const byte *tempSrcP = srcP + (horizUsage[xp] * srcImage.bytesPerPixel);
-			for (int byteCtr = 0; byteCtr < srcImage.bytesPerPixel; ++byteCtr) {
+			const byte *tempSrcP = srcP + (horizUsage[xp] * srcImage.format.bytesPerPixel);
+			for (int byteCtr = 0; byteCtr < srcImage.format.bytesPerPixel; ++byteCtr) {
 				*destP++ = *tempSrcP++;
 			}
 		}

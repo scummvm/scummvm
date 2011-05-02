@@ -48,6 +48,8 @@
 #include "tinsel/tinlib.h"
 #include "tinsel/token.h"
 
+#include "common/textconsole.h"
+
 namespace Tinsel {
 
 //----------------- EXTERN FUNCTIONS --------------------

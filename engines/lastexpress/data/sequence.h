@@ -77,6 +77,8 @@
 #include "lastexpress/shared.h"
 
 #include "common/array.h"
+#include "common/rect.h"
+#include "common/str.h"
 
 namespace Common {
 class SeekableReadStream;

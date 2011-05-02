@@ -27,10 +27,9 @@
 #define COMMON_WINEXE_H
 
 #include "common/hash-str.h"
+#include "common/str.h"
 
 namespace Common {
-
-class String;
 
 class WinResourceID {
 public:

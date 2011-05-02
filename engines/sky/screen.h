@@ -31,8 +31,9 @@
 #include "sky/skydefs.h"
 
 class OSystem;
+
 namespace Common {
-	struct Rect;
+struct Rect;
 }
 
 namespace Sky {

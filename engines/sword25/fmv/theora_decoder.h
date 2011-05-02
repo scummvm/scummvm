@@ -30,9 +30,12 @@
 
 #ifdef USE_THEORADEC
 
+#include "common/rational.h"
 #include "video/video_decoder.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 
 #include <theora/theoradec.h>
 #include <vorbis/codec.h>

@@ -26,8 +26,8 @@
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/stream.h"
-#include "common/util.h"
 #include "common/debug.h"
+#include "common/textconsole.h"
 
 #include "audio/mods/tfmx.h"
 

@@ -27,6 +27,7 @@
 #define SWORD1_MOUSE_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
 #include "sword1/sworddefs.h"
 #include "sword1/object.h"
 

@@ -23,6 +23,9 @@
  *
  */
 
+#include "common/debug.h"
+#include "common/rect.h"
+
 #include "toon/anim.h"
 #include "toon/toon.h"
 #include "toon/tools.h"

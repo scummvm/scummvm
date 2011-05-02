@@ -26,7 +26,11 @@
 #ifndef SOUND_MODS_MODULE_H
 #define SOUND_MODS_MODULE_H
 
-#include "common/stream.h"
+#include "common/scummsys.h"
+
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Modules {
 

@@ -51,6 +51,7 @@
 #include "tinsel/sysvar.h"
 #include "tinsel/token.h"
 
+#include "common/textconsole.h"
 
 namespace Tinsel {
 

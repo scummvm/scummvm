@@ -252,12 +252,7 @@ EOF
 }
 
 gcc_get_define() {
-	# Note: The AmigaOS compiler doesn't like the "-" input file, so a real file
-	# is used instead
-	rm -f $TMPC
-	touch $TMPC
-	$CXX -dM -E $TMPC | fgrep "$1" | head -n1 | cut -d ' ' -f 3-
-	rm -f $TMPC
+	echo "" | $CXX -dM -E - | fgrep "$1" | head -n1 | cut -d ' ' -f 3-
 }
 
 #
@@ -1143,6 +1138,10 @@ webos)
 	_host_os=webos
 	_host_cpu=arm
 	_host_alias=arm-none-linux-gnueabi
+	test "x$prefix" = xNONE && prefix=/media/cryptofs/apps/usr/palm/applications/org.scummvm.scummvm
+	datarootdir='${prefix}/data'
+	datadir='${datarootdir}'
+	docdir='${prefix}/doc'
 	;;
 wii)
 	_host_os=wii
@@ -1519,8 +1518,7 @@ echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
 	amigaos*)
-		CXXFLAGS="$CXXFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
-		LDFLAGS="$LDFLAGS -mcrt=newlib -use-dynld -L/sdk/local/newlib/lib"
+		LDFLAGS="$LDFLAGS -use-dynld -L/sdk/local/newlib/lib"
 		# We have to use 'long' for our 4 byte typedef because AmigaOS already typedefs (u)int32
 		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
 		type_4_byte='long'
@@ -1672,6 +1670,8 @@ case $_host_os in
 		_unix=yes
 		;;
 	webos)
+		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/include -I$WEBOS_PDK/include/SDL -I$WEBOS_PDK/device/usr/include"
+		CXXFLAGS="$CXXFLAGS -mcpu=arm1136jf-s -mfpu=vfp -mfloat-abi=softfp"
 		LDFLAGS="$LDFLAGS -L$WEBOS_PDK/device/lib -L$WEBOS_PDK/device/usr/lib"
 		LDFLAGS="$LDFLAGS -Wl,--allow-shlib-undefined"
 		LDFLAGS="$LDFLAGS --sysroot=$WEBOS_PDK/arm-gcc/sysroot"
@@ -1969,6 +1969,7 @@ if test -n "$_host"; then
 			;;
 		ppc-amigaos)
 			_endian=big
+			# AmigaOS exec allocates memory always in an aligned way
 			_need_memalign=yes
 			;;
 		ps2)
@@ -2931,6 +2932,9 @@ case $_backend in
 		# Add ../plugins as a path so plugins can be found when running from a .PND.
 		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"../plugins\\\""
 		;;
+	webos)
+		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$libdir\\\""
+		;;
 	*)
 		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$libdir/scummvm\\\""
 		;;
@@ -3109,7 +3113,6 @@ case $_backend in
 		DEFINES="$DEFINES -DSDL_BACKEND"
 		;;
 	webos)
-		INCLUDES="$INCLUDES -I$WEBOS_PDK/include -I$WEBOS_PDK/include/SDL -I$WEBOS_PDK/device/usr/include"
 		LIBS="$LIBS -lSDL -lpdl"
 		DEFINES="$DEFINES -DSDL_BACKEND -DWEBOS"
 		MODULES="$MODULES backends/platform/sdl"

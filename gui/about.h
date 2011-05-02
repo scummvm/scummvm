@@ -27,7 +27,8 @@
 
 #include "gui/dialog.h"
 #include "common/str.h"
-#include "graphics/surface.h"
+#include "common/array.h"
+#include "common/keyboard.h"
 
 namespace GUI {
 

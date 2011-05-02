@@ -27,6 +27,9 @@
 
 
 #include "common/system.h"
+#include "common/textconsole.h"
+
+#include "graphics/palette.h"
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"

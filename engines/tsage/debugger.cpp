@@ -24,8 +24,6 @@
  */
 
 #include "tsage/debugger.h"
-#include "common/config-manager.h"
-#include "common/endian.h"
 #include "tsage/globals.h"
 #include "tsage/graphics.h"
 #include "tsage/ringworld_logic.h"
@@ -94,6 +92,8 @@ bool Debugger::Cmd_WalkRegions(int argc, const char **argv) {
 	Graphics::Surface destSurface = _globals->_sceneManager._scene->_backSurface.lockSurface();
 
 	// Loop through drawing each walk region in a different color to the background surface
+	Common::String regionsDesc;
+
 	for (uint regionIndex = 0; regionIndex < _globals->_walkRegions._regionList.size(); ++regionIndex, ++color) {
 		WalkRegion &wr = _globals->_walkRegions._regionList[regionIndex];
 
@@ -104,6 +104,9 @@ bool Debugger::Cmd_WalkRegions(int argc, const char **argv) {
 				destSurface.hLine(sliceSet.items[idx].xs - _globals->_sceneOffset.x, yp,
 				sliceSet.items[idx].xe - _globals->_sceneOffset.x, color);
 		}
+
+		regionsDesc += Common::String::format("Region #%d d bounds=%d,%d,%d,%d\n",
+					regionIndex, wr._bounds.left, wr._bounds.top, wr._bounds.right, wr._bounds.bottom);
 	}
 
 	// Release the surface
@@ -111,6 +114,9 @@ bool Debugger::Cmd_WalkRegions(int argc, const char **argv) {
 
 	// Mark the scene as requiring a full redraw
 	_globals->_paneRefreshFlag[0] = 2;
+
+	DebugPrintf("Total regions = %d\n", _globals->_walkRegions._regionList.size());
+	DebugPrintf("%s\n", regionsDesc.c_str());
 
 	return false;
 }
@@ -385,7 +391,7 @@ bool Debugger::Cmd_MoveObject(int argc, const char **argv) {
  * Give a specified item to the player
  */
 bool Debugger::Cmd_Item(int argc, const char **argv) {
-	RING_INVENTORY._infoDisk._sceneNumber = 1;
+	RING_INVENTORY._stasisBox._sceneNumber = 1;
 	return true;
 }
 

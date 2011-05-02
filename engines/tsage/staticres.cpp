@@ -114,4 +114,7 @@ const char *SCENE6100_SWEAT = "Humans sweat, Kzin twitch their tail. What's the 
 const char *SCENE6100_VERY_WELL = "Very well. I will retrieve the stasis box and return the probe. \
 Wait for it's return in the lander bay.";
 
+const char *DEMO_HELP_MSG = " Help...\rF2 - Sound Options\rF3 - Exit demo\r\rPress ENTER\rto continue";
+const char *DEMO_PAUSED_MSG = " demo is paused";
+
 } // End of namespace tSage

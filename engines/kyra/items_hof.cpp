@@ -25,6 +25,8 @@
 
 #include "kyra/kyra_hof.h"
 
+#include "common/system.h"
+
 namespace Kyra {
 
 int KyraEngine_HoF::checkItemCollision(int x, int y) {

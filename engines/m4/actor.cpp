@@ -25,6 +25,7 @@
 
 #include "common/system.h"
 #include "common/array.h"
+#include "common/textconsole.h"
 #include "m4/actor.h"
 #include "m4/m4_views.h"
 #include "m4/assets.h"

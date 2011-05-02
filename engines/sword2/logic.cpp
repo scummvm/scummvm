@@ -26,6 +26,7 @@
  */
 
 
+#include "common/textconsole.h"
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"

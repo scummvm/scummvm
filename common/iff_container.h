@@ -29,7 +29,7 @@
 #include "common/endian.h"
 #include "common/func.h"
 #include "common/stream.h"
-#include "common/util.h"
+#include "common/textconsole.h"
 
 namespace Common {
 

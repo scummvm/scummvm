@@ -23,6 +23,9 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
+
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -32,6 +35,7 @@
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
 #include "common/EventRecorder.h"
+#include "common/textconsole.h"
 
 #include "backends/saves/default/default-saves.h"
 #include "backends/audiocd/sdl/sdl-audiocd.h"

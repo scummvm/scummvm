@@ -25,8 +25,7 @@
 
 
 #include "common/config-manager.h"
-#include "common/events.h"
-#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "queen/logic.h"
 

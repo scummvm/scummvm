@@ -327,8 +327,20 @@ inline void Cursor::setRendererModePalettized(bool palettized) {
 		_renderer.setAlphaReverse(false);
 		_renderer.setColorTest(false);
 	} else {			// 16 bits, no palette
+		// Color test is an easy way for the hardware to make our keycolor 
+		// transparent.
+		_renderer.setColorTest(true);	
+		
+		// Alpha blending is not strictly required, but makes the cursor look
+		// much better
 		_renderer.setAlphaBlending(true);
-		_renderer.setAlphaReverse(true); // We can't change all alpha values, so just reverse
-		_renderer.setColorTest(true);	// Color test to make our key color transparent
+		
+		// Pixel formats without alpha (5650) are considered to have their alpha set.
+		// Since pixel formats with alpha don't have their alpha bits set, we reverse
+		// the alpha format for them so that 0 alpha is 1.
+		if (_buffer.getPixelFormat() != PSPPixelFormat::Type_5650) 
+			_renderer.setAlphaReverse(true);
+		else
+			_renderer.setAlphaReverse(false);
 	}
 }

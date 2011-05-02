@@ -34,7 +34,7 @@
 #include "audio/mixer.h"
 
 namespace Audio {
-	class Mixer;
+class Mixer;
 }
 
 namespace Sword1 {

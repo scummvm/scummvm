@@ -31,10 +31,10 @@
 
 namespace Common {
 #ifdef ENABLE_KEYMAPPER
-	class Keymapper;
+class Keymapper;
 #endif
 #ifdef ENABLE_VKEYBD
-	class VirtualKeyboard;
+class VirtualKeyboard;
 #endif
 }
 

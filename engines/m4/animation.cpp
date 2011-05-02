@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/textconsole.h"
+
 #include "m4/assets.h"
 #include "m4/animation.h"
 #include "m4/compression.h"

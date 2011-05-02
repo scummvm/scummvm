@@ -30,15 +30,14 @@
 #include "mohawk/cstime_view.h"
 #include "mohawk/resource.h"
 #include "mohawk/cursors.h"
-#include "mohawk/sound.h"
 #include "mohawk/video.h"
 
 #include "common/config-manager.h"
+#include "common/error.h"
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/fs.h"
-
-#include "engines/util.h"
+#include "common/textconsole.h"
 
 namespace Mohawk {
 

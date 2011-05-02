@@ -30,7 +30,7 @@
 #include "common/stream.h"
 
 namespace Common {
-	class ReadStream;
+class ReadStream;
 }
 
 namespace Draci {

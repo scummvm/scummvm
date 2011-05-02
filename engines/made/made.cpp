@@ -26,8 +26,6 @@
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/keyboard.h"
-#include "common/file.h"
-#include "common/savefile.h"
 #include "common/config-manager.h"
 #include "common/stream.h"
 

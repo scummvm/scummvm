@@ -31,6 +31,7 @@
 #ifdef ENABLE_KEYMAPPER
 
 #include "backends/keymapper/types.h"
+#include "common/textconsole.h"
 
 namespace Common {
 

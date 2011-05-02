@@ -33,7 +33,7 @@
 #include "lure/res_struct.h"
 
 namespace Common {
-	class File;
+class File;
 }
 
 namespace Lure {

@@ -24,14 +24,14 @@
  */
 
 #include "common/debug.h"
-#include "common/endian.h"
 #include "common/file.h"
+#include "common/mutex.h"
+#include "common/textconsole.h"
 #include "common/queue.h"
 #include "common/util.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/flac.h"
-#include "audio/mixer.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"

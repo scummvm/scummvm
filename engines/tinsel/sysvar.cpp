@@ -31,6 +31,8 @@
 #include "tinsel/sysvar.h"
 #include "tinsel/tinsel.h"
 
+#include "common/textconsole.h"
+
 namespace Tinsel {
 
 // Return for SYS_Platform

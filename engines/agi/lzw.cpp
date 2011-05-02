@@ -36,6 +36,8 @@
 #include "agi/agi.h"
 #include "agi/lzw.h"
 
+#include "common/textconsole.h"
+
 namespace Agi {
 
 

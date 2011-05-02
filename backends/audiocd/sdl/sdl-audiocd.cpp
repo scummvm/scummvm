@@ -27,6 +27,7 @@
 
 #if defined(SDL_BACKEND)
 
+#include "common/textconsole.h"
 #include "backends/audiocd/sdl/sdl-audiocd.h"
 
 SdlAudioCDManager::SdlAudioCDManager()

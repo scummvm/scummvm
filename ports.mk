@@ -180,6 +180,8 @@ endif
 	cp $(srcdir)/README $(WIN32PATH)/README.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
+	cp $(srcdir)/icons/scummvm.ico $(WIN32PATH)
+	cp $(srcdir)/dists/win32/ScummVM.iss $(WIN32PATH)
 	unix2dos $(WIN32PATH)/*.txt
 
 # Special target to create a win32 installer

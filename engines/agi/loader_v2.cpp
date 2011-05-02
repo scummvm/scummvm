@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/textconsole.h"
+
 #include "agi/agi.h"
 
 namespace Agi {

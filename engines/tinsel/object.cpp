@@ -32,6 +32,8 @@
 #include "tinsel/text.h"
 #include "tinsel/tinsel.h"
 
+#include "common/textconsole.h"
+
 #define	OID_EFFECTS	0x2000			// generic special effects object id
 
 namespace Tinsel {

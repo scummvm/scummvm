@@ -25,6 +25,8 @@
 
 #include "agi/agi.h"
 
+#include "common/textconsole.h"
+
 namespace Agi {
 
 int AgiEngine::allocObjects(int n) {

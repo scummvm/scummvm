@@ -29,11 +29,11 @@
 #include "common/scummsys.h"
 
 namespace Common {
-	class MacResManager;
-	class NEResources;
-	class PEResources;
-	class SeekableReadStream;
-	class String;
+class MacResManager;
+class NEResources;
+class PEResources;
+class SeekableReadStream;
+class String;
 }
 
 #include "mohawk/resource.h"

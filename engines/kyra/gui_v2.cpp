@@ -24,12 +24,12 @@
  */
 
 #include "kyra/gui_v2.h"
-#include "kyra/kyra_v2.h"
 #include "kyra/screen_v2.h"
 #include "kyra/text.h"
 #include "kyra/util.h"
 
 #include "common/savefile.h"
+#include "common/system.h"
 
 namespace Kyra {
 

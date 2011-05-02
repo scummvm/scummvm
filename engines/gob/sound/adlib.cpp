@@ -23,8 +23,10 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/endian.h"
+#include "common/textconsole.h"
 
 #include "gob/gob.h"
 #include "gob/sound/adlib.h"

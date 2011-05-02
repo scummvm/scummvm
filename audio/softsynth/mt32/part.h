@@ -24,7 +24,6 @@
 
 namespace MT32Emu {
 
-class PartialManager;
 class Synth;
 
 class Part {

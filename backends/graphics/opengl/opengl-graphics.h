@@ -28,7 +28,9 @@
 
 #include "backends/graphics/opengl/gltexture.h"
 #include "backends/graphics/graphics.h"
+#include "common/array.h"
 #include "common/events.h"
+#include "graphics/pixelformat.h"
 
 // Uncomment this to enable the 'on screen display' code.
 #define USE_OSD	1

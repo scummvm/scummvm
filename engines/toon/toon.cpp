@@ -33,6 +33,7 @@
 #include "common/memstream.h"
 
 #include "engines/util.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"
@@ -57,7 +58,7 @@ void ToonEngine::init() {
 	_hotspots = new Hotspots(this);
 
 	_mainSurface = new Graphics::Surface();
-	_mainSurface->create(TOON_BACKBUFFER_WIDTH, TOON_BACKBUFFER_HEIGHT, 1);
+	_mainSurface->create(TOON_BACKBUFFER_WIDTH, TOON_BACKBUFFER_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
 	_finalPalette = new uint8[768];
 	_backupPalette = new uint8[768];

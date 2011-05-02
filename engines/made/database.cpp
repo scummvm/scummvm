@@ -27,6 +27,7 @@
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 
 #include "made/database.h"
 

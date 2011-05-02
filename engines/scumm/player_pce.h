@@ -27,6 +27,7 @@
 #define SCUMM_PLAYER_PCE_H
 
 #include "common/scummsys.h"
+#include "common/mutex.h"
 #include "scumm/music.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"

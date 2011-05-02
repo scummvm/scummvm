@@ -30,8 +30,9 @@
 #include "cine/pal.h"
 
 #include "common/endian.h"
-#include "common/system.h"
 #include "common/events.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "graphics/cursorman.h"
 

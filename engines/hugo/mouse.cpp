@@ -32,6 +32,7 @@
 
 // mouse.cpp : Handle all mouse activity
 
+#include "common/debug.h"
 #include "common/system.h"
 
 #include "hugo/hugo.h"

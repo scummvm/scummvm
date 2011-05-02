@@ -23,6 +23,12 @@
  */
 
 #if defined(UNIX)
+
+// Re-enable some forbidden symbols  to avoid clashes with stat.h and unistd.h.
+#define FORBIDDEN_SYMBOL_EXCEPTION_chdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_unlink
+
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/fs/posix/posix-fs.cpp"
 

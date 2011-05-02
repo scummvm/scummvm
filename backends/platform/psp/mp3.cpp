@@ -29,6 +29,7 @@
 #include "common/util.h"
 #include "common/singleton.h"
 #include "common/mutex.h"
+#include "common/textconsole.h"
 
 #include "audio/audiostream.h"
 

@@ -27,7 +27,10 @@
 
 #include "kyra/screen_lol.h"
 #include "kyra/lol.h"
-#include "kyra/resource.h"
+
+#include "common/system.h"
+
+#include "graphics/palette.h"
 
 namespace Kyra {
 

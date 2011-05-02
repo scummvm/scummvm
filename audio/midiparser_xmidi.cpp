@@ -24,7 +24,7 @@
  */
 
 #include "audio/midiparser.h"
-#include "audio/mididrv.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 /**

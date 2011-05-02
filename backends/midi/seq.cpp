@@ -35,6 +35,8 @@
 
 #if defined(USE_SEQ_MIDI)
 
+#include "common/error.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"

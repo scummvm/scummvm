@@ -25,9 +25,11 @@
 
 #ifdef ENABLE_LOL
 
-#include "kyra/sound.h"
 #include "kyra/lol.h"
+#include "kyra/sound.h"
 #include "kyra/resource.h"
+
+#include "common/system.h"
 
 #include "audio/audiostream.h"
 

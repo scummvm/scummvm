@@ -27,6 +27,7 @@
 #define COMMON_BUFFEREDSTREAM_H
 
 #include "common/stream.h"
+#include "common/types.h"
 
 namespace Common {
 

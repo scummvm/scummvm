@@ -29,6 +29,7 @@
 #include "tsage/tsage.h"
 #include "tsage/core.h"
 #include "common/algorithm.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "tsage/globals.h"
 
@@ -257,7 +258,7 @@ void GfxSurface::create(int width, int height) {
 	assert((width >= 0) && (height >= 0));
 	_screenSurface = false;
 	_customSurface = new Graphics::Surface();
-	_customSurface->create(width, height, 1);
+	_customSurface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	_bounds = Rect(0, 0, width, height);
 }
 
@@ -282,7 +283,7 @@ Graphics::Surface GfxSurface::lockSurface() {
 	result.w = _bounds.width();
 	result.h = _bounds.height();
 	result.pitch = src->pitch;
-	result.bytesPerPixel = src->bytesPerPixel;
+	result.format = src->format;
 	result.pixels = src->getBasePtr(_bounds.left, _bounds.top);
 
 	return result;
@@ -331,7 +332,7 @@ GfxSurface &GfxSurface::operator=(const GfxSurface &s) {
 	if (_customSurface) {
 		// Surface owns the internal data, so replicate it so new surface owns it's own
 		_customSurface = new Graphics::Surface();
-		_customSurface->create(s._customSurface->w, s._customSurface->h, 1);
+		_customSurface->create(s._customSurface->w, s._customSurface->h, Graphics::PixelFormat::createFormatCLUT8());
 		const byte *srcP = (const byte *)s._customSurface->getBasePtr(0, 0);
 		byte *destP = (byte *)_customSurface->getBasePtr(0, 0);
 

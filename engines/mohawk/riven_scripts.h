@@ -28,6 +28,7 @@
 
 #include "common/str-array.h"
 #include "common/ptr.h"
+#include "common/textconsole.h"
 
 class MohawkEngine_Riven;
 

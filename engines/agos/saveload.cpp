@@ -26,6 +26,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "common/translation.h"
 
 #include "gui/about.h"

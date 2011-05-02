@@ -32,6 +32,7 @@
 #include "common/system.h"
 
 #include "graphics/surface.h"
+#include "graphics/palette.h"
 
 namespace AGOS {
 

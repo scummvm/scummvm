@@ -25,9 +25,11 @@
 #ifndef GUI_OBJECT_H
 #define GUI_OBJECT_H
 
+#include "common/scummsys.h"
+#include "common/str.h"
+
 namespace GUI {
 
-class CommandReceiver;
 class CommandSender;
 
 class CommandReceiver {

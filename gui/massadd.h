@@ -30,7 +30,6 @@
 #include "common/hashmap.h"
 #include "common/stack.h"
 #include "common/str.h"
-#include "common/hash-str.h"
 
 namespace GUI {
 
@@ -63,6 +62,7 @@ private:
 	Common::HashMap<Common::String, StringArray>	_pathToTargets;
 
 	int _dirsScanned;
+	int _oldGamesCount;
 
 	Widget *_okButton;
 	StaticTextWidget *_dirProgressText;

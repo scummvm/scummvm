@@ -46,7 +46,7 @@ enum GsInterlace {
 
 
 namespace Graphics {
-	struct Surface;
+struct Surface;
 }
 
 class Gs2dScreen {

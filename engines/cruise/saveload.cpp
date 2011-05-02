@@ -30,6 +30,7 @@
 #include "common/serializer.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"

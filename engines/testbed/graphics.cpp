@@ -33,6 +33,7 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "graphics/VectorRendererSpec.h"
 

@@ -36,6 +36,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/memstream.h"
+#include "common/textconsole.h"
 #include "sword25/gfx/screenshot.h"
 #include "sword25/kernel/filesystemutil.h"
 #include <png.h>
@@ -127,14 +128,14 @@ Common::SeekableReadStream *Screenshot::createThumbnail(Graphics::Surface *data)
 	// generates a pixel of the target image. Finally, the result as a PNG file is stored as a file.
 
 	// The source image must be 800x600.
-	if (data->w != 800 || data->h != 600 || data->bytesPerPixel != 4) {
+	if (data->w != 800 || data->h != 600 || data->format.bytesPerPixel != 4) {
 		error("The sreenshot dimensions have to be 800x600 in order to be saved as a thumbnail.");
 		return false;
 	}
 
 	// Buffer for the output thumbnail
 	Graphics::Surface thumbnail;
-	thumbnail.create(200, 125, 4);
+	thumbnail.create(200, 125, g_system->getScreenFormat());
 
 	// Über das Zielbild iterieren und einen Pixel zur Zeit berechnen.
 	uint x, y;

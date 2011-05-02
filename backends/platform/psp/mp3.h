@@ -30,7 +30,7 @@
 #include "common/scummsys.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Audio {

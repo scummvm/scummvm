@@ -40,6 +40,7 @@
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 #include "audio/mixer_intern.h"

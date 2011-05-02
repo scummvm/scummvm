@@ -27,6 +27,8 @@
 #include "teenagent/resources.h"
 #include "teenagent/dialog.h"
 
+#include "common/textconsole.h"
+
 namespace TeenAgent {
 
 #define CHECK_FLAG(addr, v) (res->dseg.get_byte(addr) == (v))

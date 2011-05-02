@@ -30,6 +30,8 @@
 #include "lure/decode.h"
 #include "lure/events.h"
 
+#include "graphics/palette.h"
+
 namespace Lure {
 
 static Screen *int_disk = NULL;

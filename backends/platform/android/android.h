@@ -31,6 +31,7 @@
 #include "common/fs.h"
 #include "common/archive.h"
 #include "audio/mixer_intern.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "backends/base-backend.h"
 #include "backends/plugins/posix/posix-provider.h"

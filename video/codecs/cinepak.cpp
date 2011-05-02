@@ -25,7 +25,13 @@
 
 #include "video/codecs/cinepak.h"
 
+#include "common/debug.h"
+#include "common/stream.h"
 #include "common/system.h"
+#include "common/textconsole.h"
+#include "common/util.h"
+
+#include "graphics/surface.h"
 
 // Code here partially based off of ffmpeg ;)
 
@@ -89,7 +95,7 @@ const Graphics::Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream 
 
 	if (!_curFrame.surface) {
 		_curFrame.surface = new Graphics::Surface();
-		_curFrame.surface->create(_curFrame.width, _curFrame.height, _pixelFormat.bytesPerPixel);
+		_curFrame.surface->create(_curFrame.width, _curFrame.height, _pixelFormat);
 	}
 
 	// Reset the y variable.

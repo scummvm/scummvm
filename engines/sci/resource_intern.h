@@ -29,7 +29,7 @@
 #include "sci/resource.h"
 
 namespace Common {
-	class MacResManager;
+class MacResManager;
 }
 
 namespace Sci {

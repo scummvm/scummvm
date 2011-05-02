@@ -23,12 +23,8 @@
  *
  */
 
-#include "kyra/kyra_v1.h"
-#include "kyra/screen.h"
 #include "kyra/text.h"
-
-#include "common/system.h"
-#include "common/endian.h"
+#include "kyra/kyra_v1.h"
 
 namespace Kyra {
 

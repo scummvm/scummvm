@@ -29,6 +29,7 @@
 
 #include "engines/metaengine.h"
 #include "gui/saveload.h"
+#include "common/system.h"
 #include "common/translation.h"
 
 namespace Cruise {

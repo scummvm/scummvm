@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/textconsole.h"
+
 #include "m4/m4_views.h"
 #include "m4/events.h"
 #include "m4/font.h"

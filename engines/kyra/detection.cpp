@@ -22,16 +22,16 @@
  * $Id$
  */
 
-#include "kyra/kyra_v1.h"
 #include "kyra/kyra_lok.h"
 #include "kyra/lol.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/kyra_mr.h"
 
-
 #include "common/config-manager.h"
-#include "engines/advancedDetector.h"
+#include "common/system.h"
 #include "common/savefile.h"
+
+#include "engines/advancedDetector.h"
 
 #include "base/plugins.h"
 

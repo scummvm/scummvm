@@ -50,6 +50,10 @@ protected:
 	const char *getProjectExtension();
 	const char *getPropertiesExtension();
 	int getVisualStudioVersion();
+
+	void outputConfiguration(std::ostream &project, const BuildSetup &setup, const std::string &libraries, const std::string &config, const std::string &platform, const std::string &props, const bool isWin32);
+	void outputConfiguration(std::ostream &project, const std::string &toolConfig, const std::string &config, const std::string &platform, const std::string &props);
+	void outputBuildEvents(std::ostream &project, const BuildSetup &setup, const bool isWin32);
 };
 
 } // End of CreateProjectTool namespace

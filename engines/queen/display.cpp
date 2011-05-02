@@ -29,6 +29,7 @@
 #include "common/events.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/palette.h"
 
 #include "queen/display.h"
 #include "queen/input.h"

@@ -24,6 +24,11 @@
 
 #include "audio/softsynth/emumidi.h"
 #include "common/debug.h"
+#include "common/error.h"
+#include "common/scummsys.h"
+#include "common/system.h"
+#include "common/textconsole.h"
+#include "common/types.h"
 #include "common/util.h"
 #include "audio/fmopl.h"
 #include "audio/musicplugin.h"

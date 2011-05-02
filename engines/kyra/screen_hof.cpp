@@ -23,10 +23,8 @@
  *
  */
 
-#include "common/endian.h"
-
-#include "kyra/kyra_hof.h"
 #include "kyra/screen_hof.h"
+#include "kyra/kyra_hof.h"
 
 namespace Kyra {
 

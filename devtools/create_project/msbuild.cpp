@@ -52,22 +52,29 @@ int MSBuildProvider::getVisualStudioVersion() {
 	return 2010;
 }
 
-#define OUTPUT_CONFIGURATION_MSBUILD(config, platform) \
-	(project << "\t\t<ProjectConfiguration Include=\"" << config << "|" << platform << "\">\n" \
-	           "\t\t\t<Configuration>" << config << "</Configuration>\n" \
-	           "\t\t\t<Platform>" << platform << "</Platform>\n" \
-	           "\t\t</ProjectConfiguration>\n")
+namespace {
 
-#define OUTPUT_CONFIGURATION_TYPE_MSBUILD(config) \
-	(project << "\t<PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "'\" Label=\"Configuration\">\n" \
-	           "\t\t<ConfigurationType>" << (name == PROJECT_NAME ? "Application" : "StaticLibrary") << "</ConfigurationType>\n" \
-	           "\t</PropertyGroup>\n")
+inline void outputConfiguration(std::ostream &project, const std::string &config, const std::string &platform) {
+	project << "\t\t<ProjectConfiguration Include=\"" << config << "|" << platform << "\">\n"
+	           "\t\t\t<Configuration>" << config << "</Configuration>\n"
+	           "\t\t\t<Platform>" << platform << "</Platform>\n"
+	           "\t\t</ProjectConfiguration>\n";
+}
 
-#define OUTPUT_PROPERTIES_MSBUILD(config, properties) \
-	(project << "\t<ImportGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "'\" Label=\"PropertySheets\">\n" \
-	           "\t\t<Import Project=\"$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props')\" Label=\"LocalAppDataPlatform\" />\n" \
-	           "\t\t<Import Project=\"" << properties << "\" />\n" \
-	           "\t</ImportGroup>\n")
+inline void outputConfigurationType(std::ostream &project, const std::string &name, const std::string &config) {
+	project << "\t<PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "'\" Label=\"Configuration\">\n"
+	           "\t\t<ConfigurationType>" << (name == PROJECT_NAME ? "Application" : "StaticLibrary") << "</ConfigurationType>\n"
+	           "\t</PropertyGroup>\n";
+}
+
+inline void outputProperties(std::ostream &project, const std::string &config, const std::string &properties) {
+	project << "\t<ImportGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "'\" Label=\"PropertySheets\">\n"
+	           "\t\t<Import Project=\"$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props')\" Label=\"LocalAppDataPlatform\" />\n"
+	           "\t\t<Import Project=\"" << properties << "\" />\n"
+	           "\t</ImportGroup>\n";
+}
+
+} // End of anonymous namespace
 
 void MSBuildProvider::createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
                                         const StringList &includeList, const StringList &excludeList) {
@@ -80,12 +87,12 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	           "<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	           "\t<ItemGroup Label=\"ProjectConfigurations\">\n";
 
-	OUTPUT_CONFIGURATION_MSBUILD("Debug", "Win32");
-	OUTPUT_CONFIGURATION_MSBUILD("Debug", "x64");
-	OUTPUT_CONFIGURATION_MSBUILD("Analysis", "Win32");
-	OUTPUT_CONFIGURATION_MSBUILD("Analysis", "x64");
-	OUTPUT_CONFIGURATION_MSBUILD("Release", "Win32");
-	OUTPUT_CONFIGURATION_MSBUILD("Release", "x64");
+	outputConfiguration(project, "Debug", "Win32");
+	outputConfiguration(project, "Debug", "x64");
+	outputConfiguration(project, "Analysis", "Win32");
+	outputConfiguration(project, "Analysis", "x64");
+	outputConfiguration(project, "Release", "Win32");
+	outputConfiguration(project, "Release", "x64");
 
 	project << "\t</ItemGroup>\n";
 
@@ -99,23 +106,23 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	// Shared configuration
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\n";
 
-	OUTPUT_CONFIGURATION_TYPE_MSBUILD("Release|Win32");
-	OUTPUT_CONFIGURATION_TYPE_MSBUILD("Analysis|Win32");
-	OUTPUT_CONFIGURATION_TYPE_MSBUILD("Debug|Win32");
-	OUTPUT_CONFIGURATION_TYPE_MSBUILD("Release|x64");
-	OUTPUT_CONFIGURATION_TYPE_MSBUILD("Analysis|x64");
-	OUTPUT_CONFIGURATION_TYPE_MSBUILD("Debug|x64");
+	outputConfigurationType(project, name, "Release|Win32");
+	outputConfigurationType(project, name, "Analysis|Win32");
+	outputConfigurationType(project, name, "Debug|Win32");
+	outputConfigurationType(project, name, "Release|x64");
+	outputConfigurationType(project, name, "Analysis|x64");
+	outputConfigurationType(project, name, "Debug|x64");
 
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.props\" />\n"
 	           "\t<ImportGroup Label=\"ExtensionSettings\">\n"
 	           "\t</ImportGroup>\n";
 
-	OUTPUT_PROPERTIES_MSBUILD("Release|Win32",  PROJECT_DESCRIPTION "_Release.props");
-	OUTPUT_PROPERTIES_MSBUILD("Analysis|Win32", PROJECT_DESCRIPTION "_Analysis.props");
-	OUTPUT_PROPERTIES_MSBUILD("Debug|Win32",    PROJECT_DESCRIPTION "_Debug.props");
-	OUTPUT_PROPERTIES_MSBUILD("Release|x64",    PROJECT_DESCRIPTION "_Release64.props");
-	OUTPUT_PROPERTIES_MSBUILD("Analysis|x64",   PROJECT_DESCRIPTION "_Analysis64.props");
-	OUTPUT_PROPERTIES_MSBUILD("Debug|x64",      PROJECT_DESCRIPTION "_Debug64.props");
+	outputProperties(project, "Release|Win32",  PROJECT_DESCRIPTION "_Release.props");
+	outputProperties(project, "Analysis|Win32", PROJECT_DESCRIPTION "_Analysis.props");
+	outputProperties(project, "Debug|Win32",    PROJECT_DESCRIPTION "_Debug.props");
+	outputProperties(project, "Release|x64",    PROJECT_DESCRIPTION "_Release64.props");
+	outputProperties(project, "Analysis|x64",   PROJECT_DESCRIPTION "_Analysis64.props");
+	outputProperties(project, "Debug|x64",      PROJECT_DESCRIPTION "_Debug64.props");
 
 	project << "\t<PropertyGroup Label=\"UserMacros\" />\n";
 
@@ -153,21 +160,6 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	createFiltersFile(setup, name);
 }
 
-#define OUTPUT_FILTER_MSBUILD(files, action) \
-	if (!files.empty()) { \
-		filters << "\t<ItemGroup>\n"; \
-		for (std::list<FileEntry>::const_iterator entry = files.begin(); entry != files.end(); ++entry) { \
-			if ((*entry).filter != "") { \
-				filters << "\t\t<" action " Include=\"" << (*entry).path << "\">\n" \
-				           "\t\t\t<Filter>" << (*entry).filter << "</Filter>\n" \
-				           "\t\t</" action ">\n"; \
-			} else { \
-				filters << "\t\t<" action " Include=\"" << (*entry).path << "\" />\n"; \
-			} \
-		} \
-		filters << "\t</ItemGroup>\n"; \
-	}
-
 void MSBuildProvider::createFiltersFile(const BuildSetup &setup, const std::string &name) {
 	// No filters => no need to create a filter file
 	if (_filters.empty())
@@ -199,13 +191,29 @@ void MSBuildProvider::createFiltersFile(const BuildSetup &setup, const std::stri
 	filters << "\t</ItemGroup>\n";
 
 	// Output files
-	OUTPUT_FILTER_MSBUILD(_compileFiles, "ClCompile")
-	OUTPUT_FILTER_MSBUILD(_includeFiles, "ClInclude")
-	OUTPUT_FILTER_MSBUILD(_otherFiles, "None")
-	OUTPUT_FILTER_MSBUILD(_resourceFiles, "ResourceCompile")
-	OUTPUT_FILTER_MSBUILD(_asmFiles, "CustomBuild")
+	outputFilter(filters, _compileFiles, "ClCompile");
+	outputFilter(filters, _includeFiles, "ClInclude");
+	outputFilter(filters, _otherFiles, "None");
+	outputFilter(filters, _resourceFiles, "ResourceCompile");
+	outputFilter(filters, _asmFiles, "CustomBuild");
 
 	filters << "</Project>";
+}
+
+void MSBuildProvider::outputFilter(std::ostream &filters, const FileEntries &files, const std::string &action) {
+	if (!files.empty()) {
+		filters << "\t<ItemGroup>\n";
+		for (FileEntries::const_iterator entry = files.begin(), end = files.end(); entry != end; ++entry) {
+			if ((*entry).filter != "") {
+				filters << "\t\t<" << action << " Include=\"" << (*entry).path << "\">\n"
+				           "\t\t\t<Filter>" << (*entry).filter << "</Filter>\n"
+				           "\t\t</" << action << ">\n";
+			} else {
+				filters << "\t\t<" << action << " Include=\"" << (*entry).path << "\" />\n";
+			}
+		}
+		filters << "\t</ItemGroup>\n";
+	}
 }
 
 void MSBuildProvider::writeReferences(std::ofstream &output) {
@@ -398,19 +406,6 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 	properties.close();
 }
 
-#define OUTPUT_NASM_COMMAND_MSBUILD(config) \
-	projectFile << "\t\t\t<Command Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">nasm.exe -f win32 -g -o \"$(IntDir)" << (isDuplicate ? (*entry).prefix : "") << "%(Filename).obj\" \"%(FullPath)\"</Command>\n" \
-	               "\t\t\t<Outputs Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">$(IntDir)" << (isDuplicate ? (*entry).prefix : "") << "%(Filename).obj;%(Outputs)</Outputs>\n";
-
-#define OUPUT_FILES_MSBUILD(files, action) \
-	if (!files.empty()) { \
-		projectFile << "\t<ItemGroup>\n"; \
-		for (std::list<FileEntry>::const_iterator entry = files.begin(); entry != files.end(); ++entry) { \
-			projectFile << "\t\t<" action " Include=\"" << (*entry).path << "\" />\n"; \
-		} \
-		projectFile << "\t</ItemGroup>\n"; \
-	}
-
 bool hasEnding(std::string const &fullString, std::string const &ending) {
 	if (fullString.length() > ending.length()) {
 		return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
@@ -419,6 +414,14 @@ bool hasEnding(std::string const &fullString, std::string const &ending) {
 	}
 }
 
+namespace {
+
+inline void outputNasmCommand(std::ostream &projectFile, const std::string &config, const std::string &prefix) {
+	projectFile << "\t\t\t<Command Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">nasm.exe -f win32 -g -o \"$(IntDir)" << prefix << "%(Filename).obj\" \"%(FullPath)\"</Command>\n"
+	               "\t\t\t<Outputs Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">$(IntDir)" << prefix << "%(Filename).obj;%(Outputs)</Outputs>\n";
+}
+
+} // End of anonymous namespace
 
 void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int, const StringList &duplicate,
                                              const std::string &objPrefix, const std::string &filePrefix) {
@@ -455,9 +458,9 @@ void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream 
 	}
 
 	// Output include, other and resource files
-	OUPUT_FILES_MSBUILD(_includeFiles, "ClInclude")
-	OUPUT_FILES_MSBUILD(_otherFiles, "None")
-	OUPUT_FILES_MSBUILD(_resourceFiles, "ResourceCompile")
+	outputFiles(projectFile, _includeFiles, "ClInclude");
+	outputFiles(projectFile, _otherFiles, "None");
+	outputFiles(projectFile, _resourceFiles, "ResourceCompile");
 
 	// Output asm files
 	if (!_asmFiles.empty()) {
@@ -469,11 +472,21 @@ void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream 
 			projectFile << "\t\t<CustomBuild Include=\"" << (*entry).path << "\">\n"
 			               "\t\t\t<FileType>Document</FileType>\n";
 
-			OUTPUT_NASM_COMMAND_MSBUILD("Debug")
-			OUTPUT_NASM_COMMAND_MSBUILD("Analysis")
-			OUTPUT_NASM_COMMAND_MSBUILD("Release")
+			outputNasmCommand(projectFile, "Debug", (isDuplicate ? (*entry).prefix : ""));
+			outputNasmCommand(projectFile, "Analysis", (isDuplicate ? (*entry).prefix : ""));
+			outputNasmCommand(projectFile, "Release", (isDuplicate ? (*entry).prefix : ""));
 
 			projectFile << "\t\t</CustomBuild>\n";
+		}
+		projectFile << "\t</ItemGroup>\n";
+	}
+}
+
+void MSBuildProvider::outputFiles(std::ostream &projectFile, const FileEntries &files, const std::string &action) {
+	if (!files.empty()) {
+		projectFile << "\t<ItemGroup>\n";
+		for (FileEntries::const_iterator entry = files.begin(), end = files.end(); entry != end; ++entry) {
+			projectFile << "\t\t<" << action << " Include=\"" << (*entry).path << "\" />\n";
 		}
 		projectFile << "\t</ItemGroup>\n";
 	}

@@ -23,9 +23,6 @@
  *
  */
 
-#include "common/endian.h"
-#include "common/system.h"
-
 #include "kyra/script_tim.h"
 #include "kyra/wsamovie.h"
 #include "kyra/screen_lol.h"
@@ -35,6 +32,8 @@
 #else
 #include "kyra/screen_v2.h"
 #endif
+
+#include "common/system.h"
 
 namespace Kyra {
 

@@ -24,9 +24,10 @@
  */
 
 
+#include "common/debug.h"
 #include "common/endian.h"
-#include "common/util.h"
 #include "common/file.h"
+#include "common/textconsole.h"
 #include "sky/compact.h"
 #include "gui/message.h"
 #include <stddef.h>	// for ptrdiff_t

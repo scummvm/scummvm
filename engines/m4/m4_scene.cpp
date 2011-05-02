@@ -24,6 +24,7 @@
  */
 
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "m4/m4_scene.h"
 #include "m4/dialogs.h"

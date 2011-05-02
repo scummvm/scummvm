@@ -30,11 +30,11 @@
 #define VIDEO_CODECS_QDM2_H
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Audio {
-	class AudioStream;
+class AudioStream;
 }
 
 namespace Video {

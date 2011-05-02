@@ -28,6 +28,7 @@
 
 #include "common/system.h"
 #include "backends/base-backend.h"
+#include "graphics/palette.h"
 
 class DefaultTimerManager;
 class DefaultSaveFileManager;
@@ -47,11 +48,11 @@ struct Ps2Mutex {
 };
 
 namespace Common {
-	class TimerManager;
+class TimerManager;
 };
 
 namespace Audio {
-	class MixerImpl;
+class MixerImpl;
 };
 
 class OSystem_PS2 : public BaseBackend, public PaletteManager {

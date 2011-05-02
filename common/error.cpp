@@ -24,7 +24,6 @@
  */
 
 #include "common/error.h"
-#include "common/util.h"
 
 #include "common/translation.h"
 

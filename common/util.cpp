@@ -23,9 +23,9 @@
  */
 
 #include "common/util.h"
-#include "common/system.h"
 #include "common/translation.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
 
 namespace Common {
 

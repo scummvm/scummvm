@@ -24,8 +24,6 @@
  */
 
 
-#include "common/events.h"
-#include "common/system.h"
 #include "queen/command.h"
 
 #include "queen/display.h"

@@ -27,10 +27,9 @@
 #include "common/endian.h"
 
 #include "common/util.h"
-#include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/memstream.h"
-#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "sword1/sound.h"
 #include "sword1/resman.h"

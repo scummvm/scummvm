@@ -27,6 +27,7 @@
 
 #include "video/codecs/msvideo1.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace Video {
 
@@ -38,7 +39,8 @@ namespace Video {
 
 MSVideo1Decoder::MSVideo1Decoder(uint16 width, uint16 height, byte bitsPerPixel) : Codec() {
 	_surface = new Graphics::Surface();
-	_surface->create(width, height, (bitsPerPixel == 8) ? 1 : 2);
+	// TODO: Specify the correct pixel format for 2Bpp mode.
+	_surface->create(width, height, (bitsPerPixel == 8) ? Graphics::PixelFormat::createFormatCLUT8() : Graphics::PixelFormat(2, 0, 0, 0, 0, 0, 0, 0, 0));
 	_bitsPerPixel = bitsPerPixel;
 }
 

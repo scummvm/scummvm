@@ -79,6 +79,10 @@ extern const char *SCENE6100_SURPRISE;
 extern const char *SCENE6100_SWEAT;
 extern const char *SCENE6100_VERY_WELL;
 
+// Demo messages
+extern const char *DEMO_HELP_MSG;
+extern const char *DEMO_PAUSED_MSG;
+
 } // End of namespace tSage
 
 #endif

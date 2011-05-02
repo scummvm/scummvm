@@ -39,19 +39,31 @@
 #include "common/memstream.h"
 #include "common/util.h"
 #include "common/zlib.h"
+#include "common/stream.h"
+#include "common/system.h"
+#include "common/textconsole.h"
+#include "common/types.h"
+
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
+
+
+#include "audio/audiostream.h"
 
 // Audio codecs
 #include "audio/decoders/adpcm.h"
 #include "audio/decoders/raw.h"
-#include "video/codecs/qdm2.h"
 
 // Video codecs
+#include "video/codecs/codec.h"
 #include "video/codecs/cinepak.h"
 #include "video/codecs/mjpeg.h"
+#include "video/codecs/qdm2.h"
 #include "video/codecs/qtrle.h"
 #include "video/codecs/rpza.h"
 #include "video/codecs/smc.h"
 #include "video/codecs/cdtoons.h"
+
 
 namespace Video {
 
@@ -381,7 +393,7 @@ const Graphics::Surface *QuickTimeDecoder::scaleSurface(const Graphics::Surface 
 
 	for (int32 j = 0; j < _scaledSurface->h; j++)
 		for (int32 k = 0; k < _scaledSurface->w; k++)
-			memcpy(_scaledSurface->getBasePtr(k, j), frame->getBasePtr((k * getScaleFactorX()).toInt() , (j * getScaleFactorY()).toInt()), frame->bytesPerPixel);
+			memcpy(_scaledSurface->getBasePtr(k, j), frame->getBasePtr((k * getScaleFactorX()).toInt() , (j * getScaleFactorY()).toInt()), frame->format.bytesPerPixel);
 
 	return _scaledSurface;
 }
@@ -526,7 +538,7 @@ void QuickTimeDecoder::init() {
 		if (getScaleFactorX() != 1 || getScaleFactorY() != 1) {
 			// We have to initialize the scaled surface
 			_scaledSurface = new Graphics::Surface();
-			_scaledSurface->create(getWidth(), getHeight(), getPixelFormat().bytesPerPixel);
+			_scaledSurface->create(getWidth(), getHeight(), getPixelFormat());
 		}
 	}
 }

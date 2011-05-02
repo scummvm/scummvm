@@ -26,6 +26,9 @@
 #include "common/debug.h"
 #include "common/algorithm.h"
 #include "common/ptr.h"
+#include "common/textconsole.h"
+
+#include "graphics/palette.h"
 
 #include "teenagent/scene.h"
 #include "teenagent/resources.h"
@@ -379,7 +382,7 @@ void Scene::init(int id, const Common::Point &pos) {
 		custom_animation[i].free();
 
 	if (background.pixels == NULL)
-		background.create(320, 200, 1);
+		background.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 
 	warp(pos);
 

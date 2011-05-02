@@ -344,7 +344,7 @@ void SpeakerGText::setText(const Common::String &msg) {
 	_sceneObject.postInit();
 	_sceneObject.setVisage(9405);
 	_sceneObject.setStrip2(3);
-	_sceneObject.setPriority2(255);
+	_sceneObject.fixPriority(255);
 	_sceneObject.changeZoom(100);
 	_sceneObject._frame = 1;
 	_sceneObject.setPosition(Common::Point(183, 71));
@@ -405,7 +405,7 @@ void SpeakerPOR::setText(const Common::String &msg) {
 	_object3.setVisage(7223);
 	_object3.setStrip(3);
 	_object3.setPosition(Common::Point(119, 107), 0);
-	_object3.setPriority2(199);
+	_object3.fixPriority(199);
 	_object3.setAction(&_action2);
 
 	Speaker::setText(msg);
@@ -425,7 +425,7 @@ void SpeakerOR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(9431);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(202, 147), 0);
@@ -434,7 +434,7 @@ void SpeakerOR::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(9431);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.setZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(199, 85), 0);
@@ -605,7 +605,7 @@ void SpeakerSKL::setText(const Common::String &msg) {
 	_object1.setVisage(7013);
 	_object1.setStrip2(2);
 	_object1._frame = 1;
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1.setPosition(Common::Point(203, 120));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
@@ -613,7 +613,7 @@ void SpeakerSKL::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(7013);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(197, 80));
@@ -636,7 +636,7 @@ void SpeakerQL::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(2612);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(128, 146));
@@ -645,7 +645,7 @@ void SpeakerQL::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2612);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(122, 84));
@@ -668,7 +668,7 @@ void SpeakerSR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(2813);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(224, 198));
@@ -677,7 +677,7 @@ void SpeakerSR::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2813);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(203, 96));
@@ -687,7 +687,7 @@ void SpeakerSR::setText(const Common::String &msg) {
 	_object3.setVisage(2813);
 	_object3.setStrip(3);
 	_object3.setPosition(Common::Point(204, 91));
-	_object3.setPriority2(199);
+	_object3.fixPriority(199);
 	_object3._numFrames = 3;
 	_object3.animate(ANIM_MODE_7, 0, NULL);
 
@@ -709,7 +709,7 @@ void SpeakerSL::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(2812);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(95, 198));
@@ -718,7 +718,7 @@ void SpeakerSL::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2812);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(116, 96));
@@ -741,7 +741,7 @@ void SpeakerQR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(2613);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(191, 146));
@@ -750,7 +750,7 @@ void SpeakerQR::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2613);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(197, 84));
@@ -773,7 +773,7 @@ void SpeakerQU::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(7021);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(116, 120), 0);
@@ -782,7 +782,7 @@ void SpeakerQU::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(7021);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(111, 84), 0);
@@ -804,14 +804,14 @@ void SpeakerCR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(9011);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.setPosition(Common::Point(219, 168));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
 	
 	_object2.postInit(&_objectList);
 	_object2.setVisage(9011);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(232, 81));
 	_object2.setAction(&_speakerAction, NULL);
 
@@ -831,7 +831,7 @@ void SpeakerMR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(2713);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(220, 143));
@@ -840,7 +840,7 @@ void SpeakerMR::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2713);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(215, 99));
 	_object2.setAction(&_speakerAction, NULL);
@@ -862,7 +862,7 @@ void SpeakerSAL::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(2853);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(185, 200));
@@ -871,7 +871,7 @@ void SpeakerSAL::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2853);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(170, 92));
 	_object2.setAction(&_speakerAction, NULL);
@@ -892,7 +892,7 @@ void SpeakerML::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(2712);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(99, 143));
@@ -901,7 +901,7 @@ void SpeakerML::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2712);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(105, 99));
 	_object2.setAction(&_speakerAction, NULL);
@@ -922,7 +922,7 @@ void SpeakerCHFL::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(4113);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(205, 116));
@@ -931,7 +931,7 @@ void SpeakerCHFL::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(4113);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(202, 71));
 	_object2.setAction(&_speakerAction, NULL);
@@ -952,7 +952,7 @@ void SpeakerCHFR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(4112);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(103, 116));
@@ -961,7 +961,7 @@ void SpeakerCHFR::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(4112);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(106, 71));
 	_object2.setAction(&_speakerAction, NULL);
@@ -982,7 +982,7 @@ void SpeakerPL::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(4062);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(107, 117));
@@ -991,7 +991,7 @@ void SpeakerPL::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(4062);
 	_object2.setStrip2(1);
-	_object2.setPriority2(200);
+	_object2.fixPriority(200);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(105, 62));
 	_object2.setAction(&_speakerAction, NULL);
@@ -999,7 +999,7 @@ void SpeakerPL::setText(const Common::String &msg) {
 	_object3.postInit(&_objectList);
 	_object3.setVisage(4062);
 	_object3.setStrip2(3);
-	_object3.setPriority2(255);
+	_object3.fixPriority(255);
 	_object3._frame = 1;
 	_object3.setPosition(Common::Point(105, 59));
 	_object3.setAction(&_speakerAction2, NULL);
@@ -1025,7 +1025,7 @@ void SpeakerPR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(4063);
 	_object1.setStrip2(1);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(212, 117));
@@ -1034,7 +1034,7 @@ void SpeakerPR::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(4063);
 	_object2.setStrip2(2);
-	_object2.setPriority2(200);
+	_object2.fixPriority(200);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(214, 62));
@@ -1043,7 +1043,7 @@ void SpeakerPR::setText(const Common::String &msg) {
 	_object3.postInit(&_objectList);
 	_object3.setVisage(4063);
 	_object3.setStrip2(3);
-	_object3.setPriority2(255);
+	_object3.fixPriority(255);
 	_object3.changeZoom(100);
 	_object3._frame = 1;
 	_object3.setPosition(Common::Point(214, 59));
@@ -1070,7 +1070,7 @@ void SpeakerCDR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(4163);
 	_object1.setStrip2(1);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(208, 97));
@@ -1079,7 +1079,7 @@ void SpeakerCDR::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(4163);
 	_object2.setStrip2(2);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(200, 57));
@@ -1101,7 +1101,7 @@ void SpeakerCDL::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(4162);
 	_object1.setStrip2(1);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(112, 97));
@@ -1110,7 +1110,7 @@ void SpeakerCDL::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(4162);
 	_object2.setStrip2(2);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(115, 57));
@@ -1132,7 +1132,7 @@ void SpeakerFLL::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(5223);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(216, 129));
@@ -1141,7 +1141,7 @@ void SpeakerFLL::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(5223);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(210, 67));
@@ -1163,7 +1163,7 @@ void SpeakerBatR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(5361);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(137, 122));
@@ -1172,7 +1172,7 @@ void SpeakerBatR::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(5361);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(137, 104));
@@ -1319,6 +1319,8 @@ void RingworldGame::start() {
 
 	// Switch to the title screen
 	_globals->_sceneManager.setNewScene(1000);
+
+	_globals->_events.showCursor();
 }
 
 void RingworldGame::restart() {
@@ -1407,6 +1409,8 @@ void RingworldGame::endGame(int resNum, int lineNum) {
 void RingworldDemoGame::start() {
 	// Start the demo's single scene
 	_globals->_sceneManager.changeScene(1);
+	
+	_globals->_events.setCursor(CURSOR_NONE);
 }
 
 void RingworldDemoGame::restart() {

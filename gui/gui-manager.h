@@ -30,12 +30,13 @@
 #include "common/stack.h"
 #include "common/str.h"
 
-#include "graphics/font.h"
-
-#include "gui/widget.h"
 #include "gui/ThemeEngine.h"
 
 class OSystem;
+
+namespace Graphics {
+class Font;
+}
 
 namespace GUI {
 

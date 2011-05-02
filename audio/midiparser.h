@@ -31,7 +31,6 @@
 #include "common/scummsys.h"
 #include "common/endian.h"
 
-class MidiParser;
 class MidiDriver_BASE;
 
 

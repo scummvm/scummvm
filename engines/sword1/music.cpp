@@ -24,10 +24,9 @@
  */
 
 
-#include "common/endian.h"
 #include "common/file.h"
 #include "common/util.h"
-#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "sword1/sword1.h"
 #include "sword1/music.h"

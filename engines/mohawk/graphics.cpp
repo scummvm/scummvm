@@ -28,7 +28,10 @@
 #include "mohawk/livingbooks.h"
 
 #include "common/substream.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 #include "engines/util.h"
+#include "graphics/palette.h"
 #include "graphics/primitives.h"
 #include "gui/message.h"
 
@@ -70,14 +73,14 @@ MohawkSurface::~MohawkSurface() {
 void MohawkSurface::convertToTrueColor() {
 	assert(_surface);
 
-	if (_surface->bytesPerPixel > 1)
+	if (_surface->format.bytesPerPixel > 1)
 		return;
 
 	assert(_palette);
 
 	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
 	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(_surface->w, _surface->h, pixelFormat.bytesPerPixel);
+	surface->create(_surface->w, _surface->h, pixelFormat);
 
 	for (uint16 i = 0; i < _surface->h; i++) {
 		for (uint16 j = 0; j < _surface->w; j++) {
@@ -292,7 +295,7 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 
 	// Initialize our buffer
 	_backBuffer = new Graphics::Surface();
-	_backBuffer->create(_vm->_system->getWidth(), _vm->_system->getHeight(), _pixelFormat.bytesPerPixel);
+	_backBuffer->create(_vm->_system->getWidth(), _vm->_system->getHeight(), _pixelFormat);
 }
 
 MystGraphics::~MystGraphics() {
@@ -486,7 +489,7 @@ void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, 
 	debug(3, "\theight: %d", height);
 
 	for (uint16 i = 0; i < height; i++)
-		memcpy(_backBuffer->getBasePtr(dest.left, i + dest.top), surface->getBasePtr(src.left, top + i), width * surface->bytesPerPixel);
+		memcpy(_backBuffer->getBasePtr(dest.left, i + dest.top), surface->getBasePtr(src.left, top + i), width * surface->format.bytesPerPixel);
 }
 
 void MystGraphics::copyImageToScreen(uint16 image, Common::Rect dest) {
@@ -646,7 +649,7 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm
 	// The actual game graphics only take up the first 392 rows. The inventory
 	// occupies the rest of the screen and we don't use the buffer to hold that.
 	_mainScreen = new Graphics::Surface();
-	_mainScreen->create(608, 392, _pixelFormat.bytesPerPixel);
+	_mainScreen->create(608, 392, _pixelFormat);
 
 	_updatesEnabled = true;
 	_scheduledTransition = -1;	// no transition
@@ -677,7 +680,7 @@ void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uin
 		surface->w = 608 - left;
 
 	for (uint16 i = 0; i < surface->h; i++)
-		memcpy(_mainScreen->getBasePtr(left, i + top), surface->getBasePtr(0, i), surface->w * surface->bytesPerPixel);
+		memcpy(_mainScreen->getBasePtr(left, i + top), surface->getBasePtr(0, i), surface->w * surface->format.bytesPerPixel);
 
 	_dirtyScreen = true;
 }
@@ -972,7 +975,7 @@ void RivenGraphics::drawImageRect(uint16 id, Common::Rect srcRect, Common::Rect 
 	assert(srcRect.width() == dstRect.width() && srcRect.height() == dstRect.height());
 
 	for (uint16 i = 0; i < srcRect.height(); i++)
-		memcpy(_mainScreen->getBasePtr(dstRect.left, i + dstRect.top), surface->getBasePtr(srcRect.left, i + srcRect.top), srcRect.width() * surface->bytesPerPixel);
+		memcpy(_mainScreen->getBasePtr(dstRect.left, i + dstRect.top), surface->getBasePtr(srcRect.left, i + srcRect.top), srcRect.width() * surface->format.bytesPerPixel);
 
 	_dirtyScreen = true;
 }

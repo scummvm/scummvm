@@ -27,7 +27,7 @@
 #define GROOVIE_RESOURCE_H
 
 namespace Common {
-	class MacResManager;
+class MacResManager;
 }
 
 namespace Groovie {

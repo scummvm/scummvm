@@ -31,6 +31,7 @@
 #include "sci/parser/vocabulary.h"
 #include "sci/console.h"
 #include "common/array.h"
+#include "common/textconsole.h"
 
 namespace Sci {
 

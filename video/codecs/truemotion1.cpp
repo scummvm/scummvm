@@ -32,6 +32,8 @@
 
 #include "video/codecs/truemotion1data.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
+#include "common/util.h"
 
 namespace Video {
 
@@ -92,7 +94,7 @@ TrueMotion1Decoder::TrueMotion1Decoder(uint16 width, uint16 height) {
 	_width = width;
 	_height = height;
 
-	_surface->create(width, height, 2);
+	_surface->create(width, height, getPixelFormat());
 
 	// there is a vertical predictor for each pixel in a line; each vertical
 	// predictor is 0 to start with

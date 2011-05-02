@@ -24,12 +24,12 @@
  */
 
 
+#include "common/debug.h"
+#include "common/textconsole.h"
 #include "common/endian.h"
 #include "common/file.h"
-#include "common/util.h"
 
 #include "sky/disk.h"
-#include "sky/rnc_deco.h"
 #include "sky/sky.h"
 #include "sky/struc.h"
 

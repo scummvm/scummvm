@@ -25,6 +25,7 @@
 
 #include "common/events.h"
 #include "common/keyboard.h"
+#include "common/textconsole.h"
 
 #include "m4/globals.h"
 #include "m4/events.h"

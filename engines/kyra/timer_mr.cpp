@@ -26,6 +26,8 @@
 #include "kyra/kyra_mr.h"
 #include "kyra/timer.h"
 
+#include "common/system.h"
+
 namespace Kyra {
 
 #define TimerV3(x) new Common::Functor1Mem<int, void, KyraEngine_MR>(this, &KyraEngine_MR::x)

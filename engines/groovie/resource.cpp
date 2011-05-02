@@ -24,8 +24,11 @@
  */
 
 #include "common/archive.h"
+#include "common/debug.h"
+#include "common/file.h"
 #include "common/macresman.h"
 #include "common/substream.h"
+#include "common/textconsole.h"
 
 #include "groovie/resource.h"
 #include "groovie/groovie.h"

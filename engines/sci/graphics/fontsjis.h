@@ -29,7 +29,7 @@
 #include "sci/graphics/helpers.h"
 
 namespace Graphics {
-	class FontSJIS;
+class FontSJIS;
 }
 
 namespace Sci {

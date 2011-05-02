@@ -34,6 +34,9 @@
 #include "queen/resource.h"
 #include "queen/sound.h"
 
+#include "common/debug.h"
+#include "common/textconsole.h"
+
 namespace Queen {
 
 void BobSlot::curPos(int16 xx, int16 yy) {

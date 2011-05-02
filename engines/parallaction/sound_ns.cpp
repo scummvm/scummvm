@@ -24,8 +24,8 @@
  */
 
 #include "common/file.h"
-
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 #include "audio/mixer.h"
 #include "audio/midiparser.h"

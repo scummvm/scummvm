@@ -27,6 +27,9 @@
 
 #include "audio/softsynth/emumidi.h"
 
+#include "common/debug.h"
+#include "common/system.h"
+
 namespace Sci {
 
 #define VOLUME_SHIFT 3

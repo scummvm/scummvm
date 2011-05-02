@@ -32,8 +32,9 @@
 #include "queen/defs.h"
 
 class OSystem;
+
 namespace Common {
-	struct Rect;
+struct Rect;
 }
 
 namespace Queen {

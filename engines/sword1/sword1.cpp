@@ -37,6 +37,7 @@
 #include "sword1/control.h"
 
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
 #include "engines/util.h"
 

@@ -610,7 +610,7 @@ Graphics::Surface *OSystem_N64::lockScreen() {
 	_framebuffer.w = _gameWidth;
 	_framebuffer.h = _gameHeight;
 	_framebuffer.pitch = _screenWidth;
-	_framebuffer.bytesPerPixel = 1;
+	_framebuffer.format = Graphics::PixelFormat::createFormatCLUT8();
 
 	return &_framebuffer;
 }

@@ -25,8 +25,12 @@
 #ifndef TEENAGENT_SURFACE_H
 #define TEENAGENT_SURFACE_H
 
+#include "common/rect.h"
 #include "graphics/surface.h"
-#include "common/stream.h"
+
+namespace Common {
+   class SeekableReadStream;
+}
 
 namespace TeenAgent {
 

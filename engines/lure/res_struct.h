@@ -27,9 +27,11 @@
 #define LURE_RESSTRUCT_H
 
 #include "lure/luredefs.h"
+#include "common/rect.h"
 #include "common/list.h"
 #include "common/file.h"
 #include "common/ptr.h"
+#include "common/textconsole.h"
 
 namespace Lure {
 

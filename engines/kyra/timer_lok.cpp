@@ -23,13 +23,9 @@
  *
  */
 
-#include "kyra/kyra_v1.h"
 #include "kyra/kyra_lok.h"
-#include "kyra/screen.h"
 #include "kyra/animator_lok.h"
 #include "kyra/timer.h"
-
-#include "common/system.h"
 
 namespace Kyra {
 

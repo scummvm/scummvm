@@ -23,6 +23,7 @@
  */
 
 #include "teenagent/segment.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 namespace TeenAgent {

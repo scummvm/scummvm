@@ -82,11 +82,14 @@ public:
 	CursorType _currentCursor;
 
 	void setCursor(CursorType cursorType);
+	void pushCursor(CursorType cursorType);
+	void popCursor();
 	void setCursor(Graphics::Surface &cursor, int transColor, const Common::Point &hotspot, CursorType cursorId);
 	void setCursorFromFlag();
 	CursorType getCursor() const { return _currentCursor; }
 	void showCursor();
 	void hideCursor();
+	bool isCursorVisible() const;
 
 	bool pollEvent();
 	void waitForPress(int eventMask = EVENT_BUTTON_DOWN | EVENT_KEYPRESS);

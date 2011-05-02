@@ -25,7 +25,10 @@
 
 #include "mohawk/sound.h"
 
+#include "common/debug.h"
+#include "common/system.h"
 #include "common/util.h"
+#include "common/textconsole.h"
 
 #include "audio/musicplugin.h"
 #include "audio/audiostream.h"

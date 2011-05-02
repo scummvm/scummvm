@@ -200,11 +200,11 @@ struct DecodeReference {
  */
 byte *TLib::getResource(uint16 id, bool suppressErrors) {
 	// Scan for an entry for the given Id
-	ResourceEntry *re= NULL;
-	ResourceList::iterator i;
-	for (i = _resources.begin(); i != _resources.end(); ++i) {
-		if ((*i).id == id) {
-			re = &(*i);
+	ResourceEntry *re = NULL;
+	ResourceList::iterator iter;
+	for (iter = _resources.begin(); iter != _resources.end(); ++iter) {
+		if ((*iter).id == id) {
+			re = &(*iter);
 			break;
 		}
 	}
@@ -239,6 +239,9 @@ byte *TLib::getResource(uint16 id, bool suppressErrors) {
 	uint16 word_48050 = 0, currentToken = 0, word_48054 =0;
 	byte byte_49068 = 0, byte_49069 = 0;
 	DecodeReference table[0x1000];
+	for (int i = 0; i < 0x1000; ++i) {
+		table[i].vByte = table[i].vWord = 0;
+	}
 	Common::Stack<uint16> tokenList;
 
 	for (;;) {

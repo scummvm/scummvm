@@ -24,6 +24,7 @@
  */
 
 #include "common/algorithm.h"		// for find()
+#include "common/textconsole.h"
 #include "gui/dialog.h"
 #include "gui/message.h"
 

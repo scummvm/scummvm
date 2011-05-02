@@ -27,6 +27,7 @@
 #include "common/endian.h"
 #include "common/config-manager.h"
 #include "common/substream.h"
+#include "common/textconsole.h"
 #include "queen/resource.h"
 
 namespace Queen {

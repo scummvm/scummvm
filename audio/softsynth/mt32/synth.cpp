@@ -19,13 +19,17 @@
  * IN THE SOFTWARE.
  */
 
+// FIXME: Avoid using printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
+// FIXME: Avoid using vprintf
+#define FORBIDDEN_SYMBOL_EXCEPTION_vprintf
+
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
 
 #include "mt32emu.h"
-
-#include "common/str.h"
 
 #if defined(MACOSX) || defined(SOLARIS) || defined(__MINGW32__)
 // Older versions of Mac OS X didn't supply a powf function, so using it

@@ -27,7 +27,9 @@
 #define SWORD1_H
 
 #include "engines/engine.h"
-#include "common/events.h"
+#include "common/error.h"
+#include "common/keyboard.h"
+#include "common/rect.h"
 #include "common/util.h"
 #include "sword1/sworddefs.h"
 #include "sword1/console.h"

@@ -27,6 +27,7 @@
 #define BACKENDS_GRAPHICS_SDL_H
 
 #include "backends/graphics/graphics.h"
+#include "graphics/pixelformat.h"
 #include "graphics/scaler.h"
 #include "common/events.h"
 #include "common/system.h"

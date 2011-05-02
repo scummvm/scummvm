@@ -35,7 +35,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 
 	private String[] _args;
 
-	final private native void create(AssetManager _asset_manager,
+	final private native void create(AssetManager asset_manager,
 										EGL10 egl, EGLDisplay egl_display,
 										AudioTrack audio_track,
 										int sample_rate, int buffer_size);

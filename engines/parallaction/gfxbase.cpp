@@ -28,6 +28,7 @@
 #include "disk.h"
 
 #include "common/algorithm.h"
+#include "common/textconsole.h"
 #include "parallaction/parallaction.h"
 
 namespace Parallaction {

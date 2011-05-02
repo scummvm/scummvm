@@ -32,6 +32,7 @@
 #include "common/events.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 
 namespace Agi {
 

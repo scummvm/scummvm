@@ -23,7 +23,6 @@
  */
 
 #include "gui/widgets/edittext.h"
-#include "gui/dialog.h"
 #include "gui/gui-manager.h"
 
 #include "gui/ThemeEval.h"

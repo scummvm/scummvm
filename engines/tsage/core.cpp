@@ -25,6 +25,7 @@
 
 #include "common/system.h"
 #include "engines/engine.h"
+#include "graphics/palette.h"
 #include "tsage/tsage.h"
 #include "tsage/core.h"
 #include "tsage/dialogs.h"
@@ -556,7 +557,6 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 		} while (routeRegions[++idx] != destRegion);
 
 		tempList[idx] = 1;
-		idx = 0;
 		for (int listIndex = 1; listIndex <= endIndex; ++listIndex) {
 			int var10 = tempList[listIndex];
 			int var12 = tempList[listIndex + 1];
@@ -1520,7 +1520,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 			_globals->_sceneText.setPosition(pos, 0);
 		}
 
-		_globals->_sceneText.setPriority2(255);
+		_globals->_sceneText.fixPriority(255);
 		_globals->_sceneObjects->draw();
 	}
 
@@ -1585,12 +1585,19 @@ void NamedHotspot::doAction(int action) {
 	}
 }
 
-void NamedHotspot::setup(const int ys, const int xe, const int ye, const int xs, const int resnum, const int lookLineNum, const int useLineNum) {
+void NamedHotspot::setup(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum) {
 	setBounds(ys, xe, ye, xs);
 	_resnum = resnum;
 	_lookLineNum = lookLineNum;
 	_useLineNum = useLineNum;
 	_globals->_sceneItems.addItems(this, NULL);
+}
+
+void NamedHotspot::synchronise(Serialiser &s) {
+	SceneHotspot::synchronise(s);
+	s.syncAsSint16LE(_resnum);
+	s.syncAsSint16LE(_lookLineNum);
+	s.syncAsSint16LE(_useLineNum);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1794,7 +1801,7 @@ void SceneObject::setPriority(int priority) {
 	}
 }
 
-void SceneObject::setPriority2(int priority) {
+void SceneObject::fixPriority(int priority) {
 	if (priority == -1) {
 		_flags &= ~OBJFLAG_FIXED_PRIORITY;
 	} else {
@@ -2238,7 +2245,7 @@ void SceneObject::setup(int visage, int stripFrameNum, int frameNum, int posX, i
 	setStrip(stripFrameNum);
 	setFrame(frameNum);
 	setPosition(Common::Point(posX, posY), 0);
-	setPriority2(priority);
+	fixPriority(priority);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -3309,7 +3316,7 @@ void WalkRegions::loadRevised() {
  */
 int WalkRegions::indexOf(const Common::Point &pt, const Common::List<int> *indexList) {
 	for (uint idx = 0; idx < _regionList.size(); ++idx) {
-		if ((!indexList || contains(*indexList, int(idx + 1))) && _regionList[idx].contains(pt))
+		if ((!indexList || !contains(*indexList, int(idx + 1))) && _regionList[idx].contains(pt))
 			return idx + 1;
 	}
 
@@ -3449,8 +3456,7 @@ void SceneHandler::process(Event &event) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_F1:
 			// F1 - Help
-			_globals->_events.setCursor(CURSOR_ARROW);
-			MessageDialog::show(HELP_MSG, OK_BTN_STRING);
+			MessageDialog::show((_vm->getFeatures() & GF_DEMO) ? DEMO_HELP_MSG : HELP_MSG, OK_BTN_STRING);
 			break;
 
 		case Common::KEYCODE_F2: {

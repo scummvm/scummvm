@@ -41,18 +41,22 @@
 
 #ifndef FORBIDDEN_SYMBOL_ALLOW_ALL
 
+// Make sure scummsys.h is always included first
+#include "common/scummsys.h"
+
+
 /**
  * The garbage string to use as replacement for forbidden symbols.
  *
  * The reason for this particular string is the following:
- * By including a space and "!" we try to ensure a compiler error.
- * By using the words "forbidden symbol" we try to make it a bit
- * clearer what is causing the error.
+ * By including a space and some non-alphanumeric symbols we trigger
+ * a compiler error. By including the words "forbidden symbol" (which
+ * the compiler will hopefully print along with its own error message),
+ * we try to make clear what is causing the error.
  */
-#define FORBIDDEN_SYMBOL_REPLACEMENT	FORBIDDEN SYMBOL!
+#define FORBIDDEN_SYMBOL_REPLACEMENT	FORBIDDEN SYMBOL !%*
 
 
-/*
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_printf
 #undef printf
 #define printf	FORBIDDEN_SYMBOL_REPLACEMENT
@@ -62,7 +66,16 @@
 #undef fprintf
 #define fprintf	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
-*/
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_vprintf
+#undef vprintf
+#define vprintf	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_vfprintf
+#undef vfprintf
+#define vfprintf	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_FILE
 #undef FILE
@@ -131,29 +144,101 @@
 #endif
 
 
+// Disable various symbols from time.h
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
 /*
-time_t
-
-time
-
-difftime
-
-mktime
-
-localtime
-
-clock
-
-gmtime
-
-system
-
-remove
-
-setlocale
-
-setvbuf
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_time_t
+#undef time_t
+#define time_t	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
 */
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_asctime
+#undef asctime
+#define asctime(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_clock
+#undef clock
+#define clock()	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_ctime
+#undef ctime
+#define ctime(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_difftime
+#undef difftime
+#define difftime(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getdate
+#undef getdate
+#define getdate(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_gmtime
+#undef gmtime
+#define gmtime(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_localtime
+#undef localtime
+#define localtime(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_mktime
+#undef mktime
+#define mktime(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_time
+#undef time
+#define time(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#endif // FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_chdir
+#undef chdir
+#define chdir(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+#undef mkdir
+#define mkdir(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+/*
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_setlocale
+#undef setlocale
+#define setlocale(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+*/
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_setvbuf
+#undef setvbuf
+#define setvbuf(a,b,c,d)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_unlink
+#undef unlink
+#define unlink(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+/*
+ * We also would like to disable the following symbols;
+ * however, these are also frequently used in regular code,
+ * e.g. for method names, so we don't override them.
+ * - read
+ * - remove
+ * - write
+ * - ...
+ */
+
 
 #endif
 

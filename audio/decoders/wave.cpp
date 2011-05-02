@@ -24,11 +24,10 @@
  */
 
 #include "common/debug.h"
-#include "common/util.h"
+#include "common/textconsole.h"
 #include "common/stream.h"
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/wave.h"
 #include "audio/decoders/adpcm.h"
 #include "audio/decoders/raw.h"

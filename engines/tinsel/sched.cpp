@@ -30,6 +30,7 @@
 #include "tinsel/polygons.h"
 #include "tinsel/sched.h"
 
+#include "common/textconsole.h"
 #include "common/util.h"
 
 namespace Tinsel {

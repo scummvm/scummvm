@@ -23,6 +23,9 @@
  *
  */
 
+#include "common/stream.h"
+#include "common/util.h"
+
 #include "tinsel/adpcm.h"
 
 namespace Tinsel {
@@ -44,14 +47,14 @@ void Tinsel_ADPCMStream::readBufferTinselHeader() {
 		// Negate
 		start = ~(start | 0xC0) + 1;
 
-		_status.predictor = 1 << start;
+		_status.predictor = (unsigned long long int)1 << start;
 	} else {
 		// Lower 6 bit are positive
 
 		// Truncate
 		start &= 0x1F;
 
-		_status.predictor = ((double) 1.0) / (1 << start);
+		_status.predictor = ((double) 1.0) / ((unsigned long long int)1 << start);
 	}
 
 	_status.K0 = TinselFilterTable[filterVal][0];

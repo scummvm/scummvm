@@ -31,7 +31,7 @@
 #include "draci/walking.h"
 
 namespace Common {
-	class Serializer;
+class Serializer;
 }
 
 namespace Draci {

@@ -23,11 +23,7 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
-#include "common/system.h"
-#include "common/savefile.h"
 #include "engines/util.h"
 
 #include "tsage/tsage.h"
@@ -93,8 +89,6 @@ void TSageEngine::deinitialise() {
 Common::Error TSageEngine::run() {
 	// Basic initialisation
 	initialise();
-
-	_globals->_events.showCursor();
 
 	_globals->_sceneHandler.registerHandler();
 	_globals->_game->execute();

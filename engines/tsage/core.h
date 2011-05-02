@@ -432,9 +432,10 @@ public:
 	int _resnum, _lookLineNum, _useLineNum;
 	NamedHotspot() : SceneHotspot() {}
 
-	void setup(const int ys, const int xe, const int ye, const int xs, const int resnum, const int lookLineNum, const int useLineNum);
+	void setup(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum);
 	virtual void doAction(int action);
 	virtual Common::String getClassName() { return "NamedHotspot"; }
+	virtual void synchronise(Serialiser &s);
 };
 
 enum AnimateMode {ANIM_MODE_NONE = 0, ANIM_MODE_1 = 1, ANIM_MODE_2 = 2, ANIM_MODE_3 = 3,
@@ -529,7 +530,7 @@ public:
 	void setFrame(int frameNum);
 	void setFrame2(int frameNum);
 	void setPriority(int priority);
-	void setPriority2(int priority);
+	void fixPriority(int priority);
 	void setVisage(int visage);
 	void setObjectWrapper(SceneObjectWrapper *objWrapper);
 	void addMover(ObjectMover *mover, ...);

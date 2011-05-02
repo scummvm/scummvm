@@ -39,6 +39,7 @@
 #define SWORD2_SOUND_H
 
 #include "common/file.h"
+#include "common/mutex.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 

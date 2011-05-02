@@ -30,10 +30,11 @@
 #include "common/str.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
-#include "graphics/font.h"
 
 
 namespace Graphics {
+
+class Font;
 
 class FontManager : public Common::Singleton<FontManager> {
 public:

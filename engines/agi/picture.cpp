@@ -26,6 +26,8 @@
 #include "agi/agi.h"
 #include "agi/graphics.h"
 
+#include "common/textconsole.h"
+
 namespace Agi {
 
 PictureMgr::PictureMgr(AgiBase *agi, GfxMgr *gfx) {

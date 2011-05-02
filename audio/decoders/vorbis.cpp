@@ -32,8 +32,8 @@
 
 #ifdef USE_VORBIS
 
-#include "common/debug.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 #include "audio/audiostream.h"

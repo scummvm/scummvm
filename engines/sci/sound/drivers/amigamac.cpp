@@ -30,6 +30,8 @@
 #include "common/file.h"
 #include "common/frac.h"
 #include "common/memstream.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 namespace Sci {

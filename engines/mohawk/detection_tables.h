@@ -793,6 +793,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"seussabc",
+			"Demo",
+			AD_ENTRY1("BookOutline", "17d72660680ae32cd7c560d0cf04d2ef"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		0
+	},
+
+	{
+		{
 			"1stdegree",
 			"",
 			AD_ENTRY1("AL236_1.MHK", "3ba145492a7b8b4dee0ef4222c5639c3"),
@@ -1021,6 +1036,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GType_LIVINGBOOKSV3,
 		0,
 		0
+	},
+
+	// Just Grandma and Me 1.0
+	// From scoriae
+	{
+		{
+			"grandma",
+			"v1.0",
+			AD_ENTRY1("PAGES.512", "e694ac10f957dd2e20611350bf968da3"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_LB_10,
+		"GRANDMA.EXE"
 	},
 
 	{

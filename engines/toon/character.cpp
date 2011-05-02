@@ -23,6 +23,9 @@
 *
 */
 
+#include "common/debug.h"
+#include "common/system.h"
+
 #include "toon/character.h"
 #include "toon/drew.h"
 #include "toon/flux.h"

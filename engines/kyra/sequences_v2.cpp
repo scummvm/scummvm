@@ -26,6 +26,8 @@
 #include "kyra/kyra_v2.h"
 #include "kyra/resource.h"
 
+#include "common/system.h"
+
 namespace Kyra {
 
 void KyraEngine_v2::runAnimationScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload) {

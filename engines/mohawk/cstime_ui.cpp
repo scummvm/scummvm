@@ -29,6 +29,8 @@
 #include "mohawk/resource.h"
 #include "common/algorithm.h" // find
 #include "common/events.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 #include "graphics/fontman.h"
 
 namespace Mohawk {

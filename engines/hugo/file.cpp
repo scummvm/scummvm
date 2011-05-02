@@ -30,8 +30,10 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 #include "common/config-manager.h"
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"

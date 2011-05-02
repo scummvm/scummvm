@@ -27,11 +27,17 @@
 #define SWORD25_H
 
 #include "common/scummsys.h"
-#include "common/str-array.h"
-#include "common/util.h"
 #include "engines/engine.h"
 
 #include "sword25/console.h"
+
+namespace Common {
+class Error;
+}
+
+namespace GUI {
+class Debugger;
+}
 
 struct ADGameDescription;
 

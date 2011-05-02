@@ -28,7 +28,9 @@
 
 #include "common/scummsys.h"
 
-namespace Common { class ReadStream; }
+namespace Common {
+class ReadStream;
+}
 
 namespace Sci {
 

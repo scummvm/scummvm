@@ -33,7 +33,7 @@
 #include "graphics/pict.h"
 
 namespace Graphics {
-	class JPEG;
+class JPEG;
 }
 
 namespace Mohawk {

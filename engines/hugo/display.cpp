@@ -32,8 +32,11 @@
 
 // Display.c - DIB related code for HUGOWIN
 
+#include "common/debug.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "graphics/cursorman.h"
+#include "graphics/palette.h"
 
 #include "hugo/hugo.h"
 #include "hugo/display.h"

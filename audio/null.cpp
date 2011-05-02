@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#include "common/error.h"
 #include "audio/null.h"
 
 Common::Error NullMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {

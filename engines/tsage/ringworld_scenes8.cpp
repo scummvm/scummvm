@@ -31,6 +31,12 @@
 
 namespace tSage {
 
+void NamedHotspotMult::synchronise(Serialiser &s) {
+	SceneHotspot::synchronise(s);
+	s.syncAsSint16LE(_useLineNum);
+	s.syncAsSint16LE(_lookLineNum);
+}
+
 /*--------------------------------------------------------------------------
  * Scene 7000
  *
@@ -54,16 +60,17 @@ void Scene7000::Action1::signal() {
 		scene->_object1.setVisage(7003);
 		scene->_object1.animate(ANIM_MODE_5, this);
 		scene->_object1.setPosition(Common::Point(151, 182), 0);
-		scene->_object1.setPriority2(205);
+		scene->_object1.fixPriority(205);
 		_globals->_sceneItems.push_front(&scene->_object1);
 		break;
 	case 3:
-		scene->_object1.setStrip(4);
-		scene->_object1.animate(ANIM_MODE_8, 0, 0);
+		scene->_object1._numFrames = 4;
+		scene->_object1.setStrip(2);
+		scene->_object1.animate(ANIM_MODE_8, 0, NULL);
 		scene->_stripManager.start(7005, this);
 		break;
 	case 4:
-		scene->_object1.animate(ANIM_MODE_2, 0);
+		scene->_object1.animate(ANIM_MODE_2, NULL);
 		setDelay(3);
 		break;
 	case 5:
@@ -107,7 +114,7 @@ void Scene7000::Action3::dispatch() {
 
 	Action::dispatch();
 	if (_actionIndex == 4)
-		scene->_object4.setPosition(Common::Point(scene->_object3._position.x, scene->_object3._position.y));
+		scene->_object4.setPosition(scene->_object3._position, 0);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -122,9 +129,9 @@ void Scene7000::Action3::signal() {
 		scene->_object4.postInit();
 		scene->_object4.setVisage(5001);
 		scene->_object4.setStrip2(2);
-		scene->_object4.animate(ANIM_MODE_8, 0, 0);
+		scene->_object4.animate(ANIM_MODE_8, 0, NULL);
 		scene->_object4.setPosition(Common::Point(10, 18), 0);
-		scene->_object4.setPriority2(10);
+		scene->_object4.fixPriority(10);
 		scene->_object4.changeZoom(100);
 		scene->_object4.hide();
 		break;
@@ -135,7 +142,8 @@ void Scene7000::Action3::signal() {
 		break;
 	}
 	case 2:
-		scene->_object3.setPriority2(10);
+		scene->_object3._moveDiff.y = 1;
+		scene->_object3.fixPriority(10);
 		scene->_object4.setPosition(Common::Point(scene->_object3._position.x, scene->_object3._position.y + 15), 0);
 		scene->_object4.show();
 		setDelay(30);
@@ -176,8 +184,8 @@ void Scene7000::Action4::signal() {
 		scene->_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
-		scene->_object1.setStrip(1);
-		scene->_object1.animate(ANIM_MODE_8, 0, 0);
+		scene->_object1.setStrip(4);
+		scene->_object1.animate(ANIM_MODE_8, 0, NULL);
 		_globals->setFlag(81);
 		_globals->_player.enableControl();
 		remove();
@@ -222,7 +230,7 @@ void Scene7000::Action5::signal() {
 		break;
 	}
 	case 5: {
-		_globals->_player.setPriority2(10);
+		_globals->_player.fixPriority(10);
 		NpcMover *mover = new NpcMover();
 		Common::Point pt(11, 89);
 		_globals->_player.addMover(mover, &pt, this);
@@ -268,7 +276,7 @@ void Scene7000::Action6::signal() {
 		NpcMover *mover = new NpcMover();
 		Common::Point pt(31, 96);
 		_globals->_player.addMover(mover, &pt, this);
-		_globals->_player.setPriority2(-1);
+		_globals->_player.fixPriority(-1);
 		break;
 	}
 	case 4: {
@@ -315,7 +323,7 @@ void Scene7000::Action7::signal() {
 		break;
 	}
 	case 4: {
-		_globals->_player.setPriority2(10);
+		_globals->_player.fixPriority(10);
 		NpcMover *mover = new NpcMover();
 		Common::Point pt(11, 89);
 		_globals->_player.addMover(mover, &pt, this);
@@ -354,22 +362,19 @@ void Scene7000::Object1::doAction(int action) {
 	case OBJECT_TRANSLATOR:
 		_globals->_player.disableControl();
 		RING_INVENTORY._translator._sceneNumber = 7000;
-		if (RING_INVENTORY._waldos._sceneNumber == 7000) {
-			if (RING_INVENTORY._jar._sceneNumber == 7000) {
-				scene->_sceneMode = 7012;
-				scene->setAction(&scene->_sequenceManager, scene, 7010, &_globals->_player, &scene->_object1, 0, 0);
-			} else {
-				scene->_sceneMode = 7015;
-				scene->setAction(&scene->_sequenceManager, scene, 7017, &_globals->_player, 0, 0);
-			}
+
+		if ((RING_INVENTORY._waldos._sceneNumber != 7000) && (RING_INVENTORY._jar._sceneNumber != 7000)) {
+			scene->_sceneMode = 7004;
+			scene->setAction(&scene->_sequenceManager, scene, 7004, &_globals->_player, this, NULL);
+		} else if (RING_INVENTORY._waldos._sceneNumber != 7000) {
+			scene->_sceneMode = 7011;
+			scene->setAction(&scene->_sequenceManager, scene, 7010, &_globals->_player, &scene->_object1, NULL);
+		} else if (RING_INVENTORY._jar._sceneNumber != 7000) {
+			scene->_sceneMode = 7012;
+			scene->setAction(&scene->_sequenceManager, scene, 7010, &_globals->_player, &scene->_object1, NULL);
 		} else {
-			if (RING_INVENTORY._jar._sceneNumber == 7000) {
-				scene->_sceneMode = 7011;
-				scene->setAction(&scene->_sequenceManager, scene, 7010, &_globals->_player, &scene->_object1, 0, 0);
-			} else {
-				scene->_sceneMode = 7004;
-				scene->setAction(&scene->_sequenceManager, scene, 7004, &_globals->_player, this, 0, 0);
-			}
+			scene->_sceneMode = 7015;
+			scene->setAction(&scene->_sequenceManager, scene, 7017, &_globals->_player, NULL);
 		}
 		break;
 	case OBJECT_WALDOS:
@@ -378,30 +383,31 @@ void Scene7000::Object1::doAction(int action) {
 		if (RING_INVENTORY._translator._sceneNumber == 7000) {
 			if (RING_INVENTORY._jar._sceneNumber == 7000) {
 				scene->_sceneMode = 7015;
-				scene->setAction(&scene->_sequenceManager, scene, 7015, &_globals->_player, 0, 0);
+				scene->setAction(&scene->_sequenceManager, scene, 7015, &_globals->_player, NULL);
 			} else {
 				scene->_sceneMode = 7006;
-				scene->setAction(&scene->_sequenceManager, scene, 7006, &_globals->_player, 0, 0);
+				scene->setAction(&scene->_sequenceManager, scene, 7006, &_globals->_player, NULL);
 			}
 		} else {
 			scene->_sceneMode = 7009;
-			scene->setAction(&scene->_sequenceManager, scene, 7009, &_globals->_player, 0, 0);
+			scene->setAction(&scene->_sequenceManager, scene, 7009, &_globals->_player, NULL);
 		}
 		break;
 	case OBJECT_JAR:
 		_globals->_player.disableControl();
 		RING_INVENTORY._jar._sceneNumber = 7000;
+
 		if (RING_INVENTORY._translator._sceneNumber == 7000) {
-			if (RING_INVENTORY._waldos._sceneNumber == 7000) {
+			if (RING_INVENTORY._waldos._sceneNumber != 7000) {
 				scene->_sceneMode = 7007;
-				scene->setAction(&scene->_sequenceManager, scene, 7007, &_globals->_player, &scene->_object1, 0, 0);
+				scene->setAction(&scene->_sequenceManager, scene, 7007, &_globals->_player, &scene->_object1, NULL);
 			} else {
 				scene->_sceneMode = 7015;
-				scene->setAction(&scene->_sequenceManager, scene, 7016, &_globals->_player, 0, 0);
+				scene->setAction(&scene->_sequenceManager, scene, 7016, &_globals->_player, NULL);
 			}
 		} else {
 			scene->_sceneMode = 7008;
-			scene->setAction(&scene->_sequenceManager, scene, 7008, &_globals->_player, 0, 0);
+			scene->setAction(&scene->_sequenceManager, scene, 7008, &_globals->_player, NULL);
 		}
 		break;
 	case CURSOR_LOOK:
@@ -412,7 +418,7 @@ void Scene7000::Object1::doAction(int action) {
 		break;
 	case CURSOR_USE:
 		if (_globals->getFlag(81)) {
-			RING_INVENTORY._stasisBox._sceneNumber = 1;
+			RING_INVENTORY._stasisBox2._sceneNumber = 1;
 			_globals->_player.disableControl();
 			scene->setAction(&scene->_action5);
 		} else {
@@ -421,7 +427,7 @@ void Scene7000::Object1::doAction(int action) {
 		break;
 	case CURSOR_TALK:
 		if (_globals->getFlag(81)) {
-			RING_INVENTORY._stasisBox._sceneNumber = 1;
+			RING_INVENTORY._stasisBox2._sceneNumber = 1;
 			_globals->_player.disableControl();
 			scene->setAction(&scene->_action5);
 		} else if (_globals->getFlag(52)) {
@@ -450,8 +456,8 @@ void Scene7000::dispatch() {
 		if (_globals->_sceneRegions.indexOf(_globals->_player._position) == 8) {
 			if (!_globals->getFlag(13)) {
 				_globals->_player.disableControl();
-				_globals->_player.addMover(0);
-				SceneItem::display(7000, 3, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
+				_globals->_player.addMover(NULL);
+				SceneItem::display2(7000, 3);
 				_sceneMode = 7001;
 				setAction(&scene->_sequenceManager, this, 7001, &_globals->_player, NULL);
 			} else if (!_globals->getFlag(52)) {
@@ -459,7 +465,7 @@ void Scene7000::dispatch() {
 			} else {
 				_globals->_player.disableControl();
 				_sceneMode = 7003;
-				setAction(&scene->_sequenceManager, this, 7003, &_globals->_player, 0);
+				setAction(&scene->_sequenceManager, this, 7003, &_globals->_player, NULL);
 			}
 		}
 		if (_globals->_sceneRegions.indexOf(_globals->_player._position) == 9)
@@ -486,39 +492,38 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 	_object5.postInit();
 	_object5.setVisage(7001);
 	_object5.setStrip2(1);
-	_object5.animate(ANIM_MODE_2, 0);
+	_object5.animate(ANIM_MODE_2, NULL);
 	_object5.setPosition(Common::Point(49, 147), 0);
-	_object5.setPriority2(1);
+	_object5.fixPriority(1);
 
 	_object6.postInit();
 	_object6.setVisage(7001);
 	_object6.setStrip2(2);
-	_object6.animate(ANIM_MODE_2, 0);
+	_object6.animate(ANIM_MODE_2, NULL);
 	_object6.setPosition(Common::Point(160, 139), 0);
-	_object6.setPriority2(1);
+	_object6.fixPriority(1);
 
 	_object7.postInit();
 	_object7.setVisage(7001);
 	_object7.setStrip2(3);
-	_object7.animate(ANIM_MODE_2, 0);
+	_object7.animate(ANIM_MODE_2, NULL);
 	_object7.setPosition(Common::Point(272, 129), 0);
-	_object7.setPriority2(1);
+	_object7.fixPriority(1);
 
 	_object8.postInit();
 	_object8.setVisage(7001);
 	_object8.setStrip2(4);
-	_object8.animate(ANIM_MODE_2, 0);
+	_object8.animate(ANIM_MODE_2, NULL);
 	_object8.setPosition(Common::Point(176, 175), 0);
-	_object8.setPriority2(1);
+	_object8.fixPriority(1);
 
 	if (_globals->getFlag(72)) {
 		_object3.postInit();
 		_object3.setVisage(5001);
 		_object3.setStrip2(1);
-		_object3.animate(ANIM_MODE_2, 0);
 		_object3.setPosition(Common::Point(107, 92), 0);
 		_object3.changeZoom(100);
-		_object3.setPriority2(10);
+		_object3.fixPriority(10);
 
 		_object1.postInit();
 		_object1.setVisage(7003);
@@ -529,24 +534,25 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 		_object1.setPosition(Common::Point(87, 129), 0);
 		_object1._numFrames = 4;
 		_object1.changeZoom(45);
-		_object1.animate(ANIM_MODE_8, 0, 0);
-		_globals->_sceneItems.addItems(&_object1, 0);
+		_object1.animate(ANIM_MODE_8, 0, NULL);
+		_globals->_sceneItems.push_back(&_object1);
 	}
 	_soundHandler.startSound(251);
 	if (_globals->_sceneManager._previousScene == 2100) {
 		if (_globals->getFlag(72)) {
 			_globals->_player.postInit();
 			_globals->_player.setVisage(0);
-			_globals->_player.animate(ANIM_MODE_1, 0);
+			_globals->_player.animate(ANIM_MODE_1, NULL);
 			SceneObjectWrapper *wrapper = new SceneObjectWrapper();
 			_globals->_player.setObjectWrapper(wrapper);
 			_globals->_player.setPosition(Common::Point(57, 94), 0);
 			_globals->_player.changeZoom(-1);
-			_globals->_player.setPriority2(10);
+			_globals->_player.fixPriority(10);
 			if (_globals->getFlag(81)) {
 				setAction(&_action4);
 			} else {
 				_object1.setPosition(Common::Point(151, 182), 0);
+				_object1.changeZoom(100);
 				setAction(&_action1);
 			}
 		} else {
@@ -556,7 +562,7 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 			_object3.postInit();
 			_object3.setVisage(5001);
 			_object3.setStrip2(1);
-			_object3.animate(ANIM_MODE_1, 0);
+			_object3.animate(ANIM_MODE_1, NULL);
 			_object3.setPosition(Common::Point(307, 0), 0);
 			_object3.changeZoom(-1);
 			setAction(&_action3);
@@ -564,12 +570,11 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 	} else if (_globals->_sceneManager._previousScene == 2280) {
 		_globals->_player.postInit();
 		_globals->_player.setVisage(2170);
-		_globals->_player.animate(ANIM_MODE_1, 0);
-		SceneObjectWrapper *wrapper = new SceneObjectWrapper();
-		_globals->_player.setObjectWrapper(wrapper);
+		_globals->_player.animate(ANIM_MODE_1, NULL);
+		_globals->_player.setObjectWrapper(new SceneObjectWrapper());
 		_globals->_player.setPosition(Common::Point(57, 94), 0);
 		_globals->_player.changeZoom(-1);
-		_globals->_player.setPriority2(10);
+		_globals->_player.fixPriority(10);
 		_globals->_player.disableControl();
 		_sceneMode = 7001;
 		setAction(&_action6, this);
@@ -587,7 +592,7 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 		_globals->_player.setObjectWrapper(wrapper);
 		_globals->_player.setPosition(Common::Point(57, 94), 0);
 		_globals->_player.changeZoom(-1);
-		_globals->_player.setPriority2(10);
+		_globals->_player.fixPriority(10);
 		_sceneMode = 7001;
 		setAction(&_action6, this);
 	} else {
@@ -602,6 +607,9 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 		_globals->_soundHandler.startSound(250);
 		setAction(&_action3);
 	}
+
+	_sceneItem1.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	_globals->_sceneItems.push_back(&_sceneItem1);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -612,6 +620,10 @@ void Scene7000::signal() {
 	case 7001:
 	case 7002:
 	case 7004:
+	case 7005:
+	case 7006:
+	case 7007:
+	case 7008:
 	case 7009:
 		_globals->_player.enableControl();
 		break;
@@ -709,7 +721,7 @@ void Scene7100::Action5::signal() {
 	}
 	case 3: {
 		scene->_object9.setStrip2(2);
-		scene->_object9.setPriority2(180);
+		scene->_object9.fixPriority(180);
 		Common::Point pt(8, 181);
 		NpcMover *mover = new NpcMover();
 		scene->_object9.addMover(mover, &pt, this);
@@ -728,13 +740,13 @@ void Scene7100::Action6::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		setDelay(1);
-		scene->_object10.setPriority2(8);
+		scene->_object10.fixPriority(8);
 		scene->_object10.setPosition(Common::Point(155, 187), 0);
 
-		scene->_object11.setPriority2(8);
+		scene->_object11.fixPriority(8);
 		scene->_object11.setPosition(Common::Point(155, 190), 0);
 
-		scene->_object12.setPriority2(8);
+		scene->_object12.fixPriority(8);
 		scene->_object12.setPosition(Common::Point(151, 193), 0);
 		break;
 	case 1: {
@@ -758,13 +770,13 @@ void Scene7100::Action6::signal() {
 		scene->_object10.addMover(mover1, &pt1, this);
 
 		scene->_object11.setStrip2(6);
-		scene->_object11.setPriority2(50);
+		scene->_object11.fixPriority(50);
 		Common::Point pt2(89, 185);
 		NpcMover *mover2 = new NpcMover();
 		scene->_object11.addMover(mover2, &pt2, 0);
 
 		scene->_object12.setStrip2(6);
-		scene->_object12.setPriority2(50);
+		scene->_object12.fixPriority(50);
 		Common::Point pt3(87, 183);
 		NpcMover *mover3 = new NpcMover();
 		scene->_object12.addMover(mover3, &pt3, 0);
@@ -919,7 +931,7 @@ void Scene7100::Action9::signal() {
 	}
 	case 2: {
 		scene->_object24.setStrip2(2);
-		scene->_object24.setPriority2(160);
+		scene->_object24.fixPriority(160);
 		Common::Point pt(34, 159);
 		NpcMover *mover = new NpcMover();
 		scene->_object24.addMover(mover, &pt, this);
@@ -934,7 +946,7 @@ void Scene7100::Action9::signal() {
 	}
 	case 4: {
 		scene->_object24.setStrip2(2);
-		scene->_object24.setPriority2(180);
+		scene->_object24.fixPriority(180);
 		Common::Point pt(-12, 182);
 		NpcMover *mover = new NpcMover();
 		scene->_object24.addMover(mover, &pt, this);
@@ -1006,7 +1018,7 @@ void Scene7100::postInit(SceneObjectList *OwnerList) {
 	_object2.animate(ANIM_MODE_2, 0);
 	_object2.setPosition(Common::Point(10, 140), 0);
 	_object2._numFrames = 1;
-	_object2.setPriority2(180);
+	_object2.fixPriority(180);
 	_object2.setAction(&_action1, 0);
 
 	_object3.postInit();
@@ -1014,7 +1026,7 @@ void Scene7100::postInit(SceneObjectList *OwnerList) {
 	_object3.animate(ANIM_MODE_2, 0);
 	_object3.setPosition(Common::Point(34, 115), 0);
 	_object3._numFrames = 1;
-	_object3.setPriority2(180);
+	_object3.fixPriority(180);
 	_object3.setAction(&_action2, 0);
 
 	_object4.postInit();
@@ -1022,7 +1034,7 @@ void Scene7100::postInit(SceneObjectList *OwnerList) {
 	_object4.animate(ANIM_MODE_2, 0);
 	_object4.setPosition(Common::Point(-10, 159), 0);
 	_object4._numFrames = 2;
-	_object4.setPriority2(250);
+	_object4.fixPriority(250);
 	_object4.setAction(&_action3, 0);
 
 	_object5.postInit();
@@ -1038,7 +1050,7 @@ void Scene7100::postInit(SceneObjectList *OwnerList) {
 	_object9.animate(ANIM_MODE_2, 0);
 	_object9.setPosition(Common::Point(110, 168), 0);
 	_object9._numFrames = 2;
-	_object9.setPriority2(16);
+	_object9.fixPriority(16);
 	_object9.setAction(&_action5, 0);
 
 	_object13.postInit();
@@ -1047,7 +1059,7 @@ void Scene7100::postInit(SceneObjectList *OwnerList) {
 	_object13.animate(ANIM_MODE_2, 0);
 	_object13.setPosition(Common::Point(524, 104), 0);
 	_object13._numFrames = 5;
-	_object13.setPriority2(250);
+	_object13.fixPriority(250);
 	_object13.setAction(&_action7, 0);
 
 	_object17.postInit();
@@ -1084,7 +1096,7 @@ void Scene7100::postInit(SceneObjectList *OwnerList) {
 	_object24.animate(ANIM_MODE_2, 0);
 	_object24.setPosition(Common::Point(-12, 182), 0);
 	_object24._numFrames = 4;
-	_object24.setPriority2(180);
+	_object24.fixPriority(180);
 	_object24.setAction(&_action9, 0);
 
 	_object25.postInit();
@@ -1092,7 +1104,7 @@ void Scene7100::postInit(SceneObjectList *OwnerList) {
 	_object25.animate(ANIM_MODE_2, 0);
 	_object25.setPosition(Common::Point(551, 145), 0);
 	_object25._numFrames = 5;
-	_object25.setPriority2(160);
+	_object25.fixPriority(160);
 	_object25.setAction(&_action10, 0);
 
 	// Swimmer 1
@@ -1102,7 +1114,7 @@ void Scene7100::postInit(SceneObjectList *OwnerList) {
 	_globals->_player._moveDiff.x = 4;
 	_globals->_player._moveDiff.y = 2;
 	_globals->_player.setPosition(Common::Point(135, 135), 0);
-	_globals->_player.setPriority2(200);
+	_globals->_player.fixPriority(200);
 	_globals->_player.disableControl();
 
 	// Swimmer 2
@@ -1158,9 +1170,9 @@ void Scene7200::Action2::signal() {
 		setDelay(3);
 		break;
 	case 1: {
-		scene->_object2.setPriority2(25);
-		scene->_object3.setPriority2(25);
-		scene->_object4.setPriority2(25);
+		scene->_object2.fixPriority(25);
+		scene->_object3.fixPriority(25);
+		scene->_object4.fixPriority(25);
 		scene->_object2.setStrip(1);
 		scene->_object3.setStrip(1);
 		scene->_object4.setStrip(1);
@@ -1176,9 +1188,9 @@ void Scene7200::Action2::signal() {
 		break;
 	}
 	case 2: {
-		scene->_object2.setPriority2(160);
-		scene->_object3.setPriority2(160);
-		scene->_object4.setPriority2(160);
+		scene->_object2.fixPriority(160);
+		scene->_object3.fixPriority(160);
+		scene->_object4.fixPriority(160);
 		scene->_object2.setStrip(2);
 		scene->_object3.setStrip(2);
 		scene->_object4.setStrip(2);
@@ -1323,7 +1335,7 @@ void Scene7300::Action1::signal() {
 		break;
 	case 7:
 		setDelay(3);
-		_globals->_soundHandler.proc1(0);
+		_globals->_soundHandler.proc1(NULL);
 		break;
 	case 8:
 		_globals->_sceneManager.changeScene(2280);
@@ -1342,7 +1354,7 @@ void Scene7300::Action2::signal() {
 		break;
 	case 1:
 		NpcMover *mover1 = new NpcMover();
-		Common::Point pt(_globals->_randomSource.getRandomNumber(203), _globals->_randomSource.getRandomNumber(96));
+		Common::Point pt(_globals->_randomSource.getRandomNumber(3) + 203, _globals->_randomSource.getRandomNumber(3) + 96);
 		scene->_object3.addMover(mover1, &pt, this);
 		_actionIndex = 0;
 		break;
@@ -1360,7 +1372,7 @@ void Scene7300::Action3::signal() {
 		break;
 	case 1:
 		NpcMover *mover1 = new NpcMover();
-		Common::Point pt(_globals->_randomSource.getRandomNumber(76), _globals->_randomSource.getRandomNumber(78));
+		Common::Point pt(_globals->_randomSource.getRandomNumber(5) + 76, _globals->_randomSource.getRandomNumber(5) + 78);
 		scene->_object1.addMover(mover1, &pt, this);
 		_actionIndex = 0;
 		break;
@@ -1446,7 +1458,7 @@ void Scene7300::postInit(SceneObjectList *OwnerList) {
 	_object2.setStrip(2);
 	_object2.animate(ANIM_MODE_2, 0);
 	_object2.setPosition(Common::Point(77, 47), 0);
-	_object2.setPriority2(190);
+	_object2.fixPriority(190);
 
 	_object5.postInit();
 	_object5.setVisage(7300);
@@ -1530,41 +1542,41 @@ void Scene7600::postInit(SceneObjectList *OwnerList) {
 	_object2.postInit();
 	_object2.setVisage(7601);
 	_object2.setStrip(1);
-	_object2.animate(ANIM_MODE_2, 0);
+	_object2.animate(ANIM_MODE_2, NULL);
 	_object2.setPosition(Common::Point(48, 135));
-	_object2.setPriority2(1);
+	_object2.fixPriority(1);
 
 	_object3.postInit();
 	_object3.setVisage(7601);
 	_object3.setStrip(2);
-	_object3.animate(ANIM_MODE_2, 0);
+	_object3.animate(ANIM_MODE_2, NULL);
 	_object3.setPosition(Common::Point(158, 136));
-	_object3.setPriority2(1);
+	_object3.fixPriority(1);
 
 	_object4.postInit();
 	_object4.setVisage(7601);
 	_object4.setStrip(3);
-	_object4.animate(ANIM_MODE_2, 0);
+	_object4.animate(ANIM_MODE_2, NULL);
 	_object4.setPosition(Common::Point(293, 141));
-	_object4.setPriority2(1);
+	_object4.fixPriority(1);
 
 	_object5.postInit();
 	_object5.setVisage(7601);
 	_object5.setStrip(4);
-	_object5.animate(ANIM_MODE_2, 0);
+	_object5.animate(ANIM_MODE_2, NULL);
 	_object5.setPosition(Common::Point(405, 143));
-	_object5.setPriority2(1);
+	_object5.fixPriority(1);
 
 	_object6.postInit();
 	_object6.setVisage(7601);
 	_object6.setStrip(5);
-	_object6.animate(ANIM_MODE_2, 0);
+	_object6.animate(ANIM_MODE_2, NULL);
 	_object6.setPosition(Common::Point(379, 191));
-	_object6.setPriority2(1);
+	_object6.fixPriority(1);
 
 	_globals->_player.postInit();
 	_globals->_player.setVisage(2333);
-	_globals->_player.animate(ANIM_MODE_1, 0);
+	_globals->_player.animate(ANIM_MODE_1, NULL);
 	_globals->_player.setObjectWrapper(new SceneObjectWrapper());
 	_globals->_player.setStrip(1);
 	_globals->_player._moveDiff = Common::Point(16, 16);
@@ -1770,7 +1782,7 @@ void Scene7700::SceneHotspot3::doAction(int action) {
 		} else if (RING_INVENTORY._key._sceneNumber == 7700) {
 			_globals->_player.disableControl();
 			scene->_sceneMode = 7705;
-			scene->setAction(&scene->_sequenceManager, scene, 7705, &_globals->_player, 0);
+			scene->setAction(&scene->_sequenceManager, scene, 7705, &_globals->_player, NULL);
 		}
 		break;
 	default:
@@ -2036,27 +2048,26 @@ void Scene7700::Object8::doAction(int action) {
 			scene->_object9.setVisage(7701);
 			scene->_object9.setStrip2(3);
 			scene->_object9.setPosition(Common::Point(91, 166), 0);
-			scene->_object9.setPriority2(200);
+			scene->_object9.fixPriority(200);
 
 			scene->_object14.postInit();
 			scene->_object14.setVisage(7701);
 			scene->_object14.setStrip(2);
-			scene->_object14.setPriority2(250);
+			scene->_object14.fixPriority(250);
 			scene->_object14.setPosition(Common::Point(139, 151), 0);
 
 			scene->_gfxButton.setText(EXIT_MSG);
 			scene->_gfxButton._bounds.center(140, 189);
 			scene->_gfxButton.draw();
-			scene->_gfxButton._bounds.expandPanes();
 
-			_globals->_sceneItems.push_front(&scene->_object10);
+			_globals->_sceneItems.push_front(&scene->_sceneItem10);
 			_globals->_sceneItems.push_front(&scene->_object9);
 			_globals->_player._canWalk = false;
-		} else {
+		} else if (_globals->getFlag(78)) {
 			scene->_object15.postInit();
 			scene->_object15.setVisage(7701);
 			scene->_object15.setPosition(Common::Point(140, 165), 0);
-			scene->_object15.setPriority2(200);
+			scene->_object15.fixPriority(200);
 
 			scene->_gfxButton.setText(EXIT_MSG);
 			scene->_gfxButton._bounds.center(140, 186);
@@ -2068,11 +2079,13 @@ void Scene7700::Object8::doAction(int action) {
 			scene->_object19.setStrip(6);
 			scene->_object19.setPosition(Common::Point(140, 192), 0);
 
-			_globals->_sceneItems.push_front(&scene->_object10);
-			_globals->_sceneItems.push_front(&scene->_object8);
-			_globals->_sceneItems.push_front(&scene->_object9);
+			_globals->_sceneItems.push_front(&scene->_sceneItem10);
+			_globals->_sceneItems.push_front(&scene->_sceneHotspot8);
+			_globals->_sceneItems.push_front(&scene->_sceneHotspot9);
 			_globals->_events.setCursor(CURSOR_WALK);
 			_globals->_player._canWalk = false;
+		} else {
+			scene->setAction(&scene->_sequenceManager, scene, 7715, NULL);
 		}
 	} else {
 		SceneHotspot::doAction(action);
@@ -2100,7 +2113,7 @@ void Scene7700::Object9::doAction(int action) {
 					scene->_object10.setStrip(4);
 					scene->_object10.setPosition(Common::Point(159, 136));
 					_globals->_sceneItems.push_front(&scene->_object10);
-					scene->_object10.setPriority2(240);
+					scene->_object10.fixPriority(240);
 				}
 				scene->_soundHandler.startSound(262);
 				scene->_object14.animate(ANIM_MODE_5, 0);
@@ -2118,6 +2131,8 @@ void Scene7700::Object10::doAction(int action) {
 	if (action == CURSOR_LOOK) {
 		SceneItem::display(7700, 50, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 	} else if (action == CURSOR_USE) {
+		_globals->_player._canWalk = true;
+		RING_INVENTORY._translator._sceneNumber = 1;
 		_globals->setFlag(80);
 		scene->_sceneItem10.remove();
 		scene->_gfxButton._bounds.expandPanes();
@@ -2188,7 +2203,7 @@ void Scene7700::Object12::doAction(int action) {
 void Scene7700::signal() {
 	switch (_sceneMode) {
 	case 7701:
-		_globals->_player.setPriority2(-1);
+		_globals->_player.fixPriority(-1);
 		_globals->_player.setStrip2(-1);
 		if (_globals->getFlag(78)) {
 			_globals->_player.enableControl();
@@ -2216,8 +2231,11 @@ void Scene7700::signal() {
 		_globals->_player.enableControl();
 		break;
 	case 7705:
-	case 7708:
 		RING_INVENTORY._key._sceneNumber = 1;
+		_globals->_player.enableControl();
+		break;
+	case 7708:
+		RING_INVENTORY._paper._sceneNumber = 1;
 		_globals->_player.enableControl();
 		break;
 	case 7709:
@@ -2242,8 +2260,8 @@ void Scene7700::process(Event &event) {
 	if (contains<SceneItem *>(_globals->_sceneItems, &_sceneItem10)) {
 		if (_gfxButton.process(event)) {
 			_sceneItem10.remove();
-			_sceneHotspot15.remove();
-			_sceneHotspot9.remove();
+			_object15.remove();
+			_object9.remove();
 			if (_globals->_sceneObjects->contains(&_object10))
 				_object10.remove();
 			if (_globals->_sceneObjects->contains(&_object14))
@@ -2259,7 +2277,7 @@ void Scene7700::process(Event &event) {
 			_easterEgg1.postInit();
 			_easterEgg1.setVisage(7708);
 			_easterEgg1.setPosition(Common::Point(163, 50), 0);
-			_easterEgg1.setPriority2(1);
+			_easterEgg1.fixPriority(1);
 			_easterEgg1.animate(ANIM_MODE_2, 0);
 			_easterEgg1.setAction(&_action6);
 		}
@@ -2301,7 +2319,7 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.setObjectWrapper(wrapper);
 	_globals->_player.setPosition(Common::Point(-19, 68), 0);
 	_globals->_player.setStrip2(7);
-	_globals->_player.setPriority2(95);
+	_globals->_player.fixPriority(95);
 	_globals->_player.changeZoom(80);
 	_globals->_player._moveDiff.x = 6;
 	_globals->_player._moveDiff.y = 3;
@@ -2312,7 +2330,7 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 
 	if (_globals->getFlag(78)) {
 		_prof.setStrip2(4);
-		_prof.setPriority2(80);
+		_prof.fixPriority(80);
 		_prof.setPosition(Common::Point(159, 87), 0);
 	} else {
 		_prof.setPosition(Common::Point(203, 87), 0);
@@ -2324,7 +2342,7 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_cloud.postInit();
 	_cloud.setVisage(7700);
 	_cloud.setStrip2(5);
-	_cloud.setPriority2(1);
+	_cloud.fixPriority(1);
 	_cloud.setPosition(Common::Point(133, 160), 0);
 	_cloud._moveDiff.x = 1;
 	_cloud._moveRate = 7;
@@ -2339,7 +2357,7 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_object2.postInit();
 	_object2.setVisage(7700);
 	_object2.setPosition(Common::Point(184, 70), 0);
-	_object2.setPriority2(60);
+	_object2.fixPriority(60);
 	_object2._lookLineNum = 19;
 	_object2._defltLineNum = 17;
 
@@ -2358,7 +2376,7 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_object5.postInit();
 	_object5.setVisage(7700);
 	_object5.setPosition(Common::Point(268, 67), 0);
-	_object5.setPriority2(58);
+	_object5.fixPriority(58);
 	_object5.setStrip2(3);
 	_object5._lookLineNum = 38;
 	_object5._defltLineNum = 36;
@@ -2366,7 +2384,7 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_object6.postInit();
 	_object6.setVisage(7700);
 	_object6.setPosition(Common::Point(268, 75), 0);
-	_object6.setPriority2(57);
+	_object6.fixPriority(57);
 	_object6.setStrip2(4);
 	_object6._lookLineNum = 40;
 	_object6._defltLineNum = 43;
@@ -2375,7 +2393,7 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_object8.setVisage(7703);
 	_object8.setPosition(Common::Point(203, 91), 0);
 	_object8.setStrip2(4);
-	_object8.setPriority2(86);
+	_object8.fixPriority(86);
 
 	_sceneHotspot8.setBounds(82, 141, 161, 92);
 	_sceneHotspot9.setBounds(82, 187, 161, 141);
@@ -2420,8 +2438,8 @@ void Scene7700::postInit(SceneObjectList *OwnerList) {
 	_sceneHotspot15._useLineNum = 6;
 	_sceneHotspot15._lookLineNum = 7;
 	_sceneHotspot16.setBounds(0, 130, 34, 103);
-	_sceneHotspot16._useLineNum = 8;
-	_sceneHotspot16._lookLineNum = 9;
+	_sceneHotspot16._useLineNum = 7;
+	_sceneHotspot16._lookLineNum = 8;
 	_sceneHotspot17.setBounds(41, 180, 46, 170);
 	_sceneHotspot17._useLineNum = 11;
 	_sceneHotspot17._lookLineNum = 13;

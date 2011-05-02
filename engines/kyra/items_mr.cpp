@@ -26,6 +26,8 @@
 #include "kyra/kyra_mr.h"
 #include "kyra/timer.h"
 
+#include "common/system.h"
+
 namespace Kyra {
 
 void KyraEngine_MR::removeTrashItems() {

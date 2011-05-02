@@ -28,6 +28,8 @@
 #include "common/util.h"
 #include "common/system.h"
 
+#include "graphics/palette.h"
+
 #include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/cache.h"

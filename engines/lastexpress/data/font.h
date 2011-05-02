@@ -39,10 +39,12 @@
 	byte {x}      - Unknown data (probably just garbage)
 */
 
+#include "common/str.h"
 #include "graphics/surface.h"
 
 namespace Common {
 class SeekableReadStream;
+struct Rect;
 }
 
 namespace LastExpress {

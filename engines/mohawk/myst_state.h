@@ -31,7 +31,7 @@
 #include "common/str.h"
 
 namespace Common {
-	class Serializer;
+class Serializer;
 }
 
 namespace Mohawk {

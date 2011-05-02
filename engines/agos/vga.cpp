@@ -31,6 +31,7 @@
 #include "agos/vga.h"
 
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "graphics/surface.h"
 

@@ -32,7 +32,9 @@
 #ifndef SOUND_MODS_RJP1_H
 #define SOUND_MODS_RJP1_H
 
-#include "common/stream.h"
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Audio {
 

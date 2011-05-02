@@ -28,6 +28,7 @@
 #ifndef SAGA_GFX_H
 #define SAGA_GFX_H
 
+#include "common/rect.h"
 #include "graphics/surface.h"
 
 namespace Saga {

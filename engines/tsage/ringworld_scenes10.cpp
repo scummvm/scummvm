@@ -38,7 +38,8 @@ Scene2::Scene2() : Scene() {
 /*--------------------------------------------------------------------------*/
 
 void Object9350::postInit(SceneObjectList *OwnerList) {
-	_globals->_sceneManager.postInit(&_globals->_sceneManager._altSceneObjects);
+	//SceneObject::postInit(&_globals->_sceneManager._altSceneObjects);
+	SceneObject::postInit(OwnerList);
 }
 
 void Object9350::draw() {
@@ -66,7 +67,7 @@ void Scene9100::SceneHotspot1::doAction(int action) {
 			_globals->_player.disableControl();
 			scene->_sceneMode = 9105;
 		}
-		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &_globals->_player, &scene->_object5, &scene->_object6, 0);
+		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &_globals->_player, &scene->_object5, &scene->_object6, NULL);
 	} else {
 		NamedHotspot::doAction(action);
 	}
@@ -77,16 +78,16 @@ void Scene9100::dispatch() {
 
 	if (!_action) {
 		if (_globals->_player._position.x < 25) {
-			if (!_globals->getFlag(11)) {
-				scene->_sceneMode = 9106;
-			} else {
-				scene->_sceneMode = 9108;
+			_globals->_player.disableControl();
+			if (!_globals->getFlag(23) || _globals->getFlag(11))
+				_sceneMode = 9106;
+			else {
+				_sceneMode = 9108;
 				_globals->setFlag(11);
 			}
-		} else {
-			scene->_sceneMode = 9106;
+
+			scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &_globals->_player, NULL);
 		}
-		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &_globals->_player, 0);
 	} else {
 		Scene::dispatch();
 	}
@@ -102,7 +103,7 @@ void Scene9100::signal() {
 		_globals->_sceneManager.changeScene(9150);
 		break;
 	case 9105:
-		_sceneHotspot1.remove();
+		_sceneHotspot3.remove();
 	// No break on purpose
 	case 9103:
 	case 9104:
@@ -115,17 +116,15 @@ void Scene9100::signal() {
 }
 
 void Scene9100::postInit(SceneObjectList *OwnerList) {
-	Scene9100 *scene = (Scene9100 *)_globals->_sceneManager._scene;
-
 	Scene::postInit();
 	setZoomPercents(0, 100, 200, 100);
 	_object1.postInit();
 	_object1.setVisage(9100);
 	_object1._strip = 1;
 	_object1._numFrames = 6;
-	_object1.setPosition(Common::Point(297, 132), 0);
+	_object1.setPosition(Common::Point(279, 132), 0);
 	_object1.animate(ANIM_MODE_2, 0);
-	_object1.setPriority2(10);
+	_object1.fixPriority(10);
 
 	_globals->_player.postInit();
 
@@ -146,7 +145,7 @@ void Scene9100::postInit(SceneObjectList *OwnerList) {
 		_object6.setVisage(9111);
 		_object6.setStrip(6);
 		_object6.setFrame(1);
-		_object6.setPosition(Common::Point(138, 166), 0);
+		_object6.setPosition(Common::Point(138, 166));
 		_sceneHotspot3.setup(145, 125, 166, 156, 9100, 40, 43);
 	}
 	_sceneHotspot1.setup(140, 176, 185, 215, 9100, 36, 37);
@@ -163,17 +162,17 @@ void Scene9100::postInit(SceneObjectList *OwnerList) {
 				_sceneMode = 9107;
 			else
 				_sceneMode = 9109;
-			setAction(&scene->_sequenceManager, scene, _sceneMode, &_globals->_player, &_object5, 0);
+			setAction(&_sequenceManager, this, _sceneMode, &_globals->_player, &_object5, NULL);
 		} else {
 			_sceneMode = 9103;
 			_globals->_player.disableControl();
-			setAction(&scene->_sequenceManager, scene, _sceneMode, &_globals->_player, &_object2, &_object3, &_object4, &_object5, 0);
+			setAction(&_sequenceManager, this, _sceneMode, &_globals->_player, &_object2, &_object3, &_object4, &_object5, NULL);
 			_globals->setFlag(20);
 		}
 	} else {
 		_sceneMode = 9102;
 		_globals->_player.disableControl();
-		setAction(&scene->_sequenceManager, scene, _sceneMode, &_globals->_player, &_object2, &_object3, &_object4, &_object5, 0);
+		setAction(&_sequenceManager, this, _sceneMode, &_globals->_player, &_object2, &_object3, &_object4, &_object5, NULL);
 	}
 }
 
@@ -224,7 +223,7 @@ void Scene9150::dispatch() {
 	if ((_sceneState != 0) && (_sceneBounds.left == 0)) {
 		_object3._timer = 0;
 		_sceneState = 0;
-		_sceneHotspot3.setAction(&_sequenceManager2, 0, 9154, &_object3, 0);
+		_object3.setAction(&_sequenceManager2, NULL, 9154, &_object3, NULL);
 		_sceneHotspot10.remove();
 	}
 
@@ -308,16 +307,16 @@ void Scene9200::SceneHotspot1::doAction(int action) {
 		_globals->_player.disableControl();
 		if (_globals->getFlag(93)) {
 			scene->_sceneState = 9214;
-			setAction(&scene->_sequenceManager, scene, 9214, &_globals->_player, &scene->_object2, 0);
+			scene->setAction(&scene->_sequenceManager, scene, 9214, &_globals->_player, &scene->_object2, 0);
 		} else {
 			_globals->setFlag(93);
 			scene->_sceneState = 9213;
-			setAction(&scene->_sequenceManager, scene, 9213, &_globals->_player, &scene->_object2, 0);
+			scene->setAction(&scene->_sequenceManager, scene, 9213, &_globals->_player, &scene->_object2, 0);
 		}
 	} else if (action <= 100) {
 		_globals->_player.disableControl();
 		scene->_sceneState = 9214;
-		setAction(&scene->_sequenceManager, scene, 9214, &_globals->_player, &scene->_object2, 0);
+		scene->setAction(&scene->_sequenceManager, scene, 9214, &_globals->_player, &scene->_object2, 0);
 	} else {
 		NamedHotspot::doAction(action);
 	}
@@ -405,7 +404,7 @@ void Scene9200::postInit(SceneObjectList *OwnerList) {
 	_object1._strip = 3;
 	_object1.animate(ANIM_MODE_2, 0);
 	_object1.setPosition(Common::Point(132, 114), 0);
-	_object1.setPriority2(140);
+	_object1.fixPriority(140);
 	_soundHandler.startSound(297);
 	_stripManager.addSpeaker(&_speakerQText);
 	_stripManager.addSpeaker(&_speakerGR);
@@ -589,7 +588,7 @@ void Scene9350::postInit(SceneObjectList *OwnerList) {
 	setZoomPercents(95, 80, 200, 100);
 	_globals->_player.postInit();
 
-	_object1.setup(9350, 1, 3, 139, 97, 0);
+	_object1.setup(9351, 1, 3, 139, 97, 0);
 	_sceneHotspot1.setup(42, 0, 97, 60, 9350, 0, -1);
 	_sceneHotspot2.setup(37, 205, 82, 256, 9350, 0, -1);
 	_sceneHotspot3.setup(29, 93, 92, 174, 9350, 1, -1);
@@ -602,22 +601,22 @@ void Scene9350::postInit(SceneObjectList *OwnerList) {
 	if (_globals->_sceneManager._previousScene == 9360) {
 		_globals->_player.disableControl();
 		_sceneState = 9352;
-		setAction(&_sequenceManager, this, 9352, &_globals->_player, &_object2, 0);
+		setAction(&_sequenceManager, this, 9352, &_globals->_player, &_object2, NULL);
 	} else if (_globals->_sceneManager._previousScene == 9400) {
 		_globals->_player.disableControl();
 		_sceneState = 9353;
-		setAction(&_sequenceManager, this, 9353, &_globals->_player, &_object2, 0);
+		setAction(&_sequenceManager, this, 9353, &_globals->_player, &_object2, NULL);
 	} else {
-		if (!_globals->getFlag(84)) {
+		if (_globals->getFlag(84)) {
 			_globals->clearFlag(84);
 			_object2.postInit();
 			_globals->_player.disableControl();
 			_sceneState = 9359;
-			setAction(&_sequenceManager, this, 9359, &_globals->_player, &_object2, 0);
+			setAction(&_sequenceManager, this, 9359, &_globals->_player, &_object2, NULL);
 		} else {
 			_globals->_player.disableControl();
 			_sceneState = 9354;
-			setAction(&_sequenceManager, this, 9354, &_globals->_player, &_object2, 0);
+			setAction(&_sequenceManager, this, 9354, &_globals->_player, &_object2, NULL);
 		}
 	}
 }
@@ -713,6 +712,7 @@ void Scene9400::SceneHotspot7::doAction(int action) {
 
 	if ((action == CURSOR_USE) && (RING_INVENTORY._straw._sceneNumber != 1)) {
 		scene->_sceneState = 1;
+		RING_INVENTORY._straw._sceneNumber = 1;
 		scene->setAction(&scene->_sequenceManager, scene, 9408, &_globals->_player, 0);
 	} else {
 		NamedHotspot::doAction(action);
@@ -825,7 +825,7 @@ void Scene9400::postInit(SceneObjectList *OwnerList) {
 void Scene9450::Object2::signal() {
 	Scene9450 *scene = (Scene9450 *)_globals->_sceneManager._scene;
 
-	this->setAction(&scene->_sequenceManager3, this, 9458, &scene->_object1, 0);
+	this->setAction(&scene->_sequenceManager3, this, 9458, this, &scene->_object1, 0);
 }
 
 void Scene9450::Object3::dispatch() {
@@ -841,7 +841,7 @@ void Scene9450::Hotspot1::doAction(int action) {
 			scene->_object2._action->remove();
 		scene->_sceneMode = 9459;
 		_globals->_player.disableControl();
-		setAction(&scene->_sequenceManager1, scene, 9459, &scene->_object2, &scene->_object1, &scene->_object3, &_globals->_player, 0);
+		scene->setAction(&scene->_sequenceManager1, scene, 9459, &scene->_object2, &scene->_object1, &scene->_object3, &_globals->_player, 0);
 	} else {
 		NamedHotspot::doAction(action);
 	}
@@ -918,7 +918,9 @@ void Scene9450::signal() {
 		_globals->_sceneManager.changeScene(9360);
 		break;
 	case 9459:
+		RING_INVENTORY._tunic._sceneNumber = 1;
 		_object2.signal();
+		_globals->_player.enableControl();
 		_globals->_events.setCursor(CURSOR_WALK);
 		_hotspot1.remove();
 		break;
@@ -967,7 +969,7 @@ void Scene9450::postInit(SceneObjectList *OwnerList) {
 		} else {
 			_object2.setPosition(Common::Point(184, 144), 0);
 			_object2.setVisage(9451);
-			_object2.setPriority2(250);
+			_object2.fixPriority(250);
 			_object2._strip = 5;
 			_object2._frame = 10;
 		}
@@ -1079,6 +1081,7 @@ void Scene9500::signal() {
 		break;
 	case 9505:
 		_candle.setStrip(2);
+		RING_INVENTORY._candle._sceneNumber = 1;
 		_globals->_player.enableControl();
 		break;
 	case 9506:
@@ -1086,6 +1089,7 @@ void Scene9500::signal() {
 		_globals->_player.enableControl();
 		break;
 	case 9511:
+		RING_INVENTORY._helmet._sceneNumber = 1;
 		_globals->_player.enableControl();
 		if (!_globals->getFlag(51)) {
 			_globals->setFlag(51);
@@ -1140,7 +1144,7 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 
 	_object3.postInit(0);
 	_object3.hide();
-	_object3.setPriority2(150);
+	_object3.fixPriority(150);
 	_object3.setPosition(Common::Point(166, 133));
 	if (RING_INVENTORY._straw._sceneNumber == 9500) {
 		_object3.show();
@@ -1164,7 +1168,7 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 		_object2.setStrip(1);
 		_object2.setFrame(_object2.getFrameCount());
 		_object2.setPosition(Common::Point(303, 130));
-		_object2.setPriority2(132);
+		_object2.fixPriority(132);
 		if (RING_INVENTORY._helmet._sceneNumber == 1) {
 			_hotspot2.setup(87, 294, 104, 314, 9400, 17, -1);
 		} else {
@@ -1243,7 +1247,7 @@ void Scene9700::signal() {
 }
 
 void Scene9700::process(Event &event) {
-	if ((event.eventType == EVENT_BUTTON_DOWN) && (event.kbd.keycode == 0)) {
+	if ((event.eventType == EVENT_BUTTON_DOWN) && !_action) {
 		if (_gfxButton1.process(event)) {
 			_globals->_sceneManager.changeScene(9200);
 		} else if (_globals->_events._currentCursor == OBJECT_SCANNER) {
@@ -1545,7 +1549,7 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
 	_objDoor.setStrip(1);
 	_objDoor.setFrame(1);
 	_objDoor.setPosition(Common::Point(28, 118), 0);
-	_objDoor.setPriority2(90);
+	_objDoor.fixPriority(90);
 
 	_objLever.postInit();
 	_objLever.setVisage(9850);
@@ -1557,7 +1561,7 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
 	_objCloak.setVisage(9850);
 	_objCloak.setStrip(5);
 	_objCloak.setFrame(1);
-	_objCloak.setPriority2(90);
+	_objCloak.fixPriority(90);
 	_objCloak.setPosition(Common::Point(157, 81), 0);
 	if (RING_INVENTORY._cloak._sceneNumber != 9850)
 		_objCloak.hide();
@@ -1566,7 +1570,7 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
 	_objJacket.setVisage(9850);
 	_objJacket.setStrip(5);
 	_objJacket.setFrame(2);
-	_objJacket.setPriority2(90);
+	_objJacket.fixPriority(90);
 	_objJacket.setPosition(Common::Point(201, 84));
 	if (RING_INVENTORY._jacket._sceneNumber != 9850)
 		_objJacket.hide();
@@ -1575,7 +1579,7 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
 	_objTunic2.setVisage(9850);
 	_objTunic2.setStrip(5);
 	_objTunic2.setFrame(3);
-	_objTunic2.setPriority2(90);
+	_objTunic2.fixPriority(90);
 	_objTunic2.setPosition(Common::Point(295, 90));
 	if (RING_INVENTORY._tunic2._sceneNumber != 9850)
 		_objTunic2.hide();
@@ -1586,7 +1590,7 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
 		_objScimitar.setStrip(2);
 		_objScimitar.setFrame(1);
 		_objScimitar.setPosition(Common::Point(55, 83), 0);
-		_objScimitar.setPriority2(80);
+		_objScimitar.fixPriority(80);
 		_objScimitar.hide();
 	}
 
@@ -1596,7 +1600,7 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
 		_objSword.setStrip(3);
 		_objSword.setFrame(1);
 		_objSword.setPosition(Common::Point(56, 101), 0);
-		_objSword.setPriority2(80);
+		_objSword.fixPriority(80);
 		_objSword.hide();
 	}
 
@@ -1708,7 +1712,7 @@ void Scene9900::strAction2::signal() {
 			_txtArray1[_txtArray1Index].setup(msg);
 			_txtArray1[_txtArray1Index]._moveRate = 20;
 			_txtArray1[_txtArray1Index]._moveDiff.y = 2;
-			_txtArray1[_txtArray1Index].setPriority2(255);
+			_txtArray1[_txtArray1Index].fixPriority(255);
 			int frameWidth = _txtArray1[_txtArray1Index].getFrame().getBounds().width();
 			int frameHeight = _txtArray1[_txtArray1Index].getFrame().getBounds().height();
 			_txtArray1[_txtArray1Index].setPosition(Common::Point((320 - frameWidth) / 2, 200));
@@ -1725,7 +1729,7 @@ void Scene9900::strAction2::signal() {
 			_txtArray2[_txtArray1Index].setup(msg);
 			_txtArray2[_txtArray1Index]._moveRate = 20;
 			_txtArray2[_txtArray1Index]._moveDiff.y = 2;
-			_txtArray2[_txtArray1Index].setPriority2(255);
+			_txtArray2[_txtArray1Index].fixPriority(255);
 			frameWidth = _txtArray2[_txtArray1Index].getFrame().getBounds().width();
 			_txtArray2[_txtArray1Index].setPosition(Common::Point((320 - frameWidth) / 2, 200 + frameHeight));
 		} else {
@@ -1834,7 +1838,7 @@ void Scene9900::signal() {
 		_object8.setVisage(2002);
 		_object8.setStrip(1);
 		_object8.setFrame(1);
-		_object8.setPriority2(200);
+		_object8.fixPriority(200);
 		_object8.setPosition(Common::Point(64, 199));
 		_globals->_player.disableControl();
 		_sceneMode = 9908;
@@ -2021,7 +2025,7 @@ void Scene9999::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.postInit();
 	_globals->_player.setVisage(1303);
 	_globals->_player.setStrip2(1);
-	_globals->_player.setPriority2(250);
+	_globals->_player.fixPriority(250);
 	_globals->_player.animate(ANIM_MODE_2, 0);
 	_globals->_player.setPosition(Common::Point(194, 98), 0);
 	_globals->_player._numFrames = 20;
@@ -2030,13 +2034,13 @@ void Scene9999::postInit(SceneObjectList *OwnerList) {
 	_object2.postInit();
 	_object2.setVisage(1303);
 	_object2.setStrip2(2);
-	_object2.setPriority2(2);
+	_object2.fixPriority(2);
 	_object2.setPosition(Common::Point(164, 149), 0);
 
 	_object3.postInit();
 	_object3.setVisage(1303);
 	_object3.setStrip2(2);
-	_object3.setPriority2(2);
+	_object3.fixPriority(2);
 	_object3.setFrame(2);
 	_object3.setPosition(Common::Point(292, 149), 0);
 	_object3.setAction(&_action3);

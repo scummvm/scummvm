@@ -24,7 +24,6 @@
  */
 
 #include "common/system.h"
-#include "common/events.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
@@ -32,14 +31,13 @@
 #include "common/tokenizer.h"
 #include "common/translation.h"
 
-#include "graphics/colormasks.h"
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
 #include "graphics/imagedec.h"
 #include "graphics/surface.h"
 #include "graphics/VectorRenderer.h"
 
-#include "gui/launcher.h"
+#include "gui/widget.h"
 #include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
 #include "gui/ThemeParser.h"
@@ -373,8 +371,8 @@ const char *ThemeEngine::findModeConfigName(GraphicsMode mode) {
 bool ThemeEngine::init() {
 	// reset everything and reload the graphics
 	_initOk = false;
-	setGraphicsMode(_graphicsMode);
 	_overlayFormat = _system->getOverlayFormat();
+	setGraphicsMode(_graphicsMode);
 
 	if (_screen.pixels && _backBuffer.pixels) {
 		_initOk = true;
@@ -499,10 +497,10 @@ void ThemeEngine::setGraphicsMode(GraphicsMode mode) {
 	uint32 height = _system->getOverlayHeight();
 
 	_backBuffer.free();
-	_backBuffer.create(width, height, _bytesPerPixel);
+	_backBuffer.create(width, height, _overlayFormat);
 
 	_screen.free();
-	_screen.create(width, height, _bytesPerPixel);
+	_screen.create(width, height, _overlayFormat);
 
 	delete _vectorRenderer;
 	_vectorRenderer = Graphics::createRenderer(mode);

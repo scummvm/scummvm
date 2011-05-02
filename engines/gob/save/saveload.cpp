@@ -23,9 +23,6 @@
  *
  */
 
-#include "common/endian.h"
-#include "common/savefile.h"
-
 #include "gob/gob.h"
 #include "gob/save/saveload.h"
 #include "gob/global.h"

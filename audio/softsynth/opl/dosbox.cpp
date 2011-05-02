@@ -36,6 +36,7 @@
 
 #include "common/system.h"
 #include "common/scummsys.h"
+#include "common/util.h"
 
 #include <math.h>
 #include <string.h>

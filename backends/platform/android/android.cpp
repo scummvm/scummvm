@@ -32,6 +32,7 @@
 #include <unistd.h>
 
 #include "common/util.h"
+#include "common/textconsole.h"
 #include "common/rect.h"
 #include "common/queue.h"
 #include "common/mutex.h"

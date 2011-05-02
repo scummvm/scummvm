@@ -26,11 +26,18 @@
 #ifndef VIDEO_SMK_PLAYER_H
 #define VIDEO_SMK_PLAYER_H
 
+#include "common/rational.h"
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 #include "video/video_decoder.h"
 #include "audio/mixer.h"
 
 namespace Audio {
-	class QueuingAudioStream;
+class QueuingAudioStream;
+}
+
+namespace Common {
+class SeekableReadStream;
 }
 
 namespace Video {

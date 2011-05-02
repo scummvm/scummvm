@@ -26,12 +26,33 @@
 #ifndef VIDEO_AVI_PLAYER_H
 #define VIDEO_AVI_PLAYER_H
 
+#include "common/endian.h"
+#include "common/rational.h"
+#include "common/rect.h"
+#include "common/str.h"
+
 #include "video/video_decoder.h"
-#include "video/codecs/codec.h"
-#include "audio/audiostream.h"
 #include "audio/mixer.h"
 
+namespace Audio {
+class QueuingAudioStream;
+}
+
+namespace Common {
+class SeekableReadStream;
+}
+
+namespace Graphics {
+struct PixelFormat;
+}
+
+namespace Graphics {
+struct Surface;
+}
+
 namespace Video {
+
+class Codec;
 
 #define UNKNOWN_HEADER(a) error("Unknown header found -- \'%s\'", tag2str(a))
 

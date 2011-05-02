@@ -24,6 +24,7 @@
 
 #include "teenagent/resources.h"
 #include "teenagent/teenagent.h"
+#include "common/textconsole.h"
 #include "common/zlib.h"
 
 namespace TeenAgent {

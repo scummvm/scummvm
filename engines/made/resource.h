@@ -30,6 +30,7 @@
 #include "common/file.h"
 #include "common/stream.h"
 #include "common/hashmap.h"
+#include "common/textconsole.h"
 #include "graphics/surface.h"
 #include "audio/audiostream.h"
 

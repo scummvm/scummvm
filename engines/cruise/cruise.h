@@ -31,7 +31,6 @@
 #include "common/random.h"
 
 #include "engines/engine.h"
-#include "engines/game.h"
 
 #include "cruise/cruise_main.h"
 #include "cruise/debugger.h"

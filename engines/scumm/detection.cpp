@@ -23,6 +23,9 @@
  *
  */
 
+// FIXME: Avoid using printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "base/plugins.h"
 
 #include "common/archive.h"
@@ -1131,6 +1134,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 			break;
 		case 62:
 		case 61:
+		case 60:
 			*engine = new ScummEngine_v60he(syst, res);
 			break;
 		default:

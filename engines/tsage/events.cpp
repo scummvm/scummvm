@@ -38,6 +38,7 @@ namespace tSage {
 
 EventsClass::EventsClass() {
 	_currentCursor = CURSOR_NONE;
+	hideCursor();
 	_frameNumber = 0;
 	_priorFrameTime = 0;
 	_prevDelayFrame = 0;
@@ -208,6 +209,62 @@ void EventsClass::setCursor(CursorType cursorType) {
 		DEALLOCATE(cursor);
 }
 
+void EventsClass::pushCursor(CursorType cursorType) {
+	const byte *cursor;
+	bool delFlag = true;
+	uint size;
+
+	switch (cursorType) {
+	case CURSOR_CROSSHAIRS:
+		// Crosshairs cursor
+		cursor = _resourceManager->getSubResource(4, 1, 6, &size);
+		break;
+
+	case CURSOR_LOOK:
+		// Look cursor
+		cursor = _resourceManager->getSubResource(4, 1, 5, &size);
+		break;
+
+	case CURSOR_USE:
+		// Use cursor
+		cursor = _resourceManager->getSubResource(4, 1, 4, &size);
+		break;
+
+	case CURSOR_TALK:
+		// Talk cursor
+		cursor = _resourceManager->getSubResource(4, 1, 3, &size);
+		break;
+
+	case CURSOR_ARROW:
+		// Arrow cursor
+		cursor = CURSOR_ARROW_DATA;
+		delFlag = false;
+		break;
+
+	case CURSOR_WALK:
+	default:
+		// Walk cursor
+		cursor = CURSOR_WALK_DATA;
+		delFlag = false;
+		break;
+	}
+
+	// Decode the cursor
+	GfxSurface s = surfaceFromRes(cursor);
+
+	Graphics::Surface surface = s.lockSurface();
+	const byte *cursorData = (const byte *)surface.getBasePtr(0, 0);
+	CursorMan.pushCursor(cursorData, surface.w, surface.h, s._centroid.x, s._centroid.y, s._transColor);
+	s.unlockSurface();
+
+	if (delFlag)
+		DEALLOCATE(cursor);
+}
+
+void EventsClass::popCursor() {
+	CursorMan.popCursor();
+}
+
 void EventsClass::setCursor(Graphics::Surface &cursor, int transColor, const Common::Point &hotspot, CursorType cursorId) {
 	const byte *cursorData = (const byte *)cursor.getBasePtr(0, 0);
 	CursorMan.replaceCursor(cursorData, cursor.w, cursor.h, hotspot.x, hotspot.y, transColor);
@@ -225,6 +282,10 @@ void EventsClass::showCursor() {
 
 void EventsClass::hideCursor() {
 	CursorMan.showMouse(false);
+}
+
+bool EventsClass::isCursorVisible() const { 
+	return CursorMan.isVisible(); 
 }
 
 /**

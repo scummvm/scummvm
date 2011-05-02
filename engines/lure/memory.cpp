@@ -25,6 +25,7 @@
 
 #include "lure/memory.h"
 #include "common/file.h"
+#include "common/textconsole.h"
 
 namespace Lure {
 

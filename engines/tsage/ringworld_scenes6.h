@@ -216,11 +216,11 @@ class Scene5200 : public Scene {
 	};
 
 	/* Hotspots */
-	class Hotspot9 : public SceneItemExt {
+	class Hotspot9 : public SceneObjectExt {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot10 : public SceneItemExt {
+	class Hotspot10 : public SceneObjectExt {
 	public:
 		virtual void doAction(int action);
 	};

@@ -960,7 +960,7 @@ begin_credits("Credits");
 			add_person("Eugene Sandulenko", "sev", "");
 		end_section();
 		begin_section("Spanish");
-			add_person("Tom&aacute;s Maidagan", "Truido", "");
+			add_person("Tom&aacute;s Maidagan", "", "");
 		end_section();
 		begin_section("Swedish");
 			add_person("Hampus Flink", "", "");

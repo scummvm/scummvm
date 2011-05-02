@@ -31,7 +31,7 @@
 #include "sky/skydefs.h"
 
 namespace Common {
-	class File;
+class File;
 }
 
 enum CptIds {

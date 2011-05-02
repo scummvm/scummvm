@@ -43,6 +43,7 @@ static SavedObject *classFactoryProc(const Common::String &className) {
 	if (className == "ObjectMover2") return new ObjectMover2();
 	if (className == "ObjectMover3") return new ObjectMover3();
 	if (className == "PlayerMover") return new PlayerMover();
+	if (className == "SceneObjectWrapper") return new SceneObjectWrapper();
 
 	return NULL;
 }
@@ -54,12 +55,21 @@ Globals::Globals() :
 		_gfxManagerInstance(_screenSurface) {
 	reset();
 	_stripNum = 0;
-	_gfxFontNumber = (_vm->getFeatures() & GF_DEMO) ? 0 : 50;
-	_gfxColors.background = 53;
-	_gfxColors.foreground = 18;
-	_fontColors.background = 51;
-	_fontColors.foreground = 54;
 
+	if (_vm->getFeatures() & GF_DEMO) {
+		_gfxFontNumber = 0;
+		_gfxColors.background = 6;
+		_gfxColors.foreground = 0;
+		_fontColors.background = 0;
+		_fontColors.foreground = 0;
+		_dialogCenter.y = 80;
+	} else {
+		_gfxFontNumber = 50;
+		_gfxColors.background = 53;
+		_gfxColors.foreground = 18;
+		_fontColors.background = 51;
+		_fontColors.foreground = 54;
+	}
 	_screenSurface.setScreenSurface();
 	_gfxManagers.push_back(&_gfxManagerInstance);
 

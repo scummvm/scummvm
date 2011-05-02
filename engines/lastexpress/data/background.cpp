@@ -31,6 +31,7 @@
 
 #include "lastexpress/debug.h"
 
+#include "common/rect.h"
 #include "common/stream.h"
 
 namespace LastExpress {

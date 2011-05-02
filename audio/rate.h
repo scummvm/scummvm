@@ -27,12 +27,10 @@
 #define SOUND_RATE_H
 
 #include "common/scummsys.h"
-#include "engines/engine.h"
-
-class AudioStream;
-
 
 namespace Audio {
+
+class AudioStream;
 
 typedef int16 st_sample_t;
 typedef uint16 st_volume_t;

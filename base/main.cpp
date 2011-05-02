@@ -31,6 +31,9 @@
  * of almost all the classes, methods and variables, and how they interact.
  */
 
+// FIXME: Avoid using printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "engines/engine.h"
 #include "engines/metaengine.h"
 #include "base/commandLine.h"
@@ -43,14 +46,13 @@
 #include "common/debug-channels.h" /* for debug manager */
 #include "common/events.h"
 #include "common/EventRecorder.h"
-#include "common/file.h"
 #include "common/fs.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "common/tokenizer.h"
 #include "common/translation.h"
 
 #include "gui/gui-manager.h"
-#include "gui/message.h"
 #include "gui/error.h"
 
 #include "audio/mididrv.h"

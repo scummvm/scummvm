@@ -61,7 +61,7 @@ void Surface::load(Common::SeekableReadStream *stream, Type type) {
 	}
 
 	//debug(0, "creating surface %ux%u -> %u,%u", w_, h_, x, y);
-	create(w_, h_, 1);
+	create(w_, h_, Graphics::PixelFormat::createFormatCLUT8());
 
 	stream->read(pixels, w_ * h_);
 }

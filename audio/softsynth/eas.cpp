@@ -30,8 +30,11 @@
 
 #include "common/debug.h"
 #include "common/endian.h"
+#include "common/textconsole.h"
+#include "common/error.h"
 #include "common/file.h"
 #include "common/config-manager.h"
+#include "common/system.h"
 #include "audio/audiostream.h"
 #include "audio/mpu401.h"
 #include "audio/musicplugin.h"

@@ -23,6 +23,10 @@
  *
  */
 
+#include "common/array.h"
+#include "common/textconsole.h"
+#include "graphics/surface.h"
+
 #include "groovie/font.h"
 
 namespace Groovie {

@@ -36,6 +36,7 @@
 #include "audio/mixer_intern.h"
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
+#include "graphics/palette.h"
 
 class OSystem_DS : public BaseBackend, public PaletteManager {
 protected:

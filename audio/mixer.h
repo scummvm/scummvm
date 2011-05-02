@@ -27,20 +27,13 @@
 #define SOUND_MIXER_H
 
 #include "common/types.h"
-#include "common/mutex.h"
 #include "common/noncopyable.h"
-
-#include "audio/timestamp.h"
-
-class OSystem;
-
 
 namespace Audio {
 
 class AudioStream;
 class Channel;
-class Mixer;
-class MixerImpl;
+class Timestamp;
 
 /**
  * A SoundHandle instances corresponds to a specific sound

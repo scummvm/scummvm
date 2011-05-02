@@ -23,6 +23,8 @@
 *
 */
 
+#include "common/debug.h"
+
 #include "toon/path.h"
 
 namespace Toon {
@@ -407,7 +409,11 @@ void PathFinding::init(Picture *mask) {
 	_height = mask->getHeight();
 	_currentMask = mask;
 	_heap->unload();
-	_heap->init(_width * _height);
+	// In order to reduce memory fragmentation on small devices, we use the maximum 
+	// possible size here which is TOON_BACKBUFFER_WIDTH. Even though this is 
+	// 1280 as opposed to the possible 640, it actually helps memory allocation on
+	// those devices.
+	_heap->init(TOON_BACKBUFFER_WIDTH * _height);	// should really be _width
 	delete[] _gridTemp;
 	_gridTemp = new int32[_width*_height];
 }

@@ -29,7 +29,7 @@
 #include "common/util.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Scumm {

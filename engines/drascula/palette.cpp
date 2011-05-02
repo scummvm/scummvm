@@ -23,6 +23,8 @@
  *
  */
 
+#include "graphics/palette.h"
+
 #include "drascula/drascula.h"
 
 namespace Drascula {

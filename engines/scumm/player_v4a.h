@@ -27,6 +27,7 @@
 #define SCUMM_PLAYER_V4A_H
 
 #include "common/scummsys.h"
+#include "common/util.h"
 #include "scumm/music.h"
 #include "audio/mixer.h"
 #include "audio/mods/tfmx.h"

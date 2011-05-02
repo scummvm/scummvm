@@ -29,8 +29,11 @@
 
 #include "backends/audiocd/audiocd.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
+#include "common/file.h"
 #include "common/macresman.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 #include "audio/midiparser.h"
 
 namespace Groovie {
