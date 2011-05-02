@@ -4360,7 +4360,7 @@ void Scene4301::Hotspot5::doAction(int action) {
 		SceneItem::display2(4300, 0);
 		break;
 	case CURSOR_USE:
-		SceneItem::display(4300, 30);
+		SceneItem::display2(4300, 30);
 		break;
 	case OBJECT_SCANNER:
 		SceneItem::display2(4300, 31);
@@ -4384,7 +4384,7 @@ void Scene4301::postInit(SceneObjectList *OwnerList) {
 
 	_field68E = false;
 	RING_INVENTORY._stasisBox2._sceneNumber = 1;
-	_hotspot4.setup(76, 97, 102, 127, 4300, 5, 6);
+	_hotspot4.setup(97, 76, 127, 102, 4300, 5, 6);
 
 	_hotspot1.postInit();
 	_hotspot1.setPosition(Common::Point(90, 128));
