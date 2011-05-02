@@ -59,18 +59,21 @@ public:
 	
 private:
 	TownsMidiOutputChannel *allocateOutputChannel(int pri);
+	
+	int randomValue(int para);
 
 	TownsMidiInputChannel **_channels;
 	TownsMidiOutputChannel **_out;
 	TownsMidiChanState *_chanState;
 
-	Common::TimerManager::TimerProc _timerBproc;
-	void *_timerBpara;
+	Common::TimerManager::TimerProc _timerProc;
+	void *_timerProcPara;
 
 	TownsAudioInterface *_intf;
 
 	uint32 _tickCounter;
 	uint8 _curChan;
+	uint8 _rand;
 	
 	bool _open;
 

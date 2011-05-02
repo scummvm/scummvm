@@ -49,28 +49,25 @@ public:
 
 private:
 	struct StateA {
-		uint8 active;
-		uint8 fld_1;
-		uint8 fld_2;
-		uint8 fld_3;
-		uint8 fld_4;
-		uint8 fld_5;
-		uint8 fld_6;
-		uint8 fld_7;
-		uint8 fld_8;
-		uint32 fld_9;
-		uint32 effectState;
+		uint8 numLoop;
+		int32 fld_1;
+		uint32 fld_5;
+		int32 fld_9;
+		int32 effectState;
 		uint8 fld_11;
-		uint8 fld_12;
-		uint8 fld_13;
-		uint8 fld_14;
-		uint8 fld_15;
-		uint8 fld_16;
-		uint8 fld_17;
-		uint8 fld_18;
-		uint8 fld_19;
+		uint8 ar1[4];
+		uint8 ar2[4];
 		uint8 fld_1a;
 		uint8 modWheelImpact;
+		uint8 fld_1c;
+		uint32 fld_1d;
+		uint32 fld_21;
+		uint32 fld_25;
+		int8 dir;
+		uint32 fld_2a;
+		uint8 fld_2b;
+		uint8 fld_2c;
+		uint8 fld_2d;
 		uint8 modWheel;
 	} *_stateA;
 
@@ -83,7 +80,9 @@ private:
 	} *_stateB;
 
 	uint32 getEffectState(uint8 type);
-	void processEffect(StateA *a, const uint8 *effectData);
+	void initEffect(StateA *a, const uint8 *effectData);
+	void updateEffect(StateA *a);
+	int lookupVolume(int a, int b);
 
 	void keyOn();
 	void keyOff();
@@ -101,7 +100,7 @@ private:
 	uint8 _sustainNoteOff;
 	uint32 _duration;
 	uint8 _fld_13;
-	uint8 _prg;	
+	uint8 _prg;
 
 	uint16 _freq;
 	int16 _freqAdjust;
@@ -111,6 +110,7 @@ private:
 	static const uint8 _chanMap[];
 	static const uint8 _chanMap2[];
 	static const uint8 _effectDefs[];
+	static const uint16 _effectData[];
 	static const uint8 _freqMSB[];
 	static const uint16 _freqLSB[];
 };
@@ -327,14 +327,14 @@ void TownsMidiOutputChannel::setupEffects(int index, uint8 c, const uint8 *effec
 		break;
 	}
 
-	processEffect(a, effectData);
+	initEffect(a, effectData);
 }
 
 void TownsMidiOutputChannel::setModWheel(uint8 value) {
-	if (_stateA[0].active && _stateB[0].type)
+	if (_stateA[0].numLoop && _stateB[0].type)
 		_stateA[0].modWheel = value >> 2;
 
-	if (_stateA[1].active && _stateB[1].type)
+	if (_stateA[1].numLoop && _stateB[1].type)
 		_stateA[1].modWheel = value >> 2;
 }
 
@@ -393,8 +393,81 @@ uint32 TownsMidiOutputChannel::getEffectState(uint8 type) {
 	return res;	
 }
 
-void TownsMidiOutputChannel::processEffect(StateA *a, const uint8 *effectData) {
+void TownsMidiOutputChannel::initEffect(StateA *a, const uint8 *effectData) {
+	a->numLoop = 1;
+	a->fld_1 = 0;
+	a->fld_1c = 0x1f;
+	a->fld_5 = effectData[0];
+	a->ar1[0] = effectData[1];
+	a->ar1[1] = effectData[3];
+	a->ar1[2] = effectData[5];
+	a->ar1[3] = effectData[6];
+	a->ar2[0] = effectData[2];
+	a->ar2[1] = effectData[3];
+	a->ar2[2] = 0;
+	a->ar2[3] = effectData[7];
+	updateEffect(a);
+}
 
+void TownsMidiOutputChannel::updateEffect(StateA *a) {
+	uint8 c = --a->numLoop;
+	uint16 v = a->ar1[c];
+	int e = _effectData[_driver->_chanOutputLevel[((v & 0x7f) << 5) + a->fld_1a]];
+
+	if (v & 0x80)
+		e = _driver->randomValue(e);
+	
+	if (!e)
+		e = 1;
+
+	a->fld_1d = a->fld_21 = e;
+	int32 d = 0;
+
+	if (c + 1 != 3) {
+		v = a->ar2[c];
+		e = lookupVolume(a->fld_9, (v & 0x7f) - 31);
+
+		if (v & 0x80)
+			e = _driver->randomValue(e);
+
+		if (e + a->effectState > a->fld_9) {
+			e = a->fld_9 - a->effectState;
+		} else {
+			if (e + a->effectState + 1 <= 0)
+				e = -e;
+		}
+
+		d = e - a->fld_1;
+	}
+
+	a->fld_25 = d / a->fld_1d;
+	a->dir = d < 0 ? -1 : 1;
+	a->fld_2a = d % a->fld_1d;
+
+	a->fld_2b = a->fld_2c = a->fld_2d = a->modWheel = 0;
+}
+
+int TownsMidiOutputChannel::lookupVolume(int a, int b) {
+	if (b == 0)
+		return 0;
+
+	if (b == 31)
+		return a;
+
+	if (a > 63)
+		return ((a + 1) * b) >> 5;
+
+	if (b < 0) {
+		if (a < 0)			
+			return _driver->_chanOutputLevel[(-a << 5) - b];
+		else
+			return -_driver->_chanOutputLevel[(a << 5) - b];
+	} else {
+		if (a < 0)			
+			return -_driver->_chanOutputLevel[(-a << 5) + b];
+		else
+			return _driver->_chanOutputLevel[(-a << 5) + b];
+	}
 }
 
 void TownsMidiOutputChannel::keyOn() {
@@ -450,6 +523,13 @@ const uint8 TownsMidiOutputChannel::_effectDefs[] = {
 	0x80, 0x04, 0xF0, 0x0F, 0x80, 0x00, 0x0F, 0x0F, 0xE0, 0x00, 0x03, 0x00,
 	0x20, 0x07, 0x80, 0x00, 0x20, 0x06, 0x40, 0x00, 0x20, 0x05, 0x20, 0x00,
 	0x20, 0x04, 0x10, 0x00, 0xC0, 0x00, 0x01, 0x00, 0xC0, 0x01, 0x0E, 0x00
+};
+
+const uint16 TownsMidiOutputChannel::_effectData[] = {
+	0x0001, 0x0002, 0x0004, 0x0005, 0x0006, 0x0007,	0x0008, 0x0009,
+	0x000A, 0x000C, 0x000E, 0x0010,	0x0012, 0x0015, 0x0018, 0x001E,
+	0x0024, 0x0032,	0x0040, 0x0052, 0x0064, 0x0088, 0x00A0, 0x00C0,
+	0x00F0, 0x0114, 0x0154, 0x01CC, 0x0258, 0x035C,	0x04B0, 0x0640
 };
 
 const uint8 TownsMidiOutputChannel::_freqMSB[] = {
@@ -556,12 +636,12 @@ void TownsMidiInputChannel::noteOn(byte note, byte velocity) {
 	if (_instrument[11] & 0x80)
 		oc->setupEffects(0, _instrument[11], &_instrument[12]);
 	else
-		oc->_stateA[0].active = 0;
+		oc->_stateA[0].numLoop = 0;
 
 	if (_instrument[20] & 0x80)
 		oc->setupEffects(1, _instrument[20], &_instrument[21]);
 	else
-		oc->_stateA[1].active = 0;	
+		oc->_stateA[1].numLoop = 0;	
 }
 
 void TownsMidiInputChannel::programChange(byte program) {
@@ -661,7 +741,7 @@ const uint8 TownsMidiInputChannel::_programAdjustLevel[] = {
 	0x3D, 0x3D, 0x3E, 0x3E, 0x3E, 0x3F, 0x3F, 0x3F
 };
 
-MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer) : _timerBproc(0), _timerBpara(0), _open(false) {
+MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer) : _timerProc(0), _timerProcPara(0), _tickCounter(0), _curChan(0), _rand(1), _open(false) {
 	_intf = new TownsAudioInterface(mixer, this);
 
 	_channels = new TownsMidiInputChannel*[32];
@@ -681,9 +761,6 @@ MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer) : _timerBproc(0), _timer
 	}
 	for (int i = 0; i < 64; i++)
 		_chanOutputLevel[i << 5] = 0;
-
-	_tickCounter = 0;
-	_curChan = 0;
 }
 
 MidiDriver_TOWNS::~MidiDriver_TOWNS() {
@@ -764,8 +841,8 @@ void MidiDriver_TOWNS::send(uint32 b) {
 }
 
 void MidiDriver_TOWNS::setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {
-	_timerBproc = timer_proc;
-	_timerBpara = timer_param;
+	_timerProc = timer_proc;
+	_timerProcPara = timer_param;
 }
 
 uint32 MidiDriver_TOWNS::getBaseTempo() {
@@ -792,12 +869,12 @@ void MidiDriver_TOWNS::timerCallback(int timerId) {
 
 	switch (timerId) {
 	case 1:
-		if (_timerBproc) {
-			_timerBproc(_timerBpara);
+		if (_timerProc) {
+			_timerProc(_timerProcPara);
 			_tickCounter += 10000;
 			while (_tickCounter >= 4167) {
 				_tickCounter -= 4167;
-				_timerBproc(_timerBpara);
+				_timerProc(_timerProcPara);
 			}
 		}
 		break;
@@ -827,4 +904,9 @@ TownsMidiOutputChannel *MidiDriver_TOWNS::allocateOutputChannel(int pri) {
 		res->disconnect();
 
 	return res;
+}
+
+int MidiDriver_TOWNS::randomValue(int para) {
+	_rand = (_rand & 1) ? (_rand >> 1) ^ 0xb8 : (_rand >> 1);
+	return (_rand * para) >> 8;
 }
