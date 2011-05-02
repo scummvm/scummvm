@@ -4100,6 +4100,10 @@ void concatFallback() {
 	lua_pushstring(result);
 }
 
+static void LightMgrStartup() {
+	// we will not implement this opcode
+}
+
 // Stub function for builtin functions not yet implemented
 static void stubWarning(const char *funcName) {
 	warning("Stub function: %s", funcName);
@@ -4120,7 +4124,6 @@ STUB_FUNC(SetActorClipActive)
 STUB_FUNC(SetActorCollisionScale)
 STUB_FUNC(SetActorCollisionMode)
 STUB_FUNC(FlushControls)
-STUB_FUNC(LightMgrStartup)
 STUB_FUNC(TurnLightOn)
 STUB_FUNC(GetCameraLookVector)
 STUB_FUNC(SetCameraRoll)
