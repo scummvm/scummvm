@@ -138,22 +138,14 @@ static LuaFile *getfile(const char *name) {
 	lua_Object f = lua_getglobal(name);
 	if (!ishandler(f))
 		luaL_verror("global variable `%.50s' is not a file handle", name);
-#ifdef TARGET_64BITS
-	return getfile((int64)lua_getuserdata(f));
-#else
-	return getfile((int32)lua_getuserdata(f));
-#endif
+	return getfile((residualptr)lua_getuserdata(f));
 }
 
 static LuaFile *getfileparam(const char *name, int32 *arg) {
 	lua_Object f = lua_getparam(*arg);
 	if (ishandler(f)) {
 		(*arg)++;
-#ifdef TARGET_64BITS
-		return getfile((int64)lua_getuserdata(f));
-#else
-		return getfile((int32)lua_getuserdata(f));
-#endif
+		return getfile((residualptr)lua_getuserdata(f));
 	} else
 		return getfile(name);
 }
@@ -189,11 +181,7 @@ static void io_readfrom() {
 		closefile(FINPUT);
 		setreturn(1, FINPUT);
 	} else if (lua_tag(f) == gettag(IOTAG)) {
-#ifdef TARGET_64BITS
-		int64 id = (int64)lua_getuserdata(f);
-#else
-		int32 id = (int32)lua_getuserdata(f);
-#endif
+		int32 id = (residualptr)lua_getuserdata(f);
 		LuaFile *current = getfile(id);
 		if (!current) {
 			pushresult(0);
@@ -228,11 +216,7 @@ static void io_writeto() {
 		closefile(FOUTPUT);
 		setreturn(2, FOUTPUT);
 	} else if (lua_tag(f) == gettag(IOTAG)) {
-#ifdef TARGET_64BITS
-		int64 id = (int64)lua_getuserdata(f);
-#else
-		int32 id = (int32)lua_getuserdata(f);
-#endif
+		int32 id = (residualptr)lua_getuserdata(f);
 		LuaFile *current = getfile(id);
 		if (!current->isOpen()) {
 			pushresult(0);
