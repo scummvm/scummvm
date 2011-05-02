@@ -401,7 +401,7 @@ int CharsetRendererClassic::getCharWidth(uint16 chr) {
 					spacing++;
 				}
 			}
-			
+
 		} else if (chr >= 0x80) {
 			return _vm->_2byteWidth / 2;
 		}
@@ -618,11 +618,12 @@ int CharsetRendererV3::getCharWidth(uint16 chr) {
 				spacing = 4;
 		} else if (chr & 0x80) {
 			spacing = _vm->_2byteWidth / 2;
-		}	
+		}
 	}
 
-	if (!spacing)
+	if (!spacing) {
 		spacing = *(_widthTable + chr);
+	}
 
 	return spacing;
 }
@@ -857,17 +858,17 @@ void CharsetRenderer::processTownsCharsetColors(uint8 bytesPerPixel) {
 	if (_vm->_game.platform == Common::kPlatformFMTowns) {
 		for (int i = 0; i < (1 << bytesPerPixel); i++) {
 			uint8 c = _vm->_charsetColorMap[i];
-						
+
 			if (c > 16) {
 				uint8 t = (_vm->_currentPalette[c * 3] < 32) ? 4 : 12;
 				t |= ((_vm->_currentPalette[c * 3 + 1] < 32) ? 2 : 10);
 				t |= ((_vm->_currentPalette[c * 3 + 1] < 32) ? 1 : 9);
 				c = t;
 			}
-			
+
 			if (c == 0)
 				c = _vm->_townsOverrideShadowColor;
-			
+
 			c = ((c & 0x0f) << 4) | (c & 0x0f);
 			_vm->_townsCharsetColorMap[i] = c;
 		}
@@ -920,12 +921,12 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 			noSjis = true;
 		}
 	}
-	
+
 	if (useTownsFontRomCharacter(chr) && !noSjis) {
 		charPtr = 0;
 		_vm->_cjkChar = chr;
 		enableShadow(true);
-		
+
 		width = getCharWidth(chr);
 		// For whatever reason MI1 uses a different font width
 		// for alignment calculation and for drawing when
@@ -947,7 +948,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 			height++;
 		}
 	} else
-#endif	
+#endif
 	{
 		uint32 charOffs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
 		assert(charOffs < 0x14000);
@@ -1259,14 +1260,14 @@ void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, con
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	byte *dst3 = dst2;
 	byte *dst4 = dst2;
-	if (scale2x) {		
+	if (scale2x) {
 		dst3 = dst2 + s.pitch;
 		dst4 = dst3 + s.pitch;
 		pitch <<= 1;
 	}
 	if (_vm->_game.platform == Common::kPlatformFMTowns && _vm->_game.version == 5)
 		col = _vm->_townsCharsetColorMap[1];
-#endif			
+#endif
 
 	for (y = 0; y < height && y + drawTop < s.h; y++) {
 		for (x = 0; x < width; x++) {
@@ -1287,19 +1288,19 @@ void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, con
 						if (scale2x) {
 							dst[2] = dst[3] = dst2[2] = dst2[3] = _shadowColor;
 							dst3[0] = dst4[0] = dst3[1] = dst4[1] = _shadowColor;
-						} else 
+						} else
 #endif
 						{
 							dst[1] = dst2[0] = _shadowColor;
 							if (_shadowMode != kFMTOWNSShadowMode)
 								dst2[1] = _shadowColor;
-						}						
+						}
 					}
 					dst[0] = col;
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 					if (scale2x)
-						dst[1] = dst2[0] = dst2[1] = col;					
+						dst[1] = dst2[0] = dst2[1] = col;
 #endif
 				}
 			}
@@ -1317,7 +1318,7 @@ void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, con
 
 		dst += pitch;
 		dst2 += pitch;
-#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE		
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		dst3 += pitch;
 		dst4 += pitch;
 #endif
