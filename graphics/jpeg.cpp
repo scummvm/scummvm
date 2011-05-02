@@ -711,9 +711,9 @@ uint8 JPEG::readBit() {
 				if (byte2 == 0xDC) {
 					// DNL marker: Define Number of Lines
 					// TODO: terminate scan
-					printf("DNL marker detected: terminate scan\n");
+					warning("DNL marker detected: terminate scan");
 				} else {
-					printf("Error: marker 0x%02X read in entropy data\n", byte2);
+					warning("Error: marker 0x%02X read in entropy data", byte2);
 				}
 			}
 		}
