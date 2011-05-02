@@ -483,6 +483,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 #ifdef ENABLE_SCUMM_7_8
 	{ "dig", "dig.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "dig", "thedig.la%d", kGenDiskNum, UNK_LANG, UNK, "Demo" }, // Used by an alternate version of the demo
 	{ "dig", "The Dig Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "dig", "The Dig Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, "Demo" },
 
