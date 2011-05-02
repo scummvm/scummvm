@@ -67,7 +67,7 @@ void Scene9100::SceneHotspot1::doAction(int action) {
 			_globals->_player.disableControl();
 			scene->_sceneMode = 9105;
 		}
-		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &_globals->_player, &scene->_object5, &scene->_object6, 0);
+		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &_globals->_player, &scene->_object5, &scene->_object6, NULL);
 	} else {
 		NamedHotspot::doAction(action);
 	}
@@ -103,7 +103,7 @@ void Scene9100::signal() {
 		_globals->_sceneManager.changeScene(9150);
 		break;
 	case 9105:
-		_sceneHotspot1.remove();
+		_sceneHotspot3.remove();
 	// No break on purpose
 	case 9103:
 	case 9104:
@@ -122,7 +122,7 @@ void Scene9100::postInit(SceneObjectList *OwnerList) {
 	_object1.setVisage(9100);
 	_object1._strip = 1;
 	_object1._numFrames = 6;
-	_object1.setPosition(Common::Point(297, 132), 0);
+	_object1.setPosition(Common::Point(279, 132), 0);
 	_object1.animate(ANIM_MODE_2, 0);
 	_object1.fixPriority(10);
 
