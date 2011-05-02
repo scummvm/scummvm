@@ -27,7 +27,7 @@
 
 TownsEuphonyDriver::TownsEuphonyDriver(Audio::Mixer *mixer) : _activeChannels(0), _sustainChannels(0),
 	_assignedChannels(0), _paraCount(0), _command(0), _tEnable(0), _tMode(0), _tOrdr(0), _tLevel(0),
-	_tTranspose(0), _musicPos(0), _musicStart(0), _playing(false), _eventBuffer(0), _bufferedEventsCount(0),
+	_tDetune(0), _musicPos(0), _musicStart(0), _playing(false), _eventBuffer(0), _bufferedEventsCount(0),
 	_tempoControlMode(0) {
 	_para[0] = _para[1] = 0;
 	_intf = new TownsAudioInterface(mixer, this);
@@ -44,7 +44,7 @@ TownsEuphonyDriver::~TownsEuphonyDriver() {
 	delete[] _tMode;
 	delete[] _tOrdr;
 	delete[] _tLevel;
-	delete[] _tTranspose;
+	delete[] _tDetune;
 }
 
 bool TownsEuphonyDriver::init() {
@@ -59,7 +59,7 @@ bool TownsEuphonyDriver::init() {
 	delete[] _tMode;
 	delete[] _tOrdr;
 	delete[] _tLevel;
-	delete[] _tTranspose;
+	delete[] _tDetune;
 
 	_activeChannels = new int8[16];
 	_sustainChannels = new int8[16];
@@ -70,7 +70,7 @@ bool TownsEuphonyDriver::init() {
 	_tMode = new uint8[32];
 	_tOrdr = new uint8[32];
 	_tLevel = new int8[32];
-	_tTranspose = new int8[32];
+	_tDetune = new int8[32];
 
 	reset();
 
@@ -220,21 +220,21 @@ void TownsEuphonyDriver::setOutputVolume(int mode, int volLeft, int volRight) {
 	_intf->callback(67, mode, volLeft, volRight);
 }
 
-int TownsEuphonyDriver::chanEnable(int tableEntry, int val) {
+int TownsEuphonyDriver::configChan_enable(int tableEntry, int val) {
 	if (tableEntry > 31)
 		return 3;
 	_tEnable[tableEntry] = val;
 	return 0;
 }
 
-int TownsEuphonyDriver::chanMode(int tableEntry, int val) {
+int TownsEuphonyDriver::configChan_setMode(int tableEntry, int val) {
 	if (tableEntry > 31)
 		return 3;
 	_tMode[tableEntry] = val;
 	return 0;
 }
 
-int TownsEuphonyDriver::chanOrdr(int tableEntry, int val) {
+int TownsEuphonyDriver::configChan_remap(int tableEntry, int val) {
 	if (tableEntry > 31)
 		return 3;
 	if (val < 16)
@@ -242,7 +242,7 @@ int TownsEuphonyDriver::chanOrdr(int tableEntry, int val) {
 	return 0;
 }
 
-int TownsEuphonyDriver::chanVolumeShift(int tableEntry, int val) {
+int TownsEuphonyDriver::configChan_adjustVolume(int tableEntry, int val) {
 	if (tableEntry > 31)
 		return 3;
 	if (val <= 40)
@@ -250,11 +250,11 @@ int TownsEuphonyDriver::chanVolumeShift(int tableEntry, int val) {
 	return 0;
 }
 
-int TownsEuphonyDriver::chanNoteShift(int tableEntry, int val) {
+int TownsEuphonyDriver::configChan_setDetune(int tableEntry, int val) {
 	if (tableEntry > 31)
 		return 3;
 	if (val <= 40)
-		_tTranspose[tableEntry] = (int8)(val & 0xff);
+		_tDetune[tableEntry] = (int8)(val & 0xff);
 	return 0;
 }
 
@@ -325,7 +325,7 @@ void TownsEuphonyDriver::resetTables() {
 	for (int i = 0; i < 32; i++)
 		_tOrdr[i] = i & 0x0f;
 	memset(_tLevel, 0, 32);
-	memset(_tTranspose, 0, 32);
+	memset(_tDetune, 0, 32);
 }
 
 void TownsEuphonyDriver::resetTempo() {
@@ -672,8 +672,8 @@ bool TownsEuphonyDriver::evtSetupNote() {
 	uint8 velo = _musicPos[5];
 
 	sendEvent(mode, evt);
-	sendEvent(mode, applyNoteShift(note));
-	sendEvent(mode, applyVolumeShift(velo));
+	sendEvent(mode, applyDetune(note));
+	sendEvent(mode, applyVolumeAdjust(velo));
 
 	jumpNextLoop();
 	if (_musicPos[0] == 0xfe || _musicPos[0] == 0xfd)
@@ -712,7 +712,7 @@ bool TownsEuphonyDriver::evtPolyphonicAftertouch() {
 	uint8 mode = _tMode[_musicPos[1]];
 
 	sendEvent(mode, evt);
-	sendEvent(mode, applyNoteShift(_musicPos[4]));
+	sendEvent(mode, applyDetune(_musicPos[4]));
 	sendEvent(mode, _musicPos[5]);
 
 	return false;
@@ -780,8 +780,8 @@ bool TownsEuphonyDriver::evtModeOrdrChange() {
 	return false;
 }
 
-uint8 TownsEuphonyDriver::applyNoteShift(uint8 in) {
-	int out = _tTranspose[_musicPos[1]];
+uint8 TownsEuphonyDriver::applyDetune(uint8 in) {
+	int out = _tDetune[_musicPos[1]];
 	if (!out)
 		return in;
 	out += (in & 0x7f);
@@ -795,7 +795,7 @@ uint8 TownsEuphonyDriver::applyNoteShift(uint8 in) {
 	return out & 0xff;
 }
 
-uint8 TownsEuphonyDriver::applyVolumeShift(uint8 in) {
+uint8 TownsEuphonyDriver::applyVolumeAdjust(uint8 in) {
 	int out = _tLevel[_musicPos[1]];
 	out += (in & 0x7f);
 	out = CLIP(out, 1, 127);

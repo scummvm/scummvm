@@ -31,7 +31,7 @@
 
 class TownsMidiOutputChannel;
 class TownsMidiInputChannel;
-struct ChanState;
+class TownsMidiChanState;
 
 class MidiDriver_TOWNS : public MidiDriver, public TownsAudioInterfacePluginDriver {
 friend class TownsMidiInputChannel;
@@ -61,9 +61,8 @@ private:
 	TownsMidiOutputChannel *allocateOutputChannel(int pri);
 
 	TownsMidiInputChannel **_channels;
-	TownsMidiOutputChannel **_out;	
-
-	ChanState *_chanState;
+	TownsMidiOutputChannel **_out;
+	TownsMidiChanState *_chanState;
 
 	Common::TimerManager::TimerProc _timerBproc;
 	void *_timerBpara;

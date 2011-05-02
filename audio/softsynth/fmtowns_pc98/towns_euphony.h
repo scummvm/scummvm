@@ -55,11 +55,11 @@ public:
 
 	void setOutputVolume(int chanType, int volLeft, int volRight);
 
-	int chanEnable(int tableEntry, int val);
-	int chanMode(int tableEntry, int val);
-	int chanOrdr(int tableEntry, int val);
-	int chanVolumeShift(int tableEntry, int val);
-	int chanNoteShift(int tableEntry, int val);
+	int configChan_enable(int tableEntry, int val);
+	int configChan_setMode(int tableEntry, int val);
+	int configChan_remap(int tableEntry, int val);
+	int configChan_adjustVolume(int tableEntry, int val);
+	int configChan_setDetune(int tableEntry, int val);
 
 	int assignChannel(int chan, int tableEntry);
 
@@ -111,8 +111,8 @@ private:
 		return false;
 	}
 
-	uint8 applyNoteShift(uint8 in);
-	uint8 applyVolumeShift(uint8 in);
+	uint8 applyDetune(uint8 in);
+	uint8 applyVolumeAdjust(uint8 in);
 
 	void sendNoteOff();
 	void sendNoteOn();
@@ -136,7 +136,7 @@ private:
 	uint8 *_tMode;
 	uint8 *_tOrdr;
 	int8 *_tLevel;
-	int8 *_tTranspose;
+	int8 *_tDetune;
 
 	struct DlEvent {
 		uint8 evt;

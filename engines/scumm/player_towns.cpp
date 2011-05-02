@@ -500,15 +500,15 @@ void Player_Towns_v1::playEuphonyTrack(int sound, const uint8 *data) {
 	const uint8 *trackData = src + 150;
 
 	for (int i = 0; i < 32; i++)
-		_driver->chanEnable(i, *src++);
+		_driver->configChan_enable(i, *src++);
 	for (int i = 0; i < 32; i++)
-		_driver->chanMode(i, 0xff);
+		_driver->configChan_setMode(i, 0xff);
 	for (int i = 0; i < 32; i++)
-		_driver->chanOrdr(i, *src++);
+		_driver->configChan_remap(i, *src++);
 	for (int i = 0; i < 32; i++)
-		_driver->chanVolumeShift(i, *src++);
+		_driver->configChan_adjustVolume(i, *src++);
 	for (int i = 0; i < 32; i++)
-		_driver->chanNoteShift(i, *src++);
+		_driver->configChan_setDetune(i, *src++);
 
 	src += 8;
 	for (int i = 0; i < 6; i++)

@@ -25,38 +25,6 @@
 #include "audio/softsynth/fmtowns_pc98/towns_midi.h"
 #include "common/textconsole.h"
 
-struct ChanState {
-	uint8 get(uint8 type) {
-		switch (type) {
-		case 0:
-			return unk1;
-		case 1:
-			return mulAmsFms;
-		case 2:
-			return tl;
-		case 3:
-			return attDec;
-		case 4:
-			return sus;
-		case 5:
-			return fgAlg;
-		case 6:
-			return unk2;
-		default:
-			break;
-		}
-		return 0;
-	}
-
-	uint8 unk1;
-	uint8 mulAmsFms;
-	uint8 tl;
-	uint8 attDec;
-	uint8 sus;
-	uint8 fgAlg;
-	uint8 unk2;
-};
-
 class TownsMidiOutputChannel {
 friend class TownsMidiInputChannel;
 public:
@@ -119,7 +87,7 @@ private:
 
 	void keyOn();
 	void keyOff();
-	void internKeySetFreq(uint16 frq);
+	void keyOnSetFreq(uint16 frq);
 	void out(uint8 reg, uint8 val);
 
 	TownsMidiInputChannel *_midi;
@@ -205,6 +173,47 @@ private:
 	static const uint8 _programAdjustLevel[];
 };
 
+class TownsMidiChanState {
+public:
+	TownsMidiChanState();
+	~TownsMidiChanState() {}	
+	uint8 get(uint8 type);
+
+	uint8 unk1;
+	uint8 mulAmsFms;
+	uint8 tl;
+	uint8 attDec;
+	uint8 sus;
+	uint8 fgAlg;
+	uint8 unk2;
+};
+
+TownsMidiChanState::TownsMidiChanState() {
+	unk1 = mulAmsFms = tl =	attDec = sus = fgAlg = unk2 = 0;
+}
+
+uint8 TownsMidiChanState::get(uint8 type) {
+	switch (type) {
+	case 0:
+		return unk1;
+	case 1:
+		return mulAmsFms;
+	case 2:
+		return tl;
+	case 3:
+		return attDec;
+	case 4:
+		return sus;
+	case 5:
+		return fgAlg;
+	case 6:
+		return unk2;
+	default:
+		break;
+	}
+	return 0;
+}
+
 TownsMidiOutputChannel::TownsMidiOutputChannel(MidiDriver_TOWNS *driver, int chanIndex) : _driver(driver), _chan(chanIndex),
 	_midi(0), _prev(0), _next(0), _fld_c(0), _carrierTl(0), _note(0), _modulatorTl(0), _sustainNoteOff(0), _duration(0), _fld_13(0), _prg(0), _freq(0), _freqAdjust(0) {
 	_stateA = new StateA[2];
@@ -221,12 +230,12 @@ TownsMidiOutputChannel::~TownsMidiOutputChannel() {
 void TownsMidiOutputChannel::noteOn(uint8 msb, uint16 lsb) {
 	_freq = (msb << 7) + lsb;
 	_freqAdjust = 0;
-	internKeySetFreq(_freq);
+	keyOnSetFreq(_freq);
 }
 
 void TownsMidiOutputChannel::noteOnPitchBend(uint8 msb, uint16 lsb) {
 	_freq = (msb << 7) + lsb;
-	internKeySetFreq(_freq + _freqAdjust);
+	keyOnSetFreq(_freq + _freqAdjust);
 }
 
 void TownsMidiOutputChannel::setupProgram(const uint8 *data, uint8 vol1, uint8 vol2) {
@@ -401,7 +410,7 @@ void TownsMidiOutputChannel::keyOff() {
 	out(0x28, 0);
 }
 
-void TownsMidiOutputChannel::internKeySetFreq(uint16 frq) {
+void TownsMidiOutputChannel::keyOnSetFreq(uint16 frq) {
 	uint8 t = (frq << 1) >> 8;	
 	frq = (_freqMSB[t] << 11) | _freqLSB[t] ;
 	out(0xa4, frq >> 8);
@@ -556,7 +565,7 @@ void TownsMidiInputChannel::noteOn(byte note, byte velocity) {
 }
 
 void TownsMidiInputChannel::programChange(byte program) {
-	// Dysfunctional since this is all done inside the imuse code 
+	// Dysfunctional since this is all done inside the imuse code
 }
 
 void TownsMidiInputChannel::pitchBend(int16 bend) {
@@ -663,8 +672,7 @@ MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer) : _timerBproc(0), _timer
 	for (int i = 0; i < 6; i++)
 		_out[i] = new TownsMidiOutputChannel(this, i);
 
-	_chanState = new ChanState[32];
-	memset(_chanState, 0, 32 * sizeof(ChanState));
+	_chanState = new TownsMidiChanState[32];
 
 	_chanOutputLevel = new uint8[2048];
 	for (int i = 0; i < 64; i++) {
