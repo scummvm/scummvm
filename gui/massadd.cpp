@@ -62,6 +62,7 @@ enum {
 MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	: Dialog("MassAdd"),
 	_dirsScanned(0),
+	_oldGamesCount(0),
 	_okButton(0),
 	_dirProgressText(0),
 	_gameProgressText(0) {
@@ -212,8 +213,10 @@ void MassAddDialog::handleTickle() {
 						break;
 					}
 				}
-				if (duplicate)
+				if (duplicate) {
+					_oldGamesCount++;
 					break;	// Skip duplicates
+				}
 			}
 			result["path"] = path;
 			_games.push_back(result);
@@ -243,14 +246,14 @@ void MassAddDialog::handleTickle() {
 		snprintf(buf, sizeof(buf), "%s", _("Scan complete!"));
 		_dirProgressText->setLabel(buf);
 
-		snprintf(buf, sizeof(buf), _("Discovered %d new games."), _games.size());
+		snprintf(buf, sizeof(buf), _("Discovered %d new games, ignored %d previously added games."), _games.size(), _oldGamesCount);
 		_gameProgressText->setLabel(buf);
 
 	} else {
 		snprintf(buf, sizeof(buf), _("Scanned %d directories ..."), _dirsScanned);
 		_dirProgressText->setLabel(buf);
 
-		snprintf(buf, sizeof(buf), _("Discovered %d new games ..."), _games.size());
+		snprintf(buf, sizeof(buf), _("Discovered %d new games, ignored %d previously added games ..."), _games.size(), _oldGamesCount);
 		_gameProgressText->setLabel(buf);
 	}
 
