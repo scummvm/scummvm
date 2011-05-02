@@ -48,6 +48,7 @@ LuaFile *g_stdout;
 LuaFile *g_stderr;
 
 static int32 s_id = 0;
+Common::HashMap<int32, LuaFile *> *g_files;
 
 LuaFile::LuaFile() : _in(NULL), _out(NULL), _stdin(false), _stdout(false), _stderr(false) {
 }
@@ -125,14 +126,22 @@ static int32 ishandler(lua_Object f) {
 	else return 0;
 }
 
+static LuaFile *getfile(int32 id) {
+	if (g_files->contains(id)) {
+		return (*g_files)[id];
+	}
+
+	return NULL;
+}
+
 static LuaFile *getfile(const char *name) {
 	lua_Object f = lua_getglobal(name);
 	if (!ishandler(f))
 		luaL_verror("global variable `%.50s' is not a file handle", name);
 #ifdef TARGET_64BITS
-	return g_grim->_files[(int64)lua_getuserdata(f)];
+	return getfile((int64)lua_getuserdata(f));
 #else
-	return g_grim->_files[(int32)lua_getuserdata(f)];
+	return getfile((int32)lua_getuserdata(f));
 #endif
 }
 
@@ -141,9 +150,9 @@ static LuaFile *getfileparam(const char *name, int32 *arg) {
 	if (ishandler(f)) {
 		(*arg)++;
 #ifdef TARGET_64BITS
-		return g_grim->_files[(int64)lua_getuserdata(f)];
+		return getfile((int64)lua_getuserdata(f));
 #else
-		return g_grim->_files[(int32)lua_getuserdata(f)];
+		return getfile((int32)lua_getuserdata(f));
 #endif
 	} else
 		return getfile(name);
@@ -169,7 +178,7 @@ static void setreturn(int32 id, const char *name) {
 
 static int32 addfile(LuaFile *f) {
 	++s_id;
-	g_grim->_files[s_id] = f;
+	(*g_files)[s_id] = f;
 
 	return s_id;
 }
@@ -185,7 +194,7 @@ static void io_readfrom() {
 #else
 		int32 id = (int32)lua_getuserdata(f);
 #endif
-		LuaFile *current = g_grim->_files[id];
+		LuaFile *current = getfile(id);
 		if (!current) {
 			pushresult(0);
 			return;
@@ -224,7 +233,7 @@ static void io_writeto() {
 #else
 		int32 id = (int32)lua_getuserdata(f);
 #endif
-		LuaFile *current = g_grim->_files[id];
+		LuaFile *current = getfile(id);
 		if (!current->isOpen()) {
 			pushresult(0);
 			return;
@@ -463,6 +472,8 @@ static void openwithtags() {
 }
 
 void lua_iolibopen() {
+	g_files = new Common::HashMap<int32, LuaFile *>();
+
 	luaL_openlib(iolib, (sizeof(iolib) / sizeof(iolib[0])));
 	luaL_addlibtolist(iolibtag, (sizeof(iolibtag) / sizeof(iolibtag[0])));
 	openwithtags();
@@ -476,6 +487,8 @@ void lua_iolibclose() {
 	delete g_stdin;
 	delete g_stdout;
 	delete g_stderr;
+
+	delete g_files;
 }
 
 } // end of namespace Grim

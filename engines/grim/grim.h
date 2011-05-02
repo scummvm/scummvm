@@ -266,8 +266,6 @@ public:
 	TextObjectDefaults _printLineDefaults;
 	TextObjectDefaults _blastTextDefaults;
 
-	Common::HashMap<int32, LuaFile *> _files;
-
 private:
 
 	void handleControls(int operation, int key, int keyModifier, uint16 ascii);
