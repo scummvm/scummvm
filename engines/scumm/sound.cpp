@@ -527,6 +527,10 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		sprintf(filename, "audio/%s.%d/%d.voc", roomname, offset, b);
 		_vm->openFile(*_sfxFile, filename);
 		if (!_sfxFile->isOpen()) {
+			sprintf(filename, "audio/%s_%d/%d.voc", roomname, offset, b);
+			_vm->openFile(*_sfxFile, filename);
+		}
+		if (!_sfxFile->isOpen()) {
 			sprintf(filename, "%d.%d.voc", offset, b);
 			_vm->openFile(*_sfxFile, filename);
 		}
