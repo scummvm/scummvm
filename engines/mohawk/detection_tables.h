@@ -1431,7 +1431,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("DEMO.512", "27c3455b850e5981d2bf2a3fa489b91e"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_WIP,
+			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV1,
@@ -1446,7 +1446,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("BookOutline", "d30e6026a9809dea579030bac380977d"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_WIP,
+			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV1,
@@ -1461,7 +1461,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("SAMPLER.LB", "6c77cba7326f975645d55fd17ad02d92"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_WIP,
+			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV2,
@@ -1477,7 +1477,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("BookOutline", "48985306013164b128981883045f2c43"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_WIP,
+			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV1,
@@ -1492,7 +1492,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("outline", "d239506f969ff68fa886f084082e9158"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_WIP,
+			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV3,
@@ -1507,7 +1507,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("BookOutline", "6dd1c0606f1db3b71207121b4370e487"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_WIP,
+			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV3,
