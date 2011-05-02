@@ -180,7 +180,7 @@ static void recreateObj(TObject *obj) {
 			obj->value.f = NULL;
 			assert(obj->value.f);
 		}
-	} else if (obj->ttype == LUA_T_NIL || obj->ttype == LUA_T_LINE || obj->ttype == LUA_T_NUMBER) {
+	} else if (obj->ttype == LUA_T_NIL || obj->ttype == LUA_T_LINE || obj->ttype == LUA_T_NUMBER || obj->ttype == LUA_T_TASK) {
 		return;
 	} else {
 		if (obj->value.i == 0)
