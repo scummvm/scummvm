@@ -1492,7 +1492,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("outline", "d239506f969ff68fa886f084082e9158"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV3,
@@ -1507,7 +1507,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("BookOutline", "6dd1c0606f1db3b71207121b4370e487"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_NO_FLAGS,
+			ADGF_WIP,
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV3,
