@@ -23,6 +23,10 @@
  *
  */
 
+
+// Enable mkdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+
 #include "common/scummsys.h"
 
 #if defined(UNIX) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)

@@ -351,7 +351,7 @@ void MidiDriver_MT32::send(uint32 b) {
 
 void MidiDriver_MT32::setPitchBendRange(byte channel, uint range) {
 	if (range > 24) {
-		printf("setPitchBendRange() called with range > 24: %d", range);
+		warning("setPitchBendRange() called with range > 24: %d", range);
 	}
 	byte benderRangeSysex[9];
 	benderRangeSysex[0] = 0x41; // Roland

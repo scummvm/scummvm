@@ -66,7 +66,7 @@ SdlEventSource::SdlEventSource()
 
 		// Enable joystick
 		if (SDL_NumJoysticks() > 0) {
-			printf("Using joystick: %s\n", SDL_JoystickName(0));
+			debug("Using joystick: %s", SDL_JoystickName(0));
 			_joystick = SDL_JoystickOpen(joystick_num);
 		}
 	}

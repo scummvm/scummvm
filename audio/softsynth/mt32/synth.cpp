@@ -19,6 +19,12 @@
  * IN THE SOFTWARE.
  */
 
+// FIXME: Avoid using printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
+// FIXME: Avoid using vprintf
+#define FORBIDDEN_SYMBOL_EXCEPTION_vprintf
+
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>

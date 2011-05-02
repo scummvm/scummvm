@@ -23,6 +23,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+
 #include "common/scummsys.h"
 
 #ifdef UNIX
@@ -33,6 +35,7 @@
 
 #include <errno.h>
 #include <sys/stat.h>
+
 
 OSystem_POSIX::OSystem_POSIX(Common::String baseConfigName)
 	:

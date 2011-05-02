@@ -23,6 +23,9 @@
  *
  */
 
+// FIXME: Avoid using printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "engines/metaengine.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"

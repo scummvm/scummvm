@@ -2279,9 +2279,9 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				SDL_RWclose(file);
 			}
 			if (saveScreenshot(filename))
-				printf("Saved '%s'\n", filename);
+				debug("Saved screenshot '%s'", filename);
 			else
-				printf("Could not save screenshot!\n");
+				warning("Could not save screenshot");
 			return true;
 		}
 

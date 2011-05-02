@@ -31,6 +31,9 @@
  * of almost all the classes, methods and variables, and how they interact.
  */
 
+// FIXME: Avoid using printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "engines/engine.h"
 #include "engines/metaengine.h"
 #include "base/commandLine.h"
