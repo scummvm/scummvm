@@ -1150,9 +1150,9 @@ void Costume::moveHead() {
 			}
 			_joint1Node->_animYaw = _headYaw;
 			float pi = _headPitch / 3.f;
-			_joint1Node->_animPitch = pi;
-			_joint2Node->_animPitch = pi;
-			_joint3Node->_animPitch = pi;
+			_joint1Node->_animPitch += pi;
+			_joint2Node->_animPitch += pi;
+			_joint3Node->_animPitch += pi;
 			_joint1Node->_animRoll = (_joint1Node->_animYaw / 20.f) * -_headPitch / 5.f;
 
 			if (_joint1Node->_animRoll > _head.maxRoll)
@@ -1196,7 +1196,9 @@ void Costume::moveHead() {
 		float bodyYaw = _matrix._rot.getYaw();
 		p = _joint1Node->_parent;
 		while (p) {
-			bodyYaw += p->_animYaw;
+			bodyYaw += p->_yaw;
+			if (p->_totalWeight > 0)
+				bodyYaw += p->_animYaw / p->_totalWeight;
 			p = p->_parent;
 		}
 
@@ -1252,9 +1254,9 @@ void Costume::moveHead() {
 			pitch = _headPitch - pitchStep;
 
 		float pi = pitch / 3.f;
-		_joint1Node->_animPitch = pi;
-		_joint2Node->_animPitch = pi;
-		_joint3Node->_animPitch = pi;
+		_joint1Node->_animPitch += pi;
+		_joint2Node->_animPitch += pi;
+		_joint3Node->_animPitch += pi;
 
 		//animate yaw
 		if (_joint1Node->_animYaw - _headYaw > yawStep)
