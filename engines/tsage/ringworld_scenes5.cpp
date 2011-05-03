@@ -3309,6 +3309,7 @@ void Scene4250::Hotspot1::doAction(int action) {
 }
 
 void Scene4250::Hotspot2::doAction(int action) {
+	//Ship with stasis field
 	Scene4250 *scene = (Scene4250 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -3640,6 +3641,7 @@ void Scene4250::signal() {
 		break;
 	case 4253:
 		if (_globals->_stripNum == 4301) {
+			_sceneMode = 4261;
 			ADD_MOVER_NULL(_hotspot1, 241, 169);
 			setAction(&_sequenceManager, this, 4261, &_globals->_player, &_hotspot6, NULL);
 		} else {
@@ -3660,10 +3662,6 @@ void Scene4250::signal() {
 	case 4270:
 		_globals->_player.enableControl();
 		break;
-	case 4255:
-	case 4262:
-	case 4263:
-		break;
 	case 4259:
 		_globals->_soundHandler.startSound(360);
 		_globals->_sceneManager.changeScene(9900);
@@ -3671,6 +3669,11 @@ void Scene4250::signal() {
 	case 4261:
 		RING_INVENTORY._keyDevice._sceneNumber = 1;
 		_globals->_player.enableControl();
+		break;
+	case 4255:
+	case 4262:
+	case 4263:
+	default:
 		break;
 	}
 }
@@ -3861,6 +3864,7 @@ void Scene4300::Hotspot9::doAction(int action) {
 }
 
 void Scene4300::Hotspot10::doAction(int action) {
+	// Alien
 	Scene4300 *scene = (Scene4300 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -4244,6 +4248,7 @@ void Scene4301::Action1::signal() {
 		_actionIndex = 2;
 		break;
 	case 10:
+		// Puzzle: Wrong code 
 		_globals->_events.setCursor(CURSOR_NONE);
 		scene->_soundHandler.startSound(337);
 		if (scene->_hotspot3._flags & OBJFLAG_HIDE)
@@ -4268,6 +4273,7 @@ void Scene4301::Action1::signal() {
 		_globals->_events.setCursor(CURSOR_USE);
 		break;
 	case 20:
+		// Puzzle: Correct code
 		_globals->_player.disableControl();
 		scene->_soundHandler.startSound(339);
 		scene->_hotspot3._frame = 3;
@@ -4290,6 +4296,7 @@ void Scene4301::Action1::signal() {
 }
 
 void Scene4301::Action1::process(Event &event) {
+	// Puzzle
 	Scene4301 *scene = (Scene4301 *)_globals->_sceneManager._scene;
 	Rect buttonsRect;
 
@@ -4344,6 +4351,7 @@ void Scene4301::Action1::process(Event &event) {
 /*--------------------------------------------------------------------------*/
 
 void Scene4301::Hotspot4::doAction(int action) {
+	// Hatch near door
 	Scene4301 *scene = (Scene4301 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_USE) {
