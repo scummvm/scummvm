@@ -62,9 +62,13 @@ void SceneManager::checkScene() {
 }
 
 void SceneManager::sceneChange() {
+	int activeScreenNumber = 0;
+
 	// Handle removing the scene
-	if (_scene)
+	if (_scene) {
+		activeScreenNumber = _scene->_activeScreenNumber;
 		_scene->remove();
+	}
 
 	// Clear the scene objects
 	SynchronisedList<SceneObject *>::iterator io = _globals->_sceneObjects->begin();
@@ -122,7 +126,7 @@ void SceneManager::sceneChange() {
 	if (!_saver->getMacroRestoreFlag())
 		_scene->postInit();
 	else
-		_scene->loadScene(_sceneNumber);
+		_scene->loadScene(activeScreenNumber);
 }
 
 Scene *SceneManager::getNewScene() {
@@ -225,15 +229,16 @@ void SceneManager::setBgOffset(const Common::Point &pt, int loadCount) {
 
 void SceneManager::listenerSynchronise(Serialiser &s) {
 	s.validate("SceneManager");
-	_altSceneObjects.synchronise(s);
 
+	_altSceneObjects.synchronise(s);
 	s.syncAsSint32LE(_sceneNumber);
+	s.syncAsUint16LE(_globals->_sceneManager._scene->_activeScreenNumber);
+
 	if (s.isLoading()) {
 		changeScene(_sceneNumber);
 		checkScene();
 	}
 
-	s.syncAsUint16LE(_globals->_sceneManager._scene->_activeScreenNumber);
 	_globals->_sceneManager._scrollerRect.synchronise(s);
 	SYNC_POINTER(_globals->_scrollFollower);
 	s.syncAsSint16LE(_loadMode);
@@ -252,6 +257,8 @@ Scene::~Scene() {
 }
 
 void Scene::synchronise(Serialiser &s) {
+	StripCallback::synchronise(s);
+
 	s.syncAsSint32LE(_field12);
 	s.syncAsSint32LE(_screenNumber);
 	s.syncAsSint32LE(_activeScreenNumber);

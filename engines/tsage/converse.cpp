@@ -53,6 +53,8 @@ void SequenceManager::setup() {
 }
 
 void SequenceManager::synchronise(Serialiser &s) {
+	Action::synchronise(s);
+
 	s.syncAsSint32LE(_resNum);
 	s.syncAsSint32LE(_sequenceOffset);
 	s.syncAsByte(_keepActive);

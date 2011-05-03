@@ -110,8 +110,6 @@ Action::Action() {
 
 void Action::synchronise(Serialiser &s) {
 	EventHandler::synchronise(s);
-	if (s.isLoading())
-		remove();
 
 	SYNC_POINTER(_owner);
 	s.syncAsSint32LE(_actionIndex);
