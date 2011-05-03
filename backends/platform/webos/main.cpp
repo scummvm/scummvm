@@ -23,6 +23,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+
 #include "backends/platform/webos/webos.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"

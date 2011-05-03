@@ -144,68 +144,91 @@
 #endif
 
 
+//
 // Disable various symbols from time.h
+//
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
-/*
-#ifndef FORBIDDEN_SYMBOL_EXCEPTION_time_t
-#undef time_t
-#define time_t	FORBIDDEN_SYMBOL_REPLACEMENT
-#endif
-*/
+	/*
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_time_t
+	#undef time_t
+	#define time_t	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+	*/
 
-#ifndef FORBIDDEN_SYMBOL_EXCEPTION_asctime
-#undef asctime
-#define asctime(a)	FORBIDDEN_SYMBOL_REPLACEMENT
-#endif
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_asctime
+	#undef asctime
+	#define asctime(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
 
-#ifndef FORBIDDEN_SYMBOL_EXCEPTION_clock
-#undef clock
-#define clock()	FORBIDDEN_SYMBOL_REPLACEMENT
-#endif
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_clock
+	#undef clock
+	#define clock()	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
 
-#ifndef FORBIDDEN_SYMBOL_EXCEPTION_ctime
-#undef ctime
-#define ctime(a)	FORBIDDEN_SYMBOL_REPLACEMENT
-#endif
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_ctime
+	#undef ctime
+	#define ctime(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
 
-#ifndef FORBIDDEN_SYMBOL_EXCEPTION_difftime
-#undef difftime
-#define difftime(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
-#endif
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_difftime
+	#undef difftime
+	#define difftime(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
 
-#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getdate
-#undef getdate
-#define getdate(a)	FORBIDDEN_SYMBOL_REPLACEMENT
-#endif
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getdate
+	#undef getdate
+	#define getdate(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
 
-#ifndef FORBIDDEN_SYMBOL_EXCEPTION_gmtime
-#undef gmtime
-#define gmtime(a)	FORBIDDEN_SYMBOL_REPLACEMENT
-#endif
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_gmtime
+	#undef gmtime
+	#define gmtime(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
 
-#ifndef FORBIDDEN_SYMBOL_EXCEPTION_localtime
-#undef localtime
-#define localtime(a)	FORBIDDEN_SYMBOL_REPLACEMENT
-#endif
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_localtime
+	#undef localtime
+	#define localtime(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
 
-#ifndef FORBIDDEN_SYMBOL_EXCEPTION_mktime
-#undef mktime
-#define mktime(a)	FORBIDDEN_SYMBOL_REPLACEMENT
-#endif
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_mktime
+	#undef mktime
+	#define mktime(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
 
-#ifndef FORBIDDEN_SYMBOL_EXCEPTION_time
-#undef time
-#define time(a)	FORBIDDEN_SYMBOL_REPLACEMENT
-#endif
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_time
+	#undef time
+	#define time(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
 
 #endif // FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
+//
+// Disable various symbols from unistd.h
+//
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
-#ifndef FORBIDDEN_SYMBOL_EXCEPTION_chdir
-#undef chdir
-#define chdir(a)	FORBIDDEN_SYMBOL_REPLACEMENT
-#endif
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_chdir
+	#undef chdir
+	#define chdir(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getcwd
+	#undef getcwd
+	#define getcwd(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getwd
+	#undef getwd
+	#define getwd(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_unlink
+	#undef unlink
+	#define unlink(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+#endif // FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #undef mkdir
@@ -222,11 +245,6 @@
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_setvbuf
 #undef setvbuf
 #define setvbuf(a,b,c,d)	FORBIDDEN_SYMBOL_REPLACEMENT
-#endif
-
-#ifndef FORBIDDEN_SYMBOL_EXCEPTION_unlink
-#undef unlink
-#define unlink(a)	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
 /*

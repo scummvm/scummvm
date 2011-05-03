@@ -40,11 +40,9 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
-// Avoid clashes with unistd.h
-#define FORBIDDEN_SYMBOL_EXCEPTION_chdir
-#define FORBIDDEN_SYMBOL_EXCEPTION_unlink
+#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 
 #include "backends/fs/psp/psp-fs.h"
 #include "backends/fs/psp/psp-stream.h"

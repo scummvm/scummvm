@@ -22,6 +22,8 @@
 
 #ifdef __N64__
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+
 #include "backends/fs/n64/n64-fs.h"
 #include "backends/fs/n64/romfsstream.h"
 

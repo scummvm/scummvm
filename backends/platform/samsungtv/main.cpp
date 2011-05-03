@@ -23,6 +23,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+
 #include "backends/platform/samsungtv/samsungtv.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
