@@ -1064,8 +1064,11 @@ void GrimEngine::savegameRestore() {
 	//  unlock resources
 	delete _savedState;
 
-	if (bundle_dofile("patch05.bin") == 2)
-		single_dofile("patch05.bin");
+	// Apply the patch, only if it wasn't applied already.
+	if (lua_isnil(lua_getglobal("  service_release.lua"))) {
+		if (bundle_dofile("patch05.bin") == 2)
+			single_dofile("patch05.bin");
+	}
 
 	g_imuse->pause(false);
 	g_smush->pause(false);
