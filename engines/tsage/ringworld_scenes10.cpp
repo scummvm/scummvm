@@ -1687,22 +1687,22 @@ void Scene9900::strAction2::signal() {
 		_lineNum = 0;
 		_txtArray1Index = 0;
 		_txtArray1[0]._position.y = 200;
-		_txtArray1[0]._position.y = 300;
+		_txtArray1[1]._position.y = 300;
 		_txtArray2[0]._position.y = 400;
-		_txtArray2[0]._position.y = 500;
+		_txtArray2[1]._position.y = 500;
 		_var3 = 0;
 		// No break on purpose
 	case 1: {
 		Common::String msg = _resourceManager->getMessage(8030, _lineNum++);
-		if (!msg.compareTo("LASTCREDIT")) {
-			if (_var3 == 0) {
+		if (msg.compareTo("LASTCREDIT")) {
+			if (_var3) {
 				// Not used?
 				// int x = _txtArray1[_txtArray1Index].getFrame().getBounds().height();
 				_txtArray1[_txtArray1Index]._moveDiff.y = 10;
 
 				NpcMover *mover = new NpcMover();
-				Common::Point pt(_txtArray1[_txtArray1Index]._moveDiff.x, -100);
-				_txtArray1[_txtArray1Index].addMover(mover, &pt, 0);
+				Common::Point pt(_txtArray1[_txtArray1Index]._position.x, -100);
+				_txtArray1[_txtArray1Index].addMover(mover, &pt, NULL);
 
 				// Not used?
 				// int x = _txtArray2[_txtArray1Index].getFrame().getBounds().height();
@@ -1721,9 +1721,10 @@ void Scene9900::strAction2::signal() {
 			int frameWidth = _txtArray1[_txtArray1Index].getFrame().getBounds().width();
 			int frameHeight = _txtArray1[_txtArray1Index].getFrame().getBounds().height();
 			_txtArray1[_txtArray1Index].setPosition(Common::Point((320 - frameWidth) / 2, 200));
+
 			NpcMover *mover2 = new NpcMover();
 			Common::Point pt2(_txtArray1[_txtArray1Index]._position.x, 100);
-			_txtArray1[_txtArray1Index].addMover(mover2, &pt2, 0);
+			_txtArray1[_txtArray1Index].addMover(mover2, &pt2, this);
 
 			_txtArray2[_txtArray1Index]._textMode = ALIGN_CENTER;
 			_txtArray2[_txtArray1Index]._width = 240;
