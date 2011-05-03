@@ -40,6 +40,8 @@ public:
 	void connect(TownsMidiInputChannel *chan);
 	void disconnect();
 
+	bool update();
+
 	enum CheckPriorityStatus {
 		kDisconnected = -3,
 		kHighPriority = -2
@@ -81,7 +83,9 @@ private:
 
 	uint32 getEffectState(uint8 type);
 	void initEffect(StateA *a, const uint8 *effectData);
-	void updateEffect(StateA *a);
+	void updateEffectOuter3(StateA *a, StateB *b);
+	void updateEffectOuter(StateA *a, StateB *b);
+	void updateEffect(StateA *a);	
 	int lookupVolume(int a, int b);
 
 	void keyOn();
@@ -98,10 +102,8 @@ private:
 	uint8 _carrierTl;
 	uint8 _modulatorTl;
 	uint8 _sustainNoteOff;
-	uint32 _duration;
-	uint8 _fld_13;
-	uint8 _prg;
-
+	int32 _duration;
+	
 	uint16 _freq;
 	int16 _freqAdjust;
 
@@ -215,7 +217,7 @@ uint8 TownsMidiChanState::get(uint8 type) {
 }
 
 TownsMidiOutputChannel::TownsMidiOutputChannel(MidiDriver_TOWNS *driver, int chanIndex) : _driver(driver), _chan(chanIndex),
-	_midi(0), _prev(0), _next(0), _fld_c(0), _carrierTl(0), _note(0), _modulatorTl(0), _sustainNoteOff(0), _duration(0), _fld_13(0), _prg(0), _freq(0), _freqAdjust(0) {
+	_midi(0), _prev(0), _next(0), _fld_c(0), _carrierTl(0), _note(0), _modulatorTl(0), _sustainNoteOff(0), _duration(0), _freq(0), _freqAdjust(0) {
 	_stateA = new StateA[2];
 	memset(_stateA, 0, 2 * sizeof(StateA));
 	_stateB = new StateB[2];
@@ -363,6 +365,24 @@ void TownsMidiOutputChannel::disconnect() {
 	_midi = 0;
 }
 
+bool TownsMidiOutputChannel::update() {
+	if (!_midi)
+		return false;
+
+	_duration -= 17;
+	if (_duration <=0) {
+		disconnect();
+		return true;
+	}
+
+	for (int i = 0; i < 2; i++) {
+		if (_stateA[i].numLoop)
+			updateEffectOuter3(&_stateA[i], &_stateB[i]);
+	}
+
+	return false;
+}
+
 int TownsMidiOutputChannel::checkPriority(int pri) {
 	if (!_midi)
 		return kDisconnected;
@@ -407,6 +427,14 @@ void TownsMidiOutputChannel::initEffect(StateA *a, const uint8 *effectData) {
 	a->ar2[2] = 0;
 	a->ar2[3] = effectData[7];
 	updateEffect(a);
+}
+
+void TownsMidiOutputChannel::updateEffectOuter3(StateA *a, StateB *b) {
+
+}
+
+void TownsMidiOutputChannel::updateEffectOuter(StateA *a, StateB *b) {
+
 }
 
 void TownsMidiOutputChannel::updateEffect(StateA *a) {
@@ -741,7 +769,7 @@ const uint8 TownsMidiInputChannel::_programAdjustLevel[] = {
 	0x3D, 0x3D, 0x3E, 0x3E, 0x3E, 0x3F, 0x3F, 0x3F
 };
 
-MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer) : _timerProc(0), _timerProcPara(0), _tickCounter(0), _curChan(0), _rand(1), _open(false) {
+MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer) : _timerProc(0), _timerProcPara(0), _tickCounter1(0), _tickCounter2(0), _curChan(0), _rand(1), _open(false) {
 	_intf = new TownsAudioInterface(mixer, this);
 
 	_channels = new TownsMidiInputChannel*[32];
@@ -846,7 +874,7 @@ void MidiDriver_TOWNS::setTimerCallback(void *timer_param, Common::TimerManager:
 }
 
 uint32 MidiDriver_TOWNS::getBaseTempo() {
-	return 4167;
+	return 10080;
 }
 
 MidiChannel *MidiDriver_TOWNS::allocateChannel() {
@@ -869,14 +897,14 @@ void MidiDriver_TOWNS::timerCallback(int timerId) {
 
 	switch (timerId) {
 	case 1:
-		if (_timerProc) {
-			_timerProc(_timerProcPara);
-			_tickCounter += 10000;
-			while (_tickCounter >= 4167) {
-				_tickCounter -= 4167;
-				_timerProc(_timerProcPara);
-			}
-		}
+		updateParser();
+		updateOutputChannels();
+
+		/*_tickCounter1 += 10000;
+		while (_tickCounter1 >= 4167) {
+			_tickCounter1 -= 4167;
+			unkUpdate();
+		}*/
 		break;
 	default:
 		break;
@@ -904,6 +932,23 @@ TownsMidiOutputChannel *MidiDriver_TOWNS::allocateOutputChannel(int pri) {
 		res->disconnect();
 
 	return res;
+}
+
+void MidiDriver_TOWNS::updateParser() {
+	if (_timerProc)
+		_timerProc(_timerProcPara);
+}
+
+void MidiDriver_TOWNS::updateOutputChannels() {
+	_tickCounter2 += 10000;
+	while (_tickCounter2 >= 16667) {
+		_tickCounter2 -= 16667;
+		for (int i = 0; i < 6; i++) {
+			TownsMidiOutputChannel *oc = _out[i];
+			if (oc->update())
+				return;
+		}
+	}
 }
 
 int MidiDriver_TOWNS::randomValue(int para) {

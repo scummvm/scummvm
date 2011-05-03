@@ -59,7 +59,10 @@ public:
 	
 private:
 	TownsMidiOutputChannel *allocateOutputChannel(int pri);
-	
+
+	void updateParser();
+	void updateOutputChannels();
+		
 	int randomValue(int para);
 
 	TownsMidiInputChannel **_channels;
@@ -71,7 +74,8 @@ private:
 
 	TownsAudioInterface *_intf;
 
-	uint32 _tickCounter;
+	uint32 _tickCounter1;
+	uint32 _tickCounter2;
 	uint8 _curChan;
 	uint8 _rand;
 	
