@@ -26,6 +26,8 @@
 // Allow use of stuff in <time.h>
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include <common/scummsys.h>
 #include <engines/engine.h>
 #include <base/main.h>

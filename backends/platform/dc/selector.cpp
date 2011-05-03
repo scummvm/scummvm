@@ -23,6 +23,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_chdir
+
 #include <common/scummsys.h>
 #include <engines/engine.h>
 #include <engines/metaengine.h>

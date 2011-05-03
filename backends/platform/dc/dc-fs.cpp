@@ -22,6 +22,10 @@
  * $Id$
  */
 
+// Avoid clashes with unistd.h
+#define FORBIDDEN_SYMBOL_EXCEPTION_chdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_unlink
+
 #include "dc.h"
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/stdiostream.h"
