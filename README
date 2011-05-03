@@ -26,9 +26,9 @@ A software renderer is also included for machines without hardware OpenGL.
 Residual is a fairly slow developing project and is still very much considered
 alpha. 
 
-2.1 - Which games does it support?
-----------------------------------
-Currently it supports the GrimE-engine, but only Grim Fandango.
+2.1 - Which games does Residual support?
+----------------------------------------
+Currently Residual supports the GrimE-engine, but only Grim Fandango.
 
 2.1.1 . GrimE-games support 
 -----------------------------------
@@ -73,12 +73,25 @@ GRIM.TAB
 3.2 - Running Grim Fandango
 ------------------------------------
 1. Copy the neccessary files to a folder on your Hard Drive.
+2. Apply the patch, if you don't have it*
 2. Open Residual
 3. Choose "Add Game"
 4. Select the folder you created in step 1
 5. Click Start
 
+* Patched versions have subtitles in cutscenes, and can complete
+the game, unpatched versions don't have subtitles in cutscenes, 
+and can't complete the game. 
 
+The patch can be downloaded from:
+ftp://ftp.lucasarts.com/patches/pc/Gfupd101.exe and obviously requires
+Windows or something similar to unpack and apply it. (There does exist
+tools to unpack it on any platform in the residual-tools git-repos).
+
+If you want to try to play with fullscreen, or you want to play with
+software-rendering, see the configuration-section below.
+
+-----------------------------
 4 - Default Keyboard-settings
 -----------------------------
 e,u,p,i    : Examine, Use, Pickup, Inventory
