@@ -25,6 +25,9 @@
 
 #if defined(__ANDROID__)
 
+// Allow use of stuff in <time.h>
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <sys/system_properties.h>

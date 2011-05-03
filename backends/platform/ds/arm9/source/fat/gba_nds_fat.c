@@ -18,6 +18,9 @@
 //---------------------------------------------------------------
 // Includes
 
+// Allow use of stuff in <time.h>
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
 #include "gba_nds_fat.h"
 #include "disc_io.h"
 #include <string.h>
