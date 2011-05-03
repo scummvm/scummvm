@@ -1755,7 +1755,7 @@ void Scene4045::OlloStand::doAction(int action) {
 	case CURSOR_TALK:
 		if (_strip == 5) {
 			setStrip(6);
-			animate(ANIM_MODE_NONE, 0);
+			animate(ANIM_MODE_NONE, NULL);
 		}
 		if (_globals->_player._position.y < 135) {
 			scene->_sceneMode = 4046;
