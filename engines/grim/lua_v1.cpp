@@ -78,32 +78,24 @@ static inline void pushbool(bool val) {
 		lua_pushnil();
 }
 
-static void pushobject(int id, int32 tag) {
-	lua_pushusertag(id, tag);
-}
-
-static int getobject(lua_Object obj) {
-	return lua_getuserdata(obj);
-}
-
 static Actor *getactor(lua_Object obj) {
-	return g_grim->actor(getobject(obj));
+	return g_grim->actor(lua_getuserdata(obj));
 }
 
 static TextObject *gettextobject(lua_Object obj) {
-	return g_grim->textObject(getobject(obj));
+	return g_grim->textObject(lua_getuserdata(obj));
 }
 
 static Font *getfont(lua_Object obj) {
-	return g_grim->getFont(getobject(obj));
+	return g_grim->getFont(lua_getuserdata(obj));
 }
 
 static Color *getcolor(lua_Object obj) {
-	return g_grim->color(getobject(obj));
+	return g_grim->color(lua_getuserdata(obj));
 }
 
 static PrimitiveObject *getprimitive(lua_Object obj) {
-	return g_grim->primitiveObject(getobject(obj));
+	return g_grim->primitiveObject(lua_getuserdata(obj));
 }
 
 // Lua interface to bundle_dofile
@@ -242,7 +234,7 @@ static void MakeColor() {
 
 	Color *c = new Color (r, g ,b);
 	g_grim->registerColor(c);
-	pushobject(c->getId(), MKTAG('C','O','L','R'));
+	lua_pushusertag(c->getId(), MKTAG('C','O','L','R'));
 }
 
 static void GetColorComponents() {
@@ -296,7 +288,7 @@ static void LoadActor() {
 	else
 		name = lua_getstring(nameObj);
 	Actor *a = new Actor(name);
-	pushobject(a->getId(), MKTAG('A','C','T','R'));
+	lua_pushusertag(a->getId(), MKTAG('A','C','T','R'));
 }
 
 static void GetActorTimeScale() {
@@ -325,7 +317,7 @@ static void SetSelectedActor() {
 static void GetCameraActor() {
 	// TODO verify what is going on with selected actor
 	Actor *actor = g_grim->selectedActor();
-	pushobject(actor->getId(), MKTAG('A','C','T','R'));
+	lua_pushusertag(actor->getId(), MKTAG('A','C','T','R'));
 }
 
 
@@ -470,7 +462,7 @@ static void GetActorTalkColor() {
 		return;
 	}
 	Actor *actor = getactor(actorObj);
-	pushobject(actor->talkColor()->getId(), MKTAG('C','O','L','R'));
+	lua_pushusertag(actor->talkColor()->getId(), MKTAG('C','O','L','R'));
 }
 
 static bool findCostume(lua_Object costumeObj, Actor *actor, Costume **costume) {
@@ -1943,7 +1935,7 @@ static void GetVisibleThings() {
 		// Consider the active actor visible
 		if (actor == a || actor->angleTo(*a) < 90) {
 			lua_pushobject(result);
-			pushobject(i->_key, MKTAG('A','C','T','R'));
+			lua_pushusertag(i->_key, MKTAG('A','C','T','R'));
 			lua_pushnumber(1);
 			lua_settable();
 		}
@@ -2985,14 +2977,14 @@ static void GetImage() {
 	const char *bitmapName = lua_getstring(nameObj);
 	Bitmap *b = g_resourceloader->loadBitmap(bitmapName);
 	g_grim->registerBitmap(b);
-	pushobject(b->getId(), MKTAG('V','B','U','F'));
+	lua_pushusertag(b->getId(), MKTAG('V','B','U','F'));
 }
 
 static void FreeImage() {
 	lua_Object param = lua_getparam(1);
 	if (!lua_isuserdata(param) || lua_tag(param) != MKTAG('V','B','U','F'))
 		return;
-	Bitmap *bitmap = g_grim->getBitmap(getobject(param));
+	Bitmap *bitmap = g_grim->getBitmap(lua_getuserdata(param));
 	g_grim->killBitmap(bitmap);
 }
 
@@ -3000,7 +2992,7 @@ static void BlastImage() {
 	lua_Object param = lua_getparam(1);
 	if (!lua_isuserdata(param) || lua_tag(param) != MKTAG('V','B','U','F'))
 		return;
-	Bitmap *bitmap = g_grim->getBitmap(getobject(param));
+	Bitmap *bitmap = g_grim->getBitmap(lua_getuserdata(param));
 	lua_Object xObj = lua_getparam(2);
 	lua_Object yObj = lua_getparam(3);
 	if (!lua_isnumber(xObj) || !lua_isnumber(yObj))
@@ -3220,7 +3212,7 @@ static void MakeTextObject() {
 		textObject->createBitmap();
 	g_grim->registerTextObject(textObject);
 
-	pushobject(textObject->getId(), MKTAG('T', 'E', 'X', 'T'));
+	lua_pushusertag(textObject->getId(), MKTAG('T', 'E', 'X', 'T'));
 	if (!(g_grim->getGameFlags() & GF_DEMO)) {
 		lua_pushnumber(textObject->getBitmapWidth());
 		lua_pushnumber(textObject->getBitmapHeight());
@@ -3420,7 +3412,7 @@ static void DrawPolygon() {
 	PrimitiveObject *p = new PrimitiveObject();
 	p->createPolygon(p1, p2, p3, p4, color);
 	g_grim->registerPrimitiveObject(p);
-	pushobject(p->getId(), MKTAG('P','R','I','M'));
+	lua_pushusertag(p->getId(), MKTAG('P','R','I','M'));
 }
 
 static void DrawLine() {
@@ -3460,7 +3452,7 @@ static void DrawLine() {
 	PrimitiveObject *p = new PrimitiveObject();
 	p->createLine(p1, p2, color); // TODO Add layer support
 	g_grim->registerPrimitiveObject(p);
-	pushobject(p->getId(), MKTAG('P','R','I','M'));
+	lua_pushusertag(p->getId(), MKTAG('P','R','I','M'));
 }
 
 static void ChangePrimitive() {
@@ -3608,7 +3600,7 @@ static void DrawRectangle() {
 	PrimitiveObject *p = new PrimitiveObject();
 	p->createRectangle(p1, p2, color, filled);
 	g_grim->registerPrimitiveObject(p);
-	pushobject(p->getId(), MKTAG('P','R','I','M')); // FIXME: we use PRIM usetag here
+	lua_pushusertag(p->getId(), MKTAG('P','R','I','M')); // FIXME: we use PRIM usetag here
 }
 
 static void BlastRect() {
@@ -3693,21 +3685,21 @@ static void NewObjectState() {
 	ObjectState *state = new ObjectState(setupID, pos, bitmap, zbitmap, transparency);
 	g_grim->registerObjectState(state);
 	g_grim->currScene()->addObjectState(state);
-	pushobject(state->getId(), MKTAG('S','T','A','T'));
+	lua_pushusertag(state->getId(), MKTAG('S','T','A','T'));
 }
 
 static void FreeObjectState() {
 	lua_Object param = lua_getparam(1);
 	if (!lua_isuserdata(param) || lua_tag(param) != MKTAG('S','T','A','T'))
 		return;
-	ObjectState *state =  g_grim->objectState(getobject(param));
+	ObjectState *state =  g_grim->objectState(lua_getuserdata(param));
 	g_grim->currScene()->deleteObjectState(state);
 }
 
 static void SendObjectToBack() {
 	lua_Object param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKTAG('S','T','A','T')) {
-		ObjectState *state =  g_grim->objectState(getobject(param));
+		ObjectState *state =  g_grim->objectState(lua_getuserdata(param));
 		g_grim->currScene()->moveObjectStateToFirst(state);
 	}
 }
@@ -3715,7 +3707,7 @@ static void SendObjectToBack() {
 static void SendObjectToFront() {
 	lua_Object param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKTAG('S','T','A','T')) {
-		ObjectState *state =  g_grim->objectState(getobject(param));
+		ObjectState *state =  g_grim->objectState(lua_getuserdata(param));
 		g_grim->currScene()->moveObjectStateToLast(state);
 	}
 }
@@ -3724,7 +3716,7 @@ static void SetObjectType() {
 	lua_Object param = lua_getparam(1);
 	if (!lua_isuserdata(param) || lua_tag(param) != MKTAG('S','T','A','T'))
 		return;
-	ObjectState *state =  g_grim->objectState(getobject(param));
+	ObjectState *state =  g_grim->objectState(lua_getuserdata(param));
 	int val = (int)lua_getnumber(lua_getparam(2));
 	ObjectState::Position pos = (ObjectState::Position)val;
 	state->setPos(pos);
@@ -3743,7 +3735,7 @@ static void ScreenShot() {
 	Bitmap *screenshot = g_driver->getScreenshot(width, height);
 	g_grim->setMode(mode);
 	if (screenshot) {
-		pushobject(screenshot->getId(), MKTAG('V','B','U','F'));
+		lua_pushusertag(screenshot->getId(), MKTAG('V','B','U','F'));
 	} else {
 		lua_pushnil();
 	}
@@ -3771,7 +3763,7 @@ static void GetSaveGameImage() {
 	savedState->read(data, dataSize);
 	screenshot = g_grim->registerBitmap(data, width, height, "screenshot");
 	if (screenshot) {
-		pushobject(screenshot->getId(), MKTAG('V','B','U','F'));
+		lua_pushusertag(screenshot->getId(), MKTAG('V','B','U','F'));
 	} else {
 		lua_pushnil();
 		warning("Could not restore screenshot from file");
@@ -3890,7 +3882,7 @@ static void LockFont() {
 		Font *result = g_resourceloader->loadFont(fontName);
 		if (result) {
 			g_grim->registerFont(result);
-			pushobject(result->getId(), MKTAG('F','O','N','T'));
+			lua_pushusertag(result->getId(), MKTAG('F','O','N','T'));
 			return;
 		}
 	}
@@ -4074,7 +4066,7 @@ void concatFallback() {
 		else if (lua_isstring(params[i]))
 			sprintf(strPtr, "%s", lua_getstring(params[i]));
 		else if (lua_tag(params[i]) == MKTAG('A','C','T','R')) {
-			Actor *a = g_grim->actor(getobject(params[i]));
+			Actor *a = g_grim->actor(lua_getuserdata(params[i]));
 			sprintf(strPtr, "(actor%p:%s)", (void *)a,
 				(a->currentCostume() && a->currentCostume()->getModelNodes()) ?
 				a->currentCostume()->getModelNodes()->_name : "");
