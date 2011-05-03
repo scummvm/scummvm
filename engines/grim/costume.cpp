@@ -1121,9 +1121,9 @@ void Costume::update() {
 	}
 }
 
-void Costume::moveHead() {
+void Costume::moveHead(bool lookingMode, const Graphics::Vector3d &lookAt, float rate) {
 	if (_joint1Node) {
-		float step = g_grim->perSecond(_lookAtRate);
+		float step = g_grim->perSecond(rate);
 		float yawStep = step;
 		float pitchStep = step / 3.f;
 
@@ -1131,7 +1131,7 @@ void Costume::moveHead() {
 		_joint2Node->_totalWeight = 1;
 		_joint3Node->_totalWeight = 1;
 
-		if (_lookAt.isZero()) {
+		if (!lookingMode) {
 			//animate yaw
 			if (_headYaw > yawStep) {
 				_headYaw -= yawStep;
@@ -1180,7 +1180,7 @@ void Costume::moveHead() {
 
 		pos += _matrix._pos;
 
-		Graphics::Vector3d v =  _lookAt - pos;
+		Graphics::Vector3d v =  lookAt - pos;
 		if (v.isZero()) {
 			return;
 		}
@@ -1274,11 +1274,6 @@ void Costume::moveHead() {
 		_headPitch = pitch;
 		_headYaw = _joint1Node->_animYaw;
 	}
-}
-
-void Costume::setLookAt(const Graphics::Vector3d &vec, float rate) {
-	_lookAt = vec;
-	_lookAtRate = rate;
 }
 
 void Costume::setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw) {

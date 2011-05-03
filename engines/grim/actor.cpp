@@ -1181,17 +1181,12 @@ void Actor::update() {
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
 		c->setPosRotate(_pos, _pitch, _yaw, _roll);
-		if (_lookingMode) {
-			c->setLookAt(_lookAtVector, _lookAtRate);
-		}
 		c->update();
 	}
 
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
-		if (_lookingMode) {
-			c->moveHead();
-		}
+		c->moveHead(_lookingMode, _lookAtVector, _lookAtRate);
 	}
 }
 

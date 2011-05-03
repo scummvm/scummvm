@@ -61,9 +61,8 @@ public:
 	int isChoring(int num, bool excludeLooping);
 	int isChoring(bool excludeLooping);
 
-	void setLookAt(const Graphics::Vector3d &vec, float rate);
 	void setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
-	void moveHead();
+	void moveHead(bool lookingMode, const Graphics::Vector3d &lookAt, float rate);
 
 	void update();
 	void setupTextures();
@@ -184,8 +183,6 @@ private:
 	Model::HierNode *_joint1Node;
 	Model::HierNode *_joint2Node;
 	Model::HierNode *_joint3Node;
-	Graphics::Vector3d _lookAt;
-	float _lookAtRate;
 
 	float _headPitch;
 	float _headYaw;

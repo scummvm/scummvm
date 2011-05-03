@@ -1520,7 +1520,12 @@ static void ActorLookAt() {
 
 		actor->setLookAtVectorZero();
 		actor->setLooking(false);
-		if (lua_isnumber(yObj))
+		// FIXME: When grabbing Chepito lua_getnumber(yObj) returns -3.50214
+		// which doesn't make any sense. I suspect that is a bug in Lua, since
+		// i couldn't find any call to manny:head_look_at(nil, -3.50214) while
+		// there are some calls to glottis:setpos(-0.120987, -3.50214, 0).
+		// The same number, strange indeed eh?
+		if (lua_isnumber(yObj) && lua_getnumber(yObj) > 0)
 			actor->setLookAtRate(lua_getnumber(yObj));
 		return;
 	} else if (lua_isnumber(xObj)) { // look at xyz
