@@ -66,14 +66,19 @@ public:
 	const char *readCharString();
 	Common::String readString();
 
+	void checkAlloc(int size);
+
 protected:
 	bool _saving;
 	Common::InSaveFile *_inSaveFile;
 	Common::OutSaveFile *_outSaveFile;
 	uint32 _currentSection;
 	uint32 _sectionSize;
+	uint32 _sectionAlloc;
 	uint32 _sectionPtr;
 	byte *_sectionBuffer;
+
+	static const int _allocAmmount = 1024;
 };
 
 } // end of namespace Grim
