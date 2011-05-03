@@ -2237,29 +2237,23 @@ static void SayLine() {
 			paramObj = lua_getparam(paramId++);
 		}
 		if (actor) {
-			if (lua_isnil(paramObj)) {
-loop:
-				if (!msg.empty()) {
-					actor->sayLine(msg.c_str(), msgId); //background, vol, pan, x, y
-				}
-			} else {
-				while (1) {
-					if (!lua_isstring(paramObj) && !lua_isnumber(paramObj) && !lua_istable(paramObj))
-						break;
-					if (lua_istable(paramObj))
-						parseSayLineTable(paramObj, &background, &vol, &buffer, &x, &y);
+			while (!lua_isnil(paramObj)) {
+				if (!lua_isstring(paramObj) && !lua_isnumber(paramObj) && !lua_istable(paramObj))
+					break;
+				if (lua_istable(paramObj))
+					parseSayLineTable(paramObj, &background, &vol, &buffer, &x, &y);
+				else {
+					if (lua_isnumber(paramObj))
+						background = false;
 					else {
-						if (lua_isnumber(paramObj))
-							background = false;
-						else {
-							const char *tmpstr = lua_getstring(paramObj);
-							msg = parseMsgText(tmpstr, msgId);
-						}
+						const char *tmpstr = lua_getstring(paramObj);
+						msg = parseMsgText(tmpstr, msgId);
 					}
-					paramObj = lua_getparam(paramId++);
-					if (lua_isnil(paramObj))
-						goto loop;
 				}
+				paramObj = lua_getparam(paramId++);
+			}
+			if (!msg.empty()) {
+				actor->sayLine(msg.c_str(), msgId); //background, vol, pan, x, y
 			}
 		}
 	}
