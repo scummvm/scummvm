@@ -110,7 +110,7 @@ static int32 gettag(int32 i) {
 
 static void pushresult(int32 i) {
 	if (i)
-		lua_pushuserdata(NULL);
+		lua_pushuserdata(0);
 	else {
 		lua_pushnil();
 		lua_pushstring("File I/O error.");
@@ -138,14 +138,14 @@ static LuaFile *getfile(const char *name) {
 	lua_Object f = lua_getglobal(name);
 	if (!ishandler(f))
 		luaL_verror("global variable `%.50s' is not a file handle", name);
-	return getfile((residualptr)lua_getuserdata(f));
+	return getfile(lua_getuserdata(f));
 }
 
 static LuaFile *getfileparam(const char *name, int32 *arg) {
 	lua_Object f = lua_getparam(*arg);
 	if (ishandler(f)) {
 		(*arg)++;
-		return getfile((residualptr)lua_getuserdata(f));
+		return getfile(lua_getuserdata(f));
 	} else
 		return getfile(name);
 }
@@ -158,14 +158,14 @@ static void closefile(const char *name) {
 }
 
 static void setfile(int32 id, const char *name, int32 tag) {
-	lua_pushusertag((void *)id, tag);
+	lua_pushusertag(id, tag);
 	lua_setglobal(name);
 }
 
 static void setreturn(int32 id, const char *name) {
 	int32 tag = gettag(IOTAG);
 	setfile(id, name, tag);
-	lua_pushusertag((void *)id, tag);
+	lua_pushusertag(id, tag);
 }
 
 static int32 addfile(LuaFile *f) {
@@ -181,7 +181,7 @@ static void io_readfrom() {
 		closefile(FINPUT);
 		setreturn(1, FINPUT);
 	} else if (lua_tag(f) == gettag(IOTAG)) {
-		int32 id = (residualptr)lua_getuserdata(f);
+		int32 id = lua_getuserdata(f);
 		LuaFile *current = getfile(id);
 		if (!current) {
 			pushresult(0);
@@ -216,7 +216,7 @@ static void io_writeto() {
 		closefile(FOUTPUT);
 		setreturn(2, FOUTPUT);
 	} else if (lua_tag(f) == gettag(IOTAG)) {
-		int32 id = (residualptr)lua_getuserdata(f);
+		int32 id = lua_getuserdata(f);
 		LuaFile *current = getfile(id);
 		if (!current->isOpen()) {
 			pushresult(0);

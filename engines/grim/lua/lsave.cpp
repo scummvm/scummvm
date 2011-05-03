@@ -106,6 +106,10 @@ static void saveObjectValue(TObject *object, SaveSint32 saveSint32, SaveUint32 s
 			}
 			break;
 		case LUA_T_USERDATA:
+			{
+				saveSint32(object->value.ud.id);
+				saveSint32(object->value.ud.tag);
+			}
 		case LUA_T_STRING:
 			{
 				saveUint32(makeIdFromPointer(object->value.ts).low);
@@ -237,13 +241,6 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 					int len = strlen(tempString->str);
 					saveSint32(len);
 					saveStream(tempString->str, len);
-				} else {
-					if (saveCallbackPtr) {
-						PointerId ptr = makeIdFromPointer(tempString->globalval.value.ts);
-						ptr = saveCallbackPtr(tempString->globalval.ttype, ptr, saveSint32);
-						tempString->globalval.value.ts = (TaggedString *)makePointerFromId(ptr);
-					}
-					saveObjectValue((TObject *)&tempString->globalval, saveSint32, saveUint32);
 				}
 			}
 		}

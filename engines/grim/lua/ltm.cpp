@@ -96,7 +96,7 @@ int32 luaT_efectivetag(TObject *o) {
 		return o->value.a->htag;
 	case LUA_T_USERDATA:
 		{
-			int32 tag = o->value.ts->globalval.ttype;
+			int32 tag = o->value.ud.tag;
 			return (tag >= 0) ? LUA_T_USERDATA : tag;
 		}
 	case LUA_T_CLOSURE:
@@ -202,7 +202,7 @@ void luaT_setfallback() {
 		*luaT_getim(LUA_T_NIL, IM_GETGLOBAL) = *luaA_Address(func);
 		replace = nilFB;
 		break;
-	case 2: 
+	case 2:
 		{  // old arith fallback
 			int32 i;
 			oldfunc = *luaT_getim(LUA_T_NUMBER, IM_POW);
@@ -211,7 +211,7 @@ void luaT_setfallback() {
 			replace = typeFB;
 			break;
 		}
-	case 3: 
+	case 3:
 		{  // old order fallback
 			int32 i;
 			oldfunc = *luaT_getim(LUA_T_NIL, IM_LT);

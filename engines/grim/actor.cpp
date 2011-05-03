@@ -1374,12 +1374,12 @@ void Actor::costumeMarkerCallback(Footstep step)
 		lua_Object func = lua_gettable();
 		if (lua_isfunction(func)) {
 			lua_pushobject(func);
-			lua_pushusertag(this, MKTAG('A','C','T','R'));
+			lua_pushusertag(getId(), MKTAG('A','C','T','R'));
 			lua_pushnumber(step);
 			lua_callfunction(func);
 		}
 	} else if (lua_isfunction(table)) {
-		lua_pushusertag(this, MKTAG('A','C','T','R'));
+		lua_pushusertag(getId(), MKTAG('A','C','T','R'));
 		lua_pushnumber(step);
 		lua_callfunction(table);
 	}

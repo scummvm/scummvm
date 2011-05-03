@@ -79,11 +79,11 @@ static inline void pushbool(bool val) {
 }
 
 static void pushobject(int id, int32 tag) {
-	lua_pushusertag((void *)id, tag);
+	lua_pushusertag(id, tag);
 }
 
 static int getobject(lua_Object obj) {
-	return (residualptr)lua_getuserdata(obj);
+	return lua_getuserdata(obj);
 }
 
 static Actor *getactor(lua_Object obj) {
@@ -114,7 +114,7 @@ static void new_dofile() {
 	const char *fname_str = luaL_check_string(1);
 	if (bundle_dofile(fname_str) == 0)
 		if (luaA_passresults() == 0)
-			lua_pushuserdata(NULL);
+			lua_pushuserdata(0);
 }
 
 // Debugging message functions
@@ -3868,7 +3868,7 @@ static void Save() {
 
 static void lua_remove() {
 	if (g_system->getSavefileManager()->removeSavefile(luaL_check_string(1)))
-		lua_pushuserdata(NULL);
+		lua_pushuserdata(0);
 	else {
 		lua_pushnil();
 		lua_pushstring(g_system->getSavefileManager()->getErrorDesc().c_str());

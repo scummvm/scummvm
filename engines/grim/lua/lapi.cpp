@@ -236,11 +236,11 @@ const char *lua_getstring (lua_Object object) {
 		return (svalue(Address(object)));
 }
 
-void *lua_getuserdata(lua_Object object) {
+int32 lua_getuserdata(lua_Object object) {
 	if (object == LUA_NOOBJECT || ttype(Address(object)) != LUA_T_USERDATA)
-		return NULL;
+		return 0;
 	else
-		return tsvalue(Address(object))->globalval.value.ts;
+		return (Address(object))->value.ud.id;
 }
 
 lua_CFunction lua_getcfunction(lua_Object object) {
@@ -282,10 +282,11 @@ void lua_pushCclosure(lua_CFunction fn, int32 n) {
 	luaV_closure(n);
 }
 
-void lua_pushusertag(void *u, int32 tag) {
+void lua_pushusertag(int32 u, int32 tag) {
 	if (tag < 0 && tag != LUA_ANYTAG)
 		luaT_realtag(tag);  // error if tag is not valid
-	tsvalue(lua_state->stack.top) = luaS_createudata(u, tag);
+	lua_state->stack.top->value.ud.id = u;
+	lua_state->stack.top->value.ud.tag = tag;
 	ttype(lua_state->stack.top) = LUA_T_USERDATA;
 	incr_top;
 	luaC_checkGC();
@@ -314,7 +315,7 @@ int32 lua_tag(lua_Object lo) {
 		int32 t;
 		switch (t = ttype(o)) {
 		case LUA_T_USERDATA:
-			return o->value.ts->globalval.ttype;
+			return o->value.ud.tag;
 		case LUA_T_ARRAY:
 			return o->value.a->htag;
 		case LUA_T_PMARK:
@@ -341,7 +342,7 @@ void lua_settag(int32 tag) {
 		(lua_state->stack.top - 1)->value.a->htag = tag;
 		break;
 	case LUA_T_USERDATA:
-		(lua_state->stack.top - 1)->value.ts->globalval.ttype = (lua_Type)tag;
+		(lua_state->stack.top - 1)->value.ud.tag = tag;
 		break;
 	default:
 		luaL_verror("cannot change the tag of a %.20s", luaO_typenames[-ttype((lua_state->stack.top - 1))]);

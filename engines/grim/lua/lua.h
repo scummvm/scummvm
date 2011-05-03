@@ -114,13 +114,13 @@ int32 lua_isfunction           (lua_Object object);
 float lua_getnumber 		(lua_Object object);
 const char *lua_getstring 		(lua_Object object);
 lua_CFunction lua_getcfunction 	(lua_Object object);
-void *lua_getuserdata		(lua_Object object);
+int32 lua_getuserdata		(lua_Object object);
 
 void lua_pushnil();
 void lua_pushnumber(float n);
 void lua_pushstring(const char *s);
 void lua_pushCclosure(lua_CFunction fn, int32 n);
-void lua_pushusertag(void *u, int32 tag);
+void lua_pushusertag(int32 id, int32 tag);
 void lua_pushobject(lua_Object object);
 
 lua_Object lua_pop();

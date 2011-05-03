@@ -159,7 +159,7 @@ void callHook(lua_Function func, const char *filename, int32 line) {
 					Color *c = g_grim->color((residualptr)lua_getuserdata(lua_getparam(i)));
 					fprintf(output, "<color #%02x%02x%02x>", c->red(), c->green(), c->blue());
 				} else
-					fprintf(output, "<userdata %p>", lua_getuserdata(lua_getparam(i)));
+					fprintf(output, "<userdata %d>", lua_getuserdata(lua_getparam(i)));
 			} else if (lua_isfunction(lua_getparam(i))) {
 				fprintf(output, "<function>");
 			} else if (lua_isnumber(lua_getparam(i)))

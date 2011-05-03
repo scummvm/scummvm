@@ -47,14 +47,20 @@ typedef enum {
 #define NUM_TYPES 12
 #define NUM_TAGS  8
 
+typedef struct UserData {
+	int32 id;
+	int32 tag;
+} UserData;
+
 typedef union {
 	lua_CFunction f;  // LUA_T_CPROTO, LUA_T_CMARK
 	float n;  // LUA_T_NUMBER
-	struct TaggedString *ts;  // LUA_T_STRING, LUA_T_USERDATA
+	struct TaggedString *ts;  // LUA_T_STRING
 	struct TProtoFunc *tf;  // LUA_T_PROTO, LUA_T_PMARK
 	struct Closure *cl;  // LUA_T_CLOSURE, LUA_T_CLMARK
 	struct Hash *a;  // LUA_T_ARRAY
 	int32 i;  // LUA_T_LINE
+	struct UserData ud;  // LUA_T_USERDATA
 } Value;
 
 typedef struct TObject {

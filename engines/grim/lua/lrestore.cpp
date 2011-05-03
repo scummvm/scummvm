@@ -59,6 +59,10 @@ static void restoreObjectValue(TObject *object, RestoreSint32 restoreSint32, Res
 			}
 			break;
 		case LUA_T_USERDATA:
+			{
+				object->value.ud.id = restoreSint32();
+				object->value.ud.tag = restoreSint32();
+			}
 		case LUA_T_STRING:
 			{
 				PointerId ptr;
@@ -180,7 +184,8 @@ static void recreateObj(TObject *obj) {
 			obj->value.f = NULL;
 			assert(obj->value.f);
 		}
-	} else if (obj->ttype == LUA_T_NIL || obj->ttype == LUA_T_LINE || obj->ttype == LUA_T_NUMBER || obj->ttype == LUA_T_TASK) {
+	} else if (obj->ttype == LUA_T_NIL || obj->ttype == LUA_T_LINE || obj->ttype == LUA_T_NUMBER ||
+			obj->ttype == LUA_T_TASK || obj->ttype == LUA_T_USERDATA) {
 		return;
 	} else {
 		if (obj->value.i == 0)
@@ -204,12 +209,6 @@ static void recreateObj(TObject *obj) {
 			found = (ArrayIDObj *)bsearch(&tmpId, arrayProtoFuncs, arrayProtoFuncsCount, sizeof(ArrayIDObj), sortCallback);
 			assert(found);
 			obj->value.tf = (TProtoFunc *)found->object;
-			break;
-		case LUA_T_USERDATA:
-			tmpId.idObj = makeIdFromPointer(obj->value.ts);
-			found = (ArrayIDObj *)bsearch(&tmpId, arrayStrings, arrayStringsCount, sizeof(ArrayIDObj), sortCallback);
-			assert(found);
-			obj->value.ts = (TaggedString *)found->object;
 			break;
 		case LUA_T_PROTO:
 			tmpId.idObj = makeIdFromPointer(obj->value.tf);
@@ -278,22 +277,6 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 			tempStringBuffer[length] = '\0';
 			tempString = luaS_new(tempStringBuffer);
 			tempString->globalval = obj;
-		} else {
-			PointerId ptr;
-			int32 tag = restoreSint32();
-			ptr.low = restoreUint32();
-			ptr.hi = restoreUint32();
-			void *pointer = makePointerFromId(ptr);
-
-			if (tag == 0)
-				tempString = luaS_createudata(pointer, LUA_ANYTAG);
-			else
-				tempString = luaS_createudata(pointer, tag);
-			if (restoreCallbackPtr) {
-				ptr = makeIdFromPointer(tempString->globalval.value.ts);
-				ptr = restoreCallbackPtr(tempString->globalval.ttype, ptr, restoreSint32);
-				tempString->globalval.value.ts = (TaggedString *)makePointerFromId(ptr);
-			}
 		}
 		tempString->constindex = constIndex;
 		arraysObj->object = tempString;

@@ -82,7 +82,6 @@ static int32 ismarked(TObject *o) {
 	// valid only for locked objects
 	switch (o->ttype) {
 	case LUA_T_STRING:
-	case LUA_T_USERDATA:
 		return o->value.ts->head.marked;
 	case LUA_T_ARRAY:
 		return o->value.a->head.marked;
@@ -203,7 +202,6 @@ static void globalmark() {
 
 static int32 markobject(TObject *o) {
 	switch (ttype(o)) {
-	case LUA_T_USERDATA:
 	case LUA_T_STRING:
 		strmark(tsvalue(o));
 		break;

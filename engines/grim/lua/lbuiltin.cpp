@@ -109,7 +109,7 @@ static void internaldostring() {
 		lua_error("invalid 2nd argument (probably obsolete code)");
 	if (lua_dostring(luaL_check_string(1)) == 0)
 		if (luaA_passresults() == 0)
-			lua_pushuserdata(NULL);  // at least one result to signal no errors
+			lua_pushuserdata(0);  // at least one result to signal no errors
 }
 
 static const char *to_string(lua_Object obj) {
@@ -150,7 +150,7 @@ static const char *to_string(lua_Object obj) {
 		}
 	case LUA_T_USERDATA:
 		{
-			sprintf(buff, "userdata: %p", (void *)o->value.ts->globalval.value.ts);
+			sprintf(buff, "userdata: %d", o->value.ud.id);
 			return buff;
 		}
 	case LUA_T_TASK:

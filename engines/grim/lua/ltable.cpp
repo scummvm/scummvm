@@ -27,8 +27,9 @@ static int64 hashindex(TObject *ref) {
 	case LUA_T_NUMBER:
 		h = (int64)nvalue(ref);
 		break;
-	case LUA_T_STRING:
 	case LUA_T_USERDATA:
+		h = (int64)ref->value.ud.id;
+	case LUA_T_STRING:
 		h = (int64)tsvalue(ref);
 		break;
 	case LUA_T_ARRAY:
