@@ -23,8 +23,9 @@
  */
 
 #if defined(__PSP__)
+
 #include "backends/fs/psp/psp-fs-factory.h"
-#include "backends/fs/psp/psp-fs.cpp"
+#include "backends/fs/psp/psp-fs.h"
 
 DECLARE_SINGLETON(PSPFilesystemFactory);
 
@@ -34,7 +35,7 @@ AbstractFSNode *PSPFilesystemFactory::makeRootFileNode() const {
 
 AbstractFSNode *PSPFilesystemFactory::makeCurrentDirectoryFileNode() const {
 	char buf[MAXPATHLEN];
-	char * ret = 0;
+	char *ret = 0;
 
 	PowerMan.beginCriticalSection();
 	ret = getcwd(buf, MAXPATHLEN);
@@ -46,4 +47,5 @@ AbstractFSNode *PSPFilesystemFactory::makeCurrentDirectoryFileNode() const {
 AbstractFSNode *PSPFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	return new PSPFilesystemNode(path, true);
 }
+
 #endif

@@ -30,7 +30,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_unlink
 
 #include "backends/fs/posix/posix-fs-factory.h"
-#include "backends/fs/posix/posix-fs.cpp"
+#include "backends/fs/posix/posix-fs.h"
 
 AbstractFSNode *POSIXFilesystemFactory::makeRootFileNode() const {
 	return new POSIXFilesystemNode("/");

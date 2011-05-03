@@ -22,52 +22,45 @@
  * $Id$
  */
 
-#ifndef POSIX_FILESYSTEM_H
-#define POSIX_FILESYSTEM_H
+#ifndef SYMBIAN_FILESYSTEM_H
+#define SYMBIAN_FILESYSTEM_H
 
 #include "backends/fs/abstract-fs.h"
-
-#ifdef MACOSX
-#include <sys/types.h>
-#endif
-#include <unistd.h>
 
 /**
  * Implementation of the ScummVM file system API based on POSIX.
  *
  * Parts of this class are documented in the base interface class, AbstractFSNode.
  */
-class POSIXFilesystemNode : public AbstractFSNode {
+class SymbianFilesystemNode : public AbstractFSNode {
 protected:
 	Common::String _displayName;
 	Common::String _path;
 	bool _isDirectory;
 	bool _isValid;
-
-	virtual AbstractFSNode *makeNode(const Common::String &path) const {
-		return new POSIXFilesystemNode(path);
-	}
-
-	/**
-	 * Plain constructor, for internal use only (hence protected).
-	 */
-	POSIXFilesystemNode() : _isDirectory(false), _isValid(false) {}
-
+	bool _isPseudoRoot;
 public:
 	/**
-	 * Creates a POSIXFilesystemNode for a given path.
+	 * Creates a SymbianFilesystemNode with the root node as path.
 	 *
-	 * @param path the path the new node should point to.
+	 * @param aIsRoot true if the node will be a pseudo root, false otherwise.
 	 */
-	POSIXFilesystemNode(const Common::String &path);
+	SymbianFilesystemNode(bool aIsRoot);
 
-	virtual bool exists() const { return access(_path.c_str(), F_OK) == 0; }
+	/**
+	 * Creates a SymbianFilesystemNode for a given path.
+	 *
+	 * @param path Common::String with the path the new node should point to.
+	 */
+	SymbianFilesystemNode(const Common::String &path);
+
+	virtual bool exists() const;
 	virtual Common::String getDisplayName() const { return _displayName; }
 	virtual Common::String getName() const { return _displayName; }
 	virtual Common::String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
-	virtual bool isReadable() const { return access(_path.c_str(), R_OK) == 0; }
-	virtual bool isWritable() const { return access(_path.c_str(), W_OK) == 0; }
+	virtual bool isReadable() const;
+	virtual bool isWritable() const;
 
 	virtual AbstractFSNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
@@ -75,12 +68,6 @@ public:
 
 	virtual Common::SeekableReadStream *createReadStream();
 	virtual Common::WriteStream *createWriteStream();
-
-private:
-	/**
-	 * Tests and sets the _isValid and _isDirectory flags, using the stat() function.
-	 */
-	virtual void setFlags();
 };
 
 #endif

@@ -28,7 +28,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/fs/ps2/ps2-fs-factory.h"
-#include "backends/fs/ps2/ps2-fs.cpp"
+#include "backends/fs/ps2/ps2-fs.h"
 
 DECLARE_SINGLETON(Ps2FilesystemFactory);
 
@@ -43,4 +43,5 @@ AbstractFSNode *Ps2FilesystemFactory::makeCurrentDirectoryFileNode() const {
 AbstractFSNode *Ps2FilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	return new Ps2FilesystemNode(path, true);
 }
+
 #endif

@@ -18,9 +18,13 @@ MODULE_OBJS := \
 	events/wincesdl/wincesdl-events.o \
 	fs/abstract-fs.o \
 	fs/stdiostream.o \
+	fs/amigaos4/amigaos4-fs.o \
 	fs/amigaos4/amigaos4-fs-factory.o \
+	fs/posix/posix-fs.o \
 	fs/posix/posix-fs-factory.o \
+	fs/symbian/symbian-fs.o \
 	fs/symbian/symbian-fs-factory.o \
+	fs/windows/windows-fs.o \
 	fs/windows/windows-fs-factory.o \
 	graphics/dinguxsdl/dinguxsdl-graphics.o \
 	graphics/gp2xsdl/gp2xsdl-graphics.o \
@@ -77,25 +81,28 @@ MODULE_OBJS := \
 
 ifeq ($(BACKEND),ds)
 MODULE_OBJS += \
-	fs/ds/ds-fs-factory.o \
 	fs/ds/ds-fs.o \
+	fs/ds/ds-fs-factory.o \
 	plugins/ds/ds-provider.o
 endif
 
 ifeq ($(BACKEND),n64)
 MODULE_OBJS += \
+	fs/n64/n64-fs.o \
 	fs/n64/n64-fs-factory.o \
 	fs/n64/romfsstream.o
 endif
 
 ifeq ($(BACKEND),ps2)
 MODULE_OBJS += \
+	fs/ps2/ps2-fs.o \
 	fs/ps2/ps2-fs-factory.o \
 	plugins/ps2/ps2-provider.o
 endif
 
 ifeq ($(BACKEND),psp)
 MODULE_OBJS += \
+	fs/psp/psp-fs.o \
 	fs/psp/psp-fs-factory.o \
 	fs/psp/psp-stream.o \
 	plugins/psp/psp-provider.o \
@@ -105,6 +112,7 @@ endif
 
 ifeq ($(BACKEND),wii)
 MODULE_OBJS += \
+	fs/wii/wii-fs.o \
 	fs/wii/wii-fs-factory.o \
 	plugins/wii/wii-provider.o
 endif

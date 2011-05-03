@@ -22,53 +22,76 @@
  * $Id$
  */
 
-#ifndef POSIX_FILESYSTEM_H
-#define POSIX_FILESYSTEM_H
+#ifndef PS2_FILESYSTEM_H
+#define PS2_FILESYSTEM_H
 
 #include "backends/fs/abstract-fs.h"
 
-#ifdef MACOSX
-#include <sys/types.h>
-#endif
-#include <unistd.h>
-
 /**
- * Implementation of the ScummVM file system API based on POSIX.
+ * Implementation of the ScummVM file system API based on the Ps2SDK.
  *
  * Parts of this class are documented in the base interface class, AbstractFSNode.
  */
-class POSIXFilesystemNode : public AbstractFSNode {
+class Ps2FilesystemNode : public AbstractFSNode {
+
+friend class Ps2FilesystemFactory;
+
 protected:
 	Common::String _displayName;
 	Common::String _path;
 	bool _isDirectory;
-	bool _isValid;
+	bool _isRoot;
+	bool _isHere;
+	bool _verified;
 
-	virtual AbstractFSNode *makeNode(const Common::String &path) const {
-		return new POSIXFilesystemNode(path);
-	}
-
-	/**
-	 * Plain constructor, for internal use only (hence protected).
-	 */
-	POSIXFilesystemNode() : _isDirectory(false), _isValid(false) {}
+private:
+	const char *getDeviceDescription() const;
+	void doverify();
 
 public:
 	/**
-	 * Creates a POSIXFilesystemNode for a given path.
-	 *
-	 * @param path the path the new node should point to.
+	 * Creates a PS2FilesystemNode with the root node as path.
 	 */
-	POSIXFilesystemNode(const Common::String &path);
+	Ps2FilesystemNode();
 
-	virtual bool exists() const { return access(_path.c_str(), F_OK) == 0; }
+	/**
+	 * Creates a PS2FilesystemNode for a given path.
+	 *
+	 * @param path Common::String with the path the new node should point to.
+	 */
+	Ps2FilesystemNode(const Common::String &path);
+	Ps2FilesystemNode(const Common::String &path, bool verify);
+
+	/**
+	 * Copy constructor.
+	 */
+	Ps2FilesystemNode(const Ps2FilesystemNode *node);
+
 	virtual Common::String getDisplayName() const { return _displayName; }
 	virtual Common::String getName() const { return _displayName; }
 	virtual Common::String getPath() const { return _path; }
-	virtual bool isDirectory() const { return _isDirectory; }
-	virtual bool isReadable() const { return access(_path.c_str(), R_OK) == 0; }
-	virtual bool isWritable() const { return access(_path.c_str(), W_OK) == 0; }
 
+	virtual bool exists() const {
+		// printf("%s : is %d\n", _path.c_str(), _isHere);
+		return _isHere;
+	}
+
+	virtual bool isDirectory() const {
+		// printf("%s : dir %d\n", _path.c_str(), _isDirectory);
+		return _isDirectory;
+	}
+
+	virtual bool isReadable() const {
+		return _isHere;
+	}
+
+	virtual bool isWritable() const {
+		if (strncmp(_path.c_str(), "cdfs", 4)==0)
+			return false;
+		return true; // exists(); // creating ?
+	}
+
+	virtual AbstractFSNode *clone() const { return new Ps2FilesystemNode(this); }
 	virtual AbstractFSNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFSNode *getParent() const;
@@ -76,11 +99,7 @@ public:
 	virtual Common::SeekableReadStream *createReadStream();
 	virtual Common::WriteStream *createWriteStream();
 
-private:
-	/**
-	 * Tests and sets the _isValid and _isDirectory flags, using the stat() function.
-	 */
-	virtual void setFlags();
+	int getDev() { return 0; };
 };
 
 #endif

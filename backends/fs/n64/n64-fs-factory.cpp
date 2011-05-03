@@ -27,7 +27,7 @@
 #include <n64utils.h>
 
 #include "backends/fs/n64/n64-fs-factory.h"
-#include "backends/fs/n64/n64-fs.cpp"
+#include "backends/fs/n64/n64-fs.h"
 
 AbstractFSNode *N64FilesystemFactory::makeRootFileNode() const {
 	return new N64FilesystemNode();
