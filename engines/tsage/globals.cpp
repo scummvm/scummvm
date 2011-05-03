@@ -101,6 +101,7 @@ void Globals::reset() {
 }
 
 void Globals::synchronise(Serialiser &s) {
+	SavedObject::synchronise(s);
 	assert(_gfxManagers.size() == 1);
 
 	_sceneItems.synchronise(s);

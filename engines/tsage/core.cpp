@@ -925,6 +925,7 @@ bool PlayerMover::sub_F8E5(const Common::Point &pt1, const Common::Point &pt2, c
 /*--------------------------------------------------------------------------*/
 
 void PlayerMover2::synchronise(Serialiser &s) {
+	PlayerMover::synchronise(s);
 	SYNC_POINTER(_destObject);
 	s.syncAsSint16LE(_maxArea);
 	s.syncAsSint16LE(_minArea);
@@ -1342,6 +1343,8 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 }
 
 void ScenePalette::synchronise(Serialiser &s) {
+	SavedObject::synchronise(s);
+
 	s.syncBytes(_palette, 256 * 3);
 	s.syncAsSint32LE(_colors.foreground);
 	s.syncAsSint32LE(_colors.background);
@@ -2496,6 +2499,7 @@ void SceneObjectList::deactivate() {
 }
 
 void SceneObjectList::synchronise(Serialiser &s) {
+	SavedObject::synchronise(s);
 	_objList.synchronise(s);
 }
 
@@ -3418,6 +3422,8 @@ void GameHandler::execute() {
 }
 
 void GameHandler::synchronise(Serialiser &s) {
+	EventHandler::synchronise(s);
+
 	_lockCtr.synchronise(s);
 	_waitCtr.synchronise(s);
 	s.syncAsSint16LE(_nextWaitCtr);

@@ -320,6 +320,8 @@ void SceneArea::wait() {
 }
 
 void SceneArea::synchronise(Serialiser &s) {
+	SavedObject::synchronise(s);
+
 	s.syncAsSint16LE(_pt.x);
 	s.syncAsSint16LE(_pt.y);
 	s.syncAsSint32LE(_resNum);

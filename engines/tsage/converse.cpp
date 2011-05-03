@@ -590,6 +590,8 @@ void StripManager::load() {
 }
 
 void StripManager::synchronise(Serialiser &s) {
+	Action::synchronise(s);
+
 	s.syncAsSint32LE(_stripNum);
 	s.syncAsSint32LE(_obj44Index);
 	s.syncAsSint32LE(_field20);
@@ -802,6 +804,8 @@ Speaker::Speaker() : EventHandler() {
 }
 
 void Speaker::synchronise(Serialiser &s) {
+	EventHandler::synchronise(s);
+
 	_fieldA.synchronise(s);
 	SYNC_POINTER(_field18);
 	s.syncString(_speakerName);
