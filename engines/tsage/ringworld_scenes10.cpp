@@ -1652,6 +1652,7 @@ void Scene9900::strAction1::signal() {
 		_object9.setVisage(18);
 		_object9._frame = 1;
 		_object9._strip = 6;
+		_object9.fixPriority(250);
 		_object9.setPosition(Common::Point(171, 59));
 		_object9.animate(ANIM_MODE_5, 0);
 		_globals->_scenePalette.addRotation(67, 111, 1, 1, this);
@@ -1938,7 +1939,7 @@ void Scene9900::process(Event &event) {
 	if (event.handled)
 		return;
 	Scene::process(event);
-	if (_sceneMode != 9906) {
+	if (_sceneMode == 9906) {
 		if ((event.eventType == EVENT_BUTTON_DOWN) && (_globals->_events.getCursor() == OBJECT_ITEMS)) {
 			_object8._state = 1;
 			RING_INVENTORY._items._sceneNumber = 9900;
