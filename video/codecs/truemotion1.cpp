@@ -60,12 +60,14 @@ enum {
 };
 
 // { valid for metatype }, algorithm, num of deltas, vert res, horiz res
-struct {
+struct CompressionType {
 	int algorithm;
 	int blockWidth; // vres
 	int blockHeight; // hres
 	int blockType;
-} static const compressionTypes[17] = {
+};
+
+static const CompressionType compressionTypes[17] = {
 	{ ALGO_NOP,	0, 0, 0 },
 
 	{ ALGO_RGB16V, 4, 4, BLOCK_4x4 },
