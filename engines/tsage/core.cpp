@@ -1247,8 +1247,11 @@ void ScenePalette::getPalette(int start, int count) {
 }
 
 void ScenePalette::signalListeners() {
-	for (SynchronisedList<PaletteModifier *>::iterator i = _listeners.begin(); i != _listeners.end(); ++i) {
-		(*i)->signal();
+	SynchronisedList<PaletteModifier *>::iterator i = _listeners.begin();
+	while (i != _listeners.end()) {
+		PaletteModifier *obj = *i;
+		++i;
+		obj->signal();
 	}
 }
 
