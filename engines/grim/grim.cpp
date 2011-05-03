@@ -331,6 +331,7 @@ GrimEngine::GrimEngine(OSystem *syst, int gameFlags, GrimGameType gameType) :
 
 	Color *c = new Color(0, 0, 0);
 	registerColor(c);
+	registerColor(new Color(255, 255, 255)); // Default color for actors. Id == 2
 
 	_printLineDefaults.x = 0;
 	_printLineDefaults.y = 100;

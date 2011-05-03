@@ -39,7 +39,7 @@ namespace Grim {
 int g_winX1, g_winY1, g_winX2, g_winY2;
 
 Actor::Actor(const char *actorName) :
-		Object(), _name(actorName), _setName(""), _talkColor(NULL), _pos(0, 0, 0),
+		Object(), _name(actorName), _setName(""), _talkColor(g_grim->color(2)), _pos(0, 0, 0),
 		// Some actors don't set walk and turn rates, so we default the
 		// _turnRate so Doug at the cat races can turn and we set the
 		// _walkRate so Glottis at the demon beaver entrance can walk and
