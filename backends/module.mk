@@ -33,21 +33,21 @@ MODULE_OBJS := \
 	midi/camd.o \
 	midi/coreaudio.o \
 	midi/coremidi.o \
+	midi/dmedia.o \
 	midi/seq.o \
 	midi/stmidi.o \
 	midi/timidity.o \
-	midi/dmedia.o \
 	midi/windows.o \
 	mixer/doublebuffersdl/doublebuffersdl-mixer.o \
 	mixer/sdl/sdl-mixer.o \
 	mutex/sdl/sdl-mutex.o \
-	plugins/elf/elf-loader.o \
-	plugins/elf/mips-loader.o \
-	plugins/elf/shorts-segment-manager.o \
-	plugins/elf/ppc-loader.o \
 	plugins/elf/arm-loader.o \
+	plugins/elf/elf-loader.o \
 	plugins/elf/elf-provider.o \
 	plugins/elf/memory-manager.o \
+	plugins/elf/mips-loader.o \
+	plugins/elf/ppc-loader.o \
+	plugins/elf/shorts-segment-manager.o \
 	plugins/elf/version.o \
 	plugins/posix/posix-provider.o \
 	plugins/sdl/sdl-provider.o \
