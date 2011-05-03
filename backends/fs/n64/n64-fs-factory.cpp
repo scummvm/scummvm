@@ -25,6 +25,7 @@
 #ifdef __N64__
 
 #include <n64utils.h>
+#include <romfs.h>
 
 #include "backends/fs/n64/n64-fs-factory.h"
 #include "backends/fs/n64/n64-fs.h"

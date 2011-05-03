@@ -27,6 +27,7 @@
 #include "backends/fs/n64/n64-fs.h"
 #include "backends/fs/n64/romfsstream.h"
 
+#include <romfs.h>
 #include <sys/param.h>
 #include <unistd.h>
 #include <n64utils.h>
