@@ -22,6 +22,9 @@
 // Allow use of stuff in <time.h>
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
+// Allow printf for debugging
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include <unistd.h>
 
 #include <ogc/conf.h>

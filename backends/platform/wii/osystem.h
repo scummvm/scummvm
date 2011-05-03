@@ -24,7 +24,6 @@
 
 #include <gctypes.h>
 #include <gccore.h>
-#include <ogcsys.h>
 
 #include <gxflux/gfx.h>
 
