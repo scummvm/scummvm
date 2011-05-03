@@ -24,8 +24,29 @@
 
 #if defined(__PSP__)
 
+// Disable printf override in common/forbidden.h to avoid
+// clashes with pspdebug.h from the PSP SDK.
+// That header file uses
+//   __attribute__((format(printf,1,2)));
+// which gets messed up by our override mechanism; this could
+// be avoided by either changing the PSP SDK to use the equally
+// legal and valid
+//   __attribute__((format(__printf__,1,2)));
+// or by refining our printf override to use a varadic macro
+// (which then wouldn't be portable, though).
+// Anyway, for now we just disable the printf override globally
+// for the PSP port
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
+// Avoid clashes with unistd.h
+#define FORBIDDEN_SYMBOL_EXCEPTION_chdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_unlink
+
 #include "backends/fs/psp/psp-fs-factory.h"
 #include "backends/fs/psp/psp-fs.h"
+#include "backends/platform/psp/powerman.h"
+
+#include <unistd.h>
 
 DECLARE_SINGLETON(PSPFilesystemFactory);
 
