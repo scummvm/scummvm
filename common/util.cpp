@@ -213,7 +213,7 @@ const PlatformDescription g_platforms[] = {
 	{ "segacd", "segacd", "sega", "SegaCD", kPlatformSegaCD },
 	{ "windows", "win", "win", "Windows", kPlatformWindows },
 	{ "playstation", "psx", "psx", "Sony PlayStation", kPlatformPSX },
-	{ "cdi", "cdi", "cdi", "Phillips CD-i", kPlatformCDi },
+	{ "cdi", "cdi", "cdi", "Philips CD-i", kPlatformCDi },
 
 	{ 0, 0, 0, "Default", kPlatformUnknown }
 };
