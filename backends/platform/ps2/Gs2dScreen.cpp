@@ -23,6 +23,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "Gs2dScreen.h"
 #include <kernel.h>
 #include <malloc.h>

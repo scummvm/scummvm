@@ -23,6 +23,10 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_chdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+
 #include "common/config-manager.h"
 #include "common/zlib.h"
 

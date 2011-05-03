@@ -23,6 +23,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "backends/platform/ps2/systemps2.h"
 
 void OSystem_PS2::initMutexes(void) {

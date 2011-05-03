@@ -568,6 +568,11 @@ void OSystem_PS2::updateScreen(void) {
 	_screen->updateScreen();
 }
 
+void OSystem_PS2::displayMessageOnOSD(const char *msg) {
+	/* TODO : check */
+	printf("displayMessageOnOSD: %s\n", msg);
+}
+
 uint32 OSystem_PS2::getMillis(void) {
 	return msecCount;
 }
