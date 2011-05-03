@@ -284,6 +284,9 @@ SaveLoad_v6::GameHandler::GameHandler(GobEngine *vm, const char *target,
 
 SaveLoad_v6::GameHandler::~GameHandler() {
 	delete _slotFile;
+
+	delete _reader;
+	delete _writer;
 }
 
 int32 SaveLoad_v6::GameHandler::getSize() {
