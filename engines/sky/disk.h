@@ -28,13 +28,12 @@
 
 
 #include "common/scummsys.h"
-#include "common/str.h"
 #include "sky/rnc_deco.h"
 
 #define MAX_FILES_IN_LIST 60
 
 namespace Common {
-	class File;
+class File;
 }
 
 namespace Sky {

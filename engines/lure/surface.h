@@ -34,7 +34,7 @@
 
 namespace Lure {
 
-#define DEFAULT_TEXT_COLOUR -1
+#define DEFAULT_TEXT_COLOR -1
 
 class Surface {
 private:
@@ -61,20 +61,20 @@ public:
 
 	void loadScreen(uint16 resourceId);
 	void loadScreen(MemoryBlock *data);
-	int writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, int colour);
+	int writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, int color);
 	void writeString(uint16 x, uint16 y, Common::String line, bool transparent,
-		int colour = DEFAULT_TEXT_COLOUR, bool varLength = true);
+		int color = DEFAULT_TEXT_COLOR, bool varLength = true);
 	void writeSubstring(uint16 x, uint16 y, Common::String line, int len,
-		bool transparent, int colour = DEFAULT_TEXT_COLOUR, bool varLength = true);
+		bool transparent, int color = DEFAULT_TEXT_COLOR, bool varLength = true);
 	void transparentCopyTo(Surface *dest);
 	void copyTo(Surface *dest);
 	void copyTo(Surface *dest, uint16 x, uint16 y);
 	void copyTo(Surface *dest, const Common::Rect &srcBounds, uint16 destX, uint16 destY,
-		int transparentColour = -1);
+		int transparentColor = -1);
 	void copyFrom(MemoryBlock *src) { _data->copyFrom(src); }
 	void copyFrom(MemoryBlock *src, uint32 destOffset);
 	void empty() { _data->empty(); }
-	void fillRect(const Common::Rect &r, uint8 colour);
+	void fillRect(const Common::Rect &r, uint8 color);
 	void createDialog(bool blackFlag = false);
 	void copyToScreen(uint16 x, uint16 y);
 	void centerOnScreen();
@@ -82,8 +82,8 @@ public:
 	static uint16 textWidth(const char *s, int numChars = 0);
 	static void wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines);
 	static Surface *newDialog(uint16 width, uint8 numLines, const char **lines, bool varLength = true,
-		int colour = DEFAULT_TEXT_COLOUR, bool squashedLines = true);
-	static Surface *newDialog(uint16 width, const char *lines, int colour = DEFAULT_TEXT_COLOUR);
+		int color = DEFAULT_TEXT_COLOR, bool squashedLines = true);
+	static Surface *newDialog(uint16 width, const char *lines, int color = DEFAULT_TEXT_COLOR);
 	static Surface *getScreen(uint16 resourceId);
 	bool getString(Common::String &line, int maxSize, bool isNumeric, bool varLength, int16 x, int16 y);
 };

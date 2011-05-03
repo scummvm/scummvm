@@ -155,7 +155,7 @@ struct CommandQueue {
 //
 //////////////////////////////////////////////////
 
-class Player : public MidiDriver {
+class Player : public MidiDriver_BASE {
 /*
  * External SysEx handler functions shall each be defined in
  * a separate file. This header file shall be included at the
@@ -174,7 +174,6 @@ protected:
 protected:
 	MidiDriver *_midi;
 	MidiParser *_parser;
-	bool _passThrough; // Only respond to EOT, all else direct to MidiDriver
 
 	Part *_parts;
 	bool _active;
@@ -278,21 +277,14 @@ public:
 	void setSpeed(byte speed);
 	int setTranspose(byte relative, int b);
 	int setVolume(byte vol);
-	bool startSound(int sound, MidiDriver *midi, bool passThrough);
+	bool startSound(int sound, MidiDriver *midi);
 	int getMusicTimer() const;
 
 public:
 	// MidiDriver interface
-	int open() { return 0; }
-	void close() { }
 	void send(uint32 b);
-	const char *getErrorName(int error_code) { return "Unknown"; }
 	void sysEx(const byte *msg, uint16 length);
 	void metaEvent(byte type, byte *data, uint16 length);
-	void setTimerCallback(void *timer_param, void(*timer_proc)(void *)) { }
-	uint32 getBaseTempo();
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
 };
 
 
@@ -424,7 +416,6 @@ protected:
 
 	int  _player_limit;       // Limits how many simultaneous music tracks are played
 	bool _recycle_players;    // Can we stop a player in order to start another one?
-	bool _direct_passthrough; // Pass data direct to MidiDriver (no interactivity)
 
 	uint _queue_end, _queue_pos, _queue_sound;
 	byte _queue_adding;

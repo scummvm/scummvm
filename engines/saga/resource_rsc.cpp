@@ -30,7 +30,7 @@
 
 namespace Saga {
 
-#define ID_MIDI     MKID_BE('Midi')
+#define ID_MIDI     MKTAG('M','i','d','i')
 
 bool ResourceContext_RSC::loadMacMIDI() {
 	// Sanity check

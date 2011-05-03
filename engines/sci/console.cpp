@@ -40,12 +40,16 @@
 #include "sci/sound/music.h"
 #include "sci/sound/drivers/mididriver.h"
 #include "sci/sound/drivers/map-mt32-to-gm.h"
+#include "sci/graphics/animate.h"
+#include "sci/graphics/cache.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/paint.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/ports.h"
+#include "sci/graphics/view.h"
 
 #include "sci/parser/vocabulary.h"
 
@@ -123,6 +127,10 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("undither",           WRAP_METHOD(Console, cmdUndither));
 	DCmd_Register("pic_visualize",		WRAP_METHOD(Console, cmdPicVisualize));
 	DCmd_Register("play_video",         WRAP_METHOD(Console, cmdPlayVideo));
+	DCmd_Register("animate_list",       WRAP_METHOD(Console, cmdAnimateList));
+	DCmd_Register("al",                 WRAP_METHOD(Console, cmdAnimateList));	// alias
+	DCmd_Register("window_list",        WRAP_METHOD(Console, cmdWindowList));
+	DCmd_Register("wl",                 WRAP_METHOD(Console, cmdWindowList));	// alias
 	// Segments
 	DCmd_Register("segment_table",		WRAP_METHOD(Console, cmdPrintSegmentTable));
 	DCmd_Register("segtable",			WRAP_METHOD(Console, cmdPrintSegmentTable));	// alias
@@ -354,6 +362,8 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" draw_cel - Draws a cel from a view resource\n");
 	DebugPrintf(" pic_visualize - Enables visualization of the drawing process of EGA pictures\n");
 	DebugPrintf(" undither - Enable/disable undithering\n");
+	DebugPrintf(" play_video - Plays a SEQ, AVI, VMD, RBT or DUK video\n");
+	DebugPrintf(" animate_object_list / al - Shows the current list of objects in kAnimate's draw list\n");
 	DebugPrintf("\n");
 	DebugPrintf("Segments:\n");
 	DebugPrintf(" segment_table / segtable - Lists all segments\n");
@@ -432,7 +442,7 @@ ResourceType parseResourceType(const char *resid) {
 }
 
 bool Console::cmdGetVersion(int argc, const char **argv) {
-	const char *viewTypeDesc[] = { "Unknown", "EGA", "VGA", "VGA SCI1.1", "Amiga" };
+	const char *viewTypeDesc[] = { "Unknown", "EGA", "Amiga ECS 32 colors", "Amiga AGA 64 colors", "VGA", "VGA SCI1.1" };
 
 	bool hasVocab997 = g_sci->getResMan()->testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS)) ? true : false;
 	Common::String gameVersion = "N/A";
@@ -623,7 +633,7 @@ bool Console::cmdSetParseNodes(int argc, const char **argv) {
 bool Console::cmdRegisters(int argc, const char **argv) {
 	EngineState *s = _engine->_gamestate;
 	DebugPrintf("Current register values:\n");
-	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(s->r_acc), PRINT_REG(s->r_prev), s->restAdjust);
+	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(s->r_acc), PRINT_REG(s->r_prev), s->r_rest);
 
 	if (!s->_executionStack.empty()) {
 		DebugPrintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n",
@@ -1434,7 +1444,7 @@ bool Console::cmdSaid(int argc, const char **argv) {
 			_engine->getVocabulary()->dumpParseTree();
 			_engine->getVocabulary()->parserIsValid = true;
 
-			int ret = said(_engine->_gamestate, (byte*)spec, true);
+			int ret = said((byte*)spec, true);
 			DebugPrintf("kSaid: %s\n", (ret == SAID_NO_MATCH ? "No match" : "Match"));
 		}
 
@@ -1503,7 +1513,14 @@ bool Console::cmdDrawCel(int argc, const char **argv) {
 	uint16 loopNo = atoi(argv[2]);
 	uint16 celNo = atoi(argv[3]);
 
-	_engine->_gfxPaint->kernelDrawCel(resourceId, loopNo, celNo, 50, 50, 0, 0, false, NULL_REG);
+	if (_engine->_gfxPaint16) {
+		_engine->_gfxPaint16->kernelDrawCel(resourceId, loopNo, celNo, 50, 50, 0, 0, 128, 128, false, NULL_REG);
+	} else {
+		GfxView *view = _engine->_gfxCache->getView(resourceId);
+		Common::Rect celRect(50, 50, 50 + view->getWidth(loopNo, celNo), 50 + view->getHeight(loopNo, celNo));
+		view->draw(celRect, celRect, celRect, loopNo, celNo, 255, 0, false);
+		_engine->_gfxScreen->copyRectToScreen(celRect);
+	}
 	return true;
 }
 
@@ -1567,6 +1584,22 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 	}
 }
 
+bool Console::cmdAnimateList(int argc, const char **argv) {
+	if (_engine->_gfxAnimate) {
+		DebugPrintf("Animate list:\n");
+		_engine->_gfxAnimate->printAnimateList(this);
+	}
+	return true;
+}
+
+bool Console::cmdWindowList(int argc, const char **argv) {
+	if (_engine->_gfxPorts) {
+		DebugPrintf("Window list:\n");
+		_engine->_gfxPorts->printWindowList(this);
+	}
+	return true;
+
+}
 bool Console::cmdParseGrammar(int argc, const char **argv) {
 	DebugPrintf("Parse grammar, in strict GNF:\n");
 
@@ -1701,9 +1734,7 @@ bool Console::segmentInfo(int nr) {
 
 		for (uint i = 0; i < ct->_table.size(); i++)
 			if (ct->isValidEntry(i)) {
-				reg_t objpos;
-				objpos.offset = i;
-				objpos.segment = nr;
+				reg_t objpos = make_reg(nr, i);
 				DebugPrintf("  [%04x] %s; copy of ", i, _engine->_gamestate->_segMan->getObjectName(objpos));
 				// Object header
 				const Object *obj = _engine->_gamestate->_segMan->getObject(ct->_table[i].getPos());
@@ -2189,7 +2220,7 @@ bool Console::cmdStack(int argc, const char **argv) {
 		return true;
 	}
 
-	ExecStack &xs = _engine->_gamestate->_executionStack.back();
+	const ExecStack &xs = _engine->_gamestate->_executionStack.back();
 	int nr = atoi(argv[1]);
 
 	for (int i = nr; i > 0; i--) {
@@ -2438,12 +2469,12 @@ bool Console::cmdScriptSteps(int argc, const char **argv) {
 
 bool Console::cmdBacktrace(int argc, const char **argv) {
 	DebugPrintf("Call stack (current base: 0x%x):\n", _engine->_gamestate->executionStackBase);
-	Common::List<ExecStack>::iterator iter;
+	Common::List<ExecStack>::const_iterator iter;
 	uint i = 0;
 
 	for (iter = _engine->_gamestate->_executionStack.begin();
 	     iter != _engine->_gamestate->_executionStack.end(); ++iter, ++i) {
-		ExecStack &call = *iter;
+		const ExecStack &call = *iter;
 		const char *objname = _engine->_gamestate->_segMan->getObjectName(call.sendp);
 		int paramc, totalparamc;
 
@@ -2607,7 +2638,7 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 
 	const Object *obj = _engine->_gamestate->_segMan->getObject(objAddr);
 	int selectorId = _engine->getKernel()->findSelector(argv[2]);
-	reg_t addr;
+	reg_t addr = NULL_REG;
 
 	if (!obj) {
 		DebugPrintf("Not an object.");
@@ -2626,13 +2657,22 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 
 	for (int i = 3; i < argc; i++) {
 		if (!scumm_stricmp(argv[i], "bwt"))
-			printBytecode = true;
-		else if (!scumm_stricmp(argv[i], "bc"))
 			printBWTag = true;
+		else if (!scumm_stricmp(argv[i], "bc"))
+			printBytecode = true;
 	}
 
+	reg_t farthestTarget = addr;
 	do {
+		reg_t prevAddr = addr;
+		reg_t jumpTarget;
+		if (isJumpOpcode(_engine->_gamestate, addr, jumpTarget)) {
+			if (jumpTarget > farthestTarget)
+				farthestTarget = jumpTarget;
+		}
 		addr = disassemble(_engine->_gamestate, addr, printBWTag, printBytecode);
+		if (addr.isNull() && prevAddr < farthestTarget)
+			addr = prevAddr + 1; // skip past the ret
 	} while (addr.offset > 0);
 
 	return true;
@@ -2699,26 +2739,30 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 
 	int scriptSegment;
 	Script *script;
-	SegManager *segMan = _engine->getEngineState()->_segMan;
+	// Create a custom segment manager here, so that the game's segment
+	// manager won't be affected by loading and unloading scripts here.
+	SegManager *customSegMan = new SegManager(_engine->getResMan());
 
 	while (itr != resources->end()) {
-		if (_engine->getGameId() == GID_KQ5 && itr->getNumber() == 980) {
-			// Ignore script 980 in KQ5. Seems to be a leftover, as it
-			// uses a superclass from script 988, which doesn't exist
+		// Ignore specific leftover scripts, which require other non-existing scripts
+		if ((_engine->getGameId() == GID_HOYLE3         && itr->getNumber() == 995) ||
+		    (_engine->getGameId() == GID_KQ5            && itr->getNumber() == 980) ||
+		    (_engine->getGameId() == GID_SLATER         && itr->getNumber() == 947) ||
+			(_engine->getGameId() == GID_MOTHERGOOSE256 && itr->getNumber() == 980)) {
 			itr++;
 			continue;
 		}
 
 		// Load script
-		scriptSegment = segMan->instantiateScript(itr->getNumber());
-		script = segMan->getScript(scriptSegment);
+		scriptSegment = customSegMan->instantiateScript(itr->getNumber());
+		script = customSegMan->getScript(scriptSegment);
 
 		// Iterate through all the script's objects
 		ObjMap::iterator it;
 		const ObjMap::iterator end = script->_objects.end();
 		for (it = script->_objects.begin(); it != end; ++it) {
-			const Object *obj = segMan->getObject(it->_value.getPos());
-			const char *objName = segMan->getObjectName(it->_value.getPos());
+			const Object *obj = customSegMan->getObject(it->_value.getPos());
+			const char *objName = customSegMan->getObjectName(it->_value.getPos());
 
 			// Now dissassemble each method of the script object
 			for (uint16 i = 0; i < obj->getMethodCount(); i++) {
@@ -2761,9 +2805,11 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 			}	// for (uint16 i = 0; i < obj->getMethodCount(); i++)
 		}	// for (it = script->_objects.begin(); it != end; ++it)
 
-		segMan->uninstantiateScript(itr->getNumber());
+		customSegMan->uninstantiateScript(itr->getNumber());
 		++itr;
 	}
+
+	delete customSegMan;
 
 	delete resources;
 }
@@ -3108,10 +3154,9 @@ bool Console::cmdBreakpointKernel(int argc, const char **argv) {
 }
 
 bool Console::cmdBreakpointFunction(int argc, const char **argv) {
-	// TODO/FIXME: Why does this accept 2 parameters (the high and the low part of the address)?"
 	if (argc != 3) {
 		DebugPrintf("Sets a breakpoint on the execution of the specified exported function.\n");
-		DebugPrintf("Usage: %s <addr1> <addr2>\n", argv[0]);
+		DebugPrintf("Usage: %s <script number> <export number\n", argv[0]);
 		return true;
 	}
 
@@ -3120,6 +3165,7 @@ bool Console::cmdBreakpointFunction(int argc, const char **argv) {
 	   A breakpoint set on an invalid method name will just never trigger. */
 	Breakpoint bp;
 	bp.type = BREAK_EXPORT;
+	// script number, export number
 	bp.address = (atoi(argv[1]) << 16 | atoi(argv[2]));
 
 	_debugState._breakpoints.push_back(bp);
@@ -3758,11 +3804,16 @@ int Console::printObject(reg_t pos) {
 	return 0;
 }
 
+static void printChar(byte c) {
+	if (c < 32 || c >= 127)
+		c = '.';
+	debugN("%c", c);
+}
+
 void Console::hexDumpReg(const reg_t *data, int len, int regsPerLine, int startOffset, bool isArray) {
 	// reg_t version of Common::hexdump
 	assert(1 <= regsPerLine && regsPerLine <= 8);
 	int i;
-	byte c;
 	int offset = startOffset;
 	while (len >= regsPerLine) {
 		debugN("%06x: ", offset);
@@ -3771,14 +3822,13 @@ void Console::hexDumpReg(const reg_t *data, int len, int regsPerLine, int startO
 		}
 		debugN(" |");
 		for (i = 0; i < regsPerLine; i++) {
-			c = data[i].toUint16() & 0xff;
-			if (c < 32 || c >= 127)
-				c = '.';
-			debugN("%c", c);
-			c = data[i].toUint16() >> 8;
-			if (c < 32 || c >= 127)
-				c = '.';
-			debugN("%c", c);
+			if (g_sci->isBE()) {
+				printChar(data[i].toUint16() >> 8);
+				printChar(data[i].toUint16() & 0xff);
+			} else {
+				printChar(data[i].toUint16() & 0xff);
+				printChar(data[i].toUint16() >> 8);
+			}
 		}
 		debugN("|\n");
 		data += regsPerLine;
@@ -3798,14 +3848,13 @@ void Console::hexDumpReg(const reg_t *data, int len, int regsPerLine, int startO
 	}
 	debugN(" |");
 	for (i = 0; i < len; i++) {
-		c = data[i].toUint16() & 0xff;
-		if (c < 32 || c >= 127)
-			c = '.';
-		debugN("%c", c);
-		c = data[i].toUint16() >> 8;
-		if (c < 32 || c >= 127)
-			c = '.';
-		debugN("%c", c);
+		if (g_sci->isBE()) {
+			printChar(data[i].toUint16() >> 8);
+			printChar(data[i].toUint16() & 0xff);
+		} else {
+			printChar(data[i].toUint16() & 0xff);
+			printChar(data[i].toUint16() >> 8);
+		}
 	}
 	for (; i < regsPerLine; i++)
 		debugN("  ");

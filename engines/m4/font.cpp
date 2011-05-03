@@ -81,7 +81,7 @@ Font::Font(MadsM4Engine *vm, const char *filename) : _vm(vm) {
 void Font::setFontM4(const char *filename) {
 	Common::SeekableReadStream *fontFile = _vm->res()->openFile(filename);
 
-	if (fontFile->readUint32LE() != MKID_BE('FONT')) {
+	if (fontFile->readUint32LE() != MKTAG('F','O','N','T')) {
 		debugCN(kDebugGraphics, "Font::Font: FONT tag expected\n");
 		return;
 	}
@@ -92,7 +92,7 @@ void Font::setFontM4(const char *filename) {
 
 	//debugCN(kDebugGraphics, "Font::Font: _maxWidth = %d, _maxHeight = %d, fontSize = %d\n", _maxWidth, _maxHeight, fontSize);
 
-	if (fontFile->readUint32LE() != MKID_BE('WIDT')) {
+	if (fontFile->readUint32LE() != MKTAG('W','I','D','T')) {
 		debugCN(kDebugGraphics, "Font::Font: WIDT tag expected\n");
 		return;
 	}
@@ -100,7 +100,7 @@ void Font::setFontM4(const char *filename) {
 	_charWidths = new uint8[256];
 	fontFile->read(_charWidths, 256);
 
-	if (fontFile->readUint32LE() != MKID_BE('OFFS')) {
+	if (fontFile->readUint32LE() != MKTAG('O','F','F','S')) {
 		debugCN(kDebugGraphics, "Font::Font: OFFS tag expected\n");
 		return;
 	}
@@ -110,7 +110,7 @@ void Font::setFontM4(const char *filename) {
 	for (int i = 0; i < 256; i++)
 		_charOffs[i] = fontFile->readUint16LE();
 
-	if (fontFile->readUint32LE() != MKID_BE('PIXS')) {
+	if (fontFile->readUint32LE() != MKTAG('P','I','X','S')) {
 		debugCN(kDebugGraphics, "Font::Font: PIXS tag expected\n");
 		return;
 	}
@@ -159,14 +159,14 @@ Font::~Font() {
 	}
 }
 
-void Font::setColour(uint8 colour) {
+void Font::setColor(uint8 color) {
 	if (_sysFont)
-		_fontColors[1] = colour;
+		_fontColors[1] = color;
 	else
-		_fontColors[3] = colour;
+		_fontColors[3] = color;
 }
 
-void Font::setColours(uint8 col1, uint8 col2, uint8 col3) {
+void Font::setColors(uint8 col1, uint8 col2, uint8 col3) {
 	if (_sysFont)
 		_fontColors[1] = col3;
 	else {

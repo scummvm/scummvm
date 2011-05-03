@@ -23,6 +23,8 @@
 *
 */
 
+#include "common/debug.h"
+
 #include "toon/state.h"
 #include "toon/toon.h"
 
@@ -119,7 +121,6 @@ State::State(void) {
 }
 
 State::~State(void) {
-
 }
 
 int32 State::getGameFlag(int32 flagId) {

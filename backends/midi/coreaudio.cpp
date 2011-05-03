@@ -41,6 +41,8 @@
 
 
 #include "common/config-manager.h"
+#include "common/error.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"
@@ -72,7 +74,9 @@ do {                                                                \
 class MidiDriver_CORE : public MidiDriver_MPU401 {
 public:
 	MidiDriver_CORE();
+	~MidiDriver_CORE();
 	int open();
+	bool isOpen() const { return _auGraph != 0; }
 	void close();
 	void send(uint32 b);
 	void sysEx(const byte *msg, uint16 length);
@@ -86,10 +90,18 @@ MidiDriver_CORE::MidiDriver_CORE()
 	: _auGraph(0) {
 }
 
+MidiDriver_CORE::~MidiDriver_CORE() {
+	if (_auGraph) {
+		AUGraphStop(_auGraph);
+		DisposeAUGraph(_auGraph);
+		_auGraph = 0;
+	}
+}
+
 int MidiDriver_CORE::open() {
 	OSStatus err = 0;
 
-	if (_auGraph)
+	if (isOpen())
 		return MERR_ALREADY_OPEN;
 
 	// Open the Music Device.
@@ -176,7 +188,6 @@ bail:
 
 void MidiDriver_CORE::close() {
 	MidiDriver_MPU401::close();
-
 	if (_auGraph) {
 		AUGraphStop(_auGraph);
 		DisposeAUGraph(_auGraph);
@@ -185,7 +196,7 @@ void MidiDriver_CORE::close() {
 }
 
 void MidiDriver_CORE::send(uint32 b) {
-	assert(_auGraph != NULL);
+	assert(isOpen());
 
 	byte status_byte = (b & 0x000000FF);
 	byte first_byte = (b & 0x0000FF00) >> 8;
@@ -198,7 +209,7 @@ void MidiDriver_CORE::sysEx(const byte *msg, uint16 length) {
 	unsigned char buf[266];
 
 	assert(length + 2 <= ARRAYSIZE(buf));
-	assert(_auGraph != NULL);
+	assert(isOpen());
 
 	// Add SysEx frame
 	buf[0] = 0xF0;

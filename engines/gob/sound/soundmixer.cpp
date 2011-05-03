@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/util.h"
+
 #include "gob/sound/soundmixer.h"
 #include "gob/sound/sounddesc.h"
 

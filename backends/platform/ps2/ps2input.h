@@ -32,6 +32,10 @@
 class OSystem_PS2;
 class Ps2Pad;
 
+namespace Common {
+struct Event;
+}
+
 class Ps2Input {
 public:
 	Ps2Input(OSystem_PS2 *system, bool mouseLoaded, bool kbdLoaded);

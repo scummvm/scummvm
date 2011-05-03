@@ -26,6 +26,7 @@
 #include "cruise/cruise.h"
 #include "cruise/cruise_main.h"
 #include "common/endian.h"
+#include "common/textconsole.h"
 
 namespace Cruise {
 
@@ -619,13 +620,13 @@ int executeScripts(scriptInstanceStruct *ptr) {
 	positionInStack = 0;
 
 	do {
-//#ifdef SKIP_INTRO
+#ifdef SKIP_INTRO
 		if (currentScriptPtr->scriptOffset == 290
 		        && currentScriptPtr->overlayNumber == 4
 		        && currentScriptPtr->scriptNumber == 0) {
 			currentScriptPtr->scriptOffset = 923;
 		}
-//#endif
+#endif
 		opcodeType = getByteFromScript();
 
 		debugC(5, kCruiseDebugScript, "Script %s/%d ip=%d opcode=%d",

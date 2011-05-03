@@ -29,14 +29,20 @@
 #define PATH_LEN 200
 
 #include "common/archive.h"
+#include "common/str.h"
 
-#include "graphics/surface.h"
 #include "graphics/iff.h"
 
 namespace Common {
-	class FSDirectory;
+class FSDirectory;
+class ReadStream;
+class SeekableReadStream;
+struct IFFChunk;
 }
 
+namespace Graphics {
+struct Surface;
+}
 
 namespace Parallaction {
 

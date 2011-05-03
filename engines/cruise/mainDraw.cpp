@@ -1081,8 +1081,6 @@ void mainDrawPolygons(int fileIndex, cellStruct *plWork, int X, int scale, int Y
 	int newScale;
 	char *newFrame;
 
-	int var_8;		// unused
-
 	int sizeTable[4];	// 0 = left, 1 = right, 2 = bottom, 3 = top
 
 	// this function checks if the dataPtr is not 0, else it retrives the data for X, Y, scale and DataPtr again (OLD: mainDrawSub1Sub1)
@@ -1124,8 +1122,6 @@ void mainDrawPolygons(int fileIndex, cellStruct *plWork, int X, int scale, int Y
 		return;
 
 	gfxModuleData_addDirtyRect(Common::Rect(spriteX2, spriteY2, spriteX1, spriteY1));
-
-	var_8 = 0;
 
 	memset(polygonMask, 0xFF, (320*200) / 8);
 

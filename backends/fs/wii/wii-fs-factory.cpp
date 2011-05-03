@@ -22,10 +22,13 @@
 
 #if defined(__WII__)
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
+
 #include <unistd.h>
 
 #include "backends/fs/wii/wii-fs-factory.h"
-#include "backends/fs/wii/wii-fs.cpp"
+#include "backends/fs/wii/wii-fs.h"
 
 #ifdef USE_WII_DI
 #include <di/di.h>

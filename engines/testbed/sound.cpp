@@ -26,6 +26,8 @@
 
 #include "backends/audiocd/audiocd.h"
 
+#include "common/config-manager.h"
+
 #include "testbed/sound.h"
 
 namespace Testbed {

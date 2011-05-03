@@ -31,7 +31,7 @@
 #include "tinsel/dw.h"
 
 namespace Common {
-	class Serializer;
+class Serializer;
 }
 
 namespace Tinsel {

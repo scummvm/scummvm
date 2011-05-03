@@ -18,7 +18,7 @@ static T *createSine(const int sampleRate, const int time) {
 	const T maxValue = std::numeric_limits<T>::max() ^ xorMask;
 
 	for (int i = 0; i < time * sampleRate; ++i)
-		sine[i] = ((T)(sin((double)i / sampleRate * 2 * PI) * maxValue)) ^ xorMask;
+		sine[i] = ((T)(sin((double)i / sampleRate * 2 * M_PI) * maxValue)) ^ xorMask;
 
 	return sine;
 }

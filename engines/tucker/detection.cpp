@@ -122,8 +122,8 @@ static const ADParams detectionParams = {
 	0,
 	// Flags
 	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOLAUNCHLOAD,
+	// Additional GUI options (for every game)
+	Common::GUIO_NONE,
 	// Maximum directory depth
 	1,
 	// List of directory globs
@@ -156,6 +156,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const {
 		switch (f) {
 		case kSupportsListSaves:
+		case kSupportsLoadingDuringStartup:
 		case kSupportsDeleteSave:
 			return true;
 		default:

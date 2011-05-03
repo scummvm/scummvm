@@ -30,11 +30,13 @@
 #include "common/file.h"
 #include "common/frac.h"
 #include "common/memstream.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 namespace Sci {
 
-/* #define DEBUG */
+//#define DEBUG
 
 class MidiDriver_AmigaMac : public MidiDriver_Emulated {
 public:
@@ -132,6 +134,7 @@ private:
 	};
 
 	bool _isSci1;
+	bool _isSci1Early;	// KQ1 Amiga, patch 5
 	bool _playSwitch;
 	int _masterVolume;
 	int _frequency;
@@ -289,9 +292,9 @@ void MidiDriver_AmigaMac::playInstrument(int16 *dest, Voice *channel, int count)
 void MidiDriver_AmigaMac::changeInstrument(int channel, int instrument) {
 #ifdef DEBUG
 	if (_bank.instruments[instrument][0])
-		debugN("[sfx:seq:amiga] Setting channel %i to \"%s\" (%i)\n", channel, _bank.instruments[instrument]->name, instrument);
+		debugN("Amiga/Mac driver: Setting channel %i to \"%s\" (%i)\n", channel, _bank.instruments[instrument].name, instrument);
 	else
-		warning("[sfx:seq:amiga] instrument %i does not exist (channel %i)", instrument, channel);
+		warning("Amiga/Mac driver: instrument %i does not exist (channel %i)", instrument, channel);
 #endif
 	_channels[channel].instrument = instrument;
 }
@@ -326,7 +329,7 @@ void MidiDriver_AmigaMac::stopNote(int ch, int note) {
 
 	if (channel == kChannels) {
 #ifdef DEBUG
-		warning("[sfx:seq:amiga] cannot stop note %i on channel %i", note, ch);
+		warning("Amiga/Mac driver: cannot stop note %i on channel %i", note, ch);
 #endif
 		return;
 	}
@@ -366,7 +369,7 @@ void MidiDriver_AmigaMac::setOutputFrac(int voice) {
 			fnote += instrument->transpose;
 
 		if (fnote < 0 || fnote > 127) {
-			warning("[sfx:seq:amiga] illegal note %i", fnote);
+			warning("Amiga/Mac driver: illegal note %i", fnote);
 			return;
 		}
 	} else
@@ -403,14 +406,14 @@ void MidiDriver_AmigaMac::startNote(int ch, int note, int velocity) {
 	int channel;
 
 	if (_channels[ch].instrument < 0 || _channels[ch].instrument > 255) {
-		warning("[sfx:seq:amiga] invalid instrument %i on channel %i", _channels[ch].instrument, ch);
+		warning("Amiga/Mac driver: invalid instrument %i on channel %i", _channels[ch].instrument, ch);
 		return;
 	}
 
 	InstrumentSample *instrument = findInstrument(_channels[ch].instrument, note);
 
 	if (!instrument) {
-		warning("[sfx:seq:amiga] instrument %i does not exist", _channels[ch].instrument);
+		warning("Amiga/Mac driver: instrument %i does not exist", _channels[ch].instrument);
 		return;
 	}
 
@@ -419,7 +422,7 @@ void MidiDriver_AmigaMac::startNote(int ch, int note, int velocity) {
 			break;
 
 	if (channel == kChannels) {
-		warning("[sfx:seq:amiga] could not find a free channel");
+		warning("Amiga/Mac driver: could not find a free channel");
 		return;
 	}
 
@@ -447,14 +450,14 @@ MidiDriver_AmigaMac::InstrumentSample *MidiDriver_AmigaMac::readInstrumentSCI0(C
 	byte header[61];
 
 	if (file.read(header, 61) < 61) {
-		warning("[sfx:seq:amiga] failed to read instrument header");
+		warning("Amiga/Mac driver: failed to read instrument header");
 		return NULL;
 	}
 
 	int seg_size[3];
-	seg_size[0] = READ_BE_UINT16(header + 35) * 2;
-	seg_size[1] = READ_BE_UINT16(header + 41) * 2;
-	seg_size[2] = READ_BE_UINT16(header + 47) * 2;
+	seg_size[0] = (int16)READ_BE_UINT16(header + 35) * 2;
+	seg_size[1] = (int16)READ_BE_UINT16(header + 41) * 2;
+	seg_size[2] = (int16)READ_BE_UINT16(header + 47) * 2;
 
 	InstrumentSample *instrument = new InstrumentSample;
 
@@ -489,18 +492,18 @@ MidiDriver_AmigaMac::InstrumentSample *MidiDriver_AmigaMac::readInstrumentSCI0(C
 	instrument->name[29] = 0;
 
 #ifdef DEBUG
-	debugN("[sfx:seq:amiga] Reading instrument %i: \"%s\" (%i bytes)\n",
+	debugN("Amiga/Mac driver: Reading instrument %i: \"%s\" (%i bytes)\n",
 	          *id, instrument->name, size);
 	debugN("                Mode: %02x\n", instrument->mode);
 	debugN("                Looping: %s\n", instrument->mode & kModeLoop ? "on" : "off");
 	debugN("                Pitch changes: %s\n", instrument->mode & kModePitch ? "on" : "off");
 	debugN("                Segment sizes: %i %i %i\n", seg_size[0], seg_size[1], seg_size[2]);
-	debugN("                Segment offsets: 0 %i %i\n", loop_offset, read_int32(header + 43));
+	debugN("                Segment offsets: 0 %i %i\n", loop_offset, (int32)READ_BE_UINT32(header + 43));
 #endif
 
 	instrument->samples = (int8 *) malloc(size + 1);
 	if (file.read(instrument->samples, size) < (unsigned int)size) {
-		warning("[sfx:seq:amiga] failed to read instrument samples");
+		warning("Amiga/Mac driver: failed to read instrument samples");
 		free(instrument->samples);
 		delete instrument;
 		return NULL;
@@ -512,14 +515,14 @@ MidiDriver_AmigaMac::InstrumentSample *MidiDriver_AmigaMac::readInstrumentSCI0(C
 	if (instrument->mode & kModeLoop) {
 		if (loop_offset + seg_size[1] > size) {
 #ifdef DEBUG
-			warning("[sfx:seq:amiga] looping samples extend %i bytes past end of sample block",
+			warning("Amiga/Mac driver: looping samples extend %i bytes past end of sample block",
 			          loop_offset + seg_size[1] - size);
 #endif
 			seg_size[1] = size - loop_offset;
 		}
 
 		if (seg_size[1] < 0) {
-			warning("[sfx:seq:amiga] invalid looping point");
+			warning("Amiga/Mac driver: invalid looping point");
 			free(instrument->samples);
 			delete instrument;
 			return NULL;
@@ -557,6 +560,7 @@ uint32 MidiDriver_AmigaMac::property(int prop, uint32 param) {
 
 int MidiDriver_AmigaMac::open() {
 	_isSci1 = false;
+	_isSci1Early = false;
 
 	for (int i = 0; i < 48; i++)
 		_freqTable[i] = pow(2, i / (double)48);
@@ -589,9 +593,15 @@ int MidiDriver_AmigaMac::open() {
 	} else {
 		ResourceManager *resMan = g_sci->getResMan();
 
-		Resource *resource = resMan->findResource(ResourceId(kResourceTypePatch, 7), false);
+		Resource *resource = resMan->findResource(ResourceId(kResourceTypePatch, 7), false);	// Mac
 		if (!resource)
-			resource = resMan->findResource(ResourceId(kResourceTypePatch, 9), false);
+			resource = resMan->findResource(ResourceId(kResourceTypePatch, 9), false);	// Amiga
+
+		if (!resource) {
+			resource = resMan->findResource(ResourceId(kResourceTypePatch, 5), false);	// KQ1 Amiga
+			if (resource)
+				_isSci1Early = true;
+		}
 
 		// If we have a patch by this point, it's SCI1
 		if (resource)
@@ -666,26 +676,42 @@ void MidiDriver_AmigaMac::send(uint32 b) {
 		case 0x07:
 			_channels[channel].volume = op2;
 			break;
-		case 0x0a:
+		case 0x0a:	// pan
+			// TODO
 #ifdef DEBUG
-			warning("[sfx:seq:amiga] ignoring pan 0x%02x event for channel %i", op2, channel);
+			warning("Amiga/Mac driver: ignoring pan 0x%02x event for channel %i", op2, channel);
 #endif
+			break;
+		case 0x40:	// hold
+			// TODO
+#ifdef DEBUG
+			warning("Amiga/Mac driver: ignoring hold 0x%02x event for channel %i", op2, channel);
+#endif
+			break;
+		case 0x4b:	// voice mapping
+			break;
+		case 0x4e:	// velocity
 			break;
 		case 0x7b:
 			stopChannel(channel);
 			break;
 		default:
-			warning("[sfx:seq:amiga] unknown control event 0x%02x", op1);
+			//warning("Amiga/Mac driver: unknown control event 0x%02x", op1);
+			break;
 		}
 		break;
 	case 0xc0:
 		changeInstrument(channel, op1);
 		break;
+	// The original MIDI driver from sierra ignores aftertouch completely, so should we
+	case 0xa0: // Polyphonic key pressure (aftertouch)
+	case 0xd0: // Channel pressure (aftertouch)
+		break;
 	case 0xe0:
 		pitchWheel(channel, (op2 << 7) | op1);
 		break;
 	default:
-		warning("[sfx:seq:amiga] unknown event %02x", command);
+		warning("Amiga/Mac driver: unknown event %02x", command);
 	}
 }
 
@@ -738,7 +764,7 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI0(Common::File &file) {
 	byte header[40];
 
 	if (file.read(header, 40) < 40) {
-		warning("[sfx:seq:amiga] failed to read header of file bank.001");
+		warning("Amiga/Mac driver: failed to read header of file bank.001");
 		return false;
 	}
 
@@ -746,7 +772,7 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI0(Common::File &file) {
 	strncpy(_bank.name, (char *) header + 8, 29);
 	_bank.name[29] = 0;
 #ifdef DEBUG
-	debugN("[sfx:seq:amiga] Reading %i instruments from bank \"%s\"\n", _bank.size, _bank.name);
+	debugN("Amiga/Mac driver: Reading %i instruments from bank \"%s\"\n", _bank.size, _bank.name);
 #endif
 
 	for (uint i = 0; i < _bank.size; i++) {
@@ -754,12 +780,12 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI0(Common::File &file) {
 		InstrumentSample *instrument = readInstrumentSCI0(file, &id);
 
 		if (!instrument) {
-			warning("[sfx:seq:amiga] failed to read bank.001");
+			warning("Amiga/Mac driver: failed to read bank.001");
 			return false;
 		}
 
 		if (id < 0 || id > 255) {
-			warning("[sfx:seq:amiga] Error: instrument ID out of bounds");
+			warning("Amiga/Mac driver: Error: instrument ID out of bounds");
 			return false;
 		}
 
@@ -777,7 +803,7 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI0Mac(Common::SeekableReadStream &fil
 	byte header[40];
 
 	if (file.read(header, 40) < 40) {
-		warning("[sfx:seq:amiga] failed to read header of file patch.200");
+		warning("Amiga/Mac driver: failed to read header of file patch.200");
 		return false;
 	}
 
@@ -785,7 +811,7 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI0Mac(Common::SeekableReadStream &fil
 	strncpy(_bank.name, (char *) header + 8, 29);
 	_bank.name[29] = 0;
 #ifdef DEBUG
-	debugN("[sfx:seq:amiga] Reading %i instruments from bank \"%s\"\n", _bank.size, _bank.name);
+	debugN("Amiga/Mac driver: Reading %i instruments from bank \"%s\"\n", _bank.size, _bank.name);
 #endif
 
 	Common::Array<uint32> instrumentOffsets;
@@ -848,7 +874,7 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI0Mac(Common::SeekableReadStream &fil
 
 		instrument->samples = (int8 *)malloc(size + 1);
 		if (file.read(instrument->samples, size) < size) {
-			warning("[sfx:seq:amiga] failed to read instrument sample");
+			warning("Amiga/Mac driver: failed to read instrument sample");
 			free(instrument->samples);
 			delete instrument;
 			continue;
@@ -880,6 +906,9 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI0Mac(Common::SeekableReadStream &fil
 bool MidiDriver_AmigaMac::loadInstrumentsSCI1(Common::SeekableReadStream &file) {
 	_bank.size = 128;
 
+	if (_isSci1Early)
+		file.skip(4);	// TODO: What is this offset for?
+
 	Common::Array<uint32> instrumentOffsets;
 	instrumentOffsets.resize(_bank.size);
 	_bank.instruments.resize(_bank.size);
@@ -892,10 +921,16 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI1(Common::SeekableReadStream &file) 
 		if (instrumentOffsets[i] == 0)
 			continue;
 
-		file.seek(instrumentOffsets[i]);
+		file.seek(instrumentOffsets[i] + (_isSci1Early ? 4 : 0));
 
 		// Read in the instrument name
 		file.read(_bank.instruments[i].name, 10); // last two bytes are always 0
+
+		// TODO: Finish off support of SCI1 early patches (patch.005 - KQ1 Amiga)
+		if (_isSci1Early) {
+			warning("Music patch 5 isn't supported yet - ignoring instrument %d", i);
+			continue;
+		}
 
 		for (uint32 j = 0; ; j++) {
 			InstrumentSample *sample = new InstrumentSample;

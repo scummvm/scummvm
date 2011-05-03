@@ -25,11 +25,11 @@
 #ifndef GRAPHICS_WINFONT_H
 #define GRAPHICS_WINFONT_H
 
+#include "common/str.h"
 #include "graphics/font.h"
 
 namespace Common {
-	class SeekableReadStream;
-	class String;
+class SeekableReadStream;
 }
 
 namespace Graphics {
@@ -69,6 +69,10 @@ public:
 	void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const;
 
 private:
+	bool loadFromPE(const Common::String &fileName, const WinFontDirEntry &dirEntry);
+	bool loadFromNE(const Common::String &fileName, const WinFontDirEntry &dirEntry);
+
+	uint32 getFontIndex(Common::SeekableReadStream &stream, const WinFontDirEntry &dirEntry);
 	bool loadFromFNT(Common::SeekableReadStream &stream);
 	char indexToCharacter(uint16 index) const;
 	uint16 characterToIndex(byte character) const;

@@ -50,7 +50,7 @@ char *strdup(const char *strSource);
 // common missing functions required by both gcc and evc
 
 void *bsearch(const void *key, const void *base, size_t nmemb,
-			  size_t size, int (*compar)(const void *, const void *)) {
+              size_t size, int (*compar)(const void *, const void *)) {
 	// Perform binary search
 	size_t lo = 0;
 	size_t hi = nmemb;
@@ -63,17 +63,17 @@ void *bsearch(const void *key, const void *base, size_t nmemb,
 		else if (tmp > 0)
 			lo = mid + 1;
 		else
-			return (void *)p;
+			return const_cast<void *>(p);
 	}
 
 	return NULL;
 }
 
-static char cwd[MAX_PATH+1] = "";
+static char cwd[MAX_PATH + 1] = "";
 
 EXT_C char *getcwd(char *buffer, int maxlen) {
-	TCHAR fileUnc[MAX_PATH+1];
-	char* plast;
+	TCHAR fileUnc[MAX_PATH + 1];
+	char *plast;
 
 	if (cwd[0] == 0) {
 		GetModuleFileName(NULL, fileUnc, MAX_PATH);
@@ -94,7 +94,7 @@ EXT_C char *getcwd(char *buffer, int maxlen) {
 #undef GetCurrentDirectory
 #endif
 EXT_C void GetCurrentDirectory(int len, char *buf) {
-	getcwd(buf,len);
+	getcwd(buf, len);
 }
 
 /*
@@ -103,8 +103,8 @@ fully qualified paths refer to root folder rather
 than current folder (concept not implemented in CE).
 */
 #undef fopen
-EXT_C FILE *wce_fopen(const char* fname, const char* fmode) {
-	char fullname[MAX_PATH+1];
+EXT_C FILE *wce_fopen(const char *fname, const char *fmode) {
+	char fullname[MAX_PATH + 1];
 
 	if (!fname || fname[0] == '\0')
 		return NULL;
@@ -118,8 +118,8 @@ EXT_C FILE *wce_fopen(const char* fname, const char* fmode) {
 }
 
 /* Remove file by name */
-int remove(const char* path) {
-	TCHAR pathUnc[MAX_PATH+1];
+int remove(const char *path) {
+	TCHAR pathUnc[MAX_PATH + 1];
 	MultiByteToWideChar(CP_ACP, 0, path, -1, pathUnc, MAX_PATH);
 	return !DeleteFile(pathUnc);
 }
@@ -128,15 +128,15 @@ int remove(const char* path) {
 /* check out file access permissions */
 int _access(const char *path, int mode) {
 	TCHAR fname[MAX_PATH];
-	char fullname[MAX_PATH+1];
+	char fullname[MAX_PATH + 1];
 
 	if (path[0] != '\\' && path[0] != '/') {
 		getcwd(fullname, MAX_PATH);
 		strcat(fullname, "\\");
 		strcat(fullname, path);
-		MultiByteToWideChar(CP_ACP, 0, fullname, -1, fname, sizeof(fname)/sizeof(TCHAR));
+		MultiByteToWideChar(CP_ACP, 0, fullname, -1, fname, sizeof(fname) / sizeof(TCHAR));
 	} else
-		MultiByteToWideChar(CP_ACP, 0, path, -1, fname, sizeof(fname)/sizeof(TCHAR));
+		MultiByteToWideChar(CP_ACP, 0, path, -1, fname, sizeof(fname) / sizeof(TCHAR));
 
 	WIN32_FIND_DATA ffd;
 	HANDLE h = FindFirstFile(fname, &ffd);
@@ -144,10 +144,10 @@ int _access(const char *path, int mode) {
 
 	if (h == INVALID_HANDLE_VALUE) {
 		// WORKAROUND: WinCE 3.0 doesn't find paths ending in '\'
-		if (path[strlen(path)-1] == '\\') {
+		if (path[strlen(path) - 1] == '\\') {
 			char p2[MAX_PATH];
-			strncpy(p2, path, strlen(path)-1);
-			p2[strlen(path) - 1]= '\0';
+			strncpy(p2, path, strlen(path) - 1);
+			p2[strlen(path) - 1] = '\0';
 			return _access(p2, mode);
 		} else
 			return -1;  //Can't find file
@@ -158,7 +158,7 @@ int _access(const char *path, int mode) {
 		// hits for files that don't exist. TRIPLE checking for the same fname
 		// seems to weed out those false positives.
 		// Exhibited in kyra engine.
-		HANDLE h = FindFirstFile(fname, &ffd);
+		h = FindFirstFile(fname, &ffd);
 		FindClose(h);
 		if (h == INVALID_HANDLE_VALUE)
 			return -1;  //Can't find file
@@ -170,13 +170,13 @@ int _access(const char *path, int mode) {
 		return 0; //Always return success if target is directory and exists
 	}
 	switch (mode) {
-		case 00: //Check existence
-			return 0;
-		case 06: //Check Read & Write permission
-		case 02: //Check Write permission
-			return ffd.dwFileAttributes & FILE_ATTRIBUTE_READONLY ? -1 : 0;
-		case 04: //Check Read permission
-			return 0; //Assume always have read permission
+	case 00: //Check existence
+		return 0;
+	case 06: //Check Read & Write permission
+	case 02: //Check Write permission
+		return ffd.dwFileAttributes & FILE_ATTRIBUTE_READONLY ? -1 : 0;
+	case 04: //Check Read permission
+		return 0; //Assume always have read permission
 	}
 	//Bad mode value supplied, return failure
 	return -1;
@@ -188,7 +188,7 @@ int _access(const char *path, int mode) {
 char *strdup(const char *strSource) {
 	char *buffer;
 	size_z len = strlen(strSource) + 1;
-	buffer = (char*)malloc(len);
+	buffer = (char *)malloc(len);
 	if (buffer)
 		memcpy(buffer, strSource, len);
 	return buffer;
@@ -199,25 +199,25 @@ char *strdup(const char *strSource) {
 
 #ifndef __MINGW32CE__
 int islower(int c) {
-	return (c>='a' && c<='z');
+	return (c >= 'a' && c <= 'z');
 }
 
 int isspace(int c) {
-	return (c==' ' || c=='\f' || c=='\n' || c=='\r' || c=='\t' || c=='\v');
+	return (c == ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v');
 }
 
 int isalpha(int c) {
-	return ((c>='a' && c<='z') || (c>='A' && c<='Z'));
+	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
 }
 
 int isalnum(int c) {
-	return ((c>='a' && c<='z') || (c>='A' && c<='Z') || (c>='0' && c<='9'));
+	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'));
 }
 
 int isprint(int c) {
 	//static const char punct[] = "!\"#%&'();<=>?[\\]*+,-./:^_{|}~";
 	//return (isalnum(c) || strchr(punct, c));
-	return (32 <= c && c <= 126);	// based on BSD manpage
+	return (32 <= c && c <= 126);   // based on BSD manpage
 }
 #endif
 

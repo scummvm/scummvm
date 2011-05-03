@@ -23,13 +23,10 @@
  *
  */
 
-#include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/file.h"
-#include "common/savefile.h"
-#include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "engines/util.h"
 
@@ -52,15 +49,12 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 	DebugMan.addDebugChannel(kCruiseDebugScript, "scripts", "Scripts debug level");
 	DebugMan.addDebugChannel(kCruiseDebugSound, "sound", "Sound debug level");
 
-	// Setup mixer
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType,
-			ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,
-			ConfMan.getInt("music_volume"));
-
 	_vm = this;
 	_debugger = new Debugger();
 	_sound = new PCSound(_mixer, this);
+
+	// Setup mixer
+	syncSoundSettings();
 
 	g_eventRec.registerRandomSource(_rnd, "cruise");
 }
@@ -235,6 +229,8 @@ const char *CruiseEngine::getSavegameFile(int saveGameIdx) {
 }
 
 void CruiseEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
 	_sound->syncSounds();
 }
 

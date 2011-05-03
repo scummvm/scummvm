@@ -104,6 +104,7 @@ public:
 	int32 getCurFrame(VideoHandle handle);
 	uint32 getFrameCount(VideoHandle handle);
 	uint32 getElapsedTime(VideoHandle handle);
+	uint32 getDuration(VideoHandle videoHandle);
 	bool endOfVideo(VideoHandle handle);
 	void setVideoBounds(VideoHandle handle, Audio::Timestamp start, Audio::Timestamp end);
 	void seekToTime(VideoHandle handle, Audio::Timestamp time);

@@ -23,6 +23,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -32,6 +34,7 @@
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
 #include "common/EventRecorder.h"
+#include "common/textconsole.h"
 
 #include "backends/saves/default/default-saves.h"
 #include "backends/audiocd/sdl/sdl-audiocd.h"
@@ -125,10 +128,10 @@ void OSystem_SDL::init() {
 	if (_timerManager == 0)
 		_timerManager = new SdlTimerManager();
 
-	#ifdef USE_OPENGL
-		// Setup a list with both SDL and OpenGL graphics modes
-		setupGraphicsModes();
-	#endif
+#ifdef USE_OPENGL
+	// Setup a list with both SDL and OpenGL graphics modes
+	setupGraphicsModes();
+#endif
 }
 
 void OSystem_SDL::initBackend() {
@@ -148,11 +151,15 @@ void OSystem_SDL::initBackend() {
 			Common::String gfxMode(ConfMan.get("gfx_mode"));
 			bool use_opengl = false;
 			const OSystem::GraphicsMode *mode = OpenGLSdlGraphicsManager::supportedGraphicsModes();
+			int i = 0;
 			while (mode->name) {
-				if (scumm_stricmp(mode->name, gfxMode.c_str()) == 0)
+				if (scumm_stricmp(mode->name, gfxMode.c_str()) == 0) {
+					_graphicsMode = i + _sdlModesCount;
 					use_opengl = true;
+				}
 
 				mode++;
+				++i;
 			}
 
 			// If the gfx_mode is from OpenGL, create the OpenGL graphics manager
@@ -209,6 +216,11 @@ void OSystem_SDL::initSDL() {
 		uint32 sdlFlags = 0;
 		if (ConfMan.hasKey("disable_sdl_parachute"))
 			sdlFlags |= SDL_INIT_NOPARACHUTE;
+
+#ifdef WEBOS
+		// WebOS needs this flag or otherwise the application won't start
+		sdlFlags |= SDL_INIT_VIDEO;
+#endif
 
 		// Initialize SDL (SDL Subsystems are initiliazed in the corresponding sdl managers)
 		if (SDL_Init(sdlFlags) == -1)
@@ -369,7 +381,11 @@ void OSystem_SDL::setupIcon() {
 	unsigned int rgba[256];
 	unsigned int *icon;
 
-	sscanf(scummvm_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes);
+	if (sscanf(scummvm_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes) != 4) {
+		warning("Wrong format of scummvm_icon[0] (%s)", scummvm_icon[0]);
+		
+		return;
+	}
 	if ((w > 512) || (h > 512) || (ncols > 255) || (nbytes > 1)) {
 		warning("Could not load the built-in icon (%d %d %d %d)", w, h, ncols, nbytes);
 		return;
@@ -384,13 +400,17 @@ void OSystem_SDL::setupIcon() {
 		unsigned char code;
 		char color[32];
 		unsigned int col;
-		sscanf(scummvm_icon[1 + i], "%c c %s", &code, color);
+		if (sscanf(scummvm_icon[1 + i], "%c c %s", &code, color) != 2) {
+			warning("Wrong format of scummvm_icon[%d] (%s)", 1 + i, scummvm_icon[1 + i]);
+		}
 		if (!strcmp(color, "None"))
 			col = 0x00000000;
 		else if (!strcmp(color, "black"))
 			col = 0xFF000000;
 		else if (color[0] == '#') {
-			sscanf(color + 1, "%06x", &col);
+			if (sscanf(color + 1, "%06x", &col) != 1) {
+				warning("Wrong format of color (%s)", color + 1);
+			}
 			col |= 0xFF000000;
 		} else {
 			warning("Could not load the built-in icon (%d %s - %s) ", code, color, scummvm_icon[1 + i]);
@@ -464,6 +484,7 @@ int OSystem_SDL::getDefaultGraphicsMode() const {
 bool OSystem_SDL::setGraphicsMode(int mode) {
 	const OSystem::GraphicsMode *srcMode;
 	int i;
+
 	// Check if mode is from SDL or OpenGL
 	if (mode < _sdlModesCount) {
 		srcMode = SdlGraphicsManager::supportedGraphicsModes();
@@ -472,28 +493,34 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		srcMode = OpenGLSdlGraphicsManager::supportedGraphicsModes();
 		i = _sdlModesCount;
 	}
+
 	// Loop through modes
 	while (srcMode->name) {
 		if (i == mode) {
 			// If the new mode and the current mode are not from the same graphics
 			// manager, delete and create the new mode graphics manager
 			if (_graphicsMode >= _sdlModesCount && mode < _sdlModesCount) {
+				debug(1, "switching to plain SDL graphics");
 				delete _graphicsManager;
 				_graphicsManager = new SdlGraphicsManager(_eventSource);
 				((SdlGraphicsManager *)_graphicsManager)->initEventObserver();
 				_graphicsManager->beginGFXTransaction();
 			} else if (_graphicsMode < _sdlModesCount && mode >= _sdlModesCount) {
+				debug(1, "switching to OpenGL graphics");
 				delete _graphicsManager;
 				_graphicsManager = new OpenGLSdlGraphicsManager();
 				((OpenGLSdlGraphicsManager *)_graphicsManager)->initEventObserver();
 				_graphicsManager->beginGFXTransaction();
 			}
+
 			_graphicsMode = mode;
 			return _graphicsManager->setGraphicsMode(srcMode->id);
 		}
+
 		i++;
 		srcMode++;
 	}
+
 	return false;
 }
 

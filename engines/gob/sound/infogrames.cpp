@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/textconsole.h"
+
 #include "gob/sound/infogrames.h"
 
 namespace Gob {

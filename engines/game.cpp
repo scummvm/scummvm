@@ -24,7 +24,6 @@
  */
 
 #include "engines/game.h"
-#include "base/plugins.h"
 
 
 const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list) {

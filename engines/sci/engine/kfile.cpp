@@ -28,6 +28,7 @@
 #include "common/file.h"
 #include "common/str.h"
 #include "common/savefile.h"
+#include "common/system.h"
 #include "common/translation.h"
 
 #include "gui/saveload.h"
@@ -253,6 +254,7 @@ reg_t kFGets(EngineState *s, int argc, reg_t *argv) {
 	debugC(kDebugLevelFile, "kFGets(%d, %d)", handle, maxsize);
 	int readBytes = fgets_wrapper(s, buf, maxsize, handle);
 	s->_segMan->memcpy(argv[0], (const byte*)buf, maxsize);
+	delete[] buf;
 	return readBytes ? argv[0] : NULL_REG;
 }
 
@@ -1155,15 +1157,14 @@ reg_t kCD(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kSave(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
-	case 0: // Called by kq7 when starting chapters
+	case 0:
 		return kSaveGame(s, argc - 1,argv + 1);
-	case 2: // GetSaveDir
-		// Yay! Reusing the old kernel function!
+	case 1:
+		return kRestoreGame(s, argc - 1,argv + 1);
+	case 2:
 		return kGetSaveDir(s, argc - 1, argv + 1);
 	case 5:
-		// TODO
-		// 3 parameters: game ID, a string and an array
-		return s->r_acc;
+		return kGetSaveFiles(s, argc - 1, argv + 1);
 	case 8:
 		// TODO
 		// This is a timer callback, with 1 parameter: the timer object

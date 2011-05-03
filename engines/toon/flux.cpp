@@ -23,6 +23,8 @@
 *
 */
 
+#include "common/debug.h"
+
 #include "toon/flux.h"
 
 namespace Toon {
@@ -96,7 +98,7 @@ int32 CharacterFlux::fixFacingForAnimation(int32 originalFacing, int32 animation
 		if (!facingMask)
 			break;
 	}
-	
+
 	return finalFacing;
 }
 

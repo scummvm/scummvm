@@ -41,8 +41,10 @@
 #include "common/scummsys.h"
 #include "common/types.h"
 
-namespace Common { class ReadStream; }
-namespace Common { class SeekableReadStream; }
+namespace Common {
+class ReadStream;
+class SeekableReadStream;
+}
 
 namespace Audio {
 

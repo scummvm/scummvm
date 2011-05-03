@@ -233,9 +233,9 @@ public:
 	const Common::Array<Common::String> &getDialogLines() { return _dialogLines; }
 	const Common::Array<byte> &getDialogLineColors() { return _dialogLineColors; }
 
-	const Graphics::WinFont &getNormalFont() { return _normalFont; }
-	const Graphics::WinFont &getDialogFont() { return _dialogFont; }
-	const Graphics::WinFont &getRolloverFont() { return _rolloverFont; }
+	const Graphics::Font &getNormalFont() const;
+	const Graphics::Font &getDialogFont() const;
+	const Graphics::Font &getRolloverFont() const;
 
 	Common::Rect _sceneRect, _uiRect;
 	Common::Rect _dialogTextRect, _bookRect, _noteRect;

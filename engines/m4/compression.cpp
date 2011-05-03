@@ -27,6 +27,7 @@
 #include "m4/m4.h"
 
 #include "common/memstream.h"
+#include "common/textconsole.h"
 
 namespace M4 {
 

@@ -28,10 +28,13 @@
 
 #include "video/video_decoder.h"
 #include "common/list.h"
+#include "common/rational.h"
 #include "common/rect.h"
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Video {

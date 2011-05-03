@@ -27,12 +27,13 @@
 
 #include "video/codecs/msrle.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace Video {
 
 MSRLEDecoder::MSRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) {
 	_surface = new Graphics::Surface();
-	_surface->create(width, height, 1);
+	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	_bitsPerPixel = bitsPerPixel;
 }
 

@@ -36,7 +36,7 @@ void CEException::writeBreak(HANDLE file) {
 	int i;
 
 	memset(tempo, 0, sizeof(tempo));
-	for (i=0; i<40; i++)
+	for (i = 0; i < 40; i++)
 		tempo[i] = '-';
 	writeString(file, tempo);
 }
@@ -51,23 +51,23 @@ void CEException::dumpContext(HANDLE file, HANDLE hProcess, CONTEXT *context) {
 	writeBreak(file);
 	writeString(file, "Context dump");
 	sprintf(tempo, "R0=%.8x R1=%.8x R2=%.8x R3=%.8x R4=%.8x", context->R0, context->R1,
-		context->R2, context->R3, context->R4);
+	        context->R2, context->R3, context->R4);
 	writeString(file, tempo);
 	sprintf(tempo, "R5=%.8x R6=%.8x R7=%.8x R8=%.8x R9=%.8x", context->R5, context->R6,
-		context->R7, context->R8, context->R9);
+	        context->R7, context->R8, context->R9);
 	writeString(file, tempo);
 	sprintf(tempo, "R10=%.8x R11=%.8x R12=%.8x", context->R10, context->R11,
-		context->R12);
+	        context->R12);
 	writeString(file, tempo);
 	sprintf(tempo, "Sp=%.8x Lr=%.8x Pc=%.8x Psr=%.8x", context->Sp, context->Lr,
-		context->Pc, context->Psr);
+	        context->Pc, context->Psr);
 	writeString(file, tempo);
 	writeBreak(file);
 
 	sprintf(tempo, "Memory dump at %.8x", context->Pc - (sizeof(memoryDump) / 2));
 	writeString(file, tempo);
 	if (ReadProcessMemory(hProcess, (LPCVOID)(context->Pc - (sizeof(memoryDump) / 2)), memoryDump, sizeof(memoryDump), &size)) {
-		for (i=0; i<size; i+=8) {
+		for (i = 0; i < size; i += 8) {
 			int j;
 			char digit[4];
 			int max;
@@ -75,7 +75,7 @@ void CEException::dumpContext(HANDLE file, HANDLE hProcess, CONTEXT *context) {
 			if (max > 8)
 				max = 8;
 			tempo[0] = '\0';
-			for (j=0; j<max; j++) {
+			for (j = 0; j < max; j++) {
 				sprintf(digit, "%.2x ", memoryDump[i + j]);
 				strcat(tempo, digit);
 			}
@@ -121,10 +121,10 @@ void CEException::dumpException(HANDLE file, EXCEPTION_RECORD *exceptionRecord) 
 		break;
 	}
 	sprintf(tempo, "Exception %s Flags %.8x Address %.8x", exceptionName, exceptionRecord->ExceptionFlags,
-		exceptionRecord->ExceptionAddress);
+	        exceptionRecord->ExceptionAddress);
 	writeString(file, tempo);
 	if (exceptionRecord->NumberParameters) {
-		for (i=0; i<exceptionRecord->NumberParameters; i++) {
+		for (i = 0; i < exceptionRecord->NumberParameters; i++) {
 			sprintf(tempo, "Parameter %d %.8x", i, exceptionRecord->ExceptionInformation[i]);
 			writeString(file, tempo);
 		}
@@ -144,8 +144,8 @@ bool CEException::writeException(TCHAR *path, EXCEPTION_POINTERS *exceptionPoint
 
 	GetSystemTime(&systemTime);
 	wsprintf(dumpFileName, TEXT("%s_%.2d_%.2d_%.4d_%.2d_%.2d_%.2d.txt"),
-			path, systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-			systemTime.wHour, systemTime.wMinute, systemTime.wSecond);
+	         path, systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+	         systemTime.wHour, systemTime.wMinute, systemTime.wSecond);
 	dumpFile = CreateFile(dumpFileName, GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (dumpFile == INVALID_HANDLE_VALUE)
 		return false;

@@ -280,11 +280,9 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const Common::FSList &
 
 	ADGameDescList matched;
 	int maxFilesMatched = 0;
-	bool gotAnyMatchesWithAllFiles = false;
 
 	// MD5 based matching
-	uint i;
-	for (i = 0, g = &Tinsel::gameDescriptions[0]; g->desc.gameid != 0; ++g) {
+	for (g = &Tinsel::gameDescriptions[0]; g->desc.gameid != 0; ++g) {
 		if (strcmp(g->desc.gameid, "dw2") != 0)
 			continue;
 
@@ -326,9 +324,6 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const Common::FSList &
 				break;
 			}
 		}
-
-		if (allFilesPresent)
-			gotAnyMatchesWithAllFiles = true;
 
 		if (!fileMissing) {
 			// Count the number of matching files. Then, only keep those

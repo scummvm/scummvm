@@ -109,7 +109,7 @@ void ActorEvent(int ano, TINSEL_EVENT event, PLR_EVENT be);
 
 void storeActorAttr(int ano, int r1, int g1, int b1);
 COLORREF GetActorRGB(int ano);
-void SetActorRGB(int ano, COLORREF colour);
+void SetActorRGB(int ano, COLORREF color);
 void SetActorZfactor(int ano, uint32 zFactor);
 uint32 GetActorZfactor(int ano);
 

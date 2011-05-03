@@ -195,7 +195,7 @@ static bool readSOLHeader(Common::SeekableReadStream *audioStream, int headerSiz
 
 	uint32 tag = audioStream->readUint32BE();
 
-	if (tag != MKID_BE('SOL\0')) {
+	if (tag != MKTAG('S','O','L',0)) {
 		warning("No 'SOL' FourCC found");
 		return false;
 	}
@@ -290,17 +290,17 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		Common::SeekableReadStream *compressedStream = new Common::MemoryReadStream(compressedData, audioRes->size, DisposeAfterUse::YES);
 		
 		switch (audioCompressionType) {
-		case MKID_BE('MP3 '):
+		case MKTAG('M','P','3',' '):
 #ifdef USE_MAD
 			audioSeekStream = Audio::makeMP3Stream(compressedStream, DisposeAfterUse::YES);
 #endif
 			break;
-		case MKID_BE('OGG '):
+		case MKTAG('O','G','G',' '):
 #ifdef USE_VORBIS
 			audioSeekStream = Audio::makeVorbisStream(compressedStream, DisposeAfterUse::YES);
 #endif
 			break;
-		case MKID_BE('FLAC'):
+		case MKTAG('F','L','A','C'):
 #ifdef USE_FLAC
 			audioSeekStream = Audio::makeFLACStream(compressedStream, DisposeAfterUse::YES);
 #endif
@@ -319,7 +319,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 				Common::MemoryReadStream dataStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
 				data = readSOLAudio(&dataStream, size, audioFlags, flags);
 			}
-		} else if (audioRes->size > 4 && READ_BE_UINT32(audioRes->data) == MKID_BE('RIFF')) {
+		} else if (audioRes->size > 4 && READ_BE_UINT32(audioRes->data) == MKTAG('R','I','F','F')) {
 			// WAVE detected
 			Common::SeekableReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
 
@@ -331,7 +331,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 
 			waveStream->seek(0, SEEK_SET);
 			audioStream = Audio::makeWAVStream(waveStream, DisposeAfterUse::YES);
-		} else if (audioRes->size > 4 && READ_BE_UINT32(audioRes->data) == MKID_BE('FORM')) {
+		} else if (audioRes->size > 4 && READ_BE_UINT32(audioRes->data) == MKTAG('F','O','R','M')) {
 			// AIFF detected
 			Common::SeekableReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
 

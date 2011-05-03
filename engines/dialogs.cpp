@@ -25,21 +25,21 @@
 #include "base/version.h"
 
 #include "common/config-manager.h"
-#include "common/savefile.h"
-#include "common/system.h"
 #include "common/events.h"
+#include "common/str.h"
+#include "common/system.h"
 #include "common/translation.h"
-
-#include "graphics/scaler.h"
 
 #include "gui/about.h"
 #include "gui/gui-manager.h"
-#include "gui/launcher.h"
-#include "gui/widgets/list.h"
 #include "gui/message.h"
 #include "gui/options.h"
 #include "gui/saveload.h"
+#include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
+#include "gui/widget.h"
+
+#include "graphics/font.h"
 
 #include "engines/dialogs.h"
 #include "engines/engine.h"

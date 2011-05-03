@@ -39,9 +39,6 @@ namespace Tinsel {
 // current background
 const BACKGND *pCurBgnd = NULL;
 
-// FIXME: Not yet used
-static bool bEntireRedraw;
-
 /**
  * Called to initialise a background.
  * @param pBgnd			Pointer to data struct for current background
@@ -54,8 +51,8 @@ void InitBackground(const BACKGND *pBgnd) {
 	// set current background
 	pCurBgnd = pBgnd;
 
-	// init background sky colour
-	SetBgndColour(pBgnd->rgbSkyColour);
+	// init background sky color
+	SetBgndColor(pBgnd->rgbSkyColor);
 
 	// start of playfield array
 	pPlayfield = pBgnd->fieldArray;
@@ -130,11 +127,11 @@ void PlayfieldGetPos(int which, int *pXpos, int *pYpos) {
 }
 
 /**
- * Returns the x position of the centre of the specified playfield
+ * Returns the x position of the center of the specified playfield
  * @param which			Which playfield
  */
 
-int PlayfieldGetCentreX(int which) {
+int PlayfieldGetCenterX(int which) {
 	PLAYFIELD *pPlayfield; // pointer to relavent playfield
 
 	// make sure there is a background
@@ -256,10 +253,5 @@ void DrawBackgnd() {
 	// delete all the clipping rectangles
 	ResetClipRect();
 }
-
-void ForceEntireRedraw() {
-	bEntireRedraw = true;
-}
-
 
 } // End of namespace Tinsel

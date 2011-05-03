@@ -28,6 +28,8 @@
 #include "cruise/cell.h"
 #include "cruise/sound.h"
 #include "cruise/staticres.h"
+
+#include "common/textconsole.h"
 #include "common/util.h"
 
 namespace Cruise {

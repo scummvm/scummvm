@@ -622,6 +622,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// Gabriel Knight - English DOS Floppy
+	// SCI interpreter version 2.000.000, VERSION file reports "1.0\nGabriel Knight\n11/22/10:33 pm\n\x1A"
+	{"gk1", "", {
+		{"resource.map", 0, "ef41df08cf2c1f680216cdbeed0f8311", 10783},
+		{"resource.000", 0, "69b7516962510f780d38519cc15fcc7c", 13022630},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Gabriel Knight - German DOS Floppy (supplied my markcoolio in bug report #2723775)
 	// SCI interpreter version 2.000.000
 	{"gk1", "", {
@@ -1608,7 +1616,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
-	// Larry 1 VGA Remake - English Amiga (from www.back2roots.org)
+#if 0
+	// The resource.002 file, contained in disk 3, is broken in this version
+	// (it contains a large chunk of zeroes and several broken resources,
+	// e.g. pic 250 and views 250 and 251).
+	// Thus this detection entry isn't accurate.
+
+	// Larry 1 Remake - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.004.024"
 	// SCI interpreter version 1.000.784
 	{"lsl1sci", "SCI", {
@@ -1619,6 +1633,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "4a34c3367c2fe7eb380d741374da1989", 572251},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO_NOSPEECH	},
+#endif
 
 	// Larry 1 VGA Remake - English DOS (from spookypeanut)
 	// Executable scanning reports "1.000.577", VERSION file reports "2.1"
@@ -1992,31 +2007,31 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
-	// Larry 6 - English/German/French DOS CD - LORES
+	// Larry 6 - English/German/French DOS CD - LOWRES
 	// SCI interpreter version 1.001.115
 	{"lsl6", "", {
 		{"resource.map", 0, "0b91234b7112782962cb480b7791b6e2", 7263},
 		{"resource.000", 0, "57d5fe8bb9e044158514476ea7678eb0", 5754790},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NONE	},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_CD, GUIO_NONE	},
 
-	// Larry 6 - German DOS CD - LORES (provided by richiefs in bug report #2670691)
+	// Larry 6 - German DOS CD - LOWRES (provided by richiefs in bug report #2670691)
 	// SCI interpreter version 1.001.115
 	{"lsl6", "", {
 		{"resource.map", 0, "bafe85f32738854135991d4324ad147e", 7268},
 		{"resource.000", 0, "f6cbc6da7b90ea135883e0759848ca2c", 5773160},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformPC, 0, GUIO_NONE	},
+		Common::DE_DEU, Common::kPlatformPC, ADGF_CD, GUIO_NONE	},
 
-	// Larry 6 - French DOS CD - LORES (provided by richiefs in bug report #2670691)
+	// Larry 6 - French DOS CD - LOWRES (provided by richiefs in bug report #2670691)
 	// SCI interpreter version 1.001.115
 	{"lsl6", "", {
 		{"resource.map", 0, "97797ea775baaf18a1907d357d3c0ea6", 7268},
 		{"resource.000", 0, "f6cbc6da7b90ea135883e0759848ca2c", 5776092},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformPC, 0, GUIO_NONE	},
+		Common::FR_FRA, Common::kPlatformPC, ADGF_CD, GUIO_NONE	},
 
-	// Larry 6 - Spanish DOS - LORES (from the Leisure Suit Larry Collection)
+	// Larry 6 - Spanish DOS - LOWRES (from the Leisure Suit Larry Collection)
 	// Executable scanning reports "1.001.113", VERSION file reports "1.000, 11.06.93, FIVE PATCHES ADDED TO DISK 6 ON 11-18-93"
 	{"lsl6", "", {
 		{"resource.map", 0, "633bf8f42170b6271019917c8009989b", 6943},
@@ -2588,13 +2603,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
 
 #ifdef ENABLE_SCI32
-	// Police Quest 4 - English DOS (from the Police Quest Collection)
+	// Police Quest 4 - English DOS CD (from the Police Quest Collection)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.100.000"
-	{"pq4", "", {
+	{"pq4", "CD", {
 		{"resource.map", 0, "379dfe80ed6bd16c47e4b950c4722eac", 11374},
 		{"resource.000", 0, "fd316a09b628b7032248139003369022", 18841068},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_CD, GUIO_NONE	},
 
 	// Police Quest 4 - English DOS
 	// SCI interpreter version 2.000.000 (a guess?)
@@ -2628,6 +2643,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
 
+	// Police Quest: SWAT - English DOS (from GOG.com)
+	// Executable scanning reports "2.100.002", VERSION file reports "1.0c"
+	{"pqswat", "", {
+		{"resmap.000", 0, "1c2563fee189885e29d9348f37306d94", 12175},
+		{"ressci.000", 0, "b2e1826ca81ce2e7e764587f5a14eee9", 127149181},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NONE	},
+
 	// Police Quest: SWAT - English Windows (from the Police Quest Collection)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.0c"
 	// Original DOS/Windows release VERSION file reports "1.000" is the same
@@ -2641,7 +2664,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.004", 0, "4228038906f041623e65789500b22285", 6835},
 		{"ressci.004", 0, "b7e619e6ecf62fe65d5116a3a422e5f0", 46223872},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NOSPEECH	},
+		Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NONE	},
 #endif // ENABLE_SCI32
 
 	// Quest for Glory 1 / Hero's Quest - English DOS 3.5" Floppy (supplied by merkur in bug report #2718784)
@@ -2651,6 +2674,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "481b034132106390cb5160fe61dd5f58", 80334},
 		{"resource.001", 0, "4d67acf52833ff45c7f753d6663532e8", 462727},
 		{"resource.002", 0, "439ba9b6dde216e6eb97ef3a9830fbe4", 646869},
+		{"resource.003", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 642203},
+		{"resource.004", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 641688},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH },
+
+	// Quest for Glory 1 / Hero's Quest - English DOS 3.5" Floppy (supplied by alonzotg in bug report #3206006)
+	{"qfg1", "", {
+		{"resource.map", 0, "85512508ed4e4ef1e3b309adabceeda9", 6486},
+		{"resource.000", 0, "481b034132106390cb5160fe61dd5f58", 80334},
+		{"resource.001", 0, "4d67acf52833ff45c7f753d6663532e8", 462729},
+		{"resource.002", 0, "439ba9b6dde216e6eb97ef3a9830fbe4", 647244},
 		{"resource.003", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 642203},
 		{"resource.004", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 641688},
 		AD_LISTEND},
@@ -2709,7 +2743,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH },
 
-	// Quest for Glory 1 - Japanese PC-98 5.25" Floppy (also includes english language)
+	// Quest for Glory 1 - Japanese PC-98 5.25" Floppy (also includes English language)
 	// Executable scanning reports "S.old.201"
 	{"qfg1", "8 Colors", {
 		{"resource.map", 0, "5cbeb95dd2a4b7cb242b415cc6ec1c47", 6444},
@@ -2719,7 +2753,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::JA_JPN, Common::kPlatformPC98, ADGF_ADDENGLISH, GUIO_NOSPEECH	},
 
-	// Quest for Glory 1 - Japanese PC-98 5.25" Floppy (also includes english language)
+	// Quest for Glory 1 - Japanese PC-98 5.25" Floppy (also includes English language)
 	// Executable scanning reports "S.old.201"
 	{"qfg1", "16 Colors", {
 		{"resource.map", 0, "3ecaba33bf77cb434067a0b8aee15097", 6444},
@@ -2959,13 +2993,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
-	// Quest for Glory 4 - English DOS/Windows (from jvprat)
+	// Quest for Glory 4 CD - English DOS/Windows (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
-	{"qfg4", "", {
+	{"qfg4", "CD", {
 		{"resource.map", 0, "aba367f2102e81782d961b14fbe3d630", 10246},
 		{"resource.000", 0, "263dce4aa34c49d3ad29bec889007b1c", 11571394},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_CD, GUIO_NONE	},
 
 	// RAMA - English DOS/Windows Demo
 	// Executable scanning reports "2.100.002", VERSION file reports "000.000.008"

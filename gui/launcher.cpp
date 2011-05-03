@@ -28,7 +28,6 @@
 #include "common/events.h"
 #include "common/fs.h"
 #include "common/util.h"
-#include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
 
@@ -48,9 +47,6 @@
 #include "gui/ThemeEval.h"
 
 #include "graphics/cursorman.h"
-
-#include "audio/mididrv.h"
-
 
 using Common::ConfigManager;
 

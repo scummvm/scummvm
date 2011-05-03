@@ -27,6 +27,7 @@
 #define KYRA_GUI_LOK_H
 
 #include "kyra/gui.h"
+#include "kyra/screen_lok.h"
 
 namespace Kyra {
 
@@ -166,6 +167,7 @@ private:
 	uint8 _toplevelMenu;
 	int _savegameOffset;
 	char _savegameName[35];
+	char _savegameNames[5][35];
 	const char *_specialSavegameString;
 
 	Button::Callback _scrollUpFunctor;

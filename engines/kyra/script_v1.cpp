@@ -26,6 +26,8 @@
 #include "kyra/kyra_v1.h"
 #include "kyra/screen.h"
 
+#include "common/system.h"
+
 namespace Kyra {
 
 int KyraEngine_v1::o1_queryGameFlag(EMCState *script) {

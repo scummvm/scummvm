@@ -77,6 +77,7 @@ struct AnimateEntry {
 typedef Common::List<AnimateEntry> AnimateList;
 typedef Common::Array<AnimateEntry> AnimateArray;
 
+class Console;
 class GfxCache;
 class GfxCursor;
 class GfxPorts;
@@ -105,6 +106,7 @@ public:
 	void reAnimate(Common::Rect rect);
 	void addToPicDrawCels();
 	void addToPicDrawView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
+	void printAnimateList(Console *con);
 
 	virtual void kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t *argv);
 	virtual void kernelAddToPicList(reg_t listReference, int argc, reg_t *argv);
@@ -115,6 +117,10 @@ private:
 
 	void addToPicSetPicNotValid();
 	void animateShowPic();
+	void throttleSpeed();
+	void adjustInvalidCels(GfxView *view, AnimateList::iterator it);
+	void processViewScaling(GfxView *view, AnimateList::iterator it);
+	void setNsRect(GfxView *view, AnimateList::iterator it);
 
 	EngineState *_s;
 	GfxCache *_cache;

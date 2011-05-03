@@ -25,12 +25,14 @@
 
 #include "common/system.h"
 #include "common/random.h"
+#include "common/error.h"
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/debug-channels.h"
+#include "common/config-manager.h"
+#include "common/textconsole.h"
 
 #include "hugo/hugo.h"
-#include "hugo/game.h"
 #include "hugo/file.h"
 #include "hugo/schedule.h"
 #include "hugo/display.h"
@@ -52,7 +54,7 @@ HugoEngine *HugoEngine::s_Engine = 0;
 
 HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(syst), _gameDescription(gd),
 	_hero(0), _heroImage(0), _defltTunes(0), _numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0),
-	_screenStates(0), _score(0), _maxscore(0), _lastTime(0), _curTime(0)
+	_screenStates(0), _numStates(0), _score(0), _maxscore(0), _lastTime(0), _curTime(0), _episode(0)
 {
 	_system = syst;
 	DebugMan.addDebugChannel(kDebugSchedule, "Schedule", "Script Schedule debug level");
@@ -164,7 +166,7 @@ bool HugoEngine::isPacked() const {
  * Print options for user when dead
  */
 void HugoEngine::gameOverMsg() {
-	Utils::Box(kBoxOk, "%s", _text->getTextUtil(kGameOver));
+	Utils::notifyBox(_text->getTextUtil(kGameOver));
 }
 
 Common::Error HugoEngine::run() {
@@ -175,6 +177,10 @@ Common::Error HugoEngine::run() {
 	_inventory = new InventoryHandler(this);
 	_route = new Route(this);
 	_sound = new SoundHandler(this);
+
+	// Setup mixer
+	syncSoundSettings();
+
 	_text = new TextHandler(this);
 
 	_topMenu = new TopMenu(this);
@@ -247,20 +253,28 @@ Common::Error HugoEngine::run() {
 
 	initStatus();                                   // Initialize game status
 	initConfig();                                   // Initialize user's config
-	initialize();
-	resetConfig();                                  // Reset user's config
-	initMachine();
+	if (!_status.doQuitFl) {
+		initialize();
+		resetConfig();                              // Reset user's config
+		initMachine();
 
-	// Start the state machine
-	_status.viewState = kViewIntroInit;
+		// Start the state machine
+		_status.viewState = kViewIntroInit;
 
-	_status.doQuitFl = false;
+		int16 loadSlot = Common::ConfigManager::instance().getInt("save_slot");
+		if (loadSlot >= 0) {
+			_status.skipIntroFl = true;
+			_file->restoreGame(loadSlot);
+		} else {
+			_file->saveGame(0, "New Game");
+		}
+	}
 
 	while (!_status.doQuitFl) {
 		_screen->drawBoundaries();
-
 		g_system->updateScreen();
 		runMachine();
+
 		// Handle input
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
@@ -285,6 +299,11 @@ Common::Error HugoEngine::run() {
 				break;
 			}
 		}
+		if (_status.helpFl) {
+			_status.helpFl = false;
+			_file->instructions();
+		}
+	
 		_mouse->mouseHandler();                     // Mouse activity - adds to display list
 		_screen->displayList(kDisplayDisplay);      // Blit the display list to screen
 		_status.doQuitFl |= shouldQuit();           // update game quit flag
@@ -309,9 +328,6 @@ void HugoEngine::initMachine() {
  */
 void HugoEngine::runMachine() {
 	status_t &gameStatus = getGameStatus();
-	// Don't process if we're in a textbox
-	if (gameStatus.textBoxFl)
-		return;
 
 	// Don't process if gameover
 	if (gameStatus.gameOverFl)
@@ -449,6 +465,7 @@ bool HugoEngine::loadHugoDat() {
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
 		if (varnt == _gameVariant) {
+			_numStates = numElem;
 			_screenStates = (byte *)malloc(sizeof(byte) * numElem);
 			memset(_screenStates, 0, sizeof(_screenStates));
 		}
@@ -516,13 +533,13 @@ void HugoEngine::initStatus() {
 	debugC(1, kDebugEngine, "initStatus");
 	_status.storyModeFl   = false;                  // Not in story mode
 	_status.gameOverFl    = false;                  // Hero not knobbled yet
-	_status.textBoxFl     = false;                  // Not processing a text box
 	_status.lookFl        = false;                  // Toolbar "look" button
 	_status.recallFl      = false;                  // Toolbar "recall" button
 	_status.newScreenFl   = false;                  // Screen not just loaded
 	_status.godModeFl     = false;                  // No special cheats allowed
 	_status.doQuitFl      = false;
 	_status.skipIntroFl   = false;
+	_status.helpFl        = false;
 
 	// Initialize every start of new game
 	_status.tick            = 0;                    // Tick count
@@ -539,6 +556,7 @@ void HugoEngine::initStatus() {
 //	_status.screenWidth   = 0;                      // Desktop screen width
 //	_status.saveTick      = 0;                      // Time of last save
 //	_status.saveSlot      = 0;                      // Slot to save/restore game
+//	_status.textBoxFl     = false;                  // Not processing a text box
 }
 
 /**
@@ -623,6 +641,13 @@ void HugoEngine::readScreenFiles(const int screenNum) {
 
 	_file->readBackground(screenNum);               // Scenery file
 	memcpy(_screen->getBackBuffer(), _screen->getFrontBuffer(), sizeof(_screen->getFrontBuffer())); // Make a copy
+
+	// Workaround for graphic glitches in DOS versions. Cleaning the overlays fix the problem
+	memset(_object->_objBound, '\0', sizeof(overlay_t));
+	memset(_object->_boundary, '\0', sizeof(overlay_t));
+	memset(_object->_overlay,  '\0', sizeof(overlay_t));
+	memset(_object->_ovlBase,  '\0', sizeof(overlay_t));
+
 	_file->readOverlay(screenNum, _object->_boundary, kOvlBoundary); // Boundary file
 	_file->readOverlay(screenNum, _object->_overlay, kOvlOverlay);   // Overlay file
 	_file->readOverlay(screenNum, _object->_ovlBase, kOvlBase);      // Overlay base file
@@ -658,9 +683,9 @@ void HugoEngine::calcMaxScore() {
 void HugoEngine::endGame() {
 	debugC(1, kDebugEngine, "endGame");
 
-	if (!_boot.registered)
-		Utils::Box(kBoxAny, "%s", _text->getTextEngine(kEsAdvertise));
-	Utils::Box(kBoxAny, "%s\n%s", _episode, getCopyrightString());
+	if (_boot.registered != kRegRegistered)
+		Utils::notifyBox(_text->getTextEngine(kEsAdvertise));
+	Utils::notifyBox(Common::String::format("%s\n%s", _episode, getCopyrightString()));
 	_status.viewState = kViewExit;
 }
 

@@ -28,6 +28,8 @@
 #include "made/resource.h"
 #include "made/database.h"
 
+#include "graphics/palette.h"
+
 namespace Made {
 
 Screen::Screen(MadeEngine *vm) : _vm(vm) {
@@ -36,10 +38,10 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 	_newPalette = new byte[768];
 
 	_backgroundScreen = new Graphics::Surface();
-	_backgroundScreen->create(320, 200, 1);
+	_backgroundScreen->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 
 	_workScreen = new Graphics::Surface();
-	_workScreen->create(320, 200, 1);
+	_workScreen->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 
 	_backgroundScreenDrawCtx.clipRect = Common::Rect(320, 200);
 	_workScreenDrawCtx.clipRect = Common::Rect(320, 200);
@@ -51,7 +53,7 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 	// Screen mask is only needed in v2 games
 	if (_vm->getGameID() != GID_RTZ) {
 		_screenMask = new Graphics::Surface();
-		_screenMask->create(320, 200, 1);
+		_screenMask->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 		_maskDrawCtx.clipRect = Common::Rect(320, 200);
 		_maskDrawCtx.destSurface = _screenMask;
 	}

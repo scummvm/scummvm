@@ -35,7 +35,9 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "common/macresman.h"
+#include "common/textconsole.h"
 
 #include "backends/audiocd/audiocd.h"
 #include "engines/util.h"
@@ -322,6 +324,8 @@ void GroovieEngine::errorString(const char *buf_input, char *buf_output, int buf
 }
 
 void GroovieEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
 	bool mute = ConfMan.getBool("mute");
 
 	// Set the music volume

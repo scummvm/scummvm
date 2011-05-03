@@ -42,9 +42,6 @@
 
 #include "graphics/surface.h"
 
-#include "common/rect.h"
-#include "common/array.h"
-
 /**
  * OpenGL texture manager class
  */

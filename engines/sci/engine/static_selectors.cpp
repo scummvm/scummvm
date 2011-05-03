@@ -28,6 +28,7 @@
 
 #include "sci/engine/kernel.h"
 #include "sci/engine/seg_manager.h"
+#include "sci/engine/vm.h"
 
 namespace Sci {
 
@@ -118,6 +119,33 @@ static const SelectorRemap sciSelectorRemap[] = {
 	{ SCI_VERSION_NONE,             SCI_VERSION_NONE,            0,   0 }
 };
 
+struct ClassReference {
+	int script;
+	const char *className;
+	const char *selectorName;
+	SelectorType selectorType;
+	uint selectorOffset;
+};
+
+// For variable selectors, we ignore the global selectors and start off from
+// the object's selectors (i.e. from the name selector onwards). Thus, the
+// following are not taken into consideration when calculating the indices of
+// variable selectors in this array:
+// SCI0 - SCI1: species, superClass, -info-
+// SCI1.1: -objID-, -size-, -propDict-, -methDict-, -classScript-, -script-,
+//         -super-, -info-
+static const ClassReference classReferences[] = {
+	{   0, "Character",         "say",   kSelectorMethod,  5 },	// Crazy Nick's Soft Picks
+	{ 928,  "Narrator",         "say",   kSelectorMethod,  4 },
+	{ 928,  "Narrator",   "startText",   kSelectorMethod,  5 },
+	{ 929,      "Sync",    "syncTime", kSelectorVariable,  1 },
+	{ 929,      "Sync",     "syncCue", kSelectorVariable,  2 },
+	{ 981, "SysWindow",        "open",   kSelectorMethod,  1 },
+	{ 999,    "Script",        "init",   kSelectorMethod,  0 },
+	{ 999,    "Script",     "dispose",   kSelectorMethod,  2 },
+	{ 999,    "Script", "changeState",   kSelectorMethod,  3 }
+};
+
 Common::StringArray Kernel::checkStaticSelectorNames() {
 	Common::StringArray names;
 	const int offset = (getSciVersion() < SCI_VERSION_1_1) ? 3 : 0;
@@ -158,114 +186,7 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 				names[i] = sci11Selectors[i - count - countSci1];
 		}
 
-		// Now, we need to find out selectors which keep changing place...
-		// We do that by dissecting game objects, and looking for selectors at
-		// specified locations.
-
-		// We need to initialize script 0 here, to make sure that it's always
-		// located at segment 1.
-		_segMan->instantiateScript(0);
-
-		// The Actor class contains the init, xLast and yLast selectors, which
-		// we reference directly. It's always in script 998, so we need to
-		// explicitly load it here.
-		if (_resMan->testResource(ResourceId(kResourceTypeScript, 998))) {
-			_segMan->instantiateScript(998);
-
-			const Object *actorClass = _segMan->getObject(_segMan->findObjectByName("Actor"));
-
-			if (actorClass) {
-				// The init selector is always the first function
-				int initSelectorPos = actorClass->getFuncSelector(0);
-
-				if (names.size() < (uint32)initSelectorPos + 2)
-					names.resize((uint32)initSelectorPos + 2);
-
-				names[initSelectorPos] = "init";
-				// dispose comes right after init
-				names[initSelectorPos + 1] = "dispose";
-
-				if ((getSciVersion() >= SCI_VERSION_1_EGA)) {
-					// Find the xLast and yLast selectors, used in kDoBresen
-
-					// xLast and yLast always come between illegalBits and xStep
-					int illegalBitsSelectorPos = actorClass->locateVarSelector(_segMan, 15 + offset);	// illegalBits
-					int xStepSelectorPos = actorClass->locateVarSelector(_segMan, 51 + offset);	// xStep
-					if (xStepSelectorPos - illegalBitsSelectorPos != 3) {
-						error("illegalBits and xStep selectors aren't found in "
-							  "known locations. illegalBits = %d, xStep = %d",
-							  illegalBitsSelectorPos, xStepSelectorPos);
-					}
-
-					int xLastSelectorPos = actorClass->getVarSelector(illegalBitsSelectorPos + 1);
-					int yLastSelectorPos = actorClass->getVarSelector(illegalBitsSelectorPos + 2);
-
-					if (names.size() < (uint32)yLastSelectorPos + 1)
-						names.resize((uint32)yLastSelectorPos + 1);
-
-					names[xLastSelectorPos] = "xLast";
-					names[yLastSelectorPos] = "yLast";
-				}	// if ((getSciVersion() >= SCI_VERSION_1_EGA))
-			}	// if (actorClass)
-
-			_segMan->uninstantiateScript(998);
-		}	// if (_resMan->testResource(ResourceId(kResourceTypeScript, 998)))
-
-		if (_resMan->testResource(ResourceId(kResourceTypeScript, 981))) {
-			// The SysWindow class contains the open selectors, which we
-			// reference directly. It's always in script 981, so we need to
-			// explicitly load it here
-			_segMan->instantiateScript(981);
-
-			const Object *sysWindowClass = _segMan->getObject(_segMan->findObjectByName("SysWindow"));
-
-			if (sysWindowClass) {
-				if (sysWindowClass->getMethodCount() < 2)
-					error("The SysWindow class has less than 2 methods");
-
-				// The open selector is always the second function
-				int openSelectorPos = sysWindowClass->getFuncSelector(1);
-
-				if (names.size() < (uint32)openSelectorPos + 1)
-					names.resize((uint32)openSelectorPos + 1);
-
-				names[openSelectorPos] = "open";
-			}
-
-			_segMan->uninstantiateScript(981);
-		}	// if (_resMan->testResource(ResourceId(kResourceTypeScript, 981)))
-
-		if (g_sci->getGameId() == GID_HOYLE4) {
-			// The demo of Hoyle 4 is one of the few demos with lip syncing and no selector vocabulary.
-			// This needs two selectors, "syncTime" and "syncCue", which keep changing positions in each
-			// game. Usually, games with speech and lip sync have a selector vocabulary, so we don't need
-			// to set these two selectors, but we need for Hoyle...
-			if (names.size() < 276)
-				names.resize(276);
-
-			names[274] = "syncTime";
-			names[275] = "syncCue";
-		} else if (g_sci->getGameId() == GID_PEPPER) {
-			// Same as above for the non-interactive demo of Pepper
-			if (names.size() < 539)
-				names.resize(539);
-
-			names[263] = "syncTime";
-			names[264] = "syncCue";
-			names[538] = "startText";
-		} else if (g_sci->getGameId() == GID_LAURABOW2) {
-			// The floppy of version needs the changeState selector set to match up with the
-			// CD version's workarounds.
-			if (names.size() < 251)
-				names.resize(251);
-
-			names[144] = "changeState";
-		} else if (g_sci->getGameId() == GID_CNICK_KQ) {
-			if (names.size() < 447)
-				names.resize(447);
-
-			names[446] = "say";
-		}
+		findSpecificSelectors(names);
 
 #ifdef ENABLE_SCI32
 	} else {
@@ -285,6 +206,95 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 	}
 
 	return names;
+}
+
+void Kernel::findSpecificSelectors(Common::StringArray &selectorNames) {
+	// Now, we need to find out selectors which keep changing place...
+	// We do that by dissecting game objects, and looking for selectors at
+	// specified locations.
+
+	// We need to initialize script 0 here, to make sure that it's always
+	// located at segment 1.
+	_segMan->instantiateScript(0);
+
+	// The Actor class contains the init, xLast and yLast selectors, which
+	// we reference directly. It's always in script 998, so we need to
+	// explicitly load it here.
+	if ((getSciVersion() >= SCI_VERSION_1_EGA_ONLY)) {
+		if (_resMan->testResource(ResourceId(kResourceTypeScript, 998))) {
+			_segMan->instantiateScript(998);
+
+			const Object *actorClass = _segMan->getObject(_segMan->findObjectByName("Actor"));
+
+			if (actorClass) {
+				// Find the xLast and yLast selectors, used in kDoBresen
+
+				const int offset = (getSciVersion() < SCI_VERSION_1_1) ? 3 : 0;
+				// xLast and yLast always come between illegalBits and xStep
+				int illegalBitsSelectorPos = actorClass->locateVarSelector(_segMan, 15 + offset);	// illegalBits
+				int xStepSelectorPos = actorClass->locateVarSelector(_segMan, 51 + offset);	// xStep
+				if (xStepSelectorPos - illegalBitsSelectorPos != 3) {
+					error("illegalBits and xStep selectors aren't found in "
+							"known locations. illegalBits = %d, xStep = %d",
+							illegalBitsSelectorPos, xStepSelectorPos);
+				}
+
+				int xLastSelectorPos = actorClass->getVarSelector(illegalBitsSelectorPos + 1);
+				int yLastSelectorPos = actorClass->getVarSelector(illegalBitsSelectorPos + 2);
+
+				if (selectorNames.size() < (uint32)yLastSelectorPos + 1)
+					selectorNames.resize((uint32)yLastSelectorPos + 1);
+
+				selectorNames[xLastSelectorPos] = "xLast";
+				selectorNames[yLastSelectorPos] = "yLast";
+			}	// if (actorClass)
+
+			_segMan->uninstantiateScript(998);
+		}	// if (_resMan->testResource(ResourceId(kResourceTypeScript, 998)))
+	}	// if ((getSciVersion() >= SCI_VERSION_1_EGA_ONLY))
+
+	// Find selectors from specific classes
+
+	for (int i = 0; i < ARRAYSIZE(classReferences); i++) {
+		if (!_resMan->testResource(ResourceId(kResourceTypeScript, classReferences[i].script)))
+			continue;
+
+		_segMan->instantiateScript(classReferences[i].script);
+
+		const Object *targetClass = _segMan->getObject(_segMan->findObjectByName(classReferences[i].className));
+		int targetSelectorPos = 0;
+		uint selectorOffset = classReferences[i].selectorOffset;
+
+		if (targetClass) {
+			if (classReferences[i].selectorType == kSelectorMethod) {
+				if (targetClass->getMethodCount() < selectorOffset + 1)
+					error("The %s class has less than %d methods (%d)", 
+							classReferences[i].className, selectorOffset + 1, 
+							targetClass->getMethodCount());
+
+				targetSelectorPos = targetClass->getFuncSelector(selectorOffset);
+			} else {
+				// Add the global selectors to the selector ID
+				selectorOffset += (getSciVersion() <= SCI_VERSION_1_LATE) ? 3 : 8;
+
+				if (targetClass->getVarCount() < selectorOffset + 1)
+					error("The %s class has less than %d variables (%d)", 
+							classReferences[i].className, selectorOffset + 1,
+							targetClass->getVarCount());
+
+				targetSelectorPos = targetClass->getVarSelector(selectorOffset);
+			}
+
+			if (selectorNames.size() < (uint32)targetSelectorPos + 1)
+				selectorNames.resize((uint32)targetSelectorPos + 1);
+
+
+			selectorNames[targetSelectorPos] = classReferences[i].selectorName;
+		}
+	}
+
+	// Reset the segment manager
+	_segMan->resetSegMan();
 }
 
 } // End of namespace Sci

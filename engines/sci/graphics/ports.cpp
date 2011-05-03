@@ -25,8 +25,10 @@
 
 #include "common/util.h"
 
+#include "sci/console.h"
 #include "sci/sci.h"
 #include "sci/engine/features.h"
+#include "sci/engine/gc.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
@@ -246,8 +248,10 @@ void GfxPorts::beginUpdate(Window *wnd) {
 	PortList::iterator it = _windowList.reverse_begin();
 	const PortList::iterator end = Common::find(_windowList.begin(), _windowList.end(), wnd);
 	while (it != end) {
-		// FIXME: We also store Port objects in the window list.
-		// We should add a check that we really only pass windows here...
+		// We also store Port objects in the window list, but they
+		// shouldn't be encountered during this iteration.
+		assert((*it)->isWindow());
+
 		updateWindow((Window *)*it);
 		--it;
 	}
@@ -263,10 +267,15 @@ void GfxPorts::endUpdate(Window *wnd) {
 	assert(it != end);
 
 	while (++it != end) {
-		// FIXME: We also store Port objects in the window list.
-		// We should add a check that we really only pass windows here...
+		// We also store Port objects in the window list, but they
+		// shouldn't be encountered during this iteration.
+		assert((*it)->isWindow());
+
 		updateWindow((Window *)*it);
 	}
+
+	if (getSciVersion() < SCI_VERSION_1_EGA_ONLY)
+		g_sci->_gfxPaint16->kernelGraphRedrawBox(_curPort->rect);
 
 	setPort(oldPort);
 }
@@ -300,7 +309,14 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 	}
 
 	_windowsById[id] = pwnd;
-	if (style & SCI_WINDOWMGR_STYLE_TOPMOST)
+
+	// KQ1sci, KQ4, iceman, QfG2 always add windows to the back of the list.
+	// KQ5CD checks style.
+	// Hoyle3-demo also always adds to the back (#3036763).
+	bool forceToBack = (getSciVersion() <= SCI_VERSION_1_EGA_ONLY) ||
+	                   (g_sci->getGameId() == GID_HOYLE3 && g_sci->isDemo());
+
+	if (!forceToBack && (style & SCI_WINDOWMGR_STYLE_TOPMOST))
 		_windowList.push_front(pwnd);
 	else
 		_windowList.push_back(pwnd);
@@ -311,7 +327,7 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 	// bit of the left dimension in their interpreter. It seems Sierra did it
 	// for EGA byte alignment (EGA uses 1 byte for 2 pixels) and left it in
 	// their interpreter even in the newer VGA games.
-	r.left = r.left & 0x7FFE;
+	r.left = r.left & 0xFFFE;
 
 	if (r.width() > _screen->getWidth()) {
 		// We get invalid dimensions at least at the end of sq3 (script bug!).
@@ -347,24 +363,49 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 	}
 
 	pwnd->dims = r;
-	const Common::Rect *wmprect = &_wmgrPort->rect;
+
+	// Clip window, if needed
+	Common::Rect wmprect = _wmgrPort->rect;
+	// Handle a special case for Dr. Brain 1 Mac. When hovering the mouse cursor
+	// over the status line on top, the game scripts try to draw the game's icon
+	// bar above the current port, by specifying a negative window top, so that
+	// the end result will be drawn 10 pixels above the current port. This is a
+	// hack by Sierra, and is only limited to user style windows. Normally, we
+	// should not clip, same as what Sierra does. However, this will result in
+	// having invalid rectangles with negative coordinates. For this reason, we
+	// adjust the containing rectangle instead.
+	if (pwnd->dims.top < 0 && g_sci->getPlatform() == Common::kPlatformMacintosh &&
+		(style & SCI_WINDOWMGR_STYLE_USER) && _wmgrPort->top + pwnd->dims.top >= 0) {
+		// Offset the final rect top by the requested pixels
+		wmprect.top += pwnd->dims.top;
+	}
+
 	int16 oldtop = pwnd->dims.top;
 	int16 oldleft = pwnd->dims.left;
-	if (wmprect->top > pwnd->dims.top)
-		pwnd->dims.moveTo(pwnd->dims.left, wmprect->top);
 
-	if (wmprect->bottom < pwnd->dims.bottom)
-		pwnd->dims.moveTo(pwnd->dims.left, wmprect->bottom - pwnd->dims.bottom + pwnd->dims.top);
+	if (wmprect.top > pwnd->dims.top)
+		pwnd->dims.moveTo(pwnd->dims.left, wmprect.top);
 
-	if (wmprect->right < pwnd->dims.right)
-		pwnd->dims.moveTo(wmprect->right + pwnd->dims.left - pwnd->dims.right, pwnd->dims.top);
+	if (wmprect.bottom < pwnd->dims.bottom)
+		pwnd->dims.moveTo(pwnd->dims.left, wmprect.bottom - pwnd->dims.bottom + pwnd->dims.top);
 
-	if (wmprect->left > pwnd->dims.left)
-		pwnd->dims.moveTo(wmprect->left, pwnd->dims.top);
+	if (wmprect.right < pwnd->dims.right)
+		pwnd->dims.moveTo(wmprect.right + pwnd->dims.left - pwnd->dims.right, pwnd->dims.top);
+
+	if (wmprect.left > pwnd->dims.left)
+		pwnd->dims.moveTo(wmprect.left, pwnd->dims.top);
 
 	pwnd->rect.moveTo(pwnd->rect.left + pwnd->dims.left - oldleft, pwnd->rect.top + pwnd->dims.top - oldtop);
+
 	if (restoreRect == 0)
 		pwnd->restoreRect = pwnd->dims;
+
+	if (pwnd->restoreRect.top < 0 && g_sci->getPlatform() == Common::kPlatformMacintosh &&
+		(style & SCI_WINDOWMGR_STYLE_USER) && _wmgrPort->top + pwnd->restoreRect.top >= 0) {
+		// Special case for Dr. Brain 1 Mac (check above), applied to the
+		// restore rectangle.
+		pwnd->restoreRect.moveTo(pwnd->restoreRect.left, wmprect.top);
+	}
 
 	if (draw)
 		drawWindow(pwnd);
@@ -666,6 +707,28 @@ int16 GfxPorts::kernelPriorityToCoordinate(byte priority) {
 				return y;
 	}
 	return _priorityBottom;
+}
+
+void GfxPorts::processEngineHunkList(WorklistManager &wm) {
+	for (PortList::const_iterator it = _windowList.begin(); it != _windowList.end(); ++it) {
+		if ((*it)->isWindow()) {
+			Window *wnd = ((Window *)*it);
+			wm.push(wnd->hSaved1);
+			wm.push(wnd->hSaved2);
+		}
+	}
+}
+
+void GfxPorts::printWindowList(Console *con) {
+	for (PortList::const_iterator it = _windowList.begin(); it != _windowList.end(); ++it) {
+		if ((*it)->isWindow()) {
+			Window *wnd = ((Window *)*it);
+			con->DebugPrintf("%d: '%s' at %d, %d, (%d, %d, %d, %d), drawn: %d, style: %d\n",
+					wnd->id, wnd->title.c_str(), wnd->left, wnd->top, 
+					wnd->rect.left, wnd->rect.top, wnd->rect.right, wnd->rect.bottom,
+					wnd->bDrawn, wnd->wndStyle);
+		}
+	}
 }
 
 } // End of namespace Sci

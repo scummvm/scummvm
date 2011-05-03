@@ -57,7 +57,7 @@ public:
 	virtual ~ToolbarHandler();
 private:
 
-	HashMap<String, Toolbar*, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _toolbarMap;
+	HashMap<String, Toolbar *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _toolbarMap;
 	String _current;
 	Toolbar *_active;
 	int _offset;

@@ -23,6 +23,9 @@
  *
  */
 
+// FIXME: Avoid using printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "base/plugins.h"
 
 #include "common/archive.h"
@@ -77,8 +80,6 @@ Common::String ScummEngine::generateFilename(const int room) const {
 			snprintf(buf, sizeof(buf), "disk%02d.lec", diskNumber);
 		}
 	} else {
-		char id = 0;
-
 		switch (_filenamePattern.genMethod) {
 		case kGenDiskNum:
 			snprintf(buf, sizeof(buf), _filenamePattern.pattern, diskNumber);
@@ -88,59 +89,6 @@ Common::String ScummEngine::generateFilename(const int room) const {
 			snprintf(buf, sizeof(buf), _filenamePattern.pattern, room);
 			break;
 
-		case kGenHEMac:
-		case kGenHEMacNoParens:
-		case kGenHEPC:
-			if (room < 0) {
-				id = '0' - room;
-			} else if (_game.heversion >= 98) {
-				int disk = 0;
-				if (_heV7DiskOffsets)
-					disk = _heV7DiskOffsets[room];
-
-				switch (disk) {
-				case 2:
-					id = 'b';
-					// Special cases for Blue's games, which share common (b) files
-					if (_game.id == GID_BIRTHDAY && !(_game.features & GF_DEMO))
-						strcpy(buf, "Blue'sBirthday.(b)");
-					else if (_game.id == GID_TREASUREHUNT)
-						strcpy(buf, "Blue'sTreasureHunt.(b)");
-					else
-						snprintf(buf, sizeof(buf), "%s.(b)", _filenamePattern.pattern);
-					break;
-				case 1:
-					id = 'a';
-					snprintf(buf, sizeof(buf), "%s.(a)", _filenamePattern.pattern);
-					break;
-				default:
-					id = '0';
-					snprintf(buf, sizeof(buf), "%s.he0", _filenamePattern.pattern);
-				}
-			} else if (_game.heversion >= 70) {
-				id = (room == 0) ? '0' : '1';
-			} else {
-				id = diskNumber + '0';
-			}
-
-			if (_filenamePattern.genMethod == kGenHEPC) {
-				// For HE >= 98, we already called snprintf above.
-				if (_game.heversion < 98 || room < 0)
-					snprintf(buf, sizeof(buf), "%s.he%c", _filenamePattern.pattern, id);
-			} else {
-				if (id == '3') { // special case for cursors
-					// For mac they're stored in game binary
-					strncpy(buf, _filenamePattern.pattern, sizeof(buf));
-				} else {
-					if (_filenamePattern.genMethod == kGenHEMac)
-						snprintf(buf, sizeof(buf), "%s (%c)", _filenamePattern.pattern, id);
-					else
-						snprintf(buf, sizeof(buf), "%s %c", _filenamePattern.pattern, id);
-				}
-			}
-
-			break;
-
 		case kGenUnchanged:
 			strncpy(buf, _filenamePattern.pattern, sizeof(buf));
 			break;
@@ -148,6 +96,109 @@ Common::String ScummEngine::generateFilename(const int room) const {
 		default:
 			error("generateFilename: Unsupported genMethod");
 		}
+	}
+
+	return buf;
+}
+
+Common::String ScummEngine_v60he::generateFilename(const int room) const {
+	char buf[128];
+	char id = 0;
+
+	switch (_filenamePattern.genMethod) {
+	case kGenHEMac:
+	case kGenHEMacNoParens:
+	case kGenHEPC:
+		if (room < 0) {
+			id = '0' - room;
+		} else {
+			const int diskNumber = (room > 0) ? _res->roomno[rtRoom][room] : 0;
+			id = diskNumber + '0';
+		}
+
+		if (_filenamePattern.genMethod == kGenHEPC) {
+			snprintf(buf, sizeof(buf), "%s.he%c", _filenamePattern.pattern, id);
+		} else {
+			if (id == '3') { // special case for cursors
+				// For mac they're stored in game binary
+				strncpy(buf, _filenamePattern.pattern, sizeof(buf));
+			} else {
+				if (_filenamePattern.genMethod == kGenHEMac)
+					snprintf(buf, sizeof(buf), "%s (%c)", _filenamePattern.pattern, id);
+				else
+					snprintf(buf, sizeof(buf), "%s %c", _filenamePattern.pattern, id);
+			}
+		}
+
+		break;
+
+	default:
+		// Fallback to parent method
+		return ScummEngine::generateFilename(room);
+	}
+
+	return buf;
+}
+
+Common::String ScummEngine_v70he::generateFilename(const int room) const {
+	char buf[128];
+	char id = 0;
+
+	switch (_filenamePattern.genMethod) {
+	case kGenHEMac:
+	case kGenHEMacNoParens:
+	case kGenHEPC:
+		if (_game.heversion >= 98 && room >= 0) {
+			int disk = 0;
+			if (_heV7DiskOffsets)
+				disk = _heV7DiskOffsets[room];
+
+			switch (disk) {
+			case 2:
+				id = 'b';
+				// Special cases for Blue's games, which share common (b) files
+				if (_game.id == GID_BIRTHDAY && !(_game.features & GF_DEMO))
+					strcpy(buf, "Blue'sBirthday.(b)");
+				else if (_game.id == GID_TREASUREHUNT)
+					strcpy(buf, "Blue'sTreasureHunt.(b)");
+				else
+					snprintf(buf, sizeof(buf), "%s.(b)", _filenamePattern.pattern);
+				break;
+			case 1:
+				id = 'a';
+				snprintf(buf, sizeof(buf), "%s.(a)", _filenamePattern.pattern);
+				break;
+			default:
+				id = '0';
+				snprintf(buf, sizeof(buf), "%s.he0", _filenamePattern.pattern);
+			}
+		} else if (room < 0) {
+			id = '0' - room;
+		} else {
+			id = (room == 0) ? '0' : '1';
+		}
+
+		if (_filenamePattern.genMethod == kGenHEPC) {
+			// For HE >= 98, we already called snprintf above.
+			if (_game.heversion < 98 || room < 0)
+				snprintf(buf, sizeof(buf), "%s.he%c", _filenamePattern.pattern, id);
+		} else {
+			if (id == '3') { // special case for cursors
+				// For mac they're stored in game binary
+				strncpy(buf, _filenamePattern.pattern, sizeof(buf));
+			} else {
+				if (_filenamePattern.genMethod == kGenHEMac)
+					snprintf(buf, sizeof(buf), "%s (%c)", _filenamePattern.pattern, id);
+				else
+					snprintf(buf, sizeof(buf), "%s %c", _filenamePattern.pattern, id);
+			}
+		}
+
+		break;
+
+	default:
+		// Fallback to parent method
+		return ScummEngine_v60he::generateFilename(room);
 	}
 
 	return buf;
@@ -946,7 +997,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	Common::FSList fslist;
 	Common::FSNode dir(ConfMan.get("path"));
 	if (!dir.isDirectory())
-		return Common::kInvalidPathError;
+		return Common::kPathNotDirectory;
 	if (!dir.getChildren(fslist, Common::FSNode::kListFilesOnly))
 		return Common::kNoGameDataFoundError;
 
@@ -1083,6 +1134,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 			break;
 		case 62:
 		case 61:
+		case 60:
 			*engine = new ScummEngine_v60he(syst, res);
 			break;
 		default:
@@ -1186,7 +1238,7 @@ SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int 
 	desc.setDeletableFlag(true);
 	desc.setThumbnail(thumbnail);
 
-	InfoStuff infos;
+	SaveStateMetaInfos infos;
 	memset(&infos, 0, sizeof(infos));
 	if (ScummEngine::loadInfosFromSlot(target, slot, &infos)) {
 		int day = (infos.date >> 24) & 0xFF;

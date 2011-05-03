@@ -30,8 +30,8 @@
 #include <stddef.h>	// for ptrdiff_t
 
 namespace Common {
-	class SeekableReadStream;
-	class WriteStream;
+class SeekableReadStream;
+class WriteStream;
 }
 
 namespace Scumm {

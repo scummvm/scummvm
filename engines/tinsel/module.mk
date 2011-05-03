@@ -2,6 +2,7 @@ MODULE := engines/tinsel
 
 MODULE_OBJS := \
 	actors.o \
+	adpcm.o \
 	anim.o \
 	background.o \
 	bg.o \

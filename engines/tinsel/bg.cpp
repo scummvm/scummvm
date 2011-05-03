@@ -40,6 +40,7 @@
 #include "tinsel/tinlib.h"		// For Control()
 #include "tinsel/tinsel.h"
 
+#include "common/textconsole.h"
 #include "common/util.h"
 
 namespace Tinsel {
@@ -158,7 +159,7 @@ static void BGmainProcess(CORO_PARAM, const void *param) {
 			FadeInFast(NULL);
 			bDoFadeIn = false;
 		} else if (TinselV2)
-			PokeInTagColour();
+			PokeInTagColor();
 
 		for (;;) {
 			for (int i = 0; i < bgReels; i++) {

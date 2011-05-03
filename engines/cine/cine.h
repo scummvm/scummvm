@@ -117,6 +117,8 @@ public:
 	CineEngine(OSystem *syst, const CINEGameDescription *gameDesc);
 	virtual ~CineEngine();
 
+	virtual void syncSoundSettings();
+
 	int getGameType() const;
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;

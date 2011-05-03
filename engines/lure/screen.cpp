@@ -30,6 +30,8 @@
 #include "lure/decode.h"
 #include "lure/events.h"
 
+#include "graphics/palette.h"
+
 namespace Lure {
 
 static Screen *int_disk = NULL;
@@ -44,7 +46,7 @@ Screen::Screen(OSystem &system): _system(system),
 		_palette(new Palette(GAME_PALETTE_RESOURCE_ID, RGB64)) {
 	int_disk = this;
 	_screen->empty();
-	_system.getPaletteManager()->setPalette(_palette->data(), 0, GAME_COLOURS);
+	_system.getPaletteManager()->setPalette(_palette->data(), 0, GAME_COLORS);
 }
 
 Screen::~Screen() {
@@ -87,7 +89,7 @@ void Screen::setPaletteEmpty(int numEntries) {
 
 void Screen::setPalette(Palette *p) {
 	_palette->copyFrom(p);
-	setSystemPalette(_palette, 0, GAME_COLOURS);
+	setSystemPalette(_palette, 0, GAME_COLORS);
 	_system.updateScreen();
 }
 
@@ -138,7 +140,7 @@ void Screen::paletteFadeIn(Palette *p) {
 }
 
 // paletteFadeOut
-// Fades the screen to black by gradually decreasing the palette colours
+// Fades the screen to black by gradually decreasing the palette colors
 
 void Screen::paletteFadeOut(int numEntries) {
 	assert((uint32)numEntries <= _palette->palette()->size());

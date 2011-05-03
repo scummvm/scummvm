@@ -60,7 +60,7 @@ void DefaultSaveFileManager::checkPath(const Common::FSNode &dir) {
 Common::StringArray DefaultSaveFileManager::listSavefiles(const Common::String &pattern) {
 	Common::String savePathName = getSavePath();
 	checkPath(Common::FSNode(savePathName));
-	if (getError() != Common::kNoError)
+	if (getError().getCode() != Common::kNoError)
 		return Common::StringArray();
 
 	// recreate FSNode since checkPath may have changed/created the directory
@@ -84,7 +84,7 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const Common::String 
 	// Ensure that the savepath is valid. If not, generate an appropriate error.
 	Common::String savePathName = getSavePath();
 	checkPath(Common::FSNode(savePathName));
-	if (getError() != Common::kNoError)
+	if (getError().getCode() != Common::kNoError)
 		return 0;
 
 	// recreate FSNode since checkPath may have changed/created the directory
@@ -104,7 +104,7 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const Common::String 
 	// Ensure that the savepath is valid. If not, generate an appropriate error.
 	Common::String savePathName = getSavePath();
 	checkPath(Common::FSNode(savePathName));
-	if (getError() != Common::kNoError)
+	if (getError().getCode() != Common::kNoError)
 		return 0;
 
 	// recreate FSNode since checkPath may have changed/created the directory
@@ -121,7 +121,7 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const Common::String 
 bool DefaultSaveFileManager::removeSavefile(const Common::String &filename) {
 	Common::String savePathName = getSavePath();
 	checkPath(Common::FSNode(savePathName));
-	if (getError() != Common::kNoError)
+	if (getError().getCode() != Common::kNoError)
 		return false;
 
 	// recreate FSNode since checkPath may have changed/created the directory

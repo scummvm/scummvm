@@ -26,10 +26,10 @@
 #ifndef KYRA_WSAMOVIE_H
 #define KYRA_WSAMOVIE_H
 
+#include "kyra/kyra_v1.h"
+
 namespace Kyra {
 
-class KyraEngine_v1;
-class Screen_v2;
 class Palette;
 
 class Movie {

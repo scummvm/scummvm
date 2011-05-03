@@ -264,7 +264,7 @@ SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int s
 		if (version < 4)
 			warning("This savegame is not endian-safe. There may be problems");
 
-		if (type != MKID_BE('SAGA')) {
+		if (type != MKTAG('S','A','G','A')) {
 			error("SagaEngine::load wrong save game format");
 		}
 
@@ -372,12 +372,13 @@ Common::Error SagaEngine::saveGameState(int slot, const char *desc) {
 }
 
 bool SagaEngine::canLoadGameStateCurrently() {
-	return !_scene->isInIntro();
+	return !_scene->isInIntro() &&
+		(_interface->getMode() == kPanelMain || _interface->getMode() == kPanelChapterSelection);
 }
 
 bool SagaEngine::canSaveGameStateCurrently() {
 	return !_scene->isInIntro() &&
-		   (_interface->getMode() == kPanelMain || _interface->getMode() == kPanelChapterSelection);
+		(_interface->getMode() == kPanelMain || _interface->getMode() == kPanelChapterSelection);
 }
 
 } // End of namespace Saga

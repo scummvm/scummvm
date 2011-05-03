@@ -27,6 +27,7 @@
 
 #include "video/codecs/smc.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace Video {
 
@@ -49,7 +50,7 @@ namespace Video {
 
 SMCDecoder::SMCDecoder(uint16 width, uint16 height) {
 	_surface = new Graphics::Surface();
-	_surface->create(width, height, 1);
+	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 SMCDecoder::~SMCDecoder() {

@@ -32,6 +32,7 @@
 
 // parser.c - handles all keyboard/command input
 
+#include "common/debug.h"
 #include "common/system.h"
 
 #include "hugo/hugo.h"
@@ -114,14 +115,13 @@ void Parser_v2d::lineHandler() {
 	}
 
 	if (!strcmp("exit", _vm->_line) || strstr(_vm->_line, "quit")) {
-		if (Utils::Box(kBoxYesNo, "%s", _vm->_text->getTextParser(kTBExit_1d)) != 0)
+		if (Utils::yesNoBox(_vm->_text->getTextParser(kTBExit_1d)))
 			_vm->endGame();
 		return;
 	}
 
 	// SAVE/RESTORE
 	if (!strcmp("save", _vm->_line)) {
-		_vm->_config.soundFl = false;
 		if (gameStatus.gameOverFl)
 			_vm->gameOverMsg();
 		else
@@ -130,10 +130,7 @@ void Parser_v2d::lineHandler() {
 	}
 
 	if (!strcmp("restore", _vm->_line)) {
-		_vm->_config.soundFl = false;
 		_vm->_file->restoreGame(-1);
-		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
-		gameStatus.viewState = kViewPlay;
 		return;
 	}
 
@@ -177,16 +174,16 @@ void Parser_v2d::lineHandler() {
 		&& !isCatchallVerb_v1(false, noun, verb, _backgroundObjects[*_vm->_screen_p])
 		&& !isCatchallVerb_v1(false, noun, verb, _catchallList)) {
 		if (*farComment != '\0') {                  // An object matched but not near enough
-			Utils::Box(kBoxAny, "%s", farComment);
+			Utils::notifyBox(farComment);
 		} else if (_vm->_maze.enabledFl && (verb == _vm->_text->getVerb(_vm->_look, 0))) {
-			Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBMaze));
+			Utils::notifyBox(_vm->_text->getTextParser(kTBMaze));
 			_vm->_object->showTakeables();
 		} else if (verb && noun) {                  // A combination I didn't think of
-			Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBNoUse_2d));
+			Utils::notifyBox(_vm->_text->getTextParser(kTBNoUse_2d));
 		} else if (verb || noun) {
-			Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBNoun));
+			Utils::notifyBox(_vm->_text->getTextParser(kTBNoun));
 		} else {
-			Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBEh_2d));
+			Utils::notifyBox(_vm->_text->getTextParser(kTBEh_2d));
 		}
 	}
 }

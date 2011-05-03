@@ -7,21 +7,21 @@ IDI_ICON               ICON    DISCARDABLE     "../../icons/scummvm.ico"
 #endif
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION @VER_MAJOR@,@VER_MINOR@,@VER_PATCH@,0
- PRODUCTVERSION @VER_MAJOR@,@VER_MINOR@,@VER_PATCH@,0
- FILEFLAGSMASK 0x3fL
+ FILEVERSION     @VER_MAJOR@,@VER_MINOR@,@VER_PATCH@,0
+ PRODUCTVERSION  @VER_MAJOR@,@VER_MINOR@,@VER_PATCH@,0
+ FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
 #ifdef _DEBUG
- FILEFLAGS 0x1L
+ FILEFLAGS       VS_FF_DEBUG
 #else
- FILEFLAGS 0x0L
+ FILEFLAGS       0
 #endif
- FILEOS 0x40004L
- FILETYPE 0x1L
- FILESUBTYPE 0x0L
+ FILEOS          VOS_NT_WINDOWS32
+ FILETYPE        VFT_APP
+ FILESUBTYPE     VFT2_UNKNOWN
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
-        BLOCK "040904b0"
+        BLOCK "040904b0" // US English, Unicode
         BEGIN
             VALUE "Comments", "Look! A three headed monkey (TM)! .. Nice use of the TM!\0"
             VALUE "FileDescription", "http://www.scummvm.org/\0"
@@ -34,8 +34,9 @@ BEGIN
             VALUE "ProductVersion", "@VERSION@\0"
         END
     END
+
     BLOCK "VarFileInfo"
     BEGIN
-        VALUE "Translation", 0x409, 1200
+        VALUE "Translation", 0x409, 1200 // US English, Unicode
     END
 END

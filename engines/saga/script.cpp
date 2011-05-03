@@ -160,7 +160,7 @@ SAGA2Script::SAGA2Script(SagaEngine *vm) : Script(vm) {
 	}
 
 	// Script export segment (lookup table)
-	uint32 saga2ExportSegId = MKID_BE('_EXP');
+	uint32 saga2ExportSegId = MKTAG('_','E','X','P');
 	int32 entryNum = _scriptContext->getEntryNum(saga2ExportSegId);
 	if (entryNum < 0)
 		error("Unable to locate the script's export segment");
@@ -176,7 +176,7 @@ SAGA2Script::SAGA2Script(SagaEngine *vm) : Script(vm) {
 
 	// Script data segment
 	/*
-	uint32 saga2DataSegId = MKID_BE('__DA');
+	uint32 saga2DataSegId = MKTAG('_','_','D','A');
 	entryNum = _scriptContext->getEntryNum(saga2DataSegId);
 	if (entryNum < 0)
 		error("Unable to locate the script's data segment");

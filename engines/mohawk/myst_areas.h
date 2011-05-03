@@ -233,6 +233,7 @@ public:
 	void drawFrame(uint16 frame);
 	bool pullLeverV();
 	void releaseLeverV();
+	uint16 getNumFrames() { return _numFrames; }
 
 protected:
 	uint16 _numFrames;

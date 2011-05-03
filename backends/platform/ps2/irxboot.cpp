@@ -73,7 +73,7 @@ PS2Device detectBootPath(const char *elfPath, char *bootPath) {
 
 	PS2Device device = _getDev(elfPath);
 
-	printf("elf path: %s, device %d\n", elfPath, device);
+	sioprintf("elf path: %s, device %d\n", elfPath, device);
 
 	strcpy(bootPath, elfPath);
 

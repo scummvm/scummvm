@@ -102,7 +102,7 @@ protected:
 enum KyraResources {
 	kLoadAll = -1,
 
-	// This list has to match orderwise (and thus value wise) the static data list of "tools/create_kyradat/create_kyradat.h"!
+	// This list has to match orderwise (and thus value wise) the static data list of "devtools/create_kyradat/create_kyradat.h"!
 	k1ForestSeq = 1,
 	k1KallakWritingSeq,
 	k1KyrandiaLogoSeq,

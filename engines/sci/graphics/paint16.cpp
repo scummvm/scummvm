@@ -23,11 +23,6 @@
  *
  */
 
-#include "common/util.h"
-#include "common/stack.h"
-#include "common/system.h"
-#include "graphics/primitives.h"
-
 #include "sci/sci.h"
 #include "sci/engine/features.h"
 #include "sci/engine/state.h"
@@ -159,8 +154,8 @@ void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 c
 		// adjust curPort to upscaled hires
 		clipRect = celRect;
 		curPortRect = _ports->_curPort->rect;
-		_screen->adjustToUpscaledCoordinates(curPortRect.top, curPortRect.left);
-		_screen->adjustToUpscaledCoordinates(curPortRect.bottom, curPortRect.right);
+		view->adjustToUpscaledCoordinates(curPortRect.top, curPortRect.left);
+		view->adjustToUpscaledCoordinates(curPortRect.bottom, curPortRect.right);
 		curPortRect.bottom++;
 		curPortRect.right++;
 		clipRect.clip(curPortRect);
@@ -170,7 +165,7 @@ void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 c
 		clipRectTranslated = clipRect;
 		if (!upscaledHiresHack) {
 			curPortPos.x = _ports->_curPort->left; curPortPos.y = _ports->_curPort->top;
-			_screen->adjustToUpscaledCoordinates(curPortPos.y, curPortPos.x);
+			view->adjustToUpscaledCoordinates(curPortPos.y, curPortPos.x);
 			clipRectTranslated.top += curPortPos.y; clipRectTranslated.bottom += curPortPos.y;
 			clipRectTranslated.left += curPortPos.x; clipRectTranslated.right += curPortPos.x;
 		}
@@ -302,6 +297,11 @@ void GfxPaint16::bitsShow(const Common::Rect &rect) {
 		return;
 
 	_ports->offsetRect(workerRect);
+
+	// We adjust the left/right coordinates to even coordinates
+	workerRect.left &= 0xFFFE; // round down
+	workerRect.right = (workerRect.right + 1) & 0xFFFE; // round up
+
 	_screen->copyRectToScreen(workerRect);
 }
 
@@ -360,7 +360,7 @@ void GfxPaint16::bitsRestore(reg_t memoryHandle) {
 
 		if (memoryPtr) {
 			_screen->bitsRestore(memoryPtr);
-			_segMan->freeHunkEntry(memoryHandle);
+			bitsFree(memoryHandle);
 		}
 	}
 }
@@ -472,6 +472,7 @@ void GfxPaint16::kernelGraphRedrawBox(Common::Rect rect) {
 #define SCI_DISPLAY_RESTOREUNDER		108
 #define SCI_DISPLAY_DUMMY1				114 // used in longbow demo/qfg1 ega demo, not supported in sierra sci - no parameters
 #define SCI_DISPLAY_DUMMY2				115 // used in longbow demo, not supported in sierra sci - has 1 parameter
+#define SCI_DISPLAY_DUMMY3				117 // used in qfg1 ega demo, not supported in sierra sci - no parameters
 #define SCI_DISPLAY_DONTSHOWBITS		121
 
 reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
@@ -532,20 +533,7 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 		case SCI_DISPLAY_RESTOREUNDER:
 			bitsGetRect(argv[0], &rect);
 			rect.translate(-_ports->getPort()->left, -_ports->getPort()->top);
-			if (g_sci->getGameId() == GID_PQ3 && g_sci->getEngineState()->currentRoomNumber() == 29) {
-				// WORKAROUND: PQ3 calls this without calling the associated
-				// kDisplay(SCI_DISPLAY_SAVEUNDER) call before. Theoretically,
-				// this would result in no rect getting restored. However, we
-				// still maintain a pointer from the previous room, resulting
-				// in invalidated content being restored on screen, and causing
-				// graphics glitches. Thus, we simply don't restore a rect in
-				// that room. The correct fix for this would be to erase hunk
-				// pointers when changing rooms, but this will suffice for now,
-				// as restoring from a totally invalid pointer is very rare.
-				// Fixes bug #3037945.
-			} else {
-				bitsRestore(argv[0]);
-			}
+			bitsRestore(argv[0]);
 			kernelGraphRedrawBox(rect);
 			// finishing loop
 			argc = 0;
@@ -555,9 +543,10 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 			break;
 
 		// 2 Dummy functions, longbow-demo is using those several times but sierra sci doesn't support them at all
-		// The Quest for Glory 1 EGA demo also calls kDisplay(114)
+		// The Quest for Glory 1 EGA demo also calls kDisplay(114) and kDisplay(117)
 		case SCI_DISPLAY_DUMMY1:
 		case SCI_DISPLAY_DUMMY2:
+		case SCI_DISPLAY_DUMMY3:
 			if (!g_sci->isDemo() || (g_sci->getGameId() != GID_LONGBOW && g_sci->getGameId() != GID_QFG1))
 				error("Unknown kDisplay argument %d", displayArg.offset);
 			if (displayArg.offset == SCI_DISPLAY_DUMMY2) {
@@ -581,7 +570,10 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	// now drawing the text
 	_text16->Size(rect, text, -1, width);
 	rect.moveTo(_ports->getPort()->curLeft, _ports->getPort()->curTop);
-	if (getSciVersion() >= SCI_VERSION_1_LATE) {
+	// Note: This code has been found in SCI1 middle and newer games. It was
+	// previously only for SCI1 late and newer, but the LSL1 interpreter contains
+	// this code.
+	if (getSciVersion() >= SCI_VERSION_1_MIDDLE) {
 		int16 leftPos = rect.right <= _screen->getWidth() ? 0 : _screen->getWidth() - rect.right;
 		int16 topPos = rect.bottom <= _screen->getHeight() ? 0 : _screen->getHeight() - rect.bottom;
 		_ports->move(leftPos, topPos);

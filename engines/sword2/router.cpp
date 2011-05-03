@@ -27,6 +27,7 @@
 
 
 #include "common/memstream.h"
+#include "common/textconsole.h"
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
@@ -2344,9 +2345,9 @@ void Router::plotWalkGrid() {
 		plotCross(_node[i].x, _node[i].y, 184);
 }
 
-void Router::plotCross(int16 x, int16 y, uint8 colour) {
-	_vm->_screen->drawLine(x - 1, y - 1, x + 1, y + 1, colour);
-	_vm->_screen->drawLine(x + 1, y - 1, x - 1, y + 1, colour);
+void Router::plotCross(int16 x, int16 y, uint8 color) {
+	_vm->_screen->drawLine(x - 1, y - 1, x + 1, y + 1, color);
+	_vm->_screen->drawLine(x + 1, y - 1, x - 1, y + 1, color);
 }
 
 void Router::loadWalkGrid() {

@@ -27,6 +27,9 @@
 #ifdef USE_FLUIDSYNTH
 
 #include "common/config-manager.h"
+#include "common/error.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"
 #include "audio/softsynth/emumidi.h"
@@ -40,7 +43,6 @@ private:
 	fluid_synth_t *_synth;
 	int _soundFont;
 	int _outputRate;
-	Audio::SoundHandle _handle;
 
 protected:
 	// Because GCC complains about casting from const to non-const...
@@ -144,7 +146,7 @@ int MidiDriver_FluidSynth::open() {
 	MidiDriver_Emulated::open();
 
 	// The MT-32 emulator uses kSFXSoundType here. I don't know why.
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 	return 0;
 }
 
@@ -153,7 +155,7 @@ void MidiDriver_FluidSynth::close() {
 		return;
 	_isOpen = false;
 
-	_mixer->stopHandle(_handle);
+	_mixer->stopHandle(_mixerSoundHandle);
 
 	if (_soundFont != -1)
 		fluid_synth_sfunload(_synth, _soundFont, 1);

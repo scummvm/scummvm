@@ -41,10 +41,6 @@
 namespace OPL {
 namespace DOSBox {
 
-#ifndef PI
-#define PI 3.14159265358979323846
-#endif
-
 namespace DBOPL {
 
 #define OPLRATE		((double)(14318180.0 / 288.0))
@@ -1392,7 +1388,7 @@ void InitTables( void ) {
 	//Add 0.5 for the trunc rounding of the integer cast
 	//Do a PI sinetable instead of the original 0.5 PI
 	for ( int i = 0; i < 512; i++ ) {
-		SinTable[i] = (Bit16s)( 0.5 - log10( sin( (i + 0.5) * (PI / 512.0) ) ) / log10(2.0)*256 );
+		SinTable[i] = (Bit16s)( 0.5 - log10( sin( (i + 0.5) * (M_PI / 512.0) ) ) / log10(2.0)*256 );
 	}
 #endif
 #if ( DBOPL_WAVE == WAVE_TABLEMUL )
@@ -1406,7 +1402,7 @@ void InitTables( void ) {
 
 	//Sine Wave Base
 	for ( int i = 0; i < 512; i++ ) {
-		WaveTable[ 0x0200 + i ] = (Bit16s)(sin( (i + 0.5) * (PI / 512.0) ) * 4084);
+		WaveTable[ 0x0200 + i ] = (Bit16s)(sin( (i + 0.5) * (M_PI / 512.0) ) * 4084);
 		WaveTable[ 0x0000 + i ] = -WaveTable[ 0x200 + i ];
 	}
 	//Exponential wave
@@ -1418,7 +1414,7 @@ void InitTables( void ) {
 #if ( DBOPL_WAVE == WAVE_TABLELOG )
 	//Sine Wave Base
 	for ( int i = 0; i < 512; i++ ) {
-		WaveTable[ 0x0200 + i ] = (Bit16s)( 0.5 - log10( sin( (i + 0.5) * (PI / 512.0) ) ) / log10(2.0)*256 );
+		WaveTable[ 0x0200 + i ] = (Bit16s)( 0.5 - log10( sin( (i + 0.5) * (M_PI / 512.0) ) ) / log10(2.0)*256 );
 		WaveTable[ 0x0000 + i ] = ((Bit16s)0x8000) | WaveTable[ 0x200 + i];
 	}
 	//Exponential wave

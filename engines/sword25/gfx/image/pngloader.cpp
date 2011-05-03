@@ -84,7 +84,7 @@ static uint findEmbeddedPNG(const byte *fileDataPtr, uint fileSize) {
 	Common::MemoryReadStream stream(fileDataPtr, fileSize);
 	stream.seek(0, SEEK_SET);
 
-	// Headerinformationen der Spielstandes einlesen.
+	// Read header information of savegame
 	uint compressedGamedataSize;
 	loadString(stream);		// Marker
 	loadString(stream);		// Version
@@ -124,7 +124,7 @@ bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize, byte *&unc
 		error("png_check_sig failed");
 	}
 
-	// Die beiden PNG Strukturen erstellen
+	// Create both PNG structures
 	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!png_ptr) {
 		error("Could not create libpng read struct.");
@@ -135,31 +135,31 @@ bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize, byte *&unc
 		error("Could not create libpng info struct.");
 	}
 
-	// Alternative Lesefunktion benutzen
+	// Use alternative reading function
 	const byte **ref = &fileDataPtr;
 	png_set_read_fn(png_ptr, (void *)ref, png_user_read_data);
 
-	// PNG Header einlesen
+	// Read PNG header
 	png_read_info(png_ptr, info_ptr);
 
-	// PNG Informationen auslesen
+	// Read out PNG informations
 
 	png_uint_32 w, h;
 	png_get_IHDR(png_ptr, info_ptr, &w, &h, &bitDepth, &colorType, &interlaceType, NULL, NULL);
 	width = w;
 	height = h;
 
-	// Pitch des Ausgabebildes berechnen
+	// Calculate pitch of output image
 	pitch = GraphicEngine::calcPitch(GraphicEngine::CF_ARGB32, width);
 
-	// Speicher für die endgültigen Bilddaten reservieren
-	// Dieses geschieht vor dem reservieren von Speicher für temporäre Bilddaten um die Fragmentierung des Speichers gering zu halten
+	// Allocate memory for the final image data.
+	// To keep memory framentation low this happens before allocating memory for temporary image data.
 	uncompressedDataPtr = new byte[pitch * height];
 	if (!uncompressedDataPtr) {
 		error("Could not allocate memory for output image.");
 	}
 
-	// Bilder jeglicher Farbformate werden zunächst in ARGB Bilder umgewandelt
+	// Images of all color formates will be transformed into ARGB images
 	if (bitDepth == 16)
 		png_set_strip_16(png_ptr);
 	if (colorType == PNG_COLOR_TYPE_PALETTE)
@@ -177,7 +177,7 @@ bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize, byte *&unc
 	if (colorType != PNG_COLOR_TYPE_RGB_ALPHA)
 		png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
 
-	// Nachdem die Transformationen registriert wurden, werden die Bilddaten erneut eingelesen
+	// After the transformations have been registered, the image data is read again.
 	png_read_update_info(png_ptr, info_ptr);
 	png_get_IHDR(png_ptr, info_ptr, &w, &h, &bitDepth, &colorType, NULL, NULL, NULL);
 	width = w;
@@ -218,7 +218,7 @@ bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize, byte *&unc
 	Common::MemoryReadStream *fileStr = new Common::MemoryReadStream(fileDataPtr, fileSize, DisposeAfterUse::NO);
 	Graphics::PNG *png = new Graphics::PNG();
 	if (!png->read(fileStr))	// the fileStr pointer, and thus pFileData will be deleted after this is done
-		error("Error while reading PNG image");	
+		error("Error while reading PNG image");
 
 	Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
 	Graphics::Surface *pngSurface = png->getSurface(format);
@@ -251,7 +251,7 @@ bool PNGLoader::doImageProperties(const byte *fileDataPtr, uint fileSize, int &w
 	png_structp png_ptr = NULL;
 	png_infop info_ptr = NULL;
 
-	// Die beiden PNG Strukturen erstellen
+	// Create both PNG structures
 	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!png_ptr) {
 		error("Could not create libpng read struct.");
@@ -262,14 +262,14 @@ bool PNGLoader::doImageProperties(const byte *fileDataPtr, uint fileSize, int &w
 		error("Could not create libpng info struct.");
 	}
 
-	// Alternative Lesefunktion benutzen
+	// Use alternative reading function
 	const byte **ref = &fileDataPtr;
 	png_set_read_fn(png_ptr, (void *)ref, png_user_read_data);
 
-	// PNG Header einlesen
+	// Read PNG Header
 	png_read_info(png_ptr, info_ptr);
 
-	// PNG Informationen auslesen
+	// Read out PNG informations
 	int bitDepth;
 	int colorType;
 	png_uint_32 w, h;
@@ -278,7 +278,7 @@ bool PNGLoader::doImageProperties(const byte *fileDataPtr, uint fileSize, int &w
 	width = w;
 	height = h;
 
-	// Die Strukturen freigeben
+	// Destroy libpng structures
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 #else
 	// We don't need to read the image properties here...

@@ -84,7 +84,7 @@ bool VirtualKeyboardParser::parserCallback_keyboard(ParserNode *node) {
 		if (h.equalsIgnoreCase("left"))
 			_keyboard->_hAlignment = VirtualKeyboard::kAlignLeft;
 		else if (h.equalsIgnoreCase("centre") || h.equalsIgnoreCase("center"))
-			_keyboard->_hAlignment = VirtualKeyboard::kAlignCentre;
+			_keyboard->_hAlignment = VirtualKeyboard::kAlignCenter;
 		else if (h.equalsIgnoreCase("right"))
 			_keyboard->_hAlignment = VirtualKeyboard::kAlignRight;
 	}

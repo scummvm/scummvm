@@ -32,7 +32,7 @@
 #include "graphics/pixelformat.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Graphics {

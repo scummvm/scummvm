@@ -40,16 +40,36 @@ enum seqTextUtil {
 };
 
 namespace Utils {
-static const int kMaxStrLength = 1024;
 
 int   firstBit(byte data);
 int   lastBit(byte data);
 
 void  reverseByte(byte *data);
 
-char *Box(box_t, const char *, ...) GCC_PRINTF(2, 3);
+/**
+ * Show a dialog notifying the user about something, with
+ * only a simple "OK" button to dismiss it.
+ */
+void notifyBox(const Common::String &msg);
+
+/**
+ * Show a dialog prompting the player to input some text.
+ */
+Common::String promptBox(const Common::String &msg);
+
+/**
+ * Show a dialog prompting the player for a "yes"/"no" choice.
+ */
+bool yesNoBox(const Common::String &msg);
+
+/**
+ * Convert a string to lower case, in place.
+ * @param buffer	string to convert to lower case
+ * @return the string which was passed in
+ */
 char *strlwr(char *buffer);
-}
+
+} // End of namespace Utils
 
 } // End of namespace Hugo
 

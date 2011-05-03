@@ -31,6 +31,8 @@
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/dni.h"
 
+#include "common/system.h"
+
 namespace Mohawk {
 namespace MystStacks {
 

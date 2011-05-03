@@ -137,8 +137,10 @@ ScummVM Team
        Filippos Karapetis
 
     Mohawk:
+       Bastien Bouclet
        Matthew Hoops
        Filippos Karapetis
+       Alyssa Milburn
        Eugene Sandulenko
        David Turner
 
@@ -181,12 +183,17 @@ ScummVM Team
     Touche:
        Gregory Montoir
 
+    TsAGE:
+       Paul Gilbert
+       Arnaud Boutonne
+
     Tucker:
        Gregory Montoir
 
   Backend Teams
   -------------
     Android:
+       Andre Heider
        Angus Lees
 
     Dreamcast:
@@ -233,6 +240,9 @@ ScummVM Team
        Jurgen Braam
        Lars Persson
 
+    WebOS:
+       Klaus Reimer
+
     Wii:
        Andre Heider
 
@@ -252,7 +262,7 @@ ScummVM Team
     Miscellaneous:
        David Corrales-Lopez  - Filesystem access improvements (GSoC 2007
                                task) (retired)
-       Jerome Fisher         - MT-32 emulator (retired)
+       Jerome Fisher         - MT-32 emulator
        Benjamin Haisch       - Heavily improved de-/encoder for DXA videos
        Jochen Hoenicke       - Speaker & PCjr sound support, AdLib work
                                (retired)
@@ -264,6 +274,18 @@ ScummVM Team
   Website (code)
   --------------
      Fredrik Wendel        - (retired)
+
+  Website (maintenance)
+  ---------------------
+     James Brown           - IRC Logs maintainer
+     Thierry Crozat        - Wiki maintainer
+     Andre Heider          - Buildbot maintainer
+     Max Horn              - Forum, IRC channel and Mailing list maintainer
+     Joost Peters          - Doxygen Project Documentation maintainer
+     Jordi Vilalta Prat    - Wiki maintainer
+     Eugene Sandulenko     - Forum, IRC channel, Screen Shots and Mailing
+                             list maintainer
+     John Willis
 
   Website (content)
   -----------------
@@ -386,6 +408,9 @@ Other contributions
     Spanish:
        Tomas Maidagan
 
+    Swedish:
+       Hampus Flink
+
     Ukrainian:
        Lubomyr Lisen
 
@@ -396,6 +421,7 @@ Other contributions
      David Jensen          - SVG logo conversion
      Jean Marc Gimenez     - ScummVM logo
      Raina                 - ScummVM forum buttons
+     William Claydon       - Skins for doxygen, buildbot and wiki
 
   Code contributions
   ------------------
@@ -405,7 +431,7 @@ Other contributions
                              engine)
      Paolo Costabel        - PSP port contributions
      Martin Doucha         - CinE engine objectification
-     Thomas Fach-Pedersen  - ProTracker module player
+     Thomas Fach-Pedersen  - ProTracker module player, Smacker video decoder
      Tobias Gunkel         - Sound support for C64 version of MM/Zak, Loom
                              PCE support
      Janne Huttunen        - V3 actor mask support, Dig/FT SMUSH audio
@@ -533,7 +559,7 @@ Special thanks to
    Drascula: The Vampire Strikes Back with us and his generosity with
    freewaring the game.
 
-   David P. Gray from Gray Design Associate for sharing the source code of
+   David P. Gray from Gray Design Associates for sharing the source code of
    the Hugo trilogy.
 
    Broken Sword 2.5 team for providing sources of their engine and their

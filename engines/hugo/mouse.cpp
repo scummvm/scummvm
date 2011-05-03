@@ -32,6 +32,7 @@
 
 // mouse.cpp : Handle all mouse activity
 
+#include "common/debug.h"
 #include "common/system.h"
 
 #include "hugo/hugo.h"
@@ -187,7 +188,7 @@ void MouseHandler::processRightClick(const int16 objId, const int16 cx, const in
 				if (_vm->_hero->cycling == kCycleInvisible) // If invisible do
 					_vm->_object->useObject(objId); // immediate use
 				else
-					Utils::Box(kBoxAny, "%s", _vm->_text->getTextMouse(kMsNoWayText)); // Can't get there
+					Utils::notifyBox(_vm->_text->getTextMouse(kMsNoWayText)); // Can't get there
 			}
 			break;
 		}
@@ -241,7 +242,7 @@ void MouseHandler::processLeftClick(const int16 objId, const int16 cx, const int
 				else if (_hotspots[i].direction == Common::KEYCODE_LEFT)
 					x += kHeroMaxWidth;
 				if (!_vm->_route->startRoute(kRouteExit, i, x, y))
-					Utils::Box(kBoxAny, "%s", _vm->_text->getTextMouse(kMsNoWayText)); // Can't get there
+					Utils::notifyBox(_vm->_text->getTextMouse(kMsNoWayText)); // Can't get there
 			}
 
 			// Get rid of any attached icon
@@ -271,7 +272,7 @@ void MouseHandler::processLeftClick(const int16 objId, const int16 cx, const int
 					if (_vm->_hero->cycling == kCycleInvisible) // If invisible do
 						_vm->_object->lookObject(obj);          // immediate decription
 					else
-						Utils::Box(kBoxAny, "%s", _vm->_text->getTextMouse(kMsNoWayText));  // Can't get there
+						Utils::notifyBox(_vm->_text->getTextMouse(kMsNoWayText));  // Can't get there
 				}
 				break;
 			}
@@ -363,6 +364,7 @@ void MouseHandler::readHotspot(Common::ReadStream &in, hotspot_t &hotspot) {
 void MouseHandler::loadHotspots(Common::ReadStream &in) {
 	hotspot_t *wrkHotspots = 0;
 	hotspot_t tmp;
+	memset(&tmp, 0, sizeof(tmp));
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		int numRows = in.readUint16BE();
 		if (varnt == _vm->_gameVariant)

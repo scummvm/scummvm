@@ -35,6 +35,7 @@
 #include "audio/rate.h"
 #include "audio/mixer.h"
 #include "common/frac.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 namespace Audio {

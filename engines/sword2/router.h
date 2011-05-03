@@ -193,7 +193,7 @@ private:
 	int32 solidWalkAnimator(WalkData *walkAnim);
 #endif
 
-	void plotCross(int16 x, int16 y, uint8 colour);
+	void plotCross(int16 x, int16 y, uint8 color);
 
 public:
 	Router(Sword2Engine *vm) : _vm(vm), _diagonalx(0), _diagonaly(0) {

@@ -25,7 +25,11 @@
 #include "common/stream.h"
 #include "common/file.h"
 #include "common/endian.h"
+#include "common/array.h"
+#include "common/textconsole.h"
+#include "common/util.h"
 #include "graphics/font.h"
+#include "graphics/surface.h"
 
 namespace Graphics {
 
@@ -74,7 +78,7 @@ void NewFont::drawChar(Surface *dst, byte chr, const int tx, const int ty, const
 	assert(dst != 0);
 
 	assert(desc.bits != 0 && desc.maxwidth <= 16);
-	assert(dst->bytesPerPixel == 1 || dst->bytesPerPixel == 2);
+	assert(dst->format.bytesPerPixel == 1 || dst->format.bytesPerPixel == 2);
 
 	// If this character is not included in the font, use the default char.
 	if (chr < desc.firstchar || chr >= desc.firstchar + desc.size) {
@@ -106,9 +110,9 @@ void NewFont::drawChar(Surface *dst, byte chr, const int tx, const int ty, const
 	tmp += bbh - y;
 	y -= MAX(0, ty + desc.ascent - bby - dst->h);
 
-	if (dst->bytesPerPixel == 1)
+	if (dst->format.bytesPerPixel == 1)
 		drawCharIntern<byte>(ptr, dst->pitch, tmp, y, MAX(0, -(tx + bbx)), MIN(bbw, dst->w - tx - bbx), color);
-	else if (dst->bytesPerPixel == 2)
+	else if (dst->format.bytesPerPixel == 2)
 		drawCharIntern<uint16>(ptr, dst->pitch, tmp, y, MAX(0, -(tx + bbx)), MIN(bbw, dst->w - tx - bbx), color);
 }
 

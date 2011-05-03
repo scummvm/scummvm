@@ -59,7 +59,7 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 
 	_backSurface = Kernel::getInstance()->getGfx()->getSurface();
 
-	// Datei laden
+	// Load file
 	byte *pFileData;
 	uint fileSize;
 	pFileData = pPackage->getFile(filename, &fileSize);
@@ -68,7 +68,7 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 		return;
 	}
 
-	// Bildeigenschaften bestimmen
+	// Determine image properties
 	int pitch;
 	if (!PNGLoader::imageProperties(pFileData, fileSize, _width, _height)) {
 		error("Could not read image properties.");
@@ -76,14 +76,14 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 		return;
 	}
 
-	// Das Bild dekomprimieren
+	// Uncompress the image
 	if (!PNGLoader::decodeImage(pFileData, fileSize, _data, _width, _height, pitch)) {
 		error("Could not decode image.");
 		delete[] pFileData;
 		return;
 	}
 
-	// Dateidaten freigeben
+	// Cleanup FileData
 	delete[] pFileData;
 
 	_doCleanup = true;
@@ -134,7 +134,7 @@ bool RenderedImage::fill(const Common::Rect *pFillRect, uint color) {
 // -----------------------------------------------------------------------------
 
 bool RenderedImage::setContent(const byte *pixeldata, uint size, uint offset, uint stride) {
-	// Überprüfen, ob PixelData ausreichend viele Pixel enthält um ein Bild der Größe Width * Height zu erzeugen
+	// Check if PixelData contains enough pixel to create an image with image size equals width * height
 	if (size < static_cast<uint>(_width * _height * 4)) {
 		error("PixelData vector is too small to define a 32 bit %dx%d image.", _width, _height);
 		return false;
@@ -187,7 +187,8 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 
 	// Create an encapsulating surface for the data
 	Graphics::Surface srcImage;
-	srcImage.bytesPerPixel = 4;
+	// TODO: Is the data really in the screen format?
+	srcImage.format = g_system->getScreenFormat();
 	srcImage.pitch = _width * 4;
 	srcImage.w = _width;
 	srcImage.h = _height;
@@ -198,11 +199,11 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 		srcImage.w = pPartRect->right - pPartRect->left;
 		srcImage.h = pPartRect->bottom - pPartRect->top;
 
-		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, 
+		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping,
 			pPartRect->left,  pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
 	} else {
 
-		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, 0, 0, 
+		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, 0, 0,
 			srcImage.w, srcImage.h, color, width, height);
 	}
 
@@ -267,10 +268,11 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 			out = outo;
 			in = ino;
 			for (int j = 0; j < img->w; j++) {
-				int b = in[0];
-				int g = in[1];
-				int r = in[2];
-				int a = in[3];
+				uint32 pix = *(uint32 *)in;
+				int b = (pix >> 0) & 0xff;
+				int g = (pix >> 8) & 0xff;
+				int r = (pix >> 16) & 0xff;
+				int a = (pix >> 24) & 0xff;
 				in += inStep;
 
 				if (ca != 255) {
@@ -282,6 +284,7 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 					out += 4;
 					break;
 				case 255: // Full opacity
+#if defined(SCUMM_LITTLE_ENDIAN)
 					if (cb != 255)
 						*out++ = (b * cb) >> 8;
 					else
@@ -298,9 +301,28 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 						*out++ = r;
 
 					*out++ = a;
+#else
+					*out++ = a;
+
+					if (cr != 255)
+						*out++ = (r * cr) >> 8;
+					else
+						*out++ = r;
+
+					if (cg != 255)
+						*out++ = (g * cg) >> 8;
+					else
+						*out++ = g;
+
+					if (cb != 255)
+						*out++ = (b * cb) >> 8;
+					else
+						*out++ = b;
+#endif
 					break;
 
 				default: // alpha blending
+#if defined(SCUMM_LITTLE_ENDIAN)
 					if (cb != 255)
 						*out += ((b - *out) * a * cb) >> 16;
 					else
@@ -318,13 +340,32 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 					out++;
 					*out = 255;
 					out++;
+#else
+					*out = 255;
+					out++;
+					if (cr != 255)
+						*out += ((r - *out) * a * cr) >> 16;
+					else
+						*out += ((r - *out) * a) >> 8;
+					out++;
+					if (cg != 255)
+						*out += ((g - *out) * a * cg) >> 16;
+					else
+						*out += ((g - *out) * a) >> 8;
+					out++;
+					if (cb != 255)
+						*out += ((b - *out) * a * cb) >> 16;
+					else
+						*out += ((b - *out) * a) >> 8;
+					out++;
+#endif
 				}
 			}
 			outo += _backSurface->pitch;
 			ino += inoStep;
 		}
 
-		g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(posX, posY), _backSurface->pitch, posX, posY, 
+		g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(posX, posY), _backSurface->pitch, posX, posY,
 			img->w, img->h);
 	}
 
@@ -369,7 +410,7 @@ void RenderedImage::copyDirectly(int posX, int posY) {
  */
 Graphics::Surface *RenderedImage::scale(const Graphics::Surface &srcImage, int xSize, int ySize) {
 	Graphics::Surface *s = new Graphics::Surface();
-	s->create(xSize, ySize, srcImage.bytesPerPixel);
+	s->create(xSize, ySize, srcImage.format);
 
 	int *horizUsage = scaleLine(xSize, srcImage.w);
 	int *vertUsage = scaleLine(ySize, srcImage.h);
@@ -380,8 +421,8 @@ Graphics::Surface *RenderedImage::scale(const Graphics::Surface &srcImage, int x
 		byte *destP = (byte *)s->getBasePtr(0, yp);
 
 		for (int xp = 0; xp < xSize; ++xp) {
-			const byte *tempSrcP = srcP + (horizUsage[xp] * srcImage.bytesPerPixel);
-			for (int byteCtr = 0; byteCtr < srcImage.bytesPerPixel; ++byteCtr) {
+			const byte *tempSrcP = srcP + (horizUsage[xp] * srcImage.format.bytesPerPixel);
+			for (int byteCtr = 0; byteCtr < srcImage.format.bytesPerPixel; ++byteCtr) {
 				*destP++ = *tempSrcP++;
 			}
 		}
@@ -413,7 +454,7 @@ int *RenderedImage::scaleLine(int size, int srcSize) {
 			distCtr -= 100;
 		}
 	}
-	
+
 	return v;
 }
 

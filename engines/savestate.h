@@ -32,7 +32,7 @@
 
 
 namespace Graphics {
-	struct Surface;
+struct Surface;
 }
 
 /**

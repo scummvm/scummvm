@@ -158,11 +158,11 @@ struct VirtScreen : Graphics::Surface {
 	}
 
 	byte *getPixels(int x, int y) const {
-		return (byte *)pixels + y * pitch + (xstart + x) * bytesPerPixel;
+		return (byte *)pixels + y * pitch + (xstart + x) * format.bytesPerPixel;
 	}
 
 	byte *getBackPixels(int x, int y) const {
-		return (byte *)backBuf + y * pitch + (xstart + x) * bytesPerPixel;
+		return (byte *)backBuf + y * pitch + (xstart + x) * format.bytesPerPixel;
 	}
 };
 

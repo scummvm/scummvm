@@ -51,7 +51,7 @@ public:
 	virtual bool action(int x, int y, bool pushed);
 private:
 
-	typedef HashMap<String, PanelItem*, Common::IgnoreCase_Hash , Common::IgnoreCase_EqualTo> ItemMap;
+	typedef HashMap<String, PanelItem *, Common::IgnoreCase_Hash , Common::IgnoreCase_EqualTo> ItemMap;
 
 	ItemMap _itemsMap;
 	int _interleave;

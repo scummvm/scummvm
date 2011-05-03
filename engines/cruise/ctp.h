@@ -57,7 +57,7 @@ class CtStruct {
 public:
 	CtStruct *next;
 	int16 num;
-	int16 colour;
+	int16 color;
 	Common::Rect bounds;
 	Common::Array<CtEntry> slices;
 };

@@ -108,21 +108,21 @@
 		<font	id = 'text_default'
 				file = 'helvb12.bdf'
 		/>
-		<font	resolution = '320xY, 256x240'
+		<font	resolution = 'y<400'
 		   		id = 'text_default'
 				file = 'clR6x12.bdf'
 		/>
 		<font	id = 'text_button'
 				file = 'helvb12.bdf'
 		/>
-		<font	resolution = '320xY, 256x240'
+		<font	resolution = 'y<400'
 		   		id = 'text_button'
 				file = 'clR6x12.bdf'
 		/>
 		<font	id = 'text_normal'
 				file = 'helvb12.bdf'
 		/>
-		<font	resolution = '320xY, 256x240'
+		<font	resolution = 'y<400'
 		   		id = 'text_normal'
 				file = 'clR6x12.bdf'
 		/>
@@ -178,7 +178,7 @@
 	<!-- <defaults fill = 'gradient' fg_color = 'white'/> -->
 
 	<cursor file = 'cursor.bmp' hotspot = '0, 0' scale = '3'/>
-	<cursor resolution = '320xY, 256x240' file = 'cursor_small.bmp' hotspot = '0, 0' scale = '3'/>
+	<cursor resolution = 'y<400' file = 'cursor_small.bmp' hotspot = '0, 0' scale = '3'/>
 
 	<!-- Selection (text or list items) -->
 	<drawdata id = 'text_selection' cache = 'false'>

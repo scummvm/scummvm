@@ -27,9 +27,10 @@
 #include "graphics/jpeg.h"
 #include "graphics/pixelformat.h"
 
+#include "common/debug.h"
 #include "common/endian.h"
-#include "common/util.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace Graphics {
 
@@ -46,7 +47,7 @@ static const uint8 _zigZagOrder[64] = {
 };
 
 // IDCT table built with :
-// _idct8x8[x][y] = cos(((2 * x + 1) * y) * (PI / 16.0)) * 0.5;
+// _idct8x8[x][y] = cos(((2 * x + 1) * y) * (M_PI / 16.0)) * 0.5;
 // _idct8x8[x][y] /= sqrt(2.0) if y == 0
 static const double _idct8x8[8][8] = {
 	{ 0.353553390593274,  0.490392640201615,  0.461939766255643,  0.415734806151273,  0.353553390593274,  0.277785116509801,  0.191341716182545,  0.097545161008064 },
@@ -95,7 +96,7 @@ Surface *JPEG::getSurface(const PixelFormat &format) {
 	Graphics::Surface *vComponent = getComponent(3);
 
 	Graphics::Surface *output = new Graphics::Surface();
-	output->create(yComponent->w, yComponent->h, format.bytesPerPixel);
+	output->create(yComponent->w, yComponent->h, format);
 
 	for (uint16 i = 0; i < output->h; i++) {
 		for (uint16 j = 0; j < output->w; j++) {
@@ -226,7 +227,7 @@ bool JPEG::read(Common::SeekableReadStream *stream) {
 bool JPEG::readJFIF() {
 	uint16 length = _stream->readUint16BE();
 	uint32 tag = _stream->readUint32BE();
-	if (tag != MKID_BE('JFIF')) {
+	if (tag != MKTAG('J','F','I','F')) {
 		warning("JPEG::readJFIF() tag mismatch");
 		return false;
 	}
@@ -443,7 +444,7 @@ bool JPEG::readSOS() {
 
 	// Initialize the scan surfaces
 	for (uint16 c = 0; c < _numScanComp; c++) {
-		_scanComp[c]->surface.create(xMCU * _maxFactorH * 8, yMCU * _maxFactorV * 8, 1);
+		_scanComp[c]->surface.create(xMCU * _maxFactorH * 8, yMCU * _maxFactorV * 8, PixelFormat::createFormatCLUT8());
 	}
 
 	bool ok = true;
@@ -710,9 +711,9 @@ uint8 JPEG::readBit() {
 				if (byte2 == 0xDC) {
 					// DNL marker: Define Number of Lines
 					// TODO: terminate scan
-					printf("DNL marker detected: terminate scan\n");
+					warning("DNL marker detected: terminate scan");
 				} else {
-					printf("Error: marker 0x%02X read in entropy data\n", byte2);
+					warning("Error: marker 0x%02X read in entropy data", byte2);
 				}
 			}
 		}

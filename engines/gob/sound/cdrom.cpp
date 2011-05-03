@@ -25,6 +25,7 @@
 
 #include "common/endian.h"
 #include "common/str.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 #include "backends/audiocd/audiocd.h"

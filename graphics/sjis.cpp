@@ -31,6 +31,7 @@
 #include "common/archive.h"
 #include "common/endian.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 #include "graphics/surface.h"
 
@@ -57,7 +58,7 @@ FontSJIS *FontSJIS::createFont(const Common::Platform platform) {
 }
 
 void FontSJIS::drawChar(Graphics::Surface &dst, uint16 ch, int x, int y, uint32 c1, uint32 c2) const {
-	drawChar(dst.getBasePtr(x, y), ch, dst.pitch, dst.bytesPerPixel, c1, c2, dst.w - x, dst.h - y);
+	drawChar(dst.getBasePtr(x, y), ch, dst.pitch, dst.format.bytesPerPixel, c1, c2, dst.w - x, dst.h - y);
 }
 
 template<typename Color>
@@ -362,7 +363,7 @@ bool FontSjisSVM::loadData() {
 	uint32 magic1 = data->readUint32BE();
 	uint32 magic2 = data->readUint32BE();
 
-	if (magic1 != MKID_BE('SCVM') || magic2 != MKID_BE('SJIS')) {
+	if (magic1 != MKTAG('S','C','V','M') || magic2 != MKTAG('S','J','I','S')) {
 		delete data;
 		return false;
 	}

@@ -50,12 +50,11 @@
 #ifdef USE_MAD
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Audio {
 
-class AudioStream;
 class SeekableAudioStream;
 
 /**

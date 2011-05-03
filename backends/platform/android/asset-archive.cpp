@@ -35,10 +35,10 @@
 #include "common/util.h"
 #include "common/archive.h"
 #include "common/debug.h"
+#include "common/textconsole.h"
 
+#include "backends/platform/android/jni.h"
 #include "backends/platform/android/asset-archive.h"
-
-extern JNIEnv *JNU_GetEnv();
 
 // Must match android.content.res.AssetManager.ACCESS_*
 const jint ACCESS_UNKNOWN = 0;
@@ -100,7 +100,7 @@ JavaInputStream::JavaInputStream(JNIEnv *env, jobject is) :
 {
 	_input_stream = env->NewGlobalRef(is);
 	_buflen = 8192;
-	_buf = static_cast<jbyteArray>(env->NewGlobalRef(env->NewByteArray(_buflen)));
+	_buf = (jbyteArray)env->NewGlobalRef(env->NewByteArray(_buflen));
 
 	jclass cls = env->GetObjectClass(_input_stream);
 	MID_mark = env->GetMethodID(cls, "mark", "(I)V");
@@ -124,7 +124,7 @@ JavaInputStream::JavaInputStream(JNIEnv *env, jobject is) :
 }
 
 JavaInputStream::~JavaInputStream() {
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	close(env);
 
 	env->DeleteGlobalRef(_buf);
@@ -139,11 +139,11 @@ void JavaInputStream::close(JNIEnv *env) {
 }
 
 uint32 JavaInputStream::read(void *dataPtr, uint32 dataSize) {
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 
 	if (_buflen < jint(dataSize)) {
 		_buflen = dataSize;
-	
+
 		env->DeleteGlobalRef(_buf);
 		_buf = static_cast<jbyteArray>(env->NewGlobalRef(env->NewByteArray(_buflen)));
 	}
@@ -171,7 +171,7 @@ uint32 JavaInputStream::read(void *dataPtr, uint32 dataSize) {
 }
 
 bool JavaInputStream::seek(int32 offset, int whence) {
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	uint32 newpos;
 
 	switch (whence) {
@@ -305,7 +305,8 @@ AssetFdReadStream::AssetFdReadStream(JNIEnv *env, jobject assetfd) :
 	_declared_len = env->CallLongMethod(_assetfd, MID_getDeclaredLength);
 
 	jmethodID MID_getFileDescriptor =
-		env->GetMethodID(cls, "getFileDescriptor", "()Ljava/io/FileDescriptor;");
+		env->GetMethodID(cls, "getFileDescriptor",
+							"()Ljava/io/FileDescriptor;");
 	assert(MID_getFileDescriptor);
 	jobject javafd = env->CallObjectMethod(_assetfd, MID_getFileDescriptor);
 	assert(javafd);
@@ -318,7 +319,7 @@ AssetFdReadStream::AssetFdReadStream(JNIEnv *env, jobject assetfd) :
 }
 
 AssetFdReadStream::~AssetFdReadStream() {
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	env->CallVoidMethod(_assetfd, MID_close);
 
 	if (env->ExceptionCheck())
@@ -369,7 +370,7 @@ bool AssetFdReadStream::seek(int32 offset, int whence) {
 }
 
 AndroidAssetArchive::AndroidAssetArchive(jobject am) {
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	_am = env->NewGlobalRef(am);
 
 	jclass cls = env->GetObjectClass(_am);
@@ -377,8 +378,8 @@ AndroidAssetArchive::AndroidAssetArchive(jobject am) {
 								"(Ljava/lang/String;I)Ljava/io/InputStream;");
 	assert(MID_open);
 
-	MID_openFd = env->GetMethodID(cls, "openFd",
-									"(Ljava/lang/String;)Landroid/content/res/AssetFileDescriptor;");
+	MID_openFd = env->GetMethodID(cls, "openFd", "(Ljava/lang/String;)"
+								"Landroid/content/res/AssetFileDescriptor;");
 	assert(MID_openFd);
 
 	MID_list = env->GetMethodID(cls, "list",
@@ -387,12 +388,12 @@ AndroidAssetArchive::AndroidAssetArchive(jobject am) {
 }
 
 AndroidAssetArchive::~AndroidAssetArchive() {
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	env->DeleteGlobalRef(_am);
 }
 
 bool AndroidAssetArchive::hasFile(const Common::String &name) {
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	jstring path = env->NewStringUTF(name.c_str());
 	jobject result = env->CallObjectMethod(_am, MID_open, path, ACCESS_UNKNOWN);
 	if (env->ExceptionCheck()) {
@@ -412,7 +413,7 @@ bool AndroidAssetArchive::hasFile(const Common::String &name) {
 }
 
 int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) {
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	Common::List<Common::String> dirlist;
 	dirlist.push_back("");
 
@@ -422,7 +423,8 @@ int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) {
 		dirlist.pop_back();
 
 		jstring jpath = env->NewStringUTF(dir.c_str());
-		jobjectArray jpathlist = static_cast<jobjectArray>(env->CallObjectMethod(_am, MID_list, jpath));
+		jobjectArray jpathlist =
+			(jobjectArray)env->CallObjectMethod(_am, MID_list, jpath);
 
 		if (env->ExceptionCheck()) {
 			warning("Error while calling AssetManager->list(%s). Ignoring.",
@@ -439,19 +441,22 @@ int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) {
 		for (jsize i = 0; i < env->GetArrayLength(jpathlist); ++i) {
 			jstring elem = (jstring)env->GetObjectArrayElement(jpathlist, i);
 			const char *p = env->GetStringUTFChars(elem, 0);
-			Common::String thispath = dir;
 
-			if (!thispath.empty())
-				thispath += "/";
+			if (strlen(p)) {
+				Common::String thispath = dir;
 
-			thispath += p;
+				if (!thispath.empty())
+					thispath += "/";
 
-			// Assume files have a . in them, and directories don't
-			if (strchr(p, '.')) {
-				member_list.push_back(getMember(thispath));
-				++count;
-			} else {
-				dirlist.push_back(thispath);
+				thispath += p;
+
+				// Assume files have a . in them, and directories don't
+				if (strchr(p, '.')) {
+					member_list.push_back(getMember(thispath));
+					++count;
+				} else {
+					dirlist.push_back(thispath);
+				}
 			}
 
 			env->ReleaseStringUTFChars(elem, p);
@@ -469,7 +474,7 @@ Common::ArchiveMemberPtr AndroidAssetArchive::getMember(const Common::String &na
 }
 
 Common::SeekableReadStream *AndroidAssetArchive::createReadStreamForMember(const Common::String &path) const {
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	jstring jpath = env->NewStringUTF(path.c_str());
 
 	// Try openFd() first ...

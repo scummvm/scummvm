@@ -139,7 +139,7 @@ public:
 // speech structure - contains fields used by speech scripts & text output
 
 class ObjectSpeech {
-	// int32 pen;			// colour to use for body of characters
+	// int32 pen;			// color to use for body of characters
 	// int32 width;			// max width of text sprite
 	// int32 command;		// speech script command id
 	// int32 ins1;			// speech script instruction parameters

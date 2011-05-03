@@ -28,8 +28,6 @@
 #include "common/timer.h"
 #include "common/mutex.h"
 
-class OSystem;
-
 struct TimerSlot;
 
 class DefaultTimerManager : public Common::TimerManager {
@@ -40,9 +38,9 @@ private:
 
 public:
 	DefaultTimerManager();
-	~DefaultTimerManager();
-	bool installTimerProc(TimerProc proc, int32 interval, void *refCon);
-	void removeTimerProc(TimerProc proc);
+	virtual ~DefaultTimerManager();
+	virtual bool installTimerProc(TimerProc proc, int32 interval, void *refCon);
+	virtual void removeTimerProc(TimerProc proc);
 
 	/**
 	 * Timer callback, to be invoked at regular time intervals by the backend.

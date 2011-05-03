@@ -1,10 +1,9 @@
 MODULE := backends/platform/gph
 
 MODULE_OBJS := \
-	gph-events.o \
-	gph-graphics.o \
-	gph-hw.o \
-	gph-main.o
+	gph-main.o \
+	gph-backend.o \
+	gph-hw.o
 
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
 MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))

@@ -144,6 +144,8 @@ private:
 	void handleRivenSubcommandStream(byte count, byte *&dst);
 };
 
+#ifdef ENABLE_MYST
+
 // Myst uses a different image format than that of other Mohawk games.
 // It essentially uses a Windows bitmap with the LZ encoding from the
 // Mohawk Bitmap format.
@@ -181,10 +183,12 @@ private:
 	} _info;
 };
 
-class OldMohawkBitmap : public MohawkBitmap {
+#endif
+
+class LivingBooksBitmap_v1 : public MohawkBitmap {
 public:
-	OldMohawkBitmap() : MohawkBitmap() {}
-	~OldMohawkBitmap() {}
+	LivingBooksBitmap_v1() : MohawkBitmap() {}
+	~LivingBooksBitmap_v1() {}
 
 	MohawkSurface *decodeImage(Common::SeekableReadStream *stream);
 

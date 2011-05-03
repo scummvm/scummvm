@@ -101,10 +101,6 @@ protected:
 	static const byte stdMouseCursorHeight = 20;
 	static const byte stdMouseCursorWidth = 12;
 
-	inline bool isInX(const int16 x, const rect_t *rect) const;
-	inline bool isInY(const int16 y, const rect_t *rect) const;
-	inline bool isOverlapping(const rect_t *rectA, const rect_t *rectB) const;
-
 	bool fontLoadedFl[kNumFonts];
 
 	// Fonts used in dib (non-GDI)
@@ -114,6 +110,14 @@ protected:
 	byte *_font[kNumFonts][kFontLength];            // Ptrs to each char
 	byte *_mainPalette;
 	int16 _arrayFontSize[kNumFonts];
+
+	viewdib_t _frontBuffer;
+
+	inline bool isInX(const int16 x, const rect_t *rect) const;
+	inline bool isInY(const int16 y, const rect_t *rect) const;
+	inline bool isOverlapping(const rect_t *rectA, const rect_t *rectB) const;
+
+	virtual overlayState_t findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) = 0;
 
 private:
 	byte     *_curPalette;
@@ -125,9 +129,6 @@ private:
 	int16 mergeLists(rect_t *list, rect_t *blist, const int16 len, int16 blen);
 	int16 center(const char *s) const;
 
-	overlayState_t findOvl(seq_t *seq_p, image_pt dst_p, uint16 y);
-
-	viewdib_t _frontBuffer;
 	viewdib_t _backBuffer;
 	viewdib_t _GUIBuffer;                              // User interface images
 	viewdib_t _backBufferBackup;                       // Backup _backBuffer during inventory
@@ -151,6 +152,8 @@ public:
 
 	void loadFont(int16 fontId);
 	void loadFontArr(Common::ReadStream &in);
+protected:
+	overlayState_t findOvl(seq_t *seq_p, image_pt dst_p, uint16 y);
 };
 
 class Screen_v1w : public Screen {
@@ -160,6 +163,8 @@ public:
 
 	void loadFont(int16 fontId);
 	void loadFontArr(Common::ReadStream &in);
+protected:
+	overlayState_t findOvl(seq_t *seq_p, image_pt dst_p, uint16 y);
 };
 
 } // End of namespace Hugo

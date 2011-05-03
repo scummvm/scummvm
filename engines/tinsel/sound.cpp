@@ -26,6 +26,7 @@
 
 #include "tinsel/sound.h"
 
+#include "tinsel/adpcm.h"
 #include "tinsel/dw.h"
 #include "tinsel/config.h"
 #include "tinsel/music.h"
@@ -34,9 +35,7 @@
 #include "tinsel/sysvar.h"
 #include "tinsel/background.h"
 
-#include "common/config-manager.h"
 #include "common/endian.h"
-#include "common/file.h"
 #include "common/memstream.h"
 #include "common/system.h"
 
@@ -130,13 +129,9 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 			error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
 
 		// FIXME: Should set this in a different place ;)
-		bool mute = false;
-		if (ConfMan.hasKey("mute"))
-			mute = ConfMan.getBool("mute");
-
-		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, mute ? 0 : _vm->_config->_soundVolume);
+		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, _vm->_config->_soundVolume);
 		//_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
-		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, mute ? 0 : _vm->_config->_voiceVolume);
+		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, _vm->_config->_voiceVolume);
 
 		Audio::AudioStream *sampleStream = 0;
 
@@ -319,18 +314,14 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 #endif
 		break;
 	default:
-		sampleStream = Audio::makeADPCMStream(compressedStream, DisposeAfterUse::YES, sampleLen, Audio::kADPCMTinsel6, 22050, 1, 24);
+		sampleStream = new Tinsel6_ADPCMStream(compressedStream, DisposeAfterUse::YES, sampleLen, 22050, 1, 24);
 		break;
 	}
 
 	// FIXME: Should set this in a different place ;)
-	bool mute = false;
-	if (ConfMan.hasKey("mute"))
-		mute = ConfMan.getBool("mute");
-
-	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, mute ? 0 : _vm->_config->_soundVolume);
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, _vm->_config->_soundVolume);
 	//_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
-	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, mute ? 0 : _vm->_config->_voiceVolume);
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, _vm->_config->_voiceVolume);
 
 	curChan->sampleNum = id;
 	curChan->subSample = sub;
@@ -363,8 +354,8 @@ bool SoundManager::offscreenChecks(int x, int &y) {
 	if (x == -1)
 		return true;
 
-	// convert x to offset from screen centre
-	x -= PlayfieldGetCentreX(FIELD_WORLD);
+	// convert x to offset from screen center
+	x -= PlayfieldGetCenterX(FIELD_WORLD);
 
 	if (x < -SCREEN_WIDTH || x > SCREEN_WIDTH) {
 		// A long way offscreen, ignore it
@@ -384,7 +375,7 @@ int8 SoundManager::getPan(int x) {
 	if (x == -1)
 		return 0;
 
-	x -= PlayfieldGetCentreX(FIELD_WORLD);
+	x -= PlayfieldGetCenterX(FIELD_WORLD);
 
 	if (x == 0)
 		return 0;
@@ -530,17 +521,17 @@ void SoundManager::openSampleFiles() {
 
 		// Detect format of soundfile by looking at 1st sample-index
 		switch (TO_BE_32(_sampleIndex[0])) {
-		case MKID_BE('MP3 '):
+		case MKTAG('M','P','3',' '):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected MP3 sound-data");
 			_soundMode = kMP3Mode;
 			break;
 
-		case MKID_BE('OGG '):
+		case MKTAG('O','G','G',' '):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected OGG sound-data");
 			_soundMode = kVorbisMode;
 			break;
 
-		case MKID_BE('FLAC'):
+		case MKTAG('F','L','A','C'):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected FLAC sound-data");
 			_soundMode = kFLACMode;
 			break;

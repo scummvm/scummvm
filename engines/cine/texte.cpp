@@ -23,8 +23,10 @@
  *
  */
 
-#include "cine/cine.h"
 #include "common/file.h"
+#include "common/textconsole.h"
+
+#include "cine/cine.h"
 #include "cine/various.h"
 
 namespace Cine {

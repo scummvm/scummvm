@@ -35,14 +35,25 @@
 
 #include "common/list.h"
 #include "common/array.h"
-#include "common/rect.h"
+#include "common/rational.h"
+#include "common/str.h"
+
+#include "graphics/surface.h"
 
 #include "video/video_decoder.h"
 
 #include "audio/mixer.h"
 
+namespace Common {
+struct Rect;
+class SeekableReadStream;
+}
 namespace Audio {
-	class QueuingAudioStream;
+class QueuingAudioStream;
+}
+
+namespace Graphics {
+struct PixelFormat;
 }
 
 namespace Video {
@@ -431,8 +442,6 @@ private:
 
 	// Tables for the audio decompressors
 	static const uint16 _tableDPCM[128];
-	static const int32  _tableADPCM[];
-	static const int32  _tableADPCMStep[];
 
 	Common::SeekableReadStream *_stream;
 

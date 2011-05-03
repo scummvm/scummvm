@@ -56,4 +56,3 @@ backends/platform/wince/CEActionsPocket.cpp
 backends/platform/wince/CEActionsSmartphone.cpp
 backends/platform/wince/CELauncherDialog.cpp
 backends/platform/wince/wince-sdl.cpp
-backends/platform/openpandora/op-graphics.cpp

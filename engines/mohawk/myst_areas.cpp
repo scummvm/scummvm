@@ -29,6 +29,10 @@
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 
+#include "common/events.h"
+#include "common/system.h"
+#include "common/textconsole.h"
+
 namespace Mohawk {
 
 MystResource::MystResource(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) {

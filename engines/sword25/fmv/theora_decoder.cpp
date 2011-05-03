@@ -41,6 +41,7 @@
 
 #ifdef USE_THEORADEC
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "graphics/conversion.h"
 #include "audio/decoders/raw.h"
 #include "sword25/kernel/common.h"
@@ -289,7 +290,7 @@ bool TheoraDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	_surface = new Graphics::Surface();
 
-	_surface->create(_theoraInfo.frame_width, _theoraInfo.frame_height, 4);
+	_surface->create(_theoraInfo.frame_width, _theoraInfo.frame_height, g_system->getScreenFormat());
 
 	return true;
 }

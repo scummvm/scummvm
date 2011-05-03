@@ -170,10 +170,10 @@ dsclean:
 
 # HACK/FIXME: C compiler, for cartreset.c -- we should switch this to use CXX
 # as soon as possible.
-CC := $(DEVKITARM)/bin/arm-eabi-gcc
+CC := $(DEVKITPRO)/devkitARM/bin/arm-eabi-gcc
 
 # HACK/TODO: Pointer to objcopy. This should really be set by configure
-OBJCOPY := $(DEVKITARM)/bin/arm-eabi-objcopy
+OBJCOPY := $(DEVKITPRO)/devkitARM/bin/arm-eabi-objcopy
 
 #
 # Set various flags

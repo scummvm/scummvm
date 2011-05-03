@@ -197,6 +197,7 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 		free(_currentPtr);
 		_currentPtr = NULL;
 	}
+
 	if (ptrId) {
 		MousePtr *lugg = NULL;
 		MousePtr *ptr = (MousePtr*)_resMan->openFetchRes(ptrId);
@@ -284,6 +285,7 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 void Mouse::setPointer(uint32 resId, uint32 rate) {
 	_currentPtrId = resId;
 	_frame = 0;
+	_activeFrame = -1;
 
 	createPointer(resId, _currentLuggageId);
 
@@ -298,15 +300,24 @@ void Mouse::setPointer(uint32 resId, uint32 rate) {
 void Mouse::setLuggage(uint32 resId, uint32 rate) {
 	_currentLuggageId = resId;
 	_frame = 0;
+	_activeFrame = -1;
+
 	createPointer(_currentPtrId, resId);
 }
 
 void Mouse::animate() {
 	if ((Logic::_scriptVars[MOUSE_STATUS] == 1) || (_mouseOverride && _currentPtr)) {
 		_frame = (_frame + 1) % _currentPtr->numFrames;
+
+		if (_activeFrame == _frame)
+			return;
+
 		uint8 *ptrData = (uint8*)_currentPtr + sizeof(MousePtr);
 		ptrData += _frame * _currentPtr->sizeX * _currentPtr->sizeY;
+
 		CursorMan.replaceCursor(ptrData, _currentPtr->sizeX, _currentPtr->sizeY, _currentPtr->hotSpotX, _currentPtr->hotSpotY, 255);
+
+		_activeFrame = _frame;
 	}
 }
 

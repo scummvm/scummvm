@@ -287,7 +287,7 @@ void _2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 
 
 			register unsigned colorA, colorB;
 			unsigned colorC, colorD,
-				colorE, colorF, colorG, colorH, colorI, colorJ, colorK, colorL, colorM, colorN, colorO, colorP;
+				colorE, colorF, colorG, colorH, colorI, colorJ, colorK, colorL, colorM, colorN, colorO;
 			unsigned product, product1, product2;
 
 //---------------------------------------
@@ -313,7 +313,6 @@ void _2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 
 			colorM = *(bP + 2 * nextlineSrc - 1);
 			colorN = *(bP + 2 * nextlineSrc);
 			colorO = *(bP + 2 * nextlineSrc + 1);
-			colorP = *(bP + 2 * nextlineSrc + 2);
 
 			if ((colorA == colorD) && (colorB != colorC)) {
 				if (((colorA == colorE) && (colorB == colorL)) ||

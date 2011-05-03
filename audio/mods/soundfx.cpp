@@ -24,10 +24,11 @@
  */
 
 #include "common/endian.h"
+#include "common/stream.h"
+#include "common/textconsole.h"
 
 #include "audio/mods/paula.h"
 #include "audio/mods/soundfx.h"
-#include "audio/audiostream.h"
 
 namespace Audio {
 

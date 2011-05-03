@@ -23,14 +23,9 @@
  *
  */
 
+#include "common/textconsole.h"
 #include "common/util.h"
-#include "common/system.h"
-#include "common/events.h"
 
-#include "graphics/surface.h"
-#include "graphics/colormasks.h"
-
-#include "gui/ThemeEngine.h"
 #include "graphics/VectorRenderer.h"
 
 #define VECTOR_RENDERER_FAST_TRIANGLES

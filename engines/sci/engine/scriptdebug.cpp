@@ -208,12 +208,12 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 
 	if (pos == s->xs->addr.pc) { // Extra information if debugging the current opcode
 		if (opcode == op_callk) {
-			int stackframe = (scr[pos.offset + 2] >> 1) + (s->restAdjust);
+			int stackframe = (scr[pos.offset + 2] >> 1) + (s->r_rest);
 			int argc = ((s->xs->sp)[- stackframe - 1]).offset;
 			bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 			if (!oldScriptHeader)
-				argc += (s->restAdjust);
+				argc += (s->r_rest);
 
 			debugN(" Kernel params: (");
 
@@ -224,7 +224,7 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 			}
 			debugN(")\n");
 		} else if ((opcode == op_send) || (opcode == op_self)) {
-			int restmod = s->restAdjust;
+			int restmod = s->r_rest;
 			int stackframe = (scr[pos.offset + 1] >> 1) + restmod;
 			reg_t *sb = s->xs->sp;
 			uint16 selector;
@@ -279,6 +279,34 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 	} // (heappos == *p_pc)
 
 	return retval;
+}
+
+bool isJumpOpcode(EngineState *s, reg_t pos, reg_t& jumpTarget) {
+	SegmentObj *mobj = s->_segMan->getSegment(pos.segment, SEG_TYPE_SCRIPT);
+	if (!mobj)
+		return false;
+	Script *script_entity = (Script *)mobj;
+
+	const byte *scr = script_entity->getBuf();
+	int scr_size = script_entity->getBufSize();
+
+	if (pos.offset >= scr_size)
+		return false;
+
+	int16 opparams[4];
+	byte opsize;
+	int bytecount = readPMachineInstruction(scr + pos.offset, opsize, opparams);
+	const byte opcode = opsize >> 1;
+
+	switch (opcode) {
+	case op_bt:
+	case op_bnt:
+	case op_jmp:
+		jumpTarget = pos + bytecount + opparams[0];
+		return true;
+	default:
+		return false;
+	}
 }
 
 
@@ -540,6 +568,189 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 	}
 
 	debugN("Script ends without terminator\n");
+}
+
+bool SciEngine::checkSelectorBreakpoint(BreakpointType breakpointType, reg_t send_obj, int selector) {
+	Common::String methodName = _gamestate->_segMan->getObjectName(send_obj);
+	methodName += ("::" + getKernel()->getSelectorName(selector));
+
+	Common::List<Breakpoint>::const_iterator bpIter;
+	for (bpIter = _debugState._breakpoints.begin(); bpIter != _debugState._breakpoints.end(); ++bpIter) {
+		if ((*bpIter).type == breakpointType && (*bpIter).name == methodName) {
+			_console->DebugPrintf("Break on %s (in [%04x:%04x])\n", methodName.c_str(), PRINT_REG(send_obj));
+			_debugState.debugging = true;
+			_debugState.breakpointWasHit = true;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
+	if (_debugState._activeBreakpointTypes & BREAK_EXPORT) {
+		uint32 bpaddress = (script << 16 | pubfunct);
+
+		Common::List<Breakpoint>::const_iterator bp;
+		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
+			if (bp->type == BREAK_EXPORT && bp->address == bpaddress) {
+				_console->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
+				_debugState.debugging = true;
+				_debugState.breakpointWasHit = true;
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr argp, ObjVarRef &varp, reg_t funcp, SegManager *segMan, SelectorType selectorType) {
+	int activeBreakpointTypes = g_sci->_debugState._activeBreakpointTypes;
+	const char *objectName = segMan->getObjectName(send_obj);
+	const char *selectorName = g_sci->getKernel()->getSelectorName(selector).c_str();
+	Console *con = g_sci->getSciDebugger();
+
+#ifdef VM_DEBUG_SEND
+		debugN("Send to %04x:%04x (%s), selector %04x (%s):", PRINT_REG(send_obj), 
+			s->_segMan->getObjectName(send_obj), selector, 
+			g_sci->getKernel()->getSelectorName(selector).c_str());
+#endif // VM_DEBUG_SEND
+
+	switch (selectorType) {
+	case kSelectorNone:
+		break;
+	case kSelectorVariable:
+#ifdef VM_DEBUG_SEND
+		if (argc)
+			debugN("Varselector: Write %04x:%04x\n", PRINT_REG(argp[1]));
+		else
+			debugN("Varselector: Read\n");
+#endif // VM_DEBUG_SEND
+
+		// argc == 0: read selector
+		// argc == 1: write selector
+		// argc can be bigger than 1 in some cases, because of a script bug.
+		// Usually, these aren't fatal.
+		if ((activeBreakpointTypes & BREAK_SELECTORREAD) ||
+			(activeBreakpointTypes & BREAK_SELECTORWRITE) ||
+			argc > 1) {
+
+			reg_t selectorValue = *varp.getPointer(segMan);
+			if (!argc && (activeBreakpointTypes & BREAK_SELECTORREAD)) {
+				if (g_sci->checkSelectorBreakpoint(BREAK_SELECTORREAD, send_obj, selector))
+					con->DebugPrintf("Read from selector (%s:%s): %04x:%04x\n", 
+							objectName, selectorName,
+							PRINT_REG(selectorValue));
+			} else if (argc && (activeBreakpointTypes & BREAK_SELECTORWRITE)) {
+				if (g_sci->checkSelectorBreakpoint(BREAK_SELECTORWRITE, send_obj, selector))
+					con->DebugPrintf("Write to selector (%s:%s): change %04x:%04x to %04x:%04x\n", 
+							objectName, selectorName,
+							PRINT_REG(selectorValue), PRINT_REG(argp[1]));
+			}
+
+			if (argc > 1)
+				debug(kDebugLevelScripts, "Write to selector (%s:%s): change %04x:%04x to %04x:%04x, argc == %d\n", 
+							objectName, selectorName,
+							PRINT_REG(selectorValue), PRINT_REG(argp[1]), argc);
+		}
+		break;
+	case kSelectorMethod:
+#ifndef VM_DEBUG_SEND
+			if (activeBreakpointTypes & BREAK_SELECTOREXEC) {
+				if (g_sci->checkSelectorBreakpoint(BREAK_SELECTOREXEC, send_obj, selector)) {
+#else
+			if (true) {
+				if (true) {
+#endif
+					con->DebugPrintf("%s::%s(", objectName, selectorName);
+					for (int i = 0; i < argc; i++) {
+						con->DebugPrintf("%04x:%04x", PRINT_REG(argp[i+1]));
+						if (i + 1 < argc)
+							con->DebugPrintf(", ");
+					}
+					con->DebugPrintf(") at %04x:%04x\n", PRINT_REG(funcp));
+				}
+			}
+		break;
+	}	// switch
+}
+
+void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *kernelSubCall, EngineState *s, int argc, reg_t *argv, reg_t result) {
+	Kernel *kernel = g_sci->getKernel();
+	if (!kernelSubCall) {
+		debugN("k%s: ", kernelCall->name);
+	} else {
+		int callNameLen = strlen(kernelCall->name);
+		if (strncmp(kernelCall->name, kernelSubCall->name, callNameLen) == 0) {
+			const char *subCallName = kernelSubCall->name + callNameLen;
+			debugN("k%s(%s): ", kernelCall->name, subCallName);
+		} else {
+			debugN("k%s(%s): ", kernelCall->name, kernelSubCall->name);
+		}
+	}
+	for (int parmNr = 0; parmNr < argc; parmNr++) {
+		if (parmNr)
+			debugN(", ");
+		uint16 regType = kernel->findRegType(argv[parmNr]);
+		if (regType & SIG_TYPE_NULL)
+			debugN("0");
+		else if (regType & SIG_TYPE_UNINITIALIZED)
+			debugN("UNINIT");
+		else if (regType & SIG_IS_INVALID)
+			debugN("INVALID");
+		else if (regType & SIG_TYPE_INTEGER)
+			debugN("%d", argv[parmNr].offset);
+		else {
+			debugN("%04x:%04x", PRINT_REG(argv[parmNr]));
+			switch (regType) {
+			case SIG_TYPE_OBJECT:
+				debugN(" (%s)", s->_segMan->getObjectName(argv[parmNr]));
+				break;
+			case SIG_TYPE_REFERENCE:
+			{
+				SegmentObj *mobj = s->_segMan->getSegmentObj(argv[parmNr].segment);
+				switch (mobj->getType()) {
+				case SEG_TYPE_HUNK:
+				{
+					HunkTable *ht = (HunkTable*)mobj;
+					int index = argv[parmNr].offset;
+					if (ht->isValidEntry(index)) {
+						// NOTE: This ", deleted" isn't as useful as it could
+						// be because it prints the status _after_ the kernel
+						// call.
+						debugN(" ('%s' hunk%s)", ht->_table[index].type, ht->_table[index].mem ? "" : ", deleted");
+					} else
+						debugN(" (INVALID hunk ref)");
+					break;
+				}
+				default:
+					// TODO: Any other segment types which could
+					// use special handling?
+
+					if (kernelCall->function == kSaid) {
+						SegmentRef saidSpec = s->_segMan->dereference(argv[parmNr]);
+						if (saidSpec.isRaw) {
+							debugN(" ('");
+							g_sci->getVocabulary()->debugDecipherSaidBlock(saidSpec.raw);
+							debugN("')");
+						} else {
+							debugN(" (non-raw said-spec)");
+						}
+					} else {
+						debugN(" ('%s')", s->_segMan->getString(argv[parmNr]).c_str());
+					}
+					break;
+				}
+			}
+			default:
+				break;
+			}
+		}
+	}
+	if (result.isPointer())
+		debugN(" = %04x:%04x\n", PRINT_REG(result));
+	else
+		debugN(" = %d\n", result.offset);
 }
 
 } // End of namespace Sci

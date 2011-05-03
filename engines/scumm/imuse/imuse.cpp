@@ -57,7 +57,6 @@ _initialized(false),
 _tempoFactor(0),
 _player_limit(ARRAYSIZE(_players)),
 _recycle_players(false),
-_direct_passthrough(false),
 _queue_end(0),
 _queue_pos(0),
 _queue_sound(0),
@@ -151,22 +150,22 @@ bool IMuseInternal::isMT32(int sound) {
 
 	tag = READ_BE_UINT32(ptr + 4);
 	switch (tag) {
-	case MKID_BE('ADL '):
-	case MKID_BE('ASFX'): // Special AD class for old AdLib sound effects
-	case MKID_BE('SPK '):
+	case MKTAG('A','D','L',' '):
+	case MKTAG('A','S','F','X'): // Special AD class for old AdLib sound effects
+	case MKTAG('S','P','K',' '):
 		return false;
 
-	case MKID_BE('AMI '):
-	case MKID_BE('ROL '):
+	case MKTAG('A','M','I',' '):
+	case MKTAG('R','O','L',' '):
 		return true;
 
-	case MKID_BE('MAC '):	// Occurs in the Mac version of FOA and MI2
+	case MKTAG('M','A','C',' '):	// Occurs in the Mac version of FOA and MI2
 		return true;
 
-	case MKID_BE('GMD '):
+	case MKTAG('G','M','D',' '):
 		return false;
 
-	case MKID_BE('MIDI'):	// Occurs in Sam & Max
+	case MKTAG('M','I','D','I'):	// Occurs in Sam & Max
 		// HE games use Roland music
 		if (ptr[12] == 'H' && ptr[13] == 'S')
 			return true;
@@ -198,20 +197,20 @@ bool IMuseInternal::isMIDI(int sound) {
 
 	tag = READ_BE_UINT32(ptr + 4);
 	switch (tag) {
-	case MKID_BE('ADL '):
-	case MKID_BE('ASFX'): // Special AD class for old AdLib sound effects
-	case MKID_BE('SPK '):
+	case MKTAG('A','D','L',' '):
+	case MKTAG('A','S','F','X'): // Special AD class for old AdLib sound effects
+	case MKTAG('S','P','K',' '):
 		return false;
 
-	case MKID_BE('AMI '):
-	case MKID_BE('ROL '):
+	case MKTAG('A','M','I',' '):
+	case MKTAG('R','O','L',' '):
 		return true;
 
-	case MKID_BE('MAC '):	// Occurs in the Mac version of FOA and MI2
+	case MKTAG('M','A','C',' '):	// Occurs in the Mac version of FOA and MI2
 		return true;
 
-	case MKID_BE('GMD '):
-	case MKID_BE('MIDI'):	// Occurs in Sam & Max
+	case MKTAG('G','M','D',' '):
+	case MKTAG('M','I','D','I'):	// Occurs in Sam & Max
 		return true;
 	}
 
@@ -472,10 +471,6 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 		_recycle_players = (value != 0);
 		break;
 
-	case IMuse::PROP_DIRECT_PASSTHROUGH:
-		_direct_passthrough = (value != 0);
-		break;
-
 	case IMuse::PROP_GAME_ID:
 		_game_id = value;
 		break;
@@ -636,7 +631,7 @@ bool IMuseInternal::startSound_internal(int sound, int offset) {
 
 	player->clear();
 	player->setOffsetNote(offset);
-	return player->startSound(sound, driver, _direct_passthrough);
+	return player->startSound(sound, driver);
 }
 
 int IMuseInternal::stopSound_internal(int sound) {

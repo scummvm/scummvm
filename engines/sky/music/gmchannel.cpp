@@ -25,6 +25,7 @@
 
 #include "gmchannel.h"
 #include "common/util.h"
+#include "common/textconsole.h"
 #include "audio/mididrv.h"
 
 namespace Sky {

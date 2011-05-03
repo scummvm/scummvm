@@ -28,7 +28,6 @@
 
 #include "toon/character.h"
 
-
 namespace Toon {
 
 class ToonEngine;
@@ -46,7 +45,6 @@ public:
 	int32 getRandomIdleAnim();
 protected:
 	int32 _currentScale;
-
 };
 
 } // End of namespace Toon

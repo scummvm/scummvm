@@ -32,7 +32,7 @@ namespace Scumm {
 
 extern const char *resTypeFromId(int id);
 
-void ScummEngine_v3old::readResTypeList(int id) {
+int ScummEngine_v3old::readResTypeList(int id) {
 	int num;
 	int i;
 
@@ -57,6 +57,8 @@ void ScummEngine_v3old::readResTypeList(int id) {
 		if (_res->roomoffs[id][i] == 0xFFFF)
 			_res->roomoffs[id][i] = (uint32)RES_INVALID_OFFSET;
 	}
+
+	return num;
 }
 
 void ScummEngine_v3old::readIndexFile() {

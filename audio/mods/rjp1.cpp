@@ -25,10 +25,12 @@
 
 #include "common/debug.h"
 #include "common/endian.h"
+#include "common/stream.h"
+#include "common/textconsole.h"
+#include "common/util.h"
 
 #include "audio/mods/paula.h"
 #include "audio/mods/rjp1.h"
-#include "audio/audiostream.h"
 
 namespace Audio {
 
@@ -138,7 +140,7 @@ Rjp1::~Rjp1() {
 }
 
 bool Rjp1::load(Common::SeekableReadStream *songData, Common::SeekableReadStream *instrumentsData) {
-	if (songData->readUint32BE() == MKID_BE('RJP1') && songData->readUint32BE() == MKID_BE('SMOD')) {
+	if (songData->readUint32BE() == MKTAG('R','J','P','1') && songData->readUint32BE() == MKTAG('S','M','O','D')) {
 		for (int i = 0; i < 7; ++i) {
 			uint32 size = songData->readUint32BE();
 			_vars.songData[i] = (uint8 *)malloc(size);
@@ -167,7 +169,7 @@ bool Rjp1::load(Common::SeekableReadStream *songData, Common::SeekableReadStream
 			}
 		}
 
-		if (instrumentsData->readUint32BE() == MKID_BE('RJP1')) {
+		if (instrumentsData->readUint32BE() == MKTAG('R','J','P','1')) {
 			uint32 size = instrumentsData->size() - 4;
 			_vars.instData = (int8 *)malloc(size);
 			if (!_vars.instData)

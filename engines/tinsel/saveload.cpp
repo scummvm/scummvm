@@ -36,6 +36,7 @@
 
 #include "common/serializer.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 
 #include "gui/message.h"
 
@@ -76,9 +77,6 @@ SRSTATE SRstate = SR_IDLE;
 
 // in DOS_DW.C
 extern void syncSCdata(Common::Serializer &s);
-
-// in DOS_MAIN.C
-//char HardDriveLetter();
 
 // in PCODE.C
 extern void syncGlobInfo(Common::Serializer &s);
@@ -186,7 +184,7 @@ static void syncSavedMover(Common::Serializer &s, SAVED_MOVER &sm) {
 		s.syncAsByte(sm.bHidden);
 
 		s.syncAsSint32LE(sm.brightness);
-		s.syncAsSint32LE(sm.startColour);
+		s.syncAsSint32LE(sm.startColor);
 		s.syncAsSint32LE(sm.paletteLength);
 	}
 }
@@ -281,32 +279,6 @@ static void syncSavedData(Common::Serializer &s, SAVED_DATA &sd) {
 		for (int i = 0; i < MAX_SOUNDREELS; ++i)
 			syncSoundReel(s, sd.SavedSoundReels[i]);
 	}
-}
-
-
-/**
- * Called when saving a game to a new file.
- * Generates a new, unique, filename.
- */
-static char *NewName() {
-	static char result[FNAMELEN];	// FIXME: Avoid non-const global vars
-	int	i;
-	int	ano = 1;	// Allocated number
-
-	while (1) {
-		Common::String fname = _vm->getSavegameFilename(ano);
-		strcpy(result, fname.c_str());
-
-		for (i = 0; i < numSfiles; i++)
-			if (!strcmp(savedFiles[i].name, result))
-				break;
-
-		if (i == numSfiles)
-			break;
-		ano++;
-	}
-
-	return result;
 }
 
 /**
@@ -498,19 +470,37 @@ static bool DoRestore() {
  */
 static void DoSave() {
 	Common::OutSaveFile *f;
-	const char *fname;
+	char tmpName[FNAMELEN];
 
 	// Next getList() must do its stuff again
 	NeedLoad = true;
 
-	if (SaveSceneName == NULL)
-		SaveSceneName = NewName();
+	if (SaveSceneName == NULL) {
+		// Generate a new unique save name	
+		int	i;
+		int	ano = 1;	// Allocated number
+
+		while (1) {
+			Common::String fname = _vm->getSavegameFilename(ano);
+			strcpy(tmpName, fname.c_str());
+
+			for (i = 0; i < numSfiles; i++)
+				if (!strcmp(savedFiles[i].name, tmpName))
+					break;
+
+			if (i == numSfiles)
+				break;
+			ano++;
+		}
+
+		SaveSceneName = tmpName;
+	}
+
+
 	if (SaveSceneDesc[0] == 0)
 		SaveSceneDesc = "unnamed";
 
-	fname = SaveSceneName;
-
-	f = _vm->getSaveFileMan()->openForSaving(fname);
+	f = _vm->getSaveFileMan()->openForSaving(SaveSceneName);
 	Common::Serializer s(0, f);
 
 	if (f == NULL)
@@ -537,12 +527,14 @@ static void DoSave() {
 
 	f->finalize();
 	delete f;
+	SaveSceneName = NULL;	// Invalidate save name
 	return;
 
 save_failure:
 	if (f) {
 		delete f;
-		_vm->getSaveFileMan()->removeSavefile(fname);
+		_vm->getSaveFileMan()->removeSavefile(SaveSceneName);
+		SaveSceneName = NULL;	// Invalidate save name
 	}
 	GUI::MessageDialog dialog("Failed to save game state to file.");
 	dialog.runModal();

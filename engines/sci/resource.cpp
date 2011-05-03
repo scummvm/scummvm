@@ -28,6 +28,7 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/macresman.h"
+#include "common/textconsole.h"
 
 #include "sci/resource.h"
 #include "sci/resource_intern.h"
@@ -67,7 +68,7 @@ const char *getSciVersionDesc(SciVersion version) {
 		return "Late SCI0";
 	case SCI_VERSION_01:
 		return "SCI01";
-	case SCI_VERSION_1_EGA:
+	case SCI_VERSION_1_EGA_ONLY:
 		return "SCI1 EGA";
 	case SCI_VERSION_1_EARLY:
 		return "Early SCI1";
@@ -948,14 +949,17 @@ void ResourceManager::init(bool initFromFallbackDetector) {
 	case kViewEga:
 		debugC(1, kDebugLevelResMan, "resMan: Detected EGA graphic resources");
 		break;
+	case kViewAmiga:
+		debugC(1, kDebugLevelResMan, "resMan: Detected Amiga ECS graphic resources");
+		break;
+	case kViewAmiga64:
+		debugC(1, kDebugLevelResMan, "resMan: Detected Amiga AGA graphic resources");
+		break;
 	case kViewVga:
 		debugC(1, kDebugLevelResMan, "resMan: Detected VGA graphic resources");
 		break;
 	case kViewVga11:
 		debugC(1, kDebugLevelResMan, "resMan: Detected SCI1.1 VGA graphic resources");
-		break;
-	case kViewAmiga:
-		debugC(1, kDebugLevelResMan, "resMan: Detected Amiga graphic resources");
 		break;
 	default:
 #ifdef ENABLE_SCI32
@@ -1272,7 +1276,7 @@ ResVersion ResourceManager::detectVolVersion() {
 	// SCI32 volume format:   {bResType wResNumber dwPacked dwUnpacked wCompression} = 13 bytes
 	// Try to parse volume with SCI0 scheme to see if it make sense
 	// Checking 1MB of data should be enough to determine the version
-	uint16 resId, wCompression;
+	uint16 wCompression;
 	uint32 dwPacked, dwUnpacked;
 	ResVersion curVersion = kResVersionSci0Sci1Early;
 	bool failed = false;
@@ -1282,7 +1286,7 @@ ResVersion ResourceManager::detectVolVersion() {
 	while (!fileStream->eos() && fileStream->pos() < 0x100000) {
 		if (curVersion > kResVersionSci0Sci1Early)
 			fileStream->readByte();
-		resId = fileStream->readUint16LE();
+		fileStream->skip(2);	// resId
 		dwPacked = (curVersion < kResVersionSci2) ? fileStream->readUint16LE() : fileStream->readUint32LE();
 		dwUnpacked = (curVersion < kResVersionSci2) ? fileStream->readUint16LE() : fileStream->readUint32LE();
 
@@ -1485,7 +1489,7 @@ void ResourceManager::readResourcePatchesBase36() {
 				Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(name);
 				uint32 tag = stream->readUint32BE();
 
-				if (tag == MKID_BE('RIFF') || tag == MKID_BE('FORM')) {
+				if (tag == MKTAG('R','I','F','F') || tag == MKTAG('F','O','R','M')) {
 					delete stream;
 					processWavePatch(resource36, name);
 					continue;
@@ -1494,7 +1498,7 @@ void ResourceManager::readResourcePatchesBase36() {
 				// Check for SOL as well
 				tag = (tag << 16) | stream->readUint16BE();
 					
-				if (tag != MKID_BE('SOL\0')) {
+				if (tag != MKTAG('S','O','L',0)) {
 					delete stream;
 					continue;
 				}
@@ -1535,10 +1539,18 @@ void ResourceManager::readResourcePatches() {
 		mask += s_resourceTypeSuffixes[i];
 		SearchMan.listMatchingMembers(files, mask);
 
-		if (i == kResourceTypeScript && files.size() == 0) {
-			// SCI3 (we can't use getSciVersion() at this point)
-			mask = "*.csc";
-			SearchMan.listMatchingMembers(files, mask);
+		if (i == kResourceTypeView) {
+			SearchMan.listMatchingMembers(files, "*.v16");	// EGA SCI1 view patches
+			SearchMan.listMatchingMembers(files, "*.v32");	// Amiga SCI1 view patches
+			SearchMan.listMatchingMembers(files, "*.v64");	// Amiga AGA SCI1 (i.e. Longbow) view patches
+		} else if (i == kResourceTypePic) {
+			SearchMan.listMatchingMembers(files, "*.p16");	// EGA SCI1 picture patches
+			SearchMan.listMatchingMembers(files, "*.p32");	// Amiga SCI1 picture patches
+			SearchMan.listMatchingMembers(files, "*.p64");	// Amiga AGA SCI1 (i.e. Longbow) picture patches
+		} else if (i == kResourceTypeScript) {
+			if (files.size() == 0)
+				// SCI3 (we can't use getSciVersion() at this point)
+				SearchMan.listMatchingMembers(files, "*.csc");
 		}
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
@@ -1735,25 +1747,25 @@ struct MacResTag {
 };
 
 static const MacResTag macResTagMap[] = {
-	{ MKID_BE('V56 '), kResourceTypeView },
-	{ MKID_BE('P56 '), kResourceTypePic },
-	{ MKID_BE('SCR '), kResourceTypeScript },
-	{ MKID_BE('TEX '), kResourceTypeText },
-	{ MKID_BE('SND '), kResourceTypeSound },
-	{ MKID_BE('VOC '), kResourceTypeVocab },
-	{ MKID_BE('FON '), kResourceTypeFont },
-	{ MKID_BE('CURS'), kResourceTypeCursor },
-	{ MKID_BE('crsr'), kResourceTypeCursor },
-	{ MKID_BE('Pat '), kResourceTypePatch },
-	{ MKID_BE('PAL '), kResourceTypePalette },
-	{ MKID_BE('snd '), kResourceTypeAudio },
-	{ MKID_BE('MSG '), kResourceTypeMessage },
-	{ MKID_BE('HEP '), kResourceTypeHeap },
-	{ MKID_BE('IBIN'), kResourceTypeMacIconBarPictN },
-	{ MKID_BE('IBIS'), kResourceTypeMacIconBarPictS },
-	{ MKID_BE('PICT'), kResourceTypeMacPict },
-	{ MKID_BE('SYN '), kResourceTypeSync },
-	{ MKID_BE('SYNC'), kResourceTypeSync }
+	{ MKTAG('V','5','6',' '), kResourceTypeView },
+	{ MKTAG('P','5','6',' '), kResourceTypePic },
+	{ MKTAG('S','C','R',' '), kResourceTypeScript },
+	{ MKTAG('T','E','X',' '), kResourceTypeText },
+	{ MKTAG('S','N','D',' '), kResourceTypeSound },
+	{ MKTAG('V','O','C',' '), kResourceTypeVocab },
+	{ MKTAG('F','O','N',' '), kResourceTypeFont },
+	{ MKTAG('C','U','R','S'), kResourceTypeCursor },
+	{ MKTAG('c','r','s','r'), kResourceTypeCursor },
+	{ MKTAG('P','a','t',' '), kResourceTypePatch },
+	{ MKTAG('P','A','L',' '), kResourceTypePalette },
+	{ MKTAG('s','n','d',' '), kResourceTypeAudio },
+	{ MKTAG('M','S','G',' '), kResourceTypeMessage },
+	{ MKTAG('H','E','P',' '), kResourceTypeHeap },
+	{ MKTAG('I','B','I','N'), kResourceTypeMacIconBarPictN },
+	{ MKTAG('I','B','I','S'), kResourceTypeMacIconBarPictS },
+	{ MKTAG('P','I','C','T'), kResourceTypeMacPict },
+	{ MKTAG('S','Y','N',' '), kResourceTypeSync },
+	{ MKTAG('S','Y','N','C'), kResourceTypeSync }
 };
 
 static Common::Array<uint32> resTypeToMacTags(ResourceType type) {
@@ -2049,7 +2061,13 @@ ViewType ResourceManager::detectViewType() {
 
 			switch (res->data[1]) {
 			case 128:
-				// If the 2nd byte is 128, it's a VGA game
+				// If the 2nd byte is 128, it's a VGA game.
+				// However, Longbow Amiga (AGA, 64 colors), also sets this byte
+				// to 128, but it's a mixed VGA/Amiga format. Detect this from
+				// the platform here.
+				if (g_sci && g_sci->getPlatform() == Common::kPlatformAmiga)
+					return kViewAmiga64;
+
 				return kViewVga;
 			case 0:
 				// EGA or Amiga, try to read as Amiga view
@@ -2127,9 +2145,9 @@ void ResourceManager::detectSciVersion() {
 
 	if (viewCompression != kCompLZW) {
 		// If it's a different compression type from kCompLZW, the game is probably
-		// SCI_VERSION_1_EGA or later. If the views are uncompressed, it is
+		// SCI_VERSION_1_EGA_ONLY or later. If the views are uncompressed, it is
 		// likely not an early disk game.
-		s_sciVersion = SCI_VERSION_1_EGA;
+		s_sciVersion = SCI_VERSION_1_EGA_ONLY;
 		oldDecompressors = false;
 	}
 
@@ -2243,9 +2261,9 @@ void ResourceManager::detectSciVersion() {
 			return;
 		}
 
-		// New decompressors. It's either SCI_VERSION_1_EGA or SCI_VERSION_1_EARLY.
+		// New decompressors. It's either SCI_VERSION_1_EGA_ONLY or SCI_VERSION_1_EARLY.
 		if (hasSci1Voc900()) {
-			s_sciVersion = SCI_VERSION_1_EGA;
+			s_sciVersion = SCI_VERSION_1_EGA_ONLY;
 			return;
 		}
 
@@ -2255,6 +2273,12 @@ void ResourceManager::detectSciVersion() {
 	case kResVersionSci1Middle:
 	case kResVersionKQ5FMT:
 		s_sciVersion = SCI_VERSION_1_MIDDLE;
+		// Amiga SCI1 middle games are actually SCI1 late
+		if (_viewType == kViewAmiga || _viewType == kViewAmiga64)
+			s_sciVersion = SCI_VERSION_1_LATE;
+		// Same goes for Mac SCI1 middle games
+		if (g_sci && g_sci->getPlatform() == Common::kPlatformMacintosh)
+			s_sciVersion = SCI_VERSION_1_LATE;
 		return;
 	case kResVersionSci1Late:
 		if (_volVersion == kResVersionSci11) {

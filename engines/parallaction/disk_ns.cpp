@@ -27,6 +27,7 @@
 #include "common/fs.h"
 #include "common/memstream.h"
 #include "common/substream.h"
+#include "common/textconsole.h"
 #include "parallaction/parser.h"
 #include "parallaction/parallaction.h"
 
@@ -91,7 +92,7 @@ NSArchive::NSArchive(Common::SeekableReadStream *stream, Common::Platform platfo
 		if (features & GF_DEMO) {
 			isSmallArchive = stream->size() == SIZEOF_SMALL_ARCHIVE;
 		} else if (features & GF_LANG_MULT) {
-			isSmallArchive = (stream->readUint32BE() != MKID_BE('NDOS'));
+			isSmallArchive = (stream->readUint32BE() != MKTAG('N','D','O','S'));
 		}
 	}
 
@@ -473,7 +474,7 @@ void DosDisk_ns::loadBackground(BackgroundInfo& info, const char *filename) {
 	}
 
 	// read bitmap, mask and path data and extract them into the 3 buffers
-	info.bg.create(info.width, info.height, 1);
+	info.bg.create(info.width, info.height, Graphics::PixelFormat::createFormatCLUT8());
 	createMaskAndPathBuffers(info);
 	unpackBackground(stream, (byte*)info.bg.pixels, info._mask->data, info._path->data);
 
@@ -801,7 +802,7 @@ void AmigaDisk_ns::unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 b
 	uint16 planeSize = bytesPerPlane * height;
 
 	for (uint32 i = 0; i < numFrames; i++) {
-		if (READ_BE_UINT32(src) == MKID_BE('DLTA')) {
+		if (READ_BE_UINT32(src) == MKTAG('D','L','T','A')) {
 
 			uint size = READ_BE_UINT32(src + 4);
 

@@ -303,6 +303,27 @@ bool LuaBindhelper::getMetatable(lua_State *L, const Common::String &tableName) 
 	return true;
 }
 
+// Like luaL_checkudata, only without that no error is generated.
+void *LuaBindhelper::my_checkudata(lua_State *L, int ud, const char *tname) {
+	int top = lua_gettop(L);
+
+	void *p = lua_touserdata(L, ud);
+	if (p != NULL) { /* value is a userdata? */
+		if (lua_getmetatable(L, ud)) { /* does it have a metatable? */
+			// lua_getfield(L, LUA_REGISTRYINDEX, tname);  /* get correct metatable */
+			LuaBindhelper::getMetatable(L, tname);
+			if (lua_rawequal(L, -1, -2)) { /* does it have the correct mt? */
+				lua_settop(L, top);
+				return p;
+			}
+		}
+	}
+
+	lua_settop(L, top);
+	return NULL;
+}
+
+
 bool LuaBindhelper::createTable(lua_State *L, const Common::String &tableName) {
 	const char *partBegin = tableName.c_str();
 

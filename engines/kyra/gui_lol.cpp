@@ -25,13 +25,15 @@
 
 #ifdef ENABLE_LOL
 
+#include "kyra/gui_lol.h"
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
-#include "kyra/gui_lol.h"
 #include "kyra/resource.h"
 #include "kyra/util.h"
+#include "kyra/sound.h"
 
 #include "common/savefile.h"
+#include "common/system.h"
 #include "common/config-manager.h"
 #include "graphics/scaler.h"
 

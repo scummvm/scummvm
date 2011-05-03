@@ -128,7 +128,7 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 	debugC(kDebugLevelBresen, "c: %d, tmp: %d", c, tmp);
 
 	// Compute x step
-	if (tmp != 0)
+	if (tmp != 0 && dx != 0)
 		vx = (int16)((float)(dx * sqrt(gy / (2.0 * tmp))));
 	else
 		vx = 0;
@@ -165,17 +165,6 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 
 	return s->r_acc;
 }
-
-// TODO/FIXME: There is a notable regression with the new kInitBresed/kDoBresen
-// functions below in a death scene of LB1 - the shower scene, room 215 (bug
-// #3122075). There is a hack to get around this bug by modifying the actor's
-// position for that scene in kScriptID. The actual bug should be found, but
-// since only this death scene has an issue, it's not really worth the effort.
-// The new kInitBresen/kDoBresen functions have been enabled in r52467. The
-// old ones are based on observations, so there are many differences in the
-// way that they behave. Check the hack in kScriptID for more info. Note that
-// the actual issue might not be with kInitBresen/kDoBresen, and there might
-// be another underlying problem here.
 
 reg_t kInitBresen(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
@@ -275,7 +264,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	bool completed = false;
 	bool handleMoveCount = g_sci->_features->handleMoveCount();
 
-	if (getSciVersion() >= SCI_VERSION_1_EGA) {
+	if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY) {
 		uint client_signal = readSelectorValue(segMan, client, SELECTOR(signal));
 		writeSelectorValue(segMan, client, SELECTOR(signal), client_signal & ~kSignalHitObstacle);
 	}
@@ -292,8 +281,6 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		mover_moveCnt = 0;
 		int16 client_x = readSelectorValue(segMan, client, SELECTOR(x));
 		int16 client_y = readSelectorValue(segMan, client, SELECTOR(y));
-		int16 client_org_x = client_x;
-		int16 client_org_y = client_y;
 		int16 mover_x = readSelectorValue(segMan, mover, SELECTOR(x));
 		int16 mover_y = readSelectorValue(segMan, mover, SELECTOR(y));
 		int16 mover_xAxis = readSelectorValue(segMan, mover, SELECTOR(b_xAxis));
@@ -307,12 +294,19 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		int16 mover_org_i2 = mover_i2;
 		int16 mover_org_di = mover_di;
 
-		if ((getSciVersion() >= SCI_VERSION_1_EGA)) {
+		if ((getSciVersion() >= SCI_VERSION_1_EGA_ONLY)) {
 			// save current position into mover
 			writeSelectorValue(segMan, mover, SELECTOR(xLast), client_x);
 			writeSelectorValue(segMan, mover, SELECTOR(yLast), client_y);
 		}
-		// sierra sci saves full client selector variables here
+
+		// Store backups of all client selector variables. We will restore them
+		// in case of a collision.
+		Object* clientObject = segMan->getObject(client);
+		uint clientVarNum = clientObject->getVarCount();
+		reg_t* clientBackup = new reg_t[clientVarNum];
+		for (uint i = 0; i < clientVarNum; ++i)
+			clientBackup[i] = clientObject->getVariable(i);
 
 		if (mover_xAxis) {
 			if (ABS(mover_x - client_x) < ABS(mover_dx))
@@ -360,9 +354,10 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		if (collision) {
-			// sierra restores full client variables here, seems that restoring x/y is enough
-			writeSelectorValue(segMan, client, SELECTOR(x), client_org_x);
-			writeSelectorValue(segMan, client, SELECTOR(y), client_org_y);
+			// We restore the backup of the client variables
+			for (uint i = 0; i < clientVarNum; ++i)
+				clientObject->getVariableRef(i) = clientBackup[i];
+
 			mover_i1 = mover_org_i1;
 			mover_i2 = mover_org_i2;
 			mover_di = mover_org_di;
@@ -370,30 +365,29 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 			uint16 client_signal = readSelectorValue(segMan, client, SELECTOR(signal));
 			writeSelectorValue(segMan, client, SELECTOR(signal), client_signal | kSignalHitObstacle);
 		}
+		delete[] clientBackup;
+
 		writeSelectorValue(segMan, mover, SELECTOR(b_i1), mover_i1);
 		writeSelectorValue(segMan, mover, SELECTOR(b_i2), mover_i2);
 		writeSelectorValue(segMan, mover, SELECTOR(b_di), mover_di);
 
-		if ((getSciVersion() >= SCI_VERSION_1_EGA)) {
-			// this calling code here was right before the last return in
-			//  sci1ega and got changed to this position since sci1early
-			//  this was an uninitialized issue in sierra sci
-			if ((handleMoveCount) && (getSciVersion() >= SCI_VERSION_1_EARLY))
+		if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY) {
+			// In sci1egaonly this block of code was outside of the main if,
+			// but client_x/client_y aren't set there, so it was an
+			// uninitialized read in SSCI. (This issue was fixed in sci1early.)
+			if (handleMoveCount)
 				writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), mover_moveCnt);
 			// We need to compare directly in here, complete may have happened during
 			//  the current move
 			if ((client_x == mover_x) && (client_y == mover_y))
 				invokeSelector(s, mover, SELECTOR(moveDone), argc, argv);
-			if (getSciVersion() >= SCI_VERSION_1_EARLY)
-				return s->r_acc;
+			return s->r_acc;
 		}
 	}
-	if (handleMoveCount) {
-		if (getSciVersion() <= SCI_VERSION_1_EGA)
-			writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), mover_moveCnt);
-		else
-			writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), client_moveSpeed);
-	}
+
+	if (handleMoveCount)
+		writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), mover_moveCnt);
+
 	return s->r_acc;
 }
 
@@ -575,8 +569,8 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 		debugC(kDebugLevelBresen, " avoider %04x:%04x", PRINT_REG(avoider));
 
 		for (moves = 0; moves < 8; moves++) {
-			int move_x = (int)(sin(angle * PI / 180.0) * (xstep));
-			int move_y = (int)(-cos(angle * PI / 180.0) * (ystep));
+			int move_x = (int)(sin(angle * M_PI / 180.0) * (xstep));
+			int move_y = (int)(-cos(angle * M_PI / 180.0) * (ystep));
 
 			writeSelectorValue(segMan, client, SELECTOR(x), oldx + move_x);
 			writeSelectorValue(segMan, client, SELECTOR(y), oldy + move_y);

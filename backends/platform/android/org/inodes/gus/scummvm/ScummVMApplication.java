@@ -8,22 +8,24 @@ public class ScummVMApplication extends Application {
 	public final static String ACTION_PLUGIN_QUERY = "org.inodes.gus.scummvm.action.PLUGIN_QUERY";
 	public final static String EXTRA_UNPACK_LIBS = "org.inodes.gus.scummvm.extra.UNPACK_LIBS";
 
-	private static File cache_dir;
+	private static File _cache_dir;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
 		// This is still on /data :(
-		cache_dir = getCacheDir();
+		_cache_dir = getCacheDir();
 		// This is mounted noexec :(
 		//cache_dir = new File(Environment.getExternalStorageDirectory(),
-		//			 "/.ScummVM.tmp");
+		//				"/.ScummVM.tmp");
 		// This is owned by download manager and requires special
 		// permissions to access :(
 		//cache_dir = Environment.getDownloadCacheDirectory();
 	}
 
 	public static File getLastCacheDir() {
-		return cache_dir;
+		return _cache_dir;
 	}
 }
+

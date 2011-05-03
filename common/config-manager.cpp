@@ -24,10 +24,11 @@
  */
 
 #include "common/config-manager.h"
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/fs.h"
-#include "common/util.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 DECLARE_SINGLETON(Common::ConfigManager);
 
@@ -103,9 +104,9 @@ void ConfigManager::loadConfigFile(const String &filename) {
 	FSNode node(filename);
 	File cfg_file;
 	if (!cfg_file.open(node)) {
-		debug("Creating configuration file: %s\n", filename.c_str());
+		debug("Creating configuration file: %s", filename.c_str());
 	} else {
-		debug("Using configuration file: %s\n", _filename.c_str());
+		debug("Using configuration file: %s", _filename.c_str());
 		loadFromStream(cfg_file);
 	}
 }
@@ -120,7 +121,7 @@ void ConfigManager::addDomain(const Common::String &domainName, const ConfigMana
 	if (domainName == kApplicationDomain) {
 		_appDomain = domain;
 #ifdef ENABLE_KEYMAPPER
-	} else if (domain == kKeymapperDomain) {
+	} else if (domainName == kKeymapperDomain) {
 		_keymapperDomain = domain;
 #endif
 	} else if (domain.contains("gameid")) {

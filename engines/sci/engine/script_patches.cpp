@@ -60,55 +60,6 @@ struct SciScriptSignature {
 //  - if not EOS, an adjust offset and the actual bytes
 //  - rinse and repeat
 
-#if 0
-
-// ===========================================================================
-// Castle of Dr. Brain
-// cipher::init (script 391) is called on room 380 init. This resets the word
-//  cipher puzzle. The puzzle sadly operates on some hep strings, which aren't
-//  saved in our sci. So saving/restoring in this room will break the puzzle
-//  Because of this issue, we just init the puzzle each time it's accessed.
-//  this is not 100% sierra behaviour, in fact we will actually reset the puzzle
-//  during each access which makes it impossible to cheat.
-const byte castlebrainSignatureCipherPuzzle[] = {
-	22,
-	0x35, 0x00,        // ldi 00
-	0xa3, 0x26,        // sal local[26]
-	0xa3, 0x25,        // sal local[25]
-	0x35, 0x00,        // ldi 00
-	0xa3, 0x2a,        // sal local[2a] (local is not used)
-	0xa3, 0x29,        // sal local[29] (local is not used)
-	0x35, 0xff,        // ldi ff
-	0xa3, 0x2c,        // sal local[2c]
-	0xa3, 0x2b,        // sal local[2b]
-	0x35, 0x00,        // ldi 00
-	0x65, 0x16,        // aTop highlightedIcon
-	0
-};
-
-const uint16 castlebrainPatchCipherPuzzle[] = {
-	0x39, 0x6b,        // pushi 6b (selector init)
-	0x76,              // push0
-	0x55, 0x04,        // self 04
-	0x35, 0x00,        // ldi 00
-	0xa3, 0x25,        // sal local[25]
-	0xa3, 0x26,        // sal local[26]
-	0xa3, 0x29,        // sal local[29]
-	0x65, 0x16,        // aTop highlightedIcon
-	0x34, 0xff, 0xff,  // ldi ffff
-	0xa3, 0x2b,        // sal local[2b]
-	0xa3, 0x2c,        // sal local[2c]
-	PATCH_END
-};
-
-//    script, description,                                      magic DWORD,                             adjust
-const SciScriptSignature castlebrainSignatures[] = {
-	{    391, "cipher puzzle save/restore break",            1, PATCH_MAGICDWORD(0xa3, 0x26, 0xa3, 0x25),    -2, castlebrainSignatureCipherPuzzle, castlebrainPatchCipherPuzzle },
-	SCI_SIGNATUREENTRY_TERMINATOR
-};
-
-#endif
-
 // ===========================================================================
 // stayAndHelp::changeState (0) is called when ego swims to the left or right
 //  boundaries of room 660. Normally a textbox is supposed to get on screen
@@ -497,74 +448,6 @@ const SciScriptSignature gk1Signatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
-#if 0
-
-// ===========================================================================
-// this here gets called on entry and when going out of game windows
-//  uEvt::port will not get changed after kDisposeWindow but a bit later, so
-//  we would get an invalid port handle to a kSetPort call. We just patch in
-//  resetting of the port selector. We destroy the stop/fade code in there,
-//  it seems it isn't used at all in the game.
-const byte hoyle4SignaturePortFix[] = {
-	28,
-	0x39, 0x09,        // pushi 09
-	0x89, 0x0b,        // lsg 0b
-	0x39, 0x64,        // pushi 64
-	0x38, 0xc8, 0x00,  // pushi 00c8
-	0x38, 0x2c, 0x01,  // pushi 012c
-	0x38, 0x90, 0x01,  // pushi 0190
-	0x38, 0xf4, 0x01,  // pushi 01f4
-	0x38, 0x58, 0x02,  // pushi 0258
-	0x38, 0xbc, 0x02,  // pushi 02bc
-	0x38, 0x20, 0x03,  // pushi 0320
-	0x46,              // calle [xxxx] [xxxx] [xx]
-	+5, 43,            // [skip 5 bytes]
-	0x30, 0x27, 0x00,  // bnt 0027 -> end of routine
-	0x87, 0x00,        // lap 00
-	0x30, 0x19, 0x00,  // bnt 0019 -> fade out
-	0x87, 0x01,        // lap 01
-	0x30, 0x14, 0x00,  // bnt 0014 -> fade out
-	0x38, 0xa7, 0x00,  // pushi 00a7
-	0x76,              // push0
-	0x80, 0x29, 0x01,  // lag 0129
-	0x4a, 0x04,        // send 04 - call song::stop
-	0x39, 0x27,        // pushi 27
-	0x78,              // push1
-	0x8f, 0x01,        // lsp 01
-	0x51, 0x54,        // class 54
-	0x4a, 0x06,        // send 06 - call PlaySong::play
-	0x33, 0x09,        // jmp 09 -> end of routine
-	0x38, 0xaa, 0x00,  // pushi 00aa
-	0x76,              // push0
-	0x80, 0x29, 0x01,  // lag 0129
-	0x4a, 0x04,        // send 04
-	0x48,              // ret
-	0
-};
-
-const uint16 hoyle4PatchPortFix[] = {
-	PATCH_ADDTOOFFSET | +33,
-	0x38, 0x31, 0x01,  // pushi 0131 (selector curEvent)
-	0x76,              // push0
-	0x80, 0x50, 0x00,  // lag 0050 (global var 80h, "User")
-	0x4a, 0x04,        // send 04 - read User::curEvent
-
-	0x38, 0x93, 0x00,  // pushi 0093 (selector port)
-	0x78,              // push1
-	0x76,              // push0
-	0x4a, 0x06,        // send 06 - write 0 to that object::port
-	0x48,              // ret
-	PATCH_END
-};
-
-//    script, description,                                   magic DWORD,                                 adjust
-const SciScriptSignature hoyle4Signatures[] = {
-    {      0, "port fix when disposing windows",             PATCH_MAGICDWORD(0x64, 0x38, 0xC8, 0x00),    -5, hoyle4SignaturePortFix,   hoyle4PatchPortFix },
-    {      0, NULL,                                          0,                                            0, NULL,                     NULL }
-};
-
-#endif
-
 // ===========================================================================
 // at least during harpy scene export 29 of script 0 is called in kq5cd and
 //  has an issue for those calls, where temp 3 won't get inititialized, but
@@ -615,9 +498,121 @@ const uint16 kq5PatchCdHarpyVolume[] = {
 	PATCH_END
 };
 
+// This is a heap patch, and it modifies the properties of an object, instead
+// of patching script code.
+//
+// The witchCage object in script 200 is broken and claims to have 12
+// variables instead of the 8 it should have because it is a Cage.
+// Additionally its top,left,bottom,right properties are set to 0 rather
+// than the right values. We fix the object by setting the right values.
+// If they are all zero, this causes an impossible position check in
+// witch::cantBeHere and an infinite loop when entering room 22 (bug #3034714).
+//
+// This bug is accidentally not triggered in SSCI because the invalid number
+// of variables effectively hides witchCage::doit, causing this position check
+// to be bypassed entirely.
+// See also the warning+comment in Object::initBaseObject
+const byte kq5SignatureWitchCageInit[] = {
+	16,
+	0x00, 0x00,	// top
+	0x00, 0x00,	// left
+	0x00, 0x00,	// bottom
+	0x00, 0x00,	// right
+	0x00, 0x00,	// extra property #1
+	0x7a, 0x00,	// extra property #2
+	0xc8, 0x00,	// extra property #3
+	0xa3, 0x00,	// extra property #4
+	0
+};
+
+const uint16 kq5PatchWitchCageInit[] = {
+	0x00, 0x00,	// top
+	0x7a, 0x00,	// left
+	0xc8, 0x00,	// bottom
+	0xa3, 0x00,	// right
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                 adjust
 const SciScriptSignature kq5Signatures[] = {
 	{      0, "CD: harpy volume change",                     1, PATCH_MAGICDWORD(0x80, 0x91, 0x01, 0x18),     0, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
+	{    200, "CD: witch cage init",                         1, PATCH_MAGICDWORD(0x7a, 0x00, 0xc8, 0x00),   -10, kq5SignatureWitchCageInit, kq5PatchWitchCageInit },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
+// When giving the milk bottle to one of the babies in the garden in KQ6 (room
+// 480), script 481 starts a looping baby cry sound. However, that particular
+// script also has an overriden check method (cryMusic::check). This method
+// explicitly restarts the sound, even if it's set to be looped, thus the same
+// sound is played twice, squelching all other sounds. We just rip the
+// unnecessary cryMusic::check method out, thereby stopping the sound from
+// constantly restarting (since it's being looped anyway), thus the normal
+// game speech can work while the baby cry sound is heard. Fixes bug #3034579.
+const byte kq6SignatureDuplicateBabyCry[] = {
+	10,
+	0x83, 0x00,         // lal 00
+    0x31, 0x1e,         // bnt 1e  [07f4]
+    0x78,               // push1
+    0x39, 0x04,         // pushi 04
+    0x43, 0x75, 0x02,   // callk DoAudio[75] 02
+	0
+};
+
+const uint16 kq6PatchDuplicateBabyCry[] = {
+	0x48,              // ret
+	PATCH_END
+};
+
+//    script, description,                                      magic DWORD,                                 adjust
+const SciScriptSignature kq6Signatures[] = {
+	{    481, "duplicate baby cry",                          1, PATCH_MAGICDWORD(0x83, 0x00, 0x31, 0x1e),     0, kq6SignatureDuplicateBabyCry, kq6PatchDuplicateBabyCry },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
+// Script 210 in the German version of Longbow handles the case where Robin
+// hands out the scroll to Marion and then types his name using the hand code.
+// The German version script contains a typo (probably a copy/paste error),
+// and the function that is used to show each letter is called twice. The
+// second time that the function is called, the second parameter passed to
+// the function is undefined, thus kStrCat() that is called inside the function
+// reads a random pointer and crashes. We patch all of the 5 function calls
+// (one for each letter typed from "R", "O", "B", "I", "N") so that they are
+// the same as the English version. Fixes bug #3048054.
+const byte longbowSignatureShowHandCode[] = {
+	3,
+	0x78,                   // push1
+	0x78,                   // push1
+	0x72,                   // lofsa
+	+2, 2,                  // skip 2 bytes, offset of lofsa (the letter typed)
+	0x36,                   // push
+	0x40,                   // call
+	+2, 3,                  // skip 2 bytes, offset of call
+	0x02,                   // perform the call above with 2 parameters
+	0x36,                   // push
+	0x40,                   // call
+	+2, 8,                  // skip 2 bytes, offset of call
+	0x02,                   // perform the call above with 2 parameters
+	0x38, 0x1c, 0x01,       // pushi 011c (setMotion)
+	0x39, 0x04,             // pushi 04 (x)
+	0x51, 0x1e,             // class MoveTo
+	0
+};
+
+const uint16 longbowPatchShowHandCode[] = {
+	0x39, 0x01,             // pushi 1 (combine the two push1's in one, like in the English version)
+	PATCH_ADDTOOFFSET | +3, // leave the lofsa call untouched
+	// The following will remove the duplicate call
+	0x32, 0x02, 0x00,       // jmp 02 - skip 2 bytes (the remainder of the first call)
+	0x48,                   // ret (dummy, should never be reached)
+	0x48,                   // ret (dummy, should never be reached)
+	PATCH_END
+};
+
+//    script, description,                                      magic DWORD,                                  adjust
+const SciScriptSignature longbowSignatures[] = {
+	{    210, "hand code crash",                             5, PATCH_MAGICDWORD(0x02, 0x38, 0x1c, 0x01),   -14, longbowSignatureShowHandCode, longbowPatchShowHandCode },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -673,7 +668,7 @@ const SciScriptSignature larry6Signatures[] = {
 };
 
 // ===========================================================================
-// rm560::doit was supposed to close the painting, when heimlich enters the
+// rm560::doit was supposed to close the painting, when Heimlich enters the
 //  room. The code is buggy, so it actually closes the painting, when heimlich
 //  is not in the room. We fix that.
 const byte laurabow2SignaturePaintingClosing[] = {
@@ -796,44 +791,10 @@ const uint16 qfg1vgaPatchFightEvents[] = {
 	PATCH_END
 };
 
-// When QFG1VGA and QFG3 dispose of a child window. For example, when choosing
-// a spell (parent window), if the spell can't be casted, a subsequent window
-// opens, notifying that it can't be casted. When showing the child window, the
-// scripts restore the area below the parent window, draw the child window, and
-// then attempt to redraw the parent window, which leads to the background
-// picture (which has just been restored) overwriting the child window. It
-// appers that kGraph(redrawBox) is different in QFG1VGA and QFG3. However, we
-// can just remove the window redraw and update calls when the window is
-// supposed to be disposed, and the window is disposed of correctly. Fixes bug
-// #3053093.
-const byte qfg1vgaWindowDispose[] = {
-	17,
-	0x39, 0x05,       // pushi 05
-	0x39, 0x0d,       // pushi 0d
-	0x67, 0x2e,       // pTos 2e
-	0x67, 0x30,       // pTos 30
-	0x67, 0x32,       // pTos 32
-	0x67, 0x34,       // pTos 34
-	0x43, 0x6c, 0x0a, // callk kGraph 10
-	0x39, 0x06,       // pushi 06
-	0
-};
-
-const uint16 qfg1vgaPatchWindowDispose[] = {
-	0x34, 0x00, 0x00, // ldi 0000 (dummy)
-	0x34, 0x00, 0x00, // ldi 0000 (dummy)
-	0x34, 0x00, 0x00, // ldi 0000 (dummy)
-	0x34, 0x00, 0x00, // ldi 0000 (dummy)
-	0x34, 0x00, 0x00, // ldi 0000 (dummy)
-	0x33, 0x3e,       // jmp 0x3e (skip 62 bytes - this skips the subsequent 2 kGraph(update) calls, before kDisposeWindow is invoked)
-	PATCH_END
-};
-
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg1vgaSignatures[] = {
 	{    215, "fight event issue",                           1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,       qfg1vgaPatchFightEvents },
 	{    216, "weapon master event issue",                   1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,       qfg1vgaPatchFightEvents },
-	{    559, "window dispose",                              1, PATCH_MAGICDWORD(0x39, 0x05, 0x39, 0x0d),     0,        qfg1vgaWindowDispose,     qfg1vgaPatchWindowDispose },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -897,37 +858,6 @@ const uint16 qfg3PatchImportDialog[] = {
 	PATCH_END
 };
 
-// When QFG1VGA and QFG3 dispose of a child window. For example, when choosing
-// a spell (parent window), if the spell can't be casted, a subsequent window
-// opens, notifying that it can't be casted. When showing the child window, the
-// scripts restore the area below the parent window, draw the child window, and
-// then attempt to redraw the parent window, which leads to the background
-// picture (which has just been restored) overwriting the child window. It
-// appers that kGraph(redrawBox) is different in QFG1VGA and QFG3. However, we
-// can just remove the window redraw and update calls when the window is
-// supposed to be disposed, and the window is disposed of correctly. Fixes bug
-// #3053093.
-const byte qfg3WindowDispose[] = {
-	15,
-	0x39, 0x05,       // pushi 05
-	0x39, 0x0d,       // pushi 0d
-	0x67, 0x2e,       // pTos 2e
-	0x67, 0x30,       // pTos 30
-	0x67, 0x32,       // pTos 32
-	0x67, 0x34,       // pTos 34
-	0x43, 0x6c, 0x0a, // callk kGraph 10
-	0
-};
-
-const uint16 qfg3PatchWindowDispose[] = {
-	0x34, 0x00, 0x00, // ldi 0000 (dummy)
-	0x34, 0x00, 0x00, // ldi 0000 (dummy)
-	0x34, 0x00, 0x00, // ldi 0000 (dummy)
-	0x34, 0x00, 0x00, // ldi 0000 (dummy)
-	0x34, 0x00, 0x00, // ldi 0000 (dummy)
-	PATCH_END
-};
-
 // Script 23 in QFG3 has a typo/bug which makes it loop endlessly and
 // read garbage. Fixes bug #3040722.
 const byte qfg3DialogCrash[] = {
@@ -944,10 +874,50 @@ const uint16 qfg3PatchDialogCrash[] = {
 	PATCH_END
 };
 
+// Part of script 47 that handles the barter icon checks for the wrong local.
+// The local is supposed to contain the value returned by a previous kDisplay
+// call, but since the wrong one is checked, it contains junk instead. We
+// remove that check here (this doesn't affect the game at all). This occurs
+// when attempting to purchase something from a vendor and the barter button is
+// available (e.g. when buying the robe or meat from the associated vendors).
+// Fixes bug #3292251.
+const byte qfg3BarterCrash[] = {
+	22,
+	0x83, 0x10,        // lal 10   ---> BUG! Wrong local
+	0x30, 0x11, 0x00,  // bnt 0011 ---> the accumulator will now contain garbage, so this check fails
+	0x35, 0x00,        // ldi 00
+	0xa5, 0x00,        // sat 00
+	0x39, 0x03,        // pushi 03
+	0x5b, 0x04, 0x00,  // lea 04 00
+	0x36,              // push
+	0x39, 0x6c,        // pushi 6c
+	0x8b, 0x10,        // lsl 10   ---> local 10 contains garbage, so the call below will fail
+	0x43, 0x1b, 0x06   // callk Display[1b] 06
+};
+
+// Same as above, but for local 0x11
+const byte qfg3BarterCrash2[] = {
+	18,
+	0x83, 0x11,        // lal 11   ---> BUG! Wrong local
+	0x30, 0x0d, 0x00,  // bnt 000d ---> the accumulator will now contain garbage, so this check fails
+	0x39, 0x03,        // pushi 03
+	0x5b, 0x04, 0x00,  // lea 04 00
+	0x36,              // push
+	0x39, 0x6c,        // pushi 6c
+	0x8b, 0x11,        // lsl 11   ---> local 11 contains garbage, so the call below will fail
+	0x43, 0x1b, 0x06   // callk Display[1b] 06
+};
+
+const uint16 qfg3PatchBarterCrash[] = {
+	0x35, 0x00,       // ldi 00    ---> the accumulator will always be zero, so the problematic code won't run
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg3Signatures[] = {
-	{     22, "window dispose",                                 1, PATCH_MAGICDWORD(0x39, 0x05, 0x39, 0x0d),   0,         qfg3WindowDispose,        qfg3PatchWindowDispose },
 	{     23, "dialog crash",                                   1, PATCH_MAGICDWORD(0xe7, 0x03, 0x22, 0x33),  -1,           qfg3DialogCrash,          qfg3PatchDialogCrash },
+	{     47, "barter crash",                                   1, PATCH_MAGICDWORD(0x83, 0x10, 0x30, 0x11),   0,           qfg3BarterCrash,          qfg3PatchBarterCrash },
+	{     47, "barter crash 2",                                 1, PATCH_MAGICDWORD(0x83, 0x11, 0x30, 0x0d),   0,          qfg3BarterCrash2,          qfg3PatchBarterCrash },
 	{    944, "import dialog continuous calls",                 1, PATCH_MAGICDWORD(0x2a, 0x31, 0x0b, 0x7a),  -1, qfg3SignatureImportDialog,         qfg3PatchImportDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -1065,54 +1035,52 @@ const SciScriptSignature sq4Signatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
-// ===========================================================================
-// It seems to scripts warp ego outside the screen somehow (or maybe kDoBresen?)
-//  ego::mover is set to 0 and rm119::doit will crash in that case. This here
-//  fixes part of the problem and actually checks ego::mover to be 0 and skips
-//  TODO: this should get further investigated by waltervn and maybe properly
-//   patched. For now ego will shortly disappear and reappear a bit after
-//   this isn't good, but sierra sci also "crashed" (endless looped) so this
-//   is at least better than the original code
-const byte sq5SignatureScrubbing[] = {
-	19,
-	0x18,             // not
-	0x31, 0x37,       // bnt 37
-	0x78,             // push1 (selector x)
+const byte sq1vgaSignatureEgoShowsCard[] = {
+	25,
+	0x38, 0x46, 0x02, // push 0x246 (set up send frame to set timesShownID)
+	0x78,             // push1
+	0x38, 0x46, 0x02, // push 0x246 (set up send frame to get timesShownID)
 	0x76,             // push0
-	0x39, 0x38,       // pushi 38 (selector mover)
-	0x76,             // push0
-	0x81, 0x00,       // lag 00
-	0x4a, 0x04,       // send 04 - read ego::mover
-	0x4a, 0x04,       // send 04 - read ego::mover::x
+	0x51, 0x7c,       // class DeltaurRegion
+	0x4a, 0x04,       // send 0x04 (get timesShownID)
 	0x36,             // push
-	0x34, 0xa0, 0x00, // ldi 00a0
-	0x1c,             // ne?
-	0
-};
+	0x35, 0x01,       // ldi 1
+	0x02,             // add
+	0x36,             // push
+	0x51, 0x7c,       // class DeltaurRegion
+	0x4a, 0x06,       // send 0x06 (set timesShownID)
+	0x36,             // push      (wrong, acc clobbered by class, above)
+	0x35, 0x03,       // ldi 0x03
+	0x22,             // lt?
+	0};
 
-const uint16 sq5PatchScrubbing[] = {
-	0x18,             // not
-	0x31, 0x37,       // bnt 37
-//	0x2f, 0x38,       // bt 37 (would save another byte, isn't needed
-	0x39, 0x38,       // pushi 38 (selector mover)
+// Note that this script patch is merely a reordering of the
+// instructions in the original script.
+const uint16 sq1vgaPatchEgoShowsCard[] = {
+	0x38, 0x46, 0x02, // push 0x246 (set up send frame to get timesShownID)
 	0x76,             // push0
-	0x81, 0x00,       // lag 00
-	0x4a, 0x04,       // send 04 - read ego::mover
-	0x31, 0x2e,       // bnt 2e (jump if ego::mover is 0)
-	0x78,             // push1 (selector x)
-	0x76,             // push0
-	0x4a, 0x04,       // send 04 - read ego::mover::x
-	0x39, 0xa0,       // pushi a0 (saving 2 bytes)
-	0x1c,             // ne?
-	PATCH_END
-};
+	0x51, 0x7c,       // class DeltaurRegion
+	0x4a, 0x04,       // send 0x04 (get timesShownID)
+	0x36,             // push
+	0x35, 0x01,       // ldi 1
+	0x02,             // add
+	0x36,             // push (this push corresponds to the wrong one above)
+	0x38, 0x46, 0x02, // push 0x246 (set up send frame to set timesShownID)
+	0x78,             // push1
+	0x36,             // push
+	0x51, 0x7c,       // class DeltaurRegion
+	0x4a, 0x06,       // send 0x06 (set timesShownID)
+	0x35, 0x03,       // ldi 0x03
+	0x22,             // lt?
+	PATCH_END};
+
 
 //    script, description,                                      magic DWORD,                                  adjust
-const SciScriptSignature sq5Signatures[] = {
-	{    119, "scrubbing send crash",                        1, PATCH_MAGICDWORD(0x18, 0x31, 0x37, 0x78),     0, sq5SignatureScrubbing, sq5PatchScrubbing },
-	SCI_SIGNATUREENTRY_TERMINATOR
-};
+const SciScriptSignature sq1vgaSignatures[] = {
+	{   58, "Sarien armory droid zapping ego first time", 1, PATCH_MAGICDWORD( 0x72, 0x88, 0x15, 0x36 ), -70,  
+		sq1vgaSignatureEgoShowsCard, sq1vgaPatchEgoShowsCard },
 
+	SCI_SIGNATUREENTRY_TERMINATOR};
 
 // will actually patch previously found signature area
 void Script::applyPatch(const uint16 *patch, byte *scriptData, const uint32 scriptSize, int32 signatureOffset) {
@@ -1206,12 +1174,6 @@ int32 Script::findSignature(const SciScriptSignature *signature, const byte *scr
 void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uint32 scriptSize) {
 	const SciScriptSignature *signatureTable = NULL;
 	switch (g_sci->getGameId()) {
-	// Dr. Brain now works because we properly maintain the state of the string heap in savegames
-#if 0
-	case GID_CASTLEBRAIN:
-		signatureTable = castlebrainSignatures;
-		break;
-#endif
 	case GID_ECOQUEST:
 		signatureTable = ecoquest1Signatures;
 		break;
@@ -1227,17 +1189,17 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 	case GID_GK1:
 		signatureTable = gk1Signatures;
 		break;
-	// hoyle4 now works due to workaround inside GfxPorts
-#if 0
-	case GID_HOYLE4:
-		signatureTable = hoyle4Signatures;
-		break;
-#endif
 	case GID_KQ5:
 		signatureTable = kq5Signatures;
 		break;
+	case GID_KQ6:
+		signatureTable = kq6Signatures;
+		break;
 	case GID_LAURABOW2:
 		signatureTable = laurabow2Signatures;
+		break;
+	case GID_LONGBOW:
+		signatureTable = longbowSignatures;
 		break;
 	case GID_LSL6:
 		signatureTable = larry6Signatures;
@@ -1254,11 +1216,11 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 	case GID_QFG3:
 		signatureTable = qfg3Signatures;
 		break;
+	case GID_SQ1:
+		signatureTable = sq1vgaSignatures;
+		break;
 	case GID_SQ4:
 		signatureTable = sq4Signatures;
-		break;
-	case GID_SQ5:
-		signatureTable = sq5Signatures;
 		break;
 	default:
 		break;

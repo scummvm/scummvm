@@ -24,17 +24,9 @@
  */
 
 #include "kyra/kyra_lok.h"
-#include "kyra/seqplayer.h"
-#include "kyra/screen.h"
-#include "kyra/resource.h"
-#include "kyra/sound.h"
-#include "kyra/sprites.h"
-#include "kyra/wsamovie.h"
 #include "kyra/animator_lok.h"
-#include "kyra/text.h"
 
 #include "common/system.h"
-#include "common/savefile.h"
 
 namespace Kyra {
 

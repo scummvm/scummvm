@@ -65,5 +65,5 @@ SOURCEPATH ..\..\..\..\engines\kyra
 // *** Include paths
 
 USERINCLUDE     ..\..\..\..\engines
-USERINCLUDE     ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\sound ..\src
+USERINCLUDE     ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\audio ..\src
 SYSTEMINCLUDE   \epoc32\include \epoc32\include\libc ..\src

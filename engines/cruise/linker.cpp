@@ -147,8 +147,6 @@ int updateScriptImport(int ovlIdx) {
 				const char *ptrImportName;
 				uint8 *ptrData;
 
-				int var_22 = 0;
-
 				if (param == 0) {
 					pScript = getOvlData3Entry(ovlIdx, i);
 				} else {
@@ -158,8 +156,6 @@ int updateScriptImport(int ovlIdx) {
 				ptrImportData = (importScriptStruct *)(pScript->dataPtr + pScript->offsetToImportData);	// import data
 				ptrImportName = (const char*)(pScript->dataPtr + pScript->offsetToImportName);	// import name
 				ptrData = pScript->dataPtr;
-
-				var_22 = 0;
 
 				if (pScript->numRelocGlob > 0) {
 					int counter = pScript->numRelocGlob;

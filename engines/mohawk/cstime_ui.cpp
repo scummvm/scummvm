@@ -29,6 +29,9 @@
 #include "mohawk/resource.h"
 #include "common/algorithm.h" // find
 #include "common/events.h"
+#include "common/system.h"
+#include "common/textconsole.h"
+#include "graphics/fontman.h"
 
 namespace Mohawk {
 
@@ -64,12 +67,15 @@ CSTimeInterface::CSTimeInterface(MohawkEngine_CSTime *vm) : _vm(vm) {
 	_note = new CSTimeCarmenNote(_vm);
 	_options = new CSTimeOptions(_vm);
 
-	if (!_normalFont.loadFromFON("EvP14.fon"))
-		error("failed to load normal font");
-	if (!_dialogFont.loadFromFON("Int1212.fon"))
-		error("failed to load dialog font");
-	if (!_rolloverFont.loadFromFON("Int1818.fon"))
-		error("failed to load rollover font");
+	// The demo uses hardcoded system fonts
+	if (!(_vm->getFeatures() & GF_DEMO)) {
+		if (!_normalFont.loadFromFON("EvP14.fon"))
+			error("failed to load normal font");
+		if (!_dialogFont.loadFromFON("Int1212.fon"))
+			error("failed to load dialog font");
+		if (!_rolloverFont.loadFromFON("Int1818.fon"))
+			error("failed to load rollover font");
+	}
 
 	_uiFeature = NULL;
 	_dialogTextFeature = NULL;
@@ -89,6 +95,30 @@ CSTimeInterface::~CSTimeInterface() {
 	delete _book;
 	delete _note;
 	delete _options;
+}
+
+const Graphics::Font &CSTimeInterface::getNormalFont() const {
+	// HACK: Use a ScummVM GUI font in place of a system one for the demo
+	if (_vm->getFeatures() & GF_DEMO)
+		return *FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+
+	return _normalFont;
+}
+
+const Graphics::Font &CSTimeInterface::getDialogFont() const {
+	// HACK: Use a ScummVM GUI font in place of a system one for the demo
+	if (_vm->getFeatures() & GF_DEMO)
+		return *FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+
+	return _dialogFont;
+}
+
+const Graphics::Font &CSTimeInterface::getRolloverFont() const {
+	// HACK: Use a ScummVM GUI font in place of a system one for the demo
+	if (_vm->getFeatures() & GF_DEMO)
+		return *FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+
+	return _rolloverFont;
 }
 
 void CSTimeInterface::cursorInstall() {

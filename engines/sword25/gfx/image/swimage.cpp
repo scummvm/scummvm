@@ -47,7 +47,7 @@ SWImage::SWImage(const Common::String &filename, bool &result) :
 	PackageManager *pPackage = Kernel::getInstance()->getPackage();
 	assert(pPackage);
 
-	// Datei laden
+	// Load file
 	byte *pFileData;
 	uint fileSize;
 	pFileData = pPackage->getFile(filename, &fileSize);
@@ -56,21 +56,21 @@ SWImage::SWImage(const Common::String &filename, bool &result) :
 		return;
 	}
 
-	// Bildeigenschaften bestimmen
+	// Determine image properties
 	int pitch;
 	if (!PNGLoader::imageProperties(pFileData, fileSize, _width, _height)) {
 		error("Could not read image properties.");
 		return;
 	}
 
-	// Das Bild dekomprimieren
+	// Uncompress the image
 	byte *pUncompressedData;
 	if (!PNGLoader::decodeImage(pFileData, fileSize, pUncompressedData, _width, _height, pitch)) {
 		error("Could not decode image.");
 		return;
 	}
 
-	// Dateidaten freigeben
+	// Cleanup FileData
 	delete[] pFileData;
 
 	_imageDataPtr = (uint *)pUncompressedData;

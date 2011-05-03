@@ -201,8 +201,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_bootParam = 0;
 	_dumpScripts = false;
 	_debugMode = 0;
-	_heV7DiskOffsets = NULL;
-	_heV7RoomIntOffsets = NULL;
 	_objectOwnerTable = NULL;
 	_objectRoomTable = NULL;
 	_objectStateTable = NULL;
@@ -319,11 +317,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_2byteFontPtr = 0;
 	_V1TalkingActor = 0;
 	_NESStartStrip = 0;
-
-	_actorClipOverride.top = 0;
-	_actorClipOverride.bottom = 480;
-	_actorClipOverride.left = 0;
-	_actorClipOverride.right = 640;
 
 	_skipDrawObject = 0;
 
@@ -767,6 +760,12 @@ ScummEngine_v60he::ScummEngine_v60he(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v6(syst, dr) {
 	memset(_hInFileTable, 0, sizeof(_hInFileTable));
 	memset(_hOutFileTable, 0, sizeof(_hOutFileTable));
+
+	_actorClipOverride.top = 0;
+	_actorClipOverride.bottom = 480;
+	_actorClipOverride.left = 0;
+	_actorClipOverride.right = 640;
+
 	memset(_heTimers, 0, sizeof(_heTimers));
 
 	if (_game.heversion >= 61)
@@ -787,7 +786,9 @@ ScummEngine_v70he::ScummEngine_v70he(OSystem *syst, const DetectorResult &dr)
 	else
 		_resExtractor = new Win32ResExtractor(this);
 
+	_heV7DiskOffsets = NULL;
 	_heV7RoomOffsets = NULL;
+	_heV7RoomIntOffsets = NULL;
 
 	_heSndSoundId = 0;
 	_heSndOffset = 0;
@@ -804,8 +805,8 @@ ScummEngine_v70he::ScummEngine_v70he(OSystem *syst, const DetectorResult &dr)
 ScummEngine_v70he::~ScummEngine_v70he() {
 	delete _resExtractor;
 	free(_heV7DiskOffsets);
-	free(_heV7RoomIntOffsets);
 	free(_heV7RoomOffsets);
+	free(_heV7RoomIntOffsets);
 	free(_storedFlObjects);
 }
 
@@ -1161,7 +1162,7 @@ Common::Error ScummEngine::init() {
 				warning("Starting game without the required 16bit color support.\nYou may experience color glitches");
 				initGraphics(screenWidth, screenHeight, (screenWidth > 320));
 			} else {
-				error("16bit color support is required for this game");
+				return Common::Error(Common::kUnsupportedColorMode, "16bit color support is required for this game");
 			}
 #endif
 		} else {
@@ -1221,7 +1222,7 @@ void ScummEngine::setupScumm() {
 	setupCharsetRenderer();
 
 	// Create and clear the text surface
-	_textSurface.create(_screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, 1);
+	_textSurface.create(_screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, Graphics::PixelFormat::createFormatCLUT8());
 	clearTextSurface();
 
 	// Create the costume renderer
@@ -1576,7 +1577,7 @@ void ScummEngine_v3::resetScumm() {
 		// Load tile set and palette for the distaff
 		byte *roomptr = getResourceAddress(rtRoom, 90);
 		assert(roomptr);
-		const byte *palPtr = findResourceData(MKID_BE('CLUT'), roomptr);
+		const byte *palPtr = findResourceData(MKTAG('C','L','U','T'), roomptr);
 		assert(palPtr - 4);
 		setPCEPaletteFromPtr(palPtr);
 		_gdi->_distaff = true;
@@ -1647,6 +1648,8 @@ void ScummEngine_v90he::resetScumm() {
 			break;
 
 		case GID_SOCCER:
+		case GID_SOCCERMLS:
+		case GID_SOCCER2004:
 			_logicHE = new LogicHEsoccer(this);
 			break;
 
@@ -1858,27 +1861,25 @@ void ScummEngine::setupMusic(int midi) {
 			if (ConfMan.hasKey("tempo"))
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
 			// YM2162 driver can't handle midi->getPercussionChannel(), NULL shouldn't init MT-32/GM/GS
-			if (/*(midi != MDT_TOWNS) && (*/midi != MDT_NONE/*)*/) {
+			if (midi != MDT_NONE) {
 				_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
 				if (MidiDriver::getMusicType(dev) != MT_MT32) // MT-32 Emulation shouldn't be GM/GS initialized
 					_imuse->property(IMuse::PROP_GS, _enable_gs);
 			}
-			if (_game.heversion >= 60 /*|| midi == MDT_TOWNS*/) {
+			if (_game.heversion >= 60) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
 				_imuse->property(IMuse::PROP_RECYCLE_PLAYERS, 1);
 			}
-			/*if (midi == MDT_TOWNS)
-				_imuse->property(IMuse::PROP_DIRECT_PASSTHROUGH, 1);*/
 		}
 	}
 }
 
 void ScummEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
 
 	// Sync the engine with the config manager
 	int soundVolumeMusic = ConfMan.getInt("music_volume");
 	int soundVolumeSfx = ConfMan.getInt("sfx_volume");
-	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
 
 	bool mute = false;
 
@@ -1886,7 +1887,7 @@ void ScummEngine::syncSoundSettings() {
 		mute = ConfMan.getBool("mute");
 
 		if (mute)
-			soundVolumeMusic = soundVolumeSfx = soundVolumeSpeech = 0;
+			soundVolumeMusic = soundVolumeSfx = 0;
 	}
 
 	if (_musicEngine) {
@@ -1896,10 +1897,6 @@ void ScummEngine::syncSoundSettings() {
 	if (_townsPlayer) {
 		_townsPlayer->setSfxVolume(soundVolumeSfx);
 	}
-
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSfx);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
 
 	if (ConfMan.getBool("speech_mute"))
 		_voiceMode = 2;
@@ -2499,7 +2496,7 @@ void ScummEngine_v90he::runBootscript() {
 
 void ScummEngine::startManiac() {
 	debug(0, "stub startManiac()");
-	displayMessage(0, "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' directory inside the Tentacle game directory.");
+	displayMessage(0, "%s", _("Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' directory inside the Tentacle game directory."));
 }
 
 #pragma mark -

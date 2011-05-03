@@ -23,6 +23,8 @@
 *
 */
 
+#include "common/debug.h"
+
 #include "toon/path.h"
 
 namespace Toon {
@@ -186,7 +188,7 @@ int32 PathFinding::findClosestWalkingPoint(int32 xx, int32 yy, int32 *fxx, int32
 
 	for (int y = 0; y < _height; y++) {
 		for (int x = 0; x < _width; x++) {
-			if (isWalkable(x, y) && isLikelyWalkable(x,y)) {
+			if (isWalkable(x, y) && isLikelyWalkable(x, y)) {
 				int32 ndist = (x - xx) * (x - xx) + (y - yy) * (y - yy);
 				int32 ndist2 = (x - origX) * (x - origX) + (y - origY) * (y - origY);
 				if (currentFound < 0 || ndist < dist || (ndist == dist && ndist2 < dist2)) {
@@ -283,8 +285,8 @@ int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	}
 
 	// first test direct line
-	if (lineIsWalkable(x,y,destx,desty)) {
-		walkLine(x,y,destx,desty);
+	if (lineIsWalkable(x, y, destx, desty)) {
+		walkLine(x, y, destx, desty);
 		return true;
 	}
 
@@ -317,7 +319,7 @@ int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 
 					int32 curPNode = px + py * _width;
 					if (isWalkable(px, py)) { // walkable ?
-						int sum = sq[curNode] + wei * (1 + (isLikelyWalkable(px,py) ? 5 : 0));
+						int sum = sq[curNode] + wei * (1 + (isLikelyWalkable(px, py) ? 5 : 0));
 						if (sq[curPNode] > sum || !sq[curPNode]) {
 							int newWeight = abs(destx - px) + abs(desty - py);
 							sq[curPNode] = sum;
@@ -407,7 +409,11 @@ void PathFinding::init(Picture *mask) {
 	_height = mask->getHeight();
 	_currentMask = mask;
 	_heap->unload();
-	_heap->init(_width * _height);
+	// In order to reduce memory fragmentation on small devices, we use the maximum 
+	// possible size here which is TOON_BACKBUFFER_WIDTH. Even though this is 
+	// 1280 as opposed to the possible 640, it actually helps memory allocation on
+	// those devices.
+	_heap->init(TOON_BACKBUFFER_WIDTH * _height);	// should really be _width
 	delete[] _gridTemp;
 	_gridTemp = new int32[_width*_height];
 }
@@ -437,7 +443,6 @@ void PathFinding::addBlockingEllipse(int32 x1, int32 y1, int32 w, int32 h) {
 	_blockingRects[_numBlockingRects][4] = 1;
 	_numBlockingRects++;
 }
-
 
 int32 PathFinding::getPathNodeCount() const {
 	return _gridPathCount;

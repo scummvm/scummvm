@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/system.h"
-#include "common/events.h"
 #include "common/EventRecorder.h"
 
 #include "gob/sound/bgatmosphere.h"
@@ -47,7 +45,7 @@ BackgroundAtmosphere::~BackgroundAtmosphere() {
 	queueClear();
 }
 
-void BackgroundAtmosphere::play() {
+void BackgroundAtmosphere::playBA() {
 	Common::StackLock slock(_mutex);
 
 	_queuePos = -1;
@@ -59,7 +57,7 @@ void BackgroundAtmosphere::play() {
 	SoundMixer::play(*_queue[_queuePos], 1, 0);
 }
 
-void BackgroundAtmosphere::stop() {
+void BackgroundAtmosphere::stopBA() {
 	SoundMixer::stop(0);
 }
 

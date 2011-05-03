@@ -26,6 +26,7 @@
 #ifndef GRAPHICS_PALETTE_H
 #define GRAPHICS_PALETTE_H
 
+#include "common/scummsys.h"
 #include "common/noncopyable.h"
 
 /**

@@ -42,14 +42,14 @@ typedef	uint32	COLORREF;
 #define TINSEL_PSX_RGB(r,g,b) ((uint16)(((uint8)(r))|((uint16)(g)<<5)|(((uint16)(b))<<10)))
 
 enum {
-	MAX_COLOURS		= 256,	///< maximum number of colours - for VGA 256
+	MAX_COLORS		= 256,	///< maximum number of colors - for VGA 256
 	BITS_PER_PIXEL	= 8,	///< number of bits per pixel for VGA 256
 	MAX_INTENSITY	= 255,	///< the biggest value R, G or B can have
 	NUM_PALETTES	= 32,	///< number of palettes
 
 	// Discworld has some fixed apportioned bits in the palette.
-	BGND_DAC_INDEX	= 0,	///< index of background colour in Video DAC
-	FGND_DAC_INDEX	= 1,	///< index of first foreground colour in Video DAC
+	BGND_DAC_INDEX	= 0,	///< index of background color in Video DAC
+	FGND_DAC_INDEX	= 1,	///< index of first foreground color in Video DAC
 	TBLUE1			= 228,	///< Blue used in translucent rectangles
 	TBLUE2			= 229,	///< Blue used in translucent rectangles
 	TBLUE3			= 230,	///< Blue used in translucent rectangles
@@ -57,7 +57,7 @@ enum {
 	TALKFONT_COL	= 233
 };
 
-// some common colours
+// some common colors
 
 #define	BLACK	(TINSEL_RGB(0, 0, 0))
 #define	WHITE	(TINSEL_RGB(MAX_INTENSITY, MAX_INTENSITY, MAX_INTENSITY))
@@ -73,8 +73,8 @@ enum {
 
 /** hardware palette structure */
 struct PALETTE {
-	int32 numColours;		///< number of colours in the palette
-	COLORREF palRGB[MAX_COLOURS];	///< actual palette colours
+	int32 numColors;		///< number of colors in the palette
+	COLORREF palRGB[MAX_COLORS];	///< actual palette colors
 } PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
@@ -85,10 +85,10 @@ struct PALQ {
 	SCNHANDLE hPal;		///< handle to palette data struct
 	int objCount;		///< number of objects using this palette
 	int posInDAC;		///< palette position in the video DAC
-	int numColours;		///< number of colours in the palette
+	int numColors;		///< number of colors in the palette
 	// Discworld 2 fields
 	bool bFading;		// Whether or not fading
-	COLORREF palRGB[MAX_COLOURS];	// actual palette colours
+	COLORREF palRGB[MAX_COLORS];	// actual palette colors
 };
 
 #define	PALETTE_MOVED	0x8000	// when this bit is set in the "posInDAC"
@@ -114,13 +114,13 @@ void PalettesToVideoDAC();	// Update the video DAC with palettes currently the t
 
 void UpdateDACqueueHandle(
 	int posInDAC,		// position in video DAC
-	int numColours,		// number of colours in palette
+	int numColors,		// number of colors in palette
 	SCNHANDLE hPalette);	// handle to palette
 
 void UpdateDACqueue(		// places a palette in the video DAC queue
 	int posInDAC,		// position in video DAC
-	int numColours,		// number of colours in palette
-	COLORREF *pColours);	// list of RGB tripples
+	int numColors,		// number of colors in palette
+	COLORREF *pColors);	// list of RGB tripples
 
 void UpdateDACqueue(int posInDAC, COLORREF color);
 
@@ -140,10 +140,10 @@ void SwapPalette(		// swaps palettes at the specified palette queue position
 PALQ *GetNextPalette(		// returns the next palette in the queue
 	PALQ *pStrtPal);	// queue position to start from - when NULL will start from beginning of queue
 
-COLORREF GetBgndColour();	// returns current background colour
+COLORREF GetBgndColor();	// returns current background color
 
-void SetBgndColour(		// sets current background colour
-	COLORREF colour);	// colour to set the background to
+void SetBgndColor(		// sets current background color
+	COLORREF color);	// color to set the background to
 
 void FadingPalette(PALQ *pPalQ, bool bFading);
 
@@ -155,22 +155,22 @@ void NoFadingPalettes();	// All fading processes have just been killed
 
 void DimPartPalette(
 	SCNHANDLE hPal,
-	int startColour,
+	int startColor,
 	int length,
 	int brightness);	// 0 = black, 10 == 100%
 
 
-int TranslucentColour();
+int TranslucentColor();
 
-#define BoxColour TranslucentColour
+#define BoxColor TranslucentColor
 
-int HighlightColour();
+int HighlightColor();
 
-int TalkColour();
+int TalkColor();
 
-void SetTalkColourRef(COLORREF colRef);
+void SetTalkColorRef(COLORREF colRef);
 
-COLORREF GetTalkColourRef();
+COLORREF GetTalkColorRef();
 
 void SetTagColorRef(COLORREF colRef);
 

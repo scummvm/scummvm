@@ -62,7 +62,7 @@ bool ResourceContext_HRS::loadResV2(uint32 contextSize) {
 	readElement(_file, origin);
 
 	// Check if the file is valid
-	if (origin.id != MKID_BE('HRES')) {	// header
+	if (origin.id != MKTAG('H','R','E','S')) {	// header
 		return false;
 	}
 

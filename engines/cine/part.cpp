@@ -25,6 +25,7 @@
 
 #include "common/debug.h"
 #include "common/endian.h"
+#include "common/textconsole.h"
 
 #include "cine/cine.h"
 #include "cine/unpack.h"

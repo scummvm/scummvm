@@ -576,11 +576,43 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Harry and the Haunted House 1.1
+	// From pacifist
+	{
+		{
+			"harryhh",
+			"",
+			AD_ENTRY1("HARRY.512", "8d786f0998f27e44603a2202d6786c25"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"HARRY.EXE"
+	},
+
 	{
 		{
 			"carmentq",
 			"",
 			AD_ENTRY1("Outline.txt", "67abce5dcda969c23f367a98c90439bc"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV5,
+		0,
+		0
+	},
+
+	{
+		{
+			"carmentqc",
+			"",
+			AD_ENTRY1("Outline.txt", "6a281eefe72987afb0f8fb6cf84553f5"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -761,6 +793,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"seussabc",
+			"Demo",
+			AD_ENTRY1("BookOutline", "17d72660680ae32cd7c560d0cf04d2ef"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		0
+	},
+
+	{
+		{
 			"1stdegree",
 			"",
 			AD_ENTRY1("AL236_1.MHK", "3ba145492a7b8b4dee0ef4222c5639c3"),
@@ -852,6 +899,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"TORTOISE.EXE"
 	},
 
+	// From Scarlatti in bug #3275626
+	{
+		{
+			"tortoise",
+			"Demo v1.1",
+			AD_ENTRY1("TORTOISE.512", "14400a3358a3f1148e4d4b47bc3523c9"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"TORTOISE.EXE"
+	},
+
 	{
 		{
 			"tortoise",
@@ -912,6 +975,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"ARTHUR.EXE"
 	},
 
+	// From Scarlatti in bug #3275626
+	{
+		{
+			"arthur",
+			"Demo v1.1",
+			AD_ENTRY1("ARTHUR.512", "dabdd466dea26ab5ecb9415cf73f8601"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"ARTHUR.EXE"
+	},
+
 	{
 		{
 			"arthur",
@@ -942,6 +1021,40 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Living Books Player"
 	},
 
+	// Just Grandma and Me 2.0
+	// From pacifist
+	{
+		{
+			"grandma",
+			"v2.0",
+			AD_ENTRY1("OUTLINE", "159c18b663c58d1aa17ad5e1ab1f0e12"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	// Just Grandma and Me 1.0
+	// From scoriae
+	{
+		{
+			"grandma",
+			"v1.0",
+			AD_ENTRY1("PAGES.512", "e694ac10f957dd2e20611350bf968da3"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_LB_10,
+		"GRANDMA.EXE"
+	},
+
 	{
 		{
 			"grandma",
@@ -962,6 +1075,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"grandma",
 			"Demo v1.1",
 			AD_ENTRY1("GRANDMA.512", "72a4d5fb1b3f06b5f75425635d42ce2e"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"GRANDMA.EXE"
+	},
+
+	// From Scarlatti in bug #3275626
+	{
+		{
+			"grandma",
+			"Demo v1.1",
+			AD_ENTRY1("GRANDMA.512", "4f616647245bb4e37e6dab7557dad304"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
@@ -1002,11 +1131,44 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Living Books Player"
 	},
 
+	// Ruff's Bone 1.0
+	// From pacifist
+	{
+		{
+			"ruff",
+			"",
+			AD_ENTRY1("RUFF.512", "3dbda0de6f47a64d1714d89f5a5f60d1"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"RUFF.EXE"
+	},
+
 	{
 		{
 			"ruff",
 			"Demo",
 			AD_ENTRY1("RUFF.512", "2ba1aa65177c816e156db648c398d362"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"RUFF.EXE"
+	},
+
+	// From Scarlatti in bug #3275626
+	{
+		{
+			"ruff",
+			"Demo",
+			AD_ENTRY1("RUFF.512", "07b9d013e2400d61ca268892a76de4d2"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
@@ -1052,6 +1214,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"newkid",
 			"Demo v1.1",
 			AD_ENTRY1("NEWKID.512", "41e975b7390c626f8d1058a34f9d9b2e"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"NEWKID.EXE"
+	},
+
+	// From Scarlatti in bug #3275626
+	{
+		{
+			"newkid",
+			"Demo v1.1",
+			AD_ENTRY1("NEWKID.512", "de576f3481f62e84eda03b4d2307492b"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
@@ -1108,11 +1286,43 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// From zerep in bug #3287894
+	{
+		{
+			"arthurbday",
+			"",
+			AD_ENTRY1("BIRTHDAY.512", "874f80ff363214d63593864e58c4a130"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"BIRTHDAY.EXE"
+	},
+
 	{
 		{
 			"arthurbday",
 			"Demo",
 			AD_ENTRY1("BIRTHDAY.512", "fb73e387cfec65c5c930db068a8f468a"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"BIRTHDAY.EXE"
+	},
+
+	// From Scarlatti in bug #3275626
+	{
+		{
+			"arthurbday",
+			"Demo",
+			AD_ENTRY1("BIRTHDAY.512", "2946b1e06f59ea607b8b29dfc6ba8976"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
@@ -1166,6 +1376,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GType_LIVINGBOOKSV1,
 		0,
 		"Little Monster at School"
+	},
+
+	// From Scarlatti in bug #3275626
+	{
+		{
+			"lilmonster",
+			"Demo",
+			AD_ENTRY1("MONSTER.512", "029e57f1fc8dd1f93f6623a1841f0df2"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"MONSTER.EXE"
 	},
 
 	{
@@ -1367,6 +1593,55 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Bears Get in a Fight"
 	},
 
+	// From bkennimer in bug #3284930
+	{
+		{
+			"beardark",
+			"",
+			AD_ENTRY1("DARK.LB", "81d1e6eaf88d54bd29836a133935c0d4"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	// From bkennimer in bug #3284930
+	// 32-bit version of the previous entry
+	{
+		{
+			"beardark",
+			"",
+			AD_ENTRY1("DARK32.LB", "28abbf5498aeb29e78e5e0dec969ebe2"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	// From bkennimer in bug #3284930
+	{
+		{
+			"beardark",
+			"",
+			AD_ENTRY1("BookOutline", "95b2e43778ca9cfaee37bdde843e7681"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
 	{
 		{
 			"arthurcomp",
@@ -1393,6 +1668,40 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV4,
+		0,
+		0
+	},
+
+	// Stellaluna 1.0
+	// From pacifist
+	{
+		{
+			"stellaluna",
+			"",
+			AD_ENTRY1("STELLA.LB", "763bb4a4721aebb5af316ca8e1b478ed"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// Sheila Rae the Brave 1.0
+	// From pacifist
+	{
+		{
+			"sheila",
+			"",
+			AD_ENTRY1("SHEILA.LB", "c28a60f615a46384d9a8941fc5c89d63"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
 		0,
 		0
 	},

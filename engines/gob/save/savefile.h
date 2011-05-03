@@ -48,8 +48,8 @@ class SaveHeader {
 public:
 	/** The size of the header. */
 	static const int kSize = 20;
-	static const uint32 kID1 = MKID_BE('\0SCV');
-	static const uint32 kID2 = MKID_BE('MGOB');
+	static const uint32 kID1 = MKTAG(0,'S','C','V');
+	static const uint32 kID2 = MKTAG('M','G','O','B');
 
 	SaveHeader(uint32 type = 0, uint32 version = 0, uint32 size = 0);
 
@@ -106,7 +106,7 @@ protected:
 class SavePartMem : public SavePart {
 public:
 	static const uint32 kVersion = 1;
-	static const uint32 kID = MKID_BE('PMEM');
+	static const uint32 kID = MKTAG('P','M','E','M');
 
 	SavePartMem(uint32 size);
 	~SavePartMem();
@@ -128,7 +128,7 @@ private:
 class SavePartVars : public SavePart {
 public:
 	static const uint32 kVersion = 1;
-	static const uint32 kID = MKID_BE('VARS');
+	static const uint32 kID = MKTAG('V','A','R','S');
 
 	SavePartVars(GobEngine *vm, uint32 size);
 	~SavePartVars();
@@ -155,7 +155,7 @@ private:
 class SavePartSprite : public SavePart {
 public:
 	static const uint32 kVersion = 2;
-	static const uint32 kID = MKID_BE('SPRT');
+	static const uint32 kID = MKTAG('S','P','R','T');
 
 	SavePartSprite(uint32 width, uint32 height, bool trueColor = false);
 	~SavePartSprite();
@@ -193,7 +193,7 @@ private:
 class SavePartInfo : public SavePart {
 public:
 	static const uint32 kVersion = 1;
-	static const uint32 kID = MKID_BE('INFO');
+	static const uint32 kID = MKTAG('I','N','F','O');
 
 	/**
 	 * The constructor.
@@ -235,7 +235,7 @@ private:
 class SaveContainer {
 public:
 	static const uint32 kVersion = 1;
-	static const uint32 kID = MKID_BE('CONT');
+	static const uint32 kID = MKTAG('C','O','N','T');
 
 	/**
 	 * The constructor.

@@ -26,6 +26,8 @@
 #include "agos/agos.h"
 #include "agos/vga.h"
 
+#include "common/textconsole.h"
+
 namespace AGOS {
 
 enum {

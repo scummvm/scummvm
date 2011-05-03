@@ -27,7 +27,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "common/util.h"
+#include "common/textconsole.h"
 
 #define MAXLINELEN 256
 

@@ -29,6 +29,8 @@
 #include "audio/softsynth/cms.h"
 #include "audio/mixer.h"
 
+#include "common/system.h"
+
 #include "sci/resource.h"
 
 namespace Sci {
@@ -785,7 +787,7 @@ public:
 
 	int open(ResourceManager *resMan) {
 		if (_driver)
-			return MERR_ALREADY_OPEN;
+			return MidiDriver::MERR_ALREADY_OPEN;
 
 		_driver = new MidiDriver_CMS(g_system->getMixer(), resMan);
 		int driverRetVal = _driver->open();

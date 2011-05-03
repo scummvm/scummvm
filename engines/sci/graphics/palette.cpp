@@ -28,6 +28,8 @@
 #include "common/util.h"
 #include "common/system.h"
 
+#include "graphics/palette.h"
+
 #include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/cache.h"
@@ -76,6 +78,24 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMergi
 #ifdef ENABLE_SCI32
 	_clutTable = 0;
 #endif
+
+	switch (_resMan->getViewType()) {
+	case kViewEga:
+		_totalScreenColors = 16;
+		break;
+	case kViewAmiga:
+		_totalScreenColors = 32;
+		break;
+	case kViewAmiga64:
+		_totalScreenColors = 64;
+		break;
+	case kViewVga:
+	case kViewVga11:
+			_totalScreenColors = 256;
+		break;
+	default:
+		error("GfxPalette: Unknown view type");
+	}
 }
 
 GfxPalette::~GfxPalette() {
@@ -97,7 +117,7 @@ bool GfxPalette::isMerging() {
 void GfxPalette::setDefault() {
 	if (_resMan->getViewType() == kViewEga)
 		setEGA();
-	else if (_resMan->isAmiga32color())
+	else if (_resMan->getViewType() == kViewAmiga)
 		setAmiga();
 	else
 		kernelSetFromResource(999, true);
@@ -418,10 +438,6 @@ void GfxPalette::getSys(Palette *pal) {
 }
 
 void GfxPalette::setOnScreen() {
-	// We dont change palette at all times for amiga
-	if (_resMan->isAmiga32color())
-		return;
-
 	copySysPaletteToScreen();
 }
 
@@ -847,24 +863,28 @@ void GfxPalette::palVaryProcess(int signal, bool setPalette) {
 	}
 }
 
+static inline uint getMacColorDiff(byte r1, byte g1, byte b1, byte r2, byte g2, byte b2) {
+	// Use the difference of the top 4 bits and add together the differences
+	return ABS((r2 & 0xf0) - (r1 & 0xf0)) + ABS((g2 & 0xf0) - (g1 & 0xf0)) + ABS((b2 & 0xf0) - (b1 & 0xf0));
+}
+
 byte GfxPalette::findMacIconBarColor(byte r, byte g, byte b) {
 	// Find the best color for use with the Mac icon bar
+	// Check white, then the palette colors, and then black
 
-	// For black, always use 0
-	if (r == 0 && g == 0 && b == 0)
-		return 0;
+	// Try white first
+	byte found = 0xff;
+	uint diff = getMacColorDiff(r, g, b, 0xff, 0xff, 0xff);
 
-	byte found = 0xFF;
-	uint diff = 0xFFFFFFFF;
+	if (diff == 0)
+		return found;
 
+	// Go through the main colors of the CLUT
 	for (uint16 i = 1; i < 255; i++) {
-		int dr = _macClut[i * 3    ] - r;
-		int dg = _macClut[i * 3 + 1] - g;
-		int db = _macClut[i * 3 + 2] - b;
+		if (!colorIsFromMacClut(i))
+			continue;
 
-		// Use the largest difference. This is what the Mac Palette Manager does.
-		uint cdiff = MAX<int>(ABS(dr), ABS(dg));
-		cdiff = MAX<int>(cdiff, ABS(db));
+		uint cdiff = getMacColorDiff(r, g, b, _macClut[i * 3], _macClut[i * 3 + 1], _macClut[i * 3 + 2]);
 
 		if (cdiff == 0)
 			return i;
@@ -874,6 +894,10 @@ byte GfxPalette::findMacIconBarColor(byte r, byte g, byte b) {
 		}
 	}
 
+	// Also check black here
+	if (getMacColorDiff(r, g, b, 0, 0, 0) < diff)
+		return 0;
+
 	return found;
 }
 
@@ -881,7 +905,7 @@ void GfxPalette::loadMacIconBarPalette() {
 	if (!g_sci->hasMacIconBar())
 		return;
 
-	Common::SeekableReadStream *clutStream = g_sci->getMacExecutable()->getResource(MKID_BE('clut'), 150);
+	Common::SeekableReadStream *clutStream = g_sci->getMacExecutable()->getResource(MKTAG('c','l','u','t'), 150);
 
 	if (!clutStream)
 		error("Could not find clut 150 for the Mac icon bar");
@@ -889,7 +913,9 @@ void GfxPalette::loadMacIconBarPalette() {
 	clutStream->readUint32BE(); // seed
 	clutStream->readUint16BE(); // flags
 	uint16 colorCount = clutStream->readUint16BE() + 1;
-	_macClut = new byte[colorCount * 3];
+	assert(colorCount == 256);
+
+	_macClut = new byte[256 * 3];
 
 	for (uint16 i = 0; i < colorCount; i++) {
 		clutStream->readUint16BE();
@@ -897,6 +923,19 @@ void GfxPalette::loadMacIconBarPalette() {
 		_macClut[i * 3 + 1] = clutStream->readUint16BE() >> 8;
 		_macClut[i * 3 + 2] = clutStream->readUint16BE() >> 8;
 	}
+
+	// Adjust bounds on the KQ6 palette
+	// We don't use all of it for the icon bar
+	if (g_sci->getGameId() == GID_KQ6)
+		memset(_macClut + 32 * 3, 0, (256 - 32) * 3);
+
+	// Force black/white
+	_macClut[0x00 * 3    ] = 0;
+	_macClut[0x00 * 3 + 1] = 0;
+	_macClut[0x00 * 3 + 2] = 0;
+	_macClut[0xff * 3    ] = 0xff;
+	_macClut[0xff * 3 + 1] = 0xff;
+	_macClut[0xff * 3 + 2] = 0xff;
 
 	delete clutStream;
 }

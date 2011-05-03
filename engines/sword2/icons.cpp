@@ -157,33 +157,33 @@ void Mouse::buildMenu() {
 		byte *icon = NULL;
 
 		if (res) {
-			bool icon_coloured;
+			bool icon_colored;
 
 			uint32 object_held = _vm->_logic->readVar(OBJECT_HELD);
 			uint32 combine_base = _vm->_logic->readVar(COMBINE_BASE);
 
 			if (_examiningMenuIcon) {
 				// When examining an object, that object is
-				// coloured. The rest are greyed out.
-				icon_coloured = (res == object_held);
+				// colored. The rest are greyed out.
+				icon_colored = (res == object_held);
 			} else if (combine_base) {
 				// When combining two menu object (i.e. using
-				// one on another), both are coloured. The rest
+				// one on another), both are colored. The rest
 				// are greyed out.
-				icon_coloured = (res == object_held || combine_base);
+				icon_colored = (res == object_held || combine_base);
 			} else {
 				// If an object is selected but we are not yet
 				// doing anything with it, the selected object
-				// is greyed out. The rest are coloured.
-				icon_coloured = (res != object_held);
+				// is greyed out. The rest are colored.
+				icon_colored = (res != object_held);
 			}
 
 			icon = _vm->_resman->openResource(res) + ResHeader::size();
 
-			// The coloured icon is stored directly after the
+			// The colored icon is stored directly after the
 			// greyed out one.
 
-			if (icon_coloured)
+			if (icon_colored)
 				icon += (menuIconWidth * RDMENU_ICONDEEP);
 		}
 
@@ -216,7 +216,7 @@ void Mouse::buildSystemMenu() {
 	else
 		menuIconWidth = RDMENU_ICONWIDE;
 
-	// Build them all high in full colour - when one is clicked on all the
+	// Build them all high in full color - when one is clicked on all the
 	// rest will grey out.
 
 	for (int i = 0; i < ARRAYSIZE(icon_list); i++) {

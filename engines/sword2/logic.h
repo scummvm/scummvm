@@ -260,7 +260,7 @@ public:
 	int32 fnStandAtAnim(int32 *params);
 	int32 fnSetScrollLeftMouse(int32 *params);
 	int32 fnSetScrollRightMouse(int32 *params);
-	int32 fnColour(int32 *params);
+	int32 fnColor(int32 *params);
 	int32 fnFlash(int32 *params);
 	int32 fnPreFetch(int32 *params);
 	int32 fnGetPlayerSaveData(int32 *params);

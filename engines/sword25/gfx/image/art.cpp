@@ -1041,7 +1041,7 @@ static void art_pri_free(ArtPriQ *pq) {
 	free(pq);
 }
 
-static art_boolean art_pri_empty(ArtPriQ *pq) {
+static bool art_pri_empty(ArtPriQ *pq) {
 	return pq->n_items == 0;
 }
 
@@ -1122,7 +1122,7 @@ static int art_svp_writer_rewind_add_segment(ArtSvpWriter *self, int wind_left,
 	ArtSvpWriterRewind *swr = (ArtSvpWriterRewind *)self;
 	ArtSVP *svp;
 	ArtSVPSeg *seg;
-	art_boolean left_filled = 0, right_filled = 0;
+	bool left_filled = 0, right_filled = 0;
 	int wind_right = wind_left + delta_wind;
 	int seg_num;
 	const int init_n_points_max = 4;
@@ -1459,7 +1459,7 @@ static ArtActiveSeg *art_svp_intersect_add_point(ArtIntersectCtx *ctx, double x,
                             ArtActiveSeg *seg, ArtBreakFlags break_flags) {
 	ArtActiveSeg *left, *right;
 	double x_min = x, x_max = x;
-	art_boolean left_live, right_live;
+	bool left_live, right_live;
 	double d;
 	double new_x;
 	ArtActiveSeg *test, *result = NULL;
@@ -1490,9 +1490,9 @@ static ArtActiveSeg *art_svp_intersect_add_point(ArtIntersectCtx *ctx, double x,
 					left = left->left;
 					left_live = (left != NULL);
 				} else
-					left_live = ART_FALSE;
+					left_live = false;
 			} else
-				left_live = ART_FALSE;
+				left_live = false;
 		} else if (right_live) {
 			if (x >= right->x[(right->flags & ART_ACTIVE_FLAGS_BNEG) ^ 1] &&
 			        /* It may be that one of these conjuncts turns out to be always
@@ -1510,9 +1510,9 @@ static ArtActiveSeg *art_svp_intersect_add_point(ArtIntersectCtx *ctx, double x,
 					right = right->right;
 					right_live = (right != NULL);
 				} else
-					right_live = ART_FALSE;
+					right_live = false;
 			} else
-				right_live = ART_FALSE;
+				right_live = false;
 		}
 	}
 
@@ -1571,7 +1571,7 @@ static void art_svp_intersect_swap_active(ArtIntersectCtx *ctx,
  * Return value: True if the intersection took place at the current
  * scan line, indicating further iteration is needed.
  **/
-static art_boolean art_svp_intersect_test_cross(ArtIntersectCtx *ctx,
+static bool art_svp_intersect_test_cross(ArtIntersectCtx *ctx,
                              ArtActiveSeg *left_seg, ArtActiveSeg *right_seg,
                              ArtBreakFlags break_flags) {
 	double left_x0, left_y0, left_x1;
@@ -1597,17 +1597,17 @@ static art_boolean art_svp_intersect_test_cross(ArtIntersectCtx *ctx,
 			if (left_x1 <
 			        right_seg->x[(right_seg->flags & ART_ACTIVE_FLAGS_BNEG) ^ 1] ||
 			        left_y1 == right_seg->y0)
-				return ART_FALSE;
+				return false;
 			d = left_x1 * right_seg->a + left_y1 * right_seg->b + right_seg->c;
 			if (d < -EPSILON_A)
-				return ART_FALSE;
+				return false;
 			else if (d < EPSILON_A) {
 				/* I'm unsure about the break flags here. */
 				double right_x1 = art_svp_intersect_break(ctx, right_seg,
 				                  left_x1, left_y1,
 				                  ART_BREAK_RIGHT);
 				if (left_x1 <= right_x1)
-					return ART_FALSE;
+					return false;
 			}
 		} else if (left_y1 > right_y1) {
 			/* Test right (x1, y1) against left segment */
@@ -1615,27 +1615,27 @@ static art_boolean art_svp_intersect_test_cross(ArtIntersectCtx *ctx,
 
 			if (right_x1 > left_seg->x[left_seg->flags & ART_ACTIVE_FLAGS_BNEG] ||
 			        right_y1 == left_seg->y0)
-				return ART_FALSE;
+				return false;
 			d = right_x1 * left_seg->a + right_y1 * left_seg->b + left_seg->c;
 			if (d > EPSILON_A)
-				return ART_FALSE;
+				return false;
 			else if (d > -EPSILON_A) {
 				/* See above regarding break flags. */
 				left_x1 = art_svp_intersect_break(ctx, left_seg,
 				                 right_x1, right_y1,
 				                 ART_BREAK_LEFT);
 				if (left_x1 <= right_x1)
-					return ART_FALSE;
+					return false;
 			}
 		} else { /* left_y1 == right_y1 */
 			left_x1 = left_seg->x[1];
 			double right_x1 = right_seg->x[1];
 
 			if (left_x1 <= right_x1)
-				return ART_FALSE;
+				return false;
 		}
 		art_svp_intersect_swap_active(ctx, left_seg, right_seg);
-		return ART_TRUE;
+		return true;
 	}
 
 	if (left_y1 < right_y1) {
@@ -1645,16 +1645,16 @@ static art_boolean art_svp_intersect_test_cross(ArtIntersectCtx *ctx,
 		if (left_x1 <
 		        right_seg->x[(right_seg->flags & ART_ACTIVE_FLAGS_BNEG) ^ 1] ||
 		        left_y1 == right_seg->y0)
-			return ART_FALSE;
+			return false;
 		d = left_x1 * right_seg->a + left_y1 * right_seg->b + right_seg->c;
 		if (d < -EPSILON_A)
-			return ART_FALSE;
+			return false;
 		else if (d < EPSILON_A) {
 			double right_x1 = art_svp_intersect_break(ctx, right_seg,
 			                  left_x1, left_y1,
 			                  ART_BREAK_RIGHT);
 			if (left_x1 <= right_x1)
-				return ART_FALSE;
+				return false;
 		}
 	} else if (left_y1 > right_y1) {
 		/* Test right (x1, y1) against left segment */
@@ -1662,23 +1662,23 @@ static art_boolean art_svp_intersect_test_cross(ArtIntersectCtx *ctx,
 
 		if (right_x1 > left_seg->x[left_seg->flags & ART_ACTIVE_FLAGS_BNEG] ||
 		        right_y1 == left_seg->y0)
-			return ART_FALSE;
+			return false;
 		d = right_x1 * left_seg->a + right_y1 * left_seg->b + left_seg->c;
 		if (d > EPSILON_A)
-			return ART_FALSE;
+			return false;
 		else if (d > -EPSILON_A) {
 			left_x1 = art_svp_intersect_break(ctx, left_seg,
 			                 right_x1, right_y1,
 			                 ART_BREAK_LEFT);
 			if (left_x1 <= right_x1)
-				return ART_FALSE;
+				return false;
 		}
 	} else { /* left_y1 == right_y1 */
 		left_x1 = left_seg->x[1];
 		double right_x1 = right_seg->x[1];
 
 		if (left_x1 <= right_x1)
-			return ART_FALSE;
+			return false;
 	}
 
 	/* The segments cross. Find the intersection point. */
@@ -1748,7 +1748,7 @@ static art_boolean art_svp_intersect_test_cross(ArtIntersectCtx *ctx,
 			winner->horiz_delta_wind -= loser->delta_wind;
 
 			art_svp_intersect_swap_active(ctx, left_seg, right_seg);
-			return ART_TRUE;
+			return true;
 		}
 	} else if (y == right_seg->y0) {
 		art_svp_intersect_push_pt(ctx, left_seg, x, y);
@@ -1764,7 +1764,7 @@ static art_boolean art_svp_intersect_test_cross(ArtIntersectCtx *ctx,
 		if ((break_flags & ART_BREAK_RIGHT) && right_seg->right != NULL)
 			art_svp_intersect_add_point(ctx, x, y, right_seg->right, break_flags);
 	}
-	return ART_FALSE;
+	return false;
 }
 
 /**
@@ -1885,7 +1885,7 @@ static void art_svp_intersect_horiz(ArtIntersectCtx *ctx, ArtActiveSeg *seg,
 
 	if (x0 > x1) {
 		ArtActiveSeg *left;
-		art_boolean first = ART_TRUE;
+		bool first = true;
 
 		for (left = seg->left; left != NULL; left = seg->left) {
 			int left_bneg = left->flags & ART_ACTIVE_FLAGS_BNEG;
@@ -1902,12 +1902,12 @@ static void art_svp_intersect_horiz(ArtIntersectCtx *ctx, ArtActiveSeg *seg,
 			if (first && left->right != NULL) {
 				art_svp_intersect_test_cross(ctx, left, left->right,
 				                             ART_BREAK_RIGHT);
-				first = ART_FALSE;
+				first = false;
 			}
 		}
 	} else {
 		ArtActiveSeg *right;
-		art_boolean first = ART_TRUE;
+		bool first = true;
 
 		for (right = seg->right; right != NULL; right = seg->right) {
 			int right_bneg = right->flags & ART_ACTIVE_FLAGS_BNEG;
@@ -1925,7 +1925,7 @@ static void art_svp_intersect_horiz(ArtIntersectCtx *ctx, ArtActiveSeg *seg,
 			if (first && right->left != NULL) {
 				art_svp_intersect_test_cross(ctx, right->left, right,
 				                             ART_BREAK_RIGHT);
-				first = ART_FALSE;
+				first = false;
 			}
 		}
 	}
@@ -2231,7 +2231,7 @@ void art_svp_intersector(const ArtSVP *in, ArtSvpWriter *out) {
 
 typedef double artfloat;
 
-struct _ArtSVPRenderAAIter {
+struct ArtSVPRenderAAIter {
 	const ArtSVP *svp;
 	int x0, x1;
 	int y;

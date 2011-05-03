@@ -24,9 +24,7 @@
  * CD/drive handling functions
  */
 
-#include "common/config-manager.h"
-#include "common/substream.h"
-#include "gui/message.h"
+#include "common/textconsole.h"
 #include "tinsel/drives.h"
 #include "tinsel/scene.h"
 #include "tinsel/tinsel.h"
@@ -38,7 +36,6 @@ namespace Tinsel {
 // FIXME: Avoid non-const global vars
 
 char currentCD = '1';
-static uint32 cdFlags[] = { fCd1, fCd2, fCd3, fCd4, fCd5, fCd6, fCd7, fCd8 };
 
 static bool bChangingCD = false;
 static char nextCD = '\0';
@@ -74,6 +71,8 @@ int GetCurrentCD() {
 	// count from 1
 	return (currentCD - '1' + 1);
 }
+
+static const uint32 cdFlags[] = { fCd1, fCd2, fCd3, fCd4, fCd5, fCd6, fCd7, fCd8 };
 
 void SetCD(int flags) {
 	if (flags & cdFlags[currentCD - '1'])

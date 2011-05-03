@@ -35,3 +35,7 @@ ip.txt : $(srcdir)/backends/platform/dc/ip.txt.in
 	  ver="V$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH)"; fi; \
 	sed -e 's/[@]VERSION[@]/'"$$ver"/ -e 's/[@]DATE[@]/$(shell date '+%Y%m%d')/' < $< > $@
 
+
+dcdist : dist
+	mkdir -p dcdist/scummvm
+	cp scummvm.elf SCUMMVM.BIN IP.BIN *.PLG dcdist/scummvm/

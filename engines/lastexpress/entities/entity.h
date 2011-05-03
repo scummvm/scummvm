@@ -35,6 +35,7 @@
 #include "common/array.h"
 #include "common/func.h"
 #include "common/serializer.h"
+#include "common/textconsole.h"
 
 namespace LastExpress {
 

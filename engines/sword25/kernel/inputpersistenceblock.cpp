@@ -32,6 +32,8 @@
  *
  */
 
+#include "common/textconsole.h"
+
 #include "sword25/kernel/inputpersistenceblock.h"
 
 namespace Sword25 {

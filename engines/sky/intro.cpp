@@ -28,6 +28,7 @@
 #include "common/util.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "sky/disk.h"
 #include "sky/intro.h"

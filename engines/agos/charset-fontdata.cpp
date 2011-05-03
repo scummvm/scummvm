@@ -26,6 +26,7 @@
 
 
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "agos/agos.h"
 #include "agos/intern.h"

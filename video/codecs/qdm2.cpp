@@ -34,8 +34,9 @@
 #include "video/codecs/qdm2data.h"
 
 #include "common/array.h"
+#include "common/debug.h"
 #include "common/stream.h"
-#include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Video {
 
@@ -376,13 +377,7 @@ static inline unsigned int getBits(GetBitContext *s, int n) {
 }
 
 static inline void skipBits(GetBitContext *s, int n) {
-	int reIndex, reCache;
-
-	reIndex = s->index;
-	reCache = 0;
-
-	reCache = READ_LE_UINT32((const uint8 *)s->buffer + (reIndex >> 3)) >> (reIndex & 0x07);
-	s->index = reIndex + n;
+	s->index += n;
 }
 
 #define BITS_LEFT(length, gb) ((length) - getBitsCount((gb)))
@@ -448,7 +443,7 @@ float *ff_cos_tabs[] = {
 
 void initCosineTables(int index) {
 	int m = 1 << index;
-	double freq = 2 * PI / m;
+	double freq = 2 * M_PI / m;
 	float *tab = ff_cos_tabs[index];
 
 	for (int i = 0; i <= m / 4; i++)
@@ -776,7 +771,7 @@ int fftInit(FFTContext *s, int nbits, int inverse) {
 		s->tmpBuf = (FFTComplex *)malloc(n * sizeof(FFTComplex));
 	} else {
 		for (i = 0; i < n / 2; i++) {
-			alpha = 2 * PI * (float)i / (float)n;
+			alpha = 2 * M_PI * (float)i / (float)n;
 			c1 = cos(alpha);
 			s1 = sin(alpha) * s2;
 			s->exptab[i].re = c1;
@@ -814,7 +809,7 @@ int fftInit(FFTContext *s, int nbits, int inverse) {
  */
 int rdftInit(RDFTContext *s, int nbits, RDFTransformType trans) {
 	int n = 1 << nbits;
-	const double theta = (trans == RDFT || trans == IRIDFT ? -1 : 1) * 2 * PI / n;
+	const double theta = (trans == RDFT || trans == IRIDFT ? -1 : 1) * 2 * M_PI / n;
 
 	s->nbits = nbits;
 	s->inverse = trans == IRDFT || trans == IRIDFT;
@@ -1775,14 +1770,14 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadS
 
 	tmp = extraData->readUint32BE();
 	debug(1, "QDM2Stream::QDM2Stream() extraTag: %d", tmp);
-	if (tmp != MKID_BE('frma'))
+	if (tmp != MKTAG('f','r','m','a'))
 		warning("QDM2Stream::QDM2Stream() extraTag mismatch");
 
 	tmp = extraData->readUint32BE();
 	debug(1, "QDM2Stream::QDM2Stream() extraType: %d", tmp);
-	if (tmp == MKID_BE('QDMC'))
+	if (tmp == MKTAG('Q','D','M','C'))
 		warning("QDM2Stream::QDM2Stream() QDMC stream type not supported");
-	else if (tmp != MKID_BE('QDM2'))
+	else if (tmp != MKTAG('Q','D','M','2'))
 		error("QDM2Stream::QDM2Stream() Unsupported stream type");
 
 	tmp_s = extraData->readSint32BE();
@@ -1792,7 +1787,7 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadS
 
 	tmp = extraData->readUint32BE();
 	debug(1, "QDM2Stream::QDM2Stream() extraTag2: %d", tmp);
-	if (tmp != MKID_BE('QDCA'))
+	if (tmp != MKTAG('Q','D','C','A'))
 		warning("QDM2Stream::QDM2Stream() extraTag2 mismatch");
 
 	if (extraData->readUint32BE() != 1)
@@ -1824,7 +1819,7 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadS
 
 		tmp = extraData->readUint32BE();
 		debug(1, "QDM2Stream::QDM2Stream() extraTag3: %d", tmp);
-		if (tmp != MKID_BE('QDCP'))
+		if (tmp != MKTAG('Q','D','C','P'))
 			warning("QDM2Stream::QDM2Stream() extraTag3 mismatch");
 
 		if ((float)extraData->readUint32BE() != 1.0)
@@ -3009,7 +3004,7 @@ void QDM2Stream::qdm2_fft_generate_tone(FFTTone *tone)
 	float level, f[6];
 	int i;
 	QDM2Complex c;
-	const double iscale = 2.0 * PI / 512.0;
+	const double iscale = 2.0 * M_PI / 512.0;
 
 	tone->phase += tone->phase_shift;
 
@@ -3050,7 +3045,7 @@ void QDM2Stream::qdm2_fft_generate_tone(FFTTone *tone)
 
 void QDM2Stream::qdm2_fft_tone_synthesizer(uint8 sub_packet) {
 	int i, j, ch;
-	const double iscale = 0.25 * PI;
+	const double iscale = 0.25 * M_PI;
 
 	for (ch = 0; ch < _channels; ch++) {
 		memset(_fft.complex[ch], 0, _frameSize * sizeof(QDM2Complex));

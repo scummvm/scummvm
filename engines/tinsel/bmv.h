@@ -96,7 +96,7 @@ class BMVPlayer {
 		int	dieFrame;
 	} texts[2];
 
-	COLORREF talkColour;
+	COLORREF talkColor;
 
 	int bigProblemCount;
 
@@ -143,7 +143,7 @@ private:
 	void MovieAudio(int audioOffset, int blobs);
 	void FettleMovieText();
 	void BmvDrawText(bool bDraw);
-	void MovieText(CORO_PARAM, int stringId, int x, int y, int fontId, COLORREF *pTalkColour, int duration);
+	void MovieText(CORO_PARAM, int stringId, int x, int y, int fontId, COLORREF *pTalkColor, int duration);
 	int MovieCommand(char cmd, int commandOffset);
 	int FollowingPacket(int thisPacket, bool bReallyImportant);
 	void LoadSlots(int number);
@@ -151,7 +151,6 @@ private:
 	bool MaintainBuffer();
 	bool DoBMVFrame();
 	bool DoSoundFrame();
-	void LookAtBuffers();
 };
 
 

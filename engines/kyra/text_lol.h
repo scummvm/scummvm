@@ -28,9 +28,11 @@
 #ifndef KYRA_TEXT_LOL_H
 #define KYRA_TEXT_LOL_H
 
+#include "common/scummsys.h"
+
 namespace Kyra {
 
-class Screen_v2;
+class Screen_LoL;
 class LoLEngine;
 struct EMCState;
 

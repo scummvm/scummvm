@@ -33,26 +33,14 @@
 #include "graphics/pict.h"
 
 namespace Graphics {
-
 class JPEG;
-
 }
 
 namespace Mohawk {
 
 class MohawkEngine;
-class MohawkEngine_Myst;
-class MohawkEngine_Riven;
 class MohawkEngine_LivingBooks;
-class MohawkEngine_CSTime;
 class MohawkBitmap;
-class MystBitmap;
-
-enum RectState{
-	kRectEnabled,
-	kRectDisabled,
-	kRectUnreachable
-};
 
 class MohawkSurface {
 public:
@@ -110,11 +98,23 @@ protected:
 	virtual Common::Array<MohawkSurface *> decodeImages(uint16 id);
 
 	virtual MohawkEngine *getVM() = 0;
+	void addImageToCache(uint16 id, MohawkSurface *surface);
 
 private:
 	// An image cache that stores images until clearCache() is called
 	Common::HashMap<uint16, MohawkSurface*> _cache;
 	Common::HashMap<uint16, Common::Array<MohawkSurface*> > _subImageCache;
+};
+
+#ifdef ENABLE_MYST
+
+class MystBitmap;
+class MohawkEngine_Myst;
+
+enum RectState {
+	kRectEnabled,
+	kRectDisabled,
+	kRectUnreachable
 };
 
 class MystGraphics : public GraphicsManager {
@@ -161,17 +161,11 @@ private:
 	Common::Rect _viewport;
 };
 
-struct SFXERecord {
-	// Record values
-	uint16 frameCount;
-	Common::Rect rect;
-	uint16 speed;
-	Common::Array<Common::SeekableReadStream*> frameScripts;
+#endif // ENABLE_MYST
 
-	// Cur frame
-	uint16 curFrame;
-	uint32 lastFrameTime;
-};
+#ifdef ENABLE_RIVEN
+
+class MohawkEngine_Riven;
 
 class RivenGraphics : public GraphicsManager {
 public:
@@ -195,10 +189,16 @@ public:
 	// Transitions
 	void scheduleTransition(uint16 id, Common::Rect rect = Common::Rect(0, 0, 608, 392));
 	void runScheduledTransition();
+	void fadeToBlack();
 
 	// Inventory
 	void showInventory();
 	void hideInventory();
+
+	// Credits
+	void beginCredits();
+	void updateCredits();
+	uint getCurCreditsImage() { return _creditsImage; }
 
 protected:
 	MohawkSurface *decodeImage(uint16 id);
@@ -209,6 +209,17 @@ private:
 	MohawkBitmap *_bitmapDecoder;
 
 	// Water Effects
+	struct SFXERecord {
+		// Record values
+		uint16 frameCount;
+		Common::Rect rect;
+		uint16 speed;
+		Common::Array<Common::SeekableReadStream*> frameScripts;
+
+		// Cur frame
+		uint16 curFrame;
+		uint32 lastFrameTime;
+	};
 	Common::Array<SFXERecord> _waterEffects;
 
 	// Transitions
@@ -224,7 +235,13 @@ private:
 	Graphics::Surface *_mainScreen;
 	bool _dirtyScreen;
 	Graphics::PixelFormat _pixelFormat;
+	void clearMainScreen();
+
+	// Credits
+	uint _creditsImage, _creditsPos;
 };
+
+#endif // ENABLE_RIVEN
 
 class LBGraphics : public GraphicsManager {
 public:
@@ -244,6 +261,10 @@ private:
 	MohawkEngine_LivingBooks *_vm;
 };
 
+#ifdef ENABLE_CSTIME
+
+class MohawkEngine_CSTime;
+
 class CSTimeGraphics : public GraphicsManager {
 public:
 	CSTimeGraphics(MohawkEngine_CSTime *vm);
@@ -260,6 +281,8 @@ private:
 	MohawkBitmap *_bmpDecoder;
 	MohawkEngine_CSTime *_vm;
 };
+
+#endif
 
 } // End of namespace Mohawk
 

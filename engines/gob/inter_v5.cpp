@@ -23,9 +23,6 @@
  *
  */
 
-#include "common/endian.h"
-#include "common/file.h"
-
 #include "gui/message.h"
 
 #include "gob/gob.h"

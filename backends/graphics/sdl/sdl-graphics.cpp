@@ -32,6 +32,7 @@
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
 #include "common/mutex.h"
+#include "common/textconsole.h"
 #include "common/translation.h"
 #include "common/util.h"
 #ifdef USE_RGB_COLOR
@@ -141,7 +142,11 @@ SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *sdlEventSource)
 	_currentShakePos(0), _newShakePos(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
 	_screenIsLocked(false),
-	_graphicsMutex(0), _transactionMode(kTransactionNone) {
+	_graphicsMutex(0),
+#ifdef USE_SDL_DEBUG_FOCUSRECT
+	_enableFocusRectDebugCode(false), _enableFocusRect(false), _focusRect(),
+#endif
+	_transactionMode(kTransactionNone) {
 
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
 		error("Could not initialize SDL: %s", SDL_GetError());
@@ -161,11 +166,9 @@ SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *sdlEventSource)
 
 	_graphicsMutex = g_system->createMutex();
 
-#ifdef _WIN32_WCE
-	if (ConfMan.hasKey("use_GDI") && ConfMan.getBool("use_GDI")) {
-		SDL_VideoInit("windib", 0);
-		sdlFlags ^= SDL_INIT_VIDEO;
-	}
+#ifdef USE_SDL_DEBUG_FOCUSRECT
+	if (ConfMan.hasKey("use_sdl_debug_focusrect"))
+		_enableFocusRectDebugCode = ConfMan.getBool("use_sdl_debug_focusrect");
 #endif
 
 	SDL_ShowCursor(SDL_DISABLE);
@@ -1103,6 +1106,79 @@ void SdlGraphicsManager::internUpdateScreen() {
 			SDL_BlitSurface(_osdSurface, 0, _hwscreen, 0);
 		}
 #endif
+
+#ifdef USE_SDL_DEBUG_FOCUSRECT
+		// We draw the focus rectangle on top of everything, to assure it's easily visible.
+		// Of course when the overlay is visible we do not show it, since it is only for game
+		// specific focus.
+		if (_enableFocusRect && !_overlayVisible) {
+			int y = _focusRect.top + _currentShakePos;
+			int h = 0;
+			int x = _focusRect.left * scale1;
+			int w = _focusRect.width() * scale1;
+
+			if (y < height) {
+				h = _focusRect.height();
+				if (h > height - y)
+					h = height - y;
+
+				y *= scale1;
+
+				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
+					y = real2Aspect(y);
+
+				if (h > 0 && w > 0) {
+					SDL_LockSurface(_hwscreen);
+
+					// Use white as color for now.
+					Uint32 rectColor = SDL_MapRGB(_hwscreen->format, 0xFF, 0xFF, 0xFF);
+
+					// First draw the top and bottom lines
+					// then draw the left and right lines
+					if (_hwscreen->format->BytesPerPixel == 2) {
+						uint16 *top = (uint16 *)((byte *)_hwscreen->pixels + y * _hwscreen->pitch + x * 2);
+						uint16 *bottom = (uint16 *)((byte *)_hwscreen->pixels + (y + h) * _hwscreen->pitch + x * 2);
+						byte *left = ((byte *)_hwscreen->pixels + y * _hwscreen->pitch + x * 2);
+						byte *right = ((byte *)_hwscreen->pixels + y * _hwscreen->pitch + (x + w - 1) * 2);
+
+						while (w--) {
+							*top++ = rectColor;
+							*bottom++ = rectColor;
+						}
+
+						while (h--) {
+							*(uint16 *)left = rectColor;
+							*(uint16 *)right = rectColor;
+
+							left += _hwscreen->pitch;
+							right += _hwscreen->pitch;
+						}
+					} else if (_hwscreen->format->BytesPerPixel == 4) {
+						uint32 *top = (uint32 *)((byte *)_hwscreen->pixels + y * _hwscreen->pitch + x * 4);
+						uint32 *bottom = (uint32 *)((byte *)_hwscreen->pixels + (y + h) * _hwscreen->pitch + x * 4);
+						byte *left = ((byte *)_hwscreen->pixels + y * _hwscreen->pitch + x * 4);
+						byte *right = ((byte *)_hwscreen->pixels + y * _hwscreen->pitch + (x + w - 1) * 4);
+
+						while (w--) {
+							*top++ = rectColor;
+							*bottom++ = rectColor;
+						}
+
+						while (h--) {
+							*(uint32 *)left = rectColor;
+							*(uint32 *)right = rectColor;
+
+							left += _hwscreen->pitch;
+							right += _hwscreen->pitch;
+						}
+					}
+
+					SDL_UnlockSurface(_hwscreen);
+				}
+			}
+		}
+#endif
+
 		// Finally, blit all our changes to the screen
 		SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
 	}
@@ -1166,25 +1242,25 @@ void SdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int x, int
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
 #ifdef USE_RGB_COLOR
-	byte *dst = (byte *)_screen->pixels + y * _videoMode.screenWidth * _screenFormat.bytesPerPixel + x * _screenFormat.bytesPerPixel;
-	if (_videoMode.screenWidth == w && pitch == w * _screenFormat.bytesPerPixel) {
-		memcpy(dst, src, h*w*_screenFormat.bytesPerPixel);
+	byte *dst = (byte *)_screen->pixels + y * _screen->pitch + x * _screenFormat.bytesPerPixel;
+	if (_videoMode.screenWidth == w && pitch == _screen->pitch) {
+		memcpy(dst, src, h*pitch);
 	} else {
 		do {
 			memcpy(dst, src, w * _screenFormat.bytesPerPixel);
 			src += pitch;
-			dst += _videoMode.screenWidth * _screenFormat.bytesPerPixel;
+			dst += _screen->pitch;
 		} while (--h);
 	}
 #else
-	byte *dst = (byte *)_screen->pixels + y * _videoMode.screenWidth + x;
-	if (_videoMode.screenWidth == pitch && pitch == w) {
+	byte *dst = (byte *)_screen->pixels + y * _screen->pitch + x;
+	if (_screen->pitch == pitch && pitch == w) {
 		memcpy(dst, src, h*w);
 	} else {
 		do {
 			memcpy(dst, src, w);
 			src += pitch;
-			dst += _videoMode.screenWidth;
+			dst += _screen->pitch;
 		} while (--h);
 	}
 #endif
@@ -1212,9 +1288,9 @@ Graphics::Surface *SdlGraphicsManager::lockScreen() {
 	_framebuffer.h = _screen->h;
 	_framebuffer.pitch = _screen->pitch;
 #ifdef USE_RGB_COLOR
-	_framebuffer.bytesPerPixel = _screenFormat.bytesPerPixel;
+	_framebuffer.format = _screenFormat;
 #else
-	_framebuffer.bytesPerPixel = 1;
+	_framebuffer.format = Graphics::PixelFormat::createFormatCLUT8();
 #endif
 
 	return &_framebuffer;
@@ -1396,6 +1472,41 @@ void SdlGraphicsManager::setShakePos(int shake_pos) {
 	_newShakePos = shake_pos;
 }
 
+void SdlGraphicsManager::setFocusRectangle(const Common::Rect &rect) {
+#ifdef USE_SDL_DEBUG_FOCUSRECT
+	// Only enable focus rectangle debug code, when the user wants it
+	if (!_enableFocusRectDebugCode)
+		return;
+
+	_enableFocusRect = true;
+	_focusRect = rect;
+
+	if (rect.left < 0 || rect.top < 0 || rect.right > _videoMode.screenWidth || rect.bottom > _videoMode.screenHeight)
+		warning("SdlGraphicsManager::setFocusRectangle: Got a rect which does not fit inside the screen bounds: %d,%d,%d,%d", rect.left, rect.top, rect.right, rect.bottom);
+
+	// It's gross but we actually sometimes get rects, which are not inside the screen bounds,
+	// thus we need to clip the rect here...
+	_focusRect.clip(_videoMode.screenWidth, _videoMode.screenHeight);
+
+	// We just fake this as a dirty rect for now, to easily force an screen update whenever
+	// the rect changes.
+	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height());
+#endif
+}
+
+void SdlGraphicsManager::clearFocusRectangle() {
+#ifdef USE_SDL_DEBUG_FOCUSRECT
+	// Only enable focus rectangle debug code, when the user wants it
+	if (!_enableFocusRectDebugCode)
+		return;
+
+	_enableFocusRect = false;
+
+	// We just fake this as a dirty rect for now, to easily force an screen update whenever
+	// the rect changes.
+	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height());
+#endif
+}
 
 #pragma mark -
 #pragma mark --- Overlays ---
@@ -1868,7 +1979,6 @@ void SdlGraphicsManager::drawMouse() {
 
 	SDL_Rect dst;
 	int scale;
-	int width, height;
 	int hotX, hotY;
 
 	dst.x = _mouseCurState.x;
@@ -1876,16 +1986,12 @@ void SdlGraphicsManager::drawMouse() {
 
 	if (!_overlayVisible) {
 		scale = _videoMode.scaleFactor;
-		width = _videoMode.screenWidth;
-		height = _videoMode.screenHeight;
 		dst.w = _mouseCurState.vW;
 		dst.h = _mouseCurState.vH;
 		hotX = _mouseCurState.vHotX;
 		hotY = _mouseCurState.vHotY;
 	} else {
 		scale = 1;
-		width = _videoMode.overlayWidth;
-		height = _videoMode.overlayHeight;
 		dst.w = _mouseCurState.rW;
 		dst.h = _mouseCurState.rH;
 		hotX = _mouseCurState.rHotX;
@@ -1949,7 +2055,11 @@ void SdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 	dst.w = _osdSurface->w;
 	dst.h = _osdSurface->h;
 	dst.pitch = _osdSurface->pitch;
-	dst.bytesPerPixel = _osdSurface->format->BytesPerPixel;
+	dst.format = Graphics::PixelFormat(_osdSurface->format->BytesPerPixel,
+	                                   8 - _osdSurface->format->Rloss, 8 - _osdSurface->format->Gloss,
+	                                   8 - _osdSurface->format->Bloss, 8 - _osdSurface->format->Aloss,
+	                                   _osdSurface->format->Rshift, _osdSurface->format->Gshift,
+	                                   _osdSurface->format->Bshift, _osdSurface->format->Ashift);
 
 	// The font we are going to use:
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kOSDFont);
@@ -2169,9 +2279,9 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				SDL_RWclose(file);
 			}
 			if (saveScreenshot(filename))
-				printf("Saved '%s'\n", filename);
+				debug("Saved screenshot '%s'", filename);
 			else
-				printf("Could not save screenshot!\n");
+				warning("Could not save screenshot");
 			return true;
 		}
 

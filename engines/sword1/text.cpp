@@ -24,8 +24,7 @@
  */
 
 
-#include "common/endian.h"
-#include "common/util.h"
+#include "common/textconsole.h"
 
 #include "sword1/text.h"
 #include "sword1/resman.h"

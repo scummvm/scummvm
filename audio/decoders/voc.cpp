@@ -27,9 +27,9 @@
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
 

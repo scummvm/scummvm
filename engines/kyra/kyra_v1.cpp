@@ -23,21 +23,16 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/EventRecorder.h"
-
-#include "audio/mididrv.h"
-#include "audio/mixer.h"
-
 #include "kyra/kyra_v1.h"
 #include "kyra/sound_intern.h"
 #include "kyra/resource.h"
-#include "kyra/screen.h"
-#include "kyra/text.h"
 #include "kyra/timer.h"
-#include "kyra/script.h"
 #include "kyra/debugger.h"
+
+#include "common/error.h"
+#include "common/config-manager.h"
+#include "common/debug-channels.h"
+#include "common/EventRecorder.h"
 
 namespace Kyra {
 

@@ -26,6 +26,7 @@
 #include "m4/woodscript.h"
 
 #include "common/memstream.h"
+#include "graphics/palette.h"
 
 namespace M4 {
 
@@ -164,7 +165,7 @@ WoodScript::WoodScript(MadsM4Engine *vm) {
 
 	_backgroundSurface = NULL;
 
-	Common::Rect viewBounds = Common::Rect(0, 0, 640, 480);
+	//Common::Rect viewBounds = Common::Rect(0, 0, 640, 480);
 	//_surfaceView = new View(viewBounds);
 }
 

@@ -234,24 +234,24 @@ void Screen::scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 
  * used for debugging.
  * @param x x-coordinate of the point
  * @param y y-coordinate of the point
- * @param colour colour of the point
+ * @param color color of the point
  */
 
-void Screen::plotPoint(int x, int y, uint8 colour) {
+void Screen::plotPoint(int x, int y, uint8 color) {
 	byte *buf = _buffer + MENUDEEP * RENDERWIDE;
 
 	x -= _scrollX;
 	y -= _scrollY;
 
 	if (x >= 0 && x < RENDERWIDE && y >= 0 && y < RENDERDEEP) {
-		buf[y * RENDERWIDE + x] = colour;
+		buf[y * RENDERWIDE + x] = color;
 		markAsDirty(x, y + MENUDEEP, x, y + MENUDEEP);
 	}
 }
 
-static void plot(int x, int y, int colour, void *data) {
+static void plot(int x, int y, int color, void *data) {
 	Screen *screen = (Screen *)data;
-	screen->plotPoint(x, y, (uint8) colour);
+	screen->plotPoint(x, y, (uint8) color);
 }
 
 /**
@@ -260,11 +260,11 @@ static void plot(int x, int y, int colour, void *data) {
  * @param y0 y-coordinate of the start point
  * @param x1 x-coordinate of the end point
  * @param y1 y-coordinate of the end point
- * @param colour colour of the line
+ * @param color color of the line
  */
 
-void Screen::drawLine(int x0, int y0, int x1, int y1, uint8 colour) {
-	Graphics::drawLine(x0, y0, x1, y1, colour, &plot, this);
+void Screen::drawLine(int x0, int y0, int x1, int y1, uint8 color) {
+	Graphics::drawLine(x0, y0, x1, y1, color, &plot, this);
 }
 
 /**

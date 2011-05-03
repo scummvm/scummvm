@@ -27,6 +27,8 @@
 #define SCUMM_SMUSH_MIXER_H
 
 
+#include "audio/mixer.h"
+#include "common/mutex.h"
 #include "scumm/sound.h"
 
 namespace Scumm {

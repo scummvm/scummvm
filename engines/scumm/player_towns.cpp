@@ -622,7 +622,7 @@ int Player_Towns_v2::getSoundStatus(int sound) const {
 void Player_Towns_v2::startSound(int sound) {
 	uint8 *ptr = _vm->getResourceAddress(rtSound, sound);
 
-	if (READ_BE_UINT32(ptr) == MKID_BE('TOWS')) {
+	if (READ_BE_UINT32(ptr) == MKTAG('T','O','W','S')) {
 		_soundOverride[sound].type = 7;
 		uint8 velo = _soundOverride[sound].velo ? _soundOverride[sound].velo - 1: (ptr[10] + ptr[11] + 1) >> 1;
 		uint8 pan = _soundOverride[sound].pan ? _soundOverride[sound].pan - 1 : 64;
@@ -630,7 +630,7 @@ void Player_Towns_v2::startSound(int sound) {
 		_soundOverride[sound].velo = _soundOverride[sound].pan = 0;
 		playPcmTrack(sound, ptr + 8, velo, pan, ptr[52], pri);
 
-	} else if (READ_BE_UINT32(ptr) == MKID_BE('SBL ')) {
+	} else if (READ_BE_UINT32(ptr) == MKTAG('S','B','L',' ')) {
 		_soundOverride[sound].type = 5;
 		playVocTrack(ptr + 27);
 
@@ -680,7 +680,7 @@ int32 Player_Towns_v2::doCommand(int numargs, int args[]) {
 	case 258:
 		if (_soundOverride[args[1]].type == 0) {
 			ptr = _vm->getResourceAddress(rtSound, args[1]);
-			if (READ_BE_UINT32(ptr) == MKID_BE('TOWS')) 
+			if (READ_BE_UINT32(ptr) == MKTAG('T','O','W','S')) 
 				_soundOverride[args[1]].type = 7;
 		}
 		if (_soundOverride[args[1]].type == 7)	{
@@ -692,7 +692,7 @@ int32 Player_Towns_v2::doCommand(int numargs, int args[]) {
 	case 259:
 		if (_soundOverride[args[1]].type == 0) {
 			ptr = _vm->getResourceAddress(rtSound, args[1]);
-			if (READ_BE_UINT32(ptr) == MKID_BE('TOWS')) 
+			if (READ_BE_UINT32(ptr) == MKTAG('T','O','W','S')) 
 				_soundOverride[args[1]].type = 7;
 		}
 		if (_soundOverride[args[1]].type == 7)	{

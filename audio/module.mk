@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	midiparser_smf.o \
 	midiparser_xmidi.o \
 	midiparser.o \
+	midiplayer.o \
 	mixer.o \
 	mpu401.o \
 	musicplugin.o \
@@ -44,6 +45,7 @@ MODULE_OBJS := \
 	softsynth/ym2612.o \
 	softsynth/fluidsynth.o \
 	softsynth/mt32.o \
+	softsynth/eas.o \
 	softsynth/pcspk.o \
 	softsynth/sid.o \
 	softsynth/wave6581.o

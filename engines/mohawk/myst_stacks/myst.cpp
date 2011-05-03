@@ -33,6 +33,8 @@
 #include "mohawk/myst_stacks/myst.h"
 
 #include "common/events.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "gui/message.h"
 
@@ -50,6 +52,7 @@ Myst::Myst(MohawkEngine_Myst *vm) :
 	_towerRotationBlinkLabel = false;
 	_libraryBookcaseChanged = false;
 	_dockVaultState = 0;
+	_cabinDoorOpened = 0;
 	_cabinMatchState = 2;
 	_matchBurning = false;
 	_tree = 0;
@@ -3132,7 +3135,7 @@ Common::Point Myst::towerRotationMapComputeCoords(const Common::Point &center, u
 	Common::Point end;
 
 	// Polar to rect coords
-	double radians = angle * PI / 180.0;
+	double radians = angle * M_PI / 180.0;
 	end.x = (int16)(center.x + cos(radians) * 310.0);
 	end.y = (int16)(center.y + sin(radians) * 310.0);
 

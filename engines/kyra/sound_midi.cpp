@@ -33,7 +33,7 @@
 
 namespace Kyra {
 
-class MidiOutput : public MidiDriver {
+class MidiOutput : public MidiDriver_BASE {
 public:
 	MidiOutput(OSystem *system, MidiDriver *output, bool isMT32, bool defaultMT32);
 	~MidiOutput();
@@ -46,19 +46,16 @@ public:
 
 	void setSoundSource(int source) { _curSource = source; }
 
-	void send(uint32 b);
-	void sysEx(const byte *msg, uint16 length);
-	void metaEvent(byte type, byte *data, uint16 length);
+	// MidiDriver_BASE interface
+	virtual void send(uint32 b);
+	virtual void sysEx(const byte *msg, uint16 length);
+	virtual void metaEvent(byte type, byte *data, uint16 length);
 
+	// TODO: Get rid of the following two methods
 	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { _output->setTimerCallback(timerParam, timerProc); }
 	uint32 getBaseTempo() { return _output->getBaseTempo(); }
 
-	// DUMMY
-	int open() { return 0; }
-	void close() {}
 
-	MidiChannel *allocateChannel()		{ return 0; }
-	MidiChannel *getPercussionChannel()	{ return 0; }
 private:
 	void sendIntern(const byte event, const byte channel, byte param1, const byte param2);
 	void sendSysEx(const byte p1, const byte p2, const byte p3, const byte *buffer, const int size);
@@ -265,7 +262,7 @@ void MidiOutput::sendIntern(const byte event, const byte channel, byte param1, c
 	if (event == 0xC0) {
 		// MT32 -> GM conversion
 		if (!_isMT32 && _defaultMT32)
-			param1 = _mt32ToGm[param1];
+			param1 = MidiDriver::_mt32ToGm[param1];
 	}
 
 	_output->send(event | channel, param1, param2);

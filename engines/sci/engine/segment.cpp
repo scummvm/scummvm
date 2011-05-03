@@ -39,7 +39,6 @@ namespace Sci {
 //#define GC_DEBUG // Debug garbage collection
 //#define GC_DEBUG_VERBOSE // Debug garbage verbosely
 
-
 SegmentObj *SegmentObj::createSegmentObj(SegmentType type) {
 	SegmentObj *mem = 0;
 	switch (type) {
@@ -85,57 +84,54 @@ SegmentObj *SegmentObj::createSegmentObj(SegmentType type) {
 	return mem;
 }
 
-const char *SegmentObj::getSegmentTypeName(SegmentType type) {
-	switch (type) {
-	case SEG_TYPE_SCRIPT:
-		return "script";
-		break;
-	case SEG_TYPE_CLONES:
-		return "clones";
-		break;
-	case SEG_TYPE_LOCALS:
-		return "locals";
-		break;
-	case SEG_TYPE_STACK:
-		return "stack";
-		break;
-	case SEG_TYPE_HUNK:
-		return "hunk";
-		break;
-	case SEG_TYPE_LISTS:
-		return "lists";
-		break;
-	case SEG_TYPE_NODES:
-		return "nodes";
-		break;
-	case SEG_TYPE_DYNMEM:
-		return "dynmem";
-		break;
-#ifdef ENABLE_SCI32
-	case SEG_TYPE_ARRAY:
-		return "array";
-		break;
-	case SEG_TYPE_STRING:
-		return "string";
-		break;
-#endif
-	default:
-		error("Unknown SegmentObj type %d", type);
-		break;
-	}
-	return NULL;
-}
-
 SegmentRef SegmentObj::dereference(reg_t pointer) {
 	error("Error: Trying to dereference pointer %04x:%04x to inappropriate segment",
 		          PRINT_REG(pointer));
 	return SegmentRef();
 }
 
+//-------------------- clones --------------------
 
-bool LocalVariables::isValidOffset(uint16 offset) const {
-	return offset < _locals.size() * 2;
+Common::Array<reg_t> CloneTable::listAllOutgoingReferences(reg_t addr) const {
+	Common::Array<reg_t> tmp;
+//	assert(addr.segment == _segId);
+
+	if (!isValidEntry(addr.offset)) {
+		error("Unexpected request for outgoing references from clone at %04x:%04x", PRINT_REG(addr));
+	}
+
+	const Clone *clone = &(_table[addr.offset]);
+
+	// Emit all member variables (including references to the 'super' delegate)
+	for (uint i = 0; i < clone->getVarCount(); i++)
+		tmp.push_back(clone->getVariable(i));
+
+	// Note that this also includes the 'base' object, which is part of the script and therefore also emits the locals.
+	tmp.push_back(clone->getPos());
+	//debugC(kDebugLevelGC, "[GC] Reporting clone-pos %04x:%04x", PRINT_REG(clone->pos));
+
+	return tmp;
 }
+
+void CloneTable::freeAtAddress(SegManager *segMan, reg_t addr) {
+#ifdef GC_DEBUG
+	Object *victim_obj = &(_table[addr.offset]);
+
+	if (!(victim_obj->_flags & OBJECT_FLAG_FREED))
+		warning("[GC] Clone %04x:%04x not reachable and not freed (freeing now)", PRINT_REG(addr));
+#ifdef GC_DEBUG_VERBOSE
+	else
+		warning("[GC-DEBUG] Clone %04x:%04x: Freeing", PRINT_REG(addr));
+
+	warning("[GC] Clone had pos %04x:%04x", PRINT_REG(victim_obj->pos));
+#endif
+#endif
+
+	freeEntry(addr.offset);
+}
+
+
+//-------------------- locals --------------------
 
 SegmentRef LocalVariables::dereference(reg_t pointer) {
 	SegmentRef ret;
@@ -165,9 +161,23 @@ SegmentRef LocalVariables::dereference(reg_t pointer) {
 	return ret;
 }
 
-bool DataStack::isValidOffset(uint16 offset) const {
-	return offset < _capacity * 2;
+reg_t LocalVariables::findCanonicAddress(SegManager *segMan, reg_t addr) const {
+	// Reference the owning script
+	SegmentId owner_seg = segMan->getScriptSegment(script_id);
+	assert(owner_seg > 0);
+	return make_reg(owner_seg, 0);
 }
+
+Common::Array<reg_t> LocalVariables::listAllOutgoingReferences(reg_t addr) const {
+	Common::Array<reg_t> tmp;
+	for (uint i = 0; i < _locals.size(); i++)
+		tmp.push_back(_locals[i]);
+
+	return tmp;
+}
+
+
+//-------------------- stack --------------------
 
 SegmentRef DataStack::dereference(reg_t pointer) {
 	SegmentRef ret;
@@ -183,89 +193,6 @@ SegmentRef DataStack::dereference(reg_t pointer) {
 	return ret;
 }
 
-bool DynMem::isValidOffset(uint16 offset) const {
-	return offset < _size;
-}
-
-SegmentRef DynMem::dereference(reg_t pointer) {
-	SegmentRef ret;
-	ret.isRaw = true;
-	ret.maxSize = _size - pointer.offset;
-	ret.raw = _buf + pointer.offset;
-	return ret;
-}
-
-//-------------------- clones --------------------
-
-Common::Array<reg_t> CloneTable::listAllOutgoingReferences(reg_t addr) const {
-	Common::Array<reg_t> tmp;
-//	assert(addr.segment == _segId);
-
-	if (!isValidEntry(addr.offset)) {
-		error("Unexpected request for outgoing references from clone at %04x:%04x", PRINT_REG(addr));
-	}
-
-	const Clone *clone = &(_table[addr.offset]);
-
-	// Emit all member variables (including references to the 'super' delegate)
-	for (uint i = 0; i < clone->getVarCount(); i++)
-		tmp.push_back(clone->getVariable(i));
-
-	// Note that this also includes the 'base' object, which is part of the script and therefore also emits the locals.
-	tmp.push_back(clone->getPos());
-	//debugC(kDebugLevelGC, "[GC] Reporting clone-pos %04x:%04x", PRINT_REG(clone->pos));
-
-	return tmp;
-}
-
-void CloneTable::freeAtAddress(SegManager *segMan, reg_t addr) {
-#ifdef GC_DEBUG
-	//	assert(addr.segment == _segId);
-
-	Object *victim_obj = &(_table[addr.offset]);
-
-	if (!(victim_obj->_flags & OBJECT_FLAG_FREED))
-		warning("[GC] Clone %04x:%04x not reachable and not freed (freeing now)", PRINT_REG(addr));
-#ifdef GC_DEBUG_VERBOSE
-	else
-		warning("[GC-DEBUG] Clone %04x:%04x: Freeing", PRINT_REG(addr));
-#endif
-#endif
-	/*
-		warning("[GC] Clone %04x:%04x: Freeing", PRINT_REG(addr));
-		warning("[GC] Clone had pos %04x:%04x", PRINT_REG(victim_obj->pos));
-	*/
-	freeEntry(addr.offset);
-}
-
-
-//-------------------- locals --------------------
-reg_t LocalVariables::findCanonicAddress(SegManager *segMan, reg_t addr) const {
-	// Reference the owning script
-	SegmentId owner_seg = segMan->getScriptSegment(script_id);
-
-	assert(owner_seg > 0);
-
-	return make_reg(owner_seg, 0);
-}
-
-Common::Array<reg_t> LocalVariables::listAllOutgoingReferences(reg_t addr) const {
-	Common::Array<reg_t> tmp;
-//	assert(addr.segment == _segId);
-
-	for (uint i = 0; i < _locals.size(); i++)
-		tmp.push_back(_locals[i]);
-
-	return tmp;
-}
-
-
-//-------------------- stack --------------------
-reg_t DataStack::findCanonicAddress(SegManager *segMan, reg_t addr) const {
-	addr.offset = 0;
-	return addr;
-}
-
 Common::Array<reg_t> DataStack::listAllOutgoingReferences(reg_t object) const {
 	Common::Array<reg_t> tmp;
 	for (int i = 0; i < _capacity; i++)
@@ -274,11 +201,7 @@ Common::Array<reg_t> DataStack::listAllOutgoingReferences(reg_t object) const {
 	return tmp;
 }
 
-
 //-------------------- lists --------------------
-void ListTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
-	freeEntry(sub_addr.offset);
-}
 
 Common::Array<reg_t> ListTable::listAllOutgoingReferences(reg_t addr) const {
 	Common::Array<reg_t> tmp;
@@ -296,11 +219,7 @@ Common::Array<reg_t> ListTable::listAllOutgoingReferences(reg_t addr) const {
 	return tmp;
 }
 
-
 //-------------------- nodes --------------------
-void NodeTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
-	freeEntry(sub_addr.offset);
-}
 
 Common::Array<reg_t> NodeTable::listAllOutgoingReferences(reg_t addr) const {
 	Common::Array<reg_t> tmp;
@@ -321,14 +240,12 @@ Common::Array<reg_t> NodeTable::listAllOutgoingReferences(reg_t addr) const {
 
 //-------------------- dynamic memory --------------------
 
-reg_t DynMem::findCanonicAddress(SegManager *segMan, reg_t addr) const {
-	addr.offset = 0;
-	return addr;
-}
-
-Common::Array<reg_t> DynMem::listAllDeallocatable(SegmentId segId) const {
-	const reg_t r = make_reg(segId, 0);
-	return Common::Array<reg_t>(&r, 1);
+SegmentRef DynMem::dereference(reg_t pointer) {
+	SegmentRef ret;
+	ret.isRaw = true;
+	ret.maxSize = _size - pointer.offset;
+	ret.raw = _buf + pointer.offset;
+	return ret;
 }
 
 #ifdef ENABLE_SCI32
@@ -391,11 +308,6 @@ SegmentRef StringTable::dereference(reg_t pointer) {
 	ret.maxSize = _table[pointer.offset].getSize();
 	ret.raw = (byte*)_table[pointer.offset].getRawData();
 	return ret;
-}
-
-void StringTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) { 
-	_table[sub_addr.offset].destroy();
-	freeEntry(sub_addr.offset);
 }
 
 #endif

@@ -1,11 +1,12 @@
 # Android specific build targets
 
 # These must be incremented for each market upload
-#ANDROID_VERSIONCODE = 6  Specified in dists/android/AndroidManifest.xml.in
+ANDROID_VERSIONCODE = 6
 ANDROID_PLUGIN_VERSIONCODE = 6
 
 JAVA_FILES = \
 	ScummVM.java \
+	ScummVMEvents.java \
 	ScummVMApplication.java \
 	ScummVMActivity.java \
 	EditableSurfaceView.java \
@@ -20,6 +21,8 @@ JAVA_FILES_GEN = \
 
 PATH_DIST = $(srcdir)/dists/android
 PATH_RESOURCES = $(PATH_DIST)/res
+
+PORT_DISTFILES = $(PATH_DIST)/README.Android
 
 RESOURCES = \
 	$(PATH_RESOURCES)/values/strings.xml \
@@ -69,7 +72,8 @@ PATH_GEN = $(PATH_GEN_TOP)/$(PATH_REL)
 PATH_CLASSES_MAIN = $(PATH_BUILD_CLASSES_MAIN_TOP)/$(PATH_REL)
 PATH_CLASSES_PLUGIN = $(PATH_BUILD_CLASSES_PLUGIN_TOP)/$(PATH_REL)
 
-FILE_MANIFEST = $(srcdir)/dists/android/AndroidManifest.xml
+FILE_MANIFEST_SRC = $(srcdir)/dists/android/AndroidManifest.xml
+FILE_MANIFEST = $(PATH_BUILD)/AndroidManifest.xml
 FILE_DEX = $(PATH_BUILD)/classes.dex
 FILE_DEX_PLUGIN = $(PATH_BUILD)/plugins/classes.dex
 FILE_RESOURCES = resources.ap_
@@ -83,6 +87,10 @@ CLASSES_PLUGIN = $(addprefix $(PATH_CLASSES_PLUGIN)/, $(JAVA_FILES_PLUGIN:%.java
 
 APK_MAIN = scummvm.apk
 APK_PLUGINS = $(patsubst plugins/lib%.so, scummvm-engine-%.apk, $(PLUGINS))
+
+$(FILE_MANIFEST): $(FILE_MANIFEST_SRC)
+	@$(MKDIR) -p $(@D)
+	sed "s/@ANDROID_VERSIONCODE@/$(ANDROID_VERSIONCODE)/" < $< > $@
 
 $(SRC_GEN): $(FILE_MANIFEST) $(filter %.xml,$(RESOURCES)) $(ANDROID_JAR8)
 	@$(MKDIR) -p $(PATH_GEN_TOP)
@@ -107,14 +115,13 @@ $(FILE_DEX_PLUGIN): $(CLASSES_PLUGIN)
 	@$(MKDIR) -p $(@D)
 	$(DX) --dex --output=$@ $(PATH_BUILD_CLASSES_PLUGIN_TOP)
 
-$(PATH_BUILD)/%/AndroidManifest.xml $(PATH_STAGE_PREFIX).%/res/values/strings.xml: $(PATH_DIST)/mkmanifest.pl $(srcdir)/configure $(PATH_DIST)/AndroidManifest.xml
-	$(PATH_DIST)/mkmanifest.pl --id=$* --configure=$(srcdir)/configure \
-		--version-name=$(VERSION) \
-		--version-code=$(ANDROID_PLUGIN_VERSIONCODE) \
-		--stringres=$(PATH_STAGE_PREFIX).$*/res/values/strings.xml \
-		--manifest=$(PATH_BUILD)/$*/AndroidManifest.xml \
-		--master-manifest=$(PATH_DIST)/AndroidManifest.xml \
-		--unpacklib=mylib/armeabi/lib$*.so
+$(PATH_BUILD)/%/AndroidManifest.xml: $(PATH_DIST)/mkplugin.sh $(srcdir)/configure $(PATH_DIST)/plugin-manifest.xml
+	@$(MKDIR) -p $(@D)
+	$(PATH_DIST)/mkplugin.sh $(srcdir)/configure $* $(PATH_DIST)/plugin-manifest.xml $(ANDROID_PLUGIN_VERSIONCODE) $@
+
+$(PATH_STAGE_PREFIX).%/res/values/strings.xml: $(PATH_DIST)/mkplugin.sh $(srcdir)/configure $(PATH_DIST)/plugin-manifest.xml
+	@$(MKDIR) -p $(@D)
+	$(PATH_DIST)/mkplugin.sh $(srcdir)/configure $* $(PATH_DIST)/plugin-strings.xml $(ANDROID_PLUGIN_VERSIONCODE) $@
 
 $(PATH_STAGE_PREFIX).%/res/drawable/scummvm.png: $(PATH_RESOURCES)/drawable/scummvm.png
 	@$(MKDIR) -p $(@D)
@@ -163,6 +170,10 @@ release/%.apk: %.apk
 
 androidrelease: $(addprefix release/, $(APK_MAIN) $(APK_PLUGINS))
 
+androidtestmain: $(APK_MAIN)
+	$(ADB) install -r $(APK_MAIN)
+	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.inodes.gus.scummvm/.Unpacker
+
 androidtest: $(APK_MAIN) $(APK_PLUGINS)
 	@set -e; for apk in $^; do \
 		$(ADB) install -r $$apk; \
@@ -173,7 +184,7 @@ androidtest: $(APK_MAIN) $(APK_PLUGINS)
 androiddistdebug: all
 	$(MKDIR) debug
 	$(CP) $(APK_MAIN) $(APK_PLUGINS) debug/
-	for i in $(DIST_FILES_DOCS); do \
+	for i in $(DIST_FILES_DOCS) $(PORT_DISTFILES); do \
 		sed 's/$$/\r/' < $$i > debug/`basename $$i`.txt; \
 	done
 

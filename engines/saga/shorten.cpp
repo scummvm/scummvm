@@ -24,6 +24,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/textconsole.h"
 
 #include "saga/shorten.h"
 
@@ -34,10 +35,8 @@
 
 // FIXME: This doesn't work yet correctly
 
-#include "common/endian.h"
 #include "common/util.h"
 
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 
 namespace Saga {

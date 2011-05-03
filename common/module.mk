@@ -17,7 +17,6 @@ MODULE_OBJS := \
 	memorypool.o \
 	md5.o \
 	mutex.o \
-	ne_exe.o \
 	random.o \
 	rational.o \
 	str.o \
@@ -29,6 +28,9 @@ MODULE_OBJS := \
 	unarj.o \
 	unzip.o \
 	util.o \
+	winexe.o \
+	winexe_ne.o \
+	winexe_pe.o \
 	xmlparser.o \
 	zlib.o
 

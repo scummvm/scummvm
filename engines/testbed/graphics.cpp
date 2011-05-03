@@ -33,6 +33,7 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "graphics/VectorRendererSpec.h"
 
@@ -229,16 +230,16 @@ void rotatePalette(byte *palette, int size) {
 	// Rotate the colors starting from address palette "size" times
 
 	// take a temporary palette color
-	byte tColor[4] = {0};
+	byte tColor[3] = {0};
 	// save first color in it.
-	memcpy(tColor, &palette[0], 4 * sizeof(byte));
+	memcpy(tColor, &palette[0], 3 * sizeof(byte));
 
 	// Move each color upward by 1
 	for (int i = 0; i < size - 1; i++) {
-		memcpy(&palette[i * 4], &palette[(i + 1) * 4], 4 * sizeof(byte));
+		memcpy(&palette[i * 3], &palette[(i + 1) * 3], 3 * sizeof(byte));
 	}
 	// Assign last color to tcolor
-	memcpy(&palette[(size - 1) * 4], tColor, 4 * sizeof(byte));
+	memcpy(&palette[(size - 1) * 3], tColor, 3 * sizeof(byte));
 }
 
 /**
@@ -360,7 +361,7 @@ void GFXtests::drawEllipse(int cx, int cy, int a, int b) {
 
 	// Illuminate the points lying on ellipse
 
-	for (theta = 0; theta <= PI / 2; theta += PI / 360) {
+	for (theta = 0; theta <= M_PI / 2; theta += M_PI / 360) {
 		x = (int)(b * sin(theta) + 0.5);
 		y = (int)(a * cos(theta) + 0.5);
 
@@ -606,7 +607,7 @@ TestExitStatus GFXtests::mouseMovements() {
 
 	Common::String info = "Testing Automated Mouse movements.\n"
 						"You should expect cursor hotspot(top-left corner) to automatically move from (0, 0) to (100, 100).\n"
-						"There we have a rectangle drawn, finally the cursor would lie centred in that rectangle.";
+						"There we have a rectangle drawn, finally the cursor would lie centered in that rectangle.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Mouse Movements\n");
@@ -637,7 +638,7 @@ TestExitStatus GFXtests::mouseMovements() {
 	g_system->delayMillis(1500);
 	CursorMan.showMouse(false);
 
-	if (Testsuite::handleInteractiveInput("Was the cursor centred in the rectangle at (100, 100)?", "Yes", "No", kOptionRight)) {
+	if (Testsuite::handleInteractiveInput("Was the cursor centered in the rectangle at (100, 100)?", "Yes", "No", kOptionRight)) {
 		return kTestFailed;
 	}
 
@@ -654,7 +655,7 @@ TestExitStatus GFXtests::copyRectToScreen() {
 
 	Testsuite::clearScreen();
 	Common::String info = "Testing Blitting a Bitmap to screen.\n"
-		"You should expect to see a 20x40 yellow horizontal rectangle centred at the screen.";
+		"You should expect to see a 20x40 yellow horizontal rectangle centered at the screen.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Blitting Bitmap\n");
@@ -1113,7 +1114,7 @@ TestExitStatus GFXtests::pixelFormats() {
 
 		Graphics::Surface *screen = g_system->lockScreen();
 
-		// Draw 6 rectangles centred at (50, 160), piled over one another
+		// Draw 6 rectangles centered at (50, 160), piled over one another
 		// each with color in colors[]
 		for (int i = 0; i < 6; i++) {
 			screen->fillRect(Common::Rect::center(160, 20 + i * 10, 100, 10), colors[i]);

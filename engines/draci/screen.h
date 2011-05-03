@@ -33,7 +33,7 @@ namespace Draci {
 enum ScreenParameters {
 	kScreenWidth = 320,
 	kScreenHeight = 200,
-	kNumColours = 256,
+	kNumColors = 256,
 	kDefaultTransparent = 255
 };
 

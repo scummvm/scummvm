@@ -23,6 +23,10 @@
  *
  */
 
+
+// Enable mkdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+
 #include "common/scummsys.h"
 
 #if defined(UNIX) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
@@ -31,6 +35,7 @@
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 
 #include <stdio.h>
 #include <string.h>

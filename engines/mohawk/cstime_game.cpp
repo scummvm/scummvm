@@ -29,6 +29,8 @@
 #include "mohawk/resource.h"
 #include "mohawk/sound.h"
 #include "common/events.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Mohawk {
 
@@ -470,8 +472,8 @@ void CSTimeConversation::end(bool useLastClicked, bool runEvents) {
 			_vm->getCase()->getCurrScene()->getChar(_sourceChar)->setupAmbientAnims(true);
 	}
 
-	CSTimeInterface *interface = _vm->getInterface();
-	CSTimeInventoryDisplay *invDisplay = interface->getInventoryDisplay();
+	CSTimeInterface *iface = _vm->getInterface();
+	CSTimeInventoryDisplay *invDisplay = iface->getInventoryDisplay();
 	if (invDisplay->getState() == 4) {
 		invDisplay->hide();
 		invDisplay->setState(0);
@@ -480,8 +482,8 @@ void CSTimeConversation::end(bool useLastClicked, bool runEvents) {
 	setState((uint)~0);
 	_currHover = 0xffff;
 
-	interface->clearTextLine();
-	interface->clearDialogArea();
+	iface->clearTextLine();
+	iface->clearDialogArea();
 	invDisplay->show();
 
 	// TODO: stupid case 20 stuff

@@ -172,11 +172,73 @@ bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClas
 	const Object *baseObj = segMan->getObject(getSpeciesSelector());
 
 	if (baseObj) {
-		_variables.resize(baseObj->getVarCount());
+		uint originalVarCount = _variables.size();
+
+		if (_variables.size() != baseObj->getVarCount())
+			_variables.resize(baseObj->getVarCount());
 		// Copy base from species class, as we need its selector IDs
 		_baseObj = baseObj->_baseObj;
 		if (doInitSuperClass)
 			initSuperClass(segMan, addr);
+
+		if (_variables.size() != originalVarCount) {
+			// These objects are probably broken.
+			// An example is 'witchCage' in script 200 in KQ5 (#3034714),
+			// but also 'girl' in script 216 and 'door' in script 22.
+			// In LSL3 a number of sound objects trigger this right away.
+			// SQ4-floppy's bug #3037938 also seems related.
+
+			// The effect is that a number of its method selectors may be
+			// treated as variable selectors, causing unpredictable effects.
+			int objScript = segMan->getScript(_pos.segment)->getScriptNumber();
+
+			// We have to do a little bit of work to get the name of the object
+			// before any relocations are done.
+			reg_t nameReg = getNameSelector();
+			const char *name;
+			if (nameReg.isNull()) {
+				name = "<no name>";
+			} else {
+				nameReg.segment = _pos.segment;
+				name = segMan->derefString(nameReg);
+				if (!name)
+					name = "<invalid name>";
+			}
+
+			warning("Object %04x:%04x (name %s, script %d) varnum doesn't "
+			        "match baseObj's: obj %d, base %d", PRINT_REG(_pos),
+			        name, objScript, originalVarCount, baseObj->getVarCount());
+
+#if 0
+			// We enumerate the methods selectors which could be hidden here
+			if (getSciVersion() <= SCI_VERSION_2_1) {
+				const SegmentRef objRef = segMan->dereference(baseObj->_pos);
+				assert(objRef.isRaw);
+				uint segBound = objRef.maxSize/2 - baseObj->getVarCount();
+				const byte* buf = (const byte *)baseObj->_baseVars;
+				if (!buf) {
+					// While loading this may happen due to objects being loaded
+					// out of order, and we can't proceed then, unfortunately.
+					segBound = 0;
+				}
+				for (uint i = baseObj->getVarCount();
+				         i < originalVarCount && i < segBound; ++i) {
+					uint16 slc = READ_SCI11ENDIAN_UINT16(buf + 2*i);
+					// Skip any numbers which happen to be varselectors too
+					bool found = false;
+					for (uint j = 0; j < baseObj->getVarCount() && !found; ++j)
+						found = READ_SCI11ENDIAN_UINT16(buf + 2*j) == slc;
+					if (found) continue;
+					// Skip any selectors which aren't method selectors,
+					// so couldn't be mistaken for varselectors
+					if (lookupSelector(segMan, _pos, slc, 0, 0) != kSelectorMethod) continue;
+					warning("    Possibly affected selector: %02x (%s)", slc,
+					        g_sci->getKernel()->getSelectorName(slc).c_str());
+				}
+			}
+#endif
+		}
+
 		return true;
 	}
 

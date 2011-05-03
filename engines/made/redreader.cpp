@@ -25,6 +25,7 @@
 
 #include "made/redreader.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 
 namespace Made {
 

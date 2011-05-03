@@ -28,6 +28,7 @@
 
 #include "common/system.h"
 #include "backends/base-backend.h"
+#include "graphics/palette.h"
 
 class DefaultTimerManager;
 class DefaultSaveFileManager;
@@ -47,11 +48,11 @@ struct Ps2Mutex {
 };
 
 namespace Common {
-	class TimerManager;
+class TimerManager;
 };
 
 namespace Audio {
-	class MixerImpl;
+class MixerImpl;
 };
 
 class OSystem_PS2 : public BaseBackend, public PaletteManager {
@@ -78,9 +79,7 @@ public:
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
 	virtual void updateScreen();
-	/* TODO : check */
-	virtual void displayMessageOnOSD(const char *msg) { printf("displayMessageOnOSD: %s\n", msg); };
-	/* */
+	virtual void displayMessageOnOSD(const char *msg);
 
 	virtual void showOverlay();
 	virtual void hideOverlay();

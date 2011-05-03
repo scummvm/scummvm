@@ -28,12 +28,12 @@ $(TOOL-$(MODULE)): $(MODULE_OBJS-$(MODULE))
 # Reset TOOL_EXECUTABLE var
 TOOL_EXECUTABLE:=
 
-# Add to "tools" target
-tools: $(TOOL-$(MODULE))
+# Add to "devtools" target
+devtools: $(TOOL-$(MODULE))
 
-# Pseudo target for comfort, allows for "make tools/skycpt", etc.
+# Pseudo target for comfort, allows for "make devtools/skycpt", etc.
 $(MODULE): $(TOOL-$(MODULE))
-clean-tools: clean-$(MODULE)
+clean-devtools: clean-$(MODULE)
 
 else
 ifdef PLUGIN

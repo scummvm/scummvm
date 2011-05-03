@@ -30,7 +30,9 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "hugo/hugo.h"
 #include "hugo/file.h"
@@ -121,7 +123,7 @@ void FileManager_v1d::instructions() const {
 			f.read(wrkLine, 1);
 		} while (*wrkLine++ != '#');                // '#' is EOP
 		wrkLine[-2] = '\0';                         // Remove EOP and previous CR
-		Utils::Box(kBoxAny, "%s", line);
+		Utils::notifyBox(line);
 		wrkLine = line;
 		f.read(readBuf, 2);                         // Remove CRLF after EOP
 	}

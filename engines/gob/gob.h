@@ -30,12 +30,14 @@
 #include "common/system.h"
 #include "common/savefile.h"
 
+#include "graphics/pixelformat.h"
+
 #include "engines/engine.h"
 
 #include "gob/console.h"
 
 namespace GUI {
-	class StaticTextWidget;
+class StaticTextWidget;
 }
 
 /**

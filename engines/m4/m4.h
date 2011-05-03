@@ -148,7 +148,6 @@ protected:
 
 	void shutdown();
 
-	MidiDriver *_driver;
 	MidiPlayer *_midi;
 
 public:

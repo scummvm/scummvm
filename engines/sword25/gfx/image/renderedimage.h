@@ -50,12 +50,12 @@ public:
 	RenderedImage(const Common::String &filename, bool &result);
 
 	/**
-	    @brief Erzeugt ein leeres BS_RenderedImage
+	    @brief Creates an empty BS_RenderedImage
 
-	    @param Width die Breite des zu erzeugenden Bildes.
-	    @param Height die Höhe des zu erzeugenden Bildes
-	    @param Result gibt dem Aufrufer bekannt, ob der Konstruktor erfolgreich ausgeführt wurde. Wenn es nach dem Aufruf false enthalten sollte,
-	                  dürfen keine Methoden am Objekt aufgerufen werden und das Objekt ist sofort zu zerstören.
+	    @param Width The width of the image to be created.
+	    @param Height The height of the image to be created
+	    @param Result Informs the caller, whether the constructor is executed successfully. If it contains false
+	                  after the call, do not call methods on the object and destroy the object immediately.
 	*/
 	RenderedImage(uint width, uint height, bool &result);
 	RenderedImage();
@@ -84,25 +84,25 @@ public:
 	void replaceContent(byte *pixeldata, int width, int height);
 	virtual uint getPixel(int x, int y);
 
-	virtual bool isBlitSource() const               {
+	virtual bool isBlitSource() const {
 		return true;
 	}
-	virtual bool isBlitTarget() const               {
+	virtual bool isBlitTarget() const {
 		return false;
 	}
-	virtual bool isScalingAllowed() const           {
+	virtual bool isScalingAllowed() const {
 		return true;
 	}
-	virtual bool isFillingAllowed() const           {
+	virtual bool isFillingAllowed() const {
 		return false;
 	}
-	virtual bool isAlphaAllowed() const             {
+	virtual bool isAlphaAllowed() const {
 		return true;
 	}
-	virtual bool isColorModulationAllowed() const   {
+	virtual bool isColorModulationAllowed() const {
 		return true;
 	}
-	virtual bool isSetContentAllowed() const        {
+	virtual bool isSetContentAllowed() const {
 		return true;
 	}
 

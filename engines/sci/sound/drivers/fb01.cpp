@@ -30,6 +30,7 @@
 
 #include "common/file.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Sci {
 
@@ -129,7 +130,7 @@ private:
 
 MidiPlayer_Fb01::MidiPlayer_Fb01(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _timerParam(NULL), _timerProc(NULL) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI);
-	_driver = createMidi(dev);
+	_driver = MidiDriver::createMidi(dev);
 
 	_sysExBuf[0] = 0x43;
 	_sysExBuf[1] = 0x75;

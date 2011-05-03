@@ -24,6 +24,7 @@
 #include "pegasus/video.h"
 
 #include "common/events.h"
+#include "common/textconsole.h"
 #include "graphics/scaler.h"
 #include "video/qt_decoder.h"
 
@@ -169,7 +170,7 @@ bool VideoManager::updateBackgroundMovies() {
 			const Graphics::Surface *frame = _videoStreams[i]->decodeNextFrame();
 
 			if (frame) {			
-				if (frame->bytesPerPixel == 1)
+				if (frame->format.bytesPerPixel == 1)
 					error("Unhandled 8bpp frames"); // Cut out because Pegasus Prime shouldn't need this
 				
 				// Clip the width/height to make sure we stay on the screen
@@ -182,7 +183,7 @@ bool VideoManager::updateBackgroundMovies() {
 					_videoStreams[i].x = 0;
 					_videoStreams[i].y = 0;
 					Graphics::Surface scaledSurf;
-					scaledSurf.create(frame->w * 2, frame->h * 2, frame->bytesPerPixel);
+					scaledSurf.create(frame->w * 2, frame->h * 2, frame->format);
 					Normal2x((byte *)frame->pixels, frame->pitch, (byte *)scaledSurf.pixels, scaledSurf.pitch, frame->w, frame->h);
 					_vm->_system->copyRectToScreen((byte*)scaledSurf.pixels, scaledSurf.pitch, _videoStreams[i].x, _videoStreams[i].y, width * 2, height * 2);
 					scaledSurf.free();

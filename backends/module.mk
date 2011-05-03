@@ -8,25 +8,36 @@ MODULE_OBJS := \
 	events/default/default-events.o \
 	events/dinguxsdl/dinguxsdl-events.o \
 	events/gp2xsdl/gp2xsdl-events.o \
+	events/gph/gph-events.o \
 	events/linuxmotosdl/linuxmotosdl-events.o \
+	events/openpandora/op-events.o \
 	events/samsungtvsdl/samsungtvsdl-events.o \
 	events/sdl/sdl-events.o \
 	events/symbiansdl/symbiansdl-events.o \
+	events/webossdl/webossdl-events.o \
+	events/wincesdl/wincesdl-events.o \
 	fs/abstract-fs.o \
 	fs/stdiostream.o \
+	fs/amigaos4/amigaos4-fs.o \
 	fs/amigaos4/amigaos4-fs-factory.o \
+	fs/posix/posix-fs.o \
 	fs/posix/posix-fs-factory.o \
+	fs/symbian/symbian-fs.o \
 	fs/symbian/symbian-fs-factory.o \
+	fs/windows/windows-fs.o \
 	fs/windows/windows-fs-factory.o \
 	graphics/dinguxsdl/dinguxsdl-graphics.o \
 	graphics/gp2xsdl/gp2xsdl-graphics.o \
+	graphics/gph/gph-graphics.o \
 	graphics/linuxmotosdl/linuxmotosdl-graphics.o \
 	graphics/opengl/glerrorcheck.o \
 	graphics/opengl/gltexture.o \
 	graphics/opengl/opengl-graphics.o \
 	graphics/openglsdl/openglsdl-graphics.o \
+	graphics/openpandora/op-graphics.o \
 	graphics/sdl/sdl-graphics.o \
 	graphics/symbiansdl/symbiansdl-graphics.o \
+	graphics/wincesdl/wincesdl-graphics.o \
 	keymapper/action.o \
 	keymapper/keymap.o \
 	keymapper/keymapper.o \
@@ -44,6 +55,7 @@ MODULE_OBJS := \
 	mixer/doublebuffersdl/doublebuffersdl-mixer.o \
 	mixer/sdl/sdl-mixer.o \
 	mixer/symbiansdl/symbiansdl-mixer.o \
+	mixer/wincesdl/wincesdl-mixer.o \
 	mutex/sdl/sdl-mutex.o \
 	plugins/elf/elf-loader.o \
 	plugins/elf/mips-loader.o \
@@ -67,32 +79,30 @@ MODULE_OBJS := \
 	vkeybd/virtual-keyboard-gui.o \
 	vkeybd/virtual-keyboard-parser.o
 
-ifeq ($(BACKEND),dc)
-MODULE_OBJS += \
-	plugins/dc/dc-provider.o
-endif
-
 ifeq ($(BACKEND),ds)
 MODULE_OBJS += \
-	fs/ds/ds-fs-factory.o \
 	fs/ds/ds-fs.o \
+	fs/ds/ds-fs-factory.o \
 	plugins/ds/ds-provider.o
 endif
 
 ifeq ($(BACKEND),n64)
 MODULE_OBJS += \
+	fs/n64/n64-fs.o \
 	fs/n64/n64-fs-factory.o \
 	fs/n64/romfsstream.o
 endif
 
 ifeq ($(BACKEND),ps2)
 MODULE_OBJS += \
+	fs/ps2/ps2-fs.o \
 	fs/ps2/ps2-fs-factory.o \
 	plugins/ps2/ps2-provider.o
 endif
 
 ifeq ($(BACKEND),psp)
 MODULE_OBJS += \
+	fs/psp/psp-fs.o \
 	fs/psp/psp-fs-factory.o \
 	fs/psp/psp-stream.o \
 	plugins/psp/psp-provider.o \
@@ -102,6 +112,7 @@ endif
 
 ifeq ($(BACKEND),wii)
 MODULE_OBJS += \
+	fs/wii/wii-fs.o \
 	fs/wii/wii-fs-factory.o \
 	plugins/wii/wii-provider.o
 endif

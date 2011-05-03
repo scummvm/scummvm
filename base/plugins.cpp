@@ -175,6 +175,9 @@ public:
 		#if PLUGIN_ENABLED_STATIC(TOON)
 		LINK_PLUGIN(TOON)
 		#endif
+		#if PLUGIN_ENABLED_STATIC(TSAGE)
+		LINK_PLUGIN(TSAGE)
+		#endif
 		#if PLUGIN_ENABLED_STATIC(TOUCHE)
 		LINK_PLUGIN(TOUCHE)
 		#endif
@@ -214,6 +217,9 @@ public:
 		#endif
 		#ifdef USE_MT32EMU
 		LINK_PLUGIN(MT32)
+		#endif
+		#if defined(__ANDROID__)
+		LINK_PLUGIN(EAS)
 		#endif
 		LINK_PLUGIN(ADLIB)
 		LINK_PLUGIN(PCSPK)

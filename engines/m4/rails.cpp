@@ -194,9 +194,8 @@ long SqrtF16(long n) {
 void Rails::createEdge(int32 node1, int32 node2) {
 	uint32		index;
 	int32		x1, y1, x2, y2;
-	bool		valid, finished;
+	bool		valid;
 	long		deltaX, deltaY, distance;
-	uint8		*walkCodePtr;
 
 	if ((node1 < 0) || (node1 >= MAXRAILNODES) || (node2 < 0) || (node2 >= MAXRAILNODES))
 		return;
@@ -214,8 +213,6 @@ void Rails::createEdge(int32 node1, int32 node2) {
 		_edges.resize(index + 1);
 	_edges.insert_at(index, 0);
 	valid = true;
-	walkCodePtr = NULL;
-	finished = false;
 
 	if (_nodes.size() <= (uint32)node1 || _nodes.size() <= (uint32)node2)
 		return;

@@ -31,6 +31,8 @@
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 
+#include "common/system.h"
+#include "common/textconsole.h"
 #include "gui/message.h"
 
 namespace Mohawk {

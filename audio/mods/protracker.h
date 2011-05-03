@@ -33,7 +33,9 @@
 #ifndef SOUND_MODS_PROTRACKER_H
 #define SOUND_MODS_PROTRACKER_H
 
-#include "common/stream.h"
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Audio {
 

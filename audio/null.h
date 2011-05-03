@@ -33,6 +33,7 @@
 class MidiDriver_NULL : public MidiDriver_MPU401 {
 public:
 	int open() { return 0; }
+ 	bool isOpen() const { return true; }
 	void send(uint32 b) { }
 };
 

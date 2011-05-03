@@ -55,7 +55,7 @@ void gfxModuleData_flip();
 void gfxModuleData_updatePalette();
 void gfxModuleData_updateScreen();
 
-void gfxCopyRect(const uint8 *sourceBuffer, int width, int height, byte *dest, int x, int y, int colour);
+void gfxCopyRect(const uint8 *sourceBuffer, int width, int height, byte *dest, int x, int y, int color);
 void gfxModuleData_gfxCopyScreen(const uint8 *sourcePtr, uint8 *destPtr);
 void convertGfxFromMode4(const uint8 *sourcePtr, int width, int height, uint8 *destPtr);
 void convertGfxFromMode5(const uint8 *sourcePtr, int width, int height, uint8 *destPtr);
@@ -67,7 +67,7 @@ void gfxModuleData_setPalEntries(const byte *ptr, int start, int num);
 void gfxModuleData_setPal256(const byte *ptr);
 void gfxModuleData_addDirtyRect(const Common::Rect &r);
 void flip();
-void drawSolidBox(int32 x1, int32 y1, int32 x2, int32 y2, uint8 colour);
+void drawSolidBox(int32 x1, int32 y1, int32 x2, int32 y2, uint8 color);
 void resetBitmap(uint8 *dataPtr, int32 dataSize);
 
 void switchBackground(const byte *newBg);

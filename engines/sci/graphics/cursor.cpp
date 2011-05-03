@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/macresman.h"
+#include "common/memstream.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "graphics/cursorman.h"
@@ -38,6 +39,7 @@
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/view.h"
 #include "sci/graphics/cursor.h"
+#include "sci/graphics/maciconbar.h"
 
 namespace Sci {
 
@@ -434,9 +436,17 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 
 	if (_macCursorRemap.empty()) {
 		// QFG1/Freddy/Hoyle4 use a straight viewNum->cursor ID mapping
-		// KQ6 seems to use this mapping for its cursors
-		if (g_sci->getGameId() == GID_KQ6)
-			viewNum = loopNum * 1000 + celNum;
+		// KQ6 uses this mapping for its cursors
+		if (g_sci->getGameId() == GID_KQ6) {
+			if (viewNum == 990)      // Inventory Cursors
+				viewNum = loopNum * 16 + celNum + 2000;
+			else if (viewNum == 998) // Regular Cursors
+				viewNum = celNum + 1000;
+			else                     // Unknown cursor, ignored
+				return;
+		}
+		if (g_sci->hasMacIconBar())
+			g_sci->_gfxMacIconBar->setInventoryIcon(viewNum);
 	} else {
 		// If we do have the list, we'll be using a remap based on what the
 		// scripts have given us.
@@ -485,8 +495,8 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 					cursorBitmap[i * 8 + b] = 0; // Doesn't matter, just is transparent
 		}
 
-		uint16 hotspotX = READ_BE_UINT16(data);
-		uint16 hotspotY = READ_BE_UINT16(data + 2);
+		uint16 hotspotY = READ_BE_UINT16(data);
+		uint16 hotspotX = READ_BE_UINT16(data + 2);
 
 		static const byte cursorPalette[] = { 0x00, 0x00, 0x00, 0xff, 0xff, 0xff };
 
@@ -498,11 +508,12 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 		// Mac crsr cursor
 		byte *cursorBitmap, *palette;
 		int width, height, hotspotX, hotspotY, palSize, keycolor;
-		Common::MacResManager::convertCrsrCursor(resource->data, resource->size, &cursorBitmap, &width, &height, &hotspotX, &hotspotY, &keycolor, true, &palette, &palSize);
+		Common::MemoryReadStream resStream(resource->data, resource->size);
+		Common::MacResManager::convertCrsrCursor(&resStream, &cursorBitmap, width, height, hotspotX, hotspotY, keycolor, true, &palette, palSize);
 		CursorMan.replaceCursor(cursorBitmap, width, height, hotspotX, hotspotY, keycolor);
 		CursorMan.replaceCursorPalette(palette, 0, palSize);
-		free(cursorBitmap);
-		free(palette);
+		delete[] cursorBitmap;
+		delete[] palette;
 	}
 
 	kernelShow();

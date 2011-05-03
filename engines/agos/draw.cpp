@@ -28,6 +28,7 @@
 #include "common/system.h"
 
 #include "graphics/surface.h"
+#include "graphics/palette.h"
 
 #include "agos/agos.h"
 #include "agos/intern.h"

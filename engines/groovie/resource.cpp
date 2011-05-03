@@ -24,8 +24,11 @@
  */
 
 #include "common/archive.h"
+#include "common/debug.h"
+#include "common/file.h"
 #include "common/macresman.h"
 #include "common/substream.h"
+#include "common/textconsole.h"
 
 #include "groovie/resource.h"
 #include "groovie/groovie.h"
@@ -92,7 +95,7 @@ ResMan_t7g::ResMan_t7g(Common::MacResManager *macResFork) : _macResFork(macResFo
 	}
 }
 
-uint16 ResMan_t7g::getRef(Common::String name, Common::String scriptname) {
+uint32 ResMan_t7g::getRef(Common::String name, Common::String scriptname) {
 	// Get the name of the RL file
 	Common::String rlFileName(t7g_gjds[_lastGjd]);
 	rlFileName += ".rl";
@@ -110,7 +113,7 @@ uint16 ResMan_t7g::getRef(Common::String name, Common::String scriptname) {
 	if (!rlFile)
 		error("Groovie::Resource: Couldn't open %s", rlFileName.c_str());
 
-	uint16 resNum;
+	uint32 resNum;
 	bool found = false;
 	for (resNum = 0; !found && !rlFile->err() && !rlFile->eos(); resNum++) {
 		// Read the resource name
@@ -134,7 +137,7 @@ uint16 ResMan_t7g::getRef(Common::String name, Common::String scriptname) {
 	// Verify we really found the resource
 	if (!found) {
 		error("Groovie::Resource: Couldn't find resource %s in %s", name.c_str(), rlFileName.c_str());
-		return (uint16)-1;
+		return (uint32)-1;
 	}
 
 	return (_lastGjd << 10) | (resNum - 1);
@@ -217,8 +220,42 @@ ResMan_v2::ResMan_v2() {
 	indexfile.close();
 }
 
-uint16 ResMan_v2::getRef(Common::String name, Common::String scriptname) {
-	return 0;
+uint32 ResMan_v2::getRef(Common::String name, Common::String scriptname) {
+	// Open the RL file
+	Common::File rlFile;
+	if (!rlFile.open("dir.rl")) {
+		error("Groovie::Resource: Couldn't open dir.rl");
+		return false;
+	}
+
+	uint32 resNum;
+	bool found = false;
+	for (resNum = 0; !found && !rlFile.err() && !rlFile.eos(); resNum++) {
+		// Seek past metadata
+		rlFile.seek(14, SEEK_CUR);
+
+		// Read the resource name
+		char readname[18];
+		rlFile.read(readname, 18);
+
+		// Test whether it's the resource we're searching
+		Common::String resname(readname, 18);
+		if (resname.hasPrefix(name.c_str())) {
+			debugC(2, kGroovieDebugResource | kGroovieDebugAll, "Groovie::Resource: Resource %12s matches %s", readname, name.c_str());
+			found = true;
+		}
+	}
+
+	// Close the RL file
+	rlFile.close();
+
+	// Verify we really found the resource
+	if (!found) {
+		error("Groovie::Resource: Couldn't find resource %s", name.c_str());
+		return (uint32)-1;
+	}
+
+	return resNum;
 }
 
 bool ResMan_v2::getResInfo(uint32 fileRef, ResInfo &resInfo) {

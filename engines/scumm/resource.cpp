@@ -167,8 +167,6 @@ void ScummEngine::deleteRoomOffsets() {
 
 /** Read room offsets */
 void ScummEngine::readRoomsOffsets() {
-	int num, room;
-
 	debug(9, "readRoomOffsets()");
 
 	if (_game.features & GF_SMALL_HEADER) {
@@ -177,13 +175,12 @@ void ScummEngine::readRoomsOffsets() {
 		_fileHandle->seek(16, SEEK_SET);
 	}
 
-	num = _fileHandle->readByte();
+	int num = _fileHandle->readByte();
 	while (num--) {
-		room = _fileHandle->readByte();
+		int room = _fileHandle->readByte();
+		int offset =  _fileHandle->readUint32LE();
 		if (_res->roomoffs[rtRoom][room] != RES_INVALID_OFFSET) {
-			_res->roomoffs[rtRoom][room] = _fileHandle->readUint32LE();
-		} else {
-			_fileHandle->readUint32LE();
+			_res->roomoffs[rtRoom][room] = offset;
 		}
 	}
 }
@@ -262,26 +259,26 @@ void ScummEngine::readIndexFile() {
 			if (_fileHandle->eos() || _fileHandle->err())
 				break;
 			switch (blocktype) {
-			case MKID_BE('DOBJ'):
+			case MKTAG('D','O','B','J'):
 				_numGlobalObjects = _fileHandle->readUint16LE();
 				itemsize -= 2;
 				break;
-			case MKID_BE('DROO'):
+			case MKTAG('D','R','O','O'):
 				_numRooms = _fileHandle->readUint16LE();
 				itemsize -= 2;
 				break;
 
-			case MKID_BE('DSCR'):
+			case MKTAG('D','S','C','R'):
 				_numScripts = _fileHandle->readUint16LE();
 				itemsize -= 2;
 				break;
 
-			case MKID_BE('DCOS'):
+			case MKTAG('D','C','O','S'):
 				_numCostumes = _fileHandle->readUint16LE();
 				itemsize -= 2;
 				break;
 
-			case MKID_BE('DSOU'):
+			case MKTAG('D','S','O','U'):
 				_numSounds = _fileHandle->readUint16LE();
 				itemsize -= 2;
 				break;
@@ -354,7 +351,7 @@ void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	int num;
 	char *ptr;
 	switch (blocktype) {
-	case MKID_BE('ANAM'):		// Used by: The Dig, FT
+	case MKTAG('A','N','A','M'):		// Used by: The Dig, FT
 		debug(9, "found ANAM block, reading audio names");
 		num = _fileHandle->readUint16LE();
 		ptr = (char*)malloc(num * 9);
@@ -362,7 +359,7 @@ void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		_imuseDigital->setAudioNames(num, ptr);
 		break;
 
-	case MKID_BE('DRSC'):		// Used by: COMI
+	case MKTAG('D','R','S','C'):		// Used by: COMI
 		readResTypeList(rtRoomScripts);
 		break;
 
@@ -375,37 +372,37 @@ void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	int i;
 	switch (blocktype) {
-	case MKID_BE('DIRI'):
+	case MKTAG('D','I','R','I'):
 		readResTypeList(rtRoomImage);
 		break;
 
-	case MKID_BE('DIRM'):
+	case MKTAG('D','I','R','M'):
 		readResTypeList(rtImage);
 		break;
 
-	case MKID_BE('DIRT'):
+	case MKTAG('D','I','R','T'):
 		readResTypeList(rtTalkie);
 		break;
 
-	case MKID_BE('DLFL'):
+	case MKTAG('D','L','F','L'):
 		i = _fileHandle->readUint16LE();
 		_fileHandle->seek(-2, SEEK_CUR);
 		_heV7RoomOffsets = (byte *)calloc(2 + (i * 4), 1);
 		_fileHandle->read(_heV7RoomOffsets, (2 + (i * 4)) );
 		break;
 
-	case MKID_BE('DISK'):
+	case MKTAG('D','I','S','K'):
 		i = _fileHandle->readUint16LE();
 		_heV7DiskOffsets = (byte *)calloc(i, 1);
 		_fileHandle->read(_heV7DiskOffsets, i);
 		break;
 
-	case MKID_BE('SVER'):
+	case MKTAG('S','V','E','R'):
 		// Index version number
 		_fileHandle->seek(itemsize - 8, SEEK_CUR);
 		break;
 
-	case MKID_BE('INIB'):
+	case MKTAG('I','N','I','B'):
 		_fileHandle->seek(itemsize - 8, SEEK_CUR);
 		debug(2, "INIB index block not yet handled, skipping");
 		break;
@@ -418,17 +415,17 @@ void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	int i;
 	switch (blocktype) {
-	case MKID_BE('DCHR'):
-	case MKID_BE('DIRF'):
+	case MKTAG('D','C','H','R'):
+	case MKTAG('D','I','R','F'):
 		readResTypeList(rtCharset);
 		break;
 
-	case MKID_BE('DOBJ'):
+	case MKTAG('D','O','B','J'):
 		debug(9, "found DOBJ block, reading object table");
 		readGlobalObjects();
 		break;
 
-	case MKID_BE('RNAM'):
+	case MKTAG('R','N','A','M'):
 		// Names of rooms. Maybe we should put them into a table, for use by the debugger?
 		if (_game.heversion >= 80) {
 			for (int room; (room = _fileHandle->readUint16LE()); ) {
@@ -452,32 +449,32 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		}
 		break;
 
-	case MKID_BE('DROO'):
-	case MKID_BE('DIRR'):
+	case MKTAG('D','R','O','O'):
+	case MKTAG('D','I','R','R'):
 		readResTypeList(rtRoom);
 		break;
 
-	case MKID_BE('DSCR'):
-	case MKID_BE('DIRS'):
+	case MKTAG('D','S','C','R'):
+	case MKTAG('D','I','R','S'):
 		readResTypeList(rtScript);
 		break;
 
-	case MKID_BE('DCOS'):
-	case MKID_BE('DIRC'):
+	case MKTAG('D','C','O','S'):
+	case MKTAG('D','I','R','C'):
 		readResTypeList(rtCostume);
 		break;
 
-	case MKID_BE('MAXS'):
+	case MKTAG('M','A','X','S'):
 		readMAXS(itemsize);
 		allocateArrays();
 		break;
 
-	case MKID_BE('DIRN'):
-	case MKID_BE('DSOU'):
+	case MKTAG('D','I','R','N'):
+	case MKTAG('D','S','O','U'):
 		readResTypeList(rtSound);
 		break;
 
-	case MKID_BE('AARY'):
+	case MKTAG('A','A','R','Y'):
 		readArrayFromIndexFile();
 		break;
 
@@ -491,7 +488,7 @@ void ScummEngine::readArrayFromIndexFile() {
 	error("readArrayFromIndexFile() not supported in pre-V6 games");
 }
 
-void ScummEngine::readResTypeList(int id) {
+int ScummEngine::readResTypeList(int id) {
 	int num;
 	int i;
 
@@ -511,16 +508,27 @@ void ScummEngine::readResTypeList(int id) {
 	}
 	for (i = 0; i < num; i++) {
 		_res->roomoffs[id][i] = _fileHandle->readUint32LE();
-
-		if (id == rtRoom && _game.heversion >= 70)
-			_heV7RoomIntOffsets[i] = _res->roomoffs[id][i];
 	}
 
-	if (_game.heversion >= 70) {
+	return num;
+}
+
+int ScummEngine_v70he::readResTypeList(int id) {
+	int num;
+	int i;
+
+	num = ScummEngine::readResTypeList(id);
+
+	if (id == rtRoom)
 		for (i = 0; i < num; i++) {
-			_res->globsize[id][i] = _fileHandle->readUint32LE();
+			_heV7RoomIntOffsets[i] = _res->roomoffs[rtRoom][i];
 		}
+
+	for (i = 0; i < num; i++) {
+		_res->globsize[id][i] = _fileHandle->readUint32LE();
 	}
+
+	return num;
 }
 
 void ResourceManager::allocResTypeData(int id, uint32 tag, int num_, const char *name_, int mode_) {
@@ -635,18 +643,9 @@ int ScummEngine::loadResource(int type, int idx) {
 	if (roomNr == 0)
 		roomNr = _roomResource;
 
-	if (type == rtRoom) {
-		if (_game.version == 8)
-			fileOffs = 8;
-		else if (_game.heversion >= 70)
-			fileOffs = _heV7RoomIntOffsets[idx];
-		else
-			fileOffs = 0;
-	} else {
-		fileOffs = _res->roomoffs[type][idx];
-		if (fileOffs == RES_INVALID_OFFSET)
-			return 0;
-	}
+	fileOffs = getResourceRoomOffset(type, idx);
+	if (fileOffs == RES_INVALID_OFFSET)
+		return 0;
 
 	openRoom(roomNr);
 
@@ -691,19 +690,31 @@ int ScummEngine::loadResource(int type, int idx) {
 		dumpResource("script-", idx, getResourceAddress(rtScript, idx));
 	}
 
-	if (!_fileHandle->err() && !_fileHandle->eos()) {
-		return 1;
+	if (_fileHandle->err() || _fileHandle->eos()) {
+		error("Cannot read resource");
 	}
 
-	_res->nukeResource(type, idx);
-
-	error("Cannot read resource");
+	return 1;
 }
 
 int ScummEngine::getResourceRoomNr(int type, int idx) {
 	if (type == rtRoom && _game.heversion < 70)
 		return idx;
 	return _res->roomno[type][idx];
+}
+
+uint32 ScummEngine::getResourceRoomOffset(int type, int idx) {
+	if (type == rtRoom) {
+		return (_game.version == 8) ? 8 : 0;
+	}
+	return _res->roomoffs[type][idx];
+}
+
+uint32 ScummEngine_v70he::getResourceRoomOffset(int type, int idx) {
+	if (type == rtRoom) {
+		return _heV7RoomIntOffsets[idx];
+	}
+	return _res->roomoffs[type][idx];
 }
 
 int ScummEngine::getResourceSize(int type, int idx) {
@@ -1276,14 +1287,14 @@ void ScummEngine::allocateArrays() {
 		_arraySlot = (byte *)calloc(_numArray, 1);
 	}
 
-	_res->allocResTypeData(rtCostume, (_game.features & GF_NEW_COSTUMES) ? MKID_BE('AKOS') : MKID_BE('COST'),
+	_res->allocResTypeData(rtCostume, (_game.features & GF_NEW_COSTUMES) ? MKTAG('A','K','O','S') : MKTAG('C','O','S','T'),
 								_numCostumes, "costume", 1);
-	_res->allocResTypeData(rtRoom, MKID_BE('ROOM'), _numRooms, "room", 1);
-	_res->allocResTypeData(rtRoomImage, MKID_BE('RMIM'), _numRooms, "room image", 1);
-	_res->allocResTypeData(rtRoomScripts, MKID_BE('RMSC'), _numRooms, "room script", 1);
-	_res->allocResTypeData(rtSound, MKID_BE('SOUN'), _numSounds, "sound", 2);
-	_res->allocResTypeData(rtScript, MKID_BE('SCRP'), _numScripts, "script", 1);
-	_res->allocResTypeData(rtCharset, MKID_BE('CHAR'), _numCharsets, "charset", 1);
+	_res->allocResTypeData(rtRoom, MKTAG('R','O','O','M'), _numRooms, "room", 1);
+	_res->allocResTypeData(rtRoomImage, MKTAG('R','M','I','M'), _numRooms, "room image", 1);
+	_res->allocResTypeData(rtRoomScripts, MKTAG('R','M','S','C'), _numRooms, "room script", 1);
+	_res->allocResTypeData(rtSound, MKTAG('S','O','U','N'), _numSounds, "sound", 2);
+	_res->allocResTypeData(rtScript, MKTAG('S','C','R','P'), _numScripts, "script", 1);
+	_res->allocResTypeData(rtCharset, MKTAG('C','H','A','R'), _numCharsets, "charset", 1);
 	_res->allocResTypeData(rtObjectName, 0, _numNewNames, "new name", 0);
 	_res->allocResTypeData(rtInventory, 0, _numInventory, "inventory", 0);
 	_res->allocResTypeData(rtTemp, 0, 10, "temp", 0);
@@ -1293,14 +1304,17 @@ void ScummEngine::allocateArrays() {
 	_res->allocResTypeData(rtString, 0, _numArray, "array", 0);
 	_res->allocResTypeData(rtFlObject, 0, _numFlObject, "flobject", 0);
 	_res->allocResTypeData(rtMatrix, 0, 10, "boxes", 0);
-	_res->allocResTypeData(rtImage, MKID_BE('AWIZ'), _numImages, "images", 1);
-	_res->allocResTypeData(rtTalkie, MKID_BE('TLKE'), _numTalkies, "talkie", 1);
-
-	if (_game.heversion >= 70) {
-		_res->allocResTypeData(rtSpoolBuffer, 0, 9, "spool buffer", 1);
-		_heV7RoomIntOffsets = (uint32 *)calloc(_numRooms, sizeof(uint32));
-	}
+	_res->allocResTypeData(rtImage, MKTAG('A','W','I','Z'), _numImages, "images", 1);
+	_res->allocResTypeData(rtTalkie, MKTAG('T','L','K','E'), _numTalkies, "talkie", 1);
 }
+
+void ScummEngine_v70he::allocateArrays() {
+	ScummEngine::allocateArrays();
+
+	_res->allocResTypeData(rtSpoolBuffer, 0, 9, "spool buffer", 1);
+	_heV7RoomIntOffsets = (uint32 *)calloc(_numRooms, sizeof(uint32));
+}
+
 
 void ScummEngine::dumpResource(const char *tag, int idx, const byte *ptr, int length) {
 	char buf[256];
@@ -1450,35 +1464,35 @@ const byte *findResourceSmall(uint32 tag, const byte *searchin) {
 
 uint16 newTag2Old(uint32 newTag) {
 	switch (newTag) {
-	case (MKID_BE('RMHD')):
+	case (MKTAG('R','M','H','D')):
 		return (0x4448);	// HD
-	case (MKID_BE('IM00')):
+	case (MKTAG('I','M','0','0')):
 		return (0x4D42);	// BM
-	case (MKID_BE('EXCD')):
+	case (MKTAG('E','X','C','D')):
 		return (0x5845);	// EX
-	case (MKID_BE('ENCD')):
+	case (MKTAG('E','N','C','D')):
 		return (0x4E45);	// EN
-	case (MKID_BE('SCAL')):
+	case (MKTAG('S','C','A','L')):
 		return (0x4153);	// SA
-	case (MKID_BE('LSCR')):
+	case (MKTAG('L','S','C','R')):
 		return (0x534C);	// LS
-	case (MKID_BE('OBCD')):
+	case (MKTAG('O','B','C','D')):
 		return (0x434F);	// OC
-	case (MKID_BE('OBIM')):
+	case (MKTAG('O','B','I','M')):
 		return (0x494F);	// OI
-	case (MKID_BE('SMAP')):
+	case (MKTAG('S','M','A','P')):
 		return (0x4D42);	// BM
-	case (MKID_BE('CLUT')):
+	case (MKTAG('C','L','U','T')):
 		return (0x4150);	// PA
-	case (MKID_BE('BOXD')):
+	case (MKTAG('B','O','X','D')):
 		return (0x5842);	// BX
-	case (MKID_BE('CYCL')):
+	case (MKTAG('C','Y','C','L')):
 		return (0x4343);	// CC
-	case (MKID_BE('EPAL')):
+	case (MKTAG('E','P','A','L')):
 		return (0x5053);	// SP
-	case (MKID_BE('TILE')):
+	case (MKTAG('T','I','L','E')):
 		return (0x4C54);	// TL
-	case (MKID_BE('ZP00')):
+	case (MKTAG('Z','P','0','0')):
 		return (0x505A);	// ZP
 	default:
 		return (0);

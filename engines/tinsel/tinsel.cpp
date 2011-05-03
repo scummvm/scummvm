@@ -29,21 +29,13 @@
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/keyboard.h"
-#include "common/file.h"
 #include "common/fs.h"
-#include "common/savefile.h"
 #include "common/config-manager.h"
 #include "common/serializer.h"
-#include "common/stream.h"
 
 #include "backends/audiocd/audiocd.h"
 
 #include "engines/util.h"
-
-#include "graphics/cursorman.h"
-
-#include "base/plugins.h"
-#include "base/version.h"
 
 #include "tinsel/actors.h"
 #include "tinsel/background.h"
@@ -218,14 +210,17 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 			continue;
 #endif
 
+		case Common::KEYCODE_1:
 		case Common::KEYCODE_F1:
 			// Options dialog
 			ProcessKeyEvent(PLR_MENU);
 			continue;
+		case Common::KEYCODE_5:
 		case Common::KEYCODE_F5:
 			// Save game
 			ProcessKeyEvent(PLR_SAVE);
 			continue;
+		case Common::KEYCODE_7:
 		case Common::KEYCODE_F7:
 			// Load game
 			ProcessKeyEvent(PLR_LOAD);
@@ -856,25 +851,8 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	if (cd_num >= 0)
 		_system->getAudioCDManager()->openCD(cd_num);
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	bool native_mt32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
-	//bool adlib = (MidiDriver::getMusicType(dev) == MT_ADLIB);
-
-	_driver = MidiDriver::createMidi(dev);
-	if (native_mt32)
-		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-
-	_midiMusic = new MidiMusicPlayer(_driver);
+	_midiMusic = new MidiMusicPlayer();
 	_pcmMusic = new PCMMusicPlayer();
-	//_midiMusic->setNativeMT32(native_mt32);
-	//_midiMusic->setAdLib(adlib);
-
-	if (native_mt32)
-		_driver->sendMT32Reset();
-	else
-		_driver->sendGMReset();
-
-	_musicVolume = ConfMan.getInt("music_volume");
 
 	_sound = new SoundManager(this);
 
@@ -896,7 +874,6 @@ TinselEngine::~TinselEngine() {
 	delete _midiMusic;
 	delete _pcmMusic;
 	delete _console;
-	delete _driver;
 	_screenSurface.free();
 	FreeSaveScenes();
 	FreeTextBuffer();
@@ -926,10 +903,10 @@ Common::Error TinselEngine::run() {
 #else
 		initGraphics(640, 432, true);
 #endif
-		_screenSurface.create(640, 432, 1);
+		_screenSurface.create(640, 432, Graphics::PixelFormat::createFormatCLUT8());
 	} else {
 		initGraphics(320, 200, false);
-		_screenSurface.create(320, 200, 1);
+		_screenSurface.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
 	g_eventRec.registerRandomSource(_random, "tinsel");
@@ -987,7 +964,7 @@ Common::Error TinselEngine::run() {
 	// errors when loading the save state.
 
 	if (ConfMan.hasKey("save_slot")) {
-		if (loadGameState(ConfMan.getInt("save_slot")) == Common::kNoError)
+		if (loadGameState(ConfMan.getInt("save_slot")).getCode() == Common::kNoError)
 			loadingFromGMM = true;
 	}
 

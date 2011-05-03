@@ -30,8 +30,10 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 #include "common/config-manager.h"
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"
@@ -46,6 +48,13 @@
 #include "hugo/mouse.h"
 
 namespace Hugo {
+
+namespace {
+static const char s_bootCypher[] = "Copyright 1992, David P Gray, Gray Design Associates";
+static const int s_bootCypherLen = sizeof(s_bootCypher) - 1;
+}
+
+
 FileManager::FileManager(HugoEngine *vm) : _vm(vm) {
 	has_read_header = false;
 	firstUIFFl = true;
@@ -291,7 +300,11 @@ sound_pt FileManager::getSound(const int16 sound, uint16 *size) {
 	}
 
 	if (!has_read_header) {
-		if (fp.read(s_hdr, sizeof(s_hdr)) != sizeof(s_hdr))
+		for (int i = 0; i < kMaxSounds; i++) {
+			s_hdr[i].size = fp.readUint16LE();
+			s_hdr[i].offset = fp.readUint32LE();
+		}
+		if (fp.err())
 			error("Wrong sound file format");
 		has_read_header = true;
 	}
@@ -393,7 +406,7 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 	out->writeByte((gameStatus.gameOverFl) ? 1 : 0);
 
 	// Save screen states
-	for (int i = 0; i < _vm->_numScreens; i++)
+	for (int i = 0; i < _vm->_numStates; i++)
 		out->writeByte(_vm->_screenStates[i]);
 
 	_vm->_scheduler->saveSchedulerData(out);
@@ -410,6 +423,8 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 	out->writeSint16BE(_vm->_maze.x3);
 	out->writeSint16BE(_vm->_maze.x4);
 	out->writeByte(_vm->_maze.firstScreenIndex);
+
+	out->writeByte((byte)_vm->getGameStatus().viewState);
 
 	out->finalize();
 
@@ -488,7 +503,7 @@ bool FileManager::restoreGame(const int16 slot) {
 	gameStatus.storyModeFl = (in->readByte() == 1);
 	_vm->_mouse->setJumpExitFl(in->readByte() == 1);
 	gameStatus.gameOverFl = (in->readByte() == 1);
-	for (int i = 0; i < _vm->_numScreens; i++)
+	for (int i = 0; i < _vm->_numStates; i++)
 		_vm->_screenStates[i] = in->readByte();
 
 	_vm->_scheduler->restoreSchedulerData(in);
@@ -507,6 +522,11 @@ bool FileManager::restoreGame(const int16 slot) {
 	_vm->_maze.x4 = in->readSint16BE();
 	_vm->_maze.firstScreenIndex = in->readByte();
 
+	_vm->_scheduler->restoreScreen(*_vm->_screen_p);
+	if ((_vm->getGameStatus().viewState = (vstate_t) in->readByte()) != kViewPlay)
+		_vm->_screen->hideCursor();
+
+
 	delete in;
 	return true;
 }
@@ -516,16 +536,17 @@ bool FileManager::restoreGame(const int16 slot) {
  */
 void FileManager::printBootText() {
 	debugC(1, kDebugFile, "printBootText()");
-	static const char *cypher = getBootCypher();
 
 	Common::File ofp;
 	if (!ofp.open(getBootFilename())) {
-		if (_vm->_gameVariant == kGameVariantH1Dos) {
+		if (_vm->getPlatform() == Common::kPlatformPC) {
 			//TODO initialize properly _boot structure
-			warning("printBootText - Skipping as H1 Dos may be a freeware");
+			warning("printBootText - Skipping as Dos versions may be a freeware or shareware");
 			return;
 		} else {
-			error("Missing startup file");
+			Utils::notifyBox(Common::String::format("Missing startup file '%s'", getBootFilename()));
+			_vm->getGameStatus().doQuitFl = true;
+			return;
 		}
 	}
 
@@ -534,16 +555,19 @@ void FileManager::printBootText() {
 	if (buf) {
 		// Skip over the boot structure (already read) and read exit text
 		ofp.seek((long)sizeof(_vm->_boot), SEEK_SET);
-		if (ofp.read(buf, _vm->_boot.exit_len) != (size_t)_vm->_boot.exit_len)
-			error("Error while reading startup file");
+		if (ofp.read(buf, _vm->_boot.exit_len) != (size_t)_vm->_boot.exit_len) {
+			Utils::notifyBox(Common::String::format("Error while reading startup file '%s'", getBootFilename()));
+			_vm->getGameStatus().doQuitFl = true;
+			return;
+		}
 
 		// Decrypt the exit text, using CRYPT substring
 		int i;
 		for (i = 0; i < _vm->_boot.exit_len; i++)
-			buf[i] ^= cypher[i % strlen(cypher)];
+			buf[i] ^= s_bootCypher[i % s_bootCypherLen];
 
 		buf[i] = '\0';
-		Utils::Box(kBoxOk, "%s", buf);
+		Utils::notifyBox(buf);
 	}
 
 	free(buf);
@@ -556,21 +580,32 @@ void FileManager::printBootText() {
  */
 void FileManager::readBootFile() {
 	debugC(1, kDebugFile, "readBootFile()");
-	static const char *cypher = getBootCypher();
 
 	Common::File ofp;
 	if (!ofp.open(getBootFilename())) {
 		if (_vm->_gameVariant == kGameVariantH1Dos) {
 			//TODO initialize properly _boot structure
 			warning("readBootFile - Skipping as H1 Dos may be a freeware");
+			memset(_vm->_boot.distrib, '\0', sizeof(_vm->_boot.distrib));
+			_vm->_boot.registered = kRegFreeware;
+			return;
+		} else if (_vm->getPlatform() == Common::kPlatformPC) {
+			warning("readBootFile - Skipping as H2 and H3 Dos may be shareware");
+			memset(_vm->_boot.distrib, '\0', sizeof(_vm->_boot.distrib));
+			_vm->_boot.registered = kRegShareware;
 			return;
 		} else {
-			error("Missing startup file");
+			Utils::notifyBox(Common::String::format("Missing startup file '%s'", getBootFilename()));
+			_vm->getGameStatus().doQuitFl = true;
+			return;
 		}
 	}
 
-	if (ofp.size() < (int32)sizeof(_vm->_boot))
-		error("Corrupted startup file");
+	if (ofp.size() < (int32)sizeof(_vm->_boot)) {
+		Utils::notifyBox(Common::String::format("Corrupted startup file '%s'", getBootFilename()));
+		_vm->getGameStatus().doQuitFl = true;
+		return;
+	}
 
 	_vm->_boot.checksum = ofp.readByte();
 	_vm->_boot.registered = ofp.readByte();
@@ -583,12 +618,14 @@ void FileManager::readBootFile() {
 	byte checksum = 0;
 	for (uint32 i = 0; i < sizeof(_vm->_boot); i++) {
 		checksum ^= p[i];
-		p[i] ^= cypher[i % strlen(cypher)];
+		p[i] ^= s_bootCypher[i % s_bootCypherLen];
 	}
 	ofp.close();
 
-	if (checksum)
-		error("Corrupted startup file");
+	if (checksum) {
+		Utils::notifyBox(Common::String::format("Corrupted startup file '%s'", getBootFilename()));
+		_vm->getGameStatus().doQuitFl = true;
+	}
 }
 
 /**
@@ -660,8 +697,5 @@ void FileManager::readUIFImages() {
 	readUIFItem(UIF_IMAGES, _vm->_screen->getGUIBuffer());   // Read all uif images
 }
 
-const char *FileManager::getBootCypher() const {
-	return "Copyright 1992, David P Gray, Gray Design Associates";
-}
 } // End of namespace Hugo
 

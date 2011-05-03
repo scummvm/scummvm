@@ -35,7 +35,7 @@ namespace Scumm {
 
 class ScummEngine;
 namespace APUe {
-	class APU;
+class APU;
 }
 
 static const int MAXVOLUME = 0x7F;

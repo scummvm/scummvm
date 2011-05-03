@@ -1,9 +1,12 @@
 MODULE := backends/platform/android
 
 MODULE_OBJS := \
-	android.o \
+	jni.o \
+	texture.o \
 	asset-archive.o \
-	video.o
+	android.o \
+	gfx.o \
+	events.o
 
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
 MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))

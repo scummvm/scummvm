@@ -92,9 +92,10 @@ struct ExecStack {
 
 	StackPtr fp; // Frame pointer
 	StackPtr sp; // Stack pointer
-	int argc;
 
+	int argc;
 	StackPtr variables_argp; // Argument pointer
+
 	SegmentId local_segment; // local variables etc
 
 	Selector debugSelector;   // The selector which was used to call or -1 if not applicable
@@ -104,6 +105,29 @@ struct ExecStack {
 	ExecStackType type;
 
 	reg_t* getVarPointer(SegManager *segMan) const;
+
+	ExecStack(reg_t objp_, reg_t sendp_, StackPtr sp_, int argc_, StackPtr argp_,
+				SegmentId localsSegment_, reg_t pc_, Selector debugSelector_,
+				int debugExportId_, int debugLocalCallOffset_, int debugOrigin_,
+				ExecStackType type_) {
+		objp = objp_;
+		sendp = sendp_;
+		// varp is set separately for varselector calls
+		addr.pc = pc_;
+		fp = sp = sp_;
+		argc = argc_;
+		variables_argp = argp_;
+		*variables_argp = make_reg(0, argc);  // The first argument is argc
+		if (localsSegment_ != 0xFFFF)
+			local_segment = localsSegment_;
+		else
+			local_segment = pc_.segment;
+		debugSelector = debugSelector_;
+		debugExportId = debugExportId_;
+		debugLocalCallOffset = debugLocalCallOffset_;
+		debugOrigin = debugOrigin_;
+		type = type_;
+	}
 };
 
 enum {
@@ -115,7 +139,7 @@ enum {
 
 /** Number of kernel calls in between gcs; should be < 50000 */
 enum {
-	GC_INTERVAL = 32768
+	GC_INTERVAL = 0x8000
 };
 
 // Opcode formats

@@ -30,7 +30,6 @@
 #define SOUND_SOFTSYNTH_OPL_MAME_H
 
 #include "common/scummsys.h"
-#include "common/util.h"
 #include "common/random.h"
 
 #include "audio/fmopl.h"

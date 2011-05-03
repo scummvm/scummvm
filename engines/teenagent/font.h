@@ -25,6 +25,7 @@
 #ifndef TEENAGENT_FONT_H
 #define TEENAGENT_FONT_H
 
+#include "common/str.h"
 #include "graphics/surface.h"
 
 namespace TeenAgent {

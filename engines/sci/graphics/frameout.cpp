@@ -23,9 +23,15 @@
  *
  */
 
-#include "common/util.h"
-#include "common/stack.h"
-#include "graphics/primitives.h"
+#include "common/algorithm.h"
+#include "common/events.h"
+#include "common/keyboard.h"
+#include "common/list_intern.h"
+#include "common/str.h"
+#include "common/system.h"
+#include "common/textconsole.h"
+#include "engines/engine.h"
+#include "graphics/surface.h"
 
 #include "sci/sci.h"
 #include "sci/engine/kernel.h"
@@ -83,10 +89,12 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 	}
 
 	newPlane.object = object;
-	newPlane.pictureId = 0xFFFF;
 	newPlane.priority = readSelectorValue(_segMan, object, SELECTOR(priority));
 	newPlane.lastPriority = 0xFFFF; // hidden
 	newPlane.planeOffsetX = 0;
+	newPlane.pictureId = 0xFFFF;
+	newPlane.planePictureMirrored = false;
+	newPlane.planeBack = 0;
 	_planes.push_back(newPlane);
 
 	kernelUpdatePlane(object);
@@ -123,7 +131,10 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 			if (it->planeRect.left < 0) {
 				it->planeOffsetX = -it->planeRect.left;
 				it->planeRect.left = 0;
+			} else {
+				it->planeOffsetX = 0;
 			}
+
 			if (it->planeRect.top < 0)
 				it->planeRect.top = 0;
 			// We get bad plane-bottom in sq6
@@ -337,6 +348,8 @@ static int16 GetLongest(const char *text, int16 maxWidth, GfxFont *font) {
 			maxChars = curCharCount; // return count up to (but not including) breaking space
 			break;
 		}
+		if (width + font->getCharWidth(curChar) > maxWidth)
+			break;
 		width += font->getCharWidth(curChar);
 		curCharCount++;
 	}
@@ -485,8 +498,8 @@ void GfxFrameout::kernelFrameout() {
 
 				if (view->isSci2Hires()) {
 					int16 dummyX = 0;
-					_screen->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
-					_screen->adjustToUpscaledCoordinates(itemEntry->z, dummyX);
+					view->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
+					view->adjustToUpscaledCoordinates(itemEntry->z, dummyX);
 				} else if (getSciVersion() == SCI_VERSION_2_1) {
 					itemEntry->y = (itemEntry->y * _screen->getHeight()) / scriptsRunningHeight;
 					itemEntry->x = (itemEntry->x * _screen->getWidth()) / scriptsRunningWidth;
@@ -503,8 +516,8 @@ void GfxFrameout::kernelFrameout() {
 					itemEntry->celRect.bottom = readSelectorValue(_segMan, itemEntry->object, SELECTOR(inBottom)) + 1;
 					itemEntry->celRect.right = readSelectorValue(_segMan, itemEntry->object, SELECTOR(inRight)) + 1;
 					if (view->isSci2Hires()) {
-						_screen->adjustToUpscaledCoordinates(itemEntry->celRect.top, itemEntry->celRect.left);
-						_screen->adjustToUpscaledCoordinates(itemEntry->celRect.bottom, itemEntry->celRect.right);
+						view->adjustToUpscaledCoordinates(itemEntry->celRect.top, itemEntry->celRect.left);
+						view->adjustToUpscaledCoordinates(itemEntry->celRect.bottom, itemEntry->celRect.right);
 					}
 					itemEntry->celRect.translate(itemEntry->x, itemEntry->y);
 					// TODO: maybe we should clip the cels rect with this, i'm not sure
@@ -520,8 +533,8 @@ void GfxFrameout::kernelFrameout() {
 					nsRect.translate(it->planeOffsetX, 0);
 
 					if (view->isSci2Hires()) {
-						_screen->adjustBackUpscaledCoordinates(nsRect.top, nsRect.left);
-						_screen->adjustBackUpscaledCoordinates(nsRect.bottom, nsRect.right);
+						view->adjustBackUpscaledCoordinates(nsRect.top, nsRect.left);
+						view->adjustBackUpscaledCoordinates(nsRect.bottom, nsRect.right);
 					} else if (getSciVersion() == SCI_VERSION_2_1) {
 						nsRect.top = (nsRect.top * scriptsRunningHeight) / _screen->getHeight();
 						nsRect.left = (nsRect.left * scriptsRunningWidth) / _screen->getWidth();
@@ -592,9 +605,9 @@ void GfxFrameout::kernelFrameout() {
 					const char *txt = text.c_str();
 					// HACK. The plane sometimes doesn't contain the correct width. This
 					// hack breaks the dialog options when speaking with Grace, but it's
-					// the best we got up to now.
-					// TODO: Remove this, and figure out why the plane in question isn't
-					// initialized correctly (its width is 0).
+					// the best we got up to now. This happens because of the unimplemented
+					// kTextWidth function in SCI32.
+					// TODO: Remove this once kTextWidth has been implemented.
 					uint16 w = it->planeRect.width() >= 20 ? it->planeRect.width() : _screen->getWidth() - 10;
 					int16 charCount;
 

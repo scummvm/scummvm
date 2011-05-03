@@ -204,19 +204,24 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 			maxChars = curCharCount; // return count up to (but not including) breaking space
 			break;
 		}
+		// Sometimes this can go off the screen, like for example bug #3040161.
+		// However, we only perform this for non-Japanese games, as these require
+		// special handling, done after this loop.
+		if (width + _font->getCharWidth(curChar) > maxWidth && g_sci->getLanguage() != Common::JA_JPN)
+			break;
 		width += _font->getCharWidth(curChar);
 		curCharCount++;
 	}
+
+	// Text without spaces, probably Kanji/Japanese
 	if (maxChars == 0) {
-		// Text w/o space, supposingly kanji
 		maxChars = curCharCount;
 
 		uint16 nextChar;
 
 		// We remove the last char only, if maxWidth was actually equal width
 		// before adding the last char. Otherwise we won't get the same cutting
-		// as in sierra pc98 sci. Note: changing the while() instead will NOT
-		// WORK. it would break all sorts of regular sci games.
+		// as in sierra pc98 sci.
 		if (maxWidth == (width - _font->getCharWidth(curChar))) {
 			maxChars--;
 			if (curChar > 0xFF)

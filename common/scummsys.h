@@ -94,6 +94,11 @@
 	#include <stdarg.h>
 	#include <assert.h>
 	#include <ctype.h>
+	// MSVC does not define M_PI, M_SQRT2 and other math defines by default.
+	// _USE_MATH_DEFINES must be defined in order to have these defined, thus
+	// we enable it here. For more information, check:
+	// http://msdn.microsoft.com/en-us/library/4hwaceh6(v=VS.100).aspx
+	#define _USE_MATH_DEFINES
 	#include <math.h>
 
 #endif
@@ -238,11 +243,6 @@
 	// You need to set this manually if necessary
 //	#define SCUMM_NEED_ALIGNMENT
 
-	#if defined(__DECCXX) // Assume alpha architecture
-	#define INVERSE_MKID
-	#define SCUMM_NEED_ALIGNMENT
-	#endif
-
 	// Very BAD hack following, used to avoid triggering an assert in uClibc dingux library
 	// "toupper" when pressing keyboard function keys.
 	#if defined(DINGUX)
@@ -367,7 +367,7 @@
 #if defined(__GNUC__)
 	#define NORETURN_POST __attribute__((__noreturn__))
 	#define PACKED_STRUCT __attribute__((__packed__))
-	#define GCC_PRINTF(x,y) __attribute__((__format__(printf, x, y)))
+	#define GCC_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
 
 	#if !defined(FORCEINLINE) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
 		#define FORCEINLINE inline __attribute__((__always_inline__))
@@ -375,7 +375,7 @@
 #elif defined(__INTEL_COMPILER)
 	#define NORETURN_POST __attribute__((__noreturn__))
 	#define PACKED_STRUCT __attribute__((__packed__))
-	#define GCC_PRINTF(x,y) __attribute__((__format__(printf, x, y)))
+	#define GCC_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
 #else
 	#define PACKED_STRUCT
 	#define GCC_PRINTF(x,y)
@@ -403,10 +403,6 @@
 
 #ifndef STRINGBUFLEN
 #define STRINGBUFLEN 1024
-#endif
-
-#ifndef PI
-#define PI 3.14159265358979323846
 #endif
 
 #ifndef MAXPATHLEN

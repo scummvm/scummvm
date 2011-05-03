@@ -28,6 +28,7 @@
 
 
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "agos/animation.h"
 #include "agos/agos.h"

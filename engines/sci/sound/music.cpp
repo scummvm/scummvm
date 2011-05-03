@@ -75,7 +75,7 @@ void SciMusic::init() {
 		deviceFlags |= MDT_PREFER_GM;
 
 	// Currently our CMS implementation only supports SCI1(.1)
-	if (getSciVersion() >= SCI_VERSION_1_EGA && getSciVersion() <= SCI_VERSION_1_1)
+	if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY && getSciVersion() <= SCI_VERSION_1_1)
 		deviceFlags |= MDT_CMS;
 
 	uint32 dev = MidiDriver::detectDevice(deviceFlags);
@@ -303,7 +303,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			pSnd->hCurrentAud = Audio::SoundHandle();
 		} else {
 			// play MIDI track
-			_mutex.lock();
+			Common::StackLock lock(_mutex);
 			pSnd->soundType = Audio::Mixer::kMusicSoundType;
 			if (pSnd->pMidiParser == NULL) {
 				pSnd->pMidiParser = new MidiParser_SCI(_soundVersion, this);
@@ -318,10 +318,22 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(), _pMidiDrv->hasRhythmChannel());
 
 			pSnd->pMidiParser->mainThreadBegin();
+			// loadMusic() below calls jumpToTick.
+			// Disable sound looping and hold before jumpToTick is called,
+			// otherwise the song may keep looping forever when it ends in
+			// jumpToTick (e.g. LSL3, when going left from room 210).
+			uint16 prevLoop = pSnd->loop;
+			int16 prevHold = pSnd->hold;
+			pSnd->loop = 0;
+			pSnd->hold = -1;
+
 			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
 			pSnd->reverb = pSnd->pMidiParser->getSongReverb();
+
+			// Restore looping and hold
+			pSnd->loop = prevLoop;
+			pSnd->hold = prevHold;
 			pSnd->pMidiParser->mainThreadEnd();
-			_mutex.unlock();
 		}
 	}
 }
@@ -428,26 +440,52 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 		}
 	} else {
 		if (pSnd->pMidiParser) {
-			_mutex.lock();
+			Common::StackLock lock(_mutex);
 			pSnd->pMidiParser->mainThreadBegin();
+
+			if (pSnd->status != kSoundPaused) {
+				// Stop any in progress music fading, as that will reset the
+				// volume of the sound channels that the faded song occupies..
+				// Fixes bug #3266480 and partially fixes bug #3041738.
+				for (uint i = 0; i < playListCount; i++) {
+					// Is another MIDI song being faded? If yes, stop it
+					// immediately instead
+					if (_playList[i]->fadeStep && _playList[i]->pMidiParser) {
+						_playList[i]->status = kSoundStopped;
+						if (_soundVersion <= SCI_VERSION_0_LATE)
+							_playList[i]->isQueued = false;
+						_playList[i]->pMidiParser->stop();
+						freeChannels(_playList[i]);
+						_playList[i]->fadeStep = 0;
+					}
+				}
+			}
+
 			pSnd->pMidiParser->tryToOwnChannels();
 			if (pSnd->status != kSoundPaused)
 				pSnd->pMidiParser->sendInitCommands();
 			pSnd->pMidiParser->setVolume(pSnd->volume);
-			if (pSnd->status == kSoundStopped) {
+
+			// Disable sound looping and hold before jumpToTick is called,
+			// otherwise the song may keep looping forever when it ends in jumpToTick.
+			// This is needed when loading saved games, or when a game
+			// stops the same sound twice (e.g. LSL3 Amiga, going left from
+			// room 210 to talk with Kalalau). Fixes bugs #3083151 and #3106107.
+			uint16 prevLoop = pSnd->loop;
+			int16 prevHold = pSnd->hold;
+			pSnd->loop = 0;
+			pSnd->hold = -1;
+
+			if (pSnd->status == kSoundStopped)
 				pSnd->pMidiParser->jumpToTick(0);
-			} else {
-				// Disable sound looping before fast forwarding to the last position,
-				// when loading a saved game. Fixes bug #3083151.
-				uint16 prevLoop = pSnd->loop;
-				pSnd->loop = 0;
+			else
 				// Fast forward to the last position and perform associated events when loading
 				pSnd->pMidiParser->jumpToTick(pSnd->ticker, true, true, true);
-				// Restore looping
-				pSnd->loop = prevLoop;
-			}
+
+			// Restore looping and hold
+			pSnd->loop = prevLoop;
+			pSnd->hold = prevHold;
 			pSnd->pMidiParser->mainThreadEnd();
-			_mutex.unlock();
 		}
 	}
 
@@ -463,7 +501,7 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 		_pMixer->stopHandle(pSnd->hCurrentAud);
 
 	if (pSnd->pMidiParser) {
-		_mutex.lock();
+		Common::StackLock lock(_mutex);
 		pSnd->pMidiParser->mainThreadBegin();
 		// We shouldn't call stop in case it's paused, otherwise we would send
 		// allNotesOff() again
@@ -471,7 +509,6 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 			pSnd->pMidiParser->stop();
 		freeChannels(pSnd);
 		pSnd->pMidiParser->mainThreadEnd();
-		_mutex.unlock();
 	}
 
 	pSnd->fadeStep = 0; // end fading, if fading was in progress
@@ -483,11 +520,10 @@ void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
 		// we simply ignore volume changes for samples, because sierra sci also
 		//  doesn't support volume for samples via kDoSound
 	} else if (pSnd->pMidiParser) {
-		_mutex.lock();
+		Common::StackLock lock(_mutex);
 		pSnd->pMidiParser->mainThreadBegin();
 		pSnd->pMidiParser->setVolume(volume);
 		pSnd->pMidiParser->mainThreadEnd();
-		_mutex.unlock();
 	}
 }
 
@@ -509,13 +545,12 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 	pSnd->status = kSoundStopped;
 
 	if (pSnd->pMidiParser) {
-		_mutex.lock();
+		Common::StackLock lock(_mutex);
 		pSnd->pMidiParser->mainThreadBegin();
 		pSnd->pMidiParser->unloadMusic();
 		pSnd->pMidiParser->mainThreadEnd();
 		delete pSnd->pMidiParser;
 		pSnd->pMidiParser = NULL;
-		_mutex.unlock();
 	}
 
 	if (pSnd->pStreamAud) {
@@ -526,7 +561,7 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 		pSnd->pLoopStream = 0;
 	}
 
-	_mutex.lock();
+	Common::StackLock lock(_mutex);
 	uint sz = _playList.size(), i;
 	// Remove sound from playlist
 	for (i = 0; i < sz; i++) {
@@ -537,7 +572,6 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 			break;
 		}
 	}
-	_mutex.unlock();
 }
 
 void SciMusic::soundPause(MusicEntry *pSnd) {
@@ -560,12 +594,11 @@ void SciMusic::soundPause(MusicEntry *pSnd) {
 		_pMixer->pauseHandle(pSnd->hCurrentAud, true);
 	} else {
 		if (pSnd->pMidiParser) {
-			_mutex.lock();
+			Common::StackLock lock(_mutex);
 			pSnd->pMidiParser->mainThreadBegin();
 			pSnd->pMidiParser->pause();
 			freeChannels(pSnd);
 			pSnd->pMidiParser->mainThreadEnd();
-			_mutex.unlock();
 		}
 	}
 }
@@ -630,9 +663,11 @@ void SciMusic::printPlayList(Console *con) {
 
 	for (uint32 i = 0; i < _playList.size(); i++) {
 		MusicEntry *song = _playList[i];
-		con->DebugPrintf("%d: %04x:%04x, resource id: %d, status: %s, %s type\n", i,
-						PRINT_REG(song->soundObj), song->resourceId,
-						musicStatus[song->status], song->pMidiParser ? "MIDI" : "digital audio");
+		con->DebugPrintf("%d: %04x:%04x (%s), resource id: %d, status: %s, %s type\n",
+						i, PRINT_REG(song->soundObj),
+						g_sci->getEngineState()->_segMan->getObjectName(song->soundObj),
+						song->resourceId, musicStatus[song->status],
+						song->pMidiParser ? "MIDI" : "digital audio");
 	}
 }
 

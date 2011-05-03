@@ -29,22 +29,22 @@
 
 #include "backends/platform/wince/wince-sdl.h"
 
-static void (WINAPI* _SHIdleTimerReset)(void) = NULL;
-static HANDLE (WINAPI* _SetPowerRequirement)(PVOID,int,ULONG,PVOID,ULONG) = NULL;
-static DWORD (WINAPI* _ReleasePowerRequirement)(HANDLE) = NULL;
+static void (WINAPI *_SHIdleTimerReset)(void) = NULL;
+static HANDLE(WINAPI *_SetPowerRequirement)(PVOID, int, ULONG, PVOID, ULONG) = NULL;
+static DWORD (WINAPI *_ReleasePowerRequirement)(HANDLE) = NULL;
 static HANDLE _hPowerManagement = NULL;
 static DWORD _lastTime = 0;
 static DWORD REG_bat = 0, REG_ac = 0, REG_disp = 0, bat_timeout = 0;
 static bool REG_tampered = false;
 #ifdef __GNUC__
 extern "C" void WINAPI SystemIdleTimerReset(void);
-#define SPI_SETBATTERYIDLETIMEOUT	251
-#define SPI_GETBATTERYIDLETIMEOUT	252
+#define SPI_SETBATTERYIDLETIMEOUT   251
+#define SPI_GETBATTERYIDLETIMEOUT   252
 #endif
 
 #define TIMER_TRIGGER 9000
 
-DWORD CEDevice::reg_access(TCHAR *key, TCHAR *val, DWORD data) {
+DWORD CEDevice::reg_access(const TCHAR *key, const TCHAR *val, DWORD data) {
 	HKEY regkey;
 	DWORD tmpval, cbdata;
 
@@ -70,7 +70,7 @@ DWORD CEDevice::reg_access(TCHAR *key, TCHAR *val, DWORD data) {
 void CEDevice::backlight_xchg() {
 	HANDLE h;
 
-	REG_bat = reg_access(TEXT("ControlPanel\\BackLight"), TEXT("BatteryTimeout"), REG_bat);
+	REG_bat = reg_access(TEXT("ControlPanel\\BackLight"), (const TCHAR *)TEXT("BatteryTimeout"), REG_bat);
 	REG_ac = reg_access(TEXT("ControlPanel\\BackLight"), TEXT("ACTimeout"), REG_ac);
 	REG_disp = reg_access(TEXT("ControlPanel\\Power"), TEXT("Display"), REG_disp);
 
@@ -85,20 +85,19 @@ void CEDevice::init() {
 	// 2003+ power management code borrowed from MoDaCo & Betaplayer. Thanks !
 	HINSTANCE dll = LoadLibrary(TEXT("aygshell.dll"));
 	if (dll) {
-		*(FARPROC*)&_SHIdleTimerReset = GetProcAddress(dll, MAKEINTRESOURCE(2006));
+		_SHIdleTimerReset = (void (*)())GetProcAddress(dll, MAKEINTRESOURCE(2006));
 	}
 	dll = LoadLibrary(TEXT("coredll.dll"));
 	if (dll) {
-		*(FARPROC*)&_SetPowerRequirement = GetProcAddress(dll, TEXT("SetPowerRequirement"));
-		*(FARPROC*)&_ReleasePowerRequirement = GetProcAddress(dll, TEXT("ReleasePowerRequirement"));
-
+		_SetPowerRequirement = (HANDLE (*)(PVOID, int, ULONG, PVOID, ULONG))GetProcAddress(dll, TEXT("SetPowerRequirement"));
+		_ReleasePowerRequirement = (DWORD (*)(HANDLE))GetProcAddress(dll, TEXT("ReleasePowerRequirement"));
 	}
 	if (_SetPowerRequirement)
 		_hPowerManagement = _SetPowerRequirement((PVOID) TEXT("BKL1:"), 0, 1, (PVOID) NULL, 0);
 	_lastTime = GetTickCount();
 
 	// older devices
-	REG_bat = REG_ac = REG_disp = 2 * 60 * 60 * 1000;	// 2hrs should do it
+	REG_bat = REG_ac = REG_disp = 2 * 60 * 60 * 1000;   // 2hrs should do it
 	backlight_xchg();
 	REG_tampered = true;
 	SystemParametersInfo(SPI_GETBATTERYIDLETIMEOUT, 0, (void *) &bat_timeout, 0);
@@ -127,6 +126,10 @@ bool CEDevice::hasSquareQVGAResolution() {
 	return (OSystem_WINCE3::getScreenWidth() == 240 && OSystem_WINCE3::getScreenHeight() == 240);
 }
 
+bool CEDevice::hasWideResolution() {
+	return (OSystem_WINCE3::getScreenWidth() >= 640 || OSystem_WINCE3::getScreenHeight() >= 640);
+}
+
 bool CEDevice::hasPocketPCResolution() {
 	if (OSystem_WINCE3::isOzone() && hasWideResolution())
 		return true;
@@ -137,10 +140,6 @@ bool CEDevice::hasDesktopResolution() {
 	if (OSystem_WINCE3::isOzone() && hasWideResolution())
 		return true;
 	return (OSystem_WINCE3::getScreenWidth() > 320);
-}
-
-bool CEDevice::hasWideResolution() {
-	return (OSystem_WINCE3::getScreenWidth() >= 640 || OSystem_WINCE3::getScreenHeight() >= 640);
 }
 
 bool CEDevice::hasSmartphoneResolution() {

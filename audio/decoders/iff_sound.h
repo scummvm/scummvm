@@ -33,7 +33,7 @@
 #define SOUND_IFF_H
 
 namespace Common {
-	class ReadStream;
+class ReadStream;
 }
 
 namespace Audio {

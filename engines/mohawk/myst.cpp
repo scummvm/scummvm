@@ -25,7 +25,9 @@
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/system.h"
 #include "common/translation.h"
+#include "common/textconsole.h"
 
 #include "mohawk/cursors.h"
 #include "mohawk/graphics.h"
@@ -1141,20 +1143,6 @@ void MohawkEngine_Myst::loadResources() {
 	}
 
 	delete rlstStream;
-}
-
-void MohawkEngine_Myst::runLoadDialog() {
-	const Common::String gameId = ConfMan.get("gameid");
-
-	const EnginePlugin *plugin = 0;
-	EngineMan.findGame(gameId, &plugin);
-
-	pauseEngine(true);
-	int slot = _loadDialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
-	if (slot >= 0) {
-		// TODO
-	}
-	pauseEngine(false);
 }
 
 Common::Error MohawkEngine_Myst::loadGameState(int slot) {

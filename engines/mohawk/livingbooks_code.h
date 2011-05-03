@@ -26,6 +26,8 @@
 #ifndef MOHAWK_LIVINGBOOKS_CODE_H
 #define MOHAWK_LIVINGBOOKS_CODE_H
 
+#include "common/rect.h"
+#include "common/stack.h"
 #include "common/substream.h"
 
 namespace Mohawk {
@@ -35,18 +37,81 @@ class LBItem;
 
 enum LBValueType {
 	kLBValueString,
-	kLBValueInteger
+	kLBValueInteger,
+	kLBValueReal,
+	kLBValuePoint,
+	kLBValueRect,
+	kLBValueItemPtr
 };
 
 struct LBValue {
-	LBValue() { type = kLBValueInteger; integer = 0; }
+	LBValue() {
+		type = kLBValueInteger;
+		integer = 0;
+	}
+	LBValue(int val) {
+		type = kLBValueInteger;
+		integer = val;
+	}
+	LBValue(const Common::String &str) {
+		type = kLBValueString;
+		string = str;
+	}
+	LBValue(const Common::Point &p) {
+		type = kLBValuePoint;
+		point = p;
+	}
+	LBValue(const Common::Rect &r) {
+		type = kLBValueRect;
+		rect = r;
+	}
+	LBValue(LBItem *itm) {
+		type = kLBValueItemPtr;
+		item = itm;
+	}
+	LBValue(const LBValue &val) {
+		type = val.type;
+		switch (type) {
+		case kLBValueString:
+			string = val.string;
+			break;
+		case kLBValueInteger:
+			integer = val.integer;
+			break;
+		case kLBValueReal:
+			real = val.real;
+			break;
+		case kLBValuePoint:
+			point = val.point;
+			break;
+		case kLBValueRect:
+			rect = val.rect;
+			break;
+		case kLBValueItemPtr:
+			item = val.item;
+			break;
+		}
+	}
 
 	LBValueType type;
 	Common::String string;
 	int integer;
+	double real;
+	Common::Point point;
+	Common::Rect rect;
+	LBItem *item;
 
 	bool operator==(const LBValue &x) const;
 	bool operator!=(const LBValue &x) const;
+
+	bool isNumeric() const;
+	bool isZero() const;
+
+	Common::String toString() const;
+	int toInt() const;
+	double toDouble() const;
+	Common::Point toPoint() const;
+	Common::Rect toRect() const;
 };
 
 enum {
@@ -54,39 +119,119 @@ enum {
 };
 
 enum {
-	kLBCodeTokenString = 0x1,
-	kLBCodeTokenLiteral = 0x5,
-	kLBCodeTokenChar = 0x6,
-	kLBCodeTokenEndOfStatement = 0x7,
-	kLBCodeTokenEndOfFile = 0x8,
-	kLBCodeTokenOpenBracket = 0xf,
-	kLBCodeTokenCloseBracket = 0x10,
-	kLBCodeTokenLong = 0x11,
+	kTokenIdentifier = 0x1,
+	kTokenLiteral = 0x5,
+	kTokenString = 0x6,
+	kTokenEndOfStatement = 0x7,
+	kTokenEndOfFile = 0x8,
+	kTokenConcat = 0xb,
+	kTokenSingleQuote = 0xc, // ??
+	kTokenDoubleQuote = 0xd, // ??
+	kTokenMultiply = 0xe,
+	kTokenOpenBracket = 0xf,
+	kTokenCloseBracket = 0x10,
+	kTokenMinus = 0x11,
+	kTokenMinusMinus = 0x12,
+	kTokenPlusEquals = 0x13,
+	kTokenPlus = 0x14,
+	kTokenPlusPlus = 0x15,
+	kTokenEquals = 0x16,
+	kTokenMinusEquals = 0x17,
+	kTokenMultiplyEquals = 0x18,
+	kTokenDivideEquals = 0x19,
+	kTokenListStart = 0x1a,
+	kTokenListEnd = 0x1b,
+	kTokenColon = 0x1c, // ??
+	kTokenLessThan = 0x1d,
+	kTokenGreaterThan = 0x1e,
+	kTokenAndEquals = 0x1f,
+	kTokenDotOperator = 0x20,
+	kTokenDivide = 0x21,
+	kTokenAssign = 0x22,
+	kTokenLessThanEq = 0x23,
+	kTokenGreaterThanEq = 0x24,
+	kTokenNotEq = 0x25,
+	kTokenQuote = 0x27, // ??
+	kTokenAnd = 0x2a,
+	kTokenComma = 0x2c,
+	kTokenConstMode = 0x31,
+	kTokenIntDivide = 0x32,
+	kTokenModulo = 0x34,
+	kTokenNot = 0x35,
+	kTokenOr = 0x37,
+	kTokenTrue = 0x39,
+	kTokenFalse = 0x3a,
+	kTokenConstDataType = 0x3b, // ??
+	kTokenConstItemType = 0x3c, // ??
+	kTokenConstEventId = 0x42,
+	kTokenConstScriptOpcode = 0x43, // ??
+	kTokenConstScriptParam = 0x44, // ??
+	kTokenGeneralCommand = 0x4d,
+	kTokenItemCommand = 0x4e,
+	kTokenNotifyCommand = 0x4f,
+	// 0x5e?!
+	kTokenKeycode = 0x5f,
 
-	kLBCodeTokenEquals = 0x22, // TODO: maybe..
-	kLBCodeTokenQuote = 0x27, // "'"
-	kLBCodeTokenComma = 0x2c // ","
+	// v5 only:
+	kTokenLocal = 0x61,
+	kTokenPropListCommand = 0x70,
+	kTokenRectCommand = 0x71
 };
 
 class LBCode {
 public:
-	LBCode(MohawkEngine_LivingBooks *vm);
+	LBCode(MohawkEngine_LivingBooks *vm, uint16 baseId);
 	~LBCode();
 
-	void runCode(LBItem *src, uint32 offset);
+	LBValue runCode(LBItem *src, uint32 offset);
 
 protected:
 	MohawkEngine_LivingBooks *_vm;
 
-	uint32 size;
-	byte *data;
+	uint32 _size;
+	byte *_data;
+	Common::HashMap<uint16, Common::String> _strings;
 
-	Common::HashMap<uint16, Common::String> strings;
+	uint32 _currOffset;
+	LBItem *_currSource;
 
-	Common::Array<LBValue> readParams(LBItem *src, uint32 &offset);
-	void runCodeCommand(LBItem *src, uint32 &offset);
-	void runCodeItemCommand(LBItem *src, uint32 &offset);
-	void runCodeNotifyCommand(LBItem *src, uint32 &offset);
+	Common::Stack<LBValue> _stack;
+	byte _currToken;
+	LBValue _currValue;
+
+	void nextToken();
+
+	LBValue runCode(byte terminator);
+	void parseStatement();
+	void parseComparisons();
+	void parseConcat();
+	void parseArithmetic1();
+	void parseArithmetic2();
+	void parseMain();
+
+	Common::Array<LBValue> readParams();
+	Common::Rect getRectFromParams(const Common::Array<LBValue> &params);
+
+	void runGeneralCommand();
+	void runItemCommand();
+	void runNotifyCommand();
+
+public:
+	void cmdUnimplemented(const Common::Array<LBValue> &params);
+	void cmdGetRect(const Common::Array<LBValue> &params);
+	void cmdTopLeft(const Common::Array<LBValue> &params);
+	void cmdBottomRight(const Common::Array<LBValue> &params);
+	void cmdTop(const Common::Array<LBValue> &params);
+	void cmdLeft(const Common::Array<LBValue> &params);
+	void cmdBottom(const Common::Array<LBValue> &params);
+	void cmdRight(const Common::Array<LBValue> &params);
+	void cmdSetPlayParams(const Common::Array<LBValue> &params);
+	void cmdSetKeyEvent(const Common::Array<LBValue> &params);
+	void cmdSetHitTest(const Common::Array<LBValue> &params);
+	void cmdKey(const Common::Array<LBValue> &params);
+
+	void itemSetParent(const Common::Array<LBValue> &params);
+	void itemIsPlaying(const Common::Array<LBValue> &params);
 };
 
 } // End of namespace Mohawk

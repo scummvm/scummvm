@@ -26,6 +26,8 @@
 #include "sci/sci.h"
 
 #include "common/file.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "audio/fmopl.h"
 #include "audio/softsynth/emumidi.h"
@@ -55,7 +57,7 @@ public:
 	virtual ~MidiDriver_AdLib() { }
 
 	// MidiDriver
-	int open(bool isSCI0);
+	int openAdLib(bool isSCI0);
 	void close();
 	void send(uint32 b);
 	MidiChannel *allocateChannel() { return NULL; }
@@ -215,7 +217,7 @@ static const int ym3812_note[13] = {
 	0x2ae
 };
 
-int MidiDriver_AdLib::open(bool isSCI0) {
+int MidiDriver_AdLib::openAdLib(bool isSCI0) {
 	int rate = _mixer->getOutputRate();
 
 	_stereo = STEREO;
@@ -273,10 +275,6 @@ void MidiDriver_AdLib::send(uint32 b) {
 	case 0x90:
 		noteOn(channel, op1, op2);
 		break;
-	case 0xe0:
-		_channels[channel].pitchWheel = (op1 & 0x7f) | ((op2 & 0x7f) << 7);
-		renewNotes(channel, true);
-		break;
 	case 0xb0:
 		switch (op1) {
 		case 0x07:
@@ -321,7 +319,9 @@ void MidiDriver_AdLib::send(uint32 b) {
 	case 0xa0: // Polyphonic key pressure (aftertouch)
 	case 0xd0: // Channel pressure (aftertouch)
 		break;
-	case 0xf0:	// SysEx, ignore it
+	case 0xe0:
+		_channels[channel].pitchWheel = (op1 & 0x7f) | ((op2 & 0x7f) << 7);
+		renewNotes(channel, true);
 		break;
 	default:
 		warning("ADLIB: Unknown event %02x", command);
@@ -828,7 +828,7 @@ int MidiPlayer_AdLib::open(ResourceManager *resMan) {
 		return -1;
 	}
 
-	return static_cast<MidiDriver_AdLib *>(_driver)->open(_version <= SCI_VERSION_0_LATE);
+	return static_cast<MidiDriver_AdLib *>(_driver)->openAdLib(_version <= SCI_VERSION_0_LATE);
 }
 
 void MidiPlayer_AdLib::close() {

@@ -30,7 +30,6 @@
 #include "m4/burger_data.h"
 #include "m4/m4.h"
 #include "m4/resource.h"
-#include "m4/sprite.h"
 #include "m4/hotspot.h"
 #include "m4/font.h"
 #include "m4/rails.h"
@@ -50,17 +49,15 @@
 #include "m4/mads_anim.h"
 #include "m4/mads_menus.h"
 
+#include "common/error.h"
 #include "common/file.h"
 #include "common/fs.h"
-#include "common/events.h"
 #include "common/EventRecorder.h"
-#include "common/endian.h"
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/textconsole.h"
 #include "engines/util.h"
-#include "graphics/surface.h"
-#include "audio/mididrv.h"
 
 namespace M4 {
 
@@ -107,6 +104,8 @@ void gameMenuHotkeyHandler(MadsM4Engine *vm, View *view, uint32 key) {
 
 MadsM4Engine::MadsM4Engine(OSystem *syst, const M4GameDescription *gameDesc) :
 	Engine(syst), _gameDescription(gameDesc) {
+	// Setup mixer
+	syncSoundSettings();
 
 	// FIXME
 	_vm = this;
@@ -149,7 +148,6 @@ MadsM4Engine::~MadsM4Engine() {
 	delete _palette;
 	delete _globals;
 	delete _sound;
-	delete _driver;
 	delete _resourceManager;
 }
 
@@ -157,16 +155,8 @@ Common::Error MadsM4Engine::run() {
 	// Initialize backend
 	_screen = new M4Surface(true); // Special form for creating screen reference
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	bool native_mt32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
-
-	_driver = MidiDriver::createMidi(dev);
-	if (native_mt32)
-		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-
-	_midi = new MidiPlayer(this, _driver);
-	_midi->setGM(true);
-	_midi->setNativeMT32(native_mt32);
+	_midi = new MidiPlayer(this);
+	_midi->setGM(true);	// FIXME: Really? Always?
 
 	_saveLoad = new SaveLoad(this);
 	_palette = new Palette(this);
@@ -423,7 +413,7 @@ Common::Error M4Engine::run() {
 			_scene->loadScene(_kernel->currentRoom);
 
 			_ws->setBackgroundSurface(_scene->getBackgroundSurface());
-			_ws->setInverseColourTable(scene()->getInverseColourTable());
+			_ws->setInverseColorTable(scene()->getInverseColorTable());
 
 			_kernel->loadSectionScriptFunctions();
 			_kernel->loadRoomScriptFunctions();
@@ -561,7 +551,7 @@ Common::Error MadsEngine::run() {
 		_scene->show();
 
 		_font->setFont(FONT_MAIN_MADS);
-		_font->current()->setColours(2, 1, 3);
+		_font->current()->setColors(2, 1, 3);
 		_font->current()->writeString(_scene->getBackgroundSurface(), "Testing the M4/MADS ScummVM engine", 5, 160, 310, 2);
 		_font->current()->writeString(_scene->getBackgroundSurface(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 5, 180, 310, 2);
 

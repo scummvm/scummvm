@@ -25,6 +25,10 @@
 #include "graphics/iff.h"
 #include "graphics/surface.h"
 
+#include "common/endian.h"
+#include "common/func.h"
+#include "common/iff_container.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 namespace Graphics {
@@ -204,7 +208,7 @@ struct PBMLoader {
 
 		case ID_BODY:
 			if (_surface) {
-				_surface->create(_decoder._header.width, _decoder._header.height, 1);
+				_surface->create(_decoder._header.width, _decoder._header.height, PixelFormat::createFormatCLUT8());
 				_decoder.loadBitmap((byte*)_surface->pixels, chunk._stream);
 			}
 			return true;	// stop the parser

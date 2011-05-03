@@ -27,6 +27,8 @@
 #include "kyra/resource.h"
 #include "kyra/wsamovie.h"
 
+#include "common/system.h"
+
 namespace Kyra {
 
 void KyraEngine_MR::restorePage3() {
@@ -336,7 +338,6 @@ void KyraEngine_MR::setupSceneAnimObject(int animId, uint16 flags, int x, int y,
 
 	if (flags & 8) {
 		_sceneAnimMovie[animId]->open(filename, 1, 0);
-		musicUpdate(0);
 		if (_sceneAnimMovie[animId]->opened()) {
 			anim.wsaFlag = 1;
 			if (x2 == -1)

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #if !defined(BACKEND_EVENTS_SDL_GP2X_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
@@ -29,7 +26,7 @@
 #include "backends/events/sdl/sdl-events.h"
 
 /**
- * SDL events manager for GP2X and GP2XWIZ
+ * SDL events manager for GP2X
  */
 class GP2XSdlEventSource : public SdlEventSource {
 public:

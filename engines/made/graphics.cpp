@@ -23,7 +23,9 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/endian.h"
+#include "common/textconsole.h"
 
 #include "made/graphics.h"
 

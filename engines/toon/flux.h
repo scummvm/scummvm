@@ -26,7 +26,6 @@
 #ifndef TOON_FLUX_H
 #define TOON_FLUX_H
 
-
 #include "toon/character.h"
 
 class ToonEngine;

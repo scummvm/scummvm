@@ -88,14 +88,17 @@ add_engine drascula "Drascula: The Vampire Strikes Back" yes
 add_engine gob "Gobli*ns" yes
 add_engine groovie "Groovie" yes "groovie2"
 add_engine groovie2 "Groovie 2 games" no
-add_engine hugo "Hugo Trilogy" no
+add_engine hugo "Hugo Trilogy" yes
 add_engine kyra "Legend of Kyrandia" yes "lol"
 add_engine lol "Lands of Lore" no
 add_engine lastexpress "The Last Express" no
 add_engine lure "Lure of the Temptress" yes
 add_engine m4 "M4/MADS" no
 add_engine made "MADE" yes
-add_engine mohawk "Mohawk" no
+add_engine mohawk "Mohawk" yes "cstime myst riven"
+add_engine cstime "Where in Time is Carmen Sandiego?" no
+add_engine riven "Riven: The Sequel to Myst" no
+add_engine myst "Myst" no
 add_engine parallaction "Parallaction" yes
 add_engine pegasus "The Journeyman Project: Pegasus Prime" no
 add_engine queen "Flight of the Amazon Queen" yes
@@ -113,6 +116,7 @@ add_engine testbed "TestBed: the Testing framework" no
 add_engine tinsel "Tinsel" yes
 add_engine toon "Toonstruck" yes
 add_engine touche "Touche: The Adventures of the Fifth Musketeer" yes
+add_engine tsage "Ringworld: Revenge Of The Patriarch" no
 add_engine tucker "Bud Tucker in Double Trouble" yes
 
 
@@ -122,6 +126,7 @@ add_engine tucker "Bud Tucker in Double Trouble" yes
 # Default lib behaviour yes/no/auto
 _vorbis=auto
 _tremor=auto
+_tremolo=no
 _flac=auto
 _mad=auto
 _alsa=auto
@@ -143,6 +148,7 @@ _text_console=no
 _mt32emu=yes
 _build_scalers=yes
 _build_hq_scalers=yes
+_arm_asm=no
 _indeo3=auto
 _enable_prof=no
 _unix=no
@@ -216,10 +222,10 @@ cc_check_no_clean() {
 	echo "$CXX $LDFLAGS $CXXFLAGS $TMPC -o $TMPO$HOSTEXEEXT $@" >> "$TMPLOG"
 	rm -f "$TMPO$HOSTEXEEXT"
 	( $CXX $LDFLAGS $CXXFLAGS "$TMPC" -o "$TMPO$HOSTEXEEXT" "$@" ) >> "$TMPLOG" 2>&1
-	TMP="$?"
-	echo "return code: $TMP" >> "$TMPLOG"
+	TMPR="$?"
+	echo "return code: $TMPR" >> "$TMPLOG"
 	echo >> "$TMPLOG"
-	return "$TMP"
+	return "$TMPR"
 }
 
 cc_check_clean() {
@@ -228,9 +234,9 @@ cc_check_clean() {
 
 cc_check() {
 	cc_check_no_clean "$@"
-	TMP="$?"
+	TMPR="$?"
 	cc_check_clean
-	return "$TMP"
+	return "$TMPR"
 }
 
 cc_check_define() {
@@ -247,12 +253,7 @@ EOF
 }
 
 gcc_get_define() {
-	# Note: The AmigaOS compiler doesn't like the "-" input file, so a real file
-	# is used instead
-	rm -f $TMPC
-	touch $TMPC
-	$CXX -dM -E $TMPC | fgrep "$1" | head -n1 | cut -d ' ' -f 3-
-	rm -f $TMPC
+	echo "" | $CXX -dM -E - | fgrep "$1" | head -n1 | cut -d ' ' -f 3-
 }
 
 #
@@ -653,7 +654,7 @@ Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (android, dc, dingux, ds, gp2x, gph,
                           iphone, linuxmoto, maemo, n64, null, openpandora, ps2,
-                          psp, samsungtv, sdl, symbian, wii, wince) [sdl]
+                          psp, samsungtv, sdl, symbian, webos, wii, wince) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -696,11 +697,13 @@ Special configuration feature:
                                            ps2 for PlayStation 2
                                            psp for PlayStation Portable
                                            samsungtv for Samsung TV
+                                           webos for HP Palm WebOS
                                            wii for Nintendo Wii
                                            wince for Windows CE
 
 Game engines:
-  --enable-all-engines     enable all engines
+  --enable-all-engines     enable all engines, including those which are
+                           broken or unsupported
   --disable-all-engines    disable all engines
 $engines_help
 Optional Features:
@@ -977,7 +980,7 @@ get_system_exe_extension $guessed_host
 NATIVEEXEEXT=$_exeext
 
 case $_host in
-android)
+android | android-v7a)
 	_host_os=android
 	_host_cpu=arm
 	_host_alias=arm-linux-androideabi
@@ -1132,6 +1135,15 @@ samsungtv)
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabi
 	;;
+webos)
+	_host_os=webos
+	_host_cpu=arm
+	_host_alias=arm-none-linux-gnueabi
+	test "x$prefix" = xNONE && prefix=/media/cryptofs/apps/usr/palm/applications/org.scummvm.scummvm
+	datarootdir='${prefix}/data'
+	datadir='${datarootdir}'
+	docdir='${prefix}/doc'
+	;;
 wii)
 	_host_os=wii
 	_host_cpu=ppc
@@ -1236,6 +1248,16 @@ psp)
 	PSPSDK=`psp-config --pspsdk-path`
 	if test -z "$PSPSDK"; then
 		echo "Please set the path to PSPSDK in your environment."
+		exit 1
+	fi
+	;;
+webos)
+	if test -z "$WEBOS_SDK"; then
+		echo "Please set WEBOS_SDK in your environment. export WEBOS_SDK=<path to WebOS SDK>"
+		exit 1
+	fi
+	if test -z "$WEBOS_PDK"; then
+		echo "Please set WEBOS_PDK in your environment. export WEBOS_PDK=<path to WebOS PDK>"
 		exit 1
 	fi
 	;;
@@ -1460,21 +1482,21 @@ EOF
 #
 echo_n "Type with 1 byte... "
 type_1_byte=`find_type_with_size 1`
-TMP="$?"
+TMPR="$?"
 echo "$type_1_byte"
-test $TMP -eq 0 || exit 1	# check exit code of subshell
+test $TMPR -eq 0 || exit 1	# check exit code of subshell
 
 echo_n "Type with 2 bytes... "
 type_2_byte=`find_type_with_size 2`
-TMP="$?"
+TMPR="$?"
 echo "$type_2_byte"
-test $TMP -eq 0 || exit 1	# check exit code of subshell
+test $TMPR -eq 0 || exit 1	# check exit code of subshell
 
 echo_n "Type with 4 bytes... "
 type_4_byte=`find_type_with_size 4`
-TMP="$?"
+TMPR="$?"
 echo "$type_4_byte"
-test $TMP -eq 0 || exit 1	# check exit code of subshell
+test $TMPR -eq 0 || exit 1	# check exit code of subshell
 
 #
 # Check whether we can use x86 asm routines
@@ -1497,21 +1519,37 @@ echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
 	amigaos*)
-		CXXFLAGS="$CXXFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
-		LDFLAGS="$LDFLAGS -mcrt=newlib -use-dynld -LSDK:Local/newib/lib"
+		LDFLAGS="$LDFLAGS -use-dynld -L/sdk/local/newlib/lib"
 		# We have to use 'long' for our 4 byte typedef because AmigaOS already typedefs (u)int32
 		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
 		type_4_byte='long'
 		add_line_to_config_mk 'AMIGAOS = 1'
 		;;
 	android)
+		case $_host in
+			android)
+				CXXFLAGS="$CXXFLAGS -march=armv5te -mtune=xscale -msoft-float"
+				;;
+			android-v7a)
+				CXXFLAGS="$CXXFLAGS -march=armv7-a -mfloat-abi=softfp -mfpu=vfp"
+				LDFLAGS="$LDFLAGS -Wl,--fix-cortex-a8"
+				;;
+		esac
 		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
-		CXXFLAGS="$CXXFLAGS -Os -mandroid -msoft-float -mthumb-interwork"
-		CXXFLAGS="$CXXFLAGS -march=armv5te -mtune=xscale"
+		CXXFLAGS="$CXXFLAGS -fpic -ffunction-sections -funwind-tables"
+		if test "$_debug_build" = yes; then
+			CXXFLAGS="$CXXFLAGS -fno-omit-frame-pointer -fno-strict-aliasing"
+		else
+			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer -fstrict-aliasing"
+		fi
+		CXXFLAGS="$CXXFLAGS -finline-limit=300"
+		CXXFLAGS="$CXXFLAGS -Os -mthumb-interwork"
+		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__"
+		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5E__ -D__ARM_ARCH_5TE__"
 		# supress 'mangling of 'va_list' has changed in GCC 4.4'
 		CXXFLAGS="$CXXFLAGS -Wno-psabi"
 		LDFLAGS="$LDFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
-		LDFLAGS="$LDFLAGS -mandroid -mthumb-interwork"
+		LDFLAGS="$LDFLAGS -mthumb-interwork"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
 		_unix=yes
 		_seq_midi=no
@@ -1551,8 +1589,8 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -fuse-cxa-atexit"
 		LDFLAGS="$LDFLAGS -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt"
 		if test "$_dynamic_modules" = no ; then
-  			LDFLAGS="$LDFLAGS -Wl,--gc-sections"
- 		else
+			LDFLAGS="$LDFLAGS -Wl,--gc-sections"
+		else
 				LDFLAGS="$LDFLAGS -Wl,--no-gc-sections"
 				# TODO automate this required 2 step linking phase
 				# LDFLAGS="$LDFLAGS -Wl,--retain-symbols-file,ds.syms"
@@ -1581,7 +1619,6 @@ case $_host_os in
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		# Needs -lnetwork for the timidity MIDI driver
 		LIBS="$LIBS -lnetwork"
-		CXXFLAGS="$CXXFLAGS -fhuge-objects"
 		_unix=yes
 		_seq_midi=no
 		;;
@@ -1633,6 +1670,16 @@ case $_host_os in
 		LIBS="$LIBS -lnsl -lsocket"
 		_unix=yes
 		;;
+	webos)
+		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/include -I$WEBOS_PDK/include/SDL -I$WEBOS_PDK/device/usr/include"
+		CXXFLAGS="$CXXFLAGS -mcpu=arm1136jf-s -mfpu=vfp -mfloat-abi=softfp"
+		LDFLAGS="$LDFLAGS -L$WEBOS_PDK/device/lib -L$WEBOS_PDK/device/usr/lib"
+		LDFLAGS="$LDFLAGS -Wl,--allow-shlib-undefined"
+		LDFLAGS="$LDFLAGS --sysroot=$WEBOS_PDK/arm-gcc/sysroot"
+		add_line_to_config_mk "WEBOS_SDK = $WEBOS_SDK"
+		_unix=yes
+		_seq_midi=no
+		;;
 	wii)
 		CXXFLAGS="$CXXFLAGS -Os -mrvl -mcpu=750 -meabi -mhard-float"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
@@ -1646,7 +1693,7 @@ case $_host_os in
 		fi
 		;;
 	wince)
-		CXXFLAGS="$CXXFLAGS -O3 -march=armv4 -mtune=xscale"
+		CXXFLAGS="$CXXFLAGS -O3 -fno-inline-functions -march=armv4 -mtune=xscale"
 		DEFINES="$DEFINES -D_WIN32_WCE=300 -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
 		DEFINES="$DEFINES -DWIN32 -Dcdecl= -D__cdecl__="
 		;;
@@ -1661,20 +1708,16 @@ if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
 	echo "Cross-compiling to $_host"
 	case "$_host" in
-		android)
+		android | android-v7a)
 			_unix=yes
 			_need_memalign=yes
 			# we link a .so as default
 			LDFLAGS="$LDFLAGS -shared -Wl,-Bsymbolic,--no-undefined"
 			HOSTEXEPRE=lib
 			HOSTEXEEXT=.so
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			_backend="android"
 			_port_mk="backends/platform/android/android.mk"
+			_arm_asm=yes
 			_build_scalers=no
 			_seq_midi=no
 			_mt32emu=no
@@ -1683,11 +1726,7 @@ if test -n "$_host"; then
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
 			;;
 		arm-riscos|linupy)
 			DEFINES="$DEFINES -DLINUPY"
@@ -1711,16 +1750,13 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
 			_backend="gph"
 			_build_hq_scalers=no
-			_mt32emu=no
 			_vkeybd=yes
 			_seq_midi=no
+			_mt32emu=no
+			_timidity=no
 			_port_mk="backends/platform/gph/caanoo-bundle.mk"
 			;;
 		*darwin*)
@@ -1762,11 +1798,7 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL -DDISABLE_SID -DDISABLE_NES_APU"
 			DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
 			add_line_to_config_h '#define DISABLE_TEXT_CONSOLE'
 			_backend="ds"
 			_build_scalers=no
@@ -1800,17 +1832,14 @@ if test -n "$_host"; then
 			LDFLAGS="$LDFLAGS -static"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
-			_backend="gp2x"
+			_arm_asm=yes
+			_backend="gph"
 			_build_hq_scalers=no
-			_mt32emu=no
 			_vkeybd=yes
 			_seq_midi=no
-			_port_mk="backends/platform/gp2x/gp2x-bundle.mk"
+			_mt32emu=no
+			_timidity=no
+			_port_mk="backends/platform/gph/gp2x-bundle.mk"
 			;;
 		gp2xwiz)
 			# This uses the GPH backend.
@@ -1823,24 +1852,20 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
 			_backend="gph"
 			_build_hq_scalers=no
-			_mt32emu=no
 			_vkeybd=yes
 			_seq_midi=no
+			_mt32emu=no
+			_timidity=no
 			_port_mk="backends/platform/gph/gp2xwiz-bundle.mk"
 			;;
 		iphone)
 			DEFINES="$DEFINES -DIPHONE"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			_arm_asm=yes
 			_backend="iphone"
 			_build_hq_scalers=no
 			_seq_midi=no
@@ -1871,11 +1896,7 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
 			_backend="linuxmoto"
 			_build_hq_scalers=no
 			_mt32emu=no
@@ -1888,11 +1909,7 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
 			_backend="linuxmoto"
 			_build_hq_scalers=no
 			_mt32emu=no
@@ -1943,20 +1960,17 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
 			_backend="openpandora"
 			_build_hq_scalers=yes
-			_mt32emu=no
 			_vkeybd=no
+			_mt32emu=no
 			_seq_midi=no
 			_port_mk="backends/platform/openpandora/op-bundle.mk"
 			;;
 		ppc-amigaos)
 			_endian=big
+			# AmigaOS exec allocates memory always in an aligned way
 			_need_memalign=yes
 			;;
 		ps2)
@@ -2002,14 +2016,23 @@ if test -n "$_host"; then
 			HOSTEXEEXT=".so"
 			_unix=yes
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
 			_backend="samsungtv"
 			_mt32emu=no
 			_vkeybd=yes
+			;;
+		webos)
+			_unix=yes
+			_need_memalign=yes
+			_arm_asm=yes
+			_backend="webos"
+			_port_mk="backends/platform/webos/webos.mk"
+			_build_scalers=no
+			_timidity=no
+			_mt32emu=no
+			_seq_midi=no
+			_vkeybd=no
+			_keymapper=yes
 			;;
 		wii)
 			_endian=big
@@ -2029,12 +2052,8 @@ if test -n "$_host"; then
 		wince)
 			LDFLAGS="$LDFLAGS -Wl,-Map,scummvm.exe.map -Wl,--stack,65536"
 			_need_memalign=yes
-			add_line_to_config_mk 'USE_TREMOLO = 1'
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_arm_asm=yes
+			_tremolo=yes
 			_backend="wince"
 			_mt32emu=no
 			_port_mk="backends/platform/wince/wince.mk"
@@ -2097,7 +2116,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	dingux | dreamcast | gph | openpandora | psp | samsungtv | sdl | wii)
+	android | dingux | dreamcast | gph | openpandora | psp | samsungtv | sdl | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -2262,7 +2281,7 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 LIBS            += -ldl
 '
 		;;
-	linux*)
+	linux* | webos)
 _def_plugin='
 #define PLUGIN_PREFIX	"lib"
 #define PLUGIN_SUFFIX	".so"
@@ -2364,6 +2383,15 @@ define_in_config_if_yes "$_build_scalers" 'USE_SCALERS'
 define_in_config_if_yes "$_build_hq_scalers" 'USE_HQ_SCALERS'
 
 #
+# Check whether to use optimized ARM asm
+#
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_SCALER_ASM'
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_SOUND_ASM'
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_SMUSH_ASM'
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_GFX_ASM'
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_COSTUME_ASM'
+
+#
 # Check whether to compile the Indeo3 decoder
 #
 if test "$_indeo3" = auto ; then
@@ -2408,6 +2436,10 @@ echo "$_vorbis"
 # Check for Tremor
 #
 echocheck "Tremor"
+if test "$_tremolo" = yes ; then
+	_tremor=yes
+fi
+
 if test "$_tremor" = auto ; then
 	_tremor=no
 	cat > $TMPC << EOF
@@ -2420,7 +2452,12 @@ fi
 if test "$_tremor" = yes && test "$_vorbis" = no; then
 	add_line_to_config_h '#define USE_TREMOR'
 	add_line_to_config_h '#define USE_VORBIS'
-	LIBS="$LIBS $TREMOR_LIBS -lvorbisidec"
+	if test "$_tremolo" = yes ; then
+		add_line_to_config_h '#define USE_TREMOLO'
+		LIBS="$LIBS $TREMOR_LIBS -ltremolo"
+	else
+		LIBS="$LIBS $TREMOR_LIBS -lvorbisidec"
+	fi
 	INCLUDES="$INCLUDES $TREMOR_CFLAGS"
 else
 	if test "$_vorbis" = yes; then
@@ -2896,6 +2933,9 @@ case $_backend in
 		# Add ../plugins as a path so plugins can be found when running from a .PND.
 		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"../plugins\\\""
 		;;
+	webos)
+		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$libdir\\\""
+		;;
 	*)
 		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$libdir/scummvm\\\""
 		;;
@@ -2957,6 +2997,15 @@ fi
 #
 case $_backend in
 	android)
+		# ssp at this point so the cxxtests link
+		if test "$_debug_build" = yes; then
+			CXXFLAGS="$CXXFLAGS -fstack-protector"
+		else
+			CXXFLAGS="$CXXFLAGS -fno-stack-protector"
+		fi
+		CXXFLAGS="$CXXFLAGS -Wa,--noexecstack"
+		LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
+
 		static_libs=''
 		system_libs=''
 		for lib in $LIBS; do
@@ -2975,7 +3024,7 @@ case $_backend in
 		# than pick up anything unhygenic from the Android libs.
 		LIBS="-Wl,-Bstatic $static_libs"
 		LIBS="$LIBS -Wl,-Bdynamic -lgcc $system_libs -llog -lGLESv1_CM"
-		DEFINES="$DEFINES -D__ANDROID__ -DREDUCE_MEMORY_USAGE"
+		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 		;;
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
@@ -3041,8 +3090,8 @@ case $_backend in
 		DEFINES="$DEFINES -D_EE -DFORCE_RTL"
 		INCLUDES="$INCLUDES -I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2SDK/ports/include"
 		if test "$_dynamic_modules" = no ; then
-  			LDFLAGS="$LDFLAGS -mno-crt0 $PS2SDK/ee/startup/crt0.o -T $PS2SDK/ee/startup/linkfile"
- 		fi
+			LDFLAGS="$LDFLAGS -mno-crt0 $PS2SDK/ee/startup/crt0.o -T $PS2SDK/ee/startup/linkfile"
+		fi
 		LDFLAGS="$LDFLAGS -L$PS2SDK/ee/lib -L$PS2SDK/ports/lib"
 		LIBS="$LIBS -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lm -lc -lfileXio -lkernel -lstdc++ "
 		;;
@@ -3063,6 +3112,11 @@ case $_backend in
 		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		DEFINES="$DEFINES -DSDL_BACKEND"
+		;;
+	webos)
+		LIBS="$LIBS -lSDL -lpdl"
+		DEFINES="$DEFINES -DSDL_BACKEND -DWEBOS"
+		MODULES="$MODULES backends/platform/sdl"
 		;;
 	wii)
 		DEFINES="$DEFINES -D__WII__ -DGEKKO"
@@ -3095,7 +3149,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__
-		amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | wii | wince )
+		amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | wii | wince )
 			CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 			;;
 		*)

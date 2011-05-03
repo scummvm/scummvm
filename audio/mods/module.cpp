@@ -27,6 +27,8 @@
 
 #include "common/util.h"
 #include "common/endian.h"
+#include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace Modules {
 
@@ -113,7 +115,7 @@ const int16 Module::periods[16][60] = {
 	 108 , 101 , 96  , 90  , 85  , 80  , 76  , 72  , 68  , 64  , 60  , 57 }};
 
 const uint32 Module::signatures[] = {
-	MKID_BE('M.K.'), MKID_BE('M!K!'), MKID_BE('FLT4')
+	MKTAG('M','.','K','.'), MKTAG('M','!','K','!'), MKTAG('F','L','T','4')
 };
 
 bool Module::load(Common::SeekableReadStream &st, int offs) {

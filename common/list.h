@@ -185,7 +185,7 @@ public:
 	}
 
 	uint size() const {
-		int n = 0;
+		uint n = 0;
 		for (const NodeBase *cur = _anchor._next; cur != &_anchor; cur = cur->_next)
 			++n;
 		return n;

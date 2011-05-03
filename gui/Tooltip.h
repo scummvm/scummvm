@@ -25,10 +25,13 @@
 #ifndef GUI_TOOLTIP_H
 #define GUI_TOOLTIP_H
 
+#include "common/keyboard.h"
+#include "common/str-array.h"
 #include "gui/dialog.h"
-#include "gui/widget.h"
 
 namespace GUI {
+
+class Widget;
 
 class Tooltip : public Dialog {
 public:

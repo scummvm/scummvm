@@ -23,6 +23,8 @@
 *
 */
 
+#include "common/debug.h"
+
 #include "toon/tools.h"
 #include "toon/toon.h"
 
@@ -125,7 +127,6 @@ uint32 decompressSPCN(byte *src, byte *dst, uint32 dstsize) {
 	return (dstp - dst);
 }
 
-
 //return codes
 #define NOT_PACKED  0
 #define PACKED_CRC  -1
@@ -201,7 +202,16 @@ uint16 RncDecoder::inputBits(uint8 amount) {
 		newBitBuffl >>= newBitCount;
 		newBitBuffl |= remBits;
 		_srcPtr += 2;
-		newBitBuffh = READ_LE_UINT16(_srcPtr);
+
+		// added some more check here to prevent reading in the buffer
+		// if there are no bytes anymore.
+		_inputByteLeft -= 2;
+		if (_inputByteLeft <= 0)
+			newBitBuffh = 0;
+		else if (_inputByteLeft == 1)
+			newBitBuffh = *_srcPtr;
+		else
+			newBitBuffh = READ_LE_UINT16(_srcPtr);
 		amount -= newBitCount;
 		newBitCount = 16 - amount;
 	}
@@ -284,7 +294,7 @@ int RncDecoder::getbit() {
 	return temp;
 }
 
-int32 RncDecoder::unpackM1(const void *input, void *output) {
+int32 RncDecoder::unpackM1(const void *input, uint16 inputSize, void *output) {
 	debugC(1, kDebugTools, "unpackM1(input, output)");
 
 	uint8 *outputLow, *outputHigh;
@@ -297,6 +307,7 @@ int32 RncDecoder::unpackM1(const void *input, void *output) {
 	uint16 crcPacked = 0;
 
 
+	_inputByteLeft = inputSize;
 	_bitBuffl = 0;
 	_bitBuffh = 0;
 	_bitCount = 0;
@@ -339,8 +350,11 @@ int32 RncDecoder::unpackM1(const void *input, void *output) {
 		_srcPtr = (_dstPtr - packLen);
 	}
 
+	_inputByteLeft -= HEADER_LEN;
+
 	_dstPtr = (uint8 *)output;
 	_bitCount = 0;
+
 
 	_bitBuffl = READ_LE_UINT16(_srcPtr);
 	inputBits(2);
@@ -360,8 +374,22 @@ int32 RncDecoder::unpackM1(const void *input, void *output) {
 				memcpy(_dstPtr, _srcPtr, inputLength); //memcpy is allowed here
 				_dstPtr += inputLength;
 				_srcPtr += inputLength;
-				uint16 a = READ_LE_UINT16(_srcPtr);
-				uint16 b = READ_LE_UINT16(_srcPtr + 2);
+				_inputByteLeft -= inputLength;
+				uint16 a; 
+				if (_inputByteLeft <= 0)
+					a = 0;
+				else if (_inputByteLeft == 1)
+					a = *_srcPtr;
+				else
+					a = READ_LE_UINT16(_srcPtr);
+
+				uint16 b;
+				if (_inputByteLeft <= 2)
+					b = 0;
+				else if(_inputByteLeft == 3)
+					b = *(_srcPtr + 2);
+				else
+					b = READ_LE_UINT16(_srcPtr + 2);
 
 				_bitBuffl &= ((1 << _bitCount) - 1);
 				_bitBuffl |= (a << _bitCount);
@@ -397,9 +425,6 @@ int32 RncDecoder::unpackM2(const void *input, void *output) {
 	uint16 crcUnpacked = 0;
 	uint16 crcPacked = 0;
 
-// Strangerke - Commented (not used)
-//	uint16 counts = 0;
-
 	_bitBuffl = 0;
 	_bitCount = 0;
 
@@ -428,7 +453,6 @@ int32 RncDecoder::unpackM2(const void *input, void *output) {
 	inputptr = (((const uint8 *)input) + HEADER_LEN);
 	_srcPtr = inputptr;
 	_dstPtr = (uint8 *)output;
-
 
 	uint16 ofs, len;
 	byte ofs_hi, ofs_lo;

@@ -1413,7 +1413,7 @@ int32 Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32
 	_smush_setupsan1 = setupsan1;
 
 	/* skip FLUP marker */
-	if (READ_BE_UINT32(fluPtr) == MKID_BE('FLUP'))
+	if (READ_BE_UINT32(fluPtr) == MKTAG('F','L','U','P'))
 		tmp += 8;
 
 	_smush_setupsan2 = setupsan2;

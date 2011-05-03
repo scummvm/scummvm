@@ -28,8 +28,11 @@
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
 #include "kyra/resource.h"
+#include "kyra/sound.h"
 
 #include "base/version.h"
+
+#include "common/system.h"
 
 namespace Kyra {
 

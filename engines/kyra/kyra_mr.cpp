@@ -23,18 +23,15 @@
  *
  */
 
-#include "kyra/kyra_v1.h"
 #include "kyra/kyra_mr.h"
-#include "kyra/screen_mr.h"
 #include "kyra/wsamovie.h"
-#include "kyra/sound.h"
 #include "kyra/text_mr.h"
 #include "kyra/vqa.h"
-#include "kyra/gui.h"
 #include "kyra/timer.h"
 #include "kyra/debugger.h"
 #include "kyra/gui_mr.h"
 #include "kyra/resource.h"
+#include "kyra/sound.h"
 
 #include "common/system.h"
 #include "common/config-manager.h"
@@ -426,9 +423,7 @@ void KyraEngine_MR::snd_playWanderScoreViaMap(int track, int force) {
 	if (_musicSoundChannel == -1) {
 		assert(track < _soundListSize && track >= 0);
 
-		char file[13];
-		sprintf(file, "%s", _soundList[track]);
-		_musicSoundChannel = _soundDigital->playSound(file, 0xFF, Audio::Mixer::kMusicSoundType);
+		_musicSoundChannel = _soundDigital->playSound(_soundList[track], 0xFF, Audio::Mixer::kMusicSoundType, 255, true);
 	}
 
 	_lastMusicCommand = track;
@@ -440,31 +435,6 @@ void KyraEngine_MR::stopMusicTrack() {
 
 	_lastMusicCommand = -1;
 	_musicSoundChannel = -1;
-}
-
-int KyraEngine_MR::musicUpdate(int forceRestart) {
-	static uint32 mTimer = 0;
-	static uint16 lock = 0;
-
-	if (ABS<int>(_system->getMillis() - mTimer) > (int)(0x0F * _tickLength))
-		mTimer = _system->getMillis();
-
-	if (_system->getMillis() < mTimer && !forceRestart)
-		return 1;
-
-	if (!lock) {
-		lock = 1;
-		if (_musicSoundChannel >= 0) {
-			if (!_soundDigital->isPlaying(_musicSoundChannel)) {
-				if (_lastMusicCommand != -1)
-					snd_playWanderScoreViaMap(_lastMusicCommand, 1);
-			}
-		}
-		lock = 0;
-		mTimer = _system->getMillis() + 0x0F * _tickLength;
-	}
-
-	return 1;
 }
 
 void KyraEngine_MR::fadeOutMusic(int ticks) {
@@ -550,11 +520,8 @@ void KyraEngine_MR::startup() {
 	assert(_album.leftPage.wsa);
 	_album.rightPage.wsa = new WSAMovie_v2(this);
 	assert(_album.rightPage.wsa);
-	musicUpdate(0);
 
 	_gamePlayBuffer = new uint8[64000];
-	musicUpdate(0);
-	musicUpdate(0);
 
 	_interface = new uint8[17920];
 	_interfaceCommandLine = new uint8[3840];
@@ -562,16 +529,10 @@ void KyraEngine_MR::startup() {
 	_screen->setFont(Screen::FID_8_FNT);
 
 	_stringBuffer = new char[500];
-	musicUpdate(0);
 	allocAnimObjects(1, 16, 50);
-
-	musicUpdate(0);
 
 	memset(_sceneShapes, 0, sizeof(_sceneShapes));
 	_screenBuffer = new uint8[64000];
-
-	musicUpdate(0);
-	musicUpdate(0);
 
 	if (!loadLanguageFile("ITEMS.", _itemFile))
 		error("Couldn't load ITEMS");
@@ -586,13 +547,10 @@ void KyraEngine_MR::startup() {
 	if (!loadLanguageFile("_ACTOR.", _actorFile))
 		error("couldn't load _ACTOR");
 
-	musicUpdate(0);
 	openTalkFile(0);
-	musicUpdate(0);
 	_currentTalkFile = 0;
 	openTalkFile(1);
 	loadCostPal();
-	musicUpdate(0);
 
 	for (int i = 0; i < 16; ++i) {
 		_sceneAnims[i].flags = 0;
@@ -607,30 +565,24 @@ void KyraEngine_MR::startup() {
 	for (int i = 0; i < 88; ++i)
 		_talkObjectList[i].sceneId = 0xFF;
 
-	musicUpdate(0);
 	_gfxBackUpRect = new uint8[_screen->getRectSize(32, 32)];
 	initItemList(50);
 	resetItemList();
 
 	loadShadowShape();
-	musicUpdate(0);
 	loadExtrasShapes();
-	musicUpdate(0);
 	_characterShapeFile = 0;
 	loadCharacterShapes(_characterShapeFile);
 	updateMalcolmShapes();
-	musicUpdate(0);
 	initMainButtonList(true);
 	loadButtonShapes();
 	loadInterfaceShapes();
 
-	musicUpdate(0);
 	_screen->loadPalette("PALETTE.COL", _screen->getPalette(0));
 	_paletteOverlay = new uint8[256];
 	_screen->generateOverlay(_screen->getPalette(0), _paletteOverlay, 0xF0, 0x19);
 
 	loadInterface();
-	musicUpdate(0);
 
 	clearAnimObjects();
 
@@ -640,8 +592,6 @@ void KyraEngine_MR::startup() {
 			_scoreMax += _scoreTable[i];
 	}
 
-	musicUpdate(0);
-
 	memset(_newSceneDlgState, 0, sizeof(_newSceneDlgState));
 	memset(_conversationState, -1, sizeof(_conversationState));
 
@@ -650,7 +600,6 @@ void KyraEngine_MR::startup() {
 	memset(_sceneList, 0, sizeof(SceneDesc)*98);
 	_sceneListSize = 98;
 
-	musicUpdate(0);
 	runStartupScript(1, 0);
 	_res->exists("MOODOMTR.WSA", true);
 	_invWsa = new WSAMovie_v2(this);
@@ -667,7 +616,6 @@ void KyraEngine_MR::startup() {
 		(*_mainButtonData[0].buttonCallback)(&_mainButtonData[0]);
 
 	_screen->updateScreen();
-	musicUpdate(0);
 	_screen->showMouse();
 
 	setNextIdleAnimTimer();
@@ -837,7 +785,7 @@ int KyraEngine_MR::getCharacterWalkspeed() const {
 	return _mainCharacter.walkspeed;
 }
 
-void KyraEngine_MR::updateCharAnimFrame(int character, int *table) {
+void KyraEngine_MR::updateCharAnimFrame(int *table) {
 	++_mainCharacter.animFrame;
 	int facing = _mainCharacter.facing;
 
@@ -1113,14 +1061,11 @@ int KyraEngine_MR::inputSceneChange(int x, int y, int unk1, int unk2) {
 void KyraEngine_MR::update() {
 	updateInput();
 
-	musicUpdate(0);
 	refreshAnimObjectsIfNeed();
-	musicUpdate(0);
 	updateMouse();
 	updateSpecialSceneScripts();
 	updateCommandLine();
 	updateItemAnimations();
-	musicUpdate(0);
 
 	_screen->updateScreen();
 }
@@ -1128,12 +1073,10 @@ void KyraEngine_MR::update() {
 void KyraEngine_MR::updateWithText() {
 	updateInput();
 
-	musicUpdate(0);
 	updateMouse();
 	updateItemAnimations();
 	updateSpecialSceneScripts();
 	updateCommandLine();
-	musicUpdate(0);
 
 	restorePage3();
 	drawAnimObjects();

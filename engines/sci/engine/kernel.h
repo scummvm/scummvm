@@ -255,6 +255,11 @@ private:
 	Common::StringArray checkStaticSelectorNames();
 
 	/**
+	 * Automatically find specific selectors
+	 */
+	void findSpecificSelectors(Common::StringArray &selectorNames);
+
+	/**
 	 * Maps special selectors.
 	 */
 	void mapSelectors();

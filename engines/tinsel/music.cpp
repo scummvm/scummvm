@@ -38,6 +38,7 @@
 #include "common/file.h"
 #include "common/memstream.h"
 
+#include "tinsel/adpcm.h"
 #include "tinsel/config.h"
 #include "tinsel/sound.h"
 #include "tinsel/music.h"
@@ -64,10 +65,6 @@ struct SOUND_BUFFER {
 };
 
 // FIXME: Avoid non-const global vars
-
-// get set when music driver is installed
-//static MDI_DRIVER *mDriver;
-//static HSEQUENCE mSeqHandle;
 
 // MIDI buffer
 static SOUND_BUFFER midiBuffer = { 0, 0 };
@@ -115,26 +112,6 @@ static const int enhancedAudioSCNVersion[] = {
 	  97,  98,  99,   99                             	// 151-154
 };
 
-// TODO. This mapping is wrong
-static const int enhancedAudioSCNVersionALT[] = {
-	 301, 302,   2,    1,   1, 301, 302,   3,   3,   4,	//   1-10
-	   4,   5,   6,    1,   7,   8,   9,  10,   8,  11,	//  11-20
-	  11,  12,  13,   13,  13,  13,  13,  14,  13,  13,	//  21-30
-	  15,  16,  17,   15,  18,  19,  20, 338,  21,  21,	//  31-40
-	 341, 342,  22,   22,  23,  24,  25,  26,  27,  28,	//  41-50
-	  29,  30,  31,   32,  33,  34,  35,  35,  36,  37,	//  51-60
-	  38,  39,  39,   39,  39,  40,  39,  41,  41,  42,	//  61-70
-	  43,  42,  44,   45,  41,  46,  48,  47,  48,  49,	//  71-80
-	  50,  51,  52,   53,  54,  55,  56,  57,  58,  59,	//  81-90
-	  60,  61,  62,   63,  61,  64,  65,  66,  67,  68,	//  91-100
-	  69,  70,  68,   71,  72,  73,  74,  75,  12,  76,	// 101-110
-	  77,  78,  79,   80,   4,   4,  82,  83,  77,   4,	// 111-120
-	  84,  85,  86, 3124,  88,  89,  90,  88,   2,   2,	// 121-130
-	   2,   2,   2,    2,   2,   2,   2,   2,   2,   2,	// 131-140
-	3142,  91,  92,   93,  94,  94,  95,  96,  52,   4,	// 141-150
-	  97,  98,  99		                             	// 151-153
-};
-
 int GetTrackNumber(SCNHANDLE hMidi) {
 	for (int i = 0; i < ARRAYSIZE(midiOffsets); i++)
 		if (midiOffsets[i] == hMidi)
@@ -172,18 +149,18 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 
 	// the index and length of the last tune loaded
 	static uint32 dwLastMidiIndex = 0;	// FIXME: Avoid non-const global vars
-	//static uint32 dwLastSeqLen;
-
 	uint32 dwSeqLen = 0;	// length of the sequence
 
 	// Support for external music from the music enhancement project
 	if (_vm->getFeatures() & GF_ENHANCED_AUDIO_SUPPORT) {
 		int trackNumber = GetTrackNumber(dwFileOffset);
+		// Track 8 has been removed in the German CD re-release "Neon Edition"
+		if ((_vm->getFeatures() & GF_ALT_MIDI) && trackNumber >= 8)
+			trackNumber++;
+
 		int track = 0;
 		if (trackNumber >= 0) {
-			if (_vm->getFeatures() & GF_ALT_MIDI)
-				track = enhancedAudioSCNVersionALT[trackNumber];
-			else if (_vm->getFeatures() & GF_SCNFILES)
+			if (_vm->getFeatures() & GF_SCNFILES)
 				track = enhancedAudioSCNVersion[trackNumber];
 			else
 				track = enhancedAudioGRAVersion[trackNumber];
@@ -404,112 +381,43 @@ void DeleteMidiBuffer() {
 	midiBuffer.pDat = NULL;
 }
 
-MidiMusicPlayer::MidiMusicPlayer(MidiDriver *driver) : _parser(0), _driver(driver), _looping(false), _isPlaying(false) {
-	memset(_channel, 0, sizeof(_channel));
-	memset(_channelVolume, 0, sizeof(_channelVolume));
-	_masterVolume = 0;
-	this->open();
-	_xmidiParser = MidiParser::createParser_XMIDI();
-}
+MidiMusicPlayer::MidiMusicPlayer() {
+	MidiPlayer::createDriver();
 
-MidiMusicPlayer::~MidiMusicPlayer() {
-	_driver->setTimerCallback(NULL, NULL);
-	stop();
-	this->close();
-	_xmidiParser->setMidiDriver(NULL);
-	delete _xmidiParser;
+	int ret = _driver->open();
+	if (ret == 0) {
+		if (_nativeMT32)
+			_driver->sendMT32Reset();
+		else
+			_driver->sendGMReset();
+
+		_driver->setTimerCallback(this, &timerCallback);
+	}
 }
 
 void MidiMusicPlayer::setVolume(int volume) {
 	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
 
-	if (_masterVolume == volume)
-		return;
-
-	_masterVolume = volume;
-
-	Common::StackLock lock(_mutex);
-
-	for (int i = 0; i < 16; ++i) {
-		if (_channel[i]) {
-			_channel[i]->volume(_channelVolume[i] * _masterVolume / 255);
-		}
-	}
-}
-
-int MidiMusicPlayer::open() {
-	// Don't ever call open without first setting the output driver!
-	if (!_driver)
-		return 255;
-
-	int ret = _driver->open();
-	if (ret)
-		return ret;
-
-	_driver->setTimerCallback(this, &onTimer);
-	return 0;
-}
-
-void MidiMusicPlayer::close() {
-	stop();
-	if (_driver)
-		_driver->close();
-	_driver = 0;
+	Audio::MidiPlayer::setVolume(volume);
 }
 
 void MidiMusicPlayer::send(uint32 b) {
+	Audio::MidiPlayer::send(b);
+
 	byte channel = (byte)(b & 0x0F);
-	if ((b & 0xFFF0) == 0x07B0) {
-		// Adjust volume changes by master volume
-		byte volume = (byte)((b >> 16) & 0x7F);
-		_channelVolume[channel] = volume;
-		volume = volume * _masterVolume / 255;
-		b = (b & 0xFF00FFFF) | (volume << 16);
-	} else if ((b & 0xFFF0) == 0x007BB0) {
-		// Only respond to All Notes Off if this channel
-		// has currently been allocated
-		if (!_channel[b & 0x0F])
-			return;
-	}
-
-	if (!_channel[channel])
-		_channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
-
-	if (_channel[channel]) {
-		_channel[channel]->send(b);
-
+	if (_channelsTable[channel]) {
 		if ((b & 0xFFF0) == 0x0079B0) {
 			// We've just Reset All Controllers, so we need to
 			// re-adjust the volume. Otherwise, volume is reset to
 			// default whenever the music changes.
-			_channel[channel]->send(0x000007B0 | (((_channelVolume[channel] * _masterVolume) / 255) << 16) | channel);
+			_channelsTable[channel]->send(0x000007B0 | (((_channelsVolume[channel] * _masterVolume) / 255) << 16) | channel);
 		}
 	}
 }
 
-void MidiMusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
-	switch (type) {
-	case 0x2F:	// End of Track
-		if (_looping)
-			_parser->jumpToTick(0);
-		else
-			stop();
-		break;
-	default:
-		//warning("Unhandled meta event: %02x", type);
-		break;
-	}
-}
-
-void MidiMusicPlayer::onTimer(void *refCon) {
-	MidiMusicPlayer *music = (MidiMusicPlayer *)refCon;
-	Common::StackLock lock(music->_mutex);
-
-	if (music->_isPlaying)
-		music->_parser->onTimer();
-}
-
 void MidiMusicPlayer::playXMIDI(byte *midiData, uint32 size, bool loop) {
+	Common::StackLock lock(_mutex);
+
 	if (_isPlaying)
 		return;
 
@@ -527,8 +435,8 @@ void MidiMusicPlayer::playXMIDI(byte *midiData, uint32 size, bool loop) {
 
 	// Load XMID resource data
 
-	if (_xmidiParser->loadMusic(midiData, size)) {
-		MidiParser *parser = _xmidiParser;
+	MidiParser *parser = MidiParser::createParser_XMIDI();
+	if (parser->loadMusic(midiData, size)) {
 		parser->setTrack(0);
 		parser->setMidiDriver(this);
 		parser->setTimerRate(getBaseTempo());
@@ -537,18 +445,10 @@ void MidiMusicPlayer::playXMIDI(byte *midiData, uint32 size, bool loop) {
 
 		_parser = parser;
 
-		_looping = loop;
+		_isLooping = loop;
 		_isPlaying = true;
-	}
-}
-
-void MidiMusicPlayer::stop() {
-	Common::StackLock lock(_mutex);
-
-	_isPlaying = false;
-	if (_parser) {
-		_parser->unloadMusic();
-		_parser = NULL;
+	} else {
+		delete parser;
 	}
 }
 
@@ -566,7 +466,6 @@ PCMMusicPlayer::PCMMusicPlayer() {
 	_silenceSamples = 0;
 
 	_curChunk = 0;
-	_fileName = 0;
 	_state = S_IDLE;
 	_mState = S_IDLE;
 	_scriptNum = -1;
@@ -589,15 +488,13 @@ PCMMusicPlayer::PCMMusicPlayer() {
 
 PCMMusicPlayer::~PCMMusicPlayer() {
 	_vm->_mixer->stopHandle(_handle);
-
-	delete[] _fileName;
 }
 
 void PCMMusicPlayer::startPlay(int id) {
-	if (!_fileName)
+	if (_filename.empty())
 		return;
 
-	debugC(DEBUG_DETAILED, kTinselDebugMusic, "Playing PCM music %s, index %d", _fileName, id);
+	debugC(DEBUG_DETAILED, kTinselDebugMusic, "Playing PCM music %s, index %d", _filename.c_str(), id);
 
 	Common::StackLock slock(_mutex);
 
@@ -712,8 +609,7 @@ void PCMMusicPlayer::setMusicSceneDetails(SCNHANDLE hScript,
 
 	_hScript = hScript;
 	_hSegment = hSegment;
-	_fileName = new char[strlen(fileName) + 1];
-	strcpy(_fileName, fileName);
+	_filename = fileName;
 
 	// Start scene with music not dimmed
 	_dimmed = false;
@@ -869,19 +765,19 @@ bool PCMMusicPlayer::getNextChunk() {
 		sampleLength = FROM_LE_32(musicSegments[snum].sampleLength);
 		sampleCLength = (((sampleLength + 63) & ~63)*33)/64;
 
-		if (!file.open(_fileName))
-			error(CANNOT_FIND_FILE, _fileName);
+		if (!file.open(_filename))
+			error(CANNOT_FIND_FILE, _filename.c_str());
 
 		file.seek(sampleOffset);
 		if (file.eos() || file.err() || (uint32)file.pos() != sampleOffset)
-			error(FILE_IS_CORRUPT, _fileName);
+			error(FILE_IS_CORRUPT, _filename.c_str());
 
 		buffer = (byte *) malloc(sampleCLength);
 		assert(buffer);
 
 		// read all of the sample
 		if (file.read(buffer, sampleCLength) != sampleCLength)
-			error(FILE_IS_CORRUPT, _fileName);
+			error(FILE_IS_CORRUPT, _filename.c_str());
 
 		debugC(DEBUG_DETAILED, kTinselDebugMusic, "Creating ADPCM music chunk with size %d, "
 				"offset %d (script %d.%d)", sampleCLength, sampleOffset,
@@ -890,8 +786,8 @@ bool PCMMusicPlayer::getNextChunk() {
 		sampleStream = new Common::MemoryReadStream(buffer, sampleCLength, DisposeAfterUse::YES);
 
 		delete _curChunk;
-		_curChunk = makeADPCMStream(sampleStream, DisposeAfterUse::YES, sampleCLength,
-				Audio::kADPCMTinsel8, 22050, 1, 32);
+		_curChunk = new Tinsel8_ADPCMStream(sampleStream, DisposeAfterUse::YES, sampleCLength,
+				22050, 1, 32);
 
 		_state = S_MID;
 		return true;

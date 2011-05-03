@@ -29,6 +29,8 @@
 
 #if defined(__amigaos4__)
 
+#include "common/textconsole.h"
+#include "common/error.h"
 #include "common/endian.h"
 #include "common/util.h"
 #include "audio/musicplugin.h"
@@ -46,6 +48,7 @@ class MidiDriver_CAMD : public MidiDriver_MPU401 {
 public:
 	MidiDriver_CAMD();
 	int open();
+	bool isOpen() const { return _isOpen; }
 	void close();
 	void send(uint32 b);
 	void sysEx(const byte *msg, uint16 length);
@@ -134,8 +137,8 @@ void MidiDriver_CAMD::sysEx(const byte *msg, uint16 length) {
 char *MidiDriver_CAMD::getDevice() {
 	char *retname = NULL;
 
-	APTR key;
-	if (key = _ICamd->LockCAMD(CD_Linkages)) {
+	APTR key = _ICamd->LockCAMD(CD_Linkages);
+	if (key != NULL) {
 		struct MidiCluster *cluster = _ICamd->NextCluster(NULL);
 
 		while (cluster && !retname) {

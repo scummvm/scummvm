@@ -29,6 +29,7 @@
 #include "audio/decoders/voc.h"
 
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
 #include "backends/audiocd/audiocd.h"
 

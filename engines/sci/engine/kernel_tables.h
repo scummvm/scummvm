@@ -56,7 +56,7 @@ struct SciKernelMapSubEntry {
 
 #define SIG_SCIALL         SCI_VERSION_NONE, SCI_VERSION_NONE
 #define SIG_SCI0           SCI_VERSION_NONE, SCI_VERSION_01
-#define SIG_SCI1           SCI_VERSION_1_EGA, SCI_VERSION_1_LATE
+#define SIG_SCI1           SCI_VERSION_1_EGA_ONLY, SCI_VERSION_1_LATE
 #define SIG_SCI11          SCI_VERSION_1_1, SCI_VERSION_1_1
 #define SIG_SINCE_SCI11    SCI_VERSION_1_1, SCI_VERSION_NONE
 #define SIG_SCI21          SCI_VERSION_2_1, SCI_VERSION_3
@@ -348,7 +348,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(FindKey),           SIG_EVERYWHERE,           "l.",                    NULL,            kFindKey_workarounds },
 	{ MAP_CALL(FirstNode),         SIG_EVERYWHERE,           "[l0]",                  NULL,            NULL },
 	{ MAP_CALL(FlushResources),    SIG_EVERYWHERE,           "i",                     NULL,            NULL },
-	{ MAP_CALL(Format),            SIG_EVERYWHERE,           "r(.*)",                 NULL,            NULL },
+	{ MAP_CALL(Format),            SIG_EVERYWHERE,           "r[ri](.*)",             NULL,            NULL },
 	{ MAP_CALL(GameIsRestarting),  SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
 	{ MAP_CALL(GetAngle),          SIG_EVERYWHERE,           "iiii",                  NULL,            kGetAngle_workarounds },
 	{ MAP_CALL(GetCWD),            SIG_EVERYWHERE,           "r",                     NULL,            NULL },
@@ -434,7 +434,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(Sort),              SIG_EVERYWHERE,           "ooo",                   NULL,            NULL },
 	{ MAP_CALL(Sqrt),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(StrAt),             SIG_EVERYWHERE,           "ri(i)",                 NULL,            kStrAt_workarounds },
-	{ MAP_CALL(StrCat),            SIG_EVERYWHERE,           "rr",                    NULL,            kStrCat_workarounds },
+	{ MAP_CALL(StrCat),            SIG_EVERYWHERE,           "rr",                    NULL,            NULL },
 	{ MAP_CALL(StrCmp),            SIG_EVERYWHERE,           "rr(i)",                 NULL,            NULL },
 	{ MAP_CALL(StrCpy),            SIG_EVERYWHERE,           "r[r0](i)",              NULL,            NULL },
 	{ MAP_CALL(StrEnd),            SIG_EVERYWHERE,           "r",                     NULL,            NULL },
@@ -490,6 +490,12 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(ListFirstTrue),     SIG_EVERYWHERE,           "li(.*)",                NULL,            NULL },
 	{ MAP_CALL(ListIndexOf),       SIG_EVERYWHERE,           "l[o0]",                 NULL,            NULL },
 	{ "OnMe", kIsOnMe,             SIG_EVERYWHERE,           "iioi",                  NULL,            NULL },
+	// Purge is used by the memory manager in SSCI to ensure that X number of bytes (the so called "unmovable
+	// memory") are available when the current room changes. This is similar to the SCI0-SCI1.1 FlushResources
+	// call, with the added functionality of ensuring that a specific amount of memory is available. We have
+	// our own memory manager and garbage collector, thus we simply call FlushResources, which in turn invokes
+	// our garbage collector (i.e. the SCI0-SCI1.1 semantics).
+	{ "Purge", kFlushResources,    SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(RepaintPlane),      SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(SetShowStyle),      SIG_EVERYWHERE,           "ioiiiii([ri])(i)",      NULL,            NULL },
 	{ MAP_CALL(String),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
@@ -507,12 +513,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// ObjectIntersect - used in QFG4 floppy
 	// MakeSaveCatName - used in the Save/Load dialog of GK1CD (SRDialog, script 64990)
 	// MakeSaveFileName - used in the Save/Load dialog of GK1CD (SRDialog, script 64990)
-
-	// SCI2 empty functions
-
-	// Purge is used by the memory manager in SSCI to ensure that X number of bytes (the so called "unmovable
-	// memory") are available. We have our own memory manager and garbage collector, thus we ignore this call.
-	{ MAP_EMPTY(Purge),            SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 
 	// Unused / debug SCI2 unused functions, always mapped to kDummy
 	{ MAP_DUMMY(InspectObject),    SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },

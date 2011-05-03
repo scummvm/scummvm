@@ -29,15 +29,60 @@
 #include "common/scummsys.h"
 
 namespace Common {
-	class MacResManager;
-	class NEResources;
-	class SeekableReadStream;
-	class String;
+class MacResManager;
+class NEResources;
+class PEResources;
+class SeekableReadStream;
+class String;
 }
 
 #include "mohawk/resource.h"
 
 namespace Mohawk {
+
+enum {
+	kRivenOpenHandCursor = 2003,
+	kRivenClosedHandCursor = 2004,
+	kRivenMainCursor = 3000,
+	kRivenPelletCursor = 5000,
+	kRivenHideCursor = 9000
+};
+
+class MohawkArchive;
+class MohawkEngine;
+
+class CursorManager {
+public:
+	CursorManager() {}
+	virtual ~CursorManager() {}
+
+	virtual void showCursor();
+	virtual void hideCursor();
+	virtual void setCursor(uint16 id);
+	virtual void setDefaultCursor();
+	virtual bool hasSource() const { return false; }
+
+protected:
+	// Set a Mac XOR/AND map cursor to the screen
+	void setMacXorCursor(Common::SeekableReadStream *stream);
+};
+
+// The default Mohawk cursor manager
+// Uses standard tCUR resources
+class DefaultCursorManager : public CursorManager {
+public:
+	DefaultCursorManager(MohawkEngine *vm, uint32 tag = ID_TCUR) : _vm(vm), _tag(tag) {}
+	~DefaultCursorManager() {}
+
+	void setCursor(uint16 id);
+	bool hasSource() const { return true; }
+
+private:
+	MohawkEngine *_vm;
+	uint32 _tag;
+};
+
+#ifdef ENABLE_MYST
 
 // 803-805 are animated, one large bmp which is in chunks - these are NEVER USED
 // Other cursors (200, 300, 400, 500, 600, 700) are not the same in each stack
@@ -58,50 +103,8 @@ enum {
 	kMystZipModeCursor = 999				// Zip Mode cursor
 };
 
-enum {
-	kRivenOpenHandCursor = 2003,
-	kRivenClosedHandCursor = 2004,
-	kRivenMainCursor = 3000,
-	kRivenPelletCursor = 5000,
-	kRivenHideCursor = 9000
-};
-
-class MohawkArchive;
-class MohawkEngine;
 class MohawkEngine_Myst;
 class MystBitmap;
-
-class CursorManager {
-public:
-	CursorManager() {}
-	virtual ~CursorManager() {}
-
-	virtual void showCursor();
-	virtual void hideCursor();
-	virtual void setCursor(uint16 id);
-	virtual void setDefaultCursor();
-
-protected:
-	// Handles the Mac version of the xor/and map cursor
-	void decodeMacXorCursor(Common::SeekableReadStream *stream, byte *cursor);
-
-	// Set a tCUR resource as the current cursor
-	void setStandardCursor(Common::SeekableReadStream *stream);
-};
-
-// The default Mohawk cursor manager
-// Uses standard tCUR resources
-class DefaultCursorManager : public CursorManager {
-public:
-	DefaultCursorManager(MohawkEngine *vm, uint32 tag = ID_TCUR) : _vm(vm), _tag(tag) {}
-	~DefaultCursorManager() {}
-
-	void setCursor(uint16 id);
-
-private:
-	MohawkEngine *_vm;
-	uint32 _tag;
-};
 
 // The cursor manager for Myst
 // Uses WDIB + CLRC resources
@@ -114,31 +117,23 @@ public:
 	void hideCursor();
 	void setCursor(uint16 id);
 	void setDefaultCursor();
+	bool hasSource() const { return true; }
 
 private:
 	MohawkEngine_Myst *_vm;
 	MystBitmap *_bmpDecoder;
 };
 
+#endif // ENABLE_MYST
 
-// The cursor manager for Riven
-// Uses hardcoded cursors
-class RivenCursorManager : public CursorManager {
-public:
-	RivenCursorManager() {}
-	~RivenCursorManager() {}
-
-	void setCursor(uint16 id);
-	void setDefaultCursor();
-};
-
-// The cursor manager for NE exe's
+// The cursor manager for NE EXE's
 class NECursorManager : public CursorManager {
 public:
 	NECursorManager(const Common::String &appName);
 	~NECursorManager();
 
 	void setCursor(uint16 id);
+	bool hasSource() const { return _exe != 0; }
 
 private:
 	Common::NEResources *_exe;
@@ -151,6 +146,7 @@ public:
 	~MacCursorManager();
 
 	void setCursor(uint16 id);
+	bool hasSource() const { return _resFork != 0; }
 
 private:
 	Common::MacResManager *_resFork;
@@ -164,9 +160,23 @@ public:
 	~LivingBooksCursorManager_v2();
 
 	void setCursor(uint16 id);
+	bool hasSource() const { return _sysArchive != 0; }
 
 private:
 	MohawkArchive *_sysArchive;
+};
+
+// The cursor manager for PE EXE's
+class PECursorManager : public CursorManager {
+public:
+	PECursorManager(const Common::String &appName);
+	~PECursorManager();
+
+	void setCursor(uint16 id);
+	bool hasSource() const { return _exe != 0; }
+
+private:
+	Common::PEResources *_exe;
 };
 
 } // End of namespace Mohawk

@@ -31,7 +31,7 @@
 #ifndef GRAPHICS_IFF_H
 #define GRAPHICS_IFF_H
 
-#include "common/iff_container.h"
+#include "common/stream.h"
 
 namespace Graphics {
 

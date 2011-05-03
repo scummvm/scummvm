@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/str.h"
@@ -479,7 +478,7 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 			//is BgNeedsRedraw enough?
 			_vm->_bgNeedsRedraw = true;
 		} else {
-			DebugPrintf("object command 'state' requires a parameter\n");
+			DebugPrintf("State of object %d: %d\n", obj, _vm->getState(obj));
 		}
 	} else if (!strcmp(argv[2], "name")) {
 		DebugPrintf("Name of object %d: %s\n", obj, _vm->getObjOrActorName(obj));

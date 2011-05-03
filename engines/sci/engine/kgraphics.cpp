@@ -58,6 +58,17 @@
 
 namespace Sci {
 
+static int16 adjustGraphColor(int16 color) {
+	// WORKAROUND: SCI1 EGA and Amiga games can set invalid colors (above 0 - 15).
+	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
+	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
+	// for the undithering algorithm in EGA games - bug #3048908.
+	if (getSciVersion() >= SCI_VERSION_1_EARLY && g_sci->getResMan()->getViewType() == kViewEga)
+		return color & 0x0F;	// 0 - 15
+	else
+		return color;
+}
+
 void showScummVMDialog(const Common::String &message) {
 	GUI::MessageDialog dialog(message, "OK");
 	dialog.runModal();
@@ -242,22 +253,13 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kGraphGetColorCount(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->getResMan()->isAmiga32color())
-		return make_reg(0, 32);
-	return make_reg(0, !g_sci->getResMan()->isVGA() ? 16 : 256);
+	return make_reg(0, g_sci->_gfxPalette->getTotalColorCount());
 }
 
 reg_t kGraphDrawLine(EngineState *s, int argc, reg_t *argv) {
-	int16 color = argv[4].toSint16();
+	int16 color = adjustGraphColor(argv[4].toSint16());
 	int16 priority = (argc > 5) ? argv[5].toSint16() : -1;
 	int16 control = (argc > 6) ? argv[6].toSint16() : -1;
-
-	// WORKAROUND: SCI1 EGA games can set invalid colors (above 0 - 15).
-	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
-	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
-	// for the undithering algorithm in EGA games - bug #3048908.
-	if (g_sci->getResMan()->getViewType() == kViewEga && getSciVersion() >= SCI_VERSION_1_EARLY)
-		color &= 0x0F;
 
 	g_sci->_gfxPaint16->kernelGraphDrawLine(getGraphPoint(argv), getGraphPoint(argv + 2), color, priority, control);
 	return s->r_acc;
@@ -290,16 +292,9 @@ reg_t kGraphFillBoxForeground(EngineState *s, int argc, reg_t *argv) {
 reg_t kGraphFillBoxAny(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect rect = getGraphRect(argv);
 	int16 colorMask = argv[4].toUint16();
-	int16 color = argv[5].toSint16();
+	int16 color = adjustGraphColor(argv[5].toSint16());
 	int16 priority = argv[6].toSint16(); // yes, we may read from stack sometimes here
 	int16 control = argv[7].toSint16(); // sierra did the same
-
-	// WORKAROUND: SCI1 EGA games can set invalid colors (above 0 - 15).
-	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
-	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
-	// for the undithering algorithm in EGA games - bug #3048908.
-	if (g_sci->getResMan()->getViewType() == kViewEga && getSciVersion() >= SCI_VERSION_1_EARLY)
-		color &= 0x0F;
 
 	g_sci->_gfxPaint16->kernelGraphFillBox(rect, colorMask, color, priority, control);
 	return s->r_acc;
@@ -364,6 +359,7 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	if (!g_sci->_gfxText16) {
 		// TODO: Implement this
 		textWidth = 0; textHeight = 0;
+		warning("TODO: implement kTextSize for SCI32");
 	} else
 #endif
 		g_sci->_gfxText16->kernelTextSize(g_sci->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
@@ -553,8 +549,6 @@ reg_t kSetNowSeen(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-// we are called on EGA/amiga games as well, this doesnt make sense.
-//  doing this would actually break the system EGA/amiga palette
 reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 	if (!s)
 		return make_reg(0, getSciVersion());
@@ -562,86 +556,85 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPaletteSetFromResource(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->getResMan()->isVGA()) {
-		GuiResourceId resourceId = argv[0].toUint16();
-		bool force = false;
-		if (argc == 2)
-			force = argv[1].toUint16() == 2 ? true : false;
-		g_sci->_gfxPalette->kernelSetFromResource(resourceId, force);
-	}
+	GuiResourceId resourceId = argv[0].toUint16();
+	bool force = false;
+	if (argc == 2)
+		force = argv[1].toUint16() == 2 ? true : false;
+
+	// Non-VGA games don't use palette resources.
+	// This has been changed to 64 colors because Longbow Amiga does have
+	// one palette (palette 999).
+	if (g_sci->_gfxPalette->getTotalColorCount() < 64)
+		return s->r_acc;
+
+	g_sci->_gfxPalette->kernelSetFromResource(resourceId, force);
 	return s->r_acc;
 }
 
 reg_t kPaletteSetFlag(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->getResMan()->isVGA()) {
-		uint16 fromColor = CLIP<uint16>(argv[0].toUint16(), 1, 255);
-		uint16 toColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
-		uint16 flags = argv[2].toUint16();
-		g_sci->_gfxPalette->kernelSetFlag(fromColor, toColor, flags);
-	}
+	uint16 fromColor = CLIP<uint16>(argv[0].toUint16(), 1, 255);
+	uint16 toColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
+	uint16 flags = argv[2].toUint16();
+	g_sci->_gfxPalette->kernelSetFlag(fromColor, toColor, flags);
 	return s->r_acc;
 }
 
 reg_t kPaletteUnsetFlag(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->getResMan()->isVGA()) {
-		uint16 fromColor = CLIP<uint16>(argv[0].toUint16(), 1, 255);
-		uint16 toColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
-		uint16 flags = argv[2].toUint16();
-		g_sci->_gfxPalette->kernelUnsetFlag(fromColor, toColor, flags);
-	}
+	uint16 fromColor = CLIP<uint16>(argv[0].toUint16(), 1, 255);
+	uint16 toColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
+	uint16 flags = argv[2].toUint16();
+	g_sci->_gfxPalette->kernelUnsetFlag(fromColor, toColor, flags);
 	return s->r_acc;
 }
 
 reg_t kPaletteSetIntensity(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->getResMan()->isVGA()) {
-		uint16 fromColor = CLIP<uint16>(argv[0].toUint16(), 1, 255);
-		uint16 toColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
-		uint16 intensity = argv[2].toUint16();
-		bool setPalette = (argc < 4) ? true : (argv[3].isNull()) ? true : false;
+	uint16 fromColor = CLIP<uint16>(argv[0].toUint16(), 1, 255);
+	uint16 toColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
+	uint16 intensity = argv[2].toUint16();
+	bool setPalette = (argc < 4) ? true : (argv[3].isNull()) ? true : false;
 
-		g_sci->_gfxPalette->kernelSetIntensity(fromColor, toColor, intensity, setPalette);
-	}
+	// Palette intensity in non-VGA SCI1 games has been removed
+	if (g_sci->_gfxPalette->getTotalColorCount() < 256)
+		return s->r_acc;
+
+	g_sci->_gfxPalette->kernelSetIntensity(fromColor, toColor, intensity, setPalette);
 	return s->r_acc;
 }
 
 reg_t kPaletteFindColor(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->getResMan()->isVGA()) {
-		uint16 r = argv[0].toUint16();
-		uint16 g = argv[1].toUint16();
-		uint16 b = argv[2].toUint16();
-		return make_reg(0, g_sci->_gfxPalette->kernelFindColor(r, g, b));
-	}
-	return NULL_REG;
+	uint16 r = argv[0].toUint16();
+	uint16 g = argv[1].toUint16();
+	uint16 b = argv[2].toUint16();
+	return make_reg(0, g_sci->_gfxPalette->kernelFindColor(r, g, b));
 }
 
 reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->getResMan()->isVGA()) {
-		int16 argNr;
-		bool paletteChanged = false;
-		for (argNr = 0; argNr < argc; argNr += 3) {
-			uint16 fromColor = argv[argNr].toUint16();
-			uint16 toColor = argv[argNr + 1].toUint16();
-			int16 speed = argv[argNr + 2].toSint16();
-			if (g_sci->_gfxPalette->kernelAnimate(fromColor, toColor, speed))
-				paletteChanged = true;
-		}
-		if (paletteChanged)
-			g_sci->_gfxPalette->kernelAnimateSet();
+	int16 argNr;
+	bool paletteChanged = false;
+
+	// Palette animation in non-VGA SCI1 games has been removed
+	if (g_sci->_gfxPalette->getTotalColorCount() < 256)
+		return s->r_acc;
+
+	for (argNr = 0; argNr < argc; argNr += 3) {
+		uint16 fromColor = argv[argNr].toUint16();
+		uint16 toColor = argv[argNr + 1].toUint16();
+		int16 speed = argv[argNr + 2].toSint16();
+		if (g_sci->_gfxPalette->kernelAnimate(fromColor, toColor, speed))
+			paletteChanged = true;
 	}
+	if (paletteChanged)
+		g_sci->_gfxPalette->kernelAnimateSet();
+
 	return s->r_acc;
 }
 
 reg_t kPaletteSave(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->getResMan()->isVGA()) {
-		return g_sci->_gfxPalette->kernelSave();
-	}
-	return NULL_REG;
+	return g_sci->_gfxPalette->kernelSave();
 }
 
 reg_t kPaletteRestore(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->getResMan()->isVGA()) {
-		g_sci->_gfxPalette->kernelRestore(argv[0]);
-	}
+	g_sci->_gfxPalette->kernelRestore(argv[0]);
 	return argv[0];
 }
 
@@ -1082,22 +1075,11 @@ reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
 	int argextra = argc >= 13 ? 4 : 0; // Triggers in PQ3 and SCI1.1 games, argc 13 for DOS argc 15 for mac
 	int	style = argv[5 + argextra].toSint16();
 	int	priority = (argc > 6 + argextra) ? argv[6 + argextra].toSint16() : -1;
-	int colorPen = (argc > 7 + argextra) ? argv[7 + argextra].toSint16() : 0;
-	int colorBack = (argc > 8 + argextra) ? argv[8 + argextra].toSint16() : 255;
+	int colorPen = adjustGraphColor((argc > 7 + argextra) ? argv[7 + argextra].toSint16() : 0);
+	int colorBack = adjustGraphColor((argc > 8 + argextra) ? argv[8 + argextra].toSint16() : 255);
 
-	// WORKAROUND: SCI1 EGA games can set invalid colors (above 0 - 15).
-	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
-	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
-	// for the undithering algorithm in EGA games - bug #3048908.
-	if (g_sci->getResMan()->getViewType() == kViewEga && getSciVersion() >= SCI_VERSION_1_EARLY) {
-		colorPen &= 0x0F;
-		colorBack &= 0x0F;
-	}
-
-	//	const char *title = argv[4 + argextra].segment ? kernel_dereference_char_pointer(s, argv[4 + argextra], 0) : NULL;
-	if (argc>=13) {
+	if (argc >= 13)
 		rect2 = Common::Rect (argv[5].toSint16(), argv[4].toSint16(), argv[7].toSint16(), argv[6].toSint16());
-	}
 
 	Common::String title;
 	if (argv[4 + argextra].segment) {
@@ -1201,14 +1183,12 @@ reg_t kShow(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
-	// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
-	kStub(s, argc, argv);
-
 	uint16 operation = argv[0].toUint16();
 
 	switch (operation) {
-	case 0:	{ // Initialize remapping to base. 0 turns remapping off.
-		//int16 unk1 = (argc >= 2) ? argv[1].toSint16() : 0;
+	case 0:	{ // Set remapping to base. 0 turns remapping off.
+		int16 base = (argc >= 2) ? argv[1].toSint16() : 0;
+		warning("kRemapColors: Set remapping to base %d", base);
 		}
 		break;
 	case 1:	{ // unknown
@@ -1218,18 +1198,32 @@ reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 		//int16 unk3 = argv[3].toSint16();
 		//uint16 unk4 = argv[4].toUint16();
 		//uint16 unk5 = (argc >= 6) ? argv[5].toUint16() : 0;
+		kStub(s, argc, argv);
 		}
 		break;
 	case 2:	{ // remap by percent
-		//int16 unk1 = argv[1].toSint16();
-		//uint16 percent = argv[2].toUint16();
-		//uint16 unk3 = (argc >= 4) ? argv[3].toUint16() : 0;
+		// This adjusts the alpha value of a specific color, and it operates on
+		// an RGBA palette. Since we're operating on an RGB palette, we just
+		// modify the color intensity instead
+		// TODO: From what I understand, palette remapping should be placed
+		// separately, so that it can be reset by case 0 above. Thus, we
+		// should adjust the functionality of the Palette class accordingly.
+		int16 color = argv[1].toSint16();
+		if (color >= 10)
+			color -= 10;
+		uint16 percent = argv[2].toUint16(); // 0 - 100
+		if (argc >= 4)
+			warning("RemapByPercent called with 4 parameters, unknown parameter is %d", argv[3].toUint16());
+		g_sci->_gfxPalette->kernelSetIntensity(color, 255, percent, false);
 		}
 		break;
 	case 3:	{ // remap to gray
-		//int16 unk1 = argv[1].toSint16();
-		//int16 percent = argv[2].toSint16();	// 0 - 100
-		//uint16 unk3 = (argc >= 4) ? argv[3].toUint16() : 0;
+		// NOTE: This adjusts the alpha value of a specific color, and it operates on
+		// an RGBA palette
+		int16 color = argv[1].toSint16();	// this is subtracted from a maximum color value, and can be offset by 10
+		int16 percent = argv[2].toSint16(); // 0 - 100
+		uint16 unk3 = (argc >= 4) ? argv[3].toUint16() : 0;
+		warning("kRemapColors: RemapToGray color %d by %d percent (unk3 = %d)", color, percent, unk3);
 		}
 		break;
 	case 4:	{ // unknown
@@ -1237,11 +1231,13 @@ reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 		//uint16 unk2 = argv[2].toUint16();
 		//uint16 unk3 = argv[3].toUint16();
 		//uint16 unk4 = (argc >= 5) ? argv[4].toUint16() : 0;
+		kStub(s, argc, argv);
 		}
 		break;
 	case 5:	{ // increment color
 		//int16 unk1 = argv[1].toSint16();
 		//uint16 unk2 = argv[2].toUint16();
+		kStub(s, argc, argv);
 		}
 		break;
 	default:

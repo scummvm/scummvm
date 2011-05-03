@@ -27,9 +27,11 @@
 #define LURE_RESSTRUCT_H
 
 #include "lure/luredefs.h"
+#include "common/rect.h"
 #include "common/list.h"
 #include "common/file.h"
 #include "common/ptr.h"
+#include "common/textconsole.h"
 
 namespace Lure {
 
@@ -88,7 +90,7 @@ struct HotspotResource {
 	uint16 walkY;
 	int8 talkX;
 	int8 talkY;
-	uint16 colourOffset;
+	uint16 colorOffset;
 	uint16 animRecordId;
 	uint16 hotspotScriptOffset;
 	uint16 talkScriptOffset;
@@ -538,7 +540,7 @@ public:
 	uint16 walkY;
 	int8 talkX;
 	int8 talkY;
-	uint16 colourOffset;
+	uint16 colorOffset;
 	uint16 animRecordId;
 	uint16 hotspotScriptOffset;
 	uint16 talkScriptOffset;

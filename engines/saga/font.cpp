@@ -434,7 +434,6 @@ int Font::getHeight(FontId fontId, const char *text, int width, FontEffectFlags 
 	int textWidth;
 	int textLength;
 	int fitWidth;
-	const char *startPointer;
 	const char *searchPointer;
 	const char *measurePointer;
 	const char *foundPointer;
@@ -465,7 +464,6 @@ int Font::getHeight(FontId fontId, const char *text, int width, FontEffectFlags 
 	len_total = 0;
 	wc = 0;
 
-	startPointer = text;
 	measurePointer = text;
 	searchPointer = text;
 	endPointer = text + textLength;
@@ -498,7 +496,6 @@ int Font::getHeight(FontId fontId, const char *text, int width, FontEffectFlags 
 			len_total = 0;
 			wc = 0;
 			measurePointer = searchPointer;
-			startPointer = searchPointer;
 		} else {
 			// Word will fit ok
 			w_total += w;

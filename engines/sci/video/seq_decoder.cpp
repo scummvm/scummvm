@@ -23,12 +23,10 @@
  *
  */
 
-#include "common/debug.h"
 #include "common/endian.h"
-#include "common/archive.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "common/util.h"
+#include "common/textconsole.h"
 
 #include "graphics/surface.h"
 
@@ -61,7 +59,7 @@ bool SeqDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	_fileStream = stream;
 	_surface = new Graphics::Surface();
-	_surface->create(SEQ_SCREEN_WIDTH, SEQ_SCREEN_HEIGHT, 1);
+	_surface->create(SEQ_SCREEN_WIDTH, SEQ_SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
 	_frameCount = _fileStream->readUint16LE();
 

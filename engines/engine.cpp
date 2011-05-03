@@ -22,6 +22,8 @@
  * $Id$
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
+
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -32,25 +34,26 @@
 
 #include "engines/engine.h"
 #include "engines/dialogs.h"
-#include "engines/metaengine.h"
-#include "engines/util.h"
 
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/events.h"
 #include "common/file.h"
-#include "common/timer.h"
-#include "common/savefile.h"
 #include "common/system.h"
 #include "common/str.h"
+#include "common/error.h"
+#include "common/list.h"
+#include "common/list_intern.h"
+#include "common/scummsys.h"
+#include "common/textconsole.h"
 
 #include "gui/debugger.h"
+#include "gui/dialog.h"
 #include "gui/message.h"
-#include "gui/gui-manager.h"
 
 #include "audio/mixer.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/pixelformat.h"
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone();
@@ -145,7 +148,11 @@ void initCommonGFX(bool defaultTo1XScaler) {
 	assert(transientDomain);
 
 	const bool useDefaultGraphicsMode =
-		!transientDomain->contains("gfx_mode") &&
+		(!transientDomain->contains("gfx_mode") ||
+		!scumm_stricmp(transientDomain->getVal("gfx_mode").c_str(), "normal") ||
+		!scumm_stricmp(transientDomain->getVal("gfx_mode").c_str(), "default")
+		)
+		 &&
 		(
 		!gameDomain ||
 		!gameDomain->contains("gfx_mode") ||
@@ -155,10 +162,7 @@ void initCommonGFX(bool defaultTo1XScaler) {
 
 	// See if the game should default to 1x scaler
 	if (useDefaultGraphicsMode && defaultTo1XScaler) {
-		// FIXME: As a hack, we use "1x" here. Would be nicer to use
-		// getDefaultGraphicsMode() instead, but right now, we do not specify
-		// whether that is a 1x scaler or not...
-		g_system->setGraphicsMode("1x");
+		g_system->resetGraphicsScale();
 	} else {
 		// Override global scaler with any game-specific define
 		if (ConfMan.hasKey("gfx_mode")) {
@@ -280,7 +284,7 @@ void initGraphics(int width, int height, bool defaultTo1xScaler) {
 	initGraphics(width, height, defaultTo1xScaler, &format);
 }
 
-void GUIErrorMessage(const Common::String msg) {
+void GUIErrorMessage(const Common::String &msg) {
 	g_system->setWindowCaption("Error");
 	g_system->beginGFXTransaction();
 		initCommonGFX(false);
@@ -429,7 +433,6 @@ int Engine::runDialog(GUI::Dialog &dialog) {
 }
 
 void Engine::syncSoundSettings() {
-
 	// Sync the engine with the config manager
 	int soundVolumeMusic = ConfMan.getInt("music_volume");
 	int soundVolumeSFX = ConfMan.getInt("sfx_volume");
@@ -439,9 +442,14 @@ void Engine::syncSoundSettings() {
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
 
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, (mute ? 0 : soundVolumeMusic));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, (mute ? 0 : soundVolumeSFX));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, (mute ? 0 : soundVolumeSpeech));
+	_mixer->muteSoundType(Audio::Mixer::kPlainSoundType, mute);
+	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, mute);
+	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, mute);
+	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, mute);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, Audio::Mixer::kMaxMixerVolume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
 }
 
 void Engine::flipMute() {

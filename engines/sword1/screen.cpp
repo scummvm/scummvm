@@ -25,7 +25,10 @@
 
 
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "common/util.h"
+
+#include "graphics/palette.h"
 
 #include "sword1/screen.h"
 #include "sword1/logic.h"
@@ -899,7 +902,7 @@ uint8* Screen::psxShrinkedBackgroundToIndexed(uint8 *psxBackground, uint32 bakXr
 	uint8 *fullres_buffer = (uint8 *)malloc(bakXres * (yresInTiles + 1) * 32);
 	memset(fullres_buffer, 0, bakXres * (yresInTiles + 1) * 32);
 
-	bool isCompressed = (READ_LE_UINT32(psxBackground) == MKID_BE('COMP'));
+	bool isCompressed = (READ_LE_UINT32(psxBackground) == MKTAG('C','O','M','P'));
 
 	totTiles -= xresInTiles;
 	psxBackground += 4; //We skip the id tag

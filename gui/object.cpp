@@ -22,7 +22,8 @@
  * $Id$
  */
 
-#include "common/system.h"
+#include "common/textconsole.h"
+
 #include "gui/object.h"
 #include "gui/widget.h"
 #include "gui/gui-manager.h"

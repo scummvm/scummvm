@@ -34,7 +34,7 @@ namespace Tinsel {
 
 /** text mode flags - defaults to left justify */
 enum {
-	TXT_CENTRE		= 0x0001,	///< centre justify text
+	TXT_CENTER		= 0x0001,	///< center justify text
 	TXT_RIGHT		= 0x0002,	///< right justify text
 	TXT_SHADOW		= 0x0004,	///< shadow each character
 	TXT_ABSOLUTE	= 0x0008	///< position of text is absolute (only for object text)
@@ -72,7 +72,7 @@ struct FONT {
 struct TEXTOUT {
 	OBJECT *pList;		///< object list to add text to
 	char *szStr;		///< string to output
-	int colour;			///< colour for monochrome text
+	int color;			///< color for monochrome text
 	int xPos;			///< x position of string
 	int yPos;			///< y position of string
 	SCNHANDLE hFont;	///< which font to use
@@ -91,14 +91,14 @@ struct TEXTOUT {
  * of the list is returned.
  * @param pList			object list to add text to
  * @param szStr			string to output
- * @param colour		colour for monochrome text
+ * @param color		color for monochrome text
  * @param xPos			x position of string
  * @param yPos			y position of string
  * @param hFont			which font to use
  * @param mode			mode flags for the string
  * @param sleepTime		Sleep time between each character (if non-zero)
  */
-OBJECT *ObjectTextOut(OBJECT *pList, char *szStr, int colour,
+OBJECT *ObjectTextOut(OBJECT *pList, char *szStr, int color,
 					int xPos, int yPos, SCNHANDLE hFont, int mode, int sleepTime = 0);
 
 OBJECT *ObjectTextOutIndirect(	// output a string of text

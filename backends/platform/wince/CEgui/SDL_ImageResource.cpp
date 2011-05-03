@@ -32,7 +32,7 @@ SDL_ImageResource::SDL_ImageResource() :
 	_surface(0) {
 }
 
-SDL_Surface* SDL_ImageResource::load(WORD resourceID) {
+SDL_Surface *SDL_ImageResource::load(WORD resourceID) {
 	HRSRC resource;
 	HGLOBAL resourceGlobal;
 	LPVOID resourcePointer;
@@ -62,7 +62,7 @@ SDL_Surface* SDL_ImageResource::load(WORD resourceID) {
 	return _surface;
 }
 
-SDL_Surface* SDL_ImageResource::get() {
+SDL_Surface *SDL_ImageResource::get() {
 	return _surface;
 }
 

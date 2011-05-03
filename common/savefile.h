@@ -136,6 +136,14 @@ public:
 	virtual bool renameSavefile(const String &oldName, const String &newName);
 
 	/**
+	 * Copy the given savefile.
+	 * @param oldName Old name.
+	 * @param newName New name.
+	 * @return true if no error occurred. false otherwise.
+	 */
+	virtual bool copySavefile(const String &oldName, const String &newName);
+
+	/**
 	 * Request a list of available savegames with a given DOS-style pattern,
 	 * also known as "glob" in the UNIX world. Refer to the Common::matchString()
 	 * function to learn about the precise pattern format.

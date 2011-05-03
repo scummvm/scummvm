@@ -36,15 +36,6 @@
 namespace Sci {
 
 /**
- * Verify the the given condition is true, output the message if condition is false, and exit.
- * @param cond	condition to be verified
- * @param msg	the message to be printed if condition fails
- */
-#define VERIFY( cond, msg ) if (!(cond)) {\
-		error("%s, line, %d, %s", __FILE__, __LINE__, msg); \
-	}
-
-/**
  * Parameters for getScriptSegment().
  */
 enum ScriptLoadType {
@@ -477,7 +468,7 @@ private:
 
 private:
 	SegmentObj *allocSegment(SegmentObj *mem, SegmentId *segid);
-	void deallocate(SegmentId seg, bool recursive);
+	void deallocate(SegmentId seg);
 	void createClassTable();
 
 	SegmentId findFreeSegment() const;

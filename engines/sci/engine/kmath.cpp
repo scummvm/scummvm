@@ -117,7 +117,7 @@ reg_t kGetDistance(EngineState *s, int argc, reg_t *argv) {
 	int xdiff = (argc > 3) ? argv[3].toSint16() : 0;
 	int ydiff = (argc > 2) ? argv[2].toSint16() : 0;
 	int angle = (argc > 5) ? argv[5].toSint16() : 0;
-	int xrel = (int)(((float) argv[1].toSint16() - xdiff) / cos(angle * PI / 180.0)); // This works because cos(0)==1
+	int xrel = (int)(((float) argv[1].toSint16() - xdiff) / cos(angle * M_PI / 180.0)); // This works because cos(0)==1
 	int yrel = argv[0].toSint16() - ydiff;
 	return make_reg(0, (int16)sqrt((float) xrel*xrel + yrel*yrel));
 }
@@ -126,20 +126,20 @@ reg_t kTimesSin(EngineState *s, int argc, reg_t *argv) {
 	int angle = argv[0].toSint16();
 	int factor = argv[1].toSint16();
 
-	return make_reg(0, (int16)(factor * sin(angle * PI / 180.0)));
+	return make_reg(0, (int16)(factor * sin(angle * M_PI / 180.0)));
 }
 
 reg_t kTimesCos(EngineState *s, int argc, reg_t *argv) {
 	int angle = argv[0].toSint16();
 	int factor = argv[1].toSint16();
 
-	return make_reg(0, (int16)(factor * cos(angle * PI / 180.0)));
+	return make_reg(0, (int16)(factor * cos(angle * M_PI / 180.0)));
 }
 
 reg_t kCosDiv(EngineState *s, int argc, reg_t *argv) {
 	int angle = argv[0].toSint16();
 	int value = argv[1].toSint16();
-	double cosval = cos(angle * PI / 180.0);
+	double cosval = cos(angle * M_PI / 180.0);
 
 	if ((cosval < 0.0001) && (cosval > -0.0001)) {
 		error("kCosDiv: Attempted division by zero");
@@ -151,7 +151,7 @@ reg_t kCosDiv(EngineState *s, int argc, reg_t *argv) {
 reg_t kSinDiv(EngineState *s, int argc, reg_t *argv) {
 	int angle = argv[0].toSint16();
 	int value = argv[1].toSint16();
-	double sinval = sin(angle * PI / 180.0);
+	double sinval = sin(angle * M_PI / 180.0);
 
 	if ((sinval < 0.0001) && (sinval > -0.0001)) {
 		error("kSinDiv: Attempted division by zero");
@@ -169,7 +169,7 @@ reg_t kTimesTan(EngineState *s, int argc, reg_t *argv) {
 		error("kTimesTan: Attempted tan(pi/2)");
 		return SIGNAL_REG;
 	} else
-		return make_reg(0, (int16) - (tan(param * PI / 180.0) * scale));
+		return make_reg(0, (int16) - (tan(param * M_PI / 180.0) * scale));
 }
 
 reg_t kTimesCot(EngineState *s, int argc, reg_t *argv) {
@@ -180,7 +180,7 @@ reg_t kTimesCot(EngineState *s, int argc, reg_t *argv) {
 		error("kTimesCot: Attempted tan(pi/2)");
 		return SIGNAL_REG;
 	} else
-		return make_reg(0, (int16)(tan(param * PI / 180.0) * scale));
+		return make_reg(0, (int16)(tan(param * M_PI / 180.0) * scale));
 }
 
 #ifdef ENABLE_SCI32

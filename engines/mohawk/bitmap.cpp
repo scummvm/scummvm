@@ -31,6 +31,7 @@
 #include "common/memstream.h"
 #include "common/substream.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Mohawk {
 
@@ -135,8 +136,12 @@ Common::Array<MohawkSurface *> MohawkBitmap::decodeImages(Common::SeekableReadSt
 
 Graphics::Surface *MohawkBitmap::createSurface(uint16 width, uint16 height) {
 	Graphics::Surface *surface = new Graphics::Surface();
-	byte bytesPerPixel = (getBitsPerPixel() <= 8) ? 1 : g_system->getScreenFormat().bytesPerPixel;
-	surface->create(width, height, bytesPerPixel);
+	Graphics::PixelFormat format;
+	if (getBitsPerPixel() <= 8)
+		format = Graphics::PixelFormat::createFormatCLUT8();
+	else
+		format = g_system->getScreenFormat();
+	surface->create(width, height, format);
 	return surface;
 }
 
@@ -569,7 +574,7 @@ void MohawkBitmap::drawRaw(Graphics::Surface *surface) {
 				byte b = _data->readByte();
 				byte g = _data->readByte();
 				byte r = _data->readByte();
-				if (surface->bytesPerPixel == 2)
+				if (surface->format.bytesPerPixel == 2)
 					*((uint16 *)surface->getBasePtr(x, y)) = pixelFormat.RGBToColor(r, g, b);
 				else
 					*((uint32 *)surface->getBasePtr(x, y)) = pixelFormat.RGBToColor(r, g, b);
@@ -608,19 +613,20 @@ void MohawkBitmap::drawRLE8(Graphics::Surface *surface, bool isLE) {
 
 			if (code & 0x80) {
 				byte val = _data->readByte();
-				for (uint16 j = 0; j < runLen; j++)
-					*dst++ = val;
+				memset(dst, val, runLen);
 			} else {
-				for (uint16 j = 0; j < runLen; j++)
-					*dst++ = _data->readByte();
+				_data->read(dst, runLen);
 			}
 
+			dst += runLen;
 			remaining -= runLen;
 		}
 
 		_data->seek(startPos + rowByteCount);
 	}
 }
+
+#ifdef ENABLE_MYST
 
 //////////////////////////////////////////
 // Myst Bitmap Decoder
@@ -721,7 +727,9 @@ MohawkSurface *MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
 	return new MohawkSurface(surface, palData);
 }
 
-MohawkSurface *OldMohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
+#endif
+
+MohawkSurface *LivingBooksBitmap_v1::decodeImage(Common::SeekableReadStream *stream) {
 	Common::SeekableSubReadStreamEndian *endianStream = (Common::SeekableSubReadStreamEndian *)stream;
 
 	// 12 bytes header for the image
@@ -756,10 +764,10 @@ MohawkSurface *OldMohawkBitmap::decodeImage(Common::SeekableReadStream *stream) 
 		_data = decompressLZ(stream, uncompressedSize);
 
 		if (endianStream->pos() != endianStream->size())
-			error("OldMohawkBitmap decompression failed");
+			error("LivingBooksBitmap_v1 decompression failed");
 	} else {
 		if ((_header.format & 0xf0) != 0)
-			error("Tried to use unknown OldMohawkBitmap compression (format %02x)", _header.format & 0xf0);
+			error("Tried to use unknown LivingBooksBitmap_v1 compression (format %02x)", _header.format & 0xf0);
 
 		// This is so nasty on so many levels. The original Windows LZ decompressor for the
 		// Living Books v1 games had knowledge of the underlying RLE8 data. While going
@@ -853,7 +861,7 @@ MohawkSurface *DOSBitmap::decodeImage(Common::SeekableReadStream *stream) {
 }
 
 void DOSBitmap::expandMonochromePlane(Graphics::Surface *surface, Common::SeekableReadStream *rawStream) {
-	assert(surface->bytesPerPixel == 1);
+	assert(surface->format.bytesPerPixel == 1);
 
 	byte *dst = (byte *)surface->pixels;
 
@@ -879,7 +887,7 @@ void DOSBitmap::expandMonochromePlane(Graphics::Surface *surface, Common::Seekab
 	*(dst + j * 4 + dstPixel) = (*(dst + j * 4 + dstPixel) >> 1) | (((temp >> srcBit) & 1) << 3)
 
 void DOSBitmap::expandEGAPlanes(Graphics::Surface *surface, Common::SeekableReadStream *rawStream) {
-	assert(surface->bytesPerPixel == 1);
+	assert(surface->format.bytesPerPixel == 1);
 
 	// Note that the image is in EGA planar form and not just standard 4bpp
 	// This seems to contradict the PoP specs which seem to do

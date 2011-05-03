@@ -28,6 +28,7 @@
 #include "common/endian.h"
 #include "common/md5.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 
 namespace Scumm {
 

@@ -122,7 +122,6 @@ private:
 	void snd_playWanderScoreViaMap(int track, int force);
 	void stopMusicTrack();
 
-	int musicUpdate(int forceRestart);
 	void fadeOutMusic(int ticks);
 
 	void snd_playSoundEffect(int item, int volume);
@@ -387,7 +386,7 @@ private:
 
 	// character
 	int getCharacterWalkspeed() const;
-	void updateCharAnimFrame(int character, int *table);
+	void updateCharAnimFrame(int *table);
 	int8 _characterAnimTable[2];
 	static const uint8 _characterFrameTable[];
 

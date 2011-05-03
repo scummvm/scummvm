@@ -81,26 +81,6 @@ static ActionCallback *actionCallbackPtr = 0;	// FIXME: should be turned into Gr
 #define ANIMATION_TEMPLATE_CLASS_NAME "Gfx.AnimationTemplate"
 static const char *GFX_LIBRARY_NAME = "Gfx";
 
-// Wie luaL_checkudata, nur ohne dass kein Fehler erzeugt wird.
-static void *my_checkudata(lua_State *L, int ud, const char *tname) {
-	int top = lua_gettop(L);
-
-	void *p = lua_touserdata(L, ud);
-	if (p != NULL) { /* value is a userdata? */
-		if (lua_getmetatable(L, ud)) { /* does it have a metatable? */
-			// lua_getfield(L, LUA_REGISTRYINDEX, tname);  /* get correct metatable */
-			LuaBindhelper::getMetatable(L, tname);
-			if (lua_rawequal(L, -1, -2)) { /* does it have the correct mt? */
-				lua_settop(L, top);
-				return p;
-			}
-		}
-	}
-
-	lua_settop(L, top);
-	return NULL;
-}
-
 static void newUintUserData(lua_State *L, uint value) {
 	void *userData = lua_newuserdata(L, sizeof(value));
 	memcpy(userData, &value, sizeof(value));
@@ -108,8 +88,8 @@ static void newUintUserData(lua_State *L, uint value) {
 
 static AnimationTemplate *checkAnimationTemplate(lua_State *L, int idx = 1) {
 	// Der erste Parameter muss vom Typ userdata sein und die Metatable der Klasse Gfx.AnimationTemplate
-	uint animationTemplateHandle;
-	if ((animationTemplateHandle = *reinterpret_cast<uint *>(my_checkudata(L, idx, ANIMATION_TEMPLATE_CLASS_NAME))) != 0) {
+	uint animationTemplateHandle = *reinterpret_cast<uint *>(LuaBindhelper::my_checkudata(L, idx, ANIMATION_TEMPLATE_CLASS_NAME));
+	if (animationTemplateHandle != 0) {
 		AnimationTemplate *animationTemplatePtr = AnimationTemplateRegistry::instance().resolveHandle(animationTemplateHandle);
 		if (!animationTemplatePtr)
 			luaL_error(L, "The animation template with the handle %d does no longer exist.", animationTemplateHandle);
@@ -370,10 +350,10 @@ static const luaL_reg GFX_FUNCTIONS[] = {
 static RenderObjectPtr<RenderObject> checkRenderObject(lua_State *L, bool errorIfRemoved = true) {
 	// Der erste Parameter muss vom Typ userdata sein und die Metatable einer Klasse haben, die von Gfx.RenderObject "erbt".
 	uint *userDataPtr;
-	if ((userDataPtr = (uint *) my_checkudata(L, 1, BITMAP_CLASS_NAME)) != 0 ||
-	        (userDataPtr = (uint *) my_checkudata(L, 1, ANIMATION_CLASS_NAME)) != 0 ||
-	        (userDataPtr = (uint *) my_checkudata(L, 1, PANEL_CLASS_NAME)) != 0 ||
-	        (userDataPtr = (uint *) my_checkudata(L, 1, TEXT_CLASS_NAME)) != 0) {
+	if ((userDataPtr = (uint *)LuaBindhelper::my_checkudata(L, 1, BITMAP_CLASS_NAME)) != 0 ||
+	        (userDataPtr = (uint *)LuaBindhelper::my_checkudata(L, 1, ANIMATION_CLASS_NAME)) != 0 ||
+	        (userDataPtr = (uint *)LuaBindhelper::my_checkudata(L, 1, PANEL_CLASS_NAME)) != 0 ||
+	        (userDataPtr = (uint *)LuaBindhelper::my_checkudata(L, 1, TEXT_CLASS_NAME)) != 0) {
 		RenderObjectPtr<RenderObject> roPtr(*userDataPtr);
 		if (roPtr.isValid())
 			return roPtr;
@@ -600,11 +580,11 @@ static const luaL_reg RENDEROBJECT_METHODS[] = {
 static RenderObjectPtr<Panel> checkPanel(lua_State *L) {
 	// Der erste Parameter muss vom Typ userdata sein und die Metatable der Klasse Gfx.Panel
 	uint *userDataPtr;
-	if ((userDataPtr = (uint *)my_checkudata(L, 1, PANEL_CLASS_NAME)) != 0) {
+	if ((userDataPtr = (uint *)LuaBindhelper::my_checkudata(L, 1, PANEL_CLASS_NAME)) != 0) {
 		RenderObjectPtr<RenderObject> roPtr(*userDataPtr);
-		if (roPtr.isValid()) {
+		if (roPtr.isValid())
 			return roPtr->toPanel();
-		} else
+		else
 			luaL_error(L, "The panel with the handle %d does no longer exist.", *userDataPtr);
 	} else {
 		luaL_argcheck(L, 0, 1, "'" PANEL_CLASS_NAME "' expected");
@@ -645,11 +625,11 @@ static const luaL_reg PANEL_METHODS[] = {
 static RenderObjectPtr<Bitmap> checkBitmap(lua_State *L) {
 	// Der erste Parameter muss vom Typ userdata sein und die Metatable der Klasse Gfx.Bitmap
 	uint *userDataPtr;
-	if ((userDataPtr = (uint *)my_checkudata(L, 1, BITMAP_CLASS_NAME)) != 0) {
+	if ((userDataPtr = (uint *)LuaBindhelper::my_checkudata(L, 1, BITMAP_CLASS_NAME)) != 0) {
 		RenderObjectPtr<RenderObject> roPtr(*userDataPtr);
-		if (roPtr.isValid()) {
+		if (roPtr.isValid())
 			return roPtr->toBitmap();
-		} else
+		else
 			luaL_error(L, "The bitmap with the handle %d does no longer exist.", *userDataPtr);
 	} else {
 		luaL_argcheck(L, 0, 1, "'" BITMAP_CLASS_NAME "' expected");
@@ -790,13 +770,12 @@ static const luaL_reg BITMAP_METHODS[] = {
 static RenderObjectPtr<Animation> checkAnimation(lua_State *L) {
 	// Der erste Parameter muss vom Typ userdata sein und die Metatable der Klasse Gfx.Animation
 	uint *userDataPtr;
-	if ((userDataPtr = (uint *)my_checkudata(L, 1, ANIMATION_CLASS_NAME)) != 0) {
+	if ((userDataPtr = (uint *)LuaBindhelper::my_checkudata(L, 1, ANIMATION_CLASS_NAME)) != 0) {
 		RenderObjectPtr<RenderObject> roPtr(*userDataPtr);
 		if (roPtr.isValid())
 			return roPtr->toAnimation();
-		else {
+		else
 			luaL_error(L, "The animation with the handle %d does no longer exist.", *userDataPtr);
-		}
 	} else {
 		luaL_argcheck(L, 0, 1, "'" ANIMATION_CLASS_NAME "' expected");
 	}
@@ -1064,7 +1043,7 @@ static const luaL_reg ANIMATION_METHODS[] = {
 static RenderObjectPtr<Text> checkText(lua_State *L) {
 	// Der erste Parameter muss vom Typ userdata sein und die Metatable der Klasse Gfx.Text
 	uint *userDataPtr;
-	if ((userDataPtr = (uint *)my_checkudata(L, 1, TEXT_CLASS_NAME)) != 0) {
+	if ((userDataPtr = (uint *)LuaBindhelper::my_checkudata(L, 1, TEXT_CLASS_NAME)) != 0) {
 		RenderObjectPtr<RenderObject> roPtr(*userDataPtr);
 		if (roPtr.isValid())
 			return roPtr->toText();

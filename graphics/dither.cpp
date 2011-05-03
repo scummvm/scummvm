@@ -174,7 +174,7 @@ bool PaletteLUT::save(Common::WriteStream &stream) {
 	while (_got < _dim1)
 		buildNext();
 
-	stream.writeUint32BE(MKID_BE('PLUT')); // Magic
+	stream.writeUint32BE(MKTAG('P','L','U','T')); // Magic
 	stream.writeUint32BE(kVersion);
 	stream.writeByte(_depth1);
 	if (stream.write(_realPal, 768) != 768)
@@ -200,7 +200,7 @@ bool PaletteLUT::load(Common::SeekableReadStream &stream) {
 		return false;
 
 	// Magic
-	if (stream.readUint32BE() != MKID_BE('PLUT'))
+	if (stream.readUint32BE() != MKTAG('P','L','U','T'))
 		return false;
 
 	if (stream.readUint32BE() != kVersion)

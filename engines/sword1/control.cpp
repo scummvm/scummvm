@@ -29,7 +29,9 @@
 #include "common/events.h"
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
+#include "graphics/palette.h"
 #include "graphics/thumbnail.h"
 #include "gui/message.h"
 

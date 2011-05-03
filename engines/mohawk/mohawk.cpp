@@ -24,13 +24,9 @@
  */
 
 #include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/file.h"
-#include "common/events.h"
-#include "common/keyboard.h"
-
-#include "base/plugins.h"
-#include "base/version.h"
+#include "common/error.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "mohawk/mohawk.h"
 #include "mohawk/cursors.h"
@@ -46,8 +42,8 @@ MohawkEngine::MohawkEngine(OSystem *syst, const MohawkGameDescription *gamedesc)
 	if (!_mixer->isReady())
 		error ("Sound initialization failed");
 
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	// Setup mixer
+	syncSoundSettings();
 
 	_sound = 0;
 	_video = 0;

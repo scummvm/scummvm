@@ -51,27 +51,6 @@ namespace Sword25 {
 #define REGION_CLASS_NAME "Geo.Region"
 #define WALKREGION_CLASS_NAME "Geo.WalkRegion"
 
-// How luaL_checkudata, only without that no error is generated.
-static void *my_checkudata(lua_State *L, int ud, const char *tname) {
-	int top = lua_gettop(L);
-
-	void *p = lua_touserdata(L, ud);
-	if (p != NULL) { /* value is a userdata? */
-		if (lua_getmetatable(L, ud)) { /* does it have a metatable? */
-			// lua_getfield(L, LUA_REGISTRYINDEX, tname);  /* get correct metatable */
-			LuaBindhelper::getMetatable(L, tname);
-			/* does it have the correct mt? */
-			if (lua_rawequal(L, -1, -2)) {
-				lua_settop(L, top);
-				return p;
-			}
-		}
-	}
-
-	lua_settop(L, top);
-	return NULL;
-}
-
 static void newUintUserData(lua_State *L, uint value) {
 	void *userData = lua_newuserdata(L, sizeof(value));
 	memcpy(userData, &value, sizeof(value));
@@ -276,9 +255,9 @@ static const luaL_reg GEO_FUNCTIONS[] = {
 
 static Region *checkRegion(lua_State *L) {
 	// The first parameter must be of type 'userdata', and the Metatable class Geo.Region or Geo.WalkRegion
-	uint *regionHandlePtr;
-	if ((regionHandlePtr = reinterpret_cast<uint *>(my_checkudata(L, 1, REGION_CLASS_NAME))) != 0 ||
-	        (regionHandlePtr = reinterpret_cast<uint *>(my_checkudata(L, 1, WALKREGION_CLASS_NAME))) != 0) {
+	uint *regionHandlePtr = reinterpret_cast<uint *>(LuaBindhelper::my_checkudata(L, 1, REGION_CLASS_NAME));
+	if (regionHandlePtr != 0 ||
+	        (regionHandlePtr = reinterpret_cast<uint *>(LuaBindhelper::my_checkudata(L, 1, WALKREGION_CLASS_NAME))) != 0) {
 		return RegionRegistry::instance().resolveHandle(*regionHandlePtr);
 	} else {
 		luaL_argcheck(L, 0, 1, "'" REGION_CLASS_NAME "' expected");
@@ -398,7 +377,7 @@ static const luaL_reg REGION_METHODS[] = {
 static WalkRegion *checkWalkRegion(lua_State *L) {
 	// The first parameter must be of type 'userdate', and the Metatable class Geo.WalkRegion
 	uint regionHandle;
-	if ((regionHandle = *reinterpret_cast<uint *>(my_checkudata(L, 1, WALKREGION_CLASS_NAME))) != 0) {
+	if ((regionHandle = *reinterpret_cast<uint *>(LuaBindhelper::my_checkudata(L, 1, WALKREGION_CLASS_NAME))) != 0) {
 		return reinterpret_cast<WalkRegion *>(RegionRegistry::instance().resolveHandle(regionHandle));
 	} else {
 		luaL_argcheck(L, 0, 1, "'" WALKREGION_CLASS_NAME "' expected");

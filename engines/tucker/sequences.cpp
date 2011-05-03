@@ -24,10 +24,13 @@
  */
 
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
+
+#include "graphics/palette.h"
 
 #include "tucker/tucker.h"
 #include "tucker/graphics.h"

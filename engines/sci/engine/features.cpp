@@ -285,20 +285,16 @@ SciVersion GameFeatures::detectLofsType() {
 		}
 
 		// Find a function of the "Game" object (which is the game super class) which invokes lofsa/lofss
-		reg_t gameSuperClass = g_sci->getGameSuperClassAddress();
+		const Object *gameObject = _segMan->getObject(g_sci->getGameObject());
+		const Object *gameSuperObject = _segMan->getObject(gameObject->getSuperClassSelector());
 		bool found = false;
-		if (!gameSuperClass.isNull()) {
-			Common::String gameSuperClassName = _segMan->getObjectName(gameSuperClass);
-			const Object *gameSuperObject = _segMan->getObject(gameSuperClass);
+		if (gameSuperObject) {
+			Common::String gameSuperClassName = _segMan->getObjectName(gameObject->getSuperClassSelector());
 
-			if (gameSuperObject) {
-				for (uint m = 0; m < gameSuperObject->getMethodCount(); m++) {
-					found = autoDetectLofsType(gameSuperClassName, m);
-					if (found)
-						break;
-				}
-			} else {
-				warning("detectLofsType(): Could not get superclass object");
+			for (uint m = 0; m < gameSuperObject->getMethodCount(); m++) {
+				found = autoDetectLofsType(gameSuperClassName, m);
+				if (found)
+					break;
 			}
 		} else {
 			warning("detectLofsType(): Could not find superclass of game object");

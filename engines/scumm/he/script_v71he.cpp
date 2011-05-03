@@ -88,15 +88,15 @@ byte *ScummEngine_v71he::heFindResource(uint32 tag, byte *searchin) {
 }
 
 byte *ScummEngine_v71he::findWrappedBlock(uint32 tag, byte *ptr, int state, bool errorFlag) {
-	if (READ_BE_UINT32(ptr) == MKID_BE('MULT')) {
+	if (READ_BE_UINT32(ptr) == MKTAG('M','U','L','T')) {
 		byte *offs, *wrap;
 		uint32 size;
 
-		wrap = heFindResource(MKID_BE('WRAP'), ptr);
+		wrap = heFindResource(MKTAG('W','R','A','P'), ptr);
 		if (wrap == NULL)
 			return NULL;
 
-		offs = heFindResourceData(MKID_BE('OFFS'), wrap);
+		offs = heFindResourceData(MKTAG('O','F','F','S'), wrap);
 		if (offs == NULL)
 			return NULL;
 
@@ -109,7 +109,7 @@ byte *ScummEngine_v71he::findWrappedBlock(uint32 tag, byte *ptr, int state, bool
 		if (offs)
 			return offs;
 
-		offs = heFindResourceData(MKID_BE('DEFA'), ptr);
+		offs = heFindResourceData(MKTAG('D','E','F','A'), ptr);
 		if (offs == NULL)
 			return NULL;
 

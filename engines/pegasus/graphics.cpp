@@ -24,6 +24,7 @@
 
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/textconsole.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 
@@ -63,10 +64,10 @@ Graphics::Surface *GraphicsManager::decodeImage(const Common::String &filename) 
 	Graphics::Surface *image = _pictDecoder->decodeImage(&file, palette);
 
 	// For <= 8bpp, we need to convert
-	if (image->bytesPerPixel == 1) {
+	if (image->format.bytesPerPixel == 1) {
 		Graphics::PixelFormat format = _vm->_system->getScreenFormat();
 		Graphics::Surface *output = new Graphics::Surface();
-		output->create(image->w, image->h, format.bytesPerPixel);
+		output->create(image->w, image->h, format);
 
 		for (uint16 y = 0; y < image->h; y++) {
 			for (uint16 x = 0; x < image->w; x++) {
@@ -135,7 +136,7 @@ uint32 GraphicsManager::getColor(byte r, byte g, byte b) {
 }
 
 void GraphicsManager::setCursor(uint16 cursor) {
-	Common::SeekableReadStream *cicnStream = _vm->_resFork->getResource(MKID_BE('cicn'), cursor);
+	Common::SeekableReadStream *cicnStream = _vm->_resFork->getResource(MKTAG('c', 'i', 'c', 'n'), cursor);
 	
 	// PixMap section
 	Graphics::PictDecoder::PixMap pixMap = _pictDecoder->readPixMap(cicnStream);
@@ -181,9 +182,9 @@ void GraphicsManager::setCursor(uint16 cursor) {
 	Common::SeekableReadStream *cursStream = NULL;
 	
 	if (cursor >= kMainCursor && cursor <= kGrabbingHand)
-		cursStream = _vm->_resFork->getResource(MKID_BE('Curs'), kMainCursor);
+		cursStream = _vm->_resFork->getResource(MKTAG('C', 'u', 'r', 's'), kMainCursor);
 	else // if (cursor == kTargetingReticle1 || cursor == kTargetingReticle2)
-		cursStream = _vm->_resFork->getResource(MKID_BE('Curs'), kTargetingReticle1);
+		cursStream = _vm->_resFork->getResource(MKTAG('C', 'u', 'r', 's'), kTargetingReticle1);
 
 	// Go through the stream until we find the right cursor hotspot
 	uint16 x = 0, y = 0;

@@ -43,7 +43,7 @@ public:
 	static bool isSmartphone();
 
 private:
-	static DWORD reg_access(TCHAR *key, TCHAR *val, DWORD data);
+	static DWORD reg_access(const TCHAR *key, const TCHAR *val, DWORD data);
 	static void backlight_xchg();
 };
 

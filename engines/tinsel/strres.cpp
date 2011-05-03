@@ -31,6 +31,7 @@
 #include "tinsel/scn.h"
 #include "common/file.h"
 #include "common/endian.h"
+#include "common/textconsole.h"
 
 #include "gui/message.h"
 

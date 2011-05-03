@@ -27,6 +27,7 @@
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 
 #include "queen/sound.h"
 #include "queen/input.h"
@@ -192,10 +193,12 @@ Sound *Sound::makeSoundInstance(Audio::Mixer *mixer, QueenEngine *vm, uint8 comp
 }
 
 void Sound::setVolume(int vol) {
-	_musicVolume = vol;
+	if (ConfMan.hasKey("mute") && ConfMan.getBool("mute"))
+		_musicVolume = 0;
+	else
+		_musicVolume = vol;
+
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _musicVolume);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 }
 
 void Sound::saveState(byte *&ptr) {

@@ -26,6 +26,7 @@
 #include "engines/advancedDetector.h"
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
@@ -291,6 +292,11 @@ SaveStateDescriptor HugoMetaEngine::querySaveMetaInfos(const char *target, int s
 		int minutes = saveTime & 0xFF;
 
 		desc.setSaveTime(hour, minutes);
+
+		// Slot 0 is used for the 'restart game' save in all Hugo games, thus
+		// we prevent it from being deleted.
+		desc.setDeletableFlag(slot != 0);
+		desc.setWriteProtectedFlag(slot == 0);
 
 		delete file;
 		return desc;

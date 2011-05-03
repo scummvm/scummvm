@@ -82,7 +82,7 @@ SOURCE smush/codec47ARM.s		// ARM version: add ASM routines
 // *** Include paths
 
 USERINCLUDE     ..\..\..\..\engines ..\..\..\..\engines\scumm\smush ..\..\..\..\engines\scumm\insane
-USERINCLUDE     ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\sound ..\src
+USERINCLUDE     ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\audio ..\src
 
 SYSTEMINCLUDE	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
 SYSTEMINCLUDE   \epoc32\include\libc

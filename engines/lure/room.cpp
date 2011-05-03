@@ -432,7 +432,7 @@ void Room::update() {
 	Surface &s = _screen.screen();
 	Resources &res = Resources::getReference();
 	HotspotList &hotspots = res.activeHotspots();
-	byte white = LureEngine::getReference().isEGA() ?  EGA_DIALOG_WHITE_COLOUR : VGA_DIALOG_WHITE_COLOUR;
+	byte white = LureEngine::getReference().isEGA() ?  EGA_DIALOG_WHITE_COLOR : VGA_DIALOG_WHITE_COLOR;
 	HotspotList::iterator i;
 
 	// Copy the background to the temporary screen surface
@@ -564,9 +564,9 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 		if (isEGA)
 			_screen.setPaletteEmpty();
 		else
-			// Fade out all the colours except the high index 0FFh, which is used to show the
+			// Fade out all the colors except the high index 0FFh, which is used to show the
 			// disk cursor as a room changes
-			_screen.paletteFadeOut(GAME_COLOURS - 1);
+			_screen.paletteFadeOut(GAME_COLORS - 1);
 
 		// Deallocate graphical layers from the room
 		for (int layerNum = 0; layerNum < _numLayers; ++layerNum) {

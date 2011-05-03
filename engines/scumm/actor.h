@@ -34,7 +34,6 @@
 
 namespace Scumm {
 
-
 enum {
 	V12_X_MULTIPLIER = 8,
 	V12_Y_MULTIPLIER = 2,
@@ -313,46 +312,6 @@ protected:
 	virtual bool isPlayer();
 
 	bool findPathTowards(byte box, byte box2, byte box3, Common::Point &foundPath);
-};
-
-class ActorHE : public Actor {
-public:
-	ActorHE(ScummEngine *scumm, int id) : Actor(scumm, id) {}
-
-	virtual void initActor(int mode);
-
-	virtual void hideActor();
-
-	void drawActorToBackBuf(int x, int y);
-
-	void setHEFlag(int bit, int set);
-
-	void setUserCondition(int slot, int set);
-	bool isUserConditionSet(int slot) const;
-
-	void setTalkCondition(int slot);
-	bool isTalkConditionSet(int slot) const;
-
-public:
-	/** This rect is used to clip actor drawing. */
-	Common::Rect _clipOverride;
-
-	bool _heNoTalkAnimation;
-	bool _heTalking;
-	byte _heFlags;
-
-	AuxBlock _auxBlock;
-
-	struct {
-		int16 posX;
-		int16 posY;
-		int16 color;
-		byte sentence[128];
-	} _heTalkQueue[16];
-
-
-	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
-	virtual void setActorCostume(int c);
 };
 
 class Actor_v3 : public Actor {

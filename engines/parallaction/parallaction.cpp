@@ -23,13 +23,10 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/events.h"
 #include "common/EventRecorder.h"
-#include "common/file.h"
-#include "common/util.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "parallaction/exec.h"
 #include "parallaction/input.h"
@@ -52,6 +49,8 @@ uint32		_globalFlags = 0;
 Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gameDesc) :
 	Engine(syst), _gameDescription(gameDesc), _location(getGameType()),
 	_dialogueMan(0) {
+	// Setup mixer
+	syncSoundSettings();
 
 	_vm = this;
 	DebugMan.addDebugChannel(kDebugDialogue, "dialogue", "Dialogues debug level");

@@ -31,6 +31,8 @@
 #include "agi/sound_sarien.h"
 #include "agi/sound_pcjr.h"
 
+#include "common/textconsole.h"
+
 namespace Agi {
 
 //

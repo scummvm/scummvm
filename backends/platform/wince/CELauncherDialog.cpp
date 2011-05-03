@@ -48,14 +48,14 @@ using namespace Common;
 class CEAboutDialog : public Dialog {
 public:
 	CEAboutDialog()
-	: Dialog(10, 60, 300, 77) {
+		: Dialog(10, 60, 300, 77) {
 		char tempo[100];
 
 		// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
 		// needs fixing, or remove it!
 		const int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 0);
 		const int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
-		new ButtonWidget(this, (_w - buttonWidth) / 2, 45, buttonWidth, buttonHeight, _("OK"), 0, kCloseCmd, '\r');	// Close dialog - FIXME
+		new ButtonWidget(this, (_w - buttonWidth) / 2, 45, buttonWidth, buttonHeight, _("OK"), 0, kCloseCmd, '\r'); // Close dialog - FIXME
 
 		Common::String videoDriver(_("Using SDL driver "));
 		SDL_VideoDriverName(tempo, sizeof(tempo));
@@ -106,14 +106,13 @@ void CELauncherDialog::addGame() {
 	MessageDialog alert(_("Do you want to perform an automatic scan ?"), _("Yes"), _("No"));
 	if (alert.runModal() == kMessageOK && _browser->runModal() > 0) {
 		// Clear existing domains
-		ConfigManager::DomainMap &domains = (ConfigManager::DomainMap&)ConfMan.getGameDomains();
+		ConfigManager::DomainMap &domains = (ConfigManager::DomainMap &)ConfMan.getGameDomains();
 		domains.clear();
 		ConfMan.flushToDisk();
 		automaticScanDirectory(_browser->getResult());
 		ConfMan.flushToDisk();
 		updateListing();
 		draw();
-	}
-	else
+	} else
 		GUILauncherDialog::addGame();
 }

@@ -94,10 +94,9 @@ void EngineState::reset(bool isRestoring) {
 	stack_base = 0;
 	stack_top = 0;
 
-	restAdjust = 0;
-
 	r_acc = NULL_REG;
 	r_prev = NULL_REG;
+	r_rest = 0;
 
 	lastWaitTime = 0;
 

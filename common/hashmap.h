@@ -47,8 +47,6 @@
 
 
 #include "common/func.h"
-#include "common/str.h"
-#include "common/util.h"
 
 #ifdef DEBUG_HASH_COLLISIONS
 #include "common/debug.h"
@@ -142,8 +140,8 @@ private:
 	}
 
 	void assign(const HM_t &map);
-	int lookup(const Key &key) const;
-	int lookupAndCreateIfMissing(const Key &key);
+	uint lookup(const Key &key) const;
+	uint lookupAndCreateIfMissing(const Key &key);
 	void expandStorage(uint newCapacity);
 
 #if !defined(__sgi) || defined(__GNUC__)
@@ -456,7 +454,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::expandStorage(uint newCapacity) {
 }
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
-int HashMap<Key, Val, HashFunc, EqualFunc>::lookup(const Key &key) const {
+uint HashMap<Key, Val, HashFunc, EqualFunc>::lookup(const Key &key) const {
 	const uint hash = _hash(key);
 	uint ctr = hash & _mask;
 	for (uint perturb = hash; ; perturb >>= HASHMAP_PERTURB_SHIFT) {
@@ -487,7 +485,7 @@ int HashMap<Key, Val, HashFunc, EqualFunc>::lookup(const Key &key) const {
 }
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
-int HashMap<Key, Val, HashFunc, EqualFunc>::lookupAndCreateIfMissing(const Key &key) {
+uint HashMap<Key, Val, HashFunc, EqualFunc>::lookupAndCreateIfMissing(const Key &key) {
 	const uint hash = _hash(key);
 	uint ctr = hash & _mask;
 	const uint NONE_FOUND = _mask + 1;

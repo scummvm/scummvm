@@ -47,7 +47,7 @@ bundle: scummvm-static
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/Contents/Resources/
 endif
-	$(srcdir)/tools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
+	$(srcdir)/devtools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
 	chmod 644 $(bundle_name)/Contents/Resources/*
 	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm
 	chmod 755 $(bundle_name)/Contents/MacOS/scummvm
@@ -138,7 +138,7 @@ iphone: $(OBJS)
 # TODO: Replace AUTHORS by Credits.rtf
 osxsnap: bundle
 	mkdir ScummVM-snapshot
-	$(srcdir)/tools/credits.pl --text > $(srcdir)/AUTHORS
+	$(srcdir)/devtools/credits.pl --text > $(srcdir)/AUTHORS
 	cp $(srcdir)/AUTHORS ./ScummVM-snapshot/Authors
 	cp $(srcdir)/COPYING ./ScummVM-snapshot/License\ \(GPL\)
 	cp $(srcdir)/COPYING.LGPL ./ScummVM-snapshot/License\ \(LGPL\)
@@ -180,6 +180,8 @@ endif
 	cp $(srcdir)/README $(WIN32PATH)/README.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
+	cp $(srcdir)/icons/scummvm.ico $(WIN32PATH)
+	cp $(srcdir)/dists/win32/ScummVM.iss $(WIN32PATH)
 	u2d $(WIN32PATH)/*.txt
 
 #
@@ -200,30 +202,3 @@ endif
 # Mark special targets as phony
 .PHONY: deb bundle osxsnap win32dist install uninstall
 
-#
-# ARM specific
-#
-ifdef USE_TREMOLO
-DEFINES += -DUSE_TREMOR -DUSE_VORBIS -DUSE_TREMOLO
-LIBS += -ltremolo
-endif
-
-ifdef USE_ARM_SMUSH_ASM
-DEFINES += -DUSE_ARM_SMUSH_ASM
-endif
-
-ifdef USE_ARM_SOUND_ASM
-DEFINES += -DUSE_ARM_SOUND_ASM
-endif
-
-ifdef USE_ARM_GFX_ASM
-DEFINES += -DUSE_ARM_GFX_ASM
-endif
-
-ifdef USE_ARM_COSTUME_ASM
-DEFINES += -DUSE_ARM_COSTUME_ASM
-endif
-
-ifdef USE_ARM_SCALER_ASM
-DEFINES += -DUSE_ARM_SCALER_ASM
-endif

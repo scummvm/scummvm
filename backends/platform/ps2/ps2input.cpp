@@ -23,6 +23,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include <kernel.h>
 #include <malloc.h>
 #include <assert.h>

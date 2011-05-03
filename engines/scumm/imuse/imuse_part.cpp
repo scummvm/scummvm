@@ -25,6 +25,8 @@
 
 
 
+#include "common/debug.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 #include "scumm/imuse/imuse_internal.h"
 #include "scumm/saveload.h"

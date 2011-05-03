@@ -30,11 +30,10 @@
  * We implement both type 1 and type 2 snd resources, but only those that are sampled
  */
 
-#include "common/util.h"
+#include "common/textconsole.h"
 #include "common/stream.h"
 
 #include "audio/decoders/mac_snd.h"
-#include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 
 namespace Audio {

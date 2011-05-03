@@ -61,7 +61,6 @@ uint16 Player::_active_notes[128];
 Player::Player() :
 	_midi(NULL),
 	_parser(NULL),
-	_passThrough(0),
 	_parts(NULL),
 	_active(false),
 	_scanning(false),
@@ -93,7 +92,7 @@ Player::~Player() {
 	}
 }
 
-bool Player::startSound(int sound, MidiDriver *midi, bool passThrough) {
+bool Player::startSound(int sound, MidiDriver *midi) {
 	void *ptr;
 	int i;
 
@@ -119,7 +118,6 @@ bool Player::startSound(int sound, MidiDriver *midi, bool passThrough) {
 	_pan = 0;
 	_transpose = 0;
 	_detune = 0;
-	_passThrough = passThrough;
 
 	for (i = 0; i < ARRAYSIZE(_parameterFaders); ++i)
 		_parameterFaders[i].init();
@@ -227,11 +225,6 @@ void Player::setSpeed(byte speed) {
 }
 
 void Player::send(uint32 b) {
-	if (_passThrough) {
-		_midi->send(b);
-		return;
-	}
-
 	byte cmd = (byte)(b & 0xF0);
 	byte chan = (byte)(b & 0x0F);
 	byte param1 = (byte)((b >> 8) & 0xFF);
@@ -347,11 +340,6 @@ void Player::sysEx(const byte *p, uint16 len) {
 	byte a;
 	byte buf[128];
 	Part *part;
-
-	if (_passThrough) {
-		_midi->sysEx(p, len);
-		return;
-	}
 
 	// Check SysEx manufacturer.
 	a = *p++;
@@ -996,10 +984,6 @@ void Player::fixAfterLoad() {
 		_isMT32 = _se->isMT32(_id);
 		_isMIDI = _se->isMIDI(_id);
 	}
-}
-
-uint32 Player::getBaseTempo() {
-	return (_midi ? _midi->getBaseTempo() : 0);
 }
 
 void Player::metaEvent(byte type, byte *msg, uint16 len) {

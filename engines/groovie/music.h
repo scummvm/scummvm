@@ -88,20 +88,14 @@ protected:
 	virtual void unload();
 };
 
-class MusicPlayerMidi : public MusicPlayer, public MidiDriver {
+class MusicPlayerMidi : public MusicPlayer, public MidiDriver_BASE {
 public:
 	MusicPlayerMidi(GroovieEngine *vm);
 	~MusicPlayerMidi();
 
-	// MidiDriver interface
-	int open();
-	void close();
-	void send(uint32 b);
-	void metaEvent(byte type, byte *data, uint16 length);
-	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc);
-	uint32 getBaseTempo();
-	MidiChannel *allocateChannel();
-	MidiChannel *getPercussionChannel();
+	// MidiDriver_BASE interface
+	virtual void send(uint32 b);
+	virtual void metaEvent(byte type, byte *data, uint16 length);
 
 private:
 	// Channel volumes
@@ -115,7 +109,7 @@ protected:
 	MidiParser *_midiParser;
 	MidiDriver *_driver;
 
-	void onTimerInternal();
+	virtual void onTimerInternal();
 	void updateVolume();
 	void unload();
 

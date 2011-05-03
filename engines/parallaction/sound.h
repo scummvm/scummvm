@@ -140,7 +140,7 @@ class DosSoundMan_ns : public SoundMan_ns {
 
 	
 public:
-	DosSoundMan_ns(Parallaction_ns *vm, MidiDriver *midiDriver);
+	DosSoundMan_ns(Parallaction_ns *vm);
 	~DosSoundMan_ns();
 	void playMusic();
 	void stopMusic();
@@ -228,7 +228,7 @@ class DosSoundMan_br : public SoundMan_br {
 	Audio::AudioStream *loadChannelData(const char *filename, Channel *ch, bool looping);
 
 public:
-	DosSoundMan_br(Parallaction_br *vm, MidiDriver *midiDriver);
+	DosSoundMan_br(Parallaction_br *vm);
 	~DosSoundMan_br();
 
 	void playMusic();

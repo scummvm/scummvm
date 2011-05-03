@@ -37,6 +37,7 @@ class SciEngine;
 struct List;
 
 reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode);
+bool isJumpOpcode(EngineState *s, reg_t pos, reg_t& jumpOffset);
 
 class Console : public GUI::Debugger {
 public:
@@ -94,6 +95,8 @@ private:
 	bool cmdUndither(int argc, const char **argv);
 	bool cmdPicVisualize(int argc, const char **argv);
 	bool cmdPlayVideo(int argc, const char **argv);
+	bool cmdAnimateList(int argc, const char **argv);
+	bool cmdWindowList(int argc, const char **argv);
 	// Segments
 	bool cmdPrintSegmentTable(int argc, const char **argv);
 	bool cmdSegmentInfo(int argc, const char **argv);

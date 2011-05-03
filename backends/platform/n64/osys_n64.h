@@ -37,6 +37,7 @@
 
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
+#include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 
 #include "audio/mixer_intern.h"

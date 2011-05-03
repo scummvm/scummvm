@@ -28,74 +28,27 @@
 #ifndef DRACI_MUSIC_H
 #define DRACI_MUSIC_H
 
-#include "audio/mididrv.h"
-#include "audio/midiparser.h"
-#include "common/mutex.h"
+#include "audio/midiplayer.h"
 
 namespace Draci {
 
 // Taken from MADE, which took it from SAGA.
 
-class MusicPlayer : public MidiDriver {
+class MusicPlayer : public Audio::MidiPlayer {
 public:
-	MusicPlayer(MidiDriver *driver, const char *pathMask);
-	~MusicPlayer();
+	MusicPlayer(const char *pathMask);
 
-	bool isPlaying() { return _isPlaying; }
-	void setPlaying(bool playing) { _isPlaying = playing; }
-
-	void setVolume(int volume);
-	int getVolume() { return _masterVolume; }
-	void syncVolume();
-
-	void setNativeMT32(bool b) { _nativeMT32 = b; }
-	bool hasNativeMT32() { return _nativeMT32; }
 	void playSMF(int track, bool loop);
 	void stop();
-	void pause();
-	void resume();
-	void setLoop(bool loop) { _looping = loop; }
-	void setPassThrough(bool b) { _passThrough = b; }
 
-	void setGM(bool isGM) { _isGM = isGM; }
-
-	// MidiDriver interface implementation
-	int open();
-	void close();
-	void send(uint32 b);
-
-	void metaEvent(byte type, byte *data, uint16 length);
-
-	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo() { return _driver ? _driver->getBaseTempo() : 0; }
-
-	//Channel allocation functions
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
-
-	MidiParser *_parser;
-	Common::Mutex _mutex;
+	// Overload Audio::MidiPlayer method
+	virtual void sendToChannel(byte channel, uint32 b);
 
 protected:
-
-	static void onTimer(void *data);
-	void setChannelVolume(int channel);
-
-	MidiChannel *_channel[16];
-	MidiDriver *_driver;
-	MidiParser *_smfParser;
 	Common::String _pathMask;
-	byte _channelVolume[16];
-	bool _nativeMT32;
 	bool _isGM;
-	bool _passThrough;
 
-	bool _isPlaying;
-	bool _looping;
-	byte _masterVolume;
 	int _track;
-
-	byte *_midiMusicData;
 };
 
 } // End of namespace Draci

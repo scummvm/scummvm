@@ -26,15 +26,21 @@
 #include "mohawk/livingbooks.h"
 #include "mohawk/resource.h"
 #include "mohawk/cursors.h"
-#include "mohawk/sound.h"
 #include "mohawk/video.h"
 
+#include "common/config-manager.h"
+#include "common/error.h"
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/fs.h"
 #include "common/archive.h"
+#include "common/textconsole.h"
+
+#include "graphics/palette.h"
 
 #include "engines/util.h"
+
+#include "gui/message.h"
 
 namespace Mohawk {
 
@@ -70,6 +76,48 @@ Common::Rect MohawkEngine_LivingBooks::readRect(Common::SeekableSubReadStreamEnd
 	return rect;
 }
 
+LBPage::LBPage(MohawkEngine_LivingBooks *vm) : _vm(vm) {
+	_code = NULL;
+	_mhk = NULL;
+
+	_baseId = 0;
+	_cascade = false;
+}
+
+void LBPage::open(MohawkArchive *mhk, uint16 baseId) {
+	_mhk = mhk;
+	_baseId = baseId;
+
+	_vm->addArchive(_mhk);
+	if (_vm->hasResource(ID_BCOD, baseId))
+		_code = new LBCode(_vm, baseId);
+
+	loadBITL(baseId);
+	for (uint i = 0; i < _items.size(); i++)
+		_vm->addItem(_items[i]);
+
+	for (uint32 i = 0; i < _items.size(); i++)
+		_items[i]->init();
+}
+
+void LBPage::itemDestroyed(LBItem *item) {
+	for (uint i = 0; i < _items.size(); i++)
+		if (item == _items[i]) {
+			_items.remove_at(i);
+			return;
+		}
+	error("itemDestroyed didn't find item");
+}
+
+LBPage::~LBPage() {
+	delete _code;
+	_vm->removeItems(_items);
+	for (uint i = 0; i < _items.size(); i++)
+		delete _items[i];
+	_vm->removeArchive(_mhk);
+	delete _mhk;
+}
+
 MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
 	_needsUpdate = false;
 	_needsRedraw = false;
@@ -80,10 +128,10 @@ MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGa
 
 	_alreadyShowedIntro = false;
 
-	_code = NULL;
-
 	_rnd = new Common::RandomSource();
 	g_eventRec.registerRandomSource(*_rnd, "livingbooks");
+
+	_page = NULL;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	// Rugrats
@@ -115,6 +163,9 @@ Common::Error MohawkEngine_LivingBooks::run() {
 		debug("Starting Living Books Title \'%s\'", _title.c_str());
 	if (!_copyright.empty())
 		debug("Copyright: %s", _copyright.c_str());
+	debug("This book has %d page(s) in %d language(s).", _numPages, _numLanguages);
+	if (_poetryMode)
+		debug("Running in poetry mode.");
 
 	if (!_screenWidth || !_screenHeight)
 		error("Could not find xRes/yRes variables");
@@ -173,8 +224,7 @@ Common::Error MohawkEngine_LivingBooks::run() {
 
 				case Common::KEYCODE_ESCAPE:
 					if (_curMode == kLBIntroMode)
-						if (!loadPage(kLBControlMode, 1, 1))
-							loadPage(kLBControlMode, 1, 0);
+						tryLoadPageStart(kLBControlMode, 1);
 					break;
 
 				case Common::KEYCODE_LEFT:
@@ -268,21 +318,18 @@ Common::String MohawkEngine_LivingBooks::stringForMode(LBMode mode) {
 
 void MohawkEngine_LivingBooks::destroyPage() {
 	_sound->stopSound();
+	_lastSoundOwner = 0;
+	_lastSoundId = 0;
+	_soundLockOwner = 0;
+
 	_gfx->clearCache();
 	_video->stopVideos();
 
 	_eventQueue.clear();
 
-	delete _code;
-	_code = NULL;
-
-	for (uint32 i = 0; i < _items.size(); i++)
-		delete _items[i];
-	_items.clear();
-
-	for (uint32 i = 0; i < _mhk.size(); i++)
-		delete _mhk[i];
-	_mhk.clear();
+	delete _page;
+	assert(_items.empty());
+	_page = NULL;
 
 	_notifyEvents.clear();
 
@@ -300,26 +347,42 @@ bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 	else
 		base = Common::String::format("Page%d", page);
 
-	Common::String filename;
+	Common::String filename, leftover;
 
-	filename = getFileNameFromConfig(name, base);
+	filename = getFileNameFromConfig(name, base, leftover);
 	_readOnly = false;
 
 	if (filename.empty()) {
-		filename = getFileNameFromConfig(name, base + ".r");
+		leftover.clear();
+		filename = getFileNameFromConfig(name, base + ".r", leftover);
 		_readOnly = true;
 	}
 
 	// TODO: fading between pages
 	bool fade = false;
-	if (filename.hasSuffix(" fade")) {
+	if (leftover.contains("fade")) {
 		fade = true;
-		filename = Common::String(filename.c_str(), filename.size() - 5);
+	}
+	if (leftover.contains("read")) {
+		_readOnly = true;
+	}
+	if (leftover.contains("load")) {
+		// FIXME: don't ignore this
+		warning("ignoring 'load' for filename '%s'", filename.c_str());
+	}
+	if (leftover.contains("cut")) {
+		// FIXME: don't ignore this
+		warning("ignoring 'cut' for filename '%s'", filename.c_str());
+	}
+	if (leftover.contains("killgag")) {
+		// FIXME: don't ignore this
+		warning("ignoring 'killgag' for filename '%s'", filename.c_str());
 	}
 
 	MohawkArchive *pageArchive = createMohawkArchive();
 	if (!filename.empty() && pageArchive->open(filename)) {
-		_mhk.push_back(pageArchive);
+		_page = new LBPage(this);
+		_page->open(pageArchive, 1000);
 	} else {
 		delete pageArchive;
 		debug(2, "Could not find page %d.%d for '%s'", page, subpage, name.c_str());
@@ -337,7 +400,7 @@ bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 		}
 	}
 
-	debug(1, "Stack Version: %d", getResourceVersion());
+	debug(1, "Page Version: %d", _page->getResourceVersion());
 
 	_curMode = mode;
 	_curPage = page;
@@ -346,13 +409,6 @@ bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 	_cursor->showCursor();
 
 	_gfx->setPalette(1000);
-
-	if (hasResource(ID_BCOD, 1000))
-		_code = new LBCode(this);
-
-	loadBITL(1000);
-	for (uint32 i = 0; i < _items.size(); i++)
-		_items[i]->init();
 
 	_phase = 0;
 	_introDone = false;
@@ -377,10 +433,6 @@ void MohawkEngine_LivingBooks::updatePage() {
 		if (_curMode == kLBControlMode) {
 			// hard-coded control page startup
 			LBItem *item;
-
-			item = getItemById(10);
-			if (item)
-				item->togglePlaying(false);
 
 			uint16 page = _curPage;
 			if (getFeatures() & GF_LB_10) {
@@ -473,6 +525,12 @@ void MohawkEngine_LivingBooks::updatePage() {
 		for (uint32 i = 0; i < _items.size(); i++)
 			_items[i]->startPhase(_phase);
 
+		if (_curMode == kLBControlMode) {
+			LBItem *item = getItemById(10);
+			if (item)
+				item->togglePlaying(false);
+		}
+
 		_phase++;
 		break;
 
@@ -496,7 +554,9 @@ void MohawkEngine_LivingBooks::updatePage() {
 			switch (delayedEvent.type) {
 			case kLBDelayedEventDestroy:
 				_items.remove_at(i);
+				i--;
 				delete delayedEvent.item;
+				_page->itemDestroyed(delayedEvent.item);
 				if (_focus == delayedEvent.item)
 					_focus = NULL;
 				break;
@@ -524,9 +584,50 @@ void MohawkEngine_LivingBooks::updatePage() {
 	}
 }
 
+void MohawkEngine_LivingBooks::addArchive(MohawkArchive *archive) {
+	_mhk.push_back(archive);
+}
+
+void MohawkEngine_LivingBooks::removeArchive(MohawkArchive *archive) {
+	for (uint i = 0; i < _mhk.size(); i++) {
+		if (archive != _mhk[i])
+			continue;
+		_mhk.remove_at(i);
+		return;
+	}
+
+	error("removeArchive didn't find archive");
+}
+
+void MohawkEngine_LivingBooks::addItem(LBItem *item) {
+	_items.push_back(item);
+}
+
+void MohawkEngine_LivingBooks::removeItems(const Common::Array<LBItem *> &items) {
+	for (uint i = 0; i < items.size(); i++) {
+		bool found = false;
+		for (uint16 j = 0; j < _items.size(); j++) {
+			if (items[i] != _items[j])
+				continue;
+			found = true;
+			_items.remove_at(j);
+			break;
+		}
+		assert(found);
+	}
+}
+
 LBItem *MohawkEngine_LivingBooks::getItemById(uint16 id) {
 	for (uint16 i = 0; i < _items.size(); i++)
 		if (_items[i]->getId() == id)
+			return _items[i];
+
+	return NULL;
+}
+
+LBItem *MohawkEngine_LivingBooks::getItemByName(Common::String name) {
+	for (uint16 i = 0; i < _items.size(); i++)
+		if (_items[i]->getName() == name)
 			return _items[i];
 
 	return NULL;
@@ -551,12 +652,60 @@ void MohawkEngine_LivingBooks::queueDelayedEvent(DelayedEvent event) {
 	_eventQueue.push(event);
 }
 
-// Only 1 VSRN resource per stack, Id 1000
-uint16 MohawkEngine_LivingBooks::getResourceVersion() {
-	Common::SeekableReadStream *versionStream = getResource(ID_VRSN, 1000);
+bool MohawkEngine_LivingBooks::playSound(LBItem *source, uint16 resourceId) {
+	if (_lastSoundId && !_sound->isPlaying(_lastSoundId))
+		_lastSoundId = 0;
 
+	if (!source->isAmbient() || !_sound->isPlaying()) {
+		if (!_soundLockOwner) {
+			if (_lastSoundId && _lastSoundOwner != source->getId())
+				if (source->getSoundPriority() >= _lastSoundPriority)
+					return false;
+		} else {
+			if (_soundLockOwner != source->getId() && source->getSoundPriority() >= _maxSoundPriority)
+				return false;
+		}
+
+		if (_lastSoundId)
+			_sound->stopSound(_lastSoundId);
+
+		_lastSoundOwner = source->getId();
+		_lastSoundPriority = source->getSoundPriority();
+	}
+
+	_lastSoundId = resourceId;
+	_sound->playSound(resourceId);
+
+	return true;
+}
+
+void MohawkEngine_LivingBooks::lockSound(LBItem *owner, bool lock) {
+	if (!lock) {
+		_soundLockOwner = 0;
+		return;
+	}
+
+	if (_soundLockOwner || (owner->isAmbient() && _sound->isPlaying()))
+		return;
+
+	if (_lastSoundId && !_sound->isPlaying(_lastSoundId))
+		_lastSoundId = 0;
+
+	_soundLockOwner = owner->getId();
+	_maxSoundPriority = owner->getSoundPriority();
+	if (_lastSoundId && _maxSoundPriority <= _lastSoundPriority) {
+		_sound->stopSound(_lastSoundId);
+		_lastSoundId = 0;
+	}
+}
+
+// Only 1 VSRN resource per page
+uint16 LBPage::getResourceVersion() {
+	Common::SeekableReadStream *versionStream = _vm->getResource(ID_VRSN, _baseId);
+
+	// FIXME: some V2 games have very strange version entries
 	if (versionStream->size() != 2)
-		warning("Version Record size mismatch");
+		debug(1, "Version Record size mismatch");
 
 	uint16 version = versionStream->readUint16BE();
 
@@ -564,40 +713,43 @@ uint16 MohawkEngine_LivingBooks::getResourceVersion() {
 	return version;
 }
 
-void MohawkEngine_LivingBooks::loadBITL(uint16 resourceId) {
-	Common::SeekableSubReadStreamEndian *bitlStream = wrapStreamEndian(ID_BITL, resourceId);
+void LBPage::loadBITL(uint16 resourceId) {
+	Common::SeekableSubReadStreamEndian *bitlStream = _vm->wrapStreamEndian(ID_BITL, resourceId);
 
 	while (true) {
-		Common::Rect rect = readRect(bitlStream);
+		Common::Rect rect = _vm->readRect(bitlStream);
 		uint16 type = bitlStream->readUint16();
 
 		LBItem *res;
 		switch (type) {
 		case kLBPictureItem:
-			res = new LBPictureItem(this, rect);
+			res = new LBPictureItem(_vm, this, rect);
 			break;
 		case kLBAnimationItem:
-			res = new LBAnimationItem(this, rect);
+			res = new LBAnimationItem(_vm, this, rect);
 			break;
 		case kLBPaletteItem:
-			res = new LBPaletteItem(this, rect);
+			res = new LBPaletteItem(_vm, this, rect);
 			break;
 		case kLBGroupItem:
-			res = new LBGroupItem(this, rect);
+			res = new LBGroupItem(_vm, this, rect);
 			break;
 		case kLBSoundItem:
-			res = new LBSoundItem(this, rect);
+			res = new LBSoundItem(_vm, this, rect);
 			break;
 		case kLBLiveTextItem:
-			res = new LBLiveTextItem(this, rect);
+			res = new LBLiveTextItem(_vm, this, rect);
 			break;
 		case kLBMovieItem:
-			res = new LBMovieItem(this, rect);
+			res = new LBMovieItem(_vm, this, rect);
+			break;
+		case kLBMiniGameItem:
+			res = new LBMiniGameItem(_vm, this, rect);
 			break;
 		default:
 			warning("Unknown item type %04x", type);
 		case 3: // often used for buttons
-			res = new LBItem(this, rect);
+			res = new LBItem(_vm, this, rect);
 			break;
 		}
 
@@ -615,17 +767,27 @@ Common::SeekableSubReadStreamEndian *MohawkEngine_LivingBooks::wrapStreamEndian(
 }
 
 Common::String MohawkEngine_LivingBooks::getStringFromConfig(const Common::String &section, const Common::String &key) {
+	Common::String x, leftover;
+	_bookInfoFile.getKey(key, section, x);
+	Common::String tmp = removeQuotesFromString(x, leftover);
+	if (!leftover.empty())
+		warning("while parsing config key '%s' from section '%s', string '%s' was left after '%s'",
+			key.c_str(), section.c_str(), leftover.c_str(), tmp.c_str());
+	return tmp;
+}
+
+Common::String MohawkEngine_LivingBooks::getStringFromConfig(const Common::String &section, const Common::String &key, Common::String &leftover) {
 	Common::String x;
 	_bookInfoFile.getKey(key, section, x);
-	return removeQuotesFromString(x);
+	return removeQuotesFromString(x, leftover);
 }
 
 int MohawkEngine_LivingBooks::getIntFromConfig(const Common::String &section, const Common::String &key) {
 	return atoi(getStringFromConfig(section, key).c_str());
 }
 
-Common::String MohawkEngine_LivingBooks::getFileNameFromConfig(const Common::String &section, const Common::String &key) {
-	Common::String string = getStringFromConfig(section, key);
+Common::String MohawkEngine_LivingBooks::getFileNameFromConfig(const Common::String &section, const Common::String &key, Common::String &leftover) {
+	Common::String string = getStringFromConfig(section, key, leftover);
 	Common::String x;
 
 	uint32 i = 0;
@@ -640,17 +802,23 @@ Common::String MohawkEngine_LivingBooks::getFileNameFromConfig(const Common::Str
 	return (getPlatform() == Common::kPlatformMacintosh) ? convertMacFileName(x) : convertWinFileName(x);
 }
 
-Common::String MohawkEngine_LivingBooks::removeQuotesFromString(const Common::String &string) {
-	// The last char isn't necessarily a quote, the line could have "fade" in it
-	// (which is then handled in loadPage).
+Common::String MohawkEngine_LivingBooks::removeQuotesFromString(const Common::String &string, Common::String &leftover) {
+	if (string.empty())
+		return string;
 
-	// Some versions wrap in quotations, some don't...
-	Common::String tmp = string;
-	for (uint32 i = 0; i < tmp.size(); i++) {
-		if (tmp[i] == '\"') {
-			tmp.deleteChar(i);
-			i--;
-		}
+	char quoteChar = string[0];
+	if (quoteChar != '\"' && quoteChar != '\'')
+		return string;
+
+	Common::String tmp;
+	bool inLeftover = false;
+	for (uint32 i = 1; i < string.size(); i++) {
+		if (inLeftover)
+			leftover += string[i];
+		else if (string[i] == quoteChar)
+			inLeftover = true;
+		else
+			tmp += string[i];
 	}
 
 	return tmp;
@@ -675,6 +843,8 @@ Common::String MohawkEngine_LivingBooks::convertWinFileName(const Common::String
 	Common::String filename;
 
 	for (uint32 i = 0; i < string.size(); i++) {
+		if (i == 0 && (string[i] == '/' || string[i] == '\\')) // ignore slashes at start
+			continue;
 		if (string[i] == '\\')
 			filename += '/';
 		else
@@ -713,19 +883,17 @@ bool MohawkEngine_LivingBooks::tryDefaultPage() {
 	if (_curMode == kLBCreditsMode || _curMode == kLBPreviewMode) {
 		// go to options page
 		if (getFeatures() & GF_LB_10) {
-			if (loadPage(kLBControlMode, 2, 0))
+			if (tryLoadPageStart(kLBControlMode, 2))
 				return true;
 		} else {
-			if (loadPage(kLBControlMode, 3, 0))
+			if (tryLoadPageStart(kLBControlMode, 3))
 				return true;
 		}
-	} else {
-		// go to menu page
-		if (loadPage(kLBControlMode, 1, 1))
-			return true;
-		if (loadPage(kLBControlMode, 1, 0))
-			return true;
 	}
+
+	// go to menu page
+	if (tryLoadPageStart(kLBControlMode, 1))
+		return true;
 
 	return false;
 }
@@ -760,9 +928,11 @@ void MohawkEngine_LivingBooks::handleUIMenuClick(uint controlId) {
 	switch (controlId) {
 	case 1:
 		if (getFeatures() & GF_LB_10) {
-			loadPage(kLBControlMode, 2, 0);
+			if (!tryLoadPageStart(kLBControlMode, 2))
+				error("couldn't load options page");
 		} else {
-			loadPage(kLBControlMode, 3, 0);
+			if (!tryLoadPageStart(kLBControlMode, 3))
+				error("couldn't load options page");
 		}
 		break;
 
@@ -776,7 +946,7 @@ void MohawkEngine_LivingBooks::handleUIMenuClick(uint controlId) {
 		item = getItemById(199 + _curLanguage);
 		if (item) {
 			item->setVisible(true);
-			item->togglePlaying(true);
+			item->togglePlaying(false, true);
 		}
 		break;
 
@@ -790,15 +960,17 @@ void MohawkEngine_LivingBooks::handleUIMenuClick(uint controlId) {
 		item = getItemById(12);
 		if (item) {
 			item->setVisible(true);
-			item->togglePlaying(true);
+			item->togglePlaying(false, true);
 		}
 		break;
 
 	case 4:
 		if (getFeatures() & GF_LB_10) {
-			loadPage(kLBControlMode, 3, 0);
+			if (!tryLoadPageStart(kLBControlMode, 3))
+				error("couldn't load quit page");
 		} else {
-			loadPage(kLBControlMode, 2, 0);
+			if (!tryLoadPageStart(kLBControlMode, 2))
+				error("couldn't load quit page");
 		}
 		break;
 
@@ -807,21 +979,22 @@ void MohawkEngine_LivingBooks::handleUIMenuClick(uint controlId) {
 		if (item)
 			item->destroySelf();
 		item = getItemById(11);
-		if (item)
+		if (item) {
 			item->setVisible(true);
-		if (item)
 			item->togglePlaying(false);
+		}
 		break;
 
 	case 11:
 		item = getItemById(11);
 		if (item)
-			item->togglePlaying(true);
+			item->togglePlaying(false, true);
 		break;
 
 	case 12:
 		// start game, in play mode
-		loadPage(kLBPlayMode, 1, 0);
+		if (!tryLoadPageStart(kLBPlayMode, 1))
+			error("couldn't start play mode");
 		break;
 
 	default:
@@ -835,7 +1008,8 @@ void MohawkEngine_LivingBooks::handleUIMenuClick(uint controlId) {
 			_curLanguage = newLanguage;
 		} else if (controlId >= 200 && controlId < 200 + (uint)_numLanguages) {
 			// start game, in read mode
-			loadPage(kLBReadMode, 1, 0);
+			if (!tryLoadPageStart(kLBReadMode, 1))
+				error("couldn't start read mode");
 		}
 		break;
 	}
@@ -864,7 +1038,6 @@ void MohawkEngine_LivingBooks::handleUIPoetryMenuClick(uint controlId) {
 		break;
 
 	case 7:
-	case 0xA:
 		item = getItemById(10);
 		if (item)
 			item->destroySelf();
@@ -874,14 +1047,25 @@ void MohawkEngine_LivingBooks::handleUIPoetryMenuClick(uint controlId) {
 		item = getItemById(12);
 		if (item) {
 			item->setVisible(true);
-			item->togglePlaying(controlId == 7);
+			item->togglePlaying(false, true);
+		}
+		break;
+
+	case 0xA:
+		item = getItemById(10);
+		if (item)
+			item->destroySelf();
+		item = getItemById(11);
+		if (item) {
+			item->setVisible(true);
+			item->togglePlaying(false);
 		}
 		break;
 
 	case 0xB:
-		item = getItemById(12);
+		item = getItemById(11);
 		if (item)
-			item->togglePlaying(true);
+			item->togglePlaying(false, true);
 		break;
 
 	case 0xC:
@@ -923,7 +1107,7 @@ void MohawkEngine_LivingBooks::handleUIQuitClick(uint controlId) {
 	case 11:
 		item = getItemById(11);
 		if (item)
-			item->togglePlaying(true);
+			item->togglePlaying(false, true);
 		break;
 
 	case 12:
@@ -933,7 +1117,8 @@ void MohawkEngine_LivingBooks::handleUIQuitClick(uint controlId) {
 
 	case 13:
 		// 'no', go back to menu
-		loadPage(kLBControlMode, 1, 0);
+		if (!tryLoadPageStart(kLBControlMode, 1))
+			error("couldn't return to menu");
 		break;
 	}
 }
@@ -949,7 +1134,7 @@ void MohawkEngine_LivingBooks::handleUIOptionsClick(uint controlId) {
 		item = getItemById(202);
 		if (item) {
 			item->setVisible(true);
-			item->togglePlaying(true);
+			item->togglePlaying(false, true);
 		}
 		break;
 
@@ -994,11 +1179,13 @@ void MohawkEngine_LivingBooks::handleUIOptionsClick(uint controlId) {
 		break;
 
 	case 4:
-		loadPage(kLBCreditsMode, 1, 0);
+		if (!tryLoadPageStart(kLBCreditsMode, 1))
+			error("failed to start credits");
 		break;
 
 	case 5:
-		loadPage(kLBPreviewMode, 1, 0);
+		if (!tryLoadPageStart(kLBPreviewMode, 1))
+			error("failed to start preview");
 		break;
 
 	case 202:
@@ -1055,7 +1242,7 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 	case kLBNotifyGoToControls:
 		debug(2, "kLBNotifyGoToControls: %d", event.param);
 
-		if (!loadPage(kLBControlMode, 1, 0))
+		if (!tryLoadPageStart(kLBControlMode, 1))
 			error("couldn't load controls page");
 		break;
 
@@ -1085,7 +1272,7 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 	case kLBNotifyGotoQuit:
 		debug(2, "kLBNotifyGotoQuit: %d", event.param);
 
-		if (!loadPage(kLBControlMode, 2, 0))
+		if (!tryLoadPageStart(kLBControlMode, 2))
 			error("couldn't load quit page");
 		break;
 
@@ -1119,9 +1306,10 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 			if (!event.newMode)
 				event.newMode = _curMode;
 			if (!loadPage((LBMode)event.newMode, event.newPage, event.newSubpage)) {
-				if (event.newSubpage != 0 || !loadPage((LBMode)event.newMode, event.newPage, 1))
-					error("kLBNotifyChangeMode failed to move to mode %d, page %d.%d",
-						event.newMode, event.newPage, event.newSubpage);
+				if (event.newPage != 0 || !loadPage((LBMode)event.newMode, _curPage, event.newSubpage))
+					if (event.newSubpage != 0 || !loadPage((LBMode)event.newMode, event.newPage, 1))
+						error("kLBNotifyChangeMode failed to move to mode %d, page %d.%d",
+							event.newMode, event.newPage, event.newSubpage);
 			}
 		}
 		break;
@@ -1247,11 +1435,17 @@ NodeState LBAnimationNode::update(bool seeking) {
 				break;
 			}
 
-			assert(entry.size == 4);
-			uint16 strLen = READ_BE_UINT16(entry.data + 2);
-
-			if (strLen)
-				error("String length for unnamed wave file");
+			Common::String cue;
+			uint pos = 2;
+			while (pos < entry.size) {
+				char in = entry.data[pos];
+				if (!in)
+					break;
+				pos++;
+				cue += in;
+			}
+			if (pos == entry.size)
+				error("Cue in sound kLBAnimOp wasn't null-terminated");
 
 			switch (entry.opcode) {
 			case kLBAnimOpPlaySound:
@@ -1264,7 +1458,7 @@ NodeState LBAnimationNode::update(bool seeking) {
 				if (seeking)
 					break;
 				debug(4, "b: WaitForSound(%0d)", soundResourceId);
-				if (!_parent->soundPlaying(soundResourceId))
+				if (!_parent->soundPlaying(soundResourceId, cue))
 					break;
 				_currentEntry--;
 				return kLBNodeWaiting;
@@ -1597,6 +1791,11 @@ void LBAnimation::seek(uint16 pos) {
 	_lastTime = 0;
 	_currentFrame = 0;
 
+	if (_currentSound != 0xffff) {
+		_vm->_sound->stopSound(_currentSound);
+		_currentSound = 0xffff;
+	}
+
 	for (uint32 i = 0; i < _nodes.size(); i++)
 		_nodes[i]->reset();
 
@@ -1625,11 +1824,27 @@ void LBAnimation::stop() {
 
 void LBAnimation::playSound(uint16 resourceId) {
 	_currentSound = resourceId;
-	_vm->_sound->playSound(_currentSound);
+	_vm->_sound->playSound(_currentSound, Audio::Mixer::kMaxChannelVolume, false, &_cueList);
 }
 
-bool LBAnimation::soundPlaying(uint16 resourceId) {
-	return _currentSound == resourceId && _vm->_sound->isPlaying(_currentSound);
+bool LBAnimation::soundPlaying(uint16 resourceId, const Common::String &cue) {
+	if (_currentSound != resourceId)
+		return false;
+	if (!_vm->_sound->isPlaying(_currentSound))
+		return false;
+
+	if (cue.empty())
+		return true;
+
+	uint samples = _vm->_sound->getNumSamplesPlayed(_currentSound);
+	for (uint i = 0; i < _cueList.pointCount; i++) {
+		if (_cueList.points[i].sampleFrame > samples)
+			break;
+		if (_cueList.points[i].name == cue)
+			return false;
+	}
+
+	return true;
 }
 
 bool LBAnimation::transparentAt(int x, int y) {
@@ -1662,7 +1877,7 @@ LBScriptEntry::~LBScriptEntry() {
 		delete subentries[i];
 }
 
-LBItem::LBItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : _vm(vm), _rect(rect) {
+LBItem::LBItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : _vm(vm), _page(page), _rect(rect) {
 	_phase = 0;
 
 	_loopMode = 0;
@@ -1685,6 +1900,7 @@ LBItem::LBItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : _vm(vm), _rect
 	_loops = 0;
 
 	_isAmbient = false;
+	_doHitTest = true;
 }
 
 LBItem::~LBItem() {
@@ -1785,10 +2001,16 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 			debug(4, "%d targets with targeting type %04x", count, targetingType);
 
 			// FIXME: targeting by name
+			uint oldAlign = size % 2;
 			for (uint i = 0; i < count; i++) {
 				Common::String target = _vm->readString(stream);
 				warning("ignoring target '%s' in script entry", target.c_str());
 				size -= target.size() + 1;
+			}
+
+			if ((uint)(size % 2) != oldAlign) {
+				stream->skip(1);
+				size--;
 			}
 		}
 
@@ -1810,17 +2032,19 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 		}
 	}
 
-	if (type == kLBMsgListScript && entry->opcode == 0xfffb) {
-		uint16 u1 = stream->readUint16();
-		uint16 u2 = stream->readUint16();
-		uint16 u3 = stream->readUint16();
-		warning("unknown 0xfffb: %04x, %04x, %04x", u1, u2, u3);
+	if (type == kLBMsgListScript && entry->opcode == kLBOpJumpUnlessExpression) {
+		if (size < 6)
+			error("not enough bytes (%d) in kLBOpJumpUnlessExpression, event 0x%04x", size, entry->event);
+		entry->offset = stream->readUint32();
+		entry->target = stream->readUint16();
+		debug(4, "kLBOpJumpUnlessExpression: offset %08x, target %d", entry->offset, entry->target);
 		size -= 6;
 	}
-	if (type == kLBMsgListScript && entry->opcode == 0xfffd) {
-		uint16 u1 = stream->readUint16();
-		uint16 u2 = stream->readUint16();
-		warning("unknown 0xfffd: %04x, %04x", u1, u2);
+	if (type == kLBMsgListScript && entry->opcode == kLBOpJumpToExpression) {
+		if (size < 4)
+			error("not enough bytes (%d) in kLBOpJumpToExpression, event 0x%04x", size, entry->event);
+		entry->offset = stream->readUint32();
+		debug(4, "kLBOpJumpToExpression: offset %08x", entry->offset);
 		size -= 4;
 	}
 
@@ -1964,22 +2188,22 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 		debug(2, "kLBSetPlayPhase: %d", _phase);
 		break;
 
-	case kLBUnknown6F:
+	case kLBSetKeyNotify:
 		{
+		// FIXME: variable-size notifies, targets
 		if (size != 18)
 			error("0x6f had wrong size (%d)", size);
-		uint u1 = stream->readUint16();
-		uint u2 = stream->readUint16();
 		uint event = stream->readUint16();
+		LBKey key;
+		stream->read(&key, 4);
 		uint opcode = stream->readUint16();
 		uint param = stream->readUint16();
 		uint u6 = stream->readUint16();
 		uint u7 = stream->readUint16();
 		uint u8 = stream->readUint16();
 		uint u9 = stream->readUint16();
-		// FIXME: this is scripting stuff
-		warning("0x6f: unknown: item %s, unknowns: %04x, %04x, event %04x, opcode %04x, param %04x, unknowns %04x, %04x, %04x, %04x",
-			_desc.c_str(), u1, u2, event, opcode, param, u6, u7, u8, u9);
+		warning("ignoring kLBSetKeyNotify: item %s, key code %02x (modifier mask %d, char %d, repeat %d), event %04x, opcode %04x, param %04x, unknowns %04x, %04x, %04x, %04x",
+			_desc.c_str(), key.code, key.modifiers, key.char_, key.repeats, event, opcode, param, u6, u7, u8, u9);
 		}
 		break;
 
@@ -2013,28 +2237,28 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 		_isAmbient = true;
 		break;
 
-	case kLBUnknown7D:
+	case kLBSetKeyEvent:
 		{
+		// FIXME: targets
 		if (size != 10)
-			error("0x7d had wrong size (%d)", size);
-		uint u1 = stream->readUint16();
-		uint key = stream->readUint16();
+			error("kLBSetKeyEvent had wrong size (%d)", size);
 		uint u3 = stream->readUint16();
+		LBKey key;
+		stream->read(&key, 4);
 		uint target = stream->readUint16();
-		byte event = stream->readByte();
-		byte u4 = stream->readByte();
+		uint16 event = stream->readUint16();
 		// FIXME: this is scripting stuff: what to run when key is pressed
-		warning("0x7d: unknown: item %s, unknown %04x, key %04x, unknown %04x, target %d, event %02x, unknown %02x",
-			_desc.c_str(), u1, key, u3, target, event, u4);
+		warning("ignoring kLBSetKeyEvent: item %s, key code %02x (modifier mask %d, char %d, repeat %d) unknown %04x, target %d, event %04x",
+			_desc.c_str(), key.code, key.modifiers, key.char_, key.repeats, u3, target, event);
 		}
 		break;
 
-	case kLBUnknown80:
+	case kLBSetHitTest:
 		{
 		assert(size == 2);
-		uint id = stream->readUint16();
-		warning("0x80: unknown: item %s, id %04x", _desc.c_str(), id);
-		// FIXME
+		uint val = stream->readUint16();
+		_doHitTest = (bool)val;
+		debug(2, "kLBSetHitTest (on %s): value %04x", _desc.c_str(), val);
 		}
 		break;
 
@@ -2042,9 +2266,9 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 		{
 		assert(size == 4);
 		uint offset = stream->readUint32();
-		if (!_vm->_code)
+		if (!_page->_code)
 			error("no BCOD?");
-		_vm->_code->runCode(this, offset);
+		_page->_code->runCode(this, offset);
 		}
 		break;
 
@@ -2148,7 +2372,7 @@ bool LBItem::togglePlaying(bool playing, bool restart) {
 			if (_controlMode >= kLBControlHideMouse) {
 				debug(2, "Hiding cursor");
 				_vm->_cursor->hideCursor();
-				// TODO: lock sound?
+				_vm->lockSound(this, true);
 
 				if (_controlMode >= kLBControlPauseItems) {
 					debug(2, "Disabling all");
@@ -2186,7 +2410,7 @@ void LBItem::done(bool onlyNotify) {
 	if (_controlMode >= kLBControlHideMouse) {
 		debug(2, "Showing cursor");
 		_vm->_cursor->showCursor();
-		// TODO: unlock sound?
+		_vm->lockSound(this, false);
 
 		if (_controlMode >= kLBControlPauseItems) {
 			debug(2, "Enabling all");
@@ -2323,9 +2547,9 @@ void LBItem::runScript(uint event, uint16 data, uint16 from) {
 	}
 }
 
-void LBItem::runScriptEntry(LBScriptEntry *entry) {
+int LBItem::runScriptEntry(LBScriptEntry *entry) {
 	if (entry->state == 0xffff)
-		return;
+		return 0;
 
 	uint start = 0;
 	uint count = entry->argc;
@@ -2333,7 +2557,7 @@ void LBItem::runScriptEntry(LBScriptEntry *entry) {
 	if (!count)
 		count = 1;
 
-	switch (entry->param) {
+	if (entry->opcode != kLBOpRunSubentries) switch (entry->param) {
 	case 0xfffe:
 		// Run once (disable self after run).
 		entry->state = 0xffff;
@@ -2350,7 +2574,7 @@ void LBItem::runScriptEntry(LBScriptEntry *entry) {
 			case 0:
 				// Disable..
 				entry->state = 0xffff;
-				return;
+				return 0;
 			case 1:
 				// Stay at the end.
 				entry->state = count - 1;
@@ -2388,7 +2612,7 @@ void LBItem::runScriptEntry(LBScriptEntry *entry) {
 				debug(2, "Target %04x (%04x) doesn't exist, skipping", targetId, param);
 				continue;
 			}
-			debug(2, "Target: %04x (%04x) '%s'", targetId, param, _desc.c_str());
+			debug(2, "Target: %04x (%04x) '%s'", targetId, param, target->_desc.c_str());
 		} else {
 			target = this;
 			debug(2, "Self-target on '%s'", _desc.c_str());
@@ -2433,7 +2657,7 @@ void LBItem::runScriptEntry(LBScriptEntry *entry) {
 			break;
 
 		case kLBOpRewind:
-			target->seek(0);
+			target->seek(1);
 			break;
 
 		case kLBOpStop:
@@ -2511,16 +2735,31 @@ void LBItem::runScriptEntry(LBScriptEntry *entry) {
 			break;
 
 		case kLBOpSendExpression:
-			if (!_vm->_code)
+			if (!_page->_code)
 				error("no BCOD?");
-			_vm->_code->runCode(this, entry->offset);
+			_page->_code->runCode(this, entry->offset);
 			break;
 
 		case kLBOpRunSubentries:
 			for (uint i = 0; i < entry->subentries.size(); i++) {
 				LBScriptEntry *subentry = entry->subentries[i];
 
-				runScriptEntry(subentry);
+				int e = runScriptEntry(subentry);
+
+				switch (subentry->opcode) {
+				case kLBOpJumpUnlessExpression:
+					debug(2, "JumpUnless got %d (to %d, on %d, of %d)", e, subentry->target, i, entry->subentries.size());
+					if (!e)
+						i = subentry->target - 1;
+					break;
+				case kLBOpBreakExpression:
+					debug(2, "BreakExpression");
+					i = entry->subentries.size();
+				case kLBOpJumpToExpression:
+					debug(2, "JumpToExpression got %d (on %d, of %d)", e, i, entry->subentries.size());
+					i = e - 1;
+					break;
+				}
 			}
 			break;
 
@@ -2528,11 +2767,24 @@ void LBItem::runScriptEntry(LBScriptEntry *entry) {
 			runCommand(entry->command);
 			break;
 
+		case kLBOpJumpUnlessExpression:
+		case kLBOpBreakExpression:
+		case kLBOpJumpToExpression:
+			if (!_page->_code)
+				error("no BCOD?");
+			{
+			LBValue r = _page->_code->runCode(this, entry->offset);
+			// FIXME
+			return r.integer;
+			}
+
 		default:
 			error("Unknown script opcode (type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x, target '%s')",
 				entry->type, entry->event, entry->opcode, entry->param, target->_desc.c_str());
 		}
 	}
+
+	return 0;
 }
 
 void LBItem::setNextTime(uint16 min, uint16 max) {
@@ -2542,24 +2794,6 @@ void LBItem::setNextTime(uint16 min, uint16 max) {
 void LBItem::setNextTime(uint16 min, uint16 max, uint32 start) {
 	_nextTime = start + _vm->_rnd->getRandomNumberRng((uint)min, (uint)max);
 	debug(9, "nextTime is now %d frames away", _nextTime - (uint)(_vm->_system->getMillis() / 16));
-}
-
-bool LBValue::operator==(const LBValue &x) const {
-	if (type != x.type) return false;
-
-	switch (type) {
-	case kLBValueString:
-		return string == x.string;
-
-	case kLBValueInteger:
-		return integer == x.integer;
-	default:
-		error("Unknown type when testing for equality");
-	}
-}
-
-bool LBValue::operator!=(const LBValue &x) const {
-	return !(*this == x);
 }
 
 enum LBTokenType {
@@ -2815,7 +3049,7 @@ bool LBItem::checkCondition(const Common::String &condition) {
 	return false; // unreachable
 }
 
-LBSoundItem::LBSoundItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
+LBSoundItem::LBSoundItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	debug(3, "new LBSoundItem");
 	_running = false;
 }
@@ -2847,7 +3081,8 @@ bool LBSoundItem::togglePlaying(bool playing, bool restart) {
 		return false;
 
 	_running = true;
-	_vm->_sound->playSound(_resourceId, Audio::Mixer::kMaxChannelVolume, false);
+	debug(4, "sound %d play for item %d (%s)", _resourceId, _itemId, _desc.c_str());
+	_vm->playSound(this, _resourceId);
 	return true;
 }
 
@@ -2860,7 +3095,7 @@ void LBSoundItem::stop() {
 	LBItem::stop();
 }
 
-LBGroupItem::LBGroupItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
+LBGroupItem::LBGroupItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	debug(3, "new LBGroupItem");
 	_starting = false;
 }
@@ -2889,6 +3124,16 @@ void LBGroupItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStre
 
 	default:
 		LBItem::readData(type, size, stream);
+	}
+}
+
+void LBGroupItem::destroySelf() {
+	LBItem::destroySelf();
+
+	for (uint i = 0; i < _groupEntries.size(); i++) {
+		LBItem *item = _vm->getItemById(_groupEntries[i].entryId);
+		if (item)
+			item->destroySelf();
 	}
 }
 
@@ -2965,7 +3210,7 @@ void LBGroupItem::stop() {
 	}
 }
 
-LBPaletteItem::LBPaletteItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
+LBPaletteItem::LBPaletteItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	debug(3, "new LBPaletteItem");
 
 	_fadeInStart = 0;
@@ -3050,7 +3295,7 @@ void LBPaletteItem::update() {
 	LBItem::update();
 }
 
-LBLiveTextItem::LBLiveTextItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
+LBLiveTextItem::LBLiveTextItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	_currentPhrase = 0xFFFF;
 	_currentWord = 0xFFFF;
 	debug(3, "new LBLiveTextItem");
@@ -3232,7 +3477,7 @@ void LBLiveTextItem::handleMouseDown(Common::Point pos) {
 				return;
 			}
 			_currentWord = i;
-			_vm->_sound->playSound(soundId);
+			_vm->playSound(this, soundId);
 			paletteUpdate(_currentWord, true);
 			return;
 		}
@@ -3297,7 +3542,7 @@ void LBLiveTextItem::notify(uint16 data, uint16 from) {
 	LBItem::notify(data, from);
 }
 
-LBPictureItem::LBPictureItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
+LBPictureItem::LBPictureItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	debug(3, "new LBPictureItem");
 }
 
@@ -3322,6 +3567,9 @@ bool LBPictureItem::contains(Common::Point point) {
 	if (!LBItem::contains(point))
 		return false;
 
+	if (!_doHitTest)
+		return true;
+
 	// TODO: only check pixels if necessary
 	return !_vm->_gfx->imageIsTransparentAt(_resourceId, false, point.x - _rect.left, point.y - _rect.top);
 }
@@ -3337,7 +3585,7 @@ void LBPictureItem::draw() {
 	_vm->_gfx->copyAnimImageToScreen(_resourceId, _rect.left, _rect.top);
 }
 
-LBAnimationItem::LBAnimationItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
+LBAnimationItem::LBAnimationItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	_anim = NULL;
 	_running = false;
 	debug(3, "new LBAnimationItem");
@@ -3349,26 +3597,32 @@ LBAnimationItem::~LBAnimationItem() {
 
 void LBAnimationItem::setEnabled(bool enabled) {
 	if (_running) {
-		if (enabled && _neverEnabled)
+		if (enabled && _globalEnabled && _neverEnabled)
 			_anim->start();
 		else if (!_neverEnabled && !enabled && _enabled && _globalEnabled)
-			if (_running) {
-				_anim->stop();
-			}
+			_anim->stop();
 	}
 
 	return LBItem::setEnabled(enabled);
 }
 
 bool LBAnimationItem::contains(Common::Point point) {
-	return LBItem::contains(point) && !_anim->transparentAt(point.x, point.y);
+	if (!LBItem::contains(point))
+		return false;
+
+	if (!_doHitTest)
+		return true;
+
+	return !_anim->transparentAt(point.x, point.y);
 }
 
 void LBAnimationItem::update() {
 	if (!_neverEnabled && _enabled && _globalEnabled && _running) {
 		bool wasDone = _anim->update();
-		if (wasDone)
+		if (wasDone) {
+			_running = false;
 			done(true);
+		}
 	}
 
 	LBItem::update();
@@ -3430,7 +3684,7 @@ void LBAnimationItem::draw() {
 	_anim->draw();
 }
 
-LBMovieItem::LBMovieItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
+LBMovieItem::LBMovieItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
 	debug(3, "new LBMovieItem");
 }
 
@@ -3457,6 +3711,41 @@ bool LBMovieItem::togglePlaying(bool playing, bool restart) {
 	}
 
 	return LBItem::togglePlaying(playing, restart);
+}
+
+LBMiniGameItem::LBMiniGameItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
+	debug(3, "new LBMiniGameItem");
+}
+
+LBMiniGameItem::~LBMiniGameItem() {
+}
+
+bool LBMiniGameItem::togglePlaying(bool playing, bool restart) {
+	// HACK: Since we don't support any of these hardcoded mini games yet,
+	// just skip to the most logical page. For optional minigames, this
+	// will return the player to the previous page. For mandatory minigames,
+	// this will send the player to the next page.
+	// TODO: Document mini games from Arthur's Reading Race
+
+	uint16 destPage;
+
+	// Figure out what minigame we have and bring us back to a page where
+	// the player can continue
+	if (_desc == "Kitch")     // Green Eggs and Ham: Kitchen minigame
+		destPage = 4;
+	else if (_desc == "Eggs") // Green Eggs and Ham: Eggs minigame
+		destPage = 5;
+	else if (_desc == "Fall") // Green Eggs and Ham: Fall minigame
+		destPage = 13;
+	else
+		error("Unknown minigame '%s'", _desc.c_str());
+
+	GUI::MessageDialog dialog(Common::String::format("The '%s' minigame is not supported yet.", _desc.c_str()));
+	dialog.runModal();
+
+	_vm->addNotifyEvent(NotifyEvent(kLBNotifyChangePage, destPage));
+
+	return false;
 }
 
 } // End of namespace Mohawk

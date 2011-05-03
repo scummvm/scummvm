@@ -151,8 +151,13 @@ reg_t kMemorySegment(EngineState *s, int argc, reg_t *argv) {
 		if (!size)
 			size = s->_segMan->strlen(argv[1]) + 1;
 
-		if (size > EngineState::kMemorySegmentMax)
-			size = EngineState::kMemorySegmentMax;
+		if (size > EngineState::kMemorySegmentMax) {
+			// This was set to cut the block to 256 bytes. This should be an
+			// error, as we won't restore the full block that the game scripts
+			// request, thus error out instead.
+			//size = EngineState::kMemorySegmentMax;
+			error("kMemorySegment: Requested to save more than 256 bytes (%d)", size);
+		}
 
 		s->_memorySegmentSize = size;
 
@@ -298,12 +303,9 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 			error("Attempt to peek invalid memory at %04x:%04x", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
-		if (ref.isRaw) {
-			if (g_sci->getPlatform() == Common::kPlatformAmiga)
-				return make_reg(0, (int16)READ_BE_UINT16(ref.raw));		// Amiga versions are BE
-			else
-				return make_reg(0, (int16)READ_LE_UINT16(ref.raw));
-		} else {
+		if (ref.isRaw)
+			return make_reg(0, (int16)READ_SCIENDIAN_UINT16(ref.raw));
+		else {
 			if (ref.skipByte)
 				error("Attempt to peek memory at odd offset %04X:%04X", PRINT_REG(argv[1]));
 			return *(ref.reg);
@@ -323,10 +325,7 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 				error("Attempt to poke memory reference %04x:%04x to %04x:%04x", PRINT_REG(argv[2]), PRINT_REG(argv[1]));
 				return s->r_acc;
 			}
-			if (g_sci->getPlatform() == Common::kPlatformAmiga)
-				WRITE_BE_UINT16(ref.raw, argv[2].offset);		// Amiga versions are BE
-			else
-				WRITE_LE_UINT16(ref.raw, argv[2].offset);
+			WRITE_SCIENDIAN_UINT16(ref.raw, argv[2].offset);		// Amiga versions are BE
 		} else {
 			if (ref.skipByte)
 				error("Attempt to poke memory at odd offset %04X:%04X", PRINT_REG(argv[1]));
@@ -365,23 +364,22 @@ reg_t kIconBar(EngineState *s, int argc, reg_t *argv) {
 	case 0: // InitIconBar
 		for (int i = 0; i < argv[1].toUint16(); i++)
 			g_sci->_gfxMacIconBar->addIcon(argv[i + 2]);
-
-		// TODO: Should return icon bar handle
-		// Said handle is then used by DisposeIconBar
 		break;
 	case 1: // DisposeIconBar
 		warning("kIconBar(Dispose)");
 		break;
-	case 2: // EnableIconBar (0xffff = all)
-		debug(0, "kIconBar(Enable, %d)", argv[1].toUint16());
-		g_sci->_gfxMacIconBar->setIconEnabled(argv[1].toUint16(), true);
+	case 2: // EnableIconBar (-1 = all)
+		debug(0, "kIconBar(Enable, %i)", argv[1].toSint16());
+		g_sci->_gfxMacIconBar->setIconEnabled(argv[1].toSint16(), true);
 		break;
-	case 3: // DisableIconBar (0xffff = all)
-		debug(0, "kIconBar(Disable, %d)", argv[1].toUint16());
-		g_sci->_gfxMacIconBar->setIconEnabled(argv[1].toUint16(), false);
+	case 3: // DisableIconBar (-1 = all)
+		debug(0, "kIconBar(Disable, %i)", argv[1].toSint16());
+		g_sci->_gfxMacIconBar->setIconEnabled(argv[1].toSint16(), false);
 		break;
 	case 4: // SetIconBarIcon
-		warning("kIconBar(SetIcon, %d, %d)", argv[1].toUint16(), argv[2].toUint16());
+		debug(0, "kIconBar(SetIcon, %d, %d)", argv[1].toUint16(), argv[2].toUint16());
+		if (argv[2].toSint16() == -1)
+			g_sci->_gfxMacIconBar->setInventoryIcon(argv[2].toSint16());
 		break;
 	default:
 		error("Unknown kIconBar(%d)", argv[0].toUint16());
@@ -413,7 +411,8 @@ reg_t kMacPlatform(EngineState *s, int argc, reg_t *argv) {
 		return kIconBar(s, argc - 1, argv + 1);
 	case 7: // Unknown, but always return -1
 		return SIGNAL_REG;
-	case 1:	// Unknown, calls QuickDraw region functions (KQ5, QFG1VGA)
+	case 1:	// Unknown, calls QuickDraw region functions (KQ5, QFG1VGA, Dr. Brain 1)
+		break;	// removed warning, as it produces a lot of spam in the console
 	case 2: // Unknown, "UseNextWaitEvent" (Various)
 	case 3: // Unknown, "ProcessOpenDocuments" (Various)
 	case 5: // Unknown, plays a sound (KQ7)
@@ -503,7 +502,7 @@ reg_t kStub(EngineState *s, int argc, reg_t *argv) {
 	Kernel *kernel = g_sci->getKernel();
 	int kernelCallNr = -1;
 
-	Common::List<ExecStack>::iterator callIterator = s->_executionStack.end();
+	Common::List<ExecStack>::const_iterator callIterator = s->_executionStack.end();
 	if (callIterator != s->_executionStack.begin()) {
 		callIterator--;
 		ExecStack lastCall = *callIterator;

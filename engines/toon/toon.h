@@ -52,6 +52,11 @@ class MemoryWriteStreamDynamic;
 #define TOON_SAVEGAME_VERSION 4
 #define DATAALIGNMENT 4
 
+#define TOON_SCREEN_WIDTH 640
+#define TOON_SCREEN_HEIGHT 400
+#define TOON_BACKBUFFER_WIDTH 1280
+#define TOON_BACKBUFFER_HEIGHT 400
+
 /**
  * This is the namespace of the Toon engine.
  *
@@ -206,8 +211,6 @@ public:
 	void waitForScriptStep();
 	void doMagnifierEffect();
 
-
-
 	bool canSaveGameStateCurrently();
 	bool canLoadGameStateCurrently();
 	void pauseEngineIntern(bool pause);
@@ -334,6 +337,10 @@ public:
 			(f == kSupportsSavingDuringRuntime);
 	}
 
+	void dirtyAllScreen();
+	void addDirtyRect(int32 left, int32 top, int32 right, int32 bottom);
+	void clearDirtyRects();
+
 protected:
 	OSystem *_system;
 	int32 _tickLength;
@@ -345,6 +352,7 @@ protected:
 	uint8 *_backupPalette;
 	uint8 *_additionalPalette1;
 	uint8 *_additionalPalette2;
+	bool _additionalPalette2Present;
 	uint8 *_cutawayPalette;
 	uint8 *_universalPalette;
 	uint8 *_fluxPalette;
@@ -371,6 +379,11 @@ protected:
 	bool _updatingSceneScriptRunFlag;
 
 	Graphics::Surface *_mainSurface;
+	Common::Array<Common::Rect> _dirtyRects;
+	Common::Array<Common::Rect> _oldDirtyRects;
+
+	bool _dirtyAll;
+	
 
 	AnimationInstance *_cursorAnimationInstance;
 	Animation *_cursorAnimation;

@@ -45,25 +45,24 @@ private:
 	int _samplesPerTick;
 
 protected:
+	int _baseFreq;
+
 	virtual void generateSamples(int16 *buf, int len) = 0;
 	virtual void onTimer() {}
 
-	int _baseFreq;
-
 public:
-	MidiDriver_Emulated(Audio::Mixer *mixer) : _mixer(mixer) {
-		_isOpen = false;
-
-		_timerProc = 0;
-		_timerParam = 0;
-
-		_nextTick = 0;
-		_samplesPerTick = 0;
-
-		_baseFreq = 250;
+	MidiDriver_Emulated(Audio::Mixer *mixer) :
+		_mixer(mixer),
+		_isOpen(false),
+		_timerProc(0),
+		_timerParam(0),
+		_nextTick(0),
+		_samplesPerTick(0),
+		_baseFreq(250) {
 	}
 
-	int open() {
+	// MidiDriver API
+	virtual int open() {
 		_isOpen = true;
 
 		int d = getRate() / _baseFreq;
@@ -73,19 +72,23 @@ public:
 		// but less prone to arithmetic overflow.
 
 		_samplesPerTick = (d << FIXP_SHIFT) + (r << FIXP_SHIFT) / _baseFreq;
+
 		return 0;
 	}
 
-	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {
+	bool isOpen() const { return _isOpen; }
+
+	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {
 		_timerProc = timer_proc;
 		_timerParam = timer_param;
 	}
 
-	uint32 getBaseTempo() { return 1000000 / _baseFreq; }
-
+	virtual uint32 getBaseTempo() {
+		return 1000000 / _baseFreq;
+	}
 
 	// AudioStream API
-	int readBuffer(int16 *data, const int numSamples) {
+	virtual int readBuffer(int16 *data, const int numSamples) {
 		const int stereoFactor = isStereo() ? 2 : 1;
 		int len = numSamples / stereoFactor;
 		int step;
@@ -101,16 +104,22 @@ public:
 			if (!(_nextTick >> FIXP_SHIFT)) {
 				if (_timerProc)
 					(*_timerProc)(_timerParam);
+
 				onTimer();
+
 				_nextTick += _samplesPerTick;
 			}
+
 			data += step * stereoFactor;
 			len -= step;
 		} while (len);
 
 		return numSamples;
 	}
-	bool endOfData() const { return false; }
+
+	virtual bool endOfData() const {
+		return false;
+	}
 };
 
 #endif

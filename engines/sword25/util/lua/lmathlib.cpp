@@ -6,6 +6,11 @@
 
 
 #include <stdlib.h>
+// MSVC does not define M_PI, M_SQRT2 and other math defines by default.
+// _USE_MATH_DEFINES must be defined in order to have these defined, thus
+// we enable it here. For more information, check:
+// http://msdn.microsoft.com/en-us/library/4hwaceh6(v=VS.100).aspx
+#define _USE_MATH_DEFINES
 #include <math.h>
 
 #define lmathlib_c
@@ -16,12 +21,7 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
-
-#undef PI
-#define PI (3.14159265358979323846)
-#define RADIANS_PER_DEGREE (PI/180.0)
-
-
+#define RADIANS_PER_DEGREE (M_PI/180.0)
 
 static int math_abs (lua_State *L) {
   lua_pushnumber(L, fabs(luaL_checknumber(L, 1)));
@@ -250,7 +250,7 @@ static const luaL_Reg mathlib[] = {
 */
 LUALIB_API int luaopen_math (lua_State *L) {
   luaL_register(L, LUA_MATHLIBNAME, mathlib);
-  lua_pushnumber(L, PI);
+  lua_pushnumber(L, M_PI);
   lua_setfield(L, -2, "pi");
 #if defined(MACOSX) && defined(__GNUC__) && ! defined( __XLC__ )
   // WORKAROUND for a bug in the Mac OS X 10.2.8 SDK. It defines

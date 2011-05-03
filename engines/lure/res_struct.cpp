@@ -406,7 +406,7 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	walkY = READ_LE_UINT16(&rec->walkY);
 	talkX = rec->talkX;
 	talkY = rec->talkY;
-	colourOffset = READ_LE_UINT16(&rec->colourOffset);
+	colorOffset = READ_LE_UINT16(&rec->colorOffset);
 	animRecordId = READ_LE_UINT16(&rec->animRecordId);
 	hotspotScriptOffset = READ_LE_UINT16(&rec->hotspotScriptOffset);
 	talkScriptOffset = READ_LE_UINT16(&rec->talkScriptOffset);

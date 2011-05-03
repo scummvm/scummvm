@@ -23,8 +23,14 @@
  *
  */
 
+// FIXME: Avoid using fprintf
+#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
+
+// FIXME: Avoid using vfprintf
+#define FORBIDDEN_SYMBOL_EXCEPTION_vfprintf
+
+
 #include "common/xmlparser.h"
-#include "common/util.h"
 #include "common/archive.h"
 #include "common/fs.h"
 #include "common/memstream.h"

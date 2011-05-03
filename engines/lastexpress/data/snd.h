@@ -42,8 +42,8 @@
 #include "audio/mixer.h"
 
 namespace Audio {
-	class AudioStream;
-	class QueuingAudioStream;
+class AudioStream;
+class QueuingAudioStream;
 }
 
 namespace Common {

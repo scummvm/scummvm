@@ -32,11 +32,11 @@ namespace Tinsel {
 #define	PID_DESTROY	0x8000			// process id of any process that is to be destroyed between scenes
 
 #define	PID_EFFECTS	(0x0010 | PID_DESTROY)	// generic special effects process id
-#define	PID_FLASH	(PID_EFFECTS + 1)	// flash colour process
-#define	PID_CYCLE	(PID_EFFECTS + 2)	// cycle colour range process
+#define	PID_FLASH	(PID_EFFECTS + 1)	// flash color process
+#define	PID_CYCLE	(PID_EFFECTS + 2)	// cycle color range process
 #define	PID_MORPH	(PID_EFFECTS + 3)	// morph process
 #define	PID_FADER	(PID_EFFECTS + 4)	// fader process
-#define	PID_FADE_BGND	(PID_EFFECTS + 5)	// fade background colour process
+#define	PID_FADE_BGND	(PID_EFFECTS + 5)	// fade background color process
 
 #define	PID_BACKGND	(0x0020 | PID_DESTROY)	// background update process id
 

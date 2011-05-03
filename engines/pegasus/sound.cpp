@@ -23,6 +23,7 @@
 #include "pegasus/sound.h"
 
 #include "common/file.h"
+#include "common/textconsole.h"
 #include "audio/decoders/aiff.h"
 
 namespace Pegasus {

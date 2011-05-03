@@ -132,8 +132,8 @@ uint8 AgiEngine::testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 	    v->yPos >= y1 && v->xPos + v->xSize - 1 <= x2 && v->yPos <= y2;
 }
 
-// if n is in centre of box
-uint8 AgiEngine::testObjCentre(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
+// if n is in center of box
+uint8 AgiEngine::testObjCenter(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 	VtEntry *v = &_game.viewTable[n];
 
 	return v->xPos + v->xSize / 2 >= x1 &&
@@ -311,7 +311,7 @@ int AgiEngine::testIfCode(int lognum) {
 			ec = testObjInBox(p[0], p[1], p[2], p[3], p[4]);
 			break;
 		case 0x11:
-			ec = testObjCentre(p[0], p[1], p[2], p[3], p[4]);
+			ec = testObjCenter(p[0], p[1], p[2], p[3], p[4]);
 			break;
 		case 0x12:
 			ec = testObjRight(p[0], p[1], p[2], p[3], p[4]);

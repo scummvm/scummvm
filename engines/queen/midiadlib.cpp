@@ -24,13 +24,12 @@
  */
 
 #include "common/endian.h"
+#include "common/textconsole.h"
 
 #include "audio/fmopl.h"
 #include "audio/softsynth/emumidi.h"
 
 namespace Queen {
-
-class AdLibMidiChannel;
 
 class AdLibMidiDriver : public MidiDriver_Emulated {
 public:

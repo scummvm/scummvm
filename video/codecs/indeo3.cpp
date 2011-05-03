@@ -35,8 +35,8 @@
 
 #include "common/system.h"
 #include "common/endian.h"
-#include "common/frac.h"
-#include "common/file.h"
+#include "common/stream.h"
+#include "common/textconsole.h"
 
 #include "graphics/conversion.h"
 
@@ -51,7 +51,7 @@ Indeo3Decoder::Indeo3Decoder(uint16 width, uint16 height) : _ModPred(0), _correc
 	_pixelFormat = g_system->getScreenFormat();
 
 	_surface = new Graphics::Surface;
-	_surface->create(width, height, _pixelFormat.bytesPerPixel);
+	_surface->create(width, height, _pixelFormat);
 
 	buildModPred();
 	allocFrames();
@@ -85,7 +85,7 @@ bool Indeo3Decoder::isIndeo3(Common::SeekableReadStream &stream) {
 		return false;
 
 	// These 4 uint32s XOR'd need to spell "FRMH"
-	if ((id0 ^ id1 ^ id2 ^ id3) != MKID_BE('FRMH'))
+	if ((id0 ^ id1 ^ id2 ^ id3) != MKTAG('F','R','M','H'))
 		return false;
 
 	return true;
@@ -322,10 +322,10 @@ const Graphics::Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *
 
 				const uint32 color = _pixelFormat.RGBToColor(r, g, b);
 
-				for (uint32 sW = 0; sW < scaleWidth; sW++, rowDest += _surface->bytesPerPixel) {
-					if      (_surface->bytesPerPixel == 1)
+				for (uint32 sW = 0; sW < scaleWidth; sW++, rowDest += _surface->format.bytesPerPixel) {
+					if      (_surface->format.bytesPerPixel == 1)
 						*((uint8 *)rowDest) = (uint8)color;
-					else if (_surface->bytesPerPixel == 2)
+					else if (_surface->format.bytesPerPixel == 2)
 						*((uint16 *)rowDest) = (uint16)color;
 				}
 			}

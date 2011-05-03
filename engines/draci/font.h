@@ -36,19 +36,19 @@ extern const char * const kFontBig;
 class Surface;
 
 /**
- *  Default font colours. They all seem to remain constant except for the
+ *  Default font colors. They all seem to remain constant except for the
  *  first one which varies depending on the character speaking.
- *  kOverFontColour is set to transparent.
+ *  kOverFontColor is set to transparent.
  */
 enum {
-	kFontColour1 = 2,
-	kFontColour2 = 0,
-	kFontColour3 = 3,
-	kFontColour4 = 4,
-	kOverFontColour = 255,
-	kTitleColour = 255,
-	kLineActiveColour = 254,
-	kLineInactiveColour = 255
+	kFontColor1 = 2,
+	kFontColor2 = 0,
+	kFontColor3 = 3,
+	kFontColor4 = 4,
+	kOverFontColor = 255,
+	kTitleColor = 255,
+	kLineActiveColor = 254,
+	kLineInactiveColor = 255
 };
 
 /**
@@ -64,12 +64,12 @@ public:
 	uint8 getFontHeight() const { return _fontHeight; }
 	uint8 getMaxCharWidth() const { return _maxCharWidth; }
 	uint8 getCharWidth(byte chr) const;
-	void drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_colour) const;
+	void drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_color) const;
 
-	void drawString(Surface *dst, const byte *str, uint len, int x, int y, int with_colour,
+	void drawString(Surface *dst, const byte *str, uint len, int x, int y, int with_color,
 	                int spacing, bool markDirty) const;
 	void drawString(Surface *dst, const Common::String &str,
-	                int x, int y, int with_colour, int spacing, bool markDirty) const;
+	                int x, int y, int with_color, int spacing, bool markDirty) const;
 
 	uint getStringWidth(const Common::String &str, int spacing) const;
 	uint getStringHeight(const Common::String &str) const;

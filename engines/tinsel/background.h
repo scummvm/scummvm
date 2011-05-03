@@ -60,7 +60,7 @@ struct PLAYFIELD {
 
 /** multi-playfield background structure - a backgnd is a container of playfields */
 struct BACKGND {
-	COLORREF rgbSkyColour;	///< background sky colour
+	COLORREF rgbSkyColor;	///< background sky color
 	Common::Point ptInitWorld;		///< initial world position
 	Common::Rect rcScrollLimits;	///< scroll limits
 	int refreshRate;		///< background update process refresh rate
@@ -93,7 +93,7 @@ void PlayfieldGetPos(		// Returns the xy position of the specified playfield in 
 	int *pXpos,		// returns current x position
 	int *pYpos);		// returns current y position
 
-int PlayfieldGetCentreX(	// Returns the xy position of the specified playfield in the current background
+int PlayfieldGetCenterX(	// Returns the xy position of the specified playfield in the current background
 	int which);		// which playfield
 
 OBJECT *GetPlayfieldList(	// Returns the display list for the specified playfield
@@ -109,8 +109,6 @@ void RedrawBackgnd();	// Completely redraws all the playfield object lists for t
 OBJECT *GetBgObject();
 
 SCNHANDLE BgPal();
-
-void ForceEntireRedraw();
 
 int BgWidth();
 

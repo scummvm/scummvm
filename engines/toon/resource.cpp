@@ -24,18 +24,26 @@
 */
 
 #include "toon/resource.h"
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/substream.h"
 #include "toon/toon.h"
 
-
 namespace Toon {
 
-Resources::Resources(ToonEngine *vm) : _vm(vm) {
+Resources::Resources(ToonEngine *vm) : _vm(vm), _cacheSize(0) {
+	_resourceCache.clear();
 }
 
 Resources::~Resources() {
+
+	while (!_resourceCache.empty()) {
+		CacheEntry *temp = _resourceCache.back();
+		_resourceCache.pop_back();
+		delete temp;
+	}
+
 	while(!_pakFiles.empty()) {
 		PakFile *temp = _pakFiles.back();
 		_pakFiles.pop_back();
@@ -45,8 +53,73 @@ Resources::~Resources() {
 	purgeFileData();
 }
 
-void Resources::openPackage(Common::String fileName, bool preloadEntirePackage) {
-	debugC(1, kDebugResource, "openPackage(%s, %d)", fileName.c_str(), (preloadEntirePackage) ? 1 : 0);
+void Resources::removePackageFromCache(Common::String packName) {
+	// I'm not sure what's a good strategy here. It seems unnecessary to
+	// actually remove the cached resources, because the player may be
+	// wandering back and forth between rooms. So for now, do nothing.
+}
+
+bool Resources::getFromCache(Common::String fileName, uint32 *fileSize, uint8 **fileData) {
+	for (Common::Array<CacheEntry *>::iterator entry = _resourceCache.begin(); entry != _resourceCache.end(); ++entry) {
+		if ((*entry)->_data && (*entry)->_fileName.compareToIgnoreCase(fileName) == 0) {
+			debugC(5, kDebugResource, "getFromCache(%s) - Got %d bytes from %s", fileName.c_str(), (*entry)->_size, (*entry)->_packName.c_str());
+			(*entry)->_age = 0;
+			*fileSize = (*entry)->_size;
+			*fileData = (*entry)->_data;
+			return true;
+			}
+		}
+	return false;
+}
+
+void Resources::addToCache(Common::String packName, Common::String fileName, uint32 fileSize, uint8 *fileData) {
+	debugC(5, kDebugResource, "addToCache(%s, %s, %d) - Total Size: %d", packName.c_str(), fileName.c_str(), fileSize, _cacheSize + fileSize);
+	for (Common::Array<CacheEntry *>::iterator entry = _resourceCache.begin(); entry != _resourceCache.end(); ++entry) {
+		if ((*entry)->_data) {
+			(*entry)->_age++;
+		}
+	}
+	_cacheSize += fileSize;
+
+	while (_cacheSize > MAX_CACHE_SIZE) {
+		CacheEntry *bestEntry = 0;
+		for (Common::Array<CacheEntry *>::iterator entry = _resourceCache.begin(); entry != _resourceCache.end(); ++entry) {
+			if ((*entry)->_data) {
+				if (!bestEntry || ((*entry)->_age >= bestEntry->_age && (*entry)->_size >= bestEntry->_size)) {
+					bestEntry = *entry;
+				}
+			}
+		}
+		if (!bestEntry)
+			break;
+
+		free(bestEntry->_data);
+		bestEntry->_data = 0;
+		_cacheSize -= bestEntry->_size;
+		debugC(5, kDebugResource, "Freed %s (%s) to reclaim %d bytes", bestEntry->_fileName.c_str(), bestEntry->_packName.c_str(), bestEntry->_size);
+	}
+
+	for (Common::Array<CacheEntry *>::iterator entry = _resourceCache.begin(); entry != _resourceCache.end(); ++entry) {
+		if (!(*entry)->_data) {
+			(*entry)->_packName = packName;
+			(*entry)->_fileName = fileName;
+			(*entry)->_age = 0;
+			(*entry)->_size = fileSize;
+			(*entry)->_data = fileData;
+			return;
+		}
+	}
+
+	CacheEntry *entry = new CacheEntry();
+	entry->_packName = packName;
+	entry->_fileName = fileName;
+	entry->_size = fileSize;
+	entry->_data = fileData;
+	_resourceCache.push_back(entry);
+}
+
+void Resources::openPackage(Common::String fileName) {
+	debugC(1, kDebugResource, "openPackage(%s)", fileName.c_str());
 
 	Common::File file;
 	bool opened = file.open(fileName);
@@ -55,15 +128,16 @@ void Resources::openPackage(Common::String fileName, bool preloadEntirePackage) 
 		return;
 
 	PakFile *pakFile = new PakFile();
-	pakFile->open(&file, fileName, preloadEntirePackage);
+	pakFile->open(&file, fileName);
 
-	if (preloadEntirePackage)
-		file.close();
+	file.close();
 
 	_pakFiles.push_back(pakFile);
 }
 
 void Resources::closePackage(Common::String fileName) {
+
+	removePackageFromCache(fileName);
 	for (uint32 i = 0; i < _pakFiles.size(); i++) {
 		if (_pakFiles[i]->getPackName() == fileName) {
 			delete _pakFiles[i];
@@ -91,13 +165,21 @@ uint8 *Resources::getFileData(Common::String fileName, uint32 *fileSize) {
 		_allocatedFileData.push_back(memory);
 		return memory;
 	} else {
+
+		uint32 locFileSize = 0;
+		uint8 *locFileData = 0;
+
+		if (getFromCache(fileName, &locFileSize, &locFileData)) {
+			*fileSize = locFileSize;
+			return locFileData;
+		}
+
 		for (uint32 i = 0; i < _pakFiles.size(); i++) {
-			uint32 locFileSize = 0;
-			uint8 *locFileData = 0;
 
 			locFileData = _pakFiles[i]->getFileData(fileName, &locFileSize);
 			if (locFileData) {
 				*fileSize = locFileSize;
+				addToCache(_pakFiles[i]->getPackName(), fileName, locFileSize, locFileData);
 				return locFileData;
 			}
 		}
@@ -136,25 +218,16 @@ void Resources::purgeFileData() {
 	}
 	_allocatedFileData.clear();
 }
+
 Common::SeekableReadStream *PakFile::createReadStream(Common::String fileName) {
 	debugC(1, kDebugResource, "createReadStream(%s)", fileName.c_str());
 
-	int32 offset = 0;
-	int32 size = 0;
-	for (uint32 i = 0; i < _numFiles; i++) {
-		if (fileName.compareToIgnoreCase(_files[i]._name) == 0) {
-			size = _files[i]._size;
-			offset = _files[i]._offset;
-			break;
-		}
-	}
-	if (!size)
-		return 0;
-
-	if (_fileHandle)
-		return new Common::SeekableSubReadStream(_fileHandle, offset, offset + size);
+	uint32 fileSize = 0;
+	uint8 *buffer = getFileData(fileName, &fileSize);
+	if (buffer)
+		return new Common::MemoryReadStream(buffer, fileSize, DisposeAfterUse::YES);
 	else
-		return new Common::MemoryReadStream(_buffer + offset, size);
+		return 0;
 }
 
 uint8 *PakFile::getFileData(Common::String fileName, uint32 *fileSize) {
@@ -162,16 +235,26 @@ uint8 *PakFile::getFileData(Common::String fileName, uint32 *fileSize) {
 
 	for (uint32 i = 0; i < _numFiles; i++) {
 		if (fileName.compareToIgnoreCase(_files[i]._name) == 0) {
-			*fileSize = _files[i]._size;
-			return _buffer + _files[i]._offset;
+			Common::File file;
+			if (file.open(_packName)) {
+					*fileSize = _files[i]._size;
+					file.seek(_files[i]._offset);
+
+					// Use malloc() because that's what MemoryReadStream
+					// uses to dispose of the memory when it's done.
+					uint8 *buffer = (uint8 *)malloc(*fileSize);
+					file.read(buffer, *fileSize);
+					file.close();
+					return buffer;
+			}
 		}
 	}
 
 	return 0;
 }
 
-void PakFile::open(Common::SeekableReadStream *rs, Common::String packName, bool preloadEntirePackage) {
-	debugC(1, kDebugResource, "open(rs, %d)", (preloadEntirePackage) ? 1 : 0);
+void PakFile::open(Common::SeekableReadStream *rs, Common::String packName) {
+	debugC(1, kDebugResource, "open(rs)");
 
 	char buffer[64];
 	int32 currentPos = 0;
@@ -199,30 +282,12 @@ void PakFile::open(Common::SeekableReadStream *rs, Common::String packName, bool
 		_numFiles++;
 		_files.push_back(newFile);
 	}
-
-	if (preloadEntirePackage) {
-		_bufferSize = rs->size();
-		delete[] _buffer;
-		_buffer = new uint8[_bufferSize];
-		rs->seek(0);
-		rs->read(_buffer, _bufferSize);
-	}
 }
 
 void PakFile::close() {
-	delete[] _buffer;
-
-	if (_fileHandle) {
-		_fileHandle->close();
-		delete _fileHandle;
-	}
 }
 
 PakFile::PakFile() {
-	_bufferSize = 0;
-	_buffer = NULL;
-
-	_fileHandle = NULL;
 }
 
 PakFile::~PakFile() {

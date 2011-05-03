@@ -26,7 +26,7 @@
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 
-
+#include "common/textconsole.h"
 
 namespace Parallaction {
 
@@ -141,7 +141,7 @@ void Parallaction::closeInventory() {
 
 
 InventoryRenderer::InventoryRenderer(Parallaction *vm, InventoryProperties *props, Inventory *inv) : _vm(vm), _props(props), _inv(inv) {
-	_surf.create(_props->_width, _props->_height, 1);
+	_surf.create(_props->_width, _props->_height, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 InventoryRenderer::~InventoryRenderer() {

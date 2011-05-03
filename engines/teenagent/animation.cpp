@@ -24,6 +24,7 @@
 
 #include "teenagent/animation.h"
 #include "common/endian.h"
+#include "common/textconsole.h"
 
 namespace TeenAgent {
 

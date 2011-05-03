@@ -31,11 +31,14 @@
 #include "kyra/kyra_v1.h"
 #include "kyra/script_tim.h"
 #include "kyra/script.h"
-#include "kyra/sound.h"
 #include "kyra/gui_lol.h"
 #include "kyra/text_lol.h"
 
 #include "common/list.h"
+
+namespace Audio {
+class SeekableAudioStream;
+} // End of namespace Audio
 
 namespace Kyra {
 

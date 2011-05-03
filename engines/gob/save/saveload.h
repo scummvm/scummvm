@@ -305,7 +305,7 @@ protected:
 			int getSlot(int32 offset) const;
 			int getSlotRemainder(int32 offset) const;
 
-			void buildIndex(byte *buffer) const;
+			void buildScreenshotIndex(byte *buffer) const;
 
 		protected:
 			uint32 _shotSize;
@@ -430,7 +430,7 @@ protected:
 			int getSlot(int32 offset) const;
 			int getSlotRemainder(int32 offset) const;
 
-			void buildIndex(byte *buffer) const;
+			void buildScreenshotIndex(byte *buffer) const;
 		};
 
 		File *_file;

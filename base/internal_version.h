@@ -2,6 +2,12 @@
 #error This file may only be included by base/version.cpp
 #endif
 
+// Reads revision number from file
+// (this is used when building with Visual Studio)
+#ifdef SCUMMVM_INTERNAL_REVISION
+#include "internal_revision.h"
+#endif
+
 #ifdef RELEASE_BUILD
 #undef SCUMMVM_REVISION
 #endif
@@ -10,4 +16,4 @@
 #define SCUMMVM_REVISION
 #endif
 
-#define SCUMMVM_VERSION "1.3.0git" SCUMMVM_REVISION
+#define SCUMMVM_VERSION "1.4.0git" SCUMMVM_REVISION

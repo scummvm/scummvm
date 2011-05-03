@@ -499,11 +499,11 @@ byte *findSoundTag(uint32 tag, byte *ptr) {
 	byte *endPtr;
 	uint32 offset, size;
 
-	if (READ_BE_UINT32(ptr) == MKID_BE('WSOU')) {
+	if (READ_BE_UINT32(ptr) == MKTAG('W','S','O','U')) {
 		ptr += 8;
 	}
 
-	if (READ_BE_UINT32(ptr) != MKID_BE('RIFF'))
+	if (READ_BE_UINT32(ptr) != MKTAG('R','I','F','F'))
 		return NULL;
 
 	endPtr = (ptr + 12);
@@ -591,14 +591,14 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 	}
 
 	// Support for sound in later HE games
-	if (READ_BE_UINT32(ptr) == MKID_BE('RIFF') || READ_BE_UINT32(ptr) == MKID_BE('WSOU')) {
+	if (READ_BE_UINT32(ptr) == MKTAG('R','I','F','F') || READ_BE_UINT32(ptr) == MKTAG('W','S','O','U')) {
 		uint16 compType;
 		int blockAlign;
 		int codeOffs = -1;
 
 		priority = (soundID > _vm->_numSounds) ? 255 : *(ptr + 18);
 
-		byte *sbngPtr = findSoundTag(MKID_BE('SBNG'), ptr);
+		byte *sbngPtr = findSoundTag(MKTAG('S','B','N','G'), ptr);
 		if (sbngPtr != NULL) {
 			codeOffs = sbngPtr - ptr + 8;
 		}
@@ -611,7 +611,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 				return;
 		}
 
-		if (READ_BE_UINT32(ptr) == MKID_BE('WSOU'))
+		if (READ_BE_UINT32(ptr) == MKTAG('W','S','O','U'))
 			ptr += 8;
 
 		size = READ_LE_UINT32(ptr + 4);
@@ -675,7 +675,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 						Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundID);
 	}
 	// Support for sound in Humongous Entertainment games
-	else if (READ_BE_UINT32(ptr) == MKID_BE('DIGI') || READ_BE_UINT32(ptr) == MKID_BE('TALK')) {
+	else if (READ_BE_UINT32(ptr) == MKTAG('D','I','G','I') || READ_BE_UINT32(ptr) == MKTAG('T','A','L','K')) {
 		byte *sndPtr = ptr;
 		int codeOffs = -1;
 
@@ -693,12 +693,12 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 				return;
 		}
 
-		if (READ_BE_UINT32(ptr) == MKID_BE('SBNG')) {
+		if (READ_BE_UINT32(ptr) == MKTAG('S','B','N','G')) {
 			codeOffs = ptr - sndPtr + 8;
 			ptr += READ_BE_UINT32(ptr + 4);
 		}
 
-		assert(READ_BE_UINT32(ptr) == MKID_BE('SDAT'));
+		assert(READ_BE_UINT32(ptr) == MKTAG('S','D','A','T'));
 		size = READ_BE_UINT32(ptr + 4) - 8;
 		if (heOffset < 0 || heOffset > size) {
 			// Occurs when making fireworks in puttmoon
@@ -734,14 +734,14 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 						Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundID);
 	}
 	// Support for PCM music in 3DO versions of Humongous Entertainment games
-	else if (READ_BE_UINT32(ptr) == MKID_BE('MRAW')) {
+	else if (READ_BE_UINT32(ptr) == MKTAG('M','R','A','W')) {
 		priority = *(ptr + 18);
 		rate = READ_LE_UINT16(ptr + 22);
 
 		// Skip DIGI (8) and HSHD (24) blocks
 		ptr += 32;
 
-		assert(READ_BE_UINT32(ptr) == MKID_BE('SDAT'));
+		assert(READ_BE_UINT32(ptr) == MKTAG('S','D','A','T'));
 		size = READ_BE_UINT32(ptr + 4) - 8;
 
 		byte *sound = (byte *)malloc(size);
@@ -753,7 +753,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		stream = Audio::makeRawStream(sound, size, rate, 0);
 		_mixer->playStream(Audio::Mixer::kMusicSoundType, NULL, stream, soundID);
 	}
-	else if (READ_BE_UINT32(ptr) == MKID_BE('MIDI')) {
+	else if (READ_BE_UINT32(ptr) == MKTAG('M','I','D','I')) {
 		if (_vm->_imuse) {
 			// This is used in the DOS version of Fatty Bear's
 			// Birthday Surprise to change the note on the piano
@@ -833,9 +833,9 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 			chan =  i;
 	}
 
-	if (!findSoundTag(MKID_BE('data'), snd1Ptr)) {
-		sbng1Ptr = heFindResource(MKID_BE('SBNG'), snd1Ptr);
-		sbng2Ptr = heFindResource(MKID_BE('SBNG'), snd2Ptr);
+	if (!findSoundTag(MKTAG('d','a','t','a'), snd1Ptr)) {
+		sbng1Ptr = heFindResource(MKTAG('S','B','N','G'), snd1Ptr);
+		sbng2Ptr = heFindResource(MKTAG('S','B','N','G'), snd2Ptr);
 	}
 
 	if (sbng1Ptr != NULL && sbng2Ptr != NULL) {
@@ -879,10 +879,10 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 		}
 	}
 
-	if (findSoundTag(MKID_BE('data'), snd1Ptr)) {
-		sdat1Ptr = findSoundTag(MKID_BE('data'), snd1Ptr);
+	if (findSoundTag(MKTAG('d','a','t','a'), snd1Ptr)) {
+		sdat1Ptr = findSoundTag(MKTAG('d','a','t','a'), snd1Ptr);
 		assert(sdat1Ptr);
-		sdat2Ptr = findSoundTag(MKID_BE('data'), snd2Ptr);
+		sdat2Ptr = findSoundTag(MKTAG('d','a','t','a'), snd2Ptr);
 		assert(sdat2Ptr);
 
 		if (!_sndDataSize)
@@ -890,9 +890,9 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 
 		sdat2size = READ_LE_UINT32(sdat2Ptr + 4) - 8;
 	} else {
-		sdat1Ptr = heFindResource(MKID_BE('SDAT'), snd1Ptr);
+		sdat1Ptr = heFindResource(MKTAG('S','D','A','T'), snd1Ptr);
 		assert(sdat1Ptr);
-		sdat2Ptr = heFindResource(MKID_BE('SDAT'), snd2Ptr);
+		sdat2Ptr = heFindResource(MKTAG('S','D','A','T'), snd2Ptr);
 		assert(sdat2Ptr);
 
 		_sndDataSize = READ_BE_UINT32(sdat1Ptr + 4) - 8;

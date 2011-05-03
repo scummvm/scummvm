@@ -26,6 +26,7 @@
 
 #include "sword1/eventman.h"
 #include "sword1/sworddefs.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 namespace Sword1 {

@@ -29,6 +29,7 @@
 #include "common/file.h"
 #include "common/str.h"
 #include "common/substream.h"
+#include "common/textconsole.h"
 #include "common/memstream.h"
 #include "common/unzip.h"
 
@@ -408,21 +409,25 @@ void Sound::stopVoice() {
 }
 
 void Sound::setVolume() {
+	_showSubtitles = ConfMan.getBool("subtitles");
+	_talkSpeed = ConfMan.getInt("talkspeed");
+
 	if (_mixer->isReady()) {
 		_muteSound = ConfMan.getBool("sfx_mute");
 		_muteVoice = ConfMan.getBool("speech_mute");
 	} else {
 		_muteSound = _muteVoice = true;
 	}
+
 	if (ConfMan.getBool("mute")) {
 		_muteSound = _muteVoice = true;
 	}
-	_showSubtitles = ConfMan.getBool("subtitles");
-	_talkSpeed = ConfMan.getInt("talkspeed");
-	const int soundVolume = ConfMan.getInt("sfx_volume");
-	const int speechVolume = ConfMan.getInt("speech_volume");
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolume);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, speechVolume);
+
+	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, _muteSound);
+	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, _muteVoice);
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 }
 
 } // End of namespace Draci

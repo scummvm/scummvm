@@ -28,6 +28,7 @@
 #include "m4/compression.h"
 
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"

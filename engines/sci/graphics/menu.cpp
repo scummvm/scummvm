@@ -399,12 +399,10 @@ void GfxMenu::calculateMenuAndItemWidth() {
 reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 	int16 eventType = readSelectorValue(_segMan, eventObject, SELECTOR(type));
 	int16 keyPress, keyModifier;
-	Common::Point mousePosition;
 	GuiMenuItemList::iterator itemIterator = _itemList.begin();
 	GuiMenuItemList::iterator itemEnd = _itemList.end();
 	GuiMenuItemEntry *itemEntry = NULL;
 	bool forceClaimed = false;
-	EngineState *s;
 
 	switch (eventType) {
 	case SCI_EVENT_KEYBOARD:
@@ -438,8 +436,6 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 		break;
 
 	case SCI_EVENT_SAID:
-		// HACK: should be removed as soon as said() is cleaned up
-		s = g_sci->getEngineState();
 		while (itemIterator != itemEnd) {
 			itemEntry = *itemIterator;
 
@@ -451,7 +447,7 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 					continue;
 				}
 
-				if (said(s, saidSpec, 0) != SAID_NO_MATCH)
+				if (said(saidSpec, 0) != SAID_NO_MATCH)
 					break;
 			}
 			itemIterator++;
@@ -460,15 +456,17 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 			itemEntry = NULL;
 		break;
 
-	case SCI_EVENT_MOUSE_PRESS:
-		mousePosition = _cursor->getPosition();
+	case SCI_EVENT_MOUSE_PRESS: {
+		Common::Point mousePosition;
+		mousePosition.x = readSelectorValue(_segMan, eventObject, SELECTOR(x));
+		mousePosition.y = readSelectorValue(_segMan, eventObject, SELECTOR(y));
 		if (mousePosition.y < 10) {
 			interactiveStart(pauseSound);
 			itemEntry = interactiveWithMouse();
 			interactiveEnd(pauseSound);
 			forceClaimed = true;
 		}
-		break;
+		} break;
 	}
 
 	if (!_menuSaveHandle.isNull()) {
@@ -718,7 +716,6 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 	uint16 newItemId = _curItemId;
 	GuiMenuItemEntry *curItemEntry = findItem(_curMenuId, _curItemId);
 	GuiMenuItemEntry *newItemEntry = curItemEntry;
-	Common::Point mousePosition;
 
 	// We don't 100% follow Sierra here: we select last item instead of
 	// selecting first item of first menu every time. Also sierra sci didn't
@@ -796,9 +793,9 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 			}
 			break;
 
-		case SCI_EVENT_MOUSE_PRESS:
-			mousePosition = _cursor->getPosition();
-			if (_cursor->getPosition().y < 10) {
+		case SCI_EVENT_MOUSE_PRESS: {
+			Common::Point mousePosition = curEvent.mousePos;
+			if (mousePosition.y < 10) {
 				// Somewhere on the menubar
 				newMenuId = mouseFindMenuSelection(mousePosition);
 				if (newMenuId) {
@@ -827,7 +824,8 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 				}
 				newItemId = curItemEntry->id;
 			}
-			break;
+			} break;
+
 		case SCI_EVENT_NONE:
 			g_sci->sleep(2500 / 1000);
 			break;
@@ -843,7 +841,6 @@ GuiMenuItemEntry *GfxMenu::interactiveWithMouse() {
 	SciEvent curEvent;
 	uint16 newMenuId = 0, newItemId = 0;
 	uint16 curMenuId = 0, curItemId = 0;
-	Common::Point mousePosition = _cursor->getPosition();
 	bool firstMenuChange = true;
 	GuiMenuItemEntry *curItemEntry = NULL;
 
@@ -874,7 +871,7 @@ GuiMenuItemEntry *GfxMenu::interactiveWithMouse() {
 		}
 
 		// Find out where mouse is currently pointing to
-		mousePosition = _cursor->getPosition();
+		Common::Point mousePosition = curEvent.mousePos;
 		if (mousePosition.y < 10) {
 			// Somewhere on the menubar
 			newMenuId = mouseFindMenuSelection(mousePosition);
@@ -914,6 +911,13 @@ void GfxMenu::kernelDrawStatus(const char *text, int16 colorPen, int16 colorBack
 	_ports->moveTo(0, 1);
 	_text16->DrawStatus(text);
 	_paint16->bitsShow(_ports->_menuBarRect);
+	// Also draw the line under the status bar. Normally, this is never drawn,
+	// but we need it to be drawn because Dr. Brain 1 Mac draws over it when
+	// it displays the icon bar. SSCI used negative rectangles to erase the
+	// area after drawing the icon bar, but this is a much cleaner way of
+	// achieving the same effect.
+	_paint16->fillRect(_ports->_menuLine, 1, 0);
+	_paint16->bitsShow(_ports->_menuLine);
 	_ports->setPort(oldPort);
 }
 

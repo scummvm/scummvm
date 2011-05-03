@@ -31,7 +31,7 @@
 #include "tinsel/sched.h"	// for PROCESS
 
 namespace Common {
-	class Serializer;
+class Serializer;
 }
 
 namespace Tinsel {

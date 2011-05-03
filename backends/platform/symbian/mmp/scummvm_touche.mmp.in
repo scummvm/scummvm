@@ -59,6 +59,6 @@ SOURCEPATH ..\..\..\..\engines\touche
 // *** Include paths
 
 USERINCLUDE     ..\..\..\..\engines
-USERINCLUDE     ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\sound ..\src
+USERINCLUDE     ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\audio ..\src
 SYSTEMINCLUDE	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
 SYSTEMINCLUDE   \epoc32\include \epoc32\include\libc ..\src

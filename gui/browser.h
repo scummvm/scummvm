@@ -26,13 +26,13 @@
 #define BROWSER_DIALOG_H
 
 #include "gui/dialog.h"
-#include "common/str.h"
 #include "common/fs.h"
 
 namespace GUI {
 
 class ListWidget;
 class StaticTextWidget;
+class CommandSender;
 
 class BrowserDialog : public Dialog {
 public:

@@ -21,7 +21,9 @@
  */
 
 #include "common/config-manager.h"
+#include "common/error.h"
 #include "common/events.h"
+#include "common/textconsole.h"
 #include "base/plugins.h"
 #include "base/version.h"
 
@@ -131,7 +133,7 @@ Common::Error PegasusEngine::run() {
 }
 
 void PegasusEngine::loadItemLocationData() {
-	Common::SeekableReadStream *res = _resFork->getResource(MKID_BE('NItm'), 0x80);
+	Common::SeekableReadStream *res = _resFork->getResource(MKTAG('N', 'I', 't', 'm'), 0x80);
 
 	uint16 entryCount = res->readUint16BE();
 
@@ -206,7 +208,7 @@ void PegasusEngine::changeLocation(TimeZone timeZone) {
 void PegasusEngine::loadViews(TimeZone timeZone) {
 	_currentViews.clear();
 
-	Common::SeekableReadStream *res = _resFork->getResource(MKID_BE('View'), getTimeZoneDesc(timeZone));
+	Common::SeekableReadStream *res = _resFork->getResource(MKTAG('V', 'i', 'e', 'w'), getTimeZoneDesc(timeZone));
 
 	uint32 entryCount = res->readUint32BE();
 
@@ -226,7 +228,7 @@ void PegasusEngine::loadViews(TimeZone timeZone) {
 void PegasusEngine::loadDoors(TimeZone timeZone) {
 	_currentDoors.clear();
 
-	Common::SeekableReadStream *res = _resFork->getResource(MKID_BE('Door'), getTimeZoneDesc(timeZone));
+	Common::SeekableReadStream *res = _resFork->getResource(MKTAG('D', 'o', 'o', 'r'), getTimeZoneDesc(timeZone));
 
 	uint32 entryCount = res->readUint32BE();
 
@@ -247,7 +249,7 @@ void PegasusEngine::loadDoors(TimeZone timeZone) {
 void PegasusEngine::loadSoundSpots(TimeZone timeZone) {
 	_currentSoundSpots.clear();
 
-	Common::SeekableReadStream *res = _resFork->getResource(MKID_BE('Spot'), getTimeZoneDesc(timeZone));
+	Common::SeekableReadStream *res = _resFork->getResource(MKTAG('S', 'p', 'o', 't'), getTimeZoneDesc(timeZone));
 
 	uint32 entryCount = res->readUint32BE();
 
@@ -269,7 +271,7 @@ void PegasusEngine::loadSoundSpots(TimeZone timeZone) {
 void PegasusEngine::loadZooms(TimeZone timeZone) {
 	_currentZooms.clear();
 
-	Common::SeekableReadStream *res = _resFork->getResource(MKID_BE('Zoom'), getTimeZoneDesc(timeZone));
+	Common::SeekableReadStream *res = _resFork->getResource(MKTAG('Z', 'o', 'o', 'm'), getTimeZoneDesc(timeZone));
 
 	uint32 entryCount = res->readUint32BE();
 
@@ -290,7 +292,7 @@ void PegasusEngine::loadZooms(TimeZone timeZone) {
 void PegasusEngine::loadExtras(TimeZone timeZone) {
 	_currentExtras.clear();
 
-	Common::SeekableReadStream *res = _resFork->getResource(MKID_BE('Xtra'), getTimeZoneDesc(timeZone));
+	Common::SeekableReadStream *res = _resFork->getResource(MKTAG('X', 't', 'r', 'a'), getTimeZoneDesc(timeZone));
 
 	uint32 entryCount = res->readUint32BE();
 

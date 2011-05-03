@@ -54,6 +54,7 @@ public:
 	bool merge(Palette *pFrom, bool force, bool forceRealMerge);
 	uint16 matchColor(byte r, byte g, byte b);
 	void getSys(Palette *pal);
+	uint16 getTotalColorCount() const { return _totalScreenColors; }
 
 	void setOnScreen();
 	void copySysPaletteToScreen();
@@ -123,6 +124,7 @@ private:
 	uint16 _palVaryTicks;
 	int _palVaryPaused;
 	int _palVarySignal;
+	uint16 _totalScreenColors;
 
 	void loadMacIconBarPalette();
 	byte *_macClut;

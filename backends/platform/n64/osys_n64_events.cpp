@@ -118,9 +118,9 @@ void OSystem_N64::readControllerAnalogInput(void) {
 
 	// Gamepad
 	if (abs(pad_analogX) > PAD_DEADZONE)
-		mx += tan(pad_analogX * (PI / 140));
+		mx += tan(pad_analogX * (M_PI / 140));
 	if (abs(pad_analogY) > PAD_DEADZONE)
-		my -= tan(pad_analogY * (PI / 140));
+		my -= tan(pad_analogY * (M_PI / 140));
 
 	// Mouse
 	if (abs(pad_mouseX) > MOUSE_DEADZONE)

@@ -32,6 +32,8 @@
 
 #include "video/codecs/truemotion1data.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
+#include "common/util.h"
 
 namespace Video {
 
@@ -58,12 +60,14 @@ enum {
 };
 
 // { valid for metatype }, algorithm, num of deltas, vert res, horiz res
-struct {
+struct CompressionType {
 	int algorithm;
 	int blockWidth; // vres
 	int blockHeight; // hres
 	int blockType;
-} static const compressionTypes[17] = {
+};
+
+static const CompressionType compressionTypes[17] = {
 	{ ALGO_NOP,	0, 0, 0 },
 
 	{ ALGO_RGB16V, 4, 4, BLOCK_4x4 },
@@ -92,7 +96,7 @@ TrueMotion1Decoder::TrueMotion1Decoder(uint16 width, uint16 height) {
 	_width = width;
 	_height = height;
 
-	_surface->create(width, height, 2);
+	_surface->create(width, height, getPixelFormat());
 
 	// there is a vertical predictor for each pixel in a line; each vertical
 	// predictor is 0 to start with

@@ -24,6 +24,7 @@
  */
 
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "m4/m4.h"
 #include "m4/script.h"

@@ -30,6 +30,8 @@
 #include "mohawk/cursors.h"
 
 #include "common/events.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Mohawk {
 
@@ -537,7 +539,7 @@ void CSTimeModule::dialogTextDrawProc(Feature *feature) {
 	const Common::Array<Common::String> &lines = _vm->getInterface()->getDialogLines();
 	const Common::Array<byte> &colors = _vm->getInterface()->getDialogLineColors();
 	const Common::Rect &bounds = feature->_data.bounds;
-	const Graphics::WinFont &font = _vm->getInterface()->getDialogFont();
+	const Graphics::Font &font = _vm->getInterface()->getDialogFont();
 
 	Graphics::Surface *screen = _vm->_system->lockScreen();
 	for (uint i = 0; i < lines.size(); i++)
@@ -553,7 +555,7 @@ void CSTimeModule::bubbleTextMoveProc(Feature *feature) {
 void CSTimeModule::bubbleTextDrawProc(Feature *feature) {
 	Common::Rect bounds = feature->_data.bounds;
 	bounds.grow(-5);
-	const Graphics::WinFont &font = _vm->getInterface()->getDialogFont();
+	const Graphics::Font &font = _vm->getInterface()->getDialogFont();
 	uint height = font.getFontHeight();
 
 	Common::Array<Common::String> lines;

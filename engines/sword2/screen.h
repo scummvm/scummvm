@@ -172,7 +172,7 @@ struct SpriteInfo {
 	uint16 type;		// mask containing 'RDSPR_' bits specifying compression type, flip, transparency, etc
 	uint16 blend;		// holds the blending values.
 	byte *data;		// pointer to the sprite data
-	byte *colourTable;	// pointer to 16-byte colour table, only applicable to 16-col compression type
+	byte *colorTable;	// pointer to 16-byte color table, only applicable to 16-col compression type
 	bool isText;		// It is a engine-generated sprite containing text
 };
 
@@ -442,8 +442,8 @@ public:
 
 	void buildDisplay();
 
-	void plotPoint(int x, int y, uint8 colour);
-	void drawLine(int x0, int y0, int x1, int y1, uint8 colour);
+	void plotPoint(int x, int y, uint8 color);
+	void drawLine(int x0, int y0, int x1, int y1, uint8 color);
 
 	void rollCredits();
 	void splashScreen();

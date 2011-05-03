@@ -25,33 +25,47 @@
 
 #include "sci/engine/gc.h"
 #include "common/array.h"
+#include "sci/graphics/ports.h"
 
 namespace Sci {
 
 //#define GC_DEBUG_CODE
 
-struct WorklistManager {
-	Common::Array<reg_t> _worklist;
-	AddrSet _map;	// used for 2 contains() calls, inside push() and run_gc()
-
-	void push(reg_t reg) {
-		if (!reg.segment) // No numbers
-			return;
-
-		debugC(kDebugLevelGC, "[GC] Adding %04x:%04x", PRINT_REG(reg));
-
-		if (_map.contains(reg))
-			return; // already dealt with it
-
-		_map.setVal(reg, true);
-		_worklist.push_back(reg);
-	}
-
-	void pushArray(const Common::Array<reg_t> &tmp) {
-		for (Common::Array<reg_t>::const_iterator it = tmp.begin(); it != tmp.end(); ++it)
-			push(*it);
-	}
+#ifdef GC_DEBUG_CODE
+const char *segmentTypeNames[] = {
+	"invalid",   // 0
+	"script",    // 1
+	"clones",    // 2
+	"locals",    // 3
+	"stack",     // 4
+	"obsolete",  // 5: obsolete system strings
+	"lists",     // 6
+	"nodes",     // 7
+	"hunk",      // 8
+	"dynmem",    // 9
+	"obsolete",  // 10: obsolete string fragments
+	"array",     // 11: SCI32 arrays
+	"string"     // 12: SCI32 strings
 };
+#endif
+
+void WorklistManager::push(reg_t reg) {
+	if (!reg.segment) // No numbers
+		return;
+
+	debugC(kDebugLevelGC, "[GC] Adding %04x:%04x", PRINT_REG(reg));
+
+	if (_map.contains(reg))
+		return; // already dealt with it
+
+	_map.setVal(reg, true);
+	_worklist.push_back(reg);
+}
+
+void WorklistManager::pushArray(const Common::Array<reg_t> &tmp) {
+	for (Common::Array<reg_t>::const_iterator it = tmp.begin(); it != tmp.end(); ++it)
+		push(*it);
+}
 
 static AddrSet *normalizeAddresses(SegManager *segMan, const AddrSet &nonnormal_map) {
 	AddrSet *normal_map = new AddrSet();
@@ -95,7 +109,7 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 
 	// Initialize value stack
 	// We do this one by hand since the stack doesn't know the current execution stack
-	Common::List<ExecStack>::iterator iter = s->_executionStack.reverse_begin();
+	Common::List<ExecStack>::const_iterator iter = s->_executionStack.reverse_begin();
 
 	// Skip fake kernel stack frame if it's on top
 	if ((*iter).type == EXEC_STACK_TYPE_KERNEL)
@@ -103,9 +117,9 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 
 	assert((iter != s->_executionStack.end()) && ((*iter).type != EXEC_STACK_TYPE_KERNEL));
 
-	ExecStack &xs = *iter;
+	const StackPtr sp = iter->sp;
 
-	for (reg_t *pos = s->stack_base; pos < xs.sp; pos++)
+	for (reg_t *pos = s->stack_base; pos < sp; pos++)
 		wm.push(*pos);
 
 	debugC(kDebugLevelGC, "[GC] -- Finished adding value stack");
@@ -113,7 +127,7 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 	// Init: Execution Stack
 	for (iter = s->_executionStack.begin();
 	     iter != s->_executionStack.end(); ++iter) {
-		ExecStack &es = *iter;
+		const ExecStack &es = *iter;
 
 		if (es.type != EXEC_STACK_TYPE_KERNEL) {
 			wm.push(es.objp);
@@ -143,6 +157,9 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 
 	processWorkList(s->_segMan, wm, heap);
 
+	if (g_sci->_gfxPorts)
+		g_sci->_gfxPorts->processEngineHunkList(wm);
+
 	return normalizeAddresses(s->_segMan, wm._map);
 }
 
@@ -170,7 +187,7 @@ void run_gc(EngineState *s) {
 		if (mobj != NULL) {
 #ifdef GC_DEBUG_CODE
 			const SegmentType type = mobj->getType();
-			segnames[type] = SegmentObj::getSegmentTypeName(type);
+			segnames[type] = segmentTypeNames[type];
 #endif
 
 			// Get a list of all deallocatable objects in this segment,

@@ -166,7 +166,7 @@ void AgiEngine::blitTextbox(const char *p, int y, int x, int len) {
 	drawWindow(xoff, yoff, xoff + w - 1, yoff + h - 1);
 
 	printText2(2, msg, 0, CHAR_COLS + xoff, CHAR_LINES + yoff,
-			len + 1, MSG_BOX_TEXT, MSG_BOX_COLOUR);
+			len + 1, MSG_BOX_TEXT, MSG_BOX_COLOR);
 
 	free(msg);
 
@@ -730,7 +730,7 @@ void AgiEngine::drawWindow(int x1, int y1, int x2, int y2) {
 
 	debugC(4, kDebugLevelText, "x1=%d, y1=%d, x2=%d, y2=%d", x1, y1, x2, y2);
 	_gfx->saveBlock(x1, y1, x2, y2, _game.window.buffer);
-	_gfx->drawBox(x1, y1, x2, y2, MSG_BOX_COLOUR, MSG_BOX_LINE, 2);
+	_gfx->drawBox(x1, y1, x2, y2, MSG_BOX_COLOR, MSG_BOX_LINE, 2);
 }
 
 } // End of namespace Agi

@@ -30,11 +30,13 @@
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 	:
 	_hwscreen(0),
 	_screenResized(false),
+	_activeFullscreenMode(-2),
 	_lastFullscreenModeWidth(0),
 	_lastFullscreenModeHeight(0),
 	_desktopWidth(0),
@@ -78,9 +80,6 @@ bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 
 void OpenGLSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	switch (f) {
-	case OSystem::kFeatureFullscreenMode:
-		setFullscreenMode(enable);
-		break;
 	case OSystem::kFeatureIconifyWindow:
 		if (enable)
 			SDL_WM_IconifyWindow();
@@ -121,6 +120,7 @@ void OpenGLSdlGraphicsManager::detectSupportedFormats() {
 #endif
 		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),	// RGB565
 		Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),	// RGB5551
+		Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),	// RGB555
 		Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),	// RGBA4444
 #ifndef USE_GLES
 		Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)   // ARGB4444
@@ -191,52 +191,8 @@ void OpenGLSdlGraphicsManager::detectSupportedFormats() {
 
 #endif
 
-void OpenGLSdlGraphicsManager::warpMouse(int x, int y) {
-	int scaledX = x;
-	int scaledY = y;
-
-	int16 currentX = _cursorState.x;
-	int16 currentY = _cursorState.y;
-
-	adjustMousePosition(currentX, currentY);
-
-	// Do not adjust the real screen position, when the current game / overlay
-	// coordinates match the requested coordinates. This avoids a slight
-	// movement which might occur otherwise when the mouse is at a subpixel
-	// position.
-	if (x == currentX && y == currentY)
-		return;
-
-	if (_videoMode.mode == OpenGL::GFX_NORMAL) {
-		if (_videoMode.hardwareWidth != _videoMode.overlayWidth)
-			scaledX = scaledX * _videoMode.hardwareWidth / _videoMode.overlayWidth;
-		if (_videoMode.hardwareHeight != _videoMode.overlayHeight)
-			scaledY = scaledY * _videoMode.hardwareHeight / _videoMode.overlayHeight;
-
-		if (!_overlayVisible) {
-			scaledX *= _videoMode.scaleFactor;
-			scaledY *= _videoMode.scaleFactor;
-		}
-	} else {
-		if (_overlayVisible) {
-			if (_displayWidth != _videoMode.overlayWidth)
-				scaledX = scaledX * _displayWidth / _videoMode.overlayWidth;
-			if (_displayHeight != _videoMode.overlayHeight)
-				scaledY = scaledY * _displayHeight / _videoMode.overlayHeight;
-		} else {
-			if (_displayWidth != _videoMode.screenWidth)
-				scaledX = scaledX * _displayWidth / _videoMode.screenWidth;
-			if (_displayHeight != _videoMode.screenHeight)
-				scaledY = scaledY * _displayHeight / _videoMode.screenHeight;
-		}
-
-		scaledX += _displayX;
-		scaledY += _displayY;
-	}
-
-	SDL_WarpMouse(scaledX, scaledY);
-
-	setMousePos(scaledX, scaledY);
+void OpenGLSdlGraphicsManager::setInternalMousePosition(int x, int y) {
+	SDL_WarpMouse(x, y);
 }
 
 void OpenGLSdlGraphicsManager::updateScreen() {
@@ -258,7 +214,7 @@ bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
 	if (availableModes == (void *)-1) {
 		_videoMode.hardwareWidth = _desktopWidth;
 		_videoMode.hardwareHeight = _desktopHeight;
-		_videoMode.activeFullscreenMode = -2;
+		_activeFullscreenMode = -2;
 		return true;
 	}
 
@@ -266,7 +222,7 @@ bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
 	// The last used fullscreen mode will be prioritized, if there is no last fullscreen
 	// mode, the desktop resolution will be used, and in case the desktop resolution
 	// is not available as a fullscreen mode, the one with smallest metric will be selected.
-	if (_videoMode.activeFullscreenMode == -2) {
+	if (_activeFullscreenMode == -2) {
 		// Desktop resolution
 		int desktopModeIndex = -1;
 
@@ -281,7 +237,7 @@ bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
 			if (mode->w == _lastFullscreenModeWidth && mode->h == _lastFullscreenModeHeight) {
 				_videoMode.hardwareWidth = _lastFullscreenModeWidth;
 				_videoMode.hardwareHeight = _lastFullscreenModeHeight;
-				_videoMode.activeFullscreenMode = i;
+				_activeFullscreenMode = i;
 				return true;
 			}
 
@@ -305,32 +261,32 @@ bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
 			_videoMode.hardwareWidth = _desktopWidth;
 			_videoMode.hardwareHeight = _desktopHeight;
 
-			_videoMode.activeFullscreenMode = desktopModeIndex;
+			_activeFullscreenMode = desktopModeIndex;
 			return true;
 		} else if (bestMode) {
 			_videoMode.hardwareWidth = bestMode->w;
 			_videoMode.hardwareHeight = bestMode->h;
 
-			_videoMode.activeFullscreenMode = bestModeIndex;
+			_activeFullscreenMode = bestModeIndex;
 			return true;
 		}
 	} else {
 		// Use last fullscreen mode if looping backwards from the first mode
-		if (_videoMode.activeFullscreenMode == -1) {
+		if (_activeFullscreenMode == -1) {
 			do {
-				_videoMode.activeFullscreenMode++;
-			} while(availableModes[_videoMode.activeFullscreenMode]);
-			_videoMode.activeFullscreenMode--;
+				_activeFullscreenMode++;
+			} while(availableModes[_activeFullscreenMode]);
+			_activeFullscreenMode--;
 		}
 
 		// Use first fullscreen mode if looping from last mode
-		if (!availableModes[_videoMode.activeFullscreenMode])
-			_videoMode.activeFullscreenMode = 0;
+		if (!availableModes[_activeFullscreenMode])
+			_activeFullscreenMode = 0;
 
 		// Check if the fullscreen mode is valid
-		if (availableModes[_videoMode.activeFullscreenMode]) {
-			_videoMode.hardwareWidth = availableModes[_videoMode.activeFullscreenMode]->w;
-			_videoMode.hardwareHeight = availableModes[_videoMode.activeFullscreenMode]->h;
+		if (availableModes[_activeFullscreenMode]) {
+			_videoMode.hardwareWidth = availableModes[_activeFullscreenMode]->w;
+			_videoMode.hardwareHeight = availableModes[_activeFullscreenMode]->h;
 			return true;
 		}
 	}
@@ -340,17 +296,11 @@ bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
 }
 
 bool OpenGLSdlGraphicsManager::loadGFXMode() {
-	// Force 4/3 if feature enabled
-	if (_aspectRatioCorrection)
-		_videoMode.mode = OpenGL::GFX_4_3;
-
-	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
-	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
-
 	// If the screen was resized, do not change its size
 	if (!_screenResized) {
-		_videoMode.hardwareWidth = _videoMode.overlayWidth;
-		_videoMode.hardwareHeight = _videoMode.overlayHeight;
+		const int scaleFactor = getScale();
+		_videoMode.overlayWidth = _videoMode.hardwareWidth = _videoMode.screenWidth * scaleFactor;
+		_videoMode.overlayHeight = _videoMode.hardwareHeight = _videoMode.screenHeight * scaleFactor;
 
 		int screenAspectRatio = _videoMode.screenWidth * 10000 / _videoMode.screenHeight;
 		int desiredAspectRatio = getAspectRatio();
@@ -360,11 +310,6 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 			_videoMode.hardwareHeight = (_videoMode.overlayWidth * 10000  + 5000) / desiredAspectRatio;
 		else if (screenAspectRatio < desiredAspectRatio)
 			_videoMode.hardwareWidth = (_videoMode.overlayHeight * desiredAspectRatio + 5000) / 10000;
-
-		// Only adjust the overlay height if it is bigger than original one. If
-		// the width is modified it can break the overlay.
-		if (_videoMode.hardwareHeight > _videoMode.overlayHeight)
-			_videoMode.overlayHeight = _videoMode.hardwareHeight;
 	}
 
 	_screenResized = false;
@@ -376,14 +321,24 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-	if (_videoMode.fullscreen)
+	const bool isFullscreen = getFullscreenMode();
+
+	// In case we have an fullscreen mode and we are not in a rollback, detect
+	// a proper mode to use. In case we are in a rollback, we already detected
+	// a proper mode when setting up that mode, thus there is no need to run
+	// the detection again.
+	if (isFullscreen && _transactionMode != kTransactionRollback) {
 		if (!setupFullscreenMode())
 			// Failed setuping a fullscreen mode
 			return false;
+	}
+
+	_videoMode.overlayWidth = _videoMode.hardwareWidth;
+	_videoMode.overlayHeight = _videoMode.hardwareHeight;
 
 	uint32 flags = SDL_OPENGL;
 
-	if (_videoMode.fullscreen)
+	if (isFullscreen)
 		flags |= SDL_FULLSCREEN;
 	else
 		flags |= SDL_RESIZABLE;
@@ -409,7 +364,7 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	// Check if the screen is BGR format
 	_formatBGR = _hwscreen->format->Rshift != 0;
 
-	if (_videoMode.fullscreen) {
+	if (isFullscreen) {
 		_lastFullscreenModeWidth = _videoMode.hardwareWidth;
 		_lastFullscreenModeHeight = _videoMode.hardwareHeight;
 		ConfMan.setInt("last_fullscreen_mode_width", _lastFullscreenModeWidth);
@@ -439,11 +394,13 @@ void OpenGLSdlGraphicsManager::internUpdateScreen() {
 void OpenGLSdlGraphicsManager::displayModeChangedMsg() {
 	const char *newModeName = getCurrentModeName();
 	if (newModeName) {
+		const int scaleFactor = getScale();
+
 		char buffer[128];
 		sprintf(buffer, "Current display mode: %s\n%d x %d -> %d x %d",
 			newModeName,
-			_videoMode.screenWidth * _videoMode.scaleFactor,
-			_videoMode.screenHeight * _videoMode.scaleFactor,
+			_videoMode.screenWidth * scaleFactor,
+			_videoMode.screenHeight * scaleFactor,
 			_hwscreen->w, _hwscreen->h
 			);
 		displayMessageOnOSD(buffer);
@@ -451,25 +408,15 @@ void OpenGLSdlGraphicsManager::displayModeChangedMsg() {
 }
 void OpenGLSdlGraphicsManager::displayScaleChangedMsg() {
 	char buffer[128];
+	const int scaleFactor = getScale();
 	sprintf(buffer, "Current scale: x%d\n%d x %d -> %d x %d",
-		_videoMode.scaleFactor,
+		scaleFactor,
 		_videoMode.screenWidth, _videoMode.screenHeight,
 		_videoMode.overlayWidth, _videoMode.overlayHeight
 		);
 	displayMessageOnOSD(buffer);
 }
 #endif
-
-void OpenGLSdlGraphicsManager::setFullscreenMode(bool enable) {
-	if (_oldVideoMode.setup && _oldVideoMode.fullscreen == enable &&
-		_oldVideoMode.activeFullscreenMode == _videoMode.activeFullscreenMode)
-		return;
-
-	if (_transactionMode == kTransactionActive) {
-		_videoMode.fullscreen = enable;
-		_transactionDetails.needRefresh = true;
-	}
-}
 
 bool OpenGLSdlGraphicsManager::isHotkey(const Common::Event &event) {
 	if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
@@ -488,12 +435,14 @@ bool OpenGLSdlGraphicsManager::isHotkey(const Common::Event &event) {
 
 void OpenGLSdlGraphicsManager::toggleFullScreen(int loop) {
 	beginGFXTransaction();
-		if (_videoMode.fullscreen && loop) {
-			_videoMode.activeFullscreenMode += loop;
+		const bool isFullscreen = getFullscreenMode();
+
+		if (isFullscreen && loop) {
+			_activeFullscreenMode += loop;
 			setFullscreenMode(true);
 		} else {
-			_videoMode.activeFullscreenMode = -2;
-			setFullscreenMode(!_videoMode.fullscreen);
+			_activeFullscreenMode = -2;
+			setFullscreenMode(!isFullscreen);
 		}
 	endGFXTransaction();
 
@@ -502,7 +451,7 @@ void OpenGLSdlGraphicsManager::toggleFullScreen(int loop) {
 
 #ifdef USE_OSD
 	char buffer[128];
-	if (_videoMode.fullscreen)
+	if (getFullscreenMode())
 		sprintf(buffer, "Fullscreen mode\n%d x %d",
 			_hwscreen->w, _hwscreen->h
 			);
@@ -539,9 +488,9 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 					SDL_RWclose(file);
 				}
 				if (saveScreenshot(filename))
-					printf("Saved '%s'\n", filename);
+					debug("Saved screenshot '%s'", filename);
 				else
-					printf("Could not save screenshot!\n");
+					warning("Could not save screenshot");
 				return true;
 			}
 		}
@@ -557,10 +506,19 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			// Ctrl-Alt-a switch between display modes
 			if (event.kbd.keycode == 'a') {
 				beginGFXTransaction();
-					switchDisplayMode(-1);
+					setFeatureState(OSystem::kFeatureAspectRatioCorrection, !getFeatureState(OSystem::kFeatureAspectRatioCorrection));
 				endGFXTransaction();
 #ifdef USE_OSD
-				displayModeChangedMsg();
+			char buffer[128];
+			if (getFeatureState(OSystem::kFeatureAspectRatioCorrection))
+				sprintf(buffer, "Enabled aspect ratio correction\n%d x %d -> %d x %d",
+				        _videoMode.screenWidth, _videoMode.screenHeight,
+				        _hwscreen->w, _hwscreen->h);
+			else
+				sprintf(buffer, "Disabled aspect ratio correction\n%d x %d -> %d x %d",
+				        _videoMode.screenWidth, _videoMode.screenHeight,
+				        _hwscreen->w, _hwscreen->h);
+			displayMessageOnOSD(buffer);
 #endif
 				internUpdateScreen();
 				return true;
@@ -569,11 +527,14 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			// Ctrl-Alt-f toggles antialiasing
 			if (event.kbd.keycode == 'f') {
 				beginGFXTransaction();
-					_videoMode.antialiasing = !_videoMode.antialiasing;
-					_transactionDetails.filterChanged = true;
+					toggleAntialiasing();
 				endGFXTransaction();
+
 #ifdef USE_OSD
-				if (_videoMode.antialiasing)
+				// TODO: This makes guesses about what internal antialiasing
+				// modes we use, we might want to consider a better way of
+				// displaying information to the user.
+				if (getAntialiasingState())
 					displayMessageOnOSD("Active filter mode: Linear");
 				else
 					displayMessageOnOSD("Active filter mode: Nearest");
@@ -586,7 +547,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			// Ctrl+Alt+Plus/Minus Increase/decrease the scale factor
 			if ((sdlKey == SDLK_EQUALS || sdlKey == SDLK_PLUS || sdlKey == SDLK_MINUS ||
 				sdlKey == SDLK_KP_PLUS || sdlKey == SDLK_KP_MINUS)) {
-				int factor = _videoMode.scaleFactor;
+				int factor = getScale();
 				factor += (sdlKey == SDLK_MINUS || sdlKey == SDLK_KP_MINUS) ? -1 : +1;
 				if (0 < factor && factor < 4) {
 					// Check if the desktop resolution has been detected
@@ -606,17 +567,21 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				}
 			}
 
-			const bool isNormalNumber = (SDLK_1 <= sdlKey && sdlKey <= SDLK_4);
-			const bool isKeypadNumber = (SDLK_KP1 <= sdlKey && sdlKey <= SDLK_KP4);
+			const bool isNormalNumber = (SDLK_1 <= sdlKey && sdlKey <= SDLK_3);
+			const bool isKeypadNumber = (SDLK_KP1 <= sdlKey && sdlKey <= SDLK_KP3);
 
 			// Ctrl-Alt-<number key> will change the GFX mode
 			if (isNormalNumber || isKeypadNumber) {
-				if (sdlKey - (isNormalNumber ? SDLK_1 : SDLK_KP1) <= 4) {
+				if (sdlKey - (isNormalNumber ? SDLK_1 : SDLK_KP1) <= 3) {
+#ifdef USE_OSD
 					int lastMode = _videoMode.mode;
+#endif
+					// We need to query the scale and set it up, because
+					// setGraphicsMode sets the default scale to 2
+					int oldScale = getScale();
 					beginGFXTransaction();
-						_videoMode.mode = sdlKey - (isNormalNumber ? SDLK_1 : SDLK_KP1);
-						_transactionDetails.needRefresh = true;
-						_aspectRatioCorrection = false;
+						setGraphicsMode(sdlKey - (isNormalNumber ? SDLK_1 : SDLK_KP1));
+						setScale(oldScale);
 					endGFXTransaction();
 #ifdef USE_OSD
 					if (lastMode != _videoMode.mode)
@@ -634,18 +599,6 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				toggleFullScreen(-1);
 				return true;
 			}
-
-			// Ctrl-Shift-a switch backwards between display modes
-			if (event.kbd.keycode == 'a') {
-				beginGFXTransaction();
-					switchDisplayMode(-2);
-				endGFXTransaction();
-#ifdef USE_OSD
-				displayModeChangedMsg();
-#endif
-				internUpdateScreen();
-				return true;
-			}
 		}
 		break;
 	case Common::EVENT_KEYUP:
@@ -655,7 +608,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	// there is no common resize event.
 	case OSystem_SDL::kSdlEventResize:
 		// Do not resize if ignoring resize events.
-		if (!_ignoreResizeFrames && !_videoMode.fullscreen) {
+		if (!_ignoreResizeFrames && !getFullscreenMode()) {
 			bool scaleChanged = false;
 			beginGFXTransaction();
 				_videoMode.hardwareWidth = event.mouse.x;
@@ -667,10 +620,11 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				}
 
 				int scale = MIN(_videoMode.hardwareWidth / _videoMode.screenWidth,
-							_videoMode.hardwareHeight / _videoMode.screenHeight);
-				if (_videoMode.scaleFactor != scale) {
+				                _videoMode.hardwareHeight / _videoMode.screenHeight);
+
+				if (getScale() != scale) {
 					scaleChanged = true;
-					_videoMode.scaleFactor = MAX(MIN(scale, 3), 1);
+					setScale(MAX(MIN(scale, 3), 1));
 				}
 
 				if (_videoMode.mode == OpenGL::GFX_ORIGINAL) {

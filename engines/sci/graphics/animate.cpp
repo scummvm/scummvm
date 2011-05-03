@@ -27,6 +27,7 @@
 #include "common/stack.h"
 #include "graphics/primitives.h"
 
+#include "sci/console.h"
 #include "sci/sci.h"
 #include "sci/event.h"
 #include "sci/engine/kernel.h"
@@ -191,11 +192,88 @@ void GfxAnimate::makeSortedList(List *list) {
 	Common::sort(_list.begin(), _list.end(), sortHelper);
 }
 
-void GfxAnimate::applyGlobalScaling(AnimateList::iterator entry, GfxView *view) {
-	reg_t curObject = entry->object;
+void GfxAnimate::fill(byte &old_picNotValid) {
+	GfxView *view = NULL;
+	AnimateList::iterator it;
+	const AnimateList::iterator end = _list.end();
 
+	for (it = _list.begin(); it != end; ++it) {
+		// Get the corresponding view
+		view = _cache->getView(it->viewId);
+
+		adjustInvalidCels(view, it);
+		processViewScaling(view, it);
+		setNsRect(view, it);
+		
+		//warning("%s view %d, loop %d, cel %d, signal %x", _s->_segMan->getObjectName(curObject), it->viewId, it->loopNo, it->celNo, it->signal);
+
+		// Calculate current priority according to y-coordinate
+		if (!(it->signal & kSignalFixedPriority)) {
+			it->priority = _ports->kernelCoordinateToPriority(it->y);
+			writeSelectorValue(_s->_segMan, it->object, SELECTOR(priority), it->priority);
+		}
+
+		if (it->signal & kSignalNoUpdate) {
+			if ((it->signal & (kSignalForceUpdate | kSignalViewUpdated))
+				||   (it->signal & kSignalHidden  && !(it->signal & kSignalRemoveView))
+				|| (!(it->signal & kSignalHidden) &&   it->signal & kSignalRemoveView)
+				||   (it->signal & kSignalAlwaysUpdate))
+				old_picNotValid++;
+			it->signal &= ~kSignalStopUpdate;
+		} else {
+			if ((it->signal & kSignalStopUpdate) || (it->signal & kSignalAlwaysUpdate))
+				old_picNotValid++;
+			it->signal &= ~kSignalForceUpdate;
+		}
+	}
+}
+
+void GfxAnimate::adjustInvalidCels(GfxView *view, AnimateList::iterator it) {
+	// adjust loop and cel, if any of those is invalid
+	//  this seems to be completely crazy code
+	//  sierra sci checked signed int16 to be above or equal the counts and reseted to 0 in those cases
+	//  later during view processing those are compared unsigned again and then set to maximum count - 1
+	//  Games rely on this behaviour. For example laura bow 1 has a knight standing around in room 37
+	//   which has cel set to 3. This cel does not exist and the actual knight is 0
+	//   In kq5 on the other hand during the intro, when the trunk is opened, cel is set to some real
+	//   high number, which is negative when considered signed. This actually requires to get fixed to
+	//   maximum cel, otherwise the trunk would be closed.
+	int16 viewLoopCount = view->getLoopCount();
+	if (it->loopNo >= viewLoopCount) {
+		it->loopNo = 0;
+		writeSelectorValue(_s->_segMan, it->object, SELECTOR(loop), it->loopNo);
+	} else if (it->loopNo < 0) {
+		it->loopNo = viewLoopCount - 1;
+		// not setting selector is right, sierra sci didn't do it during view processing as well
+	}
+	int16 viewCelCount = view->getCelCount(it->loopNo);
+	if (it->celNo >= viewCelCount) {
+		it->celNo = 0;
+		writeSelectorValue(_s->_segMan, it->object, SELECTOR(cel), it->celNo);
+	} else if (it->celNo < 0) {
+		it->celNo = viewCelCount - 1;
+	}
+}
+
+void GfxAnimate::processViewScaling(GfxView *view, AnimateList::iterator it) {
+	if (!view->isScaleable()) {
+		// Laura Bow 2 (especially floppy) depends on this, some views are not supposed to be scaleable
+		//  this "feature" was removed in later versions of SCI1.1
+		it->scaleSignal = 0;
+		it->scaleY = it->scaleX = 128;
+	} else {
+		// Process global scaling, if needed
+		if (it->scaleSignal & kScaleSignalDoScaling) {
+			if (it->scaleSignal & kScaleSignalGlobalScaling) {
+				applyGlobalScaling(it, view);
+			}
+		}
+	}
+}
+
+void GfxAnimate::applyGlobalScaling(AnimateList::iterator entry, GfxView *view) {
 	// Global scaling uses global var 2 and some other stuff to calculate scaleX/scaleY
-	int16 maxScale = readSelectorValue(_s->_segMan, curObject, SELECTOR(maxScale));
+	int16 maxScale = readSelectorValue(_s->_segMan, entry->object, SELECTOR(maxScale));
 	int16 celHeight = view->getHeight(entry->loopNo, entry->celNo);
 	int16 maxCelHeight = (maxScale * celHeight) >> 7;
 	reg_t globalVar2 = _s->variables[VAR_GLOBAL][2]; // current room object
@@ -215,120 +293,43 @@ void GfxAnimate::applyGlobalScaling(AnimateList::iterator entry, GfxView *view) 
 	entry->scaleX = entry->scaleY;
 
 	// and set objects scale selectors
-	writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleX), entry->scaleX);
-	writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleY), entry->scaleY);
+	writeSelectorValue(_s->_segMan, entry->object, SELECTOR(scaleX), entry->scaleX);
+	writeSelectorValue(_s->_segMan, entry->object, SELECTOR(scaleY), entry->scaleY);
 }
 
-void GfxAnimate::fill(byte &old_picNotValid) {
-	reg_t curObject;
-	uint16 signal;
-	GfxView *view = NULL;
-	AnimateList::iterator it;
-	const AnimateList::iterator end = _list.end();
+void GfxAnimate::setNsRect(GfxView *view, AnimateList::iterator it) {
+	bool shouldSetNsRect = true;
 
-	for (it = _list.begin(); it != end; ++it) {
-		curObject = it->object;
-		signal = it->signal;
-
-		// Get the corresponding view
-		view = _cache->getView(it->viewId);
-
-		// adjust loop and cel, if any of those is invalid
-		//  this seems to be completely crazy code
-		//  sierra sci checked signed int16 to be above or equal the counts and reseted to 0 in those cases
-		//  later during view processing those are compared unsigned again and then set to maximum count - 1
-		//  Games rely on this behaviour. For example laura bow 1 has a knight standing around in room 37
-		//   which has cel set to 3. This cel does not exist and the actual knight is 0
-		//   In kq5 on the other hand during the intro, when the trunk is opened, cel is set to some real
-		//   high number, which is negative when considered signed. This actually requires to get fixed to
-		//   maximum cel, otherwise the trunk would be closed.
-		int16 viewLoopCount = view->getLoopCount();
-		if (it->loopNo >= viewLoopCount) {
-			it->loopNo = 0;
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(loop), it->loopNo);
-		} else if (it->loopNo < 0) {
-			it->loopNo = viewLoopCount - 1;
-			// not setting selector is right, sierra sci didn't do it during view processing as well
-		}
-		int16 viewCelCount = view->getCelCount(it->loopNo);
-		if (it->celNo >= viewCelCount) {
-			it->celNo = 0;
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(cel), it->celNo);
-		} else if (it->celNo < 0) {
-			it->celNo = viewCelCount - 1;
-		}
-
-		if (!view->isScaleable()) {
-			// Laura Bow 2 (especially floppy) depends on this, some views are not supposed to be scaleable
-			//  this "feature" was removed in later versions of SCI1.1
-			it->scaleSignal = 0;
-			it->scaleY = it->scaleX = 128;
+	// Create rect according to coordinates and given cel
+	if (it->scaleSignal & kScaleSignalDoScaling) {
+		view->getCelScaledRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->scaleX, it->scaleY, it->celRect);
+		// when being scaled, only set nsRect, if object will get drawn
+		if ((it->signal & kSignalHidden) && !(it->signal & kSignalAlwaysUpdate))
+			shouldSetNsRect = false;
+	} else {
+		//  This special handling is not included in the other SCI1.1 interpreters and MUST NOT be
+		//  checked in those cases, otherwise we will break games (e.g. EcoQuest 2, room 200)
+		if ((g_sci->getGameId() == GID_HOYLE4) && (it->scaleSignal & kScaleSignalHoyle4SpecialHandling)) {
+			it->celRect.left = readSelectorValue(_s->_segMan, it->object, SELECTOR(nsLeft));
+			it->celRect.top = readSelectorValue(_s->_segMan, it->object, SELECTOR(nsTop));
+			it->celRect.right = readSelectorValue(_s->_segMan, it->object, SELECTOR(nsRight));
+			it->celRect.bottom = readSelectorValue(_s->_segMan, it->object, SELECTOR(nsBottom));
+			view->getCelSpecialHoyle4Rect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
+			shouldSetNsRect = false;
 		} else {
-			// Process global scaling, if needed
-			if (it->scaleSignal & kScaleSignalDoScaling) {
-				if (it->scaleSignal & kScaleSignalGlobalScaling) {
-					applyGlobalScaling(it, view);
-				}
-			}
+			view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
 		}
+	}
 
-		//warning("%s view %d, loop %d, cel %d, signal %x", _s->_segMan->getObjectName(curObject), it->viewId, it->loopNo, it->celNo, it->signal);
-
-		bool setNsRect = true;
-
-		// Create rect according to coordinates and given cel
-		if (it->scaleSignal & kScaleSignalDoScaling) {
-			view->getCelScaledRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->scaleX, it->scaleY, it->celRect);
-			// when being scaled, only set nsRect, if object will get drawn
-			if ((signal & kSignalHidden) && !(signal & kSignalAlwaysUpdate))
-				setNsRect = false;
-		} else {
-			//  This special handling is not included in the other SCI1.1 interpreters and MUST NOT be
-			//  checked in those cases, otherwise we will break games (e.g. EcoQuest 2, room 200)
-			if ((g_sci->getGameId() == GID_HOYLE4) && (it->scaleSignal & kScaleSignalHoyle4SpecialHandling)) {
-				it->celRect.left = readSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft));
-				it->celRect.top = readSelectorValue(_s->_segMan, curObject, SELECTOR(nsTop));
-				it->celRect.right = readSelectorValue(_s->_segMan, curObject, SELECTOR(nsRight));
-				it->celRect.bottom = readSelectorValue(_s->_segMan, curObject, SELECTOR(nsBottom));
-				view->getCelSpecialHoyle4Rect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
-				setNsRect = false;
-			} else {
-				view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
-			}
-		}
-
-		if (setNsRect) {
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft), it->celRect.left);
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsTop), it->celRect.top);
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsRight), it->celRect.right);
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsBottom), it->celRect.bottom);
-		}
-
-		// Calculate current priority according to y-coordinate
-		if (!(signal & kSignalFixedPriority)) {
-			it->priority = _ports->kernelCoordinateToPriority(it->y);
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(priority), it->priority);
-		}
-
-		if (signal & kSignalNoUpdate) {
-			if (signal & (kSignalForceUpdate | kSignalViewUpdated)
-				|| (signal & kSignalHidden && !(signal & kSignalRemoveView))
-				|| (!(signal & kSignalHidden) && signal & kSignalRemoveView)
-				|| (signal & kSignalAlwaysUpdate))
-				old_picNotValid++;
-			signal &= ~kSignalStopUpdate;
-		} else {
-			if (signal & kSignalStopUpdate || signal & kSignalAlwaysUpdate)
-				old_picNotValid++;
-			signal &= ~kSignalForceUpdate;
-		}
-		it->signal = signal;
+	if (shouldSetNsRect) {
+		writeSelectorValue(_s->_segMan, it->object, SELECTOR(nsLeft), it->celRect.left);
+		writeSelectorValue(_s->_segMan, it->object, SELECTOR(nsTop), it->celRect.top);
+		writeSelectorValue(_s->_segMan, it->object, SELECTOR(nsRight), it->celRect.right);
+		writeSelectorValue(_s->_segMan, it->object, SELECTOR(nsBottom), it->celRect.bottom);
 	}
 }
 
 void GfxAnimate::update() {
-	reg_t curObject;
-	uint16 signal;
 	reg_t bitsHandle;
 	Common::Rect rect;
 	AnimateList::iterator it;
@@ -336,81 +337,66 @@ void GfxAnimate::update() {
 
 	// Remove all no-update cels, if requested
 	for (it = _list.reverse_begin(); it != end; --it) {
-		curObject = it->object;
-		signal = it->signal;
-
-		if (signal & kSignalNoUpdate) {
-			if (!(signal & kSignalRemoveView)) {
-				bitsHandle = readSelector(_s->_segMan, curObject, SELECTOR(underBits));
+		if (it->signal & kSignalNoUpdate) {
+			if (!(it->signal & kSignalRemoveView)) {
+				bitsHandle = readSelector(_s->_segMan, it->object, SELECTOR(underBits));
 				if (_screen->_picNotValid != 1) {
 					_paint16->bitsRestore(bitsHandle);
 					it->showBitsFlag = true;
 				} else	{
 					_paint16->bitsFree(bitsHandle);
 				}
-				writeSelectorValue(_s->_segMan, curObject, SELECTOR(underBits), 0);
+				writeSelectorValue(_s->_segMan, it->object, SELECTOR(underBits), 0);
 			}
-			signal &= ~kSignalForceUpdate;
-			if (signal & kSignalViewUpdated)
-				signal &= ~(kSignalViewUpdated | kSignalNoUpdate);
-		} else if (signal & kSignalStopUpdate) {
-			signal &= ~kSignalStopUpdate;
-			signal |= kSignalNoUpdate;
+			it->signal &= ~kSignalForceUpdate;
+			if (it->signal & kSignalViewUpdated)
+				it->signal &= ~(kSignalViewUpdated | kSignalNoUpdate);
+		} else if (it->signal & kSignalStopUpdate) {
+			it->signal &= ~kSignalStopUpdate;
+			it->signal |= kSignalNoUpdate;
 		}
-		it->signal = signal;
 	}
 
 	// Draw always-update cels
 	for (it = _list.begin(); it != end; ++it) {
-		curObject = it->object;
-		signal = it->signal;
-
-		if (signal & kSignalAlwaysUpdate) {
+		if (it->signal & kSignalAlwaysUpdate) {
 			// draw corresponding cel
 			_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY);
 			it->showBitsFlag = true;
 
-			signal &= ~(kSignalStopUpdate | kSignalViewUpdated | kSignalNoUpdate | kSignalForceUpdate);
-			if ((signal & kSignalIgnoreActor) == 0) {
+			it->signal &= ~(kSignalStopUpdate | kSignalViewUpdated | kSignalNoUpdate | kSignalForceUpdate);
+			if (!(it->signal & kSignalIgnoreActor)) {
 				rect = it->celRect;
 				rect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(it->priority) - 1, rect.top, rect.bottom - 1);
 				_paint16->fillRect(rect, GFX_SCREEN_MASK_CONTROL, 0, 0, 15);
 			}
-			it->signal = signal;
 		}
 	}
 
 	// Saving background for all NoUpdate-cels
 	for (it = _list.begin(); it != end; ++it) {
-		curObject = it->object;
-		signal = it->signal;
-
-		if (signal & kSignalNoUpdate) {
-			if (signal & kSignalHidden) {
-				signal |= kSignalRemoveView;
+		if (it->signal & kSignalNoUpdate) {
+			if (it->signal & kSignalHidden) {
+				it->signal |= kSignalRemoveView;
 			} else {
-				signal &= ~kSignalRemoveView;
-				if (signal & kSignalIgnoreActor)
+				it->signal &= ~kSignalRemoveView;
+				if (it->signal & kSignalIgnoreActor)
 					bitsHandle = _paint16->bitsSave(it->celRect, GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY);
 				else
 					bitsHandle = _paint16->bitsSave(it->celRect, GFX_SCREEN_MASK_ALL);
-				writeSelector(_s->_segMan, curObject, SELECTOR(underBits), bitsHandle);
+				writeSelector(_s->_segMan, it->object, SELECTOR(underBits), bitsHandle);
 			}
-			it->signal = signal;
 		}
 	}
 
 	// Draw NoUpdate cels
 	for (it = _list.begin(); it != end; ++it) {
-		curObject = it->object;
-		signal = it->signal;
-
-		if (signal & kSignalNoUpdate && !(signal & kSignalHidden)) {
+		if (it->signal & kSignalNoUpdate && !(it->signal & kSignalHidden)) {
 			// draw corresponding cel
 			_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY);
 			it->showBitsFlag = true;
 
-			if (!(signal & kSignalIgnoreActor)) {
+			if (!(it->signal & kSignalIgnoreActor)) {
 				rect = it->celRect;
 				rect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(it->priority) - 1, rect.top, rect.bottom - 1);
 				_paint16->fillRect(rect, GFX_SCREEN_MASK_CONTROL, 0, 0, 15);
@@ -420,30 +406,23 @@ void GfxAnimate::update() {
 }
 
 void GfxAnimate::drawCels() {
-	reg_t curObject;
-	uint16 signal;
 	reg_t bitsHandle;
 	AnimateList::iterator it;
 	const AnimateList::iterator end = _list.end();
 	_lastCastData.clear();
 
 	for (it = _list.begin(); it != end; ++it) {
-		curObject = it->object;
-		signal = it->signal;
-
-		if (!(signal & (kSignalNoUpdate | kSignalHidden | kSignalAlwaysUpdate))) {
+		if (!(it->signal & (kSignalNoUpdate | kSignalHidden | kSignalAlwaysUpdate))) {
 			// Save background
 			bitsHandle = _paint16->bitsSave(it->celRect, GFX_SCREEN_MASK_ALL);
-			writeSelector(_s->_segMan, curObject, SELECTOR(underBits), bitsHandle);
+			writeSelector(_s->_segMan, it->object, SELECTOR(underBits), bitsHandle);
 
 			// draw corresponding cel
 			_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY);
 			it->showBitsFlag = true;
 
-			if (signal & kSignalRemoveView) {
-				signal &= ~kSignalRemoveView;
-			}
-			it->signal = signal;
+			if (it->signal & kSignalRemoveView)
+				it->signal &= ~kSignalRemoveView;
 
 			// Remember that entry in lastCast
 			_lastCastData.push_back(*it);
@@ -452,23 +431,18 @@ void GfxAnimate::drawCels() {
 }
 
 void GfxAnimate::updateScreen(byte oldPicNotValid) {
-	reg_t curObject;
-	uint16 signal;
 	AnimateList::iterator it;
 	const AnimateList::iterator end = _list.end();
 	Common::Rect lsRect;
 	Common::Rect workerRect;
 
 	for (it = _list.begin(); it != end; ++it) {
-		curObject = it->object;
-		signal = it->signal;
-
-		if (it->showBitsFlag || !(signal & (kSignalRemoveView | kSignalNoUpdate) ||
-										(!(signal & kSignalRemoveView) && (signal & kSignalNoUpdate) && oldPicNotValid))) {
-			lsRect.left = readSelectorValue(_s->_segMan, curObject, SELECTOR(lsLeft));
-			lsRect.top = readSelectorValue(_s->_segMan, curObject, SELECTOR(lsTop));
-			lsRect.right = readSelectorValue(_s->_segMan, curObject, SELECTOR(lsRight));
-			lsRect.bottom = readSelectorValue(_s->_segMan, curObject, SELECTOR(lsBottom));
+		if (it->showBitsFlag || !(it->signal & (kSignalRemoveView | kSignalNoUpdate) ||
+										(!(it->signal & kSignalRemoveView) && (it->signal & kSignalNoUpdate) && oldPicNotValid))) {
+			lsRect.left = readSelectorValue(_s->_segMan, it->object, SELECTOR(lsLeft));
+			lsRect.top = readSelectorValue(_s->_segMan, it->object, SELECTOR(lsTop));
+			lsRect.right = readSelectorValue(_s->_segMan, it->object, SELECTOR(lsRight));
+			lsRect.bottom = readSelectorValue(_s->_segMan, it->object, SELECTOR(lsBottom));
 
 			workerRect = lsRect;
 			workerRect.clip(it->celRect);
@@ -480,17 +454,16 @@ void GfxAnimate::updateScreen(byte oldPicNotValid) {
 				_paint16->bitsShow(lsRect);
 				workerRect = it->celRect;
 			}
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsLeft), it->celRect.left);
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsTop), it->celRect.top);
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsRight), it->celRect.right);
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsBottom), it->celRect.bottom);
+			writeSelectorValue(_s->_segMan, it->object, SELECTOR(lsLeft), it->celRect.left);
+			writeSelectorValue(_s->_segMan, it->object, SELECTOR(lsTop), it->celRect.top);
+			writeSelectorValue(_s->_segMan, it->object, SELECTOR(lsRight), it->celRect.right);
+			writeSelectorValue(_s->_segMan, it->object, SELECTOR(lsBottom), it->celRect.bottom);
 			// may get used for debugging
 			//_paint16->frameRect(workerRect);
 			_paint16->bitsShow(workerRect);
 
-			if (signal & kSignalHidden) {
+			if (it->signal & kSignalHidden)
 				it->signal |= kSignalRemoveView;
-			}
 		}
 	}
 	// use this for debug purposes
@@ -498,37 +471,30 @@ void GfxAnimate::updateScreen(byte oldPicNotValid) {
 }
 
 void GfxAnimate::restoreAndDelete(int argc, reg_t *argv) {
-	reg_t curObject;
-	uint16 signal;
 	AnimateList::iterator it;
 	const AnimateList::iterator end = _list.end();
-
 
 	// This has to be done in a separate loop. At least in sq1 some .dispose
 	// modifies FIXEDLOOP flag in signal for another object. In that case we
 	// would overwrite the new signal with our version of the old signal.
 	for (it = _list.begin(); it != end; ++it) {
-		curObject = it->object;
-		signal = it->signal;
-
 		// Finally update signal
-		writeSelectorValue(_s->_segMan, curObject, SELECTOR(signal), signal);
+		writeSelectorValue(_s->_segMan, it->object, SELECTOR(signal), it->signal);
 	}
 
 	for (it = _list.reverse_begin(); it != end; --it) {
-		curObject = it->object;
 		// We read out signal here again, this is not by accident but to ensure
 		// that we got an up-to-date signal
-		signal = readSelectorValue(_s->_segMan, curObject, SELECTOR(signal));
+		it->signal = readSelectorValue(_s->_segMan, it->object, SELECTOR(signal));
 
-		if ((signal & (kSignalNoUpdate | kSignalRemoveView)) == 0) {
-			_paint16->bitsRestore(readSelector(_s->_segMan, curObject, SELECTOR(underBits)));
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(underBits), 0);
+		if ((it->signal & (kSignalNoUpdate | kSignalRemoveView)) == 0) {
+			_paint16->bitsRestore(readSelector(_s->_segMan, it->object, SELECTOR(underBits)));
+			writeSelectorValue(_s->_segMan, it->object, SELECTOR(underBits), 0);
 		}
 
-		if (signal & kSignalDisposeMe) {
+		if (it->signal & kSignalDisposeMe) {
 			// Call .delete_ method of that object
-			invokeSelector(_s, curObject, SELECTOR(delete_), argc, argv, 0);
+			invokeSelector(_s, it->object, SELECTOR(delete_), argc, argv, 0);
 		}
 	}
 }
@@ -591,7 +557,7 @@ void GfxAnimate::addToPicDrawCels() {
 
 		// draw corresponding cel
 		_paint16->drawCel(view, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY);
-		if ((it->signal & kSignalIgnoreActor) == 0) {
+		if (!(it->signal & kSignalIgnoreActor)) {
 			it->celRect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(it->priority) - 1, it->celRect.top, it->celRect.bottom - 1);
 			_paint16->fillRect(it->celRect, GFX_SCREEN_MASK_CONTROL, 0, 0, 15);
 		}
@@ -665,10 +631,10 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 		// beginUpdate()/endUpdate() were introduced SCI1.
 		// Calling those for SCI0 will work most of the time but breaks minor
 		// stuff like percentage bar of qfg1ega at the character skill screen.
-		if (getSciVersion() >= SCI_VERSION_1_EGA)
+		if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY)
 			_ports->beginUpdate(_ports->_picWind);
 		update();
-		if (getSciVersion() >= SCI_VERSION_1_EGA)
+		if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY)
 			_ports->endUpdate(_ports->_picWind);
 	}
 
@@ -687,6 +653,10 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 	_ports->setPort(oldPort);
 
 	// Now trigger speed throttler
+	throttleSpeed();
+}
+
+void GfxAnimate::throttleSpeed() {
 	switch (_lastCastData.size()) {
 	case 0:
 		// No entries drawn -> no speed throttler triggering
@@ -757,6 +727,23 @@ void GfxAnimate::kernelAddToPicView(GuiResourceId viewId, int16 loopNo, int16 ce
 	_ports->setPort((Port *)_ports->_picWind);
 	addToPicDrawView(viewId, loopNo, celNo, x, y, priority, control);
 	addToPicSetPicNotValid();
+}
+
+void GfxAnimate::printAnimateList(Console *con) {
+	AnimateList::iterator it;
+	const AnimateList::iterator end = _list.end();
+
+	for (it = _list.begin(); it != end; ++it) {
+		Script *scr = _s->_segMan->getScriptIfLoaded(it->object.segment);
+		int16 scriptNo = scr ? scr->getScriptNumber() : -1;
+
+		con->DebugPrintf("%04x:%04x (%s), script %d, view %d (%d, %d), pal %d, "
+			"at %d, %d, scale %d, %d / %d (z: %d, prio: %d, shown: %d, signal: %d)\n",
+			PRINT_REG(it->object), _s->_segMan->getObjectName(it->object),
+			scriptNo, it->viewId, it->loopNo, it->celNo, it->paletteNo,
+			it->x, it->y, it->scaleX, it->scaleY, it->scaleSignal,
+			it->z, it->priority, it->showBitsFlag, it->signal);
+	}
 }
 
 } // End of namespace Sci

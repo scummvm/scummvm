@@ -32,6 +32,7 @@
 #include "common/substream.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "graphics/pixelformat.h"
 #include "video/video_decoder.h"
 
 namespace Sci {

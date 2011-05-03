@@ -36,8 +36,8 @@ namespace CEGUI {
 class SDL_ImageResource {
 public:
 	SDL_ImageResource();
-	SDL_Surface* load(WORD resourceID);
-	SDL_Surface* get();
+	SDL_Surface *load(WORD resourceID);
+	SDL_Surface *get();
 	int height();
 	int width();
 	virtual ~SDL_ImageResource();

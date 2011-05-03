@@ -27,6 +27,7 @@
 #define SWORD1_MOUSE_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
 #include "sword1/sworddefs.h"
 #include "sword1/object.h"
 
@@ -99,8 +100,9 @@ private:
 	ObjectMan *_objMan;
 	Common::Point _mouse;
 
-	uint32 _currentPtrId, _currentLuggageId, _frame;
+	uint32 _currentPtrId, _currentLuggageId;
 	MousePtr *_currentPtr;
+	int _frame, _activeFrame;
 	uint16 _numObjs;
 	uint16 _lastState, _state;
 	uint32 _getOff;

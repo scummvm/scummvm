@@ -95,6 +95,10 @@ Common::Error LureEngine::init() {
 
 	_gameToLoad = -1;
 	_initialised = true;
+
+	// Setup mixer
+	syncSoundSettings();
+
 	return Common::kNoError;
 }
 
@@ -264,6 +268,8 @@ GUI::Debugger *LureEngine::getDebugger() {
 }
 
 void LureEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
 	Sound.syncSounds();
 }
 

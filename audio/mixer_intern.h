@@ -64,7 +64,14 @@ private:
 	bool _mixerReady;
 	uint32 _handleSeed;
 
-	int _volumeForSoundType[4];
+	struct SoundTypeSettings {
+		SoundTypeSettings() : mute(false), volume(kMaxMixerVolume) {}
+
+		bool mute;
+		int volume;
+	};
+
+	SoundTypeSettings _soundTypeSettings[4];
 	Channel *_channels[NUM_CHANNELS];
 
 
@@ -97,6 +104,9 @@ public:
 
 	virtual bool isSoundHandleActive(SoundHandle handle);
 
+	virtual void muteSoundType(SoundType type, bool mute);
+	virtual bool isSoundTypeMuted(SoundType type) const;
+
 	virtual void setChannelVolume(SoundHandle handle, byte volume);
 	virtual void setChannelBalance(SoundHandle handle, int8 balance);
 
@@ -118,8 +128,10 @@ public:
 	 * The mixer callback function, to be called at regular intervals by
 	 * the backend (e.g. from an audio mixing thread). All the actual mixing
 	 * work is done from here.
+	 *
+	 * @return number of sample pairs processed (which can still be silence!)
 	 */
-	void mixCallback(byte *samples, uint len);
+	int mixCallback(byte *samples, uint len);
 
 	/**
 	 * Set the internal 'is ready' flag of the mixer.

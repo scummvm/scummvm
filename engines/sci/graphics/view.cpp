@@ -83,7 +83,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 	_loopCount = 0;
 	_embeddedPal = false;
 	_EGAmapping = NULL;
-	_isSci2Hires = false;
+	_sci2ScaleRes = SCI_VIEW_NATIVERES_NONE;
 	_isScaleable = true;
 
 	// we adjust inside getCelRect for SCI0EARLY (that version didn't have the +1 when calculating bottom)
@@ -104,9 +104,10 @@ void GfxView::initData(GuiResourceId resourceId) {
 	}
 
 	switch (curViewType) {
-	case kViewEga: // View-format SCI0 (and Amiga 16 colors)
+	case kViewEga: // SCI0 (and Amiga 16 colors)
 		isEGA = true;
-	case kViewAmiga: // View-format Amiga (32 colors)
+	case kViewAmiga: // Amiga ECS (32 colors)
+	case kViewAmiga64: // Amiga AGA (64 colors)
 	case kViewVga: // View-format SCI1
 		// LoopCount:WORD MirrorMask:WORD Version:WORD PaletteOffset:WORD LoopOffset0:WORD LoopOffset1:WORD...
 
@@ -132,7 +133,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 				//  SCI1 VGA conversion games (which will get detected as SCI1EARLY/MIDDLE/LATE) have some views
 				//  with broken mapping tables. I guess those games won't use the mapping, so I rather disable it
 				//  for them
-				if (getSciVersion() == SCI_VERSION_1_EGA) {
+				if (getSciVersion() == SCI_VERSION_1_EGA_ONLY) {
 					_EGAmapping = &_resourceData[palOffset];
 					for (EGAmapNr = 0; EGAmapNr < SCI_VIEW_EGAMAPPING_COUNT; EGAmapNr++) {
 						if (memcmp(_EGAmapping, EGAmappingStraight, SCI_VIEW_EGAMAPPING_SIZE) != 0)
@@ -201,8 +202,15 @@ void GfxView::initData(GuiResourceId resourceId) {
 		assert(headerSize >= 16);
 		_loopCount = _resourceData[2];
 		assert(_loopCount);
-		_isSci2Hires = _resourceData[5] == 1 ? true : false;
 		palOffset = READ_SCI11ENDIAN_UINT32(_resourceData + 8);
+
+		// For SCI32, this is a scale flag
+		if (getSciVersion() >= SCI_VERSION_2) { 
+			_sci2ScaleRes = (Sci32ViewNativeResolution)_resourceData[5];
+			if (_screen->getUpscaledHires() == GFX_SCREEN_UPSCALED_DISABLED)
+				_sci2ScaleRes = SCI_VIEW_NATIVERES_NONE;
+		}
+
 		// flags is actually a bit-mask
 		//  it seems it was only used for some early sci1.1 games (or even just laura bow 2)
 		//  later interpreters dont support it at all anymore
@@ -282,10 +290,10 @@ void GfxView::initData(GuiResourceId resourceId) {
 		}
 #ifdef ENABLE_SCI32
 		// adjust width/height returned to scripts
-		if (_isSci2Hires) {
+		if (_sci2ScaleRes != SCI_VIEW_NATIVERES_NONE) {
 			for (loopNo = 0; loopNo < _loopCount; loopNo++)
 				for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++)
-					_screen->adjustBackUpscaledCoordinates(_loop[loopNo].cel[celNo].scriptWidth, _loop[loopNo].cel[celNo].scriptHeight);
+					_screen->adjustBackUpscaledCoordinates(_loop[loopNo].cel[celNo].scriptWidth, _loop[loopNo].cel[celNo].scriptHeight, _sci2ScaleRes);
 		} else if (getSciVersion() == SCI_VERSION_2_1) {
 			for (loopNo = 0; loopNo < _loopCount; loopNo++)
 				for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++)
@@ -329,7 +337,7 @@ Palette *GfxView::getPalette() {
 }
 
 bool GfxView::isSci2Hires() {
-	return _isSci2Hires;
+	return _sci2ScaleRes > SCI_VIEW_NATIVERES_320x200;
 }
 
 bool GfxView::isScaleable() {
@@ -370,22 +378,157 @@ void GfxView::getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int1
 	outRect.top = outRect.bottom - scaledHeight;
 }
 
+void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCount, int rlePos, int literalPos, ViewType viewType, uint16 width, bool isMacSci11ViewData) {
+	byte *outPtr = celBitmap;
+	byte curByte, runLength;
+	byte *rlePtr = inBuffer + rlePos;
+	// The existence of a literal position pointer signifies data with two
+	// separate streams, most likely a SCI1.1 view
+	byte *literalPtr = inBuffer + literalPos;
+	int pixelNr = 0;
+
+	memset(celBitmap, clearColor, pixelCount);
+
+	// View unpacking:
+	//
+	// EGA:
+	// Each byte is like XXXXYYYY (XXXX: 0 - 15, YYYY: 0 - 15)
+	// Set the next XXXX pixels to YYYY
+	//
+	// Amiga:
+	// Each byte is like XXXXXYYY (XXXXX: 0 - 31, YYY: 0 - 7)
+	// - Case A: YYY != 0
+	//   Set the next YYY pixels to XXXXX
+	// - Case B: YYY == 0
+	//   Skip the next XXXXX pixels (i.e. transparency)
+	//
+	// Amiga 64:
+	// Each byte is like XXYYYYYY (XX: 0 - 3, YYYYYY: 0 - 63)
+	// - Case A: XX != 0
+	//   Set the next XX pixels to YYYYYY
+	// - Case B: XX == 0
+	//   Skip the next YYYYYY pixels (i.e. transparency)
+	//
+	// VGA:
+	// Each byte is like XXYYYYYY (YYYYY: 0 - 63)
+	// - Case A: XX == 00 (binary)
+	//   Copy next YYYYYY bytes as-is
+	// - Case B: XX == 01 (binary)
+	//   Same as above, copy YYYYYY + 64 bytes as-is
+	// - Case C: XX == 10 (binary)
+	//   Set the next YYYYY pixels to the next byte value
+	// - Case D: XX == 11 (binary)
+	//   Skip the next YYYYY pixels (i.e. transparency)
+
+	if (literalPos && isMacSci11ViewData) {
+		// KQ6/Freddy Pharkas use byte lengths, all others use uint16
+		// The SCI devs must have realized that a max of 255 pixels wide
+		// was not very good for 320 or 640 width games.
+		bool hasByteLengths = (g_sci->getGameId() == GID_KQ6 || g_sci->getGameId() == GID_FREDDYPHARKAS);
+
+		// compression for SCI1.1+ Mac
+		while (pixelNr < pixelCount) {
+			uint32 pixelLine = pixelNr;
+		
+			if (hasByteLengths) {
+				pixelNr += *rlePtr++;
+				runLength = *rlePtr++;
+			} else {
+				pixelNr += READ_BE_UINT16(rlePtr);
+				runLength = READ_BE_UINT16(rlePtr + 2);
+				rlePtr += 4;
+			}
+
+			while (runLength-- && pixelNr < pixelCount)
+				outPtr[pixelNr++] = *literalPtr++;
+
+			pixelNr = pixelLine + width;
+		}
+		return;
+	}
+
+	switch (viewType) {
+	case kViewEga:
+		while (pixelNr < pixelCount) {
+			curByte = *rlePtr++;
+			runLength = curByte >> 4;
+			memset(outPtr + pixelNr,        curByte & 0x0F, MIN<uint16>(runLength, pixelCount - pixelNr));
+			pixelNr += runLength;
+		}
+		break;
+	case kViewAmiga:
+		while (pixelNr < pixelCount) {
+			curByte = *rlePtr++;
+			if (curByte & 0x07) { // fill with color
+				runLength = curByte & 0x07;
+				curByte = curByte >> 3;
+				memset(outPtr + pixelNr,           curByte, MIN<uint16>(runLength, pixelCount - pixelNr));
+			} else { // skip the next pixels (transparency)
+				runLength = curByte >> 3;
+			}
+			pixelNr += runLength;
+		}
+		break;
+	case kViewAmiga64:
+		while (pixelNr < pixelCount) {
+			curByte = *rlePtr++;
+			if (curByte & 0xC0) { // fill with color
+				runLength = curByte >> 6;
+				memset(outPtr + pixelNr,    curByte & 0x3F, MIN<uint16>(runLength, pixelCount - pixelNr));
+			} else { // skip the next pixels (transparency)
+				runLength = curByte & 0x3F;
+			}
+			pixelNr += runLength;
+		}
+		break;
+	case kViewVga:
+	case kViewVga11:
+		// If we have no RLE data, the image is just uncompressed
+		if (rlePos == 0) {
+			memcpy(outPtr, literalPtr, pixelCount);
+			break;
+		}
+
+		while (pixelNr < pixelCount) {
+			curByte = *rlePtr++;
+			runLength = curByte & 0x3F;
+
+			switch (curByte & 0xC0) {
+			case 0x40: // copy bytes as is (In copy case, runLength can go up to 127 i.e. pixel & 0x40). Fixes bug #3135872.
+				runLength += 64;
+			case 0x00: // copy bytes as-is
+				if (!literalPos) {
+					memcpy(outPtr + pixelNr,        rlePtr, MIN<uint16>(runLength, pixelCount - pixelNr));
+					rlePtr += runLength;
+				} else {
+					memcpy(outPtr + pixelNr,    literalPtr, MIN<uint16>(runLength, pixelCount - pixelNr));
+					literalPtr += runLength;
+				}			
+				break;
+			case 0x80: // fill with color
+				if (!literalPos)
+					memset(outPtr + pixelNr,     *rlePtr++, MIN<uint16>(runLength, pixelCount - pixelNr));
+				else
+					memset(outPtr + pixelNr, *literalPtr++, MIN<uint16>(runLength, pixelCount - pixelNr));
+				break;
+			case 0xC0: // skip the next pixels (transparency)
+				break;
+			}
+
+			pixelNr += runLength;
+		}
+		break;
+	default:
+		error("Unsupported picture viewtype");
+	}
+}
+
 void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCount) {
 	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
-	byte *rlePtr;
-	byte *literalPtr;
-	uint32 pixelNo = 0, runLength;
-	byte pixel;
 
 	if (celInfo->offsetEGA) {
 		// decompression for EGA views
-		literalPtr = _resourceData + _loop[loopNo].cel[celNo].offsetEGA;
-		while (pixelNo < pixelCount) {
-			pixel = *literalPtr++;
-			runLength = pixel >> 4;
-			memset(outPtr + pixelNo, pixel & 0x0F, MIN<uint32>(runLength, pixelCount - pixelNo));
-			pixelNo += runLength;
-		}
+		unpackCelData(_resourceData, outPtr, 0, pixelCount, celInfo->offsetEGA, 0, _resMan->getViewType(), celInfo->width, false);
 	} else {
 		// We fill the buffer with transparent pixels, so that we can later skip
 		//  over pixels to automatically have them transparent
@@ -408,100 +551,8 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 				clearColor = 0;
 		}
 
-		memset(outPtr, clearColor, pixelCount);
-
-		rlePtr = _resourceData + celInfo->offsetRLE;
-		if (!celInfo->offsetLiteral) { // no additional literal data
-			if (_resMan->isAmiga32color()) {
-				// decompression for amiga views
-				while (pixelNo < pixelCount) {
-					pixel = *rlePtr++;
-					if (pixel & 0x07) { // fill with color
-						runLength = pixel & 0x07;
-						pixel = pixel >> 3;
-						while (runLength-- && pixelNo < pixelCount) {
-							outPtr[pixelNo++] = pixel;
-						}
-					} else { // fill with transparent
-						runLength = pixel >> 3;
-						pixelNo += runLength;
-					}
-				}
-			} else {
-				// decompression for data that has just one combined stream
-				while (pixelNo < pixelCount) {
-					pixel = *rlePtr++;
-					runLength = pixel & 0x3F;
-					switch (pixel & 0xC0) {
-					case 0x40: // copy bytes as is (In copy case, runLength can go upto 127 i.e. pixel & 0x40)
-						runLength += 64;
-					case 0x00: // copy bytes as-is
-						while (runLength-- && pixelNo < pixelCount)
-							outPtr[pixelNo++] = *rlePtr++;
-						break;
-					case 0x80: // fill with color
-						memset(outPtr + pixelNo, *rlePtr++, MIN<uint32>(runLength, pixelCount - pixelNo));
-						pixelNo += runLength;
-						break;
-					case 0xC0: // fill with transparent
-						pixelNo += runLength;
-						break;
-					}
-				}
-			}
-		} else {
-			literalPtr = _resourceData + celInfo->offsetLiteral;
-			if (celInfo->offsetRLE) {
-				if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() == SCI_VERSION_1_1) {
-					// KQ6/Freddy Pharkas use byte lengths, all others use uint16
-					// The SCI devs must have realized that a max of 255 pixels wide
-					// was not very good for 320 or 640 width games.
-					bool hasByteLengths = (g_sci->getGameId() == GID_KQ6 || g_sci->getGameId() == GID_FREDDYPHARKAS);
-
-					// compression for SCI1.1+ Mac
-					while (pixelNo < pixelCount) {
-						uint32 pixelLine = pixelNo;
-		
-						if (hasByteLengths) {
-							pixelNo += *rlePtr++;
-							runLength = *rlePtr++;
-						} else {
-							pixelNo += READ_BE_UINT16(rlePtr);
-							runLength = READ_BE_UINT16(rlePtr + 2);
-							rlePtr += 4;
-						}
-
-						while (runLength-- && pixelNo < pixelCount)
-							outPtr[pixelNo++] = *literalPtr++;
-
-						pixelNo = pixelLine + celInfo->width;
-					}
-				} else {
-					// decompression for data that has separate rle and literal streams
-					while (pixelNo < pixelCount) {
-						pixel = *rlePtr++;
-						runLength = pixel & 0x3F;
-						switch (pixel & 0xC0) {
-						case 0: // copy bytes as-is
-							while (runLength-- && pixelNo < pixelCount)
-								outPtr[pixelNo++] = *literalPtr++;
-							break;
-						case 0x80: // fill with color
-							memset(outPtr + pixelNo, *literalPtr++, MIN<uint32>(runLength, pixelCount - pixelNo));
-							pixelNo += runLength;
-							break;
-						case 0xC0: // fill with transparent
-							pixelNo += runLength;
-							break;
-						}
-					}
-				}
-			} else {
-				// literal stream only, so no compression
-				memcpy(outPtr, literalPtr, pixelCount);
-				pixelNo = pixelCount;
-			}
-		}
+		bool isMacSci11ViewData = g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() == SCI_VERSION_1_1;
+		unpackCelData(_resourceData, outPtr, clearColor, pixelCount, celInfo->offsetRLE, celInfo->offsetLiteral, _resMan->getViewType(), celInfo->width, isMacSci11ViewData);
 
 		// Swap 0 and 0xff pixels for Mac SCI1.1+ games (see above)
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1) {
@@ -531,9 +582,8 @@ const byte *GfxView::getBitmap(int16 loopNo, int16 celNo) {
 	// unpack the actual cel bitmap data
 	unpackCel(loopNo, celNo, pBitmap, pixelCount);
 
-	if (!_resMan->isVGA()) {
+	if (_resMan->getViewType() == kViewEga)
 		unditherBitmap(pBitmap, width, height, _loop[loopNo].cel[celNo].clearKey);
-	}
 
 	// mirroring the cel if needed
 	if (_loop[loopNo].mirrorFlag) {
@@ -549,19 +599,15 @@ const byte *GfxView::getBitmap(int16 loopNo, int16 celNo) {
  * cel if the dithering in here matches dithering used by the current picture.
  */
 void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte clearKey) {
-	int16 *unditherMemorial = _screen->unditherGetMemorial();
+	int16 *ditheredPicColors = _screen->unditherGetDitheredBgColors();
 
-	// It makes no sense to go further, if no memorial data from current picture
-	// is available
-	if (!unditherMemorial)
+	// It makes no sense to go further, if there isn't any dithered color data
+	// available for the current picture
+	if (!ditheredPicColors)
 		return;
 
-	// Makes no sense to process bitmaps that are 3 pixels wide or less
-	if (width <= 3)
-		return;
-
-	// We need at least 2 pixel lines
-	if (height < 2)
+	// We need at least a 4x2 bitmap for this algorithm to work
+	if (width < 4 || height < 2)
 		return;
 
 	// If EGA mapping is used for this view, dont do undithering as well
@@ -569,13 +615,13 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 		return;
 
 	// Walk through the bitmap and remember all combinations of colors
-	int16 bitmapMemorial[SCI_SCREEN_UNDITHERMEMORIAL_SIZE];
+	int16 ditheredBitmapColors[DITHERED_BG_COLORS_SIZE];
 	byte *curPtr;
 	byte color1, color2;
 	byte nextColor1, nextColor2;
 	int16 y, x;
 
-	memset(&bitmapMemorial, 0, sizeof(bitmapMemorial));
+	memset(&ditheredBitmapColors, 0, sizeof(ditheredBitmapColors));
 
 	// Count all seemingly dithered pixel-combinations as soon as at least 4
 	// pixels are adjacent and check pixels in the following line as well to
@@ -594,17 +640,17 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 			nextColor1 = (nextColor1 >> 4) | (nextColor2 << 4);
 			nextColor2 = (nextColor2 >> 4) | *nextPtr++ << 4;
 			if ((color1 == color2) && (color1 == nextColor1) && (color1 == nextColor2))
-				bitmapMemorial[color1]++;
+				ditheredBitmapColors[color1]++;
 		}
 	}
 
-	// Now compare both memorial tables to find out matching
-	// dithering-combinations
-	bool unditherTable[SCI_SCREEN_UNDITHERMEMORIAL_SIZE];
+	// Now compare both dither color tables to find out matching dithered color
+	// combinations
+	bool unditherTable[DITHERED_BG_COLORS_SIZE];
 	byte color, unditherCount = 0;
 	memset(&unditherTable, false, sizeof(unditherTable));
 	for (color = 0; color < 255; color++) {
-		if ((bitmapMemorial[color] > 5) && (unditherMemorial[color] > 200)) {
+		if ((ditheredBitmapColors[color] > 5) && (ditheredPicColors[color] > 200)) {
 			// match found, check if colorKey is contained -> if so, we ignore
 			// of course
 			color1 = color & 0x0F; color2 = color >> 4;
@@ -676,6 +722,8 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 						// get drawn onto lowres screen.
 						// FIXME(?): we can't read priority directly with the
 						// hires coordinates. May not be needed at all in kq6
+						// FIXME: Handle proper aspect ratio. Some GK1 hires images
+						// are in 640x400 instead of 640x480
 						_screen->putPixelOnDisplay(x2, y2, palette->mapping[color]);
 					}
 				}
@@ -781,6 +829,14 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 			}
 		}
 	}
+}
+
+void GfxView::adjustToUpscaledCoordinates(int16 &y, int16 &x) {
+	_screen->adjustToUpscaledCoordinates(y, x, _sci2ScaleRes);
+}
+
+void GfxView::adjustBackUpscaledCoordinates(int16 &y, int16 &x) {
+	_screen->adjustBackUpscaledCoordinates(y, x, _sci2ScaleRes);
 }
 
 } // End of namespace Sci
