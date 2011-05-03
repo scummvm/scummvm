@@ -484,6 +484,8 @@ static GfxSurface ResizeSurface(GfxSurface &src, int xSize, int ySize, int trans
  */
 void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Region *priorityRegion) {
 	GfxSurface srcImage;
+	if (srcBounds.isEmpty())
+		return;
 
 	if (srcBounds == src.getBounds())
 		srcImage = src;

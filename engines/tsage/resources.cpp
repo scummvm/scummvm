@@ -404,11 +404,11 @@ byte *TLib::getSubResource(int resNum, int rlbNum, int index, uint *size, bool s
 /**
  * Retrieves a given message resource, and returns the specified message number
  */
-Common::String TLib::getMessage(int resNum, int lineNum, bool suppressErrors) {
-	byte *msgData = getResource(RES_MESSAGE, resNum, 0);
+bool TLib::getMessage(int resNum, int lineNum, Common::String &result, bool suppressErrors) {
+	byte *msgData = getResource(RES_MESSAGE, resNum, 0, true);
 	if (!msgData) {
 		if (suppressErrors)
-			return Common::String();
+			return false;
 
 		error("Unknown message %d line %d", resNum, lineNum);
 	}
@@ -417,9 +417,9 @@ Common::String TLib::getMessage(int resNum, int lineNum, bool suppressErrors) {
 	while (lineNum-- > 0)
 		srcP += strlen(srcP) + 1;
 
-	Common::String result(srcP);
+	result = Common::String(srcP);
 	_memoryManager.deallocate(msgData);
-	return result;
+	return true;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -489,8 +489,7 @@ Common::String ResourceManager::getMessage(int resNum, int lineNum, bool suppres
 	Common::String result;
 
 	for (uint idx = 0; idx < _libList.size(); ++idx) {
-		result = _libList[idx]->getMessage(resNum, lineNum, true);
-		if (!result.empty())
+		if (_libList[idx]->getMessage(resNum, lineNum, result, true))
 			return result;
 	}
 
