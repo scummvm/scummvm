@@ -1519,8 +1519,10 @@ static void ActorLookAt() {
 			return;
 
 		actor->setLookAtVectorZero();
+		actor->setLooking(false);
 		if (lua_isnumber(yObj))
 			actor->setLookAtRate(lua_getnumber(yObj));
+		return;
 	} else if (lua_isnumber(xObj)) { // look at xyz
 		float fY;
 		float fZ;
