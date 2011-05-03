@@ -60,12 +60,12 @@ public:
 	void saveState(SaveGame *savedState) const;
 	bool restoreState(SaveGame *savedState);
 
-	const char *name() const { return _name.c_str(); }
+	const char *getName() const { return _name.c_str(); }
 
 	void setTalkColor(Color *c) { _talkColor = c; }
-	Color *talkColor() const { return _talkColor; }
+	Color *getTalkColor() const { return _talkColor; }
 	void setPos(Graphics::Vector3d position);
-	Graphics::Vector3d pos() const;
+	Graphics::Vector3d getPos() const;
 	void walkTo(Graphics::Vector3d p);
 	Graphics::Vector3d getDestPos() const;
 	void stopWalking() { _walking = false; }
@@ -73,29 +73,29 @@ public:
 	void setRot(float pitch, float yaw, float roll);
 	void turnTo(float pitch, float yaw, float roll);
 	bool isTurning() const;
-	float pitch() const { return _pitch; }
-	float yaw() const { return _yaw; }
-	float roll() const { return _roll; }
+	float getPitch() const { return _pitch; }
+	float getYaw() const { return _yaw; }
+	float getRoll() const { return _roll; }
 	void setVisibility(bool val) { _visible = val; }
-	bool visible() const { return _visible; }
+	bool isVisible() const { return _visible; }
 	void setScale(float scale);
 	// The set should change immediately, otherwise a very rapid set change
 	// for an actor will be recognized incorrectly and the actor will be lost.
 	void putInSet(const char *setName);
 	void setTurnRate(float rate) { _turnRate = rate; }
-	float turnRate() const { return _turnRate; }
+	float getTurnRate() const { return _turnRate; }
 	void setWalkRate(float rate) { _walkRate = rate; }
-	float walkRate() const { return _walkRate; }
+	float getWalkRate() const { return _walkRate; }
 	void setLooking(bool lookingMode) { _lookingMode = lookingMode; }
 
-	float angleTo(const Actor &a) const;
-	float yawTo(Graphics::Vector3d p) const;
+	float getAngleTo(const Actor &a) const;
+	float getYawTo(Graphics::Vector3d p) const;
 
-	bool inSet(const char *setName) const;
+	bool isInSet(const char *setName) const;
 	void walkForward();
 	void setRunning(bool running);
 	void setReflection(float angle) { _reflectionAngle = angle; }
-	Graphics::Vector3d puckVector() const;
+	Graphics::Vector3d getPuckVector() const;
 	void turn(int dir);
 
 	void sayLine(const char *msg, const char *msgId);
@@ -103,10 +103,10 @@ public:
 	// objects again since they're already freed
 	void lineCleanup() { _sayLineText = NULL; }
 	void shutUp();
-	bool talking();
+	bool isTalking();
 
 	void setRestChore(int choreNumber, Costume *cost);
-	int restChore() const { return _restChore; }
+	int getRestChore() const { return _restChore; }
 	void setWalkChore(int choreNumber, Costume *cost);
 	void setTurnChores(int left_chore, int right_chore, Costume *cost);
 	void setTalkChore(int index, int choreNumber, Costume *cost);
@@ -117,14 +117,14 @@ public:
 	void setCostume(const char *name);
 	void popCostume();
 	void clearCostumes();
-	Costume *currentCostume() {
+	Costume *getCurrentCostume() {
 		if (_costumeStack.empty())
 			return NULL;
 		else
 			return _costumeStack.back();
 	}
 	Costume *findCostume(const char *name);
-	int costumeStackDepth() const {
+	int getCostumeStackDepth() const {
 		return _costumeStack.size();
 	}
 
@@ -158,7 +158,7 @@ public:
 	void setLookAtRate(float rate) {
 		_lookAtRate = rate;
 	}
-	float lookAtRate() {
+	float getLookAtRate() {
 		return _lookAtRate;
 	}
 	void setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);

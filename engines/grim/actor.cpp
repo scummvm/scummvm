@@ -463,7 +463,7 @@ void Actor::setPos(Graphics::Vector3d position) {
 // When the actor is walking report where the actor is going to and
 // not the actual current position, this fixes some scene change
 // change issues with the Bone Wagon (along with other fixes)
-Graphics::Vector3d Actor::pos() const {
+Graphics::Vector3d Actor::getPos() const {
 	// NOTE: These commented out lines break the "su" set, like explained
 	// at https://github.com/residual/residual/issues/11 . According to the
 	// above comment they however fix some issues. Since i don't know what
@@ -715,7 +715,7 @@ void Actor::setRunning(bool running) {
 	_running = running;
 }
 
-Graphics::Vector3d Actor::puckVector() const {
+Graphics::Vector3d Actor::getPuckVector() const {
 	float yaw_rad = _yaw * (LOCAL_PI / 180.f);
 	Graphics::Vector3d forwardVec(-sin(yaw_rad), cos(yaw_rad), 0);
 
@@ -804,16 +804,16 @@ void Actor::turn(int dir) {
 		costumeMarkerCallback(LeftTurn);
 }
 
-float Actor::angleTo(const Actor &a) const {
+float Actor::getAngleTo(const Actor &a) const {
 	float yaw_rad = _yaw * (LOCAL_PI / 180.f);
 	Graphics::Vector3d forwardVec(-sin(yaw_rad), cos(yaw_rad), 0);
-	Graphics::Vector3d delta = a.pos() - _pos;
+	Graphics::Vector3d delta = a.getPos() - _pos;
 	delta.z() = 0;
 
 	return angle(forwardVec, delta) * (180.f / LOCAL_PI);
 }
 
-float Actor::yawTo(Graphics::Vector3d p) const {
+float Actor::getYawTo(Graphics::Vector3d p) const {
 	Graphics::Vector3d dpos = p - _pos;
 
 	if (dpos.x() == 0 && dpos.y() == 0)
@@ -853,11 +853,11 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 		_talkSoundName = soundName;
 		g_imuse->startVoice(_talkSoundName.c_str());
 		if (g_grim->currScene()) {
-			g_grim->currScene()->setSoundPosition(_talkSoundName.c_str(), pos());
+			g_grim->currScene()->setSoundPosition(_talkSoundName.c_str(), _pos);
 		}
 
 		// If the actor is clearly not visible then don't try to play the lip sync
-		if (visible()) {
+		if (_visible) {
 			// Sometimes actors speak offscreen before they, including their
 			// talk chores are initialized.
 			// For example, when reading the work order (a LIP file exists for no reason).
@@ -901,7 +901,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	g_grim->registerTextObject(_sayLineText);
 }
 
-bool Actor::talking() {
+bool Actor::isTalking() {
 	// If there's no sound file then we're obviously not talking
 	if (strlen(_talkSoundName.c_str()) == 0 || !g_imuse->getSoundStatus(_talkSoundName.c_str())) {
 		// If we're not talking and _sayLinetext exists delete it.
@@ -941,7 +941,7 @@ void Actor::shutUp() {
 }
 
 void Actor::pushCostume(const char *n) {
-	Costume *newCost = g_resourceloader->loadCostume(n, currentCostume());
+	Costume *newCost = g_resourceloader->loadCostume(n, getCurrentCostume());
 
 	newCost->setColormap(NULL);
 	_costumeStack.push_back(newCost);
@@ -1025,7 +1025,7 @@ void Actor::updateWalk() {
 	}
 
 	Graphics::Vector3d destPos = _path.back();
-	float y = yawTo(destPos);
+	float y = getYawTo(destPos);
 	if (y < 0.f) {
 		y += 360.f;
 	}
@@ -1260,7 +1260,7 @@ void Actor::draw() {
 
 // "Undraw objects" (handle objects for actors that may not be on screen)
 void Actor::undraw(bool /*visible*/) {
-	if (!talking() || !g_imuse->isVoicePlaying())
+	if (!isTalking() || !g_imuse->isVoicePlaying())
 		shutUp();
 }
 
@@ -1336,7 +1336,7 @@ void Actor::putInSet(const char *setName) {
 	_setName = setName;
 }
 
-bool Actor::inSet(const char *setName) const {
+bool Actor::isInSet(const char *setName) const {
 	return _setName == setName;
 }
 

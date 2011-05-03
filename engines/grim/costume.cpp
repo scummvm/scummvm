@@ -649,7 +649,7 @@ void SoundComponent::setKey(int val) {
 		// then it will just use the existing handle
 		g_imuse->startSfx(_soundName.c_str());
 		if (g_grim->currScene() && g_currentUpdatedActor) {
-			Graphics::Vector3d pos = g_currentUpdatedActor->pos();
+			Graphics::Vector3d pos = g_currentUpdatedActor->getPos();
 			g_grim->currScene()->setSoundPosition(_soundName.c_str(), pos);
 		}
 		break;
@@ -913,7 +913,7 @@ void Costume::Chore::setKeys(int startTime, int stopTime) {
 
 		if (FROM_BE_32(comp->_tag) == MKTAG('K','E','Y','F')) {
 			KeyframeComponent *f = static_cast<KeyframeComponent *>(comp);
-			if (g_currentUpdatedActor && g_currentUpdatedActor->restChore() == _id)
+			if (g_currentUpdatedActor && g_currentUpdatedActor->getRestChore() == _id)
 				f->setLowPriority(true);
 			else
 				f->setLowPriority(false);
@@ -1209,6 +1209,8 @@ void Costume::moveHead() {
 		if (_joint1Node->_animYaw > 180.) {
 			_joint1Node->_animYaw -= 360;
 		}
+		_joint2Node->_animYaw = 0;
+		_joint3Node->_animYaw = 0;
 
 		if (_joint1Node->_animYaw > _head.maxYaw)
 			_joint1Node->_animYaw = _head.maxYaw;

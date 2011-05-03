@@ -462,11 +462,11 @@ static void GetActorTalkColor() {
 		return;
 	}
 	Actor *actor = getactor(actorObj);
-	lua_pushusertag(actor->talkColor()->getId(), MKTAG('C','O','L','R'));
+	lua_pushusertag(actor->getTalkColor()->getId(), MKTAG('C','O','L','R'));
 }
 
 static bool findCostume(lua_Object costumeObj, Actor *actor, Costume **costume) {
-	*costume = actor->currentCostume(); // should be root of list I think
+	*costume = actor->getCurrentCostume(); // should be root of list I think
 	if (lua_isnil(costumeObj))
 		return true;
 	if (lua_isnumber(costumeObj)) {
@@ -667,7 +667,7 @@ static void GetActorPos() {
 		return;
 
 	Actor *actor = getactor(actorObj);
-	Graphics::Vector3d pos = actor->pos();
+	Graphics::Vector3d pos = actor->getPos();
 	lua_pushnumber(pos.x());
 	lua_pushnumber(pos.y());
 	lua_pushnumber(pos.z());
@@ -701,9 +701,9 @@ static void GetActorRot() {
 		return;
 
 	Actor *actor = getactor(actorObj);
-	lua_pushnumber(actor->pitch());
-	lua_pushnumber(actor->yaw());
-	lua_pushnumber(actor->roll());
+	lua_pushnumber(actor->getPitch());
+	lua_pushnumber(actor->getYaw());
+	lua_pushnumber(actor->getRoll());
 }
 
 static void IsActorTurning() {
@@ -736,9 +736,9 @@ static void GetAngleBetweenActors() {
 		return;
 	}
 
-	Graphics::Vector3d vec1 = actor1->puckVector();
-	Graphics::Vector3d vec2 = actor2->pos();
-	vec2 -= actor1->pos();
+	Graphics::Vector3d vec1 = actor1->getPuckVector();
+	Graphics::Vector3d vec2 = actor2->getPos();
+	vec2 -= actor1->getPos();
 	vec1.z() = 0;
 	vec2.z() = 0;
 	vec1.normalize();
@@ -828,7 +828,7 @@ static void GetActorYawToPoint() {
 
 	Graphics::Vector3d yawVector(x, y, z);
 
-	lua_pushnumber(actor->yawTo(yawVector));
+	lua_pushnumber(actor->getYawTo(yawVector));
 }
 
 /* Changes the set that an actor is associated with,
@@ -867,7 +867,7 @@ static void PutActorInSet() {
 	// FIXME verify adding actor to set
 	if (!set)
 		set = "";
-	if (!actor->inSet(set))
+	if (!actor->isInSet(set))
 		actor->putInSet(set);
 }
 
@@ -891,7 +891,7 @@ static void GetActorWalkRate() {
 		return;
 
 	Actor *actor = getactor(actorObj);
-	lua_pushnumber(actor->walkRate());
+	lua_pushnumber(actor->getWalkRate());
 }
 
 static void SetActorTurnRate() {
@@ -943,9 +943,9 @@ static void GetActorPuckVector() {
 		return;
 	}
 
-	Graphics::Vector3d result = actor->puckVector();
+	Graphics::Vector3d result = actor->getPuckVector();
 	if (!lua_isnil(addObj))
-		result += actor->pos();
+		result += actor->getPos();
 
 	lua_pushnumber(result.x());
 	lua_pushnumber(result.y());
@@ -971,7 +971,7 @@ static void WalkActorTo() {
 		if (!lua_isuserdata(xObj) || lua_tag(xObj) != MKTAG('A','C','T','R'))
 			return;
 		Actor *destActor = getactor(xObj);
-		destVec = destActor->pos();
+		destVec = destActor->getPos();
 	} else {
 		float x = lua_getnumber(xObj);
 		float y = lua_getnumber(yObj);
@@ -1094,12 +1094,12 @@ static void GetActorNodeLocation() {
 		return;
 
 	Actor *actor = getactor(actorObj);
-	if (!actor->currentCostume() || !actor->currentCostume()->getModelNodes())
+	if (!actor->getCurrentCostume() || !actor->getCurrentCostume()->getModelNodes())
 		return;
 
 	int nodeId = (int)lua_getnumber(nodeObj);
 
-	Model::HierNode *allNodes = actor->currentCostume()->getModelNodes();
+	Model::HierNode *allNodes = actor->getCurrentCostume()->getModelNodes();
 	Model::HierNode *node = allNodes + nodeId;
 
 	Graphics::Vector3d p = node->_pos;
@@ -1108,14 +1108,14 @@ static void GetActorNodeLocation() {
 		p += parent->_pos;
 		parent = parent->_parent;
 	}
-	float yaw = actor->yaw() * LOCAL_PI / 180.;
+	float yaw = actor->getYaw() * LOCAL_PI / 180.;
 
 	Graphics::Vector3d pos;
 	pos.x() = p.x() * cos(yaw) - p.y() * sin(yaw);
 	pos.y() = p.x() * sin(yaw) + p.y() * cos(yaw);
 	pos.z() = p.z();
 
-	pos += actor->pos();
+	pos += actor->getPos();
 
 	lua_pushnumber(pos.x());
 	lua_pushnumber(pos.y());
@@ -1215,7 +1215,7 @@ static void GetActorCostume() {
 	}
 
 	Actor *actor = getactor(actorObj);
-	Costume *costume = actor->currentCostume();
+	Costume *costume = actor->getCurrentCostume();
 	if (lua_isnil(costumeObj)) {
 		// dummy
 	} else if (lua_isnumber(costumeObj)) {
@@ -1236,8 +1236,8 @@ static void PopActorCostume() {
 		return;
 
 	Actor *actor = getactor(actorObj);
-	if (actor->currentCostume()) {
-		lua_pushstring(const_cast<char *>(actor->currentCostume()->getFilename()));
+	if (actor->getCurrentCostume()) {
+		lua_pushstring(const_cast<char *>(actor->getCurrentCostume()->getFilename()));
 		actor->popCostume();
 	} else
 		lua_pushnil();
@@ -1251,7 +1251,7 @@ static void GetActorCostumeDepth() {
 	}
 
 	Actor *actor = getactor(actorObj);
-	lua_pushnumber(actor->costumeStackDepth());
+	lua_pushnumber(actor->getCostumeStackDepth());
 }
 
 static void PrintActorCostumes() {
@@ -1507,7 +1507,7 @@ static void ActorLookAt() {
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
 	Actor *actor = getactor(actorObj);
-	if (!actor->currentCostume())
+	if (!actor->getCurrentCostume())
 		return;
 
 	if (lua_isnumber(rateObj))
@@ -1545,7 +1545,7 @@ static void ActorLookAt() {
 			actor->setLookAtRate(lua_getnumber(rateObj));
 	} else if (lua_isuserdata(xObj) && lua_tag(xObj) == MKTAG('A','C','T','R')) { // look at another actor
 		Actor *lookedAct = getactor(xObj);
-		actor->setLookAtVector(lookedAct->pos());
+		actor->setLookAtVector(lookedAct->getPos());
 
 		if (lua_isnumber(yObj))
 			actor->setLookAtRate(lua_getnumber(yObj));
@@ -1578,9 +1578,9 @@ static void TurnActorTo() {
 
 	if (lua_isuserdata(xObj) && lua_tag(xObj) == MKTAG('A','C','T','R')) {
 		Actor *destActor = getactor(xObj);
-		x = destActor->pos().x();
-		y = destActor->pos().y();
-		z = destActor->pos().z();
+		x = destActor->getPos().x();
+		y = destActor->getPos().y();
+		z = destActor->getPos().z();
 	} else {
 		x = lua_getnumber(xObj);
 		y = lua_getnumber(yObj);
@@ -1591,7 +1591,7 @@ static void TurnActorTo() {
 
 	// Find the vector pointing from the actor to the desired location
 	Graphics::Vector3d turnToVector(x, y, z);
-	Graphics::Vector3d lookVector = turnToVector - actor->pos();
+	Graphics::Vector3d lookVector = turnToVector - actor->getPos();
 	// find the angle the requested position is around the unit circle
 	float yaw = lookVector.unitCircleAngle();
 	// yaw is offset from forward by 90 degrees
@@ -1601,7 +1601,7 @@ static void TurnActorTo() {
 	}
 	actor->turnTo(0, yaw, 0);
 
-	float diff = actor->yaw() - yaw;
+	float diff = actor->getYaw() - yaw;
 	// Return true if the actor is still turning and its yaw is not the target one.
 	// This allows manny to have the right yaw when he exits the elevator in the garage
 	pushbool((diff > 0.005) || (diff < -0.005)); //fuzzy compare
@@ -1622,9 +1622,9 @@ static void PointActorAt() {
 
 	if (lua_isuserdata(xObj) && lua_tag(xObj) == MKTAG('A','C','T','R')) {
 		Actor *destActor = getactor(xObj);
-		x = destActor->pos().x();
-		y = destActor->pos().y();
-		z = destActor->pos().z();
+		x = destActor->getPos().x();
+		y = destActor->getPos().y();
+		z = destActor->getPos().z();
 	} else {
 		x = lua_getnumber(xObj);
 		y = lua_getnumber(yObj);
@@ -1635,7 +1635,7 @@ static void PointActorAt() {
 
 	// Find the vector pointing from the actor to the desired location
 	Graphics::Vector3d turnToVector(x, y, z);
-	Graphics::Vector3d lookVector = turnToVector - actor->pos();
+	Graphics::Vector3d lookVector = turnToVector - actor->getPos();
 	// find the angle the requested position is around the unit circle
 	float yaw = lookVector.unitCircleAngle();
 	// yaw is offset from forward by 90 degrees
@@ -1689,7 +1689,7 @@ static void WalkActorVector() {
 	if (yaw >= 360.0f)
 		yaw -= 360.0f;
 	// set the new direction or walk forward
-	if (actor2->yaw() != yaw)
+	if (actor2->getYaw() != yaw)
 		actor2->turnTo(0, yaw, 0);
 	else
 		actor2->walkForward();
@@ -1786,7 +1786,7 @@ static void SetActorPitch() {
 
 	Actor *actor = getactor(actorObj);
 	float pitch = lua_getnumber(pitchObj);
-	actor->setRot(pitch, actor->yaw(), actor->roll());
+	actor->setRot(pitch, actor->getYaw(), actor->getRoll());
 }
 
 static void SetActorLookRate() {
@@ -1800,7 +1800,7 @@ static void SetActorLookRate() {
 		return;
 
 	Actor *actor = getactor(actorObj);
-	if (!actor->currentCostume())
+	if (!actor->getCurrentCostume())
 		return;
 
 	float rate = lua_getnumber(rateObj);
@@ -1814,10 +1814,10 @@ static void GetActorLookRate() {
 		return;
 
 	Actor *actor = getactor(actorObj);
-	if (!actor->currentCostume())
+	if (!actor->getCurrentCostume())
 		lua_pushnil();
 	else
-		lua_pushnumber(actor->lookAtRate());
+		lua_pushnumber(actor->getLookAtRate());
 }
 
 static void SetActorHead() {
@@ -1930,10 +1930,10 @@ static void GetVisibleThings() {
 	// TODO verify code below
 	for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); ++i) {
 		Actor *a = i->_value;
-		if (!i->_value->inSet(g_grim->sceneName()))
+		if (!i->_value->isInSet(g_grim->sceneName()))
 			continue;
 		// Consider the active actor visible
-		if (actor == a || actor->angleTo(*a) < 90) {
+		if (actor == a || actor->getAngleTo(*a) < 90) {
 			lua_pushobject(result);
 			lua_pushusertag(i->_key, MKTAG('A','C','T','R'));
 			lua_pushnumber(1);
@@ -2299,7 +2299,7 @@ static void IsMessageGoing() {
 		if (lua_isuserdata(actorObj) && lua_tag(actorObj) == MKTAG('A','C','T','R')) {
 			Actor *actor = getactor(actorObj);
 			if (actor) {
-				pushbool(actor->talking());
+				pushbool(actor->isTalking());
 			}
 		} else {
 			// TODO
@@ -2394,7 +2394,7 @@ static void IsActorInSector() {
 	for (int i = 0; i < numSectors; i++) {
 		Sector *sector = g_grim->currScene()->getSectorBase(i);
 		if (strmatch(sector->name(), name)) {
-			if (sector->isPointInSector(actor->pos())) {
+			if (sector->isPointInSector(actor->getPos())) {
 				lua_pushnumber(sector->id());
 				lua_pushstring(sector->name());
 				lua_pushnumber(sector->type());
@@ -2801,7 +2801,7 @@ static void SetSoundPosition() {
 		Actor *actor = getactor(actorObj);
 		if (!actor)
 			return;
-		pos = actor->pos();
+		pos = actor->getPos();
 	} else if (lua_isnumber(actorObj)) {
 		float x = lua_getnumber(actorObj);
 		float y = lua_getnumber(argId++);
@@ -4068,8 +4068,8 @@ void concatFallback() {
 		else if (lua_tag(params[i]) == MKTAG('A','C','T','R')) {
 			Actor *a = g_grim->actor(lua_getuserdata(params[i]));
 			sprintf(strPtr, "(actor%p:%s)", (void *)a,
-				(a->currentCostume() && a->currentCostume()->getModelNodes()) ?
-				a->currentCostume()->getModelNodes()->_name : "");
+				(a->getCurrentCostume() && a->getCurrentCostume()->getModelNodes()) ?
+				a->getCurrentCostume()->getModelNodes()->_name : "");
 		} else {
 			lua_pushobject(params[0]);
 			lua_pushobject(params[1]);

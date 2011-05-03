@@ -778,7 +778,7 @@ void GrimEngine::luaUpdate() {
 			// Note that the actor need not be visible to update chores, for example:
 			// when Manny has just brought Meche back he is offscreen several times
 			// when he needs to perform certain chores
-			if (a->inSet(_currScene->name()))
+			if (a->isInSet(_currScene->name()))
 				a->update();
 		}
 		g_currentUpdatedActor = NULL;
@@ -860,9 +860,9 @@ void GrimEngine::updateDisplayScene() {
 		// Draw actors
 		for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); ++i) {
 			Actor *a = i->_value;
-			if (a->inSet(_currScene->name()) && a->visible())
+			if (a->isInSet(_currScene->name()) && a->isVisible())
 				a->draw();
-			a->undraw(a->inSet(_currScene->name()) && a->visible());
+			a->undraw(a->isInSet(_currScene->name()) && a->isVisible());
 		}
 		flagRefreshShadowMask(false);
 
