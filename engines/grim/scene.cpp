@@ -489,7 +489,6 @@ void Scene::setLightIntensity(int light, float intensity) {
 }
 
 void Scene::setLightPosition(const char *light, Graphics::Vector3d pos) {
-	printf("%s\n",light);
 	for (int i = 0; i < _numLights; ++i) {
 		Light &l = _lights[i];
 		if (l._name == light) {
