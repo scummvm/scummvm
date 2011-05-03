@@ -22,6 +22,8 @@
 
 #if defined(__WII__)
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include <unistd.h>
 
 #include "backends/fs/wii/wii-fs-factory.h"

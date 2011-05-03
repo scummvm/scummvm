@@ -22,7 +22,13 @@
 
 #if defined(__WII__)
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#define FORBIDDEN_SYMBOL_EXCEPTION_chdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_unlink
+
 #include "backends/fs/wii/wii-fs.h"
+#include "backends/fs/wii/wii-fs-factory.h"
 #include "backends/fs/stdiostream.h"
 
 #include <sys/iosupport.h>
