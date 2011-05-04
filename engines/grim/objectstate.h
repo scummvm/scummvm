@@ -81,7 +81,7 @@ private:
 	bool _visibility;
 	int _setupID;
 	Position _pos;
-	BitmapPtr _bitmap, _zbitmap;
+	Bitmap *_bitmap, *_zbitmap;
 
 	friend class GrimEngine;
 };

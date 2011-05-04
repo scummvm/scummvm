@@ -33,9 +33,12 @@ namespace Grim {
 
 ObjectState::ObjectState(int setup, ObjectState::Position position, const char *bitmap, const char *zbitmap, bool transparency) :
 		Object(), _setupID(setup), _pos(position), _visibility(false) {
-	_bitmap = g_resourceloader->getBitmap(bitmap);
+
+	_bitmap = g_resourceloader->loadBitmap(bitmap);
+	g_grim->registerBitmap(_bitmap);
 	if (zbitmap) {
-		_zbitmap = g_resourceloader->getBitmap(zbitmap);
+		_zbitmap = g_resourceloader->loadBitmap(zbitmap);
+		g_grim->registerBitmap(_zbitmap);
 	} else
 		_zbitmap = NULL;
 }
@@ -47,9 +50,10 @@ ObjectState::ObjectState() :
 
 ObjectState::~ObjectState() {
 	g_grim->killObjectState(this);
-//	g_resourceloader->uncache(_bitmap->getFilename());
-//	if (_zbitmap)
-//		g_resourceloader->uncache(_zbitmap->getFilename());
+
+	g_grim->killBitmap(_bitmap);
+	if (_zbitmap)
+		g_grim->killBitmap(_zbitmap);
 }
 
 void ObjectState::saveState(SaveGame *savedState) const {
@@ -59,16 +63,14 @@ void ObjectState::saveState(SaveGame *savedState) const {
 
 	//_bitmap
 	if (_bitmap) {
-		savedState->writeLEUint32(1);
-		savedState->writeCharString(_bitmap->filename());
+		savedState->writeLESint32(_bitmap->getId());
 	} else {
 		savedState->writeLEUint32(0);
 	}
 
 	//_zbitmap
 	if (_zbitmap) {
-		savedState->writeLEUint32(1);
-		savedState->writeCharString(_zbitmap->filename());
+		savedState->writeLESint32(_zbitmap->getId());
 	} else {
 		savedState->writeLEUint32(0);
 	}
@@ -79,21 +81,8 @@ bool ObjectState::restoreState(SaveGame *savedState) {
 	_setupID    = savedState->readLEUint32();
 	_pos        = (Position) savedState->readLEUint32();
 
-	if (savedState->readLEUint32()) {
-		const char *name = savedState->readCharString();
-		_bitmap = g_resourceloader->getBitmap(name);
-		delete[] name;
-	} else {
-		_bitmap = 0;
-	}
-
-	if (savedState->readLEUint32()) {
-		const char *name = savedState->readCharString();
-		_zbitmap = g_resourceloader->getBitmap(name);
-		delete[] name;
-	} else {
-		_zbitmap = 0;
-	}
+	_bitmap = g_grim->getBitmap(savedState->readLESint32());
+	_zbitmap = g_grim->getBitmap(savedState->readLESint32());
 
 	return true;
 }
