@@ -340,7 +340,7 @@ void Inventory::show() {
 	askForRedraw();
 
 	// Show portrait (first draw, cannot be highlighted)
-	drawItem((CursorStyle)getProgress().portrait, 0, 0);
+	drawItem((CursorStyle)getProgress().portrait, 0, 0, 1);
 
 	// Show selected item
 	if (_selectedItem != kItemNone)
@@ -599,7 +599,7 @@ void Inventory::clearSelectedItem() {
 	_engine->getGraphicsManager()->clear(GraphicsManager::kBackgroundInventory, Common::Rect(44, 0, 44 + 32, 32));
 }
 
-// Close inventory: clear items and reset icon
+// Open inventory: show portrait selected and draw contents
 void Inventory::open() {
 	_portraitHighlighted = false;
 	_isOpened = true;
