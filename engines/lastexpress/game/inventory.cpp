@@ -186,7 +186,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 					error("[Inventory::handleMouseEvent] Click on highlighted item not implemented");
 				}
 			} else {
-				error("[Inventory::handleMouseEvent] Default handling of open menu not implemented");
+				warning("[Inventory::handleMouseEvent] Default handling of open menu not implemented");
 			}
 		} else {
 			if (_portraitHighlighted) {
@@ -251,6 +251,8 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 			askForRedraw();
 		}
 
+		return;
+
 		// Stop processing if we are not looking at an item already
 		if (!getState()->sceneUseBackup) {
 			_isOpened = false;
@@ -287,7 +289,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 		if (!_portraitHighlighted && !_isOpened) {
 			drawItem((CursorStyle)getProgress().portrait, 0, 0);
 			_portraitHighlighted = true;
-		} else if (!_isOpened || (ev.type == Common::EVENT_LBUTTONDOWN || ev.type == Common::EVENT_LBUTTONUP)) {
+		} else if (!_isOpened || getFlags()->mouseLeftPressed) {
 			// Do nothing
 		} else if (_isOpened) {
 			close();

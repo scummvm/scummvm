@@ -566,6 +566,9 @@ public:
 		bool mouseLeftClick;
 		bool mouseRightClick;
 
+		bool mouseLeftPressed;
+		bool mouseRightPressed;
+
 		bool flag_entities_0;
 		bool flag_entities_1;
 
@@ -586,6 +589,9 @@ public:
 
 			mouseRightClick = false;
 			mouseLeftClick = false;
+
+			mouseLeftPressed = false;
+			mouseRightPressed = false;
 
 			flag_entities_0 = false;
 			flag_entities_1 = false;
