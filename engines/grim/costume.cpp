@@ -137,6 +137,7 @@ public:
 	void reset();
 	void resetColormap();
 	void setMatrix(Graphics::Matrix4 matrix) { _matrix = matrix; };
+	void restoreState(SaveGame *state);
 	~ModelComponent();
 
 	Model::HierNode *hierarchy() { return _hier; }
@@ -176,6 +177,8 @@ public:
 	void setKey(int val);
 	void update();
 	void reset();
+	void saveState(SaveGame *state);
+	void restoreState(SaveGame *state);
 	~MeshComponent() { }
 
 	void setMatrix(Graphics::Matrix4 matrix) { _matrix = matrix; };
@@ -352,6 +355,10 @@ void ModelComponent::resetColormap() {
 		_obj->reload(cm);
 }
 
+void ModelComponent::restoreState(SaveGame *state) {
+	_hier->_hierVisible = _visible;
+}
+
 ModelComponent::~ModelComponent() {
 	if (_hier && _hier->_parent) {
 		_hier->_parent->removeChild(_hier);
@@ -475,6 +482,8 @@ public:
 	void setLowPriority(bool lowPriority);
 	void update();
 	void reset();
+	void saveState(SaveGame *state);
+	void restoreState(SaveGame *state);
 	~KeyframeComponent() {}
 
 private:
@@ -586,6 +595,18 @@ void KeyframeComponent::init() {
 	}
 }
 
+void KeyframeComponent::saveState(SaveGame *state) {
+	state->writeLESint32(_active);
+	state->writeLESint32(_repeatMode);
+	state->writeLESint32(_currTime);
+}
+
+void KeyframeComponent::restoreState(SaveGame *state) {
+	_active = state->readLESint32();
+	_repeatMode = state->readLESint32();
+	_currTime = state->readLESint32();
+}
+
 MeshComponent::MeshComponent(Costume::Component *p, int parentID, const char *name, tag32 t) :
 		Costume::Component(p, parentID, t), _name(name), _node(NULL) {
 	if (sscanf(name, "mesh %d", &_num) < 1)
@@ -615,6 +636,14 @@ void MeshComponent::reset() {
 void MeshComponent::update() {
 	_node->setMatrix(_matrix);
 	_node->update();
+}
+
+void MeshComponent::saveState(SaveGame *state) {
+	state->writeLESint32(_node->_meshVisible);
+}
+
+void MeshComponent::restoreState(SaveGame *state) {
+	_node->_meshVisible = state->readLESint32();
 }
 
 MaterialComponent::MaterialComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
@@ -1376,14 +1405,7 @@ void Costume::saveState(SaveGame *state) const {
 			state->writeLESint32(c->_visible);
 			state->writeVector3d(c->_matrix._pos);
 
-			if (FROM_BE_32(c->_tag) == MKTAG('K','E','Y','F')) {
-				KeyframeComponent *f = static_cast<KeyframeComponent *>(c);
-				state->writeLESint32(f->_active);
-				state->writeLESint32(f->_repeatMode);
-				state->writeLESint32(f->_currTime);
-			} else if (FROM_BE_32(c->_tag) == MKTAG('M','E','S','H')) {
-				state->writeLESint32(static_cast<MeshComponent *>(c)->node()->_meshVisible);
-			}
+			c->saveState(state);
 		}
 	}
 
@@ -1416,17 +1438,8 @@ bool Costume::restoreState(SaveGame *state) {
 		if (c) {
 			c->_visible = state->readLESint32();
 			c->_matrix._pos = state->readVector3d();
-			if (FROM_BE_32(c->_tag) == MKTAG('M','O','D','L') || FROM_BE_32(c->_tag) == MKTAG('M','M','D','L')) {
-				ModelComponent *m = static_cast<ModelComponent *>(c);
-				m->hierarchy()->_hierVisible = c->_visible;
-			} else if (FROM_BE_32(c->_tag) == MKTAG('K','E','Y','F')) {
-				KeyframeComponent *f = static_cast<KeyframeComponent *>(c);
-				f->_active = state->readLESint32();
-				f->_repeatMode = state->readLESint32();
-				f->_currTime = state->readLESint32();
-			} else if (FROM_BE_32(c->_tag) == MKTAG('M','E','S','H')) {
-				static_cast<MeshComponent *>(c)->node()->_meshVisible = state->readLESint32();
-			}
+
+			c->restoreState(state);
 		}
 	}
 

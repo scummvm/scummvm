@@ -92,6 +92,8 @@ public:
 		virtual void setupTexture() { }
 		virtual void draw() { }
 		virtual void reset() { }
+		virtual void saveState(SaveGame *) { }
+		virtual void restoreState(SaveGame *) { }
 		virtual ~Component() { }
 
 	protected:
