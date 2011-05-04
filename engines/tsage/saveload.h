@@ -68,6 +68,12 @@ class Serialiser : public Common::Serializer {
 public:
 	Serialiser(Common::SeekableReadStream *in, Common::WriteStream *out) : Common::Serializer(in, out) {}
 
+	// HACK: TSAGE saved games contain a single byte for the savegame version,
+	// thus the normal syncVersion() Serializer member won't work here. In order
+	// to maintain compatibility with older game saves, this method is provided
+	// in order to set the savegame version from a byte
+	void setSaveVersion(byte version) { _version = version; }
+
 	void syncPointer(SavedObject **ptr, Common::Serializer::Version minVersion = 0,
 		Common::Serializer::Version maxVersion = kLastVersion);
 	void validate(const Common::String &s, Common::Serializer::Version minVersion = 0,

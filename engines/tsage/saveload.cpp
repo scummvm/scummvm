@@ -121,6 +121,7 @@ Common::Error Saver::save(int slot, const Common::String &saveName) {
 	// Set up the serialiser
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(_vm->generateSaveName(slot));
 	Serialiser serialiser(NULL, saveFile);
+	serialiser.setSaveVersion(TSAGE_SAVEGAME_VERSION);
 
 	// Write out the savegame header
 	tSageSavegameHeader header;
@@ -170,6 +171,8 @@ Common::Error Saver::restore(int slot) {
 	tSageSavegameHeader header;
 	readSavegameHeader(saveFile, header);
 	delete header.thumbnail;
+
+	serialiser.setSaveVersion(header.version);
 
 	// Load in data for objects that need to come at the start of the savegame
 	for (Common::List<SaveListener *>::iterator i = _listeners.begin(); i != _listeners.end(); ++i) {
