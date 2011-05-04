@@ -89,6 +89,11 @@ ResourceLoader::ResourceLoader() {
 ResourceLoader::~ResourceLoader() {
 	for (LabList::const_iterator i = _labs.begin(); i != _labs.end(); ++i)
 		delete *i;
+	for (Common::Array<ResourceCache>::iterator i = _cache.begin(); i != _cache.end(); ++i) {
+		ResourceCache &r = *i;
+		delete[] r.fname;
+		delete r.resPtr;
+	}
 
 	for (Common::List<Material *>::const_iterator i = _materials.begin(); i != _materials.end(); ++i) {
 		Material *m = *i;
