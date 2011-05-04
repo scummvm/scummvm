@@ -106,6 +106,19 @@ private:
 	Common::String _filename;
 };
 
+class SpriteComponent : public Costume::Component {
+public:
+	SpriteComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag);
+	~SpriteComponent();
+
+	void init();
+	void setKey(int val);
+
+private:
+	Common::String _filename;
+	Material *_material;
+};
+
 class ColormapComponent : public Costume::Component {
 public:
 	ColormapComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag);
@@ -207,6 +220,39 @@ void BitmapComponent::setKey(int val) {
 	g_grim->currScene()->addObjectState(state);
 	state->setNumber(val);
 */
+}
+
+SpriteComponent::SpriteComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
+	Costume::Component(p, parentID, t), _filename(filename) {
+
+}
+
+SpriteComponent::~SpriteComponent() {
+	delete _material;
+}
+
+void SpriteComponent::init() {
+
+	warning("SpriteComponent '%s' not implemented. (%s)", _filename.c_str(), _cost->getFilename());
+
+	const char *comma = strchr(_filename.c_str(), ',');
+
+	Common::String name(_filename.c_str(), comma);
+
+	if (comma) {
+		_material = g_resourceloader->loadMaterial(name.c_str(), cmap());
+
+		int a,b,c,d,e;
+		sscanf(comma, ",%d,%d,%d,%d,%d", &a, &b, &c, &d, &e);
+		// FIXME: What do these numbers mean?
+
+	} else {
+
+	}
+}
+
+void SpriteComponent::setKey(int val) {
+	_material->setNumber(val);
 }
 
 ModelComponent::ModelComponent(Costume::Component *p, int parentID, const char *filename, Costume::Component *prevComponent, tag32 t) :
@@ -1016,7 +1062,7 @@ Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *paren
 	else if (FROM_BE_32(tag) == MKTAG('M','A','T',' '))
 		return new MaterialComponent(parent, parentID, name, tag);
 	else if (FROM_BE_32(tag) == MKTAG('S','P','R','T'))
-		return NULL;// new SpriteComponent(parent, parentID, name);
+		return new SpriteComponent(parent, parentID, name, tag);
 
 	char t[4];
 	memcpy(t, &tag, sizeof(tag32));
