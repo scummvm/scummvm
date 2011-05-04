@@ -305,7 +305,7 @@ void PictureEngine::drawScreen() {
 
 	_screen->_renderQueue->update();
 
-	//printf("_guiHeight = %d\n", _guiHeight); fflush(stdout);
+	//debug("_guiHeight = %d\n", _guiHeight);
 
 	if (_screen->_guiRefresh && _guiHeight > 0 && _cameraHeight > 0) {
 		// Update the GUI when needed and it's visible

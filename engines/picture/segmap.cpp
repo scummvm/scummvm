@@ -372,7 +372,7 @@ void SegmentMap::getRgbModifiertAtPoint(int16 x, int16 y, int16 id, byte &r, byt
 void SegmentMap::loadSegmapMaskRectSurface(byte *maskData, SegmapMaskRect &maskRect) {
 
 	maskRect.surface = new Graphics::Surface();
-	maskRect.surface->create(maskRect.width, maskRect.height, 1);
+	maskRect.surface->create(maskRect.width, maskRect.height, Graphics::PixelFormat::createFormatCLUT8());
 
 	byte *backScreen = _vm->_screen->_backScreen + maskRect.x + (maskRect.y * _vm->_sceneWidth);
 	byte *dest = (byte*)maskRect.surface->getBasePtr(0, 0);

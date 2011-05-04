@@ -44,7 +44,7 @@ int MenuSystem::run() {
 	debug("MenuSystem::run()");
 
 	_background = new Graphics::Surface();
-	_background->create(640, 400, 1);
+	_background->create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 
 	_currMenuID = kMenuIdNone;
 	_newMenuID = kMenuIdMain;
