@@ -560,4 +560,4 @@ Common::Error TimidityMusicPlugin::createInstance(MidiDriver **mididriver, MidiD
 	REGISTER_PLUGIN_STATIC(TIMIDITY, PLUGIN_TYPE_MUSIC, TimidityMusicPlugin);
 //#endif
 
-#endif // defined (UNIX)
+#endif // defined (USE_TIMIDITY)
