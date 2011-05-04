@@ -589,7 +589,7 @@ void GrimEngine::handleChars(int operation, int key, int /*keyModifier*/, uint16
 
 void GrimEngine::handleControls(int operation, int key, int /*keyModifier*/, uint16 ascii) {
 	lua_Object buttonFunc, joyFunc;
-	bool buttonFuncIsTable, joyFuncIsTable;
+	bool buttonFuncIsTable;
 
 	// If we're not supposed to handle the key then don't
 	if (!_controlsEnabled[key])
@@ -628,10 +628,8 @@ void GrimEngine::handleControls(int operation, int key, int /*keyModifier*/, uin
 			error("handleControls: joystick handler not a function");
 			return;
 		}
-		joyFuncIsTable = true;
 	} else if (lua_isfunction(joyHandler)) {
 		joyFunc = joyHandler;
-		joyFuncIsTable = false;
 	} else {
 		error("handleControls: invalid joystick handler");
 		return;

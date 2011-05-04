@@ -521,7 +521,6 @@ void Actor::walkTo(Graphics::Vector3d p) {
 			openList.push_back(start);
 			g_grim->currScene()->findClosestSector(_pos, &start->sect, NULL);
 
-			Graphics::Vector3d currPos = _pos;
 			Common::List<Sector *> sectors;
 			for (int i = 0; i < g_grim->currScene()->getSectorCount(); ++i) {
 				Sector *s = g_grim->currScene()->getSectorBase(i);
@@ -643,7 +642,6 @@ void Actor::walkForward() {
 	//float yaw;
 	Graphics::Vector3d forwardVec(-sin(yaw_rad) * cos(pitch_rad),
 		cos(yaw_rad) * cos(pitch_rad), sin(pitch_rad));
-	Graphics::Vector3d destPos = _pos + forwardVec * dist;
 
 	if (_lastWasLeft)
 		if (_running)
