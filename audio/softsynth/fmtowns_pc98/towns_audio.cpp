@@ -467,6 +467,7 @@ int TownsAudioInterfaceIntern::processCommand(int command, va_list &args) {
 	if (command < 0 || command > 81)
 		return 4;
 	
+	Common::StackLock lock(_mutex);
 	return (this->*_intfOpcodes[command])(args);
 }
 
@@ -918,7 +919,7 @@ int TownsAudioInterfaceIntern::intf_setOutputVolume(va_list &args) {
 	left = (left & 0x7e) >> 1;
 	right = (right & 0x7e) >> 1;
 
-	if (chan)
+	if (chan == 12)
 		_outputVolumeFlags |= flags[chanType];
 	else
 		_outputVolumeFlags &= ~flags[chanType];
