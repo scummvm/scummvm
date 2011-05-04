@@ -156,6 +156,7 @@ void glNormalPointer(TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
 	p[0].op = OP_NormalPointer;
 	p[1].i = stride;
 	p[2].p = const_cast<void *>(pointer);
+	gl_add_op(p);
 }
 
 void glopTexCoordPointer(GLContext *c, GLParam *p) {
@@ -171,6 +172,7 @@ void glTexCoordPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid
 	p[1].i = size;
 	p[2].i = stride;
 	p[3].p = const_cast<void *>(pointer);
+	gl_add_op(p);
 }
 
 } // end of namespace TinyGL

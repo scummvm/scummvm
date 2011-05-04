@@ -569,6 +569,8 @@ void tglPolygonOffset(TGLfloat factor, TGLfloat units) {
 	p[0].op = TinyGL::OP_PolygonOffset;
 	p[1].f = factor;
 	p[2].f = units;
+
+	TinyGL::gl_add_op(p);
 }
 
 // Special Functions
