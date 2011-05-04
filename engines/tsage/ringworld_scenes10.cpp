@@ -1369,12 +1369,12 @@ void Scene9850::Hotspot12::doAction(int action) {
 			RING_INVENTORY._tunic2._sceneNumber = 1;
 			_globals->_player.disableControl();
 			scene->_sceneMode = 9858;
-			setAction(&scene->_sequenceManager, scene, 9858, &_globals->_player, &scene->_objTunic2, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 9858, &_globals->_player, &scene->_objTunic2, NULL);
 		} else {
 			RING_INVENTORY._tunic2._sceneNumber = 9850;
 			_globals->_player.disableControl();
 			scene->_sceneMode = 9861;
-			setAction(&scene->_sequenceManager, scene, 9861, &_globals->_player, &scene->_objTunic2, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 9861, &_globals->_player, &scene->_objTunic2, NULL);
 		}
 	} else if ((action != CURSOR_LOOK) || (RING_INVENTORY._tunic2._sceneNumber != 1)) {
 		NamedHotspot::doAction(action);
@@ -1391,12 +1391,12 @@ void Scene9850::Hotspot14::doAction(int action) {
 			RING_INVENTORY._jacket._sceneNumber = 1;
 			_globals->_player.disableControl();
 			scene->_sceneMode = 9857;
-			setAction(&scene->_sequenceManager, scene, 9857, &_globals->_player, &scene->_objJacket, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 9857, &_globals->_player, &scene->_objJacket, NULL);
 		} else {
 			RING_INVENTORY._jacket._sceneNumber = 9850;
 			_globals->_player.disableControl();
 			scene->_sceneMode = 9860;
-			setAction(&scene->_sequenceManager, scene, 9860, &_globals->_player, &scene->_objJacket, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 9860, &_globals->_player, &scene->_objJacket, NULL);
 		}
 	} else if ((action != CURSOR_LOOK) || (RING_INVENTORY._jacket._sceneNumber != 1)) {
 		NamedHotspot::doAction(action);
@@ -1413,12 +1413,12 @@ void Scene9850::Hotspot16::doAction(int action) {
 			RING_INVENTORY._cloak._sceneNumber = 1;
 			_globals->_player.disableControl();
 			scene->_sceneMode = 9862;
-			setAction(&scene->_sequenceManager, scene, 9862, &_globals->_player, &scene->_objCloak, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 9862, &_globals->_player, &scene->_objCloak, NULL);
 		} else {
 			RING_INVENTORY._cloak._sceneNumber = 9850;
 			_globals->_player.disableControl();
 			scene->_sceneMode = 9859;
-			setAction(&scene->_sequenceManager, scene, 9859, &_globals->_player, &scene->_objCloak, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 9859, &_globals->_player, &scene->_objCloak, NULL);
 		}
 	} else if ((action != CURSOR_LOOK) || (RING_INVENTORY._cloak._sceneNumber != 1)) {
 		NamedHotspot::doAction(action);
