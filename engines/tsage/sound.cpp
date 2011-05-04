@@ -50,15 +50,18 @@ SoundManager::SoundManager() {
 	_suspendCtr = 0;
 	_disableCtr = 0;
 	_field153 = 0;
-	_field16D = 0;
+	_driversDetected = false;
 }
 
 SoundManager::~SoundManager() {
 	if (__sndmgrReady) {
 		for (Common::List<Sound *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
 			(*i)->stop();
-		for (Common::List<SoundDriver *>::iterator i = _installedDrivers.begin(); i != _installedDrivers.end(); ++i)
-			unInstallDriver(*i);
+		for (Common::List<SoundDriver *>::iterator i = _installedDrivers.begin(); i != _installedDrivers.end(); ) {
+			int driverNum = (*i)->_driverNum;
+			++i;
+			unInstallDriver(driverNum);
+		}
 		_sfTerminate();
 	}
 }
@@ -72,70 +75,154 @@ void SoundManager::postInit() {
 	}
 }
 
-void SoundManager::saveNotifier(bool postFlag) {
-	_globals->_soundManager.saveNotifierProc(postFlag);
+Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool detectFlag) {
+	assert(__sndmgrReady);
+	_availableDrivers.clear();
+
+	// Build up a list of available drivers. Currently we only implement an Adlib driver
+	SoundDriverEntry sd;
+	sd.driverNum = ADLIB_DRIVER_NUM;
+	sd.status = detectFlag ? SNDSTATUS_DETECTED : SNDSTATUS_SKIPPED;
+	sd.field2 = 0;
+	sd.field6 = 15000;
+	sd.shortDescription = "Adlib or SoundBlaster";
+	sd.longDescription = "3812fm";
+	_availableDrivers.push_back(sd);
+
+	_driversDetected = true;
+	return _availableDrivers;
 }
 
-void SoundManager::saveNotifierProc(bool postFlag) {
-	warning("TODO: SoundManager::saveNotifierProc");
-}
-
-void SoundManager::loadNotifier(bool postFlag) {
-	_globals->_soundManager.loadNotifierProc(postFlag);
-}
-
-void SoundManager::loadNotifierProc(bool postFlag) {
-	warning("TODO: SoundManager::loadNotifierProc");
-}
-
-void SoundManager::listenerSynchronise(Serialiser &s) {
-	s.validate("SoundManager");
-	warning("TODO: SoundManager listenerSynchronise");
-}
-
-void SoundManager::checkResVersion(const byte *soundData) {
-	int maxVersion = READ_LE_UINT16(soundData + 4);
-	int minVersion = READ_LE_UINT16(soundData + 6);
-
-	if (_globals->_soundManager._minVersion < minVersion)
-		error("Attempt to play/prime sound resource that is too new");
-	if (_globals->_soundManager._minVersion > maxVersion)
-		error("Attempt to play/prime sound resource that is too old");
-}
-
-/*--------------------------------------------------------------------------*/
-
-void SoundManager::suspendSoundServer() {
-	++_globals->_soundManager._suspendCtr;
-}
-
-
-void SoundManager::restartSoundServer() {
-	if (_globals->_soundManager._suspendCtr > 0)
-		--_globals->_soundManager._suspendCtr;
-}
-
-void SoundManager::unInstallDriver(SoundDriver *driver) {
+void SoundManager::installConfigDrivers() {
 	
 }
 
-Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool flag) {
-	assert(__sndmgrReady);
-	_driverList.clear();
-
-	warning("TODO: SoundManager::buildDriverList");
-	return _driverList;
-}
-
-Common::List<SoundDriverEntry> &SoundManager::getDriverList(bool flag) {
-	if (flag)
-		return _driverList;
+Common::List<SoundDriverEntry> &SoundManager::getDriverList(bool detectFlag) {
+	if (detectFlag)
+		return _availableDrivers;
 	else
 		return buildDriverList(false);
 }
 
 void SoundManager::dumpDriverList() {
-	_driverList.clear();
+	_availableDrivers.clear();
+}
+
+void SoundManager::disableSoundServer() {
+	++_disableCtr;
+}
+
+void SoundManager::enableSoundServer() {
+	if (_disableCtr > 0)
+		--_disableCtr;
+}
+
+void SoundManager::suspendSoundServer() {
+	++_suspendCtr;
+}
+
+void SoundManager::restartSoundServer() {
+	if (_suspendCtr > 0)
+		--_suspendCtr;
+}
+
+/**
+ * Install the specified driver number
+ */
+void SoundManager::installDriver(int driverNum) {
+	// If driver is already installed, no need to install it
+	if (isInstalled(driverNum))
+		return;
+
+	// Instantiate the sound driver
+	SoundDriver *driver = instantiateDriver(driverNum);
+	if (!driver)
+		return;
+
+	assert((_maxVersion >= driver->_minVersion) && (_maxVersion <= driver->_maxVersion));
+
+	// Mute any loaded sounds
+	disableSoundServer();
+	for (Common::List<Sound *>::iterator i = _playList.begin(); i != _playList.end(); ++i)
+		(*i)->mute(true);
+
+	// Install the driver
+	if (!_sfInstallDriver(driver))
+		error("Sound driver initialization failed");
+
+	switch (driverNum) {
+	case ROLAND_DRIVER_NUM:
+	case ADLIB_DRIVER_NUM: {
+		// Handle loading bank infomation
+		byte *bankData = _resourceManager->getResource(RES_BANK, ROLAND_DRIVER_NUM, 0, true);
+		if (bankData) {
+			// Install the patch bank data
+			_sfInstallPatchBank(bankData);
+			DEALLOCATE(bankData);
+		} else {
+			// Could not locate patch bank data, so unload the driver
+			_sfUnInstallDriver(driver);
+
+			// Unmute currently active sounds
+			for (Common::List<Sound *>::iterator i = _playList.begin(); i != _playList.end(); ++i)
+				(*i)->mute(false);
+	
+			enableSoundServer();
+		}
+		break;
+	}
+	}
+}
+
+/**
+ * Instantiate a driver class for the specified driver number
+ */
+SoundDriver *SoundManager::instantiateDriver(int driverNum) {
+	assert(driverNum == ADLIB_DRIVER_NUM);
+	return new AdlibSoundDriver();
+}
+
+/**
+ * Uninstall the specified driver
+ */
+void SoundManager::unInstallDriver(int driverNum) {
+	Common::List<SoundDriver *>::const_iterator i;
+	for (i = _installedDrivers.begin(); i != _installedDrivers.end(); ++i) {
+		if ((*i)->_driverNum == driverNum) {
+			// Found driver to remove
+
+			// Mute any loaded sounds
+			disableSoundServer();
+			for (Common::List<Sound *>::iterator i = _playList.begin(); i != _playList.end(); ++i)
+				(*i)->mute(true);
+
+			// Uninstall the driver
+			_sfUnInstallDriver(*i);
+
+			// Re-orient all the loaded sounds 
+			for (Common::List<Sound *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
+				(*i)->orientAfterDriverChange();
+
+			// Unmute currently active sounds
+			for (Common::List<Sound *>::iterator i = _playList.begin(); i != _playList.end(); ++i)
+				(*i)->mute(false);
+	
+			enableSoundServer();
+		}
+	}
+}
+
+/**
+ * Returns true if a specified driver number is currently installed
+ */
+bool SoundManager::isInstalled(int driverNum) const {
+	Common::List<SoundDriver *>::const_iterator i;
+	for (i = _installedDrivers.begin(); i != _installedDrivers.end(); ++i) {
+		if ((*i)->_driverNum == driverNum)
+			return true;
+	}
+
+	return false;
 }
 
 void SoundManager::setMasterVol(int volume) {
@@ -156,6 +243,16 @@ void SoundManager::unloadSound(int soundNum) {
 
 int SoundManager::determineGroup(const byte *soundData) {
 	return _sfDetermineGroup(soundData);
+}
+
+void SoundManager::checkResVersion(const byte *soundData) {
+	int maxVersion = READ_LE_UINT16(soundData + 4);
+	int minVersion = READ_LE_UINT16(soundData + 6);
+
+	if (_globals->_soundManager._minVersion < minVersion)
+		error("Attempt to play/prime sound resource that is too new");
+	if (_globals->_soundManager._minVersion > maxVersion)
+		error("Attempt to play/prime sound resource that is too old");
 }
 
 int SoundManager::extractPriority(const byte *soundData) {
@@ -205,6 +302,29 @@ void SoundManager::updateSoundLoop(Sound *sound) {
 
 void SoundManager::rethinkVoiceTypes() {
 	_sfRethinkVoiceTypes();
+}
+
+/*--------------------------------------------------------------------------*/
+
+void SoundManager::saveNotifier(bool postFlag) {
+	_globals->_soundManager.saveNotifierProc(postFlag);
+}
+
+void SoundManager::saveNotifierProc(bool postFlag) {
+	warning("TODO: SoundManager::saveNotifierProc");
+}
+
+void SoundManager::loadNotifier(bool postFlag) {
+	_globals->_soundManager.loadNotifierProc(postFlag);
+}
+
+void SoundManager::loadNotifierProc(bool postFlag) {
+	warning("TODO: SoundManager::loadNotifierProc");
+}
+
+void SoundManager::listenerSynchronise(Serialiser &s) {
+	s.validate("SoundManager");
+	warning("TODO: SoundManager listenerSynchronise");
 }
 
 /*--------------------------------------------------------------------------*/
@@ -318,6 +438,18 @@ void SoundManager::_sfExtractGroupMask() {
 		mask |= _globals->_soundManager._groupList[idx];
 
 	_globals->_soundManager._groupMask = mask;
+}
+
+bool SoundManager::_sfInstallDriver(SoundDriver *driver) {
+	return false;
+}
+
+void SoundManager::_sfUnInstallDriver(SoundDriver *driver) {
+
+}
+
+void SoundManager::_sfInstallPatchBank(const byte *bankData) {
+
 }
 
 /*--------------------------------------------------------------------------*/

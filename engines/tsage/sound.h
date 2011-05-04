@@ -36,6 +36,8 @@ namespace tSage {
 class Sound;
 
 #define SOUND_ARR_SIZE 16
+#define ROLAND_DRIVER_NUM 2
+#define ADLIB_DRIVER_NUM 3
 
 struct trackInfoStruct {
 	int count;
@@ -43,14 +45,22 @@ struct trackInfoStruct {
 	int arr2[SOUND_ARR_SIZE];
 };
 
+enum SoundDriverStatus {SNDSTATUS_FAILED = 0, SNDSTATUS_DETECTED = 1, SNDSTATUS_SKIPPED = 2};
+
 class SoundDriverEntry {
 public:
-
+	int driverNum;
+	SoundDriverStatus status;
+	int field2, field6;
+	Common::String shortDescription;
+	Common::String longDescription;
 };
 
 class SoundDriver {
-private:
+public:
 	Common::String _shortDescription, _longDescription;
+	int _driverNum;
+	int _minVersion, _maxVersion;
 public:
 	const Common::String &getShortDriverDescription() { return _shortDescription; }
 	const Common::String &getLongDriverDescription() { return _longDescription; }
@@ -60,7 +70,7 @@ public:
 
 class SoundManager : public SaveListener {
 private:
-	void unInstallDriver(SoundDriver *driver);
+	SoundDriver *instantiateDriver(int driverNum);
 public:
 	bool __sndmgrReady;
 	int _minVersion, _maxVersion;
@@ -71,15 +81,13 @@ public:
 	int _disableCtr;
 	int _suspendCtr;
 	int _field153;
+	bool _driversDetected;
 	Common::List<Sound *> _soundList;
-	Common::List<SoundDriverEntry> _driverList;
-
+	Common::List<SoundDriverEntry> _availableDrivers;
 	Common::List<SoundDriver *> _installedDrivers;
 	int _field89[SOUND_ARR_SIZE];
 	uint16 _groupList[SOUND_ARR_SIZE];
 	int _fieldE9[SOUND_ARR_SIZE];
-
-	int _field16D;
 public:
 	SoundManager();
 	~SoundManager();
@@ -93,9 +101,17 @@ public:
 	static void loadNotifier(bool postFlag);
 	void loadNotifierProc(bool postFlag);
 
-	Common::List<SoundDriverEntry> &buildDriverList(bool flag);
-	Common::List<SoundDriverEntry> &getDriverList(bool flag);
+	void installConfigDrivers();
+	Common::List<SoundDriverEntry> &buildDriverList(bool detectFlag);
+	Common::List<SoundDriverEntry> &getDriverList(bool detectFlag);
 	void dumpDriverList();
+	void installDriver(int driverNum);
+	bool isInstalled(int driverNum) const;
+	void unInstallDriver(int driverNum);
+	void disableSoundServer();
+	void enableSoundServer();
+	void suspendSoundServer();
+	void restartSoundServer();
 	void checkResVersion(const byte *soundData);
 	int determineGroup(const byte *soundData);
 	int extractPriority(const byte *soundData);
@@ -106,9 +122,7 @@ public:
 	void removeFromSoundList(Sound *sound);
 	void addToPlayList(Sound *sound);
 	void removeFromPlayList(Sound *sound);
-	void suspendSoundServer();
 	void rethinkVoiceTypes();
-	void restartSoundServer();
 	void updateSoundVol(Sound *sound);
 	void updateSoundPri(Sound *sound);
 	void updateSoundLoop(Sound *sound);
@@ -133,13 +147,15 @@ public:
 	static void _sfSetMasterVol(int volume);
 	static void _sfExtractTrackInfo(trackInfoStruct *trackInfo, const byte *soundData, int groupNum);
 	static void _sfExtractGroupMask();
+	static bool _sfInstallDriver(SoundDriver *driver);
+	static void _sfUnInstallDriver(SoundDriver *driver);
+	static void _sfInstallPatchBank(const byte *bankData);
 };
 
 class Sound: public EventHandler {
 private:
 	void _prime(int soundNum, bool queFlag);
 	void _unPrime();
-	void orientAfterDriverChange();
 	void orientAfterRestore();
 public:
 	int _field6;
@@ -210,6 +226,8 @@ public:
 	bool getLoop();
 	void holdAt(int amount);
 	void release();
+
+	void orientAfterDriverChange();
 };
 
 class ASound: public EventHandler {
@@ -247,6 +265,11 @@ public:
 	int getVol() const { return _sound.getVol(); }
 	void holdAt(int v) { _sound.holdAt(v); }
 	void release() { _sound.release(); }
+};
+
+class AdlibSoundDriver: public SoundDriver {
+public:
+	void setVolume(int volume) {}
 };
 
 } // End of namespace tSage
