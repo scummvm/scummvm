@@ -573,8 +573,8 @@ public:
 	void enterName();
 	bool soundIsActive();
 	void waitFrameSSN();
-	void mixVideo(byte *OldScreen, byte *NewScreen);
-	void decodeRLE(byte *BufferRLE, byte *MiVideoRLE);
+	void mixVideo(byte *OldScreen, byte *NewScreen, uint16 oldPitch);
+	void decodeRLE(byte *BufferRLE, byte *MiVideoRLE, uint16 pitch = 320);
 	void decodeOffset(byte *BufferOFF, byte *MiVideoOFF, int length);
 	int playFrameSSN(Common::SeekableReadStream *stream);
 
