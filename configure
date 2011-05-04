@@ -1432,15 +1432,56 @@ fi
 echo $_global_constructors
 
 #
+# Do CXXFLAGS now that we know the compiler version
+#
+if test "$have_gcc" = yes ; then
+	if test "$_cxx_major" -ge "3" ; then
+		case $_host_os in
+		# newlib-based system include files suppress non-C89 function
+		# declarations under __STRICT_ANSI__
+		amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | wii | wince )
+			CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
+			;;
+		*)
+			CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
+			;;
+		esac
+		add_line_to_config_mk 'HAVE_GCC3 = 1'
+		add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
+	fi;
+
+	if test "$_cxx_major" -eq 4 && test "$_cxx_minor" -ge 3 || \
+	   test "$_cxx_major" -gt 4 ; then
+		CXXFLAGS="$CXXFLAGS -Wno-empty-body"
+	else
+		CXXFLAGS="$CXXFLAGS -Wconversion"
+	fi;
+elif test "$have_icc" = yes ; then
+	add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
+fi;
+
+# Some platforms use certain GNU extensions in header files
+case $_host_os in
+android | gamecube | psp | wii)
+	;;
+*)
+	# ICC does not support pedantic
+	if test "$have_icc" = no ; then
+		CXXFLAGS="$CXXFLAGS -pedantic"
+	fi
+	;;
+esac
+
+#
 # Check for endianness
 #
 echo_n "Checking endianness... "
 cat > tmp_endianness_check.cpp << EOF
-short ascii_mm[] = { 0x4249, 0x4765, 0x6E44, 0x6961, 0x6E53, 0x7953, 0 };
-short ascii_ii[] = { 0x694C, 0x5454, 0x656C, 0x6E45, 0x6944, 0x6E61, 0 };
+unsigned short ascii_mm[] = { 0x4249, 0x4765, 0x6E44, 0x6961, 0x6E53, 0x7953, 0 };
+unsigned short ascii_ii[] = { 0x694C, 0x5454, 0x656C, 0x6E45, 0x6944, 0x6E61, 0 };
 void _ascii() { char* s = (char*) ascii_mm; s = (char*) ascii_ii; }
-short ebcdic_ii[] = { 0x89D3, 0xE3E3, 0x8593, 0x95C5, 0x89C4, 0x9581, 0 };
-short ebcdic_mm[] = { 0xC2C9, 0xC785, 0x95C4, 0x8981, 0x95E2, 0xA8E2, 0 };
+unsigned short ebcdic_ii[] = { 0x89D3, 0xE3E3, 0x8593, 0x95C5, 0x89C4, 0x9581, 0 };
+unsigned short ebcdic_mm[] = { 0xC2C9, 0xC785, 0x95C4, 0x8981, 0x95E2, 0xA8E2, 0 };
 void _ebcdic() { char* s = (char*) ebcdic_mm; s = (char*) ebcdic_ii; }
 int main() { _ascii (); _ebcdic (); return 0; }
 EOF
@@ -2115,6 +2156,157 @@ EOF
 	esac
 	echo "$_need_memalign"
 fi
+
+#
+# Backend related stuff
+#
+case $_backend in
+	android)
+		# ssp at this point so the cxxtests link
+		if test "$_debug_build" = yes; then
+			CXXFLAGS="$CXXFLAGS -fstack-protector"
+		else
+			CXXFLAGS="$CXXFLAGS -fno-stack-protector"
+		fi
+		CXXFLAGS="$CXXFLAGS -Wa,--noexecstack"
+		LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
+
+		static_libs=''
+		system_libs=''
+		for lib in $LIBS; do
+			case $lib in
+			-lz|-lm)
+				system_libs="$system_libs $lib"
+				;;
+			*)
+				static_libs="$static_libs $lib"
+				;;
+			esac
+		done
+
+		# -lgcc is carefully placed here - we want to catch
+		# all toolchain symbols in *our* libraries rather
+		# than pick up anything unhygenic from the Android libs.
+		LIBS="-Wl,-Bstatic $static_libs"
+		LIBS="$LIBS -Wl,-Bdynamic -lgcc $system_libs -llog -lGLESv1_CM"
+		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
+		;;
+	dc)
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
+		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000 -nostartfiles "'$(ronindir)/lib/crt0.o -L$(ronindir)/lib'
+		LIBS="$LIBS -lronin -lm"
+		;;
+	dingux)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND -DDINGUX"
+		LDFLAGS="$LDFLAGS "
+		MODULES="$MODULES backends/platform/sdl"
+		;;
+	ds)
+		# TODO ds
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/arm9/source'
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/commoninclude'
+		INCLUDES="$INCLUDES "'-Ibackends/platform/ds/arm9/data'
+		;;
+	gp2x)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		LDFLAGS="$LDFLAGS"
+		DEFINES="$DEFINES -DSDL_BACKEND"
+		;;
+	gph)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		LDFLAGS="$LDFLAGS"
+		DEFINES="$DEFINES -DSDL_BACKEND"
+		;;
+	iphone)
+		OBJCFLAGS="$OBJCFLAGS --std=c99"
+		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES -framework QuartzCore -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
+		;;
+	linuxmoto)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND -DLINUXMOTO"
+		;;
+	n64)
+		INCLUDES="$INCLUDES "'-I$(N64SDK)/include'
+		INCLUDES="$INCLUDES "'-I$(N64SDK)/mips64/include'
+		INCLUDES="$INCLUDES "'-I$(N64SDK)/hkz-libn64'
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/n64'
+		LIBS="$LIBS -lpakfs -lframfs -ln64 -ln64utils -lromfs -lm -lstdc++ -lc -lgcc -lz -lnosys"
+		;;
+	null)
+		DEFINES="$DEFINES -DUSE_NULL_DRIVER"
+		;;
+	openpandora)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		LDFLAGS="$LDFLAGS"
+		DEFINES="$DEFINES -DSDL_BACKEND"
+		;;
+	ps2)
+		# TODO ps2
+		DEFINES="$DEFINES -D_EE -DFORCE_RTL"
+		INCLUDES="$INCLUDES -I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2SDK/ports/include"
+		if test "$_dynamic_modules" = no ; then
+			LDFLAGS="$LDFLAGS -mno-crt0 $PS2SDK/ee/startup/crt0.o -T $PS2SDK/ee/startup/linkfile"
+		fi
+		LDFLAGS="$LDFLAGS -L$PS2SDK/ee/lib -L$PS2SDK/ports/lib"
+		LIBS="$LIBS -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lm -lc -lfileXio -lkernel -lstdc++ "
+		;;
+	psp)
+		DEFINES="$DEFINES -D__PSP__ -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
+		LIBS="$LIBS -lpng -Wl,-Map,mapfile.txt"
+		;;
+	samsungtv)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND -DSAMSUNGTV"
+		LDFLAGS="$LDFLAGS -shared -fpic"
+		MODULES="$MODULES backends/platform/sdl"
+		;;
+	sdl)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND"
+		;;
+	webos)
+		# There is no sdl-config in the WebOS PDK so we don't use find_sdlconfig here.
+		LIBS="$LIBS -lSDL"
+		DEFINES="$DEFINES -DSDL_BACKEND -DWEBOS"
+		MODULES="$MODULES backends/platform/sdl"
+		;;
+	wii)
+		DEFINES="$DEFINES -D__WII__ -DGEKKO"
+		case $_host_os in
+		gamecube)
+			LIBS="$LIBS -lgxflux -liso9660 -lfat -logc -ldb"
+			;;
+		*)
+			LIBS="$LIBS -lgxflux -ldi -liso9660 -ltinysmb -lfat -lwiiuse -lbte -logc -lwiikeyboard -ldb"
+			;;
+		esac
+		;;
+	wince)
+		INCLUDES="$INCLUDES "'-I$(srcdir) -I$(srcdir)/backends/platform/wince -I$(srcdir)/engines -I$(srcdir)/backends/platform/wince/missing/gcc -I$(srcdir)/backends/platform/wince/CEgui -I$(srcdir)/backends/platform/wince/CEkeys'
+		LIBS="$LIBS -static -lSDL"
+		DEFINES="$DEFINES -DSDL_BACKEND"
+		;;
+	*)
+		echo "support for $_backend backend not implemented in configure script yet"
+		exit 1
+		;;
+esac
+MODULES="$MODULES backends/platform/$_backend"
 
 #
 # Enable 16bit support only for backends which support it
@@ -3033,198 +3225,6 @@ if test "$_keymapper" = yes ; then
 else
 	echo
 fi
-
-#
-# Backend related stuff
-#
-case $_backend in
-	android)
-		# ssp at this point so the cxxtests link
-		if test "$_debug_build" = yes; then
-			CXXFLAGS="$CXXFLAGS -fstack-protector"
-		else
-			CXXFLAGS="$CXXFLAGS -fno-stack-protector"
-		fi
-		CXXFLAGS="$CXXFLAGS -Wa,--noexecstack"
-		LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
-
-		static_libs=''
-		system_libs=''
-		for lib in $LIBS; do
-			case $lib in
-			-lz|-lm)
-				system_libs="$system_libs $lib"
-				;;
-			*)
-				static_libs="$static_libs $lib"
-				;;
-			esac
-		done
-
-		# -lgcc is carefully placed here - we want to catch
-		# all toolchain symbols in *our* libraries rather
-		# than pick up anything unhygenic from the Android libs.
-		LIBS="-Wl,-Bstatic $static_libs"
-		LIBS="$LIBS -Wl,-Bdynamic -lgcc $system_libs -llog -lGLESv1_CM"
-		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
-		;;
-	dc)
-		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
-		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000 -nostartfiles "'$(ronindir)/lib/crt0.o -L$(ronindir)/lib'
-		LIBS="$LIBS -lronin -lm"
-		;;
-	dingux)
-		find_sdlconfig
-		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
-		DEFINES="$DEFINES -DSDL_BACKEND -DDINGUX"
-		LDFLAGS="$LDFLAGS "
-		MODULES="$MODULES backends/platform/sdl"
-		;;
-	ds)
-		# TODO ds
-		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/arm9/source'
-		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/commoninclude'
-		INCLUDES="$INCLUDES "'-Ibackends/platform/ds/arm9/data'
-		;;
-	gp2x)
-		find_sdlconfig
-		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
-		LDFLAGS="$LDFLAGS"
-		DEFINES="$DEFINES -DSDL_BACKEND"
-		;;
-	gph)
-		find_sdlconfig
-		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
-		LDFLAGS="$LDFLAGS"
-		DEFINES="$DEFINES -DSDL_BACKEND"
-		;;
-	iphone)
-		OBJCFLAGS="$OBJCFLAGS --std=c99"
-		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES -framework QuartzCore -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
-		;;
-	linuxmoto)
-		find_sdlconfig
-		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
-		DEFINES="$DEFINES -DSDL_BACKEND -DLINUXMOTO"
-		;;
-	n64)
-		INCLUDES="$INCLUDES "'-I$(N64SDK)/include'
-		INCLUDES="$INCLUDES "'-I$(N64SDK)/mips64/include'
-		INCLUDES="$INCLUDES "'-I$(N64SDK)/hkz-libn64'
-		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/n64'
-		LIBS="$LIBS -lpakfs -lframfs -ln64 -ln64utils -lromfs -lm -lstdc++ -lc -lgcc -lz -lnosys"
-		;;
-	null)
-		DEFINES="$DEFINES -DUSE_NULL_DRIVER"
-		;;
-	openpandora)
-		find_sdlconfig
-		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
-		LDFLAGS="$LDFLAGS"
-		DEFINES="$DEFINES -DSDL_BACKEND"
-		;;
-	ps2)
-		# TODO ps2
-		DEFINES="$DEFINES -D_EE -DFORCE_RTL"
-		INCLUDES="$INCLUDES -I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2SDK/ports/include"
-		if test "$_dynamic_modules" = no ; then
-			LDFLAGS="$LDFLAGS -mno-crt0 $PS2SDK/ee/startup/crt0.o -T $PS2SDK/ee/startup/linkfile"
-		fi
-		LDFLAGS="$LDFLAGS -L$PS2SDK/ee/lib -L$PS2SDK/ports/lib"
-		LIBS="$LIBS -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lm -lc -lfileXio -lkernel -lstdc++ "
-		;;
-	psp)
-		DEFINES="$DEFINES -D__PSP__ -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
-		LIBS="$LIBS -lpng -Wl,-Map,mapfile.txt"
-		;;
-	samsungtv)
-		find_sdlconfig
-		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
-		DEFINES="$DEFINES -DSDL_BACKEND -DSAMSUNGTV"
-		LDFLAGS="$LDFLAGS -shared -fpic"
-		MODULES="$MODULES backends/platform/sdl"
-		;;
-	sdl)
-		find_sdlconfig
-		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
-		DEFINES="$DEFINES -DSDL_BACKEND"
-		;;
-	webos)
-		# There is no sdl-config in the WebOS PDK so we don't use find_sdlconfig here.
-		LIBS="$LIBS -lSDL"
-		DEFINES="$DEFINES -DSDL_BACKEND -DWEBOS"
-		MODULES="$MODULES backends/platform/sdl"
-		;;
-	wii)
-		DEFINES="$DEFINES -D__WII__ -DGEKKO"
-		case $_host_os in
-		gamecube)
-			LIBS="$LIBS -lgxflux -liso9660 -lfat -logc -ldb"
-			;;
-		*)
-			LIBS="$LIBS -lgxflux -ldi -liso9660 -ltinysmb -lfat -lwiiuse -lbte -logc -lwiikeyboard -ldb"
-			;;
-		esac
-		;;
-	wince)
-		INCLUDES="$INCLUDES "'-I$(srcdir) -I$(srcdir)/backends/platform/wince -I$(srcdir)/engines -I$(srcdir)/backends/platform/wince/missing/gcc -I$(srcdir)/backends/platform/wince/CEgui -I$(srcdir)/backends/platform/wince/CEkeys'
-		LIBS="$LIBS -static -lSDL"
-		DEFINES="$DEFINES -DSDL_BACKEND"
-		;;
-	*)
-		echo "support for $_backend backend not implemented in configure script yet"
-		exit 1
-		;;
-esac
-MODULES="$MODULES backends/platform/$_backend"
-
-#
-# Do CXXFLAGS now that we know the compiler version
-#
-if test "$have_gcc" = yes ; then
-	if test "$_cxx_major" -ge "3" ; then
-		case $_host_os in
-		# newlib-based system include files suppress non-C89 function
-		# declarations under __STRICT_ANSI__
-		amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | wii | wince )
-			CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
-			;;
-		*)
-			CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
-			;;
-		esac
-		add_line_to_config_mk 'HAVE_GCC3 = 1'
-		add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
-	fi;
-
-	if test "$_cxx_major" -eq 4 && test "$_cxx_minor" -ge 3 || \
-	   test "$_cxx_major" -gt 4 ; then
-		CXXFLAGS="$CXXFLAGS -Wno-empty-body"
-	else
-		CXXFLAGS="$CXXFLAGS -Wconversion"
-	fi;
-elif test "$have_icc" = yes ; then
-	add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
-fi;
-
-# Some platforms use certain GNU extensions in header files
-case $_host_os in
-android | gamecube | psp | wii)
-	;;
-*)
-	# ICC does not support pedantic
-	if test "$have_icc" = no ; then
-		CXXFLAGS="$CXXFLAGS -pedantic"
-	fi
-	;;
-esac
 
 #
 # Engine selection
