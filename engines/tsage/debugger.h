@@ -46,7 +46,7 @@ protected:
 	bool Cmd_ListObjects(int argc, const char **argv);
 	bool Cmd_MoveObject(int argc, const char **argv);
 
-	bool Cmd_Item(int argc, const char **argv);
+	bool Cmd_Hotspots(int argc, const char **argv);
 };
 
 } // End of namespace tSage

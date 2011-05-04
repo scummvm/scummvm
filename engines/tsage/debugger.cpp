@@ -40,8 +40,7 @@ Debugger::Debugger() : GUI::Debugger() {
 	DCmd_Register("clearflag",		WRAP_METHOD(Debugger, Cmd_ClearFlag));
 	DCmd_Register("listobjects",	WRAP_METHOD(Debugger, Cmd_ListObjects));
 	DCmd_Register("moveobject",		WRAP_METHOD(Debugger, Cmd_MoveObject));
-
-	DCmd_Register("item",			WRAP_METHOD(Debugger, Cmd_Item));
+	DCmd_Register("hotspots",		WRAP_METHOD(Debugger, Cmd_Hotspots));
 }
 
 static int strToInt(const char *s) {
@@ -388,11 +387,53 @@ bool Debugger::Cmd_MoveObject(int argc, const char **argv) {
 }
 
 /**
- * Give a specified item to the player
+ * Show any active hotspot areas in the scene
  */
-bool Debugger::Cmd_Item(int argc, const char **argv) {
-	RING_INVENTORY._stasisBox._sceneNumber = 1;
-	return true;
+bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
+	int colIndex = 16;
+	const Rect &sceneBounds = _globals->_sceneManager._scene->_sceneBounds;
+
+	// Lock the background surface for access
+	Graphics::Surface destSurface = _globals->_sceneManager._scene->_backSurface.lockSurface();
+	
+	// Iterate through the scene items
+	SynchronizedList<SceneItem *>::iterator i;
+	for (i = _globals->_sceneItems.reverse_begin(); i != _globals->_sceneItems.end(); --i, ++colIndex) {
+		SceneItem *o = *i;
+
+		// Draw the contents of the hotspot area
+		if (o->_sceneRegionId == 0) {
+			// Scene item doesn't use a region, so fill in the entire area
+			destSurface.fillRect(Rect(o->_bounds.left - sceneBounds.left, o->_bounds.top - sceneBounds.top,
+				o->_bounds.right - sceneBounds.left - 1, o->_bounds.bottom - sceneBounds.top - 1), colIndex);
+		} else {
+			// Scene uses a region, so get it and use it to fill out only the correct parts
+			SceneRegions::iterator ri = _globals->_sceneRegions.begin();
+			while ((ri != _globals->_sceneRegions.end()) && ((*ri)._regionId != o->_sceneRegionId))
+				++ri;
+
+			if (ri != _globals->_sceneRegions.end()) {
+				// Fill out the areas defined by the region
+				Region &r = *ri;
+
+				for (int y = r._bounds.top; y < r._bounds.bottom; ++y) {
+					LineSliceSet set = r.getLineSlices(y);
+
+					for (uint p = 0; p < set.items.size(); ++p)
+						destSurface.hLine(set.items[p].xs - sceneBounds.left, y - sceneBounds.top, 
+							set.items[p].xe - sceneBounds.left - 1, colIndex);
+				}
+			}
+		}
+	}
+
+	// Release the surface
+	_globals->_sceneManager._scene->_backSurface.unlockSurface();
+
+	// Mark the scene as requiring a full redraw
+	_globals->_paneRefreshFlag[0] = 2;
+
+	return false;
 }
 
 
