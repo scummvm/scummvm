@@ -10,7 +10,7 @@ namespace Prisoner {
 
 Screen::Screen(PrisonerEngine *vm) : _vm(vm) {
 	_workScreen = new Graphics::Surface();
-	_workScreen->create(640, 480, 1);
+	_workScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 	setClipRect(0, 0, 640, 480);
 
 	for (int16 i = 0; i < 256; i++)

@@ -30,11 +30,6 @@
 #include "common/array.h"
 
 #if defined(USE_ZLIB)
-  #ifdef __SYMBIAN32__
-	#include <zlib\zlib.h>
-  #else
-	#include <zlib.h>
-  #endif
 #else
   #error Sorry, zlib is required for the Prisoner engine
 #endif
@@ -75,8 +70,6 @@ public:
 protected:
 	Common::Array<PakDirectoryEntry> _directory;
 };
-
-int uncompress (Bytef *dest, uint32 *destLen, Bytef *source, uint32 sourceLen);
 
 } // End of namespace Prisoner
 

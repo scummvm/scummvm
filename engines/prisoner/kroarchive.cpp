@@ -87,10 +87,10 @@ byte *KroArchive::load(uint index) {
 	}
 	case 4: // zlib compressed
 	{
-		uint32 dstLen = entry->size;
+		unsigned long dstLen = entry->size;
 		byte *compressedData = new byte[entry->compressedSize];
 		_fd->read(compressedData, entry->compressedSize);
-		if (uncompress(data, &dstLen, compressedData, entry->compressedSize) != Z_OK)
+		if (!Common::uncompress(data, &dstLen, compressedData, entry->compressedSize))
 			error("KroArchive::load(%d) Error decompressing type %d", index, entry->compressionType);
 		delete[] compressedData;
 		break;
@@ -147,29 +147,6 @@ uint32 PakDirectory::getBaseIndex(Common::String &pakName) {
 			return _directory[i].baseIndex;
 	}
 	error("PakDirectory::getBaseIndex() PakName %s not found", pakName.c_str());
-}
-
-int uncompress (Bytef *dest, uint32 *destLen, Bytef *source, uint32 sourceLen) {
-	z_stream stream;
-	int err;
-	stream.next_in = (Bytef*)source;
-	stream.avail_in = (uInt)sourceLen;
-	stream.next_out = dest;
-	stream.avail_out = (uInt)*destLen;
-	stream.zalloc = (alloc_func)0;
-	stream.zfree = (free_func)0;
-	err = inflateInit2_(&stream, -MAX_WBITS, ZLIB_VERSION, sizeof(z_stream));
-	if (err != Z_OK) return err;
-	err = inflate(&stream, Z_FINISH);
-	if (err != Z_STREAM_END) {
-		inflateEnd(&stream);
-		if (err == Z_NEED_DICT || (err == Z_BUF_ERROR && stream.avail_in == 0))
-			return Z_DATA_ERROR;
-		return err;
-	}
-	*destLen = stream.total_out;
-	err = inflateEnd(&stream);
-	return err;
 }
 
 } // End of namespace Prisoner

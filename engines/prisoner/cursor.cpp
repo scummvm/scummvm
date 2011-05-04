@@ -104,7 +104,7 @@ void PrisonerEngine::loadMouseCursors() {
 
 Graphics::Surface *PrisonerEngine::decompressAnimationCel(AnimationCel *animationCel) {
 	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(animationCel->width, animationCel->height, 1);
+	surface->create(animationCel->width, animationCel->height, Graphics::PixelFormat::createFormatCLUT8());
 	byte *src = animationCel->data;
 	byte *dst = (byte*)surface->pixels;
 	int height = animationCel->height;

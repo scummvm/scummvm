@@ -94,7 +94,7 @@ Common::Error PrisonerEngine::run() {
 	_pathSystem = new PathSystem(this);
 
 	_screenBackupSurface = new Graphics::Surface();
-	_screenBackupSurface->create(640, 480, 1);
+	_screenBackupSurface->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 	_screenBackedup = false;
 
 	_screen->initPaletteTransTable(65);

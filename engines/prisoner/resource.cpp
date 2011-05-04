@@ -57,7 +57,7 @@ void PictureResource::load(Common::MemoryReadStream &stream) {
 	uint32 height = stream.readUint16LE();
 	debug(1, "PictureResource::load() width = %d; height = %d", width, height);
 	_picture = new Graphics::Surface();
-	_picture->create(width, height, 1);
+	_picture->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	stream.read(_picture->pixels, width * height);
 }
 
