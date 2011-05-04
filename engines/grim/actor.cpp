@@ -107,6 +107,10 @@ Actor::~Actor() {
 		clearShadowPlanes();
 		delete[] _shadowArray;
 	}
+	while (!_costumeStack.empty()) {
+		delete _costumeStack.back();
+		_costumeStack.pop_back();
+	}
 }
 
 void Actor::saveState(SaveGame *savedState) const {
