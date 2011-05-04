@@ -910,7 +910,7 @@ void OSystem_N64::detectControllers(void) {
 	controller_data_status *ctrl_status = (controller_data_status*)memalign(8, sizeof(controller_data_status));
 	controller_Read_Status(ctrl_status);
 
-	_controllerPort = 0; // Use first controller as default
+	_controllerPort = -1; // Default no controller
 	_mousePort = -1; // Default no mouse
 	for (int8 ctrl_port = 3; ctrl_port >= 0; ctrl_port--) {
 		// Found a standard pad, use this by default.
