@@ -3134,7 +3134,7 @@ static void CleanBuffer() {
 }
 
 static void Exit() {
-	exit(0);
+	g_grim->quitGame();
 }
 
 /* Destroy a text object since we don't need it anymore

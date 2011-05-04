@@ -375,6 +375,7 @@ GrimEngine::~GrimEngine() {
 	for (ActorListType::const_iterator i = _actors.begin(); i != _actors.end(); ++i)
 		delete i->_value;
 
+	killActors();
 	killPrimitiveObjects();
 	killTextObjects();
 	killBitmaps();
@@ -1617,11 +1618,9 @@ void GrimEngine::killActor(Actor *a) {
 }
 
 void GrimEngine::killActors() {
-// 	_actors.clear();
-// 	while (!_actors.empty()) {
-// 		delete _actors.back();
-// 		_actors.pop_back();
-// 	}
+	while (!_actors.empty()) {
+		delete _actors.begin()->_value;
+	}
 }
 
 Actor *GrimEngine::actor(int id) const {
