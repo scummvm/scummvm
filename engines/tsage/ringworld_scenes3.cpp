@@ -2727,7 +2727,7 @@ void Scene2200::Action3::signal() {
 			_actionIndex = 8;
 			setDelay(5);
 		} else {
-			for (SynchronisedList<SceneObject *>::iterator i = _globals->_sceneObjects->begin();
+			for (SynchronizedList<SceneObject *>::iterator i = _globals->_sceneObjects->begin();
 					i != _globals->_sceneObjects->end(); ++i) {
 				(*i)->hide();
 			}
@@ -2764,7 +2764,7 @@ void Scene2200::Action3::signal() {
 		setDelay(5);
 		break;
 	case 7:
-		for (SynchronisedList<SceneObject *>::iterator i = _globals->_sceneObjects->begin();
+		for (SynchronizedList<SceneObject *>::iterator i = _globals->_sceneObjects->begin();
 				i != _globals->_sceneObjects->end(); ++i)
 			(*i)->show();
 

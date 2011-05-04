@@ -379,7 +379,7 @@ bool GfxInvImage::process(Event &event) {
 void InventoryDialog::show() {
 	// Determine how many items are in the player's inventory
 	int itemCount = 0;
-	SynchronisedList<InvObject *>::iterator i;
+	SynchronizedList<InvObject *>::iterator i;
 	for (i = RING_INVENTORY._itemList.begin(); i != RING_INVENTORY._itemList.end(); ++i) {
 		if ((*i)->inInventory())
 			++itemCount;
@@ -400,7 +400,7 @@ InventoryDialog::InventoryDialog() {
 	// Determine the maximum size of the image of any item in the player's inventory
 	int imgWidth = 0, imgHeight = 0;
 
-	SynchronisedList<InvObject *>::iterator i;
+	SynchronizedList<InvObject *>::iterator i;
 	for (i = RING_INVENTORY._itemList.begin(); i != RING_INVENTORY._itemList.end(); ++i) {
 		InvObject *invObject = *i;
 		if (invObject->inInventory()) {

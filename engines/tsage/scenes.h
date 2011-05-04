@@ -93,7 +93,7 @@ public:
 	SceneManager();
 	virtual ~SceneManager();
 
-	virtual void listenerSynchronise(Serializer &s);
+	virtual void listenerSynchronize(Serializer &s);
 	void setNewScene(int sceneNumber);
 	void checkScene();
 	void sceneChange();

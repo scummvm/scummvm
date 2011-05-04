@@ -100,10 +100,10 @@ public:
 	uint32 getFrameNumber() const { return _frameNumber; }
 	void delay(int numFrames);
 
-	virtual void listenerSynchronise(Serializer &s) {
+	virtual void listenerSynchronize(Serializer &s) {
 		s.syncAsUint32LE(_frameNumber);
 		s.syncAsUint32LE(_prevDelayFrame);
-		// TODO: Synchronise unknown stuff
+		// TODO: Synchronize unknown stuff
 	}
 };
 

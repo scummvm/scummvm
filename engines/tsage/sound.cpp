@@ -52,9 +52,9 @@ void SoundManager::loadNotifierProc(bool postFlag) {
 	warning("TODO: SoundManager::loadNotifierProc");
 }
 
-void SoundManager::listenerSynchronise(Serializer &s) {
+void SoundManager::listenerSynchronize(Serializer &s) {
 	s.validate("SoundManager");
-	warning("TODO: SoundManager listenerSynchronise");
+	warning("TODO: SoundManager listenerSynchronize");
 }
 
 } // End of namespace tSage

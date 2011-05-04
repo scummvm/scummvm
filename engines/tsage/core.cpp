@@ -1250,7 +1250,7 @@ void ScenePalette::getPalette(int start, int count) {
 }
 
 void ScenePalette::signalListeners() {
-	SynchronisedList<PaletteModifier *>::iterator i = _listeners.begin();
+	SynchronizedList<PaletteModifier *>::iterator i = _listeners.begin();
 	while (i != _listeners.end()) {
 		PaletteModifier *obj = *i;
 		++i;
@@ -1259,7 +1259,7 @@ void ScenePalette::signalListeners() {
 }
 
 void ScenePalette::clearListeners() {
-	SynchronisedList<PaletteModifier *>::iterator i = _listeners.begin();
+	SynchronizedList<PaletteModifier *>::iterator i = _listeners.begin();
 	while (i != _listeners.end()) {
 		PaletteModifier *obj = *i;
 		++i;
@@ -1343,7 +1343,7 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 	_globals->_screenSurface.copyFrom(_globals->_sceneManager._scene->_backSurface,
 		bounds, Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), NULL);
 
-	for (SynchronisedList<PaletteModifier *>::iterator i = tempPalette._listeners.begin(); i != tempPalette._listeners.end(); ++i)
+	for (SynchronizedList<PaletteModifier *>::iterator i = tempPalette._listeners.begin(); i != tempPalette._listeners.end(); ++i)
 		delete *i;
 	tempPalette._listeners.clear();
 }
@@ -1895,7 +1895,7 @@ int SceneObject::checkRegion(const Common::Point &pt) {
 	}
 	newY -= _yDiff;
 
-	SynchronisedList<SceneObject *>::iterator i;
+	SynchronizedList<SceneObject *>::iterator i;
 	for (i = _globals->_sceneObjects->begin(); (regionIndex == 0) && (i != _globals->_sceneObjects->end()); ++i) {
 		if ((*i) && ((*i)->_flags & OBJFLAG_CHECK_REGION)) {
 			int objYDiff = (*i)->_position.y - _yDiff;
@@ -2320,7 +2320,7 @@ void SceneObjectList::draw() {
 		uint32 flagMask = (paneNum == 0) ? OBJFLAG_PANE_0 : OBJFLAG_PANE_1;
 
 		// Initial loop to set up object list and update object position, priority, and flags
-		for (SynchronisedList<SceneObject *>::iterator i = _globals->_sceneObjects->begin();
+		for (SynchronizedList<SceneObject *>::iterator i = _globals->_sceneObjects->begin();
 				i != _globals->_sceneObjects->end(); ++i) {
 			SceneObject *obj = *i;
 			objList.push_back(obj);
@@ -2474,7 +2474,7 @@ void SceneObjectList::activate() {
 	_globals->_sceneObjects_queue.push_front(this);
 
 	// Flag all the objects as modified
-	SynchronisedList<SceneObject *>::iterator i;
+	SynchronizedList<SceneObject *>::iterator i;
 	for (i = begin(); i != end(); ++i) {
 		(*i)->_flags |= OBJFLAG_PANES;
 	}
@@ -2495,7 +2495,7 @@ void SceneObjectList::deactivate() {
 	_globals->_sceneObjects_queue.pop_front();
 	_globals->_sceneObjects = *_globals->_sceneObjects_queue.begin();
 
-	SynchronisedList<SceneObject *>::iterator i;
+	SynchronizedList<SceneObject *>::iterator i;
 	for (i = objectList->begin(); i != objectList->end(); ++i) {
 		if (!((*i)->_flags & OBJFLAG_CLONED)) {
 			SceneObject *sceneObj = (*i)->clone();
@@ -3549,7 +3549,7 @@ void SceneHandler::process(Event &event) {
 		if (_globals->_player._uiEnabled && (event.eventType == EVENT_BUTTON_DOWN) &&
 				!_globals->_sceneItems.empty()) {
 			// Scan the item list to find one the mouse is within
-			SynchronisedList<SceneItem *>::iterator i = _globals->_sceneItems.begin();
+			SynchronizedList<SceneItem *>::iterator i = _globals->_sceneItems.begin();
 			while ((i != _globals->_sceneItems.end()) && !(*i)->contains(event.mousePos))
 				++i;
 
@@ -3639,7 +3639,7 @@ void Game::execute() {
 	do {
 		// Process all currently atcive game handlers
 		activeFlag = false;
-		for (SynchronisedList<GameHandler *>::iterator i = _handlers.begin(); i != _handlers.end(); ++i) {
+		for (SynchronizedList<GameHandler *>::iterator i = _handlers.begin(); i != _handlers.end(); ++i) {
 			GameHandler *gh = *i;
 			if (gh->_lockCtr.getCtr() == 0) {
 				gh->execute();

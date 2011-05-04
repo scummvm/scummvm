@@ -34,7 +34,7 @@ namespace tSage {
 class SoundManager : public SaveListener {
 public:
 	void dispatch() {}
-	virtual void listenerSynchronise(Serializer &s);
+	virtual void listenerSynchronize(Serializer &s);
 	virtual void postInit();
 
 	void proc2() {}

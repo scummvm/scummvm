@@ -93,7 +93,7 @@ public:
 class SaveListener {
 public:
 	virtual ~SaveListener() {}
-	virtual void listenerSynchronise(Serializer &s) = 0;
+	virtual void listenerSynchronize(Serializer &s) = 0;
 };
 
 /*--------------------------------------------------------------------------*/
@@ -115,7 +115,7 @@ public:
  * Derived list class with extra functionality
  */
 template<typename T>
-class SynchronisedList : public Common::List<T> {
+class SynchronizedList : public Common::List<T> {
 public:
 	void synchronize(Serializer &s) {
 		int entryCount;

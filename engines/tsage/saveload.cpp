@@ -53,7 +53,7 @@ Saver::Saver() {
 Saver::~Saver() {
 	// Internal validation that no saved object is still present
 	int totalLost = 0;
-	for (SynchronisedList<SavedObject *>::iterator i = _saver->_objList.begin(); i != _saver->_objList.end(); ++i) {
+	for (SynchronizedList<SavedObject *>::iterator i = _saver->_objList.begin(); i != _saver->_objList.end(); ++i) {
 		SavedObject *so = *i;
 		if (so)
 			++totalLost;
@@ -130,12 +130,12 @@ Common::Error Saver::save(int slot, const Common::String &saveName) {
 	writeSavegameHeader(saveFile, header);
 
 	// Save out objects that need to come at the start of the savegame
-	for (SynchronisedList<SaveListener *>::iterator i = _listeners.begin(); i != _listeners.end(); ++i) {
-		(*i)->listenerSynchronise(serializer);
+	for (SynchronizedList<SaveListener *>::iterator i = _listeners.begin(); i != _listeners.end(); ++i) {
+		(*i)->listenerSynchronize(serializer);
 	}
 
 	// Save each registered SaveObject descendant object into the savegame file
-	for (SynchronisedList<SavedObject *>::iterator i = _objList.begin(); i != _objList.end(); ++i) {
+	for (SynchronizedList<SavedObject *>::iterator i = _objList.begin(); i != _objList.end(); ++i) {
 		serializer.validate((*i)->getClassName());
 		(*i)->synchronize(serializer);
 	}
@@ -176,11 +176,11 @@ Common::Error Saver::restore(int slot) {
 
 	// Load in data for objects that need to come at the start of the savegame
 	for (Common::List<SaveListener *>::iterator i = _listeners.begin(); i != _listeners.end(); ++i) {
-		(*i)->listenerSynchronise(serializer);
+		(*i)->listenerSynchronize(serializer);
 	}
 
 	// Loop through each registered object to load in the data
-	for (SynchronisedList<SavedObject *>::iterator i = _objList.begin(); i != _objList.end(); ++i) {
+	for (SynchronizedList<SavedObject *>::iterator i = _objList.begin(); i != _objList.end(); ++i) {
 		serializer.validate((*i)->getClassName());
 		(*i)->synchronize(serializer);
 	}
@@ -379,7 +379,7 @@ void Saver::resolveLoadPointers() {
 
 	// Outer loop through the main object list
 	int objIndex = 1;
-	for (SynchronisedList<SavedObject *>::iterator iObj = _objList.begin(); iObj != _objList.end(); ++iObj, ++objIndex) {
+	for (SynchronizedList<SavedObject *>::iterator iObj = _objList.begin(); iObj != _objList.end(); ++iObj, ++objIndex) {
 		Common::List<SavedObjectRef>::iterator iPtr;
 		SavedObject *pObj = *iObj;
 

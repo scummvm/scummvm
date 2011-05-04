@@ -73,7 +73,7 @@ public:
 
 class InvObjectList : public SavedObject {
 public:
-	SynchronisedList<InvObject *> _itemList;
+	SynchronizedList<InvObject *> _itemList;
 	InvObject *_selectedItem;
 
 	InvObjectList();
@@ -337,7 +337,7 @@ class ScenePalette : public SavedObject {
 public:
 	byte _palette[256 * 3];
 	GfxColors _colors;
-	SynchronisedList<PaletteModifier *> _listeners;
+	SynchronizedList<PaletteModifier *> _listeners;
 	int _field412;
 
 	uint8 _redColor;
@@ -672,7 +672,7 @@ class SceneObjectList : public SavedObject {
 private:
 	void checkIntersection(Common::Array<SceneObject *> &ObjList, uint ObjIndex, int PaneNum);
 
-	SynchronisedList<SceneObject *> _objList;
+	SynchronizedList<SceneObject *> _objList;
 	bool _listAltered;
 public:
 	SceneObjectList() { _listAltered = false; }
@@ -689,14 +689,14 @@ public:
 	void recurse(EventHandlerFn Fn) {
 		// Loop through each object
 		_listAltered = false;
-		for (SynchronisedList<SceneObject *>::iterator i = _objList.begin(); i != _objList.end() && !_listAltered; ) {
+		for (SynchronizedList<SceneObject *>::iterator i = _objList.begin(); i != _objList.end() && !_listAltered; ) {
 			SceneObject *o = *i;
 			++i;
 			Fn(o);
 		}
 	}
-	SynchronisedList<SceneObject *>::iterator begin() { return _objList.begin(); }
-	SynchronisedList<SceneObject *>::iterator end() { return _objList.end(); }
+	SynchronizedList<SceneObject *>::iterator begin() { return _objList.begin(); }
+	SynchronizedList<SceneObject *>::iterator end() { return _objList.end(); }
 	int size() const { return _objList.size(); }
 	bool contains(SceneObject *sceneObj) { return tSage::contains(_objList, sceneObj); }
 	void push_back(SceneObject *sceneObj) { _objList.push_back(sceneObj); }
@@ -789,7 +789,7 @@ public:
 
 /*--------------------------------------------------------------------------*/
 
-class SceneItemList : public SynchronisedList<SceneItem *> {
+class SceneItemList : public SynchronizedList<SceneItem *> {
 public:
 	void addItems(SceneItem *first, ...);
 };
@@ -915,7 +915,7 @@ public:
 
 class Game {
 protected:
-	SynchronisedList<GameHandler *> _handlers;
+	SynchronizedList<GameHandler *> _handlers;
 
 	static bool notLockedFn(GameHandler *g);
 	virtual void handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName) {}

@@ -604,7 +604,7 @@ void StripManager::synchronize(Serializer &s) {
 	s.syncAsByte(_field2E6);
 	s.syncAsSint32LE(_field2E8);
 
-	// Synchronise the item list
+	// Synchronize the item list
 	int arrSize = _obj44List.size();
 	s.syncAsUint16LE(arrSize);
 	if (s.isLoading())
