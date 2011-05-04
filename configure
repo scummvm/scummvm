@@ -1853,7 +1853,6 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/ds/ds.mk"
 			;;
 		gamecube)
-			_endian=big
 			_need_memalign=yes
 			_backend="wii"
 			_build_scalers=no
@@ -1920,7 +1919,6 @@ if test -n "$_host"; then
 		m68k-atari-mint)
 			DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 			_unix=yes
-			_endian=big
 			_need_memalign=yes
 			_ranlib=m68k-atari-mint-ranlib
 			_ar="m68k-atari-mint-ar cru"
@@ -1935,7 +1933,6 @@ if test -n "$_host"; then
 		mips-sgi*)
 			LDFLAGS="$LDFLAGS -static-libgcc"
 			LIBS="$LIBS -laudio"
-			_endian=big
 			_need_memalign=yes
 			;;
 		motoezx)
@@ -2016,7 +2013,6 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/openpandora/op-bundle.mk"
 			;;
 		ppc-amigaos)
-			_endian=big
 			# AmigaOS exec allocates memory always in an aligned way
 			_need_memalign=yes
 			;;
@@ -2082,7 +2078,6 @@ if test -n "$_host"; then
 			_keymapper=yes
 			;;
 		wii)
-			_endian=big
 			_need_memalign=yes
 			_backend="wii"
 			_build_scalers=no
