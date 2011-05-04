@@ -2278,6 +2278,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdLib,
 		"disk0.stk", 0, 0
 	},
+	{ // Supplied by alex86r in bug report #3297633
+		{
+			"fascination",
+			"VGA 3 disks edition",
+			AD_ENTRY1s("disk0.stk", "ab3dfdce43917bc806812959d692fc8f", 1061929),
+			IT_ITA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeFascination,
+		kFeaturesAdLib,
+		"disk0.stk", 0, 0
+	},
 	{
 		{
 			"fascination",
