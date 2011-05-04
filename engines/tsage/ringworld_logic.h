@@ -97,7 +97,7 @@ public:
 	void display();
 	void restore();
 
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void draw(bool flag);
 	virtual void wait();
 };

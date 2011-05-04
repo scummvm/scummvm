@@ -227,10 +227,10 @@ void SceneManager::setBgOffset(const Common::Point &pt, int loadCount) {
 	_sceneLoadCount = loadCount;
 }
 
-void SceneManager::listenerSynchronise(Serialiser &s) {
+void SceneManager::listenerSynchronise(Serializer &s) {
 	s.validate("SceneManager");
 
-	_altSceneObjects.synchronise(s);
+	_altSceneObjects.synchronize(s);
 	s.syncAsSint32LE(_sceneNumber);
 	s.syncAsUint16LE(_globals->_sceneManager._scene->_activeScreenNumber);
 
@@ -239,7 +239,7 @@ void SceneManager::listenerSynchronise(Serialiser &s) {
 		checkScene();
 	}
 
-	_globals->_sceneManager._scrollerRect.synchronise(s);
+	_globals->_sceneManager._scrollerRect.synchronize(s);
 	SYNC_POINTER(_globals->_scrollFollower);
 	s.syncAsSint16LE(_loadMode);
 }
@@ -256,17 +256,17 @@ Scene::Scene() : _sceneBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
 Scene::~Scene() {
 }
 
-void Scene::synchronise(Serialiser &s) {
+void Scene::synchronize(Serializer &s) {
 	if (s.getVersion() >= 2)
-		StripCallback::synchronise(s);
+		StripCallback::synchronize(s);
 
 	s.syncAsSint32LE(_field12);
 	s.syncAsSint32LE(_screenNumber);
 	s.syncAsSint32LE(_activeScreenNumber);
 	s.syncAsSint32LE(_sceneMode);
-	_backgroundBounds.synchronise(s);
-	_sceneBounds.synchronise(s);
-	_oldSceneBounds.synchronise(s);
+	_backgroundBounds.synchronize(s);
+	_sceneBounds.synchronize(s);
+	_oldSceneBounds.synchronize(s);
 	s.syncAsSint16LE(_fieldA);
 	s.syncAsSint16LE(_fieldE);
 

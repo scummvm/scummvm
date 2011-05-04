@@ -324,7 +324,7 @@ public:
 	int _lineOffset;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 };
 
 class Scene2150 : public Scene {
@@ -381,7 +381,7 @@ public:
 
 	Scene2150();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void signal();
 	virtual void dispatch();
 };
@@ -446,7 +446,7 @@ public:
 	Scene2200();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void stripCallback(int v);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void signal();
 	virtual void dispatch();
 };
@@ -579,7 +579,7 @@ public:
 
 	Scene2230();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void dispatch();
 };
 
@@ -679,7 +679,7 @@ public:
 
 	Scene2280();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void signal();
 	virtual void dispatch();
 };
@@ -760,7 +760,7 @@ public:
 
 	Scene2310();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void signal();
 	virtual void process(Event &event);
 	virtual void dispatch();
@@ -873,7 +873,7 @@ public:
 
 	Scene2320();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void signal();
 };
 

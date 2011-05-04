@@ -113,8 +113,8 @@ Scene3700::Viewer::Viewer() {
 	_percentList[3] = 114;
 }
 
-void Scene3700::Viewer::synchronise(Serialiser &s) {
-	SceneObject::synchronise(s);
+void Scene3700::Viewer::synchronize(Serializer &s) {
+	SceneObject::synchronize(s);
 	s.syncAsByte(_active);
 	s.syncAsSint16LE(_countdownCtr);
 	for (int idx = 0; idx < 4; ++idx) {

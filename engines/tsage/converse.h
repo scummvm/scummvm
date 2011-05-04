@@ -58,7 +58,7 @@ public:
 	SequenceManager();
 
 	virtual Common::String getClassName() { return "SequenceManager"; }
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void signal();
 	virtual void process(Event &event);
@@ -86,7 +86,7 @@ public:
 	Speaker();
 
 	virtual Common::String getClassName() { return "Speaker"; }
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void proc12(Action *action);
 	virtual void setText(const Common::String &msg);
@@ -168,7 +168,7 @@ public:
 	int _id;
 	uint _scriptOffset;
 
-	virtual void synchronise(Serialiser &s) {
+	virtual void synchronize(Serializer &s) {
 		s.syncAsSint32LE(_id);
 		s.syncAsUint32LE(_scriptOffset);
 	}
@@ -184,7 +184,7 @@ public:
 	uint _speakerOffset;
 public:
 	void load(const byte *dataP);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 };
 
 class StripManager : public Action {
@@ -212,7 +212,7 @@ public:
 	StripManager();
 	virtual ~StripManager();
 
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void signal();
 	virtual void process(Event &event);

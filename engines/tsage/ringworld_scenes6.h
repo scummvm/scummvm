@@ -321,8 +321,8 @@ public:
 	Scene5300();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
-	virtual void synchronise(Serialiser &s) {
-		Scene::synchronise(s);
+	virtual void synchronize(Serializer &s) {
+		Scene::synchronize(s);
 		s.syncAsSint16LE(_field1B0A);
 	}
 };

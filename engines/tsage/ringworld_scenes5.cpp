@@ -1415,8 +1415,8 @@ void Scene4025::Action3::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene4025::Hole::synchronise(Serialiser &s) {
-	SceneObject::synchronise(s);
+void Scene4025::Hole::synchronize(Serializer &s) {
+	SceneObject::synchronize(s);
 	SYNC_POINTER(_pegPtr);
 	s.syncAsSint16LE(_armStrip);
 	s.syncAsSint16LE(_newPosition.x);
@@ -1459,8 +1459,8 @@ void Scene4025::Hole::doAction(int action) {
 	}
 }
 
-void Scene4025::Peg::synchronise(Serialiser &s) {
-	SceneObject::synchronise(s);
+void Scene4025::Peg::synchronize(Serializer &s) {
+	SceneObject::synchronize(s);
 	s.syncAsSint16LE(_field88);
 	SYNC_POINTER(_armStrip);
 }
@@ -1600,8 +1600,8 @@ void Scene4025::postInit(SceneObjectList *OwnerList) {
 	setAction(&_sequenceManager, this, 4026, NULL);
 }
 
-void Scene4025::synchronise(Serialiser &s) {
-	Scene::synchronise(s);
+void Scene4025::synchronize(Serializer &s) {
+	Scene::synchronize(s);
 	SYNC_POINTER(_pegPtr);
 	SYNC_POINTER(_pegPtr2);
 	SYNC_POINTER(_holePtr);
@@ -4195,8 +4195,8 @@ void Scene4300::process(Event &event) {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene4301::Action1::synchronise(Serialiser &s) {
-	Action::synchronise(s);
+void Scene4301::Action1::synchronize(Serializer &s) {
+	Action::synchronize(s);
 	s.syncAsSint16LE(_field34E);
 	for (int idx = 0; idx < 6; ++idx)
 		s.syncAsSint16LE(_indexList[idx]);

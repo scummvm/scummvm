@@ -62,11 +62,11 @@ struct tSageSavegameHeader {
 	if (s.isLoading()) FIELD = (TYPE)v_##FIELD;
 
 /**
- * Derived serialiser class with extra synchronisation types
+ * Derived serializer class with extra synchronisation types
  */
-class Serialiser : public Common::Serializer {
+class Serializer : public Common::Serializer {
 public:
-	Serialiser(Common::SeekableReadStream *in, Common::WriteStream *out) : Common::Serializer(in, out) {}
+	Serializer(Common::SeekableReadStream *in, Common::WriteStream *out) : Common::Serializer(in, out) {}
 
 	// HACK: TSAGE saved games contain a single byte for the savegame version,
 	// thus the normal syncVersion() Serializer member won't work here. In order
@@ -87,13 +87,13 @@ public:
 class Serialisable {
 public:
 	virtual ~Serialisable() {}
-	virtual void synchronise(Serialiser &s) = 0;
+	virtual void synchronize(Serializer &s) = 0;
 };
 
 class SaveListener {
 public:
 	virtual ~SaveListener() {}
-	virtual void listenerSynchronise(Serialiser &s) = 0;
+	virtual void listenerSynchronise(Serializer &s) = 0;
 };
 
 /*--------------------------------------------------------------------------*/
@@ -104,7 +104,7 @@ public:
 	virtual ~SavedObject();
 
 	virtual Common::String getClassName() { return "SavedObject"; }
-	virtual void synchronise(Serialiser &s) {}
+	virtual void synchronize(Serializer &s) {}
 
 	static SavedObject *createInstance(const Common::String &className);
 };
@@ -117,7 +117,7 @@ public:
 template<typename T>
 class SynchronisedList : public Common::List<T> {
 public:
-	void synchronise(Serialiser &s) {
+	void synchronize(Serializer &s) {
 		int entryCount;
 
 		if (s.isLoading()) {

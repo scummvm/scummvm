@@ -52,9 +52,9 @@ void SequenceManager::setup() {
 	_sceneObject = _objectList[0];
 }
 
-void SequenceManager::synchronise(Serialiser &s) {
+void SequenceManager::synchronize(Serializer &s) {
 	if (s.getVersion() >= 2)
-		Action::synchronise(s);
+		Action::synchronize(s);
 
 	s.syncAsSint32LE(_resNum);
 	s.syncAsSint32LE(_sequenceOffset);
@@ -512,12 +512,12 @@ void Obj44::load(const byte *dataP) {
 	_speakerOffset = READ_LE_UINT16(dataP + 0x42);
 }
 
-void Obj44::synchronise(Serialiser &s) {
+void Obj44::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_id);
 	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
 		s.syncAsSint32LE(_field2[idx]);
 	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
-		_list[idx].synchronise(s);
+		_list[idx].synchronize(s);
 	s.syncAsUint32LE(_speakerOffset);
 }
 
@@ -590,15 +590,15 @@ void StripManager::load() {
 	DEALLOCATE(obj44List);
 }
 
-void StripManager::synchronise(Serialiser &s) {
+void StripManager::synchronize(Serializer &s) {
 	if (s.getVersion() >= 2)
-		Action::synchronise(s);
+		Action::synchronize(s);
 
 	s.syncAsSint32LE(_stripNum);
 	s.syncAsSint32LE(_obj44Index);
 	s.syncAsSint32LE(_field20);
 	s.syncAsSint32LE(_sceneNumber);
-	_sceneBounds.synchronise(s);
+	_sceneBounds.synchronize(s);
 	SYNC_POINTER(_activeSpeaker);
 	s.syncAsByte(_textShown);
 	s.syncAsByte(_field2E6);
@@ -610,7 +610,7 @@ void StripManager::synchronise(Serialiser &s) {
 	if (s.isLoading())
 		_obj44List.resize(arrSize);
 	for (int i = 0; i < arrSize; ++i)
-		_obj44List[i].synchronise(s);
+		_obj44List[i].synchronize(s);
 
 	// Synhcronise script data
 	int scriptSize = _script.size();
@@ -805,16 +805,16 @@ Speaker::Speaker() : EventHandler() {
 	_speakerName = "SPEAKER";
 }
 
-void Speaker::synchronise(Serialiser &s) {
+void Speaker::synchronize(Serializer &s) {
 	if (s.getVersion() >= 2)
-		EventHandler::synchronise(s);
+		EventHandler::synchronize(s);
 
-	_fieldA.synchronise(s);
+	_fieldA.synchronize(s);
 	SYNC_POINTER(_field18);
 	s.syncString(_speakerName);
 	s.syncAsSint32LE(_newSceneNumber);
 	s.syncAsSint32LE(_oldSceneNumber);
-	_sceneBounds.synchronise(s);
+	_sceneBounds.synchronize(s);
 	s.syncAsSint32LE(_textWidth);
 	s.syncAsSint16LE(_textPos.x); s.syncAsSint16LE(_textPos.y);
 	s.syncAsSint32LE(_fontNumber);

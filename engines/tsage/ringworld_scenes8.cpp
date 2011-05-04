@@ -31,8 +31,8 @@
 
 namespace tSage {
 
-void NamedHotspotMult::synchronise(Serialiser &s) {
-	SceneHotspot::synchronise(s);
+void NamedHotspotMult::synchronize(Serializer &s) {
+	SceneHotspot::synchronize(s);
 	s.syncAsSint16LE(_useLineNum);
 	s.syncAsSint16LE(_lookLineNum);
 }

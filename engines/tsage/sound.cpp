@@ -52,7 +52,7 @@ void SoundManager::loadNotifierProc(bool postFlag) {
 	warning("TODO: SoundManager::loadNotifierProc");
 }
 
-void SoundManager::listenerSynchronise(Serialiser &s) {
+void SoundManager::listenerSynchronise(Serializer &s) {
 	s.validate("SoundManager");
 	warning("TODO: SoundManager listenerSynchronise");
 }

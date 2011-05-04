@@ -90,7 +90,7 @@ public:
 
 	GfxManager &gfxManager() { return **_gfxManagers.begin(); }
 	virtual Common::String getClassName() { return "Globals"; }
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 };
 
 extern Globals *_globals;

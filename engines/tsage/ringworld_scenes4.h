@@ -67,7 +67,7 @@ class Scene3700 : public Scene {
 
 		Viewer();
 		virtual Common::String getClassName() { return "Viewer"; }
-		virtual void synchronise(Serialiser &s);
+		virtual void synchronize(Serializer &s);
 		virtual void dispatch();
 		virtual void reposition();
 		virtual void draw();

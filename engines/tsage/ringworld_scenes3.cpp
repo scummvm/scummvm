@@ -2195,8 +2195,8 @@ void Scene2120::postInit(SceneObjectList *OwnerList) {
 	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
 }
 
-void Scene2120::synchronise(Serialiser &s) {
-	Scene::synchronise(s);
+void Scene2120::synchronize(Serializer &s) {
+	Scene::synchronize(s);
 
 	s.syncAsSint16LE(_dbMode);
 	s.syncAsSint16LE(_prevDbMode);
@@ -2589,10 +2589,10 @@ void Scene2150::postInit(SceneObjectList *OwnerList) {
 	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
 }
 
-void Scene2150::synchronise(Serialiser &s) {
-	Scene::synchronise(s);
-	_rect1.synchronise(s);
-	_rect2.synchronise(s);
+void Scene2150::synchronize(Serializer &s) {
+	Scene::synchronize(s);
+	_rect1.synchronize(s);
+	_rect2.synchronize(s);
 }
 
 void Scene2150::signal() {
@@ -3006,9 +3006,9 @@ void Scene2200::stripCallback(int v) {
 	}
 }
 
-void Scene2200::synchronise(Serialiser &s) {
-	Scene::synchronise(s);
-	_exitRect.synchronise(s);
+void Scene2200::synchronize(Serializer &s) {
+	Scene::synchronize(s);
+	_exitRect.synchronize(s);
 }
 
 void Scene2200::signal() {
@@ -3733,9 +3733,9 @@ void Scene2230::postInit(SceneObjectList *OwnerList) {
 	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
 }
 
-void Scene2230::synchronise(Serialiser &s) {
-	Scene::synchronise(s);
-	_rect1.synchronise(s);
+void Scene2230::synchronize(Serializer &s) {
+	Scene::synchronize(s);
+	_rect1.synchronize(s);
 	s.syncAsSint16LE(_field30A);
 }
 
@@ -4355,9 +4355,9 @@ void Scene2280::dispatch() {
 	}
 }
 
-void Scene2280::synchronise(Serialiser &s) {
-	Scene::synchronise(s);
-	_exitRect.synchronise(s);
+void Scene2280::synchronize(Serializer &s) {
+	Scene::synchronize(s);
+	_exitRect.synchronize(s);
 }
 
 /*--------------------------------------------------------------------------
@@ -4917,8 +4917,8 @@ void Scene2310::signal() {
 	}
 }
 
-void Scene2310::synchronise(Serialiser &s) {
-	Scene::synchronise(s);
+void Scene2310::synchronize(Serializer &s) {
+	Scene::synchronize(s);
 
 	s.syncAsSint16LE(_wireIndex);
 	s.syncAsSint16LE(_pageIndex);
@@ -5998,8 +5998,8 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 		&_hotspot13, &_hotspot4, &_hotspot3, &_hotspot2, &_hotspot1, NULL);
 }
 
-void Scene2320::synchronise(Serialiser &s) {
-	Scene::synchronise(s);
+void Scene2320::synchronize(Serializer &s) {
+	Scene::synchronize(s);
 	SYNC_POINTER(_hotspotPtr);
 }
 

@@ -100,14 +100,14 @@ void Globals::reset() {
 	_saver->addFactory(classFactoryProc);
 }
 
-void Globals::synchronise(Serialiser &s) {
+void Globals::synchronize(Serializer &s) {
 	if (s.getVersion() >= 2)
-		SavedObject::synchronise(s);
+		SavedObject::synchronize(s);
 	assert(_gfxManagers.size() == 1);
 
-	_sceneItems.synchronise(s);
+	_sceneItems.synchronize(s);
 	SYNC_POINTER(_sceneObjects);
-	_sceneObjects_queue.synchronise(s);
+	_sceneObjects_queue.synchronize(s);
 	s.syncAsSint32LE(_gfxFontNumber);
 	s.syncAsSint32LE(_gfxColors.background);
 	s.syncAsSint32LE(_gfxColors.foreground);
@@ -115,7 +115,7 @@ void Globals::synchronise(Serialiser &s) {
 	s.syncAsSint32LE(_fontColors.foreground);
 
 	s.syncAsSint16LE(_dialogCenter.x); s.syncAsSint16LE(_dialogCenter.y);
-	_sceneListeners.synchronise(s);
+	_sceneListeners.synchronize(s);
 	for (int i = 0; i < 256; ++i)
 		s.syncAsByte(_flags[i]);
 

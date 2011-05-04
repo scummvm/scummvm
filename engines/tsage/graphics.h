@@ -55,7 +55,7 @@ public:
 	void resize(const GfxSurface &surface, int xp, int yp, int percent);
 	void expandPanes();
 
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 };
 
 class GfxColors {

@@ -212,7 +212,7 @@ void Rect::expandPanes() {
 /**
  * Serialises the given rect
  */
-void Rect::synchronise(Serialiser &s) {
+void Rect::synchronize(Serializer &s) {
 	s.syncAsSint16LE(left);
 	s.syncAsSint16LE(top);
 	s.syncAsSint16LE(right);

@@ -97,8 +97,8 @@ class Scene4000 : public Scene {
 	private:
 		int _ctr;
 	public:
-		virtual void synchronise(Serialiser &s) {
-			SceneObject::synchronise(s);
+		virtual void synchronize(Serializer &s) {
+			SceneObject::synchronize(s);
 			s.syncAsUint16LE(_ctr);
 		}
 		virtual void doAction(int action);
@@ -208,7 +208,7 @@ class Scene4025 : public Scene {
 		int _armStrip;
 		Common::Point _newPosition;
 
-		virtual void synchronise(Serialiser &s);
+		virtual void synchronize(Serializer &s);
 		virtual void doAction(int action);
 	};
 	class Peg : public SceneObject {
@@ -217,7 +217,7 @@ class Scene4025 : public Scene {
 		int _armStrip;
 
 		Peg() : SceneObject() { _field88 = 0; _armStrip = 3; }
-		virtual void synchronise(Serialiser &s);
+		virtual void synchronize(Serializer &s);
 		virtual void doAction(int action);
 	};
 
@@ -248,7 +248,7 @@ public:
 
 	Scene4025();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void signal();
 	virtual void process(Event &event);
@@ -656,7 +656,7 @@ class Scene4301 : public Scene {
 		int _field34E;
 		int _indexList[6];
 
-		virtual void synchronise(Serialiser &s);
+		virtual void synchronize(Serializer &s);
 		virtual void remove();
 		virtual void signal();
 		virtual void process(Event &event);
@@ -684,8 +684,8 @@ public:
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void dispatch();
-	virtual void synchronise(Serialiser &s) {
-		Scene::synchronise(s);
+	virtual void synchronize(Serializer &s) {
+		Scene::synchronize(s);
 		s.syncAsSint16LE(_field68E);
 	}
 };

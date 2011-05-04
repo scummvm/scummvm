@@ -59,7 +59,7 @@ public:
 	virtual ~Scene();
 
 	virtual Common::String getClassName() { return "Scene"; }
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void stripCallback(int v) {}
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void process(Event &event);
@@ -93,7 +93,7 @@ public:
 	SceneManager();
 	virtual ~SceneManager();
 
-	virtual void listenerSynchronise(Serialiser &s);
+	virtual void listenerSynchronise(Serializer &s);
 	void setNewScene(int sceneNumber);
 	void checkScene();
 	void sceneChange();

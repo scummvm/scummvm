@@ -39,8 +39,8 @@ class SceneObject9150 : public SceneObject {
 public:
 	int _timer, _signalFlag;
 
-	virtual void synchronise(Serialiser &s) {
-		SceneObject::synchronise(s);
+	virtual void synchronize(Serializer &s) {
+		SceneObject::synchronize(s);
 		s.syncAsSint16LE(_timer);
 		s.syncAsSint16LE(_signalFlag);
 	}
@@ -52,8 +52,8 @@ public :
 	int _sceneState;
 
 	Scene2();
-	virtual void synchronise(Serialiser &s) {
-		Scene::synchronise(s);
+	virtual void synchronize(Serializer &s) {
+		Scene::synchronize(s);
 		s.syncAsSint16LE(_sceneState);
 	}
 };

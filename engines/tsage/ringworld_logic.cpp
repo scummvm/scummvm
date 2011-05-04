@@ -319,9 +319,9 @@ void SceneArea::wait() {
 	_globals->_events.setCursor(CURSOR_ARROW);
 }
 
-void SceneArea::synchronise(Serialiser &s) {
+void SceneArea::synchronize(Serializer &s) {
 	if (s.getVersion() >= 2)
-		SavedObject::synchronise(s);
+		SavedObject::synchronize(s);
 
 	s.syncAsSint16LE(_pt.x);
 	s.syncAsSint16LE(_pt.y);
@@ -329,7 +329,7 @@ void SceneArea::synchronise(Serialiser &s) {
 	s.syncAsSint32LE(_rlbNum);
 	s.syncAsSint32LE(_subNum);
 	s.syncAsSint32LE(_actionId);
-	_bounds.synchronise(s);
+	_bounds.synchronize(s);
 }
 
 /*--------------------------------------------------------------------------*/

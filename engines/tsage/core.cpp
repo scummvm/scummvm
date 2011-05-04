@@ -73,8 +73,8 @@ InvObjectList::InvObjectList() {
 	_selectedItem = NULL;
 }
 
-void InvObjectList::synchronise(Serialiser &s) {
-	SavedObject::synchronise(s);
+void InvObjectList::synchronize(Serializer &s) {
+	SavedObject::synchronize(s);
 	SYNC_POINTER(_selectedItem);
 }
 
@@ -108,8 +108,8 @@ Action::Action() {
 	_attached = false;
 }
 
-void Action::synchronise(Serialiser &s) {
-	EventHandler::synchronise(s);
+void Action::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
 	if (s.getVersion() == 1)
 		remove();
 
@@ -182,8 +182,8 @@ ObjectMover::~ObjectMover() {
 		_sceneObject->_mover = NULL;
 }
 
-void ObjectMover::synchronise(Serialiser &s) {
-	EventHandler::synchronise(s);
+void ObjectMover::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
 
 	s.syncAsSint16LE(_destPosition.x); s.syncAsSint16LE(_destPosition.y);
 	s.syncAsSint16LE(_moveDelta.x); s.syncAsSint16LE(_moveDelta.y);
@@ -328,8 +328,8 @@ ObjectMover2::ObjectMover2() : ObjectMover() {
 	_destObject = NULL;
 }
 
-void ObjectMover2::synchronise(Serialiser &s) {
-	ObjectMover::synchronise(s);
+void ObjectMover2::synchronize(Serializer &s) {
+	ObjectMover::synchronize(s);
 
 	SYNC_POINTER(_destObject);
 	s.syncAsSint32LE(_minArea);
@@ -404,8 +404,8 @@ void NpcMover::startMove(SceneObject *sceneObj, va_list va) {
 
 /*--------------------------------------------------------------------------*/
 
-void PlayerMover::synchronise(Serialiser &s) {
-	NpcMover::synchronise(s);
+void PlayerMover::synchronize(Serializer &s) {
+	NpcMover::synchronize(s);
 
 	s.syncAsSint16LE(_finalDest.x); s.syncAsSint16LE(_finalDest.y);
 	s.syncAsSint32LE(_routeIndex);
@@ -926,9 +926,9 @@ bool PlayerMover::sub_F8E5(const Common::Point &pt1, const Common::Point &pt2, c
 
 /*--------------------------------------------------------------------------*/
 
-void PlayerMover2::synchronise(Serialiser &s) {
+void PlayerMover2::synchronize(Serializer &s) {
 	if (s.getVersion() >= 2)
-		PlayerMover::synchronise(s);
+		PlayerMover::synchronize(s);
 	SYNC_POINTER(_destObject);
 	s.syncAsSint16LE(_maxArea);
 	s.syncAsSint16LE(_minArea);
@@ -978,8 +978,8 @@ void PaletteModifierCached::setPalette(ScenePalette *palette, int step) {
 	_percent = 100;
 }
 
-void PaletteModifierCached::synchronise(Serialiser &s) {
-	PaletteModifier::synchronise(s);
+void PaletteModifierCached::synchronize(Serializer &s) {
+	PaletteModifier::synchronize(s);
 
 	s.syncAsByte(_step);
 	s.syncAsSint32LE(_percent);
@@ -993,8 +993,8 @@ PaletteRotation::PaletteRotation() : PaletteModifierCached() {
 	_frameNumber = _globals->_events.getFrameNumber();
 }
 
-void PaletteRotation::synchronise(Serialiser &s) {
-	PaletteModifierCached::synchronise(s);
+void PaletteRotation::synchronize(Serializer &s) {
+	PaletteModifierCached::synchronize(s);
 
 	s.syncAsSint32LE(_delayCtr);
 	s.syncAsUint32LE(_frameNumber);
@@ -1122,8 +1122,8 @@ void PaletteRotation::setDelay(int amount) {
 
 /*--------------------------------------------------------------------------*/
 
-void PaletteFader::synchronise(Serialiser &s) {
-	PaletteModifierCached::synchronise(s);
+void PaletteFader::synchronize(Serializer &s) {
+	PaletteModifierCached::synchronize(s);
 
 	s.syncAsSint16LE(_step);
 	s.syncAsSint16LE(_percent);
@@ -1348,9 +1348,9 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 	tempPalette._listeners.clear();
 }
 
-void ScenePalette::synchronise(Serialiser &s) {
+void ScenePalette::synchronize(Serializer &s) {
 	if (s.getVersion() >= 2)
-		SavedObject::synchronise(s);
+		SavedObject::synchronize(s);
 
 	s.syncBytes(_palette, 256 * 3);
 	s.syncAsSint32LE(_colors.foreground);
@@ -1367,10 +1367,10 @@ void ScenePalette::synchronise(Serialiser &s) {
 
 /*--------------------------------------------------------------------------*/
 
-void SceneItem::synchronise(Serialiser &s) {
-	EventHandler::synchronise(s);
+void SceneItem::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
 
-	_bounds.synchronise(s);
+	_bounds.synchronize(s);
 	s.syncString(_msg);
 	s.syncAsSint32LE(_fieldE);
 	s.syncAsSint32LE(_field10);
@@ -1601,8 +1601,8 @@ void NamedHotspot::setup(int ys, int xs, int ye, int xe, const int resnum, const
 	_globals->_sceneItems.addItems(this, NULL);
 }
 
-void NamedHotspot::synchronise(Serialiser &s) {
-	SceneHotspot::synchronise(s);
+void NamedHotspot::synchronize(Serializer &s) {
+	SceneHotspot::synchronize(s);
 	s.syncAsSint16LE(_resnum);
 	s.syncAsSint16LE(_lookLineNum);
 	s.syncAsSint16LE(_useLineNum);
@@ -1616,8 +1616,8 @@ void SceneObjectWrapper::setSceneObject(SceneObject *so) {
 	so->_flags |= OBJFLAG_PANES;
 }
 
-void SceneObjectWrapper::synchronise(Serialiser &s) {
-	EventHandler::synchronise(s);
+void SceneObjectWrapper::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
 	SYNC_POINTER(_sceneObject);
 }
 
@@ -2014,8 +2014,8 @@ int SceneObject::getSpliceArea(const SceneObject *obj) {
 	return (xd * xd + yd) / 2;
 }
 
-void SceneObject::synchronise(Serialiser &s) {
-	SceneHotspot::synchronise(s);
+void SceneObject::synchronize(Serializer &s) {
+	SceneHotspot::synchronize(s);
 
 	s.syncAsUint32LE(_updateStartFrame);
 	s.syncAsUint32LE(_walkStartFrame);
@@ -2026,8 +2026,8 @@ void SceneObject::synchronise(Serialiser &s) {
 	s.syncAsUint32LE(_flags);
 	s.syncAsSint16LE(_xs);
 	s.syncAsSint16LE(_xe);
-	_paneRects[0].synchronise(s);
-	_paneRects[1].synchronise(s);
+	_paneRects[0].synchronize(s);
+	_paneRects[1].synchronize(s);
 	s.syncAsSint32LE(_visage);
 	SYNC_POINTER(_objectWrapper);
 	s.syncAsSint32LE(_strip);
@@ -2505,10 +2505,10 @@ void SceneObjectList::deactivate() {
 	}
 }
 
-void SceneObjectList::synchronise(Serialiser &s) {
+void SceneObjectList::synchronize(Serializer &s) {
 	if (s.getVersion() >= 2)
-		SavedObject::synchronise(s);
-	_objList.synchronise(s);
+		SavedObject::synchronize(s);
+	_objList.synchronize(s);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -2550,8 +2550,8 @@ void SceneText::setup(const Common::String &msg) {
 	gfxMan.deactivate();
 }
 
-void SceneText::synchronise(Serialiser &s) {
-	SceneObject::synchronise(s);
+void SceneText::synchronize(Serializer &s) {
+	SceneObject::synchronize(s);
 
 	s.syncAsSint16LE(_fontNumber);
 	s.syncAsSint16LE(_width);
@@ -2669,8 +2669,8 @@ void Player::process(Event &event) {
 	}
 }
 
-void Player::synchronise(Serialiser &s) {
-	SceneObject::synchronise(s);
+void Player::synchronize(Serializer &s) {
+	SceneObject::synchronize(s);
 
 	s.syncAsByte(_canWalk);
 	s.syncAsByte(_uiEnabled);
@@ -3429,12 +3429,12 @@ void GameHandler::execute() {
 	}
 }
 
-void GameHandler::synchronise(Serialiser &s) {
+void GameHandler::synchronize(Serializer &s) {
 	if (s.getVersion() >= 2)
-		EventHandler::synchronise(s);
+		EventHandler::synchronize(s);
 
-	_lockCtr.synchronise(s);
-	_waitCtr.synchronise(s);
+	_lockCtr.synchronize(s);
+	_waitCtr.synchronize(s);
 	s.syncAsSint16LE(_nextWaitCtr);
 	s.syncAsSint16LE(_field14);
 }
@@ -3627,7 +3627,7 @@ void SceneHandler::dispatchObject(EventHandler *obj) {
 	obj->dispatch();
 }
 
-void SceneHandler::saveListener(Serialiser &ser) {
+void SceneHandler::saveListener(Serializer &ser) {
 	warning("TODO: SceneHandler::saveListener");
 }
 
