@@ -38,8 +38,17 @@ Material::Material(const char *filename, const char *data, int len, CMap *cmap) 
 
 	_numImages = READ_LE_UINT32(data + 12);
 	_currImage = 0;
-	_width = READ_LE_UINT32(data + 76 + _numImages * 40);
-	_height = READ_LE_UINT32(data + 80 + _numImages * 40);
+	/* Discovered by diffing orange.mat with pink.mat and blue.mat .
+	 * Actual meaning unknown, so I prefer to use it as an enum-ish
+	 * at the moment, to detect unexpected values.
+	 */
+	uint32 offset = READ_LE_UINT32(data + 0x4c);
+	if (offset == 0x8)
+	    data += 16;
+	else if (offset != 0)
+	    error("Unknown offset: %d", offset);
+	_width = READ_LE_UINT32(data + 60 + _numImages * 40);
+	_height = READ_LE_UINT32(data + 64 + _numImages * 40);
 
 	if (_width == 0 || _height == 0) {
 		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
@@ -47,7 +56,7 @@ Material::Material(const char *filename, const char *data, int len, CMap *cmap) 
 		return;
 	}
 
-	data += 100 + _numImages * 40;
+	data += 84 + _numImages * 40;
 
 	g_driver->createMaterial(this, data, cmap);
 }
