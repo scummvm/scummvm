@@ -911,8 +911,10 @@ void Scene9450::signal() {
 			_sceneMode = 1001;
 			if (_object2._action)
 				_object2._action->remove();
+			// Eat
+			setAction(&_sequenceManager1, this, 9455, &_object2, &_object1, &_object3, NULL);
 		}
-		// No break on purpose
+		break;
 	case 1001:
 	case 1003:
 		// Eat
@@ -980,7 +982,7 @@ void Scene9450::postInit(SceneObjectList *OwnerList) {
 	} else {
 		_object3.postInit();
 		_object3.hide();
-		_object3.setAction(&_sequenceManager2, 0, 9455, &_object2, &_object1, NULL);
+		_object3.setAction(&_sequenceManager2, NULL, 9455, &_object2, &_object1, NULL);
 	}
 
 	if (RING_INVENTORY._tunic._sceneNumber != 1)
