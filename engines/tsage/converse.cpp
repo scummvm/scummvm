@@ -741,8 +741,8 @@ void StripManager::process(Event &event) {
 	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
 		if (_obj44Index != 10000) {
 			int currIndex = _obj44Index;
-			while (!_obj44List[_obj44Index + 1]._id) {
-				_obj44Index = getNewIndex(_obj44List[_obj44Index]._id);
+			while (!_obj44List[_obj44Index]._list[1]._id) {
+				_obj44Index = getNewIndex(_obj44List[_obj44Index]._list[0]._id);
 				if ((_obj44Index < 0) || (_obj44Index == 10000))
 					break;
 				currIndex = _obj44Index;
