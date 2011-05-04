@@ -3425,8 +3425,9 @@ void SceneHandler::postInit(SceneObjectList *OwnerList) {
 	_globals->_scenePalette.loadPalette(0);
 	_globals->_scenePalette.refresh();
 
-	// TODO: Bunch of other scene related setup goes here
 	_globals->_soundManager.postInit();
+	_globals->_soundManager.buildDriverList(true);
+	_globals->_soundManager.installConfigDrivers();
 
 	_globals->_game->start();
 }
