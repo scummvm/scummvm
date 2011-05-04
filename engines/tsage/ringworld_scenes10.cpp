@@ -860,7 +860,7 @@ void Scene9450::Hotspot3::doAction(int action) {
 	case OBJECT_TUNIC2:
 		scene->_sceneMode = 9460;
 		_globals->_player.disableControl();
-		setAction(&scene->_sequenceManager1, scene, 9460, &_globals->_player, &scene->_object2, &scene->_object1, NULL);
+		scene->setAction(&scene->_sequenceManager1, scene, 9460, &_globals->_player, &scene->_object2, &scene->_object1, NULL);
 		break;
 	case OBJECT_TUNIC:
 		SceneItem::display(9450, 49, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
@@ -878,13 +878,13 @@ void Scene9450::Hotspot3::doAction(int action) {
 				scene->_object2._action->remove();
 			scene->_sceneMode = 9459;
 			_globals->_player.disableControl();
-			setAction(&scene->_sequenceManager1, scene, 9459, &scene->_object2, &scene->_object1, &scene->_object3, &_globals->_player, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, 9459, &scene->_object2, &scene->_object1, &scene->_object3, &_globals->_player, NULL);
 		} else if ((RING_INVENTORY._cloak._sceneNumber != 1) && (RING_INVENTORY._jacket._sceneNumber != 1) && (RING_INVENTORY._tunic2._sceneNumber != 1)) {
 			SceneItem::display(9450, 38, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		} else {
 			scene->_sceneMode = 9460;
 			_globals->_player.disableControl();
-			setAction(&scene->_sequenceManager1, scene, 9460, &_globals->_player, &scene->_object2, &scene->_object1, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, 9460, &_globals->_player, &scene->_object2, &scene->_object1, NULL);
 		}
 		break;
 	default:
