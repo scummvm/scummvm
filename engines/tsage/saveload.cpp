@@ -225,7 +225,7 @@ bool Saver::readSavegameHeader(Common::InSaveFile *in, tSageSavegameHeader &head
 		return false;
 
 	header.version = in->readByte();
-	if (header.version != TSAGE_SAVEGAME_VERSION)
+	if (header.version > TSAGE_SAVEGAME_VERSION)
 		return false;
 
 	// Read in the string

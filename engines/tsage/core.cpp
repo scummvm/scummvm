@@ -110,6 +110,8 @@ Action::Action() {
 
 void Action::synchronise(Serialiser &s) {
 	EventHandler::synchronise(s);
+	if (s.getVersion() == 1)
+		remove();
 
 	SYNC_POINTER(_owner);
 	s.syncAsSint32LE(_actionIndex);
@@ -925,7 +927,8 @@ bool PlayerMover::sub_F8E5(const Common::Point &pt1, const Common::Point &pt2, c
 /*--------------------------------------------------------------------------*/
 
 void PlayerMover2::synchronise(Serialiser &s) {
-	PlayerMover::synchronise(s);
+	if (s.getVersion() >= 2)
+		PlayerMover::synchronise(s);
 	SYNC_POINTER(_destObject);
 	s.syncAsSint16LE(_maxArea);
 	s.syncAsSint16LE(_minArea);
@@ -1346,7 +1349,8 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 }
 
 void ScenePalette::synchronise(Serialiser &s) {
-	SavedObject::synchronise(s);
+	if (s.getVersion() >= 2)
+		SavedObject::synchronise(s);
 
 	s.syncBytes(_palette, 256 * 3);
 	s.syncAsSint32LE(_colors.foreground);
@@ -2502,7 +2506,8 @@ void SceneObjectList::deactivate() {
 }
 
 void SceneObjectList::synchronise(Serialiser &s) {
-	SavedObject::synchronise(s);
+	if (s.getVersion() >= 2)
+		SavedObject::synchronise(s);
 	_objList.synchronise(s);
 }
 
@@ -3425,7 +3430,8 @@ void GameHandler::execute() {
 }
 
 void GameHandler::synchronise(Serialiser &s) {
-	EventHandler::synchronise(s);
+	if (s.getVersion() >= 2)
+		EventHandler::synchronise(s);
 
 	_lockCtr.synchronise(s);
 	_waitCtr.synchronise(s);

@@ -257,7 +257,8 @@ Scene::~Scene() {
 }
 
 void Scene::synchronise(Serialiser &s) {
-	StripCallback::synchronise(s);
+	if (s.getVersion() >= 2)
+		StripCallback::synchronise(s);
 
 	s.syncAsSint32LE(_field12);
 	s.syncAsSint32LE(_screenNumber);

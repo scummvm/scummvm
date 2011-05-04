@@ -53,7 +53,8 @@ void SequenceManager::setup() {
 }
 
 void SequenceManager::synchronise(Serialiser &s) {
-	Action::synchronise(s);
+	if (s.getVersion() >= 2)
+		Action::synchronise(s);
 
 	s.syncAsSint32LE(_resNum);
 	s.syncAsSint32LE(_sequenceOffset);
@@ -590,7 +591,8 @@ void StripManager::load() {
 }
 
 void StripManager::synchronise(Serialiser &s) {
-	Action::synchronise(s);
+	if (s.getVersion() >= 2)
+		Action::synchronise(s);
 
 	s.syncAsSint32LE(_stripNum);
 	s.syncAsSint32LE(_obj44Index);
@@ -804,7 +806,8 @@ Speaker::Speaker() : EventHandler() {
 }
 
 void Speaker::synchronise(Serialiser &s) {
-	EventHandler::synchronise(s);
+	if (s.getVersion() >= 2)
+		EventHandler::synchronise(s);
 
 	_fieldA.synchronise(s);
 	SYNC_POINTER(_field18);
