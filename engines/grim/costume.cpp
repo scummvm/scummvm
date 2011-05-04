@@ -111,6 +111,8 @@ public:
 	ColormapComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag);
 	ColormapComponent *copy(Costume::Component *newParent);
 	~ColormapComponent();
+
+	void init();
 };
 
 class ModelComponent : public Costume::Component {
@@ -405,14 +407,17 @@ private:
 ColormapComponent::ColormapComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
 		Costume::Component(p, parentID, t) {
 	_cmap = g_resourceloader->getColormap(filename);
-
-	if (p)
-		p->setColormap(_cmap);
-	else
-		warning("No parent to apply colormap object on.");
 }
 
 ColormapComponent::~ColormapComponent() {
+}
+
+void ColormapComponent::init() {
+	if (_parent)
+		_parent->setColormap(_cmap);
+	else
+		warning("No parent to apply colormap object on. CMap: %s, Costume: %s",
+				_cmap->filename(),_cost->getFilename());
 }
 
 class KeyframeComponent : public Costume::Component {
