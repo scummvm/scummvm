@@ -33,8 +33,23 @@ Name ScummVM
 #!define build_dir    ""
 #!define text_dir     ""
 #!define ARCH         ""    ;(optional, defaults to win32)
+
+# Check parameters
+!ifndef top_srcdir
+	!error "Top source folder has not been passed to command line!"
+!endif
+
+!ifndef build_dir
+	!error "Build folder has not been passed to command line (this folder should contain the executable and linked DLLs)!"
+!endif
+
+!ifndef text_dir
+	!error "Text folder has not been passed to command line (this folder should contain all the text files used by the installer)!"
+!endif
+
 !ifndef ARCH
-!define ARCH         "win32"
+	!warning "ARCH has not been defined, defaulting to 'win32'"
+	!define ARCH         "win32"
 !endif
 
 #########################################################################################
