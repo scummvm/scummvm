@@ -1075,13 +1075,6 @@ psp)
 	_host_os=psp
 	_host_cpu=mipsallegrexel
 	_host_alias=psp
-	if test -z "$PSPDEV"; then
-		PSPDEV=`psp-config --pspdev-path`
-	fi
-	if test -d "$PSPDEV/psp/lib"; then
-		LDFLAGS="$LDFLAGS -L$PSPDEV/psp/lib"
-	fi
-	LDFLAGS="$LDFLAGS -L$PSPDEV/psp/sdk/lib -specs=$_srcdir/backends/platform/psp/psp.spec"
 	;;
 samsungtv)
 	_host_os=linux
@@ -1218,9 +1211,15 @@ ps2)
 	fi
 	;;
 psp)
-	PSPSDK=`psp-config --pspsdk-path`
+	if test -z "$PSPDEV"; then
+		PSPDEV=`psp-config --pspdev-path`
+	fi
+	# TODO: Should we also insist on a valid PSPDEV value?
 	if test -z "$PSPSDK"; then
-		echo "Please set the path to PSPSDK in your environment."
+		PSPSDK=`psp-config --pspsdk-path`
+	fi
+	if test -z "$PSPSDK"; then
+		echo "Please set PSPSDK in your environment. export PSPSDK=<path to psp sdk>"
 		exit 1
 	fi
 	;;
@@ -1662,6 +1661,10 @@ case $_host_os in
 		DEFINES="$DEFINES -D_EE -D__PLAYSTATION2__"
 		;;
 	psp)
+		if test -d "$PSPDEV/psp/lib"; then
+			LDFLAGS="$LDFLAGS -L$PSPDEV/psp/lib"
+		fi
+		LDFLAGS="$LDFLAGS -L$PSPSDK/lib -specs=$_srcdir/backends/platform/psp/psp.spec"
 		CXXFLAGS="$CXXFLAGS -O3 -I$PSPSDK/include -D_PSP_FW_VERSION=150"
 		;;
 	solaris*)
