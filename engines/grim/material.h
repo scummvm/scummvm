@@ -44,8 +44,8 @@ public:
 	// Set which image in an animated texture to use
 	void setNumber(int n) { _currImage = n; }
 
-	int numImages() const { return _numImages; }
-	int currentImage() const { return _currImage; }
+	int getNumImages() const { return _numImages; }
+	int getCurrentImage() const { return _currImage; }
 	const char *getFilename() { return _fname.c_str(); }
 
 	~Material();
