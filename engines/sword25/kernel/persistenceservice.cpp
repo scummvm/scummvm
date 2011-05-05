@@ -336,6 +336,9 @@ bool PersistenceService::saveGame(uint slotID, const Common::String &screenshotF
 	// Savegameinformationen für diesen Slot aktualisieren.
 	_impl->readSlotSavegameInformation(slotID);
 
+	// Empty the cache, to remove old thumbnails
+	Kernel::getInstance()->getResourceManager()->emptyThumbnailCache();
+
 	// Erfolg signalisieren.
 	return true;
 }

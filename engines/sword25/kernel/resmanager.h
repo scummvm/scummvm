@@ -82,6 +82,11 @@ public:
 	void emptyCache();
 
 	/**
+	 * Removes all the savegame thumbnails from the cache
+	 **/
+	void emptyThumbnailCache();
+
+	/**
 	 * Writes the names of all currently locked resources to the log file
 	 */
 	void dumpLockedResources();
