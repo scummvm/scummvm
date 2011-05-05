@@ -145,7 +145,6 @@ _text_console=no
 _mt32emu=yes
 _build_scalers=yes
 _build_hq_scalers=yes
-_arm_asm=no
 _indeo3=auto
 _enable_prof=no
 _unix=no
@@ -161,6 +160,7 @@ _backend=sdl
 _endian=unknown
 _need_memalign=no
 _have_x86=no
+_arm_asm=no
 _verbose_build=no
 _dynamic_modules=no
 _plugins_default=static
@@ -1543,20 +1543,6 @@ echo "$type_4_byte"
 test $TMPR -eq 0 || exit 1	# check exit code of subshell
 
 #
-# Check whether we can use x86 asm routines
-#
-echo_n "Compiling for x86... "
-case $_host_cpu in
-	i386|i486|i586|i686)
-		_have_x86=yes
-		;;
-	*)
-		_have_x86=no
-		;;
-esac
-echo "$_have_x86"
-
-#
 # Determine build settings
 #
 echo_n "Checking hosttype... "
@@ -1762,7 +1748,6 @@ if test -n "$_host"; then
 			HOSTEXEEXT=.so
 			_backend="android"
 			_port_mk="backends/platform/android/android.mk"
-			_arm_asm=yes
 			_build_scalers=no
 			_seq_midi=no
 			_mt32emu=no
@@ -1771,7 +1756,6 @@ if test -n "$_host"; then
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			_unix=yes
 			_need_memalign=yes
-			_arm_asm=yes
 			;;
 		arm-riscos|linupy)
 			DEFINES="$DEFINES -DLINUPY"
@@ -1795,7 +1779,6 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS"
 			_unix=yes
 			_need_memalign=yes
-			_arm_asm=yes
 			_backend="gph"
 			_build_hq_scalers=no
 			_vkeybd=yes
@@ -1843,7 +1826,6 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL -DDISABLE_SID -DDISABLE_NES_APU"
 			DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
 			_need_memalign=yes
-			_arm_asm=yes
 			add_line_to_config_h '#define DISABLE_TEXT_CONSOLE'
 			_backend="ds"
 			_build_scalers=no
@@ -1876,7 +1858,6 @@ if test -n "$_host"; then
 			LDFLAGS="$LDFLAGS -static"
 			_unix=yes
 			_need_memalign=yes
-			_arm_asm=yes
 			_backend="gph"
 			_build_hq_scalers=no
 			_vkeybd=yes
@@ -1896,7 +1877,6 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			_unix=yes
 			_need_memalign=yes
-			_arm_asm=yes
 			_backend="gph"
 			_build_hq_scalers=no
 			_vkeybd=yes
@@ -1909,7 +1889,6 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DIPHONE"
 			_unix=yes
 			_need_memalign=yes
-			_arm_asm=yes
 			_backend="iphone"
 			_build_hq_scalers=no
 			_seq_midi=no
@@ -1938,7 +1917,6 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			_unix=yes
 			_need_memalign=yes
-			_arm_asm=yes
 			_backend="linuxmoto"
 			_build_hq_scalers=no
 			_mt32emu=no
@@ -1951,7 +1929,6 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			_unix=yes
 			_need_memalign=yes
-			_arm_asm=yes
 			_backend="linuxmoto"
 			_build_hq_scalers=no
 			_mt32emu=no
@@ -2002,7 +1979,6 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			_unix=yes
 			_need_memalign=yes
-			_arm_asm=yes
 			_backend="openpandora"
 			_build_hq_scalers=yes
 			_vkeybd=no
@@ -2057,7 +2033,6 @@ if test -n "$_host"; then
 			HOSTEXEEXT=".so"
 			_unix=yes
 			_need_memalign=yes
-			_arm_asm=yes
 			_backend="samsungtv"
 			_mt32emu=no
 			_vkeybd=yes
@@ -2065,7 +2040,6 @@ if test -n "$_host"; then
 		webos)
 			_unix=yes
 			_need_memalign=yes
-			_arm_asm=yes
 			_backend="webos"
 			_port_mk="backends/platform/webos/webos.mk"
 			_build_scalers=no
@@ -2092,7 +2066,6 @@ if test -n "$_host"; then
 		wince)
 			LDFLAGS="$LDFLAGS -Wl,--stack,65536"
 			_need_memalign=yes
-			_arm_asm=yes
 			_tremolo=yes
 			_backend="wince"
 			_mt32emu=no
@@ -2319,7 +2292,6 @@ case $_endian in
 		;;
 esac
 
-define_in_config_h_if_yes $_have_x86 'HAVE_X86'
 
 define_in_config_h_if_yes $_need_memalign 'SCUMM_NEED_ALIGNMENT'
 
@@ -2590,15 +2562,6 @@ fi
 define_in_config_if_yes "$_build_scalers" 'USE_SCALERS'
 
 define_in_config_if_yes "$_build_hq_scalers" 'USE_HQ_SCALERS'
-
-#
-# Check whether to use optimized ARM asm
-#
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_SCALER_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_SOUND_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_SMUSH_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_GFX_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_COSTUME_ASM'
 
 #
 # Check whether to compile the Indeo3 decoder
@@ -3036,6 +2999,41 @@ fi
 
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
 define_in_config_if_yes "$_opengles" "USE_GLES"
+
+
+#
+# Check whether we can use x86 asm routines
+#
+echo_n "Compiling for x86... "
+case $_host_cpu in
+	i386|i486|i586|i686)
+		_have_x86=yes
+		;;
+	*)
+		_have_x86=no
+		;;
+esac
+echo "$_have_x86"
+define_in_config_h_if_yes $_have_x86 'HAVE_X86'
+
+#
+# Check whether to use optimized ARM asm
+#
+echo_n "Compiling for ARM... "
+case $_host_cpu in
+	arm*)
+		_arm_asm=yes
+		;;
+	*)
+		_arm_asm=no
+		;;
+esac
+echo "$_arm_asm"
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_SCALER_ASM'
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_SOUND_ASM'
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_SMUSH_ASM'
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_GFX_ASM'
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_COSTUME_ASM'
 
 #
 # Check for nasm
