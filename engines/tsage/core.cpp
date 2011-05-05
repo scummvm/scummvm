@@ -2535,6 +2535,8 @@ void SceneText::setup(const Common::String &msg) {
 	gfxMan._font._colors2.foreground = _color3;
 
 	gfxMan.getStringBounds(msg.c_str(), textRect, _width);
+	_bounds.setWidth(textRect.width());
+	_bounds.setHeight(textRect.height());
 
 	// Set up a new blank surface to hold the text
 	_textSurface.create(textRect.width(), textRect.height());

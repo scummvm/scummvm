@@ -349,17 +349,19 @@ void SequenceManager::setMessage(int resNum, int lineNum, int color, const Commo
 	// Get the display message
 	Common::String msg = _resourceManager->getMessage(resNum, lineNum);
 
-	// Get the needed rect, and move it to the desired position
-	Rect textRect;
-	_globals->gfxManager().getStringBounds(msg.c_str(), textRect, width);
+	// Set the text message
+	_sceneText.setup(msg);
+
+	// Move the text to the correct position
+	Rect textRect = _sceneText._bounds;
 	Rect sceneBounds = _globals->_sceneManager._scene->_sceneBounds;
 	sceneBounds.collapse(4, 2);
 	textRect.moveTo(pt);
 	textRect.contain(sceneBounds);
 
-	// Set the text message
-	_sceneText.setup(msg);
 	_sceneText.setPosition(Common::Point(textRect.left, textRect.top));
+
+	// Draw the text
 	_sceneText.fixPriority(255);
 	_sceneText.show();
 
