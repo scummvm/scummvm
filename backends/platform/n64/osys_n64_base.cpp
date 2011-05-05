@@ -32,6 +32,8 @@
 #include "framfs_save_manager.h"
 #include "backends/fs/n64/n64-fs-factory.h"
 
+typedef unsigned long long uint64;
+
 extern uint8 _romfs; // Defined by linker (used to calculate position of romfs image)
 
 inline uint16 colRGB888toBGR555(byte r, byte g, byte b);
