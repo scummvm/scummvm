@@ -411,13 +411,13 @@ bool TownsAudioInterfaceIntern::checkPluginDriver(TownsAudioInterfacePluginDrive
 	if (_refCount <= 1)
 		return true;
 
-	Common::StackLock lock(_mutex);
-
 	if (_drv) {
 		if (driver && driver != _drv)
 			return false;
 	} else {
+		lock();
 		_drv = driver;
+		unlock();
 	}
 
 	return true;
@@ -467,8 +467,11 @@ int TownsAudioInterfaceIntern::processCommand(int command, va_list &args) {
 	if (command < 0 || command > 81)
 		return 4;
 	
-	Common::StackLock lock(_mutex);
-	return (this->*_intfOpcodes[command])(args);
+	lock();
+	int res = (this->*_intfOpcodes[command])(args);
+	unlock();
+
+	return res;
 }
 
 void TownsAudioInterfaceIntern::setMusicVolume(int volume) {
@@ -539,13 +542,11 @@ void TownsAudioInterfaceIntern::nextTickEx(int32 *buffer, uint32 bufferSize) {
 }
 
 void TownsAudioInterfaceIntern::timerCallbackA() {
-	Common::StackLock lock(_mutex);
 	if (_drv && _ready)
 		_drv->timerCallback(0);
 }
 
 void TownsAudioInterfaceIntern::timerCallbackB() {
-	Common::StackLock lock(_mutex);
 	if (_ready) {
 		if (_drv)
 			_drv->timerCallback(1);

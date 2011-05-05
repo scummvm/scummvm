@@ -52,7 +52,7 @@ public:
 private:
 	struct StateA {
 		uint8 numLoop;
-		int32 fld_1;
+		uint32 fld_1;
 		int32 duration;
 		int32 fld_9;
 		int16 effectState;
@@ -60,10 +60,10 @@ private:
 		uint8 ar1[4];
 		uint8 ar2[4];
 		int8 modWheelSensitivity;
-		uint8 modWheelState;
+		int8 modWheelState;
 		uint8 fld_1c;
 		uint32 fld_1d;
-		int32 fld_21;
+		uint32 fld_21;
 		uint32 fld_25;
 		int8 dir;
 		uint32 fld_2a;
@@ -71,14 +71,14 @@ private:
 	} *_stateA;
 
 	struct StateB {
-		int8 inc;
+		int16 inc;
 		uint8 type;
 		uint8 useModWheel;
 		uint8 fld_6;
 		StateA *a;
 	} *_stateB;
 
-	uint16 getEffectState(uint8 type);
+	int16 getEffectState(uint8 type);
 	void initEffect(StateA *a, const uint8 *effectData);
 	void updateEffectOuter3(StateA *a, StateB *b);
 	int updateEffectOuter(StateA *a, StateB *b);
@@ -159,7 +159,7 @@ private:
 	int8 _transpose;
 	uint8 _fld_1f;
 	int8 _detune;
-	uint8 _modWheel;
+	int8 _modWheel;
 	uint8 _sustain;
 	uint8 _pitchBendFactor;
 	int16 _pitchBend;
@@ -392,7 +392,7 @@ int TownsMidiOutputChannel::checkPriority(int pri) {
 	return kHighPriority;
 }
 
-uint16 TownsMidiOutputChannel::getEffectState(uint8 type) {
+int16 TownsMidiOutputChannel::getEffectState(uint8 type) {
 	uint8 chan = (type < 13) ? _chanMap2[_chan] : ((type < 26) ? _chanMap[_chan] : _chan);
 	
 	if (type == 28)
@@ -404,7 +404,7 @@ uint16 TownsMidiOutputChannel::getEffectState(uint8 type) {
 	else if (type > 12)
 		type -= 13;
 
-	uint32 res = 0;
+	int32 res = 0;
 	uint8 cs = (_driver->_chanState[chan].get(_effectDefs[type * 4] >> 5) & _effectDefs[type * 4 + 2]) >> _effectDefs[type * 4 + 1];
 	if (_effectDefs[type * 4 + 3])
 		res = _effectDefs[type * 4 + 3] - cs;
@@ -422,7 +422,7 @@ void TownsMidiOutputChannel::initEffect(StateA *a, const uint8 *effectData) {
 	a->ar1[2] = effectData[5];
 	a->ar1[3] = effectData[6];
 	a->ar2[0] = effectData[2];
-	a->ar2[1] = effectData[3];
+	a->ar2[1] = effectData[4];
 	a->ar2[2] = 0;
 	a->ar2[3] = effectData[7];
 	updateEffect(a);
@@ -434,10 +434,10 @@ void TownsMidiOutputChannel::updateEffectOuter3(StateA *a, StateB *b) {
 	if (f & 1) {
 		switch (b->type) {
 		case 0:
-			_carrierTl = (a->effectState & 0xff) + b->inc; /*???*/
+			_carrierTl = a->effectState + b->inc; /*???*/
 			break;
 		case 13:
-			_modulatorTl = (a->effectState & 0xff) + b->inc; /*???*/
+			_modulatorTl = a->effectState + b->inc; /*???*/
 			break;
 		case 30:
 			b->a->modWheelState = b->inc;
@@ -504,7 +504,7 @@ int TownsMidiOutputChannel::updateEffectOuter(StateA *a, StateB *b) {
 void TownsMidiOutputChannel::updateEffect(StateA *a) {
 	uint8 c = a->numLoop - 1;
 	uint16 v = a->ar1[c];
-	int e = _effectData[_driver->_chanOutputLevel[((v & 0x7f) << 5) + a->modWheelSensitivity]];
+	int32 e = _effectData[_driver->_chanOutputLevel[((v & 0x7f) << 5) + a->modWheelSensitivity]];
 
 	if (v & 0x80)
 		e = _driver->randomValue(e);
@@ -545,7 +545,7 @@ int TownsMidiOutputChannel::lookupVolume(int a, int b) {
 	if (b == 31)
 		return a;
 
-	if (a > 63)
+	if (a > 63 || a < -63)
 		return ((a + 1) * b) >> 5;
 
 	if (b < 0) {
@@ -760,6 +760,10 @@ void TownsMidiInputChannel::controlChange(byte control, byte value) {
 	case 64:
 		controlSustain(value);
 		break;
+	case 123:
+		while (_outChan)
+			_outChan->disconnect();
+		break;
 	default:
 		break;
 	}
@@ -793,7 +797,7 @@ void TownsMidiInputChannel::controlVolume(byte value) {
 	uint16 v2 = value;
 	if (_chanIndex != 16) {
 		_ctrlVolume = value;
-		v2 = value;
+		v2 = _player->getEffectiveVolume();
 	}
 	_tl = (v1 * v2) >> 7;*/
 

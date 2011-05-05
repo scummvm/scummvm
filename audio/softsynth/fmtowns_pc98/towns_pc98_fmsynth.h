@@ -102,11 +102,13 @@ protected:
 	void setVolumeIntern(int volA, int volB);
 	void setVolumeChannelMasks(int channelMaskA, int channelMaskB);
 
+	void lock();
+	void unlock();
+
 	const int _numChan;
 	const int _numSSG;
 	const bool _hasPercussion;
 
-	Common::Mutex _mutex;
 private:
 	void generateTables();
 	void nextTick(int32 *buffer, uint32 bufferSize);
@@ -124,6 +126,7 @@ private:
 		}
 
 		uint16 frqTemp;
+		uint8 fmIndex;
 		bool enableLeft;
 		bool enableRight;
 		bool updateEnvelopeParameters;
@@ -178,6 +181,9 @@ private:
 
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
+
+	int _externLock;
+	Common::Mutex _mutex;
 
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
 	static const uint8 _percussionData[];

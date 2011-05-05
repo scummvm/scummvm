@@ -837,8 +837,7 @@ TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type) :
 	_hasPercussion(type == kType86 ? true : false),
 	_oprRates(0), _oprRateshift(0), _oprAttackDecay(0), _oprFrq(0), _oprSinTbl(0), _oprLevelOut(0), _oprDetune(0),
 	 _rtt(type == kTypeTowns ? 0x514767 : 0x5B8D80), _baserate(55125.0f / (float)mixer->getOutputRate()),
-	_volMaskA(0), _volMaskB(0), _volumeA(255), _volumeB(255),
-	_regProtectionFlag(false), _ready(false) {
+	_volMaskA(0), _volMaskB(0), _volumeA(255), _volumeB(255), _regProtectionFlag(false), _externLock(0), _ready(false) {
 
 	memset(&_timers[0], 0, sizeof(ChipTimer));
 	memset(&_timers[1], 0, sizeof(ChipTimer));
@@ -931,9 +930,9 @@ void TownsPC98_FmSynth::writeReg(uint8 part, uint8 regAddress, uint8 value) {
 	if (_regProtectionFlag || !_ready)
 		return;
 
-	static const uint8 oprOrdr[] = { 0, 2, 1, 3 };
+	lock();
 
-	Common::StackLock lock(_mutex);
+	static const uint8 oprOrdr[] = { 0, 2, 1, 3 };
 
 	uint8 h = regAddress & 0xf0;
 	uint8 l = (regAddress & 0x0f);
@@ -1081,6 +1080,7 @@ void TownsPC98_FmSynth::writeReg(uint8 part, uint8 regAddress, uint8 value) {
 		if (l == 0) {
 			c->frqTemp = (c->frqTemp & 0xff00) | value;
 			c->updateEnvelopeParameters = true;
+			c->fmIndex = (c->frqTemp >> 4 & 0x7f);
 			for (int i = 0; i < 4; i++)
 				co[i]->frequency(c->frqTemp);
 		} else if (l == 4) {
@@ -1112,18 +1112,17 @@ void TownsPC98_FmSynth::writeReg(uint8 part, uint8 regAddress, uint8 value) {
 	default:
 		warning("TownsPC98_FmSynth: UNKNOWN ADDRESS %d", regAddress);
 	}
+	unlock();
 }
 
 int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
-	Common::StackLock lock(_mutex);
-
 	memset(buffer, 0, sizeof(int16) * numSamples);
 	int32 *tmp = new int32[numSamples];
 	int32 *tmpStart = tmp;
 	memset(tmp, 0, sizeof(int32) * numSamples);
 	int32 samplesLeft = numSamples >> 1;
 
-	while (_ready && samplesLeft) {
+	while (_ready && !_externLock && samplesLeft) {
 		int32 render = samplesLeft;
 
 		for (int i = 0; i < 2; i++) {
@@ -1173,6 +1172,7 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 	}
 
 	delete[] tmpStart;
+
 	return numSamples;
 }
 
@@ -1187,7 +1187,7 @@ uint8 TownsPC98_FmSynth::readSSGStatus() {
 }
 
 void TownsPC98_FmSynth::setVolumeIntern(int volA, int volB) {
-	Common::StackLock lock(_mutex);
+	lock();
 	_volumeA = CLIP<uint16>(volA, 0, Audio::Mixer::kMaxMixerVolume);
 	_volumeB = CLIP<uint16>(volB, 0, Audio::Mixer::kMaxMixerVolume);
 	if (_ssg)
@@ -1196,10 +1196,11 @@ void TownsPC98_FmSynth::setVolumeIntern(int volA, int volB) {
 	if (_prc)
 		_prc->setVolumeIntern(_volumeA, _volumeB);
 #endif
+	unlock();
 }
 
 void TownsPC98_FmSynth::setVolumeChannelMasks(int channelMaskA, int channelMaskB) {
-	Common::StackLock lock(_mutex);
+	lock();
 	_volMaskA = channelMaskA;
 	_volMaskB = channelMaskB;
 	if (_ssg)
@@ -1208,6 +1209,17 @@ void TownsPC98_FmSynth::setVolumeChannelMasks(int channelMaskA, int channelMaskB
 	if (_prc)
 		_prc->setVolumeChannelMasks(_volMaskA >> (_numChan + _numSSG), _volMaskB >> (_numChan + _numSSG));
 #endif
+	unlock();
+}
+
+void TownsPC98_FmSynth::lock() {
+	_mutex.lock();
+	_externLock++;
+}
+
+void  TownsPC98_FmSynth::unlock() {
+	_mutex.unlock();
+	_externLock--;
 }
 
 void TownsPC98_FmSynth::generateTables() {
