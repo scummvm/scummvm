@@ -70,8 +70,8 @@ public:
 	Common::File *openNewStreamFile(const char *filename) const;
 	LuaFile *openNewStreamLuaFile(const char *filename) const;
 	void uncache(const char *fname);
-	bool fileExists(const char *filename) const;
-	int fileLength(const char *filename) const;
+	bool getFileExists(const char *filename) const;
+	int getFileLength(const char *filename) const;
 
 	MaterialPtr getMaterial(const char *filename, CMap *c);
 	BitmapPtr getBitmap(const char *fname);

@@ -160,7 +160,7 @@ ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const char *fil
 	return (ResourceLoader::ResourceCache *)bsearch(&key, _cache.begin(), _cache.size(), sizeof(ResourceCache), sortCallback);
 }
 
-bool ResourceLoader::fileExists(const char *filename) const {
+bool ResourceLoader::getFileExists(const char *filename) const {
 	return getLab(filename) != NULL;
 }
 
@@ -204,7 +204,7 @@ Common::File *ResourceLoader::openNewStreamFile(const char *filename) const {
 		return l->openNewStreamFile(filename);
 }
 
-int ResourceLoader::fileLength(const char *filename) const {
+int ResourceLoader::getFileLength(const char *filename) const {
 	const Lab *l = getLab(filename);
 	if (l)
 		return l->getFileLength(filename);

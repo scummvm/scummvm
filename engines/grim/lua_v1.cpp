@@ -203,7 +203,7 @@ static void CheckForFile() {
 		return;
 
 	const char *filename = lua_getstring(strObj);
-	pushbool(g_resourceloader->fileExists(filename));
+	pushbool(g_resourceloader->getFileExists(filename));
 }
 
 static byte clamp_color(int c) {
