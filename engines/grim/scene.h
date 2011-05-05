@@ -59,7 +59,7 @@ public:
 	void setSoundParameters(int minVolume, int maxVolume);
 	void getSoundParameters(int *minVolume, int *maxVolume);
 
-	const char *name() const { return _name.c_str(); }
+	const char *getName() const { return _name.c_str(); }
 
 	void setLightEnableState(bool state) {
 		_enableLights = state;
@@ -70,7 +70,7 @@ public:
 	void setLightPosition(int light, Graphics::Vector3d pos);
 
 	void setSetup(int num);
-	int setup() const { return _currSetup - _setups; }
+	int getSetup() const { return _currSetup - _setups; }
 
 	// Sector access functions
 	int getSectorCount() {

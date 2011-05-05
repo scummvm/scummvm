@@ -777,7 +777,7 @@ void GrimEngine::luaUpdate() {
 			// Note that the actor need not be visible to update chores, for example:
 			// when Manny has just brought Meche back he is offscreen several times
 			// when he needs to perform certain chores
-			if (a->isInSet(_currScene->name()))
+			if (a->isInSet(_currScene->getName()))
 				a->update();
 		}
 		g_currentUpdatedActor = NULL;
@@ -812,7 +812,7 @@ void GrimEngine::updateDisplayScene() {
 		if (!_currScene)
 			return;
 
-		cameraPostChangeHandle(_currScene->setup());
+		cameraPostChangeHandle(_currScene->getSetup());
 
 		g_driver->clearScreen();
 
@@ -859,9 +859,9 @@ void GrimEngine::updateDisplayScene() {
 		// Draw actors
 		for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); ++i) {
 			Actor *a = i->_value;
-			if (a->isInSet(_currScene->name()) && a->isVisible())
+			if (a->isInSet(_currScene->getName()) && a->isVisible())
 				a->draw();
-			a->undraw(a->isInSet(_currScene->name()) && a->isVisible());
+			a->undraw(a->isInSet(_currScene->getName()) && a->isVisible());
 		}
 		flagRefreshShadowMask(false);
 
@@ -1506,7 +1506,7 @@ void GrimEngine::savegameCallback() {
 Scene *GrimEngine::findScene(const char *name) {
 	// Find scene object
 	for (SceneListType::const_iterator i = scenesBegin(); i != scenesEnd(); ++i) {
-		if (!strcmp(i->_value->name(), name))
+		if (!strcmp(i->_value->getName(), name))
 			return i->_value;
 	}
 	return NULL;
@@ -1559,7 +1559,7 @@ void GrimEngine::setScene(Scene *scene) {
 }
 
 void GrimEngine::makeCurrentSetup(int num) {
-	int prevSetup = g_grim->getCurrScene()->setup();
+	int prevSetup = g_grim->getCurrScene()->getSetup();
 	if (prevSetup != num) {
 		getCurrScene()->setSetup(num);
 		getCurrScene()->setSoundParameters(20, 127);

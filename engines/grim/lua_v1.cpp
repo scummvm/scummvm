@@ -2545,7 +2545,7 @@ static void GetCurrentSetup() {
 		lua_pushnil();
 		return;
 	}
-	lua_pushnumber(scene->setup());
+	lua_pushnumber(scene->getSetup());
 }
 
 static void GetShrinkPos() {
