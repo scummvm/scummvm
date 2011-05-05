@@ -428,7 +428,7 @@ MaterialPtr ResourceLoader::getMaterial(const char *fname, CMap *c) {
 BitmapPtr ResourceLoader::getBitmap(const char *fname) {
 	for (Common::List<Bitmap *>::const_iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
 		Bitmap *b = *i;
-		if (strcmp(fname, b->filename()) == 0) {
+		if (strcmp(fname, b->getFilename()) == 0) {
 			return b;
 		}
 	}

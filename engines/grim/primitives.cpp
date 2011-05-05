@@ -54,7 +54,7 @@ void PrimitiveObject::saveState(SaveGame *savedState) const {
 
 	if (_bitmap) {
 		savedState->writeLEUint32(1);
-		savedState->writeCharString(_bitmap->filename());
+		savedState->writeCharString(_bitmap->getFilename());
 	} else {
 		savedState->writeLEUint32(0);
 	}

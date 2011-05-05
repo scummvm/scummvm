@@ -159,7 +159,7 @@ void Scene::saveState(SaveGame *savedState) const {
 		//bkgndBm
 		if (set._bkgndBm) {
 			savedState->writeLEUint32(1);
-			savedState->writeCharString(set._bkgndBm->filename());
+			savedState->writeCharString(set._bkgndBm->getFilename());
 		} else {
 			savedState->writeLEUint32(0);
 		}
@@ -167,7 +167,7 @@ void Scene::saveState(SaveGame *savedState) const {
 		//bkgndZBm
 		if (set._bkgndZBm) {
 			savedState->writeLEUint32(1);
-			savedState->writeCharString(set._bkgndZBm->filename());
+			savedState->writeCharString(set._bkgndZBm->getFilename());
 		} else {
 			savedState->writeLEUint32(0);
 		}

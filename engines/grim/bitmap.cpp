@@ -44,8 +44,6 @@ Bitmap::Bitmap(const char *fname, const char *data, int len) :
 			error("Invalid magic loading bitmap");
 	}
 
-	strcpy(_filename, fname);
-
 	int codec = READ_LE_UINT32(data + 8);
 //  _paletteIncluded = READ_LE_UINT32(data + 12);
 	_numImages = READ_LE_UINT32(data + 16);
@@ -92,7 +90,6 @@ Bitmap::Bitmap(const char *data, int w, int h, int bpp, const char *fname) : Obj
 	_fname = fname;
 	if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
 		printf("New bitmap loaded: %s\n", fname);
-	strcpy(_filename, fname);
 	_currImage = 1;
 	_numImages = 1;
 	_x = 0;

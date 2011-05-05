@@ -1284,7 +1284,7 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	g_grim->setMode(mode);
 	state->beginSection('SIMG');
 	if (screenshot) {
-		int size = screenshot->width() * screenshot->height() * sizeof(uint16);
+		int size = screenshot->getWidth() * screenshot->getHeight() * sizeof(uint16);
 		screenshot->setNumber(0);
 		char *data = screenshot->getData();
 		state->write(data, size);
@@ -1438,11 +1438,11 @@ void GrimEngine::saveBitmaps(SaveGame *state) {
 	for (BitmapListType::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
 		state->writeLEUint32(i->_key);
 		Bitmap *b = i->_value;
-		state->writeCharString(b->filename());
+		state->writeCharString(b->getFilename());
 
-		state->writeLESint32(b->currentImage());
-		state->writeLESint32(b->x());
-		state->writeLESint32(b->y());
+		state->writeLESint32(b->getCurrentImage());
+		state->writeLESint32(b->getX());
+		state->writeLESint32(b->getY());
 	}
 
 	state->endSection();

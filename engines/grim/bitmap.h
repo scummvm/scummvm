@@ -38,26 +38,24 @@ public:
 	Bitmap(const char *data, int width, int height, int bpp, const char *filename);
 	Bitmap();
 
-	const char *filename() const { return _fname.c_str(); }
+	const char *getFilename() const { return _fname.c_str(); }
 
 	void draw() const;
 
 	// Set which image in an animated bitmap to use
 	void setNumber(int n) { if ((n - 1) >= _numImages) warning("Bitmap::setNumber: no anim image: %d", n); else _currImage = n; }
 
-	int numImages() const { return _numImages; }
-	int currentImage() const { return _currImage; }
+	int getNumImages() const { return _numImages; }
+	int getCurrentImage() const { return _currImage; }
 
-	int width() const { return _width; }
-	int height() const { return _height; }
-	int x() const { return _x; }
-	int y() const { return _y; }
+	int getWidth() const { return _width; }
+	int getHeight() const { return _height; }
+	int getX() const { return _x; }
+	int getY() const { return _y; }
 	void setX(int xPos) { _x = xPos; }
 	void setY(int yPos) { _y = yPos; }
 
 	char *getData() { return _data[_currImage]; }
-
-	char *getFilename() { return _filename; }
 
 	virtual ~Bitmap();
 

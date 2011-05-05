@@ -54,7 +54,7 @@ public:
 	void setPos(Position position) { _pos = position; }
 
 	const char *bitmapFilename() const {
-		return _bitmap->filename();
+		return _bitmap->getFilename();
 	}
 
 	void setNumber(int val) {
