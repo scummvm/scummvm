@@ -55,7 +55,7 @@ MODULE_OBJS += \
 	plugins/sdl/sdl-provider.o \
 	timer/sdl/sdl-timer.o
 
-ifdef UNIX
+ifdef POSIX
 MODULE_OBJS += \
 	fs/posix/posix-fs.o \
 	fs/posix/posix-fs-factory.o \

@@ -4,7 +4,7 @@
 
 
 #
-# UNIX specific
+# POSIX specific
 #
 install:
 	$(INSTALL) -d "$(DESTDIR)$(bindir)"
