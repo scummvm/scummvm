@@ -92,9 +92,9 @@ OSystem_N64::OSystem_N64() {
 	_shakeOffset = 0;
 
 	// Allocate memory for offscreen buffers
-	_offscreen_hic = (uint16*)memalign(8, _screenWidth * _screenHeight * 2);
-	_offscreen_pal = (uint8*)memalign(8, _screenWidth * _screenHeight);
-	_overlayBuffer = (uint16*)memalign(8, _overlayWidth * _overlayHeight * sizeof(OverlayColor));
+	_offscreen_hic = (uint16 *)memalign(8, _screenWidth * _screenHeight * 2);
+	_offscreen_pal = (uint8 *)memalign(8, _screenWidth * _screenHeight);
+	_overlayBuffer = (uint16 *)memalign(8, _overlayWidth * _overlayHeight * sizeof(OverlayColor));
 
 	_cursor_pal = NULL;
 	_cursor_hic = NULL;
@@ -113,9 +113,9 @@ OSystem_N64::OSystem_N64() {
 	_graphicMode = OVERS_NTSC_340X240;
 
 	// Clear palette array
-	_screenPalette = (uint16*)memalign(8, 256 * sizeof(uint16));
+	_screenPalette = (uint16 *)memalign(8, 256 * sizeof(uint16));
 #ifndef N64_EXTREME_MEMORY_SAVING
-	_screenExactPalette = (uint8*)memalign(8, 256 * 3);
+	_screenExactPalette = (uint8 *)memalign(8, 256 * 3);
 	memset(_screenExactPalette, 0, 256 * 3);
 #endif
 	memset(_screenPalette, 0, 256 * sizeof(uint16));
@@ -127,7 +127,7 @@ OSystem_N64::OSystem_N64() {
 	_audioEnabled = false;
 
 	// Initialize ROMFS access interface
-	initRomFSmanager((uint8*)(((uint32)&_romfs + (uint32)0xc00) | (uint32)0xB0000000));
+	initRomFSmanager((uint8 *)(((uint32)&_romfs + (uint32)0xc00) | (uint32)0xB0000000));
 
 	_mouseVisible = false;
 
@@ -376,7 +376,7 @@ void OSystem_N64::rebuildOffscreenGameBuffer(void) {
 
 	for (int h = 0; h < _gameHeight; h++) {
 		for (int w = 0; w < _gameWidth; w += 4) {
-			four_col_pal = *(uint32*)(_offscreen_pal + ((h * _screenWidth) + w));
+			four_col_pal = *(uint32 *)(_offscreen_pal + ((h * _screenWidth) + w));
 
 			four_col_hi = 0;
 			four_col_hi |= (uint64)_screenPalette[((four_col_pal >> 24) & 0xFF)] << 48;
@@ -385,7 +385,7 @@ void OSystem_N64::rebuildOffscreenGameBuffer(void) {
 			four_col_hi |= (uint64)_screenPalette[((four_col_pal >>  0) & 0xFF)] <<  0;
 
 			// Save the converted pixels into hicolor buffer
-			*(uint64*)((_offscreen_hic) + (h * _screenWidth) + w) = four_col_hi;
+			*(uint64 *)((_offscreen_hic) + (h * _screenWidth) + w) = four_col_hi;
 		}
 	}
 }
@@ -522,7 +522,7 @@ void OSystem_N64::updateScreen() {
 	// Obtain the framebuffer
 	while (!(_dc = lockDisplay()));
 
-	uint16 *overlay_framebuffer = (uint16*)_dc->conf.framebuffer; // Current screen framebuffer
+	uint16 *overlay_framebuffer = (uint16 *)_dc->conf.framebuffer; // Current screen framebuffer
 	uint16 *game_framebuffer = overlay_framebuffer + (_frameBufferWidth * skip_lines * 2); // Skip some lines to center the image vertically
 
 	uint16 currentHeight, currentWidth;
@@ -534,8 +534,8 @@ void OSystem_N64::updateScreen() {
 		tmpDst = game_framebuffer;
 		tmpSrc = _offscreen_hic + (_shakeOffset * _screenWidth);
 		for (currentHeight = _shakeOffset; currentHeight < _gameHeight; currentHeight++) {
-			uint64 *game_dest = (uint64*)(tmpDst + skip_pixels + _offscrPixels);
-			uint64 *game_src = (uint64*)tmpSrc;
+			uint64 *game_dest = (uint64 *)(tmpDst + skip_pixels + _offscrPixels);
+			uint64 *game_src = (uint64 *)tmpSrc;
 
 			// With uint64 we copy 4 pixels at a time
 			for (currentWidth = 0; currentWidth < _gameWidth; currentWidth += 4) {
@@ -554,8 +554,8 @@ void OSystem_N64::updateScreen() {
 		tmpDst = overlay_framebuffer;
 		tmpSrc = _overlayBuffer;
 		for (currentHeight = 0; currentHeight < _overlayHeight; currentHeight++) {
-			uint64 *over_dest = (uint64*)(tmpDst + _offscrPixels);
-			uint64 *over_src = (uint64*)tmpSrc;
+			uint64 *over_dest = (uint64 *)(tmpDst + _offscrPixels);
+			uint64 *over_src = (uint64 *)tmpSrc;
 
 			// Copy 4 pixels at a time
 			for (currentWidth = 0; currentWidth < _overlayWidth; currentWidth += 4) {
@@ -792,8 +792,8 @@ void OSystem_N64::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, 
 	}
 
 	if (!_cursor_pal) {
-		_cursor_pal = (uint8*)malloc(w * h);
-		_cursor_hic = (uint16*)malloc(w * h * sizeof(uint16));
+		_cursor_pal = (uint8 *)malloc(w * h);
+		_cursor_hic = (uint16 *)malloc(w * h * sizeof(uint16));
 	}
 
 	_cursorWidth = w;
@@ -909,7 +909,7 @@ void OSystem_N64::setupMixer(void) {
 
 /* Check all controller ports for a compatible input adapter. */
 void OSystem_N64::detectControllers(void) {
-	controller_data_status *ctrl_status = (controller_data_status*)memalign(8, sizeof(controller_data_status));
+	controller_data_status *ctrl_status = (controller_data_status *)memalign(8, sizeof(controller_data_status));
 	controller_Read_Status(ctrl_status);
 
 	_controllerPort = -1; // Default no controller
