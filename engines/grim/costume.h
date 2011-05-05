@@ -69,7 +69,7 @@ public:
 	void draw();
 	void setPosRotate(Graphics::Vector3d pos, float pitch, float yaw, float roll);
 
-	Costume *previousCostume() const;
+	Costume *getPreviousCostume() const;
 
 	void saveState(SaveGame *state) const;
 	bool restoreState(SaveGame *state);
@@ -78,11 +78,11 @@ public:
 	public:
 		Component(Component *parent, int parentID, tag32 tag);
 
-		tag32 tag() { return _tag; }
-		CMap *cmap();
+		tag32 getTag() { return _tag; }
+		CMap *getCMap();
 		void setColormap(CMap *c);
-		bool visible();
-		Component *parent() { return _parent; }
+		bool isVisible();
+		Component *getParent() { return _parent; }
 		virtual void setMatrix(Graphics::Matrix4) { };
 		virtual void init() { }
 		virtual void setKey(int) { }

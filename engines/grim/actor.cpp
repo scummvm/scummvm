@@ -152,17 +152,17 @@ void Actor::saveState(SaveGame *savedState) const {
 	for (Common::List<Costume *>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
 		savedState->writeCharString(c->getFilename());
-		Costume *pc = c->previousCostume();
+		Costume *pc = c->getPreviousCostume();
 		int depth = 0;
 		while (pc) {
 			++depth;
-			pc = pc->previousCostume();
+			pc = pc->getPreviousCostume();
 		}
 		savedState->writeLEUint32(depth);
-		pc = c->previousCostume();
+		pc = c->getPreviousCostume();
 		for (int j = 0; j < depth; ++j) { //save the previousCostume hierarchy
 			savedState->writeCharString(pc->getFilename());
-			pc = pc->previousCostume();
+			pc = pc->getPreviousCostume();
 		}
 		c->saveState(savedState);
 	}

@@ -140,8 +140,8 @@ public:
 	void restoreState(SaveGame *state);
 	~ModelComponent();
 
-	Model::HierNode *hierarchy() { return _hier; }
-	int numNodes() { return _obj->numNodes(); }
+	Model::HierNode *getHierarchy() { return _hier; }
+	int getNumNodes() { return _obj->numNodes(); }
 	void draw();
 
 protected:
@@ -172,7 +172,7 @@ public:
 		ModelComponent *mc = dynamic_cast<ModelComponent *>(_parent);
 		if (!mc)
 			return NULL;
-		return mc->cmap();
+		return mc->getCMap();
 	}
 	void setKey(int val);
 	void update();
@@ -183,7 +183,7 @@ public:
 
 	void setMatrix(Graphics::Matrix4 matrix) { _matrix = matrix; };
 
-	Model::HierNode *node() { return _node; }
+	Model::HierNode *getNode() { return _node; }
 
 private:
 	Common::String _name;
@@ -243,7 +243,7 @@ void SpriteComponent::init() {
 	Common::String name(_filename.c_str(), comma);
 
 	if (comma) {
-		_material = g_resourceloader->loadMaterial(name.c_str(), cmap());
+		_material = g_resourceloader->loadMaterial(name.c_str(), getCMap());
 
 		int a,b,c,d,e;
 		sscanf(comma, ",%d,%d,%d,%d,%d", &a, &b, &c, &d, &e);
@@ -277,7 +277,7 @@ ModelComponent::ModelComponent(Costume::Component *p, int parentID, const char *
 		MainModelComponent *mmc = dynamic_cast<MainModelComponent *>(prevComponent);
 
 		if (mmc)
-			_previousCmap = mmc->cmap();
+			_previousCmap = mmc->getCMap();
 	}
 }
 
@@ -286,7 +286,7 @@ void ModelComponent::init() {
 	// by the sharing MainModelComponent
 	// constructor before
 	if (!_obj) {
-		CMapPtr cm = this->cmap();
+		CMapPtr cm = getCMap();
 
 		// Get the default colormap if we haven't found
 		// a valid colormap
@@ -301,7 +301,7 @@ void ModelComponent::init() {
 
 		// Use parent availablity to decide whether to default the
 		// component to being visible
-		if (!_parent || !_parent->visible())
+		if (!_parent || !_parent->isVisible())
 			setKey(1);
 		else
 			setKey(0);
@@ -318,7 +318,7 @@ void ModelComponent::init() {
 		reset();
 
 		if (mc)
-			mc->node()->addChild(_hier);
+			mc->getNode()->addChild(_hier);
 		else if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Parent of model %s wasn't a mesh", _filename.c_str());
 	}
@@ -350,7 +350,7 @@ void ModelComponent::update() {
 void ModelComponent::resetColormap() {
 	CMap *cm;
 
-	cm = this->cmap();
+	cm = getCMap();
 	if (_obj && cm)
 		_obj->reload(cm);
 }
@@ -390,7 +390,7 @@ void ModelComponent::draw() {
 	// If the object was drawn by being a component
 	// of it's parent then don't draw it
 
-	if (_parent && _parent->visible())
+	if (_parent && _parent->isVisible())
 			return;
 	// Need to translate object to be in accordance
 	// with the setup of the parent
@@ -587,7 +587,7 @@ void KeyframeComponent::update() {
 void KeyframeComponent::init() {
 	ModelComponent *mc = dynamic_cast<ModelComponent *>(_parent);
 	if (mc)
-		_hier = mc->hierarchy();
+		_hier = mc->getHierarchy();
 	else {
 		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Parent of %s was not a model", _keyf->filename());
@@ -617,7 +617,7 @@ MeshComponent::MeshComponent(Costume::Component *p, int parentID, const char *na
 void MeshComponent::init() {
 	ModelComponent *mc = dynamic_cast<ModelComponent *>(_parent);
 	if (mc)
-		_node = mc->hierarchy() + _num;
+		_node = mc->getHierarchy() + _num;
 	else {
 		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Parent of mesh %d was not a model", _num);
@@ -655,7 +655,7 @@ MaterialComponent::MaterialComponent(Costume::Component *p, int parentID, const 
 }
 
 void MaterialComponent::init() {
-	CMap *cm = this->cmap();
+	CMap *cm = getCMap();
 
 	if (!cm) {
 		// Use the default colormap if we're still drawing a blank
@@ -885,21 +885,21 @@ void Costume::Component::setColormap(CMap *c) {
 
 	if (c)
 		_cmap = c;
-	if (mc && this->cmap())
+	if (mc && getCMap())
 		mc->resetColormap();
 }
 
-bool Costume::Component::visible() {
+bool Costume::Component::isVisible() {
 	if (_visible && _parent)
-		return _parent->visible();
+		return _parent->isVisible();
 	return _visible;
 }
 
-CMap *Costume::Component::cmap() {
+CMap *Costume::Component::getCMap() {
 	if (!_cmap && _previousCmap)
 		return _previousCmap;
 	else if (!_cmap && _parent)
-		return _parent->cmap();
+		return _parent->getCMap();
 	else if (!_cmap && !_parent && _cost)
 		return _cost->_cmap;
 	else
@@ -1105,8 +1105,8 @@ Model::HierNode *Costume::getModelNodes() {
 			continue;
 		// Needs to handle Main Models (pigeons) and normal Models
 		// (when Manny climbs the rope)
-		if (FROM_BE_32(_components[i]->tag()) == MKTAG('M','M','D','L'))
-			return dynamic_cast<ModelComponent *>(_components[i])->hierarchy();
+		if (FROM_BE_32(_components[i]->getTag()) == MKTAG('M','M','D','L'))
+			return dynamic_cast<ModelComponent *>(_components[i])->getHierarchy();
 	}
 	return NULL;
 }
@@ -1377,7 +1377,7 @@ void Costume::setPosRotate(Graphics::Vector3d pos, float pitch, float yaw, float
 	_matrix._rot.buildFromPitchYawRoll(pitch, yaw, roll);
 }
 
-Costume *Costume::previousCostume() const {
+Costume *Costume::getPreviousCostume() const {
 	return _prevCostume;
 }
 
