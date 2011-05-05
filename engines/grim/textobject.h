@@ -77,7 +77,7 @@ public:
 	int getBitmapHeight();
 	int getTextCharPosition(int pos);
 
-	const char *name() const { return _textID; }
+	const char *getName() const { return _textID; }
 	void draw();
 
 	void saveState(SaveGame *state) const;
