@@ -97,14 +97,15 @@ Sub DetermineRevision()
 			End If
 		End If
 	End If
-
-	Wscript.StdErr.WriteLine "Found revision " & revision & " on branch " & branch & vbCrLf
-
+	
+	Dim outputInfo : outputInfo = "Found revision " & revision & " on branch " & branch
+	
 	' Setup our revision string
 	Dim revisionString : revisionString = revision
 
 	If (modified) Then
 		revisionString = revisionString & "-dirty"
+		outputInfo = outputInfo &  " (dirty)"
 	End If
 
 	' If we are not on trunk, add the branch name to the revision string
@@ -115,7 +116,10 @@ Sub DetermineRevision()
 	' Add the DVCS name at the end (when not git)
 	If (tool <> "git") Then
 		revisionString = revisionString & "-" & tool
+		outputInfo = outputInfo & " using " & tool
 	End If
+	
+	Wscript.StdErr.WriteLine outputInfo & vbCrLf
 
 	' Output revision header file
 	FSO.CopyFile rootFolder & "\\base\\internal_revision.h.in", targetFolder & "\\internal_revision.h"
@@ -228,6 +232,7 @@ Function DetermineGitVersion()
 	Err.Clear
 	On Error Resume Next
 	DetermineGitVersion = False
+	Dim line
 	Wscript.StdErr.Write "   Git...           "
 	tool = "git"
 
@@ -265,10 +270,10 @@ Function DetermineGitVersion()
 	End If
 
 	' Get the version hash
-	Dim hash: hash = oExec.StdOut.ReadLine()
+	Dim hash : hash = oExec.StdOut.ReadLine()
 
 	' Make sure index is in sync with disk
-	Set oExec = WshShell.Exec(gitPath & "update-index --refresh")
+	Set oExec = WshShell.Exec(gitPath & "update-index --refresh --unmerged")
 	If Err.Number = 0 Then
 		' Wait till the application is finished ...
 		Do While oExec.Status = 0
@@ -276,7 +281,7 @@ Function DetermineGitVersion()
 		Loop
 	End If
 
-	Set oExec = WshShell.Exec(gitPath & "diff-index --exit-code --quiet HEAD " & rootFolder)
+	Set oExec = WshShell.Exec(gitPath & "diff-index --quiet HEAD " & rootFolder)
 	If oExec.ExitCode <> 0 Then
 		Wscript.StdErr.WriteLine "Error parsing git revision!"
 		Exit Function
@@ -294,14 +299,24 @@ Function DetermineGitVersion()
 	' Get branch name
 	Set oExec = WshShell.Exec(gitPath & "symbolic-ref HEAD")
 	If Err.Number = 0 Then
-		Dim line: line = oExec.StdOut.ReadLine()
+		line = oExec.StdOut.ReadLine()
 		line = Mid(line, InStrRev(line, "/") + 1)
 		If line <> "master" Then
 			branch = line
 		End If
 	End If
 
-	' Fallback to abbreviated revision number
+	' Get revision description
+	Set oExec = WshShell.Exec(gitPath & "describe --match desc/*")
+	If Err.Number = 0 Then
+		line = oExec.StdOut.ReadLine()
+		line = Mid(line, InStr(line, "-") + 1)
+		If line <> "" Then
+			revision = line
+		End If
+	End If
+
+	' Fallback to abbreviated revision number if needed
 	If revision = "" Then
 		revision = Mid(hash, 1, 7)
 	End If
