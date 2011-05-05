@@ -6,7 +6,6 @@
 
 #define FILE 256
 
-#if defined (__MINGW32__) || defined(__CYGWIN32__) || defined(HAS_INCLUDE_SET)
 IDI_ICON               ICON    DISCARDABLE     "icons/scummvm.ico"
 
 scummmodern.zip        FILE    "gui/themes/scummmodern.zip"
@@ -43,10 +42,6 @@ toon.dat               FILE    "dists/engine-data/toon.dat"
 #endif
 #if ENABLE_AGI       == STATIC_PLUGIN
 pred.dic               FILE    "dists/pred.dic"
-#endif
-
-#else
-IDI_ICON               ICON    DISCARDABLE     "../../icons/scummvm.ico"
 #endif
 
 VS_VERSION_INFO VERSIONINFO
