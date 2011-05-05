@@ -1629,6 +1629,18 @@ Actor *GrimEngine::getActor(int id) const {
 	return NULL;
 }
 
+Bitmap *GrimEngine::registerBitmap(const char *filename, const char *data, int len) {
+	Bitmap *b = new Bitmap(filename, data, len);
+	registerBitmap(b);
+	return b;
+}
+
+Bitmap *GrimEngine::registerBitmap(const char *data, int width, int height, const char *filename) {
+	Bitmap *b = new Bitmap(data, width, height, 16, filename);
+	registerBitmap(b);
+	return b;
+}
+
 void GrimEngine::registerBitmap(Bitmap *bitmap) {
 	_bitmaps[bitmap->getId()] = bitmap;
 }
