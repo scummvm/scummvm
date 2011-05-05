@@ -86,7 +86,6 @@ GraphicEngine::GraphicEngine(Kernel *pKernel) :
 GraphicEngine::~GraphicEngine() {
 	unregisterScriptBindings();
 	_backSurface.free();
-	_frameBuffer.free();
 	delete _thumbnail;
 }
 
@@ -115,7 +114,6 @@ bool GraphicEngine::init(int width, int height, int bitDepth, int backbufferCoun
 	const Graphics::PixelFormat format = g_system->getScreenFormat();
 
 	_backSurface.create(width, height, format);
-	_frameBuffer.create(width, height, format);
 
 	// Standardmäßig ist Vsync an.
 	setVsync(true);
@@ -150,18 +148,6 @@ bool GraphicEngine::endFrame() {
 #endif
 
 	_renderObjectManagerPtr->render();
-
-	// FIXME: The following hack doesn't really work (all the thumbnails are empty)
-#if 0
-	// HACK: The frame buffer surface is only used as the base for creating thumbnails when saving the
-	// game, since the _backSurface is blanked. Currently I'm doing a slightly hacky check and only
-	// copying the back surface if line 50 (the first line after the interface area) is non-blank
-	if (READ_LE_UINT32((byte *)_backSurface.pixels + (_backSurface.pitch * 50)) & 0xffffff) {
-		// Make a copy of the current frame into the frame buffer
-		Common::copy((byte *)_backSurface.pixels, (byte *)_backSurface.pixels + 
-			(_backSurface.pitch * _backSurface.h), (byte *)_frameBuffer.pixels); 
-	}
-#endif
 
 	g_system->updateScreen();
 
@@ -385,7 +371,9 @@ bool GraphicEngine::saveThumbnailScreenshot(const Common::String &filename) {
 	// Note: In ScumMVM, rather than saivng the thumbnail to a file, we store it in memory 
 	// until needed when creating savegame files
 	delete _thumbnail;
-	_thumbnail = Screenshot::createThumbnail(&_frameBuffer);
+
+	_thumbnail = Screenshot::createThumbnail(&_backSurface);
+
 	return true;
 }
 

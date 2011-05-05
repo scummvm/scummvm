@@ -235,9 +235,6 @@ public:
 	Graphics::Surface _backSurface;
 	Graphics::Surface *getSurface() { return &_backSurface; }
 
-	Graphics::Surface _frameBuffer;
-	Graphics::Surface *getFrameBuffer() { return &_frameBuffer; }
-
 	Common::SeekableReadStream *_thumbnail;
 	Common::SeekableReadStream *getThumbnail() { return _thumbnail; }
 
