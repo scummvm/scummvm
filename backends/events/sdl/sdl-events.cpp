@@ -282,7 +282,7 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 		event.type = Common::EVENT_QUIT;
 		return true;
 	}
-#elif defined(UNIX)
+#elif defined(POSIX)
 	// On other *nix systems, Control-Q quits
 	if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'q') {
 		event.type = Common::EVENT_QUIT;
@@ -326,7 +326,7 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 		if (ev.key.keysym.sym == 'm' ||	// Ctrl-m toggles mouse capture
 #if defined(MACOSX)
 			// Meta - Q, handled below
-#elif defined(UNIX)
+#elif defined(POSIX)
 			ev.key.keysym.sym == 'q' ||	// On other *nix systems, Control-Q quits
 #else
 			ev.key.keysym.sym == 'z' ||	// Ctrl-z quit
@@ -339,7 +339,7 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 #if defined(MACOSX)
 	if ((mod & KMOD_META) && ev.key.keysym.sym == 'q')
 		return false;	// On Macintosh, Cmd-Q quits
-#elif defined(UNIX)
+#elif defined(POSIX)
 	// Control Q has already been handled above
 #else
 	if ((mod & KMOD_ALT) && ev.key.keysym.sym == 'x')

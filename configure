@@ -149,7 +149,7 @@ _build_scalers=yes
 _build_hq_scalers=yes
 _indeo3=auto
 _enable_prof=no
-_unix=no
+_posix=no
 _global_constructors=no
 _elf_loader=no
 # Default vkeybd/keymapper options
@@ -1550,7 +1550,7 @@ case $_host_os in
 		LDFLAGS="$LDFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
 		LDFLAGS="$LDFLAGS -mthumb-interwork"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
-		_unix=yes
+		_posix=yes
 		_seq_midi=no
 		;;
 	beos*)
@@ -1560,11 +1560,11 @@ case $_host_os in
 		CFLAGS="-I/boot/home/config/include"
 		CXXFLAGS="$CXXFLAGS -fhuge-objects"
 		LIBS="$LIBS -lbind -lsocket"
-		_unix=yes
+		_posix=yes
 		_seq_midi=no
 		;;
 	bsd* | hpux* | netbsd* | openbsd* | sunos*)
-		_unix=yes
+		_posix=yes
 		;;
 	cygwin*)
 		echo ERROR: Cygwin building is not supported by ScummVM anymore. Consider using MinGW.
@@ -1574,7 +1574,7 @@ case $_host_os in
 		DEFINES="$DEFINES -DMACOSX"
 		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
 		add_line_to_config_mk 'MACOSX = 1'
-		_unix=yes
+		_posix=yes
 		;;
 	dreamcast)
 		DEFINES="$DEFINES -D__DC__ -DNONSTANDARD_PORT"
@@ -1600,7 +1600,7 @@ case $_host_os in
 	freebsd*)
 		LDFLAGS="$LDFLAGS -L/usr/local/lib"
 		CXXFLAGS="$CXXFLAGS -I/usr/local/include"
-		_unix=yes
+		_posix=yes
 		;;
 	gamecube)
 		CXXFLAGS="$CXXFLAGS -Os -mogc -mcpu=750 -meabi -mhard-float"
@@ -1618,14 +1618,14 @@ case $_host_os in
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		# Needs -lnetwork for the timidity MIDI driver
 		LIBS="$LIBS -lnetwork"
-		_unix=yes
+		_posix=yes
 		_seq_midi=no
 		;;
 	irix*)
 		DEFINES="$DEFINES -DIRIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		LIBS="$LIBS -lmd -lfastm -lm"
 		_ranlib=:
-		_unix=yes
+		_posix=yes
 		;;
 	linux* | uclinux*)
 		# When not cross-compiling, enable large file support, but don't
@@ -1633,7 +1633,7 @@ case $_host_os in
 		if test -z "$_host"; then
 			CXXFLAGS="$CXXFLAGS $(getconf LFS_CFLAGS 2>/dev/null)"
 		fi
-		_unix=yes
+		_posix=yes
 		DEFINES="$DEFINES -DLUA_USE_POSIX"
 		;;
 	mingw*)
@@ -1644,7 +1644,7 @@ case $_host_os in
 		;;
 	mint*)
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
-		_unix=yes
+		_posix=yes
 		;;
 	n64)
 		DEFINES="$DEFINES -D__N64__ -DLIMIT_FPS -DNONSTANDARD_PORT"
@@ -1653,7 +1653,7 @@ case $_host_os in
 		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 		;;
 	os2-emx*)
-		_unix=yes	# FIXME??? Why??
+		_posix=yes	# FIXME??? Why??
 		;;
 	ps2)
 		# TODO ps2
@@ -1671,7 +1671,7 @@ case $_host_os in
 		DEFINES="$DEFINES -DSOLARIS -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		# Needs -lbind -lsocket for the timidity MIDI driver
 		LIBS="$LIBS -lnsl -lsocket"
-		_unix=yes
+		_posix=yes
 		;;
 	webos)
 		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/include -I$WEBOS_PDK/include/SDL -I$WEBOS_PDK/device/usr/include"
@@ -1681,7 +1681,7 @@ case $_host_os in
 		LDFLAGS="$LDFLAGS -Wl,--allow-shlib-undefined"
 		LDFLAGS="$LDFLAGS --sysroot=$WEBOS_PDK/arm-gcc/sysroot"
 		add_line_to_config_mk "WEBOS_SDK = $WEBOS_SDK"
-		_unix=yes
+		_posix=yes
 		_seq_midi=no
 		;;
 	wii)
@@ -1701,10 +1701,10 @@ case $_host_os in
 		DEFINES="$DEFINES -D_WIN32_WCE=300 -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
 		DEFINES="$DEFINES -DWIN32 -Dcdecl= -D__cdecl__="
 		;;
-	# given this is a shell script assume some type of unix
+	# given this is a shell script assume some type of posix
 	*)
 		echo "WARNING: could not establish system type, assuming unix like"
-		_unix=yes
+		_posix=yes
 		;;
 esac
 
@@ -1713,7 +1713,7 @@ if test -n "$_host"; then
 	echo "Cross-compiling to $_host"
 	case "$_host" in
 		android | android-v7a)
-			_unix=yes
+			_posix=yes
 			# we link a .so as default
 			LDFLAGS="$LDFLAGS -shared -Wl,-Bsymbolic,--no-undefined"
 			HOSTEXEPRE=lib
@@ -1726,11 +1726,11 @@ if test -n "$_host"; then
 			_timidity=no
 			;;
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
-			_unix=yes
+			_posix=yes
 			;;
 		arm-riscos|linupy)
 			DEFINES="$DEFINES -DLINUPY"
-			_unix=yes
+			_posix=yes
 			;;
 		bfin*)
 			;;
@@ -1746,7 +1746,7 @@ if test -n "$_host"; then
 			fi
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
 			ASFLAGS="$ASFLAGS"
-			_unix=yes
+			_posix=yes
 			_backend="gph"
 			_build_hq_scalers=no
 			_vkeybd=yes
@@ -1760,7 +1760,7 @@ if test -n "$_host"; then
 			_strip=$_host-strip
 			;;
 		dingux)
-			DEFINES="$DEFINES -DUNIX -DDINGUX -DDISABLE_DOSBOX_OPL -DREDUCE_MEMORY_USAGE"
+			DEFINES="$DEFINES -DDINGUX -DDISABLE_DOSBOX_OPL -DREDUCE_MEMORY_USAGE"
 			ASFLAGS="$ASFLAGS"
 			CXXFLAGS="$CXXFLAGS -msoft-float -mips32"
 			_backend="dingux"
@@ -1820,7 +1820,7 @@ if test -n "$_host"; then
 			CXXFLAGS="$CXXFLAGS -march=armv4t"
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			LDFLAGS="$LDFLAGS -static"
-			_unix=yes
+			_posix=yes
 			_backend="gph"
 			_build_hq_scalers=no
 			_vkeybd=yes
@@ -1838,7 +1838,7 @@ if test -n "$_host"; then
 			fi
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
-			_unix=yes
+			_posix=yes
 			_backend="gph"
 			_build_hq_scalers=no
 			_vkeybd=yes
@@ -1849,14 +1849,14 @@ if test -n "$_host"; then
 			;;
 		iphone)
 			DEFINES="$DEFINES -DIPHONE"
-			_unix=yes
+			_posix=yes
 			_backend="iphone"
 			_build_hq_scalers=no
 			_seq_midi=no
 			;;
 		m68k-atari-mint)
 			DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
-			_unix=yes
+			_posix=yes
 			_ranlib=m68k-atari-mint-ranlib
 			_ar="m68k-atari-mint-ar cru"
 			_seq_midi=no
@@ -1874,7 +1874,7 @@ if test -n "$_host"; then
 		motoezx)
 			DEFINES="$DEFINES -DMOTOEZX"
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
-			_unix=yes
+			_posix=yes
 			_backend="linuxmoto"
 			_build_hq_scalers=no
 			_mt32emu=no
@@ -1885,7 +1885,7 @@ if test -n "$_host"; then
 		motomagx)
 			DEFINES="$DEFINES -DMOTOMAGX"
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
-			_unix=yes
+			_posix=yes
 			_backend="linuxmoto"
 			_build_hq_scalers=no
 			_mt32emu=no
@@ -1917,7 +1917,7 @@ if test -n "$_host"; then
 			;;
 		neuros)
 			DEFINES="$DEFINES -DNEUROS"
-			_unix=yes
+			_posix=yes
 			_backend='null'
 			_build_hq_scalers=no
 			_mt32emu=no
@@ -1932,7 +1932,7 @@ if test -n "$_host"; then
 			fi
 			CXXFLAGS="$CXXFLAGS -march=armv7-a -mtune=cortex-a8 -mfpu=neon"
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
-			_unix=yes
+			_posix=yes
 			_backend="openpandora"
 			_build_hq_scalers=yes
 			_vkeybd=no
@@ -1981,13 +1981,13 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DSAMSUNGTV -DDISABLE_COMMAND_LINE"
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			HOSTEXEEXT=".so"
-			_unix=yes
+			_posix=yes
 			_backend="samsungtv"
 			_mt32emu=no
 			_vkeybd=yes
 			;;
 		webos)
-			_unix=yes
+			_posix=yes
 			_backend="webos"
 			_port_mk="backends/platform/webos/webos.mk"
 			_build_scalers=no
@@ -2230,9 +2230,9 @@ case $_endian in
 		;;
 esac
 
-if test "$_unix" = yes ; then
-	DEFINES="$DEFINES -DUNIX"
-	add_line_to_config_mk 'UNIX = 1'
+if test "$_posix" = yes ; then
+	DEFINES="$DEFINES -DPOSIX"
+	add_line_to_config_mk 'POSIX = 1'
 fi
 
 #
@@ -2686,9 +2686,9 @@ fi
 echocheck "SEQ MIDI"
 if test "$_seq_midi" = auto ; then
 	# TODO: Test for /dev/sequencer presence? Or maybe just for /dev ?
-	# For now, we just always enable it when "unix" mode is on (backends
+	# For now, we just always enable it when "posix" mode is on (backends
 	# that do not want it can disable it by setting _seq_midi=no).
-	_seq_midi="$_unix"
+	_seq_midi="$_posix"
 fi
 define_in_config_h_if_yes "$_seq_midi" 'USE_SEQ_MIDI'
 echo "$_seq_midi"
@@ -2701,7 +2701,7 @@ if test "$_timidity" = auto ; then
 	# TODO: Is there a good possibility of auto detecting whether we
 	# should include TiMidity support? It can only be used on Unix
 	# currently so we use that as "detection" for now.
-	_timidity="$_unix"
+	_timidity="$_posix"
 fi
 define_in_config_h_if_yes "$_timidity" 'USE_TIMIDITY'
 echo "$_timidity"

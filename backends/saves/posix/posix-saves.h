@@ -28,7 +28,7 @@
 
 #include "backends/saves/default/default-saves.h"
 
-#if defined(UNIX)
+#if defined(POSIX) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 /**
  * Customization of the DefaultSaveFileManager for POSIX platforms.
  * The only two differences are that the default constructor sets
@@ -38,7 +38,6 @@
 class POSIXSaveFileManager : public DefaultSaveFileManager {
 public:
 	POSIXSaveFileManager();
-//	POSIXSaveFileManager(const Common::String &defaultSavepath);
 
 protected:
 	/**
