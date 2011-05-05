@@ -1475,20 +1475,23 @@ Common::String ThemeEngine::genLocalizedFontFilename(const Common::String &filen
 #ifndef USE_TRANSLATION
 	return filename;
 #else
-	Common::String result;
-	bool pointPassed = false;
+	// We will transform the font filename in the following way:
+	//   name.bdf
+	//  will become:
+	//   name-charset.bdf
+	// Note that name should not contain any dot here!
 
-	for (const char *p = filename.c_str(); *p != 0; p++) {
-		if (!pointPassed && *p == '.') {
-			result += "-";
-			result += TransMan.getCurrentCharset();
-			result += *p;
+	// In the first step we look for the dot. In case there is none we will
+	// return the normal filename.
+	Common::String::const_iterator dot = Common::find(filename.begin(), filename.end(), '.');
+	if (dot == filename.end())
+		return filename;
 
-			pointPassed = true;
-		} else {
-			result += *p;
-		}
-	}
+	// Put the translated font filename string back together.
+	Common::String result(filename.begin(), dot);
+	result += '-';
+	result += TransMan.getCurrentCharset();
+	result += dot;
 
 	return result;
 #endif
