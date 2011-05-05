@@ -991,7 +991,7 @@ void Costume::Chore::setKeys(int startTime, int stopTime) {
 			comp->setFade(1.f - ((float)_fadeCurrTime / (float)_fadeLength));
 		}
 
-		if (FROM_BE_32(comp->_tag) == MKTAG('K','E','Y','F')) {
+		if (FROM_BE_32(comp->getTag()) == MKTAG('K','E','Y','F')) {
 			KeyframeComponent *f = static_cast<KeyframeComponent *>(comp);
 			if (g_currentUpdatedActor && g_currentUpdatedActor->getRestChore() == _id)
 				f->setLowPriority(true);
