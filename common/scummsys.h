@@ -116,6 +116,7 @@
 #if defined(_WIN32_WCE) || defined(_MSC_VER)
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp _strnicmp
+	#define snprintf _snprintf
 #elif defined(__MINGW32__) || defined(__GP32__) || defined(__DS__)
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp strnicmp
@@ -167,8 +168,6 @@
 	#define SCUMM_LITTLE_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
 
-	#define SMALL_SCREEN_DEVICE
-
 	// Enable Symbians own datatypes
 	// This is done for two reasons
 	// a) uint is already defined by Symbians libc component
@@ -188,36 +187,15 @@
 
 #elif defined(_WIN32_WCE)
 
-	#define snprintf _snprintf
-
 	#define SCUMM_LITTLE_ENDIAN
-
-	#ifndef __GNUC__
-		#define FORCEINLINE __forceinline
-		#define NORETURN_PRE __declspec(noreturn)
-	#endif
-	#define PLUGIN_EXPORT __declspec(dllexport)
-
-	#if _WIN32_WCE < 300
-	#define SMALL_SCREEN_DEVICE
-	#endif
 
 #elif defined(_MSC_VER)
 
-	#define snprintf _snprintf
-
 	#define SCUMM_LITTLE_ENDIAN
-
-	#define FORCEINLINE __forceinline
-	#define NORETURN_PRE __declspec(noreturn)
-	#define PLUGIN_EXPORT __declspec(dllexport)
-
 
 #elif defined(__MINGW32__)
 
 	#define SCUMM_LITTLE_ENDIAN
-
-	#define PLUGIN_EXPORT __declspec(dllexport)
 
 #elif defined(UNIX)
 
@@ -232,16 +210,6 @@
 		#else
 		#error Neither SDL_BIG_ENDIAN nor SDL_LIL_ENDIAN is set.
 		#endif
-	#endif
-
-	// You need to set this manually if necessary
-//	#define SCUMM_NEED_ALIGNMENT
-
-	// Very BAD hack following, used to avoid triggering an assert in uClibc dingux library
-	// "toupper" when pressing keyboard function keys.
-	#if defined(DINGUX)
-	#undef toupper
-	#define toupper(c) (((c & 0xFF) >= 97) && ((c & 0xFF) <= 122) ? ((c & 0xFF) - 32) : (c & 0xFF))
 	#endif
 
 #elif defined(__DC__)
@@ -277,8 +245,6 @@
 	#define SCUMM_BIG_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
 
-	#define STRINGBUFLEN 256
-
 	#define SCUMMVM_DONT_DEFINE_TYPES
 	typedef unsigned char byte;
 
@@ -293,14 +259,8 @@
 
 #elif defined(__PSP__)
 
-	#include <malloc.h>
-	#include "backends/platform/psp/memory.h"
-
 	#define	SCUMM_LITTLE_ENDIAN
 	#define	SCUMM_NEED_ALIGNMENT
-
-	/* to make an efficient, inlined memcpy implementation */
-	#define memcpy(dst, src, size)   psp_memcpy(dst, src, size)
 
 #elif defined(__amigaos4__)
 
@@ -314,9 +274,6 @@
 
 	#define SCUMMVM_DONT_DEFINE_TYPES
 
-	#define STRINGBUFLEN 256
-//	#define printf(fmt, ...)					consolePrintf(fmt, ##__VA_ARGS__)
-
 #elif defined(__WII__)
 
 	#define	SCUMM_BIG_ENDIAN
@@ -329,47 +286,96 @@
 
 
 //
-// GCC specific stuff
+// Some more system specific settings.
+// TODO/FIXME: All of these should be moved to backend specific files (such as portdefs.h)
 //
-#if defined(__GNUC__)
-	#define NORETURN_POST __attribute__((__noreturn__))
-	#define PACKED_STRUCT __attribute__((__packed__))
-	#define GCC_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
+#if defined(__SYMBIAN32__)
 
-	#if !defined(FORCEINLINE) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
-		#define FORCEINLINE inline __attribute__((__always_inline__))
+	#define SMALL_SCREEN_DEVICE
+
+#elif defined(_WIN32_WCE)
+
+	#if _WIN32_WCE < 300
+	#define SMALL_SCREEN_DEVICE
 	#endif
-#elif defined(__INTEL_COMPILER)
-	#define NORETURN_POST __attribute__((__noreturn__))
-	#define PACKED_STRUCT __attribute__((__packed__))
-	#define GCC_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
-#else
-	#define PACKED_STRUCT
-	#define GCC_PRINTF(x,y)
+
+#elif defined(DINGUX)
+
+	// Very BAD hack following, used to avoid triggering an assert in uClibc dingux library
+	// "toupper" when pressing keyboard function keys.
+	#undef toupper
+	#define toupper(c) (((c & 0xFF) >= 97) && ((c & 0xFF) <= 122) ? ((c & 0xFF) - 32) : (c & 0xFF))
+
+#elif defined(__PSP__)
+
+	#include <malloc.h>
+	#include "backends/platform/psp/memory.h"
+
+	/* to make an efficient, inlined memcpy implementation */
+	#define memcpy(dst, src, size)   psp_memcpy(dst, src, size)
+
 #endif
 
 
 //
 // Fallbacks / default values for various special macros
 //
+#ifndef GCC_PRINTF
+	#if defined(__GNUC__) || defined(__INTEL_COMPILER)
+		#define GCC_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
+	#else
+		#define GCC_PRINTF(x,y)
+	#endif
+#endif
+
+#ifndef PACKED_STRUCT
+	#if defined(__GNUC__) || defined(__INTEL_COMPILER)
+		#define PACKED_STRUCT __attribute__((__packed__))
+	#else
+		#define PACKED_STRUCT
+	#endif
+#endif
+
 #ifndef FORCEINLINE
-#define FORCEINLINE inline
+	#if defined(_MSC_VER)
+		#define FORCEINLINE __forceinline
+	#elif (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
+		#define FORCEINLINE inline __attribute__((__always_inline__))
+	#else
+		#define FORCEINLINE inline
+	#endif
 #endif
 
 #ifndef PLUGIN_EXPORT
-#define PLUGIN_EXPORT
+	#if defined(_MSC_VER) || defined(_WIN32_WCE) || defined(__MINGW32__)
+		#define PLUGIN_EXPORT __declspec(dllexport)
+	#else
+		#define PLUGIN_EXPORT
+	#endif
 #endif
 
 #ifndef NORETURN_PRE
-#define	NORETURN_PRE
+	#if defined(_MSC_VER)
+		#define NORETURN_PRE __declspec(noreturn)
+	#else
+		#define	NORETURN_PRE
+	#endif
 #endif
 
 #ifndef NORETURN_POST
-#define	NORETURN_POST
+	#if defined(__GNUC__) || defined(__INTEL_COMPILER)
+		#define NORETURN_POST __attribute__((__noreturn__))
+	#else
+		#define	NORETURN_POST
+	#endif
 #endif
 
 #ifndef STRINGBUFLEN
-#define STRINGBUFLEN 1024
+  #if defined(__N64__) || defined(__DS__)
+    #define STRINGBUFLEN 256
+  #else
+    #define STRINGBUFLEN 1024
+  #endif
 #endif
 
 #ifndef MAXPATHLEN
