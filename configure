@@ -158,7 +158,7 @@ _translation=yes
 # Default platform settings
 _backend=sdl
 _endian=unknown
-_need_memalign=no
+_need_memalign=yes
 _have_x86=no
 _arm_asm=no
 _verbose_build=no
@@ -1741,7 +1741,6 @@ if test -n "$_host"; then
 	case "$_host" in
 		android | android-v7a)
 			_unix=yes
-			_need_memalign=yes
 			# we link a .so as default
 			LDFLAGS="$LDFLAGS -shared -Wl,-Bsymbolic,--no-undefined"
 			HOSTEXEPRE=lib
@@ -1755,15 +1754,12 @@ if test -n "$_host"; then
 			;;
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			_unix=yes
-			_need_memalign=yes
 			;;
 		arm-riscos|linupy)
 			DEFINES="$DEFINES -DLINUPY"
 			_unix=yes
-			_need_memalign=yes
 			;;
 		bfin*)
-			_need_memalign=yes
 			;;
 		caanoo)
 			# This uses the GPH backend.
@@ -1778,7 +1774,6 @@ if test -n "$_host"; then
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
 			ASFLAGS="$ASFLAGS"
 			_unix=yes
-			_need_memalign=yes
 			_backend="gph"
 			_build_hq_scalers=no
 			_vkeybd=yes
@@ -1795,7 +1790,6 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DUNIX -DDINGUX -DDISABLE_DOSBOX_OPL -DREDUCE_MEMORY_USAGE"
 			ASFLAGS="$ASFLAGS"
 			CXXFLAGS="$CXXFLAGS -msoft-float -mips32"
-			_need_memalign=yes
 			_backend="dingux"
 			_mt32emu=no
 			_vkeybd=yes
@@ -1810,7 +1804,6 @@ if test -n "$_host"; then
 		dreamcast)
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
 			CXXFLAGS="$CXXFLAGS -O3 -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks"
-			_need_memalign=yes
 			_backend="dc"
 			_build_scalers=no
 			_mad=yes
@@ -1825,7 +1818,6 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE -DSTREAM_AUDIO_FROM_DISK"
 			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL -DDISABLE_SID -DDISABLE_NES_APU"
 			DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
-			_need_memalign=yes
 			add_line_to_config_h '#define DISABLE_TEXT_CONSOLE'
 			_backend="ds"
 			_build_scalers=no
@@ -1833,7 +1825,6 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/ds/ds.mk"
 			;;
 		gamecube)
-			_need_memalign=yes
 			_backend="wii"
 			_build_scalers=no
 			_mt32emu=no
@@ -1857,7 +1848,6 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			LDFLAGS="$LDFLAGS -static"
 			_unix=yes
-			_need_memalign=yes
 			_backend="gph"
 			_build_hq_scalers=no
 			_vkeybd=yes
@@ -1876,7 +1866,6 @@ if test -n "$_host"; then
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			_unix=yes
-			_need_memalign=yes
 			_backend="gph"
 			_build_hq_scalers=no
 			_vkeybd=yes
@@ -1888,7 +1877,6 @@ if test -n "$_host"; then
 		iphone)
 			DEFINES="$DEFINES -DIPHONE"
 			_unix=yes
-			_need_memalign=yes
 			_backend="iphone"
 			_build_hq_scalers=no
 			_seq_midi=no
@@ -1896,7 +1884,6 @@ if test -n "$_host"; then
 		m68k-atari-mint)
 			DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 			_unix=yes
-			_need_memalign=yes
 			_ranlib=m68k-atari-mint-ranlib
 			_ar="m68k-atari-mint-ar cru"
 			_seq_midi=no
@@ -1910,13 +1897,11 @@ if test -n "$_host"; then
 		mips-sgi*)
 			LDFLAGS="$LDFLAGS -static-libgcc"
 			LIBS="$LIBS -laudio"
-			_need_memalign=yes
 			;;
 		motoezx)
 			DEFINES="$DEFINES -DMOTOEZX"
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			_unix=yes
-			_need_memalign=yes
 			_backend="linuxmoto"
 			_build_hq_scalers=no
 			_mt32emu=no
@@ -1928,7 +1913,6 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DMOTOMAGX"
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			_unix=yes
-			_need_memalign=yes
 			_backend="linuxmoto"
 			_build_hq_scalers=no
 			_mt32emu=no
@@ -1943,7 +1927,6 @@ if test -n "$_host"; then
 			LDFLAGS="$LDFLAGS -L$N64SDK/hkz-libn64 -L$N64SDK/lib"
 			LDFLAGS="$LDFLAGS -T n64ld_cpp.x -Xlinker -Map -Xlinker scummvm.map"
 			_backend="n64"
-			_need_memalign=yes
 			_mt32emu=no
 			_build_scalers=no
 			_indeo3=no
@@ -1962,7 +1945,6 @@ if test -n "$_host"; then
 		neuros)
 			DEFINES="$DEFINES -DNEUROS"
 			_unix=yes
-			_need_memalign=yes
 			_backend='null'
 			_build_hq_scalers=no
 			_mt32emu=no
@@ -1978,7 +1960,6 @@ if test -n "$_host"; then
 			CXXFLAGS="$CXXFLAGS -march=armv7-a -mtune=cortex-a8 -mfpu=neon"
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			_unix=yes
-			_need_memalign=yes
 			_backend="openpandora"
 			_build_hq_scalers=yes
 			_vkeybd=no
@@ -1987,14 +1968,11 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/openpandora/op-bundle.mk"
 			;;
 		ppc-amigaos)
-			# AmigaOS exec allocates memory always in an aligned way
-			_need_memalign=yes
 			;;
 		ps2)
 			# TODO: complete this
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
 			DEFINES="$DEFINES -DDISABLE_SID -DDISABLE_NES_APU"
-			_need_memalign=yes
 			_backend="ps2"
 			_build_scalers=no
 			_mt32emu=no
@@ -2021,7 +1999,6 @@ if test -n "$_host"; then
 			fi
 			;;
 		psp)
-			_need_memalign=yes
 			_backend="psp"
 			_build_scalers=no
 			_mt32emu=no
@@ -2032,14 +2009,12 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			HOSTEXEEXT=".so"
 			_unix=yes
-			_need_memalign=yes
 			_backend="samsungtv"
 			_mt32emu=no
 			_vkeybd=yes
 			;;
 		webos)
 			_unix=yes
-			_need_memalign=yes
 			_backend="webos"
 			_port_mk="backends/platform/webos/webos.mk"
 			_build_scalers=no
@@ -2050,7 +2025,6 @@ if test -n "$_host"; then
 			_keymapper=yes
 			;;
 		wii)
-			_need_memalign=yes
 			_backend="wii"
 			_build_scalers=no
 			_port_mk="backends/platform/wii/wii.mk"
@@ -2065,7 +2039,6 @@ if test -n "$_host"; then
 			;;
 		wince)
 			LDFLAGS="$LDFLAGS -Wl,--stack,65536"
-			_need_memalign=yes
 			_tremolo=yes
 			_backend="wince"
 			_mt32emu=no
@@ -2075,33 +2048,42 @@ if test -n "$_host"; then
 			echo "WARNING: Unknown target, continuing with auto-detected values"
 			;;
 	esac
+fi
 
-else
-	#
-	# Check whether memory alignment is required
-	#
-	echo_n "Alignment required... "
-	case $_host_cpu in
-		alpha*)
-			# Hardcode alignment requirements for Alpha processsors
-			_need_memalign=yes
-			;;
-		arm*)
-			_need_memalign=yes
-			;;
-		mips*)
-			# Hardcode alignment requirements for MIPS processsors.
-			# While these can emulate unaligned memory access, this
-			# emulation is rather slow.
-			_need_memalign=yes
-			;;
-		sh*)
-			# Hardcode alignment requirements for SH processsors.
-			# While these can emulate unaligned memory access, this
-			# emulation is rather slow.
-			_need_memalign=yes
-			;;
-		*)
+#
+# Check whether memory alignment is required
+#
+# For some CPU types, unaligned memory access is either not supported at
+# all (and so leads to a crash), requires a super-slow emulation via an
+# exception handler, or just results in incorrect results.
+# On the other hand, accessing data in a manner that works regardless of
+# alignment can be a lot slower than regular access, so we don't want
+# to use it if we don't have to.
+#
+# So we do the following: First, for CPU families where we know whether
+# unaligned access is safe & fast, we enable / disable unaligned access
+# accordingly.
+# Otherwise, for cross compiled builds we just disable memory alignment.
+# For native builds, we run some test code that detects whether unaligned
+# access is supported (and is supported without an exception handler).
+#
+# NOTE: The only kinds of unaligned access we allow are for 2 byte and
+# 4 byte loads / stores. No promises are made for bigger sizes, such as
+# 8 or 16 byte loads, for which various architectures (e.g. x86 and PowerPC)
+# behave differently than for the smaller sizes).
+echo_n "Alignment required... "
+case $_host_cpu in
+	alpha* | arm* | bfin* | hp* | mips* | sh* | sparc* | ia64 | nv1*)
+		# Unaligned access is not supported or extremely slow.
+		_need_memalign=yes
+		;;
+	i[3-6]86 | x86_64 | ppc*)
+		# Unaligned access should work reasonably well
+		_need_memalign=no
+		;;
+	*)
+		if test -z "$_host"; then
+			# NOT in cross-compiling mode:
 			# Try to auto-detect....
 			cat > $TMPC << EOF
 #include <stdlib.h>
@@ -2117,13 +2099,14 @@ int main(int argc, char **argv) {
 	return 0;
 }
 EOF
-			_need_memalign=yes
 			cc_check_no_clean && $TMPO$HOSTEXEEXT && _need_memalign=no
 			cc_check_clean
-			;;
-	esac
-	echo "$_need_memalign"
-fi
+		fi
+		;;
+esac
+echo "$_need_memalign"
+
+define_in_config_h_if_yes $_need_memalign 'SCUMM_NEED_ALIGNMENT'
 
 #
 # Backend related stuff
@@ -2291,9 +2274,6 @@ case $_endian in
 		exit 1
 		;;
 esac
-
-
-define_in_config_h_if_yes $_need_memalign 'SCUMM_NEED_ALIGNMENT'
 
 if test "$_unix" = yes ; then
 	DEFINES="$DEFINES -DUNIX"
