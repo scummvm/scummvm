@@ -147,7 +147,6 @@ _text_console=no
 _mt32emu=yes
 _build_scalers=yes
 _build_hq_scalers=yes
-_indeo3=auto
 _enable_prof=no
 _posix=no
 _global_constructors=no
@@ -748,8 +747,6 @@ Optional Libraries:
   --with-opengl-prefix=DIR Prefix where OpenGL (ES) is installed (optional)
   --disable-opengl         disable OpenGL (ES) support [autodetect]
 
-  --disable-indeo3         disable Indeo3 decoder [autodetect]
-
   --with-png-prefix=DIR    Prefix where libpng is installed (optional)
   --disable-png            disable PNG decoder [autodetect]
 
@@ -808,8 +805,6 @@ for ac_option in $@; do
 	--enable-nasm)            _nasm=yes       ;;
 	--disable-nasm)           _nasm=no        ;;
 	--enable-mpeg2)           _mpeg2=yes      ;;
-	--disable-indeo3)         _indeo3=no      ;;
-	--enable-indeo3)          _indeo3=yes     ;;
 	--disable-png)            _png=no         ;;
 	--enable-png)             _png=yes        ;;
 	--disable-theoradec)      _theoradec=no   ;;
@@ -1936,7 +1931,6 @@ if test -n "$_host"; then
 			_backend="n64"
 			_mt32emu=no
 			_build_scalers=no
-			_indeo3=no
 			_translation=no
 			_keymapper=no
 			_text_console=no
@@ -2519,19 +2513,6 @@ fi
 define_in_config_if_yes "$_build_scalers" 'USE_SCALERS'
 
 define_in_config_if_yes "$_build_hq_scalers" 'USE_HQ_SCALERS'
-
-#
-# Check whether to compile the Indeo3 decoder
-#
-if test "$_indeo3" = auto ; then
-	# Autodetect. Build if either the gob engine or plugins are enabled
-	if test `get_engine_build gob` = yes || test "$_dynamic_modules" = yes ; then
-		_indeo3=yes
-	else
-		_indeo3=no
-	fi
-fi
-define_in_config_if_yes "$_indeo3" 'USE_INDEO3'
 
 #
 # Check for math lib
@@ -3138,10 +3119,6 @@ fi
 
 if test "$_mt32emu" = yes ; then
 	echo_n ", MT-32 emu"
-fi
-
-if test "$_indeo3" = yes ; then
-	echo_n ", Indeo3 decoder"
 fi
 
 if test "$_text_console" = yes ; then
