@@ -992,15 +992,6 @@ caanoo)
 	_host_os=gph-linux
 	_host_cpu=arm
 	_host_alias=arm-none-linux-gnueabi
-	if test "$_debug_build" = auto; then
-		# If you want to debug on the Caanoo use '--disable-release --enable-debug'
-		_debug_build=no
-	fi
-
-	if test "$_release_build" = auto; then
-		# Enable release build by default.
-		_release_build=yes
-	fi
 	;;
 dingux)
 	_host_os=linux
@@ -1028,29 +1019,11 @@ gp2x)
 	_host_os=gph-linux
 	_host_cpu=arm
 	_host_alias=arm-open2x-linux
-	if test "$_debug_build" = auto; then
-		# If you want to debug on the GP2X use '--disable-release --enable-debug'
-		_debug_build=no
-	fi
-
-	if test "$_release_build" = auto; then
-		# Enable release build by default.
-		_release_build=yes
-	fi
 	;;
 gp2xwiz)
 	_host_os=gph-linux
 	_host_cpu=arm
 	_host_alias=arm-open2x-linux
-	if test "$_debug_build" = auto; then
-		# If you want to debug on the GP2XWiz use '--disable-release --enable-debug'
-		_debug_build=no
-	fi
-
-	if test "$_release_build" = auto; then
-		# Enable release build by default.
-		_release_build=yes
-	fi
 	;;
 i586-mingw32msvc)
 	_host_os=mingw32msvc
@@ -1088,15 +1061,6 @@ openpandora)
 	_host_os=linux
 	_host_cpu=arm
 	_host_alias=arm-angstrom-linux-gnueabi
-	if test "$_debug_build" = auto; then
-		# If you want to debug on the OP use '--disable-release --enable-debug'
-		_debug_build=no
-	fi
-
-	if test "$_release_build" = auto; then
-		# Enable release build by default.
-		_release_build=yes
-	fi
 	;;
 ppc-amigaos)
 	_host_os=amigaos
@@ -1106,16 +1070,6 @@ ps2)
 	_host_os=ps2
 	_host_cpu=mips64r5900el
 	_host_alias=ee
-	if test "$_debug_build" = auto; then
-		# Disable debug mode by default. The resulting binaries are far too big in general,
-		# and one has to disable multiple engines to make it usable.
-		_debug_build=no
-	fi
-
-	if test "$_release_build" = auto; then
-		# Enable release build by default.
-		_release_build=yes
-	fi
 	;;
 psp)
 	_host_os=psp
@@ -1183,6 +1137,20 @@ fi
 #
 # Determine extra build flags for debug and/or release builds
 #
+
+case $_host in
+caanoo | gp2x | gp2xwiz | openpandora | ps2)
+	if test "$_debug_build" = auto; then
+		# If you want to debug one of these platforms, use '--disable-release --enable-debug'
+		_debug_build=no
+	fi
+
+	if test "$_release_build" = auto; then
+		# Enable release build by default.
+		_release_build=yes
+	fi
+	;;
+esac
 
 if test "$_debug_build" != no; then
 	# debug mode not explicitly disabled -> compile with -g
