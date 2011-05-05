@@ -117,7 +117,7 @@ void Lab::parseMonkey4FileTable() {
 	delete[] stringTable;
 }
 
-bool Lab::fileExists(const Common::String &filename) const {
+bool Lab::getFileExists(const Common::String &filename) const {
 	return _entries.contains(filename);
 }
 
@@ -126,7 +126,7 @@ bool Lab::isOpen() const {
 }
 
 Block *Lab::getFileBlock(const Common::String &filename) const {
-	if (!fileExists(filename))
+	if (!getFileExists(filename))
 		return 0;
 
 	const LabEntry &i = _entries[filename];
@@ -138,7 +138,7 @@ Block *Lab::getFileBlock(const Common::String &filename) const {
 }
 
 LuaFile *Lab::openNewStreamLua(const Common::String &filename) const {
-	if (!fileExists(filename))
+	if (!getFileExists(filename))
 		return 0;
 
 	Common::File *file = new Common::File();
@@ -152,7 +152,7 @@ LuaFile *Lab::openNewStreamLua(const Common::String &filename) const {
 }
 
 Common::File *Lab::openNewStreamFile(const Common::String &filename) const {
-	if (!fileExists(filename))
+	if (!getFileExists(filename))
 		return 0;
 
 	Common::File *file = new Common::File();
@@ -162,8 +162,8 @@ Common::File *Lab::openNewStreamFile(const Common::String &filename) const {
 	return file;
 }
 
-int Lab::fileLength(const Common::String &filename) const {
-	if (!fileExists(filename))
+int Lab::getFileLength(const Common::String &filename) const {
+	if (!getFileExists(filename))
 		return -1;
 
 	return _entries[filename].len;

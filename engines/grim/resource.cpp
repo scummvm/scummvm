@@ -127,7 +127,7 @@ ResourceLoader::~ResourceLoader() {
 
 const Lab *ResourceLoader::getLab(const char *filename) const {
 	for (LabList::const_iterator i = _labs.begin(); i != _labs.end(); ++i)
-		if ((*i)->fileExists(filename))
+		if ((*i)->getFileExists(filename))
 			return *i;
 
 	return NULL;
@@ -207,7 +207,7 @@ Common::File *ResourceLoader::openNewStreamFile(const char *filename) const {
 int ResourceLoader::fileLength(const char *filename) const {
 	const Lab *l = getLab(filename);
 	if (l)
-		return l->fileLength(filename);
+		return l->getFileLength(filename);
 	else
 		return 0;
 }
