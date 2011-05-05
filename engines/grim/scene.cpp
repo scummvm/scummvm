@@ -419,7 +419,7 @@ void Scene::drawBackground() const {
 
 void Scene::drawBitmaps(ObjectState::Position stage) {
 	for (StateList::iterator i = _states.begin(); i != _states.end(); ++i) {
-		if ((*i)->pos() == stage && _currSetup == _setups + (*i)->setupID())
+		if ((*i)->getPos() == stage && _currSetup == _setups + (*i)->getSetupID())
 			(*i)->draw();
 	}
 }
@@ -461,7 +461,7 @@ void Scene::findClosestSector(Graphics::Vector3d p, Sector **sect, Graphics::Vec
 ObjectState *Scene::findState(const char *filename) {
 	// Check the different state objects for the bitmap
 	for (StateList::iterator i = _states.begin(); i != _states.end(); ++i) {
-		const char *file = (*i)->bitmapFilename();
+		const char *file = (*i)->getBitmapFilename();
 
 		if (strcmp(file, filename) == 0)
 			return *i;

@@ -49,11 +49,11 @@ public:
 	void saveState(SaveGame *savedState) const;
 	bool restoreState(SaveGame *savedState);
 
-	int setupID() const { return _setupID; }
-	Position pos() const { return _pos; }
+	int getSetupID() const { return _setupID; }
+	Position getPos() const { return _pos; }
 	void setPos(Position position) { _pos = position; }
 
-	const char *bitmapFilename() const {
+	const char *getBitmapFilename() const {
 		return _bitmap->getFilename();
 	}
 
