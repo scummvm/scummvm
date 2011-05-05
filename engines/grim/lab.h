@@ -41,8 +41,8 @@ class LuaFile;
 class Block {
 public:
 	Block(const char *dataPtr, int length) : _data(dataPtr), _len(length) {}
-	const char *data() const { return _data; }
-	int len() const { return _len; }
+	const char *getData() const { return _data; }
+	int getLen() const { return _len; }
 
 	~Block() { delete[] _data; }
 

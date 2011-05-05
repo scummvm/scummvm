@@ -217,7 +217,7 @@ void ResourceLoader::putIntoCache(Common::String fname, Block *res) {
 	entry.resPtr = res;
 	entry.fname = new char[fname.size() + 1];
 	strcpy(entry.fname, fname.c_str());
-	_cacheMemorySize += res->len();
+	_cacheMemorySize += res->getLen();
 	_cache.push_back(entry);
 	_cacheDirty = true;
 }
@@ -235,7 +235,7 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 		putIntoCache(fname, b);
 	}
 
-	Bitmap *result = new Bitmap(filename, b->data(), b->len());
+	Bitmap *result = new Bitmap(filename, b->getData(), b->getLen());
 
 	return result;
 }
@@ -252,7 +252,7 @@ CMap *ResourceLoader::loadColormap(const char *filename) {
 		putIntoCache(fname, b);
 	}
 
-	CMap *result = new CMap(filename, b->data(), b->len());
+	CMap *result = new CMap(filename, b->getData(), b->getLen());
 	_colormaps.push_back(result);
 
 	return result;
@@ -268,7 +268,7 @@ Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
 			error("Could not find costume \"%s\"", filename);
 		putIntoCache(fname, b);
 	}
-	Costume *result = new Costume(filename, b->data(), b->len(), prevCost);
+	Costume *result = new Costume(filename, b->getData(), b->getLen(), prevCost);
 
 	return result;
 }
@@ -284,7 +284,7 @@ Font *ResourceLoader::loadFont(const char *filename) {
 		putIntoCache(fname, b);
 	}
 
-	Font *result = new Font(filename, b->data(), b->len());
+	Font *result = new Font(filename, b->getData(), b->getLen());
 
 	return result;
 }
@@ -300,7 +300,7 @@ KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 		putIntoCache(fname, b);
 	}
 
-	KeyframeAnim *result = new KeyframeAnim(filename, b->data(), b->len());
+	KeyframeAnim *result = new KeyframeAnim(filename, b->getData(), b->getLen());
 	_keyframeAnims.push_back(result);
 
 	return result;
@@ -317,7 +317,7 @@ LipSync *ResourceLoader::loadLipSync(const char *filename) {
 			return NULL;
 	}
 
-	result = new LipSync(filename, b->data(), b->len());
+	result = new LipSync(filename, b->getData(), b->getLen());
 
 	// Some lipsync files have no data
 	if (result->isValid()) {
@@ -343,7 +343,7 @@ Material *ResourceLoader::loadMaterial(const char *filename, CMap *c) {
 		putIntoCache(fname, b);
 	}
 
-	Material *result = new Material(fname.c_str(), b->data(), b->len(), c);
+	Material *result = new Material(fname.c_str(), b->getData(), b->getLen(), c);
 	_materials.push_back(result);
 
 	return result;
@@ -360,7 +360,7 @@ Model *ResourceLoader::loadModel(const char *filename, CMap *c) {
 		putIntoCache(fname, b);
 	}
 
-	Model *result = new Model(filename, b->data(), b->len(), c);
+	Model *result = new Model(filename, b->getData(), b->getLen(), c);
 	_models.push_back(result);
 
 	return result;
@@ -378,7 +378,7 @@ void ResourceLoader::uncache(const char *filename) {
 	for (unsigned int i = 0; i < _cache.size(); i++) {
 		if (fname.compareTo(_cache[i].fname) == 0) {
 			delete[] _cache[i].fname;
-			_cacheMemorySize -= _cache[i].resPtr->len();
+			_cacheMemorySize -= _cache[i].resPtr->getLen();
 			delete _cache[i].resPtr;
 			_cache.remove_at(i);
 			_cacheDirty = true;

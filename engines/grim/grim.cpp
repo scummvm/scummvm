@@ -1536,7 +1536,7 @@ void GrimEngine::setScene(const char *name) {
 	Block *b = g_resourceloader->getFileBlock(name);
 	if (!b)
 		warning("Could not find scene file %s", name);
-	_currScene = new Scene(name, b->data(), b->len());
+	_currScene = new Scene(name, b->getData(), b->getLen());
 	registerScene(_currScene);
 	_currScene->setSoundParameters(20, 127);
 	// should delete the old scene after creating the new one

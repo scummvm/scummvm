@@ -178,7 +178,7 @@ ImuseSndMgr::SoundDesc *ImuseSndMgr::openSound(const char *soundName, int volGro
 	if (!(g_grim->getGameFlags() & GF_DEMO) && scumm_stricmp(extension, "imu") == 0) {
 		sound->blockRes = g_resourceloader->getFileBlock(soundName);
 		if (sound->blockRes) {
-			ptr = (byte *)sound->blockRes->data();
+			ptr = (byte *)sound->blockRes->getData();
 			parseSoundHeader(ptr, sound, headerSize);
 			sound->mcmpData = false;
 			sound->resPtr = ptr + headerSize;

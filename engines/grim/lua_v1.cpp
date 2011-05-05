@@ -4552,7 +4552,7 @@ int bundle_dofile(const char *filename) {
 		return 2;
 	}
 
-	int result = lua_dobuffer(const_cast<char *>(b->data()), b->len(), const_cast<char *>(filename));
+	int result = lua_dobuffer(const_cast<char *>(b->getData()), b->getLen(), const_cast<char *>(filename));
 	delete b;
 	return result;
 }
