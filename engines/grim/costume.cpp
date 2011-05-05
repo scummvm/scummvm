@@ -529,7 +529,7 @@ void KeyframeComponent::setKey(int val) {
 		break;
 	default:
 		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Unknown key %d for keyframe %s", val, _keyf->filename());
+			warning("Unknown key %d for keyframe %s", val, _keyf->getFilename());
 	}
 }
 
@@ -554,7 +554,7 @@ void KeyframeComponent::update() {
 	else
 		_currTime += g_grim->getFrameTime();
 
-	int animLength = (int)(_keyf->length() * 1000);
+	int animLength = (int)(_keyf->getLength() * 1000);
 
 	if (_currTime > animLength) { // What to do at end?
 		switch (_repeatMode) {
@@ -572,7 +572,7 @@ void KeyframeComponent::update() {
 				break;
 			default:
 				if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-					warning("Unknown repeat mode %d for keyframe %s", _repeatMode, _keyf->filename());
+					warning("Unknown repeat mode %d for keyframe %s", _repeatMode, _keyf->getFilename());
 		}
 	}
 
@@ -590,7 +590,7 @@ void KeyframeComponent::init() {
 		_hier = mc->getHierarchy();
 	else {
 		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Parent of %s was not a model", _keyf->filename());
+			warning("Parent of %s was not a model", _keyf->getFilename());
 		_hier = NULL;
 	}
 }

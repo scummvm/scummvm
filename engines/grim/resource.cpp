@@ -464,7 +464,7 @@ CMapPtr ResourceLoader::getColormap(const char *fname) {
 KeyframeAnimPtr ResourceLoader::getKeyframe(const char *fname) {
 	for (Common::List<KeyframeAnim *>::const_iterator i = _keyframeAnims.begin(); i != _keyframeAnims.end(); ++i) {
 		KeyframeAnim *k = *i;
-		if (strcmp(fname, k->filename()) == 0) {
+		if (strcmp(fname, k->getFilename()) == 0) {
 			return k;
 		}
 	}

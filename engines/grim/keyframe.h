@@ -40,8 +40,8 @@ public:
 	void loadText(TextSplitter &ts);
 	void animate(Model::HierNode *nodes, float time, int priority1 = 1, int priority2 = 5, float fade = 1) const;
 
-	float length() const { return _numFrames / _fps; }
-	const char *filename() const { return _fname.c_str(); }
+	float getLength() const { return _numFrames / _fps; }
+	const char *getFilename() const { return _fname.c_str(); }
 
 private:
 	Common::String _fname;
