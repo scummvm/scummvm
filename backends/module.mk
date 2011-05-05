@@ -160,6 +160,8 @@ endif
 ifeq ($(BACKEND),wince)
 MODULE_OBJS += \
 	events/wincesdl/wincesdl-events.o \
+	fs/windows/windows-fs.o \
+	fs/windows/windows-fs-factory.o \
 	graphics/wincesdl/wincesdl-graphics.o \
 	mixer/wincesdl/wincesdl-mixer.o
 endif
