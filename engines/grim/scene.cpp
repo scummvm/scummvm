@@ -79,7 +79,7 @@ Scene::Scene(const char *sceneName, const char *buf, int len) :
 	_maxVolume = 0;
 
 	// Lights are optional
-	if (ts.eof())
+	if (ts.isEof())
 		return;
 
 	ts.expectString("section: lights");
@@ -90,7 +90,7 @@ Scene::Scene(const char *sceneName, const char *buf, int len) :
 
 	// Calculate the number of sectors
 	ts.expectString("section: sectors");
-	if (ts.eof())	// Sectors are optional, but section: doesn't seem to be
+	if (ts.isEof())	// Sectors are optional, but section: doesn't seem to be
 		return;
 
 	int sectorStart = ts.getLineNumber();
@@ -98,7 +98,7 @@ Scene::Scene(const char *sceneName, const char *buf, int len) :
 	// Find the number of sectors (while the sectors usually
 	// count down from the highest number there are a few
 	// cases where they count up, see hh.set for example)
-	while (!ts.eof()) {
+	while (!ts.isEof()) {
 		ts.scanString(" %s", 1, tempBuf);
 		if (!scumm_stricmp(tempBuf, "sector"))
 			_numSectors++;
@@ -345,7 +345,7 @@ void Scene::Light::load(TextSplitter &ts) {
 	char buf[256];
 
 	// Light names can be null, but ts doesn't seem flexible enough to allow this
-	if (strlen(ts.currentLine()) > strlen(" light"))
+	if (strlen(ts.getCurrentLine()) > strlen(" light"))
 		ts.scanString(" light %256s", 1, buf);
 	else {
 		ts.nextLine();

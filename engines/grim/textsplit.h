@@ -41,9 +41,9 @@ public:
 		return _currLine;
 	}
 
-	char *currentLine() { return _currLine; }
-	const char *currentLine() const { return _currLine; }
-	bool eof() const { return _lineIndex == _numLines; }
+	char *getCurrentLine() { return _currLine; }
+	const char *getCurrentLine() const { return _currLine; }
+	bool isEof() const { return _lineIndex == _numLines; }
 	int getLineNumber() { return _lineIndex; }
 	void setLineNumber(int line) { _lineIndex = line - 1; processLine(); }
 

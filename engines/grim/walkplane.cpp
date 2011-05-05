@@ -83,7 +83,7 @@ void Sector::load(TextSplitter &ts) {
 	Graphics::Vector3d tempVert;
 
 	// Sector NAMES can be null, but ts isn't flexible enough
-	if (strlen(ts.currentLine()) > strlen(" sector"))
+	if (strlen(ts.getCurrentLine()) > strlen(" sector"))
 		ts.scanString(" sector %256s", 1, buf);
 	else {
 		ts.nextLine();

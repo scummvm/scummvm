@@ -94,9 +94,9 @@ TextSplitter::TextSplitter(const char *data, int len) {
 bool TextSplitter::checkString(const char *needle) {
 	// checkString also needs to check for extremely optional
 	// components like "object_art" which can be missing entirely
-	if (!currentLine())
+	if (!getCurrentLine())
 		return false;
-	else if (strstr(currentLine(), needle))
+	else if (strstr(getCurrentLine(), needle))
 		return true;
 	else
 		return false;
@@ -105,8 +105,8 @@ bool TextSplitter::checkString(const char *needle) {
 void TextSplitter::expectString(const char *expected) {
 	if (!_currLine)
 		error("Expected `%s', got EOF", expected);
-	if (scumm_stricmp(currentLine(), expected) != 0)
-		error("Expected `%s', got '%s'", expected, currentLine());
+	if (scumm_stricmp(getCurrentLine(), expected) != 0)
+		error("Expected `%s', got '%s'", expected, getCurrentLine());
 	nextLine();
 }
 
@@ -119,18 +119,18 @@ void TextSplitter::scanString(const char *fmt, int field_count, ...) {
 	va_start(va, field_count);
 
 #ifdef WIN32
-	if (residual_vsscanf(currentLine(), field_count, fmt, va) < field_count)
+	if (residual_vsscanf(getCurrentLine(), field_count, fmt, va) < field_count)
 #else
-	if (vsscanf(currentLine(), fmt, va) < field_count)
+	if (vsscanf(getCurrentLine(), fmt, va) < field_count)
 #endif
-		error("Expected line of format '%s', got '%s'", fmt, currentLine());
+		error("Expected line of format '%s', got '%s'", fmt, getCurrentLine());
 	va_end(va);
 
 	nextLine();
 }
 
 void TextSplitter::processLine() {
-	if (eof())
+	if (isEof())
 		return;
 
 	_currLine = _lines[_lineIndex++].getData();
@@ -151,7 +151,7 @@ void TextSplitter::processLine() {
 		nextLine();
 
 	// Convert to lower case
-	if (!eof())
+	if (!isEof())
 		for (char *s = _currLine; *s != '\0'; s++)
 			*s = tolower(*s);
 }

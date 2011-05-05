@@ -363,7 +363,7 @@ void Model::loadText(TextSplitter *ts, CMap *cmap) {
 		_rootHierNode[num]._totalWeight = 0;
 	}
 
-	if (!ts->eof() && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
+	if (!ts->isEof() && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
 		warning("Unexpected junk at end of model text");
 }
 
@@ -392,7 +392,7 @@ void Model::Mesh::loadText(TextSplitter *ts, Material* materials[]) {
 	ts->scanString("radius %f", 1, &_radius);
 
 	// In data001/rope_scale.3do, the shadow line is missing
-	if (sscanf(ts->currentLine(), "shadow %d", &_shadow) < 1) {
+	if (sscanf(ts->getCurrentLine(), "shadow %d", &_shadow) < 1) {
 		_shadow = 0;
 	} else
 		ts->nextLine();
@@ -444,11 +444,11 @@ void Model::Mesh::loadText(TextSplitter *ts, Material* materials[]) {
 		float extralight;
 		int readlen;
 
-		if (ts->eof())
+		if (ts->isEof())
 			error("Expected face data, got EOF");
 
-		if (sscanf(ts->currentLine(), " %d: %d %x %d %d %d %f %d%n", &num, &materialid, &type, &geo, &light, &tex, &extralight, &verts, &readlen) < 8)
-			error("Expected face data, got '%s'", ts->currentLine());
+		if (sscanf(ts->getCurrentLine(), " %d: %d %x %d %d %d %f %d%n", &num, &materialid, &type, &geo, &light, &tex, &extralight, &verts, &readlen) < 8)
+			error("Expected face data, got '%s'", ts->getCurrentLine());
 
 		assert(materialid != -1);
 		_materialid[num] = materialid;
@@ -464,10 +464,10 @@ void Model::Mesh::loadText(TextSplitter *ts, Material* materials[]) {
 		for (int j = 0; j < verts; j++) {
 			int readlen2;
 
-			if (sscanf(ts->currentLine() + readlen, " %d, %d%n", &_faces[num]._vertices[j], &_faces[num]._texVertices[j], &readlen2) < 2)
+			if (sscanf(ts->getCurrentLine() + readlen, " %d, %d%n", &_faces[num]._vertices[j], &_faces[num]._texVertices[j], &readlen2) < 2)
 				error("Could not read vertex indices in line '%s'",
 
-			ts->currentLine());
+			ts->getCurrentLine());
 			readlen += readlen2;
 		}
 		ts->nextLine();

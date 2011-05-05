@@ -794,7 +794,7 @@ void Costume::load(const char *filename, const char *data, int len, Costume *pre
 	_components = new Component *[_numComponents];
 	for (int i = 0; i < _numComponents; i++) {
 		int id, tagID, hash, parentID, namePos;
-		const char *line = ts.currentLine();
+		const char *line = ts.getCurrentLine();
 		Component *prevComponent = NULL;
 
 		if (sscanf(line, " %d %d %d %d %n", &id, &tagID, &hash, &parentID, &namePos) < 4)
