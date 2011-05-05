@@ -113,8 +113,8 @@ void SlotFileIndexed::buildIndex(byte *buffer, SavePartInfo &info,
 	if (setLongest) {
 		uint32 slot0Len;
 		for (slot0Len = strlen((const char *) bufferStart); slot0Len < longest; slot0Len++)
-			buffer[slot0Len] = ' ';
-		buffer[slot0Len] = '\0';
+			bufferStart[slot0Len] = ' ';
+		bufferStart[slot0Len] = '\0';
 	}
 }
 
