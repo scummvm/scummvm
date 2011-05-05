@@ -48,7 +48,7 @@ public:
 		if (g_resourceloader)
 			g_resourceloader->uncacheColormap(this);
 	}
-	const char *filename() const { return _fname.c_str(); }
+	const char *getFilename() const { return _fname.c_str(); }
 
 	// The color data, in RGB format
 	char _colors[256 * 3];

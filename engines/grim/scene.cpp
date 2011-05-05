@@ -135,7 +135,7 @@ void Scene::saveState(SaveGame *savedState) const {
 	savedState->writeString(_name);
 	savedState->writeLESint32(_numCmaps);
 	for (int i = 0; i < _numCmaps; ++i) {
-		savedState->writeCharString(_cmaps[i]->filename());
+		savedState->writeCharString(_cmaps[i]->getFilename());
 	}
 	savedState->writeLEUint32(_currSetup - _setups); // current setup id
 	savedState->writeLEUint32(_locked);

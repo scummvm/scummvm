@@ -470,7 +470,7 @@ void ColormapComponent::init() {
 		_parent->setColormap(_cmap);
 	else
 		warning("No parent to apply colormap object on. CMap: %s, Costume: %s",
-				_cmap->filename(),_cost->getFilename());
+				_cmap->getFilename(),_cost->getFilename());
 }
 
 class KeyframeComponent : public Costume::Component {
@@ -1384,7 +1384,7 @@ Costume *Costume::previousCostume() const {
 void Costume::saveState(SaveGame *state) const {
 	if (_cmap) {
 		state->writeLEUint32(1);
-		state->writeCharString(_cmap->filename());
+		state->writeCharString(_cmap->getFilename());
 	} else {
 		state->writeLEUint32(0);
 	}
