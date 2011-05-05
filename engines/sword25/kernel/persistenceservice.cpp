@@ -133,18 +133,26 @@ struct PersistenceService::Impl {
 	}
 
 	void reloadSlots() {
-		// Über alle Spielstanddateien iterieren und deren Infos einlesen.
+		// Iterate through all the saved games, and read their thumbnails.
 		for (uint i = 0; i < SLOT_COUNT; ++i) {
 			readSlotSavegameInformation(i);
+			// TODO: This function is supposed to load savegame screenshots
+			// into an appropriate array (or the header struct of each saved
+			// game). Currently, it's a stub. For each slot, we should skip
+			// the header plus gameDataLength bytes and read the screenshot
+			// data. Then, these screenshots should be used for the save list
+			// screen. The thumbnail code seems to be missing completely,
+			// though (unless I'm mistaken), so these thumbnails aren't used
+			// anywhere currently.
 		}
 	}
 
 	void readSlotSavegameInformation(uint slotID) {
-		// Aktuelle Slotinformationen in den Ausgangszustand versetzen, er wird im Folgenden neu gefüllt.
+		// Get the information corresponding to the requested save slot.
 		SavegameInformation &curSavegameInfo = _savegameInformations[slotID];
 		curSavegameInfo.clear();
 
-		// Den Dateinamen für den Spielstand des Slots generieren.
+		// Generate the save slot file name.
 		Common::String filename = generateSavegameFilename(slotID);
 
 		// Try to open the savegame for loading
@@ -163,16 +171,17 @@ struct PersistenceService::Impl {
 
 			// If the header can be read in and is detected to be valid, we will have a valid file
 			if (storedMarker == FILE_MARKER) {
-				// Der Slot wird als belegt markiert.
+				// The slot is marked as occupied.
 				curSavegameInfo.isOccupied = true;
-				// Speichern, ob der Spielstand kompatibel mit der aktuellen Engine-Version ist.
+				// Check if the saved game is compatible with the current engine version.
 				curSavegameInfo.isCompatible = (storedVersionID == Common::String(VERSIONID));
-				// Dateinamen des Spielstandes speichern.
-				curSavegameInfo.filename = generateSavegameFilename(slotID);
-				// Die Beschreibung des Spielstandes besteht aus einer textuellen Darstellung des Änderungsdatums der Spielstanddatei.
+				// Store the save game name - FIXME: Why is this needed?
+				curSavegameInfo.filename = filename;
+				// Load the save game description.
 				curSavegameInfo.description = gameDescription;
-				// Den Offset zu den gespeicherten Spieldaten innerhalb der Datei speichern.
-				// Dieses entspricht der aktuellen Position, da nach der letzten Headerinformation noch ein Leerzeichen als trenner folgt.
+				// The offset to the stored save game data within the file.
+				// This reflects the current position, as the header information
+				// is still followed by a space as separator.
 				curSavegameInfo.gamedataOffset = static_cast<uint>(file->pos());
 			}
 
