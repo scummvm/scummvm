@@ -2869,7 +2869,7 @@ if test "$_readline" = yes ; then
 fi
 define_in_config_h_if_yes "$_readline" 'USE_READLINE'
 
-define_in_config_h_if_yes "$_text_console" 'USE_TEXT_CONSOLE'
+define_in_config_h_if_yes "$_text_console" 'USE_TEXT_CONSOLE_FOR_DEBUGGER'
 
 #
 # Check for OpenGL (ES)
