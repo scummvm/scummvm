@@ -404,8 +404,7 @@ void Engine::openMainMenuDialog() {
 }
 
 void Engine::warnUserAboutWIPGame() {
-	if(ConfMan.get("display_wip_engine_warning").compareTo("false") != 0)
-	{
+	if (ConfMan.get("display_wip_engine_warning").compareTo("false") != 0) {
 		GUI::MessageDialog alert("WARNING: This game is UNSTABLE");
 		alert.runModal();
 	}
