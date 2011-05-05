@@ -141,6 +141,29 @@ bool PackageManager::loadDirectoryAsPackage(const Common::String &directoryName,
 	}
 }
 
+// Duplicated from kernel/persistenceservice.cpp
+static Common::String generateSavegameFilename(uint slotID) {
+	char buffer[100];
+	// NOTE: This is hardcoded to sword25
+	snprintf(buffer, 100, "%s.%.3d", "sword25", slotID);
+	return Common::String(buffer);
+}
+
+// Duplicated from kernel/persistenceservice.cpp
+static Common::String loadString(Common::InSaveFile *in, uint maxSize = 999) {
+	Common::String result;
+
+	char ch = (char)in->readByte();
+	while (ch != '\0') {
+		result += ch;
+		if (result.size() >= maxSize)
+			break;
+		ch = (char)in->readByte();
+	}
+
+	return result;
+}
+
 byte *PackageManager::getFile(const Common::String &fileName, uint *fileSizePtr) {
 	const Common::String B25S_EXTENSION(".b25s");
 	Common::SeekableReadStream *in;
@@ -163,6 +186,40 @@ byte *PackageManager::getFile(const Common::String &fileName, uint *fileSizePtr)
 		
 		delete file;
 		return buffer;
+	}
+
+	if (fileName.hasPrefix("/saves")) {
+		// A savegame thumbnail
+		Common::SaveFileManager *sfm = g_system->getSavefileManager();
+		int slotNum = atoi(fileName.c_str() + fileName.size() - 3);
+		Common::InSaveFile *file = sfm->openForLoading(generateSavegameFilename(slotNum));
+
+		if (file) {
+			loadString(file);	// storedMarker
+			loadString(file);	// storedVersionID
+			loadString(file);	// gameDescription
+			int gameDataLength = atoi(loadString(file).c_str());
+			loadString(file);	// gamedataUncompressedLength
+			// Skip the savegame data
+			file->skip(gameDataLength);
+
+			int thumbnailSize = file->size() - file->pos();
+
+			if (thumbnailSize <= 0) {
+				warning("Saved game at slot %d does not contain a thumbnail", slotNum);
+				delete file;
+				return 0;
+			}
+
+			if (fileSizePtr)
+				*fileSizePtr = thumbnailSize;
+
+			byte *thumbnail = new byte[thumbnailSize];
+			file->read(thumbnail, thumbnailSize);
+			
+			delete file;
+			return thumbnail;
+		}
 	}
 
 	Common::ArchiveMemberPtr fileNode = getArchiveMember(normalizePath(fileName, _currentDirectory));

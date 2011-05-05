@@ -266,8 +266,9 @@ Resource *GraphicEngine::loadResource(const Common::String &filename) {
 		return pResource;
 	}
 
-	// Load sprite image
-	if (filename.hasSuffix(".png") || filename.hasSuffix(".b25s")) {
+	// Load sprite image. Savegame thumbnails are also loaded here.
+	if (filename.hasSuffix(".png") || filename.hasSuffix(".b25s") ||
+		filename.hasPrefix("/saves")) {
 		bool result = false;
 		RenderedImage *pImage = new RenderedImage(filename, result);
 		if (!result) {
@@ -354,7 +355,8 @@ bool GraphicEngine::canLoadResource(const Common::String &filename) {
 		filename.hasSuffix("_ani.xml") ||
 		filename.hasSuffix("_fnt.xml") ||
 		filename.hasSuffix(".swf") ||
-		filename.hasSuffix(".b25s");
+		filename.hasSuffix(".b25s") ||
+		filename.hasPrefix("/saves");
 }
 
 void  GraphicEngine::updateLastFrameDuration() {

@@ -134,14 +134,6 @@ struct PersistenceService::Impl {
 		// Iterate through all the saved games, and read their thumbnails.
 		for (uint i = 0; i < SLOT_COUNT; ++i) {
 			readSlotSavegameInformation(i);
-			// TODO: This function is supposed to load savegame screenshots
-			// into an appropriate array (or the header struct of each saved
-			// game). Currently, it's a stub. For each slot, we should skip
-			// the header plus gameDataLength bytes and read the screenshot
-			// data. Then, these screenshots should be used for the save list
-			// screen. The thumbnail code seems to be missing completely,
-			// though (unless I'm mistaken), so these thumbnails aren't used
-			// anywhere currently.
 		}
 	}
 
