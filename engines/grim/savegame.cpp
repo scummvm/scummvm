@@ -245,9 +245,9 @@ void SaveGame::writeVector3d(const Graphics::Vector3d &vec) {
 }
 
 void SaveGame::writeColor(const Grim::Color &color) {
-	writeByte(color.red());
-	writeByte(color.green());
-	writeByte(color.blue());
+	writeByte(color.getRed());
+	writeByte(color.getGreen());
+	writeByte(color.getBlue());
 }
 
 void SaveGame::writeFloat(float data) {
@@ -273,9 +273,9 @@ Graphics::Vector3d SaveGame::readVector3d() {
 
 Grim::Color SaveGame::readColor() {
 	Color color;
-	color.red() = readByte();
-	color.green() = readByte();
-	color.blue() = readByte();
+	color.getRed() = readByte();
+	color.getGreen() = readByte();
+	color.getBlue() = readByte();
 
 	return color;
 }

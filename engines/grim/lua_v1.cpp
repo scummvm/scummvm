@@ -240,9 +240,9 @@ static void MakeColor() {
 static void GetColorComponents() {
 	lua_Object colorObj = lua_getparam(1);
 	Color *c = getcolor(colorObj);
-	lua_pushnumber(c->red());
-	lua_pushnumber(c->green());
-	lua_pushnumber(c->blue());
+	lua_pushnumber(c->getRed());
+	lua_pushnumber(c->getGreen());
+	lua_pushnumber(c->getBlue());
 }
 
 static void ReadRegistryValue() {

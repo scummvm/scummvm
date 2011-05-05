@@ -523,9 +523,9 @@ void GfxTinyGL::setupLight(Scene::Light *light, int lightId) {
 	float lightDir[] = { 0.0f, 0.0f, 0.0f };
 
 	float intensity = light->_intensity / 1.3f;
-	lightColor[0] = ((float)light->_color.red() / 15.0f) * intensity;
-	lightColor[1] = ((float)light->_color.blue() / 15.0f) * intensity;
-	lightColor[2] = ((float)light->_color.green() / 15.0f) * intensity;
+	lightColor[0] = ((float)light->_color.getRed() / 15.0f) * intensity;
+	lightColor[1] = ((float)light->_color.getBlue() / 15.0f) * intensity;
+	lightColor[2] = ((float)light->_color.getGreen() / 15.0f) * intensity;
 
 	if (strcmp(light->_type.c_str(), "omni") == 0) {
 		lightPos[0] = light->_pos.x();
@@ -708,7 +708,7 @@ void GfxTinyGL::loadEmergFont() {
 }
 
 void GfxTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgColor) {
-	uint16 color = ((fgColor.red() & 0xF8) << 8) | ((fgColor.green() & 0xFC) << 3) | (fgColor.blue() >> 3);
+	uint16 color = ((fgColor.getRed() & 0xF8) << 8) | ((fgColor.getGreen() & 0xFC) << 3) | (fgColor.getBlue() >> 3);
 
 	for (int l = 0; l < (int)strlen(text); l++) {
 		int c = text[l];
@@ -743,9 +743,9 @@ GfxBase::TextObjectHandle *GfxTinyGL::createTextBitmap(uint8 *data, int width, i
 	uint16 *texDataPtr = texData;
 	handle->bitmapData = texData;
 	uint8 *bitmapData = data;
-	uint8 r = fgColor.red();
-	uint8 g = fgColor.green();
-	uint8 b = fgColor.blue();
+	uint8 r = fgColor.getRed();
+	uint8 g = fgColor.getGreen();
+	uint8 b = fgColor.getBlue();
 	uint16 color = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
 	if (color == 0xf81f)
 		color = 0xf81e;
@@ -846,7 +846,7 @@ void GfxTinyGL::drawRectangle(PrimitiveObject *primitive) {
 	int y2 = primitive->getP2().y;
 
 	const Color &color = *primitive->getColor();
-	uint16 c = ((color.red() & 0xF8) << 8) | ((color.green() & 0xFC) << 3) | (color.blue() >> 3);
+	uint16 c = ((color.getRed() & 0xF8) << 8) | ((color.getGreen() & 0xFC) << 3) | (color.getBlue() >> 3);
 
 	if (primitive->isFilled()) {
 		for (; y1 <= y2; y1++)
@@ -882,7 +882,7 @@ void GfxTinyGL::drawLine(PrimitiveObject *primitive) {
 	int y2 = primitive->getP2().y;
 
 	const Color &color = *primitive->getColor();
-	uint16 c = ((color.red() & 0xF8) << 8) | ((color.green() & 0xFC) << 3) | (color.blue() >> 3);
+	uint16 c = ((color.getRed() & 0xF8) << 8) | ((color.getGreen() & 0xFC) << 3) | (color.getBlue() >> 3);
 
 	if (x2 == x1) {
 		for (int y = y1; y <= y2; y++) {
@@ -914,7 +914,7 @@ void GfxTinyGL::drawPolygon(PrimitiveObject *primitive) {
 	int b;
 
 	const Color &color = *primitive->getColor();
-	uint16 c = ((color.red() & 0xF8) << 8) | ((color.green() & 0xFC) << 3) | (color.blue() >> 3);
+	uint16 c = ((color.getRed() & 0xF8) << 8) | ((color.getGreen() & 0xFC) << 3) | (color.getBlue() >> 3);
 
 	m = (y2 - y1) / (x2 - x1);
 	b = (int)(-m * x1 + y1);

@@ -418,9 +418,9 @@ void GfxOpenGL::setupLight(Scene::Light *light, int lightId) {
 	float lightDir[] = { 0.0f, 0.0f, 0.0f };
 
 	float intensity = light->_intensity / 1.3f;
-	lightColor[0] = ((float)light->_color.red() / 15.0f) * intensity;
-	lightColor[1] = ((float)light->_color.blue() / 15.0f) * intensity;
-	lightColor[2] = ((float)light->_color.green() / 15.0f) * intensity;
+	lightColor[0] = ((float)light->_color.getRed() / 15.0f) * intensity;
+	lightColor[1] = ((float)light->_color.getBlue() / 15.0f) * intensity;
+	lightColor[2] = ((float)light->_color.getGreen() / 15.0f) * intensity;
 
 	if (strcmp(light->_type.c_str(), "omni") == 0) {
 		lightPos[0] = light->_pos.x();
@@ -839,9 +839,9 @@ GfxBase::TextObjectHandle *GfxOpenGL::createTextBitmap(uint8 *data, int width, i
 	byte *texData = new byte[4 * width * height];
 	byte *texDataPtr = texData;
 	uint8 *bitmapData = data;
-	uint8 r = fgColor.red();
-	uint8 g = fgColor.green();
-	uint8 b = fgColor.blue();
+	uint8 r = fgColor.getRed();
+	uint8 g = fgColor.getGreen();
+	uint8 b = fgColor.getBlue();
 
 	for (int i = 0; i < width * height; i++, texDataPtr += 4, bitmapData++) {
 		byte pixel = *bitmapData;
@@ -1071,7 +1071,7 @@ void GfxOpenGL::drawRectangle(PrimitiveObject *primitive) {
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
-	glColor3f(color.red() / 255.0f, color.green() / 255.0f, color.blue() / 255.0f);
+	glColor3f(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f);
 
 	if (primitive->isFilled()) {
 		glBegin(GL_QUADS);
@@ -1110,7 +1110,7 @@ void GfxOpenGL::drawLine(PrimitiveObject *primitive) {
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
-	glColor3f(color.red() / 255.0f, color.green() / 255.0f, color.blue() / 255.0f);
+	glColor3f(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f);
 
 	glBegin(GL_LINES);
 	glVertex2i(x1, y1);
@@ -1146,7 +1146,7 @@ void GfxOpenGL::drawPolygon(PrimitiveObject *primitive) {
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
-	glColor3f(color.red() / 255.0f, color.green() / 255.0f, color.blue() / 255.0f);
+	glColor3f(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f);
 
 	glBegin(GL_LINES);
 	glVertex2i(x1, y1);

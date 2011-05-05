@@ -45,12 +45,12 @@ public:
 			Object() {
 		_vals[0] = c._vals[0]; _vals[1] = c._vals[1]; _vals[2] = c._vals[2];
 	}
-	byte &red() { return _vals[0]; }
-	byte red() const { return _vals[0]; }
-	byte &green() { return _vals[1]; }
-	byte green() const { return _vals[1]; }
-	byte &blue() { return _vals[2]; }
-	byte blue() const { return _vals[2]; }
+	byte &getRed() { return _vals[0]; }
+	byte getRed() const { return _vals[0]; }
+	byte &getGreen() { return _vals[1]; }
+	byte getGreen() const { return _vals[1]; }
+	byte &getBlue() { return _vals[2]; }
+	byte getBlue() const { return _vals[2]; }
 
 	Color& operator =(const Color &c) {
 		_vals[0] = c._vals[0]; _vals[1] = c._vals[1]; _vals[2] = c._vals[2];

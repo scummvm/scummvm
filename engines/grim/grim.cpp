@@ -1262,9 +1262,9 @@ void GrimEngine::restoreColors(SaveGame *state) {
 		if (id > Object::s_id) {
 			Object::s_id = id;
 		}
-		c->red() = state->readByte();
-		c->green() = state->readByte();
-		c->blue() = state->readByte();
+		c->getRed() = state->readByte();
+		c->getGreen() = state->readByte();
+		c->getBlue() = state->readByte();
 		registerColor(c);
 	}
 
@@ -1467,9 +1467,9 @@ void GrimEngine::saveColors(SaveGame *state) {
 	for (ColorListType::iterator i = _colors.begin(); i != _colors.end(); ++i) {
 		state->writeLEUint32(i->_key);
 		Color *c = i->_value;
-		state->writeByte(c->red());
-		state->writeByte(c->green());
-		state->writeByte(c->blue());
+		state->writeByte(c->getRed());
+		state->writeByte(c->getGreen());
+		state->writeByte(c->getBlue());
 	}
 
 	state->endSection();

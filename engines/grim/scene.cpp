@@ -364,9 +364,9 @@ void Scene::Light::load(TextSplitter &ts) {
 
 	int r, g, b;
 	ts.scanString(" color %d %d %d", 3, &r, &g, &b);
-	_color.red() = r;
-	_color.green() = g;
-	_color.blue() = b;
+	_color.getRed() = r;
+	_color.getGreen() = g;
+	_color.getBlue() = b;
 }
 
 void Scene::Setup::setupCamera() const {
