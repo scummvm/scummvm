@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	iff.o \
 	imagedec.o \
 	jpeg.o \
+	maccursor.o \
 	pict.o \
 	png.o \
 	primitives.o \
