@@ -1153,7 +1153,9 @@ if test "$_release_build" = yes; then
 	# makes it possible to use -Wuninitialized, so let's do that.
 	# We will also add a define, which indicates we are doing
 	# an build for a release version.
-	CXXFLAGS="$CXXFLAGS -O2 -Wuninitialized -DRELEASE_BUILD"
+	CXXFLAGS="$CXXFLAGS -O2 -Wuninitialized"
+	# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
+	CXXFLAGS="$CXXFLAGS -DRELEASE_BUILD"
 fi
 
 
@@ -1541,6 +1543,7 @@ case $_host_os in
 		fi
 		CXXFLAGS="$CXXFLAGS -finline-limit=300"
 		CXXFLAGS="$CXXFLAGS -Os -mthumb-interwork"
+		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__"
 		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5E__ -D__ARM_ARCH_5TE__"
 		# supress 'mangling of 'va_list' has changed in GCC 4.4'
@@ -1569,11 +1572,16 @@ case $_host_os in
 		add_line_to_config_mk 'MACOSX = 1'
 		;;
 	dreamcast)
-		DEFINES="$DEFINES -D__DC__ -DNONSTANDARD_PORT"
+		DEFINES="$DEFINES -D__DC__"
+		DEFINES="$DEFINES -DNONSTANDARD_PORT"
 		;;
 	ds)
 		# TODO Nintendo DS
-		DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT"
+		DEFINES="$DEFINES -D__DS__"
+		DEFINES="$DEFINES -DNDS"
+		DEFINES="$DEFINES -DARM9"
+		DEFINES="$DEFINES -DARM"
+		DEFINES="$DEFINES -DNONSTANDARD_PORT"
 		CXXFLAGS="$CXXFLAGS -isystem $DEVKITPRO/libnds/include -isystem $DEVKITPRO/devkitARM/arm-eabi/include"
 		CXXFLAGS="$CXXFLAGS -mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer -mthumb-interwork"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fno-strict-aliasing"
@@ -1612,7 +1620,8 @@ case $_host_os in
 		_seq_midi=no
 		;;
 	irix*)
-		DEFINES="$DEFINES -DIRIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		DEFINES="$DEFINES -DIRIX"
+		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		LIBS="$LIBS -lmd -lfastm -lm"
 		_ranlib=:
 		;;
@@ -1625,7 +1634,8 @@ case $_host_os in
 		DEFINES="$DEFINES -DLUA_USE_POSIX"
 		;;
 	mingw*)
-		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0"
+		DEFINES="$DEFINES -DWIN32"
+		DEFINES="$DEFINES -D__USE_MINGW_ANSI_STDIO=0"
 		LIBS="$LIBS -lmingw32 -lwinmm"
 		OBJS="$OBJS scummvmwinres.o"
 		add_line_to_config_mk 'WIN32 = 1'
@@ -1634,25 +1644,35 @@ case $_host_os in
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		;;
 	n64)
-		DEFINES="$DEFINES -D__N64__ -DLIMIT_FPS -DNONSTANDARD_PORT"
-		DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_COMMAND_LINE"
-		DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DDISABLE_DOSBOX_OPL -DDISABLE_SID -DDISABLE_NES_APU"
+		DEFINES="$DEFINES -D__N64__"
+		DEFINES="$DEFINES -DLIMIT_FPS"
+		DEFINES="$DEFINES -DNONSTANDARD_PORT"
+		DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
+		DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
+		DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
+		DEFINES="$DEFINES -DDISABLE_FANCY_THEMES"
+		DEFINES="$DEFINES -DDISABLE_NES_APU"
+		DEFINES="$DEFINES -DDISABLE_SID"
 		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 		;;
 	ps2)
 		# TODO ps2
 		CXXFLAGS="$CXXFLAGS -G2"
-		DEFINES="$DEFINES -D_EE -D__PLAYSTATION2__"
+		DEFINES="$DEFINES -D_EE"
+		DEFINES="$DEFINES -D__PLAYSTATION2__"
 		;;
 	psp)
 		if test -d "$PSPDEV/psp/lib"; then
 			LDFLAGS="$LDFLAGS -L$PSPDEV/psp/lib"
 		fi
 		LDFLAGS="$LDFLAGS -L$PSPSDK/lib -specs=$_srcdir/backends/platform/psp/psp.spec"
-		CXXFLAGS="$CXXFLAGS -O3 -I$PSPSDK/include -D_PSP_FW_VERSION=150"
+		CXXFLAGS="$CXXFLAGS -O3 -I$PSPSDK/include"
+		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
+		CXXFLAGS="$CXXFLAGS -D_PSP_FW_VERSION=150"
 		;;
 	solaris*)
-		DEFINES="$DEFINES -DSOLARIS -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		DEFINES="$DEFINES -DSOLARIS"
+		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		# Needs -lbind -lsocket for the timidity MIDI driver
 		LIBS="$LIBS -lnsl -lsocket"
 		;;
@@ -1679,9 +1699,16 @@ case $_host_os in
 		fi
 		;;
 	wince)
-		CXXFLAGS="$CXXFLAGS -O3 -fno-inline-functions -march=armv4 -mtune=xscale -D_WIN32_WCE=300 "
-		DEFINES="$DEFINES -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
-		DEFINES="$DEFINES -DWIN32 -Dcdecl= -D__cdecl__="
+		CXXFLAGS="$CXXFLAGS -O3 -fno-inline-functions -march=armv4 -mtune=xscale"
+		DEFINES="$DEFINES -D_WIN32_WCE=300"
+		DEFINES="$DEFINES -D__ARM__"
+		DEFINES="$DEFINES -D_ARM_"
+		DEFINES="$DEFINES -DUNICODE"
+		DEFINES="$DEFINES -DFPM_DEFAULT"
+		DEFINES="$DEFINES -DNONSTANDARD_PORT"
+		DEFINES="$DEFINES -DWIN32"
+		DEFINES="$DEFINES -Dcdecl="
+		DEFINES="$DEFINES -D__cdecl__="
 		;;
 esac
 
@@ -1740,7 +1767,8 @@ if test -n "$_host"; then
 		caanoo)
 			# This uses the GPH backend.
 			DEFINES="$DEFINES -DGPH_DEVICE"
-			DEFINES="$DEFINES -DCAANOO -DREDUCE_MEMORY_USAGE"
+			DEFINES="$DEFINES -DCAANOO"
+			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 			if test "$_debug_build" = yes; then
 				DEFINES="$DEFINES -DGPH_DEBUG"
 			else
@@ -1762,7 +1790,9 @@ if test -n "$_host"; then
 			_strip=$_host-strip
 			;;
 		dingux)
-			DEFINES="$DEFINES -DDINGUX -DDISABLE_DOSBOX_OPL -DREDUCE_MEMORY_USAGE"
+			DEFINES="$DEFINES -DDINGUX"
+			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
+			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 			ASFLAGS="$ASFLAGS"
 			CXXFLAGS="$CXXFLAGS -msoft-float -mips32"
 			_backend="dingux"
@@ -1777,7 +1807,9 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
 		dreamcast)
-			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
+			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
+			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE"
+			DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
 			CXXFLAGS="$CXXFLAGS -O3 -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks"
 			_backend="dc"
 			_build_scalers=no
@@ -1788,11 +1820,14 @@ if test -n "$_host"; then
 			;;
 		ds)
 			# TODO: complete this
-			DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555"
-			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
-			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE -DSTREAM_AUDIO_FROM_DISK"
-			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL -DDISABLE_SID -DDISABLE_NES_APU"
 			DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
+			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
+			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
+			DEFINES="$DEFINES -DDISABLE_FANCY_THEMES"
+			DEFINES="$DEFINES -DDISABLE_SID -DDISABLE_NES_APU"
+			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
+			DEFINES="$DEFINES -DSTREAM_AUDIO_FROM_DISK"
+			DEFINES="$DEFINES -DVECTOR_RENDERER_FORMAT=1555"
 			add_line_to_config_h '#define DISABLE_TEXT_CONSOLE'
 			_backend="ds"
 			_build_scalers=no
@@ -1815,7 +1850,8 @@ if test -n "$_host"; then
 		gp2x)
 			# This uses the GPH backend.
 			DEFINES="$DEFINES -DGPH_DEVICE"	
-			DEFINES="$DEFINES -DGP2X -DREDUCE_MEMORY_USAGE"
+			DEFINES="$DEFINES -DGP2X"
+			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 			if test "$_debug_build" = yes; then
 				DEFINES="$DEFINES -DGPH_DEBUG"
 			fi
@@ -1833,7 +1869,8 @@ if test -n "$_host"; then
 		gp2xwiz)
 			# This uses the GPH backend.
 			DEFINES="$DEFINES -DGPH_DEVICE"
-			DEFINES="$DEFINES -DGP2XWIZ -DREDUCE_MEMORY_USAGE"
+			DEFINES="$DEFINES -DGP2XWIZ"
+			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 			if test "$_debug_build" = yes; then
 				DEFINES="$DEFINES -DGPH_DEBUG"
 			fi
@@ -1918,7 +1955,8 @@ if test -n "$_host"; then
 			_mt32emu=no
 			;;
 		openpandora)
-			DEFINES="$DEFINES -DOPENPANDORA -DREDUCE_MEMORY_USAGE"
+			DEFINES="$DEFINES -DOPENPANDORA"
+			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 			if test "$_release_build" = no; then
 				DEFINES="$DEFINES -DOP_DEBUG"
 			else
@@ -1938,8 +1976,11 @@ if test -n "$_host"; then
 			;;
 		ps2)
 			# TODO: complete this
-			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
-			DEFINES="$DEFINES -DDISABLE_SID -DDISABLE_NES_APU"
+			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE"
+			DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
+			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
+			DEFINES="$DEFINES -DDISABLE_SID"
+			DEFINES="$DEFINES -DDISABLE_NES_APU"
 			_backend="ps2"
 			_build_scalers=no
 			_mt32emu=no
@@ -1972,7 +2013,8 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/psp/psp.mk"
 			;;
 		samsungtv)
-			DEFINES="$DEFINES -DSAMSUNGTV -DDISABLE_COMMAND_LINE"
+			DEFINES="$DEFINES -DSAMSUNGTV"
+			DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			HOSTEXEEXT=".so"
 			_backend="samsungtv"
@@ -2128,7 +2170,8 @@ case $_backend in
 		;;
 	ps2)
 		# TODO ps2
-		DEFINES="$DEFINES -D_EE -DFORCE_RTL"
+		DEFINES="$DEFINES -D_EE"
+		DEFINES="$DEFINES -DFORCE_RTL"
 		INCLUDES="$INCLUDES -I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2SDK/ports/include"
 		if test "$_dynamic_modules" = no ; then
 			LDFLAGS="$LDFLAGS -mno-crt0 $PS2SDK/ee/startup/crt0.o -T $PS2SDK/ee/startup/linkfile"
@@ -2137,7 +2180,9 @@ case $_backend in
 		LIBS="$LIBS -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lm -lc -lfileXio -lkernel -lstdc++ "
 		;;
 	psp)
-		DEFINES="$DEFINES -D__PSP__ -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
+		DEFINES="$DEFINES -D__PSP__"
+		DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
+		DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
 		LIBS="$LIBS -lpng -Wl,-Map,mapfile.txt"
 		;;
 	samsungtv)
@@ -2147,11 +2192,13 @@ case $_backend in
 	webos)
 		# There is no sdl-config in the WebOS PDK so we don't use find_sdlconfig here.
 		LIBS="$LIBS -lSDL"
-		DEFINES="$DEFINES -DSDL_BACKEND -DWEBOS"
+		DEFINES="$DEFINES -DSDL_BACKEND"
+		DEFINES="$DEFINES -DWEBOS"
 		MODULES="$MODULES backends/platform/sdl"
 		;;
 	wii)
-		DEFINES="$DEFINES -D__WII__ -DGEKKO"
+		DEFINES="$DEFINES -D__WII__"
+		DEFINES="$DEFINES -DGEKKO"
 		case $_host_os in
 		gamecube)
 			LIBS="$LIBS -lgxflux -liso9660 -lfat -logc -ldb"
