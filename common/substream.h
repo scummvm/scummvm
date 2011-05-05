@@ -102,6 +102,25 @@ public:
 	}
 };
 
+/**
+ * A seekable substream that removes the exclusivity demand required by the
+ * normal SeekableSubReadStream, at the cost of seek()ing the parent stream
+ * before each read().
+ *
+ * More than one SafeSubReadStream to the same parent stream can be used
+ * at the same time; they won't mess up each other. They will, however,
+ * reposition the parent stream, so don't depend on its position to be
+ * the same after a read() or seek() on one of its SafeSubReadStream.
+ */
+class SafeSubReadStream : public SeekableSubReadStream {
+public:
+ SafeSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO) :
+		SeekableSubReadStream(parentStream, begin, end, disposeParentStream) {
+	}
+
+ virtual uint32 read(void *dataPtr, uint32 dataSize);
+};
+
 
 }	// End of namespace Common
 
