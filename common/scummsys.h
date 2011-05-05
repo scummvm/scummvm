@@ -110,12 +110,6 @@
 #include "config.h"
 #endif
 
-// make sure we really are compiling for WIN32
-#ifndef WIN32
-#undef _MSC_VER
-#endif
-
-
 //
 // Define scumm_stricmp and scumm_strnicmp
 //
