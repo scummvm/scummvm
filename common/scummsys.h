@@ -116,6 +116,21 @@
 #endif
 
 
+//
+// Define scumm_stricmp and scumm_strnicmp
+//
+#if defined(_WIN32_WCE) || defined(_MSC_VER)
+	#define scumm_stricmp stricmp
+	#define scumm_strnicmp _strnicmp
+#elif defined(__MINGW32__) || defined(__GP32__) || defined(__DS__)
+	#define scumm_stricmp stricmp
+	#define scumm_strnicmp strnicmp
+#else
+	#define scumm_stricmp strcasecmp
+	#define scumm_strnicmp strncasecmp
+#endif
+
+
 // In the following we configure various targets, in particular those
 // which can't use our "configure" tool and hence don't use config.h.
 //
@@ -134,26 +149,6 @@
 //    - ...
 // ...
 
-// We define all types in config.h, so we don't want to typedef those types
-// here again!
-#ifdef HAVE_CONFIG_H
-#define SCUMMVM_DONT_DEFINE_TYPES
-#endif
-
-//
-// Define scumm_stricmp and scumm_strnicmp
-//
-#if defined(_WIN32_WCE) || defined(_MSC_VER)
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp _strnicmp
-#elif defined(__MINGW32__) || defined(__GP32__) || defined(__DS__)
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp strnicmp
-#else
-	#define scumm_stricmp strcasecmp
-	#define scumm_strnicmp strncasecmp
-#endif
-
 
 //
 // By default we try to use pragma push/pop to ensure various structs we use
@@ -169,7 +164,11 @@
 #define SCUMMVM_USE_PRAGMA_PACK
 
 
-#if defined(__SYMBIAN32__)
+#if defined(HAVE_CONFIG_H)
+	// All settings should have been set in config.h
+	#define SCUMMVM_DONT_DEFINE_TYPES
+
+#elif defined(__SYMBIAN32__)
 
 	#define SCUMM_LITTLE_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
