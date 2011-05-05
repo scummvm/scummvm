@@ -245,6 +245,9 @@ int main(int argc, char *argv[]) {
 
 		} else if (!std::strcmp(argv[i], "--build-events")) {
 			setup.runBuildEvents = true;
+		} else if (!std::strcmp(argv[i], "--installer")) {
+			setup.runBuildEvents  = true;
+			setup.createInstaller = true;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -515,6 +518,8 @@ void displayHelp(const char *exe) {
 	        "                           10 stands for \"Visual Studio 2010\"\n"
 	        "                           The default is \"9\", thus \"Visual Studio 2008\"\n"
 	        " --build-events           Run custom build events as part of the build\n"
+	        "                          (default: false)\n"
+	        " --installer              Create NSIS installer after the build (implies --build-events)\n"
 	        "                          (default: false)\n"
 	        "\n"
 	        "Engines settings:\n"
