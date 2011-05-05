@@ -354,7 +354,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// TODO: deal with settings that require plugins to be loaded
 	res = Base::processSettings(command, settings);
 	if (res.getCode() != Common::kArgumentNotProcessed) {
-		warning("%s", res.getDesc().c_str());
+		if (res.getCode() != Common::kNoError)
+			warning("%s", res.getDesc().c_str());
 		return res.getCode();
 	}
 
