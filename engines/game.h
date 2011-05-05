@@ -85,6 +85,10 @@ public:
 	void setGUIOptions(uint32 options);
 	void appendGUIOptions(const Common::String &str);
 
+	/**
+	 * Check if the game is a work in progress or unstable
+	 * or not officially supported
+	 */
 	bool isWIP() const { return contains("wip"); };
 	void setWIP(bool wip) { if (wip) setVal("wip", "true"); else clear("wip"); };
 
