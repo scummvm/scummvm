@@ -228,7 +228,7 @@ bool Scene::restoreState(SaveGame *savedState) {
 	_states.clear();
 	for (int i = 0; i < _numObjectStates; ++i) {
 		int32 id = savedState->readLEUint32();
-		ObjectState *o = g_grim->objectState(id);
+		ObjectState *o = g_grim->getObjectState(id);
 		_states.push_back(o);
 	}
 

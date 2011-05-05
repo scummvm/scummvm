@@ -79,11 +79,11 @@ static inline void pushbool(bool val) {
 }
 
 static Actor *getactor(lua_Object obj) {
-	return g_grim->actor(lua_getuserdata(obj));
+	return g_grim->getActor(lua_getuserdata(obj));
 }
 
 static TextObject *gettextobject(lua_Object obj) {
-	return g_grim->textObject(lua_getuserdata(obj));
+	return g_grim->getTextObject(lua_getuserdata(obj));
 }
 
 static Font *getfont(lua_Object obj) {
@@ -91,11 +91,15 @@ static Font *getfont(lua_Object obj) {
 }
 
 static Color *getcolor(lua_Object obj) {
-	return g_grim->color(lua_getuserdata(obj));
+	return g_grim->getColor(lua_getuserdata(obj));
 }
 
 static PrimitiveObject *getprimitive(lua_Object obj) {
-	return g_grim->primitiveObject(lua_getuserdata(obj));
+	return g_grim->getPrimitiveObject(lua_getuserdata(obj));
+}
+
+static ObjectState *getobjectstate(lua_Object obj) {
+	return g_grim->getObjectState(lua_getuserdata(obj));
 }
 
 // Lua interface to bundle_dofile
@@ -316,7 +320,7 @@ static void SetSelectedActor() {
  */
 static void GetCameraActor() {
 	// TODO verify what is going on with selected actor
-	Actor *actor = g_grim->selectedActor();
+	Actor *actor = g_grim->getSelectedActor();
 	lua_pushusertag(actor->getId(), MKTAG('A','C','T','R'));
 }
 
@@ -1677,7 +1681,7 @@ static void WalkActorVector() {
 	moveVert = luaL_check_number(4);
 
 	// Get the direction the camera is pointing
-	Graphics::Vector3d cameraVector = g_grim->currScene()->_currSetup->_interest - g_grim->currScene()->_currSetup->_pos;
+	Graphics::Vector3d cameraVector = g_grim->getCurrScene()->_currSetup->_interest - g_grim->getCurrScene()->_currSetup->_pos;
 	// find the angle the camera direction is around the unit circle
 	float cameraYaw = cameraVector.unitCircleAngle();
 
@@ -1860,20 +1864,20 @@ static void PutActorAtInterest() {
 		return;
 
 	Actor *actor = getactor(actorObj);
-	if (!g_grim->currScene())
+	if (!g_grim->getCurrScene())
 		return;
 
-	Graphics::Vector3d p = g_grim->currScene()->_currSetup->_interest;
+	Graphics::Vector3d p = g_grim->getCurrScene()->_currSetup->_interest;
 	Graphics::Vector3d resultPt = p;
 	float minDist = -1.f;
 
-	for (int i = 0; i < g_grim->currScene()->getSectorCount(); ++i) {
-		Sector *sector = g_grim->currScene()->getSectorBase(i);
+	for (int i = 0; i < g_grim->getCurrScene()->getSectorCount(); ++i) {
+		Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
 		if (sector->type() != Sector::WalkType || !sector->visible())
 			continue;
 
 		Graphics::Vector3d closestPt = sector->closestPoint(p);
-		if (g_grim->currScene()->findPointSector(closestPt, Sector::HotType))
+		if (g_grim->getCurrScene()->findPointSector(closestPt, Sector::HotType))
 			continue;
 		float thisDist = (closestPt - p).magnitude();
 		if (minDist < 0 || thisDist < minDist) {
@@ -1923,9 +1927,8 @@ static void GetVisibleThings() {
 	lua_Object actorObj = lua_getparam(1);
 	Actor *actor = NULL;
 	if (lua_isnil(actorObj)) {
-		if (g_grim->selectedActor())
-			actor = g_grim->selectedActor();
-		else
+		actor = g_grim->getSelectedActor();
+		if (!actor)
 			return;
 	} else if (lua_isuserdata(actorObj) && lua_tag(actorObj) == MKTAG('A','C','T','R')) {
 		actor = getactor(actorObj);
@@ -1937,7 +1940,7 @@ static void GetVisibleThings() {
 	// TODO verify code below
 	for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); ++i) {
 		Actor *a = i->_value;
-		if (!i->_value->isInSet(g_grim->sceneName()))
+		if (!i->_value->isInSet(g_grim->getSceneName()))
 			continue;
 		// Consider the active actor visible
 		if (actor == a || actor->getAngleTo(*a) < 90) {
@@ -2352,7 +2355,7 @@ static void GetPointSector() {
 	float z = lua_getnumber(zObj);
 
 	Graphics::Vector3d point(x, y, z);
-	Sector *result = g_grim->currScene()->findPointSector(point, sectorType);
+	Sector *result = g_grim->getCurrScene()->findPointSector(point, sectorType);
 	if (result) {
 		lua_pushnumber(result->id());
 		lua_pushstring(const_cast<char *>(result->name()));
@@ -2374,7 +2377,7 @@ static void GetActorSector() {
 	Actor *actor = getactor(actorObj);
 	Sector::SectorType sectorType = (Sector::SectorType)(int)lua_getnumber(typeObj);
 	Graphics::Vector3d pos = actor->getDestPos();
-	Sector *result = g_grim->currScene()->findPointSector(pos, sectorType);
+	Sector *result = g_grim->getCurrScene()->findPointSector(pos, sectorType);
 	if (result) {
 		lua_pushnumber(result->id());
 		lua_pushstring(const_cast<char *>(result->name()));
@@ -2397,9 +2400,9 @@ static void IsActorInSector() {
 	Actor *actor = getactor(actorObj);
 	const char *name = lua_getstring(nameObj);
 
-	int numSectors = g_grim->currScene()->getSectorCount();
+	int numSectors = g_grim->getCurrScene()->getSectorCount();
 	for (int i = 0; i < numSectors; i++) {
-		Sector *sector = g_grim->currScene()->getSectorBase(i);
+		Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
 		if (strmatch(sector->name(), name)) {
 			if (sector->isPointInSector(actor->getPos())) {
 				lua_pushnumber(sector->id());
@@ -2429,9 +2432,9 @@ static void IsPointInSector() {
 	float z = lua_getnumber(zObj);
 	Graphics::Vector3d pos(x, y, z);
 
-	int numSectors = g_grim->currScene()->getSectorCount();
+	int numSectors = g_grim->getCurrScene()->getSectorCount();
 	for (int i = 0; i < numSectors; i++) {
-		Sector *sector = g_grim->currScene()->getSectorBase(i);
+		Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
 		if (strmatch(sector->name(), name)) {
 			if (sector->isPointInSector(pos)) {
 				lua_pushnumber(sector->id());
@@ -2451,17 +2454,17 @@ static void MakeSectorActive() {
 		return;
 
 	// FIXME: This happens on initial load. Are we initting something in the wrong order?
-	if (!g_grim->currScene()) {
+	if (!g_grim->getCurrScene()) {
 		warning("!!!! Trying to call MakeSectorActive without a scene");
 		return;
 	}
 
 	bool visible = !lua_isnil(lua_getparam(2));
-	int numSectors = g_grim->currScene()->getSectorCount();
+	int numSectors = g_grim->getCurrScene()->getSectorCount();
 	if (lua_isstring(sectorObj)) {
 		const char *name = lua_getstring(sectorObj);
 		for (int i = 0; i < numSectors; i++) {
-			Sector *sector = g_grim->currScene()->getSectorBase(i);
+			Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
 			if (strmatch(sector->name(), name)) {
 				sector->setVisible(visible);
 				return;
@@ -2470,7 +2473,7 @@ static void MakeSectorActive() {
 	} else if (lua_isnumber(sectorObj)) {
 		int id = (int)lua_getnumber(sectorObj);
 		for (int i = 0; i < numSectors; i++) {
-			Sector *sector = g_grim->currScene()->getSectorBase(i);
+			Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
 			if (sector->id() == id) {
 				sector->setVisible(visible);
 				return;
@@ -2795,8 +2798,8 @@ static void SetSoundPosition() {
 	int argId = 1;
 	lua_Object paramObj;
 
-	if (g_grim->currScene()) {
-		g_grim->currScene()->getSoundParameters(&minVolume, &maxVolume);
+	if (g_grim->getCurrScene()) {
+		g_grim->getCurrScene()->getSoundParameters(&minVolume, &maxVolume);
 	}
 
 	lua_Object nameObj = lua_getparam(argId++);
@@ -2838,12 +2841,12 @@ static void SetSoundPosition() {
 			someParam = 0.0;
 	}
 
-	if (g_grim->currScene()) {
+	if (g_grim->getCurrScene()) {
 		if (lua_isnumber(nameObj))
 			error("SetSoundPosition: number is not yet supported");
 		else {
 			const char *soundName = lua_getstring(nameObj);
-			g_grim->currScene()->setSoundPosition(soundName, pos, minVolume, maxVolume);
+			g_grim->getCurrScene()->setSoundPosition(soundName, pos, minVolume, maxVolume);
 		}
 	}
 }
@@ -2915,7 +2918,7 @@ void PerSecond() {
 		return;
 	}
 	float rate = lua_getnumber(rateObj);
-	lua_pushnumber(g_grim->perSecond(rate));
+	lua_pushnumber(g_grim->getPerSecond(rate));
 }
 
 void EnableControl() {
@@ -3691,7 +3694,7 @@ static void NewObjectState() {
 
 	ObjectState *state = new ObjectState(setupID, pos, bitmap, zbitmap, transparency);
 	g_grim->registerObjectState(state);
-	g_grim->currScene()->addObjectState(state);
+	g_grim->getCurrScene()->addObjectState(state);
 	lua_pushusertag(state->getId(), MKTAG('S','T','A','T'));
 }
 
@@ -3699,23 +3702,23 @@ static void FreeObjectState() {
 	lua_Object param = lua_getparam(1);
 	if (!lua_isuserdata(param) || lua_tag(param) != MKTAG('S','T','A','T'))
 		return;
-	ObjectState *state =  g_grim->objectState(lua_getuserdata(param));
-	g_grim->currScene()->deleteObjectState(state);
+	ObjectState *state =  getobjectstate(param);
+	g_grim->getCurrScene()->deleteObjectState(state);
 }
 
 static void SendObjectToBack() {
 	lua_Object param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKTAG('S','T','A','T')) {
-		ObjectState *state =  g_grim->objectState(lua_getuserdata(param));
-		g_grim->currScene()->moveObjectStateToFirst(state);
+		ObjectState *state =  getobjectstate(param);
+		g_grim->getCurrScene()->moveObjectStateToFirst(state);
 	}
 }
 
 static void SendObjectToFront() {
 	lua_Object param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKTAG('S','T','A','T')) {
-		ObjectState *state =  g_grim->objectState(lua_getuserdata(param));
-		g_grim->currScene()->moveObjectStateToLast(state);
+		ObjectState *state =  getobjectstate(param);
+		g_grim->getCurrScene()->moveObjectStateToLast(state);
 	}
 }
 
@@ -3723,7 +3726,7 @@ static void SetObjectType() {
 	lua_Object param = lua_getparam(1);
 	if (!lua_isuserdata(param) || lua_tag(param) != MKTAG('S','T','A','T'))
 		return;
-	ObjectState *state =  g_grim->objectState(lua_getuserdata(param));
+	ObjectState *state =  getobjectstate(param);
 	int val = (int)lua_getnumber(lua_getparam(2));
 	ObjectState::Position pos = (ObjectState::Position)val;
 	state->setPos(pos);
@@ -3907,12 +3910,12 @@ static void LightMgrSetChange() {
 static void SetAmbientLight() {
 	int mode = (int)lua_getnumber(lua_getparam(1));
 	if (mode == 0) {
-		if (g_grim->currScene()) {
-			g_grim->currScene()->setLightEnableState(true);
+		if (g_grim->getCurrScene()) {
+			g_grim->getCurrScene()->setLightEnableState(true);
 		}
 	} else if (mode == 1) {
-		if (g_grim->currScene()) {
-			g_grim->currScene()->setLightEnableState(false);
+		if (g_grim->getCurrScene()) {
+			g_grim->getCurrScene()->setLightEnableState(false);
 		}
 	}
 }
@@ -3928,10 +3931,10 @@ static void SetLightIntensity() {
 
 	if (lua_isnumber(lightObj)) {
 		int light = (int)lua_getnumber(lightObj);
-		g_grim->currScene()->setLightIntensity(light, intensity);
+		g_grim->getCurrScene()->setLightIntensity(light, intensity);
 	} else if (lua_isstring(lightObj)) {
 		const char *light = lua_getstring(lightObj);
-		g_grim->currScene()->setLightIntensity(light, intensity);
+		g_grim->getCurrScene()->setLightIntensity(light, intensity);
 	}
 }
 
@@ -3951,10 +3954,10 @@ static void SetLightPosition() {
 
 	if (lua_isnumber(lightObj)) {
 		int light = (int)lua_getnumber(lightObj);
-		g_grim->currScene()->setLightPosition(light, vec);
+		g_grim->getCurrScene()->setLightPosition(light, vec);
 	} else if (lua_isstring(lightObj)) {
 		const char *light = lua_getstring(lightObj);
-		g_grim->currScene()->setLightPosition(light, vec);
+		g_grim->getCurrScene()->setLightPosition(light, vec);
 	}
 }
 
@@ -4073,7 +4076,7 @@ void concatFallback() {
 		else if (lua_isstring(params[i]))
 			sprintf(strPtr, "%s", lua_getstring(params[i]));
 		else if (lua_tag(params[i]) == MKTAG('A','C','T','R')) {
-			Actor *a = g_grim->actor(lua_getuserdata(params[i]));
+			Actor *a = getactor(params[i]);
 			sprintf(strPtr, "(actor%p:%s)", (void *)a,
 				(a->getCurrentCostume() && a->getCurrentCostume()->getModelNodes()) ?
 				a->getCurrentCostume()->getModelNodes()->_name : "");

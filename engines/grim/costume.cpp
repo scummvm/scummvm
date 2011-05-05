@@ -198,7 +198,7 @@ BitmapComponent::BitmapComponent(Costume::Component *p, int parentID, const char
 
 void BitmapComponent::setKey(int val) {
 	const char *bitmap = _filename.c_str();
-	ObjectState *state = g_grim->currScene()->findState(bitmap);
+	ObjectState *state = g_grim->getCurrScene()->findState(bitmap);
 
 	if (state) {
 		state->setNumber(val);
@@ -220,7 +220,7 @@ void BitmapComponent::setKey(int val) {
 			warning("Couldn't find bitmap %s in current scene", _filename.c_str());
 		return;
 	}
-	g_grim->currScene()->addObjectState(state);
+	g_grim->getCurrScene()->addObjectState(state);
 	state->setNumber(val);
 */
 }
@@ -552,7 +552,7 @@ void KeyframeComponent::update() {
 	if (_currTime < 0)		// For first time through
 		_currTime = 0;
 	else
-		_currTime += g_grim->frameTime();
+		_currTime += g_grim->getFrameTime();
 
 	int animLength = (int)(_keyf->length() * 1000);
 
@@ -728,9 +728,9 @@ void SoundComponent::setKey(int val) {
 		// No longer a need to check the sound status, if it's already playing
 		// then it will just use the existing handle
 		g_imuse->startSfx(_soundName.c_str());
-		if (g_grim->currScene() && g_currentUpdatedActor) {
+		if (g_grim->getCurrScene() && g_currentUpdatedActor) {
 			Graphics::Vector3d pos = g_currentUpdatedActor->getPos();
-			g_grim->currScene()->setSoundPosition(_soundName.c_str(), pos);
+			g_grim->getCurrScene()->setSoundPosition(_soundName.c_str(), pos);
 		}
 		break;
 	case 1: // "Stop"
@@ -1031,10 +1031,10 @@ void Costume::Chore::update() {
 	if (_currTime < 0)
 		newTime = 0; // For first time through
 	else
-		newTime = _currTime + g_grim->frameTime();
+		newTime = _currTime + g_grim->getFrameTime();
 
 	if (_fadeMode != None) {
-		_fadeCurrTime += g_grim->frameTime();
+		_fadeCurrTime += g_grim->getFrameTime();
 
 		if (_fadeCurrTime > _fadeLength) {
 			if (_fadeMode == FadeOut)
@@ -1203,7 +1203,7 @@ void Costume::update() {
 
 void Costume::moveHead(bool lookingMode, const Graphics::Vector3d &lookAt, float rate) {
 	if (_joint1Node) {
-		float step = g_grim->perSecond(rate);
+		float step = g_grim->getPerSecond(rate);
 		float yawStep = step;
 		float pitchStep = step / 3.f;
 

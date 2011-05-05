@@ -106,13 +106,13 @@ public:
 	void drawPrimitives();
 
 	void mainLoop();
-	unsigned frameStart() const { return _frameStart; }
-	unsigned frameTime() const { return _frameTime; }
+	unsigned getFrameStart() const { return _frameStart; }
+	unsigned getFrameTime() const { return _frameTime; }
 
 	// perSecond should allow rates of zero, some actors will accelerate
 	// up to their normal speed (such as the bone wagon) so handling
 	// a walking rate of zero should happen in the default actor creation
-	float perSecond(float rate) const;
+	float getPerSecond(float rate) const;
 
 	int getTextSpeed() { return _textSpeed; }
 	void setTextSpeed(int speed);
@@ -126,8 +126,8 @@ public:
 	void setSceneLock(const char *name, bool lockStatus);
 	void setScene(const char *name);
 	void setScene(Scene *scene);
-	Scene *currScene() { return _currScene; }
-	const char *sceneName() const { return _currScene->name(); }
+	Scene *getCurrScene() { return _currScene; }
+	const char *getSceneName() const { return _currScene->name(); }
 	void makeCurrentSetup(int num);
 
 	// Scene registration
@@ -175,10 +175,10 @@ public:
 	}
 	void registerActor(Actor *a);
 	void killActor(Actor *a);
-	Actor *actor(int id) const;
+	Actor *getActor(int id) const;
 
 	void setSelectedActor(Actor *a) { _selectedActor = a; }
-	Actor *selectedActor() { return _selectedActor; }
+	Actor *getSelectedActor() { return _selectedActor; }
 	void killActors();
 
 	// Text Object Registration
@@ -192,7 +192,7 @@ public:
 	void registerTextObject(TextObject *a);
 	void killTextObject(TextObject *a);
 	void killTextObjects();
-	TextObject *textObject(int id) const;
+	TextObject *getTextObject(int id) const;
 
 	// Primitives Object Registration
 	typedef Common::HashMap<int, PrimitiveObject *> PrimitiveListType;
@@ -206,13 +206,13 @@ public:
 	void registerPrimitiveObject(PrimitiveObject *a);
 	void killPrimitiveObject(PrimitiveObject *a);
 	void killPrimitiveObjects();
-	PrimitiveObject *primitiveObject(int id) const;
+	PrimitiveObject *getPrimitiveObject(int id) const;
 
 	typedef Common::HashMap<int32, ObjectState *> StateListType;
 	void registerObjectState(ObjectState *o);
 	void killObjectState(ObjectState *o);
 	void killObjectStates();
-	ObjectState *objectState(int id) const;
+	ObjectState *getObjectState(int id) const;
 
 	void registerFont(Font *f);
 	void killFont(Font *f);
@@ -222,7 +222,7 @@ public:
 	void registerColor(Color *c);
 	void killColor(Color *c);
 	void killColors();
-	Color *color(int32 id) const;
+	Color *getColor(int32 id) const;
 
 	void savegameSave();
 	void saveActors(SaveGame *savedState);

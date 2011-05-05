@@ -87,7 +87,7 @@ void TextObject::saveState(SaveGame *state) const {
 bool TextObject::restoreState(SaveGame *state) {
 	destroyBitmap();
 
-	_fgColor = g_grim->color(state->readLEUint32());
+	_fgColor = g_grim->getColor(state->readLEUint32());
 
 	_x = state->readLESint32();
 	_y = state->readLESint32();

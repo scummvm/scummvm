@@ -1080,7 +1080,7 @@ void GrimEngine::restoreActors(SaveGame *state) {
 	int32 size = state->readLEUint32();
 	for (int32 i = 0; i < size; ++i) {
 		int32 id = state->readLEUint32();
-		Actor *a = actor(id);
+		Actor *a = getActor(id);
 		if (!a) {
 			a = new Actor();
 			a->_id = id;
@@ -1105,7 +1105,7 @@ void GrimEngine::restoreTextObjects(SaveGame *state) {
 	state->beginSection('TEXT');
 
 	_sayLineDefaults.disabled = state->readLESint32();
-	_sayLineDefaults.fgColor = color(state->readLEUint32());
+	_sayLineDefaults.fgColor = getColor(state->readLEUint32());
 	_sayLineDefaults.font = getFont(state->readLEUint32());
 	_sayLineDefaults.height = state->readLESint32();
 	_sayLineDefaults.justify = state->readLESint32();
@@ -1118,7 +1118,7 @@ void GrimEngine::restoreTextObjects(SaveGame *state) {
 	int32 size = state->readLESint32();
 	for (int32 i = 0; i < size; ++i) {
 		int32 id = state->readLEUint32();
-		TextObject *t = textObject(id);
+		TextObject *t = getTextObject(id);
 		if (!t) {
 			t = new TextObject();
 			t->_id = id;
@@ -1164,7 +1164,7 @@ void GrimEngine::restorePrimitives(SaveGame *state) {
 	int32 size = state->readLESint32();
 	for (int32 i = 0; i < size; ++i) {
 		int32 id = state->readLEUint32();
-		PrimitiveObject *p = primitiveObject(id);
+		PrimitiveObject *p = getPrimitiveObject(id);
 		if (!p) {
 			p = new PrimitiveObject();
 			p->_id = id;
@@ -1186,7 +1186,7 @@ void GrimEngine::restoreObjectStates(SaveGame *state) {
 	int32 size = state->readLESint32();
 	for (int32 i = 0; i < size; ++i) {
 		int32 id = state->readLEUint32();
-		ObjectState *o = objectState(id);
+		ObjectState *o = getObjectState(id);
 		if (!o) {
 			o = new ObjectState();
 			o->_id = id;
@@ -1559,10 +1559,10 @@ void GrimEngine::setScene(Scene *scene) {
 }
 
 void GrimEngine::makeCurrentSetup(int num) {
-	int prevSetup = g_grim->currScene()->setup();
+	int prevSetup = g_grim->getCurrScene()->setup();
 	if (prevSetup != num) {
-		currScene()->setSetup(num);
-		currScene()->setSoundParameters(20, 127);
+		getCurrScene()->setSetup(num);
+		getCurrScene()->setSoundParameters(20, 127);
 		cameraChangeHandle(prevSetup, num);
 		// here should be set sound position
 	}
@@ -1584,7 +1584,7 @@ bool GrimEngine::getControlState(int num) {
 	return _controlsState[num];
 }
 
-float GrimEngine::perSecond(float rate) const {
+float GrimEngine::getPerSecond(float rate) const {
 	return rate * _frameTime / 1000;
 }
 
@@ -1603,7 +1603,7 @@ void GrimEngine::killTextObjects() {
 	}
 }
 
-TextObject *GrimEngine::textObject(int id) const {
+TextObject *GrimEngine::getTextObject(int id) const {
 	return _textObjects[id];
 }
 
@@ -1621,7 +1621,7 @@ void GrimEngine::killActors() {
 	}
 }
 
-Actor *GrimEngine::actor(int id) const {
+Actor *GrimEngine::getActor(int id) const {
 	if (_actors.contains(id)) {
 		return _actors[id];
 	}
@@ -1690,7 +1690,7 @@ void GrimEngine::killColors() {
 	}
 }
 
-Color *GrimEngine::color(int32 id) const {
+Color *GrimEngine::getColor(int32 id) const {
 	if (_colors.contains(id)) {
 		return _colors[id];
 	}
@@ -1710,7 +1710,7 @@ void GrimEngine::killObjectStates() {
 
 }
 
-ObjectState *GrimEngine::objectState(int id) const {
+ObjectState *GrimEngine::getObjectState(int id) const {
 	return _objectStates[id];
 }
 
@@ -1730,7 +1730,7 @@ void GrimEngine::killPrimitiveObjects() {
 	}
 }
 
-PrimitiveObject *GrimEngine::primitiveObject(int id) const {
+PrimitiveObject *GrimEngine::getPrimitiveObject(int id) const {
 	return _primitiveObjects[id];
 }
 
