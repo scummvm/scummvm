@@ -140,6 +140,20 @@
 #define SCUMMVM_DONT_DEFINE_TYPES
 #endif
 
+//
+// Define scumm_stricmp and scumm_strnicmp
+//
+#if defined(_WIN32_WCE) || defined(_MSC_VER)
+	#define scumm_stricmp stricmp
+	#define scumm_strnicmp _strnicmp
+#elif defined(__MINGW32__) || defined(__GP32__) || defined(__DS__)
+	#define scumm_stricmp stricmp
+	#define scumm_strnicmp strnicmp
+#else
+	#define scumm_stricmp strcasecmp
+	#define scumm_strnicmp strncasecmp
+#endif
+
 
 //
 // By default we try to use pragma push/pop to ensure various structs we use
@@ -156,9 +170,6 @@
 
 
 #if defined(__SYMBIAN32__)
-
-	#define scumm_stricmp strcasecmp
-	#define scumm_strnicmp strncasecmp
 
 	#define SCUMM_LITTLE_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
@@ -184,8 +195,6 @@
 
 #elif defined(_WIN32_WCE)
 
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp _strnicmp
 	#define snprintf _snprintf
 
 	#define SCUMM_LITTLE_ENDIAN
@@ -202,8 +211,6 @@
 
 #elif defined(_MSC_VER)
 
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp _strnicmp
 	#define snprintf _snprintf
 
 	#define SCUMM_LITTLE_ENDIAN
@@ -215,19 +222,13 @@
 
 #elif defined(__MINGW32__)
 
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp strnicmp
-
 	#define SCUMM_LITTLE_ENDIAN
 
 	#define PLUGIN_EXPORT __declspec(dllexport)
 
 #elif defined(UNIX)
 
-	#define scumm_stricmp strcasecmp
-	#define scumm_strnicmp strncasecmp
-
-	#ifndef CONFIG_H
+	#if !defined(CONFIG_H) && defined(SDL_BACKEND)
 		/* need this for the SDL_BYTEORDER define */
 		#include <SDL_byteorder.h>
 
@@ -252,16 +253,10 @@
 
 #elif defined(__DC__)
 
-	#define scumm_stricmp strcasecmp
-	#define scumm_strnicmp strncasecmp
-
 	#define SCUMM_LITTLE_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
 
 #elif defined(__GP32__)
-
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp strnicmp
 
 	#define SCUMM_LITTLE_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
@@ -281,16 +276,10 @@
 
 #elif defined(__PLAYSTATION2__)
 
-	#define scumm_stricmp strcasecmp
-	#define scumm_strnicmp strncasecmp
-
 	#define SCUMM_LITTLE_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
 
 #elif defined(__N64__)
-
-	#define scumm_stricmp strcasecmp
-	#define scumm_strnicmp strncasecmp
 
 	#define SCUMM_BIG_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
@@ -314,9 +303,6 @@
 	#include <malloc.h>
 	#include "backends/platform/psp/memory.h"
 
-	#define scumm_stricmp strcasecmp
-	#define scumm_strnicmp strncasecmp
-
 	#define	SCUMM_LITTLE_ENDIAN
 	#define	SCUMM_NEED_ALIGNMENT
 
@@ -325,16 +311,10 @@
 
 #elif defined(__amigaos4__)
 
-	#define	scumm_stricmp strcasecmp
-	#define	scumm_strnicmp strncasecmp
-
 	#define	SCUMM_BIG_ENDIAN
 	#define	SCUMM_NEED_ALIGNMENT
 
-#elif defined (__DS__)
-
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp strnicmp
+#elif defined(__DS__)
 
 	#define SCUMM_NEED_ALIGNMENT
 	#define SCUMM_LITTLE_ENDIAN
@@ -345,9 +325,6 @@
 //	#define printf(fmt, ...)					consolePrintf(fmt, ##__VA_ARGS__)
 
 #elif defined(__WII__)
-
-	#define scumm_stricmp strcasecmp
-	#define scumm_strnicmp strncasecmp
 
 	#define	SCUMM_BIG_ENDIAN
 	#define	SCUMM_NEED_ALIGNMENT
