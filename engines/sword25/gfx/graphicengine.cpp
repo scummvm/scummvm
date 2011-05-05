@@ -239,10 +239,6 @@ bool GraphicEngine::fill(const Common::Rect *fillRectPtr, uint color) {
 	return true;
 }
 
-Graphics::Surface *GraphicEngine::getScreenshot() {
-	return &_frameBuffer;
-}
-
 // -----------------------------------------------------------------------------
 // RESOURCE MANAGING
 // -----------------------------------------------------------------------------
