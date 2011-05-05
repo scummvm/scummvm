@@ -26,11 +26,20 @@ Name ScummVM
 !include MUI2.nsh
 
 #########################################################################################
+# Command line options
+#########################################################################################
+
+#!define top_srcdir   ""
+#!define build_dir    ""
+#!define text_dir     ""
+#!define ARCH         ""    ;(optional, defaults to win32)
+!ifndef ARCH
+!define ARCH         "win32"
+!endif
+
+#########################################################################################
 # Folders
 #########################################################################################
-#!define top_srcdir   ""    ; passed through command line
-#!define build_dir    ""    ; passed through command line
-#!define text_dir     ""    ; passed through command line
 !define engine_data  "${top_srcdir}\dists\engine-data"
 !define theme_data   "${top_srcdir}\gui\themes"
 
@@ -47,7 +56,7 @@ Name ScummVM
 #########################################################################################
 # Installer configuration
 #########################################################################################
-OutFile          ${build_dir}\scummvm-${VERSION}-win32.exe
+OutFile          ${build_dir}\scummvm-${VERSION}-${ARCH}.exe
 InstallDir       $PROGRAMFILES\ScummVM                            ; Default installation folder
 InstallDirRegKey HKCU "Software\ScummVM\ScummVM" "InstallPath"    ; Get installation folder from registry if available
                                                                   ; The application name needs to be refered directly instead of through ${REGKEY}
