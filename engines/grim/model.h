@@ -79,7 +79,7 @@ public:
 	};
 
 	HierNode *copyHierarchy();
-	int numNodes() const { return _numHierNodes; }
+	int getNumNodes() const { return _numHierNodes; }
 
 //private:
 	struct Face {

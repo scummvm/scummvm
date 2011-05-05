@@ -141,7 +141,7 @@ public:
 	~ModelComponent();
 
 	Model::HierNode *getHierarchy() { return _hier; }
-	int getNumNodes() { return _obj->numNodes(); }
+	int getNumNodes() { return _obj->getNumNodes(); }
 	void draw();
 
 protected:
@@ -337,7 +337,7 @@ void ModelComponent::reset() {
 // Reset the hierarchy nodes for any keyframe animations (which
 // are children of this component and therefore get updated later).
 void ModelComponent::update() {
-	for (int i = 0; i < _obj->numNodes(); i++) {
+	for (int i = 0; i < _obj->getNumNodes(); i++) {
 		_hier[i]._priority = -1;
 		_hier[i]._animPos.set(0,0,0);
 		_hier[i]._animPitch = 0;
