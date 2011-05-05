@@ -58,17 +58,17 @@ public:
 
 	void setVisible(bool visible);
 
-	const char *name() const { return _name.c_str(); }
-	int id() const { return _id; }
-	SectorType type() const { return _type; } // FIXME: Implement type de-masking
-	bool visible() const { return _visible; }
+	const char *getName() const { return _name.c_str(); }
+	int getSectorId() const { return _id; }
+	SectorType getType() const { return _type; } // FIXME: Implement type de-masking
+	bool isVisible() const { return _visible; }
 	bool isPointInSector(Graphics::Vector3d point) const;
 	bool isAdjacentTo(Sector *sector, Graphics::Line3d *line) const;
 
-	Graphics::Vector3d projectToPlane(Graphics::Vector3d point) const;
-	Graphics::Vector3d projectToPuckVector(Graphics::Vector3d v) const;
+	Graphics::Vector3d getProjectionToPlane(Graphics::Vector3d point) const;
+	Graphics::Vector3d getProjectionToPuckVector(Graphics::Vector3d v) const;
 
-	Graphics::Vector3d closestPoint(Graphics::Vector3d point) const;
+	Graphics::Vector3d getClosestPoint(Graphics::Vector3d point) const;
 
 	// Interface to trace a ray to its exit from the polygon
 	struct ExitInfo {

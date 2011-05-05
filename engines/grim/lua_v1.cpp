@@ -1873,10 +1873,10 @@ static void PutActorAtInterest() {
 
 	for (int i = 0; i < g_grim->getCurrScene()->getSectorCount(); ++i) {
 		Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
-		if (sector->type() != Sector::WalkType || !sector->visible())
+		if (sector->getType() != Sector::WalkType || !sector->isVisible())
 			continue;
 
-		Graphics::Vector3d closestPt = sector->closestPoint(p);
+		Graphics::Vector3d closestPt = sector->getClosestPoint(p);
 		if (g_grim->getCurrScene()->findPointSector(closestPt, Sector::HotType))
 			continue;
 		float thisDist = (closestPt - p).magnitude();
@@ -2357,9 +2357,9 @@ static void GetPointSector() {
 	Graphics::Vector3d point(x, y, z);
 	Sector *result = g_grim->getCurrScene()->findPointSector(point, sectorType);
 	if (result) {
-		lua_pushnumber(result->id());
-		lua_pushstring(const_cast<char *>(result->name()));
-		lua_pushnumber(result->type());
+		lua_pushnumber(result->getSectorId());
+		lua_pushstring(const_cast<char *>(result->getName()));
+		lua_pushnumber(result->getType());
 	} else {
 		lua_pushnil();
 	}
@@ -2379,9 +2379,9 @@ static void GetActorSector() {
 	Graphics::Vector3d pos = actor->getDestPos();
 	Sector *result = g_grim->getCurrScene()->findPointSector(pos, sectorType);
 	if (result) {
-		lua_pushnumber(result->id());
-		lua_pushstring(const_cast<char *>(result->name()));
-		lua_pushnumber(result->type());
+		lua_pushnumber(result->getSectorId());
+		lua_pushstring(const_cast<char *>(result->getName()));
+		lua_pushnumber(result->getType());
 	} else {
 		lua_pushnil();
 	}
@@ -2403,11 +2403,11 @@ static void IsActorInSector() {
 	int numSectors = g_grim->getCurrScene()->getSectorCount();
 	for (int i = 0; i < numSectors; i++) {
 		Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
-		if (strmatch(sector->name(), name)) {
+		if (strmatch(sector->getName(), name)) {
 			if (sector->isPointInSector(actor->getPos())) {
-				lua_pushnumber(sector->id());
-				lua_pushstring(sector->name());
-				lua_pushnumber(sector->type());
+				lua_pushnumber(sector->getSectorId());
+				lua_pushstring(sector->getName());
+				lua_pushnumber(sector->getType());
 				return;
 			}
 		}
@@ -2435,11 +2435,11 @@ static void IsPointInSector() {
 	int numSectors = g_grim->getCurrScene()->getSectorCount();
 	for (int i = 0; i < numSectors; i++) {
 		Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
-		if (strmatch(sector->name(), name)) {
+		if (strmatch(sector->getName(), name)) {
 			if (sector->isPointInSector(pos)) {
-				lua_pushnumber(sector->id());
-				lua_pushstring(sector->name());
-				lua_pushnumber(sector->type());
+				lua_pushnumber(sector->getSectorId());
+				lua_pushstring(sector->getName());
+				lua_pushnumber(sector->getType());
 				return;
 			}
 		}
@@ -2465,7 +2465,7 @@ static void MakeSectorActive() {
 		const char *name = lua_getstring(sectorObj);
 		for (int i = 0; i < numSectors; i++) {
 			Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
-			if (strmatch(sector->name(), name)) {
+			if (strmatch(sector->getName(), name)) {
 				sector->setVisible(visible);
 				return;
 			}
@@ -2474,7 +2474,7 @@ static void MakeSectorActive() {
 		int id = (int)lua_getnumber(sectorObj);
 		for (int i = 0; i < numSectors; i++) {
 			Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
-			if (sector->id() == id) {
+			if (sector->getSectorId() == id) {
 				sector->setVisible(visible);
 				return;
 			}

@@ -427,7 +427,7 @@ void Scene::drawBitmaps(ObjectState::Position stage) {
 Sector *Scene::findPointSector(Graphics::Vector3d p, Sector::SectorType type) {
 	for (int i = 0; i < _numSectors; i++) {
 		Sector *sector = _sectors[i];
-		if (sector && (sector->type() & type) && sector->visible() && sector->isPointInSector(p))
+		if (sector && (sector->getType() & type) && sector->isVisible() && sector->isPointInSector(p))
 			return sector;
 	}
 	return NULL;
@@ -440,9 +440,9 @@ void Scene::findClosestSector(Graphics::Vector3d p, Sector **sect, Graphics::Vec
 
 	for (int i = 0; i < _numSectors; i++) {
 		Sector *sector = _sectors[i];
-		if ((sector->type() & Sector::WalkType) == 0 || !sector->visible())
+		if ((sector->getType() & Sector::WalkType) == 0 || !sector->isVisible())
 			continue;
-		Graphics::Vector3d closestPt = sector->closestPoint(p);
+		Graphics::Vector3d closestPt = sector->getClosestPoint(p);
 		float thisDist = (closestPt - p).magnitude();
 		if (!resultSect || thisDist < minDist) {
 			resultSect = sector;

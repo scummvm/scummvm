@@ -524,7 +524,7 @@ void Actor::walkTo(Graphics::Vector3d p) {
 			Common::List<Sector *> sectors;
 			for (int i = 0; i < g_grim->getCurrScene()->getSectorCount(); ++i) {
 				Sector *s = g_grim->getCurrScene()->getSectorBase(i);
-				if (s->type() >= Sector::WalkType && s->visible()) {
+				if (s->getType() >= Sector::WalkType && s->isVisible()) {
 					sectors.push_back(s);
 				}
 			}
@@ -585,7 +585,7 @@ void Actor::walkTo(Graphics::Vector3d p) {
 							n = new PathNode;
 							n->parent = node;
 							n->sect = s;
-							n->pos = s->closestPoint(_destPos);
+							n->pos = s->getClosestPoint(_destPos);
 							Graphics::Line3d l(node->pos, n->pos);
 							if (!line.intersectLine2d(l, &n->pos)) {
 								n->pos = line.middle();
@@ -677,7 +677,7 @@ void Actor::walkForward() {
 
 	while (currSector) {
 		prevSector = currSector;
-		Graphics::Vector3d puckVec = currSector->projectToPuckVector(forwardVec);
+		Graphics::Vector3d puckVec = currSector->getProjectionToPuckVector(forwardVec);
 		puckVec /= puckVec.magnitude();
 		currSector->getExitInfo(_pos, puckVec, &ei);
 		float exitDist = (ei.exitPoint - _pos).magnitude();
@@ -727,7 +727,7 @@ Graphics::Vector3d Actor::getPuckVector() const {
 	if (!sector)
 		return forwardVec;
 	else
-		return sector->projectToPuckVector(forwardVec);
+		return sector->getProjectionToPuckVector(forwardVec);
 }
 
 void Actor::setRestChore(int chore, Costume *cost) {
@@ -1282,7 +1282,7 @@ void Actor::addShadowPlane(const char *n) {
 		// Naranja is dead, because the scene changes back and forth few times and so
 		// the scenes' sectors are deleted while they are still keeped by the actors.
 		Sector *sector = new Sector(*g_grim->getCurrScene()->getSectorBase(i));
-		if (strmatch(sector->name(), n)) {
+		if (strmatch(sector->getName(), n)) {
 			_shadowArray[_activeShadowSlot].planeList.push_back(sector);
 			g_grim->flagRefreshShadowMask(true);
 			return;
