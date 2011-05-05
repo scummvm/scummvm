@@ -89,11 +89,14 @@ protected:
 	std::string getPreBuildEvent() const;
 
 	/**
-	 * Get the command line for copying data files to the build directory
+	 * Get the command line for copying data files to the build directory.
 	 *
-	 * @param isWin32 Bitness of property file
+	 * @param	isWin32		   	Bitness of property file.
+	 * @param	createInstaller	true to NSIS create installer
+	 *
+	 * @return	The post build event.
 	 */
-	std::string getPostBuildEvent(bool isWin32) const;
+	std::string getPostBuildEvent(bool isWin32, bool createInstaller) const;
 };
 
 } // End of CreateProjectTool namespace

@@ -232,6 +232,10 @@
 				RelativePath="..\scripts\revision.vbs"
 				>
 			</File>
+			<File
+				RelativePath="..\scripts\installer.vbs"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
