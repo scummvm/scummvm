@@ -45,7 +45,7 @@ if "%~5"=="0" goto done
 
 echo Running installer script
 echo.
-@call cscript "%~1/devtools/create_project/scripts/installer.vbs" %~1 %~2 1>NUL
+@call cscript "%~1/devtools/create_project/scripts/installer.vbs" %~1 %~2 %~3 1>NUL
 if not %errorlevel% == 0 goto error_script
 goto done
 

@@ -43,6 +43,7 @@ Dim WshShell : Set WshShell = CreateObject("WScript.Shell")
 ' Folders
 Dim rootFolder : rootFolder = ""
 Dim targetFolder : targetFolder = ""
+Dim arch : arch = ""
 
 ' Parse our command line arguments
 If ParseCommandLine() Then
@@ -59,11 +60,21 @@ Sub CreateInstaller()
 		Exit Sub
 	End If
 
+	' Preprocess architecture
+	Select Case arch
+	Case "x86"
+		arch = "win32"
+
+	Case "x64"
+		arch = "win64"
+	End Select
+
 	' Build command line
 	Dim commandLine : commandLine = """" & nsisPath & "\makensis.exe"" /V2" & _
 	                                " /Dtop_srcdir=""" & rootFolder & """" & _
 	                                " /Dbuild_dir=""" & targetFolder & """" & _
 	                                " /Dtext_dir=""" & targetFolder & """" & _
+	                                " /DARCH=""" & arch & """" & _
 	                                " """ & rootFolder & "\dists\nsis\scummvm.nsi"""
 
 	Dim oExec: Set oExec = WshShell.Exec(commandline)
@@ -115,8 +126,8 @@ End Function
 Function ParseCommandLine()
 	ParseCommandLine = True
 
-	If Wscript.Arguments.Count <> 2 Then
-		Wscript.StdErr.WriteLine "[Error] Invalid number of arguments (was: " & Wscript.Arguments.Count & ", expected: 2)"
+	If Wscript.Arguments.Count <> 3 Then
+		Wscript.StdErr.WriteLine "[Error] Invalid number of arguments (was: " & Wscript.Arguments.Count & ", expected: 3)"
 
 		ParseCommandLine = False
 		Exit Function
@@ -125,6 +136,7 @@ Function ParseCommandLine()
 	' Get our arguments
 	rootFolder = Wscript.Arguments.Item(0)
 	targetFolder = Wscript.Arguments.Item(1)
+	arch = Wscript.Arguments.Item(2)
 
 	' Check that the folders are valid
 	If Not FSO.FolderExists(rootFolder) Then
