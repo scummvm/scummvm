@@ -40,6 +40,9 @@
 
 namespace Sword25 {
 
+// Define to use ScummVM's PNG decoder, instead of libpng
+#define USE_INTERNAL_PNG_DECODER
+
 /**
  * Class for loading PNG files, and PNG data embedded into savegames.
  *
@@ -50,7 +53,9 @@ protected:
 	PNGLoader() {}	// Protected constructor to prevent instances
 
 	static bool doDecodeImage(const byte *fileDataPtr, uint fileSize, byte *&uncompressedDataPtr, int &width, int &height, int &pitch);
+#ifndef USE_INTERNAL_PNG_DECODER
 	static bool doImageProperties(const byte *fileDataPtr, uint fileSize, int &width, int &height);
+#endif
 
 public:
 
@@ -72,6 +77,8 @@ public:
 	                        byte *&pUncompressedData,
 	                        int &width, int &height,
 	                        int &pitch);
+
+#ifndef USE_INTERNAL_PNG_DECODER
 	/**
 	 * Extract the properties of an image.
 	 * @param[in] fileDatePtr	pointer to the image data
@@ -86,6 +93,8 @@ public:
 	static bool imageProperties(const byte *fileDatePtr, uint fileSize,
 	                            int &width,
 	                            int &height);
+#endif
+
 };
 
 } // End of namespace Sword25

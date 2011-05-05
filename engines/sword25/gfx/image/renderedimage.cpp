@@ -90,15 +90,17 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 		return;
 	}
 
+#ifndef USE_INTERNAL_PNG_DECODER
 	// Determine image properties
-	int pitch;
 	if (!PNGLoader::imageProperties(pFileData, fileSize, _width, _height)) {
 		error("Could not read image properties.");
 		delete[] pFileData;
 		return;
 	}
+#endif
 
 	// Uncompress the image
+	int pitch;
 	if (!PNGLoader::decodeImage(pFileData, fileSize, _data, _width, _height, pitch)) {
 		error("Could not decode image.");
 		delete[] pFileData;
