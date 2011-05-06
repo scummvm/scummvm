@@ -227,6 +227,7 @@ GfxSurface::GfxSurface() : _bounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
 	_lockSurfaceCtr = 0;
 	_customSurface = NULL;
 	_screenSurfaceP = NULL;
+	_transColor = -1;
 }
 
 GfxSurface::GfxSurface(const GfxSurface &s) {
@@ -259,6 +260,7 @@ void GfxSurface::create(int width, int height) {
 	_screenSurface = false;
 	_customSurface = new Graphics::Surface();
 	_customSurface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	Common::set_to((byte *)_customSurface->pixels, (byte *)_customSurface->pixels + (width * height), 0);
 	_bounds = Rect(0, 0, width, height);
 }
 
