@@ -1589,9 +1589,6 @@ void Scene5200::Hotspot14::doAction(int action) {
 	case CURSOR_USE:
 		scene->setAction(&scene->_action2);
 		break;
-	default:
-		SceneObject::doAction(action);
-		break;
 	}
 }
 
