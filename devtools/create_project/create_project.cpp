@@ -1225,10 +1225,20 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 					tokens = tokenize(line);
 					i = tokens.begin();
 				} else {
-					if (shouldInclude.top())
-						includeList.push_back(moduleDir + "/" + unifyPath(*i));
-					else
-						excludeList.push_back(moduleDir + "/" + unifyPath(*i));
+					const std::string filename = moduleDir + "/" + unifyPath(*i);
+
+					if (shouldInclude.top()) {
+						// In case we should include a file, we need to make
+						// sure it is not in the exclude list already. If it
+						// is we just drop it from the exclude list.
+						excludeList.remove(filename);
+
+						includeList.push_back(filename);
+					} else if (std::find(includeList.begin(), includeList.end(), filename) == includeList.end()) {
+						// We only add the file to the exclude list in case it
+						// has not yet been added to the include list.
+						excludeList.push_back(filename);
+					}
 					++i;
 				}
 			}
