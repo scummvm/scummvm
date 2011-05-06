@@ -47,7 +47,6 @@ void Scene4000::Action1::signal() {
 		scene->_hotspot5.animate(ANIM_MODE_1, NULL);
 		scene->_hotspot5.setPosition(Common::Point(116, 160));
 
-//		ADD_PLAYER_MOVER_NULL(scene->_hotspot5, 208, 169);
 		Common::Point pt(208, 169);
 		NpcMover *mover = new NpcMover();
 		scene->_hotspot5.addMover(mover, &pt, this);
@@ -102,7 +101,7 @@ void Scene4000::Action1::signal() {
 	}
 	case 4:
 		ADD_MOVER(scene->_miranda, -30, 86);
-		ADD_MOVER(scene->_hotspot5, -40, 86);
+		ADD_MOVER_NULL(scene->_hotspot5, -40, 86);
 		break;
 	case 5:
 		_globals->_soundHandler.startSound(155);
