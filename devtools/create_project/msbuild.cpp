@@ -340,7 +340,6 @@ void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, 
 	              "\t\t\t<EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>\n"
 	              "\t\t</Link>\n"
 	              "\t\t<ResourceCompile>\n"
-	              "\t\t\t<PreprocessorDefinitions>HAS_INCLUDE_SET;%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
 	              "\t\t\t<AdditionalIncludeDirectories>" << prefix << ";%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
 	              "\t\t</ResourceCompile>\n"
 	              "\t</ItemDefinitionGroup>\n"

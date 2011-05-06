@@ -240,7 +240,6 @@ void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int b
 	              "\t/>\n"
 	              "\t<Tool\n"
 	              "\t\tName=\"VCResourceCompilerTool\"\n"
-	              "\t\tPreprocessorDefinitions=\"HAS_INCLUDE_SET\"\n"
 	              "\t\tAdditionalIncludeDirectories=\"" << prefix << "\"\n"
 	              "\t/>\n"
 	              "</VisualStudioPropertySheet>\n";

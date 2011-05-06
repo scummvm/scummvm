@@ -1,9 +1,47 @@
 #include "winresrc.h"
 
-#if defined (__MINGW32__) || defined(__CYGWIN32__) || defined(HAS_INCLUDE_SET)
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#define FILE 256
+
 IDI_ICON               ICON    DISCARDABLE     "icons/scummvm.ico"
-#else
-IDI_ICON               ICON    DISCARDABLE     "../../icons/scummvm.ico"
+
+scummmodern.zip        FILE    "gui/themes/scummmodern.zip"
+#ifdef USE_TRANSLATION
+translations.dat       FILE    "gui/themes/translations.dat"
+#endif
+
+#if ENABLE_DRASCULA  == STATIC_PLUGIN
+drascula.dat           FILE    "dists/engine-data/drascula.dat"
+#endif
+#if ENABLE_HUGO      == STATIC_PLUGIN
+hugo.dat               FILE    "dists/engine-data/hugo.dat"
+#endif
+#if ENABLE_KYRA      == STATIC_PLUGIN
+kyra.dat               FILE    "dists/engine-data/kyra.dat"
+#endif
+#if ENABLE_LURE      == STATIC_PLUGIN
+lure.dat               FILE    "dists/engine-data/lure.dat"
+#endif
+#if ENABLE_M4        == STATIC_PLUGIN
+m4.dat                 FILE    "dists/engine-data/m4.dat"
+#endif
+#if ENABLE_QUEEN     == STATIC_PLUGIN
+queen.tbl              FILE    "dists/engine-data/queen.tbl"
+#endif
+#if ENABLE_SKY       == STATIC_PLUGIN
+sky.cpt                FILE    "dists/engine-data/sky.cpt"
+#endif
+#if ENABLE_TEENAGENT == STATIC_PLUGIN
+teenagent.dat          FILE    "dists/engine-data/teenagent.dat"
+#endif
+#if ENABLE_TOON      == STATIC_PLUGIN
+toon.dat               FILE    "dists/engine-data/toon.dat"
+#endif
+#if ENABLE_AGI       == STATIC_PLUGIN
+pred.dic               FILE    "dists/pred.dic"
 #endif
 
 VS_VERSION_INFO VERSIONINFO
