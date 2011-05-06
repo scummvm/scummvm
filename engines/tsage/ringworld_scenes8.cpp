@@ -349,8 +349,8 @@ void Scene7000::Action7::signal() {
 void Scene7000::SceneItem1::doAction(int action) {
 	if (action == CURSOR_LOOK)
 		SceneItem::display2(7000, 2);
-
-	SceneItem::doAction(action);
+	else
+		SceneHotspot::doAction(action);
 }
 
 /*--------------------------------------------------------------------------*/

@@ -95,7 +95,7 @@ class Scene7000 : public Scene {
 	};
 
 	/* Items */
-	class SceneItem1 : public SceneItem {
+	class SceneItem1 : public SceneHotspot {
 	public:
 		virtual void doAction(int action);
 	};
