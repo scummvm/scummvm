@@ -172,6 +172,20 @@ static const GrimGameDescription gameDescriptions[] = {
 		GType_MONKEY4
 	},
 	{
+		// Escape from Monkey Island German
+		{
+			"monkey4",
+			"",
+			AD_ENTRY1s("voiceAll.m4b", "63b4724afc9d94a5aa71b46e6b1b7551", 19999850),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		0,
+		GType_MONKEY4
+	},
+	{
 		// Escape from Monkey Island Italian
 		{
 			"monkey4",
@@ -220,6 +234,20 @@ static const GrimGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1s("voiceAll.m4b", "c03391279486f0158c75398f5117ad73", 15095808),
 			Common::EN_ANY,
+			Common::kPlatformPS2,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		0,
+		GType_MONKEY4
+	},
+	{
+		// Escape from Monkey Island German PS2
+		{
+			"monkey4",
+			"",
+			AD_ENTRY1s("voiceAll.m4b", "6bdd08f3f313765c610fbbe39d18797f", 17262912),
+			Common::DE_DEU,
 			Common::kPlatformPS2,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
