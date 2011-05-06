@@ -86,43 +86,29 @@ ResourceLoader::ResourceLoader() {
 	}
 }
 
+template<typename T>
+void clearList(Common::List<T> &list) {
+	while (!list.empty()) {
+		T p = list.front();
+		list.erase(list.begin());
+		delete p;
+	}
+}
+
 ResourceLoader::~ResourceLoader() {
-	for (LabList::const_iterator i = _labs.begin(); i != _labs.end(); ++i)
-		delete *i;
 	for (Common::Array<ResourceCache>::iterator i = _cache.begin(); i != _cache.end(); ++i) {
 		ResourceCache &r = *i;
 		delete[] r.fname;
 		delete r.resPtr;
 	}
-
-	for (Common::List<Material *>::const_iterator i = _materials.begin(); i != _materials.end(); ++i) {
-		Material *m = *i;
-		delete m;
-	}
-	for (Common::List<Bitmap *>::const_iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
-		Bitmap *b = *i;
-		delete b;
-	}
-	for (Common::List<Model *>::const_iterator i = _models.begin(); i != _models.end(); ++i) {
-		Model *m = *i;
-		delete m;
-	}
-	for (Common::List<CMap *>::const_iterator i = _colormaps.begin(); i != _colormaps.end(); ++i) {
-		CMap *c = *i;
-		delete c;
-	}
-	for (Common::List<KeyframeAnim *>::const_iterator i = _keyframeAnims.begin(); i != _keyframeAnims.end(); ++i) {
-		KeyframeAnim *k = *i;
-		delete k;
-	}
-	for (Common::List<Font *>::const_iterator i = _fonts.begin(); i != _fonts.end(); ++i) {
-		Font *f = *i;
-		delete f;
-	}
-	for (Common::List<LipSync *>::const_iterator i = _lipsyncs.begin(); i != _lipsyncs.end(); ++i) {
-		LipSync *l = *i;
-		delete l;
-	}
+	clearList(_labs);
+	clearList(_materials);
+	clearList(_bitmaps);
+	clearList(_models);
+	clearList(_colormaps);
+	clearList(_keyframeAnims);
+	clearList(_fonts);
+	clearList(_lipsyncs);
 }
 
 const Lab *ResourceLoader::getLab(const char *filename) const {
