@@ -396,18 +396,18 @@ void SpeakerPOR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(7223);
 	_object1.setStrip2(2);
-	_object1.setPosition(Common::Point(191, 166), 0);
-	_object1.animate(ANIM_MODE_7, 0, 0);
+	_object1.setPosition(Common::Point(191, 166));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
 
 	_object2.postInit(&_objectList);
 	_object2.setVisage(7223);
-	_object2.setPosition(Common::Point(159, 86), 0);
-	_object2.setAction(&_speakerAction, 0);
+	_object2.setPosition(Common::Point(159, 86));
+	_object2.setAction(&_speakerAction, NULL);
 
 	_object3.postInit(&_objectList);
 	_object3.setVisage(7223);
 	_object3.setStrip(3);
-	_object3.setPosition(Common::Point(119, 107), 0);
+	_object3.setPosition(Common::Point(119, 107));
 	_object3.fixPriority(199);
 	_object3.setAction(&_action2);
 
@@ -431,8 +431,8 @@ void SpeakerOR::setText(const Common::String &msg) {
 	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
-	_object1.setPosition(Common::Point(202, 147), 0);
-	_object1.animate(ANIM_MODE_7, 0, 0);
+	_object1.setPosition(Common::Point(202, 147));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
 
 	_object2.postInit(&_objectList);
 	_object2.setVisage(9431);
@@ -440,8 +440,8 @@ void SpeakerOR::setText(const Common::String &msg) {
 	_object2.fixPriority(255);
 	_object2.setZoom(100);
 	_object2._frame = 1;
-	_object2.setPosition(Common::Point(199, 85), 0);
-	_object2.setAction(&_speakerAction, 0);
+	_object2.setPosition(Common::Point(199, 85));
+	_object2.setAction(&_speakerAction, NULL);
 
 	Speaker::setText(msg);
 }
@@ -518,12 +518,25 @@ SpeakerEText::SpeakerEText() {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerGR::SpeakerGR() {
+SpeakerGR::SpeakerGR() : AnimatedSpeaker() {
 	_speakerName = "GR";
 	_newSceneNumber = 9220;
 	_textWidth = 136;
 	_textPos = Common::Point(168, 36);
 	_color1 = 14;
+}
+
+void SpeakerGR::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(9221);
+	_object1.setStrip2(2);
+	_object1.fixPriority(255);
+	_object1.changeZoom(100);
+	_object1._frame = 1;
+	_object1.setPosition(Common::Point(101, 70));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
+
+	Speaker::setText(msg);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -541,7 +554,7 @@ SpeakerSKText::SpeakerSKText() : ScreenSpeaker() {
 	_speakerName = "SKTEXT";
 	_textWidth = 240;
 	_textMode = ALIGN_CENTER;
-	_color1 = 5;
+	_color1 = 9;
 	_hideObjects = false;
 }
 
@@ -600,16 +613,16 @@ SpeakerSKL::SpeakerSKL() : AnimatedSpeaker() {
 	_speakerName = "SKL";
 	_newSceneNumber = 7011;
 	_textPos = Common::Point(10, 30);
-	_color1 = 10;
+	_color1 = 9;
 }
 
 void SpeakerSKL::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(7013);
 	_object1.setStrip2(2);
-	_object1._frame = 1;
 	_object1.fixPriority(255);
 	_object1.changeZoom(100);
+	_object1._frame = 1;
 	_object1.setPosition(Common::Point(203, 120));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
 	
@@ -780,8 +793,8 @@ void SpeakerQU::setText(const Common::String &msg) {
 	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
-	_object1.setPosition(Common::Point(116, 120), 0);
-	_object1.animate(ANIM_MODE_7, 0, 0);
+	_object1.setPosition(Common::Point(116, 120));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
 	
 	_object2.postInit(&_objectList);
 	_object2.setVisage(7021);
@@ -789,8 +802,8 @@ void SpeakerQU::setText(const Common::String &msg) {
 	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
-	_object2.setPosition(Common::Point(111, 84), 0);
-	_object2.setAction(&_speakerAction, 0);
+	_object2.setPosition(Common::Point(111, 84));
+	_object2.setAction(&_speakerAction, NULL);
 
 	Speaker::setText(msg);
 }
@@ -877,6 +890,7 @@ void SpeakerSAL::setText(const Common::String &msg) {
 	_object2.setVisage(2853);
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
+	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(170, 92));
 	_object2.setAction(&_speakerAction, NULL);
@@ -980,7 +994,6 @@ void SpeakerCHFR::setText(const Common::String &msg) {
 /*--------------------------------------------------------------------------*/
 
 SpeakerPL::SpeakerPL() {
-	// TODO: check initialization of object3 and action2
 	_speakerName = "PL";
 	_newSceneNumber = 4060;
 	_textPos = Common::Point(160, 40);

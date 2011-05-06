@@ -192,6 +192,7 @@ public:
 	SpeakerGR();
 
 	virtual Common::String getClassName() { return "SpeakerGR"; }
+	virtual void setText(const Common::String &msg);
 };
 
 class SpeakerHText : public ScreenSpeaker {
