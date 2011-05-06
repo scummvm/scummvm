@@ -1639,7 +1639,7 @@ case $_host_os in
 	mingw*)
 		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0"
 		LIBS="$LIBS -lmingw32 -lwinmm"
-		OBJS="$OBJS scummvmico.o"
+		OBJS="$OBJS scummvmwinres.o"
 		add_line_to_config_mk 'WIN32 = 1'
 		;;
 	mint*)

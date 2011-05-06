@@ -32,6 +32,7 @@ class OSystem_Win32 : public OSystem_SDL {
 public:
 	virtual void init();
 
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 protected:
 	virtual Common::String getDefaultConfigFileName();
 	virtual Common::WriteStream *createLogFile();
