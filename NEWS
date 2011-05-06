@@ -115,7 +115,6 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added workarounds for several issues present in the original game.
 
  SDL ports:
-   - Added support for OpenGL (GSoC Task).
    - Closed memory leaks in Mouse Surfaces.
 
  Android port:
