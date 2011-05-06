@@ -1242,7 +1242,7 @@ void Scene9700::signal() {
 		_gfxButton1.draw();
 		_gfxButton1._bounds.expandPanes();
 		_globals->_player.enableControl();
-		_globals->_player._canWalk = 0;
+		_globals->_player._canWalk = false;
 		_globals->_events.setCursor(CURSOR_USE);
 		break;
 	case 9704:
@@ -1253,6 +1253,7 @@ void Scene9700::signal() {
 }
 
 void Scene9700::process(Event &event) {
+	Scene::process(event);
 	if ((event.eventType == EVENT_BUTTON_DOWN) && !_action) {
 		if (_gfxButton1.process(event)) {
 			_globals->_sceneManager.changeScene(9200);
@@ -1277,7 +1278,7 @@ void Scene9700::postInit(SceneObjectList *OwnerList) {
 
 	_sceneHotspot1.setup(84, 218, 151, 278, 9700, 14, -1);
 	_sceneHotspot2.setup(89, 11, 151, 121, 9700, 14, -1);
-	_sceneHotspot3.setup(69, 119, 138, 218, 9700, 15, 16);
+	_sceneHotspot3.setup(69, 119, 138, 216, 9700, 15, 16);
 	_sceneHotspot4.setup(34, 13, 88, 116, 9700, 17, -1);
 	_sceneHotspot5.setup(52, 119, 68, 204, 9700, 17, -1);
 	_sceneHotspot6.setup(0, 22, 56, 275, 9700, 18, -1);
@@ -1285,7 +1286,7 @@ void Scene9700::postInit(SceneObjectList *OwnerList) {
 	_object1.postInit();
 	_object1.hide();
 	_globals->_player.postInit();
-	if (_globals->getFlag(97)) {
+	if (!_globals->getFlag(97)) {
 		_globals->_player.disableControl();
 		_sceneMode = 9701;
 		setAction(&_sequenceManager, this, 9701, &_globals->_player, &_object1, NULL);
