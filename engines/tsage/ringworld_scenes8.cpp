@@ -346,7 +346,7 @@ void Scene7000::Action7::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene7000::SceneItem1::doAction(int action) {
+void Scene7000::Hotspot1::doAction(int action) {
 	if (action == CURSOR_LOOK)
 		SceneItem::display2(7000, 2);
 	else
@@ -608,8 +608,8 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 		setAction(&_action3);
 	}
 
-	_sceneItem1.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-	_globals->_sceneItems.push_back(&_sceneItem1);
+	_hotspot1.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	_globals->_sceneItems.push_back(&_hotspot1);
 }
 
 /*--------------------------------------------------------------------------*/

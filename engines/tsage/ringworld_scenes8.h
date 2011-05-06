@@ -95,7 +95,7 @@ class Scene7000 : public Scene {
 	};
 
 	/* Items */
-	class SceneItem1 : public SceneHotspot {
+	class Hotspot1 : public SceneHotspot {
 	public:
 		virtual void doAction(int action);
 	};
@@ -125,7 +125,7 @@ public:
 	Action5 _action5;
 	Action6 _action6;
 	Action7 _action7;
-	SceneItem1  _sceneItem1;
+	Hotspot1  _hotspot1;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
