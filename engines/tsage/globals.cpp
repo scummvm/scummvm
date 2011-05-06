@@ -93,6 +93,8 @@ Globals::Globals() :
 
 Globals::~Globals() {
 	_globals = NULL;
+	delete _inventory;
+	delete _game;
 }
 
 void Globals::reset() {
