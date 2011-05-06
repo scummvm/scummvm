@@ -598,7 +598,7 @@ public:
 	bool _uiEnabled;
 	int _field8C;
 public:
-	Player() : SceneObject() {}
+	Player();
 
 	virtual Common::String getClassName() { return "Player"; }
 	virtual void synchronize(Serializer &s);

@@ -2622,6 +2622,12 @@ int Visage::getFrameCount() const {
 
 /*--------------------------------------------------------------------------*/
 
+Player::Player(): SceneObject() {
+	_canWalk = false;
+	_uiEnabled = false;
+	_field8C = 0;
+}
+
 void Player::postInit(SceneObjectList *OwnerList) {
 	SceneObject::postInit();
 
