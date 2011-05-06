@@ -148,7 +148,7 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 void VisualStudioProvider::outputConfiguration(std::ostream &project, const BuildSetup &setup, const std::string &libraries, const std::string &config, const std::string &platform, const std::string &props, const bool isWin32) {
 	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\" << PROJECT_DESCRIPTION << "_" << config << props << ".vsprops\">\n"
 	           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n"
-	           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/" << PROJECT_NAME << "\"\n"
+	           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/" << PROJECT_NAME << ".exe\"\n"
 	           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
 	           "\t\t\t/>\n";
 	outputBuildEvents(project, setup, isWin32);
