@@ -1602,7 +1602,7 @@ void Scene7600::postInit(SceneObjectList *OwnerList) {
  *--------------------------------------------------------------------------*/
 
 void Scene7700::Action1::signal() {
-	SceneObject *fmtObj = (SceneObject *) _endHandler;
+	SceneObjectExt *fmtObj = (SceneObjectExt *) _endHandler;
 	switch (_actionIndex++) {
 	case 0: {
 		PlayerMover *mover1 = new PlayerMover();
@@ -1612,7 +1612,7 @@ void Scene7700::Action1::signal() {
 	}
 	case 1:
 		_globals->_player.checkAngle(fmtObj);
-		if (_globals->_player._field8C == 0)
+		if (fmtObj->_state == 0)
 			fmtObj->animate(ANIM_MODE_5, this);
 		else
 			fmtObj->animate(ANIM_MODE_6, this);
