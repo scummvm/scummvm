@@ -223,8 +223,7 @@ void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int b
 	properties << "\t\tRuntimeTypeInfo=\"false\"\n";
 #endif
 
-	properties << "\t\tRuntimeTypeInfo=\"false\"\n"
-	              "\t\tWarningLevel=\"4\"\n"
+	properties << "\t\tWarningLevel=\"4\"\n"
 	              "\t\tWarnAsError=\"false\"\n"
 	              "\t\tCompileAs=\"0\"\n"
 	              "\t\t/>\n"
