@@ -342,6 +342,8 @@ private:
 	void saveGame();
 	void loadGame();
 	void dropObjRnd();
+	void setTakeDrop(int[]);
+	void makeSel(int*, int[]);
 
 	void wind();
 	void mist();
