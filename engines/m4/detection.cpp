@@ -380,7 +380,12 @@ static const M4GameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
-}
+} // End of namespace M4
+
+static const char *directoryGlobs[] = {
+	"option1",
+	0
+};
 
 static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
@@ -402,9 +407,9 @@ static const ADParams detectionParams = {
 	// Additional GUI options (for every game}
 	Common::GUIO_NOMIDI,
 	// Maximum directory depth
-	1,
+	2,
 	// List of directory globs
-	0
+	directoryGlobs
 };
 
 class M4MetaEngine : public AdvancedMetaEngine {

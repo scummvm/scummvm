@@ -115,6 +115,7 @@ MadsM4Engine::MadsM4Engine(OSystem *syst, const M4GameDescription *gameDesc) :
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "goodstuf");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "resource");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "option1");
 
 	DebugMan.addDebugChannel(kDebugScript, "script", "Script debug level");
 	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics debug level");
