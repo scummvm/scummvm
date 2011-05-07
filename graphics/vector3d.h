@@ -118,11 +118,11 @@ public:
 		}
 	}
 
-	float dotProduct(float sx, float sy, float sz) {
+	float dotProduct(float sx, float sy, float sz) const {
 		return x() * sx + y() * sy + z() * sz;
 	}
 
-	bool isZero() {
+	bool isZero() const {
 		if (x() == 0.f && y() == 0.f && z() == 0.f)
 			return true;
 		return false;
