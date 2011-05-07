@@ -1138,7 +1138,13 @@ webos)
 	_host_os=webos
 	_host_cpu=arm
 	_host_alias=arm-none-linux-gnueabi
+	# The prefix is always the same on WebOS so we hardcode the default
+	# here. It is still possible to define a custom prefix which is
+	# needed when packaging the app with a user-specific app ID.
 	test "x$prefix" = xNONE && prefix=/media/cryptofs/apps/usr/palm/applications/org.scummvm.scummvm
+	# WebOS apps are installed into app-specific directories. The 
+	# default directory structure of ScummVM makes no sense here so we
+	# hardcode WebOS specific directories here.
 	datarootdir='${prefix}/data'
 	datadir='${datarootdir}'
 	docdir='${prefix}/doc'
@@ -2933,6 +2939,8 @@ case $_backend in
 		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"../plugins\\\""
 		;;
 	webos)
+		# The WebOS app wants the plugins in the "lib" directory
+		# without a scummvm sub directory.
 		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$libdir\\\""
 		;;
 	*)
@@ -3114,6 +3122,7 @@ case $_backend in
 		DEFINES="$DEFINES -DSDL_BACKEND"
 		;;
 	webos)
+		# There is no sdl-config in the WebOS PDK so we don't use find_sdlconfig here.
 		LIBS="$LIBS -lSDL -lpdl"
 		DEFINES="$DEFINES -DSDL_BACKEND -DWEBOS"
 		MODULES="$MODULES backends/platform/sdl"
