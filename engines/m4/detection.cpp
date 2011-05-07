@@ -48,7 +48,7 @@ Common::Platform MadsM4Engine::getPlatform() const { return _gameDescription->de
 
 static const PlainGameDescriptor m4Games[] = {
 	{"m4", "MADS/M4 engine game"},
-	{"riddle", "Riddle of Master Lu: Believe it or Not!"},
+	{"riddle", "Ripley's Believe It of Not!: The Riddle of Master Lu"},
 	{"burger", "Orion Burger"},
 	{"rex", "Rex Nebular and the Cosmic Gender Bender"},
 	{"dragon", "DragonSphere"},
