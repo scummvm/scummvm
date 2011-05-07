@@ -89,7 +89,7 @@ Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool detectFlag) {
 }
 
 void SoundManager::installConfigDrivers() {
-	
+	installDriver(ADLIB_DRIVER_NUM);
 }
 
 Common::List<SoundDriverEntry> &SoundManager::getDriverList(bool detectFlag) {
@@ -324,6 +324,10 @@ void SoundManager::listenerSynchronize(Serializer &s) {
 
 /*--------------------------------------------------------------------------*/
 
+SoundManager &SoundManager::sfManager() {
+	return _globals->_soundManager;
+}
+
 void SoundManager::_soSetTimeIndex(int timeIndex) {
 	warning("TODO: _soSetTimeIndex");
 }
@@ -341,12 +345,19 @@ int SoundManager::_sfDetermineGroup(const byte *soundData) {
 	return 0;
 }
 
-void SoundManager::_sfAddToPlayList(Sound*soundData) {
-	
+void SoundManager::_sfAddToPlayList(Sound *sound) {
+	++sfManager()._suspendCtr;
+	_sfDoAddToPlayList(sound);
+	sound->_field6 = 0;
+	_sfRethinkVoiceTypes();
+	--sfManager()._suspendCtr;
 }
 	
 void SoundManager::_sfRemoveFromPlayList(Sound *sound) {
-
+	++sfManager()._suspendCtr;
+	if (_sfDoRemoveFromPlayList(sound))
+		_sfRethinkVoiceTypes();
+	--sfManager()._suspendCtr;
 }
 
 bool SoundManager::_sfIsOnPlayList(Sound *sound) {
@@ -363,23 +374,35 @@ void SoundManager::_sfRethinkVoiceTypes() {
 
 void SoundManager::_sfUpdateVolume(Sound *sound) {
 	_sfDereferenceAll();
-	sub_233EE(sound);
+	_sfDoUpdateVolume(sound);
 }
 
 void SoundManager::_sfDereferenceAll() {
-
-}
-
-void SoundManager::sub_233EE(Sound *sound) {
-
+	// Orignal used handles for both the driver list and voiceStructPtrs list. This method then refreshed 
+	// pointer lists based on the handles. Since in ScummVM we're just using pointers directly, this
+	// method doesn't need any implementation
 }
 
 void SoundManager::_sfUpdatePriority(Sound *sound) {
+	++_globals->_soundManager._suspendCtr; 
 
+	int tempPriority = (sound->_priority2 == 255) ? sound->_soundPriority : sound->_priority;
+	if (sound->_priority != tempPriority) {
+		sound->_priority = tempPriority;
+		if (_sfDoRemoveFromPlayList(sound)) {
+			_sfDoAddToPlayList(sound);
+			_sfRethinkVoiceTypes();
+		}
+	}
+
+	--_globals->_soundManager._suspendCtr;
 }
 
 void SoundManager::_sfUpdateLoop(Sound *sound) {
-
+	if (sound->_loopFlag2)
+		sound->_loopFlag = sound->_loop;
+	else
+		sound->_loopFlag = sound->_loopFlag2;
 }
 
 void SoundManager::_sfSetMasterVol(int volume) {
@@ -445,6 +468,53 @@ void SoundManager::_sfUnInstallDriver(SoundDriver *driver) {
 
 void SoundManager::_sfInstallPatchBank(const byte *bankData) {
 
+}
+
+/**
+ * Adds the specified sound in the playing sound list, inserting in order of priority
+ */
+void SoundManager::_sfDoAddToPlayList(Sound *sound) {
+	++sfManager()._suspendCtr;
+
+	Common::List<Sound *>::iterator i = sfManager()._playList.begin();
+	while ((i != sfManager()._playList.end()) && (sound->_priority > (*i)->_priority))
+		++i;
+
+	sfManager()._playList.insert(i, sound);
+	--sfManager()._suspendCtr;
+}
+
+/**
+ * Removes the specified sound from the play list
+ */
+bool SoundManager::_sfDoRemoveFromPlayList(Sound *sound) {
+	++sfManager()._suspendCtr;
+
+	bool result = false;
+	for (Common::List<Sound *>::iterator i = sfManager()._playList.begin(); i != sfManager()._playList.end(); ++i) {
+		if (*i == sound) {
+			result = true;
+			sfManager()._playList.erase(i);
+			break;
+		}
+	}
+	
+	--sfManager()._suspendCtr;
+	return result;
+}
+
+void SoundManager::_sfDoUpdateVolume(Sound *sound) {
+	++_globals->_soundManager._suspendCtr; 
+
+	for (int idx = 0; idx < 16; ++idx) {
+		Sound *snd = sfManager()._voiceStructPtrs[idx];
+		if (!snd)
+			continue;
+
+		// TODO: More stuff
+	}
+	
+	--_globals->_soundManager._suspendCtr;
 }
 
 /*--------------------------------------------------------------------------*/

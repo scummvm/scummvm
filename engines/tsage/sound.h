@@ -85,6 +85,7 @@ public:
 	int _field89[SOUND_ARR_SIZE];
 	uint16 _groupList[SOUND_ARR_SIZE];
 	int _fieldE9[SOUND_ARR_SIZE];
+	Sound *_voiceStructPtrs[SOUND_ARR_SIZE];
 public:
 	SoundManager();
 	~SoundManager();
@@ -129,6 +130,7 @@ public:
 	void unloadSound(int soundNum);
 
 	// _so methods
+	static SoundManager &sfManager();
 	static void _sfTerminate();
 	static void _soSetTimeIndex(int timeIndex);
 	static int _sfDetermineGroup(const byte *soundData);
@@ -138,7 +140,6 @@ public:
 	static void _sfRethinkVoiceTypes();
 	static void _sfUpdateVolume(Sound *sound);
 	static void _sfDereferenceAll();
-	static void sub_233EE(Sound *sound);
 	static void _sfUpdatePriority(Sound *sound);
 	static void _sfUpdateLoop(Sound *sound);
 	static void _sfSetMasterVol(int volume);
@@ -147,6 +148,9 @@ public:
 	static bool _sfInstallDriver(SoundDriver *driver);
 	static void _sfUnInstallDriver(SoundDriver *driver);
 	static void _sfInstallPatchBank(const byte *bankData);
+	static void _sfDoAddToPlayList(Sound *sound);
+	static bool _sfDoRemoveFromPlayList(Sound *sound);
+	static void _sfDoUpdateVolume(Sound *sound);
 };
 
 class Sound: public EventHandler {
@@ -155,6 +159,7 @@ private:
 	void _unPrime();
 	void orientAfterRestore();
 public:
+	int _field0;
 	int _field6;
 	int _soundNum;
 	int _groupNum;
