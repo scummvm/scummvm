@@ -3141,7 +3141,7 @@ case $_backend in
 		;;
 	webos)
 		# There is no sdl-config in the WebOS PDK so we don't use find_sdlconfig here.
-		LIBS="$LIBS -lSDL -lpdl"
+		LIBS="$LIBS -lSDL"
 		DEFINES="$DEFINES -DSDL_BACKEND -DWEBOS"
 		MODULES="$MODULES backends/platform/sdl"
 		;;
