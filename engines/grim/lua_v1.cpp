@@ -1104,26 +1104,22 @@ static void GetActorNodeLocation() {
 	int nodeId = (int)lua_getnumber(nodeObj);
 
 	Model::HierNode *allNodes = actor->getCurrentCostume()->getModelNodes();
-	Model::HierNode *node = allNodes + nodeId;
+	Model::HierNode *node = allNodes + nodeId - 1;
 
-	Graphics::Vector3d p = node->_pos;
-	Model::HierNode *parent = node->_parent;
-	while (parent) {
-		p += parent->_pos;
-		parent = parent->_parent;
+	Model::HierNode *root = node;
+	while (root->_parent) {
+		root = root->_parent;
 	}
-	float yaw = actor->getYaw() * LOCAL_PI / 180.;
 
-	Graphics::Vector3d pos;
-	pos.x() = p.x() * cos(yaw) - p.y() * sin(yaw);
-	pos.y() = p.x() * sin(yaw) + p.y() * cos(yaw);
-	pos.z() = p.z();
+	Graphics::Matrix4 matrix;
+	matrix._pos = actor->getPos();
+	matrix._rot.buildFromPitchYawRoll(actor->getPitch(), actor->getYaw(), actor->getRoll());
+	root->setMatrix(matrix);
+	root->update();
 
-	pos += actor->getPos();
-
-	lua_pushnumber(pos.x());
-	lua_pushnumber(pos.y());
-	lua_pushnumber(pos.z());
+	lua_pushnumber(node->_matrix._pos.x());
+	lua_pushnumber(node->_matrix._pos.y());
+	lua_pushnumber(node->_matrix._pos.z());
 }
 
 static void SetActorWalkDominate() {
