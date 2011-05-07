@@ -1242,25 +1242,14 @@ void Costume::moveHead(bool lookingMode, const Graphics::Vector3d &lookAt, float
 			return;
 		}
 
-		Graphics::Vector3d po = _joint3Node->_pos;
-		Model::HierNode *p = _joint3Node->_parent;
-		while (p) {
-			po += p->_pos;
-			if (p->_totalWeight > 0)
-				po += p->_animPos / p->_totalWeight;
+		Model::HierNode *p = _joint3Node;
+		while (p->_parent) {
 			p = p->_parent;
 		}
+		p->setMatrix(_matrix);
+		p->update();
 
-		float y = _matrix._rot.getYaw() * LOCAL_PI / 180.;
-
-		Graphics::Vector3d pos;
-		pos.x() = po.x() * cos(y) - po.y() * sin(y);
-		pos.y() = po.x() * sin(y) + po.y() * cos(y);
-		pos.z() = po.z();
-
-		pos += _matrix._pos;
-
-		Graphics::Vector3d v =  lookAt - pos;
+		Graphics::Vector3d v =  lookAt - _joint3Node->_matrix._pos;
 		if (v.isZero()) {
 			return;
 		}
