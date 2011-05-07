@@ -258,6 +258,10 @@ void GfxSurface::setScreenSurface() {
 void GfxSurface::create(int width, int height) {
 	assert((width >= 0) && (height >= 0));
 	_screenSurface = false;
+	if (_customSurface) {
+		_customSurface->free();
+		delete _customSurface;
+	}
 	_customSurface = new Graphics::Surface();
 	_customSurface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	Common::set_to((byte *)_customSurface->pixels, (byte *)_customSurface->pixels + (width * height), 0);
