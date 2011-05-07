@@ -338,7 +338,7 @@ void SoundTowns::playEuphonyTrack(uint32 offset, int loop) {
 	for (int i = 0; i < 32; i++)
 		_driver->configChan_adjustVolume(i, *src++);
 	for (int i = 0; i < 32; i++)
-		_driver->configChan_setDetune(i, *src++);
+		_driver->configChan_setTranspose(i, *src++);
 
 	src = _musicTrackData + 1748;
 	for (int i = 0; i < 6; i++)

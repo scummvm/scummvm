@@ -163,8 +163,10 @@ private:
 	int intf_fmReset(va_list &args);
 	int intf_setOutputVolume(va_list &args);
 	int intf_resetOutputVolume(va_list &args);
-	int intf_updateOutputVolume(va_list &args);
+	int intf_setOutputMute(va_list &args);
 	int intf_cdaToggle(va_list &args);
+	int intf_getOutputVolume(va_list &args);
+	int intf_getOutputMute(va_list &args);
 	int intf_pcmUpdateEnvelopeGenerator(va_list &args);
 
 	int intf_notImpl(va_list &args);
@@ -344,13 +346,13 @@ TownsAudioInterfaceIntern::TownsAudioInterfaceIntern(Audio::Mixer *mixer, TownsA
 		// 68
 		INTCB(resetOutputVolume),
 		INTCB(notImpl),
-		INTCB(updateOutputVolume),
+		INTCB(setOutputMute),
 		INTCB(notImpl),
 		// 72
 		INTCB(notImpl),
 		INTCB(cdaToggle),
-		INTCB(notImpl),
-		INTCB(notImpl),
+		INTCB(getOutputVolume),
+		INTCB(getOutputMute),
 		// 76
 		INTCB(notImpl),
 		INTCB(notImpl),
@@ -947,7 +949,7 @@ int TownsAudioInterfaceIntern::intf_resetOutputVolume(va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_updateOutputVolume(va_list &args) {
+int TownsAudioInterfaceIntern::intf_setOutputMute(va_list &args) {
 	int flags = va_arg(args, int);
 	_outputMuteFlags = flags & 3;
 	updateOutputVolume();
@@ -957,6 +959,14 @@ int TownsAudioInterfaceIntern::intf_updateOutputVolume(va_list &args) {
 int TownsAudioInterfaceIntern::intf_cdaToggle(va_list &args) {
 	//int mode = va_arg(args, int);
 	//_unkMask = mode ? 0x7f : 0x3f;
+	return 0;
+}
+
+int TownsAudioInterfaceIntern::intf_getOutputVolume (va_list &args) {
+	return 0;
+}
+
+int TownsAudioInterfaceIntern::intf_getOutputMute (va_list &args) {
 	return 0;
 }
 

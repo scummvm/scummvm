@@ -43,25 +43,22 @@ public:
 	int open();
 	bool isOpen() const { return _open; }
 	void close();
+
 	void send(uint32 b);
-	//virtual uint32 property(int prop, uint32 param) { return 0; }
-	//virtual void sysEx(const byte *msg, uint16 length) { }
-	//virtual void sysEx_customInstrument(byte channel, uint32 type, const byte *instr) { }
-	//virtual void metaEvent(byte type, byte *data, uint16 length) { }
+
 	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc);
+
 	uint32 getBaseTempo();
 	MidiChannel *allocateChannel();
 	MidiChannel *getPercussionChannel();
 
 	void timerCallback(int timerId);
 
-	TownsAudioInterface *intf() { return _intf; }
-	
 private:
-	TownsMidiOutputChannel *allocateOutputChannel(int pri);
-
 	void updateParser();
 	void updateOutputChannels();
+
+	TownsMidiOutputChannel *allocateOutputChannel(int pri);
 		
 	int randomValue(int para);
 
@@ -81,7 +78,7 @@ private:
 	
 	bool _open;
 
-	uint8 *_chanOutputLevel;
+	uint8 *_chanEffectLevel;
 };
 
 #endif

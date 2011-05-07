@@ -837,7 +837,7 @@ TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type) :
 	_hasPercussion(type == kType86 ? true : false),
 	_oprRates(0), _oprRateshift(0), _oprAttackDecay(0), _oprFrq(0), _oprSinTbl(0), _oprLevelOut(0), _oprDetune(0),
 	 _rtt(type == kTypeTowns ? 0x514767 : 0x5B8D80), _baserate(55125.0f / (float)mixer->getOutputRate()),
-	_volMaskA(0), _volMaskB(0), _volumeA(255), _volumeB(255), _regProtectionFlag(false), _externLock(0), _ready(false) {
+	_volMaskA(0), _volMaskB(0), _volumeA(255), _volumeB(255), _regProtectionFlag(false), _lock(0), _ready(false) {
 
 	memset(&_timers[0], 0, sizeof(ChipTimer));
 	memset(&_timers[1], 0, sizeof(ChipTimer));
@@ -1121,8 +1121,9 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 	int32 *tmpStart = tmp;
 	memset(tmp, 0, sizeof(int32) * numSamples);
 	int32 samplesLeft = numSamples >> 1;
+	_lock |= 0x10000;
 
-	while (_ready && !_externLock && samplesLeft) {
+	while (_ready && !(_lock & 0xffff) && samplesLeft) {
 		int32 render = samplesLeft;
 
 		for (int i = 0; i < 2; i++) {
@@ -1171,6 +1172,7 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 		tmp += (render << 1);
 	}
 
+	_lock &= ~0x10000;
 	delete[] tmpStart;
 
 	return numSamples;
@@ -1178,6 +1180,8 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 
 void TownsPC98_FmSynth::deinit() {
 	_ready = false;
+	while (_lock)
+		g_system->delayMillis(20);
 	_mixer->stopHandle(_soundHandle);
 	_timers[0].cb = _timers[1].cb = &TownsPC98_FmSynth::idleTimerCallback;
 }
@@ -1214,12 +1218,12 @@ void TownsPC98_FmSynth::setVolumeChannelMasks(int channelMaskA, int channelMaskB
 
 void TownsPC98_FmSynth::lock() {
 	_mutex.lock();
-	_externLock++;
+	_lock++;
 }
 
 void  TownsPC98_FmSynth::unlock() {
 	_mutex.unlock();
-	_externLock--;
+	_lock--;
 }
 
 void TownsPC98_FmSynth::generateTables() {

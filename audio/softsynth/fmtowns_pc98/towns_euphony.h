@@ -59,7 +59,7 @@ public:
 	int configChan_setMode(int tableEntry, int val);
 	int configChan_remap(int tableEntry, int val);
 	int configChan_adjustVolume(int tableEntry, int val);
-	int configChan_setDetune(int tableEntry, int val);
+	int configChan_setTranspose(int tableEntry, int val);
 
 	int assignChannel(int chan, int tableEntry);
 
@@ -111,7 +111,7 @@ private:
 		return false;
 	}
 
-	uint8 applyDetune(uint8 in);
+	uint8 applyTranspose(uint8 in);
 	uint8 applyVolumeAdjust(uint8 in);
 
 	void sendNoteOff();
@@ -136,7 +136,7 @@ private:
 	uint8 *_tMode;
 	uint8 *_tOrdr;
 	int8 *_tLevel;
-	int8 *_tDetune;
+	int8 *_tTranspose;
 
 	struct DlEvent {
 		uint8 evt;

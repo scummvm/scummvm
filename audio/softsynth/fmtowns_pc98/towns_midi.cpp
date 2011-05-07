@@ -24,6 +24,7 @@
 
 #include "audio/softsynth/fmtowns_pc98/towns_midi.h"
 #include "common/textconsole.h"
+#include "common/system.h"
 
 class TownsMidiOutputChannel {
 friend class TownsMidiInputChannel;
@@ -33,8 +34,8 @@ public:
 
 	void noteOn(uint8 msb, uint16 lsb);
 	void noteOnPitchBend(uint8 msb, uint16 lsb);
-	void setupProgram(const uint8 *data, uint8 vol1, uint8 vol2);
-	void setupEffects(int index, uint8 c, const uint8 *effectData);
+	void setupProgram(const uint8 *data, uint8 mLevelPara, uint8 tLevelPara);
+	void setupEffects(int index, uint8 flags, const uint8 *effectData);
 	void setModWheel(uint8 value);
 	
 	void connect(TownsMidiInputChannel *chan);
@@ -52,26 +53,26 @@ public:
 private:
 	struct StateA {
 		uint8 numLoop;
-		uint32 fld_1;
+		int32 fld_1;
 		int32 duration;
-		int32 fld_9;
-		int16 effectState;
+		uint32 fld_9;
+		int32 effectState;
 		uint8 fld_11;
 		uint8 ar1[4];
 		uint8 ar2[4];
 		int8 modWheelSensitivity;
 		int8 modWheelState;
-		uint8 fld_1c;
-		uint32 fld_1d;
+		uint8 modWheelLast;
+		uint16 fld_1d;
 		uint32 fld_21;
-		uint32 fld_25;
+		int32 fld_25;
 		int8 dir;
 		uint32 fld_2a;
 		uint32 fld_2e;
 	} *_stateA;
 
 	struct StateB {
-		int16 inc;
+		int32 inc;
 		uint8 type;
 		uint8 useModWheel;
 		uint8 fld_6;
@@ -99,7 +100,7 @@ private:
 	uint8 _carrierTl;
 	uint8 _modulatorTl;
 	uint8 _sustainNoteOff;
-	int32 _duration;
+	int16 _duration;
 	
 	uint16 _freq;
 	int16 _freqAdjust;
@@ -237,7 +238,7 @@ void TownsMidiOutputChannel::noteOnPitchBend(uint8 msb, uint16 lsb) {
 	keyOnSetFreq(_freq + _freqAdjust);
 }
 
-void TownsMidiOutputChannel::setupProgram(const uint8 *data, uint8 vol1, uint8 vol2) {
+void TownsMidiOutputChannel::setupProgram(const uint8 *data, uint8 mLevelPara, uint8 tLevelPara) {
 	// This driver uses only 2 operators and 2 algorithms (algorithm 5 and 7),
 	// since it is just a modified AdLib driver. It also uses AdLib programs.
 	// There are no FM-TOWNS specific programs. This is the reason for the FM-TOWNS
@@ -248,10 +249,10 @@ void TownsMidiOutputChannel::setupProgram(const uint8 *data, uint8 vol1, uint8 v
 	uint8 chan = _chanMap[_chan];	
 
 	uint8 mulAmsFms1 = _driver->_chanState[chan].mulAmsFms = data[0];
-	uint8 tl1 = _driver->_chanState[chan].tl = (data[1] | 0x3f) - vol1;
+	uint8 tl1 = _driver->_chanState[chan].tl = (data[1] | 0x3f) - mLevelPara;
 	uint8 attDec1 = _driver->_chanState[chan].attDec = ~data[2];
 	uint8 sus1 = _driver->_chanState[chan].sus = ~data[3];
-	uint8 unk1 = _driver->_chanState[chan].unk2 = data[4];
+	_driver->_chanState[chan].unk2 = data[4];
 	chan += 3;
 
 	out(0x30, mul[mulAmsFms1 & 0x0f]);
@@ -262,10 +263,10 @@ void TownsMidiOutputChannel::setupProgram(const uint8 *data, uint8 vol1, uint8 v
 	out(0x80, sus1);
 
 	uint8 mulAmsFms2 = _driver->_chanState[chan].mulAmsFms = data[5];
-	uint8 tl2 = _driver->_chanState[chan].tl = (data[6] | 0x3f) - vol2;
+	uint8 tl2 = _driver->_chanState[chan].tl = (data[6] | 0x3f) - tLevelPara;
 	uint8 attDec2 = _driver->_chanState[chan].attDec = ~data[7];
 	uint8 sus2 = _driver->_chanState[chan].sus = ~data[8];
-	uint8 unk2 = _driver->_chanState[chan].unk2 = data[9];
+	_driver->_chanState[chan].unk2 = data[9];
 
 	uint8 mul2 = mul[mulAmsFms2 & 0x0f];
 	tl2 = (tl2 & 0x3f) + 15;
@@ -290,7 +291,7 @@ void TownsMidiOutputChannel::setupProgram(const uint8 *data, uint8 vol1, uint8 v
 	out(0xb4, 0xc0 | ((t & 0x80) >> 3) | ((t & 0x40) >> 5));
 }
 
-void TownsMidiOutputChannel::setupEffects(int index, uint8 c, const uint8 *effectData) {
+void TownsMidiOutputChannel::setupEffects(int index, uint8 flags, const uint8 *effectData) {
 	uint16 maxVal[] = { 0x2FF, 0x1F, 0x07, 0x3F, 0x0F, 0x0F, 0x0F, 0x03, 0x3F, 0x0F, 0x0F, 0x0F, 0x03, 0x3E, 0x1F };
 	uint8 effectType[] = { 0x1D, 0x1C, 0x1B, 0x00, 0x03, 0x04, 0x07, 0x08, 0x0D, 0x10, 0x11, 0x14, 0x15, 0x1e, 0x1f, 0x00 };
 	
@@ -298,11 +299,11 @@ void TownsMidiOutputChannel::setupEffects(int index, uint8 c, const uint8 *effec
 	StateB *b = &_stateB[index];
 
 	b->inc = 0;
-	b->useModWheel = c & 0x40;
-	a->fld_11 = c & 0x20;
-	b->fld_6 = c & 0x10;
-	b->type = effectType[c & 0x0f];
-	a->fld_9 = maxVal[c & 0x0f];
+	b->useModWheel = flags & 0x40;
+	a->fld_11 = flags & 0x20;
+	b->fld_6 = flags & 0x10;
+	b->type = effectType[flags & 0x0f];
+	a->fld_9 = maxVal[flags & 0x0f];
 	a->modWheelSensitivity = 31;
 	a->modWheelState = b->useModWheel ? _midi->_modWheel >> 2 : 31;
 
@@ -368,8 +369,9 @@ bool TownsMidiOutputChannel::update() {
 
 	if (_duration) {
 		_duration -= 17;
-		if (_duration <=0) {
+		if (_duration <= 0) {
 			disconnect();
+			//_duration = 0;
 			return true;
 		}
 	}
@@ -415,7 +417,7 @@ int16 TownsMidiOutputChannel::getEffectState(uint8 type) {
 void TownsMidiOutputChannel::initEffect(StateA *a, const uint8 *effectData) {
 	a->numLoop = 1;
 	a->fld_1 = 0;
-	a->fld_1c = 31;
+	a->modWheelLast = 31;
 	a->duration = effectData[0] * 63;
 	a->ar1[0] = effectData[1];
 	a->ar1[1] = effectData[3];
@@ -475,16 +477,17 @@ int TownsMidiOutputChannel::updateEffectOuter(StateA *a, StateB *b) {
 
 	int retFlags = 0;
 
-	if (t != a->fld_1 || a->modWheelState != a->fld_1c) {
+	if (t != a->fld_1 || a->modWheelState != a->modWheelLast) {
 		a->fld_1 = t;
-		a->fld_1c = a->modWheelState;
+		a->modWheelLast = a->modWheelState;
 		t = lookupVolume(t, a->modWheelState);
 		if (t != b->inc)
 			b->inc = t;
 		retFlags |= 1;
 	}
 
-	if (--a->fld_21 != 0)
+	--a->fld_21;/*???*/
+	if (a->fld_21 != 0)
 		return retFlags;
 
 	if (++a->numLoop > 4) {
@@ -504,7 +507,7 @@ int TownsMidiOutputChannel::updateEffectOuter(StateA *a, StateB *b) {
 void TownsMidiOutputChannel::updateEffect(StateA *a) {
 	uint8 c = a->numLoop - 1;
 	uint16 v = a->ar1[c];
-	int32 e = _effectData[_driver->_chanOutputLevel[((v & 0x7f) << 5) + a->modWheelSensitivity]];
+	int32 e = _effectData[_driver->_chanEffectLevel[((v & 0x7f) << 5) + a->modWheelSensitivity]];
 
 	if (v & 0x80)
 		e = _driver->randomValue(e);
@@ -515,7 +518,7 @@ void TownsMidiOutputChannel::updateEffect(StateA *a) {
 	a->fld_1d = a->fld_21 = e;
 	int32 d = 0;
 
-	if (c + 1 != 3) {
+	if (c != 2) {
 		v = a->ar2[c];
 		e = lookupVolume(a->fld_9, (v & 0x7f) - 31);
 
@@ -533,7 +536,8 @@ void TownsMidiOutputChannel::updateEffect(StateA *a) {
 	}
 
 	a->fld_25 = d / a->fld_1d;
-	a->dir = d < 0 ? -1 : 1;
+	a->dir = (d < 0) ? -1 : 1;
+	d *= a->dir;
 	a->fld_2a = d % a->fld_1d;
 	a->fld_2e = 0;
 }
@@ -550,14 +554,14 @@ int TownsMidiOutputChannel::lookupVolume(int a, int b) {
 
 	if (b < 0) {
 		if (a < 0)			
-			return _driver->_chanOutputLevel[(-a << 5) - b];
+			return _driver->_chanEffectLevel[((-a) << 5) - b];
 		else
-			return -_driver->_chanOutputLevel[(a << 5) - b];
+			return -_driver->_chanEffectLevel[(a << 5) - b];
 	} else {
 		if (a < 0)			
-			return -_driver->_chanOutputLevel[(-a << 5) + b];
+			return -_driver->_chanEffectLevel[((-a) << 5) + b];
 		else
-			return _driver->_chanOutputLevel[(-a << 5) + b];
+			return _driver->_chanEffectLevel[((-a) << 5) + b];
 	}
 }
 
@@ -713,15 +717,15 @@ void TownsMidiInputChannel::noteOn(byte note, byte velocity) {
 	oc->_sustainNoteOff = 0;
 	oc->_duration = _instrument[29] * 63;
 	
-	oc->_modulatorTl = (_instrument[1] & 0x3f) + _driver->_chanOutputLevel[((velocity >> 1) << 5) + (_instrument[4] >> 2)];
+	oc->_modulatorTl = (_instrument[1] & 0x3f) + _driver->_chanEffectLevel[((velocity >> 1) << 5) + (_instrument[4] >> 2)];
 	if (oc->_modulatorTl > 63)
 		oc->_modulatorTl = 63;
 
-	oc->_carrierTl = (_instrument[6] & 0x3f) + _driver->_chanOutputLevel[((velocity >> 1) << 5) + (_instrument[9] >> 2)];
+	oc->_carrierTl = (_instrument[6] & 0x3f) + _driver->_chanEffectLevel[((velocity >> 1) << 5) + (_instrument[9] >> 2)];
 	if (oc->_carrierTl > 63)
 		oc->_carrierTl = 63;
 
-	oc->setupProgram(_instrument, oc->_fld_c == 1 ? _programAdjustLevel[_driver->_chanOutputLevel[(_tl >> 2) + (oc->_modulatorTl << 5)]] : oc->_modulatorTl, _programAdjustLevel[_driver->_chanOutputLevel[(_tl >> 2) + (oc->_carrierTl << 5)]]);
+	oc->setupProgram(_instrument, oc->_fld_c == 1 ? _programAdjustLevel[_driver->_chanEffectLevel[(_tl >> 2) + (oc->_modulatorTl << 5)]] : oc->_modulatorTl, _programAdjustLevel[_driver->_chanEffectLevel[(_tl >> 2) + (oc->_carrierTl << 5)]]);
 	oc->noteOn(note + _transpose, _freqLSB);
 
 	if (_instrument[11] & 0x80)
@@ -838,6 +842,19 @@ const uint8 TownsMidiInputChannel::_programAdjustLevel[] = {
 
 MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer) : _timerProc(0), _timerProcPara(0), _tickCounter1(0), _tickCounter2(0), _curChan(0), _rand(1), _open(false) {
 	_intf = new TownsAudioInterface(mixer, this);
+}
+
+MidiDriver_TOWNS::~MidiDriver_TOWNS() {
+	close();
+	delete _intf;
+}
+
+int MidiDriver_TOWNS::open() {
+	if (_open)
+		return MERR_ALREADY_OPEN;
+
+	if (!_intf->init())
+		return MERR_CANNOT_CONNECT;
 
 	_channels = new TownsMidiInputChannel*[32];
 	for (int i = 0; i < 32; i++)
@@ -849,38 +866,13 @@ MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer) : _timerProc(0), _timerP
 
 	_chanState = new TownsMidiChanState[32];
 
-	_chanOutputLevel = new uint8[2048];
+	_chanEffectLevel = new uint8[2048];
 	for (int i = 0; i < 64; i++) {
 		for (int ii = 0; ii < 32; ii++)
-			_chanOutputLevel[(i << 5) + ii] = ((i * (ii + 1)) >> 5) & 0xff;
+			_chanEffectLevel[(i << 5) + ii] = ((i * (ii + 1)) >> 5) & 0xff;
 	}
 	for (int i = 0; i < 64; i++)
-		_chanOutputLevel[i << 5] = 0;
-}
-
-MidiDriver_TOWNS::~MidiDriver_TOWNS() {
-	close();
-	delete _intf;
-	setTimerCallback(0, 0);
-
-	for (int i = 0; i < 32; i++)
-		delete _channels[i];
-	delete[] _channels;
-
-	for (int i = 0; i < 6; i++)
-		delete _out[i];
-	delete[] _out;
-
-	delete[] _chanState;
-	delete[] _chanOutputLevel;
-}
-
-int MidiDriver_TOWNS::open() {
-	if (_open)
-		return MERR_ALREADY_OPEN;
-
-	if (!_intf->init())
-		return MERR_CANNOT_CONNECT;
+		_chanEffectLevel[i << 5] = 0;
 
 	_intf->callback(0);
 
@@ -897,10 +889,38 @@ int MidiDriver_TOWNS::open() {
 }
 
 void MidiDriver_TOWNS::close() {
+	if (!_open)
+		return;
+
 	_open = false;
+
+	setTimerCallback(0, 0);
+	g_system->delayMillis(20);
+	
+	if (_channels) {
+		for (int i = 0; i < 32; i++)
+			delete _channels[i];
+		delete[] _channels;
+	}
+	_channels = 0;
+
+	if (_out) {
+		for (int i = 0; i < 6; i++)
+			delete _out[i];
+		delete[] _out;
+	}
+	_out = 0;
+
+	delete[] _chanState;
+	_chanState = 0;
+	delete[] _chanEffectLevel;
+	_chanEffectLevel = 0;
 }
 
 void MidiDriver_TOWNS::send(uint32 b) {
+	if (!_open)
+		return;
+
 	byte param2 = (b >> 16) & 0xFF;
 	byte param1 = (b >> 8) & 0xFF;
 	byte cmd = b & 0xF0;
@@ -945,6 +965,9 @@ uint32 MidiDriver_TOWNS::getBaseTempo() {
 }
 
 MidiChannel *MidiDriver_TOWNS::allocateChannel() {
+	if (!_open)
+		return 0;
+
 	for (int i = 0; i < 32; ++i) {		
 		TownsMidiInputChannel *chan = _channels[i];
 		if (chan->allocate())
@@ -978,6 +1001,23 @@ void MidiDriver_TOWNS::timerCallback(int timerId) {
 	}
 }
 
+void MidiDriver_TOWNS::updateParser() {
+	if (_timerProc)
+		_timerProc(_timerProcPara);
+}
+
+void MidiDriver_TOWNS::updateOutputChannels() {
+	_tickCounter2 += 10000;
+	while (_tickCounter2 >= 16667) {
+		_tickCounter2 -= 16667;
+		for (int i = 0; i < 6; i++) {
+			TownsMidiOutputChannel *oc = _out[i];
+			if (oc->update())
+				return;
+		}
+	}
+}
+
 TownsMidiOutputChannel *MidiDriver_TOWNS::allocateOutputChannel(int pri) {
 	TownsMidiOutputChannel *res = 0;
 
@@ -999,23 +1039,6 @@ TownsMidiOutputChannel *MidiDriver_TOWNS::allocateOutputChannel(int pri) {
 		res->disconnect();
 
 	return res;
-}
-
-void MidiDriver_TOWNS::updateParser() {
-	if (_timerProc)
-		_timerProc(_timerProcPara);
-}
-
-void MidiDriver_TOWNS::updateOutputChannels() {
-	_tickCounter2 += 10000;
-	while (_tickCounter2 >= 16667) {
-		_tickCounter2 -= 16667;
-		for (int i = 0; i < 6; i++) {
-			TownsMidiOutputChannel *oc = _out[i];
-			if (oc->update())
-				return;
-		}
-	}
 }
 
 int MidiDriver_TOWNS::randomValue(int para) {

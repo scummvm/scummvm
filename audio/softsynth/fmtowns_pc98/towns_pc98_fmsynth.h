@@ -182,7 +182,7 @@ private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 
-	int _externLock;
+	int _lock;
 	Common::Mutex _mutex;
 
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
