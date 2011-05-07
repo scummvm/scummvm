@@ -2286,7 +2286,7 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 LIBS            += -ldl
 '
 		;;
-	linux* | webos)
+	linux*)
 _def_plugin='
 #define PLUGIN_PREFIX	"lib"
 #define PLUGIN_SUFFIX	".so"
@@ -2334,6 +2334,24 @@ PLUGIN_LDFLAGS		+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backend
 _mak_plugins='
 LDFLAGS				+= -Wl,-T$(srcdir)/backends/plugins/psp/main_prog.ld
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lstdc++ -lc
+'
+		;;
+	webos)
+_def_plugin='
+#define PLUGIN_PREFIX	"lib"
+#define PLUGIN_SUFFIX	".so"
+'
+_mak_plugins='
+DYNAMIC_MODULES := 1
+PLUGIN_PREFIX := lib
+PLUGIN_SUFFIX := .so
+PLUGIN_EXTRA_DEPS =
+CXXFLAGS        += -DDYNAMIC_MODULES
+CXXFLAGS        += -fpic
+PLUGIN_LDFLAGS  += -shared $(LDFLAGS)
+PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
+POST_OBJS_FLAGS := -Wl,-no-whole-archive
+LIBS            += -ldl
 '
 		;;
 	*)
