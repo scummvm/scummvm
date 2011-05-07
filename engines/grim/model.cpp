@@ -509,6 +509,11 @@ void Model::HierNode::setMatrix(Graphics::Matrix4 matrix) {
 }
 
 void Model::HierNode::update() {
+	if (_sibling) {
+		_sibling->setMatrix(_matrix);
+		_sibling->update();
+	}
+
 	if (!_initialized)
 		return;
 
