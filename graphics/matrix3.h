@@ -40,38 +40,34 @@ public:
 	void setAsIdentity();
 
 	void constructAroundPitch(float pitch);
-	void constructAroundYaw(float pitch);
-	void constructAroundRoll(float pitch);
+	void constructAroundYaw(float yaw);
+	void constructAroundRoll(float roll);
 
-	void getPitchYawRoll(float* pPitch, float* pYaw, float* pRoll);
+	void getPitchYawRoll(float* pPitch, float* pYaw, float* pRoll) const;
 
-	float getPitch();
-	float getYaw();
-	float getRoll();
+	float getPitch() const;
+	float getYaw() const;
+	float getRoll() const;
 
-	void transform(Vector3d* v);
+	void transform(Vector3d* v) const;
 
 	// operators
 	Matrix3& operator *=(const Matrix3& s) {
-		float x, y, z;
+		float rx = s._right.dotProduct(_right.x(), _up.x(), _at.x());
+		float ry = s._right.dotProduct(_right.y(), _up.y(), _at.y());
+		float rz = s._right.dotProduct(_right.z(), _up.z(), _at.z());
 
-		x = _right.dotProduct(s._right.x(), s._up.x(), s._at.x());
-		y = _right.dotProduct(s._right.y(), s._up.y(), s._at.y());
-		z = _right.dotProduct(s._right.z(), s._up.z(), s._at.z());
+		float ux = s._up.dotProduct(_right.x(), _up.x(), _at.x());
+		float uy = s._up.dotProduct(_right.y(), _up.y(), _at.y());
+		float uz = s._up.dotProduct(_right.z(), _up.z(), _at.z());
 
-		_right.set(x, y, z);
+		float ax = s._at.dotProduct(_right.x(), _up.x(), _at.x());
+		float ay = s._at.dotProduct(_right.y(), _up.y(), _at.y());
+		float az = s._at.dotProduct(_right.z(), _up.z(), _at.z());
 
-		x = _up.dotProduct(s._right.x(), s._up.x(), s._at.x());
-		y = _up.dotProduct(s._right.y(), s._up.y(), s._at.y());
-		z = _up.dotProduct(s._right.z(), s._up.z(), s._at.z());
-
-		_up.set( x, y, z );
-
-		x = _at.dotProduct(s._right.x(), s._up.x(), s._at.x());
-		y = _at.dotProduct(s._right.y(), s._up.y(), s._at.y());
-		z = _at.dotProduct(s._right.z(), s._up.z(), s._at.z());
-
-		_at.set(x, y, z);
+		_right.set(rx,ry,rz);
+		_up.set(ux,uy,uz);
+		_at.set(ax,ay,az);
 
 		return *this;
 	}
