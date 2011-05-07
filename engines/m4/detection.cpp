@@ -44,11 +44,11 @@ uint32 MadsM4Engine::getFeatures() const { return _gameDescription->features; }
 Common::Language MadsM4Engine::getLanguage() const { return _gameDescription->desc.language; }
 Common::Platform MadsM4Engine::getPlatform() const { return _gameDescription->desc.platform; }
 
-}
+} // End of namespace M4
 
 static const PlainGameDescriptor m4Games[] = {
 	{"m4", "MADS/M4 engine game"},
-	{"riddle", "Ripley's Believe It of Not!: The Riddle of Master Lu"},
+	{"riddle", "Ripley's Believe It or Not!: The Riddle of Master Lu"},
 	{"burger", "Orion Burger"},
 	{"rex", "Rex Nebular and the Cosmic Gender Bender"},
 	{"dragon", "DragonSphere"},
