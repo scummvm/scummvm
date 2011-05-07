@@ -99,8 +99,8 @@ MidiMusic::MidiMusic(QueenEngine *vm)
 MidiMusic::~MidiMusic() {
 	_driver->setTimerCallback(0, 0);
 	_parser->unloadMusic();
-	_driver->close();
 	delete _parser;
+	_driver->close();
 	delete _driver;
 	delete[] _buf;
 	delete[] _musicData;
