@@ -66,7 +66,6 @@ STUB_FUNC2(L2_SetActorWalkRate)
 STUB_FUNC2(L2_GetActorWalkRate)
 STUB_FUNC2(L2_SetActorTurnRate)
 STUB_FUNC2(L2_SetSelectedActor)
-STUB_FUNC2(L2_LoadActor)
 STUB_FUNC2(L2_GetActorPos)
 STUB_FUNC2(L2_GetActorPuckVector)
 STUB_FUNC2(L2_GetActorYawToPoint)
@@ -324,7 +323,7 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "GetActorWalkRate", L2_GetActorWalkRate },
 	{ "SetActorTurnRate", L2_SetActorTurnRate },
 	{ "SetSelectedActor", L2_SetSelectedActor },
-	{ "LoadActor", L2_LoadActor },
+	{ "LoadActor", L1_LoadActor },
 	{ "GetActorPos", L2_GetActorPos },
 	{ "GetActorPuckVector", L2_GetActorPuckVector },
 	{ "GetActorYawToPoint", L2_GetActorYawToPoint },
