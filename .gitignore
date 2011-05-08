@@ -74,5 +74,5 @@ ipch/
 *.tss
 
 #Ignore default Visual Studio build folders
-[Dd]ebug/
-[Rr]elease/
+[Dd]ebug*/
+[Rr]elease*/
