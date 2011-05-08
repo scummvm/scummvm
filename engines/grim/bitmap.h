@@ -38,6 +38,8 @@ public:
 	Bitmap(const char *data, int width, int height, int bpp, const char *filename);
 	Bitmap();
 
+	bool loadTile(const char *filename, const char *data, int len);
+
 	const char *getFilename() const { return _fname.c_str(); }
 
 	void draw() const;
