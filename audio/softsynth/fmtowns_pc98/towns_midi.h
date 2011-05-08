@@ -58,7 +58,7 @@ private:
 	void updateParser();
 	void updateOutputChannels();
 
-	TownsMidiOutputChannel *allocateOutputChannel(int pri);
+	TownsMidiOutputChannel *allocateOutputChannel(uint8 pri);
 		
 	int randomValue(int para);
 
@@ -73,7 +73,7 @@ private:
 
 	uint32 _tickCounter1;
 	uint32 _tickCounter2;
-	uint8 _curChan;
+	uint8 _allocCurPos;
 	uint8 _rand;
 	
 	bool _open;

@@ -44,8 +44,8 @@ public:
 	bool update();
 
 	enum CheckPriorityStatus {
-		kDisconnected = -3,
-		kHighPriority = -2
+		kDisconnected = -2,
+		kHighPriority = -1
 	};
 
 	int checkPriority(int pri);
@@ -55,14 +55,14 @@ private:
 		uint8 numLoop;
 		int32 fld_1;
 		int32 duration;
-		uint32 fld_9;
+		uint16 fld_9;
 		int32 effectState;
 		uint8 fld_11;
 		uint8 ar1[4];
 		uint8 ar2[4];
 		int8 modWheelSensitivity;
 		int8 modWheelState;
-		uint8 modWheelLast;
+		int8 modWheelLast;
 		uint16 fld_1d;
 		uint32 fld_21;
 		int32 fld_25;
@@ -91,10 +91,10 @@ private:
 	void keyOnSetFreq(uint16 frq);
 	void out(uint8 reg, uint8 val);
 
-	TownsMidiInputChannel *_midi;
+	TownsMidiInputChannel *_in;
 	TownsMidiOutputChannel *_prev;
 	TownsMidiOutputChannel *_next;
-	uint8 _fld_c;
+	uint8 _adjustModTl;
 	uint8 _chan;
 	uint8 _note;
 	uint8 _carrierTl;
@@ -145,7 +145,7 @@ private:
 
 	void releasePedal();
 
-	TownsMidiOutputChannel *_outChan;
+	TownsMidiOutputChannel *_out;
 	
 	uint8 *_instrument;
 	uint8 _prg;
@@ -215,11 +215,13 @@ uint8 TownsMidiChanState::get(uint8 type) {
 }
 
 TownsMidiOutputChannel::TownsMidiOutputChannel(MidiDriver_TOWNS *driver, int chanIndex) : _driver(driver), _chan(chanIndex),
-	_midi(0), _prev(0), _next(0), _fld_c(0), _carrierTl(0), _note(0), _modulatorTl(0), _sustainNoteOff(0), _duration(0), _freq(0), _freqAdjust(0) {
+	_in(0), _prev(0), _next(0), _adjustModTl(0), _carrierTl(0), _note(0), _modulatorTl(0), _sustainNoteOff(0), _duration(0), _freq(0), _freqAdjust(0) {
 	_stateA = new StateA[2];
 	memset(_stateA, 0, 2 * sizeof(StateA));
 	_stateB = new StateB[2];
 	memset(_stateB, 0, 2 * sizeof(StateB));
+	_stateB[0].a = &_stateA[1];
+	_stateB[1].a = &_stateA[0];
 }
 
 TownsMidiOutputChannel::~TownsMidiOutputChannel() {
@@ -259,7 +261,7 @@ void TownsMidiOutputChannel::setupProgram(const uint8 *data, uint8 mLevelPara, u
 	out(0x40, (tl1 & 0x3f) + 15);
 	out(0x50, ((attDec1 >> 4) << 1) | ((attDec1 >> 4) & 1));
 	out(0x60, ((attDec1 << 1) | (attDec1 & 1)) & 0x1f);
-	out(0x70, (mulAmsFms1 & 0x20) ^ 0x20 ? ((sus1 & 0x0f) << 1) | 1: 0);
+	out(0x70, (mulAmsFms1 & 0x20) ^ 0x20 ? (((sus1 & 0x0f) << 1) | 1) : 0);
 	out(0x80, sus1);
 
 	uint8 mulAmsFms2 = _driver->_chanState[chan].mulAmsFms = data[5];
@@ -272,7 +274,7 @@ void TownsMidiOutputChannel::setupProgram(const uint8 *data, uint8 mLevelPara, u
 	tl2 = (tl2 & 0x3f) + 15;
 	uint8 ar2 = ((attDec2 >> 4) << 1) | ((attDec2 >> 4) & 1);
 	uint8 dec2 = ((attDec2 << 1) | (attDec2 & 1)) & 0x1f;
-	uint8 sus2r = (mulAmsFms2 & 0x20) ^ 0x20 ? ((sus2 & 0x0f) << 1) | 1: 0;
+	uint8 sus2r = (mulAmsFms2 & 0x20) ^ 0x20 ? (((sus2 & 0x0f) << 1) | 1) : 0;
 
 	for (int i = 4; i < 16; i += 4) {
 		out(0x30 + i, mul2);
@@ -284,11 +286,12 @@ void TownsMidiOutputChannel::setupProgram(const uint8 *data, uint8 mLevelPara, u
 	}
 
 	_driver->_chanState[chan].fgAlg = data[10];
+
 	uint8 alg = 5 + 2 * (data[10] & 1);
 	uint8 fb = 4 * (data[10] & 0x0e);
 	out(0xb0, fb | alg);
 	uint8 t = mulAmsFms1 | mulAmsFms2;
-	out(0xb4, 0xc0 | ((t & 0x80) >> 3) | ((t & 0x40) >> 5));
+	out(0xb4, (0xc0 | ((t & 0x80) >> 3) | ((t & 0x40) >> 5)));
 }
 
 void TownsMidiOutputChannel::setupEffects(int index, uint8 flags, const uint8 *effectData) {
@@ -305,7 +308,7 @@ void TownsMidiOutputChannel::setupEffects(int index, uint8 flags, const uint8 *e
 	b->type = effectType[flags & 0x0f];
 	a->fld_9 = maxVal[flags & 0x0f];
 	a->modWheelSensitivity = 31;
-	a->modWheelState = b->useModWheel ? _midi->_modWheel >> 2 : 31;
+	a->modWheelState = b->useModWheel ? _in->_modWheel >> 2 : 31;
 
 	switch (b->type) {
 	case 0:
@@ -341,16 +344,18 @@ void TownsMidiOutputChannel::setModWheel(uint8 value) {
 void TownsMidiOutputChannel::connect(TownsMidiInputChannel *chan) {
 	if (!chan)
 		return;
-	_midi = chan;
-	_next = chan->_outChan;
+
+	_in = chan;
+	_next = chan->_out;
 	_prev = 0;
-	chan->_outChan = this;
+	chan->_out = this;
 	if (_next)
 		_next->_prev = this;
 }
 
 void TownsMidiOutputChannel::disconnect() {
 	keyOff();
+	
 	TownsMidiOutputChannel *p = _prev;
 	TownsMidiOutputChannel *n = _next;
 
@@ -359,19 +364,18 @@ void TownsMidiOutputChannel::disconnect() {
 	if (p)
 		p->_next = n;
 	else
-		_midi->_outChan = n;
-	_midi = 0;
+		_in->_out = n;
+	_in = 0;
 }
 
 bool TownsMidiOutputChannel::update() {
-	if (!_midi)
+	if (!_in)
 		return false;
 
 	if (_duration) {
 		_duration -= 17;
 		if (_duration <= 0) {
 			disconnect();
-			//_duration = 0;
 			return true;
 		}
 	}
@@ -385,11 +389,11 @@ bool TownsMidiOutputChannel::update() {
 }
 
 int TownsMidiOutputChannel::checkPriority(int pri) {
-	if (!_midi)
+	if (!_in)
 		return kDisconnected;
 
-	if (!_next && pri >= _midi->_priority)
-		return _midi->_priority;
+	if (!_next && pri >= _in->_priority)
+		return _in->_priority;
 
 	return kHighPriority;
 }
@@ -486,12 +490,11 @@ int TownsMidiOutputChannel::updateEffectOuter(StateA *a, StateB *b) {
 		retFlags |= 1;
 	}
 
-	--a->fld_21;/*???*/
-	if (a->fld_21 != 0)
+	if (--a->fld_21)
 		return retFlags;
 
 	if (++a->numLoop > 4) {
-		if (a->fld_11 == 0) {
+		if (!a->fld_11) {
 			a->numLoop = 0;
 			return retFlags;
 		}
@@ -506,7 +509,7 @@ int TownsMidiOutputChannel::updateEffectOuter(StateA *a, StateB *b) {
 
 void TownsMidiOutputChannel::updateEffect(StateA *a) {
 	uint8 c = a->numLoop - 1;
-	uint16 v = a->ar1[c];
+	uint8 v = a->ar1[c];
 	int32 e = _effectData[_driver->_chanEffectLevel[((v & 0x7f) << 5) + a->modWheelSensitivity]];
 
 	if (v & 0x80)
@@ -665,7 +668,7 @@ const uint16 TownsMidiOutputChannel::_freqLSB[] = {
 	0x055B, 0x055B, 0x055B, 0x055B, 0x055B, 0x055B, 0x055B, 0x055B
 };
 
-TownsMidiInputChannel::TownsMidiInputChannel(MidiDriver_TOWNS *driver, int chanIndex) : MidiChannel(), _driver(driver), _outChan(0), _prg(0), _chanIndex(chanIndex),
+TownsMidiInputChannel::TownsMidiInputChannel(MidiDriver_TOWNS *driver, int chanIndex) : MidiChannel(), _driver(driver), _out(0), _prg(0), _chanIndex(chanIndex),
 	_effectLevel(0), _priority(0), _ctrlVolume(0), _tl(0), _pan(0), _panEff(0), _transpose(0), _percS(0), _pitchBendFactor(0), _pitchBend(0), _sustain(0), _freqLSB(0),
 	_fld_1f(0), _detune(0), _modWheel(0), _allocated(false) {
 	_instrument = new uint8[30];
@@ -692,16 +695,16 @@ void TownsMidiInputChannel::send(uint32 b) {
 }
 
 void TownsMidiInputChannel::noteOff(byte note) {
-	if (!_outChan)
+	if (!_out)
 		return;
 
-	if (_outChan->_note != note)
+	if (_out->_note != note)
 		return;
 
 	if (_sustain)
-		_outChan->_sustainNoteOff = 1;
+		_out->_sustainNoteOff = 1;
 	else
-		_outChan->disconnect();
+		_out->disconnect();
 }
 
 void TownsMidiInputChannel::noteOn(byte note, byte velocity) {
@@ -712,7 +715,7 @@ void TownsMidiInputChannel::noteOn(byte note, byte velocity) {
 
 	oc->connect(this);
 
-	oc->_fld_c = _instrument[10] & 1;
+	oc->_adjustModTl = _instrument[10] & 1;
 	oc->_note = note;
 	oc->_sustainNoteOff = 0;
 	oc->_duration = _instrument[29] * 63;
@@ -725,7 +728,7 @@ void TownsMidiInputChannel::noteOn(byte note, byte velocity) {
 	if (oc->_carrierTl > 63)
 		oc->_carrierTl = 63;
 
-	oc->setupProgram(_instrument, oc->_fld_c == 1 ? _programAdjustLevel[_driver->_chanEffectLevel[(_tl >> 2) + (oc->_modulatorTl << 5)]] : oc->_modulatorTl, _programAdjustLevel[_driver->_chanEffectLevel[(_tl >> 2) + (oc->_carrierTl << 5)]]);
+	oc->setupProgram(_instrument, oc->_adjustModTl == 1 ? _programAdjustLevel[_driver->_chanEffectLevel[(_tl >> 2) + (oc->_modulatorTl << 5)]] : oc->_modulatorTl, _programAdjustLevel[_driver->_chanEffectLevel[(_tl >> 2) + (oc->_carrierTl << 5)]]);
 	oc->noteOn(note + _transpose, _freqLSB);
 
 	if (_instrument[11] & 0x80)
@@ -736,7 +739,7 @@ void TownsMidiInputChannel::noteOn(byte note, byte velocity) {
 	if (_instrument[20] & 0x80)
 		oc->setupEffects(1, _instrument[20], &_instrument[21]);
 	else
-		oc->_stateA[1].numLoop = 0;	
+		oc->_stateA[1].numLoop = 0;
 }
 
 void TownsMidiInputChannel::programChange(byte program) {
@@ -746,8 +749,8 @@ void TownsMidiInputChannel::programChange(byte program) {
 void TownsMidiInputChannel::pitchBend(int16 bend) {
 	_pitchBend = bend;
 	_freqLSB = ((_pitchBend * _pitchBendFactor) >> 6) + _detune;
-	for (TownsMidiOutputChannel *oc = _outChan; oc; oc = oc->_next)
-		oc->noteOnPitchBend(oc->_note + oc->_midi->_transpose, _freqLSB);
+	for (TownsMidiOutputChannel *oc = _out; oc; oc = oc->_next)
+		oc->noteOnPitchBend(oc->_note + oc->_in->_transpose, _freqLSB);
 }
 
 void TownsMidiInputChannel::controlChange(byte control, byte value) {
@@ -765,8 +768,8 @@ void TownsMidiInputChannel::controlChange(byte control, byte value) {
 		controlSustain(value);
 		break;
 	case 123:
-		while (_outChan)
-			_outChan->disconnect();
+		while (_out)
+			_out->disconnect();
 		break;
 	default:
 		break;
@@ -776,8 +779,8 @@ void TownsMidiInputChannel::controlChange(byte control, byte value) {
 void TownsMidiInputChannel::pitchBendFactor(byte value) {
 	_pitchBendFactor = value;
 	_freqLSB = ((_pitchBend * _pitchBendFactor) >> 6) + _detune;
-	for (TownsMidiOutputChannel *oc = _outChan; oc; oc = oc->_next)
-		oc->noteOnPitchBend(oc->_note + oc->_midi->_transpose, _freqLSB);
+	for (TownsMidiOutputChannel *oc = _out; oc; oc = oc->_next)
+		oc->noteOnPitchBend(oc->_note + oc->_in->_transpose, _freqLSB);
 }
 
 void TownsMidiInputChannel::priority(byte value) {
@@ -790,7 +793,7 @@ void TownsMidiInputChannel::sysEx_customInstrument(uint32 type, const byte *inst
 
 void TownsMidiInputChannel::controlModulationWheel(byte value) {
 	_modWheel = value;
-	for (TownsMidiOutputChannel *oc = _outChan; oc; oc = oc->_next)
+	for (TownsMidiOutputChannel *oc = _out; oc; oc = oc->_next)
 		oc->setModWheel(value);
 }
 
@@ -808,7 +811,7 @@ void TownsMidiInputChannel::controlVolume(byte value) {
 	_tl = value;
 	
 	/* nullsub
-	_outChan->setVolume(_tl);
+	_out->setVolume(_tl);
 	*/
 }
 
@@ -823,7 +826,7 @@ void TownsMidiInputChannel::controlSustain(byte value) {
 }
 
 void TownsMidiInputChannel::releasePedal() {
-	for (TownsMidiOutputChannel *oc = _outChan; oc; oc = oc->_next) {
+	for (TownsMidiOutputChannel *oc = _out; oc; oc = oc->_next) {
 		if (oc->_sustainNoteOff)
 			oc->disconnect();
 	}
@@ -840,7 +843,7 @@ const uint8 TownsMidiInputChannel::_programAdjustLevel[] = {
 	0x3D, 0x3D, 0x3E, 0x3E, 0x3E, 0x3F, 0x3F, 0x3F
 };
 
-MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer) : _timerProc(0), _timerProcPara(0), _tickCounter1(0), _tickCounter2(0), _curChan(0), _rand(1), _open(false) {
+MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer) : _timerProc(0), _timerProcPara(0), _open(false) {
 	_intf = new TownsAudioInterface(mixer, this);
 }
 
@@ -882,6 +885,10 @@ int MidiDriver_TOWNS::open() {
 
 	_intf->callback(33, 8);
 	_intf->setSoundEffectChanMask(~0x3f);
+
+	 _tickCounter1 = _tickCounter2 = 0;
+	 _allocCurPos = 0;
+	 _rand = 1;
 
 	_open = true;
 
@@ -978,7 +985,7 @@ MidiChannel *MidiDriver_TOWNS::allocateChannel() {
 }
 
 MidiChannel *MidiDriver_TOWNS::getPercussionChannel() {
-	return 0;//_channels[16];
+	return 0;
 }
 
 void MidiDriver_TOWNS::timerCallback(int timerId) {
@@ -1018,20 +1025,20 @@ void MidiDriver_TOWNS::updateOutputChannels() {
 	}
 }
 
-TownsMidiOutputChannel *MidiDriver_TOWNS::allocateOutputChannel(int pri) {
+TownsMidiOutputChannel *MidiDriver_TOWNS::allocateOutputChannel(uint8 pri) {
 	TownsMidiOutputChannel *res = 0;
 
 	for (int i = 0; i < 6; i++) {
-		if (++_curChan == 6)
-			_curChan = 0;
+		if (++_allocCurPos == 6)
+			_allocCurPos = 0;
 
-		int s = _out[i]->checkPriority(pri);
+		int s = _out[_allocCurPos]->checkPriority(pri);
 		if (s == TownsMidiOutputChannel::kDisconnected)
-			return _out[i];
+			return _out[_allocCurPos];
 
 		if (s != TownsMidiOutputChannel::kHighPriority) {
 			pri = s;
-			res = _out[i];
+			res = _out[_allocCurPos];
 		}
 	}
 	
