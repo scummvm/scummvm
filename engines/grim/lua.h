@@ -32,12 +32,33 @@ namespace Grim {
 
 class Actor;
 class Color;
+class Costume;
 class Font;
 class ObjectState;
 class PrimitiveObject;
 class TextObject;
 
 struct TextObjectDefaults;
+
+extern int refSystemTable;
+extern int refTypeOverride;
+extern int refOldConcatFallback;
+extern int refTextObjectX;
+extern int refTextObjectY;
+extern int refTextObjectFont;
+extern int refTextObjectWidth;
+extern int refTextObjectHeight;
+extern int refTextObjectFGColor;
+extern int refTextObjectBGColor;
+extern int refTextObjectFXColor;
+extern int refTextObjectHIColor;
+extern int refTextObjectDuration;
+extern int refTextObjectCenter;
+extern int refTextObjectLJustify;
+extern int refTextObjectRJustify;
+extern int refTextObjectVolume;
+extern int refTextObjectBackground;
+extern int refTextObjectPan;
 
 // Helpers
 bool getbool(int num);
@@ -51,7 +72,7 @@ Color *getcolor(lua_Object obj);
 PrimitiveObject *getprimitive(lua_Object obj);
 ObjectState *getobjectstate(lua_Object obj);
 byte clamp_color(int c);
-bool findCostume();
+bool findCostume(lua_Object costumeObj, Actor *actor, Costume **costume);
 
 void setDefaultObjectParams(TextObjectDefaults *defaults, lua_Object tableObj);
 Common::String parseMsgText(const char *msg, char *msgId);
