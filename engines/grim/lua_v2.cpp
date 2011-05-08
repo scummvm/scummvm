@@ -155,7 +155,6 @@ STUB_FUNC2(L2_GetTextObjectDimensions)
 STUB_FUNC2(L2_ChangeTextObject)
 STUB_FUNC2(L2_KillTextObject)
 STUB_FUNC2(L2_ExpireText)
-STUB_FUNC2(L2_MakeColor)
 STUB_FUNC2(L2_GetColorComponents)
 STUB_FUNC2(L2_GetTextCharPosition)
 STUB_FUNC2(L2_LocalizeString)
@@ -540,7 +539,7 @@ struct luaL_reg monkeyTextOpcodes[] = {
 	{ "KillTextObject", L2_KillTextObject },
 	{ "ExpireText", L2_ExpireText },
 	{ "PurgeText", L2_PurgeText },
-	{ "MakeColor", L2_MakeColor },
+	{ "MakeColor", L1_MakeColor },
 	{ "GetColorComponents", L2_GetColorComponents },
 	{ "GetTextCharPosition", L2_GetTextCharPosition },
 	{ "LocalizeString", L2_LocalizeString },
