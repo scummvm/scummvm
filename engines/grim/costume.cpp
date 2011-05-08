@@ -462,15 +462,17 @@ private:
 ColormapComponent::ColormapComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
 		Costume::Component(p, parentID, t) {
 	_cmap = g_resourceloader->getColormap(filename);
+
+	// Set the colormap here in the ctor and not in init()!
+	if (p)
+		p->setColormap(_cmap);
 }
 
 ColormapComponent::~ColormapComponent() {
 }
 
 void ColormapComponent::init() {
-	if (_parent)
-		_parent->setColormap(_cmap);
-	else
+	if (!_parent)
 		warning("No parent to apply colormap object on. CMap: %s, Costume: %s",
 				_cmap->getFilename(),_cost->getFilename());
 }
