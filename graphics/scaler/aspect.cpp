@@ -79,10 +79,7 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 		}
 	} else {
 		while (width--) {
-			// TODO: We really would like to use interpolate16_5_3, but that
-			// does not exist (yet), so we use this trick instead.
-			uint16 tmp = *srcA++;
-			*dst++ = interpolate16_5_2_1<ColorMask>(*srcB++, tmp, tmp);
+			*dst++ = interpolate16_5_3<ColorMask>(*srcB++, *srcA++);
 		}
 	}
 }
