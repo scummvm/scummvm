@@ -116,11 +116,21 @@ void MidiDriver_CAMD::close() {
 }
 
 void MidiDriver_CAMD::send(uint32 b) {
+	if (!_isOpen) {
+		warning("MidiDriver_CAMD: Got event while not open");
+		return;
+	}
+
 	ULONG data = READ_LE_UINT32(&b);
 	_ICamd->PutMidi(_midi_link, data);
 }
 
 void MidiDriver_CAMD::sysEx(const byte *msg, uint16 length) {
+	if (!_isOpen) {
+		warning("MidiDriver_CAMD: Got SysEx while not open");
+		return;
+	}
+
 	unsigned char buf[266];
 
 	assert(length + 2 <= ARRAYSIZE(buf));
