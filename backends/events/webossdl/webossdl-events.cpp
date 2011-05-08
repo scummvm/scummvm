@@ -92,6 +92,8 @@ void WebOSSdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod,
 		event.kbd.flags |= Common::KBD_SHIFT;
 	if (mod & KMOD_CTRL)
 		event.kbd.flags |= Common::KBD_CTRL;
+		
+	// Holding down the gesture area emulates the ALT key
 	if (gestureDown)
 		event.kbd.flags |= Common::KBD_ALT;
 }
@@ -110,6 +112,14 @@ bool WebOSSdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 		gestureDown = true;
 		gestureDownTime = getMillis();
 		return true;
+	}
+
+	// Ensure that ALT key (Gesture down) is ignored when back or forward
+	// gesture is detected. This is needed for WebOS 1 which releases the
+	// gesture tap AFTER the backward gesture event and not BEFORE (Like
+	// WebOS 2).
+	if (ev.key.keysym.sym == 27 || ev.key.keysym.sym == 229) {
+	    gestureDown = false;
 	}
 
 	// Call original SDL key handler.
