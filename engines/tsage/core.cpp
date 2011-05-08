@@ -1166,6 +1166,10 @@ ScenePalette::ScenePalette() {
 	_field412 = 0;
 }
 
+ScenePalette::~ScenePalette() {
+	clearListeners();
+}
+
 ScenePalette::ScenePalette(int paletteNum) {
 	loadPalette(paletteNum);
 }

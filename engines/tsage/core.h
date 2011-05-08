@@ -349,6 +349,7 @@ public:
 public:
 	ScenePalette();
 	ScenePalette(int paletteNum);
+	~ScenePalette();
 
 	bool loadPalette(int paletteNum);
 	void refresh();
