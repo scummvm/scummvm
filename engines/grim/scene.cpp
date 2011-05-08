@@ -25,6 +25,8 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#include "common/memstream.h"
+
 #include "engines/grim/scene.h"
 #include "engines/grim/textsplit.h"
 #include "engines/grim/colormap.h"
@@ -40,10 +42,40 @@ int Scene::s_id = 0;
 
 Scene::Scene(const char *sceneName, const char *buf, int len) :
 		_locked(false), _name(sceneName), _enableLights(false) {
-	TextSplitter ts(buf, len);
-	char tempBuf[256];
+
 	++s_id;
 	_id = s_id;
+
+	if (len >= 7 && memcmp(buf, "section", 7) == 0) {
+		TextSplitter ts(buf, len);
+		loadText(ts);
+	} else {
+		Common::MemoryReadStream ms((const byte *)buf, len);
+		loadBinary(&ms);
+	}
+}
+
+Scene::Scene() :
+	_cmaps(NULL) {
+
+}
+
+Scene::~Scene() {
+	if (_cmaps) {
+		delete[] _cmaps;
+		delete[] _setups;
+		delete[] _lights;
+		for (int i = 0; i < _numSectors; ++i) {
+			delete _sectors[i];
+		}
+		delete[] _sectors;
+		for (StateList::iterator i = _states.begin(); i != _states.end(); ++i)
+			delete (*i);
+	}
+}
+
+void Scene::loadText(TextSplitter &ts){
+	char tempBuf[256];
 
 	ts.expectString("section: colormaps");
 	ts.scanString(" numcolormaps %d", 1, &_numCmaps);
@@ -109,29 +141,51 @@ Scene::Scene(const char *sceneName, const char *buf, int len) :
 	_sectors = new Sector*[_numSectors];
 	ts.setLineNumber(sectorStart);
 	for (int i = 0; i < _numSectors; i++) {
-        _sectors[i] = new Sector();
+		_sectors[i] = new Sector();
 		_sectors[i]->load(ts);
 	}
 }
 
-Scene::Scene() :
-	_cmaps(NULL) {
+void Scene::loadBinary(Common::MemoryReadStream *ms)
+{
+	// yes, an array of size 0
+	_cmaps = new CMapPtr[0];
 
-}
 
-Scene::~Scene() {
-	if (_cmaps) {
-		delete[] _cmaps;
-		delete[] _setups;
-		delete[] _lights;
-		for (int i = 0; i < _numSectors; ++i) {
-			delete _sectors[i];
-		}
-		delete[] _sectors;
-		for (StateList::iterator i = _states.begin(); i != _states.end(); ++i)
-			delete (*i);
+	_numSetups = ms->readUint32LE();
+	_setups = new Setup[_numSetups];
+	for (int i = 0; i < _numSetups; i++)
+		_setups[i].loadBinary(ms);
+	_setups = new Setup[1];
+	_currSetup = _setups;
+
+	_numSectors = 0;
+	_numLights = 0;
+	_lights = NULL;
+	_sectors = NULL;
+
+	_minVolume = 0;
+	_maxVolume = 0;
+
+	// the rest may or may not be optional. Might be a good idea to check if there is no more data.
+
+	_numLights = ms->readUint32LE();
+	_lights = new Light[_numLights];
+	for (int i = 0; i < _numLights; i++)
+		_lights[i].loadBinary(ms);
+
+	// bypass light stuff for now
+	_numLights = 0;
+
+	_numSectors = ms->readUint32LE();
+	// Allocate and fill an array of sector info
+	_sectors = new Sector*[_numSectors];
+	for (int i = 0; i < _numSectors; i++) {
+		_sectors[i] = new Sector();
+		_sectors[i]->loadBinary(ms);
 	}
 }
+
 
 void Scene::saveState(SaveGame *savedState) const {
 	savedState->writeString(_name);
@@ -330,6 +384,32 @@ void Scene::Setup::load(TextSplitter &ts) {
 	}
 }
 
+void Scene::Setup::loadBinary(Common::MemoryReadStream *ms) {
+	char name[128];
+	ms->read(name, 128);
+	_name = Common::String(name);
+
+	// Skip an unknown number (this is the stringlength of the following string)
+	int fNameLen = 0;
+	fNameLen = ms->readUint32LE();
+
+	char* fileName = new char[fNameLen];
+	ms->read(fileName,fNameLen);
+
+	_bkgndBm = g_resourceloader->getBitmap(fileName);
+
+
+	ms->read(_pos._coords, 12);
+
+	ms->read(_interest._coords, 12);
+
+	ms->read(&_roll, 4);
+	ms->read(&_fov, 4);
+	ms->read(&_nclip, 4);
+	ms->read(&_fclip, 4);
+
+}
+
 void Scene::Light::load(TextSplitter &ts) {
 	char buf[256];
 
@@ -356,6 +436,11 @@ void Scene::Light::load(TextSplitter &ts) {
 	_color.getRed() = r;
 	_color.getGreen() = g;
 	_color.getBlue() = b;
+}
+
+void Scene::Light::loadBinary(Common::MemoryReadStream *ms) {
+	// skip lights for now
+	ms->seek(100, SEEK_CUR);
 }
 
 void Scene::Setup::setupCamera() const {
