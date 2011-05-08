@@ -105,7 +105,7 @@ static void L2_SetActorLighting() {
 	if (lua_isnil(lightModeObj) || !lua_isnumber(lightModeObj))
 		return;
 
-	int lightMode = lua_getnumber(lightModeObj);
+	int lightMode = (int)lua_getnumber(lightModeObj);
 	if (lightMode != 0) {
 		if (lightMode == 1) {
 			//FIXME actor->
