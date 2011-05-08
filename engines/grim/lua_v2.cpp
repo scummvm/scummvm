@@ -72,7 +72,6 @@ STUB_FUNC2(L2_GetActorPos)
 STUB_FUNC2(L2_GetActorPuckVector)
 STUB_FUNC2(L2_GetActorYawToPoint)
 STUB_FUNC2(L2_SetActorReflection)
-STUB_FUNC2(L2_PutActorAt)
 STUB_FUNC2(L2_PutActorInSet)
 STUB_FUNC2(L2_WalkActorVector)
 STUB_FUNC2(L2_WalkActorForward)
@@ -328,7 +327,7 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "GetActorPuckVector", L2_GetActorPuckVector },
 	{ "GetActorYawToPoint", L2_GetActorYawToPoint },
 	{ "SetActorReflection", L2_SetActorReflection },
-	{ "PutActorAt", L2_PutActorAt },
+	{ "PutActorAt", L1_PutActorAt },
 	{ "PutActorInSet", L2_PutActorInSet },
 	{ "WalkActorVector", L2_WalkActorVector },
 	{ "WalkActorForward", L2_WalkActorForward },
