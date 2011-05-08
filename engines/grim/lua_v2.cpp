@@ -33,7 +33,9 @@
 
 namespace Grim {
 
-
+static void L2_GetCPUSpeed() {
+	lua_pushnumber(500); // anything above 333 make best configuration
+}
 
 static void L2_GetActiveCD() {
 	// return current CD number 1 or 2, original can also avoid push any numer
@@ -282,7 +284,6 @@ STUB_FUNC2(L2_PitchCamera)
 STUB_FUNC2(L2_RollCamera)
 STUB_FUNC2(L2_UndimAll)
 STUB_FUNC2(L2_UndimRegion)
-STUB_FUNC2(L2_GetCPUSpeed)
 STUB_FUNC2(L2_NewLayer)
 STUB_FUNC2(L2_FreeLayer)
 STUB_FUNC2(L2_SetLayerSortOrder)
