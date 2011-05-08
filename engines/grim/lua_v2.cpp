@@ -35,6 +35,23 @@
 
 namespace Grim {
 
+static void L2_StopActorChores() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object paramObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	if (!actor)
+		return;
+
+	bool p = lua_isnil(paramObj) != 0;
+	// I'm not fully sure about bool logic here
+	//actor->func(p);
+	warning("L2_StopActorChores: implement opcode... bool param: %d, actor: %s", (int)p, actor->getName());
+}
+
 static void L2_SetActorLighting() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object lightModeObj = lua_getparam(2);
@@ -274,7 +291,6 @@ STUB_FUNC2(L2_DetachActor)
 STUB_FUNC2(L2_IsChoreValid)
 STUB_FUNC2(L2_IsChorePlaying)
 STUB_FUNC2(L2_IsChoreLooping)
-STUB_FUNC2(L2_StopActorChores)
 STUB_FUNC2(L2_PlayChore)
 STUB_FUNC2(L2_StopChore)
 STUB_FUNC2(L2_PauseChore)
