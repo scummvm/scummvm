@@ -222,11 +222,11 @@ bool Bitmap::loadTile(const char *filename, const char *data, int len) {
 	// Should check that we actually HAVE a TIL
 	bmoffset = o->readUint32LE();
 	o->seek(bmoffset + 16);
-	_numImages = o->readUint32LE();
-	if (_numImages < 5)
-		error("Can not handle a tile with less than 5 images");
+	int numSubImages = o->readUint32LE();
+	if (numSubImages < 5)
+		error("Can not handle a tile with less than 5 sub images");
 
-	_data = new char *[_numImages];
+	_data = new char *[numSubImages];
 
 	o->seek(16, SEEK_CUR);
 	_bpp = o->readUint32LE();
@@ -238,13 +238,13 @@ bool Bitmap::loadTile(const char *filename, const char *data, int len) {
 	o->seek(-8, SEEK_CUR);
 
 	int size = _bpp / 8 * _width * _height;
-	for (int i = 0; i < _numImages; ++i) {
+	for (int i = 0; i < numSubImages; ++i) {
 		_data[i] = new char[size];
 		o->seek(8, SEEK_CUR);
 		o->read(_data[i], size);
 	}
 	char* bMap = makeBitmapFromTile(_data, 640, 480, _bpp);
-	for (int i = 0; i < _numImages; ++i) {
+	for (int i = 0; i < numSubImages; ++i) {
 		delete[] _data[i];
 	}
 	_data[0] = bMap;
