@@ -20,8 +20,6 @@
  *
  */
 
-
-#include "backends/platform/sdl/sdl-sys.h"
 #include "backends/platform/openpandora/op-sdl.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "base/main.h"
@@ -35,7 +33,7 @@ int main(int argc, char *argv[]) {
 	assert(g_system);
 
 	// Pre initialize the backend
-	//((OSystem_OP *)g_system)->init();
+	((OSystem_OP *)g_system)->init();
 
 #ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new POSIXPluginProvider());
