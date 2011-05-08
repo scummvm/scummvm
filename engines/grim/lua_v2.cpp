@@ -30,8 +30,42 @@
 #include "engines/grim/lua/lauxlib.h"
 
 #include "engines/grim/grim.h"
+#include "engines/grim/actor.h"
+#include "engines/grim/lipsync.h"
 
 namespace Grim {
+
+static void L2_SetActorLighting() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object paramObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	if (!actor)
+		return;
+
+	if (lua_isnil(paramObj) || !lua_isnumber(paramObj))
+		return;
+
+	int param = lua_getnumber(paramObj);
+	if (param != 0) {
+		if (param == 1) {
+			//FIXME actor->
+			warning("L2_SetActorLighting: case param 1(LIGHT_FASTDYN), actor: %s", actor->getName());
+		} else if (param == 2) {
+			//FIXME actor->
+			warning("L2_SetActorLighting: case param 2(LIGHT_NORMDYN), actor: %s", actor->getName());
+		} else {
+			//FIXME actor->
+			warning("L2_SetActorLighting: case param %d(LIGHT_NONE), actor: %s", param, actor->getName());
+		}
+	} else {
+		//FIXME actor->
+		warning("L2_SetActorLighting: case param 0(LIGHT_STATIC), actor: %s", actor->getName());
+	}
+}
 
 static void L2_GetCPUSpeed() {
 	lua_pushnumber(500); // anything above 333 make best configuration
@@ -228,7 +262,6 @@ STUB_FUNC2(L2_ClearOverworld)
 STUB_FUNC2(L2_ToggleOverworld)
 STUB_FUNC2(L2_ActorStopMoving)
 STUB_FUNC2(L2_SetActorFOV)
-STUB_FUNC2(L2_SetActorLighting)
 STUB_FUNC2(L2_SetActorHeadLimits)
 STUB_FUNC2(L2_ActorActivateShadow)
 STUB_FUNC2(L2_EnableActorPuck)
