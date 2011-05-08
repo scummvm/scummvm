@@ -95,8 +95,6 @@ STUB_FUNC2(L2_StopActorChore)
 STUB_FUNC2(L2_IsActorResting)
 STUB_FUNC2(L2_Exit)
 STUB_FUNC2(L2_FunctionName)
-STUB_FUNC2(L2_EnableControl)
-STUB_FUNC2(L2_DisableControl)
 STUB_FUNC2(L2_GetControlState)
 STUB_FUNC2(L2_MakeCurrentSet)
 STUB_FUNC2(L2_LockSet)
@@ -358,8 +356,8 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "WorldToScreen", L2_WorldToScreen },
 	{ "exit", L2_Exit },
 	{ "FunctionName", L2_FunctionName },
-	{ "EnableControl", L2_EnableControl },
-	{ "DisableControl", L2_DisableControl },
+	{ "EnableControl", L1_EnableControl },
+	{ "DisableControl", L1_DisableControl },
 	{ "GetControlState", L2_GetControlState },
 	{ "PrintError", L1_PrintDebug },
 	{ "PrintWarning", L1_PrintDebug },
