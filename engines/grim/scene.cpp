@@ -156,7 +156,6 @@ void Scene::loadBinary(Common::MemoryReadStream *ms)
 	_setups = new Setup[_numSetups];
 	for (int i = 0; i < _numSetups; i++)
 		_setups[i].loadBinary(ms);
-	_setups = new Setup[1];
 	_currSetup = _setups;
 
 	_numSectors = 0;
