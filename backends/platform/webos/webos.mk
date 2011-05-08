@@ -58,7 +58,8 @@ PATH_DIST = $(srcdir)/dists/webos
 PATH_MOJO = $(PATH_DIST)/mojo
 APP_ID = $(shell basename $(prefix))
 APP_VERSION = $(shell printf "%d.%d.%02d%02d" $(VER_MAJOR) $(VER_MINOR) $(VER_PATCH) $(VER_PACKAGE))
-DESTDIR ?= portdist
+DESTDIR ?= staging
+PORTDISTDIR ?= portdist
 
 install: all
 	$(QUIET)$(INSTALL) -d "$(DESTDIR)$(prefix)"
@@ -87,5 +88,9 @@ endif
 uninstall:
 	$(QUIET)$(RM_REC) "$(DESTDIR)$(prefix)"
 
-package: install
-	$(QUIET)$(WEBOS_SDK)/bin/palm-package --use-v1-format "$(DESTDIR)$(prefix)" -o "$(DESTDIR)"
+package: uninstall install
+	$(QUIET)$(RM_REC) "$(PORTDISTDIR)"
+	$(QUIET)$(MKDIR) "$(PORTDISTDIR)"
+	$(QUIET)$(WEBOS_SDK)/bin/palm-package --use-v1-format "$(DESTDIR)$(prefix)" -o "$(PORTDISTDIR)"
+
+.PHONY: install uninstall package
