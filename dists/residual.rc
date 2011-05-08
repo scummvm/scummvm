@@ -12,7 +12,6 @@ modern.zip        FILE    "gui/themes/modern.zip"
 #ifdef USE_TRANSLATION
 translations.dat       FILE    "gui/themes/translations.dat"
 #endif
-#endif
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION     0,0,7,0
