@@ -268,7 +268,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 		arraysObj->idObj.hi = restoreSint32();
 		int32 constIndex = restoreSint32();
 
-		TaggedString *tempString;
+		TaggedString *tempString = NULL;
 		if (constIndex != -1) {
 			TObject obj;
 			restoreObjectValue(&obj, restoreSint32, restoreUint32);
@@ -278,6 +278,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 			tempString = luaS_new(tempStringBuffer);
 			tempString->globalval = obj;
 		}
+		assert(tempString);
 		tempString->constindex = constIndex;
 		arraysObj->object = tempString;
 		arraysObj++;
