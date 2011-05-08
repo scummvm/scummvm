@@ -68,6 +68,8 @@
    PkWare has also a specification at :
       ftp://ftp.pkware.com/probdesc.zip */
 
+// Disable symbol overrides so that we can use zlib.h
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/scummsys.h"
 

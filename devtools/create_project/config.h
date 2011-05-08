@@ -31,7 +31,7 @@
 #define LIBS_DEFINE "RESIDUAL_LIBS"       // Name of the include environment variable
 #define REVISION_DEFINE "RESIDUAL_INTERNAL_REVISION"
 
-#define HAS_VIDEO_FOLDER 0
+#define HAS_VIDEO_FOLDER 1
 #define ADDITIONAL_LIBRARY "glu32"
 #define NEEDS_RTTI 1
 

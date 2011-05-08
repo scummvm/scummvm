@@ -23,6 +23,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "graphics/line3d.h"
 
 #include "engines/grim/actor.h"

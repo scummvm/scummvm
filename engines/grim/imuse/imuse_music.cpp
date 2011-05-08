@@ -23,6 +23,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "engines/grim/grim.h"
 #include "engines/grim/colormap.h"
 

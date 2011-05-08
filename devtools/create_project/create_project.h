@@ -192,10 +192,12 @@ struct BuildSetup {
 	StringList defines;   ///< List of all defines for the build.
 	StringList libraries; ///< List of all external libraries required for the build.
 
-	bool runBuildEvents;
+	bool runBuildEvents;   ///< Run build events as part of the build (generate revision number and copy engine/theme data & needed files to the build folder
+	bool createInstaller;  ///< Create NSIS installer after the build
 
 	BuildSetup() {
-		runBuildEvents = false;
+		runBuildEvents  = false;
+		createInstaller = false;
 	}
 };
 

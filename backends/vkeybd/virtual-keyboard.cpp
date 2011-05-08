@@ -137,7 +137,7 @@ bool VirtualKeyboard::loadKeyboardPack(const String &packName) {
 		_loaded = _parser->parse();
 
 		if (_loaded) {
-			printf("Keyboard pack '%s' loaded successfully!\n", packName.c_str());
+			debug("Keyboard pack '%s' loaded successfully", packName.c_str());
 		} else {
 			warning("Error parsing the keyboard pack '%s'", packName.c_str());
 

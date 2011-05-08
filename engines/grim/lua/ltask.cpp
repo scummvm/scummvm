@@ -1,3 +1,9 @@
+#define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
+#define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
+
+#ifdef _MSC_VER
+#pragma warning(disable:4611)
+#endif
 
 #include "engines/grim/lua/ltask.h"
 #include "engines/grim/lua/lapi.h"

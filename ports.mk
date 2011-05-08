@@ -167,8 +167,8 @@ osxsnap: bundle
 # Windows specific
 #
 
-residualico.o: $(srcdir)/icons/residual.ico
-	$(WINDRES) $(WINDRESFLAGS) -I$(srcdir) $(srcdir)/dists/residual.rc residualico.o
+residualwinres.o: $(srcdir)/icons/residual.ico $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(srcdir)/dists/residual.rc
+	$(QUIET_WINDRES)$(WINDRES) -DHAVE_CONFIG_H $(WINDRESFLAGS) $(DEFINES) -I. -I$(srcdir) $(srcdir)/dists/residual.rc residualwinres.o
 
 # Special target to create a win32 snapshot binary
 win32dist: $(EXECUTABLE)
@@ -186,7 +186,9 @@ endif
 	cp $(srcdir)/README $(WIN32PATH)/README.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
-	u2d $(WIN32PATH)/*.txt
+	cp $(srcdir)/icons/residual.ico $(WIN32PATH)
+	cp $(srcdir)/dists/win32/residual.iss $(WIN32PATH)
+	unix2dos $(WIN32PATH)/*.txt
 
 # Special target to create a win32 snapshot binary under Debian Linux using cross mingw32 toolchain
 crosswin32dist: $(EXECUTABLE)

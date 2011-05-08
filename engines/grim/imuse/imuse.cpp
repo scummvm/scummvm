@@ -23,6 +23,10 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
+#define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
+
 #include "common/timer.h"
 
 #include "engines/grim/grim.h"

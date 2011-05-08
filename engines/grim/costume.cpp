@@ -23,6 +23,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "common/endian.h"
 
 #include "engines/grim/colormap.h"

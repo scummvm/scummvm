@@ -23,6 +23,11 @@
  *
  */
 
+
+// Enable mkdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h	//On IRIX, sys/stat.h includes sys/time.h
+
 #include "common/scummsys.h"
 
 #if defined(UNIX) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)

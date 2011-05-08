@@ -367,7 +367,7 @@
 #if defined(__GNUC__)
 	#define NORETURN_POST __attribute__((__noreturn__))
 	#define PACKED_STRUCT __attribute__((__packed__))
-	#define GCC_PRINTF(x,y) __attribute__((__format__(printf, x, y)))
+	#define GCC_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
 
 	#if !defined(FORCEINLINE) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
 		#define FORCEINLINE inline __attribute__((__always_inline__))
@@ -375,7 +375,7 @@
 #elif defined(__INTEL_COMPILER)
 	#define NORETURN_POST __attribute__((__noreturn__))
 	#define PACKED_STRUCT __attribute__((__packed__))
-	#define GCC_PRINTF(x,y) __attribute__((__format__(printf, x, y)))
+	#define GCC_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
 #else
 	#define PACKED_STRUCT
 	#define GCC_PRINTF(x,y)
@@ -440,5 +440,7 @@
 	// 15/16 bit color mode everywhere else...
 	typedef uint16 OverlayColor;
 #endif
+
+#include "common/forbidden.h"	
 
 #endif

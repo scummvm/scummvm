@@ -23,6 +23,9 @@
  *
  */
 
+// FIXME: Avoid using printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "common/debug.h"
 #include "common/util.h"
 #include "common/hash-str.h"

@@ -23,6 +23,9 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
+#define FORBIDDEN_SYMBOL_EXCEPTION_fgetc
+
 #include "engines/grim/grim.h"
 #include "engines/grim/lua.h"
 #include "engines/grim/localize.h"

@@ -83,4 +83,4 @@ private:
 	virtual void setFlags();
 };
 
-#endif /*POSIX_FILESYSTEM_H*/
+#endif

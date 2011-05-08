@@ -23,6 +23,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "common/endian.h"
 #include "common/timer.h"
 #include "common/file.h"
@@ -193,12 +195,12 @@ void Smush::handleFrame() {
 			//  Lola engine room (loops a limited number of times?):
 			//  MakeAnim animation type 'Bl16' parameters: 6000;8000;90;1;0;0;0;0;2;0;
 			if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
-				printf("Announcement data: %s\n", anno);
+				debug("Announcement data: %s\n", anno);
 			// It looks like the announcement data is actually for setting some of the
 			// header parameters, not for any looping purpose
 		} else {
 			if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
-				printf("Announcement header not understood: %s\n", anno);
+				debug("Announcement header not understood: %s\n", anno);
 		}
 		delete[] anno;
 		tag = _file.readUint32BE();

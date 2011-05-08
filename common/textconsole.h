@@ -66,8 +66,6 @@ void NORETURN_PRE error(const char *s, ...) GCC_PRINTF(1, 2) NORETURN_POST;
 
 #ifdef DISABLE_TEXT_CONSOLE
 
-inline int printf(const char *s, ...) { return 0; }
-
 inline void warning(const char *s, ...) {}
 
 #else

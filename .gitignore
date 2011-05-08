@@ -23,6 +23,8 @@ lib*.a
 /.project
 /.cproject
 /.settings
+
+/build
 /dists/codeblocks/*.cbp
 /dists/codeblocks/*.depend
 /dists/codeblocks/*.layout

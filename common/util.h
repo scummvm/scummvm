@@ -178,8 +178,8 @@ enum Platform {
 	kPlatformPC98,
 	kPlatformWii,
 	kPlatformPSX,
-	kPlatformCDi,
 	kPlatformPS2,
+	kPlatformCDi,
 
 	kPlatformUnknown = -1
 };

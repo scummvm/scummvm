@@ -1,3 +1,4 @@
+#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
 
 #include "graphics/tinygl/zgl.h"
 

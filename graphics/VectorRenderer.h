@@ -26,16 +26,19 @@
 #ifndef VECTOR_RENDERER_H
 #define VECTOR_RENDERER_H
 
+#include "common/rect.h"
 #include "common/scummsys.h"
-#include "common/system.h"
+#include "common/str.h"
 
 #include "graphics/surface.h"
-#include "graphics/pixelformat.h"
 
 #include "gui/ThemeEngine.h"
 
+class OSystem;
+
 namespace Graphics {
 class VectorRenderer;
+struct DrawStep;
 
 
 typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const Graphics::DrawStep &);

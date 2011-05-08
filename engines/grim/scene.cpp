@@ -23,6 +23,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "engines/grim/scene.h"
 #include "engines/grim/textsplit.h"
 #include "engines/grim/colormap.h"
@@ -306,10 +308,10 @@ void Scene::Setup::load(TextSplitter &ts) {
 	_bkgndBm = g_resourceloader->getBitmap(buf);
 	if (!_bkgndBm) {
 		if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
-			printf("Unable to load scene bitmap: %s\n", buf);
+			warning("Unable to load scene bitmap: %s\n", buf);
 	} else {
 		if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
-			printf("Loaded scene bitmap: %s\n", buf);
+			warning("Loaded scene bitmap: %s\n", buf);
 	}
 
 	// ZBuffer is optional

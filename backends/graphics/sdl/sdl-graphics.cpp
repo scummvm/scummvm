@@ -32,14 +32,15 @@
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
 #include "common/mutex.h"
+#include "common/textconsole.h"
 #include "common/translation.h"
 #include "common/util.h"
-#include "common/textconsole.h"
 #ifdef USE_RGB_COLOR
 #include "common/list.h"
 #endif
 #include "graphics/font.h"
 #include "graphics/fontman.h"
+#include "graphics/scaler.h"
 #include "graphics/surface.h"
 
 SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *sdlEventSource)

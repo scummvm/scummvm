@@ -62,6 +62,7 @@ private:
 	Common::HashMap<Common::String, StringArray>	_pathToTargets;
 
 	int _dirsScanned;
+	int _oldGamesCount;
 
 	Widget *_okButton;
 	StaticTextWidget *_dirProgressText;
