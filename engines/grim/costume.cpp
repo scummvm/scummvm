@@ -996,6 +996,8 @@ void Costume::Chore::setKeys(int startTime, int stopTime) {
 			comp->setFade((float)_fadeCurrTime / (float)_fadeLength);
 		} else if (_fadeMode == FadeOut) {
 			comp->setFade(1.f - ((float)_fadeCurrTime / (float)_fadeLength));
+		} else {
+			comp->setFade(1.f);
 		}
 
 		if (FROM_BE_32(comp->getTag()) == MKTAG('K','E','Y','F')) {
@@ -1044,10 +1046,18 @@ void Costume::Chore::update() {
 		_fadeCurrTime += g_grim->getFrameTime();
 
 		if (_fadeCurrTime > _fadeLength) {
-			if (_fadeMode == FadeOut)
-				stop();
-
-			_fadeMode = None;
+			if (_fadeMode == FadeOut) {
+				_playing = false;
+				_fadeMode = None;
+				for (int i = 0; i < _numTracks; i++) {
+					Component *comp = _owner->_components[_tracks[i].compID];
+					if (comp)
+						comp->setFade(0.f);
+				}
+				return;
+			} else {
+				_fadeMode = None;
+			}
 		}
 	}
 
@@ -1213,7 +1223,6 @@ void Costume::update() {
 		if (_components[i]) {
 			_components[i]->setMatrix(_matrix);
 			_components[i]->update();
-			_components[i]->setFade(1.f);
 		}
 	}
 }
