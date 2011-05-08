@@ -61,13 +61,13 @@ void glopColorMaterial(GLContext *c, GLParam *p) {
 }
 
 void glopLight(GLContext *c, GLParam *p) {
-	int light=p[1].i;
-	int type=p[2].i;
+	int light = p[1].i;
+	int type = p[2].i;
 	V4 v;
 	GLLight *l;
 	int i;
   
-	assert(light >= TGL_LIGHT0 && light < TGL_LIGHT0+T_MAX_LIGHTS );
+	assert(light >= TGL_LIGHT0 && light < TGL_LIGHT0 + T_MAX_LIGHTS);
 
 	l = &c->lights[light - TGL_LIGHT0];
 
@@ -102,8 +102,8 @@ void glopLight(GLContext *c, GLParam *p) {
 		break;
 	case TGL_SPOT_DIRECTION:
 		for (i = 0; i < 3; i++) {
-			l->spot_direction.v[i]=v.v[i];
-			l->norm_spot_direction.v[i]=v.v[i];
+			l->spot_direction.v[i] = v.v[i];
+			l->norm_spot_direction.v[i] = v.v[i];
 		}
 		gl_V3_Norm(&l->norm_spot_direction);
 		break;
