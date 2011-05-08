@@ -138,7 +138,6 @@ STUB_FUNC2(L2_GetSaveGameData)
 STUB_FUNC2(L2_SetTextSpeed)
 STUB_FUNC2(L2_GetTextSpeed)
 STUB_FUNC2(L2_JustLoaded)
-STUB_FUNC2(L2_new_dofile)
 STUB_FUNC2(L2_IsMessageGoing)
 STUB_FUNC2(L2_SetSayLineDefaults)
 STUB_FUNC2(L2_SetActorTalkColor)
@@ -424,7 +423,7 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "JustLoaded", L2_JustLoaded },
 	{ "UnShrinkBoxes", L2_UnShrinkBoxes },
 	{ "GetMemoryUsage", L2_GetMemoryUsage },
-	{ "dofile", L2_new_dofile },
+	{ "dofile", L1_new_dofile },
 
 	// Monkey specific opcodes:
 
