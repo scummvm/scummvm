@@ -39,9 +39,6 @@
 // Inidicates if gesture area is pressed down or not.
 static bool gestureDown = false;
 
-// The timestamp when gesture area was pressed down.
-static int gestureDownTime = 0;
-
 // The timestamp when screen was pressed down.
 static int screenDownTime = 0;
 
@@ -113,7 +110,6 @@ bool WebOSSdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	// Handle gesture area tap.
 	if (ev.key.keysym.sym == SDLK_WORLD_71) {
 		gestureDown = true;
-		gestureDownTime = getMillis();
 		return true;
 	}
 
