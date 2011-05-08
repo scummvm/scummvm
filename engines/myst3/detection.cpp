@@ -49,7 +49,7 @@ static const Myst3GameDescription gameDescriptions[] = {
 			0,
 			AD_ENTRY1s("RSRC.m3r", "a2c8ed69800f60bf5667e5c76a88e481", 1223862),
 			Common::FR_FRA,
-			Common::kPlatformPC,
+			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
@@ -60,39 +60,12 @@ static const Myst3GameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, 0 }
 };
 
-static const Myst3GameDescription fallbackGameDescriptions[] = {
-	{{"myst3", 0, {{0, 0, 0, 0}}, Common::UNK_LANG, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE}, 0}
-};
-
-static const ADFileBasedFallback myst3Fallback[] = {
-	{&fallbackGameDescriptions[0], {"RSRC.m3r"}},
-	{0, {0}}
-};
-
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)gameDescriptions,
-	// Size of that superset structure
-	sizeof(Myst3GameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	myst3Games,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"myst3",
-	// List of files for file-based fallback detection (optional)
-	myst3Fallback,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOMIDI
-};
-
 class Myst3MetaEngine : public AdvancedMetaEngine {
 public:
-	Myst3MetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	Myst3MetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(Myst3GameDescription), myst3Games) {
+		_singleid = "myst3";
+		_guioptions = Common::GUIO_NOMIDI;
+	}
 
 	virtual const char *getName() const {
 		return "Myst III Engine";
