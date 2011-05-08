@@ -29,6 +29,7 @@
 #include "common/keyboard.h"
 #include "common/queue.h"
 #include "common/rect.h"
+#include "common/mutex.h"
 #include "common/noncopyable.h"
 
 #include "common/list.h"
@@ -68,14 +69,21 @@ enum EventType {
 
 	EVENT_QUIT = 10,
 	EVENT_SCREEN_CHANGED = 11,
-	/**
-	 * The backend requests the agi engine's predictive dialog to be shown.
-	 * TODO: Fingolfin suggests that it would be of better value to expand
-	 * on this notion by generalizing its use. For example the backend could
-	 * use events to ask for the save game dialog or to pause the engine.
-	 * An associated enumerated type can accomplish this.
-	 **/
-	EVENT_PREDICTIVE_DIALOG = 12
+
+	EVENT_CUSTOM = 18
+};
+
+enum CustomEventMessage {
+	MESSAGE_INVALID           = 0,
+	MESSAGE_PREDICTIVE_DIALOG = 1    ///< The backend requests the agi engine's predictive dialog to be shown
+};
+
+struct CustomEvent {
+	CustomEventMessage message;
+	int32 param1;
+	int32 param2;
+
+	CustomEvent() : message(MESSAGE_INVALID), param1(0), param2(0) {}
 };
 
 /**
@@ -101,6 +109,10 @@ struct Event {
 	 * screen area as defined by the most recent call to initSize().
 	 */
 	Common::Point mouse;
+	/**
+	 * The custom event data; only valid for EVENT_CUSTOM events
+	 */
+	CustomEvent custom;
 
 	Event() : type(EVENT_INVALID), synthetic(false) {}
 };
@@ -143,13 +155,19 @@ public:
 class ArtificialEventSource : public EventSource {
 protected:
 	Common::Queue<Common::Event> _artificialEventQueue;
+	Common::Mutex                _mutex;
+
 public:
 	void addEvent(const Common::Event &ev) {
+		Common::StackLock lock(_mutex);
+
 		_artificialEventQueue.push(ev);
 	}
 
 	bool pollEvent(Common::Event &ev) {
-	if (!_artificialEventQueue.empty()) {
+		Common::StackLock lock(_mutex);
+
+		if (!_artificialEventQueue.empty()) {
 			ev = _artificialEventQueue.pop();
 			return true;
 		} else {
