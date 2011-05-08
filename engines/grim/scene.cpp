@@ -396,7 +396,7 @@ void Scene::Setup::loadBinary(Common::MemoryReadStream *ms) {
 	char* fileName = new char[fNameLen];
 	ms->read(fileName,fNameLen);
 
-	_bkgndBm = g_resourceloader->getBitmap(fileName);
+	_bkgndBm = g_resourceloader->loadBitmap(fileName);
 
 
 	ms->read(_pos._coords, 12);
