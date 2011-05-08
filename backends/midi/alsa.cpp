@@ -183,6 +183,11 @@ void MidiDriver_ALSA::close() {
 }
 
 void MidiDriver_ALSA::send(uint32 b) {
+	if (!_isOpen) {
+		warning("MidiDriver_ALSA: Got event while not open");
+		return;
+	}
+
 	unsigned int midiCmd[4];
 	ev.type = SND_SEQ_EVENT_OSS;
 
@@ -256,6 +261,11 @@ void MidiDriver_ALSA::send(uint32 b) {
 }
 
 void MidiDriver_ALSA::sysEx(const byte *msg, uint16 length) {
+	if (!_isOpen) {
+		warning("MidiDriver_ALSA: Got SysEx while not open");
+		return;
+	}
+
 	unsigned char buf[266];
 
 	assert(length + 2 <= ARRAYSIZE(buf));
