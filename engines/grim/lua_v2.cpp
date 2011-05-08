@@ -37,7 +37,7 @@ namespace Grim {
 
 static void L2_GetActiveCD() {
 	// return current CD number 1 or 2, original can also avoid push any numer
-	warning("return const CD 1");
+	warning("L2_GetActiveCD: return const CD 1");
 	lua_pushnumber(1);
 }
 
