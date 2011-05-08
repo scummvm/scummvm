@@ -44,7 +44,8 @@ static SavedObject *classFactoryProc(const Common::String &className) {
 	if (className == "ObjectMover3") return new ObjectMover3();
 	if (className == "PlayerMover") return new PlayerMover();
 	if (className == "SceneObjectWrapper") return new SceneObjectWrapper();
-
+	if (className == "PaletteRotation") return new PaletteRotation();
+	if (className == "PaletteFader") return new PaletteFader();
 	return NULL;
 }
 
