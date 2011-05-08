@@ -50,6 +50,7 @@ MODULE_OBJS := \
 	lipsync.o \
 	localize.o \
 	lua_v1.o \
+	lua_v2.o \
 	material.o \
 	model.o \
 	objectstate.o \

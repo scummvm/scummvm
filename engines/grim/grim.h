@@ -114,6 +114,9 @@ public:
 	unsigned getFrameStart() const { return _frameStart; }
 	unsigned getFrameTime() const { return _frameTime; }
 
+	int bundle_dofile(const char *filename);
+	int single_dofile(const char *filename);
+
 	// perSecond should allow rates of zero, some actors will accelerate
 	// up to their normal speed (such as the bone wagon) so handling
 	// a walking rate of zero should happen in the default actor creation

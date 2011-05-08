@@ -29,411 +29,544 @@
 #include "engines/grim/lua/luadebug.h"
 #include "engines/grim/lua/lauxlib.h"
 
-namespace Grim {
+#include "engines/grim/grim.h"
 
+namespace Grim {
 
 // Stub function for builtin functions not yet implemented
 static void stubWarning(const char *funcName) {
 	warning("Stub function: %s", funcName);
 }
 
-#define STUB_FUNC(name) static void name() { stubWarning(#name); }
-STUB_FUNC(SetActorInvClipNode)
-STUB_FUNC(NukeResources)
-STUB_FUNC(UnShrinkBoxes)
-STUB_FUNC(ShrinkBoxes)
-STUB_FUNC(ResetTextures)
-STUB_FUNC(AttachToResources)
-STUB_FUNC(DetachFromResources)
-STUB_FUNC(IrisUp)
-STUB_FUNC(IrisDown)
-STUB_FUNC(FadeInChore)
-STUB_FUNC(FadeOutChore)
-STUB_FUNC(SetActorClipPlane)
-STUB_FUNC(SetActorClipActive)
-STUB_FUNC(SetActorCollisionScale)
-STUB_FUNC(SetActorCollisionMode)
-STUB_FUNC(FlushControls)
-STUB_FUNC(ActorToClean)
-STUB_FUNC(LightMgrStartup)
-STUB_FUNC(SetLightIntensity)
-STUB_FUNC(SetLightPosition)
-STUB_FUNC(TurnLightOn)
-STUB_FUNC(GetAngleBetweenVectors)
-STUB_FUNC(GetCameraLookVector)
-STUB_FUNC(SetCameraRoll)
-STUB_FUNC(SetCameraInterest)
-STUB_FUNC(GetCameraPosition)
-STUB_FUNC(SpewStartup)
-STUB_FUNC(PreRender)
-STUB_FUNC(GetSectorOppositeEdge)
-STUB_FUNC(PreviousSetup)
-STUB_FUNC(NextSetup)
-STUB_FUNC(WorldToScreen)
-STUB_FUNC(SetActorRoll)
-STUB_FUNC(IsPointInSector)
-STUB_FUNC(SetActorFrustrumCull)
-STUB_FUNC(DriveActorTo)
-STUB_FUNC(GetActorRect)
-STUB_FUNC(SetActorTimeScale)
-STUB_FUNC(SetActorScale)
-STUB_FUNC(GetTranslationMode)
-STUB_FUNC(SetTranslationMode)
-STUB_FUNC(PrintLine)
-STUB_FUNC(KillPrimitive)
-STUB_FUNC(WalkActorToAvoiding)
-STUB_FUNC(GetActorChores)
-STUB_FUNC(SetCameraPosition)
-STUB_FUNC(GetCameraFOV)
-STUB_FUNC(SetCameraFOV)
-STUB_FUNC(GetCameraRoll)
-STUB_FUNC(ActorPuckOrient)
-STUB_FUNC(GetMemoryUsage)
-STUB_FUNC(GetFontDimensions)
-STUB_FUNC(PurgeText)
+static void stubError(const char *funcName) {
+	error("Stub function: %s", funcName);
+}
+
+#define STUB_FUNC(name) void name() { stubWarning(#name); }
+#define STUB_FUNC2(name) void name() { stubError(#name); }
+
+STUB_FUNC2(L2_EngineDisplay)
+STUB_FUNC2(L2_Load)
+STUB_FUNC2(L2_Save)
+STUB_FUNC2(L2_Remove)
+STUB_FUNC2(L2_SetActorWalkChore)
+STUB_FUNC2(L2_SetActorTurnChores)
+STUB_FUNC2(L2_SetActorRestChore)
+STUB_FUNC2(L2_SetActorMumblechore)
+STUB_FUNC2(L2_SetActorTalkChore)
+STUB_FUNC2(L2_SetActorWalkRate)
+STUB_FUNC2(L2_GetActorWalkRate)
+STUB_FUNC2(L2_SetActorTurnRate)
+STUB_FUNC2(L2_SetSelectedActor)
+STUB_FUNC2(L2_LoadActor)
+STUB_FUNC2(L2_GetActorPos)
+STUB_FUNC2(L2_GetActorPuckVector)
+STUB_FUNC2(L2_GetActorYawToPoint)
+STUB_FUNC2(L2_SetActorReflection)
+STUB_FUNC2(L2_PutActorAt)
+STUB_FUNC2(L2_PutActorInSet)
+STUB_FUNC2(L2_WalkActorVector)
+STUB_FUNC2(L2_WalkActorForward)
+STUB_FUNC2(L2_WalkActorTo)
+STUB_FUNC2(L2_ActorLookAt)
+STUB_FUNC2(L2_SetActorLookRate)
+STUB_FUNC2(L2_GetActorLookRate)
+STUB_FUNC2(L2_GetVisibleThings)
+STUB_FUNC2(L2_SetActorHead)
+STUB_FUNC2(L2_SetActorVisibility)
+STUB_FUNC2(L2_SetActorFollowBoxes)
+STUB_FUNC2(L2_ShutUpActor)
+STUB_FUNC2(L2_IsActorInSector)
+STUB_FUNC2(L2_GetActorSector)
+STUB_FUNC2(L2_TurnActor)
+STUB_FUNC2(L2_GetActorRot)
+STUB_FUNC2(L2_SetActorRot)
+STUB_FUNC2(L2_IsActorTurning)
+STUB_FUNC2(L2_PlayActorChore)
+STUB_FUNC2(L2_StopActorChore)
+STUB_FUNC2(L2_IsActorResting)
+STUB_FUNC2(L2_Exit)
+STUB_FUNC2(L2_FunctionName)
+STUB_FUNC2(L2_EnableControl)
+STUB_FUNC2(L2_DisableControl)
+STUB_FUNC2(L2_GetControlState)
+STUB_FUNC2(L2_PrintError)
+STUB_FUNC2(L2_PrintWarning)
+STUB_FUNC2(L2_PrintDebug)
+STUB_FUNC2(L2_MakeCurrentSet)
+STUB_FUNC2(L2_LockSet)
+STUB_FUNC2(L2_UnLockSet)
+STUB_FUNC2(L2_MakeCurrentSetup)
+STUB_FUNC2(L2_GetCurrentSetup)
+STUB_FUNC2(L2_StartFullscreenMovie)
+STUB_FUNC2(L2_IsFullscreenMoviePlaying)
+STUB_FUNC2(L2_StartMovie)
+STUB_FUNC2(L2_StopMovie)
+STUB_FUNC2(L2_PauseMovie)
+STUB_FUNC2(L2_IsMoviePlaying)
+STUB_FUNC2(L2_PlaySound)
+STUB_FUNC2(L2_IsSoundPlaying)
+STUB_FUNC2(L2_SetSoundPosition)
+STUB_FUNC2(L2_FileFindFirst)
+STUB_FUNC2(L2_FileFindNext)
+STUB_FUNC2(L2_FileFindDispose)
+STUB_FUNC2(L2_InputDialog)
+STUB_FUNC2(L2_MakeSectorActive)
+STUB_FUNC2(L2_GetCurrentScript)
+STUB_FUNC2(L2_TurnActorTo)
+STUB_FUNC2(L2_PerSecond)
+STUB_FUNC2(L2_GetAngleBetweenActors)
+STUB_FUNC2(L2_SetAmbientLight)
+STUB_FUNC2(L2_ImStartSound)
+STUB_FUNC2(L2_ImGetSfxVol)
+STUB_FUNC2(L2_ImGetVoiceVol)
+STUB_FUNC2(L2_ImGetMusicVol)
+STUB_FUNC2(L2_ImSetState)
+STUB_FUNC2(L2_ImSetSequence)
+STUB_FUNC2(L2_LoadBundle)
+STUB_FUNC2(L2_SetGamma)
+STUB_FUNC2(L2_SetActorWalkDominate)
+STUB_FUNC2(L2_RenderModeUser)
+STUB_FUNC2(L2_DimScreen)
+STUB_FUNC2(L2_Display)
+STUB_FUNC2(L2_SetSpeechMode)
+STUB_FUNC2(L2_GetSpeechMode)
+STUB_FUNC2(L2_KillActorShadows)
+STUB_FUNC2(L2_NewObjectState)
+STUB_FUNC2(L2_SubmitSaveGameData)
+STUB_FUNC2(L2_GetSaveGameData)
+STUB_FUNC2(L2_SetTextSpeed)
+STUB_FUNC2(L2_GetTextSpeed)
+STUB_FUNC2(L2_JustLoaded)
+STUB_FUNC2(L2_new_dofile)
+STUB_FUNC2(L2_IsMessageGoing)
+STUB_FUNC2(L2_SetSayLineDefaults)
+STUB_FUNC2(L2_SetActorTalkColor)
+STUB_FUNC2(L2_SayLine)
+STUB_FUNC2(L2_MakeTextObject)
+STUB_FUNC2(L2_GetTextObjectDimensions)
+STUB_FUNC2(L2_ChangeTextObject)
+STUB_FUNC2(L2_KillTextObject)
+STUB_FUNC2(L2_ExpireText)
+STUB_FUNC2(L2_MakeColor)
+STUB_FUNC2(L2_GetColorComponents)
+STUB_FUNC2(L2_GetTextCharPosition)
+STUB_FUNC2(L2_LocalizeString)
+STUB_FUNC2(L2_SetOffscreenTextPos)
+STUB_FUNC2(L2_DrawLine)
+STUB_FUNC2(L2_ChangePrimitive)
+STUB_FUNC2(L2_PurgePrimitiveQueue)
+STUB_FUNC2(L2_concatFallback)
+STUB_FUNC2(L2_typeOverride)
+
+
+STUB_FUNC2(L2_SetActorInvClipNode)
+STUB_FUNC2(L2_NukeResources)
+STUB_FUNC2(L2_UnShrinkBoxes)
+STUB_FUNC2(L2_ShrinkBoxes)
+STUB_FUNC2(L2_ResetTextures)
+STUB_FUNC2(L2_AttachToResources)
+STUB_FUNC2(L2_DetachFromResources)
+STUB_FUNC2(L2_IrisUp)
+STUB_FUNC2(L2_IrisDown)
+STUB_FUNC2(L2_FadeInChore)
+STUB_FUNC2(L2_FadeOutChore)
+STUB_FUNC2(L2_SetActorClipPlane)
+STUB_FUNC2(L2_SetActorClipActive)
+STUB_FUNC2(L2_SetActorCollisionScale)
+STUB_FUNC2(L2_SetActorCollisionMode)
+STUB_FUNC2(L2_FlushControls)
+STUB_FUNC2(L2_ActorToClean)
+STUB_FUNC2(L2_LightMgrStartup)
+STUB_FUNC2(L2_SetLightIntensity)
+STUB_FUNC2(L2_SetLightPosition)
+STUB_FUNC2(L2_TurnLightOn)
+STUB_FUNC2(L2_GetAngleBetweenVectors)
+STUB_FUNC2(L2_GetCameraLookVector)
+STUB_FUNC2(L2_SetCameraRoll)
+STUB_FUNC2(L2_SetCameraInterest)
+STUB_FUNC2(L2_GetCameraPosition)
+STUB_FUNC2(L2_SpewStartup)
+STUB_FUNC2(L2_PreRender)
+STUB_FUNC2(L2_GetSectorOppositeEdge)
+STUB_FUNC2(L2_PreviousSetup)
+STUB_FUNC2(L2_NextSetup)
+STUB_FUNC2(L2_WorldToScreen)
+STUB_FUNC2(L2_SetActorRoll)
+STUB_FUNC2(L2_IsPointInSector)
+STUB_FUNC2(L2_SetActorFrustrumCull)
+STUB_FUNC2(L2_DriveActorTo)
+STUB_FUNC2(L2_GetActorRect)
+STUB_FUNC2(L2_SetActorTimeScale)
+STUB_FUNC2(L2_SetActorScale)
+STUB_FUNC2(L2_GetTranslationMode)
+STUB_FUNC2(L2_SetTranslationMode)
+STUB_FUNC2(L2_PrintLine)
+STUB_FUNC2(L2_KillPrimitive)
+STUB_FUNC2(L2_WalkActorToAvoiding)
+STUB_FUNC2(L2_GetActorChores)
+STUB_FUNC2(L2_SetCameraPosition)
+STUB_FUNC2(L2_GetCameraFOV)
+STUB_FUNC2(L2_SetCameraFOV)
+STUB_FUNC2(L2_GetCameraRoll)
+STUB_FUNC2(L2_ActorPuckOrient)
+STUB_FUNC2(L2_GetMemoryUsage)
+STUB_FUNC2(L2_GetFontDimensions)
+STUB_FUNC2(L2_PurgeText)
 
 // Monkey specific opcodes:
 
-STUB_FUNC(SetActiveCD)
-STUB_FUNC(GetActiveCD)
-STUB_FUNC(AreWeInternational)
-STUB_FUNC(MakeScreenTextures)
-STUB_FUNC(ThumbnailFromFile)
-STUB_FUNC(ClearSpecialtyTexture)
-STUB_FUNC(UnloadActor)
-STUB_FUNC(PutActorInOverworld)
-STUB_FUNC(RemoveActorFromOverworld)
-STUB_FUNC(ClearOverworld)
-STUB_FUNC(ToggleOverworld)
-STUB_FUNC(ActorStopMoving)
-STUB_FUNC(SetActorFOV)
-STUB_FUNC(SetActorLighting)
-STUB_FUNC(SetActorHeadLimits)
-STUB_FUNC(ActorActivateShadow)
-STUB_FUNC(EnableActorPuck)
-STUB_FUNC(SetActorGlobalAlpha)
-STUB_FUNC(SetActorLocalAlpha)
-STUB_FUNC(SetActorSortOrder)
-STUB_FUNC(GetActorSortOrder)
-STUB_FUNC(AttachActor)
-STUB_FUNC(DetachActor)
-STUB_FUNC(IsChoreValid)
-STUB_FUNC(IsChorePlaying)
-STUB_FUNC(IsChoreLooping)
-STUB_FUNC(StopActorChores)
-STUB_FUNC(PlayChore)
-STUB_FUNC(StopChore)
-STUB_FUNC(PauseChore)
-STUB_FUNC(AdvanceChore)
-STUB_FUNC(CompleteChore)
-STUB_FUNC(LockChore)
-STUB_FUNC(UnlockChore)
-STUB_FUNC(LockChoreSet)
-STUB_FUNC(UnlockChoreSet)
-STUB_FUNC(LockBackground)
-STUB_FUNC(UnLockBackground)
-STUB_FUNC(EscapeMovie)
-STUB_FUNC(StopAllSounds)
-STUB_FUNC(LoadSound)
-STUB_FUNC(FreeSound)
-STUB_FUNC(PlayLoadedSound)
-STUB_FUNC(SetGroupVolume)
-STUB_FUNC(GetSoundVolume)
-STUB_FUNC(SetSoundVolume)
-STUB_FUNC(EnableAudioGroup)
-STUB_FUNC(EnableVoiceFX)
-STUB_FUNC(PlaySoundFrom)
-STUB_FUNC(PlayLoadedSoundFrom)
-STUB_FUNC(SetReverb)
-STUB_FUNC(UpdateSoundPosition)
-STUB_FUNC(ImSelectSet)
-STUB_FUNC(ImStateHasLooped)
-STUB_FUNC(ImStateHasEnded)
-STUB_FUNC(ImPushState)
-STUB_FUNC(ImPopState)
-STUB_FUNC(ImFlushStack)
-STUB_FUNC(ImGetMillisecondPosition)
-STUB_FUNC(GetSectorName)
-STUB_FUNC(GetCameraYaw)
-STUB_FUNC(YawCamera)
-STUB_FUNC(GetCameraPitch)
-STUB_FUNC(PitchCamera)
-STUB_FUNC(RollCamera)
-STUB_FUNC(UndimAll)
-STUB_FUNC(UndimRegion)
-STUB_FUNC(GetCPUSpeed)
-STUB_FUNC(NewLayer)
-STUB_FUNC(FreeLayer)
-STUB_FUNC(SetLayerSortOrder)
-STUB_FUNC(SetLayerFrame)
-STUB_FUNC(AdvanceLayerFrame)
-STUB_FUNC(PushText)
-STUB_FUNC(PopText)
-STUB_FUNC(NukeAllScriptLocks)
-STUB_FUNC(ToggleDebugDraw)
-STUB_FUNC(ToggleDrawCameras)
-STUB_FUNC(ToggleDrawLights)
-STUB_FUNC(ToggleDrawSectors)
-STUB_FUNC(ToggleDrawBBoxes)
-STUB_FUNC(ToggleDrawFPS)
-STUB_FUNC(ToggleDrawPerformance)
-STUB_FUNC(ToggleDrawActorStats)
-STUB_FUNC(SectEditSelect)
-STUB_FUNC(SectEditPlace)
-STUB_FUNC(SectEditDelete)
-STUB_FUNC(SectEditInsert)
-STUB_FUNC(SectEditSortAdd)
-STUB_FUNC(SectEditForgetIt)
-STUB_FUNC(FRUTEY_Begin)
-STUB_FUNC(FRUTEY_End)
+STUB_FUNC2(L2_SetActiveCD)
+STUB_FUNC2(L2_GetActiveCD)
+STUB_FUNC2(L2_AreWeInternational)
+STUB_FUNC2(L2_MakeScreenTextures)
+STUB_FUNC2(L2_ThumbnailFromFile)
+STUB_FUNC2(L2_ClearSpecialtyTexture)
+STUB_FUNC2(L2_UnloadActor)
+STUB_FUNC2(L2_PutActorInOverworld)
+STUB_FUNC2(L2_RemoveActorFromOverworld)
+STUB_FUNC2(L2_ClearOverworld)
+STUB_FUNC2(L2_ToggleOverworld)
+STUB_FUNC2(L2_ActorStopMoving)
+STUB_FUNC2(L2_SetActorFOV)
+STUB_FUNC2(L2_SetActorLighting)
+STUB_FUNC2(L2_SetActorHeadLimits)
+STUB_FUNC2(L2_ActorActivateShadow)
+STUB_FUNC2(L2_EnableActorPuck)
+STUB_FUNC2(L2_SetActorGlobalAlpha)
+STUB_FUNC2(L2_SetActorLocalAlpha)
+STUB_FUNC2(L2_SetActorSortOrder)
+STUB_FUNC2(L2_GetActorSortOrder)
+STUB_FUNC2(L2_AttachActor)
+STUB_FUNC2(L2_DetachActor)
+STUB_FUNC2(L2_IsChoreValid)
+STUB_FUNC2(L2_IsChorePlaying)
+STUB_FUNC2(L2_IsChoreLooping)
+STUB_FUNC2(L2_StopActorChores)
+STUB_FUNC2(L2_PlayChore)
+STUB_FUNC2(L2_StopChore)
+STUB_FUNC2(L2_PauseChore)
+STUB_FUNC2(L2_AdvanceChore)
+STUB_FUNC2(L2_CompleteChore)
+STUB_FUNC2(L2_LockChore)
+STUB_FUNC2(L2_UnlockChore)
+STUB_FUNC2(L2_LockChoreSet)
+STUB_FUNC2(L2_UnlockChoreSet)
+STUB_FUNC2(L2_LockBackground)
+STUB_FUNC2(L2_UnLockBackground)
+STUB_FUNC2(L2_EscapeMovie)
+STUB_FUNC2(L2_StopAllSounds)
+STUB_FUNC2(L2_LoadSound)
+STUB_FUNC2(L2_FreeSound)
+STUB_FUNC2(L2_PlayLoadedSound)
+STUB_FUNC2(L2_SetGroupVolume)
+STUB_FUNC2(L2_GetSoundVolume)
+STUB_FUNC2(L2_SetSoundVolume)
+STUB_FUNC2(L2_EnableAudioGroup)
+STUB_FUNC2(L2_EnableVoiceFX)
+STUB_FUNC2(L2_PlaySoundFrom)
+STUB_FUNC2(L2_PlayLoadedSoundFrom)
+STUB_FUNC2(L2_SetReverb)
+STUB_FUNC2(L2_UpdateSoundPosition)
+STUB_FUNC2(L2_ImSelectSet)
+STUB_FUNC2(L2_ImStateHasLooped)
+STUB_FUNC2(L2_ImStateHasEnded)
+STUB_FUNC2(L2_ImPushState)
+STUB_FUNC2(L2_ImPopState)
+STUB_FUNC2(L2_ImFlushStack)
+STUB_FUNC2(L2_ImGetMillisecondPosition)
+STUB_FUNC2(L2_GetSectorName)
+STUB_FUNC2(L2_GetCameraYaw)
+STUB_FUNC2(L2_YawCamera)
+STUB_FUNC2(L2_GetCameraPitch)
+STUB_FUNC2(L2_PitchCamera)
+STUB_FUNC2(L2_RollCamera)
+STUB_FUNC2(L2_UndimAll)
+STUB_FUNC2(L2_UndimRegion)
+STUB_FUNC2(L2_GetCPUSpeed)
+STUB_FUNC2(L2_NewLayer)
+STUB_FUNC2(L2_FreeLayer)
+STUB_FUNC2(L2_SetLayerSortOrder)
+STUB_FUNC2(L2_SetLayerFrame)
+STUB_FUNC2(L2_AdvanceLayerFrame)
+STUB_FUNC2(L2_PushText)
+STUB_FUNC2(L2_PopText)
+STUB_FUNC2(L2_NukeAllScriptLocks)
+STUB_FUNC2(L2_ToggleDebugDraw)
+STUB_FUNC2(L2_ToggleDrawCameras)
+STUB_FUNC2(L2_ToggleDrawLights)
+STUB_FUNC2(L2_ToggleDrawSectors)
+STUB_FUNC2(L2_ToggleDrawBBoxes)
+STUB_FUNC2(L2_ToggleDrawFPS)
+STUB_FUNC2(L2_ToggleDrawPerformance)
+STUB_FUNC2(L2_ToggleDrawActorStats)
+STUB_FUNC2(L2_SectEditSelect)
+STUB_FUNC2(L2_SectEditPlace)
+STUB_FUNC2(L2_SectEditDelete)
+STUB_FUNC2(L2_SectEditInsert)
+STUB_FUNC2(L2_SectEditSortAdd)
+STUB_FUNC2(L2_SectEditForgetIt)
+STUB_FUNC2(L2_FRUTEY_Begin)
+STUB_FUNC2(L2_FRUTEY_End)
 
-static void dummyHandler() {
-}
-
-struct luaL_reg mainOpcodes[] = {
-	{ "EngineDisplay", EngineDisplay },
-	{ "Load", Load },
-	{ "Save", Save },
-	{ "remove", lua_remove },
-	{ "SetActorTimeScale", SetActorTimeScale },
-	{ "SetActorWalkChore", SetActorWalkChore },
-	{ "SetActorTurnChores", SetActorTurnChores },
-	{ "SetActorRestChore", SetActorRestChore },
-	{ "SetActorMumblechore", SetActorMumblechore },
-	{ "SetActorTalkChore", SetActorTalkChore },
-	{ "SetActorWalkRate", SetActorWalkRate },
-	{ "GetActorWalkRate", GetActorWalkRate },
-	{ "SetActorTurnRate", SetActorTurnRate },
-	{ "SetSelectedActor", SetSelectedActor },
-	{ "LoadActor", LoadActor },
-	{ "GetActorPos", GetActorPos },
-	{ "GetActorPuckVector", GetActorPuckVector },
-	{ "GetActorYawToPoint", GetActorYawToPoint },
-	{ "SetActorReflection", SetActorReflection },
-	{ "PutActorAt", PutActorAt },
-	{ "PutActorInSet", PutActorInSet },
-	{ "WalkActorVector", WalkActorVector },
-	{ "WalkActorForward", WalkActorForward },
-	{ "WalkActorTo", WalkActorTo },
-	{ "WalkActorToAvoiding", WalkActorToAvoiding },
-	{ "ActorLookAt", ActorLookAt },
-	{ "SetActorLookRate", SetActorLookRate },
-	{ "GetActorLookRate", GetActorLookRate },
-	{ "GetVisibleThings", GetVisibleThings },
-	{ "SetActorHead", SetActorHead },
-	{ "SetActorVisibility", SetActorVisibility },
-	{ "SetActorFollowBoxes", SetActorFollowBoxes },
-	{ "ShutUpActor", ShutUpActor },
-	{ "IsActorInSector", IsActorInSector },
-	{ "GetActorSector", GetActorSector },
-	{ "TurnActor", TurnActor },
-	{ "GetActorRot", GetActorRot },
-	{ "SetActorRot", SetActorRot },
-	{ "IsActorTurning", IsActorTurning },
-	{ "PlayActorChore", PlayActorChore },
-	{ "StopActorChore", StopActorChore },
-	{ "IsActorResting", IsActorResting },
-	{ "GetActorChores", GetActorChores },
-	{ "WorldToScreen", WorldToScreen },
-	{ "exit", Exit },
-	{ "FunctionName", FunctionName },
-	{ "EnableControl", EnableControl },
-	{ "DisableControl", DisableControl },
-	{ "GetControlState", GetControlState },
-	{ "PrintError", PrintError },
-	{ "PrintWarning", PrintWarning },
-	{ "PrintDebug", PrintDebug },
-	{ "MakeCurrentSet", MakeCurrentSet },
-	{ "LockSet", LockSet },
-	{ "UnLockSet", UnLockSet },
-	{ "MakeCurrentSetup", MakeCurrentSetup },
-	{ "GetCurrentSetup", GetCurrentSetup },
-	{ "NextSetup", NextSetup },
-	{ "PreviousSetup", PreviousSetup },
-	{ "StartFullscreenMovie", StartFullscreenMovie },
-	{ "IsFullscreenMoviePlaying", IsFullscreenMoviePlaying },
-	{ "StartMovie", StartMovie },
-	{ "StopMovie", StopMovie },
-	{ "PauseMovie", PauseMovie },
-	{ "IsMoviePlaying", IsMoviePlaying },
-	{ "PlaySound", PlaySound },
-	{ "IsSoundPlaying", IsSoundPlaying },
-	{ "SetSoundPosition", SetSoundPosition },
-	{ "FileFindFirst", luaFileFindFirst },
-	{ "FileFindNext", luaFileFindNext },
-	{ "FileFindDispose", FileFindDispose },
-	{ "InputDialog", InputDialog },
-	{ "GetSectorOppositeEdge", GetSectorOppositeEdge },
-	{ "MakeSectorActive", MakeSectorActive },
-	{ "GetCurrentScript", GetCurrentScript },
-	{ "GetCameraPosition", GetCameraPosition },
-	{ "SetCameraPosition", SetCameraPosition },
-	{ "GetCameraFOV", GetCameraFOV },
-	{ "SetCameraFOV", SetCameraFOV },
-	{ "GetCameraRoll", GetCameraRoll },
-	{ "GetCameraLookVector", GetCameraLookVector },
-	{ "TurnActorTo", TurnActorTo },
-	{ "PerSecond", PerSecond },
-	{ "GetAngleBetweenVectors", GetAngleBetweenVectors },
-	{ "GetAngleBetweenActors", GetAngleBetweenActors },
-	{ "SetAmbientLight", SetAmbientLight },
-	{ "TurnLightOn", TurnLightOn },
-	{ "SetLightPosition", SetLightPosition },
-	{ "LightMgrStartup", LightMgrStartup },
-	{ "ImStartSound", ImStartSound },
-	{ "ImGetSfxVol", ImGetSfxVol },
-	{ "ImGetVoiceVol", ImGetVoiceVol },
-	{ "ImGetMusicVol", ImGetMusicVol },
-	{ "ImSetState", ImSetState },
-	{ "ImSetSequence", ImSetSequence },
-	{ "LoadBundle", LoadBundle },
-	{ "SetGamma", SetGamma },
-	{ "SetActorWalkDominate", SetActorWalkDominate },
-	{ "RenderModeUser", RenderModeUser },
-	{ "DimScreen", DimScreen },
-	{ "Display", Display },
-	{ "SetSpeechMode", SetSpeechMode },
-	{ "GetSpeechMode", GetSpeechMode },
-	{ "KillActorShadows", KillActorShadows },
-	{ "NewObjectState", NewObjectState },
-	{ "SetActorCollisionMode", SetActorCollisionMode },
-	{ "SetActorCollisionScale", SetActorCollisionScale },
-	{ "SubmitSaveGameData", SubmitSaveGameData },
-	{ "GetSaveGameData", GetSaveGameData },
-	{ "SetTextSpeed", SetTextSpeed },
-	{ "GetTextSpeed", GetTextSpeed },
-	{ "JustLoaded", JustLoaded },
-	{ "UnShrinkBoxes", UnShrinkBoxes },
-	{ "GetMemoryUsage", GetMemoryUsage },
-	{ "dofile", new_dofile },
+struct luaL_reg monkeyMainOpcodes[] = {
+	{ "EngineDisplay", L2_EngineDisplay },
+	{ "Load", L2_Load },
+	{ "Save", L2_Save },
+	{ "remove", L2_Remove },
+	{ "SetActorTimeScale", L2_SetActorTimeScale },
+	{ "SetActorWalkChore", L2_SetActorWalkChore },
+	{ "SetActorTurnChores", L2_SetActorTurnChores },
+	{ "SetActorRestChore", L2_SetActorRestChore },
+	{ "SetActorMumblechore", L2_SetActorMumblechore },
+	{ "SetActorTalkChore", L2_SetActorTalkChore },
+	{ "SetActorWalkRate", L2_SetActorWalkRate },
+	{ "GetActorWalkRate", L2_GetActorWalkRate },
+	{ "SetActorTurnRate", L2_SetActorTurnRate },
+	{ "SetSelectedActor", L2_SetSelectedActor },
+	{ "LoadActor", L2_LoadActor },
+	{ "GetActorPos", L2_GetActorPos },
+	{ "GetActorPuckVector", L2_GetActorPuckVector },
+	{ "GetActorYawToPoint", L2_GetActorYawToPoint },
+	{ "SetActorReflection", L2_SetActorReflection },
+	{ "PutActorAt", L2_PutActorAt },
+	{ "PutActorInSet", L2_PutActorInSet },
+	{ "WalkActorVector", L2_WalkActorVector },
+	{ "WalkActorForward", L2_WalkActorForward },
+	{ "WalkActorTo", L2_WalkActorTo },
+	{ "WalkActorToAvoiding", L2_WalkActorToAvoiding },
+	{ "ActorLookAt", L2_ActorLookAt },
+	{ "SetActorLookRate", L2_SetActorLookRate },
+	{ "GetActorLookRate", L2_GetActorLookRate },
+	{ "GetVisibleThings", L2_GetVisibleThings },
+	{ "SetActorHead", L2_SetActorHead },
+	{ "SetActorVisibility", L2_SetActorVisibility },
+	{ "SetActorFollowBoxes", L2_SetActorFollowBoxes },
+	{ "ShutUpActor", L2_ShutUpActor },
+	{ "IsActorInSector", L2_IsActorInSector },
+	{ "GetActorSector", L2_GetActorSector },
+	{ "TurnActor", L2_TurnActor },
+	{ "GetActorRot", L2_GetActorRot },
+	{ "SetActorRot", L2_SetActorRot },
+	{ "IsActorTurning", L2_IsActorTurning },
+	{ "PlayActorChore", L2_PlayActorChore },
+	{ "StopActorChore", L2_StopActorChore },
+	{ "IsActorResting", L2_IsActorResting },
+	{ "GetActorChores", L2_GetActorChores },
+	{ "WorldToScreen", L2_WorldToScreen },
+	{ "exit", L2_Exit },
+	{ "FunctionName", L2_FunctionName },
+	{ "EnableControl", L2_EnableControl },
+	{ "DisableControl", L2_DisableControl },
+	{ "GetControlState", L2_GetControlState },
+	{ "PrintError", L2_PrintError },
+	{ "PrintWarning", L2_PrintWarning },
+	{ "PrintDebug", L2_PrintDebug },
+	{ "MakeCurrentSet", L2_MakeCurrentSet },
+	{ "LockSet", L2_LockSet },
+	{ "UnLockSet", L2_UnLockSet },
+	{ "MakeCurrentSetup", L2_MakeCurrentSetup },
+	{ "GetCurrentSetup", L2_GetCurrentSetup },
+	{ "NextSetup", L2_NextSetup },
+	{ "PreviousSetup", L2_PreviousSetup },
+	{ "StartFullscreenMovie", L2_StartFullscreenMovie },
+	{ "IsFullscreenMoviePlaying", L2_IsFullscreenMoviePlaying },
+	{ "StartMovie", L2_StartMovie },
+	{ "StopMovie", L2_StopMovie },
+	{ "PauseMovie", L2_PauseMovie },
+	{ "IsMoviePlaying", L2_IsMoviePlaying },
+	{ "PlaySound", L2_PlaySound },
+	{ "IsSoundPlaying", L2_IsSoundPlaying },
+	{ "SetSoundPosition", L2_SetSoundPosition },
+	{ "FileFindFirst", L2_FileFindFirst },
+	{ "FileFindNext", L2_FileFindNext },
+	{ "FileFindDispose", L2_FileFindDispose },
+	{ "InputDialog", L2_InputDialog },
+	{ "GetSectorOppositeEdge", L2_GetSectorOppositeEdge },
+	{ "MakeSectorActive", L2_MakeSectorActive },
+	{ "GetCurrentScript", L2_GetCurrentScript },
+	{ "GetCameraPosition", L2_GetCameraPosition },
+	{ "SetCameraPosition", L2_SetCameraPosition },
+	{ "GetCameraFOV", L2_GetCameraFOV },
+	{ "SetCameraFOV", L2_SetCameraFOV },
+	{ "GetCameraRoll", L2_GetCameraRoll },
+	{ "GetCameraLookVector", L2_GetCameraLookVector },
+	{ "TurnActorTo", L2_TurnActorTo },
+	{ "PerSecond", L2_PerSecond },
+	{ "GetAngleBetweenVectors", L2_GetAngleBetweenVectors },
+	{ "GetAngleBetweenActors", L2_GetAngleBetweenActors },
+	{ "SetAmbientLight", L2_SetAmbientLight },
+	{ "TurnLightOn", L2_TurnLightOn },
+	{ "SetLightPosition", L2_SetLightPosition },
+	{ "LightMgrStartup", L2_LightMgrStartup },
+	{ "ImStartSound", L2_ImStartSound },
+	{ "ImGetSfxVol", L2_ImGetSfxVol },
+	{ "ImGetVoiceVol", L2_ImGetVoiceVol },
+	{ "ImGetMusicVol", L2_ImGetMusicVol },
+	{ "ImSetState", L2_ImSetState },
+	{ "ImSetSequence", L2_ImSetSequence },
+	{ "LoadBundle", L2_LoadBundle },
+	{ "SetGamma", L2_SetGamma },
+	{ "SetActorWalkDominate", L2_SetActorWalkDominate },
+	{ "RenderModeUser", L2_RenderModeUser },
+	{ "DimScreen", L2_DimScreen },
+	{ "Display", L2_Display },
+	{ "SetSpeechMode", L2_SetSpeechMode },
+	{ "GetSpeechMode", L2_GetSpeechMode },
+	{ "KillActorShadows", L2_KillActorShadows },
+	{ "NewObjectState", L2_NewObjectState },
+	{ "SetActorCollisionMode", L2_SetActorCollisionMode },
+	{ "SetActorCollisionScale", L2_SetActorCollisionScale },
+	{ "SubmitSaveGameData", L2_SubmitSaveGameData },
+	{ "GetSaveGameData", L2_GetSaveGameData },
+	{ "SetTextSpeed", L2_SetTextSpeed },
+	{ "GetTextSpeed", L2_GetTextSpeed },
+	{ "JustLoaded", L2_JustLoaded },
+	{ "UnShrinkBoxes", L2_UnShrinkBoxes },
+	{ "GetMemoryUsage", L2_GetMemoryUsage },
+	{ "dofile", L2_new_dofile },
 
 	// Monkey specific opcodes:
 
-	{ "SetActiveCD", SetActiveCD },
-	{ "GetActiveCD", GetActiveCD },
-	{ "AreWeInternational", AreWeInternational },
-	{ "MakeScreenTextures", MakeScreenTextures },
-	{ "ThumbnailFromFile", ThumbnailFromFile },
-	{ "ClearSpecialtyTexture", ClearSpecialtyTexture },
-	{ "UnloadActor", UnloadActor },
-	{ "PutActorInOverworld", PutActorInOverworld },
-	{ "RemoveActorFromOverworld", RemoveActorFromOverworld },
-	{ "ClearOverworld", ClearOverworld },
-	{ "ToggleOverworld", ToggleOverworld },
-	{ "ActorStopMoving", ActorStopMoving },
-	{ "SetActorFOV", SetActorFOV },
-	{ "SetActorLighting", SetActorLighting },
-	{ "SetActorHeadLimits", SetActorHeadLimits },
-	{ "ActorActivateShadow", ActorActivateShadow },
-	{ "EnableActorPuck", EnableActorPuck },
-	{ "SetActorGlobalAlpha", SetActorGlobalAlpha },
-	{ "SetActorLocalAlpha", SetActorLocalAlpha },
-	{ "SetActorSortOrder", SetActorSortOrder },
-	{ "GetActorSortOrder", GetActorSortOrder },
-	{ "AttachActor", AttachActor },
-	{ "DetachActor", DetachActor },
-	{ "IsChoreValid", IsChoreValid },
-	{ "IsChorePlaying", IsChorePlaying },
-	{ "IsChoreLooping", IsChoreLooping },
-	{ "StopActorChores", StopActorChores },
-	{ "PlayChore", PlayChore },
-	{ "StopChore", StopChore },
-	{ "PauseChore", PauseChore },
-	{ "AdvanceChore", AdvanceChore },
-	{ "CompleteChore", CompleteChore },
-	{ "LockChore", LockChore },
-	{ "UnlockChore", UnlockChore },
-	{ "LockChoreSet", LockChoreSet },
-	{ "UnlockChoreSet", UnlockChoreSet },
-	{ "LockBackground", LockBackground },
-	{ "UnLockBackground", UnLockBackground },
-	{ "EscapeMovie", EscapeMovie },
-	{ "StopAllSounds", StopAllSounds },
-	{ "LoadSound", LoadSound },
-	{ "FreeSound", FreeSound },
-	{ "PlayLoadedSound", PlayLoadedSound },
-	{ "SetGroupVolume", SetGroupVolume },
-	{ "GetSoundVolume", GetSoundVolume },
-	{ "SetSoundVolume", SetSoundVolume },
-	{ "EnableAudioGroup", EnableAudioGroup },
-	{ "EnableVoiceFX", EnableVoiceFX },
-	{ "PlaySoundFrom", PlaySoundFrom },
-	{ "PlayLoadedSoundFrom", PlayLoadedSoundFrom },
-	{ "SetReverb", SetReverb },
-	{ "UpdateSoundPosition", UpdateSoundPosition },
-	{ "ImSelectSet", ImSelectSet },
-	{ "ImStateHasLooped", ImStateHasLooped },
-	{ "ImStateHasEnded", ImStateHasEnded },
-	{ "ImPushState", ImPushState },
-	{ "ImPopState", ImPopState },
-	{ "ImFlushStack", ImFlushStack },
-	{ "ImGetMillisecondPosition", ImGetMillisecondPosition },
-	{ "GetSectorName", GetSectorName },
-	{ "GetCameraYaw", GetCameraYaw },
-	{ "YawCamera", YawCamera },
-	{ "GetCameraPitch", GetCameraPitch },
-	{ "PitchCamera", PitchCamera },
-	{ "RollCamera", RollCamera },
-	{ "UndimAll", UndimAll },
-	{ "UndimRegion", UndimRegion },
-	{ "GetCPUSpeed", GetCPUSpeed },
-	{ "NewLayer", NewLayer },
-	{ "FreeLayer", FreeLayer },
-	{ "SetLayerSortOrder", SetLayerSortOrder },
-	{ "SetLayerFrame", SetLayerFrame },
-	{ "AdvanceLayerFrame", AdvanceLayerFrame },
-	{ "PushText", PushText },
-	{ "PopText", PopText },
-	{ "NukeAllScriptLocks", NukeAllScriptLocks },
-	{ "ToggleDebugDraw", ToggleDebugDraw },
-	{ "ToggleDrawCameras", ToggleDrawCameras },
-	{ "ToggleDrawLights", ToggleDrawLights },
-	{ "ToggleDrawSectors", ToggleDrawSectors },
-	{ "ToggleDrawBBoxes", ToggleDrawBBoxes },
-	{ "ToggleDrawFPS", ToggleDrawFPS },
-	{ "ToggleDrawPerformance", ToggleDrawPerformance },
-	{ "ToggleDrawActorStats", ToggleDrawActorStats },
-	{ "SectEditSelect", SectEditSelect },
-	{ "SectEditPlace", SectEditPlace },
-	{ "SectEditDelete", SectEditDelete },
-	{ "SectEditInsert", SectEditInsert },
-	{ "SectEditSortAdd", SectEditSortAdd },
-	{ "SectEditForgetIt", SectEditForgetIt },
-	{ "FRUTEY_Begin", FRUTEY_Begin },
-	{ "FRUTEY_End", FRUTEY_End }
+	{ "SetActiveCD", L2_SetActiveCD },
+	{ "GetActiveCD", L2_GetActiveCD },
+	{ "AreWeInternational", L2_AreWeInternational },
+	{ "MakeScreenTextures", L2_MakeScreenTextures },
+	{ "ThumbnailFromFile", L2_ThumbnailFromFile },
+	{ "ClearSpecialtyTexture", L2_ClearSpecialtyTexture },
+	{ "UnloadActor", L2_UnloadActor },
+	{ "PutActorInOverworld", L2_PutActorInOverworld },
+	{ "RemoveActorFromOverworld", L2_RemoveActorFromOverworld },
+	{ "ClearOverworld", L2_ClearOverworld },
+	{ "ToggleOverworld", L2_ToggleOverworld },
+	{ "ActorStopMoving", L2_ActorStopMoving },
+	{ "SetActorFOV", L2_SetActorFOV },
+	{ "SetActorLighting", L2_SetActorLighting },
+	{ "SetActorHeadLimits", L2_SetActorHeadLimits },
+	{ "ActorActivateShadow", L2_ActorActivateShadow },
+	{ "EnableActorPuck", L2_EnableActorPuck },
+	{ "SetActorGlobalAlpha", L2_SetActorGlobalAlpha },
+	{ "SetActorLocalAlpha", L2_SetActorLocalAlpha },
+	{ "SetActorSortOrder", L2_SetActorSortOrder },
+	{ "GetActorSortOrder", L2_GetActorSortOrder },
+	{ "AttachActor", L2_AttachActor },
+	{ "DetachActor", L2_DetachActor },
+	{ "IsChoreValid", L2_IsChoreValid },
+	{ "IsChorePlaying", L2_IsChorePlaying },
+	{ "IsChoreLooping", L2_IsChoreLooping },
+	{ "StopActorChores", L2_StopActorChores },
+	{ "PlayChore", L2_PlayChore },
+	{ "StopChore", L2_StopChore },
+	{ "PauseChore", L2_PauseChore },
+	{ "AdvanceChore", L2_AdvanceChore },
+	{ "CompleteChore", L2_CompleteChore },
+	{ "LockChore", L2_LockChore },
+	{ "UnlockChore", L2_UnlockChore },
+	{ "LockChoreSet", L2_LockChoreSet },
+	{ "UnlockChoreSet", L2_UnlockChoreSet },
+	{ "LockBackground", L2_LockBackground },
+	{ "UnLockBackground", L2_UnLockBackground },
+	{ "EscapeMovie", L2_EscapeMovie },
+	{ "StopAllSounds", L2_StopAllSounds },
+	{ "LoadSound", L2_LoadSound },
+	{ "FreeSound", L2_FreeSound },
+	{ "PlayLoadedSound", L2_PlayLoadedSound },
+	{ "SetGroupVolume", L2_SetGroupVolume },
+	{ "GetSoundVolume", L2_GetSoundVolume },
+	{ "SetSoundVolume", L2_SetSoundVolume },
+	{ "EnableAudioGroup", L2_EnableAudioGroup },
+	{ "EnableVoiceFX", L2_EnableVoiceFX },
+	{ "PlaySoundFrom", L2_PlaySoundFrom },
+	{ "PlayLoadedSoundFrom", L2_PlayLoadedSoundFrom },
+	{ "SetReverb", L2_SetReverb },
+	{ "UpdateSoundPosition", L2_UpdateSoundPosition },
+	{ "ImSelectSet", L2_ImSelectSet },
+	{ "ImStateHasLooped", L2_ImStateHasLooped },
+	{ "ImStateHasEnded", L2_ImStateHasEnded },
+	{ "ImPushState", L2_ImPushState },
+	{ "ImPopState", L2_ImPopState },
+	{ "ImFlushStack", L2_ImFlushStack },
+	{ "ImGetMillisecondPosition", L2_ImGetMillisecondPosition },
+	{ "GetSectorName", L2_GetSectorName },
+	{ "GetCameraYaw", L2_GetCameraYaw },
+	{ "YawCamera", L2_YawCamera },
+	{ "GetCameraPitch", L2_GetCameraPitch },
+	{ "PitchCamera", L2_PitchCamera },
+	{ "RollCamera", L2_RollCamera },
+	{ "UndimAll", L2_UndimAll },
+	{ "UndimRegion", L2_UndimRegion },
+	{ "GetCPUSpeed", L2_GetCPUSpeed },
+	{ "NewLayer", L2_NewLayer },
+	{ "FreeLayer", L2_FreeLayer },
+	{ "SetLayerSortOrder", L2_SetLayerSortOrder },
+	{ "SetLayerFrame", L2_SetLayerFrame },
+	{ "AdvanceLayerFrame", L2_AdvanceLayerFrame },
+	{ "PushText", L2_PushText },
+	{ "PopText", L2_PopText },
+	{ "NukeAllScriptLocks", L2_NukeAllScriptLocks },
+	{ "ToggleDebugDraw", L2_ToggleDebugDraw },
+	{ "ToggleDrawCameras", L2_ToggleDrawCameras },
+	{ "ToggleDrawLights", L2_ToggleDrawLights },
+	{ "ToggleDrawSectors", L2_ToggleDrawSectors },
+	{ "ToggleDrawBBoxes", L2_ToggleDrawBBoxes },
+	{ "ToggleDrawFPS", L2_ToggleDrawFPS },
+	{ "ToggleDrawPerformance", L2_ToggleDrawPerformance },
+	{ "ToggleDrawActorStats", L2_ToggleDrawActorStats },
+	{ "SectEditSelect", L2_SectEditSelect },
+	{ "SectEditPlace", L2_SectEditPlace },
+	{ "SectEditDelete", L2_SectEditDelete },
+	{ "SectEditInsert", L2_SectEditInsert },
+	{ "SectEditSortAdd", L2_SectEditSortAdd },
+	{ "SectEditForgetIt", L2_SectEditForgetIt },
+	{ "FRUTEY_Begin", L2_FRUTEY_Begin },
+	{ "FRUTEY_End", L2_FRUTEY_End }
 };
 
-struct luaL_reg textOpcodes[] = {
-	{ "IsMessageGoing", IsMessageGoing },
-	{ "SetSayLineDefaults", SetSayLineDefaults },
-	{ "SetActorTalkColor", SetActorTalkColor },
-	{ "SayLine", SayLine },
-	{ "MakeTextObject", MakeTextObject },
-	{ "GetTextObjectDimensions", GetTextObjectDimensions },
-	{ "GetFontDimensions", GetFontDimensions },
-	{ "ChangeTextObject", ChangeTextObject },
-	{ "KillTextObject", KillTextObject },
-	{ "ExpireText", ExpireText },
-	{ "PurgeText", PurgeText },
-	{ "MakeColor", MakeColor },
-	{ "GetColorComponents", GetColorComponents },
-	{ "GetTextCharPosition", GetTextCharPosition },
-	{ "LocalizeString", LocalizeString },
-	{ "SetOffscreenTextPos", SetOffscreenTextPos }
+struct luaL_reg monkeyTextOpcodes[] = {
+	{ "IsMessageGoing", L2_IsMessageGoing },
+	{ "SetSayLineDefaults", L2_SetSayLineDefaults },
+	{ "SetActorTalkColor", L2_SetActorTalkColor },
+	{ "SayLine", L2_SayLine },
+	{ "MakeTextObject", L2_MakeTextObject },
+	{ "GetTextObjectDimensions", L2_GetTextObjectDimensions },
+	{ "GetFontDimensions", L2_GetFontDimensions },
+	{ "ChangeTextObject", L2_ChangeTextObject },
+	{ "KillTextObject", L2_KillTextObject },
+	{ "ExpireText", L2_ExpireText },
+	{ "PurgeText", L2_PurgeText },
+	{ "MakeColor", L2_MakeColor },
+	{ "GetColorComponents", L2_GetColorComponents },
+	{ "GetTextCharPosition", L2_GetTextCharPosition },
+	{ "LocalizeString", L2_LocalizeString },
+	{ "SetOffscreenTextPos", L2_SetOffscreenTextPos }
 };
 
-struct luaL_reg primitivesOpcodes[] = {
-	{ "DrawLine", DrawLine },
-	{ "ChangePrimitive", ChangePrimitive },
-	{ "KillPrimitive", KillPrimitive },
-	{ "PurgePrimitiveQueue", PurgePrimitiveQueue }
+struct luaL_reg monkeyPrimitivesOpcodes[] = {
+	{ "DrawLine", L2_DrawLine },
+	{ "ChangePrimitive", L2_ChangePrimitive },
+	{ "KillPrimitive", L2_KillPrimitive },
+	{ "PurgePrimitiveQueue", L2_PurgePrimitiveQueue }
 };
 
-struct luaL_reg miscOpcodes[] = {
-	{ "  concatfallback", concatFallback },
-	{ "  typeoverride", typeOverride },
+struct luaL_reg monkeyMiscOpcodes[] = {
+	{ "  concatfallback", L2_concatFallback },
+	{ "  typeoverride", L2_typeOverride },
 	{ "  dfltcamera", dummyHandler },
 	{ "  dfltcontrol", dummyHandler },
 };
+
+void registerMonkeyOpcodes() {
+	// Register main opcodes functions
+	luaL_openlib(monkeyMainOpcodes, ARRAYSIZE(monkeyMainOpcodes));
+
+	// Register text opcodes functions
+	luaL_openlib(monkeyTextOpcodes, ARRAYSIZE(monkeyTextOpcodes));
+
+	// Register primitives opcodes functions
+	luaL_openlib(monkeyPrimitivesOpcodes, ARRAYSIZE(monkeyPrimitivesOpcodes));
+
+	// Register miscOpcodes opcodes functions
+	luaL_openlib(monkeyMiscOpcodes, ARRAYSIZE(monkeyMiscOpcodes));
+}
 
 } // end of namespace Grim

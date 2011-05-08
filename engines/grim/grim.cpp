@@ -442,20 +442,69 @@ Common::Error GrimEngine::run() {
 	lua_strlibopen();
 	lua_mathlibopen();
 
-	register_lua();
+	if (getGameType() == GType_GRIM) {
+		registerGrimOpcodes();
+
+		// FIXME/HACK: see PutActorInSet
+		const char *func = "function reset_doorman() doorman_in_hot_box = FALSE end";
+		lua_pushstring(func);
+		lua_call("dostring");
+	} else
+		registerMonkeyOpcodes();
+
+	registerLua();
 	g_lua_initialized = true;
 
 	bundle_dofile("_system.lua");
 
 	lua_pushnil();		// resumeSave
 	lua_pushnil();		// bootParam - not used in scripts
-//	lua_pushnumber(0);		// bootParam
+//	lua_pushnumber(0);	// bootParam
 	lua_call("BOOT");
 
 	g_grim->setMode(ENGINE_MODE_NORMAL);
 	g_grim->mainLoop();
 
 	return Common::kNoError;
+}
+
+int GrimEngine::bundle_dofile(const char *filename) {
+	Block *b = g_resourceloader->getFileBlock(filename);
+	if (!b) {
+		delete b;
+		// Don't print warnings on Scripts\foo.lua,
+		// d:\grimFandango\Scripts\foo.lua
+		if (!strstr(filename, "Scripts\\") && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
+			warning("Cannot find script %s", filename);
+
+		return 2;
+	}
+
+	int result = lua_dobuffer(const_cast<char *>(b->getData()), b->getLen(), const_cast<char *>(filename));
+	delete b;
+	return result;
+}
+
+int GrimEngine::single_dofile(const char *filename) {
+	Common::File *f = new Common::File();
+
+	if (!f->open(filename)) {
+		delete f;
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
+			warning("Cannot find script %s", filename);
+
+		return 2;
+	}
+
+	int32 size = f->size();
+	char *data = new char[size];
+	f->read(data, size);
+
+	int result = lua_dobuffer(data, size, const_cast<char *>(filename));
+	delete f;
+	delete[] data;
+
+	return result;
 }
 
 extern int refSystemTable;
