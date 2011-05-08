@@ -472,8 +472,8 @@ int32 lua_ref(int32 lock) {
 	return ref;
 }
 
-lua_Object lua_getref(int32 ref) {
-	TObject *o = luaC_getref(ref);
+lua_Object lua_getref(int32 r) {
+	TObject *o = luaC_getref(r);
 	return (o ? put_luaObject(o) : LUA_NOOBJECT);
 }
 
