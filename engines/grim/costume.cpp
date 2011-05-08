@@ -1127,6 +1127,16 @@ void Costume::playChoreLooping(int num) {
 	_chores[num].playLooping();
 }
 
+void Costume::playChore(const char *name) {
+	for (int i = 0; i < _numChores; ++i) {
+			if (strcmp(_chores[i]._name, name) == 0) {
+			playChore(i);
+			return;
+		}
+	}
+	warning("Costume::playChore: Could not find chore: %s", name);
+	return;
+}
 void Costume::playChore(int num) {
 	if (num < 0 || num >= _numChores) {
 		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)

@@ -32,8 +32,47 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/actor.h"
 #include "engines/grim/lipsync.h"
+#include "engines/grim/costume.h"
 
 namespace Grim {
+
+void L2_PlayActorChore() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object choreObj = lua_getparam(2);
+	lua_Object costumeObj = lua_getparam(3);
+	lua_Object modeObj = lua_getparam(4);
+	lua_Object paramObj = lua_getparam(5);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+
+	if (!lua_isstring(choreObj) || !lua_isstring(costumeObj))
+		lua_pushnil();
+
+	bool mode = false;
+	float param = 0.0;
+
+	if (!lua_isnil(modeObj)) {
+		if (lua_getnumber(modeObj) != 0.0)
+			mode = true;
+		if (!lua_isnil(paramObj))
+			if (lua_isnumber(paramObj))
+				param = lua_getnumber(paramObj);
+	}
+
+	const char *choreName = lua_getstring(choreObj);
+	const char *costumeName = lua_getstring(costumeObj);
+
+	warning("L2_PlayActorChore: implement opcode actor: %s, chore: %s, costume: %s, mode bool: %d, param: %f", 
+			actor->getName(), choreName, costumeName, (int)mode, param);
+	// FIXME. code below is a hack, need proper implementation
+	actor->setCostume(costumeName);
+	Costume *costume = actor->getCurrentCostume();
+	costume->playChore(choreName);
+	pushbool(true);
+}
 
 static void L2_StopActorChores() {
 	lua_Object actorObj = lua_getparam(1);
@@ -141,7 +180,6 @@ STUB_FUNC2(L2_TurnActor)
 STUB_FUNC2(L2_GetActorRot)
 STUB_FUNC2(L2_SetActorRot)
 STUB_FUNC2(L2_IsActorTurning)
-STUB_FUNC2(L2_PlayActorChore)
 STUB_FUNC2(L2_StopActorChore)
 STUB_FUNC2(L2_IsActorResting)
 STUB_FUNC2(L2_Exit)
