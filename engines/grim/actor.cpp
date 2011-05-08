@@ -24,6 +24,10 @@
  */
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_chdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
+#define FORBIDDEN_SYMBOL_EXCEPTION_getwd
+#define FORBIDDEN_SYMBOL_EXCEPTION_unlink
 
 #include "graphics/line3d.h"
 
