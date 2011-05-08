@@ -144,6 +144,7 @@ public:
 
 	Model::HierNode *getHierarchy() { return _hier; }
 	int getNumNodes() { return _obj->getNumNodes(); }
+	Model *getModel() { return _obj; }
 	void draw();
 
 protected:
@@ -659,16 +660,18 @@ MaterialComponent::MaterialComponent(Costume::Component *p, int parentID, const 
 }
 
 void MaterialComponent::init() {
-	CMap *cm = getCMap();
-
-	if (!cm) {
-		// Use the default colormap if we're still drawing a blank
-		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("MaterialComponent::init on %s", _filename.c_str());
-
-		cm = g_resourceloader->getColormap(DEFAULT_COLORMAP);
+	if (FROM_BE_32(_parent->getTag()) == MKTAG('M','M','D','L') ||
+		FROM_BE_32(_parent->getTag()) == MKTAG('M','O','D','L')) {
+		ModelComponent *p = static_cast<ModelComponent *>(_parent);
+		Model *model = p->getModel();
+		for (int i = 0; i < model->_numMaterials; ++i) {
+			if (strcmp(model->_materials[i]->getFilename(), _filename.c_str()) == 0)
+				_mat = model->_materials[i].object();
+		}
+	} else {
+		warning("Parent of a MaterialComponent not a ModelComponent. %s %s", _filename.c_str(),_cost->getFilename());
+		_mat = NULL;
 	}
-	_mat = g_resourceloader->getMaterial(_filename.c_str(), cm);
 }
 
 void MaterialComponent::setKey(int val) {
