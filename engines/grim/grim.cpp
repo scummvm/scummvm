@@ -1627,7 +1627,12 @@ void GrimEngine::setScene(const char *name) {
 		setScene(scene);
 		return;
 	}
-	Block *b = g_resourceloader->getFileBlock(name);
+	Common::String filename(name);
+	// EMI-scripts refer to their .setb files as .set
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		filename += "b";
+	}
+	Block *b = g_resourceloader->getFileBlock(filename.c_str());
 	if (!b)
 		warning("Could not find scene file %s", name);
 	_currScene = new Scene(name, b->getData(), b->getLen());
