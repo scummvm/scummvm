@@ -569,11 +569,7 @@ int TownsMidiOutputChannel::lookupVolume(int a, int b) {
 }
 
 void TownsMidiOutputChannel::keyOn() {
-	// This driver uses only 2 operators and 2 algorithms (algorithm 5 and 7),
-	// since it is just a modified AdLib driver. It also uses AdLib programs.
-	// There are no FM-TOWNS specific programs. This is the reason for the FM-TOWNS
-	// music being so bad compared to AdLib (unsuitable data is just forced into the
-	// wrong audio device).
+	// This driver uses only 2 operators since it is just a modified AdLib driver.
 	out(0x28, 0x30);
 }
 
@@ -587,11 +583,7 @@ void TownsMidiOutputChannel::keyOnSetFreq(uint16 frq) {
 	out(0xa4, frq >> 8);
 	out(0xa0, frq & 0xff);
 	out(0x28, 0);
-	// This driver uses only 2 operators and 2 algorithms (algorithm 5 and 7),
-	// since it is just a modified AdLib driver. It also uses AdLib programs.
-	// There are no FM-TOWNS specific programs. This is the reason for the FM-TOWNS
-	// music being so bad compared to AdLib (unsuitable data is just forced into the
-	// wrong audio device).
+	// This driver uses only 2 operators since it is just a modified AdLib driver.
 	out(0x28, 0x30);
 }
 
@@ -698,13 +690,15 @@ void TownsMidiInputChannel::noteOff(byte note) {
 	if (!_out)
 		return;
 
-	if (_out->_note != note)
-		return;
+	for (TownsMidiOutputChannel *oc = _out; oc; oc = oc->_next) {
+		if (oc->_note != note)
+			continue;
 
-	if (_sustain)
-		_out->_sustainNoteOff = 1;
-	else
-		_out->disconnect();
+		if (_sustain)
+			oc->_sustainNoteOff = 1;
+		else
+			oc->disconnect();
+	}
 }
 
 void TownsMidiInputChannel::noteOn(byte note, byte velocity) {
@@ -743,7 +737,9 @@ void TownsMidiInputChannel::noteOn(byte note, byte velocity) {
 }
 
 void TownsMidiInputChannel::programChange(byte program) {
-	// Dysfunctional since this is all done inside the imuse code
+	// Not implemented (The loading and assignment of programs
+	// is handled externally by the SCUMM engine. The programs
+	// get sent via sysEx_customInstrument.)
 }
 
 void TownsMidiInputChannel::pitchBend(int16 bend) {
@@ -816,7 +812,7 @@ void TownsMidiInputChannel::controlVolume(byte value) {
 }
 
 void TownsMidiInputChannel::controlPanPos(byte value) {
-	// not supported
+	// not implemented
 }
 
 void TownsMidiInputChannel::controlSustain(byte value) {
