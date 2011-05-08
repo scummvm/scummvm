@@ -98,9 +98,6 @@ STUB_FUNC2(L2_FunctionName)
 STUB_FUNC2(L2_EnableControl)
 STUB_FUNC2(L2_DisableControl)
 STUB_FUNC2(L2_GetControlState)
-STUB_FUNC2(L2_PrintError)
-STUB_FUNC2(L2_PrintWarning)
-STUB_FUNC2(L2_PrintDebug)
 STUB_FUNC2(L2_MakeCurrentSet)
 STUB_FUNC2(L2_LockSet)
 STUB_FUNC2(L2_UnLockSet)
@@ -364,9 +361,9 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "EnableControl", L2_EnableControl },
 	{ "DisableControl", L2_DisableControl },
 	{ "GetControlState", L2_GetControlState },
-	{ "PrintError", L2_PrintError },
-	{ "PrintWarning", L2_PrintWarning },
-	{ "PrintDebug", L2_PrintDebug },
+	{ "PrintError", L1_PrintDebug },
+	{ "PrintWarning", L1_PrintDebug },
+	{ "PrintDebug", L1_PrintDebug },
 	{ "MakeCurrentSet", L2_MakeCurrentSet },
 	{ "LockSet", L2_LockSet },
 	{ "UnLockSet", L2_UnLockSet },
