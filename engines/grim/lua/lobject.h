@@ -127,7 +127,7 @@ typedef struct Closure {
 	TObject consts[1];  // at least one for prototype
 } Closure;
 
-typedef struct node {
+typedef struct Node {
 	TObject ref;
 	TObject val;
 } Node;
