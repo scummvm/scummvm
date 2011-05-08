@@ -24,6 +24,7 @@
  */
 
 #include "common/util.h"
+#include "common/memstream.h"
 
 #include "engines/grim/grim.h"
 #include "engines/grim/walkplane.h"
@@ -132,6 +133,32 @@ void Sector::load(TextSplitter &ts) {
 	float length = _normal.magnitude();
 	if (length > 0)
 		_normal /= length;
+}
+
+void Sector::loadBinary(Common::MemoryReadStream *ms) {
+	_numVertices = ms->readUint32LE();
+	_vertices = new Graphics::Vector3d[_numVertices];
+	for(int i = 0; i < _numVertices; i++) {
+		ms->read(_vertices[i]._coords, 12);
+	}
+
+	char name[128];
+	int nameLength = ms->readUint32LE();
+
+	_name = ms->read(name, nameLength);
+
+	_id = ms->readUint32LE();
+
+	_visible = ms->readByte();
+
+	_type = (SectorType)ms->readUint32LE();
+
+	// this probably does something more than skip bytes, but ATM I don't know what
+	int skip = ms->readUint32LE();
+	ms->seek(skip * 4, SEEK_CUR);
+
+	ms->read(&_height, 4);
+
 }
 
 void Sector::setVisible(bool vis) {
