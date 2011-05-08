@@ -37,7 +37,7 @@ namespace Grim {
 
 static void L2_SetActorLighting() {
 	lua_Object actorObj = lua_getparam(1);
-	lua_Object paramObj = lua_getparam(2);
+	lua_Object lightModeObj = lua_getparam(2);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
@@ -46,20 +46,20 @@ static void L2_SetActorLighting() {
 	if (!actor)
 		return;
 
-	if (lua_isnil(paramObj) || !lua_isnumber(paramObj))
+	if (lua_isnil(lightModeObj) || !lua_isnumber(lightModeObj))
 		return;
 
-	int param = lua_getnumber(paramObj);
-	if (param != 0) {
-		if (param == 1) {
+	int lightMode = lua_getnumber(lightModeObj);
+	if (lightMode != 0) {
+		if (lightMode == 1) {
 			//FIXME actor->
 			warning("L2_SetActorLighting: case param 1(LIGHT_FASTDYN), actor: %s", actor->getName());
-		} else if (param == 2) {
+		} else if (lightMode == 2) {
 			//FIXME actor->
 			warning("L2_SetActorLighting: case param 2(LIGHT_NORMDYN), actor: %s", actor->getName());
 		} else {
 			//FIXME actor->
-			warning("L2_SetActorLighting: case param %d(LIGHT_NONE), actor: %s", param, actor->getName());
+			warning("L2_SetActorLighting: case param %d(LIGHT_NONE), actor: %s", lightMode, actor->getName());
 		}
 	} else {
 		//FIXME actor->
