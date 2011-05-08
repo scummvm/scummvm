@@ -63,8 +63,9 @@ static int32 hashindex(TObject *r) {
 	case LUA_T_NUMBER:
 		h = (int32)nvalue(r);
 		break;
-	case LUA_T_STRING:
 	case LUA_T_USERDATA:
+		h = (int32)r->value.ud.id;
+	case LUA_T_STRING:
 		h = (int32)tsvalue(r);
 		break;
 	case LUA_T_ARRAY:
