@@ -35,8 +35,8 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
 
-GPHGraphicsManager::GPHGraphicsManager(SdlEventSource *boss)
- : SdlGraphicsManager(boss) {
+GPHGraphicsManager::GPHGraphicsManager(SdlEventSource *sdlEventSource)
+ : SdlGraphicsManager(sdlEventSource) {
 }
 
 const OSystem::GraphicsMode *GPHGraphicsManager::getSupportedGraphicsModes() const {
@@ -110,8 +110,26 @@ void GPHGraphicsManager::setGraphicsModeIntern() {
 	blitCursor();
 }
 
-void GPHGraphicsManager::initSize(uint w, uint h) {
+void GPHGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
+
+#ifdef USE_RGB_COLOR
+	// Avoid redundant format changes
+	Graphics::PixelFormat newFormat;
+	if (!format)
+		newFormat = Graphics::PixelFormat::createFormatCLUT8();
+	else
+		newFormat = *format;
+
+	assert(newFormat.bytesPerPixel > 0);
+
+	if (newFormat != _videoMode.format) {
+		_videoMode.format = newFormat;
+		_transactionDetails.formatChanged = true;
+		_screenFormat = newFormat;
+	}
+#endif
+
 
 	// Avoid redundant res changes
 	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
@@ -119,11 +137,15 @@ void GPHGraphicsManager::initSize(uint w, uint h) {
 
 	_videoMode.screenWidth = w;
 	_videoMode.screenHeight = h;
+
 	if (w > 320 || h > 240){
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
 		_sdlEventSource->toggleMouseGrab();
 	}
+
+	_videoMode.overlayWidth = 320;
+	_videoMode.overlayHeight = 240;
 
 	_transactionDetails.sizeChanged = true;
 }
@@ -433,26 +455,65 @@ void GPHGraphicsManager::hideOverlay() {
 }
 
 
+//bool GPHGraphicsManager::loadGFXMode() {
+
+
+//	_videoMode.overlayWidth = 320;
+//	_videoMode.overlayHeight = 240;
+//	_videoMode.fullscreen = true;
+//
+//	/* Forcefully disable aspect ratio correction for games
+//	   that start with a native 240px height resolution
+//	   This corrects games with non-standard resolutions
+//	   such as MM Nes (256x240).
+//	*/
+//	if(_videoMode.screenHeight == 240) {
+//		_videoMode.aspectRatioCorrection = false;
+//	}
+
+//	debug("Game ScreenMode = %d*%d", _videoMode.screenWidth, _videoMode.screenHeight);
+//	if (_videoMode.screenWidth > 320 || _videoMode.screenHeight > 240) {
+//		_videoMode.aspectRatioCorrection = false;
+//		setGraphicsMode(GFX_HALF);
+//		debug("GraphicsMode set to HALF");
+//	} else {
+//		setGraphicsMode(GFX_NORMAL);
+//		debug("GraphicsMode set to NORMAL");
+//	}
+
+
+//	if ((_videoMode.mode == GFX_HALF) && !_overlayVisible) {
+//		//_videoMode.overlayWidth = _videoMode.screenWidth / 2;
+//		//_videoMode.overlayHeight = _videoMode.screenHeight / 2;
+//		_videoMode.overlayWidth = 320;
+//		_videoMode.overlayHeight = 240;
+//		_videoMode.fullscreen = true;
+//	} else {
+//
+//		_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
+//		_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
+//
+//		if (_videoMode.aspectRatioCorrection)
+//			_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
+//
+//		//_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
+//		//_videoMode.hardwareHeight = effectiveScreenHeight();
+//		_videoMode.hardwareWidth = 320;
+//		_videoMode.hardwareHeight = 240;
+//
+//	}
+
+//	return SdlGraphicsManager::loadGFXMode();
+//}
+
 bool GPHGraphicsManager::loadGFXMode() {
-
-	/* Forcefully disable aspect ratio correction for games
-	   that start with a native 240px height resolution
-	   This corrects games with non-standard resolutions
-	   such as MM Nes (256x240).
-	*/
-
-	if(_videoMode.screenHeight == 240) {
-		_videoMode.aspectRatioCorrection = false;
-	}
-
-	debug("Game ScreenMode = %d*%d", _videoMode.screenWidth, _videoMode.screenHeight);
 	if (_videoMode.screenWidth > 320 || _videoMode.screenHeight > 240) {
 		_videoMode.aspectRatioCorrection = false;
 		setGraphicsMode(GFX_HALF);
-		debug("GraphicsMode set to HALF");
+//		printf("GFX_HALF\n");
 	} else {
 		setGraphicsMode(GFX_NORMAL);
-		debug("GraphicsMode set to NORMAL");
+//		printf("GFX_NORMAL\n");
 	}
 
 	if ((_videoMode.mode == GFX_HALF) && !_overlayVisible) {
