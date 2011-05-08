@@ -56,31 +56,31 @@ static int64 hashindex(TObject *ref) {
 
 #else
 
-static int32 hashindex(TObject *ref) {
+static int32 hashindex(TObject *r) {
 	int32 h;
 
-	switch (ttype(ref)) {
+	switch (ttype(r)) {
 	case LUA_T_NUMBER:
-		h = (int32)nvalue(ref);
+		h = (int32)nvalue(r);
 		break;
 	case LUA_T_STRING:
 	case LUA_T_USERDATA:
-		h = (int32)tsvalue(ref);
+		h = (int32)tsvalue(r);
 		break;
 	case LUA_T_ARRAY:
-		h = (int32)avalue(ref);
+		h = (int32)avalue(r);
 		break;
 	case LUA_T_PROTO:
-		h = (int32)tfvalue(ref);
+		h = (int32)tfvalue(r);
 		break;
 	case LUA_T_CPROTO:
-		h = (int32)fvalue(ref);
+		h = (int32)fvalue(r);
 		break;
 	case LUA_T_CLOSURE:
-		h = (int32)clvalue(ref);
+		h = (int32)clvalue(r);
 		break;
 	case LUA_T_TASK:
-		h = (int32)nvalue(ref);
+		h = (int32)nvalue(r);
 		break;
 	default:
 		lua_error("unexpected type to index table");
@@ -184,8 +184,8 @@ static void rehash(Hash *t) {
 ** If the hash node is present, return its pointer, otherwise return
 ** null.
 */
-TObject *luaH_get(Hash *t, TObject *ref) {
-	int32 h = present(t, ref);
+TObject *luaH_get(Hash *t, TObject *r) {
+	int32 h = present(t, r);
 	if (ttype(ref(node(t, h))) != LUA_T_NIL)
 		return val(node(t, h));
 	else
@@ -196,15 +196,15 @@ TObject *luaH_get(Hash *t, TObject *ref) {
 ** If the hash node is present, return its pointer, otherwise create a luaM_new
 ** node for the given reference and also return its pointer.
 */
-TObject *luaH_set(Hash *t, TObject *ref) {
-	Node *n = node(t, present(t, ref));
+TObject *luaH_set(Hash *t, TObject *r) {
+	Node *n = node(t, present(t, r));
 	if (ttype(ref(n)) == LUA_T_NIL) {
 		nuse(t)++;
 		if ((float)nuse(t) > (float)nhash(t) * REHASH_LIMIT) {
 			rehash(t);
-			n = node(t, present(t, ref));
+			n = node(t, present(t, r));
 		}
-		*ref(n) = *ref;
+		*ref(n) = *r;
 		ttype(val(n)) = LUA_T_NIL;
 	}
 	return (val(n));

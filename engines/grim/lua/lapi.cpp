@@ -386,8 +386,8 @@ lua_Object lua_getlocal(lua_Function func, int32 local_number, char **name) {
 		*name = luaF_getlocalname(fp, local_number, lua_currentline(func));
 		if (*name) {
 			// if "*name", there must be a LUA_T_LINE
-			// therefore, f+2 points to function base
-			return Ref((f+2)+(local_number-1));
+			// therefore, f + 2 points to function base
+			return Ref((f + 2) + (local_number - 1));
 		} else
 			return LUA_NOOBJECT;
 	}
@@ -472,8 +472,8 @@ int32 lua_ref(int32 lock) {
 	return ref;
 }
 
-lua_Object lua_getref(int32 ref) {
-	TObject *o = luaC_getref(ref);
+lua_Object lua_getref(int32 r) {
+	TObject *o = luaC_getref(r);
 	return (o ? put_luaObject(o) : LUA_NOOBJECT);
 }
 
