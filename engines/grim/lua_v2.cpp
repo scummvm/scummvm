@@ -33,6 +33,14 @@
 
 namespace Grim {
 
+
+
+static void L2_GetActiveCD() {
+	// return current CD number 1 or 2, original can also avoid push any numer
+	warning("return const CD 1");
+	lua_pushnumber(1);
+}
+
 // Stub function for builtin functions not yet implemented
 static void stubWarning(const char *funcName) {
 	warning("Stub function: %s", funcName);
@@ -216,7 +224,6 @@ STUB_FUNC2(L2_PurgeText)
 // Monkey specific opcodes:
 
 STUB_FUNC2(L2_SetActiveCD)
-STUB_FUNC2(L2_GetActiveCD)
 STUB_FUNC2(L2_AreWeInternational)
 STUB_FUNC2(L2_MakeScreenTextures)
 STUB_FUNC2(L2_ThumbnailFromFile)
