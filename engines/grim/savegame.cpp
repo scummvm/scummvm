@@ -35,7 +35,8 @@ namespace Grim {
 
 #define SAVEGAME_HEADERTAG	'RSAV'
 #define SAVEGAME_FOOTERTAG	'ESAV'
-#define SAVEGAME_VERSION		12
+
+int SaveGame::SAVEGAME_VERSION = 12;
 
 // Constructor. Should create/open a saved game
 SaveGame::SaveGame(const char *filename, bool saving) :
@@ -48,8 +49,10 @@ SaveGame::SaveGame(const char *filename, bool saving) :
 		}
 		_outSaveFile->writeUint32BE(SAVEGAME_HEADERTAG);
 		_outSaveFile->writeUint32BE(SAVEGAME_VERSION);
+
+		_version = SAVEGAME_VERSION;
 	} else {
-		uint32 tag, version;
+		uint32 tag;
 
 		_inSaveFile = g_system->getSavefileManager()->openForLoading(filename);
 		if (!_inSaveFile) {
@@ -58,8 +61,7 @@ SaveGame::SaveGame(const char *filename, bool saving) :
 		}
 		tag = _inSaveFile->readUint32BE();
 		assert(tag == SAVEGAME_HEADERTAG);
-		version = _inSaveFile->readUint32BE();
-		assert(version == SAVEGAME_VERSION);
+		_version = _inSaveFile->readUint32BE();
 	}
 }
 
@@ -75,7 +77,13 @@ SaveGame::~SaveGame() {
 	}
 }
 
+int SaveGame::saveVersion() const {
+	return _version;
+}
+
 uint32 SaveGame::beginSection(uint32 sectionTag) {
+	assert(_version == SAVEGAME_VERSION);
+
 	if (_currentSection != 0)
 		error("Tried to begin a new save game section with ending old section");
 	_currentSection = sectionTag;

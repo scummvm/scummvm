@@ -41,6 +41,9 @@ public:
 	SaveGame(const char *filename, bool saving);
 	~SaveGame();
 
+	static int SAVEGAME_VERSION;
+
+	int saveVersion() const;
 	uint32 beginSection(uint32 sectionTag);
 	void endSection();
 	uint32 getBufferPos();
@@ -69,6 +72,7 @@ public:
 	void checkAlloc(int size);
 
 protected:
+	int _version;
 	bool _saving;
 	Common::InSaveFile *_inSaveFile;
 	Common::OutSaveFile *_outSaveFile;

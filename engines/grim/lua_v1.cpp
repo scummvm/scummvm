@@ -899,7 +899,7 @@ void L1_GetSaveGameImage() {
 	}
 	const char *filename = lua_getstring(param);
 	SaveGame *savedState = new SaveGame(filename, false);
-	if (!savedState) {
+	if (!savedState || savedState->saveVersion() != SaveGame::SAVEGAME_VERSION) {
 		lua_pushnil();
 		return;
 	}
@@ -951,8 +951,20 @@ void L1_GetSaveGameData() {
 		return;
 	const char *filename = lua_getstring(param);
 	SaveGame *savedState = new SaveGame(filename, false);
-	int32 dataSize = savedState->beginSection('SUBS');
 	lua_Object result = lua_createtable();
+
+	if (!savedState || savedState->saveVersion() != SaveGame::SAVEGAME_VERSION) {
+		lua_pushobject(result);
+		lua_pushnumber(2);
+		lua_pushstring("mo.set"); // Just a placeholder to not make it throw a lua error
+		lua_settable();
+		lua_pushobject(result);
+
+		warning("Savegame %s is incompatible with this Residual build.", filename);
+		delete savedState;
+		return;
+	}
+	int32 dataSize = savedState->beginSection('SUBS');
 
 	char str[200];
 	int strSize;
