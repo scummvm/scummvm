@@ -55,7 +55,6 @@ void L1_GetImage() {
 	}
 	const char *bitmapName = lua_getstring(nameObj);
 	Bitmap *b = g_resourceloader->loadBitmap(bitmapName);
-	g_grim->registerBitmap(b);
 	lua_pushusertag(b->getId(), MKTAG('V','B','U','F'));
 }
 

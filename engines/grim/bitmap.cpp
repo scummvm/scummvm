@@ -132,8 +132,7 @@ Bitmap::~Bitmap() {
 
 		g_driver->destroyBitmap(this);
 	}
-	if (g_resourceloader)
-		g_resourceloader->uncacheBitmap(this);
+	g_grim->killBitmap(this);
 }
 
 #define GET_BIT do { bit = bitstr_value & 1; \

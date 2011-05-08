@@ -74,14 +74,12 @@ public:
 	int getFileLength(const char *filename) const;
 
 	MaterialPtr getMaterial(const char *filename, CMap *c);
-	BitmapPtr getBitmap(const char *fname);
 	ModelPtr getModel(const char *fname, CMap *c);
 	CMapPtr getColormap(const char *fname);
 	KeyframeAnimPtr getKeyframe(const char *fname);
 	FontPtr getFont(const char *fname);
 	LipSyncPtr getLipSync(const char *fname);
 	void uncacheMaterial(Material *m);
-	void uncacheBitmap(Bitmap *bitmap);
 	void uncacheModel(Model *m);
 	void uncacheColormap(CMap *c);
 	void uncacheKeyframe(KeyframeAnim *kf);
@@ -108,7 +106,6 @@ private:
 	int32 _cacheMemorySize;
 
 	Common::List<Material *> _materials;
-	Common::List<Bitmap *> _bitmaps;
 	Common::List<Model *> _models;
 	Common::List<CMap *> _colormaps;
 	Common::List<KeyframeAnim *> _keyframeAnims;

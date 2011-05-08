@@ -1305,6 +1305,7 @@ void GrimEngine::restoreBitmaps(SaveGame *state) {
 		int32 id = state->readLEUint32();
 		const char *fname = state->readCharString();
 		Bitmap *b = g_resourceloader->loadBitmap(fname);
+		killBitmap(b);
 		b->setNumber(state->readLESint32());
 		b->setX(state->readLESint32());
 		b->setY(state->readLESint32());
@@ -1740,12 +1741,11 @@ void GrimEngine::registerBitmap(Bitmap *bitmap) {
 
 void GrimEngine::killBitmap(Bitmap *b) {
 	_bitmaps.erase(b->getId());
-	delete b;
 }
 
 void GrimEngine::killBitmaps() {
 	while (!_bitmaps.empty()) {
-		killBitmap(_bitmaps.begin()->_value);
+		delete _bitmaps.begin()->_value;
 	}
 }
 

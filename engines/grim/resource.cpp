@@ -103,7 +103,6 @@ ResourceLoader::~ResourceLoader() {
 	}
 	clearList(_labs);
 	clearList(_materials);
-	clearList(_bitmaps);
 	clearList(_models);
 	clearList(_colormaps);
 	clearList(_keyframeAnims);
@@ -222,6 +221,8 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 	}
 
 	Bitmap *result = new Bitmap(filename, b->getData(), b->getLen());
+	if (result)
+		g_grim->registerBitmap(result);
 
 	return result;
 }
@@ -376,10 +377,6 @@ void ResourceLoader::uncacheMaterial(Material *mat) {
 	_materials.remove(mat);
 }
 
-void ResourceLoader::uncacheBitmap(Bitmap *bitmap) {
-	_bitmaps.remove(bitmap);
-}
-
 void ResourceLoader::uncacheModel(Model *m) {
 	_models.remove(m);
 }
@@ -409,20 +406,6 @@ MaterialPtr ResourceLoader::getMaterial(const char *fname, CMap *c) {
 	}
 
 	return loadMaterial(fname, c);
-}
-
-BitmapPtr ResourceLoader::getBitmap(const char *fname) {
-	for (Common::List<Bitmap *>::const_iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
-		Bitmap *b = *i;
-		if (strcmp(fname, b->getFilename()) == 0) {
-			return b;
-		}
-	}
-
-	Bitmap *b = loadBitmap(fname);
-	if (b)
-		_bitmaps.push_back(b);
-	return b;
 }
 
 ModelPtr ResourceLoader::getModel(const char *fname, CMap *c) {

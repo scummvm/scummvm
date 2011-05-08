@@ -160,16 +160,14 @@ void Scene::saveState(SaveGame *savedState) const {
 
 		//bkgndBm
 		if (set._bkgndBm) {
-			savedState->writeLEUint32(1);
-			savedState->writeCharString(set._bkgndBm->getFilename());
+			savedState->writeLEUint32(set._bkgndBm->getId());
 		} else {
 			savedState->writeLEUint32(0);
 		}
 
 		//bkgndZBm
 		if (set._bkgndZBm) {
-			savedState->writeLEUint32(1);
-			savedState->writeCharString(set._bkgndZBm->getFilename());
+			savedState->writeLEUint32(set._bkgndZBm->getId());
 		} else {
 			savedState->writeLEUint32(0);
 		}
@@ -243,19 +241,8 @@ bool Scene::restoreState(SaveGame *savedState) {
 
 		set._name = savedState->readString();
 
-		if (savedState->readLEUint32()) {
-			const char *fname = savedState->readCharString();
-			set._bkgndBm = g_resourceloader->getBitmap(fname);
-		} else {
-			set._bkgndBm = NULL;
-		}
-
-			if (savedState->readLEUint32()) {
-			const char *fname = savedState->readCharString();
-			set._bkgndZBm = g_resourceloader->getBitmap(fname);
-		} else {
-			set._bkgndZBm = NULL;
-		}
+		set._bkgndBm = g_grim->getBitmap(savedState->readLEUint32());
+		set._bkgndZBm = g_grim->getBitmap(savedState->readLEUint32());
 
 		set._pos      = savedState->readVector3d();
 		set._interest = savedState->readVector3d();
@@ -305,7 +292,7 @@ void Scene::Setup::load(TextSplitter &ts) {
 	_name = buf;
 
 	ts.scanString(" background %256s", 1, buf);
-	_bkgndBm = g_resourceloader->getBitmap(buf);
+	_bkgndBm = g_resourceloader->loadBitmap(buf);
 	if (!_bkgndBm) {
 		if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
 			warning("Unable to load scene bitmap: %s\n", buf);
@@ -321,7 +308,7 @@ void Scene::Setup::load(TextSplitter &ts) {
 		ts.scanString(" zbuffer %256s", 1, buf);
 		// Don't even try to load if it's the "none" bitmap
 		if (strcmp(buf, "<none>.lbm") != 0) {
-			_bkgndZBm = g_resourceloader->getBitmap(buf);
+			_bkgndZBm = g_resourceloader->loadBitmap(buf);
 			if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
 				printf("Loading scene z-buffer bitmap: %s\n", buf);
 		}

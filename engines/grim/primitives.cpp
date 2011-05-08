@@ -53,8 +53,7 @@ void PrimitiveObject::saveState(SaveGame *savedState) const {
 	savedState->writeLEUint32(_filled);
 
 	if (_bitmap) {
-		savedState->writeLEUint32(1);
-		savedState->writeCharString(_bitmap->getFilename());
+		savedState->writeLEUint32(_bitmap->getId());
 	} else {
 		savedState->writeLEUint32(0);
 	}
@@ -76,13 +75,7 @@ bool PrimitiveObject::restoreState(SaveGame *savedState) {
 
 	_filled = savedState->readLEUint32();
 
-	if (savedState->readLEUint32()) {
-		const char *name = savedState->readCharString();
-		_bitmap = g_resourceloader->getBitmap(name);
-		delete[] name;
-	} else {
-		_bitmap = NULL;
-	}
+	_bitmap = g_grim->getBitmap(savedState->readLEUint32());
 
 	_p1.x = savedState->readLEUint32();
 	_p1.y = savedState->readLEUint32();
