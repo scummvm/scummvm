@@ -585,9 +585,9 @@ void Scene::setSoundPosition(const char *soundName, Graphics::Vector3d pos, int 
 	Graphics::Vector3d vector, vector2;
 	vector.set(fabs(cameraPos.x() - pos.x()), fabs(cameraPos.y() - pos.y()), fabs(cameraPos.z() - pos.z()));
 	float distance = vector.magnitude();
-	float maxDistance = 8.0f;
-	int diffVolume = maxVol - minVol;
-	int newVolume = (int)(diffVolume * (1.0 - (distance / maxDistance)));
+	float diffVolume = maxVol - minVol;
+	//This 8.f is a guess, so it may need some adjusting
+	int newVolume = (int)(8.f * diffVolume / distance);
 	newVolume += minVol;
 	g_imuse->setVolume(soundName, newVolume);
 
