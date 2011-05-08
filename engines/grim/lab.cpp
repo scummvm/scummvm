@@ -105,7 +105,14 @@ void Lab::parseMonkey4FileTable() {
 		int size = _f->readUint32LE();
 		_f->readUint32LE();
 
-		Common::String fname = stringTable + fnameOffset;
+		char *str = stringTable + fnameOffset;
+		int len = strlen(str);
+
+		for (int l = 0; l < len; ++l) {
+			if (str[l] == '\\')
+				str[l] = '/';
+		}
+		Common::String fname = str;
 
 		LabEntry entry;
 		entry.offset = start;
