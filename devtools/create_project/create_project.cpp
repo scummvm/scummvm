@@ -725,8 +725,8 @@ const Feature s_features[] = {
 	{     "mad",         "USE_MAD", "libmad",           true, "libmad (MP3) support" },
 	{  "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static libogg_static", true, "Ogg Vorbis support" },
 	{    "flac",        "USE_FLAC", "libFLAC_static",   true, "FLAC support" },
-	{     "png",         "USE_PNG", "libpng",           true, "libpng support" },
-	{  "theora",   "USE_THEORADEC", "libtheora_static", true, "Theora decoding support" },
+	{     "png",         "USE_PNG", "libpng",           false, "libpng support" },
+	{  "theora",   "USE_THEORADEC", "libtheora_static", false, "Theora decoding support" },
 	{   "mpeg2",       "USE_MPEG2", "libmpeg2",         false, "mpeg2 codec for cutscenes" },
 
 	// Feature flags

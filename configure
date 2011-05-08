@@ -92,7 +92,6 @@ _seq_midi=auto
 _timidity=auto
 _zlib=auto
 _mpeg2=no
-_theoradec=auto
 _fluidsynth=auto
 _opengl=auto
 _opengles=no
@@ -653,10 +652,8 @@ Optional Libraries:
 
   --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
   --enable-mpeg2           enable mpeg2 codec for cutscenes [no]
-  --disable-opengl         disable OpenGL (ES) support [autodetect]
 
-  --with-theoradec-prefix=DIR Prefix where libtheoradec is installed (optional)
-  --disable-theoradec      disable Theora decoder [autodetect]
+  --disable-opengl         disable OpenGL (ES) support [autodetect]
 
   --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is
                            installed (optional)
@@ -705,8 +702,6 @@ for ac_option in $@; do
 	--enable-nasm)            _nasm=yes       ;;
 	--disable-nasm)           _nasm=no        ;;
 	--enable-mpeg2)           _mpeg2=yes      ;;
-	--disable-theoradec)      _theoradec=no   ;;
-	--enable-theoradec)       _theoradec=yes  ;;
 	--disable-fluidsynth)     _fluidsynth=no  ;;
 	--enable-readline)        _readline=yes   ;;
 	--disable-readline)       _readline=no    ;;
@@ -764,11 +759,6 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		MAD_CFLAGS="-I$arg/include"
 		MAD_LIBS="-L$arg/lib"
-		;;
-	--with-theoradec-prefix=*)
-		arg=`echo $ac_option | cut -d '=' -f 2`
-		THEORADEC_CFLAGS="-I$arg/include"
-		THEORADEC_LIBS="-L$arg/lib"
 		;;
 	--with-zlib-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -2407,33 +2397,6 @@ if test "$_alsa" = yes ; then
 fi
 define_in_config_h_if_yes "$_alsa" 'USE_ALSA'
 echo "$_alsa"
-
-#
-#
-# Check for Theora Decoder
-#
-echocheck "libtheoradec >= 1.0"
-if test "$_vorbis" = no ; then
-	echo "skipping. no vorbis"
-	_theoradec=notsupported
-fi
-if test "$_theoradec" = auto ; then
-	_theoradec=no
-	cat > $TMPC << EOF
-#include <theora/theoradec.h>
-#include <vorbis/codec.h>
-int main(void) { th_ycbcr_buffer yuv; th_decode_ycbcr_out(NULL, yuv);  }
-EOF
-	cc_check $THEORADEC_CFLAGS $THEORADEC_LIBS -ltheoradec && _theoradec=yes
-fi
-if test "$_theoradec" = yes ; then
-	LIBS="$LIBS $THEORADEC_LIBS -ltheoradec"
-	INCLUDES="$INCLUDES $THEORADEC_CFLAGS"
-fi
-define_in_config_if_yes "$_theoradec" 'USE_THEORADEC'
-if test ! "$_theoradec" = notsupported ; then
-	echo "$_theoradec"
-fi
 
 #
 # Check for SEQ MIDI
