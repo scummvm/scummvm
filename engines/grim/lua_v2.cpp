@@ -230,7 +230,6 @@ STUB_FUNC2(L2_SetTextSpeed)
 STUB_FUNC2(L2_GetTextSpeed)
 STUB_FUNC2(L2_JustLoaded)
 STUB_FUNC2(L2_IsMessageGoing)
-STUB_FUNC2(L2_SetSayLineDefaults)
 STUB_FUNC2(L2_SetActorTalkColor)
 STUB_FUNC2(L2_SayLine)
 STUB_FUNC2(L2_MakeTextObject)
@@ -608,7 +607,7 @@ struct luaL_reg monkeyMainOpcodes[] = {
 
 struct luaL_reg monkeyTextOpcodes[] = {
 	{ "IsMessageGoing", L2_IsMessageGoing },
-	{ "SetSayLineDefaults", L2_SetSayLineDefaults },
+	{ "SetSayLineDefaults", L1_SetSayLineDefaults },
 	{ "SetActorTalkColor", L2_SetActorTalkColor },
 	{ "SayLine", L2_SayLine },
 	{ "MakeTextObject", L2_MakeTextObject },
