@@ -630,7 +630,7 @@ void GfxScreen::enableUndithering(bool flag) {
 
 int16 *GfxScreen::unditherGetDitheredBgColors() {
 	if (_unditheringEnabled)
-		return (int16 *)&_ditheredPicColors;
+		return _ditheredPicColors;
 	else
 		return NULL;
 }
