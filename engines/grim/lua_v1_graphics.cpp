@@ -484,6 +484,14 @@ void L1_ScreenShot() {
 }
 
 void L1_SetGamma() {
+	lua_Object levelObj = lua_getparam(1);
+
+	if (!lua_isnumber(levelObj))
+		return;
+	int level = (int)lua_getnumber(levelObj);
+
+	// FIXME: func(level)
+	warning("L1_SetGamma, implement opcode, level: %d", level);
 }
 
 void L1_Display() {

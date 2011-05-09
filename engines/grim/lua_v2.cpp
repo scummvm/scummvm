@@ -36,8 +36,52 @@
 
 namespace Grim {
 
+void L2_EnableVoiceFX() {
+	lua_Object stateObj = lua_getparam(1);
+
+	bool state = false;
+	if (!lua_isnil(stateObj))
+		state = true;
+
+	// FIXME: func(state);
+	warning("L2_EnableVoiceFX: implement opcode, state: %d", (int)state);
+}
+
+void L2_SetGroupVolume() {
+	lua_Object groupObj = lua_getparam(1);
+	lua_Object volumeObj = lua_getparam(2);
+
+	if (!lua_isnumber(groupObj))
+		return;
+	int group = lua_getnumber(groupObj);
+
+	int volume = 100;
+	if (lua_isnumber(volumeObj))
+		volume = (int)lua_getnumber(volumeObj);
+
+	// FIXME: func(group, volume);
+	warning("L2_SetGroupVolume: implement opcode, group: %d, volume %d", group, volume);
+}
+
+void L2_EnableAudioGroup() {
+	lua_Object groupObj = lua_getparam(1);
+	lua_Object stateObj = lua_getparam(2);
+
+	if (!lua_isnumber(groupObj))
+		return;
+	int group = lua_getnumber(groupObj);
+
+	bool state = false;
+	if (!lua_isnil(stateObj))
+		state = true;
+
+	// FIXME: func(group, state);
+	warning("L2_EnableAudioGroup: implement opcode, group: %d, state %d", group, (int)state);
+}
+
 void L2_ImSelectSet() {
 	lua_Object qualityObj = lua_getparam(1);
+
 	if (lua_isnumber(qualityObj)) {
 		int quality = (int)lua_getnumber(qualityObj);
 		// FIXME: func(quality);
@@ -224,7 +268,6 @@ STUB_FUNC2(L2_ImGetMusicVol)
 STUB_FUNC2(L2_ImSetState)
 STUB_FUNC2(L2_ImSetSequence)
 STUB_FUNC2(L2_LoadBundle)
-STUB_FUNC2(L2_SetGamma)
 STUB_FUNC2(L2_SetActorWalkDominate)
 STUB_FUNC2(L2_RenderModeUser)
 STUB_FUNC2(L2_DimScreen)
@@ -352,11 +395,8 @@ STUB_FUNC2(L2_StopAllSounds)
 STUB_FUNC2(L2_LoadSound)
 STUB_FUNC2(L2_FreeSound)
 STUB_FUNC2(L2_PlayLoadedSound)
-STUB_FUNC2(L2_SetGroupVolume)
 STUB_FUNC2(L2_GetSoundVolume)
 STUB_FUNC2(L2_SetSoundVolume)
-STUB_FUNC2(L2_EnableAudioGroup)
-STUB_FUNC2(L2_EnableVoiceFX)
 STUB_FUNC2(L2_PlaySoundFrom)
 STUB_FUNC2(L2_PlayLoadedSoundFrom)
 STUB_FUNC2(L2_SetReverb)
@@ -497,7 +537,7 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "ImSetState", L2_ImSetState },
 	{ "ImSetSequence", L2_ImSetSequence },
 	{ "LoadBundle", L2_LoadBundle },
-	{ "SetGamma", L2_SetGamma },
+	{ "SetGamma", L1_SetGamma },
 	{ "SetActorWalkDominate", L2_SetActorWalkDominate },
 	{ "RenderModeUser", L2_RenderModeUser },
 	{ "DimScreen", L2_DimScreen },
