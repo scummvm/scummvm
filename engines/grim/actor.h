@@ -66,7 +66,7 @@ public:
 	Color *getTalkColor() const { return _talkColor; }
 	void setPos(Graphics::Vector3d position);
 	Graphics::Vector3d getPos() const;
-	void walkTo(Graphics::Vector3d p);
+	void walkTo(const Graphics::Vector3d &p);
 	Graphics::Vector3d getDestPos() const;
 	void stopWalking() { _walking = false; }
 	bool isWalking() const;

@@ -505,7 +505,7 @@ void Actor::turnTo(float pitchParam, float yawParam, float rollParam) {
 		_turning = false;
 }
 
-void Actor::walkTo(Graphics::Vector3d p) {
+void Actor::walkTo(const Graphics::Vector3d &p) {
 	if (p == _pos)
 		_walking = false;
 	else {
@@ -632,6 +632,7 @@ bool Actor::isTurning() const {
 
 void Actor::walkForward() {
 	float dist = g_grim->getPerSecond(_walkRate);
+	_walking = false;
 
 	// HACK: Limit the speed of the movement. Find a better way??
 	// When the game starts or the scene changes the value of g_grim->frameRate() can
@@ -804,6 +805,7 @@ void Actor::setMumbleChore(int chore, Costume *cost) {
 }
 
 void Actor::turn(int dir) {
+	_walking = false;
 	float delta = g_grim->getPerSecond(_turnRate) * dir;
 	setYaw(_yaw + delta);
 	_currTurnDir = dir;
