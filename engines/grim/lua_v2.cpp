@@ -178,7 +178,6 @@ STUB_FUNC2(L2_IsActorInSector)
 STUB_FUNC2(L2_GetActorSector)
 STUB_FUNC2(L2_TurnActor)
 STUB_FUNC2(L2_GetActorRot)
-STUB_FUNC2(L2_SetActorRot)
 STUB_FUNC2(L2_IsActorTurning)
 STUB_FUNC2(L2_StopActorChore)
 STUB_FUNC2(L2_IsActorResting)
@@ -432,7 +431,7 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "GetActorSector", L2_GetActorSector },
 	{ "TurnActor", L2_TurnActor },
 	{ "GetActorRot", L2_GetActorRot },
-	{ "SetActorRot", L2_SetActorRot },
+	{ "SetActorRot", L1_SetActorRot },
 	{ "IsActorTurning", L2_IsActorTurning },
 	{ "PlayActorChore", L2_PlayActorChore },
 	{ "StopActorChore", L2_StopActorChore },
