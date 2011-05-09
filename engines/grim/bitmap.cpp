@@ -42,14 +42,11 @@ static void decompress_codec3(const char *compressed, char *result);
 Bitmap::Bitmap(const char *fname, const char *data, int len) :
 		Object() {
 	_fname = fname;
-	printf("Trying to load %s\n", fname);
-	if (len < 8 || memcmp(data, "BM  F\0\0\0", 8) != 0) {
-		// Should probably just check the filename
-		if (loadTile(fname, data, len)){
-			return;
-			// Everything is fine
-		}
-		else if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
+	if (len > 4 && memcmp(data, "\x1f\x8b\x08\0", 4) == 0) {
+		loadTile(fname, data, len);
+		return;
+	} else if (len < 8 || memcmp(data, "BM  F\0\0\0", 8) != 0) {
+		if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
 			error("Invalid magic loading bitmap");
 	}
 
