@@ -65,11 +65,11 @@ int refTextObjectPan;
 
 #define strmatch(src, dst)		(strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
 
-inline bool getbool(int num) {
+bool getbool(int num) {
 	return !lua_isnil(lua_getparam(num));
 }
 
-inline void pushbool(bool val) {
+void pushbool(bool val) {
 	if (val)
 		lua_pushnumber(1);
 	else
