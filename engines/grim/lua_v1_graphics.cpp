@@ -63,7 +63,7 @@ void L1_FreeImage() {
 	if (!lua_isuserdata(param) || lua_tag(param) != MKTAG('V','B','U','F'))
 		return;
 	Bitmap *bitmap = g_grim->getBitmap(lua_getuserdata(param));
-	g_grim->killBitmap(bitmap);
+	delete bitmap;
 }
 
 void L1_BlastImage() {

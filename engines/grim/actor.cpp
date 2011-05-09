@@ -1289,9 +1289,9 @@ void Actor::addShadowPlane(const char *n) {
 		// behind our back. This is important when Membrillo phones Velasco to tell him
 		// Naranja is dead, because the scene changes back and forth few times and so
 		// the scenes' sectors are deleted while they are still keeped by the actors.
-		Sector *sector = new Sector(*g_grim->getCurrScene()->getSectorBase(i));
+		Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
 		if (strmatch(sector->getName(), n)) {
-			_shadowArray[_activeShadowSlot].planeList.push_back(sector);
+			_shadowArray[_activeShadowSlot].planeList.push_back(new Sector(*sector));
 			g_grim->flagRefreshShadowMask(true);
 			return;
 		}
