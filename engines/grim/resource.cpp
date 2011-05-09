@@ -245,9 +245,30 @@ CMap *ResourceLoader::loadColormap(const char *filename) {
 	return result;
 }
 
-Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
-	Common::String fname = filename;
+static Common::String fixFilename(const char *filename) {
+	Common::String fname;
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		char str[128];
+		int len = strlen(filename);
+		for (int i = 0; i < len; i++) {
+			str[i] = filename[i];
+			// Fix paths
+			if (str[i] == '\\')
+				str[i] = '/';
+		}
+		// Append b to end of filename for EMI
+		str[len] = 'b';
+		str[len + 1] = '\0';
+		fname = str;
+	} else {
+		fname = filename;
+	}
 	fname.toLowercase();
+	return fname;
+}
+
+Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
+	Common::String fname = fixFilename(filename);
 	Block *b = getFileFromCache(fname.c_str());
 	if (!b) {
 		b = getFileBlock(fname.c_str());
@@ -337,8 +358,7 @@ Material *ResourceLoader::loadMaterial(const char *filename, CMap *c) {
 }
 
 Model *ResourceLoader::loadModel(const char *filename, CMap *c) {
-	Common::String fname = filename;
-	fname.toLowercase();
+	Common::String fname = fixFilename(filename);
 	Block *b = getFileFromCache(fname.c_str());
 	if (!b) {
 		b = getFileBlock(fname.c_str());

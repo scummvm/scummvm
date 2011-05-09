@@ -40,7 +40,10 @@ Model::Model(const char *filename, const char *data, int len, CMap *cmap) :
 	_fname = filename;
 	_headNode = NULL;
 
-	if (len >= 4 && READ_BE_UINT32(data) == MKTAG('L','D','O','M'))
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		Common::MemoryReadStream ms((const byte *)data, len);
+		loadEMI(ms);
+	} else if (len >= 4 && READ_BE_UINT32(data) == MKTAG('L','D','O','M'))
 		loadBinary(data, cmap);
 	else {
 		TextSplitter ts(data, len);
@@ -62,6 +65,30 @@ void Model::reload(CMap *cmap) {
 	delete[] materials;
 }
 
+void Model::loadEMI(Common::MemoryReadStream &ms) {
+	char name[64];
+
+	int nameLength = ms.readUint32LE();
+	assert(nameLength < 64);
+
+	ms.read(name, nameLength);
+
+	_numMaterials = ms.readUint32LE();
+	_materials = new MaterialPtr[_numMaterials];
+	_materialNames = new char[_numMaterials][32];
+	for (int i = 0; i < _numMaterials; i++) {
+		nameLength = ms.readUint32LE();
+		assert(nameLength < 32);
+
+		ms.read(_materialNames[i], nameLength);
+		_materials[i] = g_resourceloader->getMaterial(_materialNames[i], 0);
+		ms.seek(4, SEEK_CUR);
+	}
+
+	ms.seek(4, SEEK_CUR);
+
+
+}
 void Model::loadBinary(const char *&data, CMap *cmap) {
 	_numMaterials = READ_LE_UINT32(data + 4);
 	data += 8;

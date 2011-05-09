@@ -26,6 +26,8 @@
 #ifndef GRIM_MODEL_H
 #define GRIM_MODEL_H
 
+#include "common/memstream.h"
+
 #include "engines/grim/resource.h"
 #include "engines/grim/object.h"
 #include "graphics/matrix4.h"
@@ -40,6 +42,7 @@ public:
 	Model(const char *filename, const char *data, int len, CMap *cmap);
 	void loadBinary(const char *&data, CMap *cmap);
 	void loadText(TextSplitter *ts, CMap *cmap);
+	void loadEMI(Common::MemoryReadStream &ms);
 	void reload(CMap *cmap);
 	void draw() const;
 

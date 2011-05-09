@@ -761,11 +761,7 @@ void SoundComponent::reset() {
 Costume::Costume(const char *fname, const char *data, int len, Costume *prevCost) :
 		Object() {
 
-	load(fname, data, len, prevCost);
-}
-
-void Costume::load(const char *filename, const char *data, int len, Costume *prevCost) {
-	_fname = filename;
+	_fname = fname;
 	_head.maxPitch = 0;
 	_head.joint1 = -1;
 	_head.joint2 = -1;
@@ -776,9 +772,16 @@ void Costume::load(const char *filename, const char *data, int len, Costume *pre
 	_headYaw = 0;
 	_headPitch = 0;
 	_prevCostume = prevCost;
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		Common::MemoryReadStream ms((const byte *)data, len);
+		loadEMI(ms, prevCost);
+	} else {
+		TextSplitter ts(data, len);
+		loadGRIM(ts, prevCost);
+	}
+}
 
-	TextSplitter ts(data, len);
-
+void Costume::loadGRIM(TextSplitter &ts, Costume *prevCost) {
 	ts.expectString("costume v0.1");
 	ts.expectString("section tags");
 	int numTags;
@@ -860,6 +863,68 @@ void Costume::load(const char *filename, const char *data, int len, Costume *pre
 		int which;
 		ts.scanString("chore %d", 1, &which);
 		_chores[which].load(i, this, ts);
+	}
+}
+
+void Costume::loadEMI(Common::MemoryReadStream &ms, Costume *prevCost) {
+	Common::List<Component *>components;
+
+	_numChores = ms.readUint32LE();
+	_chores = new Chore[_numChores];
+	for (int i = 0; i < _numChores; i++) {
+		uint32 nameLength;
+		nameLength = ms.readUint32LE();
+		ms.read(_chores[i]._name, nameLength);
+		float length;
+		ms.read(&length, 4);
+		_chores[i]._length = (int)length;
+
+		_chores[i]._owner = this;
+		_chores[i]._numTracks = ms.readUint32LE();
+		_chores[i]._tracks = new ChoreTrack[_chores[i]._numTracks];
+
+		for (int k = 0; k < _chores[i]._numTracks; k++) {
+			int componentNameLength = ms.readUint32LE();
+			assert(componentNameLength < 64);
+
+			char name[64];
+			ms.read(name, componentNameLength);
+
+			int trackID = ms.readUint32LE();
+			int parent = ms.readUint32LE();
+			assert(parent == -1);
+
+			Component *component = loadComponentEMI(name, parent);
+
+			components.push_back(component);
+
+			ChoreTrack &track = _chores[i]._tracks[k];
+			track.numKeys = ms.readUint32LE();
+			track.keys = new TrackKey[track.numKeys];
+
+			// this is probably wrong
+			track.compID = 0;
+			for (int j = 0; j < track.numKeys; j++) {
+				float time, value;
+				ms.read(&time, 4);
+				ms.read(&value, 4);
+				track.keys[j].time = time;
+				track.keys[j].value = value;
+			}
+		}
+		_chores[i]._tracks->compID;
+	}
+
+	_numComponents = components.size();
+	_components = new Component *[_numComponents];
+	int i = 0;
+	for (Common::List<Component *>::iterator it = components.begin(); it != components.end(); ++it, ++i) {
+		_components[i] = *it;
+		if (!_components[i])
+			continue;
+		_components[i]->setCostume(this);
+		_components[i]->init();
+		_components[i]->setFade(1.f);
 	}
 }
 
@@ -1116,6 +1181,46 @@ Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *paren
 	return NULL;
 }
 
+Costume::Component *Costume::loadComponentEMI(const char *name, int parentID) {
+	// some have an exclimation mark, this could mean something.
+	assert(name[0] == '!');
+	++name;
+
+	char type[5];
+	memcpy(type, name, 4);
+	type[4] = 0;
+
+	name += 4;
+
+	if (strcmp(type, "mesh") == 0)
+		return new MainModelComponent(0, parentID, name, 0, 0);
+	/*if (FROM_BE_32(tag) == MKTAG('M','M','D','L'))
+	return new MainModelComponent(parent, parentID, name, prevComponent, tag);
+	else if (FROM_BE_32(tag) == MKTAG('M','O','D','L'))
+	return new ModelComponent(parent, parentID, name, prevComponent, tag);
+	else if (FROM_BE_32(tag) == MKTAG('C','M','A','P'))
+	return new ColormapComponent(parent, parentID, name, tag);
+	else if (FROM_BE_32(tag) == MKTAG('K','E','Y','F'))
+	return new KeyframeComponent(parent, parentID, name, tag);
+	else if (FROM_BE_32(tag) == MKTAG('M','E','S','H'))
+	return new MeshComponent(parent, parentID, name, tag);
+	else if (FROM_BE_32(tag) == MKTAG('L','U','A','V'))
+	return new LuaVarComponent(parent, parentID, name, tag);
+	else if (FROM_BE_32(tag) == MKTAG('I','M','L','S'))
+	return new SoundComponent(parent, parentID, name, tag);
+	else if (FROM_BE_32(tag) == MKTAG('B','K','N','D'))
+	return new BitmapComponent(parent, parentID, name, tag);
+	else if (FROM_BE_32(tag) == MKTAG('M','A','T',' '))
+	return new MaterialComponent(parent, parentID, name, tag);
+	else if (FROM_BE_32(tag) == MKTAG('S','P','R','T'))
+	return NULL;// new SpriteComponent(parent, parentID, name);
+
+	char t[4];
+	memcpy(t, &tag, sizeof(tag32));
+	warning("loadComponent: Unknown tag '%c%c%c%c', name '%s'", t[0], t[1], t[2], t[3], name);*/
+	return NULL;
+}
+
 Model::HierNode *Costume::getModelNodes() {
 	for (int i = 0; i < _numComponents; i++) {
 		if (!_components[i])
@@ -1147,6 +1252,7 @@ void Costume::playChore(const char *name) {
 	warning("Costume::playChore: Could not find chore: %s", name);
 	return;
 }
+
 void Costume::playChore(int num) {
 	if (num < 0 || num >= _numChores) {
 		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)

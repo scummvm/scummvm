@@ -26,6 +26,8 @@
 #ifndef GRIM_COSTUME_H
 #define GRIM_COSTUME_H
 
+#include "common/memstream.h"
+
 #include "engines/grim/model.h"
 #include "engines/grim/object.h"
 #include "engines/grim/colormap.h"
@@ -41,7 +43,8 @@ public:
 	Costume(const char *filename, const char *data, int len, Costume *prevCost);
     Costume() : Object() { _chores = 0; }
 
-	void load(const char *filename, const char *data, int len, Costume *prevCost);
+	void loadGRIM(TextSplitter &ts, Costume *prevCost);
+	void loadEMI(Common::MemoryReadStream &ms, Costume *prevCost);
 
 	virtual ~Costume();
 
@@ -113,7 +116,7 @@ public:
 
 private:
 	Component *loadComponent(tag32 tag, Component *parent, int parentID, const char *name, Component *prevComponent);
-
+	Component *loadComponentEMI(const char *name, int parentID);
 
 	Common::String _fname;
 	Costume *_prevCostume;
