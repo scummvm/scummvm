@@ -36,6 +36,15 @@
 
 namespace Grim {
 
+void L2_ImSelectSet() {
+	lua_Object qualityObj = lua_getparam(1);
+	if (lua_isnumber(qualityObj)) {
+		int quality = (int)lua_getnumber(qualityObj);
+		// FIXME: func(quality);
+		warning("L2_ImSelectSet: implement opcode, quality mode: %d", quality);
+	}
+}
+
 void L2_PlayActorChore() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object choreObj = lua_getparam(2);
@@ -352,7 +361,6 @@ STUB_FUNC2(L2_PlaySoundFrom)
 STUB_FUNC2(L2_PlayLoadedSoundFrom)
 STUB_FUNC2(L2_SetReverb)
 STUB_FUNC2(L2_UpdateSoundPosition)
-STUB_FUNC2(L2_ImSelectSet)
 STUB_FUNC2(L2_ImStateHasLooped)
 STUB_FUNC2(L2_ImStateHasEnded)
 STUB_FUNC2(L2_ImPushState)
