@@ -42,7 +42,7 @@ PrimitiveObject::PrimitiveObject() :
 
 PrimitiveObject::~PrimitiveObject() {
 	if (_bitmap && _type == 2)
-		g_driver->destroyBitmap(_bitmap.object());
+		delete _bitmap.object();
 }
 
 void PrimitiveObject::saveState(SaveGame *savedState) const {
@@ -103,7 +103,6 @@ void PrimitiveObject::createBitmap(Bitmap *bitmap, Common::Point p, bool /*trans
 	_bitmap->setX(p.x);
 	_bitmap->setY(p.y);
 	// transparent: what to do ?
-	g_driver->createBitmap(bitmap);
 }
 
 void PrimitiveObject::createLine(Common::Point p1, Common::Point p2, Color *color) {

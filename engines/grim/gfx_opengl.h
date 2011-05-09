@@ -82,9 +82,9 @@ byte *setupScreen(int screenW, int screenH, bool fullscreen);
 	void selectMaterial(const Material *material);
 	void destroyMaterial(Material *material);
 
-	void createBitmap(Bitmap *bitmap);
+	void createBitmap(BitmapData *bitmap);
 	void drawBitmap(const Bitmap *bitmap);
-	void destroyBitmap(Bitmap *bitmap);
+	void destroyBitmap(BitmapData *bitmap);
 
 	void drawDepthBitmap(int x, int y, int w, int h, char *data);
 	void drawBitmap();

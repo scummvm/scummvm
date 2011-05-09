@@ -85,9 +85,9 @@ public:
 	virtual void selectMaterial(const Material *material) = 0;
 	virtual void destroyMaterial(Material *material) = 0;
 
-	virtual void createBitmap(Bitmap *bitmap) = 0;
+	virtual void createBitmap(BitmapData *bitmap) = 0;
 	virtual void drawBitmap(const Bitmap *bitmap) = 0;
-	virtual void destroyBitmap(Bitmap *bitmap) = 0;
+	virtual void destroyBitmap(BitmapData *bitmap) = 0;
 
 	virtual void drawDepthBitmap(int x, int y, int w, int h, char *data) = 0;
 

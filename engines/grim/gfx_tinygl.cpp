@@ -562,7 +562,7 @@ void GfxTinyGL::setupLight(Scene::Light *light, int lightId) {
 	}
 }
 
-void GfxTinyGL::createBitmap(Bitmap *bitmap) {
+void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 	if (bitmap->_format != 1) {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
 			uint16 *bufPtr = reinterpret_cast<uint16 *>(bitmap->_data[pic]);
@@ -627,16 +627,16 @@ void TinyGLBlit(byte *dst, byte *src, int x, int y, int width, int height, bool 
 }
 
 void GfxTinyGL::drawBitmap(const Bitmap *bitmap) {
-	assert(bitmap->_currImage > 0);
-	if (bitmap->_format == 1)
-		TinyGLBlit((byte *)_zb->pbuf, (byte *)bitmap->_data[bitmap->_currImage - 1],
+	assert(bitmap->getCurrentImage() > 0);
+	if (bitmap->getFormat() == 1)
+		TinyGLBlit((byte *)_zb->pbuf, (byte *)bitmap->getData(bitmap->getCurrentImage() - 1),
 			bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), true);
 	else
-		TinyGLBlit((byte *)_zb->zbuf, (byte *)bitmap->_data[bitmap->_currImage - 1],
+		TinyGLBlit((byte *)_zb->zbuf, (byte *)bitmap->getData(bitmap->getCurrentImage() - 1),
 			bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), false);
 }
 
-void GfxTinyGL::destroyBitmap(Bitmap *) { }
+void GfxTinyGL::destroyBitmap(BitmapData *) { }
 
 void GfxTinyGL::drawDepthBitmap(int, int, int, int, char *) { }
 

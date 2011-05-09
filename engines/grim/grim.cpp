@@ -1746,12 +1746,11 @@ void GrimEngine::registerBitmap(Bitmap *bitmap) {
 
 void GrimEngine::killBitmap(Bitmap *b) {
 	_bitmaps.erase(b->getId());
-	b->dereference();
 }
 
 void GrimEngine::killBitmaps() {
 	while (!_bitmaps.empty()) {
-		_bitmaps.begin()->_value->dereference();;
+		delete _bitmaps.begin()->_value;
 	}
 }
 

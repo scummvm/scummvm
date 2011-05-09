@@ -81,7 +81,6 @@ void L1_BlastImage() {
 //	bool transparent = getbool(4); // TODO transparent/masked copy into display
 	bitmap->setX(x);
 	bitmap->setY(y);
-	g_driver->createBitmap(bitmap);
 	g_driver->drawBitmap(bitmap);
 }
 

@@ -459,7 +459,7 @@ void GfxOpenGL::setupLight(Scene::Light *light, int lightId) {
 
 #define BITMAP_TEXTURE_SIZE 256
 
-void GfxOpenGL::createBitmap(Bitmap *bitmap) {
+void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 	GLuint *textures;
 	if (bitmap->_format == 1) {
 		bitmap->_hasTransparency = false;
@@ -564,22 +564,22 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap) {
 	glLoadIdentity();
 	// A lot more may need to be put there : disabling Alpha test, blending, ...
 	// For now, just keep this here :-)
-	if (bitmap->_format == 1 && bitmap->_hasTransparency) {
+	if (bitmap->getFormat() == 1 && bitmap->getHasTransparency()) {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	} else
 		glDisable(GL_BLEND);
 	glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
-	if (bitmap->_format == 1) { // Normal image
+	if (bitmap->getFormat() == 1) { // Normal image
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
 		glEnable(GL_SCISSOR_TEST);
-		glScissor(bitmap->_x, _screenHeight - (bitmap->_y + bitmap->_height), bitmap->_width, bitmap->_height);
-		int cur_tex_idx = bitmap->_numTex * (bitmap->_currImage - 1);
-		for (int y = bitmap->_y; y < (bitmap->_y + bitmap->_height); y += BITMAP_TEXTURE_SIZE) {
-			for (int x = bitmap->_x; x < (bitmap->_x + bitmap->_width); x += BITMAP_TEXTURE_SIZE) {
-				textures = (GLuint *)bitmap->_texIds;
+		glScissor(bitmap->getX(), _screenHeight - (bitmap->getY() + bitmap->getHeight()), bitmap->getWidth(), bitmap->getHeight());
+		int cur_tex_idx = bitmap->getNumTex() * (bitmap->getCurrentImage() - 1);
+		for (int y = bitmap->getY(); y < (bitmap->getY() + bitmap->getHeight()); y += BITMAP_TEXTURE_SIZE) {
+			for (int x = bitmap->getX(); x < (bitmap->getX() + bitmap->getWidth()); x += BITMAP_TEXTURE_SIZE) {
+				textures = (GLuint *)bitmap->getTexIds();
 				glBindTexture(GL_TEXTURE_2D, textures[cur_tex_idx]);
 				glBegin(GL_QUADS);
 				glTexCoord2f(0.0f, 0.0f);
@@ -600,18 +600,18 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap) {
 		glDisable(GL_BLEND);
 		glDepthMask(GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
-	} else if (bitmap->_format == 5) {	// ZBuffer image
+	} else if (bitmap->getFormat() == 5) {	// ZBuffer image
 		// Only draw the manual zbuffer when enabled
-		if (bitmap->_currImage - 1 < bitmap->_numImages) {
-			drawDepthBitmap(bitmap->_x, bitmap->_y, bitmap->_width, bitmap->_height, bitmap->_data[bitmap->_currImage - 1]);
+		if (bitmap->getCurrentImage() - 1 < bitmap->getNumImages()) {
+			drawDepthBitmap(bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), bitmap->getData(bitmap->getCurrentImage() - 1));
 		} else {
-			warning("zbuffer image has index out of bounds! %d/%d", bitmap->_currImage, bitmap->_numImages);
+			warning("zbuffer image has index out of bounds! %d/%d", bitmap->getCurrentImage(), bitmap->getNumImages());
 		}
 	}
 	glEnable(GL_LIGHTING);
 }
 
-void GfxOpenGL::destroyBitmap(Bitmap *bitmap) {
+void GfxOpenGL::destroyBitmap(BitmapData *bitmap) {
 	GLuint *textures;
 	textures = (GLuint *)bitmap->_texIds;
 	if (textures) {
