@@ -20,21 +20,25 @@ Residual Team
        Marcus Comstedt       - Initial Dreamcast port
        Andrea Corna          - Improved font support, patch extractor
        Jonathan Gray         - Various code fixes
-       Vincent Hamm          - Various engine code
-       Erich Hoover          - x86-64 fixes, various fixes and comments, menu
-                               support, improved state support
+       Vincent Hamm          - Various engine code fixes and improvements
+       Erich Hoover          - x86-64 fixes, various code fixes and
+                               improvements
        Travis Howell         - Various code fixes, Windows port
        Joost Peters          - Various code fixes
        Christian Neumair     - Various optimisation patches
        Daniel Schepler       - Initial engine codebase, LUA support
-       Einar Johan T. Somaen - A lot of play-testing
+       Einar Johan T. Somaen - Initial EMI support, a lot of play-testing
        Yaron Tausky          - Fixes to subtitles
+       Joel Teichroeb        - Initial EMI support, various code fixes
        Pino Toscano          - Debian GNU/Linux package files
        Lionel Ulmer          - OpenGL optimisations
+       Joni Vahamaki         - Various code fixes and improvements
+       vpelletier            - Various code fixes and improvements
+       usineur               - Few code improvements
 
 ScummVM code
 ************
-   Residual use a lot of ScummVM code. For list of authors look into
+   Residual use a lot of ScummVM code. For a list of authors look into
    COPYRIGHT file. 
 
 Website code
