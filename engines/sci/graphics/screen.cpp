@@ -111,7 +111,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 
 	_picNotValid = 0;
 	_picNotValidSci11 = 0;
-	_unditherState = true;
+	_unditheringEnabled = true;
 	_fontIsUpscaled = false;
 
 	if (_resMan->getViewType() != kViewEga) {
@@ -560,7 +560,7 @@ void GfxScreen::dither(bool addToFlag) {
 	byte *visualPtr = _visualScreen;
 	byte *displayPtr = _displayScreen;
 
-	if (!_unditherState) {
+	if (!_unditheringEnabled) {
 		// Do dithering on visual and display-screen
 		for (y = 0; y < _height; y++) {
 			for (x = 0; x < _width; x++) {
@@ -624,12 +624,12 @@ void GfxScreen::ditherForceDitheredColor(byte color) {
 	_ditheredPicColors[color] = 256;
 }
 
-void GfxScreen::debugUnditherSetState(bool flag) {
-	_unditherState = flag;
+void GfxScreen::enableUndithering(bool flag) {
+	_unditheringEnabled = flag;
 }
 
 int16 *GfxScreen::unditherGetDitheredBgColors() {
-	if (_unditherState)
+	if (_unditheringEnabled)
 		return (int16 *)&_ditheredPicColors;
 	else
 		return NULL;

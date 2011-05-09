@@ -512,7 +512,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 			// WORKAROUND: we remove certain visual&priority lines in underwater rooms of iceman, when not dithering the
 			//              picture. Normally those lines aren't shown, because they share the same color as the dithered
 			//              fill color combination. When not dithering, those lines would appear and get distracting.
-			if ((_screen->getUnditherState()) && ((_resourceId >= 53 && _resourceId <= 58) || (_resourceId == 61)))
+			if ((_screen->isUnditheringEnabled()) && ((_resourceId >= 53 && _resourceId <= 58) || (_resourceId == 61)))
 				icemanDrawFix = true;
 		}
 		if (g_sci->getGameId() == GID_KQ5) {

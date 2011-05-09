@@ -218,7 +218,7 @@ Common::Error SciEngine::run() {
 
 	// Initialize the game screen
 	_gfxScreen = new GfxScreen(_resMan);
-	_gfxScreen->debugUnditherSetState(ConfMan.getBool("disable_dithering"));
+	_gfxScreen->enableUndithering(ConfMan.getBool("disable_dithering"));
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);

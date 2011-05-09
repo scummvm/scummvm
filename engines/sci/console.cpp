@@ -1532,7 +1532,7 @@ bool Console::cmdUndither(int argc, const char **argv) {
 	}
 
 	bool flag = atoi(argv[1]) ? true : false;
-	_engine->_gfxScreen->debugUnditherSetState(flag);
+	_engine->_gfxScreen->enableUndithering(flag);
 	if (flag)
 		DebugPrintf("undithering ENABLED\n");
 	else
