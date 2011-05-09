@@ -1149,8 +1149,7 @@ if test "$_release_build" = yes; then
 	# We will also add a define, which indicates we are doing
 	# an build for a release version.
 	CXXFLAGS="$CXXFLAGS -O2 -Wuninitialized"
-	# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
-	CXXFLAGS="$CXXFLAGS -DRELEASE_BUILD"
+	DEFINES="$DEFINES -DRELEASE_BUILD"
 fi
 
 
