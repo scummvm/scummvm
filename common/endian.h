@@ -149,8 +149,8 @@
  */
 #define MKTAG(a0,a1,a2,a3) ((uint32)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))
 
-// Functions for reading/writing native Integers,
-// this transparently handles the need for alignment
+// Functions for reading/writing native integers,
+// this transparently handles the need for alignment.
 
 #if !defined(SCUMM_NEED_ALIGNMENT)
 
@@ -170,8 +170,10 @@
 		*(uint32 *)(ptr) = value;
 	}
 
-// test for GCC >= 4.0. these implementations will automatically use CPU-specific
-// instructions for unaligned data when they are available (eg. MIPS)
+// Test for GCC >= 4.0. These implementations will automatically use CPU-specific
+// instructions for unaligned data when they are available (eg. MIPS).
+// See also this email thread on scummvm-devel for details:
+// <http://thread.gmane.org/gmane.games.devel.scummvm/8063>
 #elif defined(__GNUC__) && (__GNUC__ >= 4)
 
 	FORCEINLINE uint16 READ_UINT16(const void *ptr) {
