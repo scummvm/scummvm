@@ -109,7 +109,7 @@ public:
 		void loadBinary(Common::MemoryReadStream *ms);
 		void setupCamera() const;
 		Common::String _name;
-		BitmapPtr _bkgndBm, _bkgndZBm;
+		Bitmap *_bkgndBm, *_bkgndZBm;
 		Graphics::Vector3d _pos, _interest;
 		float _roll, _fov, _nclip, _fclip;
 	};

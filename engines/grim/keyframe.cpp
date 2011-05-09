@@ -143,6 +143,7 @@ void KeyframeAnim::loadText(TextSplitter &ts) {
 KeyframeAnim::~KeyframeAnim() {
 	for (int i = 0; i < _numJoints; i++)
 		delete _nodes[i];
+	delete[] _nodes;
 	delete[] _markers;
 	g_resourceloader->uncacheKeyframe(this);
 }

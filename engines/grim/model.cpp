@@ -155,6 +155,8 @@ void Model::Mesh::loadBinary(const char *&data, Material *materials[]) {
 	_verticesI = new float[_numVertices];
 	_vertNormals = new float[3 * _numVertices];
 	_textureVerts = new float[2 * _numTextureVerts];
+	_faces = new Face[_numFaces];
+	_materialid = new int[_numFaces];
 	data += 60;
 	for (int i = 0; i < 3 * _numVertices; i++) {
 		_vertices[i] = get_float(data);
@@ -169,11 +171,8 @@ void Model::Mesh::loadBinary(const char *&data, Material *materials[]) {
 		data += 4;
 	}
 	data += _numVertices * 4;
-	_faces = new Face[_numFaces];
-	_materialid = new int[_numFaces];
 	for (int i = 0; i < _numFaces; i++)
 		_materialid[i] = _faces[i].loadBinary(data, materials);
-	_vertNormals = new float[3 * _numVertices];
 	for (int i = 0; i < 3 * _numVertices; i++) {
 		_vertNormals[i] = get_float(data);
 		data += 4;

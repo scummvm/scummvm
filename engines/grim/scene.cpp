@@ -63,6 +63,10 @@ Scene::Scene() :
 Scene::~Scene() {
 	if (_cmaps) {
 		delete[] _cmaps;
+		for (int i = 0; i < _numSetups; ++i) {
+			delete _setups[i]._bkgndBm;
+			delete _setups[i]._bkgndZBm;
+		}
 		delete[] _setups;
 		delete[] _lights;
 		for (int i = 0; i < _numSectors; ++i) {

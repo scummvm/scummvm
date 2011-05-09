@@ -51,9 +51,8 @@ ObjectState::ObjectState() :
 ObjectState::~ObjectState() {
 	g_grim->killObjectState(this);
 
-	g_grim->killBitmap(_bitmap);
-	if (_zbitmap)
-		g_grim->killBitmap(_zbitmap);
+	delete _bitmap;
+	delete _zbitmap;
 }
 
 void ObjectState::saveState(SaveGame *savedState) const {

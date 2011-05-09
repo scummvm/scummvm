@@ -230,7 +230,7 @@ BitmapData::~BitmapData() {
 			if (_data[i])
 				delete[] _data[i];
 
-			delete[] _data;
+		delete[] _data;
 		_data = NULL;
 
 		g_driver->destroyBitmap(this);
