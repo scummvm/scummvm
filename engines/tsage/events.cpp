@@ -158,8 +158,8 @@ void EventsClass::setCursor(CursorType cursorType) {
 	uint size;
 
 	switch (cursorType) {
-	case CURSOR_CROSSHAIRS:
-		// Crosshairs cursor
+	case OBJECT_STUNNER:
+		// Stunner cursor
 		cursor = _resourceManager->getSubResource(4, 1, 6, &size);
 		_globals->setFlag(122);
 		break;
