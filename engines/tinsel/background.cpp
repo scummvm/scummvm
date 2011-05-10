@@ -165,7 +165,7 @@ OBJECT *GetPlayfieldList(int which) {
 	pPlayfield = pCurBgnd->fieldArray + which;
 
 	// return the display list pointer for this playfield
-	return (OBJECT *)&pPlayfield->pDispList;
+	return pPlayfield->pDispList;
 }
 
 /**
@@ -205,10 +205,10 @@ void DrawBackgnd() {
 			pPlay->bMoved = true;
 
 		// sort the display list for this background - just in case somebody has changed object Z positions
-		SortObjectList((OBJECT *)&pPlay->pDispList);
+		SortObjectList(pPlay->pDispList);
 
 		// generate clipping rects for all objects that have moved etc.
-		FindMovingObjects((OBJECT *)&pPlay->pDispList, &ptWin,
+		FindMovingObjects(pPlay->pDispList, &ptWin,
 			&pPlay->rcClip,	false, pPlay->bMoved);
 
 		// clear playfield moved flag
@@ -235,7 +235,7 @@ void DrawBackgnd() {
 
 			if (IntersectRectangle(rcPlayClip, pPlay->rcClip, *r))
 				// redraw all objects within this clipping rect
-				UpdateClipRect((OBJECT *)&pPlay->pDispList,
+				UpdateClipRect(pPlay->pDispList,
 						&ptWin,	&rcPlayClip);
 		}
 	}
