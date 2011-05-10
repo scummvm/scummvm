@@ -3250,7 +3250,8 @@ void Scene6100::dispatch() {
 
 	// Handle mouse controlling the turning
 	int changeAmount = (_globals->_events._mousePos.x - 160) / -20;
-	_turnAmount += (changeAmount - _turnAmount) / 2;
+	int turnDifference = (changeAmount - _turnAmount) / 2;
+	_turnAmount = !turnDifference ? 0 : _turnAmount + turnDifference;
 
 	if (_fadePercent < 100) {
 		_fadePercent += 10;
