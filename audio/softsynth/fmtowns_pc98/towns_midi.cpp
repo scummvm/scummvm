@@ -51,40 +51,40 @@ public:
 	int checkPriority(int pri);
 
 private:
-	struct StateA {
-		uint8 numLoop;
-		int32 fld_1;
+	struct EffectState {
+		uint8 envState;
+		int32 envStepLen;
 		int32 duration;
-		uint16 fld_9;
-		int32 effectState;
-		uint8 fld_11;
-		uint8 ar1[4];
-		uint8 ar2[4];
+		int32 envTargetLevel;
+		int32 currentLevel;
+		uint8 loop;
+		uint8 envStepping[4];
+		uint8 envMod[4];
 		int8 modWheelSensitivity;
 		int8 modWheelState;
 		int8 modWheelLast;
-		uint16 fld_1d;
-		uint32 fld_21;
-		int32 fld_25;
+		uint16 envStateNumSteps;
+		uint32 envStateStepCounter;
+		int32 envChangePerStep;
 		int8 dir;
-		uint32 fld_2a;
-		uint32 fld_2e;
-	} *_stateA;
+		uint32 envChangePerStepRem;
+		uint32 envChangeCountRem;
+	} *_effectStates;
 
-	struct StateB {
-		int32 inc;
+	struct EffectDef {
+		int32 phase;
 		uint8 type;
 		uint8 useModWheel;
-		uint8 fld_6;
-		StateA *a;
-	} *_stateB;
+		uint8 loopRefresh;
+		EffectState *s;
+	} *_effectDefs;
 
-	int16 getEffectState(uint8 type);
-	void initEffect(StateA *a, const uint8 *effectData);
-	void updateEffectOuter3(StateA *a, StateB *b);
-	int updateEffectOuter(StateA *a, StateB *b);
-	void updateEffect(StateA *a);	
-	int lookupVolume(int a, int b);
+	int16 getEffectLevel(uint8 type);
+	void initEffect(EffectState *s, const uint8 *effectData);
+	void updateEffectGenerator(EffectState *s, EffectDef *d);
+	int updateEffectEnvelope(EffectState *s, EffectDef *d);
+	void updateEffect(EffectState *s);	
+	int calcModWheelLevel(int lvl, int mod);
 
 	void keyOn();
 	void keyOff();
@@ -97,8 +97,8 @@ private:
 	uint8 _adjustModTl;
 	uint8 _chan;
 	uint8 _note;
-	uint8 _carrierTl;
-	uint8 _modulatorTl;
+	uint8 _operator2Tl;
+	uint8 _operator1Tl;
 	uint8 _sustainNoteOff;
 	int16 _duration;
 	
@@ -109,8 +109,8 @@ private:
 
 	static const uint8 _chanMap[];
 	static const uint8 _chanMap2[];
-	static const uint8 _effectDefs[];
-	static const uint16 _effectData[];
+	static const uint8 _effectDefaults[];
+	static const uint16 _effectEnvStepTable[];
 	static const uint8 _freqMSB[];
 	static const uint16 _freqLSB[];
 };
@@ -215,18 +215,19 @@ uint8 TownsMidiChanState::get(uint8 type) {
 }
 
 TownsMidiOutputChannel::TownsMidiOutputChannel(MidiDriver_TOWNS *driver, int chanIndex) : _driver(driver), _chan(chanIndex),
-	_in(0), _prev(0), _next(0), _adjustModTl(0), _carrierTl(0), _note(0), _modulatorTl(0), _sustainNoteOff(0), _duration(0), _freq(0), _freqAdjust(0) {
-	_stateA = new StateA[2];
-	memset(_stateA, 0, 2 * sizeof(StateA));
-	_stateB = new StateB[2];
-	memset(_stateB, 0, 2 * sizeof(StateB));
-	_stateB[0].a = &_stateA[1];
-	_stateB[1].a = &_stateA[0];
+	_in(0), _prev(0), _next(0), _adjustModTl(0), _operator2Tl(0), _note(0), _operator1Tl(0), _sustainNoteOff(0), _duration(0), _freq(0), _freqAdjust(0) {
+	_effectStates = new EffectState[2];
+	_effectDefs = new EffectDef[2];
+
+	memset(_effectStates, 0, 2 * sizeof(EffectState));
+	memset(_effectDefs, 0, 2 * sizeof(EffectDef));
+	_effectDefs[0].s = &_effectStates[1];
+	_effectDefs[1].s = &_effectStates[0];
 }
 
 TownsMidiOutputChannel::~TownsMidiOutputChannel() {
-	delete[] _stateA;
-	delete[] _stateB;
+	delete[] _effectStates;
+	delete[] _effectDefs;
 }
 
 void TownsMidiOutputChannel::noteOn(uint8 msb, uint16 lsb) {
@@ -243,9 +244,8 @@ void TownsMidiOutputChannel::noteOnPitchBend(uint8 msb, uint16 lsb) {
 void TownsMidiOutputChannel::setupProgram(const uint8 *data, uint8 mLevelPara, uint8 tLevelPara) {
 	// This driver uses only 2 operators and 2 algorithms (algorithm 5 and 7),
 	// since it is just a modified AdLib driver. It also uses AdLib programs.
-	// There are no FM-TOWNS specific programs. This is the reason for the FM-TOWNS
-	// music being so bad compared to AdLib (unsuitable data is just forced into the
-	// wrong audio device).
+	// There are no FM-TOWNS specific programs. This is the reason for the low quality of the FM-TOWNS
+	// music (unsuitable data is just forced into the wrong audio device).
 
 	static const uint8 mul[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 12, 12, 15, 15 };
 	uint8 chan = _chanMap[_chan];	
@@ -295,50 +295,50 @@ void TownsMidiOutputChannel::setupProgram(const uint8 *data, uint8 mLevelPara, u
 }
 
 void TownsMidiOutputChannel::setupEffects(int index, uint8 flags, const uint8 *effectData) {
-	uint16 maxVal[] = { 0x2FF, 0x1F, 0x07, 0x3F, 0x0F, 0x0F, 0x0F, 0x03, 0x3F, 0x0F, 0x0F, 0x0F, 0x03, 0x3E, 0x1F };
+	uint16 effectTargetLevel[] = { 0x2FF, 0x1F, 0x07, 0x3F, 0x0F, 0x0F, 0x0F, 0x03, 0x3F, 0x0F, 0x0F, 0x0F, 0x03, 0x3E, 0x1F };
 	uint8 effectType[] = { 0x1D, 0x1C, 0x1B, 0x00, 0x03, 0x04, 0x07, 0x08, 0x0D, 0x10, 0x11, 0x14, 0x15, 0x1e, 0x1f, 0x00 };
 	
-	StateA *a = &_stateA[index];
-	StateB *b = &_stateB[index];
+	EffectState *s = &_effectStates[index];
+	EffectDef *d = &_effectDefs[index];
 
-	b->inc = 0;
-	b->useModWheel = flags & 0x40;
-	a->fld_11 = flags & 0x20;
-	b->fld_6 = flags & 0x10;
-	b->type = effectType[flags & 0x0f];
-	a->fld_9 = maxVal[flags & 0x0f];
-	a->modWheelSensitivity = 31;
-	a->modWheelState = b->useModWheel ? _in->_modWheel >> 2 : 31;
+	d->phase = 0;
+	d->useModWheel = flags & 0x40;
+	s->loop = flags & 0x20;
+	d->loopRefresh = flags & 0x10;
+	d->type = effectType[flags & 0x0f];
+	s->envTargetLevel = effectTargetLevel[flags & 0x0f];
+	s->modWheelSensitivity = 31;
+	s->modWheelState = d->useModWheel ? _in->_modWheel >> 2 : 31;
 
-	switch (b->type) {
+	switch (d->type) {
 	case 0:
-		a->effectState = _carrierTl;
+		s->currentLevel = _operator2Tl;
 		break;
 	case 13:
-		a->effectState = _modulatorTl;
+		s->currentLevel = _operator1Tl;
 		break;
 	case 30:
-		a->effectState = 31;
-		b->a->modWheelState = 0;
+		s->currentLevel = 31;
+		d->s->modWheelState = 0;
 		break;
 	case 31:
-		a->effectState = 0;
-		b->a->modWheelSensitivity = 0;
+		s->currentLevel = 0;
+		d->s->modWheelSensitivity = 0;
 		break;
 	default:
-		a->effectState = getEffectState(b->type);
+		s->currentLevel = getEffectLevel(d->type);
 		break;
 	}
 
-	initEffect(a, effectData);
+	initEffect(s, effectData);
 }
 
 void TownsMidiOutputChannel::setModWheel(uint8 value) {
-	if (_stateA[0].numLoop && _stateB[0].type)
-		_stateA[0].modWheelState = value >> 2;
+	if (_effectStates[0].envState && _effectDefs[0].type)
+		_effectStates[0].modWheelState = value >> 2;
 
-	if (_stateA[1].numLoop && _stateB[1].type)
-		_stateA[1].modWheelState = value >> 2;
+	if (_effectStates[1].envState && _effectDefs[1].type)
+		_effectStates[1].modWheelState = value >> 2;
 }
 
 void TownsMidiOutputChannel::connect(TownsMidiInputChannel *chan) {
@@ -381,8 +381,8 @@ bool TownsMidiOutputChannel::update() {
 	}
 
 	for (int i = 0; i < 2; i++) {
-		if (_stateA[i].numLoop)
-			updateEffectOuter3(&_stateA[i], &_stateB[i]);
+		if (_effectStates[i].envState)
+			updateEffectGenerator(&_effectStates[i], &_effectDefs[i]);
 	}
 
 	return false;
@@ -398,7 +398,7 @@ int TownsMidiOutputChannel::checkPriority(int pri) {
 	return kHighPriority;
 }
 
-int16 TownsMidiOutputChannel::getEffectState(uint8 type) {
+int16 TownsMidiOutputChannel::getEffectLevel(uint8 type) {
 	uint8 chan = (type < 13) ? _chanMap2[_chan] : ((type < 26) ? _chanMap[_chan] : _chan);
 	
 	if (type == 28)
@@ -411,45 +411,45 @@ int16 TownsMidiOutputChannel::getEffectState(uint8 type) {
 		type -= 13;
 
 	int32 res = 0;
-	uint8 cs = (_driver->_chanState[chan].get(_effectDefs[type * 4] >> 5) & _effectDefs[type * 4 + 2]) >> _effectDefs[type * 4 + 1];
-	if (_effectDefs[type * 4 + 3])
-		res = _effectDefs[type * 4 + 3] - cs;
+	uint8 cs = (_driver->_chanState[chan].get(_effectDefaults[type * 4] >> 5) & _effectDefaults[type * 4 + 2]) >> _effectDefaults[type * 4 + 1];
+	if (_effectDefaults[type * 4 + 3])
+		res = _effectDefaults[type * 4 + 3] - cs;
 	
 	return res;	
 }
 
-void TownsMidiOutputChannel::initEffect(StateA *a, const uint8 *effectData) {
-	a->numLoop = 1;
-	a->fld_1 = 0;
-	a->modWheelLast = 31;
-	a->duration = effectData[0] * 63;
-	a->ar1[0] = effectData[1];
-	a->ar1[1] = effectData[3];
-	a->ar1[2] = effectData[5];
-	a->ar1[3] = effectData[6];
-	a->ar2[0] = effectData[2];
-	a->ar2[1] = effectData[4];
-	a->ar2[2] = 0;
-	a->ar2[3] = effectData[7];
-	updateEffect(a);
+void TownsMidiOutputChannel::initEffect(EffectState *s, const uint8 *effectData) {
+	s->envState = 1;
+	s->envStepLen = 0;
+	s->modWheelLast = 31;
+	s->duration = effectData[0] * 63;
+	s->envStepping[0] = effectData[1];
+	s->envStepping[1] = effectData[3];
+	s->envStepping[2] = effectData[5];
+	s->envStepping[3] = effectData[6];
+	s->envMod[0] = effectData[2];
+	s->envMod[1] = effectData[4];
+	s->envMod[2] = 0;
+	s->envMod[3] = effectData[7];
+	updateEffect(s);
 }
 
-void TownsMidiOutputChannel::updateEffectOuter3(StateA *a, StateB *b) {
-	uint8 f = updateEffectOuter(a, b);
+void TownsMidiOutputChannel::updateEffectGenerator(EffectState *s, EffectDef *d) {
+	uint8 f = updateEffectEnvelope(s, d);
 
 	if (f & 1) {
-		switch (b->type) {
+		switch (d->type) {
 		case 0:
-			_carrierTl = a->effectState + b->inc; /*???*/
+			_operator2Tl = s->currentLevel + d->phase;
 			break;
 		case 13:
-			_modulatorTl = a->effectState + b->inc; /*???*/
+			_operator1Tl = s->currentLevel + d->phase;
 			break;
 		case 30:
-			b->a->modWheelState = b->inc;
+			d->s->modWheelState = d->phase;
 			break;
 		case 31:
-			b->a->modWheelSensitivity = b->inc;
+			d->s->modWheelSensitivity = d->phase;
 			break;
 		default:
 			break;
@@ -457,60 +457,60 @@ void TownsMidiOutputChannel::updateEffectOuter3(StateA *a, StateB *b) {
 	}
 
 	if (f & 2) {
-		if (b->fld_6)
+		if (d->loopRefresh)
 			keyOn();
 	}
 }
 
-int TownsMidiOutputChannel::updateEffectOuter(StateA *a, StateB *b) {
-	if (a->duration) {
-		a->duration -= 17;
-		if (a->duration <= 0) {
-			a->numLoop = 0;
+int TownsMidiOutputChannel::updateEffectEnvelope(EffectState *s, EffectDef *d) {
+	if (s->duration) {
+		s->duration -= 17;
+		if (s->duration <= 0) {
+			s->envState = 0;
 			return 0;
 		}
 	} 
 
-	int32 t = a->fld_1 + a->fld_25;
+	int32 t = s->envStepLen + s->envChangePerStep;
 	
-	a->fld_2e += a->fld_2a;
-	if (a->fld_2e >= a->fld_1d) {
-		a->fld_2e -= a->fld_1d;
-		t += a->dir;
+	s->envChangeCountRem += s->envChangePerStepRem;
+	if (s->envChangeCountRem >= s->envStateNumSteps) {
+		s->envChangeCountRem -= s->envStateNumSteps;
+		t += s->dir;
 	}
 
 	int retFlags = 0;
 
-	if (t != a->fld_1 || a->modWheelState != a->modWheelLast) {
-		a->fld_1 = t;
-		a->modWheelLast = a->modWheelState;
-		t = lookupVolume(t, a->modWheelState);
-		if (t != b->inc)
-			b->inc = t;
+	if (t != s->envStepLen || (s->modWheelState != s->modWheelLast)) {
+		s->envStepLen = t;
+		s->modWheelLast = s->modWheelState;
+		t = calcModWheelLevel(t, s->modWheelState);
+		if (t != d->phase)
+			d->phase = t;
 		retFlags |= 1;
 	}
 
-	if (--a->fld_21)
+	if (--s->envStateStepCounter)
 		return retFlags;
 
-	if (++a->numLoop > 4) {
-		if (!a->fld_11) {
-			a->numLoop = 0;
+	if (++s->envState > 4) {
+		if (!s->loop) {
+			s->envState = 0;
 			return retFlags;
 		}
-		a->numLoop = 1;
+		s->envState = 1;
 		retFlags |= 2;
 	}
 
-	updateEffect(a);
+	updateEffect(s);
 
 	return retFlags;
 }
 
-void TownsMidiOutputChannel::updateEffect(StateA *a) {
-	uint8 c = a->numLoop - 1;
-	uint8 v = a->ar1[c];
-	int32 e = _effectData[_driver->_chanEffectLevel[((v & 0x7f) << 5) + a->modWheelSensitivity]];
+void TownsMidiOutputChannel::updateEffect(EffectState *s) {
+	uint8 st= s->envState - 1;
+	uint8 v = s->envStepping[st];
+	int32 e = _effectEnvStepTable[_driver->_chanEffectLevelModifier[((v & 0x7f) << 5) + s->modWheelSensitivity]];
 
 	if (v & 0x80)
 		e = _driver->randomValue(e);
@@ -518,58 +518,59 @@ void TownsMidiOutputChannel::updateEffect(StateA *a) {
 	if (!e)
 		e = 1;
 
-	a->fld_1d = a->fld_21 = e;
+	s->envStateNumSteps = s->envStateStepCounter = e;
 	int32 d = 0;
 
-	if (c != 2) {
-		v = a->ar2[c];
-		e = lookupVolume(a->fld_9, (v & 0x7f) - 31);
+	if (st != 2) {
+		v = s->envMod[st];
+		e = calcModWheelLevel(s->envTargetLevel, (v & 0x7f) - 31);
 
 		if (v & 0x80)
 			e = _driver->randomValue(e);
 
-		if (e + a->effectState > a->fld_9) {
-			e = a->fld_9 - a->effectState;
+		if (e + s->currentLevel > s->envTargetLevel) {
+			e = s->envTargetLevel - s->currentLevel;
 		} else {
-			if (e + a->effectState + 1 <= 0)
-				e = -a->effectState;
+			if (e + s->currentLevel + 1 <= 0)
+				e = -s->currentLevel;
 		}
 
-		d = e - a->fld_1;
+		d = e - s->envStepLen;
 	}
 
-	a->fld_25 = d / a->fld_1d;
-	a->dir = (d < 0) ? -1 : 1;
-	d *= a->dir;
-	a->fld_2a = d % a->fld_1d;
-	a->fld_2e = 0;
+	s->envChangePerStep = d / s->envStateNumSteps;
+	s->dir = (d < 0) ? -1 : 1;
+	d *= s->dir;
+	s->envChangePerStepRem = d % s->envStateNumSteps;
+	s->envChangeCountRem = 0;
 }
 
-int TownsMidiOutputChannel::lookupVolume(int a, int b) {
-	if (b == 0)
+int TownsMidiOutputChannel::calcModWheelLevel(int lvl, int mod) {
+	if (mod == 0)
 		return 0;
 
-	if (b == 31)
-		return a;
+	if (mod == 31)
+		return lvl;
 
-	if (a > 63 || a < -63)
-		return ((a + 1) * b) >> 5;
+	if (lvl > 63 || lvl < -63)
+		return ((lvl + 1) * mod) >> 5;
 
-	if (b < 0) {
-		if (a < 0)			
-			return _driver->_chanEffectLevel[((-a) << 5) - b];
+	if (mod < 0) {
+		if (mod < 0)			
+			return _driver->_chanEffectLevelModifier[((-lvl) << 5) - mod];
 		else
-			return -_driver->_chanEffectLevel[(a << 5) - b];
+			return -_driver->_chanEffectLevelModifier[(lvl << 5) - mod];
 	} else {
-		if (a < 0)			
-			return -_driver->_chanEffectLevel[((-a) << 5) + b];
+		if (mod < 0)			
+			return -_driver->_chanEffectLevelModifier[((-lvl) << 5) + mod];
 		else
-			return _driver->_chanEffectLevel[((-a) << 5) + b];
+			return _driver->_chanEffectLevelModifier[((-lvl) << 5) + mod];
 	}
+
+	return 0;
 }
 
 void TownsMidiOutputChannel::keyOn() {
-	// This driver uses only 2 operators since it is just a modified AdLib driver.
 	out(0x28, 0x30);
 }
 
@@ -578,12 +579,11 @@ void TownsMidiOutputChannel::keyOff() {
 }
 
 void TownsMidiOutputChannel::keyOnSetFreq(uint16 frq) {
-	uint8 t = (frq << 1) >> 8;	
-	frq = (_freqMSB[t] << 11) | _freqLSB[t] ;
+	uint16 note = (frq << 1) >> 8;	
+	frq = (_freqMSB[note] << 11) | _freqLSB[note] ;
 	out(0xa4, frq >> 8);
 	out(0xa0, frq & 0xff);
-	out(0x28, 0);
-	// This driver uses only 2 operators since it is just a modified AdLib driver.
+	//out(0x28, 0x00);
 	out(0x28, 0x30);
 }
 
@@ -607,7 +607,7 @@ const uint8 TownsMidiOutputChannel::_chanMap2[] = {
 	3, 4, 5, 11, 12, 13
 };
 
-const uint8 TownsMidiOutputChannel::_effectDefs[] = {
+const uint8 TownsMidiOutputChannel::_effectDefaults[] = {
 	0x40, 0x00, 0x3F, 0x3F, 0xE0, 0x02, 0x00, 0x00, 0x40, 0x06, 0xC0, 0x00,
 	0x20, 0x00, 0x0F, 0x00, 0x60, 0x04, 0xF0, 0x0F, 0x60, 0x00, 0x0F, 0x0F,
 	0x80, 0x04, 0xF0, 0x0F, 0x80, 0x00, 0x0F, 0x0F, 0xE0, 0x00, 0x03, 0x00,
@@ -615,7 +615,7 @@ const uint8 TownsMidiOutputChannel::_effectDefs[] = {
 	0x20, 0x04, 0x10, 0x00, 0xC0, 0x00, 0x01, 0x00, 0xC0, 0x01, 0x0E, 0x00
 };
 
-const uint16 TownsMidiOutputChannel::_effectData[] = {
+const uint16 TownsMidiOutputChannel::_effectEnvStepTable[] = {
 	0x0001, 0x0002, 0x0004, 0x0005, 0x0006, 0x0007,	0x0008, 0x0009,
 	0x000A, 0x000C, 0x000E, 0x0010,	0x0012, 0x0015, 0x0018, 0x001E,
 	0x0024, 0x0032,	0x0040, 0x0052, 0x0064, 0x0088, 0x00A0, 0x00C0,
@@ -714,26 +714,26 @@ void TownsMidiInputChannel::noteOn(byte note, byte velocity) {
 	oc->_sustainNoteOff = 0;
 	oc->_duration = _instrument[29] * 63;
 	
-	oc->_modulatorTl = (_instrument[1] & 0x3f) + _driver->_chanEffectLevel[((velocity >> 1) << 5) + (_instrument[4] >> 2)];
-	if (oc->_modulatorTl > 63)
-		oc->_modulatorTl = 63;
+	oc->_operator1Tl = (_instrument[1] & 0x3f) + _driver->_chanEffectLevelModifier[((velocity >> 1) << 5) + (_instrument[4] >> 2)];
+	if (oc->_operator1Tl > 63)
+		oc->_operator1Tl = 63;
 
-	oc->_carrierTl = (_instrument[6] & 0x3f) + _driver->_chanEffectLevel[((velocity >> 1) << 5) + (_instrument[9] >> 2)];
-	if (oc->_carrierTl > 63)
-		oc->_carrierTl = 63;
+	oc->_operator2Tl = (_instrument[6] & 0x3f) + _driver->_chanEffectLevelModifier[((velocity >> 1) << 5) + (_instrument[9] >> 2)];
+	if (oc->_operator2Tl > 63)
+		oc->_operator2Tl = 63;
 
-	oc->setupProgram(_instrument, oc->_adjustModTl == 1 ? _programAdjustLevel[_driver->_chanEffectLevel[(_tl >> 2) + (oc->_modulatorTl << 5)]] : oc->_modulatorTl, _programAdjustLevel[_driver->_chanEffectLevel[(_tl >> 2) + (oc->_carrierTl << 5)]]);
+	oc->setupProgram(_instrument, oc->_adjustModTl == 1 ? _programAdjustLevel[_driver->_chanEffectLevelModifier[(_tl >> 2) + (oc->_operator1Tl << 5)]] : oc->_operator1Tl, _programAdjustLevel[_driver->_chanEffectLevelModifier[(_tl >> 2) + (oc->_operator2Tl << 5)]]);
 	oc->noteOn(note + _transpose, _freqLSB);
 
 	if (_instrument[11] & 0x80)
 		oc->setupEffects(0, _instrument[11], &_instrument[12]);
 	else
-		oc->_stateA[0].numLoop = 0;
+		oc->_effectStates[0].envState = 0;
 
 	if (_instrument[20] & 0x80)
 		oc->setupEffects(1, _instrument[20], &_instrument[21]);
 	else
-		oc->_stateA[1].numLoop = 0;
+		oc->_effectStates[1].envState = 0;
 }
 
 void TownsMidiInputChannel::programChange(byte program) {
@@ -795,7 +795,6 @@ void TownsMidiInputChannel::controlModulationWheel(byte value) {
 
 void TownsMidiInputChannel::controlVolume(byte value) {
 	/* This is all done inside the imuse code
-
 	uint16 v1 = _ctrlVolume + 1;
 	uint16 v2 = value;
 	if (_chanIndex != 16) {
@@ -805,10 +804,6 @@ void TownsMidiInputChannel::controlVolume(byte value) {
 	_tl = (v1 * v2) >> 7;*/
 
 	_tl = value;
-	
-	/* nullsub
-	_out->setVolume(_tl);
-	*/
 }
 
 void TownsMidiInputChannel::controlPanPos(byte value) {
@@ -865,13 +860,13 @@ int MidiDriver_TOWNS::open() {
 
 	_chanState = new TownsMidiChanState[32];
 
-	_chanEffectLevel = new uint8[2048];
+	_chanEffectLevelModifier = new uint8[2048];
 	for (int i = 0; i < 64; i++) {
 		for (int ii = 0; ii < 32; ii++)
-			_chanEffectLevel[(i << 5) + ii] = ((i * (ii + 1)) >> 5) & 0xff;
+			_chanEffectLevelModifier[(i << 5) + ii] = ((i * (ii + 1)) >> 5) & 0xff;
 	}
 	for (int i = 0; i < 64; i++)
-		_chanEffectLevel[i << 5] = 0;
+		_chanEffectLevelModifier[i << 5] = 0;
 
 	_intf->callback(0);
 
@@ -916,8 +911,8 @@ void MidiDriver_TOWNS::close() {
 
 	delete[] _chanState;
 	_chanState = 0;
-	delete[] _chanEffectLevel;
-	_chanEffectLevel = 0;
+	delete[] _chanEffectLevelModifier;
+	_chanEffectLevelModifier = 0;
 }
 
 void MidiDriver_TOWNS::send(uint32 b) {

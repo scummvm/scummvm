@@ -39,45 +39,22 @@ public:
 	void recalculateRates();
 	void generateOutput(int32 phasebuf, int32 *feedbuf, int32 &out);
 
-	void feedbackLevel(int32 level) {
-		_feedbackLevel = level ? level + 6 : 0;
-	}
-	void detune(int value) {
-		_detn = &_detnTbl[value << 5];
-	}
-	void multiple(uint32 value) {
-		_multiple = value ? (value << 1) : 1;
-	}
-	void attackRate(uint32 value) {
-		_specifiedAttackRate = value;
-	}
+	void feedbackLevel(int32 level);
+	void detune(int value);
+	void multiple(uint32 value);
+	void attackRate(uint32 value);
 	bool scaleRate(uint8 value);
-	void decayRate(uint32 value) {
-		_specifiedDecayRate = value;
-		recalculateRates();
-	}
-	void sustainRate(uint32 value) {
-		_specifiedSustainRate = value;
-		recalculateRates();
-	}
-	void sustainLevel(uint32 value) {
-		_sustainLevel = (value == 0x0f) ? 0x3e0 : value << 5;
-	}
-	void releaseRate(uint32 value) {
-		_specifiedReleaseRate = value;
-		recalculateRates();
-	}
-	void totalLevel(uint32 value) {
-		_totalLevel = value << 3;
-	}
-	void ampModulation(bool enable) {
-		_ampMod = enable;
-	}
+	void decayRate(uint32 value);
+	void sustainRate(uint32 value);
+	void sustainLevel(uint32 value);
+	void releaseRate(uint32 value);
+	void totalLevel(uint32 value);
+	void ampModulation(bool enable);
 	void reset();
 
 protected:
 	EnvelopeState _state;
-	bool _playing;
+	bool _holdKey;
 	uint32 _feedbackLevel;
 	uint32 _multiple;
 	uint32 _totalLevel;
@@ -122,7 +99,7 @@ TownsPC98_FmSynthOperator::TownsPC98_FmSynthOperator(const uint32 timerbase, con
 	_rtt(rtt), _rateTbl(rateTable), _rshiftTbl(shiftTable), _adTbl(attackDecayTable), _fTbl(frqTable),
 	_sinTbl(sineTable), _tLvlTbl(tlevelOut), _detnTbl(detuneTable), _tickLength(timerbase * 2),
 	_specifiedAttackRate(0), _specifiedDecayRate(0), _specifiedReleaseRate(0), _specifiedSustainRate(0),
-	_phase(0), _state(kEnvReady), _playing(false), _timer(0), _keyScale1(0),
+	_phase(0), _state(kEnvReady), _holdKey(false), _timer(0), _keyScale1(0),
 	_keyScale2(0), _currentLevel(1023), _ampMod(false), _tickCount(0) {
 
 	fs_a.rate = fs_a.shift = fs_d.rate = fs_d.shift = fs_s.rate = fs_s.shift = fs_r.rate = fs_r.shift = 0;
@@ -131,19 +108,19 @@ TownsPC98_FmSynthOperator::TownsPC98_FmSynthOperator(const uint32 timerbase, con
 }
 
 void TownsPC98_FmSynthOperator::keyOn() {
-	if (_playing)
+	if (_holdKey)
 		return;
 
-	_playing = true;
+	_holdKey = true;
 	_state = kEnvAttacking;
 	_phase = 0;
 }
 
 void TownsPC98_FmSynthOperator::keyOff() {
-	if (!_playing)
+	if (!_holdKey)
 		return;
 
-	_playing = false;
+	_holdKey = false;
 	if (_state != kEnvReady)
 		_state = kEnvReleasing;
 }
@@ -199,39 +176,42 @@ void TownsPC98_FmSynthOperator::generateOutput(int32 phasebuf, int32 *feed, int3
 		int32 targetLevel = 0;
 		EnvelopeState nextState = kEnvReady;
 
-		switch (_state) {
-		case kEnvReady:
-			return;
-		case kEnvAttacking:
-			targetLevel = 0;
-			nextState = kEnvDecaying;
-			if ((_specifiedAttackRate << 1) + _keyScale2 < 64) {
-				targetTime = (1 << fs_a.shift) - 1;
-				levelIncrement = (~_currentLevel * _adTbl[fs_a.rate + ((_tickCount >> fs_a.shift) & 7)]) >> 4;
+		for (bool loop = true; loop;) {
+			switch (_state) {
+			case kEnvReady:
+				return;
+			case kEnvAttacking:
+				targetLevel = 0;
+				nextState = _sustainLevel ? kEnvDecaying : kEnvSustaining;
+				if ((_specifiedAttackRate << 1) + _keyScale2 < 62) {
+					targetTime = (1 << fs_a.shift) - 1;
+					levelIncrement = (~_currentLevel * _adTbl[fs_a.rate + ((_tickCount >> fs_a.shift) & 7)]) >> 4;
+				} else {
+					_currentLevel = targetLevel;
+					_state = nextState;
+					continue;
+				}
 				break;
-			} else {
-				_currentLevel = targetLevel;
-				_state = nextState;
+			case kEnvDecaying:
+				targetTime = (1 << fs_d.shift) - 1;
+				nextState = kEnvSustaining;
+				targetLevel = _sustainLevel;
+				levelIncrement = _adTbl[fs_d.rate + ((_tickCount >> fs_d.shift) & 7)];
+				break;
+			case kEnvSustaining:
+				targetTime = (1 << fs_s.shift) - 1;
+				nextState = kEnvSustaining;
+				targetLevel = 1023;
+				levelIncrement = _adTbl[fs_s.rate + ((_tickCount >> fs_s.shift) & 7)];
+				break;
+			case kEnvReleasing:
+				targetTime = (1 << fs_r.shift) - 1;
+				nextState = kEnvReady;
+				targetLevel = 1023;
+				levelIncrement = _adTbl[fs_r.rate + ((_tickCount >> fs_r.shift) & 7)];
+				break;
 			}
-			// Fall through
-		case kEnvDecaying:
-			targetTime = (1 << fs_d.shift) - 1;
-			nextState = kEnvSustaining;
-			targetLevel = _sustainLevel;
-			levelIncrement = _adTbl[fs_d.rate + ((_tickCount >> fs_d.shift) & 7)];
-			break;
-		case kEnvSustaining:
-			targetTime = (1 << fs_s.shift) - 1;
-			nextState = kEnvSustaining;
-			targetLevel = 1023;
-			levelIncrement = _adTbl[fs_s.rate + ((_tickCount >> fs_s.shift) & 7)];
-			break;
-		case kEnvReleasing:
-			targetTime = (1 << fs_r.shift) - 1;
-			nextState = kEnvReady;
-			targetLevel = 1023;
-			levelIncrement = _adTbl[fs_r.rate + ((_tickCount >> fs_r.shift) & 7)];
-			break;
+			loop = false;
 		}
 
 		if (!(_tickCount & targetTime)) {
@@ -272,6 +252,63 @@ void TownsPC98_FmSynthOperator::generateOutput(int32 phasebuf, int32 *feed, int3
 	out += *o;
 }
 
+void TownsPC98_FmSynthOperator::feedbackLevel(int32 level) {
+	_feedbackLevel = level ? level + 6 : 0;
+}
+
+void TownsPC98_FmSynthOperator::detune(int value) {
+	_detn = &_detnTbl[value << 5];
+}
+
+void TownsPC98_FmSynthOperator::multiple(uint32 value) {
+	_multiple = value ? (value << 1) : 1;
+}
+
+void TownsPC98_FmSynthOperator::attackRate(uint32 value) {
+	_specifiedAttackRate = value;
+}
+
+bool TownsPC98_FmSynthOperator::scaleRate(uint8 value) {
+	value = 3 - value;
+	if (_keyScale1 != value) {
+		_keyScale1 = value;
+		return true;
+	}
+
+	int k = _keyScale2;
+	int r = _specifiedAttackRate ? (_specifiedAttackRate << 1) + 0x20 : 0;
+	fs_a.rate = ((r + k) < 94) ? _rateTbl[r + k] : 136;
+	fs_a.shift = ((r + k) < 94) ? _rshiftTbl[r + k] : 0;
+	return false;
+}
+
+void TownsPC98_FmSynthOperator::decayRate(uint32 value) {
+	_specifiedDecayRate = value;
+	recalculateRates();
+}
+
+void TownsPC98_FmSynthOperator::sustainRate(uint32 value) {
+		_specifiedSustainRate = value;
+		recalculateRates();
+	}
+
+void TownsPC98_FmSynthOperator::sustainLevel(uint32 value) {
+	_sustainLevel = (value == 0x0f) ? 0x3e0 : value << 5;
+}
+
+void TownsPC98_FmSynthOperator::releaseRate(uint32 value) {
+	_specifiedReleaseRate = value;
+	recalculateRates();
+}
+
+void TownsPC98_FmSynthOperator::totalLevel(uint32 value) {
+	_totalLevel = value << 3;
+}
+
+void TownsPC98_FmSynthOperator::ampModulation(bool enable) {
+	_ampMod = enable;
+}
+
 void TownsPC98_FmSynthOperator::reset() {
 	keyOff();
 	_timer = 0;
@@ -290,20 +327,6 @@ void TownsPC98_FmSynthOperator::reset() {
 	feedbackLevel(0);
 	totalLevel(127);
 	ampModulation(false);
-}
-
-bool TownsPC98_FmSynthOperator::scaleRate(uint8 value) {
-	value = 3 - value;
-	if (_keyScale1 != value) {
-		_keyScale1 = value;
-		return true;
-	}
-
-	int k = _keyScale2;
-	int r = _specifiedAttackRate ? (_specifiedAttackRate << 1) + 0x20 : 0;
-	fs_a.rate = ((r + k) < 94) ? _rateTbl[r + k] : 136;
-	fs_a.shift = ((r + k) < 94) ? _rshiftTbl[r + k] : 0;
-	return false;
 }
 
 class TownsPC98_FmSynthSquareSineSource {

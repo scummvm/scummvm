@@ -78,7 +78,7 @@ private:
 	
 	bool _open;
 
-	uint8 *_chanEffectLevel;
+	uint8 *_chanEffectLevelModifier;
 };
 
 #endif
