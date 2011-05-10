@@ -592,6 +592,8 @@ void Scene::setSoundPosition(const char *soundName, Graphics::Vector3d pos, int 
 	//This 8.f is a guess, so it may need some adjusting
 	int newVolume = (int)(8.f * diffVolume / distance);
 	newVolume += minVol;
+	if (newVolume > _maxVolume)
+		newVolume = _maxVolume;
 	g_imuse->setVolume(soundName, newVolume);
 
 	//TODO
