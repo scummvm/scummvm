@@ -3232,9 +3232,9 @@ void Scene6100::process(Event &event) {
 	if (event.eventType == EVENT_KEYPRESS) {
 		// Handle incremental turning speeds with arrow keys
 		if ((event.kbd.keycode == Common::KEYCODE_LEFT) || (event.kbd.keycode == Common::KEYCODE_KP4)) {
-			_turnAmount = MAX(_turnAmount - 1, -8);
+			_turnAmount = MIN(_turnAmount + 1, 8);
 		} else if ((event.kbd.keycode == Common::KEYCODE_RIGHT) || (event.kbd.keycode == Common::KEYCODE_KP6)) {
-			_turnAmount = MIN(_turnAmount + 1, -8);
+			_turnAmount = MAX(_turnAmount - 1, -8);
 		}
 	}
 
@@ -3250,8 +3250,7 @@ void Scene6100::dispatch() {
 
 	// Handle mouse controlling the turning
 	int changeAmount = (_globals->_events._mousePos.x - 160) / -20;
-	int turnDifference = (changeAmount - _turnAmount) / 2;
-	_turnAmount = !turnDifference ? 0 : _turnAmount + turnDifference;
+	_turnAmount += (changeAmount - _turnAmount) / 2;
 
 	if (_fadePercent < 100) {
 		_fadePercent += 10;
