@@ -423,11 +423,11 @@ static int *scaleLine(int size, int srcSize) {
 	int *v = new int[size];
 	Common::set_to(v, &v[size], -1);
 
-	int distCtr = 0;
+	int distCtr = PRECISION_FACTOR / 2;
 	int *destP = v;
 	for (int distIndex = 0; distIndex < srcSize; ++distIndex) {
 		distCtr += scale;
-		while (distCtr >= PRECISION_FACTOR) {
+		while (distCtr > PRECISION_FACTOR) {
 			assert(destP < &v[size]);
 			*destP++ = distIndex;
 			distCtr -= PRECISION_FACTOR;
