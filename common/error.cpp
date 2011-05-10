@@ -74,6 +74,9 @@ static String errorToString(ErrorCode errorCode) {
 	case kArgumentNotProcessed:
 		return _s("Command line argument not processed");
 
+	case kUserCanceled:
+		return _s("User canceled");
+
 	case kUnknownError:
 	default:
 		return _s("Unknown error");

@@ -348,8 +348,8 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 	Common::updateGameGUIOptions(agdDesc->guioptions | params.guioptions, lang);
 
 	GameDescriptor gameDescriptor = toGameDescriptor(*agdDesc, params.list);
-	if (gameDescriptor.isWIP())
-		Engine::warnUserAboutWIPGame();
+	if (gameDescriptor.isWIP() && !Engine::warnUserAboutWIPGame())
+		return Common::kUserCanceled;
 
 	debug(2, "Running %s", gameDescriptor.description().c_str());
 	if (!createInstance(syst, engine, agdDesc))

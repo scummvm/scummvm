@@ -403,11 +403,15 @@ void Engine::openMainMenuDialog() {
 	syncSoundSettings();
 }
 
-void Engine::warnUserAboutWIPGame() {
+bool Engine::warnUserAboutWIPGame() {
 	if (ConfMan.getBool("display_wip_engine_warning")) {
-		GUI::MessageDialog alert("WARNING: This game is UNSTABLE");
-		alert.runModal();
+		GUI::MessageDialog alert("WARNING: The game you are about to start is"
+			" not yet full supported by ScummVM. As such, it is likely to run"
+			" unstable, and any savestates you make could become invalid in a"
+			" future ScummVM release.", "Start anyway", "Cancel");
+		return alert.runModal() == GUI::kMessageOK;
 	}
+	return true;
 }
 
 uint32 Engine::getTotalPlayTime() const {

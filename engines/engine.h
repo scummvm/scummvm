@@ -256,8 +256,10 @@ public:
 
 	/**
 	 * Display a warning to the user that the game is still unstable.
+	 *
+	 * @return true if the user chose to start anyway, false otherwise
 	 */
-	static void warnUserAboutWIPGame();
+	static bool warnUserAboutWIPGame();
 
 	/**
 	 * Get the total play time.

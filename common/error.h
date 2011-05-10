@@ -68,6 +68,8 @@ enum ErrorCode {
 
 	kArgumentNotProcessed,		///< Used in command line parsing
 
+	kUserCanceled,			///< User has canceled the launching of the game
+
 	kUnknownError				///< Catch-all error, used if no other error code matches
 };
 
