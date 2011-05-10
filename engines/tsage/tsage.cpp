@@ -101,14 +101,14 @@ Common::Error TSageEngine::run() {
  * Returns true if it is currently okay to restore a game
  */
 bool TSageEngine::canLoadGameStateCurrently() {
-	return (_globals->getFlag(50) == 0) && _globals->_player._uiEnabled;
+	return (_globals->getFlag(50) == 0);
 }
 
 /**
  * Returns true if it is currently okay to save the game
  */
 bool TSageEngine::canSaveGameStateCurrently() {
-	return (_globals->getFlag(50) == 0) && _globals->_player._uiEnabled;
+	return (_globals->getFlag(50) == 0);
 }
 
 /**

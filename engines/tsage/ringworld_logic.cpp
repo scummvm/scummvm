@@ -1288,7 +1288,7 @@ void RingworldGame::restartGame() {
 }
 
 void RingworldGame::saveGame() {
-	if (_globals->getFlag(50))
+	if (!_vm->canSaveGameStateCurrently())
 		MessageDialog::show(SAVING_NOT_ALLOWED_MSG, OK_BTN_STRING);
 	else {
 		// Show the save dialog
@@ -1297,7 +1297,7 @@ void RingworldGame::saveGame() {
 }
 
 void RingworldGame::restoreGame() {
-	if (_globals->getFlag(50))
+	if (!_vm->canLoadGameStateCurrently())
 		MessageDialog::show(RESTORING_NOT_ALLOWED_MSG, OK_BTN_STRING);
 	else {
 		// Show the load dialog
