@@ -169,23 +169,24 @@ const char *MadsSceneLogic::_opcodeStrings[] = {
 };
 
 /**
- * This method sets up the data map with pointers to all the common game objects. This allows the script engine to
- * convert game specific offsets for various fields in the original game's data segment into a generic data index
- * that will be common across all the MADS games
+ * This method sets up the data map with pointers to all the common game
+ * objects. This allows the script engine to convert game specific offsets for
+ * various fields in the original game's data segment into a generic data index
+ * that will be common across all the MADS games.
  */
 void MadsSceneLogic::initialiseDataMap() {
 	// The unique order of these items must be maintained
-	MAP_DATA((uint16 *)&_madsVm->scene()->_abortTimersMode2);
-	MAP_DATA(&_madsVm->scene()->_abortTimers);
-	MAP_DATA(&_madsVm->_player._stepEnabled);
-	MAP_DATA(&_madsVm->scene()->_nextScene);
-	MAP_DATA(&_madsVm->scene()->_previousScene);
-	MAP_DATA(&_madsVm->_player._playerPos.x);
-	MAP_DATA(&_madsVm->_player._playerPos.y);
-	MAP_DATA(&_madsVm->_player._direction);
-	MAP_DATA(&_madsVm->_player._visible);
-	MAP_DATA(&getActiveAnimationBool);
-	MAP_DATA(&getAnimationCurrentFrame);
+	dataMap().addMapping(new GenericDataMapWrapper<AbortTimerMode>(&_madsVm->scene()->_abortTimersMode2));
+	dataMap().addMapping(new GenericDataMapWrapper<int>(&_madsVm->scene()->_abortTimers));
+	dataMap().addMapping(new BoolDataMapWrapper(&_madsVm->_player._stepEnabled));
+	dataMap().addMapping(new GenericDataMapWrapper<int>(&_madsVm->scene()->_nextScene));
+	dataMap().addMapping(new GenericDataMapWrapper<int>(&_madsVm->scene()->_previousScene));
+	dataMap().addMapping(new GenericDataMapWrapper<int16>(&_madsVm->_player._playerPos.x));
+	dataMap().addMapping(new GenericDataMapWrapper<int16>(&_madsVm->_player._playerPos.y));
+	dataMap().addMapping(new GenericDataMapWrapper<int16>(&_madsVm->_player._direction));
+	dataMap().addMapping(new BoolDataMapWrapper(&_madsVm->_player._visible));
+	dataMap().addMapping(new IntFuncDataMapWrapper(&getActiveAnimationBool));
+	dataMap().addMapping(new IntFuncDataMapWrapper(&getAnimationCurrentFrame));
 
 }
 

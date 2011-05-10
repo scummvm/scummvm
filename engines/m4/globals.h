@@ -232,45 +232,59 @@ struct MadsConfigData {
 #define SET_GLOBAL(x,y) _madsVm->globals()->_globals[x] = y
 #define SET_GLOBAL32(x,y) { _madsVm->globals()->_globals[x] = (y) & 0xffff; _madsVm->globals()->_globals[(x) + 1] = (y) >> 16; }
 
-typedef int (*IntFunctionPtr)();
-
-union DataMapEntry {
-	bool *boolValue;
-	uint16 *uint16Value;
-	int *intValue;
-	IntFunctionPtr fnPtr;
-};
-
 typedef Common::HashMap<uint16, uint16> DataMapHash;
 
-enum DataMapType {BOOL, UINT16, INT, INT_FN};
-
 class DataMapWrapper {
-	friend class DataMap;
-private:
-	DataMapEntry _value;
-	DataMapType _type;
 public:
-	DataMapWrapper(bool *v) { _value.boolValue = v; _type = BOOL; }
-	DataMapWrapper(uint16 *v) { _value.uint16Value = v; _type = UINT16; }
-	DataMapWrapper(int16 *v) { _value.uint16Value = (uint16 *)v; _type = UINT16; }
-	DataMapWrapper(int *v) { _value.intValue = v; _type = INT; }
-	DataMapWrapper(IntFunctionPtr v) { _value.fnPtr = v; _type = INT_FN; }
+	virtual ~DataMapWrapper() {}
+	virtual uint16 getIntValue() const = 0;
+	virtual void setIntValue(uint16 v) = 0;
+};
 
-	uint16 getIntValue() {
-		if (_type == BOOL) return *_value.boolValue ? 0xffff : 0;
-		else if (_type == UINT16) return *_value.uint16Value;
-		else if (_type == INT) return *_value.intValue;
-		else return _value.fnPtr();
+template <typename T>
+class GenericDataMapWrapper : public DataMapWrapper {
+private:
+	T *_value;
+public:
+	GenericDataMapWrapper(T *v) : _value(v) {}
+
+	uint16 getIntValue() const {
+		return *_value;
 	}
 	void setIntValue(uint16 v) {
-		if (_type == BOOL) *_value.boolValue = v != 0;
-		else if (_type == UINT16) *_value.uint16Value = v;
-		else if (_type == INT) *_value.intValue = v;
+		*_value = (T)v;
 	}
 };
 
-#define MAP_DATA(V) _madsVm->globals()->_dataMap.addMapping(new DataMapWrapper(V))
+class BoolDataMapWrapper : public DataMapWrapper {
+private:
+	bool *_value;
+public:
+	BoolDataMapWrapper(bool *v) : _value(v) {}
+
+	uint16 getIntValue() const {
+		return *_value ? 0xffff : 0;
+	}
+	void setIntValue(uint16 v) {
+		*_value = (v != 0);
+	}
+};
+
+
+typedef int (*IntFunctionPtr)();
+
+class IntFuncDataMapWrapper : public DataMapWrapper {
+private:
+	IntFunctionPtr _value;
+public:
+	IntFuncDataMapWrapper(IntFunctionPtr v) : _value(v) {}
+
+	uint16 getIntValue() const {
+		return _value();
+	}
+	void setIntValue(uint16 v) {
+	}
+};
 
 class DataMap {
 private:
