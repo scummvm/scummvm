@@ -854,6 +854,7 @@ void L1_FreeObjectState() {
 		return;
 	ObjectState *state =  getobjectstate(param);
 	g_grim->getCurrScene()->deleteObjectState(state);
+	delete state;
 }
 
 void L1_SendObjectToBack() {
