@@ -148,7 +148,7 @@ some of them might make residual crash, or behave in weird ways.
 |-------------------|-------------|-----------------------------------------------------|
 |Setting            | Values      | Effect                                              |
 |-------------------|-------------|-----------------------------------------------------|
-|soft_render        |[true/false] | If true, then the software renderer will be used    |
+|soft_renderer      |[true/false] | If true, then the software renderer will be used    |
 |                   |             | otherwise, Residual will try to use HW-rendering.   |
 |-------------------|-------------|-----------------------------------------------------|
 |fullscreen         |[true/false] | If true, then Residual will attempt to run in       |
