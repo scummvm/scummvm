@@ -163,7 +163,7 @@ private:
 	// Important rects
 	//Common::Rect _inventoryRect;
 	Common::Rect _menuEggRect;
-	//Common::Rect _selectedItemRect;
+	Common::Rect _selectedItemRect;
 
 	void init();
 
@@ -171,10 +171,13 @@ private:
 	void close();
 	void examine(InventoryItem item);
 	void drawHighlight(uint32 currentIndex, bool reset);
+	uint32 getItemIndex(uint32 currentIndex);
 
 	bool isItemSceneParameter(InventoryItem item) const;
 
 	void drawItem(CursorStyle id, uint16 x, uint16 y, int16 brighnessIndex = -1);
+
+	void drawSelectedItem();
 	void clearSelectedItem();
 };
 

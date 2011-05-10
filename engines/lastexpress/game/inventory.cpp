@@ -49,7 +49,7 @@ Inventory::Inventory(LastExpressEngine *engine) : _engine(engine), _selectedItem
 
 	//_inventoryRect = Common::Rect(0, 0, 32, 32);
 	_menuEggRect = Common::Rect(608, 448, 640, 480);
-	//_selectedItemRect = Common::Rect(44, 0, 76, 32);
+	_selectedItemRect = Common::Rect(44, 0, 76, 32);
 
 	init();
 }
@@ -195,7 +195,9 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 				_portraitHighlighted = false;
 			}
 
-			if (_selectedItem != kItemNone) {
+			if (_selectedItem != kItemNone
+			 && get(_selectedItem)->scene != kSceneNone
+			 && _selectedItemRect.contains(ev.mouse)) {
 				error("[Inventory::handleMouseEvent] Default handling of selected item not implemented");
 			}
 		}
@@ -205,6 +207,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 
 	// Opened inventory
 	if (ev.mouse.y >= 32) {
+		// Draw portrait (darkened) if the inventory is closed (and we are not on top of it)
 		if (!_isOpened) {
 			if (_portraitHighlighted) {
 				drawItem((CursorStyle)getProgress().portrait, 0, 0, 1);
@@ -215,7 +218,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 			return;
 		}
 
-		// Change highlights on item list
+		// Change item highlight on list
 		if (getFlags()->mouseLeftPressed) {
 			uint32 index = ev.mouse.y / 40;
 
@@ -228,37 +231,46 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 			return;
 		}
 
-		uint32 index = 0;
-		if (_highlightedItemIndex) {
-			error("[Inventory::handleMouseEvent] Computing of open inventory clicked item not implemented");
-		}
+		// User released the mouse button, check if we were on a valid item
+		uint32 index = _highlightedItemIndex ? getItemIndex(_highlightedItemIndex) : 0;
 
+		// Reset items and portrait
 		drawItem((CursorStyle)getProgress().portrait, 0, 0, 1);
-
-		// TODO clear items on inventory surface before redraw
+		_engine->getGraphicsManager()->clear(GraphicsManager::kBackgroundInventory, Common::Rect(0, 44, 32, (int16)(40 * _itemsShown + 40)));
+		_highlightedItemIndex = 0;
+		_itemsShown = 0;
 
 		// Load the scene if an item has been selected
 		if (index) {
-			error("[Inventory::handleMouseEvent] Loading of item scene not implemented");
+			InventoryEntry entry = _entries[index];
 
+			// If a scene is affected to the item
+			if (entry.scene) {
+				if (getState()->sceneUseBackup) {
+					if (getFirstExaminableItem() && !getState()->sceneBackup2)
+						getState()->sceneBackup2 = getState()->scene;
+				} else {
+					getState()->sceneUseBackup = true;
+					getState()->sceneBackup = getState()->scene;
+				}
+
+				getScenes()->loadScene(entry.scene);
+			}
+
+			if (entry.field_2) {
+				selectItem((InventoryItem)index);
+			} else {
+				drawSelectedItem();
+			}
+
+			// Set inventory as closed (will cause a cleanup on next call)
 			_isOpened = false;
 
 			return;
 		}
 
-		// Draw the selected item if any
-		if (!_selectedItem || get(_selectedItem)->manualSelect) {
-			_selectedItem = getFirstExaminableItem();
-
-			if (_selectedItem) {
-				drawItem(get(_selectedItem)->cursor, 44, 0);
-			} else {
-				clearSelectedItem();
-			}
-			askForRedraw();
-		}
-
-		return;
+		// Draw the currently selected item
+		drawSelectedItem();
 
 		// Stop processing if we are not looking at an item already
 		if (!getState()->sceneUseBackup) {
@@ -271,7 +283,16 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 			scene = getState()->sceneBackup2;
 			getState()->sceneBackup2 = kSceneNone;
 		} else {
-			error("[Inventory::handleMouseEvent] Processing of item scene not implemented");
+			if (getEvent(kEventKronosBringFirebird) || getProgress().isEggOpen) {
+				_isOpened = false;
+				return;
+			}
+
+			getState()->sceneUseBackup = false;
+			scene = getState()->sceneBackup;
+
+			if (getEntities()->getPosition(getScenes()->get(scene)->car, getScenes()->get(scene)->position))
+				scene = getScenes()->processIndex(getState()->sceneBackup);
 		}
 
 		getScenes()->loadScene(scene);
@@ -602,6 +623,20 @@ void Inventory::drawItem(CursorStyle id, uint16 x, uint16 y, int16 brightnessInd
 	_engine->getGraphicsManager()->draw(&icon, GraphicsManager::kBackgroundInventory);
 }
 
+void Inventory::drawSelectedItem() {
+	// Draw the selected item if any
+	if (!_selectedItem || get(_selectedItem)->manualSelect) {
+		_selectedItem = getFirstExaminableItem();
+
+		if (_selectedItem) {
+			drawItem(get(_selectedItem)->cursor, 44, 0);
+		} else {
+			clearSelectedItem();
+		}
+		askForRedraw();
+	}
+}
+
 void Inventory::clearSelectedItem() {
 	_engine->getGraphicsManager()->clear(GraphicsManager::kBackgroundInventory, Common::Rect(44, 0, 44 + 32, 32));
 }
@@ -648,8 +683,17 @@ void Inventory::close() {
 }
 
 void Inventory::drawHighlight(uint32 currentIndex, bool reset) {
+	uint32 index = getItemIndex(currentIndex);
+
+	if (index) {
+		drawItem(_entries[index].cursor, 0, 40 * currentIndex + 4, reset ? 1 : -1);
+		_highlightedItemIndex = reset ? 0 : currentIndex;
+		askForRedraw();
+	}
+}
+
+uint32 Inventory::getItemIndex(uint32 currentIndex) {
 	uint32 count = 0;
-	uint32 index = 0;
 
 	for (uint32 i = 1; i < ARRAYSIZE(_entries); i++) {
 		if (!_entries[i].isPresent)
@@ -660,18 +704,13 @@ void Inventory::drawHighlight(uint32 currentIndex, bool reset) {
 
 		if (count < 11) {
 			++count;
-			if (count == currentIndex) {
-				index = i;
-				break;
-			}
+
+			if (count == currentIndex)
+				return i;
 		}
 	}
 
-	if (index) {
-		drawItem(_entries[index].cursor, 0, 40 * currentIndex + 4, reset ? 1 : -1);
-		_highlightedItemIndex = reset ? 0 : currentIndex;
-		askForRedraw();
-	}
+	return 0;
 }
 
 } // End of namespace LastExpress
