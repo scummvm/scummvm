@@ -142,7 +142,7 @@ private:
 
 	InventoryEntry _entries[32];
 	InventoryItem _selectedItem;
-	InventoryItem _highlightedItem;
+	uint32 _highlightedItemIndex;
 
 	uint32 _itemsShown;
 
@@ -161,16 +161,16 @@ private:
 	Scene *_itemScene;
 
 	// Important rects
-	Common::Rect _inventoryRect;
-	Common::Rect _menuRect;
-	Common::Rect _selectedRect;
+	//Common::Rect _inventoryRect;
+	Common::Rect _menuEggRect;
+	//Common::Rect _selectedItemRect;
 
 	void init();
 
 	void open();
 	void close();
 	void examine(InventoryItem item);
-	void drawHighlight();
+	void drawHighlight(uint32 currentIndex, bool reset);
 
 	bool isItemSceneParameter(InventoryItem item) const;
 

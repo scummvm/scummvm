@@ -43,13 +43,13 @@
 
 namespace LastExpress {
 
-Inventory::Inventory(LastExpressEngine *engine) : _engine(engine), _selectedItem(kItemNone), _highlightedItem(kItemNone), _itemsShown(0),
+Inventory::Inventory(LastExpressEngine *engine) : _engine(engine), _selectedItem(kItemNone), _highlightedItemIndex(0), _itemsShown(0),
 	_showingHourGlass(false), _blinkingEgg(false), _blinkingTime(0), _blinkingInterval(_defaultBlinkingInterval), _blinkingBrightness(1),
 	_useMagnifier(false), _portraitHighlighted(false), _isOpened(false), _eggHightlighted(false), _itemScene(NULL) {
 
-	_inventoryRect = Common::Rect(0, 0, 32, 32);
-	_menuRect = Common::Rect(608, 448, 640, 480);
-	_selectedRect = Common::Rect(44, 0, 76, 32);
+	//_inventoryRect = Common::Rect(0, 0, 32, 32);
+	_menuEggRect = Common::Rect(608, 448, 640, 480);
+	//_selectedItemRect = Common::Rect(44, 0, 76, 32);
 
 	init();
 }
@@ -136,7 +136,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 	_useMagnifier = false;
 
 	// Egg (menu)
-	if (!_menuRect.contains(ev.mouse)) {
+	if (!_menuEggRect.contains(ev.mouse)) {
 		// Remove highlight if needed
 		if (_eggHightlighted) {
 			if (!getGlobalTimer()) {
@@ -182,7 +182,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 		if (_isOpened) {
 			// If clicked
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				if (_highlightedItem != kItemNone) {
+				if (_highlightedItemIndex != 0) {
 					error("[Inventory::handleMouseEvent] Click on highlighted item not implemented");
 				}
 			} else {
@@ -215,14 +215,21 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 			return;
 		}
 
-		if (ev.type == Common::EVENT_LBUTTONDOWN) {
-			error("[Inventory::handleMouseEvent] Click on open inventory item not implemented");
+		// Change highlights on item list
+		if (getFlags()->mouseLeftPressed) {
+			uint32 index = ev.mouse.y / 40;
+
+			if (_highlightedItemIndex && _highlightedItemIndex != index)
+				drawHighlight(_highlightedItemIndex, true);
+
+			if (index && index <= _itemsShown && index != _highlightedItemIndex)
+				drawHighlight(index, false);
 
 			return;
 		}
 
 		uint32 index = 0;
-		if (_highlightedItem != kItemNone) {
+		if (_highlightedItemIndex) {
 			error("[Inventory::handleMouseEvent] Computing of open inventory clicked item not implemented");
 		}
 
@@ -327,8 +334,8 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 		}
 
 		// Draw highlighted item
-		if (_highlightedItem)
-			drawHighlight();
+		if (_highlightedItemIndex)
+			drawHighlight(_highlightedItemIndex, true);
 	}
 }
 
@@ -640,8 +647,8 @@ void Inventory::close() {
 	askForRedraw();
 }
 
-void Inventory::drawHighlight() {
-	int32 count = 0;
+void Inventory::drawHighlight(uint32 currentIndex, bool reset) {
+	uint32 count = 0;
 	uint32 index = 0;
 
 	for (uint32 i = 1; i < ARRAYSIZE(_entries); i++) {
@@ -653,7 +660,7 @@ void Inventory::drawHighlight() {
 
 		if (count < 11) {
 			++count;
-			if (count == _highlightedItem) {
+			if (count == currentIndex) {
 				index = i;
 				break;
 			}
@@ -661,8 +668,9 @@ void Inventory::drawHighlight() {
 	}
 
 	if (index) {
-		drawItem(_entries[index].cursor, 0, 40 * _highlightedItem + 4, 1);
-		_highlightedItem = kItemNone;
+		drawItem(_entries[index].cursor, 0, 40 * currentIndex + 4, reset ? 1 : -1);
+		_highlightedItemIndex = reset ? 0 : currentIndex;
+		askForRedraw();
 	}
 }
 
