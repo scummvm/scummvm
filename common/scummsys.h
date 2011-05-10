@@ -136,10 +136,6 @@
 //    - Define this on a big endian target
 // SCUMM_NEED_ALIGNMENT
 //    - Define this if your system has problems reading e.g. an int32 from an odd address
-// SCUMMVM_DONT_DEFINE_TYPES
-//    - Define this if you need to provide your own typedefs, e.g. because your
-//      system headers conflict with our typenames, or because you have odd
-//      type requirements.
 // SMALL_SCREEN_DEVICE
 //    - ...
 // ...
@@ -161,29 +157,11 @@
 
 #if defined(HAVE_CONFIG_H)
 	// All settings should have been set in config.h
-	#define SCUMMVM_DONT_DEFINE_TYPES
 
 #elif defined(__SYMBIAN32__)
 
 	#define SCUMM_LITTLE_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
-
-	// Enable Symbians own datatypes
-	// This is done for two reasons
-	// a) uint is already defined by Symbians libc component
-	// b) Symbian is using its "own" datatyping, and the Scummvm port
-	//    should follow this to ensure the best compability possible.
-	#define SCUMMVM_DONT_DEFINE_TYPES
-	typedef unsigned char byte;
-
-	typedef unsigned char uint8;
-	typedef signed char int8;
-
-	typedef unsigned short int uint16;
-	typedef signed short int int16;
-
-	typedef unsigned long int uint32;
-	typedef signed long int int32;
 
 #elif defined(_WIN32_WCE)
 
@@ -197,19 +175,16 @@
 
 	#define SCUMM_LITTLE_ENDIAN
 
-#elif defined(UNIX)
+#elif defined(SDL_BACKEND)
+	/* need this for the SDL_BYTEORDER define */
+	#include <SDL_byteorder.h>
 
-	#if !defined(CONFIG_H) && defined(SDL_BACKEND)
-		/* need this for the SDL_BYTEORDER define */
-		#include <SDL_byteorder.h>
-
-		#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-		#define SCUMM_LITTLE_ENDIAN
-		#elif SDL_BYTEORDER == SDL_BIG_ENDIAN
-		#define SCUMM_BIG_ENDIAN
-		#else
-		#error Neither SDL_BIG_ENDIAN nor SDL_LIL_ENDIAN is set.
-		#endif
+	#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	#define SCUMM_LITTLE_ENDIAN
+	#elif SDL_BYTEORDER == SDL_BIG_ENDIAN
+	#define SCUMM_BIG_ENDIAN
+	#else
+	#error Neither SDL_BIG_ENDIAN nor SDL_LIL_ENDIAN is set.
 	#endif
 
 #elif defined(__DC__)
@@ -222,19 +197,6 @@
 	#define SCUMM_LITTLE_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
 
-	// Override typenames. uint is already defined by system header files.
-	#define SCUMMVM_DONT_DEFINE_TYPES
-	typedef unsigned char byte;
-
-	typedef unsigned char uint8;
-	typedef signed char int8;
-
-	typedef unsigned short int uint16;
-	typedef signed short int int16;
-
-	typedef unsigned long int uint32;
-	typedef signed long int int32;
-
 #elif defined(__PLAYSTATION2__)
 
 	#define SCUMM_LITTLE_ENDIAN
@@ -244,18 +206,6 @@
 
 	#define SCUMM_BIG_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
-
-	#define SCUMMVM_DONT_DEFINE_TYPES
-	typedef unsigned char byte;
-
-	typedef unsigned char uint8;
-	typedef signed char int8;
-
-	typedef unsigned short int uint16;
-	typedef signed short int int16;
-
-	typedef unsigned int uint32;
-	typedef signed int int32;
 
 #elif defined(__PSP__)
 
@@ -271,8 +221,6 @@
 
 	#define SCUMM_NEED_ALIGNMENT
 	#define SCUMM_LITTLE_ENDIAN
-
-	#define SCUMMVM_DONT_DEFINE_TYPES
 
 #elif defined(__WII__)
 
@@ -384,9 +332,60 @@
 
 
 //
-// Typedef our system types unless SCUMMVM_DONT_DEFINE_TYPES is set.
+// Typedef our system types
 //
-#ifndef SCUMMVM_DONT_DEFINE_TYPES
+#if !defined(HAVE_CONFIG_H) && defined(__SYMBIAN32__)
+
+	// Enable Symbians own datatypes
+	// This is done for two reasons
+	// a) uint is already defined by Symbians libc component
+	// b) Symbian is using its "own" datatyping, and the Scummvm port
+	//    should follow this to ensure the best compability possible.
+	typedef unsigned char byte;
+
+	typedef unsigned char uint8;
+	typedef signed char int8;
+
+	typedef unsigned short int uint16;
+	typedef signed short int int16;
+
+	typedef unsigned long int uint32;
+	typedef signed long int int32;
+
+#elif !defined(HAVE_CONFIG_H) && defined(__GP32__)
+
+	// Override typenames. uint is already defined by system header files.
+	typedef unsigned char byte;
+
+	typedef unsigned char uint8;
+	typedef signed char int8;
+
+	typedef unsigned short int uint16;
+	typedef signed short int int16;
+
+	typedef unsigned long int uint32;
+	typedef signed long int int32;
+
+#elif !defined(HAVE_CONFIG_H) && defined(__N64__)
+
+	typedef unsigned char byte;
+
+	typedef unsigned char uint8;
+	typedef signed char int8;
+
+	typedef unsigned short int uint16;
+	typedef signed short int int16;
+
+	typedef unsigned int uint32;
+	typedef signed int int32;
+
+#elif !defined(HAVE_CONFIG_H) && defined(__DS__)
+
+	// Do nothing, the SDK defines all types we need in nds/ndstypes.h,
+	// which we include in our portsdef.h
+
+#else
+
 	typedef unsigned char byte;
 	typedef unsigned char uint8;
 	typedef signed char int8;
