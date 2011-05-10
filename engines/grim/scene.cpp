@@ -359,9 +359,8 @@ void Scene::Setup::load(TextSplitter &ts) {
 	}
 
 	// ZBuffer is optional
-	if (!ts.checkString("zbuffer")) {
-		_bkgndZBm = NULL;
-	} else {
+	_bkgndZBm = NULL;
+	if (ts.checkString("zbuffer")) {
 		ts.scanString(" zbuffer %256s", 1, buf);
 		// Don't even try to load if it's the "none" bitmap
 		if (strcmp(buf, "<none>.lbm") != 0) {
