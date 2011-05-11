@@ -185,10 +185,16 @@ void PegasusEngine::mainGameLoop() {
 	_system->fillScreen(0);
 	_video->playMovieCentered("Images/Caldoria/Pullback.movie");
 	drawInterface();
-	if (isDemo())
-		_video->playMovie("Images/Prehistoric/Prehistoric.movie", kViewScreenOffset, kViewScreenOffset);
+
+	Common::String navMovieFolder;
+	if (_timeZone == kLocTinyTSA || _timeZone == kLocFullTSA)
+		navMovieFolder = "TSA";
 	else
-		_video->playMovie("Images/Caldoria/Caldoria.movie", kViewScreenOffset, kViewScreenOffset);
+		navMovieFolder = getTimeZoneDesc(_timeZone);
+
+	Common::String navMovie = Common::String::format("Images/%s/%s.movie", navMovieFolder.c_str(), getTimeZoneDesc(_timeZone).c_str());
+	_video->playMovie(navMovie, kViewScreenOffset, kViewScreenOffset);
+
 	_gameMode = kQuitMode;
 }
 
