@@ -1276,7 +1276,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 				if (_game.version < 6 && type == rtObjectName)
 					continue;
 				for (idx = 1; idx < _res->_types[type].num; idx++)
-					saveLoadResource(s, type, idx);
+					loadResourceOLD(s, type, idx);
 			}
 	}
 
@@ -1633,57 +1633,32 @@ void ScummEngine_v100he::saveOrLoad(Serializer *s) {
 }
 #endif
 
-void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
-	byte *ptr;
+void ScummEngine::loadResourceOLD(Serializer *ser, int type, int idx) {
 	uint32 size;
 
 	if (_res->_types[type]._mode == kDynamicResTypeMode) {
-		if (ser->isSaving()) {
-			ptr = _res->_types[type].address[idx];
-			if (ptr == NULL) {
-				ser->saveUint32(0);
-				return;
-			}
-
-			size = ((MemBlkHeader *)ptr)->size;
-
-			ser->saveUint32(size);
-			ser->saveBytes(ptr + sizeof(MemBlkHeader), size);
-
+		size = ser->loadUint32();
+		if (size) {
+			_res->createResource(type, idx, size);
+			ser->loadBytes(getResourceAddress(type, idx), size);
 			if (type == rtInventory) {
-				ser->saveUint16(_inventory[idx]);
+				_inventory[idx] = ser->loadUint16();
 			}
 			if (type == rtObjectName && ser->getVersion() >= VER(25)) {
-				ser->saveUint16(_newNames[idx]);
-			}
-		} else {
-			size = ser->loadUint32();
-			if (size) {
-				_res->createResource(type, idx, size);
-				ser->loadBytes(getResourceAddress(type, idx), size);
-				if (type == rtInventory) {
-					_inventory[idx] = ser->loadUint16();
-				}
-				if (type == rtObjectName && ser->getVersion() >= VER(25)) {
-					// Paranoia: We increased the possible number of new names
-					// to fix bugs #933610 and #936323. The savegame format
-					// didn't change, but at least during the transition
-					// period there is a slight chance that we try to load
-					// more names than we have allocated space for. If so,
-					// discard them.
-					if (idx < _numNewNames)
-						_newNames[idx] = ser->loadUint16();
-				}
+				// Paranoia: We increased the possible number of new names
+				// to fix bugs #933610 and #936323. The savegame format
+				// didn't change, but at least during the transition
+				// period there is a slight chance that we try to load
+				// more names than we have allocated space for. If so,
+				// discard them.
+				if (idx < _numNewNames)
+					_newNames[idx] = ser->loadUint16();
 			}
 		}
 	} else if (_res->_types[type]._mode == kSoundResTypeMode && ser->getVersion() >= VER(23)) {
 		// Save/load only a list of resource numbers that need to be reloaded.
-		if (ser->isSaving()) {
-			ser->saveUint16(_res->_types[type].address[idx] ? 1 : 0);
-		} else {
-			if (ser->loadUint16())
-				ensureResourceLoaded(type, idx);
-		}
+		if (ser->loadUint16())
+			ensureResourceLoaded(type, idx);
 	}
 }
 
