@@ -135,6 +135,7 @@ void Scene5000::Action2::signal() {
 		ADD_MOVER(_globals->_player, 213, 98);
 		break;
 	case 4:
+		_globals->_player.fixPriority(20);
 		ADD_MOVER(_globals->_player, 215, 115);
 		break;
 	case 5:
@@ -218,7 +219,7 @@ void Scene5000::Action3::signal() {
 		break;
 	case 4:
 		scene->_hotspot7.fixPriority(19);
-		ADD_MOVER(scene->_hotspot7, 213, 98);
+		ADD_MOVER(scene->_hotspot7, 215, 115);
 		break;
 	case 5:
 		scene->_hotspot7.changeZoom(46);
