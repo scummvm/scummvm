@@ -573,10 +573,22 @@ void Actor::walkTo(const Graphics::Vector3d &p) {
 						}
 					}
 					Graphics::Line3d line;
-					if (!inClosed && sector->isAdjacentTo(s, &line)) {
+					Common::List<Graphics::Line3d> bridges;
+					if (!inClosed) {
+						bridges = sector->getBridgesTo(s);
+					}
+					while (!bridges.empty()) {
+						line = bridges.back();
+						bridges.pop_back();
 						PathNode *n = NULL;
+						Graphics::Vector3d pos = s->getClosestPoint(_destPos);
+						Graphics::Line3d l(node->pos, pos);
+						if (!line.intersectLine2d(l, &pos)) {
+							pos = line.middle();
+						}
+
 						for (Common::List<PathNode *>::iterator j = openList.begin(); j != openList.end(); ++j) {
-							if ((*j)->sect == s) {
+							if ((*j)->pos == pos) {
 								n = *j;
 								break;
 							}
@@ -591,11 +603,7 @@ void Actor::walkTo(const Graphics::Vector3d &p) {
 							n = new PathNode;
 							n->parent = node;
 							n->sect = s;
-							n->pos = s->getClosestPoint(_destPos);
-							Graphics::Line3d l(node->pos, n->pos);
-							if (!line.intersectLine2d(l, &n->pos)) {
-								n->pos = line.middle();
-							}
+							n->pos = pos;
 							n->dist = (n->pos - _destPos).magnitude();
 							n->cost = node->cost + (n->pos - node->pos).magnitude();
 							openList.push_back(n);

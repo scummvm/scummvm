@@ -214,30 +214,68 @@ bool Sector::isPointInSector(Graphics::Vector3d point) const {
 	return true;
 }
 
-bool Sector::isAdjacentTo(Sector *sector, Graphics::Line3d *line) const {
-	int vertices[2] = {-1, -1};
-	Graphics::Vector3d *sectorVertices = sector->getVertices();
-	for (int j = 0; j < _numVertices; ++j) {
-		Graphics::Vector3d &vect = _vertices[j];
-		for (int k = 0; k < sector->getNumVertices(); ++k) {
-			// We're not using "vect == sectorvertices[k]" here because sometimes
-			// that isn't true even for edjacent sectors, and breaks a walkTo like
-			// explained at https://github.com/residual/residual/issues/34
-			if ((vect - sectorVertices[k]).magnitude() < 0.1 && j != vertices[0] && j != vertices[1]) {
-				if (vertices[0] > -1) {
-					vertices[1] = j;
-					if (line) {
-						*line = Graphics::Line3d(_vertices[vertices[0]], _vertices[vertices[1]]);
-					}
-					return true;
-				} else {
-					vertices[0] = j;
+Common::List<Graphics::Line3d> Sector::getBridgesTo(Sector *sector) const {
+	// This returns a list of "bridges", which are edges that can be travelled
+	// through to get to another sector. 0 bridges mean the sectors aren't
+	// connected.
+
+	// The algorithm starts by considering all the edges of sector A
+	// bridges. It then narrows them down by cutting the bridges against
+	// sector B, so we end up with a list of lines which are at the border
+	// of sector A and inside sector B.
+
+	Common::List<Graphics::Line3d> bridges;
+	Common::List<Graphics::Line3d>::iterator it;
+
+	for (int i = 0; i < _numVertices; i++){
+		bridges.push_back(Graphics::Line3d(_vertices[i], _vertices[i+1]));
+	}
+
+	Graphics::Vector3d* sectorVertices = sector->getVertices();
+	for (int i = 0; i < sector->getNumVertices(); i++) {
+		Graphics::Vector3d pos, edge, delta_b1, delta_b2;
+		Graphics::Line3d line(sectorVertices[i], sectorVertices[i+1]);
+		it = bridges.begin();
+		while (it != bridges.end()) {
+			Graphics::Line3d& bridge = (*it);
+			edge = line.end() - line.begin();
+			delta_b1 = bridge.begin() - line.begin();
+			delta_b2 = bridge.end() - line.begin();
+			bool b1_out = edge.x() * delta_b1.y() < edge.y() * delta_b1.x();
+			bool b2_out = edge.x() * delta_b2.y() < edge.y() * delta_b2.x();
+
+			if (b1_out && b2_out) {
+				// Both points are outside.
+				it = bridges.erase(it);
+				continue;
+			} else if (b1_out) {
+				if (bridge.intersectLine2d(line, &pos)) {
+					bridge = Graphics::Line3d(pos, bridge.end());
+				}
+			} else if (b2_out) {
+				if (bridge.intersectLine2d(line, &pos)) {
+					bridge = Graphics::Line3d(bridge.begin(), pos);
 				}
 			}
+
+			if ((bridge.end() - bridge.begin()).magnitude() < 0.01f) {
+				it = bridges.erase(it);
+				continue;
+			}
+			++it;
 		}
 	}
 
-	return false;
+	// All the bridges should be at the same height on both sectors.
+	while (it != bridges.end()) {
+		if (fabs(getProjectionToPlane((*it).begin()).z() - sector->getProjectionToPlane((*it).begin()).z()) > 0.01f ||
+			fabs(getProjectionToPlane((*it).end()).z() - sector->getProjectionToPlane((*it).end()).z()) > 0.01f) {
+			it = bridges.erase(it);
+			continue;
+		}
+		++it;
+	}
+	return bridges;
 }
 
 Graphics::Vector3d Sector::getProjectionToPlane(Graphics::Vector3d point) const {
