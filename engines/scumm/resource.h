@@ -95,7 +95,11 @@ public:
 	public:
 		byte *roomno;
 		uint32 *roomoffs;
-		uint32 *globsize;
+		uint32 *globsize;	///!< Occurs in HE 70+, but we don't use it for anything.
+
+	public:
+		ResTypeData();
+		~ResTypeData();
 	};
 	ResTypeData _types[rtNumTypes];
 

@@ -828,10 +828,18 @@ byte *ResourceManager::createResource(int type, int idx, uint32 size) {
 	return (byte *)ptr + sizeof(MemBlkHeader);	/* skip header */
 }
 
-ResourceManager::ResourceManager(ScummEngine *vm) {
-	memset(this, 0, sizeof(ResourceManager));
-	_vm = vm;
-//	_allocatedSize = 0;
+ResourceManager::ResTypeData::ResTypeData() {
+	memset(this, 0, sizeof(this));
+}
+
+ResourceManager::ResTypeData::~ResTypeData() {
+}
+
+ResourceManager::ResourceManager(ScummEngine *vm) : _vm(vm) {
+	_allocatedSize = 0;
+	_maxHeapThreshold = 0;
+	_minHeapThreshold = 0;
+	_expireCounter = 0;
 }
 
 ResourceManager::~ResourceManager() {
