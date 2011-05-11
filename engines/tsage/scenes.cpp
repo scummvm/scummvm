@@ -103,6 +103,7 @@ void SceneManager::sceneChange() {
 		delete _scene;
 		_scene = NULL;
 		_sceneNumber = -1;
+		_globals->_scrollFollower = NULL;
 	}
 
 	// Set the next scene to be active
@@ -254,7 +255,6 @@ Scene::Scene() : _sceneBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
 }
 
 Scene::~Scene() {
-	_globals->_scrollFollower = NULL;
 }
 
 void Scene::synchronize(Serializer &s) {
