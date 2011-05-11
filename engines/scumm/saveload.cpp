@@ -1243,7 +1243,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		// number of script resources, savegames won't break.
 		if (s->isSaving()) {
 			for (type = rtFirst; type <= rtLast; type++) {
-				if (_res->_types[type].mode != 1 && type != rtTemp && type != rtBuffer) {
+				if (_res->_types[type]._mode != kStaticResTypeMode && type != rtTemp && type != rtBuffer) {
 					s->saveUint16(type);	// Save the res type...
 					for (idx = 0; idx < _res->_types[type].num; idx++) {
 						// Only save resources which actually exist...
@@ -1269,7 +1269,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		// with index 0, and breaks whenever we change the limit on a given
 		// resource type.
 		for (type = rtFirst; type <= rtLast; type++)
-			if (_res->_types[type].mode != 1 && type != rtTemp && type != rtBuffer) {
+			if (_res->_types[type]._mode != kStaticResTypeMode && type != rtTemp && type != rtBuffer) {
 				// For V1-V5 games, there used to be no object name resources.
 				// At some point this changed. But since old savegames rely on
 				// unchanged resource counts, we have to hard code the following check
@@ -1637,7 +1637,7 @@ void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 	byte *ptr;
 	uint32 size;
 
-	if (!_res->_types[type].mode) {
+	if (_res->_types[type]._mode == kDynamicResTypeMode) {
 		if (ser->isSaving()) {
 			ptr = _res->_types[type].address[idx];
 			if (ptr == NULL) {
@@ -1676,7 +1676,7 @@ void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 				}
 			}
 		}
-	} else if (_res->_types[type].mode == 2 && ser->getVersion() >= VER(23)) {
+	} else if (_res->_types[type]._mode == kSoundResTypeMode && ser->getVersion() >= VER(23)) {
 		// Save/load only a list of resource numbers that need to be reloaded.
 		if (ser->isSaving()) {
 			ser->saveUint16(_res->_types[type].address[idx] ? 1 : 0);
@@ -1690,7 +1690,7 @@ void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 void ScummEngine::saveResource(Serializer *ser, int type, int idx) {
 	assert(_res->_types[type].address[idx]);
 
-	if (_res->_types[type].mode == 0) {
+	if (_res->_types[type]._mode == kDynamicResTypeMode) {
 		byte *ptr = _res->_types[type].address[idx];
 		uint32 size = ((MemBlkHeader *)ptr)->size;
 
@@ -1713,7 +1713,7 @@ void ScummEngine::loadResource(Serializer *ser, int type, int idx) {
 		assert(size);
 		_res->createResource(type, idx, size);
 		ser->loadBytes(getResourceAddress(type, idx), size);
-	} else if (_res->_types[type].mode == 0) {
+	} else if (_res->_types[type]._mode == kDynamicResTypeMode) {
 		uint32 size = ser->loadUint32();
 		assert(size);
 		_res->createResource(type, idx, size);
@@ -1725,7 +1725,7 @@ void ScummEngine::loadResource(Serializer *ser, int type, int idx) {
 		if (type == rtObjectName) {
 			_newNames[idx] = ser->loadUint16();
 		}
-	} else if (_res->_types[type].mode == 2) {
+	} else if (_res->_types[type]._mode == kSoundResTypeMode) {
 		// HE Games use sound resource 1 for speech
 		if (_game.heversion >= 60 && idx == 1)
 			return;

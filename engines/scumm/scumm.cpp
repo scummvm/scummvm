@@ -1233,7 +1233,7 @@ void ScummEngine::setupScumm() {
 		requestLoad(ConfMan.getInt("save_slot"));
 	}
 
-	_res->allocResTypeData(rtBuffer, 0, 10, "buffer", 0);
+	_res->allocResTypeData(rtBuffer, 0, 10, "buffer", kDynamicResTypeMode);
 
 	setupScummVars();
 

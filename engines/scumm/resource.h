@@ -50,6 +50,24 @@ enum {
 class ScummEngine;
 
 /**
+ * The mode of a resource type indicates whether the resource can be restored
+ * from the game data files or not.
+ * This affects for example whether the resource is stored in savestates.
+ *
+ * Note that we treat sound resources somewhat differently: On the one hand,
+ * these behave mostly like a kStaticResTypeMode res type. However, when we
+ * create a savestate, we do save *some* information about them: Namely, which
+ * sound resources are loaded in memory at the time the save is made. And when
+ * loading, we invoke ensureResourceLoaded() for each sound resource that was
+ * marked in this way.
+ */
+enum ResTypeMode {
+	kDynamicResTypeMode = 0,	///!< Resource is generated during runtime and may change
+	kStaticResTypeMode = 1,		///!< Resource comes from data files, does not change
+	kSoundResTypeMode = 2		///!< Resource comes from data files, but may change
+};
+
+/**
  * The 'resource manager' class. Currently doesn't really deserve to be called
  * a 'class', at least until somebody gets around to OOfying this more.
  */
@@ -60,12 +78,15 @@ protected:
 	ScummEngine *_vm;
 
 public:
+	/**
+	 * This struct represents a resource type and all resource of that type.
+	 */
 	class ResTypeData {
 	friend class ResourceManager;
 	public:
-		byte mode;
+		ResTypeMode _mode;
 		uint16 num;
-		uint32 tags;
+		uint32 tag;
 		const char *name;
 		byte **address;
 	protected:
@@ -89,7 +110,7 @@ public:
 
 	void setHeapThreshold(int min, int max);
 
-	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
+	void allocResTypeData(int id, uint32 tag, int num, const char *name, ResTypeMode mode);
 	void freeResources();
 
 	byte *createResource(int type, int index, uint32 size);

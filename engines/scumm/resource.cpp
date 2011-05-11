@@ -526,28 +526,28 @@ int ScummEngine_v70he::readResTypeList(int id) {
 	return num;
 }
 
-void ResourceManager::allocResTypeData(int id, uint32 tag, int num_, const char *name_, int mode_) {
-	debug(9, "allocResTypeData(%s/%s,%s,%d,%d)", resTypeFromId(id), name_, tag2str(TO_BE_32(tag)), num_, mode_);
+void ResourceManager::allocResTypeData(int id, uint32 tag, int num, const char *name, ResTypeMode mode) {
+	debug(9, "allocResTypeData(%s/%s,%s,%d,%d)", resTypeFromId(id), name, tag2str(TO_BE_32(tag)), num, mode);
 	assert(id >= 0 && id < (int)(ARRAYSIZE(_types)));
 
-	if (num_ >= 8000)
-		error("Too many %ss (%d) in directory", name_, num_);
+	if (num >= 8000)
+		error("Too many %ss (%d) in directory", name, num);
 
-	_types[id].mode = mode_;
-	_types[id].num = num_;
-	_types[id].tags = tag;
-	_types[id].name = name_;
-	_types[id].address = (byte **)calloc(num_, sizeof(void *));
-	_types[id].flags = (byte *)calloc(num_, sizeof(byte));
-	_types[id].status = (byte *)calloc(num_, sizeof(byte));
+	_types[id]._mode = mode;
+	_types[id].num = num;
+	_types[id].tag = tag;
+	_types[id].name = name;
+	_types[id].address = (byte **)calloc(num, sizeof(void *));
+	_types[id].flags = (byte *)calloc(num, sizeof(byte));
+	_types[id].status = (byte *)calloc(num, sizeof(byte));
 
-	if (mode_) {
-		_types[id].roomno = (byte *)calloc(num_, sizeof(byte));
-		_types[id].roomoffs = (uint32 *)calloc(num_, sizeof(uint32));
+	if (mode) {
+		_types[id].roomno = (byte *)calloc(num, sizeof(byte));
+		_types[id].roomoffs = (uint32 *)calloc(num, sizeof(uint32));
 	}
 
 	if (_vm->_game.heversion >= 70) {
-		_types[id].globsize = (uint32 *)calloc(num_, sizeof(uint32));
+		_types[id].globsize = (uint32 *)calloc(num, sizeof(uint32));
 	}
 
 }
@@ -669,7 +669,7 @@ int ScummEngine::loadResource(int type, int idx) {
 
 		tag = _fileHandle->readUint32BE();
 
-		if (tag != _res->_types[type].tags && _game.heversion < 70) {
+		if (tag != _res->_types[type].tag && _game.heversion < 70) {
 			error("%s %d not in room %d at %d+%d in file %s",
 					_res->_types[type].name, idx, roomNr,
 					_fileOffset, fileOffs, _fileHandle->getName());
@@ -734,11 +734,13 @@ byte *ScummEngine::getResourceAddress(int type, int idx) {
 		return NULL;
 	}
 
-	if (_res->_types[type].mode && !_res->_types[type].address[idx]) {
+	// If the resource is missing, but loadable from the game data files, try to do so.
+	if (!_res->_types[type].address[idx] && _res->_types[type]._mode != kDynamicResTypeMode) {
 		ensureResourceLoaded(type, idx);
 	}
 
-	if (!(ptr = (byte *)_res->_types[type].address[idx])) {
+	ptr = (byte *)_res->_types[type].address[idx];
+	if (!ptr) {
 		debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == NULL", resTypeFromId(type), idx);
 		return NULL;
 	}
@@ -978,7 +980,9 @@ void ResourceManager::expireResources(uint32 size) {
 		best_counter = 2;
 
 		for (i = rtFirst; i <= rtLast; i++)
-			if (_types[i].mode) {
+			if (_types[i]._mode != kDynamicResTypeMode) {
+				// Resources of this type can be reloaded from the data files,
+				// so we can potentially unload them to free memory.
 				for (j = _types[i].num; --j >= 0;) {
 					flag = _types[i].flags[j];
 					if (!(flag & RF_LOCK) && flag >= best_counter && _types[i].address[j] && !_vm->isResourceInUse(i, j)) {
@@ -1275,30 +1279,30 @@ void ScummEngine::allocateArrays() {
 	}
 
 	_res->allocResTypeData(rtCostume, (_game.features & GF_NEW_COSTUMES) ? MKTAG('A','K','O','S') : MKTAG('C','O','S','T'),
-								_numCostumes, "costume", 1);
-	_res->allocResTypeData(rtRoom, MKTAG('R','O','O','M'), _numRooms, "room", 1);
-	_res->allocResTypeData(rtRoomImage, MKTAG('R','M','I','M'), _numRooms, "room image", 1);
-	_res->allocResTypeData(rtRoomScripts, MKTAG('R','M','S','C'), _numRooms, "room script", 1);
-	_res->allocResTypeData(rtSound, MKTAG('S','O','U','N'), _numSounds, "sound", 2);
-	_res->allocResTypeData(rtScript, MKTAG('S','C','R','P'), _numScripts, "script", 1);
-	_res->allocResTypeData(rtCharset, MKTAG('C','H','A','R'), _numCharsets, "charset", 1);
-	_res->allocResTypeData(rtObjectName, 0, _numNewNames, "new name", 0);
-	_res->allocResTypeData(rtInventory, 0, _numInventory, "inventory", 0);
-	_res->allocResTypeData(rtTemp, 0, 10, "temp", 0);
-	_res->allocResTypeData(rtScaleTable, 0, 5, "scale table", 0);
-	_res->allocResTypeData(rtActorName, 0, _numActors, "actor name", 0);
-	_res->allocResTypeData(rtVerb, 0, _numVerbs, "verb", 0);
-	_res->allocResTypeData(rtString, 0, _numArray, "array", 0);
-	_res->allocResTypeData(rtFlObject, 0, _numFlObject, "flobject", 0);
-	_res->allocResTypeData(rtMatrix, 0, 10, "boxes", 0);
-	_res->allocResTypeData(rtImage, MKTAG('A','W','I','Z'), _numImages, "images", 1);
-	_res->allocResTypeData(rtTalkie, MKTAG('T','L','K','E'), _numTalkies, "talkie", 1);
+								_numCostumes, "costume", kStaticResTypeMode);
+	_res->allocResTypeData(rtRoom, MKTAG('R','O','O','M'), _numRooms, "room", kStaticResTypeMode);
+	_res->allocResTypeData(rtRoomImage, MKTAG('R','M','I','M'), _numRooms, "room image", kStaticResTypeMode);
+	_res->allocResTypeData(rtRoomScripts, MKTAG('R','M','S','C'), _numRooms, "room script", kStaticResTypeMode);
+	_res->allocResTypeData(rtSound, MKTAG('S','O','U','N'), _numSounds, "sound", kSoundResTypeMode);
+	_res->allocResTypeData(rtScript, MKTAG('S','C','R','P'), _numScripts, "script", kStaticResTypeMode);
+	_res->allocResTypeData(rtCharset, MKTAG('C','H','A','R'), _numCharsets, "charset", kStaticResTypeMode);
+	_res->allocResTypeData(rtObjectName, 0, _numNewNames, "new name", kDynamicResTypeMode);
+	_res->allocResTypeData(rtInventory, 0, _numInventory, "inventory", kDynamicResTypeMode);
+	_res->allocResTypeData(rtTemp, 0, 10, "temp", kDynamicResTypeMode);
+	_res->allocResTypeData(rtScaleTable, 0, 5, "scale table", kDynamicResTypeMode);
+	_res->allocResTypeData(rtActorName, 0, _numActors, "actor name", kDynamicResTypeMode);
+	_res->allocResTypeData(rtVerb, 0, _numVerbs, "verb", kDynamicResTypeMode);
+	_res->allocResTypeData(rtString, 0, _numArray, "array", kDynamicResTypeMode);
+	_res->allocResTypeData(rtFlObject, 0, _numFlObject, "flobject", kDynamicResTypeMode);
+	_res->allocResTypeData(rtMatrix, 0, 10, "boxes", kDynamicResTypeMode);
+	_res->allocResTypeData(rtImage, MKTAG('A','W','I','Z'), _numImages, "images", kStaticResTypeMode);
+	_res->allocResTypeData(rtTalkie, MKTAG('T','L','K','E'), _numTalkies, "talkie", kStaticResTypeMode);
 }
 
 void ScummEngine_v70he::allocateArrays() {
 	ScummEngine::allocateArrays();
 
-	_res->allocResTypeData(rtSpoolBuffer, 0, 9, "spool buffer", 1);
+	_res->allocResTypeData(rtSpoolBuffer, 0, 9, "spool buffer", kStaticResTypeMode);
 	_heV7RoomIntOffsets = (uint32 *)calloc(_numRooms, sizeof(uint32));
 }
 
