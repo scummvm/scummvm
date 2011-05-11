@@ -1391,8 +1391,7 @@ void Scene5100::dispatch() {
 
 	if (_globals->getFlag(61) && !_globals->getFlag(62) &&
 			((_globals->_player._position.x - _hotspot2._position.x) < 160) &&
-			(_globals->_sceneManager._previousScene != 5200) &&
-			(_globals->_sceneManager._previousScene != 5150)) {
+			(_globals->_sceneManager._previousScene != 5200) && (_sceneMode != 5150)) {
 		setAction(NULL);
 		_sceneMode = 5150;
 		_soundHandler.startSound(208);
