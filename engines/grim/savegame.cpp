@@ -89,19 +89,22 @@ uint32 SaveGame::beginSection(uint32 sectionTag) {
 	_currentSection = sectionTag;
 	_sectionSize = 0;
 	_sectionAlloc = _allocAmmount;
-	_sectionBuffer = (byte *)malloc(_sectionAlloc);
 	if (!_saving) {
 		uint32 tag = 0;
 
 		while (tag != sectionTag) {
-			free(_sectionBuffer);
 			tag = _inSaveFile->readUint32BE();
 			if (tag == SAVEGAME_FOOTERTAG)
 				error("Unable to find requested section of savegame");
 			_sectionSize = _inSaveFile->readUint32BE();
-			_sectionBuffer = (byte *)malloc(_sectionSize);
-			_inSaveFile->read(_sectionBuffer, _sectionSize);
+			_inSaveFile->seek(_sectionSize, SEEK_CUR);
 		}
+		_sectionBuffer = (byte *)malloc(_sectionSize);
+		_inSaveFile->seek(-_sectionSize, SEEK_CUR);
+		_inSaveFile->read(_sectionBuffer, _sectionSize);
+
+	} else {
+		_sectionBuffer = (byte *)malloc(_sectionAlloc);
 	}
 	_sectionPtr = 0;
 	return _sectionSize;
