@@ -48,6 +48,7 @@
 #include "audio/rate.h"
 #include "audio/mixer.h"
 #include "common/util.h"
+#include "common/textconsole.h"
 
 //#define DEBUG_RATECONV
 
@@ -129,13 +130,11 @@ SimpleRateConverter<stereo, reverseStereo>::SimpleRateConverter(st_rate_t inrate
 	sr.inLen = 0;
 }
 
-extern "C" {
 #ifndef IPHONE
 #define ARM_SimpleRate_M _ARM_SimpleRate_M
 #define ARM_SimpleRate_S _ARM_SimpleRate_S
 #define ARM_SimpleRate_R _ARM_SimpleRate_R
 #endif
-}
 
 extern "C" st_sample_t *ARM_SimpleRate_M(
 								AudioStream &input,

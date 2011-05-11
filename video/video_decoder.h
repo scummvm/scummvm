@@ -26,18 +26,19 @@
 #ifndef VIDEO_DECODER_H
 #define VIDEO_DECODER_H
 
-#include "common/events.h"
-#include "common/list.h"
-#include "common/rational.h"
-
-#include "graphics/surface.h"
-#include "graphics/pixelformat.h"
+#include "common/str.h"
 
 #include "audio/timestamp.h"	// TODO: Move this to common/ ?
 
 
 namespace Common {
-	class SeekableReadStream;
+class Rational;
+class SeekableReadStream;
+}
+
+namespace Graphics {
+struct PixelFormat;
+struct Surface;
 }
 
 namespace Video {

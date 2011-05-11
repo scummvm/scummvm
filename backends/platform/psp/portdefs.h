@@ -26,6 +26,12 @@
 #ifndef PORTDEFS_H
 #define PORTDEFS_H
 
+// FIXME: This file is only used when building using the file
+// backends/platform/psp/Makefile, but not when building using configure
+// && make. So either -DNONSTANDARD_PORT needs to be added to the PSP
+// configure rules, or it should be removed from the aforementioned
+// Makefile.
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

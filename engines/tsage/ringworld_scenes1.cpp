@@ -48,7 +48,7 @@ void Scene10::Action1::signal() {
 		break;
 	case 2:
 		scene->_speakerSText.setTextPos(Common::Point(20, 20));
-		scene->_speakerSText._colour1 = 10;
+		scene->_speakerSText._color1 = 10;
 		scene->_speakerSText._textWidth = 160;
 		scene->_stripManager.start(11, this, scene);
 		break;
@@ -138,10 +138,10 @@ void Scene10::postInit(SceneObjectList *OwnerList) {
 	_speakerSText._hideObjects = false;
 	_speakerQText._hideObjects = false;
 	_speakerQText.setTextPos(Common::Point(140, 120));
-	_speakerQText._colour1 = 4;
+	_speakerQText._color1 = 4;
 	_speakerQText._textWidth = 160;
 	_speakerSText.setTextPos(Common::Point(20, 20));
-	_speakerSText._colour1 = 7;
+	_speakerSText._color1 = 7;
 	_speakerSText._textWidth = 320;
 
 	_stripManager.setCallback(this);
@@ -149,20 +149,20 @@ void Scene10::postInit(SceneObjectList *OwnerList) {
 	_object1.postInit();
 	_object1.setVisage(10);
 	_object1.setPosition(Common::Point(232, 90));
-	_object1.setPriority2(1);
+	_object1.fixPriority(1);
 
 	_object2.postInit();
 	_object2.setVisage(10);
 	_object2.setStrip(4);
 	_object2.setFrame(1);
 	_object2.setPosition(Common::Point(204, 59));
-	_object2.setPriority2(198);
+	_object2.fixPriority(198);
 
 	_object3.postInit();
 	_object3.setVisage(10);
 	_object3.setStrip2(5);
 	_object3.setPosition(Common::Point(180, 87));
-	_object3.setPriority2(196);
+	_object3.fixPriority(196);
 	_object3.setAction(&_action2);
 
 	_object4.postInit();
@@ -221,12 +221,12 @@ void Scene15::Action1::signal() {
 		setDelay(60);
 		break;
 	case 1:
-		SceneItem::display(15, 0, SET_Y, 20, SET_FONT, 2, SET_BG_COLOUR, -1, SET_EXT_BGCOLOUR, 7,
+		SceneItem::display(15, 0, SET_Y, 20, SET_FONT, 2, SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 7,
 				SET_WIDTH, 320, SET_KEEP_ONSCREEN, 1, LIST_END);
 		setDelay(300);
 		break;
 	case 2: {
-		SceneItem::display(15, 1, SET_Y, 20, SET_FONT, 2, SET_BG_COLOUR, -1, SET_EXT_BGCOLOUR, 7,
+		SceneItem::display(15, 1, SET_Y, 20, SET_FONT, 2, SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 7,
 				SET_WIDTH, 320, SET_KEEP_ONSCREEN, 1, LIST_END);
 		scene->_object1.postInit();
 		scene->_object1.setVisage(15);
@@ -300,7 +300,7 @@ void Scene20::Action2::signal() {
 		break;
 	case 1:
 		SceneItem::display(20, 1, SET_WIDTH, 200, SET_Y, 20, SET_X, 160, SET_KEEP_ONSCREEN, true,
-			SET_EXT_BGCOLOUR, 4, LIST_END);
+			SET_EXT_BGCOLOR, 4, LIST_END);
 		setDelay(120);
 		break;
 	case 2: {
@@ -512,7 +512,7 @@ void Scene20::Action4::signal() {
 		scene->_sound.startSound(77, this, 127);
 		break;
 	case 8:
-		_globals->_game.endGame(20, 0);
+		_globals->_game->endGame(20, 0);
 		break;
 	default:
 		break;
@@ -533,6 +533,7 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 	_speakerQText._npc = &_globals->_player;
 
 	if (_globals->_sceneManager._previousScene == 30) {
+		// Cut scene: Assassins are coming
 		_globals->_player.postInit();
 		_globals->_player.setVisage(20);
 		_globals->_player.setPosition(Common::Point(405, 69));
@@ -558,12 +559,47 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 
 		_sceneBounds = Rect(320, 0, 640, 200);
 	} else if (_globals->_sceneManager._previousScene == 60) {
+		// Evasion
+		_sound.startSound(30);
+		_globals->_player.postInit();
+		_globals->_player.setVisage(20);
+		_globals->_player.setPosition(Common::Point(588, 79));
+		_globals->_player._moveDiff = Common::Point(5, 5);
+		_globals->_player.fixPriority(50);
+		_globals->_player.animate(ANIM_MODE_1, NULL);
+
+		_SceneObjectExt.postInit();
+		_SceneObjectExt.setVisage(20);
+		_SceneObjectExt.setPosition(Common::Point(583, 79));
+		_SceneObjectExt.animate(ANIM_MODE_1, NULL);
+
+		_sceneObject3.postInit();
+		_sceneObject3.setVisage(20);
+		_sceneObject3.setStrip2(2);
+		_sceneObject3.setPosition(Common::Point(595, 79));
+		_sceneObject3.animate(ANIM_MODE_1, NULL);
+
+		if ((_globals->getFlag(120) && _globals->getFlag(116)) ||
+				(_globals->getFlag(117) && _globals->getFlag(119))) {
+			// Successful evasion
+			setAction(&_action3);
+		} else if (_globals->getFlag(104)) {
+			_sceneMode = 21;
+			setAction(&_sequenceManager, this, 21, &_globals->_player, &_SceneObjectExt, NULL);
+		} else {
+			// Failed evasion
+			_sceneObject3._moveDiff = Common::Point(8, 8);
+			setAction(&_action4);
+		}
+		_sceneBounds.center(_globals->_player._position.x, _globals->_player._position.y);
+	} else {
+		// Intro: Quinn looking at the monaster
 		_globals->_player.postInit();
 		_globals->_player.setVisage(2640);
 		_globals->_player.animate(ANIM_MODE_NONE, NULL);
 		_globals->_player.setStrip2(1);
 		_globals->_player.setFrame2(4);
-		_globals->_player.setPriority2(200);
+		_globals->_player.fixPriority(200);
 		_globals->_player.setPosition(Common::Point(425, 233));
 
 		setAction(&_action1);
@@ -574,38 +610,6 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 
 		_globals->_soundHandler.startSound(8);
 		_sceneBounds = Rect(320, 0, 640, 200);
-	} else {
-		_sound.startSound(30);
-		_globals->_player.postInit();
-		_globals->_player.setVisage(20);
-		_globals->_player.setPosition(Common::Point(588, 79));
-		_globals->_player._moveDiff = Common::Point(5, 5);
-		_globals->_player.setPriority2(50);
-		_globals->_player.animate(ANIM_MODE_1, NULL);
-
-		_SceneObjectExt.postInit();
-		_SceneObjectExt.setVisage(20);
-		_SceneObjectExt.setPosition(Common::Point(583, 79));
-		_SceneObjectExt.animate(ANIM_MODE_1, NULL);
-
-		_sceneObject3.postInit();
-		_sceneObject3.setVisage(20);
-		_sceneObject3.setStrip(2);
-		_SceneObjectExt.setPosition(Common::Point(595, 79));
-		_SceneObjectExt.animate(ANIM_MODE_1, NULL);
-
-		if ((_globals->getFlag(120) && _globals->getFlag(116)) ||
-				(_globals->getFlag(117) && _globals->getFlag(119))) {
-			setAction(&_action3);
-		} else if (_globals->getFlag(104)) {
-			_sceneMode = 21;
-			setAction(&_sequenceManager, this, 21, &_globals->_player, &_SceneObjectExt, NULL);
-		} else {
-			_sceneObject3._moveDiff = Common::Point(8, 8);
-			setAction(&_action4);
-		}
-
-		_sceneBounds.centre(_globals->_player._position.x, _globals->_player._position.y);
 	}
 
 	_globals->_player.disableControl();
@@ -621,6 +625,29 @@ void Scene20::signal() {
  * Scene 30 - First game scene (Outside Ch'mee house)
  *
  *--------------------------------------------------------------------------*/
+
+void Scene30::BeamObject::doAction(int action) {
+	if (action == OBJECT_SCANNER)
+		display2(30, 14);
+	else if (action == CURSOR_LOOK)
+		display2(30, 2);
+	else if (action == CURSOR_USE) {
+		Scene30 *parent = (Scene30 *)_globals->_sceneManager._scene;
+		parent->setAction(&parent->_beamAction);
+	} else
+		SceneObject::doAction(action);
+}
+
+void Scene30::DoorObject::doAction(int action) {
+	if (action == OBJECT_SCANNER)
+		display2(30, 13);
+	else if (action == CURSOR_LOOK)
+		display2(30, 1);
+	else if (action == CURSOR_USE)
+		display2(30, 7);
+	else
+		SceneObject::doAction(action);
+}
 
 void Scene30::BeamAction::signal() {
 	Scene30 *scene = (Scene30 *)_globals->_sceneManager._scene;
@@ -817,7 +844,7 @@ void Scene30::KzinObject::doAction(int action) {
 		display2(30, 11);
 		break;
 	case OBJECT_RING:
-		_globals->_inventory._ring._sceneNumber = 30;
+		RING_INVENTORY._ring._sceneNumber = 30;
 		scene->setAction(&scene->_ringAction);
 		break;
 	case CURSOR_LOOK:
@@ -874,7 +901,7 @@ void Scene30::postInit(SceneObjectList *OwnerList) {
 	_beam.setVisage(31);
 	_beam.setStrip(2);
 	_beam.setPosition(Common::Point(124, 178));
-	_beam.setPriority2(188);
+	_beam.fixPriority(188);
 
 	// Set up door object
 	_door.postInit();
@@ -900,7 +927,7 @@ void Scene30::signal() {
 		_beam.setVisage(31);
 		_beam.setStrip(2);
 		_beam.setPosition(Common::Point(124, 178));
-		_beam.setPriority2(188);
+		_beam.fixPriority(188);
 		_globals->_sceneItems.push_front(&_beam);
 		_globals->_player.enableControl();
 	} else if (_sceneMode == 32) {
@@ -977,7 +1004,8 @@ void Scene40::Action1::signal() {
 		break;
 	case 9: {
 		scene->_dyingKzin.setStrip(1);
-		scene->_dyingKzin.setFrame(1);
+		//Workaround: The original uses setFrame(1) but it's completely wrong.
+		scene->_dyingKzin.setFrame(2);
 		scene->_dyingKzin._moveDiff.y = 15;
 		scene->_dyingKzin.animate(ANIM_MODE_5, NULL);
 		Common::Point pt(223, 186);
@@ -1035,7 +1063,7 @@ void Scene40::Action1::signal() {
 		_globals->_soundHandler.startSound(77, this);
 		break;
 	case 17:
-		_globals->_game.endGame(40, 20);
+		_globals->_game->endGame(40, 20);
 		remove();
 		break;
 	}
@@ -1062,10 +1090,10 @@ void Scene40::Action2::signal() {
 		scene->_doorway.postInit();
 		scene->_doorway.setVisage(16);
 		scene->_doorway.setStrip2(6);
-		scene->_doorway.setPriority2(200);
+		scene->_doorway.fixPriority(200);
 		scene->_doorway.setPosition(Common::Point(159, 191));
 		scene->_doorway._moveDiff = Common::Point(40, 40);
-		scene->_doorway._field7A = 60;
+		scene->_doorway._moveRate = 60;
 		scene->_doorway.animate(ANIM_MODE_5, NULL);
 
 		Common::Point pt(271, 165);
@@ -1079,7 +1107,7 @@ void Scene40::Action2::signal() {
 		scene->_assassin._frame = 1;
 		scene->_assassin.animate(ANIM_MODE_5, this);
 		scene->_soundHandler.startSound(29);
-		_globals->_inventory._infoDisk._sceneNumber = 40;
+		RING_INVENTORY._infoDisk._sceneNumber = 40;
 		break;
 	case 4:
 		_globals->_player.animate(ANIM_MODE_6, this);
@@ -1146,7 +1174,7 @@ void Scene40::Action3::signal() {
 	case 2:
 		scene->_assassin.setStrip(2);
 		scene->_assassin.setFrame(1);
-		_globals->_inventory._infoDisk._sceneNumber = 1;
+		RING_INVENTORY._infoDisk._sceneNumber = 1;
 		_globals->_player.animate(ANIM_MODE_6, this);
 		break;
 	case 3:
@@ -1180,7 +1208,7 @@ void Scene40::Action5::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		setDelay(_globals->_randomSource.getRandomNumber(120));
+		setDelay(_globals->_randomSource.getRandomNumber(119) + 120);
 		break;
 	case 1:
 		scene->_object2.animate(ANIM_MODE_8, 1, this);
@@ -1196,12 +1224,13 @@ void Scene40::Action6::signal() {
 		scene->_object1.postInit();
 		scene->_object1.setVisage(16);
 		scene->_object1.setStrip2(6);
+		scene->_object1._moveDiff = Common::Point(40, 40);
 		scene->_object1.setPosition(Common::Point(313, 53));
-		scene->_object1._field7A = 60;
+		scene->_object1._moveRate = 60;
 
 		Common::Point pt(141, 194);
 		NpcMover *mover = new NpcMover();
-		scene->_object1.addMover(mover, &pt, this);
+		scene->_object1.addMover(mover, &pt, NULL);
 		scene->_object1.animate(ANIM_MODE_5, NULL);
 
 		scene->_doorway.postInit();
@@ -1229,6 +1258,7 @@ void Scene40::Action7::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
+		// TODO: check if it's rand(500) or rand(499)+500
 		setDelay(_globals->_randomSource.getRandomNumber(500));
 		break;
 	case 1:
@@ -1242,6 +1272,8 @@ void Scene40::Action7::signal() {
 			scene->_object7.setPosition(Common::Point(305, 61));
 			scene->_object7.setFrame(15);
 		}
+		scene->_object7.animate(ANIM_MODE_5, this);
+		scene->_soundHandler.startSound(25);
 		break;
 	case 2:
 		scene->_object7.remove();
@@ -1268,11 +1300,11 @@ void Scene40::Action8::signal() {
 			scene->_doorway.postInit();
 			scene->_doorway.setVisage(16);
 			scene->_doorway.setStrip2(6);
-			scene->_doorway.setPriority2(200);
-			scene->_doorway._field7A = 60;
+			scene->_doorway.fixPriority(200);
+			scene->_doorway._moveRate = 60;
 
 			if (_globals->_player._position.x >= 145) {
-				scene->_doorway.setPriority2(-1);
+				scene->_doorway.fixPriority(-1);
 				scene->_doorway.setPosition(Common::Point(6, 157));
 			} else {
 				scene->_doorway.setPosition(Common::Point(313, 53));
@@ -1296,7 +1328,7 @@ void Scene40::Action8::signal() {
 		_globals->_soundHandler.startSound(77, this);
 		break;
 	case 4:
-		_globals->_game.endGame(40, 45);
+		_globals->_game->endGame(40, 45);
 		remove();
 		break;
 	}
@@ -1307,10 +1339,10 @@ void Scene40::Action8::signal() {
 void Scene40::DyingKzin::doAction(int action) {
 	switch (action) {
 	case OBJECT_STUNNER:
-		SceneItem::display2(40, 43);
-		break;
-	case CURSOR_CROSSHAIRS:
 		SceneItem::display2(40, 44);
+		break;
+	case OBJECT_SCANNER:
+		SceneItem::display2(40, 43);
 		break;
 	case CURSOR_LOOK:
 		SceneItem::display2(40, 12);
@@ -1328,7 +1360,7 @@ void Scene40::Assassin::doAction(int action) {
 	Scene40 *scene = (Scene40 *)_globals->_sceneManager._scene;
 
 	switch (action) {
-	case CURSOR_CROSSHAIRS:
+	case OBJECT_STUNNER:
 		if (scene->_assassin._visage == 44)
 			SceneItem::display2(40, 21);
 		else {
@@ -1336,6 +1368,7 @@ void Scene40::Assassin::doAction(int action) {
 			Common::Point pt(230, 187);
 			NpcMover *mover = new NpcMover();
 			addMover(mover, &pt, NULL);
+			scene->setAction(&scene->_action2);
 		}
 		break;
 	case OBJECT_SCANNER:
@@ -1345,12 +1378,12 @@ void Scene40::Assassin::doAction(int action) {
 		if (scene->_assassin._visage != 44)
 			SceneItem::display2(40, 13);
 		else
-			SceneItem::display2(40, (_globals->_inventory._infoDisk._sceneNumber == 1) ? 19 : 14);
+			SceneItem::display2(40, (RING_INVENTORY._infoDisk._sceneNumber == 1) ? 19 : 14);
 		break;
 	case CURSOR_USE:
 		if (scene->_assassin._visage != 44)
 			SceneItem::display2(40, 15);
-		else if (_globals->_inventory._infoDisk._sceneNumber == 1)
+		else if (RING_INVENTORY._infoDisk._sceneNumber == 1)
 			SceneItem::display2(40, 19);
 		else {
 			_globals->_player.disableControl();
@@ -1370,7 +1403,7 @@ void Scene40::Assassin::doAction(int action) {
 
 void Scene40::Item2::doAction(int action) {
 	switch (action) {
-	case CURSOR_CROSSHAIRS:
+	case OBJECT_STUNNER:
 		SceneItem::display2(40, 35);
 		_globals->_events.setCursor(CURSOR_WALK);
 		break;
@@ -1394,7 +1427,7 @@ void Scene40::Item2::doAction(int action) {
 
 void Scene40::Item6::doAction(int action) {
 	switch (action) {
-	case CURSOR_CROSSHAIRS:
+	case OBJECT_STUNNER:
 		SceneItem::display2(40, 25);
 		_globals->_events.setCursor(CURSOR_WALK);
 		break;
@@ -1416,12 +1449,12 @@ void Scene40::Item6::doAction(int action) {
 /*--------------------------------------------------------------------------*/
 
 Scene40::Scene40() :
-	_item1(2, OBJECT_SCANNER, 40, 24, CURSOR_CROSSHAIRS, 40, 25, CURSOR_LOOK, 40, 7, CURSOR_USE, 40, 16, LIST_END),
-	_item3(5, OBJECT_SCANNER, 40, 26, CURSOR_CROSSHAIRS, 40, 27, CURSOR_LOOK, 40, 9, CURSOR_USE, 40, 17, LIST_END),
-	_item4(6, OBJECT_SCANNER, 40, 31, CURSOR_CROSSHAIRS, 40, 32, CURSOR_LOOK, 40, 5, CURSOR_USE, 40, 33, LIST_END),
+	_item1(2, OBJECT_SCANNER, 40, 24, OBJECT_STUNNER, 40, 25, CURSOR_LOOK, 40, 7, CURSOR_USE, 40, 16, LIST_END),
+	_item3(5, OBJECT_SCANNER, 40, 26, OBJECT_STUNNER, 40, 27, CURSOR_LOOK, 40, 9, CURSOR_USE, 40, 17, LIST_END),
+	_item4(6, OBJECT_SCANNER, 40, 31, OBJECT_STUNNER, 40, 32, CURSOR_LOOK, 40, 5, CURSOR_USE, 40, 33, LIST_END),
 	_item5(0, CURSOR_LOOK, 40, 11, LIST_END),
-	_item7(4, OBJECT_SCANNER, 40, 26, CURSOR_CROSSHAIRS, 40, 27, CURSOR_LOOK, 40, 9, CURSOR_USE, 40, 17, LIST_END),
-	_item8(8, OBJECT_SCANNER, 40, 39, CURSOR_CROSSHAIRS, 40, 40, CURSOR_LOOK, 40, 3, CURSOR_USE, 40, 41, LIST_END) {
+	_item7(4, OBJECT_SCANNER, 40, 26, OBJECT_STUNNER, 40, 27, CURSOR_LOOK, 40, 9, CURSOR_USE, 40, 17, LIST_END),
+	_item8(8, OBJECT_SCANNER, 40, 39, OBJECT_STUNNER, 40, 40, CURSOR_LOOK, 40, 3, CURSOR_USE, 40, 41, LIST_END) {
 }
 
 void Scene40::postInit(SceneObjectList *OwnerList) {
@@ -1437,7 +1470,7 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_speakerSText);
 	_stripManager.addSpeaker(&_speakerGameText);
 
-	_speakerGameText._colour1 = 9;
+	_speakerGameText._color1 = 9;
 	_speakerGameText.setTextPos(Common::Point(160, 30));
 	_speakerQText._npc = &_globals->_player;
 	_speakerSText._npc = &_object1;
@@ -1459,14 +1492,14 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 		_object2.postInit();
 		_object2.setVisage(41);
 		_object2.setStrip(6);
-		_object2.setPriority2(200);
+		_object2.fixPriority(200);
 		_object2.setPosition(Common::Point(94, 189));
 		_object2.setAction(&_action5);
 
 		_object3.postInit();
 		_object3.setVisage(41);
 		_object3.setStrip(5);
-		_object3.setPriority2(205);
+		_object3.fixPriority(205);
 		_object3.setPosition(Common::Point(110, 186));
 		_object3._numFrames = 2;
 		_object3.animate(ANIM_MODE_8, NULL, NULL);
@@ -1479,7 +1512,7 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 		_dyingKzin.setVisage(40);
 		_dyingKzin.setStrip(6);
 		_dyingKzin.setPosition(Common::Point(-90, 65));
-		_dyingKzin.setPriority2(170);
+		_dyingKzin.fixPriority(170);
 
 		setAction(&_action1);
 	} else {
@@ -1492,7 +1525,7 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 		_dyingKzin.postInit();
 		_dyingKzin.setVisage(40);
 		_dyingKzin.setPosition(Common::Point(205, 183));
-		_dyingKzin.setPriority2(170);
+		_dyingKzin.fixPriority(170);
 		_dyingKzin._frame = 9;
 		_dyingKzin.setAction(&_action7);
 
@@ -1501,7 +1534,7 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 		_assassin.setPosition(Common::Point(230, 187));
 		_assassin.setAction(&_action8);
 
-		if (_globals->_inventory._infoDisk._sceneNumber == 40) {
+		if (RING_INVENTORY._infoDisk._sceneNumber == 40) {
 			_assassin.setStrip(1);
 			_assassin.setFrame(_assassin.getFrameCount());
 		} else {
@@ -1759,19 +1792,19 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 	_object2.setVisage(2331);
 	_object2.setStrip(6);
 	_object2.setPosition(Common::Point(136, 192));
-	_object2.setPriority2(200);
+	_object2.fixPriority(200);
 
 	_object3.postInit();
 	_object3.setVisage(2337);
 	_object3.setStrip(6);
 	_object3.setPosition(Common::Point(260, 180));
-	_object3.setPriority2(200);
+	_object3.fixPriority(200);
 
 	_object4.postInit();
 	_object4.setVisage(2331);
 	_object4.setStrip(6);
 	_object4.setPosition(Common::Point(295, 144));
-	_object4.setPriority2(178);
+	_object4.fixPriority(178);
 
 	_globals->_sceneItems.addItems(&_object2, &_object3, &_object4, NULL);
 
@@ -1833,33 +1866,33 @@ void Scene60::Action1::signal() {
 		setDelay(3);
 		break;
 	case 1:
-		scene->_object9.postInit();
-		scene->_object9.setVisage(60);
-		scene->_object9.setStrip(7);
-		scene->_object9.setPosition(Common::Point(136, 65));
-		scene->_object9.animate(ANIM_MODE_5, this);
+		scene->_floppyDrive.postInit();
+		scene->_floppyDrive.setVisage(60);
+		scene->_floppyDrive.setStrip(7);
+		scene->_floppyDrive.setPosition(Common::Point(136, 65));
+		scene->_floppyDrive.animate(ANIM_MODE_5, this);
 
 		scene->_soundHandler1.startSound(35);
 		break;
 	case 2:
-		scene->_object10.postInit();
-		scene->_object10.setVisage(60);
-		scene->_object10.setPosition(Common::Point(199, 186));
-		scene->_object10.animate(ANIM_MODE_8, 0, NULL);
-		scene->_object10._numFrames = 5;
+		scene->_redLights.postInit();
+		scene->_redLights.setVisage(60);
+		scene->_redLights.setPosition(Common::Point(199, 186));
+		scene->_redLights.animate(ANIM_MODE_8, 0, NULL);
+		scene->_redLights._numFrames = 5;
 
-		scene->_object6.animate(ANIM_MODE_2, NULL);
+		scene->_controlButton.animate(ANIM_MODE_2, NULL);
 
 		if (!_globals->getFlag(83)) {
-			scene->_object5.postInit();
-			scene->_object5.setVisage(60);
-			scene->_object5.setStrip2(3);
-			scene->_object5.setFrame(2);
-			scene->_object5.setPosition(Common::Point(148, 85));
-			scene->_object5.animate(ANIM_MODE_2, NULL);
-			scene->_object5._numFrames = 5;
+			scene->_message.postInit();
+			scene->_message.setVisage(60);
+			scene->_message.setStrip2(3);
+			scene->_message.setFrame(2);
+			scene->_message.setPosition(Common::Point(148, 85));
+			scene->_message.animate(ANIM_MODE_2, NULL);
+			scene->_message._numFrames = 5;
 
-			_globals->_sceneItems.push_front(&scene->_object5);
+			_globals->_sceneItems.push_front(&scene->_message);
 			scene->_soundHandler2.startSound(38);
 		}
 
@@ -1868,40 +1901,40 @@ void Scene60::Action1::signal() {
 	case 3:
 		scene->_soundHandler2.startSound(37);
 		scene->loadScene(65);
-		scene->_object5.remove();
+		scene->_message.remove();
 
-		if (_globals->_sceneObjects->contains(&scene->_object10))
-			scene->_object10.remove();
+		if (_globals->_sceneObjects->contains(&scene->_redLights))
+			scene->_redLights.remove();
 
-		scene->_object6.remove();
+		scene->_controlButton.remove();
 		scene->_slaveButton.remove();
-		scene->_object8.remove();
+		scene->_masterButton.remove();
 		scene->_item1.remove();
 		scene->_item2.remove();
 
-		scene->_object3.postInit();
-		scene->_object3.setVisage(65);
-		scene->_object3.setPosition(Common::Point(118, 197));
+		scene->_nextButton.postInit();
+		scene->_nextButton.setVisage(65);
+		scene->_nextButton.setPosition(Common::Point(118, 197));
 
-		scene->_object2.postInit();
-		scene->_object2.setVisage(65);
-		scene->_object2.setStrip(2);
-		scene->_object2.setPosition(Common::Point(160, 197));
+		scene->_prevButton.postInit();
+		scene->_prevButton.setVisage(65);
+		scene->_prevButton.setStrip(2);
+		scene->_prevButton.setPosition(Common::Point(160, 197));
 
-		scene->_object4.postInit();
-		scene->_object4.setVisage(65);
-		scene->_object4.setStrip(3);
-		scene->_object4.setPosition(Common::Point(202, 197));
+		scene->_exitButton.postInit();
+		scene->_exitButton.setVisage(65);
+		scene->_exitButton.setStrip(3);
+		scene->_exitButton.setPosition(Common::Point(202, 197));
 
-		scene->_object1.postInit();
-		scene->_object1.setVisage(65);
-		scene->_object1.setStrip(4);
-		scene->_object1.setFrame(1);
-		scene->_object1.setPosition(Common::Point(145, 165));
+		scene->_rose.postInit();
+		scene->_rose.setVisage(65);
+		scene->_rose.setStrip(4);
+		scene->_rose.setFrame(1);
+		scene->_rose.setPosition(Common::Point(145, 165));
 
-		_globals->_sceneItems.push_front(&scene->_object3);
-		_globals->_sceneItems.push_front(&scene->_object2);
-		_globals->_sceneItems.push_front(&scene->_object4);
+		_globals->_sceneItems.push_front(&scene->_nextButton);
+		_globals->_sceneItems.push_front(&scene->_prevButton);
+		_globals->_sceneItems.push_front(&scene->_exitButton);
 		setDelay(10);
 
 		_globals->_events.setCursor(CURSOR_USE);
@@ -1913,33 +1946,33 @@ void Scene60::Action1::signal() {
 	case 6:
 	case 7:
 		SceneItem::display(60, _actionIndex - 4, SET_Y, 40, SET_X, 25, SET_FONT, 75,
-			SET_EXT_BGCOLOUR, -1, SET_FG_COLOUR, 34, SET_POS_MODE, 0,
+			SET_EXT_BGCOLOR, -1, SET_FG_COLOR, 34, SET_POS_MODE, 0,
 			SET_WIDTH, 280, SET_KEEP_ONSCREEN, 1, LIST_END);
 		_globals->_events.setCursor(CURSOR_USE);
 		break;
 	case 9:
 		_globals->_player._uiEnabled = false;
-		_globals->_inventory._infoDisk._sceneNumber = 1;
+		RING_INVENTORY._infoDisk._sceneNumber = 1;
 
-		if (_globals->_sceneObjects->contains(&scene->_object5))
-			scene->_object5.remove();
+		if (_globals->_sceneObjects->contains(&scene->_message))
+			scene->_message.remove();
 
-		scene->_object6.animate(ANIM_MODE_NONE);
-		scene->_object6.setFrame(1);
-		scene->_object10.remove();
+		scene->_controlButton.animate(ANIM_MODE_NONE);
+		scene->_controlButton.setFrame(1);
+		scene->_redLights.remove();
 
-		scene->_object9.postInit();
-		scene->_object9.setVisage(60);
-		scene->_object9.setStrip(7);
-		scene->_object9.setPosition(Common::Point(136, 65));
-		scene->_object9.setFrame(scene->_object9.getFrameCount());
-		scene->_object9.animate(ANIM_MODE_6, this);
+		scene->_floppyDrive.postInit();
+		scene->_floppyDrive.setVisage(60);
+		scene->_floppyDrive.setStrip(7);
+		scene->_floppyDrive.setPosition(Common::Point(136, 65));
+		scene->_floppyDrive.setFrame(scene->_floppyDrive.getFrameCount());
+		scene->_floppyDrive.animate(ANIM_MODE_6, this);
 
 		scene->_soundHandler1.startSound(35);
 		scene->_soundHandler3.proc3();
 
-		scene->_object8.setFrame(1);
-		scene->_object8._state = 0;
+		scene->_masterButton.setFrame(1);
+		scene->_masterButton._state = 0;
 
 		_globals->clearFlag(103);
 		_globals->clearFlag(!_globals->_stripNum ? 116 : 119);
@@ -1949,9 +1982,10 @@ void Scene60::Action1::signal() {
 		break;
 	case 11:
 		_globals->_player._uiEnabled = true;
-		scene->_object9.remove();
+		scene->_floppyDrive.remove();
 		remove();
 		break;
+	case 8:
 	default:
 		break;
 	}
@@ -1976,7 +2010,7 @@ void Scene60::Action2::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene60::Object2::doAction(int action) {
+void Scene60::PrevObject::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -1994,7 +2028,7 @@ void Scene60::Object2::doAction(int action) {
 	}
 }
 
-void Scene60::Object3::doAction(int action) {
+void Scene60::NextObject::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -2011,7 +2045,7 @@ void Scene60::Object3::doAction(int action) {
 	}
 }
 
-void Scene60::Object4::doAction(int action) {
+void Scene60::ExitObject::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -2019,47 +2053,49 @@ void Scene60::Object4::doAction(int action) {
 	} else if (action == CURSOR_USE) {
 		scene->_soundHandler3.startSound(36);
 		animate(ANIM_MODE_8, 1, NULL);
-		scene->_object3.remove();
-		scene->_object2.remove();
-		scene->_object4.remove();
-		scene->_object1.remove();
+		scene->_nextButton.remove();
+		scene->_prevButton.remove();
+		scene->_exitButton.remove();
+		scene->_rose.remove();
 
 		SceneItem::display(0, 0);
 		scene->loadScene(60);
 
-		scene->_object6.setVisage(60);
-		scene->_object6.setPosition(Common::Point(233, 143));
-		scene->_object6.animate(ANIM_MODE_2, NULL);
+		scene->_controlButton.postInit();
+		scene->_controlButton.setVisage(60);
+		scene->_controlButton.setStrip(5);
+		scene->_controlButton.setPosition(Common::Point(233, 143));
+		scene->_controlButton.animate(ANIM_MODE_2, NULL);
 
 		scene->_slaveButton.postInit();
 		scene->_slaveButton.setVisage(60);
 		scene->_slaveButton.setStrip(8);
 		scene->_slaveButton.setPosition(Common::Point(143, 125));
 
-		scene->_object8.postInit();
-		scene->_object8.setVisage(60);
-		scene->_object8.setStrip(8);
-		scene->_object8.setPosition(Common::Point(143, 105));
+		scene->_masterButton.postInit();
+		scene->_masterButton.setVisage(60);
+		scene->_masterButton.setStrip(8);
+		scene->_masterButton.setPosition(Common::Point(143, 105));
 
-		_globals->_sceneItems.push_front(&scene->_object8);
+		_globals->_sceneItems.push_front(&scene->_masterButton);
 		_globals->_sceneItems.push_front(&scene->_slaveButton);
 
-		scene->_object10.postInit();
-		scene->_object10.setVisage(60);
-		scene->_object10.setPosition(Common::Point(199, 186));
-		scene->_object10.animate(ANIM_MODE_8, 0, NULL);
-		scene->_object10._numFrames = 5;
-		scene->_object10.setAction(&scene->_sequenceManager, scene, 61, NULL);
+		scene->_redLights.postInit();
+		scene->_redLights.setVisage(60);
+		scene->_redLights.setPosition(Common::Point(199, 186));
+		scene->_redLights.animate(ANIM_MODE_8, 0, NULL);
+		scene->_redLights._numFrames = 5;
+		scene->_redLights.setAction(&scene->_sequenceManager, scene, 61, NULL);
 
 		if (scene->_slaveButton._state)
 			scene->_slaveButton.setFrame(2);
-		if (scene->_object8._state)
-			scene->_object8.setFrame(2);
+		if (scene->_masterButton._state)
+			scene->_masterButton.setFrame(2);
 
 		_globals->_sceneItems.push_front(&scene->_item1);
-		_globals->_sceneItems.push_front(&scene->_object6);
+		_globals->_sceneItems.push_front(&scene->_controlButton);
 		_globals->_sceneItems.push_front(&scene->_slaveButton);
-		_globals->_sceneItems.push_front(&scene->_object8);
+		_globals->_sceneItems.push_front(&scene->_masterButton);
 		_globals->_sceneItems.push_back(&scene->_item2);
 
 		_globals->gfxManager()._font.setFontNumber(2);
@@ -2074,7 +2110,7 @@ void Scene60::Object4::doAction(int action) {
 	}
 }
 
-void Scene60::Object5::doAction(int action) {
+void Scene60::MessageObject::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -2087,7 +2123,7 @@ void Scene60::Object5::doAction(int action) {
 	}
 }
 
-void Scene60::Object6::doAction(int action) {
+void Scene60::ControlObject::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -2114,7 +2150,7 @@ void Scene60::SlaveObject::doAction(int action) {
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 8);
 	} else if (action == CURSOR_USE) {
-		if (scene->_object8._state)
+		if (scene->_masterButton._state)
 			scene->_sceneMode = 19;
 		else if (_state) {
 			scene->_soundHandler3.proc3();
@@ -2138,20 +2174,22 @@ void Scene60::SlaveObject::doAction(int action) {
 	}
 }
 
-void Scene60::Object8::doAction(int action) {
+void Scene60::MasterObject::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 7);
 	} else if (action == CURSOR_USE) {
-		if (!scene->_object8._state)
+		if (!scene->_controlButton._animateMode)
 			scene->_sceneMode = 14;
+		else if (scene->_slaveButton._state)
+			scene->_sceneMode = 20;
 		else if (_state) {
 			scene->_soundHandler3.proc3();
 			animate(ANIM_MODE_6, NULL);
+			_state = 0;
 			_globals->clearFlag(103);
 			_globals->clearFlag(!_globals->_stripNum ? 116 : 119);
-			_state = 0;
 			scene->_sceneMode = 9998;
 		} else {
 			scene->_soundHandler3.startSound(39);
@@ -2168,7 +2206,7 @@ void Scene60::Object8::doAction(int action) {
 	}
 }
 
-void Scene60::Object9::doAction(int action) {
+void Scene60::FloppyDrive::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -2188,7 +2226,7 @@ void Scene60::Item1::doAction(int action) {
 
 	switch (action) {
 	case OBJECT_INFODISK:
-		_globals->_inventory._infoDisk._sceneNumber = 60;
+		RING_INVENTORY._infoDisk._sceneNumber = 60;
 		_globals->setFlag(!_globals->_stripNum ? 118 : 121);
 		scene->_sceneMode = 0;
 		scene->setAction(&scene->_action1);
@@ -2197,7 +2235,7 @@ void Scene60::Item1::doAction(int action) {
 		SceneItem::display2(60, 10);
 		break;
 	case CURSOR_USE:
-		if (_globals->_inventory._infoDisk._sceneNumber == 60) {
+		if (RING_INVENTORY._infoDisk._sceneNumber == 60) {
 			if (_globals->getFlag(118) && !_globals->_stripNum) {
 				_globals->clearFlag(118);
 				scene->setAction(&scene->_action1);
@@ -2210,7 +2248,7 @@ void Scene60::Item1::doAction(int action) {
 				scene->_action1.setActionIndex(9);
 				scene->_action1.setDelay(1);
 			}
-		} else if (_globals->_inventory._infoDisk._sceneNumber == 1) {
+		} else if (RING_INVENTORY._infoDisk._sceneNumber == 1) {
 			scene->_sceneMode = 0;
 			setAction(&scene->_sequenceManager, scene, 62, NULL);
 		} else {
@@ -2264,20 +2302,20 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 	_slaveButton.setPosition(Common::Point(143, 125));
 	_slaveButton._state = 0;
 
-	_object8.postInit();
-	_object8.setVisage(60);
-	_object8.setStrip(8);
-	_object8.setPosition(Common::Point(143, 105));
-	_object8._state = 0;
+	_masterButton.postInit();
+	_masterButton.setVisage(60);
+	_masterButton.setStrip(8);
+	_masterButton.setPosition(Common::Point(143, 105));
+	_masterButton._state = 0;
 
-	_globals->_sceneItems.push_back(&_object8);
+	_globals->_sceneItems.push_back(&_masterButton);
 	_globals->_sceneItems.push_back(&_slaveButton);
 
-	_object6.postInit();
-	_object6.setVisage(60);
-	_object6.setStrip(5);
-	_object6.setPosition(Common::Point(233, 143));
-	_globals->_sceneItems.push_back(&_object6);
+	_controlButton.postInit();
+	_controlButton.setVisage(60);
+	_controlButton.setStrip(5);
+	_controlButton.setPosition(Common::Point(233, 143));
+	_globals->_sceneItems.push_back(&_controlButton);
 
 	if (_globals->_stripNum == -1) {
 		_globals->_stripNum = 0;
@@ -2297,29 +2335,29 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 		}
 
 		if (_globals->getFlag(116)) {
-			_object8._state = 1;
-			_object8.setFrame(2);
+			_masterButton._state = 1;
+			_masterButton.setFrame(2);
 		}
 
 		if (_globals->getFlag(118)) {
-			_object6.animate(ANIM_MODE_2, NULL);
+			_controlButton.animate(ANIM_MODE_2, NULL);
 
-			_object10.postInit();
-			_object10.setVisage(60);
-			_object10.setPosition(Common::Point(199, 186));
-			_object10.animate(ANIM_MODE_8, 0, NULL);
+			_redLights.postInit();
+			_redLights.setVisage(60);
+			_redLights.setPosition(Common::Point(199, 186));
+			_redLights.animate(ANIM_MODE_8, 0, NULL);
 
 			_soundHandler1.startSound(35);
 
 			if (!_globals->getFlag(83)) {
-				_object5.postInit();
-				_object5.setVisage(60);
-				_object5.setStrip2(3);
-				_object5.setFrame(2);
-				_object5.setPosition(Common::Point(148, 85));
-				_object5.animate(ANIM_MODE_2, NULL);
-				_object5._numFrames = 5;
-				_globals->_sceneItems.push_front(&_object5);
+				_message.postInit();
+				_message.setVisage(60);
+				_message.setStrip2(3);
+				_message.setFrame(2);
+				_message.setPosition(Common::Point(148, 85));
+				_message.animate(ANIM_MODE_2, NULL);
+				_message._numFrames = 5;
+				_globals->_sceneItems.push_front(&_message);
 
 				_soundHandler2.startSound(38);
 			}
@@ -2331,30 +2369,30 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 		}
 
 		if (_globals->getFlag(119)) {
-			_object8._state = 1;
-			_object8.setFrame(2);
+			_masterButton._state = 1;
+			_masterButton.setFrame(2);
 		}
 
 		if (_globals->getFlag(121)) {
-			_object6.animate(ANIM_MODE_2, NULL);
+			_controlButton.animate(ANIM_MODE_2, NULL);
 
-			_object10.postInit();
-			_object10.setVisage(60);
-			_object10.setPosition(Common::Point(199, 186));
-			_object10.animate(ANIM_MODE_8, 0, NULL);
-			_object10._numFrames = 5;
+			_redLights.postInit();
+			_redLights.setVisage(60);
+			_redLights.setPosition(Common::Point(199, 186));
+			_redLights.animate(ANIM_MODE_8, 0, NULL);
+			_redLights._numFrames = 5;
 
 			_soundHandler1.startSound(35);
 
 			if (!_globals->getFlag(83)) {
-				_object5.postInit();
-				_object5.setVisage(60);
-				_object5.setStrip2(3);
-				_object5.setFrame(2);
-				_object5.setPosition(Common::Point(148, 85));
-				_object5.animate(ANIM_MODE_2, NULL);
-				_object5._numFrames = 5;
-				_globals->_sceneItems.push_front(&_object5);
+				_message.postInit();
+				_message.setVisage(60);
+				_message.setStrip2(3);
+				_message.setFrame(2);
+				_message.setPosition(Common::Point(148, 85));
+				_message.animate(ANIM_MODE_2, NULL);
+				_message._numFrames = 5;
+				_globals->_sceneItems.push_front(&_message);
 
 				_soundHandler2.startSound(38);
 			}
@@ -2374,7 +2412,7 @@ void Scene60::signal() {
 			_globals->_events.setCursor(CURSOR_USE);
 
 			_gfxButton.setText(EXIT_MSG);
-			_gfxButton._bounds.centre(160, 193);
+			_gfxButton._bounds.center(160, 193);
 			_gfxButton.draw();
 			_gfxButton._bounds.expandPanes();
 		} else {
@@ -2387,7 +2425,7 @@ void Scene60::signal() {
 void Scene60::process(Event &event) {
 	Scene::process(event);
 
-	if (_sceneNumber == 60) {
+	if (_screenNumber == 60) {
 		if (_gfxButton.process(event))
 			_globals->_sceneManager.changeScene(50);
 	}
@@ -2474,7 +2512,7 @@ void Scene90::Action1::signal() {
 		scene->_object3.animate(ANIM_MODE_6, NULL);
 
 		SceneItem::display(90, _globals->getFlag(104) ? 15 : 14,
-			SET_EXT_BGCOLOUR, 13, SET_KEEP_ONSCREEN, -1, SET_X, 120, SET_Y, 20, LIST_END);
+			SET_EXT_BGCOLOR, 13, SET_KEEP_ONSCREEN, -1, SET_X, 120, SET_Y, 20, LIST_END);
 		break;
 	case 12:
 		SceneItem::display(0, 0);
@@ -2611,7 +2649,7 @@ void Scene90::postInit(SceneObjectList *OwnerList) {
 	_object3.setVisage(90);
 	_object3.animate(ANIM_MODE_1, NULL);
 	_object3.setPosition(Common::Point(196, 181));
-	_object3.setPriority2(175);
+	_object3.fixPriority(175);
 	_globals->_sceneItems.push_back(&_object3);
 
 	_globals->_player.disableControl();
@@ -2636,7 +2674,7 @@ void Scene90::signal() {
 		break;
 	case 92:
 		_globals->_scenePalette.clearListeners();
-		_globals->_game.endGame(90, 6);
+		_globals->_game->endGame(90, 6);
 		break;
 	case 96:
 		_globals->_player.enableControl();
@@ -2667,7 +2705,7 @@ void Scene95::Action1::signal() {
 	case 1:
 		if (_state) {
 			SceneItem::display(95, _state % 2, SET_FONT, 2,
-				SET_EXT_BGCOLOUR, -1, SET_EXT_BGCOLOUR, 20,
+				SET_EXT_BGCOLOR, -1, SET_EXT_BGCOLOR, 20,
 				SET_WIDTH, 200, SET_KEEP_ONSCREEN, 1, SET_TEXT_MODE, 1, LIST_END);
 			--_state;
 			_actionIndex = 1;
@@ -2701,7 +2739,7 @@ void Scene95::Action1::signal() {
 		scene->_object1.addMover(mover2, &pt2, NULL);
 
 		SceneItem::display(95, 2, SET_Y, 45, SET_FONT, 2,
-			SET_BG_COLOUR, -1, SET_EXT_BGCOLOUR, 13, SET_WIDTH, 200,
+			SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 13, SET_WIDTH, 200,
 			SET_KEEP_ONSCREEN, 1, LIST_END);
 		setDelay(240);
 		break;
@@ -2710,13 +2748,13 @@ void Scene95::Action1::signal() {
 		scene->_object3.remove();
 
 		SceneItem::display(95, 3, SET_Y, 45, SET_FONT, 2,
-			SET_BG_COLOUR, -1, SET_EXT_BGCOLOUR, 35, SET_WIDTH, 200,
+			SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 35, SET_WIDTH, 200,
 			SET_KEEP_ONSCREEN, 1, LIST_END);
 		setDelay(240);
 		break;
 	case 5:
 		SceneItem::display(95, 4, SET_Y, 45, SET_FONT, 2,
-			SET_BG_COLOUR, -1, SET_EXT_BGCOLOUR, 35, SET_WIDTH, 200,
+			SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 35, SET_WIDTH, 200,
 			SET_KEEP_ONSCREEN, 1, LIST_END);
 		setDelay(240);
 		break;
@@ -2841,7 +2879,7 @@ void Scene6100::Action3::signal() {
 		break;
 	case 1:
 		_globals->_scenePalette.clearListeners();
-		scene->_fadePercent = 0;
+		scene->_fadePercent = 100;
 		_globals->_scenePalette.refresh();
 		scene->loadScene(9997);
 		scene->_object1.hide();
@@ -2852,7 +2890,7 @@ void Scene6100::Action3::signal() {
 		scene->_sunflower3.hide();
 		scene->_rocks.hide();
 		scene->_sceneText.hide();
-
+	
 		_globals->_events.setCursor(CURSOR_WALK);
 		scene->_stripManager.start(8120, this);
 		break;
@@ -2957,39 +2995,39 @@ void Scene6100::Action5::dispatch() {
 		}
 
 		scene->_objList[idx]->_flags |= OBJFLAG_PANES;
-/*
+
 		if ((idx != 3) && (scene->_fadePercent == 100) &&
-				(tempSet.sqrt(floatSet) < 150.0)) {
+				(tempSet.sqrt(zeroSet) < 150.0)) {
 			switch (scene->_hitCount++) {
 			case 1:
 				scene->_soundHandler.startSound(233);
-				scene->showMessage(0, NULL, 0);
+				scene->showMessage(NULL, 0, NULL);
 
 				if (!_globals->getFlag(76))
-					scene->_object5.setAction(&scene->_action2);
+					scene->_probe.setAction(&scene->_action2);
+				break;
 
 			case 2:
 				scene->_soundHandler.startSound(234);
-				scene->showMessage(0, NULL, 0);
+				scene->showMessage(NULL, 0, NULL);
 
 				if (!_globals->getFlag(76))
-					scene->_object5.setAction(NULL);
+					scene->_probe.setAction(NULL);
 				scene->setAction(&scene->_action3);
 				break;
 
 			default:
 				scene->_soundHandler.startSound(233);
-				scene->showMessage(0, NULL, 0);
+				scene->showMessage(NULL, 0, NULL);
 
 				if (!_globals->getFlag(76))
-					scene->_object5.setAction(&scene->_action1);
+					scene->_probe.setAction(&scene->_action1);
 				break;
 			}
 
 			_globals->_scenePalette.clearListeners();
 			scene->_fadePercent = 0;
 		}
-		*/
 	}
 }
 
@@ -3091,6 +3129,7 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 	loadScene(6100);
 	Scene::postInit();
 	setZoomPercents(62, 2, 200, 425);
+	_globals->_sceneHandler._delayTicks = 8;
 
 	_globals->_player.disableControl();
 	_globals->_events.setCursor(CURSOR_WALK);
@@ -3102,28 +3141,28 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 	_object1._frame = 1;
 	_object1._strip = 4;
 	_object1.setPosition(Common::Point(0, 60));
-	_object1.setPriority2(1);
+	_object1.fixPriority(1);
 
 	_object2.postInit();
 	_object2.setVisage(6100);
 	_object2._frame = 1;
 	_object2._strip = 4;
 	_object2.setPosition(Common::Point(160, 60));
-	_object2.setPriority2(1);
+	_object2.fixPriority(1);
 
 	_object3.postInit();
 	_object3.setVisage(6100);
 	_object3._frame = 1;
 	_object3._strip = 4;
 	_object3.setPosition(Common::Point(320, 60));
-	_object3.setPriority2(1);
+	_object3.fixPriority(1);
 
 	_rocks.postInit();
 	_rocks.setVisage(6100);
 	_rocks._frame = 1;
 	_rocks._strip = 3;
 	_rocks.setPosition(Common::Point(320, 0));
-	_rocks.setPriority2(2);
+	_rocks.fixPriority(2);
 	_rocks.changeZoom(-1);
 	_rocks._floats._float1 = 320.0;
 	_rocks._floats._float2 = 25000.0;
@@ -3135,7 +3174,7 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 	_probe._frame = 1;
 	_probe._strip = 5;
 	_probe.setPosition(Common::Point(160, 260));
-	_probe.setPriority2(3);
+	_probe.fixPriority(3);
 	_probe._floats._float1 = 320.0;
 	_probe._floats._float2 = 0.0;
 	_probe._floats._float3 = 0.0;
@@ -3160,7 +3199,7 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 
 		_objList[idx]->setPosition(Common::Point(
 			_globals->_randomSource.getRandomNumber(319), 60));
-		_objList[idx]->setPriority2(1);
+		_objList[idx]->fixPriority(1);
 		_objList[idx]->changeZoom(-1);
 	}
 
@@ -3193,9 +3232,9 @@ void Scene6100::process(Event &event) {
 	if (event.eventType == EVENT_KEYPRESS) {
 		// Handle incremental turning speeds with arrow keys
 		if ((event.kbd.keycode == Common::KEYCODE_LEFT) || (event.kbd.keycode == Common::KEYCODE_KP4)) {
-			_turnAmount = MAX(_turnAmount - 1, -8);
+			_turnAmount = MIN(_turnAmount + 1, 8);
 		} else if ((event.kbd.keycode == Common::KEYCODE_RIGHT) || (event.kbd.keycode == Common::KEYCODE_KP6)) {
-			_turnAmount = MIN(_turnAmount + 1, -8);
+			_turnAmount = MAX(_turnAmount - 1, -8);
 		}
 	}
 
@@ -3231,7 +3270,7 @@ void Scene6100::dispatch() {
 
 		_sceneText.setPosition(Common::Point(24, 160));
 		_sceneText._fontNumber = 0;
-		_sceneText._colour1 = 35;
+		_sceneText._color1 = 35;
 		_sceneText.setup(s);
 	}
 
@@ -3244,7 +3283,7 @@ void Scene6100::dispatch() {
 	}
 }
 
-void Scene6100::showMessage(const Common::String &msg, int colour, Action *action) {
+void Scene6100::showMessage(const Common::String &msg, int color, Action *action) {
 	if (_msgActive) {
 		_msgActive = false;
 		_speaker1.removeText();
@@ -3254,7 +3293,7 @@ void Scene6100::showMessage(const Common::String &msg, int colour, Action *actio
 		_msgActive = true;
 		_speaker1._textPos.x = 20;
 		_speaker1._textWidth = 280;
-		_speaker1._colour1 = colour;
+		_speaker1._color1 = color;
 		_speaker1._action = action;
 		_speaker1.setText(msg);
 	}

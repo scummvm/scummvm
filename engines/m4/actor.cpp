@@ -25,6 +25,7 @@
 
 #include "common/system.h"
 #include "common/array.h"
+#include "common/textconsole.h"
 #include "m4/actor.h"
 #include "m4/m4_views.h"
 #include "m4/assets.h"
@@ -59,7 +60,7 @@ void Actor::placeWalkerSpriteAt(int spriteNum, int x, int y) {
 	info.height = info.sprite->height();
 	info.scaleX = info.scaleY = _scaling;
 	info.palette = _walkerSprites[_direction]->getPalette();
-	info.inverseColourTable = _m4Vm->scene()->getInverseColourTable();
+	info.inverseColorTable = _m4Vm->scene()->getInverseColorTable();
 
 	_vm->_scene->drawSprite(x, y, info, Common::Rect(640, 400));
 }

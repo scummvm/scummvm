@@ -44,11 +44,11 @@ uint32 MadsM4Engine::getFeatures() const { return _gameDescription->features; }
 Common::Language MadsM4Engine::getLanguage() const { return _gameDescription->desc.language; }
 Common::Platform MadsM4Engine::getPlatform() const { return _gameDescription->desc.platform; }
 
-}
+} // End of namespace M4
 
 static const PlainGameDescriptor m4Games[] = {
 	{"m4", "MADS/M4 engine game"},
-	{"riddle", "Riddle of Master Lu: Believe it or Not!"},
+	{"riddle", "Ripley's Believe It or Not!: The Riddle of Master Lu"},
 	{"burger", "Orion Burger"},
 	{"rex", "Rex Nebular and the Cosmic Gender Bender"},
 	{"dragon", "DragonSphere"},
@@ -380,7 +380,12 @@ static const M4GameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
-}
+} // End of namespace M4
+
+static const char *directoryGlobs[] = {
+	"option1",
+	0
+};
 
 static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
@@ -402,9 +407,9 @@ static const ADParams detectionParams = {
 	// Additional GUI options (for every game}
 	Common::GUIO_NOMIDI,
 	// Maximum directory depth
-	1,
+	2,
 	// List of directory globs
-	0
+	directoryGlobs
 };
 
 class M4MetaEngine : public AdvancedMetaEngine {

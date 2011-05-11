@@ -77,6 +77,16 @@ static inline unsigned interpolate16_3_1(unsigned p1, unsigned p2) {
 }
 
 /**
+ * Interpolate two 16 bit pixels with weights 5 and 3 and 1, i.e., (5*p1+3*p2)/8.
+ */
+template<typename ColorMask>
+static inline unsigned interpolate16_5_3(unsigned p1, unsigned p2) {
+	const unsigned lowbits = (((p1 & ColorMask::kLowBits) << 2) + (p1 & ColorMask::kLow3Bits)
+		                   + ((p2 & ColorMask::kLow2Bits) << 1) + (p2 & ColorMask::kLow3Bits)) & ColorMask::kLow3Bits;
+	return ((p1*5 + p2*3) - lowbits) >> 3;
+}
+
+/**
  * Interpolate two 16 bit pixels with weights 7 and 1, i.e., (7*p1+p2)/8.
  */
 template<typename ColorMask>

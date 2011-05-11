@@ -26,6 +26,8 @@
 #include "agos/agos.h"
 #include "agos/intern.h"
 
+#include "common/textconsole.h"
+
 namespace AGOS {
 
 uint32 AGOSEngine_PN::ftext(uint32 base, int n) {

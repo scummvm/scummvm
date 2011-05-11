@@ -24,6 +24,7 @@
  */
 
 
+#include "common/textconsole.h"
 
 #include "audio/decoders/flac.h"
 #include "audio/mixer.h"

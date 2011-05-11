@@ -35,6 +35,7 @@
 #include "common/random.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "common/textconsole.h"
 #include "graphics/surface.h"
 #include "graphics/sjis.h"
 
@@ -56,12 +57,12 @@
 #endif
 
 namespace GUI {
-	class Dialog;
+class Dialog;
 }
 using GUI::Dialog;
 namespace Common {
-	class SeekableReadStream;
-	class WriteStream;
+class SeekableReadStream;
+class WriteStream;
 }
 
 /**
@@ -253,6 +254,8 @@ enum ScummGameId {
 	GID_FUNSHOP,	// Used for all three funshops
 	GID_FOOTBALL,
 	GID_SOCCER,
+	GID_SOCCERMLS,
+	GID_SOCCER2004,
 	GID_BASEBALL2001,
 	GID_BASKETBALL,
 	GID_MOONBASE,
@@ -463,7 +466,7 @@ public:
 	virtual Common::Error run() {
 		Common::Error err;
 		err = init();
-		if (err != Common::kNoError)
+		if (err.getCode() != Common::kNoError)
 			return err;
 		return go();
 	}

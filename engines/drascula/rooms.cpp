@@ -24,6 +24,7 @@
  */
 
 #include "common/array.h"
+#include "common/textconsole.h"
 
 #include "drascula/drascula.h"
 
@@ -140,6 +141,9 @@ void DrasculaEngine::setupRoomsTable() {
 }
 
 void DrasculaEngine::freeRoomsTable() {
+	if (_roomHandlers == 0)
+		return;
+
 	for (uint32 i = 0; i < _roomHandlers->roomParsers.size(); i++)
 		delete _roomHandlers->roomParsers[i];
 	_roomHandlers->roomParsers.clear();

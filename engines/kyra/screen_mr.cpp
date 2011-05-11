@@ -24,7 +24,6 @@
  */
 
 #include "kyra/screen_mr.h"
-
 #include "kyra/kyra_mr.h"
 
 namespace Kyra {

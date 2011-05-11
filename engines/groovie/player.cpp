@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/debug.h"
+
 #include "groovie/player.h"
 #include "groovie/groovie.h"
 

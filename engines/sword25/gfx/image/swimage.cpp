@@ -56,14 +56,16 @@ SWImage::SWImage(const Common::String &filename, bool &result) :
 		return;
 	}
 
+#ifndef USE_INTERNAL_PNG_DECODER
 	// Determine image properties
-	int pitch;
 	if (!PNGLoader::imageProperties(pFileData, fileSize, _width, _height)) {
 		error("Could not read image properties.");
 		return;
 	}
+#endif
 
 	// Uncompress the image
+	int pitch;
 	byte *pUncompressedData;
 	if (!PNGLoader::decodeImage(pFileData, fileSize, pUncompressedData, _width, _height, pitch)) {
 		error("Could not decode image.");

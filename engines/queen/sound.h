@@ -32,7 +32,7 @@
 #include "queen/defs.h"
 
 namespace Common {
-	class File;
+class File;
 }
 
 namespace Queen {

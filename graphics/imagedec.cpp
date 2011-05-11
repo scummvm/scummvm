@@ -23,6 +23,7 @@
  */
 
 #include "graphics/imagedec.h"
+#include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
 #include "common/file.h"
@@ -117,7 +118,7 @@ Surface *BMPDecoder::decodeImage(Common::SeekableReadStream &stream, const Pixel
 	uint8 r = 0, g = 0, b = 0;
 	Surface *newSurf = new Surface;
 	assert(newSurf);
-	newSurf->create(info.width, info.height, sizeof(OverlayColor));
+	newSurf->create(info.width, info.height, format);
 	assert(newSurf->pixels);
 	OverlayColor *curPixel = (OverlayColor*)newSurf->pixels + (newSurf->h-1) * newSurf->w;
 	int pitchAdd = info.width % 4;

@@ -111,7 +111,7 @@ MemoryBlock *PictureDecoder::egaDecode(MemoryBlock *src, uint32 maxOutputSize) {
 	dataPos += sizeof(uint16);
 	int bitCtr = 8;
 
-	// Decode the colour popularity table
+	// Decode the color popularity table
 
 	for (int nibbleCtr = 0; nibbleCtr < 32; ++nibbleCtr) {
 		for (int byteCtr = 0; byteCtr < 128; byteCtr += 32) {
@@ -134,7 +134,7 @@ MemoryBlock *PictureDecoder::egaDecode(MemoryBlock *src, uint32 maxOutputSize) {
 		READ_BIT_DX
 
 		if (!bitFlag) {
-			// Get the favourite colour
+			// Get the favourite color
 			v = popTable[tableOffset];
 
 		} else {
@@ -182,7 +182,7 @@ MemoryBlock *PictureDecoder::egaDecode(MemoryBlock *src, uint32 maxOutputSize) {
 						continue;
 
 					} else {
-						// It's a new colour
+						// It's a new color
 						v = al;
 					}
 

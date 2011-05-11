@@ -26,6 +26,7 @@
 #include "common/substream.h"
 #include "graphics/imagedec.h"
 #include "gui/gui-manager.h"
+#include "gui/ThemeEval.h"
 
 #include "hugo/hugo.h"
 #include "hugo/display.h"
@@ -132,7 +133,7 @@ void TopMenu::loadBmpArr(Common::SeekableReadStream &in) {
 		Common::SeekableSubReadStream stream(&in, filPos, filPos + bmpSize);
 		arrayBmp[i * 2] = Graphics::ImageDecoder::loadFile(stream, g_system->getOverlayFormat());
 		arrayBmp[i * 2 + 1] = new Graphics::Surface();
-		arrayBmp[i * 2 + 1]->create(arrayBmp[i * 2]->w * 2, arrayBmp[i * 2]->h * 2, arrayBmp[i * 2]->bytesPerPixel);
+		arrayBmp[i * 2 + 1]->create(arrayBmp[i * 2]->w * 2, arrayBmp[i * 2]->h * 2, g_system->getOverlayFormat());
 		byte *src = (byte *)arrayBmp[i * 2]->pixels;
 		byte *dst = (byte *)arrayBmp[i * 2 + 1]->pixels;
 		
@@ -140,12 +141,12 @@ void TopMenu::loadBmpArr(Common::SeekableReadStream &in) {
 			src = (byte *)arrayBmp[i * 2]->getBasePtr(0, j);
 			dst = (byte *)arrayBmp[i * 2 + 1]->getBasePtr(0, j * 2);
 			for (int k = arrayBmp[i * 2]->w; k > 0; k--) {
-				for (int m = arrayBmp[i * 2]->bytesPerPixel; m > 0; m--) {
+				for (int m = arrayBmp[i * 2]->format.bytesPerPixel; m > 0; m--) {
 					*dst++ = *src++;
 				}
-				src -= arrayBmp[i * 2]->bytesPerPixel;
+				src -= arrayBmp[i * 2]->format.bytesPerPixel;
 
-				for (int m = arrayBmp[i * 2]->bytesPerPixel; m > 0; m--) {
+				for (int m = arrayBmp[i * 2]->format.bytesPerPixel; m > 0; m--) {
 					*dst++ = *src++;
 				}
 			}
@@ -164,7 +165,8 @@ void TopMenu::handleCommand(GUI::CommandSender *sender, uint32 command, uint32 d
 	switch (command) {
 	case kCmdWhat:
 		close();
-		_vm->_file->instructions();
+		_vm->getGameStatus().helpFl = true;
+
 		break;
 	case kCmdMusic:
 		_vm->_sound->toggleMusic();
@@ -231,12 +233,52 @@ void TopMenu::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 EntryDialog::EntryDialog(const Common::String &title, const Common::String &buttonLabel, const Common::String &defaultValue) : GUI::Dialog(20, 20, 100, 50) {
-	new GUI::StaticTextWidget(this, 0, 0, 10, 10, title, Graphics::kTextAlignCenter);
-	
-	_text = new GUI::EditTextWidget(this, 0, 0, 50, 10, "");
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+
+	int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 0);
+	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
+
+	// First, determine the size the dialog needs. For this we have to break
+	// down the string into lines, and taking the maximum of their widths.
+	// Using this, and accounting for the space the button(s) need, we can set
+	// the real size of the dialog
+	Common::Array<Common::String> lines;
+	int lineCount, buttonPos;
+	int maxlineWidth = g_gui.getFont().wordWrapText(title, screenW - 2 * 30, lines);
+
+	// Calculate the desired dialog size (maxing out at 300*180 for now)
+	_w = MAX(maxlineWidth, buttonWidth) + 20;
+
+	lineCount = lines.size();
+
+	_h = 16 + buttonHeight + 8;
+
+	// Limit the number of lines so that the dialog still fits on the screen.
+	if (lineCount > (screenH - 20 - _h) / kLineHeight) {
+		lineCount = (screenH - 20 - _h) / kLineHeight;
+	}
+	_h += lineCount * kLineHeight;
+
+	// Center the dialog
+	_x = (screenW - _w) / 2;
+	_y = (screenH - _h) / 2;
+
+	// Each line is represented by one static text item.
+	for (int i = 0; i < lineCount; i++) {
+		new GUI::StaticTextWidget(this, 10, 10 + i * kLineHeight, maxlineWidth, kLineHeight,
+								lines[i], Graphics::kTextAlignCenter);
+	}
+
+	_text = new GUI::EditTextWidget(this, 10, 10 + lineCount * (kLineHeight + 1), _w - 20, kLineHeight, "", "", 0, kCmdFinishEdit);
 	_text->setEditString(defaultValue);
 
-	new GUI::ButtonWidget(this, 20, 20, 30, 10, buttonLabel, 0, kCmdButton);
+	_h += kLineHeight + 5;
+
+	buttonPos = (_w - buttonWidth) / 2;
+
+	new GUI::ButtonWidget(this, buttonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, buttonLabel, 0, kCmdButton, Common::ASCII_RETURN);	// Confirm dialog
+
 }
 
 EntryDialog::~EntryDialog() {
@@ -245,18 +287,12 @@ EntryDialog::~EntryDialog() {
 void EntryDialog::handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data) {
 	switch (command) {
 	case kCmdButton:
+	case kCmdFinishEdit:
 		close();
 		break;
 	default:
 		Dialog::handleCommand(sender, command, data);
 	}
 }
-
-void EntryDialog::reflowLayout() {
-}
-
-void EntryDialog::init() {
-}
-
 
 } // End of namespace Hugo

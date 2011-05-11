@@ -24,6 +24,7 @@
 
 
 #include "common/endian.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 /*

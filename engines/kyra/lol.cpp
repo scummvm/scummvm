@@ -28,17 +28,15 @@
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
 #include "kyra/resource.h"
-
-#include "kyra/sound.h"
 #include "kyra/timer.h"
 #include "kyra/util.h"
 #include "kyra/debugger.h"
+#include "kyra/sound.h"
 
-#include "audio/decoders/voc.h"
 #include "audio/audiostream.h"
 
 #include "common/config-manager.h"
-#include "common/endian.h"
+#include "common/system.h"
 
 namespace Kyra {
 
@@ -591,7 +589,9 @@ Common::Error LoLEngine::go() {
 	if (action == 0) {
 		startupNew();
 	} else if (_gameToLoad != -1) {
-		if (loadGameState(_gameToLoad) != Common::kNoError)
+		// FIXME: Instead of throwing away the error returned by
+		// loadGameState, we should use it / augment it.
+		if (loadGameState(_gameToLoad).getCode() != Common::kNoError)
 			error("Couldn't load game slot %d on startup", _gameToLoad);
 		_gameToLoad = -1;
 	}
@@ -918,7 +918,9 @@ void LoLEngine::runLoop() {
 
 	while (!shouldQuit() && _runFlag) {
 		if (_gameToLoad != -1) {
-			if (loadGameState(_gameToLoad) != Common::kNoError)
+			// FIXME: Instead of throwing away the error returned by
+			// loadGameState, we should use it / augment it.
+			if (loadGameState(_gameToLoad).getCode() != Common::kNoError)
 				error("Couldn't load game slot %d", _gameToLoad);
 			_gameToLoad = -1;
 		}

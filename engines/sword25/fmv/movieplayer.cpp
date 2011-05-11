@@ -32,13 +32,17 @@
  *
  */
 
+#include "common/debug.h"
+#include "common/system.h"
+#include "common/textconsole.h"
+#include "common/util.h"
+
 #include "sword25/sword25.h"	// for kDebugScript
 #include "sword25/fmv/movieplayer.h"
 #include "sword25/gfx/graphicengine.h"
 #include "sword25/gfx/panel.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/package/packagemanager.h"
-#include "sword25/sfx/soundengine.h"
 
 namespace Sword25 {
 
@@ -121,7 +125,7 @@ void MoviePlayer::update() {
 		const Graphics::Surface *s = _decoder.decodeNextFrame();
 		if (s) {
 			// Transfer the next frame
-			assert(s->bytesPerPixel == 4);
+			assert(s->format.bytesPerPixel == 4);
 
 #ifdef THEORA_INDIRECT_RENDERING
 			byte *frameData = (byte *)s->getBasePtr(0, 0);

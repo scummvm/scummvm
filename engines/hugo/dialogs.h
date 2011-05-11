@@ -67,7 +67,8 @@ enum {
 	kCmdInvent = 'INVT',
 
 	// EntryDialog commands
-	kCmdButton = 'BTNP'
+	kCmdButton = 'BTNP',
+	kCmdFinishEdit = 'FNSH'
 };
 
 class TopMenu : public GUI::Dialog {
@@ -105,14 +106,11 @@ public:
 	EntryDialog(const Common::String &title, const Common::String &buttonLabel, const Common::String &defaultValue);
 	virtual ~EntryDialog();
 
-	void reflowLayout();
 	void handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data);
 
 	const Common::String &getEditString() const	{ return _text->getEditString(); }
 
 protected:
-	void init();
-
 	GUI::EditTextWidget *_text;
 };
 

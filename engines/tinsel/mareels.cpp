@@ -28,6 +28,7 @@
 #include "tinsel/pcode.h"	// For D_UP, D_DOWN
 #include "tinsel/rince.h"
 
+#include "common/textconsole.h"
 #include "common/util.h"
 
 namespace Tinsel {

@@ -8,7 +8,7 @@
 #ifndef lzio_h
 #define lzio_h
 
-#include "lua.h"
+#include "sword25/util/lua/lua.h"
 
 
 #define EOZ	(-1)			/* end of stream */

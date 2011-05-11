@@ -70,6 +70,7 @@
 #include "tinsel/tinsel.h"
 #include "tinsel/token.h"
 
+#include "common/textconsole.h"
 
 namespace Tinsel {
 
@@ -84,7 +85,7 @@ extern bool bNoPause;
 
 // In DOS_MAIN.C
 // TODO/FIXME: From dos_main.c: "Only used on PSX so far"
-int clRunMode = 0;
+//int clRunMode = 0;
 
 //----------------- EXTERNAL FUNCTIONS ---------------------
 
@@ -426,11 +427,11 @@ static void ScrollMonitorProcess(CORO_PARAM, const void *param) {
 /**
  * NOT A LIBRARY FUNCTION
  *
- * Poke supplied colour into the DAC queue.
+ * Poke supplied color into the DAC queue.
  */
 void SetTextPal(COLORREF col) {
-	SetTalkColourRef(col);
-	UpdateDACqueue(TalkColour(), col);
+	SetTalkColorRef(col);
+	UpdateDACqueue(TalkColor(), col);
 }
 
 /**
@@ -522,7 +523,7 @@ void TinGetVersion(WHICH_VER which, char *buffer, int length) {
 
 /**
  * Set actor's attributes.
- * - currently only the text colour.
+ * - currently only the text color.
  */
 static void ActorAttr(int actor, int r1, int g1, int b1) {
 	storeActorAttr(actor, r1, g1, b1);
@@ -553,11 +554,11 @@ static int ActorDirection(int actor) {
 /**
  * Set actor's palette details for path brightnesses
  */
-void ActorPalette(int actor, int startColour, int length) {
+void ActorPalette(int actor, int startColor, int length) {
 	PMOVER pMover = GetMover(actor);
 	assert(pMover);
 
-	StoreMoverPalette(pMover, startColour, length);
+	StoreMoverPalette(pMover, startColor, length);
 }
 
 /**
@@ -568,10 +569,10 @@ static void ActorPriority(int actor, int zFactor) {
 }
 
 /**
- * Set actor's text colour.
+ * Set actor's text color.
  */
-static void ActorRGB(int actor, COLORREF colour) {
-	SetActorRGB(actor, colour);
+static void ActorRGB(int actor, COLORREF color) {
+	SetActorRGB(actor, color);
 }
 
 /**
@@ -1196,9 +1197,9 @@ static int GetInvLimit(int invno) {
 /**
  * Ghost
  */
-static void Ghost(int actor, int tColour, int tPalOffset) {
+static void Ghost(int actor, int tColor, int tPalOffset) {
 	SetSysVar(ISV_GHOST_ACTOR, actor);
-	SetSysVar(ISV_GHOST_COLOUR,  tColour);
+	SetSysVar(ISV_GHOST_COLOR,  tColor);
 	SetSysVar(ISV_GHOST_BASE, tPalOffset);
 	CreateGhostPalette(BgPal());
 }
@@ -1952,7 +1953,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 		PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 		_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 			TextBufferAddr(), 0, x - Loffset, y - Toffset, GetTagFontHandle(),
-			TXT_CENTRE, 0);
+			TXT_CENTER, 0);
 		assert(_ctx->pText);
 
 		// Adjust x, y, or z if necessary
@@ -1965,7 +1966,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 		PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 		_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
 					0, x - Loffset, y - Toffset,
-					TinselV2 ? GetTagFontHandle() : GetTalkFontHandle(), TXT_CENTRE);
+					TinselV2 ? GetTagFontHandle() : GetTalkFontHandle(), TXT_CENTER);
 		assert(_ctx->pText); // string produced NULL text
 		if (IsTopWindow())
 			MultiSetZPosition(_ctx->pText, Z_TOPW_TEXT);
@@ -2128,7 +2129,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 				LoadStringRes(hText, TextBufferAddr(), TBUFSZ);
 
 			_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
-						0, _ctx->textx, _ctx->texty, GetTagFontHandle(), TXT_CENTRE);
+						0, _ctx->textx, _ctx->texty, GetTagFontHandle(), TXT_CENTER);
 			assert(_ctx->pText); // PrintObj() string produced NULL text
 
 			MultiSetZPosition(_ctx->pText, Z_INV_ITEXT);
@@ -2181,7 +2182,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 						LoadStringRes(hText, TextBufferAddr(), TBUFSZ);
 						_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 							TextBufferAddr(), 0, _ctx->textx, _ctx->texty, GetTagFontHandle(),
-							TXT_CENTRE, 0);
+							TXT_CENTER, 0);
 						assert(_ctx->pText);
 
 						KeepOnScreen(_ctx->pText, &_ctx->textx, &_ctx->texty);
@@ -2297,7 +2298,7 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 				// Re-display in the same place
 				LoadStringRes(text, TextBufferAddr(), TBUFSZ);
 				pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
-							0, textx, texty, GetTagFontHandle(), TXT_CENTRE);
+							0, textx, texty, GetTagFontHandle(), TXT_CENTER);
 				assert(pText); // PrintObj() string produced NULL text
 				MultiSetZPosition(pText, Z_INV_ITEXT);
 			}
@@ -2490,7 +2491,7 @@ void ResumeLastGame() {
  * Returns the current run mode
  */
 static int RunMode() {
-	return clRunMode;
+	return 0;	//clRunMode;
 }
 
 /**
@@ -3367,7 +3368,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 
 			_ctx->pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
 					TextBufferAddr(), 0, _ctx->x - _ctx->Loffset, _ctx->y - _ctx->Toffset,
-					GetTalkFontHandle(), TXT_CENTRE);
+					GetTalkFontHandle(), TXT_CENTER);
 			assert(_ctx->pText); // talk() string produced NULL text;
 
 			if (IsTopWindow())
@@ -3595,12 +3596,12 @@ static void TalkPaletteIndex(unsigned index) {
 /**
  * Set talk font's palette entry.
  */
-static void TalkRGB(COLORREF colour, int myescEvent) {
+static void TalkRGB(COLORREF color, int myescEvent) {
 	// Don't do it if it's not wanted
 	if (myescEvent && myescEvent != GetEscEvents())
 		return;
 
-	SetTextPal(colour);
+	SetTextPal(color);
 }
 
 /**

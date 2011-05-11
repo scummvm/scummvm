@@ -35,9 +35,7 @@
 #include "tinsel/sysvar.h"
 #include "tinsel/background.h"
 
-#include "common/config-manager.h"
 #include "common/endian.h"
-#include "common/file.h"
 #include "common/memstream.h"
 #include "common/system.h"
 
@@ -131,13 +129,9 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 			error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
 
 		// FIXME: Should set this in a different place ;)
-		bool mute = false;
-		if (ConfMan.hasKey("mute"))
-			mute = ConfMan.getBool("mute");
-
-		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, mute ? 0 : _vm->_config->_soundVolume);
+		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, _vm->_config->_soundVolume);
 		//_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
-		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, mute ? 0 : _vm->_config->_voiceVolume);
+		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, _vm->_config->_voiceVolume);
 
 		Audio::AudioStream *sampleStream = 0;
 
@@ -325,13 +319,9 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 	}
 
 	// FIXME: Should set this in a different place ;)
-	bool mute = false;
-	if (ConfMan.hasKey("mute"))
-		mute = ConfMan.getBool("mute");
-
-	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, mute ? 0 : _vm->_config->_soundVolume);
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, _vm->_config->_soundVolume);
 	//_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
-	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, mute ? 0 : _vm->_config->_voiceVolume);
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, _vm->_config->_voiceVolume);
 
 	curChan->sampleNum = id;
 	curChan->subSample = sub;
@@ -364,8 +354,8 @@ bool SoundManager::offscreenChecks(int x, int &y) {
 	if (x == -1)
 		return true;
 
-	// convert x to offset from screen centre
-	x -= PlayfieldGetCentreX(FIELD_WORLD);
+	// convert x to offset from screen center
+	x -= PlayfieldGetCenterX(FIELD_WORLD);
 
 	if (x < -SCREEN_WIDTH || x > SCREEN_WIDTH) {
 		// A long way offscreen, ignore it
@@ -385,7 +375,7 @@ int8 SoundManager::getPan(int x) {
 	if (x == -1)
 		return 0;
 
-	x -= PlayfieldGetCentreX(FIELD_WORLD);
+	x -= PlayfieldGetCenterX(FIELD_WORLD);
 
 	if (x == 0)
 		return 0;

@@ -32,7 +32,7 @@
 
 namespace Sword2 {
 
-// Output colour for character border - should be be black but note that we
+// Output color for character border - should be be black but note that we
 // have to use a different pen number during sequences
 
 #define BORDER_PEN 194
@@ -47,14 +47,14 @@ enum {
 	NO_JUSTIFICATION = 0,
 
 	// These all force text inside the screen edge margin when necessary
-	POSITION_AT_CENTRE_OF_BASE = 1,
-	POSITION_AT_CENTRE_OF_TOP = 2,
+	POSITION_AT_CENTER_OF_BASE = 1,
+	POSITION_AT_CENTER_OF_TOP = 2,
 	POSITION_AT_LEFT_OF_TOP = 3,
 	POSITION_AT_RIGHT_OF_TOP = 4,
 	POSITION_AT_LEFT_OF_BASE = 5,
 	POSITION_AT_RIGHT_OF_BASE = 6,
-	POSITION_AT_LEFT_OF_CENTRE = 7,
-	POSITION_AT_RIGHT_OF_CENTRE = 8
+	POSITION_AT_LEFT_OF_CENTER = 7,
+	POSITION_AT_RIGHT_OF_CENTER = 8
 };
 
 enum {
@@ -92,7 +92,7 @@ private:
 				// for overlap
 	int8 _charSpacing;	// no. of pixels to separate characters along
 				// each line - negative for overlap
-	uint8 _borderPen;	// output pen colour of character borders
+	uint8 _borderPen;	// output pen color of character borders
 
 	uint16 analyseSentence(byte *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line);
 	byte *buildTextSprite(byte *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines);

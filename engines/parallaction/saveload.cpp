@@ -25,6 +25,7 @@
 
 #include "common/savefile.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
 #include "gui/dialog.h"
 #include "gui/saveload.h"
@@ -313,7 +314,7 @@ void SaveLoad_ns::renameOldSavefiles() {
 		if (_saveFileMan->renameSavefile(oldName, newName)) {
 			success++;
 		} else {
-			warning("Error %i (%s) occurred while renaming %s to %s", _saveFileMan->getError(),
+			warning("Error %i (%s) occurred while renaming %s to %s", _saveFileMan->getError().getCode(),
 				_saveFileMan->getErrorDesc().c_str(), oldName.c_str(), newName.c_str());
 		}
 	}

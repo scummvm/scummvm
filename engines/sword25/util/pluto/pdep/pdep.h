@@ -1,16 +1,17 @@
 #ifndef PDEP_H
 #define PDEP_H
 
-#include "lua.h"
-#include "ldo.h"
-#include "lfunc.h"
-#include "lgc.h"
-#include "llimits.h"
-#include "lobject.h"
-#include "lopcodes.h"
-#include "lstate.h"
-#include "lstring.h"
-#include "lauxlib.h"
+#include "sword25/util/lua/lua.h"
+#include "sword25/util/pluto/pdep/lzio.h"
+#include "sword25/util/lua/ldo.h"
+#include "sword25/util/lua/lfunc.h"
+#include "sword25/util/lua/lgc.h"
+#include "sword25/util/lua/llimits.h"
+#include "sword25/util/lua/lobject.h"
+#include "sword25/util/lua/lopcodes.h"
+#include "sword25/util/lua/lstate.h"
+#include "sword25/util/lua/lstring.h"
+#include "sword25/util/lua/lauxlib.h"
 
 
 #define pdep_reallocv(L,b,on,n,e) \

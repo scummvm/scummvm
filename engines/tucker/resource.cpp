@@ -24,6 +24,7 @@
  */
 
 #include "common/file.h"
+#include "common/textconsole.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/flac.h"

@@ -25,10 +25,12 @@
 
 #include "common/debug.h"
 #include "common/endian.h"
+#include "common/stream.h"
+#include "common/textconsole.h"
+#include "common/util.h"
 
 #include "audio/mods/paula.h"
 #include "audio/mods/rjp1.h"
-#include "audio/audiostream.h"
 
 namespace Audio {
 

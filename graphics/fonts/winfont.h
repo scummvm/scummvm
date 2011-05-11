@@ -25,11 +25,11 @@
 #ifndef GRAPHICS_WINFONT_H
 #define GRAPHICS_WINFONT_H
 
+#include "common/str.h"
 #include "graphics/font.h"
 
 namespace Common {
-	class SeekableReadStream;
-	class String;
+class SeekableReadStream;
 }
 
 namespace Graphics {

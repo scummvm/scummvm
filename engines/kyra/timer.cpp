@@ -23,11 +23,9 @@
  *
  */
 
-#include "kyra/kyra_v1.h"
 #include "kyra/timer.h"
 
-#include "common/func.h"
-#include "common/stream.h"
+#include "common/system.h"
 
 namespace Kyra {
 

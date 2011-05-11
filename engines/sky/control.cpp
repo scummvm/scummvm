@@ -26,11 +26,10 @@
 
 #include "common/endian.h"
 #include "common/config-manager.h"
-#include "common/file.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "common/savefile.h"
-#include "common/util.h"
+#include "common/textconsole.h"
 
 #include "gui/message.h"
 #include "sky/compact.h"
@@ -1275,7 +1274,7 @@ void Control::importOldCompact(Compact* destCpt, uint8 **srcPos, uint16 numElems
 		LODSW(*srcPos, destCpt->alt);
 		LODSW(*srcPos, destCpt->request);
 		LODSW(*srcPos, destCpt->spWidth_xx);
-		LODSW(*srcPos, destCpt->spColour);
+		LODSW(*srcPos, destCpt->spColor);
 		LODSW(*srcPos, destCpt->spTextId);
 		LODSW(*srcPos, destCpt->spTime);
 		LODSW(*srcPos, destCpt->arAnimIndex);

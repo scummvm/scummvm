@@ -23,6 +23,9 @@
  *
  */
 
+// FIXME: Avoid using printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "engines/metaengine.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"
@@ -30,6 +33,7 @@
 
 #include "common/config-manager.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "common/fs.h"
 
 #include "gui/ThemeEngine.h"
@@ -262,7 +266,7 @@ void registerDefaults() {
 #define DO_OPTION_INT(shortCmd, longCmd) \
 	DO_OPTION(shortCmd, longCmd) \
 	char *endptr = 0; \
-	int intValue; intValue = (int)strtol(option, &endptr, 0); \
+	strtol(option, &endptr, 0); \
 	if (endptr == NULL || *endptr != 0) usage("--%s: Invalid number '%s'", longCmd, option);
 
 // Use this for boolean options; this distinguishes between "-x" and "-X",
@@ -641,29 +645,30 @@ static Common::Error listSaves(const char *target) {
 	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
 	if (!plugin) {
-		warning("Could not find any plugin to handle target '%s' (gameid '%s')", target, gameid.c_str());
-		return Common::kPluginNotFound;
+		return Common::Error(Common::kEnginePluginNotFound,
+						Common::String::format("target '%s', gameid '%s", target, gameid.c_str()));
 	}
 
 	if (!(*plugin)->hasFeature(MetaEngine::kSupportsListSaves)) {
 		// TODO: Include more info about the target (desc, engine name, ...) ???
-		printf("ScummVM does not support listing save states for target '%s' (gameid '%s') .\n", target, gameid.c_str());
-		result = Common::kPluginNotSupportSaves;
+		return Common::Error(Common::kEnginePluginNotSupportSaves,
+						Common::String::format("target '%s', gameid '%s", target, gameid.c_str()));
 	} else {
 		// Query the plugin for a list of savegames
 		SaveStateList saveList = (*plugin)->listSaves(target);
 
-		// TODO: Include more info about the target (desc, engine name, ...) ???
-		printf("Saves for target '%s' (gameid '%s'):\n", target, gameid.c_str());
-		printf("  Slot Description                                           \n"
-		       "  ---- ------------------------------------------------------\n");
+		if (saveList.size() > 0) {
+			// TODO: Include more info about the target (desc, engine name, ...) ???
+			printf("Save states for target '%s' (gameid '%s'):\n", target, gameid.c_str());
+			printf("  Slot Description                                           \n"
+				   "  ---- ------------------------------------------------------\n");
 
-		if (saveList.size() == 0)
-			result = Common::kNoSavesError;
-
-		for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
-			printf("  %-4s %s\n", x->save_slot().c_str(), x->description().c_str());
-			// TODO: Could also iterate over the full hashmap, printing all key-value pairs
+			for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
+				printf("  %-4s %s\n", x->save_slot().c_str(), x->description().c_str());
+				// TODO: Could also iterate over the full hashmap, printing all key-value pairs
+			}
+		} else {
+			printf("There are no save states for target '%s' (gameid '%s'):\n", target, gameid.c_str());
 		}
 	}
 

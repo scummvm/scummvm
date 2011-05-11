@@ -32,15 +32,15 @@
 
 #ifdef USE_VORBIS
 
-#include "common/debug.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 #include "audio/audiostream.h"
 
 #ifdef USE_TREMOR
-#if defined(__GP32__) // custom libtremor locations
-#include <ivorbisfile.h>
+#ifdef USE_TREMOLO
+#include <tremolo/ivorbisfile.h>
 #else
 #include <tremor/ivorbisfile.h>
 #endif

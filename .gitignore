@@ -24,6 +24,8 @@ lib*.a
 /.cproject
 /.settings
 
+/build
+
 /backends/platform/dc/gui
 /backends/platform/dc/graphics
 /backends/platform/dc/sound

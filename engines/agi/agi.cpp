@@ -32,6 +32,7 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/random.h"
+#include "common/textconsole.h"
 
 #include "engines/util.h"
 

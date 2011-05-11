@@ -24,6 +24,7 @@
  */
 
 #include "common/savefile.h"
+#include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "tsage/globals.h"
@@ -52,7 +53,7 @@ Saver::Saver() {
 Saver::~Saver() {
 	// Internal validation that no saved object is still present
 	int totalLost = 0;
-	for (SynchronisedList<SavedObject *>::iterator i = _saver->_objList.begin(); i != _saver->_objList.end(); ++i) {
+	for (SynchronizedList<SavedObject *>::iterator i = _saver->_objList.begin(); i != _saver->_objList.end(); ++i) {
 		SavedObject *so = *i;
 		if (so)
 			++totalLost;
@@ -64,7 +65,7 @@ Saver::~Saver() {
 
 /*--------------------------------------------------------------------------*/
 
-void Serialiser::syncPointer(SavedObject **ptr, Common::Serializer::Version minVersion,
+void Serializer::syncPointer(SavedObject **ptr, Common::Serializer::Version minVersion,
 		Common::Serializer::Version maxVersion) {
 	int idx;
 	assert(ptr);
@@ -88,7 +89,7 @@ void Serialiser::syncPointer(SavedObject **ptr, Common::Serializer::Version minV
 	}
 }
 
-void Serialiser::validate(const Common::String &s, Common::Serializer::Version minVersion,
+void Serializer::validate(const Common::String &s, Common::Serializer::Version minVersion,
 		Common::Serializer::Version maxVersion) {
 	Common::String tempStr = s;
 	syncString(tempStr, minVersion, maxVersion);
@@ -97,7 +98,7 @@ void Serialiser::validate(const Common::String &s, Common::Serializer::Version m
 		error("Savegame is corrupt");
 }
 
-void Serialiser::validate(int v, Common::Serializer::Version minVersion,
+void Serializer::validate(int v, Common::Serializer::Version minVersion,
 		Common::Serializer::Version maxVersion) {
 	int tempVal = v;
 	syncAsUint32LE(tempVal, minVersion, maxVersion);
@@ -117,9 +118,10 @@ Common::Error Saver::save(int slot, const Common::String &saveName) {
 	_macroSaveFlag = true;
 	_saveSlot = slot;
 
-	// Set up the serialiser
+	// Set up the serializer
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(_vm->generateSaveName(slot));
-	Serialiser serialiser(NULL, saveFile);
+	Serializer serializer(NULL, saveFile);
+	serializer.setSaveVersion(TSAGE_SAVEGAME_VERSION);
 
 	// Write out the savegame header
 	tSageSavegameHeader header;
@@ -128,14 +130,14 @@ Common::Error Saver::save(int slot, const Common::String &saveName) {
 	writeSavegameHeader(saveFile, header);
 
 	// Save out objects that need to come at the start of the savegame
-	for (SynchronisedList<SaveListener *>::iterator i = _listeners.begin(); i != _listeners.end(); ++i) {
-		(*i)->listenerSynchronise(serialiser);
+	for (SynchronizedList<SaveListener *>::iterator i = _listeners.begin(); i != _listeners.end(); ++i) {
+		(*i)->listenerSynchronize(serializer);
 	}
 
 	// Save each registered SaveObject descendant object into the savegame file
-	for (SynchronisedList<SavedObject *>::iterator i = _objList.begin(); i != _objList.end(); ++i) {
-		serialiser.validate((*i)->getClassName());
-		(*i)->synchronise(serialiser);
+	for (SynchronizedList<SavedObject *>::iterator i = _objList.begin(); i != _objList.end(); ++i) {
+		serializer.validate((*i)->getClassName());
+		(*i)->synchronize(serializer);
 	}
 
 	// Save file complete
@@ -151,34 +153,36 @@ Common::Error Saver::save(int slot, const Common::String &saveName) {
 }
 
 Common::Error Saver::restore(int slot) {
-	assert(!getMacroSaveFlag());
+	assert(!getMacroRestoreFlag());
 
 	// Signal any objects registered for notification
 	_loadNotifiers.notify(false);
 
 	// Set fields
-	_macroSaveFlag = true;
+	_macroRestoreFlag = true;
 	_saveSlot = slot;
 	_unresolvedPtrs.clear();
 
-	// Set up the serialiser
+	// Set up the serializer
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(_vm->generateSaveName(slot));
-	Serialiser serialiser(saveFile, NULL);
+	Serializer serializer(saveFile, NULL);
 
 	// Read in the savegame header
 	tSageSavegameHeader header;
 	readSavegameHeader(saveFile, header);
 	delete header.thumbnail;
 
+	serializer.setSaveVersion(header.version);
+
 	// Load in data for objects that need to come at the start of the savegame
 	for (Common::List<SaveListener *>::iterator i = _listeners.begin(); i != _listeners.end(); ++i) {
-		(*i)->listenerSynchronise(serialiser);
+		(*i)->listenerSynchronize(serializer);
 	}
 
 	// Loop through each registered object to load in the data
-	for (SynchronisedList<SavedObject *>::iterator i = _objList.begin(); i != _objList.end(); ++i) {
-		serialiser.validate((*i)->getClassName());
-		(*i)->synchronise(serialiser);
+	for (SynchronizedList<SavedObject *>::iterator i = _objList.begin(); i != _objList.end(); ++i) {
+		serializer.validate((*i)->getClassName());
+		(*i)->synchronize(serializer);
 	}
 
 	// Loop through the remaining data of the file, instantiating new objects.
@@ -186,17 +190,17 @@ Common::Error Saver::restore(int slot) {
 	// of instantiating a saved object registers it with the saver, and will then be resolved to whatever
 	// object originally had a pointer to it as part of the post-processing step
 	Common::String className;
-	serialiser.syncString(className);
+	serializer.syncString(className);
 	while (className != "END") {
 		SavedObject *savedObject;
 		if (!_factoryPtr || ((savedObject = _factoryPtr(className)) == NULL))
 			error("Unknown class name '%s' encountered trying to restore savegame", className.c_str());
 
 		// Populate the contents of the object
-		savedObject->synchronise(serialiser);
+		savedObject->synchronize(serializer);
 
 		// Move to next object
-		serialiser.syncString(className);
+		serializer.syncString(className);
 	}
 
 	// Post-process any unresolved pointers to get the correct pointer
@@ -224,7 +228,7 @@ bool Saver::readSavegameHeader(Common::InSaveFile *in, tSageSavegameHeader &head
 		return false;
 
 	header.version = in->readByte();
-	if (header.version != TSAGE_SAVEGAME_VERSION)
+	if (header.version > TSAGE_SAVEGAME_VERSION)
 		return false;
 
 	// Read in the string
@@ -261,16 +265,8 @@ void Saver::writeSavegameHeader(Common::OutSaveFile *out, tSageSavegameHeader &h
 	out->write(header.saveName.c_str(), header.saveName.size() + 1);
 
 	// Get the active palette
-	uint32 workPal[256];
 	uint8 thumbPalette[256 * 3];
-	const byte *srcP = (const byte *)&workPal[0];
-	byte *destP = &thumbPalette[0];
-	g_system->getPaletteManager()->grabPalette((byte *)workPal, 0, 256);
-	for (int idx = 0; idx < 256; ++idx, ++srcP) {
-		*destP++ = *srcP++;
-		*destP++ = *srcP++;
-		*destP++ = *srcP++;
-	}
+	g_system->getPaletteManager()->grabPalette(thumbPalette, 0, 256);
 
 	// Create a thumbnail and save it
 	Graphics::Surface *thumb = new Graphics::Surface();
@@ -343,7 +339,7 @@ bool Saver::savegamesExist() const {
  */
 int Saver::blockIndexOf(SavedObject *p) {
 	int objIndex = 1;
-	SynchronisedList<SavedObject *>::iterator iObj;
+	Common::List<SavedObject *>::iterator iObj;
 
 	for (iObj = _objList.begin(); iObj != _objList.end(); ++iObj, ++objIndex) {
 		SavedObject *iObjP = *iObj;
@@ -352,6 +348,25 @@ int Saver::blockIndexOf(SavedObject *p) {
 	}
 
 	return 0;
+}
+
+/**
+ * Returns the number of objects in the object list registry
+ */
+int Saver::getObjectCount() const {
+	return _objList.size();
+}
+
+/**
+ * List any currently active objects
+ */
+void Saver::listObjects() {
+	Common::List<SavedObject *>::iterator i;
+	int count = 1;
+
+	for (i = _objList.begin(); i != _objList.end(); ++i, ++count)
+		debug("%d - %s", count, (*i)->getClassName().c_str());
+	debugN("\n");
 }
 
 /**
@@ -364,14 +379,16 @@ void Saver::resolveLoadPointers() {
 
 	// Outer loop through the main object list
 	int objIndex = 1;
-	for (SynchronisedList<SavedObject *>::iterator iObj = _objList.begin(); iObj != _objList.end(); ++iObj, ++objIndex) {
+	for (SynchronizedList<SavedObject *>::iterator iObj = _objList.begin(); iObj != _objList.end(); ++iObj, ++objIndex) {
 		Common::List<SavedObjectRef>::iterator iPtr;
+		SavedObject *pObj = *iObj;
 
 		for (iPtr = _unresolvedPtrs.begin(); iPtr != _unresolvedPtrs.end(); ) {
 			SavedObjectRef &r = *iPtr;
 			if (r._objIndex == objIndex) {
 				// Found an unresolved pointer to this object
-				*r._savedObject = *iObj;
+				SavedObject **objPP = r._savedObject;
+				*objPP = pObj;
 				iPtr = _unresolvedPtrs.erase(iPtr);
 			} else {
 				++iPtr;

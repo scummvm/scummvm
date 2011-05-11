@@ -25,10 +25,12 @@
 #ifndef ENGINES_ADVANCED_DETECTOR_H
 #define ENGINES_ADVANCED_DETECTOR_H
 
-#include "common/fs.h"
-#include "common/error.h"
-
 #include "engines/metaengine.h"
+
+namespace Common {
+class Error;
+class FSList;
+}
 
 
 struct ADGameFileDescription {
@@ -62,8 +64,8 @@ struct ADGameDescription {
 	Common::Platform platform;
 
 	/**
-	 * A bitmask of extra flags. The top 8 bits are reserved for generic flags
-	 * defined in the ADGameFlags. This leaves 24 flags to be used by client
+	 * A bitmask of extra flags. The top 16 bits are reserved for generic flags
+	 * defined in the ADGameFlags. This leaves 16 bits to be used by client
 	 * code.
 	 */
 	uint32 flags;

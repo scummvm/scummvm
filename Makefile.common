@@ -63,14 +63,15 @@ endif
 ifneq ($(findstring $(MAKEFLAGS),s),s)
 ifneq ($(VERBOSE_BUILD),1)
 ifneq ($(VERBOSE_BUILD),yes)
-QUIET_CXX    = @echo '   ' C++ '    ' $@;
-QUIET_AS     = @echo '   ' AS '     ' $@;
-QUIET_NASM   = @echo '   ' NASM '   ' $@;
-QUIET_AR     = @echo '   ' AR '     ' $@;
-QUIET_RANLIB = @echo '   ' RANLIB ' ' $@;
-QUIET_PLUGIN = @echo '   ' PLUGIN ' ' $@;
-QUIET_LINK   = @echo '   ' LINK '   ' $@;
-QUIET        = @
+QUIET_CXX     = @echo '   ' C++ '    ' $@;
+QUIET_AS      = @echo '   ' AS '     ' $@;
+QUIET_NASM    = @echo '   ' NASM '   ' $@;
+QUIET_AR      = @echo '   ' AR '     ' $@;
+QUIET_RANLIB  = @echo '   ' RANLIB ' ' $@;
+QUIET_PLUGIN  = @echo '   ' PLUGIN ' ' $@;
+QUIET_LINK    = @echo '   ' LINK '   ' $@;
+QUIET_WINDRES = @echo '   ' WINDRES '' $@;
+QUIET         = @
 endif
 endif
 endif
@@ -154,8 +155,7 @@ endif
 # Get the current version information
 ######################################################################
 
-# AmigaOS4's grep has a problem with "./" in pathnames, so use cat.
-VERSION = $(shell cat "${srcdir}/base/internal_version.h" | grep SCUMMVM_VERSION | cut -d\" -f2)
+VERSION = $(shell grep SCUMMVM_VERSION "${srcdir}/base/internal_version.h" | cut -d\" -f2)
 VER_MAJOR = $(shell echo $(VERSION) | cut -d. -f 1)
 VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
 VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)

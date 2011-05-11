@@ -24,9 +24,10 @@
  */
 
 
+#include "common/debug.h"
 #include "common/endian.h"
-#include "common/util.h"
 #include "common/file.h"
+#include "common/textconsole.h"
 #include "sky/compact.h"
 #include "gui/message.h"
 #include <stddef.h>	// for ptrdiff_t
@@ -85,7 +86,7 @@ static const uint32 compactOffsets[] = {
 	MK16(Compact, alt),
 	MK16(Compact, request),
 	MK16(Compact, spWidth_xx),
-	MK16(Compact, spColour),
+	MK16(Compact, spColor),
 	MK16(Compact, spTextId),
 	MK16(Compact, spTime),
 	MK16(Compact, arAnimIndex),

@@ -50,7 +50,8 @@ enum {
 enum {
 	GF_DEMO = 1 << 0,
 	GF_CD = 1 << 1,
-	GF_FLOPPY = 1 << 2
+	GF_FLOPPY = 1 << 2,
+	GF_ALT_REGIONS = 1 << 3
 };
 
 enum {
@@ -61,8 +62,8 @@ struct tSageGameDescription;
 
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
-#define SCREEN_CENTRE_X 160
-#define SCREEN_CENTRE_Y 100
+#define SCREEN_CENTER_X 160
+#define SCREEN_CENTER_Y 100
 
 class TSageEngine : public Engine {
 private:
@@ -74,12 +75,11 @@ public:
 
 	MemoryManager _memoryManager;
 	Debugger *_debugger;
-	RlbManager *_tSageManager;
-	RlbManager *_dataManager;
 
 	const char *getGameId() const;
 	uint32 getGameID() const;
 	uint32 getFeatures() const;
+	Common::String getPrimaryFilename() const;
 
 	virtual Common::Error init();
 	virtual Common::Error run();

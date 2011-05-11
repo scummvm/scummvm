@@ -30,7 +30,7 @@
 #define AUDIO_QDM2_H
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Audio {

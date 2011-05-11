@@ -34,7 +34,7 @@
 #include "lure/events.h"
 #include "lure/lure.h"
 
-#if defined(_WIN32_WCE) || defined(__SYMBIAN32__)
+#if defined(_WIN32_WCE) || defined(__SYMBIAN32__) || defined(WEBOS)
 #define LURE_CLICKABLE_MENUS
 #endif
 
@@ -153,7 +153,7 @@ uint8 Menu::execute() {
 						toggleHighlight(_selectedMenu);
 						_surfaceMenu = Surface::newDialog(
 							_selectedMenu->width(), _selectedMenu->numEntries(),
-							_selectedMenu->entries(), false, DEFAULT_TEXT_COLOUR, false);
+							_selectedMenu->entries(), false, DEFAULT_TEXT_COLOR, false);
 						_surfaceMenu->copyToScreen(_selectedMenu->xstart(), MENUBAR_Y_SIZE);
 					}
 
@@ -230,26 +230,26 @@ uint8 Menu::getIndexAt(uint16 x, uint16 y) {
 	return index;
 }
 
-#define MENUBAR_SELECTED_COLOUR 0xf7
+#define MENUBAR_SELECTED_COLOR 0xf7
 
 void Menu::toggleHighlight(MenuRecord *menuRec) {
-	const byte colourList[4] = {4, 2, 0, 0xf7};
-	const byte *colours = LureEngine::getReference().isEGA() ? &colourList[0] : &colourList[2];
+	const byte colorList[4] = {4, 2, 0, 0xf7};
+	const byte *colors = LureEngine::getReference().isEGA() ? &colorList[0] : &colorList[2];
 	byte *addr = _menu->data();
 
 	for (uint16 y=0; y<MENUBAR_Y_SIZE; ++y) {
 		for (uint16 x=menuRec->hsxstart(); x<=menuRec->hsxend(); ++x) {
-			if (addr[x] == colours[0]) addr[x] = colours[1];
-			else if (addr[x] == colours[1]) addr[x] = colours[0];
+			if (addr[x] == colors[0]) addr[x] = colors[1];
+			else if (addr[x] == colors[1]) addr[x] = colors[0];
 		}
 		addr += FULL_SCREEN_WIDTH;
 	}
 }
 
 void Menu::toggleHighlightItem(uint8 index) {
-	const byte colourList[4] = {EGA_DIALOG_TEXT_COLOUR, EGA_DIALOG_WHITE_COLOUR,
-		VGA_DIALOG_TEXT_COLOUR, VGA_DIALOG_WHITE_COLOUR};
-	const byte *colours = LureEngine::getReference().isEGA() ? &colourList[0] : &colourList[2];
+	const byte colorList[4] = {EGA_DIALOG_TEXT_COLOR, EGA_DIALOG_WHITE_COLOR,
+		VGA_DIALOG_TEXT_COLOR, VGA_DIALOG_WHITE_COLOR};
+	const byte *colors = LureEngine::getReference().isEGA() ? &colorList[0] : &colorList[2];
 	byte *p = _surfaceMenu->data().data() + (Surface::textY() +
 		((index - 1) * FONT_HEIGHT)) * _surfaceMenu->width() + Surface::textX();
 	int numBytes =_surfaceMenu->width() - Surface::textX() * 2;
@@ -258,8 +258,8 @@ void Menu::toggleHighlightItem(uint8 index) {
 		byte *pTemp = p;
 
 		for (int x = 0; x < numBytes; ++x, ++pTemp) {
-			if (*pTemp == colours[0]) *pTemp = colours[1];
-			else if (*pTemp == colours[1]) *pTemp = colours[0];
+			if (*pTemp == colors[0]) *pTemp = colors[1];
+			else if (*pTemp == colors[1]) *pTemp = colors[0];
 		}
 	}
 
@@ -475,9 +475,9 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 	Screen &screen = Screen::getReference();
 	Common::Rect r;
 	bool isEGA = LureEngine::getReference().isEGA();
-	byte bgColour = isEGA ? EGA_DIALOG_BG_COLOUR : 0;
-	byte textColour = isEGA ? EGA_DIALOG_TEXT_COLOUR : VGA_DIALOG_TEXT_COLOUR;
-	byte whiteColour = isEGA ? EGA_DIALOG_WHITE_COLOUR : VGA_DIALOG_WHITE_COLOUR;
+	byte bgColor = isEGA ? EGA_DIALOG_BG_COLOR : 0;
+	byte textColor = isEGA ? EGA_DIALOG_TEXT_COLOR : VGA_DIALOG_TEXT_COLOR;
+	byte whiteColor = isEGA ? EGA_DIALOG_WHITE_COLOR : VGA_DIALOG_WHITE_COLOR;
 
 
 	const uint16 yMiddle = FULL_SCREEN_HEIGHT / 2;
@@ -521,7 +521,7 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 	for (;;) {
 		if (refreshFlag) {
 			// Set up the contents of the menu
-			s->fillRect(r, bgColour);
+			s->fillRect(r, bgColor);
 
 			for (int index = 0; index < numLines; ++index) {
 #ifndef LURE_CLICKABLE_MENUS
@@ -533,9 +533,9 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 					s->writeString(Surface::textX(), Surface::textY() + index * FONT_HEIGHT,
 						actions[actionIndex], true,
 #ifndef LURE_CLICKABLE_MENUS
-						(index == (numLines / 2)) ? whiteColour : textColour,
+						(index == (numLines / 2)) ? whiteColor : textColor,
 #else
-						(index == selectedIndex) ? whiteColour : textColour,
+						(index == selectedIndex) ? whiteColor : textColor,
 #endif
 						false);
 				}

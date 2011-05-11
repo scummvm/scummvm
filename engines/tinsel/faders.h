@@ -50,7 +50,7 @@ void FadeOutMedium(SCNHANDLE noFadeTable[]);
 void FadeOutFast(SCNHANDLE noFadeTable[]);
 void FadeInMedium(SCNHANDLE noFadeTable[]);
 void FadeInFast(SCNHANDLE noFadeTable[]);
-void PokeInTagColour();
+void PokeInTagColor();
 
 } // End of namespace Tinsel
 

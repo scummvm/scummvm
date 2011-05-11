@@ -36,10 +36,10 @@ void displayErrorDialog(const char *text) {
 	alert.runModal();
 }
 
-void displayErrorDialog(Common::Error error, const char *extraText) {
+void displayErrorDialog(const Common::Error &error, const char *extraText) {
 	Common::String errorText(extraText);
 	errorText += " ";
-	errorText += _(Common::errorToString(error));
+	errorText += _(error.getDesc());
 	GUI::MessageDialog alert(errorText);
 	alert.runModal();
 }

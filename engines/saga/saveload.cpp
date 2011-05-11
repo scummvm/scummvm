@@ -23,10 +23,8 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "common/file.h"
 #include "graphics/thumbnail.h"
 
 #include "saga/saga.h"
@@ -256,6 +254,8 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 		warning("Can't write file '%s'. (Disk full?)", fileName);
 
 	delete out;
+
+	_interface->resetSaveReminder();
 }
 
 void SagaEngine::load(const char *fileName) {

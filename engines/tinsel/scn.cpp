@@ -24,9 +24,6 @@
  * A (some would say very) small collection of utility functions.
  */
 
-#include "common/endian.h"
-#include "common/util.h"
-
 #include "tinsel/dw.h"
 #include "tinsel/film.h"
 #include "tinsel/handle.h"

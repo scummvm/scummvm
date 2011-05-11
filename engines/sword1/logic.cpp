@@ -25,9 +25,8 @@
 
 #include "common/endian.h"
 #include "common/util.h"
-#include "common/system.h"
-#include "common/events.h"
 #include "common/EventRecorder.h"
+#include "common/textconsole.h"
 
 #include "sword1/logic.h"
 #include "sword1/text.h"

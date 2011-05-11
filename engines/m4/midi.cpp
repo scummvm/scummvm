@@ -31,6 +31,7 @@
 #include "audio/midiparser.h"
 #include "common/config-manager.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 
 namespace M4 {
 

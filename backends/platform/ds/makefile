@@ -3,7 +3,7 @@
 
 
 
-export PATH	:=	$(DEVKITARM)/bin:$(PATH)
+export PATH	:=	$(DEVKITPRO)/devkitARM/bin:$(PATH)
 
 export portdir = $(CURDIR)/arm9
 export srcdir = $(CURDIR)/../../..

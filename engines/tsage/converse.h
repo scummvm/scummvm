@@ -40,7 +40,7 @@ class SequenceManager : public Action {
 private:
 	void setup();
 	uint16 getNextValue();
-	void setMessage(int resNum, int lineNum, int colour, const Common::Point &pt, int width);
+	void setMessage(int resNum, int lineNum, int color, const Common::Point &pt, int width);
 	SequenceManager *globalManager();
 public:
 	SceneText _sceneText;
@@ -58,11 +58,11 @@ public:
 	SequenceManager();
 
 	virtual Common::String getClassName() { return "SequenceManager"; }
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void signal();
 	virtual void process(Event &event);
-	virtual void attached(EventHandler *newOwner, EventHandler *fmt, va_list va);
+	virtual void attached(EventHandler *newOwner, EventHandler *endHandler, va_list va);
 };
 
 
@@ -80,13 +80,13 @@ public:
 	Common::Point _textPos;
 	int _fontNumber;
 	TextAlign _textMode;
-	int _colour1, _colour2, _colour3;
+	int _color1, _color2, _color3;
 	bool _hideObjects;
 public:
 	Speaker();
 
 	virtual Common::String getClassName() { return "Speaker"; }
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void proc12(Action *action);
 	virtual void setText(const Common::String &msg);
@@ -143,19 +143,19 @@ public:
 
 class ConversationChoiceDialog : public ModalDialog {
 public:
-	int _stdColour;
-	int _highlightColour;
+	int _stdColor;
+	int _highlightColor;
 	int _fontNumber;
-	int _savedFgColour;
+	int _savedFgColor;
 	int _savedFontNumber;
 	Common::Array<ChoiceEntry> _choiceList;
 	uint _selectedIndex;
 public:
 	ConversationChoiceDialog();
 
-	void setColours(int stdColour, int highlightColour) {
-		_stdColour = stdColour;
-		_highlightColour = highlightColour;
+	void setColors(int stdColor, int highlightColor) {
+		_stdColor = stdColor;
+		_highlightColor = highlightColor;
 	}
 	void setFontNumber(int fontNum) { _fontNumber = fontNum; }
 	int execute(const Common::StringArray &choiceList);
@@ -168,7 +168,7 @@ public:
 	int _id;
 	uint _scriptOffset;
 
-	virtual void synchronise(Serialiser &s) {
+	virtual void synchronize(Serializer &s) {
 		s.syncAsSint32LE(_id);
 		s.syncAsUint32LE(_scriptOffset);
 	}
@@ -184,7 +184,7 @@ public:
 	uint _speakerOffset;
 public:
 	void load(const byte *dataP);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 };
 
 class StripManager : public Action {
@@ -212,14 +212,14 @@ public:
 	StripManager();
 	virtual ~StripManager();
 
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void signal();
 	virtual void process(Event &event);
 
 	void start(int stripNum, EventHandler *owner, StripCallback *callback = NULL);
 	void setCallback(StripCallback *callback) { _callbackObject = callback; }
-	void setColours(int stdColour, int highlightColour) { _choiceDialog.setColours(stdColour, highlightColour); }
+	void setColors(int stdColor, int highlightColor) { _choiceDialog.setColors(stdColor, highlightColor); }
 	void setFontNumber(int fontNum) { _choiceDialog.setFontNumber(fontNum); }
 	void addSpeaker(Speaker *speaker);
 };

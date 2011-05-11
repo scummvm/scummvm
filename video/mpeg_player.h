@@ -81,7 +81,7 @@ typedef sequence_t mpeg2_sequence_t;
 #define BUFFER_SIZE 4096
 
 namespace Common {
-	class File;
+class File;
 }
 
 class OSystem;

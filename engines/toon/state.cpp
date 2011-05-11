@@ -23,6 +23,8 @@
 *
 */
 
+#include "common/debug.h"
+
 #include "toon/state.h"
 #include "toon/toon.h"
 

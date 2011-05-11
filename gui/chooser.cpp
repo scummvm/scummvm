@@ -22,10 +22,9 @@
  * $Id$
  */
 
-#include "common/system.h"
 #include "common/translation.h"
 #include "gui/chooser.h"
-#include "gui/gui-manager.h"
+#include "gui/widget.h"
 #include "gui/widgets/list.h"
 
 namespace GUI {

@@ -30,6 +30,7 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "graphics/palette.h"
 #include "scumm/scumm.h"
 #include "scumm/util.h"
 #include "scumm/he/intern_he.h"

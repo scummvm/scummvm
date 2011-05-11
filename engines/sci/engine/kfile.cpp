@@ -28,6 +28,7 @@
 #include "common/file.h"
 #include "common/str.h"
 #include "common/savefile.h"
+#include "common/system.h"
 #include "common/translation.h"
 
 #include "gui/saveload.h"

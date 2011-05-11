@@ -33,6 +33,8 @@
 #include "mohawk/myst_stacks/myst.h"
 
 #include "common/events.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "gui/message.h"
 

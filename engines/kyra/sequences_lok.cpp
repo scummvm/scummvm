@@ -25,14 +25,12 @@
 
 #include "kyra/kyra_lok.h"
 #include "kyra/seqplayer.h"
-#include "kyra/screen_lok.h"
 #include "kyra/resource.h"
-#include "kyra/sound.h"
 #include "kyra/sprites.h"
 #include "kyra/wsamovie.h"
 #include "kyra/animator_lok.h"
-#include "kyra/text.h"
 #include "kyra/timer.h"
+#include "kyra/sound.h"
 
 #include "common/system.h"
 #include "common/savefile.h"

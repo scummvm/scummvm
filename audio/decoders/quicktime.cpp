@@ -27,6 +27,7 @@
 #include "common/util.h"
 #include "common/memstream.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/quicktime.h"

@@ -36,6 +36,8 @@
 
 #include "common/events.h"
 
+#include "graphics/palette.h"
+
 namespace Gob {
 
 Util::Util(GobEngine *vm) : _vm(vm) {

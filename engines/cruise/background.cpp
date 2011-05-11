@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/textconsole.h"
+
 #include "cruise/cruise_main.h"
 
 namespace Cruise {

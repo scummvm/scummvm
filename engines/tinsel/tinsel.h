@@ -125,8 +125,8 @@ typedef bool (*KEYFPTR)(const Common::KeyState &);
 
 #define	SCREEN_WIDTH	(_vm->screen().w)	// PC screen dimensions
 #define	SCREEN_HEIGHT	(_vm->screen().h)
-#define	SCRN_CENTRE_X	((SCREEN_WIDTH  - 1) / 2)	// screen centre x
-#define	SCRN_CENTRE_Y	((SCREEN_HEIGHT - 1) / 2)	// screen centre y
+#define	SCRN_CENTER_X	((SCREEN_WIDTH  - 1) / 2)	// screen center x
+#define	SCRN_CENTER_Y	((SCREEN_HEIGHT - 1) / 2)	// screen center y
 #define UNUSED_LINES	48
 #define EXTRA_UNUSED_LINES	3
 //#define	SCREEN_BOX_HEIGHT1	(SCREEN_HEIGHT - UNUSED_LINES)

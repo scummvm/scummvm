@@ -27,7 +27,7 @@
 #define GROOVIE_RESOURCE_H
 
 namespace Common {
-	class MacResManager;
+class MacResManager;
 }
 
 namespace Groovie {
@@ -44,7 +44,8 @@ public:
 	virtual ~ResMan() {}
 
 	Common::SeekableReadStream *open(uint32 fileRef);
-	virtual uint16 getRef(Common::String name, Common::String scriptname = "") = 0;
+
+	virtual uint32 getRef(Common::String name, Common::String scriptname = "") = 0;
 	virtual bool getResInfo(uint32 fileRef, ResInfo &resInfo) = 0;
 
 protected:
@@ -58,7 +59,7 @@ public:
 	ResMan_t7g(Common::MacResManager *macResFork = 0);
 	~ResMan_t7g() {}
 
-	uint16 getRef(Common::String name, Common::String scriptname);
+	uint32 getRef(Common::String name, Common::String scriptname);
 	bool getResInfo(uint32 fileRef, ResInfo &resInfo);
 
 private:
@@ -70,7 +71,7 @@ public:
 	ResMan_v2();
 	~ResMan_v2() {}
 
-	uint16 getRef(Common::String name, Common::String scriptname);
+	uint32 getRef(Common::String name, Common::String scriptname);
 	bool getResInfo(uint32 fileRef, ResInfo &resInfo);
 };
 

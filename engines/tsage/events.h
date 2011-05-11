@@ -82,11 +82,14 @@ public:
 	CursorType _currentCursor;
 
 	void setCursor(CursorType cursorType);
-	void setCursor(Graphics::Surface &cursor, int transColour, const Common::Point &hotspot, CursorType cursorId);
+	void pushCursor(CursorType cursorType);
+	void popCursor();
+	void setCursor(Graphics::Surface &cursor, int transColor, const Common::Point &hotspot, CursorType cursorId);
 	void setCursorFromFlag();
 	CursorType getCursor() const { return _currentCursor; }
 	void showCursor();
 	void hideCursor();
+	bool isCursorVisible() const;
 
 	bool pollEvent();
 	void waitForPress(int eventMask = EVENT_BUTTON_DOWN | EVENT_KEYPRESS);
@@ -97,10 +100,10 @@ public:
 	uint32 getFrameNumber() const { return _frameNumber; }
 	void delay(int numFrames);
 
-	virtual void listenerSynchronise(Serialiser &s) {
+	virtual void listenerSynchronize(Serializer &s) {
 		s.syncAsUint32LE(_frameNumber);
 		s.syncAsUint32LE(_prevDelayFrame);
-		// TODO: Synchronise unknown stuff
+		// TODO: Synchronize unknown stuff
 	}
 };
 

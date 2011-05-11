@@ -32,12 +32,17 @@
 #include "backends/platform/wince/wince-sdl.h"
 #include "backends/mixer/wincesdl/wincesdl-mixer.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #ifdef USE_VORBIS
 #ifndef USE_TREMOR
 #include <vorbis/vorbisfile.h>
 #else
+#ifdef USE_TREMOLO
+#include <tremolo/ivorbisfile.h>
+#else
 #include <tremor/ivorbisfile.h>
+#endif
 #endif
 #endif
 

@@ -26,16 +26,15 @@
 #define GUI_WIDGET_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/str.h"
-#include "common/str-array.h"
 #include "common/keyboard.h"
+#include "graphics/font.h"
 #include "graphics/surface.h"
 #include "gui/object.h"
 #include "gui/ThemeEngine.h"
 
 namespace GUI {
-
-class Dialog;
 
 enum {
 	WIDGET_ENABLED		= 1 <<  0,

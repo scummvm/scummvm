@@ -23,13 +23,10 @@
  *
  */
 
-#include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/file.h"
-#include "common/savefile.h"
-#include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "engines/util.h"
 

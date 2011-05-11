@@ -23,12 +23,9 @@
  *
  */
 
-#include "common/debug.h"
-#include "common/file.h"
-#include "common/memstream.h"
 #include "common/ptr.h"
-#include "common/str.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 #include "common/winexe_ne.h"
 #include "common/winexe_pe.h"
 

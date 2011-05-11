@@ -23,18 +23,11 @@
  *
  */
 
+#include "kyra/seqplayer.h"
+#include "kyra/resource.h"
+#include "kyra/sound.h"
 
 #include "common/system.h"
-
-#include "engines/engine.h"
-
-#include "kyra/resource.h"
-#include "kyra/screen.h"
-#include "kyra/sound.h"
-#include "kyra/wsamovie.h"
-#include "kyra/text.h"
-
-#include "kyra/seqplayer.h"
 
 #define SEQOP(n, x) { n, &SeqPlayer::x, #x }
 

@@ -19,6 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include <malloc.h>
 
 #include <gxflux/gfx_con.h>
@@ -537,10 +539,10 @@ Graphics::Surface *OSystem_Wii::lockScreen() {
 	_surface.h = _gameHeight;
 #ifdef USE_RGB_COLOR
 	_surface.pitch = _gameWidth * _pfGame.bytesPerPixel;
-	_surface.bytesPerPixel = _pfGame.bytesPerPixel;
+	_surface.format = _pfGame;
 #else
 	_surface.pitch = _gameWidth;
-	_surface.bytesPerPixel = 1;
+	_surface.format = Graphics::PixelFormat::createFormatCLUT8();
 #endif
 
 	return &_surface;

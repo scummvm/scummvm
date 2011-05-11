@@ -29,6 +29,8 @@
 #include "audio/softsynth/cms.h"
 #include "audio/mixer.h"
 
+#include "common/system.h"
+
 #include "sci/resource.h"
 
 namespace Sci {

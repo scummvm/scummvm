@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "tsage/ringworld_scenes2.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
@@ -76,8 +77,8 @@ void Scene1000::Action2::signal() {
 		setDelay(10);
 		break;
 	case 1:
-		SceneItem::display(1000, 0, SET_Y, 20, SET_FONT, 2, SET_BG_COLOUR, -1,
-				SET_EXT_BGCOLOUR, 35, SET_WIDTH, 200, SET_KEEP_ONSCREEN, 1, LIST_END);
+		SceneItem::display(1000, 0, SET_Y, 20, SET_FONT, 2, SET_BG_COLOR, -1,
+				SET_EXT_BGCOLOR, 35, SET_WIDTH, 200, SET_KEEP_ONSCREEN, 1, LIST_END);
 		setDelay(180);
 		break;
 	case 2:
@@ -112,28 +113,25 @@ void Scene1000::Action3::signal() {
 		setDelay(240);
 		break;
 	case 5: {
-		// Intro.txt file presence is used to allow user option to skip the introduction
-		_globals->_player.enableControl();
-		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading("Intro.txt");
-		if (!in) {
-			// File not present, so create it
-			Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving("Intro.txt");
-			out->finalize();
-			delete out;
+		const char *SEEN_INTRO = "seen_intro";
+		if (!ConfMan.hasKey(SEEN_INTRO) || !ConfMan.getBool(SEEN_INTRO)) {
+			// First time being played, so show the introduction
+			ConfMan.setBool(SEEN_INTRO, true);
+			ConfMan.flushToDisk();
 			setDelay(1);
 		} else {
-			delete in;
-
 			// Prompt user for whether to start play or watch introduction
+			_globals->_player.enableControl();
+
 			if (MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING) == 0) {
 				_actionIndex = 20;
 				_globals->_soundHandler.proc1(this);
 			} else {
 				setDelay(1);
 			}
-
-			_globals->_player.disableControl();
 		}
+
+		_globals->_player.disableControl();
 		break;
 	}
 	case 6: {
@@ -266,7 +264,7 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 
 		setAction(&_action2);
 
-		_globals->_sceneManager._scene->_sceneBounds.centre(_object1._position.x, _object1._position.y);
+		_globals->_sceneManager._scene->_sceneBounds.center(_object1._position.x, _object1._position.y);
 		_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
 
 		_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
@@ -280,7 +278,7 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 		_object1._moveDiff = Common::Point(2, 2);
 		_object1.setPosition(Common::Point(120, 180));
 
-		_globals->_sceneManager._scene->_sceneBounds.centre(_object1._position.x, _object1._position.y);
+		_globals->_sceneManager._scene->_sceneBounds.center(_object1._position.x, _object1._position.y);
 		_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
 		_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
 
@@ -301,7 +299,7 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 		_globals->_player.hide();
 		_globals->_player.disableControl();
 
-		_globals->_sceneManager._scene->_sceneBounds.centre(_object3._position.x, _object3._position.y);
+		_globals->_sceneManager._scene->_sceneBounds.center(_object3._position.x, _object3._position.y);
 
 		setAction(&_action3);
 	}
@@ -439,7 +437,7 @@ void Scene1001::Action1::signal() {
 		scene->_object6.setStrip2(6);
 		scene->_object6.setFrame2(2);
 		scene->_object6._moveDiff = Common::Point(20, 20);
-		scene->_object6.setPriority2(20);
+		scene->_object6.fixPriority(20);
 		scene->_object6.setPosition(Common::Point(scene->_object2._position.x - 6, scene->_object2._position.y + 7));
 		scene->_object6.animate(ANIM_MODE_5, NULL);
 
@@ -458,7 +456,7 @@ void Scene1001::Action1::signal() {
 		scene->_object7.setFrame2(1);
 		scene->_object7._moveDiff = Common::Point(20, 20);
 		scene->_object7.setPosition(Common::Point(scene->_object3._position.x - 28, scene->_object3._position.y - 11));
-		scene->_object7.setPriority2(200);
+		scene->_object7.fixPriority(200);
 		scene->_object7.animate(ANIM_MODE_5, NULL);
 
 		Common::Point pt(scene->_object7._position.x - 70, scene->_object7._position.y - 70);
@@ -473,7 +471,7 @@ void Scene1001::Action1::signal() {
 		scene->_object5.setVisage(16);
 		scene->_object5.setPosition(Common::Point(306, 93));
 		scene->_object5._strip = 3;
-		scene->_object5.setPriority2(200);
+		scene->_object5.fixPriority(200);
 		scene->_object5.animate(ANIM_MODE_2, NULL);
 		setDelay(30);
 		break;
@@ -521,7 +519,7 @@ void Scene1001::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_speakerCText);
 	_stripManager.addSpeaker(&_speakerCR);
 	_stripManager.addSpeaker(&_speakerSL);
-	_speakerQText._colour1 = 11;
+	_speakerQText._color1 = 11;
 
 	_object3.postInit();
 	_object3.setVisage(16);
@@ -638,7 +636,7 @@ void Scene1250::postInit(SceneObjectList *OwnerList) {
 	_object2.setVisage(1250);
 	_object2.setPosition(Common::Point(126, 69));
 	_object2.setStrip2(2);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2._frame = 1;
 	_object2.setAction(&_action2);
 
@@ -666,7 +664,7 @@ void Scene1400::Action1::signal() {
 		setDelay(5);
 		break;
 	case 1: {
-		SceneItem::display(1400, 0, SET_X, 120, SET_Y, 610, SET_FONT, 2, SET_EXT_BGCOLOUR, 23, SET_KEEP_ONSCREEN, -1, LIST_END);
+		SceneItem::display(1400, 0, SET_X, 120, SET_Y, 610, SET_FONT, 2, SET_EXT_BGCOLOR, 23, SET_KEEP_ONSCREEN, -1, LIST_END);
 
 		Common::Point pt(160, 700);
 		NpcMover *mover = new NpcMover();
@@ -687,7 +685,7 @@ void Scene1400::Action1::signal() {
 	}
 	case 3:
 		SceneItem::display(1400, 2, SET_X, 60, SET_Y, _globals->_sceneManager._scene->_sceneBounds.bottom - 80,
-			SET_FONT, 2, SET_FG_COLOUR, 13, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
+			SET_FONT, 2, SET_FG_COLOR, 13, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
 		setDelay(420);
 		break;
 	case 4:
@@ -696,7 +694,7 @@ void Scene1400::Action1::signal() {
 		break;
 	case 5:
 		SceneItem::display(1400, 3, SET_X, 60, SET_Y, _globals->_sceneManager._scene->_sceneBounds.bottom - 80,
-			SET_FONT, 2, SET_FG_COLOUR, 23, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
+			SET_FONT, 2, SET_FG_COLOR, 23, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
 		setDelay(360);
 		break;
 	case 6:
@@ -722,7 +720,7 @@ void Scene1400::Action1::signal() {
 		_globals->_player.animate(ANIM_MODE_2, NULL);
 
 		SceneItem::display(1400, 4, SET_X, 30, SET_Y, _globals->_player._position.y + 10, SET_FONT, 2,
-			SET_FG_COLOUR, 13, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
+			SET_FG_COLOR, 13, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
 		setDelay(300);
 		break;
 	case 9: {
@@ -771,12 +769,12 @@ void Scene1400::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.setVisage(1401);
 	_globals->_player.animate(ANIM_MODE_2, 0);
 	_globals->_player.setStrip2(4);
-	_globals->_player.setPriority2(4);
+	_globals->_player.fixPriority(4);
 	_globals->_player.disableControl();
 
 	_globals->_player._moveDiff = Common::Point(4, 2);
 	_globals->_player.setPosition(Common::Point(160, 800));
-	_globals->_sceneManager._scene->_sceneBounds.centre(_globals->_player._position);
+	_globals->_sceneManager._scene->_sceneBounds.center(_globals->_player._position);
 	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
 	_globals->_sceneOffset.y = (_globals->_sceneManager._scene->_sceneBounds.top / 100) * 100;
 
@@ -874,7 +872,7 @@ void Scene1500::Action2::signal() {
 	case 1: {
 		scene->_object2.postInit();
 		scene->_object2.setVisage(1502);
-		scene->_object2.setPriority2(255);
+		scene->_object2.fixPriority(255);
 		scene->_object2.changeZoom(5);
 		scene->_object2._frame = 1;
 		scene->_object2._moveDiff = Common::Point(1, 1);
@@ -897,7 +895,7 @@ void Scene1500::Action2::signal() {
 	case 3:
 		scene->_soundHandler.proc4();
 		_globals->_stripNum = 1505;
-		_globals->_sceneManager.changeScene(1505);
+		_globals->_sceneManager.changeScene(2400);
 		break;
 	}
 }

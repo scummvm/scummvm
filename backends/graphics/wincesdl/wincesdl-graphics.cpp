@@ -28,6 +28,7 @@
 #ifdef _WIN32_WCE
 
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "common/translation.h"
 #include "common/mutex.h"
 

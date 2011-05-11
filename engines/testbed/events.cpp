@@ -24,10 +24,17 @@
 
 #include "common/events.h"
 #include "common/keyboard.h"
+#include "common/rect.h"
+#include "common/str.h"
+#include "common/system.h"
+#include "common/util.h"
 
 #include "engines/engine.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
+#include "graphics/surface.h"
 
 #include "testbed/events.h"
 #include "testbed/graphics.h"

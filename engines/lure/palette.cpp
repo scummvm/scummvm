@@ -33,7 +33,7 @@ namespace Lure {
 // Defaults the palette to a full 256 entry palette
 
 Palette::Palette() {
-	_numEntries = GAME_COLOURS;
+	_numEntries = GAME_COLORS;
 	_palette = Memory::allocate(_numEntries * 4);
 	_palette->empty();
 }
@@ -91,7 +91,7 @@ Palette::Palette(uint16 resourceId, PaletteSource paletteSource) {
 		break;
 
 	case RGB64:
-		if (((srcData->size() % 3) != 0) || ((srcData->size() / 3) > GAME_COLOURS))
+		if (((srcData->size() % 3) != 0) || ((srcData->size() / 3) > GAME_COLORS))
 			error("Specified resource %d is not a palette", resourceId);
 
 		_numEntries = srcData->size() / 3;

@@ -32,6 +32,7 @@
 
 #include "gui/message.h"
 #include "common/events.h"
+#include "common/system.h"
 
 namespace Mohawk {
 

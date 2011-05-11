@@ -32,6 +32,8 @@
  *
  */
 
+#include "common/textconsole.h"
+
 #include "sword25/script/luacallback.h"
 #include "sword25/script/luabindhelper.h"
 

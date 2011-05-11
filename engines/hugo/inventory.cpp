@@ -30,6 +30,7 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/system.h"
 
 #include "hugo/hugo.h"

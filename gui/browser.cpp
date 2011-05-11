@@ -23,7 +23,6 @@
  */
 
 #include "gui/browser.h"
-#include "gui/gui-manager.h"
 #include "gui/widgets/list.h"
 
 #include "common/config-manager.h"

@@ -37,6 +37,7 @@
 
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
+#include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 
 #include "audio/mixer_intern.h"
@@ -128,7 +129,7 @@ protected:
 	volatile int _mouseMaxX, _mouseMaxY;
 	int _mouseHotspotX, _mouseHotspotY;
 
-	uint8 _controllerPort;
+	int8 _controllerPort;
 	int8 _mousePort;
 	bool _controllerHasRumble; // Gets enabled if rumble-pak is detected
 

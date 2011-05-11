@@ -33,7 +33,7 @@
 
 class OSystem;
 namespace Common {
-	class SaveFileManager;
+class SaveFileManager;
 }
 
 namespace Sword1 {

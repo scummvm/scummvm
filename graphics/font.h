@@ -26,14 +26,15 @@
 #define GRAPHICS_FONT_H
 
 #include "common/str.h"
-#include "common/array.h"
-#include "graphics/surface.h"
 
 namespace Common {
 class SeekableReadStream;
+template<class T> class Array;
 }
 
 namespace Graphics {
+
+struct Surface;
 
 /** Text alignment modes */
 enum TextAlign {

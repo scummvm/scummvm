@@ -26,6 +26,9 @@
 #include "mohawk/livingbooks.h"
 #include "mohawk/resource.h"
 
+#include "common/system.h"
+#include "common/textconsole.h"
+
 namespace Mohawk {
 
 bool LBValue::operator==(const LBValue &x) const {

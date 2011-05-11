@@ -27,7 +27,6 @@
 #define COMMON_ARCHIVE_H
 
 #include "common/str.h"
-#include "common/hash-str.h"
 #include "common/list.h"
 #include "common/ptr.h"
 #include "common/singleton.h"

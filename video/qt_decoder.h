@@ -35,19 +35,20 @@
 #define VIDEO_QT_DECODER_H
 
 #include "common/scummsys.h"
+#include "common/rational.h"
 
 #include "video/video_decoder.h"
-#include "video/codecs/codec.h"
 
-#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/quicktime_intern.h"
 
 namespace Common {
-	class MacResManager;
+	class Rational;
 }
 
 namespace Video {
+
+class Codec;
 
 /**
  * Decoder for QuickTime videos.

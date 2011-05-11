@@ -48,22 +48,22 @@ public:
 
 	void set(int16 x1, int16 y1, int16 x2, int16 y2);
 	void collapse(int dx, int dy);
-	void centre(int dx, int dy);
-	void centre(const Rect &r);
-	void centre(const Common::Point &pt) { centre(pt.x, pt.y); }
+	void center(int dx, int dy);
+	void center(const Rect &r);
+	void center(const Common::Point &pt) { center(pt.x, pt.y); }
 	void contain(const Rect &r);
 	void resize(const GfxSurface &surface, int xp, int yp, int percent);
 	void expandPanes();
 
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 };
 
-class GfxColours {
+class GfxColors {
 public:
 	uint8 foreground;
 	uint8 background;
 
-	GfxColours() : foreground(0), background(0) {};
+	GfxColors() : foreground(0), background(0) {};
 };
 
 class LineSlice {
@@ -85,7 +85,7 @@ private:
 	Rect _bounds;
 public:
 	Common::Point _centroid;
-	int _transColour;
+	int _transColor;
 public:
 	GfxSurface();
 	GfxSurface(const GfxSurface &s);
@@ -108,14 +108,14 @@ public:
 		copyFrom(src, tempRect, priorityRegion);
 	}
 	void draw(const Common::Point &pt, Rect *rect = NULL);
-	void fillRect(const Rect &bounds, int colour);
+	void fillRect(const Rect &bounds, int color);
 	GfxSurface &operator=(const GfxSurface &s);
 
 	static void loadScreenSection(Graphics::Surface &dest, int xHalf, int yHalf, int xSection, int ySection);
 	static bool displayText(const Common::String &msg, const Common::Point &pt = Common::Point(160, 100));
 };
 
-enum TextAlign {ALIGN_LEFT = 0, ALIGN_CENTRE = 1, ALIGN_RIGHT = 2, ALIGN_JUSTIFIED = 3};
+enum TextAlign {ALIGN_LEFT = 0, ALIGN_CENTER = 1, ALIGN_RIGHT = 2, ALIGN_JUSTIFIED = 3};
 
 class GfxFont {
 	friend class GfxFontBackup;
@@ -131,8 +131,8 @@ public:
 	Common::Point _edgeSize;
 	Common::Point _position;
 	bool _fillFlag;
-	GfxColours _colours;
-	GfxColours _colours2;
+	GfxColors _colors;
+	GfxColors _colors2;
 	uint32 _fontNumber;
 	Common::Point _topLeft;
 public:
@@ -160,7 +160,7 @@ private:
 	GfxSurface *_surface;
 	Common::Point _edgeSize;
 	Common::Point _position;
-	GfxColours _colours;
+	GfxColors _colors;
 	uint32 _fontNumber;
 public:
 	GfxFontBackup();
@@ -177,8 +177,8 @@ public:
 	Rect _bounds;
 	uint16 _flags;
 	uint16 _fontNumber;
-	GfxColours _colours;
-	GfxColours _fontColours;
+	GfxColors _colors;
+	GfxColors _fontColors;
 	uint16 _keycode;
 public:
 	GfxElement();
@@ -275,19 +275,19 @@ public:
 		return _surface.lockSurface();
 	}
 	void unlockSurface() { _surface.unlockSurface(); };
-	void fillArea(int xp, int yp, int colour);
-	void fillRect(const Rect &bounds, int colour);
-	void fillRect2(int xs, int ys, int width, int height, int colour);
+	void fillArea(int xp, int yp, int color);
+	void fillRect(const Rect &bounds, int color);
+	void fillRect2(int xs, int ys, int width, int height, int color);
 	void setFillFlag(bool v) { _font._fillFlag = v; }
 
 	static int getAngle(const Common::Point &p1, const Common::Point &p2);
 
 	// Virtual method table
-	virtual void xorArea(const Common::Rect &r, int colour, int fillMode) {
-		//_surface->xorArea(r, colour, fillMode);
+	virtual void xorArea(const Common::Rect &r, int color, int fillMode) {
+		//_surface->xorArea(r, color, fillMode);
 	}
-	virtual void draw(const Common::Rect &r, void *gfxData, int v1, GfxColours *colours) {
-		//_surface->draw(r, gfxData, v1, colours);
+	virtual void draw(const Common::Rect &r, void *gfxData, int v1, GfxColors *colors) {
+		//_surface->draw(r, gfxData, v1, colors);
 	}
 	virtual void copy(const byte *src, byte *dest, int size) {
 		Common::copy(src, src + size, dest);
@@ -325,7 +325,7 @@ public:
 	void add(GfxElement *element);
 	void addElements(GfxElement *ge, ...);
 	void setTopLeft(int xp, int yp);
-	void setCentre(int xp, int yp);
+	void setCenter(int xp, int yp);
 	void frame() {
 		setDefaults();
 		_bounds.collapse(6, 6);

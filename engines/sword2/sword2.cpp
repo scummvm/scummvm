@@ -34,6 +34,7 @@
 #include "common/EventRecorder.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "engines/metaengine.h"
 #include "engines/util.h"

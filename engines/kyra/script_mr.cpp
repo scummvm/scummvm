@@ -24,14 +24,10 @@
  */
 
 #include "kyra/kyra_mr.h"
-#include "kyra/script.h"
-#include "kyra/screen_mr.h"
 #include "kyra/text_mr.h"
-#include "kyra/wsamovie.h"
-#include "kyra/timer.h"
 #include "kyra/resource.h"
 
-#include "common/endian.h"
+#include "common/system.h"
 
 namespace Kyra {
 

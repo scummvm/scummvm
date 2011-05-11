@@ -30,6 +30,7 @@
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 	:
@@ -487,9 +488,9 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 					SDL_RWclose(file);
 				}
 				if (saveScreenshot(filename))
-					printf("Saved '%s'\n", filename);
+					debug("Saved screenshot '%s'", filename);
 				else
-					printf("Could not save screenshot!\n");
+					warning("Could not save screenshot");
 				return true;
 			}
 		}

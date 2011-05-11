@@ -33,8 +33,8 @@
 #include "scumm/detection.h"
 
 namespace GUI {
-	class ListWidget;
-	class CommandSender;
+class ListWidget;
+class CommandSender;
 }
 
 

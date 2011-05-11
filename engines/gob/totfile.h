@@ -29,7 +29,7 @@
 #include "common/str.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Gob {

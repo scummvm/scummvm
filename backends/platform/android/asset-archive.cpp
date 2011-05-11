@@ -35,6 +35,7 @@
 #include "common/util.h"
 #include "common/archive.h"
 #include "common/debug.h"
+#include "common/textconsole.h"
 
 #include "backends/platform/android/jni.h"
 #include "backends/platform/android/asset-archive.h"

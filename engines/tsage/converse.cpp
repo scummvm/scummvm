@@ -52,7 +52,10 @@ void SequenceManager::setup() {
 	_sceneObject = _objectList[0];
 }
 
-void SequenceManager::synchronise(Serialiser &s) {
+void SequenceManager::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		Action::synchronize(s);
+
 	s.syncAsSint32LE(_resNum);
 	s.syncAsSint32LE(_sequenceOffset);
 	s.syncAsByte(_keepActive);
@@ -150,11 +153,11 @@ void SequenceManager::signal() {
 		case 10: {
 			int resNum= getNextValue();
 			int lineNum = getNextValue();
-			int colour = getNextValue();
+			int color = getNextValue();
 			int xp = getNextValue();
 			int yp = getNextValue();
 			int width = getNextValue();
-			setMessage(resNum, lineNum, colour, Common::Point(xp, yp), width);
+			setMessage(resNum, lineNum, color, Common::Point(xp, yp), width);
 			break;
 		}
 		case 11:
@@ -181,7 +184,7 @@ void SequenceManager::signal() {
 			break;
 		case 15:
 			v1 = getNextValue();
-			_sceneObject->_field7A = v1;
+			_sceneObject->_moveRate = v1;
 			break;
 		case 16:
 			v1 = getNextValue();
@@ -208,7 +211,7 @@ void SequenceManager::signal() {
 			break;
 		case 22:
 			v1 = getNextValue();
-			_sceneObject->setPriority2(v1);
+			_sceneObject->fixPriority(v1);
 			break;
 		case 23:
 			v1 = getNextValue();
@@ -244,6 +247,7 @@ void SequenceManager::signal() {
 		}
 		case 28:
 			_objectIndex = getNextValue();
+			assert((_objectIndex >= 0) && (_objectIndex < 6));
 			_sceneObject = _objectList[_objectIndex];
 			assert(_sceneObject);
 			break;
@@ -272,14 +276,15 @@ void SequenceManager::signal() {
 		case 34: {
 			v1 = getNextValue();
 			v2 = getNextValue();
-			int objIndex1 = getNextValue();
-			int objIndex2 = getNextValue();
-			int objIndex3 = getNextValue();
-			int objIndex4 = getNextValue();
-			int objIndex5 = getNextValue();
+			int objIndex1 = getNextValue() - 1;
+			int objIndex2 = getNextValue() - 1;
+			int objIndex3 = getNextValue() - 1;
+			int objIndex4 = getNextValue() - 1;
+			int objIndex5 = getNextValue() - 1;
+			int objIndex6 = getNextValue() - 1;
 
 			setAction(globalManager(), v2 ? this : NULL, v1, _objectList[objIndex1], _objectList[objIndex2],
-				_objectList[objIndex3], _objectList[objIndex4], _objectList[objIndex5]);
+				_objectList[objIndex3], _objectList[objIndex4], _objectList[objIndex5], _objectList[objIndex6], NULL);
 			break;
 		}
 		default:
@@ -294,17 +299,19 @@ void SequenceManager::process(Event &event) {
 		!event.handled && _globals->_sceneObjects->contains(&_sceneText)) {
 		// Remove the text item
 		_sceneText.remove();
+		setDelay(2);
+		event.handled = true;
 	} else {
 		Action::process(event);
 	}
 }
 
 
-void SequenceManager::attached(EventHandler *newOwner, EventHandler *fmt, va_list va) {
+void SequenceManager::attached(EventHandler *newOwner, EventHandler *endHandler, va_list va) {
 	// Get the sequence number to use
 	_resNum = va_arg(va, int);
 
-	byte *seqData = _vm->_dataManager->getResource(RES_SEQUENCE, _resNum, 0);
+	byte *seqData = _resourceManager->getResource(RES_SEQUENCE, _resNum, 0);
 	uint seqSize = _vm->_memoryManager.getSize(seqData);
 
 	_sequenceData.resize(seqSize);
@@ -320,12 +327,7 @@ void SequenceManager::attached(EventHandler *newOwner, EventHandler *fmt, va_lis
 	}
 
 	setup();
-	// TODO: This is not particulary nice, since dummy is uninitialized.
-	// Since the default Action implementation does not access the va_list
-	// parameter it should be fine though. Still it would be nice to find
-	// a better solution to this.
-	va_list dummy;
-	Action::attached(newOwner, fmt, dummy);
+	Action::attached(newOwner, endHandler, va);
 }
 
 /**
@@ -337,28 +339,30 @@ uint16 SequenceManager::getNextValue() {
 	return result;
 }
 
-void SequenceManager::setMessage(int resNum, int lineNum, int colour, const Common::Point &pt, int width) {
-	_sceneText._colour1 = colour;
-	_sceneText._colour2 = 0;
-	_sceneText._colour3 = 0;
+void SequenceManager::setMessage(int resNum, int lineNum, int color, const Common::Point &pt, int width) {
+	_sceneText._color1 = color;
+	_sceneText._color2 = 0;
+	_sceneText._color3 = 0;
 	_sceneText._fontNumber = 2;
 	_sceneText._width = width;
 
 	// Get the display message
-	Common::String msg = _vm->_dataManager->getMessage(resNum, lineNum);
+	Common::String msg = _resourceManager->getMessage(resNum, lineNum);
 
-	// Get the needed rect, and move it to the desired position
-	Rect textRect;
-	_globals->gfxManager().getStringBounds(msg.c_str(), textRect, width);
+	// Set the text message
+	_sceneText.setup(msg);
+
+	// Move the text to the correct position
+	Rect textRect = _sceneText._bounds;
 	Rect sceneBounds = _globals->_sceneManager._scene->_sceneBounds;
 	sceneBounds.collapse(4, 2);
 	textRect.moveTo(pt);
 	textRect.contain(sceneBounds);
 
-	// Set the text message
-	_sceneText.setup(msg);
 	_sceneText.setPosition(Common::Point(textRect.left, textRect.top));
-	_sceneText.setPriority2(255);
+
+	// Draw the text
+	_sceneText.fixPriority(255);
 	_sceneText.show();
 
 	// Set the delay based on the number of words
@@ -379,8 +383,8 @@ SequenceManager *SequenceManager::globalManager() {
 /*--------------------------------------------------------------------------*/
 
 ConversationChoiceDialog::ConversationChoiceDialog() {
-	_stdColour = 23;
-	_highlightColour = _globals->_scenePalette._colours.background;
+	_stdColor = 23;
+	_highlightColor = _globals->_scenePalette._colors.background;
 	_fontNumber = 1;
 }
 
@@ -443,7 +447,7 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 			if (idx != _selectedIndex) {
 				if (_selectedIndex != _choiceList.size()) {
 					// De-highlight previously selected item
-					_gfxManager._font._colours.foreground = _stdColour;
+					_gfxManager._font._colors.foreground = _stdColor;
 					_gfxManager._font.writeLines(_choiceList[_selectedIndex]._msg.c_str(),
 						_choiceList[_selectedIndex]._bounds, ALIGN_LEFT);
 				}
@@ -452,7 +456,7 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 
 				if (_selectedIndex != _choiceList.size()) {
 					// Highlight the new item
-					_gfxManager._font._colours.foreground = _highlightColour;
+					_gfxManager._font._colors.foreground = _highlightColor;
 					_gfxManager._font.writeLines(_choiceList[idx]._msg.c_str(), _choiceList[idx]._bounds, ALIGN_LEFT);
 				}
 
@@ -477,7 +481,7 @@ void ConversationChoiceDialog::draw() {
 	drawFrame();
 
 	_gfxManager._bounds = tempRect;
-	_gfxManager._font._colours.foreground = _stdColour;
+	_gfxManager._font._colors.foreground = _stdColor;
 	_gfxManager.activate();
 
 	// Loop through writing the conversation choices
@@ -510,12 +514,12 @@ void Obj44::load(const byte *dataP) {
 	_speakerOffset = READ_LE_UINT16(dataP + 0x42);
 }
 
-void Obj44::synchronise(Serialiser &s) {
+void Obj44::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_id);
-	for (int i = 0; i < OBJ44_LIST_SIZE; ++i)
-		s.syncAsSint32LE(_field2[i]);
-	for (int i = 0; i < OBJ44_LIST_SIZE; ++i)
-		_list[OBJ44_LIST_SIZE].synchronise(s);
+	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
+		s.syncAsSint32LE(_field2[idx]);
+	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
+		_list[idx].synchronize(s);
 	s.syncAsUint32LE(_speakerOffset);
 }
 
@@ -535,7 +539,7 @@ void StripManager::start(int stripNum, EventHandler *owner, StripCallback *callb
 
 	_stripNum = stripNum;
 	_callbackObject = callback;
-	_sceneNumber = _globals->_sceneManager._sceneNumber;
+	_sceneNumber = _globals->_sceneManager._scene->_screenNumber;
 	_sceneBounds = _globals->_sceneManager._scene->_sceneBounds;
 	_script.clear();
 
@@ -547,7 +551,7 @@ void StripManager::reset() {
 	_actionIndex = 0;
 	_delayFrames = 0;
 	_owner = NULL;
-	_fmt = NULL;
+	_endHandler = NULL;
 	_field2E6 = false;
 	_stripNum = -1;
 	_obj44Index = 0;
@@ -565,7 +569,7 @@ void StripManager::reset() {
 
 void StripManager::load() {
 	// Get the script
-	byte *script = _vm->_dataManager->getResource(RES_STRIP, _stripNum, 2);
+	byte *script = _resourceManager->getResource(RES_STRIP, _stripNum, 2);
 	uint scriptSize = _vm->_memoryManager.getSize(script);
 
 	_script.resize(scriptSize);
@@ -574,7 +578,7 @@ void StripManager::load() {
 	DEALLOCATE(script);
 
 	// Get the object list
-	byte *obj44List = _vm->_dataManager->getResource(RES_STRIP, _stripNum, 1);
+	byte *obj44List = _resourceManager->getResource(RES_STRIP, _stripNum, 1);
 	int dataSize = _vm->_memoryManager.getSize(obj44List);
 	assert((dataSize % 0x44) == 0);
 
@@ -588,24 +592,27 @@ void StripManager::load() {
 	DEALLOCATE(obj44List);
 }
 
-void StripManager::synchronise(Serialiser &s) {
+void StripManager::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		Action::synchronize(s);
+
 	s.syncAsSint32LE(_stripNum);
 	s.syncAsSint32LE(_obj44Index);
 	s.syncAsSint32LE(_field20);
 	s.syncAsSint32LE(_sceneNumber);
-	_sceneBounds.synchronise(s);
+	_sceneBounds.synchronize(s);
 	SYNC_POINTER(_activeSpeaker);
 	s.syncAsByte(_textShown);
 	s.syncAsByte(_field2E6);
 	s.syncAsSint32LE(_field2E8);
 
-	// Synchronise the item list
+	// Synchronize the item list
 	int arrSize = _obj44List.size();
 	s.syncAsUint16LE(arrSize);
 	if (s.isLoading())
 		_obj44List.resize(arrSize);
 	for (int i = 0; i < arrSize; ++i)
-		_obj44List[i].synchronise(s);
+		_obj44List[i].synchronize(s);
 
 	// Synhcronise script data
 	int scriptSize = _script.size();
@@ -636,7 +643,7 @@ void StripManager::remove() {
 	if (_activeSpeaker)
 		_activeSpeaker->remove();
 
-	if (_sceneNumber != _globals->_sceneManager._scene->_sceneNumber) {
+	if (_sceneNumber != _globals->_sceneManager._scene->_screenNumber) {
 		_globals->_sceneManager._scene->_sceneBounds = _sceneBounds;
 		_globals->_sceneManager._scene->loadScene(_sceneNumber);
 	}
@@ -651,7 +658,7 @@ void StripManager::signal() {
 	}
 
 	if (_obj44Index < 0) {
-		EventHandler *owner = _fmt;
+		EventHandler *owner = _endHandler;
 		int stripNum = ABS(_obj44Index);
 		remove();
 
@@ -700,7 +707,7 @@ void StripManager::signal() {
 				_activeSpeaker->remove();
 			_activeSpeaker = speakerP;
 
-			if ((_activeSpeaker->_newSceneNumber == -1) && (_globals->_sceneManager._scene->_sceneNumber != _sceneNumber)) {
+			if ((_activeSpeaker->_newSceneNumber == -1) && (_globals->_sceneManager._scene->_screenNumber != _sceneNumber)) {
 				_globals->_sceneManager._scene->_sceneBounds = _sceneBounds;
 				_globals->_sceneManager._scene->loadScene(_sceneNumber);
 			}
@@ -736,8 +743,8 @@ void StripManager::process(Event &event) {
 	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
 		if (_obj44Index != 10000) {
 			int currIndex = _obj44Index;
-			while (!_obj44List[_obj44Index + 1]._id) {
-				_obj44Index = getNewIndex(_obj44List[_obj44Index]._id);
+			while (!_obj44List[_obj44Index]._list[1]._id) {
+				_obj44Index = getNewIndex(_obj44List[_obj44Index]._list[0]._id);
 				if ((_obj44Index < 0) || (_obj44Index == 10000))
 					break;
 				currIndex = _obj44Index;
@@ -795,25 +802,28 @@ Speaker::Speaker() : EventHandler() {
 	_textPos = Common::Point(10, 20);
 	_fontNumber = 2;
 	_textMode = ALIGN_LEFT;
-	_colour1 = _colour2 = _colour3 = _globals->_scenePalette._colours.foreground;
+	_color1 = _color2 = _color3 = _globals->_scenePalette._colors.foreground;
 	_action = NULL;
 	_speakerName = "SPEAKER";
 }
 
-void Speaker::synchronise(Serialiser &s) {
-	_fieldA.synchronise(s);
+void Speaker::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		EventHandler::synchronize(s);
+
+	_fieldA.synchronize(s);
 	SYNC_POINTER(_field18);
 	s.syncString(_speakerName);
 	s.syncAsSint32LE(_newSceneNumber);
 	s.syncAsSint32LE(_oldSceneNumber);
-	_sceneBounds.synchronise(s);
+	_sceneBounds.synchronize(s);
 	s.syncAsSint32LE(_textWidth);
 	s.syncAsSint16LE(_textPos.x); s.syncAsSint16LE(_textPos.y);
 	s.syncAsSint32LE(_fontNumber);
 	SYNC_ENUM(_textMode, TextAlign);
-	s.syncAsSint16LE(_colour1);
-	s.syncAsSint16LE(_colour2);
-	s.syncAsSint16LE(_colour3);
+	s.syncAsSint16LE(_color1);
+	s.syncAsSint16LE(_color2);
+	s.syncAsSint16LE(_color3);
 	s.syncAsByte(_hideObjects);
 }
 
@@ -844,15 +854,15 @@ void Speaker::proc12(Action *action) {
 void Speaker::setText(const Common::String &msg) {
 	_globals->_sceneObjects->draw();
 
-	_sceneText._colour1 = _colour1;
-	_sceneText._colour2 = _colour2;
-	_sceneText._colour3 = _colour3;
+	_sceneText._color1 = _color1;
+	_sceneText._color2 = _color2;
+	_sceneText._color3 = _color3;
 	_sceneText._width = _textWidth;
 	_sceneText._fontNumber = _fontNumber;
 	_sceneText._textMode = _textMode;
 	_sceneText.setup(msg);
 	_sceneText.setPosition(_textPos);
-	_sceneText.setPriority2(256);
+	_sceneText.fixPriority(256);
 
 	// Count the number of words (by spaces) in the string
 	const char *msgP = msg.c_str();
@@ -876,8 +886,8 @@ void Speaker::removeText() {
 SpeakerGameText::SpeakerGameText() : Speaker() {
 	_speakerName = "GAMETEXT";
 	_textPos = Common::Point(40, 40);
-	_textMode = ALIGN_CENTRE;
-	_colour1 = 7;
+	_textMode = ALIGN_CENTER;
+	_color1 = 7;
 	_textWidth = 230;
 	_hideObjects = false;
 }
@@ -886,7 +896,7 @@ SpeakerGameText::SpeakerGameText() : Speaker() {
 
 ScreenSpeaker::ScreenSpeaker() : Speaker() {
 	_npc = NULL;
-	_textMode = ALIGN_CENTRE;
+	_textMode = ALIGN_CENTER;
 }
 
 void ScreenSpeaker::setText(const Common::String &msg) {
@@ -897,9 +907,9 @@ void ScreenSpeaker::setText(const Common::String &msg) {
 
 	_globals->gfxManager().getStringBounds(msg.c_str(), textRect, _textWidth);
 	if (_npc) {
-		textRect.centre(_npc->_position.x, _npc->_bounds.top - (textRect.height() / 2 + 10));
+		textRect.center(_npc->_position.x, _npc->_bounds.top - (textRect.height() / 2 + 10));
 	} else {
-		textRect.centre(_globals->_sceneManager._scene->_sceneBounds.left +
+		textRect.center(_globals->_sceneManager._scene->_sceneBounds.left +
 			(_globals->_sceneManager._scene->_sceneBounds.width() / 2),
 			_globals->_sceneManager._scene->_sceneBounds.top);
 	}

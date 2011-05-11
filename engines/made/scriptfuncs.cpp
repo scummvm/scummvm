@@ -23,9 +23,7 @@
  *
  */
 
-#include "common/endian.h"
 #include "common/util.h"
-#include "common/events.h"
 
 #include "backends/audiocd/audiocd.h"
 #include "graphics/cursorman.h"

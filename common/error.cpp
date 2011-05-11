@@ -24,51 +24,68 @@
  */
 
 #include "common/error.h"
-#include "common/util.h"
 
 #include "common/translation.h"
 
 namespace Common {
 
 /**
- * Error Table: Maps error codes to their default descriptions
+ * Maps an error code to equivalent string description.
+ *
+ * @param errorCode error code to be converted
+ * @return a pointer to string description of the error
  */
+static String errorToString(ErrorCode errorCode) {
+	switch (errorCode) {
+	case kNoError:
+		return _s("No error");
+	case kNoGameDataFoundError:
+		return _s("Game data not found");
+	case kUnsupportedGameidError:
+		return _s("Game id not supported");
+	case kUnsupportedColorMode:
+		return _s("Unsupported color mode");
 
-struct ErrorMessage {
-	Error error;
-	const char *errMsg;
-};
+	case kReadPermissionDenied:
+		return _s("Read permission denied");
+	case kWritePermissionDenied:
+		return _s("Write permission denied");
 
-static const ErrorMessage _errMsgTable[] = {
-	{ kInvalidPathError, _s("Invalid Path") },
-	{ kNoGameDataFoundError, _s("Game Data not found") },
-	{ kUnsupportedGameidError, _s("Game Id not supported") },
-	{ kUnsupportedColorMode, _s("Unsupported Color Mode") },
+	case kPathDoesNotExist:
+		return _s("Path does not exist");
+	case kPathNotDirectory:
+		return _s("Path not a directory");
+	case kPathNotFile:
+		return _s("Path not a file");
 
-	{ kReadPermissionDenied, _s("Read permission denied") },
-	{ kWritePermissionDenied, _s("Write permission denied") },
+	case kCreatingFileFailed:
+		return _s("Cannot create file");
+	case kReadingFailed:
+		return _s("Reading data failed");
+	case kWritingFailed:
+		return _s("Writing data failed");
 
-	// The following three overlap a bit with kInvalidPathError and each other. Which to keep?
-	{ kPathDoesNotExist, _s("Path not exists") },
-	{ kPathNotDirectory, _s("Path not a directory") },
-	{ kPathNotFile, _s("Path not a file") },
+	case kEnginePluginNotFound:
+		return _s("Could not find suitable engine plugin");
+	case kEnginePluginNotSupportSaves:
+		return _s("Engine plugin does not support save states");
 
-	{ kCreatingFileFailed, _s("Cannot create file") },
-	{ kReadingFailed, _s("Reading failed") },
-	{ kWritingFailed, _s("Writing data failed") },
+	case kArgumentNotProcessed:
+		return _s("Command line argument not processed");
 
-	{ kUnknownError, _s("Unknown Error") }
-};
-
-const char *errorToString(Error error) {
-
-	for (int i = 0; i < ARRAYSIZE(_errMsgTable); i++) {
-		if (error == _errMsgTable[i].error) {
-			return _errMsgTable[i].errMsg;
-		}
+	case kUnknownError:
+	default:
+		return _s("Unknown error");
 	}
-
-	return _("Unknown Error");
 }
+
+Error::Error(ErrorCode code)
+	: _code(code), _desc(errorToString(code)) {
+}
+
+Error::Error(ErrorCode code, const String &desc)
+	: _code(code), _desc(errorToString(code) + " (" + desc + ")") {
+}
+
 
 } // End of namespace Common

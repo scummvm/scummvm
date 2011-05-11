@@ -27,15 +27,10 @@
 #define SOUND_MIDIDRV_H
 
 #include "common/scummsys.h"
+#include "common/str.h"
 #include "common/timer.h"
 
 class MidiChannel;
-class MusicDevice;
-
-namespace Audio {
-	class Mixer;
-}
-namespace Common { class String; }
 
 /**
  * Music types that music drivers can implement and engines can rely on.

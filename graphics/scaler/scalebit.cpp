@@ -35,7 +35,6 @@
 
 #include "common/scummsys.h"
 
-#include "graphics/scaler/intern.h"
 #include "graphics/scaler/scale2x.h"
 #include "graphics/scaler/scale3x.h"
 

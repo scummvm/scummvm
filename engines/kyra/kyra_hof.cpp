@@ -23,18 +23,13 @@
  *
  */
 
-#include "kyra/kyra_v1.h"
 #include "kyra/kyra_hof.h"
-#include "kyra/screen.h"
 #include "kyra/resource.h"
-#include "kyra/wsamovie.h"
-#include "kyra/sound.h"
-#include "kyra/script.h"
-#include "kyra/script_tim.h"
 #include "kyra/text_hof.h"
 #include "kyra/timer.h"
 #include "kyra/debugger.h"
 #include "kyra/util.h"
+#include "kyra/sound.h"
 
 #include "common/system.h"
 #include "common/config-manager.h"

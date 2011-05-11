@@ -26,6 +26,7 @@
 
 #include "common/endian.h"
 #include "common/events.h"
+#include "common/textconsole.h"
 
 #include "graphics/cursorman.h"
 

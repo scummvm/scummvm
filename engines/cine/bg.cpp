@@ -26,6 +26,7 @@
 
 #include "common/endian.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 
 #include "cine/cine.h"
 #include "cine/various.h"

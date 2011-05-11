@@ -27,10 +27,12 @@
 #define RING_RESOURCES_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/file.h"
 #include "common/list.h"
 #include "common/str.h"
 #include "common/str-array.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 #include "graphics/surface.h"
 
@@ -44,16 +46,6 @@ const int MEMORY_POOL_SIZE = 1000;
 enum ResourceType { RES_LIBRARY, RES_STRIP, RES_IMAGE, RES_PALETTE, RES_VISAGE, RES_SOUND, RES_MESSAGE,
 		RES_FONT, RES_POINTER, RES_BANK, RES_SND_DRIVER, RES_PRIORITY, RES_CONTROL, RES_WALKRGNS,
 		RES_BITMAP, RES_SAVE, RES_SEQUENCE };
-
-#include "common/pack-start.h"	// START STRUCT PACKING
-
-struct RGB8 {
-	uint8 r;
-	uint8 g;
-	uint8 b;
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"	// END STRUCT PACKING
 
 class MemoryHeader {
 public:
@@ -127,7 +119,7 @@ public:
 	byte *lock(uint32 handle);
 	int indexOf(const byte *p);
 	void deallocate(const byte *p);
-	void deallocate(uint16 handle) { assert("TODO"); }
+	void deallocate(uint16 handle) { warning("TODO: MemoryManager::deallocate(handle)"); }
 	uint32 getSize(const byte *p);
 	void incLocks(const byte *p);
 };
@@ -148,7 +140,7 @@ public:
 	int numBits;
 };
 
-class RlbManager {
+class TLib {
 private:
 	Common::StringArray _resStrings;
 	MemoryManager &_memoryManager;
@@ -160,14 +152,29 @@ private:
 	void loadSection(uint32 fileOffset);
 	void loadIndex();
 public:
-	RlbManager(MemoryManager &memManager, const Common::String filename);
-	~RlbManager();
+	TLib(MemoryManager &memManager, const Common::String &filename);
+	~TLib();
 
 	byte *getResource(uint16 id, bool suppressErrors = false);
 	byte *getResource(ResourceType resType, uint16 resNum, uint16 rlbNum, bool suppressErrors = false);
-	void getPalette(int paletteNum, RGB8 *palData, uint *startNum, uint *numEntries);
-	byte *getSubResource(int resNum, int rlbNum, int index, uint *size);
-	Common::String getMessage(int resNum, int lineNum);
+	bool getPalette(int paletteNum, byte *palData, uint *startNum, uint *numEntries);
+	byte *getSubResource(int resNum, int rlbNum, int index, uint *size, bool suppressErrors = false);
+	bool getMessage(int resNum, int lineNum, Common::String &result, bool suppressErrors = false);
+};
+
+class ResourceManager {
+private:
+	Common::Array<TLib *> _libList;
+public:
+	~ResourceManager();
+
+	void addLib(const Common::String &libName);
+
+	byte *getResource(uint16 id, bool suppressErrors = false);
+	byte *getResource(ResourceType resType, uint16 resNum, uint16 rlbNum, bool suppressErrors = false);
+	void getPalette(int paletteNum, byte *palData, uint *startNum, uint *numEntries, bool suppressErrors = false);
+	byte *getSubResource(int resNum, int rlbNum, int index, uint *size, bool suppressErrors = false);
+	Common::String getMessage(int resNum, int lineNum, bool suppressErrors = false);
 };
 
 

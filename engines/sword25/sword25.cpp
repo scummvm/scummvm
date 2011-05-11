@@ -34,10 +34,18 @@
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/algorithm.h"
+#include "common/array.h"
+#include "common/error.h"
+#include "common/fs.h"
+#include "common/singleton.h"
+#include "common/str-array.h"
+#include "common/str.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 #include "engines/util.h"
 
 #include "sword25/sword25.h"
-#include "sword25/kernel/filesystemutil.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/persistenceservice.h"
 #include "sword25/package/packagemanager.h"
@@ -73,10 +81,10 @@ Sword25Engine::~Sword25Engine() {
 
 Common::Error Sword25Engine::run() {
 	// Engine initialisation
-	Common::Error errorCode = appStart();
-	if (errorCode != Common::kNoError) {
+	Common::Error error = appStart();
+	if (error.getCode() != Common::kNoError) {
 		appEnd();
-		return errorCode;
+		return error;
 	}
 
 	// Run the game

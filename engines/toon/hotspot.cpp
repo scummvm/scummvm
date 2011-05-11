@@ -23,6 +23,8 @@
 *
 */
 
+#include "common/debug.h"
+
 #include "toon/hotspot.h"
 #include "toon/tools.h"
 

@@ -23,18 +23,15 @@
  *
  */
 
-#include "common/endian.h"
-#include "common/system.h"
-
 #include "kyra/kyra_lok.h"
-#include "kyra/script.h"
-#include "kyra/screen.h"
 #include "kyra/sprites.h"
 #include "kyra/wsamovie.h"
 #include "kyra/animator_lok.h"
 #include "kyra/text.h"
 #include "kyra/timer.h"
 #include "kyra/sound.h"
+
+#include "common/system.h"
 
 namespace Kyra {
 

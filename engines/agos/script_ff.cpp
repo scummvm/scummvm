@@ -272,7 +272,7 @@ void AGOSEngine_Feeble::setupOpcodes() {
 		OPCODE(os1_unloadZone),
 		OPCODE(o_invalid),
 		OPCODE(os1_unfreezeZones),
-		OPCODE(off_centreScroll),
+		OPCODE(off_centerScroll),
 		/* 188 */
 		OPCODE(os2_isShortText),
 		OPCODE(os2_clearMarks),
@@ -590,9 +590,9 @@ void AGOSEngine_Feeble::off_playVideo() {
 	}
 }
 
-void AGOSEngine_Feeble::off_centreScroll() {
+void AGOSEngine_Feeble::off_centerScroll() {
 	// 187
-	centreScroll();
+	centerScroll();
 }
 
 void AGOSEngine_Feeble::off_resetPVCount() {

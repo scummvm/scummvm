@@ -36,7 +36,7 @@ namespace tSage {
 
 typedef void (*SaveNotifierFn)(bool postFlag);
 
-#define TSAGE_SAVEGAME_VERSION 1
+#define TSAGE_SAVEGAME_VERSION 2
 
 class SavedObject;
 
@@ -51,16 +51,28 @@ struct tSageSavegameHeader {
 
 /*--------------------------------------------------------------------------*/
 
-#define SYNC_POINTER(x) s.syncPointer((SavedObject **)&x)
+// FIXME: workaround to supress spurious strict-alias warnings on older GCC
+// versions. this should be resolved with the savegame rewrite
+#define SYNC_POINTER(x) do { \
+	SavedObject **y = (SavedObject **)((void *)&x); \
+	s.syncPointer(y); \
+} while (false)
+
 #define SYNC_ENUM(FIELD, TYPE) int v_##FIELD = (int)FIELD; s.syncAsUint16LE(v_##FIELD); \
 	if (s.isLoading()) FIELD = (TYPE)v_##FIELD;
 
 /**
- * Derived serialiser class with extra synchronisation types
+ * Derived serializer class with extra synchronisation types
  */
-class Serialiser : public Common::Serializer {
+class Serializer : public Common::Serializer {
 public:
-	Serialiser(Common::SeekableReadStream *in, Common::WriteStream *out) : Common::Serializer(in, out) {}
+	Serializer(Common::SeekableReadStream *in, Common::WriteStream *out) : Common::Serializer(in, out) {}
+
+	// HACK: TSAGE saved games contain a single byte for the savegame version,
+	// thus the normal syncVersion() Serializer member won't work here. In order
+	// to maintain compatibility with older game saves, this method is provided
+	// in order to set the savegame version from a byte
+	void setSaveVersion(byte version) { _version = version; }
 
 	void syncPointer(SavedObject **ptr, Common::Serializer::Version minVersion = 0,
 		Common::Serializer::Version maxVersion = kLastVersion);
@@ -75,13 +87,13 @@ public:
 class Serialisable {
 public:
 	virtual ~Serialisable() {}
-	virtual void synchronise(Serialiser &s) = 0;
+	virtual void synchronize(Serializer &s) = 0;
 };
 
 class SaveListener {
 public:
 	virtual ~SaveListener() {}
-	virtual void listenerSynchronise(Serialiser &s) = 0;
+	virtual void listenerSynchronize(Serializer &s) = 0;
 };
 
 /*--------------------------------------------------------------------------*/
@@ -92,7 +104,7 @@ public:
 	virtual ~SavedObject();
 
 	virtual Common::String getClassName() { return "SavedObject"; }
-	virtual void synchronise(Serialiser &s) {}
+	virtual void synchronize(Serializer &s) {}
 
 	static SavedObject *createInstance(const Common::String &className);
 };
@@ -103,9 +115,9 @@ public:
  * Derived list class with extra functionality
  */
 template<typename T>
-class SynchronisedList : public Common::List<T> {
+class SynchronizedList : public Common::List<T> {
 public:
-	void synchronise(Serialiser &s) {
+	void synchronize(Serializer &s) {
 		int entryCount;
 
 		if (s.isLoading()) {
@@ -170,7 +182,7 @@ typedef SavedObject *(*SavedObjectFactory)(const Common::String &className);
 
 class Saver {
 private:
-	SynchronisedList<SavedObject *> _objList;
+	Common::List<SavedObject *> _objList;
 	FunctionList<bool> _saveNotifiers;
 	FunctionList<bool> _loadNotifiers;
 	Common::List<SaveListener *> _listeners;
@@ -206,6 +218,8 @@ public:
 	bool getMacroSaveFlag() const { return _macroSaveFlag; }
 	bool getMacroRestoreFlag() const { return _macroRestoreFlag; }
 	int blockIndexOf(SavedObject *p);
+	int getObjectCount() const;
+	void listObjects();
 };
 
 extern Saver *_saver;

@@ -24,7 +24,7 @@
  */
 
 /**
- * Internal interfaces to the ADPCM encoders.
+ * Internal interfaces to the ADPCM decoders.
  *
  * These can be used to make custom ADPCM decoder subclasses,
  * or to at least share some common data tables between various
@@ -37,6 +37,7 @@
 #include "audio/audiostream.h"
 #include "common/endian.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 
 namespace Audio {
@@ -52,7 +53,7 @@ protected:
 	uint32 _blockPos[2];
 	const int _rate;
 
-	struct {
+	struct ADPCMStatus {
 		// OKI/IMA
 		struct {
 			int32 last;
@@ -148,24 +149,30 @@ public:
 
 class MSIma_ADPCMStream : public Ima_ADPCMStream {
 public:
-	MSIma_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign, bool invertSamples = false)
-		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign), _invertSamples(invertSamples) {
+	MSIma_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
+		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
+
 		if (blockAlign == 0)
-			error("ADPCMStream(): blockAlign isn't specified for MS IMA ADPCM");
+			error("MSIma_ADPCMStream(): blockAlign isn't specified");
+
+		if (blockAlign % (_channels * 4))
+			error("MSIma_ADPCMStream(): invalid blockAlign");
+
+		_samplesLeft[0] = 0;
+		_samplesLeft[1] = 0;
 	}
 
-	virtual int readBuffer(int16 *buffer, const int numSamples) {
-		if (_channels == 1)
-			return readBufferMSIMA1(buffer, numSamples);
-		else
-			return readBufferMSIMA2(buffer, numSamples);
-	}
+	virtual int readBuffer(int16 *buffer, const int numSamples);
 
-	int readBufferMSIMA1(int16 *buffer, const int numSamples);
-	int readBufferMSIMA2(int16 *buffer, const int numSamples);
+	void reset() {
+		Ima_ADPCMStream::reset();
+		_samplesLeft[0] = 0;
+		_samplesLeft[1] = 0;
+	}
 
 private:
-	bool _invertSamples;    // Some implementations invert the way samples are decoded
+	int16 _buffer[2][8];
+	int _samplesLeft[2];
 };
 
 class MS_ADPCMStream : public ADPCMStream {

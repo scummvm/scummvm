@@ -27,6 +27,8 @@
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 
+#include "common/textconsole.h"
+
 namespace Parallaction {
 
 #define INST_ON			1

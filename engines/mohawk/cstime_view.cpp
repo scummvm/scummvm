@@ -30,6 +30,8 @@
 #include "mohawk/cursors.h"
 
 #include "common/events.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Mohawk {
 

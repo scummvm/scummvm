@@ -34,7 +34,7 @@
 class OSystem;
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 /**

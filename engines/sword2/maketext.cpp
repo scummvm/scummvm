@@ -27,17 +27,17 @@
 
 // MAKETEXT	- Constructs a single-frame text sprite: returns a handle to a
 //		  FLOATING memory block containing the sprite, given a
-//		  null-terminated string, max width allowed, pen colour and
+//		  null-terminated string, max width allowed, pen color and
 //		  pointer to required character set.
 //
 //		  NB 1) The routine does not create a standard file header or
 //		  an anim header for the text sprite - the data simply begins
 //		  with the frame header.
 //
-//		  NB 2) If pen colour is zero, it copies the characters into
-//		  the sprite without remapping the colours.
-//		  ie. It can handle both the standard 2-colour font for speech
-//		  and any multicoloured fonts for control panels, etc.
+//		  NB 2) If pen color is zero, it copies the characters into
+//		  the sprite without remapping the colors.
+//		  ie. It can handle both the standard 2-color font for speech
+//		  and any multicolored fonts for control panels, etc.
 //
 //		  Based on textsprt.c as used for Broken Sword 1, but updated
 //		  for new system by JEL on 9oct96 and updated again (for font
@@ -45,6 +45,7 @@
 
 
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
@@ -58,10 +59,10 @@ namespace Sword2 {
 
 #define MAX_LINES	30	// max character lines in output sprite
 
-#define BORDER_COL	200	// source colour for character border (only
-						// needed for remapping colours)
+#define BORDER_COL	200	// source color for character border (only
+						// needed for remapping colors)
 
-#define LETTER_COL	193	// source colour for bulk of character ( " )
+#define LETTER_COL	193	// source color for bulk of character ( " )
 #define LETTER_COL_PSX1 33
 #define LETTER_COL_PSX2 34
 #define SPACE		' '
@@ -76,9 +77,9 @@ namespace Sword2 {
  *
  * @param  sentence  pointer to a null-terminated string
  * @param  maxWidth  the maximum allowed text sprite width in pixels
- * @param  pen       the text colour, or zero to use the source colours
+ * @param  pen       the text color, or zero to use the source colors
  * @param  fontRes   the font resource id
- * @param  border    the border colour; black by default
+ * @param  border    the border color; black by default
  * @return a handle to a floating memory block containing the text sprite
  * @note   The sentence must contain no leading, trailing or extra spaces.
  *         Out-of-range characters in the string are replaced by a special
@@ -200,7 +201,7 @@ uint16 FontRenderer::analyseSentence(byte *sentence, uint16 maxWidth, uint32 fon
  *
  * @param  sentence  pointer to a null-terminated string
  * @param  fontRes   the font resource id
- * @param  pen       the text colour, or zero to use the source colours
+ * @param  pen       the text color, or zero to use the source colors
  * @param  line      array of LineInfo structures, created by analyseSentence()
  * @param  noOfLines the number of lines, i.e. the number of elements in 'line'
  * @return a handle to a floating memory block containing the text sprite
@@ -448,7 +449,7 @@ byte *FontRenderer::findChar(byte ch, byte *charSet) {
  * @param spritePtr   pointer to the sprite buffer
  * @param spriteWidth the width of the character
  * @param pen         If zero, copy the data directly. Otherwise remap the
- *                    sprite's colours from BORDER_COL to _borderPen and from
+ *                    sprite's colors from BORDER_COL to _borderPen and from
  *                    LETTER_COL to pen.
  */
 
@@ -464,7 +465,7 @@ void FontRenderer::copyChar(byte *charPtr, byte *spritePtr, uint16 spriteWidth, 
 		byte *dest = rowPtr;
 
 		if (pen) {
-			// Use the specified colours
+			// Use the specified colors
 			for (uint j = 0; j < frame.width; j++) {
 				switch (*source++) {
 				case 0:
@@ -489,7 +490,7 @@ void FontRenderer::copyChar(byte *charPtr, byte *spritePtr, uint16 spriteWidth, 
 			}
 		} else {
 			// Pen is zero, so just copy character sprites
-			// directly into text sprite without remapping colours.
+			// directly into text sprite without remapping colors.
 			// Apparently overlapping is never considered here?
 			memcpy(dest, source, frame.width);
 			source += frame.width;
@@ -528,13 +529,13 @@ uint32 FontRenderer::buildNewBloc(byte *ascii, int16 x, int16 y, uint16 width, u
 		frame_head.read(_blocList[i].text_mem);
 
 		switch (justification) {
-		case POSITION_AT_CENTRE_OF_BASE:
+		case POSITION_AT_CENTER_OF_BASE:
 			// This one is always used for SPEECH TEXT; possibly
 			// also for pointer text
 			x -= (frame_head.width / 2);
 			y -= frame_head.height;
 			break;
-		case POSITION_AT_CENTRE_OF_TOP:
+		case POSITION_AT_CENTER_OF_TOP:
 			x -= (frame_head.width / 2);
 			break;
 		case POSITION_AT_LEFT_OF_TOP:
@@ -550,10 +551,10 @@ uint32 FontRenderer::buildNewBloc(byte *ascii, int16 x, int16 y, uint16 width, u
 			x -= frame_head.width;
 			y -= frame_head.height;
 			break;
-		case POSITION_AT_LEFT_OF_CENTRE:
+		case POSITION_AT_LEFT_OF_CENTER:
 			y -= (frame_head.height / 2);
 			break;
-		case POSITION_AT_RIGHT_OF_CENTRE:
+		case POSITION_AT_RIGHT_OF_CENTER:
 			x -= frame_head.width;
 			y -= (frame_head.height) / 2;
 			break;
@@ -613,7 +614,7 @@ void FontRenderer::printTextBlocs() {
 			spriteInfo.type = _blocList[i].type;
 			spriteInfo.blend = 0;
 			spriteInfo.data = _blocList[i].text_mem + FrameHeader::size();
-			spriteInfo.colourTable = 0;
+			spriteInfo.colorTable = 0;
 			spriteInfo.isText = true;
 
 			uint32 rv = _vm->_screen->drawSprite(&spriteInfo);

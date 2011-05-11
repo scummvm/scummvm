@@ -27,6 +27,7 @@
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 
 #include "queen/sound.h"
 #include "queen/input.h"

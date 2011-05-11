@@ -30,8 +30,6 @@
 #include "audio/audiostream.h"
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
-#include "common/config-manager.h"
-#include "common/file.h"
 
 #include "made/music.h"
 

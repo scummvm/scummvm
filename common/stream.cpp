@@ -26,9 +26,7 @@
 #include "common/stream.h"
 #include "common/memstream.h"
 #include "common/substream.h"
-#include "common/bufferedstream.h"
 #include "common/str.h"
-#include "common/util.h"
 
 namespace Common {
 
@@ -205,7 +203,6 @@ uint32 SubReadStream::read(void *dataPtr, uint32 dataSize) {
 	}
 
 	dataSize = _parentStream->read(dataPtr, dataSize);
-	_eos |= _parentStream->eos();
 	_pos += dataSize;
 
 	return dataSize;
@@ -243,6 +240,13 @@ bool SeekableSubReadStream::seek(int32 offset, int whence) {
 	if (ret) _eos = false; // reset eos on successful seek
 
 	return ret;
+}
+
+uint32 SafeSubReadStream::read(void *dataPtr, uint32 dataSize) {
+	// Make sure the parent stream is at the right position
+	seek(0, SEEK_CUR);
+
+	return SeekableSubReadStream::read(dataPtr, dataSize);
 }
 
 

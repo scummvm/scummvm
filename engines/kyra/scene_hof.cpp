@@ -24,12 +24,10 @@
  */
 
 #include "kyra/kyra_hof.h"
-#include "kyra/screen_v2.h"
 #include "kyra/sound.h"
-#include "kyra/wsamovie.h"
 #include "kyra/resource.h"
 
-#include "common/func.h"
+#include "common/system.h"
 
 namespace Kyra {
 

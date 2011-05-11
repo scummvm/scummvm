@@ -28,6 +28,7 @@
 #if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
 
 #include "backends/plugins/elf/memory-manager.h"
+#include "common/debug.h"
 #include "common/util.h"
 #include <malloc.h>
  

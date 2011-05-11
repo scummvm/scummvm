@@ -26,6 +26,8 @@
 #define SCUMM_IMUSE_DIGI_H
 
 #include "common/scummsys.h"
+#include "common/mutex.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 #include "scumm/imuse_digi/dimuse.h"

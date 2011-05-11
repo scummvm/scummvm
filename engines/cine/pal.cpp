@@ -27,6 +27,9 @@
 #include "cine/various.h"
 #include "cine/pal.h"
 #include "common/system.h" // For g_system->getPaletteManager()->setPalette
+#include "common/textconsole.h"
+
+#include "graphics/palette.h"
 
 namespace Cine {
 

@@ -24,6 +24,7 @@
 
 #include "common/memstream.h"
 #include "common/ptr.h"
+#include "common/textconsole.h"
 
 #include "teenagent/inventory.h"
 #include "teenagent/resources.h"

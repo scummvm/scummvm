@@ -1162,7 +1162,7 @@ Common::Error ScummEngine::init() {
 				warning("Starting game without the required 16bit color support.\nYou may experience color glitches");
 				initGraphics(screenWidth, screenHeight, (screenWidth > 320));
 			} else {
-				error("16bit color support is required for this game");
+				return Common::Error(Common::kUnsupportedColorMode, "16bit color support is required for this game");
 			}
 #endif
 		} else {
@@ -1222,7 +1222,7 @@ void ScummEngine::setupScumm() {
 	setupCharsetRenderer();
 
 	// Create and clear the text surface
-	_textSurface.create(_screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, 1);
+	_textSurface.create(_screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, Graphics::PixelFormat::createFormatCLUT8());
 	clearTextSurface();
 
 	// Create the costume renderer
@@ -1648,6 +1648,8 @@ void ScummEngine_v90he::resetScumm() {
 			break;
 
 		case GID_SOCCER:
+		case GID_SOCCERMLS:
+		case GID_SOCCER2004:
 			_logicHE = new LogicHEsoccer(this);
 			break;
 
@@ -2494,7 +2496,7 @@ void ScummEngine_v90he::runBootscript() {
 
 void ScummEngine::startManiac() {
 	debug(0, "stub startManiac()");
-	displayMessage(0, "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' directory inside the Tentacle game directory.");
+	displayMessage(0, "%s", _("Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' directory inside the Tentacle game directory."));
 }
 
 #pragma mark -

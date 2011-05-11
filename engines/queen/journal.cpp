@@ -24,6 +24,7 @@
  */
 
 
+#include "common/error.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "queen/journal.h"

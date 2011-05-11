@@ -32,7 +32,7 @@
 #include "tinsel/events.h"	// for PLR_EVENT, PLR_EVENT
 
 namespace Common {
-	class Serializer;
+class Serializer;
 }
 
 namespace Tinsel {

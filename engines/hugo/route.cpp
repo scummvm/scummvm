@@ -32,6 +32,7 @@
 
 // Find shortest route from hero to destination
 
+#include "common/debug.h"
 #include "common/system.h"
 
 #include "hugo/hugo.h"

@@ -28,29 +28,27 @@
 
 #include "common/scummsys.h"
 #include "common/noncopyable.h"
-#include "common/rect.h"
 #include "common/list.h" // For OSystem::getSupportedFormats()
-
-#include "graphics/palette.h" // for PaletteManager
 #include "graphics/pixelformat.h"
 
 namespace Audio {
-	class Mixer;
+class Mixer;
 }
 
 namespace Graphics {
-	struct Surface;
+struct Surface;
 }
 
 namespace Common {
-	struct Event;
-	class EventManager;
-	class SaveFileManager;
-	class SearchSet;
-	class TimerManager;
-	class SeekableReadStream;
-	class WriteStream;
-	class HardwareKeySet;
+class EventManager;
+struct Rect;
+class SaveFileManager;
+class SearchSet;
+class String;
+class TimerManager;
+class SeekableReadStream;
+class WriteStream;
+class HardwareKeySet;
 }
 
 class AudioCDManager;
@@ -363,7 +361,7 @@ public:
 
 	/**
 	 * Determine which graphics mode is currently active.
-	 * @return the active graphics mode
+	 * @return the ID of the active graphics mode
 	 */
 	virtual int getGraphicsMode() const = 0;
 

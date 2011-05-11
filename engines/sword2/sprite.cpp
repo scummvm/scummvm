@@ -51,7 +51,7 @@ void Screen::mirrorSprite(byte *dst, byte *src, int16 w, int16 h) {
 }
 
 /**
- * This function takes a compressed frame of a sprite with up to 256 colours
+ * This function takes a compressed frame of a sprite with up to 256 colors
  * and decompresses it.
  * @param dst destination buffer
  * @param src source buffer
@@ -82,7 +82,7 @@ int32 Screen::decompressRLE256(byte *dst, byte *src, int32 decompSize) {
 				break;
 			}
 
-			// set the next 'headerByte' pixels to the next colour
+			// set the next 'headerByte' pixels to the next color
 			// at 'source'
 			memset(dst, *src, headerByte);
 
@@ -90,7 +90,7 @@ int32 Screen::decompressRLE256(byte *dst, byte *src, int32 decompSize) {
 			// block
 			dst += headerByte;
 
-			// increment source pointer to just after this colour
+			// increment source pointer to just after this color
 			src++;
 
 			// if we've decompressed all of the data
@@ -135,7 +135,7 @@ int32 Screen::decompressRLE256(byte *dst, byte *src, int32 decompSize) {
 }
 
 /**
- * Unwinds a run of 16-colour data into 256-colour palette data.
+ * Unwinds a run of 16-color data into 256-color palette data.
  */
 
 void Screen::unwindRaw16(byte *dst, byte *src, uint16 blockSize, byte *colTable) {
@@ -143,11 +143,11 @@ void Screen::unwindRaw16(byte *dst, byte *src, uint16 blockSize, byte *colTable)
 	while (blockSize > 1) {
 
 		if (Sword2Engine::isPsx()) {
-			// 1st colour = number in table at position given by upper
+			// 1st color = number in table at position given by upper
 			// nibble of source byte
 			*dst++ = colTable[(*src) & 0x0f];
 
-			// 2nd colour = number in table at position given by lower
+			// 2nd color = number in table at position given by lower
 			// nibble of source byte
 			*dst++ = colTable[(*src) >> 4];
 		} else {
@@ -165,19 +165,19 @@ void Screen::unwindRaw16(byte *dst, byte *src, uint16 blockSize, byte *colTable)
 
 	// if there's a final odd pixel
 	if (blockSize) {
-		// colour = number in table at position given by upper nibble
+		// color = number in table at position given by upper nibble
 		// of source byte
 		*dst++ = colTable[(*src) >> 4];
 	}
 }
 
 /**
- * This function takes a compressed frame of a sprite (with up to 16 colours)
+ * This function takes a compressed frame of a sprite (with up to 16 colors)
  * and decompresses it.
  * @param dst destination buffer
  * @param src source buffer
  * @param decompSize the expected size of the uncompressed sprite
- * @param colTable mapping from the 16 encoded colours to the current palette
+ * @param colTable mapping from the 16 encoded colors to the current palette
  */
 
 int32 Screen::decompressRLE16(byte *dst, byte *src, int32 decompSize, byte *colTable) {
@@ -199,14 +199,14 @@ int32 Screen::decompressRLE16(byte *dst, byte *src, int32 decompSize, byte *colT
 			}
 
 			// set the next 'headerByte' pixels to the next
-			// colour at 'source'
+			// color at 'source'
 			memset(dst, *src, headerByte);
 
 			// increment destination pointer to just after this
 			// block
 			dst += headerByte;
 
-			// increment source pointer to just after this colour
+			// increment source pointer to just after this color
 			src++;
 
 			// if we've decompressed all of the data
@@ -470,13 +470,13 @@ void Screen::deleteSurface(byte *surface) {
  * RDSPR_DISPLAYALIGN	The sprite is drawn relative to the top left corner
  *			of the screen
  * RDSPR_FLIP		The sprite is mirrored
- * RDSPR_TRANS		The sprite has a transparent colour zero
+ * RDSPR_TRANS		The sprite has a transparent color zero
  * RDSPR_BLEND		The sprite is translucent
  * RDSPR_SHADOW		The sprite is affected by the light mask. (Scaled
  *			sprites always are.)
  * RDSPR_NOCOMPRESSION	The sprite data is not compressed
- * RDSPR_RLE16		The sprite data is a 16-colour compressed sprite
- * RDSPR_RLE256		The sprite data is a 256-colour compressed sprite
+ * RDSPR_RLE16		The sprite data is a 16-color compressed sprite
+ * RDSPR_RLE256		The sprite data is a 256-color compressed sprite
  * @param s all the information needed to draw the sprite
  * @warning Sprites will only be drawn onto the background, not over menubar
  * areas.
@@ -538,7 +538,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 				byte *tempBuf2 = (byte *)malloc(s->w * s->h * 10);
 				memset(tempBuf2, 0, s->w * s->h * 2);
 
-				unwindRaw16(tempBuf2, tempBuf, (s->w * (s->h / 2)), s->colourTable);
+				unwindRaw16(tempBuf2, tempBuf, (s->w * (s->h / 2)), s->colorTable);
 				sprite = (byte *)malloc(s->w * s->h);
 
 				if (!sprite) {
@@ -557,7 +557,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 				if (!sprite)
 					return RDERR_OUTOFMEMORY;
 
-				if (decompressRLE16(sprite, s->data, s->w * s->h, s->colourTable)) {
+				if (decompressRLE16(sprite, s->data, s->w * s->h, s->colorTable)) {
 					free(sprite);
 					return RDERR_DECOMPRESSION;
 				}

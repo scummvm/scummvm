@@ -23,18 +23,13 @@
  *
  */
 
-
-#include "common/endian.h"
-#include "common/system.h"
-
-#include "kyra/kyra_v1.h"
-#include "kyra/kyra_v2.h"
-#include "kyra/screen.h"
-#include "kyra/screen_v2.h"
 #include "kyra/wsamovie.h"
 #include "kyra/resource.h"
 
+#include "common/endian.h"
+
 namespace Kyra {
+
 WSAMovie_v1::WSAMovie_v1(KyraEngine_v1 *vm)
     : Movie(vm), _frameData(0), _frameOffsTable(0), _offscreenBuffer(0), _deltaBuffer(0) {
 }

@@ -39,7 +39,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::GUIO_NONE
 		},
 		GType_Ringworld,
-		GF_CD
+		GF_CD | GF_ALT_REGIONS
 	},
 	// Ringworld First Wave English CD version
 	{
@@ -53,7 +53,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::GUIO_NONE
 		},
 		GType_Ringworld,
-		GF_CD
+		GF_CD | GF_ALT_REGIONS
 	},
 	// Ringworld English Floppy version
 	{
@@ -68,6 +68,34 @@ static const tSageGameDescription gameDescriptions[] = {
 		},
 		GType_Ringworld,
 		GF_FLOPPY
+	},
+	// Ringworld English Floppy Demo #1 version
+	{
+		{
+			"ring",
+			"Floppy Demo",
+			AD_ENTRY1s("tsage.rlb", "bf4e8525d0cab84b08b57126092eeacd", 833453),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_Ringworld,
+		GF_FLOPPY | GF_DEMO
+	},
+	// Ringworld English Floppy Demo #2 version
+	{
+		{
+			"ring",
+			"Floppy Demo",
+			AD_ENTRY1s("demoring.rlb", "9ecf48e088a0d475778fab480b3dbdd0", 832206),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_Ringworld,
+		GF_FLOPPY | GF_DEMO | GF_ALT_REGIONS
 	},
 
 	// Blue Force

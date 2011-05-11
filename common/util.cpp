@@ -23,9 +23,9 @@
  */
 
 #include "common/util.h"
-#include "common/system.h"
 #include "common/translation.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
 
 namespace Common {
 
@@ -213,7 +213,7 @@ const PlatformDescription g_platforms[] = {
 	{ "segacd", "segacd", "sega", "SegaCD", kPlatformSegaCD },
 	{ "windows", "win", "win", "Windows", kPlatformWindows },
 	{ "playstation", "psx", "psx", "Sony PlayStation", kPlatformPSX },
-	{ "cdi", "cdi", "cdi", "Phillips CD-i", kPlatformCDi },
+	{ "cdi", "cdi", "cdi", "Philips CD-i", kPlatformCDi },
 	{ "ios", "ios", "ios", "Apple iOS", kPlatformIOS },
 
 	{ 0, 0, 0, "Default", kPlatformUnknown }

@@ -336,7 +336,7 @@ bool SavePartSprite::read(Common::ReadStream &stream) {
 
 	// If it's in the current format, the true color flag has to be the same too
 	if (!_oldFormat)
-		if (stream.readByte() != _trueColor)
+		if ((stream.readByte() != 0) != _trueColor)
 			return false;
 
 	// Sprite data

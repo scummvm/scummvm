@@ -27,6 +27,7 @@
 #define BODGE
 
 #include "common/file.h"
+#include "common/textconsole.h"
 
 #include "tinsel/drives.h"
 #include "tinsel/dw.h"

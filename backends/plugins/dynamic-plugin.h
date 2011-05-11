@@ -27,6 +27,7 @@
 #define BACKENDS_PLUGINS_DYNAMICPLUGIN_H
 
 #include "base/plugins.h"
+#include "common/textconsole.h"
 
 
 class DynamicPlugin : public Plugin {

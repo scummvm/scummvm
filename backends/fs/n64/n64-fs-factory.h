@@ -25,7 +25,6 @@
 #ifndef N64_FILESYSTEM_FACTORY_H
 #define N64_FILESYSTEM_FACTORY_H
 
-#include <romfs.h>
 #include "backends/fs/fs-factory.h"
 
 /**

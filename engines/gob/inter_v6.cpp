@@ -23,9 +23,7 @@
  *
  */
 
-#include "common/endian.h"
 #include "common/str.h"
-#include "common/file.h"
 #include "graphics/dither.h"
 
 #include "gob/gob.h"

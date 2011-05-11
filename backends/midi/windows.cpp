@@ -38,6 +38,8 @@
 #include "audio/mpu401.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
+#include "common/textconsole.h"
+#include "common/error.h"
 
 #include <mmsystem.h>
 

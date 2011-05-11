@@ -26,10 +26,17 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "common/archive.h"
+#include "common/debug.h"
+#include "common/error.h"
+#include "common/keyboard.h"
+#include "common/textconsole.h"
 
 #include "engines/util.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/palette.h"
+#include "gui/debugger.h"
 
 #include "tucker/tucker.h"
 #include "tucker/graphics.h"

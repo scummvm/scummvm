@@ -25,7 +25,9 @@
 
 #include "teenagent/music.h"
 #include "teenagent/resources.h"
+#include "common/debug.h"
 #include "common/ptr.h"
+#include "common/textconsole.h"
 
 namespace TeenAgent {
 

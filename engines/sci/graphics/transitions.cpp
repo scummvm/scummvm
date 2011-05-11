@@ -24,9 +24,8 @@
  */
 
 #include "common/events.h"
-#include "common/util.h"
-#include "common/stack.h"
 #include "common/system.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "sci/sci.h"

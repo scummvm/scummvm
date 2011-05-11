@@ -33,7 +33,10 @@
 #define SOUND_MODS_INFOGRAMES_H
 
 #include "audio/mods/paula.h"
-#include "common/stream.h"
+
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Audio {
 

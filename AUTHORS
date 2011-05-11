@@ -183,6 +183,10 @@ ScummVM Team
     Touche:
        Gregory Montoir
 
+    TsAGE:
+       Paul Gilbert
+       Arnaud Boutonne
+
     Tucker:
        Gregory Montoir
 
@@ -417,7 +421,7 @@ Other contributions
      David Jensen          - SVG logo conversion
      Jean Marc Gimenez     - ScummVM logo
      Raina                 - ScummVM forum buttons
-     William Claydon       - Skins for doxygen and wiki
+     William Claydon       - Skins for doxygen, buildbot and wiki
 
   Code contributions
   ------------------
@@ -555,7 +559,7 @@ Special thanks to
    Drascula: The Vampire Strikes Back with us and his generosity with
    freewaring the game.
 
-   David P. Gray from Gray Design Associate for sharing the source code of
+   David P. Gray from Gray Design Associates for sharing the source code of
    the Hugo trilogy.
 
    Broken Sword 2.5 team for providing sources of their engine and their

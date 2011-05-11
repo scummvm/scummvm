@@ -128,7 +128,7 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 	debugC(kDebugLevelBresen, "c: %d, tmp: %d", c, tmp);
 
 	// Compute x step
-	if (tmp != 0)
+	if (tmp != 0 && dx != 0)
 		vx = (int16)((float)(dx * sqrt(gy / (2.0 * tmp))));
 	else
 		vx = 0;

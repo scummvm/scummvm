@@ -15,11 +15,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.3.0git</string>
+	<string>1.4.0git</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.3.0git</string>
+	<string>1.4.0git</string>
 	<key>CFBundleIconFile</key>
 	<string>icon.png</string>
 	<key>CFBundleIconFiles</key>

@@ -304,7 +304,7 @@ int BalloonManager_ns::createBalloon(int16 w, int16 h, int16 winding, uint16 bor
 
 	int16 real_h = (winding == -1) ? h : h + 9;
 	balloon->surface = new Graphics::Surface;
-	balloon->surface->create(w, real_h, 1);
+	balloon->surface->create(w, real_h, Graphics::PixelFormat::createFormatCLUT8());
 	balloon->surface->fillRect(Common::Rect(w, real_h), BALLOON_TRANSPARENT_COLOR_NS);
 
 	Common::Rect r(w, h);
@@ -578,7 +578,7 @@ Graphics::Surface *BalloonManager_br::expandBalloon(Frames *data, int frameNum) 
 	rect.translate(-rect.left, -rect.top);
 
 	Graphics::Surface *surf = new Graphics::Surface;
-	surf->create(rect.width(), rect.height(), 1);
+	surf->create(rect.width(), rect.height(), Graphics::PixelFormat::createFormatCLUT8());
 
 	_vm->_gfx->unpackBlt(rect, data->getData(frameNum), data->getRawSize(frameNum), surf, LAYER_FOREGROUND, 100, BALLOON_TRANSPARENT_COLOR_BR);
 
@@ -670,7 +670,7 @@ int BalloonManager_br::createBalloon(int16 w, int16 h, uint16 borderThickness) {
 	Balloon *balloon = &_intBalloons[id];
 
 	balloon->surface = new Graphics::Surface;
-	balloon->surface->create(w, h, 1);
+	balloon->surface->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 
 	Common::Rect rect(w, h);
 	balloon->surface->fillRect(rect, 1);

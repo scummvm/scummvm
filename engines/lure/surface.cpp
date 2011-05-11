@@ -123,21 +123,21 @@ void Surface::getDialogBounds(Common::Point &size, int charWidth, int numLines, 
 // Forms a dialog encompassing the entire surface
 
 void Surface::egaCreateDialog(bool blackFlag) {
-	byte lineColours1[3] = {6, 0, 9};
-	byte lineColours2[3] = {7, 0, 12};
+	byte lineColors1[3] = {6, 0, 9};
+	byte lineColors2[3] = {7, 0, 12};
 
 	// Surface contents
-	data().setBytes(blackFlag ? 0 : EGA_DIALOG_BG_COLOUR, 0, data().size());
+	data().setBytes(blackFlag ? 0 : EGA_DIALOG_BG_COLOR, 0, data().size());
 
 	// Top/bottom lines
 	for (int y = 2; y >= 0; --y) {
-		data().setBytes(lineColours1[y], y * width(), width());
-		data().setBytes(lineColours2[y], (height() - y - 1) * width(), width());
+		data().setBytes(lineColors1[y], y * width(), width());
+		data().setBytes(lineColors2[y], (height() - y - 1) * width(), width());
 
 		for (int p = y + 1; p < height() - y; ++p) {
 			byte *line = data().data() + p * width();
-			*(line + y) = lineColours2[y];
-			*(line + width() - y - 1) = lineColours1[y];
+			*(line + y) = lineColors2[y];
+			*(line + width() - y - 1) = lineColors1[y];
 		}
 	}
 }
@@ -220,10 +220,10 @@ void Surface::loadScreen(MemoryBlock *rawData) {
 	delete tmpScreen;
 }
 
-int Surface::writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, int colour) {
+int Surface::writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, int color) {
 	byte *const addr = _data->data() + (y * _width) + x;
-	if (colour == DEFAULT_TEXT_COLOUR)
-		colour = LureEngine::getReference().isEGA() ? EGA_DIALOG_TEXT_COLOUR : VGA_DIALOG_TEXT_COLOUR;
+	if (color == DEFAULT_TEXT_COLOR)
+		color = LureEngine::getReference().isEGA() ? EGA_DIALOG_TEXT_COLOR : VGA_DIALOG_TEXT_COLOR;
 
 	if ((ascii < 32) || (ascii >= 32 + numFontChars))
 		error("Invalid ascii character passed for display '%d'", ascii);
@@ -239,7 +239,7 @@ int Surface::writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, int co
 
 		for (int x1 = 0; x1 < 8; ++x1, ++pDest) {
 			if (v & 0x80) {
-				*pDest = colour;
+				*pDest = color;
 				if (x1+1 > charWidth) charWidth = x1 + 1;
 			}
 			else if (!transparent) *pDest = 0;
@@ -251,16 +251,16 @@ int Surface::writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, int co
 }
 
 void Surface::writeString(uint16 x, uint16 y, Common::String line, bool transparent,
-						  int colour, bool varLength) {
-	writeSubstring(x, y, line, line.size(), transparent, colour, varLength);
+						  int color, bool varLength) {
+	writeSubstring(x, y, line, line.size(), transparent, color, varLength);
 }
 
 void Surface::writeSubstring(uint16 x, uint16 y, Common::String line, int len,
-		  bool transparent, int colour, bool varLength) {
+		  bool transparent, int color, bool varLength) {
 
 	const char *sPtr = line.c_str();
-	if (colour == DEFAULT_TEXT_COLOUR)
-		colour = LureEngine::getReference().isEGA() ? EGA_DIALOG_TEXT_COLOUR : VGA_DIALOG_TEXT_COLOUR;
+	if (color == DEFAULT_TEXT_COLOR)
+		color = LureEngine::getReference().isEGA() ? EGA_DIALOG_TEXT_COLOR : VGA_DIALOG_TEXT_COLOR;
 
 	for (int index = 0; (index < len) && (*sPtr != '\0'); ++index, ++sPtr) {
 		int charSize = varLength ? fontSize[(uint8)*sPtr - 32] + 2 : FONT_WIDTH;
@@ -269,7 +269,7 @@ void Surface::writeSubstring(uint16 x, uint16 y, Common::String line, int len,
 			break;
 
 		// Write next character
-		writeChar(x, y, (uint8) *sPtr, transparent, colour);
+		writeChar(x, y, (uint8) *sPtr, transparent, color);
 
 		// Move to after the character in preparation for the next character
 		x += charSize;
@@ -312,7 +312,7 @@ void Surface::copyTo(Surface *dest, uint16 x, uint16 y) {
 }
 
 void Surface::copyTo(Surface *dest, const Common::Rect &srcBounds,
-					 uint16 destX, uint16 destY, int transparentColour) {
+					 uint16 destX, uint16 destY, int transparentColor) {
 	int numBytes = srcBounds.right - srcBounds.left + 1;
 	if (destX + numBytes > dest->width())
 		numBytes = dest->width() - destX;
@@ -322,8 +322,8 @@ void Surface::copyTo(Surface *dest, const Common::Rect &srcBounds,
 		const uint32 srcPos = (srcBounds.top + y) * _width + srcBounds.left;
 		const uint32 destPos = (destY+y) * dest->width() + destX;
 
-		if (transparentColour == -1) {
-			// No trnnsparent colour, so copy all the bytes of the line
+		if (transparentColor == -1) {
+			// No trnnsparent color, so copy all the bytes of the line
 			dest->data().copyFrom(_data, srcPos, destPos, numBytes);
 		} else {
 			byte *pSrc = _data->data() + srcPos;
@@ -331,7 +331,7 @@ void Surface::copyTo(Surface *dest, const Common::Rect &srcBounds,
 
 			int bytesCtr = numBytes;
 			while (bytesCtr-- > 0) {
-				if (*pSrc != (uint8) transparentColour)
+				if (*pSrc != (uint8) transparentColor)
 					*pDest = *pSrc;
 				++pSrc;
 				++pDest;
@@ -347,12 +347,12 @@ void Surface::copyFrom(MemoryBlock *src, uint32 destOffset) {
 }
 
 // fillRect
-// Fills a rectangular area with a colour
+// Fills a rectangular area with a color
 
-void Surface::fillRect(const Common::Rect &r, uint8 colour) {
+void Surface::fillRect(const Common::Rect &r, uint8 color) {
 	for (int yp = r.top; yp <= r.bottom; ++yp) {
 		byte *const addr = _data->data() + (yp * _width) + r.left;
-		memset(addr, colour, r.width());
+		memset(addr, color, r.width());
 	}
 }
 
@@ -464,7 +464,7 @@ void Surface::wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines)
 }
 
 Surface *Surface::newDialog(uint16 width, uint8 numLines, const char **lines, bool varLength,
-							int colour, bool squashedLines) {
+							int color, bool squashedLines) {
 	Common::Point size;
 	Surface::getDialogBounds(size, 0, numLines, squashedLines);
 
@@ -473,21 +473,21 @@ Surface *Surface::newDialog(uint16 width, uint8 numLines, const char **lines, bo
 
 	uint16 yP = Surface::textY();
 	for (uint8 ctr = 0; ctr < numLines; ++ctr) {
-		s->writeString(Surface::textX(), yP, lines[ctr], true, colour, varLength);
+		s->writeString(Surface::textX(), yP, lines[ctr], true, color, varLength);
 		yP += squashedLines ? FONT_HEIGHT - 1 : FONT_HEIGHT;
 	}
 
 	return s;
 }
 
-Surface *Surface::newDialog(uint16 width, const char *line, int colour) {
+Surface *Surface::newDialog(uint16 width, const char *line, int color) {
 	char **lines;
 	char *lineCopy = strdup(line);
 	uint8 numLines;
 	wordWrap(lineCopy, width - (Surface::textX() * 2), lines, numLines);
 
 	// Create the dialog
-	Surface *result = newDialog(width, numLines, const_cast<const char **>(lines), true, colour);
+	Surface *result = newDialog(width, numLines, const_cast<const char **>(lines), true, color);
 
 	// Deallocate used resources
 	free(lines);
@@ -510,7 +510,7 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 	Mouse &mouse = Mouse::getReference();
 	Events &events = Events::getReference();
 	Screen &screen = Screen::getReference();
-	uint8 bgColour = *(screen.screen().data().data() + (y * FULL_SCREEN_WIDTH) + x);
+	uint8 bgColor = *(screen.screen().data().data() + (y * FULL_SCREEN_WIDTH) + x);
 	Common::String newLine(line);
 	bool abortFlag = false;
 	bool refreshFlag = false;
@@ -527,7 +527,7 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 
 	while (!abortFlag) {
 		// Display the string
-		screen.screen().writeString(x, y, newLine, true, DEFAULT_TEXT_COLOUR, varLength);
+		screen.screen().writeString(x, y, newLine, true, DEFAULT_TEXT_COLOR, varLength);
 		screen.update();
 		int stringSize = textWidth(newLine.c_str());
 
@@ -545,7 +545,7 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 					if ((keycode == Common::KEYCODE_RETURN) || (keycode == Common::KEYCODE_KP_ENTER)) {
 						// Return character
 						screen.screen().fillRect(
-							Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
+							Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColor);
 						screen.update();
 						newLine.deleteLastChar();
 						line = newLine;
@@ -556,7 +556,7 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 					else if (keycode == Common::KEYCODE_ESCAPE) {
 						// Escape character
 						screen.screen().fillRect(
-							Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
+							Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColor);
 						screen.update();
 						abortFlag = true;
 					} else if (keycode == Common::KEYCODE_BACKSPACE) {
@@ -564,14 +564,14 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 						if (newLine.size() == 1) continue;
 
 						screen.screen().fillRect(
-							Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
+							Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColor);
 						newLine.deleteChar(newLine.size() - 2);
 						refreshFlag = true;
 
 					} else if ((ch >= ' ') && (stringSize + 8 < maxSize)) {
 						if (((ch >= '0') && (ch <= '9')) || !isNumeric) {
 							screen.screen().fillRect(
-								Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
+								Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColor);
 							newLine.insertChar(ch, newLine.size() - 1);
 							refreshFlag = true;
 						}
@@ -818,7 +818,7 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 
 	// Write out the character name
 	uint16 charWidth = Surface::textWidth(srcCharName);
-	byte white = LureEngine::getReference().isEGA() ?  EGA_DIALOG_WHITE_COLOUR : VGA_DIALOG_WHITE_COLOUR;
+	byte white = LureEngine::getReference().isEGA() ?  EGA_DIALOG_WHITE_COLOR : VGA_DIALOG_WHITE_COLOR;
 	_surface->writeString((TALK_DIALOG_WIDTH - charWidth) / 2, TALK_DIALOG_EDGE_SIZE + 2,
 		srcCharName, true, white);
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "TalkDialog end");
@@ -903,14 +903,14 @@ TalkDialog *TalkDialog::loadFromStream(Common::ReadStream *stream) {
 void SaveRestoreDialog::toggleHightlight(int xs, int xe, int ys, int ye) {
 	Screen &screen = Screen::getReference();
 	byte *addr = screen.screen().data().data() + FULL_SCREEN_WIDTH * ys + xs;
-	const byte colourList[4] = {EGA_DIALOG_TEXT_COLOUR, EGA_DIALOG_WHITE_COLOUR,
-		VGA_DIALOG_TEXT_COLOUR, VGA_DIALOG_WHITE_COLOUR};
-	const byte *colours = LureEngine::getReference().isEGA() ? &colourList[0] : &colourList[2];
+	const byte colorList[4] = {EGA_DIALOG_TEXT_COLOR, EGA_DIALOG_WHITE_COLOR,
+		VGA_DIALOG_TEXT_COLOR, VGA_DIALOG_WHITE_COLOR};
+	const byte *colors = LureEngine::getReference().isEGA() ? &colorList[0] : &colorList[2];
 
 	for (int y = 0; y < ye - ys + 1; ++y, addr += FULL_SCREEN_WIDTH) {
 		for (int x = 0; x < xe - xs + 1; ++x) {
-			if (addr[x] == colours[0]) addr[x] = colours[1];
-			else if (addr[x] == colours[1]) addr[x] = colours[0];
+			if (addr[x] == colors[0]) addr[x] = colors[1];
+			else if (addr[x] == colors[1]) addr[x] = colors[0];
 		}
 	}
 
@@ -951,9 +951,9 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 	// Create the outer dialog and dividing line
 	s->createDialog();
 	byte *pDest = s->data().data() + (s->width() * SR_SEPARATOR_Y) + SR_SEPARATOR_X;
-	uint8 rowColours[5] = {*(pDest-2), *(pDest-1), *(pDest-1), *(pDest-2), *(pDest+1)};
+	uint8 rowColors[5] = {*(pDest-2), *(pDest-1), *(pDest-1), *(pDest-2), *(pDest+1)};
 	for (int y = 0; y < SR_SEPARATOR_HEIGHT; ++y, pDest += s->width())
-		memset(pDest, rowColours[y], s->width() - 12);
+		memset(pDest, rowColors[y], s->width() - 12);
 
 	// Create title line
 	Common::String title(res.stringList().getString(
@@ -1248,7 +1248,7 @@ struct ItemDesc {
 	int16 x, y;
 	uint16 width, height;
 	uint16 animId;
-	uint8 startColour;
+	uint8 startColor;
 };
 
 #define PROT_SPR_HEADER 0x1830
@@ -1286,7 +1286,7 @@ CopyProtectionDialog::CopyProtectionDialog() {
 			Hotspot *h = new Hotspot();
 			h->setPosition(ptr->x, ptr->y);
 			h->setSize(ptr->width, ptr->height);
-			h->setColourOffset(ptr->startColour);
+			h->setColorOffset(ptr->startColor);
 			h->setAnimation(ptr->animId);
 
 			_hotspots.push_back(HotspotsList::value_type(h));

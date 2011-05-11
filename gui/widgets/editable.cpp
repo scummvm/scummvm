@@ -22,9 +22,11 @@
  * $Id$
  */
 
-#include "common/events.h"
+#include "common/rect.h"
+#include "common/system.h"
 #include "gui/widgets/editable.h"
 #include "gui/gui-manager.h"
+#include "graphics/font.h"
 
 namespace GUI {
 

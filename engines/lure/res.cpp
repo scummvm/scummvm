@@ -432,7 +432,7 @@ byte *Resources::getCursor(uint8 cursorNum) {
 		}
 	}
 
-	// Post-process the cells to adjust the colour
+	// Post-process the cells to adjust the color
 	for (int index = 0; index < CURSOR_SIZE; ++index) {
 		if (_cursor[index] == 3) _cursor[index] = 15;
 	}

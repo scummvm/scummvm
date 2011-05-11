@@ -29,7 +29,7 @@
 #define	SWORD2_RESMAN_H
 
 namespace Common {
-	class File;
+class File;
 }
 
 #define MAX_MEM_CACHE (8 * 1024 * 1024) // we keep up to 8 megs of resource data files in memory

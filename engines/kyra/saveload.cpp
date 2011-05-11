@@ -23,14 +23,14 @@
  *
  */
 
-#include "common/endian.h"
-#include "common/savefile.h"
-#include "common/system.h"
-#include "graphics/thumbnail.h"
-#include "graphics/surface.h"
-
 #include "kyra/kyra_v1.h"
 #include "kyra/util.h"
+
+#include "common/savefile.h"
+#include "common/system.h"
+
+#include "graphics/thumbnail.h"
+#include "graphics/surface.h"
 
 #define CURRENT_SAVE_VERSION 16
 
@@ -257,7 +257,9 @@ void KyraEngine_v1::checkAutosave() {
 }
 
 void KyraEngine_v1::loadGameStateCheck(int slot) {
-	if (loadGameState(slot) != Common::kNoError) {
+	// FIXME: Instead of throwing away the error returned by
+	// loadGameState, we should use it / augment it.
+	if (loadGameState(slot).getCode() != Common::kNoError) {
 		const char *filename = getSavegameFilename(slot);
 		Common::String errorMessage = "Could not load savegame: '";
 		errorMessage += filename;

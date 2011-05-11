@@ -106,14 +106,14 @@ void Mouse::setCursorType(CursorType cur) {
 	f = _vm->_iconsArchive->getFile(cur);
 
 	Sprite sp(f->_data, f->_length, 0, 0, true);
-	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColours);
+	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColors);
 	CursorMan.replaceCursor(sp.getBuffer(), sp.getWidth(), sp.getHeight(),
 	        sp.getWidth() / 2, sp.getHeight() / 2, 255);
 }
 
 void Mouse::loadItemCursor(const GameItem *item, bool highlighted) {
 	const int itemID = item->_absNum;
-	const int archiveIndex = 2 * itemID + highlighted;
+	const int archiveIndex = 2 * itemID + (highlighted ? 1 : 0);
 	CursorType newCursor = static_cast<CursorType> (kItemCursor + archiveIndex);
 	if (newCursor == getCursorType()) {
 		return;
@@ -124,7 +124,7 @@ void Mouse::loadItemCursor(const GameItem *item, bool highlighted) {
 	f = _vm->_itemImagesArchive->getFile(archiveIndex);
 
 	Sprite sp(f->_data, f->_length, 0, 0, true);
-	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColours);
+	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColors);
 	CursorMan.replaceCursor(sp.getBuffer(), sp.getWidth(), sp.getHeight(),
 	        sp.getWidth() / 2, sp.getHeight() / 2, 255);
 }

@@ -23,6 +23,9 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h	//On IRIX, sys/stat.h includes sys/time.h
+
 #include "common/scummsys.h"
 
 #ifdef UNIX
@@ -33,6 +36,7 @@
 
 #include <errno.h>
 #include <sys/stat.h>
+
 
 OSystem_POSIX::OSystem_POSIX(Common::String baseConfigName)
 	:

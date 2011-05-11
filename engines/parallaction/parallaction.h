@@ -32,6 +32,7 @@
 #include "common/func.h"
 #include "common/random.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 
 #include "engines/engine.h"
 
@@ -268,7 +269,7 @@ public:
 	virtual Common::Error run() {
 		Common::Error err;
 		err = init();
-		if (err != Common::kNoError)
+		if (err.getCode() != Common::kNoError)
 			return err;
 		return go();
 	}

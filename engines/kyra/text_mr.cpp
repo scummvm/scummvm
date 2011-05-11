@@ -24,8 +24,9 @@
  */
 
 #include "kyra/text_mr.h"
-#include "kyra/screen_mr.h"
 #include "kyra/resource.h"
+
+#include "common/system.h"
 
 namespace Kyra {
 

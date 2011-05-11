@@ -48,6 +48,8 @@
 #include "tinsel/tinlib.h"
 #include "tinsel/token.h"
 
+#include "common/textconsole.h"
+
 namespace Tinsel {
 
 //----------------- EXTERN FUNCTIONS --------------------
@@ -226,7 +228,7 @@ static void SortMAProcess(CORO_PARAM, const void *) {
 		}
 
 		ActorPalette(rsd->SavedMoverInfo[_ctx->i].actorID,
-			rsd->SavedMoverInfo[_ctx->i].startColour, rsd->SavedMoverInfo[_ctx->i].paletteLength);
+			rsd->SavedMoverInfo[_ctx->i].startColor, rsd->SavedMoverInfo[_ctx->i].paletteLength);
 
 		if (rsd->SavedMoverInfo[_ctx->i].brightness != BOGUS_BRIGHTNESS)
 			ActorBrightness(rsd->SavedMoverInfo[_ctx->i].actorID, rsd->SavedMoverInfo[_ctx->i].brightness);

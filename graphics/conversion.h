@@ -27,9 +27,10 @@
 #define GRAPHICS_CONVERSION_H
 
 #include "common/util.h"
-#include "graphics/pixelformat.h"
 
 namespace Graphics {
+
+struct PixelFormat;
 
 /** Converting a color from YUV to RGB colorspace. */
 inline static void YUV2RGB(byte y, byte u, byte v, byte &r, byte &g, byte &b) {

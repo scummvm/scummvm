@@ -39,7 +39,7 @@ private:
 	void drawAltObjects();
 public:
 	int _field12;
-	int _sceneNumber;
+	int _screenNumber;
 	int _activeScreenNumber;
 	int _sceneMode;
 	StripManager _stripManager;
@@ -59,7 +59,7 @@ public:
 	virtual ~Scene();
 
 	virtual Common::String getClassName() { return "Scene"; }
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void stripCallback(int v) {}
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void process(Event &event);
@@ -88,11 +88,12 @@ public:
 	int _sceneLoadCount;
 	Rect _scrollerRect;
 	SceneObjectList _altSceneObjects;
+	int _objectCount;
 public:
 	SceneManager();
 	virtual ~SceneManager();
 
-	virtual void listenerSynchronise(Serialiser &s);
+	virtual void listenerSynchronize(Serializer &s);
 	void setNewScene(int sceneNumber);
 	void checkScene();
 	void sceneChange();

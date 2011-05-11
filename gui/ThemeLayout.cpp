@@ -25,14 +25,12 @@
 
 #include "common/util.h"
 #include "common/system.h"
-#include "common/events.h"
-#include "common/xmlparser.h"
 
-#include "gui/ThemeEval.h"
 #include "gui/ThemeLayout.h"
 
-#ifdef LAYOUT_DEBUG_DIALOG
 #include "graphics/font.h"
+
+#ifdef LAYOUT_DEBUG_DIALOG
 #include "graphics/surface.h"
 #endif
 

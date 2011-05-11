@@ -29,6 +29,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
 #include "backends/audiocd/audiocd.h"
 

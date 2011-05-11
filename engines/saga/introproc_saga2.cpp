@@ -31,7 +31,10 @@
 #include "saga/scene.h"
 #include "saga/gfx.h"
 
-#include "audio/mixer.h"
+#include "common/events.h"
+#include "common/keyboard.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 #include "graphics/surface.h"
 #include "video/smk_decoder.h"
 

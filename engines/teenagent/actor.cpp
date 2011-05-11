@@ -27,6 +27,7 @@
 #include "teenagent/resources.h"
 
 #include "common/random.h"
+#include "common/textconsole.h"
 
 namespace TeenAgent {
 

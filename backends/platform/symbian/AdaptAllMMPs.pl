@@ -36,6 +36,7 @@ chdir("../../../");
 	"mmp/scummvm_hugo.mmp",
 	"mmp/scummvm_toon.mmp",
 	"mmp/scummvm_lastexpress.mmp",
+	"mmp/scummvm_tsage.mmp",
 	# Target Platform Project Files
 	"S60/ScummVM_S60.mmp",
 	"S60v3/ScummVM_S60v3.mmp",
@@ -111,7 +112,8 @@ ParseModule("_base",	"base",		\@section_empty); # now in ./TRG/ScummVM_TRG.mmp, 
 ParseModule("_base",	"common",	\@section_empty);
 ParseModule("_base",	"gui",		\@section_empty,		\@excludes_gui);
 ParseModule("_base",	"graphics",	\@section_empty,		\@excludes_graphics);
-ParseModule("_base",	"sound",	\@section_empty,		\@excludes_snd);
+ParseModule("_base",	"audio",	\@section_empty,		\@excludes_snd);
+ParseModule("_base",	"video",	\@section_empty);
 
 chdir("engines/");
 ParseModule("_scumm",	"scumm",	\@sections_scumm,		\@excludes_scumm );
@@ -142,6 +144,7 @@ ParseModule("_mohawk"   ,"mohawk",	\@section_empty);
 ParseModule("_hugo"     ,"hugo",	\@section_empty);
 ParseModule("_toon"     ,"toon",	\@section_empty);
 ParseModule("_lastexpress","lastexpress",	\@section_empty);
+ParseModule("_tsage","tsage",	\@section_empty);
 print "
 =======================================================================================
 Done. Enjoy :P

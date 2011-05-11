@@ -26,6 +26,8 @@
 
 #include "common/system.h"
 
+#include "graphics/palette.h"
+
 #include "agos/agos.h"
 
 #ifdef _WIN32_WCE

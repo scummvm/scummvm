@@ -27,8 +27,6 @@
 
 #include "common/dcl.h"
 #include "common/debug.h"
-#include "common/substream.h"
-#include "common/util.h"
 
 namespace Mohawk {
 

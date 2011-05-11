@@ -33,6 +33,7 @@
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/util.h"
+#include "common/textconsole.h"
 #include "common/timer.h"
 #include "common/translation.h"
 

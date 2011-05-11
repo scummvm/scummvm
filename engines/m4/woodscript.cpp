@@ -26,6 +26,7 @@
 #include "m4/woodscript.h"
 
 #include "common/memstream.h"
+#include "graphics/palette.h"
 
 namespace M4 {
 

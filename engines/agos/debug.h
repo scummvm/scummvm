@@ -2058,7 +2058,7 @@ static const char *const feeblefiles_opcodeNameTable[256] = {
 	"W|UNLOAD_ZONE",
 	NULL,
 	"|UNFREEZE_ZONES",
-	"|CENTRE_SCROLL",
+	"|CENTER_SCROLL",
 	/* 188 */
 	"BSJ|STRING2_IS",
 	"|CLEAR_MARKS",

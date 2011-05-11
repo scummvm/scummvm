@@ -29,6 +29,8 @@
 
 #include "audio/audiostream.h"
 
+#include "common/textconsole.h"
+
 namespace Modules {
 
 class ProtrackerStream : public ::Audio::Paula {

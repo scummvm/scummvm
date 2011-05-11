@@ -26,7 +26,6 @@
 // NB: This is really only necessary if USE_READLINE is defined
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/system.h"
 

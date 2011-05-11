@@ -27,6 +27,8 @@
 
 #include "common/util.h"
 #include "common/endian.h"
+#include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace Modules {
 

@@ -720,7 +720,7 @@ Graphics::Surface *OSystem_Dreamcast::lockScreen()
   _framebuffer.w = _screen_w;
   _framebuffer.h = _screen_h;
   _framebuffer.pitch = SCREEN_W*2;
-  _framebuffer.bytesPerPixel = (_screenFormat == 0? 1 : 2);
+  _framebuffer.format = screenFormats[_screenFormat];
 
   return &_framebuffer;
 }

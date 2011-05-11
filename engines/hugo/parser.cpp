@@ -30,12 +30,8 @@
  *
  */
 
-#include "common/system.h"
 #include "common/events.h"
-
-#include "common/random.h"
-#include "common/EventRecorder.h"
-#include "common/debug-channels.h"
+#include "common/textconsole.h"
 
 #include "hugo/hugo.h"
 #include "hugo/display.h"
@@ -87,6 +83,7 @@ void Parser::readCmd(Common::ReadStream &in, cmd &curCmd) {
  */
 void Parser::loadCmdList(Common::ReadStream &in) {
 	cmd tmpCmd;
+	memset(&tmpCmd, 0, sizeof(tmpCmd));
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		uint16 numElem = in.readUint16BE();
 		if (varnt == _vm->_gameVariant) {
@@ -119,6 +116,7 @@ void Parser::readBG(Common::ReadStream &in, background_t &curBG) {
  */
 void Parser::loadBackgroundObjects(Common::ReadStream &in) {
 	background_t tmpBG;
+	memset(&tmpBG, 0, sizeof(tmpBG));
 
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		uint16 numElem = in.readUint16BE();
@@ -145,6 +143,7 @@ void Parser::loadBackgroundObjects(Common::ReadStream &in) {
 void Parser::loadCatchallList(Common::ReadStream &in) {
 	background_t *wrkCatchallList = 0;
 	background_t tmpBG;
+	memset(&tmpBG, 0, sizeof(tmpBG));
 
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		uint16 numElem = in.readUint16BE();
@@ -337,7 +336,7 @@ void Parser::keyHandler(Common::Event event) {
 		break;
 	case Common::KEYCODE_F1:                        // User Help (DOS)
 		if (_checkDoubleF1Fl)
-			_vm->_file->instructions();
+			gameStatus.helpFl = true;
 		else
 			_vm->_screen->userHelp();
 		_checkDoubleF1Fl = !_checkDoubleF1Fl;

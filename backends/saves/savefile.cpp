@@ -25,9 +25,7 @@
 
 #include "common/util.h"
 #include "common/savefile.h"
-
-#include <stdio.h>
-#include <string.h>
+#include "common/str.h"
 
 namespace Common {
 

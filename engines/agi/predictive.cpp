@@ -28,6 +28,7 @@
 #include "agi/keyboard.h"
 
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
 #ifdef __DS__
 #include "wordcompletion.h"

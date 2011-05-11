@@ -29,6 +29,8 @@
 
 #include "agi/agi.h"
 
+#include "common/textconsole.h"
+
 namespace Agi {
 
 static uint8 *words;		// words in the game

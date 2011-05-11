@@ -29,6 +29,7 @@
 #undef main
 #endif // main
 
+#include "config.h"
 #include "create_project.h"
 #include "codeblocks.h"
 
@@ -150,7 +151,7 @@ int main(int argc, char *argv[]) {
 	using std::cout;
 	for (int i = 2; i < argc; ++i) {
 		if (!std::strcmp(argv[i], "--list-engines")) {
-			cout << " The following enables are available in the ScummVM source distribution\n"
+			cout << " The following enables are available in the " PROJECT_DESCRIPTION " source distribution\n"
 			        " located at \"" << srcDir << "\":\n";
 
 			cout << "   state  |       name      |     description\n\n";
@@ -244,6 +245,9 @@ int main(int argc, char *argv[]) {
 
 		} else if (!std::strcmp(argv[i], "--build-events")) {
 			setup.runBuildEvents = true;
+		} else if (!std::strcmp(argv[i], "--installer")) {
+			setup.runBuildEvents  = true;
+			setup.createInstaller = true;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -289,20 +293,17 @@ int main(int argc, char *argv[]) {
 	setup.libraries.push_back("sdl");
 	setup.libraries.push_back("winmm");
 
-// Initialize global & project-specific warnings
-#define SET_GLOBAL_WARNINGS(...) \
-	{ \
-		std::string global[PP_NARG(__VA_ARGS__)] = { __VA_ARGS__ }; \
-		globalWarnings.assign(global, global + (sizeof(global) / sizeof(global[0]))); \
-	}
-
-#define SET_WARNINGS(name, ...) \
-	{ \
-		std::string project[PP_NARG(__VA_ARGS__)] = { __VA_ARGS__ }; \
-		projectWarnings[name].assign(project, project + (sizeof(project) / sizeof(project[0]))); \
-	}
+	// Add additional project-specific library
+#ifdef ADDITIONAL_LIBRARY
+	setup.libraries.push_back(ADDITIONAL_LIBRARY);
+#endif
 
 	// List of global warnings and map of project-specific warnings
+	// FIXME: As shown below these two structures have different behavior for
+	// Code::Blocks and MSVC. In Code::Blocks this is used to enable *and*
+	// disable certain warnings (and some other not warning related flags
+	// actually...). While in MSVC this is solely for disabling warnings.
+	// That is really not nice. We should consider a nicer way of doing this.
 	StringList globalWarnings;
 	std::map<std::string, StringList> projectWarnings;
 
@@ -336,9 +337,23 @@ int main(int argc, char *argv[]) {
 		//
 		////////////////////////////////////////////////////////////////////////////
 
-		SET_GLOBAL_WARNINGS("-Wall", "-Wno-long-long", "-Wno-multichar", "-Wno-unknown-pragmas", "-Wno-reorder",
-		                    "-Wpointer-arith", "-Wcast-qual", "-Wcast-align", "-Wshadow", "-Wimplicit",
-		                    "-Wnon-virtual-dtor", "-Wwrite-strings", "-fno-rtti", "-fno-exceptions", "-fcheck-new");
+		globalWarnings.push_back("-Wall");
+		globalWarnings.push_back("-Wno-long-long");
+		globalWarnings.push_back("-Wno-multichar");
+		globalWarnings.push_back("-Wno-unknown-pragmas");
+		globalWarnings.push_back("-Wno-reorder");
+		globalWarnings.push_back("-Wpointer-arith");
+		globalWarnings.push_back("-Wcast-qual");
+		globalWarnings.push_back("-Wcast-align");
+		globalWarnings.push_back("-Wshadow");
+		globalWarnings.push_back("-Wimplicit");
+		globalWarnings.push_back("-Wnon-virtual-dtor");
+		globalWarnings.push_back("-Wwrite-strings");
+		// The following are not warnings at all... We should consider adding them to
+		// a different list of parameters.
+		globalWarnings.push_back("-fno-rtti");
+		globalWarnings.push_back("-fno-exceptions");
+		globalWarnings.push_back("-fcheck-new");
 
 		provider = new CreateProjectTool::CodeBlocksProvider(globalWarnings, projectWarnings);
 
@@ -415,12 +430,35 @@ int main(int argc, char *argv[]) {
 		//
 		////////////////////////////////////////////////////////////////////////////
 
-		SET_GLOBAL_WARNINGS("4068", "4100", "4103", "4127", "4244", "4250", "4310", "4351", "4512", "4702", "4706", "4800", "4996", "6204", "6211", "6385", "6386");
-		SET_WARNINGS("agi", "4510", "4610");
-		SET_WARNINGS("agos", "4511");
-		SET_WARNINGS("lure", "4189", "4355");
-		SET_WARNINGS("kyra", "4355");
-		SET_WARNINGS("m4", "4355");
+		globalWarnings.push_back("4068");
+		globalWarnings.push_back("4100");
+		globalWarnings.push_back("4103");
+		globalWarnings.push_back("4127");
+		globalWarnings.push_back("4244");
+		globalWarnings.push_back("4250");
+		globalWarnings.push_back("4310");
+		globalWarnings.push_back("4351");
+		globalWarnings.push_back("4512");
+		globalWarnings.push_back("4702");
+		globalWarnings.push_back("4706");
+		globalWarnings.push_back("4800");
+		globalWarnings.push_back("4996");
+		globalWarnings.push_back("6204");
+		globalWarnings.push_back("6211");
+		globalWarnings.push_back("6385");
+		globalWarnings.push_back("6386");
+
+		projectWarnings["agi"].push_back("4510");
+		projectWarnings["agi"].push_back("4610");
+
+		projectWarnings["agos"].push_back("4511");
+
+		projectWarnings["lure"].push_back("4189");
+		projectWarnings["lure"].push_back("4355");
+
+		projectWarnings["kyra"].push_back("4355");
+
+		projectWarnings["m4"].push_back("4355");
 
 		if (msvcVersion == 8 || msvcVersion == 9)
 			provider = new CreateProjectTool::VisualStudioProvider(globalWarnings, projectWarnings, msvcVersion);
@@ -456,7 +494,7 @@ void displayHelp(const char *exe) {
 	cout << "Usage:\n"
 	     << exe << " path\\to\\source [optional options]\n"
 	     << "\n"
-	     << " Creates project files for the ScummVM source located at \"path\\to\\source\".\n"
+	     << " Creates project files for the " PROJECT_DESCRIPTION " source located at \"path\\to\\source\".\n"
 	        " The project files will be created in the directory where tool is run from and\n"
 	        " will include \"path\\to\\source\" for relative file paths, thus be sure that you\n"
 	        " pass a relative file path like \"..\\..\\trunk\".\n"
@@ -481,15 +519,17 @@ void displayHelp(const char *exe) {
 	        "                           The default is \"9\", thus \"Visual Studio 2008\"\n"
 	        " --build-events           Run custom build events as part of the build\n"
 	        "                          (default: false)\n"
+	        " --installer              Create NSIS installer after the build (implies --build-events)\n"
+	        "                          (default: false)\n"
 	        "\n"
-	        "ScummVM engine settings:\n"
+	        "Engines settings:\n"
 	        " --list-engines           list all available engines and their default state\n"
 	        " --enable-engine          enable building of the engine with the name \"engine\"\n"
 	        " --disable-engine         disable building of the engine with the name \"engine\"\n"
 	        " --enable-all-engines     enable building of all engines\n"
 	        " --disable-all-engines    disable building of all engines\n"
 	        "\n"
-	        "ScummVM optional feature settings:\n"
+	        "Optional features settings:\n"
 	        " --enable-name            enable inclusion of the feature \"name\"\n"
 	        " --disable-name           disable inclusion of the feature \"name\"\n"
 	        "\n"
@@ -686,25 +726,26 @@ TokenList tokenize(const std::string &input) {
 namespace {
 const Feature s_features[] = {
 	// Libraries
-	{    "libz",        "USE_ZLIB", "zlib", true, "zlib (compression) support" },
-	{     "mad",         "USE_MAD", "libmad", true, "libmad (MP3) support" },
+	{    "libz",        "USE_ZLIB", "zlib",             true, "zlib (compression) support" },
+	{     "mad",         "USE_MAD", "libmad",           true, "libmad (MP3) support" },
 	{  "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static libogg_static", true, "Ogg Vorbis support" },
-	{    "flac",        "USE_FLAC", "libFLAC_static", true, "FLAC support" },
-	{   "png",           "USE_PNG", "libpng", true, "libpng support" },
-	{   "theora",  "USE_THEORADEC", "libtheora_static", true, "Theora decoding support" },
-	{   "mpeg2",       "USE_MPEG2", "libmpeg2", false, "mpeg2 codec for cutscenes" },
+	{    "flac",        "USE_FLAC", "libFLAC_static",   true, "FLAC support" },
+	{     "png",         "USE_PNG", "libpng",           true, "libpng support" },
+	{  "theora",   "USE_THEORADEC", "libtheora_static", true, "Theora decoding support" },
+	{   "mpeg2",       "USE_MPEG2", "libmpeg2",         false, "mpeg2 codec for cutscenes" },
 
-	// ScummVM feature flags
-	{     "scalers",     "USE_SCALERS", "", true, "Scalers" },
-	{   "hqscalers",  "USE_HQ_SCALERS", "", true, "HQ scalers" },
-	{       "16bit",   "USE_RGB_COLOR", "", true, "16bit color support" },
-	{     "mt32emu",     "USE_MT32EMU", "", true, "integrated MT-32 emulator" },
-	{        "nasm",        "USE_NASM", "", true, "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
+	// Feature flags
+	{     "scalers",     "USE_SCALERS",         "", true, "Scalers" },
+	{   "hqscalers",  "USE_HQ_SCALERS",         "", true, "HQ scalers" },
+	{       "16bit",   "USE_RGB_COLOR",         "", true, "16bit color support" },
+	{     "mt32emu",     "USE_MT32EMU",         "", true, "integrated MT-32 emulator" },
+	{        "nasm",        "USE_NASM",         "", true, "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
 	{      "opengl",      "USE_OPENGL", "opengl32", true, "OpenGL support" },
-	{      "indeo3",      "USE_INDEO3", "", true, "Indeo3 codec support"},
-	{ "translation", "USE_TRANSLATION", "", true, "Translation support" },
-	{  "langdetect",  "USE_DETECTLANG", "", true, "System language detection support" } // This feature actually depends on "translation", there
-	                                                                                    // is just no current way of properly detecting this...
+	{      "indeo3",      "USE_INDEO3",         "", true, "Indeo3 codec support"},
+	{ "translation", "USE_TRANSLATION",         "", true, "Translation support" },
+	{      "vkeybd",   "ENABLE_VKEYBD",         "", false, "Virtual keyboard support"},
+	{  "langdetect",  "USE_DETECTLANG",         "", true, "System language detection support" } // This feature actually depends on "translation", there
+	                                                                                            // is just no current way of properly detecting this...
 };
 } // End of anonymous namespace
 
@@ -791,9 +832,10 @@ bool producesObjectFile(const std::string &fileName) {
  * Checks whether the give file in the specified directory is present in the given
  * file list.
  *
- * This function does as special match against the file list. It will not take file
- * extensions into consideration, when the extension of a file in the specified
- * directory is one of "h", "cpp", "c" or "asm".
+ * This function does as special match against the file list. Object files (.o) are
+ * excluded by default and it will not take file extensions into consideration,
+ * when the extension of a file in the specified directory is one of "h", "cpp",
+ * "c" or "asm".
  *
  * @param dir Parent directory of the file.
  * @param fileName File name to match.
@@ -823,7 +865,9 @@ bool isInList(const std::string &dir, const std::string &fileName, const StringL
 		}
 
 		const std::string lastPathComponent = getLastPathComponent(*i);
-		if (!producesObjectFile(fileName) && extensionName != "h") {
+		if (extensionName == "o") {
+			return false;
+		} else if (!producesObjectFile(fileName) && extensionName != "h") {
 			if (fileName == lastPathComponent)
 				return true;
 		} else {
@@ -977,7 +1021,7 @@ void ProjectProvider::createProject(const BuildSetup &setup) {
 	_uuidMap = createUUIDMap(setup);
 
 	// We also need to add the UUID of the main project file.
-	const std::string svmUUID = _uuidMap["scummvm"] = createUUID();
+	const std::string svmUUID = _uuidMap[PROJECT_NAME] = createUUID();
 
 	// Create Solution/Workspace file
 	createWorkspace(setup);
@@ -986,7 +1030,7 @@ void ProjectProvider::createProject(const BuildSetup &setup) {
 
 	// Create engine project files
 	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
-		if (i->first == "scummvm")
+		if (i->first == PROJECT_NAME)
 			continue;
 
 		in.clear(); ex.clear();
@@ -996,10 +1040,10 @@ void ProjectProvider::createProject(const BuildSetup &setup) {
 		createProjectFile(i->first, i->second, setup, moduleDir, in, ex);
 	}
 
-	// Last but not least create the main ScummVM project file.
+	// Last but not least create the main project file.
 	in.clear(); ex.clear();
 
-	// File list for the ScummVM project file
+	// File list for the Project file
 	createModuleList(setup.srcDir + "/backends", setup.defines, in, ex);
 	createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, in, ex);
 	createModuleList(setup.srcDir + "/base", setup.defines, in, ex);
@@ -1009,11 +1053,13 @@ void ProjectProvider::createProject(const BuildSetup &setup) {
 	createModuleList(setup.srcDir + "/gui", setup.defines, in, ex);
 	createModuleList(setup.srcDir + "/audio", setup.defines, in, ex);
 	createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, in, ex);
+#if HAS_VIDEO_FOLDER
 	createModuleList(setup.srcDir + "/video", setup.defines, in, ex);
+#endif
 
 	// Resource files
-	in.push_back(setup.srcDir + "/icons/scummvm.ico");
-	in.push_back(setup.srcDir + "/dists/scummvm.rc");
+	in.push_back(setup.srcDir + "/icons/" + PROJECT_NAME + ".ico");
+	in.push_back(setup.srcDir + "/dists/" + PROJECT_NAME + ".rc");
 
 	// Various text files
 	in.push_back(setup.srcDir + "/AUTHORS");
@@ -1024,8 +1070,8 @@ void ProjectProvider::createProject(const BuildSetup &setup) {
 	in.push_back(setup.srcDir + "/README");
 	in.push_back(setup.srcDir + "/TODO");
 
-	// Create the scummvm project file.
-	createProjectFile("scummvm", svmUUID, setup, setup.srcDir, in, ex);
+	// Create the main project file.
+	createProjectFile(PROJECT_NAME, svmUUID, setup, setup.srcDir, in, ex);
 
 	// Create other misc. build files
 	createOtherBuildFiles(setup);
@@ -1179,10 +1225,20 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 					tokens = tokenize(line);
 					i = tokens.begin();
 				} else {
-					if (shouldInclude.top())
-						includeList.push_back(moduleDir + "/" + unifyPath(*i));
-					else
-						excludeList.push_back(moduleDir + "/" + unifyPath(*i));
+					const std::string filename = moduleDir + "/" + unifyPath(*i);
+
+					if (shouldInclude.top()) {
+						// In case we should include a file, we need to make
+						// sure it is not in the exclude list already. If it
+						// is we just drop it from the exclude list.
+						excludeList.remove(filename);
+
+						includeList.push_back(filename);
+					} else if (std::find(includeList.begin(), includeList.end(), filename) == includeList.end()) {
+						// We only add the file to the exclude list in case it
+						// has not yet been added to the include list.
+						excludeList.push_back(filename);
+					}
 					++i;
 				}
 			}

@@ -30,6 +30,7 @@
 #include "audio/mixer_intern.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "graphics/colormasks.h"
+#include "graphics/palette.h"
 
 #include <AudioToolbox/AudioQueue.h>
 
@@ -81,7 +82,7 @@ protected:
 
 	bool _mouseVisible;
 	byte *_mouseBuf;
-	byte _mouseKeyColour;
+	byte _mouseKeyColor;
 	uint _mouseWidth, _mouseHeight;
 	uint _mouseX, _mouseY;
 	int _mouseHotspotX, _mouseHotspotY;

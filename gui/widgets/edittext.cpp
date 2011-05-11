@@ -23,25 +23,26 @@
  */
 
 #include "gui/widgets/edittext.h"
-#include "gui/dialog.h"
 #include "gui/gui-manager.h"
 
 #include "gui/ThemeEval.h"
 
 namespace GUI {
 
-EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, const char *tooltip, uint32 cmd)
+	EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, const char *tooltip, uint32 cmd, uint32 finishCmd)
 	: EditableWidget(boss, x, y - 1, w, h + 2, tooltip, cmd) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
 	_type = kEditTextWidget;
+	_finishCmd = finishCmd;
 
 	setEditString(text);
 }
 
-EditTextWidget::EditTextWidget(GuiObject *boss, const String &name, const String &text, const char *tooltip, uint32 cmd)
+EditTextWidget::EditTextWidget(GuiObject *boss, const String &name, const String &text, const char *tooltip, uint32 cmd, uint32 finishCmd)
 	: EditableWidget(boss, name, tooltip, cmd) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
 	_type = kEditTextWidget;
+	_finishCmd = finishCmd;
 
 	setEditString(text);
 }
@@ -107,6 +108,8 @@ void EditTextWidget::startEditMode() {
 
 void EditTextWidget::endEditMode() {
 	releaseFocus();
+
+	sendCommand(_finishCmd, 0);
 }
 
 void EditTextWidget::abortEditMode() {

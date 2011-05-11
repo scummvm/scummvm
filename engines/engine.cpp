@@ -22,6 +22,8 @@
  * $Id$
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
+
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -32,25 +34,26 @@
 
 #include "engines/engine.h"
 #include "engines/dialogs.h"
-#include "engines/metaengine.h"
-#include "engines/util.h"
 
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/events.h"
 #include "common/file.h"
-#include "common/timer.h"
-#include "common/savefile.h"
 #include "common/system.h"
 #include "common/str.h"
+#include "common/error.h"
+#include "common/list.h"
+#include "common/list_intern.h"
+#include "common/scummsys.h"
+#include "common/textconsole.h"
 
 #include "gui/debugger.h"
+#include "gui/dialog.h"
 #include "gui/message.h"
-#include "gui/gui-manager.h"
 
 #include "audio/mixer.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/pixelformat.h"
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone();
@@ -439,10 +442,14 @@ void Engine::syncSoundSettings() {
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
 
-	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, (mute ? 0 : Audio::Mixer::kMaxMixerVolume));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, (mute ? 0 : soundVolumeMusic));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, (mute ? 0 : soundVolumeSFX));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, (mute ? 0 : soundVolumeSpeech));
+	_mixer->muteSoundType(Audio::Mixer::kPlainSoundType, mute);
+	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, mute);
+	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, mute);
+	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, mute);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, Audio::Mixer::kMaxMixerVolume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
 }
 
 void Engine::flipMute() {

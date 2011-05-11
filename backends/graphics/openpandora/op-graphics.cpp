@@ -28,7 +28,6 @@
 #include "backends/events/openpandora/op-events.h"
 #include "backends/platform/openpandora/op-sdl.h"
 #include "common/mutex.h"
-#include "common/translation.h"
 #include "common/util.h"
 
 #include "graphics/scaler/aspect.h"

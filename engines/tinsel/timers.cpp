@@ -31,7 +31,7 @@
 #include "tinsel/timers.h"
 #include "tinsel/dw.h"
 #include "common/serializer.h"
-
+#include "common/textconsole.h"
 #include "common/system.h"
 
 namespace Tinsel {

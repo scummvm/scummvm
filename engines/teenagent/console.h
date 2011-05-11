@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#ifndef TEENAGENT_DIALOG_H
-#define TEENAGENT_DIALOG_H
+#ifndef TEENAGENT_CONSOLE_H
+#define TEENAGENT_CONSOLE_H
 
 #include "gui/debugger.h"
 

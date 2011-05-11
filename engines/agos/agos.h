@@ -29,6 +29,7 @@
 #include "engines/engine.h"
 
 #include "common/array.h"
+#include "common/error.h"
 #include "common/keyboard.h"
 #include "common/random.h"
 #include "common/rect.h"
@@ -186,7 +187,7 @@ class AGOSEngine : public Engine {
 	virtual Common::Error run() {
 		Common::Error err;
 		err = init();
-		if (err != Common::kNoError)
+		if (err.getCode() != Common::kNoError)
 			return err;
 		return go();
 	}
@@ -1140,7 +1141,7 @@ protected:
 	int getScale(int16 y, int16 x);
 	void checkScrollX(int16 x, int16 xpos);
 	void checkScrollY(int16 y, int16 ypos);
-	void centreScroll();
+	void centerScroll();
 
 	virtual void clearVideoWindow(uint16 windowNum, uint16 color);
 	void clearVideoBackGround(uint16 windowNum, uint16 color);
@@ -1921,7 +1922,7 @@ public:
 	void off_mouseOff();
 	void off_loadVideo();
 	void off_playVideo();
-	void off_centreScroll();
+	void off_centerScroll();
 	void off_resetPVCount();
 	void off_setPathValues();
 	void off_stopClock();

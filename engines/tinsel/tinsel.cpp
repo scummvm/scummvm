@@ -29,21 +29,13 @@
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/keyboard.h"
-#include "common/file.h"
 #include "common/fs.h"
-#include "common/savefile.h"
 #include "common/config-manager.h"
 #include "common/serializer.h"
-#include "common/stream.h"
 
 #include "backends/audiocd/audiocd.h"
 
 #include "engines/util.h"
-
-#include "graphics/cursorman.h"
-
-#include "base/plugins.h"
-#include "base/version.h"
 
 #include "tinsel/actors.h"
 #include "tinsel/background.h"
@@ -911,10 +903,10 @@ Common::Error TinselEngine::run() {
 #else
 		initGraphics(640, 432, true);
 #endif
-		_screenSurface.create(640, 432, 1);
+		_screenSurface.create(640, 432, Graphics::PixelFormat::createFormatCLUT8());
 	} else {
 		initGraphics(320, 200, false);
-		_screenSurface.create(320, 200, 1);
+		_screenSurface.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
 	g_eventRec.registerRandomSource(_random, "tinsel");
@@ -972,7 +964,7 @@ Common::Error TinselEngine::run() {
 	// errors when loading the save state.
 
 	if (ConfMan.hasKey("save_slot")) {
-		if (loadGameState(ConfMan.getInt("save_slot")) == Common::kNoError)
+		if (loadGameState(ConfMan.getInt("save_slot")).getCode() == Common::kNoError)
 			loadingFromGMM = true;
 	}
 

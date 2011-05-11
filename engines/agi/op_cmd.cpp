@@ -32,6 +32,7 @@
 #include "agi/menu.h"
 
 #include "common/random.h"
+#include "common/textconsole.h"
 
 namespace Agi {
 

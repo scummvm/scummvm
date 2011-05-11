@@ -24,7 +24,7 @@
 
 #if defined(__SYMBIAN32__)
 #include "backends/fs/symbian/symbian-fs-factory.h"
-#include "backends/fs/symbian/symbian-fs.cpp"
+#include "backends/fs/symbian/symbian-fs.h"
 
 AbstractFSNode *SymbianFilesystemFactory::makeRootFileNode() const {
 	return new SymbianFilesystemNode(true);

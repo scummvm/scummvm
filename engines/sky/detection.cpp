@@ -34,6 +34,7 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 
 #include "engines/metaengine.h"
 

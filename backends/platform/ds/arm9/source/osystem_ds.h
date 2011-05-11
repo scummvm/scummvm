@@ -36,6 +36,7 @@
 #include "audio/mixer_intern.h"
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
+#include "graphics/palette.h"
 
 class OSystem_DS : public BaseBackend, public PaletteManager {
 protected:
@@ -183,7 +184,7 @@ public:
 	Common::WriteStream *createConfigWriteStream();
 	Common::SeekableReadStream *createConfigReadStream();
 
-	u16 applyGamma(u16 colour);
+	u16 applyGamma(u16 color);
 	void setGammaValue(int gamma) { _gammaValue = gamma; }
 
 	void engineDone();

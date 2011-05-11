@@ -37,7 +37,10 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/EventRecorder.h"
+#include "common/file.h"
 #include "common/macresman.h"
+
+#include "gui/message.h"
 
 #define NUM_OPCODES 90
 
@@ -65,7 +68,9 @@ static void debugScript(int level, bool nl, const char *s, ...) {
 
 Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_code(NULL), _savedCode(NULL), _stacktop(0), _debugger(NULL), _vm(vm),
-	_videoFile(NULL), _videoRef(0), _staufsMove(NULL), _lastCursor(0xff) {
+	_videoFile(NULL), _videoRef(0), _staufsMove(NULL), _lastCursor(0xff),
+	_version(version) {
+
 	// Initialize the opcode set depending on the engine version
 	switch (version) {
 	case kGroovieT7G:
@@ -320,7 +325,7 @@ uint8 Script::readScriptChar(bool allow7C, bool limitVal, bool limitVar) {
 	return result;
 }
 
-uint16 Script::getVideoRefString() {
+uint32 Script::getVideoRefString() {
 	Common::String str;
 	byte c;
 
@@ -411,6 +416,13 @@ void Script::savegame(uint slot) {
 	char save[15];
 	char newchar;
 	Common::OutSaveFile *file = SaveLoad::openForSaving(ConfMan.getActiveDomainName(), slot);
+
+	if (!file) {
+		debugC(9, kGroovieDebugScript, "Save file pointer is null");
+		GUI::MessageDialog dialog("Failed to save game", "OK");
+		dialog.runModal();
+		return;
+	}
 
 	// Saving the variables. It is endian safe because they're byte variables
 	file->write(_variables, 0x400);
@@ -722,7 +734,7 @@ void Script::o_hotspot_center() {
 
 	debugScript(5, true, "HOTSPOT-CENTER @0x%04X", address);
 
-	// Mark the centremost 240 pixels of the game area
+	// Mark the centermost 240 pixels of the game area
 	Common::Rect rect(200, 80, 440, 400);
 	hotspot(rect, address, 0);
 }
@@ -1020,7 +1032,7 @@ void Script::o_add() {
 
 void Script::o_videofromstring1() {
 	uint16 instStart = _currentInstruction;
-	uint16 fileref = getVideoRefString();
+	uint32 fileref = getVideoRefString();
 
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {
@@ -1036,7 +1048,7 @@ void Script::o_videofromstring1() {
 
 void Script::o_videofromstring2() {
 	uint16 instStart = _currentInstruction;
-	uint16 fileref = getVideoRefString();
+	uint32 fileref = getVideoRefString();
 
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {

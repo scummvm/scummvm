@@ -695,6 +695,11 @@ begin_credits("Credits");
 		  add_person("Gregory Montoir", "cyx", "");
 	  end_section();
 
+	  begin_section("TsAGE");
+		  add_person("Paul Gilbert", "dreammaster", "");
+		  add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+	  end_section();
+
 	  begin_section("Tucker");
 		  add_person("Gregory Montoir", "cyx", "");
 	  end_section();
@@ -955,7 +960,7 @@ begin_credits("Credits");
 			add_person("Eugene Sandulenko", "sev", "");
 		end_section();
 		begin_section("Spanish");
-			add_person("Tom&aacute;s Maidagan", "Truido", "");
+			add_person("Tom&aacute;s Maidagan", "", "");
 		end_section();
 		begin_section("Swedish");
 			add_person("Hampus Flink", "", "");
@@ -972,7 +977,7 @@ begin_credits("Credits");
 		  add_person("David Jensen", "Tyst", "SVG logo conversion");
 		  add_person("Jean Marc Gimenez", "", "ScummVM logo");
 		  add_person("", "Raina", "ScummVM forum buttons");
-		  add_person("William Claydon", "billwashere", "Skins for doxygen and wiki");
+		  add_person("William Claydon", "billwashere", "Skins for doxygen, buildbot and wiki");
 	  end_persons();
 	end_section();
 
@@ -1113,7 +1118,7 @@ begin_credits("Credits");
   "freewaring the game.");
 
   add_paragraph(
-  "David P. Gray from Gray Design Associate for sharing the source code ".
+  "David P. Gray from Gray Design Associates for sharing the source code ".
   "of the Hugo trilogy.");
 
   add_paragraph(

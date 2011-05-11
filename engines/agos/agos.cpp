@@ -25,9 +25,9 @@
 
 #include "common/config-manager.h"
 #include "common/EventRecorder.h"
-#include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/textconsole.h"
 #include "common/system.h"
 
 #include "engines/util.h"
@@ -35,14 +35,12 @@
 #include "agos/debugger.h"
 #include "agos/intern.h"
 #include "agos/agos.h"
-#include "agos/vga.h"
 
 #include "backends/audiocd/audiocd.h"
 
 #include "graphics/surface.h"
 
 #include "audio/mididrv.h"
-#include "audio/mods/protracker.h"
 
 namespace AGOS {
 
@@ -568,33 +566,33 @@ Common::Error AGOSEngine::init() {
 
 	// allocate buffers
 	_backGroundBuf = new Graphics::Surface();
-	_backGroundBuf->create(_screenWidth, _screenHeight, 1);
+	_backGroundBuf->create(_screenWidth, _screenHeight, Graphics::PixelFormat::createFormatCLUT8());
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		_backBuf = new Graphics::Surface();
-		_backBuf->create(_screenWidth, _screenHeight, 1);
+		_backBuf->create(_screenWidth, _screenHeight, Graphics::PixelFormat::createFormatCLUT8());
 		_scaleBuf = new Graphics::Surface();
-		_scaleBuf->create(_screenWidth, _screenHeight, 1);
+		_scaleBuf->create(_screenWidth, _screenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
 	if (getGameType() == GType_SIMON2) {
 		_window4BackScn = new Graphics::Surface();
-		_window4BackScn->create(_screenWidth, _screenHeight, 1);
+		_window4BackScn->create(_screenWidth, _screenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	} else if (getGameType() == GType_SIMON1) {
 		_window4BackScn = new Graphics::Surface();
-		_window4BackScn->create(_screenWidth, 134, 1);
+		_window4BackScn->create(_screenWidth, 134, Graphics::PixelFormat::createFormatCLUT8());
 	} else if (getGameType() == GType_WW || getGameType() == GType_ELVIRA2) {
 		_window4BackScn = new Graphics::Surface();
-		_window4BackScn->create(224, 127, 1);
+		_window4BackScn->create(224, 127, Graphics::PixelFormat::createFormatCLUT8());
 	} else if (getGameType() == GType_ELVIRA1) {
 		_window4BackScn = new Graphics::Surface();
 		if (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_DEMO)) {
-			_window4BackScn->create(224, 196, 1);
+			_window4BackScn->create(224, 196, Graphics::PixelFormat::createFormatCLUT8());
 		} else {
-			_window4BackScn->create(224, 144, 1);
+			_window4BackScn->create(224, 144, Graphics::PixelFormat::createFormatCLUT8());
 		}
 		_window6BackScn = new Graphics::Surface();
-		_window6BackScn->create(48, 80, 1);
+		_window6BackScn->create(48, 80, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
 	setupGame();

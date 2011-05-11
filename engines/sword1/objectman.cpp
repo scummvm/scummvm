@@ -24,6 +24,7 @@
  */
 
 
+#include "common/textconsole.h"
 #include "common/util.h"
 
 #include "sword1/objectman.h"

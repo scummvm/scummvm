@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#include "graphics/font.h"
 #include "graphics/fontman.h"
 
 DECLARE_SINGLETON(Graphics::FontManager);

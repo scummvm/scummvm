@@ -24,6 +24,8 @@
  */
 
 #include "common/endian.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "cruise/cruise.h"
 #include "cruise/cruise_main.h"

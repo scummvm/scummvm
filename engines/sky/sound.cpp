@@ -24,7 +24,9 @@
  */
 
 
+#include "common/debug.h"
 #include "common/endian.h"
+#include "common/textconsole.h"
 
 #include "sky/disk.h"
 #include "sky/logic.h"

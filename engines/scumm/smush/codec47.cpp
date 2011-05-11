@@ -25,6 +25,7 @@
 
 
 #include "common/endian.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 #include "scumm/bomp.h"
 #include "scumm/smush/codec47.h"
@@ -342,11 +343,9 @@ void Codec47Decoder::makeTables47(int width) {
 
 #ifdef USE_ARM_SMUSH_ASM
 
-extern "C" {
 #ifndef IPHONE
 #define ARM_Smush_decode2 _ARM_Smush_decode2
 #endif
-}
 
 extern "C" void ARM_Smush_decode2(      byte  *dst,
                                   const byte  *src,

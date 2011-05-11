@@ -1379,9 +1379,7 @@ void Interface::setSave(PanelButton *panelButton) {
 				fileName = _vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
 				_vm->save(fileName, _textInputString);
 			}
-			_vm->getTimerManager()->removeTimerProc(&saveReminderCallback);
-			_vm->getTimerManager()->installTimerProc(&saveReminderCallback, TIMETOSAVE, this);
-			setSaveReminderState(1);
+			resetSaveReminder();
 
 			_textInput = false;
 			setMode(kPanelOption);
@@ -1391,6 +1389,12 @@ void Interface::setSave(PanelButton *panelButton) {
 			setMode(kPanelOption);
 			break;
 	}
+}
+
+void Interface::resetSaveReminder() {
+	_vm->getTimerManager()->removeTimerProc(&saveReminderCallback);
+	_vm->getTimerManager()->installTimerProc(&saveReminderCallback, TIMETOSAVE, this);
+	setSaveReminderState(1);
 }
 
 void Interface::handleOptionUpdate(const Point& mousePoint) {
@@ -2794,7 +2798,7 @@ void Interface::keyBoss() {
 	Rect rect;
 	ByteArray image;
 	int imageWidth, imageHeight;
-	const byte *pal;
+	//const byte *pal;
 	PalEntry cPal[PAL_ENTRIES];
 
 	_vm->_gfx->showCursor(false);
@@ -2814,7 +2818,7 @@ void Interface::keyBoss() {
 	rect.setHeight(imageHeight);
 
 	_vm->_gfx->getCurrentPal(_mapSavedPal);
-	pal = _vm->getImagePal(resourceData);
+	//pal = _vm->getImagePal(resourceData);
 
 	cPal[0].red = 0;
 	cPal[0].green = 0;

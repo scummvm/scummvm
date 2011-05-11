@@ -24,6 +24,7 @@
  */
 
 #include "common/savefile.h"
+#include "common/textconsole.h"
 
 #include "tucker/tucker.h"
 

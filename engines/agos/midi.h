@@ -31,7 +31,7 @@
 #include "common/mutex.h"
 
 namespace Common {
-	class File;
+class File;
 }
 
 namespace AGOS {

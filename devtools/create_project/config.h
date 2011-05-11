@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -23,20 +23,16 @@
  *
  */
 
-#ifndef BACKENDS_PLUGINS_DC_H
-#define BACKENDS_PLUGINS_DC_H
+#ifndef TOOLS_CREATE_PROJECT_CONFIG_H
+#define TOOLS_CREATE_PROJECT_CONFIG_H
 
-#include "base/plugins.h"
+#define PROJECT_DESCRIPTION "ScummVM"    // Used in console output and build configuration
+#define PROJECT_NAME "scummvm"           // Used for folders, icons, resources and project/solution name
+#define LIBS_DEFINE "SCUMMVM_LIBS"       // Name of the include environment variable
+#define REVISION_DEFINE "SCUMMVM_INTERNAL_REVISION"
 
-#if defined(DYNAMIC_MODULES) && defined(__DC__)
+#define HAS_VIDEO_FOLDER 1
+//#define ADDITIONAL_LIBRARY ""
+#define NEEDS_RTTI 0
 
-class DCPluginProvider : public FilePluginProvider {
-protected:
-	Plugin* createPlugin(const Common::FSNode &node) const;
-
-	bool isPluginFilename(const Common::FSNode &node) const;
-};
-
-#endif // defined(DYNAMIC_MODULES) && defined(__DC__)
-
-#endif
+#endif // TOOLS_CREATE_PROJECT_CONFIG_H

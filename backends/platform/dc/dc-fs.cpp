@@ -22,6 +22,8 @@
  * $Id$
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+
 #include "dc.h"
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/stdiostream.h"

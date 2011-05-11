@@ -31,8 +31,6 @@
 #include "common/util.h"
 #include "gui/about.h"
 #include "gui/gui-manager.h"
-#include "gui/widget.h"
-
 #include "gui/ThemeEval.h"
 
 namespace GUI {

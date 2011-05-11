@@ -147,6 +147,21 @@ void ResourceManager::emptyCache() {
 	}
 }
 
+void ResourceManager::emptyThumbnailCache() {
+	// Scan through the resource list
+	Common::List<Resource *>::iterator iter = _resources.begin();
+	while (iter != _resources.end()) {
+		if ((*iter)->getFileName().hasPrefix("/saves")) {
+			// Unlock the thumbnail
+			while ((*iter)->getLockCount() > 0)
+				(*iter)->release();
+			// Delete the thumbnail
+			iter = deleteResource(*iter);
+		} else
+			++iter;
+	}
+}
+
 /**
  * Returns a requested resource. If any error occurs, returns NULL
  * @param FileName      Filename of resource

@@ -28,6 +28,7 @@
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
 
+#include "common/textconsole.h"
 
 namespace Parallaction {
 

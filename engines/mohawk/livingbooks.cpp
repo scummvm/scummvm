@@ -26,13 +26,17 @@
 #include "mohawk/livingbooks.h"
 #include "mohawk/resource.h"
 #include "mohawk/cursors.h"
-#include "mohawk/sound.h"
 #include "mohawk/video.h"
 
+#include "common/config-manager.h"
+#include "common/error.h"
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/fs.h"
 #include "common/archive.h"
+#include "common/textconsole.h"
+
+#include "graphics/palette.h"
 
 #include "engines/util.h"
 
@@ -2004,7 +2008,7 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 				size -= target.size() + 1;
 			}
 
-			if (size % 2 != oldAlign) {
+			if ((uint)(size % 2) != oldAlign) {
 				stream->skip(1);
 				size--;
 			}

@@ -35,6 +35,7 @@
 
 
 #include "common/rect.h"
+#include "common/textconsole.h"
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
@@ -166,7 +167,7 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 		spriteInfo.type = 0;
 		spriteInfo.blend = 0;
 		spriteInfo.data = _vm->fetchShadingMask(file);
-		spriteInfo.colourTable = 0;
+		spriteInfo.colorTable = 0;
 
 		if (openLightMask(&spriteInfo) != RD_OK)
 			error("Could not open light mask");

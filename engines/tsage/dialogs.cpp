@@ -24,13 +24,16 @@
  */
 
 #include "common/translation.h"
+
+#include "gui/dialog.h"
+#include "gui/widget.h"
+
 #include "tsage/tsage.h"
 #include "tsage/core.h"
 #include "tsage/dialogs.h"
-#include "tsage/graphics.h"
-#include "tsage/core.h"
 #include "tsage/staticres.h"
 #include "tsage/globals.h"
+#include "tsage/ringworld_logic.h"
 
 namespace tSage {
 
@@ -64,23 +67,18 @@ MessageDialog::MessageDialog(const Common::String &message, const Common::String
 	// Do post setup for the dialog
 	setDefaults();
 
-	// Set the dialog's centre
-	setCentre(_globals->_dialogCentre.x, _globals->_dialogCentre.y);
+	// Set the dialog's center
+	setCenter(_globals->_dialogCenter.x, _globals->_dialogCenter.y);
 }
 
 int MessageDialog::show(const Common::String &message, const Common::String &btn1Message, const Common::String &btn2Message) {
 	// Ensure that the cursor is the arrow
-	CursorType currentCursor = _globals->_events.getCursor();
-	if (currentCursor != CURSOR_ARROW)
-		_globals->_events.setCursor(CURSOR_ARROW);
+	_globals->_events.pushCursor(CURSOR_ARROW);
 	_globals->_events.showCursor();
 
 	int result = show2(message, btn1Message, btn2Message);
 
-	// If the cursor was changed, change it back
-	if (currentCursor != CURSOR_ARROW)
-		_globals->_events.setCursor(currentCursor);
-
+	_globals->_events.popCursor();
 	return result;
 }
 
@@ -94,7 +92,6 @@ int MessageDialog::show2(const Common::String &message, const Common::String &bt
 	delete dlg;
 	return result;
 }
-
 
 /*--------------------------------------------------------------------------*/
 
@@ -139,7 +136,7 @@ void RightClickButton::highlight() {
 		_savedButton = Surface_getArea(_globals->gfxManager().getSurface(), _bounds);
 
 		uint size;
-		byte *imgData = _vm->_dataManager->getSubResource(7, 2, _buttonIndex, &size);
+		byte *imgData = _resourceManager->getSubResource(7, 2, _buttonIndex, &size);
 
 		GfxSurface btnSelected = surfaceFromRes(imgData);
 		_globals->gfxManager().copyFrom(btnSelected, _bounds.left, _bounds.top);
@@ -167,7 +164,7 @@ RightClickDialog::RightClickDialog() : GfxDialog(),
 
 	// Set the dialog position
 	dialogRect.resize(_surface, 0, 0, 100);
-	dialogRect.centre(_globals->_events._mousePos.x, _globals->_events._mousePos.y);
+	dialogRect.center(_globals->_events._mousePos.x, _globals->_events._mousePos.y);
 
 	// Ensure the dialog will be entirely on-screen
 	Rect screenRect = _globals->gfxManager()._bounds;
@@ -379,36 +376,34 @@ bool GfxInvImage::process(Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-void InventoryDialog::show(bool allFlag) {
-	if (!allFlag) {
-		// Determine how many items are in the player's inventory
-		int itemCount = 0;
-		SynchronisedList<InvObject *>::iterator i;
-		for (i = _globals->_inventory._itemList.begin(); i != _globals->_inventory._itemList.end(); ++i) {
-			if ((*i)->inInventory())
-				++itemCount;
-		}
-
-		if (itemCount == 0) {
-			MessageDialog::show(INV_EMPTY_MSG, OK_BTN_STRING);
-			return;
-		}
+void InventoryDialog::show() {
+	// Determine how many items are in the player's inventory
+	int itemCount = 0;
+	SynchronizedList<InvObject *>::iterator i;
+	for (i = RING_INVENTORY._itemList.begin(); i != RING_INVENTORY._itemList.end(); ++i) {
+		if ((*i)->inInventory())
+			++itemCount;
 	}
 
-	InventoryDialog *dlg = new InventoryDialog(allFlag);
+	if (itemCount == 0) {
+		MessageDialog::show(INV_EMPTY_MSG, OK_BTN_STRING);
+		return;
+	}
+
+	InventoryDialog *dlg = new InventoryDialog();
 	dlg->draw();
 	dlg->execute();
 	delete dlg;
 }
 
-InventoryDialog::InventoryDialog(bool allFlag) {
+InventoryDialog::InventoryDialog() {
 	// Determine the maximum size of the image of any item in the player's inventory
 	int imgWidth = 0, imgHeight = 0;
 
-	SynchronisedList<InvObject *>::iterator i;
-	for (i = _globals->_inventory._itemList.begin(); i != _globals->_inventory._itemList.end(); ++i) {
+	SynchronizedList<InvObject *>::iterator i;
+	for (i = RING_INVENTORY._itemList.begin(); i != RING_INVENTORY._itemList.end(); ++i) {
 		InvObject *invObject = *i;
-		if (allFlag || invObject->inInventory()) {
+		if (invObject->inInventory()) {
 			// Get the image for the item
 			GfxSurface itemSurface = surfaceFromRes(invObject->_displayResNum, invObject->_rlbNum, invObject->_cursorNum);
 
@@ -417,10 +412,11 @@ InventoryDialog::InventoryDialog(bool allFlag) {
 			imgHeight = MAX(imgHeight, (int)itemSurface.getBounds().height());
 
 			// Add the item to the display list
-			_images.push_back(GfxInvImage());
-			_images[_images.size() - 1].setDetails(invObject->_displayResNum, invObject->_rlbNum, invObject->_cursorNum);
-			_images[_images.size() - 1]._invObject = invObject;
-			add(&_images[_images.size() - 1]);
+			GfxInvImage *img = new GfxInvImage();
+			_images.push_back(img);
+			img->setDetails(invObject->_displayResNum, invObject->_rlbNum, invObject->_cursorNum);
+			img->_invObject = invObject;
+			add(img);
 		}
 	}
 	assert(_images.size() > 0);
@@ -442,7 +438,7 @@ InventoryDialog::InventoryDialog(bool allFlag) {
 			cellX = 0;
 		}
 
-		_images[idx]._bounds.moveTo(pt.x, pt.y);
+		_images[idx]->_bounds.moveTo(pt.x, pt.y);
 
 		pt.x += imgWidth + 2;
 		++cellX;
@@ -457,15 +453,21 @@ InventoryDialog::InventoryDialog(bool allFlag) {
 	addElements(&_btnLook, &_btnOk, NULL);
 
 	frame();
-	setCentre(SCREEN_CENTRE_X, SCREEN_CENTRE_Y);
+	setCenter(SCREEN_CENTER_X, SCREEN_CENTER_Y);
+}
+
+InventoryDialog::~InventoryDialog() {
+	for (uint idx = 0; idx < _images.size(); ++idx)
+		delete _images[idx];
 }
 
 void InventoryDialog::execute() {
-	if ((_globals->_inventory._selectedItem) && _globals->_inventory._selectedItem->inInventory())
-		_globals->_inventory._selectedItem->setCursor();
+	if ((RING_INVENTORY._selectedItem) && RING_INVENTORY._selectedItem->inInventory())
+		RING_INVENTORY._selectedItem->setCursor();
 
 	GfxElement *hiliteObj;
 	bool lookFlag = false;
+	_gfxManager.activate();
 
 	while (!_vm->getEventManager()->shouldQuit()) {
 		// Get events
@@ -491,7 +493,7 @@ void InventoryDialog::execute() {
 		if (!event.handled && event.eventType == EVENT_KEYPRESS) {
 			if ((event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
 				// Exit the dialog
-				hiliteObj = &_btnOk;
+				//hiliteObj = &_btnOk;
 				break;
 			}
 		}
@@ -513,20 +515,20 @@ void InventoryDialog::execute() {
 				_globals->_events.setCursor(CURSOR_WALK);
 			}
 
-			_gfxManager.activate();
 			hiliteObj->draw();
-			_gfxManager.deactivate();
 		} else if (hiliteObj) {
 			// Inventory item selected
 			InvObject *invObject = static_cast<GfxInvImage *>(hiliteObj)->_invObject;
 			if (lookFlag) {
 				_globals->_screenSurface.displayText(invObject->_description);
 			} else {
-				_globals->_inventory._selectedItem = invObject;
+				RING_INVENTORY._selectedItem = invObject;
 				invObject->setCursor();
 			}
 		}
 	}
+
+	_gfxManager.deactivate();
 }
 
 /*--------------------------------------------------------------------------*/
@@ -544,15 +546,15 @@ void OptionsDialog::show() {
 		}
 	} else if (btn == &dlg->_btnRestart) {
 		// Restart game
-		_globals->_game.restartGame();
+		_globals->_game->restartGame();
 	} else if (btn == &dlg->_btnSound) {
 		// Sound dialog
 	} else if (btn == &dlg->_btnSave) {
 		// Save button
-		_globals->_game.saveGame();
+		_globals->_game->saveGame();
 	} else if (btn == &dlg->_btnRestore) {
 		// Restore button
-		_globals->_game.restoreGame();
+		_globals->_game->restoreGame();
 	}
 
 	dlg->remove();
@@ -591,7 +593,7 @@ OptionsDialog::OptionsDialog() {
 
 	// Set the dialog size and position
 	frame();
-	setCentre(160, 100);
+	setCenter(160, 100);
 }
 
 

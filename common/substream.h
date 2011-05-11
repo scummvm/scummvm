@@ -27,6 +27,7 @@
 #define COMMON_SUBSTREAM_H
 
 #include "common/stream.h"
+#include "common/types.h"
 
 namespace Common {
 
@@ -59,7 +60,7 @@ public:
 			delete _parentStream;
 	}
 
-	virtual bool eos() const { return _eos; }
+	virtual bool eos() const { return _eos | _parentStream->eos(); }
 	virtual bool err() const { return _parentStream->err(); }
 	virtual void clearErr() { _eos = false; _parentStream->clearErr(); }
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
@@ -99,6 +100,25 @@ public:
 		: SeekableSubReadStream(parentStream, begin, end, disposeParentStream),
 		  ReadStreamEndian(bigEndian) {
 	}
+};
+
+/**
+ * A seekable substream that removes the exclusivity demand required by the
+ * normal SeekableSubReadStream, at the cost of seek()ing the parent stream
+ * before each read().
+ *
+ * More than one SafeSubReadStream to the same parent stream can be used
+ * at the same time; they won't mess up each other. They will, however,
+ * reposition the parent stream, so don't depend on its position to be
+ * the same after a read() or seek() on one of its SafeSubReadStream.
+ */
+class SafeSubReadStream : public SeekableSubReadStream {
+public:
+ SafeSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO) :
+		SeekableSubReadStream(parentStream, begin, end, disposeParentStream) {
+	}
+
+ virtual uint32 read(void *dataPtr, uint32 dataSize);
 };
 
 

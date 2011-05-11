@@ -32,9 +32,6 @@
  *
  */
 
-// Define to use ScummVM's PNG decoder, instead of libpng
-#define USE_INTERNAL_PNG_DECODER
-
 #ifndef USE_INTERNAL_PNG_DECODER
 // Disable symbol overrides so that we can use png.h
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
@@ -242,8 +239,8 @@ bool PNGLoader::decodeImage(const byte *fileDataPtr, uint fileSize, byte *&uncom
 	return doDecodeImage(fileDataPtr + pngOffset, fileSize - pngOffset, uncompressedDataPtr, width, height, pitch);
 }
 
-bool PNGLoader::doImageProperties(const byte *fileDataPtr, uint fileSize, int &width, int &height) {
 #ifndef USE_INTERNAL_PNG_DECODER
+bool PNGLoader::doImageProperties(const byte *fileDataPtr, uint fileSize, int &width, int &height) {
 	// Check for valid PNG signature
 	if (!doIsCorrectImageFormat(fileDataPtr, fileSize))
 		return false;
@@ -280,9 +277,7 @@ bool PNGLoader::doImageProperties(const byte *fileDataPtr, uint fileSize, int &w
 
 	// Destroy libpng structures
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-#else
-	// We don't need to read the image properties here...
-#endif
+
 	return true;
 
 }
@@ -291,6 +286,10 @@ bool PNGLoader::imageProperties(const byte *fileDataPtr, uint fileSize, int &wid
 	uint pngOffset = findEmbeddedPNG(fileDataPtr, fileSize);
 	return doImageProperties(fileDataPtr + pngOffset, fileSize - pngOffset, width, height);
 }
+
+#else
+	// We don't need to read the image properties here...
+#endif
 
 
 } // End of namespace Sword25

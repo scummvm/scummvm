@@ -89,7 +89,7 @@ class Scene4000 : public Scene {
 	};
 
 	/* Hotspots */
-	class Hotspot7 : public SceneObject {
+	class Miranda : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -97,21 +97,21 @@ class Scene4000 : public Scene {
 	private:
 		int _ctr;
 	public:
-		virtual void synchronise(Serialiser &s) {
-			SceneObject::synchronise(s);
+		virtual void synchronize(Serializer &s) {
+			SceneObject::synchronize(s);
 			s.syncAsUint16LE(_ctr);
 		}
 		virtual void doAction(int action);
 	};
-	class Hotspot9 : public SceneObject {
+	class GuardRock : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot10 : public SceneObject {
+	class Ladder : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot12 : public SceneObject {
+	class TheTech : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -151,13 +151,13 @@ public:
 	SpeakerCHFR _speakerCHFR;
 	SpeakerQL _speakerQL;
 	SpeakerCHFText _speakerCHFText;
-	SceneObject _hotspot1, _hotspot2, _hotspot3, _hotspot4, _hotspot5, _hotspot6;
-	Hotspot7 _hotspot7;
+	SceneObject _smoke1, _hotspot2, _lander, _olo, _hotspot5, _rope;
+	Miranda _miranda;
 	Hotspot8 _hotspot8;
-	Hotspot9 _hotspot9;
-	Hotspot10 _hotspot10;
-	DisplayHotspot _hotspot11;
-	Hotspot12 _hotspot12;
+	GuardRock _guardRock;
+	Ladder _ladder;
+	DisplayHotspot _forceField;
+	TheTech _theTech;
 	Hotspot13 _hotspot13;
 	Hotspot _hotspot14, _hotspot15, _hotspot16;
 	Hotspot17 _hotspot17;
@@ -165,7 +165,7 @@ public:
 	DisplayHotspot _hotspot19, _hotspot20, _hotspot21, _hotspot22;
 	Hotspot23 _hotspot23;
 	DisplayHotspot _hotspot24, _hotspot25, _hotspot26;
-	SceneObject _hotspot27;
+	SceneObject _smoke2;
 	Action1 _action1;
 	Action2 _action2;
 	Action3 _action3;
@@ -208,7 +208,7 @@ class Scene4025 : public Scene {
 		int _armStrip;
 		Common::Point _newPosition;
 
-		virtual void synchronise(Serialiser &s);
+		virtual void synchronize(Serializer &s);
 		virtual void doAction(int action);
 	};
 	class Peg : public SceneObject {
@@ -217,7 +217,7 @@ class Scene4025 : public Scene {
 		int _armStrip;
 
 		Peg() : SceneObject() { _field88 = 0; _armStrip = 3; }
-		virtual void synchronise(Serialiser &s);
+		virtual void synchronize(Serializer &s);
 		virtual void doAction(int action);
 	};
 
@@ -248,7 +248,7 @@ public:
 
 	Scene4025();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void signal();
 	virtual void process(Event &event);
@@ -271,15 +271,15 @@ class Scene4045 : public Scene {
 	};
 
 	/* Hotspots */
-	class Hotspot1 : public SceneObject {
+	class OlloStand : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot2 : public SceneObject {
+	class Miranda : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot6 : public SceneObject {
+	class Necklace : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -292,11 +292,11 @@ public:
 	SpeakerPText _speakerPText;
 	SpeakerQText _speakerQText;
 	SpeakerQL _speakerQL;
-	Hotspot1 _hotspot1;
-	Hotspot2 _hotspot2;
-	DisplayHotspot _hotspot3;
-	SceneObject _hotspot4, _hotspot5;
-	Hotspot6 _hotspot6;
+	OlloStand _olloStand;
+	Miranda _miranda;
+	DisplayHotspot _flame;
+	SceneObject _hotspot4, _olloFace;
+	Necklace _necklace;
 	DisplayHotspot _hotspot7, _hotspot8, _hotspot9, _hotspot10;
 	DisplayHotspot _hotspot11, _hotspot12, _hotspot13, _hotspot14;
 	Action1 _action1;
@@ -330,7 +330,7 @@ class Scene4050 : public Scene {
 	};
 
 	/* Hotspots */
-	class Hotspot14 : public SceneObject {
+	class Hotspot15 : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -349,8 +349,9 @@ public:
 	DisplayHotspot _hotspot1, _hotspot2, _hotspot3, _hotspot4, _hotspot5;
 	DisplayHotspot _hotspot6, _hotspot7, _hotspot8, _hotspot9, _hotspot10;
 	DisplayHotspot _hotspot11, _hotspot12, _hotspot13;
-	Hotspot14 _hotspot14;
-	SceneObject _hotspot15, _hotspot16;
+	SceneObject _hotspot14;
+	Hotspot15 _hotspot15;
+	SceneObject _hotspot16;
 	Hotspot17 _hotspot17;
 
 	Scene4050();
@@ -395,11 +396,11 @@ class Scene4100 : public Scene {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot5 : public SceneObject {
+	class Miranda : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot6 : public SceneObject {
+	class Ladder : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -425,8 +426,8 @@ public:
 	Hotspot1 _hotspot1;
 	Hotspot2 _hotspot2;
 	DisplayHotspot _hotspot3, _hotspot4;
-	Hotspot5 _hotspot5;
-	Hotspot6 _hotspot6;
+	Miranda _miranda;
+	Ladder _ladder;
 	DisplayHotspot _hotspot7, _hotspot8, _hotspot9, _hotspot10;
 	DisplayHotspot _hotspot11, _hotspot12, _hotspot13;
 	Hotspot14 _hotspot14;
@@ -655,7 +656,7 @@ class Scene4301 : public Scene {
 		int _field34E;
 		int _indexList[6];
 
-		virtual void synchronise(Serialiser &s);
+		virtual void synchronize(Serializer &s);
 		virtual void remove();
 		virtual void signal();
 		virtual void process(Event &event);
@@ -683,8 +684,8 @@ public:
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void dispatch();
-	virtual void synchronise(Serialiser &s) {
-		Scene::synchronise(s);
+	virtual void synchronize(Serializer &s) {
+		Scene::synchronize(s);
 		s.syncAsSint16LE(_field68E);
 	}
 };

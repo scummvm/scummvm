@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/textconsole.h"
+
 #include "drascula/drascula.h"
 
 namespace Drascula {

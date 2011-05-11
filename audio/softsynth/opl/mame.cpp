@@ -33,6 +33,9 @@
 
 #include "mame.h"
 
+#include "common/textconsole.h"
+#include "common/util.h"
+
 #if defined (_WIN32_WCE) || defined (__SYMBIAN32__) || defined(__GP32__) || defined(GP2X) || defined (__MAEMO__) || defined(__DS__) || defined (__MINT__) || defined(__N64__)
 #include "common/config-manager.h"
 #endif

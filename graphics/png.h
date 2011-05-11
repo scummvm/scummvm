@@ -31,8 +31,6 @@
 #ifndef GRAPHICS_PNG_H
 #define GRAPHICS_PNG_H
 
-#include "graphics/surface.h"
-
 // PNG decoder, based on the W3C specs:
 // http://www.w3.org/TR/PNG/
 // Parts of the code have been adapted from LodePNG, by Lode Vandevenne:
@@ -54,11 +52,16 @@
 // is a bit unclear. For now, these won't be supported, until a suitable sample
 // is found.
 
+#include "common/scummsys.h"
+#include "common/textconsole.h"
+
 namespace Common {
 class SeekableReadStream;
 }
 
 namespace Graphics {
+
+struct Surface;
 
 enum PNGColorType {
 	kGrayScale          = 0,	// bit depths: 1, 2, 4, 8, 16
@@ -117,14 +120,18 @@ public:
 	}
 
 	/**
-	 * Returns the palette of the specified PNG8 image.
-	 *
-	 * Note that the palette's format is RGBA.
+	 * Returns the palette of the specified PNG8 image, given a pointer to
+	 * an RGBA palette array (4 x 256).
 	 */
 	void getPalette(byte *palette, uint16 &entries) {
 		if (_header.colorType != kIndexed)
 			error("Palette requested for a non-indexed PNG");
-		palette = _palette;
+		for (int i = 0; i < 256; i++) {
+			palette[0 + i * 4] = _palette[0 + i * 4];	// R
+			palette[1 + i * 4] = _palette[1 + i * 4];	// G
+			palette[2 + i * 4] = _palette[2 + i * 4];	// B
+			palette[3 + i * 4] = _palette[3 + i * 4];	// A
+		}
 		entries = _paletteEntries;
 	}
 

@@ -60,7 +60,7 @@ typedef enum {	SV_DEFAULT_INV,
 		SV_SPEECHDELAY,		// Delay 'twixt text/animation and sample
 		SV_MUSICDIMFACTOR,	// dimVolume = volume - volume/SV_MDF
 
-		SV_TAGCOLOUR,		// if set, default actor's text colour gets poked in here
+		SV_TAGCOLOR,		// if set, default actor's text color gets poked in here
 
 		SV_USER1,
 		SV_USER2,
@@ -85,7 +85,7 @@ typedef enum {	SV_DEFAULT_INV,
 		ISV_NO_BLOCKING,
 		ISV_GHOST_ACTOR,
 		ISV_GHOST_BASE,
-		ISV_GHOST_COLOUR,
+		ISV_GHOST_COLOR,
 
 
 		SV_TOPVALID } SYSVARS;

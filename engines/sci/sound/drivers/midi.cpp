@@ -745,7 +745,7 @@ uint8 MidiPlayer_Midi::getGmInstrument(const Mt32ToGmMap &Mt32Ins) {
 void MidiPlayer_Midi::mapMt32ToGm(byte *data, size_t size) {
 	// FIXME: Clean this up
 	int memtimbres, patches;
-	uint8 group, number, keyshift, finetune, bender_range;
+	uint8 group, number, keyshift, /*finetune,*/ bender_range;
 	uint8 *patchpointer;
 	uint32 pos;
 	int i;
@@ -784,7 +784,7 @@ void MidiPlayer_Midi::mapMt32ToGm(byte *data, size_t size) {
 		group = *patchpointer;
 		number = *(patchpointer + 1);
 		keyshift = *(patchpointer + 2);
-		finetune = *(patchpointer + 3);
+		//finetune = *(patchpointer + 3);
 		bender_range = *(patchpointer + 4);
 
 		debugCN(kDebugLevelSound, "  [%03d] ", i);

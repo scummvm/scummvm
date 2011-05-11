@@ -716,14 +716,14 @@ void Script::talk(const Common::Array<int> &params) {
 	SoundSample *sample = _vm->_sound->isMutedVoice()
 		? NULL : _vm->_dubbingArchive->getSample(sentenceID, 0);
 
-	// Set the string and text colour
+	// Set the string and text color
 	surface->markDirtyRect(speechFrame->getRect(kNoDisplacement));
 	if (_vm->_sound->showSubtitles() || !sample) {
 		speechFrame->setText(Common::String((const char *)f->_data+1, f->_length-1));
 	} else {
 		speechFrame->setText("");
 	}
-	speechFrame->setColour(person->_fontColour);
+	speechFrame->setColor(person->_fontColor);
 	speechFrame->repeatedlySplitLongLines(kScreenWidth);
 
 	// Speak the dubbing if possible
@@ -873,11 +873,11 @@ void Script::fadePalettePlay(const Common::Array<int> &params) {
 
 void Script::setPalette(const Common::Array<int> &params) {
 	if (_vm->_game->getScheduledPalette() == -1) {
-		_vm->_screen->setPalette(NULL, 0, kNumColours);
+		_vm->_screen->setPalette(NULL, 0, kNumColors);
 	} else {
 		const BAFile *f;
 		f = _vm->_paletteArchive->getFile(_vm->_game->getScheduledPalette());
-		_vm->_screen->setPalette(f->_data, 0, kNumColours);
+		_vm->_screen->setPalette(f->_data, 0, kNumColors);
 	}
 	// Immediately update the palette
 	_vm->_screen->copyToScreen();

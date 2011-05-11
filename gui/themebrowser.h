@@ -33,8 +33,8 @@
 
 namespace GUI {
 
+class CommandSender;
 class ListWidget;
-class StaticTextWidget;
 
 class ThemeBrowser : public Dialog {
 public:

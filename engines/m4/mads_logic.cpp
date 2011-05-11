@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/textconsole.h"
+
 #include "m4/m4.h"
 #include "m4/dialogs.h"
 #include "m4/mads_logic.h"

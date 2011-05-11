@@ -25,6 +25,23 @@
 
 #if defined(__ANDROID__)
 
+// Allow use of stuff in <time.h>
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
+// Disable printf override in common/forbidden.h to avoid
+// clashes with log.h from the Android SDK.
+// That header file uses
+//   __attribute__ ((format(printf, 3, 4)))
+// which gets messed up by our override mechanism; this could
+// be avoided by either changing the Android SDK to use the equally
+// legal and valid
+//   __attribute__ ((format(printf, 3, 4)))
+// or by refining our printf override to use a varadic macro
+// (which then wouldn't be portable, though).
+// Anyway, for now we just disable the printf override globally
+// for the Android port
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "common/events.h"
 
 #include "backends/platform/android/android.h"
@@ -444,8 +461,12 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 		if (arg4 & JMETA_SHIFT)
 			e.kbd.flags |= Common::KBD_SHIFT;
-		if (arg4 & JMETA_ALT)
-			e.kbd.flags |= Common::KBD_ALT;
+		// JMETA_ALT is Fn on physical keyboards!
+		// when mapping this to ALT - as we know it from PC keyboards - all
+		// Fn combos will be broken (like Fn+q, which needs to end as 1 and
+		// not ALT+1). Do not want.
+		//if (arg4 & JMETA_ALT)
+		//	e.kbd.flags |= Common::KBD_ALT;
 		if (arg4 & (JMETA_SYM | JMETA_CTRL))
 			e.kbd.flags |= Common::KBD_CTRL;
 

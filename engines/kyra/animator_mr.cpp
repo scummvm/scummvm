@@ -27,6 +27,8 @@
 #include "kyra/resource.h"
 #include "kyra/wsamovie.h"
 
+#include "common/system.h"
+
 namespace Kyra {
 
 void KyraEngine_MR::restorePage3() {

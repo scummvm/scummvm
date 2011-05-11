@@ -31,6 +31,7 @@
 #include "backends/platform/sdl/sdl.h"
 #include "backends/graphics/graphics.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
 // FIXME move joystick defines out and replace with confile file options
 // we should really allow users to map any key to a joystick button
@@ -65,7 +66,7 @@ SdlEventSource::SdlEventSource()
 
 		// Enable joystick
 		if (SDL_NumJoysticks() > 0) {
-			printf("Using joystick: %s\n", SDL_JoystickName(0));
+			debug("Using joystick: %s", SDL_JoystickName(0));
 			_joystick = SDL_JoystickOpen(joystick_num);
 		}
 	}

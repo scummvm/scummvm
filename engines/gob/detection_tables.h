@@ -2278,6 +2278,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdLib,
 		"disk0.stk", 0, 0
 	},
+	{ // Supplied by alex86r in bug report #3297633
+		{
+			"fascination",
+			"VGA 3 disks edition",
+			AD_ENTRY1s("disk0.stk", "ab3dfdce43917bc806812959d692fc8f", 1061929),
+			IT_ITA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeFascination,
+		kFeaturesAdLib,
+		"disk0.stk", 0, 0
+	},
 	{
 		{
 			"fascination",
@@ -3770,6 +3784,20 @@ static const GOBGameDescription gameDescriptions[] = {
 			"urban",
 			"",
 			AD_ENTRY1s("intro.stk", "9ea647085a16dd0fb9ecd84cd8778ec9", 1253436),
+			IT_ITA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeUrban,
+		kFeatures640x480 | kFeaturesTrueColor,
+		0, 0, 0
+	},
+	{ // Supplied by alex86r in bug report #3297602
+		{
+			"urban",
+			"",
+			AD_ENTRY1s("intro.stk", "4e4a3c017fe5475353bf94c455fe3efd", 1253448),
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,

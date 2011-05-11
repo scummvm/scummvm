@@ -105,14 +105,14 @@ public:
 
 class InventoryDialog : public ModalDialog {
 private:
-	Common::Array<GfxInvImage> _images;
+	Common::Array<GfxInvImage *> _images;
 	GfxButton _btnOk, _btnLook;
 public:
-	InventoryDialog(bool allFlag = false);
-	virtual ~InventoryDialog() {}
+	InventoryDialog();
+	virtual ~InventoryDialog();
 	void execute();
 
-	static void show(bool allFlag = false);
+	static void show();
 };
 
 /*--------------------------------------------------------------------------*/

@@ -27,6 +27,7 @@
 #include "sky/disk.h"
 #include "common/util.h"
 #include "common/endian.h"
+#include "common/textconsole.h"
 
 namespace Sky {
 

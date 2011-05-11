@@ -25,9 +25,9 @@
 #ifndef TESTBED_H
 #define TESTBED_H
 
-#include "engines/engine.h"
+#include "common/array.h"
 
-#include "gui/options.h"
+#include "engines/engine.h"
 
 #include "testbed/config.h"
 #include "testbed/testsuite.h"

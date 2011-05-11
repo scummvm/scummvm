@@ -30,12 +30,12 @@
 #include "common/scummsys.h"
 #include "common/archive.h"
 #include "common/debug.h"
-#include "common/util.h"
 #include "common/unarj.h"
 #include "common/file.h"
 #include "common/hash-str.h"
 #include "common/memstream.h"
 #include "common/bufferedstream.h"
+#include "common/textconsole.h"
 
 namespace Common {
 

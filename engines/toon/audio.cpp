@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/debug.h"
+
 #include "toon/audio.h"
 #include "common/memstream.h"
 #include "common/substream.h"

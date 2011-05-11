@@ -26,6 +26,8 @@
 #include "mohawk/cstime_cases.h"
 #include "mohawk/cstime_ui.h"
 
+#include "common/textconsole.h"
+
 namespace Mohawk {
 
 CSTimeCase1::CSTimeCase1(MohawkEngine_CSTime *vm) : CSTimeCase(vm, 1) {

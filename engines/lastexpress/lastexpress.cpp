@@ -215,6 +215,7 @@ bool LastExpressEngine::handleEvents() {
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_LBUTTONDOWN:
 			getGameLogic()->getGameState()->getGameFlags()->mouseLeftClick = true;
+			getGameLogic()->getGameState()->getGameFlags()->mouseLeftPressed = (ev.type == Common::EVENT_LBUTTONDOWN) ? true : false;
 
 			// Adjust frameInterval flag
 			if (_frameCounter < _lastFrameCount + 30)
@@ -228,6 +229,8 @@ bool LastExpressEngine::handleEvents() {
 		case Common::EVENT_RBUTTONUP:
 		case Common::EVENT_RBUTTONDOWN:
 			getGameLogic()->getGameState()->getGameFlags()->mouseRightClick = true;
+			getGameLogic()->getGameState()->getGameFlags()->mouseRightPressed = (ev.type == Common::EVENT_RBUTTONDOWN) ? true : false;
+
 			if (_eventMouse && _eventMouse->isValid())
 				(*_eventMouse)(ev);
 			break;

@@ -32,8 +32,8 @@
 #include "common/str-array.h"
 
 namespace Common {
-	class SeekableReadStream;
-	class WriteStream;
+class SeekableReadStream;
+class WriteStream;
 }
 
 #include "sci/sci.h"

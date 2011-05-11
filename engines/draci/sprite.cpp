@@ -144,7 +144,7 @@ void Sprite::drawReScaled(Surface *surface, bool markDirty, const Displacement &
 	// Get pointers to source and destination buffers
 	byte *dst = (byte *)surface->getBasePtr(clippedDestRect.left, clippedDestRect.top);
 
-	const int transparent = surface->getTransparentColour();
+	const int transparent = surface->getTransparentColor();
 
 	// Calculate how many rows and columns we need to draw
 	const int rows = clippedDestRect.height();
@@ -212,7 +212,7 @@ void Sprite::draw(Surface *surface, bool markDirty, int relX, int relY) const {
 	const byte *src = _data + croppedBy.y * _width +
 		(!_mirror ? croppedBy.x : _width - 1 - croppedBy.x);
 
-	const int transparent = surface->getTransparentColour();
+	const int transparent = surface->getTransparentColor();
 
 	// Calculate how many rows and columns we need to draw
 	const int rows = clippedDestRect.height();
@@ -252,7 +252,7 @@ Common::Rect Sprite::getRect(const Displacement &displacement) const {
 	    _y + displacement.relY + scummvm_lround(_scaledHeight * displacement.extraScaleY));
 }
 
-Text::Text(const Common::String &str, const Font *font, byte fontColour,
+Text::Text(const Common::String &str, const Font *font, byte fontColor,
                 int x, int y, uint spacing) {
 	_x = x;
 	_y = y;
@@ -268,7 +268,7 @@ Text::Text(const Common::String &str, const Font *font, byte fontColour,
 	}
 
 	_spacing = spacing;
-	_colour = fontColour;
+	_color = fontColor;
 
 	_font = font;
 
@@ -294,7 +294,7 @@ void Text::setText(const Common::String &str) {
 }
 
 void Text::draw(Surface *surface, bool markDirty, int relX, int relY) const {
-	_font->drawString(surface, _text, _x + relX, _y + relY, _colour, _spacing, true);
+	_font->drawString(surface, _text, _x + relX, _y + relY, _color, _spacing, true);
 }
 
 Common::Rect Text::getRect(const Displacement &displacement) const {

@@ -24,11 +24,9 @@
  */
 
 #include "kyra/text_hof.h"
-#include "kyra/kyra_hof.h"
-#include "kyra/script_tim.h"
 #include "kyra/resource.h"
 
-#include "common/endian.h"
+#include "common/system.h"
 
 namespace Kyra {
 

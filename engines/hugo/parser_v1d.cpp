@@ -32,6 +32,7 @@
 
 // parser.c - handles all keyboard/command input
 
+#include "common/debug.h"
 #include "common/system.h"
 
 #include "hugo/hugo.h"

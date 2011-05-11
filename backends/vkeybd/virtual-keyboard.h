@@ -134,7 +134,7 @@ protected:
 
 	enum HorizontalAlignment {
 		kAlignLeft,
-		kAlignCentre,
+		kAlignCenter,
 		kAlignRight
 	};
 

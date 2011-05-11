@@ -352,6 +352,7 @@ protected:
 	uint8 *_backupPalette;
 	uint8 *_additionalPalette1;
 	uint8 *_additionalPalette2;
+	bool _additionalPalette2Present;
 	uint8 *_cutawayPalette;
 	uint8 *_universalPalette;
 	uint8 *_fluxPalette;

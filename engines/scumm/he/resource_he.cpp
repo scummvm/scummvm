@@ -32,6 +32,7 @@
 
 #include "audio/decoders/wave.h"
 #include "graphics/cursorman.h"
+#include "graphics/maccursor.h"
 #include "graphics/wincursor.h"
 
 #include "common/archive.h"
@@ -172,11 +173,49 @@ bool MacResExtractor::extractResource(int id, CachedCursor *cc) {
 	if (!dataStream)
 		return false;
 
-	int keyColor; // HACK: key color is ignored
-	_resMgr->convertCrsrCursor(dataStream, &cc->bitmap, cc->width, cc->height, cc->hotspotX, cc->hotspotY,
-						keyColor, _vm->_system->hasFeature(OSystem::kFeatureCursorHasPalette),
-						&cc->palette, cc->palSize);
+	// If we don't have a cursor palette, force monochrome cursors
+	bool forceMonochrome = !_vm->_system->hasFeature(OSystem::kFeatureCursorHasPalette);
 
+	Graphics::MacCursor *macCursor = new Graphics::MacCursor();
+
+	if (!macCursor->readFromStream(*dataStream, forceMonochrome)) {
+		delete dataStream;
+		delete macCursor;
+		return false;
+	}
+
+	cc->bitmap = new byte[macCursor->getWidth() * macCursor->getHeight()];
+	cc->width = macCursor->getWidth();
+	cc->height = macCursor->getHeight();
+	cc->hotspotX = macCursor->getHotspotX();
+	cc->hotspotY = macCursor->getHotspotY();
+
+	if (forceMonochrome) {
+		// Convert to the SCUMM palette
+		const byte *srcBitmap = macCursor->getSurface();
+
+		for (int i = 0; i < macCursor->getWidth() * macCursor->getHeight(); i++) {
+			if (srcBitmap[i] == macCursor->getKeyColor()) // Transparent
+				cc->bitmap[i] = 255;
+			else if (srcBitmap[i] == 0)                // Black
+				cc->bitmap[i] = 253;
+			else                                       // White
+				cc->bitmap[i] = 254;
+		}
+	} else {
+		// Copy data and palette
+
+		// Sanity check. This code assumes that the key color is the same
+		assert(macCursor->getKeyColor() == 255);
+
+		memcpy(cc->bitmap, macCursor->getSurface(), macCursor->getWidth() * macCursor->getHeight());
+
+		cc->palette = new byte[256 * 3];
+		cc->palSize = 256;
+		memcpy(cc->palette, macCursor->getPalette(), 256 * 3);
+	}
+
+	delete macCursor;
 	delete dataStream;
 	return true;
 }

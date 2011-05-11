@@ -24,10 +24,13 @@
  */
 
 #include "tsage/globals.h"
+#include "tsage/tsage.h"
+#include "tsage/ringworld_logic.h"
 
 namespace tSage {
 
 Globals *_globals = NULL;
+ResourceManager *_resourceManager = NULL;
 
 /*--------------------------------------------------------------------------*/
 
@@ -40,23 +43,34 @@ static SavedObject *classFactoryProc(const Common::String &className) {
 	if (className == "ObjectMover2") return new ObjectMover2();
 	if (className == "ObjectMover3") return new ObjectMover3();
 	if (className == "PlayerMover") return new PlayerMover();
-
+	if (className == "SceneObjectWrapper") return new SceneObjectWrapper();
+	if (className == "PaletteRotation") return new PaletteRotation();
+	if (className == "PaletteFader") return new PaletteFader();
 	return NULL;
 }
 
 /*--------------------------------------------------------------------------*/
 
 Globals::Globals() :
-		_dialogCentre(160, 140),
+		_dialogCenter(160, 140),
 		_gfxManagerInstance(_screenSurface) {
 	reset();
 	_stripNum = 0;
-	_gfxFontNumber = 50;
-	_gfxColours.background = 53;
-	_gfxColours.foreground = 18;
-	_fontColours.background = 51;
-	_fontColours.foreground = 54;
 
+	if (_vm->getFeatures() & GF_DEMO) {
+		_gfxFontNumber = 0;
+		_gfxColors.background = 6;
+		_gfxColors.foreground = 0;
+		_fontColors.background = 0;
+		_fontColors.foreground = 0;
+		_dialogCenter.y = 80;
+	} else {
+		_gfxFontNumber = 50;
+		_gfxColors.background = 53;
+		_gfxColors.foreground = 18;
+		_fontColors.background = 51;
+		_fontColors.foreground = 54;
+	}
 	_screenSurface.setScreenSurface();
 	_gfxManagers.push_back(&_gfxManagerInstance);
 
@@ -66,10 +80,22 @@ Globals::Globals() :
 	_prevSceneOffset = Common::Point(-1, -1);
 	_sceneListeners.push_back(&_soundHandler);
 	_sceneListeners.push_back(&_sequenceManager._soundHandler);
+
+	_scrollFollower = NULL;
+	_inventory = NULL;
+
+	if (!(_vm->getFeatures() & GF_DEMO)) {
+		_inventory = new RingworldInvObjectList();
+		_game = new RingworldGame();
+	} else {
+		_game = new RingworldDemoGame();
+	}
 }
 
 Globals::~Globals() {
 	_globals = NULL;
+	delete _inventory;
+	delete _game;
 }
 
 void Globals::reset() {
@@ -77,20 +103,22 @@ void Globals::reset() {
 	_saver->addFactory(classFactoryProc);
 }
 
-void Globals::synchronise(Serialiser &s) {
+void Globals::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		SavedObject::synchronize(s);
 	assert(_gfxManagers.size() == 1);
 
-	_sceneItems.synchronise(s);
+	_sceneItems.synchronize(s);
 	SYNC_POINTER(_sceneObjects);
-	_sceneObjects_queue.synchronise(s);
+	_sceneObjects_queue.synchronize(s);
 	s.syncAsSint32LE(_gfxFontNumber);
-	s.syncAsSint32LE(_gfxColours.background);
-	s.syncAsSint32LE(_gfxColours.foreground);
-	s.syncAsSint32LE(_fontColours.background);
-	s.syncAsSint32LE(_fontColours.foreground);
+	s.syncAsSint32LE(_gfxColors.background);
+	s.syncAsSint32LE(_gfxColors.foreground);
+	s.syncAsSint32LE(_fontColors.background);
+	s.syncAsSint32LE(_fontColors.foreground);
 
-	s.syncAsSint16LE(_dialogCentre.x); s.syncAsSint16LE(_dialogCentre.y);
-	_sceneListeners.synchronise(s);
+	s.syncAsSint16LE(_dialogCenter.x); s.syncAsSint16LE(_dialogCenter.y);
+	_sceneListeners.synchronize(s);
 	for (int i = 0; i < 256; ++i)
 		s.syncAsByte(_flags[i]);
 

@@ -30,7 +30,7 @@
 #include "common/random.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 #if defined(_WIN32_WCE) && (_WIN32_WCE <= 300)

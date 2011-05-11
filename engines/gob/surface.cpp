@@ -31,6 +31,8 @@
 #include "common/frac.h"
 
 #include "graphics/primitives.h"
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 
 namespace Gob {
 
