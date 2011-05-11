@@ -23,9 +23,10 @@
  *
  */
 
-#ifndef GRIM_SMUSH_PLAYER_H
-#define GRIM_SMUSH_PLAYER_H
-
+#ifndef GRIM_BINK_PLAYER_H
+#define GRIM_BINK_PLAYER_H
+#include "common/scummsys.h"
+#include "graphics/pixelformat.h"
 #ifdef __SYMBIAN32__
 #include <zlib\zlib.h>
 #else
@@ -35,49 +36,23 @@
 #include "common/file.h"
 
 #include "engines/grim/smush/video.h"
-#include "engines/grim/smush/blocky8.h"
-#include "engines/grim/smush/blocky16.h"
-
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
+//#include "video/mpeg_player.h"
 
 namespace Grim {
+	
 
-class SaveGame;
-
-class zlibFile {
-private:
-	Common::File *_handle;
-	z_stream _stream;	// Zlib stream
-	byte *_inBuf;		// Buffer for decompression
-	bool _fileDone;
-
-public:
-	zlibFile();
-	~zlibFile();
-	bool setPos(struct SavePos *pos);
-	bool open(const char *filename);
-	struct SavePos *getPos();
-	void close();
-	bool isOpen();
-
-	uint32 read(void *ptr, uint32 size);
-	uint8 readByte();
-	uint16 readUint16LE();
-	uint32 readUint32LE();
-	uint16 readUint16BE();
-	uint32 readUint32BE();
-};
-
-class Smush : public VideoPlayer{
+class Bink_Player : public VideoPlayer{
 private:
 	int32 _nbframes;
-	Blocky8 _blocky8;
-	Blocky16 _blocky16;
-	zlibFile _file;
-	
-	Audio::SoundHandle _soundHandle;
-	Audio::QueuingAudioStream *_stream;
+	Common::File _f;
+	//	Audio::SoundHandle _soundHandle;
+	//	Audio::QueuingAudioStream *_stream;
+	// Video::BaseAnimationState* bas;
+	//Video::BaseAnimationState vHandler;
+	Common::String _fname;
+	bool _isPlaying;
 	
 	byte _pal[0x300];
 	int16 _deltaPal[0x300];
@@ -85,25 +60,23 @@ private:
 	int32 _IACTpos;
 
 public:
-	Smush();
-	~Smush();
+	Bink_Player();
+	~Bink_Player();
 
 	bool play(const char *filename, bool looping, int x, int y);
 	void stop();
-	
+	bool isPlaying() { return !_isPlaying; }
 	void saveState(SaveGame *state);
 	void restoreState(SaveGame *state);
-
+	void deliverFrameFromDecode(int width, int height, uint16 *dat);
 private:
 	static void timerCallback(void *ptr);
 	void parseNextFrame();
 	void handleDeltaPalette(byte *src, int32 size);
 	void handleFramesHeader();
 	void handleFrameDemo();
-	void handleFrame();
-	void handleBlocky16(byte *src);
+	virtual void handleFrame();
 	void handleWave(const byte *src, uint32 size);
-	void handleIACT(const byte *src, int32 size);
 	void init();
 	void deinit();
 	bool setupAnim(const char *file, bool looping, int x, int y);
@@ -111,5 +84,6 @@ private:
 };
 
 } // end of namespace Grim
+
 
 #endif

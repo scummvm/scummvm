@@ -51,18 +51,21 @@ namespace Grim {
 #define ANNO_HEADER "MakeAnim animation type 'Bl16' parameters: "
 #define BUFFER_SIZE 16385
 
-Smush *g_smush;
 static uint16 smushDestTable[5786];
+
+VideoPlayer* CreateSMUSHPlayer(){
+	return new Smush();
+}
 
 void Smush::timerCallback(void *) {
 	if (g_grim->getGameFlags() & GF_DEMO)
-		g_smush->handleFrameDemo();
+		((Smush*)g_video)->handleFrameDemo();
 	else
-		g_smush->handleFrame();
+		((Smush*)g_video)->handleFrame();
 }
 
 Smush::Smush() {
-	g_smush = this;
+//	g_smush = this;
 	_nbframes = 0;
 	_internalBuffer = NULL;
 	_externalBuffer = NULL;
