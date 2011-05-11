@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * This is a utility for extracting needed resource data from different language
  * version of the Lure of the Temptress lure.exe executable files into a new file
  * lure.dat - this file is required for the ScummVM  Lure of the Temptress module
