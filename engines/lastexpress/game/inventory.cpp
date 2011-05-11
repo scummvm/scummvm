@@ -127,11 +127,6 @@ void Inventory::init() {
 	_selectedItem = kItemNone;
 }
 
-// FIXME we need to draw cursors with full background opacity so that whatever is in the background is erased
-// this saved us clearing some part of the background when switching between states
-
-// TODO if we draw inventory objects on screen, we need to load a new scene.
-// Signal that the inventory has taken over the screen and stop processing mouse events after we have been called
 void Inventory::handleMouseEvent(const Common::Event &ev) {
 	_useMagnifier = false;
 
@@ -180,13 +175,39 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 	// Selected item
 	if (ev.mouse.x >= 32) {
 		if (_isOpened) {
-			// If clicked
-			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				if (_highlightedItemIndex != 0) {
-					error("[Inventory::handleMouseEvent] Click on highlighted item not implemented");
-				}
+			// If we are currently inside inventory with the mouse pressed
+			if (getFlags()->mouseLeftPressed) {
+				if (_highlightedItemIndex)
+					drawHighlight(_highlightedItemIndex, true);
 			} else {
-				warning("[Inventory::handleMouseEvent] Default handling of open menu not implemented");
+				// The user released the mouse button, we need to update the inventory state (clear hightlight and items)
+				drawItem((CursorStyle)getProgress().portrait, 0, 0, 1);
+				_engine->getGraphicsManager()->clear(GraphicsManager::kBackgroundInventory, Common::Rect(0, 44, 32, (int16)(40 * _itemsShown + 40)));
+				_isOpened = false;
+				askForRedraw();
+
+				drawSelectedItem();
+
+				// Load backup scene
+				if (getState()->sceneUseBackup) {
+					SceneIndex scene = kSceneNone;
+					if (getState()->sceneBackup2) {
+						scene = getState()->sceneBackup2;
+						getState()->sceneBackup2 = kSceneNone;
+
+						// Load our scene
+						getScenes()->loadScene(scene);
+					} else if (!getEvent(kEventKronosBringFirebird) && !getProgress().isEggOpen) {
+						getState()->sceneUseBackup = false;
+						scene = getState()->sceneBackup;
+
+						if (getEntities()->getPosition(getScenes()->get(scene)->car, getScenes()->get(scene)->position))
+							scene = getScenes()->processIndex(getState()->sceneBackup);
+
+						// Load our scene
+						getScenes()->loadScene(scene);
+					}
+				}
 			}
 		} else {
 			if (_portraitHighlighted) {
@@ -195,10 +216,30 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 				_portraitHighlighted = false;
 			}
 
+			// Magnifier
 			if (_selectedItem != kItemNone
 			 && get(_selectedItem)->scene != kSceneNone
 			 && _selectedItemRect.contains(ev.mouse)) {
-				error("[Inventory::handleMouseEvent] Default handling of selected item not implemented");
+
+				if (!getState()->sceneUseBackup || (getState()->sceneBackup2 && getFirstExaminableItem() == _selectedItem))
+					_useMagnifier = true;
+
+				if (getFlags()->mouseLeftPressed) {
+					if (getState()->sceneUseBackup) {
+						if (getState()->sceneBackup2
+						 && getFirstExaminableItem() == _selectedItem) {
+							 SceneIndex sceneIndex = getState()->sceneBackup2;
+							 getState()->sceneBackup2 = kSceneNone;
+
+							 getScenes()->loadScene(sceneIndex);
+						}
+					} else {
+						getState()->sceneBackup = getState()->scene;
+						getState()->sceneUseBackup = true;
+
+						getScenes()->loadScene(get(_selectedItem)->scene);
+					}
+				}
 			}
 		}
 
@@ -237,6 +278,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 		// Reset items and portrait
 		drawItem((CursorStyle)getProgress().portrait, 0, 0, 1);
 		_engine->getGraphicsManager()->clear(GraphicsManager::kBackgroundInventory, Common::Rect(0, 44, 32, (int16)(40 * _itemsShown + 40)));
+		askForRedraw();
 		_highlightedItemIndex = 0;
 		_itemsShown = 0;
 
@@ -257,11 +299,10 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 				getScenes()->loadScene(entry.scene);
 			}
 
-			if (entry.field_2) {
+			if (entry.field_2)
 				selectItem((InventoryItem)index);
-			} else {
+			else
 				drawSelectedItem();
-			}
 
 			// Set inventory as closed (will cause a cleanup on next call)
 			_isOpened = false;
