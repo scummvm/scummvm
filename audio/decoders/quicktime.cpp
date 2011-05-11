@@ -304,8 +304,7 @@ void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
 	_audStream = Audio::makeQueuingAudioStream(entry->sampleRate, entry->channels == 2);
 
 	// First, we need to track down what audio sample we need
-	Audio::Timestamp curAudioTime = where;
-	curAudioTime.convertToFramerate(_streams[_audioStreamIndex]->time_scale);
+	Audio::Timestamp curAudioTime = where.convertToFramerate(_streams[_audioStreamIndex]->time_scale);
 	uint32 sample = curAudioTime.totalNumberOfFrames() / entry->channels;
 	uint32 seekSample = sample; 
 
