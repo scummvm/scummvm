@@ -103,7 +103,6 @@ void SceneManager::sceneChange() {
 		delete _scene;
 		_scene = NULL;
 		_sceneNumber = -1;
-		_globals->_scrollFollower = NULL;
 	}
 
 	// Set the next scene to be active
