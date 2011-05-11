@@ -397,7 +397,7 @@ void ScummEngine::getScriptBaseAddress() {
 	case WIO_ROOM:								/* room script */
 		if (_game.version == 8) {
 			_scriptOrgPointer = getResourceAddress(rtRoomScripts, _roomResource);
-			assert(_roomResource < _res->_types[rtRoomScripts].num);
+			assert(_roomResource < _res->_types[rtRoomScripts]._num);
 			_lastCodePtr = &_res->_types[rtRoomScripts]._address[_roomResource];
 		} else {
 			_scriptOrgPointer = getResourceAddress(rtRoom, _roomResource);
@@ -1099,7 +1099,7 @@ void ScummEngine::checkAndRunSentenceScript() {
 			// For now we assume that if there are more than 460 scripts, then
 			// the pair 29/104 is used, else the pair 28/103.
 
-			if (_res->_types[rtScript].num > 460) {
+			if (_res->_types[rtScript]._num > 460) {
 				if (sentenceScript == 104)
 					sentenceScript = 29;
 			} else {

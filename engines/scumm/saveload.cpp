@@ -428,7 +428,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// Nuke all resources
 	for (i = rtFirst; i <= rtLast; i++)
 		if (i != rtTemp && i != rtBuffer && (i != rtSound || _saveSound || !compat))
-			for (j = 0; j < _res->_types[i].num; j++) {
+			for (j = 0; j < _res->_types[i]._num; j++) {
 				_res->nukeResource(i, j);
 			}
 
@@ -517,7 +517,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// loading such an old save game, try to upgrade the old to new format.
 	if (hdr.ver < VER(22)) {
 		// Convert all rtScaleTable resources to matching scale items
-		for (i = 1; i < _res->_types[rtScaleTable].num; i++) {
+		for (i = 1; i < _res->_types[rtScaleTable]._num; i++) {
 			convertScaleTableToScaleSlot(i);
 		}
 	}
@@ -1245,7 +1245,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 			for (type = rtFirst; type <= rtLast; type++) {
 				if (_res->_types[type]._mode != kStaticResTypeMode && type != rtTemp && type != rtBuffer) {
 					s->saveUint16(type);	// Save the res type...
-					for (idx = 0; idx < _res->_types[type].num; idx++) {
+					for (idx = 0; idx < _res->_types[type]._num; idx++) {
 						// Only save resources which actually exist...
 						if (_res->_types[type]._address[idx]) {
 							s->saveUint16(idx);	// Save the index of the resource
@@ -1259,7 +1259,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		} else {
 			while ((type = s->loadUint16()) != 0xFFFF) {
 				while ((idx = s->loadUint16()) != 0xFFFF) {
-					assert(0 <= idx && idx < _res->_types[type].num);
+					assert(0 <= idx && idx < _res->_types[type]._num);
 					loadResource(s, type, idx);
 				}
 			}
@@ -1275,7 +1275,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 				// unchanged resource counts, we have to hard code the following check
 				if (_game.version < 6 && type == rtObjectName)
 					continue;
-				for (idx = 1; idx < _res->_types[type].num; idx++)
+				for (idx = 1; idx < _res->_types[type]._num; idx++)
 					loadResourceOLD(s, type, idx);
 			}
 	}
@@ -1388,7 +1388,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	//
 	if (s->isSaving()) {
 		for (i = rtFirst; i <= rtLast; i++)
-			for (j = 1; j < _res->_types[i].num; j++) {
+			for (j = 1; j < _res->_types[i]._num; j++) {
 				if (_res->isLocked(i, j)) {
 					s->saveByte(i);
 					s->saveUint16(j);

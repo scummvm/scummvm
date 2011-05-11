@@ -85,40 +85,44 @@ public:
 	friend class ResourceManager;
 	public:
 		ResTypeMode _mode;
-		uint16 num;
+		/**
+		 * The maximal number of resource of this type. Determines the size
+		 * of various arrays.
+		 */
+		uint16 _num;
 		uint32 tag;
 		const char *name;
 
 		/**
-		 * Array of size num containing pointers to each resource of this type.
+		 * Array of size _num containing pointers to each resource of this type.
 		 */
 		byte **_address;
 
 		/**
-		 * Array of size num containing the sizes of each resource of this type.
+		 * Array of size _num containing the sizes of each resource of this type.
 		 */
 		uint32 *_size;
 	protected:
 		/**
-		 * Array of size num containing TODO of each resource of this type.
+		 * Array of size _num containing TODO of each resource of this type.
 		 */
 		byte *flags;
 
 		/**
-		 * Array of size num containing the status of each resource of this type.
+		 * Array of size _num containing the status of each resource of this type.
 		 * This is a bitfield of which currently only one bit is used, which indicates
 		 * whether the resource is modified.
 		 */
 		byte *_status;
 	public:
 		/**
-		 * Array of size num containing for each resource of this type the
+		 * Array of size _num containing for each resource of this type the
 		 * id of the room (resp. the disk) the resource is contained in.
 		 */
 		byte *roomno;
 
 		/**
-		 * Array of size num containing room offsets of each resource of this type.
+		 * Array of size _num containing room offsets of each resource of this type.
 		 * That is the offset (in bytes) where the data for this resources
 		 * can be found in the game data file(s), relative to the start
 		 * of the room the resource is contained in.
@@ -129,7 +133,7 @@ public:
 		uint32 *roomoffs;
 
 		/**
-		 * Array of size num. Occurs in HE 70+, but we don't use it for anything.
+		 * Array of size _num. Occurs in HE 70+, but we don't use it for anything.
 		 */
 		uint32 *globsize;
 

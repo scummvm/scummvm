@@ -491,7 +491,7 @@ int ScummEngine::readResTypeList(int id) {
 	else
 		num = _fileHandle->readUint16LE();
 
-	if (num != _res->_types[id].num) {
+	if (num != _res->_types[id]._num) {
 		error("Invalid number of %ss (%d) in directory", resTypeFromId(id), num);
 	}
 
@@ -534,7 +534,7 @@ void ResourceManager::allocResTypeData(int id, uint32 tag, int num, const char *
 		error("Too many %ss (%d) in directory", name, num);
 
 	_types[id]._mode = mode;
-	_types[id].num = num;
+	_types[id]._num = num;
 	_types[id].tag = tag;
 	_types[id].name = name;
 	_types[id]._address = (byte **)calloc(num, sizeof(byte *));
@@ -605,7 +605,7 @@ void ScummEngine::ensureResourceLoaded(int type, int i) {
 	if (type != rtCharset && i == 0)
 		return;
 
-	if (i <= _res->_types[type].num && _res->_types[type]._address[i])
+	if (i <= _res->_types[type]._num && _res->_types[type]._address[i])
 		return;
 
 	loadResource(type, i);
@@ -628,8 +628,8 @@ int ScummEngine::loadResource(int type, int idx) {
 
 	roomNr = getResourceRoomNr(type, idx);
 
-	if (idx >= _res->_types[type].num)
-		error("%s %d undefined %d %d", _res->_types[type].name, idx, _res->_types[type].num, roomNr);
+	if (idx >= _res->_types[type]._num)
+		error("%s %d undefined %d %d", _res->_types[type].name, idx, _res->_types[type]._num, roomNr);
 
 	if (roomNr == 0)
 		roomNr = _roomResource;
@@ -773,7 +773,7 @@ void ResourceManager::increaseResourceCounter() {
 	byte counter;
 
 	for (i = rtFirst; i <= rtLast; i++) {
-		for (j = _types[i].num; --j >= 0;) {
+		for (j = _types[i]._num; --j >= 0;) {
 			counter = _types[i].flags[j] & RF_USAGE;
 			if (counter && counter < RF_USAGE_MAX) {
 				setResourceCounter(i, j, counter + 1);
@@ -848,7 +848,7 @@ void ResourceManager::setHeapThreshold(int min, int max) {
 }
 
 bool ResourceManager::validateResource(const char *str, int type, int idx) const {
-	if (type < rtFirst || type > rtLast || (uint) idx >= (uint)_types[type].num) {
+	if (type < rtFirst || type > rtLast || (uint) idx >= (uint)_types[type]._num) {
 		error("%s Illegal Glob type %s (%d) num %d", str, resTypeFromId(type), type, idx);
 		return false;
 	}
@@ -861,7 +861,7 @@ void ResourceManager::nukeResource(int type, int idx) {
 	if (!_types[type]._address)
 		return;
 
-	assert(idx >= 0 && idx < _types[type].num);
+	assert(idx >= 0 && idx < _types[type]._num);
 
 	ptr = _types[type]._address[idx];
 	if (ptr != NULL) {
@@ -986,7 +986,7 @@ void ResourceManager::expireResources(uint32 size) {
 			if (_types[i]._mode != kDynamicResTypeMode) {
 				// Resources of this type can be reloaded from the data files,
 				// so we can potentially unload them to free memory.
-				for (j = _types[i].num; --j >= 0;) {
+				for (j = _types[i]._num; --j >= 0;) {
 					flag = _types[i].flags[j];
 					if (!(flag & RF_LOCK) && flag >= best_counter && _types[i]._address[j] && !_vm->isResourceInUse(i, j)) {
 						best_counter = flag;
@@ -1009,7 +1009,7 @@ void ResourceManager::expireResources(uint32 size) {
 void ResourceManager::freeResources() {
 	int i, j;
 	for (i = rtFirst; i <= rtLast; i++) {
-		for (j = _types[i].num; --j >= 0;) {
+		for (j = _types[i]._num; --j >= 0;) {
 			if (isResourceLoaded(i, j))
 				nukeResource(i, j);
 		}
@@ -1060,7 +1060,7 @@ void ResourceManager::resourceStats() {
 	byte flag;
 
 	for (i = rtFirst; i <= rtLast; i++)
-		for (j = _types[i].num; --j >= 0;) {
+		for (j = _types[i]._num; --j >= 0;) {
 			flag = _types[i].flags[j];
 			if (flag & RF_LOCK && _types[i]._address[j]) {
 				lockedSize += _types[i]._size[j];
