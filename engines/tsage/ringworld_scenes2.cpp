@@ -113,6 +113,8 @@ void Scene1000::Action3::signal() {
 		setDelay(240);
 		break;
 	case 5: {
+		_globals->_player.enableControl();
+
 		const char *SEEN_INTRO = "seen_intro";
 		if (!ConfMan.hasKey(SEEN_INTRO) || !ConfMan.getBool(SEEN_INTRO)) {
 			// First time being played, so show the introduction

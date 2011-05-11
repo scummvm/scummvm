@@ -1328,10 +1328,9 @@ void RingworldGame::handleSaveLoad(bool saveFlag, int &saveSlot, Common::String 
 }
 
 void RingworldGame::start() {
-	// Set some default flags and cursor
+	// Set some default flags
 	_globals->setFlag(12);
 	_globals->setFlag(34);
-	_globals->_events.setCursor(CURSOR_WALK);
 
 	// Set the screen to scroll in response to the player moving off-screen
 	_globals->_scrollFollower = &_globals->_player;

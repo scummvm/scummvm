@@ -80,6 +80,7 @@ public:
 
 	Common::Point _mousePos;
 	CursorType _currentCursor;
+	CursorType _lastCursor;
 
 	void setCursor(CursorType cursorType);
 	void pushCursor(CursorType cursorType);

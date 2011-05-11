@@ -38,7 +38,7 @@ namespace tSage {
 
 EventsClass::EventsClass() {
 	_currentCursor = CURSOR_NONE;
-	hideCursor();
+	_lastCursor = CURSOR_NONE;
 	_frameNumber = 0;
 	_priorFrameTime = 0;
 	_prevDelayFrame = 0;
@@ -140,17 +140,11 @@ bool EventsClass::getEvent(Event &evt, int eventMask) {
  * @cursorType Specified cursor number
  */
 void EventsClass::setCursor(CursorType cursorType) {
+	if (cursorType == _lastCursor)
+		return;
+
+	_lastCursor = cursorType;
 	_globals->clearFlag(122);
-
-	if ((_currentCursor == cursorType) && CursorMan.isVisible())
-		return;
-
-	if (cursorType == CURSOR_NONE) {
-		if (CursorMan.isVisible())
-			CursorMan.showMouse(false);
-		return;
-	}
-
 	CursorMan.showMouse(true);
 
 	const byte *cursor;
@@ -158,8 +152,8 @@ void EventsClass::setCursor(CursorType cursorType) {
 	uint size;
 
 	switch (cursorType) {
-	case OBJECT_STUNNER:
-		// Stunner cursor
+	case CURSOR_NONE:
+		// No cursor
 		cursor = _resourceManager->getSubResource(4, 1, 6, &size);
 		_globals->setFlag(122);
 		break;
@@ -215,8 +209,8 @@ void EventsClass::pushCursor(CursorType cursorType) {
 	uint size;
 
 	switch (cursorType) {
-	case CURSOR_CROSSHAIRS:
-		// Crosshairs cursor
+	case CURSOR_NONE:
+		// No cursor
 		cursor = _resourceManager->getSubResource(4, 1, 6, &size);
 		break;
 
@@ -273,19 +267,19 @@ void EventsClass::setCursor(Graphics::Surface &cursor, int transColor, const Com
 }
 
 void EventsClass::setCursorFromFlag() {
-	setCursor(_globals->getFlag(122) ? CURSOR_CROSSHAIRS : _currentCursor);
+	setCursor(isCursorVisible() ? _currentCursor : CURSOR_NONE);
 }
 
 void EventsClass::showCursor() {
-	CursorMan.showMouse(true);
+	setCursor(_currentCursor);
 }
 
 void EventsClass::hideCursor() {
-	CursorMan.showMouse(false);
+	setCursor(CURSOR_NONE);
 }
 
 bool EventsClass::isCursorVisible() const { 
-	return CursorMan.isVisible(); 
+	return !_globals->getFlag(122);
 }
 
 /**
