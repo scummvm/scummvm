@@ -2914,15 +2914,22 @@ void Region::uniteRect(const Rect &rect) {
 
 void SceneRegions::load(int sceneNum) {
 	clear();
-
-	byte *regionData = _resourceManager->getResource(RES_CONTROL, sceneNum, 9999, true);
+	bool altRegions = _vm->getFeatures() & GF_ALT_REGIONS;
+	byte *regionData = _resourceManager->getResource(RES_CONTROL, sceneNum, altRegions ? 1 : 9999, true);
 
 	if (regionData) {
 		int regionCount = READ_LE_UINT16(regionData);
 		for (int regionCtr = 0; regionCtr < regionCount; ++regionCtr) {
-			int rlbNum = READ_LE_UINT16(regionData + regionCtr * 6 + 2);
+			int regionId = READ_LE_UINT16(regionData + regionCtr * 6 + 2);
 
-			push_back(Region(sceneNum, rlbNum));
+			if (altRegions) {
+				// Load data from within this resource
+				uint32 dataOffset = READ_LE_UINT32(regionData + regionCtr * 6 + 4);
+				push_back(Region(regionId, regionData + dataOffset));
+			} else {
+				// Load region from a separate resource
+				push_back(Region(sceneNum, regionId));
+			}
 		}
 
 		DEALLOCATE(regionData);
