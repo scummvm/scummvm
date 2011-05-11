@@ -211,6 +211,7 @@ Common::Error Saver::restore(int slot) {
 	// Final post-restore notifications
 	_macroRestoreFlag = false;
 	_loadNotifiers.notify(false);
+	_globals->_events.setCursor(CURSOR_WALK);
 
 	return Common::kNoError;
 }
