@@ -390,7 +390,7 @@ void ScummEngine::getScriptBaseAddress() {
 				break;
 		_scriptOrgPointer = getResourceAddress(rtInventory, idx);
 		assert(idx < _numInventory);
-		_lastCodePtr = &_res->_types[rtInventory].address[idx];
+		_lastCodePtr = &_res->_types[rtInventory]._address[idx];
 		break;
 
 	case WIO_LOCAL:
@@ -398,18 +398,18 @@ void ScummEngine::getScriptBaseAddress() {
 		if (_game.version == 8) {
 			_scriptOrgPointer = getResourceAddress(rtRoomScripts, _roomResource);
 			assert(_roomResource < _res->_types[rtRoomScripts].num);
-			_lastCodePtr = &_res->_types[rtRoomScripts].address[_roomResource];
+			_lastCodePtr = &_res->_types[rtRoomScripts]._address[_roomResource];
 		} else {
 			_scriptOrgPointer = getResourceAddress(rtRoom, _roomResource);
 			assert(_roomResource < _numRooms);
-			_lastCodePtr = &_res->_types[rtRoom].address[_roomResource];
+			_lastCodePtr = &_res->_types[rtRoom]._address[_roomResource];
 		}
 		break;
 
 	case WIO_GLOBAL:							/* global script */
 		_scriptOrgPointer = getResourceAddress(rtScript, ss->number);
 		assert(ss->number < _numScripts);
-		_lastCodePtr = &_res->_types[rtScript].address[ss->number];
+		_lastCodePtr = &_res->_types[rtScript]._address[ss->number];
 		break;
 
 	case WIO_FLOBJECT:						/* flobject script */
@@ -418,7 +418,7 @@ void ScummEngine::getScriptBaseAddress() {
 		idx = _objs[idx].fl_object_index;
 		_scriptOrgPointer = getResourceAddress(rtFlObject, idx);
 		assert(idx < _numFlObject);
-		_lastCodePtr = &_res->_types[rtFlObject].address[idx];
+		_lastCodePtr = &_res->_types[rtFlObject]._address[idx];
 		break;
 	default:
 		error("Bad type while getting base address");
@@ -445,7 +445,7 @@ void ScummEngine::resetScriptPointer() {
  * collected by ResourceManager::expireResources.
  */
 void ScummEngine::refreshScriptPointer() {
-	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
+	if (*_lastCodePtr != _scriptOrgPointer) {
 		long oldoffs = _scriptPointer - _scriptOrgPointer;
 		getScriptBaseAddress();
 		_scriptPointer = _scriptOrgPointer + oldoffs;

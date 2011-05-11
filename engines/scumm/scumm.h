@@ -168,17 +168,6 @@ enum {
 	DEBUG_SMUSH	=	1 << 10		// Track SMUSH
 };
 
-/**
- * Internal header for any memory block allocated by the resource manager.
- *
- * @todo Hide MemBlkHeader; no code outside the resource manager should
- * have to use it, ever. Currently script code needs it to detect whether
- * some scripts have moved (in fetchScriptByte()).
- */
-struct MemBlkHeader {
-	uint32 size;
-};
-
 struct VerbSlot;
 struct ObjectData;
 
@@ -622,9 +611,11 @@ protected:
 protected:
 	/* Script VM - should be in Script class */
 	uint32 _localScriptOffsets[1024];
-	const byte *_scriptPointer, *_scriptOrgPointer;
-	byte _opcode, _currentScript;
+	const byte *_scriptPointer;
+	const byte *_scriptOrgPointer;
 	const byte * const *_lastCodePtr;
+	byte _opcode;
+	byte _currentScript;
 	int _scummStackPos;
 	int _vmStack[150];
 

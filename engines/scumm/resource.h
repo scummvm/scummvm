@@ -88,14 +88,50 @@ public:
 		uint16 num;
 		uint32 tag;
 		const char *name;
-		byte **address;
+
+		/**
+		 * Array of size num containing pointers to each resource of this type.
+		 */
+		byte **_address;
+
+		/**
+		 * Array of size num containing the sizes of each resource of this type.
+		 */
+		uint32 *_size;
 	protected:
+		/**
+		 * Array of size num containing TODO of each resource of this type.
+		 */
 		byte *flags;
-		byte *status;
+
+		/**
+		 * Array of size num containing the status of each resource of this type.
+		 * This is a bitfield of which currently only one bit is used, which indicates
+		 * whether the resource is modified.
+		 */
+		byte *_status;
 	public:
+		/**
+		 * Array of size num containing for each resource of this type the
+		 * id of the room (resp. the disk) the resource is contained in.
+		 */
 		byte *roomno;
+
+		/**
+		 * Array of size num containing room offsets of each resource of this type.
+		 * That is the offset (in bytes) where the data for this resources
+		 * can be found in the game data file(s), relative to the start
+		 * of the room the resource is contained in.
+		 *
+		 * A value of RES_INVALID_OFFSET indicates a resources that is not contained
+		 * in the game data files.
+		 */
 		uint32 *roomoffs;
-		uint32 *globsize;	///!< Occurs in HE 70+, but we don't use it for anything.
+
+		/**
+		 * Array of size num. Occurs in HE 70+, but we don't use it for anything.
+		 */
+		uint32 *globsize;
 
 	public:
 		ResTypeData();

@@ -537,9 +537,10 @@ void ResourceManager::allocResTypeData(int id, uint32 tag, int num, const char *
 	_types[id].num = num;
 	_types[id].tag = tag;
 	_types[id].name = name;
-	_types[id].address = (byte **)calloc(num, sizeof(void *));
+	_types[id]._address = (byte **)calloc(num, sizeof(byte *));
+	_types[id]._size = (uint32 *)calloc(num, sizeof(uint32));
 	_types[id].flags = (byte *)calloc(num, sizeof(byte));
-	_types[id].status = (byte *)calloc(num, sizeof(byte));
+	_types[id]._status = (byte *)calloc(num, sizeof(byte));
 
 	if (mode) {
 		_types[id].roomno = (byte *)calloc(num, sizeof(byte));
@@ -584,8 +585,6 @@ void ScummEngine::nukeCharset(int i) {
 }
 
 void ScummEngine::ensureResourceLoaded(int type, int i) {
-	void *addr = NULL;
-
 	debugC(DEBUG_RESOURCE, "ensureResourceLoaded(%s,%d)", resTypeFromId(type), i);
 
 	if ((type == rtRoom) && i > 0x7F && _game.version < 7 && _game.heversion <= 71) {
@@ -606,10 +605,7 @@ void ScummEngine::ensureResourceLoaded(int type, int i) {
 	if (type != rtCharset && i == 0)
 		return;
 
-	if (i <= _res->_types[type].num)
-		addr = _res->_types[type].address[i];
-
-	if (addr)
+	if (i <= _res->_types[type].num && _res->_types[type]._address[i])
 		return;
 
 	loadResource(type, i);
@@ -715,9 +711,7 @@ uint32 ScummEngine_v70he::getResourceRoomOffset(int type, int idx) {
 int ScummEngine::getResourceSize(int type, int idx) {
 	byte *ptr = getResourceAddress(type, idx);
 	assert(ptr);
-	MemBlkHeader *hdr = (MemBlkHeader *)(ptr - sizeof(MemBlkHeader));
-
-	return hdr->size;
+	return _res->_types[type]._size[idx];
 }
 
 byte *ScummEngine::getResourceAddress(int type, int idx) {
@@ -729,17 +723,17 @@ byte *ScummEngine::getResourceAddress(int type, int idx) {
 	if (!_res->validateResource("getResourceAddress", type, idx))
 		return NULL;
 
-	if (!_res->_types[type].address) {
-		debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d), _res->_types[type].address == NULL", resTypeFromId(type), idx);
+	if (!_res->_types[type]._address) {
+		debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d), _res->_types[type]._address == NULL", resTypeFromId(type), idx);
 		return NULL;
 	}
 
 	// If the resource is missing, but loadable from the game data files, try to do so.
-	if (!_res->_types[type].address[idx] && _res->_types[type]._mode != kDynamicResTypeMode) {
+	if (!_res->_types[type]._address[idx] && _res->_types[type]._mode != kDynamicResTypeMode) {
 		ensureResourceLoaded(type, idx);
 	}
 
-	ptr = (byte *)_res->_types[type].address[idx];
+	ptr = (byte *)_res->_types[type]._address[idx];
 	if (!ptr) {
 		debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == NULL", resTypeFromId(type), idx);
 		return NULL;
@@ -747,8 +741,8 @@ byte *ScummEngine::getResourceAddress(int type, int idx) {
 
 	_res->setResourceCounter(type, idx, 1);
 
-	debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == %p", resTypeFromId(type), idx, ptr + sizeof(MemBlkHeader));
-	return ptr + sizeof(MemBlkHeader);
+	debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == %p", resTypeFromId(type), idx, ptr);
+	return ptr;
 }
 
 byte *ScummEngine::getStringAddress(int i) {
@@ -807,29 +801,29 @@ byte *ResourceManager::createResource(int type, int idx, uint32 size) {
 		// cases. For instance, Zak tries to reload the intro music
 		// while it's playing. See bug #1253171.
 
-		if (_types[type].address[idx] && (type == rtSound || type == rtScript || type == rtCostume))
-			return _types[type].address[idx] + sizeof(MemBlkHeader);
+		if (_types[type]._address[idx] && (type == rtSound || type == rtScript || type == rtCostume))
+			return _types[type]._address[idx];
 	}
 
 	nukeResource(type, idx);
 
 	expireResources(size);
 
-	void *ptr = calloc(size + sizeof(MemBlkHeader) + SAFETY_AREA, 1);
+	byte *ptr = (byte *)calloc(size + SAFETY_AREA, 1);
 	if (ptr == NULL) {
 		error("createResource(%s,%d): Out of memory while allocating %d", resTypeFromId(type), idx, size);
 	}
 
 	_allocatedSize += size;
 
-	_types[type].address[idx] = (byte *)ptr;
-	((MemBlkHeader *)ptr)->size = size;
+	_types[type]._address[idx] = ptr;
+	_types[type]._size[idx] = size;
 	setResourceCounter(type, idx, 1);
-	return (byte *)ptr + sizeof(MemBlkHeader);	/* skip header */
+	return ptr;
 }
 
 ResourceManager::ResTypeData::ResTypeData() {
-	memset(this, 0, sizeof(this));
+	memset(this, 0, sizeof(*this));
 }
 
 ResourceManager::ResTypeData::~ResTypeData() {
@@ -864,18 +858,19 @@ bool ResourceManager::validateResource(const char *str, int type, int idx) const
 void ResourceManager::nukeResource(int type, int idx) {
 	byte *ptr;
 
-	if (!_types[type].address)
+	if (!_types[type]._address)
 		return;
 
 	assert(idx >= 0 && idx < _types[type].num);
 
-	ptr = _types[type].address[idx];
+	ptr = _types[type]._address[idx];
 	if (ptr != NULL) {
 		debugC(DEBUG_RESOURCE, "nukeResource(%s,%d)", resTypeFromId(type), idx);
-		_types[type].address[idx] = 0;
+		_types[type]._address[idx] = 0;
+		_types[type]._size[idx] = 0;
 		_types[type].flags[idx] = 0;
-		_types[type].status[idx] &= ~RS_MODIFIED;
-		_allocatedSize -= ((MemBlkHeader *)ptr)->size;
+		_types[type]._status[idx] &= ~RS_MODIFIED;
+		_allocatedSize -= _types[type]._size[idx];
 		free(ptr);
 	}
 }
@@ -957,13 +952,13 @@ bool ScummEngine::isResourceInUse(int type, int i) const {
 void ResourceManager::setModified(int type, int i) {
 	if (!validateResource("Modified", type, i))
 		return;
-	_types[type].status[i] |= RS_MODIFIED;
+	_types[type]._status[i] |= RS_MODIFIED;
 }
 
 bool ResourceManager::isModified(int type, int i) const {
 	if (!validateResource("isModified", type, i))
 		return false;
-	return (_types[type].status[i] & RS_MODIFIED) != 0;
+	return (_types[type]._status[i] & RS_MODIFIED) != 0;
 }
 
 void ResourceManager::expireResources(uint32 size) {
@@ -993,7 +988,7 @@ void ResourceManager::expireResources(uint32 size) {
 				// so we can potentially unload them to free memory.
 				for (j = _types[i].num; --j >= 0;) {
 					flag = _types[i].flags[j];
-					if (!(flag & RF_LOCK) && flag >= best_counter && _types[i].address[j] && !_vm->isResourceInUse(i, j)) {
+					if (!(flag & RF_LOCK) && flag >= best_counter && _types[i]._address[j] && !_vm->isResourceInUse(i, j)) {
 						best_counter = flag;
 						best_type = i;
 						best_res = j;
@@ -1018,9 +1013,10 @@ void ResourceManager::freeResources() {
 			if (isResourceLoaded(i, j))
 				nukeResource(i, j);
 		}
-		free(_types[i].address);
+		free(_types[i]._address);
+		free(_types[i]._size);
 		free(_types[i].flags);
-		free(_types[i].status);
+		free(_types[i]._status);
 		free(_types[i].roomno);
 		free(_types[i].roomoffs);
 
@@ -1055,7 +1051,7 @@ void ScummEngine::loadPtrToResource(int type, int resindex, const byte *source) 
 bool ResourceManager::isResourceLoaded(int type, int idx) const {
 	if (!validateResource("isResourceLoaded", type, idx))
 		return false;
-	return _types[type].address[idx] != NULL;
+	return _types[type]._address[idx] != NULL;
 }
 
 void ResourceManager::resourceStats() {
@@ -1066,8 +1062,8 @@ void ResourceManager::resourceStats() {
 	for (i = rtFirst; i <= rtLast; i++)
 		for (j = _types[i].num; --j >= 0;) {
 			flag = _types[i].flags[j];
-			if (flag & RF_LOCK && _types[i].address[j]) {
-				lockedSize += ((MemBlkHeader *)_types[i].roomoffs[j])->size;
+			if (flag & RF_LOCK && _types[i]._address[j]) {
+				lockedSize += _types[i]._size[j];
 				lockedNum++;
 			}
 		}

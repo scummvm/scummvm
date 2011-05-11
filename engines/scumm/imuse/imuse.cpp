@@ -112,12 +112,12 @@ byte *IMuseInternal::findStartOfSound(int sound) {
 	}
 
 	// Check for old-style headers first, like 'RO'
-	if (ptr[4] == 'R' && ptr[5] == 'O'&& ptr[6] != 'L')
+	if (ptr[0] == 'R' && ptr[1] == 'O'&& ptr[2] != 'L')
+		return ptr;
+	if (ptr[4] == 'S' && ptr[5] == 'O')
 		return ptr + 4;
-	if (ptr[8] == 'S' && ptr[9] == 'O')
-		return ptr + 8;
 
-	ptr += 8;
+	ptr += 4;
 	size = READ_BE_UINT32(ptr);
 	ptr += 4;
 
@@ -145,7 +145,7 @@ bool IMuseInternal::isMT32(int sound) {
 	if (ptr == NULL)
 		return false;
 
-	tag = READ_BE_UINT32(ptr + 4);
+	tag = READ_BE_UINT32(ptr);
 	switch (tag) {
 	case MKTAG('A','D','L',' '):
 	case MKTAG('A','S','F','X'): // Special AD class for old AdLib sound effects
@@ -164,17 +164,17 @@ bool IMuseInternal::isMT32(int sound) {
 
 	case MKTAG('M','I','D','I'):	// Occurs in Sam & Max
 		// HE games use Roland music
-		if (ptr[12] == 'H' && ptr[13] == 'S')
+		if (ptr[8] == 'H' && ptr[9] == 'S')
 			return true;
 		else
 			return false;
 	}
 
 	// Old style 'RO' has equivalent properties to 'ROL'
-	if (ptr[4] == 'R' && ptr[5] == 'O')
+	if (ptr[0] == 'R' && ptr[1] == 'O')
 		return true;
 	// Euphony tracks show as 'SO' and have equivalent properties to 'ADL'
-	if (ptr[8] == 'S' && ptr[9] == 'O')
+	if (ptr[4] == 'S' && ptr[5] == 'O')
 		return false;
 
 	error("Unknown music type: '%c%c%c%c'", (char)tag >> 24, (char)tag >> 16, (char)tag >> 8, (char)tag);
@@ -192,7 +192,7 @@ bool IMuseInternal::isMIDI(int sound) {
 	if (ptr == NULL)
 		return false;
 
-	tag = READ_BE_UINT32(ptr + 4);
+	tag = READ_BE_UINT32(ptr);
 	switch (tag) {
 	case MKTAG('A','D','L',' '):
 	case MKTAG('A','S','F','X'): // Special AD class for old AdLib sound effects
@@ -212,11 +212,11 @@ bool IMuseInternal::isMIDI(int sound) {
 	}
 
 	// Old style 'RO' has equivalent properties to 'ROL'
-	if (ptr[4] == 'R' && ptr[5] == 'O')
+	if (ptr[0] == 'R' && ptr[1] == 'O')
 		return true;
 	// Euphony tracks show as 'SO' and have equivalent properties to 'ADL'
 	// FIXME: Right now we're pretending it's GM.
-	if (ptr[8] == 'S' && ptr[9] == 'O')
+	if (ptr[4] == 'S' && ptr[5] == 'O')
 		return true;
 
 	error("Unknown music type: '%c%c%c%c'", (char)tag >> 24, (char)tag >> 16, (char)tag >> 8, (char)tag);
