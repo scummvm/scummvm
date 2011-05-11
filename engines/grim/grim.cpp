@@ -1132,6 +1132,8 @@ void GrimEngine::savegameRestore() {
 	//  lock resources
 
 	_selectedActor = NULL;
+	delete _currScene;
+	removeScene(_currScene);
 	_currScene = NULL;
 
 	restoreColors(_savedState);
