@@ -35,6 +35,8 @@ MODULE_OBJS := \
 	smush/blocky8.o \
 	smush/blocky16.o \
 	smush/smush.o \
+	smush/video.o \
+	smush/mpeg.o \
 	smush/vima.o \
 	actor.o \
 	bitmap.o \
