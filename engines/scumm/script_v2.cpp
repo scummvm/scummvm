@@ -23,6 +23,7 @@
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/object.h"
+#include "scumm/resource.h"
 #include "scumm/scumm_v2.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"

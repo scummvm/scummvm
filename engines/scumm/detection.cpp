@@ -40,6 +40,7 @@
 #include "scumm/scumm_v8.h"
 #include "scumm/file.h"
 #include "scumm/file_nes.h"
+#include "scumm/resource.h"
 
 #include "engines/metaengine.h"
 

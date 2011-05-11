@@ -27,6 +27,7 @@
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/he/intern_he.h"
+#include "scumm/resource.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"

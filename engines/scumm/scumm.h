@@ -346,71 +346,7 @@ enum ResTypes {
 	rtNumTypes = 22
 };
 
-enum {
-	RES_INVALID_OFFSET = 0xFFFFFFFF
-};
-
-/**
- * The 'resource manager' class. Currently doesn't really deserve to be called
- * a 'class', at least until somebody gets around to OOfying this more.
- */
-class ResourceManager {
-	//friend class ScummDebugger;
-	//friend class ScummEngine;
-protected:
-	ScummEngine *_vm;
-
-public:
-	byte mode[rtNumTypes];
-	uint16 num[rtNumTypes];
-	uint32 tags[rtNumTypes];
-	const char *name[rtNumTypes];
-	byte **address[rtNumTypes];
-protected:
-	byte *flags[rtNumTypes];
-	byte *status[rtNumTypes];
-public:
-	byte *roomno[rtNumTypes];
-	uint32 *roomoffs[rtNumTypes];
-	uint32 *globsize[rtNumTypes];
-
-protected:
-	uint32 _allocatedSize;
-	uint32 _maxHeapThreshold, _minHeapThreshold;
-	byte _expireCounter;
-
-public:
-	ResourceManager(ScummEngine *vm);
-	~ResourceManager();
-
-	void setHeapThreshold(int min, int max);
-
-	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
-	void freeResources();
-
-	byte *createResource(int type, int index, uint32 size);
-	void nukeResource(int type, int i);
-
-	bool isResourceLoaded(int type, int index) const;
-
-	void lock(int type, int i);
-	void unlock(int type, int i);
-	bool isLocked(int type, int i) const;
-
-	void setModified(int type, int i);
-	bool isModified(int type, int i) const;
-
-	void increaseExpireCounter();
-	void setResourceCounter(int type, int index, byte flag);
-	void increaseResourceCounter();
-
-	void resourceStats();
-
-//protected:
-	bool validateResource(const char *str, int type, int index) const;
-protected:
-	void expireResources(uint32 size);
-};
+class ResourceManager;
 
 /**
  * Base class for all SCUMM engines.
