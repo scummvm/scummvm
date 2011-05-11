@@ -19,6 +19,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 #!define _DEBUG
+#!define _INCLUDE_DATA_FILES
 
 Name ScummVM
 
@@ -231,6 +232,7 @@ Section "ScummVM" SecMain
 	File /oname=README.txt       "${text_dir}\README"
 	File /oname=README-SDL.txt   "${build_dir}\README-SDL"
 
+!ifdef _INCLUDE_DATA_FILES
 	# Engine data
 	File "${engine_data}\drascula.dat"
 	File "${engine_data}\hugo.dat"
@@ -248,6 +250,7 @@ Section "ScummVM" SecMain
 	File "${theme_data}\scummclassic.zip"
 	File "${theme_data}\scummmodern.zip"
 	File "${theme_data}\translations.dat"
+!endif
 
 	# Main exe and dlls
 	File "${build_dir}\scummvm.exe"
@@ -299,6 +302,7 @@ Section -un.Main SecUninstall
 	Delete /REBOOTOK $INSTDIR\README.txt
 	Delete /REBOOTOK $INSTDIR\README-SDL.txt
 
+!ifdef _INCLUDE_DATA_FILES
 	Delete /REBOOTOK $INSTDIR\drascula.dat
 	Delete /REBOOTOK $INSTDIR\hugo.dat
 	Delete /REBOOTOK $INSTDIR\kyra.dat
@@ -314,6 +318,7 @@ Section -un.Main SecUninstall
 	Delete /REBOOTOK $INSTDIR\scummclassic.zip
 	Delete /REBOOTOK $INSTDIR\scummmodern.zip
 	Delete /REBOOTOK $INSTDIR\translations.dat
+!endif
 
 	Delete /REBOOTOK $INSTDIR\scummvm.exe
 	Delete /REBOOTOK $INSTDIR\SDL.dll
