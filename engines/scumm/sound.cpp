@@ -1224,7 +1224,7 @@ int ScummEngine::readSoundResource(int idx) {
 
 		if (!dmuFile.open(buffer)) {
 			error("Can't open music file %s", buffer);
-			_res->roomoffs[rtSound][idx] = RES_INVALID_OFFSET;
+			_res->_types[rtSound].roomoffs[idx] = RES_INVALID_OFFSET;
 			return 0;
 		}
 		dmuFile.seek(4, SEEK_SET);
@@ -1248,7 +1248,7 @@ int ScummEngine::readSoundResource(int idx) {
 		}
 		error("Unrecognized base tag 0x%08x in sound %d", basetag, idx);
 	}
-	_res->roomoffs[rtSound][idx] = RES_INVALID_OFFSET;
+	_res->_types[rtSound].roomoffs[idx] = RES_INVALID_OFFSET;
 	return 0;
 }
 
@@ -2123,7 +2123,7 @@ int ScummEngine::readSoundResourceSmallHeader(int idx) {
 		_fileHandle->read(_res->createResource(rtSound, idx, ro_size - 4), ro_size - 4);
 		return 1;
 	}
-	_res->roomoffs[rtSound][idx] = RES_INVALID_OFFSET;
+	_res->_types[rtSound].roomoffs[idx] = RES_INVALID_OFFSET;
 	return 0;
 }
 

@@ -38,13 +38,13 @@ int ScummEngine_v4::readResTypeList(int id) {
 
 	num = _fileHandle->readUint16LE();
 
-	if (num != _res->num[id]) {
+	if (num != _res->_types[id].num) {
 		error("Invalid number of %ss (%d) in directory", resTypeFromId(id), num);
 	}
 
 	for (i = 0; i < num; i++) {
-		_res->roomno[id][i] = _fileHandle->readByte();
-		_res->roomoffs[id][i] = _fileHandle->readUint32LE();
+		_res->_types[id].roomno[i] = _fileHandle->readByte();
+		_res->_types[id].roomoffs[i] = _fileHandle->readUint32LE();
 	}
 
 	return num;

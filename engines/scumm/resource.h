@@ -60,18 +60,23 @@ protected:
 	ScummEngine *_vm;
 
 public:
-	byte mode[rtNumTypes];
-	uint16 num[rtNumTypes];
-	uint32 tags[rtNumTypes];
-	const char *name[rtNumTypes];
-	byte **address[rtNumTypes];
-protected:
-	byte *flags[rtNumTypes];
-	byte *status[rtNumTypes];
-public:
-	byte *roomno[rtNumTypes];
-	uint32 *roomoffs[rtNumTypes];
-	uint32 *globsize[rtNumTypes];
+	class ResTypeData {
+	friend class ResourceManager;
+	public:
+		byte mode;
+		uint16 num;
+		uint32 tags;
+		const char *name;
+		byte **address;
+	protected:
+		byte *flags;
+		byte *status;
+	public:
+		byte *roomno;
+		uint32 *roomoffs;
+		uint32 *globsize;
+	};
+	ResTypeData _types[rtNumTypes];
 
 protected:
 	uint32 _allocatedSize;
