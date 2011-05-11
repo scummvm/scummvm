@@ -164,8 +164,6 @@ void ScummEngine::deleteRoomOffsets() {
 
 /** Read room offsets */
 void ScummEngine::readRoomsOffsets() {
-	debug(9, "readRoomOffsets()");
-
 	if (_game.features & GF_SMALL_HEADER) {
 		_fileHandle->seek(12, SEEK_SET);	// Directly searching for the room offset block would be more generic...
 	} else {
@@ -300,6 +298,7 @@ void ScummEngine::readIndexFile() {
 			break;
 
 		numblock++;
+		debug(2, "Reading index block of type '%s', size %d", tag2str(blocktype), itemsize);
 		readIndexBlock(blocktype, itemsize);
 	}
 
@@ -349,7 +348,6 @@ void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	char *ptr;
 	switch (blocktype) {
 	case MKTAG('A','N','A','M'):		// Used by: The Dig, FT
-		debug(9, "found ANAM block, reading audio names");
 		num = _fileHandle->readUint16LE();
 		ptr = (char*)malloc(num * 9);
 		_fileHandle->read(ptr, num * 9);
@@ -418,7 +416,6 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		break;
 
 	case MKTAG('D','O','B','J'):
-		debug(9, "found DOBJ block, reading object table");
 		readGlobalObjects();
 		break;
 
@@ -489,8 +486,6 @@ int ScummEngine::readResTypeList(int id) {
 	int num;
 	int i;
 
-	debug(9, "readResTypeList(%s)", resTypeFromId(id));
-
 	if (_game.version == 8)
 		num = _fileHandle->readUint32LE();
 	else
@@ -499,6 +494,9 @@ int ScummEngine::readResTypeList(int id) {
 	if (num != _res->num[id]) {
 		error("Invalid number of %ss (%d) in directory", resTypeFromId(id), num);
 	}
+
+	debug(2, "  readResTypeList(%s): %d entries", resTypeFromId(id), num);
+
 
 	for (i = 0; i < num; i++) {
 		_res->roomno[id][i] = _fileHandle->readByte();
@@ -1066,8 +1064,6 @@ void ResourceManager::resourceStats() {
 }
 
 void ScummEngine_v5::readMAXS(int blockSize) {
-	debug(9, "ScummEngine_v5 readMAXS: MAXS has blocksize %d", blockSize);
-
 	_numVariables = _fileHandle->readUint16LE();      // 800
 	_fileHandle->readUint16LE();                      // 16
 	_numBitVariables = _fileHandle->readUint16LE();   // 2048
@@ -1096,8 +1092,6 @@ void ScummEngine_v5::readMAXS(int blockSize) {
 
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::readMAXS(int blockSize) {
-	debug(9, "ScummEngine_v8 readMAXS: MAXS has blocksize %d", blockSize);
-
 	_fileHandle->seek(50, SEEK_CUR);                 // Skip over SCUMM engine version
 	_fileHandle->seek(50, SEEK_CUR);                 // Skip over data file version
 	_numVariables = _fileHandle->readUint32LE();     // 1500
@@ -1126,8 +1120,6 @@ void ScummEngine_v8::readMAXS(int blockSize) {
 }
 
 void ScummEngine_v7::readMAXS(int blockSize) {
-	debug(9, "ScummEngine_v7 readMAXS: MAXS has blocksize %d", blockSize);
-
 	_fileHandle->seek(50, SEEK_CUR);                 // Skip over SCUMM engine version
 	_fileHandle->seek(50, SEEK_CUR);                 // Skip over data file version
 	_numVariables = _fileHandle->readUint16LE();
@@ -1161,8 +1153,6 @@ void ScummEngine_v7::readMAXS(int blockSize) {
 
 void ScummEngine_v6::readMAXS(int blockSize) {
 	if (blockSize == 38) {
-		debug(0, "ScummEngine_v6 readMAXS: MAXS has blocksize %d", blockSize);
-
 		_numVariables = _fileHandle->readUint16LE();
 		_fileHandle->readUint16LE();
 		_numBitVariables = _fileHandle->readUint16LE();

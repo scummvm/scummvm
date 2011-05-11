@@ -253,8 +253,6 @@ void ScummEngine_v70he::readGlobalObjects() {
 #ifdef ENABLE_HE
 void ScummEngine_v99he::readMAXS(int blockSize) {
 	if (blockSize == 52) {
-		debug(0, "ScummEngine_v99he readMAXS: MAXS has blocksize %d", blockSize);
-
 		_numVariables = _fileHandle->readUint16LE();
 		_fileHandle->readUint16LE();
 		_numRoomVariables = _fileHandle->readUint16LE();
@@ -287,8 +285,6 @@ void ScummEngine_v99he::readMAXS(int blockSize) {
 
 void ScummEngine_v90he::readMAXS(int blockSize) {
 	if (blockSize == 46) {
-		debug(0, "ScummEngine_v90he readMAXS: MAXS has blocksize %d", blockSize);
-
 		_numVariables = _fileHandle->readUint16LE();
 		_fileHandle->readUint16LE();
 		_numRoomVariables = _fileHandle->readUint16LE();
@@ -321,8 +317,6 @@ void ScummEngine_v90he::readMAXS(int blockSize) {
 
 void ScummEngine_v72he::readMAXS(int blockSize) {
 	if (blockSize == 40) {
-		debug(0, "ScummEngine_v72he readMAXS: MAXS has blocksize %d", blockSize);
-
 		_numVariables = _fileHandle->readUint16LE();
 		_fileHandle->readUint16LE();
 		_numBitVariables = _numRoomVariables = _fileHandle->readUint16LE();
