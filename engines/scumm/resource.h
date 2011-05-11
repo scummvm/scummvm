@@ -90,8 +90,12 @@ public:
 		 * of various arrays.
 		 */
 		uint16 _num;
-		uint32 tag;
-		const char *name;
+
+		/**
+		 * The 4-byte tag or chunk type associated to this resource type, if any.
+		 * Only applies to resources that are loaded from the game data files.
+		 */
+		uint32 _tag;
 
 		/**
 		 * Array of size _num containing pointers to each resource of this type.
@@ -154,7 +158,7 @@ public:
 
 	void setHeapThreshold(int min, int max);
 
-	void allocResTypeData(int id, uint32 tag, int num, const char *name, ResTypeMode mode);
+	void allocResTypeData(int id, uint32 tag, int num, ResTypeMode mode);
 	void freeResources();
 
 	byte *createResource(int type, int index, uint32 size);
