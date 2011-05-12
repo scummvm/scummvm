@@ -122,10 +122,19 @@ void PegasusEngine::drawInterfaceOverview(const OverviewHotspot &hotspot, Video:
 		// had similar names...
 		_gfx->drawPict("Images/Interface/OVcontrollerHilite.mac", hotspot.rect.left, hotspot.rect.top, false);
 	} else if (hotspot.time != 1000) {
-		// TODO: Thicker line (=4px) with rounded edges
+		// Draw a yellow outline around the hotspot
+		Common::Rect rect = hotspot.rect;
 		uint32 color = _system->getScreenFormat().RGBToColor(232, 232, 0); // Yellow
 		Graphics::Surface *screen = _system->lockScreen();
-		screen->frameRect(hotspot.rect, color);
+		screen->frameRect(rect, color);
+		rect.grow(1);
+		screen->frameRect(rect, color);
+		rect.grow(1);
+		screen->frameRect(rect, color);
+		screen->hLine(rect.left + 1, rect.top - 1, rect.right - 2, color);
+		screen->hLine(rect.left + 1, rect.bottom, rect.right - 2, color);
+		screen->vLine(rect.left - 1, rect.top + 1, rect.bottom - 2, color);
+		screen->vLine(rect.right, rect.top + 1, rect.bottom - 2, color);
 		_system->unlockScreen();
 	}
 }
