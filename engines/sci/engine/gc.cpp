@@ -90,7 +90,8 @@ static void processWorkList(SegManager *segMan, WorklistManager &wm, const Commo
 		wm._worklist.pop_back();
 		if (reg.segment != stackSegment) { // No need to repeat this one
 			debugC(kDebugLevelGC, "[GC] Checking %04x:%04x", PRINT_REG(reg));
-			if (reg.segment < heap.size() && heap[reg.segment]) {
+			// We only check for valid offsets here. Fixes bugs #3299458 and #3295849.
+			if (reg.segment < heap.size() && heap[reg.segment] && heap[reg.segment]->isValidOffset(reg.offset)) {
 				// Valid heap object? Find its outgoing references!
 				wm.pushArray(heap[reg.segment]->listAllOutgoingReferences(reg));
 			}
