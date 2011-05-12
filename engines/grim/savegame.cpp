@@ -100,7 +100,7 @@ uint32 SaveGame::beginSection(uint32 sectionTag) {
 			_inSaveFile->seek(_sectionSize, SEEK_CUR);
 		}
 		_sectionBuffer = (byte *)malloc(_sectionSize);
-		_inSaveFile->seek(-_sectionSize, SEEK_CUR);
+		_inSaveFile->seek(-(int32)_sectionSize, SEEK_CUR);
 		_inSaveFile->read(_sectionBuffer, _sectionSize);
 
 	} else {

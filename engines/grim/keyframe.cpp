@@ -182,7 +182,7 @@ void KeyframeAnim::KeyframeNode::loadBinary(const char *&data) {
 	// If the name handle is entirely null (like ma_rest.key)
 	// then we shouldn't try to set the name
 	if (READ_LE_UINT32(data) == 0)
-		memcpy(_meshName, "(null)", 32);
+		memcpy(_meshName, "(null)", 7);
 	else
 		memcpy(_meshName, data, 32);
 	_numEntries = READ_LE_UINT32(data + 36);
