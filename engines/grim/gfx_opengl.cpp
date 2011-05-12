@@ -478,7 +478,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 					texData = new byte[4 * bitmap->_width * bitmap->_height];
 				// Convert data to 32-bit RGBA format
 				byte *texDataPtr = texData;
-				uint16 *bitmapData = reinterpret_cast<uint16 *>(bitmap->_data[pic]);
+				uint16 *bitmapData = reinterpret_cast<uint16 *>(bitmap->getImageData(pic));
 				for (int i = 0; i < bitmap->_width * bitmap->_height; i++, texDataPtr += 4, bitmapData++) {
 					uint16 pixel = *bitmapData;
 					int r = pixel >> 11;
@@ -496,7 +496,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 				}
 				texOut = texData;
 			} else {
-				texOut = (byte *)bitmap->_data[pic];
+				texOut = (byte *)bitmap->getImageData(pic);
 			}
 
 			for (int i = 0; i < bitmap->_numTex; i++) {
@@ -532,9 +532,9 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 		delete[] texData;
 	} else {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
-			uint16 *zbufPtr = reinterpret_cast<uint16 *>(bitmap->_data[pic]);
+			uint16 *zbufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic));
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
-				uint16 val = READ_LE_UINT16(bitmap->_data[pic] + 2 * i);
+				uint16 val = READ_LE_UINT16(bitmap->getImageData(pic) + 2 * i);
 				zbufPtr[i] = 0xffff - ((uint32) val) * 0x10000 / 100 / (0x10000 - val);
 			}
 

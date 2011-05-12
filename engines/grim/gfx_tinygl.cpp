@@ -565,9 +565,9 @@ void GfxTinyGL::setupLight(Scene::Light *light, int lightId) {
 void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 	if (bitmap->_format != 1) {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
-			uint16 *bufPtr = reinterpret_cast<uint16 *>(bitmap->_data[pic]);
+			uint16 *bufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic));
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
-				uint16 val = READ_LE_UINT16(bitmap->_data[pic] + 2 * i);
+				uint16 val = READ_LE_UINT16(bitmap->getImageData(pic) + 2 * i);
 				bufPtr[i] = ((uint32) val) * 0x10000 / 100 / (0x10000 - val);
 			}
 		}

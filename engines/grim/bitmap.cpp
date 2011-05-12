@@ -297,6 +297,10 @@ bool BitmapData::loadTile(const char *filename, const char *data, int len) {
 	return true;
 }
 
+char *BitmapData::getImageData(int num) const {
+	return _data[num];
+}
+
 // Bitmap
 
 Bitmap::Bitmap(const char *fname, const char *data, int len) :
