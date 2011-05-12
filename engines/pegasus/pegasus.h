@@ -214,6 +214,7 @@ private:
 	//void drawCompass();
 	//void runPauseMenu();
 	void showLoadDialog();
+	void runInterfaceOverview();
 
 	// Interface Overview
 	void drawInterfaceOverview();

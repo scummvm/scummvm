@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	detection.o \
 	graphics.o \
 	menu.o \
+	overview.o \
 	pegasus.o \
 	sound.o \
 	video.o

@@ -175,7 +175,7 @@ void PegasusEngine::setGameMode(int buttonSelected) {
 	} else {
 		switch (buttonSelected) {
 		case kInterfaceOverviewButton:
-			warning("No overview just yet");
+			runInterfaceOverview();
 			break;
 		case kStartButton:
 			_gameMode = kMainGameMode;

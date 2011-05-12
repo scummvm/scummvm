@@ -173,14 +173,6 @@ void PegasusEngine::drawInterface() {
 	_system->updateScreen();
 }
 
-void PegasusEngine::drawInterfaceOverview() {
-	_gfx->drawPict("Images/Interface/OVTop.mac", 0, 0, false);
-	_gfx->drawPict("Images/Interface/OVLeft.mac", 0, kViewScreenOffset, false);
-	_gfx->drawPict("Images/Interface/OVRight.mac", 640 - kViewScreenOffset, kViewScreenOffset, false);
-	_gfx->drawPict("Images/Interface/OVBottom.mac", 0, kViewScreenOffset + 256, false);
-	_system->updateScreen();
-}
-
 void PegasusEngine::mainGameLoop() {
 	// TODO: Yeah...
 	_system->fillScreen(0);

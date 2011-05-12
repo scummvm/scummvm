@@ -74,13 +74,13 @@ public:
 
 	void seekToTime(VideoHandle handle, uint32 time);
 
+	// Helper functions
+	void copyFrameToScreen(const Graphics::Surface *frame, int width, int height, int x, int y);
+
 private:
 	PegasusEngine *_vm;
 
 	Video::QuickTimeDecoder *_timeZoneVideo;
-
-	// Helper functions
-	void copyFrameToScreen(const Graphics::Surface *frame, int width, int height, int x, int y);
 
 	// Keep tabs on any videos playing
 	Common::Array<VideoEntry> _videoStreams;
