@@ -572,42 +572,52 @@ void Actor::walkTo(const Graphics::Vector3d &p) {
 							break;
 						}
 					}
-					Graphics::Line3d line;
-					Common::List<Graphics::Line3d> bridges;
-					if (!inClosed) {
-						bridges = sector->getBridgesTo(s);
+					if (inClosed)
+						continue;
+
+					Common::List<Graphics::Line3d> bridges = sector->getBridgesTo(s);
+					if (bridges.empty())
+						continue; // The sectors are not adjacent.
+
+					PathNode *n = NULL;
+					for (Common::List<PathNode *>::iterator j = openList.begin(); j != openList.end(); ++j) {
+						if ((*j)->sect == s) {
+							n = *j;
+							break;
+						}
 					}
-					while (!bridges.empty()) {
-						line = bridges.back();
-						bridges.pop_back();
-						PathNode *n = NULL;
-						Graphics::Vector3d pos = s->getClosestPoint(_destPos);
-						Graphics::Line3d l(node->pos, pos);
-						if (!line.intersectLine2d(l, &pos)) {
-							pos = line.middle();
+					if (n) {
+						float newCost = node->cost + (n->pos - node->pos).magnitude();
+						if (newCost < n->cost) {
+							n->cost = newCost;
+							n->parent = node;
+						}
+					} else {
+						Graphics::Vector3d closestPoint = s->getClosestPoint(_destPos);
+						Graphics::Vector3d best;
+						float bestDist = 1e6f;
+						Graphics::Line3d l(node->pos, closestPoint);
+						while (!bridges.empty()) {
+							Graphics::Line3d bridge = bridges.back();
+							Graphics::Vector3d pos;
+							if (!bridge.intersectLine2d(l, &pos)) {
+								pos = bridge.middle();
+							}
+							float dist = (pos - closestPoint).magnitude();
+							if (dist < bestDist) {
+								bestDist = dist;
+								best = pos;
+							}
+							bridges.pop_back();
 						}
 
-						for (Common::List<PathNode *>::iterator j = openList.begin(); j != openList.end(); ++j) {
-							if ((*j)->pos == pos) {
-								n = *j;
-								break;
-							}
-						}
-						if (n) {
-							float newCost = node->cost + (n->pos - node->pos).magnitude();
-							if (newCost < n->cost) {
-								n->cost = newCost;
-								n->parent = node;
-							}
-						} else {
-							n = new PathNode;
-							n->parent = node;
-							n->sect = s;
-							n->pos = pos;
-							n->dist = (n->pos - _destPos).magnitude();
-							n->cost = node->cost + (n->pos - node->pos).magnitude();
-							openList.push_back(n);
-						}
+						n = new PathNode;
+						n->parent = node;
+						n->sect = s;
+						n->pos = best;
+						n->dist = (n->pos - _destPos).magnitude();
+						n->cost = node->cost + (n->pos - node->pos).magnitude();
+						openList.push_back(n);
 					}
 				}
 			} while (!openList.empty());
