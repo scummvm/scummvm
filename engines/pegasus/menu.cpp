@@ -23,6 +23,7 @@
 #include "common/events.h"
 #include "common/textconsole.h"
 
+#include "pegasus/console.h"
 #include "pegasus/pegasus.h"
 
 namespace Pegasus {
@@ -89,6 +90,12 @@ void PegasusEngine::runMainMenu() {
 						}
 
 						drawMenu(buttonSelected);
+					}
+					break;
+				case Common::KEYCODE_d:
+					if (event.kbd.flags & Common::KBD_CTRL) {
+						_console->attach();
+						_console->onFrame();
 					}
 					break;
 				default:
