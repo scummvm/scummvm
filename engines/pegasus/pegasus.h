@@ -35,6 +35,10 @@
 #include "pegasus/graphics.h"
 #include "pegasus/video.h"
 
+namespace Video {
+	class Video::QuickTimeDecoder;
+}
+
 namespace Pegasus {
 
 struct PegasusGameDescription;
@@ -134,6 +138,11 @@ struct RightAreaData {
 	uint32 time;
 };
 
+struct OverviewHotspot {
+	Common::Rect rect;
+	uint32 time;
+};
+
 enum TimeZone {
 	kLocPrehistoric = 0,
 	kLocMars = 1,
@@ -214,10 +223,10 @@ private:
 	//void drawCompass();
 	//void runPauseMenu();
 	void showLoadDialog();
-	void runInterfaceOverview();
 
 	// Interface Overview
-	void drawInterfaceOverview();
+	void runInterfaceOverview();
+	void drawInterfaceOverview(const OverviewHotspot &hotspot, Video::QuickTimeDecoder *video);
 
 	// Main Game Functions
 	void mainGameLoop();

@@ -175,7 +175,9 @@ void PegasusEngine::setGameMode(int buttonSelected) {
 	} else {
 		switch (buttonSelected) {
 		case kInterfaceOverviewButton:
+			_sound->stopSound();
 			runInterfaceOverview();
+			_sound->playSound("Sounds/Main Menu.aiff", true);
 			break;
 		case kStartButton:
 			_gameMode = kMainGameMode;
