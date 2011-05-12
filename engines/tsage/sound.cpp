@@ -44,7 +44,7 @@ SoundManager::SoundManager() {
 	_volume = 127;
 	_suspendCtr = 0;
 	_disableCtr = 0;
-	_field153 = 0;
+	_suspendedCount = 0;
 	_driversDetected = false;
 }
 
@@ -152,7 +152,7 @@ void SoundManager::installDriver(int driverNum) {
 		byte *bankData = _resourceManager->getResource(RES_BANK, ROLAND_DRIVER_NUM, 0, true);
 		if (bankData) {
 			// Install the patch bank data
-			_sfInstallPatchBank(bankData);
+			_sfInstallPatchBank(driver, bankData);
 			DEALLOCATE(bankData);
 		} else {
 			// Could not locate patch bank data, so unload the driver
@@ -368,6 +368,10 @@ bool SoundManager::_sfIsOnPlayList(Sound *sound) {
 	return result;
 }
 
+void SoundManager::_sfRethinkSoundDrivers() {
+	
+}
+
 void SoundManager::_sfRethinkVoiceTypes() {
 	
 }
@@ -459,15 +463,29 @@ void SoundManager::_sfExtractGroupMask() {
 }
 
 bool SoundManager::_sfInstallDriver(SoundDriver *driver) {
-	return false;
+	if (!driver->open())
+		return false;
+	
+	sfManager()._installedDrivers.push_back(driver);
+	uint32 *maskList = driver->getGroupMaskList();
+	driver->_groupMask = *maskList;
+
+	_sfExtractGroupMask();
+	_sfRethinkSoundDrivers();
+	driver->setVolume(sfManager()._volume);
+
+	return true;
 }
 
 void SoundManager::_sfUnInstallDriver(SoundDriver *driver) {
+	sfManager()._installedDrivers.remove(driver);
 
+	_sfExtractGroupMask();
+	_sfRethinkSoundDrivers();
 }
 
-void SoundManager::_sfInstallPatchBank(const byte *bankData) {
-
+void SoundManager::_sfInstallPatchBank(SoundDriver *driver, const byte *bankData) {
+	driver->installPatchBank(bankData);
 }
 
 /**
@@ -535,10 +553,10 @@ Sound::Sound() {
 	_holdAt = false;
 	_cueValue = -1;
 	_volume1 = -1;
-	_field1F = 0;
+	_volume3 = 0;
 	_volume2 = 0;
-	_field21 = 0;
-	_field22 = 0;
+	_volume5 = 0;
+	_volume4 = 0;
 	_timeIndex = 0;
 	_field26 = 0;
 	_trackInfo.count = 0;
@@ -701,21 +719,21 @@ void Sound::mute(bool flag) {
 	_globals->_soundManager.restartSoundServer();
 }
 
-void Sound::fade(int volume1, int volume2, int v3, int v4) {
+void Sound::fade(int volume1, int volume2, int volume3, int volume4) {
 	_globals->_soundManager.suspendSoundServer();
 
 	if (volume1 > 127)
 		volume1 = 127;
 	if (volume2 > 127)
 		volume2 = 127;
-	if (v3 > 255)
-		v3 = 255;
+	if (volume3 > 255)
+		volume3 = 255;
 
 	_volume1 = volume1;
 	_volume2 = volume2;
-	_field1F = v3;
-	_field21 = 0;
-	_field22 = v4;
+	_volume3 = volume3;
+	_volume5 = 0;
+	_volume4 = volume4;
 
 	_globals->_soundManager.restartSoundServer();
 }
@@ -849,6 +867,17 @@ void ASound::fade(int v1, int v2, int v3, int v4, Action *action) {
 		_action = action;
 
 	_sound.fade(v1, v2, v3, v4);
+}
+
+
+/*--------------------------------------------------------------------------*/
+
+SoundDriver::SoundDriver() {
+	_driverNum = 0;
+	_minVersion = _maxVersion = 0;
+	_groupMaskList = NULL;
+
+	_groupMask = 0;
 }
 
 } // End of namespace tSage
