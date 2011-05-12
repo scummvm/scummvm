@@ -30,6 +30,7 @@
 #include "base/version.h"
 #include "gui/saveload.h"
 
+#include "pegasus/console.h"
 #include "pegasus/pegasus.h"
 
 //#define RUN_SUB_MOVIE // :D :D :D :D :D :D
@@ -47,9 +48,11 @@ PegasusEngine::~PegasusEngine() {
 	delete _resFork;
 	delete _inventoryLid;
 	delete _biochipLid;
+	delete _console;
 }
 
 Common::Error PegasusEngine::run() {
+	_console = new PegasusConsole(this);
 	_gfx = new GraphicsManager(this);
 	_video = new VideoManager(this);
 	_sound = new SoundManager(this);
@@ -330,6 +333,10 @@ Common::String PegasusEngine::getTimeZoneFolder(TimeZone timeZone) {
 		return "TSA";
 
 	return getTimeZoneDesc(timeZone);
+}
+
+GUI::Debugger *PegasusEngine::getDebugger() {
+	return _console;
 }
 
 } // End of namespace Pegasus

@@ -41,6 +41,7 @@ namespace Video {
 
 namespace Pegasus {
 
+class PegasusConsole;
 struct PegasusGameDescription;
 class SoundManager;
 class VideoManager;
@@ -200,6 +201,7 @@ public:
 	
 	const PegasusGameDescription *_gameDescription;
 	bool hasFeature(EngineFeature f) const;
+	GUI::Debugger *getDebugger();
 	
 	VideoManager *_video;
 	SoundManager *_sound;
@@ -257,6 +259,9 @@ private:
 	Common::Array<SoundSpot> _currentSoundSpots;
 	Common::Array<Zoom> _currentZooms;
 	Common::Array<Extra> _currentExtras;
+
+	// Console
+	PegasusConsole *_console;
 };
 
 } // End of namespace Pegasus

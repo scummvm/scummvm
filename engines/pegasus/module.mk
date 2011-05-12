@@ -1,6 +1,7 @@
 MODULE := engines/pegasus
 
 MODULE_OBJS = \
+	console.o \
 	credits.o \
 	detection.o \
 	graphics.o \
