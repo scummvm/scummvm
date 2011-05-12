@@ -161,8 +161,6 @@ void PegasusEngine::runIntro() {
 	_video->waitUntilMovieEnds(handle);
 }
 
-static const int kViewScreenOffset = 64;
-
 void PegasusEngine::drawInterface() {
 	_gfx->drawPict("Images/Interface/3DInterface Top", 0, 0, false);
 	_gfx->drawPict("Images/Interface/3DInterface Left", 0, kViewScreenOffset, false);
@@ -186,13 +184,7 @@ void PegasusEngine::mainGameLoop() {
 	_video->playMovieCentered("Images/Caldoria/Pullback.movie");
 	drawInterface();
 
-	Common::String navMovieFolder;
-	if (_timeZone == kLocTinyTSA || _timeZone == kLocFullTSA)
-		navMovieFolder = "TSA";
-	else
-		navMovieFolder = getTimeZoneDesc(_timeZone);
-
-	Common::String navMovie = Common::String::format("Images/%s/%s.movie", navMovieFolder.c_str(), getTimeZoneDesc(_timeZone).c_str());
+	Common::String navMovie = Common::String::format("Images/%s/%s.movie", getTimeZoneFolder(_timeZone).c_str(), getTimeZoneDesc(_timeZone).c_str());
 	_video->playMovie(navMovie, kViewScreenOffset, kViewScreenOffset);
 
 	_gameMode = kQuitMode;
@@ -317,6 +309,13 @@ void PegasusEngine::loadExtras(TimeZone timeZone) {
 Common::String PegasusEngine::getTimeZoneDesc(TimeZone timeZone) {
 	static const char *names[] = { "Prehistoric", "Mars", "WSC", "Tiny TSA", "Full TSA", "Norad Alpha", "Caldoria", "Norad Delta" };
 	return names[timeZone];
+}
+
+Common::String PegasusEngine::getTimeZoneFolder(TimeZone timeZone) {
+	if (timeZone == kLocFullTSA || timeZone == kLocTinyTSA)
+		return "TSA";
+
+	return getTimeZoneDesc(timeZone);
 }
 
 } // End of namespace Pegasus

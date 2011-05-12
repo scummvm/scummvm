@@ -31,7 +31,7 @@
 namespace Pegasus {
 	
 VideoManager::VideoManager(PegasusEngine *vm) : _vm(vm) {
-	_timeZoneVideo = new Video::QuickTimeDecoder();
+	_timeZoneVideo = 0;
 }
 	
 VideoManager::~VideoManager() {
@@ -39,16 +39,24 @@ VideoManager::~VideoManager() {
 	delete _timeZoneVideo;
 }
 
-void VideoManager::setTimeZoneVideo(const Common::String &filename) {
-	if (!_timeZoneVideo->loadFile(filename))
-		error("Could not load time zone video '%s'", filename.c_str());
+bool VideoManager::loadTimeZoneVideo(const Common::String &filename) {
+	Video::QuickTimeDecoder *video = new Video::QuickTimeDecoder();
+
+	if (!video->loadFile(filename)) {
+		delete video;
+		return false;
+	}
+
+	delete _timeZoneVideo;
+	_timeZoneVideo = video;
 
 	// Set it on pause
 	_timeZoneVideo->pauseVideo(true);
+	return true;
 }
 
 void VideoManager::drawTimeZoneVideoFrame(uint32 time) {
-	assert(_timeZoneVideo->isVideoLoaded());
+	assert(_timeZoneVideo);
 
 	if (!_timeZoneVideo->isPaused())
 		_timeZoneVideo->pauseVideo(true);
@@ -60,18 +68,58 @@ void VideoManager::drawTimeZoneVideoFrame(uint32 time) {
 	if (!frame)	
 		error("Could not find frame at time %d", time);
 
-	// TODO
+	copyFrameToScreen(frame, _timeZoneVideo->getWidth(), _timeZoneVideo->getHeight(), kViewScreenOffset, kViewScreenOffset);
+	_vm->_system->updateScreen();
 }
 
 void VideoManager::playTimeZoneVideoSegment(uint32 startTime, uint32 endTime) {
-	assert(_timeZoneVideo->isVideoLoaded());
+	assert(_timeZoneVideo);
+
+	_timeZoneVideo->seekToTime(Audio::Timestamp(0, startTime, 600));
 
 	if (_timeZoneVideo->isPaused())
 		_timeZoneVideo->pauseVideo(false);
 
-	_timeZoneVideo->seekToTime(Audio::Timestamp(0, startTime, 600));
+	// Convert the end time to ms
+	endTime = Audio::Timestamp(0, endTime, 600).msecs();
 
-	// TODO
+	bool continuePlaying = true;
+	while (!_timeZoneVideo->endOfVideo() && _timeZoneVideo->getElapsedTime() < endTime && !_vm->shouldQuit() && continuePlaying) {
+		if (_timeZoneVideo->needsUpdate()) {
+			const Graphics::Surface *frame = _timeZoneVideo->decodeNextFrame();
+
+			if (frame) {
+				copyFrameToScreen(frame, _timeZoneVideo->getWidth(), _timeZoneVideo->getHeight(), kViewScreenOffset, kViewScreenOffset);
+				_vm->_system->updateScreen();
+			}
+		}
+
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_RTL:
+			case Common::EVENT_QUIT:
+				continuePlaying = false;
+				break;
+			case Common::EVENT_KEYDOWN:
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_ESCAPE:
+					continuePlaying = false;
+					break;
+				default:
+					break;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+
+		// Cut down on CPU usage
+		_vm->_system->delayMillis(10);
+	}
+
+	_timeZoneVideo->pauseVideo(true);
 }
 
 void VideoManager::pauseVideos() {
@@ -131,7 +179,8 @@ void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 					break;
 				default:
 					break;
-			}
+				}
+				break;
 			default:
 				break;
 			}
@@ -169,27 +218,8 @@ bool VideoManager::updateBackgroundMovies() {
 		if (_videoStreams[i]->needsUpdate()) {
 			const Graphics::Surface *frame = _videoStreams[i]->decodeNextFrame();
 
-			if (frame) {			
-				if (frame->format.bytesPerPixel == 1)
-					error("Unhandled 8bpp frames"); // Cut out because Pegasus Prime shouldn't need this
-				
-				// Clip the width/height to make sure we stay on the screen
-				uint16 width = MIN<int32>(_videoStreams[i]->getWidth(), _vm->_system->getWidth() - _videoStreams[i].x);
-				uint16 height = MIN<int32>(_videoStreams[i]->getHeight(), _vm->_system->getHeight() - _videoStreams[i].y);
-
-				if (width == 320 && height == 240) {
-					// TODO: Is this right? At least "Big Movie" and the "Sub Chase Movie" need to be scaled...
-					// FIXME: Normal2x is only compiled in when USE_SCALERS is defined
-					_videoStreams[i].x = 0;
-					_videoStreams[i].y = 0;
-					Graphics::Surface scaledSurf;
-					scaledSurf.create(frame->w * 2, frame->h * 2, frame->format);
-					Normal2x((byte *)frame->pixels, frame->pitch, (byte *)scaledSurf.pixels, scaledSurf.pitch, frame->w, frame->h);
-					_vm->_system->copyRectToScreen((byte*)scaledSurf.pixels, scaledSurf.pitch, _videoStreams[i].x, _videoStreams[i].y, width * 2, height * 2);
-					scaledSurf.free();
-				} else
-					_vm->_system->copyRectToScreen((byte*)frame->pixels, frame->pitch, _videoStreams[i].x, _videoStreams[i].y, width, height);
-					
+			if (frame) {				
+				copyFrameToScreen(frame, _videoStreams[i]->getWidth(), _videoStreams[i]->getHeight(), _videoStreams[i].x, _videoStreams[i].y);
 
 				// We've drawn something to the screen, make sure we update it
 				updateScreen = true;
@@ -233,6 +263,26 @@ VideoHandle VideoManager::playBackgroundMovie(Common::String filename, int x, in
 void VideoManager::seekToTime(VideoHandle handle, uint32 time) {
 	if (handle != NULL_VID_HANDLE)
 		_videoStreams[handle]->seekToTime(Audio::Timestamp(0, time, 600));
+}
+
+void VideoManager::copyFrameToScreen(const Graphics::Surface *frame, int width, int height, int x, int y) {
+	if (frame->format.bytesPerPixel == 1)
+		error("Unhandled 8bpp frames"); // Cut out because Pegasus Prime shouldn't need this
+
+	// Clip the width/height to make sure we stay on the screen
+	width = MIN<int32>(width, _vm->_system->getWidth() - x);
+	height = MIN<int32>(height, _vm->_system->getHeight() - y);
+
+	if (width == 320 && height == 240) {
+		// TODO: Is this right? At least "Big Movie" and the "Sub Chase Movie" need to be scaled...
+		// FIXME: Normal2x is only compiled in when USE_SCALERS is defined
+		Graphics::Surface scaledSurf;
+		scaledSurf.create(frame->w * 2, frame->h * 2, frame->format);
+		Normal2x((byte *)frame->pixels, frame->pitch, (byte *)scaledSurf.pixels, scaledSurf.pitch, frame->w, frame->h);
+		_vm->_system->copyRectToScreen((byte *)scaledSurf.pixels, scaledSurf.pitch, 0, 0, width * 2, height * 2);
+		scaledSurf.free();
+	} else
+		_vm->_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, width, height);
 }
 
 } // End of namespace Pegasus

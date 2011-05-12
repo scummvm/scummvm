@@ -52,6 +52,8 @@ enum ItemLocation {
 	kItemLocationBuiltIn = 0xffff
 };
 
+static const int kViewScreenOffset = 64;
+
 struct ItemLocationData {
 	uint16 id;
 	ItemLocation location;
@@ -228,6 +230,7 @@ private:
 	void loadExtras(TimeZone timeZone);
 
 	// Misc Functions
+	static Common::String getTimeZoneFolder(TimeZone timeZone);
 	static Common::String getTimeZoneDesc(TimeZone timeZone);
 
 	// Game Variables

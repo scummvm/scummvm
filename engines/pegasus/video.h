@@ -58,7 +58,7 @@ public:
 	VideoManager(PegasusEngine *vm);
 	~VideoManager();
 
-	void setTimeZoneVideo(const Common::String &filename);
+	bool loadTimeZoneVideo(const Common::String &filename);
 	void drawTimeZoneVideoFrame(uint32 time);
 	void playTimeZoneVideoSegment(uint32 startTime, uint32 endTime);
 	
@@ -78,6 +78,9 @@ private:
 	PegasusEngine *_vm;
 
 	Video::QuickTimeDecoder *_timeZoneVideo;
+
+	// Helper functions
+	void copyFrameToScreen(const Graphics::Surface *frame, int width, int height, int x, int y);
 
 	// Keep tabs on any videos playing
 	Common::Array<VideoEntry> _videoStreams;
