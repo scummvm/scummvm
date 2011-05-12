@@ -1149,6 +1149,10 @@ int32 Script::findSignature(const SciScriptSignature *signature, const byte *scr
 			byte matchAdjust = 1;
 			while (matchAdjust) {
 				byte matchBytesCount = *signatureData++;
+				if (matchBytesCount == 0) { // done with all pieces of signature?
+					matchAdjust = 0;
+					break;
+				}
 				if ((byteOffset + matchBytesCount) > scriptSize) // Out-Of-Bounds?
 					break;
 				if (memcmp(signatureData, &scriptData[byteOffset], matchBytesCount)) // Byte-Mismatch?
