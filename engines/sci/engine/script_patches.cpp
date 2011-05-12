@@ -862,6 +862,7 @@ const byte qfg3DialogCrash[] = {
 	0x34, 0xe7, 0x03,  // ldi 3e7 (999)
 	0x22,              // lt?
 	0x33,              // jmp [back] ---> BUG! Infinite loop
+	0
 };
 
 const uint16 qfg3PatchDialogCrash[] = {
