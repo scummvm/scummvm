@@ -1006,9 +1006,6 @@ void ScummEngine::setPalColor(int idx, int r, int g, int b) {
 }
 
 void ScummEngine::setCurrentPalette(int palindex) {
-	// TODO: This method could almost be moved to ScummEngin_v6, the only
-	// problem is that it is called by ScummEngine::resetRoomSubBlocks().
-	// But it should be possible to get rid of that, too (with some care).
 	const byte *pals;
 
 	_curPalIndex = palindex;
