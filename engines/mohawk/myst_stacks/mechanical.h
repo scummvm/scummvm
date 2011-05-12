@@ -49,8 +49,7 @@ private:
 	void toggleVar(uint16 var);
 	bool setVarValue(uint16 var, uint16 value);
 
-	void opcode_202_run();
-	void opcode_202_disable();
+	void birdSing_run();
 	void elevatorRotation_run();
 	void elevatorGoMiddle_run();
 	void opcode_205_run();
@@ -61,6 +60,8 @@ private:
 	void opcode_209_disable();
 
 	DECLARE_OPCODE(o_throneEnablePassage);
+	DECLARE_OPCODE(o_birdCrankStart);
+	DECLARE_OPCODE(o_birdCrankStop);
 	DECLARE_OPCODE(o_snakeBoxTrigger);
 	DECLARE_OPCODE(o_fortressStaircaseMovie);
 	DECLARE_OPCODE(o_elevatorRotationStart);
@@ -81,7 +82,7 @@ private:
 
 	DECLARE_OPCODE(o_throne_init);
 	DECLARE_OPCODE(o_fortressStaircase_init);
-	DECLARE_OPCODE(opcode_202);
+	DECLARE_OPCODE(o_bird_init);
 	DECLARE_OPCODE(o_snakeBox_init);
 	DECLARE_OPCODE(o_elevatorRotation_init);
 	DECLARE_OPCODE(opcode_205);
@@ -109,6 +110,12 @@ private:
 	uint32 _elevatorNextTime;
 
 	uint16 _crystalLit; // 130
+
+	bool _birdSinging; // 144
+	uint32 _birdCrankStartTime; // 136
+	uint32 _birdSingEndTime; // 140
+	MystResourceType6 *_bird; // 152
+
 
 	MystResourceType6 *_snakeBox; // 156
 };

@@ -51,6 +51,9 @@ Mechanical::~Mechanical() {
 void Mechanical::setupOpcodes() {
 	// "Stack-Specific" Opcodes
 	OPCODE(100, o_throneEnablePassage);
+	OPCODE(101, o_birdCrankStart);
+	OPCODE(102, NOP);
+	OPCODE(103, o_birdCrankStop);
 	OPCODE(104, o_snakeBoxTrigger);
 	OPCODE(105, o_fortressStaircaseMovie);
 	OPCODE(106, o_elevatorRotationStart);
@@ -72,7 +75,7 @@ void Mechanical::setupOpcodes() {
 	// "Init" Opcodes
 	OPCODE(200, o_throne_init);
 	OPCODE(201, o_fortressStaircase_init);
-	OPCODE(202, opcode_202);
+	OPCODE(202, o_bird_init);
 	OPCODE(203, o_snakeBox_init);
 	OPCODE(204, o_elevatorRotation_init);
 	OPCODE(205, opcode_205);
@@ -86,15 +89,16 @@ void Mechanical::setupOpcodes() {
 #undef OPCODE
 
 void Mechanical::disablePersistentScripts() {
-	opcode_202_disable();
 	opcode_205_disable();
 	opcode_206_disable();
 	opcode_209_disable();
 	_elevatorGoingMiddle = false;
+	_birdSinging = false;
 }
 
 void Mechanical::runPersistentScripts() {
-	opcode_202_run();
+	if (_birdSinging)
+		birdSing_run();
 
 	if (_elevatorRotationLeverMoving)
 		elevatorRotation_run();
@@ -240,6 +244,38 @@ void Mechanical::o_throneEnablePassage(uint16 op, uint16 var, uint16 argc, uint1
 	debugC(kDebugScript, "Opcode %d: Enable throne passage", op);
 
 	_vm->_resources[argv[0]]->setEnabled(getVar(var));
+}
+
+void Mechanical::o_birdCrankStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Mechanical bird crank start", op);
+
+	MystResourceType11 *crank = static_cast<MystResourceType11 *>(_invokingResource);
+
+	uint16 crankSoundId = crank->getList2(0);
+	_vm->_sound->replaceSoundMyst(crankSoundId, Audio::Mixer::kMaxChannelVolume, true);
+
+	_birdSingEndTime = 0;
+	_birdCrankStartTime = _vm->_system->getMillis();
+
+	MystResourceType6 *crankMovie = static_cast<MystResourceType6 *>(crank->getSubResource(0));
+	crankMovie->playMovie();
+}
+
+void Mechanical::o_birdCrankStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Mechanical bird crank stop", op);
+
+	MystResourceType11 *crank = static_cast<MystResourceType11 *>(_invokingResource);
+
+	MystResourceType6 *crankMovie = static_cast<MystResourceType6 *>(crank->getSubResource(0));
+	crankMovie->pauseMovie(true);
+
+	uint16 crankSoundId = crank->getList2(1);
+	_vm->_sound->replaceSoundMyst(crankSoundId);
+
+	_birdSingEndTime = 2 * _vm->_system->getMillis() - _birdCrankStartTime;
+	_birdSinging = true;
+
+	_bird->playMovie();
 }
 
 void Mechanical::o_snakeBoxTrigger(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -512,25 +548,21 @@ void Mechanical::o_fortressStaircase_init(uint16 op, uint16 var, uint16 argc, ui
 	_vm->_resources[argv[2]]->setEnabled(_state.staircaseState);
 }
 
-static struct {
-	bool enabled;
-} g_opcode202Parameters;
-
-void Mechanical::opcode_202_run() {
+void Mechanical::birdSing_run() {
 	// Used for Card 6220 (Sirrus' Mechanical Bird)
-	// TODO: Fill in Function
+	uint32 time = _vm->_system->getMillis();
+	if (_birdSingEndTime < time) {
+		_bird->pauseMovie(true);
+		_birdSinging = false;
+	}
 }
 
-void Mechanical::opcode_202_disable() {
-	g_opcode202Parameters.enabled = false;
-}
+void Mechanical::o_bird_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Mechanical bird init", op);
 
-void Mechanical::opcode_202(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used for Card 6220 (Sirrus' Mechanical Bird)
-	if (argc == 0)
-		g_opcode202Parameters.enabled = true;
-	else
-		unknown(op, var, argc, argv);
+	_birdSinging = false;
+	_birdSingEndTime = 0;
+	_bird = static_cast<MystResourceType6 *>(_invokingResource);
 }
 
 void Mechanical::o_snakeBox_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
