@@ -228,6 +228,11 @@ private:
 	void runInterfaceOverview();
 	void drawInterfaceOverview(const OverviewHotspot &hotspot, Video::QuickTimeDecoder *video);
 
+	// Credits
+	void runCredits();
+	void drawCredits(int button, bool highlight, int frame, Video::QuickTimeDecoder *video);
+	void runDemoCredits();
+
 	// Main Game Functions
 	void mainGameLoop();
 	void loadItemLocationData();

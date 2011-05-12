@@ -1,6 +1,7 @@
 MODULE := engines/pegasus
 
 MODULE_OBJS = \
+	credits.o \
 	detection.o \
 	graphics.o \
 	menu.o \

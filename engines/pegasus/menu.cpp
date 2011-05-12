@@ -166,7 +166,9 @@ void PegasusEngine::setGameMode(int buttonSelected) {
 			_gameMode = kMainGameMode;
 			break;
 		case kDemoCreditsButton:
-			warning("No credits just yet");
+			_sound->stopSound();
+			runDemoCredits();
+			_sound->playSound("Sounds/Main Menu.aiff", true);
 			break;
 		case kDemoQuitButton:
 			_gameMode = kQuitMode;
@@ -186,7 +188,9 @@ void PegasusEngine::setGameMode(int buttonSelected) {
 			showLoadDialog();
 			break;
 		case kCreditsButton:
-			warning("No credits just yet");
+			_sound->stopSound();
+			runCredits();
+			_sound->playSound("Sounds/Main Menu.aiff", true);
 			break;
 		case kQuitButton:
 			_gameMode = kQuitMode;
