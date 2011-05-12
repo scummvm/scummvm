@@ -115,7 +115,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	VAR(VAR_ROOM) = room;
 	_fullRedraw = true;
 
-	_res->increaseResourceCounter();
+	_res->increaseResourceCounters();
 
 	_currentRoom = room;
 	VAR(VAR_ROOM) = room;

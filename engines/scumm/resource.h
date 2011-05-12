@@ -106,9 +106,19 @@ public:
 		 * Array of size _num containing the sizes of each resource of this type.
 		 */
 		uint32 *_size;
+
 	protected:
 		/**
-		 * Array of size _num containing TODO of each resource of this type.
+		 * Array of size _num containing some information on each resource of
+		 * this type.
+		 * First off, the uppermost bit indicates whether the resources is
+		 * locked into memory.
+		 * Secondly, the lower 7 bits contain a counter. This counter measures
+		 * roughly how old it is; a resource starts out with a count of 1 and
+		 * can go as high as 127. When memory falls low resp. when the engine
+		 * decides that it should throw out some unused stuff, then it begins
+		 * by removing the resources with the highest counter (excluding locked
+		 * resources and resources that are known to be in use).
 		 */
 		byte *flags;
 
@@ -118,6 +128,7 @@ public:
 		 * whether the resource is modified.
 		 */
 		byte *_status;
+
 	public:
 		/**
 		 * Array of size _num containing for each resource of this type the
@@ -161,26 +172,42 @@ public:
 	void allocResTypeData(int id, uint32 tag, int num, ResTypeMode mode);
 	void freeResources();
 
-	byte *createResource(int type, int index, uint32 size);
-	void nukeResource(int type, int i);
+	byte *createResource(int type, int idx, uint32 size);
+	void nukeResource(int type, int idx);
 
-	bool isResourceLoaded(int type, int index) const;
+	bool isResourceLoaded(int type, int idx) const;
 
-	void lock(int type, int i);
-	void unlock(int type, int i);
-	bool isLocked(int type, int i) const;
+	void lock(int type, int idx);
+	void unlock(int type, int idx);
+	bool isLocked(int type, int idx) const;
 
-	void setModified(int type, int i);
-	bool isModified(int type, int i) const;
+	void setModified(int type, int idx);
+	bool isModified(int type, int idx) const;
 
+	/**
+	 * This method increments the _expireCounter, and if it overflows (which happens
+	 * after at most 256 calls), it calls increaseResourceCounter.
+	 * It is invoked in the engine's main loop ScummEngine::scummLoop().
+	 */
 	void increaseExpireCounter();
-	void setResourceCounter(int type, int index, byte flag);
-	void increaseResourceCounter();
+
+	/**
+	 * Update the specified resource's counter.
+	 */
+	void setResourceCounter(int type, int idx, byte counter);
+
+	/**
+	 * Increment the counter of all unlocked loaded resources.
+	 * The maximal count is 255.
+	 * This is called by increaseExpireCounter and expireResources,
+	 * but also by ScummEngine::startScene.
+	 */
+	void increaseResourceCounters();
 
 	void resourceStats();
 
 //protected:
-	bool validateResource(const char *str, int type, int index) const;
+	bool validateResource(const char *str, int type, int idx) const;
 protected:
 	void expireResources(uint32 size);
 };

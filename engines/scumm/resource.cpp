@@ -762,12 +762,13 @@ byte *ScummEngine::getStringAddressVar(int i) {
 }
 
 void ResourceManager::increaseExpireCounter() {
-	if (!(++_expireCounter)) {
-		increaseResourceCounter();
+	++_expireCounter;
+	if (_expireCounter == 0) {	// overflow?
+		increaseResourceCounters();
 	}
 }
 
-void ResourceManager::increaseResourceCounter() {
+void ResourceManager::increaseResourceCounters() {
 	int i, j;
 	byte counter;
 
@@ -781,9 +782,9 @@ void ResourceManager::increaseResourceCounter() {
 	}
 }
 
-void ResourceManager::setResourceCounter(int type, int idx, byte flag) {
-	_types[type].flags[idx] &= ~RF_USAGE;
-	_types[type].flags[idx] |= flag;
+void ResourceManager::setResourceCounter(int type, int idx, byte counter) {
+	_types[type].flags[idx] &= RF_LOCK;	// Clear lower 7 bits, preserve the lock bit.
+	_types[type].flags[idx] |= counter;	// Update the usage counter
 }
 
 /* 2 bytes safety area to make "precaching" of bytes in the gdi drawer easier */
@@ -969,7 +970,7 @@ void ResourceManager::expireResources(uint32 size) {
 
 	if (_expireCounter != 0xFF) {
 		_expireCounter = 0xFF;
-		increaseResourceCounter();
+		increaseResourceCounters();
 	}
 
 	if (size + _allocatedSize < _maxHeapThreshold)
@@ -1000,7 +1001,7 @@ void ResourceManager::expireResources(uint32 size) {
 		nukeResource(best_type, best_res);
 	} while (size + _allocatedSize > _minHeapThreshold);
 
-	increaseResourceCounter();
+	increaseResourceCounters();
 
 	debugC(DEBUG_RESOURCE, "Expired resources, mem %d -> %d", oldAllocatedSize, _allocatedSize);
 }
