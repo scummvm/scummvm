@@ -87,7 +87,13 @@ static void processWorkList(SegManager *segMan, WorklistManager &wm, const Commo
 		wm._worklist.pop_back();
 		if (reg.segment != stackSegment) { // No need to repeat this one
 			debugC(kDebugLevelGC, "[GC] Checking %04x:%04x", PRINT_REG(reg));
-			// We only check for valid offsets here. Fixes bugs #3299458 and #3295849.
+			// WORKAROUND: We only check for valid offsets here. Fixes bugs
+			// #3299458 and #3295849.
+			// FIXME: Where are these invalid offsets coming from? The check
+			// below avoids a crash when examining invalid references, but the
+			// root of the problem lies elsewhere. These shouldn't be in the
+			// stack at all (unless these really are script bugs, in which case
+			// we should just keep the sanity check).
 			if (reg.segment < heap.size() && heap[reg.segment] && heap[reg.segment]->isValidOffset(reg.offset)) {
 				// Valid heap object? Find its outgoing references!
 				wm.pushArray(heap[reg.segment]->listAllOutgoingReferences(reg));
