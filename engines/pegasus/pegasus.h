@@ -175,11 +175,9 @@ enum Item {
 };
 
 enum GameMode {
+	kIntroMode,
 	kMainMenuMode,
 	kMainGameMode,
-	kCreditsMode,
-	kInterfaceOverviewMode,
-	kRestoreMode,
 	kQuitMode
 };
 
@@ -215,6 +213,7 @@ private:
 	void drawInterface();
 	//void drawCompass();
 	//void runPauseMenu();
+	void showLoadDialog();
 
 	// Interface Overview
 	void drawInterfaceOverview();

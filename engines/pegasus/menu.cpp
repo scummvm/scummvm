@@ -21,6 +21,7 @@
  */
 
 #include "common/events.h"
+#include "common/textconsole.h"
 
 #include "pegasus/pegasus.h"
 
@@ -81,8 +82,13 @@ void PegasusEngine::runMainMenu() {
 					if (buttonSelected != kDifficultyButton) {
 						drawMenuButtonSelected(buttonSelected);
 						setGameMode(buttonSelected);
-						_sound->stopSound();
-						return;
+
+						if (_gameMode != kMainMenuMode) {
+							_sound->stopSound();
+							return;
+						}
+
+						drawMenu(buttonSelected);
 					}
 					break;
 				default:
@@ -107,6 +113,7 @@ void PegasusEngine::runMainMenu() {
 	// Too slow! Go back and show the intro again.
 	_sound->stopSound();
 	_video->playMovie("Images/Opening_Closing/LilMovie.movie");
+	_gameMode = kIntroMode;
 }
 
 void PegasusEngine::drawMenu(int buttonSelected) {
@@ -159,7 +166,7 @@ void PegasusEngine::setGameMode(int buttonSelected) {
 			_gameMode = kMainGameMode;
 			break;
 		case kDemoCreditsButton:
-			_gameMode = kCreditsMode;
+			warning("No credits just yet");
 			break;
 		case kDemoQuitButton:
 			_gameMode = kQuitMode;
@@ -168,16 +175,16 @@ void PegasusEngine::setGameMode(int buttonSelected) {
 	} else {
 		switch (buttonSelected) {
 		case kInterfaceOverviewButton:
-			_gameMode = kInterfaceOverviewMode;
+			warning("No overview just yet");
 			break;
 		case kStartButton:
 			_gameMode = kMainGameMode;
 			break;
 		case kRestoreButton:
-			_gameMode = kRestoreMode;
+			showLoadDialog();
 			break;
 		case kCreditsButton:
-			_gameMode = kCreditsMode;
+			warning("No credits just yet");
 			break;
 		case kQuitButton:
 			_gameMode = kQuitMode;

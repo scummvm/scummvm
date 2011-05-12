@@ -23,13 +23,14 @@
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "base/plugins.h"
 #include "base/version.h"
+#include "gui/saveload.h"
 
 #include "pegasus/pegasus.h"
-
-#include "common/file.h"
 
 //#define RUN_SUB_MOVIE // :D :D :D :D :D :D
 //#define RUN_INTERFACE_TEST
@@ -55,7 +56,7 @@ Common::Error PegasusEngine::run() {
 	_resFork = new Common::MacResManager();
 	_inventoryLid = new Common::MacResManager();
 	_biochipLid = new Common::MacResManager();
-	_gameMode = kMainMenuMode;
+	_gameMode = kIntroMode;
 	_adventureMode = true;
 	
 	if (!_resFork->open("JMP PP Resources") || !_resFork->hasResFork())
@@ -107,10 +108,12 @@ Common::Error PegasusEngine::run() {
 #else
 	while (!shouldQuit()) {
 		switch (_gameMode) {
-		case kMainMenuMode:
+		case kIntroMode:
 			if (!isDemo())
 				runIntro();
-
+			_gameMode = kMainMenuMode;
+			break;
+		case kMainMenuMode:
 			runMainMenu();
 			break;
 		case kMainGameMode:
@@ -304,6 +307,25 @@ void PegasusEngine::loadExtras(TimeZone timeZone) {
 	}
 
 	delete res;
+}
+
+void PegasusEngine::showLoadDialog() {
+	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"));
+	slc.setSaveMode(false);
+
+	Common::String gameId = ConfMan.get("gameid");
+
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+
+	int slot = slc.runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+
+	if (slot >= 0) {
+		warning("TODO: Load game");
+		_gameMode = kMainGameMode;
+	}
+
+	slc.close();
 }
 
 Common::String PegasusEngine::getTimeZoneDesc(TimeZone timeZone) {
