@@ -53,10 +53,13 @@ void PegasusEngine::runInterfaceOverview() {
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
+				// TODO: Highlighted images and changing the viewscreen image
 				_system->updateScreen();
 				break;
 			case Common::EVENT_KEYDOWN:
-				continueLooping = false;
+				// Break on any keypress, but ignore the meta keys
+				// Except for num lock! num lock on OS9 is 'clear' and we need that for the inventory panel (along with the tilde)
+				continueLooping = (event.kbd.keycode == Common::KEYCODE_INVALID || (event.kbd.keycode >= Common::KEYCODE_CAPSLOCK && event.kbd.keycode <= Common::KEYCODE_COMPOSE));
 				break;
 			default:
 				break;
