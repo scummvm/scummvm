@@ -305,7 +305,7 @@ void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
 
 	// First, we need to track down what audio sample we need
 	Audio::Timestamp curAudioTime = where.convertToFramerate(_streams[_audioStreamIndex]->time_scale);
-	uint32 sample = curAudioTime.totalNumberOfFrames() / entry->channels;
+	uint32 sample = curAudioTime.totalNumberOfFrames();
 	uint32 seekSample = sample; 
 
 	if (!isOldDemuxing()) {
@@ -316,6 +316,8 @@ void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
 			return;
 		}
 
+		// Note that duration is in terms of *one* channel
+		// This eases calculation a bit
 		seekSample /= _streams[_audioStreamIndex]->stts_data[0].duration;
 	}
 
@@ -336,7 +338,7 @@ void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
 	if (sample != totalSamples) {
 		// HACK: Skip a certain amount of samples from the stream
 		// (There's got to be a better way to do this!)
-		int skipSamples = (sample - totalSamples) * ((AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0])->channels;
+		int skipSamples = (sample - totalSamples) * entry->channels;
 
 		int16 *tempBuffer = new int16[skipSamples];
 		_audStream->readBuffer(tempBuffer, skipSamples);
