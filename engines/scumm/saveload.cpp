@@ -1636,7 +1636,11 @@ void ScummEngine_v100he::saveOrLoad(Serializer *s) {
 void ScummEngine::loadResourceOLD(Serializer *ser, int type, int idx) {
 	uint32 size;
 
-	if (_res->_types[type]._mode == kDynamicResTypeMode) {
+	if (type == rtSound && ser->getVersion() >= VER(23)) {
+		// Save/load only a list of resource numbers that need to be reloaded.
+		if (ser->loadUint16())
+			ensureResourceLoaded(rtSound, idx);
+	} else if (_res->_types[type]._mode == kDynamicResTypeMode) {
 		size = ser->loadUint32();
 		if (size) {
 			_res->createResource(type, idx, size);
@@ -1655,10 +1659,6 @@ void ScummEngine::loadResourceOLD(Serializer *ser, int type, int idx) {
 					_newNames[idx] = ser->loadUint16();
 			}
 		}
-	} else if (_res->_types[type]._mode == kSoundResTypeMode && ser->getVersion() >= VER(23)) {
-		// Save/load only a list of resource numbers that need to be reloaded.
-		if (ser->loadUint16())
-			ensureResourceLoaded(type, idx);
 	}
 }
 
@@ -1688,11 +1688,17 @@ void ScummEngine::loadResource(Serializer *ser, int type, int idx) {
 		assert(size);
 		_res->createResource(type, idx, size);
 		ser->loadBytes(getResourceAddress(type, idx), size);
+	} else if (type == rtSound) {
+		// HE Games use sound resource 1 for speech
+		if (_game.heversion >= 60 && idx == 1)
+			return;
+
+		ensureResourceLoaded(rtSound, idx);
 	} else if (_res->_types[type]._mode == kDynamicResTypeMode) {
 		uint32 size = ser->loadUint32();
 		assert(size);
-		_res->createResource(type, idx, size);
-		ser->loadBytes(getResourceAddress(type, idx), size);
+		byte *ptr = _res->createResource(type, idx, size);
+		ser->loadBytes(ptr, size);
 
 		if (type == rtInventory) {
 			_inventory[idx] = ser->loadUint16();
@@ -1700,12 +1706,6 @@ void ScummEngine::loadResource(Serializer *ser, int type, int idx) {
 		if (type == rtObjectName) {
 			_newNames[idx] = ser->loadUint16();
 		}
-	} else if (_res->_types[type]._mode == kSoundResTypeMode) {
-		// HE Games use sound resource 1 for speech
-		if (_game.heversion >= 60 && idx == 1)
-			return;
-
-		ensureResourceLoaded(type, idx);
 	}
 }
 
