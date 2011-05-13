@@ -34,6 +34,7 @@
 
 #include "common/fs.h"
 #include "common/savefile.h"
+#include "common/zlib.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/persistenceservice.h"
 #include "sword25/kernel/inputpersistenceblock.h"
@@ -44,7 +45,6 @@
 #include "sword25/input/inputengine.h"
 #include "sword25/math/regionregistry.h"
 #include "sword25/script/script.h"
-#include <zlib.h>
 
 namespace Sword25 {
 
@@ -288,34 +288,22 @@ bool PersistenceService::saveGame(uint slotID, const Common::String &screenshotF
 		error("Unable to persist modules for savegame file \"%s\".", filename.c_str());
 	}
 
-	// Daten komprimieren.
-	uLongf compressedLength = writer.getDataSize() + (writer.getDataSize() + 500) / 1000 + 12;
-	Bytef *compressionBuffer = new Bytef[compressedLength];
-
-	if (compress2(&compressionBuffer[0], &compressedLength, reinterpret_cast<const Bytef *>(writer.getData()), writer.getDataSize(), 6) != Z_OK) {
-		error("Unable to compress savegame data in savegame file \"%s\".", filename.c_str());
-	}
-
-	// Länge der komprimierten Daten und der unkomprimierten Daten in die Datei schreiben.
+	// Write the save game data uncompressed, since the final saved game will be
+	// compressed anyway.
 	char sBuffer[10];
-	snprintf(sBuffer, 10, "%ld", compressedLength);
+	snprintf(sBuffer, 10, "%ld", writer.getDataSize());
 	file->writeString(sBuffer);
 	file->writeByte(0);
 	snprintf(sBuffer, 10, "%u", writer.getDataSize());
 	file->writeString(sBuffer);
 	file->writeByte(0);
-
-	// Komprimierte Daten in die Datei schreiben.
-	file->write(reinterpret_cast<char *>(&compressionBuffer[0]), compressedLength);
-	if (file->err()) {
-		error("Unable to write game data to savegame file \"%s\".", filename.c_str());
-	}
+	file->write(writer.getData(), writer.getDataSize());
 
 	// Get the screenshot
 	Common::SeekableReadStream *thumbnail = Kernel::getInstance()->getGfx()->getThumbnail();
 
 	if (thumbnail) {
-		byte *buffer = new Byte[FILE_COPY_BUFFER_SIZE];
+		byte *buffer = new byte[FILE_COPY_BUFFER_SIZE];
 		while (!thumbnail->eos()) {
 			int bytesRead = thumbnail->read(&buffer[0], FILE_COPY_BUFFER_SIZE);
 			file->write(&buffer[0], bytesRead);
@@ -328,7 +316,6 @@ bool PersistenceService::saveGame(uint slotID, const Common::String &screenshotF
 
 	file->finalize();
 	delete file;
-	delete[] compressionBuffer;
 
 	// Savegameinformationen für diesen Slot aktualisieren.
 	_impl->readSlotSavegameInformation(slotID);
@@ -369,7 +356,7 @@ bool PersistenceService::loadGame(uint slotID) {
 #endif
 
 	byte *compressedDataBuffer = new byte[curSavegameInfo.gamedataLength];
-	byte *uncompressedDataBuffer = new Bytef[curSavegameInfo.gamedataUncompressedLength];
+	byte *uncompressedDataBuffer = new byte[curSavegameInfo.gamedataUncompressedLength];
 	Common::String filename = generateSavegameFilename(slotID);
 	file = sfm->openForLoading(filename);
 
@@ -382,15 +369,22 @@ bool PersistenceService::loadGame(uint slotID) {
 		return false;
 	}
 
-	// Spieldaten dekomprimieren.
-	uLongf uncompressedBufferSize = curSavegameInfo.gamedataUncompressedLength;
-	if (uncompress(reinterpret_cast<Bytef *>(&uncompressedDataBuffer[0]), &uncompressedBufferSize,
-	               reinterpret_cast<Bytef *>(&compressedDataBuffer[0]), curSavegameInfo.gamedataLength) != Z_OK) {
-		error("Unable to decompress the gamedata from savegame file \"%s\".", filename.c_str());
-		delete[] uncompressedDataBuffer;
-		delete[] compressedDataBuffer;
-		delete file;
-		return false;
+	// Uncompress game data, if needed.
+	unsigned long uncompressedBufferSize = curSavegameInfo.gamedataUncompressedLength;
+
+	if (uncompressedBufferSize > curSavegameInfo.gamedataLength) {
+		// Older saved game, where the game data was compressed again.
+		if (!Common::uncompress(reinterpret_cast<byte *>(&uncompressedDataBuffer[0]), &uncompressedBufferSize,
+					   reinterpret_cast<byte *>(&compressedDataBuffer[0]), curSavegameInfo.gamedataLength)) {
+			error("Unable to decompress the gamedata from savegame file \"%s\".", filename.c_str());
+			delete[] uncompressedDataBuffer;
+			delete[] compressedDataBuffer;
+			delete file;
+			return false;
+		}
+	} else {
+		// Newer saved game with uncompressed game data, copy it as-is.
+		memcpy(uncompressedDataBuffer, compressedDataBuffer, uncompressedBufferSize);
 	}
 
 	InputPersistenceBlock reader(&uncompressedDataBuffer[0], curSavegameInfo.gamedataUncompressedLength);
