@@ -119,7 +119,7 @@ void PegasusEngine::runMainMenu() {
 
 	// Too slow! Go back and show the intro again.
 	_sound->stopSound();
-	_video->playMovie("Images/Opening_Closing/LilMovie.movie");
+	_video->playMovie(_introDirectory + "/LilMovie.movie");
 	_gameMode = kIntroMode;
 }
 

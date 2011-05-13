@@ -24,6 +24,7 @@
 #include "common/error.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "base/plugins.h"
@@ -72,6 +73,21 @@ Common::Error PegasusEngine::run() {
 		error("Could not open Biochip Lid Sequence");
 
 	loadItemLocationData();
+
+	if (!detectOpeningClosingDirectory()) {
+		Common::String message = "Missing intro directory. ";
+
+		// Give Mac OS X a more specific message because we can
+#ifdef MACOSX
+		message += "Make sure \"Opening/Closing\" is present.";
+#else
+		message += "Be sure to rename \"Opening/Closing\" to \"Opening_Closing\".";
+#endif
+
+		GUIErrorMessage(message);
+		warning("%s", message.c_str());
+		return Common::kNoGameDataFoundError;
+	}
 
 #if 0
 	Common::MacResIDArray pictIds = _biochipLid->getResIDArray(MKID_BE('PICT'));
@@ -138,6 +154,39 @@ Common::Error PegasusEngine::run() {
 	return Common::kNoError;
 }
 
+bool PegasusEngine::detectOpeningClosingDirectory() {
+	// We need to detect what our Opening/Closing directory is listed as
+	// On the original disc, it was 'Opening/Closing' but only HFS(+) supports the slash
+	// Mac OS X will display this as 'Opening:Closing' and we can use that directly
+	// On other systems, users will need to rename to "Opening_Closing"
+
+	Common::FSNode gameDataDir(ConfMan.get("path"));
+	gameDataDir = gameDataDir.getChild("Images");
+
+	if (!gameDataDir.exists())
+		return false;
+
+	Common::FSList fsList;
+	if (!gameDataDir.getChildren(fsList, Common::FSNode::kListDirectoriesOnly, true))
+		return false;
+
+	for (uint i = 0; i < fsList.size() && _introDirectory.empty(); i++) {
+		Common::String name = fsList[i].getName();
+
+		if (name.equalsIgnoreCase("Opening:Closing"))
+			_introDirectory = name;
+		else if (name.equalsIgnoreCase("Opening_Closing"))
+			_introDirectory = name;
+	}
+
+	if (_introDirectory.empty())
+		return false;
+
+	debug(0, "Detected intro location as '%s'", _introDirectory.c_str());
+	_introDirectory = Common::String("Images/") + _introDirectory;
+	return true;
+}
+
 void PegasusEngine::loadItemLocationData() {
 	Common::SeekableReadStream *res = _resFork->getResource(MKTAG('N', 'I', 't', 'm'), 0x80);
 
@@ -158,11 +207,8 @@ void PegasusEngine::loadItemLocationData() {
 }
 
 void PegasusEngine::runIntro() {
-	// The Opening/Closing folder will need to be renamed to something else. Windows
-	// and other OS's/FS's do not support a '/' in the filename. I arbitrarily chose
-	// to rename my folder with the underscore.
-	_video->playMovieCentered("Images/Opening_Closing/BandaiLogo.movie");
-	VideoHandle handle = _video->playBackgroundMovie("Images/Opening_Closing/Big Movie.movie");
+	_video->playMovieCentered(_introDirectory + "/BandaiLogo.movie");
+	VideoHandle handle = _video->playBackgroundMovie(_introDirectory + "/Big Movie.movie");
 	_video->seekToTime(handle, 10 * 600);
 	_video->waitUntilMovieEnds(handle);
 }

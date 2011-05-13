@@ -262,6 +262,10 @@ private:
 
 	// Console
 	PegasusConsole *_console;
+
+	// Intro Directory Code
+	bool detectOpeningClosingDirectory();
+	Common::String _introDirectory;
 };
 
 } // End of namespace Pegasus
