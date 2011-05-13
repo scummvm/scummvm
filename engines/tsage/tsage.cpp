@@ -68,9 +68,15 @@ void TSageEngine::initialise() {
 	if (_vm->getFeatures() & GF_DEMO) {
 		// Add the single library file associated with the demo
 		_resourceManager->addLib(getPrimaryFilename());
-	} else {
+	} else if (_vm->getGameID() == GType_Ringworld) {
 		_resourceManager->addLib("RING.RLB");
 		_resourceManager->addLib("TSAGE.RLB");
+	} else if (_vm->getGameID() == GType_BlueForce) {
+		_resourceManager->addLib("BLUE.RLB");
+		if (_vm->getFeatures() & GF_FLOPPY) {
+			_resourceManager->addLib("FILES.RLB");
+			_resourceManager->addLib("TSAGE.RLB");
+		}
 	}
 
 	_globals = new Globals();
