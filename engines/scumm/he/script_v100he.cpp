@@ -2380,7 +2380,8 @@ void ScummEngine_v100he::o100_isResourceLoaded() {
 
 void ScummEngine_v100he::o100_getResourceSize() {
 	const byte *ptr;
-	int size, type;
+	int size;
+	ResType type;
 
 	int resid = pop();
 	byte subOp = fetchScriptByte();
@@ -2399,7 +2400,7 @@ void ScummEngine_v100he::o100_getResourceSize() {
 		type = rtScript;
 		break;
 	case 72:
-		push (getSoundResourceSize(resid));
+		push(getSoundResourceSize(resid));
 		return;
 	default:
 		error("o100_getResourceSize: default type %d", subOp);

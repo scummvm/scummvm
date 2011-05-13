@@ -1064,7 +1064,7 @@ void Sound::saveLoadWithSerializer(Serializer *ser) {
 #pragma mark --- Sound resource handling ---
 #pragma mark -
 
-static void convertMac0Resource(ResourceManager *res, int idx, byte *src_ptr, int size);
+static void convertMac0Resource(ResourceManager *res, ResId idx, byte *src_ptr, int size);
 
 
 /*
@@ -1074,7 +1074,7 @@ static void convertMac0Resource(ResourceManager *res, int idx, byte *src_ptr, in
  * could stand a thorough cleanup!
  */
 
-int ScummEngine::readSoundResource(int idx) {
+int ScummEngine::readSoundResource(ResId idx) {
 	uint32 pos, total_size, size, tag, basetag, max_total_size;
 	int pri, best_pri;
 	uint32 best_size = 0, best_offs = 0;
@@ -1427,7 +1427,7 @@ static byte Mac0ToGMInstrument(uint32 type, int &transpose) {
 	}
 }
 
-static void convertMac0Resource(ResourceManager *res, int idx, byte *src_ptr, int size) {
+static void convertMac0Resource(ResourceManager *res, ResId idx, byte *src_ptr, int size) {
 	/*
 	From Markus Magnuson (superqult) we got this information:
 	Mac0
@@ -1618,7 +1618,7 @@ static void convertMac0Resource(ResourceManager *res, int idx, byte *src_ptr, in
 #endif
 }
 
-static void convertADResource(ResourceManager *res, const GameSettings& game, int idx, byte *src_ptr, int size) {
+static void convertADResource(ResourceManager *res, const GameSettings& game, ResId idx, byte *src_ptr, int size) {
 	// We will ignore the PPQN in the original resource, because
 	// it's invalid anyway. We use a constant PPQN of 480.
 	const int ppqn = 480;
@@ -2001,7 +2001,7 @@ static void convertADResource(ResourceManager *res, const GameSettings& game, in
 }
 
 
-int ScummEngine::readSoundResourceSmallHeader(int idx) {
+int ScummEngine::readSoundResourceSmallHeader(ResId idx) {
 	uint32 pos, total_size, size, tag;
 	uint32 ad_size = 0, ad_offs = 0;
 	uint32 ro_size = 0, ro_offs = 0;

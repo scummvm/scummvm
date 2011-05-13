@@ -1911,7 +1911,8 @@ void ScummEngine_v72he::o72_writeINI() {
 
 void ScummEngine_v72he::o72_getResourceSize() {
 	const byte *ptr;
-	int size, type;
+	int size;
+	ResType type;
 
 	int resid = pop();
 	if (_game.heversion == 72) {
@@ -1923,7 +1924,7 @@ void ScummEngine_v72he::o72_getResourceSize() {
 
 	switch (subOp) {
 	case 13:
-		push (getSoundResourceSize(resid));
+		push(getSoundResourceSize(resid));
 		return;
 	case 14:
 		type = rtRoomImage;

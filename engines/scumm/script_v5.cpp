@@ -1490,7 +1490,7 @@ void ScummEngine_v5::o5_systemOps() {
 }
 
 void ScummEngine_v5::o5_resourceRoutines() {
-	const ResTypes resType[4] = { rtScript, rtSound, rtCostume, rtRoom };
+	const ResType resType[4] = { rtScript, rtSound, rtCostume, rtRoom };
 	int resid = 0;
 	int foo, bar;
 

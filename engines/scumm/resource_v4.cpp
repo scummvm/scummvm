@@ -30,21 +30,20 @@ namespace Scumm {
 
 extern const char *resTypeFromId(int id);
 
-int ScummEngine_v4::readResTypeList(int id) {
-	int num;
-	int i;
+int ScummEngine_v4::readResTypeList(ResType type) {
+	uint num;
 
-	debug(9, "readResTypeList(%s)", resTypeFromId(id));
+	debug(9, "readResTypeList(%s)", resTypeFromId(type));
 
 	num = _fileHandle->readUint16LE();
 
-	if (num != _res->_types[id]._num) {
-		error("Invalid number of %ss (%d) in directory", resTypeFromId(id), num);
+	if (num != _res->_types[type]._num) {
+		error("Invalid number of %ss (%d) in directory", resTypeFromId(type), num);
 	}
 
-	for (i = 0; i < num; i++) {
-		_res->_types[id]._resources[i]._roomno = _fileHandle->readByte();
-		_res->_types[id]._resources[i]._roomoffs = _fileHandle->readUint32LE();
+	for (ResId idx = 0; idx < num; idx++) {
+		_res->_types[type]._resources[idx]._roomno = _fileHandle->readByte();
+		_res->_types[type]._resources[idx]._roomoffs = _fileHandle->readUint32LE();
 	}
 
 	return num;

@@ -23,7 +23,7 @@
 #define SCUMM_RESOURCE_H
 
 #include "common/array.h"
-#include "scumm/scumm.h"	// for rtNumTypes
+#include "scumm/scumm.h"	// for ResType
 
 namespace Scumm {
 
@@ -175,7 +175,7 @@ public:
 		ResTypeData();
 		~ResTypeData();
 	};
-	ResTypeData _types[rtNumTypes];
+	ResTypeData _types[rtLast + 1];
 
 protected:
 	uint32 _allocatedSize;
@@ -188,23 +188,23 @@ public:
 
 	void setHeapThreshold(int min, int max);
 
-	void allocResTypeData(int id, uint32 tag, int num, ResTypeMode mode);
+	void allocResTypeData(ResType type, uint32 tag, int num, ResTypeMode mode);
 	void freeResources();
 
-	byte *createResource(int type, int idx, uint32 size);
-	void nukeResource(int type, int idx);
+	byte *createResource(ResType type, ResId idx, uint32 size);
+	void nukeResource(ResType type, ResId idx);
 
-	inline Resource &getRes(int type, int idx) { return _types[type]._resources[idx]; }
-	inline const Resource &getRes(int type, int idx) const { return _types[type]._resources[idx]; }
+//	inline Resource &getRes(ResType type, ResId idx) { return _types[type]._resources[idx]; }
+//	inline const Resource &getRes(ResType type, ResId idx) const { return _types[type]._resources[idx]; }
 
-	bool isResourceLoaded(int type, int idx) const;
+	bool isResourceLoaded(ResType type, ResId idx) const;
 
-	void lock(int type, int idx);
-	void unlock(int type, int idx);
-	bool isLocked(int type, int idx) const;
+	void lock(ResType type, ResId idx);
+	void unlock(ResType type, ResId idx);
+	bool isLocked(ResType type, ResId idx) const;
 
-	void setModified(int type, int idx);
-	bool isModified(int type, int idx) const;
+	void setModified(ResType type, ResId idx);
+	bool isModified(ResType type, ResId idx) const;
 
 	/**
 	 * This method increments the _expireCounter, and if it overflows (which happens
@@ -216,7 +216,7 @@ public:
 	/**
 	 * Update the specified resource's counter.
 	 */
-	void setResourceCounter(int type, int idx, byte counter);
+	void setResourceCounter(ResType type, ResId idx, byte counter);
 
 	/**
 	 * Increment the counter of all unlocked loaded resources.
@@ -229,7 +229,7 @@ public:
 	void resourceStats();
 
 //protected:
-	bool validateResource(const char *str, int type, int idx) const;
+	bool validateResource(const char *str, ResType type, ResId idx) const;
 protected:
 	void expireResources(uint32 size);
 };

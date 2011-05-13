@@ -341,14 +341,14 @@ void ScummEngine_v72he::readMAXS(int blockSize) {
 		ScummEngine_v6::readMAXS(blockSize);
 }
 
-byte *ScummEngine_v72he::getStringAddress(int i) {
-	byte *addr = getResourceAddress(rtString, i);
+byte *ScummEngine_v72he::getStringAddress(ResId idx) {
+	byte *addr = getResourceAddress(rtString, idx);
 	if (addr == NULL)
 		return NULL;
 	return ((ScummEngine_v72he::ArrayHeader *)addr)->data;
 }
 
-int ScummEngine_v72he::getSoundResourceSize(int id) {
+int ScummEngine_v72he::getSoundResourceSize(ResId id) {
 	const byte *ptr;
 	int offs, size;
 
