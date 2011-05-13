@@ -111,7 +111,7 @@ void Scene7000::Action3::dispatch() {
 
 	Action::dispatch();
 	if (_actionIndex == 4)
-		scene->_object4.setPosition(scene->_object3._position);
+		scene->_object4.setPosition(Common::Point(scene->_object3._position.x, scene->_object3._position.y + 15));
 }
 
 /*--------------------------------------------------------------------------*/
