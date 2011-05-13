@@ -85,13 +85,13 @@ public:
 		tag32 getTag() { return _tag; }
 		CMap *getCMap();
 		void setColormap(CMap *c);
+		void setFade(float fade);
 		bool isVisible();
 		Component *getParent() { return _parent; }
 		virtual void setMatrix(Graphics::Matrix4) { };
 		virtual void init() { }
 		virtual void setKey(int) { }
 		virtual void setMapName(char *) { }
-		virtual void setFade(float fade) { }
 		virtual void update() { }
 		virtual void setupTexture() { }
 		virtual void draw() { }
@@ -105,6 +105,7 @@ public:
 		tag32 _tag;
 		int _parentID;
 		bool _visible;
+		float _fade;
 		Component *_parent, *_child, *_sibling;
 		Graphics::Matrix4 _matrix;
 		Costume *_cost;

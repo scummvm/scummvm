@@ -1153,7 +1153,7 @@ void Actor::update() {
 
 	// The rest chore might have been stopped because of a
 	// StopActorChore(nil).  Restart it if so.
-	if (_restChore >= 0 && _restCostume->isChoring(_restChore, false) < 0)
+	if (!_walkedCur && _restChore >= 0 && _restCostume->isChoring(_restChore, false) < 0)
 		_restCostume->playChoreLooping(_restChore);
 
 	if (_walkChore >= 0) {
@@ -1162,6 +1162,8 @@ void Actor::update() {
 				_lastStepTime = 0;
 				_walkCostume->playChoreLooping(_walkChore);
 			}
+			if (_restChore >= 0 && _restCostume->isChoring(_restChore, false))
+				_restCostume->stopChore(_restChore);
 		} else {
 			if (_walkCostume->isChoring(_walkChore, false) >= 0)
 				_walkCostume->stopChore(_walkChore);

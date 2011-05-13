@@ -483,7 +483,6 @@ public:
 	KeyframeComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag);
 	void init();
 	void setKey(int val);
-	void setFade(float fade);
 	void setLowPriority(bool lowPriority);
 	void update();
 	void reset();
@@ -499,7 +498,6 @@ private:
 	bool _lowPriority;
 	int _repeatMode;
 	int _currTime;
-	float _fade;
 	Common::String _fname;
 
 	friend class Costume;
@@ -536,10 +534,6 @@ void KeyframeComponent::setKey(int val) {
 		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Unknown key %d for keyframe %s", val, _keyf->getFilename());
 	}
-}
-
-void KeyframeComponent::setFade(float fade) {
-	_fade = fade;
 }
 
 void KeyframeComponent::setLowPriority(bool lowPriority) {
@@ -959,6 +953,10 @@ void Costume::Component::setColormap(CMap *c) {
 		_cmap = c;
 	if (mc && getCMap())
 		mc->resetColormap();
+}
+
+void Costume::Component::setFade(float fade) {
+	_fade = fade;
 }
 
 bool Costume::Component::isVisible() {
@@ -1517,6 +1515,7 @@ void Costume::saveState(SaveGame *state) const {
 		state->writeLESint32(c._playing);
 		state->writeLESint32(c._looping);
 		state->writeLESint32(c._currTime);
+		state->writeLESint32(c._fadeMode);
 	}
 
 	for (int i = 0; i < _numComponents; ++i) {
@@ -1525,6 +1524,7 @@ void Costume::saveState(SaveGame *state) const {
 		if (c) {
 			state->writeLESint32(c->_visible);
 			state->writeVector3d(c->_matrix._pos);
+			state->writeFloat(c->_fade);
 
 			c->saveState(state);
 		}
@@ -1552,6 +1552,7 @@ bool Costume::restoreState(SaveGame *state) {
 		c._playing = state->readLESint32();
 		c._looping = state->readLESint32();
 		c._currTime = state->readLESint32();
+		c._fadeMode = (Chore::FadeMode)state->readLESint32();
 	}
 	for (int i = 0; i < _numComponents; ++i) {
 		Component *c = _components[i];
@@ -1559,6 +1560,7 @@ bool Costume::restoreState(SaveGame *state) {
 		if (c) {
 			c->_visible = state->readLESint32();
 			c->_matrix._pos = state->readVector3d();
+			c->_fade = state->readFloat();
 
 			c->restoreState(state);
 		}
