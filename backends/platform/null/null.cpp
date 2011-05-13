@@ -34,7 +34,7 @@
  */
 #if defined(__amigaos4__)
 	#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
-#elif defined(UNIX)
+#elif defined(POSIX)
 	#include "backends/fs/posix/posix-fs-factory.h"
 #elif defined(WIN32)
 	#include "backends/fs/windows/windows-fs-factory.h"
@@ -60,7 +60,7 @@ public:
 OSystem_NULL::OSystem_NULL() {
 	#if defined(__amigaos4__)
 		_fsFactory = new AmigaOSFilesystemFactory();
-	#elif defined(UNIX)
+	#elif defined(POSIX)
 		_fsFactory = new POSIXFilesystemFactory();
 	#elif defined(WIN32)
 		_fsFactory = new WindowsFilesystemFactory();

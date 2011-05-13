@@ -24,7 +24,7 @@
 
 // Several SDL based ports use a custom main, and hence do not want to compile
 // of this file. The following "#if" ensures that.
-#if !defined(UNIX) && \
+#if !defined(POSIX) && \
     !defined(WIN32) && \
     !defined(__MAEMO__) && \
     !defined(__SYMBIAN32__) && \

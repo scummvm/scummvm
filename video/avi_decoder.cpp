@@ -399,10 +399,8 @@ Codec *AviDecoder::createCodec() {
 			return new MSRLEDecoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
 		case ID_CVID:
 			return new CinepakDecoder(_bmInfo.bitCount);
-#ifdef USE_INDEO3
 		case ID_IV32:
 			return new Indeo3Decoder(_bmInfo.width, _bmInfo.height);
-#endif
 #ifdef VIDEO_CODECS_TRUEMOTION1_H
 		case ID_DUCK:
 			return new TrueMotion1Decoder(_bmInfo.width, _bmInfo.height);

@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 
-#ifdef UNIX
+#ifdef POSIX
 
 #include "backends/platform/sdl/posix/posix.h"
 #include "backends/saves/posix/posix-saves.h"
@@ -60,7 +60,7 @@ void OSystem_POSIX::initBackend() {
 Common::String OSystem_POSIX::getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
 
-	// On UNIX type systems, by default we store the config file inside
+	// On POSIX type systems, by default we store the config file inside
 	// to the HOME directory of the user.
 	const char *home = getenv("HOME");
 	if (home != NULL && strlen(home) < MAXPATHLEN)

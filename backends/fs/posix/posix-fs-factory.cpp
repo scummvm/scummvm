@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#if defined(UNIX)
+#if defined(POSIX)
 
 // Re-enable some forbidden symbols to avoid clashes with stat.h and unistd.h.
 // Also with clock() in sys/time.h in some Mac OS X SDKs.

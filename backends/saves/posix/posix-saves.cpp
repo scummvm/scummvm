@@ -27,7 +27,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(UNIX) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
+#if defined(POSIX) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
 #include "backends/saves/posix/posix-saves.h"
 
@@ -61,13 +61,7 @@ POSIXSaveFileManager::POSIXSaveFileManager() {
 	}
 #endif
 }
-/*
-POSIXSaveFileManager::POSIXSaveFileManager(const Common::String &defaultSavepath)
-	: DefaultSaveFileManager(defaultSavepath) {
-}
-*/
 
-#if defined(UNIX)
 void POSIXSaveFileManager::checkPath(const Common::FSNode &dir) {
 	const Common::String path = dir.getPath();
 	clearError();
@@ -132,6 +126,5 @@ void POSIXSaveFileManager::checkPath(const Common::FSNode &dir) {
 		}
 	}
 }
-#endif
 
 #endif
