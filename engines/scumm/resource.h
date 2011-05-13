@@ -153,11 +153,15 @@ public:
 	class ResTypeData {
 	friend class ResourceManager;
 	public:
+		/**
+		 * The mode of this res type.
+		 */
 		ResTypeMode _mode;
 
 		/**
 		 * The 4-byte tag or chunk type associated to this resource type, if any.
 		 * Only applies to resources that are loaded from the game data files.
+		 * This value is only used for debugging purposes.
 		 */
 		uint32 _tag;
 
