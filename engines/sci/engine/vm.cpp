@@ -114,7 +114,9 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 	return true;
 }
 
+#ifndef REDUCE_MEMORY_USAGE
 extern const char *opcodeNames[]; // from scriptdebug.cpp
+#endif
 
 static reg_t read_var(EngineState *s, int type, int index) {
 	if (validate_variable(s->variables[type], s->stack_base, type, s->variablesMax[type], index)) {
