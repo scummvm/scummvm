@@ -252,8 +252,7 @@ void GfxOpenGL::startActorDraw(Graphics::Vector3d pos, float scale, float yaw, f
 			_currentShadowArray->shadowMask = new byte[_screenWidth * _screenHeight];
 			_currentShadowArray->shadowMaskSize = _screenWidth * _screenHeight;
 		}
-		SectorListType::iterator i = _currentShadowArray->planeList.begin();
-		Sector *shadowSector = *i;
+		Sector *shadowSector = _currentShadowArray->planeList.front();
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
@@ -472,6 +471,9 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 		byte *texData = 0;
 		byte *texOut = 0;
 
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, bitmap->_width);
+
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
 			if (bitmap->_bpp == 16) {
 				if (texData == 0)
@@ -500,7 +502,6 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 			}
 
 			for (int i = 0; i < bitmap->_numTex; i++) {
-				textures = (GLuint *)bitmap->_texIds;
 				glBindTexture(GL_TEXTURE_2D, textures[bitmap->_numTex * pic + i]);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -509,16 +510,12 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 			}
 
-			glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-			glPixelStorei(GL_UNPACK_ROW_LENGTH, bitmap->_width);
-
 			int cur_tex_idx = bitmap->_numTex * pic;
 
 			for (int y = 0; y < bitmap->_height; y += BITMAP_TEXTURE_SIZE) {
 				for (int x = 0; x < bitmap->_width; x += BITMAP_TEXTURE_SIZE) {
 					int width  = (x + BITMAP_TEXTURE_SIZE >= bitmap->_width)  ? (bitmap->_width  - x) : BITMAP_TEXTURE_SIZE;
 					int height = (y + BITMAP_TEXTURE_SIZE >= bitmap->_height) ? (bitmap->_height - y) : BITMAP_TEXTURE_SIZE;
-					textures = (GLuint *)bitmap->_texIds;
 					glBindTexture(GL_TEXTURE_2D, textures[cur_tex_idx]);
 					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE,
 						texOut + (y * 4 * bitmap->_width) + (4 * x));
@@ -527,8 +524,8 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 			}
 		}
 
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+
 		delete[] texData;
 	} else {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
@@ -612,8 +609,7 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap) {
 }
 
 void GfxOpenGL::destroyBitmap(BitmapData *bitmap) {
-	GLuint *textures;
-	textures = (GLuint *)bitmap->_texIds;
+	GLuint *textures = (GLuint *)bitmap->_texIds;
 	if (textures) {
 		glDeleteTextures(bitmap->_numTex * bitmap->_numImages, textures);
 		delete[] textures;
@@ -622,25 +618,25 @@ void GfxOpenGL::destroyBitmap(BitmapData *bitmap) {
 
 void GfxOpenGL::createMaterial(Material *material, const char *data, const CMap *cmap) {
 	material->_textures = new GLuint[material->_numImages];
-	GLuint *textures;
 	glGenTextures(material->_numImages, (GLuint *)material->_textures);
 	char *texdata = new char[material->_width * material->_height * 4];
 	for (int i = 0; i < material->_numImages; i++) {
 		char *texdatapos = texdata;
 		for (int y = 0; y < material->_height; y++) {
 			for (int x = 0; x < material->_width; x++) {
-				int col = *(uint8 *)(data);
-				if (col == 0)
+				uint8 col = *(uint8 *)(data);
+				if (col == 0) {
 					memset(texdatapos, 0, 4); // transparent
-				else {
-					memcpy(texdatapos, cmap->_colors + 3 * (*(uint8 *)(data)), 3);
+				} else {
+					memcpy(texdatapos, cmap->_colors + 3 * (col), 3);
 					texdatapos[3] = '\xff'; // fully opaque
 				}
 				texdatapos += 4;
 				data++;
 			}
 		}
-		textures = (GLuint *)material->_textures;
+
+		GLuint *textures = (GLuint *)material->_textures;
 		glBindTexture(GL_TEXTURE_2D, textures[i]);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -653,8 +649,7 @@ void GfxOpenGL::createMaterial(Material *material, const char *data, const CMap 
 }
 
 void GfxOpenGL::selectMaterial(const Material *material) {
-	GLuint *textures;
-	textures = (GLuint *)material->_textures;
+	GLuint *textures = (GLuint *)material->_textures;
 	glBindTexture(GL_TEXTURE_2D, textures[material->_currImage]);
 	glMatrixMode(GL_TEXTURE);
 	glLoadIdentity();
@@ -662,10 +657,11 @@ void GfxOpenGL::selectMaterial(const Material *material) {
 }
 
 void GfxOpenGL::destroyMaterial(Material *material) {
-	GLuint *textures;
-	textures = (GLuint *)material->_textures;
-	glDeleteTextures(material->_numImages, textures);
-	delete[] textures;
+	GLuint *textures = (GLuint *)material->_textures;
+	if (textures) {
+		glDeleteTextures(material->_numImages, textures);
+		delete[] textures;
+	}
 }
 
 void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
@@ -843,6 +839,9 @@ GfxBase::TextObjectHandle *GfxOpenGL::createTextBitmap(uint8 *data, int width, i
 	uint8 g = fgColor.getGreen();
 	uint8 b = fgColor.getBlue();
 
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, width);
+
 	for (int i = 0; i < width * height; i++, texDataPtr += 4, bitmapData++) {
 		byte pixel = *bitmapData;
 		if (pixel == 0x00) {
@@ -872,9 +871,6 @@ GfxBase::TextObjectHandle *GfxOpenGL::createTextBitmap(uint8 *data, int width, i
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 	}
 
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, width);
-
 	int curTexIdx = 0;
 	for (int y = 0; y < height; y += BITMAP_TEXTURE_SIZE) {
 		for (int x = 0; x < width; x += BITMAP_TEXTURE_SIZE) {
@@ -887,7 +883,6 @@ GfxBase::TextObjectHandle *GfxOpenGL::createTextBitmap(uint8 *data, int width, i
 	}
 
 	delete[] texData;
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	return handle;
 }
@@ -937,8 +932,11 @@ void GfxOpenGL::drawTextBitmap(int x, int y, TextObjectHandle *handle) {
 }
 
 void GfxOpenGL::destroyTextBitmap(TextObjectHandle *handle) {
-	glDeleteTextures(handle->numTex, (GLuint *)handle->texIds);
-	delete[] (GLuint *)handle->texIds;
+	GLuint *textures = (GLuint *)handle->texIds;
+	if (textures) {
+		glDeleteTextures(handle->numTex, textures);
+		delete[] textures;
+	}
 }
 
 Bitmap *GfxOpenGL::getScreenshot(int w, int h) {

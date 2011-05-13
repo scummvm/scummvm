@@ -79,8 +79,6 @@ public:
 	void drawBitmap(const Bitmap *bitmap);
 	void destroyBitmap(BitmapData *bitmap);
 
-	void drawDepthBitmap(int x, int y, int w, int h, char *data);
-	void drawBitmap();
 	void dimScreen();
 	void dimRegion(int x, int y, int w, int h, float level);
 

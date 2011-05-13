@@ -86,9 +86,6 @@ byte *setupScreen(int screenW, int screenH, bool fullscreen);
 	void drawBitmap(const Bitmap *bitmap);
 	void destroyBitmap(BitmapData *bitmap);
 
-	void drawDepthBitmap(int x, int y, int w, int h, char *data);
-	void drawBitmap();
-
 	Bitmap *getScreenshot(int w, int h);
 	void storeDisplay();
 	void copyStoredToDisplay();
@@ -110,7 +107,7 @@ byte *setupScreen(int screenW, int screenH, bool fullscreen);
 	void releaseSmushFrame();
 
 protected:
-
+	void drawDepthBitmap(int x, int y, int w, int h, char *data);
 private:
 	GLuint _emergFont;
 	int _smushNumTex;
