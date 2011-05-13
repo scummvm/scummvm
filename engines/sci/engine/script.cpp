@@ -383,6 +383,7 @@ void Script::relocateSci3(reg_t block) {
 }
 
 void Script::incrementLockers() {
+	assert(!_markedAsDeleted);
 	_lockers++;
 }
 
@@ -396,6 +397,7 @@ int Script::getLockers() const {
 }
 
 void Script::setLockers(int lockers) {
+	assert(lockers == 0 || !_markedAsDeleted);
 	_lockers = lockers;
 }
 

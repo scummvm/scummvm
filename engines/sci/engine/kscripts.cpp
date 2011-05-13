@@ -262,7 +262,7 @@ reg_t kDisposeScript(EngineState *s, int argc, reg_t *argv) {
 
 	SegmentId id = s->_segMan->getScriptSegment(script);
 	Script *scr = s->_segMan->getScriptIfLoaded(id);
-	if (scr) {
+	if (scr && !scr->isMarkedAsDeleted()) {
 		if (s->_executionStack.back().addr.pc.segment != id)
 			scr->setLockers(1);
 	}
