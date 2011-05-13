@@ -603,6 +603,28 @@ int Vocabulary::parseGNF(const ResultWordListList &words, bool verbose) {
 
 	results = work;
 
+	if (g_sci->getGameId() == GID_QFG2 && words.size() == 3 && results->next) {
+		// WORKAROUND:
+		// This is a serious hack to temporarily fix bug #3288328.
+		// The groups below spell out "buy healing pills" in QfG2.
+		// It results in four valid expansions, but only the second one
+		// matches the said spec in the apothecary script, so we force
+		// that one.
+
+		bool ok = true;
+		words_iter = words.begin();
+		if (words_iter->size() != 1 || words_iter->begin()->_group != 0x3f4)
+			ok = false;
+		words_iter++;
+		if (words_iter->size() != 2 || words_iter->begin()->_group != 0xa88)
+			ok = false;
+		words_iter++;
+		if (words_iter->size() != 1 || words_iter->begin()->_group != 0xad3)
+			ok = false;
+		if (ok)
+			results = results->next;
+	}
+
 	if (verbose) {
 		con->DebugPrintf("All results (excluding the surrounding '(141 %03x' and ')'):\n", _parserBranches[0].id);
 		results->print();
