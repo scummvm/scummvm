@@ -22,6 +22,7 @@
 #ifndef SCUMM_RESOURCE_H
 #define SCUMM_RESOURCE_H
 
+#include "common/array.h"
 #include "scumm/scumm.h"	// for rtNumTypes
 
 namespace Scumm {
@@ -78,6 +79,74 @@ protected:
 	ScummEngine *_vm;
 
 public:
+	class Resource {
+	public:
+		/**
+		 * Pointer to the data contained in this resource
+		 */
+		byte *_address;
+
+		/**
+		 * Size of this resource, i.e. of the data contained in it.
+		 */
+		uint32 _size;
+
+	protected:
+		/**
+		 * The uppermost bit indicates whether the resources is locked.
+		 * The lower 7 bits contain a counter. This counter measures roughly
+		 * how old the resource is; it starts out with a count of 1 and can go
+		 * as high as 127. When memory falls low resp. when the engine decides
+		 * that it should throw out some unused stuff, then it begins by
+		 * removing the resources with the highest counter (excluding locked
+		 * resources and resources that are known to be in use).
+		 */
+		byte _flags;
+
+		/**
+		 * The status of the resource. Currently only one bit is used, which
+		 * indicates whether the resource is modified.
+		 */
+		byte _status;
+
+	public:
+		/**
+		 * The id of the room (resp. the disk) the resource is contained in.
+		 */
+		byte _roomno;
+
+		/**
+		 * The offset (in bytes) where the data for this resources can be found
+		 * in the game data file(s), relative to the start of the room the
+		 * resource is contained in.
+		 *
+		 * A value of RES_INVALID_OFFSET indicates a resources that is not contained
+		 * in the game data files.
+		 */
+		uint32 _roomoffs;
+
+		/**
+		 * Occurs in HE 70+, but we don't use it for anything.
+		 */
+		uint32 _globsize;
+
+	public:
+		Resource();
+		~Resource();
+
+		void nuke();
+
+		inline void setResourceCounter(byte counter);
+		inline byte getResourceCounter() const;
+
+		void lock();
+		void unlock();
+		bool isLocked() const;
+
+		void setModified();
+		bool isModified() const;
+	};
+
 	/**
 	 * This struct represents a resource type and all resource of that type.
 	 */
@@ -100,57 +169,7 @@ public:
 		/**
 		 * Array of size _num containing pointers to each resource of this type.
 		 */
-		byte **_address;
-
-		/**
-		 * Array of size _num containing the sizes of each resource of this type.
-		 */
-		uint32 *_size;
-
-	protected:
-		/**
-		 * Array of size _num containing some information on each resource of
-		 * this type.
-		 * First off, the uppermost bit indicates whether the resources is
-		 * locked into memory.
-		 * Secondly, the lower 7 bits contain a counter. This counter measures
-		 * roughly how old it is; a resource starts out with a count of 1 and
-		 * can go as high as 127. When memory falls low resp. when the engine
-		 * decides that it should throw out some unused stuff, then it begins
-		 * by removing the resources with the highest counter (excluding locked
-		 * resources and resources that are known to be in use).
-		 */
-		byte *flags;
-
-		/**
-		 * Array of size _num containing the status of each resource of this type.
-		 * This is a bitfield of which currently only one bit is used, which indicates
-		 * whether the resource is modified.
-		 */
-		byte *_status;
-
-	public:
-		/**
-		 * Array of size _num containing for each resource of this type the
-		 * id of the room (resp. the disk) the resource is contained in.
-		 */
-		byte *roomno;
-
-		/**
-		 * Array of size _num containing room offsets of each resource of this type.
-		 * That is the offset (in bytes) where the data for this resources
-		 * can be found in the game data file(s), relative to the start
-		 * of the room the resource is contained in.
-		 *
-		 * A value of RES_INVALID_OFFSET indicates a resources that is not contained
-		 * in the game data files.
-		 */
-		uint32 *roomoffs;
-
-		/**
-		 * Array of size _num. Occurs in HE 70+, but we don't use it for anything.
-		 */
-		uint32 *globsize;
+		Common::Array<Resource> _resources;
 
 	public:
 		ResTypeData();
@@ -174,6 +193,9 @@ public:
 
 	byte *createResource(int type, int idx, uint32 size);
 	void nukeResource(int type, int idx);
+
+	inline Resource &getRes(int type, int idx) { return _types[type]._resources[idx]; }
+	inline const Resource &getRes(int type, int idx) const { return _types[type]._resources[idx]; }
 
 	bool isResourceLoaded(int type, int idx) const;
 

@@ -390,7 +390,7 @@ void ScummEngine::getScriptBaseAddress() {
 				break;
 		_scriptOrgPointer = getResourceAddress(rtInventory, idx);
 		assert(idx < _numInventory);
-		_lastCodePtr = &_res->_types[rtInventory]._address[idx];
+		_lastCodePtr = &_res->_types[rtInventory]._resources[idx]._address;
 		break;
 
 	case WIO_LOCAL:
@@ -398,18 +398,18 @@ void ScummEngine::getScriptBaseAddress() {
 		if (_game.version == 8) {
 			_scriptOrgPointer = getResourceAddress(rtRoomScripts, _roomResource);
 			assert(_roomResource < _res->_types[rtRoomScripts]._num);
-			_lastCodePtr = &_res->_types[rtRoomScripts]._address[_roomResource];
+			_lastCodePtr = &_res->_types[rtRoomScripts]._resources[_roomResource]._address;
 		} else {
 			_scriptOrgPointer = getResourceAddress(rtRoom, _roomResource);
 			assert(_roomResource < _numRooms);
-			_lastCodePtr = &_res->_types[rtRoom]._address[_roomResource];
+			_lastCodePtr = &_res->_types[rtRoom]._resources[_roomResource]._address;
 		}
 		break;
 
 	case WIO_GLOBAL:							/* global script */
 		_scriptOrgPointer = getResourceAddress(rtScript, ss->number);
 		assert(ss->number < _numScripts);
-		_lastCodePtr = &_res->_types[rtScript]._address[ss->number];
+		_lastCodePtr = &_res->_types[rtScript]._resources[ss->number]._address;
 		break;
 
 	case WIO_FLOBJECT:						/* flobject script */
@@ -418,7 +418,7 @@ void ScummEngine::getScriptBaseAddress() {
 		idx = _objs[idx].fl_object_index;
 		_scriptOrgPointer = getResourceAddress(rtFlObject, idx);
 		assert(idx < _numFlObject);
-		_lastCodePtr = &_res->_types[rtFlObject]._address[idx];
+		_lastCodePtr = &_res->_types[rtFlObject]._resources[idx]._address;
 		break;
 	default:
 		error("Bad type while getting base address");

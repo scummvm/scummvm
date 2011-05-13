@@ -1247,7 +1247,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 					s->saveUint16(type);	// Save the res type...
 					for (idx = 0; idx < _res->_types[type]._num; idx++) {
 						// Only save resources which actually exist...
-						if (_res->_types[type]._address[idx]) {
+						if (_res->_types[type]._resources[idx]._address) {
 							s->saveUint16(idx);	// Save the index of the resource
 							saveResource(s, type, idx);
 						}
@@ -1663,11 +1663,11 @@ void ScummEngine::loadResourceOLD(Serializer *ser, int type, int idx) {
 }
 
 void ScummEngine::saveResource(Serializer *ser, int type, int idx) {
-	assert(_res->_types[type]._address[idx]);
+	assert(_res->_types[type]._resources[idx]._address);
 
 	if (_res->_types[type]._mode == kDynamicResTypeMode) {
-		byte *ptr = _res->_types[type]._address[idx];
-		uint32 size = _res->_types[type]._size[idx];
+		byte *ptr = _res->_types[type]._resources[idx]._address;
+		uint32 size = _res->_types[type]._resources[idx]._size;
 
 		ser->saveUint32(size);
 		ser->saveBytes(ptr, size);

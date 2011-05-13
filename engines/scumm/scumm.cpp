@@ -1184,10 +1184,6 @@ Common::Error ScummEngine::init() {
 	resetScumm();
 	resetScummVars();
 
-	if (_imuse) {
-		_imuse->setBase(_res->_types[rtSound]._address);
-	}
-
 	if (_game.version >= 5 && _game.version <= 7)
 		_sound->setupSound();
 
@@ -2460,10 +2456,6 @@ void ScummEngine::restart() {
 	// Reinit scumm variables
 	resetScumm();
 	resetScummVars();
-
-	if (_imuse) {
-		_imuse->setBase(_res->_types[rtSound]._address);
-	}
 
 	// Reinit sound engine
 	if (_game.version >= 5 && _game.version <= 7)

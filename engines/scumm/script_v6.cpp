@@ -357,11 +357,11 @@ void ScummEngine_v6::nukeArray(int a) {
 }
 
 int ScummEngine_v6::findFreeArrayId() {
-	byte **addr = _res->_types[rtString]._address;
+	const ResourceManager::ResTypeData &rtd = _res->_types[rtString];
 	int i;
 
 	for (i = 1; i < _numArray; i++) {
-		if (!addr[i])
+		if (!rtd._resources[i]._address)
 			return i;
 	}
 	error("Out of array pointers, %d max", _numArray);

@@ -621,11 +621,11 @@ void ScummEngine_v72he::o72_getArrayDimSize() {
 }
 
 void ScummEngine_v72he::o72_getNumFreeArrays() {
-	byte **addr = _res->_types[rtString]._address;
+	const ResourceManager::ResTypeData &rtd = _res->_types[rtString];
 	int i, num = 0;
 
 	for (i = 1; i < _numArray; i++) {
-		if (!addr[i])
+		if (!rtd._resources[i]._address)
 			num++;
 	}
 

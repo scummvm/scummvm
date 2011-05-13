@@ -30,6 +30,7 @@
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse/imuse_internal.h"
 #include "scumm/imuse/instrument.h"
+#include "scumm/resource.h"
 #include "scumm/saveload.h"
 #include "scumm/scumm.h"
 
@@ -47,7 +48,6 @@ _enable_gs(false),
 _sc55(false),
 _midi_adlib(NULL),
 _midi_native(NULL),
-_base_sounds(NULL),
 _sysex(NULL),
 _paused(false),
 _initialized(false),
@@ -100,11 +100,9 @@ IMuseInternal::~IMuseInternal() {
 }
 
 byte *IMuseInternal::findStartOfSound(int sound) {
-	byte *ptr = NULL;
 	int32 size, pos;
 
-	if (_base_sounds)
-		ptr = _base_sounds[sound];
+	byte *ptr = g_scumm->_res->_types[rtSound]._resources[sound]._address;
 
 	if (ptr == NULL) {
 		debug(1, "IMuseInternal::findStartOfSound(): Sound %d doesn't exist", sound);
@@ -136,16 +134,11 @@ byte *IMuseInternal::findStartOfSound(int sound) {
 }
 
 bool IMuseInternal::isMT32(int sound) {
-	byte *ptr = NULL;
-	uint32 tag;
-
-	if (_base_sounds)
-		ptr = _base_sounds[sound];
-
+	byte *ptr = g_scumm->_res->_types[rtSound]._resources[sound]._address;
 	if (ptr == NULL)
 		return false;
 
-	tag = READ_BE_UINT32(ptr);
+	uint32 tag = READ_BE_UINT32(ptr);
 	switch (tag) {
 	case MKTAG('A','D','L',' '):
 	case MKTAG('A','S','F','X'): // Special AD class for old AdLib sound effects
@@ -183,16 +176,11 @@ bool IMuseInternal::isMT32(int sound) {
 }
 
 bool IMuseInternal::isMIDI(int sound) {
-	byte *ptr = NULL;
-	uint32 tag;
-
-	if (_base_sounds)
-		ptr = _base_sounds[sound];
-
+	byte *ptr = g_scumm->_res->_types[rtSound]._resources[sound]._address;
 	if (ptr == NULL)
 		return false;
 
-	tag = READ_BE_UINT32(ptr);
+	uint32 tag = READ_BE_UINT32(ptr);
 	switch (tag) {
 	case MKTAG('A','D','L',' '):
 	case MKTAG('A','S','F','X'): // Special AD class for old AdLib sound effects
@@ -421,11 +409,6 @@ bool IMuseInternal::get_sound_active(int sound) const {
 int32 IMuseInternal::doCommand(int numargs, int a[]) {
 	Common::StackLock lock(_mutex, "IMuseInternal::doCommand()");
 	return doCommand_internal(numargs, a);
-}
-
-void IMuseInternal::setBase(byte **base) {
-	Common::StackLock lock(_mutex, "IMuseInternal::setBase()");
-	_base_sounds = base;
 }
 
 uint32 IMuseInternal::property(int prop, uint32 value) {

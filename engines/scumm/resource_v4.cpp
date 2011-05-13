@@ -43,8 +43,8 @@ int ScummEngine_v4::readResTypeList(int id) {
 	}
 
 	for (i = 0; i < num; i++) {
-		_res->_types[id].roomno[i] = _fileHandle->readByte();
-		_res->_types[id].roomoffs[i] = _fileHandle->readUint32LE();
+		_res->_types[id]._resources[i]._roomno = _fileHandle->readByte();
+		_res->_types[id]._resources[i]._roomoffs = _fileHandle->readUint32LE();
 	}
 
 	return num;

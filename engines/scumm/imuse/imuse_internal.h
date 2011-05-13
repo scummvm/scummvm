@@ -394,7 +394,6 @@ protected:
 	TimerCallbackInfo _timer_info_native;
 
 	uint32 _game_id;
-	byte **_base_sounds;
 
 	// Plug-in SysEx handling. Right now this only supports one
 	// custom SysEx handler for the hardcoded IMUSE_SYSEX_ID
@@ -510,7 +509,6 @@ public:
 	int save_or_load(Serializer *ser, ScummEngine *scumm);
 	bool get_sound_active(int sound) const;
 	int32 doCommand(int numargs, int args[]);
-	void setBase(byte **base);
 	uint32 property(int prop, uint32 value);
 	virtual void addSysexHandler(byte mfgID, sysexfunc handler);
 
