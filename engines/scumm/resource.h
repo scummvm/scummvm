@@ -145,7 +145,7 @@ public:
 	/**
 	 * This struct represents a resource type and all resource of that type.
 	 */
-	class ResTypeData {
+	class ResTypeData : public Common::Array<Resource> {
 	friend class ResourceManager;
 	public:
 		/**
@@ -159,11 +159,6 @@ public:
 		 * This value is only used for debugging purposes.
 		 */
 		uint32 _tag;
-
-		/**
-		 * Array containing the resources of this type.
-		 */
-		Common::Array<Resource> _resources;
 
 	public:
 		ResTypeData();
@@ -188,8 +183,8 @@ public:
 	byte *createResource(ResType type, ResId idx, uint32 size);
 	void nukeResource(ResType type, ResId idx);
 
-//	inline Resource &getRes(ResType type, ResId idx) { return _types[type]._resources[idx]; }
-//	inline const Resource &getRes(ResType type, ResId idx) const { return _types[type]._resources[idx]; }
+//	inline Resource &getRes(ResType type, ResId idx) { return _types[type][idx]; }
+//	inline const Resource &getRes(ResType type, ResId idx) const { return _types[type][idx]; }
 
 	bool isResourceLoaded(ResType type, ResId idx) const;
 

@@ -193,10 +193,10 @@ void ScummEngine::clearOwnerOf(int obj) {
 						_inventory[i] = _inventory[i+1];
 						_inventory[i+1] = 0;
 						// FIXME FIXME FIXME: This is incomplete, as we do not touch flags, status... BUG
-						_res->_types[rtInventory]._resources[i]._address = _res->_types[rtInventory]._resources[i + 1]._address;
-						_res->_types[rtInventory]._resources[i]._size = _res->_types[rtInventory]._resources[i + 1]._size;
-						_res->_types[rtInventory]._resources[i + 1]._address = NULL;
-						_res->_types[rtInventory]._resources[i + 1]._size = 0;
+						_res->_types[rtInventory][i]._address = _res->_types[rtInventory][i + 1]._address;
+						_res->_types[rtInventory][i]._size = _res->_types[rtInventory][i + 1]._size;
+						_res->_types[rtInventory][i + 1]._address = NULL;
+						_res->_types[rtInventory][i + 1]._size = 0;
 					}
 				}
 				break;
@@ -1799,7 +1799,7 @@ int ScummEngine::findLocalObjectSlot() {
 int ScummEngine::findFlObjectSlot() {
 	int i;
 	for (i = 1; i < _numFlObject; i++) {
-		if (_res->_types[rtFlObject]._resources[i]._address == NULL)
+		if (_res->_types[rtFlObject][i]._address == NULL)
 			return i;
 	}
 	error("findFlObjectSlot: Out of FLObject slots");

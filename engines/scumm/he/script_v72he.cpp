@@ -625,7 +625,7 @@ void ScummEngine_v72he::o72_getNumFreeArrays() {
 	int i, num = 0;
 
 	for (i = 1; i < _numArray; i++) {
-		if (!rtd._resources[i]._address)
+		if (!rtd[i]._address)
 			num++;
 	}
 

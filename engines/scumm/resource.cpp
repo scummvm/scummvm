@@ -83,8 +83,8 @@ void ScummEngine::openRoom(const int room) {
 	// Load the disk numer / room offs (special case for room 0 exists because
 	// room 0 contains the data which is used to create the roomno / roomoffs
 	// tables -- hence obviously we mustn't use those when loading room 0.
-	const uint32 diskNumber = room ? _res->_types[rtRoom]._resources[room]._roomno : 0;
-	const uint32 room_offs = room ? _res->_types[rtRoom]._resources[room]._roomoffs : 0;
+	const uint32 diskNumber = room ? _res->_types[rtRoom][room]._roomno : 0;
+	const uint32 room_offs = room ? _res->_types[rtRoom][room]._roomoffs : 0;
 
 	// FIXME: Since room_offs is const, clearly the following loop either
 	// is never entered, or loops forever (if it wasn't for the return/error
@@ -94,7 +94,7 @@ void ScummEngine::openRoom(const int room) {
 	while (room_offs != RES_INVALID_OFFSET) {
 
 		if (room_offs != 0 && room != 0 && _game.heversion < 98) {
-			_fileOffset = _res->_types[rtRoom]._resources[room]._roomoffs;
+			_fileOffset = _res->_types[rtRoom][room]._roomoffs;
 			return;
 		}
 
@@ -122,7 +122,7 @@ void ScummEngine::openRoom(const int room) {
 				return;
 			deleteRoomOffsets();
 			readRoomsOffsets();
-			_fileOffset = _res->_types[rtRoom]._resources[room]._roomoffs;
+			_fileOffset = _res->_types[rtRoom][room]._roomoffs;
 
 			if (_fileOffset != 8)
 				return;
@@ -157,8 +157,8 @@ void ScummEngine::closeRoom() {
 /** Delete the currently loaded room offsets. */
 void ScummEngine::deleteRoomOffsets() {
 	for (int i = 0; i < _numRooms; i++) {
-		if (_res->_types[rtRoom]._resources[i]._roomoffs != RES_INVALID_OFFSET)
-			_res->_types[rtRoom]._resources[i]._roomoffs = 0;
+		if (_res->_types[rtRoom][i]._roomoffs != RES_INVALID_OFFSET)
+			_res->_types[rtRoom][i]._roomoffs = 0;
 	}
 }
 
@@ -174,8 +174,8 @@ void ScummEngine::readRoomsOffsets() {
 	while (num--) {
 		int room = _fileHandle->readByte();
 		int offset =  _fileHandle->readUint32LE();
-		if (_res->_types[rtRoom]._resources[room]._roomoffs != RES_INVALID_OFFSET) {
-			_res->_types[rtRoom]._resources[room]._roomoffs = offset;
+		if (_res->_types[rtRoom][room]._roomoffs != RES_INVALID_OFFSET) {
+			_res->_types[rtRoom][room]._roomoffs = offset;
 		}
 	}
 }
@@ -491,7 +491,7 @@ int ScummEngine::readResTypeList(ResType type) {
 	else
 		num = _fileHandle->readUint16LE();
 
-	if (num != _res->_types[type]._resources.size()) {
+	if (num != _res->_types[type].size()) {
 		error("Invalid number of %ss (%d) in directory", nameOfResType(type), num);
 	}
 
@@ -499,10 +499,10 @@ int ScummEngine::readResTypeList(ResType type) {
 
 
 	for (idx = 0; idx < num; idx++) {
-		_res->_types[type]._resources[idx]._roomno = _fileHandle->readByte();
+		_res->_types[type][idx]._roomno = _fileHandle->readByte();
 	}
 	for (idx = 0; idx < num; idx++) {
-		_res->_types[type]._resources[idx]._roomoffs = _fileHandle->readUint32LE();
+		_res->_types[type][idx]._roomoffs = _fileHandle->readUint32LE();
 	}
 
 	return num;
@@ -516,12 +516,12 @@ int ScummEngine_v70he::readResTypeList(ResType type) {
 
 	if (type == rtRoom)
 		for (idx = 0; idx < num; idx++) {
-			_heV7RoomIntOffsets[idx] = _res->_types[rtRoom]._resources[idx]._roomoffs;
+			_heV7RoomIntOffsets[idx] = _res->_types[rtRoom][idx]._roomoffs;
 		}
 
 	for (idx = 0; idx < num; idx++) {
 		// The globsize is currently not being used
-		/*_res->_types[type]._resources[idx]._globsize =*/ _fileHandle->readUint32LE();
+		/*_res->_types[type][idx]._globsize =*/ _fileHandle->readUint32LE();
 	}
 
 	return num;
@@ -539,8 +539,8 @@ void ResourceManager::allocResTypeData(ResType type, uint32 tag, int num, ResTyp
 
 	// If there was data in there, let's clear it out completely. This is important
 	// in case we are restarting the game.
-	_types[type]._resources.clear();
-	_types[type]._resources.resize(num);
+	_types[type].clear();
+	_types[type].resize(num);
 
 /*
 	TODO: Use multiple Resource subclasses, one for each res mode; then,
@@ -608,7 +608,7 @@ void ScummEngine::ensureResourceLoaded(ResType type, ResId idx) {
 	if (type != rtCharset && idx == 0)
 		return;
 
-	if (idx <= _res->_types[type]._resources.size() && _res->_types[type]._resources[idx]._address)
+	if (idx <= _res->_types[type].size() && _res->_types[type][idx]._address)
 		return;
 
 	loadResource(type, idx);
@@ -631,8 +631,8 @@ int ScummEngine::loadResource(ResType type, ResId idx) {
 
 	roomNr = getResourceRoomNr(type, idx);
 
-	if (idx >= _res->_types[type]._resources.size())
-		error("%s %d undefined %d %d", nameOfResType(type), idx, _res->_types[type]._resources.size(), roomNr);
+	if (idx >= _res->_types[type].size())
+		error("%s %d undefined %d %d", nameOfResType(type), idx, _res->_types[type].size(), roomNr);
 
 	if (roomNr == 0)
 		roomNr = _roomResource;
@@ -702,27 +702,27 @@ int ScummEngine::loadResource(ResType type, ResId idx) {
 int ScummEngine::getResourceRoomNr(ResType type, ResId idx) {
 	if (type == rtRoom && _game.heversion < 70)
 		return idx;
-	return _res->_types[type]._resources[idx]._roomno;
+	return _res->_types[type][idx]._roomno;
 }
 
 uint32 ScummEngine::getResourceRoomOffset(ResType type, ResId idx) {
 	if (type == rtRoom) {
 		return (_game.version == 8) ? 8 : 0;
 	}
-	return _res->_types[type]._resources[idx]._roomoffs;
+	return _res->_types[type][idx]._roomoffs;
 }
 
 uint32 ScummEngine_v70he::getResourceRoomOffset(ResType type, ResId idx) {
 	if (type == rtRoom) {
 		return _heV7RoomIntOffsets[idx];
 	}
-	return _res->_types[type]._resources[idx]._roomoffs;
+	return _res->_types[type][idx]._roomoffs;
 }
 
 int ScummEngine::getResourceSize(ResType type, ResId idx) {
 	byte *ptr = getResourceAddress(type, idx);
 	assert(ptr);
-	return _res->_types[type]._resources[idx]._size;
+	return _res->_types[type][idx]._size;
 }
 
 byte *ScummEngine::getResourceAddress(ResType type, ResId idx) {
@@ -735,11 +735,11 @@ byte *ScummEngine::getResourceAddress(ResType type, ResId idx) {
 		return NULL;
 
 	// If the resource is missing, but loadable from the game data files, try to do so.
-	if (!_res->_types[type]._resources[idx]._address && _res->_types[type]._mode != kDynamicResTypeMode) {
+	if (!_res->_types[type][idx]._address && _res->_types[type]._mode != kDynamicResTypeMode) {
 		ensureResourceLoaded(type, idx);
 	}
 
-	ptr = (byte *)_res->_types[type]._resources[idx]._address;
+	ptr = (byte *)_res->_types[type][idx]._address;
 	if (!ptr) {
 		debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == NULL", nameOfResType(type), idx);
 		return NULL;
@@ -777,9 +777,9 @@ void ResourceManager::increaseExpireCounter() {
 
 void ResourceManager::increaseResourceCounters() {
 	for (ResType type = rtFirst; type <= rtLast; type = ResType(type + 1)) {
-		ResId idx = _types[type]._resources.size();
+		ResId idx = _types[type].size();
 		while (idx-- > 0) {
-			byte counter = _types[type]._resources[idx].getResourceCounter();
+			byte counter = _types[type][idx].getResourceCounter();
 			if (counter && counter < RF_USAGE_MAX) {
 				setResourceCounter(type, idx, counter + 1);
 			}
@@ -788,7 +788,7 @@ void ResourceManager::increaseResourceCounters() {
 }
 
 void ResourceManager::setResourceCounter(ResType type, ResId idx, byte counter) {
-	_types[type]._resources[idx].setResourceCounter(counter);
+	_types[type][idx].setResourceCounter(counter);
 }
 
 void ResourceManager::Resource::setResourceCounter(byte counter) {
@@ -814,8 +814,8 @@ byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
 		// cases. For instance, Zak tries to reload the intro music
 		// while it's playing. See bug #1253171.
 
-		if (_types[type]._resources[idx]._address && (type == rtSound || type == rtScript || type == rtCostume))
-			return _types[type]._resources[idx]._address;
+		if (_types[type][idx]._address && (type == rtSound || type == rtScript || type == rtCostume))
+			return _types[type][idx]._address;
 	}
 
 	nukeResource(type, idx);
@@ -829,8 +829,8 @@ byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
 
 	_allocatedSize += size;
 
-	_types[type]._resources[idx]._address = ptr;
-	_types[type]._resources[idx]._size = size;
+	_types[type][idx]._address = ptr;
+	_types[type][idx]._size = size;
 	setResourceCounter(type, idx, 1);
 	return ptr;
 }
@@ -884,7 +884,7 @@ void ResourceManager::setHeapThreshold(int min, int max) {
 }
 
 bool ResourceManager::validateResource(const char *str, ResType type, ResId idx) const {
-	if (type < rtFirst || type > rtLast || (uint)idx >= (uint)_types[type]._resources.size()) {
+	if (type < rtFirst || type > rtLast || (uint)idx >= (uint)_types[type].size()) {
 		error("%s Illegal Glob type %s (%d) num %d", str, nameOfResType(type), type, idx);
 		return false;
 	}
@@ -892,11 +892,11 @@ bool ResourceManager::validateResource(const char *str, ResType type, ResId idx)
 }
 
 void ResourceManager::nukeResource(ResType type, ResId idx) {
-	byte *ptr = _types[type]._resources[idx]._address;
+	byte *ptr = _types[type][idx]._address;
 	if (ptr != NULL) {
 		debugC(DEBUG_RESOURCE, "nukeResource(%s,%d)", nameOfResType(type), idx);
-		_allocatedSize -= _types[type]._resources[idx]._size;
-		_types[type]._resources[idx].nuke();
+		_allocatedSize -= _types[type][idx]._size;
+		_types[type][idx].nuke();
 	}
 }
 
@@ -928,19 +928,19 @@ int ScummEngine::getResourceDataSize(const byte *ptr) const {
 void ResourceManager::lock(ResType type, ResId idx) {
 	if (!validateResource("Locking", type, idx))
 		return;
-	_types[type]._resources[idx].lock();
+	_types[type][idx].lock();
 }
 
 void ResourceManager::unlock(ResType type, ResId idx) {
 	if (!validateResource("Unlocking", type, idx))
 		return;
-	_types[type]._resources[idx].unlock();
+	_types[type][idx].unlock();
 }
 
 bool ResourceManager::isLocked(ResType type, ResId idx) const {
 	if (!validateResource("isLocked", type, idx))
 		return false;
-	return _types[type]._resources[idx].isLocked();
+	return _types[type][idx].isLocked();
 }
 
 void ResourceManager::Resource::lock() {
@@ -989,13 +989,13 @@ bool ScummEngine::isResourceInUse(ResType type, ResId idx) const {
 void ResourceManager::setModified(ResType type, ResId idx) {
 	if (!validateResource("Modified", type, idx))
 		return;
-	_types[type]._resources[idx].setModified();
+	_types[type][idx].setModified();
 }
 
 bool ResourceManager::isModified(ResType type, ResId idx) const {
 	if (!validateResource("isModified", type, idx))
 		return false;
-	return _types[type]._resources[idx].isModified();
+	return _types[type][idx].isModified();
 }
 
 void ResourceManager::Resource::setModified() {
@@ -1030,9 +1030,9 @@ void ResourceManager::expireResources(uint32 size) {
 			if (_types[type]._mode != kDynamicResTypeMode) {
 				// Resources of this type can be reloaded from the data files,
 				// so we can potentially unload them to free memory.
-				ResId idx = _types[type]._resources.size();
+				ResId idx = _types[type].size();
 				while (idx-- > 0) {
-					Resource &tmp = _types[type]._resources[idx];
+					Resource &tmp = _types[type][idx];
 					byte counter = tmp.getResourceCounter();
 					if (!tmp.isLocked() && counter >= best_counter && tmp._address && !_vm->isResourceInUse(type, idx)) {
 						best_counter = counter;
@@ -1055,12 +1055,12 @@ void ResourceManager::expireResources(uint32 size) {
 
 void ResourceManager::freeResources() {
 	for (ResType type = rtFirst; type <= rtLast; type = ResType(type + 1)) {
-		ResId idx = _types[type]._resources.size();
+		ResId idx = _types[type].size();
 		while (idx-- > 0) {
 			if (isResourceLoaded(type, idx))
 				nukeResource(type, idx);
 		}
-		_types[type]._resources.clear();
+		_types[type].clear();
 	}
 }
 
@@ -1090,16 +1090,16 @@ void ScummEngine::loadPtrToResource(ResType type, ResId idx, const byte *source)
 bool ResourceManager::isResourceLoaded(ResType type, ResId idx) const {
 	if (!validateResource("isResourceLoaded", type, idx))
 		return false;
-	return _types[type]._resources[idx]._address != NULL;
+	return _types[type][idx]._address != NULL;
 }
 
 void ResourceManager::resourceStats() {
 	uint32 lockedSize = 0, lockedNum = 0;
 
 	for (ResType type = rtFirst; type <= rtLast; type = ResType(type + 1)) {
-		ResId idx = _types[type]._resources.size();
+		ResId idx = _types[type].size();
 		while (idx-- > 0) {
-			Resource &tmp = _types[type]._resources[idx];
+			Resource &tmp = _types[type][idx];
 			if (tmp.isLocked() && tmp._address) {
 				lockedSize += tmp._size;
 				lockedNum++;

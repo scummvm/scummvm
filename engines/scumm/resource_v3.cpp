@@ -44,16 +44,16 @@ int ScummEngine_v3old::readResTypeList(ResType type) {
 
 	if (type == rtRoom) {
 		for (idx = 0; idx < num; idx++)
-			_res->_types[type]._resources[idx]._roomno = idx;
+			_res->_types[type][idx]._roomno = idx;
 		_fileHandle->seek(num, SEEK_CUR);
 	} else {
 		for (idx = 0; idx < num; idx++)
-			_res->_types[type]._resources[idx]._roomno = _fileHandle->readByte();
+			_res->_types[type][idx]._roomno = _fileHandle->readByte();
 	}
 	for (idx = 0; idx < num; idx++) {
-		_res->_types[type]._resources[idx]._roomoffs = _fileHandle->readUint16LE();
-		if (_res->_types[type]._resources[idx]._roomoffs == 0xFFFF)
-			_res->_types[type]._resources[idx]._roomoffs = (uint32)RES_INVALID_OFFSET;
+		_res->_types[type][idx]._roomoffs = _fileHandle->readUint16LE();
+		if (_res->_types[type][idx]._roomoffs == 0xFFFF)
+			_res->_types[type][idx]._roomoffs = (uint32)RES_INVALID_OFFSET;
 	}
 
 	return num;

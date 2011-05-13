@@ -102,7 +102,7 @@ IMuseInternal::~IMuseInternal() {
 byte *IMuseInternal::findStartOfSound(int sound) {
 	int32 size, pos;
 
-	byte *ptr = g_scumm->_res->_types[rtSound]._resources[sound]._address;
+	byte *ptr = g_scumm->_res->_types[rtSound][sound]._address;
 
 	if (ptr == NULL) {
 		debug(1, "IMuseInternal::findStartOfSound(): Sound %d doesn't exist", sound);
@@ -134,7 +134,7 @@ byte *IMuseInternal::findStartOfSound(int sound) {
 }
 
 bool IMuseInternal::isMT32(int sound) {
-	byte *ptr = g_scumm->_res->_types[rtSound]._resources[sound]._address;
+	byte *ptr = g_scumm->_res->_types[rtSound][sound]._address;
 	if (ptr == NULL)
 		return false;
 
@@ -176,7 +176,7 @@ bool IMuseInternal::isMT32(int sound) {
 }
 
 bool IMuseInternal::isMIDI(int sound) {
-	byte *ptr = g_scumm->_res->_types[rtSound]._resources[sound]._address;
+	byte *ptr = g_scumm->_res->_types[rtSound][sound]._address;
 	if (ptr == NULL)
 		return false;
 

@@ -390,26 +390,26 @@ void ScummEngine::getScriptBaseAddress() {
 				break;
 		_scriptOrgPointer = getResourceAddress(rtInventory, idx);
 		assert(idx < _numInventory);
-		_lastCodePtr = &_res->_types[rtInventory]._resources[idx]._address;
+		_lastCodePtr = &_res->_types[rtInventory][idx]._address;
 		break;
 
 	case WIO_LOCAL:
 	case WIO_ROOM:								/* room script */
 		if (_game.version == 8) {
 			_scriptOrgPointer = getResourceAddress(rtRoomScripts, _roomResource);
-			assert(_roomResource < (int)_res->_types[rtRoomScripts]._resources.size());
-			_lastCodePtr = &_res->_types[rtRoomScripts]._resources[_roomResource]._address;
+			assert(_roomResource < (int)_res->_types[rtRoomScripts].size());
+			_lastCodePtr = &_res->_types[rtRoomScripts][_roomResource]._address;
 		} else {
 			_scriptOrgPointer = getResourceAddress(rtRoom, _roomResource);
 			assert(_roomResource < _numRooms);
-			_lastCodePtr = &_res->_types[rtRoom]._resources[_roomResource]._address;
+			_lastCodePtr = &_res->_types[rtRoom][_roomResource]._address;
 		}
 		break;
 
 	case WIO_GLOBAL:							/* global script */
 		_scriptOrgPointer = getResourceAddress(rtScript, ss->number);
 		assert(ss->number < _numScripts);
-		_lastCodePtr = &_res->_types[rtScript]._resources[ss->number]._address;
+		_lastCodePtr = &_res->_types[rtScript][ss->number]._address;
 		break;
 
 	case WIO_FLOBJECT:						/* flobject script */
@@ -418,7 +418,7 @@ void ScummEngine::getScriptBaseAddress() {
 		idx = _objs[idx].fl_object_index;
 		_scriptOrgPointer = getResourceAddress(rtFlObject, idx);
 		assert(idx < _numFlObject);
-		_lastCodePtr = &_res->_types[rtFlObject]._resources[idx]._address;
+		_lastCodePtr = &_res->_types[rtFlObject][idx]._address;
 		break;
 	default:
 		error("Bad type while getting base address");
@@ -1099,7 +1099,7 @@ void ScummEngine::checkAndRunSentenceScript() {
 			// For now we assume that if there are more than 460 scripts, then
 			// the pair 29/104 is used, else the pair 28/103.
 
-			if (_res->_types[rtScript]._resources.size() > 460) {
+			if (_res->_types[rtScript].size() > 460) {
 				if (sentenceScript == 104)
 					sentenceScript = 29;
 			} else {

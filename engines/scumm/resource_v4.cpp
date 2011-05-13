@@ -37,13 +37,13 @@ int ScummEngine_v4::readResTypeList(ResType type) {
 
 	num = _fileHandle->readUint16LE();
 
-	if (num != _res->_types[type]._resources.size()) {
+	if (num != _res->_types[type].size()) {
 		error("Invalid number of %ss (%d) in directory", nameOfResType(type), num);
 	}
 
 	for (ResId idx = 0; idx < num; idx++) {
-		_res->_types[type]._resources[idx]._roomno = _fileHandle->readByte();
-		_res->_types[type]._resources[idx]._roomoffs = _fileHandle->readUint32LE();
+		_res->_types[type][idx]._roomno = _fileHandle->readByte();
+		_res->_types[type][idx]._roomoffs = _fileHandle->readUint32LE();
 	}
 
 	return num;

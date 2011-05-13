@@ -361,7 +361,7 @@ int ScummEngine_v6::findFreeArrayId() {
 	int i;
 
 	for (i = 1; i < _numArray; i++) {
-		if (!rtd._resources[i]._address)
+		if (!rtd[i]._address)
 			return i;
 	}
 	error("Out of array pointers, %d max", _numArray);
