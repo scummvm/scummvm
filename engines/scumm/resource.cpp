@@ -662,9 +662,17 @@ int ScummEngine::loadResource(ResType type, ResId idx) {
 		}
 
 		// Sanity check: Is this the right tag for this resource type?
+		//
+		// Currently disabled for newer HE games because they use different
+		// tags. For example, for rtRoom, 'ROOM' changed to 'RMDA'; and for
+		// rtImage, 'AWIZ' and 'MULT' can both occur simultaneously.
+		// On the long run, it would be preferable to not turn this check off,
+		// but instead to explicitly support the variations in the HE games.
 		tag = _fileHandle->readUint32BE();
 		if (tag != _res->_types[type]._tag && _game.heversion < 70) {
-			error("%s %d not in room %d at %d+%d in file %s",
+			error("Unknown res tag '%s' encountered (expected '%s') "
+			        "while trying to load res (%s,%d) in room %d at %d+%d in file %s",
+			        tag2str(tag), tag2str(_res->_types[type]._tag),
 					nameOfResType(type), idx, roomNr,
 					_fileOffset, fileOffs, _fileHandle->getName());
 		}
