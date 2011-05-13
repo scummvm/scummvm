@@ -743,6 +743,9 @@ void LBPage::loadBITL(uint16 resourceId) {
 		case kLBMiniGameItem:
 			res = new LBMiniGameItem(_vm, this, rect);
 			break;
+		case kLBProxyItem:
+			res = new LBProxyItem(_vm, this, rect);
+			break;
 		default:
 			warning("Unknown item type %04x", type);
 		case 3: // often used for buttons
@@ -3743,6 +3746,37 @@ bool LBMiniGameItem::togglePlaying(bool playing, bool restart) {
 	_vm->addNotifyEvent(NotifyEvent(kLBNotifyChangePage, destPage));
 
 	return false;
+}
+
+LBProxyItem::LBProxyItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
+	debug(3, "new LBProxyItem");
+
+	_page = NULL;
+}
+
+LBProxyItem::~LBProxyItem() {
+	delete _page;
+}
+
+void LBProxyItem::init() {
+	Common::String leftover;
+	Common::String filename = _vm->getFileNameFromConfig("Proxies", _desc.c_str(), leftover);
+	if (!leftover.empty())
+		error("LBProxyItem tried loading proxy '%s' but got leftover '%s'", _desc.c_str(), leftover.c_str());
+	uint16 baseId;
+	for (uint i = 0; i < filename.size(); i++) {
+		if (filename[i] == ';') {
+			baseId = atoi(filename.c_str() + i + 1);
+			filename = Common::String(filename.c_str(), i);
+		}
+	}
+
+	debug(1, "LBProxyItem loading archive '%s' with id %d", filename.c_str(), baseId);
+	MohawkArchive *pageArchive = _vm->createMohawkArchive();
+	if (!pageArchive->open(filename))
+		error("failed to open archive '%s' (for proxy '%s')", filename.c_str(), _desc.c_str());
+	_page = new LBPage(_vm);
+	_page->open(pageArchive, baseId);
 }
 
 } // End of namespace Mohawk
