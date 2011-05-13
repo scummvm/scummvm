@@ -154,11 +154,6 @@ public:
 	friend class ResourceManager;
 	public:
 		ResTypeMode _mode;
-		/**
-		 * The maximal number of resource of this type. Determines the size
-		 * of various arrays.
-		 */
-		uint16 _num;
 
 		/**
 		 * The 4-byte tag or chunk type associated to this resource type, if any.
@@ -167,7 +162,7 @@ public:
 		uint32 _tag;
 
 		/**
-		 * Array of size _num containing pointers to each resource of this type.
+		 * Array containing the resources of this type.
 		 */
 		Common::Array<Resource> _resources;
 

@@ -37,7 +37,7 @@ int ScummEngine_v4::readResTypeList(ResType type) {
 
 	num = _fileHandle->readUint16LE();
 
-	if (num != _res->_types[type]._num) {
+	if (num != _res->_types[type]._resources.size()) {
 		error("Invalid number of %ss (%d) in directory", nameOfResType(type), num);
 	}
 

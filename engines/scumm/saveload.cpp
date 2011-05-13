@@ -427,7 +427,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// Nuke all resources
 	for (ResType type = rtFirst; type <= rtLast; type = ResType(type + 1))
 		if (type != rtTemp && type != rtBuffer && (type != rtSound || _saveSound || !compat))
-			for (ResId idx = 0; idx < _res->_types[type]._num; idx++) {
+			for (ResId idx = 0; idx < _res->_types[type]._resources.size(); idx++) {
 				_res->nukeResource(type, idx);
 			}
 
@@ -516,7 +516,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// loading such an old save game, try to upgrade the old to new format.
 	if (hdr.ver < VER(22)) {
 		// Convert all rtScaleTable resources to matching scale items
-		for (ResId idx = 1; idx < _res->_types[rtScaleTable]._num; idx++) {
+		for (ResId idx = 1; idx < _res->_types[rtScaleTable]._resources.size(); idx++) {
 			convertScaleTableToScaleSlot(idx);
 		}
 	}
@@ -1245,7 +1245,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 			for (type = rtFirst; type <= rtLast; type = ResType(type + 1)) {
 				if (_res->_types[type]._mode != kStaticResTypeMode && type != rtTemp && type != rtBuffer) {
 					s->saveUint16(type);	// Save the res type...
-					for (idx = 0; idx < _res->_types[type]._num; idx++) {
+					for (idx = 0; idx < _res->_types[type]._resources.size(); idx++) {
 						// Only save resources which actually exist...
 						if (_res->_types[type]._resources[idx]._address) {
 							s->saveUint16(idx);	// Save the index of the resource
@@ -1259,7 +1259,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		} else {
 			while ((type = (ResType)s->loadUint16()) != 0xFFFF) {
 				while ((idx = s->loadUint16()) != 0xFFFF) {
-					assert(idx < _res->_types[type]._num);
+					assert(idx < _res->_types[type]._resources.size());
 					loadResource(s, type, idx);
 				}
 			}
@@ -1275,7 +1275,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 				// unchanged resource counts, we have to hard code the following check
 				if (_game.version < 6 && type == rtObjectName)
 					continue;
-				for (idx = 1; idx < _res->_types[type]._num; idx++)
+				for (idx = 1; idx < _res->_types[type]._resources.size(); idx++)
 					loadResourceOLD(s, type, idx);
 			}
 	}
@@ -1388,7 +1388,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	//
 	if (s->isSaving()) {
 		for (type = rtFirst; type <= rtLast; type = ResType(type + 1))
-			for (idx = 1; idx < _res->_types[type]._num; idx++) {
+			for (idx = 1; idx < _res->_types[type]._resources.size(); idx++) {
 				if (_res->isLocked(type, idx)) {
 					s->saveByte(type);
 					s->saveUint16(idx);

@@ -374,8 +374,8 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 		DebugPrintf("Actor[%d]._elevation = %d\n", actnum, a->getElevation());
 		_vm->_fullRedraw = true;
 	} else if (!strcmp(argv[2], "costume")) {
-		if (value >= _vm->_res->_types[rtCostume]._num)
-			DebugPrintf("Costume not changed as %d exceeds max of %d\n", value, _vm->_res->_types[rtCostume]._num);
+		if (value >= (int)_vm->_res->_types[rtCostume]._resources.size())
+			DebugPrintf("Costume not changed as %d exceeds max of %d\n", value, _vm->_res->_types[rtCostume]._resources.size());
 		else {
 			a->setActorCostume(value);
 			_vm->_fullRedraw = true;
