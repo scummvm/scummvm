@@ -290,6 +290,15 @@ void MohawkEngine_LivingBooks::loadBookInfo(const Common::String &filename) {
 	//     - fUse254ColorPalette         (always true?)
 	//     - nKBRequired                 (4096, RAM requirement?)
 	//     - fDebugWindow                (always 0?)
+
+	if (_bookInfoFile.hasSection("Globals")) {
+		const Common::ConfigFile::SectionKeyList globals = _bookInfoFile.getKeys("Globals");
+		for (Common::ConfigFile::SectionKeyList::const_iterator i = globals.begin(); i != globals.end(); i++) {
+			Common::String command = Common::String::format("%s = %s", i->key.c_str(), i->value.c_str());
+			debug("global: %s", command.c_str());
+			// TODO: run command
+		}
+	}
 }
 
 Common::String MohawkEngine_LivingBooks::stringForMode(LBMode mode) {
@@ -2700,10 +2709,20 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 			break;
 
 		case kLBOpLoad:
+			// FIXME
+			warning("ignoring kLBOpLoad (event 0x%04x, param 0x%04x, target '%s')",
+				entry->event, entry->param, target->_desc.c_str());
+			break;
+
 		case kLBOpPreload:
+			// FIXME
+			warning("ignoring kLBOpPreload (event 0x%04x, param 0x%04x, target '%s')",
+				entry->event, entry->param, target->_desc.c_str());
+			break;
+
 		case kLBOpUnload:
 			// FIXME
-			warning("ignoring kLBOpLoad/Preload/Unload (event 0x%04x, param 0x%04x, target '%s')",
+			warning("ignoring kLBOpUnload (event 0x%04x, param 0x%04x, target '%s')",
 				entry->event, entry->param, target->_desc.c_str());
 			break;
 
