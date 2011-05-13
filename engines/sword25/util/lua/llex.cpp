@@ -176,9 +176,17 @@ static void buffreplace (LexState *ls, char from, char to) {
 
 static void trydecpoint (LexState *ls, SemInfo *seminfo) {
   /* format error: try to update decimal point separator */
+#if defined(__ANDROID__)
+  // Android is missing the decimal_point member from the lconv struct.
+  // For more information, refer to:
+  // http://www.damonkohler.com/2008/12/lua-on-android.html
+  char old = ls->decpoint;
+  ls->decpoint = '.';
+#else
   struct lconv *cv = localeconv();
   char old = ls->decpoint;
   ls->decpoint = (cv ? cv->decimal_point[0] : '.');
+#endif
   buffreplace(ls, old, ls->decpoint);  /* try updated decimal separator */
   if (!luaO_str2d(luaZ_buffer(ls->buff), &seminfo->r)) {
     /* format error with correct decimal point: no more options */

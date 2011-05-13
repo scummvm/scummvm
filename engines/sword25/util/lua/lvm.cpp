@@ -202,7 +202,14 @@ static int l_strcmp (const TString *ls, const TString *rs) {
   const char *r = getstr(rs);
   size_t lr = rs->tsv.len;
   for (;;) {
+#if defined(__ANDROID__)
+	// Android is missing strcoll().
+    // For more information, refer to:
+    // http://www.damonkohler.com/2008/12/lua-on-android.html
+	int temp = strcmp(l, r);
+#else
     int temp = strcoll(l, r);
+#endif
     if (temp != 0) return temp;
     else {  /* strings are equal up to a `\0' */
       size_t len = strlen(l);  /* index of first `\0' in both strings */
