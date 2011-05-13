@@ -105,6 +105,7 @@ static bool decodeThumbnail(const byte *pFileData, uint fileSize, byte *&pUncomp
 	const byte *src = pFileData + 4;	// skip header
 	width = READ_LE_UINT16(src); src += 2;
 	height = READ_LE_UINT16(src); src += 2;
+	src++;	// version, ignored for now
 	pitch = width * 4;
 
 	uint32 totalSize = pitch * height;

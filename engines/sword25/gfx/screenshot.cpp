@@ -39,6 +39,8 @@
 
 namespace Sword25 {
 
+#define THUMBNAIL_VERSION 1
+
 bool Screenshot::saveToFile(Graphics::Surface *data, Common::WriteStream *stream) {
 	// Convert the RGBA data to RGB
 	const byte *pSrc = (const byte *)data->getBasePtr(0, 0);
@@ -47,6 +49,7 @@ bool Screenshot::saveToFile(Graphics::Surface *data, Common::WriteStream *stream
 	stream->writeUint32BE(MKTAG('S','C','R','N'));	// SCRN, short for "Screenshot"
 	stream->writeUint16LE(data->w);
 	stream->writeUint16LE(data->h);
+	stream->writeByte(THUMBNAIL_VERSION);
 
 	for (uint y = 0; y < data->h; y++) {
 		for (uint x = 0; x < data->w; x++) {
