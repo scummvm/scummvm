@@ -520,7 +520,8 @@ int ScummEngine_v70he::readResTypeList(ResType type) {
 		}
 
 	for (idx = 0; idx < num; idx++) {
-		_res->_types[type]._resources[idx]._globsize = _fileHandle->readUint32LE();
+		// The globsize is currently not being used
+		/*_res->_types[type]._resources[idx]._globsize =*/ _fileHandle->readUint32LE();
 	}
 
 	return num;
@@ -841,7 +842,6 @@ ResourceManager::Resource::Resource() {
 	_status = 0;
 	_roomno = 0;
 	_roomoffs = 0;
-	_globsize = 0;
 }
 
 ResourceManager::Resource::~Resource() {

@@ -125,11 +125,6 @@ public:
 		 */
 		uint32 _roomoffs;
 
-		/**
-		 * Occurs in HE 70+, but we don't use it for anything.
-		 */
-		uint32 _globsize;
-
 	public:
 		Resource();
 		~Resource();
