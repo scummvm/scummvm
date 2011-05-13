@@ -1147,6 +1147,7 @@ void Scene2100::Action14::signal() {
 	case 12:
 		scene->_object3.setStrip(2);
 		setDelay(30);
+		break;
 	case 13:
 		scene->_object3.fixPriority(1);
 		scene->_soundHandler.startSound(162);
