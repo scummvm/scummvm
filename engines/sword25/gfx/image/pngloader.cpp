@@ -46,51 +46,6 @@
 
 namespace Sword25 {
 
-/**
- * Load a NULL-terminated string from the given stream.
- */
-static Common::String loadString(Common::ReadStream &in, uint maxSize = 999) {
-	Common::String result;
-
-	while (!in.eos() && (result.size() < maxSize)) {
-		char ch = (char)in.readByte();
-		if (ch == '\0')
-			break;
-
-		result += ch;
-	}
-
-	return result;
-}
-
-/**
- * Check if the given data is a savegame, and if so, locate the
- * offset to the image data.
- * @return offset to image data if fileDataPtr contains a savegame; 0 otherwise
- */
-static uint findEmbeddedPNG(const byte *fileDataPtr, uint fileSize) {
-	if (fileSize < 100)
-		return 0;
-	if (memcmp(fileDataPtr, "BS25SAVEGAME", 12))
-		return 0;
-
-	// Read in the header
-	Common::MemoryReadStream stream(fileDataPtr, fileSize);
-	stream.seek(0, SEEK_SET);
-
-	// Read header information of savegame
-	uint compressedGamedataSize;
-	loadString(stream);		// Marker
-	loadString(stream);		// Version
-	loadString(stream);		// Description
-	Common::String gameSize = loadString(stream);
-	compressedGamedataSize = atoi(gameSize.c_str());
-	loadString(stream);
-
-	// Return the offset of where the thumbnail starts
-	return static_cast<uint>(stream.pos() + compressedGamedataSize);
-}
-
 #ifndef USE_INTERNAL_PNG_DECODER
 static void png_user_read_data(png_structp png_ptr, png_bytep data, png_size_t length) {
 	const byte **ref = (const byte **)png_get_io_ptr(png_ptr);
@@ -232,8 +187,7 @@ bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize, byte *&unc
 }
 
 bool PNGLoader::decodeImage(const byte *fileDataPtr, uint fileSize, byte *&uncompressedDataPtr, int &width, int &height, int &pitch) {
-	uint pngOffset = findEmbeddedPNG(fileDataPtr, fileSize);
-	return doDecodeImage(fileDataPtr + pngOffset, fileSize - pngOffset, uncompressedDataPtr, width, height, pitch);
+	return doDecodeImage(fileDataPtr, fileSize, uncompressedDataPtr, width, height, pitch);
 }
 
 #ifndef USE_INTERNAL_PNG_DECODER
@@ -280,8 +234,7 @@ bool PNGLoader::doImageProperties(const byte *fileDataPtr, uint fileSize, int &w
 }
 
 bool PNGLoader::imageProperties(const byte *fileDataPtr, uint fileSize, int &width, int &height) {
-	uint pngOffset = findEmbeddedPNG(fileDataPtr, fileSize);
-	return doImageProperties(fileDataPtr + pngOffset, fileSize - pngOffset, width, height);
+	return doImageProperties(fileDataPtr, fileSize, width, height);
 }
 
 #else
