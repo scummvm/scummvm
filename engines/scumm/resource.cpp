@@ -535,6 +535,10 @@ void ResourceManager::allocResTypeData(ResType type, uint32 tag, int num, ResTyp
 
 	_types[type]._mode = mode;
 	_types[type]._tag = tag;
+
+	// If there was data in there, let's clear it out completely. This is important
+	// in case we are restarting the game.
+	_types[type]._resources.clear();
 	_types[type]._resources.resize(num);
 
 /*
