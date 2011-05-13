@@ -28,18 +28,18 @@
 
 namespace Scumm {
 
-extern const char *resTypeFromId(int id);
+extern const char *nameOfResType(ResType type);
 
 int ScummEngine_v3old::readResTypeList(ResType type) {
 	uint num;
 	ResId idx;
 
-	debug(9, "readResTypeList(%s)", resTypeFromId(type));
+	debug(9, "readResTypeList(%s)", nameOfResType(type));
 
 	num = _fileHandle->readByte();
 
 	if (num >= 0xFF) {
-		error("Too many %ss (%d) in directory", resTypeFromId(type), num);
+		error("Too many %ss (%d) in directory", nameOfResType(type), num);
 	}
 
 	if (type == rtRoom) {

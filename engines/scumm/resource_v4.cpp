@@ -28,17 +28,17 @@
 
 namespace Scumm {
 
-extern const char *resTypeFromId(int id);
+extern const char *nameOfResType(ResType type);
 
 int ScummEngine_v4::readResTypeList(ResType type) {
 	uint num;
 
-	debug(9, "readResTypeList(%s)", resTypeFromId(type));
+	debug(9, "readResTypeList(%s)", nameOfResType(type));
 
 	num = _fileHandle->readUint16LE();
 
 	if (num != _res->_types[type]._num) {
-		error("Invalid number of %ss (%d) in directory", resTypeFromId(type), num);
+		error("Invalid number of %ss (%d) in directory", nameOfResType(type), num);
 	}
 
 	for (ResId idx = 0; idx < num; idx++) {

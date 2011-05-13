@@ -52,7 +52,7 @@ enum {
 
 
 
-extern const char *resTypeFromId(int type);
+extern const char *nameOfResType(ResType type);
 
 static uint16 newTag2Old(uint32 newTag);
 static const byte *findResourceSmall(uint32 tag, const byte *searchin);
@@ -492,10 +492,10 @@ int ScummEngine::readResTypeList(ResType type) {
 		num = _fileHandle->readUint16LE();
 
 	if (num != _res->_types[type]._num) {
-		error("Invalid number of %ss (%d) in directory", resTypeFromId(type), num);
+		error("Invalid number of %ss (%d) in directory", nameOfResType(type), num);
 	}
 
-	debug(2, "  readResTypeList(%s): %d entries", resTypeFromId(type), num);
+	debug(2, "  readResTypeList(%s): %d entries", nameOfResType(type), num);
 
 
 	for (idx = 0; idx < num; idx++) {
@@ -527,11 +527,11 @@ int ScummEngine_v70he::readResTypeList(ResType type) {
 }
 
 void ResourceManager::allocResTypeData(ResType type, uint32 tag, int num, ResTypeMode mode) {
-	debug(2, "allocResTypeData(%s,%s,%d,%d)", resTypeFromId(type), tag2str(TO_BE_32(tag)), num, mode);
+	debug(2, "allocResTypeData(%s,%s,%d,%d)", nameOfResType(type), tag2str(TO_BE_32(tag)), num, mode);
 	assert(type >= 0 && type < (int)(ARRAYSIZE(_types)));
 
 	if (num >= 8000)
-		error("Too many %s resources (%d) in directory", resTypeFromId(type), num);
+		error("Too many %s resources (%d) in directory", nameOfResType(type), num);
 
 	_types[type]._mode = mode;
 	_types[type]._num = num;
@@ -584,7 +584,7 @@ void ScummEngine::nukeCharset(int i) {
 }
 
 void ScummEngine::ensureResourceLoaded(ResType type, ResId idx) {
-	debugC(DEBUG_RESOURCE, "ensureResourceLoaded(%s,%d)", resTypeFromId(type), idx);
+	debugC(DEBUG_RESOURCE, "ensureResourceLoaded(%s,%d)", nameOfResType(type), idx);
 
 	if ((type == rtRoom) && idx > 0x7F && _game.version < 7 && _game.heversion <= 71) {
 		idx = _resourceMapper[idx & 0x7F];
@@ -618,7 +618,7 @@ int ScummEngine::loadResource(ResType type, ResId idx) {
 	uint32 fileOffs;
 	uint32 size, tag;
 
-	debugC(DEBUG_RESOURCE, "loadResource(%s,%d)", resTypeFromId(type), idx);
+	debugC(DEBUG_RESOURCE, "loadResource(%s,%d)", nameOfResType(type), idx);
 
 	if (type == rtCharset && (_game.features & GF_SMALL_HEADER)) {
 		loadCharset(idx);
@@ -628,7 +628,7 @@ int ScummEngine::loadResource(ResType type, ResId idx) {
 	roomNr = getResourceRoomNr(type, idx);
 
 	if (idx >= _res->_types[type]._num)
-		error("%s %d undefined %d %d", resTypeFromId(type), idx, _res->_types[type]._num, roomNr);
+		error("%s %d undefined %d %d", nameOfResType(type), idx, _res->_types[type]._num, roomNr);
 
 	if (roomNr == 0)
 		roomNr = _roomResource;
@@ -666,7 +666,7 @@ int ScummEngine::loadResource(ResType type, ResId idx) {
 		tag = _fileHandle->readUint32BE();
 		if (tag != _res->_types[type]._tag && _game.heversion < 70) {
 			error("%s %d not in room %d at %d+%d in file %s",
-					resTypeFromId(type), idx, roomNr,
+					nameOfResType(type), idx, roomNr,
 					_fileOffset, fileOffs, _fileHandle->getName());
 		}
 
@@ -729,13 +729,13 @@ byte *ScummEngine::getResourceAddress(ResType type, ResId idx) {
 
 	ptr = (byte *)_res->_types[type]._resources[idx]._address;
 	if (!ptr) {
-		debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == NULL", resTypeFromId(type), idx);
+		debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == NULL", nameOfResType(type), idx);
 		return NULL;
 	}
 
 	_res->setResourceCounter(type, idx, 1);
 
-	debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == %p", resTypeFromId(type), idx, ptr);
+	debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == %p", nameOfResType(type), idx, ptr);
 	return ptr;
 }
 
@@ -792,7 +792,7 @@ byte ResourceManager::Resource::getResourceCounter() const {
 #define SAFETY_AREA 2
 
 byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
-	debugC(DEBUG_RESOURCE, "_res->createResource(%s,%d,%d)", resTypeFromId(type), idx, size);
+	debugC(DEBUG_RESOURCE, "_res->createResource(%s,%d,%d)", nameOfResType(type), idx, size);
 
 	if (!validateResource("allocating", type, idx))
 		return NULL;
@@ -812,7 +812,7 @@ byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
 
 	byte *ptr = (byte *)calloc(size + SAFETY_AREA, 1);
 	if (ptr == NULL) {
-		error("createResource(%s,%d): Out of memory while allocating %d", resTypeFromId(type), idx, size);
+		error("createResource(%s,%d): Out of memory while allocating %d", nameOfResType(type), idx, size);
 	}
 
 	_allocatedSize += size;
@@ -875,7 +875,7 @@ void ResourceManager::setHeapThreshold(int min, int max) {
 
 bool ResourceManager::validateResource(const char *str, ResType type, ResId idx) const {
 	if (type < rtFirst || type > rtLast || (uint)idx >= (uint)_types[type]._num) {
-		error("%s Illegal Glob type %s (%d) num %d", str, resTypeFromId(type), type, idx);
+		error("%s Illegal Glob type %s (%d) num %d", str, nameOfResType(type), type, idx);
 		return false;
 	}
 	return true;
@@ -884,7 +884,7 @@ bool ResourceManager::validateResource(const char *str, ResType type, ResId idx)
 void ResourceManager::nukeResource(ResType type, ResId idx) {
 	byte *ptr = _types[type]._resources[idx]._address;
 	if (ptr != NULL) {
-		debugC(DEBUG_RESOURCE, "nukeResource(%s,%d)", resTypeFromId(type), idx);
+		debugC(DEBUG_RESOURCE, "nukeResource(%s,%d)", nameOfResType(type), idx);
 		_allocatedSize -= _types[type]._resources[idx]._size;
 		_types[type]._resources[idx].nuke();
 	}
@@ -1523,7 +1523,7 @@ uint16 newTag2Old(uint32 newTag) {
 	}
 }
 
-const char *resTypeFromId(int type) {
+const char *nameOfResType(ResType type) {
 	static char buf[100];
 
 	switch (type) {
