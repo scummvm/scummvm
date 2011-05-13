@@ -483,7 +483,6 @@ public:
 	KeyframeComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag);
 	void init();
 	void setKey(int val);
-	void setLowPriority(bool lowPriority);
 	void update();
 	void reset();
 	void saveState(SaveGame *state);
@@ -495,7 +494,6 @@ private:
 	int _priority1, _priority2;
 	Model::HierNode *_hier;
 	bool _active;
-	bool _lowPriority;
 	int _repeatMode;
 	int _currTime;
 	Common::String _fname;
@@ -504,7 +502,7 @@ private:
 };
 
 KeyframeComponent::KeyframeComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
-		Costume::Component(p, parentID, t), _priority1(1), _priority2(5), _hier(NULL), _active(false), _lowPriority(false) {
+		Costume::Component(p, parentID, t), _priority1(1), _priority2(5), _hier(NULL), _active(false) {
 	_fname = filename;
 	const char *comma = strchr(filename, ',');
 	if (comma) {
@@ -534,10 +532,6 @@ void KeyframeComponent::setKey(int val) {
 		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Unknown key %d for keyframe %s", val, _keyf->getFilename());
 	}
-}
-
-void KeyframeComponent::setLowPriority(bool lowPriority) {
-	_lowPriority = lowPriority;
 }
 
 void KeyframeComponent::reset() {
@@ -575,12 +569,7 @@ void KeyframeComponent::update() {
 		}
 	}
 
-	if (_lowPriority) {
-		// Force 0 priority. Used for rest chores.
-		_keyf->animate(_hier, _currTime / 1000.0f, 0, 0, _fade);
-	} else {
-		_keyf->animate(_hier, _currTime / 1000.0f, _priority1, _priority2, _fade);
-	}
+	_keyf->animate(_hier, _currTime / 1000.0f, _priority1, _priority2, _fade);
 }
 
 void KeyframeComponent::init() {
@@ -1061,14 +1050,6 @@ void Costume::Chore::setKeys(int startTime, int stopTime) {
 			comp->setFade(1.f - ((float)_fadeCurrTime / (float)_fadeLength));
 		} else {
 			comp->setFade(1.f);
-		}
-
-		if (FROM_BE_32(comp->getTag()) == MKTAG('K','E','Y','F')) {
-			KeyframeComponent *f = static_cast<KeyframeComponent *>(comp);
-			if (g_currentUpdatedActor && g_currentUpdatedActor->getRestChore() == _id)
-				f->setLowPriority(true);
-			else
-				f->setLowPriority(false);
 		}
 
 		for (int j = 0; j < _tracks[i].numKeys; j++) {
