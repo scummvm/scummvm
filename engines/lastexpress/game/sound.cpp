@@ -367,7 +367,8 @@ bool SoundManager::setupCache(SoundEntry *entry) {
 			setInCache(cacheEntry);
 
 		// TODO: Wait until the cache entry is ready to be removed
-		while (!(cacheEntry->status.status1 & 1));
+		while (!(cacheEntry->status.status1 & 1))
+			;
 
 		if (cacheEntry->soundData)
 			removeFromCache(cacheEntry);
