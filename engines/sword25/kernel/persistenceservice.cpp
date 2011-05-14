@@ -291,7 +291,7 @@ bool PersistenceService::saveGame(uint slotID, const Common::String &screenshotF
 	// Write the save game data uncompressed, since the final saved game will be
 	// compressed anyway.
 	char sBuffer[10];
-	snprintf(sBuffer, 10, "%ld", writer.getDataSize());
+	snprintf(sBuffer, 10, "%u", writer.getDataSize());
 	file->writeString(sBuffer);
 	file->writeByte(0);
 	snprintf(sBuffer, 10, "%u", writer.getDataSize());
