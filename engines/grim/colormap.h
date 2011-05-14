@@ -26,9 +26,6 @@
 #ifndef GRIM_COLORMAP_H
 #define GRIM_COLORMAP_H
 
-#include "common/endian.h"
-
-#include "engines/grim/resource.h"
 #include "engines/grim/object.h"
 
 namespace Grim {
@@ -36,31 +33,16 @@ namespace Grim {
 class CMap : public Object {
 public:
 	// Load a colormap from the given data.
-	CMap(const char *fileName, const char *data, int len) :
-		Object() {
-		_fname = fileName;
-		if (len < 4 || READ_BE_UINT32(data) != MKTAG('C','M','P',' '))
-			error("Invalid magic loading colormap");
-		memcpy(_colors, data + 64, sizeof(_colors));
-	}
-	CMap() : Object() {}
-	~CMap() {
-		if (g_resourceloader)
-			g_resourceloader->uncacheColormap(this);
-	}
+	CMap(const char *fileName, const char *data, int len);
+	CMap();
+	~CMap();
 	const char *getFilename() const { return _fname.c_str(); }
 
 	// The color data, in RGB format
 	char _colors[256 * 3];
 	Common::String _fname;
 
-	bool operator==(const CMap &c) const {
-		if (_fname != c._fname) {
-			return false;
-		}
-
-		return true;
-	}
+	bool operator==(const CMap &c) const;
 };
 
 } // end of namespace Grim

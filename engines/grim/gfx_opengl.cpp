@@ -39,6 +39,8 @@
 #include "engines/grim/gfx_opengl.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/lipsync.h"
+#include "engines/grim/bitmap.h"
+#include "engines/grim/primitives.h"
 
 #ifdef USE_OPENGL
 

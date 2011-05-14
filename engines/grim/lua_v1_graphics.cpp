@@ -30,6 +30,10 @@
 
 #include "engines/grim/grim.h"
 #include "engines/grim/lua.h"
+#include "engines/grim/resource.h"
+#include "engines/grim/colormap.h"
+#include "engines/grim/bitmap.h"
+#include "engines/grim/primitives.h"
 
 #include "engines/grim/smush/video.h"
 

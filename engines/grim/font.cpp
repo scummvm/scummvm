@@ -30,6 +30,7 @@
 #include "engines/grim/font.h"
 #include "engines/grim/lua.h"
 #include "engines/grim/colormap.h"
+#include "engines/grim/resource.h"
 
 namespace Grim {
 

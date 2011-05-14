@@ -26,12 +26,12 @@
 #ifndef GRIM_TEXTOBJECT_H
 #define GRIM_TEXTOBJECT_H
 
-#include "engines/grim/font.h"
 #include "engines/grim/gfx_base.h"
 
 namespace Grim {
 
 class SaveGame;
+class Font;
 
 struct TextObjectDefaults {
 	Color *fgColor;
@@ -55,18 +55,8 @@ public:
 	void setText(const char *text);
 	void setX(int x) { _x = x; }
 	void setY(int y) { _y = y; }
-	void subBaseOffsetY() {
-		if (_font)
-			_y -= _font->getBaseOffsetY();
-		else
-			_y -= 5;
-	}
-	int getBaseOffsetY() {
-		if (_font)
-			return _font->getBaseOffsetY();
-		else
-			return 5;
-	}
+	void subBaseOffsetY();
+	int getBaseOffsetY();
 	void setWidth(int width) { _width = width; }
 	void setHeight(int height) { _height = height; }
 	void setFGColor(Color *fgColor) { _fgColor = fgColor; }

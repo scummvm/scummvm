@@ -28,15 +28,16 @@
 
 #include "common/memstream.h"
 
-#include "engines/grim/model.h"
 #include "engines/grim/object.h"
-#include "engines/grim/colormap.h"
+#include "engines/grim/model.h"
 
 namespace Grim {
 
 #define DEFAULT_COLORMAP "item.cmp"
 
 typedef uint32 tag32;
+
+class TextSplitter;
 
 class Costume : public Object {
 public:
@@ -101,7 +102,7 @@ public:
 		virtual ~Component() { }
 
 	protected:
-		CMapPtr _cmap, _previousCmap;
+		ObjectPtr<CMap> _cmap, _previousCmap;
 		tag32 _tag;
 		int _parentID;
 		bool _visible;
@@ -183,7 +184,7 @@ private:
 		friend class Costume;
 	};
 
-	CMapPtr _cmap;
+	ObjectPtr<CMap> _cmap;
 	int _numChores;
 	Chore *_chores;
 	Graphics::Matrix4 _matrix;

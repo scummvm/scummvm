@@ -36,6 +36,8 @@
 #include "engines/grim/material.h"
 #include "engines/grim/lua.h"
 #include "engines/grim/lipsync.h"
+#include "engines/grim/resource.h"
+#include "engines/grim/savegame.h"
 
 #include "engines/grim/imuse/imuse.h"
 
@@ -149,7 +151,7 @@ public:
 
 protected:
 	Common::String _filename;
-	ModelPtr _obj;
+	ObjectPtr<Model> _obj;
 	Model::HierNode *_hier;
 	Graphics::Matrix4 _matrix;
 };

@@ -27,7 +27,6 @@
 #define GRIM_COLOR_H
 
 #include "common/scummsys.h"
-#include "engines/grim/savegame.h"
 #include "engines/grim/object.h"
 
 namespace Grim {

@@ -36,6 +36,7 @@ namespace Common {
 namespace Grim {
 
 class SaveGame;
+class CMap;
 
 class Scene {
 public:
@@ -130,7 +131,7 @@ private:
 
 	Common::String _name;
 	int _numCmaps;
-	CMapPtr *_cmaps;
+	ObjectPtr<CMap> *_cmaps;
 	int _numSetups, _numLights, _numSectors, _numObjectStates;
 	bool _enableLights;
 	Sector **_sectors;

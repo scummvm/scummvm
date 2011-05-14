@@ -85,8 +85,9 @@ public:
 	ObjectPtr(T *obj) :
 		_obj(obj) {
 		if (obj) {
-			_obj->reference();
-			addPointer(obj);
+			Object *o = (Object *)_obj;
+			o->reference();
+			addPointer(o);
 		}
 	}
 	ObjectPtr(const ObjectPtr<T> &ptr) : Pointer() {
@@ -95,8 +96,9 @@ public:
 	}
 	~ObjectPtr() {
 		if (_obj) {
-			rmPointer(_obj);
-			_obj->dereference();
+			Object *o = (Object *)_obj;
+			rmPointer(o);
+			o->dereference();
 		}
 	}
 

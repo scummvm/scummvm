@@ -26,7 +26,6 @@
 #ifndef GRIM_LIPSYNC_H
 #define GRIM_LIPSYNC_H
 
-#include "engines/grim/resource.h"
 #include "engines/grim/object.h"
 
 namespace Grim {

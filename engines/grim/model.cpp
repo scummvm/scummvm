@@ -32,6 +32,7 @@
 #include "engines/grim/textsplit.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/lipsync.h"
+#include "engines/grim/resource.h"
 
 namespace Grim {
 

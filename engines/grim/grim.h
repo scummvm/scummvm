@@ -28,12 +28,22 @@
 
 #include "engines/engine.h"
 
+#include "common/str-array.h"
+#include "common/hashmap.h"
+
 #include "engines/grim/textobject.h"
 
 namespace Grim {
 
 class Actor;
 class SaveGame;
+class Bitmap;
+class Font;
+class Color;
+class ObjectState;
+class Scene;
+class TextObject;
+class PrimitiveObject;
 
 enum enDebugLevels {
 	DEBUG_NONE, DEBUG_NORMAL, DEBUG_WARN, DEBUG_ERROR, DEBUG_LUA, DEBUG_BITMAPS, DEBUG_MODEL, DEBUG_STUB,
@@ -236,9 +246,7 @@ public:
 	Common::StringArray _listFiles;
 	Common::StringArray::const_iterator _listFilesIter;
 
-	TextObjectDefaults _sayLineDefaults;
-	TextObjectDefaults _printLineDefaults;
-	TextObjectDefaults _blastTextDefaults;
+	TextObjectDefaults _sayLineDefaults, _printLineDefaults, _blastTextDefaults;
 
 private:
 

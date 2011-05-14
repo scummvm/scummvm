@@ -118,7 +118,7 @@ void L2_PlayActorChore() {
 	const char *choreName = lua_getstring(choreObj);
 	const char *costumeName = lua_getstring(costumeObj);
 
-	warning("L2_PlayActorChore: implement opcode actor: %s, chore: %s, costume: %s, mode bool: %d, param: %f", 
+	warning("L2_PlayActorChore: implement opcode actor: %s, chore: %s, costume: %s, mode bool: %d, param: %f",
 			actor->getName(), choreName, costumeName, (int)mode, param);
 	// FIXME. code below is a hack, need proper implementation
 	actor->setCostume(costumeName);
