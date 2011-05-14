@@ -230,15 +230,13 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 }
 
 CMap *ResourceLoader::loadColormap(const char *filename) {
-	Common::String fname = filename;
-	fname.toLowercase();
-	Block *b = getFileFromCache(fname.c_str());
+	Block *b = getFileFromCache(filename);
 	if (!b) {
-		b = getFileBlock(fname.c_str());
+		b = getFileBlock(filename);
 		if (!b) {
 			error("Could not find colormap %s", filename);
         }
-		putIntoCache(fname, b);
+		putIntoCache(filename, b);
 	}
 
 	CMap *result = new CMap(filename, b->getData(), b->getLen());
@@ -259,12 +257,12 @@ static Common::String fixFilename(const Common::String filename) {
 		// Append b to end of filename for EMI
 		fname += "b";
 	}
-	fname.toLowercase();
 	return fname;
 }
 
 Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
 	Common::String fname = fixFilename(filename);
+	fname.toLowercase();
 	Block *b = getFileFromCache(fname.c_str());
 	if (!b) {
 		b = getFileBlock(fname.c_str());
@@ -278,14 +276,12 @@ Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
 }
 
 Font *ResourceLoader::loadFont(const char *filename) {
-	Common::String fname = filename;
-	fname.toLowercase();
-	Block *b = getFileFromCache(fname.c_str());
+	Block *b = getFileFromCache(filename);
 	if (!b) {
-		b = getFileBlock(fname.c_str());
+		b = getFileBlock(filename);
 		if (!b)
 			error("Could not find font file %s", filename);
-		putIntoCache(fname, b);
+		putIntoCache(filename, b);
 	}
 
 	Font *result = new Font(filename, b->getData(), b->getLen());
@@ -294,14 +290,12 @@ Font *ResourceLoader::loadFont(const char *filename) {
 }
 
 KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
-	Common::String fname = filename;
-	fname.toLowercase();
-	Block *b = getFileFromCache(fname.c_str());
+	Block *b = getFileFromCache(filename);
 	if (!b) {
-		b = getFileBlock(fname.c_str());
+		b = getFileBlock(filename);
 		if (!b)
 			error("Could not find keyframe file %s", filename);
-		putIntoCache(fname, b);
+		putIntoCache(filename, b);
 	}
 
 	KeyframeAnim *result = new KeyframeAnim(filename, b->getData(), b->getLen());
@@ -311,12 +305,10 @@ KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 }
 
 LipSync *ResourceLoader::loadLipSync(const char *filename) {
-	Common::String fname = filename;
-	fname.toLowercase();
 	LipSync *result;
-	Block *b = getFileFromCache(fname.c_str());
+	Block *b = getFileFromCache(filename);
 	if (!b) {
-		b = getFileBlock(fname.c_str());
+		b = getFileBlock(filename);
 		if (!b)
 			return NULL;
 	}
@@ -325,7 +317,7 @@ LipSync *ResourceLoader::loadLipSync(const char *filename) {
 
 	// Some lipsync files have no data
 	if (result->isValid()) {
-		putIntoCache(fname, b);
+		putIntoCache(filename, b);
 		_lipsyncs.push_back(result);
 	} else {
 		delete result;
@@ -337,17 +329,15 @@ LipSync *ResourceLoader::loadLipSync(const char *filename) {
 }
 
 Material *ResourceLoader::loadMaterial(const char *filename, CMap *c) {
-	Common::String fname = Common::String(filename);
-	fname.toLowercase();
-	Block *b = getFileFromCache(fname.c_str());
+	Block *b = getFileFromCache(filename);
 	if (!b) {
-		b = getFileBlock(fname.c_str());
+		b = getFileBlock(filename);
 		if (!b)
 			error("Could not find material %s", filename);
-		putIntoCache(fname, b);
+		putIntoCache(filename, b);
 	}
 
-	Material *result = new Material(fname.c_str(), b->getData(), b->getLen(), c);
+	Material *result = new Material(filename, b->getData(), b->getLen(), c);
 	_materials.push_back(result);
 
 	return result;
@@ -414,9 +404,11 @@ void ResourceLoader::uncacheLipSync(LipSync *s) {
 }
 
 MaterialPtr ResourceLoader::getMaterial(const char *fname, CMap *c) {
+	Common::String filename = fname;
+	filename.toLowercase();
 	for (Common::List<Material *>::const_iterator i = _materials.begin(); i != _materials.end(); ++i) {
 		Material *m = *i;
-		if (strcmp(fname, m->_fname.c_str()) == 0 && *m->_cmap == *c) {
+		if (filename.equals(m->_fname) && *m->_cmap == *c) {
 			return m;
 		}
 	}
@@ -425,9 +417,11 @@ MaterialPtr ResourceLoader::getMaterial(const char *fname, CMap *c) {
 }
 
 ModelPtr ResourceLoader::getModel(const char *fname, CMap *c) {
+	Common::String filename = fname;
+	filename.toLowercase();
 	for (Common::List<Model *>::const_iterator i = _models.begin(); i != _models.end(); ++i) {
 		Model *m = *i;
-		if (strcmp(fname, m->_fname.c_str()) == 0 && *m->_cmap == *c) {
+		if (filename.equals(m->_fname) && *m->_cmap == *c) {
 			return m;
 		}
 	}
@@ -436,9 +430,11 @@ ModelPtr ResourceLoader::getModel(const char *fname, CMap *c) {
 }
 
 CMapPtr ResourceLoader::getColormap(const char *fname) {
+	Common::String filename = fname;
+	filename.toLowercase();
 	for (Common::List<CMap *>::const_iterator i = _colormaps.begin(); i != _colormaps.end(); ++i) {
 		CMap *c = *i;
-		if (strcmp(fname, c->_fname.c_str()) == 0) {
+		if (filename.equals(c->_fname)) {
 			return c;
 		}
 	}
@@ -447,9 +443,11 @@ CMapPtr ResourceLoader::getColormap(const char *fname) {
 }
 
 KeyframeAnimPtr ResourceLoader::getKeyframe(const char *fname) {
+	Common::String filename = fname;
+	filename.toLowercase();
 	for (Common::List<KeyframeAnim *>::const_iterator i = _keyframeAnims.begin(); i != _keyframeAnims.end(); ++i) {
 		KeyframeAnim *k = *i;
-		if (strcmp(fname, k->getFilename()) == 0) {
+		if (strcmp(filename.c_str(), k->getFilename()) == 0) {
 			return k;
 		}
 	}
@@ -458,9 +456,11 @@ KeyframeAnimPtr ResourceLoader::getKeyframe(const char *fname) {
 }
 
 FontPtr ResourceLoader::getFont(const char *fname) {
+	Common::String filename = fname;
+	filename.toLowercase();
 	for (Common::List<Font *>::const_iterator i = _fonts.begin(); i != _fonts.end(); ++i) {
 		Font *f = *i;
-		if (strcmp(fname, f->getFilename().c_str()) == 0) {
+		if (strcmp(filename.c_str(), f->getFilename().c_str()) == 0) {
 			return f;
 		}
 	}
@@ -472,9 +472,11 @@ FontPtr ResourceLoader::getFont(const char *fname) {
 }
 
 LipSyncPtr ResourceLoader::getLipSync(const char *fname) {
+	Common::String filename = fname;
+	filename.toLowercase();
 	for (Common::List<LipSync *>::const_iterator i = _lipsyncs.begin(); i != _lipsyncs.end(); ++i) {
 		LipSync *l = *i;
-		if (strcmp(fname, l->getFilename()) == 0) {
+		if (strcmp(filename.c_str(), l->getFilename()) == 0) {
 			return l;
 		}
 	}
