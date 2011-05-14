@@ -52,7 +52,7 @@ private:
 	void birdSing_run();
 	void elevatorRotation_run();
 	void elevatorGoMiddle_run();
-	void opcode_205_run();
+	void fortressRotation_run();
 	void opcode_205_disable();
 	void opcode_206_run();
 	void opcode_206_disable();
@@ -67,6 +67,12 @@ private:
 	DECLARE_OPCODE(o_elevatorRotationStart);
 	DECLARE_OPCODE(o_elevatorRotationMove);
 	DECLARE_OPCODE(o_elevatorRotationStop);
+	DECLARE_OPCODE(o_fortressRotationSpeedStart);
+	DECLARE_OPCODE(o_fortressRotationSpeedMove);
+	DECLARE_OPCODE(o_fortressRotationSpeedStop);
+	DECLARE_OPCODE(o_fortressRotationBrakeStart);
+	DECLARE_OPCODE(o_fortressRotationBrakeMove);
+	DECLARE_OPCODE(o_fortressRotationBrakeStop);
 	DECLARE_OPCODE(o_elevatorWindowMovie);
 	DECLARE_OPCODE(o_elevatorGoMiddle);
 	DECLARE_OPCODE(o_elevatorTopMovie);
@@ -85,7 +91,7 @@ private:
 	DECLARE_OPCODE(o_bird_init);
 	DECLARE_OPCODE(o_snakeBox_init);
 	DECLARE_OPCODE(o_elevatorRotation_init);
-	DECLARE_OPCODE(opcode_205);
+	DECLARE_OPCODE(o_fortressRotation_init);
 	DECLARE_OPCODE(opcode_206);
 	DECLARE_OPCODE(opcode_209);
 
@@ -93,7 +99,13 @@ private:
 
 	bool _mystStaircaseState; // 76
 
+	bool _fortressRotationRunning;
+	uint16 _fortressRotationSpeed; // 78
+	uint16 _fortressRotationBrake; // 80
 	uint16 _fortressPosition; // 82
+	uint16 _fortressRotationSounds[4]; // 86 to 92
+	MystResourceType6 *_fortressRotationGears; // 172
+
 
 	uint16 _elevatorGoingDown; // 112
 
