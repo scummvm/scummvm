@@ -3082,16 +3082,21 @@ typedef unsigned int uint;
 typedef unsigned $type_1_byte uint8;
 typedef unsigned $type_2_byte uint16;
 typedef unsigned $type_4_byte uint32;
-$_def_64bit_type_signed
 typedef signed $type_1_byte int8;
 typedef signed $type_2_byte int16;
 typedef signed $type_4_byte int32;
-typedef $type_ptr residualptr;
 
+// Residual 64bit stuff
+$_def_64bit_type_signed
+#if defined(__APPLE__) && !defined(__ppc)
 #ifndef _UINT64
 #define _UINT64
 $_def_64bit_type_unsigned
 #endif
+#else
+$_def_64bit_type_unsigned
+#endif
+typedef $type_ptr residualptr;
 
 /* Plugin settings */
 $_def_plugin
