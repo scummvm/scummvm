@@ -399,14 +399,15 @@ bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 	int i;
 	Actor *a;
 
-	DebugPrintf("+-----------------------------------------------------------+\n");
-	DebugPrintf("|# |  x |  y | w |elev|cos|box|mov| zp|frm|scl|dir|   cls   |\n");
-	DebugPrintf("+--+----+----+---+----+---+---+---+---+---+---+---+---------+\n");
+	DebugPrintf("+---------------------------------------------------------------+\n");
+	DebugPrintf("|# |  x |  y | w | h |elev|cos|box|mov| zp|frm|scl|dir|   cls   |\n");
+	DebugPrintf("+--+----+----+---+---+----+---+---+---+---+---+---+---+---------+\n");
 	for (i = 1; i < _vm->_numActors; i++) {
 		a = _vm->_actors[i];
 		if (a->_visible)
-			DebugPrintf("|%2d|%4d|%4d|%3d|%4d|%3d|%3d|%3d|%3d|%3d|%3d|%3d|$%08x|\n",
-						 a->_number, a->getRealPos().x, a->getRealPos().y, a->_width, a->getElevation(),
+			DebugPrintf("|%2d|%4d|%4d|%3d|%3d|%4d|%3d|%3d|%3d|%3d|%3d|%3d|%3d|$%08x|\n",
+						 a->_number, a->getRealPos().x, a->getRealPos().y, a->_width,  a->_bottom - a->_top,
+						 a->getElevation(),
 						 a->_costume, a->_walkbox, a->_moving, a->_forceClip, a->_frame,
 						 a->_scalex, a->getFacing(), _vm->_classData[a->_number]);
 	}
