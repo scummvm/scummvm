@@ -5,7 +5,6 @@
 */
 
 
-#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,25 +27,12 @@ static const char *const fnames[] = {"input", "output"};
 
 
 static int pushresult (lua_State *L, int i, const char *filename) {
-  int en = errno;  /* calls to Lua API may change this value */
-  if (i) {
-    lua_pushboolean(L, 1);
-    return 1;
-  }
-  else {
-    lua_pushnil(L);
-    if (filename)
-      lua_pushfstring(L, "%s: %s", filename, strerror(en));
-    else
-      lua_pushfstring(L, "%s", strerror(en));
-    lua_pushinteger(L, en);
-    return 3;
-  }
+  return luaL_error(L, "LUA file I/O functions have been removed in ScummVM");
 }
 
 
 static void fileerror (lua_State *L, int arg, const char *filename) {
-  lua_pushfstring(L, "%s: %s", filename, strerror(errno));
+  lua_pushfstring(L, "%s: %s", filename, "LUA I/O error descriptions have been removed in ScummVM");
   luaL_argerror(L, arg, lua_tostring(L, -1));
 }
 
@@ -392,7 +378,7 @@ static int io_readline (lua_State *L) {
     luaL_error(L, "file is already closed");
   sucess = read_line(L, f);
   if (ferror(f))
-    return luaL_error(L, "%s", strerror(errno));
+    return luaL_error(L, "%s", "LUA I/O error descriptions have been removed in ScummVM");
   if (sucess) return 1;
   else {  /* EOF */
     if (lua_toboolean(L, lua_upvalueindex(2))) {  /* generator created file? */

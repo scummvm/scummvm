@@ -5,7 +5,6 @@
 */
 
 
-#include <errno.h>
 #include <locale.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,21 +19,6 @@
 #include "lualib.h"
 
 
-static int os_pushresult (lua_State *L, int i, const char *filename) {
-  int en = errno;  /* calls to Lua API may change this value */
-  if (i) {
-    lua_pushboolean(L, 1);
-    return 1;
-  }
-  else {
-    lua_pushnil(L);
-    lua_pushfstring(L, "%s: %s", filename, strerror(en));
-    lua_pushinteger(L, en);
-    return 3;
-  }
-}
-
-
 static int os_execute (lua_State *L) {
   lua_pushinteger(L, system(luaL_optstring(L, 1, NULL)));
   return 1;
@@ -42,15 +26,15 @@ static int os_execute (lua_State *L) {
 
 
 static int os_remove (lua_State *L) {
-  const char *filename = luaL_checkstring(L, 1);
-  return os_pushresult(L, remove(filename) == 0, filename);
+  // Removed in ScummVM, does nothing. It's called when loading games (perhaps
+  // to delete the savegame thumbnail?)
+  return 1;
 }
 
 
 static int os_rename (lua_State *L) {
-  const char *fromname = luaL_checkstring(L, 1);
-  const char *toname = luaL_checkstring(L, 2);
-  return os_pushresult(L, rename(fromname, toname) == 0, fromname);
+  // Removed in ScummVM, does nothing.
+  return 1;
 }
 
 

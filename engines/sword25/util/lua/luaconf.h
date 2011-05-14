@@ -646,33 +646,6 @@ union luai_Cast { double l_d; long l_l; };
 
 
 /*
-@@ lua_tmpnam is the function that the OS library uses to create a
-@* temporary name.
-@@ LUA_TMPNAMBUFSIZE is the maximum size of a name created by lua_tmpnam.
-** CHANGE them if you have an alternative to tmpnam (which is considered
-** insecure) or if you want the original tmpnam anyway.  By default, Lua
-** uses tmpnam except when POSIX is available, where it uses mkstemp.
-*/
-#if defined(loslib_c) || defined(luaall_c)
-
-#if defined(LUA_USE_MKSTEMP)
-#include <unistd.h>
-#define LUA_TMPNAMBUFSIZE	32
-#define lua_tmpnam(b,e)	{ \
-	strcpy(b, "/tmp/lua_XXXXXX"); \
-	e = mkstemp(b); \
-	if (e != -1) close(e); \
-	e = (e == -1); }
-
-#else
-#define LUA_TMPNAMBUFSIZE	L_tmpnam
-#define lua_tmpnam(b,e)		{ e = (tmpnam(b) == NULL); }
-#endif
-
-#endif
-
-
-/*
 @@ lua_popen spawns a new process connected to the current one through
 @* the file streams.
 ** CHANGE it if you have a way to implement it in your system.
