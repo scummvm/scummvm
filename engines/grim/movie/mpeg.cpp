@@ -52,7 +52,7 @@ namespace Grim {
 
 class MpegHandler : public Video::BaseAnimationState {
 public:
-	MpegHandler(MpegPlayer *vid, OSystem *sys, int width, int height) : BaseAnimationState(_sys, width, height) {
+	MpegHandler(MpegPlayer *vid, OSystem *sys, int width, int height) : BaseAnimationState(sys, width, height) {
 		_mpeg = vid;
 	}
 protected:
