@@ -28,6 +28,7 @@
 #include "engines/grim/savegame.h"
 #include "engines/grim/lua.h"
 #include "engines/grim/colormap.h"
+#include "engines/grim/font.h"
 
 namespace Grim {
 
@@ -299,6 +300,20 @@ void TextObject::createBitmap() {
 			message.deleteChar(0);
 	}
 	_created = true;
+}
+
+void TextObject::subBaseOffsetY() {
+	if (_font)
+		_y -= _font->getBaseOffsetY();
+	else
+		_y -= 5;
+}
+
+int TextObject::getBaseOffsetY() {
+	if (_font)
+		return _font->getBaseOffsetY();
+	else
+		return 5;
 }
 
 void TextObject::destroyBitmap() {

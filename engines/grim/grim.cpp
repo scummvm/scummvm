@@ -61,6 +61,10 @@
 #include "engines/grim/costume.h"
 #include "engines/grim/material.h"
 #include "engines/grim/lipsync.h"
+#include "engines/grim/lab.h"
+#include "engines/grim/bitmap.h"
+#include "engines/grim/font.h"
+#include "engines/grim/primitives.h"
 
 #include "engines/grim/lua/lualib.h"
 

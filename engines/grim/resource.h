@@ -27,8 +27,8 @@
 #define GRIM_RESOURCE_H
 
 #include "common/archive.h"
+#include "common/file.h"
 
-#include "engines/grim/lab.h"
 #include "engines/grim/object.h"
 
 namespace Grim {
@@ -43,6 +43,9 @@ class Model;
 class LipSync;
 class TrackedObject;
 class SaveGame;
+class Block;
+class LuaFile;
+class Lab;
 
 typedef ObjectPtr<Material> MaterialPtr;
 typedef ObjectPtr<Bitmap> BitmapPtr;

@@ -26,7 +26,6 @@
 #ifndef GRIM_FONT_H
 #define GRIM_FONT_H
 
-#include "engines/grim/resource.h"
 #include "engines/grim/object.h"
 
 namespace Grim {

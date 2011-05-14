@@ -26,12 +26,12 @@
 #ifndef GRIM_OSTATE_H
 #define GRIM_OSTATE_H
 
-#include "engines/grim/bitmap.h"
 #include "engines/grim/object.h"
 
 namespace Grim {
 
 class SaveGame;
+class Bitmap;
 
 class ObjectState : public Object {
 public:
@@ -53,28 +53,10 @@ public:
 	Position getPos() const { return _pos; }
 	void setPos(Position position) { _pos = position; }
 
-	const char *getBitmapFilename() const {
-		return _bitmap->getFilename();
-	}
+	const char *getBitmapFilename() const;
 
-	void setNumber(int val) {
-		if (val) {
-			assert(_bitmap);
-			_bitmap->setNumber(val);
-			if (_zbitmap)
-				_zbitmap->setNumber(val);
-		}
-
-		_visibility = val != 0;
-	}
-	void draw() {
-		if (!_visibility)
-			return;
-		assert(_bitmap);
-		_bitmap->draw();
-		if (_zbitmap)
-			_zbitmap->draw();
-	}
+	void setNumber(int val);
+	void draw();
 
 private:
 

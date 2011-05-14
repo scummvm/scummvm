@@ -26,6 +26,7 @@
 #include "common/endian.h"
 
 #include "engines/grim/lipsync.h"
+#include "engines/grim/resource.h"
 
 namespace Grim {
 

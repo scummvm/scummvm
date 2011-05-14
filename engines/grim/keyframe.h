@@ -26,7 +26,6 @@
 #ifndef GRIM_KEYFRAME_H
 #define GRIM_KEYFRAME_H
 
-#include "engines/grim/model.h"
 #include "engines/grim/object.h"
 
 namespace Grim {

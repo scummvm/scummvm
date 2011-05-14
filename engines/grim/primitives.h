@@ -28,11 +28,10 @@
 
 #include "common/rect.h"
 
-#include "engines/grim/color.h"
-
 namespace Grim {
 
 class SaveGame;
+class Bitmap;
 
 class PrimitiveObject : public Object {
 public:
@@ -60,7 +59,7 @@ public:
 	bool isFilled() { return _filled; }
 	void draw();
 	bool isBitmap() { return _type == BITMAP; }
-	Bitmap *getBitmapHandle() { assert(_bitmap); return _bitmap.object(); }
+	Bitmap *getBitmapHandle() { assert(_bitmap); return _bitmap; }
 	void saveState(SaveGame *state) const;
     bool restoreState(SaveGame *state);
 
@@ -69,7 +68,7 @@ private:
 	Color *_color;
 	bool _filled;
 	int _type;
-	BitmapPtr _bitmap;
+	Bitmap *_bitmap;
 
 	friend class GrimEngine;
 };

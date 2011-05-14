@@ -28,6 +28,7 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/material.h"
 #include "engines/grim/gfx_base.h"
+#include "engines/grim/resource.h"
 
 namespace Grim {
 

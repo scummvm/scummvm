@@ -29,6 +29,7 @@
 #include "engines/grim/lua.h"
 #include "engines/grim/colormap.h"
 #include "engines/grim/grim.h"
+#include "engines/grim/bitmap.h"
 
 namespace Grim {
 
@@ -42,7 +43,7 @@ PrimitiveObject::PrimitiveObject() :
 
 PrimitiveObject::~PrimitiveObject() {
 	if (_bitmap && _type == 2)
-		delete _bitmap.object();
+		delete _bitmap;
 }
 
 void PrimitiveObject::saveState(SaveGame *savedState) const {
@@ -127,7 +128,7 @@ void PrimitiveObject::draw() {
 	if (_type == RECTANGLE)
 		g_driver->drawRectangle(this);
 	else if (_type == BITMAP)
-		g_driver->drawBitmap(_bitmap.object());
+		g_driver->drawBitmap(_bitmap);
 	else if (_type == LINE)
 		g_driver->drawLine(this);
 	else if (_type == POLYGON)

@@ -28,6 +28,8 @@
 #include "engines/grim/lua.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/colormap.h"
+#include "engines/grim/resource.h"
+#include "engines/grim/bitmap.h"
 
 namespace Grim {
 
@@ -53,6 +55,29 @@ ObjectState::~ObjectState() {
 
 	delete _bitmap;
 	delete _zbitmap;
+}
+
+const char *ObjectState::getBitmapFilename() const {
+	return _bitmap->getFilename();
+}
+
+void ObjectState::setNumber(int val) {
+	if (val) {
+		assert(_bitmap);
+		_bitmap->setNumber(val);
+		if (_zbitmap)
+			_zbitmap->setNumber(val);
+	}
+
+	_visibility = val != 0;
+}
+void ObjectState::draw() {
+	if (!_visibility)
+		return;
+	assert(_bitmap);
+	_bitmap->draw();
+	if (_zbitmap)
+		_zbitmap->draw();
 }
 
 void ObjectState::saveState(SaveGame *savedState) const {

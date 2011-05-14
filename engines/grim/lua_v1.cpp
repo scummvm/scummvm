@@ -37,6 +37,9 @@
 #include "engines/grim/colormap.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/savegame.h"
+#include "engines/grim/resource.h"
+#include "engines/grim/bitmap.h"
+#include "engines/grim/font.h"
 
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/luadebug.h"

@@ -26,11 +26,11 @@
 #ifndef GRIM_MATERIAL_H
 #define GRIM_MATERIAL_H
 
-#include "engines/grim/resource.h"
 #include "engines/grim/object.h"
-#include "engines/grim/colormap.h"
 
 namespace Grim {
+
+class CMAp;
 
 class Material : public Object {
 public:
@@ -52,7 +52,7 @@ public:
 
 	Common::String _fname;
 
-	const CMapPtr _cmap;
+	const ObjectPtr<CMap> _cmap;
 	int _numImages, _currImage;
 	int _width, _height;
 	void *_textures;

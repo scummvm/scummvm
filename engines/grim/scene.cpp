@@ -33,6 +33,8 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/lua.h"
+#include "engines/grim/resource.h"
+#include "engines/grim/bitmap.h"
 
 #include "engines/grim/imuse/imuse.h"
 
@@ -83,7 +85,7 @@ void Scene::loadText(TextSplitter &ts){
 
 	ts.expectString("section: colormaps");
 	ts.scanString(" numcolormaps %d", 1, &_numCmaps);
-	_cmaps = new CMapPtr[_numCmaps];
+	_cmaps = new ObjectPtr<CMap>[_numCmaps];
 	char cmap_name[256];
 	for (int i = 0; i < _numCmaps; i++) {
 		ts.scanString(" colormap %256s", 1, cmap_name);

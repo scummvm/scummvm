@@ -27,15 +27,16 @@
 #define GRIM_ACTOR_H
 
 #include "engines/grim/object.h"
-#include "engines/grim/color.h"
-#include "engines/grim/resource.h"
-#include "engines/grim/savegame.h"
 #include "graphics/vector3d.h"
 
 namespace Grim {
 
 class TextObject;
 class Sector;
+class Costume;
+class LipSync;
+class Font;
+class Color;
 
 typedef Common::List<Sector *> SectorListType;
 
@@ -192,7 +193,7 @@ private:
 	float _scale;
 	bool _lookingMode;
 	Common::String _talkSoundName;
-	LipSyncPtr _lipSync;
+	ObjectPtr<LipSync> _lipSync;
 	Common::List<Costume *> _costumeStack;
 
 	// Variables for gradual turning
@@ -228,7 +229,7 @@ private:
 	Shadow *_shadowArray;
 	int _activeShadowSlot;
 
-	static FontPtr _sayLineFont;
+	static ObjectPtr<Font> _sayLineFont;
 	TextObject *_sayLineText;
 
 	// Validate a yaw angle then set it appropriately

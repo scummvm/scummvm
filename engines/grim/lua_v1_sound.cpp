@@ -27,6 +27,8 @@
 #include "engines/grim/lua.h"
 #include "engines/grim/actor.h"
 #include "engines/grim/lipsync.h"
+#include "engines/grim/savegame.h"
+#include "engines/grim/colormap.h"
 
 #include "engines/grim/imuse/imuse.h"
 

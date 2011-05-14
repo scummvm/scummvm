@@ -39,6 +39,8 @@
 #include "engines/grim/smush/video.h"
 #include "engines/grim/imuse/imuse.h"
 #include "engines/grim/lua.h"
+#include "engines/grim/resource.h"
+#include "engines/grim/savegame.h"
 
 namespace Grim {
 

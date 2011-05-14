@@ -27,14 +27,14 @@
 #define GRIM_MODEL_H
 
 #include "common/memstream.h"
-
-#include "engines/grim/resource.h"
 #include "engines/grim/object.h"
 #include "graphics/matrix4.h"
 
 namespace Grim {
 
 class TextSplitter;
+class Material;
+class CMap;
 
 class Model : public Object {
 public:
@@ -49,7 +49,7 @@ public:
 	~Model();
 
 	Common::String _fname;
-	CMapPtr _cmap;
+	ObjectPtr<CMap> _cmap;
 
 	struct Geoset;
 	struct Mesh;
@@ -139,7 +139,7 @@ public:
 
 	int _numMaterials;
 	char (*_materialNames)[32];
-	MaterialPtr *_materials;
+	ObjectPtr<Material> *_materials;
 	Graphics::Vector3d _insertOffset;
 	int _numGeosets;
 	Geoset *_geosets;
