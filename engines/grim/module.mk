@@ -41,6 +41,7 @@ MODULE_OBJS := \
 	actor.o \
 	bitmap.o \
 	costume.o \
+	colormap.o \
 	detection.o \
 	font.o \
 	gfx_base.o \
