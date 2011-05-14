@@ -31,6 +31,8 @@
 #include "common/str-array.h"
 #include "common/hashmap.h"
 
+#include "engines/advancedDetector.h"
+
 #include "engines/grim/textobject.h"
 
 namespace Grim {
@@ -61,14 +63,9 @@ enum GrimGameType {
 	GType_MONKEY4
 };
 
-enum GrimGameFeatures {
-	GF_DEMO  =   1 << 0,
-	EMI_DEMO =   1 << 1
-};
-
 struct GrimGameDescription;
 
-typedef Common::HashMap<Common::String, const char *> StringPtrHashMap;
+typedef Common::HashMap<Common::String, const char *>StringPtrHashMap;
 
 struct ControlDescriptor {
 	const char *name;
@@ -92,7 +89,7 @@ public:
 	typedef Common::HashMap<int32, TextObject *> TextListType;
 	typedef Common::HashMap<int, PrimitiveObject *> PrimitiveListType;
 
-	GrimEngine(OSystem *syst, int gameFlags, GrimGameType gameType);
+	GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language);
 	virtual ~GrimEngine();
 
 	int getGameFlags() { return _gameFlags; }
@@ -289,8 +286,10 @@ private:
 	FontListType _fonts;
 	ColorListType _colors;
 
-	int _gameFlags;
+	uint32 _gameFlags;
 	GrimGameType _gameType;
+	Common::Platform _gamePlatform;
+	Common::Language _gameLanguage;
 };
 
 extern GrimEngine *g_grim;

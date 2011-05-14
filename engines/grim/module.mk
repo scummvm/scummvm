@@ -32,12 +32,13 @@ MODULE_OBJS := \
 	lua/lundump.o \
 	lua/lvm.o \
 	lua/lzio.o \
-	smush/blocky8.o \
-	smush/blocky16.o \
-	smush/smush.o \
-	smush/video.o \
-	smush/mpeg.o \
-	smush/vima.o \
+	movie/codecs/blocky8.o \
+	movie/codecs/blocky16.o \
+	movie/codecs/vima.o \
+	movie/bink.o \
+	movie/mpeg.o \
+	movie/smush.o \
+	movie/movie.o \
 	actor.o \
 	bitmap.o \
 	costume.o \

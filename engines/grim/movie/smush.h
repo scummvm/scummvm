@@ -26,17 +26,13 @@
 #ifndef GRIM_SMUSH_PLAYER_H
 #define GRIM_SMUSH_PLAYER_H
 
-#ifdef __SYMBIAN32__
-#include <zlib\zlib.h>
-#else
 #include <zlib.h>
-#endif
 
 #include "common/file.h"
 
-#include "engines/grim/smush/video.h"
-#include "engines/grim/smush/blocky8.h"
-#include "engines/grim/smush/blocky16.h"
+#include "engines/grim/movie/movie.h"
+#include "engines/grim/movie/codecs/blocky8.h"
+#include "engines/grim/movie/codecs/blocky16.h"
 
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
@@ -69,34 +65,33 @@ public:
 	uint32 readUint32BE();
 };
 
-class Smush : public VideoPlayer{
+class SmushPlayer : public MoviePlayer {
 private:
 	int32 _nbframes;
 	Blocky8 _blocky8;
 	Blocky16 _blocky16;
 	zlibFile _file;
-	
-	Audio::SoundHandle _soundHandle;
-	Audio::QueuingAudioStream *_stream;
-	
+
 	byte _pal[0x300];
 	int16 _deltaPal[0x300];
 	byte _IACToutput[4096];
 	int32 _IACTpos;
 
 public:
-	Smush();
-	~Smush();
+	SmushPlayer();
+	virtual ~SmushPlayer();
 
 	bool play(const char *filename, bool looping, int x, int y);
 	void stop();
-	
+
 	void saveState(SaveGame *state);
 	void restoreState(SaveGame *state);
 
 private:
 	static void timerCallback(void *ptr);
 	void parseNextFrame();
+	void init();
+	void deinit();
 	void handleDeltaPalette(byte *src, int32 size);
 	void handleFramesHeader();
 	void handleFrameDemo();
@@ -104,8 +99,6 @@ private:
 	void handleBlocky16(byte *src);
 	void handleWave(const byte *src, uint32 size);
 	void handleIACT(const byte *src, int32 size);
-	void init();
-	void deinit();
 	bool setupAnim(const char *file, bool looping, int x, int y);
 	bool setupAnimDemo(const char *file);
 };

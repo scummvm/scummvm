@@ -67,7 +67,7 @@ Imuse::Imuse(int fps) {
 		_track[l]->trackId = l;
 	}
 	vimaInit(imuseDestTable);
-	if (g_grim->getGameFlags() & GF_DEMO) {
+	if (g_grim->getGameFlags() & ADGF_DEMO) {
 		_stateMusicTable = grimDemoStateMusicTable;
 		_seqMusicTable = grimDemoSeqMusicTable;
 	} else {

@@ -23,57 +23,40 @@
  *
  */
 
-#ifndef GRIM_MPEG_PLAYER_H
-#define GRIM_MPEG_PLAYER_H
-#include "common/scummsys.h"
-#include "graphics/pixelformat.h"
-#ifdef __SYMBIAN32__
-#include <zlib\zlib.h>
-#else
-#include <zlib.h>
-#endif
+#ifndef GRIM_BINK_PLAYER_H
+#define GRIM_BINK_PLAYER_H
 
+#include "common/scummsys.h"
 #include "common/file.h"
 
-#include "engines/grim/smush/video.h"
+#include "graphics/pixelformat.h"
+
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
-#include "video/mpeg_player.h"
+
+#include "engines/grim/movie/movie.h"
 
 namespace Grim {
-	
 
-class MPEG_Player : public VideoPlayer{
+class BinkPlayer : public MoviePlayer {
 private:
-	int32 _nbframes;
 	Common::File _f;
+	//Video::BaseAnimationState *_videoBase;
 
-	Video::BaseAnimationState* bas;
-	Common::String _fname;
-	bool _isPlaying;
-	
 public:
-	MPEG_Player();
-	~MPEG_Player();
+	BinkPlayer();
+	~BinkPlayer();
 
-	virtual bool play(const char *filename, bool looping, int x, int y);
-	virtual void stop();
-	virtual bool isPlaying() { return !_isPlaying; }
-	virtual void saveState(SaveGame *state);
-	virtual void restoreState(SaveGame *state);
+	bool play(const char *filename, bool looping, int x, int y);
+	void stop();
+	void saveState(SaveGame *state);
+	void restoreState(SaveGame *state);
 	void deliverFrameFromDecode(int width, int height, uint16 *dat);
 private:
 	static void timerCallback(void *ptr);
-	void parseNextFrame();
-	void handleDeltaPalette(byte *src, int32 size);
-	void handleFramesHeader();
-	void handleFrameDemo();
 	virtual void handleFrame();
-	void handleWave(const byte *src, uint32 size);
 	void init();
 	void deinit();
-	bool setupAnim(const char *file, bool looping, int x, int y);
-	bool setupAnimDemo(const char *file);
 };
 
 } // end of namespace Grim

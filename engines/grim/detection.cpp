@@ -32,7 +32,6 @@ namespace Grim {
 
 struct GrimGameDescription {
 	ADGameDescription desc;
-	int flags;
 	GrimGameType gameType;
 };
 
@@ -56,7 +55,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		0,
 		GType_GRIM
 	},
 	{
@@ -70,7 +68,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		0,
 		GType_GRIM
 	},
 	{
@@ -84,7 +81,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		0,
 		GType_GRIM
 	},
 	{
@@ -98,7 +94,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		0,
 		GType_GRIM
 	},
 	{
@@ -112,7 +107,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		0,
 		GType_GRIM
 	},
 	{
@@ -126,7 +120,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		0,
 		GType_GRIM
 	},
 	{
@@ -140,7 +133,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		0,
 		GType_GRIM
 	},
 	{
@@ -154,7 +146,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			GUIO_NONE
 		},
-		GF_DEMO,
 		GType_GRIM
 	},
 	{
@@ -168,7 +159,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		0,
 		GType_MONKEY4
 	},
 	{
@@ -182,7 +172,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		0,
 		GType_MONKEY4
 	},
 	{
@@ -196,7 +185,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		0,
 		GType_MONKEY4
 	},
 	{
@@ -210,7 +198,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		0,
 		GType_MONKEY4
 	},
 	{
@@ -224,7 +211,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		0,
 		GType_MONKEY4
 	},
 	{
@@ -238,7 +224,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		0,
 		GType_MONKEY4
 	},
 	{
@@ -252,7 +237,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		0,
 		GType_MONKEY4
 	},
 	{
@@ -266,7 +250,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		0,
 		GType_MONKEY4
 	},
 	{
@@ -280,7 +263,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		0,
 		GType_MONKEY4
 	},
 	{
@@ -294,7 +276,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		0,
 		GType_MONKEY4
 	},
 	{
@@ -308,33 +289,11 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			GUIO_NONE
 		},
-		EMI_DEMO,
 		GType_MONKEY4
 	},
 
 
-	{ AD_TABLE_END_MARKER, 0, GType_GRIM }
-};
-
-static const GrimGameDescription fallbackGameDescriptions[] = {
-	{
-		{
-			"grim",
-			"",
-			{{0, 0, 0, 0}},
-			Common::UNK_LANG,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO_NONE
-		},
-		0,
-		GType_GRIM
-	}
-};
-
-static const ADFileBasedFallback grimFallback[] = {
-	{&fallbackGameDescriptions[0], {"grim.tab"}},
-	{0, {0}}
+	{ AD_TABLE_END_MARKER, GType_GRIM }
 };
 
 static const ADObsoleteGameID obsoleteGameIDsTable[] = {
@@ -356,7 +315,7 @@ static const ADParams detectionParams = {
 	// Name of single gameid (optional)
 	0,
 	// List of files for file-based fallback detection (optional)
-	grimFallback,
+	0,
 	// Flags
 	0,
 	// Additional GUI options (for every game}
@@ -386,7 +345,7 @@ bool GrimMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 	const GrimGameDescription *gd = (const GrimGameDescription *)desc;
 
 	if (gd)
-		*engine = new GrimEngine(syst, gd->flags, gd->gameType);
+		*engine = new GrimEngine(syst, gd->desc.flags, gd->gameType, gd->desc.platform, gd->desc.language);
 
 	return gd != 0;
 }

@@ -40,7 +40,7 @@
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 
-#include "engines/grim/smush/bink.h"
+#include "engines/grim/movie/mpeg.h"
 
 #include "engines/grim/grim.h"
 #include "engines/grim/colormap.h"
@@ -50,52 +50,52 @@
 
 namespace Grim {
 
-VideoPlayer* CreateBinkPlayer(){
-	return new Bink_Player();
+class MpegHandler : public Video::BaseAnimationState {
+public:
+	MpegHandler(MpegPlayer *vid, OSystem *sys, int width, int height) : BaseAnimationState(_sys, width, height) {
+		_mpeg = vid;
+	}
+protected:
+	MpegPlayer *_mpeg;
+	virtual void drawYUV(int width, int height, byte *const *dat) {
+		plotYUV(MWIDTH, MHEIGHT, dat);
+		_mpeg->deliverFrameFromDecode(width, height, _overlay);
+	}
+};
+
+void MpegPlayer::timerCallback(void *) {
+	((MpegPlayer*)g_movie)->handleFrame();
 }
 
-void Bink_Player::timerCallback(void *) {
-	((Bink_Player*)g_video)->handleFrame();
-}
-
-Bink_Player::Bink_Player()  : VideoPlayer() {
-	g_video = this;
-	_isPlaying = false;
+MpegPlayer::MpegPlayer() : MoviePlayer() {
 	_speed = 50;
+	_videoBase = new MpegHandler(this, g_system, MWIDTH, MHEIGHT);
 }
 
-Bink_Player::~Bink_Player() {
+MpegPlayer::~MpegPlayer() {
 	deinit();
 }
 
-void Bink_Player::init() {
+void MpegPlayer::init() {
 	_frame = 0;
 	_movieTime = 0;
-	_isPlaying = false;
 	_videoPause = false;
 	_updateNeeded = false;
 	_width = MWIDTH;
 	_height = MHEIGHT;
 
-	//	assert(!_internalBuffer);
-	//  assert(!_externalBuffer);
+	assert(!_externalBuffer);
 
-/*	if (!(g_grim->getGameFlags() & GF_DEMO)) {
-		_internalBuffer = new byte[_width * _height * 2];
-		_externalBuffer = new byte[_width * _height * 2];
-	}
+	_externalBuffer = new byte[_width * _height * 2];
+
 	warning("Trying to play %s",_fname.c_str());
-	bas->init(_fname.c_str());*/
+	_videoBase->init(_fname.c_str());
 	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
 }
 
-void Bink_Player::deinit() {
+void MpegPlayer::deinit() {
 	g_system->getTimerManager()->removeTimerProc(&timerCallback);
 
-	if (_internalBuffer) {
-		delete[] _internalBuffer;
-		_internalBuffer = NULL;
-	}
 	if (_externalBuffer) {
 		delete[] _externalBuffer;
 		_externalBuffer = NULL;
@@ -105,89 +105,55 @@ void Bink_Player::deinit() {
 		delete[] _startPos;
 		_startPos = NULL;
 	}
-/*	if (_stream) {
+	if (_stream) {
 		_stream->finish();
 		_stream = NULL;
 		g_system->getMixer()->stopHandle(_soundHandle);
-	}*/
+	}
 	_videoLooping = false;
-	_isPlaying = true;
 	_videoPause = true;
-
 }
 
-void Bink_Player::handleWave(const byte *src, uint32 size) {
-
-}
-
-void Bink_Player::handleFrame() {
-
+void MpegPlayer::handleFrame() {
 	if (_videoPause)
 		return;
 
-	if (_isPlaying) {
-		_videoPause = true;
+	if (!_videoBase->decodeFrame()) {
+		_videoFinished = true;
+		g_grim->setMode(ENGINE_MODE_NORMAL);
 		return;
 	}
-	_isPlaying = false;
-	_videoFinished = true;
-	g_grim->setMode(ENGINE_MODE_NORMAL);
-	return;
+	//else
+	//bas->updateScreen();
 }
-	
-void Bink_Player::deliverFrameFromDecode(int width, int height, uint16 *dat){
-	int wTest = _width;
-	int hTest = _height;
-	memcpy(_externalBuffer,dat,_width*_height*2);
+
+void MpegPlayer::deliverFrameFromDecode(int width, int height, uint16 *dat) {
+	memcpy(_externalBuffer, dat, _width * _height * 2);
 	_frame++;
 	_updateNeeded = true;
 }
 
-static byte delta_color(byte org_color, int16 delta_color) {
-	int t = (org_color * 129 + delta_color) / 128;
-	return CLIP(t, 0, 255);
-}
-
-void Bink_Player::handleDeltaPalette(byte *src, int32 size) {
-}
-
-void Bink_Player::handleFrameDemo() {
-}
-
-void Bink_Player::handleFramesHeader() {
-}
-
-bool Bink_Player::setupAnimDemo(const char *file) {
-	return true;
-}
-
-bool Bink_Player::setupAnim(const char *file, bool looping, int x, int y) {
-		return true;
-}
-
-void Bink_Player::stop() {
+void MpegPlayer::stop() {
 	deinit();
 	g_grim->setMode(ENGINE_MODE_NORMAL);
 }
 
-bool Bink_Player::play(const char *filename, bool looping, int x, int y) {
-/*	deinit();
+bool MpegPlayer::play(const char *filename, bool looping, int x, int y) {
+	deinit();
 	_fname = filename;
 
 	if (gDebugLevel == DEBUG_SMUSH)
 		printf("Playing video '%s'.\n", filename);
 
-	init();*/
-	
+	init();
+
 	return true;
 }
 
-void Bink_Player::saveState(SaveGame *state) {
+void MpegPlayer::saveState(SaveGame *state) {
 }
 
-void Bink_Player::restoreState(SaveGame *state) {
-
+void MpegPlayer::restoreState(SaveGame *state) {
 }
-	
 
 } // end of namespace Grim

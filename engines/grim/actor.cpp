@@ -36,7 +36,7 @@
 #include "engines/grim/colormap.h"
 #include "engines/grim/costume.h"
 #include "engines/grim/lipsync.h"
-#include "engines/grim/smush/video.h"
+#include "engines/grim/movie/movie.h"
 #include "engines/grim/imuse/imuse.h"
 #include "engines/grim/lua.h"
 #include "engines/grim/resource.h"
@@ -870,7 +870,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	// However, normal SMUSH movies may call SayLine, for example:
 	// When Domino yells at Manny (a SMUSH movie) he does it with
 	// a SayLine request rather than as part of the movie!
-	if (!g_video->isPlaying() || g_grim->getMode() == ENGINE_MODE_NORMAL) {
+	if (!g_movie->isPlaying() || g_grim->getMode() == ENGINE_MODE_NORMAL) {
 		Common::String soundName = msgId;
 		Common::String soundLip = msgId;
 		soundName += ".wav";

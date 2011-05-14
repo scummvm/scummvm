@@ -71,7 +71,7 @@ ResourceLoader::ResourceLoader() {
 
 	files.clear();
 
-	if (g_grim->getGameFlags() & GF_DEMO) {
+	if (g_grim->getGameFlags() & ADGF_DEMO) {
 		SearchMan.listMatchingMembers(files, "*.mus");
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {

@@ -23,14 +23,10 @@
  *
  */
 
-#ifndef GRIM_VIDEO_PLAYER_H
-#define GRIM_VIDEO_PLAYER_H
+#ifndef GRIM_MOVIE_PLAYER_H
+#define GRIM_MOVIE_PLAYER_H
 
-#ifdef __SYMBIAN32__
-#include <zlib\zlib.h>
-#else
 #include <zlib.h>
-#endif
 
 #include "common/file.h"
 
@@ -47,10 +43,12 @@ struct SavePos {
 	byte *tmpBuf;
 };
 
-class VideoPlayer {
+class MoviePlayer {
 protected:
 	Common::File _f;
 	Common::String _fname;
+	Audio::SoundHandle _soundHandle;
+	Audio::QueuingAudioStream *_stream;
 
 	int32 _frame;
 	bool _updateNeeded;
@@ -67,7 +65,7 @@ protected:
 	byte *_internalBuffer, *_externalBuffer;
 
 public:
-	VideoPlayer(){
+	MoviePlayer() {
 		_internalBuffer = NULL;
 		_externalBuffer = NULL;
 		_width = 0;
@@ -80,12 +78,12 @@ public:
 		_videoPause = true;
 		_updateNeeded = false;
 		_startPos = NULL;
-		//	_stream = NULL;
+		_stream = NULL;
 		_movieTime = 0;
 		_frame = 0;
 	};
-	virtual ~VideoPlayer(){
-	}
+	virtual ~MoviePlayer() {}
+
 	virtual bool play(const char *filename, bool looping, int x, int y) = 0;
 	virtual void stop() = 0;
 	virtual void pause(bool p) { _videoPause = p; }
@@ -110,12 +108,7 @@ protected:
 	virtual void deinit() = 0;
 };
 
-// Factory-like functions:
-	
-VideoPlayer* CreateMPEGPlayer();	
-VideoPlayer* CreateSMUSHPlayer();
-VideoPlayer* CreateBinkPlayer();
-extern VideoPlayer *g_video;
+extern MoviePlayer *g_movie;
 
 } // end of namespace Grim
 

@@ -233,12 +233,12 @@ void L1_MakeTextObject() {
 		setTextObjectParams(textObject, tableObj);
 
 	textObject->setText(text.c_str());
-	if (!(g_grim->getGameFlags() & GF_DEMO))
+	if (!(g_grim->getGameFlags() & ADGF_DEMO))
 		textObject->createBitmap();
 	g_grim->registerTextObject(textObject);
 
 	lua_pushusertag(textObject->getId(), MKTAG('T', 'E', 'X', 'T'));
-	if (!(g_grim->getGameFlags() & GF_DEMO)) {
+	if (!(g_grim->getGameFlags() & ADGF_DEMO)) {
 		lua_pushnumber(textObject->getBitmapWidth());
 		lua_pushnumber(textObject->getBitmapHeight());
 	}

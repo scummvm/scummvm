@@ -50,7 +50,9 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/lua.h"
 #include "engines/grim/actor.h"
-#include "engines/grim/smush/video.h"
+#include "engines/grim/movie/smush.h"
+#include "engines/grim/movie/bink.h"
+#include "engines/grim/movie/mpeg.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/registry.h"
 #include "engines/grim/resource.h"
@@ -326,17 +328,19 @@ int g_imuseState = -1;
 // hack for access current upated actor to allow access position of actor to sound costume component
 Actor *g_currentUpdatedActor = NULL;
 
-GrimEngine::GrimEngine(OSystem *syst, int gameFlags, GrimGameType gameType) :
+GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language) :
 		Engine(syst), _currScene(NULL), _selectedActor(NULL) {
 	g_grim = this;
 
-	_gameFlags = gameFlags;
 	_gameType = gameType;
+	_gameFlags = gameFlags;
+	_gamePlatform = platform;
+	_gameLanguage = language;
 
 	g_registry = new Registry();
 	g_resourceloader = NULL;
 	g_localizer = NULL;
-	g_video = NULL;
+	g_movie = NULL;
 	g_imuse = NULL;
 
 	_showFps = (tolower(g_registry->get("show_fps", "false")[0]) == 't');
@@ -440,8 +444,8 @@ GrimEngine::~GrimEngine() {
 		delete g_registry;
 		g_registry = NULL;
 	}
-	delete g_video;
-	g_video = NULL;
+	delete g_movie;
+	g_movie = NULL;
 	delete g_imuse;
 	g_imuse = NULL;
 	delete g_localizer;
@@ -455,12 +459,13 @@ GrimEngine::~GrimEngine() {
 Common::Error GrimEngine::run() {
 	g_resourceloader = new ResourceLoader();
 	g_localizer = new Localizer();
-	if(g_grim->getGameType() == GType_GRIM)
-		g_video = CreateSMUSHPlayer();
-	else if(g_grim->getGameType() == GType_MONKEY4){
-		// This depends on if we are playing PS2 or Win/Mac-version
-		// For now, Bink-support is just stubbed, so just use MPEG2
-		g_video = CreateMPEGPlayer();
+	if (getGameType() == GType_GRIM)
+		g_movie = new SmushPlayer();
+	else if (getGameType() == GType_MONKEY4) {
+		if (_gamePlatform == Common::kPlatformPS2)
+			g_movie = new MpegPlayer();
+		else
+			g_movie = new BinkPlayer();
 	}
 	g_imuse = new Imuse(20);
 
@@ -481,12 +486,12 @@ Common::Error GrimEngine::run() {
 	g_driver->setupScreen(640, 480, fullscreen);
 
 	BitmapPtr splash_bm;
-	if (!(_gameFlags & GF_DEMO) && getGameType() == GType_GRIM)
+	if (!(_gameFlags & ADGF_DEMO) && getGameType() == GType_GRIM)
 		splash_bm = g_resourceloader->loadBitmap("splash.bm");
 
 	g_driver->clearScreen();
 
-	if (!(_gameFlags & GF_DEMO) && getGameType() == GType_GRIM)
+	if (!(_gameFlags & ADGF_DEMO) && getGameType() == GType_GRIM)
 		splash_bm->draw();
 
 	g_driver->flipBuffer();
@@ -780,7 +785,7 @@ void GrimEngine::handleDebugLoadResource() {
 	else if (strstr(buf, ".lip"))
 		resource = (void *)g_resourceloader->loadLipSync(buf);
 	else if (strstr(buf, ".snm"))
-		resource = (void *)g_video->play(buf, false, 0, 0);
+		resource = (void *)g_movie->play(buf, false, 0, 0);
 	else if (strstr(buf, ".wav") || strstr(buf, ".imu")) {
 		g_imuse->startSfx(buf);
 		resource = (void *)1;
@@ -890,18 +895,18 @@ void GrimEngine::updateDisplayScene() {
 	_doFlip = true;
 
 	if (_mode == ENGINE_MODE_SMUSH) {
-		if (g_video->isPlaying()) {
+		if (g_movie->isPlaying()) {
 			//_mode = ENGINE_MODE_NORMAL; ???
-			_movieTime = g_video->getMovieTime();
-			if (g_video->isUpdateNeeded()) {
-				g_driver->prepareSmushFrame(g_video->getWidth(), g_video->getHeight(), g_video->getDstPtr());
-				g_video->clearUpdateNeeded();
+			_movieTime = g_movie->getMovieTime();
+			if (g_movie->isUpdateNeeded()) {
+				g_driver->prepareSmushFrame(g_movie->getWidth(), g_movie->getHeight(), g_movie->getDstPtr());
+				g_movie->clearUpdateNeeded();
 			}
-			int frame = g_video->getFrame();
+			int frame = g_movie->getFrame();
 			if (frame > 0) {
 				if (frame != _prevSmushFrame) {
-					_prevSmushFrame = g_video->getFrame();
-					g_driver->drawSmushFrame(g_video->getX(), g_video->getY());
+					_prevSmushFrame = g_movie->getFrame();
+					g_driver->drawSmushFrame(g_movie->getX(), g_movie->getY());
 					if (_showFps)
 						g_driver->drawEmergString(550, 25, _fps, Color(255, 255, 255));
 				} else
@@ -940,14 +945,14 @@ void GrimEngine::updateDisplayScene() {
 		// need to render underneath the animation or you can't see what's going on
 		// This should not occur on top of everything though or Manny gets covered
 		// up when he's next to Glottis's service room
-		if (g_video->isPlaying()) {
-			_movieTime = g_video->getMovieTime();
-			if (g_video->isUpdateNeeded()) {
-				g_driver->prepareSmushFrame(g_video->getWidth(), g_video->getHeight(), g_video->getDstPtr());
-				g_video->clearUpdateNeeded();
+		if (g_movie->isPlaying()) {
+			_movieTime = g_movie->getMovieTime();
+			if (g_movie->isUpdateNeeded()) {
+				g_driver->prepareSmushFrame(g_movie->getWidth(), g_movie->getHeight(), g_movie->getDstPtr());
+				g_movie->clearUpdateNeeded();
 			}
-			if (g_video->getFrame() > 0)
-				g_driver->drawSmushFrame(g_video->getX(), g_video->getY());
+			if (g_movie->getFrame() > 0)
+				g_driver->drawSmushFrame(g_movie->getX(), g_movie->getY());
 			else
 				g_driver->releaseSmushFrame();
 		}
@@ -1128,9 +1133,9 @@ void GrimEngine::savegameRestore() {
 		return;
 	g_imuse->stopAllSounds();
 	g_imuse->resetState();
-	g_video->stop();
+	g_movie->stop();
 	g_imuse->pause(true);
-	g_video->pause(true);
+	g_movie->pause(true);
 
 	//  free all resource
 	//  lock resources
@@ -1160,7 +1165,7 @@ void GrimEngine::savegameRestore() {
 	//Primitive_Restore(_savedState);
 	//Smush_Restore(_savedState);
 	g_imuse->restoreState(_savedState);
-	g_video->restoreState(_savedState);
+	g_movie->restoreState(_savedState);
 	_savedState->beginSection('LUAS');
 	lua_Restore(savegameReadStream, savegameReadSint32, savegameReadUint32);
 	_savedState->endSection();
@@ -1174,7 +1179,7 @@ void GrimEngine::savegameRestore() {
 	}
 
 	g_imuse->pause(false);
-	g_video->pause(false);
+	g_movie->pause(false);
 	printf("GrimEngine::savegameRestore() finished.\n");
 }
 
@@ -1417,7 +1422,7 @@ void GrimEngine::savegameSave() {
 	storeSaveGameImage(_savedState);
 
 	g_imuse->pause(true);
-	g_video->pause(true);
+	g_movie->pause(true);
 
 	savegameCallback();
 
@@ -1441,7 +1446,7 @@ void GrimEngine::savegameSave() {
 	//Primitive_Save(_savedState);
 	//Smush_Save(_savedState);
 	g_imuse->saveState(_savedState);
-	g_video->saveState(_savedState);
+	g_movie->saveState(_savedState);
 	_savedState->beginSection('LUAS');
 	lua_Save(savegameWriteStream, savegameWriteSint32, savegameWriteUint32);
 	_savedState->endSection();
@@ -1449,7 +1454,7 @@ void GrimEngine::savegameSave() {
 	delete _savedState;
 
 	g_imuse->pause(false);
-	g_video->pause(false);
+	g_movie->pause(false);
 	printf("GrimEngine::savegameSave() finished.\n");
 }
 

@@ -176,7 +176,7 @@ ImuseSndMgr::SoundDesc *ImuseSndMgr::openSound(const char *soundName, int volGro
 	strcpy(sound->name, soundName);
 	sound->volGroupId = volGroupId;
 
-	if (!(g_grim->getGameFlags() & GF_DEMO) && scumm_stricmp(extension, "imu") == 0) {
+	if (!(g_grim->getGameFlags() & ADGF_DEMO) && scumm_stricmp(extension, "imu") == 0) {
 		sound->blockRes = g_resourceloader->getFileBlock(soundName);
 		if (sound->blockRes) {
 			ptr = (byte *)sound->blockRes->getData();
@@ -188,7 +188,7 @@ ImuseSndMgr::SoundDesc *ImuseSndMgr::openSound(const char *soundName, int volGro
 			return NULL;
 		}
 	} else if (scumm_stricmp(extension, "wav") == 0 || scumm_stricmp(extension, "imc") == 0 ||
-			(g_grim->getGameFlags() & GF_DEMO && scumm_stricmp(extension, "imu") == 0)) {
+			(g_grim->getGameFlags() & ADGF_DEMO && scumm_stricmp(extension, "imu") == 0)) {
 		sound->mcmpMgr = new McmpMgr();
 		if (!sound->mcmpMgr->openSound(soundName, &ptr, headerSize)) {
 			closeSound(sound);

@@ -35,7 +35,7 @@
 #include "engines/grim/bitmap.h"
 #include "engines/grim/primitives.h"
 
-#include "engines/grim/smush/video.h"
+#include "engines/grim/movie/movie.h"
 
 namespace Grim {
 
@@ -102,7 +102,7 @@ void L1_StartFullscreenMovie() {
 	}
 	L1_CleanBuffer();
 	g_grim->setMode(ENGINE_MODE_SMUSH);
-	pushbool(g_video->play(lua_getstring(name), looping, 0, 0));
+	pushbool(g_movie->play(lua_getstring(name), looping, 0, 0));
 }
 
 void L1_StartMovie() {
@@ -121,7 +121,7 @@ void L1_StartMovie() {
 		y = (int)lua_getnumber(lua_getparam(4));
 
 	g_grim->setMode(ENGINE_MODE_NORMAL);
-	pushbool(g_video->play(lua_getstring(name), looping, x, y));
+	pushbool(g_movie->play(lua_getstring(name), looping, x, y));
 }
 
 /* Fullscreen movie playing query and normal movie
@@ -129,22 +129,22 @@ void L1_StartMovie() {
  * just return true whenever ANY movie is playing
  */
 void L1_IsFullscreenMoviePlaying() {
-	pushbool(g_video->isPlaying() && g_grim->getMode() == ENGINE_MODE_SMUSH);
+	pushbool(g_movie->isPlaying() && g_grim->getMode() == ENGINE_MODE_SMUSH);
 }
 
 void L1_IsMoviePlaying() {
-	if (g_grim->getGameFlags() & GF_DEMO)
-		pushbool(g_video->isPlaying());
+	if (g_grim->getGameFlags() & ADGF_DEMO)
+		pushbool(g_movie->isPlaying());
 	else
-		pushbool(g_video->isPlaying() && g_grim->getMode() == ENGINE_MODE_NORMAL);
+		pushbool(g_movie->isPlaying() && g_grim->getMode() == ENGINE_MODE_NORMAL);
 }
 
 void L1_StopMovie() {
-	g_video->stop();
+	g_movie->stop();
 }
 
 void L1_PauseMovie() {
-	g_video->pause(lua_isnil(lua_getparam(1)) == 0);
+	g_movie->pause(lua_isnil(lua_getparam(1)) == 0);
 }
 
 void L1_PurgePrimitiveQueue() {
@@ -521,10 +521,10 @@ void L1_RenderModeUser() {
 	lua_Object param1 = lua_getparam(1);
 	if (!lua_isnil(param1) && g_grim->getMode() != ENGINE_MODE_DRAW) {
 		g_grim->setPreviousMode(g_grim->getMode());
-		g_video->pause(true);
+		g_movie->pause(true);
 		g_grim->setMode(ENGINE_MODE_DRAW);
 	} else if (lua_isnil(param1) && g_grim->getMode() == ENGINE_MODE_DRAW) {
-		g_video->pause(false);
+		g_movie->pause(false);
 		g_grim->refreshDrawMode();
 		g_grim->setMode(g_grim->getPreviousMode());
 	}

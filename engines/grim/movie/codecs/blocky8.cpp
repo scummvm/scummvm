@@ -28,7 +28,7 @@
 #include "common/util.h"
 #include "common/textconsole.h"
 
-#include "engines/grim/smush/blocky8.h"
+#include "engines/grim/movie/codecs/blocky8.h"
 
 namespace Grim {
 
