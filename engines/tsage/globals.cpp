@@ -22,6 +22,7 @@
 
 #include "tsage/globals.h"
 #include "tsage/tsage.h"
+#include "tsage/blueforce_logic.h"
 #include "tsage/ringworld_demo.h"
 #include "tsage/ringworld_logic.h"
 
@@ -82,11 +83,19 @@ Globals::Globals() :
 	_scrollFollower = NULL;
 	_inventory = NULL;
 
-	if (!(_vm->getFeatures() & GF_DEMO)) {
-		_inventory = new RingworldInvObjectList();
-		_game = new RingworldGame();
-	} else {
-		_game = new RingworldDemoGame();
+	switch (_vm->getGameID()) {
+	case GType_Ringworld:
+		if (!(_vm->getFeatures() & GF_DEMO)) {
+			_inventory = new RingworldInvObjectList();
+			_game = new RingworldGame();
+		} else {
+			_game = new RingworldDemoGame();
+		}
+		break;
+
+	case GType_BlueForce:
+		_game = new BlueForceGame();
+		break;
 	}
 }
 
