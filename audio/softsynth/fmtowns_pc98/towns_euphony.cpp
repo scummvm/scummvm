@@ -81,7 +81,7 @@ void TownsEuphonyDriver::reset() {
 	_intf->callback(0);
 
 	_intf->callback(74);
-	_intf->callback(70);
+	_intf->callback(70, 0);
 	_intf->callback(75, 3);
 
 	setTimerA(true, 1);

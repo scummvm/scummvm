@@ -163,9 +163,10 @@ private:
 	int intf_fmReset(va_list &args);
 	int intf_setOutputVolume(va_list &args);
 	int intf_resetOutputVolume(va_list &args);
+	int intf_getOutputVolume(va_list &args);
 	int intf_setOutputMute(va_list &args);
 	int intf_cdaToggle(va_list &args);
-	int intf_getOutputVolume(va_list &args);
+	int intf_getOutputVolume2(va_list &args);
 	int intf_getOutputMute(va_list &args);
 	int intf_pcmUpdateEnvelopeGenerator(va_list &args);
 
@@ -224,7 +225,7 @@ private:
 	void updateOutputVolume();
 	uint8 _outputVolumeFlags;
 	uint8 _outputLevel[16];
-	uint8 _outputMuteFlags;
+	uint8 _outputMute[16];
 
 	const float _baserate;
 	uint32 _timerBase;
@@ -253,7 +254,7 @@ TownsAudioInterfaceIntern::TownsAudioInterfaceIntern(Audio::Mixer *mixer, TownsA
 	_fmInstruments(0), _pcmInstruments(0), _pcmChan(0), _waveTables(0), _waveTablesTotalDataSize(0),
 	_baserate(55125.0f / (float)mixer->getOutputRate()), _tickLength(0), _timer(0), _drv(driver),
 	_pcmSfxChanMask(0),	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume),
-	_outputVolumeFlags(0), _outputMuteFlags(0), _pcmChanOut(0), _pcmChanReserved(0), _pcmChanKeyPressed(0),
+	_outputVolumeFlags(0), _pcmChanOut(0), _pcmChanReserved(0), _pcmChanKeyPressed(0),
 	_pcmChanEffectPlaying(0), _pcmChanKeyPlaying(0), _ready(false) {
 
 #define INTCB(x) &TownsAudioInterfaceIntern::intf_##x
@@ -345,13 +346,13 @@ TownsAudioInterfaceIntern::TownsAudioInterfaceIntern(Audio::Mixer *mixer, TownsA
 		INTCB(setOutputVolume),
 		// 68
 		INTCB(resetOutputVolume),
-		INTCB(notImpl),
+		INTCB(getOutputVolume),
 		INTCB(setOutputMute),
 		INTCB(notImpl),
 		// 72
 		INTCB(notImpl),
 		INTCB(cdaToggle),
-		INTCB(getOutputVolume),
+		INTCB(getOutputVolume2),
 		INTCB(getOutputMute),
 		// 76
 		INTCB(notImpl),
@@ -368,6 +369,7 @@ TownsAudioInterfaceIntern::TownsAudioInterfaceIntern(Audio::Mixer *mixer, TownsA
 
 	memset(_fmSaveReg, 0, sizeof(_fmSaveReg));
 	memset(_outputLevel, 0, sizeof(_outputLevel));
+	memset(_outputMute, 0, sizeof(_outputMute));
 
 	_timerBase = (uint32)(_baserate * 1000000.0f);
 	_tickLength = 2 * _timerBase;
@@ -929,11 +931,13 @@ int TownsAudioInterfaceIntern::intf_setOutputVolume(va_list &args) {
 
 	if (chanType > 1) {
 		_outputLevel[chan + chanType] = left;
+		_outputMute[chan + chanType] = 0;
 	} else {
 		if (chanType == 0)
 			chan -= 8;
 		_outputLevel[chan] = left;
 		_outputLevel[chan + 1] = right;
+		_outputMute[chan] = _outputMute[chan + 1] = 0;
 	}
 
 	updateOutputVolume();
@@ -943,15 +947,56 @@ int TownsAudioInterfaceIntern::intf_setOutputVolume(va_list &args) {
 
 int TownsAudioInterfaceIntern::intf_resetOutputVolume(va_list &args) {
 	memset(_outputLevel, 0, sizeof(_outputLevel));
-	_outputMuteFlags = 0;
 	_outputVolumeFlags = 0;
 	updateOutputVolume();
 	return 0;
 }
 
+int TownsAudioInterfaceIntern::intf_getOutputVolume(va_list &args) {
+	int chanType = va_arg(args, int);
+	int *left = va_arg(args, int*);
+	int *right = va_arg(args, int*);
+
+	uint8 chan = (chanType & 0x40) ? 8 : 12;
+	chanType &= 3;
+
+	if (chanType > 1) {
+		*left = _outputLevel[chan + chanType] & 0x3f;
+	} else {
+		if (chanType == 0)
+			chan -= 8;
+		*left = _outputLevel[chan] & 0x3f;
+		*right = _outputLevel[chan + 1] & 0x3f;
+	}
+
+	return 0;
+}
+
 int TownsAudioInterfaceIntern::intf_setOutputMute(va_list &args) {
 	int flags = va_arg(args, int);
-	_outputMuteFlags = flags & 3;
+	_outputVolumeFlags = flags;
+	uint8 mute = flags & 3;
+	uint8 f = flags & 0xff;
+
+	memset(_outputMute, 1, 8);
+	if (mute & 2)
+		memset(_outputMute + 12, 1, 4);
+	if (mute & 1)
+		memset(_outputMute + 8, 1, 4);	
+
+	_outputMute[(f < 0x80) ? 11 : 15] = 0;
+	f += f;
+	_outputMute[(f < 0x80) ? 10 : 14] = 0;
+	f += f;
+	_outputMute[(f < 0x80) ? 8 : 12] = 0;
+	f += f;
+	_outputMute[(f < 0x80) ? 9 : 13] = 0;
+	f += f;
+	_outputMute[(f < 0x80) ? 0 : 4] = 0;
+	f += f;
+	_outputMute[(f < 0x80) ? 1 : 5] = 0;
+	f += f;	
+	
 	updateOutputVolume();
 	return 0;
 }
@@ -962,7 +1007,7 @@ int TownsAudioInterfaceIntern::intf_cdaToggle(va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_getOutputVolume (va_list &args) {
+int TownsAudioInterfaceIntern::intf_getOutputVolume2(va_list &args) {
 	return 0;
 }
 
@@ -1602,10 +1647,10 @@ void TownsAudioInterfaceIntern::updateOutputVolume() {
 	// balance values for our -128 to 127 volume range
 
 	// CD-AUDIO
-	uint32 maxVol = MAX(_outputLevel[12], _outputLevel[13]);
+	uint32 maxVol = MAX(_outputLevel[12] * (_outputMute[12] ^ 1), _outputLevel[13] * (_outputMute[13] ^ 1));
 
 	int volume = (int)(((float)(maxVol * 255) / 63.0f));
-	int balance = maxVol ? (int)( ( ((int)_outputLevel[13] - _outputLevel[12]) * 127) / (float)maxVol) : 0;
+	int balance = maxVol ? (int)( ( ((int)_outputLevel[13] * (_outputMute[13] ^ 1) - _outputLevel[12] * (_outputMute[12] ^ 1)) * 127) / (float)maxVol) : 0;
 
 	g_system->getAudioCDManager()->setVolume(volume);
 	g_system->getAudioCDManager()->setBalance(balance);

@@ -44,7 +44,7 @@ class TownsPC98_FmSynthPercussionSource;
 #endif
 
 enum EnvelopeState {
-	kEnvReady,
+	kEnvReady = 0,
 	kEnvAttacking,
 	kEnvDecaying,
 	kEnvSustaining,
