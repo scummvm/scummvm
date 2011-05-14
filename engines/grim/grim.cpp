@@ -50,9 +50,7 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/lua.h"
 #include "engines/grim/actor.h"
-#include "engines/grim/movie/smush.h"
-#include "engines/grim/movie/bink.h"
-#include "engines/grim/movie/mpeg.h"
+#include "engines/grim/movie/movie.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/registry.h"
 #include "engines/grim/resource.h"
@@ -460,12 +458,12 @@ Common::Error GrimEngine::run() {
 	g_resourceloader = new ResourceLoader();
 	g_localizer = new Localizer();
 	if (getGameType() == GType_GRIM)
-		g_movie = new SmushPlayer();
+		g_movie = CreateSmushPlayer();
 	else if (getGameType() == GType_MONKEY4) {
 		if (_gamePlatform == Common::kPlatformPS2)
-			g_movie = new MpegPlayer();
+			g_movie = CreateMpegPlayer();
 		else
-			g_movie = new BinkPlayer();
+			g_movie = CreateBinkPlayer();
 	}
 	g_imuse = new Imuse(20);
 

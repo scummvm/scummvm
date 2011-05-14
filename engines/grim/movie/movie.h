@@ -108,6 +108,12 @@ protected:
 	virtual void deinit() = 0;
 };
 
+
+// Factory-like functions:
+
+MoviePlayer *CreateMpegPlayer();
+MoviePlayer *CreateSmushPlayer();
+MoviePlayer *CreateBinkPlayer();
 extern MoviePlayer *g_movie;
 
 } // end of namespace Grim

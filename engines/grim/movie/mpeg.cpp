@@ -50,6 +50,10 @@
 
 namespace Grim {
 
+MoviePlayer *CreateMpegPlayer() {
+	return new MpegPlayer();
+}
+
 class MpegHandler : public Video::BaseAnimationState {
 public:
 	MpegHandler(MpegPlayer *vid, OSystem *sys, int width, int height) : BaseAnimationState(sys, width, height) {
@@ -68,6 +72,7 @@ void MpegPlayer::timerCallback(void *) {
 }
 
 MpegPlayer::MpegPlayer() : MoviePlayer() {
+	g_movie = this;
 	_speed = 50;
 	_videoBase = new MpegHandler(this, g_system, MWIDTH, MHEIGHT);
 }

@@ -55,6 +55,10 @@ namespace Grim {
 
 static uint16 smushDestTable[5786];
 
+MoviePlayer *CreateSmushPlayer() {
+	return new SmushPlayer();
+}
+
 void SmushPlayer::timerCallback(void *) {
 	if (g_grim->getGameFlags() & ADGF_DEMO)
 		((SmushPlayer *)g_movie)->handleFrameDemo();
@@ -63,6 +67,7 @@ void SmushPlayer::timerCallback(void *) {
 }
 
 SmushPlayer::SmushPlayer() {
+	g_movie = this;
 	_IACTpos = 0;
 	_nbframes = 0;
 }

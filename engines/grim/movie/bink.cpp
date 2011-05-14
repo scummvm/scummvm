@@ -50,11 +50,16 @@
 
 namespace Grim {
 
+MoviePlayer *CreateBinkPlayer() {
+	return new BinkPlayer();
+}
+
 void BinkPlayer::timerCallback(void *) {
 	((BinkPlayer *)g_movie)->handleFrame();
 }
 
 BinkPlayer::BinkPlayer() : MoviePlayer() {
+	g_movie = this;
 	_speed = 50;
 }
 
