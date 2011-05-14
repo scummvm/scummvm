@@ -2350,10 +2350,10 @@ void ScummEngine_v100he::o100_debugInput() {
 
 void ScummEngine_v100he::o100_isResourceLoaded() {
 	// Reports percentage of resource loaded by queue
-	int type;
+	ResType type;
 
 	byte subOp = fetchScriptByte();
-	/* int idx = */ pop();
+	int idx = pop();
 
 	switch (subOp) {
 	case 25:
@@ -2374,6 +2374,7 @@ void ScummEngine_v100he::o100_isResourceLoaded() {
 	default:
 		error("o100_isResourceLoaded: default case %d", subOp);
 	}
+	debug(7, "o100_isResourceLoaded(%d,%d)", type, idx);
 
 	push(100);
 }

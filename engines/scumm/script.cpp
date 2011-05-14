@@ -36,7 +36,7 @@ namespace Scumm {
 /* Start executing script 'script' with the given parameters */
 void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, int *lvarptr, int cycle) {
 	ScriptSlot *s;
-	byte *scriptPtr;
+	//byte *scriptPtr;
 	uint32 scriptOffs;
 	byte scriptType;
 	int slot;
@@ -48,7 +48,8 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 		stopScript(script);
 
 	if (script < _numGlobalScripts) {
-		scriptPtr = getResourceAddress(rtScript, script);
+		// Call getResourceAddress to ensure the resource is loaded & its usage count reset
+		/*scriptPtr =*/ getResourceAddress(rtScript, script);
 		scriptOffs = _resourceHeaderSize;
 		scriptType = WIO_GLOBAL;
 
