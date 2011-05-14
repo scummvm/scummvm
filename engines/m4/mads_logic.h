@@ -85,14 +85,14 @@ private:
 	void getSceneSpriteSet();
 	void getAnimName();
 
-	DataMap &dataMap();
+	uint32 getDataValue(int dataId);
+	void setDataValue(int dataId, uint16 dataValue);
 	void getCallParameters(int numParams, Common::Stack<ScriptVar> &stack, ScriptVar *callParams);
 public:
 	MadsSceneLogic() { _scriptsData = NULL; }
 	~MadsSceneLogic() { delete _scriptsData; }
 
 	void initialiseScripts();
-	void initialiseDataMap();
 	void selectScene(int sceneNum);
 
 	void setupScene();

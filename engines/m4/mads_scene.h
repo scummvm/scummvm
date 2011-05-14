@@ -110,7 +110,6 @@ public:
 	virtual ~MadsScene();
 	void initialise() {
 		_sceneLogic.initialiseScripts();
-		_sceneLogic.initialiseDataMap();
 	}
 
 	// Methods that differ between engines
