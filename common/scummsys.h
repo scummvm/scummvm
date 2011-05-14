@@ -331,66 +331,71 @@
 //
 // Typedef our system types
 //
-#if !defined(HAVE_CONFIG_H) && defined(__SYMBIAN32__)
+#if !defined(HAVE_CONFIG_H)
 
-	// Enable Symbians own datatypes
-	// This is done for two reasons
-	// a) uint is already defined by Symbians libc component
-	// b) Symbian is using its "own" datatyping, and the Scummvm port
-	//    should follow this to ensure the best compability possible.
-	typedef unsigned char byte;
+	#if defined(__SYMBIAN32__)
 
-	typedef unsigned char uint8;
-	typedef signed char int8;
+		// Enable Symbians own datatypes
+		// This is done for two reasons
+		// a) uint is already defined by Symbians libc component
+		// b) Symbian is using its "own" datatyping, and the Scummvm port
+		//    should follow this to ensure the best compability possible.
+		typedef unsigned char byte;
 
-	typedef unsigned short int uint16;
-	typedef signed short int int16;
+		typedef unsigned char uint8;
+		typedef signed char int8;
 
-	typedef unsigned long int uint32;
-	typedef signed long int int32;
+		typedef unsigned short int uint16;
+		typedef signed short int int16;
 
-#elif !defined(HAVE_CONFIG_H) && defined(__GP32__)
+		typedef unsigned long int uint32;
+		typedef signed long int int32;
 
-	// Override typenames. uint is already defined by system header files.
-	typedef unsigned char byte;
+	#elif defined(__GP32__)
 
-	typedef unsigned char uint8;
-	typedef signed char int8;
+		// Override typenames. uint is already defined by system header files.
+		typedef unsigned char byte;
 
-	typedef unsigned short int uint16;
-	typedef signed short int int16;
+		typedef unsigned char uint8;
+		typedef signed char int8;
 
-	typedef unsigned long int uint32;
-	typedef signed long int int32;
+		typedef unsigned short int uint16;
+		typedef signed short int int16;
 
-#elif !defined(HAVE_CONFIG_H) && defined(__N64__)
+		typedef unsigned long int uint32;
+		typedef signed long int int32;
 
-	typedef unsigned char byte;
+	#elif defined(__N64__)
 
-	typedef unsigned char uint8;
-	typedef signed char int8;
+		typedef unsigned char byte;
 
-	typedef unsigned short int uint16;
-	typedef signed short int int16;
+		typedef unsigned char uint8;
+		typedef signed char int8;
 
-	typedef unsigned int uint32;
-	typedef signed int int32;
+		typedef unsigned short int uint16;
+		typedef signed short int int16;
 
-#elif !defined(HAVE_CONFIG_H) && defined(__DS__)
+		typedef unsigned int uint32;
+		typedef signed int int32;
 
-	// Do nothing, the SDK defines all types we need in nds/ndstypes.h,
-	// which we include in our portsdef.h
+	#elif defined(__DS__)
 
-#else
+		// Do nothing, the SDK defines all types we need in nds/ndstypes.h,
+		// which we include in our portsdef.h
 
-	typedef unsigned char byte;
-	typedef unsigned char uint8;
-	typedef signed char int8;
-	typedef unsigned short uint16;
-	typedef signed short int16;
-	typedef unsigned int uint32;
-	typedef signed int int32;
-	typedef unsigned int uint;
+	#else
+
+		typedef unsigned char byte;
+		typedef unsigned char uint8;
+		typedef signed char int8;
+		typedef unsigned short uint16;
+		typedef signed short int16;
+		typedef unsigned int uint32;
+		typedef signed int int32;
+		typedef unsigned int uint;
+
+	#endif
+
 #endif
 
 
@@ -406,6 +411,6 @@
 	typedef uint16 OverlayColor;
 #endif
 
-#include "common/forbidden.h"	
+#include "common/forbidden.h"
 
 #endif
