@@ -312,6 +312,9 @@ const ControlDescriptor controls[] = {
 	{ "KEY_JOY2_LMUSHROOM", KEYCODE_JOY2_B15 },
 	{ "KEY_JOY2_RMUSHROOM", KEYCODE_JOY2_B16 },
 
+// tell EMI there is no joystick selected
+	{ "joy_selected", -1 },
+
 	{ NULL, 0 }
 };
 
