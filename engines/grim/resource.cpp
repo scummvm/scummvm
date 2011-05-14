@@ -247,23 +247,17 @@ CMap *ResourceLoader::loadColormap(const char *filename) {
 	return result;
 }
 
-static Common::String fixFilename(const char *filename) {
-	Common::String fname;
+static Common::String fixFilename(const Common::String filename) {
+	Common::String fname(filename);
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		char str[128];
-		int len = strlen(filename);
+		int len = fname.size();
 		for (int i = 0; i < len; i++) {
-			str[i] = filename[i];
-			// Fix paths
-			if (str[i] == '\\')
-				str[i] = '/';
+			if (fname[i] == '\\') {
+				fname.setChar('/', i);
+			}
 		}
 		// Append b to end of filename for EMI
-		str[len] = 'b';
-		str[len + 1] = '\0';
-		fname = str;
-	} else {
-		fname = filename;
+		fname += "b";
 	}
 	fname.toLowercase();
 	return fname;
