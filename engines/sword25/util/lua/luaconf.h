@@ -18,6 +18,14 @@
 ** ===================================================================
 */
 
+#if defined(__ANDROID__)
+/* Android is missing strcoll().
+** For more information, refer to:
+** http://www.damonkohler.com/2008/12/lua-on-android.html
+*/
+#define strcoll strcmp
+#endif
+
 
 /*
 @@ LUA_ANSI controls the use of non-ansi features.
@@ -183,7 +191,11 @@
 #define LUAI_DATA	/* empty */
 
 #elif defined(__GNUC__) && ((__GNUC__*100 + __GNUC_MINOR__) >= 302) && \
-      defined(__ELF__)
+      defined(__ELF__) && !defined(__PLAYSTATION2__)
+/*
+** The PS2 gcc compiler doesn't like the visibility attribute, so
+** we use the normal "extern" definitions in the block below
+*/
 #define LUAI_FUNC	__attribute__((visibility("hidden"))) extern
 #define LUAI_DATA	LUAI_FUNC
 
