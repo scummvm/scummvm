@@ -154,6 +154,11 @@ void MystScriptParser::setupCommonOpcodes() {
 
 void MystScriptParser::runScript(MystScript script, MystResource *invokingResource) {
 	debugC(kDebugScript, "Script Size: %d", script->size());
+
+	// Scripted drawing takes more time to simulate older hardware
+	// This way opcodes can't overwrite what the previous ones drew too quickly
+	_vm->_gfx->enableDrawingTimeSimulation(true);
+
 	for (uint16 i = 0; i < script->size(); i++) {
 		MystScriptEntry &entry = script->operator[](i);
 		debugC(kDebugScript, "\tOpcode %d: %d", i, entry.opcode);
@@ -165,6 +170,8 @@ void MystScriptParser::runScript(MystScript script, MystResource *invokingResour
 
 		runOpcode(entry.opcode, entry.var, entry.argc, entry.argv);
 	}
+
+	_vm->_gfx->enableDrawingTimeSimulation(false);
 }
 
 void MystScriptParser::runOpcode(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

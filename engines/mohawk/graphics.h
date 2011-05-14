@@ -128,10 +128,12 @@ public:
 	void runTransition(uint16 type, Common::Rect rect, uint16 steps, uint16 delay);
 	void drawRect(Common::Rect rect, RectState state);
 	void drawLine(const Common::Point &p1, const Common::Point &p2, uint32 color);
+	void enableDrawingTimeSimulation(bool enable);
 
 protected:
 	MohawkSurface *decodeImage(uint16 id);
 	MohawkEngine *getVM() { return (MohawkEngine *)_vm; }
+	void simulatePreviousDrawDelay(const Common::Rect &dest);
 
 private:
 	MohawkEngine_Myst *_vm;
@@ -156,6 +158,11 @@ private:
 	Graphics::Surface *_backBuffer;
 	Graphics::PixelFormat _pixelFormat;
 	Common::Rect _viewport;
+
+	int _enableDrawingTimeSimulation;
+	uint32 _nextAllowedDrawTime;
+	static const uint _constantDrawDelay = 10; // ms
+	static const uint _proportionalDrawDelay = 500; // pixels per ms
 };
 
 #endif // ENABLE_MYST
