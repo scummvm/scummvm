@@ -89,8 +89,6 @@ public:
 	virtual void drawBitmap(const Bitmap *bitmap) = 0;
 	virtual void destroyBitmap(BitmapData *bitmap) = 0;
 
-	virtual void drawDepthBitmap(int x, int y, int w, int h, char *data) = 0;
-
 	virtual Bitmap *getScreenshot(int w, int h) = 0;
 	virtual void storeDisplay() = 0;
 	virtual void copyStoredToDisplay() = 0;

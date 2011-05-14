@@ -638,8 +638,6 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap) {
 
 void GfxTinyGL::destroyBitmap(BitmapData *) { }
 
-void GfxTinyGL::drawDepthBitmap(int, int, int, int, char *) { }
-
 void GfxTinyGL::createMaterial(Material *material, const char *data, const CMap *cmap) {
 	material->_textures = new TGLuint[material->_numImages];
 	tglGenTextures(material->_numImages, (TGLuint *)material->_textures);
