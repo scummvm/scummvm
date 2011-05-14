@@ -34,7 +34,9 @@ void RingworldDemoGame::start() {
 	_globals->_events.setCursor(CURSOR_NONE);
 }
 
-void RingworldDemoGame::restart() {
+Scene *RingworldDemoGame::createScene(int sceneNumber) {
+	// The demo only has a single scene, so ignore the scene number and always return it
+	return new RingworldDemoScene();
 }
 
 /*--------------------------------------------------------------------------

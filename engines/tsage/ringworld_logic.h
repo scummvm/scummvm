@@ -451,6 +451,8 @@ public:
 	virtual void restoreGame();
 	virtual void quitGame();
 	virtual void endGame(int resNum, int lineNum);
+
+	virtual Scene *createScene(int sceneNumber);
 };
 
 } // End of namespace tSage

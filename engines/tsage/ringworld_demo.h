@@ -32,15 +32,9 @@
 namespace tSage {
 
 class RingworldDemoGame: public Game {
-protected:
-	virtual void restart();
 public:
 	virtual void start();
-	virtual void restartGame() {}
-	virtual void saveGame() {}
-	virtual void restoreGame() {}
-	virtual void quitGame() {}
-	virtual void endGame(int resNum, int lineNum) {}
+	virtual Scene *createScene(int sceneNumber);
 };
 
 class RingworldDemoScene: public Scene {

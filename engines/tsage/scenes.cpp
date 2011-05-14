@@ -127,7 +127,7 @@ void SceneManager::sceneChange() {
 }
 
 Scene *SceneManager::getNewScene() {
-	return SceneFactory::createScene(_nextSceneNumber);
+	return _globals->_game->createScene(_nextSceneNumber);
 }
 
 void SceneManager::fadeInIfNecessary() {
@@ -488,6 +488,24 @@ void Scene::setZoomPercents(int yStart, int minPercent, int yEnd, int maxPercent
 
 	while (yEnd < 256)
 		_zoomPercents[yEnd++] = minPercent;
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Game::execute() {
+	// Main game loop
+	bool activeFlag = false;
+	do {
+		// Process all currently atcive game handlers
+		activeFlag = false;
+		for (SynchronizedList<GameHandler *>::iterator i = _handlers.begin(); i != _handlers.end(); ++i) {
+			GameHandler *gh = *i;
+			if (gh->_lockCtr.getCtr() == 0) {
+				gh->execute();
+				activeFlag = true;
+			}
+		}
+	} while (activeFlag && !_vm->getEventManager()->shouldQuit());
 }
 
 } // End of namespace tSage

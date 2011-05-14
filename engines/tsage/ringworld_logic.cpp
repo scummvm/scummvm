@@ -39,10 +39,7 @@
 
 namespace tSage {
 
-Scene *SceneFactory::createScene(int sceneNumber) {
-	if (_vm->getFeatures() & GF_DEMO)
-		return new RingworldDemoScene();
-
+Scene *RingworldGame::createScene(int sceneNumber) {
 	switch (sceneNumber) {
 	/* Scene group 1 */
 	// Kziniti Palace (Introduction)

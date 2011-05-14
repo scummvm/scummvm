@@ -3647,22 +3647,4 @@ void SceneHandler::saveListener(Serializer &ser) {
 	warning("TODO: SceneHandler::saveListener");
 }
 
-/*--------------------------------------------------------------------------*/
-
-void Game::execute() {
-	// Main game loop
-	bool activeFlag = false;
-	do {
-		// Process all currently atcive game handlers
-		activeFlag = false;
-		for (SynchronizedList<GameHandler *>::iterator i = _handlers.begin(); i != _handlers.end(); ++i) {
-			GameHandler *gh = *i;
-			if (gh->_lockCtr.getCtr() == 0) {
-				gh->execute();
-				activeFlag = true;
-			}
-		}
-	} while (activeFlag && !_vm->getEventManager()->shouldQuit());
-}
-
 } // End of namespace tSage
