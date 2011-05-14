@@ -1067,8 +1067,14 @@ void Costume::Chore::setLastFrame() {
 	// If the chore has already played then don't set it to the end
 	// Example: This executing would result in Glottis being
 	// choppy when he hands Manny the work order
-	if (_hasPlayed)
-		return;
+	// 	if (_hasPlayed)
+	// 		return;
+
+	// This comment above is perfectly right, but unfortunately doing that
+	// breaks glottis movements when he answers to "i'm calavera, manny calavera".
+	// Moreover, the choppy behaviour stated above happens with grim original too,
+	// meaning the bug is not in Residual but in the scripts or in GrimE design.
+
 	_currTime = _length;
 	_playing = false;
 	_hasPlayed = true;

@@ -243,7 +243,7 @@ void KeyframeAnim::KeyframeNode::animate(Model::HierNode &node, float frame, int
 	float yaw = _entries[low]._yaw + dt * _entries[low]._dyaw;
 	float roll = _entries[low]._roll + dt * _entries[low]._droll;
 
-	if (priority > node._priority || _entries[low]._flags >= node._flags) {
+	if (priority > node._priority) {
 		node._priority = priority;
 		if (node._totalWeight > 0) {
 			node._animPos = node._animPos * (1 - fade) / node._totalWeight;
