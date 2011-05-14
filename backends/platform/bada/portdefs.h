@@ -47,7 +47,17 @@ int vsnprintf(char* buf,
 
 // http://www.ijs.si/software/snprintf/
 // engines/scumm/detection.cpp
-int snprintf(char *str, size_t size, const char *format, ...);
+int snprintf(char* str, size_t size, const char* format, ...);
 
 // engines/scumm/scumm.cpp
-int sscanf(const char *buffer, const char *format, ...);
+int sscanf(const char* buffer, const char* format, ...);
+
+// engines/scumm/smush/smush_font.cpp
+char* strdup(const char* s1);
+
+// engines/agi/text.cpp
+int vsprintf(char* str, const char* format, va_list arg);
+
+// engines/agos/script_pn.cpp
+int strnicmp(const char* s1, const char* s2, size_t len);
+

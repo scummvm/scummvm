@@ -700,7 +700,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help              display this help and exit
-  --backend=BACKEND       backend to build (android, dc, dingux, ds, gp2x, gph,
+  --backend=BACKEND       backend to build (android, bada, dc, dingux, ds, gp2x, gph,
                           iphone, linuxmoto, maemo, n64, null, openpandora, ps2,
                           psp, samsungtv, sdl, webos, wii, wince) [sdl]
 
@@ -729,6 +729,7 @@ Fine tuning of the installation directories:
 Special configuration feature:
   --host=HOST             cross-compile to target HOST (arm-linux, ...)
                           special targets: android for Android
+                                           bada for Samsung BADA
                                            caanoo for Caanoo
                                            dingux for Dingux
                                            dreamcast for Sega Dreamcast
@@ -1034,6 +1035,15 @@ arm-riscos)
 	_host_os=riscos
 	_host_cpu=arm
 	;;
+bada)
+	_host_os=bada
+	_host_cpu=arm
+  if test "$_debug_build" = yes; then
+	  _host_alias=i686-mingw32
+  else
+	  _host_alias=arm-samsung-nucleuseabi
+	fi
+	;;
 caanoo)
 	_host_os=gph-linux
 	_host_cpu=arm
@@ -1237,6 +1247,12 @@ android)
 	fi
 	if test -z "$ANDROID_NDK"; then
 		echo "Please set ANDROID_NDK in your environment. export ANDROID_NDK=<path to Android NDK>"
+		exit 1
+	fi
+	;;
+bada)
+	if test -z "$BADA_SDK"; then
+		echo "Please set BADA_SDK in your environment. export BADA_SDK=<path to Bada SDK>"
 		exit 1
 	fi
 	;;
@@ -1716,6 +1732,12 @@ case $_host_os in
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
 		_seq_midi=no
 		;;
+	bada)
+		CXXFLAGS="$CXXFLAGS -fmessage-length=0"
+		add_line_to_config_mk "BADA_SDK = $BADA_SDK"
+		_unix=yes
+		_seq_midi=no
+		;;
 	beos*)
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		# Needs -lbind -lsocket for the timidity MIDI driver
@@ -1930,6 +1952,26 @@ if test -n "$_host"; then
 			;;
 		arm-riscos|linupy)
 			DEFINES="$DEFINES -DLINUPY"
+			;;
+		bada)
+			_unix=yes
+			_need_memalign=yes
+			# we also link a .so as default
+			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DNONSTANDARD_PORT"
+			LDFLAGS="$LDFLAGS -shared -Wl,-Bsymbolic,--no-undefined"
+			HOSTEXEPRE=lib
+			HOSTEXEEXT=.so
+			_backend="bada"
+			_port_mk="backends/platform/bada/bada.mk"
+      if test "$_debug_build" = yes; then
+			  _arm_asm=no
+      else
+			  _arm_asm=yes
+	    fi
+			_build_scalers=no
+			_seq_midi=no
+			_mt32emu=no
+			_timidity=no
 			;;
 		bfin*)
 			;;
@@ -3239,7 +3281,58 @@ case $_backend in
 		# -lgcc is carefully placed here - we want to catch
 		# all toolchain symbols in *our* libraries rather
 		# than pick up anything unhygenic from the Android libs.
-		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -lGLESv1_CM"
+		LIBS="-Wl,-Bstatic $static_libs"
+		LIBS="$LIBS -Wl,-Bdynamic -lgcc $system_libs -llog -lGLESv1_CM"
+		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
+		;;
+	bada)
+    # TODO FIXME
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/bada '
+		INCLUDES="$INCLUDES "'-I$(BADA_SDK)/include'
+		LIBS="$LIBS -Wl,-Bdynamic -lgcc $system_libs "
+		;;
+	dc)
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
+		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000 -nostartfiles "'$(ronindir)/lib/crt0.o -L$(ronindir)/lib'
+		LIBS="$LIBS -lronin -lm"
+		;;
+	dingux)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND -DDINGUX"
+		LDFLAGS="$LDFLAGS "
+		MODULES="$MODULES backends/platform/sdl"
+		;;
+	ds)
+		# TODO ds
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/arm9/source'
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/commoninclude'
+		INCLUDES="$INCLUDES "'-Ibackends/platform/ds/arm9/data'
+		;;
+	gp2x)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		LDFLAGS="$LDFLAGS"
+		DEFINES="$DEFINES -DSDL_BACKEND"
+		;;
+	gph)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		LDFLAGS="$LDFLAGS"
+		DEFINES="$DEFINES -DSDL_BACKEND"
+		;;
+	iphone)
+		OBJCFLAGS="$OBJCFLAGS --std=c99"
+		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES -framework QuartzCore -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
+		;;
+	linuxmoto)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND -DLINUXMOTO"
 		;;
 	n64)
 		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found 
