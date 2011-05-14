@@ -36,6 +36,59 @@
 
 namespace Grim {
 
+void L2_PutActorInSet() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object setObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+
+	if (!lua_isstring(setObj) && !lua_isnil(setObj)) {
+		lua_pushnil();
+		return;
+	}
+
+	const char *set = lua_getstring(setObj);
+
+	// FIXME verify adding actor to set
+	if (!set) {
+		actor->putInSet("");
+	} else if (!actor->isInSet(set)) {
+		actor->putInSet(set);
+		lua_pushnumber(1.0);
+		return;
+	}
+	lua_pushnil();
+}
+
+static void L2_LoadBundle() {
+	lua_Object paramObj = lua_getparam(1);
+	if (lua_isstring(paramObj) || lua_isnil(paramObj)) {
+		const char *name = lua_getstring(paramObj);
+/*		if (!func(name))
+			lua_pushnil();
+		else*/
+			lua_pushnumber(1.0);
+		warning("L2_LoadBundle: stub, name: %s", name);
+	}
+}
+
+void L2_AreWeInternational() {
+	if (g_grim->getGameLanguage() != Common::EN_ANY)
+		lua_pushnumber(1.0);
+}
+
+void L2_ImSetState() {
+	lua_Object stateObj = lua_getparam(1);
+	if (!lua_isnumber(stateObj))
+		return;
+
+	int state = (int)lua_getnumber(stateObj);
+	warning("L2_ImSetState: stub, state: %d", state);
+}
+
 void L2_EnableVoiceFX() {
 	lua_Object stateObj = lua_getparam(1);
 
@@ -180,6 +233,16 @@ static void L2_GetCPUSpeed() {
 	lua_pushnumber(500); // anything above 333 make best configuration
 }
 
+static void L2_SetActiveCD() {
+	lua_Object cdObj = lua_getparam(1);
+	int cd = (int)lua_getnumber(cdObj);
+
+	if (cd == 1 || cd == 2) {
+		warning("L2_GetActiveCD: set to CD: %d", cd);
+		lua_pushnumber(1.0);
+	}
+}
+
 static void L2_GetActiveCD() {
 	// return current CD number 1 or 2, original can also avoid push any numer
 	warning("L2_GetActiveCD: return const CD 1");
@@ -210,12 +273,9 @@ STUB_FUNC2(L2_SetActorTalkChore)
 STUB_FUNC2(L2_SetActorWalkRate)
 STUB_FUNC2(L2_GetActorWalkRate)
 STUB_FUNC2(L2_SetActorTurnRate)
-STUB_FUNC2(L2_SetSelectedActor)
 STUB_FUNC2(L2_GetActorPos)
-STUB_FUNC2(L2_GetActorPuckVector)
 STUB_FUNC2(L2_GetActorYawToPoint)
 STUB_FUNC2(L2_SetActorReflection)
-STUB_FUNC2(L2_PutActorInSet)
 STUB_FUNC2(L2_WalkActorVector)
 STUB_FUNC2(L2_WalkActorForward)
 STUB_FUNC2(L2_WalkActorTo)
@@ -236,7 +296,6 @@ STUB_FUNC2(L2_StopActorChore)
 STUB_FUNC2(L2_IsActorResting)
 STUB_FUNC2(L2_Exit)
 STUB_FUNC2(L2_FunctionName)
-STUB_FUNC2(L2_GetControlState)
 STUB_FUNC2(L2_MakeCurrentSet)
 STUB_FUNC2(L2_LockSet)
 STUB_FUNC2(L2_UnLockSet)
@@ -251,9 +310,6 @@ STUB_FUNC2(L2_IsMoviePlaying)
 STUB_FUNC2(L2_PlaySound)
 STUB_FUNC2(L2_IsSoundPlaying)
 STUB_FUNC2(L2_SetSoundPosition)
-STUB_FUNC2(L2_FileFindFirst)
-STUB_FUNC2(L2_FileFindNext)
-STUB_FUNC2(L2_FileFindDispose)
 STUB_FUNC2(L2_InputDialog)
 STUB_FUNC2(L2_MakeSectorActive)
 STUB_FUNC2(L2_GetCurrentScript)
@@ -265,20 +321,16 @@ STUB_FUNC2(L2_ImStartSound)
 STUB_FUNC2(L2_ImGetSfxVol)
 STUB_FUNC2(L2_ImGetVoiceVol)
 STUB_FUNC2(L2_ImGetMusicVol)
-STUB_FUNC2(L2_ImSetState)
 STUB_FUNC2(L2_ImSetSequence)
-STUB_FUNC2(L2_LoadBundle)
 STUB_FUNC2(L2_SetActorWalkDominate)
 STUB_FUNC2(L2_RenderModeUser)
 STUB_FUNC2(L2_DimScreen)
 STUB_FUNC2(L2_Display)
-STUB_FUNC2(L2_SetSpeechMode)
 STUB_FUNC2(L2_GetSpeechMode)
 STUB_FUNC2(L2_KillActorShadows)
 STUB_FUNC2(L2_NewObjectState)
 STUB_FUNC2(L2_SubmitSaveGameData)
 STUB_FUNC2(L2_GetSaveGameData)
-STUB_FUNC2(L2_SetTextSpeed)
 STUB_FUNC2(L2_GetTextSpeed)
 STUB_FUNC2(L2_JustLoaded)
 STUB_FUNC2(L2_IsMessageGoing)
@@ -355,8 +407,6 @@ STUB_FUNC2(L2_PurgeText)
 
 // Monkey specific opcodes:
 
-STUB_FUNC2(L2_SetActiveCD)
-STUB_FUNC2(L2_AreWeInternational)
 STUB_FUNC2(L2_MakeScreenTextures)
 STUB_FUNC2(L2_ThumbnailFromFile)
 STUB_FUNC2(L2_ClearSpecialtyTexture)
@@ -405,7 +455,7 @@ STUB_FUNC2(L2_ImStateHasLooped)
 STUB_FUNC2(L2_ImStateHasEnded)
 STUB_FUNC2(L2_ImPushState)
 STUB_FUNC2(L2_ImPopState)
-STUB_FUNC2(L2_ImFlushStack)
+STUB_FUNC(L2_ImFlushStack)
 STUB_FUNC2(L2_ImGetMillisecondPosition)
 STUB_FUNC2(L2_GetSectorName)
 STUB_FUNC2(L2_GetCameraYaw)
@@ -454,10 +504,10 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "SetActorWalkRate", L2_SetActorWalkRate },
 	{ "GetActorWalkRate", L2_GetActorWalkRate },
 	{ "SetActorTurnRate", L2_SetActorTurnRate },
-	{ "SetSelectedActor", L2_SetSelectedActor },
+	{ "SetSelectedActor", L1_SetSelectedActor },
 	{ "LoadActor", L1_LoadActor },
 	{ "GetActorPos", L2_GetActorPos },
-	{ "GetActorPuckVector", L2_GetActorPuckVector },
+	{ "GetActorPuckVector", L1_GetActorPuckVector },
 	{ "GetActorYawToPoint", L2_GetActorYawToPoint },
 	{ "SetActorReflection", L2_SetActorReflection },
 	{ "PutActorAt", L1_PutActorAt },
@@ -489,7 +539,7 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "FunctionName", L2_FunctionName },
 	{ "EnableControl", L1_EnableControl },
 	{ "DisableControl", L1_DisableControl },
-	{ "GetControlState", L2_GetControlState },
+	{ "GetControlState", L1_GetControlState },
 	{ "PrintError", L1_PrintDebug },
 	{ "PrintWarning", L1_PrintDebug },
 	{ "PrintDebug", L1_PrintDebug },
@@ -509,9 +559,9 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "PlaySound", L2_PlaySound },
 	{ "IsSoundPlaying", L2_IsSoundPlaying },
 	{ "SetSoundPosition", L2_SetSoundPosition },
-	{ "FileFindFirst", L2_FileFindFirst },
-	{ "FileFindNext", L2_FileFindNext },
-	{ "FileFindDispose", L2_FileFindDispose },
+	{ "FileFindFirst", L1_FileFindFirst },
+	{ "FileFindNext", L1_FileFindNext },
+	{ "FileFindDispose", L1_FileFindDispose },
 	{ "InputDialog", L2_InputDialog },
 	{ "GetSectorOppositeEdge", L2_GetSectorOppositeEdge },
 	{ "MakeSectorActive", L2_MakeSectorActive },
@@ -542,7 +592,7 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "RenderModeUser", L2_RenderModeUser },
 	{ "DimScreen", L2_DimScreen },
 	{ "Display", L2_Display },
-	{ "SetSpeechMode", L2_SetSpeechMode },
+	{ "SetSpeechMode", L1_SetSpeechMode },
 	{ "GetSpeechMode", L2_GetSpeechMode },
 	{ "KillActorShadows", L2_KillActorShadows },
 	{ "NewObjectState", L2_NewObjectState },
@@ -550,7 +600,7 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "SetActorCollisionScale", L2_SetActorCollisionScale },
 	{ "SubmitSaveGameData", L2_SubmitSaveGameData },
 	{ "GetSaveGameData", L2_GetSaveGameData },
-	{ "SetTextSpeed", L2_SetTextSpeed },
+	{ "SetTextSpeed", L1_SetTextSpeed },
 	{ "GetTextSpeed", L2_GetTextSpeed },
 	{ "JustLoaded", L2_JustLoaded },
 	{ "UnShrinkBoxes", L2_UnShrinkBoxes },
