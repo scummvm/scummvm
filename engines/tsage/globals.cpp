@@ -22,6 +22,7 @@
 
 #include "tsage/globals.h"
 #include "tsage/tsage.h"
+#include "tsage/ringworld_demo.h"
 #include "tsage/ringworld_logic.h"
 
 namespace tSage {

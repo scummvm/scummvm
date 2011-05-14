@@ -27,6 +27,16 @@
 
 namespace tSage {
 
+void RingworldDemoGame::start() {
+	// Start the demo's single scene
+	_globals->_sceneManager.changeScene(1);
+	
+	_globals->_events.setCursor(CURSOR_NONE);
+}
+
+void RingworldDemoGame::restart() {
+}
+
 /*--------------------------------------------------------------------------
  * Ringworld Demo scene
  *
