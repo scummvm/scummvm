@@ -340,7 +340,13 @@ Common::Error MohawkEngine_Myst::run() {
 						drawResourceRects();
 					break;
 				case Common::KEYCODE_F5:
+					_needsPageDrop = false;
 					runDialog(*_optionsDialog);
+
+					if (_needsPageDrop) {
+						dropPage();
+						_needsPageDrop = false;
+					}
 					break;
 				default:
 					break;
@@ -1176,6 +1182,41 @@ bool MohawkEngine_Myst::canSaveGameStateCurrently() {
 	}
 
 	return false;
+}
+
+void MohawkEngine_Myst::dropPage() {
+    uint16 page = _gameState->_globals.heldPage;
+	bool whitePage = page == 13;
+	bool bluePage = page - 1 < 6;
+    bool redPage = page - 7 < 6;
+
+    // Drop page
+    _gameState->_globals.heldPage = 0;
+
+    // Redraw page area
+    if (whitePage && _gameState->_globals.currentAge == 2) {
+    	redrawArea(41);
+    } else if (bluePage) {
+    	if (page == 6) {
+    		if (_gameState->_globals.currentAge == 2)
+    			redrawArea(24);
+    	} else {
+    		redrawArea(103);
+    	}
+    } else if (redPage) {
+    	if (page == 12) {
+    		if (_gameState->_globals.currentAge == 2)
+    			redrawArea(25);
+    	} else if (page == 10) {
+    		if (_gameState->_globals.currentAge == 1)
+    			redrawArea(35);
+    	} else {
+    		redrawArea(102);
+    	}
+    }
+
+    setMainCursor(kDefaultMystCursor);
+    checkCursorHints();
 }
 
 } // End of namespace Mohawk

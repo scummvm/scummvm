@@ -165,6 +165,7 @@ public:
 
 	bool _tweaksEnabled;
 	bool _needsUpdate;
+	bool _needsPageDrop;
 
 	MystView _view;
 	MystGraphics *_gfx;
@@ -206,6 +207,8 @@ private:
 	uint16 _curCard;
 
 	bool _runExitScript;
+
+	void dropPage();
 
 	void loadCard();
 	void unloadCard();

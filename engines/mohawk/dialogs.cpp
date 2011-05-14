@@ -79,7 +79,8 @@ void PauseDialog::handleKeyDown(Common::KeyState state) {
 enum {
 	kZipCmd = 'ZIPM',
 	kTransCmd = 'TRAN',
-	kWaterCmd = 'WATR'
+	kWaterCmd = 'WATR',
+	kDropCmd = 'DROP'
 };
 
 #ifdef ENABLE_MYST
@@ -87,6 +88,7 @@ enum {
 MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : GUI::OptionsDialog("", 120, 120, 360, 200), _vm(vm) {
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
 	_transitionsCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, _("~T~ransitions Enabled"), 0, kTransCmd);
+	_dropPageButton = new GUI::ButtonWidget(this, 15, 60, 100, 25, _("~D~rop Page"), 0, kDropCmd);
 
 	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), 0, GUI::kOKCmd);
 	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), 0, GUI::kCloseCmd);
@@ -97,6 +99,8 @@ MystOptionsDialog::~MystOptionsDialog() {
 
 void MystOptionsDialog::open() {
 	Dialog::open();
+
+	_dropPageButton->setEnabled(_vm->_gameState->_globals.heldPage != 0);
 
 	_zipModeCheckbox->setState(_vm->_gameState->_globals.zipMode);
 	_transitionsCheckbox->setState(_vm->_gameState->_globals.transitions);
@@ -109,6 +113,10 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 		break;
 	case kTransCmd:
 		_vm->_gameState->_globals.transitions = _transitionsCheckbox->getState();
+		break;
+	case kDropCmd:
+		_vm->_needsPageDrop = true;
+		close();
 		break;
 	case GUI::kCloseCmd:
 		close();
