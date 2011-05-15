@@ -423,10 +423,33 @@ void BitmapData::convertToColorFormat(int num, int format){
 			_colorFormat = BM_RGB565;
 		}
 		
-	}/*else if (_colorFormat == BM_RGB565){
-	  // Might put the GFX_OpenGL-conversion here.
-	  }*/
-	else{
+	} else if (_colorFormat == BM_RGB565){
+		if(format == BM_RGBA && _bpp == 16){
+			byte *tempData = new byte[4 * _width * _height];
+			// Convert data to 32-bit RGBA format
+			byte *tempDataPtr = tempData;
+			uint16 *bitmapData = reinterpret_cast<uint16 *>(_data[num]);
+			for (int i = 0; i < _width * _height; i++, tempDataPtr += 4, bitmapData++) {
+				uint16 pixel = *bitmapData;
+				int r = pixel >> 11;
+				tempDataPtr[0] = (r << 3) | (r >> 2);
+				int g = (pixel >> 5) & 0x3f;
+				tempDataPtr[1] = (g << 2) | (g >> 4);
+				int b = pixel & 0x1f;
+				tempDataPtr[2] = (b << 3) | (b >> 2);
+				if (pixel == 0xf81f) { // transparent
+					tempDataPtr[3] = 0;
+					_hasTransparency = true;
+				} else {
+					tempDataPtr[3] = 255;
+				}
+			}
+			delete [] _data[num];
+			_data[num]=(char*)tempData;
+			_colorFormat = BM_RGBA;
+			_bpp = 32;
+		}
+	} else{
 		error("Conversion between format: %d and format %d not implemented",_colorFormat, format);
 	}
 }
