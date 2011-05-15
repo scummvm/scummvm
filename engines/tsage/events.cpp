@@ -151,8 +151,13 @@ void EventsClass::setCursor(CursorType cursorType) {
 	switch (cursorType) {
 	case CURSOR_NONE:
 		// No cursor
-		cursor = _resourceManager->getSubResource(4, 1, 6, &size);
 		_globals->setFlag(122);
+
+		if (_vm->getFeatures() & GF_DEMO) {
+			CursorMan.showMouse(false);
+			return;
+		}
+		cursor = _resourceManager->getSubResource(4, 1, 6, &size);
 		break;
 
 	case CURSOR_LOOK:
