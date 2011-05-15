@@ -308,13 +308,13 @@ Bitmap::~Bitmap() {
 void BitmapData::convertToColorFormat(int num, int format){
 	// Supports 1555->RGBA, RGBA->565
 	if(_colorFormat == BM_RGB1555){
+		char red = 0, green = 0, blue = 0;
 		if (format == BM_RGBA && _bpp == 16){
 			const int BytesPP = 2;
 			char *newData = new char[_width * _height * 4];
 			char *to = newData;
-			char red = 0, green = 0, blue = 0;
-			for (unsigned int i = 0; i< _height; i++) {
-				for(unsigned int j = 0; j < _width; j++) {
+			for (int i = 0; i< _height; i++) {
+				for(int j = 0; j < _width; j++) {
 					char byte2 = _data[num][i * _width * BytesPP + j *2];
 					char byte1 = _data[num][i * _width * BytesPP + j * 2 + 1];
 					// Probably Alpha, then 555.
@@ -346,21 +346,20 @@ void BitmapData::convertToColorFormat(int num, int format){
 			_bpp = 32;
 		}
 		else if(format == BM_RGB565){ // 1555 -> 565 (Incomplete)
-								 // This doesn't work properly yet, probably because I misinterpret the byteorder.
+			warning("Conversion 1555->565 is not properly implemented");
+			// This doesn't work properly yet, probably because I misinterpret the byteorder.
 			char *tile = getImageData(0);
-			char *newData = new char[_width * _height * 4];
 			char *to = tile;
-			char red = 0, green = 0, blue = 0;
-			for (unsigned int i = 0; i< _height; i++) {
-				for(unsigned int j = 0; j < _width; j++) {
+			for (int i = 0; i< _height; i++) {
+				for(int j = 0; j < _width; j++) {
 					char byte2 = tile[i * _width * 2 + j *2];
 					char byte1 = tile[i * _width * 2 + j * 2 + 1];
 					char outByte1 = 0;
 					char outByte2 = 0;
 					// Probably Alpha, then 555.
 					if(byte1&128){ // Chroma key
-						outByte1 = 0xf8;
-						outByte2 = 0x1f;
+					//	outByte1 = 0xf8;
+					//	outByte2 = 0x1f;
 					}else{
 						// Red
 						red = (byte1 >> 2) & 31;
