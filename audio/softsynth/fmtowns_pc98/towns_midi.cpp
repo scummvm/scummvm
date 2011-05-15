@@ -670,7 +670,7 @@ TownsMidiInputChannel::TownsMidiInputChannel(MidiDriver_TOWNS *driver, int chanI
 }
 
 TownsMidiInputChannel::~TownsMidiInputChannel() {
-	delete _instrument;
+	delete[] _instrument;
 }
 
 bool TownsMidiInputChannel::allocate() {
@@ -836,7 +836,8 @@ const uint8 TownsMidiInputChannel::_programAdjustLevel[] = {
 	0x3D, 0x3D, 0x3E, 0x3E, 0x3E, 0x3F, 0x3F, 0x3F
 };
 
-MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer) : _timerProc(0), _timerProcPara(0), _open(false) {
+MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer) : _timerProc(0), _timerProcPara(0), _channels(0), _out(0),
+	_chanState(0), _operatorLevelTable(0), _tickCounter1(0), _tickCounter2(0), _rand(1), _allocCurPos(0), _open(false) {
 	_intf = new TownsAudioInterface(mixer, this);
 }
 

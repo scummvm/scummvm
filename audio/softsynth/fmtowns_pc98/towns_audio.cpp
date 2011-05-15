@@ -255,7 +255,8 @@ TownsAudioInterfaceIntern::TownsAudioInterfaceIntern(Audio::Mixer *mixer, TownsA
 	_baserate(55125.0f / (float)mixer->getOutputRate()), _tickLength(0), _timer(0), _drv(driver),
 	_pcmSfxChanMask(0),	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume),
 	_outputVolumeFlags(0), _pcmChanOut(0), _pcmChanReserved(0), _pcmChanKeyPressed(0),
-	_pcmChanEffectPlaying(0), _pcmChanKeyPlaying(0), _ready(false) {
+	_pcmChanEffectPlaying(0), _pcmChanKeyPlaying(0), _fmChanPlaying(0), 
+	_numReservedChannels(0), _numWaveTables(0), _ready(false) {
 
 #define INTCB(x) &TownsAudioInterfaceIntern::intf_##x
 	static const TownsAudioIntfCallback intfCb[] = {
@@ -368,6 +369,11 @@ TownsAudioInterfaceIntern::TownsAudioInterfaceIntern(Audio::Mixer *mixer, TownsA
 	_intfOpcodes = intfCb;
 
 	memset(_fmSaveReg, 0, sizeof(_fmSaveReg));
+	memset(_fmChanNote, 0, sizeof(_fmChanNote));
+	memset(_fmChanPitch, 0, sizeof(_fmChanPitch));
+	memset(_pcmChanNote, 0, sizeof(_pcmChanNote));	
+	memset(_pcmChanVelo, 0, sizeof(_pcmChanVelo));
+	memset(_pcmChanLevel, 0, sizeof(_pcmChanLevel));
 	memset(_outputLevel, 0, sizeof(_outputLevel));
 	memset(_outputMute, 0, sizeof(_outputMute));
 
@@ -980,9 +986,9 @@ int TownsAudioInterfaceIntern::intf_setOutputMute(va_list &args) {
 
 	memset(_outputMute, 1, 8);
 	if (mute & 2)
-		memset(_outputMute + 12, 1, 4);
+		memset(&_outputMute[12], 1, 4);
 	if (mute & 1)
-		memset(_outputMute + 8, 1, 4);	
+		memset(&_outputMute[8], 1, 4);	
 
 	_outputMute[(f < 0x80) ? 11 : 15] = 0;
 	f += f;

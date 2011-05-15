@@ -28,7 +28,8 @@
 TownsEuphonyDriver::TownsEuphonyDriver(Audio::Mixer *mixer) : _activeChannels(0), _sustainChannels(0),
 	_assignedChannels(0), _paraCount(0), _command(0), _tEnable(0), _tMode(0), _tOrdr(0), _tLevel(0),
 	_tTranspose(0), _musicPos(0), _musicStart(0), _playing(false), _eventBuffer(0), _bufferedEventsCount(0),
-	_tempoControlMode(0) {
+	_tempoControlMode(0), _timerSetting(0), _tempoDiff(0), _timeStampBase(0), _elapsedEvents(0), _loop(false),
+	_endOfTrack(false), _suspendParsing(false), _musicTrackSize(0) {
 	_para[0] = _para[1] = 0;
 	_intf = new TownsAudioInterface(mixer, this);
 	resetTempo();

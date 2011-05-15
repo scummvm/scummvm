@@ -99,7 +99,7 @@ TownsPC98_FmSynthOperator::TownsPC98_FmSynthOperator(const uint32 timerbase, con
 	_rtt(rtt), _rateTbl(rateTable), _rshiftTbl(shiftTable), _adTbl(attackDecayTable), _fTbl(frqTable),
 	_sinTbl(sineTable), _tLvlTbl(tlevelOut), _detnTbl(detuneTable), _tickLength(timerbase * 2),
 	_specifiedAttackRate(0), _specifiedDecayRate(0), _specifiedReleaseRate(0), _specifiedSustainRate(0),
-	_phase(0), _state(kEnvReady), _holdKey(false), _timer(0), _keyScale1(0),
+	_sustainLevel(0), _phase(0), _state(kEnvReady), _holdKey(false), _timer(0), _keyScale1(0),
 	_keyScale2(0), _currentLevel(1023), _ampMod(false), _tickCount(0) {
 
 	fs_a.rate = fs_a.shift = fs_d.rate = fs_d.shift = fs_s.rate = fs_s.shift = fs_r.rate = fs_r.shift = 0;
@@ -653,7 +653,8 @@ void TownsPC98_FmSynthSquareSineSource::updateRegs() {
 
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
 TownsPC98_FmSynthPercussionSource::TownsPC98_FmSynthPercussionSource(const uint32 timerbase, const uint32 rtt) :
-	_rtt(rtt), _tickLength(timerbase * 2), _timer(0), _ready(false), _volMaskA(0), _volMaskB(0), _volumeA(Audio::Mixer::kMaxMixerVolume), _volumeB(Audio::Mixer::kMaxMixerVolume) {
+	_rtt(rtt), _tickLength(timerbase * 2), _timer(0), _totalLevel(0), _volMaskA(0), _volMaskB(0),
+	_volumeA(Audio::Mixer::kMaxMixerVolume), _volumeB(Audio::Mixer::kMaxMixerVolume), _ready(false) {
 
 	memset(_rhChan, 0, sizeof(RhtChannel) * 6);
 	_reg = new uint8 *[40];
@@ -1256,7 +1257,7 @@ void TownsPC98_FmSynth::generateTables() {
 	WRITE_BE_UINT32(_oprRates + 32, _numChan == 6 ? 0x90900000 : 0x00081018);
 	WRITE_BE_UINT32(_oprRates + 36, _numChan == 6 ? 0x00001010 : 0x00081018);
 	memset(_oprRates, 0x90, 32);
-	memset(_oprRates + 96, 0x80, 32);
+	memset(&_oprRates[96], 0x80, 32);
 	uint8 *dst = (uint8 *)_oprRates + 40;
 	for (int i = 0; i < 40; i += 4)
 		WRITE_BE_UINT32(dst + i, 0x00081018);
@@ -1313,8 +1314,8 @@ void TownsPC98_FmSynth::generateTables() {
 
 	uint8 *dtt = new uint8[128];
 	memset(dtt, 0, 36);
-	memset(dtt + 36, 1, 8);
-	memcpy(dtt + 44, _detSrc, 84);
+	memset(&dtt[36], 1, 8);
+	memcpy(&dtt[44], _detSrc, 84);
 
 	delete[] _oprDetune;
 	_oprDetune = new int32[256];
