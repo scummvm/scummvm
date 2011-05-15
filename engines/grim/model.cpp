@@ -621,5 +621,4 @@ void Model::Face::draw(float *vertices, float *vertNormals, float *textureVerts)
 	g_driver->drawModelFace(this, vertices, vertNormals, textureVerts);
 }
 
-
 } // end of namespace Grim

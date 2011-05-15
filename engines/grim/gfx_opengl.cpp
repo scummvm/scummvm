@@ -248,7 +248,6 @@ void GfxOpenGL::startActorDraw(Graphics::Vector3d pos, float scale, float yaw, f
 	glEnable(GL_TEXTURE_2D);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-
 	if (_currentShadowArray) {
 		// TODO find out why shadowMask at device in woods is null
 		if (!_currentShadowArray->shadowMask) {
