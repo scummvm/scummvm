@@ -625,6 +625,7 @@ int IMuseInternal::stopSound_internal(int sound) {
 }
 
 int IMuseInternal::stopAllSounds_internal() {
+	clear_queue();
 	Player *player = _players;
 	for (int i = ARRAYSIZE(_players); i; i--, player++) {
 		if (player->isActive())
@@ -925,54 +926,22 @@ void IMuseInternal::sequencer_timers(MidiDriver *midi) {
 }
 
 void IMuseInternal::handle_marker(uint id, byte data) {
-	uint16 *p = 0;
-	uint pos;
-
 	if (_queue_adding && _queue_sound == id && data == _queue_marker)
 		return;
 
-	// Fix for bug #733401, revised for bug #761637:
-	// It would seem that sometimes a marker is in the queue
-	// but not at the head position. In the case of our bug,
-	// this seems to be the result of commands in the queue
-	// for songs that are no longer playing. So we skip
-	// ahead to the appropriate marker, effectively chomping
-	// anything in the queue before it. This fixes the FOA
-	// end credits music, but needs to be tested for inappopriate
-	// behavior elsewhere.
-	pos = _queue_end;
-	while (pos != _queue_pos) {
-		p = _cmd_queue[pos].array;
-		if (p[0] == TRIGGER_ID && p[1] == id && p[2] == data)
-			break;
-		pos = (pos + 1) % ARRAYSIZE(_cmd_queue);
-	}
-
-	if (pos == _queue_pos)
+	uint16 *p = _cmd_queue[_queue_end].array;
+	if (p[0] != TRIGGER_ID || id != p[1] || data != p[2])
 		return;
-
-	if (pos != _queue_end)
-		debug(0, "Skipping entries in iMuse command queue to reach marker");
 
 	_trigger_count--;
 	_queue_cleared = false;
-	do {
-		pos = (pos + 1) % ARRAYSIZE(_cmd_queue);
-		if (_queue_pos == pos)
-			break;
-		p = _cmd_queue[pos].array;
-		if (*p++ != COMMAND_ID)
-			break;
-		_queue_end = pos;
-
-		doCommand_internal(p[0], p[1], p[2], p[3], p[4], p[5], p[6], 0);
-
-		if (_queue_cleared)
-			return;
-		pos = _queue_end;
-	} while (1);
-
-	_queue_end = pos;
+	_queue_end = (_queue_end + 1) % ARRAYSIZE(_cmd_queue);
+	
+	while(_queue_end != _queue_pos && _cmd_queue[_queue_end].array[0] == COMMAND_ID && !_queue_cleared) {
+		p = _cmd_queue[_queue_end].array;
+		doCommand_internal(p[1], p[2], p[3], p[4], p[5], p[6], p[7], 0);
+		_queue_end = (_queue_end + 1) % ARRAYSIZE(_cmd_queue);
+	}
 }
 
 int IMuseInternal::get_channel_volume(uint a) {
