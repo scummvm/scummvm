@@ -309,6 +309,7 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 	virtual void dispatch();
+	virtual void synchronize(Serializer &s);
 };
 
 class Scene60 : public Scene {	

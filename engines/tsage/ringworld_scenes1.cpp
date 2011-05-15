@@ -1840,6 +1840,8 @@ void Scene50::signal() {
 }
 
 void Scene50::dispatch() {
+	Scene::dispatch();
+
 	if ((_sceneMode != 55) && _doorwayRect.contains(_globals->_player._position)) {
 		// Player in house doorway, start player moving to within
 		_globals->_player.disableControl();
@@ -1848,6 +1850,13 @@ void Scene50::dispatch() {
 		NpcMover *mover = new NpcMover();
 		_globals->_player.addMover(mover, &pt, this);
 	}
+}
+
+void Scene50::synchronize(Serializer &s) {
+	Scene::synchronize(s);
+	
+	if (s.getVersion() >= 3)
+		_doorwayRect.synchronize(s);
 }
 
 /*--------------------------------------------------------------------------

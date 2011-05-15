@@ -33,7 +33,7 @@ namespace tSage {
 
 typedef void (*SaveNotifierFn)(bool postFlag);
 
-#define TSAGE_SAVEGAME_VERSION 2
+#define TSAGE_SAVEGAME_VERSION 3
 
 class SavedObject;
 
