@@ -36,6 +36,12 @@ class SaveGame;
 class BitmapData;
 class PrimitiveObject;
 
+enum colorFormat{
+	BM_RGB565 = 1,    // Grim Fandango
+	BM_RGB1555 = 2,   // EMI-PS2
+	BM_RGBA = 3      // EMI-PC
+};
+	
 class GfxBase {
 public:
 	GfxBase() { ; }
