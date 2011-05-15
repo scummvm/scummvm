@@ -341,11 +341,18 @@ Common::Error MohawkEngine_Myst::run() {
 					break;
 				case Common::KEYCODE_F5:
 					_needsPageDrop = false;
+					_needsShowMap = false;
+
 					runDialog(*_optionsDialog);
 
 					if (_needsPageDrop) {
 						dropPage();
 						_needsPageDrop = false;
+					}
+
+					if (_needsShowMap) {
+						_scriptParser->showMap();
+						_needsShowMap = false;
 					}
 					break;
 				default:

@@ -49,6 +49,8 @@ private:
 	void toggleVar(uint16 var);
 	bool setVarValue(uint16 var, uint16 value);
 
+	virtual uint16 getMap() { return 9933; }
+
 	DECLARE_OPCODE(o_pumpTurnOff);
 	DECLARE_OPCODE(o_brotherDoorOpen);
 	DECLARE_OPCODE(o_cabinBookMovie);

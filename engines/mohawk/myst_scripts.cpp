@@ -145,6 +145,7 @@ void MystScriptParser::setupCommonOpcodes() {
 	OPCODE(44, o_restoreMainCursor);
 	// Opcode 45 Not Present
 	OPCODE(46, o_soundWaitStop);
+	OPCODE(51, o_exitMap);
 	// Opcodes 47 to 99 Not Present
 
 	OPCODE(0xFFFF, NOP);
@@ -920,6 +921,17 @@ void MystScriptParser::o_soundWaitStop(uint16 op, uint16 var, uint16 argc, uint1
 
 void MystScriptParser::o_quit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_vm->quitGame();
+}
+
+void MystScriptParser::showMap() {
+	if (_vm->getCurCard() != getMap()) {
+		_savedMapCardId = _vm->getCurCard();
+		_vm->changeToCard(getMap(), true);
+	}
+}
+
+void MystScriptParser::o_exitMap(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	_vm->changeToCard(_savedMapCardId, true);
 }
 
 } // End of namespace Mohawk
