@@ -468,8 +468,10 @@ void InventoryDialog::execute() {
 	while (!_vm->getEventManager()->shouldQuit()) {
 		// Get events
 		Event event;
-		while (!_globals->_events.getEvent(event) && !_vm->getEventManager()->shouldQuit())
-			;
+		while (!_globals->_events.getEvent(event) && !_vm->getEventManager()->shouldQuit()) {
+			g_system->delayMillis(10);
+			g_system->updateScreen();
+		}
 		if (_vm->getEventManager()->shouldQuit())
 			return;
 
