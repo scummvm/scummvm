@@ -397,6 +397,7 @@ void Model::loadText(TextSplitter *ts, CMap *cmap) {
 		_rootHierNode[num]._meshVisible = true;
 		_rootHierNode[num]._hierVisible = true;
 		_rootHierNode[num]._totalWeight = 0;
+		_rootHierNode[num]._sprite = NULL;
 	}
 
 	if (!ts->isEof() && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
