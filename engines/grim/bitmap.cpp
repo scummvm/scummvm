@@ -243,6 +243,13 @@ bool BitmapData::loadTile(const char *filename, const char *data, int len) {
 		o->seek(8, SEEK_CUR);
 		o->read(_data[i], size);
 	}
+	if(_bpp==16){
+		for (int i = 0; i < numSubImages; ++i) {
+			for (int j = 0; j < _width * _height; ++j) {
+				((uint16 *)_data[i])[j] = SWAP_BYTES_16(((uint16 *)_data[i])[j]);
+			}
+		}
+	}
 	char *bMap = makeBitmapFromTile(_data, 640, 480, _bpp);
 	for (int i = 0; i < numSubImages; ++i) {
 		delete[] _data[i];
@@ -254,7 +261,7 @@ bool BitmapData::loadTile(const char *filename, const char *data, int len) {
 
 	if (_bpp == 16) {
 		_colorFormat = BM_RGB1555;
-		convertToColorFormat(0, BM_RGBA);
+		//convertToColorFormat(0, BM_RGBA);
 	}else{
 		_colorFormat = BM_RGBA;
 	}
@@ -315,8 +322,8 @@ void BitmapData::convertToColorFormat(int num, int format){
 			char *to = newData;
 			for (int i = 0; i< _height; i++) {
 				for(int j = 0; j < _width; j++) {
-					char byte2 = _data[num][i * _width * BytesPP + j *2];
-					char byte1 = _data[num][i * _width * BytesPP + j * 2 + 1];
+					char byte1 = _data[num][i * _width * BytesPP + j *2];
+					char byte2 = _data[num][i * _width * BytesPP + j * 2 + 1];
 					// Probably Alpha, then 555.
 					// Red
 					red = (byte1 >> 2) & 31;
@@ -346,6 +353,10 @@ void BitmapData::convertToColorFormat(int num, int format){
 			_bpp = 32;
 		}
 		else if(format == BM_RGB565){ // 1555 -> 565 (Incomplete)
+			convertToColorFormat(num,BM_RGBA);
+			convertToColorFormat(num,BM_RGB565);
+			warning("Conversion 1555->565 done with 1555->RGBA->565");
+			return;
 			warning("Conversion 1555->565 is not properly implemented");
 			// This doesn't work properly yet, probably because I misinterpret the byteorder.
 			char *tile = getImageData(0);

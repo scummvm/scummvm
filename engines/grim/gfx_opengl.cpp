@@ -530,7 +530,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, bitmap->_width);
 
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
-			if (bitmap->_bpp == 16) {
+			if (bitmap->_bpp == 16 && bitmap->_colorFormat != BM_RGB1555) {
 				if (texData == 0)
 					texData = new byte[4 * bitmap->_width * bitmap->_height];
 				// Convert data to 32-bit RGBA format
@@ -552,6 +552,9 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 					}
 				}
 				texOut = texData;
+			} else if(bitmap->_colorFormat == BM_RGB1555){
+				bitmap->convertToColorFormat(pic, BM_RGBA);
+				texOut = (byte *)bitmap->getImageData(pic);
 			} else {
 				texOut = (byte *)bitmap->getImageData(pic);
 			}
