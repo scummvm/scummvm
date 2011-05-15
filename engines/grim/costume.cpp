@@ -650,7 +650,7 @@ void MaterialComponent::init() {
 		ModelComponent *p = static_cast<ModelComponent *>(_parent);
 		Model *model = p->getModel();
 		for (int i = 0; i < model->_numMaterials; ++i) {
-			if (strcmp(model->_materials[i]->getFilename(), _filename.c_str()) == 0)
+			if (scumm_stricmp(model->_materials[i]->getFilename(), _filename.c_str()) == 0)
 				_mat = model->_materials[i].object();
 		}
 	} else {
