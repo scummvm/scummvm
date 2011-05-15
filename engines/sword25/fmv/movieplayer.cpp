@@ -46,7 +46,7 @@ namespace Sword25 {
 #define FLT_EPSILON     1.192092896e-07F        /* smallest such that 1.0+FLT_EPSILON != 1.0 */
 
 #ifdef USE_THEORADEC
-MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel), _decoder(g_system->getMixer()) {
+MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel), _decoder() {
 	if (!registerScriptBindings())
 		error("Script bindings could not be registered.");
 	else

@@ -53,7 +53,7 @@ namespace Sword25 {
  */
 class TheoraDecoder : public Video::FixedRateVideoDecoder {
 public:
-	TheoraDecoder(Audio::Mixer *mixer = 0, Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
+	TheoraDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 	virtual ~TheoraDecoder();
 
 	/**
@@ -71,43 +71,30 @@ public:
 	 */
 	const Graphics::Surface *decodeNextFrame();
 
-	bool isVideoLoaded() const {
-		return _fileStream != 0;
-	}
-	bool isPaused() const {
-		return (FixedRateVideoDecoder::isPaused() || !isVideoLoaded());
-	}
+	bool isVideoLoaded() const { return _fileStream != 0; }
+	uint16 getWidth() const { return _surface->w; }
+	uint16 getHeight() const { return _surface->h; }
 
-	uint16 getWidth() const {
-		return _surface->w;
-	}
-	uint16 getHeight() const {
-		return _surface->h;
-	}
 	uint32 getFrameCount() const {
 		// It is not possible to get frame count easily
 		// I.e. seeking is required
 		assert(0);
 		return 0;
 	}
-	Graphics::PixelFormat getPixelFormat() const {
-		return Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
-	}
+
+	Graphics::PixelFormat getPixelFormat() const { return _surface->format; }
 
 	uint32 getElapsedTime() const;
 
 	bool endOfVideo() const;
 
 protected:
-	Common::Rational getFrameRate() const {
-		return _frameRate;
-	}
+	Common::Rational getFrameRate() const {	return _frameRate; }
 
 private:
 	void queuePage(ogg_page *page);
 	int bufferData();
-	Audio::QueuingAudioStream *createAudioStream();
-	void translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer, byte *pixelData);
+	void translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer);
 
 private:
 	Common::SeekableReadStream *_fileStream;
@@ -115,7 +102,6 @@ private:
 	Common::Rational _frameRate;
 	uint32 _frameCount;
 
-	Audio::Mixer *_mixer;
 	Audio::Mixer::SoundType _soundType;
 	Audio::SoundHandle *_audHandle;
 	Audio::QueuingAudioStream *_audStream;
@@ -136,14 +122,10 @@ private:
 
 	int _theoraPacket;
 	int _vorbisPacket;
-	bool _stateFlag;
 
 	int _ppLevelMax;
 	int _ppLevel;
 	int _ppInc;
-
-	// single frame video buffering
-	bool _videobufReady;
 
 	// single audio fragment audio buffering
 	int _audiobufFill;
