@@ -470,6 +470,46 @@ void GfxTinyGL::drawModelFace(const Model::Face *face, float *vertices, float *v
 	tglEnd();
 }
 
+void GfxTinyGL::drawSprite(const Sprite *sprite) {
+	tglMatrixMode(TGL_TEXTURE);
+	tglLoadIdentity();
+	tglMatrixMode(TGL_MODELVIEW);
+	tglPushMatrix();
+	tglTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
+
+	TGLfloat modelview[16];
+	tglGetFloatv(TGL_MODELVIEW_MATRIX, modelview);
+
+	// We want screen-aligned sprites so reset the rotation part of the matrix.
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			if (i == j) {
+				modelview[i * 4 + j] = 1.0f;
+			} else {
+				modelview[i * 4 + j] = 0.0f;
+			}
+		}
+	}
+	tglLoadMatrixf(modelview);
+
+	tglDisable(TGL_LIGHTING);
+
+	tglBegin(TGL_POLYGON);
+	tglTexCoord2f(0.0f, 0.0f);
+	tglVertex3f(sprite->_width / 2, sprite->_height, 0.0f);
+	tglTexCoord2f(0.0f, 1.0f);
+	tglVertex3f(sprite->_width / 2, 0.0f, 0.0f);
+	tglTexCoord2f(1.0f, 1.0f);
+	tglVertex3f(-sprite->_width / 2, 0.0f, 0.0f);
+	tglTexCoord2f(1.0f, 0.0f);
+	tglVertex3f(-sprite->_width / 2, sprite->_height, 0.0f);
+	tglEnd();
+
+	tglEnable(TGL_LIGHTING);
+
+	tglPopMatrix();
+}
+
 void GfxTinyGL::translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
 	tglPushMatrix();
 
@@ -494,13 +534,21 @@ void GfxTinyGL::drawHierachyNode(const Model::HierNode *node) {
 		translateViewpointStart(node->_pos, node->_pitch, node->_yaw, node->_roll);
 	}
 	if (node->_hierVisible) {
-		if (node->_mesh && node->_meshVisible) {
-			tglPushMatrix();
-			tglTranslatef(node->_pivot.x(), node->_pivot.y(), node->_pivot.z());
-			node->_mesh->draw();
-			tglMatrixMode(TGL_MODELVIEW);
-			tglPopMatrix();
+		tglPushMatrix();
+		tglTranslatef(node->_pivot.x(), node->_pivot.y(), node->_pivot.z());
+
+		Sprite* sprite = node->_sprite;
+		while (sprite) {
+			sprite->draw();
+			sprite = sprite->_next;
 		}
+
+		if (node->_mesh && node->_meshVisible) {
+			node->_mesh->draw();
+		}
+
+		tglMatrixMode(TGL_MODELVIEW);
+		tglPopMatrix();
 
 		if (node->_child) {
 			node->_child->draw();

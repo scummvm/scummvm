@@ -117,10 +117,11 @@ public:
 
 	void init();
 	void setKey(int val);
+	void reset();
 
 private:
 	Common::String _filename;
-	Material *_material;
+	Sprite *_sprite;
 };
 
 class ColormapComponent : public Costume::Component {
@@ -231,36 +232,72 @@ void BitmapComponent::setKey(int val) {
 }
 
 SpriteComponent::SpriteComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
-	Costume::Component(p, parentID, t), _filename(filename) {
+	Costume::Component(p, parentID, t), _filename(filename), _sprite(NULL) {
 
 }
 
 SpriteComponent::~SpriteComponent() {
-	delete _material;
+	if (_sprite) {
+		if (_parent) {
+			MeshComponent *mc = dynamic_cast<MeshComponent *>(_parent);
+			mc->getNode()->removeSprite(_sprite);
+		}
+		delete _sprite->_material;
+		delete _sprite;
+	}
 }
 
 void SpriteComponent::init() {
-
-	warning("SpriteComponent '%s' not implemented. (%s)", _filename.c_str(), _cost->getFilename());
-
 	const char *comma = strchr(_filename.c_str(), ',');
 
 	Common::String name(_filename.c_str(), comma);
 
+	if (_sprite) {
+		if (_parent) {
+			MeshComponent *mc = dynamic_cast<MeshComponent *>(_parent);
+			mc->getNode()->removeSprite(_sprite);
+		}
+		delete _sprite;
+		_sprite = NULL;
+	}
+
 	if (comma) {
-		_material = g_resourceloader->loadMaterial(name.c_str(), getCMap());
+		int width, height, x, y, z;
+		sscanf(comma, ",%d,%d,%d,%d,%d", &width, &height, &x, &y, &z);
 
-		int a,b,c,d,e;
-		sscanf(comma, ",%d,%d,%d,%d,%d", &a, &b, &c, &d, &e);
-		// FIXME: What do these numbers mean?
+		_sprite = new Sprite;
+		_sprite->_material = g_resourceloader->loadMaterial(name.c_str(), getCMap());
+		_sprite->_width = (float)width / 100.0f;
+		_sprite->_height = (float)height / 100.0f;
+		_sprite->_pos.set((float)x / 100.0f, (float)y / 100.0f, (float)z / 100.0f);
+		_sprite->_visible = false;
+		_sprite->_next = NULL;
 
-	} else {
-
+		if (_parent) {
+			MeshComponent *mc = dynamic_cast<MeshComponent *>(_parent);
+			if (mc)
+				mc->getNode()->addSprite(_sprite);
+			else if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
+				warning("Parent of sprite %s wasn't a mesh", _filename.c_str());
+		}
 	}
 }
 
 void SpriteComponent::setKey(int val) {
-	_material->setNumber(val);
+	if (!_sprite)
+		return;
+
+	if (val == 0) {
+		_sprite->_visible = false;
+	} else {
+		_sprite->_visible = true;
+		_sprite->_material->setNumber(val - 1);
+	}
+}
+
+void SpriteComponent::reset() {
+	if (_sprite)
+		_sprite->_visible = false;
 }
 
 ModelComponent::ModelComponent(Costume::Component *p, int parentID, const char *filename, Costume::Component *prevComponent, tag32 t) :

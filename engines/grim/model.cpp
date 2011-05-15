@@ -36,6 +36,14 @@
 
 namespace Grim {
 
+void Sprite::draw() const {
+	if (!_visible)
+		return;
+
+	_material->select();
+	g_driver->drawSprite(this);
+}
+
 Model::Model(const char *filename, const char *data, int len, CMap *cmap) :
 		Object(), _numMaterials(0), _numGeosets(0), _cmap(cmap) {
 	_fname = filename;
@@ -270,6 +278,7 @@ void Model::HierNode::loadBinary(const char *&data, Model::HierNode *hierNodes, 
 	_animRoll = 0;
 	_priority = -1;
 	_totalWeight = 0;
+	_sprite = NULL;
 
 	data += 184;
 
@@ -573,6 +582,26 @@ void Model::HierNode::update() {
 	}
 }
 
+void Model::HierNode::addSprite(Sprite *sprite) {
+	sprite->_next = _sprite;
+	_sprite = sprite;
+}
+
+void Model::HierNode::removeSprite(Sprite *sprite) {
+	Sprite* curr = _sprite;
+	Sprite* prev = NULL;
+	while (curr->_next) {
+		if (curr == sprite) {
+			if (prev)
+				prev->_next = curr->_next;
+			else
+				_sprite = curr->_next;
+		}
+		prev = curr;
+		curr = curr->_next;
+	}
+}
+
 void Model::Mesh::draw() const {
 	int winX1, winY1, winX2, winY2;
 	g_driver->getBoundingBoxPos(this, &winX1, &winY1, &winX2, &winY2);
@@ -591,5 +620,6 @@ void Model::Face::draw(float *vertices, float *vertNormals, float *textureVerts)
 	_material->select();
 	g_driver->drawModelFace(this, vertices, vertNormals, textureVerts);
 }
+
 
 } // end of namespace Grim

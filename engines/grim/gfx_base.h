@@ -77,6 +77,7 @@ public:
 
 	virtual void drawHierachyNode(const Model::HierNode *node) = 0;
 	virtual void drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) = 0;
+	virtual void drawSprite(const Sprite *sprite) = 0;
 
 	virtual void disableLights() = 0;
 	virtual void setupLight(Scene::Light *light, int lightId) = 0;

@@ -36,6 +36,17 @@ class TextSplitter;
 class Material;
 class CMap;
 
+struct Sprite {
+	void draw() const;
+
+	Graphics::Vector3d _pos;
+	float _width;
+	float _height;
+	bool _visible;
+	Material *_material;
+	Sprite *_next;
+};
+
 class Model : public Object {
 public:
 	// Construct a 3D model from the given data.
@@ -62,6 +73,8 @@ public:
 		void removeChild(HierNode *child);
 		void setMatrix(Graphics::Matrix4 matrix);
 		void update();
+		void addSprite(Sprite *sprite);
+		void removeSprite(Sprite *sprite);
 
 		char _name[64];
 		Mesh *_mesh;
@@ -79,6 +92,7 @@ public:
 		Graphics::Matrix4 _matrix;
 		Graphics::Matrix4 _localMatrix;
 		Graphics::Matrix4 _pivotMatrix;
+		Sprite* _sprite;
 	};
 
 	HierNode *copyHierarchy();
