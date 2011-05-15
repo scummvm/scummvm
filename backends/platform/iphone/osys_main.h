@@ -86,9 +86,9 @@ protected:
 	bool _mouseDirty;
 	long _lastMouseDown;
 	long _lastMouseTap;
+	long _queuedEventTime;
 	Common::Rect _lastDrawnMouseRect;
 	Common::Event _queuedInputEvent;
-	bool _needEventRestPeriod;
 	bool _secondaryTapped;
 	long _lastSecondaryDown;
 	long _lastSecondaryTap;
