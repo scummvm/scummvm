@@ -295,6 +295,7 @@ void L1_BlastText() {
 }
 
 void L1_SetOffscreenTextPos() {
+	warning("L1_SetOffscreenTextPos: implement opcode");
 	// this sets where we shouldn't put dialog maybe?
 }
 

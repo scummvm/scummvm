@@ -36,6 +36,31 @@
 
 namespace Grim {
 
+void L2_SetActorWalkRate() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object rateObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+	if (!lua_isnumber(rateObj))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	float rate = lua_getnumber(rateObj);
+	// const below only differ from grim
+	actor->setWalkRate(rate * 3.279999971389771);
+}
+
+void L2_GetActorWalkRate() {
+	lua_Object actorObj = lua_getparam(1);
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	// const below only differ from grim
+	lua_pushnumber(actor->getWalkRate() * 0.3048780560493469);
+}
+
 void L2_SetReverb() {
 	lua_Object eaxObj = lua_getparam(1);
 	lua_Object decayObj = lua_getparam(2);
@@ -383,14 +408,37 @@ static void L2_SetActiveCD() {
 
 	if (cd == 1 || cd == 2) {
 		warning("L2_GetActiveCD: set to CD: %d", cd);
+		// FIXME
 		lua_pushnumber(1.0);
 	}
 }
 
 static void L2_GetActiveCD() {
-	// return current CD number 1 or 2, original can also avoid push any numer
+	// FIXME: return current CD number 1 or 2, original can also avoid push any numer
 	warning("L2_GetActiveCD: return const CD 1");
 	lua_pushnumber(1);
+}
+
+static void L2_PurgeText() {
+	// FIXME
+	warning("L2_PurgeText: implement opcode");
+}
+
+void L2_ImFlushStack() {
+	// FIXME
+	warning("L2_ImFlushStack: implement opcode");
+}
+
+void L2_EngineDisplay() {
+	// dummy
+}
+
+void L2_SetAmbientLight() {
+	// dummy
+}
+
+void L2_Display() {
+	// dummy
 }
 
 // Stub function for builtin functions not yet implemented
@@ -405,95 +453,53 @@ static void stubError(const char *funcName) {
 #define STUB_FUNC(name) void name() { stubWarning(#name); }
 #define STUB_FUNC2(name) void name() { stubError(#name); }
 
-STUB_FUNC2(L2_EngineDisplay)
-STUB_FUNC2(L2_Load)
-STUB_FUNC2(L2_Save)
-STUB_FUNC2(L2_Remove)
+// Opcodes more or less differ to Grim L1_* opcodes
 STUB_FUNC2(L2_SetActorWalkChore)
 STUB_FUNC2(L2_SetActorTurnChores)
 STUB_FUNC2(L2_SetActorRestChore)
 STUB_FUNC2(L2_SetActorMumblechore)
 STUB_FUNC2(L2_SetActorTalkChore)
-STUB_FUNC2(L2_SetActorWalkRate)
-STUB_FUNC2(L2_GetActorWalkRate)
-STUB_FUNC2(L2_SetActorTurnRate)
 STUB_FUNC2(L2_GetActorPos)
-STUB_FUNC2(L2_GetActorYawToPoint)
-STUB_FUNC2(L2_SetActorReflection)
 STUB_FUNC2(L2_WalkActorVector)
-STUB_FUNC2(L2_WalkActorForward)
-STUB_FUNC2(L2_WalkActorTo)
 STUB_FUNC2(L2_ActorLookAt)
 STUB_FUNC2(L2_SetActorLookRate)
 STUB_FUNC2(L2_GetActorLookRate)
 STUB_FUNC2(L2_GetVisibleThings)
 STUB_FUNC2(L2_SetActorHead)
-STUB_FUNC2(L2_SetActorVisibility)
-STUB_FUNC2(L2_ShutUpActor)
-STUB_FUNC2(L2_IsActorInSector)
-STUB_FUNC2(L2_GetActorSector)
-STUB_FUNC2(L2_TurnActor)
 STUB_FUNC2(L2_GetActorRot)
-STUB_FUNC2(L2_IsActorTurning)
-STUB_FUNC2(L2_StopActorChore)
-STUB_FUNC2(L2_IsActorResting)
-STUB_FUNC2(L2_Exit)
-STUB_FUNC2(L2_FunctionName)
 STUB_FUNC2(L2_MakeCurrentSet)
 STUB_FUNC2(L2_LockSet)
 STUB_FUNC2(L2_UnLockSet)
 STUB_FUNC2(L2_MakeCurrentSetup)
 STUB_FUNC2(L2_GetCurrentSetup)
-STUB_FUNC2(L2_StartFullscreenMovie)
-STUB_FUNC2(L2_IsFullscreenMoviePlaying)
 STUB_FUNC2(L2_StartMovie)
-STUB_FUNC2(L2_StopMovie)
-STUB_FUNC2(L2_PauseMovie)
-STUB_FUNC2(L2_IsMoviePlaying)
 STUB_FUNC2(L2_PlaySound)
 STUB_FUNC2(L2_IsSoundPlaying)
-STUB_FUNC2(L2_SetSoundPosition)
-STUB_FUNC2(L2_InputDialog)
 STUB_FUNC2(L2_MakeSectorActive)
-STUB_FUNC2(L2_GetCurrentScript)
 STUB_FUNC2(L2_TurnActorTo)
-STUB_FUNC2(L2_PerSecond)
 STUB_FUNC2(L2_GetAngleBetweenActors)
-STUB_FUNC2(L2_SetAmbientLight)
 STUB_FUNC2(L2_ImStartSound)
 STUB_FUNC2(L2_ImGetSfxVol)
 STUB_FUNC2(L2_ImGetVoiceVol)
 STUB_FUNC2(L2_ImGetMusicVol)
 STUB_FUNC2(L2_ImSetSequence)
-STUB_FUNC2(L2_SetActorWalkDominate)
 STUB_FUNC2(L2_RenderModeUser)
 STUB_FUNC2(L2_DimScreen)
-STUB_FUNC2(L2_Display)
-STUB_FUNC2(L2_GetSpeechMode)
-STUB_FUNC2(L2_KillActorShadows)
-STUB_FUNC2(L2_NewObjectState)
-STUB_FUNC2(L2_SubmitSaveGameData)
-STUB_FUNC2(L2_GetSaveGameData)
-STUB_FUNC2(L2_GetTextSpeed)
-STUB_FUNC2(L2_JustLoaded)
-STUB_FUNC2(L2_IsMessageGoing)
-STUB_FUNC2(L2_SetActorTalkColor)
 STUB_FUNC2(L2_SayLine)
 STUB_FUNC2(L2_MakeTextObject)
 STUB_FUNC2(L2_GetTextObjectDimensions)
 STUB_FUNC2(L2_ChangeTextObject)
-STUB_FUNC2(L2_KillTextObject)
 STUB_FUNC2(L2_ExpireText)
 STUB_FUNC2(L2_GetColorComponents)
 STUB_FUNC2(L2_GetTextCharPosition)
 STUB_FUNC2(L2_SetOffscreenTextPos)
-STUB_FUNC2(L2_DrawLine)
-STUB_FUNC2(L2_ChangePrimitive)
-STUB_FUNC2(L2_PurgePrimitiveQueue)
-STUB_FUNC2(L2_concatFallback)
-STUB_FUNC2(L2_typeOverride)
+STUB_FUNC2(L2_FadeInChore)
+STUB_FUNC2(L2_FadeOutChore)
+STUB_FUNC2(L2_SetLightPosition)
+STUB_FUNC2(L2_GetAngleBetweenVectors)
+STUB_FUNC2(L2_IsPointInSector)
 
-
+// Opcodes below are stubs in L1_* at that moment
 STUB_FUNC2(L2_SetActorInvClipNode)
 STUB_FUNC2(L2_NukeResources)
 STUB_FUNC2(L2_UnShrinkBoxes)
@@ -503,19 +509,13 @@ STUB_FUNC2(L2_AttachToResources)
 STUB_FUNC2(L2_DetachFromResources)
 STUB_FUNC2(L2_IrisUp)
 STUB_FUNC2(L2_IrisDown)
-STUB_FUNC2(L2_FadeInChore)
-STUB_FUNC2(L2_FadeOutChore)
 STUB_FUNC2(L2_SetActorClipPlane)
 STUB_FUNC2(L2_SetActorClipActive)
 STUB_FUNC2(L2_SetActorCollisionScale)
 STUB_FUNC2(L2_SetActorCollisionMode)
 STUB_FUNC2(L2_FlushControls)
 STUB_FUNC2(L2_ActorToClean)
-STUB_FUNC2(L2_LightMgrStartup)
-STUB_FUNC2(L2_SetLightIntensity)
-STUB_FUNC2(L2_SetLightPosition)
 STUB_FUNC2(L2_TurnLightOn)
-STUB_FUNC2(L2_GetAngleBetweenVectors)
 STUB_FUNC2(L2_GetCameraLookVector)
 STUB_FUNC2(L2_SetCameraRoll)
 STUB_FUNC2(L2_SetCameraInterest)
@@ -527,15 +527,12 @@ STUB_FUNC2(L2_PreviousSetup)
 STUB_FUNC2(L2_NextSetup)
 STUB_FUNC2(L2_WorldToScreen)
 STUB_FUNC2(L2_SetActorRoll)
-STUB_FUNC2(L2_IsPointInSector)
 STUB_FUNC2(L2_SetActorFrustrumCull)
 STUB_FUNC2(L2_DriveActorTo)
 STUB_FUNC2(L2_GetActorRect)
 STUB_FUNC2(L2_SetActorTimeScale)
-STUB_FUNC2(L2_SetActorScale)
 STUB_FUNC2(L2_GetTranslationMode)
 STUB_FUNC2(L2_SetTranslationMode)
-STUB_FUNC2(L2_PrintLine)
 STUB_FUNC2(L2_KillPrimitive)
 STUB_FUNC2(L2_WalkActorToAvoiding)
 STUB_FUNC2(L2_GetActorChores)
@@ -546,10 +543,8 @@ STUB_FUNC2(L2_GetCameraRoll)
 STUB_FUNC2(L2_ActorPuckOrient)
 STUB_FUNC2(L2_GetMemoryUsage)
 STUB_FUNC2(L2_GetFontDimensions)
-STUB_FUNC(L2_PurgeText)
 
-// Monkey specific opcodes:
-
+// Monkey specific opcodes
 STUB_FUNC2(L2_ThumbnailFromFile)
 STUB_FUNC2(L2_ClearSpecialtyTexture)
 STUB_FUNC2(L2_UnloadActor)
@@ -590,7 +585,6 @@ STUB_FUNC2(L2_ImStateHasLooped)
 STUB_FUNC2(L2_ImStateHasEnded)
 STUB_FUNC2(L2_ImPushState)
 STUB_FUNC2(L2_ImPopState)
-STUB_FUNC(L2_ImFlushStack)
 STUB_FUNC2(L2_ImGetMillisecondPosition)
 STUB_FUNC2(L2_GetSectorName)
 STUB_FUNC2(L2_GetCameraYaw)
@@ -627,9 +621,9 @@ STUB_FUNC2(L2_FRUTEY_End)
 
 struct luaL_reg monkeyMainOpcodes[] = {
 	{ "EngineDisplay", L2_EngineDisplay },
-	{ "Load", L2_Load },
-	{ "Save", L2_Save },
-	{ "remove", L2_Remove },
+	{ "Load", L1_Load },
+	{ "Save", L1_Save },
+	{ "remove", L1_Remove },
 	{ "SetActorTimeScale", L2_SetActorTimeScale },
 	{ "SetActorWalkChore", L2_SetActorWalkChore },
 	{ "SetActorTurnChores", L2_SetActorTurnChores },
@@ -638,40 +632,39 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "SetActorTalkChore", L2_SetActorTalkChore },
 	{ "SetActorWalkRate", L2_SetActorWalkRate },
 	{ "GetActorWalkRate", L2_GetActorWalkRate },
-	{ "SetActorTurnRate", L2_SetActorTurnRate },
+	{ "SetActorTurnRate", L1_SetActorTurnRate },
 	{ "SetSelectedActor", L1_SetSelectedActor },
 	{ "LoadActor", L1_LoadActor },
 	{ "GetActorPos", L2_GetActorPos },
 	{ "GetActorPuckVector", L1_GetActorPuckVector },
-	{ "GetActorYawToPoint", L2_GetActorYawToPoint },
-	{ "SetActorReflection", L2_SetActorReflection },
+	{ "GetActorYawToPoint", L1_GetActorYawToPoint },
+	{ "SetActorReflection", L1_SetActorReflection },
 	{ "PutActorAt", L1_PutActorAt },
 	{ "PutActorInSet", L2_PutActorInSet },
 	{ "WalkActorVector", L2_WalkActorVector },
-	{ "WalkActorForward", L2_WalkActorForward },
-	{ "WalkActorTo", L2_WalkActorTo },
+	{ "WalkActorForward", L1_WalkActorForward },
+	{ "WalkActorTo", L1_WalkActorTo },
 	{ "WalkActorToAvoiding", L2_WalkActorToAvoiding },
 	{ "ActorLookAt", L2_ActorLookAt },
 	{ "SetActorLookRate", L2_SetActorLookRate },
 	{ "GetActorLookRate", L2_GetActorLookRate },
 	{ "GetVisibleThings", L2_GetVisibleThings },
 	{ "SetActorHead", L2_SetActorHead },
-	{ "SetActorVisibility", L2_SetActorVisibility },
+	{ "SetActorVisibility", L1_SetActorVisibility },
 	{ "SetActorFollowBoxes", L1_SetActorFollowBoxes },
-	{ "ShutUpActor", L2_ShutUpActor },
-	{ "IsActorInSector", L2_IsActorInSector },
-	{ "GetActorSector", L2_GetActorSector },
-	{ "TurnActor", L2_TurnActor },
+	{ "ShutUpActor", L1_ShutUpActor },
+	{ "IsActorInSector", L1_IsActorInSector },
+	{ "GetActorSector", L1_GetActorSector },
+	{ "TurnActor", L1_TurnActor },
 	{ "GetActorRot", L2_GetActorRot },
 	{ "SetActorRot", L1_SetActorRot },
-	{ "IsActorTurning", L2_IsActorTurning },
+	{ "IsActorTurning", L1_IsActorTurning },
 	{ "PlayActorChore", L2_PlayActorChore },
-	{ "StopActorChore", L2_StopActorChore },
-	{ "IsActorResting", L2_IsActorResting },
+	{ "IsActorResting", L1_IsActorResting },
 	{ "GetActorChores", L2_GetActorChores },
 	{ "WorldToScreen", L2_WorldToScreen },
-	{ "exit", L2_Exit },
-	{ "FunctionName", L2_FunctionName },
+	{ "exit", L1_Exit },
+	{ "FunctionName", L1_FunctionName },
 	{ "EnableControl", L1_EnableControl },
 	{ "DisableControl", L1_DisableControl },
 	{ "GetControlState", L1_GetControlState },
@@ -685,22 +678,19 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "GetCurrentSetup", L2_GetCurrentSetup },
 	{ "NextSetup", L2_NextSetup },
 	{ "PreviousSetup", L2_PreviousSetup },
-	{ "StartFullscreenMovie", L2_StartFullscreenMovie },
-	{ "IsFullscreenMoviePlaying", L2_IsFullscreenMoviePlaying },
 	{ "StartMovie", L2_StartMovie },
-	{ "StopMovie", L2_StopMovie },
-	{ "PauseMovie", L2_PauseMovie },
-	{ "IsMoviePlaying", L2_IsMoviePlaying },
+	{ "StopMovie", L1_StopMovie },
+	{ "PauseMovie", L1_PauseMovie },
+	{ "IsMoviePlaying", L1_IsMoviePlaying },
 	{ "PlaySound", L2_PlaySound },
 	{ "IsSoundPlaying", L2_IsSoundPlaying },
-	{ "SetSoundPosition", L2_SetSoundPosition },
 	{ "FileFindFirst", L1_FileFindFirst },
 	{ "FileFindNext", L1_FileFindNext },
 	{ "FileFindDispose", L1_FileFindDispose },
-	{ "InputDialog", L2_InputDialog },
+	{ "InputDialog", L1_InputDialog },
 	{ "GetSectorOppositeEdge", L2_GetSectorOppositeEdge },
 	{ "MakeSectorActive", L2_MakeSectorActive },
-	{ "GetCurrentScript", L2_GetCurrentScript },
+	{ "GetCurrentScript", L1_GetCurrentScript },
 	{ "GetCameraPosition", L2_GetCameraPosition },
 	{ "SetCameraPosition", L2_SetCameraPosition },
 	{ "GetCameraFOV", L2_GetCameraFOV },
@@ -708,13 +698,13 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "GetCameraRoll", L2_GetCameraRoll },
 	{ "GetCameraLookVector", L2_GetCameraLookVector },
 	{ "TurnActorTo", L2_TurnActorTo },
-	{ "PerSecond", L2_PerSecond },
+	{ "PerSecond", L1_PerSecond },
 	{ "GetAngleBetweenVectors", L2_GetAngleBetweenVectors },
 	{ "GetAngleBetweenActors", L2_GetAngleBetweenActors },
 	{ "SetAmbientLight", L2_SetAmbientLight },
 	{ "TurnLightOn", L2_TurnLightOn },
 	{ "SetLightPosition", L2_SetLightPosition },
-	{ "LightMgrStartup", L2_LightMgrStartup },
+	{ "LightMgrStartup", L1_LightMgrStartup },
 	{ "ImStartSound", L2_ImStartSound },
 	{ "ImGetSfxVol", L2_ImGetSfxVol },
 	{ "ImGetVoiceVol", L2_ImGetVoiceVol },
@@ -723,21 +713,19 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "ImSetSequence", L2_ImSetSequence },
 	{ "LoadBundle", L2_LoadBundle },
 	{ "SetGamma", L1_SetGamma },
-	{ "SetActorWalkDominate", L2_SetActorWalkDominate },
+	{ "SetActorWalkDominate", L1_SetActorWalkDominate },
 	{ "RenderModeUser", L2_RenderModeUser },
 	{ "DimScreen", L2_DimScreen },
 	{ "Display", L2_Display },
 	{ "SetSpeechMode", L1_SetSpeechMode },
-	{ "GetSpeechMode", L2_GetSpeechMode },
-	{ "KillActorShadows", L2_KillActorShadows },
-	{ "NewObjectState", L2_NewObjectState },
+	{ "GetSpeechMode", L1_GetSpeechMode },
 	{ "SetActorCollisionMode", L2_SetActorCollisionMode },
 	{ "SetActorCollisionScale", L2_SetActorCollisionScale },
-	{ "SubmitSaveGameData", L2_SubmitSaveGameData },
-	{ "GetSaveGameData", L2_GetSaveGameData },
+	{ "SubmitSaveGameData", L1_SubmitSaveGameData },
+	{ "GetSaveGameData", L1_GetSaveGameData },
 	{ "SetTextSpeed", L1_SetTextSpeed },
-	{ "GetTextSpeed", L2_GetTextSpeed },
-	{ "JustLoaded", L2_JustLoaded },
+	{ "GetTextSpeed", L1_GetTextSpeed },
+	{ "JustLoaded", L1_JustLoaded },
 	{ "UnShrinkBoxes", L2_UnShrinkBoxes },
 	{ "GetMemoryUsage", L2_GetMemoryUsage },
 	{ "dofile", L1_new_dofile },
@@ -839,15 +827,15 @@ struct luaL_reg monkeyMainOpcodes[] = {
 };
 
 struct luaL_reg monkeyTextOpcodes[] = {
-	{ "IsMessageGoing", L2_IsMessageGoing },
+	{ "IsMessageGoing", L1_IsMessageGoing },
 	{ "SetSayLineDefaults", L1_SetSayLineDefaults },
-	{ "SetActorTalkColor", L2_SetActorTalkColor },
+	{ "SetActorTalkColor", L1_SetActorTalkColor },
 	{ "SayLine", L2_SayLine },
 	{ "MakeTextObject", L2_MakeTextObject },
 	{ "GetTextObjectDimensions", L2_GetTextObjectDimensions },
 	{ "GetFontDimensions", L2_GetFontDimensions },
 	{ "ChangeTextObject", L2_ChangeTextObject },
-	{ "KillTextObject", L2_KillTextObject },
+	{ "KillTextObject", L1_KillTextObject },
 	{ "ExpireText", L2_ExpireText },
 	{ "PurgeText", L2_PurgeText },
 	{ "MakeColor", L1_MakeColor },
@@ -858,15 +846,15 @@ struct luaL_reg monkeyTextOpcodes[] = {
 };
 
 struct luaL_reg monkeyPrimitivesOpcodes[] = {
-	{ "DrawLine", L2_DrawLine },
-	{ "ChangePrimitive", L2_ChangePrimitive },
+	{ "DrawLine", L1_DrawLine },
+	{ "ChangePrimitive", L1_ChangePrimitive },
 	{ "KillPrimitive", L2_KillPrimitive },
-	{ "PurgePrimitiveQueue", L2_PurgePrimitiveQueue }
+	{ "PurgePrimitiveQueue", L1_PurgePrimitiveQueue }
 };
 
 struct luaL_reg monkeyMiscOpcodes[] = {
-	{ "  concatfallback", L2_concatFallback },
-	{ "  typeoverride", L2_typeOverride },
+	{ "  concatfallback", L1_concatFallback },
+	{ "  typeoverride", L1_typeOverride },
 	{ "  dfltcamera", dummyHandler },
 	{ "  dfltcontrol", dummyHandler },
 };
