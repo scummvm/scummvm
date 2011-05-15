@@ -36,6 +36,149 @@
 
 namespace Grim {
 
+void L2_SetReverb() {
+	lua_Object eaxObj = lua_getparam(1);
+	lua_Object decayObj = lua_getparam(2);
+	lua_Object mixObj = lua_getparam(3);
+	lua_Object predelayObj = lua_getparam(4);
+	lua_Object dampingObj = lua_getparam(5);
+
+	if (!lua_isnumber(eaxObj))
+		return;
+
+	int eax = (int)lua_getnumber(eaxObj);
+	int param = 0;
+	float decay = -1;
+	float mix = -1;
+	float predelay = -1;
+	float damping = -1;
+
+	if (eax == 60) {
+		param = 26;
+	} else if (eax == 70) {
+		param = 27;
+	} else if (eax >= 0 && eax <= 25) {
+		param = eax;
+		// there is some table, initialy is like eax
+	} else {
+		return;
+	}
+
+	if (lua_isnumber(decayObj))
+		decay = lua_getnumber(decayObj);
+	if (lua_isnumber(mixObj))
+		mix = lua_getnumber(mixObj);
+	if (lua_isnumber(predelayObj))
+		predelay = lua_getnumber(predelayObj);
+	if (lua_isnumber(dampingObj))
+		damping = lua_getnumber(dampingObj);
+
+	warning("L2_SetReverb, eax: %d, decay: %f, mix: %f, predelay: %f, damping: %f", param, decay, mix, predelay, damping);
+	// FIXME: func(param, decay, mix, predelay, damping);
+}
+
+void L2_LockBackground() {
+	lua_Object filenameObj = lua_getparam(1);
+
+	if (!lua_isstring(filenameObj)) {
+		lua_pushnil();
+		return;
+	}
+	const char *filename = lua_getstring(filenameObj);
+	warning("L2_LockBackground, filename: %s", filename);
+	// FIXME: implement missing rest part of code
+}
+
+void L2_LockChore() {
+	lua_Object nameObj = lua_getparam(1);
+	lua_Object filenameObj = lua_getparam(2);
+
+	if (!lua_isstring(nameObj) || !lua_isstring(filenameObj)) {
+		lua_pushnil();
+		return;
+	}
+
+	const char *name = lua_getstring(nameObj);
+	const char *filename = lua_getstring(filenameObj);
+	warning("L2_LockChore, name: %s, filename: %s", name, filename);
+	// FIXME: implement missing rest part of code
+}
+
+void L2_SetActorSortOrder() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object modeObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	if (!lua_isnumber(modeObj))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	int mode = (int)lua_getnumber(modeObj);
+	warning("L2_SetActorSortOrder, actor: %s, mode: %d", actor->getName(), mode);
+	// FIXME: actor->func(mode);
+}
+
+void L2_ActorActivateShadow() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object qualityObj = lua_getparam(2);
+	lua_Object planeObj = lua_getparam(3);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	if (!actor)
+		return;
+	int quality = (int)lua_getnumber(qualityObj);
+	const char *plane = "NULL";
+	if (lua_isstring(planeObj))
+		plane = lua_getstring(planeObj);
+	warning("L2_ActorActivateShadow, actor: %s, aquality: %d, plane: %s", actor->getName(), quality, plane);
+	// FIXME: implement missing rest part of code
+}
+
+void L2_ActorStopMoving() {
+	lua_Object actorObj = lua_getparam(1);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+
+	warning("L2_ActorStopMoving, actor: %s", actor->getName());
+	// FIXME: implement missing rest part of code
+}
+
+void L2_PutActorInOverworld() {
+	lua_Object actorObj = lua_getparam(1);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+
+	warning("L2_PutActorInOverworld, actor: %s", actor->getName());
+	// FIXME: implement missing func
+	//actor->func();
+}
+
+void L2_MakeScreenTextures() {
+	lua_Object indexObj = lua_getparam(1);
+
+	if (!lua_isnil(indexObj) && lua_isnumber(indexObj)) {
+		int index = (int)lua_getnumber(indexObj);
+		warning("L2_MakeScreenTextures, index: %d", index);
+		// FIXME: implement missing function
+//		if (func(index)) {
+			lua_pushnumber(1.0);
+			return;
+//		}
+	}
+	lua_pushnil();
+}
+
 void L2_PutActorInSet() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object setObj = lua_getparam(2);
@@ -67,6 +210,7 @@ static void L2_LoadBundle() {
 	lua_Object paramObj = lua_getparam(1);
 	if (lua_isstring(paramObj) || lua_isnil(paramObj)) {
 		const char *name = lua_getstring(paramObj);
+		// FIXME: implement missing function
 /*		if (!func(name))
 			lua_pushnil();
 		else*/
@@ -285,7 +429,6 @@ STUB_FUNC2(L2_GetActorLookRate)
 STUB_FUNC2(L2_GetVisibleThings)
 STUB_FUNC2(L2_SetActorHead)
 STUB_FUNC2(L2_SetActorVisibility)
-STUB_FUNC2(L2_SetActorFollowBoxes)
 STUB_FUNC2(L2_ShutUpActor)
 STUB_FUNC2(L2_IsActorInSector)
 STUB_FUNC2(L2_GetActorSector)
@@ -403,26 +546,21 @@ STUB_FUNC2(L2_GetCameraRoll)
 STUB_FUNC2(L2_ActorPuckOrient)
 STUB_FUNC2(L2_GetMemoryUsage)
 STUB_FUNC2(L2_GetFontDimensions)
-STUB_FUNC2(L2_PurgeText)
+STUB_FUNC(L2_PurgeText)
 
 // Monkey specific opcodes:
 
-STUB_FUNC2(L2_MakeScreenTextures)
 STUB_FUNC2(L2_ThumbnailFromFile)
 STUB_FUNC2(L2_ClearSpecialtyTexture)
 STUB_FUNC2(L2_UnloadActor)
-STUB_FUNC2(L2_PutActorInOverworld)
 STUB_FUNC2(L2_RemoveActorFromOverworld)
 STUB_FUNC2(L2_ClearOverworld)
 STUB_FUNC2(L2_ToggleOverworld)
-STUB_FUNC2(L2_ActorStopMoving)
 STUB_FUNC2(L2_SetActorFOV)
 STUB_FUNC2(L2_SetActorHeadLimits)
-STUB_FUNC2(L2_ActorActivateShadow)
 STUB_FUNC2(L2_EnableActorPuck)
 STUB_FUNC2(L2_SetActorGlobalAlpha)
 STUB_FUNC2(L2_SetActorLocalAlpha)
-STUB_FUNC2(L2_SetActorSortOrder)
 STUB_FUNC2(L2_GetActorSortOrder)
 STUB_FUNC2(L2_AttachActor)
 STUB_FUNC2(L2_DetachActor)
@@ -434,11 +572,9 @@ STUB_FUNC2(L2_StopChore)
 STUB_FUNC2(L2_PauseChore)
 STUB_FUNC2(L2_AdvanceChore)
 STUB_FUNC2(L2_CompleteChore)
-STUB_FUNC2(L2_LockChore)
 STUB_FUNC2(L2_UnlockChore)
 STUB_FUNC2(L2_LockChoreSet)
 STUB_FUNC2(L2_UnlockChoreSet)
-STUB_FUNC2(L2_LockBackground)
 STUB_FUNC2(L2_UnLockBackground)
 STUB_FUNC2(L2_EscapeMovie)
 STUB_FUNC2(L2_StopAllSounds)
@@ -449,7 +585,6 @@ STUB_FUNC2(L2_GetSoundVolume)
 STUB_FUNC2(L2_SetSoundVolume)
 STUB_FUNC2(L2_PlaySoundFrom)
 STUB_FUNC2(L2_PlayLoadedSoundFrom)
-STUB_FUNC2(L2_SetReverb)
 STUB_FUNC2(L2_UpdateSoundPosition)
 STUB_FUNC2(L2_ImStateHasLooped)
 STUB_FUNC2(L2_ImStateHasEnded)
@@ -522,7 +657,7 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "GetVisibleThings", L2_GetVisibleThings },
 	{ "SetActorHead", L2_SetActorHead },
 	{ "SetActorVisibility", L2_SetActorVisibility },
-	{ "SetActorFollowBoxes", L2_SetActorFollowBoxes },
+	{ "SetActorFollowBoxes", L1_SetActorFollowBoxes },
 	{ "ShutUpActor", L2_ShutUpActor },
 	{ "IsActorInSector", L2_IsActorInSector },
 	{ "GetActorSector", L2_GetActorSector },
