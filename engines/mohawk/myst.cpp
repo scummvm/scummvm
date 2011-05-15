@@ -258,6 +258,9 @@ Common::Error MohawkEngine_Myst::run() {
 	_cursor = new MystCursorManager(this);
 	_rnd = new Common::RandomSource();
 
+	// Cursor is visible by default
+	_cursor->showCursor();
+
 	// Load game from launcher/command line if requested
 	if (ConfMan.hasKey("save_slot") && canLoadGameStateCurrently()) {
 		uint32 gameToLoad = ConfMan.getInt("save_slot");
@@ -285,9 +288,6 @@ Common::Error MohawkEngine_Myst::run() {
 
 	// Test Load Function...
 	loadHelp(10000);
-
-	// Set the cursor
-	_cursor->setCursor(_currentCursor);
 
 	Common::Event event;
 	while (!shouldQuit()) {
