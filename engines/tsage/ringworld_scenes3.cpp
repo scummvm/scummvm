@@ -1955,6 +1955,12 @@ void Scene2100::signal() {
 	}
 }
 
+void Scene2100::synchronize(Serializer &s) {
+	Scene::synchronize(s);
+	if (s.getVersion() >= 3)
+		s.syncAsSint16LE(_field1800);		
+}
+
 /*--------------------------------------------------------------------------
  * Scene 2120 - Encyclopedia
  *
@@ -2161,12 +2167,19 @@ void Scene2120::Action1::dispatch() {
 
 /*--------------------------------------------------------------------------*/
 
+Scene2120::Scene2120(): Scene() {
+	_listRect = Rect(18, 48, 260, 177);
+	_dbMode = 0;
+	_prevDbMode = 0;
+	_visageVisable = false;
+	_subjectIndex = 0;
+}
+
 void Scene2120::postInit(SceneObjectList *OwnerList) {
 	loadScene(2120);
 	setZoomPercents(0, 100, 200, 100);
 	_globals->_player.disableControl();
 
-	_listRect = Rect(18, 48, 260, 177);
 	_subjectButton.setBounds(Rect(266, 13, 320, 56));
 	_nextPageButton.setBounds(Rect(266, 56, 320, 98));
 	_previousPageButton.setBounds(Rect(266, 98, 320, 140));
@@ -2182,11 +2195,6 @@ void Scene2120::postInit(SceneObjectList *OwnerList) {
 	_arrowHotspot.animate(ANIM_MODE_NONE, NULL);
 	_arrowHotspot._frame = 1;
 	_arrowHotspot.setPosition(Common::Point(400, 200));
-
-	_dbMode = 0;
-	_prevDbMode = 0;
-	_visageVisable = false;
-	_subjectIndex = 0;
 
 	setAction(&_action1);
 	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
@@ -2469,6 +2477,8 @@ Scene2150::Scene2150() :
 		_hotspot8(16, CURSOR_LOOK, 2150, 8, LIST_END),
 		_hotspot9(0, CURSOR_LOOK, 2150, 9, CURSOR_USE, 2150, 13, LIST_END),
 		_hotspot11(0, CURSOR_LOOK, 2150, 12, LIST_END) {
+	_rect1 = Rect(260, 70, 270, 77);
+	_rect2 = Rect(222, 142, 252, 150);
 }
 
 void Scene2150::postInit(SceneObjectList *OwnerList) {
@@ -2518,9 +2528,6 @@ void Scene2150::postInit(SceneObjectList *OwnerList) {
 	_hotspot10.setVisage(2152);
 	_hotspot10.setStrip(5);
 	_hotspot10.setPosition(Common::Point(59, 56));
-
-	_rect1 = Rect(260, 70, 270, 77);
-	_rect2 = Rect(222, 142, 252, 150);
 
 	_globals->_player.postInit();
 	_globals->_player.setVisage(_globals->getFlag(13) ? 2170 : 0);
@@ -4849,6 +4856,14 @@ Scene2310::Scene2310() {
 	_pageList[18].set(18, 2, 3, 0, 1, 4);
 	_pageList[19].set(19, 3, 0, 1, 4, 2);
 	_pageList[20].set(20, 4, 0, 3, 1, 2);
+
+	_rectList[0].set(135, 70, 151, 140);
+	_rectList[1].set(151, 70, 167, 140);
+	_rectList[2].set(167, 70, 183, 140);
+	_rectList[3].set(183, 70, 199, 140);
+	_rectList[4].set(199, 70, 215, 140);
+
+	_wireIndex = 5;
 }
 
 void Scene2310::postInit(SceneObjectList *OwnerList) {
@@ -4865,16 +4880,9 @@ void Scene2310::postInit(SceneObjectList *OwnerList) {
 		_wireList[idx].setPosition(pointList[idx]);
 	}
 
-	_rectList[0].set(135, 70, 151, 140);
-	_rectList[1].set(151, 70, 167, 140);
-	_rectList[2].set(167, 70, 183, 140);
-	_rectList[3].set(183, 70, 199, 140);
-	_rectList[4].set(199, 70, 215, 140);
-
 	_globals->_player.disableControl();
 	_globals->_events.setCursor(CURSOR_WALK);
 
-	_wireIndex = 5;
 	if (_vm->getFeatures() & GF_CD)
 		_pageIndex = _globals->_randomSource.getRandomNumber(14) + 2;
 	else

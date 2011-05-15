@@ -309,7 +309,6 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 	virtual void dispatch();
-	virtual void synchronize(Serializer &s);
 };
 
 class Scene60 : public Scene {	
@@ -441,7 +440,6 @@ class Scene95 : public Scene {
 
 public:
 	Action1 _action1;
-	int _field326;
 	SceneObject _object1, _object2, _object3;
 	SoundHandler _soundHandler;
 

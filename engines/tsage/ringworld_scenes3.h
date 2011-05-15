@@ -285,6 +285,7 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void stripCallback(int v);
 	virtual void signal();
+	virtual void synchronize(Serializer &s);
 };
 
 class Scene2120 : public Scene {
@@ -320,6 +321,7 @@ public:
 	int _subjectIndex;
 	int _lineOffset;
 
+	Scene2120();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void synchronize(Serializer &s);
 };

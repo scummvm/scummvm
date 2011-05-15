@@ -34,6 +34,14 @@ void NamedHotspotMult::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_lookLineNum);
 }
 
+void SceneObject7700::synchronize(Serializer &s) {
+	SceneObject::synchronize(s);
+	if (s.getVersion() >= 3) {
+		s.syncAsSint16LE(_lookLineNum);
+		s.syncAsSint16LE(_defltLineNum);
+	}
+}
+
 /*--------------------------------------------------------------------------
  * Scene 7000
  *
@@ -2518,6 +2526,15 @@ Scene7700::Scene7700() {
 	_object5._state = 0;
 	_object6._state = 0;
 	_prof._state = 0;
+}
+
+void Scene7700::synchronize(Serializer &s) {
+	Scene::synchronize(s);
+	if (s.getVersion() >= 3) {
+		s.syncAsSint16LE(_field977);
+		s.syncAsSint16LE(_field979);
+		s.syncAsSint16LE(_field97B);
+	}
 }
 
 } // End of namespace tSage

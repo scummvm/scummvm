@@ -1759,6 +1759,8 @@ Scene50::Scene50() :
 		_item3(8, OBJECT_STUNNER, 50, 14, OBJECT_SCANNER, 50, 13, CURSOR_LOOK, 50, 3, LIST_END),
 		_item4(9, OBJECT_SCANNER, 40, 39, OBJECT_STUNNER, 40, 40, CURSOR_USE, 40, 41, CURSOR_LOOK, 50, 5, LIST_END),
 		_item5(10, OBJECT_SCANNER, 50, 17, OBJECT_STUNNER, 50, 18, CURSOR_LOOK, 50, 6, CURSOR_USE, 30, 8, LIST_END) {
+
+	_doorwayRect = Rect(80, 108, 160, 112);
 }
 
 void Scene50::postInit(SceneObjectList *OwnerList) {
@@ -1821,7 +1823,6 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 
 	_item0.setBounds(Rect(200, 0, 320, 200));
 	_globals->_sceneItems.addItems(&_item3, &_item4, &_item5, &_item0, NULL);
-	_doorwayRect = Rect(80, 108, 160, 112);
 }
 
 void Scene50::signal() {
@@ -1850,13 +1851,6 @@ void Scene50::dispatch() {
 		NpcMover *mover = new NpcMover();
 		_globals->_player.addMover(mover, &pt, this);
 	}
-}
-
-void Scene50::synchronize(Serializer &s) {
-	Scene::synchronize(s);
-	
-	if (s.getVersion() >= 3)
-		_doorwayRect.synchronize(s);
 }
 
 /*--------------------------------------------------------------------------

@@ -819,6 +819,12 @@ void Scene9400::postInit(SceneObjectList *OwnerList) {
 	setAction(&_sequenceManager, this, 9400, &_globals->_player, &_object1, &_object3, NULL);
 }
 
+void Scene9400::synchronize(Serializer &s) {
+	Scene::synchronize(s);
+	if (s.getVersion() >= 3)
+		s.syncAsSint16LE(_field1032);
+}
+
 /*--------------------------------------------------------------------------
  * Scene 9450
  *
@@ -1775,6 +1781,15 @@ void Scene9900::strAction2::dispatch() {
 		_txtArray2[1]._flags |= OBJFLAG_PANES;
 //	}
 	Action::dispatch();
+}
+
+void Scene9900::strAction2::synchronize(Serializer &s) {
+	Action::synchronize(s);
+	if (s.getVersion() >= 3) {
+		s.syncAsSint16LE(_lineNum);
+		s.syncAsSint16LE(_txtArray1Index);
+		s.syncAsSint16LE(_var3);
+	}
 }
 
 void Scene9900::strAction3::signal() {
