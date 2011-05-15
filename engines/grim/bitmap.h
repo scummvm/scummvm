@@ -47,6 +47,7 @@ public:
 	static Common::HashMap<Common::String, BitmapData *> *_bitmaps;
 
 	char *getImageData(int num) const;
+	void convertToColorFormat(int num, int format);
 
 	Common::String _fname;
 	int _numImages;
@@ -54,6 +55,7 @@ public:
 	int _format;
 	int _numTex;
 	int _bpp;
+	int _colorFormat;
 	void *_texIds;
 	bool _hasTransparency;
 	char _filename[32];

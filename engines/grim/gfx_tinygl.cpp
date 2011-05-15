@@ -615,6 +615,10 @@ void GfxTinyGL::setupLight(Scene::Light *light, int lightId) {
 }
 
 void GfxTinyGL::createBitmap(BitmapData *bitmap) {
+	// We want an RGB565-bitmap in TinyGL.
+	if(bitmap->_colorFormat != BM_RGB565){
+		bitmap->convertToColorFormat(0, BM_RGB565);
+	}
 	if (bitmap->_format != 1) {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
 			uint16 *bufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic));
