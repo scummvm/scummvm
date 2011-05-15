@@ -1190,6 +1190,9 @@ void MohawkEngine_Myst::dropPage() {
 	bool bluePage = page - 1 < 6;
     bool redPage = page - 7 < 6;
 
+    // Play drop page sound
+    _sound->replaceSoundMyst(800);
+
     // Drop page
     _gameState->_globals.heldPage = 0;
 
