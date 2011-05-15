@@ -71,7 +71,8 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	// original, including bugs, missing bits etc. :)
 	_tweaksEnabled = true;
 
-	_currentCursor = _mainCursor = kDefaultMystCursor;
+	_currentCursor = 0;
+	_mainCursor = kDefaultMystCursor;
 	_showResourceRects = false;
 	_curCard = 0;
 	_needsUpdate = false;
@@ -415,6 +416,11 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 
 	_curStack = stack;
 
+	// Fill screen with black and empty cursor
+	_cursor->setCursor(0);
+	_system->fillScreen(_system->getScreenFormat().RGBToColor(0, 0, 0));
+	_system->updateScreen();
+
 	_sound->stopSound();
 	_sound->stopBackgroundMyst();
 	if (linkSrcSound)
@@ -641,17 +647,17 @@ void MohawkEngine_Myst::changeToCard(uint16 card, bool updateScreen) {
 
 	// TODO: Handle Script Resources
 
-	// Make sure we have the right cursor showing
-	_dragResource = 0;
-	_hoverResource = 0;
-	_curResource = -1;
-	checkCurrentResource();
-
 	// Make sure the screen is updated
 	if (updateScreen) {
 		_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
 		_system->updateScreen();
 	}
+
+	// Make sure we have the right cursor showing
+	_dragResource = 0;
+	_hoverResource = 0;
+	_curResource = -1;
+	checkCurrentResource();
 
 	// Debug: Show resource rects
 	if (_showResourceRects)
