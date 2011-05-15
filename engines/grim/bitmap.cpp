@@ -54,37 +54,38 @@ char *makeBitmapFromTile(char **bits, int width, int height, int bpp) {
 	const int tWidth2 = 256;
 
 	char *target = fullImage;
+	int line;
 	for (int i = 0; i < 256; i++) {
 		/* This can be modified to actually use the last 32 lines.
 		 * We simply put the lower half on line 223 and down to line 32,
 		 * then skip the last 32.
 		 * While the upper half is put on line 479 and down to line 224.
 		 */
+
 		if (i < 224) { // Skip blank space
-			target=getLine(223 - i, fullImage, width, bpp);
+			line = 224 - i;
+			target = getLine(479 - i, fullImage, width, bpp);
 
-			memcpy(target, getLine(i, bits[3], tWidth2, bpp), tWidth);
+			memcpy(target, getLine(line, bits[3], tWidth2, bpp), tWidth);
 			target += tWidth;
 
-			memcpy(target, getLine(i, bits[4], tWidth2, bpp), tWidth);
+			memcpy(target, getLine(line, bits[4], tWidth2, bpp), tWidth);
 			target += tWidth;
 
-			memcpy(target, getLine(i, bits[2], tWidth2, bpp) + 128 * bpp, 128 * bpp);
-			target += tWidth / 2;
+			memcpy(target, getLine(line, bits[2], tWidth2, bpp) + 128 * bpp, 128 * bpp);
 		}
-
+		line = 255 - i;
 		// Top half of course
 
-		target = getLine(479 - i, fullImage, width, bpp);
+		target = getLine(line, fullImage, width, bpp);
 
-		memcpy(target, getLine(i, bits[0], tWidth2, bpp), tWidth);
+		memcpy(target, getLine(line, bits[0], tWidth2, bpp), tWidth);
 		target += tWidth;
 
-		memcpy(target, getLine(i, bits[1], tWidth2, bpp), tWidth);
+		memcpy(target, getLine(line, bits[1], tWidth2, bpp), tWidth);
 		target += tWidth;
 
-		memcpy(target, getLine(i, bits[2], tWidth2, bpp), 128 * bpp);
-		target += tWidth / 2;
+		memcpy(target, getLine(line, bits[2], tWidth2, bpp), 128 * bpp);
 
 	}
 
@@ -249,6 +250,7 @@ BitmapData::~BitmapData() {
 bool BitmapData::loadTile(const char *filename, const char *data, int len) {
 	_x = 0;
 	_y = 0;
+	_format = 1;
 	//warning("Loading TILE: %s",filename);
 	Common::MemoryReadStream stream((const byte *)data, len);
 	Common::SeekableReadStream *o = Common::wrapCompressedReadStream(&stream);
@@ -279,7 +281,7 @@ bool BitmapData::loadTile(const char *filename, const char *data, int len) {
 		o->seek(8, SEEK_CUR);
 		o->read(_data[i], size);
 	}
-	char* bMap = makeBitmapFromTile(_data, 640, 480, _bpp);
+	char *bMap = makeBitmapFromTile(_data, 640, 480, _bpp);
 	for (int i = 0; i < numSubImages; ++i) {
 		delete[] _data[i];
 	}

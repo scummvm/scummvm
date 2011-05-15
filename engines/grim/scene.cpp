@@ -400,6 +400,7 @@ void Scene::Setup::loadBinary(Common::MemoryReadStream *ms) {
 	char* fileName = new char[fNameLen];
 	ms->read(fileName,fNameLen);
 
+	_bkgndZBm = NULL;
 	_bkgndBm = g_resourceloader->loadBitmap(fileName);
 
 
