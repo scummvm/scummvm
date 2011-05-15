@@ -1409,11 +1409,11 @@ void RingworldGame::endGame(int resNum, int lineNum) {
 		// Savegames exist, so prompt for Restore/Restart
 		bool breakFlag;
 		do {
-			if (MessageDialog::show(msg, RESTART_BTN_STRING, RESTORE_BTN_STRING) == 0) {
+			if (MessageDialog::show(msg, RESTART_BTN_STRING, RESTORE_BTN_STRING) == 0 || _vm->shouldQuit()) {
 				breakFlag = true;
 			} else {
 				handleSaveLoad(false, _globals->_sceneHandler._loadGameSlot, _globals->_sceneHandler._saveName);
-				breakFlag = _globals->_sceneHandler._loadGameSlot > 0;
+				breakFlag = _globals->_sceneHandler._loadGameSlot >= 0;
 			}
 		} while (!breakFlag);
 	}
