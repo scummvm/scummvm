@@ -555,7 +555,7 @@ public:
 	MadeMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "MADE Engine";
+		return "MADE";
 	}
 
 	virtual const char *getOriginalCopyright() const {

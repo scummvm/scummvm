@@ -402,7 +402,7 @@ public:
 	SciMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "SCI Engine [SCI0, SCI01, SCI10, SCI11"
+		return "SCI [SCI0, SCI01, SCI10, SCI11"
 #ifdef ENABLE_SCI32
 			", SCI32"
 #endif

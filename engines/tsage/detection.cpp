@@ -88,7 +88,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "TsAGE Engine";
+		return "TsAGE";
 	}
 
 	virtual const char *getOriginalCopyright() const {

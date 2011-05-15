@@ -131,7 +131,7 @@ public:
 	SagaMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "Saga engine ["
+		return "SAGA ["
 
 #if defined(ENABLE_IHNM) && defined(ENABLE_SAGA2)
 			"all games"

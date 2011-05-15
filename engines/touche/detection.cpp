@@ -156,7 +156,7 @@ public:
 	ToucheMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "Touche Engine";
+		return "Touche";
 	}
 
 	virtual const char *getOriginalCopyright() const {

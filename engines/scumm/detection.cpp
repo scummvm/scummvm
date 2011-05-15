@@ -1156,7 +1156,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 }
 
 const char *ScummMetaEngine::getName() const {
-	return "SCUMM Engine ["
+	return "SCUMM ["
 
 #if defined(ENABLE_SCUMM_7_8) && defined(ENABLE_HE)
 		"all games"

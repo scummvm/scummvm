@@ -113,7 +113,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Teen Agent Engine";
+		return "Teen Agent";
 	}
 
 	virtual const char *getOriginalCopyright() const {

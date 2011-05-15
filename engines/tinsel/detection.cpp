@@ -104,7 +104,7 @@ public:
 	TinselMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "Tinsel Engine";
+		return "Tinsel";
 	}
 
 	virtual const char *getOriginalCopyright() const {

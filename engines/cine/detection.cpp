@@ -90,7 +90,7 @@ public:
 	CineMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "Cinematique evo 1 engine";
+		return "Cinematique evo 1";
 	}
 
 	virtual const char *getOriginalCopyright() const {

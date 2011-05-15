@@ -219,7 +219,7 @@ public:
 	GroovieMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	const char *getName() const {
-		return "Groovie Engine";
+		return "Groovie";
 	}
 
 	const char *getOriginalCopyright() const {

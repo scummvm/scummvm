@@ -414,7 +414,7 @@ public:
 	M4MetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "MADS/M4 engine";
+		return "MADS/M4";
 	}
 
 	virtual const char *getOriginalCopyright() const {

@@ -250,7 +250,7 @@ public:
 	ParallactionMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "Parallaction engine";
+		return "Parallaction";
 	}
 
 	virtual const char *getOriginalCopyright() const {
