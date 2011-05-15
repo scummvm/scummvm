@@ -26,8 +26,11 @@ static int os_execute (lua_State *L) {
 
 
 static int os_remove (lua_State *L) {
-  // Removed in ScummVM, does nothing. It's called when loading games (perhaps
-  // to delete the savegame thumbnail?)
+  // Non-portable call that deletes a file. Removed in ScummVM.
+  // This call is invoked in sword25 when loading games in order to remove the
+  // temporary savegame thumbnail that the original engine code created. We
+  // embed the thumbnail in the savegame instead, so this call is not needed at
+  // all.
   return 1;
 }
 
