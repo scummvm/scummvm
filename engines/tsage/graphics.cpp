@@ -991,6 +991,8 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 				break;
 			}
 		}
+		g_system->delayMillis(10);
+		g_system->updateScreen();
 	}
 
 	_gfxManager.deactivate();
