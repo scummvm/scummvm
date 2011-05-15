@@ -35,6 +35,7 @@ class RingworldDemoGame: public Game {
 public:
 	virtual void start();
 	virtual Scene *createScene(int sceneNumber);
+	virtual void quitGame();
 };
 
 class RingworldDemoScene: public Scene {

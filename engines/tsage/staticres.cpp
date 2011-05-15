@@ -113,5 +113,8 @@ Wait for it's return in the lander bay.";
 
 const char *DEMO_HELP_MSG = " Help...\rF2 - Sound Options\rF3 - Exit demo\r\rPress ENTER\rto continue";
 const char *DEMO_PAUSED_MSG = " demo is paused";
+const char *DEMO_EXIT_MSG = "Press ENTER to resume the Ringworld\x14 demo. Press ESC to exit";
+const char *EXIT_BTN_STRING = "Exit";
+const char *DEMO_BTN_STRING = "Demo";
 
 } // End of namespace tSage

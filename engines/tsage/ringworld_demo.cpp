@@ -39,6 +39,11 @@ Scene *RingworldDemoGame::createScene(int sceneNumber) {
 	return new RingworldDemoScene();
 }
 
+void RingworldDemoGame::quitGame() {
+	if (MessageDialog::show(DEMO_EXIT_MSG, EXIT_BTN_STRING, DEMO_BTN_STRING) == 0)
+		_vm->quitGame();
+}
+
 /*--------------------------------------------------------------------------
  * Ringworld Demo scene
  *

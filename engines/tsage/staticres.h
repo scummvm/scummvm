@@ -79,6 +79,11 @@ extern const char *SCENE6100_VERY_WELL;
 // Demo messages
 extern const char *DEMO_HELP_MSG;
 extern const char *DEMO_PAUSED_MSG;
+extern const char *DEMO_HELP_MSG;
+extern const char *DEMO_PAUSED_MSG;
+extern const char *DEMO_EXIT_MSG;
+extern const char *EXIT_BTN_STRING;
+extern const char *DEMO_BTN_STRING;
 
 } // End of namespace tSage
 
