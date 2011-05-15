@@ -364,6 +364,49 @@ void GfxOpenGL::drawModelFace(const Model::Face *face, float *vertices, float *v
 	glDisable(GL_ALPHA_TEST);
 }
 
+void GfxOpenGL::drawSprite(const Sprite *sprite) {
+	glMatrixMode(GL_TEXTURE);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
+
+	GLdouble modelview[16];
+	glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+
+	// We want screen-aligned sprites so reset the rotation part of the matrix.
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			if (i == j) {
+				modelview[i * 4 + j] = 1.0;
+			} else {
+				modelview[i * 4 + j] = 0.0;
+			}
+		}
+	}
+	glLoadMatrixd(modelview);
+
+	glAlphaFunc(GL_GREATER, 0.5);
+	glEnable(GL_ALPHA_TEST);
+	glDisable(GL_LIGHTING);
+
+	glBegin(GL_POLYGON);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(sprite->_width / 2, sprite->_height, 0.0f);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(sprite->_width / 2, 0.0f, 0.0f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(-sprite->_width / 2, 0.0f, 0.0f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(-sprite->_width / 2, sprite->_height, 0.0f);
+	glEnd();
+
+	glEnable(GL_LIGHTING);
+	glDisable(GL_ALPHA_TEST);
+
+	glPopMatrix();
+}
+
 void GfxOpenGL::translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
@@ -389,13 +432,21 @@ void GfxOpenGL::drawHierachyNode(const Model::HierNode *node) {
 		translateViewpointStart(node->_pos, node->_pitch, node->_yaw, node->_roll);
 	}
 	if (node->_hierVisible) {
-		if (node->_mesh && node->_meshVisible) {
-			glPushMatrix();
-			glTranslatef(node->_pivot.x(), node->_pivot.y(), node->_pivot.z());
-			node->_mesh->draw();
-			glMatrixMode(GL_MODELVIEW);
-			glPopMatrix();
+		glPushMatrix();
+		glTranslatef(node->_pivot.x(), node->_pivot.y(), node->_pivot.z());
+
+		Sprite* sprite = node->_sprite;
+		while (sprite) {
+			sprite->draw();
+			sprite = sprite->_next;
 		}
+
+		if (node->_mesh && node->_meshVisible) {
+			node->_mesh->draw();
+		}
+
+		glMatrixMode(GL_MODELVIEW);
+		glPopMatrix();
 
 		if (node->_child) {
 			node->_child->draw();

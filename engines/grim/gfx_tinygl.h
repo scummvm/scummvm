@@ -67,6 +67,7 @@ public:
 
 	void drawHierachyNode(const Model::HierNode *node);
 	void drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts);
+	void drawSprite(const Sprite *sprite);
 
 	void disableLights();
 	void setupLight(Scene::Light *light, int lightId);
