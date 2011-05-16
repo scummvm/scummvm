@@ -942,8 +942,8 @@ void L1_SubmitSaveGameData() {
 		if (lua_isnil(table2))
 			break;
 		str = lua_getstring(table2);
-		int len = strlen(str) + 1;
-		savedState->write(&len, sizeof(int32));
+		int32 len = strlen(str) + 1;
+		savedState->writeLESint32(len);
 		savedState->write(str, len);
 	}
 	savedState->endSection();
@@ -971,13 +971,13 @@ void L1_GetSaveGameData() {
 	int32 dataSize = savedState->beginSection('SUBS');
 
 	char str[200];
-	int strSize;
+	int32 strSize;
 	int count = 0;
 
 	for (;;) {
 		if (dataSize <= 0)
 			break;
-		savedState->read(&strSize, sizeof(int32));
+		strSize = savedState->readLESint32();
 		savedState->read(str, strSize);
 		lua_pushobject(result);
 		lua_pushnumber(count);
