@@ -491,6 +491,7 @@ public:
 	void setColormap(CMap *c);
 	void setupTexture();
 	void reset();
+	void resetColormap();
 	~MaterialComponent() { }
 
 private:
@@ -706,6 +707,10 @@ void MaterialComponent::setupTexture() {
 
 void MaterialComponent::reset() {
 	_num = 0;
+}
+
+void MaterialComponent::resetColormap() {
+	init();
 }
 
 class LuaVarComponent : public Costume::Component {
@@ -975,12 +980,10 @@ Costume::Component::Component(Component *p, int parentID, tag32 t)  {
 }
 
 void Costume::Component::setColormap(CMap *c) {
-	ModelComponent *mc = dynamic_cast<ModelComponent *>(this);
-
 	if (c)
 		_cmap = c;
-	if (mc && getCMap())
-		mc->resetColormap();
+	if (getCMap())
+		resetColormap();
 }
 
 void Costume::Component::setFade(float fade) {
