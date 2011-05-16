@@ -341,7 +341,7 @@ Material *ResourceLoader::loadMaterial(const char *filename, CMap *c) {
 
 	Material *result = new Material(fname.c_str(), b->getData(), b->getLen(), c);
 	_materials.push_back(result);
-warning("new mat %s %p",filename,result);
+
 	return result;
 }
 
@@ -357,7 +357,7 @@ Model *ResourceLoader::loadModel(const char *filename, CMap *c) {
 
 	Model *result = new Model(filename, b->getData(), b->getLen(), c);
 	_models.push_back(result);
-warning("new model %s %p",filename,result);
+
 	return result;
 }
 
