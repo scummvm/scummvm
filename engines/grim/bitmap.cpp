@@ -318,7 +318,7 @@ void BitmapData::convertToColorFormat(int num, int format){
 			char *newData = new char[_width * _height * 4];
 			char *to = newData;
 
-			for (int i = 0; i< _height * _width; i++,bitmapData++,to+=4) {
+			for (int i = 0; i< _height * _width; i++, bitmapData++, to += 4) {
 				uint pixel = *bitmapData;
 				// Alpha, then 555 (BGR).
 				blue = (pixel >> 10) & 0x1f;
@@ -328,7 +328,7 @@ void BitmapData::convertToColorFormat(int num, int format){
 				red = (pixel & 0x1f);
 				to[0] = red << 3 | red >> 2;
 				
-				if(pixel>>15 & 1)
+				if(pixel >> 15 & 1)
 					alpha = 255;
 				else
 					alpha = 0;
@@ -373,9 +373,9 @@ void BitmapData::convertToColorFormat(int num, int format){
 			char* newStore = new char[size/2];
 			uint16 *to = reinterpret_cast<uint16 *>(newStore);
 			for(int j = 0; j < size;j += 4, to++){
-				red=(tempStore[j] >> 3) & 0x1f;
-				green=(tempStore[j + 1] >> 2) & 0x3f;
-				blue=(tempStore[j + 2] >> 3) &0x1f;
+				red = (tempStore[j] >> 3) & 0x1f;
+				green = (tempStore[j + 1] >> 2) & 0x3f;
+				blue = (tempStore[j + 2] >> 3) &0x1f;
 				
 				*to = (red << 11) | (green << 5) | blue;
 			}
