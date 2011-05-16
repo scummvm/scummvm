@@ -926,7 +926,7 @@ void IMuseInternal::sequencer_timers(MidiDriver *midi) {
 }
 
 void IMuseInternal::handle_marker(uint id, byte data) {
-	if (_queue_adding && _queue_sound == id && data == _queue_marker)
+	if ((_queue_end == _queue_pos) || (_queue_adding && _queue_sound == id && data == _queue_marker))
 		return;
 
 	uint16 *p = _cmd_queue[_queue_end].array;
