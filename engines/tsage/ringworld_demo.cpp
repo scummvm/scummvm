@@ -40,7 +40,17 @@ Scene *RingworldDemoGame::createScene(int sceneNumber) {
 }
 
 void RingworldDemoGame::quitGame() {
-	if (MessageDialog::show(DEMO_EXIT_MSG, EXIT_BTN_STRING, DEMO_BTN_STRING) == 0)
+	_globals->_events.setCursor(CURSOR_ARROW);
+	MessageDialog *dlg = new MessageDialog(DEMO_EXIT_MSG, EXIT_BTN_STRING, DEMO_BTN_STRING);
+	dlg->draw();
+
+	GfxButton *selectedButton = dlg->execute(&dlg->_btn2);
+	bool exitFlag  =  selectedButton != &dlg->_btn2;
+
+	delete dlg;
+	_globals->_events.hideCursor();
+
+	if (exitFlag)
 		_vm->quitGame();
 }
 
