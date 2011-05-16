@@ -29,7 +29,10 @@
 #undef ARRAYSIZE
 #endif
 
-#if defined(USE_GLES)
+#if defined(BADA)
+#include <gl.h>
+#include <glext.h>
+#elif defined(USE_GLES)
 #include <GLES/gl.h>
 #elif defined(SDL_BACKEND)
 #include <SDL_opengl.h>

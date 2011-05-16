@@ -29,16 +29,15 @@
 #include <unistd.h>
 #include <math.h>
 
-#define M_PI		3.14159265358979323846
+#define M_PI  3.14159265358979323846
 
-// does nothing
 int printf(const char* format, ...);
 
 // delegates to snprintf
 // http://sourceware.org/newlib/libc.html#sprintf
 int sprintf(char* str, const char* format, ...);
 
-int	stricmp(const char*, const char*);
+int stricmp(const char*, const char*);
 
 int vsnprintf(char* buf,
               size_t count,
