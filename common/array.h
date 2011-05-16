@@ -238,15 +238,15 @@ public:
 		if (newCapacity <= _capacity)
 			return;
 
-		T *old_storage = _storage;
+		T *oldStorage = _storage;
 		_capacity = newCapacity;
 		_storage = new T[newCapacity];
 		assert(_storage);
 
-		if (old_storage) {
+		if (oldStorage) {
 			// Copy old data
-			copy(old_storage, old_storage + _size, _storage);
-			delete[] old_storage;
+			copy(oldStorage, oldStorage + _size, _storage);
+			delete[] oldStorage;
 		}
 	}
 
@@ -286,29 +286,28 @@ protected:
 		const uint n = last - first;
 		if (n) {
 			const uint idx = pos - _storage;
-			T *newStorage = _storage;
+			T *oldStorage = _storage;
 			if (_size + n > _capacity) {
 				// If there is not enough space, allocate more and
 				// copy old elements over.
 				uint newCapacity = roundUpCapacity(_size + n);
-				newStorage = new T[newCapacity];
-				assert(newStorage);
-				copy(_storage, _storage + idx, newStorage);
-				pos = newStorage + idx;
+				_storage = new T[newCapacity];
+				assert(_storage);
+				copy(oldStorage, oldStorage + idx, _storage);
+				pos = _storage + idx;
 			}
 
 			// Make room for the new elements by shifting back
 			// existing ones.
-			copy_backward(_storage + idx, _storage + _size, newStorage + _size + n);
+			copy_backward(oldStorage + idx, oldStorage + _size, _storage + _size + n);
 
 			// Insert the new elements.
 			copy(first, last, pos);
 
 			// Finally, update the internal state
-			if (newStorage != _storage) {
-				delete[] _storage;
+			if (_storage != oldStorage) {
+				delete[] oldStorage;
 				_capacity = roundUpCapacity(_size + n);
-				_storage = newStorage;
 			}
 			_size += n;
 		}
