@@ -308,10 +308,9 @@ Bitmap::~Bitmap() {
 	
 void BitmapData::convertToColorFormat(int num, int format){
 	// Supports 1555->RGBA, RGBA->565
-	unsigned char red = 0, green = 0, blue = 0, alpha;
-	int size = _width*_height*(_bpp/8);
-	
-	if(_colorFormat == BM_RGB1555){
+	unsigned char red = 0, green = 0, blue = 0, alpha = 0;
+	int size = _width * _height * (_bpp / 8);
+	if (_colorFormat == BM_RGB1555){
 		uint16 *bitmapData = reinterpret_cast<uint16 *>(_data[num]);
 		
 		if (format == BM_RGBA && _bpp == 16){
@@ -326,7 +325,7 @@ void BitmapData::convertToColorFormat(int num, int format){
 				to[2] = blue << 3 | blue >> 2;
 				green = (pixel >> 5) & 0x1f;
 				to[1] = green << 3 | green >> 2;
-				red = (pixel &0x1f);
+				red = (pixel & 0x1f);
 				to[0] = red << 3 | red >> 2;
 				
 				if(pixel>>15 & 1)
@@ -339,47 +338,46 @@ void BitmapData::convertToColorFormat(int num, int format){
 			_data[num] = newData;
 			_colorFormat = BM_RGBA;
 			_bpp = 32;
-		}
-		else if(format == BM_RGB565){ // 1555 -> 565 (Incomplete)
-			convertToColorFormat(num,BM_RGBA);
-			convertToColorFormat(num,BM_RGB565);
+		} else if (format == BM_RGB565){ // 1555 -> 565 (Incomplete)
+			convertToColorFormat(num, BM_RGBA);
+			convertToColorFormat(num, BM_RGB565);
 			warning("Conversion 1555->565 done with 1555->RGBA->565");
 			return;
 			warning("Conversion 1555->565 is not properly implemented");
 			// This doesn't work properly, so falling back to double-conversion via RGBA for now. 
 			uint16 *to = reinterpret_cast<uint16 *>(_data[num]);
-			for (int i = 1; i < _height * _width; i++,bitmapData++,to++) {
+			for (int i = 1; i < _height * _width; i++, bitmapData++, to++) {
 				uint pixel = *bitmapData;
 				// Alpha, then 555.
-				if(to[0]&128){ // Chroma key
-					to[0]=0xf8;
-					to[1]=0x1f;
+				if(to[0] & 128){ // Chroma key
+					to[0] = 0xf8;
+					to[1] = 0x1f;
 				}else{
-				    blue = (pixel >> 10) & 0x1f;
+					blue = (pixel >> 10) & 0x1f;
 					//red = red << 3 | red >> 2;
 					green = (pixel >> 5) & 0x1f;
 					green = green << 1 | green >> 1;
 						
 					red = (pixel) & 0x1f;
 
-					to[0] = (red<<3)||green>>3;
-					to[1] = (green<<5)|blue;
+					to[0] = (red << 3) | green >> 3;
+					to[1] = (green << 5) | blue;
 				}
 			}
-			_colorFormat=BM_RGB565;
+			_colorFormat = BM_RGB565;
 		}
 		
-	}else if (_colorFormat == BM_RGBA){
-		if(format==BM_RGB565){ // RGBA->565
+	} else if (_colorFormat == BM_RGBA){
+		if(format == BM_RGB565){ // RGBA->565
 			char* tempStore = _data[num];
 			char* newStore = new char[size/2];
 			uint16 *to = reinterpret_cast<uint16 *>(newStore);
-			for(int j=0;j<size;j+=4,to++){
+			for(int j = 0; j < size;j += 4, to++){
 				red=(tempStore[j] >> 3) & 0x1f;
-				green=(tempStore[j+1] >> 2) & 0x3f;
-				blue=(tempStore[j+2] >> 3) &0x1f;
+				green=(tempStore[j + 1] >> 2) & 0x3f;
+				blue=(tempStore[j + 2] >> 3) &0x1f;
 				
-				*to = (red<<11) | (green << 5) | blue;
+				*to = (red << 11) | (green << 5) | blue;
 			}
 			delete[] tempStore;
 			_data[num] = newStore;
@@ -408,11 +406,11 @@ void BitmapData::convertToColorFormat(int num, int format){
 				}
 			}
 			delete [] _data[num];
-			_data[num]=(char*)tempData;
+			_data[num] = (char *)tempData;
 			_colorFormat = BM_RGBA;
 			_bpp = 32;
 		}
-	} else{
+	} else {
 		error("Conversion between format: %d and format %d not implemented",_colorFormat, format);
 	}
 }
