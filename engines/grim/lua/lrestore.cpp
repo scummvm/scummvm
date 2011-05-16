@@ -42,7 +42,7 @@ static void restoreObjectValue(TObject *object, RestoreSint32 restoreSint32, Res
 				udata[2] = b[1];
 				udata[3] = b[0];
 #else
-				memcpy(&udata, &v, 4);
+				memcpy(udata, &v, 4);
 #endif
 			}
 			break;
