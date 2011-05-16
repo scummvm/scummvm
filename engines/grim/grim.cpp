@@ -1403,7 +1403,7 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 		error("Unable to store screenshot");
 	}
 	state->endSection();
-	g_grim->killBitmap(screenshot);
+	delete screenshot;
 	printf("GrimEngine::StoreSaveGameImage() finished.\n");
 }
 
