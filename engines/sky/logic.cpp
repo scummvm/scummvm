@@ -22,7 +22,6 @@
 
 #include "common/endian.h"
 #include "common/rect.h"
-#include "common/EventRecorder.h"
 #include "common/textconsole.h"
 
 #include "sky/autoroute.h"
@@ -68,8 +67,8 @@ void Logic::setupLogicTable() {
 	_logicTable = logicTable;
 }
 
-Logic::Logic(SkyCompact *skyCompact, Screen *skyScreen, Disk *skyDisk, Text *skyText, MusicBase *skyMusic, Mouse *skyMouse, Sound *skySound) {
-	g_eventRec.registerRandomSource(_rnd, "sky");
+Logic::Logic(SkyCompact *skyCompact, Screen *skyScreen, Disk *skyDisk, Text *skyText, MusicBase *skyMusic, Mouse *skyMouse, Sound *skySound)
+	: _rnd("sky") {
 
 	_skyCompact = skyCompact;
 	_skyScreen = skyScreen;

@@ -49,7 +49,6 @@
 #include "common/error.h"
 #include "common/file.h"
 #include "common/fs.h"
-#include "common/EventRecorder.h"
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -177,8 +176,7 @@ Common::Error MadsM4Engine::run() {
 	_script = new ScriptInterpreter(this);
 	_ws = new WoodScript(this);
 	//_callbacks = new Callbacks(this);
-	_random = new Common::RandomSource();
-	g_eventRec.registerRandomSource(*_random, "m4");
+	_random = new Common::RandomSource("m4");
 
 	return Common::kNoError;
 }

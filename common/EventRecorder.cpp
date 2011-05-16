@@ -251,7 +251,7 @@ void EventRecorder::deinit() {
 	g_system->deleteMutex(_recorderMutex);
 }
 
-void EventRecorder::registerRandomSource(RandomSource &rnd, const char *name) {
+void EventRecorder::registerRandomSource(RandomSource &rnd, const String &name) {
 	if (_recordMode == kRecorderRecord) {
 		RandomSourceRecord rec;
 		rec.name = name;

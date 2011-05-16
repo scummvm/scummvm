@@ -24,7 +24,6 @@
 #include "common/debug-channels.h"
 #include "common/md5.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/system.h"
 #include "common/translation.h"
 
@@ -111,7 +110,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _language(dr.language),
 	  _debugger(0),
 	  _currentScript(0xFF), // Let debug() work on init stage
-	  _messageDialog(0), _pauseDialog(0), _versionDialog(0) {
+	  _messageDialog(0), _pauseDialog(0), _versionDialog(0),
+	  _rnd("scumm")
+	  {
 
 	if (_game.heversion > 0) {
 		_gdi = new GdiHE(this);
@@ -574,8 +575,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	assert(!_mainMenuDialog);
 	_mainMenuDialog = new ScummMenuDialog(this);
 #endif
-
-	g_eventRec.registerRandomSource(_rnd, "scumm");
 }
 
 

@@ -25,11 +25,10 @@
 #include "kyra/animator_lok.h"
 
 #include "common/system.h"
-#include "common/EventRecorder.h"
 
 namespace Kyra {
 
-Sprites::Sprites(KyraEngine_LoK *vm, OSystem *system) {
+Sprites::Sprites(KyraEngine_LoK *vm, OSystem *system) : _rnd("kyraSprites") {
 	_vm = vm;
 	_res = vm->resource();
 	_screen = vm->screen();
@@ -40,7 +39,6 @@ Sprites::Sprites(KyraEngine_LoK *vm, OSystem *system) {
 	_spriteDefStart = 0;
 	memset(_drawLayerTable, 0, sizeof(_drawLayerTable));
 	_sceneAnimatorBeaconFlag = 0;
-	g_eventRec.registerRandomSource(_rnd, "kyraSprites");
 }
 
 Sprites::~Sprites() {

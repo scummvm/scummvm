@@ -20,7 +20,7 @@
  *
  */
 
-#include "common/EventRecorder.h"
+#include "common/array.h"
 
 #include "gob/sound/bgatmosphere.h"
 #include "gob/sound/sounddesc.h"
@@ -28,14 +28,12 @@
 namespace Gob {
 
 BackgroundAtmosphere::BackgroundAtmosphere(Audio::Mixer &mixer) :
-	SoundMixer(mixer, Audio::Mixer::kMusicSoundType) {
+	SoundMixer(mixer, Audio::Mixer::kMusicSoundType), _rnd("gobBA") {
 
 	_playMode = kPlayModeLinear;
 	_queuePos = -1;
 	_shaded = false;
 	_shadable = true;
-
-	g_eventRec.registerRandomSource(_rnd, "gobBA");
 }
 
 BackgroundAtmosphere::~BackgroundAtmosphere() {

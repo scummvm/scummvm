@@ -29,12 +29,11 @@
 #include "common/error.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/EventRecorder.h"
 
 namespace Kyra {
 
 KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
-	: Engine(system), _flags(flags) {
+	: Engine(system), _flags(flags), _rnd("kyra") {
 	_res = 0;
 	_sound = 0;
 	_text = 0;
@@ -78,8 +77,6 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	DebugMan.addDebugChannel(kDebugLevelSequence, "Sequence", "Sequence debug level");
 	DebugMan.addDebugChannel(kDebugLevelMovie, "Movie", "Movie debug level");
 	DebugMan.addDebugChannel(kDebugLevelTimer, "Timer", "Timer debug level");
-
-	g_eventRec.registerRandomSource(_rnd, "kyra");
 }
 
 ::GUI::Debugger *KyraEngine_v1::getDebugger() {

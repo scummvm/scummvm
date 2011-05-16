@@ -24,7 +24,6 @@
 #include "common/endian.h"
 #include "common/error.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/keyboard.h"
 #include "common/fs.h"
 #include "common/config-manager.h"
@@ -815,7 +814,7 @@ const char *TinselEngine::_textFiles[][3] = {
 
 
 TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc) {
+		Engine(syst), _gameDescription(gameDesc), _random("tinsel") {
 	_vm = this;
 
 	_config = new Config(this);
@@ -905,8 +904,6 @@ Common::Error TinselEngine::run() {
 		initGraphics(320, 200, false);
 		_screenSurface.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	}
-
-	g_eventRec.registerRandomSource(_random, "tinsel");
 
 	_console = new Console();
 

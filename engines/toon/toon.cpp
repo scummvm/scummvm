@@ -25,7 +25,6 @@
 #include "common/debug-channels.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
-#include "common/EventRecorder.h"
 #include "common/savefile.h"
 #include "common/memstream.h"
 
@@ -780,8 +779,6 @@ Common::Error ToonEngine::run() {
 	if (!loadToonDat())
 		return Common::kUnknownError;
 
-	g_eventRec.registerRandomSource(_rnd, "toon");
-
 	initGraphics(TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT, true);
 	init();
 
@@ -815,7 +812,8 @@ Common::Error ToonEngine::run() {
 }
 
 ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
-	: Engine(syst), _gameDescription(gameDescription), _language(gameDescription->language) {
+	: Engine(syst), _gameDescription(gameDescription),
+	_language(gameDescription->language), _rnd("toon") {
 	_system = syst;
 	_tickLength = 16;
 	_currentPicture = NULL;

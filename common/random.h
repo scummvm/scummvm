@@ -26,6 +26,8 @@
 
 namespace Common {
 
+class String;
+
 /**
  * Simple random number generator. Although it is definitely not suitable for
  * cryptographic purposes, it serves our purposes just fine.
@@ -35,7 +37,21 @@ private:
 	uint32 _randSeed;
 
 public:
+	/**
+	 * Construct a new randomness source with the specific name.
+	 * The name used name must be globally unique, and is used to
+	 * register the randomness source with the active event recorder,
+	 * if any.
+	 */
+	RandomSource(const String &name);
+
+	// FIXME: This constructor for a nameless randomness source should be removed.
+	// I am only adding this temporarily to ease transition to the new
+	// system which enforces names for randomness sources.
 	RandomSource();
+
+	~RandomSource();
+
 	void setSeed(uint32 seed);
 
 	uint32 getSeed() {

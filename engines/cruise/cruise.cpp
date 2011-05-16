@@ -20,7 +20,6 @@
  *
  */
 
-#include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/debug-channels.h"
 #include "common/textconsole.h"
@@ -41,7 +40,8 @@ namespace Cruise {
 
 CruiseEngine *_vm;
 
-CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc)
+	: Engine(syst), _gameDescription(gameDesc), _rnd("cruise") {
 
 	DebugMan.addDebugChannel(kCruiseDebugScript, "scripts", "Scripts debug level");
 	DebugMan.addDebugChannel(kCruiseDebugSound, "sound", "Sound debug level");
@@ -52,8 +52,6 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 
 	// Setup mixer
 	syncSoundSettings();
-
-	g_eventRec.registerRandomSource(_rnd, "cruise");
 }
 
 extern void listMemory();

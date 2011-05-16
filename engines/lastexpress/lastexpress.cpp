@@ -37,7 +37,6 @@
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/EventRecorder.h"
 
 #include "engines/util.h"
 
@@ -49,10 +48,16 @@ const char *g_entityNames[] = { "Player", "Anna", "August", "Mertens", "Coudert"
 namespace LastExpress {
 
 LastExpressEngine::LastExpressEngine(OSystem *syst, const ADGameDescription *gd) :
-    Engine(syst), _gameDescription(gd), _debugger(NULL), _cursor(NULL),
-    _font(NULL), _logic(NULL), _menu(NULL), _frameCounter(0), _lastFrameCount(0),
-	_graphicsMan(NULL), _resMan(NULL), _sceneMan(NULL), _soundMan(NULL),
-	_eventMouse(NULL), _eventTick(NULL), _eventMouseBackup(NULL), _eventTickBackup(NULL) {
+    Engine(syst), _gameDescription(gd),
+    _debugger(NULL), _cursor(NULL),
+    _font(NULL), _logic(NULL), _menu(NULL),
+    _frameCounter(0), _lastFrameCount(0),
+	_graphicsMan(NULL), _resMan(NULL),
+	_sceneMan(NULL), _soundMan(NULL),
+	_eventMouse(NULL), _eventTick(NULL),
+	_eventMouseBackup(NULL), _eventTickBackup(NULL),
+	_random("lastexpress")
+	{
 	// Setup mixer
 	syncSoundSettings();
 
@@ -71,8 +76,6 @@ LastExpressEngine::LastExpressEngine(OSystem *syst, const ADGameDescription *gd)
 	DebugMan.addDebugChannel(kLastExpressDebugLogic, "Logic", "Debug logic");
 	DebugMan.addDebugChannel(kLastExpressDebugScenes, "Scenes", "Debug scenes & hotspots");
 	DebugMan.addDebugChannel(kLastExpressDebugUnknown, "Unknown", "Debug unknown data");
-
-	g_eventRec.registerRandomSource(_random, "lastexpress");
 }
 
 LastExpressEngine::~LastExpressEngine() {

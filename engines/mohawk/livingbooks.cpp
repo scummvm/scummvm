@@ -28,10 +28,10 @@
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/fs.h"
 #include "common/archive.h"
 #include "common/textconsole.h"
+#include "common/system.h"
 
 #include "graphics/palette.h"
 
@@ -125,8 +125,7 @@ MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGa
 
 	_alreadyShowedIntro = false;
 
-	_rnd = new Common::RandomSource();
-	g_eventRec.registerRandomSource(*_rnd, "livingbooks");
+	_rnd = new Common::RandomSource("livingbooks");
 
 	_page = NULL;
 

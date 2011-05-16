@@ -24,7 +24,6 @@
 #include "common/debug-channels.h"
 #include "common/system.h"
 #include "common/savefile.h"
-#include "common/EventRecorder.h"
 
 #include "engines/util.h"
 
@@ -39,8 +38,8 @@ namespace Lure {
 
 static LureEngine *int_engine = NULL;
 
-LureEngine::LureEngine(OSystem *system, const LureGameDescription *gameDesc): Engine(system), _gameDescription(gameDesc) {
-	g_eventRec.registerRandomSource(_rnd, "lure");
+LureEngine::LureEngine(OSystem *system, const LureGameDescription *gameDesc)
+	: Engine(system), _gameDescription(gameDesc), _rnd("lure") {
 
 	DebugMan.addDebugChannel(kLureDebugScripts, "scripts", "Scripts debugging");
 	DebugMan.addDebugChannel(kLureDebugAnimations, "animations", "Animations debugging");

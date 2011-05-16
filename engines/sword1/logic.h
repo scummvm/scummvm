@@ -30,6 +30,8 @@
 #include "common/random.h"
 #include "audio/mixer.h"
 
+class OSystem;
+
 namespace Sword1 {
 
 #define NON_ZERO_SCRIPT_VARS 95

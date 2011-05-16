@@ -22,7 +22,6 @@
 
 #include "common/endian.h"
 #include "common/util.h"
-#include "common/EventRecorder.h"
 #include "common/textconsole.h"
 
 #include "sword1/logic.h"
@@ -50,8 +49,8 @@ namespace Sword1 {
 
 uint32 Logic::_scriptVars[NUM_SCRIPT_VARS];
 
-Logic::Logic(SwordEngine *vm, ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse, Sound *pSound, Music *pMusic, Menu *pMenu, OSystem *system, Audio::Mixer *mixer) {
-	g_eventRec.registerRandomSource(_rnd, "sword1");
+Logic::Logic(SwordEngine *vm, ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse, Sound *pSound, Music *pMusic, Menu *pMenu, OSystem *system, Audio::Mixer *mixer)
+	: _rnd("sword1") {
 
 	_vm = vm;
 	_objMan = pObjMan;

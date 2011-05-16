@@ -24,7 +24,6 @@
 #include "common/random.h"
 #include "common/error.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/debug-channels.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
@@ -596,8 +595,7 @@ void HugoEngine::initialize() {
 	_file->openDatabaseFiles();                     // Open database files
 	calcMaxScore();                                 // Initialise maxscore
 
-	_rnd = new Common::RandomSource();
-	g_eventRec.registerRandomSource(*_rnd, "hugo");
+	_rnd = new Common::RandomSource("hugo");
 	_rnd->setSeed(42);                              // Kick random number generator
 
 	switch (_gameVariant) {

@@ -22,9 +22,9 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/keyboard.h"
 #include "common/translation.h"
+#include "common/system.h"
 
 #include "mohawk/cursors.h"
 #include "mohawk/graphics.h"
@@ -118,8 +118,7 @@ Common::Error MohawkEngine_Riven::run() {
 	_optionsDialog = new RivenOptionsDialog(this);
 	_scriptMan = new RivenScriptManager(this);
 
-	_rnd = new Common::RandomSource();
-	g_eventRec.registerRandomSource(*_rnd, "riven");
+	_rnd = new Common::RandomSource("riven");
 
 	// Create the cursor manager
 	if (Common::File::exists("rivendmo.exe"))

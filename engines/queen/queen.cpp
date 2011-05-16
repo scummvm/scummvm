@@ -28,7 +28,6 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/textconsole.h"
 
 #include "engines/util.h"
@@ -193,8 +192,7 @@ Common::Error QueenMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 namespace Queen {
 
 QueenEngine::QueenEngine(OSystem *syst)
-	: Engine(syst), _debugger(0) {
-	g_eventRec.registerRandomSource(randomizer, "queen");
+	: Engine(syst), _debugger(0), randomizer("queen") {
 }
 
 QueenEngine::~QueenEngine() {

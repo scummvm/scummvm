@@ -21,7 +21,6 @@
  */
 
 #include "common/config-manager.h"
-#include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/textconsole.h"
@@ -110,7 +109,7 @@ AGOSEngine_Elvira1::AGOSEngine_Elvira1(OSystem *system)
 }
 
 AGOSEngine::AGOSEngine(OSystem *syst)
-	: Engine(syst) {
+	: Engine(syst), _rnd("agos") {
 
 	_vcPtr = 0;
 	_vcGetOutOfCode = 0;
@@ -526,8 +525,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "movies");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sfx");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "speech");
-
-	g_eventRec.registerRandomSource(_rnd, "agos");
 }
 
 Common::Error AGOSEngine::init() {

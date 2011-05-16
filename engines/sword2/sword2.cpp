@@ -28,7 +28,6 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -252,7 +251,7 @@ Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) c
 
 namespace Sword2 {
 
-Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
+Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst), _rnd("sword2") {
 	// Add default file directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "clusters");
@@ -292,8 +291,6 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 	_gameSpeed = 1;
 
 	_gmmLoadSlot = -1; // Used to manage GMM Loading
-
-	g_eventRec.registerRandomSource(_rnd, "sword2");
 }
 
 Sword2Engine::~Sword2Engine() {

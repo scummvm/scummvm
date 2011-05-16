@@ -21,9 +21,22 @@
 
 #include "common/random.h"
 #include "common/system.h"
+#include "common/EventRecorder.h"
 
 
 namespace Common {
+
+RandomSource::RandomSource(const String &name) {
+	// Use system time as RNG seed. Normally not a good idea, if you are using
+	// a RNG for security purposes, but good enough for our purposes.
+	assert(g_system);
+	uint32 seed = g_system->getMillis();
+	setSeed(seed);
+
+	// Register this random source with the event recorder. This might
+	// reset the seed, so call it *after* the initial seed has been set.
+	g_eventRec.registerRandomSource(*this, name);
+}
 
 RandomSource::RandomSource() {
 	// Use system time as RNG seed. Normally not a good idea, if you are using
@@ -31,6 +44,10 @@ RandomSource::RandomSource() {
 	assert(g_system);
 	uint32 seed = g_system->getMillis();
 	setSeed(seed);
+}
+
+RandomSource::~RandomSource() {
+	// TODO: Unregister with g_eventRec
 }
 
 void RandomSource::setSeed(uint32 seed) {

@@ -31,7 +31,6 @@
 #include "lure/sound.h"
 #include "common/stack.h"
 #include "common/endian.h"
-#include "common/EventRecorder.h"
 
 namespace Lure {
 
