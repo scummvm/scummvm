@@ -243,13 +243,7 @@ bool BitmapData::loadTile(const char *filename, const char *data, int len) {
 		o->seek(8, SEEK_CUR);
 		o->read(_data[i], size);
 	}
-	if(_bpp==16){
-		for (int i = 0; i < numSubImages; ++i) {
-			for (int j = 0; j < _width * _height; ++j) {
-				((uint16 *)_data[i])[j] = SWAP_BYTES_16(((uint16 *)_data[i])[j]);
-			}
-		}
-	}
+
 	char *bMap = makeBitmapFromTile(_data, 640, 480, _bpp);
 	for (int i = 0; i < numSubImages; ++i) {
 		delete[] _data[i];
@@ -314,38 +308,32 @@ Bitmap::~Bitmap() {
 	
 void BitmapData::convertToColorFormat(int num, int format){
 	// Supports 1555->RGBA, RGBA->565
+	unsigned char red = 0, green = 0, blue = 0, alpha;
+	int size = _width*_height*(_bpp/8);
+	
 	if(_colorFormat == BM_RGB1555){
-		char red = 0, green = 0, blue = 0;
+		uint16 *bitmapData = reinterpret_cast<uint16 *>(_data[num]);
+		
 		if (format == BM_RGBA && _bpp == 16){
-			const int BytesPP = 2;
+			// Convert data to 32-bit RGBA format
 			char *newData = new char[_width * _height * 4];
 			char *to = newData;
-			for (int i = 0; i< _height; i++) {
-				for(int j = 0; j < _width; j++) {
-					char byte1 = _data[num][i * _width * BytesPP + j *2];
-					char byte2 = _data[num][i * _width * BytesPP + j * 2 + 1];
-					// Probably Alpha, then 555.
-					// Red
-					red = (byte1 >> 2) & 31;
-					red = red << 3 | red >> 2;
-					// Green
-					char green1 = (byte1 & 3);
-					char green2 = (((byte2) >> 5) & 7);
-					char green3 = green1 << 3 | green2;
-					green = green3 << 3 | green3 >> 2 ;
-					// Blue
-					blue = (byte2) & 31;
-					blue = blue << 3 | blue >> 2;
-					// Some more magic to stretch the values
-					*to = blue;
-					to++;
-					*to = green;
-					to++;
-					*to = red;
-					to++;
-					*to = 0;
-					to++;
-				}
+
+			for (int i = 0; i< _height * _width; i++,bitmapData++,to+=4) {
+				uint pixel = *bitmapData;
+				// Alpha, then 555 (BGR).
+				blue = (pixel >> 10) & 0x1f;
+				to[2] = blue << 3 | blue >> 2;
+				green = (pixel >> 5) & 0x1f;
+				to[1] = green << 3 | green >> 2;
+				red = (pixel &0x1f);
+				to[0] = red << 3 | red >> 2;
+				
+				if(pixel>>15 & 1)
+					alpha = 255;
+				else
+					alpha = 0;
+				to[3] = alpha;
 			}
 			delete _data[num];
 			_data[num] = newData;
@@ -358,65 +346,40 @@ void BitmapData::convertToColorFormat(int num, int format){
 			warning("Conversion 1555->565 done with 1555->RGBA->565");
 			return;
 			warning("Conversion 1555->565 is not properly implemented");
-			// This doesn't work properly yet, probably because I misinterpret the byteorder.
-			char *tile = getImageData(0);
-			char *to = tile;
-			for (int i = 0; i< _height; i++) {
-				for(int j = 0; j < _width; j++) {
-					char byte2 = tile[i * _width * 2 + j *2];
-					char byte1 = tile[i * _width * 2 + j * 2 + 1];
-					char outByte1 = 0;
-					char outByte2 = 0;
-					// Probably Alpha, then 555.
-					if(byte1&128){ // Chroma key
-					//	outByte1 = 0xf8;
-					//	outByte2 = 0x1f;
-					}else{
-						// Red
-						red = (byte1 >> 2) & 31;
-						//red = red << 3 | red >> 2;
-						// Green
-						char green1 = (byte1 & 3);
-						char green2 = (((byte2) >> 5) & 7);
-						char green3 = green1 << 4 | green2;
+			// This doesn't work properly, so falling back to double-conversion via RGBA for now. 
+			uint16 *to = reinterpret_cast<uint16 *>(_data[num]);
+			for (int i = 1; i < _height * _width; i++,bitmapData++,to++) {
+				uint pixel = *bitmapData;
+				// Alpha, then 555.
+				if(to[0]&128){ // Chroma key
+					to[0]=0xf8;
+					to[1]=0x1f;
+				}else{
+				    blue = (pixel >> 10) & 0x1f;
+					//red = red << 3 | red >> 2;
+					green = (pixel >> 5) & 0x1f;
+					green = green << 1 | green >> 1;
 						
-						//green = green3 << 3 | green3 >> 2 ;
-						// Blue
-						blue = (byte2) & 31;
-						assert(blue<32);
-						//blue = blue << 3 | blue >> 2;
-						outByte1 = (blue<<3)|(green3>>3);
-						outByte2 = (green3<<5)|red;
-						// Some more magic to stretch the values
-					}
-					*to = outByte1;
-					to++;
-					*to = outByte2;
-					to++;
+					red = (pixel) & 0x1f;
+
+					to[0] = (red<<3)||green>>3;
+					to[1] = (green<<5)|blue;
 				}
-				
 			}
 			_colorFormat=BM_RGB565;
 		}
 		
 	}else if (_colorFormat == BM_RGBA){
 		if(format==BM_RGB565){ // RGBA->565
-			int size = _width*_height*(_bpp/8);
 			char* tempStore = _data[num];
 			char* newStore = new char[size/2];
-			_data[num] = new char[size/2];
-			int k=0;
-			char red=0,blue=0,green=0;
-			for(int j=0;j<size;j+=4){
+			uint16 *to = reinterpret_cast<uint16 *>(newStore);
+			for(int j=0;j<size;j+=4,to++){
 				red=(tempStore[j] >> 3) & 0x1f;
 				green=(tempStore[j+1] >> 2) & 0x3f;
 				blue=(tempStore[j+2] >> 3) &0x1f;
 				
-				uint16 result= (red<<11) | (green << 5) | blue;
-				
-				// If BE then switch the order of these.
-				newStore[k++] = result&0xff;
-				newStore[k++] = (result&0xff00) >> 8;
+				*to = (red<<11) | (green << 5) | blue;
 			}
 			delete[] tempStore;
 			_data[num] = newStore;
