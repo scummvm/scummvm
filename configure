@@ -1733,10 +1733,10 @@ case $_host_os in
 		_seq_midi=no
 		;;
 	bada)
-		CXXFLAGS="$CXXFLAGS -fmessage-length=0"
-		add_line_to_config_mk "BADA_SDK = $BADA_SDK"
-		_unix=yes
-		_seq_midi=no
+    BADA_SDK_ROOT="`cygpath.exe -m ${BADA_SDK}`"
+    add_line_to_config_mk "BADA_SDK = $BADA_SDK"
+    add_line_to_config_mk "BADA_SDK_ROOT = $BADA_SDK_ROOT"
+		add_line_to_config_h "#define BADA = 1"
 		;;
 	beos*)
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -1954,25 +1954,20 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DLINUPY"
 			;;
 		bada)
-			_unix=yes
-			_need_memalign=yes
-			# we also link a .so as default
-			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DNONSTANDARD_PORT"
-			LDFLAGS="$LDFLAGS -shared -Wl,-Bsymbolic,--no-undefined"
-			HOSTEXEPRE=lib
-			HOSTEXEEXT=.so
-			_backend="bada"
-			_port_mk="backends/platform/bada/bada.mk"
+      _unix=yes
+      _need_memalign=yes
+      _backend="bada"
+      _port_mk="backends/platform/bada/bada.mk"
       if test "$_debug_build" = yes; then
-			  _arm_asm=no
+        _arm_asm=no
       else
-			  _arm_asm=yes
-	    fi
-			_build_scalers=no
-			_seq_midi=no
-			_mt32emu=no
-			_timidity=no
-			;;
+        _arm_asm=yes
+      fi
+      _build_scalers=no
+      _seq_midi=no
+      _mt32emu=no
+      _timidity=no
+      ;;
 		bfin*)
 			;;
 		caanoo)
@@ -3082,6 +3077,14 @@ EOF
 	fi
 fi
 
+case $_host_os in
+	bada)
+   # components live in non-standard locations so just assume sane SDK
+   _opengl=yes
+   _opengles=yes
+  ;;
+esac
+
 if test "$_opengles" = "yes" ; then
 	echo "yes (OpenGL ES)"
 else
@@ -3286,11 +3289,23 @@ case $_backend in
 		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 		;;
 	bada)
-    # TODO FIXME
-		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/bada '
-		INCLUDES="$INCLUDES "'-I$(BADA_SDK)/include'
-		LIBS="$LIBS -Wl,-Bdynamic -lgcc $system_libs "
-		;;
+    # dirent.h not available. ensure portdefs.h is included
+    DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
+    DEFINES="$DEFINES -DDISABLE_POSIX_FS -DNONSTANDARD_PORT"
+    DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
+    INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/bada '
+    INCLUDES="$INCLUDES "'-I$(BADA_SDK)/include'
+    INCLUDES="$INCLUDES "'-I$(BADA_SDK_ROOT)/Include'
+    if test "$_debug_build" = yes; then
+      # debug using with the simulator
+      CXXFLAGS="$CXXFLAGS -D_DEBUG -DSHP -DBUILD_DLL -fmessage-length=0"
+    else
+      # created a shared library for inclusion via the eclipse build
+      CXXFLAGS="$CXXFLAGS -DSHP"
+    fi
+    HOSTEXEPRE=lib
+    HOSTEXEEXT=.a
+    ;;
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
 		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000 -nostartfiles "'$(ronindir)/lib/crt0.o -L$(ronindir)/lib'

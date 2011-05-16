@@ -33,3 +33,6 @@ Note the debug build will target the Win32 simulator
 
 TODO
 
+
+backends/fs/posix/posix-fs.cpp:36: fatal error: dirent.h:
+defined 

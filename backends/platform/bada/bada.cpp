@@ -23,22 +23,15 @@
 #include "backends/modular-backend.h"
 #include "base/main.h"
 
-#if defined(USE_BADA_DRIVER)
+#if defined(BADA)
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "audio/mixer_intern.h"
 #include "common/scummsys.h"
 
-/*
- * Include header files needed for the getFilesystemFactory() method.
- */
-#if defined(__amigaos4__)
-  #include "backends/fs/amigaos4/amigaos4-fs-factory.h"
-#elif defined(UNIX)
-  #include "backends/fs/posix/posix-fs-factory.h"
-#elif defined(WIN32)
-  #include "backends/fs/windows/windows-fs-factory.h"
-#endif
+#define DEFAULT_CONFIG_FILE "scummvm.ini"
+
+#include "backends/fs/bada/bada-fs-factory.h"
 
 class OSystemBada : public ModularBackend {
 public:
@@ -46,9 +39,7 @@ public:
   virtual ~OSystemBada();
 
   virtual void initBackend();
-
   virtual bool pollEvent(Common::Event &event);
-
   virtual uint32 getMillis();
   virtual void delayMillis(uint msecs);
   virtual void getTimeAndDate(TimeDate &t) const {}
@@ -58,15 +49,7 @@ public:
 };
 
 OSystemBada::OSystemBada() {
-  #if defined(__amigaos4__)
-    _fsFactory = new AmigaOSFilesystemFactory();
-  #elif defined(UNIX)
-    _fsFactory = new POSIXFilesystemFactory();
-  #elif defined(WIN32)
-    _fsFactory = new WindowsFilesystemFactory();
-  #else
-    #error Unknown and unsupported FS backend
-  #endif
+  _fsFactory = new BADAFilesystemFactory();
 }
 
 OSystemBada::~OSystemBada() {
@@ -101,8 +84,6 @@ uint32 OSystemBada::getMillis() {
 void OSystemBada::delayMillis(uint msecs) {
 }
 
-#define DEFAULT_CONFIG_FILE "scummvm.ini"
-
 Common::SeekableReadStream *OSystemBada::createConfigReadStream() {
   Common::FSNode file(DEFAULT_CONFIG_FILE);
   return file.createReadStream();
@@ -125,12 +106,6 @@ int main(int argc, char *argv[]) {
   int res = scummvm_main(argc, argv);
   delete (OSystemBada*)g_system;
   return res;
-}
-
-#else /* USE_BADA_DRIVER */
-
-OSystem* OSystemBadaCreate() {
-  return NULL;
 }
 
 #endif
