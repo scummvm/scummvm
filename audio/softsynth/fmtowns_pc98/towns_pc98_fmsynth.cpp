@@ -928,7 +928,7 @@ bool TownsPC98_FmSynth::init() {
 }
 
 void TownsPC98_FmSynth::reset() {
-	Common::StackLock lock(_mutex);
+	lock();
 	for (int i = 0; i < _numChan; i++) {
 		for (int ii = 0; ii < 4; ii++)
 			_chanInternal[i].opr[ii]->reset();
@@ -948,6 +948,7 @@ void TownsPC98_FmSynth::reset() {
 	if (_prc)
 		_prc->reset();
 #endif
+	unlock();
 }
 
 void TownsPC98_FmSynth::writeReg(uint8 part, uint8 regAddress, uint8 value) {
