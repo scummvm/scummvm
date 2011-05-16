@@ -257,6 +257,8 @@ int MixerImpl::mixCallback(byte *samples, uint len) {
 	Common::StackLock lock(_mutex);
 
 	int16 *buf = (int16 *)samples;
+	// we store stereo, 16-bit samples
+	assert(len % 4 == 0);
 	len >>= 2;
 
 	// Since the mixer callback has been called, the mixer must be ready...

@@ -107,6 +107,34 @@ class ArrayTestSuite : public CxxTest::TestSuite
 
 	}
 
+	void test_self_insert() {
+		Common::Array<int> array;
+		int i;
+
+		// Insert some data -- and make sure we have enough space for
+		// *twice* as much data. This way, there is no need to allocate
+		// new storage, so if the insert() operation is "clever", it
+		// will try to reuse the existing storage.
+		// This in turn may uncover bugs if the insertion code does not
+		// expect self-insertions.
+		array.reserve(128);
+		for (i = 0; i < 64; ++i)
+			array.push_back(i);
+
+		// Now insert the array into the middle of itself
+		array.insert_at(12, array);
+
+		// Verify integrity
+		TS_ASSERT_EQUALS(array.size(), 128UL);
+
+		for (i = 0; i < 12; ++i)
+			TS_ASSERT_EQUALS(array[i], i);
+		for (i = 0; i < 64; ++i)
+			TS_ASSERT_EQUALS(array[i+12], i);
+		for (i = 12; i < 64; ++i)
+			TS_ASSERT_EQUALS(array[i+64], i);
+	}
+
 
 	void test_remove_at() {
 		Common::Array<int> array;

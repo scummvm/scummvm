@@ -143,7 +143,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Tucker Engine";
+		return "Tucker";
 	}
 
 	virtual const char *getOriginalCopyright() const {

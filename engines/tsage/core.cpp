@@ -3481,52 +3481,11 @@ void SceneHandler::postInit(SceneObjectList *OwnerList) {
 
 void SceneHandler::process(Event &event) {
 	// Main keypress handler
-	if ((event.eventType == EVENT_KEYPRESS) && !event.handled) {
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_F1:
-			// F1 - Help
-			MessageDialog::show((_vm->getFeatures() & GF_DEMO) ? DEMO_HELP_MSG : HELP_MSG, OK_BTN_STRING);
-			break;
+	if (!event.handled) {
+		_globals->_game->processEvent(event);
 
-		case Common::KEYCODE_F2: {
-			// F2 - Sound Options
-			ConfigDialog *dlg = new ConfigDialog();
-			dlg->runModal();
-			delete dlg;
+		if (event.eventType == EVENT_KEYPRESS)
 			_globals->_events.setCursorFromFlag();
-			break;
-		}
-
-		case Common::KEYCODE_F3:
-			// F3 - Quit
-			_globals->_game->quitGame();
-			event.handled = false;
-			break;
-
-		case Common::KEYCODE_F4:
-			// F4 - Restart
-			_globals->_game->restartGame();
-			_globals->_events.setCursorFromFlag();
-			break;
-
-		case Common::KEYCODE_F7:
-			// F7 - Restore
-			_globals->_game->restoreGame();
-			_globals->_events.setCursorFromFlag();
-			break;
-
-		case Common::KEYCODE_F10:
-			// F10 - Pause
-			GfxDialog::setPalette();
-			MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
-			_globals->_events.setCursorFromFlag();
-			break;
-
-		default:
-			break;
-		}
-
-		_globals->_events.setCursorFromFlag();
 	}
 
 	// Check for displaying right-click dialog

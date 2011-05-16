@@ -161,7 +161,7 @@ public:
 	HugoMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	const char *getName() const {
-		return "Hugo Engine";
+		return "Hugo";
 	}
 
 	const char *getOriginalCopyright() const {

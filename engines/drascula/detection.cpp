@@ -296,7 +296,7 @@ public:
 	DrasculaMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "Drascula Engine";
+		return "Drascula";
 	}
 
 	virtual const char *getOriginalCopyright() const {

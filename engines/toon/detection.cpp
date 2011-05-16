@@ -147,7 +147,7 @@ public:
 	ToonMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "Toon Engine";
+		return "Toon";
 	}
 
 	virtual const char *getOriginalCopyright() const {

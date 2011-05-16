@@ -126,6 +126,8 @@ public:
 	 * the backend (e.g. from an audio mixing thread). All the actual mixing
 	 * work is done from here.
 	 *
+	 * @param samples Sample buffer, in which stereo 16-bit samples will be stored.
+	 * @param len Length of the provided buffer to fill (in bytes, should be divisible by 4).
 	 * @return number of sample pairs processed (which can still be silence!)
 	 */
 	int mixCallback(byte *samples, uint len);

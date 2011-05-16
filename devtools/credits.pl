@@ -500,7 +500,7 @@ begin_credits("Credits");
 		  add_person("Ludvig Strigeus", "ludde", "(retired)");
 	  end_section();
 
-	  begin_section("BASS");	# Beneath a Steel Sky
+	  begin_section("Beneath a Steel Sky");
 		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "(retired)");
 		  add_person("Oliver Kiehl", "olki", "(retired)");
 		  add_person("Joost Peters", "joostp", "");
@@ -539,7 +539,7 @@ begin_credits("Credits");
 		  add_person("Vincent Hamm", "yaz0r", "(retired)");
 	  end_section();
 
-	  begin_section("Draci");
+	  begin_section("Draci Historie");
 		  add_person("Denis Kasak", "dkasak13", "");
 		  add_person("Robert &Scaron;palek", "spalek", "");
 	  end_section();
@@ -549,7 +549,7 @@ begin_credits("Credits");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
 	  end_section();
 
-	  begin_section("FOTAQ");	# Flight of the Amazon Queen
+	  begin_section("Flight of the Amazon Queen");
 		  add_person("David Eriksson", "twogood", "(retired)");
 		  add_person("Gregory Montoir", "cyx", "");
 		  add_person("Joost Peters", "joostp", "");
@@ -574,7 +574,7 @@ begin_credits("Credits");
 		  add_person("Eugene Sandulenko", "sev", "");
 	  end_section();
 
-	  begin_section("Kyra");
+	  begin_section("Legend of Kyrandia");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "VQA Player");
 		  add_person("Oystein Eftevaag", "vinterstum", "");
 		  add_person("Florian Kagerer", "athrxx", "");
@@ -588,7 +588,7 @@ begin_credits("Credits");
 			add_person("Julien Templier", "littleboy", "");			
 	end_section();
 
-	  begin_section("Lure");
+	  begin_section("Lure of the Temptress");
 		  add_person("Paul Gilbert", "dreammaster", "");
 	  end_section();
 
@@ -636,7 +636,7 @@ begin_credits("Credits");
 		  add_person("Lars Skovlund", "lskovlun", "");
 	  end_section();
 
-	  begin_section("TeenAgent");
+	  begin_section("Teen Agent");
 		  add_person("Robert Megone", "sanguine", "Help with callback rewriting");
 		  add_person("Vladimir Menshakov", "whoozle", "");
 	  end_section();

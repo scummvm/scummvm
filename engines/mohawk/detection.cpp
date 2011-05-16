@@ -188,7 +188,7 @@ public:
 	MohawkMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "Mohawk Engine";
+		return "Mohawk";
 	}
 
 	virtual const char *getOriginalCopyright() const {

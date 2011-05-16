@@ -116,7 +116,7 @@ public:
 	GobMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "Gob Engine";
+		return "Gob";
 	}
 
 	virtual const char *getOriginalCopyright() const {

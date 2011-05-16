@@ -205,7 +205,7 @@ public:
 	LureMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "Lure of the Temptress Engine";
+		return "Lure of the Temptress";
 	}
 
 	virtual const char *getOriginalCopyright() const {

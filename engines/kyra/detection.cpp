@@ -79,7 +79,7 @@ public:
 	KyraMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	const char *getName() const {
-		return "Legend of Kyrandia Engine";
+		return "Legend of Kyrandia";
 	}
 
 	const char *getOriginalCopyright() const {

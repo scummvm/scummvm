@@ -102,7 +102,7 @@ public:
 	Sword25MetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "The Broken Sword 2.5 Engine";
+		return "Broken Sword 2.5";
 	}
 
 	virtual const char *getOriginalCopyright() const {

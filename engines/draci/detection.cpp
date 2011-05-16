@@ -113,7 +113,7 @@ public:
 	DraciMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "Draci Historie Engine";
+		return "Draci Historie";
 	}
 
 	virtual const char *getOriginalCopyright() const {

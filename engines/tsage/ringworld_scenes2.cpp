@@ -477,13 +477,14 @@ void Scene1001::Action1::signal() {
 	case 19: {
 		_globals->_soundHandler.startSound(91);
 		byte adjustData[4] = {0xff, 0xff, 0xff, 0};
-		_globals->_scenePalette.fade(adjustData, true, 0);
+		_globals->_scenePalette.fade(adjustData, false, 0);
 
 		scene->_object1._strip = 7;
 		scene->_object1._frame = 1;
 		scene->_object1.setPosition(Common::Point(314, 112));
 		scene->_object1.addMover(NULL);
 		setDelay(2);
+		break;
 	}
 	case 20:
 		_globals->_scenePalette.loadPalette(16);
