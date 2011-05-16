@@ -50,6 +50,9 @@ DemoPlayer::Script DemoPlayer::_scripts[] = {
 		"slide xant.imd 20\nslide tum.imd 20\nslide voile.imd 20\n"     \
 		"slide int.imd 20\nslide voila.imd 1\nslide voilb.imd 1\n"},
 	{kScriptSourceFile, "coktelplayer.scn"},
+	{kScriptSourceFile, "demogb.scn"},
+	{kScriptSourceFile, "demoall.scn"},
+	{kScriptSourceFile, "demofra.scn"}
 };
 
 DemoPlayer::DemoPlayer(GobEngine *vm) : _vm(vm) {
