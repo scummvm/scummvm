@@ -670,12 +670,18 @@ void GfxElement::drawFrame() {
  * @event Event to process
  */
 bool GfxElement::focusedEvent(Event &event) {
+	Common::Point mousePos = event.mousePos;
 	bool highlightFlag = false;
 
-	while (!_vm->getEventManager()->shouldQuit()) {
+	// HACK: It should use the GfxManager object to figure out the relative
+	// position, but for now this seems like the easiest way.
+	int xOffset = mousePos.x - _globals->_events._mousePos.x;
+	int yOffset = mousePos.y - _globals->_events._mousePos.y;
+
+	while (event.eventType != EVENT_BUTTON_UP && !_vm->getEventManager()->shouldQuit()) {
 		g_system->delayMillis(10);
 
-		if (_bounds.contains(event.mousePos)) {
+		if (_bounds.contains(mousePos)) {
 			if (!highlightFlag) {
 				// First highlight call to show the highlight
 				highlightFlag = true;
@@ -687,8 +693,12 @@ bool GfxElement::focusedEvent(Event &event) {
 			highlight();
 		}
 
-		if (_globals->_events.getEvent(event, EVENT_BUTTON_UP))
-			break;
+		if (_globals->_events.getEvent(event, EVENT_MOUSE_MOVE | EVENT_BUTTON_UP)) {
+			if (event.eventType == EVENT_MOUSE_MOVE) {
+				mousePos.x = event.mousePos.x + xOffset;
+				mousePos.y = event.mousePos.y + yOffset;
+			}
+		}
 	}
 
 	if (highlightFlag) {
