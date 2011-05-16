@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/algorithm.h"
+#include "common/textconsole.h"	// For error()
 
 namespace Common {
 
@@ -72,8 +73,7 @@ public:
 
 	Array(const Array<T> &array) : _capacity(array._size), _size(array._size), _storage(0) {
 		if (array._storage) {
-			_storage = new T[_capacity];
-			assert(_storage);
+			allocCapacity(_size);
 			copy(array._storage, array._storage + _size, _storage);
 		}
 	}
@@ -83,9 +83,8 @@ public:
 	 */
 	template<class T2>
 	Array(const T2 *data, int n) {
-		_capacity = _size = n;
-		_storage = new T[_capacity];
-		assert(_storage);
+		_size = n;
+		allocCapacity(n);
 		copy(data, data + _size, _storage);
 	}
 
@@ -179,9 +178,7 @@ public:
 
 		delete[] _storage;
 		_size = array._size;
-		_capacity = _size;
-		_storage = new T[_capacity];
-		assert(_storage);
+		allocCapacity(_size);
 		copy(array._storage, array._storage + _size, _storage);
 
 		return *this;
@@ -239,9 +236,7 @@ public:
 			return;
 
 		T *oldStorage = _storage;
-		_capacity = newCapacity;
-		_storage = new T[newCapacity];
-		assert(_storage);
+		allocCapacity(newCapacity);
 
 		if (oldStorage) {
 			// Copy old data
@@ -267,6 +262,13 @@ protected:
 		return capa;
 	}
 
+	void allocCapacity(uint capacity) {
+		_capacity = capacity;
+		_storage = new T[capacity];
+		if (!_storage)
+			::error("Common::Array: failure to allocate %d bytes", capacity);
+	}
+
 	/**
 	 * Insert a range of elements coming from this or another array.
 	 * Unlike std::vector::insert, this method does not accept
@@ -290,9 +292,7 @@ protected:
 			if (_size + n > _capacity) {
 				// If there is not enough space, allocate more and
 				// copy old elements over.
-				uint newCapacity = roundUpCapacity(_size + n);
-				_storage = new T[newCapacity];
-				assert(_storage);
+				allocCapacity(roundUpCapacity(_size + n));
 				copy(oldStorage, oldStorage + idx, _storage);
 				pos = _storage + idx;
 			}
@@ -307,7 +307,6 @@ protected:
 			// Finally, update the internal state
 			if (_storage != oldStorage) {
 				delete[] oldStorage;
-				_capacity = roundUpCapacity(_size + n);
 			}
 			_size += n;
 		}
