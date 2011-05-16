@@ -293,9 +293,12 @@ protected:
 		if (n) {
 			const uint idx = pos - _storage;
 			T *oldStorage = _storage;
-			if (_size + n > _capacity) {
+			if (_size + n > _capacity || (_storage <= first && first <= _storage + _size) ) {
 				// If there is not enough space, allocate more and
 				// copy old elements over.
+				// Likewise, if this is a self-insert, we allocate new
+				// storage to avoid conflicts. This is not the most efficient
+				// way to ensure that, but probably the simplest on.
 				allocCapacity(roundUpCapacity(_size + n));
 				copy(oldStorage, oldStorage + idx, _storage);
 				pos = _storage + idx;
