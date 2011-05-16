@@ -131,7 +131,7 @@ static const char *credits[] = {
 "C0""Oystein Eftevaag",
 "C0""Eugene Sandulenko",
 "",
-"C1""Legend of Kyrandia",
+"C1""Kyra",
 "C0""Torbj\366rn Andersson",
 "C2""VQA Player",
 "C0""Oystein Eftevaag",

@@ -574,7 +574,7 @@ begin_credits("Credits");
 		  add_person("Eugene Sandulenko", "sev", "");
 	  end_section();
 
-	  begin_section("Legend of Kyrandia");
+	  begin_section("Kyra");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "VQA Player");
 		  add_person("Oystein Eftevaag", "vinterstum", "");
 		  add_person("Florian Kagerer", "athrxx", "");
