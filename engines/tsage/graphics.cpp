@@ -967,9 +967,10 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 	// Event loop
 	GfxButton *selectedButton = NULL;
 
-	while (!_vm->getEventManager()->shouldQuit()) {
+	bool breakFlag = false;
+	while (!_vm->getEventManager()->shouldQuit() && !breakFlag) {
 		Event event;
-		while (_globals->_events.getEvent(event)) {
+		while (_globals->_events.getEvent(event) && !breakFlag) {
 			// Adjust mouse positions to be relative within the dialog
 			event.mousePos.x -= _gfxManager._bounds.left;
 			event.mousePos.y -= _gfxManager._bounds.top;
@@ -978,19 +979,23 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 				if ((*i)->process(event))
 					selectedButton = static_cast<GfxButton *>(*i);
 			}
-		}
 
-		if (selectedButton)
-			break;
-		else if (!event.handled) {
-			if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
-				selectedButton = NULL;
+			if (selectedButton) {
+				breakFlag = true;
 				break;
-			} else if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_RETURN)) {
-				selectedButton = defaultButton;
-				break;
+			} else if (!event.handled) {
+				if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+					selectedButton = NULL;
+					breakFlag = true;
+					break;
+				} else if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_RETURN)) {
+					selectedButton = defaultButton;
+					breakFlag = true;
+					break;
+				}
 			}
 		}
+
 		g_system->delayMillis(10);
 		g_system->updateScreen();
 	}
