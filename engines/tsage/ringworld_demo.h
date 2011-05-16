@@ -32,10 +32,13 @@
 namespace tSage {
 
 class RingworldDemoGame: public Game {
+private:
+	void pauseGame();
 public:
 	virtual void start();
 	virtual Scene *createScene(int sceneNumber);
 	virtual void quitGame();
+	virtual void processEvent(Event &event);
 };
 
 class RingworldDemoScene: public Scene {
