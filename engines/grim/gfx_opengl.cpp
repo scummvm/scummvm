@@ -552,7 +552,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 					}
 				}
 				texOut = texData;
-			} else if(bitmap->_colorFormat == BM_RGB1555){
+			} else if (bitmap->_colorFormat == BM_RGB1555) {
 				bitmap->convertToColorFormat(pic, BM_RGBA);
 				texOut = (byte *)bitmap->getImageData(pic);
 			} else {

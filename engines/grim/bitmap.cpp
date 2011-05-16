@@ -120,19 +120,19 @@ BitmapData::BitmapData(const char *fname, const char *data, int len) {
 	}
 
 	int codec = READ_LE_UINT32(data + 8);
-//	_paletteIncluded = READ_LE_UINT32(data + 12);
+	//	_paletteIncluded = READ_LE_UINT32(data + 12);
 	_numImages = READ_LE_UINT32(data + 16);
 	_x = READ_LE_UINT32(data + 20);
 	_y = READ_LE_UINT32(data + 24);
-//	_transparentColor = READ_LE_UINT32(data + 28);
+	//	_transparentColor = READ_LE_UINT32(data + 28);
 	_format = READ_LE_UINT32(data + 32);
 	_bpp = READ_LE_UINT32(data + 36);
-//	_blueBits = READ_LE_UINT32(data + 40);
-//	_greenBits = READ_LE_UINT32(data + 44);
-//	_redBits = READ_LE_UINT32(data + 48);
-//	_blueShift = READ_LE_UINT32(data + 52);
-//	_greenShift = READ_LE_UINT32(data + 56);
-//	_redShift = READ_LE_UINT32(data + 60);
+	//	_blueBits = READ_LE_UINT32(data + 40);
+	//	_greenBits = READ_LE_UINT32(data + 44);
+	//	_redBits = READ_LE_UINT32(data + 48);
+	//	_blueShift = READ_LE_UINT32(data + 52);
+	//	_greenShift = READ_LE_UINT32(data + 56);
+	//	_redShift = READ_LE_UINT32(data + 60);
 	_width = READ_LE_UINT32(data + 128);
 	_height = READ_LE_UINT32(data + 132);
 	_colorFormat = BM_RGB565;
@@ -256,7 +256,7 @@ bool BitmapData::loadTile(const char *filename, const char *data, int len) {
 	if (_bpp == 16) {
 		_colorFormat = BM_RGB1555;
 		//convertToColorFormat(0, BM_RGBA);
-	}else{
+	} else {
 		_colorFormat = BM_RGBA;
 	}
 
@@ -271,7 +271,7 @@ char *BitmapData::getImageData(int num) const {
 // Bitmap
 
 Bitmap::Bitmap(const char *fname, const char *data, int len) :
-Object() {
+		Object() {
 	_data = BitmapData::getBitmapData(fname, data, len);
 	_x = _data->_x;
 	_y = _data->_y;
@@ -279,7 +279,7 @@ Object() {
 }
 
 Bitmap::Bitmap(const char *data, int w, int h, int bpp, const char *fname) :
-Object() {
+		Object() {
 	_data = new BitmapData(data, w, h, bpp, fname);
 	_x = _data->_x;
 	_y = _data->_y;
@@ -287,7 +287,7 @@ Object() {
 }
 
 Bitmap::Bitmap() :
-Object() {
+		Object() {
 	_data = new BitmapData();
 }
 
@@ -305,15 +305,15 @@ Bitmap::~Bitmap() {
 	}
 	g_grim->killBitmap(this);
 }
-	
-void BitmapData::convertToColorFormat(int num, int format){
+
+void BitmapData::convertToColorFormat(int num, int format) {
 	// Supports 1555->RGBA, RGBA->565
 	unsigned char red = 0, green = 0, blue = 0, alpha = 0;
 	int size = _width * _height * (_bpp / 8);
-	if (_colorFormat == BM_RGB1555){
+	if (_colorFormat == BM_RGB1555) {
 		uint16 *bitmapData = reinterpret_cast<uint16 *>(_data[num]);
-		
-		if (format == BM_RGBA && _bpp == 16){
+
+		if (format == BM_RGBA && _bpp == 16) {
 			// Convert data to 32-bit RGBA format
 			char *newData = new char[_width * _height * 4];
 			char *to = newData;
@@ -327,8 +327,8 @@ void BitmapData::convertToColorFormat(int num, int format){
 				to[1] = green << 3 | green >> 2;
 				red = (pixel & 0x1f);
 				to[0] = red << 3 | red >> 2;
-				
-				if(pixel >> 15 & 1)
+
+				if (pixel >> 15 & 1)
 					alpha = 255;
 				else
 					alpha = 0;
@@ -349,43 +349,39 @@ void BitmapData::convertToColorFormat(int num, int format){
 			for (int i = 1; i < _height * _width; i++, bitmapData++, to++) {
 				uint pixel = *bitmapData;
 				// Alpha, then 555.
-				if(to[0] & 128){ // Chroma key
+				if (to[0] & 128) { // Chroma key
 					to[0] = 0xf8;
 					to[1] = 0x1f;
-				}else{
+				} else {
 					blue = (pixel >> 10) & 0x1f;
 					//red = red << 3 | red >> 2;
 					green = (pixel >> 5) & 0x1f;
 					green = green << 1 | green >> 1;
-						
 					red = (pixel) & 0x1f;
-
 					to[0] = (red << 3) | green >> 3;
 					to[1] = (green << 5) | blue;
 				}
 			}
 			_colorFormat = BM_RGB565;
 		}
-		
-	} else if (_colorFormat == BM_RGBA){
-		if(format == BM_RGB565){ // RGBA->565
+	} else if (_colorFormat == BM_RGBA) {
+		if (format == BM_RGB565) { // RGBA->565
 			char* tempStore = _data[num];
-			char* newStore = new char[size/2];
+			char* newStore = new char[size / 2];
 			uint16 *to = reinterpret_cast<uint16 *>(newStore);
 			for(int j = 0; j < size;j += 4, to++){
 				red = (tempStore[j] >> 3) & 0x1f;
 				green = (tempStore[j + 1] >> 2) & 0x3f;
 				blue = (tempStore[j + 2] >> 3) &0x1f;
-				
 				*to = (red << 11) | (green << 5) | blue;
 			}
 			delete[] tempStore;
 			_data[num] = newStore;
 			_colorFormat = BM_RGB565;
 		}
-		
-	} else if (_colorFormat == BM_RGB565){
-		if(format == BM_RGBA && _bpp == 16){
+
+	} else if (_colorFormat == BM_RGB565) {
+		if (format == BM_RGBA && _bpp == 16) {
 			byte *tempData = new byte[4 * _width * _height];
 			// Convert data to 32-bit RGBA format
 			byte *tempDataPtr = tempData;
@@ -405,7 +401,7 @@ void BitmapData::convertToColorFormat(int num, int format){
 					tempDataPtr[3] = 255;
 				}
 			}
-			delete [] _data[num];
+			delete[] _data[num];
 			_data[num] = (char *)tempData;
 			_colorFormat = BM_RGBA;
 			_bpp = 32;
