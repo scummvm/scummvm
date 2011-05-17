@@ -41,7 +41,7 @@ public:
 	~MidiDriver_TOWNS();
 
 	int open();
-	bool isOpen() const { return _open; }
+	bool isOpen() const { return _isOpen; }
 	void close();
 
 	void send(uint32 b);
@@ -76,7 +76,7 @@ private:
 	uint8 _allocCurPos;
 	uint8 _rand;
 	
-	bool _open;
+	bool _isOpen;
 
 	uint8 *_operatorLevelTable;
 };
