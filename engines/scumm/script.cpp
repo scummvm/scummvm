@@ -494,7 +494,11 @@ void ScummEngine::executeOpcode(byte i) {
 }
 
 const char *ScummEngine::getOpcodeDesc(byte i) {
+#ifndef REDUCE_MEMORY_USAGE
 	return _opcodes[i].desc;
+#else
+	return "";
+#endif
 }
 
 byte ScummEngine::fetchScriptByte() {
