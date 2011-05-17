@@ -4221,7 +4221,7 @@ void Scene2280::Hotspot18::doAction(int action) {
 /*--------------------------------------------------------------------------*/
 
 Scene2280::Scene2280() :
-		_hotspot3(0, CURSOR_LOOK, 2280, 30, CURSOR_USE, 31, 0, LIST_END),
+		_hotspot3(0, CURSOR_LOOK, 2280, 30, CURSOR_USE, 2280, 31, LIST_END),
 		_hotspot5(0, CURSOR_LOOK, 2280, 35, CURSOR_USE, 2280, 36, LIST_END),
 		_hotspot6(0, CURSOR_LOOK, 2280, 19, CURSOR_USE, 2280, 20, LIST_END),
 		_hotspot9(0, CURSOR_LOOK, 2280, 5, CURSOR_USE, 2280, 6, LIST_END),
