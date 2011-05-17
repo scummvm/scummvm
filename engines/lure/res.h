@@ -114,7 +114,7 @@ public:
 	MemoryBlock *messagesData() { return _messagesData; }
 	uint16 getHotspotScript(uint16 index);
 	HotspotList &activeHotspots() { return _activeHotspots; }
-	uint16 random() { return _rnd.getRandomNumber(65536) & 0xffff; }
+	uint16 getRandom() { return _rnd.getRandomNumber(0xffff); }
 	HotspotData *getHotspot(uint16 hotspotId);
 	Hotspot *getActiveHotspot(uint16 hotspotId);
 	HotspotOverrideData *getHotspotOverride(uint16 hotspotId);

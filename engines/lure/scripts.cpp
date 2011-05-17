@@ -1127,7 +1127,7 @@ uint16 Script::execute(uint16 startOffset) {
 			break;
 
 		case S_OPCODE_RANDOM:
-			param = r.random() >> 8; // make number between 0 to 255
+			param = r.getRandom() >> 8; // make number between 0 to 255
 			break;
 
 		case S_OPCODE_END:
