@@ -256,7 +256,7 @@ Common::Error MohawkEngine_Myst::run() {
 	_loadDialog->setSaveMode(false);
 	_optionsDialog = new MystOptionsDialog(this);
 	_cursor = new MystCursorManager(this);
-	_rnd = new Common::RandomSource();
+	_rnd = new Common::RandomSource("myst");
 
 	// Cursor is visible by default
 	_cursor->showCursor();
