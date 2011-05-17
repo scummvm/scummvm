@@ -47,7 +47,7 @@ class Scene;
 class MusicPlayer;
 class Console;
 
-class TeenAgentEngine: public Engine {
+class TeenAgentEngine : public Engine {
 public:
 	enum Action { kActionNone, kActionExamine, kActionUse };
 
@@ -117,7 +117,7 @@ public:
 	void fadeOut();
 	void wait(uint16 frames);
 
-	Common::RandomSource random;
+	Common::RandomSource _rnd;
 
 	Scene *scene;
 	Inventory *inventory;
