@@ -985,7 +985,6 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 		_globals->_player.enableControl();
 
 		if (RING_INVENTORY._ladder._sceneNumber != 4000) {
-			_hotspot8.postInit();
 			_hotspot8.setVisage(4017);
 			_hotspot8.animate(ANIM_MODE_1, NULL);
 			_hotspot8.setPosition(Common::Point(199, 188));
@@ -1005,8 +1004,9 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 			_olo.setObjectWrapper(new SceneObjectWrapper());
 			_olo.setPosition(Common::Point(219, 150));
 
+			_sceneMode = 4010;
 			_globals->_player.disableControl();
-			setAction(&_sequenceManager1, this, 4010, &_globals->_player, NULL);
+			setAction(&_sequenceManager1, this, 4010, &_globals->_player, &_olo, NULL);
 		}
 
 		if (_globals->_stripNum == 4000) {
@@ -1133,6 +1133,10 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 
 void Scene4000::signal() {
 	switch (_sceneMode) {
+	case 4010:
+		_globals->setFlag(38);
+		_olo.remove();
+		// Deliberate fall-through
 	case 4001:
 		_globals->_player.enableControl();
 		break;
@@ -1164,10 +1168,6 @@ void Scene4000::signal() {
 		break;
 	case 4009:
 		_globals->_sceneManager.changeScene(2200);
-		break;
-	case 4010:
-		_globals->setFlag(38);
-		_olo.remove();
 		break;
 	case 4012:
 		_globals->_player.checkAngle(&_theTech);
@@ -1998,7 +1998,7 @@ void Scene4045::dispatch() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 4000 - Village - Temple
+ * Scene 4050 - Village - Outside
  *
  *--------------------------------------------------------------------------*/
 

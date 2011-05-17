@@ -297,8 +297,8 @@ public:
 	DisplayHotspot _hotspot7, _hotspot8, _hotspot9, _hotspot10;
 	DisplayHotspot _hotspot11, _hotspot12, _hotspot13, _hotspot14;
 	Action1 _action1;
-	Action _action2;
-	Action _action3;
+	Action2 _action2;
+	Action3 _action3;
 
 	Scene4045();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
