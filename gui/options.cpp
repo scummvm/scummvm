@@ -357,6 +357,19 @@ void OptionsDialog::close() {
 			if (ConfMan.hasKey("fullscreen"))
 				g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen", _domain));
 			OSystem::TransactionError gfxError = g_system->endGFXTransaction();
+
+			// Since this might change the screen resolution we need to give
+			// the GUI a chance to update it's internal state. Otherwise we might
+			// get a crash when the GUI tries to grab the overlay.
+			//
+			// This fixes bug #3303501 "Switching from HQ2x->HQ3x crashes ScummVM"
+			//
+			// It is important that this is called *before* any of the current
+			// dialog's widgets are destroyed (for example before
+			// Dialog::close) is called, to prevent crashes caused by invalid
+			// widgets being referenced or similar errors.
+			g_gui.checkScreenChange();
+
 			if (gfxError != OSystem::kTransactionSuccess) {
 				// Revert ConfMan to what OSystem is using.
 				Common::String message = "Failed to apply some of the graphic options changes:";
