@@ -33,13 +33,10 @@ RandomSource::RandomSource(const String &name) {
 	uint32 seed = g_system->getMillis();
 	setSeed(seed);
 
-	// Register this random source with the event recorder. This might
-	// reset the seed, so call it *after* the initial seed has been set.
+	// Register this random source with the event recorder. This may end
+	// up querying or resetting the current seed, so we must call it
+	// *after* the initial seed has been set.
 	g_eventRec.registerRandomSource(*this, name);
-}
-
-RandomSource::~RandomSource() {
-	// TODO: Unregister with g_eventRec
 }
 
 void RandomSource::setSeed(uint32 seed) {

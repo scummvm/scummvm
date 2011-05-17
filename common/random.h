@@ -45,11 +45,9 @@ public:
 	 */
 	RandomSource(const String &name);
 
-	~RandomSource();
-
 	void setSeed(uint32 seed);
 
-	uint32 getSeed() {
+	uint32 getSeed() const {
 		return _randSeed;
 	}
 
@@ -59,12 +57,14 @@ public:
 	 * @return	a random number in the interval [0, max]
 	 */
 	uint getRandomNumber(uint max);
+
 	/**
 	 * Generates a random bit, i.e. either 0 or 1.
-	 * Identical to getRandomNumber(1), but faster, hopefully.
+	 * Identical to getRandomNumber(1), but potentially faster.
 	 * @return	a random bit, either 0 or 1
 	 */
 	uint getRandomBit();
+
 	/**
 	 * Generates a random unsigned integer in the interval [min, max].
 	 * @param min	the lower bound
