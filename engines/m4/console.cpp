@@ -147,12 +147,12 @@ bool Console::cmdDumpFile(int argc, const char **argv) {
 		DebugPrintf("If uncompress is 1, the file is uncompressed (for MADS games)\n");
 	} else {
 		if (argc == 2) {
-			_vm->dumpFile(strdup(argv[1]));
+			_vm->dumpFile(argv[1], false);
 		} else {
 			if (argc == 3 && atoi(argv[2]) == 1)
-				_vm->dumpFile(strdup(argv[1]), true);
+				_vm->dumpFile(argv[1], true);
 			else
-				_vm->dumpFile(strdup(argv[1]));
+				_vm->dumpFile(argv[1], false);
 		}
 	}
 	return true;

@@ -165,7 +165,7 @@ public:
 	ResourceManager *res() const { return _resourceManager; }
 	MidiPlayer *midi() { return _midi; }
 	Common::SaveFileManager *saveManager() { return _saveFileMan; }
-	void dumpFile(const char* filename, bool uncompress = false);
+	void dumpFile(const char *filename, bool uncompress);
 	void eventHandler();
 	bool delay(int duration, bool keyAborts = true, bool clickAborts = true);
 	void loadMenu(MenuType menuType, bool loadSaveFromHotkey = false,

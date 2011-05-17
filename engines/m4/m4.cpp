@@ -255,7 +255,7 @@ void MadsM4Engine::loadMenu(MenuType menuType, bool loadSaveFromHotkey, bool cal
 
 #define DUMP_BUFFER_SIZE 1024
 
-void MadsM4Engine::dumpFile(const char* filename, bool uncompress) {
+void MadsM4Engine::dumpFile(const char *filename, bool uncompress) {
 	Common::DumpFile f;
 	byte buffer[DUMP_BUFFER_SIZE];
 	Common::SeekableReadStream *fileS = res()->get(filename);
