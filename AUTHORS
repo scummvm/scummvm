@@ -19,7 +19,7 @@ ScummVM Team
        Jonathan Gray         - (retired)
        Vincent Hamm          - (retired)
        Max Horn
-       Travis Howell
+       Travis Howell         - (retired)
        Pawel Kolodziejski    - Codecs, iMUSE, Smush, etc.
        Gregory Montoir
        Eugene Sandulenko     - FT INSANE, MM NES, MM C64, game detection,
@@ -28,7 +28,7 @@ ScummVM Team
 
     HE:
        Jonathan Gray         - (retired)
-       Travis Howell
+       Travis Howell         - (retired)
        Gregory Montoir
        Eugene Sandulenko
 
@@ -45,7 +45,7 @@ ScummVM Team
     AGOS:
        Torbjorn Andersson
        Paul Gilbert
-       Travis Howell
+       Travis Howell         - (retired)
        Oliver Kiehl          - (retired)
        Ludvig Strigeus       - (retired)
 
@@ -357,7 +357,7 @@ Other contributions
        Markus Strangl
 
     Win32:
-       Travis Howell
+       Travis Howell         - (retired)
 
     Win64:
        Chris Gray            - (retired)
