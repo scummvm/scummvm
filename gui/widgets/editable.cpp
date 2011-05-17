@@ -182,9 +182,19 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		break;
 
 #ifdef MACOSX
-	// Mac OS X GUI style shortcuts: Ctrl-A goes to start of line, Ctrl-e to end of line.
-	// TODO: Should we disable these on Windows? There, Ctrl-A usually means
-	// "select all".
+	// Let ctrl-a / ctrl-e move the caret to the start / end of the line.
+	//
+	// These shortcuts go back a long time for command line programs. As
+	// for edit fields in GUIs, they are supported natively on Mac OS X,
+	// which is why I enabled these shortcuts there.
+	// On other systems (Windows, Gnome), Ctrl-A by default means
+	// "select all", which is why I didn't enable the shortcuts there
+	// for now, to avoid potential confusion.
+	//
+	// But since we don't support text selection, and since at least Gnome
+	// can be configured to also support ctrl-a and ctrl-e, we may want
+	// to extend this code to other targets, maybe even all. I'll leave
+	// this to other porters to decide, though.
 	case Common::KEYCODE_a:
 	case Common::KEYCODE_e:
 		if (state.flags & Common::KBD_CTRL) {
