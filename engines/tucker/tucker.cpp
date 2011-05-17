@@ -41,7 +41,7 @@
 namespace Tucker {
 
 TuckerEngine::TuckerEngine(OSystem *system, Common::Language language, uint32 flags)
-	: Engine(system), _gameLang(language), _gameFlags(flags) {
+	: Engine(system), _gameLang(language), _gameFlags(flags), _rnd("tucker") {
 	_console = new TuckerConsole(this);
 }
 
