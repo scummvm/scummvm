@@ -41,8 +41,6 @@ namespace Common {
 class SeekableReadStream;
 }
 
-//#define ENABLE_THEORA_SEEKING		// enables the extra calculations used for video seeking
-
 namespace Sword25 {
 
 /**
@@ -51,7 +49,7 @@ namespace Sword25 {
  * Video decoder used in engines:
  *  - sword25
  */
-class TheoraDecoder : public Video::FixedRateVideoDecoder {
+class TheoraDecoder : public Video::VideoDecoder {
 public:
 	TheoraDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 	virtual ~TheoraDecoder();
@@ -83,16 +81,14 @@ public:
 	}
 
 	Graphics::PixelFormat getPixelFormat() const { return _surface->format; }
-
 	uint32 getElapsedTime() const;
+	uint32 getTimeToNextFrame() const;
 
 	bool endOfVideo() const;
 
-protected:
-	Common::Rational getFrameRate() const {	return _frameRate; }
-
 private:
 	void queuePage(ogg_page *page);
+	bool queueAudio();
 	int bufferData();
 	void translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer);
 
@@ -100,7 +96,9 @@ private:
 	Common::SeekableReadStream *_fileStream;
 	Graphics::Surface *_surface;
 	Common::Rational _frameRate;
-	uint32 _frameCount;
+	double _nextFrameStartTime;
+	bool _endOfVideo;
+	bool _endOfAudio;
 
 	Audio::Mixer::SoundType _soundType;
 	Audio::SoundHandle *_audHandle;
@@ -131,12 +129,6 @@ private:
 	int _audiobufFill;
 	bool _audiobufReady;
 	ogg_int16_t *_audiobuf;
-
-#if ENABLE_THEORA_SEEKING
-	double _videobufTime;
-	ogg_int64_t  _videobufGranulePos;
-	ogg_int64_t  _audiobufGranulePos; // time position of last sample
-#endif
 };
 
 } // End of namespace Sword25
