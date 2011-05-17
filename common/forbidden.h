@@ -244,6 +244,43 @@
 #define setvbuf(a,b,c,d)	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_tmpfile
+#undef tmpfile
+#define tmpfile()	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_tmpnam
+#undef tmpnam
+#define tmpnam(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_tempnam
+#undef tempnam
+#define tempnam(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_rand
+#undef rand
+#define rand()	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_srand
+#undef srand
+#define srand(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_random
+#undef random
+#define random()	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_srandom
+#undef srandom
+#define srandom(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+
 /*
  * We also would like to disable the following symbols;
  * however, these are also frequently used in regular code,

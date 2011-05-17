@@ -19,6 +19,10 @@
  * IN THE SOFTWARE.
  */
 
+
+// FIXME: Avoid using rand
+#define FORBIDDEN_SYMBOL_EXCEPTION_rand
+
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
