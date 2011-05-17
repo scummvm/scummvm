@@ -2855,7 +2855,7 @@ void ToonEngine::playSFX(int32 id, int32 volume) {
 }
 
 void ToonEngine::playSoundWrong() {
-	_audioManager->playSFX(rand() & 7, 128, true);
+	_audioManager->playSFX(randRange(0,7), 128, true);
 }
 
 void ToonEngine::getTextPosition(int32 characterId, int32 *retX, int32 *retY) {
