@@ -45,11 +45,6 @@ public:
 	 */
 	RandomSource(const String &name);
 
-	// FIXME: This constructor for a nameless randomness source should be removed.
-	// I am only adding this temporarily to ease transition to the new
-	// system which enforces names for randomness sources.
-	RandomSource();
-
 	~RandomSource();
 
 	void setSeed(uint32 seed);
