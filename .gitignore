@@ -23,6 +23,10 @@ lib*.a
 /.project
 /.cproject
 /.settings
+/.autotools
+/Icon.*
+
+/build
 
 /backends/platform/dc/gui
 /backends/platform/dc/graphics
