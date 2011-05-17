@@ -176,9 +176,11 @@ BitmapData::BitmapData(const char *data, int w, int h, int bpp, const char *fnam
 	_texIds = NULL;
 	_bpp = bpp;
 	_hasTransparency = false;
+	_colorFormat = BM_RGB565;
 	_data = new char *[_numImages];
 	_data[0] = new char[_bpp / 8 * _width * _height];
 	memcpy(_data[0], data, _bpp / 8 * _width * _height);
+
 	g_driver->createBitmap(this);
 }
 
@@ -344,7 +346,7 @@ void BitmapData::convertToColorFormat(int num, int format) {
 			warning("Conversion 1555->565 done with 1555->RGBA->565");
 			return;
 			warning("Conversion 1555->565 is not properly implemented");
-			// This doesn't work properly, so falling back to double-conversion via RGBA for now. 
+			// This doesn't work properly, so falling back to double-conversion via RGBA for now.
 			uint16 *to = reinterpret_cast<uint16 *>(_data[num]);
 			for (int i = 1; i < _height * _width; i++, bitmapData++, to++) {
 				uint pixel = *bitmapData;
