@@ -51,8 +51,9 @@ static SavedObject *classFactoryProc(const Common::String &className) {
 /*--------------------------------------------------------------------------*/
 
 Globals::Globals() :
-		_dialogCenter(160, 140),
-		_gfxManagerInstance(_screenSurface) {
+	_dialogCenter(160, 140),
+	_gfxManagerInstance(_screenSurface),
+	_randomSource("tsage") {
 	reset();
 	_stripNum = 0;
 
