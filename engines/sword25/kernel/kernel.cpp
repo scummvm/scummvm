@@ -54,7 +54,8 @@ Kernel::Kernel() :
 	_input(0),
 	_package(0),
 	_script(0),
-	_fmv(0)
+	_fmv(0),
+	_rnd("sword25")
 	{
 
 	_instance = this;
