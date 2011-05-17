@@ -118,6 +118,8 @@ public:
 	void init();
 	void setKey(int val);
 	void reset();
+	void saveState(SaveGame *state);
+	void restoreState(SaveGame *state);
 
 private:
 	Common::String _filename;
@@ -298,6 +300,16 @@ void SpriteComponent::setKey(int val) {
 void SpriteComponent::reset() {
 	if (_sprite)
 		_sprite->_visible = false;
+}
+
+void SpriteComponent::saveState(SaveGame *state) {
+	state->writeLEBool(_sprite->_visible);
+	state->writeLESint32(_sprite->_material->getCurrentImage());
+}
+
+void SpriteComponent::restoreState(SaveGame *state) {
+	_sprite->_visible = state->readLEBool();
+	_sprite->_material->setNumber(state->readLESint32());
 }
 
 ModelComponent::ModelComponent(Costume::Component *p, int parentID, const char *filename, Costume::Component *prevComponent, tag32 t) :
@@ -492,6 +504,8 @@ public:
 	void setupTexture();
 	void reset();
 	void resetColormap();
+	void saveState(SaveGame *state);
+	void restoreState(SaveGame *state);
 	~MaterialComponent() { }
 
 private:
@@ -713,6 +727,14 @@ void MaterialComponent::reset() {
 
 void MaterialComponent::resetColormap() {
 	init();
+}
+
+void MaterialComponent::saveState(SaveGame *state) {
+	state->writeLESint32(_num);
+}
+
+void MaterialComponent::restoreState(SaveGame *state) {
+	_num = state->readLESint32();
 }
 
 class LuaVarComponent : public Costume::Component {
