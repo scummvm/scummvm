@@ -39,7 +39,8 @@
 #ifdef USE_THEORADEC
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "graphics/conversion.h"
+#include "common/util.h"
+#include "graphics/yuv_to_rgb.h"
 #include "audio/decoders/raw.h"
 #include "sword25/kernel/common.h"
 
@@ -508,16 +509,6 @@ uint32 TheoraDecoder::getElapsedTime() const {
 	return VideoDecoder::getElapsedTime();
 }
 
-static void convertYUVtoBGRA(int y, int u, int v, byte *dst, Graphics::PixelFormat format) {
-	byte r, g, b;
-	Graphics::YUV2RGB(y, u, v, r, g, b);
-
-	if (format.bytesPerPixel == 2)
-		*((uint16 *)dst) = format.RGBToColor(r, g, b);
-	else
-		*((uint32 *)dst) = format.RGBToColor(r, g, b);
-}
-
 enum TheoraYUVBuffers {
 	kBufferY = 0,
 	kBufferU = 1,
@@ -537,40 +528,7 @@ void TheoraDecoder::translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer) {
 	assert(YUVBuffer[kBufferU].height == YUVBuffer[kBufferY].height >> 1);
 	assert(YUVBuffer[kBufferV].height == YUVBuffer[kBufferY].height >> 1);
 
-	const byte *ySrc = YUVBuffer[kBufferY].data;
-	const byte *uSrc = YUVBuffer[kBufferU].data;
-	const byte *vSrc = YUVBuffer[kBufferV].data;
-	byte *dst  = (byte *)_surface->pixels;
-	int u = 0, v = 0;
-
-	const int blockSize = YUVBuffer[kBufferY].width * getPixelFormat().bytesPerPixel;
-	const int halfHeight = YUVBuffer[kBufferY].height >> 1;
-	const int halfWidth = YUVBuffer[kBufferY].width >> 1;
-	const int yStep = (YUVBuffer[kBufferY].stride << 1) - YUVBuffer[kBufferY].width;
-	// The UV step is usually 0, since in most cases stride == width.
-	// The asserts at the top ensure that the U and V steps are equal
-	// (and they must always be equal)
-	const int uvStep = YUVBuffer[kBufferU].stride - YUVBuffer[kBufferU].width;
-	const int stride = YUVBuffer[kBufferY].stride;
-
-	for (int h = 0; h < halfHeight; ++h) {
-		for (int w = 0; w < halfWidth; ++w) {
-			u = *uSrc++;
-			v = *vSrc++;
-
-			for (int i = 0; i <= 1; i++) {
-				convertYUVtoBGRA(*ySrc, u, v, dst, getPixelFormat());
-				convertYUVtoBGRA(*(ySrc + stride), u, v, dst + blockSize, getPixelFormat());
-				ySrc++;
-				dst += 4;	// BGRA
-			}
-		}
-
-		dst   += blockSize;
-		ySrc  += yStep;
-		uSrc  += uvStep;
-		vSrc  += uvStep;
-	}
+	Graphics::convertYUV420ToRGB(_surface, YUVBuffer[kBufferY].data, YUVBuffer[kBufferU].data, YUVBuffer[kBufferV].data, YUVBuffer[kBufferY].width, YUVBuffer[kBufferY].height, YUVBuffer[kBufferY].stride, YUVBuffer[kBufferU].stride);
 }
 
 } // End of namespace Sword25
