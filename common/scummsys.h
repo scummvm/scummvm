@@ -224,6 +224,12 @@
 	#define	SCUMM_BIG_ENDIAN
 	#define	SCUMM_NEED_ALIGNMENT
 
+#elif defined(IPHONE)
+
+	#define	SCUMM_LITTLE_ENDIAN
+	#define	SCUMM_NEED_ALIGNMENT
+
+
 #else
 	#error No system type defined
 
