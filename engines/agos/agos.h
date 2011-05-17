@@ -176,6 +176,7 @@ class Debugger;
 #endif
 
 class AGOSEngine : public Engine {
+protected:
 	friend class Debugger;
 
 	// Engine APIs
@@ -193,7 +194,6 @@ class AGOSEngine : public Engine {
 	virtual void syncSoundSettings();
 	virtual void pauseEngineIntern(bool pause);
 
-public:
 	virtual void setupOpcodes();
 	uint16 _numOpcodes, _opcode;
 
@@ -205,8 +205,9 @@ public:
 
 	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
 
-	const AGOSGameDescription *_gameDescription;
+	const AGOSGameDescription * const _gameDescription;
 
+public:
 	virtual void setupGame();
 
 	int getGameId() const;
@@ -584,7 +585,7 @@ protected:
 	byte _hebrewCharWidths[32];
 
 public:
-	AGOSEngine(OSystem *syst);
+	AGOSEngine(OSystem *system, const AGOSGameDescription *gd);
 	virtual ~AGOSEngine();
 
 	byte *_curSfxFile;
@@ -1281,7 +1282,7 @@ class AGOSEngine_PN : public AGOSEngine {
 	void setupBoxes();
 	int readfromline();
 public:
-	AGOSEngine_PN(OSystem *system);
+	AGOSEngine_PN(OSystem *system, const AGOSGameDescription *gd);
 	~AGOSEngine_PN();
 
 	virtual void setupGame();
@@ -1523,7 +1524,7 @@ protected:
 
 class AGOSEngine_Elvira1 : public AGOSEngine {
 public:
-	AGOSEngine_Elvira1(OSystem *system);
+	AGOSEngine_Elvira1(OSystem *system, const AGOSGameDescription *gd);
 	//~AGOSEngine_Elvira1();
 
 	virtual void setupGame();
@@ -1604,7 +1605,7 @@ protected:
 
 class AGOSEngine_Elvira2 : public AGOSEngine_Elvira1 {
 public:
-	AGOSEngine_Elvira2(OSystem *system);
+	AGOSEngine_Elvira2(OSystem *system, const AGOSGameDescription *gd);
 	//~AGOSEngine_Elvira2();
 
 	virtual void setupGame();
@@ -1699,7 +1700,7 @@ protected:
 
 class AGOSEngine_Waxworks : public AGOSEngine_Elvira2 {
 public:
-	AGOSEngine_Waxworks(OSystem *system);
+	AGOSEngine_Waxworks(OSystem *system, const AGOSGameDescription *gd);
 	//~AGOSEngine_Waxworks();
 
 	virtual void setupGame();
@@ -1766,7 +1767,7 @@ protected:
 
 class AGOSEngine_Simon1 : public AGOSEngine_Waxworks {
 public:
-	AGOSEngine_Simon1(OSystem *system);
+	AGOSEngine_Simon1(OSystem *system, const AGOSGameDescription *gd);
 	//~AGOSEngine_Simon1();
 
 	virtual void setupGame();
@@ -1837,7 +1838,7 @@ protected:
 
 class AGOSEngine_Simon2 : public AGOSEngine_Simon1 {
 public:
-	AGOSEngine_Simon2(OSystem *system);
+	AGOSEngine_Simon2(OSystem *system, const AGOSGameDescription *gd);
 	//~AGOSEngine_Simon2();
 
 	virtual void setupGame();
@@ -1884,7 +1885,7 @@ protected:
 #ifdef ENABLE_AGOS2
 class AGOSEngine_Feeble : public AGOSEngine_Simon2 {
 public:
-	AGOSEngine_Feeble(OSystem *system);
+	AGOSEngine_Feeble(OSystem *system, const AGOSGameDescription *gd);
 	~AGOSEngine_Feeble();
 
 	virtual void setupGame();
@@ -2023,7 +2024,7 @@ protected:
 
 class AGOSEngine_FeebleDemo : public AGOSEngine_Feeble {
 public:
-	AGOSEngine_FeebleDemo(OSystem *system);
+	AGOSEngine_FeebleDemo(OSystem *system, const AGOSGameDescription *gd);
 
 protected:
 	bool _filmMenuUsed;
@@ -2044,7 +2045,7 @@ protected:
 
 class AGOSEngine_PuzzlePack : public AGOSEngine_Feeble {
 public:
-	AGOSEngine_PuzzlePack(OSystem *system);
+	AGOSEngine_PuzzlePack(OSystem *system, const AGOSGameDescription *gd);
 	//~AGOSEngine_PuzzlePack();
 
 	virtual void setupGame();
@@ -2103,7 +2104,7 @@ protected:
 
 class AGOSEngine_DIMP : public AGOSEngine_PuzzlePack {
 public:
-	AGOSEngine_DIMP(OSystem *system);
+	AGOSEngine_DIMP(OSystem *system, const AGOSGameDescription *gd);
 	//~AGOSEngine_DIMP();
 
 	virtual void setupOpcodes();

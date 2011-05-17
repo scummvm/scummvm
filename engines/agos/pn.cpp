@@ -27,8 +27,8 @@
 
 namespace AGOS {
 
-AGOSEngine_PN::AGOSEngine_PN(OSystem *system)
-	: AGOSEngine(system) {
+AGOSEngine_PN::AGOSEngine_PN(OSystem *system, const AGOSGameDescription *gd)
+	: AGOSEngine(system, gd) {
 
 	_stackbase = 0;
 	_tagOfActiveDoline = 0;
