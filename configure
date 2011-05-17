@@ -3122,6 +3122,7 @@ WINDRESFLAGS := $WINDRESFLAGS
 WIN32PATH=$_win32path
 AOS4PATH=$_aos4path
 STATICLIBPATH=$_staticlibpath
+SDLCONFIG=$_sdlconfig
 
 BACKEND := $_backend
 MODULES += $MODULES
