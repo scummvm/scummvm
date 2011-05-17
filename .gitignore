@@ -23,6 +23,7 @@ lib*.a
 /.project
 /.cproject
 /.settings
+/.autotools
 /Icon.*
 
 /build
