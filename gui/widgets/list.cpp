@@ -587,6 +587,7 @@ void ListWidget::startEditMode() {
 	if (_editable && !_editMode && _selectedItem >= 0) {
 		_editMode = true;
 		setEditString(_list[_selectedItem]);
+		_caretPos = _editString.size();	// Force caret to the *end* of the selection.
 		if (_listColors.empty()) {
 			_editColor = ThemeEngine::kFontColorNormal;
 		} else {
