@@ -56,14 +56,21 @@ public:
 	Common::String longDescription;
 };
 
+struct GroupData {
+	uint32 groupMask;
+	byte v1;
+	byte v2;
+	const byte *pData;
+};
+
 class SoundDriver {
 public:
 	Common::String _shortDescription, _longDescription;
 	int _driverNum;
 	int _minVersion, _maxVersion;
-	uint32 *_groupMaskList;
 	// The following fields were originally held in separate arrays in the SoundManager class
 	uint32 _groupMask;
+	const GroupData *_groupOffset;
 public:
 	SoundDriver();
 
@@ -72,9 +79,32 @@ public:
 
 	virtual bool open() { return true; }
 	virtual void close() {}
-	virtual uint32 *getGroupMaskList() const { return _groupMaskList; }
+	virtual const GroupData *getGroupData() = 0;
 	virtual void setVolume(int volume) {}
 	virtual void installPatchBank(const byte *data) {}
+	virtual void poll() {}
+};
+
+struct VoiceStructEntry {
+	int _field0;
+	int _field1;
+	SoundDriver *_driver;
+	int _field4;
+	int _field6;
+	int _field8;
+	int _field9;
+	int _fieldA;
+	int _fieldC;
+	int _fieldD;
+};
+
+class VoiceStruct {
+public:
+	int _field0;
+	int _field1;
+	int _field2;
+
+	Common::Array<VoiceStructEntry> _entries;
 };
 
 class SoundManager : public SaveListener {
@@ -97,14 +127,16 @@ public:
 	int _field89[SOUND_ARR_SIZE];
 	uint16 _groupList[SOUND_ARR_SIZE];
 	int _fieldE9[SOUND_ARR_SIZE];
-	Sound *_voiceStructPtrs[SOUND_ARR_SIZE];
+	VoiceStruct *_voiceStructPtrs[SOUND_ARR_SIZE];
+	bool _needToRethink;
 public:
 	SoundManager();
 	~SoundManager();
 
-	void dispatch() {}
+	void dispatch();
 	virtual void listenerSynchronise(Serialiser &s);
 	virtual void postInit();
+	void syncSounds();
 
 	static void saveNotifier(bool postFlag);
 	void saveNotifierProc(bool postFlag);
@@ -164,6 +196,8 @@ public:
 	static void _sfDoAddToPlayList(Sound *sound);
 	static bool _sfDoRemoveFromPlayList(Sound *sound);
 	static void _sfDoUpdateVolume(Sound *sound);
+	static void _sfSoundServer();
+	static void _sfProcessFading();
 };
 
 class Sound: public EventHandler {
@@ -173,7 +207,7 @@ private:
 	void orientAfterRestore();
 public:
 	int _field0;
-	int _field6;
+	bool _stopFlag;
 	int _soundNum;
 	int _groupNum;
 	int _soundPriority;
@@ -249,7 +283,7 @@ class ASound: public EventHandler {
 public:
 	Sound _sound;
 	Action *_action;
-	bool _cueFlag;
+	int _cueValue;
 
 	ASound();
 	virtual void synchronise(Serialiser &s);
@@ -283,9 +317,14 @@ public:
 };
 
 class AdlibSoundDriver: public SoundDriver {
+private:
+	GroupData _groupData;
 public:
+	AdlibSoundDriver();
+
 	virtual void setVolume(int volume) {}
 	virtual void installPatchBank(const byte *data) {}
+	virtual const GroupData *getGroupData() { return &_groupData; }
 };
 
 } // End of namespace tSage

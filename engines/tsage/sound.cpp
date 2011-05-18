@@ -43,6 +43,7 @@ SoundManager::SoundManager() {
 		_groupList[i] = 0;
 		_fieldE9[i] = 0;
 		_field109[i] = 0;
+		_voiceStructPtrs[i] = NULL;
 	}
 
 	_groupMask = 0;
@@ -51,6 +52,7 @@ SoundManager::SoundManager() {
 	_disableCtr = 0;
 	_suspendedCount = 0;
 	_driversDetected = false;
+	_needToRethink = false;
 }
 
 SoundManager::~SoundManager() {
@@ -58,9 +60,9 @@ SoundManager::~SoundManager() {
 		for (Common::List<Sound *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
 			(*i)->stop();
 		for (Common::List<SoundDriver *>::iterator i = _installedDrivers.begin(); i != _installedDrivers.end(); ) {
-			int driverNum = (*i)->_driverNum;
+			SoundDriver *driver = *i;
 			++i;
-			unInstallDriver(driverNum);
+			delete driver;
 		}
 		_sfTerminate();
 	}
@@ -73,6 +75,43 @@ void SoundManager::postInit() {
 		_saver->addListener(this);
 		__sndmgrReady = true;
 	}
+}
+
+/**
+ * Loops through all the loaded sounds, and stops any that have been flagged for stopping
+ */
+void SoundManager::dispatch() {
+	Common::List<Sound *>::iterator i = _soundList.begin();
+	while (i != _soundList.end()) {
+		Sound *sound = *i;
+		++i;
+
+		// If the sound is flagged for stopping, then stop it
+		if (sound->_stopFlag) {
+			sound->stop();
+		}
+	}
+}
+
+void SoundManager::syncSounds() {
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	bool music_mute = mute;
+	bool sfx_mute = mute;
+
+	if (!mute) {
+		music_mute = ConfMan.getBool("music_mute");
+		sfx_mute = ConfMan.getBool("sfx_mute");
+	}
+
+	// Get the new music and sfx volumes
+	int musicVolume = music_mute ? 0 : MIN(255, ConfMan.getInt("music_volume"));
+	int sfxVolume = sfx_mute ? 0 : MIN(255, ConfMan.getInt("sfx_volume"));
+
+	warning("Set volume music=%d sfx=%d", musicVolume, sfxVolume);
+	this->setMasterVol(musicVolume / 2);
 }
 
 Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool detectFlag) {
@@ -94,7 +133,9 @@ Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool detectFlag) {
 }
 
 void SoundManager::installConfigDrivers() {
+#ifdef TSAGE_SOUND
 	installDriver(ADLIB_DRIVER_NUM);
+#endif
 }
 
 Common::List<SoundDriverEntry> &SoundManager::getDriverList(bool detectFlag) {
@@ -304,6 +345,34 @@ void SoundManager::rethinkVoiceTypes() {
 	_sfRethinkVoiceTypes();
 }
 
+void SoundManager::_sfSoundServer() {
+	if (!sfManager()._disableCtr && !sfManager()._suspendCtr)
+		return;
+
+	if (sfManager()._needToRethink) {
+		_sfRethinkVoiceTypes();
+		sfManager()._needToRethink = false;
+	} else {
+		_sfDereferenceAll();
+	}
+
+	// Handle any fading if necessary
+	do {
+		_sfProcessFading();
+	} while (sfManager()._suspendCtr > 0);
+	sfManager()._suspendCtr = 0;
+
+	// Poll all sound drivers in case they need it
+	for (Common::List<SoundDriver *>::iterator i = sfManager()._installedDrivers.begin(); 
+				i != sfManager()._installedDrivers.end(); ++i) {
+		(*i)->poll();
+	}
+}
+
+void SoundManager::_sfProcessFading() {
+	//TODO
+}
+
 /*--------------------------------------------------------------------------*/
 
 void SoundManager::saveNotifier(bool postFlag) {
@@ -353,7 +422,7 @@ int SoundManager::_sfDetermineGroup(const byte *soundData) {
 void SoundManager::_sfAddToPlayList(Sound *sound) {
 	++sfManager()._suspendCtr;
 	_sfDoAddToPlayList(sound);
-	sound->_field6 = 0;
+	sound->_stopFlag = false;
 	_sfRethinkVoiceTypes();
 	--sfManager()._suspendCtr;
 }
@@ -374,7 +443,121 @@ bool SoundManager::_sfIsOnPlayList(Sound *sound) {
 }
 
 void SoundManager::_sfRethinkSoundDrivers() {
-	
+	// Free any existing entries
+	for (int idx = 0; idx < SOUND_ARR_SIZE; ++idx) {
+		if (sfManager()._voiceStructPtrs[idx]) {
+			delete sfManager()._voiceStructPtrs[idx];
+			sfManager()._voiceStructPtrs[idx] = NULL;
+		}
+	}
+
+	for (int idx = 0; idx < SOUND_ARR_SIZE; ++idx) {
+		byte flag = 0xff;
+		int total = 0;
+
+		// Loop through the sound drivers
+		for (Common::List<SoundDriver *>::iterator i = sfManager()._installedDrivers.begin();
+				i != sfManager()._installedDrivers.end(); ++i) {
+			// Process the group data for each sound driver
+			SoundDriver *driver = *i;
+			const byte *groupData = driver->_groupOffset->pData;
+
+			while (*groupData != 0xff) {
+				byte byteVal = *groupData++;
+
+				if (byteVal == idx) {
+					byte byteVal2 = *groupData++;
+					if (flag == 0xff)
+						flag = byteVal2;
+					else {
+						assert(flag == byteVal2);
+					}
+
+					if (!flag) {
+						while (*groupData++ != 0xff)
+							++total;
+					} else {
+						total += *groupData;
+						groupData += 2;
+					}
+				} else if (*groupData++ == 0) {
+					while (*groupData != 0xff)
+						++groupData;
+					++groupData;
+				} else {
+					groupData += 2;
+				}
+			}
+		}
+
+		if (total) {
+			int dataSize = !flag ? total * 28 + 30 : total * 26 + 30;
+			debugC(9, ktSageSound, "data Size = %d\n", dataSize);
+
+			VoiceStruct *vs = new VoiceStruct();
+			sfManager()._voiceStructPtrs[idx] = vs;
+
+			if (!flag) {
+				vs->_field0 = 0;
+				vs->_field1 = total;
+//				offset = 2;
+			} else {
+				vs->_field0 = 1;
+				vs->_field1 = vs->_field2 = total;
+//				offset = 4;
+			}
+
+			for (Common::List<SoundDriver *>::iterator i = sfManager()._installedDrivers.begin();
+							i != sfManager()._installedDrivers.end(); ++i) {
+				// Process the group data for each sound driver
+				SoundDriver *driver = *i;
+				const byte *groupData = driver->_groupOffset->pData;
+
+				while (*groupData != 0xff) {
+					byte byteVal = *groupData++;
+				
+					if (byteVal == idx) {
+						if (!flag) {
+							while ((byteVal = *groupData++) != 0xff) {
+								VoiceStructEntry ve;
+								ve._field1 = (byteVal & 0x80) ? 0 : 1;
+								ve._driver = driver;
+								ve._field4 = 0;
+								ve._field6 = 0;
+								ve._field8 = 0;
+								ve._field9 = 0;
+								ve._fieldA = 0;
+
+								vs->_entries.push_back(ve);
+							}
+						} else {
+							byteVal = *groupData;
+							groupData += 2;
+
+							for (int idx = 0; idx < byteVal; ++idx) {
+								VoiceStructEntry ve;
+								ve._field0 = idx;
+								ve._driver = driver;
+								ve._field4 = 0xff;
+								ve._field6 = 0;
+								ve._field8 = 0;
+								ve._fieldA = 0;
+								ve._fieldC = 0;
+								ve._fieldD = 0;
+
+								vs->_entries.push_back(ve);
+							}
+						}
+					} else {
+						if (*groupData++ != 0) {
+							while (*groupData != 0xff)
+								++groupData;
+						}
+					}
+				}
+			}				
+		}
+	}
 }
 
 void SoundManager::_sfRethinkVoiceTypes() {
@@ -472,8 +655,8 @@ bool SoundManager::_sfInstallDriver(SoundDriver *driver) {
 		return false;
 	
 	sfManager()._installedDrivers.push_back(driver);
-	uint32 *maskList = driver->getGroupMaskList();
-	driver->_groupMask = *maskList;
+	driver->_groupOffset = driver->getGroupData();
+	driver->_groupMask =  READ_LE_UINT32(driver->_groupOffset);
 
 	_sfExtractGroupMask();
 	_sfRethinkSoundDrivers();
@@ -484,6 +667,7 @@ bool SoundManager::_sfInstallDriver(SoundDriver *driver) {
 
 void SoundManager::_sfUnInstallDriver(SoundDriver *driver) {
 	sfManager()._installedDrivers.remove(driver);
+	delete driver;
 
 	_sfExtractGroupMask();
 	_sfRethinkSoundDrivers();
@@ -530,10 +714,11 @@ void SoundManager::_sfDoUpdateVolume(Sound *sound) {
 	++_globals->_soundManager._suspendCtr; 
 
 	for (int idx = 0; idx < 16; ++idx) {
+		/*
 		Sound *snd = sfManager()._voiceStructPtrs[idx];
 		if (!snd)
 			continue;
-
+*/
 		// TODO: More stuff
 	}
 	
@@ -543,7 +728,7 @@ void SoundManager::_sfDoUpdateVolume(Sound *sound) {
 /*--------------------------------------------------------------------------*/
 
 Sound::Sound() {
-	_field6 = 0;
+	_stopFlag = false;
 	_soundNum = 0;
 	_groupNum = 0;
 	_soundPriority = 0;
@@ -555,7 +740,7 @@ Sound::Sound() {
 	_loopFlag = false;
 	_pauseCtr = 0;
 	_muteCtr = 0;
-	_holdAt = false;
+	_holdAt = 0xff;
 	_cueValue = -1;
 	_volume1 = -1;
 	_volume3 = 0;
@@ -642,7 +827,7 @@ void Sound::_unPrime() {
 		_globals->_soundManager.removeFromSoundList(this);
 
 		_primed = false;
-		_field6 = 0;
+		_stopFlag = false;
 	}
 }
 
@@ -812,29 +997,30 @@ void Sound::release() {
 
 ASound::ASound(): EventHandler() {
 	_action = NULL;
-	_cueFlag = false;
+	_cueValue = -1;
 }
 
 void ASound::synchronise(Serialiser &s) {
 	EventHandler::synchronise(s);
 	SYNC_POINTER(_action);
-	s.syncAsByte(_cueFlag);
+	s.syncAsByte(_cueValue);
 }
 
 void ASound::dispatch() {
 	EventHandler::dispatch();
 
-	if (!_sound.getCueValue()) {
-		_cueFlag = false;
-		_sound.setCueValue(1);
+	int cueValue = _sound.getCueValue();
+	if (cueValue != -1) {
+		_cueValue = cueValue;
+		_sound.setCueValue(-1);
 
 		if (_action)
 			_action->signal();
 	}
 
-	if (!_cueFlag) {
+	if (_cueValue != -1) {
 		if (!_sound.isPrimed()) {
-			_cueFlag = true;
+			_cueValue = -1;
 			if (_action) {
 				_action->signal();
 				_action = NULL;
@@ -845,7 +1031,7 @@ void ASound::dispatch() {
 
 void ASound::play(int soundNum, Action *action, int volume) {
 	_action = action;
-	_cueFlag = false;
+	_cueValue = 0;
 	
 	setVol(volume);
 	_sound.play(soundNum);
@@ -858,7 +1044,7 @@ void ASound::stop() {
 
 void ASound::prime(int soundNum, Action *action) {
 	_action = action;
-	_cueFlag = false;
+	_cueValue = 0;
 	_sound.prime(soundNum);
 }
 
@@ -880,9 +1066,18 @@ void ASound::fade(int v1, int v2, int v3, int v4, Action *action) {
 SoundDriver::SoundDriver() {
 	_driverNum = 0;
 	_minVersion = _maxVersion = 0;
-	_groupMaskList = NULL;
-
 	_groupMask = 0;
+}
+
+/*--------------------------------------------------------------------------*/
+
+const byte adlib_group_data[] = { 1, 1, 9, 1, 0xff };
+
+AdlibSoundDriver::AdlibSoundDriver() {
+	_groupData.groupMask = 1;
+	_groupData.v1 = 0x46;
+	_groupData.v2 = 0;
+	_groupData.pData = &adlib_group_data[0];
 }
 
 } // End of namespace tSage
