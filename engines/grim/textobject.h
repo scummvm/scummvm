@@ -33,18 +33,50 @@ namespace Grim {
 class SaveGame;
 class Font;
 
-struct TextObjectDefaults {
-	Color *fgColor;
-	int x, y;
-	int width, height;
-	int justify;
-	bool disabled;
-	Font *font;
+class TextObjectCommon {
+public:
+	void setX(int x) { _x = x; }
+	int getX() { return _x; }
+
+	void setY(int y) { _y = y; }
+	int getY() { return _y; }
+
+	void setFont(Font *font) { _font = font; }
+	Font *getFont() { return _font; }
+
+	void setFGColor(Color *fgColor) { _fgColor = fgColor; }
+	Color *getFGColor() { return _fgColor; }
+
+	void setJustify(int justify) { _justify = justify; }
+	int getJustify() { return _justify; }
+
+	void setDisabled(bool disabled) { _disabled = disabled; }
+	bool getDisabled() { return _disabled; }
+
+	void setWidth(int width) { _width = width; }
+	int getWidth() { return _width; }
+
+	void setHeight(int height) { _height = height; }
+	int getHeight() { return _height; }
+
+protected:
+	TextObjectCommon();
+
+	Color *_fgColor;
+	int _x, _y;
+	int _width, _height;
+	int _justify;
+	bool _disabled;
+	Font *_font;
+};
+
+class TextObjectDefaults : public TextObjectCommon {
+
 };
 
 #define TEXT_NULL   ' '
 
-class TextObject : public Object {
+class TextObject : public Object, public TextObjectCommon {
 public:
 	TextObject(bool blastDraw, bool isSpeech = false);
 	TextObject();
@@ -53,16 +85,10 @@ public:
 	void destroyBitmap();
 	void setDefaults(TextObjectDefaults *defaults);
 	void setText(const char *text);
-	void setX(int x) { _x = x; }
-	void setY(int y) { _y = y; }
+
 	void subBaseOffsetY();
 	int getBaseOffsetY();
-	void setWidth(int width) { _width = width; }
-	void setHeight(int height) { _height = height; }
-	void setFGColor(Color *fgColor) { _fgColor = fgColor; }
-	void setFont(Font *font) { _font = font; }
-	void setJustify(int justify) { _justify = justify; }
-	void setDisabled(bool disabled) { _disabled = disabled; }
+
 	int getBitmapWidth();
 	int getBitmapHeight();
 	int getTextCharPosition(int pos);
@@ -82,14 +108,9 @@ public:
 
 protected:
 	bool _created;
-	Color *_fgColor;
-	int _x, _y;
-	int _width, _height;
-	int _justify, _numberLines;
-	bool _disabled;
+	int _numberLines;
 	bool _blastDraw;
 	bool _isSpeech;
-	Font *_font;
 	char _textID[256];
 	uint8 *_textBitmap;
 	int *_bitmapWidthPtr;

@@ -34,18 +34,22 @@ namespace Grim {
 
 Common::String parseMsgText(const char *msg, char *msgId);
 
+TextObjectCommon::TextObjectCommon() :
+	_x(0), _y(0), _fgColor(0), _justify(0), _width(0), _height(0),
+	_disabled(false), _font(NULL) {
+}
+
 TextObject::TextObject(bool blastDraw, bool isSpeech) :
-		Object(), _created(false), _x(0), _y(0), _width(0), _height(0), _justify(0),
-		_numberLines(1), _disabled(false), _font(NULL), _textBitmap(NULL),
-		_bitmapWidthPtr(NULL), _textObjectHandle(NULL) {
+		Object(), TextObjectCommon(), _created(false), _numberLines(1),
+		_textBitmap(NULL),_bitmapWidthPtr(NULL), _textObjectHandle(NULL) {
 	memset(_textID, 0, sizeof(_textID));
-	_fgColor = NULL;
 	_blastDraw = blastDraw;
 	_isSpeech = isSpeech;
 }
 
 TextObject::TextObject() :
-	Object(), _textObjectHandle(NULL), _bitmapWidthPtr(NULL) {
+	Object(), TextObjectCommon(), _textObjectHandle(NULL),
+	_bitmapWidthPtr(NULL) {
 
 }
 
@@ -119,12 +123,12 @@ bool TextObject::restoreState(SaveGame *state) {
 }
 
 void TextObject::setDefaults(TextObjectDefaults *defaults) {
-	_x = defaults->x;
-	_y = defaults->x;
-	_font = defaults->font;
-	_fgColor = defaults->fgColor;
-	_justify = defaults->justify;
-	_disabled = defaults->disabled;
+	_x = defaults->getX();
+	_y = defaults->getY();
+	_font = defaults->getFont();
+	_fgColor = defaults->getFGColor();
+	_justify = defaults->getJustify();
+	_disabled = defaults->getDisabled();
 }
 
 int TextObject::getBitmapWidth() {

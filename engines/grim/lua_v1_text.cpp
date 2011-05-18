@@ -40,121 +40,6 @@
 
 namespace Grim {
 
-void setDefaultObjectParams(TextObjectDefaults *defaults, lua_Object tableObj) {
-	lua_Object keyObj;
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectX));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (lua_isnumber(keyObj)) {
-			defaults->x = (int)lua_getnumber(keyObj);
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectY));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (lua_isnumber(keyObj)) {
-			defaults->y = (int)lua_getnumber(keyObj);
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectFont));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKTAG('F','O','N','T')) {
-			defaults->font = getfont(keyObj);
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectWidth));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (lua_isnumber(keyObj)) {
-			defaults->width = (int)lua_getnumber(keyObj);
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectHeight));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (lua_isnumber(keyObj)) {
-			defaults->height = (int)lua_getnumber(keyObj);
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectFGColor));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKTAG('C','O','L','R')) {
-			defaults->fgColor = getcolor(keyObj);
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectBGColor));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKTAG('C','O','L','R')) {
-			//defaults->bgColor = static_cast<Color *>(lua_getuserdata(keyObj));
-			warning("setDefaultObjectParams: dummy BGColor");
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectFXColor));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKTAG('C','O','L','R')) {
-			//defaults->fxColor = static_cast<Color *>(lua_getuserdata(keyObj));
-			warning("setDefaultObjectParams: dummy FXColor");
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectCenter));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (!lua_isnil(keyObj)) {
-			defaults->justify = 1; //5
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectLJustify));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (!lua_isnil(keyObj)) {
-			defaults->justify = 2; //4
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectRJustify));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (!lua_isnil(keyObj)) {
-			defaults->justify = 3; //6
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectDuration));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (lua_isnumber(keyObj)) {
-			//defaults->duration = lua_getnumber(key);
-			warning("setDefaultObjectParams: dummy Duration: %f", lua_getnumber(keyObj));
-		}
-	}
-}
-
 /* Destroy a text object since we don't need it anymore
  * note that the menu creates more objects than it needs,
  * so it deletes some objects right after creating them
@@ -299,7 +184,7 @@ void L1_SetOffscreenTextPos() {
 	// this sets where we shouldn't put dialog maybe?
 }
 
-void setTextObjectParams(TextObject *textObject, lua_Object tableObj) {
+void setTextObjectParams(TextObjectCommon *textObject, lua_Object tableObj) {
 	lua_Object keyObj;
 
 	lua_pushobject(tableObj);
@@ -577,7 +462,7 @@ void parseSayLineTable(lua_Object paramObj, bool *background, int *vol, int *pan
 void L1_SetSayLineDefaults() {
 	lua_Object tableObj = lua_getparam(1);
 	if (tableObj && lua_istable(tableObj))
-		setDefaultObjectParams(&g_grim->_sayLineDefaults, tableObj);
+		setTextObjectParams(&g_grim->_sayLineDefaults, tableObj);
 }
 
 void L1_SayLine() {
@@ -637,7 +522,7 @@ void L1_PrintLine() {
 
 	if ((lua_isstring(param1Obj) || lua_isnil(param1Obj)) && (lua_istable(param2Obj) || lua_isnil(param2Obj))) {
 		if (lua_istable(param2Obj)) {
-			setDefaultObjectParams(&g_grim->_printLineDefaults, param2Obj);
+			setTextObjectParams(&g_grim->_printLineDefaults, param2Obj);
 			parseSayLineTable(param2Obj, &background, &vol, &buffer, &x, &y);
 		}
 		if (lua_isstring(param1Obj)) {

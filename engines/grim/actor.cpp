@@ -910,7 +910,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 		_sayLineText = NULL;
 	}
 
-	if (!g_grim->_sayLineDefaults.font)
+	if (!g_grim->_sayLineDefaults.getFont())
 		return;
 
 	_sayLineText = new TextObject(false, true);

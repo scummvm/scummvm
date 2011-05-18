@@ -37,8 +37,8 @@ class Font;
 class ObjectState;
 class PrimitiveObject;
 class TextObject;
-
-struct TextObjectDefaults;
+class TextObjectDefaults;
+class TextObjectCommon;
 
 extern int refSystemTable;
 extern int refTypeOverride;
@@ -74,12 +74,11 @@ ObjectState *getobjectstate(lua_Object obj);
 byte clamp_color(int c);
 bool findCostume(lua_Object costumeObj, Actor *actor, Costume **costume);
 
-void setDefaultObjectParams(TextObjectDefaults *defaults, lua_Object tableObj);
 Common::String parseMsgText(const char *msg, char *msgId);
 void parseSayLineTable(lua_Object paramObj, bool *background, int *vol, int *pan, int *x, int *y);
 PointerId saveCallback(int32 /*tag*/, PointerId ptr, SaveSint32 /*savedState*/);
 PointerId restoreCallback(int32 /*tag*/, PointerId ptr, RestoreSint32 /*savedState*/);
-void setTextObjectParams(TextObject *textObject, lua_Object tableObj);
+void setTextObjectParams(TextObjectCommon *textObject, lua_Object tableObj);
 void dummyHandler();
 
 void setFrameTime(float frameTime);
