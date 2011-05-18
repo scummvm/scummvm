@@ -521,6 +521,25 @@ Common::Error GrimEngine::run() {
 //	lua_pushnumber(0);	// bootParam
 	lua_call("BOOT");
 
+	_savegameLoadRequest = false;
+	_savegameSaveRequest = false;
+
+
+	// Load game from specified slot, if any
+	if (ConfMan.hasKey("save_slot")) {
+		int slot = ConfMan.getInt("save_slot");
+		assert(slot <= 99);
+		assert(slot >= 0);
+		_savegameLoadRequest = true;
+		_savegameFileName = "grim";
+		char num[4];
+		itoa(slot, num, 10);
+		if (slot < 10)
+			_savegameFileName += "0";
+		_savegameFileName += num;
+		_savegameFileName += ".gsv";
+	}
+
 	g_grim->setMode(ENGINE_MODE_NORMAL);
 	g_grim->mainLoop();
 
@@ -1018,9 +1037,6 @@ void GrimEngine::mainLoop() {
 	_timeAccum = 0;
 	_frameTimeCollection = 0;
 	_prevSmushFrame = 0;
-	_savegameLoadRequest = false;
-	_savegameSaveRequest = false;
-	_savegameFileName = NULL;
 	_refreshShadowMask = false;
 
 	for (;;) {
@@ -1124,10 +1140,10 @@ void GrimEngine::savegameRestore() {
 	printf("GrimEngine::savegameRestore() started.\n");
 	_savegameLoadRequest = false;
 	char filename[200];
-	if (!_savegameFileName) {
+	if (_savegameFileName.size() == 0) {
 		strcpy(filename, "grim.sav");
 	} else {
-		strcpy(filename, _savegameFileName);
+		strcpy(filename, _savegameFileName.c_str());
 	}
 	_savedState = new SaveGame(filename, false);
 	if (!_savedState || _savedState->saveVersion() != SaveGame::SAVEGAME_VERSION)
@@ -1142,7 +1158,8 @@ void GrimEngine::savegameRestore() {
 	//  lock resources
 
 	_selectedActor = NULL;
-	removeScene(_currScene);
+	if (_currScene)
+		removeScene(_currScene);
 	delete _currScene;
 	_currScene = NULL;
 
@@ -1411,10 +1428,10 @@ void GrimEngine::savegameSave() {
 	printf("GrimEngine::savegameSave() started.\n");
 	_savegameSaveRequest = false;
 	char filename[200];
-	if (!_savegameFileName) {
+	if (_savegameFileName.size() == 0) {
 		strcpy(filename, "grim.sav");
 	} else {
-		strcpy(filename, _savegameFileName);
+		strcpy(filename, _savegameFileName.c_str());
 	}
 	_savedState = new SaveGame(filename, true);
 	if (!_savedState)
