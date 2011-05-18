@@ -23,8 +23,9 @@
  *
  */
 
-#include "common/EventRecorder.h"
 #include "common/config-manager.h"
+#include "common/events.h"
+#include "common/random.h"
 #include "common/str.h"
 #include "common/error.h"
 #include "common/textconsole.h"
