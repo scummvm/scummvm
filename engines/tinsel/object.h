@@ -144,15 +144,6 @@ void DelObject(			// delete a object from a object list and add to free list
 void SortObjectList(		// re-sort an object list
 	OBJECT **pObjList);	// list to sort
 
-OBJECT *GetNextObject(		// object list iterator - returns next obj in list
-	OBJECT *pObjList,	// which object list
-	OBJECT *pStrtObj);	// object to start from - when NULL will start from beginning of list
-
-OBJECT *FindObject(		// Searches the specified obj list for a object matching the specified OID
-	OBJECT *pObjList,	// object list to search
-	int oidDesired,		// object identifer of object to find
-	int oidMask);		// mask to apply to object identifiers before comparison
-
 void GetAniOffset(	// returns the anim offsets of a image, takes into account orientation
 	SCNHANDLE hImg,	// image to get animation offset of
 	int flags,	// images current flags
