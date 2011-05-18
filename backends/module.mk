@@ -150,7 +150,8 @@ MODULE_OBJS += \
 	fs/windows/windows-fs.o \
 	fs/windows/windows-fs-factory.o \
 	graphics/wincesdl/wincesdl-graphics.o \
-	mixer/wincesdl/wincesdl-mixer.o
+	mixer/wincesdl/wincesdl-mixer.o \
+	plugins/win32/win32-provider.o
 endif
 
 ifeq ($(BACKEND),wii)

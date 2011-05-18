@@ -1,4 +1,3 @@
-
 /*  A Bison parser, made from lua.stx
 by  GNU Bison version 1.25
 */

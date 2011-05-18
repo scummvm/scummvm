@@ -73,7 +73,7 @@ Sub CreateInstaller()
 	Dim commandLine : commandLine = """" & nsisPath & "\makensis.exe"" /V2" & _
 	                                " /Dtop_srcdir=""" & rootFolder & """" & _
 	                                " /Dbuild_dir=""" & targetFolder & """" & _
-	                                " /Dtext_dir=""" & targetFolder & """" & _
+	                                " /Dtext_dir=""" & rootFolder & """" & _
 	                                " /DARCH=""" & arch & """" & _
 	                                " """ & rootFolder & "\dists\nsis\scummvm.nsi"""
 

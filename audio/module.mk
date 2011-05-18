@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	decoders/flac.o \
 	decoders/mp3.o \
 	decoders/raw.o \
+	decoders/vag.o \
 	decoders/vorbis.o \
 	softsynth/adlib.o \
 	softsynth/cms.o \
@@ -20,7 +21,6 @@ MODULE_OBJS := \
 	softsynth/opl/dosbox.o \
 	softsynth/opl/mame.o \
 	softsynth/appleiigs.o \
-	softsynth/ym2612.o \
 	softsynth/fluidsynth.o \
 	softsynth/mt32.o \
 	softsynth/pcspk.o \

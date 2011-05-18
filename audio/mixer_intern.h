@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SOUND_MIXER_INTERN_H
@@ -129,6 +126,8 @@ public:
 	 * the backend (e.g. from an audio mixing thread). All the actual mixing
 	 * work is done from here.
 	 *
+	 * @param samples Sample buffer, in which stereo 16-bit samples will be stored.
+	 * @param len Length of the provided buffer to fill (in bytes, should be divisible by 4).
 	 * @return number of sample pairs processed (which can still be silence!)
 	 */
 	int mixCallback(byte *samples, uint len);

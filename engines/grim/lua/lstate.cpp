@@ -1,5 +1,4 @@
 /*
-** $Id$
 ** Global State
 ** See Copyright Notice in lua.h
 */

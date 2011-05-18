@@ -1,5 +1,4 @@
 /*
-** $Id$
 ** Syntax analizer and code generator
 ** See Copyright Notice in lua.h
 */

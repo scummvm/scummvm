@@ -1,8 +1,6 @@
 ###############################################
 # Common build rules, used by the sub modules and their module.mk files
 #
-# $URL$
-# $Id$
 ###############################################
 
 

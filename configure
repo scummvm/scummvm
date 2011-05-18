@@ -614,7 +614,8 @@ Special configuration feature:
   --host=HOST             cross-compile to target HOST (arm-linux, ...)
 
 Game engines:
-  --enable-all-engines     enable all engines
+  --enable-all-engines     enable all engines, including those which are
+                           broken or unsupported
   --disable-all-engines    disable all engines
 $engines_help
 Optional Features:
@@ -1011,7 +1012,13 @@ webos)
 	_host_os=webos
 	_host_cpu=arm
 	_host_alias=arm-none-linux-gnueabi
+	# The prefix is always the same on WebOS so we hardcode the default
+	# here. It is still possible to define a custom prefix which is
+	# needed when packaging the app with a user-specific app ID.
 	test "x$prefix" = xNONE && prefix=/media/cryptofs/apps/usr/palm/applications/org.scummvm.scummvm
+	# WebOS apps are installed into app-specific directories. The 
+	# default directory structure of ScummVM makes no sense here so we
+	# hardcode WebOS specific directories here.
 	datarootdir='${prefix}/data'
 	datadir='${datarootdir}'
 	docdir='${prefix}/doc'
@@ -1585,6 +1592,7 @@ case $_host_os in
 		;;
 	webos)
 		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/include -I$WEBOS_PDK/include/SDL -I$WEBOS_PDK/device/usr/include"
+		# These compiler options are needed to support the Palm Pixi
 		CXXFLAGS="$CXXFLAGS -mcpu=arm1136jf-s -mfpu=vfp -mfloat-abi=softfp"
 		LDFLAGS="$LDFLAGS -L$WEBOS_PDK/device/lib -L$WEBOS_PDK/device/usr/lib"
 		LDFLAGS="$LDFLAGS -Wl,--allow-shlib-undefined"
@@ -1606,8 +1614,8 @@ case $_host_os in
 		fi
 		;;
 	wince)
-		CXXFLAGS="$CXXFLAGS -O3 -fno-inline-functions -march=armv4 -mtune=xscale"
-		DEFINES="$DEFINES -D_WIN32_WCE=300 -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
+		CXXFLAGS="$CXXFLAGS -O3 -fno-inline-functions -march=armv4 -mtune=xscale -D_WIN32_WCE=300 "
+		DEFINES="$DEFINES -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
 		DEFINES="$DEFINES -DWIN32 -Dcdecl= -D__cdecl__="
 		;;
 	# given this is a shell script assume some type of unix
@@ -1963,7 +1971,7 @@ if test -n "$_host"; then
 			add_line_to_config_h "#define USE_WII_KBD"
 			;;
 		wince)
-			LDFLAGS="$LDFLAGS -Wl,-Map,scummvm.exe.map -Wl,--stack,65536"
+			LDFLAGS="$LDFLAGS -Wl,--stack,65536"
 			_need_memalign=yes
 			_arm_asm=yes
 			_tremolo=yes
@@ -2177,7 +2185,7 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 LIBS            += -ldl
 '
 		;;
-	linux* | webos)
+	linux*)
 _def_plugin='
 #define PLUGIN_PREFIX	"lib"
 #define PLUGIN_SUFFIX	".so"
@@ -2211,6 +2219,24 @@ PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
 '
 		;;
+	wince)
+		DEFINES="$DEFINES -DUNCACHED_PLUGINS"
+		HOSTEXEEXT=".dll"
+_def_plugin='
+#define PLUGIN_PREFIX	""
+#define PLUGIN_SUFFIX	".dll"
+'
+_mak_plugins='
+DYNAMIC_MODULES		:= 1
+PLUGIN_PREFIX		:=
+PLUGIN_SUFFIX		:= .dll
+PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
+CXXFLAGS			+= -DDYNAMIC_MODULES
+PLUGIN_LDFLAGS		:= -shared -lresidual -L.
+PRE_OBJS_FLAGS		:= -Wl,--whole-archive
+POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a -shared
+'
+		;;
 	ps2)
 		_elf_loader=yes
 		DEFINES="$DEFINES -DMIPS_TARGET"
@@ -2225,6 +2251,24 @@ PLUGIN_LDFLAGS		+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backend
 _mak_plugins='
 LDFLAGS				+= -Wl,-T$(srcdir)/backends/plugins/psp/main_prog.ld
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lstdc++ -lc
+'
+		;;
+	webos)
+_def_plugin='
+#define PLUGIN_PREFIX	"lib"
+#define PLUGIN_SUFFIX	".so"
+'
+_mak_plugins='
+DYNAMIC_MODULES := 1
+PLUGIN_PREFIX := lib
+PLUGIN_SUFFIX := .so
+PLUGIN_EXTRA_DEPS =
+CXXFLAGS        += -DDYNAMIC_MODULES
+CXXFLAGS        += -fpic
+PLUGIN_LDFLAGS  += -shared $(LDFLAGS)
+PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
+POST_OBJS_FLAGS := -Wl,-no-whole-archive
+LIBS            += -ldl
 '
 		;;
 	*)
@@ -2753,6 +2797,8 @@ case $_backend in
 		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"../plugins\\\""
 		;;
 	webos)
+		# The WebOS app wants the plugins in the "lib" directory
+		# without a scummvm sub directory.
 		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$libdir\\\""
 		;;
 	*)
@@ -2917,7 +2963,8 @@ case $_backend in
 		DEFINES="$DEFINES -DSDL_BACKEND"
 		;;
 	webos)
-		LIBS="$LIBS -lSDL -lpdl"
+		# There is no sdl-config in the WebOS PDK so we don't use find_sdlconfig here.
+		LIBS="$LIBS -lSDL"
 		DEFINES="$DEFINES -DSDL_BACKEND -DWEBOS"
 		MODULES="$MODULES backends/platform/sdl"
 		;;

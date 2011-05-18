@@ -1,5 +1,4 @@
 /*
-** $Id$
 ** Lexical Analizer
 ** See Copyright Notice in lua.h
 */

@@ -1,5 +1,4 @@
 /*
-** $Id$
 ** Lua Function structures
 ** See Copyright Notice in lua.h
 */

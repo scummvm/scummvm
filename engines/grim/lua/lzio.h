@@ -1,5 +1,4 @@
 /*
-** $Id$
 ** Buffered streams
 ** See Copyright Notice in lua.h
 */

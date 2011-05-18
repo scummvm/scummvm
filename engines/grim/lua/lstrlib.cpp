@@ -1,5 +1,4 @@
 /*
-** $Id$
 ** Standard library for strings and pattern-matching
 ** See Copyright Notice in lua.h
 */

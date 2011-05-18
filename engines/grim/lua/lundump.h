@@ -1,5 +1,4 @@
 /*
-** $Id$
 ** load pre-compiled Lua chunks
 ** See Copyright Notice in lua.h
 */

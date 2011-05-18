@@ -1,5 +1,4 @@
 /*
-** $Id$
 ** Auxiliary functions to manipulate prototypes and closures
 ** See Copyright Notice in lua.h
 */

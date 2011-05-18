@@ -1,5 +1,4 @@
 /*
-** $Id$
 ** Tag methods
 ** See Copyright Notice in lua.h
 */

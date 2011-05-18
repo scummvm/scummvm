@@ -1,5 +1,4 @@
 /*
-** $Id$
 ** Debugging API
 ** See Copyright Notice in lua.h
 */

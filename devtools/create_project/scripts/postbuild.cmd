@@ -36,16 +36,17 @@ xcopy /F /Y "%~1/dists/engine-data/*.tbl" %~2     > NUL 2>&1
 xcopy /F /Y "%~1/dists/engine-data/*.cpt" %~2     > NUL 2>&1
 xcopy /F /Y "%~1/gui/themes/*.zip" %~2            > NUL 2>&1
 xcopy /F /Y "%~1/gui/themes/translations.dat" %~2 > NUL 2>&1
-xcopy /F /Y "%~4/lib/%~3/SDL.dll" %~2             > NUL 2>&1
-xcopy /F /Y "%~4/README-SDL" %~2                  > NUL 2>&1
 
-xcopy /F /Y "%~1/backends/vkeybd/packs/vkeybd_default.zip" %~2 > NUL 2>&1
+xcopy /F /Y "%~4/lib/%~3/SDL.dll" "%~2"             1>NUL 2>&1
+xcopy /F /Y "%~4/README-SDL" "%~2"                  1>NUL 2>&1
+
+xcopy /F /Y "%~1/backends/vkeybd/packs/vkeybd_default.zip" "%~2" 1>NUL 2>&1
 
 if "%~5"=="0" goto done
 
 echo Running installer script
 echo.
-@call cscript "%~1/devtools/create_project/scripts/installer.vbs" %~1 %~2 %~3 1>NUL
+@call cscript "%~1/devtools/create_project/scripts/installer.vbs" "%~1" "%~2" "%~3" 1>NUL
 if not %errorlevel% == 0 goto error_script
 goto done
 

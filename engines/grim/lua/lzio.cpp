@@ -1,5 +1,4 @@
 /*
-** $Id$
 ** a generic input stream interface
 ** See Copyright Notice in lua.h
 */

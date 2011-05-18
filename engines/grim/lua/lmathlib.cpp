@@ -1,9 +1,10 @@
 /*
-** $Id$
 ** Lua standard mathematical library
 ** See Copyright Notice in lua.h
 */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_rand
+#define FORBIDDEN_SYMBOL_EXCEPTION_srand
 
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/lua.h"

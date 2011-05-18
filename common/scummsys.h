@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef COMMON_SCUMMSYS_H
@@ -110,9 +107,19 @@
 #include "config.h"
 #endif
 
-// make sure we really are compiling for WIN32
-#ifndef WIN32
-#undef _MSC_VER
+//
+// Define scumm_stricmp and scumm_strnicmp
+//
+#if defined(_WIN32_WCE) || defined(_MSC_VER)
+	#define scumm_stricmp stricmp
+	#define scumm_strnicmp _strnicmp
+	#define snprintf _snprintf
+#elif defined(__MINGW32__) || defined(__GP32__) || defined(__DS__)
+	#define scumm_stricmp stricmp
+	#define scumm_strnicmp strnicmp
+#else
+	#define scumm_stricmp strcasecmp
+	#define scumm_strnicmp strncasecmp
 #endif
 
 
@@ -126,19 +133,9 @@
 //    - Define this on a big endian target
 // SCUMM_NEED_ALIGNMENT
 //    - Define this if your system has problems reading e.g. an int32 from an odd address
-// SCUMMVM_DONT_DEFINE_TYPES
-//    - Define this if you need to provide your own typedefs, e.g. because your
-//      system headers conflict with our typenames, or because you have odd
-//      type requirements.
 // SMALL_SCREEN_DEVICE
 //    - ...
 // ...
-
-// We define all types in config.h, so we don't want to typedef those types
-// here again!
-#ifdef HAVE_CONFIG_H
-#define SCUMMVM_DONT_DEFINE_TYPES
-#endif
 
 
 //
@@ -155,205 +152,83 @@
 #define SCUMMVM_USE_PRAGMA_PACK
 
 
-#if defined(__SYMBIAN32__)
+#if defined(HAVE_CONFIG_H)
+	// All settings should have been set in config.h
 
-	#define scumm_stricmp strcasecmp
-	#define scumm_strnicmp strncasecmp
+#elif defined(__SYMBIAN32__)
 
 	#define SCUMM_LITTLE_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
 
-	#define SMALL_SCREEN_DEVICE
-
-	// Enable Symbians own datatypes
-	// This is done for two reasons
-	// a) uint is already defined by Symbians libc component
-	// b) Symbian is using its "own" datatyping, and the Scummvm port
-	//    should follow this to ensure the best compability possible.
-	#define SCUMMVM_DONT_DEFINE_TYPES
-	typedef unsigned char byte;
-
-	typedef unsigned char uint8;
-	typedef signed char int8;
-
-	typedef unsigned short int uint16;
-	typedef signed short int int16;
-
-	typedef unsigned long int uint32;
-	typedef signed long int int32;
-
 #elif defined(_WIN32_WCE)
 
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp _strnicmp
-	#define snprintf _snprintf
-
 	#define SCUMM_LITTLE_ENDIAN
-
-	#ifndef __GNUC__
-		#define FORCEINLINE __forceinline
-		#define NORETURN_PRE __declspec(noreturn)
-	#endif
-	#define PLUGIN_EXPORT __declspec(dllexport)
-
-	#if _WIN32_WCE < 300
-	#define SMALL_SCREEN_DEVICE
-	#endif
 
 #elif defined(_MSC_VER)
 
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp _strnicmp
-	#define snprintf _snprintf
-
 	#define SCUMM_LITTLE_ENDIAN
-
-	#define FORCEINLINE __forceinline
-	#define NORETURN_PRE __declspec(noreturn)
-	#define PLUGIN_EXPORT __declspec(dllexport)
-
 
 #elif defined(__MINGW32__)
 
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp strnicmp
-
 	#define SCUMM_LITTLE_ENDIAN
 
-	#define PLUGIN_EXPORT __declspec(dllexport)
+#elif defined(SDL_BACKEND)
+	/* need this for the SDL_BYTEORDER define */
+	#include <SDL_byteorder.h>
 
-#elif defined(UNIX)
-
-	#define scumm_stricmp strcasecmp
-	#define scumm_strnicmp strncasecmp
-
-	#ifndef CONFIG_H
-		/* need this for the SDL_BYTEORDER define */
-		#include <SDL_byteorder.h>
-
-		#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-		#define SCUMM_LITTLE_ENDIAN
-		#elif SDL_BYTEORDER == SDL_BIG_ENDIAN
-		#define SCUMM_BIG_ENDIAN
-		#else
-		#error Neither SDL_BIG_ENDIAN nor SDL_LIL_ENDIAN is set.
-		#endif
-	#endif
-
-	// You need to set this manually if necessary
-//	#define SCUMM_NEED_ALIGNMENT
-
-	// Very BAD hack following, used to avoid triggering an assert in uClibc dingux library
-	// "toupper" when pressing keyboard function keys.
-	#if defined(DINGUX)
-	#undef toupper
-	#define toupper(c) (((c & 0xFF) >= 97) && ((c & 0xFF) <= 122) ? ((c & 0xFF) - 32) : (c & 0xFF))
+	#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	#define SCUMM_LITTLE_ENDIAN
+	#elif SDL_BYTEORDER == SDL_BIG_ENDIAN
+	#define SCUMM_BIG_ENDIAN
+	#else
+	#error Neither SDL_BIG_ENDIAN nor SDL_LIL_ENDIAN is set.
 	#endif
 
 #elif defined(__DC__)
-
-	#define scumm_stricmp strcasecmp
-	#define scumm_strnicmp strncasecmp
 
 	#define SCUMM_LITTLE_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
 
 #elif defined(__GP32__)
 
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp strnicmp
-
 	#define SCUMM_LITTLE_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
 
-	// Override typenames. uint is already defined by system header files.
-	#define SCUMMVM_DONT_DEFINE_TYPES
-	typedef unsigned char byte;
-
-	typedef unsigned char uint8;
-	typedef signed char int8;
-
-	typedef unsigned short int uint16;
-	typedef signed short int int16;
-
-	typedef unsigned long int uint32;
-	typedef signed long int int32;
-
 #elif defined(__PLAYSTATION2__)
-
-	#define scumm_stricmp strcasecmp
-	#define scumm_strnicmp strncasecmp
 
 	#define SCUMM_LITTLE_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
 
 #elif defined(__N64__)
 
-	#define scumm_stricmp strcasecmp
-	#define scumm_strnicmp strncasecmp
-
 	#define SCUMM_BIG_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
 
-	#define STRINGBUFLEN 256
-
-	#define SCUMMVM_DONT_DEFINE_TYPES
-	typedef unsigned char byte;
-
-	typedef unsigned char uint8;
-	typedef signed char int8;
-
-	typedef unsigned short int uint16;
-	typedef signed short int int16;
-
-	typedef unsigned int uint32;
-	typedef signed int int32;
-
-	typedef unsigned long long uint64;
-	typedef signed long long int64;
-
 #elif defined(__PSP__)
-
-	#include <malloc.h>
-	#include "backends/platform/psp/memory.h"
-
-	#define scumm_stricmp strcasecmp
-	#define scumm_strnicmp strncasecmp
 
 	#define	SCUMM_LITTLE_ENDIAN
 	#define	SCUMM_NEED_ALIGNMENT
 
-	/* to make an efficient, inlined memcpy implementation */
-	#define memcpy(dst, src, size)   psp_memcpy(dst, src, size)
-
 #elif defined(__amigaos4__)
-
-	#define	scumm_stricmp strcasecmp
-	#define	scumm_strnicmp strncasecmp
 
 	#define	SCUMM_BIG_ENDIAN
 	#define	SCUMM_NEED_ALIGNMENT
 
-#elif defined (__DS__)
-
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp strnicmp
+#elif defined(__DS__)
 
 	#define SCUMM_NEED_ALIGNMENT
 	#define SCUMM_LITTLE_ENDIAN
 
-	#define SCUMMVM_DONT_DEFINE_TYPES
-
-	#define STRINGBUFLEN 256
-//	#define printf(fmt, ...)					consolePrintf(fmt, ##__VA_ARGS__)
-
 #elif defined(__WII__)
-
-	#define scumm_stricmp strcasecmp
-	#define scumm_strnicmp strncasecmp
 
 	#define	SCUMM_BIG_ENDIAN
 	#define	SCUMM_NEED_ALIGNMENT
+
+#elif defined(IPHONE)
+
+	#define	SCUMM_LITTLE_ENDIAN
+	#define	SCUMM_NEED_ALIGNMENT
+
 
 #else
 	#error No system type defined
@@ -362,47 +237,96 @@
 
 
 //
-// GCC specific stuff
+// Some more system specific settings.
+// TODO/FIXME: All of these should be moved to backend specific files (such as portdefs.h)
 //
-#if defined(__GNUC__)
-	#define NORETURN_POST __attribute__((__noreturn__))
-	#define PACKED_STRUCT __attribute__((__packed__))
-	#define GCC_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
+#if defined(__SYMBIAN32__)
 
-	#if !defined(FORCEINLINE) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
-		#define FORCEINLINE inline __attribute__((__always_inline__))
+	#define SMALL_SCREEN_DEVICE
+
+#elif defined(_WIN32_WCE)
+
+	#if _WIN32_WCE < 300
+	#define SMALL_SCREEN_DEVICE
 	#endif
-#elif defined(__INTEL_COMPILER)
-	#define NORETURN_POST __attribute__((__noreturn__))
-	#define PACKED_STRUCT __attribute__((__packed__))
-	#define GCC_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
-#else
-	#define PACKED_STRUCT
-	#define GCC_PRINTF(x,y)
+
+#elif defined(DINGUX)
+
+	// Very BAD hack following, used to avoid triggering an assert in uClibc dingux library
+	// "toupper" when pressing keyboard function keys.
+	#undef toupper
+	#define toupper(c) (((c & 0xFF) >= 97) && ((c & 0xFF) <= 122) ? ((c & 0xFF) - 32) : (c & 0xFF))
+
+#elif defined(__PSP__)
+
+	#include <malloc.h>
+	#include "backends/platform/psp/memory.h"
+
+	/* to make an efficient, inlined memcpy implementation */
+	#define memcpy(dst, src, size)   psp_memcpy(dst, src, size)
+
 #endif
 
 
 //
 // Fallbacks / default values for various special macros
 //
+#ifndef GCC_PRINTF
+	#if defined(__GNUC__) || defined(__INTEL_COMPILER)
+		#define GCC_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
+	#else
+		#define GCC_PRINTF(x,y)
+	#endif
+#endif
+
+#ifndef PACKED_STRUCT
+	#if defined(__GNUC__) || defined(__INTEL_COMPILER)
+		#define PACKED_STRUCT __attribute__((__packed__))
+	#else
+		#define PACKED_STRUCT
+	#endif
+#endif
+
 #ifndef FORCEINLINE
-#define FORCEINLINE inline
+	#if defined(_MSC_VER)
+		#define FORCEINLINE __forceinline
+	#elif (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
+		#define FORCEINLINE inline __attribute__((__always_inline__))
+	#else
+		#define FORCEINLINE inline
+	#endif
 #endif
 
 #ifndef PLUGIN_EXPORT
-#define PLUGIN_EXPORT
+	#if defined(_MSC_VER) || defined(_WIN32_WCE) || defined(__MINGW32__)
+		#define PLUGIN_EXPORT __declspec(dllexport)
+	#else
+		#define PLUGIN_EXPORT
+	#endif
 #endif
 
 #ifndef NORETURN_PRE
-#define	NORETURN_PRE
+	#if defined(_MSC_VER)
+		#define NORETURN_PRE __declspec(noreturn)
+	#else
+		#define	NORETURN_PRE
+	#endif
 #endif
 
 #ifndef NORETURN_POST
-#define	NORETURN_POST
+	#if defined(__GNUC__) || defined(__INTEL_COMPILER)
+		#define NORETURN_POST __attribute__((__noreturn__))
+	#else
+		#define	NORETURN_POST
+	#endif
 #endif
 
 #ifndef STRINGBUFLEN
-#define STRINGBUFLEN 1024
+  #if defined(__N64__) || defined(__DS__)
+    #define STRINGBUFLEN 256
+  #else
+    #define STRINGBUFLEN 1024
+  #endif
 #endif
 
 #ifndef LOCAL_PI
@@ -415,17 +339,73 @@
 
 
 //
-// Typedef our system types unless SCUMMVM_DONT_DEFINE_TYPES is set.
+// Typedef our system types
 //
-#ifndef SCUMMVM_DONT_DEFINE_TYPES
-	typedef unsigned char byte;
-	typedef unsigned char uint8;
-	typedef signed char int8;
-	typedef unsigned short uint16;
-	typedef signed short int16;
-	typedef unsigned int uint32;
-	typedef signed int int32;
-	typedef unsigned int uint;
+#if !defined(HAVE_CONFIG_H)
+
+	#if defined(__SYMBIAN32__)
+
+		// Enable Symbians own datatypes
+		// This is done for two reasons
+		// a) uint is already defined by Symbians libc component
+		// b) Symbian is using its "own" datatyping, and the Scummvm port
+		//    should follow this to ensure the best compability possible.
+		typedef unsigned char byte;
+
+		typedef unsigned char uint8;
+		typedef signed char int8;
+
+		typedef unsigned short int uint16;
+		typedef signed short int int16;
+
+		typedef unsigned long int uint32;
+		typedef signed long int int32;
+
+	#elif defined(__GP32__)
+
+		// Override typenames. uint is already defined by system header files.
+		typedef unsigned char byte;
+
+		typedef unsigned char uint8;
+		typedef signed char int8;
+
+		typedef unsigned short int uint16;
+		typedef signed short int int16;
+
+		typedef unsigned long int uint32;
+		typedef signed long int int32;
+
+	#elif defined(__N64__)
+
+		typedef unsigned char byte;
+
+		typedef unsigned char uint8;
+		typedef signed char int8;
+
+		typedef unsigned short int uint16;
+		typedef signed short int int16;
+
+		typedef unsigned int uint32;
+		typedef signed int int32;
+
+	#elif defined(__DS__)
+
+		// Do nothing, the SDK defines all types we need in nds/ndstypes.h,
+		// which we include in our portsdef.h
+
+	#else
+
+		typedef unsigned char byte;
+		typedef unsigned char uint8;
+		typedef signed char int8;
+		typedef unsigned short uint16;
+		typedef signed short int16;
+		typedef unsigned int uint32;
+		typedef signed int int32;
+		typedef unsigned int uint;
+
+	#endif
+
 #endif
 
 
@@ -441,6 +421,6 @@
 	typedef uint16 OverlayColor;
 #endif
 
-#include "common/forbidden.h"	
+#include "common/forbidden.h"
 
 #endif

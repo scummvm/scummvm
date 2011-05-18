@@ -1,5 +1,4 @@
 /*
-** $Id$
 ** load bytecodes from files
 ** See Copyright Notice in lua.h
 */

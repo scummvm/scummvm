@@ -1,8 +1,6 @@
 # This file contains port specific Makefile rules. It is automatically
 # included by the default (main) Makefile.
 #
-# $URL$
-# $Id$
 
 
 #

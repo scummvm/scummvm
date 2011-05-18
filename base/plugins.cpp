@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "base/plugins.h"
@@ -136,8 +133,9 @@ public:
 		LINK_PLUGIN(C64)
 		#endif
 //		LINK_PLUGIN(AMIGA)
-		LINK_PLUGIN(APPLEIIGS)
-		LINK_PLUGIN(TOWNS)
+//		LINK_PLUGIN(APPLEIIGS)
+//		LINK_PLUGIN(TOWNS)
+//		LINK_PLUGIN(PC98)
 		#if defined(USE_TIMIDITY)
 		LINK_PLUGIN(TIMIDITY)
 		#endif
