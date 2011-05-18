@@ -240,10 +240,6 @@ SpriteComponent::SpriteComponent(Costume::Component *p, int parentID, const char
 
 SpriteComponent::~SpriteComponent() {
 	if (_sprite) {
-		if (_parent) {
-			MeshComponent *mc = dynamic_cast<MeshComponent *>(_parent);
-			mc->getNode()->removeSprite(_sprite);
-		}
 		delete _sprite->_material;
 		delete _sprite;
 	}
