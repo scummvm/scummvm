@@ -19,28 +19,40 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#if defined(UNIX) && !defined(DISABLE_POSIX_FS)
-
 // Re-enable some forbidden symbols to avoid clashes with stat.h and unistd.h.
 // Also with clock() in sys/time.h in some Mac OS X SDKs.
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 
-#include "backends/fs/bada/bada-fs.h"
+#include "fs.h"
 #include "backends/fs/stdiostream.h"
 #include "common/algorithm.h"
 
 #include <sys/param.h>
 #include <sys/stat.h>
-#include <dirent.h>
 #include <stdio.h>
 
 void BADAFilesystemNode::setFlags() {
 	struct stat st;
 
-	_isValid = (0 == stat(_path.c_str(), &st));
-	_isDirectory = _isValid ? S_ISDIR(st.st_mode) : false;
+  //	_isValid = (0 == stat(_path.c_str(), &st));
+	//_isDirectory = _isValid ? S_ISDIR(st.st_mode) : false;
+}
+
+bool BADAFilesystemNode::exists() const {
+  //;// { return access(_path.c_str(), F_OK) == 0; }
+  return false;
+}
+
+bool BADAFilesystemNode::isReadable() const { 
+  //return access(_path.c_str(), R_OK) == 0; }
+  return false;
+}
+
+bool BADAFilesystemNode::isWritable() const { 
+  //return access(_path.c_str(), W_OK) == 0; }
+  return false;
 }
 
 BADAFilesystemNode::BADAFilesystemNode(const Common::String &p) {
@@ -55,7 +67,8 @@ BADAFilesystemNode::BADAFilesystemNode(const Common::String &p) {
 			// two chars, so this is safe:
 			_path += p.c_str() + 1;
 		}
-	} else {
+	} 
+  else {
 		_path = p;
 	}
 
@@ -94,8 +107,9 @@ AbstractFSNode *BADAFilesystemNode::getChild(const Common::String &n) const {
 	// We assume here that _path is already normalized (hence don't bother to call
 	//  Common::normalizePath on the final path).
 	Common::String newPath(_path);
-	if (_path.lastChar() != '/')
+	if (_path.lastChar() != '/') {
 		newPath += '/';
+  }
 	newPath += n;
 
 	return makeNode(newPath);
@@ -103,7 +117,7 @@ AbstractFSNode *BADAFilesystemNode::getChild(const Common::String &n) const {
 
 bool BADAFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
 	assert(_isDirectory);
-
+#if 0
 	DIR *dirp = opendir(_path.c_str());
 	struct dirent *dp;
 
@@ -168,21 +182,23 @@ bool BADAFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool
 		myList.push_back(new BADAFilesystemNode(entry));
 	}
 	closedir(dirp);
-
+#endif // commented out 
 	return true;
 }
 
 AbstractFSNode *BADAFilesystemNode::getParent() const {
-	if (_path == "/")
+	if (_path == "/") {
 		return 0;	// The filesystem root has no parent
+  }
 
 	const char *start = _path.c_str();
 	const char *end = start + _path.size();
 
 	// Strip of the last component. We make use of the fact that at this
 	// point, _path is guaranteed to be normalized
-	while (end > start && *(end-1) != '/')
+	while (end > start && *(end-1) != '/') {
 		end--;
+  }
 
 	if (end == start) {
 		// This only happens if we were called with a relative path, for which
@@ -203,4 +219,3 @@ Common::WriteStream *BADAFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath(), true);
 }
 
-#endif //#if defined(UNIX)

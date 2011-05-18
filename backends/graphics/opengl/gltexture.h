@@ -20,7 +20,7 @@
  *
  */
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(BADA)
 #if defined(ARRAYSIZE) && !defined(_WINDOWS_)
 #undef ARRAYSIZE
 #endif
