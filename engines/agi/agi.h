@@ -969,7 +969,7 @@ public:
 	int showWords();
 	int loadWords(const char *);
 	void unloadWords();
-	int findWord(char *word, int *flen);
+	int findWord(const char *word, int *flen);
 	void dictionaryWords(char *);
 
 	// Motion

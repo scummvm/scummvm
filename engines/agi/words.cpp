@@ -37,7 +37,7 @@ static uint32 wordsFlen;	// length of word memory
 // Local implementation to avoid problems with strndup() used by
 // gcc 3.2 Cygwin (see #635984)
 //
-static char *myStrndup(char *src, int n) {
+static char *myStrndup(const char *src, int n) {
 	char *tmp = strncpy((char *)malloc(n + 1), src, n);
 	tmp[n] = 0;
 	return tmp;
@@ -86,11 +86,11 @@ void AgiEngine::unloadWords() {
  *
  * Thomas Akesson, November 2001
  */
-int AgiEngine::findWord(char *word, int *flen) {
+int AgiEngine::findWord(const char *word, int *flen) {
 	int mchr = 0;		// matched chars
 	int len, fchr, id = -1;
-	uint8 *p = words;
-	uint8 *q = words + wordsFlen;
+	const uint8 *p = words;
+	const uint8 *q = words + wordsFlen;
 	*flen = 0;
 
 	debugC(2, kDebugLevelScripts, "find_word(%s)", word);
