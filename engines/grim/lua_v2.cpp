@@ -586,6 +586,10 @@ STUB_FUNC2(L2_ImStateHasEnded)
 STUB_FUNC2(L2_ImPushState)
 STUB_FUNC2(L2_ImPopState)
 STUB_FUNC2(L2_ImGetMillisecondPosition)
+STUB_FUNC2(L2_ImSetMusicVol)
+STUB_FUNC2(L2_ImSetSfxVol)
+STUB_FUNC2(L2_ImSetVoiceVol)
+STUB_FUNC2(L2_ImSetVoiceEffect)
 STUB_FUNC2(L2_GetSectorName)
 STUB_FUNC2(L2_GetCameraYaw)
 STUB_FUNC2(L2_YawCamera)
@@ -711,6 +715,10 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "ImGetMusicVol", L2_ImGetMusicVol },
 	{ "ImSetState", L2_ImSetState },
 	{ "ImSetSequence", L2_ImSetSequence },
+	{ "ImSetMusicVol", L2_ImSetMusicVol },
+	{ "ImSetSfxVol", L2_ImSetSfxVol },
+	{ "ImSetVoiceVol", L2_ImSetVoiceVol },
+	{ "ImSetVoiceEffect", L2_ImSetVoiceEffect },
 	{ "LoadBundle", L2_LoadBundle },
 	{ "SetGamma", L1_SetGamma },
 	{ "SetActorWalkDominate", L1_SetActorWalkDominate },
