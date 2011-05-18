@@ -383,7 +383,7 @@ const Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 			}
 		} else {
 			// If we can't get any more frames, we're done.
-			if (_theoraOut.e_o_s) {
+			if (_theoraOut.e_o_s || _fileStream->eos()) {
 				_endOfVideo = true;
 				break;
 			}
@@ -406,7 +406,7 @@ const Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 			queuePage(&_oggPage);
 
 		bool queuedAudio = queueAudio();
-		if (_vorbisOut.e_o_s && !queuedAudio) {
+		if ((_vorbisOut.e_o_s  || _fileStream->eos()) && !queuedAudio) {
 			_endOfAudio = true;
 			break;
 		}
