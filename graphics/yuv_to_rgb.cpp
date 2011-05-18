@@ -203,6 +203,13 @@ namespace Graphics {
 		*((uint32 *)(d)) = (L[cr_r] | L[crb_g] | L[cb_b])
 
 void convertYUV420ToRGB(Graphics::Surface *dst, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
+	// Sanity checks
+	assert(dst && dst->pixels);
+	assert(dst->format.bytesPerPixel == 2 || dst->format.bytesPerPixel == 4);
+	assert(ySrc && uSrc && vSrc);
+	assert((yWidth & 1) == 0);
+	assert((yHeight & 1) == 0);
+
 	const YUVToRGBLookup *lookup = YUVToRGBMan.getLookup(dst->format);
 
 	byte *dstPtr = (byte *)dst->pixels;
