@@ -509,6 +509,11 @@ uint32 TheoraDecoder::getElapsedTime() const {
 	return VideoDecoder::getElapsedTime();
 }
 
+void TheoraDecoder::pauseVideoIntern(bool pause) {
+	if (_audStream)
+		g_system->getMixer()->pauseHandle(*_audHandle, pause);
+}
+
 enum TheoraYUVBuffers {
 	kBufferY = 0,
 	kBufferU = 1,

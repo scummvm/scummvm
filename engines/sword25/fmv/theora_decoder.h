@@ -86,13 +86,15 @@ public:
 
 	bool endOfVideo() const;
 
+protected:
+	void pauseVideoIntern(bool pause);
+
 private:
 	void queuePage(ogg_page *page);
 	bool queueAudio();
 	int bufferData();
 	void translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer);
 
-private:
 	Common::SeekableReadStream *_fileStream;
 	Graphics::Surface *_surface;
 	Common::Rational _frameRate;
