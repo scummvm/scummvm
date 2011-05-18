@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "base/plugins.h"
@@ -31,7 +28,6 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/textconsole.h"
 
 #include "engines/util.h"
@@ -196,8 +192,7 @@ Common::Error QueenMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 namespace Queen {
 
 QueenEngine::QueenEngine(OSystem *syst)
-	: Engine(syst), _debugger(0) {
-	g_eventRec.registerRandomSource(randomizer, "queen");
+	: Engine(syst), _debugger(0), randomizer("queen") {
 }
 
 QueenEngine::~QueenEngine() {

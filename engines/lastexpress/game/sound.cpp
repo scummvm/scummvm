@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "lastexpress/game/sound.h"
@@ -38,6 +35,9 @@
 #include "lastexpress/resource.h"
 
 namespace LastExpress {
+
+#define SOUNDCACHE_ENTRY_SIZE 92160
+#define SOUNDCACHE_MAX_SIZE   6
 
 // Letters & messages
 const char *messages[24] = {
@@ -112,6 +112,9 @@ SoundManager::SoundManager(LastExpressEngine *engine) : _engine(engine), _state(
 	memset(&_buffer, 0, sizeof(_buffer));
 	memset(&_lastWarning, 0, sizeof(_lastWarning));
 
+	// Sound cache
+	_soundCacheData = malloc(6 * SOUNDCACHE_ENTRY_SIZE);
+
 	_drawSubtitles = 0;
 	_currentSubtitle = NULL;
 }
@@ -126,6 +129,8 @@ SoundManager::~SoundManager() {
 	_subtitles.clear();
 
 	_currentSubtitle = NULL;
+
+	free(_soundCacheData);
 
 	// Zero passed pointers
 	_engine = NULL;
@@ -157,7 +162,7 @@ void SoundManager::handleTimer() {
 //////////////////////////////////////////////////////////////////////////
 void SoundManager::updateQueue() {
 	// TODO add mutex lock!
-	//warning("Sound::unknownFunction1: not implemented!");
+	warning("Sound::updateQueue: not implemented!");
 }
 
 void SoundManager::resetQueue(SoundType type1, SoundType type2) {
@@ -331,9 +336,63 @@ void SoundManager::setEntryStatus(SoundEntry *entry, FlagType flag) const {
 		entry->status.status = (status | kSoundStatusClear4);
 }
 
+void SoundManager::setInCache(SoundEntry *entry) {
+	entry->status.status |= kSoundStatusClear2;
+}
+
 bool SoundManager::setupCache(SoundEntry *entry) {
-	warning("Sound::setupCache: not implemented!");
+	if (entry->soundData)
+		return true;
+
+	if (_cache.size() >= SOUNDCACHE_MAX_SIZE) {
+
+		SoundEntry *cacheEntry = NULL;
+		uint32 size = 1000;
+
+		for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i) {
+			if (!((*i)->status.status & kSoundStatus_180)) {
+				uint32 newSize = (*i)->field_4C + ((*i)->status.status & kSoundStatusClear1);
+
+				if (newSize < size) {
+					cacheEntry = (*i);
+					size = newSize;
+				}
+			}
+		}
+
+		if (entry->field_4C <= size)
+			return false;
+
+		if (cacheEntry)
+			setInCache(cacheEntry);
+
+		// TODO: Wait until the cache entry is ready to be removed
+		while (!(cacheEntry->status.status1 & 1))
+			;
+
+		if (cacheEntry->soundData)
+			removeFromCache(cacheEntry);
+
+		_cache.push_back(entry);
+		entry->soundData = (char *)_soundCacheData + SOUNDCACHE_ENTRY_SIZE * (_cache.size() - 1);
+	} else {
+		_cache.push_back(entry);
+		entry->soundData = (char *)_soundCacheData + SOUNDCACHE_ENTRY_SIZE * (_cache.size() - 1);
+	}
+
 	return true;
+}
+
+void SoundManager::removeFromCache(SoundEntry *entry) {
+	for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i) {
+		if ((*i) == entry) {
+			// Remove sound buffer
+			entry->soundData = NULL;
+
+			// Remove entry from sound cache
+			i = _cache.reverse_erase(i);
+		}
+	}
 }
 
 void SoundManager::clearStatus() {

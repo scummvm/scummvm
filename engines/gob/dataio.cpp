@@ -18,14 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/endian.h"
 #include "common/types.h"
 #include "common/memstream.h"
+#include "common/substream.h"
 
 #include "gob/gob.h"
 #include "gob/dataio.h"
@@ -345,9 +343,8 @@ Common::SeekableReadStream *DataIO::getFile(File &file) {
 	if (!file.archive->file.seek(file.offset))
 		return 0;
 
-	Common::SeekableReadStream *rawData = file.archive->file.readStream(file.size);
-	if (!rawData)
-		return 0;
+	Common::SeekableReadStream *rawData =
+		new Common::SafeSubReadStream(&file.archive->file, file.offset, file.offset + file.size);
 
 	if (!file.packed)
 		return rawData;

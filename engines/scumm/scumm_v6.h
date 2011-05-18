@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SCUMM_SCRIPT_V6_H
@@ -110,7 +107,7 @@ protected:
 	virtual void decodeParseString(int a, int b);
 	virtual void readArrayFromIndexFile();
 
-	virtual byte *getStringAddress(int i);
+	virtual byte *getStringAddress(ResId idx);
 	virtual void readMAXS(int blockSize);
 
 	virtual void palManipulateInit(int resID, int start, int end, int time);

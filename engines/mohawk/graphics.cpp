@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "mohawk/resource.h"
@@ -296,6 +293,9 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 	// Initialize our buffer
 	_backBuffer = new Graphics::Surface();
 	_backBuffer->create(_vm->_system->getWidth(), _vm->_system->getHeight(), _pixelFormat);
+
+	_nextAllowedDrawTime = _vm->_system->getMillis();
+	_enableDrawingTimeSimulation = 0;
 }
 
 MystGraphics::~MystGraphics() {
@@ -447,6 +447,8 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 	debug(3, "\twidth: %d", width);
 	debug(3, "\theight: %d", height);
 
+	simulatePreviousDrawDelay(dest);
+
 	_vm->_system->copyRectToScreen((byte *)surface->getBasePtr(src.left, top), surface->pitch, dest.left, dest.top, width, height);
 }
 
@@ -502,10 +504,18 @@ void MystGraphics::copyImageToBackBuffer(uint16 image, Common::Rect dest) {
 
 void MystGraphics::copyBackBufferToScreen(Common::Rect r) {
 	r.clip(_viewport);
+
+	simulatePreviousDrawDelay(r);
+
 	_vm->_system->copyRectToScreen((byte *)_backBuffer->getBasePtr(r.left, r.top), _backBuffer->pitch, r.left, r.top, r.width(), r.height());
 }
 
 void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, uint16 delay) {
+
+	// Do not artificially delay during transitions
+	int oldEnableDrawingTimeSimulation = _enableDrawingTimeSimulation;
+	_enableDrawingTimeSimulation = 0;
+
 	switch (type) {
 	case 0:	{
 			debugC(kDebugScript, "Left to Right");
@@ -607,6 +617,8 @@ void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, u
 		_vm->_system->updateScreen();
 		break;
 	}
+
+	_enableDrawingTimeSimulation = oldEnableDrawingTimeSimulation;
 }
 
 void MystGraphics::drawRect(Common::Rect rect, RectState state) {
@@ -630,6 +642,34 @@ void MystGraphics::drawRect(Common::Rect rect, RectState state) {
 
 void MystGraphics::drawLine(const Common::Point &p1, const Common::Point &p2, uint32 color) {
 	_backBuffer->drawLine(p1.x, p1.y, p2.x, p2.y, color);
+}
+
+void MystGraphics::enableDrawingTimeSimulation(bool enable) {
+	if (enable)
+		_enableDrawingTimeSimulation++;
+	else
+		_enableDrawingTimeSimulation--;
+
+	if (_enableDrawingTimeSimulation < 0)
+		_enableDrawingTimeSimulation = 0;
+}
+
+void MystGraphics::simulatePreviousDrawDelay(const Common::Rect &dest) {
+	uint32 time = 0;
+
+	if (_enableDrawingTimeSimulation) {
+		time = _vm->_system->getMillis();
+
+		// Do not draw anything new too quickly after the previous draw call
+		// so that images stay at least a little while on screen
+		// This is enabled only for scripted draw calls
+		if (time < _nextAllowedDrawTime)
+			_vm->_system->delayMillis(_nextAllowedDrawTime - time);
+	}
+
+	// Next draw call allowed at DELAY + AERA * COEFF milliseconds from now
+	time = _vm->_system->getMillis();
+	_nextAllowedDrawTime = time + _constantDrawDelay + dest.height() * dest.width() / _proportionalDrawDelay;
 }
 
 #endif // ENABLE_MYST

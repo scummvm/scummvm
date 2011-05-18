@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/system.h"
@@ -391,7 +388,7 @@ bool ThemeEngine::init() {
 		Common::FSNode node(_themeFile);
 		if (node.isDirectory()) {
 			_themeArchive = new Common::FSDirectory(node);
-		} else if (_themeFile.hasSuffix(".zip")) {
+		} else if (_themeFile.matchString("*.zip", true)) {
 			// TODO: Also use "node" directly?
 			// Look for the zip file via SearchMan
 			Common::ArchiveMemberPtr member = SearchMan.getMember(_themeFile);
@@ -1475,20 +1472,23 @@ Common::String ThemeEngine::genLocalizedFontFilename(const Common::String &filen
 #ifndef USE_TRANSLATION
 	return filename;
 #else
-	Common::String result;
-	bool pointPassed = false;
+	// We will transform the font filename in the following way:
+	//   name.bdf
+	//  will become:
+	//   name-charset.bdf
+	// Note that name should not contain any dot here!
 
-	for (const char *p = filename.c_str(); *p != 0; p++) {
-		if (!pointPassed && *p == '.') {
-			result += "-";
-			result += TransMan.getCurrentCharset();
-			result += *p;
+	// In the first step we look for the dot. In case there is none we will
+	// return the normal filename.
+	Common::String::const_iterator dot = Common::find(filename.begin(), filename.end(), '.');
+	if (dot == filename.end())
+		return filename;
 
-			pointPassed = true;
-		} else {
-			result += *p;
-		}
-	}
+	// Put the translated font filename string back together.
+	Common::String result(filename.begin(), dot);
+	result += '-';
+	result += TransMan.getCurrentCharset();
+	result += dot;
 
 	return result;
 #endif
@@ -1532,7 +1532,7 @@ bool ThemeEngine::themeConfigUsable(const Common::ArchiveMember &member, Common:
 	Common::File stream;
 	bool foundHeader = false;
 
-	if (member.getName().hasSuffix(".zip")) {
+	if (member.getName().matchString("*.zip", true)) {
 		Common::Archive *zipArchive = Common::makeZipArchive(member.createReadStream());
 
 		if (zipArchive && zipArchive->hasFile("THEMERC")) {
@@ -1554,7 +1554,7 @@ bool ThemeEngine::themeConfigUsable(const Common::FSNode &node, Common::String &
 	Common::File stream;
 	bool foundHeader = false;
 
-	if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
+	if (node.getName().matchString("*.zip", true) && !node.isDirectory()) {
 		Common::Archive *zipArchive = Common::makeZipArchive(node);
 		if (zipArchive && zipArchive->hasFile("THEMERC")) {
 			// Open THEMERC from the ZIP file.
@@ -1640,7 +1640,7 @@ void ThemeEngine::listUsableThemes(Common::Archive &archive, Common::List<ThemeD
 
 			// If the name of the node object also contains
 			// the ".zip" suffix, we will strip it.
-			if (td.id.hasSuffix(".zip")) {
+			if (td.id.matchString("*.zip", true)) {
 				for (int j = 0; j < 4; ++j)
 					td.id.deleteLastChar();
 			}
@@ -1677,7 +1677,7 @@ void ThemeEngine::listUsableThemes(const Common::FSNode &node, Common::List<Them
 
 	for (Common::FSList::iterator i = fileList.begin(); i != fileList.end(); ++i) {
 		// We will only process zip files for now
-		if (!i->getPath().hasSuffix(".zip"))
+		if (!i->getPath().matchString("*.zip", true))
 			continue;
 
 		td.name.clear();
@@ -1687,7 +1687,7 @@ void ThemeEngine::listUsableThemes(const Common::FSNode &node, Common::List<Them
 
 			// If the name of the node object also contains
 			// the ".zip" suffix, we will strip it.
-			if (td.id.hasSuffix(".zip")) {
+			if (td.id.matchString("*.zip", true)) {
 				for (int j = 0; j < 4; ++j)
 					td.id.deleteLastChar();
 			}
@@ -1724,7 +1724,7 @@ Common::String ThemeEngine::getThemeFile(const Common::String &id) {
 	Common::FSNode node(id);
 
 	// If the given id is a full path we'll just use it
-	if (node.exists() && (node.isDirectory() || node.getName().hasSuffix(".zip")))
+	if (node.exists() && (node.isDirectory() || node.getName().matchString("*.zip", true)))
 		return id;
 
 	// FIXME:
@@ -1755,7 +1755,7 @@ Common::String ThemeEngine::getThemeId(const Common::String &filename) {
 	if (!node.exists())
 		return "builtin";
 
-	if (node.getName().hasSuffix(".zip")) {
+	if (node.getName().matchString("*.zip", true)) {
 		Common::String id = node.getName();
 
 		for (int i = 0; i < 4; ++i)

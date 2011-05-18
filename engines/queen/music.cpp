@@ -18,14 +18,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 
 #include "queen/music.h"
 #include "queen/queen.h"
@@ -40,7 +36,9 @@ namespace Queen {
 extern MidiDriver *C_Player_CreateAdLibMidiDriver(Audio::Mixer *);
 
 MidiMusic::MidiMusic(QueenEngine *vm)
-	: _isPlaying(false), _isLooping(false), _randomLoop(false), _masterVolume(192), _buf(0) {
+	: _isPlaying(false), _isLooping(false),
+	_randomLoop(false), _masterVolume(192),
+	_buf(0), _rnd("queenMusic") {
 
 	memset(_channelsTable, 0, sizeof(_channelsTable));
 	_queuePos = _lastSong = _currentSong = 0;
@@ -92,15 +90,13 @@ MidiMusic::MidiMusic(QueenEngine *vm)
 	_parser = MidiParser::createParser_SMF();
 	_parser->setMidiDriver(this);
 	_parser->setTimerRate(_driver->getBaseTempo());
-
-	g_eventRec.registerRandomSource(_rnd, "queenMusic");
 }
 
 MidiMusic::~MidiMusic() {
 	_driver->setTimerCallback(0, 0);
 	_parser->unloadMusic();
-	_driver->close();
 	delete _parser;
+	_driver->close();
 	delete _driver;
 	delete[] _buf;
 	delete[] _musicData;

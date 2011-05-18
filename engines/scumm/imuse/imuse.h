@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SCUMM_IMUSE_H
@@ -68,7 +65,6 @@ public:
 	virtual bool get_sound_active(int sound) const = 0;
 	virtual int32 doCommand(int numargs, int args[]) = 0;
 	virtual int clear_queue() = 0;
-	virtual void setBase(byte **base) = 0;
 	virtual uint32 property(int prop, uint32 value) = 0;
 	virtual void addSysexHandler (byte mfgID, sysexfunc handler) = 0;
 

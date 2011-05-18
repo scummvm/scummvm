@@ -18,12 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "graphics/png.h"
+
+#ifdef GRAPHICS_PNG_H
+
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
@@ -492,3 +492,5 @@ void PNG::readTransparencyChunk(uint32 chunkLength) {
 }
 
 } // End of Graphics namespace
+
+#endif // GRAPHICS_PNG_H

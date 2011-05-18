@@ -17,23 +17,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "common/random.h"
 #include "common/system.h"
+#include "common/EventRecorder.h"
 
 
 namespace Common {
 
-RandomSource::RandomSource() {
+RandomSource::RandomSource(const String &name) {
 	// Use system time as RNG seed. Normally not a good idea, if you are using
 	// a RNG for security purposes, but good enough for our purposes.
 	assert(g_system);
 	uint32 seed = g_system->getMillis();
 	setSeed(seed);
+
+	// Register this random source with the event recorder. This may end
+	// up querying or resetting the current seed, so we must call it
+	// *after* the initial seed has been set.
+	g_eventRec.registerRandomSource(*this, name);
 }
 
 void RandomSource::setSeed(uint32 seed) {

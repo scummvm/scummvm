@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/util.h"
@@ -260,6 +257,8 @@ int MixerImpl::mixCallback(byte *samples, uint len) {
 	Common::StackLock lock(_mutex);
 
 	int16 *buf = (int16 *)samples;
+	// we store stereo, 16-bit samples
+	assert(len % 4 == 0);
 	len >>= 2;
 
 	// Since the mixer callback has been called, the mixer must be ready...

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "lastexpress/game/logic.h"
@@ -89,7 +86,7 @@ Logic::~Logic() {
 #define REDRAW_CURSOR() { \
 	if (getInventory()->isMagnifierInUse()) \
 		_engine->getCursor()->setStyle(kCursorMagnifier); \
-	if (getInventory()->isFlag1() \
+	if (getInventory()->isPortraitHighlighted() \
 	|| getInventory()->isOpened() \
 	|| getInventory()->isEggHighlighted()) \
 		_engine->getCursor()->setStyle(kCursorNormal); \
@@ -104,7 +101,7 @@ void Logic::eventMouse(const Common::Event &ev) {
 	getFlags()->mouseRightClick = false;
 
 	// Process event flags
-	if (ev.type == Common::EVENT_LBUTTONUP) {
+	if (ev.type == Common::EVENT_LBUTTONDOWN) {
 
 		if (getFlags()->frameInterval)
 			_ignoreFrameInterval = false;
@@ -113,7 +110,7 @@ void Logic::eventMouse(const Common::Event &ev) {
 	}
 
 	if (getFlags()->flag_0) {
-		if (ev.type == Common::EVENT_LBUTTONUP || ev.type == Common::EVENT_RBUTTONUP) {
+		if (ev.type == Common::EVENT_LBUTTONDOWN || ev.type == Common::EVENT_RBUTTONDOWN) {
 			getFlags()->flag_0 = false;
 			getFlags()->shouldRedraw = true;
 			updateCursor(true);
@@ -143,7 +140,7 @@ void Logic::eventMouse(const Common::Event &ev) {
 	 && !getProgress().isEggOpen
 	 && !getEntities()->isPlayerPosition(kCarGreenSleeping, 59)
 	 && !getEntities()->isPlayerPosition(kCarGreenSleeping, 76)
-	 && !getInventory()->isFlag1()
+	 && !getInventory()->isPortraitHighlighted()
 	 && !getInventory()->isOpened()
 	 && !getInventory()->isEggHighlighted()
 	 && !getInventory()->isMagnifierInUse()) {
@@ -173,7 +170,7 @@ void Logic::eventMouse(const Common::Event &ev) {
 	if (getInventory()->getSelectedItem() == kItemMatch
 	 && (getEntities()->isPlayerInCar(kCarGreenSleeping) || getEntities()->isPlayerInCar(kCarRedSleeping))
 	 && getProgress().jacket == kJacketGreen
-	 && !getInventory()->isFlag1()
+	 && !getInventory()->isPortraitHighlighted()
 	 && !getInventory()->isOpened()
 	 && !getInventory()->isEggHighlighted()
 	 && !getInventory()->isMagnifierInUse()
@@ -198,7 +195,7 @@ void Logic::eventMouse(const Common::Event &ev) {
 	// Handle entity item case
 	EntityIndex entityIndex = getEntities()->canInteractWith(ev.mouse);
 	if (entityIndex
-	 && !getInventory()->isFlag1()
+	 && !getInventory()->isPortraitHighlighted()
 	 && !getInventory()->isOpened()
 	 && !getInventory()->isEggHighlighted()
 	 && !getInventory()->isMagnifierInUse()) {
@@ -223,17 +220,17 @@ void Logic::eventMouse(const Common::Event &ev) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Handle standard actions
-	if (getInventory()->isFlag1() || getInventory()->isOpened() || getInventory()->isEggHighlighted())
+	if (getInventory()->isPortraitHighlighted() || getInventory()->isOpened() || getInventory()->isEggHighlighted())
 		_engine->getCursor()->setStyle(kCursorNormal);
 
-	if (hotspotHandled || getInventory()->isFlag1() || getInventory()->isOpened() || getInventory()->isEggHighlighted())
+	if (hotspotHandled || getInventory()->isPortraitHighlighted() || getInventory()->isOpened() || getInventory()->isEggHighlighted())
 		return;
 
 	// Magnifier in use
 	if (getInventory()->isMagnifierInUse()) {
 		_engine->getCursor()->setStyle(kCursorMagnifier);
 
-		if (getInventory()->isFlag1()
+		if (getInventory()->isPortraitHighlighted()
 		 || getInventory()->isOpened()
 		 || getInventory()->isEggHighlighted())
 			_engine->getCursor()->setStyle(kCursorNormal);
@@ -518,7 +515,7 @@ void Logic::updateCursor(bool) const { /* the cursor is always updated, even whe
 	 || getProgress().isEggOpen
 	 || getEntities()->isPlayerPosition(kCarGreenSleeping, 59)
 	 || getEntities()->isPlayerPosition(kCarGreenSleeping, 76)
-	 || getInventory()->isFlag1()
+	 || getInventory()->isPortraitHighlighted()
 	 || getInventory()->isOpened()
 	 || getInventory()->isEggHighlighted()
 	 || getInventory()->isMagnifierInUse()) {
@@ -526,7 +523,7 @@ void Logic::updateCursor(bool) const { /* the cursor is always updated, even whe
 		if (getInventory()->getSelectedItem() != kItemMatch
 		 || (!getEntities()->isPlayerInCar(kCarGreenSleeping) && !getEntities()->isPlayerInCar(kCarRedSleeping))
 		 || getProgress().jacket != kJacketGreen
-		 || getInventory()->isFlag1()
+		 || getInventory()->isPortraitHighlighted()
 		 || getInventory()->isOpened()
 		 || getInventory()->isEggHighlighted()
 		 || getInventory()->isMagnifierInUse()
@@ -536,7 +533,7 @@ void Logic::updateCursor(bool) const { /* the cursor is always updated, even whe
 
 			EntityIndex entity = getEntities()->canInteractWith(getCoords());
 			if (entity
-			 && !getInventory()->isFlag1()
+			 && !getInventory()->isPortraitHighlighted()
 			 && !getInventory()->isOpened()
 			 && !getInventory()->isEggHighlighted()
 			 && !getInventory()->isMagnifierInUse()) {
@@ -550,7 +547,7 @@ void Logic::updateCursor(bool) const { /* the cursor is always updated, even whe
 			}
 
 			if (!interact
-			 && !getInventory()->isFlag1()
+			 && !getInventory()->isPortraitHighlighted()
 			 && !getInventory()->isOpened()
 			 && !getInventory()->isEggHighlighted()
 			 && !getInventory()->isMagnifierInUse()) {
@@ -587,7 +584,7 @@ void Logic::updateCursor(bool) const { /* the cursor is always updated, even whe
 	if (getInventory()->isMagnifierInUse())
 		style = kCursorMagnifier;
 
-	if (getInventory()->isFlag1() || getInventory()->isOpened() || getInventory()->isEggHighlighted())
+	if (getInventory()->isPortraitHighlighted() || getInventory()->isOpened() || getInventory()->isEggHighlighted())
 		style = kCursorNormal;
 
 	_engine->getCursor()->setStyle(style);

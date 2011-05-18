@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #if defined(__ANDROID__)
@@ -461,8 +458,12 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 		if (arg4 & JMETA_SHIFT)
 			e.kbd.flags |= Common::KBD_SHIFT;
-		if (arg4 & JMETA_ALT)
-			e.kbd.flags |= Common::KBD_ALT;
+		// JMETA_ALT is Fn on physical keyboards!
+		// when mapping this to ALT - as we know it from PC keyboards - all
+		// Fn combos will be broken (like Fn+q, which needs to end as 1 and
+		// not ALT+1). Do not want.
+		//if (arg4 & JMETA_ALT)
+		//	e.kbd.flags |= Common::KBD_ALT;
 		if (arg4 & (JMETA_SYM | JMETA_CTRL))
 			e.kbd.flags |= Common::KBD_CTRL;
 

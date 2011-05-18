@@ -5,8 +5,6 @@
 */
 
 
-#include <errno.h>
-#include <locale.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -20,21 +18,6 @@
 #include "lualib.h"
 
 
-static int os_pushresult (lua_State *L, int i, const char *filename) {
-  int en = errno;  /* calls to Lua API may change this value */
-  if (i) {
-    lua_pushboolean(L, 1);
-    return 1;
-  }
-  else {
-    lua_pushnil(L);
-    lua_pushfstring(L, "%s: %s", filename, strerror(en));
-    lua_pushinteger(L, en);
-    return 3;
-  }
-}
-
-
 static int os_execute (lua_State *L) {
   lua_pushinteger(L, system(luaL_optstring(L, 1, NULL)));
   return 1;
@@ -42,15 +25,18 @@ static int os_execute (lua_State *L) {
 
 
 static int os_remove (lua_State *L) {
-  const char *filename = luaL_checkstring(L, 1);
-  return os_pushresult(L, remove(filename) == 0, filename);
+  // Non-portable call that deletes a file. Removed in ScummVM.
+  // This call is invoked in sword25 when loading games in order to remove the
+  // temporary savegame thumbnail that the original engine code created. We
+  // embed the thumbnail in the savegame instead, so this call is not needed at
+  // all.
+  return 1;
 }
 
 
 static int os_rename (lua_State *L) {
-  const char *fromname = luaL_checkstring(L, 1);
-  const char *toname = luaL_checkstring(L, 2);
-  return os_pushresult(L, rename(fromname, toname) == 0, fromname);
+  // Removed in ScummVM, does nothing.
+  return 1;
 }
 
 
@@ -196,13 +182,8 @@ static int os_difftime (lua_State *L) {
 
 
 static int os_setlocale (lua_State *L) {
-  static const int cat[] = {LC_ALL, LC_COLLATE, LC_CTYPE, LC_MONETARY,
-                      LC_NUMERIC, LC_TIME};
-  static const char *const catnames[] = {"all", "collate", "ctype", "monetary",
-     "numeric", "time", NULL};
-  const char *l = luaL_optstring(L, 1, NULL);
-  int op = luaL_checkoption(L, 2, "all", catnames);
-  lua_pushstring(L, setlocale(cat[op], l));
+  // Non-portable call to set the numeric locale. Removed in ScummVM, as it's
+  // not used in sword25.
   return 1;
 }
 

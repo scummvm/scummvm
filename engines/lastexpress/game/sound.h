@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef LASTEXPRESS_SOUND_H
@@ -209,6 +206,7 @@ private:
 	enum SoundStatus {
 		kSoundStatus_20       = 0x20,
 		kSoundStatus_40       = 0x40,
+		kSoundStatus_180      = 0x180,
 		kSoundStatusRemoved   = 0x200,
 		kSoundStatus_400      = 0x400,
 
@@ -250,8 +248,8 @@ private:
 		SoundType type;    // int
 		//int field_8;
 		//int field_C;
-		//int field_10;
-		//int fileData;
+		int processedFrameCount;
+		void *soundData;
 		//int field_18;
 		int field_1C;
 		uint32 time;
@@ -265,7 +263,7 @@ private:
 		int field_40;
 		EntityIndex entity;
 		int field_48;
-		int field_4C;
+		uint32 field_4C;
 		Common::String name1; //char[16];
 		Common::String name2; //char[16];
 		//int next; // offset to the next structure in the list (not used)
@@ -277,6 +275,9 @@ private:
 		SoundEntry() {
 			status.status = 0;
 			type = kSoundTypeNone;
+
+			processedFrameCount = 0;
+			soundData = NULL;
 
 			field_1C = 0;
 			time = 0;
@@ -348,6 +349,7 @@ private:
 
 	// Sound cache
 	Common::List<SoundEntry *> _cache;
+	void *_soundCacheData;
 
 	SoundEntry *getEntry(EntityIndex index);
 	SoundEntry *getEntry(Common::String name);
@@ -356,7 +358,9 @@ private:
 	void setupEntry(SoundEntry *entry, Common::String name, FlagType flag, int a4);
 	void setEntryType(SoundEntry *entry, FlagType flag);
 	void setEntryStatus(SoundEntry *entry, FlagType flag) const;
+	void setInCache(SoundEntry *entry);
 	bool setupCache(SoundEntry *entry);
+	void removeFromCache(SoundEntry *entry);
 	void loadSoundData(SoundEntry *entry, Common::String name);
 
 	void updateEntry(SoundEntry *entry, uint value) const;

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TOOLS_CREATE_PROJECT_H
@@ -192,10 +189,12 @@ struct BuildSetup {
 	StringList defines;   ///< List of all defines for the build.
 	StringList libraries; ///< List of all external libraries required for the build.
 
-	bool runBuildEvents;
+	bool runBuildEvents;   ///< Run build events as part of the build (generate revision number and copy engine/theme data & needed files to the build folder
+	bool createInstaller;  ///< Create NSIS installer after the build
 
 	BuildSetup() {
-		runBuildEvents = false;
+		runBuildEvents  = false;
+		createInstaller = false;
 	}
 };
 

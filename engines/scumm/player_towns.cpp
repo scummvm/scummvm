@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 
@@ -29,10 +26,8 @@
 
 namespace Scumm {
 
-Player_Towns::Player_Towns(ScummEngine *vm, bool isVersion2) : _vm(vm), _v2(isVersion2), _numSoundMax(isVersion2 ? 256 : 200) {
+Player_Towns::Player_Towns(ScummEngine *vm, bool isVersion2) : _vm(vm), _v2(isVersion2), _intf(0), _numSoundMax(isVersion2 ? 256 : 200), _unkFlags(0x33) {
 	memset(_pcmCurrentSound, 0, sizeof(_pcmCurrentSound));
-	_unkFlags = 0x33;
-	_intf = 0;
 }
 
 void Player_Towns::setSfxVolume(int vol) {
@@ -505,15 +500,15 @@ void Player_Towns_v1::playEuphonyTrack(int sound, const uint8 *data) {
 	const uint8 *trackData = src + 150;
 
 	for (int i = 0; i < 32; i++)
-		_driver->chanEnable(i, *src++);
+		_driver->configChan_enable(i, *src++);
 	for (int i = 0; i < 32; i++)
-		_driver->chanMode(i, 0xff);
+		_driver->configChan_setMode(i, 0xff);
 	for (int i = 0; i < 32; i++)
-		_driver->chanOrdr(i, *src++);
+		_driver->configChan_remap(i, *src++);
 	for (int i = 0; i < 32; i++)
-		_driver->chanVolumeShift(i, *src++);
+		_driver->configChan_adjustVolume(i, *src++);
 	for (int i = 0; i < 32; i++)
-		_driver->chanNoteShift(i, *src++);
+		_driver->configChan_setTranspose(i, *src++);
 
 	src += 8;
 	for (int i = 0; i < 6; i++)
@@ -579,15 +574,15 @@ void Player_Towns_v1::playCdaTrack(int sound, const uint8 *data, bool skipTrackV
 	_cdaCurrentSound = sound;
 }
 
-Player_Towns_v2::Player_Towns_v2(ScummEngine *vm, IMuse *imuse, Audio::Mixer *mixer, bool disposeIMuse) : Player_Towns(vm, true), _imuse(imuse), _imuseDispose(disposeIMuse) {
+Player_Towns_v2::Player_Towns_v2(ScummEngine *vm, Audio::Mixer *mixer, IMuse *imuse, bool disposeIMuse) : Player_Towns(vm, true), _imuse(imuse), _imuseDispose(disposeIMuse), _sblData(0) {
 	_soundOverride = new SoundOvrParameters[_numSoundMax];
 	memset(_soundOverride, 0, _numSoundMax * sizeof(SoundOvrParameters));
-	_sblData = 0;
 	_intf = new TownsAudioInterface(mixer, 0);
 }
 
 Player_Towns_v2::~Player_Towns_v2() {
 	delete _intf;
+	_intf = 0;
 
 	if (_imuseDispose)
 		delete _imuse;

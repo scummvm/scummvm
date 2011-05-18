@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -42,45 +39,9 @@
 
 namespace Sword25 {
 
-static int disconnectService(lua_State *L) {
-	// This function apparently is not used by the game scripts
-	lua_pushboolean(L, true);
-
-	return 1;
-}
-
-static int getActiveServiceIdentifier(lua_State *L) {
-	// This function apparently is not used by the game scripts
-	lua_pushstring(L, "QUUX");
-
-	return 1;
-}
-
-static int getSuperclassCount(lua_State *L) {
-	// This function is only used by a single function in system/kernel.lua which is never called.
-	lua_pushnumber(L, 0);
-
-	return 1;
-}
-
-static int getSuperclassIdentifier(lua_State *L) {
-	// This function is only used by a single function in system/kernel.lua which is never called.
-	lua_pushstring(L, "FOO");
-
-	return 1;
-}
-
-static int getServiceCount(lua_State *L) {
-	// This function is only used by a single function in system/kernel.lua which is never called.
-	lua_pushnumber(L, 0);
-
-	return 1;
-}
-
-static int getServiceIdentifier(lua_State *L) {
-	// This function is only used by a single function in system/kernel.lua which is never called.
-	lua_pushstring(L, "BAR");
-
+// Marks a function that should never be used
+static int dummyFuncError(lua_State *L) {
+	error("Dummy function invoked by LUA");
 	return 1;
 }
 
@@ -177,12 +138,12 @@ static int getUsedMemory(lua_State *L) {
 static const char *KERNEL_LIBRARY_NAME = "Kernel";
 
 static const luaL_reg KERNEL_FUNCTIONS[] = {
-	{"DisconnectService", disconnectService},
-	{"GetActiveServiceIdentifier", getActiveServiceIdentifier},
-	{"GetSuperclassCount", getSuperclassCount},
-	{"GetSuperclassIdentifier", getSuperclassIdentifier},
-	{"GetServiceCount", getServiceCount},
-	{"GetServiceIdentifier", getServiceIdentifier},
+	{"DisconnectService", dummyFuncError},
+	{"GetActiveServiceIdentifier", dummyFuncError},
+	{"GetSuperclassCount", dummyFuncError},
+	{"GetSuperclassIdentifier", dummyFuncError},
+	{"GetServiceCount", dummyFuncError},
+	{"GetServiceIdentifier", dummyFuncError},
 	{"GetMilliTicks", getMilliTicks},
 	{"GetTimer", getTimer},
 	{"StartService", startService},
@@ -239,20 +200,6 @@ static int setY(lua_State *L) {
 //	pWindow->setY(static_cast<int>(luaL_checknumber(L, 1)));
 
 	return 0;
-}
-
-static int getClientX(lua_State *L) {
-	// This function apparently is not used by the game scripts
-	lua_pushnumber(L, 0);
-
-	return 1;
-}
-
-static int getClientY(lua_State *L) {
-	// This function apparently is not used by the game scripts
-	lua_pushnumber(L, 0);
-
-	return 1;
 }
 
 static int getWidth(lua_State *L) {
@@ -332,20 +279,6 @@ static int closeWanted(lua_State *L) {
 	return 1;
 }
 
-static int waitForFocus(lua_State *L) {
-	// This function apparently is not used by the game scripts
-	lua_pushbooleancpp(L, true);
-
-	return 1;
-}
-
-static int hasFocus(lua_State *L) {
-	// This function apparently is not used by the game scripts
-	lua_pushbooleancpp(L, true);
-
-	return 1;
-}
-
 static const char *WINDOW_LIBRARY_NAME = "Window";
 
 static const luaL_reg WINDOW_FUNCTIONS[] = {
@@ -355,8 +288,8 @@ static const luaL_reg WINDOW_FUNCTIONS[] = {
 	{"SetX", setX},
 	{"GetY", getY},
 	{"SetY", setY},
-	{"GetClientX", getClientX},
-	{"GetClientY", getClientY},
+	{"GetClientX", dummyFuncError},
+	{"GetClientY", dummyFuncError},
 	{"GetWidth", getWidth},
 	{"GetHeight", getHeight},
 	{"SetWidth", setWidth},
@@ -365,8 +298,8 @@ static const luaL_reg WINDOW_FUNCTIONS[] = {
 	{"SetTitle", setTitle},
 	{"ProcessMessages", processMessages},
 	{"CloseWanted", closeWanted},
-	{"WaitForFocus", waitForFocus},
-	{"HasFocus", hasFocus},
+	{"WaitForFocus", dummyFuncError},
+	{"HasFocus", dummyFuncError},
 	{0, 0}
 };
 
@@ -436,29 +369,6 @@ static int emptyCache(lua_State *L) {
 	return 0;
 }
 
-static int isLogCacheMiss(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	assert(pKernel);
-	ResourceManager *pResource = pKernel->getResourceManager();
-	assert(pResource);
-
-	// This isn't used in any script
-	lua_pushbooleancpp(L, false);
-
-	return 1;
-}
-
-static int setLogCacheMiss(lua_State *L) {
-	Kernel *pKernel = Kernel::getInstance();
-	assert(pKernel);
-	ResourceManager *pResource = pKernel->getResourceManager();
-	assert(pResource);
-
-	// This isn't used in any script
-
-	return 0;
-}
-
 static int dumpLockedResources(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
 	assert(pKernel);
@@ -478,8 +388,8 @@ static const luaL_reg RESOURCE_FUNCTIONS[] = {
 	{"GetMaxMemoryUsage", getMaxMemoryUsage},
 	{"SetMaxMemoryUsage", setMaxMemoryUsage},
 	{"EmptyCache", emptyCache},
-	{"IsLogCacheMiss", isLogCacheMiss},
-	{"SetLogCacheMiss", setLogCacheMiss},
+	{"IsLogCacheMiss", dummyFuncError},
+	{"SetLogCacheMiss", dummyFuncError},
 	{"DumpLockedResources", dumpLockedResources},
 	{0, 0}
 };

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_RINGWORLD_SCENES4_H
@@ -67,7 +64,7 @@ class Scene3700 : public Scene {
 
 		Viewer();
 		virtual Common::String getClassName() { return "Viewer"; }
-		virtual void synchronise(Serialiser &s);
+		virtual void synchronize(Serializer &s);
 		virtual void dispatch();
 		virtual void reposition();
 		virtual void draw();

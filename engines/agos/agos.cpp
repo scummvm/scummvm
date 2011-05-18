@@ -18,13 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
-#include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/textconsole.h"
@@ -60,8 +56,8 @@ static const GameSpecificSettings puzzlepack_settings = {
 };
 
 #ifdef ENABLE_AGOS2
-AGOSEngine_DIMP::AGOSEngine_DIMP(OSystem *system)
-	: AGOSEngine_PuzzlePack(system) {
+AGOSEngine_DIMP::AGOSEngine_DIMP(OSystem *system, const AGOSGameDescription *gd)
+	: AGOSEngine_PuzzlePack(system, gd) {
 
 	_iconToggleCount = 0;
 	_voiceCount = 0;
@@ -71,24 +67,24 @@ AGOSEngine_DIMP::AGOSEngine_DIMP(OSystem *system)
 	_tSecondCount = 0;
 }
 
-AGOSEngine_PuzzlePack::AGOSEngine_PuzzlePack(OSystem *system)
-	: AGOSEngine_Feeble(system) {
+AGOSEngine_PuzzlePack::AGOSEngine_PuzzlePack(OSystem *system, const AGOSGameDescription *gd)
+	: AGOSEngine_Feeble(system, gd) {
 
 	_oopsValid = false;
 	_gameTime = 0;
 }
 #endif
 
-AGOSEngine_Simon2::AGOSEngine_Simon2(OSystem *system)
-	: AGOSEngine_Simon1(system) {
+AGOSEngine_Simon2::AGOSEngine_Simon2(OSystem *system, const AGOSGameDescription *gd)
+	: AGOSEngine_Simon1(system, gd) {
 }
 
-AGOSEngine_Simon1::AGOSEngine_Simon1(OSystem *system)
-	: AGOSEngine_Waxworks(system) {
+AGOSEngine_Simon1::AGOSEngine_Simon1(OSystem *system, const AGOSGameDescription *gd)
+	: AGOSEngine_Waxworks(system, gd) {
 }
 
-AGOSEngine_Waxworks::AGOSEngine_Waxworks(OSystem *system)
-	: AGOSEngine_Elvira2(system) {
+AGOSEngine_Waxworks::AGOSEngine_Waxworks(OSystem *system, const AGOSGameDescription *gd)
+	: AGOSEngine_Elvira2(system, gd) {
 
 	_boxCR = false;
 	_boxLineCount = 0;
@@ -104,16 +100,16 @@ AGOSEngine_Waxworks::AGOSEngine_Waxworks(OSystem *system)
 	memset(_lineCounts, 0, sizeof(_lineCounts));
 }
 
-AGOSEngine_Elvira2::AGOSEngine_Elvira2(OSystem *system)
-	: AGOSEngine_Elvira1(system) {
+AGOSEngine_Elvira2::AGOSEngine_Elvira2(OSystem *system, const AGOSGameDescription *gd)
+	: AGOSEngine_Elvira1(system, gd) {
 }
 
-AGOSEngine_Elvira1::AGOSEngine_Elvira1(OSystem *system)
-	: AGOSEngine(system) {
+AGOSEngine_Elvira1::AGOSEngine_Elvira1(OSystem *system, const AGOSGameDescription *gd)
+	: AGOSEngine(system, gd) {
 }
 
-AGOSEngine::AGOSEngine(OSystem *syst)
-	: Engine(syst) {
+AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
+	: Engine(system), _rnd("agos"), _gameDescription(gd) {
 
 	_vcPtr = 0;
 	_vcGetOutOfCode = 0;
@@ -529,8 +525,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "movies");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sfx");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "speech");
-
-	g_eventRec.registerRandomSource(_rnd, "agos");
 }
 
 Common::Error AGOSEngine::init() {

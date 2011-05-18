@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_RINGWORLD_DEMO_H
@@ -34,6 +31,15 @@
 
 namespace tSage {
 
+class RingworldDemoGame: public Game {
+private:
+	void pauseGame();
+public:
+	virtual void start();
+	virtual Scene *createScene(int sceneNumber);
+	virtual void quitGame();
+	virtual void processEvent(Event &event);
+};
 
 class RingworldDemoScene: public Scene {
 public:

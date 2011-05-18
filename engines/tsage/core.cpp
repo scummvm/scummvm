@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/system.h"
@@ -73,8 +70,8 @@ InvObjectList::InvObjectList() {
 	_selectedItem = NULL;
 }
 
-void InvObjectList::synchronise(Serialiser &s) {
-	SavedObject::synchronise(s);
+void InvObjectList::synchronize(Serializer &s) {
+	SavedObject::synchronize(s);
 	SYNC_POINTER(_selectedItem);
 }
 
@@ -108,8 +105,10 @@ Action::Action() {
 	_attached = false;
 }
 
-void Action::synchronise(Serialiser &s) {
-	EventHandler::synchronise(s);
+void Action::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
+	if (s.getVersion() == 1)
+		remove();
 
 	SYNC_POINTER(_owner);
 	s.syncAsSint32LE(_actionIndex);
@@ -180,8 +179,8 @@ ObjectMover::~ObjectMover() {
 		_sceneObject->_mover = NULL;
 }
 
-void ObjectMover::synchronise(Serialiser &s) {
-	EventHandler::synchronise(s);
+void ObjectMover::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
 
 	s.syncAsSint16LE(_destPosition.x); s.syncAsSint16LE(_destPosition.y);
 	s.syncAsSint16LE(_moveDelta.x); s.syncAsSint16LE(_moveDelta.y);
@@ -326,8 +325,8 @@ ObjectMover2::ObjectMover2() : ObjectMover() {
 	_destObject = NULL;
 }
 
-void ObjectMover2::synchronise(Serialiser &s) {
-	ObjectMover::synchronise(s);
+void ObjectMover2::synchronize(Serializer &s) {
+	ObjectMover::synchronize(s);
 
 	SYNC_POINTER(_destObject);
 	s.syncAsSint32LE(_minArea);
@@ -402,8 +401,8 @@ void NpcMover::startMove(SceneObject *sceneObj, va_list va) {
 
 /*--------------------------------------------------------------------------*/
 
-void PlayerMover::synchronise(Serialiser &s) {
-	NpcMover::synchronise(s);
+void PlayerMover::synchronize(Serializer &s) {
+	NpcMover::synchronize(s);
 
 	s.syncAsSint16LE(_finalDest.x); s.syncAsSint16LE(_finalDest.y);
 	s.syncAsSint32LE(_routeIndex);
@@ -924,8 +923,9 @@ bool PlayerMover::sub_F8E5(const Common::Point &pt1, const Common::Point &pt2, c
 
 /*--------------------------------------------------------------------------*/
 
-void PlayerMover2::synchronise(Serialiser &s) {
-	PlayerMover::synchronise(s);
+void PlayerMover2::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		PlayerMover::synchronize(s);
 	SYNC_POINTER(_destObject);
 	s.syncAsSint16LE(_maxArea);
 	s.syncAsSint16LE(_minArea);
@@ -975,8 +975,8 @@ void PaletteModifierCached::setPalette(ScenePalette *palette, int step) {
 	_percent = 100;
 }
 
-void PaletteModifierCached::synchronise(Serialiser &s) {
-	PaletteModifier::synchronise(s);
+void PaletteModifierCached::synchronize(Serializer &s) {
+	PaletteModifier::synchronize(s);
 
 	s.syncAsByte(_step);
 	s.syncAsSint32LE(_percent);
@@ -990,8 +990,8 @@ PaletteRotation::PaletteRotation() : PaletteModifierCached() {
 	_frameNumber = _globals->_events.getFrameNumber();
 }
 
-void PaletteRotation::synchronise(Serialiser &s) {
-	PaletteModifierCached::synchronise(s);
+void PaletteRotation::synchronize(Serializer &s) {
+	PaletteModifierCached::synchronize(s);
 
 	s.syncAsSint32LE(_delayCtr);
 	s.syncAsUint32LE(_frameNumber);
@@ -1119,8 +1119,8 @@ void PaletteRotation::setDelay(int amount) {
 
 /*--------------------------------------------------------------------------*/
 
-void PaletteFader::synchronise(Serialiser &s) {
-	PaletteModifierCached::synchronise(s);
+void PaletteFader::synchronize(Serializer &s) {
+	PaletteModifierCached::synchronize(s);
 
 	s.syncAsSint16LE(_step);
 	s.syncAsSint16LE(_percent);
@@ -1161,6 +1161,10 @@ ScenePalette::ScenePalette() {
 	}
 
 	_field412 = 0;
+}
+
+ScenePalette::~ScenePalette() {
+	clearListeners();
 }
 
 ScenePalette::ScenePalette(int paletteNum) {
@@ -1247,7 +1251,7 @@ void ScenePalette::getPalette(int start, int count) {
 }
 
 void ScenePalette::signalListeners() {
-	SynchronisedList<PaletteModifier *>::iterator i = _listeners.begin();
+	SynchronizedList<PaletteModifier *>::iterator i = _listeners.begin();
 	while (i != _listeners.end()) {
 		PaletteModifier *obj = *i;
 		++i;
@@ -1256,7 +1260,7 @@ void ScenePalette::signalListeners() {
 }
 
 void ScenePalette::clearListeners() {
-	SynchronisedList<PaletteModifier *>::iterator i = _listeners.begin();
+	SynchronizedList<PaletteModifier *>::iterator i = _listeners.begin();
 	while (i != _listeners.end()) {
 		PaletteModifier *obj = *i;
 		++i;
@@ -1340,13 +1344,14 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 	_globals->_screenSurface.copyFrom(_globals->_sceneManager._scene->_backSurface,
 		bounds, Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), NULL);
 
-	for (SynchronisedList<PaletteModifier *>::iterator i = tempPalette._listeners.begin(); i != tempPalette._listeners.end(); ++i)
+	for (SynchronizedList<PaletteModifier *>::iterator i = tempPalette._listeners.begin(); i != tempPalette._listeners.end(); ++i)
 		delete *i;
 	tempPalette._listeners.clear();
 }
 
-void ScenePalette::synchronise(Serialiser &s) {
-	SavedObject::synchronise(s);
+void ScenePalette::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		SavedObject::synchronize(s);
 
 	s.syncBytes(_palette, 256 * 3);
 	s.syncAsSint32LE(_colors.foreground);
@@ -1363,10 +1368,10 @@ void ScenePalette::synchronise(Serialiser &s) {
 
 /*--------------------------------------------------------------------------*/
 
-void SceneItem::synchronise(Serialiser &s) {
-	EventHandler::synchronise(s);
+void SceneItem::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
 
-	_bounds.synchronise(s);
+	_bounds.synchronize(s);
 	s.syncString(_msg);
 	s.syncAsSint32LE(_fieldE);
 	s.syncAsSint32LE(_field10);
@@ -1597,8 +1602,8 @@ void NamedHotspot::setup(int ys, int xs, int ye, int xe, const int resnum, const
 	_globals->_sceneItems.addItems(this, NULL);
 }
 
-void NamedHotspot::synchronise(Serialiser &s) {
-	SceneHotspot::synchronise(s);
+void NamedHotspot::synchronize(Serializer &s) {
+	SceneHotspot::synchronize(s);
 	s.syncAsSint16LE(_resnum);
 	s.syncAsSint16LE(_lookLineNum);
 	s.syncAsSint16LE(_useLineNum);
@@ -1612,8 +1617,8 @@ void SceneObjectWrapper::setSceneObject(SceneObject *so) {
 	so->_flags |= OBJFLAG_PANES;
 }
 
-void SceneObjectWrapper::synchronise(Serialiser &s) {
-	EventHandler::synchronise(s);
+void SceneObjectWrapper::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
 	SYNC_POINTER(_sceneObject);
 }
 
@@ -1891,7 +1896,7 @@ int SceneObject::checkRegion(const Common::Point &pt) {
 	}
 	newY -= _yDiff;
 
-	SynchronisedList<SceneObject *>::iterator i;
+	SynchronizedList<SceneObject *>::iterator i;
 	for (i = _globals->_sceneObjects->begin(); (regionIndex == 0) && (i != _globals->_sceneObjects->end()); ++i) {
 		if ((*i) && ((*i)->_flags & OBJFLAG_CHECK_REGION)) {
 			int objYDiff = (*i)->_position.y - _yDiff;
@@ -2010,8 +2015,8 @@ int SceneObject::getSpliceArea(const SceneObject *obj) {
 	return (xd * xd + yd) / 2;
 }
 
-void SceneObject::synchronise(Serialiser &s) {
-	SceneHotspot::synchronise(s);
+void SceneObject::synchronize(Serializer &s) {
+	SceneHotspot::synchronize(s);
 
 	s.syncAsUint32LE(_updateStartFrame);
 	s.syncAsUint32LE(_walkStartFrame);
@@ -2022,8 +2027,8 @@ void SceneObject::synchronise(Serialiser &s) {
 	s.syncAsUint32LE(_flags);
 	s.syncAsSint16LE(_xs);
 	s.syncAsSint16LE(_xe);
-	_paneRects[0].synchronise(s);
-	_paneRects[1].synchronise(s);
+	_paneRects[0].synchronize(s);
+	_paneRects[1].synchronize(s);
 	s.syncAsSint32LE(_visage);
 	SYNC_POINTER(_objectWrapper);
 	s.syncAsSint32LE(_strip);
@@ -2316,7 +2321,7 @@ void SceneObjectList::draw() {
 		uint32 flagMask = (paneNum == 0) ? OBJFLAG_PANE_0 : OBJFLAG_PANE_1;
 
 		// Initial loop to set up object list and update object position, priority, and flags
-		for (SynchronisedList<SceneObject *>::iterator i = _globals->_sceneObjects->begin();
+		for (SynchronizedList<SceneObject *>::iterator i = _globals->_sceneObjects->begin();
 				i != _globals->_sceneObjects->end(); ++i) {
 			SceneObject *obj = *i;
 			objList.push_back(obj);
@@ -2470,7 +2475,7 @@ void SceneObjectList::activate() {
 	_globals->_sceneObjects_queue.push_front(this);
 
 	// Flag all the objects as modified
-	SynchronisedList<SceneObject *>::iterator i;
+	SynchronizedList<SceneObject *>::iterator i;
 	for (i = begin(); i != end(); ++i) {
 		(*i)->_flags |= OBJFLAG_PANES;
 	}
@@ -2491,7 +2496,7 @@ void SceneObjectList::deactivate() {
 	_globals->_sceneObjects_queue.pop_front();
 	_globals->_sceneObjects = *_globals->_sceneObjects_queue.begin();
 
-	SynchronisedList<SceneObject *>::iterator i;
+	SynchronizedList<SceneObject *>::iterator i;
 	for (i = objectList->begin(); i != objectList->end(); ++i) {
 		if (!((*i)->_flags & OBJFLAG_CLONED)) {
 			SceneObject *sceneObj = (*i)->clone();
@@ -2501,9 +2506,10 @@ void SceneObjectList::deactivate() {
 	}
 }
 
-void SceneObjectList::synchronise(Serialiser &s) {
-	SavedObject::synchronise(s);
-	_objList.synchronise(s);
+void SceneObjectList::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		SavedObject::synchronize(s);
+	_objList.synchronize(s);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -2530,6 +2536,8 @@ void SceneText::setup(const Common::String &msg) {
 	gfxMan._font._colors2.foreground = _color3;
 
 	gfxMan.getStringBounds(msg.c_str(), textRect, _width);
+	_bounds.setWidth(textRect.width());
+	_bounds.setHeight(textRect.height());
 
 	// Set up a new blank surface to hold the text
 	_textSurface.create(textRect.width(), textRect.height());
@@ -2545,8 +2553,8 @@ void SceneText::setup(const Common::String &msg) {
 	gfxMan.deactivate();
 }
 
-void SceneText::synchronise(Serialiser &s) {
-	SceneObject::synchronise(s);
+void SceneText::synchronize(Serializer &s) {
+	SceneObject::synchronize(s);
 
 	s.syncAsSint16LE(_fontNumber);
 	s.syncAsSint16LE(_width);
@@ -2615,6 +2623,12 @@ int Visage::getFrameCount() const {
 
 /*--------------------------------------------------------------------------*/
 
+Player::Player(): SceneObject() {
+	_canWalk = false;
+	_uiEnabled = false;
+	_field8C = 0;
+}
+
 void Player::postInit(SceneObjectList *OwnerList) {
 	SceneObject::postInit();
 
@@ -2664,8 +2678,8 @@ void Player::process(Event &event) {
 	}
 }
 
-void Player::synchronise(Serialiser &s) {
-	SceneObject::synchronise(s);
+void Player::synchronize(Serializer &s) {
+	SceneObject::synchronize(s);
 
 	s.syncAsByte(_canWalk);
 	s.syncAsByte(_uiEnabled);
@@ -2897,15 +2911,22 @@ void Region::uniteRect(const Rect &rect) {
 
 void SceneRegions::load(int sceneNum) {
 	clear();
-
-	byte *regionData = _resourceManager->getResource(RES_CONTROL, sceneNum, 9999, true);
+	bool altRegions = _vm->getFeatures() & GF_ALT_REGIONS;
+	byte *regionData = _resourceManager->getResource(RES_CONTROL, sceneNum, altRegions ? 1 : 9999, true);
 
 	if (regionData) {
 		int regionCount = READ_LE_UINT16(regionData);
 		for (int regionCtr = 0; regionCtr < regionCount; ++regionCtr) {
-			int rlbNum = READ_LE_UINT16(regionData + regionCtr * 6 + 2);
+			int regionId = READ_LE_UINT16(regionData + regionCtr * 6 + 2);
 
-			push_back(Region(sceneNum, rlbNum));
+			if (altRegions) {
+				// Load data from within this resource
+				uint32 dataOffset = READ_LE_UINT32(regionData + regionCtr * 6 + 4);
+				push_back(Region(regionId, regionData + dataOffset));
+			} else {
+				// Load region from a separate resource
+				push_back(Region(sceneNum, regionId));
+			}
 		}
 
 		DEALLOCATE(regionData);
@@ -3424,11 +3445,12 @@ void GameHandler::execute() {
 	}
 }
 
-void GameHandler::synchronise(Serialiser &s) {
-	EventHandler::synchronise(s);
+void GameHandler::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		EventHandler::synchronize(s);
 
-	_lockCtr.synchronise(s);
-	_waitCtr.synchronise(s);
+	_lockCtr.synchronize(s);
+	_waitCtr.synchronize(s);
 	s.syncAsSint16LE(_nextWaitCtr);
 	s.syncAsSint16LE(_field14);
 }
@@ -3459,52 +3481,11 @@ void SceneHandler::postInit(SceneObjectList *OwnerList) {
 
 void SceneHandler::process(Event &event) {
 	// Main keypress handler
-	if ((event.eventType == EVENT_KEYPRESS) && !event.handled) {
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_F1:
-			// F1 - Help
-			MessageDialog::show((_vm->getFeatures() & GF_DEMO) ? DEMO_HELP_MSG : HELP_MSG, OK_BTN_STRING);
-			break;
+	if (!event.handled) {
+		_globals->_game->processEvent(event);
 
-		case Common::KEYCODE_F2: {
-			// F2 - Sound Options
-			ConfigDialog *dlg = new ConfigDialog();
-			dlg->runModal();
-			delete dlg;
+		if (event.eventType == EVENT_KEYPRESS)
 			_globals->_events.setCursorFromFlag();
-			break;
-		}
-
-		case Common::KEYCODE_F3:
-			// F3 - Quit
-			_globals->_game->quitGame();
-			event.handled = false;
-			break;
-
-		case Common::KEYCODE_F4:
-			// F4 - Restart
-			_globals->_game->restartGame();
-			_globals->_events.setCursorFromFlag();
-			break;
-
-		case Common::KEYCODE_F7:
-			// F7 - Restore
-			_globals->_game->restoreGame();
-			_globals->_events.setCursorFromFlag();
-			break;
-
-		case Common::KEYCODE_F10:
-			// F10 - Pause
-			GfxDialog::setPalette();
-			MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
-			_globals->_events.setCursorFromFlag();
-			break;
-
-		default:
-			break;
-		}
-
-		_globals->_events.setCursorFromFlag();
 	}
 
 	// Check for displaying right-click dialog
@@ -3543,7 +3524,7 @@ void SceneHandler::process(Event &event) {
 		if (_globals->_player._uiEnabled && (event.eventType == EVENT_BUTTON_DOWN) &&
 				!_globals->_sceneItems.empty()) {
 			// Scan the item list to find one the mouse is within
-			SynchronisedList<SceneItem *>::iterator i = _globals->_sceneItems.begin();
+			SynchronizedList<SceneItem *>::iterator i = _globals->_sceneItems.begin();
 			while ((i != _globals->_sceneItems.end()) && !(*i)->contains(event.mousePos))
 				++i;
 
@@ -3621,26 +3602,8 @@ void SceneHandler::dispatchObject(EventHandler *obj) {
 	obj->dispatch();
 }
 
-void SceneHandler::saveListener(Serialiser &ser) {
+void SceneHandler::saveListener(Serializer &ser) {
 	warning("TODO: SceneHandler::saveListener");
-}
-
-/*--------------------------------------------------------------------------*/
-
-void Game::execute() {
-	// Main game loop
-	bool activeFlag = false;
-	do {
-		// Process all currently atcive game handlers
-		activeFlag = false;
-		for (SynchronisedList<GameHandler *>::iterator i = _handlers.begin(); i != _handlers.end(); ++i) {
-			GameHandler *gh = *i;
-			if (gh->_lockCtr.getCtr() == 0) {
-				gh->execute();
-				activeFlag = true;
-			}
-		}
-	} while (activeFlag && !_vm->getEventManager()->shouldQuit());
 }
 
 } // End of namespace tSage

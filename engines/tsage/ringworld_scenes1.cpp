@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "tsage/ringworld_scenes1.h"
@@ -1762,6 +1759,8 @@ Scene50::Scene50() :
 		_item3(8, OBJECT_STUNNER, 50, 14, OBJECT_SCANNER, 50, 13, CURSOR_LOOK, 50, 3, LIST_END),
 		_item4(9, OBJECT_SCANNER, 40, 39, OBJECT_STUNNER, 40, 40, CURSOR_USE, 40, 41, CURSOR_LOOK, 50, 5, LIST_END),
 		_item5(10, OBJECT_SCANNER, 50, 17, OBJECT_STUNNER, 50, 18, CURSOR_LOOK, 50, 6, CURSOR_USE, 30, 8, LIST_END) {
+
+	_doorwayRect = Rect(80, 108, 160, 112);
 }
 
 void Scene50::postInit(SceneObjectList *OwnerList) {
@@ -1824,7 +1823,6 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 
 	_item0.setBounds(Rect(200, 0, 320, 200));
 	_globals->_sceneItems.addItems(&_item3, &_item4, &_item5, &_item0, NULL);
-	_doorwayRect = Rect(80, 108, 160, 112);
 }
 
 void Scene50::signal() {
@@ -1843,6 +1841,8 @@ void Scene50::signal() {
 }
 
 void Scene50::dispatch() {
+	Scene::dispatch();
+
 	if ((_sceneMode != 55) && _doorwayRect.contains(_globals->_player._position)) {
 		// Player in house doorway, start player moving to within
 		_globals->_player.disableControl();
@@ -3232,9 +3232,9 @@ void Scene6100::process(Event &event) {
 	if (event.eventType == EVENT_KEYPRESS) {
 		// Handle incremental turning speeds with arrow keys
 		if ((event.kbd.keycode == Common::KEYCODE_LEFT) || (event.kbd.keycode == Common::KEYCODE_KP4)) {
-			_turnAmount = MAX(_turnAmount - 1, -8);
+			_turnAmount = MIN(_turnAmount + 1, 8);
 		} else if ((event.kbd.keycode == Common::KEYCODE_RIGHT) || (event.kbd.keycode == Common::KEYCODE_KP6)) {
-			_turnAmount = MIN(_turnAmount + 1, -8);
+			_turnAmount = MAX(_turnAmount - 1, -8);
 		}
 	}
 

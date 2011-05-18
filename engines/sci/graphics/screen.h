@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SCI_GRAPHICS_SCREEN_H
@@ -95,9 +92,10 @@ public:
 		return _upscaledHires;
 	}
 
-	bool getUnditherState() const {
-		return _unditherState;
+	bool isUnditheringEnabled() const {
+		return _unditheringEnabled;
 	}
+	void enableUndithering(bool flag);
 
 	void putKanjiChar(Graphics::FontSJIS *commonFont, int16 x, int16 y, uint16 chr, byte color);
 	byte getVisual(int x, int y);
@@ -119,7 +117,6 @@ public:
 
 	// Force a color combination as a dithered color
 	void ditherForceDitheredColor(byte color);
-	void debugUnditherSetState(bool flag);
 	int16 *unditherGetDitheredBgColors();
 
 	void debugShowMap(int mapNo);
@@ -151,7 +148,10 @@ private:
 
 	void setVerticalShakePos(uint16 shakePos);
 
-	bool _unditherState;
+	/**
+	 * If this flag is true, undithering is enabled, otherwise disabled.
+	 */
+	bool _unditheringEnabled;
 	int16 _ditheredPicColors[DITHERED_BG_COLORS_SIZE];
 
 	// These screens have the real resolution of the game engine (320x200 for
@@ -161,12 +161,12 @@ private:
 	byte *_priorityScreen;
 	byte *_controlScreen;
 
-	// This screen is the one that is actually displayed to the user. It may be
-	// 640x400 for japanese SCI1 games. SCI0 games may be undithered in here.
-	// Only read from this buffer for Save/ShowBits usage.
+	/**
+	 * This screen is the one that is actually displayed to the user. It may be
+	 * 640x400 for japanese SCI1 games. SCI0 games may be undithered in here.
+	 * Only read from this buffer for Save/ShowBits usage.
+	 */
 	byte *_displayScreen;
-
-	Common::Rect getScaledRect(Common::Rect rect);
 
 	ResourceManager *_resMan;
 
@@ -176,16 +176,22 @@ private:
 	 */
 	byte *_activeScreen;
 
-	// This variable defines, if upscaled hires is active and what upscaled mode
-	// is used.
+	/**
+	 * This variable defines, if upscaled hires is active and what upscaled mode
+	 * is used.
+	 */
 	GfxScreenUpscaledMode _upscaledHires;
 
-	// This here holds a translation for vertical coordinates between native
-	// (visual) and actual (display) screen.
+	/**
+	 * This here holds a translation for vertical coordinates between native
+	 * (visual) and actual (display) screen.
+	 */
 	int _upscaledMapping[SCI_SCREEN_UPSCALEDMAXHEIGHT + 1];
 
-	// This defines whether or not the font we're drawing is already scaled
-	// to the screen size (and we therefore should not upscale it ourselves).
+	/**
+	 * This defines whether or not the font we're drawing is already scaled
+	 * to the screen size (and we therefore should not upscale it ourselves).
+	 */
 	bool _fontIsUpscaled;
 
 	uint16 getLowResScreenHeight();

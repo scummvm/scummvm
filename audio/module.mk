@@ -39,10 +39,11 @@ MODULE_OBJS := \
 	softsynth/opl/mame.o \
 	softsynth/fmtowns_pc98/towns_audio.o \
 	softsynth/fmtowns_pc98/towns_euphony.o \
+	softsynth/fmtowns_pc98/towns_midi.o \
 	softsynth/fmtowns_pc98/towns_pc98_driver.o \
 	softsynth/fmtowns_pc98/towns_pc98_fmsynth.o \
+	softsynth/fmtowns_pc98/towns_pc98_plugins.o \
 	softsynth/appleiigs.o \
-	softsynth/ym2612.o \
 	softsynth/fluidsynth.o \
 	softsynth/mt32.o \
 	softsynth/eas.o \

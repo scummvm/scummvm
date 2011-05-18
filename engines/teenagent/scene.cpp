@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "common/config-manager.h"
@@ -807,7 +804,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 				if (_idle_timer < 50)
 					actor_animation_position = teenagent.render(surface, position, orientation, 0, actor_talking, zoom);
 				else
-					actor_animation_position = teenagent_idle.renderIdle(surface, position, orientation, mark_delta, zoom);
+					actor_animation_position = teenagent_idle.renderIdle(surface, position, orientation, mark_delta, zoom, _engine->_rnd);
 			}
 		}
 

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TOWNS_PC98_FMSYNTH_H
@@ -47,7 +44,7 @@ class TownsPC98_FmSynthPercussionSource;
 #endif
 
 enum EnvelopeState {
-	kEnvReady,
+	kEnvReady = 0,
 	kEnvAttacking,
 	kEnvDecaying,
 	kEnvSustaining,
@@ -105,11 +102,13 @@ protected:
 	void setVolumeIntern(int volA, int volB);
 	void setVolumeChannelMasks(int channelMaskA, int channelMaskB);
 
+	void lock();
+	void unlock();
+
 	const int _numChan;
 	const int _numSSG;
 	const bool _hasPercussion;
 
-	Common::Mutex _mutex;
 private:
 	void generateTables();
 	void nextTick(int32 *buffer, uint32 bufferSize);
@@ -127,6 +126,7 @@ private:
 		}
 
 		uint16 frqTemp;
+		uint8 fmIndex;
 		bool enableLeft;
 		bool enableRight;
 		bool updateEnvelopeParameters;
@@ -181,6 +181,9 @@ private:
 
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
+
+	int _lock;
+	Common::Mutex _mutex;
 
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
 	static const uint8 _percussionData[];

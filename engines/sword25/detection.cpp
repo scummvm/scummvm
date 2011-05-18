@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "base/plugins.h"
@@ -105,7 +102,7 @@ public:
 	Sword25MetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "The Broken Sword 2.5 Engine";
+		return "Broken Sword 2.5";
 	}
 
 	virtual const char *getOriginalCopyright() const {

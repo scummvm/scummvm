@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2011-04-22 19:33+0100\n"
-"PO-Revision-Date: 2010-12-09 11:11-0300\n"
+"PO-Revision-Date: 2011-05-03 19:11-0300\n"
 "Last-Translator: Saulo Benigno <saulobenigno@gmail.com>\n"
 "Language-Team: ScummBR (www.scummbr.com) <scummbr@yahoo.com.br>\n"
 "MIME-Version: 1.0\n"
@@ -1006,20 +1006,17 @@ msgstr ""
 
 #: common/error.cpp:42
 msgid "No error"
-msgstr ""
+msgstr "Nenhum erro"
 
 #: common/error.cpp:44
-#, fuzzy
 msgid "Game data not found"
 msgstr "Dados do jogo não encontrado"
 
 #: common/error.cpp:46
-#, fuzzy
 msgid "Game id not supported"
 msgstr "ID de jogo não suportado"
 
 #: common/error.cpp:48
-#, fuzzy
 msgid "Unsupported color mode"
 msgstr "Modo de cores não suportado"
 
@@ -1032,7 +1029,6 @@ msgid "Write permission denied"
 msgstr "Permissão para \"gravar\" negada"
 
 #: common/error.cpp:56
-#, fuzzy
 msgid "Path does not exist"
 msgstr "Caminho não existe"
 
@@ -1049,7 +1045,6 @@ msgid "Cannot create file"
 msgstr "Caminho não é um arquivo"
 
 #: common/error.cpp:65
-#, fuzzy
 msgid "Reading data failed"
 msgstr "Falha na leitura"
 
@@ -1059,19 +1054,17 @@ msgstr "Falha na gravação"
 
 #: common/error.cpp:70
 msgid "Could not find suitable engine plugin"
-msgstr ""
+msgstr "Não foi possível encontrar engine adequada"
 
 #: common/error.cpp:72
-#, fuzzy
 msgid "Engine plugin does not support save states"
-msgstr "Essa engine não suporta o nível de debug '%s'"
+msgstr "A engine atual não suporta salvar o progresso do jogo"
 
 #: common/error.cpp:75
 msgid "Command line argument not processed"
-msgstr ""
+msgstr "Linha de comando não processada"
 
 #: common/error.cpp:79
-#, fuzzy
 msgid "Unknown error"
 msgstr "Erro desconhecido"
 
@@ -1725,6 +1718,10 @@ msgid ""
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
 "directory inside the Tentacle game directory."
 msgstr ""
+"\"Na versão original, o jogo Maniac Mansion rodaria agora mesmo. Porem a "
+"atual versão do ScummVM não suporta essa ação. Para jogar Maniac Mansion, "
+"adicione o jogo normalmente no ScummVM. Ele se encontra em um diretório "
+"dentro da pasta do jogo Day of the Tentacle."
 
 #: engines/mohawk/dialogs.cpp:89 engines/mohawk/dialogs.cpp:127
 msgid "~Z~ip Mode Activated"

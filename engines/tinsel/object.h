@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * Object Manager data structures
  */
 
@@ -137,24 +134,15 @@ void CopyObject(		// copy one object to another
 	OBJECT *pSrc);		// source object
 
 void InsertObject(		// insert a object onto a sorted object list
-	OBJECT *pObjList,	// list to insert object onto
+	OBJECT **pObjList,	// list to insert object onto
 	OBJECT *pInsObj);	// object to insert
 
 void DelObject(			// delete a object from a object list and add to free list
-	OBJECT *pObjList,	// list to delete object from
+	OBJECT **pObjList,	// list to delete object from
 	OBJECT *pDelObj);	// object to delete
 
 void SortObjectList(		// re-sort an object list
-	OBJECT *pObjList);	// list to sort
-
-OBJECT *GetNextObject(		// object list iterator - returns next obj in list
-	OBJECT *pObjList,	// which object list
-	OBJECT *pStrtObj);	// object to start from - when NULL will start from beginning of list
-
-OBJECT *FindObject(		// Searches the specified obj list for a object matching the specified OID
-	OBJECT *pObjList,	// object list to search
-	int oidDesired,		// object identifer of object to find
-	int oidMask);		// mask to apply to object identifiers before comparison
+	OBJECT **pObjList);	// list to sort
 
 void GetAniOffset(	// returns the anim offsets of a image, takes into account orientation
 	SCNHANDLE hImg,	// image to get animation offset of

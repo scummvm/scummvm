@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_SAVELOAD_H
@@ -36,7 +33,7 @@ namespace tSage {
 
 typedef void (*SaveNotifierFn)(bool postFlag);
 
-#define TSAGE_SAVEGAME_VERSION 1
+#define TSAGE_SAVEGAME_VERSION 3
 
 class SavedObject;
 
@@ -62,11 +59,17 @@ struct tSageSavegameHeader {
 	if (s.isLoading()) FIELD = (TYPE)v_##FIELD;
 
 /**
- * Derived serialiser class with extra synchronisation types
+ * Derived serializer class with extra synchronisation types
  */
-class Serialiser : public Common::Serializer {
+class Serializer : public Common::Serializer {
 public:
-	Serialiser(Common::SeekableReadStream *in, Common::WriteStream *out) : Common::Serializer(in, out) {}
+	Serializer(Common::SeekableReadStream *in, Common::WriteStream *out) : Common::Serializer(in, out) {}
+
+	// HACK: TSAGE saved games contain a single byte for the savegame version,
+	// thus the normal syncVersion() Serializer member won't work here. In order
+	// to maintain compatibility with older game saves, this method is provided
+	// in order to set the savegame version from a byte
+	void setSaveVersion(byte version) { _version = version; }
 
 	void syncPointer(SavedObject **ptr, Common::Serializer::Version minVersion = 0,
 		Common::Serializer::Version maxVersion = kLastVersion);
@@ -81,13 +84,13 @@ public:
 class Serialisable {
 public:
 	virtual ~Serialisable() {}
-	virtual void synchronise(Serialiser &s) = 0;
+	virtual void synchronize(Serializer &s) = 0;
 };
 
 class SaveListener {
 public:
 	virtual ~SaveListener() {}
-	virtual void listenerSynchronise(Serialiser &s) = 0;
+	virtual void listenerSynchronize(Serializer &s) = 0;
 };
 
 /*--------------------------------------------------------------------------*/
@@ -98,7 +101,7 @@ public:
 	virtual ~SavedObject();
 
 	virtual Common::String getClassName() { return "SavedObject"; }
-	virtual void synchronise(Serialiser &s) {}
+	virtual void synchronize(Serializer &s) {}
 
 	static SavedObject *createInstance(const Common::String &className);
 };
@@ -109,10 +112,10 @@ public:
  * Derived list class with extra functionality
  */
 template<typename T>
-class SynchronisedList : public Common::List<T> {
+class SynchronizedList : public Common::List<T> {
 public:
-	void synchronise(Serialiser &s) {
-		int entryCount;
+	void synchronize(Serializer &s) {
+		int entryCount = 0;
 
 		if (s.isLoading()) {
 			this->clear();

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "config.h"
@@ -283,7 +280,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 			// Copy data files to the build folder
 			project << "\t\t<PostBuildEvent>\n"
 					   "\t\t\t<Message>Copy data files to the build folder</Message>\n"
-					   "\t\t\t<Command>" << getPostBuildEvent(isWin32) << "</Command>\n"
+					   "\t\t\t<Command>" << getPostBuildEvent(isWin32, setup.createInstaller) << "</Command>\n"
 					   "\t\t</PostBuildEvent>\n";
 		}
 	}
@@ -340,7 +337,6 @@ void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, 
 	              "\t\t\t<EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>\n"
 	              "\t\t</Link>\n"
 	              "\t\t<ResourceCompile>\n"
-	              "\t\t\t<PreprocessorDefinitions>HAS_INCLUDE_SET;%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
 	              "\t\t\t<AdditionalIncludeDirectories>" << prefix << ";%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
 	              "\t\t</ResourceCompile>\n"
 	              "\t</ItemDefinitionGroup>\n"

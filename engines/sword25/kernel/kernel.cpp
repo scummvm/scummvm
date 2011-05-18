@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -57,7 +54,8 @@ Kernel::Kernel() :
 	_input(0),
 	_package(0),
 	_script(0),
-	_fmv(0)
+	_fmv(0),
+	_rnd("sword25")
 	{
 
 	_instance = this;

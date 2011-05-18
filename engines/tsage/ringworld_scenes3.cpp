@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
@@ -1150,6 +1147,7 @@ void Scene2100::Action14::signal() {
 	case 12:
 		scene->_object3.setStrip(2);
 		setDelay(30);
+		break;
 	case 13:
 		scene->_object3.fixPriority(1);
 		scene->_soundHandler.startSound(162);
@@ -1957,6 +1955,12 @@ void Scene2100::signal() {
 	}
 }
 
+void Scene2100::synchronize(Serializer &s) {
+	Scene::synchronize(s);
+	if (s.getVersion() >= 3)
+		s.syncAsSint16LE(_field1800);		
+}
+
 /*--------------------------------------------------------------------------
  * Scene 2120 - Encyclopedia
  *
@@ -2163,12 +2167,19 @@ void Scene2120::Action1::dispatch() {
 
 /*--------------------------------------------------------------------------*/
 
+Scene2120::Scene2120(): Scene() {
+	_listRect = Rect(18, 48, 260, 177);
+	_dbMode = 0;
+	_prevDbMode = 0;
+	_visageVisable = false;
+	_subjectIndex = 0;
+}
+
 void Scene2120::postInit(SceneObjectList *OwnerList) {
 	loadScene(2120);
 	setZoomPercents(0, 100, 200, 100);
 	_globals->_player.disableControl();
 
-	_listRect = Rect(18, 48, 260, 177);
 	_subjectButton.setBounds(Rect(266, 13, 320, 56));
 	_nextPageButton.setBounds(Rect(266, 56, 320, 98));
 	_previousPageButton.setBounds(Rect(266, 98, 320, 140));
@@ -2185,18 +2196,13 @@ void Scene2120::postInit(SceneObjectList *OwnerList) {
 	_arrowHotspot._frame = 1;
 	_arrowHotspot.setPosition(Common::Point(400, 200));
 
-	_dbMode = 0;
-	_prevDbMode = 0;
-	_visageVisable = false;
-	_subjectIndex = 0;
-
 	setAction(&_action1);
 	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
 	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
 }
 
-void Scene2120::synchronise(Serialiser &s) {
-	Scene::synchronise(s);
+void Scene2120::synchronize(Serializer &s) {
+	Scene::synchronize(s);
 
 	s.syncAsSint16LE(_dbMode);
 	s.syncAsSint16LE(_prevDbMode);
@@ -2471,6 +2477,8 @@ Scene2150::Scene2150() :
 		_hotspot8(16, CURSOR_LOOK, 2150, 8, LIST_END),
 		_hotspot9(0, CURSOR_LOOK, 2150, 9, CURSOR_USE, 2150, 13, LIST_END),
 		_hotspot11(0, CURSOR_LOOK, 2150, 12, LIST_END) {
+	_rect1 = Rect(260, 70, 270, 77);
+	_rect2 = Rect(222, 142, 252, 150);
 }
 
 void Scene2150::postInit(SceneObjectList *OwnerList) {
@@ -2520,9 +2528,6 @@ void Scene2150::postInit(SceneObjectList *OwnerList) {
 	_hotspot10.setVisage(2152);
 	_hotspot10.setStrip(5);
 	_hotspot10.setPosition(Common::Point(59, 56));
-
-	_rect1 = Rect(260, 70, 270, 77);
-	_rect2 = Rect(222, 142, 252, 150);
 
 	_globals->_player.postInit();
 	_globals->_player.setVisage(_globals->getFlag(13) ? 2170 : 0);
@@ -2589,10 +2594,10 @@ void Scene2150::postInit(SceneObjectList *OwnerList) {
 	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
 }
 
-void Scene2150::synchronise(Serialiser &s) {
-	Scene::synchronise(s);
-	_rect1.synchronise(s);
-	_rect2.synchronise(s);
+void Scene2150::synchronize(Serializer &s) {
+	Scene::synchronize(s);
+	_rect1.synchronize(s);
+	_rect2.synchronize(s);
 }
 
 void Scene2150::signal() {
@@ -2727,7 +2732,7 @@ void Scene2200::Action3::signal() {
 			_actionIndex = 8;
 			setDelay(5);
 		} else {
-			for (SynchronisedList<SceneObject *>::iterator i = _globals->_sceneObjects->begin();
+			for (SynchronizedList<SceneObject *>::iterator i = _globals->_sceneObjects->begin();
 					i != _globals->_sceneObjects->end(); ++i) {
 				(*i)->hide();
 			}
@@ -2764,7 +2769,7 @@ void Scene2200::Action3::signal() {
 		setDelay(5);
 		break;
 	case 7:
-		for (SynchronisedList<SceneObject *>::iterator i = _globals->_sceneObjects->begin();
+		for (SynchronizedList<SceneObject *>::iterator i = _globals->_sceneObjects->begin();
 				i != _globals->_sceneObjects->end(); ++i)
 			(*i)->show();
 
@@ -3006,9 +3011,9 @@ void Scene2200::stripCallback(int v) {
 	}
 }
 
-void Scene2200::synchronise(Serialiser &s) {
-	Scene::synchronise(s);
-	_exitRect.synchronise(s);
+void Scene2200::synchronize(Serializer &s) {
+	Scene::synchronize(s);
+	_exitRect.synchronize(s);
 }
 
 void Scene2200::signal() {
@@ -3733,9 +3738,9 @@ void Scene2230::postInit(SceneObjectList *OwnerList) {
 	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
 }
 
-void Scene2230::synchronise(Serialiser &s) {
-	Scene::synchronise(s);
-	_rect1.synchronise(s);
+void Scene2230::synchronize(Serializer &s) {
+	Scene::synchronize(s);
+	_rect1.synchronize(s);
 	s.syncAsSint16LE(_field30A);
 }
 
@@ -4216,7 +4221,7 @@ void Scene2280::Hotspot18::doAction(int action) {
 /*--------------------------------------------------------------------------*/
 
 Scene2280::Scene2280() :
-		_hotspot3(0, CURSOR_LOOK, 2280, 30, CURSOR_USE, 31, 0, LIST_END),
+		_hotspot3(0, CURSOR_LOOK, 2280, 30, CURSOR_USE, 2280, 31, LIST_END),
 		_hotspot5(0, CURSOR_LOOK, 2280, 35, CURSOR_USE, 2280, 36, LIST_END),
 		_hotspot6(0, CURSOR_LOOK, 2280, 19, CURSOR_USE, 2280, 20, LIST_END),
 		_hotspot9(0, CURSOR_LOOK, 2280, 5, CURSOR_USE, 2280, 6, LIST_END),
@@ -4355,9 +4360,9 @@ void Scene2280::dispatch() {
 	}
 }
 
-void Scene2280::synchronise(Serialiser &s) {
-	Scene::synchronise(s);
-	_exitRect.synchronise(s);
+void Scene2280::synchronize(Serializer &s) {
+	Scene::synchronize(s);
+	_exitRect.synchronize(s);
 }
 
 /*--------------------------------------------------------------------------
@@ -4851,6 +4856,14 @@ Scene2310::Scene2310() {
 	_pageList[18].set(18, 2, 3, 0, 1, 4);
 	_pageList[19].set(19, 3, 0, 1, 4, 2);
 	_pageList[20].set(20, 4, 0, 3, 1, 2);
+
+	_rectList[0].set(135, 70, 151, 140);
+	_rectList[1].set(151, 70, 167, 140);
+	_rectList[2].set(167, 70, 183, 140);
+	_rectList[3].set(183, 70, 199, 140);
+	_rectList[4].set(199, 70, 215, 140);
+
+	_wireIndex = 5;
 }
 
 void Scene2310::postInit(SceneObjectList *OwnerList) {
@@ -4867,16 +4880,9 @@ void Scene2310::postInit(SceneObjectList *OwnerList) {
 		_wireList[idx].setPosition(pointList[idx]);
 	}
 
-	_rectList[0].set(135, 70, 151, 140);
-	_rectList[1].set(151, 70, 167, 140);
-	_rectList[2].set(167, 70, 183, 140);
-	_rectList[3].set(183, 70, 199, 140);
-	_rectList[4].set(199, 70, 215, 140);
-
 	_globals->_player.disableControl();
 	_globals->_events.setCursor(CURSOR_WALK);
 
-	_wireIndex = 5;
 	if (_vm->getFeatures() & GF_CD)
 		_pageIndex = _globals->_randomSource.getRandomNumber(14) + 2;
 	else
@@ -4917,8 +4923,8 @@ void Scene2310::signal() {
 	}
 }
 
-void Scene2310::synchronise(Serialiser &s) {
-	Scene::synchronise(s);
+void Scene2310::synchronize(Serializer &s) {
+	Scene::synchronize(s);
 
 	s.syncAsSint16LE(_wireIndex);
 	s.syncAsSint16LE(_pageIndex);
@@ -5998,8 +6004,8 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 		&_hotspot13, &_hotspot4, &_hotspot3, &_hotspot2, &_hotspot1, NULL);
 }
 
-void Scene2320::synchronise(Serialiser &s) {
-	Scene::synchronise(s);
+void Scene2320::synchronize(Serializer &s) {
+	Scene::synchronize(s);
 	SYNC_POINTER(_hotspotPtr);
 }
 

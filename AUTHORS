@@ -19,7 +19,7 @@ ScummVM Team
        Jonathan Gray         - (retired)
        Vincent Hamm          - (retired)
        Max Horn
-       Travis Howell
+       Travis Howell         - (retired)
        Pawel Kolodziejski    - Codecs, iMUSE, Smush, etc.
        Gregory Montoir
        Eugene Sandulenko     - FT INSANE, MM NES, MM C64, game detection,
@@ -28,7 +28,7 @@ ScummVM Team
 
     HE:
        Jonathan Gray         - (retired)
-       Travis Howell
+       Travis Howell         - (retired)
        Gregory Montoir
        Eugene Sandulenko
 
@@ -45,11 +45,11 @@ ScummVM Team
     AGOS:
        Torbjorn Andersson
        Paul Gilbert
-       Travis Howell
+       Travis Howell         - (retired)
        Oliver Kiehl          - (retired)
        Ludvig Strigeus       - (retired)
 
-    BASS:
+    Beneath a Steel Sky:
        Robert Goeffringmann  - (retired)
        Oliver Kiehl          - (retired)
        Joost Peters
@@ -82,7 +82,7 @@ ScummVM Team
        Paul Gilbert
        Vincent Hamm          - (retired)
 
-    Draci:
+    Draci Historie:
        Denis Kasak
        Robert Spalek
 
@@ -90,7 +90,7 @@ ScummVM Team
        Filippos Karapetis
        Pawel Kolodziejski
 
-    FOTAQ:
+    Flight of the Amazon Queen:
        David Eriksson        - (retired)
        Gregory Montoir
        Joost Peters
@@ -123,7 +123,7 @@ ScummVM Team
        Jordi Vilalta Prat
        Julien Templier
 
-    Lure:
+    Lure of the Temptress:
        Paul Gilbert
 
     M4:
@@ -164,7 +164,7 @@ ScummVM Team
        Jordi Vilalta Prat
        Lars Skovlund
 
-    TeenAgent:
+    Teen Agent:
        Robert Megone         - Help with callback rewriting
        Vladimir Menshakov
 
@@ -357,7 +357,7 @@ Other contributions
        Markus Strangl
 
     Win32:
-       Travis Howell
+       Travis Howell         - (retired)
 
     Win64:
        Chris Gray            - (retired)

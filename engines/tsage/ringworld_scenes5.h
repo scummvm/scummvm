@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_RINGWORLD_SCENES5_H
@@ -97,8 +94,8 @@ class Scene4000 : public Scene {
 	private:
 		int _ctr;
 	public:
-		virtual void synchronise(Serialiser &s) {
-			SceneObject::synchronise(s);
+		virtual void synchronize(Serializer &s) {
+			SceneObject::synchronize(s);
 			s.syncAsUint16LE(_ctr);
 		}
 		virtual void doAction(int action);
@@ -208,7 +205,7 @@ class Scene4025 : public Scene {
 		int _armStrip;
 		Common::Point _newPosition;
 
-		virtual void synchronise(Serialiser &s);
+		virtual void synchronize(Serializer &s);
 		virtual void doAction(int action);
 	};
 	class Peg : public SceneObject {
@@ -217,7 +214,7 @@ class Scene4025 : public Scene {
 		int _armStrip;
 
 		Peg() : SceneObject() { _field88 = 0; _armStrip = 3; }
-		virtual void synchronise(Serialiser &s);
+		virtual void synchronize(Serializer &s);
 		virtual void doAction(int action);
 	};
 
@@ -248,7 +245,7 @@ public:
 
 	Scene4025();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void signal();
 	virtual void process(Event &event);
@@ -300,8 +297,8 @@ public:
 	DisplayHotspot _hotspot7, _hotspot8, _hotspot9, _hotspot10;
 	DisplayHotspot _hotspot11, _hotspot12, _hotspot13, _hotspot14;
 	Action1 _action1;
-	Action _action2;
-	Action _action3;
+	Action2 _action2;
+	Action3 _action3;
 
 	Scene4045();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -656,7 +653,7 @@ class Scene4301 : public Scene {
 		int _field34E;
 		int _indexList[6];
 
-		virtual void synchronise(Serialiser &s);
+		virtual void synchronize(Serializer &s);
 		virtual void remove();
 		virtual void signal();
 		virtual void process(Event &event);
@@ -684,8 +681,8 @@ public:
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void dispatch();
-	virtual void synchronise(Serialiser &s) {
-		Scene::synchronise(s);
+	virtual void synchronize(Serializer &s) {
+		Scene::synchronize(s);
 		s.syncAsSint16LE(_field68E);
 	}
 };

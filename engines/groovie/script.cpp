@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "groovie/script.h"
@@ -36,7 +33,7 @@
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/EventRecorder.h"
+#include "common/events.h"
 #include "common/file.h"
 #include "common/macresman.h"
 
@@ -68,7 +65,8 @@ static void debugScript(int level, bool nl, const char *s, ...) {
 
 Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_code(NULL), _savedCode(NULL), _stacktop(0), _debugger(NULL), _vm(vm),
-	_videoFile(NULL), _videoRef(0), _staufsMove(NULL) {
+	_videoFile(NULL), _videoRef(0), _staufsMove(NULL),
+	_random("GroovieScripts") {
 	// Initialize the opcode set depending on the engine version
 	switch (version) {
 	case kGroovieT7G:
@@ -78,9 +76,6 @@ Script::Script(GroovieEngine *vm, EngineVersion version) :
 		_opcodes = _opcodesV2;
 		break;
 	}
-
-	// Initialize the random source
-	g_eventRec.registerRandomSource(_random, "GroovieScripts");
 
 	// Prepare the variables
 	_bitflags = 0;

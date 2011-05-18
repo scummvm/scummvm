@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef __OSYS_N64_H__
@@ -129,7 +126,7 @@ protected:
 	volatile int _mouseMaxX, _mouseMaxY;
 	int _mouseHotspotX, _mouseHotspotY;
 
-	uint8 _controllerPort;
+	int8 _controllerPort;
 	int8 _mousePort;
 	bool _controllerHasRumble; // Gets enabled if rumble-pak is detected
 

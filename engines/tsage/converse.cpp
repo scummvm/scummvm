@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/str-array.h"
@@ -52,8 +49,9 @@ void SequenceManager::setup() {
 	_sceneObject = _objectList[0];
 }
 
-void SequenceManager::synchronise(Serialiser &s) {
-	Action::synchronise(s);
+void SequenceManager::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		Action::synchronize(s);
 
 	s.syncAsSint32LE(_resNum);
 	s.syncAsSint32LE(_sequenceOffset);
@@ -348,17 +346,19 @@ void SequenceManager::setMessage(int resNum, int lineNum, int color, const Commo
 	// Get the display message
 	Common::String msg = _resourceManager->getMessage(resNum, lineNum);
 
-	// Get the needed rect, and move it to the desired position
-	Rect textRect;
-	_globals->gfxManager().getStringBounds(msg.c_str(), textRect, width);
+	// Set the text message
+	_sceneText.setup(msg);
+
+	// Move the text to the correct position
+	Rect textRect = _sceneText._bounds;
 	Rect sceneBounds = _globals->_sceneManager._scene->_sceneBounds;
 	sceneBounds.collapse(4, 2);
 	textRect.moveTo(pt);
 	textRect.contain(sceneBounds);
 
-	// Set the text message
-	_sceneText.setup(msg);
 	_sceneText.setPosition(Common::Point(textRect.left, textRect.top));
+
+	// Draw the text
 	_sceneText.fixPriority(255);
 	_sceneText.show();
 
@@ -418,8 +418,10 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 	Event event;
 	while (!_vm->getEventManager()->shouldQuit()) {
 		while (!_globals->_events.getEvent(event, EVENT_KEYPRESS | EVENT_BUTTON_DOWN | EVENT_MOUSE_MOVE) &&
-				!_vm->getEventManager()->shouldQuit())
-			;
+				!_vm->getEventManager()->shouldQuit()) {
+			g_system->delayMillis(10);
+			g_system->updateScreen();
+		}
 		if (_vm->getEventManager()->shouldQuit())
 			break;
 
@@ -511,12 +513,12 @@ void Obj44::load(const byte *dataP) {
 	_speakerOffset = READ_LE_UINT16(dataP + 0x42);
 }
 
-void Obj44::synchronise(Serialiser &s) {
+void Obj44::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_id);
 	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
 		s.syncAsSint32LE(_field2[idx]);
 	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
-		_list[idx].synchronise(s);
+		_list[idx].synchronize(s);
 	s.syncAsUint32LE(_speakerOffset);
 }
 
@@ -589,26 +591,27 @@ void StripManager::load() {
 	DEALLOCATE(obj44List);
 }
 
-void StripManager::synchronise(Serialiser &s) {
-	Action::synchronise(s);
+void StripManager::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		Action::synchronize(s);
 
 	s.syncAsSint32LE(_stripNum);
 	s.syncAsSint32LE(_obj44Index);
 	s.syncAsSint32LE(_field20);
 	s.syncAsSint32LE(_sceneNumber);
-	_sceneBounds.synchronise(s);
+	_sceneBounds.synchronize(s);
 	SYNC_POINTER(_activeSpeaker);
 	s.syncAsByte(_textShown);
 	s.syncAsByte(_field2E6);
 	s.syncAsSint32LE(_field2E8);
 
-	// Synchronise the item list
+	// Synchronize the item list
 	int arrSize = _obj44List.size();
 	s.syncAsUint16LE(arrSize);
 	if (s.isLoading())
 		_obj44List.resize(arrSize);
 	for (int i = 0; i < arrSize; ++i)
-		_obj44List[i].synchronise(s);
+		_obj44List[i].synchronize(s);
 
 	// Synhcronise script data
 	int scriptSize = _script.size();
@@ -739,8 +742,8 @@ void StripManager::process(Event &event) {
 	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
 		if (_obj44Index != 10000) {
 			int currIndex = _obj44Index;
-			while (!_obj44List[_obj44Index + 1]._id) {
-				_obj44Index = getNewIndex(_obj44List[_obj44Index]._id);
+			while (!_obj44List[_obj44Index]._list[1]._id) {
+				_obj44Index = getNewIndex(_obj44List[_obj44Index]._list[0]._id);
 				if ((_obj44Index < 0) || (_obj44Index == 10000))
 					break;
 				currIndex = _obj44Index;
@@ -803,15 +806,16 @@ Speaker::Speaker() : EventHandler() {
 	_speakerName = "SPEAKER";
 }
 
-void Speaker::synchronise(Serialiser &s) {
-	EventHandler::synchronise(s);
+void Speaker::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		EventHandler::synchronize(s);
 
-	_fieldA.synchronise(s);
+	_fieldA.synchronize(s);
 	SYNC_POINTER(_field18);
 	s.syncString(_speakerName);
 	s.syncAsSint32LE(_newSceneNumber);
 	s.syncAsSint32LE(_oldSceneNumber);
-	_sceneBounds.synchronise(s);
+	_sceneBounds.synchronize(s);
 	s.syncAsSint32LE(_textWidth);
 	s.syncAsSint16LE(_textPos.x); s.syncAsSint16LE(_textPos.y);
 	s.syncAsSint32LE(_fontNumber);

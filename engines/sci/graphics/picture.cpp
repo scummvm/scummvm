@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/stack.h"
@@ -509,10 +506,12 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 		memcpy(&EGApriority, &vector_defaultEGApriority, sizeof(vector_defaultEGApriority));
 
 		if (g_sci->getGameId() == GID_ICEMAN) {
-			// WORKAROUND: we remove certain visual&priority lines in underwater rooms of iceman, when not dithering the
-			//              picture. Normally those lines aren't shown, because they share the same color as the dithered
-			//              fill color combination. When not dithering, those lines would appear and get distracting.
-			if ((_screen->getUnditherState()) && ((_resourceId >= 53 && _resourceId <= 58) || (_resourceId == 61)))
+			// WORKAROUND: we remove certain visual&priority lines in underwater
+			// rooms of iceman, when not dithering the picture. Normally those
+			// lines aren't shown, because they share the same color as the
+			// dithered fill color combination. When not dithering, those lines
+			// would appear and get distracting.
+			if ((_screen->isUnditheringEnabled()) && ((_resourceId >= 53 && _resourceId <= 58) || (_resourceId == 61)))
 				icemanDrawFix = true;
 		}
 		if (g_sci->getGameId() == GID_KQ5) {
@@ -618,14 +617,17 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 			}
 			break;
 
-		// Pattern opcodes are handled in sierra sci1.1+ as actual NOPs and normally they definitely should not occur
-		//  inside picture data for such games
+		// Pattern opcodes are handled in sierra sci1.1+ as actual NOPs and
+		// normally they definitely should not occur inside picture data for
+		// such games.
 		case PIC_OP_SET_PATTERN:
 			if (_resourceType >= SCI_PICTURE_TYPE_SCI11) {
 				if (g_sci->getGameId() == GID_SQ4) {
-					// WORKAROUND: For SQ4 / for some pictures handle this like a terminator
-					//  This picture includes garbage data, first a set pattern w/o parameter and then short pattern
-					//  I guess that garbage is a left over from the sq4-floppy (sci1) to sq4-cd (sci1.1) conversion
+					// WORKAROUND: For SQ4 / for some pictures handle this like
+					// a terminator. This picture includes garbage data, first a
+					// set pattern w/o parameter and then short pattern. I guess
+					// that garbage is a left over from the sq4-floppy (sci1) to
+					// sq4-cd (sci1.1) conversion.
 					switch (_resourceId) {
 					case 35:
 					case 381:
@@ -857,7 +859,8 @@ void GfxPicture::vectorGetPatternTexture(byte *data, int &curPos, int16 pattern_
 	}
 }
 
-// Do not replace w/ some generic code. This algo really needs to behave exactly as the one from sierra
+// WARNING: Do not replace the following code with something else, like generic
+// code. This algo really needs to behave exactly as the one from sierra.
 void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, byte control) {
 	Port *curPort = _ports->getPort();
 	Common::Stack<Common::Point> stack;

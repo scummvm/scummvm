@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /**
@@ -150,25 +147,6 @@ public:
 	 * @return The base file name of the data/resource fork pair
 	 */
 	String getBaseFileName() const { return _baseFileName; }
-
-	/**
-	 * Convert cursor from crsr format to format suitable for feeding to CursorMan
-	 * @param data Pointer to the cursor datax
-	 * @param cursor Pointer to memory where result cursor will be stored. The memory
-	 *               block will be malloc()'ed
-	 * @param w Pointer to int where the cursor width will be stored
-	 * @param h Pointer to int where the cursor height will be stored
-	 * @param hotspotX Storage for cursor hotspot X coordinate
-	 * @param hotspotY Storage for cursor hotspot Y coordinate
-	 * @param keycolor Pointer to int where the transpared color value will be stored
-	 * @param colored If set to true then colored cursor will be returned (if any).
-	 *                b/w version will be used otherwise
-	 * @param palette Pointer to memory where the cursor palette will be stored.
-	 *                The memory will be malloc()'ed
-	 * @param palSize Pointer to integer where the palette size will be stored.
-	 */
-	static void convertCrsrCursor(SeekableReadStream *data, byte **cursor, int &w, int &h, int &hotspotX,
-			int &hotspotY, int &keycolor, bool colored, byte **palette, int &palSize);
 
 	/**
 	 * Return list of resource IDs with specified type ID

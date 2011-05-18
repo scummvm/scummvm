@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 //#define SCRIPT_TEST
@@ -52,7 +49,6 @@
 #include "common/error.h"
 #include "common/file.h"
 #include "common/fs.h"
-#include "common/EventRecorder.h"
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -115,6 +111,7 @@ MadsM4Engine::MadsM4Engine(OSystem *syst, const M4GameDescription *gameDesc) :
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "goodstuf");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "resource");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "option1");
 
 	DebugMan.addDebugChannel(kDebugScript, "script", "Script debug level");
 	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics debug level");
@@ -179,8 +176,7 @@ Common::Error MadsM4Engine::run() {
 	_script = new ScriptInterpreter(this);
 	_ws = new WoodScript(this);
 	//_callbacks = new Callbacks(this);
-	_random = new Common::RandomSource();
-	g_eventRec.registerRandomSource(*_random, "m4");
+	_random = new Common::RandomSource("m4");
 
 	return Common::kNoError;
 }
@@ -259,7 +255,7 @@ void MadsM4Engine::loadMenu(MenuType menuType, bool loadSaveFromHotkey, bool cal
 
 #define DUMP_BUFFER_SIZE 1024
 
-void MadsM4Engine::dumpFile(const char* filename, bool uncompress) {
+void MadsM4Engine::dumpFile(const char *filename, bool uncompress) {
 	Common::DumpFile f;
 	byte buffer[DUMP_BUFFER_SIZE];
 	Common::SeekableReadStream *fileS = res()->get(filename);

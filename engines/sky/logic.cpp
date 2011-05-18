@@ -18,14 +18,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/endian.h"
 #include "common/rect.h"
-#include "common/EventRecorder.h"
 #include "common/textconsole.h"
 
 #include "sky/autoroute.h"
@@ -71,8 +67,8 @@ void Logic::setupLogicTable() {
 	_logicTable = logicTable;
 }
 
-Logic::Logic(SkyCompact *skyCompact, Screen *skyScreen, Disk *skyDisk, Text *skyText, MusicBase *skyMusic, Mouse *skyMouse, Sound *skySound) {
-	g_eventRec.registerRandomSource(_rnd, "sky");
+Logic::Logic(SkyCompact *skyCompact, Screen *skyScreen, Disk *skyDisk, Text *skyText, MusicBase *skyMusic, Mouse *skyMouse, Sound *skySound)
+	: _rnd("sky") {
 
 	_skyCompact = skyCompact;
 	_skyScreen = skyScreen;

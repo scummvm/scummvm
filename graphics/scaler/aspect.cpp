@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "graphics/scaler/intern.h"
@@ -79,10 +76,7 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 		}
 	} else {
 		while (width--) {
-			// TODO: We really would like to use interpolate16_5_3, but that
-			// does not exist (yet), so we use this trick instead.
-			uint16 tmp = *srcA++;
-			*dst++ = interpolate16_5_2_1<ColorMask>(*srcB++, tmp, tmp);
+			*dst++ = interpolate16_5_3<ColorMask>(*srcB++, *srcA++);
 		}
 	}
 }

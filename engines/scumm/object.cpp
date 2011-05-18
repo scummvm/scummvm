@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "scumm/actor.h"
@@ -195,8 +192,11 @@ void ScummEngine::clearOwnerOf(int obj) {
 					if (!_inventory[i] && _inventory[i+1]) {
 						_inventory[i] = _inventory[i+1];
 						_inventory[i+1] = 0;
-						_res->address[rtInventory][i] = _res->address[rtInventory][i + 1];
-						_res->address[rtInventory][i + 1] = NULL;
+						// FIXME FIXME FIXME: This is incomplete, as we do not touch flags, status... BUG
+						_res->_types[rtInventory][i]._address = _res->_types[rtInventory][i + 1]._address;
+						_res->_types[rtInventory][i]._size = _res->_types[rtInventory][i + 1]._size;
+						_res->_types[rtInventory][i + 1]._address = NULL;
+						_res->_types[rtInventory][i + 1]._size = 0;
 					}
 				}
 				break;
@@ -1799,7 +1799,7 @@ int ScummEngine::findLocalObjectSlot() {
 int ScummEngine::findFlObjectSlot() {
 	int i;
 	for (i = 1; i < _numFlObject; i++) {
-		if (_res->address[rtFlObject][i] == NULL)
+		if (_res->_types[rtFlObject][i]._address == NULL)
 			return i;
 	}
 	error("findFlObjectSlot: Out of FLObject slots");

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // FIXME: Avoid using printf
@@ -43,6 +40,7 @@
 #include "scumm/scumm_v8.h"
 #include "scumm/file.h"
 #include "scumm/file_nes.h"
+#include "scumm/resource.h"
 
 #include "engines/metaengine.h"
 
@@ -70,7 +68,7 @@ static const MD5Table *findInMD5Table(const char *md5) {
 }
 
 Common::String ScummEngine::generateFilename(const int room) const {
-	const int diskNumber = (room > 0) ? _res->roomno[rtRoom][room] : 0;
+	const int diskNumber = (room > 0) ? _res->_types[rtRoom][room]._roomno : 0;
 	char buf[128];
 
 	if (_game.version == 4) {
@@ -112,7 +110,7 @@ Common::String ScummEngine_v60he::generateFilename(const int room) const {
 		if (room < 0) {
 			id = '0' - room;
 		} else {
-			const int diskNumber = (room > 0) ? _res->roomno[rtRoom][room] : 0;
+			const int diskNumber = (room > 0) ? _res->_types[rtRoom][room]._roomno : 0;
 			id = diskNumber + '0';
 		}
 
@@ -1039,6 +1037,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	// Simply use the first match
 	DetectorResult res(*(results.begin()));
 	debug(1, "Using gameid %s, variant %s, extra %s", res.game.gameid, res.game.variant, res.extra);
+	debug(1, "  SCUMM version %d, HE version %d", res.game.version, res.game.heversion);
 
 	// Print the MD5 of the game; either verbose using printf, in case of an
 	// unknown MD5, or with a medium debug level in case of a known MD5 (for
@@ -1157,7 +1156,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 }
 
 const char *ScummMetaEngine::getName() const {
-	return "SCUMM Engine ["
+	return "SCUMM ["
 
 #if defined(ENABLE_SCUMM_7_8) && defined(ENABLE_HE)
 		"all games"

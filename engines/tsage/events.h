@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_EVENTS_H
@@ -80,6 +77,7 @@ public:
 
 	Common::Point _mousePos;
 	CursorType _currentCursor;
+	CursorType _lastCursor;
 
 	void setCursor(CursorType cursorType);
 	void pushCursor(CursorType cursorType);
@@ -100,10 +98,10 @@ public:
 	uint32 getFrameNumber() const { return _frameNumber; }
 	void delay(int numFrames);
 
-	virtual void listenerSynchronise(Serialiser &s) {
+	virtual void listenerSynchronize(Serializer &s) {
 		s.syncAsUint32LE(_frameNumber);
 		s.syncAsUint32LE(_prevDelayFrame);
-		// TODO: Synchronise unknown stuff
+		// TODO: Synchronize unknown stuff
 	}
 };
 

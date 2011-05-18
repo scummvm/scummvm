@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "draci/draci.h"
@@ -116,7 +113,7 @@ public:
 	DraciMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "Draci Historie Engine";
+		return "Draci Historie";
 	}
 
 	virtual const char *getOriginalCopyright() const {

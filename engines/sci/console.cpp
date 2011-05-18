@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Console module
@@ -1532,7 +1529,7 @@ bool Console::cmdUndither(int argc, const char **argv) {
 	}
 
 	bool flag = atoi(argv[1]) ? true : false;
-	_engine->_gfxScreen->debugUnditherSetState(flag);
+	_engine->_gfxScreen->enableUndithering(flag);
 	if (flag)
 		DebugPrintf("undithering ENABLED\n");
 	else
@@ -3775,7 +3772,7 @@ int Console::printObject(reg_t pos) {
 	DebugPrintf("  -- member variables:\n");
 	for (i = 0; (uint)i < obj->getVarCount(); i++) {
 		DebugPrintf("    ");
-		if (i < var_container->getVarCount()) {
+		if (var_container && i < var_container->getVarCount()) {
 			uint16 varSelector = var_container->getVarSelector(i);
 			DebugPrintf("[%03x] %s = ", varSelector, _engine->getKernel()->getSelectorName(varSelector).c_str());
 		} else

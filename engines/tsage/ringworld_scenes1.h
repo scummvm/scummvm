@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_RINGWORLD_SCENES1_H
@@ -443,7 +440,6 @@ class Scene95 : public Scene {
 
 public:
 	Action1 _action1;
-	int _field326;
 	SceneObject _object1, _object2, _object3;
 	SoundHandler _soundHandler;
 

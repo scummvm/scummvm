@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
@@ -113,6 +110,8 @@ void Scene1000::Action3::signal() {
 		setDelay(240);
 		break;
 	case 5: {
+		_globals->_player.enableControl();
+
 		const char *SEEN_INTRO = "seen_intro";
 		if (!ConfMan.hasKey(SEEN_INTRO) || !ConfMan.getBool(SEEN_INTRO)) {
 			// First time being played, so show the introduction
@@ -478,13 +477,14 @@ void Scene1001::Action1::signal() {
 	case 19: {
 		_globals->_soundHandler.startSound(91);
 		byte adjustData[4] = {0xff, 0xff, 0xff, 0};
-		_globals->_scenePalette.fade(adjustData, true, 0);
+		_globals->_scenePalette.fade(adjustData, false, 0);
 
 		scene->_object1._strip = 7;
 		scene->_object1._frame = 1;
 		scene->_object1.setPosition(Common::Point(314, 112));
 		scene->_object1.addMover(NULL);
 		setDelay(2);
+		break;
 	}
 	case 20:
 		_globals->_scenePalette.loadPalette(16);

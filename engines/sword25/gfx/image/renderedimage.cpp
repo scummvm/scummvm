@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -36,6 +33,7 @@
 // INCLUDES
 // -----------------------------------------------------------------------------
 
+#include "common/savefile.h"
 #include "sword25/package/packagemanager.h"
 #include "sword25/gfx/image/pngloader.h"
 #include "sword25/gfx/image/renderedimage.h"
@@ -44,9 +42,87 @@
 
 namespace Sword25 {
 
+// Duplicated from kernel/persistenceservice.cpp
+static Common::String generateSavegameFilename(uint slotID) {
+	char buffer[100];
+	// NOTE: This is hardcoded to sword25
+	snprintf(buffer, 100, "%s.%.3d", "sword25", slotID);
+	return Common::String(buffer);
+}
+
 // -----------------------------------------------------------------------------
 // CONSTRUCTION / DESTRUCTION
 // -----------------------------------------------------------------------------
+
+/**
+ * Load a NULL-terminated string from the given stream.
+ */
+static Common::String loadString(Common::SeekableReadStream &in, uint maxSize = 999) {
+	Common::String result;
+
+	while (!in.eos() && (result.size() < maxSize)) {
+		char ch = (char)in.readByte();
+		if (ch == '\0')
+			break;
+
+		result += ch;
+	}
+
+	return result;
+}
+
+static byte *readSavegameThumbnail(const Common::String &filename, uint &fileSize, bool &isPNG) {
+	byte *pFileData;
+	Common::SaveFileManager *sfm = g_system->getSavefileManager();
+	int slotNum = atoi(filename.c_str() + filename.size() - 3);
+	Common::InSaveFile *file = sfm->openForLoading(generateSavegameFilename(slotNum));
+
+	// Seek to the actual PNG image
+	loadString(*file);		// Marker (BS25SAVEGAME)
+	loadString(*file);		// Version
+	loadString(*file);		// Description
+	uint32 compressedGamedataSize = atoi(loadString(*file).c_str());
+	loadString(*file);		// Uncompressed game data size
+	file->skip(compressedGamedataSize);	// Skip the game data and move to the thumbnail itself
+	uint32 thumbnailStart = file->pos();
+
+	fileSize = file->size() - thumbnailStart;
+
+	// Check if the thumbnail is in our own format, or a PNG file.
+	uint32 header = file->readUint32BE();
+	isPNG = (header != MKTAG('S','C','R','N'));
+	file->seek(-4, SEEK_CUR);
+
+	pFileData = new byte[fileSize];
+	file->read(pFileData, fileSize);
+	delete file;
+
+	return pFileData;
+}
+
+// TODO: Move this method into a more generic image loading class, together with the PNG reading code
+static bool decodeThumbnail(const byte *pFileData, uint fileSize, byte *&pUncompressedData, int &width, int &height, int &pitch) {
+	const byte *src = pFileData + 4;	// skip header
+	width = READ_LE_UINT16(src); src += 2;
+	height = READ_LE_UINT16(src); src += 2;
+	src++;	// version, ignored for now
+	pitch = width * 4;
+
+	uint32 totalSize = pitch * height;
+	pUncompressedData = new byte[totalSize];
+	uint32 *dst = (uint32 *)pUncompressedData;	// treat as uint32, for pixelformat output
+	const Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
+	byte r, g, b;
+
+	for (uint32 i = 0; i < totalSize / 4; i++) {
+		r = *src++;
+		g = *src++;
+		b = *src++;
+		*dst++ = format.RGBToColor(r, g, b);
+	}
+
+	return true;
+}
 
 RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 	_data(0),
@@ -62,22 +138,37 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 	// Load file
 	byte *pFileData;
 	uint fileSize;
-	pFileData = pPackage->getFile(filename, &fileSize);
+
+	bool isPNG = true;
+
+	if (filename.hasPrefix("/saves")) {
+		pFileData = readSavegameThumbnail(filename, fileSize, isPNG);
+	} else {
+		pFileData = pPackage->getFile(filename, &fileSize);
+	}
+
 	if (!pFileData) {
 		error("File \"%s\" could not be loaded.", filename.c_str());
 		return;
 	}
 
+#ifndef USE_INTERNAL_PNG_DECODER
 	// Determine image properties
-	int pitch;
 	if (!PNGLoader::imageProperties(pFileData, fileSize, _width, _height)) {
 		error("Could not read image properties.");
 		delete[] pFileData;
 		return;
 	}
+#endif
 
 	// Uncompress the image
-	if (!PNGLoader::decodeImage(pFileData, fileSize, _data, _width, _height, pitch)) {
+	int pitch;
+	if (isPNG)
+		result = PNGLoader::decodeImage(pFileData, fileSize, _data, _width, _height, pitch);
+	else
+		result = decodeThumbnail(pFileData, fileSize, _data, _width, _height, pitch);
+
+	if (!result) {
 		error("Could not decode image.");
 		delete[] pFileData;
 		return;
@@ -88,7 +179,6 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 
 	_doCleanup = true;
 
-	result = true;
 	return;
 }
 

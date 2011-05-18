@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "tsage/core.h"
@@ -52,9 +49,9 @@ void SoundManager::loadNotifierProc(bool postFlag) {
 	warning("TODO: SoundManager::loadNotifierProc");
 }
 
-void SoundManager::listenerSynchronise(Serialiser &s) {
+void SoundManager::listenerSynchronize(Serializer &s) {
 	s.validate("SoundManager");
-	warning("TODO: SoundManager listenerSynchronise");
+	warning("TODO: SoundManager listenerSynchronize");
 }
 
 } // End of namespace tSage

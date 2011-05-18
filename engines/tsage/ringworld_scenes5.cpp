@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
@@ -47,7 +44,6 @@ void Scene4000::Action1::signal() {
 		scene->_hotspot5.animate(ANIM_MODE_1, NULL);
 		scene->_hotspot5.setPosition(Common::Point(116, 160));
 
-//		ADD_PLAYER_MOVER_NULL(scene->_hotspot5, 208, 169);
 		Common::Point pt(208, 169);
 		NpcMover *mover = new NpcMover();
 		scene->_hotspot5.addMover(mover, &pt, this);
@@ -102,7 +98,7 @@ void Scene4000::Action1::signal() {
 	}
 	case 4:
 		ADD_MOVER(scene->_miranda, -30, 86);
-		ADD_MOVER(scene->_hotspot5, -40, 86);
+		ADD_MOVER_NULL(scene->_hotspot5, -40, 86);
 		break;
 	case 5:
 		_globals->_soundHandler.startSound(155);
@@ -989,7 +985,6 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 		_globals->_player.enableControl();
 
 		if (RING_INVENTORY._ladder._sceneNumber != 4000) {
-			_hotspot8.postInit();
 			_hotspot8.setVisage(4017);
 			_hotspot8.animate(ANIM_MODE_1, NULL);
 			_hotspot8.setPosition(Common::Point(199, 188));
@@ -1009,8 +1004,9 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 			_olo.setObjectWrapper(new SceneObjectWrapper());
 			_olo.setPosition(Common::Point(219, 150));
 
+			_sceneMode = 4010;
 			_globals->_player.disableControl();
-			setAction(&_sequenceManager1, this, 4010, &_globals->_player, NULL);
+			setAction(&_sequenceManager1, this, 4010, &_globals->_player, &_olo, NULL);
 		}
 
 		if (_globals->_stripNum == 4000) {
@@ -1137,6 +1133,10 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 
 void Scene4000::signal() {
 	switch (_sceneMode) {
+	case 4010:
+		_globals->setFlag(38);
+		_olo.remove();
+		// Deliberate fall-through
 	case 4001:
 		_globals->_player.enableControl();
 		break;
@@ -1168,10 +1168,6 @@ void Scene4000::signal() {
 		break;
 	case 4009:
 		_globals->_sceneManager.changeScene(2200);
-		break;
-	case 4010:
-		_globals->setFlag(38);
-		_olo.remove();
 		break;
 	case 4012:
 		_globals->_player.checkAngle(&_theTech);
@@ -1415,8 +1411,8 @@ void Scene4025::Action3::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene4025::Hole::synchronise(Serialiser &s) {
-	SceneObject::synchronise(s);
+void Scene4025::Hole::synchronize(Serializer &s) {
+	SceneObject::synchronize(s);
 	SYNC_POINTER(_pegPtr);
 	s.syncAsSint16LE(_armStrip);
 	s.syncAsSint16LE(_newPosition.x);
@@ -1459,8 +1455,8 @@ void Scene4025::Hole::doAction(int action) {
 	}
 }
 
-void Scene4025::Peg::synchronise(Serialiser &s) {
-	SceneObject::synchronise(s);
+void Scene4025::Peg::synchronize(Serializer &s) {
+	SceneObject::synchronize(s);
 	s.syncAsSint16LE(_field88);
 	SYNC_POINTER(_armStrip);
 }
@@ -1600,8 +1596,8 @@ void Scene4025::postInit(SceneObjectList *OwnerList) {
 	setAction(&_sequenceManager, this, 4026, NULL);
 }
 
-void Scene4025::synchronise(Serialiser &s) {
-	Scene::synchronise(s);
+void Scene4025::synchronize(Serializer &s) {
+	Scene::synchronize(s);
 	SYNC_POINTER(_pegPtr);
 	SYNC_POINTER(_pegPtr2);
 	SYNC_POINTER(_holePtr);
@@ -1755,7 +1751,7 @@ void Scene4045::OlloStand::doAction(int action) {
 	case CURSOR_TALK:
 		if (_strip == 5) {
 			setStrip(6);
-			animate(ANIM_MODE_NONE, 0);
+			animate(ANIM_MODE_NONE, NULL);
 		}
 		if (_globals->_player._position.y < 135) {
 			scene->_sceneMode = 4046;
@@ -1831,10 +1827,10 @@ Scene4045::Scene4045() :
 	_hotspot7(9, CURSOR_LOOK, 4045, 0, CURSOR_USE, 4045, 15, LIST_END),
 	_hotspot8(10, CURSOR_LOOK, 4045, 2, LIST_END),
 	_hotspot9(11, CURSOR_LOOK, 4045, 3, CURSOR_USE, 4045, 15, LIST_END),
-	_hotspot10(12, CURSOR_LOOK, 4045, 4, CURSOR_USE, 4045, 19, LIST_END),
+	_hotspot10(12, CURSOR_LOOK, 4045, 4, CURSOR_USE, 4100, 19, LIST_END),
 	_hotspot11(13, CURSOR_LOOK, 4045, 6, CURSOR_USE, 4045, 15, LIST_END),
-	_hotspot12(14, CURSOR_LOOK, 4045, 7, CURSOR_USE, 4045, 29, LIST_END),
-	_hotspot13(15, CURSOR_LOOK, 4045, 8, CURSOR_USE, 4045, 19, LIST_END),
+	_hotspot12(14, CURSOR_LOOK, 4045, 7, CURSOR_USE, 4150, 29, LIST_END),
+	_hotspot13(15, CURSOR_LOOK, 4045, 8, CURSOR_USE, 4100, 19, LIST_END),
 	_hotspot14(0, CURSOR_LOOK, 4045, 10, LIST_END) {
 
 	_hotspot14.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -2002,7 +1998,7 @@ void Scene4045::dispatch() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 4000 - Village - Temple
+ * Scene 4050 - Village - Outside
  *
  *--------------------------------------------------------------------------*/
 
@@ -3309,6 +3305,7 @@ void Scene4250::Hotspot1::doAction(int action) {
 }
 
 void Scene4250::Hotspot2::doAction(int action) {
+	//Ship with stasis field
 	Scene4250 *scene = (Scene4250 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -3640,6 +3637,7 @@ void Scene4250::signal() {
 		break;
 	case 4253:
 		if (_globals->_stripNum == 4301) {
+			_sceneMode = 4261;
 			ADD_MOVER_NULL(_hotspot1, 241, 169);
 			setAction(&_sequenceManager, this, 4261, &_globals->_player, &_hotspot6, NULL);
 		} else {
@@ -3660,10 +3658,6 @@ void Scene4250::signal() {
 	case 4270:
 		_globals->_player.enableControl();
 		break;
-	case 4255:
-	case 4262:
-	case 4263:
-		break;
 	case 4259:
 		_globals->_soundHandler.startSound(360);
 		_globals->_sceneManager.changeScene(9900);
@@ -3671,6 +3665,11 @@ void Scene4250::signal() {
 	case 4261:
 		RING_INVENTORY._keyDevice._sceneNumber = 1;
 		_globals->_player.enableControl();
+		break;
+	case 4255:
+	case 4262:
+	case 4263:
+	default:
 		break;
 	}
 }
@@ -3861,6 +3860,7 @@ void Scene4300::Hotspot9::doAction(int action) {
 }
 
 void Scene4300::Hotspot10::doAction(int action) {
+	// Alien
 	Scene4300 *scene = (Scene4300 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -4191,8 +4191,8 @@ void Scene4300::process(Event &event) {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene4301::Action1::synchronise(Serialiser &s) {
-	Action::synchronise(s);
+void Scene4301::Action1::synchronize(Serializer &s) {
+	Action::synchronize(s);
 	s.syncAsSint16LE(_field34E);
 	for (int idx = 0; idx < 6; ++idx)
 		s.syncAsSint16LE(_indexList[idx]);
@@ -4244,6 +4244,7 @@ void Scene4301::Action1::signal() {
 		_actionIndex = 2;
 		break;
 	case 10:
+		// Puzzle: Wrong code 
 		_globals->_events.setCursor(CURSOR_NONE);
 		scene->_soundHandler.startSound(337);
 		if (scene->_hotspot3._flags & OBJFLAG_HIDE)
@@ -4268,6 +4269,7 @@ void Scene4301::Action1::signal() {
 		_globals->_events.setCursor(CURSOR_USE);
 		break;
 	case 20:
+		// Puzzle: Correct code
 		_globals->_player.disableControl();
 		scene->_soundHandler.startSound(339);
 		scene->_hotspot3._frame = 3;
@@ -4290,6 +4292,7 @@ void Scene4301::Action1::signal() {
 }
 
 void Scene4301::Action1::process(Event &event) {
+	// Puzzle
 	Scene4301 *scene = (Scene4301 *)_globals->_sceneManager._scene;
 	Rect buttonsRect;
 
@@ -4344,6 +4347,7 @@ void Scene4301::Action1::process(Event &event) {
 /*--------------------------------------------------------------------------*/
 
 void Scene4301::Hotspot4::doAction(int action) {
+	// Hatch near door
 	Scene4301 *scene = (Scene4301 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_USE) {

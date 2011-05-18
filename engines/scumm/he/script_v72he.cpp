@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifdef ENABLE_HE
@@ -624,15 +621,15 @@ void ScummEngine_v72he::o72_getArrayDimSize() {
 }
 
 void ScummEngine_v72he::o72_getNumFreeArrays() {
-	byte **addr = _res->address[rtString];
+	const ResourceManager::ResTypeData &rtd = _res->_types[rtString];
 	int i, num = 0;
 
 	for (i = 1; i < _numArray; i++) {
-		if (!addr[i])
+		if (!rtd[i]._address)
 			num++;
 	}
 
-	push (num);
+	push(num);
 }
 
 void ScummEngine_v72he::o72_roomOps() {
@@ -1914,7 +1911,8 @@ void ScummEngine_v72he::o72_writeINI() {
 
 void ScummEngine_v72he::o72_getResourceSize() {
 	const byte *ptr;
-	int size, type;
+	int size;
+	ResType type;
 
 	int resid = pop();
 	if (_game.heversion == 72) {
@@ -1926,7 +1924,7 @@ void ScummEngine_v72he::o72_getResourceSize() {
 
 	switch (subOp) {
 	case 13:
-		push (getSoundResourceSize(resid));
+		push(getSoundResourceSize(resid));
 		return;
 	case 14:
 		type = rtRoomImage;

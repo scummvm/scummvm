@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "config.h"
@@ -148,7 +145,7 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 void VisualStudioProvider::outputConfiguration(std::ostream &project, const BuildSetup &setup, const std::string &libraries, const std::string &config, const std::string &platform, const std::string &props, const bool isWin32) {
 	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\" << PROJECT_DESCRIPTION << "_" << config << props << ".vsprops\">\n"
 	           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n"
-	           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/" << PROJECT_NAME << "\"\n"
+	           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/" << PROJECT_NAME << ".exe\"\n"
 	           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
 	           "\t\t\t/>\n";
 	outputBuildEvents(project, setup, isWin32);
@@ -167,7 +164,7 @@ void VisualStudioProvider::outputBuildEvents(std::ostream &project, const BuildS
 		           "\t\t\t\tCommandLine=\"" << getPreBuildEvent() << "\"\n"
 		           "\t\t\t/>\n"
 		           "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n"
-		           "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32) << "\"\n"
+		           "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32, setup.createInstaller) << "\"\n"
 		           "\t\t\t/>\n";
 	}
 }
@@ -223,8 +220,7 @@ void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int b
 	properties << "\t\tRuntimeTypeInfo=\"false\"\n";
 #endif
 
-	properties << "\t\tRuntimeTypeInfo=\"false\"\n"
-	              "\t\tWarningLevel=\"4\"\n"
+	properties << "\t\tWarningLevel=\"4\"\n"
 	              "\t\tWarnAsError=\"false\"\n"
 	              "\t\tCompileAs=\"0\"\n"
 	              "\t\t/>\n"
@@ -241,7 +237,6 @@ void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int b
 	              "\t/>\n"
 	              "\t<Tool\n"
 	              "\t\tName=\"VCResourceCompilerTool\"\n"
-	              "\t\tPreprocessorDefinitions=\"HAS_INCLUDE_SET\"\n"
 	              "\t\tAdditionalIncludeDirectories=\"" << prefix << "\"\n"
 	              "\t/>\n"
 	              "</VisualStudioPropertySheet>\n";

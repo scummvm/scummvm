@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef LASTEXPRESS_INVENTORY_H
@@ -120,7 +117,7 @@ public:
 
 	// State
 	bool isMagnifierInUse() { return _useMagnifier; }
-	bool isFlag1() { return _flag1; }
+	bool isPortraitHighlighted() { return _portraitHighlighted; }
 	bool isOpened() { return _isOpened; }
 	bool isEggHighlighted() { return _eggHightlighted; }
 
@@ -142,7 +139,7 @@ private:
 
 	InventoryEntry _entries[32];
 	InventoryItem _selectedItem;
-	InventoryItem _highlightedItem;
+	uint32 _highlightedItemIndex;
 
 	uint32 _itemsShown;
 
@@ -154,27 +151,31 @@ private:
 
 	// Flags
 	bool _useMagnifier;
-	bool _flag1;
+	bool _portraitHighlighted;
 	bool _isOpened;
 	bool _eggHightlighted;
 
 	Scene *_itemScene;
 
 	// Important rects
-	Common::Rect _inventoryRect;
-	Common::Rect _menuRect;
-	Common::Rect _selectedRect;
+	//Common::Rect _inventoryRect;
+	Common::Rect _menuEggRect;
+	Common::Rect _selectedItemRect;
 
 	void init();
 
 	void open();
 	void close();
 	void examine(InventoryItem item);
-	void drawHighlight();
+	void drawHighlight(uint32 currentIndex, bool reset);
+	uint32 getItemIndex(uint32 currentIndex);
 
 	bool isItemSceneParameter(InventoryItem item) const;
 
 	void drawItem(CursorStyle id, uint16 x, uint16 y, int16 brighnessIndex = -1);
+
+	void drawSelectedItem();
+	void clearSelectedItem();
 };
 
 } // End of namespace LastExpress

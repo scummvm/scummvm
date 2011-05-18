@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef CELAUNCHERDIALOG_H
@@ -29,6 +26,7 @@
 #include "base/plugins.h"
 #include "common/fs.h"
 #include "gui/launcher.h"
+#include "gui/massadd.h"
 
 class CELauncherDialog : public GUI::LauncherDialog {
 public:
@@ -36,7 +34,6 @@ public:
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 protected:
 	void addGame();
-	void automaticScanDirectory(const Common::FSNode &node);
 };
 
 typedef GUI::LauncherDialog GUILauncherDialog;

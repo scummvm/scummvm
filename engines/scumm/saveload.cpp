@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
@@ -314,7 +311,6 @@ static bool loadSaveGameHeader(Common::SeekableReadStream *in, SaveGameHeader &h
 bool ScummEngine::loadState(int slot, bool compat) {
 	Common::String filename;
 	Common::SeekableReadStream *in;
-	int i, j;
 	SaveGameHeader hdr;
 	int sb, sh;
 
@@ -429,10 +425,10 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
 
 	// Nuke all resources
-	for (i = rtFirst; i <= rtLast; i++)
-		if (i != rtTemp && i != rtBuffer && (i != rtSound || _saveSound || !compat))
-			for (j = 0; j < _res->num[i]; j++) {
-				_res->nukeResource(i, j);
+	for (ResType type = rtFirst; type <= rtLast; type = ResType(type + 1))
+		if (type != rtTemp && type != rtBuffer && (type != rtSound || _saveSound || !compat))
+			for (ResId idx = 0; idx < _res->_types[type].size(); idx++) {
+				_res->nukeResource(type, idx);
 			}
 
 	resetScummVars();
@@ -520,8 +516,8 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// loading such an old save game, try to upgrade the old to new format.
 	if (hdr.ver < VER(22)) {
 		// Convert all rtScaleTable resources to matching scale items
-		for (i = 1; i < _res->num[rtScaleTable]; i++) {
-			convertScaleTableToScaleSlot(i);
+		for (ResId idx = 1; idx < _res->_types[rtScaleTable].size(); idx++) {
+			convertScaleTableToScaleSlot(idx);
 		}
 	}
 
@@ -1119,7 +1115,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		MKEND()
 	};
 
-	int i, j;
+	int i;
 	int var120Backup;
 	int var98Backup;
 	uint8 md5Backup[16];
@@ -1137,9 +1133,9 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	// MD5 Operations: Backup on load, compare, and reset.
 	if (s->isLoading()) {
 		char md5str1[32+1], md5str2[32+1];
-		for (j = 0; j < 16; j++) {
-			sprintf(md5str1 + j*2, "%02x", (int)_gameMD5[j]);
-			sprintf(md5str2 + j*2, "%02x", (int)md5Backup[j]);
+		for (i = 0; i < 16; i++) {
+			sprintf(md5str1 + i*2, "%02x", (int)_gameMD5[i]);
+			sprintf(md5str2 + i*2, "%02x", (int)md5Backup[i]);
 		}
 
 		debug(2, "Save version: %d", s->getVersion());
@@ -1239,18 +1235,19 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	//
 	// Save/load resources
 	//
-	int type, idx;
+	ResType type;
+	ResId idx;
 	if (s->getVersion() >= VER(26)) {
 		// New, more robust resource save/load system. This stores the type
 		// and index of each resource. Thus if we increase e.g. the maximum
 		// number of script resources, savegames won't break.
 		if (s->isSaving()) {
-			for (type = rtFirst; type <= rtLast; type++) {
-				if (_res->mode[type] != 1 && type != rtTemp && type != rtBuffer) {
+			for (type = rtFirst; type <= rtLast; type = ResType(type + 1)) {
+				if (_res->_types[type]._mode != kStaticResTypeMode && type != rtTemp && type != rtBuffer) {
 					s->saveUint16(type);	// Save the res type...
-					for (idx = 0; idx < _res->num[type]; idx++) {
+					for (idx = 0; idx < _res->_types[type].size(); idx++) {
 						// Only save resources which actually exist...
-						if (_res->address[type][idx]) {
+						if (_res->_types[type][idx]._address) {
 							s->saveUint16(idx);	// Save the index of the resource
 							saveResource(s, type, idx);
 						}
@@ -1260,9 +1257,9 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 			}
 			s->saveUint16(0xFFFF);	// End marker
 		} else {
-			while ((type = s->loadUint16()) != 0xFFFF) {
+			while ((type = (ResType)s->loadUint16()) != 0xFFFF) {
 				while ((idx = s->loadUint16()) != 0xFFFF) {
-					assert(0 <= idx && idx < _res->num[type]);
+					assert(idx < _res->_types[type].size());
 					loadResource(s, type, idx);
 				}
 			}
@@ -1271,15 +1268,15 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		// Old, fragile resource save/load system. Doesn't save resources
 		// with index 0, and breaks whenever we change the limit on a given
 		// resource type.
-		for (type = rtFirst; type <= rtLast; type++)
-			if (_res->mode[type] != 1 && type != rtTemp && type != rtBuffer) {
+		for (type = rtFirst; type <= rtLast; type = ResType(type + 1))
+			if (_res->_types[type]._mode != kStaticResTypeMode && type != rtTemp && type != rtBuffer) {
 				// For V1-V5 games, there used to be no object name resources.
 				// At some point this changed. But since old savegames rely on
 				// unchanged resource counts, we have to hard code the following check
 				if (_game.version < 6 && type == rtObjectName)
 					continue;
-				for (idx = 1; idx < _res->num[type]; idx++)
-					saveLoadResource(s, type, idx);
+				for (idx = 1; idx < _res->_types[type].size(); idx++)
+					loadResourceOLD(s, type, idx);
 			}
 	}
 
@@ -1390,18 +1387,18 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	// Save/load a list of the locked objects
 	//
 	if (s->isSaving()) {
-		for (i = rtFirst; i <= rtLast; i++)
-			for (j = 1; j < _res->num[i]; j++) {
-				if (_res->isLocked(i, j)) {
-					s->saveByte(i);
-					s->saveUint16(j);
+		for (type = rtFirst; type <= rtLast; type = ResType(type + 1))
+			for (idx = 1; idx < _res->_types[type].size(); idx++) {
+				if (_res->isLocked(type, idx)) {
+					s->saveByte(type);
+					s->saveUint16(idx);
 				}
 			}
 		s->saveByte(0xFF);
 	} else {
-		while ((i = s->loadByte()) != 0xFF) {
-			j = s->loadUint16();
-			_res->lock(i, j);
+		while ((type = (ResType)s->loadByte()) != 0xFF) {
+			idx = s->loadUint16();
+			_res->lock(type, idx);
 		}
 	}
 
@@ -1636,69 +1633,44 @@ void ScummEngine_v100he::saveOrLoad(Serializer *s) {
 }
 #endif
 
-void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
-	byte *ptr;
+void ScummEngine::loadResourceOLD(Serializer *ser, ResType type, ResId idx) {
 	uint32 size;
 
-	if (!_res->mode[type]) {
-		if (ser->isSaving()) {
-			ptr = _res->address[type][idx];
-			if (ptr == NULL) {
-				ser->saveUint32(0);
-				return;
-			}
-
-			size = ((MemBlkHeader *)ptr)->size;
-
-			ser->saveUint32(size);
-			ser->saveBytes(ptr + sizeof(MemBlkHeader), size);
-
+	if (type == rtSound && ser->getVersion() >= VER(23)) {
+		// Save/load only a list of resource numbers that need to be reloaded.
+		if (ser->loadUint16())
+			ensureResourceLoaded(rtSound, idx);
+	} else if (_res->_types[type]._mode == kDynamicResTypeMode) {
+		size = ser->loadUint32();
+		if (size) {
+			_res->createResource(type, idx, size);
+			ser->loadBytes(getResourceAddress(type, idx), size);
 			if (type == rtInventory) {
-				ser->saveUint16(_inventory[idx]);
+				_inventory[idx] = ser->loadUint16();
 			}
 			if (type == rtObjectName && ser->getVersion() >= VER(25)) {
-				ser->saveUint16(_newNames[idx]);
+				// Paranoia: We increased the possible number of new names
+				// to fix bugs #933610 and #936323. The savegame format
+				// didn't change, but at least during the transition
+				// period there is a slight chance that we try to load
+				// more names than we have allocated space for. If so,
+				// discard them.
+				if (idx < _numNewNames)
+					_newNames[idx] = ser->loadUint16();
 			}
-		} else {
-			size = ser->loadUint32();
-			if (size) {
-				_res->createResource(type, idx, size);
-				ser->loadBytes(getResourceAddress(type, idx), size);
-				if (type == rtInventory) {
-					_inventory[idx] = ser->loadUint16();
-				}
-				if (type == rtObjectName && ser->getVersion() >= VER(25)) {
-					// Paranoia: We increased the possible number of new names
-					// to fix bugs #933610 and #936323. The savegame format
-					// didn't change, but at least during the transition
-					// period there is a slight chance that we try to load
-					// more names than we have allocated space for. If so,
-					// discard them.
-					if (idx < _numNewNames)
-						_newNames[idx] = ser->loadUint16();
-				}
-			}
-		}
-	} else if (_res->mode[type] == 2 && ser->getVersion() >= VER(23)) {
-		// Save/load only a list of resource numbers that need to be reloaded.
-		if (ser->isSaving()) {
-			ser->saveUint16(_res->address[type][idx] ? 1 : 0);
-		} else {
-			if (ser->loadUint16())
-				ensureResourceLoaded(type, idx);
 		}
 	}
 }
 
-void ScummEngine::saveResource(Serializer *ser, int type, int idx) {
-	assert(_res->address[type][idx]);
+void ScummEngine::saveResource(Serializer *ser, ResType type, ResId idx) {
+	assert(_res->_types[type][idx]._address);
 
-	if (_res->mode[type] == 0) {
-		byte *ptr = _res->address[type][idx];
-		uint32 size = ((MemBlkHeader *)ptr)->size;
+	if (_res->_types[type]._mode == kDynamicResTypeMode) {
+		byte *ptr = _res->_types[type][idx]._address;
+		uint32 size = _res->_types[type][idx]._size;
 
 		ser->saveUint32(size);
-		ser->saveBytes(ptr + sizeof(MemBlkHeader), size);
+		ser->saveBytes(ptr, size);
 
 		if (type == rtInventory) {
 			ser->saveUint16(_inventory[idx]);
@@ -1709,18 +1681,24 @@ void ScummEngine::saveResource(Serializer *ser, int type, int idx) {
 	}
 }
 
-void ScummEngine::loadResource(Serializer *ser, int type, int idx) {
+void ScummEngine::loadResource(Serializer *ser, ResType type, ResId idx) {
 	if (_game.heversion >= 60 && ser->getVersion() <= VER(65) &&
 		((type == rtSound && idx == 1) || (type == rtSpoolBuffer))) {
 		uint32 size = ser->loadUint32();
 		assert(size);
 		_res->createResource(type, idx, size);
 		ser->loadBytes(getResourceAddress(type, idx), size);
-	} else if (_res->mode[type] == 0) {
+	} else if (type == rtSound) {
+		// HE Games use sound resource 1 for speech
+		if (_game.heversion >= 60 && idx == 1)
+			return;
+
+		ensureResourceLoaded(rtSound, idx);
+	} else if (_res->_types[type]._mode == kDynamicResTypeMode) {
 		uint32 size = ser->loadUint32();
 		assert(size);
-		_res->createResource(type, idx, size);
-		ser->loadBytes(getResourceAddress(type, idx), size);
+		byte *ptr = _res->createResource(type, idx, size);
+		ser->loadBytes(ptr, size);
 
 		if (type == rtInventory) {
 			_inventory[idx] = ser->loadUint16();
@@ -1728,12 +1706,6 @@ void ScummEngine::loadResource(Serializer *ser, int type, int idx) {
 		if (type == rtObjectName) {
 			_newNames[idx] = ser->loadUint16();
 		}
-	} else if (_res->mode[type] == 2) {
-		// HE Games use sound resource 1 for speech
-		if (_game.heversion >= 60 && idx == 1)
-			return;
-
-		ensureResourceLoaded(type, idx);
 	}
 }
 

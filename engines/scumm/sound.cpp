@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
@@ -32,6 +29,7 @@
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/player_towns.h"
+#include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
@@ -1066,7 +1064,7 @@ void Sound::saveLoadWithSerializer(Serializer *ser) {
 #pragma mark --- Sound resource handling ---
 #pragma mark -
 
-static void convertMac0Resource(ResourceManager *res, int idx, byte *src_ptr, int size);
+static void convertMac0Resource(ResourceManager *res, ResId idx, byte *src_ptr, int size);
 
 
 /*
@@ -1076,7 +1074,7 @@ static void convertMac0Resource(ResourceManager *res, int idx, byte *src_ptr, in
  * could stand a thorough cleanup!
  */
 
-int ScummEngine::readSoundResource(int idx) {
+int ScummEngine::readSoundResource(ResId idx) {
 	uint32 pos, total_size, size, tag, basetag, max_total_size;
 	int pri, best_pri;
 	uint32 best_size = 0, best_offs = 0;
@@ -1120,7 +1118,7 @@ int ScummEngine::readSoundResource(int idx) {
 				break;
 			case MKTAG('A','D','L',' '):
 				pri = 1;
-				if (_musicType == MDT_ADLIB)
+				if (_musicType == MDT_ADLIB || _musicType == MDT_TOWNS)
 					pri = 10;
 				break;
 			case MKTAG('A','M','I',' '):
@@ -1226,7 +1224,7 @@ int ScummEngine::readSoundResource(int idx) {
 
 		if (!dmuFile.open(buffer)) {
 			error("Can't open music file %s", buffer);
-			_res->roomoffs[rtSound][idx] = RES_INVALID_OFFSET;
+			_res->_types[rtSound][idx]._roomoffs = RES_INVALID_OFFSET;
 			return 0;
 		}
 		dmuFile.seek(4, SEEK_SET);
@@ -1250,7 +1248,7 @@ int ScummEngine::readSoundResource(int idx) {
 		}
 		error("Unrecognized base tag 0x%08x in sound %d", basetag, idx);
 	}
-	_res->roomoffs[rtSound][idx] = RES_INVALID_OFFSET;
+	_res->_types[rtSound][idx]._roomoffs = RES_INVALID_OFFSET;
 	return 0;
 }
 
@@ -1429,7 +1427,7 @@ static byte Mac0ToGMInstrument(uint32 type, int &transpose) {
 	}
 }
 
-static void convertMac0Resource(ResourceManager *res, int idx, byte *src_ptr, int size) {
+static void convertMac0Resource(ResourceManager *res, ResId idx, byte *src_ptr, int size) {
 	/*
 	From Markus Magnuson (superqult) we got this information:
 	Mac0
@@ -1620,7 +1618,7 @@ static void convertMac0Resource(ResourceManager *res, int idx, byte *src_ptr, in
 #endif
 }
 
-static void convertADResource(ResourceManager *res, const GameSettings& game, int idx, byte *src_ptr, int size) {
+static void convertADResource(ResourceManager *res, const GameSettings& game, ResId idx, byte *src_ptr, int size) {
 	// We will ignore the PPQN in the original resource, because
 	// it's invalid anyway. We use a constant PPQN of 480.
 	const int ppqn = 480;
@@ -2003,7 +2001,7 @@ static void convertADResource(ResourceManager *res, const GameSettings& game, in
 }
 
 
-int ScummEngine::readSoundResourceSmallHeader(int idx) {
+int ScummEngine::readSoundResourceSmallHeader(ResId idx) {
 	uint32 pos, total_size, size, tag;
 	uint32 ad_size = 0, ad_offs = 0;
 	uint32 ro_size = 0, ro_offs = 0;
@@ -2125,7 +2123,7 @@ int ScummEngine::readSoundResourceSmallHeader(int idx) {
 		_fileHandle->read(_res->createResource(rtSound, idx, ro_size - 4), ro_size - 4);
 		return 1;
 	}
-	_res->roomoffs[rtSound][idx] = RES_INVALID_OFFSET;
+	_res->_types[rtSound][idx]._roomoffs = RES_INVALID_OFFSET;
 	return 0;
 }
 

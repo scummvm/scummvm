@@ -1,6 +1,7 @@
 MODULE := engines/tsage
 
 MODULE_OBJS := \
+	blueforce_logic.o \
 	converse.o \
 	core.o \
 	debugger.o \

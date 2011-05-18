@@ -18,14 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/object.h"
+#include "scumm/resource.h"
 #include "scumm/scumm_v2.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
@@ -740,23 +738,23 @@ void ScummEngine_v2::o2_drawObject() {
 }
 
 void ScummEngine_v2::o2_resourceRoutines() {
-	const ResTypes resTypes[] = {
-		rtNumTypes,	// Invalid
-		rtNumTypes,	// Invalid
+	const ResType resTypes[] = {
+		rtInvalid,
+		rtInvalid,
 		rtCostume,
 		rtRoom,
-		rtNumTypes,	// Invalid
+		rtInvalid,
 		rtScript,
 		rtSound
 	};
 	int resid = getVarOrDirectByte(PARAM_1);
 	int opcode = fetchScriptByte();
 
-	ResTypes type = rtNumTypes;
+	ResType type = rtInvalid;
 	if (0 <= (opcode >> 4) && (opcode >> 4) < (int)ARRAYSIZE(resTypes))
 		type = resTypes[opcode >> 4];
 
-	if ((opcode & 0x0f) == 0 || type == rtNumTypes)
+	if ((opcode & 0x0f) == 0 || type == rtInvalid)
 		return;
 
 	// HACK V2 Maniac Mansion tries to load an invalid sound resource in demo script.

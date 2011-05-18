@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_RINGWORLD_SCENES8_H
@@ -41,18 +38,14 @@ public:
 	NamedHotspotMult() : SceneHotspot() {}
 
 	virtual Common::String getClassName() { return "NamedHotspotMult"; }
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 };
 
 class SceneObject7700 : public SceneObjectExt {
 public:
 	int _lookLineNum, _defltLineNum;
 
-	virtual void synchronise(Serialiser &s) {
-		SceneObject::synchronise(s);
-		s.syncAsSint16LE(_lookLineNum);
-		s.syncAsSint16LE(_defltLineNum);
-	}
+	virtual void synchronize(Serializer &s);
 	virtual Common::String getClassName() { return "SceneObject7700"; }
 };
 
@@ -95,7 +88,7 @@ class Scene7000 : public Scene {
 	};
 
 	/* Items */
-	class SceneItem1 : public SceneItem {
+	class Hotspot1 : public SceneHotspot {
 	public:
 		virtual void doAction(int action);
 	};
@@ -125,7 +118,7 @@ public:
 	Action5 _action5;
 	Action6 _action6;
 	Action7 _action7;
-	SceneItem1  _sceneItem1;
+	Hotspot1  _hotspot1;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
@@ -489,6 +482,7 @@ public:
 	virtual void signal();
 	virtual void process(Event &event);
 	virtual void dispatch();
+	virtual void synchronize(Serializer &s);
 };
 
 } // End of namespace tSage

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // HACK to allow building with the SDL backend on MinGW
@@ -245,6 +242,9 @@ int main(int argc, char *argv[]) {
 
 		} else if (!std::strcmp(argv[i], "--build-events")) {
 			setup.runBuildEvents = true;
+		} else if (!std::strcmp(argv[i], "--installer")) {
+			setup.runBuildEvents  = true;
+			setup.createInstaller = true;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -515,6 +515,8 @@ void displayHelp(const char *exe) {
 	        "                           10 stands for \"Visual Studio 2010\"\n"
 	        "                           The default is \"9\", thus \"Visual Studio 2008\"\n"
 	        " --build-events           Run custom build events as part of the build\n"
+	        "                          (default: false)\n"
+	        " --installer              Create NSIS installer after the build (implies --build-events)\n"
 	        "                          (default: false)\n"
 	        "\n"
 	        "Engines settings:\n"
@@ -1220,10 +1222,20 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 					tokens = tokenize(line);
 					i = tokens.begin();
 				} else {
-					if (shouldInclude.top())
-						includeList.push_back(moduleDir + "/" + unifyPath(*i));
-					else
-						excludeList.push_back(moduleDir + "/" + unifyPath(*i));
+					const std::string filename = moduleDir + "/" + unifyPath(*i);
+
+					if (shouldInclude.top()) {
+						// In case we should include a file, we need to make
+						// sure it is not in the exclude list already. If it
+						// is we just drop it from the exclude list.
+						excludeList.remove(filename);
+
+						includeList.push_back(filename);
+					} else if (std::find(includeList.begin(), includeList.end(), filename) == includeList.end()) {
+						// We only add the file to the exclude list in case it
+						// has not yet been added to the include list.
+						excludeList.push_back(filename);
+					}
 					++i;
 				}
 			}

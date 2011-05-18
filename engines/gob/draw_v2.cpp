@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/endian.h"
@@ -899,16 +896,11 @@ void Draw_v2::spriteOperation(int16 operation) {
 	_spriteTop = spriteTop;
 	_spriteRight = spriteRight;
 	_spriteBottom = spriteBottom;
-	_destSpriteX = destSpriteX;
+	if (operation != DRAW_PRINTTEXT)
+		_destSpriteX = destSpriteX;
 	_destSpriteY = destSpriteY;
 	_destSurface = destSurface;
 	_sourceSurface = sourceSurface;
-
-	if (operation == DRAW_PRINTTEXT) {
-		len = _fonts[_fontIndex]->getCharWidth();
-		adjustCoords(1, &len, 0);
-		_destSpriteX += len * strlen(_textToPrint);
-	}
 
 	if ((_renderFlags & RENDERFLAG_USEDELTAS) && !deltaVeto) {
 		if (_sourceSurface == kBackSurface) {

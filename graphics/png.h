@@ -18,15 +18,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
  * PNG decoder used in engines:
  *  - sword25
+ * Dependencies:
+ *  - zlib
  */
+
+// Currently, only the sword25 engine uses the PNG decoder, so skip compiling
+// it if sword25 is not enabled, or if zlib (a required dependency) is not
+// enabled.
+
+#if !(defined(ENABLE_SWORD25) || defined(USE_ZLIB))
+
+// Do not compile the PNG decoder code
+
+#else
 
 #ifndef GRAPHICS_PNG_H
 #define GRAPHICS_PNG_H
@@ -167,3 +176,5 @@ private:
 } // End of Graphics namespace
 
 #endif // GRAPHICS_PNG_H
+
+#endif // Engine and zlib guard

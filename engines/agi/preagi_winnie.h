@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef AGI_PREAGI_WINNIE_H
@@ -342,6 +339,8 @@ private:
 	void saveGame();
 	void loadGame();
 	void dropObjRnd();
+	void setTakeDrop(int[]);
+	void makeSel(int*, int[]);
 
 	void wind();
 	void mist();

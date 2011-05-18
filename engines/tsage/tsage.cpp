@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/debug-channels.h"
@@ -71,9 +68,15 @@ void TSageEngine::initialise() {
 	if (_vm->getFeatures() & GF_DEMO) {
 		// Add the single library file associated with the demo
 		_resourceManager->addLib(getPrimaryFilename());
-	} else {
+	} else if (_vm->getGameID() == GType_Ringworld) {
 		_resourceManager->addLib("RING.RLB");
 		_resourceManager->addLib("TSAGE.RLB");
+	} else if (_vm->getGameID() == GType_BlueForce) {
+		_resourceManager->addLib("BLUE.RLB");
+		if (_vm->getFeatures() & GF_FLOPPY) {
+			_resourceManager->addLib("FILES.RLB");
+			_resourceManager->addLib("TSAGE.RLB");
+		}
 	}
 
 	_globals = new Globals();
@@ -101,14 +104,14 @@ Common::Error TSageEngine::run() {
  * Returns true if it is currently okay to restore a game
  */
 bool TSageEngine::canLoadGameStateCurrently() {
-	return (_globals->getFlag(50) == 0) && _globals->_player._uiEnabled;
+	return (_globals->getFlag(50) == 0);
 }
 
 /**
  * Returns true if it is currently okay to save the game
  */
 bool TSageEngine::canSaveGameStateCurrently() {
-	return (_globals->getFlag(50) == 0) && _globals->_player._uiEnabled;
+	return (_globals->getFlag(50) == 0);
 }
 
 /**

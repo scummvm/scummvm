@@ -18,14 +18,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/md5.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
@@ -488,8 +484,14 @@ static const GameSettings agiSettings[] = {
 AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_noSaveLoadAllowed = false;
 
+	_rnd = new Common::RandomSource("agi");
+
 	initFeatures();
 	initVersion();
+}
+
+AgiBase::~AgiBase() {
+	delete _rnd;
 }
 
 AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBase(syst, gameDesc) {
@@ -498,9 +500,6 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	syncSoundSettings();
 
 	parseFeatures();
-
-	_rnd = new Common::RandomSource();
-	g_eventRec.registerRandomSource(*_rnd, "agi");
 
 	DebugMan.addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
 	DebugMan.addDebugChannel(kDebugLevelResources, "Resources", "Resources debugging");
@@ -652,10 +651,11 @@ void AgiEngine::initialize() {
 }
 
 AgiEngine::~AgiEngine() {
-	// If the engine hasn't been initialized yet via AgiEngine::initialize(), don't attempt to free any resources,
-	// as they haven't been allocated. Fixes bug #1742432 - AGI: Engine crashes if no game is detected
+	// If the engine hasn't been initialized yet via
+	// AgiEngine::initialize(), don't attempt to free any resources, as
+	// they haven't been allocated. Fixes bug #1742432 - AGI: Engine
+	// crashes if no game is detected
 	if (_game.state == STATE_INIT) {
-		delete _rnd;	// delete _rnd, as it is allocated in the constructor, not in initialize()
 		return;
 	}
 
@@ -669,7 +669,6 @@ AgiEngine::~AgiEngine() {
 	free(_game.sbufOrig);
 	_gfx->deinitMachine();
 	delete _gfx;
-	delete _rnd;
 	delete _console;
 
 	free(_predictiveDictLine);

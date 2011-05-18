@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "sci/sci.h"
@@ -383,6 +380,7 @@ void Script::relocateSci3(reg_t block) {
 }
 
 void Script::incrementLockers() {
+	assert(!_markedAsDeleted);
 	_lockers++;
 }
 
@@ -396,6 +394,7 @@ int Script::getLockers() const {
 }
 
 void Script::setLockers(int lockers) {
+	assert(lockers == 0 || !_markedAsDeleted);
 	_lockers = lockers;
 }
 

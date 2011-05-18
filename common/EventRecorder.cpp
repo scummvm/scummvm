@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/EventRecorder.h"
@@ -254,7 +251,7 @@ void EventRecorder::deinit() {
 	g_system->deleteMutex(_recorderMutex);
 }
 
-void EventRecorder::registerRandomSource(RandomSource &rnd, const char *name) {
+void EventRecorder::registerRandomSource(RandomSource &rnd, const String &name) {
 	if (_recordMode == kRecorderRecord) {
 		RandomSourceRecord rec;
 		rec.name = name;

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "audio/softsynth/fmtowns_pc98/towns_pc98_driver.h"
@@ -1148,7 +1145,7 @@ void TownsPC98_AudioDriver::loadMusicData(uint8 *data, bool loadPaused) {
 
 	reset();
 
-	Common::StackLock lock(_mutex);
+	lock();
 	uint8 *src_a = _trackPtr = _musicBuffer = data;
 
 	for (uint8 i = 0; i < 3; i++) {
@@ -1179,6 +1176,7 @@ void TownsPC98_AudioDriver::loadMusicData(uint8 *data, bool loadPaused) {
 	_finishedChannelsFlag = _finishedSSGFlag = _finishedRhythmFlag = 0;
 
 	_musicPlaying = (loadPaused ? false : true);
+	unlock();
 }
 
 void TownsPC98_AudioDriver::loadSoundEffectData(uint8 *data, uint8 trackNum) {
@@ -1197,16 +1195,17 @@ void TownsPC98_AudioDriver::loadSoundEffectData(uint8 *data, uint8 trackNum) {
 		return;
 	}
 
-	Common::StackLock lock(_mutex);
+	lock();
 	_sfxData = _sfxBuffer = data;
 	_sfxOffsets[0] = READ_LE_UINT16(&_sfxData[(trackNum << 2)]);
 	_sfxOffsets[1] = READ_LE_UINT16(&_sfxData[(trackNum << 2) + 2]);
 	_sfxPlaying = true;
 	_finishedSfxFlag = 0;
+	unlock();
 }
 
 void TownsPC98_AudioDriver::reset() {
-	Common::StackLock lock(_mutex);
+	lock();
 
 	_musicPlaying = false;
 	_sfxPlaying = false;
@@ -1233,13 +1232,13 @@ void TownsPC98_AudioDriver::reset() {
 	if (_rhythmChannel)
 		_rhythmChannel->reset();
 #endif
+	unlock();
 }
 
 void TownsPC98_AudioDriver::fadeStep() {
 	if (!_musicPlaying)
 		return;
 
-	Common::StackLock lock(_mutex);
 	for (int j = 0; j < _numChan; j++) {
 		if (_updateChannelsFlag & _channels[j]->_idFlag)
 			_channels[j]->fadeStep();

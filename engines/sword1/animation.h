@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SWORD1_ANIMATION_H
@@ -30,7 +27,7 @@
 #include "video/smk_decoder.h"
 #include "video/video_decoder.h"
 
-#include "common/array.h"
+#include "common/list.h"
 
 #include "audio/audiostream.h"
 
@@ -48,14 +45,11 @@ class MovieText {
 public:
 	uint16 _startFrame;
 	uint16 _endFrame;
-	char *_text;
-	MovieText(int startFrame, int endFrame, const char *text) {
+	Common::String _text;
+	MovieText(int startFrame, int endFrame, const Common::String &text) {
 		_startFrame = startFrame;
 		_endFrame = endFrame;
-		_text = strdup(text);
-	}
-	~MovieText() {
-		free(_text);
+		_text = text;
 	}
 };
 
@@ -83,7 +77,7 @@ protected:
 	Text *_textMan;
 	Audio::Mixer *_snd;
 	OSystem *_system;
-	Common::Array<MovieText *> _movieTexts;
+	Common::List<MovieText> _movieTexts;
 	int _textX, _textY, _textWidth, _textHeight;
 	byte _white, _black;
 	DecoderType _decoderType;

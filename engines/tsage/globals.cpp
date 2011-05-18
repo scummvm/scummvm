@@ -18,13 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "tsage/globals.h"
 #include "tsage/tsage.h"
+#include "tsage/blueforce_logic.h"
+#include "tsage/ringworld_demo.h"
 #include "tsage/ringworld_logic.h"
 
 namespace tSage {
@@ -44,15 +43,17 @@ static SavedObject *classFactoryProc(const Common::String &className) {
 	if (className == "ObjectMover3") return new ObjectMover3();
 	if (className == "PlayerMover") return new PlayerMover();
 	if (className == "SceneObjectWrapper") return new SceneObjectWrapper();
-
+	if (className == "PaletteRotation") return new PaletteRotation();
+	if (className == "PaletteFader") return new PaletteFader();
 	return NULL;
 }
 
 /*--------------------------------------------------------------------------*/
 
 Globals::Globals() :
-		_dialogCenter(160, 140),
-		_gfxManagerInstance(_screenSurface) {
+	_dialogCenter(160, 140),
+	_gfxManagerInstance(_screenSurface),
+	_randomSource("tsage") {
 	reset();
 	_stripNum = 0;
 
@@ -83,16 +84,26 @@ Globals::Globals() :
 	_scrollFollower = NULL;
 	_inventory = NULL;
 
-	if (!(_vm->getFeatures() & GF_DEMO)) {
-		_inventory = new RingworldInvObjectList();
-		_game = new RingworldGame();
-	} else {
-		_game = new RingworldDemoGame();
+	switch (_vm->getGameID()) {
+	case GType_Ringworld:
+		if (!(_vm->getFeatures() & GF_DEMO)) {
+			_inventory = new RingworldInvObjectList();
+			_game = new RingworldGame();
+		} else {
+			_game = new RingworldDemoGame();
+		}
+		break;
+
+	case GType_BlueForce:
+		_game = new BlueForceGame();
+		break;
 	}
 }
 
 Globals::~Globals() {
 	_globals = NULL;
+	delete _inventory;
+	delete _game;
 }
 
 void Globals::reset() {
@@ -100,13 +111,14 @@ void Globals::reset() {
 	_saver->addFactory(classFactoryProc);
 }
 
-void Globals::synchronise(Serialiser &s) {
-	SavedObject::synchronise(s);
+void Globals::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		SavedObject::synchronize(s);
 	assert(_gfxManagers.size() == 1);
 
-	_sceneItems.synchronise(s);
+	_sceneItems.synchronize(s);
 	SYNC_POINTER(_sceneObjects);
-	_sceneObjects_queue.synchronise(s);
+	_sceneObjects_queue.synchronize(s);
 	s.syncAsSint32LE(_gfxFontNumber);
 	s.syncAsSint32LE(_gfxColors.background);
 	s.syncAsSint32LE(_gfxColors.foreground);
@@ -114,7 +126,7 @@ void Globals::synchronise(Serialiser &s) {
 	s.syncAsSint32LE(_fontColors.foreground);
 
 	s.syncAsSint16LE(_dialogCenter.x); s.syncAsSint16LE(_dialogCenter.y);
-	_sceneListeners.synchronise(s);
+	_sceneListeners.synchronize(s);
 	for (int i = 0; i < 256; ++i)
 		s.syncAsByte(_flags[i]);
 

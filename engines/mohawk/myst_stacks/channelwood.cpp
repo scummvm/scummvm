@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "mohawk/cursors.h"
@@ -333,7 +330,7 @@ void Channelwood::o_drawImageChangeCardAndVolume(uint16 op, uint16 var, uint16 a
 
 	_vm->_gfx->copyImageToScreen(imageId, Common::Rect(0, 0, 544, 333));
 	_vm->_system->updateScreen();
-	_vm->_system->delayMillis(10);
+
 	_vm->changeToCard(cardId, true);
 
 	if (argc == 3) {
@@ -351,7 +348,6 @@ void Channelwood::o_waterTankValveOpen(uint16 op, uint16 var, uint16 argc, uint1
 		for (uint16 imageId = 3601; imageId >= 3595; imageId--) {
 			_vm->_gfx->copyImageToScreen(imageId, rect);
 			_vm->_system->updateScreen();
-			_vm->_system->delayMillis(5);
 		}
 
 	pipeChangeValve(true, 0x80);
@@ -666,7 +662,6 @@ void Channelwood::o_waterTankValveClose(uint16 op, uint16 var, uint16 argc, uint
 		for (uint16 imageId = 3595; imageId <= 3601; imageId++) {
 			_vm->_gfx->copyImageToScreen(imageId, rect);
 			_vm->_system->updateScreen();
-			_vm->_system->delayMillis(5);
 		}
 
 	pipeChangeValve(false, 0x80);

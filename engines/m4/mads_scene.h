@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef M4_MADS_SCENE_H
@@ -113,7 +110,6 @@ public:
 	virtual ~MadsScene();
 	void initialise() {
 		_sceneLogic.initialiseScripts();
-		_sceneLogic.initialiseDataMap();
 	}
 
 	// Methods that differ between engines
