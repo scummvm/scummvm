@@ -367,8 +367,7 @@ SaveStateList GrimMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
-	Common::String pattern = "grim";
-	pattern += "*.gsv";
+	Common::String pattern = "grim??.gsv";
 
 	filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
@@ -384,8 +383,8 @@ SaveStateList GrimMetaEngine::listSaves(const char *target) const {
 			SaveGame *savedState = new SaveGame((*file).c_str(), false);
 			if (savedState) {
 				if (savedState->saveVersion() != SaveGame::SAVEGAME_VERSION) {
-					continue;
 					delete savedState;
+					continue;
 				}
 				savedState->beginSection('SUBS');
 				strSize = savedState->readLESint32();

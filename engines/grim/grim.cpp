@@ -530,14 +530,10 @@ Common::Error GrimEngine::run() {
 		int slot = ConfMan.getInt("save_slot");
 		assert(slot <= 99);
 		assert(slot >= 0);
+		char saveName[16];
+		sprintf(saveName, "grim%02d.gsv", slot);
 		_savegameLoadRequest = true;
-		_savegameFileName = "grim";
-		char num[4];
-		itoa(slot, num, 10);
-		if (slot < 10)
-			_savegameFileName += "0";
-		_savegameFileName += num;
-		_savegameFileName += ".gsv";
+		_savegameFileName = saveName;
 	}
 
 	g_grim->setMode(ENGINE_MODE_NORMAL);
