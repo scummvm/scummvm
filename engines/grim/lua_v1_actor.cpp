@@ -616,7 +616,7 @@ void L1_GetActorNodeLocation() {
 	int nodeId = (int)lua_getnumber(nodeObj);
 
 	Model::HierNode *allNodes = actor->getCurrentCostume()->getModelNodes();
-	Model::HierNode *node = allNodes + nodeId - 1;
+	Model::HierNode *node = allNodes + nodeId;
 
 	Model::HierNode *root = node;
 	while (root->_parent) {
@@ -629,9 +629,9 @@ void L1_GetActorNodeLocation() {
 	root->setMatrix(matrix);
 	root->update();
 
-	lua_pushnumber(node->_matrix._pos.x());
-	lua_pushnumber(node->_matrix._pos.y());
-	lua_pushnumber(node->_matrix._pos.z());
+	lua_pushnumber(node->_pivotMatrix._pos.x());
+	lua_pushnumber(node->_pivotMatrix._pos.y());
+	lua_pushnumber(node->_pivotMatrix._pos.z());
 }
 
 void L1_SetActorWalkDominate() {
