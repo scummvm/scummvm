@@ -105,10 +105,10 @@ static bool LooseIntersectRectangle(const Common::Rect &pSrc1, const Common::Rec
  * @param bNoVelocity		When reset, objects pos is updated with velocity
  * @param bScrolled)		When set, playfield has scrolled
  */
-void FindMovingObjects(OBJECT *pObjList, Common::Point *pWin, Common::Rect *pClip, bool bNoVelocity, bool bScrolled) {
+void FindMovingObjects(OBJECT **pObjList, Common::Point *pWin, Common::Rect *pClip, bool bNoVelocity, bool bScrolled) {
 	OBJECT *pObj;			// object list traversal pointer
 
-	for (pObj = pObjList->pNext; pObj != NULL; pObj = pObj->pNext) {
+	for (pObj = *pObjList; pObj != NULL; pObj = pObj->pNext) {
 		if (!bNoVelocity) {
 			// we want to add velocities to objects position
 
@@ -203,7 +203,7 @@ void MergeClipRect() {
  * @param pWin			Window top left position
  * @param pClip			Pointer to clip rectangle
  */
-void UpdateClipRect(OBJECT *pObjList, Common::Point *pWin, Common::Rect *pClip) {
+void UpdateClipRect(OBJECT **pObjList, Common::Point *pWin, Common::Rect *pClip) {
 	int x, y, right, bottom;	// object corners
 	int hclip, vclip;			// total size of object clipping
 	DRAWOBJECT currentObj;		// filled in to draw the current object in list
@@ -212,7 +212,7 @@ void UpdateClipRect(OBJECT *pObjList, Common::Point *pWin, Common::Rect *pClip) 
 	// Initialise the fields of the drawing object to empty
 	memset(&currentObj, 0, sizeof(DRAWOBJECT));
 
-	for (pObj = pObjList->pNext; pObj != NULL; pObj = pObj->pNext) {
+	for (pObj = *pObjList; pObj != NULL; pObj = pObj->pNext) {
 		if (pObj->flags & DMA_ABS) {
 			// object position is absolute
 			x = fracToInt(pObj->xPos);

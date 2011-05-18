@@ -93,7 +93,7 @@ void PlayfieldGetPos(		// Returns the xy position of the specified playfield in 
 int PlayfieldGetCenterX(	// Returns the xy position of the specified playfield in the current background
 	int which);		// which playfield
 
-OBJECT *GetPlayfieldList(	// Returns the display list for the specified playfield
+OBJECT **GetPlayfieldList(	// Returns the display list for the specified playfield
 	int which);		// which playfield
 
 void KillPlayfieldList(		// Kills all the objects on the display list for the specified playfield

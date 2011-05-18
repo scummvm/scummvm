@@ -90,7 +90,7 @@ OBJECT *MultiInitObject(const MULTI_INIT *pInitTbl) {
 
  */
 
-void MultiInsertObject(OBJECT *pObjList, OBJECT *pInsObj) {
+void MultiInsertObject(OBJECT **pObjList, OBJECT *pInsObj) {
 	// validate object pointer
 	assert(isValidObject(pInsObj));
 
@@ -111,7 +111,7 @@ void MultiInsertObject(OBJECT *pObjList, OBJECT *pInsObj) {
  * @param pMultiObj			Multi-part object to be deleted
  */
 
-void MultiDeleteObject(OBJECT *pObjList, OBJECT *pMultiObj) {
+void MultiDeleteObject(OBJECT **pObjList, OBJECT *pMultiObj) {
 	// validate object pointer
 	assert(isValidObject(pMultiObj));
 

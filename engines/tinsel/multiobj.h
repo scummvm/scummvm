@@ -57,11 +57,11 @@ OBJECT *MultiInitObject(	// Initialise a multi-part object
 	const MULTI_INIT *pInitTbl);	// pointer to multi-object initialisation table
 
 void MultiInsertObject(		// Insert a multi-part object onto a object list
-	OBJECT *pObjList,	// list to insert multi-part object onto
+	OBJECT **pObjList,	// list to insert multi-part object onto
 	OBJECT *pInsObj);	// head of multi-part object to insert
 
 void MultiDeleteObject(		// Delete all the pieces of a multi-part object
-	OBJECT *pObjList,	// list to delete multi-part object from
+	OBJECT **pObjList,	// list to delete multi-part object from
 	OBJECT *pMultiObj);	// multi-part object to be deleted
 
 void MultiHideObject(		// Hide a multi-part object

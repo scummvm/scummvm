@@ -134,15 +134,15 @@ void CopyObject(		// copy one object to another
 	OBJECT *pSrc);		// source object
 
 void InsertObject(		// insert a object onto a sorted object list
-	OBJECT *pObjList,	// list to insert object onto
+	OBJECT **pObjList,	// list to insert object onto
 	OBJECT *pInsObj);	// object to insert
 
 void DelObject(			// delete a object from a object list and add to free list
-	OBJECT *pObjList,	// list to delete object from
+	OBJECT **pObjList,	// list to delete object from
 	OBJECT *pDelObj);	// object to delete
 
 void SortObjectList(		// re-sort an object list
-	OBJECT *pObjList);	// list to sort
+	OBJECT **pObjList);	// list to sort
 
 OBJECT *GetNextObject(		// object list iterator - returns next obj in list
 	OBJECT *pObjList,	// which object list

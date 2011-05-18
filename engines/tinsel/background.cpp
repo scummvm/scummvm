@@ -149,7 +149,7 @@ int PlayfieldGetCenterX(int which) {
  * @param which			Which playfield
  */
 
-OBJECT *GetPlayfieldList(int which) {
+OBJECT **GetPlayfieldList(int which) {
 	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
 
 	// make sure there is a background
@@ -162,22 +162,7 @@ OBJECT *GetPlayfieldList(int which) {
 	pPlayfield = pCurBgnd->fieldArray + which;
 
 	// return the display list pointer for this playfield
-	//
-	// HACK: We pretend that pPlayfield is an OBJECT here, by explicitly
-	// casting a pointer to it (resp. to its first member) to an OBJECT
-	// pointer.
-	// Of course it isn't, but its first member is pDispList, an OBJECT
-	// pointer, just like the first member of an OBJECT is pNext, also
-	// an OBJECT pointer. This (classic) trick allows us to use
-	// pPlayfield as a fake anchor element for the linked list of
-	// objects pDispList points to, which in turn simplifies some list
-	// manipulation code. Alas, this is prone to confuse aliasing
-	// analysis in compilers, and also silly developers like myself ;).
-	// So at the very least, I figured we should document this trick
-	// here explicitly.
-	// Personally, I would prefer if we got rid of this trick, e.g. by
-	// introducing an explicit anchor element.
-	return (OBJECT *)&pPlayfield->pDispList;
+	return &pPlayfield->pDispList;
 }
 
 /**
@@ -217,10 +202,10 @@ void DrawBackgnd() {
 			pPlay->bMoved = true;
 
 		// sort the display list for this background - just in case somebody has changed object Z positions
-		SortObjectList((OBJECT *)&pPlay->pDispList);
+		SortObjectList(&pPlay->pDispList);
 
 		// generate clipping rects for all objects that have moved etc.
-		FindMovingObjects((OBJECT *)&pPlay->pDispList, &ptWin,
+		FindMovingObjects(&pPlay->pDispList, &ptWin,
 			&pPlay->rcClip,	false, pPlay->bMoved);
 
 		// clear playfield moved flag
@@ -247,8 +232,7 @@ void DrawBackgnd() {
 
 			if (IntersectRectangle(rcPlayClip, pPlay->rcClip, *r))
 				// redraw all objects within this clipping rect
-				UpdateClipRect((OBJECT *)&pPlay->pDispList,
-						&ptWin,	&rcPlayClip);
+				UpdateClipRect(&pPlay->pDispList, &ptWin,	&rcPlayClip);
 		}
 	}
 
