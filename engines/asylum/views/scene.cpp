@@ -2642,7 +2642,7 @@ void Scene::debugShowWalkRegion(PolyDefinitions *poly) {
 	Graphics::Surface surface;
 	surface.create(poly->boundingRect.right - poly->boundingRect.left + 1,
 	               poly->boundingRect.bottom - poly->boundingRect.top + 1,
-	               1);
+	               Graphics::PixelFormat::createFormatCLUT8());
 
 	// Draw all lines in Polygon
 	for (uint32 i = 0; i < poly->count(); i++) {
@@ -2668,7 +2668,7 @@ void Scene::debugShowPolygons() {
 		PolyDefinitions poly = _polygons->entries[p];
 		surface.create(poly.boundingRect.right - poly.boundingRect.left + 1,
 		               poly.boundingRect.bottom - poly.boundingRect.top + 1,
-		               1);
+		               Graphics::PixelFormat::createFormatCLUT8());
 
 		// Draw all lines in Polygon
 		for (uint32 i = 0; i < poly.count(); i++) {
@@ -2697,7 +2697,7 @@ void Scene::debugShowObjects() {
 		if (object->flags & 0x20) {
 			surface.create(object->getBoundingRect()->right - object->getBoundingRect()->left + 1,
 			               object->getBoundingRect()->bottom - object->getBoundingRect()->top + 1,
-			               1);
+			               Graphics::PixelFormat::createFormatCLUT8());
 			surface.frameRect(*object->getBoundingRect(), 0x22);
 			getScreen()->copyToBackBufferClipped(&surface, object->x, object->y);
 		}
@@ -2715,7 +2715,7 @@ void Scene::debugShowActors() {
 		if (a->flags & 2) {
 			surface.create(a->getBoundingRect()->right - a->getBoundingRect()->left + 1,
 			               a->getBoundingRect()->bottom - a->getBoundingRect()->top + 1,
-			               1);
+			               Graphics::PixelFormat::createFormatCLUT8());
 			surface.frameRect(*a->getBoundingRect(), 0x22);
 			getScreen()->copyToBackBufferClipped(&surface, a->getPoint()->x, a->getPoint()->y);
 		}

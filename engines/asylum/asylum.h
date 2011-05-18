@@ -175,8 +175,8 @@ public:
 	void resetFlags();
 
 	// Misc
-	uint getRandom(uint max) { return _rnd.getRandomNumber(max); }
-	uint getRandomBit()      { return _rnd.getRandomBit(); }
+	uint getRandom(uint max) { return _rnd->getRandomNumber(max); }
+	uint getRandomBit()      { return _rnd->getRandomBit(); }
 
 	/**
 	 * Switch message handler.
@@ -224,7 +224,7 @@ private:
 
 	// Misc
 	Console              *_console;
-	Common::RandomSource  _rnd;
+	Common::RandomSource *_rnd;
 
 	// Game
 	Cursor          *_cursor;

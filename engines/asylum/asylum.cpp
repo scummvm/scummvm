@@ -107,7 +107,7 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	DebugMan.addDebugChannel(kDebugLevelObjects,   "Objects",   "Debug Object Objects");
 
 	// Initialize random number source
-	g_eventRec.registerRandomSource(_rnd, "asylum");
+	_rnd = new Common::RandomSource("asylum");
 }
 
 AsylumEngine::~AsylumEngine() {
