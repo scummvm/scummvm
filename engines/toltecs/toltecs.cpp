@@ -65,8 +65,7 @@ ToltecsEngine::ToltecsEngine(OSystem *syst, const ToltecsGameDescription *gameDe
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
-	_rnd = new Common::RandomSource();
-	g_eventRec.registerRandomSource(*_rnd, "toltecs");
+	_rnd = new Common::RandomSource("toltecs");
 }
 
 ToltecsEngine::~ToltecsEngine() {
