@@ -25,9 +25,9 @@
 
 #include "common/algorithm.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/keyboard.h"
 #include "common/file.h"
+#include "common/random.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
 
@@ -62,8 +62,7 @@ PrisonerEngine::PrisonerEngine(OSystem *syst, const PrisonerGameDescription *gam
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
-	_rnd = new Common::RandomSource();
-	g_eventRec.registerRandomSource(*_rnd, "prisoner");
+	_rnd = new Common::RandomSource("prisoner");
 
 }
 
