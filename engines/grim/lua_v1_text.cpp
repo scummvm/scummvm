@@ -497,6 +497,13 @@ void L1_SayLine() {
 			}
 			if (!msg.empty()) {
 				actor->sayLine(msg.c_str(), msgId); //background, vol, pan, x, y
+
+				// Set the value of "system.lastActortalking".
+				// Necessary for wait_for_message() (_system.LUA, line 1319)
+				lua_pushobject(lua_getref(refSystemTable));
+				lua_pushstring("lastActorTalking");
+				lua_pushusertag(actor->getId(), MKTAG('A','C','T','R'));
+				lua_settable();
 			}
 		}
 	}
