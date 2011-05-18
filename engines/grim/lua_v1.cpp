@@ -996,7 +996,7 @@ void L1_GetSaveGameData() {
 void L1_Load() {
 	lua_Object fileName = lua_getparam(1);
 	if (lua_isnil(fileName)) {
-		g_grim->_savegameFileName = NULL;
+		g_grim->_savegameFileName = "";
 	} else if (lua_isstring(fileName)) {
 		g_grim->_savegameFileName = lua_getstring(fileName);
 	} else {
@@ -1009,7 +1009,7 @@ void L1_Load() {
 void L1_Save() {
 	lua_Object fileName = lua_getparam(1);
 	if (lua_isnil(fileName)) {
-		g_grim->_savegameFileName = NULL;
+		g_grim->_savegameFileName = "";
 	} else if (lua_isstring(fileName)) {
 		g_grim->_savegameFileName = lua_getstring(fileName);
 	} else {

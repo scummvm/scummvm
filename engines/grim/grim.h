@@ -238,7 +238,7 @@ public:
 
 	bool _savegameLoadRequest;
 	bool _savegameSaveRequest;
-	const char *_savegameFileName;
+	Common::String _savegameFileName;
 	SaveGame *_savedState;
 
 	Common::StringArray _listFiles;

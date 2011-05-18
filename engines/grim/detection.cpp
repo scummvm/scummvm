@@ -27,6 +27,10 @@
 
 #include "engines/grim/grim.h"
 #include "engines/grim/colormap.h"
+#include "engines/grim/savegame.h"
+
+#include "common/system.h"
+#include "common/savefile.h"
 
 namespace Grim {
 
@@ -352,6 +356,9 @@ public:
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+
+	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual SaveStateList listSaves(const char *target) const;
 };
 
 bool GrimMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -361,6 +368,49 @@ bool GrimMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 		*engine = new GrimEngine(syst, gd->desc.flags, gd->gameType, gd->desc.platform, gd->desc.language);
 
 	return gd != 0;
+}
+
+bool GrimMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsListSaves) ||
+		(f == kSupportsLoadingDuringStartup);
+}
+
+SaveStateList GrimMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray filenames;
+	Common::String saveDesc;
+	Common::String pattern = "grim??.gsv";
+
+	filenames = saveFileMan->listSavefiles(pattern);
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	char str[256];
+	int32 strSize;
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 2 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + 4);
+
+		if (slotNum >= 0 && slotNum <= 99) {
+			SaveGame *savedState = new SaveGame((*file).c_str(), false);
+			if (savedState) {
+				if (savedState->saveVersion() != SaveGame::SAVEGAME_VERSION) {
+					delete savedState;
+					continue;
+				}
+				savedState->beginSection('SUBS');
+				strSize = savedState->readLESint32();
+				savedState->read(str, strSize);
+				saveDesc = str;
+				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
+				delete savedState;
+			}
+
+		}
+	}
+
+	return saveList;
 }
 
 } // End of namespace Grim
