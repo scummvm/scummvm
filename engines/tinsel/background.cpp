@@ -162,6 +162,21 @@ OBJECT *GetPlayfieldList(int which) {
 	pPlayfield = pCurBgnd->fieldArray + which;
 
 	// return the display list pointer for this playfield
+	//
+	// HACK: We pretend that pPlayfield is an OBJECT here, by explicitly
+	// casting a pointer to it (resp. to its first member) to an OBJECT
+	// pointer.
+	// Of course it isn't, but its first member is pDispList, an OBJECT
+	// pointer, just like the first member of an OBJECT is pNext, also
+	// an OBJECT pointer. This (classic) trick allows us to use
+	// pPlayfield as a fake anchor element for the linked list of
+	// objects pDispList points to, which in turn simplifies some list
+	// manipulation code. Alas, this is prone to confuse aliasing
+	// analysis in compilers, and also silly developers like myself ;).
+	// So at the very least, I figured we should document this trick
+	// here explicitly.
+	// Personally, I would prefer if we got rid of this trick, e.g. by
+	// introducing an explicit anchor element.
 	return (OBJECT *)&pPlayfield->pDispList;
 }
 
