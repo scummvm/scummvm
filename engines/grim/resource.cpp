@@ -307,17 +307,20 @@ KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 LipSync *ResourceLoader::loadLipSync(const char *filename) {
 	LipSync *result;
 	Block *b = getFileFromCache(filename);
+	bool cached = true;
 	if (!b) {
 		b = getFileBlock(filename);
 		if (!b)
 			return NULL;
+		cached = false;
 	}
 
 	result = new LipSync(filename, b->getData(), b->getLen());
 
 	// Some lipsync files have no data
 	if (result->isValid()) {
-		putIntoCache(filename, b);
+		if (!cached)
+			putIntoCache(filename, b);
 		_lipsyncs.push_back(result);
 	} else {
 		delete result;
