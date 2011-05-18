@@ -29,6 +29,7 @@
 #include "asylum/shared.h"
 
 #include "graphics/surface.h"
+#include "common/rect.h"
 
 #include "common/array.h"
 

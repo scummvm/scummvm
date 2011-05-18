@@ -29,7 +29,9 @@
 #include "asylum/shared.h"
 
 #include "common/array.h"
+#include "common/rect.h"
 
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 namespace Asylum {

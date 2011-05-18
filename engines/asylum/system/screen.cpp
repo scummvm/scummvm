@@ -40,7 +40,7 @@ namespace Asylum {
 
 Screen::Screen(AsylumEngine *vm) : _vm(vm) ,
 	_useColorKey(false), _transTableCount(0), _transTableIndex(NULL), _transTableData(NULL), _transTableBuffer(NULL) {
-	_backBuffer.create(640, 480, 1);
+	_backBuffer.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 
 	_flag = -1;
 	_clipRect = Common::Rect(0, 0, 640, 480);
@@ -513,7 +513,7 @@ void Screen::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 		_vm->screen()->copyToBackBufferWithTransparency(
 			((byte*)surface->pixels) +
 			startY * surface->pitch +
-			startX * surface->bytesPerPixel,
+			startX * surface->format.bytesPerPixel,
 			surface->pitch,
 			animRect.left,
 			animRect.top,
