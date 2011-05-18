@@ -401,7 +401,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_sayLineDefaults.setHeight(0);
 	_sayLineDefaults.setFGColor(c);
 	_sayLineDefaults.setFont(NULL);
-	_sayLineDefaults.setJustify(TextObject::LJUSTIFY);
+	_sayLineDefaults.setJustify(TextObject::CENTER);
 	_sayLineDefaults.setDisabled(false);
 
 	_blastTextDefaults.setX(0);
