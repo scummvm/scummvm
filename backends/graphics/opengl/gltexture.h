@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(BADA)
 #if defined(ARRAYSIZE) && !defined(_WINDOWS_)
 #undef ARRAYSIZE
 #endif
@@ -32,8 +32,8 @@
 #endif
 
 #if defined(BADA)
-#include <gl.h>
-#include <glext.h>
+#include <FGraphicsOpengl.h>
+using namespace Osp::Graphics::Opengl;
 #elif defined(USE_GLES)
 #include <GLES/gl.h>
 #elif defined(SDL_BACKEND)

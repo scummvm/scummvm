@@ -23,7 +23,6 @@
 #define BADA_FILESYSTEM_H
 
 #include "backends/fs/abstract-fs.h"
-#include <unistd.h>
 
 /**
  * Implementation of the ScummVM file system API based on BADA.
@@ -54,13 +53,13 @@ public:
 	 */
 	BADAFilesystemNode(const Common::String &path);
 
-	virtual bool exists() const { return access(_path.c_str(), F_OK) == 0; }
+	virtual bool exists() const;
 	virtual Common::String getDisplayName() const { return _displayName; }
 	virtual Common::String getName() const { return _displayName; }
 	virtual Common::String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
-	virtual bool isReadable() const { return access(_path.c_str(), R_OK) == 0; }
-	virtual bool isWritable() const { return access(_path.c_str(), W_OK) == 0; }
+	virtual bool isReadable() const;
+	virtual bool isWritable() const;
 
 	virtual AbstractFSNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
