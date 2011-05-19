@@ -254,6 +254,19 @@ static const GrimGameDescription gameDescriptions[] = {
 		GType_MONKEY4
 	},
 	{
+		// Escape from Monkey Island Portuguese
+		{
+			"monkey4",
+			"",
+			AD_ENTRY1s("artAll.m4b", "030e7637aee7886a3caad60cf102f797", 18515747),
+			Common::PT_BRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		GType_MONKEY4
+	},
+	{
 		// Escape from Monkey Island English PS2
 		{
 			"monkey4",
