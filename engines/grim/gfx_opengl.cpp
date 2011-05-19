@@ -540,8 +540,8 @@ void GfxOpenGL::setupLight(Scene::Light *light, int lightId) {
 
 	float intensity = light->_intensity / 1.3f;
 	lightColor[0] = ((float)light->_color.getRed() / 15.0f) * intensity;
-	lightColor[1] = ((float)light->_color.getBlue() / 15.0f) * intensity;
-	lightColor[2] = ((float)light->_color.getGreen() / 15.0f) * intensity;
+	lightColor[1] = ((float)light->_color.getGreen() / 15.0f) * intensity;
+	lightColor[2] = ((float)light->_color.getBlue() / 15.0f) * intensity;
 
 	if (light->_type == "omni") {
 		lightPos[0] = light->_pos.x();
