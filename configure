@@ -2324,12 +2324,12 @@ POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-im
 		HOSTEXEEXT=".dll"
 _def_plugin='
 #define PLUGIN_PREFIX	""
-#define PLUGIN_SUFFIX	".dll"
+#define PLUGIN_SUFFIX	".plugin"
 '
 _mak_plugins='
 DYNAMIC_MODULES		:= 1
 PLUGIN_PREFIX		:=
-PLUGIN_SUFFIX		:= .dll
+PLUGIN_SUFFIX		:= .plugin
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
 CXXFLAGS			+= -DDYNAMIC_MODULES
 PLUGIN_LDFLAGS		:= -shared -lscummvm -L.
