@@ -26,6 +26,11 @@
 #undef ARRAYSIZE
 #endif
 
+#ifdef SDL_BACKEND
+// We need SDL.h for SDL_GL_GetProcAddress.
+#include "backends/platform/sdl/sdl-sys.h"
+#endif
+
 #include "common/endian.h"
 #include "common/system.h"
 
@@ -39,9 +44,30 @@
 #include "engines/grim/bitmap.h"
 #include "engines/grim/primitives.h"
 
+#if defined(SDL_BACKEND) || defined(WIN32)
+
+// Extension functions needed for fragment programs.
+typedef void (APIENTRY *PFNGLGENPROGRAMSARBPROC) (GLsizei n, GLuint *programs);
+typedef void (APIENTRY *PFNGLBINDPROGRAMARBPROC) (GLenum target, GLuint program);
+typedef void (APIENTRY *PFNGLPROGRAMSTRINGARBPROC) (GLenum target, GLenum format, GLsizei len, const GLvoid *string);
+typedef void (APIENTRY *PFNGLDELETEPROGRAMSARBPROC) (GLsizei n, const GLuint *programs);
+
+PFNGLGENPROGRAMSARBPROC glGenProgramsARB;
+PFNGLBINDPROGRAMARBPROC glBindProgramARB;
+PFNGLPROGRAMSTRINGARBPROC glProgramStringARB;
+PFNGLDELETEPROGRAMSARBPROC glDeleteProgramsARB;
+
+#endif
+
 #ifdef USE_OPENGL
 
 namespace Grim {
+
+// Simple ARB fragment program that writes the value from a texture to the Z-buffer.
+static char fragSrc[] =
+	"!!ARBfp1.0\n\
+	TEX result.depth, fragment.texcoord[0], texture[0], 2D;\n\
+	END\n";
 
 GfxOpenGL::GfxOpenGL() {
 	_storedDisplay = NULL;
@@ -52,6 +78,11 @@ GfxOpenGL::~GfxOpenGL() {
 	delete[] _storedDisplay;
 	if (_emergFont && glIsList(_emergFont))
 		glDeleteLists(_emergFont, 128);
+
+#ifdef GL_ARB_fragment_program
+	if (_useDepthShader)
+		glDeleteProgramsARB(1, &_fragmentProgram);
+#endif
 }
 
 byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
@@ -61,6 +92,7 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	_screenHeight = screenH;
 	_screenBPP = 24;
 	_isFullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
+	_useDepthShader = false;
 
 	char GLDriver[1024];
 	sprintf(GLDriver, "Residual: %s/%s", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
@@ -80,7 +112,43 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	glPolygonOffset(-6.0, -6.0);
 
+	initExtensions();
+
 	return NULL;
+}
+
+void GfxOpenGL::initExtensions()
+{
+#ifdef GL_ARB_fragment_program
+#ifdef SDL_BACKEND
+	glGenProgramsARB = (PFNGLGENPROGRAMSARBPROC)SDL_GL_GetProcAddress("glGenProgramsARB");
+	glBindProgramARB = (PFNGLBINDPROGRAMARBPROC)SDL_GL_GetProcAddress("glBindProgramARB");
+	glProgramStringARB = (PFNGLPROGRAMSTRINGARBPROC)SDL_GL_GetProcAddress("glProgramStringARB");
+	glDeleteProgramsARB = (PFNGLDELETEPROGRAMSARBPROC)SDL_GL_GetProcAddress("glDeleteProgramsARB");
+#elif defined(WIN32)
+	glGenProgramsARB = (PFNGLGENPROGRAMSARBPROC)wglGetProcAddress("glGenProgramsARB");
+	glBindProgramARB = (PFNGLBINDPROGRAMARBPROC)wglGetProcAddress("glBindProgramARB");
+	glProgramStringARB = (PFNGLPROGRAMSTRINGARBPROC)wglGetProcAddress("glProgramStringARB");
+	glDeleteProgramsARB = (PFNGLDELETEPROGRAMSARBPROC)wglGetProcAddress("glDeleteProgramsARB");
+#endif
+
+	const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
+	if (strstr(extensions, "ARB_fragment_program")) {
+		_useDepthShader = true;
+	}
+
+	if (_useDepthShader) {
+		glGenProgramsARB(1, &_fragmentProgram);
+		glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, _fragmentProgram);
+
+		GLint errorPos;
+		glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, strlen(fragSrc), fragSrc);
+		glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &errorPos);
+		if (errorPos != -1) {
+			warning("Error compiling fragment program:\n%s", glGetString(GL_PROGRAM_ERROR_STRING_ARB));
+		}
+	}
+#endif
 }
 
 const char *GfxOpenGL::getVideoDeviceName() {
@@ -512,7 +580,30 @@ void GfxOpenGL::setupLight(Scene::Light *light, int lightId) {
 
 void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 	GLuint *textures;
-	if (bitmap->_format == 1) {
+
+	if (bitmap->_format != 1) {
+		for (int pic = 0; pic < bitmap->_numImages; pic++) {
+			uint16 *zbufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic));
+			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
+				uint16 val = READ_LE_UINT16(bitmap->getImageData(pic) + 2 * i);
+				zbufPtr[i] = 0xffff - ((uint32) val) * 0x10000 / 100 / (0x10000 - val);
+			}
+
+			// Flip the zbuffer image to match what GL expects
+			if (!_useDepthShader) {
+				for (int y = 0; y < bitmap->_height / 2; y++) {
+					uint16 *ptr1 = zbufPtr + y * bitmap->_width;
+					uint16 *ptr2 = zbufPtr + (bitmap->_height - 1 - y) * bitmap->_width;
+					for (int x = 0; x < bitmap->_width; x++, ptr1++, ptr2++) {
+						uint16 tmp = *ptr1;
+						*ptr1 = *ptr2;
+						*ptr2 = tmp;
+					}
+				}
+			}
+		}
+	}
+	if (bitmap->_format == 1 || _useDepthShader) {
 		bitmap->_hasTransparency = false;
 		bitmap->_numTex = ((bitmap->_width + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
 			((bitmap->_height + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
@@ -523,11 +614,20 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 		byte *texData = 0;
 		byte *texOut = 0;
 
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+		GLint format = GL_RGBA;
+		GLint type = GL_UNSIGNED_BYTE;
+		int bytes = 4;
+		if (bitmap->_format != 1) {
+			format = GL_DEPTH_COMPONENT;
+			type = GL_UNSIGNED_SHORT;
+			bytes = 2;
+		}
+
+		glPixelStorei(GL_UNPACK_ALIGNMENT, bytes);
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, bitmap->_width);
 
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
-			if (bitmap->_bpp == 16 && bitmap->_colorFormat != BM_RGB1555) {
+			if (bitmap->_format == 1 && bitmap->_bpp == 16 && bitmap->_colorFormat != BM_RGB1555) {
 				if (texData == 0)
 					texData = new byte[4 * bitmap->_width * bitmap->_height];
 				// Convert data to 32-bit RGBA format
@@ -549,7 +649,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 					}
 				}
 				texOut = texData;
-			} else if (bitmap->_colorFormat == BM_RGB1555) {
+			} else if (bitmap->_format == 1 && bitmap->_colorFormat == BM_RGB1555) {
 				bitmap->convertToColorFormat(pic, BM_RGBA);
 				texOut = (byte *)bitmap->getImageData(pic);
 			} else {
@@ -562,7 +662,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+				glTexImage2D(GL_TEXTURE_2D, 0, format, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, format, type, NULL);
 			}
 
 			int cur_tex_idx = bitmap->_numTex * pic;
@@ -572,8 +672,8 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 					int width  = (x + BITMAP_TEXTURE_SIZE >= bitmap->_width)  ? (bitmap->_width  - x) : BITMAP_TEXTURE_SIZE;
 					int height = (y + BITMAP_TEXTURE_SIZE >= bitmap->_height) ? (bitmap->_height - y) : BITMAP_TEXTURE_SIZE;
 					glBindTexture(GL_TEXTURE_2D, textures[cur_tex_idx]);
-					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE,
-						texOut + (y * 4 * bitmap->_width) + (4 * x));
+					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format, type,
+						texOut + (y * bytes * bitmap->_width) + (bytes * x));
 					cur_tex_idx++;
 				}
 			}
@@ -582,26 +682,6 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
 		delete[] texData;
-	} else {
-		for (int pic = 0; pic < bitmap->_numImages; pic++) {
-			uint16 *zbufPtr = reinterpret_cast<uint16 *>(bitmap->getImageData(pic));
-			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
-				uint16 val = READ_LE_UINT16(bitmap->getImageData(pic) + 2 * i);
-				zbufPtr[i] = 0xffff - ((uint32) val) * 0x10000 / 100 / (0x10000 - val);
-			}
-
-			// Flip the zbuffer image to match what GL expects
-			for (int y = 0; y < bitmap->_height / 2; y++) {
-				uint16 *ptr1 = zbufPtr + y * bitmap->_width;
-				uint16 *ptr2 = zbufPtr + (bitmap->_height - 1 - y) * bitmap->_width;
-				for (int x = 0; x < bitmap->_width; x++, ptr1++, ptr2++) {
-					uint16 tmp = *ptr1;
-					*ptr1 = *ptr2;
-					*ptr2 = tmp;
-				}
-			}
-		}
-		bitmap->_texIds = NULL;
 	}
 }
 
@@ -623,42 +703,65 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap) {
 		glDisable(GL_BLEND);
 	glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
-	if (bitmap->getFormat() == 1) { // Normal image
-		glDisable(GL_DEPTH_TEST);
-		glDepthMask(GL_FALSE);
-		glEnable(GL_SCISSOR_TEST);
-		glScissor(bitmap->getX(), _screenHeight - (bitmap->getY() + bitmap->getHeight()), bitmap->getWidth(), bitmap->getHeight());
-		int cur_tex_idx = bitmap->getNumTex() * (bitmap->getCurrentImage() - 1);
-		for (int y = bitmap->getY(); y < (bitmap->getY() + bitmap->getHeight()); y += BITMAP_TEXTURE_SIZE) {
-			for (int x = bitmap->getX(); x < (bitmap->getX() + bitmap->getWidth()); x += BITMAP_TEXTURE_SIZE) {
-				textures = (GLuint *)bitmap->getTexIds();
-				glBindTexture(GL_TEXTURE_2D, textures[cur_tex_idx]);
-				glBegin(GL_QUADS);
-				glTexCoord2f(0.0f, 0.0f);
-				glVertex2i(x, y);
-				glTexCoord2f(1.0f, 0.0f);
-				glVertex2i(x + BITMAP_TEXTURE_SIZE, y);
-				glTexCoord2f(1.0f, 1.0f);
-				glVertex2i(x + BITMAP_TEXTURE_SIZE, y + BITMAP_TEXTURE_SIZE);
-				glTexCoord2f(0.0f, 1.0f);
-				glVertex2i(x, y + BITMAP_TEXTURE_SIZE);
-				glEnd();
-				cur_tex_idx++;
-			}
-		}
 
-		glDisable(GL_SCISSOR_TEST);
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_BLEND);
-		glDepthMask(GL_TRUE);
-		glEnable(GL_DEPTH_TEST);
-	} else if (bitmap->getFormat() == 5) {	// ZBuffer image
+	// If drawing a Z-buffer image, but no shaders are available, fall back to the glDrawPixels method.
+	if (bitmap->getFormat() == 5 && !_useDepthShader) {
 		// Only draw the manual zbuffer when enabled
 		if (bitmap->getCurrentImage() - 1 < bitmap->getNumImages()) {
 			drawDepthBitmap(bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), bitmap->getData(bitmap->getCurrentImage() - 1));
 		} else {
 			warning("zbuffer image has index out of bounds! %d/%d", bitmap->getCurrentImage(), bitmap->getNumImages());
 		}
+		glEnable(GL_LIGHTING);
+		return;
+	}
+
+	if (bitmap->getFormat() == 1) { // Normal image
+		glDisable(GL_DEPTH_TEST);
+		glDepthMask(GL_FALSE);
+	} else { // ZBuffer image
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_ALWAYS);
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		glDepthMask(GL_TRUE);
+#ifdef GL_ARB_fragment_program
+		glEnable(GL_FRAGMENT_PROGRAM_ARB);
+#endif
+	}
+
+	glEnable(GL_SCISSOR_TEST);
+	glScissor(bitmap->getX(), _screenHeight - (bitmap->getY() + bitmap->getHeight()), bitmap->getWidth(), bitmap->getHeight());
+	int cur_tex_idx = bitmap->getNumTex() * (bitmap->getCurrentImage() - 1);
+	for (int y = bitmap->getY(); y < (bitmap->getY() + bitmap->getHeight()); y += BITMAP_TEXTURE_SIZE) {
+		for (int x = bitmap->getX(); x < (bitmap->getX() + bitmap->getWidth()); x += BITMAP_TEXTURE_SIZE) {
+			textures = (GLuint *)bitmap->getTexIds();
+			glBindTexture(GL_TEXTURE_2D, textures[cur_tex_idx]);
+			glBegin(GL_QUADS);
+			glTexCoord2f(0.0f, 0.0f);
+			glVertex2i(x, y);
+			glTexCoord2f(1.0f, 0.0f);
+			glVertex2i(x + BITMAP_TEXTURE_SIZE, y);
+			glTexCoord2f(1.0f, 1.0f);
+			glVertex2i(x + BITMAP_TEXTURE_SIZE, y + BITMAP_TEXTURE_SIZE);
+			glTexCoord2f(0.0f, 1.0f);
+			glVertex2i(x, y + BITMAP_TEXTURE_SIZE);
+			glEnd();
+			cur_tex_idx++;
+		}
+	}
+
+	glDisable(GL_SCISSOR_TEST);
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	if (bitmap->getFormat() == 1) {
+		glDepthMask(GL_TRUE);
+		glEnable(GL_DEPTH_TEST);
+	} else {
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+		glDepthFunc(GL_LESS);
+#ifdef GL_ARB_fragment_program
+		glDisable(GL_FRAGMENT_PROGRAM_ARB);
+#endif
 	}
 	glEnable(GL_LIGHTING);
 }
