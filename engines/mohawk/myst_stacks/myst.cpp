@@ -2839,11 +2839,17 @@ void Myst::clockGearForwardOneStep(uint16 gear) {
 }
 
 void Myst::clockWeightDownOneStep() {
+	// The Myst ME version of this video is encoded faster than the original
+	// The weight goes on the floor one step too early. Original ME engine also has this behavior.
+	bool updateVideo = !(_vm->getFeatures() & GF_ME) || _clockWeightPosition < (2214 - 246);
+
 	// Set video bounds
-	_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
-	_vm->_video->setVideoBounds(_clockWeightVideo,
-			Audio::Timestamp(0, _clockWeightPosition, 600),
-			Audio::Timestamp(0, _clockWeightPosition + 246, 600));
+	if (updateVideo) {
+		_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
+		_vm->_video->setVideoBounds(_clockWeightVideo,
+				Audio::Timestamp(0, _clockWeightPosition, 600),
+				Audio::Timestamp(0, _clockWeightPosition + 246, 600));
+	}
 
 	// Increment value by one step
 	_clockWeightPosition += 246;
