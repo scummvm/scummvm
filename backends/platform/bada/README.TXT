@@ -26,18 +26,7 @@ Note the debug build will target the Win32 simulator
 
 4. Build the front end application using BADA-Ide:
 
-TODO
 
-My development environment:
-
-Ubuntu 11.4 using windows XP inside Oracle Virtual Box.
-
-The development code and BADA installation are located on ~/.wine/drive_c
-and are accessed via a shared VB folder (mapped to drive f:);
-
-Unfortunately using BADA-Ide (eclipse) under wine is somewhat flakey but 
-having the code on the linux drives safe guards against any XP/VB corruption
-and also allows native access to GIT. 
 
 //////////
 

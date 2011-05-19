@@ -24,13 +24,11 @@
 #include <FApp.h>
 #include <FSystem.h>
 
+#include "portdefs.h"
 #include "application.h"
 
 using namespace Osp::Base;
 using namespace Osp::Base::Collection;
-
-#define C_LINKAGE_BEGIN extern "C" {
-#define C_LINKAGE_END }
 
 C_LINKAGE_BEGIN
 

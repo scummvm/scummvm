@@ -20,8 +20,9 @@
  *
  */
 
-#include "system.h"
+#include "portdefs.h"
 #include "application.h"
+#include "system.h"
 
 using namespace Osp::Base;
 using namespace Osp::Base::Runtime;
@@ -41,17 +42,22 @@ BadaScummVM::BadaScummVM() {
 }
 
 BadaScummVM::~BadaScummVM() {
+
 }
 
 bool BadaScummVM::OnAppInitializing(AppRegistry& appRegistry) {
+  systemStart();
 	result r = E_SUCCESS;
 }
 
-bool BadaScummVM::OnAppTerminating(AppRegistry& appRegistry, bool forcedTermination) {
+bool BadaScummVM::OnAppTerminating(AppRegistry& appRegistry, 
+                                   bool forcedTermination) {
+  systemStop();
 	return true;
 }
 
 void BadaScummVM::OnForeground(void) {
+
 }
 
 void BadaScummVM::OnBackground(void) {
@@ -67,12 +73,15 @@ void BadaScummVM::OnLowMemory(void) {
 }
 
 void BadaScummVM::OnKeyPressed(const Control& source, KeyCode keyCode) {
+
 }
 
 void BadaScummVM::OnKeyReleased(const Control& source, KeyCode keyCode) {	
+
 }
 
 void BadaScummVM::OnKeyLongPressed(const Control& source, KeyCode keyCode) {
+
 }
 
 bool BadaScummVM::Draw() {

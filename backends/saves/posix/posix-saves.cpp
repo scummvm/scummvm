@@ -27,7 +27,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(UNIX) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
+#if defined(UNIX) && !defined(DISABLE_POSIX_FS)
 
 #include "backends/saves/posix/posix-saves.h"
 

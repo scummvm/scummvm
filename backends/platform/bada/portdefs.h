@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef PORT_DEFS_H
+#define PORT_DEFS_H
+
 #include <assert.h>
 #include <stdarg.h>
 #include <string.h>
@@ -30,6 +33,18 @@
 #include <math.h>
 
 #define M_PI 3.14159265358979323846
+#define C_LINKAGE_BEGIN extern "C" {
+#define C_LINKAGE_END }
+
+#undef assert
+#if defined(_DEBUG)
+void debugAssert(bool assertion);
+#define assert debugAssert
+#else
+#define assert(foo)
+#endif
+
+C_LINKAGE_BEGIN
 
 int printf(const char* format, ...);
 
@@ -60,3 +75,6 @@ int vsprintf(char* str, const char* format, va_list arg);
 // engines/agos/script_pn.cpp
 int strnicmp(const char* s1, const char* s2, size_t len);
 
+C_LINKAGE_END
+
+#endif

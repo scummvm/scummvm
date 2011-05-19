@@ -22,6 +22,8 @@
 
 #include "portdefs.h"
 
+C_LINKAGE_BEGIN
+
 int printf(const char* format, ...) {
   return 0;
 }
@@ -64,3 +66,4 @@ int strnicmp(const char* s1, const char* s2, size_t len) {
   return 0;
 }
 
+C_LINKAGE_END
