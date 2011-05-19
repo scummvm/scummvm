@@ -44,14 +44,9 @@
 #include "engines/grim/bitmap.h"
 #include "engines/grim/primitives.h"
 
-#if defined(SDL_BACKEND) || defined(WIN32)
+#if defined(SDL_BACKEND)
 
 // Extension functions needed for fragment programs.
-typedef void (APIENTRY *PFNGLGENPROGRAMSARBPROC) (GLsizei n, GLuint *programs);
-typedef void (APIENTRY *PFNGLBINDPROGRAMARBPROC) (GLenum target, GLuint program);
-typedef void (APIENTRY *PFNGLPROGRAMSTRINGARBPROC) (GLenum target, GLenum format, GLsizei len, const GLvoid *string);
-typedef void (APIENTRY *PFNGLDELETEPROGRAMSARBPROC) (GLsizei n, const GLuint *programs);
-
 PFNGLGENPROGRAMSARBPROC glGenProgramsARB;
 PFNGLBINDPROGRAMARBPROC glBindProgramARB;
 PFNGLPROGRAMSTRINGARBPROC glProgramStringARB;
@@ -119,8 +114,7 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 void GfxOpenGL::initExtensions()
 {
-#ifdef GL_ARB_fragment_program
-#ifdef SDL_BACKEND
+#if defined (SDL_BACKEND) && defined(GL_ARB_fragment_program)
 	union {
 		void* obj_ptr;
 		void (APIENTRY *func_ptr)();
@@ -133,12 +127,6 @@ void GfxOpenGL::initExtensions()
 	glProgramStringARB = (PFNGLPROGRAMSTRINGARBPROC)u.func_ptr;
 	u.obj_ptr = SDL_GL_GetProcAddress("glDeleteProgramsARB");
 	glDeleteProgramsARB = (PFNGLDELETEPROGRAMSARBPROC)u.func_ptr;
-#elif defined(WIN32)
-	glGenProgramsARB = (PFNGLGENPROGRAMSARBPROC)wglGetProcAddress("glGenProgramsARB");
-	glBindProgramARB = (PFNGLBINDPROGRAMARBPROC)wglGetProcAddress("glBindProgramARB");
-	glProgramStringARB = (PFNGLPROGRAMSTRINGARBPROC)wglGetProcAddress("glProgramStringARB");
-	glDeleteProgramsARB = (PFNGLDELETEPROGRAMSARBPROC)wglGetProcAddress("glDeleteProgramsARB");
-#endif
 
 	const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
 	if (strstr(extensions, "ARB_fragment_program")) {
