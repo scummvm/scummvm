@@ -990,7 +990,6 @@ void GrimEngine::updateDisplayScene() {
 		// including 3D objects such as Manny and the message tube
 		_currScene->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
 
-		g_driver->storeDisplay();
 		drawPrimitives();
 	} else if (_mode == ENGINE_MODE_DRAW) {
 		// Adding line below and comment out rest solve flickering, also in tripple buffering mode too
