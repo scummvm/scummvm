@@ -67,6 +67,7 @@ public:
 
 	void setLightEnableState(bool state) {
 		_enableLights = state;
+		_lightsConfigured = false;
 	}
 	void setLightIntensity(const char *light, float intensity);
 	void setLightIntensity(int light, float intensity);
@@ -139,6 +140,7 @@ private:
 	Sector **_sectors;
 	Light *_lights;
 	Setup *_setups;
+	bool _lightsConfigured;
 public:
 	Setup *_currSetup;
 private:

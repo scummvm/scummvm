@@ -107,6 +107,7 @@ void Scene::loadText(TextSplitter &ts){
 		_setups[i].load(ts);
 	_currSetup = _setups;
 
+	_lightsConfigured = false;
 	_numSectors = -1;
 	_numLights = -1;
 	_lights = NULL;
@@ -459,6 +460,9 @@ void Scene::Setup::setupCamera() const {
 }
 
 void Scene::setupLights() {
+	if (_lightsConfigured)
+		return;
+	_lightsConfigured = true;
 	if (!_enableLights) {
 		g_driver->disableLights();
 		return;
@@ -478,6 +482,7 @@ void Scene::setSetup(int num) {
 	}
 	_currSetup = _setups + num;
 	g_grim->flagRefreshShadowMask(true);
+	_lightsConfigured = false;
 }
 
 void Scene::drawBackground() const {
@@ -555,6 +560,7 @@ void Scene::setLightIntensity(const char *light, float intensity) {
 		Light &l = _lights[i];
 		if (l._name == light) {
 			l._intensity = intensity;
+			_lightsConfigured = false;
 			return;
 		}
 	}
@@ -563,6 +569,7 @@ void Scene::setLightIntensity(const char *light, float intensity) {
 void Scene::setLightIntensity(int light, float intensity) {
 	Light &l = _lights[light];
 	l._intensity = intensity;
+	_lightsConfigured = false;
 }
 
 void Scene::setLightPosition(const char *light, Graphics::Vector3d pos) {
@@ -570,6 +577,7 @@ void Scene::setLightPosition(const char *light, Graphics::Vector3d pos) {
 		Light &l = _lights[i];
 		if (l._name == light) {
 			l._pos = pos;
+			_lightsConfigured = false;
 			return;
 		}
 	}
@@ -578,6 +586,7 @@ void Scene::setLightPosition(const char *light, Graphics::Vector3d pos) {
 void Scene::setLightPosition(int light, Graphics::Vector3d pos) {
 	Light &l = _lights[light];
 	l._pos = pos;
+	_lightsConfigured = false;
 }
 
 void Scene::setSoundPosition(const char *soundName, Graphics::Vector3d pos) {
