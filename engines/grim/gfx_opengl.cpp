@@ -26,11 +26,6 @@
 #undef ARRAYSIZE
 #endif
 
-#ifdef SDL_BACKEND
-// We need SDL.h for SDL_GL_GetProcAddress.
-#include "backends/platform/sdl/sdl-sys.h"
-#endif
-
 #include "common/endian.h"
 #include "common/system.h"
 
@@ -44,7 +39,12 @@
 #include "engines/grim/bitmap.h"
 #include "engines/grim/primitives.h"
 
+#ifdef USE_OPENGL
+
 #if defined(SDL_BACKEND)
+
+// We need SDL.h for SDL_GL_GetProcAddress.
+#include "backends/platform/sdl/sdl-sys.h"
 
 // Extension functions needed for fragment programs.
 PFNGLGENPROGRAMSARBPROC glGenProgramsARB;
@@ -53,8 +53,6 @@ PFNGLPROGRAMSTRINGARBPROC glProgramStringARB;
 PFNGLDELETEPROGRAMSARBPROC glDeleteProgramsARB;
 
 #endif
-
-#ifdef USE_OPENGL
 
 namespace Grim {
 
@@ -119,6 +117,9 @@ void GfxOpenGL::initExtensions()
 		void* obj_ptr;
 		void (APIENTRY *func_ptr)();
 	} u;
+	// We're casting from an object pointer to a function pointer, the
+	// sizes need to be the same for this to work.
+	assert(sizeof(u.obj_ptr) == sizeof(u.func_ptr));
 	u.obj_ptr = SDL_GL_GetProcAddress("glGenProgramsARB");
 	glGenProgramsARB = (PFNGLGENPROGRAMSARBPROC)u.func_ptr;
 	u.obj_ptr = SDL_GL_GetProcAddress("glBindProgramARB");
