@@ -609,6 +609,10 @@ void GfxTinyGL::setupLight(Scene::Light *light, int lightId) {
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_DIFFUSE, lightColor);
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_POSITION, lightPos);
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_SPOT_DIRECTION, lightDir);
+		/* FIXME: TGL_SPOT_CUTOFF should be light->_penumbraangle, but there
+		   seems to be a bug in tinygl as it renders differently from OpenGL.
+		   Reproducing: turn off all lights (comment out), go to scene "al",
+		   and walk along left wall under the lamp. */
 		tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_CUTOFF, 90);
 		tglEnable(TGL_LIGHT0 + lightId);
 	} else {
