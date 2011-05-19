@@ -20,10 +20,13 @@
  *
  */
 
+#include "portdefs.h"
 #include "backends/modular-backend.h"
 #include "base/main.h"
+#include "backends/mutex/mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
+#include "backends/events/default/default-events.h"
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/graphics/opengl/opengl-graphics.h"
 #include "audio/mixer_intern.h"
@@ -42,47 +45,76 @@ using namespace Osp::Base::Runtime;
 
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 
-class BadaGraphicsManager : public OpenGLGraphicsManager {
-public:
-	BadaGraphicsManager() : OpenGLGraphicsManager() {
-  }
+// BadaGraphicsManager
 
-  ~BadaGraphicsManager() {
-  }
-  
-  void setInternalMousePosition(int x, int y) {
-  }
+struct BadaGraphicsManager : public OpenGLGraphicsManager {
+  void setInternalMousePosition(int x, int y);
 };
 
-class OSystemBada : public ModularBackend, public IRunnable {
+void BadaGraphicsManager::setInternalMousePosition(int x, int y) {
+}
+
+// BadaMutexManager
+
+struct BadaMutexManager : public MutexManager {
+	OSystem::MutexRef createMutex();
+  void lockMutex(OSystem::MutexRef mutex);
+  void unlockMutex(OSystem::MutexRef mutex);
+  void deleteMutex(OSystem::MutexRef mutex);
+};
+
+OSystem::MutexRef BadaMutexManager::createMutex() {
+  return (OSystem::MutexRef) new Mutex();
+}
+
+void BadaMutexManager::lockMutex(OSystem::MutexRef mutex) {
+  Mutex* m = (Mutex*) mutex;
+  m->Acquire();
+}
+
+void BadaMutexManager::unlockMutex(OSystem::MutexRef mutex) {
+  Mutex* m = (Mutex*) mutex;
+  m->Release();
+}
+
+void BadaMutexManager::deleteMutex(OSystem::MutexRef mutex) {
+  Mutex* m = (Mutex*) mutex;
+  delete m;
+}
+
+// BadaSystem
+
+class BadaSystem : public ModularBackend, public IRunnable {
 public:
-  OSystemBada();
-  ~OSystemBada();
+  BadaSystem();
+  ~BadaSystem();
 
   result Construct();
   Object* Run();
 
   void initBackend();
-  bool pollEvent(Common::Event &event);
+  //bool pollEvent(Common::Event &event);
   uint32 getMillis();
   void delayMillis(uint msecs);
   void getTimeAndDate(TimeDate &t) const;
+  void fatalError();
+  void logMessage(LogMessageType::Type type, const char *message);
 
-  Common::SeekableReadStream *createConfigReadStream();
-  Common::WriteStream *createConfigWriteStream();
+  Common::SeekableReadStream* createConfigReadStream();
+  Common::WriteStream* createConfigWriteStream();
 
 private:
   Thread* pThread;
 };
 
 //
-// OSystemBada constructor
+// BadaSystem constructor
 //
-OSystemBada::OSystemBada() {
+BadaSystem::BadaSystem() {
   Construct();
 }
 
-result OSystemBada::Construct(void) {
+result BadaSystem::Construct(void) {
   pThread = new Thread;
   if (pThread == null) {
     return E_OUT_OF_MEMORY;
@@ -96,21 +128,21 @@ result OSystemBada::Construct(void) {
   return r;
 }
 
-OSystemBada::~OSystemBada() {
+BadaSystem::~BadaSystem() {
   delete pThread;
 }
 
-Object* OSystemBada::Run(void) {
-  int res = scummvm_main(0, 0);
+Object* BadaSystem::Run(void) {
+  scummvm_main(0, 0);
   delete this;
 	return null;
 }
 
-void OSystemBada::initBackend() {
+void BadaSystem::initBackend() {
   _fsFactory = new BADAFilesystemFactory();
-  //  _mutexManager = (MutexManager*) new NullMutexManager();
-  //_timerManager = new DefaultTimerManager();
-  //_eventManager = new DefaultEventManager(this);
+  _mutexManager = new BadaMutexManager();
+  _timerManager = new DefaultTimerManager();
+  //  _eventManager = new DefaultEventManager(this);
   _savefileManager = new DefaultSaveFileManager();
   _graphicsManager = (GraphicsManager*) new BadaGraphicsManager();
   _audiocdManager = (AudioCDManager*) new DefaultAudioCDManager();
@@ -120,27 +152,45 @@ void OSystemBada::initBackend() {
   OSystem::initBackend();
 }
 
-bool OSystemBada::pollEvent(Common::Event &event) {
-  return false;
-}
+//bool BadaSystem::pollEvent(Common::Event &event) {
+// return false;
+//}
 
-uint32 OSystemBada::getMillis() {
+uint32 BadaSystem::getMillis() {
   return 0;
 }
 
-void OSystemBada::delayMillis(uint msecs) {
+void BadaSystem::delayMillis(uint msecs) {
   Thread::Sleep(msecs);
 }
 
-void OSystemBada::getTimeAndDate(TimeDate &t) const {
+void BadaSystem::getTimeAndDate(TimeDate &td) const {
+  DateTime currentTime;
+
+  if (E_SUCCESS == Osp::System::SystemTime::GetCurrentTime(currentTime)) {
+    td.tm_sec = currentTime.GetSecond();
+    td.tm_min = currentTime.GetMinute();
+    td.tm_hour = currentTime.GetHour();
+    td.tm_mday = currentTime.GetDay();
+    td.tm_mon = currentTime.GetMonth();
+    td.tm_year = currentTime.GetYear();
+  }
 }
 
-Common::SeekableReadStream *OSystemBada::createConfigReadStream() {
+void BadaSystem::fatalError() {
+  
+}
+
+void BadaSystem::logMessage(LogMessageType::Type type, const char *message) {
+  
+}
+
+Common::SeekableReadStream* BadaSystem::createConfigReadStream() {
   Common::FSNode file(DEFAULT_CONFIG_FILE);
   return file.createReadStream();
 }
 
-Common::WriteStream *OSystemBada::createConfigWriteStream() {
+Common::WriteStream* BadaSystem::createConfigWriteStream() {
   Common::FSNode file(DEFAULT_CONFIG_FILE);
   return file.createWriteStream();
 }
@@ -149,8 +199,8 @@ Common::WriteStream *OSystemBada::createConfigWriteStream() {
 //
 //
 void systemStart() {
-  g_system = new OSystemBada();
-  assert(g_system);
+  g_system = new BadaSystem();
+  
 }
 
 //
@@ -165,3 +215,8 @@ void systemStop() {
 void systemPostEvent() {
 }
 
+void debugAssert(bool assertion) {
+  if (!assertion) {
+    g_system->fatalError();
+  }
+}

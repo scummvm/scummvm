@@ -19,22 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// Re-enable some forbidden symbols to avoid clashes with stat.h and unistd.h.
-// Also with clock() in sys/time.h in some Mac OS X SDKs.
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
-#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
-
+#include "portdefs.h"
 #include "fs.h"
 #include "backends/fs/stdiostream.h"
 #include "common/algorithm.h"
 
-#include <sys/param.h>
-#include <sys/stat.h>
-#include <stdio.h>
-
 void BADAFilesystemNode::setFlags() {
-	struct stat st;
+	//struct stat st;
 
   //	_isValid = (0 == stat(_path.c_str(), &st));
 	//_isDirectory = _isValid ? S_ISDIR(st.st_mode) : false;

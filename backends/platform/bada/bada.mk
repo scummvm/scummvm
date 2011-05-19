@@ -9,6 +9,5 @@
 #MODULE_DIRS += $(sort $(dir $(MODULE_OBJS)))
 
 $(EXECUTABLE): $(OBJS)
-	ar cru $@ $(OBJS)
-	ranlib $@
-
+	rm -f $@ 
+	ar Tru $@ $(OBJS)

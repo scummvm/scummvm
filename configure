@@ -3290,7 +3290,6 @@ case $_backend in
 		;;
 	bada)
     # dirent.h not available. ensure portdefs.h is included
-    DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
     DEFINES="$DEFINES -DDISABLE_POSIX_FS -DNONSTANDARD_PORT"
     DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
     INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/bada '
