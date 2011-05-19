@@ -517,7 +517,7 @@ void L1_GetActorSector() {
 
 	Actor *actor = getactor(actorObj);
 	Sector::SectorType sectorType = (Sector::SectorType)(int)lua_getnumber(typeObj);
-	Graphics::Vector3d pos = actor->getDestPos();
+	Graphics::Vector3d pos = actor->getPos();
 	Sector *result = g_grim->getCurrScene()->findPointSector(pos, sectorType);
 	if (result) {
 		lua_pushnumber(result->getSectorId());

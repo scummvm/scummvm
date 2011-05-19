@@ -469,29 +469,17 @@ void Actor::setRot(float pitchParam, float yawParam, float rollParam) {
 void Actor::setPos(Graphics::Vector3d position) {
 	_walking = false;
 	_pos = position;
+
+	// Don't allow positions outside the sectors.
+	// This is necessary after solving the tree pump puzzle, when the bone
+	// wagon returns to the signopost set.
+	if (_constrain && !_walking) {
+		g_grim->getCurrScene()->findClosestSector(_pos, NULL, &_pos);
+	}
 }
 
-// When the actor is walking report where the actor is going to and
-// not the actual current position, this fixes some scene change
-// change issues with the Bone Wagon (along with other fixes)
 Graphics::Vector3d Actor::getPos() const {
-	// NOTE: These commented out lines break the "su" set, like explained
-	// at https://github.com/residual/residual/issues/11 . According to the
-	// above comment they however fix some issues. Since i don't know what
-	// issues is it talking about, i'm commenting them anyway and we'll
-	// see what happens.
-
-// 	if (_walking)
-// 		return _destPos;
-// 	else
-		return _pos;
-}
-
-Graphics::Vector3d Actor::getDestPos() const {
-	if (_walking)
-		return _destPos;
-	else
-		return _pos;
+	return _pos;
 }
 
 void Actor::turnTo(float pitchParam, float yawParam, float rollParam) {
