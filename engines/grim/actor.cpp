@@ -930,6 +930,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	}
 	_sayLineText->createBitmap();
 	g_grim->registerTextObject(_sayLineText);
+	g_grim->setCurrentTextObject(_sayLineText);
 }
 
 bool Actor::isTalking() {
