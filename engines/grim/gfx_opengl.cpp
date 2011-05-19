@@ -105,7 +105,7 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	_currentShadowArray = NULL;
 
-	GLfloat ambientSource[] = { 0.6f, 0.6f, 0.6f, 1.0f };
+	GLfloat ambientSource[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientSource);
 
 	glPolygonOffset(-6.0, -6.0);
