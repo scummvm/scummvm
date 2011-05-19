@@ -121,10 +121,18 @@ void GfxOpenGL::initExtensions()
 {
 #ifdef GL_ARB_fragment_program
 #ifdef SDL_BACKEND
-	glGenProgramsARB = (PFNGLGENPROGRAMSARBPROC)SDL_GL_GetProcAddress("glGenProgramsARB");
-	glBindProgramARB = (PFNGLBINDPROGRAMARBPROC)SDL_GL_GetProcAddress("glBindProgramARB");
-	glProgramStringARB = (PFNGLPROGRAMSTRINGARBPROC)SDL_GL_GetProcAddress("glProgramStringARB");
-	glDeleteProgramsARB = (PFNGLDELETEPROGRAMSARBPROC)SDL_GL_GetProcAddress("glDeleteProgramsARB");
+	union {
+		void* obj_ptr;
+		void (APIENTRY *func_ptr)();
+	} u;
+	u.obj_ptr = SDL_GL_GetProcAddress("glGenProgramsARB");
+	glGenProgramsARB = (PFNGLGENPROGRAMSARBPROC)u.func_ptr;
+	u.obj_ptr = SDL_GL_GetProcAddress("glBindProgramARB");
+	glBindProgramARB = (PFNGLBINDPROGRAMARBPROC)u.func_ptr;
+	u.obj_ptr = SDL_GL_GetProcAddress("glProgramStringARB");
+	glProgramStringARB = (PFNGLPROGRAMSTRINGARBPROC)u.func_ptr;
+	u.obj_ptr = SDL_GL_GetProcAddress("glDeleteProgramsARB");
+	glDeleteProgramsARB = (PFNGLDELETEPROGRAMSARBPROC)u.func_ptr;
 #elif defined(WIN32)
 	glGenProgramsARB = (PFNGLGENPROGRAMSARBPROC)wglGetProcAddress("glGenProgramsARB");
 	glBindProgramARB = (PFNGLBINDPROGRAMARBPROC)wglGetProcAddress("glBindProgramARB");
