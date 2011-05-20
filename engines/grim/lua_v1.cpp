@@ -648,6 +648,7 @@ void L1_MakeCurrentSet() {
 	lua_Object nameObj = lua_getparam(1);
 	if (!lua_isstring(nameObj)) {
 		// TODO setting current set null
+		warning("L1_MakeCurrentSet: implement missing case");
 		return;
 	}
 

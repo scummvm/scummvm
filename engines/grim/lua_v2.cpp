@@ -66,19 +66,15 @@ void L2_DimScreen() {
 	warning("L2_DimScreen: dim: %d", dim);
 }
 
-void L2_MakeCurrentSet() {
-	// TODO
-	warning("L2_MakeCurrentSet");
-}
-
 void L2_MakeCurrentSetup() {
-	// TODO
-	warning("L2_MakeCurrentSetup");
-}
-
-void L2_GetCurrentSetup() {
-	// TODO
-	warning("L2_GetCurrentSetup");
+	lua_Object setupObj = lua_getparam(1);
+	if (lua_isnumber(setupObj)) {
+		int num = (int)lua_getnumber(setupObj);
+		g_grim->makeCurrentSetup(num);
+	} else if (lua_isstring(setupObj)) {
+		const char *setupName = lua_getstring(setupObj);
+		error("L2_MakeCurrentSetup: Not implemented case: setup: %s", setupName);
+	}
 }
 
 void L2_SetActorGlobalAlpha() {
@@ -779,11 +775,11 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "PrintError", L1_PrintDebug },
 	{ "PrintWarning", L1_PrintDebug },
 	{ "PrintDebug", L1_PrintDebug },
-	{ "MakeCurrentSet", L2_MakeCurrentSet },
+	{ "MakeCurrentSet", L1_MakeCurrentSet },
 	{ "LockSet", L2_LockSet },
 	{ "UnLockSet", L2_UnLockSet },
 	{ "MakeCurrentSetup", L2_MakeCurrentSetup },
-	{ "GetCurrentSetup", L2_GetCurrentSetup },
+	{ "GetCurrentSetup", L1_GetCurrentSetup },
 	{ "NextSetup", L2_NextSetup },
 	{ "PreviousSetup", L2_PreviousSetup },
 	{ "StartMovie", L2_StartMovie },
