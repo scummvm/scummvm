@@ -73,8 +73,8 @@ public:
 	bool endOfData() const;
 	int getRate() const;
 
-	void lock();
-	void unlock();
+	void mutexLock();
+	void mutexUnlock();
 
 protected:
 	void deinit();

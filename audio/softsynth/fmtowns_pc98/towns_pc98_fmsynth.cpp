@@ -1147,7 +1147,7 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 
 	bool locked = false;
 	if (_ready) {
-		lock();
+		mutexLock();
 		locked = true;
 	}
 
@@ -1201,7 +1201,7 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 	}
 
 	if (locked)
-		unlock();
+		mutexUnlock();
 
 	delete[] tmpStart;
 
@@ -1220,11 +1220,11 @@ int TownsPC98_FmSynth::getRate() const {
 	return _mixer->getOutputRate();
 }
 
-void TownsPC98_FmSynth::lock() {
+void TownsPC98_FmSynth::mutexLock() {
 	_mutex.lock();
 }
 
-void TownsPC98_FmSynth::unlock() {
+void TownsPC98_FmSynth::mutexUnlock() {
 	_mutex.unlock();
 }
 

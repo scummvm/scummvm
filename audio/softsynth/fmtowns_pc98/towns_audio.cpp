@@ -1890,9 +1890,9 @@ void TownsAudioInterface::setSoundEffectChanMask(int mask) {
 }
 
 void TownsAudioInterface::lockInternal() {
-	_intf->lock();
+	_intf->mutexLock();
 }
 
 void TownsAudioInterface::unlockInternal() {
-	_intf->unlock();
+	_intf->mutexUnlock();
 }
