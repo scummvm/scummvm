@@ -234,6 +234,11 @@ void sort(T first, T last) {
 	sort(first, last, Common::Less<typename T::ValueType>());
 }
 
+// MSVC is complaining about the minus operator being applied to an unsigned type
+// We disable this warning for the affected section of code
+#pragma warning(push)
+#pragma warning(disable: 4146)
+
 /**
  * Euclid's algorithm to compute the greatest common divisor.
  */
@@ -255,6 +260,8 @@ T gcd(T a, T b) {
 
 	return b;
 }
+
+#pragma warning(pop)
 
 } // End of namespace Common
 #endif
