@@ -25,8 +25,6 @@
 #include "common/textconsole.h"
 #include "common/system.h"
 
-enum EnvelopeState;
-
 class TownsMidiOutputChannel {
 friend class TownsMidiInputChannel;
 public:
