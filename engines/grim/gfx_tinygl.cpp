@@ -574,7 +574,7 @@ void GfxTinyGL::setupLight(Scene::Light *light, int lightId) {
 	tglEnable(TGL_LIGHTING);
 	float lightColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	float lightPos[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	float lightDir[] = { 0.0f, 0.0f, 0.0f };
+	float lightDir[] = { 0.0f, 0.0f, -1.0f };
 
 	float intensity = light->_intensity / 1.3f;
 	lightColor[0] = ((float)light->_color.getRed() / 15.0f) * intensity;
