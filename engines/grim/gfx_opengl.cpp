@@ -537,6 +537,7 @@ void GfxOpenGL::setupLight(Scene::Light *light, int lightId) {
 	float lightColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	float lightPos[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	float lightDir[] = { 0.0f, 0.0f, -1.0f };
+	float cutoff = 180.0f;
 
 	float intensity = light->_intensity / 1.3f;
 	lightColor[0] = ((float)light->_color.getRed() / 15.0f) * intensity;
@@ -547,35 +548,29 @@ void GfxOpenGL::setupLight(Scene::Light *light, int lightId) {
 		lightPos[0] = light->_pos.x();
 		lightPos[1] = light->_pos.y();
 		lightPos[2] = light->_pos.z();
-		glDisable(GL_LIGHT0 + lightId);
-		glLightfv(GL_LIGHT0 + lightId, GL_DIFFUSE, lightColor);
-		glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
-		glEnable(GL_LIGHT0 + lightId);
 	} else if (light->_type == "direct") {
-		glDisable(GL_LIGHT0 + lightId);
 		lightPos[0] = -light->_dir.x();
 		lightPos[1] = -light->_dir.y();
 		lightPos[2] = -light->_dir.z();
 		lightPos[3] = 0;
-		glLightfv(GL_LIGHT0 + lightId, GL_DIFFUSE, lightColor);
-		glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
-		glEnable(GL_LIGHT0 + lightId);
 	} else if (light->_type == "spot") {
-		glDisable(GL_LIGHT0 + lightId);
 		lightPos[0] = light->_pos.x();
 		lightPos[1] = light->_pos.y();
 		lightPos[2] = light->_pos.z();
 		lightDir[0] = light->_dir.x();
 		lightDir[1] = light->_dir.y();
 		lightDir[2] = light->_dir.z();
-		glLightfv(GL_LIGHT0 + lightId, GL_DIFFUSE, lightColor);
-		glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
-		glLightfv(GL_LIGHT0 + lightId, GL_SPOT_DIRECTION, lightDir);
-		glLightf(GL_LIGHT0 + lightId, GL_SPOT_CUTOFF, light->_penumbraangle);
-		glEnable(GL_LIGHT0 + lightId);
+		cutoff = light->_penumbraangle;
 	} else {
 		error("Scene::setupLights() Unknown type of light: %s", light->_type.c_str());
+		return;
 	}
+	glDisable(GL_LIGHT0 + lightId);
+	glLightfv(GL_LIGHT0 + lightId, GL_DIFFUSE, lightColor);
+	glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
+	glLightfv(GL_LIGHT0 + lightId, GL_SPOT_DIRECTION, lightDir);
+	glLightf(GL_LIGHT0 + lightId, GL_SPOT_CUTOFF, cutoff);
+	glEnable(GL_LIGHT0 + lightId);
 }
 
 #define BITMAP_TEXTURE_SIZE 256
