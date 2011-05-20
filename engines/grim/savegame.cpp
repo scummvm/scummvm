@@ -146,6 +146,16 @@ uint32 SaveGame::readLEUint32() {
 	return data;
 }
 
+uint16 SaveGame::readLEUint16() {
+	if (_saving)
+		error("SaveGame::readBlock called when storing a savegame");
+	if (_currentSection == 0)
+		error("Tried to read a block without starting a section");
+	uint16 data = READ_LE_UINT16(&_sectionBuffer[_sectionPtr]);
+	_sectionPtr += 2;
+	return data;
+}
+
 int32 SaveGame::readLESint32() {
 	if (_saving)
 		error("SaveGame::readBlock called when storing a savegame");
@@ -208,6 +218,18 @@ void SaveGame::writeLEUint32(uint32 data) {
 
 	WRITE_LE_UINT32(&_sectionBuffer[_sectionSize], data);
 	_sectionSize += 4;
+}
+
+void SaveGame::writeLEUint16(uint16 data) {
+	if (!_saving)
+		error("SaveGame::writeBlock called when restoring a savegame");
+	if (_currentSection == 0)
+		error("Tried to write a block without starting a section");
+
+	checkAlloc(2);
+
+	WRITE_LE_UINT16(&_sectionBuffer[_sectionSize], data);
+	_sectionSize += 2;
 }
 
 void SaveGame::writeLESint32(int32 data) {

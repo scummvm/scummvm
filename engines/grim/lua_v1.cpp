@@ -890,7 +890,6 @@ void L1_GetCurrentScript() {
 
 void L1_GetSaveGameImage() {
 	int width = 250, height = 188;
-	char *data;
 	Bitmap *screenshot;
 	int dataSize;
 
@@ -906,9 +905,11 @@ void L1_GetSaveGameImage() {
 		return;
 	}
 	dataSize = savedState->beginSection('SIMG');
-	data = new char[dataSize];
-	savedState->read(data, dataSize);
-	screenshot = g_grim->registerBitmap(data, width, height, "screenshot");
+	uint16 *data = new uint16[dataSize / 2];
+	for (int l = 0; l < dataSize / 2; l++) {
+		data[l] = savedState->readLEUint16();
+	}
+	screenshot = g_grim->registerBitmap((char *)data, width, height, "screenshot");
 	if (screenshot) {
 		lua_pushusertag(screenshot->getId(), MKTAG('V','B','U','F'));
 	} else {

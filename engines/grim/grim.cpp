@@ -1405,10 +1405,12 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	g_grim->setMode(mode);
 	state->beginSection('SIMG');
 	if (screenshot) {
-		int size = screenshot->getWidth() * screenshot->getHeight() * sizeof(uint16);
+		int size = screenshot->getWidth() * screenshot->getHeight();
 		screenshot->setNumber(0);
-		char *data = screenshot->getData();
-		state->write(data, size);
+		uint16 *data = (uint16 *)screenshot->getData();
+		for (int l = 0; l < size; l++) {
+			state->writeLEUint16(data[l]);
+		}
 	} else {
 		error("Unable to store screenshot");
 	}
