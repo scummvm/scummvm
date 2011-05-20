@@ -581,11 +581,14 @@ Player_Towns_v2::Player_Towns_v2(ScummEngine *vm, Audio::Mixer *mixer, IMuse *im
 }
 
 Player_Towns_v2::~Player_Towns_v2() {
-	delete _intf;
-	_intf = 0;
-
+	// Avoid lockup in imuse.cpp, line 78
+	_intf->lockInternal();
 	if (_imuseDispose)
 		delete _imuse;
+	_intf->unlockInternal();
+
+	delete _intf;
+	_intf = 0;
 
 	delete[] _sblData;
 	delete[] _soundOverride;

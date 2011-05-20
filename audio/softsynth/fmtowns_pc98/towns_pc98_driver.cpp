@@ -1145,7 +1145,7 @@ void TownsPC98_AudioDriver::loadMusicData(uint8 *data, bool loadPaused) {
 
 	reset();
 
-	lock();
+	Common::StackLock lock(_mutex);
 	uint8 *src_a = _trackPtr = _musicBuffer = data;
 
 	for (uint8 i = 0; i < 3; i++) {
@@ -1176,7 +1176,6 @@ void TownsPC98_AudioDriver::loadMusicData(uint8 *data, bool loadPaused) {
 	_finishedChannelsFlag = _finishedSSGFlag = _finishedRhythmFlag = 0;
 
 	_musicPlaying = (loadPaused ? false : true);
-	unlock();
 }
 
 void TownsPC98_AudioDriver::loadSoundEffectData(uint8 *data, uint8 trackNum) {
@@ -1195,17 +1194,16 @@ void TownsPC98_AudioDriver::loadSoundEffectData(uint8 *data, uint8 trackNum) {
 		return;
 	}
 
-	lock();
+	Common::StackLock lock(_mutex);
 	_sfxData = _sfxBuffer = data;
 	_sfxOffsets[0] = READ_LE_UINT16(&_sfxData[(trackNum << 2)]);
 	_sfxOffsets[1] = READ_LE_UINT16(&_sfxData[(trackNum << 2) + 2]);
 	_sfxPlaying = true;
 	_finishedSfxFlag = 0;
-	unlock();
 }
 
 void TownsPC98_AudioDriver::reset() {
-	lock();
+	Common::StackLock lock(_mutex);
 
 	_musicPlaying = false;
 	_sfxPlaying = false;
@@ -1232,7 +1230,6 @@ void TownsPC98_AudioDriver::reset() {
 	if (_rhythmChannel)
 		_rhythmChannel->reset();
 #endif
-	unlock();
 }
 
 void TownsPC98_AudioDriver::fadeStep() {
@@ -1260,6 +1257,57 @@ void TownsPC98_AudioDriver::fadeStep() {
 	} else {
 		if (!--_fading)
 			reset();
+	}
+}
+
+void TownsPC98_AudioDriver::pause() {
+	_musicPlaying = false;
+}
+	
+void TownsPC98_AudioDriver::cont() {
+	_musicPlaying = true;
+}
+
+bool TownsPC98_AudioDriver::looping() {
+	return _looping == _updateChannelsFlag ? true : false;
+}
+
+bool TownsPC98_AudioDriver::musicPlaying() {
+	return _musicPlaying;
+}
+
+void TownsPC98_AudioDriver::setMusicVolume(int volume) {
+	_musicVolume = volume;
+	setVolumeIntern(_musicVolume, _sfxVolume);
+}
+
+void TownsPC98_AudioDriver::setSoundEffectVolume(int volume) {
+	_sfxVolume = volume;
+	setVolumeIntern(_musicVolume, _sfxVolume);
+}
+
+void TownsPC98_AudioDriver::timerCallbackA() {
+	if (_sfxChannels && _sfxPlaying) {
+		if (_sfxData)
+			startSoundEffect();
+
+		_sfxOffs = 3;
+		_trackPtr = _sfxBuffer;
+
+		for (int i = 0; i < 2; i++) {
+			if (_updateSfxFlag & _sfxChannels[i]->_idFlag) {
+				_sfxChannels[i]->processEvents();
+				_sfxChannels[i]->processFrequency();
+			}
+		}
+
+		_trackPtr = _musicBuffer;
+	}
+
+	if (_updateSfxFlag && _finishedSfxFlag == _updateSfxFlag) {
+		_sfxPlaying = false;
+		_updateSfxFlag = 0;
+		setVolumeChannelMasks(-1, 0);
 	}
 }
 
@@ -1296,42 +1344,6 @@ void TownsPC98_AudioDriver::timerCallbackB() {
 		_musicPlaying = false;
 }
 
-void TownsPC98_AudioDriver::timerCallbackA() {
-	if (_sfxChannels && _sfxPlaying) {
-		if (_sfxData)
-			startSoundEffect();
-
-		_sfxOffs = 3;
-		_trackPtr = _sfxBuffer;
-
-		for (int i = 0; i < 2; i++) {
-			if (_updateSfxFlag & _sfxChannels[i]->_idFlag) {
-				_sfxChannels[i]->processEvents();
-				_sfxChannels[i]->processFrequency();
-			}
-		}
-
-		_trackPtr = _musicBuffer;
-	}
-
-	if (_updateSfxFlag && _finishedSfxFlag == _updateSfxFlag) {
-		_sfxPlaying = false;
-		_updateSfxFlag = 0;
-		setVolumeChannelMasks(-1, 0);
-	}
-}
-
-void TownsPC98_AudioDriver::setMusicTempo(uint8 tempo) {
-	writeReg(0, 0x26, tempo);
-	writeReg(0, 0x27, 0x33);
-}
-
-void TownsPC98_AudioDriver::setSfxTempo(uint16 tempo) {
-	writeReg(0, 0x24, tempo & 0xff);
-	writeReg(0, 0x25, tempo >> 8);
-	writeReg(0, 0x27, 0x33);
-}
-
 void TownsPC98_AudioDriver::startSoundEffect() {
 	int volFlags = 0;
 
@@ -1352,6 +1364,16 @@ void TownsPC98_AudioDriver::startSoundEffect() {
 	_sfxData = 0;
 }
 
+void TownsPC98_AudioDriver::setMusicTempo(uint8 tempo) {
+	writeReg(0, 0x26, tempo);
+	writeReg(0, 0x27, 0x33);
+}
+
+void TownsPC98_AudioDriver::setSfxTempo(uint16 tempo) {
+	writeReg(0, 0x24, tempo & 0xff);
+	writeReg(0, 0x25, tempo >> 8);
+	writeReg(0, 0x27, 0x33);
+}
 const uint8 TownsPC98_AudioDriver::_drvTables[] = {
 	//  channel presets
 	0x00, 0x80, 0x00, 0x00, 0x00, 0x01,

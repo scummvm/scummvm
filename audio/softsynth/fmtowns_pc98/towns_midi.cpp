@@ -835,19 +835,6 @@ const uint8 TownsMidiInputChannel::_programAdjustLevel[] = {
 MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer) : _timerProc(0), _timerProcPara(0), _channels(0), _out(0),
 	_chanState(0), _operatorLevelTable(0), _tickCounter1(0), _tickCounter2(0), _rand(1), _allocCurPos(0), _isOpen(false) {
 	_intf = new TownsAudioInterface(mixer, this);
-}
-
-MidiDriver_TOWNS::~MidiDriver_TOWNS() {
-	close();
-	delete _intf;
-}
-
-int MidiDriver_TOWNS::open() {
-	if (_isOpen)
-		return MERR_ALREADY_OPEN;
-
-	if (!_intf->init())
-		return MERR_CANNOT_CONNECT;
 
 	_channels = new TownsMidiInputChannel*[32];
 	for (int i = 0; i < 32; i++)
@@ -866,34 +853,12 @@ int MidiDriver_TOWNS::open() {
 	}
 	for (int i = 0; i < 64; i++)
 		_operatorLevelTable[i << 5] = 0;
-
-	_intf->callback(0);
-
-	_intf->callback(21, 255, 1);
-	_intf->callback(21, 0, 1);
-	_intf->callback(22, 255, 221);
-
-	_intf->callback(33, 8);
-	_intf->setSoundEffectChanMask(~0x3f);
-
-	 _tickCounter1 = _tickCounter2 = 0;
-	 _allocCurPos = 0;
-	 _rand = 1;
-
-	_isOpen = true;
-
-	return 0;
 }
 
-void MidiDriver_TOWNS::close() {
-	if (!_isOpen)
-		return;
+MidiDriver_TOWNS::~MidiDriver_TOWNS() {
+	close();
+	delete _intf;
 
-	_isOpen = false;
-
-	setTimerCallback(0, 0);
-	g_system->delayMillis(20);
-	
 	if (_channels) {
 		for (int i = 0; i < 32; i++)
 			delete _channels[i];
@@ -912,6 +877,39 @@ void MidiDriver_TOWNS::close() {
 	_chanState = 0;
 	delete[] _operatorLevelTable;
 	_operatorLevelTable = 0;
+}
+
+int MidiDriver_TOWNS::open() {
+	if (_isOpen)
+		return MERR_ALREADY_OPEN;
+
+	if (!_intf->init())
+		return MERR_CANNOT_CONNECT;
+
+	_intf->callback(0);
+
+	_intf->callback(21, 255, 1);
+	_intf->callback(21, 0, 1);
+	_intf->callback(22, 255, 221);
+
+	_intf->callback(33, 8);
+	_intf->setSoundEffectChanMask(~0x3f);
+
+	_allocCurPos = 0;
+
+	_isOpen = true;
+
+	return 0;
+}
+
+void MidiDriver_TOWNS::close() {
+	if (!_isOpen)
+		return;
+
+	_isOpen = false;
+
+	setTimerCallback(0, 0);
+	g_system->delayMillis(20);
 }
 
 void MidiDriver_TOWNS::send(uint32 b) {

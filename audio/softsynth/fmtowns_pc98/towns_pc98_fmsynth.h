@@ -69,15 +69,12 @@ public:
 
 	// AudioStream interface
 	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const {
-		return true;
-	}
-	bool endOfData() const {
-		return false;
-	}
-	int getRate() const {
-		return _mixer->getOutputRate();
-	}
+	bool isStereo() const;
+	bool endOfData() const;
+	int getRate() const;
+
+	void lock();
+	void unlock();
 
 protected:
 	void deinit();
@@ -102,12 +99,11 @@ protected:
 	void setVolumeIntern(int volA, int volB);
 	void setVolumeChannelMasks(int channelMaskA, int channelMaskB);
 
-	void lock();
-	void unlock();
-
 	const int _numChan;
 	const int _numSSG;
 	const bool _hasPercussion;
+
+	Common::Mutex _mutex;
 
 private:
 	void generateTables();
@@ -181,9 +177,6 @@ private:
 
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
-
-	int _lock;
-	Common::Mutex _mutex;
 
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
 	static const uint8 _percussionData[];

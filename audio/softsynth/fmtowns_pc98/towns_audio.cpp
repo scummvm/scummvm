@@ -30,7 +30,7 @@
 
 
 class TownsAudio_PcmChannel {
-friend class TownsAudioInterfaceIntern;
+friend class TownsAudioInterfaceInternal;
 public:
 	TownsAudio_PcmChannel();
 	~TownsAudio_PcmChannel();
@@ -80,7 +80,7 @@ private:
 };
 
 class TownsAudio_WaveTable {
-friend class TownsAudioInterfaceIntern;
+friend class TownsAudioInterfaceInternal;
 public:
 	TownsAudio_WaveTable();
 	~TownsAudio_WaveTable();
@@ -101,12 +101,12 @@ private:
 	int8 *data;
 };
 
-class TownsAudioInterfaceIntern : public TownsPC98_FmSynth {
+class TownsAudioInterfaceInternal : public TownsPC98_FmSynth {
 public:
-	TownsAudioInterfaceIntern(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver);
-	~TownsAudioInterfaceIntern();
+	TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver);
+	~TownsAudioInterfaceInternal();
 
-	static TownsAudioInterfaceIntern *addNewRef(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver);
+	static TownsAudioInterfaceInternal *addNewRef(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver);
 	static void releaseRef();
 	bool checkPluginDriver(TownsAudioInterfacePluginDriver *driver);
 
@@ -127,7 +127,7 @@ private:
 	void timerCallbackA();
 	void timerCallbackB();
 
-	typedef int (TownsAudioInterfaceIntern::*TownsAudioIntfCallback)(va_list &);
+	typedef int (TownsAudioInterfaceInternal::*TownsAudioIntfCallback)(va_list &);
 	const TownsAudioIntfCallback *_intfOpcodes;
 
 	int intf_reset(va_list &args);
@@ -223,9 +223,11 @@ private:
 	void pcmCalcPhaseStep(TownsAudio_PcmChannel *p, TownsAudio_WaveTable *w);
 
 	void updateOutputVolume();
+	void updateOutputVolumeInternal();
 	uint8 _outputVolumeFlags;
 	uint8 _outputLevel[16];
 	uint8 _outputMute[16];
+	bool _updateOutputVol;
 
 	const float _baserate;
 	uint32 _timerBase;
@@ -239,7 +241,7 @@ private:
 	TownsAudioInterfacePluginDriver *_drv;
 	bool _ready;
 
-	static TownsAudioInterfaceIntern *_refInstance;
+	static TownsAudioInterfaceInternal *_refInstance;
 	static int _refCount;
 
 	static const uint8 _chanFlags[];
@@ -250,15 +252,15 @@ private:
 	static const uint16 _pcmPhase2[];
 };
 
-TownsAudioInterfaceIntern::TownsAudioInterfaceIntern(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver) : TownsPC98_FmSynth(mixer, kTypeTowns),
+TownsAudioInterfaceInternal::TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver) : TownsPC98_FmSynth(mixer, kTypeTowns),
 	_fmInstruments(0), _pcmInstruments(0), _pcmChan(0), _waveTables(0), _waveTablesTotalDataSize(0),
 	_baserate(55125.0f / (float)mixer->getOutputRate()), _tickLength(0), _timer(0), _drv(driver),
 	_pcmSfxChanMask(0),	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume),
 	_outputVolumeFlags(0), _pcmChanOut(0), _pcmChanReserved(0), _pcmChanKeyPressed(0),
 	_pcmChanEffectPlaying(0), _pcmChanKeyPlaying(0), _fmChanPlaying(0), 
-	_numReservedChannels(0), _numWaveTables(0), _ready(false) {
+	_numReservedChannels(0), _numWaveTables(0), _updateOutputVol(false), _ready(false) {
 
-#define INTCB(x) &TownsAudioInterfaceIntern::intf_##x
+#define INTCB(x) &TownsAudioInterfaceInternal::intf_##x
 	static const TownsAudioIntfCallback intfCb[] = {
 		// 0
 		INTCB(reset),
@@ -381,7 +383,7 @@ TownsAudioInterfaceIntern::TownsAudioInterfaceIntern(Audio::Mixer *mixer, TownsA
 	_tickLength = 2 * _timerBase;
 }
 
-TownsAudioInterfaceIntern::~TownsAudioInterfaceIntern() {
+TownsAudioInterfaceInternal::~TownsAudioInterfaceInternal() {
 	_ready = false;
 	deinit();
 
@@ -393,19 +395,19 @@ TownsAudioInterfaceIntern::~TownsAudioInterfaceIntern() {
 	delete[] _pcmChan;
 }
 
-TownsAudioInterfaceIntern *TownsAudioInterfaceIntern::addNewRef(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver) {
+TownsAudioInterfaceInternal *TownsAudioInterfaceInternal::addNewRef(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver) {
 	_refCount++;
 	if (_refCount == 1 && _refInstance == 0)
-		_refInstance = new TownsAudioInterfaceIntern(mixer, driver);
+		_refInstance = new TownsAudioInterfaceInternal(mixer, driver);
 	else if (_refCount < 2 || _refInstance == 0)
-		error("TownsAudioInterfaceIntern::addNewRef(): Internal reference management failure");
+		error("TownsAudioInterfaceInternal::addNewRef(): Internal reference management failure");
 	else if (!_refInstance->checkPluginDriver(driver))
-		error("TownsAudioInterfaceIntern::addNewRef(): Plugin driver conflict");
+		error("TownsAudioInterfaceInternal::addNewRef(): Plugin driver conflict");
 
 	return _refInstance;
 }
 
-void TownsAudioInterfaceIntern::releaseRef() {
+void TownsAudioInterfaceInternal::releaseRef() {
 	if (!_refCount)
 		return;
 
@@ -417,7 +419,7 @@ void TownsAudioInterfaceIntern::releaseRef() {
 	}
 }
 
-bool TownsAudioInterfaceIntern::checkPluginDriver(TownsAudioInterfacePluginDriver *driver) {
+bool TownsAudioInterfaceInternal::checkPluginDriver(TownsAudioInterfacePluginDriver *driver) {
 	if (_refCount <= 1)
 		return true;
 
@@ -425,15 +427,13 @@ bool TownsAudioInterfaceIntern::checkPluginDriver(TownsAudioInterfacePluginDrive
 		if (driver && driver != _drv)
 			return false;
 	} else {
-		lock();
 		_drv = driver;
-		unlock();
 	}
 
 	return true;
 }
 
-bool TownsAudioInterfaceIntern::init() {
+bool TownsAudioInterfaceInternal::init() {
 	if (_ready)
 		return true;
 
@@ -457,7 +457,7 @@ bool TownsAudioInterfaceIntern::init() {
 	return true;
 }
 
-int TownsAudioInterfaceIntern::callback(int command, ...) {
+int TownsAudioInterfaceInternal::callback(int command, ...) {
 	if (!_ready)
 		return 1;
 
@@ -470,39 +470,41 @@ int TownsAudioInterfaceIntern::callback(int command, ...) {
 	return res;
 }
 
-int TownsAudioInterfaceIntern::processCommand(int command, va_list &args) {
+int TownsAudioInterfaceInternal::processCommand(int command, va_list &args) {
 	if (!_ready)
 		return 1;
 
 	if (command < 0 || command > 81)
 		return 4;
 	
-	lock();
+	Common::StackLock lock(_mutex);
 	int res = (this->*_intfOpcodes[command])(args);
-	unlock();
 
 	return res;
 }
 
-void TownsAudioInterfaceIntern::setMusicVolume(int volume) {
+void TownsAudioInterfaceInternal::setMusicVolume(int volume) {
 	_musicVolume = CLIP<uint16>(volume, 0, Audio::Mixer::kMaxMixerVolume);
 	setVolumeIntern(_musicVolume, _sfxVolume);
 }
 
-void TownsAudioInterfaceIntern::setSoundEffectVolume(int volume) {
+void TownsAudioInterfaceInternal::setSoundEffectVolume(int volume) {
 	_sfxVolume = CLIP<uint16>(volume, 0, Audio::Mixer::kMaxMixerVolume);
 	setVolumeIntern(_musicVolume, _sfxVolume);
 }
 
-void TownsAudioInterfaceIntern::setSoundEffectChanMask(int mask) {
+void TownsAudioInterfaceInternal::setSoundEffectChanMask(int mask) {
 	_pcmSfxChanMask = mask >> 6;
 	mask &= 0x3f;
 	setVolumeChannelMasks(~mask, mask);
 }
 
-void TownsAudioInterfaceIntern::nextTickEx(int32 *buffer, uint32 bufferSize) {
+void TownsAudioInterfaceInternal::nextTickEx(int32 *buffer, uint32 bufferSize) {
 	if (!_ready)
 		return;
+
+	if (_updateOutputVol)
+		updateOutputVolumeInternal();
 
 	for (uint32 i = 0; i < bufferSize; i++) {
 		_timer += _tickLength;
@@ -551,12 +553,12 @@ void TownsAudioInterfaceIntern::nextTickEx(int32 *buffer, uint32 bufferSize) {
 	}
 }
 
-void TownsAudioInterfaceIntern::timerCallbackA() {
+void TownsAudioInterfaceInternal::timerCallbackA() {
 	if (_drv && _ready)
 		_drv->timerCallback(0);
 }
 
-void TownsAudioInterfaceIntern::timerCallbackB() {
+void TownsAudioInterfaceInternal::timerCallbackB() {
 	if (_ready) {
 		if (_drv)
 			_drv->timerCallback(1);
@@ -564,62 +566,62 @@ void TownsAudioInterfaceIntern::timerCallbackB() {
 	}
 }
 
-int TownsAudioInterfaceIntern::intf_reset(va_list &args) {
+int TownsAudioInterfaceInternal::intf_reset(va_list &args) {
 	fmReset();
 	pcmReset();
 	callback(68);
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_keyOn(va_list &args) {
+int TownsAudioInterfaceInternal::intf_keyOn(va_list &args) {
 	int chan = va_arg(args, int);
 	int note = va_arg(args, int);
 	int velo = va_arg(args, int);
 	return (chan & 0x40) ? pcmKeyOn(chan, note, velo) : fmKeyOn(chan, note, velo);
 }
 
-int TownsAudioInterfaceIntern::intf_keyOff(va_list &args) {
+int TownsAudioInterfaceInternal::intf_keyOff(va_list &args) {
 	int chan = va_arg(args, int);
 	return (chan & 0x40) ? pcmKeyOff(chan) : fmKeyOff(chan);
 }
 
-int TownsAudioInterfaceIntern::intf_setPanPos(va_list &args) {
+int TownsAudioInterfaceInternal::intf_setPanPos(va_list &args) {
 	int chan = va_arg(args, int);
 	int mode = va_arg(args, int);
 	return (chan & 0x40) ? pcmSetPanPos(chan, mode) : fmSetPanPos(chan, mode);
 }
 
-int TownsAudioInterfaceIntern::intf_setInstrument(va_list &args) {
+int TownsAudioInterfaceInternal::intf_setInstrument(va_list &args) {
 	int chan = va_arg(args, int);
 	int instrId = va_arg(args, int);
 	return (chan & 0x40) ? pcmSetInstrument(chan, instrId) : fmSetInstrument(chan, instrId);
 }
 
-int TownsAudioInterfaceIntern::intf_loadInstrument(va_list &args) {
+int TownsAudioInterfaceInternal::intf_loadInstrument(va_list &args) {
 	int chanType = va_arg(args, int);
 	int instrId = va_arg(args, int);
 	uint8 *instrData = va_arg(args, uint8 *);
 	return (chanType & 0x40) ? pcmLoadInstrument(instrId, instrData) : fmLoadInstrument(instrId, instrData);
 }
 
-int TownsAudioInterfaceIntern::intf_setPitch(va_list &args) {
+int TownsAudioInterfaceInternal::intf_setPitch(va_list &args) {
 	int chan = va_arg(args, int);
 	int16 pitch = (int16)(va_arg(args, int) & 0xffff);
 	return (chan & 0x40) ? pcmSetPitch(chan, pitch) : fmSetPitch(chan, pitch);
 }
 
-int TownsAudioInterfaceIntern::intf_setLevel(va_list &args) {
+int TownsAudioInterfaceInternal::intf_setLevel(va_list &args) {
 	int chan = va_arg(args, int);
 	int lvl = va_arg(args, int);
 	return (chan & 0x40) ? pcmSetLevel(chan, lvl) : fmSetLevel(chan, lvl);
 }
 
-int TownsAudioInterfaceIntern::intf_chanOff(va_list &args) {
+int TownsAudioInterfaceInternal::intf_chanOff(va_list &args) {
 	int chan = va_arg(args, int);
 	return (chan & 0x40) ? pcmChanOff(chan) : fmChanOff(chan);
 }
 
-int TownsAudioInterfaceIntern::intf_writeReg(va_list &args) {
+int TownsAudioInterfaceInternal::intf_writeReg(va_list &args) {
 	int part = va_arg(args, int) ? 1 : 0;
 	int reg = va_arg(args, int);
 	int val = va_arg(args, int);
@@ -630,7 +632,7 @@ int TownsAudioInterfaceIntern::intf_writeReg(va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_writeRegBuffer(va_list &args) {
+int TownsAudioInterfaceInternal::intf_writeRegBuffer(va_list &args) {
 	int part = va_arg(args, int) ? 1 : 0;
 	int reg = va_arg(args, int);
 	int val = va_arg(args, int);
@@ -642,7 +644,7 @@ int TownsAudioInterfaceIntern::intf_writeRegBuffer(va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_readRegBuffer(va_list &args) {
+int TownsAudioInterfaceInternal::intf_readRegBuffer(va_list &args) {
 	int part = va_arg(args, int) ? 1 : 0;
 	int reg = va_arg(args, int);
 	uint8 *dst = va_arg(args, uint8 *);
@@ -655,7 +657,7 @@ int TownsAudioInterfaceIntern::intf_readRegBuffer(va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_setTimerA(va_list &args) {
+int TownsAudioInterfaceInternal::intf_setTimerA(va_list &args) {
 	int enable = va_arg(args, int);
 	int tempo = va_arg(args, int);
 
@@ -670,7 +672,7 @@ int TownsAudioInterfaceIntern::intf_setTimerA(va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_setTimerB(va_list &args) {
+int TownsAudioInterfaceInternal::intf_setTimerB(va_list &args) {
 	int enable = va_arg(args, int);
 	int tempo = va_arg(args, int);
 
@@ -684,17 +686,17 @@ int TownsAudioInterfaceIntern::intf_setTimerB(va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_enableTimerA(va_list &args) {
+int TownsAudioInterfaceInternal::intf_enableTimerA(va_list &args) {
 	bufferedWriteReg(0, 0x27, _fmSaveReg[0][0x27] | 0x15);
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_enableTimerB(va_list &args) {
+int TownsAudioInterfaceInternal::intf_enableTimerB(va_list &args) {
 	bufferedWriteReg(0, 0x27, _fmSaveReg[0][0x27] | 0x2a);
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_loadSamples(va_list &args) {
+int TownsAudioInterfaceInternal::intf_loadSamples(va_list &args) {
 	uint32 dest = va_arg(args, uint32);
 	int size = va_arg(args, int);
 	uint8 *src = va_arg(args, uint8*);
@@ -717,7 +719,7 @@ int TownsAudioInterfaceIntern::intf_loadSamples(va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_reserveEffectChannels(va_list &args) {
+int TownsAudioInterfaceInternal::intf_reserveEffectChannels(va_list &args) {
 	int numChan = va_arg(args, int);
 	if (numChan > 8)
 		return 3;
@@ -749,7 +751,7 @@ int TownsAudioInterfaceIntern::intf_reserveEffectChannels(va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_loadWaveTable(va_list &args) {
+int TownsAudioInterfaceInternal::intf_loadWaveTable(va_list &args) {
 	uint8 *data = va_arg(args, uint8 *);
 	if (_numWaveTables > 127)
 		return 3;
@@ -776,7 +778,7 @@ int TownsAudioInterfaceIntern::intf_loadWaveTable(va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_unloadWaveTable(va_list &args) {
+int TownsAudioInterfaceInternal::intf_unloadWaveTable(va_list &args) {
 	int id = va_arg(args, int);
 
 	if (id == -1) {
@@ -803,7 +805,7 @@ int TownsAudioInterfaceIntern::intf_unloadWaveTable(va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_pcmPlayEffect(va_list &args) {
+int TownsAudioInterfaceInternal::intf_pcmPlayEffect(va_list &args) {
 	int chan = va_arg(args, int);
 	int note = va_arg(args, int);
 	int velo = va_arg(args, int);
@@ -853,13 +855,13 @@ int TownsAudioInterfaceIntern::intf_pcmPlayEffect(va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_pcmChanOff(va_list &args) {
+int TownsAudioInterfaceInternal::intf_pcmChanOff(va_list &args) {
 	int chan = va_arg(args, int);
 	pcmChanOff(chan);
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_pcmEffectPlaying(va_list &args) {
+int TownsAudioInterfaceInternal::intf_pcmEffectPlaying(va_list &args) {
 	int chan = va_arg(args, int);
 	if (chan < 0x40 || chan > 0x47)
 		return 1;
@@ -867,54 +869,54 @@ int TownsAudioInterfaceIntern::intf_pcmEffectPlaying(va_list &args) {
 	return (_pcmChanEffectPlaying & _chanFlags[chan]) ? 1 : 0;
 }
 
-int TownsAudioInterfaceIntern::intf_fmKeyOn(va_list &args) {
+int TownsAudioInterfaceInternal::intf_fmKeyOn(va_list &args) {
 	int chan = va_arg(args, int);
 	int note = va_arg(args, int);
 	int velo = va_arg(args, int);
 	return fmKeyOn(chan, note, velo);
 }
 
-int TownsAudioInterfaceIntern::intf_fmKeyOff(va_list &args) {
+int TownsAudioInterfaceInternal::intf_fmKeyOff(va_list &args) {
 	int chan = va_arg(args, int);
 	return fmKeyOff(chan);
 }
 
-int TownsAudioInterfaceIntern::intf_fmSetPanPos(va_list &args) {
+int TownsAudioInterfaceInternal::intf_fmSetPanPos(va_list &args) {
 	int chan = va_arg(args, int);
 	int mode = va_arg(args, int);
 	return fmSetPanPos(chan, mode);
 }
 
-int TownsAudioInterfaceIntern::intf_fmSetInstrument(va_list &args) {
+int TownsAudioInterfaceInternal::intf_fmSetInstrument(va_list &args) {
 	int chan = va_arg(args, int);
 	int instrId = va_arg(args, int);
 	return fmSetInstrument(chan, instrId);
 }
 
-int TownsAudioInterfaceIntern::intf_fmLoadInstrument(va_list &args) {
+int TownsAudioInterfaceInternal::intf_fmLoadInstrument(va_list &args) {
 	int instrId = va_arg(args, int);
 	uint8 *instrData = va_arg(args, uint8 *);
 	return fmLoadInstrument(instrId, instrData);
 }
 
-int TownsAudioInterfaceIntern::intf_fmSetPitch(va_list &args) {
+int TownsAudioInterfaceInternal::intf_fmSetPitch(va_list &args) {
 	int chan = va_arg(args, int);
 	uint16 freq = va_arg(args, int) & 0xffff;
 	return fmSetPitch(chan, freq);
 }
 
-int TownsAudioInterfaceIntern::intf_fmSetLevel(va_list &args) {
+int TownsAudioInterfaceInternal::intf_fmSetLevel(va_list &args) {
 	int chan = va_arg(args, int);
 	int lvl = va_arg(args, int);
 	return fmSetLevel(chan, lvl);
 }
 
-int TownsAudioInterfaceIntern::intf_fmReset(va_list &args) {
+int TownsAudioInterfaceInternal::intf_fmReset(va_list &args) {
 	fmReset();
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_setOutputVolume(va_list &args) {
+int TownsAudioInterfaceInternal::intf_setOutputVolume(va_list &args) {
 	int chanType = va_arg(args, int);
 	int left = va_arg(args, int);
 	int right = va_arg(args, int);
@@ -951,14 +953,14 @@ int TownsAudioInterfaceIntern::intf_setOutputVolume(va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_resetOutputVolume(va_list &args) {
+int TownsAudioInterfaceInternal::intf_resetOutputVolume(va_list &args) {
 	memset(_outputLevel, 0, sizeof(_outputLevel));
 	_outputVolumeFlags = 0;
 	updateOutputVolume();
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_getOutputVolume(va_list &args) {
+int TownsAudioInterfaceInternal::intf_getOutputVolume(va_list &args) {
 	int chanType = va_arg(args, int);
 	int *left = va_arg(args, int*);
 	int *right = va_arg(args, int*);
@@ -978,7 +980,7 @@ int TownsAudioInterfaceIntern::intf_getOutputVolume(va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_setOutputMute(va_list &args) {
+int TownsAudioInterfaceInternal::intf_setOutputMute(va_list &args) {
 	int flags = va_arg(args, int);
 	_outputVolumeFlags = flags;
 	uint8 mute = flags & 3;
@@ -1007,31 +1009,31 @@ int TownsAudioInterfaceIntern::intf_setOutputMute(va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_cdaToggle(va_list &args) {
+int TownsAudioInterfaceInternal::intf_cdaToggle(va_list &args) {
 	//int mode = va_arg(args, int);
 	//_unkMask = mode ? 0x7f : 0x3f;
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_getOutputVolume2(va_list &args) {
+int TownsAudioInterfaceInternal::intf_getOutputVolume2(va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_getOutputMute (va_list &args) {
+int TownsAudioInterfaceInternal::intf_getOutputMute (va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_pcmUpdateEnvelopeGenerator(va_list &args) {
+int TownsAudioInterfaceInternal::intf_pcmUpdateEnvelopeGenerator(va_list &args) {
 	for (int i = 0; i < 8; i++)
 		pcmUpdateEnvelopeGenerator(i);
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::intf_notImpl(va_list &args) {
+int TownsAudioInterfaceInternal::intf_notImpl(va_list &args) {
 	return 4;
 }
 
-void TownsAudioInterfaceIntern::fmReset() {
+void TownsAudioInterfaceInternal::fmReset() {
 	TownsPC98_FmSynth::reset();
 
 	_fmChanPlaying = 0;
@@ -1059,7 +1061,7 @@ void TownsAudioInterfaceIntern::fmReset() {
 	}
 }
 
-int TownsAudioInterfaceIntern::fmKeyOn(int chan, int note, int velo) {
+int TownsAudioInterfaceInternal::fmKeyOn(int chan, int note, int velo) {
 	if (chan > 5)
 		return 1;
 	if (note < 12 || note > 107 || (velo & 0x80))
@@ -1139,7 +1141,7 @@ int TownsAudioInterfaceIntern::fmKeyOn(int chan, int note, int velo) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::fmKeyOff(int chan) {
+int TownsAudioInterfaceInternal::fmKeyOff(int chan) {
 	if (chan > 5)
 		return 1;
 	_fmChanPlaying &= ~_chanFlags[chan];
@@ -1149,7 +1151,7 @@ int TownsAudioInterfaceIntern::fmKeyOff(int chan) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::fmChanOff(int chan) {
+int TownsAudioInterfaceInternal::fmChanOff(int chan) {
 	if (chan > 5)
 		return 1;
 	_fmChanPlaying &= ~_chanFlags[chan];
@@ -1167,7 +1169,7 @@ int TownsAudioInterfaceIntern::fmChanOff(int chan) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::fmSetPanPos(int chan, int value) {
+int TownsAudioInterfaceInternal::fmSetPanPos(int chan, int value) {
 	if (chan > 5)
 		return 1;
 
@@ -1186,7 +1188,7 @@ int TownsAudioInterfaceIntern::fmSetPanPos(int chan, int value) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::fmSetInstrument(int chan, int instrId) {
+int TownsAudioInterfaceInternal::fmSetInstrument(int chan, int instrId) {
 	if (chan > 5)
 		return 1;
 	if (instrId > 127)
@@ -1230,7 +1232,7 @@ int TownsAudioInterfaceIntern::fmSetInstrument(int chan, int instrId) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::fmLoadInstrument(int instrId, const uint8 *data) {
+int TownsAudioInterfaceInternal::fmLoadInstrument(int instrId, const uint8 *data) {
 	if (instrId > 127)
 		return 3;
 	assert(data);
@@ -1238,7 +1240,7 @@ int TownsAudioInterfaceIntern::fmLoadInstrument(int instrId, const uint8 *data) 
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::fmSetPitch(int chan, int pitch) {
+int TownsAudioInterfaceInternal::fmSetPitch(int chan, int pitch) {
 	if (chan > 5)
 		return 1;
 
@@ -1325,7 +1327,7 @@ int TownsAudioInterfaceIntern::fmSetPitch(int chan, int pitch) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::fmSetLevel(int chan, int lvl) {
+int TownsAudioInterfaceInternal::fmSetLevel(int chan, int lvl) {
 	if (chan > 5)
 		return 1;
 	if (lvl > 127)
@@ -1348,12 +1350,12 @@ int TownsAudioInterfaceIntern::fmSetLevel(int chan, int lvl) {
 	return 0;
 }
 
-void TownsAudioInterfaceIntern::bufferedWriteReg(uint8 part, uint8 regAddress, uint8 value) {
+void TownsAudioInterfaceInternal::bufferedWriteReg(uint8 part, uint8 regAddress, uint8 value) {
 	_fmSaveReg[part][regAddress] = value;
 	writeReg(part, regAddress, value);
 }
 
-void TownsAudioInterfaceIntern::pcmReset() {
+void TownsAudioInterfaceInternal::pcmReset() {
 	_pcmChanOut = 0;
 	_pcmChanReserved = _pcmChanKeyPressed = _pcmChanEffectPlaying = _pcmChanKeyPlaying = 0;
 	_numReservedChannels = 0;
@@ -1381,7 +1383,7 @@ void TownsAudioInterfaceIntern::pcmReset() {
 	}
 }
 
-int TownsAudioInterfaceIntern::pcmKeyOn(int chan, int note, int velo) {
+int TownsAudioInterfaceInternal::pcmKeyOn(int chan, int note, int velo) {
 	if (chan < 0x40 || chan > 0x47)
 		return 1;
 
@@ -1452,7 +1454,7 @@ int TownsAudioInterfaceIntern::pcmKeyOn(int chan, int note, int velo) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::pcmKeyOff(int chan) {
+int TownsAudioInterfaceInternal::pcmKeyOff(int chan) {
 	if (chan < 0x40 || chan > 0x47)
 		return 1;
 
@@ -1462,7 +1464,7 @@ int TownsAudioInterfaceIntern::pcmKeyOff(int chan) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::pcmChanOff(int chan) {
+int TownsAudioInterfaceInternal::pcmChanOff(int chan) {
 	if (chan < 0x40 || chan > 0x47)
 		return 1;
 
@@ -1476,7 +1478,7 @@ int TownsAudioInterfaceIntern::pcmChanOff(int chan) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::pcmSetPanPos(int chan, int mode) {
+int TownsAudioInterfaceInternal::pcmSetPanPos(int chan, int mode) {
 	if (chan > 0x47)
 		return 1;
 	if (mode & 0x80)
@@ -1499,7 +1501,7 @@ int TownsAudioInterfaceIntern::pcmSetPanPos(int chan, int mode) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::pcmSetInstrument(int chan, int instrId) {
+int TownsAudioInterfaceInternal::pcmSetInstrument(int chan, int instrId) {
 	if (chan > 0x47)
 		return 1;
 	if (instrId > 31)
@@ -1509,7 +1511,7 @@ int TownsAudioInterfaceIntern::pcmSetInstrument(int chan, int instrId) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::pcmLoadInstrument(int instrId, const uint8 *data) {
+int TownsAudioInterfaceInternal::pcmLoadInstrument(int instrId, const uint8 *data) {
 	if (instrId > 31)
 		return 3;
 	assert(data);
@@ -1517,7 +1519,7 @@ int TownsAudioInterfaceIntern::pcmLoadInstrument(int instrId, const uint8 *data)
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::pcmSetPitch(int chan, int pitch) {
+int TownsAudioInterfaceInternal::pcmSetPitch(int chan, int pitch) {
 	if (chan > 0x47)
 		return 1;
 
@@ -1547,7 +1549,7 @@ int TownsAudioInterfaceIntern::pcmSetPitch(int chan, int pitch) {
 	return 0;
 }
 
-int TownsAudioInterfaceIntern::pcmSetLevel(int chan, int lvl) {
+int TownsAudioInterfaceInternal::pcmSetLevel(int chan, int lvl) {
 	if (chan > 0x47)
 		return 1;
 
@@ -1576,7 +1578,7 @@ int TownsAudioInterfaceIntern::pcmSetLevel(int chan, int lvl) {
 	return 0;
 }
 
-void TownsAudioInterfaceIntern::pcmUpdateEnvelopeGenerator(int chan) {
+void TownsAudioInterfaceInternal::pcmUpdateEnvelopeGenerator(int chan) {
 	TownsAudio_PcmChannel *p = &_pcmChan[chan];
 	if (!p->envCurrentLevel) {
 		_pcmChanKeyPlaying &= ~_chanFlags[chan];
@@ -1618,7 +1620,7 @@ void TownsAudioInterfaceIntern::pcmUpdateEnvelopeGenerator(int chan) {
 	p->velo = (p->envCurrentLevel >> 8) << 1;
 }
 
-void TownsAudioInterfaceIntern::pcmCalcPhaseStep(TownsAudio_PcmChannel *p, TownsAudio_WaveTable *w) {
+void TownsAudioInterfaceInternal::pcmCalcPhaseStep(TownsAudio_PcmChannel *p, TownsAudio_WaveTable *w) {
 	int8 diff = p->note - w->baseNote;
 	uint16 r = w->rate + w->rateOffs;
 	uint16 bl = 0;
@@ -1647,7 +1649,16 @@ void TownsAudioInterfaceIntern::pcmCalcPhaseStep(TownsAudio_PcmChannel *p, Towns
 	p->step = (s * p->stepPitch) >> 14;
 }
 
-void TownsAudioInterfaceIntern::updateOutputVolume() {
+void TownsAudioInterfaceInternal::updateOutputVolume() {
+	// Avoid calls to g_system->getAudioCDManager() functions from the main thread
+	// since this can cause mutex lockups.
+	_updateOutputVol = true;
+}
+
+void TownsAudioInterfaceInternal::updateOutputVolumeInternal() {
+	if (!_ready)
+		return;
+
 	// FM Towns seems to support volumes of 0 - 63 for each channel.
 	// We recalculate sane values for our 0 to 255 volume range and
 	// balance values for our -128 to 127 volume range
@@ -1658,38 +1669,41 @@ void TownsAudioInterfaceIntern::updateOutputVolume() {
 	int volume = (int)(((float)(maxVol * 255) / 63.0f));
 	int balance = maxVol ? (int)( ( ((int)_outputLevel[13] * (_outputMute[13] ^ 1) - _outputLevel[12] * (_outputMute[12] ^ 1)) * 127) / (float)maxVol) : 0;
 
+	Common::StackLock lock(_mutex);
 	g_system->getAudioCDManager()->setVolume(volume);
 	g_system->getAudioCDManager()->setBalance(balance);
+
+	_updateOutputVol = false;
 }
 
-TownsAudioInterfaceIntern *TownsAudioInterfaceIntern::_refInstance = 0;
+TownsAudioInterfaceInternal *TownsAudioInterfaceInternal::_refInstance = 0;
 
-int TownsAudioInterfaceIntern::_refCount = 0;
+int TownsAudioInterfaceInternal::_refCount = 0;
 
-const uint8 TownsAudioInterfaceIntern::_chanFlags[] = {
+const uint8 TownsAudioInterfaceInternal::_chanFlags[] = {
 	0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80
 };
 
-const uint16 TownsAudioInterfaceIntern::_frequency[] = {
+const uint16 TownsAudioInterfaceInternal::_frequency[] = {
 	0x028C, 0x02B4, 0x02DC, 0x030A, 0x0338, 0x0368, 0x039C, 0x03D4, 0x040E, 0x044A, 0x048C, 0x04D0
 };
 
-const uint8 TownsAudioInterfaceIntern::_carrier[] = {
+const uint8 TownsAudioInterfaceInternal::_carrier[] = {
 	0x10, 0x10, 0x10, 0x10, 0x30, 0x70, 0x70, 0xF0
 };
 
-const uint8 TownsAudioInterfaceIntern::_fmDefaultInstrument[] = {
+const uint8 TownsAudioInterfaceInternal::_fmDefaultInstrument[] = {
 	0x45, 0x4C, 0x45, 0x50, 0x49, 0x41, 0x4E, 0x4F, 0x01, 0x0A, 0x02, 0x01,
 	0x1E, 0x32, 0x05, 0x00, 0x9C, 0xDC, 0x9C, 0xDC, 0x07, 0x03, 0x14, 0x08,
 	0x00, 0x03, 0x05, 0x05, 0x55, 0x45, 0x27, 0xA7, 0x04, 0xC0, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-const uint16 TownsAudioInterfaceIntern::_pcmPhase1[] =  {
+const uint16 TownsAudioInterfaceInternal::_pcmPhase1[] =  {
 	0x879B, 0x0F37, 0x1F58, 0x306E, 0x4288, 0x55B6, 0x6A08, 0x7F8F, 0x965E, 0xAE88, 0xC882, 0xE341
 };
 
-const uint16 TownsAudioInterfaceIntern::_pcmPhase2[] =  {
+const uint16 TownsAudioInterfaceInternal::_pcmPhase2[] =  {
 	0xFEFE, 0xF1A0, 0xE411, 0xD744, 0xCB2F, 0xBFC7, 0xB504, 0xAAE2, 0xA144, 0x9827, 0x8FAC
 };
 
@@ -1841,11 +1855,11 @@ void TownsAudio_WaveTable::clear() {
 }
 
 TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver) {
-	_intf = TownsAudioInterfaceIntern::addNewRef(mixer, driver);
+	_intf = TownsAudioInterfaceInternal::addNewRef(mixer, driver);
 }
 
 TownsAudioInterface::~TownsAudioInterface() {
-	TownsAudioInterfaceIntern::releaseRef();
+	TownsAudioInterfaceInternal::releaseRef();
 	_intf = 0;
 }
 
@@ -1873,4 +1887,12 @@ void TownsAudioInterface::setSoundEffectVolume(int volume) {
 
 void TownsAudioInterface::setSoundEffectChanMask(int mask) {
 	_intf->setSoundEffectChanMask(mask);
+}
+
+void TownsAudioInterface::lockInternal() {
+	_intf->lock();
+}
+
+void TownsAudioInterface::unlockInternal() {
+	_intf->unlock();
 }
