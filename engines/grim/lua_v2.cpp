@@ -33,6 +33,122 @@
 
 namespace Grim {
 
+void L2_UndimRegion() {
+	lua_Object regionObj = lua_getparam(1);
+
+	if (lua_isnumber(regionObj)) {
+		int region = (int)lua_getnumber(regionObj);
+		// FIXME func(region);
+		warning("L2_UndimRegion: region: %d", region);
+	} else {
+		lua_pushnil();
+	}
+}
+
+void L2_SleepFor() {
+	lua_Object msObj = lua_getparam(1);
+
+	if (lua_isnumber(msObj)) {
+		int ms = (int)lua_getnumber(msObj);
+		// FIXME func(ms);
+		warning("L2_SleepFor: ms: %d", ms);
+	}
+}
+
+void L2_DimScreen() {
+	lua_Object dimObj = lua_getparam(1);
+	float dim = 0.6999f;
+
+	if (lua_isnumber(dimObj))
+		dim = lua_getnumber(dimObj);
+
+	// FIXME func(dim);
+	warning("L2_DimScreen: dim: %d", dim);
+}
+
+void L2_MakeCurrentSet() {
+	// TODO
+	warning("L2_MakeCurrentSet");
+}
+
+void L2_MakeCurrentSetup() {
+	// TODO
+	warning("L2_MakeCurrentSetup");
+}
+
+void L2_GetCurrentSetup() {
+	// TODO
+	warning("L2_GetCurrentSetup");
+}
+
+void L2_SetActorGlobalAlpha() {
+	lua_Object actorObj = lua_getparam(1);
+//	lua_Object alphaModeObj = lua_getparam(2);
+//	lua_Object valueObj = lua_getparam(3);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	if (!actor)
+		return;
+
+	warning("L2_SetActorGlobalAlpha: actor: %s", actor->getName());
+
+	/* Only when actor has primitives
+	if (!actor->primities)
+			return;
+	if (lua_isnumber(alphaModeObj) {
+		int alphaMode = (int)lua_getnumber(alphaModeObj);
+		if (!lua_isnil(valueObj) && lua_isstring(valueObj)) {
+				// TODO: missing part
+		}
+		// TODO
+	}
+	*/
+}
+
+void L2_ImGetMillisecondPosition() {
+	lua_Object soundObj = lua_getparam(1);
+
+	if (lua_isnumber(soundObj)) {
+		int sound = (int)lua_getnumber(soundObj);
+		// FIXME int ms = func(sound);
+		// lua_pushnumber(ms);
+		// push -1 for now
+		warning("L2_ImGetMillisecondPosition: sound: %d", sound);
+		lua_pushnumber(-1);
+	}
+}
+
+void L2_RemoveActorFromOverworld() {
+	lua_Object actorObj = lua_getparam(1);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	if (!actor)
+		return;
+
+	warning("L2_RemoveActorFromOverworld: actor: %s", actor->getName());
+	// FIXME actor->func();
+}
+
+void L2_UnloadActor() {
+	lua_Object actorObj = lua_getparam(1);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	if (!actor)
+		return;
+
+	warning("L2_UnloadActor: actor: %s", actor->getName());
+	// FIXME actor->func();
+}
+
 void L2_SetActorWalkRate() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object rateObj = lua_getparam(2);
@@ -464,11 +580,8 @@ STUB_FUNC2(L2_GetActorLookRate)
 STUB_FUNC2(L2_GetVisibleThings)
 STUB_FUNC2(L2_SetActorHead)
 STUB_FUNC2(L2_GetActorRot)
-STUB_FUNC2(L2_MakeCurrentSet)
 STUB_FUNC2(L2_LockSet)
 STUB_FUNC2(L2_UnLockSet)
-STUB_FUNC2(L2_MakeCurrentSetup)
-STUB_FUNC2(L2_GetCurrentSetup)
 STUB_FUNC2(L2_StartMovie)
 STUB_FUNC2(L2_PlaySound)
 STUB_FUNC2(L2_IsSoundPlaying)
@@ -481,7 +594,6 @@ STUB_FUNC2(L2_ImGetVoiceVol)
 STUB_FUNC2(L2_ImGetMusicVol)
 STUB_FUNC2(L2_ImSetSequence)
 STUB_FUNC2(L2_RenderModeUser)
-STUB_FUNC2(L2_DimScreen)
 STUB_FUNC2(L2_SayLine)
 STUB_FUNC2(L2_MakeTextObject)
 STUB_FUNC2(L2_GetTextObjectDimensions)
@@ -544,14 +656,11 @@ STUB_FUNC2(L2_GetFontDimensions)
 // Monkey specific opcodes
 STUB_FUNC2(L2_ThumbnailFromFile)
 STUB_FUNC2(L2_ClearSpecialtyTexture)
-STUB_FUNC2(L2_UnloadActor)
-STUB_FUNC2(L2_RemoveActorFromOverworld)
 STUB_FUNC2(L2_ClearOverworld)
 STUB_FUNC2(L2_ToggleOverworld)
 STUB_FUNC2(L2_SetActorFOV)
 STUB_FUNC2(L2_SetActorHeadLimits)
 STUB_FUNC2(L2_EnableActorPuck)
-STUB_FUNC2(L2_SetActorGlobalAlpha)
 STUB_FUNC2(L2_SetActorLocalAlpha)
 STUB_FUNC2(L2_GetActorSortOrder)
 STUB_FUNC2(L2_AttachActor)
@@ -582,7 +691,6 @@ STUB_FUNC2(L2_ImStateHasLooped)
 STUB_FUNC2(L2_ImStateHasEnded)
 STUB_FUNC2(L2_ImPushState)
 STUB_FUNC2(L2_ImPopState)
-STUB_FUNC2(L2_ImGetMillisecondPosition)
 STUB_FUNC2(L2_ImSetMusicVol)
 STUB_FUNC2(L2_ImSetSfxVol)
 STUB_FUNC2(L2_ImSetVoiceVol)
@@ -594,7 +702,6 @@ STUB_FUNC2(L2_GetCameraPitch)
 STUB_FUNC2(L2_PitchCamera)
 STUB_FUNC2(L2_RollCamera)
 STUB_FUNC2(L2_UndimAll)
-STUB_FUNC2(L2_UndimRegion)
 STUB_FUNC2(L2_NewLayer)
 STUB_FUNC2(L2_FreeLayer)
 STUB_FUNC2(L2_SetLayerSortOrder)
@@ -828,7 +935,8 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "SectEditSortAdd", L2_SectEditSortAdd },
 	{ "SectEditForgetIt", L2_SectEditForgetIt },
 	{ "FRUTEY_Begin", L2_FRUTEY_Begin },
-	{ "FRUTEY_End", L2_FRUTEY_End }
+	{ "FRUTEY_End", L2_FRUTEY_End },
+	{ "sleep_for", L2_SleepFor }
 };
 
 struct luaL_reg monkeyTextOpcodes[] = {
