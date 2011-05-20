@@ -27,7 +27,20 @@ static const char *const fnames[] = {"input", "output"};
 
 
 static int pushresult (lua_State *L, int i, const char *filename) {
-  return luaL_error(L, "LUA file I/O functions have been removed in ScummVM");
+  int en = 0; /*errno;*/  // Currently hardcoded for ScumMVM, this may need to be changed
+  if (i) {
+    lua_pushboolean(L, 1);
+    return 1;
+  }
+  else {
+    lua_pushnil(L);
+    if (filename)
+      lua_pushfstring(L, "%s: %s", filename, "General error" /*strerror(en)*/);
+    else
+      lua_pushfstring(L, "%s", "General error" /*strerror(en)*/);
+    lua_pushinteger(L, en);
+    return 3;
+  }
 }
 
 
