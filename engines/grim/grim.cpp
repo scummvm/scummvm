@@ -1401,6 +1401,7 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	int mode = g_grim->getMode();
 	g_grim->setMode(ENGINE_MODE_NORMAL);
 	g_grim->updateDisplayScene();
+	g_driver->storeDisplay();
 	screenshot = g_driver->getScreenshot(width, height);
 	g_grim->setMode(mode);
 	state->beginSection('SIMG');
