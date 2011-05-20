@@ -20,7 +20,6 @@
  *
  */
 
-#include "portdefs.h"
 #include "backends/modular-backend.h"
 #include "base/main.h"
 #include "backends/mutex/mutex.h"
@@ -39,14 +38,53 @@
 #include <FUi.h>
 #include <FSystem.h>
 #include <FBase.h>
+#include <FIoFile.h>
 
 using namespace Osp::Base;
 using namespace Osp::Base::Runtime;
 
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 
-// BadaGraphicsManager
+//
+// BadaSaveFileManager
+//
+struct BadaSaveFileManager : public DefaultSaveFileManager {
+  bool removeSavefile(const Common::String &filename);
+};
 
+bool BadaSaveFileManager::removeSavefile(const Common::String &filename) {
+  Common::String savePathName = getSavePath();
+
+  checkPath(Common::FSNode(savePathName));
+  if (getError().getCode() != Common::kNoError) {
+    return false;
+  }
+
+  // recreate FSNode since checkPath may have changed/created the directory
+  Common::FSNode savePath(savePathName);
+  Common::FSNode file = savePath.getChild(filename);
+
+  switch (Osp::Io::File::Remove(filename.c_str())) {
+  case E_SUCCESS:
+    return true;
+
+  case E_ILLEGAL_ACCESS:
+    setError(Common::kWritePermissionDenied, "Search or write permission denied: " + 
+             file.getName());
+    break;
+
+  default:
+    setError(Common::kPathDoesNotExist, "removeSavefile: '" + file.getName() +
+             "' does not exist or path is invalid");
+    break;
+  }
+
+  return false;
+}
+
+//
+// BadaGraphicsManager
+//
 struct BadaGraphicsManager : public OpenGLGraphicsManager {
   void setInternalMousePosition(int x, int y);
 };
@@ -54,10 +92,11 @@ struct BadaGraphicsManager : public OpenGLGraphicsManager {
 void BadaGraphicsManager::setInternalMousePosition(int x, int y) {
 }
 
+//
 // BadaMutexManager
-
+//
 struct BadaMutexManager : public MutexManager {
-	OSystem::MutexRef createMutex();
+  OSystem::MutexRef createMutex();
   void lockMutex(OSystem::MutexRef mutex);
   void unlockMutex(OSystem::MutexRef mutex);
   void deleteMutex(OSystem::MutexRef mutex);
@@ -82,8 +121,9 @@ void BadaMutexManager::deleteMutex(OSystem::MutexRef mutex) {
   delete m;
 }
 
+//
 // BadaSystem
-
+//
 class BadaSystem : public ModularBackend, public IRunnable {
 public:
   BadaSystem();
@@ -107,9 +147,6 @@ private:
   Thread* pThread;
 };
 
-//
-// BadaSystem constructor
-//
 BadaSystem::BadaSystem() {
   Construct();
 }
@@ -135,7 +172,7 @@ BadaSystem::~BadaSystem() {
 Object* BadaSystem::Run(void) {
   scummvm_main(0, 0);
   delete this;
-	return null;
+  return null;
 }
 
 void BadaSystem::initBackend() {
@@ -143,7 +180,7 @@ void BadaSystem::initBackend() {
   _mutexManager = new BadaMutexManager();
   _timerManager = new DefaultTimerManager();
   //  _eventManager = new DefaultEventManager(this);
-  _savefileManager = new DefaultSaveFileManager();
+  _savefileManager = new BadaSaveFileManager();
   _graphicsManager = (GraphicsManager*) new BadaGraphicsManager();
   _audiocdManager = (AudioCDManager*) new DefaultAudioCDManager();
   _mixer = new Audio::MixerImpl(this, 22050);
@@ -195,28 +232,15 @@ Common::WriteStream* BadaSystem::createConfigWriteStream() {
   return file.createWriteStream();
 }
 
-//
-//
-//
+// create the scummVM system
 void systemStart() {
   g_system = new BadaSystem();
-  
 }
 
-//
-// Prepares to halt the application
-//
+// prepares to halt the application
 void systemStop() {
 }
 
-//
-// Adds a new event to the event queue
-//
+// adds a new event to the event queue
 void systemPostEvent() {
-}
-
-void debugAssert(bool assertion) {
-  if (!assertion) {
-    g_system->fatalError();
-  }
 }

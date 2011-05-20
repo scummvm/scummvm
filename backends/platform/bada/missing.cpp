@@ -20,15 +20,35 @@
  *
  */
 
+#include <FApp.h>
+#include <FGraphics.h>
+#include <FUi.h>
+#include <FSystem.h>
+#include <FBase.h>
+
 #include "portdefs.h"
 
 C_LINKAGE_BEGIN
+
+int __errno; // for overridden method in saves/default/default-saves.cpp
+
+void __assert_func(const char* file, int line, 
+                   const char* func, const char* err) {
+  AppLogDebug("ScummVM error: %s %d %s %s", file, line, func, err);
+  exit(1);
+}
+
+void voidFunc(void* file, const char* format, ...) {
+  // empty
+}
 
 int printf(const char* format, ...) {
   return 0;
 }
 
 int sprintf(char* str, const char* format, ...) {
+  // http://sourceware.org/newlib/libc.html#sprintf
+  // snprintf
   return 0;
 }
 
@@ -40,6 +60,7 @@ int vsnprintf(char* buf,
               size_t count,
               const char* format,
               va_list arg) {
+  // http://www.ijs.si/software/snprintf/
   return 0;
 }
 

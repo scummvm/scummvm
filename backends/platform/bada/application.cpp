@@ -20,7 +20,6 @@
  *
  */
 
-#include "portdefs.h"
 #include "application.h"
 #include "system.h"
 

@@ -30,9 +30,9 @@
  * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
 class BADAFilesystemFactory : public FilesystemFactory {
-	virtual AbstractFSNode *makeRootFileNode() const;
-	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const;
-	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const;
+  AbstractFSNode *makeRootFileNode() const;
+  AbstractFSNode *makeCurrentDirectoryFileNode() const;
+  AbstractFSNode *makeFileNodePath(const Common::String &path) const;
 };
 
 #endif /*BADA_FILESYSTEM_FACTORY_H*/

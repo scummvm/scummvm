@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Application>
+    <Entry>ScummVM</Entry>
+    <Name>
+        <English>ScummVM</English>
+        <eng-GB>ScummVM</eng-GB>
+    </Name>
+    <Vendor>Chris Warren-Smith</Vendor>
+    <Description/>
+    <Icons>
+        <MainMenu>mainMenu1.png<Type1>mainMenu1.png</Type1>
+            <Type2>mainMenu2.png</Type2>
+        </MainMenu>
+        <Setting/>
+        <Ticker/>
+        <QuickPanel/>
+        <LaunchImage>splash1.png<Type1>splash1.png</Type1>
+            <Type2>splash2.png</Type2>
+        </LaunchImage>
+    </Icons>
+    <AutoScaling>
+        <Enabled>false</Enabled>
+    </AutoScaling>
+</Application>
