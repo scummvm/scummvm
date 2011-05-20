@@ -555,6 +555,7 @@ void Scene::setLightIntensity(const char *light, float intensity) {
 		Light &l = _lights[i];
 		if (l._name == light) {
 			l._intensity = intensity;
+			return;
 		}
 	}
 }
@@ -569,6 +570,7 @@ void Scene::setLightPosition(const char *light, Graphics::Vector3d pos) {
 		Light &l = _lights[i];
 		if (l._name == light) {
 			l._pos = pos;
+			return;
 		}
 	}
 }
