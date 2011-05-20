@@ -934,7 +934,7 @@ void Costume::loadEMI(Common::MemoryReadStream &ms, Costume *prevCost) {
 			char name[64];
 			ms.read(name, componentNameLength);
 
-			int trackID = ms.readUint32LE();
+			//int trackID = ms.readUint32LE();
 			int parent = ms.readUint32LE();
 			assert(parent == -1);
 
