@@ -19,7 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "portdefs.h"
 #include "fs-factory.h"
 #include "fs.h"
 
@@ -28,13 +27,11 @@ AbstractFSNode *BADAFilesystemFactory::makeRootFileNode() const {
 }
 
 AbstractFSNode *BADAFilesystemFactory::makeCurrentDirectoryFileNode() const {
-	char buf[MAXPATHLEN];
-	//return getcwd(buf, MAXPATHLEN) ? new BADAFilesystemNode(buf) : NULL;
-  return NULL;
+	return new BADAFilesystemNode("/Home");
 }
 
 AbstractFSNode *BADAFilesystemFactory::makeFileNodePath(const Common::String &path) const {
-	assert(!path.empty());
-	return new BADAFilesystemNode(path);
+  AppAssert(!path.empty());
+  return new BADAFilesystemNode(path);
 }
 
