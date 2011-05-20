@@ -581,7 +581,7 @@ void GfxTinyGL::setupLight(Scene::Light *light, int lightId) {
 	lightColor[1] = ((float)light->_color.getBlue() / 15.0f) * intensity;
 	lightColor[2] = ((float)light->_color.getGreen() / 15.0f) * intensity;
 
-	if (strcmp(light->_type.c_str(), "omni") == 0) {
+	if (light->_type == "omni") {
 		lightPos[0] = light->_pos.x();
 		lightPos[1] = light->_pos.y();
 		lightPos[2] = light->_pos.z();
@@ -589,7 +589,7 @@ void GfxTinyGL::setupLight(Scene::Light *light, int lightId) {
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_DIFFUSE, lightColor);
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_POSITION, lightPos);
 		tglEnable(TGL_LIGHT0 + lightId);
-	} else if (strcmp(light->_type.c_str(), "direct") == 0) {
+	} else if (light->_type == "direct") {
 		tglDisable(TGL_LIGHT0 + lightId);
 		lightPos[0] = light->_dir.x();
 		lightPos[1] = light->_dir.y();
@@ -598,7 +598,7 @@ void GfxTinyGL::setupLight(Scene::Light *light, int lightId) {
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_DIFFUSE, lightColor);
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_POSITION, lightPos);
 		tglEnable(TGL_LIGHT0 + lightId);
-	} else if (strcmp(light->_type.c_str(), "spot") == 0) {
+	} else if (light->_type == "spot") {
 		tglDisable(TGL_LIGHT0 + lightId);
 		lightPos[0] = light->_pos.x();
 		lightPos[1] = light->_pos.y();
