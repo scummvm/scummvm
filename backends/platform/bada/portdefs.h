@@ -32,14 +32,15 @@
 #include <unistd.h>
 #include <math.h>
 
-#include "system.h"
-
 #define M_PI 3.14159265358979323846
 
 #define C_LINKAGE_BEGIN extern "C" {
 #define C_LINKAGE_END }
 
 C_LINKAGE_BEGIN
+
+// overcome fprintf logging in xmlparser.cpp
+// OSystem::logMessage is overridden
 
 void voidFunc(void*, const char*, ...);
 
@@ -58,16 +59,13 @@ void voidFunc(void*, const char*, ...);
 #define stdout (void*)1
 #define fputs(str, file)
 #define fflush(file)
+#define sscanf simple_sscanf
 
 int printf(const char* format, ...);
 int sprintf(char* str, const char* format, ...);
-int stricmp(const char*, const char*);
-int vsnprintf(char* buf, size_t count, const char* format, va_list arg);
-int snprintf(char* str, size_t size, const char* format, ...);
-int sscanf(const char* buffer, const char* format, ...);
+int simple_sscanf(const char* buffer, const char* format, ...);
 char* strdup(const char* s1);
 int vsprintf(char* str, const char* format, va_list arg);
-int strnicmp(const char* s1, const char* s2, size_t len);
 
 C_LINKAGE_END
 

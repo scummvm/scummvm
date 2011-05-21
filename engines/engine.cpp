@@ -21,7 +21,7 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
 
-#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && !defined(BADA)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <direct.h>
@@ -292,7 +292,7 @@ void GUIErrorMessage(const Common::String &msg) {
 }
 
 void Engine::checkCD() {
-#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && !defined(BADA)
 	// It is a known bug under Windows that games that play CD audio cause
 	// ScummVM to crash if the data files are read from the same CD. Check
 	// if this appears to be the case and issue a warning.
