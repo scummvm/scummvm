@@ -30,23 +30,23 @@
 
 namespace Graphics {
 
-void free_font(NewFontData* pf);
+void free_font(NewFontData *pf);
 
 NewFont::~NewFont() {
-	if (font) {
-		free_font(font);
+	if (_font) {
+		free_font(_font);
 	}
 }
 
 int NewFont::getCharWidth(byte chr) const {
 	// If no width table is specified, return the maximum width
-	if (!desc.width)
-		return desc.maxwidth;
+	if (!_desc.width)
+		return _desc.maxwidth;
 	// If this character is not included in the font, use the default char.
-	if (chr < desc.firstchar || desc.firstchar + desc.size < chr) {
-		chr = desc.defaultchar;
+	if (chr < _desc.firstchar || _desc.firstchar + _desc.size < chr) {
+		chr = _desc.defaultchar;
 	}
-	return desc.width[chr - desc.firstchar];
+	return _desc.width[chr - _desc.firstchar];
 }
 
 
@@ -74,38 +74,38 @@ void drawCharIntern(byte *ptr, uint pitch, const bitmap_t *src, int h, int minX,
 void NewFont::drawChar(Surface *dst, byte chr, const int tx, const int ty, const uint32 color) const {
 	assert(dst != 0);
 
-	assert(desc.bits != 0 && desc.maxwidth <= 16);
+	assert(_desc.bits != 0 && _desc.maxwidth <= 16);
 	assert(dst->format.bytesPerPixel == 1 || dst->format.bytesPerPixel == 2);
 
 	// If this character is not included in the font, use the default char.
-	if (chr < desc.firstchar || chr >= desc.firstchar + desc.size) {
-		chr = desc.defaultchar;
+	if (chr < _desc.firstchar || chr >= _desc.firstchar + _desc.size) {
+		chr = _desc.defaultchar;
 	}
 
-	chr -= desc.firstchar;
+	chr -= _desc.firstchar;
 
 	int bbw, bbh, bbx, bby;
 
 	// Get the bounding box of the character
-	if (!desc.bbx) {
-		bbw = desc.fbbw;
-		bbh = desc.fbbh;
-		bbx = desc.fbbx;
-		bby = desc.fbby;
+	if (!_desc.bbx) {
+		bbw = _desc.fbbw;
+		bbh = _desc.fbbh;
+		bbx = _desc.fbbx;
+		bby = _desc.fbby;
 	} else {
-		bbw = desc.bbx[chr].w;
-		bbh = desc.bbx[chr].h;
-		bbx = desc.bbx[chr].x;
-		bby = desc.bbx[chr].y;
+		bbw = _desc.bbx[chr].w;
+		bbh = _desc.bbx[chr].h;
+		bbx = _desc.bbx[chr].x;
+		bby = _desc.bbx[chr].y;
 	}
 
-	byte *ptr = (byte *)dst->getBasePtr(tx + bbx, ty + desc.ascent - bby - bbh);
+	byte *ptr = (byte *)dst->getBasePtr(tx + bbx, ty + _desc.ascent - bby - bbh);
 
-	const bitmap_t *tmp = desc.bits + (desc.offset ? desc.offset[chr] : (chr * desc.fbbh));
+	const bitmap_t *tmp = _desc.bits + (_desc.offset ? _desc.offset[chr] : (chr * _desc.fbbh));
 
-	int y = MIN(bbh, ty + desc.ascent - bby);
+	int y = MIN(bbh, ty + _desc.ascent - bby);
 	tmp += bbh - y;
-	y -= MAX(0, ty + desc.ascent - bby - dst->h);
+	y -= MAX(0, ty + _desc.ascent - bby - dst->h);
 
 	if (dst->format.bytesPerPixel == 1)
 		drawCharIntern<byte>(ptr, dst->pitch, tmp, y, MAX(0, -(tx + bbx)), MIN(bbw, dst->w - tx - bbx), color);
@@ -615,47 +615,47 @@ bool NewFont::cacheFontData(const NewFont &font, const Common::String &filename)
 		return false;
 	}
 
-	cacheFile.writeUint16BE(font.desc.maxwidth);
-	cacheFile.writeUint16BE(font.desc.height);
-	cacheFile.writeUint16BE(font.desc.fbbw);
-	cacheFile.writeUint16BE(font.desc.fbbh);
-	cacheFile.writeSint16BE(font.desc.fbbx);
-	cacheFile.writeSint16BE(font.desc.fbby);
-	cacheFile.writeUint16BE(font.desc.ascent);
-	cacheFile.writeUint16BE(font.desc.firstchar);
-	cacheFile.writeUint16BE(font.desc.size);
-	cacheFile.writeUint16BE(font.desc.defaultchar);
-	cacheFile.writeUint32BE(font.desc.bits_size);
+	cacheFile.writeUint16BE(font._desc.maxwidth);
+	cacheFile.writeUint16BE(font._desc.height);
+	cacheFile.writeUint16BE(font._desc.fbbw);
+	cacheFile.writeUint16BE(font._desc.fbbh);
+	cacheFile.writeSint16BE(font._desc.fbbx);
+	cacheFile.writeSint16BE(font._desc.fbby);
+	cacheFile.writeUint16BE(font._desc.ascent);
+	cacheFile.writeUint16BE(font._desc.firstchar);
+	cacheFile.writeUint16BE(font._desc.size);
+	cacheFile.writeUint16BE(font._desc.defaultchar);
+	cacheFile.writeUint32BE(font._desc.bits_size);
 
-	for (long i = 0; i < font.desc.bits_size; ++i) {
-		cacheFile.writeUint16BE(font.desc.bits[i]);
+	for (long i = 0; i < font._desc.bits_size; ++i) {
+		cacheFile.writeUint16BE(font._desc.bits[i]);
 	}
 
-	if (font.desc.offset) {
+	if (font._desc.offset) {
 		cacheFile.writeByte(1);
-		for (int i = 0; i < font.desc.size; ++i) {
-			cacheFile.writeUint32BE(font.desc.offset[i]);
+		for (int i = 0; i < font._desc.size; ++i) {
+			cacheFile.writeUint32BE(font._desc.offset[i]);
 		}
 	} else {
 		cacheFile.writeByte(0);
 	}
 
-	if (font.desc.width) {
+	if (font._desc.width) {
 		cacheFile.writeByte(1);
-		for (int i = 0; i < font.desc.size; ++i) {
-			cacheFile.writeByte(font.desc.width[i]);
+		for (int i = 0; i < font._desc.size; ++i) {
+			cacheFile.writeByte(font._desc.width[i]);
 		}
 	} else {
 		cacheFile.writeByte(0);
 	}
 
-	if (font.desc.bbx) {
+	if (font._desc.bbx) {
 		cacheFile.writeByte(1);
-		for (int i = 0; i < font.desc.size; ++i) {
-			cacheFile.writeByte(font.desc.bbx[i].w);
-			cacheFile.writeByte(font.desc.bbx[i].h);
-			cacheFile.writeByte(font.desc.bbx[i].x);
-			cacheFile.writeByte(font.desc.bbx[i].y);
+		for (int i = 0; i < font._desc.size; ++i) {
+			cacheFile.writeByte(font._desc.bbx[i].w);
+			cacheFile.writeByte(font._desc.bbx[i].h);
+			cacheFile.writeByte(font._desc.bbx[i].x);
+			cacheFile.writeByte(font._desc.bbx[i].y);
 		}
 	} else {
 		cacheFile.writeByte(0);
