@@ -27,7 +27,7 @@
 
 #ifdef USE_OPENGL
 
-#ifdef SDL_BACKEND
+#if defined (SDL_BACKEND) && !defined(__amigaos4__)
 #include <SDL_opengl.h>
 #else
 #include <GL/gl.h>

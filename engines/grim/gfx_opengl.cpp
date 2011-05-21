@@ -41,7 +41,7 @@
 
 #ifdef USE_OPENGL
 
-#if defined(SDL_BACKEND)
+#if defined (SDL_BACKEND) && defined(GL_ARB_fragment_program)
 
 // We need SDL.h for SDL_GL_GetProcAddress.
 #include "backends/platform/sdl/sdl-sys.h"
