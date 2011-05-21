@@ -2612,7 +2612,7 @@ if test "$_opengl" = auto || test "$_opengl" = yes ; then
 
 	case $_host_os in
 		amigaos*)
-			$OPENGL_CFLAGS="-DMINIGL"
+			OPENGL_CFLAGS="-DMINIGL"
 			;;
 		*)
 			;;
@@ -2671,7 +2671,6 @@ EOF
 		if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS
 			then
 			_opengl=yes
-			break
 		fi
 	fi
 	cc_check_clean
