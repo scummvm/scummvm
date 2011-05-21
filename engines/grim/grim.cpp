@@ -52,8 +52,7 @@
 #include "engines/grim/registry.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/localize.h"
-#include "engines/grim/gfx_tinygl.h"
-#include "engines/grim/gfx_opengl.h"
+#include "engines/grim/gfx_base.h"
 #include "engines/grim/object.h"
 #include "engines/grim/costume.h"
 #include "engines/grim/material.h"
@@ -476,10 +475,10 @@ Common::Error GrimEngine::run() {
 	}
 
 	if (_softRenderer)
-		g_driver = new GfxTinyGL();
+		g_driver = CreateGfxTinyGL();
 #ifdef USE_OPENGL
 	else
-		g_driver = new GfxOpenGL();
+		g_driver = CreateGfxOpenGL();
 #endif
 
 	g_driver->setupScreen(640, 480, fullscreen);

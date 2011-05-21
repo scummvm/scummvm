@@ -56,6 +56,10 @@ PFNGLDELETEPROGRAMSARBPROC glDeleteProgramsARB;
 
 namespace Grim {
 
+GfxBase *CreateGfxOpenGL() {
+	return new GfxOpenGL();
+}
+
 // Simple ARB fragment program that writes the value from a texture to the Z-buffer.
 static char fragSrc[] =
 	"!!ARBfp1.0\n\
@@ -63,6 +67,7 @@ static char fragSrc[] =
 	END\n";
 
 GfxOpenGL::GfxOpenGL() {
+	g_driver = this;
 	_storedDisplay = NULL;
 	_emergFont = 0;
 }

@@ -35,6 +35,10 @@
 
 namespace Grim {
 
+GfxBase *CreateGfxTinyGL() {
+	return new GfxTinyGL();
+}
+
 // below funcs lookAt, transformPoint and tgluProject are from Mesa glu sources
 static void lookAt(TGLfloat eyex, TGLfloat eyey, TGLfloat eyez, TGLfloat centerx,
 		TGLfloat centery, TGLfloat centerz, TGLfloat upx, TGLfloat upy, TGLfloat upz) {
@@ -136,6 +140,7 @@ TGLint tgluProject(TGLfloat objx, TGLfloat objy, TGLfloat objz, const TGLfloat m
 }
 
 GfxTinyGL::GfxTinyGL() {
+	g_driver = this;
 	_zb = NULL;
 	_storedDisplay = NULL;
 }

@@ -127,6 +127,11 @@ protected:
 	unsigned char _shadowColorB;
 };
 
+// Factory-like functions:
+
+GfxBase *CreateGfxOpenGL();
+GfxBase *CreateGfxTinyGL();
+
 extern GfxBase *g_driver;
 
 } // end of namespace Grim
