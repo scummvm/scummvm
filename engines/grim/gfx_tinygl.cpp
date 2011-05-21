@@ -708,11 +708,11 @@ void GfxTinyGL::createMaterial(Material *material, const char *data, const CMap 
 		char *texdatapos = texdata;
 		for (int y = 0; y < material->_height; y++) {
 			for (int x = 0; x < material->_width; x++) {
-				int col = *(uint8 *)(data);
+				uint8 col = *(uint8 *)(data);
 				if (col == 0)
 					memset(texdatapos, 0, 4); // transparent
 				else {
-					memcpy(texdatapos, cmap->_colors + 3 * (*(uint8 *)(data)), 3);
+					memcpy(texdatapos, cmap->_colors + 3 * (col), 3);
 					texdatapos[3] = '\xff'; // fully opaque
 				}
 				texdatapos += 4;
