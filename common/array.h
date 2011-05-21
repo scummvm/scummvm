@@ -182,7 +182,11 @@ public:
 
 		delete[] _storage;
 		_size = array._size;
+#ifdef __DS__
+		_capacity = _size;
+#else
 		_capacity = _size + 32;
+#endif
 		_storage = new T[_capacity];
 		assert(_storage);
 		copy(array._storage, array._storage + _size, _storage);
