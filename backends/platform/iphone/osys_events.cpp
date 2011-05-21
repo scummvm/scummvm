@@ -31,6 +31,7 @@
 
 #include "osys_main.h"
 
+static const int kQueuedInputEventDelay = 50;
 
 bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 	//printf("pollEvent()\n");
@@ -42,14 +43,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 		_timerCallbackNext = curTime + _timerCallbackTimer;
 	}
 
-	if (_needEventRestPeriod) {
-		// Workaround: Some engines can't handle mouse-down and mouse-up events
-		// appearing right after each other, without a call returning no input in between.
-		_needEventRestPeriod = false;
-		return false;
-	}
-
-	if (_queuedInputEvent.type != (Common::EventType)0) {
+	if (_queuedInputEvent.type != (Common::EventType)0 && curTime >= _queuedEventTime) {
 		event = _queuedInputEvent;
 		_queuedInputEvent.type = (Common::EventType)0;
 		return true;
@@ -194,7 +188,7 @@ bool OSystem_IPHONE::handleEvent_mouseUp(Common::Event &event, int x, int y) {
 			_queuedInputEvent.mouse.x = _mouseX;
 			_queuedInputEvent.mouse.y = _mouseY;
 			_lastMouseTap = getMillis();
-			_needEventRestPeriod = true;
+			_queuedEventTime = _lastMouseTap + kQueuedInputEventDelay;
 		} else
 			return false;
 	}
@@ -235,7 +229,7 @@ bool OSystem_IPHONE::handleEvent_secondMouseUp(Common::Event &event, int x, int 
 			event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
 			event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_ESCAPE;
 			event.kbd.ascii = _queuedInputEvent.kbd.ascii = Common::ASCII_ESCAPE;
-			_needEventRestPeriod = true;
+			_queuedEventTime = curTime + kQueuedInputEventDelay;
 			_lastSecondaryTap = 0;
 		} else if (!_mouseClickAndDragEnabled) {
 			//printf("Rightclick!\n");
@@ -246,7 +240,7 @@ bool OSystem_IPHONE::handleEvent_secondMouseUp(Common::Event &event, int x, int 
 			_queuedInputEvent.mouse.x = _mouseX;
 			_queuedInputEvent.mouse.y = _mouseY;
 			_lastSecondaryTap = curTime;
-			_needEventRestPeriod = true;
+			_queuedEventTime = curTime + kQueuedInputEventDelay;
 		} else {
 			//printf("Right nothing!\n");
 			return false;
@@ -334,7 +328,7 @@ bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x,
 			event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
 			event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_F5;
 			event.kbd.ascii = _queuedInputEvent.kbd.ascii = Common::ASCII_F5;
-			_needEventRestPeriod = true;
+			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 			return true;
 		}
 
@@ -463,7 +457,7 @@ void  OSystem_IPHONE::handleEvent_keyPressed(Common::Event &event, int keyPresse
 	event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
 	event.kbd.keycode = _queuedInputEvent.kbd.keycode = (Common::KeyCode)keyPressed;
 	event.kbd.ascii = _queuedInputEvent.kbd.ascii = ascii;
-	_needEventRestPeriod = true;
+	_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 }
 
 bool OSystem_IPHONE::handleEvent_swipe(Common::Event &event, int direction) {
@@ -530,7 +524,7 @@ bool OSystem_IPHONE::handleEvent_swipe(Common::Event &event, int direction) {
 	event.type = Common::EVENT_KEYDOWN;
 	_queuedInputEvent.type = Common::EVENT_KEYUP;
 	event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
-	_needEventRestPeriod = true;
+	_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 
 	return true;
 }

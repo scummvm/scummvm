@@ -398,6 +398,12 @@ void Vocabulary::lookupWord(ResultWordList& retval, const char *word, int word_l
 		if (getSciVersion() < SCI_VERSION_01)
 			return;
 
+		// WORKAROUND:
+		// This is a hack to temporarily fix bug #3288328.
+		// On the master branch this return is unconditional.
+		if (g_sci->getGameId() == GID_QFG2 && strcmp(word, "healing") == 0)
+			return;
+
 	}
 
 	// Now try all suffixes
