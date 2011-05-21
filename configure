@@ -1443,7 +1443,6 @@ case $_host_os in
 		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
 		type_4_byte='long'
 		add_line_to_config_mk 'AMIGAOS = 1'
-		_opengl=no
 		;;
 	android)
 		case $_host in
@@ -2609,14 +2608,6 @@ define_in_config_h_if_yes "$_text_console" 'USE_TEXT_CONSOLE'
 echocheck "OpenGL"
 if test "$_opengl" = auto || test "$_opengl" = yes ; then
 	_opengl=no
-
-	case $_host_os in
-		amigaos*)
-			OPENGL_CFLAGS="-DMINIGL"
-			;;
-		*)
-			;;
-	esac
 
 	for i in "GL/gl.h" "OpenGL/gl.h" "GLES/gl.h"; do
 		# Test the current header for OpenGL
