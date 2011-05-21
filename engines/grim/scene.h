@@ -123,6 +123,11 @@ public:
 	};
 
 	bool _locked;
+	CMap *getCMap() {
+		if (!_cmaps || ! _numCmaps)
+			return NULL;
+		return _cmaps[0];
+	};
 
 private:
 
