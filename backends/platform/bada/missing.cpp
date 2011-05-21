@@ -26,7 +26,14 @@
 #include <FSystem.h>
 #include <FBase.h>
 
+#include <stdio.h>
+#include <string.h>
+#include <stdarg.h>
+#include <ctype.h>
+
 #include "portdefs.h"
+
+#define BUF_SIZE 255
 
 C_LINKAGE_BEGIN
 
@@ -43,48 +50,48 @@ void voidFunc(void* file, const char* format, ...) {
 }
 
 int printf(const char* format, ...) {
-  return 0;
+  va_list ap;
+  int result;
+  char buffer[BUF_SIZE];
+
+  va_start(ap, format);
+  result = vsnprintf(buffer, sizeof(buffer), format, ap);
+  va_end(ap);
+
+  AppLog(buffer);
+
+  return result;
 }
 
 int sprintf(char* str, const char* format, ...) {
-  // http://sourceware.org/newlib/libc.html#sprintf
-  // snprintf
-  return 0;
+  va_list ap;
+  int result;
+  char buffer[BUF_SIZE];
+
+  va_start(ap, format);
+  result = vsnprintf(buffer, sizeof(buffer), format, ap);
+  va_end(ap);
+
+  strcpy(str, buffer);
+
+  return result;
 }
 
-int stricmp(const char*, const char*) {
-  return 0;
+char* strdup(const char *strSource) {
+  char *buffer;
+  int len = strlen(strSource) + 1;
+  buffer = (char*) malloc(len);
+  if (buffer) {
+    memcpy(buffer, strSource, len);
+  }
+  return buffer;
 }
 
-int vsnprintf(char* buf,
-              size_t count,
-              const char* format,
-              va_list arg) {
-  // http://www.ijs.si/software/snprintf/
-  return 0;
-}
-
-int snprintf(char* str, size_t size, const char* format, ...) {
-  return 0;
-}
-
-int sscanf(const char* buffer, const char* format, ...) {
-  return 0;
-}
-
-// engines/scumm/smush/smush_font.cpp
-char* strdup(const char* s1) {
-  return 0;
-}
-
-// engines/agi/text.cpp
-int vsprintf(char* str, const char* format, va_list arg) {
-  return 0;
-}
-
-// engines/agos/script_pn.cpp
-int strnicmp(const char* s1, const char* s2, size_t len) {
-  return 0;
+int vsprintf(char* str, const char* format, va_list ap) {
+  char buffer[BUF_SIZE];
+  int result = vsnprintf(buffer, sizeof(buffer), format, ap);
+  strcpy(str, buffer);
+  return result;
 }
 
 C_LINKAGE_END

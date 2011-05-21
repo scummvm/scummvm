@@ -1577,7 +1577,6 @@ case $_host_os in
     BADA_SDK_ROOT="`cygpath.exe -m ${BADA_SDK}`"
     add_line_to_config_mk "BADA_SDK = $BADA_SDK"
     add_line_to_config_mk "BADA_SDK_ROOT = $BADA_SDK_ROOT"
-		add_line_to_config_h "#define BADA = 1"
 		;;
 	beos*)
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -3097,7 +3096,7 @@ case $_backend in
 		;;
 	bada)
     # dirent.h not available. ensure portdefs.h is included
-    DEFINES="$DEFINES -DDISABLE_POSIX_FS -DNONSTANDARD_PORT"
+    DEFINES="$DEFINES -DBADA -DDISABLE_POSIX_FS -DNONSTANDARD_PORT"
     DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
     INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/bada '
     INCLUDES="$INCLUDES "'-I$(BADA_SDK)/include'
@@ -3237,7 +3236,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__
-		amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | wii | wince )
+		amigaos* | android | bada | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | wii | wince )
 			CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 			;;
 		*)
