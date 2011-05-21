@@ -574,6 +574,8 @@ void KeyframeComponent::setKey(int val) {
 		}
 		_repeatMode = val;
 		break;
+	case 5:
+		warning("Key 5 (meaning uncertain) used  for keyframe %s", _keyf->getFilename().c_str());
 	case 4:
 		_active = false;
 		break;
