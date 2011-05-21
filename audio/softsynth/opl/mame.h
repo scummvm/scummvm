@@ -147,7 +147,7 @@ typedef struct fm_opl_f {
 	OPL_UPDATEHANDLER UpdateHandler;	/* stream update handler   */
 	int UpdateParam;					/* stream update parameter */
 
-	Common::RandomSource rnd;
+	Common::RandomSource *rnd;
 } FM_OPL;
 
 /* ---------- Generic interface section ---------- */

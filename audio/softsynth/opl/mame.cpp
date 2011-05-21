@@ -546,7 +546,7 @@ inline void OPL_CALC_RH(FM_OPL *OPL, OPL_CH *CH) {
 	// but EG_STEP = 96.0/EG_ENT, and WHITE_NOISE_db=6.0. So, that's equivalent to
 	// int(OPL->rnd.getRandomBit() * EG_ENT/16). We know that EG_ENT is 4096, or 1024,
 	// or 128, so we can safely avoid any FP ops.
-	int whitenoise = OPL->rnd.getRandomBit() * (EG_ENT>>4);
+	int whitenoise = OPL->rnd->getRandomBit() * (EG_ENT>>4);
 
 	int tone8;
 
@@ -1126,6 +1126,15 @@ FM_OPL *OPLCreate(int type, int clock, int rate) {
 	OPL->rate  = rate;
 	OPL->max_ch = max_ch;
 
+	// Init the random source. Note: We use a fixed name for it here.
+	// So if multiple FM_OPL objects exist in parallel, then their
+	// random sources will have an equal name. At least in the
+	// current EventRecorder implementation, this causes no problems;
+	// but this is probably not guaranteed.
+	// Alas, it does not seem worthwhile to bother much with this
+	// at the time, so I am leaving it as it is.
+	OPL->rnd = new Common::RandomSource("mame");
+
 	/* init grobal tables */
 	OPL_initalize(OPL);
 
@@ -1134,9 +1143,10 @@ FM_OPL *OPLCreate(int type, int clock, int rate) {
 	return OPL;
 }
 
-/* ----------  Destroy one of vietual YM3812 ----------       */
+/* ----------  Destroy one of virtual YM3812 ----------       */
 void OPLDestroy(FM_OPL *OPL) {
 	OPL_UnLockTable();
+	delete OPL->rnd;
 	free(OPL);
 }
 
