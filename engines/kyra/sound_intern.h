@@ -139,8 +139,6 @@ private:
 
 	TownsEuphonyDriver *_driver;
 	
-	Common::Mutex _mutex;
-
 	bool _cdaPlaying;
 
 	const uint8 *_musicFadeTable;
