@@ -73,15 +73,15 @@ public:
 
 	void reset();
 	void setFlag(int flagNum) {
-		assert((flagNum > 0) && (flagNum < MAX_FLAGS));
+		assert((flagNum >= 0) && (flagNum < MAX_FLAGS));
 		_flags[flagNum] = true;
 	}
 	void clearFlag(int flagNum) {
-		assert((flagNum > 0) && (flagNum < MAX_FLAGS));
+		assert((flagNum >= 0) && (flagNum < MAX_FLAGS));
 		_flags[flagNum] = false;
 	}
 	bool getFlag(int flagNum) const {
-		assert((flagNum > 0) && (flagNum < MAX_FLAGS));
+		assert((flagNum >= 0) && (flagNum < MAX_FLAGS));
 		return _flags[flagNum];
 	}
 
