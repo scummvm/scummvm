@@ -49,51 +49,24 @@ ScummVM Team
        Oliver Kiehl          - (retired)
        Ludvig Strigeus       - (retired)
 
-    Beneath a Steel Sky:
-       Robert Goeffringmann  - (retired)
-       Oliver Kiehl          - (retired)
-       Joost Peters
-
-    Broken Sword:
-       Fabio Battaglia       - PSX version support
-       Thierry Crozat        - Mac version support
-       Robert Goeffringmann  - (retired)
-
-    Broken Sword II:
-       Torbjorn Andersson
-       Fabio Battaglia       - PSX version support
-       Jonathan Gray         - (retired)
-
-    Broken Sword 2.5:
-       Eugene Sandulenko
-       Filippos Karapetis
-       Max Horn
-       Paul Gilbert
-       Torbjorn Andersson
-
-    Cinematique evo 1:
+    Cine:
        Vincent Hamm          - (retired)
        Pawel Kolodziejski
        Gregory Montoir
        Kari Salminen
        Eugene Sandulenko
 
-    Cinematique evo 2:
+    CruisE:
        Paul Gilbert
        Vincent Hamm          - (retired)
 
-    Draci Historie:
+    Draci:
        Denis Kasak
        Robert Spalek
 
     Drascula:
        Filippos Karapetis
        Pawel Kolodziejski
-
-    Flight of the Amazon Queen:
-       David Eriksson        - (retired)
-       Gregory Montoir
-       Joost Peters
 
     Gob:
        Torbjorn Andersson
@@ -118,12 +91,12 @@ ScummVM Team
        Gregory Montoir
        Johannes Schickel
 
-    Last Express:
+    Lastexpress:
        Matthew Hoops
        Jordi Vilalta Prat
        Julien Templier
 
-    Lure of the Temptress:
+    Lure:
        Paul Gilbert
 
     M4:
@@ -147,6 +120,11 @@ ScummVM Team
     Parallaction:
        peres
 
+    Queen:
+       David Eriksson        - (retired)
+       Gregory Montoir
+       Joost Peters
+
     SAGA:
        Torbjorn Andersson
        Filippos Karapetis
@@ -164,7 +142,29 @@ ScummVM Team
        Jordi Vilalta Prat
        Lars Skovlund
 
-    Teen Agent:
+    Sky:
+       Robert Goeffringmann  - (retired)
+       Oliver Kiehl          - (retired)
+       Joost Peters
+
+    Sword1:
+       Fabio Battaglia       - PSX version support
+       Thierry Crozat        - Mac version support
+       Robert Goeffringmann  - (retired)
+
+    Sword2:
+       Torbjorn Andersson
+       Fabio Battaglia       - PSX version support
+       Jonathan Gray         - (retired)
+
+    Sword25:
+       Eugene Sandulenko
+       Filippos Karapetis
+       Max Horn
+       Paul Gilbert
+       Torbjorn Andersson
+
+    TeenAgent:
        Robert Megone         - Help with callback rewriting
        Vladimir Menshakov
 

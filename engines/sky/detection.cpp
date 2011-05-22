@@ -79,7 +79,7 @@ public:
 };
 
 const char *SkyMetaEngine::getName() const {
-	return "Beneath a Steel Sky";
+	return "Sky";
 }
 
 const char *SkyMetaEngine::getOriginalCopyright() const {

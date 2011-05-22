@@ -500,33 +500,7 @@ begin_credits("Credits");
 		  add_person("Ludvig Strigeus", "ludde", "(retired)");
 	  end_section();
 
-	  begin_section("Beneath a Steel Sky");
-		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "(retired)");
-		  add_person("Oliver Kiehl", "olki", "(retired)");
-		  add_person("Joost Peters", "joostp", "");
-	  end_section();
-
-	  begin_section("Broken Sword");
-		  add_person("Fabio Battaglia", "Hkz", "PSX version support");
-		  add_person("Thierry Crozat", "criezy", "Mac version support");
-		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "(retired)");
-	  end_section();
-
-	  begin_section("Broken Sword II");
-		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-		  add_person("Fabio Battaglia", "Hkz", "PSX version support");
-		  add_person("Jonathan Gray", "khalek", "(retired)");
-	  end_section();
-
-	  begin_section("Broken Sword 2.5");
-		  add_person("Eugene Sandulenko", "sev", "");
-		  add_person("Filippos Karapetis", "[md5]", "");
-		  add_person("Max Horn", "Fingolfin", "");
-		  add_person("Paul Gilbert", "dreammaster", "");
-		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-	  end_section();
-
-	  begin_section("Cinematique evo 1");
+	  begin_section("Cine");
 		  add_person("Vincent Hamm", "yaz0r", "(retired)");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
 		  add_person("Gregory Montoir", "cyx", "");
@@ -534,12 +508,12 @@ begin_credits("Credits");
 		  add_person("Eugene Sandulenko", "sev", "");
 	  end_section();
 
-	  begin_section("Cinematique evo 2");
+	  begin_section("CruisE");
 		  add_person("Paul Gilbert", "dreammaster", "");
 		  add_person("Vincent Hamm", "yaz0r", "(retired)");
 	  end_section();
 
-	  begin_section("Draci Historie");
+	  begin_section("Draci");
 		  add_person("Denis Kasak", "dkasak13", "");
 		  add_person("Robert &Scaron;palek", "spalek", "");
 	  end_section();
@@ -547,12 +521,6 @@ begin_credits("Credits");
 	  begin_section("Drascula");
 		  add_person("Filippos Karapetis", "[md5]", "");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
-	  end_section();
-
-	  begin_section("Flight of the Amazon Queen");
-		  add_person("David Eriksson", "twogood", "(retired)");
-		  add_person("Gregory Montoir", "cyx", "");
-		  add_person("Joost Peters", "joostp", "");
 	  end_section();
 
 	  begin_section("Gob");
@@ -582,13 +550,13 @@ begin_credits("Credits");
 		  add_person("Johannes Schickel", "LordHoto", "");
 	  end_section();
 
-	begin_section("Last Express");
+	begin_section("Lastexpress");
 			add_person("Matthew Hoops", "clone2727", "");
 			add_person("Jordi Vilalta Prat", "jvprat", "");
 			add_person("Julien Templier", "littleboy", "");			
 	end_section();
 
-	  begin_section("Lure of the Temptress");
+	  begin_section("Lure");
 		  add_person("Paul Gilbert", "dreammaster", "");
 	  end_section();
 
@@ -617,6 +585,12 @@ begin_credits("Credits");
 		  add_person("", "peres", "");
 	  end_section();
 
+	  begin_section("Queen");
+		  add_person("David Eriksson", "twogood", "(retired)");
+		  add_person("Gregory Montoir", "cyx", "");
+		  add_person("Joost Peters", "joostp", "");
+	  end_section();
+
 	  begin_section("SAGA");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 		  add_person("Filippos Karapetis", "[md5]", "");
@@ -636,7 +610,33 @@ begin_credits("Credits");
 		  add_person("Lars Skovlund", "lskovlun", "");
 	  end_section();
 
-	  begin_section("Teen Agent");
+	  begin_section("Sky");
+		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "(retired)");
+		  add_person("Oliver Kiehl", "olki", "(retired)");
+		  add_person("Joost Peters", "joostp", "");
+	  end_section();
+
+	  begin_section("Sword1");
+		  add_person("Fabio Battaglia", "Hkz", "PSX version support");
+		  add_person("Thierry Crozat", "criezy", "Mac version support");
+		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "(retired)");
+	  end_section();
+
+	  begin_section("Sword2");
+		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+		  add_person("Fabio Battaglia", "Hkz", "PSX version support");
+		  add_person("Jonathan Gray", "khalek", "(retired)");
+	  end_section();
+
+	  begin_section("Sword25");
+		  add_person("Eugene Sandulenko", "sev", "");
+		  add_person("Filippos Karapetis", "[md5]", "");
+		  add_person("Max Horn", "Fingolfin", "");
+		  add_person("Paul Gilbert", "dreammaster", "");
+		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+	  end_section();
+
+	  begin_section("TeenAgent");
 		  add_person("Robert Megone", "sanguine", "Help with callback rewriting");
 		  add_person("Vladimir Menshakov", "whoozle", "");
 	  end_section();

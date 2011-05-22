@@ -247,7 +247,7 @@ public:
 	CruiseMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "Cinematique evo 2";
+		return "CruisE";
 	}
 
 	virtual const char *getOriginalCopyright() const {

@@ -69,7 +69,7 @@ public:
 };
 
 const char *QueenMetaEngine::getName() const {
-	return "Flight of the Amazon Queen";
+	return "Queen";
 }
 
 const char *QueenMetaEngine::getOriginalCopyright() const {

@@ -76,7 +76,7 @@ static const GameSettings sword2_settings[] = {
 class Sword2MetaEngine : public MetaEngine {
 public:
 	virtual const char *getName() const {
-		return "Broken Sword II";
+		return "Sword2";
 	}
 	virtual const char *getOriginalCopyright() const {
 		return "Broken Sword Games (C) Revolution";

@@ -79,7 +79,7 @@ static const char *g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files have to
 class SwordMetaEngine : public MetaEngine {
 public:
 	virtual const char *getName() const {
-		return "Broken Sword";
+		return "Sword1";
 	}
 	virtual const char *getOriginalCopyright() const {
 		return "Broken Sword Games (C) Revolution";
