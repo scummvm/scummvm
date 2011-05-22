@@ -384,7 +384,7 @@ void L2_SetGroupVolume() {
 
 	if (!lua_isnumber(groupObj))
 		return;
-	int group = lua_getnumber(groupObj);
+	int group = (int)lua_getnumber(groupObj);
 
 	int volume = 100;
 	if (lua_isnumber(volumeObj))
@@ -400,7 +400,7 @@ void L2_EnableAudioGroup() {
 
 	if (!lua_isnumber(groupObj))
 		return;
-	int group = lua_getnumber(groupObj);
+	int group = (int)lua_getnumber(groupObj);
 
 	bool state = false;
 	if (!lua_isnil(stateObj))

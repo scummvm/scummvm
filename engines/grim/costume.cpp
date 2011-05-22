@@ -954,11 +954,11 @@ void Costume::loadEMI(Common::MemoryReadStream &ms, Costume *prevCost) {
 				float time, value;
 				ms.read(&time, 4);
 				ms.read(&value, 4);
-				track.keys[j].time = time;
-				track.keys[j].value = value;
+				track.keys[j].time = (int)time;
+				track.keys[j].value = (int)value;
 			}
 		}
-		_chores[i]._tracks->compID;
+		//_chores[i]._tracks->compID;
 	}
 
 	_numComponents = components.size();

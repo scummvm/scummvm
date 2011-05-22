@@ -152,7 +152,7 @@ void Scene::loadText(TextSplitter &ts){
 void Scene::loadBinary(Common::MemoryReadStream *ms)
 {
 	// yes, an array of size 0
-	_cmaps = new CMapPtr[0];
+	_cmaps = NULL;//new CMapPtr[0];
 
 
 	_numSetups = ms->readUint32LE();
