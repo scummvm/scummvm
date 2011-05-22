@@ -90,7 +90,7 @@ Player::~Player() {
 }
 
 bool Player::startSound(int sound, MidiDriver *midi) {
-	void *ptr;
+	byte *ptr;
 	int i;
 
 	// Not sure what the old code was doing,
@@ -108,13 +108,8 @@ bool Player::startSound(int sound, MidiDriver *midi) {
 	_active = true;
 	_midi = midi;
 	_id = sound;
-	_priority = 0x80;
-	_volume = 0x7F;
-	_vol_chan = 0xFFFF;
-	_vol_eff = (_se->get_channel_volume(0xFFFF) << 7) >> 7;
-	_pan = 0;
-	_transpose = 0;
-	_detune = 0;
+
+	loadStartParameters(sound);
 
 	for (i = 0; i < ARRAYSIZE(_parameterFaders); ++i)
 		_parameterFaders[i].init();
@@ -125,7 +120,7 @@ bool Player::startSound(int sound, MidiDriver *midi) {
 		_midi = NULL;
 		return false;
 	}
-
+	
 	debugC(DEBUG_IMUSE, "Starting music %d", sound);
 	return true;
 }
@@ -199,9 +194,41 @@ int Player::start_seq_sound(int sound, bool reset_vars) {
 	_parser->property(MidiParser::mpSmartJump, 1);
 	_parser->loadMusic(ptr, 0);
 	_parser->setTrack(_track_index);
-	setSpeed(reset_vars ? 128 : _speed);
+	
+	ptr = _se->findStartOfSound(sound, IMuseInternal::kMDhd);
+	setSpeed(reset_vars ? (ptr ? (READ_BE_UINT32(&ptr[4]) && ptr[15] ? ptr[15] : 128) : 128) : _speed);
 
 	return 0;
+}
+
+void Player::loadStartParameters(int sound) {
+	_priority = 0x80;
+	_volume = 0x7F;
+	_vol_chan = 0xFFFF;
+	_vol_eff = (_se->get_channel_volume(0xFFFF) << 7) >> 7;
+	_pan = 0;
+	_transpose = 0;
+	_detune = 0;
+
+	byte *ptr = _se->findStartOfSound(sound, IMuseInternal::kMDhd);
+	uint32 size = 0;
+
+	if (ptr) {
+		ptr += 4;
+		size = READ_BE_UINT32(ptr);
+		ptr += 4;
+
+		// MDhd chunks don't get used in MI1 and contain only zeroes.
+		// We check for volume, priority and speed settings of zero here.
+		if (size && (ptr[2] | ptr[3] | ptr[7])) {
+			_priority = ptr[2];
+			_volume = ptr[3];
+			_pan = ptr[4];
+			_transpose = ptr[5];
+			_detune = ptr[6];
+			setSpeed(ptr[7]);		
+		}
+	}
 }
 
 void Player::uninit_parts() {
