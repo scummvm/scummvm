@@ -237,7 +237,7 @@ void Actor::saveState(SaveGame *savedState) const {
 		// from other scenes. It happens e.g. when Membrillo calls Velasco to tell him
 		// Naranja is dead.
 		if (_setName != "") {
-			Scene *s = g_grim->findScene(_setName.c_str());
+			Scene *s = g_grim->findScene(_setName);
 			for (SectorListType::iterator j = shadow.planeList.begin(); j != shadow.planeList.end(); ++j) {
 				Sector *sec = *j;
 				for (int k = 0; k < s->getSectorCount(); ++k) {
@@ -305,29 +305,27 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_talkSoundName 		= savedState->readString();
 
 	if (savedState->readLEUint32()) {
-		const char *fn = savedState->readCharString();
+		Common::String fn = savedState->readString();
 		_lipSync = g_resourceloader->getLipSync(fn);
-		delete[] fn;
 	} else {
 		_lipSync = NULL;
 	}
 
 	int32 size = savedState->readLESint32();
 	for (int32 i = 0; i < size; ++i) {
-		const char *fname = savedState->readCharString();
+		Common::String fname = savedState->readString();
 		const int depth = savedState->readLEUint32();
 		Costume *pc = NULL;
 		if (depth > 0) {	//build all the previousCostume hierarchy
-			const char **names = new const char*[depth];
+			Common::String *names = new Common::String[depth];
 			for (int j = 0; j < depth; ++j) {
-				names[j] = savedState->readCharString();
+				names[j] = savedState->readString();
 			}
 			for (int j = depth - 1; j >= 0; --j) {
 				pc = findCostume(names[j]);
 				if (!pc) {
 					pc = g_resourceloader->loadCostume(names[j], pc);
 				}
-				delete[] names[j];
 			}
 			delete[] names;
 		}
@@ -344,18 +342,16 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_destPos = savedState->readVector3d();
 
 	if (savedState->readLEUint32()) {
-		const char *fname = savedState->readCharString();
+		Common::String fname = savedState->readString();
 		_restCostume = findCostume(fname);
-		delete[] fname;
 	} else {
 		_restCostume = NULL;
 	}
 	_restChore = savedState->readLESint32();
 
 	if (savedState->readLEUint32()) {
-		const char *fname = savedState->readCharString();
+		Common::String fname = savedState->readString();
 		_walkCostume = findCostume(fname);
-		delete[] fname;
 	} else {
 		_walkCostume = NULL;
 	}
@@ -365,9 +361,8 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_walkedCur = savedState->readLESint32();
 
 	if (savedState->readLEUint32()) {
-		const char *fname = savedState->readCharString();
+		Common::String fname = savedState->readString();
 		_turnCostume = findCostume(fname);
-		delete[] fname;
 	} else {
 		_turnCostume = NULL;
 	}
@@ -378,9 +373,8 @@ bool Actor::restoreState(SaveGame *savedState) {
 
 	for (int i = 0; i < 10; ++i) {
 		if (savedState->readLEUint32()) {
-			const char *fname = savedState->readCharString();
+			Common::String fname = savedState->readString();
 			_talkCostume[i] = findCostume(fname);
-			delete[] fname;
 		} else {
 			_talkCostume[i] = NULL;
 		}
@@ -389,9 +383,8 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_talkAnim = savedState->readLESint32();
 
 	if (savedState->readLEUint32()) {
-		const char *fname = savedState->readCharString();
+		Common::String fname = savedState->readString();
 		_mumbleCostume = findCostume(fname);
-		delete[] fname;
 	} else {
 		_mumbleCostume = NULL;
 	}
@@ -405,7 +398,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 
 		size = savedState->readLESint32();
 		if (_setName != "") {
-			Scene *scene = g_grim->findScene(_setName.c_str());
+			Scene *scene = g_grim->findScene(_setName);
 			shadow.planeList.clear();
 			for (int j = 0; j < size; ++j) {
 				int32 id = savedState->readLEUint32();
@@ -882,7 +875,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 			// For example, when reading the work order (a LIP file exists for no reason).
 			// Also, some lip sync files have no entries
 			// In these cases, revert to using the mumble chore.
-			_lipSync = g_resourceloader->getLipSync(soundLip.c_str());
+			_lipSync = g_resourceloader->getLipSync(soundLip);
 			// If there's no lip sync file then load the mumble chore if it exists
 			// (the mumble chore doesn't exist with the cat races announcer)
 			if (!_lipSync && _mumbleChore != -1)
@@ -1027,7 +1020,7 @@ void Actor::setScale(float scale) {
 	_scale = scale;
 }
 
-Costume *Actor::findCostume(const char *n) {
+Costume *Actor::findCostume(const Common::String &n) {
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		if ((*i)->getFilename().compareToIgnoreCase(n) == 0)
 			return *i;

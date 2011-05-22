@@ -261,7 +261,7 @@ void SpriteComponent::init() {
 		sscanf(comma, ",%d,%d,%d,%d,%d", &width, &height, &x, &y, &z);
 
 		_sprite = new Sprite;
-		_sprite->_material = g_resourceloader->loadMaterial(name.c_str(), getCMap());
+		_sprite->_material = g_resourceloader->loadMaterial(name, getCMap());
 		_sprite->_width = (float)width / 100.0f;
 		_sprite->_height = (float)height / 100.0f;
 		_sprite->_pos.set((float)x / 100.0f, (float)y / 100.0f, (float)z / 100.0f);
@@ -345,7 +345,7 @@ void ModelComponent::init() {
 
 			cm = g_resourceloader->getColormap(DEFAULT_COLORMAP);
 		}
-		_obj = g_resourceloader->getModel(_filename.c_str(), cm);
+		_obj = g_resourceloader->getModel(_filename, cm);
 		_hier = _obj->copyHierarchy();
 
 		// Use parent availablity to decide whether to default the
@@ -556,7 +556,7 @@ KeyframeComponent::KeyframeComponent(Costume::Component *p, int parentID, const 
 	const char *comma = strchr(filename, ',');
 	if (comma) {
 		Common::String realName(filename, comma);
-		_keyf = g_resourceloader->getKeyframe(realName.c_str());
+		_keyf = g_resourceloader->getKeyframe(realName);
 		sscanf(comma + 1, "%d,%d", &_priority1, &_priority2);
 	} else
 		_keyf = g_resourceloader->getKeyframe(filename);
@@ -750,7 +750,7 @@ LuaVarComponent::LuaVarComponent(Costume::Component *p, int parentID, const char
 
 void LuaVarComponent::setKey(int val) {
 	lua_pushnumber(val);
-	lua_setglobal(const_cast<char *>(_name.c_str()));
+	lua_setglobal(_name.c_str());
 }
 
 class SoundComponent : public Costume::Component {
@@ -1310,10 +1310,10 @@ void Costume::playChore(int num) {
 	_chores[num].play();
 }
 
-void Costume::setColormap(const char *map) {
+void Costume::setColormap(const Common::String &map) {
 	// Sometimes setColormap is called on a null costume,
 	// see where raoul is gone in hh.set
-	if (!map)
+	if (!map.size())
 		return;
 	_cmap = g_resourceloader->getColormap(map);
 	for (int i = 0; i < _numComponents; i++)
@@ -1590,9 +1590,8 @@ void Costume::saveState(SaveGame *state) const {
 
 bool Costume::restoreState(SaveGame *state) {
 	if (state->readLEUint32()) {
-		const char *str = state->readCharString();
+		Common::String str = state->readString();
 		setColormap(str);
-		delete[] str;
 	}
 
 	for (int i = 0; i < _numChores; ++i) {

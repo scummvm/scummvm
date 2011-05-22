@@ -1134,11 +1134,11 @@ void GrimEngine::savegameWriteUint32(uint32 val) {
 void GrimEngine::savegameRestore() {
 	printf("GrimEngine::savegameRestore() started.\n");
 	_savegameLoadRequest = false;
-	char filename[200];
+	Common::String filename;
 	if (_savegameFileName.size() == 0) {
-		strcpy(filename, "grim.sav");
+		filename = "grim.sav";
 	} else {
-		strcpy(filename, _savegameFileName.c_str());
+		filename = _savegameFileName;
 	}
 	_savedState = new SaveGame(filename, false);
 	if (!_savedState || _savedState->saveVersion() != SaveGame::SAVEGAME_VERSION)
@@ -1332,7 +1332,7 @@ void GrimEngine::restoreBitmaps(SaveGame *state) {
 	int32 size = state->readLESint32();
 	for (int32 i = 0; i < size; ++i) {
 		int32 id = state->readLEUint32();
-		const char *fname = state->readCharString();
+		Common::String fname = state->readString();
 		Bitmap *b = g_resourceloader->loadBitmap(fname);
 		killBitmap(b);
 		b->setNumber(state->readLESint32());
@@ -1344,7 +1344,6 @@ void GrimEngine::restoreBitmaps(SaveGame *state) {
 		}
 		registerBitmap(b);
 
-		delete[] fname;
 	}
 
 	state->endSection();
@@ -1358,7 +1357,7 @@ void GrimEngine::restoreFonts(SaveGame *state) {
 	int32 size = state->readLESint32();
 	for (int32 i = 0; i < size; ++i) {
 		int32 id = state->readLEUint32();
-		const char *fname = state->readCharString();
+		Common::String fname = state->readString();
 		Font *f = g_resourceloader->loadFont(fname);
 		f->_id = id;
 		if (id > Object::s_id) {
@@ -1366,7 +1365,6 @@ void GrimEngine::restoreFonts(SaveGame *state) {
 		}
 		registerFont(f);
 
-		delete[] fname;
 	}
 
 	state->endSection();
@@ -1580,7 +1578,7 @@ void GrimEngine::saveFonts(SaveGame *state) {
 	state->writeLESint32(_fonts.size());
 	for (FontListType::iterator i = _fonts.begin(); i != _fonts.end(); ++i) {
 		state->writeLEUint32(i->_key);
-		state->writeCharString(i->_value->getFilename().c_str());
+		state->writeString(i->_value->getFilename());
 	}
 
 	state->endSection();
@@ -1629,7 +1627,7 @@ void GrimEngine::savegameCallback() {
 	lua_endblock();
 }
 
-Scene *GrimEngine::findScene(const char *name) {
+Scene *GrimEngine::findScene(const Common::String &name) {
 	// Find scene object
 	for (SceneListType::const_iterator i = scenesBegin(); i != scenesEnd(); ++i) {
 		if (i->_value->getName() == name)
@@ -1664,7 +1662,7 @@ void GrimEngine::setScene(const char *name) {
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		filename += "b";
 	}
-	Block *b = g_resourceloader->getFileBlock(filename.c_str());
+	Block *b = g_resourceloader->getFileBlock(filename);
 	if (!b)
 		warning("Could not find scene file %s", name);
 	_currScene = new Scene(name, b->getData(), b->getLen());

@@ -57,28 +57,28 @@ public:
 	ResourceLoader();
 	~ResourceLoader();
 
-	Bitmap *loadBitmap(const char *fname);
-	CMap *loadColormap(const char *fname);
-	Costume *loadCostume(const char *fname, Costume *prevCost);
-	Font *loadFont(const char *fname);
-	KeyframeAnim *loadKeyframe(const char *fname);
-	Material *loadMaterial(const char *fname, CMap *c);
-	Model *loadModel(const char *fname, CMap *c);
-	LipSync *loadLipSync(const char *fname);
-	Block *getFileBlock(const char *filename) const;
+	Bitmap *loadBitmap(const Common::String &fname);
+	CMap *loadColormap(const Common::String &fname);
+	Costume *loadCostume(const Common::String &fname, Costume *prevCost);
+	Font *loadFont(const Common::String &fname);
+	KeyframeAnim *loadKeyframe(const Common::String &fname);
+	Material *loadMaterial(const Common::String &fname, CMap *c);
+	Model *loadModel(const Common::String &fname, CMap *c);
+	LipSync *loadLipSync(const Common::String &fname);
+	Block *getFileBlock(const Common::String &filename) const;
 	Block *getBlock(const char *filename);
 	Common::File *openNewStreamFile(const char *filename) const;
 	LuaFile *openNewStreamLuaFile(const char *filename) const;
 	void uncache(const char *fname);
-	bool getFileExists(const char *filename) const;
+	bool getFileExists(const Common::String &filename) const;
 	int getFileLength(const char *filename) const;
 
 	MaterialPtr getMaterial(const char *filename, CMap *c);
-	ModelPtr getModel(const char *fname, CMap *c);
-	CMapPtr getColormap(const char *fname);
-	KeyframeAnimPtr getKeyframe(const char *fname);
-	FontPtr getFont(const char *fname);
-	LipSyncPtr getLipSync(const char *fname);
+	ModelPtr getModel(const Common::String &fname, CMap *c);
+	CMapPtr getColormap(const Common::String &fname);
+	KeyframeAnimPtr getKeyframe(const Common::String &fname);
+	FontPtr getFont(const Common::String &fname);
+	LipSyncPtr getLipSync(const Common::String &fname);
 	void uncacheMaterial(Material *m);
 	void uncacheModel(Model *m);
 	void uncacheColormap(CMap *c);
@@ -92,10 +92,10 @@ public:
 	};
 
 private:
-	const Lab *getLab(const char *filename) const;
-	Block *getFileFromCache(const char *filename);
-	ResourceLoader::ResourceCache *getEntryFromCache(const char *filename);
-	void putIntoCache(Common::String fname, Block *res);
+	const Lab *getLab(const Common::String &filename) const;
+	Block *getFileFromCache(const Common::String &filename);
+	ResourceLoader::ResourceCache *getEntryFromCache(const Common::String &filename);
+	void putIntoCache(const Common::String &fname, Block *res);
 
 	typedef Common::List<Lab *> LabList;
 	LabList _labs;

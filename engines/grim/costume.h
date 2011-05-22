@@ -57,7 +57,7 @@ public:
 	void fadeChoreOut(int chore, int msecs);
 	Model::HierNode *getModelNodes();
 	Model *getModel();
-	void setColormap(const char *map);
+	void setColormap(const Common::String &map);
 	void stopChores();
 	int isChoring(const char *name, bool excludeLooping);
 	int isChoring(int num, bool excludeLooping);

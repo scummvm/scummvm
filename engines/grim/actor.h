@@ -120,7 +120,7 @@ public:
 		else
 			return _costumeStack.back();
 	}
-	Costume *findCostume(const char *name);
+	Costume *findCostume(const Common::String &name);
 	int getCostumeStackDepth() const {
 		return _costumeStack.size();
 	}
