@@ -21,6 +21,7 @@
 
 #include "graphics/font.h"
 #include "graphics/fontman.h"
+#include "common/translation.h"
 
 DECLARE_SINGLETON(Graphics::FontManager);
 
@@ -88,6 +89,32 @@ const Font *FontManager::getFontByUsage(FontUsage usage) const {
 	}
 
 	return 0;
+}
+
+Common::String FontManager::genLocalizedFontFilename(const Common::String &filename) const {
+#ifndef USE_TRANSLATION
+	return filename;
+#else
+	// We will transform the font filename in the following way:
+	//   name.bdf
+	//  will become:
+	//   name-charset.bdf
+	// Note that name should not contain any dot here!
+
+	// In the first step we look for the dot. In case there is none we will
+	// return the normal filename.
+	Common::String::const_iterator dot = Common::find(filename.begin(), filename.end(), '.');
+	if (dot == filename.end())
+		return filename;
+
+	// Put the translated font filename string back together.
+	Common::String result(filename.begin(), dot);
+	result += '-';
+	result += TransMan.getCurrentCharset();
+	result += dot;
+
+	return result;
+#endif
 }
 
 } // End of namespace Graphics
