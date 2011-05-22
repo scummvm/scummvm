@@ -36,7 +36,7 @@ namespace Grim {
 int SaveGame::SAVEGAME_VERSION = 14;
 
 // Constructor. Should create/open a saved game
-SaveGame::SaveGame(const char *filename, bool saving) :
+SaveGame::SaveGame(const Common::String &filename, bool saving) :
 		_saving(saving), _currentSection(0) {
 	if (_saving) {
 		_outSaveFile = g_system->getSavefileManager()->openForSaving(filename);
@@ -303,7 +303,9 @@ void SaveGame::writeCharString(const char *string) {
 }
 
 void SaveGame::writeString(const Common::String &string) {
-	writeCharString(string.c_str());
+	int32 len = string.size();
+	writeLESint32(len);
+	write(string.c_str(), len);
 }
 
 Graphics::Vector3d SaveGame::readVector3d() {
@@ -350,9 +352,9 @@ const char *SaveGame::readCharString() {
 }
 
 Common::String SaveGame::readString() {
-	const char *str = readCharString();
-	Common::String s = str;
-	delete[] str;
+	int32 len = readLESint32();
+	Common::String s((const char *)&_sectionBuffer[_sectionPtr], len);
+	_sectionPtr += len;
 	return s;
 }
 

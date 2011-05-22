@@ -39,7 +39,7 @@ namespace Grim {
 
 int Scene::s_id = 0;
 
-Scene::Scene(const char *sceneName, const char *buf, int len) :
+Scene::Scene(const Common::String &sceneName, const char *buf, int len) :
 		_locked(false), _name(sceneName), _enableLights(false) {
 
 	++s_id;
@@ -193,7 +193,7 @@ void Scene::saveState(SaveGame *savedState) const {
 	savedState->writeString(_name);
 	savedState->writeLESint32(_numCmaps);
 	for (int i = 0; i < _numCmaps; ++i) {
-		savedState->writeCharString(_cmaps[i]->getFilename());
+		savedState->writeString(_cmaps[i]->getFilename());
 	}
 	savedState->writeLEUint32(_currSetup - _setups); // current setup id
 	savedState->writeLEUint32(_locked);
@@ -537,13 +537,13 @@ void Scene::findClosestSector(Graphics::Vector3d p, Sector **sect, Graphics::Vec
 ObjectState *Scene::findState(const char *filename) {
 	// Check the different state objects for the bitmap
 	for (StateList::iterator i = _states.begin(); i != _states.end(); ++i) {
-		const char *file = (*i)->getBitmapFilename();
+		const Common::String &file = (*i)->getBitmapFilename();
 
-		if (strcmp(file, filename) == 0)
+		if (file == filename)
 			return *i;
-		if (scumm_stricmp(file, filename) == 0) {
+		if (file.compareToIgnoreCase(filename) == 0) {
 			if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-				warning("State object request '%s' matches object '%s' but is the wrong case", filename, file);
+				warning("State object request '%s' matches object '%s' but is the wrong case", filename, file.c_str());
 			return *i;
 		}
 	}

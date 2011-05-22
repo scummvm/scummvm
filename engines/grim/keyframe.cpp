@@ -32,9 +32,8 @@
 
 namespace Grim {
 
-KeyframeAnim::KeyframeAnim(const char *fname, const char *data, int len) :
-	Object() {
-	_fname = fname;
+KeyframeAnim::KeyframeAnim(const Common::String &fname, const char *data, int len) :
+	Object(), _fname(fname) {
 
 	if (len >= 4 && READ_BE_UINT32(data) == MKTAG('F','Y','E','K'))
 		loadBinary(data, len);

@@ -29,7 +29,7 @@ namespace Grim {
 
 class LipSync : public Object {
 public:
-	LipSync(const char *filename, const char *data, int len);
+	LipSync(const Common::String &filename, const char *data, int len);
 	~LipSync();
 
 	struct LipEntry {
@@ -39,7 +39,7 @@ public:
 
 	int getAnim(int pos);
 	bool isValid() { return _numEntries > 0; }
-	const char *getFilename() const;
+	const Common::String &getFilename() const { return _fname; };
 
 private:
 	LipEntry *_entries;

@@ -43,7 +43,7 @@ namespace Grim {
 
 int g_winX1, g_winY1, g_winX2, g_winY2;
 
-Actor::Actor(const char *actorName) :
+Actor::Actor(const Common::String &actorName) :
 		Object(), _name(actorName), _setName(""), _talkColor(g_grim->getColor(2)), _pos(0, 0, 0),
 		// Some actors don't set walk and turn rates, so we default the
 		// _turnRate so Doug at the cat races can turn and we set the
@@ -148,7 +148,7 @@ void Actor::saveState(SaveGame *savedState) const {
 
 	if (_lipSync) {
 		savedState->writeLEUint32(1);
-		savedState->writeCharString(_lipSync->getFilename());
+		savedState->writeString(_lipSync->getFilename());
 	} else {
 		savedState->writeLEUint32(0);
 	}
@@ -156,7 +156,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_costumeStack.size());
 	for (Common::List<Costume *>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
-		savedState->writeCharString(c->getFilename());
+		savedState->writeString(c->getFilename());
 		Costume *pc = c->getPreviousCostume();
 		int depth = 0;
 		while (pc) {
@@ -166,7 +166,7 @@ void Actor::saveState(SaveGame *savedState) const {
 		savedState->writeLEUint32(depth);
 		pc = c->getPreviousCostume();
 		for (int j = 0; j < depth; ++j) { //save the previousCostume hierarchy
-			savedState->writeCharString(pc->getFilename());
+			savedState->writeString(pc->getFilename());
 			pc = pc->getPreviousCostume();
 		}
 		c->saveState(savedState);
@@ -180,7 +180,7 @@ void Actor::saveState(SaveGame *savedState) const {
 
 	if (_restCostume) {
 		savedState->writeLEUint32(1);
-		savedState->writeCharString(_restCostume->getFilename());
+		savedState->writeString(_restCostume->getFilename());
 	} else {
 		savedState->writeLEUint32(0);
 	}
@@ -188,7 +188,7 @@ void Actor::saveState(SaveGame *savedState) const {
 
 	if (_walkCostume) {
 		savedState->writeLEUint32(1);
-		savedState->writeCharString(_walkCostume->getFilename());
+		savedState->writeString(_walkCostume->getFilename());
 	} else {
 		savedState->writeLEUint32(0);
 	}
@@ -198,7 +198,7 @@ void Actor::saveState(SaveGame *savedState) const {
 
 	if (_turnCostume) {
 		savedState->writeLEUint32(1);
-		savedState->writeCharString(_turnCostume->getFilename());
+		savedState->writeString(_turnCostume->getFilename());
 	} else {
 		savedState->writeLEUint32(0);
 	}
@@ -210,7 +210,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	for (int i = 0; i < 10; ++i) {
 		if (_talkCostume[i]) {
 			savedState->writeLEUint32(1);
-			savedState->writeCharString(_talkCostume[i]->getFilename());
+			savedState->writeString(_talkCostume[i]->getFilename());
 		} else {
 			savedState->writeLEUint32(0);
 		}
@@ -220,7 +220,7 @@ void Actor::saveState(SaveGame *savedState) const {
 
 	if (_mumbleCostume) {
 		savedState->writeLEUint32(1);
-		savedState->writeCharString(_mumbleCostume->getFilename());
+		savedState->writeString(_mumbleCostume->getFilename());
 	} else {
 		savedState->writeLEUint32(0);
 	}
@@ -1032,7 +1032,7 @@ void Actor::setScale(float scale) {
 
 Costume *Actor::findCostume(const char *n) {
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
-		if (scumm_stricmp((*i)->getFilename(), n) == 0)
+		if ((*i)->getFilename().compareToIgnoreCase(n) == 0)
 			return *i;
 	}
 
@@ -1358,7 +1358,7 @@ void Actor::putInSet(const char *setName) {
 	_setName = setName;
 }
 
-bool Actor::isInSet(const char *setName) const {
+bool Actor::isInSet(const Common::String &setName) const {
 	return _setName == setName;
 }
 

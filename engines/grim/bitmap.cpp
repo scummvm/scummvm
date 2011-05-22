@@ -89,7 +89,7 @@ char *makeBitmapFromTile(char **bits, int width, int height, int bpp) {
 	return fullImage;
 }
 
-BitmapData *BitmapData::getBitmapData(const char *fname, const char *data, int len) {
+BitmapData *BitmapData::getBitmapData(const Common::String &fname, const char *data, int len) {
 	Common::String str(fname);
 	if (_bitmaps && _bitmaps->contains(str)) {
 		BitmapData *b = (*_bitmaps)[str];
@@ -105,11 +105,11 @@ BitmapData *BitmapData::getBitmapData(const char *fname, const char *data, int l
 	return b;
 }
 
-BitmapData::BitmapData(const char *fname, const char *data, int len) {
+BitmapData::BitmapData(const Common::String &fname, const char *data, int len) {
 	_fname = fname;
 	_refCount = 1;
 	if (len > 4 && memcmp(data, "\x1f\x8b\x08\0", 4) == 0) {
-		loadTile(fname, data, len);
+		loadTile(data, len);
 		return;
 	} else if (len < 8 || memcmp(data, "BM  F\0\0\0", 8) != 0) {
 		if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
@@ -208,7 +208,7 @@ BitmapData::~BitmapData() {
 	}
 }
 
-bool BitmapData::loadTile(const char *filename, const char *data, int len) {
+bool BitmapData::loadTile(const char *data, int len) {
 	_x = 0;
 	_y = 0;
 	_format = 1;
@@ -269,7 +269,7 @@ char *BitmapData::getImageData(int num) const {
 
 // Bitmap
 
-Bitmap::Bitmap(const char *fname, const char *data, int len) :
+Bitmap::Bitmap(const Common::String &fname, const char *data, int len) :
 		Object() {
 	_data = BitmapData::getBitmapData(fname, data, len);
 	_x = _data->_x;

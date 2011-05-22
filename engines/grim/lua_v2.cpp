@@ -63,7 +63,7 @@ void L2_DimScreen() {
 		dim = lua_getnumber(dimObj);
 
 	// FIXME func(dim);
-	warning("L2_DimScreen: dim: %d", dim);
+	warning("L2_DimScreen: dim: %f", dim);
 }
 
 void L2_MakeCurrentSetup() {
@@ -89,7 +89,7 @@ void L2_SetActorGlobalAlpha() {
 	if (!actor)
 		return;
 
-	warning("L2_SetActorGlobalAlpha: actor: %s", actor->getName());
+	warning("L2_SetActorGlobalAlpha: actor: %s", actor->getName().c_str());
 
 	/* Only when actor has primitives
 	if (!actor->primities)
@@ -127,7 +127,7 @@ void L2_RemoveActorFromOverworld() {
 	if (!actor)
 		return;
 
-	warning("L2_RemoveActorFromOverworld: actor: %s", actor->getName());
+	warning("L2_RemoveActorFromOverworld: actor: %s", actor->getName().c_str());
 	// FIXME actor->func();
 }
 
@@ -141,7 +141,7 @@ void L2_UnloadActor() {
 	if (!actor)
 		return;
 
-	warning("L2_UnloadActor: actor: %s", actor->getName());
+	warning("L2_UnloadActor: actor: %s", actor->getName().c_str());
 	// FIXME actor->func();
 }
 
@@ -250,7 +250,7 @@ void L2_SetActorSortOrder() {
 
 	Actor *actor = getactor(actorObj);
 	int mode = (int)lua_getnumber(modeObj);
-	warning("L2_SetActorSortOrder, actor: %s, mode: %d", actor->getName(), mode);
+	warning("L2_SetActorSortOrder, actor: %s, mode: %d", actor->getName().c_str(), mode);
 	// FIXME: actor->func(mode);
 }
 
@@ -269,7 +269,7 @@ void L2_ActorActivateShadow() {
 	const char *plane = "NULL";
 	if (lua_isstring(planeObj))
 		plane = lua_getstring(planeObj);
-	warning("L2_ActorActivateShadow, actor: %s, aquality: %d, plane: %s", actor->getName(), quality, plane);
+	warning("L2_ActorActivateShadow, actor: %s, aquality: %d, plane: %s", actor->getName().c_str(), quality, plane);
 	// FIXME: implement missing rest part of code
 }
 
@@ -281,7 +281,7 @@ void L2_ActorStopMoving() {
 
 	Actor *actor = getactor(actorObj);
 
-	warning("L2_ActorStopMoving, actor: %s", actor->getName());
+	warning("L2_ActorStopMoving, actor: %s", actor->getName().c_str());
 	// FIXME: implement missing rest part of code
 }
 
@@ -293,7 +293,7 @@ void L2_PutActorInOverworld() {
 
 	Actor *actor = getactor(actorObj);
 
-	warning("L2_PutActorInOverworld, actor: %s", actor->getName());
+	warning("L2_PutActorInOverworld, actor: %s", actor->getName().c_str());
 	// FIXME: implement missing func
 	//actor->func();
 }
@@ -450,7 +450,7 @@ void L2_PlayActorChore() {
 	const char *costumeName = lua_getstring(costumeObj);
 
 	warning("L2_PlayActorChore: implement opcode actor: %s, chore: %s, costume: %s, mode bool: %d, param: %f",
-			actor->getName(), choreName, costumeName, (int)mode, param);
+			actor->getName().c_str(), choreName, costumeName, (int)mode, param);
 	// FIXME. code below is a hack, need proper implementation
 	actor->setCostume(costumeName);
 	Costume *costume = actor->getCurrentCostume();
@@ -472,7 +472,7 @@ static void L2_StopActorChores() {
 	bool p = lua_isnil(paramObj) != 0;
 	// I'm not fully sure about bool logic here
 	//actor->func(p);
-	warning("L2_StopActorChores: implement opcode... bool param: %d, actor: %s", (int)p, actor->getName());
+	warning("L2_StopActorChores: implement opcode... bool param: %d, actor: %s", (int)p, actor->getName().c_str());
 }
 
 static void L2_SetActorLighting() {
@@ -493,17 +493,17 @@ static void L2_SetActorLighting() {
 	if (lightMode != 0) {
 		if (lightMode == 1) {
 			//FIXME actor->
-			warning("L2_SetActorLighting: case param 1(LIGHT_FASTDYN), actor: %s", actor->getName());
+			warning("L2_SetActorLighting: case param 1(LIGHT_FASTDYN), actor: %s", actor->getName().c_str());
 		} else if (lightMode == 2) {
 			//FIXME actor->
-			warning("L2_SetActorLighting: case param 2(LIGHT_NORMDYN), actor: %s", actor->getName());
+			warning("L2_SetActorLighting: case param 2(LIGHT_NORMDYN), actor: %s", actor->getName().c_str());
 		} else {
 			//FIXME actor->
-			warning("L2_SetActorLighting: case param %d(LIGHT_NONE), actor: %s", lightMode, actor->getName());
+			warning("L2_SetActorLighting: case param %d(LIGHT_NONE), actor: %s", lightMode, actor->getName().c_str());
 		}
 	} else {
 		//FIXME actor->
-		warning("L2_SetActorLighting: case param 0(LIGHT_STATIC), actor: %s", actor->getName());
+		warning("L2_SetActorLighting: case param 0(LIGHT_STATIC), actor: %s", actor->getName().c_str());
 	}
 }
 

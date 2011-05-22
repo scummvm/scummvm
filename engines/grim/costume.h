@@ -38,7 +38,7 @@ class TextSplitter;
 
 class Costume : public Object {
 public:
-	Costume(const char *filename, const char *data, int len, Costume *prevCost);
+	Costume(const Common::String &filename, const char *data, int len, Costume *prevCost);
     Costume() : Object() { _chores = 0; }
 
 	void loadGRIM(TextSplitter &ts, Costume *prevCost);
@@ -46,7 +46,7 @@ public:
 
 	virtual ~Costume();
 
-	const char *getFilename() const { return _fname.c_str(); }
+	const Common::String &getFilename() const { return _fname; }
 	void playChore(const char *name);
 	void playChore(int num);
 	void playChoreLooping(int num);

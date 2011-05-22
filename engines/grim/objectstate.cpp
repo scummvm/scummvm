@@ -54,7 +54,7 @@ ObjectState::~ObjectState() {
 	delete _zbitmap;
 }
 
-const char *ObjectState::getBitmapFilename() const {
+const Common::String &ObjectState::getBitmapFilename() const {
 	return _bitmap->getFilename();
 }
 

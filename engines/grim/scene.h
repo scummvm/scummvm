@@ -37,7 +37,7 @@ class CMap;
 
 class Scene {
 public:
-	Scene(const char *name, const char *buf, int len);
+	Scene(const Common::String &name, const char *buf, int len);
 	Scene();
 	~Scene();
 
@@ -63,7 +63,7 @@ public:
 	void setSoundParameters(int minVolume, int maxVolume);
 	void getSoundParameters(int *minVolume, int *maxVolume);
 
-	const char *getName() const { return _name.c_str(); }
+	const Common::String &getName() const { return _name; }
 
 	void setLightEnableState(bool state) {
 		_enableLights = state;

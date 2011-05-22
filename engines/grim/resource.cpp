@@ -449,7 +449,7 @@ KeyframeAnimPtr ResourceLoader::getKeyframe(const char *fname) {
 	filename.toLowercase();
 	for (Common::List<KeyframeAnim *>::const_iterator i = _keyframeAnims.begin(); i != _keyframeAnims.end(); ++i) {
 		KeyframeAnim *k = *i;
-		if (strcmp(filename.c_str(), k->getFilename()) == 0) {
+		if (filename == k->getFilename()) {
 			return k;
 		}
 	}
@@ -478,7 +478,7 @@ LipSyncPtr ResourceLoader::getLipSync(const char *fname) {
 	filename.toLowercase();
 	for (Common::List<LipSync *>::const_iterator i = _lipsyncs.begin(); i != _lipsyncs.end(); ++i) {
 		LipSync *l = *i;
-		if (strcmp(filename.c_str(), l->getFilename()) == 0) {
+		if (filename.c_str() == l->getFilename()) {
 			return l;
 		}
 	}

@@ -32,14 +32,14 @@ template class ObjectPtr<LipSync>;
 // A new define that'll be around when theres a configure script :)
 #undef DEBUG_VERBOSE
 
-LipSync::LipSync(const char *filename, const char *data, int len) :
+LipSync::LipSync(const Common::String &filename, const char *data, int len) :
 	Object() {
 	_fname = filename;
 	uint16 readPhoneme;
 	int j;
 
 	if (READ_BE_UINT32(data) != MKTAG('L','I','P','!')) {
-		error("Invalid file format in %s", filename);
+		error("Invalid file format in %s", _fname.c_str());
 	} else {
 		_numEntries = (len - 8) / 4;
 
@@ -65,7 +65,7 @@ LipSync::LipSync(const char *filename, const char *data, int len) :
 				}
 
 				if (j >= _animTableSize) {
-					warning("Unknown phoneme: 0x%X in file %s", readPhoneme, filename);
+					warning("Unknown phoneme: 0x%X in file %s", readPhoneme, _fname.c_str());
 					_entries[i].anim = 1;
 				}
 
@@ -104,10 +104,6 @@ int LipSync::getAnim(int pos) {
 	}
 
 	return -1;
-}
-
-const char *LipSync::getFilename() const {
-    return _fname.c_str();
 }
 
 const LipSync::PhonemeAnim LipSync::_animTable[] = {

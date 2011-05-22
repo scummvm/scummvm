@@ -50,7 +50,7 @@ public:
 	Position getPos() const { return _pos; }
 	void setPos(Position position) { _pos = position; }
 
-	const char *getBitmapFilename() const;
+	const Common::String &getBitmapFilename() const;
 
 	void setNumber(int val);
 	void draw();

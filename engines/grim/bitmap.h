@@ -34,13 +34,13 @@ namespace Grim {
 // They are automatically deleted if they are not used by any bitmap anymore.
 class BitmapData {
 public:
-	BitmapData(const char *fname, const char *data, int len);
+	BitmapData(const Common::String &fname, const char *data, int len);
 	BitmapData(const char *data, int w, int h, int bpp, const char *fname);
 	BitmapData();
 	~BitmapData();
-	bool loadTile(const char *filename, const char *data, int len);
+	bool loadTile(const char *data, int len);
 
-	static BitmapData *getBitmapData(const char *fname, const char *data, int len);
+	static BitmapData *getBitmapData(const Common::String &fname, const char *data, int len);
 	static Common::HashMap<Common::String, BitmapData *> *_bitmaps;
 
 	char *getImageData(int num) const;
@@ -66,11 +66,11 @@ private:
 class Bitmap : public Object {
 public:
 	// Construct a bitmap from the given data.
-	Bitmap(const char *filename, const char *data, int len);
+	Bitmap(const Common::String &filename, const char *data, int len);
 	Bitmap(const char *data, int width, int height, int bpp, const char *filename);
 	Bitmap();
 
-	const char *getFilename() const { return _data->_fname.c_str(); }
+	const Common::String &getFilename() const { return _data->_fname; }
 
 	void draw() const;
 

@@ -30,10 +30,10 @@ namespace Grim {
 class CMap : public Object {
 public:
 	// Load a colormap from the given data.
-	CMap(const char *fileName, const char *data, int len);
+	CMap(const Common::String &fileName, const char *data, int len);
 	CMap();
 	~CMap();
-	const char *getFilename() const { return _fname.c_str(); }
+	const Common::String &getFilename() const { return _fname; }
 
 	// The color data, in RGB format
 	char _colors[256 * 3];

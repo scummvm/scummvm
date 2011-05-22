@@ -29,7 +29,7 @@ namespace Grim {
 
 class KeyframeAnim : public Object {
 public:
-	KeyframeAnim(const char *filename, const char *data, int len);
+	KeyframeAnim(const Common::String &filename, const char *data, int len);
 	~KeyframeAnim();
 
 	void loadBinary(const char *data, int len);
@@ -37,7 +37,7 @@ public:
 	void animate(Model::HierNode *nodes, float time, int priority1 = 1, int priority2 = 5, float fade = 1) const;
 
 	float getLength() const { return _numFrames / _fps; }
-	const char *getFilename() const { return _fname.c_str(); }
+	const Common::String &getFilename() const { return _fname; }
 
 private:
 	Common::String _fname;

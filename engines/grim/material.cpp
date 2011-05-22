@@ -29,7 +29,7 @@
 
 namespace Grim {
 
-Material::Material(const char *filename, const char *data, int len, CMap *cmap) :
+Material::Material(const Common::String &filename, const char *data, int len, CMap *cmap) :
 		Object(), _fname(filename), _cmap(cmap) {
 	if (len < 4 || memcmp(data, "MAT ", 4) != 0)
 		error("invalid magic loading texture");
@@ -50,7 +50,7 @@ Material::Material(const char *filename, const char *data, int len, CMap *cmap) 
 
 	if (_width == 0 || _height == 0) {
 		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("skip load texture: bad texture size (%dx%d) for texture %s", _width, _height, filename);
+			warning("skip load texture: bad texture size (%dx%d) for texture %s", _width, _height, _fname.c_str());
 		return;
 	}
 

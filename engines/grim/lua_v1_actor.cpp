@@ -734,7 +734,7 @@ void L1_GetActorCostume() {
 		return;
 
 	if (costume)
-		lua_pushstring(const_cast<char *>(costume->getFilename()));
+		lua_pushstring(costume->getFilename().c_str());
 	else
 		lua_pushnil();
 }
@@ -746,7 +746,7 @@ void L1_PopActorCostume() {
 
 	Actor *actor = getactor(actorObj);
 	if (actor->getCurrentCostume()) {
-		lua_pushstring(const_cast<char *>(actor->getCurrentCostume()->getFilename()));
+		lua_pushstring(actor->getCurrentCostume()->getFilename().c_str());
 		actor->popCostume();
 	} else
 		lua_pushnil();

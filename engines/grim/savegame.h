@@ -35,7 +35,7 @@ class Color;
 
 class SaveGame {
 public:
-	SaveGame(const char *filename, bool saving);
+	SaveGame(const Common::String &filename, bool saving);
 	~SaveGame();
 
 	static int SAVEGAME_VERSION;

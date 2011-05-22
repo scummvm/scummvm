@@ -41,7 +41,7 @@ void Sprite::draw() const {
 	g_driver->drawSprite(this);
 }
 
-Model::Model(const char *filename, const char *data, int len, CMap *cmap) :
+Model::Model(const Common::String &filename, const char *data, int len, CMap *cmap) :
 		Object(), _numMaterials(0), _numGeosets(0), _cmap(cmap) {
 	_fname = filename;
 	_headNode = NULL;

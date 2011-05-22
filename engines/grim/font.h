@@ -31,11 +31,11 @@ class SaveGame;
 
 class Font : public Object {
 public:
-	Font(const char *filename, const char *data, int len);
+	Font(const Common::String &filename, const char *data, int len);
 	Font();
 	~Font();
 
-	Common::String getFilename() const { return _filename; }
+	const Common::String &getFilename() const { return _filename; }
 	int32 getHeight() { return _height; }
 	int32 getBaseOffsetY() { return _baseOffsetY; }
 	int32 getCharDataWidth(unsigned char c) { return _charHeaders[getCharIndex(c)].dataWidth; }
@@ -66,7 +66,6 @@ private:
 	CharHeader *_charHeaders;
 	byte *_fontData;
 	Common::String _filename;
-	Common::String _fname;
 };
 
 } // end of namespace Grim

@@ -31,9 +31,7 @@
 
 namespace Grim {
 
-Font::Font(const char *filename, const char *data, int len) : Object() {
-	_fname = filename;
-
+Font::Font(const Common::String &filename, const char *data, int len) : Object() {
 	_filename = filename;
 	_numChars = READ_LE_UINT32(data);
 	_dataSize = READ_LE_UINT32(data + 4);
@@ -48,7 +46,7 @@ Font::Font(const char *filename, const char *data, int len) : Object() {
 	// Read character indexes - are the key/value reversed?
 	_charIndex = new uint16[_numChars];
 	if (!_charIndex)
-		error("Could not load font %s. Out of memory", filename);
+		error("Could not load font %s. Out of memory", _filename.c_str());
 	for (uint i = 0; i < _numChars; ++i) {
 		_charIndex[i] = READ_LE_UINT16(data + 2 * i);
 	}
@@ -58,7 +56,7 @@ Font::Font(const char *filename, const char *data, int len) : Object() {
 	// Read character headers
 	_charHeaders = new CharHeader[_numChars];
 	if (!_charHeaders)
-		error("Could not load font %s. Out of memory", filename);
+		error("Could not load font %s. Out of memory", _filename.c_str());
 	for (uint i = 0; i < _numChars; ++i) {
 		_charHeaders[i].offset = READ_LE_UINT32(data);
 		_charHeaders[i].width = *(int8 *)(data + 4);
@@ -68,7 +66,7 @@ Font::Font(const char *filename, const char *data, int len) : Object() {
 		_charHeaders[i].dataHeight = READ_LE_UINT32(data + 12);
 		int8 overflow = (_charHeaders[i].dataHeight + _charHeaders[i].startingLine) - available_height;
 		if (overflow > 0) {
-		    warning("Font %s, char 0x%02x exceeds font height by %d, increasing font height", filename, i, overflow);
+			warning("Font %s, char 0x%02x exceeds font height by %d, increasing font height", _filename.c_str(), i, overflow);
 		    available_height += overflow;
 		    _height += overflow;
 		}
@@ -77,7 +75,7 @@ Font::Font(const char *filename, const char *data, int len) : Object() {
 	// Read font data
 	_fontData = new byte[_dataSize];
 	if (!_fontData)
-		error("Could not load font %s. Out of memory", filename);
+		error("Could not load font %s. Out of memory", _filename.c_str());
 
 	memcpy(_fontData, data, _dataSize);
 }

@@ -47,7 +47,7 @@ struct Sprite {
 class Model : public Object {
 public:
 	// Construct a 3D model from the given data.
-	Model(const char *filename, const char *data, int len, CMap *cmap);
+	Model(const Common::String &filename, const char *data, int len, CMap *cmap);
 	void loadBinary(const char *&data, CMap *cmap);
 	void loadText(TextSplitter *ts, CMap *cmap);
 	void loadEMI(Common::MemoryReadStream &ms);

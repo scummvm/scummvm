@@ -1561,7 +1561,7 @@ void GrimEngine::saveBitmaps(SaveGame *state) {
 	for (BitmapListType::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
 		state->writeLEUint32(i->_key);
 		Bitmap *b = i->_value;
-		state->writeCharString(b->getFilename());
+		state->writeString(b->getFilename());
 
 		state->writeLESint32(b->getCurrentImage());
 		state->writeLESint32(b->getX());
@@ -1629,7 +1629,7 @@ void GrimEngine::savegameCallback() {
 Scene *GrimEngine::findScene(const char *name) {
 	// Find scene object
 	for (SceneListType::const_iterator i = scenesBegin(); i != scenesEnd(); ++i) {
-		if (!strcmp(i->_value->getName(), name))
+		if (i->_value->getName() == name)
 			return i->_value;
 	}
 	return NULL;
