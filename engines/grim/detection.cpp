@@ -46,24 +46,11 @@ using Common::GUIO_NONE;
 
 static const GrimGameDescription gameDescriptions[] = {
 	{
-		// Grim Fandango English version
+		// Grim Fandango English version (patched)
 		{
 			"grim",
 			"",
 			AD_ENTRY1s("grim.tab", "cfb333d6aec260c905151b6b98ef71e8", 362212),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO_NONE
-		},
-		GType_GRIM
-	},
-	{
-		// Grim Fandango English version (Adventure-bundle, possibly patched)
-		{
-			"grim",
-			"",
-			AD_ENTRY1s("grim.tab", "cfb333d6aec260c905151b6b98ef71e8", 362164),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -77,19 +64,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			"grim",
 			"",
 			AD_ENTRY1s("grim.tab", "464138caf47e580cbb237dee10674b16", 398592),
-			Common::DE_DEU,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO_NONE
-		},
-		GType_GRIM
-	},
-	{
-		// Grim Fandango German version (patched)
-		{
-			"grim",
-			"",
-			AD_ENTRY1s("grim.tab", "464138caf47e580cbb237dee10674b16", 398671),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -150,7 +124,7 @@ static const GrimGameDescription gameDescriptions[] = {
 		GType_GRIM
 	},
 	{
-		// Grim Fandango patched Italian version
+		// Grim Fandango Italian version (patched)
 		{
 			"grim",
 			"",
