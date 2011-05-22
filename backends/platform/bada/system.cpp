@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/scummsys.h"
+#include "common/events.h"
+#include "fs-factory.h"
 #include "backends/modular-backend.h"
 #include "base/main.h"
 #include "backends/mutex/mutex.h"
@@ -27,11 +30,7 @@
 #include "backends/timer/default/default-timer.h"
 #include "backends/events/default/default-events.h"
 #include "backends/audiocd/default/default-audiocd.h"
-#include "backends/graphics/opengl/opengl-graphics.h"
 #include "audio/mixer_intern.h"
-#include "common/scummsys.h"
-#include "common/events.h"
-#include "fs-factory.h"
 
 #include <FApp.h>
 #include <FGraphics.h>
@@ -39,6 +38,11 @@
 #include <FSystem.h>
 #include <FBase.h>
 #include <FIoFile.h>
+
+#include <stdarg.h>
+
+#include "system.h"
+#include "graphics.h"
 
 using namespace Osp::Base;
 using namespace Osp::Base::Runtime;
@@ -83,16 +87,6 @@ bool BadaSaveFileManager::removeSavefile(const Common::String &filename) {
 }
 
 //
-// BadaGraphicsManager
-//
-struct BadaGraphicsManager : public OpenGLGraphicsManager {
-  void setInternalMousePosition(int x, int y);
-};
-
-void BadaGraphicsManager::setInternalMousePosition(int x, int y) {
-}
-
-//
 // BadaMutexManager
 //
 struct BadaMutexManager : public MutexManager {
@@ -124,16 +118,20 @@ void BadaMutexManager::deleteMutex(OSystem::MutexRef mutex) {
 //
 // BadaSystem
 //
-class BadaSystem : public ModularBackend, public IRunnable {
+class BadaSystem : public ModularBackend, 
+                   public Osp::Base::Runtime::IRunnable,
+                   Common::EventSource {
 public:
-  BadaSystem();
+  BadaSystem(Osp::App::Application* app);
   ~BadaSystem();
 
   result Construct();
   Object* Run();
 
   void initBackend();
-  //bool pollEvent(Common::Event &event);
+  result initModules();
+
+  bool pollEvent(Common::Event &event);
   uint32 getMillis();
   void delayMillis(uint msecs);
   void getTimeAndDate(TimeDate &t) const;
@@ -145,24 +143,34 @@ public:
 
 private:
   Thread* pThread;
+  Osp::App::Application* app;
 };
 
-BadaSystem::BadaSystem() {
+BadaSystem::BadaSystem(Osp::App::Application* app) {
+  this->app = app;
   Construct();
 }
 
 result BadaSystem::Construct(void) {
-  pThread = new Thread;
+  logEntered();
+
+  _fsFactory = new BADAFilesystemFactory();
+  if (!_fsFactory) {
+    return E_OUT_OF_MEMORY;
+  }
+
+  pThread = new Thread();
   if (pThread == null) {
     return E_OUT_OF_MEMORY;
   }
 
   result r = pThread->Construct(*this);
-  if (r != E_OUT_OF_MEMORY) {
-    pThread->Start();
+  if (r == E_OUT_OF_MEMORY) {
+    return E_OUT_OF_MEMORY;
   }
 
-  return r;
+  pThread->Start();
+  return E_SUCCESS;
 }
 
 BadaSystem::~BadaSystem() {
@@ -175,26 +183,71 @@ Object* BadaSystem::Run(void) {
   return null;
 }
 
-void BadaSystem::initBackend() {
-  _fsFactory = new BADAFilesystemFactory();
-  _mutexManager = new BadaMutexManager();
-  _timerManager = new DefaultTimerManager();
-  //  _eventManager = new DefaultEventManager(this);
-  _savefileManager = new BadaSaveFileManager();
-  _graphicsManager = (GraphicsManager*) new BadaGraphicsManager();
-  _audiocdManager = (AudioCDManager*) new DefaultAudioCDManager();
-  _mixer = new Audio::MixerImpl(this, 22050);
-  ((Audio::MixerImpl*) _mixer)->setReady(false);
+result BadaSystem::initModules() {
+  logEntered();
 
-  OSystem::initBackend();
+  _mutexManager = new BadaMutexManager();
+  if (!_mutexManager) {
+    return E_OUT_OF_MEMORY;
+  }
+  _timerManager = new DefaultTimerManager();
+  if (!_timerManager) {
+    return E_OUT_OF_MEMORY;
+  }
+  _eventManager = new DefaultEventManager(this);
+  if (!_eventManager) {
+    return E_OUT_OF_MEMORY;
+  }
+  _savefileManager = new BadaSaveFileManager();
+  if (!_savefileManager) {
+    return E_OUT_OF_MEMORY;
+  }
+  _graphicsManager = (GraphicsManager*) new BadaGraphicsManager();
+  if (!_graphicsManager || 
+      (!((BadaGraphicsManager*) _graphicsManager)->construct(app))) {
+    return E_OUT_OF_MEMORY;
+  }
+  _mixer = new Audio::MixerImpl(this, 22050);
+  if (!_mixer) {
+    return E_OUT_OF_MEMORY;
+  }
+  _audiocdManager = (AudioCDManager*) new DefaultAudioCDManager();
+  if (!_audiocdManager) {
+    return E_OUT_OF_MEMORY;
+  }
+
+  ((Audio::MixerImpl*) _mixer)->setReady(false);
+  logLeaving();
+  return E_SUCCESS;
 }
 
-//bool BadaSystem::pollEvent(Common::Event &event) {
-// return false;
-//}
+void BadaSystem::initBackend() {
+  logEntered();
+
+  if (E_SUCCESS != initModules()) {
+    systemError("initModules failed");
+  }
+  else {
+    OSystem::initBackend();
+  }
+
+  logLeaving();
+}
+
+bool BadaSystem::pollEvent(Common::Event &event) {
+  return false;
+}
 
 uint32 BadaSystem::getMillis() {
-  return 0;
+  uint32 result = 0;
+  DateTime currentTime;
+  if (E_SUCCESS == Osp::System::SystemTime::GetCurrentTime(currentTime)) {
+    result = currentTime.GetTime().GetMilliseconds();
+  }
+  else {
+    fatalError();
+  }
+  return result;
 }
 
 void BadaSystem::delayMillis(uint msecs) {
@@ -215,11 +268,12 @@ void BadaSystem::getTimeAndDate(TimeDate &td) const {
 }
 
 void BadaSystem::fatalError() {
-  
+  systemError("ScummVM: Fatal internal error.");
+  exit(1);
 }
 
-void BadaSystem::logMessage(LogMessageType::Type type, const char *message) {
-  
+void BadaSystem::logMessage(LogMessageType::Type /*type*/, const char *message) {
+  AppLogDebug(message);
 }
 
 Common::SeekableReadStream* BadaSystem::createConfigReadStream() {
@@ -233,8 +287,10 @@ Common::WriteStream* BadaSystem::createConfigWriteStream() {
 }
 
 // create the scummVM system
-void systemStart() {
-  g_system = new BadaSystem();
+bool systemStart(Osp::App::Application* app) {
+  logEntered();
+  g_system = new BadaSystem(app);
+  return g_system != null;
 }
 
 // prepares to halt the application
@@ -244,3 +300,17 @@ void systemStop() {
 // adds a new event to the event queue
 void systemPostEvent() {
 }
+
+// display a fatal error notification
+void systemError(const char* format, ...) {
+  va_list ap;
+  char buffer[255];
+
+  va_start(ap, format);
+  vsnprintf(buffer, sizeof(buffer), format, ap);
+  va_end(ap);
+  
+  AppLogDebug(buffer);
+  // TODO: display in a popup
+}
+
