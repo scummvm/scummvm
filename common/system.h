@@ -991,7 +991,8 @@ public:
 	 * rectangle over the regular screen content; or in a message box beneath
 	 * it; etc.).
 	 *
-	 * Currently, only pure ASCII messages can be expected to show correctly.
+	 * The message is expected to be provided in the current TranslationManager
+	 * charset.
 	 *
 	 * @note There is a default implementation in BaseBackend which uses a
 	 *       TimedMessageDialog to display the message. Hence implementing

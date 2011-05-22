@@ -1385,7 +1385,7 @@ const char *OpenGLGraphicsManager::getCurrentModeName() {
 #ifdef USE_OSD
 void OpenGLGraphicsManager::updateOSD() {
 	// The font we are going to use:
-	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
 
 	if (_osdSurface.w != _osdTexture->getWidth() || _osdSurface.h != _osdTexture->getHeight())
 		_osdSurface.create(_osdTexture->getWidth(), _osdTexture->getHeight(), _overlayFormat);
