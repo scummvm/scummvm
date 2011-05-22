@@ -23,8 +23,25 @@
 #ifndef BADA_SYSTEM_H
 #define BADA_SYSTEM_H
 
-void systemStart();
+#include <FAppApplication.h>
+
+#if defined(_DEBUG)
+#define logEntered() AppLog("%s entered (%s %d)", \
+                             __FUNCTION__, __FILE__, __LINE__);
+#else
+#define logEntered()
+#endif
+
+#if defined(_DEBUG)
+#define logLeaving() AppLog("%s leaving (%s %d)", \
+                             __FUNCTION__, __FILE__, __LINE__);
+#else
+#define logLeaving()
+#endif
+
+bool systemStart(Osp::App::Application* app);
 void systemStop();
 void systemPostEvent();
+void systemError(const char* format, ...);
 
 #endif

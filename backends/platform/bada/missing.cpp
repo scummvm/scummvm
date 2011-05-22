@@ -32,6 +32,7 @@
 #include <ctype.h>
 
 #include "portdefs.h"
+#include "system.h"
 
 #define BUF_SIZE 255
 
@@ -41,7 +42,8 @@ int __errno; // for overridden method in saves/default/default-saves.cpp
 
 void __assert_func(const char* file, int line, 
                    const char* func, const char* err) {
-  AppLogDebug("ScummVM error: %s %d %s %s", file, line, func, err);
+  systemError("ScummVM internal error: %s %d %s %s", 
+              file, line, func, err);
   exit(1);
 }
 

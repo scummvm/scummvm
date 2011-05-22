@@ -26,6 +26,7 @@
 
 #include "portdefs.h"
 #include "application.h"
+#include "system.h"
 
 using namespace Osp::Base;
 using namespace Osp::Base::Collection;
@@ -50,7 +51,7 @@ int OspMain(int argc, char *pArgv[]) {
 
 	r = Osp::App::Application::Execute(BadaScummVM::createInstance, pArgs);
 	if (IsFailed(r)) {
-		AppLogException("Application execution failed-[%s].", GetErrorMessage(r));
+		systemError("ScummVM failed: [%s].", GetErrorMessage(r));
 		r &= 0x0000FFFF;
 	}
 

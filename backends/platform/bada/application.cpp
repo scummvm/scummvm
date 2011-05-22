@@ -45,8 +45,7 @@ BadaScummVM::~BadaScummVM() {
 }
 
 bool BadaScummVM::OnAppInitializing(AppRegistry& appRegistry) {
-  systemStart();
-	result r = E_SUCCESS;
+  return systemStart(this) ? E_SUCCESS : E_OUT_OF_MEMORY;
 }
 
 bool BadaScummVM::OnAppTerminating(AppRegistry& appRegistry, 
