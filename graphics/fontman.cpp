@@ -26,7 +26,6 @@ DECLARE_SINGLETON(Graphics::FontManager);
 
 namespace Graphics {
 
-const ScummFont *g_scummfont = 0;
 FORWARD_DECLARE_FONT(g_sysfont);
 FORWARD_DECLARE_FONT(g_sysfont_big);
 FORWARD_DECLARE_FONT(g_consolefont);
@@ -34,18 +33,15 @@ FORWARD_DECLARE_FONT(g_consolefont);
 FontManager::FontManager() {
 	// This assert should *never* trigger, because
 	// FontManager is a singleton, thus there is only
-	// one instance of it per time. (g_scummfont gets
+	// one instance of it per time. (g_sysfont gets
 	// reset to 0 in the desctructor of this class).
-	assert(g_scummfont == 0);
-	g_scummfont = new ScummFont;
+	assert(g_sysfont == 0);
 	INIT_FONT(g_sysfont);
 	INIT_FONT(g_sysfont_big);
 	INIT_FONT(g_consolefont);
 }
 
 FontManager::~FontManager() {
-	delete g_scummfont;
-	g_scummfont = 0;
 	delete g_sysfont;
 	g_sysfont = 0;
 	delete g_sysfont_big;
@@ -58,7 +54,6 @@ const struct {
 	const char *name;
 	FontManager::FontUsage id;
 } builtinFontNames[] = {
-	{ "builtinOSD", FontManager::kOSDFont },
 	{ "builtinConsole", FontManager::kConsoleFont },
 	{ "fixed5x8.bdf", FontManager::kConsoleFont },
 	{ "fixed5x8-iso-8859-1.bdf", FontManager::kConsoleFont },
@@ -69,7 +64,7 @@ const struct {
 	{ "helvB12.bdf", FontManager::kBigGUIFont },
 	{ "helvB12-iso-8859-1.bdf", FontManager::kBigGUIFont },
 	{ "helvB12-ascii.bdf", FontManager::kBigGUIFont },
-	{ 0, FontManager::kOSDFont }
+	{ 0, FontManager::kConsoleFont }
 };
 
 const Font *FontManager::getFontByName(const Common::String &name) const {
@@ -84,8 +79,6 @@ const Font *FontManager::getFontByName(const Common::String &name) const {
 
 const Font *FontManager::getFontByUsage(FontUsage usage) const {
 	switch (usage) {
-	case kOSDFont:
-		return g_scummfont;
 	case kConsoleFont:
 		return g_consolefont;
 	case kGUIFont:

@@ -114,18 +114,6 @@ public:
 	int wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines) const;
 };
 
-/**
- * A SCUMM style font.
- */
-class ScummFont : public Font {
-public:
-	virtual int getFontHeight() const { return 8; }
-	virtual int getMaxCharWidth() const { return 8; }
-
-	virtual int getCharWidth(byte chr) const;
-	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const;
-};
-
 typedef uint16 bitmap_t; /* bitmap image unit size*/
 
 struct BBX {

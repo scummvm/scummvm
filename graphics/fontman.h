@@ -36,7 +36,6 @@ class Font;
 class FontManager : public Common::Singleton<FontManager> {
 public:
 	enum FontUsage {
-		kOSDFont = 0,
 		kConsoleFont = 1,
 		kGUIFont = 2,
 		kBigGUIFont = 3

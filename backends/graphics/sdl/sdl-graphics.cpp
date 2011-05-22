@@ -2060,7 +2060,7 @@ void SdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 	                                   _osdSurface->format->Bshift, _osdSurface->format->Ashift);
 
 	// The font we are going to use:
-	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kOSDFont);
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 
 	// Clear everything with the "transparent" color, i.e. the colorkey
 	SDL_FillRect(_osdSurface, 0, kOSDColorKey);
