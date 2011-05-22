@@ -1401,6 +1401,7 @@ void Scene2100::Hotspot8::doAction(int action) {
 }
 
 void Scene2100::Hotspot10::doAction(int action) {
+	// Quinn's Console
 	Scene2100 *scene = (Scene2100 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -1415,6 +1416,7 @@ void Scene2100::Hotspot10::doAction(int action) {
 		} else if (_globals->getFlag(13)) {
 			SceneItem::display2(2100, 28);
 		} else {
+			scene->_sceneMode = 2101;
 			scene->setAction(&scene->_sequenceManager, scene, 2101, &_globals->_player, NULL);
 		}
 		break;
