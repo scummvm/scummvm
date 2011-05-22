@@ -5164,6 +5164,7 @@ void Scene2320::Action3::signal() {
 }
 
 void Scene2320::Action4::signal() {
+	// Fly Cycle actions
 	Scene2320 *scene = (Scene2320 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -5230,11 +5231,13 @@ void Scene2320::Action4::signal() {
 		setDelay(13);
 		break;
 	case 9:
-		if (!_globals->getFlag(109)) {
-			SceneItem::display2(2320, 19);
-		} else {
-			_globals->_sceneManager.changeScene(7600);
-		}
+		// Quinn sits in the flycycle
+		scene->_hotspot16.hide();
+		_globals->_player.setVisage(2323);
+		_globals->_player.setPosition(Common::Point(303, 176));
+		_globals->_player.setStrip(2);
+		_globals->_player.setFrame(1);
+		_globals->_player.animate(ANIM_MODE_5, this);
 		break;
 	case 10:
 		if (_globals->getFlag(109)) {
@@ -5291,6 +5294,7 @@ void Scene2320::Action4::signal() {
 		break;
 	}
 	case 18: {
+		scene->_hotspot16.fixPriority(149);
 		Common::Point pt(320, 202);
 		PlayerMover *mover = new PlayerMover();
 		scene->_hotspot16.addMover(mover, &pt, this);
@@ -5735,6 +5739,7 @@ void Scene2320::Hotspot14::doAction(int action) {
 }
 
 void Scene2320::Hotspot15::doAction(int action) {
+	// Left console (Flycycle console)
 	Scene2320 *scene = (Scene2320 *)_globals->_sceneManager._scene;
 
 	switch (action) {
