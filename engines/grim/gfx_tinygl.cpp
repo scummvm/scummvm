@@ -171,7 +171,7 @@ byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	_currentShadowArray = NULL;
 
-	TGLfloat ambientSource[] = { 0.6f, 0.6f, 0.6f, 1.0f };
+	TGLfloat ambientSource[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	tglLightModelfv(TGL_LIGHT_MODEL_AMBIENT, ambientSource);
 
 	return buffer;
@@ -574,14 +574,14 @@ void GfxTinyGL::setupLight(Scene::Light *light, int lightId) {
 	tglEnable(TGL_LIGHTING);
 	float lightColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	float lightPos[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	float lightDir[] = { 0.0f, 0.0f, 0.0f };
+	float lightDir[] = { 0.0f, 0.0f, -1.0f };
 
 	float intensity = light->_intensity / 1.3f;
 	lightColor[0] = ((float)light->_color.getRed() / 15.0f) * intensity;
-	lightColor[1] = ((float)light->_color.getBlue() / 15.0f) * intensity;
-	lightColor[2] = ((float)light->_color.getGreen() / 15.0f) * intensity;
+	lightColor[1] = ((float)light->_color.getGreen() / 15.0f) * intensity;
+	lightColor[2] = ((float)light->_color.getBlue() / 15.0f) * intensity;
 
-	if (strcmp(light->_type.c_str(), "omni") == 0) {
+	if (light->_type == "omni") {
 		lightPos[0] = light->_pos.x();
 		lightPos[1] = light->_pos.y();
 		lightPos[2] = light->_pos.z();
@@ -589,16 +589,16 @@ void GfxTinyGL::setupLight(Scene::Light *light, int lightId) {
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_DIFFUSE, lightColor);
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_POSITION, lightPos);
 		tglEnable(TGL_LIGHT0 + lightId);
-	} else if (strcmp(light->_type.c_str(), "direct") == 0) {
+	} else if (light->_type == "direct") {
 		tglDisable(TGL_LIGHT0 + lightId);
-		lightPos[0] = light->_dir.x();
-		lightPos[1] = light->_dir.y();
-		lightPos[2] = light->_dir.z();
+		lightPos[0] = -light->_dir.x();
+		lightPos[1] = -light->_dir.y();
+		lightPos[2] = -light->_dir.z();
 		lightPos[3] = 0;
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_DIFFUSE, lightColor);
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_POSITION, lightPos);
 		tglEnable(TGL_LIGHT0 + lightId);
-	} else if (strcmp(light->_type.c_str(), "spot") == 0) {
+	} else if (light->_type == "spot") {
 		tglDisable(TGL_LIGHT0 + lightId);
 		lightPos[0] = light->_pos.x();
 		lightPos[1] = light->_pos.y();
@@ -609,6 +609,10 @@ void GfxTinyGL::setupLight(Scene::Light *light, int lightId) {
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_DIFFUSE, lightColor);
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_POSITION, lightPos);
 		tglLightfv(TGL_LIGHT0 + lightId, TGL_SPOT_DIRECTION, lightDir);
+		/* FIXME: TGL_SPOT_CUTOFF should be light->_penumbraangle, but there
+		   seems to be a bug in tinygl as it renders differently from OpenGL.
+		   Reproducing: turn off all lights (comment out), go to scene "al",
+		   and walk along left wall under the lamp. */
 		tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_CUTOFF, 90);
 		tglEnable(TGL_LIGHT0 + lightId);
 	} else {
@@ -704,11 +708,11 @@ void GfxTinyGL::createMaterial(Material *material, const char *data, const CMap 
 		char *texdatapos = texdata;
 		for (int y = 0; y < material->_height; y++) {
 			for (int x = 0; x < material->_width; x++) {
-				int col = *(uint8 *)(data);
+				uint8 col = *(uint8 *)(data);
 				if (col == 0)
 					memset(texdatapos, 0, 4); // transparent
 				else {
-					memcpy(texdatapos, cmap->_colors + 3 * (*(uint8 *)(data)), 3);
+					memcpy(texdatapos, cmap->_colors + 3 * (col), 3);
 					texdatapos[3] = '\xff'; // fully opaque
 				}
 				texdatapos += 4;

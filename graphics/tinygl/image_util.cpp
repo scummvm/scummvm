@@ -13,7 +13,7 @@ void gl_convertRGB_to_5R6G5B8A(unsigned short *pixmap, unsigned char *rgba, int 
 	n = xsize * ysize;
 	p2 = (unsigned char *)pixmap;
 	for (i = 0; i < n; i++) {
-		unsigned short pixel = ((p[0] & 0xF8) << 8) | ((p[1] & 0xFC) << 3) | ((p[2] & 0xF8) >> 3);
+		unsigned short pixel = ((p[0] & 0xF8) << 8) | ((p[1] & 0xFC) << 3) | (p[2] >> 3);
 #ifdef SCUMM_BIG_ENDIAN
 		p2[3 * i + 0] = pixel >> 8;
 		p2[3 * i + 1] = pixel & 0xff;
