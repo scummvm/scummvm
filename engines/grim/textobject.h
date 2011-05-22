@@ -56,6 +56,9 @@ public:
 	void setHeight(int height) { _height = height; }
 	int getHeight() { return _height; }
 
+	void setDuration(int duration) { _duration = duration; }
+	int getDuration() const { return _duration; }
+
 protected:
 	TextObjectCommon();
 
@@ -65,6 +68,7 @@ protected:
 	int _justify;
 	bool _disabled;
 	Font *_font;
+	int _duration;
 };
 
 class TextObjectDefaults : public TextObjectCommon {
@@ -92,6 +96,7 @@ public:
 
 	const char *getName() const { return _textID; }
 	void draw();
+	void update();
 
 	void saveState(SaveGame *state) const;
 	bool restoreState(SaveGame *state);
@@ -112,6 +117,7 @@ protected:
 	uint8 *_textBitmap;
 	int *_bitmapWidthPtr;
 	GfxBase::TextObjectHandle **_textObjectHandle;
+	float _endTime;
 
 	friend class GrimEngine;
 };

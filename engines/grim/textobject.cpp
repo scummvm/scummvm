@@ -27,6 +27,8 @@
 #include "engines/grim/colormap.h"
 #include "engines/grim/font.h"
 
+#include "common/system.h"
+
 namespace Grim {
 
 Common::String parseMsgText(const char *msg, char *msgId);
@@ -301,6 +303,7 @@ void TextObject::createBitmap() {
 			message.deleteChar(0);
 	}
 	_created = true;
+	_endTime = g_system->getMillis() + _duration;
 }
 
 void TextObject::subBaseOffsetY() {
@@ -378,6 +381,17 @@ void TextObject::draw() {
 			warning("TextObject::draw: Unknown justification code (%d)", _justify);
 
 		height += _font->getHeight();
+	}
+}
+
+void TextObject::update() {
+	if (!_created || _disabled) {
+		return;
+	}
+
+	int time = g_system->getMillis();
+	if (time > _endTime) {
+		_disabled = true;
 	}
 }
 

@@ -904,6 +904,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	_sayLineText->setDefaults(&g_grim->_sayLineDefaults);
 	_sayLineText->setText(msg);
 	_sayLineText->setFGColor(_talkColor);
+	_sayLineText->setDuration((float)strlen(msg) * 20.f / sqrt((float)g_grim->getTextSpeed() / 10.f));
 	if (g_grim->getMode() == ENGINE_MODE_SMUSH) {
 		_sayLineText->setX(640 / 2);
 		_sayLineText->setY(456);
@@ -918,19 +919,12 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	}
 	_sayLineText->createBitmap();
 	g_grim->registerTextObject(_sayLineText);
-	g_grim->setCurrentTextObject(_sayLineText);
+	g_grim->setTalkingActor(this);
 }
 
 bool Actor::isTalking() {
 	// If there's no sound file then we're obviously not talking
 	if (strlen(_talkSoundName.c_str()) == 0 || !g_imuse->getSoundStatus(_talkSoundName.c_str())) {
-		// If we're not talking and _sayLinetext exists delete it.
-		// Without this sometimes after reaping Bruno, his "nice bathrob" isn't deleted
-		// and lives through all the cutscene.
-		if (_sayLineText) {
-			g_grim->killTextObject(_sayLineText);
-			_sayLineText = NULL;
-		}
 		return false;
 	}
 
@@ -957,6 +951,9 @@ void Actor::shutUp() {
 	if (_sayLineText) {
 		g_grim->killTextObject(_sayLineText);
 		_sayLineText = NULL;
+	}
+	if (g_grim->getTalkingActor() == this) {
+		g_grim->setTalkingActor(NULL);
 	}
 }
 

@@ -290,8 +290,7 @@ void setTextObjectParams(TextObjectCommon *textObject, lua_Object tableObj) {
 	keyObj = lua_gettable();
 	if (keyObj) {
 		if (lua_isnumber(keyObj)) {
-			//textObject->setDuration(lua_getnumber(key));
-			warning("setTextObjectParams: dummy Duration: %d", (int)lua_getnumber(keyObj));
+			textObject->setDuration(lua_getnumber(keyObj));
 		}
 	}
 }
@@ -563,7 +562,7 @@ void L1_IsMessageGoing() {
 			// NOTE: i'm not sure this currentTextObject stuff is totally right.
 			// if you do changes test them against the crying angelitos in the fo set.
 			// the dialog menu should appear few secods after they start crying.
-			pushbool(g_grim->getCurrentTextObject() != NULL);
+			pushbool(g_grim->getTalkingActor() != NULL);
 		}
 	} else
 		lua_pushnil();

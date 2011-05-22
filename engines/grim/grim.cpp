@@ -355,7 +355,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 
 	_currScene = NULL;
 	_selectedActor = NULL;
-	_currTextObject = NULL;
+	_talkingActor = NULL;
 	_controlsEnabled = new bool[KEYCODE_EXTRA_LAST];
 	_controlsState = new bool[KEYCODE_EXTRA_LAST];
 	for (int i = 0; i < KEYCODE_EXTRA_LAST; i++) {
@@ -901,6 +901,9 @@ void GrimEngine::luaUpdate() {
 				a->update();
 		}
 		g_currentUpdatedActor = NULL;
+	}
+	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); ++i) {
+		i->_value->update();
 	}
 }
 
@@ -1722,9 +1725,6 @@ void GrimEngine::registerTextObject(TextObject *t) {
 
 void GrimEngine::killTextObject(TextObject *t) {
 	_textObjects.erase(t->getId());
-	if (t == _currTextObject) {
-		_currTextObject = NULL;
-	}
 	delete t;
 }
 
@@ -1738,13 +1738,6 @@ TextObject *GrimEngine::getTextObject(int id) const {
 	return _textObjects[id];
 }
 
-TextObject *GrimEngine::getCurrentTextObject() const {
-	return _currTextObject;
-}
-
-void GrimEngine::setCurrentTextObject(TextObject *text) {
-	_currTextObject = text;
-}
 
 void GrimEngine::registerActor(Actor *a) {
 	_actors[a->getId()] = a;
@@ -1766,6 +1759,14 @@ Actor *GrimEngine::getActor(int id) const {
 	}
 
 	return NULL;
+}
+
+Actor *GrimEngine::getTalkingActor() const {
+	return _talkingActor;
+}
+
+void GrimEngine::setTalkingActor(Actor *a) {
+	_talkingActor = a;
 }
 
 Bitmap *GrimEngine::registerBitmap(const char *filename, const char *data, int len) {

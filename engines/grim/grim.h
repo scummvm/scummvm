@@ -167,6 +167,8 @@ public:
 	void registerActor(Actor *a);
 	void killActor(Actor *a);
 	Actor *getActor(int id) const;
+	Actor *getTalkingActor() const;
+	void setTalkingActor(Actor *actor);
 
 	void setSelectedActor(Actor *a) { _selectedActor = a; }
 	Actor *getSelectedActor() { return _selectedActor; }
@@ -179,8 +181,6 @@ public:
 	void killTextObject(TextObject *a);
 	void killTextObjects();
 	TextObject *getTextObject(int id) const;
-	TextObject *getCurrentTextObject() const;
-	void setCurrentTextObject(TextObject *text);
 
 
 	// Primitives Object Registration
@@ -277,7 +277,7 @@ private:
 	bool *_controlsState;
 
 	Actor *_selectedActor;
-	TextObject *_currTextObject;
+	Actor *_talkingActor;
 
 	SceneListType _scenes;
 	ActorListType _actors;
