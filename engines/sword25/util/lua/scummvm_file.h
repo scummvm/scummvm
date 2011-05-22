@@ -35,13 +35,20 @@ class Sword25FileProxy {
 private:
 	Common::String _readData;
 	uint _readPos;
+	Common::String _settings;
 
 	void setupConfigFile();
 	Common::String getLanguage();
+	void setLanguage(const Common::String &lang);
+	void writeSettings();
+	void updateSetting(const Common::String &setting, const Common::String &value);
 public:
 	Sword25FileProxy(const Common::String &filename, const Common::String &mode);
+	~Sword25FileProxy();
+
 	bool eof() const { return _readPos >= _readData.size(); }
 	size_t read(void *ptr, size_t size, size_t count);
+	size_t write(const char *ptr, size_t count);
 };
 
 } // End of namespace Sword25

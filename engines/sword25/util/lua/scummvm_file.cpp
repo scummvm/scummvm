@@ -53,6 +53,99 @@ SFX_SPEECH_VOLUME = %f\r\n",
 	_readPos = 0;
 }
 
+Sword25FileProxy::~Sword25FileProxy() {
+	if (!_settings.empty())
+		writeSettings();
+}
+
+size_t Sword25FileProxy::read(void *ptr, size_t size, size_t count) {
+	size_t bytesRead = MIN(_readData.size() - _readPos, size * count);
+	memmove(ptr, &_readData.c_str()[_readPos], bytesRead);
+	_readPos += bytesRead;
+	return bytesRead / size;
+}
+
+size_t Sword25FileProxy::write(const char *ptr, size_t count) {
+	// Loop through the provided line(s)
+	while (*ptr) {
+		if ((*ptr == '-') && (*(ptr + 1) == '-')) {
+			// Comment line to skip over
+			while ((*ptr != '\r') && (*ptr != '\n'))
+				++ptr;
+		} else {
+			// Legitimate data
+			const char *p = strchr(ptr, '\n');
+			if (!p) p = ptr + strlen(ptr);
+			while ((*p == '\r') || (*p == '\n')) 
+				++p;
+
+			_settings += Common::String(ptr, p - ptr);
+			ptr = p;
+		}
+
+		while ((*ptr == '\r') || (*ptr == '\n')) 
+			++ptr;
+	}
+
+	return count;
+}
+
+void Sword25FileProxy::writeSettings() {
+	// Loop through the setting lines
+	const char *pSrc = _settings.c_str();
+	while (*pSrc) {
+		if ((*pSrc != '\r') && (*pSrc != '\n')) {
+			const char *p = strchr(pSrc, '=');
+			assert(p);
+			
+			// Get the setting name
+			const char *pEnd = p - 1;
+			while (*pEnd == ' ')
+				--pEnd;
+			Common::String settingName(pSrc, pEnd - pSrc + 1);
+
+			// Get the setting value
+			const char *pStart = p + 1;
+			while (*pStart == ' ')
+				++pStart;
+
+			pEnd = pStart + 1;
+			while ((*pEnd != '\r') && (*pEnd != '\n') && (*pEnd != '\0')) 
+				++pEnd;
+			Common::String value(pStart + (*pStart == '"' ? 1 : 0), pEnd - pStart - (*pStart == '"' ? 2 : 0));
+			
+			// Update the setting
+			updateSetting(settingName, value);
+			pSrc = pEnd;
+		}
+
+		// Move to next line
+		while ((*pSrc == '\r') || (*pSrc == '\n'))
+			++pSrc;
+	}
+
+	ConfMan.flushToDisk();
+}
+
+void Sword25FileProxy::updateSetting(const Common::String &setting, const Common::String &value) {
+	if (setting == "GAME_LANGUAGE")
+		setLanguage(value);
+	else if (setting == "GAME_SUBTITLES")
+		ConfMan.setBool("subtitles", value == "true");
+	else if (setting == "SFX_SOUND_VOLUME") {
+		double v = strtod(value.c_str(), NULL);
+		ConfMan.setInt("sfx_volume", (int)(v * 255));
+	} else if (setting == "SFX_MUSIC_VOLUME") {
+		double v = strtod(value.c_str(), NULL);
+		ConfMan.setInt("music_volume", (int)(v * 255));
+	} else if (setting == "SFX_SPEECH_VOLUME") {
+		double v = strtod(value.c_str(), NULL);
+		ConfMan.setInt("speech_volume", (int)(v * 255));
+	} else {
+		// All other settings are ignored
+	}
+}
+
 /**
  * Get the language code used by the game for each language it supports
  */
@@ -83,11 +176,30 @@ Common::String Sword25FileProxy::getLanguage() {
 	}
 }
 
-size_t Sword25FileProxy::read(void *ptr, size_t size, size_t count) {
-	size_t bytesRead = MIN(_readData.size() - _readPos, size * count);
-	memmove(ptr, &_readData.c_str()[_readPos], bytesRead);
-	_readPos += bytesRead;
-	return bytesRead / size;
+/**
+ * Set the language code fro the game
+ */
+void Sword25FileProxy::setLanguage(const Common::String &lang) {
+	if (lang == "en")
+		ConfMan.set("language", Common::getLanguageCode(Common::EN_ANY));
+	else if (lang == "de")
+		ConfMan.set("language", Common::getLanguageCode(Common::DE_DEU));
+	else if (lang == "es")
+		ConfMan.set("language", Common::getLanguageCode(Common::ES_ESP));
+	else if (lang == "fr")
+		ConfMan.set("language", Common::getLanguageCode(Common::FR_FRA));
+	else if (lang == "hr")
+		ConfMan.set("language", Common::getLanguageCode(Common::HU_HUN));
+	else if (lang == "it")
+		ConfMan.set("language", Common::getLanguageCode(Common::IT_ITA));
+	else if (lang == "pl")
+		ConfMan.set("language", Common::getLanguageCode(Common::PL_POL));
+	else if (lang == "pt")
+		ConfMan.set("language", Common::getLanguageCode(Common::PT_BRA));
+	else if (lang == "ru")
+		ConfMan.set("language", Common::getLanguageCode(Common::RU_RUS));
+	else
+		error("Unknown language encountered");
 }
 
 } // End of namespace Sword25
