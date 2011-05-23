@@ -171,7 +171,7 @@ Common::String Sword25FileProxy::getLanguage() {
 	case Common::RU_RUS:
 		return "ru";
 	default:
-		error("Unknown language '%s' encountered", ConfMan.get("language"));
+		error("Unknown language '%s' encountered", ConfMan.get("language").c_str());
 		break;
 	}
 }
