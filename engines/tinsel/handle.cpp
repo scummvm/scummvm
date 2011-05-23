@@ -79,6 +79,7 @@ static uint numHandles = 0;
 
 static uint32 cdPlayHandle = (uint32)-1;
 
+static int cdPlaySceneNum;
 static SCNHANDLE cdBaseHandle = 0, cdTopHandle = 0;
 static Common::File *cdGraphStream = 0;
 
@@ -246,7 +247,9 @@ void LoadCDGraphData(MEMHANDLE *pH) {
  * @param next			Handle of end of range + 1
  */
 void LoadExtraGraphData(SCNHANDLE start, SCNHANDLE next) {
-	if (start == cdBaseHandle)
+	// It's not clear that this can ever be true. See bug #3306020, DW2:
+	// Crash On Entering Sewers, for some background information.
+	if (cdPlaySceneNum == 0 && start == cdBaseHandle)
 		return;
 
 	OpenCDGraphFile();
@@ -262,6 +265,7 @@ void LoadExtraGraphData(SCNHANDLE start, SCNHANDLE next) {
 }
 
 void SetCdPlaySceneDetails(int fileNum, const char *fileName) {
+	cdPlaySceneNum = fileNum;
 	strcpy(szCdPlayFile, fileName);
 }
 
