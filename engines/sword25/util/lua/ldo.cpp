@@ -13,6 +13,8 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
 #define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
 
+#include "common/textconsole.h"
+
 #include <setjmp.h>
 #include <stdlib.h>
 #include <string.h>
@@ -116,7 +118,7 @@ void luaD_throw (lua_State *L, int errcode) {
       lua_unlock(L);
       G(L)->panic(L);
     }
-    exit(EXIT_FAILURE);
+    error("luaD_throw failure");
   }
 }
 

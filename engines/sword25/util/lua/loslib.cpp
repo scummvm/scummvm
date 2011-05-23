@@ -18,6 +18,7 @@
 #include "lualib.h"
 
 #include "common/system.h"
+#include "common/textconsole.h"
 
 
 static int os_execute (lua_State *L) {
@@ -214,10 +215,9 @@ static int os_exit (lua_State *L) {
   // Using OSystem::quit() isn't really a great idea, either.
   // We really would prefer to let the main run loop exit, so that
   // our main() can perform cleanup.
-  g_system->quit();
-  // leave the exit call in there for now, in case some of our
-  // OSystem::quit applications are incorrect... *sigh*
-  exit(luaL_optint(L, 1, EXIT_SUCCESS));
+  if (0 == luaL_optint(L, 1, EXIT_SUCCESS))
+	  g_system->quit();
+  error("LUA os_exit invokes with non-zero exit value");
 }
 
 static const luaL_Reg syslib[] = {

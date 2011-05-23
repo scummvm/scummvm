@@ -3372,7 +3372,7 @@ bool Console::cmdQuit(int argc, const char **argv) {
 
 	} else if (!scumm_stricmp(argv[1], "now")) {
 		// Quit ungracefully
-		exit(0);
+		g_system->quit();
 	}
 
 	return Cmd_Exit(0, 0);

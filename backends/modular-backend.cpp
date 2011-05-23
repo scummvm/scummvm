@@ -20,6 +20,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
+
 #include "backends/modular-backend.h"
 
 #include "backends/fs/fs-factory.h"
@@ -276,4 +278,8 @@ Common::SaveFileManager *ModularBackend::getSavefileManager() {
 FilesystemFactory *ModularBackend::getFilesystemFactory() {
 	assert(_fsFactory);
 	return _fsFactory;
+}
+
+void ModularBackend::quit() {
+	exit(0);
 }
