@@ -542,6 +542,7 @@ private:
 	KeyframeAnimPtr _keyf;
 	int _priority1, _priority2;
 	Model::HierNode *_hier;
+	int _numNodes;
 	bool _active;
 	int _repeatMode;
 	int _currTime;
@@ -620,17 +621,19 @@ void KeyframeComponent::update() {
 		}
 	}
 
-	_keyf->animate(_hier, _currTime / 1000.0f, _priority1, _priority2, _fade);
+	_keyf->animate(_hier, _numNodes, _currTime / 1000.0f, _priority1, _priority2, _fade);
 }
 
 void KeyframeComponent::init() {
 	ModelComponent *mc = dynamic_cast<ModelComponent *>(_parent);
-	if (mc)
+	if (mc) {
 		_hier = mc->getHierarchy();
-	else {
+		_numNodes = mc->getNumNodes();
+	} else {
 		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Parent of %s was not a model", _keyf->getFilename().c_str());
 		_hier = NULL;
+		_numNodes = 0;
 	}
 }
 
