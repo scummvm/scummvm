@@ -995,12 +995,8 @@ void Actor::popCostume() {
 			freeCostumeChore(_costumeStack.back(), _talkCostume[i], _talkChore[i]);
 		delete _costumeStack.back();
 		_costumeStack.pop_back();
-		Costume *newCost;
-		if (_costumeStack.empty())
-			newCost = NULL;
-		else
-			newCost = _costumeStack.back();
-		if (!newCost) {
+
+		if (_costumeStack.empty()) {
 			if (gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
 				printf("Popped (freed) the last costume for an actor.\n");
 		}
