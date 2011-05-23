@@ -4,6 +4,9 @@
 ** See Copyright Notice in lua.h
 */
 
+// FIXME: Get rid of all time.h stuff
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
 #include <time.h>
 
 #define loslib_c
@@ -13,9 +16,6 @@
 
 #include "lauxlib.h"
 #include "lualib.h"
-
-// FIXME: Get rid of all time.h stuff
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
 #include "common/system.h"
 

@@ -5,6 +5,14 @@
 */
 
 
+// FIXME: LUAI_THROW and LUAI_TRY use either throw/catch or setjmp/longjmp.
+// Neither of these is supported in ScummVM. So we need to come up
+// with a replacement. The most simple, direct and crude approach:
+// Replace "throw" with an "error()" call. Of course we only
+// would want to do that if this actually never happens...
+#define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
+#define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
+
 #include <setjmp.h>
 #include <stdlib.h>
 #include <string.h>
@@ -94,6 +102,11 @@ static void resetstack (lua_State *L, int status) {
 void luaD_throw (lua_State *L, int errcode) {
   if (L->errorJmp) {
     L->errorJmp->status = errcode;
+    // FIXME: LUAI_THROW and LUAI_TRY use either throw/catch or setjmp/longjmp.
+    // Neither of these is supported in ScummVM. So we need to come up
+    // with a replacement. The most simple, direct and crude approach:
+    // Replace "throw" with an "error()" call. Of course we only
+    // would want to do that if this actually never happens...
     LUAI_THROW(L, L->errorJmp);
   }
   else {
@@ -113,6 +126,11 @@ int luaD_rawrunprotected (lua_State *L, Pfunc f, void *ud) {
   lj.status = 0;
   lj.previous = L->errorJmp;  /* chain new error handler */
   L->errorJmp = &lj;
+  // FIXME: LUAI_THROW and LUAI_TRY use either throw/catch or setjmp/longjmp.
+  // Neither of these is supported in ScummVM. So we need to come up
+  // with a replacement. The most simple, direct and crude approach:
+  // Replace "throw" with an "error()" call. Of course we only
+  // would want to do that if this actually never happens...
   LUAI_TRY(L, &lj,
     (*f)(L, ud);
   );

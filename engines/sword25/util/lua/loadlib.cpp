@@ -8,6 +8,15 @@
 ** implementation for Windows, and a stub for other systems.
 */
 
+// FIXME: Avoid using these APIs.
+// Actually, this could be achieved by removing 80% of the remaining
+// code in this file. Most of it is an elaborate way of expressing
+// something like "return ERROR;" anyway, as we don't support loading
+// dynamic libs
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
+#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
+
 
 #include <stdlib.h>
 #include <string.h>
@@ -39,13 +48,6 @@
 #define ERRLIB		1
 #define ERRFUNC		2
 
-#define setprogdir(L)		((void)0)
-
-
-static void ll_unloadlib (void *lib);
-static void *ll_load (lua_State *L, const char *path);
-static lua_CFunction ll_sym (lua_State *L, void *lib, const char *sym);
-
 
 /*
 ** {======================================================
@@ -59,24 +61,6 @@ static lua_CFunction ll_sym (lua_State *L, void *lib, const char *sym);
 
 #define DLMSG	"dynamic libraries not enabled; check your Lua installation"
 
-
-static void ll_unloadlib (void *lib) {
-  (void)lib;  /* to avoid warnings */
-}
-
-
-static void *ll_load (lua_State *L, const char *path) {
-  (void)path;  /* to avoid warnings */
-  lua_pushliteral(L, DLMSG);
-  return NULL;
-}
-
-
-static lua_CFunction ll_sym (lua_State *L, void *lib, const char *sym) {
-  (void)lib; (void)sym;  /* to avoid warnings */
-  lua_pushliteral(L, DLMSG);
-  return NULL;
-}
 
 /* }====================================================== */
 
@@ -108,7 +92,6 @@ static void **ll_register (lua_State *L, const char *path) {
 */
 static int gctm (lua_State *L) {
   void **lib = (void **)luaL_checkudata(L, 1, "_LOADLIB");
-  if (*lib) ll_unloadlib(*lib);
   *lib = NULL;  /* mark library as closed */
   return 0;
 }
@@ -116,15 +99,11 @@ static int gctm (lua_State *L) {
 
 static int ll_loadfunc (lua_State *L, const char *path, const char *sym) {
   void **reg = ll_register(L, path);
-  if (*reg == NULL) *reg = ll_load(L, path);
-  if (*reg == NULL)
+  if (*reg == NULL) {
+    lua_pushliteral(L, DLMSG); // loading not supported, just push an error msg
     return ERRLIB;  /* unable to load library */
-  else {
-    lua_CFunction f = ll_sym(L, *reg, sym);
-    if (f == NULL)
-      return ERRFUNC;  /* unable to find function */
-    lua_pushcfunction(L, f);
-    return 0;  /* return function */
+  } else {
+    return ERRFUNC;  /* unable to find function */
   }
 }
 
@@ -407,23 +386,11 @@ static int ll_seeall (lua_State *L) {
 
 
 
-/* auxiliary mark (for internal use) */
-#define AUXMARK		"\1"
-
 static void setpath (lua_State *L, const char *fieldname, const char *envname,
                                    const char *def) {
-  const char *path = getenv(envname);
-  if (path == NULL)  /* no environment variable? */
-    lua_pushstring(L, def);  /* use default */
-  else {
-    /* replace ";;" by ";AUXMARK;" and then AUXMARK by default path */
-    path = luaL_gsub(L, path, LUA_PATHSEP LUA_PATHSEP,
-                              LUA_PATHSEP AUXMARK LUA_PATHSEP);
-    luaL_gsub(L, path, AUXMARK, def);
-    lua_remove(L, -2);
-  }
-  setprogdir(L);
-  lua_setfield(L, -2, fieldname);
+	// no environment variable -> use default
+	lua_pushstring(L, def);
+	lua_setfield(L, -2, fieldname);
 }
 
 

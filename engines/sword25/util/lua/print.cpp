@@ -4,6 +4,9 @@
 ** See Copyright Notice in lua.h
 */
 
+// FIXME
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include <ctype.h>
 #include <stdio.h>
 
