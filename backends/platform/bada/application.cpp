@@ -20,8 +20,8 @@
  *
  */
 
-#include "application.h"
 #include "system.h"
+#include "application.h"
 
 using namespace Osp::Base;
 using namespace Osp::Base::Runtime;
@@ -37,20 +37,23 @@ Application* BadaScummVM::createInstance() {
   return new BadaScummVM();
 }
 
-BadaScummVM::BadaScummVM() {
+BadaScummVM::BadaScummVM() : appForm(0) {
 }
 
 BadaScummVM::~BadaScummVM() {
-
+  if (appForm) {
+    delete appForm;
+  }
 }
 
 bool BadaScummVM::OnAppInitializing(AppRegistry& appRegistry) {
-  return systemStart(this) ? E_SUCCESS : E_OUT_OF_MEMORY;
+  appForm = systemStart(this);
+  return (appForm != null);
 }
 
 bool BadaScummVM::OnAppTerminating(AppRegistry& appRegistry, 
                                    bool forcedTermination) {
-  systemStop();
+  systemStop(appForm);
 	return true;
 }
 
@@ -80,10 +83,6 @@ void BadaScummVM::OnKeyReleased(const Control& source, KeyCode keyCode) {
 
 void BadaScummVM::OnKeyLongPressed(const Control& source, KeyCode keyCode) {
 
-}
-
-bool BadaScummVM::Draw() {
-	return true;
 }
 
 void BadaScummVM::OnScreenOn(void) {

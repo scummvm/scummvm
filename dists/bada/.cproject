@@ -45,8 +45,6 @@
 <tool id="cdt.managedbuild.tool.osp.gnu.simul.c.compiler.exe.simul.772190113" name="bada C Compiler" superClass="cdt.managedbuild.tool.osp.gnu.simul.c.compiler.exe.simul">
 <option id="osp.gnu.c.compiler.simual.exe.option.include.paths.350490580" name="Include paths (-I)" superClass="osp.gnu.c.compiler.simual.exe.option.include.paths" valueType="includePath">
 <listOptionValue builtIn="false" value="C:/bada/1.2.1/Include"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ScummVM/ScummVM/scummvm}&quot;"/>
-<listOptionValue builtIn="false" value="C:/src/workspace/ScummVM/inc"/>
 </option>
 <inputType id="cdt.managedbuild.tool.osp.gnu.c.compiler.input.116434105" superClass="cdt.managedbuild.tool.osp.gnu.c.compiler.input"/>
 </tool>
@@ -72,8 +70,6 @@
 <tool id="cdt.managedbuild.tool.osp.gnu.simul.assembler.exe.simul.104470694" name="bada Assembler" superClass="cdt.managedbuild.tool.osp.gnu.simul.assembler.exe.simul">
 <option id="osp.gnu.both.asm.option.include.paths.1843844233" name="Include paths (-I)" superClass="osp.gnu.both.asm.option.include.paths" valueType="includePath">
 <listOptionValue builtIn="false" value="C:/bada/1.2.1/Include"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ScummVM/ScummVM/scummvm}&quot;"/>
-<listOptionValue builtIn="false" value="C:/src/workspace/ScummVM/inc"/>
 </option>
 <inputType id="cdt.managedbuild.tool.osp.gnu.assembler.input.306991340" superClass="cdt.managedbuild.tool.osp.gnu.assembler.input"/>
 </tool>

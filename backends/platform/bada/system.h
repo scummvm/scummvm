@@ -23,7 +23,12 @@
 #ifndef BADA_SYSTEM_H
 #define BADA_SYSTEM_H
 
-#include <FAppApplication.h>
+#include <FApp.h>
+#include <FGraphics.h>
+#include <FUi.h>
+#include <FSystem.h>
+#include <FBase.h>
+#include <FIoFile.h>
 
 #if defined(_DEBUG)
 #define logEntered() AppLog("%s entered (%s %d)", \
@@ -39,8 +44,20 @@
 #define logLeaving()
 #endif
 
-bool systemStart(Osp::App::Application* app);
-void systemStop();
+struct BadaAppForm : public Osp::Ui::Controls::Form,
+                     public Osp::Base::Runtime::IRunnable {
+  BadaAppForm() {}
+  ~BadaAppForm();
+
+  result Construct();
+  Object* Run();
+  result OnDraw(void);
+
+  Osp::Base::Runtime::Thread* pThread;
+};
+
+BadaAppForm* systemStart(Osp::App::Application* app);
+void systemStop(BadaAppForm* appForm);
 void systemPostEvent();
 void systemError(const char* format, ...);
 
