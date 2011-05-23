@@ -958,26 +958,6 @@ Common::Error processSettings(Common::String &command, Common::StringMap &settin
 	}
 
 
-	// The user can override the savepath with the SCUMMVM_SAVEPATH
-	// environment variable. This is weaker than a --savepath on the
-	// command line, but overrides the default savepath, hence it is
-	// handled here, just before the command line gets parsed.
-#if !defined(_WIN32_WCE) && !defined(__GP32__) && !defined(ANDROID)
-	if (!settings.contains("savepath")) {
-		const char *dir = getenv("SCUMMVM_SAVEPATH");
-		if (dir && *dir && strlen(dir) < MAXPATHLEN) {
-			Common::FSNode saveDir(dir);
-			if (!saveDir.exists()) {
-				warning("Non-existent SCUMMVM_SAVEPATH save path. It will be ignored");
-			} else if (!saveDir.isWritable()) {
-				warning("Non-writable SCUMMVM_SAVEPATH save path. It will be ignored");
-			} else {
-				settings["savepath"] = dir;
-			}
-		}
-	}
-#endif
-
 	// Finally, store the command line settings into the config manager.
 	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x) {
 		Common::String key(x->_key);
