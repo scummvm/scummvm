@@ -792,7 +792,7 @@ void GfxOpenGL::createFont(Font *font) {
 	for (int i = 0; i < 256; ++i) {
 		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
 		int m = width > height ? width : height;
-		if (m < size)
+		if (m > size)
 			size = m;
 	}
 	assert(size < 64);
@@ -805,9 +805,12 @@ void GfxOpenGL::createFont(Font *font) {
 	else if (size < 64)
 		size = 64;
 
+	int arraySize = size*size*2*16*16;
+	byte *temp = new byte[arraySize];
+	if (!temp)
+		error("Could not allocate %d bytes", arraySize);
 
-	byte *temp = new byte[size*size*2*16*16];
-	memset(temp, 0, size*size*2*16*16);
+	memset(temp, 0, arraySize);
 	font->_texIds = new GLuint;
 	font->_sizes = new int;
 
@@ -815,22 +818,22 @@ void GfxOpenGL::createFont(Font *font) {
 	glGenTextures(1, textures);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
-
+	uint start = (int)font->getCharData(0);
 	for (int i = 0, row = 0; i < 256; ++i) {
 
 		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
 
-		int d = ((int)font->getCharData(i) - (int)font->getCharData(0));
+		uint d = ((uint)font->getCharData(i) - start);
 		for (int x = 0; x < height; ++x) {
 			int pos = row * size * size * 2 * 16 + x * size * 16 * 2 + (((i-1)%16))*size*2;
-
+			assert(pos < arraySize);
 			memcpy(temp + pos, data + d * 2 + x * width * 2, width * 2);
 		}
 		if (i != 0 && i%16 == 0)
 			++row;
 
 	}
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, size*16);
+	//glPixelStorei(GL_UNPACK_ROW_LENGTH, size*16);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -846,6 +849,14 @@ void GfxOpenGL::createFont(Font *font) {
 
 	delete[] data;
 	delete[] temp;
+}
+
+void GfxOpenGL::destroyFont(Font *font) {
+	GLuint *textures = (GLuint *)font->_texIds;
+	if (textures) {
+		glDeleteTextures(1, textures);
+		delete textures;
+	}
 }
 
 void GfxOpenGL::drawText(int x, int y, const Common::String &text, Font *font, Color &color) {

@@ -95,6 +95,7 @@ Font::~Font() {
 
 		g_resourceloader->uncacheFont(this);
 	}
+	g_driver->destroyFont(this);
 }
 
 uint16 Font::getCharIndex(unsigned char c) {

@@ -86,6 +86,7 @@ public:
 	void destroyBitmap(BitmapData *bitmap);
 
 	void createFont(Font *font);
+	void destroyFont(Font *font);
 	void drawText(int x, int y, const Common::String &text, Font *font, Color &color);
 
 	Bitmap *getScreenshot(int w, int h);
