@@ -125,6 +125,27 @@
 #endif
 
 
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getc
+#undef getc
+#define getc(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getchar
+#undef getchar
+#define getchar()	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_putc
+#undef putc
+#define putc(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_putchar
+#undef putchar
+#define putchar(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_setjmp
 #undef setjmp
 #define setjmp(a)	FORBIDDEN_SYMBOL_REPLACEMENT
