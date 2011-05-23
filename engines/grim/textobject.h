@@ -117,7 +117,7 @@ protected:
 	uint8 *_textBitmap;
 	int *_bitmapWidthPtr;
 	GfxBase::TextObjectHandle **_textObjectHandle;
-	float _endTime;
+	int _elapsedTime;
 
 	friend class GrimEngine;
 };

@@ -1234,6 +1234,7 @@ void GrimEngine::restoreTextObjects(SaveGame *state) {
 	_sayLineDefaults.setWidth(state->readLESint32());
 	_sayLineDefaults.setX(state->readLESint32());
 	_sayLineDefaults.setY(state->readLESint32());
+	_sayLineDefaults.setDuration(state->readLESint32());
 
 	killTextObjects();
 
@@ -1503,6 +1504,7 @@ void GrimEngine::saveTextObjects(SaveGame *state) {
 	state->writeLESint32(_sayLineDefaults.getWidth());
 	state->writeLESint32(_sayLineDefaults.getX());
 	state->writeLESint32(_sayLineDefaults.getY());
+	state->writeLESint32(_sayLineDefaults.getDuration());
 
 	state->writeLESint32(_textObjects.size());
 	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); ++i) {

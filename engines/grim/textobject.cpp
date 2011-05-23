@@ -27,8 +27,6 @@
 #include "engines/grim/colormap.h"
 #include "engines/grim/font.h"
 
-#include "common/system.h"
-
 namespace Grim {
 
 Common::String parseMsgText(const char *msg, char *msgId);
@@ -77,11 +75,13 @@ void TextObject::saveState(SaveGame *state) const {
 	state->writeLESint32(_height);
 	state->writeLESint32(_justify);
 	state->writeLESint32(_numberLines);
+	state->writeLESint32(_duration);
 
 	state->writeLESint32(_disabled);
 	state->writeLESint32(_blastDraw);
 	state->writeLESint32(_isSpeech);
 	state->writeLESint32(_created);
+	state->writeLESint32(_elapsedTime);
 
 	state->writeLEUint32(_font->getId());
 
@@ -93,17 +93,19 @@ bool TextObject::restoreState(SaveGame *state) {
 
 	_fgColor = g_grim->getColor(state->readLEUint32());
 
-	_x = state->readLESint32();
-	_y = state->readLESint32();
-	_width = state->readLESint32();
-	_height = state->readLESint32();
-	_justify = state->readLESint32();
-	_numberLines = state->readLESint32();
+	_x            = state->readLESint32();
+	_y            = state->readLESint32();
+	_width        = state->readLESint32();
+	_height       = state->readLESint32();
+	_justify      = state->readLESint32();
+	_numberLines  = state->readLESint32();
+	_duration     = state->readLESint32();
 
-	_disabled = state->readLESint32();
-	_blastDraw = state->readLESint32();
-	_isSpeech = state->readLESint32();
-	_created = state->readLESint32();
+	_disabled     = state->readLESint32();
+	_blastDraw    = state->readLESint32();
+	_isSpeech     = state->readLESint32();
+	_created      = state->readLESint32();
+	_elapsedTime  = state->readLESint32();
 
 	_font = g_grim->getFont(state->readLEUint32());
 
@@ -303,7 +305,7 @@ void TextObject::createBitmap() {
 			message.deleteChar(0);
 	}
 	_created = true;
-	_endTime = g_system->getMillis() + _duration;
+	_elapsedTime = 0;
 }
 
 void TextObject::subBaseOffsetY() {
@@ -389,8 +391,8 @@ void TextObject::update() {
 		return;
 	}
 
-	int time = g_system->getMillis();
-	if (time > _endTime) {
+	_elapsedTime += g_grim->getFrameTime();
+	if (_elapsedTime > _duration) {
 		_disabled = true;
 	}
 }
