@@ -59,7 +59,7 @@ public:
 		kType86
 	};
 
-	TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type);
+	TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type, bool externalMutexHandling = false);
 	virtual ~TownsPC98_FmSynth();
 
 	virtual bool init();
@@ -72,9 +72,6 @@ public:
 	bool isStereo() const;
 	bool endOfData() const;
 	int getRate() const;
-
-	void mutexLock();
-	void mutexUnlock();
 
 protected:
 	void deinit();
@@ -104,6 +101,7 @@ protected:
 	const bool _hasPercussion;
 
 	Common::Mutex _mutex;
+	bool _externalMutex;
 
 private:
 	void generateTables();

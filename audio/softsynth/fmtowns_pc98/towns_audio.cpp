@@ -103,12 +103,12 @@ private:
 
 class TownsAudioInterfaceInternal : public TownsPC98_FmSynth {
 public:
-	TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver);
+	TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling = false);
 	~TownsAudioInterfaceInternal();
 
-	static TownsAudioInterfaceInternal *addNewRef(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver);
+	static TownsAudioInterfaceInternal *addNewRef(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling = false);
 	static void releaseRef();
-	bool checkPluginDriver(TownsAudioInterfacePluginDriver *driver);
+	bool checkPluginDriver(TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling = false);
 
 	bool init();
 
@@ -252,7 +252,8 @@ private:
 	static const uint16 _pcmPhase2[];
 };
 
-TownsAudioInterfaceInternal::TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver) : TownsPC98_FmSynth(mixer, kTypeTowns),
+TownsAudioInterfaceInternal::TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling) : 
+	TownsPC98_FmSynth(mixer, kTypeTowns, externalMutexHandling),
 	_fmInstruments(0), _pcmInstruments(0), _pcmChan(0), _waveTables(0), _waveTablesTotalDataSize(0),
 	_baserate(55125.0f / (float)mixer->getOutputRate()), _tickLength(0), _timer(0), _drv(driver),
 	_pcmSfxChanMask(0),	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume),
@@ -395,13 +396,13 @@ TownsAudioInterfaceInternal::~TownsAudioInterfaceInternal() {
 	delete[] _pcmChan;
 }
 
-TownsAudioInterfaceInternal *TownsAudioInterfaceInternal::addNewRef(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver) {
+TownsAudioInterfaceInternal *TownsAudioInterfaceInternal::addNewRef(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling) {
 	_refCount++;
 	if (_refCount == 1 && _refInstance == 0)
-		_refInstance = new TownsAudioInterfaceInternal(mixer, driver);
+		_refInstance = new TownsAudioInterfaceInternal(mixer, driver, externalMutexHandling);
 	else if (_refCount < 2 || _refInstance == 0)
 		error("TownsAudioInterfaceInternal::addNewRef(): Internal reference management failure");
-	else if (!_refInstance->checkPluginDriver(driver))
+	else if (!_refInstance->checkPluginDriver(driver, externalMutexHandling))
 		error("TownsAudioInterfaceInternal::addNewRef(): Plugin driver conflict");
 
 	return _refInstance;
@@ -419,7 +420,7 @@ void TownsAudioInterfaceInternal::releaseRef() {
 	}
 }
 
-bool TownsAudioInterfaceInternal::checkPluginDriver(TownsAudioInterfacePluginDriver *driver) {
+bool TownsAudioInterfaceInternal::checkPluginDriver(TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling) {
 	if (_refCount <= 1)
 		return true;
 
@@ -428,6 +429,7 @@ bool TownsAudioInterfaceInternal::checkPluginDriver(TownsAudioInterfacePluginDri
 			return false;
 	} else {
 		_drv = driver;
+		_externalMutex = externalMutexHandling;
 	}
 
 	return true;
@@ -1669,7 +1671,6 @@ void TownsAudioInterfaceInternal::updateOutputVolumeInternal() {
 	int volume = (int)(((float)(maxVol * 255) / 63.0f));
 	int balance = maxVol ? (int)( ( ((int)_outputLevel[13] * (_outputMute[13] ^ 1) - _outputLevel[12] * (_outputMute[12] ^ 1)) * 127) / (float)maxVol) : 0;
 
-	Common::StackLock lock(_mutex);
 	g_system->getAudioCDManager()->setVolume(volume);
 	g_system->getAudioCDManager()->setBalance(balance);
 
@@ -1854,8 +1855,8 @@ void TownsAudio_WaveTable::clear() {
 	data = 0;
 }
 
-TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver) {
-	_intf = TownsAudioInterfaceInternal::addNewRef(mixer, driver);
+TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling) {
+	_intf = TownsAudioInterfaceInternal::addNewRef(mixer, driver, externalMutexHandling);
 }
 
 TownsAudioInterface::~TownsAudioInterface() {
@@ -1887,12 +1888,4 @@ void TownsAudioInterface::setSoundEffectVolume(int volume) {
 
 void TownsAudioInterface::setSoundEffectChanMask(int mask) {
 	_intf->setSoundEffectChanMask(mask);
-}
-
-void TownsAudioInterface::lockInternal() {
-	_intf->mutexLock();
-}
-
-void TownsAudioInterface::unlockInternal() {
-	_intf->mutexUnlock();
 }

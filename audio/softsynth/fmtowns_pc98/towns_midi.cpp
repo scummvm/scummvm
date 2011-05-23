@@ -834,7 +834,9 @@ const uint8 TownsMidiInputChannel::_programAdjustLevel[] = {
 
 MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer) : _timerProc(0), _timerProcPara(0), _channels(0), _out(0),
 	_chanState(0), _operatorLevelTable(0), _tickCounter1(0), _tickCounter2(0), _rand(1), _allocCurPos(0), _isOpen(false) {
-	_intf = new TownsAudioInterface(mixer, this);
+	// We set exteral mutex handling to true, since this driver is only suitable for use with the SCUMM engine
+	// which has its own mutex. This causes lockups which cannot always be avoided.
+	_intf = new TownsAudioInterface(mixer, this, true);
 
 	_channels = new TownsMidiInputChannel*[32];
 	for (int i = 0; i < 32; i++)
