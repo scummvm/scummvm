@@ -769,6 +769,131 @@ void GfxOpenGL::destroyBitmap(BitmapData *bitmap) {
 	}
 }
 
+void GfxOpenGL::createFont(Font *font) {
+	byte *bitmapData = font->_fontData;
+
+	byte *texDataPtr = new byte[font->_dataSize *4];
+	byte *data = texDataPtr;
+
+	for (uint32 i = 0; i < font->_dataSize; i++, texDataPtr += 4, bitmapData++) {
+		byte pixel = *bitmapData;
+		if (pixel == 0x00) {
+			texDataPtr[0] = 0;
+			texDataPtr[1] = 0;
+			texDataPtr[2] = 0;
+			texDataPtr[3] = 0;
+		} else if (pixel == 0x80) {
+			texDataPtr[0] = 0;
+			texDataPtr[1] = 0;
+			texDataPtr[2] = 0;
+			texDataPtr[3] = 255;
+		} else if (pixel == 0xFF) {
+			texDataPtr[0] = 255;
+			texDataPtr[1] = 255;
+			texDataPtr[2] = 255;
+			texDataPtr[3] = 255;
+		}
+	}
+
+	byte *temp = new byte[64*64*4];
+
+	font->_texIds = new GLuint[256];
+	font->_sizes = new uint8[256];
+	GLuint *textures = (GLuint *)font->_texIds;
+	glGenTextures(256, textures);
+
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
+	for (int i = 0; i < 256; ++i) {
+		//
+		uint8 size = 64;
+		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
+		int m = max(width, height);
+		if (m < 8)
+			size = 8;
+		if (m < 16)
+			size = 16;
+		else if (m < 32)
+			size = 32;
+		else if (m > 64)
+			error("too big");
+		int d = ((int)font->getCharData(i) - (int)font->getCharData(0));
+
+		// need to remove this
+		memset(temp, 0, 64*64*4);
+		for (int x = 0; x < height; ++x) {
+			int pos = x * size * 4;
+			memcpy(temp + pos, data + d * 4 + x * width * 4, width * 4);
+		}
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, size);
+		glBindTexture(GL_TEXTURE_2D, textures[i]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size, size, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, temp);
+
+		((uint8 *)font->_sizes)[i] = size;
+	}
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+	delete[] data;
+
+}
+
+void GfxOpenGL::drawText(int x, int y, const Common::String &text, Font *font, Color &color) {
+	if (text.size() == 0)
+		return;
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glMatrixMode(GL_TEXTURE);
+	glLoadIdentity();
+	// A lot more may need to be put there : disabling Alpha test, blending, ...
+	// For now, just keep this here :-)
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glDisable(GL_LIGHTING);
+	glEnable(GL_TEXTURE_2D);
+
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	glColor3f(color.getRed()/255.f, color.getGreen()/255.f, color.getBlue()/255.f);
+
+	for (uint i = 0; i < text.size(); ++i) {
+		int w = y + font->getCharStartingLine(text[i]) + font->getBaseOffsetY();
+		uint8 size = ((uint8 *)font->_sizes)[text[i]];
+		GLuint *textures = (GLuint *)font->_texIds;
+		glBindTexture(GL_TEXTURE_2D, textures[text[i]]);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex2i(x, w);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex2i(x + size, w);
+		glTexCoord2f(1.0f, 1.0f);
+		glVertex2i(x + size, w + size);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex2i(x, w + size);
+		glEnd();
+		x += font->getCharWidth(text[i]);
+	}
+
+	glColor3f(1, 1, 1);
+
+	glDisable(GL_SCISSOR_TEST);
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
+}
+
 void GfxOpenGL::createMaterial(Material *material, const char *data, const CMap *cmap) {
 	material->_textures = new GLuint[material->_numImages];
 	glGenTextures(material->_numImages, (GLuint *)material->_textures);

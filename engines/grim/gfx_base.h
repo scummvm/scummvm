@@ -32,13 +32,15 @@ struct Shadow;
 class SaveGame;
 class BitmapData;
 class PrimitiveObject;
+class Font;
+class TextObject;
 
 enum colorFormat {
 	BM_RGB565 = 1,    // Grim Fandango
 	BM_RGB1555 = 2,   // EMI-PS2
 	BM_RGBA = 3      // EMI-PC
 };
-	
+
 class GfxBase {
 public:
 	GfxBase() { ; }
@@ -92,6 +94,9 @@ public:
 	virtual void createBitmap(BitmapData *bitmap) = 0;
 	virtual void drawBitmap(const Bitmap *bitmap) = 0;
 	virtual void destroyBitmap(BitmapData *bitmap) = 0;
+
+	virtual void createFont(Font *font) { }
+	virtual void drawText(int x, int y, const Common::String &text, Font *font, Color &color) { }
 
 	virtual Bitmap *getScreenshot(int w, int h) = 0;
 	virtual void storeDisplay() = 0;

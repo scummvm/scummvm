@@ -133,7 +133,7 @@ void TextObject::setDefaults(TextObjectDefaults *defaults) {
 }
 
 int TextObject::getBitmapWidth() {
-	if (!_bitmapWidthPtr)
+	/*if (!_bitmapWidthPtr)
 		return 0;
 
 	int width = 0;
@@ -142,7 +142,9 @@ int TextObject::getBitmapWidth() {
 		if (_bitmapWidthPtr[i] > width)
 			width = _bitmapWidthPtr[i];
 	}
-	return width;
+	return width;*/
+	Common::String msg = parseMsgText(_textID, NULL);
+	return _font->getStringLength(msg);
 }
 
 int TextObject::getBitmapHeight() {
@@ -341,7 +343,7 @@ void TextObject::destroyBitmap() {
 void TextObject::draw() {
 	int height = 0;
 
-	if (!_created || _disabled)
+	if (_disabled)
 		return;
 	// render multi-line (wrapped) text
 	for (int i = 0; i < _numberLines; i++) {
@@ -365,20 +367,22 @@ void TextObject::draw() {
 		if (y < 0)
 			y = 0;
 
+		Common::String msg = parseMsgText(_textID, NULL);
+
 		if (_justify == LJUSTIFY || _justify == NONE)
-			g_driver->drawTextBitmap(_x, height + y, _textObjectHandle[i]);
+			g_driver->drawText(_x, height + y, msg, _font, *_fgColor);
 		else if (_justify == CENTER) {
-			int x = _x - (_bitmapWidthPtr[i] / 2);
+			int x = _x - (getBitmapWidth() / 2);
 			if (x < 0)
 				x = 0;
 
-			g_driver->drawTextBitmap(x, height + y, _textObjectHandle[i]);
+			g_driver->drawText(x, height + y, msg, _font, *_fgColor);
 		} else if (_justify == RJUSTIFY) {
 			int x = (_x - getBitmapWidth());
 			if (x < 0)
 				x = 0;
 
-			g_driver->drawTextBitmap(x, height + y, _textObjectHandle[i]);
+			g_driver->drawText(x, height + y, msg, _font, *_fgColor);
 		} else if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("TextObject::draw: Unknown justification code (%d)", _justify);
 

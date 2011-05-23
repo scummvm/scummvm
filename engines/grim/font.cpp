@@ -78,6 +78,8 @@ Font::Font(const Common::String &filename, const char *data, int len) : Object()
 		error("Could not load font %s. Out of memory", _filename.c_str());
 
 	memcpy(_fontData, data, _dataSize);
+
+	g_driver->createFont(this);
 }
 
 Font::Font() :
@@ -124,6 +126,14 @@ uint16 Font::getCharIndex(unsigned char c) {
 	// the first character in the font so that something
 	// gets loaded to prevent the game from crashing
 	return 0;
+}
+
+int Font::getStringLength(const Common::String &text) {
+	int result = 0;
+	for (uint32 i = 0; i < text.size(); ++i) {
+		result += getCharWidth(text[i]);
+	}
+	return result;
 }
 
 // Hardcoded default font for GUI, etc

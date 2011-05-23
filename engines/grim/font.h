@@ -45,8 +45,10 @@ public:
 	int32 getCharStartingLine(unsigned char c) { return _charHeaders[getCharIndex(c)].startingLine; }
 	const byte *getCharData(unsigned char c) { return _fontData + (_charHeaders[getCharIndex(c)].offset); }
 
+	int getStringLength(const Common::String &text);
+
 	static const uint8 emerFont[][13];
-private:
+//private:
 
 	uint16 getCharIndex(unsigned char c);
 	struct CharHeader {
@@ -66,6 +68,8 @@ private:
 	CharHeader *_charHeaders;
 	byte *_fontData;
 	Common::String _filename;
+	void *_texIds;
+	void *_sizes;
 };
 
 } // end of namespace Grim
