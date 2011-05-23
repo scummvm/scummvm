@@ -107,21 +107,6 @@
 #include "config.h"
 #endif
 
-//
-// Define scumm_stricmp and scumm_strnicmp
-//
-#if defined(_WIN32_WCE) || defined(_MSC_VER)
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp _strnicmp
-	#define snprintf _snprintf
-#elif defined(__MINGW32__) || defined(__GP32__) || defined(__DS__)
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp strnicmp
-#else
-	#define scumm_stricmp strcasecmp
-	#define scumm_strnicmp strncasecmp
-#endif
-
 
 // In the following we configure various targets, in particular those
 // which can't use our "configure" tool and hence don't use config.h.
@@ -404,6 +389,15 @@
 
 #endif
 
+//
+// Define scumm_stricmp and scumm_strnicmp
+//
+extern int scumm_stricmp(const char *s1, const char *s2);
+extern int scumm_strnicmp(const char *s1, const char *s2, uint n);
+#if defined(_WIN32_WCE) || defined(_MSC_VER)
+	// FIXME: Why is this necessary?
+	#define snprintf _snprintf
+#endif
 
 
 //

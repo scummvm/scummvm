@@ -1,7 +1,6 @@
 /* Header is not present in Windows CE SDK */
 
 /* This stuff will live here until port configuration file is in place */
-#define stricmp _stricmp
 #define strdup _strdup
 
 #ifndef _FILE_DEFINED
