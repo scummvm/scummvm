@@ -80,11 +80,7 @@ void TextObject::saveState(SaveGame *state) const {
 	state->writeLESint32(_disabled);
 	state->writeLESint32(_blastDraw);
 	state->writeLESint32(_isSpeech);
-<<<<<<< HEAD
-	state->writeLESint32(_created);
 	state->writeLESint32(_elapsedTime);
-=======
->>>>>>> Removed a large amount of now unused code and slightly improved font stuff.
 
 	state->writeLEUint32(_font->getId());
 
@@ -102,17 +98,10 @@ bool TextObject::restoreState(SaveGame *state) {
 	_numberLines  = state->readLESint32();
 	_duration     = state->readLESint32();
 
-<<<<<<< HEAD
 	_disabled     = state->readLESint32();
 	_blastDraw    = state->readLESint32();
 	_isSpeech     = state->readLESint32();
-	_created      = state->readLESint32();
 	_elapsedTime  = state->readLESint32();
-=======
-	_disabled = state->readLESint32();
-	_blastDraw = state->readLESint32();
-	_isSpeech = state->readLESint32();
->>>>>>> Removed a large amount of now unused code and slightly improved font stuff.
 
 	_font = g_grim->getFont(state->readLEUint32());
 
