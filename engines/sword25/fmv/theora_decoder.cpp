@@ -54,7 +54,6 @@ static double rint(double v) {
 
 TheoraDecoder::TheoraDecoder(Audio::Mixer::SoundType soundType) {
 	_fileStream = 0;
-	_surface = 0;
 
 	_theoraPacket = 0;
 	_vorbisPacket = 0;
@@ -298,8 +297,14 @@ bool TheoraDecoder::loadStream(Common::SeekableReadStream *stream) {
 		_endOfAudio = true;
 	}
 
-	_surface = new Graphics::Surface();
-	_surface->create(_theoraInfo.frame_width, _theoraInfo.frame_height, g_system->getScreenFormat());
+	_surface.create(_theoraInfo.frame_width, _theoraInfo.frame_height, g_system->getScreenFormat());
+
+	// Set up a display surface
+	_displaySurface.pixels = _surface.getBasePtr(_theoraInfo.pic_x, _theoraInfo.pic_y);
+	_displaySurface.w = _theoraInfo.pic_width;
+	_displaySurface.h = _theoraInfo.pic_height;
+	_displaySurface.format = _surface.format;
+	_displaySurface.pitch = _surface.pitch;
 
 	// Set the frame rate
 	_frameRate = Common::Rational(_theoraInfo.fps_numerator, _theoraInfo.fps_denominator);
@@ -337,9 +342,9 @@ void TheoraDecoder::close() {
 	delete _fileStream;
 	_fileStream = 0;
 
-	_surface->free();
-	delete _surface;
-	_surface = 0;
+	_surface.free();
+	_displaySurface.pixels = 0;
+	_displaySurface.free();
 
 	reset();
 }
@@ -412,7 +417,7 @@ const Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 		}
 	}
 
-	return _surface;
+	return &_displaySurface;
 }
 
 bool TheoraDecoder::queueAudio() {
@@ -533,7 +538,7 @@ void TheoraDecoder::translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer) {
 	assert(YUVBuffer[kBufferU].height == YUVBuffer[kBufferY].height >> 1);
 	assert(YUVBuffer[kBufferV].height == YUVBuffer[kBufferY].height >> 1);
 
-	Graphics::convertYUV420ToRGB(_surface, YUVBuffer[kBufferY].data, YUVBuffer[kBufferU].data, YUVBuffer[kBufferV].data, YUVBuffer[kBufferY].width, YUVBuffer[kBufferY].height, YUVBuffer[kBufferY].stride, YUVBuffer[kBufferU].stride);
+	Graphics::convertYUV420ToRGB(&_surface, YUVBuffer[kBufferY].data, YUVBuffer[kBufferU].data, YUVBuffer[kBufferV].data, YUVBuffer[kBufferY].width, YUVBuffer[kBufferY].height, YUVBuffer[kBufferY].stride, YUVBuffer[kBufferU].stride);
 }
 
 } // End of namespace Sword25
