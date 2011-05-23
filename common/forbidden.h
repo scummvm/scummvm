@@ -140,6 +140,11 @@
 #define system(a)	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_exit
+#undef exit
+#define exit(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_getenv
 #undef getenv
 #define getenv(a)	FORBIDDEN_SYMBOL_REPLACEMENT

@@ -23,6 +23,8 @@
 // FIXME: Avoid using printf
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
+
 #include "engines/metaengine.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"
@@ -885,7 +887,8 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 #endif // DISABLE_COMMAND_LINE
 
 
-Common::Error processSettings(Common::String &command, Common::StringMap &settings) {
+bool processSettings(Common::String &command, Common::StringMap &settings, Common::Error &err) {
+	err = Common::kNoError;
 
 #ifndef DISABLE_COMMAND_LINE
 
@@ -894,33 +897,34 @@ Common::Error processSettings(Common::String &command, Common::StringMap &settin
 	// have been loaded.
 	if (command == "list-targets") {
 		listTargets();
-		return Common::kNoError;
+		return true;
 	} else if (command == "list-games") {
 		listGames();
-		return Common::kNoError;
+		return true;
 	} else if (command == "list-saves") {
-		return listSaves(settings["list-saves"].c_str());
+		err = listSaves(settings["list-saves"].c_str());
+		return true;
 	} else if (command == "list-themes") {
 		listThemes();
-		return Common::kNoError;
+		return true;
 	} else if (command == "version") {
 		printf("%s\n", gScummVMFullVersion);
 		printf("Features compiled in: %s\n", gScummVMFeatures);
-		return Common::kNoError;
+		return true;
 	} else if (command == "help") {
 		printf(HELP_STRING, s_appName);
-		return Common::kNoError;
+		return true;
 	}
 #ifdef DETECTOR_TESTING_HACK
 	else if (command == "test-detector") {
 		runDetectorTest();
-		return Common::kNoError;
+		return true;
 	}
 #endif
 #ifdef UPGRADE_ALL_TARGETS_HACK
 	else if (command == "upgrade-targets") {
 		upgradeTargets();
-		return Common::kNoError;
+		return true;
 	}
 #endif
 
@@ -972,7 +976,7 @@ Common::Error processSettings(Common::String &command, Common::StringMap &settin
 		ConfMan.set(key, value, Common::ConfigManager::kTransientDomain);
 	}
 
-	return Common::kArgumentNotProcessed;
+	return false;
 }
 
 } // End of namespace Base
