@@ -883,9 +883,10 @@ void GfxOpenGL::drawText(int x, int y, const Common::String &text, Font *font, C
 	glColor3f(color.getRed()/255.f, color.getGreen()/255.f, color.getBlue()/255.f);
 	uint8 size = ((uint8 *)font->_sizes)[0];
 	GLuint texture = *((GLuint *)font->_texIds);
+	y += font->getBaseOffsetY();
 	for (uint i = 0; i < text.size(); ++i) {
 		uint8 character = text[i];
-		int w = y + font->getCharStartingLine(character) + font->getBaseOffsetY();
+		int w = y + font->getCharStartingLine(character);
 
 
 		glBindTexture(GL_TEXTURE_2D, texture);

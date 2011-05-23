@@ -86,9 +86,9 @@ public:
 	virtual void drawBitmap(const Bitmap *bitmap) = 0;
 	virtual void destroyBitmap(BitmapData *bitmap) = 0;
 
-	virtual void createFont(Font *font) { }
-	virtual void destroyFont(Font *font) { }
-	virtual void drawText(int x, int y, const Common::String &text, Font *font, Color &color) { }
+	virtual void createFont(Font *font) = 0;
+	virtual void destroyFont(Font *font) = 0;
+	virtual void drawText(int x, int y, const Common::String &text, Font *font, Color &color) = 0;
 
 	virtual Bitmap *getScreenshot(int w, int h) = 0;
 	virtual void storeDisplay() = 0;

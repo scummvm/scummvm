@@ -693,6 +693,50 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap) {
 
 void GfxTinyGL::destroyBitmap(BitmapData *) { }
 
+void GfxTinyGL::createFont(Font *font) {
+}
+
+void GfxTinyGL::destroyFont(Font *font) {
+}
+
+void GfxTinyGL::drawText(int x, int y, const Common::String &text, Font *font, Color &fgColor) {
+	y += font->getBaseOffsetY();
+	uint16 *texData = new uint16[32 * 32];
+	for (uint i = 0; i < text.size(); ++i) {
+		uint8 character = text[i];
+		int width = font->getCharDataWidth(character), height = font->getCharDataHeight(character);
+		byte *data = (byte *)font->getCharData(character);
+
+		uint16 *texDataPtr = texData;
+
+		uint8 *bitmapData = data;
+		uint8 r = fgColor.getRed();
+		uint8 g = fgColor.getGreen();
+		uint8 b = fgColor.getBlue();
+		uint16 color = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
+		if (color == 0xf81f)
+			color = 0xf81e;
+
+		for (int i = 0; i < width * height; i++, texDataPtr++, bitmapData++) {
+			byte pixel = *bitmapData;
+			if (pixel == 0x00) {
+				WRITE_UINT16(texDataPtr, 0xf81f);
+			} else if (pixel == 0x80) {
+				*texDataPtr = 0;
+			} else if (pixel == 0xFF) {
+				WRITE_UINT16(texDataPtr, color);
+			}
+		}
+
+
+
+		TinyGLBlit((byte *)_zb->pbuf, (byte *)texData, x, y + font->getCharStartingLine(character), width, height, true);
+		x += font->getCharWidth(character);
+
+	}
+	delete[] texData;
+}
+
 void GfxTinyGL::createMaterial(Material *material, const char *data, const CMap *cmap) {
 	material->_textures = new TGLuint[material->_numImages];
 	tglGenTextures(material->_numImages, (TGLuint *)material->_textures);

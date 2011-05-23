@@ -77,6 +77,10 @@ public:
 	void drawBitmap(const Bitmap *bitmap);
 	void destroyBitmap(BitmapData *bitmap);
 
+	void createFont(Font *font);
+	void destroyFont(Font *font);
+	void drawText(int x, int y, const Common::String &text, Font *font, Color &color);
+
 	void dimScreen();
 	void dimRegion(int x, int y, int w, int h, float level);
 
