@@ -897,7 +897,6 @@ void Actor::sayLine(const char *msg, const char *msgId, bool background) {
 
 	TextObject *textObject = new TextObject(false, true);
 	textObject->setDefaults(&g_grim->_sayLineDefaults);
-	textObject->setText(msg);
 	textObject->setFGColor(_talkColor);
 	if (g_grim->getMode() == ENGINE_MODE_SMUSH)
 		g_grim->killTextObjects();
@@ -916,7 +915,7 @@ void Actor::sayLine(const char *msg, const char *msgId, bool background) {
 			textObject->setY(_winY1);
 		}
 	}
-	textObject->createBitmap();
+	textObject->setText(msg);
 	g_grim->registerTextObject(textObject);
 	if (g_grim->getMode() != ENGINE_MODE_SMUSH)
 		_sayLineText = textObject->getId();

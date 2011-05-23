@@ -46,15 +46,6 @@ public:
 	GfxBase() { ; }
 	virtual ~GfxBase() { ; }
 
-	struct TextObjectHandle {
-		uint16 *bitmapData;
-		void *surface;
-		int numTex;
-		void *texIds;
-		int width;
-		int height;
-	};
-
 	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen) = 0;
 
 	virtual bool isHardwareAccelerated() = 0;
@@ -106,9 +97,6 @@ public:
 
 	virtual void drawEmergString(int x, int y, const char *text, const Color &fgColor) = 0;
 	virtual void loadEmergFont() = 0;
-	virtual TextObjectHandle *createTextBitmap(uint8 *bitmap, int width, int height, const Color &fgColor) = 0;
-	virtual void drawTextBitmap(int x, int y, TextObjectHandle *handle) = 0;
-	virtual void destroyTextBitmap(TextObjectHandle *handle) = 0;
 
 	virtual void drawRectangle(PrimitiveObject *primitive) = 0;
 	virtual void drawLine(PrimitiveObject *primitive) = 0;

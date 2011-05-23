@@ -784,47 +784,6 @@ void GfxTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 	}
 }
 
-GfxBase::TextObjectHandle *GfxTinyGL::createTextBitmap(uint8 *data, int width, int height, const Color &fgColor) {
-	TextObjectHandle *handle = new TextObjectHandle;
-	handle->width = width;
-	handle->height = height;
-	handle->numTex = 0;
-	handle->texIds = NULL;
-
-	// Convert data to 16-bit RGB 565 format
-	uint16 *texData = new uint16[width * height];
-	uint16 *texDataPtr = texData;
-	handle->bitmapData = texData;
-	uint8 *bitmapData = data;
-	uint8 r = fgColor.getRed();
-	uint8 g = fgColor.getGreen();
-	uint8 b = fgColor.getBlue();
-	uint16 color = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
-	if (color == 0xf81f)
-		color = 0xf81e;
-
-	for (int i = 0; i < width * height; i++, texDataPtr++, bitmapData++) {
-		byte pixel = *bitmapData;
-		if (pixel == 0x00) {
-			WRITE_UINT16(texDataPtr, 0xf81f);
-		} else if (pixel == 0x80) {
-			*texDataPtr = 0;
-		} else if (pixel == 0xFF) {
-			WRITE_UINT16(texDataPtr, color);
-		}
-	}
-
-	return handle;
-}
-
-void GfxTinyGL::drawTextBitmap(int x, int y, TextObjectHandle *handle) {
-	TinyGLBlit((byte *)_zb->pbuf, (byte *)handle->bitmapData, x, y, handle->width, handle->height, true);
-}
-
-void GfxTinyGL::destroyTextBitmap(TextObjectHandle *handle) {
-	delete[] handle->bitmapData;
-}
-
 Bitmap *GfxTinyGL::getScreenshot(int w, int h) {
 	uint16 *buffer = new uint16[w * h];
 	uint16 *src = (uint16 *)_storedDisplay;
