@@ -863,9 +863,11 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 			shutUp();
 
 		_talkSoundName = soundName;
-		g_imuse->startVoice(_talkSoundName.c_str());
-		if (g_grim->getCurrScene()) {
-			g_grim->getCurrScene()->setSoundPosition(_talkSoundName.c_str(), _pos);
+		if (g_grim->getSpeechMode() != GrimEngine::TextOnly) {
+			g_imuse->startVoice(_talkSoundName.c_str());
+			if (g_grim->getCurrScene()) {
+				g_grim->getCurrScene()->setSoundPosition(_talkSoundName.c_str(), _pos);
+			}
 		}
 
 		// If the actor is clearly not visible then don't try to play the lip sync
@@ -919,7 +921,9 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 
 bool Actor::isTalking() {
 	// If there's no sound file then we're obviously not talking
-	if (strlen(_talkSoundName.c_str()) == 0 || !g_imuse->getSoundStatus(_talkSoundName.c_str())) {
+	GrimEngine::SpeechMode m = g_grim->getSpeechMode();
+	if ((m == GrimEngine::TextOnly && (!_sayLineText || _sayLineText->getDisabled())) ||
+	    (m != GrimEngine::TextOnly && (strlen(_talkSoundName.c_str()) == 0 || !g_imuse->getSoundStatus(_talkSoundName.c_str())))) {
 		return false;
 	}
 
@@ -1274,7 +1278,7 @@ void Actor::draw() {
 
 // "Undraw objects" (handle objects for actors that may not be on screen)
 void Actor::undraw(bool /*visible*/) {
-	if (!isTalking() || !g_imuse->isVoicePlaying())
+	if (!isTalking())
 		shutUp();
 }
 
