@@ -40,7 +40,7 @@ namespace Grim {
 int Scene::s_id = 0;
 
 Scene::Scene(const Common::String &sceneName, const char *buf, int len) :
-		_locked(false), _name(sceneName), _enableLights(false) {
+		_locked(false), _name(sceneName), _enableLights(false), _lightsConfigured(false) {
 
 	++s_id;
 	_id = s_id;
@@ -337,6 +337,8 @@ bool Scene::restoreState(SaveGame *savedState) {
 		l._umbraangle    = savedState->readFloat();
 		l._penumbraangle = savedState->readFloat();
 	}
+
+	_lightsConfigured = false;
 
 	return true;
 }
