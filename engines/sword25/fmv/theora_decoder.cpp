@@ -445,7 +445,11 @@ bool TheoraDecoder::queueAudio() {
 			_audiobufFill += (i * _vorbisInfo.channels) << 1;
 
 			if (_audiobufFill == AUDIOFD_FRAGSIZE) {
-				_audStream->queueBuffer((byte *)_audiobuf, AUDIOFD_FRAGSIZE, DisposeAfterUse::NO, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO);
+				byte flags = Audio::FLAG_16BITS | Audio::FLAG_STEREO;
+#ifdef SCUMM_LITTLE_ENDIAN
+				flags |= Audio::FLAG_LITTLE_ENDIAN;
+#endif
+				_audStream->queueBuffer((byte *)_audiobuf, AUDIOFD_FRAGSIZE, DisposeAfterUse::NO, flags);
 
 				// The audio mixer is now responsible for the old audio buffer.
 				// We need to create a new one.
