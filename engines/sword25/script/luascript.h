@@ -36,7 +36,8 @@
 #include "common/str-array.h"
 #include "sword25/kernel/common.h"
 #include "sword25/script/script.h"
-#include "sword25/util/lua/lua.h"
+
+struct lua_State;
 
 namespace Sword25 {
 
