@@ -252,49 +252,51 @@ void TextObject::setupText() {
 	_elapsedTime = 0;
 }
 
-void TextObject::draw() {
-	int height = 0;
+int TextObject::getLineX(int line) {
+	int x = _x;
+	if (_justify == CENTER)
+		x = _x - (_font->getStringLength(_lines[line]) / 2);
+	else if (_justify == RJUSTIFY)
+		x = _x - getBitmapWidth();
 
+	if (x < 0)
+		x = 0;
+	return x;
+}
+
+int TextObject::getLineY(int line) {
+	int y = _y;
+	if (_blastDraw)
+		y = _y + 5;
+	else {
+		if (_font->getHeight() == 21) // talk_font,verb_font
+			y = _y - 6;
+		else if (_font->getHeight() == 26) // special_font
+			y = _y - 12;
+		else if (_font->getHeight() == 13) // computer_font
+			y = _y - 6;
+		else if (_font->getHeight() == 19) // pt_font
+			y = _y - 9;
+		else
+			y = _y;
+	}
+	if (y < 0)
+		y = 0;
+	y += _font->getBaseOffsetY();
+	y += _font->getHeight()*line;
+
+	return y;
+}
+
+void TextObject::draw() {
 	if (_disabled)
 		return;
-	// render multi-line (wrapped) text
-	for (int i = 0; i < _numberLines; i++) {
-		int x = _x, y = _y;
 
-		if (_blastDraw)
-			y = _y + 5;
-		else {
-			if (_font->getHeight() == 21) // talk_font,verb_font
-				y = _y - 6;
-			else if (_font->getHeight() == 26) // special_font
-				y = _y - 12;
-			else if (_font->getHeight() == 13) // computer_font
-				y = _y - 6;
-			else if (_font->getHeight() == 19) // pt_font
-				y = _y - 9;
-			else
-				y = _y;
-		}
+	if ((_justify > 3 || _justify < 0) && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
+		warning("TextObject::draw: Unknown justification code (%d)", _justify);
 
-		Common::String msg = _lines[i];
+	g_driver->drawTextObject(this);
 
-		if (_justify == CENTER)
-			x = _x - (_font->getStringLength(msg) / 2);
-		else if (_justify == RJUSTIFY)
-			x = (_x - getBitmapWidth());
-
-		if (y < 0)
-			y = 0;
-		if (x < 0)
-			x = 0;
-
-		g_driver->drawText(x, height + y, msg, _font, *_fgColor);
-
-		if ((_justify > 3 || _justify < 0) && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
-			warning("TextObject::draw: Unknown justification code (%d)", _justify);
-
-		height += _font->getHeight();
-	}
 }
 
 void TextObject::update() {

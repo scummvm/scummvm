@@ -860,7 +860,11 @@ void GfxOpenGL::destroyFont(Font *font) {
 }
 
 void GfxOpenGL::drawText(int x, int y, const Common::String &text, Font *font, Color &color) {
-	if (text.size() == 0)
+
+}
+
+void GfxOpenGL::drawTextObject(TextObject *text) {
+	if (!text)
 		return;
 
 	glMatrixMode(GL_PROJECTION);
@@ -880,30 +884,39 @@ void GfxOpenGL::drawText(int x, int y, const Common::String &text, Font *font, C
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
-	glColor3f(color.getRed()/255.f, color.getGreen()/255.f, color.getBlue()/255.f);
+	const Color *color = text->getFGColor();
+	const Font *font = text->getFont();
+
+	glColor3f(color->getRed()/255.f, color->getGreen()/255.f, color->getBlue()/255.f);
 	uint8 size = ((uint8 *)font->_sizes)[0];
 	GLuint texture = *((GLuint *)font->_texIds);
-	y += font->getBaseOffsetY();
-	for (uint i = 0; i < text.size(); ++i) {
-		uint8 character = text[i];
-		int w = y + font->getCharStartingLine(character);
+	int y, x;
+	const Common::String *lines = text->getLines();
+	int numLines = text->getNumLines();
+	for (int j = 0; j < numLines; ++j) {
+		const Common::String &line = lines[j];
+		x = text->getLineX(j);
+		y = text->getLineY(j);
+		for (uint i = 0; i < line.size(); ++i) {
+			uint8 character = line[i];
+			int w = y + font->getCharStartingLine(character);
 
-
-		glBindTexture(GL_TEXTURE_2D, texture);
-		float width = 1/16.f;
-		float cx = ((character-1)%16)/16.0f;
-		float cy = ((character-1)/16)/16.0f;
-		glBegin(GL_QUADS);
-		glTexCoord2f(cx, cy);
-		glVertex2i(x, w);
-		glTexCoord2f(cx+width, cy);
-		glVertex2i(x+size, w);
-		glTexCoord2f(cx+width, cy+width);
-		glVertex2i(x+size, w+size);
-		glTexCoord2f(cx, cy+width);
-		glVertex2i(x, w+size);
-		glEnd();
-		x += font->getCharWidth(character);
+			glBindTexture(GL_TEXTURE_2D, texture);
+			float width = 1/16.f;
+			float cx = ((character-1)%16)/16.0f;
+			float cy = ((character-1)/16)/16.0f;
+			glBegin(GL_QUADS);
+			glTexCoord2f(cx, cy);
+			glVertex2i(x, w);
+			glTexCoord2f(cx+width, cy);
+			glVertex2i(x+size, w);
+			glTexCoord2f(cx+width, cy+width);
+			glVertex2i(x+size, w+size);
+			glTexCoord2f(cx, cy+width);
+			glVertex2i(x, w+size);
+			glEnd();
+			x += font->getCharWidth(character);
+		}
 	}
 
 	glColor3f(1, 1, 1);

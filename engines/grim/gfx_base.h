@@ -89,6 +89,7 @@ public:
 	virtual void createFont(Font *font) = 0;
 	virtual void destroyFont(Font *font) = 0;
 	virtual void drawText(int x, int y, const Common::String &text, Font *font, Color &color) = 0;
+	virtual void drawTextObject(TextObject *text) { }
 
 	virtual Bitmap *getScreenshot(int w, int h) = 0;
 	virtual void storeDisplay() = 0;

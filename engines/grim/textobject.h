@@ -88,6 +88,12 @@ public:
 	int getBitmapHeight();
 	int getTextCharPosition(int pos);
 
+	int getLineX(int line);
+	int getLineY(int line);
+
+	const Common::String *getLines() { return _lines; }
+	int getNumLines() { return _numberLines; }
+
 	const char *getName() const { return _textID; }
 	void draw();
 	void update();

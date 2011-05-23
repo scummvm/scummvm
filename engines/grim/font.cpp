@@ -98,7 +98,7 @@ Font::~Font() {
 	g_driver->destroyFont(this);
 }
 
-uint16 Font::getCharIndex(unsigned char c) {
+uint16 Font::getCharIndex(unsigned char c) const {
 	uint16 c2 = uint16(c);
 
 	// In order to ensure the correct character codes for
