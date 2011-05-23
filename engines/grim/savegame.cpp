@@ -281,18 +281,8 @@ void SaveGame::writeColor(const Grim::Color &color) {
 }
 
 void SaveGame::writeFloat(float data) {
-	byte *udata = (byte *)(&data);
 	uint32 v;
-#if defined(SCUMM_LITTLE_ENDIAN)
-	byte b[4];
-	b[0] = udata[3];
-	b[1] = udata[2];
-	b[2] = udata[1];
-	b[3] = udata[0];
-	v = *(uint32 *)b;
-#else
-	memcpy(&v, udata, 4);
-#endif
+	memcpy(&v, &data, 4);
 	writeLEUint32(v);
 }
 
@@ -320,18 +310,8 @@ Grim::Color SaveGame::readColor() {
 
 float SaveGame::readFloat() {
 	float f;
-	byte *udata = (byte *)(&f);
 	uint32 v = readLEUint32();
-#if defined(SCUMM_LITTLE_ENDIAN)
-	byte b[4];
-	*(uint32 *)&b = v;
-	udata[0] = b[3];
-	udata[1] = b[2];
-	udata[2] = b[1];
-	udata[3] = b[0];
-#else
-	memcpy(udata, &v, 4);
-#endif
+	memcpy(&f, &v, 4);
 
 	return f;
 }

@@ -31,19 +31,8 @@ static void restoreObjectValue(TObject *object, RestoreSint32 restoreSint32, Res
 		case LUA_T_NUMBER:
 		case LUA_T_TASK:
 			{
-				byte *udata = (byte *)(&object->value.n);
 				uint32 v = restoreUint32();
-				restoreUint32();
-#if defined(SCUMM_LITTLE_ENDIAN)
-				byte b[4];
-				*(uint32 *)&b = v;
-				udata[0] = b[3];
-				udata[1] = b[2];
-				udata[2] = b[1];
-				udata[3] = b[0];
-#else
-				memcpy(udata, &v, 4);
-#endif
+				memcpy(&object->value.n, &v, 4);
 			}
 			break;
 		case LUA_T_NIL:

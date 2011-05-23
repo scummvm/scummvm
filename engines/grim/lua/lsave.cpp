@@ -80,20 +80,9 @@ static void saveObjectValue(TObject *object, SaveSint32 saveSint32, SaveUint32 s
 		case LUA_T_NUMBER:
 		case LUA_T_TASK:
 			{
-				byte *udata = (byte *)(&object->value.n);
 				uint32 v;
-#if defined(SCUMM_LITTLE_ENDIAN)
-				byte b[4];
-				b[0] = udata[3];
-				b[1] = udata[2];
-				b[2] = udata[1];
-				b[3] = udata[0];
-				v = *(uint32 *)b;
-#else
-				memcpy(&v, udata, 4);
-#endif
+				memcpy(&v, &object->value.n, 4);
 				saveUint32(v);
-				saveUint32(0);
 			}
 			break;
 		case LUA_T_NIL:
