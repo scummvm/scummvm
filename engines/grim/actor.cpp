@@ -902,7 +902,9 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	_sayLineText->setDefaults(&g_grim->_sayLineDefaults);
 	_sayLineText->setText(msg);
 	_sayLineText->setFGColor(_talkColor);
-	_sayLineText->setDuration((float)strlen(msg) * 20.f / sqrt((float)g_grim->getTextSpeed() / 10.f));
+	if (m == GrimEngine::TextOnly || g_grim->getMode() == ENGINE_MODE_SMUSH) {
+		_sayLineText->setDuration((float)strlen(msg) * 20.f / sqrt((float)g_grim->getTextSpeed() / 10.f));
+	}
 	if (g_grim->getMode() == ENGINE_MODE_SMUSH) {
 		_sayLineText->setX(640 / 2);
 		_sayLineText->setY(456);
