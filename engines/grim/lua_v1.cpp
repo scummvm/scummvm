@@ -814,7 +814,7 @@ void L1_Exit() {
 }
 
 void L1_SetSpeechMode() {
-	GrimEngine::SpeechMode mode = (GrimEngine::SpeechMode)lua_getnumber(lua_getparam(1));
+	GrimEngine::SpeechMode mode = (GrimEngine::SpeechMode)((int)lua_getnumber(lua_getparam(1)));
 	if (mode >= 1 && mode <= 3)
 		g_grim->setSpeechMode(mode);
 }
