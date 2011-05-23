@@ -1153,6 +1153,7 @@ void GrimEngine::savegameRestore() {
 	//  lock resources
 
 	_selectedActor = NULL;
+	_talkingActor = NULL;
 	if (_currScene)
 		removeScene(_currScene);
 	delete _currScene;
@@ -1219,6 +1220,7 @@ void GrimEngine::restoreActors(SaveGame *state) {
 	if (id != 0) {
 		_selectedActor = _actors[id];
 	}
+	_talkingActor = getActor(state->readLEUint32());
 
 	state->endSection();
 }
@@ -1486,6 +1488,11 @@ void GrimEngine::saveActors(SaveGame *state) {
 
 	if (_selectedActor) {
 		state->writeLEUint32(_selectedActor->getId());
+	} else {
+		state->writeLEUint32(0);
+	}
+	if (_talkingActor) {
+		state->writeLEUint32(_talkingActor->getId());
 	} else {
 		state->writeLEUint32(0);
 	}
