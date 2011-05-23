@@ -23,7 +23,7 @@
 
 #include "lauxlib.h"
 #include "scummvm_file.h"
-#include "common\textconsole.h"
+#include "common/textconsole.h"
 
 #define FREELIST_REF	0	/* free list of references */
 
