@@ -19,11 +19,6 @@ LUAI_FUNC void luaU_header (char* h);
 /* dump one chunk; from ldump.c */
 LUAI_FUNC int luaU_dump (lua_State* L, const Proto* f, lua_Writer w, void* data, int strip);
 
-#ifdef luac_c
-/* print one chunk; from print.c */
-LUAI_FUNC void luaU_print (const Proto* f, int full);
-#endif
-
 /* for header of binary files -- this is Lua 5.1 */
 #define LUAC_VERSION		0x51
 
