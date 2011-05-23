@@ -68,8 +68,7 @@
 // - Try discworld?
 
 
-// Disable symbol overrides for FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 
 

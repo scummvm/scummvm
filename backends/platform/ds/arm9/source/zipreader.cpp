@@ -20,6 +20,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/scummsys.h"
 #include "zipreader.h"
