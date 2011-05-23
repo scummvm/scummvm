@@ -32,13 +32,6 @@
 #include "backends/audiocd/default/default-audiocd.h"
 #include "audio/mixer_intern.h"
 
-#include <FApp.h>
-#include <FGraphics.h>
-#include <FUi.h>
-#include <FSystem.h>
-#include <FBase.h>
-#include <FIoFile.h>
-
 #include <stdarg.h>
 
 #include "system.h"
@@ -118,16 +111,12 @@ void BadaMutexManager::deleteMutex(OSystem::MutexRef mutex) {
 //
 // BadaSystem
 //
-class BadaSystem : public ModularBackend, 
-                   public Osp::Base::Runtime::IRunnable,
-                   Common::EventSource {
-public:
-  BadaSystem(Osp::App::Application* app);
+struct BadaSystem : public ModularBackend, 
+                    Common::EventSource {
+  BadaSystem(BadaAppForm* appForm);
   ~BadaSystem();
 
   result Construct();
-  Object* Run();
-
   void initBackend();
   result initModules();
 
@@ -141,14 +130,10 @@ public:
   Common::SeekableReadStream* createConfigReadStream();
   Common::WriteStream* createConfigWriteStream();
 
-private:
-  Thread* pThread;
-  Osp::App::Application* app;
+  BadaAppForm* appForm;
 };
 
-BadaSystem::BadaSystem(Osp::App::Application* app) {
-  this->app = app;
-  Construct();
+BadaSystem::BadaSystem(BadaAppForm* appForm) : appForm(appForm) {
 }
 
 result BadaSystem::Construct(void) {
@@ -159,28 +144,10 @@ result BadaSystem::Construct(void) {
     return E_OUT_OF_MEMORY;
   }
 
-  pThread = new Thread();
-  if (pThread == null) {
-    return E_OUT_OF_MEMORY;
-  }
-
-  result r = pThread->Construct(*this);
-  if (r == E_OUT_OF_MEMORY) {
-    return E_OUT_OF_MEMORY;
-  }
-
-  pThread->Start();
   return E_SUCCESS;
 }
 
 BadaSystem::~BadaSystem() {
-  delete pThread;
-}
-
-Object* BadaSystem::Run(void) {
-  scummvm_main(0, 0);
-  delete this;
-  return null;
 }
 
 result BadaSystem::initModules() {
@@ -190,27 +157,32 @@ result BadaSystem::initModules() {
   if (!_mutexManager) {
     return E_OUT_OF_MEMORY;
   }
+
   _timerManager = new DefaultTimerManager();
   if (!_timerManager) {
     return E_OUT_OF_MEMORY;
   }
+
   _eventManager = new DefaultEventManager(this);
   if (!_eventManager) {
     return E_OUT_OF_MEMORY;
   }
+
   _savefileManager = new BadaSaveFileManager();
   if (!_savefileManager) {
     return E_OUT_OF_MEMORY;
   }
-  _graphicsManager = (GraphicsManager*) new BadaGraphicsManager();
-  if (!_graphicsManager || 
-      (!((BadaGraphicsManager*) _graphicsManager)->construct(app))) {
+
+  _graphicsManager = (GraphicsManager*) new BadaGraphicsManager(appForm);
+  if (!_graphicsManager) {
     return E_OUT_OF_MEMORY;
   }
+
   _mixer = new Audio::MixerImpl(this, 22050);
   if (!_mixer) {
     return E_OUT_OF_MEMORY;
   }
+
   _audiocdManager = (AudioCDManager*) new DefaultAudioCDManager();
   if (!_audiocdManager) {
     return E_OUT_OF_MEMORY;
@@ -235,6 +207,7 @@ void BadaSystem::initBackend() {
 }
 
 bool BadaSystem::pollEvent(Common::Event &event) {
+  Thread::Sleep(100);
   return false;
 }
 
@@ -273,7 +246,7 @@ void BadaSystem::fatalError() {
 }
 
 void BadaSystem::logMessage(LogMessageType::Type /*type*/, const char *message) {
-  AppLogDebug(message);
+  AppLog(message);
 }
 
 Common::SeekableReadStream* BadaSystem::createConfigReadStream() {
@@ -286,22 +259,106 @@ Common::WriteStream* BadaSystem::createConfigWriteStream() {
   return file.createWriteStream();
 }
 
-// create the scummVM system
-bool systemStart(Osp::App::Application* app) {
+//
+// BadaAppForm
+//
+result BadaAppForm::Construct() {
+  result r = Form::Construct(Osp::Ui::Controls::FORM_STYLE_NORMAL);
+	if (IsFailed(r)) {
+    return r;
+  }
+
+  BadaSystem* badaSystem = null;
+  pThread = null;
+
+  badaSystem = new BadaSystem(this);
+  r = badaSystem != null ? E_SUCCESS : E_OUT_OF_MEMORY;
+  
+  if (!IsFailed(r)) {
+    r = badaSystem->Construct();
+  }
+
+  if (!IsFailed(r)) {
+    pThread = new Thread();
+    r = pThread != null ? E_SUCCESS : E_OUT_OF_MEMORY;
+  }
+
+  if (!IsFailed(r)) {
+    r = pThread->Construct(*this);
+  }
+
+  if (IsFailed(r)) {
+    if (badaSystem != null) {
+      delete badaSystem;
+    }
+    if (pThread != null) {
+      delete pThread;
+    }
+  }
+  else {
+    g_system = badaSystem;
+    pThread->Start();
+  }
+
+  return r;
+}
+
+BadaAppForm::~BadaAppForm() {
+  if (pThread) {
+    delete pThread;
+  }
+}
+
+result BadaAppForm::OnDraw(void) {
   logEntered();
-  g_system = new BadaSystem(app);
-  return g_system != null;
+  //  g_system->updateScreen();
+  return E_SUCCESS;
 }
 
+Object* BadaAppForm::Run(void) {
+  scummvm_main(0, 0);
+  AppLog("scummvm_main completed");
+  delete this;
+  return null;
+}
+
+//
+// create the scummVM system
+//
+BadaAppForm* systemStart(Osp::App::Application* app) {
+  logEntered();
+
+  BadaAppForm* appForm = new BadaAppForm();
+  if (!appForm) {
+    systemError("Failed to create appForm");
+    return null;
+  }
+
+  if (E_SUCCESS != appForm->Construct() ||
+      E_SUCCESS != app->GetAppFrame()->GetFrame()->AddControl(*appForm)) {
+    delete appForm;
+    systemError("Failed to construct appForm");
+    return null;
+  }
+
+  return appForm;
+}
+
+//
 // prepares to halt the application
-void systemStop() {
+//
+void systemStop(BadaAppForm* appForm) {
 }
 
+//
 // adds a new event to the event queue
+//
 void systemPostEvent() {
 }
 
+//
 // display a fatal error notification
+//
 void systemError(const char* format, ...) {
   va_list ap;
   char buffer[255];
@@ -310,7 +367,7 @@ void systemError(const char* format, ...) {
   vsnprintf(buffer, sizeof(buffer), format, ap);
   va_end(ap);
   
-  AppLogDebug(buffer);
+  AppLog(buffer);
   // TODO: display in a popup
 }
 

@@ -20,9 +20,6 @@
  *
  */
 
-#include <FBase.h>
-#include <FAppApplication.h>
-
 #include "system.h"
 #include "graphics.h"
 
@@ -39,16 +36,36 @@ int getPowerOf2(int value) {
 //
 // BadaGraphicsManager
 //
-bool BadaGraphicsManager::construct(Osp::App::Application* app) {
-  appForm = new BadaAppForm(app);
-  return appForm != null;
+BadaGraphicsManager::BadaGraphicsManager(BadaAppForm* appForm) :
+  appForm(appForm),
+	eglDisplay(EGL_DEFAULT_DISPLAY),
+	eglSurface(EGL_NO_SURFACE),
+	eglConfig(0),
+	eglContext(EGL_NO_CONTEXT),
+	pBufferSurface(EGL_NO_SURFACE),
+	pBufferTexture(0) {
+  assert(appForm != null);
+  _videoMode.fullscreen = true;
 }
 
 bool BadaGraphicsManager::hasFeature(OSystem::Feature f) {
-  logEntered();
-
-  bool result = false;
+  bool result = (f == kFeatureFullscreenMode || 
+                 f == kFeatureVirtualKeyboard ||
+                 OpenGLGraphicsManager::hasFeature(f));
   return result;
+}
+
+void BadaGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
+  logEntered();
+	switch (f) {
+	case kFeatureVirtualKeyboard:
+    // TODO
+    // http://forums.badadev.com/viewtopic.php?f=6&t=258
+		break;
+	default:
+    OpenGLGraphicsManager::setFeatureState(f, enable);
+		break;
+	}
 }
 
 bool BadaGraphicsManager::isHotkey(const Common::Event &event) {
@@ -58,7 +75,45 @@ bool BadaGraphicsManager::isHotkey(const Common::Event &event) {
   return result;
 }
 
+bool BadaGraphicsManager::notifyEvent(const Common::Event &event) {
+  logEntered();
+
+  bool result = false;
+  return result;
+}
+
+void BadaGraphicsManager::setInternalMousePosition(int x, int y) {
+  logEntered();
+
+}
+
+void BadaGraphicsManager::internUpdateScreen() {
+  logEntered();
+
+  eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
+
+  EGLSurface eglSurfaceR = eglGetCurrentSurface(EGL_READ);
+  EGLSurface eglSurfaceW = eglGetCurrentSurface(EGL_DRAW);
+  EGLContext eglContextC  = eglGetCurrentContext();
+  
+  eglMakeCurrent(eglDisplay, pBufferSurface, pBufferSurface, eglContextC);
+  glBindTexture(GL_TEXTURE_2D, 0); // allow use of default 2D texture
+  eglReleaseTexImage(eglDisplay, pBufferSurface, EGL_BACK_BUFFER); // set draw target
+
+	// Call to parent implementation of this method
+	OpenGLGraphicsManager::internUpdateScreen();
+  
+  glBindTexture(GL_TEXTURE_2D, pBufferTexture);
+  eglBindTexImage(eglDisplay, pBufferSurface, EGL_BACK_BUFFER);
+  eglMakeCurrent(eglDisplay, eglSurfaceW, eglSurfaceR, eglContextC);
+
+  eglSwapBuffers(eglDisplay, eglSurface);
+  logLeaving();
+}
+
 bool BadaGraphicsManager::loadEgl() {
+  logEntered();
+
   EGLint numConfigs = 1;
   EGLint eglConfigList[] = {
     EGL_RED_SIZE, 5,
@@ -82,12 +137,12 @@ bool BadaGraphicsManager::loadEgl() {
     unloadGFXMode();
   }
 
-  eglDisplay = eglGetDisplay((EGLNativeDisplayType)EGL_DEFAULT_DISPLAY);
+  eglDisplay = eglGetDisplay((EGLNativeDisplayType) EGL_DEFAULT_DISPLAY);
   if (EGL_NO_DISPLAY == eglDisplay) {
     systemError("eglGetDisplay() failed. [0x%x]\n", eglGetError());
     return false;
   }
-
+  
   if (EGL_FALSE == eglInitialize(eglDisplay, null, null) || 
       EGL_SUCCESS != eglGetError()) {
     systemError("eglInitialize() failed. [0x%x]\n", eglGetError());
@@ -102,22 +157,20 @@ bool BadaGraphicsManager::loadEgl() {
   }
 
   if (!numConfigs) {
-    systemError("eglChooseConfig() failed. Matching config does nott exist \n");
+    systemError("eglChooseConfig() failed. Matching config does not exist \n");
     return false;
   }
 
   eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, 
-                                        (EGLNativeWindowType)appForm, null);
-
-  if (EGL_NO_SURFACE == eglSurface ||
-      EGL_SUCCESS != eglGetError()) {
+                                      (EGLNativeWindowType)appForm, null);
+  if (EGL_NO_SURFACE == eglSurface || EGL_SUCCESS != eglGetError()) {
     systemError("eglCreateWindowSurface() failed. EGL_NO_SURFACE [0x%x]\n", 
-           eglGetError());
+                eglGetError());
     return false;
   }
-
+  
   eglContext = eglCreateContext(eglDisplay, eglConfig, 
-                                  EGL_NO_CONTEXT, eglContextList);
+                                EGL_NO_CONTEXT, eglContextList);
   if (EGL_NO_CONTEXT == eglContext ||
       EGL_SUCCESS != eglGetError()) {
     systemError("eglCreateContext() failed. [0x%x]\n", eglGetError());
@@ -130,8 +183,8 @@ bool BadaGraphicsManager::loadEgl() {
     return false;
   }
 
+  logLeaving();
   return true;
-
 }
 
 bool BadaGraphicsManager::loadGFXMode() {
@@ -143,8 +196,7 @@ bool BadaGraphicsManager::loadGFXMode() {
   }
 
   int x, y, width, height;
-  // TODO
-  //  Application::GetInstance()->GetAppFrame()->GetFrame()->GetBounds(x, y, width, height);
+  appForm->GetBounds(x, y, width, height);
 
   EGLint surfaceType;
 
@@ -160,45 +212,28 @@ bool BadaGraphicsManager::loadGFXMode() {
     };
 
     pBufferSurface = eglCreatePbufferSurface(eglDisplay, eglConfig, pbuffer_attribs);
+    assert(pBufferSurface != EGL_NO_SURFACE);
 
-    if (pBufferSurface != EGL_NO_SURFACE) {
-      // TODO apply dimensions to scummvm model
-      //eglQuerySurface(eglDisplay, pBufferSurface, EGL_WIDTH, &__pbuffer_width);
-      //eglQuerySurface(eglDisplay, pBufferSurface, EGL_HEIGHT, &__pbuffer_height);
-
-      glGenTextures(1, &pBufferTexture);
-      glBindTexture(GL_TEXTURE_2D, pBufferTexture);
-
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    }
+    eglQuerySurface(eglDisplay, pBufferSurface, EGL_WIDTH, &_videoMode.hardwareWidth);
+    eglQuerySurface(eglDisplay, pBufferSurface, EGL_HEIGHT, &_videoMode.hardwareHeight);
+    
+    _videoMode.screenWidth = _videoMode.overlayWidth = _videoMode.hardwareWidth;
+    _videoMode.screenHeight = _videoMode.overlayHeight = _videoMode.hardwareHeight;
+    AppLog("screen size: %dx%d", _videoMode.screenWidth, _videoMode.screenHeight);
+    
+    glGenTextures(1, &pBufferTexture);
+    glBindTexture(GL_TEXTURE_2D, pBufferTexture);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   }
 
-  return true;
-}
+  logLeaving();
 
-bool BadaGraphicsManager::notifyEvent(const Common::Event &event) {
-  logEntered();
-
-  bool result = false;
-  return result;
-}
-
-void BadaGraphicsManager::internUpdateScreen() {
-  logEntered();
-
-}
-
-void BadaGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
-  logEntered();
-
-}
-
-void BadaGraphicsManager::setInternalMousePosition(int x, int y) {
-  logEntered();
-
+	// Call and return parent implementation of this method
+	return OpenGLGraphicsManager::loadGFXMode();
 }
 
 void BadaGraphicsManager::unloadGFXMode() {
@@ -232,11 +267,9 @@ void BadaGraphicsManager::unloadGFXMode() {
   }
   
   eglConfig = null;
+  logLeaving();
 }
 
-void BadaGraphicsManager::updateScreen() {
-  logEntered();
 
-}
 
 

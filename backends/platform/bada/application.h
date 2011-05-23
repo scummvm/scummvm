@@ -20,14 +20,16 @@
  *
  */
 
-#ifndef BADA_H
-#define BADA_H
+#ifndef BADA_APPLICATION_H
+#define BADA_APPLICATION_H
 
 #include <FBase.h>
 #include <FApp.h>
 #include <FGraphics.h>
 #include <FUi.h>
 #include <FSystem.h>
+
+#include "system.h"
 
 class BadaScummVM :
 	public Osp::App::Application,
@@ -51,7 +53,8 @@ public:
 	void OnKeyLongPressed(const Osp::Ui::Control& source, Osp::Ui::KeyCode keyCode);
 	void OnScreenOn(void);
 	void OnScreenOff(void);
-	bool Draw();
+
+  BadaAppForm* appForm;
 };
 
 #endif

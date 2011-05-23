@@ -20,48 +20,32 @@
  *
  */
 
+#ifndef BADA_GRAPHICS_H
+#define BADA_GRAPHICS_H
+
 #include "backends/graphics/opengl/opengl-graphics.h"
 
+#include <FBase.h>
+#include <FGraphics.h>
+#include <FApp.h>
 #include <FGraphicsOpengl.h>
-#include <FAppApplication.h>
-#include <FUiCtrlForm.h>
+#include <FSystem.h>
+#include <FUi.h>
 
 using namespace Osp::Graphics::Opengl;
 using namespace Osp::App;
 
-#ifndef BADA_GRAPHICS_H
-#define BADA_GRAPHICS_H
-
-struct BadaAppForm : public Osp::Ui::Controls::Form {
-  BadaAppForm(Osp::App::Application* app) {
-    this->app = app;
-  }
-  
-  ~BadaAppForm(void) {}
-
-  result OnDraw(void) {
-    if (app) {
-      // app->Draw();
-    }
-    return E_SUCCESS;
-  }
-
-private:
-  Osp::App::Application* app;
-};
-
 struct BadaGraphicsManager : public OpenGLGraphicsManager {
-  bool construct(Osp::App::Application* app);
+  BadaGraphicsManager(BadaAppForm* appForm);
 
   bool hasFeature(OSystem::Feature f);
+  void internUpdateScreen();
   bool isHotkey(const Common::Event &event);
   bool loadGFXMode();
   bool notifyEvent(const Common::Event &event);
-  void internUpdateScreen();
   void setFeatureState(OSystem::Feature f, bool enable);
   void setInternalMousePosition(int x, int y);
   void unloadGFXMode();
-  void updateScreen();
 
  private:
   bool loadEgl();
