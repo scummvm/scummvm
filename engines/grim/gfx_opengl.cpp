@@ -791,8 +791,9 @@ void GfxOpenGL::createFont(Font *font) {
 	int size = 0;
 	for (int i = 0; i < 256; ++i) {
 		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
-		int m = max(width, height);
-		size = max(m, size);
+		int m = width > height ? width : height;
+		if (m < size)
+			size = m;
 	}
 	assert(size < 64);
 	if (size < 8)
