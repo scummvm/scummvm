@@ -270,7 +270,7 @@ void TextObject::draw() {
 		return;
 	// render multi-line (wrapped) text
 	for (int i = 0; i < _numberLines; i++) {
-		int x = 0, y = 0;
+		int x = _x, y = _y;
 
 		if (_blastDraw)
 			y = _y + 5;
