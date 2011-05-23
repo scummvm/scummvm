@@ -59,7 +59,7 @@ Sword25FileProxy::~Sword25FileProxy() {
 }
 
 size_t Sword25FileProxy::read(void *ptr, size_t size, size_t count) {
-	size_t bytesRead = MIN(_readData.size() - _readPos, size * count);
+	size_t bytesRead = MIN<size_t>(_readData.size() - _readPos, size * count);
 	memmove(ptr, &_readData.c_str()[_readPos], bytesRead);
 	_readPos += bytesRead;
 	return bytesRead / size;
