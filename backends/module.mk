@@ -149,7 +149,8 @@ endif
 
 ifeq ($(BACKEND),samsungstv)
 MODULE_OBJS += \
-	events/samsungtvsdl/samsungtvsdl-events.o
+	events/samsungtvsdl/samsungtvsdl-events.o \
+	graphics/samsungtvsdl/samsungtvsdl-graphics.o
 endif
 
 ifeq ($(BACKEND),webos)

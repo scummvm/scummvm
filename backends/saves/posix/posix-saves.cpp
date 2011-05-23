@@ -50,7 +50,7 @@
 POSIXSaveFileManager::POSIXSaveFileManager() {
 	// Register default savepath based on HOME
 #if defined(SAMSUNGTV)
-	ConfMan.registerDefault("savepath", "/dtv/usb/sda1/.scummvm");
+	ConfMan.registerDefault("savepath", "/mtd_rwarea/scummvm/savegames");
 #else
 	Common::String savePath;
 	const char *home = getenv("HOME");

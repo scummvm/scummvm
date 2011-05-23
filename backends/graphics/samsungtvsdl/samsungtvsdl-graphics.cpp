@@ -20,37 +20,39 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
-
 #include "backends/platform/samsungtv/samsungtv.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
+#include "backends/events/samsungtvsdl/samsungtvsdl-events.h"
+#include "backends/graphics/samsungtvsdl/samsungtvsdl-graphics.h"
 
 #if defined(SAMSUNGTV)
 
-#include <unistd.h>
+SamsungTVSdlGraphicsManager::SamsungTVSdlGraphicsManager(SdlEventSource *sdlEventSource)
+	: SdlGraphicsManager(sdlEventSource) {
+}
 
-extern "C" int Game_Main(char *path, char *) {
-	chdir(path);
+bool SamsungTVSdlGraphicsManager::hasFeature(OSystem::Feature f) {
+	return
+		(f == OSystem::kFeatureAspectRatioCorrection) ||
+		(f == OSystem::kFeatureCursorHasPalette);
+}
 
-	// Create OSystem instance
-	g_system = new OSystem_SDL_SamsungTV();
-	assert(g_system);
+void SamsungTVSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
+	switch (f) {
+	case OSystem::kFeatureAspectRatioCorrection:
+		SdlGraphicsManager::setFeatureState(f, enable);
+		break;
+	default:
+		break;
+	}
+}
 
-	// Pre initialize the backend
-	((OSystem_POSIX *)g_system)->init();
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(0, 0);
-
-	// Free OSystem
-	delete (OSystem_SDL_SamsungTV *)g_system;
-
-	return res;
+bool SamsungTVSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
+	switch (f) {
+	case OSystem::kFeatureAspectRatioCorrection:
+		return SdlGraphicsManager::getFeatureState(f);
+	default:
+		return false;
+	}
 }
 
 #endif
