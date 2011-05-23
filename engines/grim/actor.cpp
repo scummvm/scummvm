@@ -885,12 +885,15 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 		}
 	}
 
+	g_grim->setTalkingActor(this);
+
 	if (_sayLineText) {
 		g_grim->killTextObject(_sayLineText);
 		_sayLineText = NULL;
 	}
 
-	if (!g_grim->_sayLineDefaults.getFont())
+	GrimEngine::SpeechMode m = g_grim->getSpeechMode();
+	if (!g_grim->_sayLineDefaults.getFont() || m == GrimEngine::VoiceOnly)
 		return;
 
 	_sayLineText = new TextObject(false, true);
@@ -912,7 +915,6 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	}
 	_sayLineText->createBitmap();
 	g_grim->registerTextObject(_sayLineText);
-	g_grim->setTalkingActor(this);
 }
 
 bool Actor::isTalking() {
