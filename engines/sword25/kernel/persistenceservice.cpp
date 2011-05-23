@@ -29,9 +29,6 @@
  *
  */
 
-// Disable symbol overrides so that we can use zlib.h
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "common/fs.h"
 #include "common/savefile.h"
 #include "common/zlib.h"

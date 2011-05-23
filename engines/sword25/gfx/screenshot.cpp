@@ -29,9 +29,6 @@
  *
  */
 
-// Disable symbol overrides so that we can use png.h
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "common/memstream.h"
 #include "common/textconsole.h"
 #include "sword25/gfx/screenshot.h"
