@@ -109,7 +109,7 @@ ResourceLoader::~ResourceLoader() {
 	clearList(_lipsyncs);
 }
 
-const Lab *ResourceLoader::getLab(const char *filename) const {
+const Lab *ResourceLoader::getLab(const Common::String &filename) const {
 	for (LabList::const_iterator i = _labs.begin(); i != _labs.end(); ++i)
 		if ((*i)->getFileExists(filename))
 			return *i;
@@ -121,7 +121,7 @@ static int sortCallback(const void *entry1, const void *entry2) {
 	return scumm_stricmp(((ResourceLoader::ResourceCache *)entry1)->fname, ((ResourceLoader::ResourceCache *)entry2)->fname);
 }
 
-Block *ResourceLoader::getFileFromCache(const char *filename) {
+Block *ResourceLoader::getFileFromCache(const Common::String &filename) {
 	ResourceLoader::ResourceCache *entry = getEntryFromCache(filename);
 	if (entry)
 		return entry->resPtr;
@@ -129,7 +129,7 @@ Block *ResourceLoader::getFileFromCache(const char *filename) {
 		return NULL;
 }
 
-ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const char *filename) {
+ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const Common::String &filename) {
 	if (_cache.empty())
 		return NULL;
 
@@ -139,16 +139,16 @@ ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const char *fil
 	}
 
 	ResourceCache key;
-	key.fname = const_cast<char *>(filename);
+	key.fname = const_cast<char *>(filename.c_str());
 
 	return (ResourceLoader::ResourceCache *)bsearch(&key, _cache.begin(), _cache.size(), sizeof(ResourceCache), sortCallback);
 }
 
-bool ResourceLoader::getFileExists(const char *filename) const {
+bool ResourceLoader::getFileExists(const Common::String &filename) const {
 	return getLab(filename) != NULL;
 }
 
-Block *ResourceLoader::getFileBlock(const char *filename) const {
+Block *ResourceLoader::getFileBlock(const Common::String &filename) const {
 	const Lab *l = getLab(filename);
 	if (!l)
 		return NULL;
@@ -159,9 +159,9 @@ Block *ResourceLoader::getFileBlock(const char *filename) const {
 Block *ResourceLoader::getBlock(const char *filename) {
     Common::String fname = filename;
     fname.toLowercase();
-    Block *b = getFileFromCache(fname.c_str());
+    Block *b = getFileFromCache(fname);
     if (!b) {
-        b = getFileBlock(fname.c_str());
+        b = getFileBlock(fname);
 		if (b) {
 			putIntoCache(fname, b);
 		}
@@ -196,7 +196,7 @@ int ResourceLoader::getFileLength(const char *filename) const {
 		return 0;
 }
 
-void ResourceLoader::putIntoCache(Common::String fname, Block *res) {
+void ResourceLoader::putIntoCache(const Common::String &fname, Block *res) {
 	ResourceCache entry;
 	entry.resPtr = res;
 	entry.fname = new char[fname.size() + 1];
@@ -206,14 +206,14 @@ void ResourceLoader::putIntoCache(Common::String fname, Block *res) {
 	_cacheDirty = true;
 }
 
-Bitmap *ResourceLoader::loadBitmap(const char *filename) {
+Bitmap *ResourceLoader::loadBitmap(const Common::String &filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
-	Block *b = getFileFromCache(fname.c_str());
+	Block *b = getFileFromCache(fname);
 	if (!b) {
-		b = getFileBlock(fname.c_str());
+		b = getFileBlock(fname);
 		if (!b) {	// Grim sometimes asks for non-existant bitmaps (eg, ha_overhead)
-			warning("Could not find bitmap %s", filename);
+			warning("Could not find bitmap %s", filename.c_str());
 			return NULL;
 		}
 		putIntoCache(fname, b);
@@ -226,12 +226,12 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 	return result;
 }
 
-CMap *ResourceLoader::loadColormap(const char *filename) {
+CMap *ResourceLoader::loadColormap(const Common::String &filename) {
 	Block *b = getFileFromCache(filename);
 	if (!b) {
 		b = getFileBlock(filename);
 		if (!b) {
-			error("Could not find colormap %s", filename);
+			error("Could not find colormap %s", filename.c_str());
         }
 		putIntoCache(filename, b);
 	}
@@ -257,14 +257,14 @@ static Common::String fixFilename(const Common::String filename) {
 	return fname;
 }
 
-Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
+Costume *ResourceLoader::loadCostume(const Common::String &filename, Costume *prevCost) {
 	Common::String fname = fixFilename(filename);
 	fname.toLowercase();
-	Block *b = getFileFromCache(fname.c_str());
+	Block *b = getFileFromCache(fname);
 	if (!b) {
-		b = getFileBlock(fname.c_str());
+		b = getFileBlock(fname);
 		if (!b)
-			error("Could not find costume \"%s\"", filename);
+			error("Could not find costume \"%s\"", filename.c_str());
 		putIntoCache(fname, b);
 	}
 	Costume *result = new Costume(filename, b->getData(), b->getLen(), prevCost);
@@ -272,12 +272,12 @@ Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
 	return result;
 }
 
-Font *ResourceLoader::loadFont(const char *filename) {
+Font *ResourceLoader::loadFont(const Common::String &filename) {
 	Block *b = getFileFromCache(filename);
 	if (!b) {
 		b = getFileBlock(filename);
 		if (!b)
-			error("Could not find font file %s", filename);
+			error("Could not find font file %s", filename.c_str());
 		putIntoCache(filename, b);
 	}
 
@@ -286,12 +286,12 @@ Font *ResourceLoader::loadFont(const char *filename) {
 	return result;
 }
 
-KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
+KeyframeAnim *ResourceLoader::loadKeyframe(const Common::String &filename) {
 	Block *b = getFileFromCache(filename);
 	if (!b) {
 		b = getFileBlock(filename);
 		if (!b)
-			error("Could not find keyframe file %s", filename);
+			error("Could not find keyframe file %s", filename.c_str());
 		putIntoCache(filename, b);
 	}
 
@@ -301,7 +301,7 @@ KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 	return result;
 }
 
-LipSync *ResourceLoader::loadLipSync(const char *filename) {
+LipSync *ResourceLoader::loadLipSync(const Common::String &filename) {
 	LipSync *result;
 	Block *b = getFileFromCache(filename);
 	bool cached = true;
@@ -328,30 +328,30 @@ LipSync *ResourceLoader::loadLipSync(const char *filename) {
 	return result;
 }
 
-Material *ResourceLoader::loadMaterial(const char *filename, CMap *c) {
+Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c) {
 	Common::String fname = filename;
 	fname.toLowercase();
 	Block *b = getFileFromCache(filename);
 	if (!b) {
 		b = getFileBlock(filename);
 		if (!b)
-			error("Could not find material %s", filename);
+			error("Could not find material %s", filename.c_str());
 		putIntoCache(filename, b);
 	}
 
-	Material *result = new Material(fname.c_str(), b->getData(), b->getLen(), c);
+	Material *result = new Material(fname, b->getData(), b->getLen(), c);
 	_materials.push_back(result);
 
 	return result;
 }
 
-Model *ResourceLoader::loadModel(const char *filename, CMap *c) {
+Model *ResourceLoader::loadModel(const Common::String &filename, CMap *c) {
 	Common::String fname = fixFilename(filename);
-	Block *b = getFileFromCache(fname.c_str());
+	Block *b = getFileFromCache(fname);
 	if (!b) {
-		b = getFileBlock(fname.c_str());
+		b = getFileBlock(fname);
 		if (!b)
-			error("Could not find model %s", filename);
+			error("Could not find model %s", filename.c_str());
 		putIntoCache(fname, b);
 	}
 
@@ -418,12 +418,12 @@ MaterialPtr ResourceLoader::getMaterial(const char *fname, CMap *c) {
 	return loadMaterial(fname, c);
 }
 
-ModelPtr ResourceLoader::getModel(const char *fname, CMap *c) {
+ModelPtr ResourceLoader::getModel(const Common::String &fname, CMap *c) {
 	Common::String filename = fname;
 	filename.toLowercase();
 	for (Common::List<Model *>::const_iterator i = _models.begin(); i != _models.end(); ++i) {
 		Model *m = *i;
-		if (filename.equals(m->_fname) && *m->_cmap == *c) {
+		if (filename == m->_fname && *m->_cmap == *c) {
 			return m;
 		}
 	}
@@ -431,7 +431,7 @@ ModelPtr ResourceLoader::getModel(const char *fname, CMap *c) {
 	return loadModel(fname, c);
 }
 
-CMapPtr ResourceLoader::getColormap(const char *fname) {
+CMapPtr ResourceLoader::getColormap(const Common::String &fname) {
 	Common::String filename = fname;
 	filename.toLowercase();
 	for (Common::List<CMap *>::const_iterator i = _colormaps.begin(); i != _colormaps.end(); ++i) {
@@ -444,7 +444,7 @@ CMapPtr ResourceLoader::getColormap(const char *fname) {
 	return loadColormap(fname);
 }
 
-KeyframeAnimPtr ResourceLoader::getKeyframe(const char *fname) {
+KeyframeAnimPtr ResourceLoader::getKeyframe(const Common::String &fname) {
 	Common::String filename = fname;
 	filename.toLowercase();
 	for (Common::List<KeyframeAnim *>::const_iterator i = _keyframeAnims.begin(); i != _keyframeAnims.end(); ++i) {
@@ -457,12 +457,12 @@ KeyframeAnimPtr ResourceLoader::getKeyframe(const char *fname) {
 	return loadKeyframe(fname);
 }
 
-FontPtr ResourceLoader::getFont(const char *fname) {
+FontPtr ResourceLoader::getFont(const Common::String &fname) {
 	Common::String filename = fname;
 	filename.toLowercase();
 	for (Common::List<Font *>::const_iterator i = _fonts.begin(); i != _fonts.end(); ++i) {
 		Font *f = *i;
-		if (strcmp(filename.c_str(), f->getFilename().c_str()) == 0) {
+		if (filename == f->getFilename()) {
 			return f;
 		}
 	}
@@ -473,12 +473,12 @@ FontPtr ResourceLoader::getFont(const char *fname) {
 	return f;
 }
 
-LipSyncPtr ResourceLoader::getLipSync(const char *fname) {
+LipSyncPtr ResourceLoader::getLipSync(const Common::String &fname) {
 	Common::String filename = fname;
 	filename.toLowercase();
 	for (Common::List<LipSync *>::const_iterator i = _lipsyncs.begin(); i != _lipsyncs.end(); ++i) {
 		LipSync *l = *i;
-		if (filename.c_str() == l->getFilename()) {
+		if (filename == l->getFilename()) {
 			return l;
 		}
 	}

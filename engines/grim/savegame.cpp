@@ -296,12 +296,6 @@ void SaveGame::writeFloat(float data) {
 	writeLEUint32(v);
 }
 
-void SaveGame::writeCharString(const char *string) {
-	int32 len = strlen(string);
-	writeLESint32(len);
-	write(string, len);
-}
-
 void SaveGame::writeString(const Common::String &string) {
 	int32 len = string.size();
 	writeLESint32(len);
@@ -340,15 +334,6 @@ float SaveGame::readFloat() {
 #endif
 
 	return f;
-}
-
-const char *SaveGame::readCharString() {
-	int32 len = readLESint32();
-	char *str = new char[len + 1];
-	read(str, len);
-	str[len] = '\0';
-
-	return str;
 }
 
 Common::String SaveGame::readString() {

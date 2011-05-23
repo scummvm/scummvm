@@ -56,7 +56,6 @@ public:
 	void writeLESint32(int32 data);
 	void writeLEBool(bool data);
 	void writeByte(byte data);
-	void writeCharString(const char *string);
 	void writeString(const Common::String &string);
 
 	void writeVector3d(const Graphics::Vector3d &vec);
@@ -65,7 +64,6 @@ public:
 	Graphics::Vector3d readVector3d();
 	Grim::Color readColor();
 	float readFloat();
-	const char *readCharString();
 	Common::String readString();
 
 	void checkAlloc(int size);

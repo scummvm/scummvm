@@ -135,7 +135,7 @@ public:
 	float getControlAxis(int num);
 	bool getControlState(int num);
 
-	Scene *findScene(const char *name);
+	Scene *findScene(const Common::String &name);
 	void setSceneLock(const char *name, bool lockStatus);
 	void setScene(const char *name);
 	void setScene(Scene *scene);

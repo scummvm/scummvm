@@ -270,9 +270,8 @@ bool Scene::restoreState(SaveGame *savedState) {
 	_numCmaps = savedState->readLESint32();
 	_cmaps = new CMapPtr[_numCmaps];
 	for (int i = 0; i < _numCmaps; ++i) {
-		const char *str = savedState->readCharString();
+		Common::String str = savedState->readString();
 		_cmaps[i] = g_resourceloader->getColormap(str);
-		delete[] str;
 	}
 
 	int32 currSetupId = savedState->readLEUint32();
