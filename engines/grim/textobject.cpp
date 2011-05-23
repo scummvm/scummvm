@@ -33,7 +33,7 @@ Common::String parseMsgText(const char *msg, char *msgId);
 
 TextObjectCommon::TextObjectCommon() :
 	_x(0), _y(0), _fgColor(0), _justify(0), _width(0), _height(0),
-	_disabled(false), _font(NULL) {
+	_disabled(false), _font(NULL), _duration(0) {
 }
 
 TextObject::TextObject(bool blastDraw, bool isSpeech) :
