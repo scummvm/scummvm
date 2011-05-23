@@ -42,14 +42,6 @@
 
 namespace Sword25 {
 
-// Duplicated from kernel/persistenceservice.cpp
-static Common::String generateSavegameFilename(uint slotID) {
-	char buffer[100];
-	// NOTE: This is hardcoded to sword25
-	snprintf(buffer, 100, "%s.%.3d", "sword25", slotID);
-	return Common::String(buffer);
-}
-
 // -----------------------------------------------------------------------------
 // CONSTRUCTION / DESTRUCTION
 // -----------------------------------------------------------------------------
@@ -74,8 +66,9 @@ static Common::String loadString(Common::SeekableReadStream &in, uint maxSize = 
 static byte *readSavegameThumbnail(const Common::String &filename, uint &fileSize, bool &isPNG) {
 	byte *pFileData;
 	Common::SaveFileManager *sfm = g_system->getSavefileManager();
-	int slotNum = atoi(filename.c_str() + filename.size() - 3);
-	Common::InSaveFile *file = sfm->openForLoading(generateSavegameFilename(slotNum));
+	Common::InSaveFile *file = sfm->openForLoading(lastPathComponent(filename, '/'));
+	if (!file)
+		error("Save file \"%s\" could not be loaded.", filename.c_str());
 
 	// Seek to the actual PNG image
 	loadString(*file);		// Marker (BS25SAVEGAME)
