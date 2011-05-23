@@ -814,18 +814,13 @@ void L1_Exit() {
 }
 
 void L1_SetSpeechMode() {
-	int mode;
-
-	mode = (int)lua_getnumber(lua_getparam(1));
+	GrimEngine::SpeechMode mode = (GrimEngine::SpeechMode)lua_getnumber(lua_getparam(1));
 	if (mode >= 1 && mode <= 3)
 		g_grim->setSpeechMode(mode);
 }
 
 void L1_GetSpeechMode() {
-	int mode;
-
-	mode = g_grim->getSpeechMode();
-	lua_pushnumber(mode);
+	lua_pushnumber(g_grim->getSpeechMode());
 }
 
 void L1_GetDiskFreeSpace() {

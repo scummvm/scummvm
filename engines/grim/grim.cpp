@@ -362,7 +362,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 		_controlsEnabled[i] = false;
 		_controlsState[i] = false;
 	}
-	_speechMode = 3; // VOICE + TEXT
+	_speechMode = TextAndVoice;
 	_textSpeed = 7;
 	_mode = _previousMode = ENGINE_MODE_IDLE;
 	_flipEnable = true;

@@ -76,6 +76,11 @@ protected:
 	virtual Common::Error run();
 
 public:
+	enum SpeechMode {
+		TextOnly = 1,
+		VoiceOnly = 2,
+		TextAndVoice = 3
+	};
 
 	typedef Common::HashMap<int32, Bitmap *> BitmapListType;
 	typedef Common::HashMap<int32, Font *> FontListType;
@@ -102,8 +107,8 @@ public:
 	int getMode() { return _mode; }
 	void setPreviousMode(int mode) { _previousMode = mode; }
 	int getPreviousMode() { return _previousMode; }
-	void setSpeechMode(int mode) { _speechMode = mode; }
-	int getSpeechMode() { return _speechMode; }
+	void setSpeechMode(SpeechMode mode) { _speechMode = mode; }
+	SpeechMode getSpeechMode() { return _speechMode; }
 	SaveGame *savedState() { return _savedState; }
 
 	void handleDebugLoadResource();
@@ -256,7 +261,7 @@ private:
 
 	Scene *_currScene;
 	int _mode, _previousMode;
-	int _speechMode;
+	SpeechMode _speechMode;
 	int _textSpeed;
 	bool _flipEnable;
 	bool _refreshDrawNeeded;
