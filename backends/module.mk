@@ -31,6 +31,7 @@ MODULE_OBJS := \
 	graphics/opengl/opengl-graphics.o \
 	graphics/openglsdl/openglsdl-graphics.o \
 	graphics/openpandora/op-graphics.o \
+	graphics/samsungtvsdl/samsungtvsdl-graphics.o \
 	graphics/sdl/sdl-graphics.o \
 	graphics/symbiansdl/symbiansdl-graphics.o \
 	graphics/wincesdl/wincesdl-graphics.o \

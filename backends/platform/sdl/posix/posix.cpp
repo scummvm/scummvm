@@ -81,6 +81,9 @@ Common::WriteStream *OSystem_POSIX::createLogFile() {
 #else
 	logFile += "/.scummvm";
 #endif
+#ifdef SAMSUNGTV
+	logFile = "/mtd_ram";
+#endif
 
 	struct stat sb;
 
