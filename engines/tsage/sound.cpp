@@ -1082,6 +1082,7 @@ ASound::ASound(): EventHandler() {
 
 void ASound::synchronize(Serializer &s) {
 	EventHandler::synchronize(s);
+
 	SYNC_POINTER(_action);
 	s.syncAsByte(_cueValue);
 }

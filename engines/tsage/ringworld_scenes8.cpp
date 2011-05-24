@@ -610,7 +610,6 @@ void Scene7000::postInit(SceneObjectList *OwnerList) {
 		_soundHandler.play(151);
 		_soundHandler.holdAt(true);
 		_globals->_soundHandler.play(250);
-
 		setAction(&_action3);
 	}
 
