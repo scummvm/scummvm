@@ -121,7 +121,7 @@ bool PuzzleLock::update(const AsylumEvent &evt)  {
 				_frameIndexes[6] = 0;
 				_counter = 0;
 
-				exit();
+				exitPuzzle();
 			} else {
 				getScreen()->drawGraphicsInQueue();
 				getScreen()->copyBackBufferToScreen();
@@ -227,7 +227,7 @@ bool PuzzleLock::mouseLeftDown(const AsylumEvent &evt) {
 }
 
 bool PuzzleLock::mouseRightDown(const AsylumEvent &evt) {
-	exit();
+	exitPuzzle();
 
 	return true;
 }

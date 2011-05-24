@@ -110,7 +110,7 @@ bool Puzzle::keyExit(const AsylumEvent &evt) {
 }
 
 
-void Puzzle::exit() {
+void Puzzle::exitPuzzle() {
 	getScreen()->clear();
 
 	_vm->switchEventHandler(getScene());
