@@ -293,7 +293,7 @@ void Scene::load(ResourcePackId packId) {
 // Event handling
 //////////////////////////////////////////////////////////////////////////
 bool Scene::handleEvent(const AsylumEvent &evt) {
-	switch ((uint32)evt.type) {
+	switch ((int32)evt.type) {
 	default:
 		break;
 
