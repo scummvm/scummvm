@@ -96,7 +96,7 @@ bool scanChar(const char** in, va_list* ap) {
   return false;
 }
 
-int simple_sscanf(const char* input, const char* format, ...) {
+extern "C" int simple_sscanf(const char* input, const char* format, ...) {
   va_list ap;
   int result = 0;
   const char* next = input;

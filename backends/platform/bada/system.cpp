@@ -23,6 +23,7 @@
 #include "common/scummsys.h"
 #include "common/events.h"
 #include "fs-factory.h"
+#include "fs.h"
 #include "backends/modular-backend.h"
 #include "base/main.h"
 #include "backends/mutex/mutex.h"
@@ -40,7 +41,7 @@
 using namespace Osp::Base;
 using namespace Osp::Base::Runtime;
 
-#define DEFAULT_CONFIG_FILE "scummvm.ini"
+#define DEFAULT_CONFIG_FILE "/Home/scummvm.ini"
 
 //
 // BadaSaveFileManager
@@ -61,7 +62,10 @@ bool BadaSaveFileManager::removeSavefile(const Common::String &filename) {
   Common::FSNode savePath(savePathName);
   Common::FSNode file = savePath.getChild(filename);
 
-  switch (Osp::Io::File::Remove(filename.c_str())) {
+  String unicodeFileName;
+  StringUtil::Utf8ToString(filename.c_str(), unicodeFileName);
+
+  switch (Osp::Io::File::Remove(unicodeFileName)) {
   case E_SUCCESS:
     return true;
 
@@ -120,6 +124,7 @@ struct BadaSystem : public ModularBackend,
   void initBackend();
   result initModules();
 
+  void updateScreen();
   bool pollEvent(Common::Event &event);
   uint32 getMillis();
   void delayMillis(uint msecs);
@@ -130,10 +135,13 @@ struct BadaSystem : public ModularBackend,
   Common::SeekableReadStream* createConfigReadStream();
   Common::WriteStream* createConfigWriteStream();
 
+  void draw();
+  
   BadaAppForm* appForm;
 };
 
-BadaSystem::BadaSystem(BadaAppForm* appForm) : appForm(appForm) {
+BadaSystem::BadaSystem(BadaAppForm* appForm) : 
+  appForm(appForm) {
 }
 
 result BadaSystem::Construct(void) {
@@ -227,6 +235,12 @@ void BadaSystem::delayMillis(uint msecs) {
   Thread::Sleep(msecs);
 }
 
+void BadaSystem::updateScreen() {
+  if (_graphicsManager) {
+    _graphicsManager->updateScreen();
+  }
+}
+
 void BadaSystem::getTimeAndDate(TimeDate &td) const {
   DateTime currentTime;
 
@@ -250,12 +264,12 @@ void BadaSystem::logMessage(LogMessageType::Type /*type*/, const char *message) 
 }
 
 Common::SeekableReadStream* BadaSystem::createConfigReadStream() {
-  Common::FSNode file(DEFAULT_CONFIG_FILE);
+  BADAFilesystemNode file(DEFAULT_CONFIG_FILE);
   return file.createReadStream();
 }
 
 Common::WriteStream* BadaSystem::createConfigWriteStream() {
-  Common::FSNode file(DEFAULT_CONFIG_FILE);
+  BADAFilesystemNode file(DEFAULT_CONFIG_FILE);
   return file.createWriteStream();
 }
 
@@ -264,7 +278,7 @@ Common::WriteStream* BadaSystem::createConfigWriteStream() {
 //
 result BadaAppForm::Construct() {
   result r = Form::Construct(Osp::Ui::Controls::FORM_STYLE_NORMAL);
-	if (IsFailed(r)) {
+  if (IsFailed(r)) {
     return r;
   }
 
@@ -311,7 +325,9 @@ BadaAppForm::~BadaAppForm() {
 
 result BadaAppForm::OnDraw(void) {
   logEntered();
-  //  g_system->updateScreen();
+  if (g_system) {
+    g_system->updateScreen();
+  }
   return E_SUCCESS;
 }
 

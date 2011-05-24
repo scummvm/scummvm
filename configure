@@ -3288,9 +3288,8 @@ case $_backend in
 		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 		;;
 	bada)
-    # dirent.h not available. ensure portdefs.h is included
+    # dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
     DEFINES="$DEFINES -DBADA -DDISABLE_POSIX_FS -DNONSTANDARD_PORT"
-    DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
     INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/bada '
     INCLUDES="$INCLUDES "'-I$(BADA_SDK)/include'
     INCLUDES="$INCLUDES "'-I$(BADA_SDK_ROOT)/Include'

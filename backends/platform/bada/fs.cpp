@@ -119,7 +119,10 @@ BadaFileStream *BadaFileStream::makeFromPath(const Common::String &path,
                                              bool writeMode) {
 	File* ioFile = new File();
   
-  result r = ioFile->Construct(path.c_str(), writeMode ? "wb" : "rb", false);
+  String unicodePath;
+  StringUtil::Utf8ToString(path.c_str(), unicodePath);
+
+  result r = ioFile->Construct(unicodePath, writeMode ? "wb" : "rb", false);
   if (r == E_SUCCESS) {
 		return new BadaFileStream(ioFile);
   }
@@ -150,18 +153,18 @@ Common::String fromString(const Osp::Base::String& in) {
 //
 // BADAFilesystemNode
 //
-BADAFilesystemNode::BADAFilesystemNode(const Common::String &p) {
+BADAFilesystemNode::BADAFilesystemNode(const Common::String& p) {
   AppAssert(p.size() > 0);
+  AppLog("creating node for %s", p.c_str());
 
-  Osp::Base::String fileName = p.c_str();
-  isValid = !IsFailed(File::GetAttributes(fileName, attr));
-  
-  if (isValid) {
-    // Normalize the path (that is, remove unneeded slashes etc.)
-    path = Common::normalizePath(p, '/');
-    displayName = Common::lastPathComponent(path, '/');
-    isDir = attr.IsDirectory();
-  }
+  String unicodePath;
+  StringUtil::Utf8ToString(p.c_str(), unicodePath);
+
+  isValid = !IsFailed(File::GetAttributes(unicodePath, attr));
+
+  // Normalize the path (that is, remove unneeded slashes etc.)
+  path = Common::normalizePath(p, '/');
+  displayName = Common::lastPathComponent(path, '/');
 }
 
 bool BADAFilesystemNode::exists() const {
@@ -170,6 +173,10 @@ bool BADAFilesystemNode::exists() const {
 
 bool BADAFilesystemNode::isReadable() const { 
   return (isValid && !attr.IsDirectory());
+}
+
+bool BADAFilesystemNode::isDirectory() const {
+  return (isValid && attr.IsDirectory());
 }
 
 bool BADAFilesystemNode::isWritable() const { 
@@ -203,7 +210,10 @@ bool BADAFilesystemNode::getChildren(AbstractFSList &myList,
   Directory* pDir = new Directory();
 
   // open directory
-  if (!IsFailed(pDir->Construct(path.c_str()))) {
+  String unicodePath;
+  StringUtil::Utf8ToString(path.c_str(), unicodePath);
+
+  if (!IsFailed(pDir->Construct(unicodePath))) {
     // read all directory entries
     pDirEnum = pDir->ReadN();
     if (pDirEnum) {
@@ -235,11 +245,10 @@ bool BADAFilesystemNode::getChildren(AbstractFSList &myList,
 
       entry.path += entry.displayName;
       entry.isValid = true;
-      entry.isDir = dirEntry.IsDirectory();
       
       // Honor the chosen mode
-      if ((mode == Common::FSNode::kListFilesOnly && entry.isDirectory()) ||
-          (mode == Common::FSNode::kListDirectoriesOnly && !entry.isDirectory())) {
+      if ((mode == Common::FSNode::kListFilesOnly && dirEntry.IsDirectory()) ||
+          (mode == Common::FSNode::kListDirectoriesOnly && !dirEntry.IsDirectory())) {
         continue;
       }
       myList.push_back(new BADAFilesystemNode(entry));
@@ -285,10 +294,22 @@ AbstractFSNode* BADAFilesystemNode::getParent() const {
 }
 
 Common::SeekableReadStream* BADAFilesystemNode::createReadStream() {
-  return BadaFileStream::makeFromPath(getPath(), false);
+  Common::SeekableReadStream* result = BadaFileStream::makeFromPath(getPath(), false);
+  if (result != null) {
+    String unicodePath;
+    StringUtil::Utf8ToString(getPath().c_str(), unicodePath);
+    isValid = !IsFailed(File::GetAttributes(unicodePath, attr));
+  }
+  return result;
 }
 
 Common::WriteStream* BADAFilesystemNode::createWriteStream() {
-  return BadaFileStream::makeFromPath(getPath(), true);
+  Common::WriteStream* result = BadaFileStream::makeFromPath(getPath(), true);
+  if (result != null) {
+    String unicodePath;
+    StringUtil::Utf8ToString(getPath().c_str(), unicodePath);
+    isValid = !IsFailed(File::GetAttributes(unicodePath, attr));
+  }
+  return result;
 }
 
