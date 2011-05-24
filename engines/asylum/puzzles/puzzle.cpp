@@ -50,7 +50,7 @@ Puzzle::~Puzzle() {
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
 bool Puzzle::handleEvent(const AsylumEvent &evt) {
-	switch ((uint32)evt.type) {
+	switch ((int32)evt.type) {
 	default:
 		break;
 

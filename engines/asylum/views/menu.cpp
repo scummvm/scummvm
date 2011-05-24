@@ -314,7 +314,7 @@ Common::String Menu::getChapterName() {
 // Event Handler
 //////////////////////////////////////////////////////////////////////////
 bool Menu::handleEvent(const AsylumEvent &evt) {
-	switch ((uint32)evt.type) {
+	switch ((int32)evt.type) {
 	default:
 		break;
 
