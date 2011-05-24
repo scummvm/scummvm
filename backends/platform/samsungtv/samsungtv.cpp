@@ -27,6 +27,7 @@
 #include "backends/platform/samsungtv/samsungtv.h"
 #include "backends/events/samsungtvsdl/samsungtvsdl-events.h"
 #include "backends/graphics/samsungtvsdl/samsungtvsdl-graphics.h"
+#include "common/textconsole.h"
 
 OSystem_SDL_SamsungTV::OSystem_SDL_SamsungTV()
 	:
