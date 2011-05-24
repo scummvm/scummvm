@@ -80,8 +80,10 @@ public:
 	virtual bool open() { return true; }
 	virtual void close() {}
 	virtual const GroupData *getGroupData() = 0;
-	virtual void setVolume(int volume) {}
+	virtual void setMasterVolume(int volume) {}
 	virtual void installPatchBank(const byte *data) {}
+	virtual void setVolume0(int channel, int v2, int v3, int volume) {}
+	virtual void setVolume1(int channel, int v2, int v3, int volume) {}
 	virtual void poll() {}
 };
 
@@ -96,11 +98,25 @@ struct VoiceStructEntry {
 	int _fieldA;
 	int _fieldC;
 	int _fieldD;
+	int _fieldE;
+	int _field10;
+	int _field11;
+	int _field12;
+	int _field13;
+	int _field14;
+	int _field16;
+	int _field18;
+	int _field19;
+
+	int _field1A;
+	int _field1B;
 };
+
+enum VoiceType {VOICETYPE_0 = 0, VOICETYPE_1 = 1};
 
 class VoiceStruct {
 public:
-	int _field0;
+	VoiceType _voiceType;
 	int _field1;
 	int _field2;
 
@@ -198,6 +214,7 @@ public:
 	static void _sfDoUpdateVolume(Sound *sound);
 	static void _sfSoundServer();
 	static void _sfProcessFading();
+	static void _sfUpdateVoiceStructs();
 };
 
 class Sound: public EventHandler {
