@@ -746,11 +746,11 @@ void KeyframeComponent::saveState(SaveGame *state) {
 }
 
 void KeyframeComponent::restoreState(SaveGame *state) {
-	_active = state->readLESint32();
+	bool active = state->readLESint32();
 	_repeatMode = state->readLESint32();
 	_anim._time = state->readLESint32();
 
-	if (_active)
+	if (active)
 		activate();
 }
 
