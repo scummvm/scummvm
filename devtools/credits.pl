@@ -712,7 +712,8 @@ begin_credits("Credits");
 	  
 	  begin_section("PocketPC / WinCE");
 		add_person("Nicolas Bacca", "arisme", "(retired)");
-		add_person("Kostas Nakos", "Jubanka", "");
+		add_person("Ismail Khatib", "CeRiAl", "");
+		add_person("Kostas Nakos", "Jubanka", "(retired)");
 	  end_section();
 
 	  begin_section("PlayStation 2");
