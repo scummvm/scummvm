@@ -435,8 +435,10 @@ void ModelComponent::addActiveAnimation(AnimationState *anim, int priority1, int
 void ModelComponent::removeActiveAnimation(AnimationState *anim) {
 	Common::List<AnimationEntry>::iterator i;
 	for (i = _activeAnims->begin(); i != _activeAnims->end(); ++i) {
-		if (i->_anim == anim)
+		if (i->_anim == anim) {
 			i = _activeAnims->erase(i);
+			i--;
+		}
 	}
 }
 
