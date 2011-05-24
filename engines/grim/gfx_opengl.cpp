@@ -823,9 +823,11 @@ void GfxOpenGL::createFont(Font *font) {
 
 		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
 
-		uint d = ((uint)font->getCharData(i) - start);
+		uint d = (uint)font->getCharData(i) - start;
 		for (int x = 0; x < height; ++x) {
-			int pos = row * size * size * 2 * 16 + x * size * 16 * 2 + (((i-1)%16))*size*2;
+
+			// TODO: Make this line use less magic
+			int pos = row * size * size * 2 * 16 + x * size * 16 * 2 + ((i-1)%16)*size*2;
 			assert(pos < arraySize);
 			memcpy(temp + pos, data + d * 2 + x * width * 2, width * 2);
 		}
@@ -833,15 +835,12 @@ void GfxOpenGL::createFont(Font *font) {
 			++row;
 
 	}
-	//glPixelStorei(GL_UNPACK_ROW_LENGTH, size*16);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size*16, size*16, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, temp);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-
 
 	*((int *)font->_sizes) = size;
 
@@ -857,10 +856,6 @@ void GfxOpenGL::destroyFont(Font *font) {
 		glDeleteTextures(1, textures);
 		delete textures;
 	}
-}
-
-void GfxOpenGL::drawText(int x, int y, const Common::String &text, Font *font, Color &color) {
-
 }
 
 void GfxOpenGL::drawTextObject(TextObject *text) {
@@ -899,7 +894,7 @@ void GfxOpenGL::drawTextObject(TextObject *text) {
 		y = text->getLineY(j);
 		for (uint i = 0; i < line.size(); ++i) {
 			uint8 character = line[i];
-			int w = y + font->getCharStartingLine(character);
+			int w = y + font->getCharStartingLine(character) + font->getBaseOffsetY();
 
 			glBindTexture(GL_TEXTURE_2D, texture);
 			float width = 1/16.f;

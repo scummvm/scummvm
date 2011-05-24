@@ -36,7 +36,7 @@ public:
 	~Font();
 
 	const Common::String &getFilename() const { return _filename; }
-	int32 getHeight() { return _height; }
+	int32 getHeight() const { return _height; }
 	int32 getBaseOffsetY() const { return _baseOffsetY; }
 	int32 getCharDataWidth(unsigned char c) const { return _charHeaders[getCharIndex(c)].dataWidth; }
 	int32 getCharDataHeight(unsigned char c) const { return _charHeaders[getCharIndex(c)].dataHeight; }
@@ -45,7 +45,7 @@ public:
 	int32 getCharStartingLine(unsigned char c) const { return _charHeaders[getCharIndex(c)].startingLine; }
 	const byte *getCharData(unsigned char c) const { return _fontData + (_charHeaders[getCharIndex(c)].offset); }
 
-	int getStringLength(const Common::String &text);
+	int getStringLength(const Common::String &text) const;
 
 	static const uint8 emerFont[][13];
 //private:

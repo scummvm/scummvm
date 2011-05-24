@@ -282,7 +282,6 @@ int TextObject::getLineY(int line) {
 	}
 	if (y < 0)
 		y = 0;
-	y += _font->getBaseOffsetY();
 	y += _font->getHeight()*line;
 
 	return y;

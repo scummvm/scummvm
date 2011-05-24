@@ -699,20 +699,49 @@ void GfxTinyGL::createFont(Font *font) {
 void GfxTinyGL::destroyFont(Font *font) {
 }
 
-void GfxTinyGL::drawText(int x, int y, const Common::String &text, Font *font, Color &fgColor) {
-	y += font->getBaseOffsetY();
-	uint16 *texData = new uint16[32 * 32];
-	for (uint i = 0; i < text.size(); ++i) {
-		uint8 character = text[i];
-		int width = font->getCharDataWidth(character), height = font->getCharDataHeight(character);
-		byte *data = (byte *)font->getCharData(character);
+void GfxTinyGL::drawTextObject(TextObject *text) {
 
+	int numLines = text->getNumLines();
+	const Common::String *lines = text->getLines();
+	const Font *font = text->getFont();
+	const Color *fgColor = text->getFGColor();
+	for (int j = 0; j < numLines; j++) {
+		const Common::String &currentLine = lines[j];
+
+		int width = font->getStringLength(currentLine) + 1;
+		int height = font->getHeight();
+
+		uint8 *_textBitmap = new uint8[height * width];
+		memset(_textBitmap, 0, height * width);
+
+		// Fill bitmap
+		int startOffset = 0;
+		for (unsigned int d = 0; d < currentLine.size(); d++) {
+			int ch = currentLine[d];
+			int8 startingLine = font->getCharStartingLine(ch) + font->getBaseOffsetY();
+			int32 charDataWidth = font->getCharDataWidth(ch);
+			int32 charWidth = font->getCharWidth(ch);
+			int8 startingCol = font->getCharStartingCol(ch);
+			for (int line = 0; line < font->getCharDataHeight(ch); line++) {
+				int offset = startOffset + (width * (line + startingLine));
+				for (int r = 0; r < charDataWidth; r++) {
+					const byte pixel = *(font->getCharData(ch) + r + (charDataWidth * line));
+					byte *dst = _textBitmap + offset + startingCol + r;
+					if (*dst == 0 && pixel != 0)
+						_textBitmap[offset + startingCol + r] = pixel;
+				}
+				if (line + startingLine >= font->getHeight())
+					break;
+			}
+			startOffset += charWidth;
+		}
+
+		uint16 *texData = new uint16[width * height];
 		uint16 *texDataPtr = texData;
-
-		uint8 *bitmapData = data;
-		uint8 r = fgColor.getRed();
-		uint8 g = fgColor.getGreen();
-		uint8 b = fgColor.getBlue();
+		uint8 *bitmapData = _textBitmap;
+		uint8 r = fgColor->getRed();
+		uint8 g = fgColor->getGreen();
+		uint8 b = fgColor->getBlue();
 		uint16 color = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
 		if (color == 0xf81f)
 			color = 0xf81e;
@@ -727,14 +756,11 @@ void GfxTinyGL::drawText(int x, int y, const Common::String &text, Font *font, C
 				WRITE_UINT16(texDataPtr, color);
 			}
 		}
-
-
-
-		TinyGLBlit((byte *)_zb->pbuf, (byte *)texData, x, y + font->getCharStartingLine(character), width, height, true);
-		x += font->getCharWidth(character);
-
+		TinyGLBlit((byte *)_zb->pbuf, (byte *)texData, text->getLineX(j), text->getLineY(j), width, height, true);
+		//_textObjectHandle[j] = g_driver->createTextBitmap(_textBitmap, _bitmapWidthPtr[j] + 1, _font->getHeight(), *_fgColor);
+		delete[] texData;
+		delete[] _textBitmap;
 	}
-	delete[] texData;
 }
 
 void GfxTinyGL::createMaterial(Material *material, const char *data, const CMap *cmap) {

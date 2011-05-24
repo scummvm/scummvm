@@ -87,7 +87,6 @@ public:
 
 	void createFont(Font *font);
 	void destroyFont(Font *font);
-	void drawText(int x, int y, const Common::String &text, Font *font, Color &color);
 	void drawTextObject(TextObject *text);
 
 	Bitmap *getScreenshot(int w, int h);
