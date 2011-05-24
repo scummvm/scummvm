@@ -20,38 +20,22 @@
  *
  */
 
-#include "backends/platform/samsungtv/samsungtv.h"
-#include "backends/events/samsungtvsdl/samsungtvsdl-events.h"
-#include "backends/graphics/samsungtvsdl/samsungtvsdl-graphics.h"
+#ifndef BACKENDS_GRAPHICS_SAMSUNGTV_H
+#define BACKENDS_GRAPHICS_SAMSUNGTV_H
 
 #if defined(SAMSUNGTV)
 
-OSystem_SDL_SamsungTV::OSystem_SDL_SamsungTV()
-	:
-	OSystem_POSIX("/mtd_rwarea/.scummvmrc") {
-}
+#include "backends/graphics/sdl/sdl-graphics.h"
 
-void OSystem_SDL_SamsungTV::initBackend() {
-	// Create the events manager
-	if (_eventSource == 0)
-		_eventSource = new SamsungTVSdlEventSource();
+class SamsungTVSdlGraphicsManager : public SdlGraphicsManager {
+public:
+	SamsungTVSdlGraphicsManager(SdlEventSource *sdlEventSource);
 
-	if (_graphicsManager == 0)
-		_graphicsManager = new SamsungTVSdlGraphicsManager(_eventSource);
+	bool hasFeature(OSystem::Feature f);
+	void setFeatureState(OSystem::Feature f, bool enable);
+	bool getFeatureState(OSystem::Feature f);
+};
 
-	// Call parent implementation of this method
-	OSystem_POSIX::initBackend();
-}
-
-void OSystem_SDL_SamsungTV::quit() {
-	delete this;
-}
-
-void OSystem_SDL_SamsungTV::fatalError() {
-	delete this;
-	// FIXME
-	warning("fatal error");
-	for (;;) {}
-}
+#endif
 
 #endif

@@ -26,32 +26,33 @@
 
 #if defined(SAMSUNGTV)
 
-OSystem_SDL_SamsungTV::OSystem_SDL_SamsungTV()
-	:
-	OSystem_POSIX("/mtd_rwarea/.scummvmrc") {
+SamsungTVSdlGraphicsManager::SamsungTVSdlGraphicsManager(SdlEventSource *sdlEventSource)
+	: SdlGraphicsManager(sdlEventSource) {
 }
 
-void OSystem_SDL_SamsungTV::initBackend() {
-	// Create the events manager
-	if (_eventSource == 0)
-		_eventSource = new SamsungTVSdlEventSource();
-
-	if (_graphicsManager == 0)
-		_graphicsManager = new SamsungTVSdlGraphicsManager(_eventSource);
-
-	// Call parent implementation of this method
-	OSystem_POSIX::initBackend();
+bool SamsungTVSdlGraphicsManager::hasFeature(OSystem::Feature f) {
+	return
+		(f == OSystem::kFeatureAspectRatioCorrection) ||
+		(f == OSystem::kFeatureCursorHasPalette);
 }
 
-void OSystem_SDL_SamsungTV::quit() {
-	delete this;
+void SamsungTVSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
+	switch (f) {
+	case OSystem::kFeatureAspectRatioCorrection:
+		SdlGraphicsManager::setFeatureState(f, enable);
+		break;
+	default:
+		break;
+	}
 }
 
-void OSystem_SDL_SamsungTV::fatalError() {
-	delete this;
-	// FIXME
-	warning("fatal error");
-	for (;;) {}
+bool SamsungTVSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
+	switch (f) {
+	case OSystem::kFeatureAspectRatioCorrection:
+		return SdlGraphicsManager::getFeatureState(f);
+	default:
+		return false;
+	}
 }
 
 #endif
