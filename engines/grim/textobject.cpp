@@ -38,7 +38,7 @@ TextObjectCommon::TextObjectCommon() :
 
 TextObject::TextObject(bool blastDraw, bool isSpeech) :
 		Object(), TextObjectCommon(), _numberLines(1),
-		_maxLineWidth(0), _lines(0) {
+		_maxLineWidth(0), _lines(0), _userData(0), _created(false) {
 	memset(_textID, 0, sizeof(_textID));
 	_blastDraw = blastDraw;
 	_isSpeech = isSpeech;
@@ -51,6 +51,7 @@ TextObject::TextObject() :
 
 TextObject::~TextObject() {
 	delete[] _lines;
+	g_driver->destroyTextObject(this);
 }
 
 void TextObject::setText(const char *text) {
@@ -80,6 +81,7 @@ void TextObject::saveState(SaveGame *state) const {
 	state->writeLESint32(_disabled);
 	state->writeLESint32(_blastDraw);
 	state->writeLESint32(_isSpeech);
+	state->writeLESint32(_created);
 	state->writeLESint32(_elapsedTime);
 
 	state->writeLEUint32(_font->getId());
@@ -101,6 +103,7 @@ bool TextObject::restoreState(SaveGame *state) {
 	_disabled     = state->readLESint32();
 	_blastDraw    = state->readLESint32();
 	_isSpeech     = state->readLESint32();
+	_created      = state->readLESint32();
 	_elapsedTime  = state->readLESint32();
 
 	_font = g_grim->getFont(state->readLEUint32());
@@ -291,6 +294,11 @@ void TextObject::draw() {
 	if (_disabled)
 		return;
 
+	if (!_created) {
+		g_driver->createTextObject(this);
+		_created = true;
+	}
+
 	if ((_justify > 3 || _justify < 0) && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
 		warning("TextObject::draw: Unknown justification code (%d)", _justify);
 
@@ -299,7 +307,7 @@ void TextObject::draw() {
 }
 
 void TextObject::update() {
-	if (!_duration || _disabled) {
+	if (!_duration || !_created || _disabled) {
 		return;
 	}
 

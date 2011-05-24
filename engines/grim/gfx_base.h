@@ -87,7 +87,10 @@ public:
 
 	virtual void createFont(Font *font) = 0;
 	virtual void destroyFont(Font *font) = 0;
+
+	virtual void createTextObject(TextObject *text) = 0;
 	virtual void drawTextObject(TextObject *text) = 0;
+	virtual void destroyTextObject(TextObject *text) = 0;
 
 	virtual Bitmap *getScreenshot(int w, int h) = 0;
 	virtual void storeDisplay() = 0;

@@ -91,6 +91,9 @@ public:
 	int getLineX(int line);
 	int getLineY(int line);
 
+	void *getUserData() { return _userData; }
+	void setUserData(void *data) { _userData = data; }
+
 	const Common::String *getLines() { return _lines; }
 	int getNumLines() { return _numberLines; }
 
@@ -109,6 +112,7 @@ public:
 	};
 
 protected:
+	bool _created;
 	void setupText();
 	int _numberLines;
 	bool _blastDraw;
@@ -117,8 +121,7 @@ protected:
 	int _elapsedTime;
 	int _maxLineWidth;
 	Common::String *_lines;
-
-	friend class GrimEngine;
+	void *_userData;
 };
 
 } // end of namespace Grim

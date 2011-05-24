@@ -87,7 +87,10 @@ public:
 
 	void createFont(Font *font);
 	void destroyFont(Font *font);
+
+	void createTextObject(TextObject *text);
 	void drawTextObject(TextObject *text);
+	void destroyTextObject(TextObject *text);
 
 	Bitmap *getScreenshot(int w, int h);
 	void storeDisplay();

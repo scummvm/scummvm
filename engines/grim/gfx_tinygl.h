@@ -79,7 +79,10 @@ public:
 
 	void createFont(Font *font);
 	void destroyFont(Font *font);
+
 	void drawTextObject(TextObject *text);
+	void createTextObject(TextObject *text);
+	void destroyTextObject(TextObject *text);
 
 	void dimScreen();
 	void dimRegion(int x, int y, int w, int h, float level);

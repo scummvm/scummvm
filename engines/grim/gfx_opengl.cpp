@@ -878,6 +878,9 @@ void GfxOpenGL::destroyFont(Font *font) {
 	}
 }
 
+void GfxOpenGL::createTextObject(TextObject *text) {
+}
+
 void GfxOpenGL::drawTextObject(TextObject *text) {
 	if (!text)
 		return;
@@ -945,6 +948,9 @@ void GfxOpenGL::drawTextObject(TextObject *text) {
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
+}
+
+void GfxOpenGL::destroyTextObject(TextObject *text) {
 }
 
 void GfxOpenGL::createMaterial(Material *material, const char *data, const CMap *cmap) {
