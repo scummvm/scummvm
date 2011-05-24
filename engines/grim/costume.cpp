@@ -692,7 +692,7 @@ void KeyframeComponent::setKey(int val) {
 		break;
 	default:
 		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Unknown key %d for keyframe %s", val, _anim._keyf->getFilename());
+			warning("Unknown key %d for keyframe %s", val, _anim._keyf->getFilename().c_str());
 	}
 }
 
@@ -733,7 +733,7 @@ void KeyframeComponent::update() {
 				break;
 			default:
 				if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-					warning("Unknown repeat mode %d for keyframe %s", _repeatMode, _anim._keyf->getFilename());
+					warning("Unknown repeat mode %d for keyframe %s", _repeatMode, _anim._keyf->getFilename().c_str());
 		}
 	}
 
@@ -747,7 +747,7 @@ void KeyframeComponent::init() {
 		_numNodes = mc->getNumNodes();
 	} else {
 		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Parent of %s was not a model", _anim._keyf->getFilename());
+			warning("Parent of %s was not a model", _anim._keyf->getFilename().c_str());
 		_hier = NULL;
 		_numNodes = 0;
 	}
