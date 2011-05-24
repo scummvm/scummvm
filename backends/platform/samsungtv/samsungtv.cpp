@@ -28,7 +28,7 @@
 
 OSystem_SDL_SamsungTV::OSystem_SDL_SamsungTV()
 	:
-	OSystem_POSIX("/mtd_rwarea/scummvm/.scummvmrc") {
+	OSystem_POSIX("/mtd_rwarea/.scummvmrc") {
 }
 
 void OSystem_SDL_SamsungTV::initBackend() {
