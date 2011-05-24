@@ -369,6 +369,29 @@ void SoundManager::_sfProcessFading() {
 	//TODO
 }
 
+void SoundManager::_sfUpdateVoiceStructs() {
+	for (int voiceIndex = 0; voiceIndex < SOUND_ARR_SIZE; ++voiceIndex) {
+		VoiceStruct *vs = sfManager()._voiceStructPtrs[voiceIndex];
+
+		for (uint idx = 0; idx < vs->_entries.size(); ++idx) {
+			VoiceStructEntry &vse = vs->_entries[idx];
+
+			if (vs->_voiceType == VOICETYPE_0) {
+				vse._field4 = vse._fieldC;
+				vse._field6 = vse._fieldE;
+				vse._field8 = vse._field10;
+				vse._field9 = vse._field11;
+				vse._fieldA = vse._field12;
+			} else {
+				vse._field8 = vse._fieldE;
+				vse._fieldA = vse._field10;
+				vse._fieldC = vse._field12;
+				vse._fieldD = vse._field13;
+			}
+		}
+	}
+}
+
 /*--------------------------------------------------------------------------*/
 
 void SoundManager::saveNotifier(bool postFlag) {
@@ -494,13 +517,11 @@ void SoundManager::_sfRethinkSoundDrivers() {
 			sfManager()._voiceStructPtrs[idx] = vs;
 
 			if (!flag) {
-				vs->_field0 = 0;
+				vs->_voiceType = VOICETYPE_0;
 				vs->_field1 = total;
-//				offset = 2;
 			} else {
-				vs->_field0 = 1;
+				vs->_voiceType = VOICETYPE_1;
 				vs->_field1 = vs->_field2 = total;
-//				offset = 4;
 			}
 
 			for (Common::List<SoundDriver *>::iterator i = sfManager()._installedDrivers.begin();
@@ -557,7 +578,56 @@ void SoundManager::_sfRethinkSoundDrivers() {
 }
 
 void SoundManager::_sfRethinkVoiceTypes() {
-	
+	++sfManager()._suspendCtr;
+	_sfDereferenceAll();
+
+	for (int voiceIndex = 0; voiceIndex < SOUND_ARR_SIZE; ++voiceIndex) {
+		VoiceStruct *vs = sfManager()._voiceStructPtrs[voiceIndex];
+		if (!vs)
+			continue;
+
+		if (vs->_voiceType == VOICETYPE_0) {
+			for (uint idx = 0; idx < vs->_entries.size(); ++idx) {
+				VoiceStructEntry &vse = vs->_entries[idx];
+				vse._field14 = vse._field4;
+				vse._field16 = vse._field6;
+				vse._field18 = vse._field8;
+				vse._field19 = vse._field9;
+				vse._field1A = vse._fieldA;
+				vse._field4 = 0;
+				vse._field6 = 0;
+				vse._field8 = 0;
+				vse._field9 = 0;
+				vse._fieldA = 0;
+				vse._fieldC = 0;
+				vse._fieldE = 0;
+				vse._field10 = 0;
+				vse._field11 = 0;
+				vse._field12 = 0;
+			}
+		} else {
+			for (uint idx = 0; idx < vs->_entries.size(); ++idx) {
+				VoiceStructEntry &vse = vs->_entries[idx];
+				vse._field14 = vse._field8;
+				vse._field16 = vse._fieldA;
+				vse._field18 = vse._fieldC;
+				vse._field19 = vse._fieldD;
+				vse._field8 = 0;
+				vse._fieldA = 0;
+				vse._fieldC = 0;
+				vse._fieldD = 0;
+				vse._fieldE = 0;
+				vse._field10 = 0;
+				vse._field12 = 0;
+			}
+		}
+	}
+
+	int var2 = 0;
+	for (Common::List<Sound *>::iterator playIterator = sfManager()._playList.begin();
+				playIterator != sfManager()._playList.end(); ++playIterator) {
+
+	}
 }
 
 void SoundManager::_sfUpdateVolume(Sound *sound) {
@@ -602,7 +672,7 @@ void SoundManager::_sfSetMasterVol(int volume) {
 
 		for (Common::List<SoundDriver *>::iterator i = _globals->_soundManager._installedDrivers.begin(); 
 				i != _globals->_soundManager._installedDrivers.end(); ++i) {
-			(*i)->setVolume(volume);
+			(*i)->setMasterVolume(volume);
 		}
 	}
 }
@@ -656,7 +726,7 @@ bool SoundManager::_sfInstallDriver(SoundDriver *driver) {
 
 	_sfExtractGroupMask();
 	_sfRethinkSoundDrivers();
-	driver->setVolume(sfManager()._volume);
+	driver->setMasterVolume(sfManager()._volume);
 
 	return true;
 }
@@ -709,13 +779,27 @@ bool SoundManager::_sfDoRemoveFromPlayList(Sound *sound) {
 void SoundManager::_sfDoUpdateVolume(Sound *sound) {
 	++_globals->_soundManager._suspendCtr; 
 
-	for (int idx = 0; idx < 16; ++idx) {
-		/*
-		Sound *snd = sfManager()._voiceStructPtrs[idx];
-		if (!snd)
+	for (int voiceIndex = 0; voiceIndex < SOUND_ARR_SIZE; ++voiceIndex) {
+		VoiceStruct *vs = sfManager()._voiceStructPtrs[voiceIndex];
+		if (!vs)
 			continue;
-*/
-		// TODO: More stuff
+
+		for (uint idx = 0; idx < vs->_entries.size(); ++idx) {
+			VoiceStructEntry &vse = vs->_entries[idx];
+			SoundDriver *driver = vse._driver;
+
+			if (vs->_voiceType == VOICETYPE_0) {
+				if (!vse._field4 && !vse._field6) {
+					int vol = sound->_volume * sound->_field48[vse._field8] / 127;
+					driver->setVolume0(voiceIndex, vse._field0, 7, vol);
+				}
+			} else {
+				if (!vse._field8 && !vse._fieldA) {
+					int vol = sound->_volume * sound->_field48[vse._fieldC] / 127;
+					driver->setVolume1(voiceIndex, vse._field0, 7, vol);
+				}
+			}
+		}
 	}
 	
 	--_globals->_soundManager._suspendCtr;
@@ -1070,6 +1154,9 @@ SoundDriver::SoundDriver() {
 const byte adlib_group_data[] = { 1, 1, 9, 1, 0xff };
 
 AdlibSoundDriver::AdlibSoundDriver() {
+	_minVersion = 0x102;
+
+
 	_groupData.groupMask = 1;
 	_groupData.v1 = 0x46;
 	_groupData.v2 = 0;
