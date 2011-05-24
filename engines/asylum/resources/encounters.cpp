@@ -255,7 +255,7 @@ void Encounter::run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2
 	_vm->switchEventHandler(this);
 }
 
-void Encounter::exit() {
+void Encounter::exitEncounter() {
 	setVariable(1, 32767);
 	initScript(_item->scriptResourceId);
 	_flag3 = true;
@@ -858,7 +858,7 @@ bool Encounter::drawBackground() {
 
 		if (_background.frameIndex - 1 < 0) {
 			_background.frameIndex = 0;
-			exit();
+			exitEncounter();
 		}
 
 		return false;

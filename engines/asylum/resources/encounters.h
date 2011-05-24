@@ -242,7 +242,7 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	// Misc
-	void exit();
+	void exitEncounter();
 	void setupEntities(bool type4);
 	int32 findRect();
 	void updateDrawingStatus();

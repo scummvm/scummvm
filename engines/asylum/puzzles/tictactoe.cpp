@@ -155,7 +155,7 @@ bool PuzzleTicTacToe::update(const AsylumEvent &evt)  {
 bool PuzzleTicTacToe::mouseLeftDown(const AsylumEvent &evt) {
 	if (!_vm->isGameFlagNotSet(kGameFlag215) || !_vm->isGameFlagNotSet(kGameFlag114)) {
 		getCursor()->show();
-		exit();
+		exitPuzzle();
 		return true;
 	}
 
@@ -186,7 +186,7 @@ bool PuzzleTicTacToe::mouseLeftDown(const AsylumEvent &evt) {
 }
 
 bool PuzzleTicTacToe::mouseRightDown(const AsylumEvent &) {
-	exit();
+	exitPuzzle();
 
 	return true;
 }
@@ -205,7 +205,7 @@ void PuzzleTicTacToe::drawField() {
 
 		if (_counter < 2) {
 			getCursor()->show();
-			exit();
+			exitPuzzle();
 			_counter = 0;
 			return;
 		}

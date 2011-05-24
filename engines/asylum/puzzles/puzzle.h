@@ -66,7 +66,7 @@ protected:
 	virtual bool mouseRightDown(const AsylumEvent &evt) { return true; }
 
 	bool keyExit(const AsylumEvent &evt);
-	void exit();
+	void exitPuzzle();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Hit test functions
