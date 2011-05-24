@@ -779,7 +779,7 @@ void GfxOpenGL::createFont(Font *font) {
 	const byte *bitmapData = font->getFontData();
 	uint dataSize = font->getDataSize();
 
-	byte *texDataPtr = new byte[dataSize *2];
+	byte *texDataPtr = new byte[dataSize *2 + 1];
 	byte *data = texDataPtr;
 
 	for (uint i = 0; i < dataSize; i++, texDataPtr += 2, bitmapData++) {
@@ -812,7 +812,7 @@ void GfxOpenGL::createFont(Font *font) {
 	else if (size < 64)
 		size = 64;
 
-	int arraySize = size*size*2*16*16;
+	int arraySize = size*size*2*16*16 + 1;
 	byte *temp = new byte[arraySize];
 	if (!temp)
 		error("Could not allocate %d bytes", arraySize);
@@ -837,9 +837,18 @@ void GfxOpenGL::createFont(Font *font) {
 		for (int x = 0; x < height; ++x) {
 
 			// TODO: Make this line use less magic
-			int pos = row * size * size * 2 * 16 + x * size * 16 * 2 + ((i-1)%16)*size*2;
-			assert(pos < arraySize);
-			memcpy(temp + pos, data + d * 2 + x * width * 2, width * 2);
+			uint a = row * size * size * 2 * 16;
+			uint b = x * size * 16 * 2;
+			uint c;
+			if (i == 0)
+				c = 0;
+			else
+				c = ((i-1)%16)*size*2;
+			uint pos = a + b + c;
+			uint pos2 = d * 2 + x * width * 2;
+			assert(pos + width * 2 <= arraySize);
+			assert(pos2 + width * 2 <= dataSize * 2);
+			memcpy(temp + pos, data + pos2, width * 2);
 		}
 		if (i != 0 && i%16 == 0)
 			++row;
