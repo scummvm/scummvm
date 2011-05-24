@@ -67,6 +67,7 @@ public:
 	void moveHead(bool lookingMode, const Graphics::Vector3d &lookAt, float rate);
 
 	void update();
+	void animate();
 	void setupTextures();
 	void draw();
 	void setPosRotate(Graphics::Vector3d pos, float pitch, float yaw, float roll);
@@ -91,6 +92,7 @@ public:
 		virtual void setKey(int) { }
 		virtual void setMapName(char *) { }
 		virtual void update() { }
+		virtual void animate() { }
 		virtual void setupTexture() { }
 		virtual void draw() { }
 		virtual void reset() { }
