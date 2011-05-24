@@ -80,7 +80,7 @@ Font::Font(const Common::String &filename, const char *data, int len) :
 
 	memcpy(_fontData, data, _dataSize);
 
-	//g_driver->createFont(this);
+	g_driver->createFont(this);
 }
 
 Font::Font() :
