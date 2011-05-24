@@ -485,8 +485,8 @@ void ModelComponent::animate() {
 
 			float time = j->_anim->_time / 1000.0f;
 			float weight = j->_anim->_fade * remainingWeight;
-			j->_anim->_keyf->animate(_hier, i, time, weight, j->_tagged);
-			totalWeight += weight;
+			if (j->_anim->_keyf->animate(_hier, i, time, weight, j->_tagged))
+				totalWeight += weight;
 		}
 
 		float weightFactor = 1.0f;
