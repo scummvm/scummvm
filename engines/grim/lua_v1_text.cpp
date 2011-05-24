@@ -177,7 +177,6 @@ void L1_BlastText() {
 		setTextObjectParams(textObject, tableObj);
 
 	textObject->setText(text.c_str());
-	//textObject->createBitmap();
 	textObject->draw();
 	delete textObject;
 }

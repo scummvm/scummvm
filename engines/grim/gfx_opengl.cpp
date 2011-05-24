@@ -808,7 +808,7 @@ void GfxOpenGL::createFont(Font *font) {
 	int size = 0;
 	for (int i = 0; i < 256; ++i) {
 		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
-		int m = width > height ? width : height;
+		int m = MAX(width, height);
 		if (m > size)
 			size = m;
 	}
@@ -838,15 +838,11 @@ void GfxOpenGL::createFont(Font *font) {
 	glGenTextures(1, texture);
 
 
-	uint start = (int)font->getCharData(0);
+	uint start = (uint)font->getCharData(0);
 	for (int i = 0, row = 0; i < 256; ++i) {
-
 		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
-
 		uint d = (uint)font->getCharData(i) - start;
 		for (int x = 0; x < height; ++x) {
-
-			// TODO: Make this line use less magic
 			uint a = row * size * size * bpp * charsHigh;
 			uint b = x * size * charsWide * bpp;
 			uint c = 0;
@@ -869,8 +865,6 @@ void GfxOpenGL::createFont(Font *font) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size * charsWide, size * charsHigh, 0, GL_RGBA, GL_UNSIGNED_BYTE, temp);
-
-
 
 	delete[] data;
 	delete[] temp;
