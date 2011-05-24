@@ -26,10 +26,13 @@
 #include "backends/fs/abstract-fs.h"
 
 #include <FBaseString.h>
+#include <FBaseUtilStringUtil.h>
 #include <FIoDirectory.h>
 #include <FIoFile.h>
 
 using namespace Osp::Io;
+using namespace Osp::Base;
+using namespace Osp::Base::Utility;
 
 /**
  * Implementation of the ScummVM file system API based on BADA.
@@ -50,7 +53,7 @@ public:
 	Common::String getPath() const { return path; }
 
 	bool exists() const;
-	bool isDirectory() const { return isDir; }
+	bool isDirectory() const;
 	bool isReadable() const;
 	bool isWritable() const;
 
@@ -65,7 +68,7 @@ protected:
 	/**
 	 * Plain constructor, for internal use only (hence protected).
 	 */
-	BADAFilesystemNode() : isDir(false), isValid(false) {}
+	BADAFilesystemNode() : isValid(false) {}
 
   AbstractFSNode *makeNode(const Common::String &path) const {
 		return new BADAFilesystemNode(path);
@@ -73,7 +76,6 @@ protected:
 
 	Common::String displayName;
 	Common::String path;
-	bool isDir;
 	bool isValid;
   FileAttributes attr;
 };

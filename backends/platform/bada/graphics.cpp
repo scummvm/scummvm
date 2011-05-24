@@ -23,63 +23,37 @@
 #include "system.h"
 #include "graphics.h"
 
-int getPowerOf2(int value) {
-  int result = 1;
-  
-  while (result < value) {
-    result <<= 1;
-  }
-  
-  return result;
-}
-
 //
 // BadaGraphicsManager
 //
 BadaGraphicsManager::BadaGraphicsManager(BadaAppForm* appForm) :
   appForm(appForm),
-	eglDisplay(EGL_DEFAULT_DISPLAY),
-	eglSurface(EGL_NO_SURFACE),
-	eglConfig(0),
-	eglContext(EGL_NO_CONTEXT),
-	pBufferSurface(EGL_NO_SURFACE),
-	pBufferTexture(0) {
+  eglDisplay(EGL_DEFAULT_DISPLAY),
+  eglSurface(EGL_NO_SURFACE),
+  eglConfig(0),
+  eglContext(EGL_NO_CONTEXT) {
   assert(appForm != null);
   _videoMode.fullscreen = true;
 }
 
 bool BadaGraphicsManager::hasFeature(OSystem::Feature f) {
-  bool result = (f == kFeatureFullscreenMode || 
-                 f == kFeatureVirtualKeyboard ||
+  bool result = (f == OSystem::kFeatureFullscreenMode || 
+                 f == OSystem::kFeatureVirtualKeyboard ||
                  OpenGLGraphicsManager::hasFeature(f));
   return result;
 }
 
 void BadaGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
   logEntered();
-	switch (f) {
-	case kFeatureVirtualKeyboard:
+  switch (f) {
+  case OSystem::kFeatureVirtualKeyboard:
     // TODO
     // http://forums.badadev.com/viewtopic.php?f=6&t=258
-		break;
-	default:
+    break;
+  default:
     OpenGLGraphicsManager::setFeatureState(f, enable);
-		break;
-	}
-}
-
-bool BadaGraphicsManager::isHotkey(const Common::Event &event) {
-  logEntered();
-
-  bool result = false;
-  return result;
-}
-
-bool BadaGraphicsManager::notifyEvent(const Common::Event &event) {
-  logEntered();
-
-  bool result = false;
-  return result;
+    break;
+  }
 }
 
 void BadaGraphicsManager::setInternalMousePosition(int x, int y) {
@@ -87,36 +61,32 @@ void BadaGraphicsManager::setInternalMousePosition(int x, int y) {
 
 }
 
+void BadaGraphicsManager::updateScreen() {
+  if (_transactionMode == kTransactionNone) {
+    internUpdateScreen();
+  }
+}
+
 void BadaGraphicsManager::internUpdateScreen() {
   logEntered();
 
   eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
+  OpenGLGraphicsManager::internUpdateScreen();
 
-  EGLSurface eglSurfaceR = eglGetCurrentSurface(EGL_READ);
-  EGLSurface eglSurfaceW = eglGetCurrentSurface(EGL_DRAW);
-  EGLContext eglContextC  = eglGetCurrentContext();
-  
-  eglMakeCurrent(eglDisplay, pBufferSurface, pBufferSurface, eglContextC);
-  glBindTexture(GL_TEXTURE_2D, 0); // allow use of default 2D texture
-  eglReleaseTexImage(eglDisplay, pBufferSurface, EGL_BACK_BUFFER); // set draw target
-
-	// Call to parent implementation of this method
-	OpenGLGraphicsManager::internUpdateScreen();
-  
-  glBindTexture(GL_TEXTURE_2D, pBufferTexture);
-  eglBindTexImage(eglDisplay, pBufferSurface, EGL_BACK_BUFFER);
-  eglMakeCurrent(eglDisplay, eglSurfaceW, eglSurfaceR, eglContextC);
-
+  //glClearColor(0.1, 0, 0.5, 1);
+  //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   eglSwapBuffers(eglDisplay, eglSurface);
+
   logLeaving();
 }
 
+// see: http://forums.badadev.com/viewtopic.php?f=7&t=208
 bool BadaGraphicsManager::loadEgl() {
   logEntered();
 
   EGLint numConfigs = 1;
   EGLint eglConfigList[] = {
-    EGL_RED_SIZE, 5,
+    EGL_RED_SIZE,   5,
     EGL_GREEN_SIZE, 6,
     EGL_BLUE_SIZE,  5,
     EGL_ALPHA_SIZE, 0,
@@ -195,62 +165,22 @@ bool BadaGraphicsManager::loadGFXMode() {
     return false;
   }
 
-  int x, y, width, height;
-  appForm->GetBounds(x, y, width, height);
+  eglQuerySurface(eglDisplay, eglSurface, EGL_WIDTH, &_videoMode.hardwareWidth);
+  eglQuerySurface(eglDisplay, eglSurface, EGL_HEIGHT, &_videoMode.hardwareHeight);
 
-  EGLint surfaceType;
-
-  eglGetConfigAttrib(eglDisplay, eglConfig, EGL_SURFACE_TYPE, &surfaceType);
-
-  if ((surfaceType & EGL_PBUFFER_BIT) > 0) {
-    EGLint pbuffer_attribs[] = {
-      EGL_WIDTH,          getPowerOf2(width),
-      EGL_HEIGHT,         getPowerOf2(height),
-      EGL_TEXTURE_TARGET, EGL_TEXTURE_2D,
-      EGL_TEXTURE_FORMAT, EGL_TEXTURE_RGB,
-      EGL_NONE
-    };
-
-    pBufferSurface = eglCreatePbufferSurface(eglDisplay, eglConfig, pbuffer_attribs);
-    assert(pBufferSurface != EGL_NO_SURFACE);
-
-    eglQuerySurface(eglDisplay, pBufferSurface, EGL_WIDTH, &_videoMode.hardwareWidth);
-    eglQuerySurface(eglDisplay, pBufferSurface, EGL_HEIGHT, &_videoMode.hardwareHeight);
+  _videoMode.screenWidth = _videoMode.overlayWidth = _videoMode.hardwareWidth;
+  _videoMode.screenHeight = _videoMode.overlayHeight = _videoMode.hardwareHeight;
+  AppLog("screen size: %dx%d", _videoMode.screenWidth, _videoMode.screenHeight);
     
-    _videoMode.screenWidth = _videoMode.overlayWidth = _videoMode.hardwareWidth;
-    _videoMode.screenHeight = _videoMode.overlayHeight = _videoMode.hardwareHeight;
-    AppLog("screen size: %dx%d", _videoMode.screenWidth, _videoMode.screenHeight);
-    
-    glGenTextures(1, &pBufferTexture);
-    glBindTexture(GL_TEXTURE_2D, pBufferTexture);
-    
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  }
-
-  logLeaving();
-
-	// Call and return parent implementation of this method
-	return OpenGLGraphicsManager::loadGFXMode();
+  // Call and return parent implementation of this method
+  return OpenGLGraphicsManager::loadGFXMode();
 }
 
 void BadaGraphicsManager::unloadGFXMode() {
   logEntered();
 
-	if (pBufferTexture) {
-		glDeleteTextures(1, &pBufferTexture);
-		pBufferTexture = 0;
-	}
-
   if (EGL_NO_DISPLAY != eglDisplay) {
     eglMakeCurrent(eglDisplay, null, null, null);
-
-    if (pBufferSurface != EGL_NO_SURFACE) {
-      eglDestroySurface(eglDisplay, pBufferSurface);
-      pBufferSurface = EGL_NO_SURFACE;
-    }
 
     if (eglContext != EGL_NO_CONTEXT) {
       eglDestroyContext(eglDisplay, eglContext);
@@ -267,9 +197,9 @@ void BadaGraphicsManager::unloadGFXMode() {
   }
   
   eglConfig = null;
+
+  OpenGLGraphicsManager::unloadGFXMode();
   logLeaving();
 }
-
-
 
 

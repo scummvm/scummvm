@@ -39,10 +39,9 @@ struct BadaGraphicsManager : public OpenGLGraphicsManager {
   BadaGraphicsManager(BadaAppForm* appForm);
 
   bool hasFeature(OSystem::Feature f);
+  void updateScreen();
   void internUpdateScreen();
-  bool isHotkey(const Common::Event &event);
   bool loadGFXMode();
-  bool notifyEvent(const Common::Event &event);
   void setFeatureState(OSystem::Feature f, bool enable);
   void setInternalMousePosition(int x, int y);
   void unloadGFXMode();
@@ -54,8 +53,6 @@ struct BadaGraphicsManager : public OpenGLGraphicsManager {
   EGLSurface eglSurface;
   EGLConfig  eglConfig;
   EGLContext eglContext;
-	EGLSurface pBufferSurface;
-	GLuint     pBufferTexture;
 };
 
 #endif
