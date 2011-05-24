@@ -246,8 +246,11 @@ Model::Face::~Face() {
 }
 
 Model::HierNode::~HierNode() {
-	if (_child)
-		_child->_parent = NULL;
+	HierNode *child = _child;
+	while (child) {
+		child->_parent = NULL;
+		child = child->_sibling;
+	}
 }
 
 void Model::HierNode::loadBinary(const char *&data, Model::HierNode *hierNodes, const Geoset *g) {
