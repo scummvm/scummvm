@@ -489,15 +489,11 @@ void GfxOpenGL::translateViewpointFinish() {
 }
 
 void GfxOpenGL::drawHierachyNode(const Model::HierNode *node) {
-	if (node->_totalWeight > 0) {
-		Graphics::Vector3d animPos = node->_pos + node->_animPos / node->_totalWeight;
-		float animPitch = node->_pitch + node->_animPitch / node->_totalWeight;
-		float animYaw = node->_yaw + node->_animYaw / node->_totalWeight;
-		float animRoll = node->_roll + node->_animRoll / node->_totalWeight;
-		translateViewpointStart(animPos, animPitch, animYaw, animRoll);
-	} else {
-		translateViewpointStart(node->_pos, node->_pitch, node->_yaw, node->_roll);
-	}
+	Graphics::Vector3d animPos = node->_pos + node->_animPos;
+	float animPitch = node->_pitch + node->_animPitch;
+	float animYaw = node->_yaw + node->_animYaw;
+	float animRoll = node->_roll + node->_animRoll;
+	translateViewpointStart(animPos, animPitch, animYaw, animRoll);
 	if (node->_hierVisible) {
 		glPushMatrix();
 		glTranslatef(node->_pivot.x(), node->_pivot.y(), node->_pivot.z());

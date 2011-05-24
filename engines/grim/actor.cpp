@@ -1208,6 +1208,11 @@ void Actor::update() {
 
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
+		c->animate();
+	}
+
+	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+		Costume *c = *i;
 		c->moveHead(_lookingMode, _lookAtVector, _lookAtRate);
 	}
 }

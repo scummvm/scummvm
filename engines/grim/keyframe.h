@@ -34,7 +34,7 @@ public:
 
 	void loadBinary(const char *data, int len);
 	void loadText(TextSplitter &ts);
-	void animate(Model::HierNode *nodes, int num, float time, int priority1 = 1, int priority2 = 5, float fade = 1) const;
+	void animate(Model::HierNode *nodes, int num, float time, float fade, bool tagged) const;
 
 	float getLength() const { return _numFrames / _fps; }
 	const Common::String &getFilename() const { return _fname; }
@@ -66,7 +66,7 @@ private:
 		void loadText(TextSplitter &ts);
 		~KeyframeNode();
 
-		void animate(Model::HierNode &node, float frame, int priority, float fade) const;
+		void animate(Model::HierNode &node, float frame, float fade) const;
 
 		char _meshName[32];
 		int _numEntries;
