@@ -674,10 +674,7 @@ void KeyframeComponent::setKey(int val) {
 	case 2:
 	case 3:
 		if (!_active || val != 1) {
-			if (!_active) {
-				activate();
-				_active = true;
-			}
+			activate();
 			_anim._time = -1;
 		}
 		_repeatMode = val;
@@ -685,10 +682,7 @@ void KeyframeComponent::setKey(int val) {
 	case 5:
 		warning("Key 5 (meaning uncertain) used  for keyframe %s", _anim._keyf->getFilename().c_str());
 	case 4:
-		if (_active) {
-			deactivate();
-			_active = false;
-		}
+		deactivate();
 		break;
 	default:
 		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
@@ -697,10 +691,7 @@ void KeyframeComponent::setKey(int val) {
 }
 
 void KeyframeComponent::reset() {
-	if (_active) {
-		deactivate();
-		_active = false;
-	}
+	deactivate();
 }
 
 void KeyframeComponent::update() {
@@ -718,10 +709,7 @@ void KeyframeComponent::update() {
 		switch (_repeatMode) {
 			case 0: // Stop
 			case 3: // Fade at end
-				if (_active) {
-					deactivate();
-					_active = false;
-				}
+				deactivate();
 				return;
 			case 1: // Loop
 				do
@@ -769,15 +757,21 @@ void KeyframeComponent::restoreState(SaveGame *state) {
 }
 
 void KeyframeComponent::activate() {
-	ModelComponent *mc = dynamic_cast<ModelComponent *>(_parent);
-	if (mc)
-		 mc->addActiveAnimation(&_anim, _priority1, _priority2);
+	if (!_active) {
+		_active = true;
+		ModelComponent *mc = dynamic_cast<ModelComponent *>(_parent);
+		if (mc)
+			 mc->addActiveAnimation(&_anim, _priority1, _priority2);
+	}
 }
 
 void KeyframeComponent::deactivate() {
-	ModelComponent *mc = dynamic_cast<ModelComponent *>(_parent);
-	if (mc)
-		 mc->removeActiveAnimation(&_anim);
+	if (_active) {
+		_active = false;
+		ModelComponent *mc = dynamic_cast<ModelComponent *>(_parent);
+		if (mc)
+			 mc->removeActiveAnimation(&_anim);
+	}
 }
 
 MeshComponent::MeshComponent(Costume::Component *p, int parentID, const char *name, tag32 t) :
