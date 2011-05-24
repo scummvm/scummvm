@@ -31,7 +31,8 @@
 
 namespace Grim {
 
-Font::Font(const Common::String &filename, const char *data, int len) : Object() {
+Font::Font(const Common::String &filename, const char *data, int len) :
+		Object(), _userData(0) {
 	_filename = filename;
 	_numChars = READ_LE_UINT32(data);
 	_dataSize = READ_LE_UINT32(data + 4);
@@ -79,7 +80,7 @@ Font::Font(const Common::String &filename, const char *data, int len) : Object()
 
 	memcpy(_fontData, data, _dataSize);
 
-	g_driver->createFont(this);
+	//g_driver->createFont(this);
 }
 
 Font::Font() :

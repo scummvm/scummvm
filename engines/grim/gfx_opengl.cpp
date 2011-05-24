@@ -769,13 +769,20 @@ void GfxOpenGL::destroyBitmap(BitmapData *bitmap) {
 	}
 }
 
-void GfxOpenGL::createFont(Font *font) {
-	byte *bitmapData = font->_fontData;
+struct FontUserData
+{
+	int size;
+	GLuint texture;
+};
 
-	byte *texDataPtr = new byte[font->_dataSize *2];
+void GfxOpenGL::createFont(Font *font) {
+	const byte *bitmapData = font->getFontData();
+	uint dataSize = font->getDataSize();
+
+	byte *texDataPtr = new byte[dataSize *2];
 	byte *data = texDataPtr;
 
-	for (uint32 i = 0; i < font->_dataSize; i++, texDataPtr += 2, bitmapData++) {
+	for (uint i = 0; i < dataSize; i++, texDataPtr += 2, bitmapData++) {
 		byte pixel = *bitmapData;
 		if (pixel == 0x00) {
 			texDataPtr[0] = 0;
@@ -811,11 +818,14 @@ void GfxOpenGL::createFont(Font *font) {
 		error("Could not allocate %d bytes", arraySize);
 
 	memset(temp, 0, arraySize);
-	font->_texIds = new GLuint;
-	font->_sizes = new int;
 
-	GLuint *textures = (GLuint *)font->_texIds;
-	glGenTextures(1, textures);
+	FontUserData *userData = new FontUserData;
+	font->setUserData(userData);
+	userData->texture = 0;
+	userData->size = size;
+
+	GLuint *texture = &(userData->texture);
+	glGenTextures(1, texture);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
 	uint start = (int)font->getCharData(0);
@@ -835,14 +845,13 @@ void GfxOpenGL::createFont(Font *font) {
 			++row;
 
 	}
-	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	glBindTexture(GL_TEXTURE_2D, texture[0]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size*16, size*16, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, temp);
 
-	*((int *)font->_sizes) = size;
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
@@ -851,10 +860,10 @@ void GfxOpenGL::createFont(Font *font) {
 }
 
 void GfxOpenGL::destroyFont(Font *font) {
-	GLuint *textures = (GLuint *)font->_texIds;
-	if (textures) {
-		glDeleteTextures(1, textures);
-		delete textures;
+	FontUserData *data = (FontUserData *)font->getUserData();
+	if (data) {
+		glDeleteTextures(1, &(data->texture));
+		delete data;
 	}
 }
 
@@ -880,11 +889,14 @@ void GfxOpenGL::drawTextObject(TextObject *text) {
 	glDepthMask(GL_FALSE);
 
 	const Color *color = text->getFGColor();
-	const Font *font = text->getFont();
+	Font *font = text->getFont();
 
 	glColor3f(color->getRed()/255.f, color->getGreen()/255.f, color->getBlue()/255.f);
-	uint8 size = ((uint8 *)font->_sizes)[0];
-	GLuint texture = *((GLuint *)font->_texIds);
+	FontUserData *userData = (FontUserData *)font->getUserData();
+	if (!userData)
+		error("Could not get font userdata");
+	int size = userData->size;
+	GLuint texture = userData->texture;
 	int y, x;
 	const Common::String *lines = text->getLines();
 	int numLines = text->getNumLines();
