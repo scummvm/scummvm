@@ -1376,6 +1376,9 @@ fi
 
 echo "$cxx_version"
 
+#
+# Bail out now if now useable compiler was found.
+#
 if test "$cxx_verc_fail" = yes ; then
 	echo
 	echo "The version of your compiler is not supported at this time"
@@ -1383,19 +1386,10 @@ if test "$cxx_verc_fail" = yes ; then
 	exit 1
 fi
 
-echocheck "whether -Wglobal-constructors work"
-cat > $TMPC << EOF
-int main() { return 0; }
-EOF
-cc_check -Wglobal-constructors && _global_constructors=yes
-
-if test "$_global_constructors" = yes; then
-	CXXFLAGS="$CXXFLAGS -Wglobal-constructors"
-fi
-echo $_global_constructors
-
 #
-# Do CXXFLAGS now that we know the compiler version
+# Setup compiler specific CXXFLAGS now that we know the compiler version.
+# Foremost, this means enabling various warnings.
+# In addition, we set CXX_UPDATE_DEP_FLAG for GCC >= 3.0 and for ICC.
 #
 if test "$have_gcc" = yes ; then
 	if test "$_cxx_major" -ge "3" ; then
@@ -1423,17 +1417,33 @@ elif test "$have_icc" = yes ; then
 	add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
 fi;
 
-# Some platforms use certain GNU extensions in header files
+# By default, we add -pedantic to the CXXFLAGS to catch some potentially
+# non-portable constructs, like use of GNU extensions.
+# However, some platforms use GNU extensions in system header files, so
+# for these we must not use -pedantic.
 case $_host_os in
 android | gamecube | psp | wii)
 	;;
 *)
-	# ICC does not support pedantic
+	# ICC does not support pedantic, while GCC and clang do.
 	if test "$have_icc" = no ; then
 		CXXFLAGS="$CXXFLAGS -pedantic"
 	fi
 	;;
 esac
+
+# If possible, we want to use -Wglobal-constructors
+# However, not all compilers support that, so check whether the active one does.
+echocheck "whether -Wglobal-constructors work"
+cat > $TMPC << EOF
+int main() { return 0; }
+EOF
+cc_check -Wglobal-constructors && _global_constructors=yes
+
+if test "$_global_constructors" = yes; then
+	CXXFLAGS="$CXXFLAGS -Wglobal-constructors"
+fi
+echo $_global_constructors
 
 #
 # Check for endianness
@@ -1570,7 +1580,6 @@ case $_host_os in
 		DEFINES="$DEFINES -DNONSTANDARD_PORT"
 		;;
 	ds)
-		# TODO Nintendo DS
 		DEFINES="$DEFINES -D__DS__"
 		DEFINES="$DEFINES -DNDS"
 		DEFINES="$DEFINES -DARM9"
@@ -1650,7 +1659,6 @@ case $_host_os in
 		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 		;;
 	ps2)
-		# TODO ps2
 		CXXFLAGS="$CXXFLAGS -G2"
 		DEFINES="$DEFINES -D_EE"
 		DEFINES="$DEFINES -D__PLAYSTATION2__"
@@ -1813,7 +1821,6 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/dc/dreamcast.mk"
 			;;
 		ds)
-			# TODO: complete this
 			DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
 			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
@@ -1968,7 +1975,6 @@ if test -n "$_host"; then
 		ppc-amigaos)
 			;;
 		ps2)
-			# TODO: complete this
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE"
 			DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
 			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
@@ -2119,7 +2125,6 @@ case $_backend in
 		DEFINES="$DEFINES -DDINGUX"
 		;;
 	ds)
-		# TODO ds
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/arm9/source'
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/commoninclude'
 		INCLUDES="$INCLUDES "'-Ibackends/platform/ds/arm9/data'
@@ -2148,7 +2153,6 @@ case $_backend in
 	openpandora)
 		;;
 	ps2)
-		# TODO ps2
 		DEFINES="$DEFINES -D_EE"
 		DEFINES="$DEFINES -DFORCE_RTL"
 		INCLUDES="$INCLUDES -I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2SDK/ports/include"
