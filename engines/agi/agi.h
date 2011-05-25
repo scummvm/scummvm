@@ -652,6 +652,9 @@ private:
 	Common::String _dsk0Name;
 	Common::String _dsk1Name;
 
+	int loadDir(AgiDir *agid, int offset, int num);
+	uint8 *loadVolRes(AgiDir *agid);
+
 public:
 	AgiLoader_v1(AgiEngine *vm, Common::String dsk0, Common::String dsk1) {
 		_vm = vm;
@@ -659,13 +662,13 @@ public:
 		_dsk1Name = dsk1;
 	}
 
-	virtual int init() { return 0; }
-	virtual int deinit() { return 0; }
-	virtual int detectGame() { return 0; }
-	virtual int loadResource(int, int) { return 0; }
-	virtual int unloadResource(int, int) { return 0; }
-	virtual int loadObjects(const char *) { return 0; }
-	virtual int loadWords(const char *) { return 0; }
+	virtual int init();
+	virtual int deinit();
+	virtual int detectGame();
+	virtual int loadResource(int, int);
+	virtual int unloadResource(int, int);
+	virtual int loadObjects(const char *);
+	virtual int loadWords(const char *);
 };
 
 class AgiLoader_v2 : public AgiLoader {
