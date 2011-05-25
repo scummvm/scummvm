@@ -28,6 +28,7 @@
 #include "engines/advancedDetector.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/md5.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
 #include "graphics/thumbnail.h"
@@ -47,6 +48,9 @@ struct AGIGameDescription {
 	int gameType;
 	uint32 features;
 	uint16 version;
+
+	Common::String dsk0Name;
+	Common::String dsk1Name;
 };
 
 uint32 AgiBase::getGameID() const {
@@ -290,7 +294,9 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXXX, const Common::FSList &fslist) const {
 	typedef Common::HashMap<Common::String, int32> IntMap;
+	typedef Common::HashMap<Common::String, Common::FSNode> NodeMap;
 	IntMap allFiles;
+	NodeMap allNodes;
 	bool matchedUsingFilenames = false;
 	bool matchedUsingWag = false;
 	int wagFileCount = 0;
@@ -317,7 +323,8 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXX
 		if (file->isDirectory()) continue;
 		Common::String filename = file->getName();
 		filename.toLowercase();
-		allFiles[filename] = true; // Save the filename in a hash table
+		allFiles[filename] = true;   // Save the filename in a hash table
+		allNodes[filename] = *file;  // ...and also the FSNode
 
 		if (filename.hasSuffix(".wag")) {
 			// Save latest found *.wag file's path (Can be used to open the file, the name can't)
@@ -420,6 +427,46 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXX
 		warning("More than one (%d) *.wag files found. WAG files ignored", wagFileCount);
 	}
 
+	// Try to detect disk images of AGI v1 and AGI v2.001 booter games
+	if (!matchedUsingFilenames && !matchedUsingWag) {
+		int index = -1;
+		
+		for (IntMap::const_iterator f = allFiles.begin(); f != allFiles.end(); ++f) {
+			if (f->_key.hasSuffix(".dsk") || f->_key.hasSuffix(".img")) {
+				Common::File file;
+				file.open(allNodes[f->_key]);
+				Common::String md5str = Common::computeStreamMD5AsString(file, detectionParams.md5Bytes);
+				debug(3, "Agi::fallbackDetector: disk image (%s) found with md5 sum (%s) ", f->_key.c_str(), md5str.c_str());
+
+				for (int i = 0; !booterDescription[i].md5str_dsk0.empty(); i++) {
+					if (booterDescription[i].md5str_dsk0 == md5str) {
+						index = i;
+						g_fallbackDesc.dsk0Name = f->_key;
+					}
+					if (booterDescription[i].md5str_dsk1 == md5str) {
+						index = i;
+						g_fallbackDesc.dsk1Name = f->_key;
+					}
+				}
+			}
+		}
+		
+		if (index >= 0) {
+			if ((booterDescription[index].md5str_dsk0.empty() == g_fallbackDesc.dsk0Name.empty()) &&
+				(booterDescription[index].md5str_dsk1.empty() == g_fallbackDesc.dsk1Name.empty())) {
+				g_fallbackDesc.gameID = booterDescription[index].gameID;
+				g_fallbackDesc.gameType = booterDescription[index].gameType;
+				g_fallbackDesc.features = booterDescription[index].features;
+				g_fallbackDesc.version = booterDescription[index].version;
+
+				g_fallbackDesc.desc.gameid = booterDescription[index].id.c_str();
+				g_fallbackDesc.desc.extra = booterDescription[index].extra.c_str();
+
+				return (const ADGameDescription *)&g_fallbackDesc;
+			}
+		}
+	}
+
 	// Check that the AGI interpreter version is a supported one
 	if (!(g_fallbackDesc.version >= 0x2000 && g_fallbackDesc.version < 0x4000)) {
 		warning("Unsupported AGI interpreter version 0x%x in AGI's fallback detection. Using default 0x2917", g_fallbackDesc.version);
@@ -477,7 +524,9 @@ int AgiEngine::agiDetectGame() {
 
 	assert(_gameDescription != NULL);
 
-	if (getVersion() <= 0x2999) {
+	if (getVersion() <= 0x2001) {
+		_loader = new AgiLoader_v1(this, _gameDescription->dsk0Name, _gameDescription->dsk1Name);
+	} else if (getVersion() <= 0x2999) {
 		_loader = new AgiLoader_v2(this);
 	} else {
 		_loader = new AgiLoader_v3(this);

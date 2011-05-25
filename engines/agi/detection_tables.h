@@ -38,6 +38,8 @@ using Common::GUIO_NONE;
 		interp, \
 		features, \
 		ver, \
+		"", \
+		"" \
 	}
 
 #define GAME_LVFPNF(id,name,fname,md5,size,lang,ver,features,gid,platform,interp) { \
@@ -54,6 +56,8 @@ using Common::GUIO_NONE;
 		interp, \
 		features, \
 		ver, \
+		"", \
+		"" \
 	}
 
 #define GAME(id,extra,md5,ver,gid) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformPC,GType_V2)
@@ -197,6 +201,8 @@ static const AGIGameDescription gameDescriptions[] = {
 		GType_V3,
 		GF_MACGOLDRUSH,
 		0x3149,
+		"",
+		""
 	},
 
 
@@ -515,6 +521,8 @@ static const AGIGameDescription gameDescriptions[] = {
 		GType_V2,
 		0,
 		0x2936,
+		"",
+		""
 	},
 
 
@@ -660,6 +668,8 @@ static const AGIGameDescription gameDescriptions[] = {
 		GType_V2,
 		GF_AGDS,
 		0x2440,
+		"",
+		""
 	},
 
 	{
@@ -677,6 +687,8 @@ static const AGIGameDescription gameDescriptions[] = {
 		GType_V2,
 		0,
 		0x2440,
+		"",
+		""
 	},
 
 	FANMADE_F("Half-Death - Terror At White-Mesa", "b62c05d0ace878261392073f57ae788c", GF_AGIMOUSE),
@@ -832,6 +844,8 @@ static const AGIGameDescription gameDescriptions[] = {
 		GType_V3,
 		GF_FANMADE,
 		0x3149,
+		"",
+		"",
 	},
 	FANMADE_SVP("V - The Graphical Adventure", "1646eaade74f137a9041eb427a389969", 768, 0x2440, Common::kPlatformCoCo3),
 
@@ -839,7 +853,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Voodoo Girl - Queen of the Darned (v1.2 2002 Mar 29)", "11d0417b7b886f963d0b36789dac4c8f"),
 	FANMADE("Wizaro (v0.1)", "abeec1eda6eaf8dbc52443ea97ff140c"),
 
-	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
+	{ AD_TABLE_END_MARKER, 0, 0, 0, 0, "", "" }
 };
 
 /**
@@ -860,6 +874,25 @@ static AGIGameDescription g_fallbackDesc = {
 	GType_V2,
 	GF_FANMADE,
 	0x2917,
+	"",
+	""
+};
+
+/**
+ * Detection table for booter games.
+ */
+static const struct {
+	Common::String md5str_dsk0;
+	Common::String md5str_dsk1;
+	Common::String id;
+	Common::String extra;
+	int gameID;
+	int gameType;
+	uint32 features;
+	uint16 version;
+} booterDescription[] = {
+	{ "f323f10abf8140ffb2668b09af2e7b87", "", "ddp", "booter", GID_DDP, GType_V2, ADGF_NO_FLAGS, 0x2001 },
+	{ "", "", "", "", 0, 0, 0, 0 }
 };
 
 } // End of namespace Agi
