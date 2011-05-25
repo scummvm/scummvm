@@ -1181,7 +1181,7 @@ void Actor::update() {
 
 		// While getPosIn60HzTicks will return "-1" to indicate that the
 		// sound is no longer playing, it is more appropriate to check first
-		if (g_imuse->getSoundStatus(_talkSoundName.c_str()))
+		if (g_grim->getSpeechMode() != GrimEngine::TextOnly && g_imuse->getSoundStatus(_talkSoundName.c_str()))
 			posSound = g_imuse->getPosIn60HzTicks(_talkSoundName.c_str());
 		else
 			posSound = -1;
