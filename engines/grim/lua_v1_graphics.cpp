@@ -101,7 +101,8 @@ void L1_StartFullscreenMovie() {
 	}
 	L1_CleanBuffer();
 	g_grim->setMode(ENGINE_MODE_SMUSH);
-	if ((result = g_movie->play(lua_getstring(name), looping, 0, 0)) == false)
+	result = g_movie->play(lua_getstring(name), looping, 0, 0);
+	if (!result)
 		g_grim->setMode(prev_engine_mode);
 	pushbool(result);
 }
@@ -123,7 +124,8 @@ void L1_StartMovie() {
 		y = (int)lua_getnumber(lua_getparam(4));
 
 	g_grim->setMode(ENGINE_MODE_NORMAL);
-	if ((result = g_movie->play(lua_getstring(name), looping, x, y)) == false)
+	result = g_movie->play(lua_getstring(name), looping, x, y);
+	if (!result)
 		g_grim->setMode(prev_engine_mode);
 	pushbool(result);
 }
