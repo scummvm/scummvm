@@ -406,9 +406,9 @@ void Engine::openMainMenuDialog() {
 bool Engine::warnUserAboutWIPGame() {
 	if (ConfMan.getBool("display_wip_engine_warning")) {
 		GUI::MessageDialog alert("WARNING: The game you are about to start is"
-			" not yet full supported by ScummVM. As such, it is likely to run"
-			" unstable, and any savestates you make could become invalid in a"
-			" future ScummVM release.", "Start anyway", "Cancel");
+			" not yet fully supported by ScummVM. As such, it is likely to be"
+			" unstable, and any saves you make might not work in future"
+			" versions of ScummVM.", "Start anyway", "Cancel");
 		return alert.runModal() == GUI::kMessageOK;
 	}
 	return true;
