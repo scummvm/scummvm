@@ -2747,7 +2747,7 @@ void Actor::saveLoadWithSerializer(Serializer *ser) {
 
 	if (ser->isLoading()) {
 		// Not all actor data is saved; so when loading, we first reset
-		// the actor, to ensure completely reproducible behaviour (else,
+		// the actor, to ensure completely reproducible behavior (else,
 		// some not saved value in the actor class can cause odd things)
 		initActor(-1);
 	}

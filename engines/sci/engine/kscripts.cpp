@@ -46,7 +46,7 @@ reg_t kLoad(EngineState *s, int argc, reg_t *argv) {
 }
 
 // Unloads an arbitrary resource of type 'restype' with resource numbber 'resnr'
-//  behaviour of this call didn't change between sci0->sci1.1 parameter wise, which means getting called with
+//  behavior of this call didn't change between sci0->sci1.1 parameter wise, which means getting called with
 //  1 or 3+ parameters is not right according to sierra sci
 reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
 	if (argc >= 2) {
@@ -192,7 +192,7 @@ reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	// SCI uses this technique to find out, if it's a clone and if it's supposed to get freed
-	//  At least kq4early relies on this behaviour. The scripts clone "Sound", then set bit 1 manually
+	//  At least kq4early relies on this behavior. The scripts clone "Sound", then set bit 1 manually
 	//  and call kDisposeClone later. In that case we may not free it, otherwise we will run into issues
 	//  later, because kIsObject would then return false and Sound object wouldn't get checked.
 	uint16 infoSelector = object->getInfoSelector().offset;

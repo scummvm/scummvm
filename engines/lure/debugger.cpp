@@ -534,7 +534,7 @@ bool Debugger::cmd_showAnim(int argc, const char **argv) {
 	}
 
 	// Bottle object is used as a handy hotspot holder that doesn't have any
-	// tick proc behaviour that we need to worry about
+	// tick proc behavior that we need to worry about
 	Hotspot *hotspot = res.activateHotspot(BOTTLE_HOTSPOT_ID);
 	hotspot->setLayer(0xfe);
 	hotspot->setSize(width, height);

@@ -374,7 +374,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 			// sets variable 913 to 1 (probably to stop him from
 			// turning around every now and then). The script may
 			// then go on to set the variable to different values
-			// to trigger various behaviours in him, but if you
+			// to trigger various behaviors in him, but if you
 			// have run out of these cases the script won't ever
 			// set it back to 0 again.
 			//

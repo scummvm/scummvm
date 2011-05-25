@@ -265,7 +265,7 @@ How do I play a game on a Smartphone device ?
 
 On non-stylus devices, the mouse cursor is emulated via a set of keys.
 The cursor will move faster if you keep the key down. You can tweak this
-behaviour in the configuration file described below.
+behavior in the configuration file described below.
 
 Here is
 the list of available actions for Smartphones:
@@ -369,7 +369,7 @@ You can tweak these parameters to customize how the cursor is handled.
  *  repeatTrigger         int       Number of milliseconds a key must be held to
                                     consider being repeated.
  *  repeatX               int       Number of key repeat events before changing
-                                    horizontal cursor behaviour.
+                                    horizontal cursor behavior.
  *  stepX1                int       Horizontal cursor offset value when the key
                                     is not repeated.
  *  stepX2                int       Horizontal cursor offset value when the key

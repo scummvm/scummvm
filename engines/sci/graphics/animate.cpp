@@ -230,7 +230,7 @@ void GfxAnimate::adjustInvalidCels(GfxView *view, AnimateList::iterator it) {
 	//  this seems to be completely crazy code
 	//  sierra sci checked signed int16 to be above or equal the counts and reseted to 0 in those cases
 	//  later during view processing those are compared unsigned again and then set to maximum count - 1
-	//  Games rely on this behaviour. For example laura bow 1 has a knight standing around in room 37
+	//  Games rely on this behavior. For example laura bow 1 has a knight standing around in room 37
 	//   which has cel set to 3. This cel does not exist and the actual knight is 0
 	//   In kq5 on the other hand during the intro, when the trunk is opened, cel is set to some real
 	//   high number, which is negative when considered signed. This actually requires to get fixed to

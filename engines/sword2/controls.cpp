@@ -618,7 +618,7 @@ public:
 
 	// The sound mute switches have 0 as their "down" state and 1 as
 	// their "up" state, so this function is needed to get consistent
-	// behaviour.
+	// behavior.
 
 	void reverseStates() {
 		_upState = 1;

@@ -167,7 +167,7 @@ uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
 	// user typed should be correct, but it looks like code 9999 means that
 	// if the string is empty at this point, the entry is also correct...
 	//
-	// With the removal of this code, the behaviour of the scene was
+	// With the removal of this code, the behavior of the scene was
 	// corrected
 
 	for (c = 0; nwords && n; c++, nwords--, n--) {
@@ -316,7 +316,7 @@ int AgiEngine::testIfCode(int lognum) {
 		case 0x13: // Unknown test command 19
 			// My current theory is that this command checks whether the ego is currently moving
 			// and that that movement has been caused using the mouse and not using the keyboard.
-			// I base this theory on the game's behaviour on an Amiga emulator, not on disassembly.
+			// I base this theory on the game's behavior on an Amiga emulator, not on disassembly.
 			// This command is used at least in the Amiga version of Gold Rush! v2.05 1989-03-09
 			// (AGI 2.316) in logics 1, 3, 5, 6, 137 and 192 (Logic.192 revealed this command's nature).
 			// TODO: Check this command's implementation using disassembly just to be sure.

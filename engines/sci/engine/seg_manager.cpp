@@ -1020,7 +1020,7 @@ void SegManager::uninstantiateScript(int script_nr) {
 
 	if (!scr || scr->isMarkedAsDeleted()) {   // Is it already unloaded?
 		//warning("unloading script 0x%x requested although not loaded", script_nr);
-		// This is perfectly valid SCI behaviour
+		// This is perfectly valid SCI behavior
 		return;
 	}
 

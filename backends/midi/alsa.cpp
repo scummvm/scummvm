@@ -382,7 +382,7 @@ MusicDevices AlsaMusicPlugin::getDevices() const {
 
 	AlsaDevices alsaDevices = getAlsaDevices();
 
-	// Since the default behaviour is to use the first device in the list,
+	// Since the default behavior is to use the first device in the list,
 	// try to put something sensible there. We used to have 17:0 and 65:0
 	// as defaults.
 
