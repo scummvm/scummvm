@@ -163,6 +163,8 @@ _arm_asm=no
 _verbose_build=no
 _dynamic_modules=no
 _plugins_default=static
+_plugin_prefix=
+_plugin_suffix=
 _nasm=auto
 # Default commands
 _ranlib=ranlib
@@ -2270,16 +2272,13 @@ add_to_config_mk_if_yes "$_verbose_build" 'VERBOSE_BUILD = 1'
 echo_n "Checking whether building plugins was requested... "
 echo "$_dynamic_modules"
 _mak_plugins=
-_def_plugin="/* -> plugins disabled */"
 
 if test "$_dynamic_modules" = yes ; then
 	echo_n "Checking whether building plugins is supported... "
 	case $_host_os in
 	android)
-_def_plugin='
-#define PLUGIN_PREFIX	"lib"
-#define PLUGIN_SUFFIX	".so"
-'
+		_plugin_prefix="lib"
+		_plugin_suffix=".so"
 # Work around an Android 2.0+ run-time linker bug:
 # The linker doesn't actually look in previously
 # loaded libraries when trying to resolve symbols -
@@ -2289,11 +2288,7 @@ _def_plugin='
 # (otherwise unnecessary) dependency from plugins back
 # to the main libscummvm.so.
 _mak_plugins='
-DYNAMIC_MODULES := 1
-PLUGIN_PREFIX := lib
-PLUGIN_SUFFIX := .so
 PLUGIN_EXTRA_DEPS = libscummvm.so
-CXXFLAGS        += -DDYNAMIC_MODULES
 CXXFLAGS        += -fpic
 PLUGIN_LDFLAGS  += $(LDFLAGS) -L. -lscummvm
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
@@ -2302,16 +2297,10 @@ LIBS            += -ldl
 '
 		;;
 	darwin*)
-_def_plugin='
-#define PLUGIN_PREFIX	""
-#define PLUGIN_SUFFIX	".plugin"
-'
+		_plugin_prefix=""
+		_plugin_suffix=".plugin"
 _mak_plugins='
-DYNAMIC_MODULES := 1
-PLUGIN_PREFIX :=
-PLUGIN_SUFFIX := .plugin
 PLUGIN_EXTRA_DEPS = $(EXECUTABLE)
-CXXFLAGS        += -DDYNAMIC_MODULES
 PLUGIN_LDFLAGS  += -bundle -bundle_loader $(EXECUTABLE) -exported_symbols_list "$(srcdir)/plugin.exp"
 PRE_OBJS_FLAGS  := -all_load
 POST_OBJS_FLAGS :=
@@ -2319,16 +2308,10 @@ LIBS            += -ldl
 '
 		;;
 	dreamcast)
-_def_plugin='
-#define PLUGIN_PREFIX	""
-#define PLUGIN_SUFFIX	".plg"
-'
+		_plugin_prefix=""
+		_plugin_suffix=".plg"
 _mak_plugins='
-DYNAMIC_MODULES		:= 1
-PLUGIN_PREFIX		:=
-PLUGIN_SUFFIX		:= .plg
 PLUGIN_EXTRA_DEPS	= $(abspath $(srcdir)/backends/platform/dc/plugin.x $(srcdir)/backends/platform/dc/plugin.syms) $(EXECUTABLE) backends/platform/dc/plugin_head.o
-CXXFLAGS			+= -DDYNAMIC_MODULES
 PLUGIN_LDFLAGS		= -ml -m4-single-only -nostartfiles -Wl,-q,-T$(srcdir)/backends/platform/dc/plugin.x,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/dc/plugin.syms -L$(ronindir)/lib backends/platform/dc/plugin_head.o
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
@@ -2342,16 +2325,10 @@ PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb-interwo
 '
 		;;
 	freebsd*)
-_def_plugin='
-#define PLUGIN_PREFIX	"lib"
-#define PLUGIN_SUFFIX	".so"
-'
+		_plugin_prefix="lib"
+		_plugin_suffix=".so"
 _mak_plugins='
-DYNAMIC_MODULES := 1
-PLUGIN_PREFIX := lib
-PLUGIN_SUFFIX := .so
 PLUGIN_EXTRA_DEPS =
-CXXFLAGS        += -DDYNAMIC_MODULES
 CXXFLAGS        += -fpic
 PLUGIN_LDFLAGS  += -shared
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
@@ -2366,16 +2343,10 @@ PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/wii/plugin.ld
 '
 		;;
 	gph*)
-_def_plugin='
-#define PLUGIN_PREFIX	""
-#define PLUGIN_SUFFIX	".plugin"
-'
+		_plugin_prefix=""
+		_plugin_suffix=".plugin"
 _mak_plugins='
-DYNAMIC_MODULES := 1
-PLUGIN_PREFIX :=
-PLUGIN_SUFFIX := .plugin
 PLUGIN_EXTRA_DEPS = $(EXECUTABLE)
-CXXFLAGS        += -DDYNAMIC_MODULES
 CXXFLAGS        += -fpic
 PLUGIN_LDFLAGS  += -shared
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
@@ -2384,16 +2355,10 @@ LIBS            += -ldl
 '
 		;;
 	linux*)
-_def_plugin='
-#define PLUGIN_PREFIX	"lib"
-#define PLUGIN_SUFFIX	".so"
-'
+		_plugin_prefix="lib"
+		_plugin_suffix=".so"
 _mak_plugins='
-DYNAMIC_MODULES := 1
-PLUGIN_PREFIX := lib
-PLUGIN_SUFFIX := .so
 PLUGIN_EXTRA_DEPS =
-CXXFLAGS        += -DDYNAMIC_MODULES
 CXXFLAGS        += -fpic
 PLUGIN_LDFLAGS  += -shared
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
@@ -2402,16 +2367,10 @@ LIBS            += -ldl
 '
 		;;
 	*mingw32*)
-_def_plugin='
-#define PLUGIN_PREFIX	""
-#define PLUGIN_SUFFIX	".dll"
-'
+		_plugin_prefix=""
+		_plugin_suffix=".dll"
 _mak_plugins='
-DYNAMIC_MODULES		:= 1
-PLUGIN_PREFIX		:=
-PLUGIN_SUFFIX		:= .dll
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
-CXXFLAGS			+= -DDYNAMIC_MODULES
 PLUGIN_LDFLAGS		:= -Wl,--enable-auto-import -shared ./libscummvm.a
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
@@ -2420,16 +2379,10 @@ POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-im
 	wince)
 		DEFINES="$DEFINES -DUNCACHED_PLUGINS"
 		HOSTEXEEXT=".dll"
-_def_plugin='
-#define PLUGIN_PREFIX	""
-#define PLUGIN_SUFFIX	".plugin"
-'
+		_plugin_prefix=""
+		_plugin_suffix=".plugin"
 _mak_plugins='
-DYNAMIC_MODULES		:= 1
-PLUGIN_PREFIX		:=
-PLUGIN_SUFFIX		:= .plugin
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
-CXXFLAGS			+= -DDYNAMIC_MODULES
 PLUGIN_LDFLAGS		:= -shared -lscummvm -L.
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a -shared
@@ -2452,16 +2405,10 @@ PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lstdc++ -lc
 '
 		;;
 	webos)
-_def_plugin='
-#define PLUGIN_PREFIX	"lib"
-#define PLUGIN_SUFFIX	".so"
-'
+		_plugin_prefix="lib"
+		_plugin_suffix=".so"
 _mak_plugins='
-DYNAMIC_MODULES := 1
-PLUGIN_PREFIX := lib
-PLUGIN_SUFFIX := .so
 PLUGIN_EXTRA_DEPS =
-CXXFLAGS        += -DDYNAMIC_MODULES
 CXXFLAGS        += -fpic
 PLUGIN_LDFLAGS  += -shared $(LDFLAGS)
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
@@ -2472,7 +2419,6 @@ LIBS            += -ldl
 	*)
 		_dynamic_modules=no
 		_mak_plugins=
-		_def_plugin=
 		;;
 	esac
 	echo "$_dynamic_modules"
@@ -2484,21 +2430,29 @@ fi
 define_in_config_if_yes "$_elf_loader" 'USE_ELF_LOADER'
 
 if test "$_elf_loader" = yes; then
-	CXXFLAGS="$CXXFLAGS -DDYNAMIC_MODULES"
-	_def_plugin='
-#define PLUGIN_PREFIX	""
-#define PLUGIN_SUFFIX	".plg"
-'
+	_plugin_prefix=""
+	_plugin_suffix=".plg"
 	_mak_plugins='
-DYNAMIC_MODULES		:= 1
-PLUGIN_PREFIX		:=
-PLUGIN_SUFFIX		:= .plg
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
 PLUGIN_LDFLAGS		= -nostartfiles backends/plugins/elf/version.o -Wl,-q,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/plugins/elf/plugin.syms
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '"$_mak_plugins"
 fi
+
+#
+# Set up some common plugin settings in config.h and config.mk, if enabled
+#
+if test "$_dynamic_modules" = yes ; then
+	add_line_to_config_h "#define PLUGIN_PREFIX	\"$_plugin_prefix\""
+	add_line_to_config_h "#define PLUGIN_SUFFIX	\"$_plugin_suffix\""
+	add_line_to_config_mk "PLUGIN_PREFIX := $_plugin_prefix"
+	add_line_to_config_mk "PLUGIN_SUFFIX := $_plugin_suffix"
+
+	add_line_to_config_mk "DYNAMIC_MODULES := 1"
+	DEFINES="$DEFINES -DDYNAMIC_MODULES"
+fi
+
 
 #
 # Check whether integrated MT-32 emulator support is requested
@@ -3268,9 +3222,6 @@ typedef unsigned $type_4_byte uint32;
 typedef signed $type_1_byte int8;
 typedef signed $type_2_byte int16;
 typedef signed $type_4_byte int32;
-
-/* Plugin settings */
-$_def_plugin
 
 #endif /* CONFIG_H */
 EOF
