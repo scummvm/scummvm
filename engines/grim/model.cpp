@@ -581,17 +581,21 @@ void Model::HierNode::addSprite(Sprite *sprite) {
 }
 
 void Model::HierNode::removeSprite(Sprite *sprite) {
-	Sprite* curr = _sprite;
-	Sprite* prev = NULL;
-	while (curr->_next) {
-		if (curr == sprite) {
-			if (prev)
-				prev->_next = curr->_next;
-			else
-				_sprite = curr->_next;
+	if (_sprite == sprite) {
+		_sprite = _sprite->_next;
+	} else {
+		Sprite* curr = _sprite;
+		Sprite* prev = NULL;
+		while (curr->_next) {
+			if (curr == sprite) {
+				if (prev)
+					prev->_next = curr->_next;
+				else
+					_sprite = curr->_next;
+			}
+			prev = curr;
+			curr = curr->_next;
 		}
-		prev = curr;
-		curr = curr->_next;
 	}
 }
 
