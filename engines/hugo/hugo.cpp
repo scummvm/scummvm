@@ -533,8 +533,8 @@ void HugoEngine::initStatus() {
 	_status.recallFl         = false;               // Toolbar "recall" button
 	_status.newScreenFl      = false;               // Screen not just loaded
 	_status.godModeFl        = false;               // No special cheats allowed
-	_status.showBoundariesFl = false;               // No special cheats allowed
-	_status.doQuitFl         = false;               // Boundaries hidden by default
+	_status.showBoundariesFl = false;               // Boundaries hidden by default
+	_status.doQuitFl         = false;
 	_status.skipIntroFl      = false;
 	_status.helpFl           = false;
 
