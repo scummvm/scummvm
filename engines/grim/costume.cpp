@@ -159,9 +159,9 @@ public:
 
 protected:
 	struct AnimationEntry {
-		AnimationState *anim;
-		int priority;
-		bool tagged;
+		AnimationState *_anim;
+		int _priority;
+		bool _tagged;
 	};
 
 	Common::String _filename;
@@ -402,18 +402,17 @@ void ModelComponent::reset() {
 	_hier->_hierVisible = _visible;
 }
 
-void ModelComponent::addActiveAnimation(AnimationState *anim, int priority1, int priority2)
-{
+void ModelComponent::addActiveAnimation(AnimationState *anim, int priority1, int priority2) {
 	// Keep the list of animations sorted by priorities in descending order. Because
 	// the animations have two different priorities, we add the animation to the list
 	// with both priorities.
 	Common::List<AnimationEntry>::iterator i;
 	AnimationEntry entry;
-	entry.anim = anim;
-	entry.priority = priority1;
-	entry.tagged = false;
+	entry._anim = anim;
+	entry._priority = priority1;
+	entry._tagged = false;
 	for (i = _activeAnims->begin(); i != _activeAnims->end(); ++i) {
-		if (i->priority < entry.priority) {
+		if (i->_priority < entry._priority) {
 			_activeAnims->insert(i, entry);
 			break;
 		}
@@ -421,10 +420,10 @@ void ModelComponent::addActiveAnimation(AnimationState *anim, int priority1, int
 	if (i == _activeAnims->end())
 		_activeAnims->push_back(entry);
 
-	entry.priority = priority2;
-	entry.tagged = true;
+	entry._priority = priority2;
+	entry._tagged = true;
 	for (i = _activeAnims->begin(); i != _activeAnims->end(); ++i) {
-		if (i->priority < entry.priority) {
+		if (i->_priority < entry._priority) {
 			_activeAnims->insert(i, entry);
 			break;
 		}
@@ -433,12 +432,13 @@ void ModelComponent::addActiveAnimation(AnimationState *anim, int priority1, int
 		_activeAnims->push_back(entry);
 }
 
-void ModelComponent::removeActiveAnimation(AnimationState *anim)
-{
+void ModelComponent::removeActiveAnimation(AnimationState *anim) {
 	Common::List<AnimationEntry>::iterator i;
 	for (i = _activeAnims->begin(); i != _activeAnims->end(); ++i) {
-		if (i->anim == anim)
+		if (i->_anim == anim) {
 			i = _activeAnims->erase(i);
+			i--;
+		}
 	}
 }
 
@@ -464,8 +464,8 @@ void ModelComponent::animate() {
 		// The highest priority layer gets as much weight as it wants, while the
 		// next layer gets the remaining amount and so on.
 		for (Common::List<AnimationEntry>::iterator j = _activeAnims->begin(); j != _activeAnims->end(); ++j) {
-			if (currPriority != j->priority) {
-				currPriority = j->priority;
+			if (currPriority != j->_priority) {
+				currPriority = j->_priority;
 				remainingWeight *= 1 - totalWeight;
 				if (remainingWeight <= 0.0f)
 					break;
@@ -485,10 +485,10 @@ void ModelComponent::animate() {
 				totalWeight = 0.0f;
 			}
 
-			float time = j->anim->_time / 1000.0f;
-			float weight = j->anim->_fade * remainingWeight;
-			j->anim->_keyf->animate(_hier, i, time, weight, j->tagged);
-			totalWeight += weight;
+			float time = j->_anim->_time / 1000.0f;
+			float weight = j->_anim->_fade * remainingWeight;
+			if (j->_anim->_keyf->animate(_hier, i, time, weight, j->_tagged))
+				totalWeight += weight;
 		}
 
 		float weightFactor = 1.0f;
@@ -748,11 +748,11 @@ void KeyframeComponent::saveState(SaveGame *state) {
 }
 
 void KeyframeComponent::restoreState(SaveGame *state) {
-	_active = state->readLESint32();
+	bool active = state->readLESint32();
 	_repeatMode = state->readLESint32();
 	_anim._time = state->readLESint32();
 
-	if (_active)
+	if (active)
 		activate();
 }
 

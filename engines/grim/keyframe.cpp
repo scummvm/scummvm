@@ -149,19 +149,22 @@ KeyframeAnim::~KeyframeAnim() {
 	g_resourceloader->uncacheKeyframe(this);
 }
 
-void KeyframeAnim::animate(Model::HierNode *nodes, int num, float time, float fade, bool tagged) const {
+bool KeyframeAnim::animate(Model::HierNode *nodes, int num, float time, float fade, bool tagged) const {
 	// Without this sending the bread down the tube in "mo" often crashes,
 	// because it goes outside the bounds of the array of the nodes.
 	if (num >= _numJoints)
-		return;
+		return false;
 
 	float frame = time * _fps;
 
 	if (frame > _numFrames)
 		frame = _numFrames;
 
-	if (_nodes[num] && tagged == ((_type & nodes[num]._type) != 0))
-		_nodes[num]->animate(nodes[num], frame, fade);
+	if (_nodes[num] && tagged == ((_type & nodes[num]._type) != 0)) {
+		return _nodes[num]->animate(nodes[num], frame, fade);
+	} else {
+		return false;
+	}
 }
 
 void KeyframeAnim::KeyframeEntry::loadBinary(const char *&data) {
@@ -219,9 +222,9 @@ KeyframeAnim::KeyframeNode::~KeyframeNode() {
 	delete[] _entries;
 }
 
-void KeyframeAnim::KeyframeNode::animate(Model::HierNode &node, float frame, float fade) const {
+bool KeyframeAnim::KeyframeNode::animate(Model::HierNode &node, float frame, float fade) const {
 	if (_numEntries == 0)
-		return;
+		return false;
 
 	// Do a binary search for the nearest previous frame
 	// Loop invariant: entries_[low].frame_ <= frame < entries_[high].frame_
@@ -262,6 +265,8 @@ void KeyframeAnim::KeyframeNode::animate(Model::HierNode &node, float frame, flo
 	while (droll < -180)
 		droll += 360;
 	node._animRoll += droll * fade;
+
+	return true;
 }
 
 } // end of namespace Grim
