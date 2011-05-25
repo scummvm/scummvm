@@ -58,10 +58,10 @@ bool HugoConsole::Cmd_gotoScreen(int argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Usage: %s <screen number>\n", argv[0]);
 		return true;
-	} else {
-		_vm->_scheduler->newScreen(strToInt(argv[1]));
-		return false;
-	}
+	} 
+	
+	_vm->_scheduler->newScreen(strToInt(argv[1]));
+	return false;
 }
 
 /**
