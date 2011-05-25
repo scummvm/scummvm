@@ -18,14 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
+
+#define FORBIDDEN_SYMBOL_EXCEPTION_getenv
+#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h	//On IRIX, sys/stat.h includes sys/time.h
 
 #include "common/scummsys.h"
 
-#ifdef UNIX
+#ifdef POSIX
 
 #include "backends/platform/sdl/posix/posix.h"
 #include "backends/saves/posix/posix-saves.h"
@@ -33,6 +34,7 @@
 
 #include <errno.h>
 #include <sys/stat.h>
+
 
 OSystem_POSIX::OSystem_POSIX(Common::String baseConfigName)
 	:
@@ -59,7 +61,7 @@ void OSystem_POSIX::initBackend() {
 Common::String OSystem_POSIX::getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
 
-	// On UNIX type systems, by default we store the config file inside
+	// On POSIX type systems, by default we store the config file inside
 	// to the HOME directory of the user.
 	const char *home = getenv("HOME");
 	if (home != NULL && strlen(home) < MAXPATHLEN)
@@ -80,6 +82,9 @@ Common::WriteStream *OSystem_POSIX::createLogFile() {
 	logFile += "/Library";
 #else
 	logFile += "/.scummvm";
+#endif
+#ifdef SAMSUNGTV
+	logFile = "/mtd_ram";
 #endif
 
 	struct stat sb;

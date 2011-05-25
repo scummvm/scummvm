@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Resource file routines for Simon1/Simon2
@@ -28,6 +25,7 @@
 
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 #include "agos/agos.h"

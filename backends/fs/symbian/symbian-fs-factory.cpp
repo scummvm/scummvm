@@ -17,14 +17,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #if defined(__SYMBIAN32__)
 #include "backends/fs/symbian/symbian-fs-factory.h"
-#include "backends/fs/symbian/symbian-fs.cpp"
+#include "backends/fs/symbian/symbian-fs.h"
 
 AbstractFSNode *SymbianFilesystemFactory::makeRootFileNode() const {
 	return new SymbianFilesystemNode(true);

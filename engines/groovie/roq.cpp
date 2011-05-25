@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // ROQ video player based on this specification by Dr. Tim Ferguson:
@@ -30,7 +27,11 @@
 #include "groovie/graphics.h"
 #include "groovie/groovie.h"
 
+#include "common/debug.h"
+#include "common/textconsole.h"
+
 #include "graphics/jpeg.h"
+#include "graphics/palette.h"
 
 #ifdef USE_RGB_COLOR
 // Required for the YUV to RGB conversion
@@ -175,7 +176,7 @@ void ROQPlayer::buildShowBuf() {
 			// Skip to the next pixel
 			out += _vm->_pixelFormat.bytesPerPixel;
 			if (!(x % _scaleX))
-				in += _currBuf->bytesPerPixel;
+				in += _currBuf->format.bytesPerPixel;
 		}
 #ifdef DITHER
 		_dither->nextLine();
@@ -328,8 +329,13 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 		_prevBuf->free();
 
 		// Allocate new buffers
-		_currBuf->create(width, height, 3);
-		_prevBuf->create(width, height, 3);
+		// These buffers use YUV data, since we can not describe it with a
+		// PixelFormat struct we just add some dummy PixelFormat with the
+		// correct bytes per pixel value. Since the surfaces are only used
+		// internally and no code assuming RGB data is present is used on
+		// them it should be just fine.
+		_currBuf->create(width, height, Graphics::PixelFormat(3, 0, 0, 0, 0, 0, 0, 0, 0));
+		_prevBuf->create(width, height, Graphics::PixelFormat(3, 0, 0, 0, 0, 0, 0, 0, 0));
 
 		// Clear the buffers with black YUV values
 		byte *ptr1 = (byte *)_currBuf->getBasePtr(0, 0);
@@ -697,7 +703,7 @@ void ROQPlayer::copy(byte size, int destx, int desty, int offx, int offy) {
 
 	for (int i = 0; i < size; i++) {
 		// Copy the current line
-		memcpy(dst, src, size * _currBuf->bytesPerPixel);
+		memcpy(dst, src, size * _currBuf->format.bytesPerPixel);
 
 		// Move to the beginning of the next line
 		dst += _currBuf->pitch;

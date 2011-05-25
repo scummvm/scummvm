@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -37,6 +34,7 @@
 
 #include "common/func.h"
 #include "common/hashmap.h"
+#include "common/textconsole.h"
 #include "sword25/kernel/common.h"
 
 namespace Sword25 {

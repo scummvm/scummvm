@@ -18,15 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 
 #include "queen/sound.h"
 #include "queen/input.h"

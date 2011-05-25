@@ -18,20 +18,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifdef ENABLE_LOL
 
+#include "kyra/gui_lol.h"
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
-#include "kyra/gui_lol.h"
 #include "kyra/resource.h"
 #include "kyra/util.h"
+#include "kyra/sound.h"
 
 #include "common/savefile.h"
+#include "common/system.h"
 #include "common/config-manager.h"
 #include "graphics/scaler.h"
 

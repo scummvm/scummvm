@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Missing string/stdlib/assert declarations for WinCE 2.xx
@@ -34,8 +31,6 @@ int isprint(int c);
 int isspace(int c);
 char *strrchr(const char *s, int c);
 char *strdup(const char *s);
-int _stricmp(const char *string1, const char *string2);
-int stricmp(const char *string1, const char *string2);
 void assert(void *expression);
 void assert(int expression);
 long int strtol(const char *nptr, char **endptr, int base);
@@ -56,8 +51,6 @@ void GetCurrentDirectory(int len, char *buf);
 #include <math.h>
 #undef GetCurrentDirectory
 extern "C" void GetCurrentDirectory(int len, char *buf);
-#define stricmp _stricmp
-#define strnicmp _strnicmp
 #define snprintf _snprintf
 #define strdup _strdup
 #define fopen wce_fopen

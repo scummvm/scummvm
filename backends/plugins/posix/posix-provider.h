@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef BACKENDS_PLUGINS_POSIX_H
@@ -28,13 +25,13 @@
 
 #include "base/plugins.h"
 
-#if defined(DYNAMIC_MODULES) && defined(UNIX)
+#if defined(DYNAMIC_MODULES) && defined(POSIX)
 
 class POSIXPluginProvider : public FilePluginProvider {
 protected:
-	Plugin* createPlugin(const Common::FSNode &node) const;
+	Plugin *createPlugin(const Common::FSNode &node) const;
 };
 
-#endif // defined(DYNAMIC_MODULES) && defined(UNIX)
+#endif // defined(DYNAMIC_MODULES) && defined(POSIX)
 
 #endif

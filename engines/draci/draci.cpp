@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/scummsys.h"
@@ -30,7 +27,6 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/keyboard.h"
-#include "common/EventRecorder.h"
 
 #include "engines/util.h"
 
@@ -74,7 +70,8 @@ const uint kSoundsFrequency = 13000;
 const uint kDubbingFrequency = 22050;
 
 DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
- : Engine(syst) {
+ : Engine(syst), _rnd("draci") {
+
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
 	// need to do such things, do them from init().
@@ -95,9 +92,6 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	DebugMan.addDebugChannel(kDraciWalkingDebugLevel, "walking", "Walking debug info");
 
 	_console = new DraciConsole(this);
-
-	// Don't forget to register your random source
-	g_eventRec.registerRandomSource(_rnd, "draci");
 }
 
 bool DraciEngine::hasFeature(EngineFeature f) const {

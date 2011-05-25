@@ -22,9 +22,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 //
@@ -117,6 +114,7 @@ SOURCE backends\platform\sdl\hardwarekeys.cpp
 SOURCE backends\platform\sdl\sdl.cpp
 SOURCE backends\audiocd\sdl\sdl-audiocd.cpp
 SOURCE backends\audiocd\default\default-audiocd.cpp
+SOURCE backends\fs\symbian\symbian-fs.cpp
 SOURCE backends\fs\symbian\symbian-fs-factory.cpp
 SOURCE backends\platform\symbian\src\SymbianOS.cpp
 SOURCE backends\platform\symbian\src\SymbianActions.cpp

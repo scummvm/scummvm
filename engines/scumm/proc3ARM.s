@@ -18,47 +18,44 @@
 @ along with this program@ if not, write to the Free Software
 @ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 @
-@ $URL$
-@ $Id$
-@
 @ @author Robin Watts (robin@wss.co.uk)
 
 	.text
 
-	.global	ClassicProc3RendererShadowARM
+	.global	_ClassicProc3RendererShadowARM
 
 
-.equ	_scaleIndexY	,	112
-.equ	_numStrips	,	108
-.equ	_palette	,	104
-.equ	_shadow_table	,	100
-.equ	_scaleIndexX	,	96
-.equ	_scaleX		,	92
-.equ	_height		,	88
-.equ	store_r14	,	84
-.equ	store_r11	,	80
-.equ	store_r10	,	76
-.equ	store_r9	,	72
-.equ	store_r8	,	68
-.equ	store_r7	,	64
-.equ	store_r6	,	60
-.equ	store_r5	,	56
-.equ	store_r4	,	52
-.equ	src		,	48
-.equ	height		,	44
-.equ	len		,	40
-.equ	v1_shr		,	36
-.equ	v1_skip_width	,	32
-.equ	v1_destptr	,	28
-.equ	v1_scaleXstep	,	24
-.equ	v1_mask_ptr	,	20
-.equ	v1_y		,	16
-.equ	v1_scaletable	,	12
-.equ	pitch		,	8
-.equ	scaleIdxXPtr	,	4
-.equ	scaleIdxYPtr	,	0
+.set	_scaleIndexY	,	112
+.set	_numStrips	,	108
+.set	_palette	,	104
+.set	_shadow_table	,	100
+.set	_scaleIndexX	,	96
+.set	_scaleX		,	92
+.set	_height		,	88
+.set	store_r14	,	84
+.set	store_r11	,	80
+.set	store_r10	,	76
+.set	store_r9	,	72
+.set	store_r8	,	68
+.set	store_r7	,	64
+.set	store_r6	,	60
+.set	store_r5	,	56
+.set	store_r4	,	52
+.set	src		,	48
+.set	height		,	44
+.set	len		,	40
+.set	v1_shr		,	36
+.set	v1_skip_width	,	32
+.set	v1_destptr	,	28
+.set	v1_scaleXstep	,	24
+.set	v1_mask_ptr	,	20
+.set	v1_y		,	16
+.set	v1_scaletable	,	12
+.set	pitch		,	8
+.set	scaleIdxXPtr	,	4
+.set	scaleIdxYPtr	,	0
 
-.equ	space		,	48
+.set	space		,	48
 
 	@ r0 = _scaleY
 	@ r1 = v1
@@ -71,7 +68,7 @@
 	@ <> = _palette
 	@ <> = _numstrips
 	@ <> = _scaleIndexY
-ClassicProc3RendererShadowARM:
+_ClassicProc3RendererShadowARM:
 	@ shadow20 = false
 	@ shadowed = true
 	@ unscaled = false

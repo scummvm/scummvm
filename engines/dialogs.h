@@ -17,23 +17,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef GLOBAL_DIALOGS_H
 #define GLOBAL_DIALOGS_H
 
-#include "common/str.h"
 #include "gui/dialog.h"
 
 class Engine;
 
 namespace GUI {
-	class ButtonWidget;
-	class GraphicsWidget;
-	class SaveLoadChooser;
+class ButtonWidget;
+class CommandSender;
+class GraphicsWidget;
+class SaveLoadChooser;
 }
 
 class MainMenuDialog : public GUI::Dialog {

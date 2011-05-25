@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "scumm/file.h"
@@ -87,40 +84,40 @@ void ScummEngine_v2::readClassicIndexFile() {
 	}
 
 	for (i = 0; i < _numRooms; i++) {
-		_res->roomno[rtRoom][i] = i;
+		_res->_types[rtRoom][i]._roomno = i;
 	}
 	_fileHandle->seek(_numRooms, SEEK_CUR);
 	for (i = 0; i < _numRooms; i++) {
-		_res->roomoffs[rtRoom][i] = _fileHandle->readUint16LE();
-		if (_res->roomoffs[rtRoom][i] == 0xFFFF)
-			_res->roomoffs[rtRoom][i] = (uint32)RES_INVALID_OFFSET;
+		_res->_types[rtRoom][i]._roomoffs = _fileHandle->readUint16LE();
+		if (_res->_types[rtRoom][i]._roomoffs == 0xFFFF)
+			_res->_types[rtRoom][i]._roomoffs = (uint32)RES_INVALID_OFFSET;
 	}
 
 	for (i = 0; i < _numCostumes; i++) {
-		_res->roomno[rtCostume][i] = _fileHandle->readByte();
+		_res->_types[rtCostume][i]._roomno = _fileHandle->readByte();
 	}
 	for (i = 0; i < _numCostumes; i++) {
-		_res->roomoffs[rtCostume][i] = _fileHandle->readUint16LE();
-		if (_res->roomoffs[rtCostume][i] == 0xFFFF)
-			_res->roomoffs[rtCostume][i] = (uint32)RES_INVALID_OFFSET;
+		_res->_types[rtCostume][i]._roomoffs = _fileHandle->readUint16LE();
+		if (_res->_types[rtCostume][i]._roomoffs == 0xFFFF)
+			_res->_types[rtCostume][i]._roomoffs = (uint32)RES_INVALID_OFFSET;
 	}
 
 	for (i = 0; i < _numScripts; i++) {
-		_res->roomno[rtScript][i] = _fileHandle->readByte();
+		_res->_types[rtScript][i]._roomno = _fileHandle->readByte();
 	}
 	for (i = 0; i < _numScripts; i++) {
-		_res->roomoffs[rtScript][i] = _fileHandle->readUint16LE();
-		if (_res->roomoffs[rtScript][i] == 0xFFFF)
-			_res->roomoffs[rtScript][i] = (uint32)RES_INVALID_OFFSET;
+		_res->_types[rtScript][i]._roomoffs = _fileHandle->readUint16LE();
+		if (_res->_types[rtScript][i]._roomoffs == 0xFFFF)
+			_res->_types[rtScript][i]._roomoffs = (uint32)RES_INVALID_OFFSET;
 	}
 
 	for (i = 0; i < _numSounds; i++) {
-		_res->roomno[rtSound][i] = _fileHandle->readByte();
+		_res->_types[rtSound][i]._roomno = _fileHandle->readByte();
 	}
 	for (i = 0; i < _numSounds; i++) {
-		_res->roomoffs[rtSound][i] = _fileHandle->readUint16LE();
-		if (_res->roomoffs[rtSound][i] == 0xFFFF)
-			_res->roomoffs[rtSound][i] = (uint32)RES_INVALID_OFFSET;
+		_res->_types[rtSound][i]._roomoffs = _fileHandle->readUint16LE();
+		if (_res->_types[rtSound][i]._roomoffs == 0xFFFF)
+			_res->_types[rtSound][i]._roomoffs = (uint32)RES_INVALID_OFFSET;
 	}
 }
 

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * Process scheduler.
  */
 
@@ -30,6 +27,7 @@
 #include "tinsel/polygons.h"
 #include "tinsel/sched.h"
 
+#include "common/textconsole.h"
 #include "common/util.h"
 
 namespace Tinsel {

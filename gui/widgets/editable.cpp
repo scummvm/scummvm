@@ -17,14 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
-#include "common/events.h"
+#include "common/rect.h"
+#include "common/system.h"
 #include "gui/widgets/editable.h"
 #include "gui/gui-manager.h"
+#include "graphics/font.h"
 
 namespace GUI {
 
@@ -94,6 +93,28 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	if (_caretVisible)
 		drawCaret(true);
 
+	// Remap numeric keypad if NUM lock is *not* active.
+	// This code relies on the fact that the various KEYCODE_KP* values are
+	// consecutive.
+	if (0 == (state.flags & Common::KBD_NUM)
+		&& Common::KEYCODE_KP0 <= state.keycode
+		&& state.keycode <= Common::KEYCODE_KP_PERIOD) {
+		const Common::KeyCode remap[11] = {
+			Common::KEYCODE_INSERT, 	// KEYCODE_KP0
+			Common::KEYCODE_END,	 	// KEYCODE_KP1
+			Common::KEYCODE_DOWN, 		// KEYCODE_KP2
+			Common::KEYCODE_PAGEDOWN, 	// KEYCODE_KP3
+			Common::KEYCODE_LEFT, 		// KEYCODE_KP4
+			Common::KEYCODE_INVALID, 	// KEYCODE_KP5
+			Common::KEYCODE_RIGHT,	 	// KEYCODE_KP6
+			Common::KEYCODE_HOME,	 	// KEYCODE_KP7
+			Common::KEYCODE_UP, 		// KEYCODE_KP8
+			Common::KEYCODE_PAGEUP, 	// KEYCODE_KP9
+			Common::KEYCODE_DELETE,	 	// KEYCODE_KP_PERIOD
+		};
+		state.keycode = remap[state.keycode - Common::KEYCODE_KP0];
+	}
+
 	switch (state.keycode) {
 	case Common::KEYCODE_RETURN:
 	case Common::KEYCODE_KP_ENTER:
@@ -118,27 +139,6 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		forcecaret = true;
 		break;
 
-	// Keypad & special keys
-	//   - if num lock is set, we always go to the default case
-	//   - if num lock is not set, we either fall down to the special key case
-	//     or ignore the key press in case of 0 (INSERT), 2 (DOWN), 3 (PGDWN)
-	//     5, 8 (UP) and 9 (PGUP)
-
-	case Common::KEYCODE_KP0:
-	case Common::KEYCODE_KP2:
-	case Common::KEYCODE_KP3:
-	case Common::KEYCODE_KP5:
-	case Common::KEYCODE_KP8:
-	case Common::KEYCODE_KP9:
-		if (state.flags & Common::KBD_NUM)
-			defaultKeyDownHandler(state, dirty, forcecaret, handled);
-		break;
-
-	case Common::KEYCODE_KP_PERIOD:
-		if (state.flags & Common::KBD_NUM) {
-			defaultKeyDownHandler(state, dirty, forcecaret, handled);
-			break;
-		}
 	case Common::KEYCODE_DELETE:
 		if (_caretPos < (int)_editString.size()) {
 			_editString.deleteChar(_caretPos);
@@ -149,22 +149,15 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		forcecaret = true;
 		break;
 
-	case Common::KEYCODE_KP1:
-		if (state.flags & Common::KBD_NUM) {
-			defaultKeyDownHandler(state, dirty, forcecaret, handled);
-			break;
-		}
+	case Common::KEYCODE_DOWN:
 	case Common::KEYCODE_END:
+		// Move caret to end
 		dirty = setCaretPos(_editString.size());
 		forcecaret = true;
 		break;
 
-	case Common::KEYCODE_KP4:
-		if (state.flags & Common::KBD_NUM) {
-			defaultKeyDownHandler(state, dirty, forcecaret, handled);
-			break;
-		}
 	case Common::KEYCODE_LEFT:
+		// Move caret one left (if possible)
 		if (_caretPos > 0) {
 			dirty = setCaretPos(_caretPos - 1);
 		}
@@ -172,12 +165,8 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		dirty = true;
 		break;
 
-	case Common::KEYCODE_KP6:
-		if (state.flags & Common::KBD_NUM) {
-			defaultKeyDownHandler(state, dirty, forcecaret, handled);
-			break;
-		}
 	case Common::KEYCODE_RIGHT:
+		// Move caret one right (if possible)
 		if (_caretPos < (int)_editString.size()) {
 			dirty = setCaretPos(_caretPos + 1);
 		}
@@ -185,15 +174,42 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		dirty = true;
 		break;
 
-	case Common::KEYCODE_KP7:
-		if (state.flags & Common::KBD_NUM) {
-			defaultKeyDownHandler(state, dirty, forcecaret, handled);
-			break;
-		}
+	case Common::KEYCODE_UP:
 	case Common::KEYCODE_HOME:
+		// Move caret to start
 		dirty = setCaretPos(0);
 		forcecaret = true;
 		break;
+
+#ifdef MACOSX
+	// Let ctrl-a / ctrl-e move the caret to the start / end of the line.
+	//
+	// These shortcuts go back a long time for command line programs. As
+	// for edit fields in GUIs, they are supported natively on Mac OS X,
+	// which is why I enabled these shortcuts there.
+	// On other systems (Windows, Gnome), Ctrl-A by default means
+	// "select all", which is why I didn't enable the shortcuts there
+	// for now, to avoid potential confusion.
+	//
+	// But since we don't support text selection, and since at least Gnome
+	// can be configured to also support ctrl-a and ctrl-e, we may want
+	// to extend this code to other targets, maybe even all. I'll leave
+	// this to other porters to decide, though.
+	case Common::KEYCODE_a:
+	case Common::KEYCODE_e:
+		if (state.flags & Common::KBD_CTRL) {
+			if (state.keycode == Common::KEYCODE_a) {
+				// Move caret to start
+				dirty = setCaretPos(0);
+				forcecaret = true;
+			} else if (state.keycode == Common::KEYCODE_e) {
+				// Move caret to end
+				dirty = setCaretPos(_editString.size());
+				forcecaret = true;
+			}
+			break;
+		}
+#endif
 
 	default:
 		defaultKeyDownHandler(state, dirty, forcecaret, handled);

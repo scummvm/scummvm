@@ -18,15 +18,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SCI_VIDEO_SEQ_DECODER_H
 #define SCI_VIDEO_SEQ_DECODER_H
 
+#include "common/rational.h"
+#include "graphics/pixelformat.h"
 #include "video/video_decoder.h"
+
+namespace Common {
+class SeekableReadStream;
+}
+
+namespace Graphics {
+struct Surface;
+}
 
 namespace Sci {
 

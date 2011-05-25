@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /** \file
@@ -29,6 +26,7 @@
 
 #include "common/endian.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 
 #include "cine/cine.h"
 #include "cine/anim.h"

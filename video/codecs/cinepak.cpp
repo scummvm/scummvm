@@ -18,14 +18,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "video/codecs/cinepak.h"
 
+#include "common/debug.h"
+#include "common/stream.h"
 #include "common/system.h"
+#include "common/textconsole.h"
+#include "common/util.h"
+
+#include "graphics/surface.h"
 
 // Code here partially based off of ffmpeg ;)
 
@@ -89,7 +92,7 @@ const Graphics::Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream 
 
 	if (!_curFrame.surface) {
 		_curFrame.surface = new Graphics::Surface();
-		_curFrame.surface->create(_curFrame.width, _curFrame.height, _pixelFormat.bytesPerPixel);
+		_curFrame.surface->create(_curFrame.width, _curFrame.height, _pixelFormat);
 	}
 
 	// Reset the y variable.

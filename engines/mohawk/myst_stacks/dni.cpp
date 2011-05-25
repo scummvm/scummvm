@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "mohawk/myst.h"
@@ -30,6 +27,8 @@
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/dni.h"
+
+#include "common/system.h"
 
 namespace Mohawk {
 namespace MystStacks {

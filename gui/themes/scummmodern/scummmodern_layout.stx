@@ -19,9 +19,6 @@
  - along with this program; if not, write to the Free Software
  - Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  -
- - $URL$
- - $Id$
- -
  -->
 <layout_info resolution = 'y>399'>
 	<globals>
@@ -128,7 +125,7 @@
 				/>
 				<space />
 				<widget name = 'Version'
-						width = '247'
+						width = '310'
 						height = 'Globals.Line.Height'
 						textalign = 'center'
 				/>

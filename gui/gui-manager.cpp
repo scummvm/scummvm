@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "common/events.h"
@@ -27,7 +24,8 @@
 #include "common/util.h"
 #include "common/config-manager.h"
 #include "common/algorithm.h"
-#include "common/timer.h"
+#include "common/rect.h"
+#include "common/textconsole.h"
 #include "common/translation.h"
 
 #include "backends/keymapper/keymapper.h"
@@ -37,6 +35,7 @@
 #include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
 #include "gui/Tooltip.h"
+#include "gui/widget.h"
 
 #include "graphics/cursorman.h"
 

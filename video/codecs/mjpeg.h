@@ -18,19 +18,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef VIDEO_CODECS_MJPEG_H
 #define VIDEO_CODECS_MJPEG_H
 
-#include "common/scummsys.h"
-
 #include "video/codecs/codec.h"
-#include "graphics/jpeg.h"
 #include "graphics/pixelformat.h"
+
+namespace Common {
+class SeekableReadStream;
+}
+
+namespace Graphics {
+class JPEG;
+struct Surface;
+}
 
 namespace Video {
 

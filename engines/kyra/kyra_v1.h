@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef KYRA_KYRA_V1_H
@@ -29,10 +26,10 @@
 #include "engines/engine.h"
 
 #include "common/array.h"
+#include "common/error.h"
 #include "common/events.h"
 #include "common/random.h"
 #include "common/hashmap.h"
-#include "common/system.h"
 
 #include "audio/mixer.h"
 
@@ -43,6 +40,10 @@ namespace Common {
 class SeekableReadStream;
 class WriteStream;
 } // End of namespace Common
+
+namespace Graphics {
+struct Surface;
+}
 
 class KyraMetaEngine;
 
@@ -166,7 +167,6 @@ enum MusicDataID {
 class Screen;
 class Resource;
 class Sound;
-class Movie;
 class TextDisplayer;
 class StaticResource;
 class TimerManager;

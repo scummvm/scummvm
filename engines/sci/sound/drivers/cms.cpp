@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "sci/sound/drivers/mididriver.h"
@@ -28,6 +25,8 @@
 #include "audio/softsynth/emumidi.h"
 #include "audio/softsynth/cms.h"
 #include "audio/mixer.h"
+
+#include "common/system.h"
 
 #include "sci/resource.h"
 

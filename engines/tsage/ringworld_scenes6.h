@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_RINGWORLD_SCENES6_H
@@ -216,11 +213,11 @@ class Scene5200 : public Scene {
 	};
 
 	/* Hotspots */
-	class Hotspot9 : public SceneItemExt {
+	class Hotspot9 : public SceneObjectExt {
 	public:
 		virtual void doAction(int action);
 	};
-	class Hotspot10 : public SceneItemExt {
+	class Hotspot10 : public SceneObjectExt {
 	public:
 		virtual void doAction(int action);
 	};
@@ -321,8 +318,8 @@ public:
 	Scene5300();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
-	virtual void synchronise(Serialiser &s) {
-		Scene::synchronise(s);
+	virtual void synchronize(Serializer &s) {
+		Scene::synchronize(s);
 		s.syncAsSint16LE(_field1B0A);
 	}
 };

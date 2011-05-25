@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -32,7 +29,9 @@
 
 // This module contains all the scheduling and timing stuff
 
+#include "common/debug.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "hugo/hugo.h"
 #include "hugo/schedule.h"
@@ -1143,6 +1142,10 @@ void Scheduler::insertAction(act *action) {
 	case AGSCHEDULE:
 		curEvent->localActionFl = false;            // Lasts over a new screen
 		break;
+	// Workaround: When dying, switch to storyMode in order to block the keyboard.
+	case GAMEOVER:
+		_vm->getGameStatus().storyModeFl = true;
+	// No break on purpose
 	default:
 		curEvent->localActionFl = true;             // Rest are for current screen only
 		break;

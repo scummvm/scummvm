@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "mohawk/cstime.h"
@@ -30,21 +27,19 @@
 #include "mohawk/cstime_view.h"
 #include "mohawk/resource.h"
 #include "mohawk/cursors.h"
-#include "mohawk/sound.h"
 #include "mohawk/video.h"
 
 #include "common/config-manager.h"
+#include "common/error.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/fs.h"
-
-#include "engines/util.h"
+#include "common/textconsole.h"
+#include "common/system.h"
 
 namespace Mohawk {
 
 MohawkEngine_CSTime::MohawkEngine_CSTime(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
-	_rnd = new Common::RandomSource();
-	g_eventRec.registerRandomSource(*_rnd, "cstime");
+	_rnd = new Common::RandomSource("cstime");
 
 	// If the user just copied the CD contents, the fonts are in a subdirectory.
 	const Common::FSNode gameDataDir(ConfMan.get("path"));

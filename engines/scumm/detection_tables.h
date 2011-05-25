@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SCUMM_DETECTION_TABLES_H
@@ -187,6 +184,8 @@ using Common::GUIO_NOLAUNCHLOAD;
 using Common::GUIO_NOMIDI;
 using Common::GUIO_NOSPEECH;
 using Common::GUIO_MIDITOWNS;
+using Common::GUIO_MIDIADLIB;
+using Common::GUIO_MIDIMT32;
 
 // The following table contains information about variants of our various
 // games. We index into it with help of md5table (from scumm-md5.h), to find
@@ -245,11 +244,11 @@ static const GameSettings gameVariantsTable[] = {
 	{"monkey", "SEGA",         0, GID_MONKEY,     5, 0, MDT_NONE,                         GF_AUDIOTRACKS, Common::kPlatformSegaCD, GUIO_NOSPEECH | GUIO_NOMIDI},
 
 	{"monkey2",  "", 0, GID_MONKEY2,  5, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, UNK, GUIO_NOSPEECH},
-	{"monkey2", "FM-TOWNS", 0, GID_MONKEY2,  5, 0, MDT_TOWNS | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, Common::kPlatformFMTowns, GUIO_NOSPEECH},
+	{"monkey2", "FM-TOWNS", 0, GID_MONKEY2,  5, 0, MDT_TOWNS | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, Common::kPlatformFMTowns, GUIO_NOSPEECH | GUIO_MIDITOWNS | GUIO_MIDIADLIB | GUIO_MIDIMT32},
 
 	{"atlantis", "", 0, GID_INDY4,    5, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, UNK, GUIO_NONE},
 	{"atlantis", "Floppy", 0, GID_INDY4,    5, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, UNK, GUIO_NOSPEECH},
-	{"atlantis", "FM-TOWNS", 0, GID_INDY4,    5, 0, MDT_TOWNS | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, Common::kPlatformFMTowns, GUIO_NONE},
+	{"atlantis", "FM-TOWNS", 0, GID_INDY4,    5, 0, MDT_TOWNS | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, Common::kPlatformFMTowns, GUIO_MIDITOWNS | GUIO_MIDIADLIB | GUIO_MIDIMT32},
 
 	{"tentacle", "", 0, GID_TENTACLE, 6, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM, GF_USE_KEY, UNK, GUIO_NONE},
 	{"tentacle", "Floppy", 0, GID_TENTACLE, 6, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM, GF_USE_KEY, UNK, GUIO_NOSPEECH},
@@ -372,7 +371,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"arttime", 0, 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_HE_LOCALIZED | GF_16BIT_COLOR, UNK, GUIO_NOLAUNCHLOAD | GUIO_NOMIDI},
 	{"baseball2001", 0, 0, GID_BASEBALL2001, 6, 99, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK, GUIO_NOLAUNCHLOAD | GUIO_NOMIDI},
 	{"readtime", 0, 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_HE_LOCALIZED | GF_16BIT_COLOR, UNK, GUIO_NOLAUNCHLOAD | GUIO_NOMIDI},
-	{"SoccerMLS", 0, 0, GID_SOCCER, 6, 99, MDT_NONE, GF_USE_KEY | GF_HE_LOCALIZED | GF_16BIT_COLOR, UNK, GUIO_NOLAUNCHLOAD | GUIO_NOMIDI},
+	{"SoccerMLS", 0, 0, GID_SOCCERMLS, 6, 99, MDT_NONE, GF_USE_KEY | GF_HE_LOCALIZED | GF_16BIT_COLOR, UNK, GUIO_NOLAUNCHLOAD | GUIO_NOMIDI},
 	{"spyozon", 0, 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_HE_LOCALIZED | GF_16BIT_COLOR, UNK, GUIO_NOLAUNCHLOAD | GUIO_NOMIDI},
 
 	{"freddicove", "",       0, GID_HEGAME, 6,  99, MDT_NONE, GF_USE_KEY | GF_HE_LOCALIZED | GF_16BIT_COLOR, UNK, GUIO_NOLAUNCHLOAD | GUIO_NOMIDI},
@@ -386,7 +385,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"Baseball2003", 0, 0, GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK, GUIO_NOLAUNCHLOAD | GUIO_NOMIDI},
 	{"basketball", 0, 0, GID_BASKETBALL, 6, 100, MDT_NONE, GF_USE_KEY| GF_16BIT_COLOR, UNK, GUIO_NOLAUNCHLOAD | GUIO_NOMIDI},
 	{"football2002", 0, 0, GID_FOOTBALL, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK, GUIO_NOLAUNCHLOAD | GUIO_NOMIDI},
-	{"Soccer2004", 0, 0, GID_SOCCER, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK, GUIO_NOLAUNCHLOAD | GUIO_NOMIDI},
+	{"Soccer2004", 0, 0, GID_SOCCER2004, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK, GUIO_NOLAUNCHLOAD | GUIO_NOMIDI},
 
 	// U32 code required, for testing only
 	{"moonbase", 0, 0, GID_MOONBASE, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK, GUIO_NOLAUNCHLOAD | GUIO_NOMIDI},
@@ -483,6 +482,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 #ifdef ENABLE_SCUMM_7_8
 	{ "dig", "dig.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "dig", "thedig.la%d", kGenDiskNum, UNK_LANG, UNK, "Demo" }, // Used by an alternate version of the demo
 	{ "dig", "The Dig Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "dig", "The Dig Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, "Demo" },
 

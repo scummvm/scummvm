@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TOOLS_CREATE_PROJECT_MSVC_H
@@ -59,8 +56,9 @@ protected:
 	 * @param bits Number of bits the platform supports.
 	 * @param defines Defines the platform needs to have set.
 	 * @param prefix File prefix, used to add additional include paths.
+	 * @param runBuildEvents true if generating a revision number, false otherwise
 	 */
-	virtual void outputGlobalPropFile(std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix) = 0;
+	virtual void outputGlobalPropFile(std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents) = 0;
 
 	/**
 	 * Generates the project properties for debug and release settings.
@@ -88,11 +86,14 @@ protected:
 	std::string getPreBuildEvent() const;
 
 	/**
-	 * Get the command line for copying data files to the build directory
+	 * Get the command line for copying data files to the build directory.
 	 *
-	 * @param isWin32 Bitness of property file
+	 * @param	isWin32		   	Bitness of property file.
+	 * @param	createInstaller	true to NSIS create installer
+	 *
+	 * @return	The post build event.
 	 */
-	std::string getPostBuildEvent(bool isWin32) const;
+	std::string getPostBuildEvent(bool isWin32, bool createInstaller) const;
 };
 
 } // End of CreateProjectTool namespace

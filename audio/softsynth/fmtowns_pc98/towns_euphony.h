@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TOWNS_EUP_H
@@ -58,11 +55,11 @@ public:
 
 	void setOutputVolume(int chanType, int volLeft, int volRight);
 
-	int chanEnable(int tableEntry, int val);
-	int chanMode(int tableEntry, int val);
-	int chanOrdr(int tableEntry, int val);
-	int chanVolumeShift(int tableEntry, int val);
-	int chanNoteShift(int tableEntry, int val);
+	int configChan_enable(int tableEntry, int val);
+	int configChan_setMode(int tableEntry, int val);
+	int configChan_remap(int tableEntry, int val);
+	int configChan_adjustVolume(int tableEntry, int val);
+	int configChan_setTranspose(int tableEntry, int val);
 
 	int assignChannel(int chan, int tableEntry);
 
@@ -114,8 +111,8 @@ private:
 		return false;
 	}
 
-	uint8 applyNoteShift(uint8 in);
-	uint8 applyVolumeShift(uint8 in);
+	uint8 applyTranspose(uint8 in);
+	uint8 applyVolumeAdjust(uint8 in);
 
 	void sendNoteOff();
 	void sendNoteOn();

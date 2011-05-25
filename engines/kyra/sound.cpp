@@ -18,25 +18,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 
-#include "common/system.h"
-#include "common/config-manager.h"
-
-#include "kyra/resource.h"
 #include "kyra/sound.h"
+#include "kyra/resource.h"
 
 #include "audio/mixer.h"
-#include "audio/decoders/voc.h"
 #include "audio/audiostream.h"
 
 #include "audio/decoders/flac.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
+#include "audio/decoders/voc.h"
 #include "audio/decoders/vorbis.h"
 
 namespace Kyra {

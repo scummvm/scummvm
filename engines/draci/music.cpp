@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // MIDI and digital music class
@@ -29,6 +26,7 @@
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
 #include "common/file.h"
 
 #include "draci/draci.h"

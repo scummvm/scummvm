@@ -17,17 +17,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
-#ifdef __PSP__
+#if defined(__PSP__)
 
-#include "engines/engine.h"
-#include "backends/fs/abstract-fs.h"
+// Disable printf override in common/forbidden.h to avoid
+// clashes with pspdebug.h from the PSP SDK.
+// That header file uses
+//   __attribute__((format(printf,1,2)));
+// which gets messed up by our override mechanism; this could
+// be avoided by either changing the PSP SDK to use the equally
+// legal and valid
+//   __attribute__((format(__printf__,1,2)));
+// or by refining our printf override to use a varadic macro
+// (which then wouldn't be portable, though).
+// Anyway, for now we just disable the printf override globally
+// for the PSP port
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
+#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+
+#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+
+#include "backends/fs/psp/psp-fs.h"
 #include "backends/fs/psp/psp-stream.h"
 #include "common/bufferedstream.h"
+#include "engines/engine.h"
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -40,48 +57,6 @@
 //#define __PSP_DEBUG_FUNCS__ /* For debugging function calls */
 //#define __PSP_DEBUG_PRINT__	/* For debug printouts */
 #include "backends/platform/psp/trace.h"
-
-/**
- * Implementation of the ScummVM file system API based on PSPSDK API.
- *
- * Parts of this class are documented in the base interface class, AbstractFSNode.
- */
-class PSPFilesystemNode : public AbstractFSNode {
-protected:
-	Common::String _displayName;
-	Common::String _path;
-	bool _isDirectory;
-	bool _isValid;
-
-public:
-	/**
-	 * Creates a PSPFilesystemNode with the root node as path.
-	 */
-	PSPFilesystemNode();
-
-	/**
-	 * Creates a PSPFilesystemNode for a given path.
-	 *
-	 * @param path Common::String with the path the new node should point to.
-	 * @param verify true if the isValid and isDirectory flags should be verified during the construction.
-	 */
-	PSPFilesystemNode(const Common::String &p, bool verify = true);
-
-	virtual bool exists() const;
-	virtual Common::String getDisplayName() const { return _displayName; }
-	virtual Common::String getName() const { return _displayName; }
-	virtual Common::String getPath() const { return _path; }
-	virtual bool isDirectory() const { return _isDirectory; }
-	virtual bool isReadable() const;
-	virtual bool isWritable() const;
-
-	virtual AbstractFSNode *getChild(const Common::String &n) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
-	virtual AbstractFSNode *getParent() const;
-
-	virtual Common::SeekableReadStream *createReadStream();
-	virtual Common::WriteStream *createWriteStream();
-};
 
 PSPFilesystemNode::PSPFilesystemNode() {
 	_isDirectory = true;

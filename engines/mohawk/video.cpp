@@ -18,17 +18,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "mohawk/mohawk.h"
 #include "mohawk/resource.h"
 #include "mohawk/video.h"
 
+#include "common/debug.h"
 #include "common/events.h"
+#include "common/textconsole.h"
+#include "common/system.h"
+
+#include "graphics/surface.h"
+
 #include "video/qt_decoder.h"
+
 
 namespace Mohawk {
 
@@ -219,7 +223,7 @@ bool VideoManager::updateMovies() {
 				// Convert from 8bpp to the current screen format if necessary
 				Graphics::PixelFormat pixelFormat = _vm->_system->getScreenFormat();
 
-				if (frame->bytesPerPixel == 1) {
+				if (frame->format.bytesPerPixel == 1) {
 					if (pixelFormat.bytesPerPixel == 1) {
 						if (_videoStreams[i]->hasDirtyPalette())
 							_videoStreams[i]->setSystemPalette();
@@ -228,7 +232,7 @@ bool VideoManager::updateMovies() {
 						const byte *palette = _videoStreams[i]->getPalette();
 						assert(palette);
 
-						convertedFrame->create(frame->w, frame->h, pixelFormat.bytesPerPixel);
+						convertedFrame->create(frame->w, frame->h, pixelFormat);
 
 						for (uint16 j = 0; j < frame->h; j++) {
 							for (uint16 k = 0; k < frame->w; k++) {

@@ -18,6 +18,14 @@
 ** ===================================================================
 */
 
+#if defined(__ANDROID__)
+/* Android is missing strcoll().
+** For more information, refer to:
+** http://www.damonkohler.com/2008/12/lua-on-android.html
+*/
+#define strcoll strcmp
+#endif
+
 
 /*
 @@ LUA_ANSI controls the use of non-ansi features.
@@ -183,7 +191,11 @@
 #define LUAI_DATA	/* empty */
 
 #elif defined(__GNUC__) && ((__GNUC__*100 + __GNUC_MINOR__) >= 302) && \
-      defined(__ELF__)
+      defined(__ELF__) && !defined(__PLAYSTATION2__)
+/*
+** The PS2 gcc compiler doesn't like the visibility attribute, so
+** we use the normal "extern" definitions in the block below
+*/
 #define LUAI_FUNC	__attribute__((visibility("hidden"))) extern
 #define LUAI_DATA	LUAI_FUNC
 
@@ -631,33 +643,6 @@ union luai_Cast { double l_d; long l_l; };
 ** CHANGE it if you need more captures. This limit is arbitrary.
 */
 #define LUA_MAXCAPTURES		32
-
-
-/*
-@@ lua_tmpnam is the function that the OS library uses to create a
-@* temporary name.
-@@ LUA_TMPNAMBUFSIZE is the maximum size of a name created by lua_tmpnam.
-** CHANGE them if you have an alternative to tmpnam (which is considered
-** insecure) or if you want the original tmpnam anyway.  By default, Lua
-** uses tmpnam except when POSIX is available, where it uses mkstemp.
-*/
-#if defined(loslib_c) || defined(luaall_c)
-
-#if defined(LUA_USE_MKSTEMP)
-#include <unistd.h>
-#define LUA_TMPNAMBUFSIZE	32
-#define lua_tmpnam(b,e)	{ \
-	strcpy(b, "/tmp/lua_XXXXXX"); \
-	e = mkstemp(b); \
-	if (e != -1) close(e); \
-	e = (e == -1); }
-
-#else
-#define LUA_TMPNAMBUFSIZE	L_tmpnam
-#define lua_tmpnam(b,e)		{ e = (tmpnam(b) == NULL); }
-#endif
-
-#endif
 
 
 /*

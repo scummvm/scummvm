@@ -18,21 +18,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
-#include "common/endian.h"
+#include "kyra/kyra_hof.h"
+#include "kyra/screen_v2.h"
+#include "kyra/sound.h"
+#include "kyra/timer.h"
+
 #include "common/savefile.h"
 #include "common/substream.h"
 #include "common/system.h"
-
-#include "kyra/kyra_v2.h"
-#include "kyra/screen_v2.h"
-#include "kyra/resource.h"
-#include "kyra/sound.h"
-#include "kyra/timer.h"
 
 namespace Kyra {
 

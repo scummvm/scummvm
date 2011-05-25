@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "engines/advancedDetector.h"
@@ -405,7 +402,7 @@ public:
 	SciMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "SCI Engine [SCI0, SCI01, SCI10, SCI11"
+		return "SCI [SCI0, SCI01, SCI10, SCI11"
 #ifdef ENABLE_SCI32
 			", SCI32"
 #endif

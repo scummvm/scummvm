@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_CONVERSE_H
@@ -58,11 +55,11 @@ public:
 	SequenceManager();
 
 	virtual Common::String getClassName() { return "SequenceManager"; }
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void signal();
 	virtual void process(Event &event);
-	virtual void attached(EventHandler *newOwner, EventHandler *fmt, va_list va);
+	virtual void attached(EventHandler *newOwner, EventHandler *endHandler, va_list va);
 };
 
 
@@ -86,7 +83,7 @@ public:
 	Speaker();
 
 	virtual Common::String getClassName() { return "Speaker"; }
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void proc12(Action *action);
 	virtual void setText(const Common::String &msg);
@@ -168,7 +165,7 @@ public:
 	int _id;
 	uint _scriptOffset;
 
-	virtual void synchronise(Serialiser &s) {
+	virtual void synchronize(Serializer &s) {
 		s.syncAsSint32LE(_id);
 		s.syncAsUint32LE(_scriptOffset);
 	}
@@ -184,7 +181,7 @@ public:
 	uint _speakerOffset;
 public:
 	void load(const byte *dataP);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 };
 
 class StripManager : public Action {
@@ -212,7 +209,7 @@ public:
 	StripManager();
 	virtual ~StripManager();
 
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void signal();
 	virtual void process(Event &event);

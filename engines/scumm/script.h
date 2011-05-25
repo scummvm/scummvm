@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SCUMM_SCRIPT_H
@@ -30,14 +27,19 @@
 
 namespace Scumm {
 
-
 typedef Common::Functor0<void> Opcode;
 
 struct OpcodeEntry : Common::NonCopyable {
 	Opcode *proc;
+#ifndef REDUCE_MEMORY_USAGE
 	const char *desc;
+#endif
 
+#ifndef REDUCE_MEMORY_USAGE
 	OpcodeEntry() : proc(0), desc(0) {}
+#else
+	OpcodeEntry() : proc(0) {}
+#endif
 	~OpcodeEntry() {
 		setProc(0, 0);
 	}
@@ -47,7 +49,9 @@ struct OpcodeEntry : Common::NonCopyable {
 			delete proc;
 			proc = p;
 		}
+#ifndef REDUCE_MEMORY_USAGE
 		desc = d;
+#endif
 	}
 };
 

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_EVENTS_H
@@ -80,13 +77,17 @@ public:
 
 	Common::Point _mousePos;
 	CursorType _currentCursor;
+	CursorType _lastCursor;
 
 	void setCursor(CursorType cursorType);
+	void pushCursor(CursorType cursorType);
+	void popCursor();
 	void setCursor(Graphics::Surface &cursor, int transColor, const Common::Point &hotspot, CursorType cursorId);
 	void setCursorFromFlag();
 	CursorType getCursor() const { return _currentCursor; }
 	void showCursor();
 	void hideCursor();
+	bool isCursorVisible() const;
 
 	bool pollEvent();
 	void waitForPress(int eventMask = EVENT_BUTTON_DOWN | EVENT_KEYPRESS);
@@ -97,10 +98,10 @@ public:
 	uint32 getFrameNumber() const { return _frameNumber; }
 	void delay(int numFrames);
 
-	virtual void listenerSynchronise(Serialiser &s) {
+	virtual void listenerSynchronize(Serializer &s) {
 		s.syncAsUint32LE(_frameNumber);
 		s.syncAsUint32LE(_prevDelayFrame);
-		// TODO: Synchronise unknown stuff
+		// TODO: Synchronize unknown stuff
 	}
 };
 

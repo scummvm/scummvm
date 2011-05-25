@@ -18,21 +18,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Based off ffmpeg's msrledec.c
 
 #include "video/codecs/msrle.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace Video {
 
 MSRLEDecoder::MSRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) {
 	_surface = new Graphics::Surface();
-	_surface->create(width, height, 1);
+	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	_bitsPerPixel = bitsPerPixel;
 }
 

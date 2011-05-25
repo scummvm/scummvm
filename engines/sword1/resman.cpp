@@ -18,25 +18,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 
-#include "common/config-manager.h"
-#include "common/util.h"
-#include "common/str.h"
-
-#include "engines/engine.h"
+#include "common/debug.h"
+#include "common/textconsole.h"
 
 #include "sword1/memman.h"
 #include "sword1/resman.h"
-#include "sword1/sworddefs.h"
 #include "sword1/swordres.h"
 
 #include "gui/message.h"
-#include "gui/gui-manager.h"
 
 namespace Sword1 {
 	void guiFatalError(char *msg) {

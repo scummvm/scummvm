@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "teenagent/actor.h"
@@ -27,16 +24,16 @@
 #include "teenagent/resources.h"
 
 #include "common/random.h"
+#include "common/textconsole.h"
 
 namespace TeenAgent {
 
 Actor::Actor() : head_index(0), idle_type(0) {}
 
 //idle animation lists at dseg: 0x6540
-Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, uint zoom) {
-	static Common::RandomSource random;
+Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, uint zoom, Common::RandomSource &rnd) {
 	if (index == 0) {
-		idle_type = random.getRandomNumber(2);
+		idle_type = rnd.getRandomNumber(2);
 		debug(0, "switched to idle animation %u", idle_type);
 	}
 
@@ -46,7 +43,7 @@ Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &
 		frames_idle = res->dseg.ptr(res->dseg.get_word(0x6540 + idle_type * 2)) + index;
 		index += delta_frame;
 		if (*frames_idle == 0) {
-			idle_type = random.getRandomNumber(2);
+			idle_type = rnd.getRandomNumber(2);
 			debug(0, "switched to idle animation %u[loop]", idle_type);
 			index = 3; //put 4th frame (base 1) if idle animation loops
 		}

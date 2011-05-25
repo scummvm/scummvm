@@ -82,7 +82,7 @@ MODULE_OBJS := \
 	util/lua/lundump.o \
 	util/lua/lvm.o \
 	util/lua/lzio.o \
-	util/lua/print.o \
+	util/lua/scummvm_file.o \
 	util/pluto/pdep.o \
 	util/pluto/pluto.o \
 	util/pluto/plzio.o

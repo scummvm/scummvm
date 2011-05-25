@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 //
@@ -35,21 +32,31 @@
 #define VIDEO_QT_DECODER_H
 
 #include "common/scummsys.h"
-#include "common/queue.h"
 #include "common/rational.h"
 
 #include "video/video_decoder.h"
-#include "video/codecs/codec.h"
 
-#include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "audio/timestamp.h"
 
 namespace Common {
-	class File;
-	class MacResManager;
+class MacResManager;
+class SeekableReadStream;
+}
+
+namespace Audio {
+class AudioStream;
+class QueuingAudioStream;
+}
+
+namespace Graphics {
+struct PixelFormat;
+struct Surface;
 }
 
 namespace Video {
+
+class Codec;
 
 /**
  * Decoder for QuickTime videos.

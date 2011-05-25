@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SCUMM_HE_INTERN_HE_H
@@ -132,8 +129,8 @@ public:
 
 protected:
 	virtual void allocateArrays();
-	virtual int readResTypeList(int id);
-	virtual uint32 getResourceRoomOffset(int type, int idx);
+	virtual int readResTypeList(ResType type);
+	virtual uint32 getResourceRoomOffset(ResType type, ResId idx);
 	virtual void setupOpcodes();
 
 	virtual void setupScummVars();
@@ -268,7 +265,7 @@ protected:
 	virtual void resetScummVars();
 	virtual void readArrayFromIndexFile();
 
-	virtual byte *getStringAddress(int i);
+	virtual byte *getStringAddress(ResId idx);
 	virtual void readMAXS(int blockSize);
 
 	virtual void redrawBGAreas();
@@ -292,7 +289,7 @@ protected:
 	void copyScriptString(byte *dst, int dstSize);
 
 	int findObject(int x, int y, int num, int *args);
-	int getSoundResourceSize(int id);
+	int getSoundResourceSize(ResId idx);
 
 	virtual bool handleNextCharsetCode(Actor *a, int *c);
 	virtual int convertMessageToString(const byte *msg, byte *dst, int dstSize);
@@ -557,7 +554,8 @@ protected:
 
 class ScummEngine_v100he : public ScummEngine_v99he {
 protected:
-	int32 _heResId, _heResType;
+	ResType _heResType;
+	int32 _heResId;
 
 	byte _debugInputBuffer[256];
 public:

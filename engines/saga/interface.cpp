@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Game interface module
@@ -2798,7 +2795,7 @@ void Interface::keyBoss() {
 	Rect rect;
 	ByteArray image;
 	int imageWidth, imageHeight;
-	const byte *pal;
+	//const byte *pal;
 	PalEntry cPal[PAL_ENTRIES];
 
 	_vm->_gfx->showCursor(false);
@@ -2818,7 +2815,7 @@ void Interface::keyBoss() {
 	rect.setHeight(imageHeight);
 
 	_vm->_gfx->getCurrentPal(_mapSavedPal);
-	pal = _vm->getImagePal(resourceData);
+	//pal = _vm->getImagePal(resourceData);
 
 	cPal[0].red = 0;
 	cPal[0].green = 0;

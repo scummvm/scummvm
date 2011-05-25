@@ -1,5 +1,5 @@
 # Czech translation for ScummVM.
-# Copyright (C) YEAR ScummVM Team
+# Copyright (C) 2001-2011 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Zbynìk Schwarz <zbynek.schwarz@gmail.com>, 2011.
 #
@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2011-04-22 19:33+0100\n"
-"PO-Revision-Date: 2011-02-06 21:53+0100\n"
+"PO-Revision-Date: 2011-04-23 10:55+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -98,7 +98,7 @@ msgstr "Zvolte èinnost a kliknìte 'Mapovat'"
 #: gui/KeysDialog.cpp:83 gui/KeysDialog.cpp:105 gui/KeysDialog.cpp:144
 #, c-format
 msgid "Associated key : %s"
-msgstr "Pøíøazená klávesa: %s"
+msgstr "Pøiøazená klávesa: %s"
 
 #: gui/KeysDialog.cpp:85 gui/KeysDialog.cpp:107 gui/KeysDialog.cpp:146
 #, c-format
@@ -126,7 +126,7 @@ msgid ""
 "Short game identifier used for referring to savegames and running the game "
 "from the command line"
 msgstr ""
-"Krátky identifikátor her, pou¾ívaný jako odkaz k ulo¾eným hrám a spu¹tìní "
+"Krátký identifikátor her, pou¾ívaný jako odkaz k ulo¾eným hrám a spu¹tìní "
 "hry z pøíkazového øádku"
 
 #: gui/launcher.cpp:178
@@ -274,7 +274,7 @@ msgstr "Dodateèná Cesta:"
 
 #: gui/launcher.cpp:302 gui/launcher.cpp:304 gui/launcher.cpp:305
 msgid "Specifies path to additional data used the game"
-msgstr "Stanoví cestu pro dodateèná data pou¾ítá ve høe"
+msgstr "Stanoví cestu pro dodateèná data pou¾itá ve høe"
 
 #: gui/launcher.cpp:304 gui/options.cpp:1039
 msgctxt "lowres"
@@ -339,7 +339,7 @@ msgstr "Ukonèit ScummVM"
 
 #: gui/launcher.cpp:563
 msgid "A~b~out..."
-msgstr "~O~..."
+msgstr "~O~ Programu..."
 
 #: gui/launcher.cpp:563
 msgid "About ScummVM"
@@ -391,7 +391,7 @@ msgstr "~O~dstranit Hru"
 
 #: gui/launcher.cpp:578 gui/launcher.cpp:585
 msgid "Remove game from the list. The game data files stay intact"
-msgstr "Odstranit hru ze snamu. Herní data zùstanou zachována"
+msgstr "Odstranit hru ze seznamu. Herní data zùstanou zachována"
 
 #: gui/launcher.cpp:581
 msgctxt "lowres"
@@ -573,11 +573,11 @@ msgstr "Re¾im obrazu:"
 
 #: gui/options.cpp:662
 msgid "Render mode:"
-msgstr "Re¾im vykreslování:"
+msgstr "Re¾im vykreslení:"
 
 #: gui/options.cpp:662 gui/options.cpp:663
 msgid "Special dithering modes supported by some games"
-msgstr "Speciální re¾imi chvìní podporované nìkterými hrami"
+msgstr "Speciální re¾imy chvìní podporované nìkterými hrami"
 
 #: gui/options.cpp:672
 msgid "Fullscreen mode"
@@ -705,7 +705,7 @@ msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
 msgstr ""
-"Za¹krtnìte, pokud chcete pou¾ít pravé hardwareové zaøízení kompatibilní s "
+"Za¹krtnìte, pokud chcete pou¾ít pravé hardwarové zaøízení kompatibilní s "
 "Roland, pøipojené k Va¹emu poèítaèi"
 
 #: gui/options.cpp:795
@@ -877,7 +877,7 @@ msgstr "Vybrat adresáø pro ulo¾ené hry"
 
 #: gui/options.cpp:1261
 msgid "The chosen directory cannot be written to. Please select another one."
-msgstr "Do zvoleného adresáøe nelze zapisovat. vyberte, prosím, jiný."
+msgstr "Do zvoleného adresáøe nelze zapisovat. Vyberte, prosím, jiný."
 
 #: gui/options.cpp:1270
 msgid "Select directory for GUI themes"
@@ -954,11 +954,11 @@ msgstr "Standardní Vykreslovaè (16bpp)"
 
 #: gui/ThemeEngine.cpp:333
 msgid "Standard (16bpp)"
-msgstr "Standarní"
+msgstr "Standardní (16bpp)"
 
 #: gui/ThemeEngine.cpp:335
 msgid "Antialiased Renderer (16bpp)"
-msgstr "Vykreslovaè s vyhlazenými hranami(16bpp)"
+msgstr "Vykreslovaè s vyhlazenými hranami (16bpp)"
 
 #: gui/ThemeEngine.cpp:335
 msgid "Antialiased (16bpp)"
@@ -998,20 +998,17 @@ msgstr "Nelze nalézt ¾ádné jádro schopné vybranou hru spustit"
 
 #: common/error.cpp:42
 msgid "No error"
-msgstr ""
+msgstr "®ádná chyba"
 
 #: common/error.cpp:44
-#, fuzzy
 msgid "Game data not found"
 msgstr "Data hry nenalezena"
 
 #: common/error.cpp:46
-#, fuzzy
 msgid "Game id not supported"
 msgstr "Id hry není podporováno"
 
 #: common/error.cpp:48
-#, fuzzy
 msgid "Unsupported color mode"
 msgstr "Nepodporovaný barevný re¾im"
 
@@ -1024,7 +1021,6 @@ msgid "Write permission denied"
 msgstr "Oprávnìní k zápisu zamítnuto"
 
 #: common/error.cpp:56
-#, fuzzy
 msgid "Path does not exist"
 msgstr "Cesta neexistuje"
 
@@ -1041,9 +1037,8 @@ msgid "Cannot create file"
 msgstr "Nelze vytvoøit soubor"
 
 #: common/error.cpp:65
-#, fuzzy
 msgid "Reading data failed"
-msgstr "Ètení selhalo"
+msgstr "Ètení dat selhalo"
 
 #: common/error.cpp:67
 msgid "Writing data failed"
@@ -1051,21 +1046,19 @@ msgstr "Zápis dat selhal"
 
 #: common/error.cpp:70
 msgid "Could not find suitable engine plugin"
-msgstr ""
+msgstr "Nelze nalézt vhodný zás. modul jádra"
 
 #: common/error.cpp:72
-#, fuzzy
 msgid "Engine plugin does not support save states"
-msgstr "Jádro nepodporuje úroveò ladìní '%s'"
+msgstr "Zás. modul jádra nepodporuje ulo¾ené stavy"
 
 #: common/error.cpp:75
 msgid "Command line argument not processed"
-msgstr ""
+msgstr "Argument pøíkazové øádky nebyl zpracován"
 
 #: common/error.cpp:79
-#, fuzzy
 msgid "Unknown error"
-msgstr "Neznámá Chyba"
+msgstr "Neznámá chyba"
 
 #: common/util.cpp:276
 msgid "Hercules Green"
@@ -1235,7 +1228,7 @@ msgstr "Zvý¹it / Sní¾it rychlost textu"
 
 #: engines/scumm/help.cpp:92
 msgid "Simulate left mouse button"
-msgstr "Napodobit levé tlaèitko my¹i"
+msgstr "Napodobit levé tlaèítko my¹i"
 
 #: engines/scumm/help.cpp:93
 msgid "Tab"
@@ -1243,7 +1236,7 @@ msgstr "Tab"
 
 #: engines/scumm/help.cpp:93
 msgid "Simulate right mouse button"
-msgstr "Napodobit pravé tlaèitko my¹i"
+msgstr "Napodobit pravé tlaèítko my¹i"
 
 #: engines/scumm/help.cpp:96
 msgid "Special keyboard commands:"
@@ -1571,7 +1564,7 @@ msgstr "Polo¾ka vpravo dole"
 
 #: engines/scumm/help.cpp:270
 msgid "Middle left item"
-msgstr "Plo¾ka vlevo uprostøed"
+msgstr "Polo¾ka vlevo uprostøed"
 
 #: engines/scumm/help.cpp:273
 msgid "Middle right item"
@@ -1696,7 +1689,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Nahráni stavu hry selhalo ze souboru:\n"
+"Nahrání stavu hry selhalo ze souboru:\n"
 "\n"
 "%s"
 
@@ -1717,6 +1710,9 @@ msgid ""
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
 "directory inside the Tentacle game directory."
 msgstr ""
+"Normálnì by teï Maniac Mansion byl spu¹tìn. Ale ScummVM toto zatím nedìlá. "
+"Abyste toto mohli hrát, pøejdìte do 'Pøidat Hru' v poèáteèním menu ScummVM a "
+"vyberte adresáø 'Maniac' uvnitø herního adresáøe Tentacle."
 
 #: engines/mohawk/dialogs.cpp:89 engines/mohawk/dialogs.cpp:127
 msgid "~Z~ip Mode Activated"
@@ -1888,12 +1884,12 @@ msgstr "Touchpad re¾im vypnut"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:47
 msgid "Normal (no scaling)"
-msgstr "Normální (bez zmìny veliosti)"
+msgstr "Normální (bez zmìny velikosti)"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:66
 msgctxt "lowres"
 msgid "Normal (no scaling)"
-msgstr "Normální (bez zmìny veliosti)"
+msgstr "Normální (bez zmìny velikosti)"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:133
 msgid "OpenGL Normal"
@@ -1999,7 +1995,7 @@ msgstr "Horizontální zmen¹ení"
 
 #: backends/platform/wii/options.cpp:66
 msgid "Vertical underscan:"
-msgstr "Vetikální zmen¹ení"
+msgstr "Vertikální zmen¹ení"
 
 #: backends/platform/wii/options.cpp:71
 msgid "Input"
@@ -2200,7 +2196,7 @@ msgstr "Mapovat èinnost pravé kliknutí"
 #: backends/platform/wince/wince-sdl.cpp:490
 msgid "You must map a key to the 'Right Click' action to play this game"
 msgstr ""
-"Musíte namapovat klávesu pro èinnost 'Pravé Kliknutí', abyste tuto hru mohi "
+"Musíte namapovat klávesu pro èinnost 'Pravé Kliknutí', abyste tuto hru mohli "
 "hrát"
 
 #: backends/platform/wince/wince-sdl.cpp:499

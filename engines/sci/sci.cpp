@@ -18,16 +18,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/EventRecorder.h"
-#include "common/file.h"	// for Common::File::exists()
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
@@ -78,7 +73,7 @@ SciEngine *g_sci = 0;
 class GfxDriver;
 
 SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gameId)
-		: Engine(syst), _gameDescription(desc), _gameId(gameId) {
+		: Engine(syst), _gameDescription(desc), _gameId(gameId), _rng("sci") {
 
 	assert(g_sci == 0);
 	g_sci = this;
@@ -186,8 +181,6 @@ SciEngine::~SciEngine() {
 extern void showScummVMDialog(const Common::String &message);
 
 Common::Error SciEngine::run() {
-	g_eventRec.registerRandomSource(_rng, "sci");
-
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("sci_originalsaveload", "false");
 	ConfMan.registerDefault("native_fb01", "false");
@@ -218,7 +211,7 @@ Common::Error SciEngine::run() {
 
 	// Initialize the game screen
 	_gfxScreen = new GfxScreen(_resMan);
-	_gfxScreen->debugUnditherSetState(ConfMan.getBool("disable_dithering"));
+	_gfxScreen->enableUndithering(ConfMan.getBool("disable_dithering"));
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);

@@ -18,15 +18,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
+#include "common/config-manager.h"
+#include "common/translation.h"
+#include "gui/saveload.h"
 #include "tsage/ringworld_logic.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
+#include "tsage/ringworld_demo.h"
 #include "tsage/ringworld_scenes1.h"
 #include "tsage/ringworld_scenes2.h"
 #include "tsage/ringworld_scenes3.h"
@@ -38,7 +39,7 @@
 
 namespace tSage {
 
-Scene *SceneFactory::createScene(int sceneNumber) {
+Scene *RingworldGame::createScene(int sceneNumber) {
 	switch (sceneNumber) {
 	/* Scene group 1 */
 	// Kziniti Palace (Introduction)
@@ -300,7 +301,7 @@ void SceneArea::wait() {
 		g_system->delayMillis(10);
 	}
 
-	SynchronisedList<SceneItem *>::iterator ii;
+	SynchronizedList<SceneItem *>::iterator ii;
 	for (ii = _globals->_sceneItems.begin(); ii != _globals->_sceneItems.end(); ++ii) {
 		SceneItem *sceneItem = *ii;
 		if (sceneItem->contains(event.mousePos)) {
@@ -312,14 +313,17 @@ void SceneArea::wait() {
 	_globals->_events.setCursor(CURSOR_ARROW);
 }
 
-void SceneArea::synchronise(Serialiser &s) {
+void SceneArea::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		SavedObject::synchronize(s);
+
 	s.syncAsSint16LE(_pt.x);
 	s.syncAsSint16LE(_pt.y);
 	s.syncAsSint32LE(_resNum);
 	s.syncAsSint32LE(_rlbNum);
 	s.syncAsSint32LE(_subNum);
 	s.syncAsSint32LE(_actionId);
-	_bounds.synchronise(s);
+	_bounds.synchronize(s);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -337,7 +341,7 @@ void SpeakerGText::setText(const Common::String &msg) {
 	_sceneObject.postInit();
 	_sceneObject.setVisage(9405);
 	_sceneObject.setStrip2(3);
-	_sceneObject.setPriority2(255);
+	_sceneObject.fixPriority(255);
 	_sceneObject.changeZoom(100);
 	_sceneObject._frame = 1;
 	_sceneObject.setPosition(Common::Point(183, 71));
@@ -386,19 +390,19 @@ void SpeakerPOR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(7223);
 	_object1.setStrip2(2);
-	_object1.setPosition(Common::Point(191, 166), 0);
-	_object1.animate(ANIM_MODE_7, 0, 0);
+	_object1.setPosition(Common::Point(191, 166));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
 
 	_object2.postInit(&_objectList);
 	_object2.setVisage(7223);
-	_object2.setPosition(Common::Point(159, 86), 0);
-	_object2.setAction(&_speakerAction, 0);
+	_object2.setPosition(Common::Point(159, 86));
+	_object2.setAction(&_speakerAction, NULL);
 
 	_object3.postInit(&_objectList);
 	_object3.setVisage(7223);
 	_object3.setStrip(3);
-	_object3.setPosition(Common::Point(119, 107), 0);
-	_object3.setPriority2(199);
+	_object3.setPosition(Common::Point(119, 107));
+	_object3.fixPriority(199);
 	_object3.setAction(&_action2);
 
 	Speaker::setText(msg);
@@ -418,20 +422,20 @@ void SpeakerOR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(9431);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
-	_object1.setPosition(Common::Point(202, 147), 0);
-	_object1.animate(ANIM_MODE_7, 0, 0);
+	_object1.setPosition(Common::Point(202, 147));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
 
 	_object2.postInit(&_objectList);
 	_object2.setVisage(9431);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.setZoom(100);
 	_object2._frame = 1;
-	_object2.setPosition(Common::Point(199, 85), 0);
-	_object2.setAction(&_speakerAction, 0);
+	_object2.setPosition(Common::Point(199, 85));
+	_object2.setAction(&_speakerAction, NULL);
 
 	Speaker::setText(msg);
 }
@@ -508,12 +512,25 @@ SpeakerEText::SpeakerEText() {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerGR::SpeakerGR() {
+SpeakerGR::SpeakerGR() : AnimatedSpeaker() {
 	_speakerName = "GR";
 	_newSceneNumber = 9220;
 	_textWidth = 136;
 	_textPos = Common::Point(168, 36);
 	_color1 = 14;
+}
+
+void SpeakerGR::setText(const Common::String &msg) {
+	_object1.postInit(&_objectList);
+	_object1.setVisage(9221);
+	_object1.setStrip2(2);
+	_object1.fixPriority(255);
+	_object1.changeZoom(100);
+	_object1._frame = 1;
+	_object1.setPosition(Common::Point(101, 70));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
+
+	Speaker::setText(msg);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -531,7 +548,7 @@ SpeakerSKText::SpeakerSKText() : ScreenSpeaker() {
 	_speakerName = "SKTEXT";
 	_textWidth = 240;
 	_textMode = ALIGN_CENTER;
-	_color1 = 5;
+	_color1 = 9;
 	_hideObjects = false;
 }
 
@@ -590,23 +607,23 @@ SpeakerSKL::SpeakerSKL() : AnimatedSpeaker() {
 	_speakerName = "SKL";
 	_newSceneNumber = 7011;
 	_textPos = Common::Point(10, 30);
-	_color1 = 10;
+	_color1 = 9;
 }
 
 void SpeakerSKL::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(7013);
 	_object1.setStrip2(2);
-	_object1._frame = 1;
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
+	_object1._frame = 1;
 	_object1.setPosition(Common::Point(203, 120));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
 	
 	_object2.postInit(&_objectList);
 	_object2.setVisage(7013);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(197, 80));
@@ -629,7 +646,7 @@ void SpeakerQL::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(2612);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(128, 146));
@@ -638,7 +655,7 @@ void SpeakerQL::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2612);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(122, 84));
@@ -650,6 +667,7 @@ void SpeakerQL::setText(const Common::String &msg) {
 /*--------------------------------------------------------------------------*/
 
 SpeakerSR::SpeakerSR() {
+	// TODO: check initialization of object3
 	_speakerName = "SR";
 	_newSceneNumber = 2811;
 	_textPos = Common::Point(10, 30);
@@ -661,7 +679,7 @@ void SpeakerSR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(2813);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(224, 198));
@@ -670,7 +688,7 @@ void SpeakerSR::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2813);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(203, 96));
@@ -680,7 +698,7 @@ void SpeakerSR::setText(const Common::String &msg) {
 	_object3.setVisage(2813);
 	_object3.setStrip(3);
 	_object3.setPosition(Common::Point(204, 91));
-	_object3.setPriority2(199);
+	_object3.fixPriority(199);
 	_object3._numFrames = 3;
 	_object3.animate(ANIM_MODE_7, 0, NULL);
 
@@ -702,7 +720,7 @@ void SpeakerSL::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(2812);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(95, 198));
@@ -711,7 +729,7 @@ void SpeakerSL::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2812);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(116, 96));
@@ -726,7 +744,7 @@ SpeakerQR::SpeakerQR() {
 	_speakerName = "QR";
 	_newSceneNumber = 2611;
 	_textPos = Common::Point(10, 30);
-	_color1 = 13;
+	_color1 = 35;
 	_textMode = ALIGN_CENTER;
 }
 
@@ -734,7 +752,7 @@ void SpeakerQR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(2613);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(191, 146));
@@ -743,7 +761,7 @@ void SpeakerQR::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2613);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(197, 84));
@@ -766,20 +784,20 @@ void SpeakerQU::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(7021);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
-	_object1.setPosition(Common::Point(116, 120), 0);
-	_object1.animate(ANIM_MODE_7, 0, 0);
+	_object1.setPosition(Common::Point(116, 120));
+	_object1.animate(ANIM_MODE_7, 0, NULL);
 	
 	_object2.postInit(&_objectList);
 	_object2.setVisage(7021);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
-	_object2.setPosition(Common::Point(111, 84), 0);
-	_object2.setAction(&_speakerAction, 0);
+	_object2.setPosition(Common::Point(111, 84));
+	_object2.setAction(&_speakerAction, NULL);
 
 	Speaker::setText(msg);
 }
@@ -797,14 +815,14 @@ void SpeakerCR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(9011);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.setPosition(Common::Point(219, 168));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
 	
 	_object2.postInit(&_objectList);
 	_object2.setVisage(9011);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(232, 81));
 	_object2.setAction(&_speakerAction, NULL);
 
@@ -816,7 +834,7 @@ void SpeakerCR::setText(const Common::String &msg) {
 SpeakerMR::SpeakerMR() {
 	_speakerName = "MR";
 	_newSceneNumber = 2711;
-	_textPos = Common::Point(40, 10);
+	_textPos = Common::Point(10, 40);
 	_color1 = 22;
 }
 
@@ -824,7 +842,7 @@ void SpeakerMR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(2713);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(220, 143));
@@ -833,7 +851,8 @@ void SpeakerMR::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2713);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
+	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(215, 99));
 	_object2.setAction(&_speakerAction, NULL);
@@ -855,7 +874,7 @@ void SpeakerSAL::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(2853);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(185, 200));
@@ -864,7 +883,8 @@ void SpeakerSAL::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2853);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
+	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(170, 92));
 	_object2.setAction(&_speakerAction, NULL);
@@ -885,7 +905,7 @@ void SpeakerML::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(2712);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(99, 143));
@@ -894,7 +914,8 @@ void SpeakerML::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2712);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
+	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(105, 99));
 	_object2.setAction(&_speakerAction, NULL);
@@ -915,7 +936,7 @@ void SpeakerCHFL::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(4113);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(205, 116));
@@ -924,7 +945,8 @@ void SpeakerCHFL::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(4113);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
+	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(202, 71));
 	_object2.setAction(&_speakerAction, NULL);
@@ -945,7 +967,7 @@ void SpeakerCHFR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(4112);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(103, 116));
@@ -954,7 +976,8 @@ void SpeakerCHFR::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(4112);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
+	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(106, 71));
 	_object2.setAction(&_speakerAction, NULL);
@@ -975,7 +998,7 @@ void SpeakerPL::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(4062);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(107, 117));
@@ -984,7 +1007,8 @@ void SpeakerPL::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(4062);
 	_object2.setStrip2(1);
-	_object2.setPriority2(200);
+	_object2.fixPriority(200);
+	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(105, 62));
 	_object2.setAction(&_speakerAction, NULL);
@@ -992,7 +1016,8 @@ void SpeakerPL::setText(const Common::String &msg) {
 	_object3.postInit(&_objectList);
 	_object3.setVisage(4062);
 	_object3.setStrip2(3);
-	_object3.setPriority2(255);
+	_object3.fixPriority(255);
+	_object3.changeZoom(100);
 	_object3._frame = 1;
 	_object3.setPosition(Common::Point(105, 59));
 	_object3.setAction(&_speakerAction2, NULL);
@@ -1018,7 +1043,7 @@ void SpeakerPR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(4063);
 	_object1.setStrip2(1);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(212, 117));
@@ -1027,7 +1052,7 @@ void SpeakerPR::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(4063);
 	_object2.setStrip2(2);
-	_object2.setPriority2(200);
+	_object2.fixPriority(200);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(214, 62));
@@ -1036,7 +1061,7 @@ void SpeakerPR::setText(const Common::String &msg) {
 	_object3.postInit(&_objectList);
 	_object3.setVisage(4063);
 	_object3.setStrip2(3);
-	_object3.setPriority2(255);
+	_object3.fixPriority(255);
 	_object3.changeZoom(100);
 	_object3._frame = 1;
 	_object3.setPosition(Common::Point(214, 59));
@@ -1063,7 +1088,7 @@ void SpeakerCDR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(4163);
 	_object1.setStrip2(1);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(208, 97));
@@ -1072,7 +1097,7 @@ void SpeakerCDR::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(4163);
 	_object2.setStrip2(2);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(200, 57));
@@ -1094,7 +1119,7 @@ void SpeakerCDL::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(4162);
 	_object1.setStrip2(1);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(112, 97));
@@ -1103,7 +1128,7 @@ void SpeakerCDL::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(4162);
 	_object2.setStrip2(2);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(115, 57));
@@ -1125,7 +1150,7 @@ void SpeakerFLL::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(5223);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(216, 129));
@@ -1134,7 +1159,7 @@ void SpeakerFLL::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(5223);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(210, 67));
@@ -1156,7 +1181,7 @@ void SpeakerBatR::setText(const Common::String &msg) {
 	_object1.postInit(&_objectList);
 	_object1.setVisage(5361);
 	_object1.setStrip2(2);
-	_object1.setPriority2(255);
+	_object1.fixPriority(255);
 	_object1.changeZoom(100);
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(137, 122));
@@ -1165,13 +1190,283 @@ void SpeakerBatR::setText(const Common::String &msg) {
 	_object2.postInit(&_objectList);
 	_object2.setVisage(5361);
 	_object2.setStrip2(1);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2.changeZoom(100);
 	_object2._frame = 1;
 	_object2.setPosition(Common::Point(137, 104));
 	_object2.setAction(&_speakerAction, NULL);
 
 	Speaker::setText(msg);
+}
+
+/*--------------------------------------------------------------------------*/
+
+RingworldInvObjectList::RingworldInvObjectList() :
+		_stunner(2280, 1, 2, OBJECT_STUNNER, "This is your stunner."),
+		_scanner(1, 1, 3, OBJECT_SCANNER, "A combination scanner comm unit."),
+		_stasisBox(5200, 1, 4, OBJECT_STASIS_BOX, "A stasis box."),
+		_infoDisk(40, 1, 1, OBJECT_INFODISK, "The infodisk you took from the assassin."),
+		_stasisNegator(0, 2, 2, OBJECT_STASIS_NEGATOR, "The stasis field negator."),
+		_keyDevice(4250, 1, 6, OBJECT_KEY_DEVICE, "A magnetic key device."),
+		_medkit(2280, 1, 7, OBJECT_MEDKIT,  "Your medkit."),
+		_ladder(4100, 1, 8, OBJECT_LADDER, "The chief's ladder."),
+		_rope(4150, 1, 9, OBJECT_ROPE, "The chief's rope."),
+		_key(7700, 1, 11, OBJECT_KEY, "A key."),
+		_translator(7700, 1, 13, OBJECT_TRANSLATOR,  "The dolphin translator box."),
+		_ale(2150, 1, 10, OBJECT_ALE, "A bottle of ale."),
+		_paper(7700, 1, 12, OBJECT_PAPER, "A slip of paper with the numbers 2,4, and 3 written on it."),
+		_waldos(0, 1, 14, OBJECT_WALDOS, "A pair of waldos from the ruined probe."),
+		_stasisBox2(8100, 1, 4, OBJECT_STASIS_BOX2, "A stasis box."),
+		_ring(8100, 2, 5, OBJECT_RING, "This is a signet ring sent to you by Louis Wu."),
+		_cloak(9850, 2, 6, OBJECT_CLOAK, "A fine silk cloak."),
+		_tunic(9450, 2, 7, OBJECT_TUNIC, "The patriarch's soiled tunic."),
+		_candle(9500, 2, 8, OBJECT_CANDLE, "A tallow candle."),
+		_straw(9400, 2, 9, OBJECT_STRAW, "Clean, dry straw."),
+		_scimitar(9850, 1, 18, OBJECT_SCIMITAR, "A scimitar from the Patriarch's closet."),
+		_sword(9850, 1, 17, OBJECT_SWORD, "A short sword from the Patriarch's closet."),
+		_helmet(9500, 2, 4, OBJECT_HELMET, "Some type of helmet."),
+		_items(4300, 2, 10, OBJECT_ITEMS, "Two interesting items from the Tnuctipun vessel."),
+		_concentrator(4300, 2, 11, OBJECT_CONCENTRATOR, "The Tnuctipun anti-matter concentrator contained in a stasis field."),
+		_nullifier(5200, 2, 12, OBJECT_NULLIFIER, "A purported neural wave nullifier."),
+		_peg(4045, 2, 16, OBJECT_PEG, "A peg with a symbol."),
+		_vial(5100, 2, 17, OBJECT_VIAL, "A vial of the bat creatures anti-pheromone drug."),
+		_jacket(9850, 3, 1, OBJECT_JACKET, "A natty padded jacket."),
+		_tunic2(9850, 3, 2, OBJECT_TUNIC2, "A very hairy tunic."),
+		_bone(5300, 3, 5, OBJECT_BONE, "A very sharp bone."),
+		_jar(7700, 3, 4, OBJECT_JAR, "An jar filled with a green substance."),
+		_emptyJar(7700, 3, 3, OBJECT_EMPTY_JAR, "An empty jar.") {
+
+	// Add the items to the list
+	_itemList.push_back(&_stunner);
+	_itemList.push_back(&_scanner);
+	_itemList.push_back(&_stasisBox);
+	_itemList.push_back(&_infoDisk);
+	_itemList.push_back(&_stasisNegator);
+	_itemList.push_back(&_keyDevice);
+	_itemList.push_back(&_medkit);
+	_itemList.push_back(&_ladder);
+	_itemList.push_back(&_rope);
+	_itemList.push_back(&_key);
+	_itemList.push_back(&_translator);
+	_itemList.push_back(&_ale);
+	_itemList.push_back(&_paper);
+	_itemList.push_back(&_waldos);
+	_itemList.push_back(&_stasisBox2);
+	_itemList.push_back(&_ring);
+	_itemList.push_back(&_cloak);
+	_itemList.push_back(&_tunic);
+	_itemList.push_back(&_candle);
+	_itemList.push_back(&_straw);
+	_itemList.push_back(&_scimitar);
+	_itemList.push_back(&_sword);
+	_itemList.push_back(&_helmet);
+	_itemList.push_back(&_items);
+	_itemList.push_back(&_concentrator);
+	_itemList.push_back(&_nullifier);
+	_itemList.push_back(&_peg);
+	_itemList.push_back(&_vial);
+	_itemList.push_back(&_jacket);
+	_itemList.push_back(&_tunic2);
+	_itemList.push_back(&_bone);
+	_itemList.push_back(&_jar);
+	_itemList.push_back(&_emptyJar);
+
+	_selectedItem = NULL;
+}
+
+/*--------------------------------------------------------------------------*/
+
+void RingworldGame::restartGame() {
+	if (MessageDialog::show(RESTART_MSG, CANCEL_BTN_STRING, RESTART_BTN_STRING) == 1)
+		_globals->_game->restart();
+}
+
+void RingworldGame::saveGame() {
+	if (!_vm->canSaveGameStateCurrently())
+		MessageDialog::show(SAVING_NOT_ALLOWED_MSG, OK_BTN_STRING);
+	else {
+		// Show the save dialog
+		handleSaveLoad(true, _globals->_sceneHandler._saveGameSlot, _globals->_sceneHandler._saveName);
+	}
+}
+
+void RingworldGame::restoreGame() {
+	if (!_vm->canLoadGameStateCurrently())
+		MessageDialog::show(RESTORING_NOT_ALLOWED_MSG, OK_BTN_STRING);
+	else {
+		// Show the load dialog
+		handleSaveLoad(false, _globals->_sceneHandler._loadGameSlot, _globals->_sceneHandler._saveName);
+	}
+}
+
+void RingworldGame::quitGame() {
+	if (MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING) == 1)
+		_vm->quitGame();
+}
+
+void RingworldGame::handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName) {
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(_vm->getGameId(), &plugin);
+	GUI::SaveLoadChooser *dialog;
+	if (saveFlag)
+		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"));
+	else
+		dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"));
+
+	dialog->setSaveMode(saveFlag);
+
+	saveSlot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+	saveName = dialog->getResultString();
+
+	delete dialog;
+}
+
+void RingworldGame::start() {
+	// Set some default flags
+	_globals->setFlag(12);
+	_globals->setFlag(34);
+
+	// Set the screen to scroll in response to the player moving off-screen
+	_globals->_scrollFollower = &_globals->_player;
+
+	// Set the object's that will be in the player's inventory by default
+	RING_INVENTORY._stunner._sceneNumber = 1;
+	RING_INVENTORY._scanner._sceneNumber = 1;
+	RING_INVENTORY._ring._sceneNumber = 1;
+
+	// Switch to the title screen
+	_globals->_sceneManager.setNewScene(1000);
+
+	_globals->_events.showCursor();
+}
+
+void RingworldGame::restart() {
+	_globals->_scenePalette.clearListeners();
+	_globals->_soundHandler.proc3();
+
+	// Reset the flags
+	_globals->reset();
+	_globals->setFlag(34);
+
+	// Clear save/load slots
+	_globals->_sceneHandler._saveGameSlot = -1;
+	_globals->_sceneHandler._loadGameSlot = -1;
+
+	_globals->_stripNum = 0;
+	_globals->_events.setCursor(CURSOR_WALK);
+
+	// Reset item properties
+	RING_INVENTORY._stunner._sceneNumber = 1;
+	RING_INVENTORY._scanner._sceneNumber = 1;
+	RING_INVENTORY._stasisBox._sceneNumber = 5200;
+	RING_INVENTORY._infoDisk._sceneNumber = 40;
+	RING_INVENTORY._stasisNegator._sceneNumber = 0;
+	RING_INVENTORY._keyDevice._sceneNumber = 0;
+	RING_INVENTORY._medkit._sceneNumber = 2280;
+	RING_INVENTORY._ladder._sceneNumber = 4100;
+	RING_INVENTORY._rope._sceneNumber = 4150;
+	RING_INVENTORY._key._sceneNumber = 7700;
+	RING_INVENTORY._translator._sceneNumber = 2150;
+	RING_INVENTORY._paper._sceneNumber = 7700;
+	RING_INVENTORY._waldos._sceneNumber = 0;
+	RING_INVENTORY._ring._sceneNumber = 1;
+	RING_INVENTORY._stasisBox2._sceneNumber = 8100;
+	RING_INVENTORY._cloak._sceneNumber = 9850;
+	RING_INVENTORY._tunic._sceneNumber = 9450;
+	RING_INVENTORY._candle._sceneNumber = 9500;
+	RING_INVENTORY._straw._sceneNumber = 9400;
+	RING_INVENTORY._scimitar._sceneNumber = 9850;
+	RING_INVENTORY._sword._sceneNumber = 9850;
+	RING_INVENTORY._helmet._sceneNumber = 9500;
+	RING_INVENTORY._items._sceneNumber = 4300;
+	RING_INVENTORY._concentrator._sceneNumber = 4300;
+	RING_INVENTORY._nullifier._sceneNumber = 4300;
+	RING_INVENTORY._peg._sceneNumber = 4045;
+	RING_INVENTORY._vial._sceneNumber = 5100;
+	RING_INVENTORY._jacket._sceneNumber = 9850;
+	RING_INVENTORY._tunic2._sceneNumber = 9850;
+	RING_INVENTORY._bone._sceneNumber = 5300;
+	RING_INVENTORY._jar._sceneNumber = 7700;
+	RING_INVENTORY._emptyJar._sceneNumber = 7700;
+	RING_INVENTORY._selectedItem = NULL;
+
+	// Change to the first game scene
+	_globals->_sceneManager.changeScene(30);
+}
+
+void RingworldGame::endGame(int resNum, int lineNum) {
+	_globals->_events.setCursor(CURSOR_WALK);
+	Common::String msg = _resourceManager->getMessage(resNum, lineNum);
+	bool savesExist = _saver->savegamesExist();
+
+	if (!savesExist) {
+		// No savegames exist, so prompt the user to restart or quit
+		if (MessageDialog::show(msg, QUIT_BTN_STRING, RESTART_BTN_STRING) == 0)
+			_vm->quitGame();
+		else
+			restart();
+	} else {
+		// Savegames exist, so prompt for Restore/Restart
+		bool breakFlag;
+		do {
+			if (MessageDialog::show(msg, RESTART_BTN_STRING, RESTORE_BTN_STRING) == 0 || _vm->shouldQuit()) {
+				breakFlag = true;
+			} else {
+				handleSaveLoad(false, _globals->_sceneHandler._loadGameSlot, _globals->_sceneHandler._saveName);
+				breakFlag = _globals->_sceneHandler._loadGameSlot >= 0;
+			}
+		} while (!breakFlag);
+	}
+
+	_globals->_events.setCursorFromFlag();
+}
+
+void RingworldGame::processEvent(Event &event) {
+	if (event.eventType == EVENT_KEYPRESS) {
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_F1:
+			// F1 - Help
+			MessageDialog::show(HELP_MSG, OK_BTN_STRING);
+			break;
+
+		case Common::KEYCODE_F2: {
+			// F2 - Sound Options
+			ConfigDialog *dlg = new ConfigDialog();
+			dlg->runModal();
+			delete dlg;
+			_globals->_events.setCursorFromFlag();
+			break;
+		}
+
+		case Common::KEYCODE_F3:
+			// F3 - Quit
+			quitGame();
+			event.handled = false;
+			break;
+
+		case Common::KEYCODE_F4:
+			// F4 - Restart
+			restartGame();
+			_globals->_events.setCursorFromFlag();
+			break;
+
+		case Common::KEYCODE_F7:
+			// F7 - Restore
+			restoreGame();
+			_globals->_events.setCursorFromFlag();
+			break;
+
+		case Common::KEYCODE_F10:
+			// F10 - Pause
+			GfxDialog::setPalette();
+			MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
+			_globals->_events.setCursorFromFlag();
+			break;
+
+		default:
+			break;
+		}
+	}
 }
 
 } // End of namespace tSage

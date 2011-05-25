@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 // Disable symbol overrides so that we can use system headers.
@@ -30,6 +27,8 @@
 #if defined(USE_ALSA)
 
 #include "common/config-manager.h"
+#include "common/error.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"
@@ -181,6 +180,11 @@ void MidiDriver_ALSA::close() {
 }
 
 void MidiDriver_ALSA::send(uint32 b) {
+	if (!_isOpen) {
+		warning("MidiDriver_ALSA: Got event while not open");
+		return;
+	}
+
 	unsigned int midiCmd[4];
 	ev.type = SND_SEQ_EVENT_OSS;
 
@@ -254,6 +258,11 @@ void MidiDriver_ALSA::send(uint32 b) {
 }
 
 void MidiDriver_ALSA::sysEx(const byte *msg, uint16 length) {
+	if (!_isOpen) {
+		warning("MidiDriver_ALSA: Got SysEx while not open");
+		return;
+	}
+
 	unsigned char buf[266];
 
 	assert(length + 2 <= ARRAYSIZE(buf));

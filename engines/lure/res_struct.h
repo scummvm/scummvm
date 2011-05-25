@@ -18,18 +18,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef LURE_RESSTRUCT_H
 #define LURE_RESSTRUCT_H
 
 #include "lure/luredefs.h"
+#include "common/rect.h"
 #include "common/list.h"
 #include "common/file.h"
 #include "common/ptr.h"
+#include "common/textconsole.h"
 
 namespace Lure {
 

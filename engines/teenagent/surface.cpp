@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "teenagent/surface.h"
@@ -61,7 +58,7 @@ void Surface::load(Common::SeekableReadStream *stream, Type type) {
 	}
 
 	//debug(0, "creating surface %ux%u -> %u,%u", w_, h_, x, y);
-	create(w_, h_, 1);
+	create(w_, h_, Graphics::PixelFormat::createFormatCLUT8());
 
 	stream->read(pixels, w_ * h_);
 }

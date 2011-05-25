@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Script debugger functionality. Absolutely not threadsafe.
@@ -34,6 +31,10 @@
 
 namespace Sci {
 
+// This table is only used for debugging. Don't include it for devices
+// with not enough available memory (e.g. phones), where REDUCE_MEMORY_USAGE
+// is defined
+#ifndef REDUCE_MEMORY_USAGE
 const char *opcodeNames[] = {
 	   "bnot",       "add",      "sub",      "mul",      "div",
 		"mod",       "shr",      "shl",      "xor",      "and",
@@ -62,6 +63,7 @@ const char *opcodeNames[] = {
 	   "-agi",      "-ali",     "-ati",     "-api",     "-sgi",
 	   "-sli",      "-sti",     "-spi"
 };
+#endif	// REDUCE_MEMORY_USAGE
 
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
 reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode) {
@@ -113,7 +115,9 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 	if (printBWTag)
 		debugN("[%c] ", opsize ? 'B' : 'W');
 
+#ifndef REDUCE_MEMORY_USAGE
 	debugN("%s", opcodeNames[opcode]);
+#endif
 
 	i = 0;
 	while (g_opcode_formats[opcode][i]) {

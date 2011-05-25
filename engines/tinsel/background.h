@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * Data structures used for handling backgrounds
  */
 
@@ -96,7 +93,7 @@ void PlayfieldGetPos(		// Returns the xy position of the specified playfield in 
 int PlayfieldGetCenterX(	// Returns the xy position of the specified playfield in the current background
 	int which);		// which playfield
 
-OBJECT *GetPlayfieldList(	// Returns the display list for the specified playfield
+OBJECT **GetPlayfieldList(	// Returns the display list for the specified playfield
 	int which);		// which playfield
 
 void KillPlayfieldList(		// Kills all the objects on the display list for the specified playfield

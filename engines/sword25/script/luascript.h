@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -39,7 +36,8 @@
 #include "common/str-array.h"
 #include "sword25/kernel/common.h"
 #include "sword25/script/script.h"
-#include "sword25/util/lua/lua.h"
+
+struct lua_State;
 
 namespace Sword25 {
 

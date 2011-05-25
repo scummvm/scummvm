@@ -18,10 +18,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
+
+// Disable symbol overrides so that we can use zlib.h
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/zlib.h"
 #include "common/util.h"

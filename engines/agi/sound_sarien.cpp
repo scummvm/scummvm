@@ -18,16 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
-#include "common/md5.h"
-#include "common/config-manager.h"
-#include "common/fs.h"
 #include "common/random.h"
-#include "common/str-array.h"
 
 #include "audio/mididrv.h"
 

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "audio/decoders/mp3.h"
@@ -29,6 +26,7 @@
 
 #include "common/debug.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 #include "audio/audiostream.h"

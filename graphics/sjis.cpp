@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "common/scummsys.h"
@@ -31,6 +28,7 @@
 #include "common/archive.h"
 #include "common/endian.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 #include "graphics/surface.h"
 
@@ -57,7 +55,7 @@ FontSJIS *FontSJIS::createFont(const Common::Platform platform) {
 }
 
 void FontSJIS::drawChar(Graphics::Surface &dst, uint16 ch, int x, int y, uint32 c1, uint32 c2) const {
-	drawChar(dst.getBasePtr(x, y), ch, dst.pitch, dst.bytesPerPixel, c1, c2, dst.w - x, dst.h - y);
+	drawChar(dst.getBasePtr(x, y), ch, dst.pitch, dst.format.bytesPerPixel, c1, c2, dst.w - x, dst.h - y);
 }
 
 template<typename Color>

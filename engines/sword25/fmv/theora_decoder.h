@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SWORD25_THEORADECODER_H
@@ -30,9 +27,12 @@
 
 #ifdef USE_THEORADEC
 
+#include "common/rational.h"
 #include "video/video_decoder.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 
 #include <theora/theoradec.h>
 #include <vorbis/codec.h>
@@ -40,8 +40,6 @@
 namespace Common {
 class SeekableReadStream;
 }
-
-//#define ENABLE_THEORA_SEEKING		// enables the extra calculations used for video seeking
 
 namespace Sword25 {
 
@@ -51,9 +49,9 @@ namespace Sword25 {
  * Video decoder used in engines:
  *  - sword25
  */
-class TheoraDecoder : public Video::FixedRateVideoDecoder {
+class TheoraDecoder : public Video::VideoDecoder {
 public:
-	TheoraDecoder(Audio::Mixer *mixer = 0, Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
+	TheoraDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 	virtual ~TheoraDecoder();
 
 	/**
@@ -71,51 +69,40 @@ public:
 	 */
 	const Graphics::Surface *decodeNextFrame();
 
-	bool isVideoLoaded() const {
-		return _fileStream != 0;
-	}
-	bool isPaused() const {
-		return (FixedRateVideoDecoder::isPaused() || !isVideoLoaded());
-	}
+	bool isVideoLoaded() const { return _fileStream != 0; }
+	uint16 getWidth() const { return _displaySurface.w; }
+	uint16 getHeight() const { return _displaySurface.h; }
 
-	uint16 getWidth() const {
-		return _surface->w;
-	}
-	uint16 getHeight() const {
-		return _surface->h;
-	}
 	uint32 getFrameCount() const {
 		// It is not possible to get frame count easily
 		// I.e. seeking is required
 		assert(0);
 		return 0;
 	}
-	Graphics::PixelFormat getPixelFormat() const {
-		return Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
-	}
 
+	Graphics::PixelFormat getPixelFormat() const { return _displaySurface.format; }
 	uint32 getElapsedTime() const;
+	uint32 getTimeToNextFrame() const;
 
 	bool endOfVideo() const;
 
 protected:
-	Common::Rational getFrameRate() const {
-		return _frameRate;
-	}
+	void pauseVideoIntern(bool pause);
 
 private:
 	void queuePage(ogg_page *page);
+	bool queueAudio();
 	int bufferData();
-	Audio::QueuingAudioStream *createAudioStream();
-	void translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer, byte *pixelData);
+	void translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer);
 
-private:
 	Common::SeekableReadStream *_fileStream;
-	Graphics::Surface *_surface;
+	Graphics::Surface _surface;
+	Graphics::Surface _displaySurface;
 	Common::Rational _frameRate;
-	uint32 _frameCount;
+	double _nextFrameStartTime;
+	bool _endOfVideo;
+	bool _endOfAudio;
 
-	Audio::Mixer *_mixer;
 	Audio::Mixer::SoundType _soundType;
 	Audio::SoundHandle *_audHandle;
 	Audio::QueuingAudioStream *_audStream;
@@ -136,25 +123,15 @@ private:
 
 	int _theoraPacket;
 	int _vorbisPacket;
-	bool _stateFlag;
 
 	int _ppLevelMax;
 	int _ppLevel;
 	int _ppInc;
 
-	// single frame video buffering
-	bool _videobufReady;
-
 	// single audio fragment audio buffering
 	int _audiobufFill;
 	bool _audiobufReady;
 	ogg_int16_t *_audiobuf;
-
-#if ENABLE_THEORA_SEEKING
-	double _videobufTime;
-	ogg_int64_t  _videobufGranulePos;
-	ogg_int64_t  _audiobufGranulePos; // time position of last sample
-#endif
 };
 
 } // End of namespace Sword25

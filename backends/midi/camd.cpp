@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 // Disable symbol overrides so that we can use system headers.
@@ -29,6 +26,8 @@
 
 #if defined(__amigaos4__)
 
+#include "common/textconsole.h"
+#include "common/error.h"
 #include "common/endian.h"
 #include "common/util.h"
 #include "audio/musicplugin.h"
@@ -114,11 +113,21 @@ void MidiDriver_CAMD::close() {
 }
 
 void MidiDriver_CAMD::send(uint32 b) {
+	if (!_isOpen) {
+		warning("MidiDriver_CAMD: Got event while not open");
+		return;
+	}
+
 	ULONG data = READ_LE_UINT32(&b);
 	_ICamd->PutMidi(_midi_link, data);
 }
 
 void MidiDriver_CAMD::sysEx(const byte *msg, uint16 length) {
+	if (!_isOpen) {
+		warning("MidiDriver_CAMD: Got SysEx while not open");
+		return;
+	}
+
 	unsigned char buf[266];
 
 	assert(length + 2 <= ARRAYSIZE(buf));
@@ -135,8 +144,8 @@ void MidiDriver_CAMD::sysEx(const byte *msg, uint16 length) {
 char *MidiDriver_CAMD::getDevice() {
 	char *retname = NULL;
 
-	APTR key;
-	if (key = _ICamd->LockCAMD(CD_Linkages)) {
+	APTR key = _ICamd->LockCAMD(CD_Linkages);
+	if (key != NULL) {
 		struct MidiCluster *cluster = _ICamd->NextCluster(NULL);
 
 		while (cluster && !retname) {

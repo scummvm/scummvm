@@ -18,17 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
-#include "common/config-manager.h"
-#include "common/file.h"
 #include "common/savefile.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "mohawk/livingbooks.h"
 
@@ -141,6 +138,7 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"rugrats", "Rugrats Adventure Game"},
 	{"lbsampler", "Living Books Sampler"},
 	{"bearfight", "The Berenstain Bears Get in a Fight"},
+	{"beardark", "The Berenstain Bears In The Dark"},
 	{"arthurcomp", "Arthur's Computer Adventure"},
 	{"harryhh","Harry and the Haunted House"},
 	{"stellaluna", "Stellaluna"},
@@ -190,7 +188,7 @@ public:
 	MohawkMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "Mohawk Engine";
+		return "Mohawk";
 	}
 
 	virtual const char *getOriginalCopyright() const {

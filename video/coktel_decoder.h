@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Currently, only GOB and SCI32 games play IMDs and VMDs, so skip compiling if GOB and SCI32 is disabled.
@@ -35,14 +32,25 @@
 
 #include "common/list.h"
 #include "common/array.h"
-#include "common/rect.h"
+#include "common/rational.h"
+#include "common/str.h"
+
+#include "graphics/surface.h"
 
 #include "video/video_decoder.h"
 
 #include "audio/mixer.h"
 
+namespace Common {
+struct Rect;
+class SeekableReadStream;
+}
 namespace Audio {
-	class QueuingAudioStream;
+class QueuingAudioStream;
+}
+
+namespace Graphics {
+struct PixelFormat;
 }
 
 namespace Video {

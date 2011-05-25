@@ -17,15 +17,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "teenagent/scene.h"
 #include "teenagent/teenagent.h"
 #include "teenagent/resources.h"
 #include "teenagent/dialog.h"
+
+#include "common/textconsole.h"
 
 namespace TeenAgent {
 
@@ -37,7 +36,7 @@ namespace TeenAgent {
 void TeenAgentEngine::rejectMessage() {
 	Resources * res = Resources::instance();
 	//random reject message:
-	uint i = random.getRandomNumber(3);
+	uint i = _rnd.getRandomNumber(3);
 	//debug(0, "reject message: %s", (const char *)res->dseg.ptr(res->dseg.get_word(0x339e + 2 * i)));
 	displayMessage(res->dseg.get_word(0x339e + 2 * i));
 }
@@ -3005,7 +3004,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		moveTo(153, 163, 4);
 		playActorAnimation(973);
 		if (CHECK_FLAG(0xDBC1, 0)) {
-			SET_FLAG(0xDBC1, random.getRandomNumber(5) + 1);
+			SET_FLAG(0xDBC1, _rnd.getRandomNumber(5) + 1);
 		}
 		loadScene(30, 18, 159, 2);
 		return true;

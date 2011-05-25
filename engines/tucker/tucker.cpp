@@ -18,18 +18,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "common/archive.h"
+#include "common/debug.h"
+#include "common/error.h"
+#include "common/keyboard.h"
+#include "common/textconsole.h"
 
 #include "engines/util.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/palette.h"
+#include "gui/debugger.h"
 
 #include "tucker/tucker.h"
 #include "tucker/graphics.h"
@@ -37,7 +41,7 @@
 namespace Tucker {
 
 TuckerEngine::TuckerEngine(OSystem *system, Common::Language language, uint32 flags)
-	: Engine(system), _gameLang(language), _gameFlags(flags) {
+	: Engine(system), _gameLang(language), _gameFlags(flags), _rnd("tucker") {
 	_console = new TuckerConsole(this);
 }
 

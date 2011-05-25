@@ -18,14 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "mohawk/sound.h"
 
+#include "common/debug.h"
+#include "common/system.h"
 #include "common/util.h"
+#include "common/textconsole.h"
 
 #include "audio/musicplugin.h"
 #include "audio/audiostream.h"
@@ -616,9 +616,16 @@ Audio::SoundHandle *Sound::replaceBackgroundMyst(uint16 id, uint16 volume) {
 
 	Common::String name = _vm->getResourceName(ID_MSND, convertMystID(id));
 
+	// Only the first eight characters need to be the same to have a match
+	Common::String prefix;
+	if (name.size() >= 8)
+		prefix = Common::String(name.c_str(), name.c_str() + 8);
+	else
+		prefix = name;
+
 	// Check if sound is already playing
 	if (_mystBackgroundSound.type == kUsedHandle && _vm->_mixer->isSoundHandleActive(_mystBackgroundSound.handle)
-			&& name.equals(_vm->getResourceName(ID_MSND, convertMystID(_mystBackgroundSound.id))))
+			&& _vm->getResourceName(ID_MSND, convertMystID(_mystBackgroundSound.id)).hasPrefix(prefix))
 		return &_mystBackgroundSound.handle;
 
 	// Stop old background sound

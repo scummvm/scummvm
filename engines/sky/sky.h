@@ -18,16 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SKY_H
 #define SKY_H
 
 
-#include "common/events.h"
+#include "common/error.h"
+#include "common/keyboard.h"
 #include "engines/engine.h"
 
 /**
@@ -52,7 +50,6 @@ struct SystemVars {
 	bool paused;
 };
 
-struct Compact;
 class Sound;
 class Disk;
 class Text;

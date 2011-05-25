@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifdef ENABLE_LOL
@@ -28,9 +25,11 @@
 #ifndef KYRA_TEXT_LOL_H
 #define KYRA_TEXT_LOL_H
 
+#include "common/scummsys.h"
+
 namespace Kyra {
 
-class Screen_v2;
+class Screen_LoL;
 class LoLEngine;
 struct EMCState;
 

@@ -17,14 +17,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "graphics/iff.h"
 #include "graphics/surface.h"
 
+#include "common/endian.h"
+#include "common/func.h"
+#include "common/iff_container.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 namespace Graphics {
@@ -204,7 +205,7 @@ struct PBMLoader {
 
 		case ID_BODY:
 			if (_surface) {
-				_surface->create(_decoder._header.width, _decoder._header.height, 1);
+				_surface->create(_decoder._header.width, _decoder._header.height, PixelFormat::createFormatCLUT8());
 				_decoder.loadBitmap((byte*)_surface->pixels, chunk._stream);
 			}
 			return true;	// stop the parser

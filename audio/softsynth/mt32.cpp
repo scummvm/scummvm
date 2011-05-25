@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "common/scummsys.h"
@@ -34,15 +31,20 @@
 
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/error.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "common/archive.h"
+#include "common/textconsole.h"
 #include "common/translation.h"
 
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
+#include "graphics/pixelformat.h"
+#include "graphics/palette.h"
+#include "graphics/font.h"
 
 class MidiChannel_MT32 : public MidiChannel_MPU401 {
 	void effectLevel(byte value) { }
@@ -346,7 +348,7 @@ void MidiDriver_MT32::send(uint32 b) {
 
 void MidiDriver_MT32::setPitchBendRange(byte channel, uint range) {
 	if (range > 24) {
-		printf("setPitchBendRange() called with range > 24: %d", range);
+		warning("setPitchBendRange() called with range > 24: %d", range);
 	}
 	byte benderRangeSysex[9];
 	benderRangeSysex[0] = 0x41; // Roland

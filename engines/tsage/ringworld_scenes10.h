@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_RINGWORLD_SCENES10_H
@@ -39,8 +36,8 @@ class SceneObject9150 : public SceneObject {
 public:
 	int _timer, _signalFlag;
 
-	virtual void synchronise(Serialiser &s) {
-		SceneObject::synchronise(s);
+	virtual void synchronize(Serializer &s) {
+		SceneObject::synchronize(s);
 		s.syncAsSint16LE(_timer);
 		s.syncAsSint16LE(_signalFlag);
 	}
@@ -52,8 +49,8 @@ public :
 	int _sceneState;
 
 	Scene2();
-	virtual void synchronise(Serialiser &s) {
-		Scene::synchronise(s);
+	virtual void synchronize(Serializer &s) {
+		Scene::synchronize(s);
 		s.syncAsSint16LE(_sceneState);
 	}
 };
@@ -241,6 +238,7 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 	virtual void dispatch();
+	virtual void synchronize(Serializer &s);
 };
 
 class Scene9450 : public Scene2 {
@@ -471,6 +469,7 @@ class Scene9900 : public Scene {
 
 		virtual void signal();
 		virtual void dispatch();
+		virtual void synchronize(Serializer &s);
 	};
 
 	class strAction3 : public Action {

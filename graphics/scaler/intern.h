@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef GRAPHICS_SCALER_INTERN_H
@@ -74,6 +71,16 @@ static inline unsigned interpolate16_3_1(unsigned p1, unsigned p2) {
 	const unsigned lowbits = (((p1 & ColorMask::kLowBits) << 1) + (p1 & ColorMask::kLow2Bits)
 		                   + (p2 & ColorMask::kLow2Bits)) & ColorMask::kLow2Bits;
 	return ((p1*3 + p2) - lowbits) >> 2;
+}
+
+/**
+ * Interpolate two 16 bit pixels with weights 5 and 3 and 1, i.e., (5*p1+3*p2)/8.
+ */
+template<typename ColorMask>
+static inline unsigned interpolate16_5_3(unsigned p1, unsigned p2) {
+	const unsigned lowbits = (((p1 & ColorMask::kLowBits) << 2) + (p1 & ColorMask::kLow3Bits)
+		                   + ((p2 & ColorMask::kLow2Bits) << 1) + (p2 & ColorMask::kLow3Bits)) & ColorMask::kLow3Bits;
+	return ((p1*5 + p2*3) - lowbits) >> 3;
 }
 
 /**

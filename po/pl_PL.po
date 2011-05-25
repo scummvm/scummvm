@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ScummVM 1.2.0\n"
+"Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2011-04-22 19:33+0100\n"
-"PO-Revision-Date: 2011-01-10 19:42+0100\n"
+"PO-Revision-Date: 2011-05-02 12:09+0100\n"
 "Last-Translator: \n"
 "Language-Team: Grajpopolsku.pl <grajpopolsku@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -999,20 +999,17 @@ msgstr "Nie uda³o siê znale¼æ silnika zdolnego do uruchomienia zaznaczonej gry"
 
 #: common/error.cpp:42
 msgid "No error"
-msgstr ""
+msgstr "Brak b³êdu"
 
 #: common/error.cpp:44
-#, fuzzy
 msgid "Game data not found"
 msgstr "Nie znaleziono plików gry"
 
 #: common/error.cpp:46
-#, fuzzy
 msgid "Game id not supported"
 msgstr "Identyfikator gry nie jest wspierany"
 
 #: common/error.cpp:48
-#, fuzzy
 msgid "Unsupported color mode"
 msgstr "Niewspierany tryb kolorów"
 
@@ -1025,7 +1022,6 @@ msgid "Write permission denied"
 msgstr "Brak praw do zapisu"
 
 #: common/error.cpp:56
-#, fuzzy
 msgid "Path does not exist"
 msgstr "¦cie¿ka nie istnieje"
 
@@ -1042,9 +1038,8 @@ msgid "Cannot create file"
 msgstr "Nie mo¿na utworzyæ pliku"
 
 #: common/error.cpp:65
-#, fuzzy
 msgid "Reading data failed"
-msgstr "Odczyt nieudany"
+msgstr "Odczyt danych nieudany"
 
 #: common/error.cpp:67
 msgid "Writing data failed"
@@ -1052,19 +1047,17 @@ msgstr "Zapisywanie danych nie powiod³o siê"
 
 #: common/error.cpp:70
 msgid "Could not find suitable engine plugin"
-msgstr ""
+msgstr "Nie uda³o siê znale¼æ odpowiedniej wtyczki silnika"
 
 #: common/error.cpp:72
-#, fuzzy
 msgid "Engine plugin does not support save states"
-msgstr "Silnik nie wspiera poziomu debugowania '%s'"
+msgstr "Silnik nie wspiera zapisu stanu gry"
 
 #: common/error.cpp:75
 msgid "Command line argument not processed"
-msgstr ""
+msgstr "Argument wiersza poleceñ nie zosta³ przetworzony"
 
 #: common/error.cpp:79
-#, fuzzy
 msgid "Unknown error"
 msgstr "Nieznany b³±d"
 
@@ -1718,6 +1711,9 @@ msgid ""
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
 "directory inside the Tentacle game directory."
 msgstr ""
+"Zwykle w tym momencie uruchomi³oby siê Maniac Mansion, ale ScummVM jeszcze "
+"tego nie obs³uguje. Aby zagraæ, u¿yj \"Dodaj grê...\" z menu startowego "
+"ScummVM i wybierz podkatalog \"Maniac\" z katalogu gry Tentacle."
 
 #: engines/mohawk/dialogs.cpp:89 engines/mohawk/dialogs.cpp:127
 msgid "~Z~ip Mode Activated"

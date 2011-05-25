@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*! \mainpage %ScummVM Source Reference
@@ -30,6 +27,9 @@
  * Currently not much is actually properly documented, but at least you can get an overview
  * of almost all the classes, methods and variables, and how they interact.
  */
+
+// FIXME: Avoid using printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
 #include "engines/engine.h"
 #include "engines/metaengine.h"
@@ -43,14 +43,13 @@
 #include "common/debug-channels.h" /* for debug manager */
 #include "common/events.h"
 #include "common/EventRecorder.h"
-#include "common/file.h"
 #include "common/fs.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "common/tokenizer.h"
 #include "common/translation.h"
 
 #include "gui/gui-manager.h"
-#include "gui/message.h"
 #include "gui/error.h"
 
 #include "audio/mididrv.h"
@@ -350,9 +349,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	Common::Error res;
 
 	// TODO: deal with settings that require plugins to be loaded
-	res = Base::processSettings(command, settings);
-	if (res.getCode() != Common::kArgumentNotProcessed) {
-		warning("%s", res.getDesc().c_str());
+	if (Base::processSettings(command, settings, res)) {
+		if (res.getCode() != Common::kNoError)
+			warning("%s", res.getDesc().c_str());
 		return res.getCode();
 	}
 

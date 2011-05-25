@@ -18,21 +18,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SOUND_RATE_H
 #define SOUND_RATE_H
 
 #include "common/scummsys.h"
-#include "engines/engine.h"
-
-class AudioStream;
-
 
 namespace Audio {
+
+class AudioStream;
 
 typedef int16 st_sample_t;
 typedef uint16 st_volume_t;

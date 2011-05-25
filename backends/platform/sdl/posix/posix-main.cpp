@@ -18,14 +18,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/scummsys.h"
 
-#if defined(UNIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA)
+#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA)
 
 #include "backends/platform/sdl/posix/posix.h"
 #include "backends/plugins/sdl/sdl-provider.h"

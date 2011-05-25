@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // The hash map (associative array) implementation in this file is
@@ -47,8 +44,6 @@
 
 
 #include "common/func.h"
-#include "common/str.h"
-#include "common/util.h"
 
 #ifdef DEBUG_HASH_COLLISIONS
 #include "common/debug.h"

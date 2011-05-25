@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef PLATFORM_SDL_WIN32_H
@@ -32,6 +29,7 @@ class OSystem_Win32 : public OSystem_SDL {
 public:
 	virtual void init();
 
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 protected:
 	virtual Common::String getDefaultConfigFileName();
 	virtual Common::WriteStream *createLogFile();

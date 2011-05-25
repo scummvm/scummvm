@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * CursorPositionProcess()
  * TagProcess()
  * PointProcess()
@@ -43,6 +40,8 @@
 #include "tinsel/strres.h"
 #include "tinsel/text.h"
 #include "tinsel/tinsel.h"
+
+#include "common/textconsole.h"
 
 namespace Tinsel {
 

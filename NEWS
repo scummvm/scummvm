@@ -1,7 +1,11 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-1.3.0 (????-??-??)
+1.4.0 (????-??-??)
+ SDL ports:
+   - Added support for OpenGL (GSoC Task).
+
+1.3.0 (2011-05-28)
  New Games:
    - Added support for Backyard Baseball.
    - Added support for Backyard Baseball 2001.
@@ -9,10 +13,13 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Playtoons: Bambou le Sauveur de la Jungle.
    - Added support for Toonstruck.
    - Added support for Living Books v1 and v2 games.
-   - Added support for Hugo's House of Horrors, Hugo 2: Whodunit? 
+   - Added support for Hugo's House of Horrors, Hugo 2: Whodunit?
      and Hugo 3: Jungle of Doom.
    - Added support for Amiga SCI games (except Conquests of the Longbow).
    - Added support for Macintosh SCI1 games.
+
+ New Ports:
+   - Added WebOS port.
 
  General
    - Added support for loadable modules on platforms without a dynamic
@@ -112,7 +119,6 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added workarounds for several issues present in the original game.
 
  SDL ports:
-   - Added support for OpenGL (GSoC Task).
    - Closed memory leaks in Mouse Surfaces.
 
  Android port:

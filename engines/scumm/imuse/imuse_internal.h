@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef SCUMM_IMUSE_INTERNAL
@@ -397,7 +394,6 @@ protected:
 	TimerCallbackInfo _timer_info_native;
 
 	uint32 _game_id;
-	byte **_base_sounds;
 
 	// Plug-in SysEx handling. Right now this only supports one
 	// custom SysEx handler for the hardcoded IMUSE_SYSEX_ID
@@ -513,7 +509,6 @@ public:
 	int save_or_load(Serializer *ser, ScummEngine *scumm);
 	bool get_sound_active(int sound) const;
 	int32 doCommand(int numargs, int args[]);
-	void setBase(byte **base);
 	uint32 property(int prop, uint32 value);
 	virtual void addSysexHandler(byte mfgID, sysexfunc handler);
 

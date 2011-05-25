@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef COMMON_CONSOLE_H
@@ -65,8 +62,6 @@ void setErrorHandler(ErrorHandler handler);
 void NORETURN_PRE error(const char *s, ...) GCC_PRINTF(1, 2) NORETURN_POST;
 
 #ifdef DISABLE_TEXT_CONSOLE
-
-inline int printf(const char *s, ...) { return 0; }
 
 inline void warning(const char *s, ...) {}
 

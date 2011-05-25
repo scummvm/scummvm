@@ -18,9 +18,6 @@
 * along with this program; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 *
-* $URL$
-* $Id$
-*
 */
 
 #include "common/scummsys.h"
@@ -36,7 +33,7 @@
 namespace Common {
 
 static void blit(Graphics::Surface *surf_dst, Graphics::Surface *surf_src, int16 x, int16 y, OverlayColor transparent) {
-	if (surf_dst->bytesPerPixel != sizeof(OverlayColor) || surf_src->bytesPerPixel != sizeof(OverlayColor))
+	if (surf_dst->format.bytesPerPixel != sizeof(OverlayColor) || surf_src->format.bytesPerPixel != sizeof(OverlayColor))
 		return;
 
 	const OverlayColor *src = (const OverlayColor *)surf_src->pixels;
@@ -133,7 +130,7 @@ void VirtualKeyboardGUI::setupDisplayArea(Rect& r, OverlayColor forecolor) {
 	_dispI = 0;
 	_dispForeColor = forecolor;
 	_dispBackColor = _dispForeColor + 0xFF;
-	_dispSurface.create(r.width(), _dispFont->getFontHeight(), sizeof(OverlayColor));
+	_dispSurface.create(r.width(), _dispFont->getFontHeight(), _system->getOverlayFormat());
 	_dispSurface.fillRect(Rect(_dispSurface.w, _dispSurface.h), _dispBackColor);
 	_displayEnabled = true;
 }
@@ -163,7 +160,7 @@ void VirtualKeyboardGUI::run() {
 		_system->showOverlay();
 		_system->clearOverlay();
 	}
-	_overlayBackup.create(_screenW, _screenH, sizeof(OverlayColor));
+	_overlayBackup.create(_screenW, _screenH, _system->getOverlayFormat());
 	_system->grabOverlay((OverlayColor*)_overlayBackup.pixels, _overlayBackup.w);
 
 	setupCursor();
@@ -265,7 +262,7 @@ void VirtualKeyboardGUI::screenChanged() {
 		_screenW = newScreenW;
 		_screenH = newScreenH;
 
-		_overlayBackup.create(_screenW, _screenH, sizeof(OverlayColor));
+		_overlayBackup.create(_screenW, _screenH, _system->getOverlayFormat());
 		_system->grabOverlay((OverlayColor*)_overlayBackup.pixels, _overlayBackup.w);
 
 		if (!_kbd->checkModeResolutions()) {
@@ -358,7 +355,7 @@ void VirtualKeyboardGUI::redraw() {
 	if (w <= 0 || h <= 0) return;
 
 	Graphics::Surface surf;
-	surf.create(w, h, sizeof(OverlayColor));
+	surf.create(w, h, _system->getOverlayFormat());
 
 	OverlayColor *dst = (OverlayColor *)surf.pixels;
 	const OverlayColor *src = (OverlayColor *) _overlayBackup.getBasePtr(_dirtyRect.left, _dirtyRect.top);

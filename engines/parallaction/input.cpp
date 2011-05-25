@@ -18,13 +18,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/events.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "graphics/cursorman.h"
 
 #include "parallaction/exec.h"
@@ -486,7 +484,7 @@ void Input::initCursors() {
 			_donnaCursor = _vm->_disk->loadPointer("pointer3");
 
 			Graphics::Surface *surf = new Graphics::Surface;
-			surf->create(_mouseComboProps_BR._width, _mouseComboProps_BR._height, 1);
+			surf->create(_mouseComboProps_BR._width, _mouseComboProps_BR._height, Graphics::PixelFormat::createFormatCLUT8());
 			_comboArrow = new SurfaceToFrames(surf);
 
 			// TODO: choose the pointer depending on the active character
@@ -495,12 +493,12 @@ void Input::initCursors() {
 		} else {
 			// TODO: Where are the Amiga cursors?
 			Graphics::Surface *surf1 = new Graphics::Surface;
-			surf1->create(_mouseComboProps_BR._width, _mouseComboProps_BR._height, 1);
+			surf1->create(_mouseComboProps_BR._width, _mouseComboProps_BR._height, Graphics::PixelFormat::createFormatCLUT8());
 			_comboArrow = new SurfaceToFrames(surf1);
 
 			// TODO: scale mouse cursor (see staticres.cpp)
 			Graphics::Surface *surf2 = new Graphics::Surface;
-			surf2->create(32, 16, 1);
+			surf2->create(32, 16, Graphics::PixelFormat::createFormatCLUT8());
 			memcpy(surf2->pixels, _resMouseArrow_BR_Amiga, 32*16);
 			_mouseArrow = new SurfaceToFrames(surf2);
 		}

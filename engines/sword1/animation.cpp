@@ -18,21 +18,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/file.h"
+#include "common/events.h"
+#include "common/keyboard.h"
+#include "common/textconsole.h"
 #include "sword1/sword1.h"
 #include "sword1/animation.h"
 #include "sword1/text.h"
-#include "audio/decoders/vorbis.h"
 
-#include "common/config-manager.h"
-#include "common/endian.h"
 #include "common/str.h"
 #include "common/system.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "gui/message.h"
@@ -128,7 +126,7 @@ bool MoviePlayer::load(uint32 id) {
 					continue;
 				}
 
-				_movieTexts.push_back(new MovieText(startFrame, endFrame, ptr));
+				_movieTexts.push_back(MovieText(startFrame, endFrame, ptr));
 				lastEnd = endFrame;
 			}
 			f.close();
@@ -163,8 +161,7 @@ void MoviePlayer::play() {
 
 	_textMan->releaseText(2, false);
 
-	while (!_movieTexts.empty())
-		delete _movieTexts.remove_at(_movieTexts.size() - 1);
+	_movieTexts.clear();
 
 	while (_snd->isSoundHandleActive(*_bgSoundHandle))
 		_system->delayMillis(100);
@@ -181,8 +178,8 @@ void MoviePlayer::play() {
 
 void MoviePlayer::performPostProcessing(byte *screen) {
 	if (!_movieTexts.empty()) {
-		if (_decoder->getCurFrame() == _movieTexts[0]->_startFrame) {
-			_textMan->makeTextSprite(2, (uint8 *)_movieTexts[0]->_text, 600, LETTER_COL);
+		if (_decoder->getCurFrame() == _movieTexts.front()._startFrame) {
+			_textMan->makeTextSprite(2, (const uint8 *)_movieTexts.front()._text.c_str(), 600, LETTER_COL);
 
 			FrameHeader *frame = _textMan->giveSpriteData(2);
 			_textWidth = frame->width;
@@ -190,9 +187,9 @@ void MoviePlayer::performPostProcessing(byte *screen) {
 			_textX = 320 - _textWidth / 2;
 			_textY = 420 - _textHeight;
 		}
-		if (_decoder->getCurFrame() == _movieTexts[0]->_endFrame) {
+		if (_decoder->getCurFrame() == _movieTexts.front()._endFrame) {
 			_textMan->releaseText(2, false);
-			delete _movieTexts.remove_at(0);
+			_movieTexts.pop_front();
 		}
 	}
 

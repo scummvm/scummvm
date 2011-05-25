@@ -18,16 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 
-#include "common/endian.h"
 #include "common/file.h"
 #include "common/util.h"
-#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "sword1/sword1.h"
 #include "sword1/music.h"

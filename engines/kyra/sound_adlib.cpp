@@ -34,16 +34,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $URL$
- * $Id$
- *
  */
 
 
+#include "kyra/sound_intern.h"
+#include "kyra/resource.h"
+
 #include "common/system.h"
 #include "common/mutex.h"
-#include "kyra/resource.h"
-#include "kyra/sound_intern.h"
 
 #include "audio/mixer.h"
 #include "audio/fmopl.h"

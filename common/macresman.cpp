@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/scummsys.h"
@@ -31,7 +28,7 @@
 #include "common/macresman.h"
 #include "common/md5.h"
 #include "common/substream.h"
-#include "common/memstream.h"
+#include "common/textconsole.h"
 
 #ifdef MACOSX
 #include "common/config-manager.h"
@@ -548,134 +545,6 @@ void MacResManager::readMap() {
 			}
 		}
 	}
-}
-
-void MacResManager::convertCrsrCursor(SeekableReadStream *data, byte **cursor, int &w, int &h, int &hotspotX,
-			int &hotspotY, int &keycolor, bool colored, byte **palette, int &palSize) {
-
-	data->readUint16BE(); // type
-	data->readUint32BE(); // offset to pixel map
-	data->readUint32BE(); // offset to pixel data
-	data->readUint32BE(); // expanded cursor data
-	data->readUint16BE(); // expanded data depth
-	data->readUint32BE(); // reserved
-
-	// Grab B/W icon data
-	*cursor = new byte[16 * 16];
-	for (int i = 0; i < 32; i++) {
-		byte imageByte = data->readByte();
-		for (int b = 0; b < 8; b++)
-			cursor[0][i * 8 + b] = (byte)((imageByte & (0x80 >> b)) > 0 ? 0x0F : 0x00);
-	}
-
-	// Apply mask data
-	for (int i = 0; i < 32; i++) {
-		byte imageByte = data->readByte();
-		for (int b = 0; b < 8; b++)
-			if ((imageByte & (0x80 >> b)) == 0)
-				cursor[0][i * 8 + b] = 0xff;
-	}
-
-	hotspotY = data->readUint16BE();
-	hotspotX = data->readUint16BE();
-	w = h = 16;
-	keycolor = 0xff;
-
-	// Use b/w cursor on backends which don't support cursor palettes
-	if (!colored)
-		return;
-
-	data->readUint32BE(); // reserved
-	data->readUint32BE(); // cursorID
-
-	// Color version of cursor
-	data->readUint32BE(); // baseAddr
-
-	// Keep only lowbyte for now
-	data->readByte();
-	int iconRowBytes = data->readByte();
-
-	if (!iconRowBytes)
-		return;
-
-	int iconBounds[4];
-	iconBounds[0] = data->readUint16BE();
-	iconBounds[1] = data->readUint16BE();
-	iconBounds[2] = data->readUint16BE();
-	iconBounds[3] = data->readUint16BE();
-
-	data->readUint16BE(); // pmVersion
-	data->readUint16BE(); // packType
-	data->readUint32BE(); // packSize
-
-	data->readUint32BE(); // hRes
-	data->readUint32BE(); // vRes
-
-	data->readUint16BE(); // pixelType
-	data->readUint16BE(); // pixelSize
-	data->readUint16BE(); // cmpCount
-	data->readUint16BE(); // cmpSize
-
-	data->readUint32BE(); // planeByte
-	data->readUint32BE(); // pmTable
-	data->readUint32BE(); // reserved
-
-	// Pixel data for cursor
-	int iconDataSize =  iconRowBytes * (iconBounds[3] - iconBounds[1]);
-	byte *iconData = new byte[iconDataSize];
-
-	if (!iconData) {
-		error("Cannot allocate iconData in macresman.cpp");
-	}
-
-	data->read(iconData, iconDataSize);
-
-	// Color table
-	data->readUint32BE(); // ctSeed
-	data->readUint16BE(); // ctFlag
-	uint16 ctSize = data->readUint16BE() + 1;
-
-	*palette = new byte[ctSize * 3];
-
-	// Read just high byte of 16-bit color
-	for (int c = 0; c < ctSize; c++) {
-		// We just use indices 0..ctSize, so ignore color ID
-		data->readUint16BE(); // colorID[c]
-
-		palette[0][c * 3 + 0] = data->readByte();
-		data->readByte();
-
-		palette[0][c * 3 + 1] = data->readByte();
-		data->readByte();
-
-		palette[0][c * 3 + 2] = data->readByte();
-		data->readByte();
-	}
-
-	palSize = ctSize;
-
-	int pixelsPerByte = (iconBounds[2] - iconBounds[0]) / iconRowBytes;
-	int bpp           = 8 / pixelsPerByte;
-
-	// build a mask to make sure the pixels are properly shifted out
-	int bitmask = 0;
-	for (int m = 0; m < bpp; m++) {
-		bitmask <<= 1;
-		bitmask  |= 1;
-	}
-
-	// Extract pixels from bytes
-	for (int j = 0; j < iconDataSize; j++)
-		for (int b = 0; b < pixelsPerByte; b++) {
-			int idx = j * pixelsPerByte + (pixelsPerByte - 1 - b);
-
-			if (cursor[0][idx] != 0xff) // if mask is not there
-				cursor[0][idx] = (byte)((iconData[j] >> (b * bpp)) & bitmask);
-		}
-
-	delete[] iconData;
-
-	assert(data->size() - data->pos() == 0);
 }
 
 } // End of namespace Common

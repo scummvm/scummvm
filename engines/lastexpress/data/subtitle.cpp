@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Based on the Xentax Wiki documentation:
@@ -33,7 +30,9 @@
 #include "lastexpress/debug.h"
 
 #include "common/debug.h"
+#include "common/rect.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace LastExpress {
 

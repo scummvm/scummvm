@@ -18,10 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
+
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
 #include "Gs2dScreen.h"
 #include <kernel.h>
@@ -398,7 +397,7 @@ Graphics::Surface *Gs2dScreen::lockScreen() {
 	_framebuffer.w = _width;
 	_framebuffer.h = _height;
 	_framebuffer.pitch = _width; // -not- _pitch; ! It's EE mem, not Tex
-	_framebuffer.bytesPerPixel = 1;
+	_framebuffer.format = Graphics::PixelFormat::createFormatCLUT8();
 
 	return &_framebuffer;
 }
@@ -441,7 +440,7 @@ void Gs2dScreen::grabPalette(uint8 *pal, uint8 start, uint16 num) {
 void Gs2dScreen::grabScreen(Graphics::Surface *surf) {
 	assert(surf);
 	WaitSema(g_DmacSema);
-	surf->create(_width, _height, 1);
+	surf->create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
 	memcpy(surf->pixels, _screenBuf, _width * _height);
 	SignalSema(g_DmacSema);
 }

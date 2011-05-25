@@ -18,13 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef PLATFORM_SDL_SAMSUNGTV_H
 #define PLATFORM_SDL_SAMSUNGTV_H
+
+#if defined(SAMSUNGTV)
 
 #include "backends/platform/sdl/posix/posix.h"
 
@@ -33,10 +32,10 @@ public:
 	OSystem_SDL_SamsungTV();
 
 	virtual void initBackend();
-
-	virtual bool hasFeature(Feature f);
-	virtual void setFeatureState(Feature f, bool enable);
-	virtual bool getFeatureState(Feature f);
+	virtual void quit();
+	virtual void fatalError();
 };
+
+#endif
 
 #endif

@@ -18,21 +18,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef VIDEO_CODECS_CINEPAK_H
 #define VIDEO_CODECS_CINEPAK_H
 
 #include "common/scummsys.h"
-#include "common/stream.h"
 #include "common/rect.h"
-#include "graphics/surface.h"
 #include "graphics/pixelformat.h"
 
 #include "video/codecs/codec.h"
+
+namespace Common {
+class SeekableReadStream;
+}
+
+namespace Graphics {
+struct Surface;
+}
 
 namespace Video {
 

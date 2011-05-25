@@ -17,31 +17,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef ENGINES_ENGINE_H
 #define ENGINES_ENGINE_H
 
 #include "common/scummsys.h"
-#include "common/error.h"
 #include "common/str.h"
 
 class OSystem;
 
 namespace Audio {
-	class Mixer;
+class Mixer;
 }
 namespace Common {
-	class EventManager;
-	class SaveFileManager;
-	class TimerManager;
+class Error;
+class EventManager;
+class SaveFileManager;
+class TimerManager;
 }
 namespace GUI {
-	class Debugger;
-	class Dialog;
+class Debugger;
+class Dialog;
 }
 
 /**

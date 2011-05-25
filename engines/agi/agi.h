@@ -18,18 +18,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef AGI_H
 #define AGI_H
 
 #include "common/scummsys.h"
-#include "common/endian.h"
+#include "common/error.h"
 #include "common/util.h"
 #include "common/file.h"
+#include "common/rect.h"
 #include "common/stack.h"
 #include "common/system.h"
 
@@ -45,7 +43,9 @@
 #include "agi/sound.h"
 
 
-namespace Common { class RandomSource; }
+namespace Common {
+class RandomSource;
+}
 
 /**
  * This is the namespace of the AGI engine.
@@ -693,7 +693,6 @@ public:
 class GfxMgr;
 class SpritesMgr;
 class Menu;
-class SearchTree;
 
 // Image stack support
 struct ImageStackElement {
@@ -756,6 +755,7 @@ public:
 	virtual void clearKeyQueue() = 0;
 
 	AgiBase(OSystem *syst, const AGIGameDescription *gameDesc);
+	~AgiBase();
 
 	virtual void clearImageStack() = 0;
 	virtual void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
@@ -969,7 +969,7 @@ public:
 	int showWords();
 	int loadWords(const char *);
 	void unloadWords();
-	int findWord(char *word, int *flen);
+	int findWord(const char *word, int *flen);
 	void dictionaryWords(char *);
 
 	// Motion

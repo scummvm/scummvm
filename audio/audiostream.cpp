@@ -18,20 +18,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/debug.h"
-#include "common/endian.h"
 #include "common/file.h"
+#include "common/mutex.h"
+#include "common/textconsole.h"
 #include "common/queue.h"
 #include "common/util.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/flac.h"
-#include "audio/mixer.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"

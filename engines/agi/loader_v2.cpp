@@ -18,10 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
+
+#include "common/textconsole.h"
 
 #include "agi/agi.h"
 
@@ -150,11 +149,11 @@ uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
 		fp.read(&x, 5);
 		if ((sig = READ_BE_UINT16((uint8 *) x)) == 0x1234) {
 			agid->len = READ_LE_UINT16((uint8 *) x + 3);
-			data = (uint8 *) calloc(1, agid->len + 32);
+			data = (uint8 *)calloc(1, agid->len + 32);
 			if (data != NULL) {
 				fp.read(data, agid->len);
 			} else {
-				exit(1);
+				error("AgiLoader_v2::loadVolRes out of memory");
 			}
 		} else {
 			warning("AgiLoader_v2::loadVolRes: bad signature %04x", sig);

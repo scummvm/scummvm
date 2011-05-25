@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Graphics maniuplation routines - private header file
@@ -28,6 +25,7 @@
 #ifndef SAGA_GFX_H
 #define SAGA_GFX_H
 
+#include "common/rect.h"
 #include "graphics/surface.h"
 
 namespace Saga {

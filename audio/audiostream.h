@@ -18,23 +18,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SOUND_AUDIOSTREAM_H
 #define SOUND_AUDIOSTREAM_H
 
-#include "common/util.h"
 #include "common/scummsys.h"
+#include "common/str.h"
 #include "common/types.h"
 
 #include "audio/timestamp.h"
 
 namespace Audio {
-
-class SeekableAudioStream;
 
 /**
  * Generic audio input stream. Subclasses of this are used to feed arbitrary

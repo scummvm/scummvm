@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_STATICRES_H
@@ -78,6 +75,16 @@ extern const char *SCENE6100_TAKE_CONTROLS;
 extern const char *SCENE6100_SURPRISE;
 extern const char *SCENE6100_SWEAT;
 extern const char *SCENE6100_VERY_WELL;
+
+// Demo messages
+extern const char *DEMO_HELP_MSG;
+extern const char *DEMO_PAUSED_MSG;
+extern const char *DEMO_HELP_MSG;
+extern const char *DEMO_PAUSED_MSG;
+extern const char *DEMO_EXIT_MSG;
+extern const char *EXIT_BTN_STRING;
+extern const char *DEMO_BTN_STRING;
+extern const char *DEMO_RESUME_BTN_STRING;
 
 } // End of namespace tSage
 

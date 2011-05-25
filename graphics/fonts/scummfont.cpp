@@ -17,12 +17,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "graphics/font.h"
+#include "graphics/surface.h"
 
 namespace Graphics {
 
@@ -302,9 +300,9 @@ void ScummFont::drawChar(Surface *dst, byte chr, int tx, int ty, uint32 color) c
 			}
 			c = ((buffer & mask) != 0);
 			if (c) {
-				if (dst->bytesPerPixel == 1)
+				if (dst->format.bytesPerPixel == 1)
 					ptr[x] = color;
-				else if (dst->bytesPerPixel == 2)
+				else if (dst->format.bytesPerPixel == 2)
 					((uint16 *)ptr)[x] = color;
 			}
 		}

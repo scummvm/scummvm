@@ -18,12 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
-#include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/str.h"
@@ -35,6 +31,7 @@
 #include "scumm/debugger.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/object.h"
+#include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 
@@ -377,8 +374,8 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 		DebugPrintf("Actor[%d]._elevation = %d\n", actnum, a->getElevation());
 		_vm->_fullRedraw = true;
 	} else if (!strcmp(argv[2], "costume")) {
-		if (value >= _vm->_res->num[rtCostume])
-			DebugPrintf("Costume not changed as %d exceeds max of %d\n", value, _vm->_res->num[rtCostume]);
+		if (value >= (int)_vm->_res->_types[rtCostume].size())
+			DebugPrintf("Costume not changed as %d exceeds max of %d\n", value, _vm->_res->_types[rtCostume].size());
 		else {
 			a->setActorCostume(value);
 			_vm->_fullRedraw = true;
@@ -402,14 +399,15 @@ bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 	int i;
 	Actor *a;
 
-	DebugPrintf("+-----------------------------------------------------------+\n");
-	DebugPrintf("|# |  x |  y | w |elev|cos|box|mov| zp|frm|scl|dir|   cls   |\n");
-	DebugPrintf("+--+----+----+---+----+---+---+---+---+---+---+---+---------+\n");
+	DebugPrintf("+---------------------------------------------------------------+\n");
+	DebugPrintf("|# |  x |  y | w | h |elev|cos|box|mov| zp|frm|scl|dir|   cls   |\n");
+	DebugPrintf("+--+----+----+---+---+----+---+---+---+---+---+---+---+---------+\n");
 	for (i = 1; i < _vm->_numActors; i++) {
 		a = _vm->_actors[i];
 		if (a->_visible)
-			DebugPrintf("|%2d|%4d|%4d|%3d|%4d|%3d|%3d|%3d|%3d|%3d|%3d|%3d|$%08x|\n",
-						 a->_number, a->getRealPos().x, a->getRealPos().y, a->_width, a->getElevation(),
+			DebugPrintf("|%2d|%4d|%4d|%3d|%3d|%4d|%3d|%3d|%3d|%3d|%3d|%3d|%3d|$%08x|\n",
+						 a->_number, a->getRealPos().x, a->getRealPos().y, a->_width,  a->_bottom - a->_top,
+						 a->getElevation(),
 						 a->_costume, a->_walkbox, a->_moving, a->_forceClip, a->_frame,
 						 a->_scalex, a->getFacing(), _vm->_classData[a->_number]);
 	}

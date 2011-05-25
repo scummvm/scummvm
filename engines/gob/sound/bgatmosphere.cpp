@@ -18,14 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
-#include "common/system.h"
-#include "common/events.h"
-#include "common/EventRecorder.h"
+#include "common/array.h"
 
 #include "gob/sound/bgatmosphere.h"
 #include "gob/sound/sounddesc.h"
@@ -33,14 +28,12 @@
 namespace Gob {
 
 BackgroundAtmosphere::BackgroundAtmosphere(Audio::Mixer &mixer) :
-	SoundMixer(mixer, Audio::Mixer::kMusicSoundType) {
+	SoundMixer(mixer, Audio::Mixer::kMusicSoundType), _rnd("gobBA") {
 
 	_playMode = kPlayModeLinear;
 	_queuePos = -1;
 	_shaded = false;
 	_shadable = true;
-
-	g_eventRec.registerRandomSource(_rnd, "gobBA");
 }
 
 BackgroundAtmosphere::~BackgroundAtmosphere() {

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "m4/m4_views.h"
@@ -34,6 +31,7 @@
 #include "m4/staticres.h"
 
 #include "common/algorithm.h"
+#include "common/textconsole.h"
 
 namespace M4 {
 

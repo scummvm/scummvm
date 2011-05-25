@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "mohawk/resource.h"
@@ -28,7 +25,10 @@
 #include "mohawk/livingbooks.h"
 
 #include "common/substream.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 #include "engines/util.h"
+#include "graphics/palette.h"
 #include "graphics/primitives.h"
 #include "gui/message.h"
 
@@ -70,14 +70,14 @@ MohawkSurface::~MohawkSurface() {
 void MohawkSurface::convertToTrueColor() {
 	assert(_surface);
 
-	if (_surface->bytesPerPixel > 1)
+	if (_surface->format.bytesPerPixel > 1)
 		return;
 
 	assert(_palette);
 
 	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
 	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(_surface->w, _surface->h, pixelFormat.bytesPerPixel);
+	surface->create(_surface->w, _surface->h, pixelFormat);
 
 	for (uint16 i = 0; i < _surface->h; i++) {
 		for (uint16 j = 0; j < _surface->w; j++) {
@@ -292,7 +292,10 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 
 	// Initialize our buffer
 	_backBuffer = new Graphics::Surface();
-	_backBuffer->create(_vm->_system->getWidth(), _vm->_system->getHeight(), _pixelFormat.bytesPerPixel);
+	_backBuffer->create(_vm->_system->getWidth(), _vm->_system->getHeight(), _pixelFormat);
+
+	_nextAllowedDrawTime = _vm->_system->getMillis();
+	_enableDrawingTimeSimulation = 0;
 }
 
 MystGraphics::~MystGraphics() {
@@ -444,6 +447,8 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 	debug(3, "\twidth: %d", width);
 	debug(3, "\theight: %d", height);
 
+	simulatePreviousDrawDelay(dest);
+
 	_vm->_system->copyRectToScreen((byte *)surface->getBasePtr(src.left, top), surface->pitch, dest.left, dest.top, width, height);
 }
 
@@ -486,7 +491,7 @@ void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, 
 	debug(3, "\theight: %d", height);
 
 	for (uint16 i = 0; i < height; i++)
-		memcpy(_backBuffer->getBasePtr(dest.left, i + dest.top), surface->getBasePtr(src.left, top + i), width * surface->bytesPerPixel);
+		memcpy(_backBuffer->getBasePtr(dest.left, i + dest.top), surface->getBasePtr(src.left, top + i), width * surface->format.bytesPerPixel);
 }
 
 void MystGraphics::copyImageToScreen(uint16 image, Common::Rect dest) {
@@ -499,10 +504,18 @@ void MystGraphics::copyImageToBackBuffer(uint16 image, Common::Rect dest) {
 
 void MystGraphics::copyBackBufferToScreen(Common::Rect r) {
 	r.clip(_viewport);
+
+	simulatePreviousDrawDelay(r);
+
 	_vm->_system->copyRectToScreen((byte *)_backBuffer->getBasePtr(r.left, r.top), _backBuffer->pitch, r.left, r.top, r.width(), r.height());
 }
 
 void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, uint16 delay) {
+
+	// Do not artificially delay during transitions
+	int oldEnableDrawingTimeSimulation = _enableDrawingTimeSimulation;
+	_enableDrawingTimeSimulation = 0;
+
 	switch (type) {
 	case 0:	{
 			debugC(kDebugScript, "Left to Right");
@@ -604,6 +617,8 @@ void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, u
 		_vm->_system->updateScreen();
 		break;
 	}
+
+	_enableDrawingTimeSimulation = oldEnableDrawingTimeSimulation;
 }
 
 void MystGraphics::drawRect(Common::Rect rect, RectState state) {
@@ -629,6 +644,34 @@ void MystGraphics::drawLine(const Common::Point &p1, const Common::Point &p2, ui
 	_backBuffer->drawLine(p1.x, p1.y, p2.x, p2.y, color);
 }
 
+void MystGraphics::enableDrawingTimeSimulation(bool enable) {
+	if (enable)
+		_enableDrawingTimeSimulation++;
+	else
+		_enableDrawingTimeSimulation--;
+
+	if (_enableDrawingTimeSimulation < 0)
+		_enableDrawingTimeSimulation = 0;
+}
+
+void MystGraphics::simulatePreviousDrawDelay(const Common::Rect &dest) {
+	uint32 time = 0;
+
+	if (_enableDrawingTimeSimulation) {
+		time = _vm->_system->getMillis();
+
+		// Do not draw anything new too quickly after the previous draw call
+		// so that images stay at least a little while on screen
+		// This is enabled only for scripted draw calls
+		if (time < _nextAllowedDrawTime)
+			_vm->_system->delayMillis(_nextAllowedDrawTime - time);
+	}
+
+	// Next draw call allowed at DELAY + AERA * COEFF milliseconds from now
+	time = _vm->_system->getMillis();
+	_nextAllowedDrawTime = time + _constantDrawDelay + dest.height() * dest.width() / _proportionalDrawDelay;
+}
+
 #endif // ENABLE_MYST
 
 #ifdef ENABLE_RIVEN
@@ -646,7 +689,7 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm
 	// The actual game graphics only take up the first 392 rows. The inventory
 	// occupies the rest of the screen and we don't use the buffer to hold that.
 	_mainScreen = new Graphics::Surface();
-	_mainScreen->create(608, 392, _pixelFormat.bytesPerPixel);
+	_mainScreen->create(608, 392, _pixelFormat);
 
 	_updatesEnabled = true;
 	_scheduledTransition = -1;	// no transition
@@ -677,7 +720,7 @@ void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uin
 		surface->w = 608 - left;
 
 	for (uint16 i = 0; i < surface->h; i++)
-		memcpy(_mainScreen->getBasePtr(left, i + top), surface->getBasePtr(0, i), surface->w * surface->bytesPerPixel);
+		memcpy(_mainScreen->getBasePtr(left, i + top), surface->getBasePtr(0, i), surface->w * surface->format.bytesPerPixel);
 
 	_dirtyScreen = true;
 }
@@ -972,7 +1015,7 @@ void RivenGraphics::drawImageRect(uint16 id, Common::Rect srcRect, Common::Rect 
 	assert(srcRect.width() == dstRect.width() && srcRect.height() == dstRect.height());
 
 	for (uint16 i = 0; i < srcRect.height(); i++)
-		memcpy(_mainScreen->getBasePtr(dstRect.left, i + dstRect.top), surface->getBasePtr(srcRect.left, i + srcRect.top), srcRect.width() * surface->bytesPerPixel);
+		memcpy(_mainScreen->getBasePtr(dstRect.left, i + dstRect.top), surface->getBasePtr(srcRect.left, i + srcRect.top), srcRect.width() * surface->format.bytesPerPixel);
 
 	_dirtyScreen = true;
 }

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "made/pmvplayer.h"
@@ -169,7 +166,7 @@ bool PmvPlayer::play(const char *filename) {
 
 		if (!_surface) {
 			_surface = new Graphics::Surface();
-			_surface->create(width, height, 1);
+			_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		}
 
 		decompressMovieImage(imageData, *_surface, cmdOffs, pixelOffs, maskOffs, lineSize);

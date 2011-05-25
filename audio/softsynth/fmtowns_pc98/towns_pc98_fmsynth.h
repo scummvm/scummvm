@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TOWNS_PC98_FMSYNTH_H
@@ -28,7 +25,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
-#include "common/list.h"
+#include "common/mutex.h"
 
 #ifdef __DS__
 /* This disables the rhythm channel when emulating the PC-98 type 86 sound card.
@@ -47,7 +44,7 @@ class TownsPC98_FmSynthPercussionSource;
 #endif
 
 enum EnvelopeState {
-	kEnvReady,
+	kEnvReady = 0,
 	kEnvAttacking,
 	kEnvDecaying,
 	kEnvSustaining,
@@ -72,15 +69,12 @@ public:
 
 	// AudioStream interface
 	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const {
-		return true;
-	}
-	bool endOfData() const {
-		return false;
-	}
-	int getRate() const {
-		return _mixer->getOutputRate();
-	}
+	bool isStereo() const;
+	bool endOfData() const;
+	int getRate() const;
+
+	void mutexLock();
+	void mutexUnlock();
 
 protected:
 	void deinit();
@@ -110,6 +104,7 @@ protected:
 	const bool _hasPercussion;
 
 	Common::Mutex _mutex;
+
 private:
 	void generateTables();
 	void nextTick(int32 *buffer, uint32 bufferSize);
@@ -127,6 +122,7 @@ private:
 		}
 
 		uint16 frqTemp;
+		uint8 fmIndex;
 		bool enableLeft;
 		bool enableRight;
 		bool updateEnvelopeParameters;

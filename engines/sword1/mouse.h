@@ -18,15 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SWORD1_MOUSE_H
 #define SWORD1_MOUSE_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
 #include "sword1/sworddefs.h"
 #include "sword1/object.h"
 

@@ -19,7 +19,7 @@ ScummVM Team
        Jonathan Gray         - (retired)
        Vincent Hamm          - (retired)
        Max Horn
-       Travis Howell
+       Travis Howell         - (retired)
        Pawel Kolodziejski    - Codecs, iMUSE, Smush, etc.
        Gregory Montoir
        Eugene Sandulenko     - FT INSANE, MM NES, MM C64, game detection,
@@ -28,7 +28,7 @@ ScummVM Team
 
     HE:
        Jonathan Gray         - (retired)
-       Travis Howell
+       Travis Howell         - (retired)
        Gregory Montoir
        Eugene Sandulenko
 
@@ -45,40 +45,18 @@ ScummVM Team
     AGOS:
        Torbjorn Andersson
        Paul Gilbert
-       Travis Howell
+       Travis Howell         - (retired)
        Oliver Kiehl          - (retired)
        Ludvig Strigeus       - (retired)
 
-    BASS:
-       Robert Goeffringmann  - (retired)
-       Oliver Kiehl          - (retired)
-       Joost Peters
-
-    Broken Sword:
-       Fabio Battaglia       - PSX version support
-       Thierry Crozat        - Mac version support
-       Robert Goeffringmann  - (retired)
-
-    Broken Sword II:
-       Torbjorn Andersson
-       Fabio Battaglia       - PSX version support
-       Jonathan Gray         - (retired)
-
-    Broken Sword 2.5:
-       Eugene Sandulenko
-       Filippos Karapetis
-       Max Horn
-       Paul Gilbert
-       Torbjorn Andersson
-
-    Cinematique evo 1:
+    Cine:
        Vincent Hamm          - (retired)
        Pawel Kolodziejski
        Gregory Montoir
        Kari Salminen
        Eugene Sandulenko
 
-    Cinematique evo 2:
+    CruisE:
        Paul Gilbert
        Vincent Hamm          - (retired)
 
@@ -89,11 +67,6 @@ ScummVM Team
     Drascula:
        Filippos Karapetis
        Pawel Kolodziejski
-
-    FOTAQ:
-       David Eriksson        - (retired)
-       Gregory Montoir
-       Joost Peters
 
     Gob:
        Torbjorn Andersson
@@ -118,7 +91,7 @@ ScummVM Team
        Gregory Montoir
        Johannes Schickel
 
-    Last Express:
+    Lastexpress:
        Matthew Hoops
        Jordi Vilalta Prat
        Julien Templier
@@ -147,6 +120,11 @@ ScummVM Team
     Parallaction:
        peres
 
+    Queen:
+       David Eriksson        - (retired)
+       Gregory Montoir
+       Joost Peters
+
     SAGA:
        Torbjorn Andersson
        Filippos Karapetis
@@ -163,6 +141,28 @@ ScummVM Team
        Willem Jan Palenstijn
        Jordi Vilalta Prat
        Lars Skovlund
+
+    Sky:
+       Robert Goeffringmann  - (retired)
+       Oliver Kiehl          - (retired)
+       Joost Peters
+
+    Sword1:
+       Fabio Battaglia       - PSX version support
+       Thierry Crozat        - Mac version support
+       Robert Goeffringmann  - (retired)
+
+    Sword2:
+       Torbjorn Andersson
+       Fabio Battaglia       - PSX version support
+       Jonathan Gray         - (retired)
+
+    Sword25:
+       Eugene Sandulenko
+       Filippos Karapetis
+       Max Horn
+       Paul Gilbert
+       Torbjorn Andersson
 
     TeenAgent:
        Robert Megone         - Help with callback rewriting
@@ -222,7 +222,8 @@ ScummVM Team
 
     PocketPC / WinCE:
        Nicolas Bacca         - (retired)
-       Kostas Nakos
+       Ismail Khatib
+       Kostas Nakos         - (retired)
 
     PlayStation 2:
        Robert Goeffringmann  - (retired)
@@ -357,7 +358,7 @@ Other contributions
        Markus Strangl
 
     Win32:
-       Travis Howell
+       Travis Howell         - (retired)
 
     Win64:
        Chris Gray            - (retired)

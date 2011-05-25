@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef DISABLE_SID
@@ -1296,7 +1293,7 @@ int Player_SID::readBuffer(int16 *buffer, const int numSamples) {
 			_cpuCyclesLeft = timingProps[_videoSystem].cyclesPerFrame;
 		}
 		// fetch samples
-		int sampleCount = _sid->clock(_cpuCyclesLeft, (short*)buffer, samplesLeft);
+		int sampleCount = _sid->updateClock(_cpuCyclesLeft, (short*)buffer, samplesLeft);
 		samplesLeft -= sampleCount;
 		buffer += sampleCount;
 	}

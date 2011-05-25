@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "common/config-manager.h"
@@ -27,6 +24,7 @@
 #include "common/events.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -37,6 +35,7 @@
 #include "audio/decoders/raw.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/palette.h"
 #include "graphics/thumbnail.h"
 
 #include "teenagent/console.h"
@@ -48,7 +47,9 @@
 
 namespace TeenAgent {
 
-TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), action(kActionNone), _gameDescription(gd) {
+TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd)
+	: Engine(system), action(kActionNone), _gameDescription(gd),
+	_rnd("teenagent") {
 	music = new MusicPlayer();
 
 	console = 0;
@@ -397,8 +398,8 @@ bool TeenAgentEngine::showMetropolis() {
 			//generate colors matrix
 			memmove(colors + 320, colors + 480, 8480);
 			for(uint c = 0; c < 17; ++c) {
-				byte x = (random.getRandomNumber(184) + 5) & 0xff;
-				uint offset = 8800 + random.getRandomNumber(158);
+				byte x = (_rnd.getRandomNumber(184) + 5) & 0xff;
+				uint offset = 8800 + _rnd.getRandomNumber(158);
 				colors[offset++] = x;
 				colors[offset++] = x;
 			}

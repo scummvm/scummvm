@@ -18,15 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/archive.h"
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/str.h"
 
 #ifndef MOHAWK_INSTALLER_ARCHIVE_H

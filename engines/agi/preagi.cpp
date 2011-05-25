@@ -18,14 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/random.h"
+#include "common/textconsole.h"
 
 #include "audio/mididrv.h"
 
@@ -43,8 +41,6 @@ PreAgiEngine::PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : 
 
 	// Setup mixer
 	syncSoundSettings();
-
-	_rnd = new Common::RandomSource();
 
 	DebugMan.addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
 	DebugMan.addDebugChannel(kDebugLevelResources, "Resources", "Resources debugging");

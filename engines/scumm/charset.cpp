@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 
@@ -401,7 +398,7 @@ int CharsetRendererClassic::getCharWidth(uint16 chr) {
 					spacing++;
 				}
 			}
-			
+
 		} else if (chr >= 0x80) {
 			return _vm->_2byteWidth / 2;
 		}
@@ -618,11 +615,12 @@ int CharsetRendererV3::getCharWidth(uint16 chr) {
 				spacing = 4;
 		} else if (chr & 0x80) {
 			spacing = _vm->_2byteWidth / 2;
-		}	
+		}
 	}
 
-	if (!spacing)
+	if (!spacing) {
 		spacing = *(_widthTable + chr);
+	}
 
 	return spacing;
 }
@@ -777,7 +775,7 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 		(ignoreCharsetMask || !vs->hasTwoBuffers)) {
 		dst = vs->getPixels(_left, drawTop);
 		if (charPtr)
-			drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight, vs->bytesPerPixel);
+			drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight, vs->format.bytesPerPixel);
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		else if (_vm->_cjkFont)
 			_vm->_cjkFont->drawChar(vs, chr, _left, drawTop, _color, _shadowColor);
@@ -785,7 +783,7 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 	} else {
 		dst = (byte *)_vm->_textSurface.getBasePtr(_left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier);
 		if (charPtr)
-			drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight, _vm->_textSurface.bytesPerPixel, (_vm->_textSurfaceMultiplier == 2 && !is2byte));
+			drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight, _vm->_textSurface.format.bytesPerPixel, (_vm->_textSurfaceMultiplier == 2 && !is2byte));
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		else if (_vm->_cjkFont)
 			_vm->_cjkFont->drawChar(_vm->_textSurface, chr, _left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier, _color, _shadowColor);
@@ -834,7 +832,7 @@ void CharsetRendererV3::drawChar(int chr, Graphics::Surface &s, int x, int y) {
 		height = 8;
 	}
 	dst = (byte *)s.pixels + y * s.pitch + x;
-	drawBits1(s, dst, charPtr, y, width, height, s.bytesPerPixel);
+	drawBits1(s, dst, charPtr, y, width, height, s.format.bytesPerPixel);
 }
 
 void CharsetRenderer::translateColor() {
@@ -857,17 +855,17 @@ void CharsetRenderer::processTownsCharsetColors(uint8 bytesPerPixel) {
 	if (_vm->_game.platform == Common::kPlatformFMTowns) {
 		for (int i = 0; i < (1 << bytesPerPixel); i++) {
 			uint8 c = _vm->_charsetColorMap[i];
-						
+
 			if (c > 16) {
 				uint8 t = (_vm->_currentPalette[c * 3] < 32) ? 4 : 12;
 				t |= ((_vm->_currentPalette[c * 3 + 1] < 32) ? 2 : 10);
 				t |= ((_vm->_currentPalette[c * 3 + 1] < 32) ? 1 : 9);
 				c = t;
 			}
-			
+
 			if (c == 0)
 				c = _vm->_townsOverrideShadowColor;
-			
+
 			c = ((c & 0x0f) << 4) | (c & 0x0f);
 			_vm->_townsCharsetColorMap[i] = c;
 		}
@@ -920,12 +918,12 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 			noSjis = true;
 		}
 	}
-	
+
 	if (useTownsFontRomCharacter(chr) && !noSjis) {
 		charPtr = 0;
 		_vm->_cjkChar = chr;
 		enableShadow(true);
-		
+
 		width = getCharWidth(chr);
 		// For whatever reason MI1 uses a different font width
 		// for alignment calculation and for drawing when
@@ -947,7 +945,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 			height++;
 		}
 	} else
-#endif	
+#endif
 	{
 		uint32 charOffs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
 		assert(charOffs < 0x14000);
@@ -1096,7 +1094,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 		} else
 #endif
 		if (is2byte) {
-			drawBits1(dstSurface, dstPtr, charPtr, drawTop, origWidth, origHeight, dstSurface.bytesPerPixel);
+			drawBits1(dstSurface, dstPtr, charPtr, drawTop, origWidth, origHeight, dstSurface.format.bytesPerPixel);
 		} else {
 			drawBitsN(dstSurface, dstPtr, charPtr, *_fontPtr, drawTop, origWidth, origHeight, _vm->_textSurfaceMultiplier == 2);
 		}
@@ -1173,7 +1171,7 @@ void CharsetRendererClassic::drawChar(int chr, Graphics::Surface &s, int x, int 
 	dst = (byte *)s.pixels + y * s.pitch + x;
 
 	if (is2byte) {
-		drawBits1(s, dst, charPtr, y, width, height, s.bytesPerPixel);
+		drawBits1(s, dst, charPtr, y, width, height, s.format.bytesPerPixel);
 	} else {
 		drawBitsN(s, dst, charPtr, *_fontPtr, y, width, height);
 	}
@@ -1259,14 +1257,14 @@ void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, con
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	byte *dst3 = dst2;
 	byte *dst4 = dst2;
-	if (scale2x) {		
+	if (scale2x) {
 		dst3 = dst2 + s.pitch;
 		dst4 = dst3 + s.pitch;
 		pitch <<= 1;
 	}
 	if (_vm->_game.platform == Common::kPlatformFMTowns && _vm->_game.version == 5)
 		col = _vm->_townsCharsetColorMap[1];
-#endif			
+#endif
 
 	for (y = 0; y < height && y + drawTop < s.h; y++) {
 		for (x = 0; x < width; x++) {
@@ -1287,19 +1285,19 @@ void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, con
 						if (scale2x) {
 							dst[2] = dst[3] = dst2[2] = dst2[3] = _shadowColor;
 							dst3[0] = dst4[0] = dst3[1] = dst4[1] = _shadowColor;
-						} else 
+						} else
 #endif
 						{
 							dst[1] = dst2[0] = _shadowColor;
 							if (_shadowMode != kFMTOWNSShadowMode)
 								dst2[1] = _shadowColor;
-						}						
+						}
 					}
 					dst[0] = col;
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 					if (scale2x)
-						dst[1] = dst2[0] = dst2[1] = col;					
+						dst[1] = dst2[0] = dst2[1] = col;
 #endif
 				}
 			}
@@ -1317,7 +1315,7 @@ void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, con
 
 		dst += pitch;
 		dst2 += pitch;
-#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE		
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		dst3 += pitch;
 		dst4 += pitch;
 #endif
@@ -1519,10 +1517,10 @@ void CharsetRendererNES::printChar(int chr, bool ignoreCharsetMask) {
 
 	if (ignoreCharsetMask || !vs->hasTwoBuffers) {
 		dst = vs->getPixels(_left, drawTop);
-		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight, vs->bytesPerPixel);
+		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight, vs->format.bytesPerPixel);
 	} else {
 		dst = (byte *)_vm->_textSurface.pixels + _top * _vm->_textSurface.pitch + _left;
-		drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight, _vm->_textSurface.bytesPerPixel);
+		drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight, _vm->_textSurface.format.bytesPerPixel);
 	}
 
 	if (_str.left > _left)
@@ -1552,7 +1550,7 @@ void CharsetRendererNES::drawChar(int chr, Graphics::Surface &s, int x, int y) {
 	height = 8;
 
 	dst = (byte *)s.pixels + y * s.pitch + x;
-	drawBits1(s, dst, charPtr, y, width, height, s.bytesPerPixel);
+	drawBits1(s, dst, charPtr, y, width, height, s.format.bytesPerPixel);
 }
 
 void CharsetRendererNES::drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth, bool scalex) {

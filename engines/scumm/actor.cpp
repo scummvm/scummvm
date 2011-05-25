@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/system.h"	// for setFocusRectangle/clearFocusRectangle
@@ -177,9 +174,21 @@ void Actor::setBox(int box) {
 }
 
 void Actor_v3::setupActorScale() {
-	// TODO: The following could probably be removed
-	_scalex = 0xFF;
-	_scaley = 0xFF;
+	// WORKAROUND bug #1463598: Under certain circumstances, it is possible
+	// for Henry Sr. to reach the front side of Castle Brunwald (following
+	// Indy there). But it seems the game has no small costume for Henry,
+	// hence he is shown as a giant, triple in size compared to Indy.
+	// To workaround this, we override the scale of Henry. Since V3 games
+	// like Indy3 don't use the costume scale otherwise, this works fine.
+	// The scale factor 0x50 was determined by some guess work.
+	if (_number == 2 && _costume == 7 && _vm->_game.id == GID_INDY3 && _vm->_currentRoom == 12) {
+		_scalex = 0x50;
+		_scaley = 0x50;
+	} else {
+		// TODO: The following could probably be removed
+		_scalex = 0xFF;
+		_scaley = 0xFF;
+	}
 }
 
 void Actor::setupActorScale() {

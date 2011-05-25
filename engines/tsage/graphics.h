@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef RING_GRAPHICS_H
@@ -43,8 +40,8 @@ class Region;
  */
 class Rect : public Common::Rect, public Serialisable {
 public:
-	Rect() : Common::Rect() {};
-	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : Common::Rect(x1, y1, x2, y2) {};
+	Rect() : Common::Rect() {}
+	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : Common::Rect(x1, y1, x2, y2) {}
 
 	void set(int16 x1, int16 y1, int16 x2, int16 y2);
 	void collapse(int dx, int dy);
@@ -55,7 +52,7 @@ public:
 	void resize(const GfxSurface &surface, int xp, int yp, int percent);
 	void expandPanes();
 
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 };
 
 class GfxColors {
@@ -63,7 +60,7 @@ public:
 	uint8 foreground;
 	uint8 background;
 
-	GfxColors() : foreground(0), background(0) {};
+	GfxColors() : foreground(0), background(0) {}
 };
 
 class LineSlice {
@@ -95,8 +92,8 @@ public:
 	Graphics::Surface lockSurface();
 	void unlockSurface();
 	void create(int width, int height);
-	void setBounds(const Rect &bounds) { _bounds = bounds; };
-	const Rect &getBounds() const { return _bounds; };
+	void setBounds(const Rect &bounds) { _bounds = bounds; }
+	const Rect &getBounds() const { return _bounds; }
 
 	void copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Region *priorityRegion = NULL);
 	void copyFrom(GfxSurface &src, Rect destBounds, Region *priorityRegion = NULL) {
@@ -190,8 +187,8 @@ public:
 	virtual void setDefaults();
 	virtual void remove() { _owner = NULL; }
 	virtual void highlight();
-	virtual void draw() {};
-	virtual bool process(Event &event) { return false; };
+	virtual void draw() {}
+	virtual bool process(Event &event) { return false; }
 	virtual bool focusedEvent(Event &event);
 };
 
@@ -232,7 +229,7 @@ private:
 public:
 	Common::String _message;
 public:
-	GfxButton() : GfxElement() {};
+	GfxButton() : GfxElement() {}
 	virtual ~GfxButton() {}
 
 	void setText(const Common::String &s) {
@@ -274,7 +271,7 @@ public:
 		_surface.setBounds(_bounds);
 		return _surface.lockSurface();
 	}
-	void unlockSurface() { _surface.unlockSurface(); };
+	void unlockSurface() { _surface.unlockSurface(); }
 	void fillArea(int xp, int yp, int color);
 	void fillRect(const Rect &bounds, int color);
 	void fillRect2(int xs, int ys, int width, int height, int color);

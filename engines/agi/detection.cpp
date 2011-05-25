@@ -18,10 +18,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
+
+// FIXME: Avoid using printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
 #include "base/plugins.h"
 
@@ -29,6 +29,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
@@ -163,7 +164,7 @@ public:
 	AgiMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "AGI preAGI + v2 + v3 Engine";
+		return "AGI preAGI + v2 + v3";
 	}
 	virtual const char *getOriginalCopyright() const {
 		return "Sierra AGI Engine (C) Sierra On-Line Software";

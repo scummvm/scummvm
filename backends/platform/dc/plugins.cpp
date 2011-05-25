@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/scummsys.h"
@@ -39,6 +36,7 @@ static void drawPluginProgress(const Common::String &filename)
 {
   ta_sync();
   void *mark = ta_txmark();
+  const char *fn = filename.c_str();
   Label lab1, lab2, lab3;
   char buf[32];
   unsigned memleft = 0x8cf00000-((unsigned)sbrk(0));
@@ -46,20 +44,21 @@ static void drawPluginProgress(const Common::String &filename)
   int fcol = (memleft < (1<<20)? 0xffff0000:
 	      (memleft < (4<<20)? 0xffffff00: 0xff00ff00));
   snprintf(buf, sizeof(buf), "%dK free memory", memleft>>10);
+  if (fn[0] == '/') fn++;
   lab1.create_texture("Loading plugins, please wait...");
-  lab2.create_texture(filename.c_str());
+  lab2.create_texture(fn);
   lab3.create_texture(buf);
   ta_begin_frame();
-  draw_solid_quad(80.0, 320.0, 560.0, 350.0,
+  draw_solid_quad(80.0, 270.0, 560.0, 300.0,
 		  0xff808080, 0xff808080, 0xff808080, 0xff808080);
-  draw_solid_quad(85.0, 325.0, 555.0, 345.0, 
+  draw_solid_quad(85.0, 275.0, 555.0, 295.0, 
 		  0xff202020, 0xff202020, 0xff202020, 0xff202020);
-  draw_solid_quad(85.0, 325.0, 85.0+470.0*ffree, 345.0,
+  draw_solid_quad(85.0, 275.0, 85.0+470.0*ffree, 295.0,
 		  fcol, fcol, fcol, fcol);
   ta_commit_end();
-  lab1.draw(100.0, 200.0, 0xffffffff);
-  lab2.draw(100.0, 240.0, 0xffffffff);
-  lab3.draw(100.0, 280.0, 0xffffffff);
+  lab1.draw(100.0, 150.0, 0xffffffff);
+  lab2.draw(100.0, 190.0, 0xffaaffaa);
+  lab3.draw(100.0, 230.0, 0xffffffff);
   ta_commit_frame();
   ta_sync();
   ta_txrelease(mark);

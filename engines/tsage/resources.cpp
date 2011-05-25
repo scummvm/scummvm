@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/scummsys.h"
@@ -29,6 +26,7 @@
 #include "common/stack.h"
 #include "common/util.h"
 #include "tsage/resources.h"
+#include "tsage/tsage.h"
 
 namespace tSage {
 
@@ -134,7 +132,7 @@ uint16 BitReader::readToken() {
 
 /*-------------------------------------------------------------------------*/
 
-RlbManager::RlbManager(MemoryManager &memManager, const Common::String filename) :
+TLib::TLib(MemoryManager &memManager, const Common::String &filename) :
 		_memoryManager(memManager) {
 
 	// If the resource strings list isn't yet loaded, load them
@@ -154,11 +152,11 @@ RlbManager::RlbManager(MemoryManager &memManager, const Common::String filename)
 	loadIndex();
 }
 
-RlbManager::~RlbManager() {
+TLib::~TLib() {
 	_resStrings.clear();
 }
 
-void RlbManager::loadSection(uint32 fileOffset) {
+void TLib::loadSection(uint32 fileOffset) {
 	_resources.clear();
 	_file.seek(fileOffset);
 	_sections.fileOffset = fileOffset;
@@ -197,13 +195,13 @@ struct DecodeReference {
 /**
  * Gets a resource from the currently loaded section
  */
-byte *RlbManager::getResource(uint16 id, bool suppressErrors) {
+byte *TLib::getResource(uint16 id, bool suppressErrors) {
 	// Scan for an entry for the given Id
-	ResourceEntry *re= NULL;
-	ResourceList::iterator i;
-	for (i = _resources.begin(); i != _resources.end(); ++i) {
-		if ((*i).id == id) {
-			re = &(*i);
+	ResourceEntry *re = NULL;
+	ResourceList::iterator iter;
+	for (iter = _resources.begin(); iter != _resources.end(); ++iter) {
+		if ((*iter).id == id) {
+			re = &(*iter);
 			break;
 		}
 	}
@@ -238,6 +236,9 @@ byte *RlbManager::getResource(uint16 id, bool suppressErrors) {
 	uint16 word_48050 = 0, currentToken = 0, word_48054 =0;
 	byte byte_49068 = 0, byte_49069 = 0;
 	DecodeReference table[0x1000];
+	for (int i = 0; i < 0x1000; ++i) {
+		table[i].vByte = table[i].vWord = 0;
+	}
 	Common::Stack<uint16> tokenList;
 
 	for (;;) {
@@ -307,7 +308,7 @@ byte *RlbManager::getResource(uint16 id, bool suppressErrors) {
 /**
  * Finds the correct section and loads the specified resource within it
  */
-byte *RlbManager::getResource(ResourceType resType, uint16 resNum, uint16 rlbNum, bool suppressErrors) {
+byte *TLib::getResource(ResourceType resType, uint16 resNum, uint16 rlbNum, bool suppressErrors) {
 	SectionList::iterator i = _sections.begin();
 	while ((i != _sections.end()) && ((*i).resType != resType || (*i).resNum != resNum))
 		++i;
@@ -322,7 +323,7 @@ byte *RlbManager::getResource(ResourceType resType, uint16 resNum, uint16 rlbNum
 	return getResource(rlbNum, suppressErrors);
 }
 
-void RlbManager::loadIndex() {
+void TLib::loadIndex() {
 	uint16 resNum, configId, fileOffset;
 
 	// Load the root resources section
@@ -356,10 +357,11 @@ void RlbManager::loadIndex() {
  *
  * @paletteNum Specefies the palette number
  */
-void RlbManager::getPalette(int paletteNum, byte *palData, uint *startNum, uint *numEntries) {
+bool TLib::getPalette(int paletteNum, byte *palData, uint *startNum, uint *numEntries) {
 	// Get the specified palette
-	byte *dataIn = getResource(RES_PALETTE, 0, paletteNum);
-	assert(dataIn);
+	byte *dataIn = getResource(RES_PALETTE, 0, paletteNum, true);
+	if (!dataIn)
+		return false;
 
 	*startNum = READ_LE_UINT16(dataIn);
 	*numEntries = READ_LE_UINT16(dataIn + 2);
@@ -369,12 +371,18 @@ void RlbManager::getPalette(int paletteNum, byte *palData, uint *startNum, uint 
 	Common::copy(&dataIn[6], &dataIn[6 + *numEntries * 3], palData);
 
 	_memoryManager.deallocate(dataIn);
+	return true;
 }
 
-byte *RlbManager::getSubResource(int resNum, int rlbNum, int index, uint *size) {
+byte *TLib::getSubResource(int resNum, int rlbNum, int index, uint *size, bool suppressErrors) {
 	// Get the specified image set
 	byte *dataIn = getResource(RES_VISAGE, resNum, rlbNum);
-	assert(dataIn);
+	if (!dataIn) {
+		if (suppressErrors)
+			return NULL;
+
+		error("Unknown sub resource %d/%d index %d", resNum, rlbNum, index);
+	}
 
 	int numEntries = READ_LE_UINT16(dataIn);
 	uint32 entryOffset = READ_LE_UINT32(dataIn + 2 + (index - 1) * 4);
@@ -393,16 +401,97 @@ byte *RlbManager::getSubResource(int resNum, int rlbNum, int index, uint *size) 
 /**
  * Retrieves a given message resource, and returns the specified message number
  */
-Common::String RlbManager::getMessage(int resNum, int lineNum) {
-	byte *msgData = getResource(RES_MESSAGE, resNum, 0);
-	assert(msgData);
+bool TLib::getMessage(int resNum, int lineNum, Common::String &result, bool suppressErrors) {
+	byte *msgData = getResource(RES_MESSAGE, resNum, 0, true);
+	if (!msgData) {
+		if (suppressErrors)
+			return false;
+
+		error("Unknown message %d line %d", resNum, lineNum);
+	}
 
 	const char *srcP = (const char *)msgData;
 	while (lineNum-- > 0)
 		srcP += strlen(srcP) + 1;
 
-	Common::String result(srcP);
+	result = Common::String(srcP);
 	_memoryManager.deallocate(msgData);
+	return true;
+}
+
+/*--------------------------------------------------------------------------*/
+
+ResourceManager::~ResourceManager() {
+	for (uint idx = 0; idx < _libList.size(); ++idx)
+		delete _libList[idx];
+}
+
+void ResourceManager::addLib(const Common::String &libName) {
+	assert(_libList.size() < 5);
+
+	_libList.push_back(new TLib(_vm->_memoryManager, libName));
+}
+
+byte *ResourceManager::getResource(uint16 id, bool suppressErrors) {
+	byte *result = NULL;
+	for (uint idx = 0; idx < _libList.size(); ++idx) {
+		result = _libList[idx]->getResource(id, true);
+		if (result)
+			return result;
+	}
+
+	if (!result && !suppressErrors)
+		error("Could not find resource Id #%d", id);
+	return NULL;
+}
+
+byte *ResourceManager::getResource(ResourceType resType, uint16 resNum, uint16 rlbNum, bool suppressErrors) {
+	byte *result = NULL;
+	for (uint idx = 0; idx < _libList.size(); ++idx) {
+		result = _libList[idx]->getResource(resType, resNum, rlbNum, true);
+		if (result)
+			return result;
+	}
+
+	if (!result && !suppressErrors)
+		error("Unknown resource type %d num %d", resType, resNum);
+	return NULL;
+}
+
+void ResourceManager::getPalette(int paletteNum, byte *palData, uint *startNum, uint *numEntries, bool suppressErrors) {
+	for (uint idx = 0; idx < _libList.size(); ++idx) {
+		if (_libList[idx]->getPalette(paletteNum, palData, startNum, numEntries))
+			return;
+	}
+
+	if (!suppressErrors)
+		error("Unknown palette resource %d", paletteNum);
+	*numEntries = 0;
+}
+
+byte *ResourceManager::getSubResource(int resNum, int rlbNum, int index, uint *size, bool suppressErrors) {
+	byte *result = NULL;
+	for (uint idx = 0; idx < _libList.size(); ++idx) {
+		result = _libList[idx]->getSubResource(resNum, rlbNum, index, size, true);
+		if (result)
+			return result;
+	}
+
+	if (!result && !suppressErrors)
+		error("Unknown resource %d/%d index %d", resNum, rlbNum, index);
+	return NULL;
+}
+
+Common::String ResourceManager::getMessage(int resNum, int lineNum, bool suppressErrors) {
+	Common::String result;
+
+	for (uint idx = 0; idx < _libList.size(); ++idx) {
+		if (_libList[idx]->getMessage(resNum, lineNum, result, true))
+			return result;
+	}
+
+	if (!suppressErrors)
+		error("Unknown message %d line %d", resNum, lineNum);
 	return result;
 }
 

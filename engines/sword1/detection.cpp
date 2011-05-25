@@ -18,17 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "sword1/sword1.h"
 #include "sword1/control.h"
 
 #include "base/plugins.h"
-#include "common/config-manager.h"
-#include "common/file.h"
 #include "common/fs.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -84,7 +79,7 @@ static const char *g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files have to
 class SwordMetaEngine : public MetaEngine {
 public:
 	virtual const char *getName() const {
-		return "Broken Sword";
+		return "Sword1";
 	}
 	virtual const char *getOriginalCopyright() const {
 		return "Broken Sword Games (C) Revolution";

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_H
@@ -50,7 +47,8 @@ enum {
 enum {
 	GF_DEMO = 1 << 0,
 	GF_CD = 1 << 1,
-	GF_FLOPPY = 1 << 2
+	GF_FLOPPY = 1 << 2,
+	GF_ALT_REGIONS = 1 << 3
 };
 
 enum {
@@ -74,12 +72,11 @@ public:
 
 	MemoryManager _memoryManager;
 	Debugger *_debugger;
-	RlbManager *_tSageManager;
-	RlbManager *_dataManager;
 
 	const char *getGameId() const;
 	uint32 getGameID() const;
 	uint32 getFeatures() const;
+	Common::String getPrimaryFilename() const;
 
 	virtual Common::Error init();
 	virtual Common::Error run();

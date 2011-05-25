@@ -17,22 +17,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef BROWSER_DIALOG_H
 #define BROWSER_DIALOG_H
 
 #include "gui/dialog.h"
-#include "common/str.h"
 #include "common/fs.h"
 
 namespace GUI {
 
 class ListWidget;
 class StaticTextWidget;
+class CommandSender;
 
 class BrowserDialog : public Dialog {
 public:

@@ -18,13 +18,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "engines/savestate.h"
 #include "graphics/surface.h"
+#include "common/textconsole.h"
 
 void SaveStateDescriptor::setThumbnail(Graphics::Surface *t) {
 	if (_thumbnail.get() == t)

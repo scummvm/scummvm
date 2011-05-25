@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "cine/cine.h"
 #include "cine/various.h"
 #include "cine/pal.h"
 #include "common/system.h" // For g_system->getPaletteManager()->setPalette
+#include "common/textconsole.h"
+
+#include "graphics/palette.h"
 
 namespace Cine {
 

@@ -18,16 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/system.h"
 #include "common/savefile.h"
-#include "common/EventRecorder.h"
 
 #include "engines/util.h"
 
@@ -42,8 +38,8 @@ namespace Lure {
 
 static LureEngine *int_engine = NULL;
 
-LureEngine::LureEngine(OSystem *system, const LureGameDescription *gameDesc): Engine(system), _gameDescription(gameDesc) {
-	g_eventRec.registerRandomSource(_rnd, "lure");
+LureEngine::LureEngine(OSystem *system, const LureGameDescription *gameDesc)
+	: Engine(system), _gameDescription(gameDesc), _rnd("lure") {
 
 	DebugMan.addDebugChannel(kLureDebugScripts, "scripts", "Scripts debugging");
 	DebugMan.addDebugChannel(kLureDebugAnimations, "animations", "Animations debugging");

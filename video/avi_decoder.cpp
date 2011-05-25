@@ -18,15 +18,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
-#include "common/endian.h"
-#include "common/file.h"
 #include "common/stream.h"
-#include "common/events.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
@@ -403,11 +399,9 @@ Codec *AviDecoder::createCodec() {
 			return new MSRLEDecoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
 		case ID_CVID:
 			return new CinepakDecoder(_bmInfo.bitCount);
-#ifdef USE_INDEO3
 		case ID_IV32:
 			return new Indeo3Decoder(_bmInfo.width, _bmInfo.height);
-#endif
-#ifdef GRAPHICS_TRUEMOTION1_H
+#ifdef VIDEO_CODECS_TRUEMOTION1_H
 		case ID_DUCK:
 			return new TrueMotion1Decoder(_bmInfo.width, _bmInfo.height);
 #endif

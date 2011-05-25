@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef MOHAWK_LIVINGBOOKS_CODE_H
@@ -225,12 +222,14 @@ public:
 	void cmdLeft(const Common::Array<LBValue> &params);
 	void cmdBottom(const Common::Array<LBValue> &params);
 	void cmdRight(const Common::Array<LBValue> &params);
+	void cmdSetDragParams(const Common::Array<LBValue> &params);
 	void cmdSetPlayParams(const Common::Array<LBValue> &params);
 	void cmdSetKeyEvent(const Common::Array<LBValue> &params);
 	void cmdSetHitTest(const Common::Array<LBValue> &params);
 	void cmdKey(const Common::Array<LBValue> &params);
 
 	void itemSetParent(const Common::Array<LBValue> &params);
+	void itemMoveTo(const Common::Array<LBValue> &params);
 	void itemIsPlaying(const Common::Array<LBValue> &params);
 };
 

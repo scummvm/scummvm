@@ -18,18 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/dcl.h"
 #include "common/debug.h"
-#include "common/debug-channels.h"
-#include "common/endian.h"
 #include "common/memstream.h"
 #include "common/stream.h"
-#include "common/util.h"
+#include "common/textconsole.h"
 
 namespace Common {
 

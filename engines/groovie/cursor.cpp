@@ -18,16 +18,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "groovie/cursor.h"
 #include "groovie/groovie.h"
 
+#include "common/debug.h"
 #include "common/archive.h"
+#include "common/file.h"
 #include "common/macresman.h"
+#include "common/textconsole.h"
 #include "graphics/cursorman.h"
 
 namespace Groovie {

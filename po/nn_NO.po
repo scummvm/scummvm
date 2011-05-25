@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2011-04-22 19:33+0100\n"
-"PO-Revision-Date: 2010-12-23 00:42+0100\n"
-"Last-Translator: Einar Johan T. Sømåen\n"
+"PO-Revision-Date: 2011-04-25 23:07+0100\n"
+"Last-Translator: Einar Johan T. Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: somaen <einarjohants@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -361,7 +361,7 @@ msgstr "~S~tart"
 
 #: gui/launcher.cpp:566
 msgid "Start selected game"
-msgstr ""
+msgstr "Start det velde spelet"
 
 #: gui/launcher.cpp:569
 msgid "~L~oad..."
@@ -369,7 +369,7 @@ msgstr "~Å~pne..."
 
 #: gui/launcher.cpp:569
 msgid "Load savegame for selected game"
-msgstr ""
+msgstr "Åpne eit lagra spel for the velde spelet"
 
 #: gui/launcher.cpp:574
 msgid "~A~dd Game..."
@@ -377,7 +377,7 @@ msgstr "~L~egg til spel..."
 
 #: gui/launcher.cpp:574 gui/launcher.cpp:581
 msgid "Hold Shift for Mass Add"
-msgstr ""
+msgstr "Hold Shift nede for å legge til fleire"
 
 #: gui/launcher.cpp:576
 msgid "~E~dit Game..."
@@ -457,12 +457,10 @@ msgid "No"
 msgstr "Nei"
 
 #: gui/launcher.cpp:779
-#, fuzzy
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM kunne ikkje åpne den velde mappa!"
 
 #: gui/launcher.cpp:791
-#, fuzzy
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM kunne ikkje finne noko spel i den velde mappa!"
 
@@ -605,7 +603,7 @@ msgstr ""
 
 #: gui/options.cpp:684
 msgid "Preferred Device:"
-msgstr ""
+msgstr "Føretrukken eining:"
 
 #: gui/options.cpp:684
 msgid "Music Device:"
@@ -635,7 +633,7 @@ msgstr "AdLib emulator:"
 
 #: gui/options.cpp:712 gui/options.cpp:713
 msgid "AdLib is used for music in many games"
-msgstr ""
+msgstr "AdLib nyttast til musikk i mange spel"
 
 #: gui/options.cpp:723
 msgid "Output rate:"
@@ -877,7 +875,7 @@ msgstr "Vel mappe for lagra spel"
 
 #: gui/options.cpp:1261
 msgid "The chosen directory cannot be written to. Please select another one."
-msgstr ""
+msgstr "Den velde mappa kan ikkje skrivast til. Vennlegst vel ein annan."
 
 #: gui/options.cpp:1270
 msgid "Select directory for GUI themes"
@@ -993,13 +991,12 @@ msgid "Error running game:"
 msgstr "Feil under køyring av spel:"
 
 #: base/main.cpp:457
-#, fuzzy
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Kunne ikkje finne nokon motor som kunne køyre det velde spelet."
 
 #: common/error.cpp:42
 msgid "No error"
-msgstr ""
+msgstr "Ingen feil"
 
 #: common/error.cpp:44
 #, fuzzy
@@ -1007,12 +1004,10 @@ msgid "Game data not found"
 msgstr "Speldata ikkje funne"
 
 #: common/error.cpp:46
-#, fuzzy
 msgid "Game id not supported"
 msgstr "Spel ID ikkje støtta"
 
 #: common/error.cpp:48
-#, fuzzy
 msgid "Unsupported color mode"
 msgstr "Ustøtta fargemodus"
 
@@ -1025,7 +1020,6 @@ msgid "Write permission denied"
 msgstr "Skrivetilgang nekta"
 
 #: common/error.cpp:56
-#, fuzzy
 msgid "Path does not exist"
 msgstr "Stien eksisterar ikkje"
 
@@ -1042,9 +1036,8 @@ msgid "Cannot create file"
 msgstr "Kan ikkje lage fil"
 
 #: common/error.cpp:65
-#, fuzzy
 msgid "Reading data failed"
-msgstr "Lesinga feila"
+msgstr "Lesing av data feila"
 
 #: common/error.cpp:67
 msgid "Writing data failed"
@@ -1052,19 +1045,17 @@ msgstr "Dataskriving feila"
 
 #: common/error.cpp:70
 msgid "Could not find suitable engine plugin"
-msgstr ""
+msgstr "Kunne ikkje finne ein passande spelmotor-plugin"
 
 #: common/error.cpp:72
-#, fuzzy
 msgid "Engine plugin does not support save states"
-msgstr "Motoren støttar ikkje debug-nivå '%s'"
+msgstr "Spelmotor-plugin støttar ikkje lagra tilstandar."
 
 #: common/error.cpp:75
 msgid "Command line argument not processed"
 msgstr ""
 
 #: common/error.cpp:79
-#, fuzzy
 msgid "Unknown error"
 msgstr "Ukjend feil"
 
@@ -1147,9 +1138,8 @@ msgid "~C~ancel"
 msgstr "~A~vbryt"
 
 #: engines/dialogs.cpp:319
-#, fuzzy
 msgid "~K~eys"
-msgstr "~T~aster"
+msgstr "~T~astar"
 
 #: engines/scumm/dialogs.cpp:284
 msgid "~P~revious"
@@ -1186,7 +1176,7 @@ msgstr "Hopp over cutscene"
 
 #: engines/scumm/help.cpp:81
 msgid "Space"
-msgstr ""
+msgstr "Opprom"
 
 #: engines/scumm/help.cpp:81
 msgid "Pause game"
@@ -1507,7 +1497,7 @@ msgstr "Objekt"
 
 #: engines/scumm/help.cpp:231
 msgid "Black and White / Color"
-msgstr ""
+msgstr "Svart-Kvitt / Fargar"
 
 #: engines/scumm/help.cpp:234
 msgid "Eyes"
@@ -1712,6 +1702,9 @@ msgid ""
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
 "directory inside the Tentacle game directory."
 msgstr ""
+"Opprinneleg, skulle Maniac Mansion ha starta no. Men ScummVM støttar ikkje "
+"det enno. For å spele Maniac Mansion, gå til 'Legg til spel' i ScummVM-"
+"menyen og vel 'Maniac'-undermappa i 'Tentacle'-mappa."
 
 #: engines/mohawk/dialogs.cpp:89 engines/mohawk/dialogs.cpp:127
 msgid "~Z~ip Mode Activated"
@@ -1835,11 +1828,11 @@ msgstr ""
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:91
 msgid "Tap for left click, double tap right click"
-msgstr ""
+msgstr "Tap for venstre-klikk, dobbelt-tap for høgre-klikk"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:93
 msgid "Sensitivity"
-msgstr ""
+msgstr "Sensitivitet"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:102
 msgid "Initial top screen scale:"
@@ -2034,7 +2027,7 @@ msgstr "SMB"
 
 #: backends/platform/wii/options.cpp:106
 msgid "Server:"
-msgstr ""
+msgstr "Teinar:"
 
 #: backends/platform/wii/options.cpp:110
 msgid "Share:"

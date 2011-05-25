@@ -18,15 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/memstream.h"
 #include "common/substream.h"
+#include "common/textconsole.h"
 #include "parallaction/parser.h"
 #include "parallaction/parallaction.h"
 
@@ -473,7 +471,7 @@ void DosDisk_ns::loadBackground(BackgroundInfo& info, const char *filename) {
 	}
 
 	// read bitmap, mask and path data and extract them into the 3 buffers
-	info.bg.create(info.width, info.height, 1);
+	info.bg.create(info.width, info.height, Graphics::PixelFormat::createFormatCLUT8());
 	createMaskAndPathBuffers(info);
 	unpackBackground(stream, (byte*)info.bg.pixels, info._mask->data, info._path->data);
 

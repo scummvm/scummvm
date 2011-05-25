@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "gob/save/saveload.h"
@@ -284,6 +281,9 @@ SaveLoad_v6::GameHandler::GameHandler(GobEngine *vm, const char *target,
 
 SaveLoad_v6::GameHandler::~GameHandler() {
 	delete _slotFile;
+
+	delete _reader;
+	delete _writer;
 }
 
 int32 SaveLoad_v6::GameHandler::getSize() {

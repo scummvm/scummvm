@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef GUI_SAVELOAD_DIALOG_H
@@ -32,6 +29,10 @@ namespace GUI {
 
 class ListWidget;
 class GraphicsWidget;
+class ButtonWidget;
+class CommandSender;
+class ContainerWidget;
+class StaticTextWidget;
 
 class SaveLoadChooser : GUI::Dialog {
 	typedef Common::String String;

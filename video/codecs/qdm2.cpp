@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Based off ffmpeg's QDM2 decoder
@@ -34,8 +31,9 @@
 #include "video/codecs/qdm2data.h"
 
 #include "common/array.h"
+#include "common/debug.h"
 #include "common/stream.h"
-#include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Video {
 

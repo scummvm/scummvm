@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include <kernel.h>
@@ -73,7 +70,7 @@ PS2Device detectBootPath(const char *elfPath, char *bootPath) {
 
 	PS2Device device = _getDev(elfPath);
 
-	printf("elf path: %s, device %d\n", elfPath, device);
+	sioprintf("elf path: %s, device %d\n", elfPath, device);
 
 	strcpy(bootPath, elfPath);
 

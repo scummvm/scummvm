@@ -18,16 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
-
-#include "common/config-manager.h"
 
 #include "kyra/kyra_v2.h"
 #include "kyra/screen_v2.h"
-#include "kyra/debugger.h"
+
+#include "common/config-manager.h"
+#include "common/error.h"
+#include "common/system.h"
 
 namespace Kyra {
 

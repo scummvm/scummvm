@@ -18,18 +18,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
-#include "kyra/kyra_v1.h"
 #include "kyra/kyra_lok.h"
-#include "kyra/screen.h"
 #include "kyra/animator_lok.h"
 #include "kyra/timer.h"
-
-#include "common/system.h"
 
 namespace Kyra {
 

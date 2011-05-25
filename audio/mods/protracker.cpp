@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "audio/mods/protracker.h"
@@ -28,6 +25,8 @@
 #include "audio/mods/module.h"
 
 #include "audio/audiostream.h"
+
+#include "common/textconsole.h"
 
 namespace Modules {
 

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SCUMM_GFX_H
@@ -158,11 +155,11 @@ struct VirtScreen : Graphics::Surface {
 	}
 
 	byte *getPixels(int x, int y) const {
-		return (byte *)pixels + y * pitch + (xstart + x) * bytesPerPixel;
+		return (byte *)pixels + y * pitch + (xstart + x) * format.bytesPerPixel;
 	}
 
 	byte *getBackPixels(int x, int y) const {
-		return (byte *)backBuf + y * pitch + (xstart + x) * bytesPerPixel;
+		return (byte *)backBuf + y * pitch + (xstart + x) * format.bytesPerPixel;
 	}
 };
 
@@ -224,7 +221,6 @@ protected:
 	virtual void writeRoomColor(byte *dst, byte color) const;
 
 	/* Mask decompressors */
-	void decompressTMSK(byte *dst, const byte *tmsk, const byte *src, int height) const;
 	void decompressMaskImgOr(byte *dst, const byte *src, int height) const;
 	void decompressMaskImg(byte *dst, const byte *src, int height) const;
 
@@ -237,7 +233,7 @@ protected:
 
 	virtual void decodeMask(int x, int y, const int width, const int height,
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag, const byte *tmsk_ptr);
+	                bool transpStrip, byte flag);
 
 	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 					const int x, const int y, const int width, const int height,
@@ -273,6 +269,24 @@ public:
 	};
 };
 
+class GdiHE : public Gdi {
+protected:
+	const byte *_tmskPtr;
+
+protected:
+	void decompressTMSK(byte *dst, const byte *tmsk, const byte *src, int height) const;
+
+	virtual void decodeMask(int x, int y, const int width, const int height,
+	                int stripnr, int numzbuf, const byte *zplane_list[9],
+	                bool transpStrip, byte flag);
+
+	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
+					const int x, const int y, const int width, const int height,
+	                int stripnr, int numstrip);
+public:
+	GdiHE(ScummEngine *vm);
+};
+
 class GdiNES : public Gdi {
 protected:
 	struct {
@@ -296,7 +310,7 @@ protected:
 
 	virtual void decodeMask(int x, int y, const int width, const int height,
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag, const byte *tmsk_ptr);
+	                bool transpStrip, byte flag);
 
 	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 					const int x, const int y, const int width, const int height,
@@ -339,7 +353,7 @@ protected:
 
 	virtual void decodeMask(int x, int y, const int width, const int height,
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag, const byte *tmsk_ptr);
+	                bool transpStrip, byte flag);
 
 	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 					const int x, const int y, const int width, const int height,
@@ -376,7 +390,7 @@ protected:
 
 	virtual void decodeMask(int x, int y, const int width, const int height,
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag, const byte *tmsk_ptr);
+	                bool transpStrip, byte flag);
 
 	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 					const int x, const int y, const int width, const int height,
@@ -402,7 +416,7 @@ protected:
 
 	virtual void decodeMask(int x, int y, const int width, const int height,
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag, const byte *tmsk_ptr);
+	                bool transpStrip, byte flag);
 
 	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 					const int x, const int y, const int width, const int height,

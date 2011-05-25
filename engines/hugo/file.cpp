@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -30,8 +27,10 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 #include "common/config-manager.h"
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"
@@ -298,7 +297,11 @@ sound_pt FileManager::getSound(const int16 sound, uint16 *size) {
 	}
 
 	if (!has_read_header) {
-		if (fp.read(s_hdr, sizeof(s_hdr)) != sizeof(s_hdr))
+		for (int i = 0; i < kMaxSounds; i++) {
+			s_hdr[i].size = fp.readUint16LE();
+			s_hdr[i].offset = fp.readUint32LE();
+		}
+		if (fp.err())
 			error("Wrong sound file format");
 		has_read_header = true;
 	}
@@ -400,7 +403,7 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 	out->writeByte((gameStatus.gameOverFl) ? 1 : 0);
 
 	// Save screen states
-	for (int i = 0; i < _vm->_numScreens; i++)
+	for (int i = 0; i < _vm->_numStates; i++)
 		out->writeByte(_vm->_screenStates[i]);
 
 	_vm->_scheduler->saveSchedulerData(out);
@@ -497,7 +500,7 @@ bool FileManager::restoreGame(const int16 slot) {
 	gameStatus.storyModeFl = (in->readByte() == 1);
 	_vm->_mouse->setJumpExitFl(in->readByte() == 1);
 	gameStatus.gameOverFl = (in->readByte() == 1);
-	for (int i = 0; i < _vm->_numScreens; i++)
+	for (int i = 0; i < _vm->_numStates; i++)
 		_vm->_screenStates[i] = in->readByte();
 
 	_vm->_scheduler->restoreSchedulerData(in);

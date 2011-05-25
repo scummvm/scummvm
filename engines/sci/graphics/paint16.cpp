@@ -18,15 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
-
-#include "common/util.h"
-#include "common/stack.h"
-#include "common/system.h"
-#include "graphics/primitives.h"
 
 #include "sci/sci.h"
 #include "sci/engine/features.h"
@@ -302,6 +294,11 @@ void GfxPaint16::bitsShow(const Common::Rect &rect) {
 		return;
 
 	_ports->offsetRect(workerRect);
+
+	// We adjust the left/right coordinates to even coordinates
+	workerRect.left &= 0xFFFE; // round down
+	workerRect.right = (workerRect.right + 1) & 0xFFFE; // round up
+
 	_screen->copyRectToScreen(workerRect);
 }
 
@@ -472,6 +469,7 @@ void GfxPaint16::kernelGraphRedrawBox(Common::Rect rect) {
 #define SCI_DISPLAY_RESTOREUNDER		108
 #define SCI_DISPLAY_DUMMY1				114 // used in longbow demo/qfg1 ega demo, not supported in sierra sci - no parameters
 #define SCI_DISPLAY_DUMMY2				115 // used in longbow demo, not supported in sierra sci - has 1 parameter
+#define SCI_DISPLAY_DUMMY3				117 // used in qfg1 ega demo, not supported in sierra sci - no parameters
 #define SCI_DISPLAY_DONTSHOWBITS		121
 
 reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
@@ -542,9 +540,10 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 			break;
 
 		// 2 Dummy functions, longbow-demo is using those several times but sierra sci doesn't support them at all
-		// The Quest for Glory 1 EGA demo also calls kDisplay(114)
+		// The Quest for Glory 1 EGA demo also calls kDisplay(114) and kDisplay(117)
 		case SCI_DISPLAY_DUMMY1:
 		case SCI_DISPLAY_DUMMY2:
+		case SCI_DISPLAY_DUMMY3:
 			if (!g_sci->isDemo() || (g_sci->getGameId() != GID_LONGBOW && g_sci->getGameId() != GID_QFG1))
 				error("Unknown kDisplay argument %d", displayArg.offset);
 			if (displayArg.offset == SCI_DISPLAY_DUMMY2) {

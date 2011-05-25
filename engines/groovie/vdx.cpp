@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "groovie/vdx.h"
@@ -28,9 +25,12 @@
 #include "groovie/groovie.h"
 #include "groovie/lzss.h"
 
+#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/textconsole.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "graphics/palette.h"
 
 #define TILE_SIZE 4			// Size of each tile on the image: only ever seen 4 so far
 #define VDX_IDENT 0x9267	// 37479

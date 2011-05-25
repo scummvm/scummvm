@@ -1,15 +1,25 @@
 ScummVM Windows CE FAQ
-Last updated: $Date$
-Release version: 1.1.0
+Last updated: 2011-05-25
+Release version: 1.3.0
 ------------------------------------------------------------------------
 
 New in this version
 -------------------
 
-1.1.1
+1.3.0:
+This is the first official Windows CE release since 1.1.1, there are no other
+port specific changes.
+
+1.2.1:
+(Note: No official 1.2.1 release)
+
+1.2.0:
+(Note: No official 1.2.0 release)
+
+1.1.1:
 Fix to the Normal2xAspect scaler that was causing crashes.
 
-1.1.0
+1.1.0:
 The TeenAgent engine is now included, but there are no other port specific
 changes since 1.0.0.
 

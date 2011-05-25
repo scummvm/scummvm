@@ -18,20 +18,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SWORD25_H
 #define SWORD25_H
 
 #include "common/scummsys.h"
-#include "common/str-array.h"
-#include "common/util.h"
 #include "engines/engine.h"
 
 #include "sword25/console.h"
+
+namespace Common {
+class Error;
+}
+
+namespace GUI {
+class Debugger;
+}
 
 struct ADGameDescription;
 

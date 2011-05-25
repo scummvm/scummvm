@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "graphics/thumbnail.h"
@@ -28,6 +25,7 @@
 #include "common/endian.h"
 #include "common/system.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace Graphics {
 
@@ -107,10 +105,10 @@ bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface &to) {
 		return false;
 	}
 
-	to.create(header.width, header.height, sizeof(OverlayColor));
+	Graphics::PixelFormat format = g_system->getOverlayFormat();
+	to.create(header.width, header.height, format);
 
 	OverlayColor *pixels = (OverlayColor *)to.pixels;
-	Graphics::PixelFormat format = g_system->getOverlayFormat();
 	for (int y = 0; y < to.h; ++y) {
 		for (int x = 0; x < to.w; ++x) {
 			uint8 r, g, b;
@@ -139,18 +137,18 @@ bool saveThumbnail(Common::WriteStream &out) {
 }
 
 bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
-	if (thumb.bytesPerPixel != 2) {
+	if (thumb.format.bytesPerPixel != 2) {
 		warning("trying to save thumbnail with bpp different than 2");
 		return false;
 	}
 
 	ThumbnailHeader header;
 	header.type = MKTAG('T','H','M','B');
-	header.size = ThumbnailHeaderSize + thumb.w*thumb.h*thumb.bytesPerPixel;
+	header.size = ThumbnailHeaderSize + thumb.w*thumb.h*thumb.format.bytesPerPixel;
 	header.version = THMB_VERSION;
 	header.width = thumb.w;
 	header.height = thumb.h;
-	header.bpp = thumb.bytesPerPixel;
+	header.bpp = thumb.format.bytesPerPixel;
 
 	out.writeUint32BE(header.type);
 	out.writeUint32BE(header.size);

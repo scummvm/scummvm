@@ -18,9 +18,6 @@
 * along with this program; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 *
-* $URL$
-* $Id$
-*
 */
 
 #include "common/system.h"
@@ -28,11 +25,11 @@
 #include "common/debug-channels.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
-#include "common/EventRecorder.h"
 #include "common/savefile.h"
 #include "common/memstream.h"
 
 #include "engines/util.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"
@@ -57,7 +54,7 @@ void ToonEngine::init() {
 	_hotspots = new Hotspots(this);
 
 	_mainSurface = new Graphics::Surface();
-	_mainSurface->create(TOON_BACKBUFFER_WIDTH, TOON_BACKBUFFER_HEIGHT, 1);
+	_mainSurface->create(TOON_BACKBUFFER_WIDTH, TOON_BACKBUFFER_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
 	_finalPalette = new uint8[768];
 	_backupPalette = new uint8[768];
@@ -116,6 +113,8 @@ void ToonEngine::init() {
 	_drew = _characters[0];
 	_flux = _characters[1];
 
+	
+
 	// preload walk anim for flux and drew
 	_drew->loadWalkAnimation("STNDWALK.CAF");
 	_drew->setupPalette();
@@ -134,6 +133,9 @@ void ToonEngine::init() {
 
 	memset(_sceneAnimations, 0, sizeof(_sceneAnimations));
 	memset(_sceneAnimationScripts, 0, sizeof(_sceneAnimationScripts));
+
+	_drew->setVisible(false);
+	_flux->setVisible(false);
 
 	_gameState->_currentChapter = 1;
 	initChapter();
@@ -777,8 +779,6 @@ Common::Error ToonEngine::run() {
 	if (!loadToonDat())
 		return Common::kUnknownError;
 
-	g_eventRec.registerRandomSource(_rnd, "toon");
-
 	initGraphics(TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT, true);
 	init();
 
@@ -812,7 +812,8 @@ Common::Error ToonEngine::run() {
 }
 
 ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
-	: Engine(syst), _gameDescription(gameDescription), _language(gameDescription->language) {
+	: Engine(syst), _gameDescription(gameDescription),
+	_language(gameDescription->language), _rnd("toon") {
 	_system = syst;
 	_tickLength = 16;
 	_currentPicture = NULL;
@@ -2854,7 +2855,7 @@ void ToonEngine::playSFX(int32 id, int32 volume) {
 }
 
 void ToonEngine::playSoundWrong() {
-	_audioManager->playSFX(rand() & 7, 128, true);
+	_audioManager->playSFX(randRange(0,7), 128, true);
 }
 
 void ToonEngine::getTextPosition(int32 characterId, int32 *retX, int32 *retY) {

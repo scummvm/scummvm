@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 
@@ -33,6 +30,7 @@
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/util.h"
+#include "common/textconsole.h"
 #include "common/timer.h"
 #include "common/translation.h"
 
@@ -65,6 +63,7 @@
 #include "backends/mixer/wincesdl/wincesdl-mixer.h"
 
 #ifdef DYNAMIC_MODULES
+#include <malloc.h>
 #include "backends/plugins/win32/win32-provider.h"
 #endif
 

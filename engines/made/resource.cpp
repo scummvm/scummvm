@@ -18,11 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
+#include "common/debug.h"
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "audio/mixer.h"
@@ -95,7 +93,7 @@ void PictureResource::loadRaw(byte *source, int size) {
 	}
 
 	_picture = new Graphics::Surface();
-	_picture->create(width, height, 1);
+	_picture->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 	decompressImage(source, *_picture, cmdOffs, pixelOffs, maskOffs, lineSize, cmdFlags, pixelFlags, maskFlags);
 
@@ -171,7 +169,7 @@ void PictureResource::loadChunked(byte *source, int size) {
 	}
 
 	_picture = new Graphics::Surface();
-	_picture->create(width, height, 1);
+	_picture->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 	decompressImage(source, *_picture, cmdOffs, pixelOffs, maskOffs, lineSize, cmdFlags, pixelFlags, maskFlags);
 
@@ -227,7 +225,7 @@ void AnimationResource::load(byte *source, int size) {
 		uint16 lineSize = sourceS->readUint16LE();
 
 		Graphics::Surface *frame = new Graphics::Surface();
-		frame->create(frameWidth, frameHeight, 1);
+		frame->create(frameWidth, frameHeight, Graphics::PixelFormat::createFormatCLUT8());
 
 		decompressImage(source + frameOffs, *frame, cmdOffs, pixelOffs, maskOffs, lineSize, 0, 0, 0, _flags & 1);
 

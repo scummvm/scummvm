@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Disable symbol overrides so that we can use system headers.
@@ -334,7 +331,7 @@ Graphics::Surface *OSystem_IPHONE::lockScreen() {
 	_framebuffer.w = _screenWidth;
 	_framebuffer.h = _screenHeight;
 	_framebuffer.pitch = _screenWidth;
-	_framebuffer.bytesPerPixel = 1;
+	_framebuffer.format = Graphics::PixelFormat::createFormatCLUT8();
 
 	return &_framebuffer;
 }

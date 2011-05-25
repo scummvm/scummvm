@@ -199,6 +199,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\config.h"
+				>
+			</File>
+			<File
 				RelativePath="..\msvc.h"
 				>
 			</File>
@@ -226,6 +230,10 @@
 			</File>
 			<File
 				RelativePath="..\scripts\revision.vbs"
+				>
+			</File>
+			<File
+				RelativePath="..\scripts\installer.vbs"
 				>
 			</File>
 		</Filter>

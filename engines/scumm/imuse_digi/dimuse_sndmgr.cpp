@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 
@@ -31,6 +28,7 @@
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/mp3.h"
 
+#include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/util.h"
 #include "scumm/imuse_digi/dimuse.h"

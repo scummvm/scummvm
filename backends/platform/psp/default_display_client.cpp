@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/scummsys.h"
@@ -199,7 +196,7 @@ Graphics::Surface *Screen::lockAndGetForEditing() {
 	_frameBuffer.w = _buffer.getSourceWidth();
 	_frameBuffer.h = _buffer.getSourceHeight();
 	_frameBuffer.pitch = _buffer.getBytesPerPixel() * _buffer.getWidth();
-	_frameBuffer.bytesPerPixel = _buffer.getBytesPerPixel();
+	_frameBuffer.format = _pixelFormat;
 	// We'll set to dirty once we unlock the screen
 
 	return &_frameBuffer;

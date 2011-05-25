@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 /* unzip.c -- IO on .zip files using zlib
@@ -68,6 +65,8 @@
    PkWare has also a specification at :
       ftp://ftp.pkware.com/probdesc.zip */
 
+// Disable symbol overrides so that we can use zlib.h
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/scummsys.h"
 
@@ -105,7 +104,6 @@ typedef struct {
 
 #include "common/fs.h"
 #include "common/unzip.h"
-#include "common/file.h"
 #include "common/memstream.h"
 
 #include "common/hashmap.h"
@@ -1470,11 +1468,13 @@ int ZipArchive::listMembers(Common::ArchiveMemberList &list) {
 
 	while (err == UNZ_OK) {
 		char szCurrentFileName[UNZ_MAXFILENAMEINZIP+1];
-		unzGetCurrentFileInfo(_zipFile, NULL,
-								szCurrentFileName, sizeof(szCurrentFileName)-1,
-								NULL, 0, NULL, 0);
-		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(szCurrentFileName, this)));
-		matches++;
+		if (unzGetCurrentFileInfo(_zipFile, NULL,
+		                          szCurrentFileName, sizeof(szCurrentFileName)-1,
+		                          NULL, 0, NULL, 0) == UNZ_OK) {
+			list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(szCurrentFileName, this)));
+			matches++;
+		}
+
 		err = unzGoToNextFile(_zipFile);
 	}
 
@@ -1493,18 +1493,31 @@ Common::SeekableReadStream *ZipArchive::createReadStreamForMember(const Common::
 		return 0;
 
 	unz_file_info fileInfo;
-	unzOpenCurrentFile(_zipFile);
-	unzGetCurrentFileInfo(_zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+	if (unzOpenCurrentFile(_zipFile) != UNZ_OK)
+		return 0;
+
+	if (unzGetCurrentFileInfo(_zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0) != UNZ_OK)
+		return 0;
+
 	byte *buffer = (byte *)malloc(fileInfo.uncompressed_size);
 	assert(buffer);
-	unzReadCurrentFile(_zipFile, buffer, fileInfo.uncompressed_size);
-	unzCloseCurrentFile(_zipFile);
+
+	if (unzReadCurrentFile(_zipFile, buffer, fileInfo.uncompressed_size) != (int)fileInfo.uncompressed_size) {
+		free(buffer);
+		return 0;
+	}
+
+	if (unzCloseCurrentFile(_zipFile) != UNZ_OK) {
+		free(buffer);
+		return 0;
+	}
+
 	return new Common::MemoryReadStream(buffer, fileInfo.uncompressed_size, DisposeAfterUse::YES);
 
 	// FIXME: instead of reading all into a memory stream, we could
 	// instead create a new ZipStream class. But then we have to be
 	// careful to handle the case where the client code opens multiple
-	// files in the archive and tries to use them indepenendtly.
+	// files in the archive and tries to use them independently.
 }
 
 Archive *makeZipArchive(const String &name) {

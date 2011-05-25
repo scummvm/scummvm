@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_DIALOGS_H
@@ -105,11 +102,11 @@ public:
 
 class InventoryDialog : public ModalDialog {
 private:
-	Common::Array<GfxInvImage> _images;
+	Common::Array<GfxInvImage *> _images;
 	GfxButton _btnOk, _btnLook;
 public:
 	InventoryDialog();
-	virtual ~InventoryDialog() {}
+	virtual ~InventoryDialog();
 	void execute();
 
 	static void show();

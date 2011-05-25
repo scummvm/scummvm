@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef BACKENDS_GRAPHICS_OPENGL_H
@@ -28,7 +25,9 @@
 
 #include "backends/graphics/opengl/gltexture.h"
 #include "backends/graphics/graphics.h"
+#include "common/array.h"
 #include "common/events.h"
+#include "graphics/pixelformat.h"
 
 // Uncomment this to enable the 'on screen display' code.
 #define USE_OSD	1

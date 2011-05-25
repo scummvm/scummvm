@@ -17,19 +17,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef GRAPHICS_WINFONT_H
 #define GRAPHICS_WINFONT_H
 
+#include "common/str.h"
 #include "graphics/font.h"
 
 namespace Common {
-	class SeekableReadStream;
-	class String;
+class SeekableReadStream;
 }
 
 namespace Graphics {

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * Handles the inventory and conversation windows.
  *
  * And the save/load game windows. Some of this will be platform
@@ -61,6 +58,8 @@
 #include "tinsel/tinlib.h"
 #include "tinsel/tinsel.h"		// For engine access
 #include "tinsel/token.h"
+
+#include "common/textconsole.h"
 
 namespace Tinsel {
 

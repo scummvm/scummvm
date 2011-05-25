@@ -18,32 +18,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/debug-channels.h"
 #include "common/endian.h"
 #include "common/error.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/keyboard.h"
-#include "common/file.h"
 #include "common/fs.h"
-#include "common/savefile.h"
 #include "common/config-manager.h"
 #include "common/serializer.h"
-#include "common/stream.h"
 
 #include "backends/audiocd/audiocd.h"
 
 #include "engines/util.h"
-
-#include "graphics/cursorman.h"
-
-#include "base/plugins.h"
-#include "base/version.h"
 
 #include "tinsel/actors.h"
 #include "tinsel/background.h"
@@ -826,7 +814,7 @@ const char *TinselEngine::_textFiles[][3] = {
 
 
 TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc) {
+		Engine(syst), _gameDescription(gameDesc), _random("tinsel") {
 	_vm = this;
 
 	_config = new Config(this);
@@ -911,13 +899,11 @@ Common::Error TinselEngine::run() {
 #else
 		initGraphics(640, 432, true);
 #endif
-		_screenSurface.create(640, 432, 1);
+		_screenSurface.create(640, 432, Graphics::PixelFormat::createFormatCLUT8());
 	} else {
 		initGraphics(320, 200, false);
-		_screenSurface.create(320, 200, 1);
+		_screenSurface.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	}
-
-	g_eventRec.registerRandomSource(_random, "tinsel");
 
 	_console = new Console();
 

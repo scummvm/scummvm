@@ -17,9 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/system.h"
@@ -385,7 +382,7 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 		s.pitch = s.w;
 		// s.h = 17 for FM-TOWNS Loom Japanese. Fixes bug #1166917
 		assert(s.w <= 16 && s.h <= 17);
-		s.bytesPerPixel = 1;
+		s.format = Graphics::PixelFormat::createFormatCLUT8();
 
 		_charset->drawChar(chr, s, 0, 0);
 

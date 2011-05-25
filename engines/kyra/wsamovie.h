@@ -18,18 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef KYRA_WSAMOVIE_H
 #define KYRA_WSAMOVIE_H
 
+#include "kyra/kyra_v1.h"
+
 namespace Kyra {
 
-class KyraEngine_v1;
-class Screen_v2;
 class Palette;
 
 class Movie {

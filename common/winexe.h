@@ -18,19 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef COMMON_WINEXE_H
 #define COMMON_WINEXE_H
 
 #include "common/hash-str.h"
+#include "common/str.h"
 
 namespace Common {
-
-class String;
 
 class WinResourceID {
 public:

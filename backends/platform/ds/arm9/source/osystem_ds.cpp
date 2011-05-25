@@ -20,6 +20,9 @@
  */
 
 
+// Allow use of stuff in <time.h>
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
 #include "common/scummsys.h"
 #include "common/system.h"
 
@@ -243,7 +246,7 @@ void OSystem_DS::setCursorPalette(const byte *colors, uint start, uint num) {
 }
 
 bool OSystem_DS::grabRawScreen(Graphics::Surface *surf) {
-	surf->create(DS::getGameWidth(), DS::getGameHeight(), 1);
+	surf->create(DS::getGameWidth(), DS::getGameHeight(), Graphics::PixelFormat::createFormatCLUT8());
 
 	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
 
@@ -756,7 +759,7 @@ Graphics::Surface *OSystem_DS::createTempFrameBuffer() {
 		_framebuffer.w = DS::getGameWidth();
 		_framebuffer.h = DS::getGameHeight();
 		_framebuffer.pitch = DS::getGameWidth();
-		_framebuffer.bytesPerPixel = 1;
+		_framebuffer.format = Graphics::PixelFormat::createFormatCLUT8();
 
 	} else {
 
@@ -781,7 +784,7 @@ Graphics::Surface *OSystem_DS::createTempFrameBuffer() {
 		_framebuffer.w = width;
 		_framebuffer.h = height;
 		_framebuffer.pitch = width;
-		_framebuffer.bytesPerPixel = 1;
+		_framebuffer.format = Graphics::PixelFormat::createFormatCLUT8();
 
 	}
 

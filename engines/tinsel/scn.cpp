@@ -18,14 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * A (some would say very) small collection of utility functions.
  */
-
-#include "common/endian.h"
-#include "common/util.h"
 
 #include "tinsel/dw.h"
 #include "tinsel/film.h"

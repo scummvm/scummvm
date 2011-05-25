@@ -18,16 +18,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
+
+#include "graphics/palette.h"
 
 #include "tucker/tucker.h"
 #include "tucker/graphics.h"

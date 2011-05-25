@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef __PS2INPUT_H__
@@ -31,6 +28,10 @@
 
 class OSystem_PS2;
 class Ps2Pad;
+
+namespace Common {
+struct Event;
+}
 
 class Ps2Input {
 public:

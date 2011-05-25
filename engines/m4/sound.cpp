@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "m4/m4.h"
@@ -28,6 +25,7 @@
 #include "m4/compression.h"
 
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "mohawk/bitmap.h"
@@ -31,6 +28,7 @@
 #include "common/memstream.h"
 #include "common/substream.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Mohawk {
 
@@ -135,8 +133,12 @@ Common::Array<MohawkSurface *> MohawkBitmap::decodeImages(Common::SeekableReadSt
 
 Graphics::Surface *MohawkBitmap::createSurface(uint16 width, uint16 height) {
 	Graphics::Surface *surface = new Graphics::Surface();
-	byte bytesPerPixel = (getBitsPerPixel() <= 8) ? 1 : g_system->getScreenFormat().bytesPerPixel;
-	surface->create(width, height, bytesPerPixel);
+	Graphics::PixelFormat format;
+	if (getBitsPerPixel() <= 8)
+		format = Graphics::PixelFormat::createFormatCLUT8();
+	else
+		format = g_system->getScreenFormat();
+	surface->create(width, height, format);
 	return surface;
 }
 
@@ -569,7 +571,7 @@ void MohawkBitmap::drawRaw(Graphics::Surface *surface) {
 				byte b = _data->readByte();
 				byte g = _data->readByte();
 				byte r = _data->readByte();
-				if (surface->bytesPerPixel == 2)
+				if (surface->format.bytesPerPixel == 2)
 					*((uint16 *)surface->getBasePtr(x, y)) = pixelFormat.RGBToColor(r, g, b);
 				else
 					*((uint32 *)surface->getBasePtr(x, y)) = pixelFormat.RGBToColor(r, g, b);
@@ -856,7 +858,7 @@ MohawkSurface *DOSBitmap::decodeImage(Common::SeekableReadStream *stream) {
 }
 
 void DOSBitmap::expandMonochromePlane(Graphics::Surface *surface, Common::SeekableReadStream *rawStream) {
-	assert(surface->bytesPerPixel == 1);
+	assert(surface->format.bytesPerPixel == 1);
 
 	byte *dst = (byte *)surface->pixels;
 
@@ -882,7 +884,7 @@ void DOSBitmap::expandMonochromePlane(Graphics::Surface *surface, Common::Seekab
 	*(dst + j * 4 + dstPixel) = (*(dst + j * 4 + dstPixel) >> 1) | (((temp >> srcBit) & 1) << 3)
 
 void DOSBitmap::expandEGAPlanes(Graphics::Surface *surface, Common::SeekableReadStream *rawStream) {
-	assert(surface->bytesPerPixel == 1);
+	assert(surface->format.bytesPerPixel == 1);
 
 	// Note that the image is in EGA planar form and not just standard 4bpp
 	// This seems to contradict the PoP specs which seem to do

@@ -18,16 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "gui/ThemeEval.h"
-#include "gui/widget.h"
 
 #include "graphics/scaler.h"
 
+#include "common/system.h"
 #include "common/tokenizer.h"
 
 namespace GUI {

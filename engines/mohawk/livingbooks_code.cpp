@@ -18,13 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "mohawk/livingbooks.h"
 #include "mohawk/resource.h"
+
+#include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Mohawk {
 
@@ -606,7 +606,7 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "move", 0 },
 	{ 0, 0 },
 	{ 0, 0 },
-	{ "setDragParams", 0 },
+	{ "setDragParams", &LBCode::cmdSetDragParams },
 	{ "resetDragParams", 0 },
 	{ "enableRollover", &LBCode::cmdUnimplemented /* FIXME */ },
 	{ "setCursor", 0 },
@@ -801,6 +801,10 @@ void LBCode::cmdRight(const Common::Array<LBValue> &params) {
 	_stack.push(rect.right);
 }
 
+void LBCode::cmdSetDragParams(const Common::Array<LBValue> &params) {
+	warning("ignoring setDragParams");
+}
+
 void LBCode::cmdSetPlayParams(const Common::Array<LBValue> &params) {
 	if (params.size() > 8)
 		error("too many parameters (%d) to setPlayParams", params.size());
@@ -875,7 +879,7 @@ CodeCommandInfo itemCommandInfo[NUM_ITEM_COMMANDS] = {
 	{ "isLoaded", 0 },
 	{ "isDragging", 0 },
 	{ "load", 0 },
-	{ "moveTo", 0 },
+	{ "moveTo", &LBCode::itemMoveTo },
 	{ "mute", 0 },
 	{ "play", 0 },
 	{ "seek", 0 },
@@ -908,6 +912,10 @@ void LBCode::itemIsPlaying(const Common::Array<LBValue> &params) {
 	// TODO
 	warning("ignoring isPlaying");
 	_stack.push(0);
+}
+
+void LBCode::itemMoveTo(const Common::Array<LBValue> &params) {
+	warning("ignoring moveTo");
 }
 
 void LBCode::itemSetParent(const Common::Array<LBValue> &params) {

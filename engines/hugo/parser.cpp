@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -30,12 +27,8 @@
  *
  */
 
-#include "common/system.h"
 #include "common/events.h"
-
-#include "common/random.h"
-#include "common/EventRecorder.h"
-#include "common/debug-channels.h"
+#include "common/textconsole.h"
 
 #include "hugo/hugo.h"
 #include "hugo/display.h"
@@ -340,7 +333,7 @@ void Parser::keyHandler(Common::Event event) {
 		break;
 	case Common::KEYCODE_F1:                        // User Help (DOS)
 		if (_checkDoubleF1Fl)
-			_vm->_file->instructions();
+			gameStatus.helpFl = true;
 		else
 			_vm->_screen->userHelp();
 		_checkDoubleF1Fl = !_checkDoubleF1Fl;

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef KYRA_KYRA_LOK_H
@@ -31,6 +28,10 @@
 #include "kyra/screen_lok.h"
 #include "kyra/gui_lok.h"
 #include "kyra/item.h"
+
+namespace Graphics {
+struct Surface;
+}
 
 namespace Kyra {
 

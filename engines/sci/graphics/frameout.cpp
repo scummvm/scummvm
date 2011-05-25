@@ -18,14 +18,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
-#include "common/util.h"
-#include "common/stack.h"
-#include "graphics/primitives.h"
+#include "common/algorithm.h"
+#include "common/events.h"
+#include "common/keyboard.h"
+#include "common/list_intern.h"
+#include "common/str.h"
+#include "common/system.h"
+#include "common/textconsole.h"
+#include "engines/engine.h"
+#include "graphics/surface.h"
 
 #include "sci/sci.h"
 #include "sci/engine/kernel.h"

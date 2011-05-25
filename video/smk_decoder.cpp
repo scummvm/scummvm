@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Based on http://wiki.multimedia.cx/index.php?title=Smacker
@@ -29,11 +26,11 @@
 
 #include "video/smk_decoder.h"
 
-#include "common/archive.h"
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/stream.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
@@ -483,7 +480,7 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	_surface = new Graphics::Surface();
 
 	// Height needs to be doubled if we have flags (Y-interlaced or Y-doubled)
-	_surface->create(width, height * (_header.flags ? 2 : 1), 1);
+	_surface->create(width, height * (_header.flags ? 2 : 1), Graphics::PixelFormat::createFormatCLUT8());
 
 	memset(_palette, 0, 3 * 256);
 	return true;

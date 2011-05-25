@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "tsage/staticres.h"
@@ -113,5 +110,12 @@ const char *SCENE6100_SURPRISE = "You surprise me Quinn. I would have thought yo
 const char *SCENE6100_SWEAT = "Humans sweat, Kzin twitch their tail. What's the difference?";
 const char *SCENE6100_VERY_WELL = "Very well. I will retrieve the stasis box and return the probe. \
 Wait for it's return in the lander bay.";
+
+const char *DEMO_HELP_MSG = " Help...\rF2 - Sound Options\rF3 - Exit demo\r\rPress ENTER\rto continue";
+const char *DEMO_PAUSED_MSG = "Ringworld\x14 demo is paused";
+const char *DEMO_EXIT_MSG = "Press ENTER to resume the Ringworld\x14 demo. Press ESC to exit";
+const char *EXIT_BTN_STRING = "Exit";
+const char *DEMO_BTN_STRING = "Demo";
+const char *DEMO_RESUME_BTN_STRING = "Resume";
 
 } // End of namespace tSage

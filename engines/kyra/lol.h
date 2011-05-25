@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifdef ENABLE_LOL
@@ -31,11 +28,14 @@
 #include "kyra/kyra_v1.h"
 #include "kyra/script_tim.h"
 #include "kyra/script.h"
-#include "kyra/sound.h"
 #include "kyra/gui_lol.h"
 #include "kyra/text_lol.h"
 
 #include "common/list.h"
+
+namespace Audio {
+class SeekableAudioStream;
+} // End of namespace Audio
 
 namespace Kyra {
 

@@ -18,24 +18,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SOUND_MIDIDRV_H
 #define SOUND_MIDIDRV_H
 
 #include "common/scummsys.h"
+#include "common/str.h"
 #include "common/timer.h"
 
 class MidiChannel;
-class MusicDevice;
-
-namespace Audio {
-	class Mixer;
-}
-namespace Common { class String; }
 
 /**
  * Music types that music drivers can implement and engines can rely on.

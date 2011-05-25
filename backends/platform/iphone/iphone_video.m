@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "iphone_video.h"
@@ -178,13 +175,18 @@ const char* iPhone_getDocumentsDir() {
 }
 
 bool getLocalMouseCoords(CGPoint *point) {
-	if (point->x < _screenRect.origin.x || point->x >= _screenRect.origin.x + _screenRect.size.width ||
-		point->y < _screenRect.origin.y || point->y >= _screenRect.origin.y + _screenRect.size.height) {
-			return false;
-	}
+	if (_overlayIsEnabled) {
+		point->x = point->x / _overlayHeight;
+		point->y = point->y / _overlayWidth;
+	} else {
+		if (point->x < _screenRect.origin.x || point->x >= _screenRect.origin.x + _screenRect.size.width ||
+			point->y < _screenRect.origin.y || point->y >= _screenRect.origin.y + _screenRect.size.height) {
+				return false;
+		}
 
-	point->x = (point->x - _screenRect.origin.x) / _screenRect.size.width;
-	point->y = (point->y - _screenRect.origin.y) / _screenRect.size.height;
+		point->x = (point->x - _screenRect.origin.x) / _screenRect.size.width;
+		point->y = (point->y - _screenRect.origin.y) / _screenRect.size.height;
+	}
 
 	return true;
 }

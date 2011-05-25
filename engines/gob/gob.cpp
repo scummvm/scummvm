@@ -18,20 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/debug-channels.h"
-#include "common/endian.h"
-#include "common/events.h"
-#include "common/EventRecorder.h"
 
 #include "backends/audiocd/audiocd.h"
 #include "base/plugins.h"
 #include "common/config-manager.h"
-#include "common/md5.h"
 #include "audio/mididrv.h"
 
 #include "gui/gui-manager.h"
@@ -116,7 +109,7 @@ void PauseDialog::handleKeyDown(Common::KeyState state) {
 }
 
 
-GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
+GobEngine::GobEngine(OSystem *syst) : Engine(syst), _rnd("gob") {
 	_sound     = 0; _mult     = 0; _game    = 0;
 	_global    = 0; _dataIO   = 0; _goblin  = 0;
 	_vidPlayer = 0; _init     = 0; _inter   = 0;
@@ -151,8 +144,6 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	DebugMan.addDebugChannel(kDebugVideo, "Video", "IMD/VMD video debug level");
 	DebugMan.addDebugChannel(kDebugHotspots, "Hotspots", "Hotspots debug level");
 	DebugMan.addDebugChannel(kDebugDemo, "Demo", "Demo script debug level");
-
-	g_eventRec.registerRandomSource(_rnd, "gob");
 }
 
 GobEngine::~GobEngine() {

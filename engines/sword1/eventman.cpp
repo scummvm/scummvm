@@ -18,14 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 
 #include "sword1/eventman.h"
 #include "sword1/sworddefs.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 namespace Sword1 {

@@ -18,15 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "video/codecs/cdtoons.h"
+#include "common/rect.h"
 #include "common/stream.h"
-
-#include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Video {
 
@@ -54,7 +51,7 @@ CDToonsDecoder::CDToonsDecoder(uint16 width, uint16 height) {
 	debugN(5, "CDToons: width %d, height %d\n", width, height);
 
 	_surface = new Graphics::Surface();
-	_surface->create(width, height, 1);
+	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 	_currentPaletteId = 0;
 	memset(_palette, 0, 256 * 3);

@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifdef WIN32
@@ -32,11 +29,11 @@
 #define TRANSLATIONS_DAT_VER 2
 
 #include "common/translation.h"
-#include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #ifdef USE_TRANSLATION
 

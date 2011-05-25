@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #if !defined(BACKEND_EVENTS_DEFAULT_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
@@ -31,10 +28,10 @@
 
 namespace Common {
 #ifdef ENABLE_KEYMAPPER
-	class Keymapper;
+class Keymapper;
 #endif
 #ifdef ENABLE_VKEYBD
-	class VirtualKeyboard;
+class VirtualKeyboard;
 #endif
 }
 

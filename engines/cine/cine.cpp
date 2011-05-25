@@ -18,18 +18,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
-#include "common/events.h"
-#include "common/EventRecorder.h"
-#include "common/file.h"
-#include "common/savefile.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/system.h"
 
 #include "engines/util.h"
 
@@ -49,7 +41,10 @@ Sound *g_sound = 0;
 
 CineEngine *g_cine = 0;
 
-CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc)
+	: Engine(syst),
+	_gameDescription(gameDesc),
+	_rnd("cine") {
 	// Setup mixer
 	syncSoundSettings();
 
@@ -60,8 +55,6 @@ CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc) : Eng
 	_console = new CineConsole(this);
 
 	g_cine = this;
-
-	g_eventRec.registerRandomSource(_rnd, "cine");
 }
 
 CineEngine::~CineEngine() {

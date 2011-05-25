@@ -17,17 +17,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "common/events.h"
 #include "common/keyboard.h"
+#include "common/rect.h"
+#include "common/str.h"
+#include "common/system.h"
+#include "common/util.h"
 
 #include "engines/engine.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
+#include "graphics/surface.h"
 
 #include "testbed/events.h"
 #include "testbed/graphics.h"

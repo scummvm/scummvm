@@ -17,15 +17,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "common/file.h"
 #include "common/str.h"
+#include "common/stream.h"
+#include "common/textconsole.h"
 #include "common/winexe_ne.h"
 #include "common/winexe_pe.h"
+#include "graphics/surface.h"
 #include "graphics/fonts/winfont.h"
 
 namespace Graphics {
@@ -320,7 +320,7 @@ bool WinFont::loadFromFNT(Common::SeekableReadStream &stream) {
 
 void WinFont::drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const {
 	assert(dst);
-	assert(dst->bytesPerPixel == 1 || dst->bytesPerPixel == 2 || dst->bytesPerPixel == 4);
+	assert(dst->format.bytesPerPixel == 1 || dst->format.bytesPerPixel == 2 || dst->format.bytesPerPixel == 4);
 	assert(_glyphs);
 
 	GlyphEntry &glyph = _glyphs[characterToIndex(chr)];
@@ -328,11 +328,11 @@ void WinFont::drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const
 	for (uint16 i = 0; i < _pixHeight; i++) {
 		for (uint16 j = 0; j < glyph.charWidth; j++) {
 			if (glyph.bitmap[j + i * glyph.charWidth]) {
-				if (dst->bytesPerPixel == 1)
+				if (dst->format.bytesPerPixel == 1)
 					*((byte *)dst->getBasePtr(x + j, y + i)) = color;
-				else if (dst->bytesPerPixel == 2)
+				else if (dst->format.bytesPerPixel == 2)
 					*((uint16 *)dst->getBasePtr(x + j, y + i)) = color;
-				else if (dst->bytesPerPixel == 4)
+				else if (dst->format.bytesPerPixel == 4)
 					*((uint32 *)dst->getBasePtr(x + j, y + i)) = color;
 			}
 		}

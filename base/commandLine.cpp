@@ -18,10 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
+
+// FIXME: Avoid using printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
 #include "engines/metaengine.h"
 #include "base/commandLine.h"
@@ -30,6 +32,7 @@
 
 #include "common/config-manager.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "common/fs.h"
 
 #include "gui/ThemeEngine.h"
@@ -264,7 +267,7 @@ void registerDefaults() {
 #define DO_OPTION_INT(shortCmd, longCmd) \
 	DO_OPTION(shortCmd, longCmd) \
 	char *endptr = 0; \
-	int intValue; intValue = (int)strtol(option, &endptr, 0); \
+	strtol(option, &endptr, 0); \
 	if (endptr == NULL || *endptr != 0) usage("--%s: Invalid number '%s'", longCmd, option);
 
 // Use this for boolean options; this distinguishes between "-x" and "-X",
@@ -886,7 +889,8 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 #endif // DISABLE_COMMAND_LINE
 
 
-Common::Error processSettings(Common::String &command, Common::StringMap &settings) {
+bool processSettings(Common::String &command, Common::StringMap &settings, Common::Error &err) {
+	err = Common::kNoError;
 
 #ifndef DISABLE_COMMAND_LINE
 
@@ -895,33 +899,34 @@ Common::Error processSettings(Common::String &command, Common::StringMap &settin
 	// have been loaded.
 	if (command == "list-targets") {
 		listTargets();
-		return Common::kNoError;
+		return true;
 	} else if (command == "list-games") {
 		listGames();
-		return Common::kNoError;
+		return true;
 	} else if (command == "list-saves") {
-		return listSaves(settings["list-saves"].c_str());
+		err = listSaves(settings["list-saves"].c_str());
+		return true;
 	} else if (command == "list-themes") {
 		listThemes();
-		return Common::kNoError;
+		return true;
 	} else if (command == "version") {
 		printf("%s\n", gScummVMFullVersion);
 		printf("Features compiled in: %s\n", gScummVMFeatures);
-		return Common::kNoError;
+		return true;
 	} else if (command == "help") {
 		printf(HELP_STRING, s_appName);
-		return Common::kNoError;
+		return true;
 	}
 #ifdef DETECTOR_TESTING_HACK
 	else if (command == "test-detector") {
 		runDetectorTest();
-		return Common::kNoError;
+		return true;
 	}
 #endif
 #ifdef UPGRADE_ALL_TARGETS_HACK
 	else if (command == "upgrade-targets") {
 		upgradeTargets();
-		return Common::kNoError;
+		return true;
 	}
 #endif
 
@@ -959,26 +964,6 @@ Common::Error processSettings(Common::String &command, Common::StringMap &settin
 	}
 
 
-	// The user can override the savepath with the SCUMMVM_SAVEPATH
-	// environment variable. This is weaker than a --savepath on the
-	// command line, but overrides the default savepath, hence it is
-	// handled here, just before the command line gets parsed.
-#if !defined(_WIN32_WCE) && !defined(__GP32__) && !defined(ANDROID)
-	if (!settings.contains("savepath")) {
-		const char *dir = getenv("SCUMMVM_SAVEPATH");
-		if (dir && *dir && strlen(dir) < MAXPATHLEN) {
-			Common::FSNode saveDir(dir);
-			if (!saveDir.exists()) {
-				warning("Non-existent SCUMMVM_SAVEPATH save path. It will be ignored");
-			} else if (!saveDir.isWritable()) {
-				warning("Non-writable SCUMMVM_SAVEPATH save path. It will be ignored");
-			} else {
-				settings["savepath"] = dir;
-			}
-		}
-	}
-#endif
-
 	// Finally, store the command line settings into the config manager.
 	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x) {
 		Common::String key(x->_key);
@@ -993,7 +978,7 @@ Common::Error processSettings(Common::String &command, Common::StringMap &settin
 		ConfMan.set(key, value, Common::ConfigManager::kTransientDomain);
 	}
 
-	return Common::kArgumentNotProcessed;
+	return false;
 }
 
 } // End of namespace Base

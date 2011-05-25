@@ -18,11 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
+#include "config.h"
 #include "codeblocks.h"
 
 #include <fstream>
@@ -34,20 +32,20 @@ CodeBlocksProvider::CodeBlocksProvider(StringList &global_warnings, std::map<std
 }
 
 void CodeBlocksProvider::createWorkspace(const BuildSetup &setup) {
-	std::ofstream workspace((setup.outputDir + '/' + "scummvm.workspace").c_str());
+	std::ofstream workspace((setup.outputDir + '/' + PROJECT_NAME + ".workspace").c_str());
 	if (!workspace)
-		error("Could not open \"" + setup.outputDir + '/' + "scummvm.workspace\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + PROJECT_NAME + ".workspace\" for writing");
 
 	workspace << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>\n"
 	             "<CodeBlocks_workspace_file>\n";
 
-	workspace << "\t<Workspace title=\"ScummVM\">\n";
+	workspace << "\t<Workspace title=\"" << PROJECT_DESCRIPTION << "\">\n";
 
 	writeReferences(workspace);
 
 	// Note we assume that the UUID map only includes UUIDs for enabled engines!
 	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
-		if (i->first == "scummvm")
+		if (i->first == PROJECT_NAME)
 			continue;
 
 		workspace << "\t\t<Project filename=\"" << i->first << ".cbp\" />\n";
@@ -59,7 +57,7 @@ void CodeBlocksProvider::createWorkspace(const BuildSetup &setup) {
 
 // HACK We need to pre-process library names
 //      since the MSVC and mingw precompiled
-//      librarie have different names :(
+//      libraries have different names :(
 std::string processLibraryName(std::string name) {
 	// Remove "_static" in lib name
 	size_t pos = name.find("_static");
@@ -90,16 +88,16 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 	           "\t\t<Option compiler=\"gcc\" />\n"
 	           "\t\t<Build>\n";
 
-	if (name == "scummvm") {
+	if (name == PROJECT_NAME) {
 		std::string libraries;
 
 		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
 			libraries += processLibraryName(*i) + ".a;";
 
 		project << "\t\t\t<Target title=\"default\">\n"
-		           "\t\t\t\t<Option output=\"scummvm\\scummvm\" prefix_auto=\"1\" extension_auto=\"1\" />\n"
-		           "\t\t\t\t<Option object_output=\"scummvm\" />\n"
-		           "\t\t\t\t<Option external_deps=\"" << libraries /* + list of engines scummvm\engines\name\name.a */ << "\" />\n"
+		           "\t\t\t\t<Option output=\"" << PROJECT_NAME << "\\" << PROJECT_NAME << "\" prefix_auto=\"1\" extension_auto=\"1\" />\n"
+		           "\t\t\t\t<Option object_output=\"" << PROJECT_NAME << "\" />\n"
+		           "\t\t\t\t<Option external_deps=\"" << libraries /* + list of engines engines\name\name.a */ << "\" />\n"
 		           "\t\t\t\t<Option type=\"1\" />\n"
 		           "\t\t\t\t<Option compiler=\"gcc\" />\n"
 		           "\t\t\t\t<Option parameters=\"-d 8 --debugflags=parser\" />\n"
@@ -112,8 +110,8 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 		writeWarnings(name, project);
 		writeDefines(setup.defines, project);
 
-		project << "\t\t\t\t\t<Add directory=\"$(SCUMMVM_LIBS)include\" />\n"
-		           "\t\t\t\t\t<Add directory=\"$(SCUMMVM_LIBS)include\\SDL\" />\n"
+		project << "\t\t\t\t\t<Add directory=\"$(" << LIBS_DEFINE << ")include\" />\n"
+		           "\t\t\t\t\t<Add directory=\"$(" << LIBS_DEFINE << ")include\\SDL\" />\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\\engines\" />\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\\common\" />\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\" />\n"
@@ -127,21 +125,21 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 			project << "\t\t\t\t\t<Add library=\"" << processLibraryName(*i) << "\" />\n";
 
 		for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
-			if (i->first == "scummvm")
+			if (i->first == PROJECT_NAME)
 				continue;
 
-			project << "\t\t\t\t\t<Add library=\"scummvm\\engines\\" << i->first << "\\lib" << i->first << ".a\" />\n";
+			project << "\t\t\t\t\t<Add library=\"" << PROJECT_NAME << "\\engines\\" << i->first << "\\lib" << i->first << ".a\" />\n";
 		}
 
-		project << "\t\t\t\t\t<Add directory=\"$(SCUMMVM_LIBS)lib\\mingw\" />\n"
-		           "\t\t\t\t\t<Add directory=\"$(SCUMMVM_LIBS)lib\" />\n"
+		project << "\t\t\t\t\t<Add directory=\"$(" << LIBS_DEFINE << ")lib\\mingw\" />\n"
+		           "\t\t\t\t\t<Add directory=\"$(" << LIBS_DEFINE << ")lib\" />\n"
 		           "\t\t\t\t</Linker>\n";
 
 		//////////////////////////////////////////////////////////////////////////
 		// Resource compiler
 		project << "\t\t\t\t<ResourceCompiler>\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\\dists\" />\n"
-		           "\t\t\t\t\t<Add directory=\"..\\..\\..\\scummvm\" />\n"
+		           "\t\t\t\t\t<Add directory=\"..\\..\\..\\" << PROJECT_NAME << "\" />\n"
 		           "\t\t\t\t</ResourceCompiler>\n"
 		           "\t\t\t</Target>\n"
 		           "\t\t</Build>\n";
@@ -150,9 +148,9 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 
 	} else {
 		project << "\t\t\t<Target title=\"default\">\n"
-		           "\t\t\t\t<Option output=\"scummvm\\engines\\" << name << "\\lib" << name << "\" prefix_auto=\"1\" extension_auto=\"1\" />\n"
+		           "\t\t\t\t<Option output=\"" << PROJECT_NAME << "\\engines\\" << name << "\\lib" << name << "\" prefix_auto=\"1\" extension_auto=\"1\" />\n"
 		           "\t\t\t\t<Option working_dir=\"\" />\n"
-		           "\t\t\t\t<Option object_output=\"scummvm\" />\n"
+		           "\t\t\t\t<Option object_output=\"" << PROJECT_NAME << "\" />\n"
 		           "\t\t\t\t<Option type=\"2\" />\n"
 		           "\t\t\t\t<Option compiler=\"gcc\" />\n"
 		           "\t\t\t\t<Option createDefFile=\"1\" />\n"
@@ -163,11 +161,11 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 
 		project << "\t\t\t\t\t<Add option=\"-g\" />\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\\engines\" />\n"
-		           "\t\t\t\t\t<Add directory=\"..\\..\\..\\scummvm\" />\n";
+		           "\t\t\t\t\t<Add directory=\"..\\..\\..\\" << PROJECT_NAME << "\" />\n";
 
 		// Sword2.5 engine needs theora and vorbis includes
 		if (name == "sword25")
-			project << "\t\t\t\t\t<Add directory=\"$(SCUMMVM_LIBS)include\" />\n";
+			project << "\t\t\t\t\t<Add directory=\"$(" << LIBS_DEFINE << ")include\" />\n";
 
 		project << "\t\t\t\t</Compiler>\n"
 		           "\t\t\t</Target>\n"
@@ -233,7 +231,7 @@ void CodeBlocksProvider::writeFileListToProject(const FileNode &dir, std::ofstre
 				               "\t\t</Unit>\n";
 			} else if (ext == "asm") {
 				projectFile << "\t\t<Unit filename=\"" << convertPathToWin(filePrefix + node->name) << "\">\n"
-				               "\t\t\t<Option compiler=\"gcc\" use=\"1\" buildCommand=\"$(SCUMMVM_LIBS)bin/nasm.exe -f win32 -g $file -o $object\" />"
+				               "\t\t\t<Option compiler=\"gcc\" use=\"1\" buildCommand=\"$(" << LIBS_DEFINE << ")bin/nasm.exe -f win32 -g $file -o $object\" />"
 				               "\t\t</Unit>\n";
 			} else {
 				projectFile << "\t\t<Unit filename=\"" << convertPathToWin(filePrefix + node->name) << "\" />\n";
@@ -243,10 +241,10 @@ void CodeBlocksProvider::writeFileListToProject(const FileNode &dir, std::ofstre
 }
 
 void CodeBlocksProvider::writeReferences(std::ofstream &output) {
-	output << "\t\t<Project filename=\"scummvm.cbp\" active=\"1\">\n";
+	output << "\t\t<Project filename=\"" << PROJECT_NAME << ".cbp\" active=\"1\">\n";
 
 	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
-		if (i->first == "scummvm")
+		if (i->first == " << PROJECT_NAME << ")
 			continue;
 
 		output << "\t\t\t<Depends filename=\"" << i->first << ".cbp\" />\n";

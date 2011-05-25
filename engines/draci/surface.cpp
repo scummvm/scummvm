@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "draci/screen.h"
@@ -29,7 +26,7 @@
 namespace Draci {
 
 Surface::Surface(int width, int height) {
-	this->create(width, height, 1);
+	this->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	this->markClean();
 	_transparentColor = kDefaultTransparent;
 }

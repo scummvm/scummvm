@@ -18,16 +18,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #if defined(__ANDROID__)
 
+// Allow use of stuff in <time.h>
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
+// Disable printf override in common/forbidden.h to avoid
+// clashes with log.h from the Android SDK.
+// That header file uses
+//   __attribute__ ((format(printf, 3, 4)))
+// which gets messed up by our override mechanism; this could
+// be avoided by either changing the Android SDK to use the equally
+// legal and valid
+//   __attribute__ ((format(printf, 3, 4)))
+// or by refining our printf override to use a varadic macro
+// (which then wouldn't be portable, though).
+// Anyway, for now we just disable the printf override globally
+// for the Android port
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "base/main.h"
 #include "base/version.h"
 #include "common/config-manager.h"
+#include "common/error.h"
+#include "common/textconsole.h"
 #include "engines/engine.h"
 
 #include "backends/platform/android/android.h"

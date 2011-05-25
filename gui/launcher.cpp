@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "base/version.h"
@@ -28,7 +25,6 @@
 #include "common/events.h"
 #include "common/fs.h"
 #include "common/util.h"
-#include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
 
@@ -48,9 +44,6 @@
 #include "gui/ThemeEval.h"
 
 #include "graphics/cursorman.h"
-
-#include "audio/mididrv.h"
-
 
 using Common::ConfigManager;
 

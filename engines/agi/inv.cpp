@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "agi/agi.h"
@@ -66,7 +63,7 @@ namespace Agi {
 #define SELECT_MSG_RU	"ENTER - \xa2\xeb\xa1\xe0\xa0\xe2\xec, ESC - \xae\xe2\xac\xa5\xad\xa8\xe2\xec."
 
 void AgiEngine::printItem(int n, int fg, int bg) {
-	printText(objectName(_intobj[n]), 0, n % 2 ? 39 - strlen(objectName(_intobj[n])) : 1,
+	printText(objectName(_intobj[n]), 0, ((n % 2) ? 39 - strlen(objectName(_intobj[n])) : 1),
 			(n / 2) + 2, 40, fg, bg);
 }
 

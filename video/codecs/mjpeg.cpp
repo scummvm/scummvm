@@ -18,15 +18,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/system.h"
-#include "graphics/conversion.h" // For YUV2RGB
+#include "common/textconsole.h"
+#include "graphics/jpeg.h"
+#include "graphics/surface.h"
 
 #include "video/codecs/mjpeg.h"
+
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Video {
 
@@ -53,7 +56,7 @@ const Graphics::Surface *JPEGDecoder::decodeImage(Common::SeekableReadStream* st
 
 	if (!_surface) {
 		_surface = new Graphics::Surface();
-		_surface->create(_jpeg->getWidth(), _jpeg->getHeight(), _pixelFormat.bytesPerPixel);
+		_surface->create(_jpeg->getWidth(), _jpeg->getHeight(), _pixelFormat);
 	}
 
 	Graphics::Surface *frame = _jpeg->getSurface(_pixelFormat);

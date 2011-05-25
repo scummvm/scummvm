@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/endian.h"
@@ -30,6 +27,7 @@
 #include "graphics/colormasks.h"
 #include "graphics/scaler.h"
 #include "graphics/scaler/intern.h"
+#include "graphics/palette.h"
 
 template<int bitFormat>
 uint16 quadBlockInterpolate(const uint8 *src, uint32 srcPitch) {
@@ -99,12 +97,12 @@ static bool grabScreen565(Graphics::Surface *surf) {
 	if (!screen)
 		return false;
 
-	assert(screen->bytesPerPixel == 1 || screen->bytesPerPixel == 2);
+	assert(screen->format.bytesPerPixel == 1 || screen->format.bytesPerPixel == 2);
 	assert(screen->pixels != 0);
 
 	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
 
-	surf->create(screen->w, screen->h, 2);
+	surf->create(screen->w, screen->h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 
 	byte *palette = 0;
 	if (screenFormat.bytesPerPixel == 1) {
@@ -146,7 +144,7 @@ static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 
 		// center MM NES screen
 		Graphics::Surface newscreen;
-		newscreen.create(width, in.h, in.bytesPerPixel);
+		newscreen.create(width, in.h, in.format);
 
 		uint8 *dst = (uint8 *)newscreen.getBasePtr((320 - in.w) / 2, 0);
 		const uint8 *src = (const uint8 *)in.getBasePtr(0, 0);
@@ -171,13 +169,13 @@ static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 
 		// cut off menu and so on..
 		Graphics::Surface newscreen;
-		newscreen.create(width, 400, in.bytesPerPixel);
+		newscreen.create(width, 400, in.format);
 
 		uint8 *dst = (uint8 *)newscreen.getBasePtr(0, (400 - 240) / 2);
 		const uint8 *src = (const uint8 *)in.getBasePtr(41, 28);
 
 		for (int y = 0; y < 240; ++y) {
-			memcpy(dst, src, 640 * in.bytesPerPixel);
+			memcpy(dst, src, 640 * in.format.bytesPerPixel);
 			dst += newscreen.pitch;
 			src += in.pitch;
 		}
@@ -190,9 +188,9 @@ static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 		inHeight = 480;
 
 		Graphics::Surface newscreen;
-		newscreen.create(width, 480, in.bytesPerPixel);
+		newscreen.create(width, 480, in.format);
 
-		memcpy(newscreen.getBasePtr(0, 0), in.getBasePtr(0, 0), width * 440 * in.bytesPerPixel);
+		memcpy(newscreen.getBasePtr(0, 0), in.getBasePtr(0, 0), width * 440 * in.format.bytesPerPixel);
 
 		in.free();
 		in = newscreen;
@@ -200,7 +198,7 @@ static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 
 	uint16 newHeight = !(inHeight % 240) ? kThumbnailHeight2 : kThumbnailHeight1;
 
-	out.create(kThumbnailWidth, newHeight, sizeof(uint16));
+	out.create(kThumbnailWidth, newHeight, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 	createThumbnail((const uint8 *)in.pixels, width * sizeof(uint16), (uint8 *)out.pixels, out.pitch, width, inHeight);
 
 	in.free();
@@ -223,7 +221,7 @@ bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h,
 	assert(surf);
 
 	Graphics::Surface screen;
-	screen.create(w, h, 2);
+	screen.create(w, h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 
 	for (uint y = 0; y < screen.h; ++y) {
 		for (uint x = 0; x < screen.w; ++x) {

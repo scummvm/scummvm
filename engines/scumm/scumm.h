@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SCUMM_H
@@ -35,6 +32,7 @@
 #include "common/random.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "common/textconsole.h"
 #include "graphics/surface.h"
 #include "graphics/sjis.h"
 
@@ -56,12 +54,12 @@
 #endif
 
 namespace GUI {
-	class Dialog;
+class Dialog;
 }
 using GUI::Dialog;
 namespace Common {
-	class SeekableReadStream;
-	class WriteStream;
+class SeekableReadStream;
+class WriteStream;
 }
 
 /**
@@ -170,17 +168,6 @@ enum {
 	DEBUG_SMUSH	=	1 << 10		// Track SMUSH
 };
 
-/**
- * Internal header for any memory block allocated by the resource manager.
- *
- * @todo Hide MemBlkHeader; no code outside the resource manager should
- * have to use it, ever. Currently script code needs it to detect whether
- * some scripts have moved (in fetchScriptByte()).
- */
-struct MemBlkHeader {
-	uint32 size;
-};
-
 struct VerbSlot;
 struct ObjectData;
 
@@ -253,6 +240,8 @@ enum ScummGameId {
 	GID_FUNSHOP,	// Used for all three funshops
 	GID_FOOTBALL,
 	GID_SOCCER,
+	GID_SOCCERMLS,
+	GID_SOCCER2004,
 	GID_BASEBALL2001,
 	GID_BASKETBALL,
 	GID_MOONBASE,
@@ -319,7 +308,8 @@ struct SaveStateMetaInfos {
  * WARNING: Do not change the order of these, as the savegame format relies
  * on it; any change made here will break savegame compatibility!
  */
-enum ResTypes {
+enum ResType {
+	rtInvalid = 0,
 	rtFirst = 1,
 	rtRoom = 1,
 	rtScript = 2,
@@ -342,75 +332,12 @@ enum ResTypes {
 	rtImage = 19,
 	rtTalkie = 20,
 	rtSpoolBuffer = 21,
-	rtLast = 21,
-	rtNumTypes = 22
+	rtLast = 21
 };
 
-enum {
-	RES_INVALID_OFFSET = 0xFFFFFFFF
-};
+typedef uint16 ResId;
 
-/**
- * The 'resource manager' class. Currently doesn't really deserve to be called
- * a 'class', at least until somebody gets around to OOfying this more.
- */
-class ResourceManager {
-	//friend class ScummDebugger;
-	//friend class ScummEngine;
-protected:
-	ScummEngine *_vm;
-
-public:
-	byte mode[rtNumTypes];
-	uint16 num[rtNumTypes];
-	uint32 tags[rtNumTypes];
-	const char *name[rtNumTypes];
-	byte **address[rtNumTypes];
-protected:
-	byte *flags[rtNumTypes];
-	byte *status[rtNumTypes];
-public:
-	byte *roomno[rtNumTypes];
-	uint32 *roomoffs[rtNumTypes];
-	uint32 *globsize[rtNumTypes];
-
-protected:
-	uint32 _allocatedSize;
-	uint32 _maxHeapThreshold, _minHeapThreshold;
-	byte _expireCounter;
-
-public:
-	ResourceManager(ScummEngine *vm);
-	~ResourceManager();
-
-	void setHeapThreshold(int min, int max);
-
-	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
-	void freeResources();
-
-	byte *createResource(int type, int index, uint32 size);
-	void nukeResource(int type, int i);
-
-	bool isResourceLoaded(int type, int index) const;
-
-	void lock(int type, int i);
-	void unlock(int type, int i);
-	bool isLocked(int type, int i) const;
-
-	void setModified(int type, int i);
-	bool isModified(int type, int i) const;
-
-	void increaseExpireCounter();
-	void setResourceCounter(int type, int index, byte flag);
-	void increaseResourceCounter();
-
-	void resourceStats();
-
-//protected:
-	bool validateResource(const char *str, int type, int index) const;
-protected:
-	void expireResources(uint32 size);
-};
+class ResourceManager;
 
 /**
  * Base class for all SCUMM engines.
@@ -651,9 +578,9 @@ protected:
 	bool saveState(int slot, bool compat);
 	bool loadState(int slot, bool compat);
 	virtual void saveOrLoad(Serializer *s);
-	void saveLoadResource(Serializer *ser, int type, int index);	// "Obsolete"
-	void saveResource(Serializer *ser, int type, int index);
-	void loadResource(Serializer *ser, int type, int index);
+	void saveResource(Serializer *ser, ResType type, ResId idx);
+	void loadResource(Serializer *ser, ResType type, ResId idx);
+	void loadResourceOLD(Serializer *ser, ResType type, ResId idx);	// "Obsolete"
 
 	Common::String makeSavegameName(int slot, bool temporary) const {
 		return makeSavegameName(_targetName, slot, temporary);
@@ -686,9 +613,11 @@ protected:
 protected:
 	/* Script VM - should be in Script class */
 	uint32 _localScriptOffsets[1024];
-	const byte *_scriptPointer, *_scriptOrgPointer;
-	byte _opcode, _currentScript;
+	const byte *_scriptPointer;
+	const byte *_scriptOrgPointer;
 	const byte * const *_lastCodePtr;
+	byte _opcode;
+	byte _currentScript;
 	int _scummStackPos;
 	int _vmStack[150];
 
@@ -784,26 +713,26 @@ protected:
 	void askForDisk(const char *filename, int disknum);	// TODO: Use Common::String
 	bool openResourceFile(const Common::String &filename, byte encByte);	// TODO: Use Common::String
 
-	void loadPtrToResource(int type, int i, const byte *ptr);
-	virtual int readResTypeList(int id);
-//	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
+	void loadPtrToResource(ResType type, ResId idx, const byte *ptr);
+	virtual int readResTypeList(ResType type);
+//	void allocResTypeData(ResType type, uint32 tag, int num, int mode);
 //	byte *createResource(int type, int index, uint32 size);
-	int loadResource(int type, int i);
-//	void nukeResource(int type, int i);
-	int getResourceRoomNr(int type, int idx);
-	virtual uint32 getResourceRoomOffset(int type, int idx);
-	int getResourceSize(int type, int idx);
+	int loadResource(ResType type, ResId idx);
+//	void nukeResource(ResType type, ResId idx);
+	int getResourceRoomNr(ResType type, ResId idx);
+	virtual uint32 getResourceRoomOffset(ResType type, ResId idx);
+	int getResourceSize(ResType type, ResId idx);
 
 public:
-	byte *getResourceAddress(int type, int i);
-	virtual byte *getStringAddress(int i);
+	byte *getResourceAddress(ResType type, ResId idx);
+	virtual byte *getStringAddress(ResId idx);
 	byte *getStringAddressVar(int i);
-	void ensureResourceLoaded(int type, int i);
+	void ensureResourceLoaded(ResType type, ResId idx);
 
 protected:
-	int readSoundResource(int index);
-	int readSoundResourceSmallHeader(int index);
-	bool isResourceInUse(int type, int i) const;
+	int readSoundResource(ResId idx);
+	int readSoundResourceSmallHeader(ResId idx);
+	bool isResourceInUse(ResType type, ResId idx) const;
 
 	virtual void setupRoomSubBlocks();
 	virtual void resetRoomSubBlocks();

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 namespace Gob {
@@ -2278,6 +2275,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdLib,
 		"disk0.stk", 0, 0
 	},
+	{ // Supplied by alex86r in bug report #3297633
+		{
+			"fascination",
+			"VGA 3 disks edition",
+			AD_ENTRY1s("disk0.stk", "ab3dfdce43917bc806812959d692fc8f", 1061929),
+			IT_ITA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeFascination,
+		kFeaturesAdLib,
+		"disk0.stk", 0, 0
+	},
 	{
 		{
 			"fascination",
@@ -3779,6 +3790,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640x480 | kFeaturesTrueColor,
 		0, 0, 0
 	},
+	{ // Supplied by alex86r in bug report #3297602
+		{
+			"urban",
+			"",
+			AD_ENTRY1s("intro.stk", "4e4a3c017fe5475353bf94c455fe3efd", 1253448),
+			IT_ITA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeUrban,
+		kFeatures640x480 | kFeaturesTrueColor,
+		0, 0, 0
+	},
 	{ // Supplied by goodoldgeorg in bug report #2770340
 		{
 			"urban",
@@ -4765,6 +4790,60 @@ static const GOBGameDescription gameDescriptions[] = {
 		kGameTypeAdibou2,
 		kFeaturesNone,
 		0, 0, 0
+	},
+	{
+		{
+			"adibou2",
+			"Non-Interactive Demo",
+			{
+				{"demogb.scn", 0, "9291455a908ac0e6aaaca686e532609b", 105},
+				{"demogb.vmd", 0, "bc9c1db97db7bec8f566332444fa0090", 14320840},
+				{0, 0, 0, 0}
+			},
+			EN_GRB,
+			kPlatformPC,
+			ADGF_DEMO,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeAdibou2,
+		kFeatures640x480 | kFeaturesSCNDemo,
+		0, 0, 9
+	},
+	{
+		{
+			"adibou2",
+			"Non-Interactive Demo",
+			{
+				{"demoall.scn", 0, "c8fd308c037b829800006332b2c32674", 106},
+				{"demoall.vmd", 0, "4672b2deacc6fca97484840424b1921b", 14263433},
+				{0, 0, 0, 0}
+			},
+			DE_DEU,
+			kPlatformPC,
+			ADGF_DEMO,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeAdibou2,
+		kFeatures640x480 | kFeaturesSCNDemo,
+		0, 0, 10
+	},
+	{
+		{
+			"adibou2",
+			"Non-Interactive Demo",
+			{
+				{"demofra.scn", 0, "d1b2b1618af384ea1120def8b986c02b", 106},
+				{"demofra.vmd", 0, "b494cdec1aac7e54c3f2480512d2880e", 14297100},
+				{0, 0, 0, 0}
+			},
+			FR_FRA,
+			kPlatformPC,
+			ADGF_DEMO,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeAdibou2,
+		kFeatures640x480 | kFeaturesSCNDemo,
+		0, 0, 11
 	},
 	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, 0, 0, 0}
 };

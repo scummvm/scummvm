@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Based on Deniz Oezmen's code: http://oezmen.eu/
@@ -30,6 +27,7 @@
 #include "lastexpress/debug.h"
 
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace LastExpress {
 
@@ -82,7 +80,7 @@ void FrameInfo::read(Common::SeekableReadStream *in, bool isSequence) {
 AnimFrame::AnimFrame(Common::SeekableReadStream *in, const FrameInfo &f) : _palette(NULL) {
 	_palSize = 1;
 	// TODO: use just the needed rectangle
-	_image.create(640, 480, 1);
+	_image.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 
 	//debugC(6, kLastExpressDebugGraphics, "    Offsets: data=%d, unknown=%d, palette=%d", f.dataOffset, f.unknown, f.paletteOffset);
 	//debugC(6, kLastExpressDebugGraphics, "    Position: (%d, %d) - (%d, %d)", f.xPos1, f.yPos1, f.xPos2, f.yPos2);

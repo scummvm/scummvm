@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef OSYS_PSP_H
@@ -29,6 +26,7 @@
 #include "common/scummsys.h"
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
+#include "graphics/palette.h"
 #include "audio/mixer_intern.h"
 #include "backends/base-backend.h"
 #include "backends/fs/psp/psp-fs-factory.h"

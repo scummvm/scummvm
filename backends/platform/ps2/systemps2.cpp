@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Disable symbol overrides so that we can use system headers.
@@ -568,6 +565,11 @@ void OSystem_PS2::updateScreen(void) {
 	_screen->updateScreen();
 }
 
+void OSystem_PS2::displayMessageOnOSD(const char *msg) {
+	/* TODO : check */
+	printf("displayMessageOnOSD: %s\n", msg);
+}
+
 uint32 OSystem_PS2::getMillis(void) {
 	return msecCount;
 }
@@ -727,7 +729,7 @@ void OSystem_PS2::msgPrintf(int millis, const char *format, ...) {
 	int maxWidth = 0;
 
 	Graphics::Surface surf;
-	surf.create(300, 200, 1);
+	surf.create(300, 200, Graphics::PixelFormat::createFormatCLUT8());
 
 	char *lnSta = resStr;
 	while (*lnSta && (posY < 180)) {

@@ -17,29 +17,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "base/version.h"
 
 #include "common/config-manager.h"
-#include "common/savefile.h"
-#include "common/system.h"
 #include "common/events.h"
+#include "common/str.h"
+#include "common/system.h"
 #include "common/translation.h"
-
-#include "graphics/scaler.h"
 
 #include "gui/about.h"
 #include "gui/gui-manager.h"
-#include "gui/launcher.h"
-#include "gui/widgets/list.h"
 #include "gui/message.h"
 #include "gui/options.h"
 #include "gui/saveload.h"
+#include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
+#include "gui/widget.h"
+
+#include "graphics/font.h"
 
 #include "engines/dialogs.h"
 #include "engines/engine.h"

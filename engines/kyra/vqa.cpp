@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Player for Kyrandia 3 VQA movies, based on the information found at
@@ -33,15 +30,13 @@
 
 
 #include "kyra/vqa.h"
+#include "kyra/resource.h"
 
 #include "common/system.h"
+
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
-
-#include "kyra/sound.h"
-#include "kyra/screen.h"
-#include "kyra/resource.h"
 
 namespace Kyra {
 

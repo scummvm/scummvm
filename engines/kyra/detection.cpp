@@ -17,21 +17,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
-#include "kyra/kyra_v1.h"
 #include "kyra/kyra_lok.h"
 #include "kyra/lol.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/kyra_mr.h"
 
-
 #include "common/config-manager.h"
-#include "engines/advancedDetector.h"
+#include "common/system.h"
 #include "common/savefile.h"
+
+#include "engines/advancedDetector.h"
 
 #include "base/plugins.h"
 
@@ -82,7 +79,7 @@ public:
 	KyraMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	const char *getName() const {
-		return "Legend of Kyrandia Engine";
+		return "Kyra";
 	}
 
 	const char *getOriginalCopyright() const {

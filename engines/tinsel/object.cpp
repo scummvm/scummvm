@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * This file contains the Object Manager code.
  */
 
@@ -31,6 +28,8 @@
 #include "tinsel/handle.h"
 #include "tinsel/text.h"
 #include "tinsel/tinsel.h"
+
+#include "common/textconsole.h"
 
 #define	OID_EFFECTS	0x2000			// generic special effects object id
 
@@ -163,13 +162,13 @@ void CopyObject(OBJECT *pDest, OBJECT *pSrc) {
  * @param pInsObj			Object to insert
  */
 
-void InsertObject(OBJECT *pObjList, OBJECT *pInsObj) {
-	OBJECT *pPrev, *pObj;	// object list traversal pointers
+void InsertObject(OBJECT **pObjList, OBJECT *pInsObj) {
+	OBJECT **pAnchor, *pObj;	// object list traversal pointers
 
 	// validate object pointer
 	assert(isValidObject(pInsObj));
 
-	for (pPrev = pObjList, pObj = pObjList->pNext; pObj != NULL; pPrev = pObj, pObj = pObj->pNext) {
+	for (pAnchor = pObjList, pObj = *pAnchor; pObj != NULL; pAnchor = &pObj->pNext, pObj = *pAnchor) {
 		// check Z order
 		if (pInsObj->zPos < pObj->zPos) {
 			// object Z is lower than list Z - insert here
@@ -183,9 +182,9 @@ void InsertObject(OBJECT *pObjList, OBJECT *pInsObj) {
 		}
 	}
 
-	// insert obj between pPrev and pObj
+	// insert obj between pAnchor and pObj
 	pInsObj->pNext = pObj;
-	pPrev->pNext = pInsObj;
+	*pAnchor = pInsObj;
 }
 
 
@@ -195,8 +194,8 @@ void InsertObject(OBJECT *pObjList, OBJECT *pInsObj) {
  * @param pObjList			List to delete object from
  * @param pDelObj			Object to delete
  */
-void DelObject(OBJECT *pObjList, OBJECT *pDelObj) {
-	OBJECT *pPrev, *pObj;	// object list traversal pointers
+void DelObject(OBJECT **pObjList, OBJECT *pDelObj) {
+	OBJECT **pAnchor, *pObj;	// object list traversal pointers
 	const Common::Rect rcScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// validate object pointer
@@ -208,7 +207,7 @@ void DelObject(OBJECT *pObjList, OBJECT *pDelObj) {
 	assert(numObj >= 0);
 #endif
 
-	for (pPrev = pObjList, pObj = pObjList->pNext; pObj != NULL; pPrev = pObj, pObj = pObj->pNext) {
+	for (pAnchor = pObjList, pObj = *pAnchor; pObj != NULL; pAnchor = &pObj->pNext, pObj = *pAnchor) {
 		if (pObj == pDelObj) {
 			// found object to delete
 
@@ -218,7 +217,7 @@ void DelObject(OBJECT *pObjList, OBJECT *pDelObj) {
 			}
 
 			// make PREV next = OBJ next - removes OBJ from list
-			pPrev->pNext = pObj->pNext;
+			*pAnchor = pObj->pNext;
 
 			// place free list in OBJ next
 			pObj->pNext = pFreeObjects;
@@ -246,12 +245,12 @@ void DelObject(OBJECT *pObjList, OBJECT *pDelObj) {
  * Sort the specified object list in Z Y order.
  * @param pObjList			List to sort
  */
-void SortObjectList(OBJECT *pObjList) {
+void SortObjectList(OBJECT **pObjList) {
 	OBJECT *pPrev, *pObj;	// object list traversal pointers
 	OBJECT head;		// temporary head of list - because pObjList is not usually a OBJECT
 
 	// put at head of list
-	head.pNext = pObjList->pNext;
+	head.pNext = *pObjList;
 
 	// set head of list dummy OBJ Z Y values to lowest possible
 	head.yPos = intToFrac(MIN_INT16);

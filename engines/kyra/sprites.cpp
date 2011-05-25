@@ -18,27 +18,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
-
-#include "common/endian.h"
-#include "common/stream.h"
-#include "common/util.h"
-#include "common/system.h"
-#include "common/EventRecorder.h"
-
-#include "kyra/screen.h"
-#include "kyra/kyra_lok.h"
 #include "kyra/sprites.h"
 #include "kyra/resource.h"
 #include "kyra/animator_lok.h"
 
+#include "common/system.h"
+
 namespace Kyra {
 
-Sprites::Sprites(KyraEngine_LoK *vm, OSystem *system) {
+Sprites::Sprites(KyraEngine_LoK *vm, OSystem *system) : _rnd("kyraSprites") {
 	_vm = vm;
 	_res = vm->resource();
 	_screen = vm->screen();
@@ -49,7 +39,6 @@ Sprites::Sprites(KyraEngine_LoK *vm, OSystem *system) {
 	_spriteDefStart = 0;
 	memset(_drawLayerTable, 0, sizeof(_drawLayerTable));
 	_sceneAnimatorBeaconFlag = 0;
-	g_eventRec.registerRandomSource(_rnd, "kyraSprites");
 }
 
 Sprites::~Sprites() {

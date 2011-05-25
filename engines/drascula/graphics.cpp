@@ -18,15 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "drascula/drascula.h"
 #include "graphics/surface.h"
-#include "common/stream.h"
 
+#include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace Drascula {
 
@@ -133,14 +131,18 @@ void DrasculaEngine::showFrame(Common::SeekableReadStream *stream, bool firstFra
 	}
 
 	byte *prevFrame = (byte *)malloc(64000);
-	byte *screenBuffer = (byte *)_system->lockScreen()->pixels;
-	memcpy(prevFrame, screenBuffer, 64000);
+	Graphics::Surface *screenSurf = _system->lockScreen();
+	byte *screenBuffer = (byte *)screenSurf->pixels;
+	uint16 screenPitch = screenSurf->pitch;
+	for (int y = 0; y < 200; y++) {
+		memcpy(prevFrame+y*320, screenBuffer+y*screenPitch, 320);
+	}
 
-	decodeRLE(pcxData, screenBuffer);
+	decodeRLE(pcxData, screenBuffer, screenPitch);
 	free(pcxData);
 
 	if (!firstFrame)
-		mixVideo(screenBuffer, prevFrame);
+		mixVideo(screenBuffer, prevFrame, screenPitch);
 
 	_system->unlockScreen();
 	_system->updateScreen();
@@ -445,7 +447,9 @@ void DrasculaEngine::screenSaver() {
 
 		int x1_, y1_, off1, off2;
 
-		byte *screenBuffer = (byte *)_system->lockScreen()->pixels;
+		Graphics::Surface *screenSurf = _system->lockScreen();
+		byte *screenBuffer = (byte *)screenSurf->pixels;
+		uint16 screenPitch = screenSurf->pitch;
 		for (int i = 0; i < 200; i++) {
 			for (int j = 0; j < 320; j++) {
 				x1_ = j + tempRow[i];
@@ -463,7 +467,7 @@ void DrasculaEngine::screenSaver() {
 				y1_ = checkWrapY(y1_);
 				off2 = 320 * y1_ + x1_;
 
-				screenBuffer[320 * i + j] = ghost[bgSurface[off2] + (copia[off1] << 8)];
+				screenBuffer[screenPitch * i + j] = ghost[bgSurface[off2] + (copia[off1] << 8)];
 			}
 		}
 
@@ -532,11 +536,14 @@ int DrasculaEngine::playFrameSSN(Common::SeekableReadStream *stream) {
 			free(BufferSSN);
 			waitFrameSSN();
 
-			byte *screenBuffer = (byte *)_system->lockScreen()->pixels;
+			Graphics::Surface *screenSurf = _system->lockScreen();
+			byte *screenBuffer = (byte *)screenSurf->pixels;
+			uint16 screenPitch = screenSurf->pitch;
 			if (FrameSSN)
-				mixVideo(screenBuffer, screenSurface);
+				mixVideo(screenBuffer, screenSurface, screenPitch);
 			else
-				memcpy(screenBuffer, screenSurface, 64000);
+				for (int y = 0; y < 200; y++)
+					memcpy(screenBuffer+y*screenPitch, screenSurface+y*320, 320);
 
 			_system->unlockScreen();
 			_system->updateScreen();
@@ -548,11 +555,14 @@ int DrasculaEngine::playFrameSSN(Common::SeekableReadStream *stream) {
 				decodeOffset(BufferSSN, screenSurface, length);
 				free(BufferSSN);
 				waitFrameSSN();
-				byte *screenBuffer = (byte *)_system->lockScreen()->pixels;
+				Graphics::Surface *screenSurf = _system->lockScreen();
+				byte *screenBuffer = (byte *)screenSurf->pixels;
+				uint16 screenPitch = screenSurf->pitch;
 				if (FrameSSN)
-					mixVideo(screenBuffer, screenSurface);
+					mixVideo(screenBuffer, screenSurface, screenPitch);
 				else
-					memcpy(screenBuffer, screenSurface, 64000);
+					for (int y = 0; y < 200; y++)
+						memcpy(screenBuffer+y*screenPitch, screenSurface+y*320, 320);
 
 				_system->unlockScreen();
 				_system->updateScreen();
@@ -588,11 +598,12 @@ void DrasculaEngine::decodeOffset(byte *BufferOFF, byte *MiVideoOFF, int length)
 	}
 }
 
-void DrasculaEngine::decodeRLE(byte* srcPtr, byte* dstPtr) {
+  void DrasculaEngine::decodeRLE(byte* srcPtr, byte* dstPtr, uint16 pitch) {
 	bool stopProcessing = false;
 	byte pixel;
 	uint repeat;
-	int curByte = 0;
+	int curByte = 0, curLine = 0;
+	pitch -= 320;
 
 	while (!stopProcessing) {
 		pixel = *srcPtr++;
@@ -603,17 +614,25 @@ void DrasculaEngine::decodeRLE(byte* srcPtr, byte* dstPtr) {
 		}
 		for (uint j = 0; j < repeat; j++) {
 			*dstPtr++ = pixel;
-			if (++curByte >= 64000) {
-				stopProcessing = true;
-				break;
+			if (++curByte >= 320) {
+				curByte = 0;
+				dstPtr += pitch;
+				if (++curLine >= 200) {
+					stopProcessing = true;
+					break;
+				}
 			}
 		}
 	}
 }
 
-void DrasculaEngine::mixVideo(byte *OldScreen, byte *NewScreen) {
-	for (int x = 0; x < 64000; x++)
-		OldScreen[x] ^= NewScreen[x];
+void DrasculaEngine::mixVideo(byte *OldScreen, byte *NewScreen, uint16 oldPitch) {
+	for (int y = 0; y < 200; y++) {
+		for (int x = 0; x < 320; x++)
+			OldScreen[x] ^= NewScreen[x];
+		OldScreen += oldPitch;
+		NewScreen += 320;
+	}
 }
 
 void DrasculaEngine::waitFrameSSN() {

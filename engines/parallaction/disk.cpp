@@ -18,10 +18,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
+
+#include "common/iff_container.h"
+#include "common/textconsole.h"
 
 #include "parallaction/disk.h"
 #include "parallaction/graphics.h"
@@ -36,7 +36,7 @@ void ILBMLoader::setupBuffer(uint32 w, uint32 h) {
 			_surf = new Graphics::Surface;
 			assert(_surf);
 		}
-		_surf->create(w, h, 1);
+		_surf->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 		_mode  = Graphics::ILBMDecoder::ILBM_UNPACK_PLANES;
 		_intBuffer = (byte*)_surf->pixels;
 		break;

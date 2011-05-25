@@ -18,20 +18,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
+
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
 #include "backends/modular-backend.h"
 
 #include "backends/fs/fs-factory.h"
-#include "backends/events/default/default-events.h"
-#include "backends/audiocd/default/default-audiocd.h"
-#include "backends/mutex/null/null-mutex.h"
-#include "backends/graphics/null/null-graphics.h"
+#include "backends/audiocd/audiocd.h"
+#include "backends/graphics/graphics.h"
+#include "backends/mutex/mutex.h"
 
+#include "audio/mixer.h"
+#include "common/events.h"
 #include "gui/message.h"
+#include "graphics/pixelformat.h"
 
 ModularBackend::ModularBackend()
 	:
@@ -277,4 +278,8 @@ Common::SaveFileManager *ModularBackend::getSavefileManager() {
 FilesystemFactory *ModularBackend::getFilesystemFactory() {
 	assert(_fsFactory);
 	return _fsFactory;
+}
+
+void ModularBackend::quit() {
+	exit(0);
 }

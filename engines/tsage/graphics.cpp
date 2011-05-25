@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "tsage/events.h"
@@ -29,6 +26,7 @@
 #include "tsage/tsage.h"
 #include "tsage/core.h"
 #include "common/algorithm.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "tsage/globals.h"
 
@@ -122,7 +120,7 @@ GfxSurface surfaceFromRes(const byte *imgData) {
 
 GfxSurface surfaceFromRes(int resNum, int rlbNum, int subNum) {
 	uint size;
-	byte *imgData = _vm->_dataManager->getSubResource(resNum, rlbNum, subNum, &size);
+	byte *imgData = _resourceManager->getSubResource(resNum, rlbNum, subNum, &size);
 	GfxSurface surface = surfaceFromRes(imgData);
 	DEALLOCATE(imgData);
 
@@ -211,7 +209,7 @@ void Rect::expandPanes() {
 /**
  * Serialises the given rect
  */
-void Rect::synchronise(Serialiser &s) {
+void Rect::synchronize(Serializer &s) {
 	s.syncAsSint16LE(left);
 	s.syncAsSint16LE(top);
 	s.syncAsSint16LE(right);
@@ -226,6 +224,7 @@ GfxSurface::GfxSurface() : _bounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
 	_lockSurfaceCtr = 0;
 	_customSurface = NULL;
 	_screenSurfaceP = NULL;
+	_transColor = -1;
 }
 
 GfxSurface::GfxSurface(const GfxSurface &s) {
@@ -256,8 +255,13 @@ void GfxSurface::setScreenSurface() {
 void GfxSurface::create(int width, int height) {
 	assert((width >= 0) && (height >= 0));
 	_screenSurface = false;
+	if (_customSurface) {
+		_customSurface->free();
+		delete _customSurface;
+	}
 	_customSurface = new Graphics::Surface();
-	_customSurface->create(width, height, 1);
+	_customSurface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	Common::set_to((byte *)_customSurface->pixels, (byte *)_customSurface->pixels + (width * height), 0);
 	_bounds = Rect(0, 0, width, height);
 }
 
@@ -282,7 +286,7 @@ Graphics::Surface GfxSurface::lockSurface() {
 	result.w = _bounds.width();
 	result.h = _bounds.height();
 	result.pitch = src->pitch;
-	result.bytesPerPixel = src->bytesPerPixel;
+	result.format = src->format;
 	result.pixels = src->getBasePtr(_bounds.left, _bounds.top);
 
 	return result;
@@ -331,7 +335,7 @@ GfxSurface &GfxSurface::operator=(const GfxSurface &s) {
 	if (_customSurface) {
 		// Surface owns the internal data, so replicate it so new surface owns it's own
 		_customSurface = new Graphics::Surface();
-		_customSurface->create(s._customSurface->w, s._customSurface->h, 1);
+		_customSurface->create(s._customSurface->w, s._customSurface->h, Graphics::PixelFormat::createFormatCLUT8());
 		const byte *srcP = (const byte *)s._customSurface->getBasePtr(0, 0);
 		byte *destP = (byte *)_customSurface->getBasePtr(0, 0);
 
@@ -390,7 +394,7 @@ void GfxSurface::loadScreenSection(Graphics::Surface &dest, int xHalf, int yHalf
 
 	if (xSection < xHalfCount && ySection < yHalfCount) {
 		int rlbNum = xSection * yHalfCount + ySection;
-		byte *data = _vm->_dataManager->getResource(RES_BITMAP, screenNum, rlbNum);
+		byte *data = _resourceManager->getResource(RES_BITMAP, screenNum, rlbNum);
 
 		for (int y = 0; y < updateRect.height(); ++y) {
 			byte *pSrc = data + y * 160;
@@ -416,11 +420,11 @@ static int *scaleLine(int size, int srcSize) {
 	int *v = new int[size];
 	Common::set_to(v, &v[size], -1);
 
-	int distCtr = 0;
+	int distCtr = PRECISION_FACTOR / 2;
 	int *destP = v;
 	for (int distIndex = 0; distIndex < srcSize; ++distIndex) {
 		distCtr += scale;
-		while (distCtr >= PRECISION_FACTOR) {
+		while (distCtr > PRECISION_FACTOR) {
 			assert(destP < &v[size]);
 			*destP++ = distIndex;
 			distCtr -= PRECISION_FACTOR;
@@ -483,6 +487,8 @@ static GfxSurface ResizeSurface(GfxSurface &src, int xSize, int ySize, int trans
  */
 void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Region *priorityRegion) {
 	GfxSurface srcImage;
+	if (srcBounds.isEmpty())
+		return;
 
 	if (srcBounds == src.getBounds())
 		srcImage = src;
@@ -664,12 +670,18 @@ void GfxElement::drawFrame() {
  * @event Event to process
  */
 bool GfxElement::focusedEvent(Event &event) {
+	Common::Point mousePos = event.mousePos;
 	bool highlightFlag = false;
 
-	while (!_vm->getEventManager()->shouldQuit()) {
+	// HACK: It should use the GfxManager object to figure out the relative
+	// position, but for now this seems like the easiest way.
+	int xOffset = mousePos.x - _globals->_events._mousePos.x;
+	int yOffset = mousePos.y - _globals->_events._mousePos.y;
+
+	while (event.eventType != EVENT_BUTTON_UP && !_vm->getEventManager()->shouldQuit()) {
 		g_system->delayMillis(10);
 
-		if (_bounds.contains(event.mousePos)) {
+		if (_bounds.contains(mousePos)) {
 			if (!highlightFlag) {
 				// First highlight call to show the highlight
 				highlightFlag = true;
@@ -681,8 +693,12 @@ bool GfxElement::focusedEvent(Event &event) {
 			highlight();
 		}
 
-		if (_globals->_events.getEvent(event, EVENT_BUTTON_UP))
-			break;
+		if (_globals->_events.getEvent(event, EVENT_MOUSE_MOVE | EVENT_BUTTON_UP)) {
+			if (event.eventType == EVENT_MOUSE_MOVE) {
+				mousePos.x = event.mousePos.x + xOffset;
+				mousePos.y = event.mousePos.y + yOffset;
+			}
+		}
 	}
 
 	if (highlightFlag) {
@@ -713,7 +729,7 @@ void GfxImage::setDefaults() {
 
 	// Decode the image
 	uint size;
-	byte *imgData = _vm->_dataManager->getSubResource(_resNum, _rlbNum, _cursorNum, &size);
+	byte *imgData = _resourceManager->getSubResource(_resNum, _rlbNum, _cursorNum, &size);
 	_surface = surfaceFromRes(imgData);
 	DEALLOCATE(imgData);
 
@@ -961,9 +977,10 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 	// Event loop
 	GfxButton *selectedButton = NULL;
 
-	while (!_vm->getEventManager()->shouldQuit()) {
+	bool breakFlag = false;
+	while (!_vm->getEventManager()->shouldQuit() && !breakFlag) {
 		Event event;
-		while (_globals->_events.getEvent(event)) {
+		while (_globals->_events.getEvent(event) && !breakFlag) {
 			// Adjust mouse positions to be relative within the dialog
 			event.mousePos.x -= _gfxManager._bounds.left;
 			event.mousePos.y -= _gfxManager._bounds.top;
@@ -972,19 +989,25 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 				if ((*i)->process(event))
 					selectedButton = static_cast<GfxButton *>(*i);
 			}
-		}
 
-		if (selectedButton)
-			break;
-		else if (!event.handled) {
-			if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
-				selectedButton = NULL;
+			if (selectedButton) {
+				breakFlag = true;
 				break;
-			} else if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_RETURN)) {
-				selectedButton = defaultButton;
-				break;
+			} else if (!event.handled) {
+				if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+					selectedButton = NULL;
+					breakFlag = true;
+					break;
+				} else if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_RETURN)) {
+					selectedButton = defaultButton;
+					breakFlag = true;
+					break;
+				}
 			}
 		}
+
+		g_system->delayMillis(10);
+		g_system->updateScreen();
 	}
 
 	_gfxManager.deactivate();
@@ -1074,7 +1097,7 @@ void GfxManager::setDialogPalette() {
 	// Get the main palette information
 	byte palData[256 * 3];
 	uint count, start;
-	_vm->_dataManager->getPalette(0, &palData[0], &start, &count);
+	_resourceManager->getPalette(0, &palData[0], &start, &count);
 	g_system->getPaletteManager()->setPalette(&palData[0], start, count);
 
 	// Miscellaneous
@@ -1109,7 +1132,7 @@ int GfxManager::getAngle(const Common::Point &p1, const Common::Point &p2) {
 
 
 GfxFont::GfxFont() {
-	_fontNumber = 50;
+	_fontNumber = (_vm->getFeatures() & GF_DEMO) ? 0 : 50;
 	_numChars = 0;
 	_bpp = 0;
 	_fontData = NULL;
@@ -1133,9 +1156,9 @@ void GfxFont::setFontNumber(uint32 fontNumber) {
 
 	_fontNumber = fontNumber;
 
-	_fontData = _vm->_tSageManager->getResource(RES_FONT, _fontNumber, 0, true);
+	_fontData = _resourceManager->getResource(RES_FONT, _fontNumber, 0, true);
 	if (!_fontData)
-		_fontData = _vm->_dataManager->getResource(RES_FONT, _fontNumber, 0);
+		_fontData = _resourceManager->getResource(RES_FONT, _fontNumber, 0);
 
 	_numChars = READ_LE_UINT16(_fontData + 4);
 	_fontSize.y = READ_LE_UINT16(_fontData + 6);

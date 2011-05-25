@@ -18,21 +18,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef GUI_THEME_ENGINE_H
 #define GUI_THEME_ENGINE_H
 
 #include "common/scummsys.h"
-#include "common/system.h"
 #include "common/fs.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/list.h"
+#include "common/str.h"
+
 #include "graphics/surface.h"
 #include "graphics/font.h"
+#include "graphics/pixelformat.h"
+
 
 #define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.3"
+
+class OSystem;
+
+namespace Common {
+struct Rect;
+}
 
 namespace Graphics {
 struct DrawStep;
@@ -42,8 +51,6 @@ class VectorRenderer;
 namespace GUI {
 
 struct WidgetDrawData;
-struct DrawDataInfo;
-struct TextDataInfo;
 struct TextDrawData;
 struct TextColorData;
 class Dialog;

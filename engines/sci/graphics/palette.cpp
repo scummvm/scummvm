@@ -18,15 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/file.h"
 #include "common/timer.h"
 #include "common/util.h"
 #include "common/system.h"
+
+#include "graphics/palette.h"
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Misc. graphics routines
@@ -34,6 +31,7 @@
 
 #include "common/system.h"
 #include "graphics/cursorman.h"
+#include "graphics/palette.h"
 #include "engines/util.h"
 
 namespace Saga {
@@ -46,7 +44,7 @@ Gfx::Gfx(SagaEngine *vm, OSystem *system, int width, int height) : _vm(vm), _sys
 
 	debug(5, "Init screen %dx%d", width, height);
 	// Convert surface data to R surface data
-	_backBuffer.create(width, height, 1);
+	_backBuffer.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 	// Start with the cursor shown. It will be hidden before the intro, if
 	// there is an intro. (With boot params, there may not be.)

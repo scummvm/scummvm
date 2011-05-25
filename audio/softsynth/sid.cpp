@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -32,7 +29,6 @@
 
 #include "sid.h"
 #include "audio/null.h"
-#include <math.h>
 
 namespace Resid {
 
@@ -110,7 +106,7 @@ void WaveformGenerator::reset() {
 	msb_rising = false;
 }
 
-RESID_INLINE void WaveformGenerator::clock(cycle_count delta_t) {
+RESID_INLINE void WaveformGenerator::updateClock(cycle_count delta_t) {
 	// No operation if test bit is set.
 	if (test) {
 		return;
@@ -165,10 +161,10 @@ RESID_INLINE void WaveformGenerator::clock(cycle_count delta_t) {
 
 /**
  * Synchronize oscillators.
- * This must be done after all the oscillators have been clock()'ed since the
+ * This must be done after all the oscillators have been updateClock()'ed since the
  * oscillators operate in parallel.
  * Note that the oscillators must be clocked exactly on the cycle when the
- * MSB is set high for hard sync to operate correctly. See SID::clock().
+ * MSB is set high for hard sync to operate correctly. See SID::updateClock().
  */
 RESID_INLINE void WaveformGenerator::synchronize() {
 	// A special case occurs when a sync source is synced itself on the same
@@ -592,7 +588,7 @@ void Filter::set_Q() {
 	_1024_div_Q = static_cast<sound_sample>(1024.0/(0.707 + 1.0*res/0x0f));
 }
 
-RESID_INLINE void Filter::clock(cycle_count delta_t,
+RESID_INLINE void Filter::updateClock(cycle_count delta_t,
 				   sound_sample voice1,
 				   sound_sample voice2,
 				   sound_sample voice3)
@@ -888,7 +884,7 @@ reg8 EnvelopeGenerator::readENV() {
 	return output();
 }
 
-RESID_INLINE void EnvelopeGenerator::clock(cycle_count delta_t) {
+RESID_INLINE void EnvelopeGenerator::updateClock(cycle_count delta_t) {
 	// Check for ADSR delay bug.
 	// If the rate counter comparison value is set below the current value of the
 	// rate counter, the counter will continue counting up until it wraps around
@@ -1027,7 +1023,7 @@ void ExternalFilter::reset() {
 	Vo = 0;
 }
 
-RESID_INLINE void ExternalFilter::clock(cycle_count delta_t, sound_sample Vi) {
+RESID_INLINE void ExternalFilter::updateClock(cycle_count delta_t, sound_sample Vi) {
 	// This is handy for testing.
 	if (!enabled) {
 		// Remove maximum DC level since there is no filter to do it.
@@ -1317,7 +1313,7 @@ bool SID::set_sampling_parameters(double clock_freq,
 	return true;
 }
 
-void SID::clock(cycle_count delta_t) {
+void SID::updateClock(cycle_count delta_t) {
 	int i;
 
 	if (delta_t <= 0) {
@@ -1333,7 +1329,7 @@ void SID::clock(cycle_count delta_t) {
 
 	// Clock amplitude modulators.
 	for (i = 0; i < 3; i++) {
-		voice[i].envelope.clock(delta_t);
+		voice[i].envelope.updateClock(delta_t);
 	}
 
 	// Clock and synchronize oscillators.
@@ -1373,7 +1369,7 @@ void SID::clock(cycle_count delta_t) {
 
 		// Clock oscillators.
 		for (i = 0; i < 3; i++) {
-			voice[i].wave.clock(delta_t_min);
+			voice[i].wave.updateClock(delta_t_min);
 		}
 
 		// Synchronize oscillators.
@@ -1385,11 +1381,11 @@ void SID::clock(cycle_count delta_t) {
 	}
 
 	// Clock filter.
-	filter.clock(delta_t,
+	filter.updateClock(delta_t,
 		voice[0].output(), voice[1].output(), voice[2].output());
 
 	// Clock external filter.
-	extfilt.clock(delta_t, filter.output());
+	extfilt.updateClock(delta_t, filter.output());
 }
 
 
@@ -1397,7 +1393,7 @@ void SID::clock(cycle_count delta_t) {
  * SID clocking with audio sampling.
  * Fixpoint arithmetics is used.
  */
-int SID::clock(cycle_count& delta_t, short* buf, int n, int interleave) {
+int SID::updateClock(cycle_count& delta_t, short* buf, int n, int interleave) {
 	int s = 0;
 
 	for (;;) {
@@ -1409,13 +1405,13 @@ int SID::clock(cycle_count& delta_t, short* buf, int n, int interleave) {
 		if (s >= n) {
 			return s;
 		}
-		clock(delta_t_sample);
+		updateClock(delta_t_sample);
 		delta_t -= delta_t_sample;
 		sample_offset = (next_sample_offset & FIXP_MASK) - (1 << (FIXP_SHIFT - 1));
 		buf[s++*interleave] = output();
 	}
 
-	clock(delta_t);
+	updateClock(delta_t);
 	sample_offset -= delta_t << FIXP_SHIFT;
 	delta_t = 0;
 	return s;

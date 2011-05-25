@@ -17,13 +17,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 
 #include "common/endian.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 /*
@@ -74,6 +72,7 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 			part->volume((p[5] & 0x0F) << 4 |(p[6] & 0x0F));
 			part->set_pan((p[7] & 0x0F) << 4 | (p[8] & 0x0F));
 			part->_percussion = player->_isMIDI ? ((p[9] & 0x08) > 0) : false;
+			part->set_detune((p[11] & 0x0F) << 4 | (p[12] & 0x0F));
 			part->pitchBendFactor((p[13] & 0x0F) << 4 | (p[14] & 0x0F));
 			if (part->_percussion) {
 				if (part->_mc) {

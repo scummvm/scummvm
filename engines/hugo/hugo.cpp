@@ -18,20 +18,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/system.h"
 #include "common/random.h"
+#include "common/error.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/debug-channels.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
 #include "hugo/hugo.h"
-#include "hugo/game.h"
 #include "hugo/file.h"
 #include "hugo/schedule.h"
 #include "hugo/display.h"
@@ -53,7 +50,7 @@ HugoEngine *HugoEngine::s_Engine = 0;
 
 HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(syst), _gameDescription(gd),
 	_hero(0), _heroImage(0), _defltTunes(0), _numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0),
-	_screenStates(0), _score(0), _maxscore(0), _lastTime(0), _curTime(0), _episode(0)
+	_screenStates(0), _numStates(0), _score(0), _maxscore(0), _lastTime(0), _curTime(0), _episode(0)
 {
 	_system = syst;
 	DebugMan.addDebugChannel(kDebugSchedule, "Schedule", "Script Schedule debug level");
@@ -298,6 +295,10 @@ Common::Error HugoEngine::run() {
 				break;
 			}
 		}
+		if (_status.helpFl) {
+			_status.helpFl = false;
+			_file->instructions();
+		}
 	
 		_mouse->mouseHandler();                     // Mouse activity - adds to display list
 		_screen->displayList(kDisplayDisplay);      // Blit the display list to screen
@@ -323,9 +324,6 @@ void HugoEngine::initMachine() {
  */
 void HugoEngine::runMachine() {
 	status_t &gameStatus = getGameStatus();
-	// Don't process if we're in a textbox
-	if (gameStatus.textBoxFl)
-		return;
 
 	// Don't process if gameover
 	if (gameStatus.gameOverFl)
@@ -463,6 +461,7 @@ bool HugoEngine::loadHugoDat() {
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
 		if (varnt == _gameVariant) {
+			_numStates = numElem;
 			_screenStates = (byte *)malloc(sizeof(byte) * numElem);
 			memset(_screenStates, 0, sizeof(_screenStates));
 		}
@@ -530,13 +529,13 @@ void HugoEngine::initStatus() {
 	debugC(1, kDebugEngine, "initStatus");
 	_status.storyModeFl   = false;                  // Not in story mode
 	_status.gameOverFl    = false;                  // Hero not knobbled yet
-	_status.textBoxFl     = false;                  // Not processing a text box
 	_status.lookFl        = false;                  // Toolbar "look" button
 	_status.recallFl      = false;                  // Toolbar "recall" button
 	_status.newScreenFl   = false;                  // Screen not just loaded
 	_status.godModeFl     = false;                  // No special cheats allowed
 	_status.doQuitFl      = false;
 	_status.skipIntroFl   = false;
+	_status.helpFl        = false;
 
 	// Initialize every start of new game
 	_status.tick            = 0;                    // Tick count
@@ -553,6 +552,7 @@ void HugoEngine::initStatus() {
 //	_status.screenWidth   = 0;                      // Desktop screen width
 //	_status.saveTick      = 0;                      // Time of last save
 //	_status.saveSlot      = 0;                      // Slot to save/restore game
+//	_status.textBoxFl     = false;                  // Not processing a text box
 }
 
 /**
@@ -595,8 +595,7 @@ void HugoEngine::initialize() {
 	_file->openDatabaseFiles();                     // Open database files
 	calcMaxScore();                                 // Initialise maxscore
 
-	_rnd = new Common::RandomSource();
-	g_eventRec.registerRandomSource(*_rnd, "hugo");
+	_rnd = new Common::RandomSource("hugo");
 	_rnd->setSeed(42);                              // Kick random number generator
 
 	switch (_gameVariant) {

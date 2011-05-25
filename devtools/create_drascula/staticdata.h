@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef STATICDATA_H
@@ -6041,7 +6038,7 @@ const char *_texthis[NUM_LANGS][NUM_TEXTHIS] = {
 },
 {
 	"",
-	"Vor einer langen Zeit scheint Drascula Von Brauns Frau getoetet zu haben und als Von Braun sich dann den Grafen vorknoepfen wollte, begann er damit, alles, was er ueber Vampire finden konnte, in Erfahrung zu bringen.",
+	"Vor langer Zeit scheint Drascula Von Brauns Frau getoetet zu haben. Um sich den Grafen vorzuknoepfen, fing Von Braun an, alles, was er ueber Vampire finden konnte, in Erfahrung zu bringen.",
 	"Als er glaubte, er sei bereit, ging er hoch zum Schloss und hatte eine aeusserst gewaltsame Auseinandersetzung mit Drascula.",
 	"Niemand weiss, was genau dort passierte. Obwohl Von Braun verlor, konnte Drascula ihn nicht toeten.",
 	"Von Braun fuehlte sich durch seine Niederlage gedemuetigt. Er rannte vom Schloss fort und wagte es nie wieder, Drascula gegenueberzutreten."

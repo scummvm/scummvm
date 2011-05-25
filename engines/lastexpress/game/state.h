@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef LASTEXPRESS_STATE_H
@@ -28,8 +25,10 @@
 
 #include "lastexpress/shared.h"
 
+#include "common/rect.h"
 #include "common/serializer.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 namespace LastExpress {
 
@@ -564,6 +563,9 @@ public:
 		bool mouseLeftClick;
 		bool mouseRightClick;
 
+		bool mouseLeftPressed;
+		bool mouseRightPressed;
+
 		bool flag_entities_0;
 		bool flag_entities_1;
 
@@ -584,6 +586,9 @@ public:
 
 			mouseRightClick = false;
 			mouseLeftClick = false;
+
+			mouseLeftPressed = false;
+			mouseRightPressed = false;
 
 			flag_entities_0 = false;
 			flag_entities_1 = false;

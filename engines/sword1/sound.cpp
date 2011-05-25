@@ -18,19 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 
 #include "common/endian.h"
 
 #include "common/util.h"
-#include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/memstream.h"
-#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "sword1/sound.h"
 #include "sword1/resman.h"
@@ -50,8 +45,8 @@ namespace Sword1 {
 #define SOUND_SPEECH_ID 1
 #define SPEECH_FLAGS (Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN)
 
-Sound::Sound(const char *searchPath, Audio::Mixer *mixer, ResMan *pResMan) {
-	g_eventRec.registerRandomSource(_rnd, "sword1sound");
+Sound::Sound(const char *searchPath, Audio::Mixer *mixer, ResMan *pResMan)
+	: _rnd("sword1sound") {
 	strcpy(_filePath, searchPath);
 	_mixer = mixer;
 	_resMan = pResMan;

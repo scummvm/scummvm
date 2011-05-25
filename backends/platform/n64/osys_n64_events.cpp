@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include <math.h> // Needed for "tan()" function
@@ -94,8 +91,13 @@ void OSystem_N64::readControllerAnalogInput(void) {
 	// Read current controller status
 	controller_Read_Buttons(&_ctrlData);
 
-	pad_analogX = (_ctrlData.c[_controllerPort].throttle >> 8) & 0xFF;
-	pad_analogY = (_ctrlData.c[_controllerPort].throttle >> 0) & 0xFF;
+	pad_analogX = 0;
+	pad_analogY = 0;
+
+	if (_controllerPort >= 0) {
+		pad_analogX = (_ctrlData.c[_controllerPort].throttle >> 8) & 0xFF;
+		pad_analogY = (_ctrlData.c[_controllerPort].throttle >> 0) & 0xFF;
+	}
 
 	pad_mouseX = 0;
 	pad_mouseY = 0;
@@ -157,9 +159,11 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 	static uint16 oldButtons = 0; // old button data... used for button press/release
 	static uint16 oldMouseButtons = 0;
 
-	uint16 newButtons = _ctrlData.c[_controllerPort].buttons; // Read from controller
+	uint16 newButtons = 0;
+	if (_controllerPort >= 0)
+		newButtons = _ctrlData.c[_controllerPort].buttons; // Read from controller
+	
 	uint16 newMouseButtons = 0;
-
 	if (_mousePort >= 0)
 		newMouseButtons = _ctrlData.c[_mousePort].buttons;
 

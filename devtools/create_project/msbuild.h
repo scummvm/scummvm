@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TOOLS_CREATE_PROJECT_MSBUILD_H
@@ -45,7 +42,7 @@ protected:
 
 	void writeReferences(std::ofstream &output);
 
-	void outputGlobalPropFile(std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix);
+	void outputGlobalPropFile(std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents);
 
 	void createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32, bool enableAnalysis);
 
@@ -75,6 +72,9 @@ private:
 
 	void computeFileList(const FileNode &dir, const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix);
 	void createFiltersFile(const BuildSetup &setup, const std::string &name);
+
+	void outputFilter(std::ostream &filters, const FileEntries &files, const std::string &action);
+	void outputFiles(std::ostream &projectFile, const FileEntries &files, const std::string &action);
 };
 
 } // End of CreateProjectTool namespace

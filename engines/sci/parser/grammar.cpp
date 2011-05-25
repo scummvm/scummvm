@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /* Functionality to transform the context-free SCI grammar rules into
@@ -31,6 +28,7 @@
 #include "sci/parser/vocabulary.h"
 #include "sci/console.h"
 #include "common/array.h"
+#include "common/textconsole.h"
 
 namespace Sci {
 

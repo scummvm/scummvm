@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/scummsys.h"
@@ -33,6 +30,7 @@
 #include "backends/vkeybd/virtual-keyboard-parser.h"
 #include "backends/vkeybd/keycode-descriptions.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 #include "common/unzip.h"
 
 #define KEY_START_CHAR ('[')
@@ -136,7 +134,7 @@ bool VirtualKeyboard::loadKeyboardPack(const String &packName) {
 		_loaded = _parser->parse();
 
 		if (_loaded) {
-			printf("Keyboard pack '%s' loaded successfully!\n", packName.c_str());
+			debug("Keyboard pack '%s' loaded successfully", packName.c_str());
 		} else {
 			warning("Error parsing the keyboard pack '%s'", packName.c_str());
 

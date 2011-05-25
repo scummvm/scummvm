@@ -18,16 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
-#include "common/debug.h"
-#include "common/endian.h"
 #include "common/archive.h"
 #include "common/stream.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 #include "graphics/surface.h"
@@ -126,7 +122,7 @@ bool RobotDecoder::loadStream(Common::SeekableReadStream *stream) {
 	readPaletteChunk(_header.paletteDataSize);
 	readFrameSizesChunk();
 	calculateVideoDimensions();
-	_surface->create(_width, _height, 1);
+	_surface->create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
 
 	return true;
 }

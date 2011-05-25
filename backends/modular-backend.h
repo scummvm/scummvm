@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef BACKENDS_MODULAR_BACKEND_H
@@ -151,8 +148,7 @@ public:
 
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual FilesystemFactory *getFilesystemFactory();
-	virtual void quit() { exit(0); }
-	virtual void setWindowCaption(const char *caption) {}
+	virtual void quit();
 	virtual void displayMessageOnOSD(const char *msg);
 
 	//@}

@@ -18,19 +18,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
-#include "engines/engine.h"
 #include "common/config-manager.h"
+#include "common/error.h"
 #include "common/str.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 #include "audio/mididrv.h"
 #include "audio/musicplugin.h"
-#include "common/translation.h"
 
 const byte MidiDriver::_mt32ToGm[128] = {
 //	  0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F

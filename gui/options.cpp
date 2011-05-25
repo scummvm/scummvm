@@ -17,17 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "gui/browser.h"
 #include "gui/themebrowser.h"
-#include "gui/chooser.h"
 #include "gui/message.h"
 #include "gui/gui-manager.h"
-#include "gui/ThemeEval.h"
 #include "gui/options.h"
 #include "gui/widgets/popup.h"
 #include "gui/widgets/tab.h"
@@ -35,9 +30,8 @@
 #include "common/fs.h"
 #include "common/config-manager.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "common/translation.h"
-
-#include "graphics/scaler.h"
 
 #include "audio/mididrv.h"
 #include "audio/musicplugin.h"
@@ -311,8 +305,14 @@ void OptionsDialog::close() {
 	if (getResult()) {
 
 		// Graphic options
+		bool graphicsModeChanged = false;
 		if (_fullscreenCheckbox) {
 			if (_enableGraphicSettings) {
+				if (ConfMan.getBool("fullscreen", _domain) != _fullscreenCheckbox->getState())
+					graphicsModeChanged = true;
+				if (ConfMan.getBool("aspect_ratio", _domain) != _aspectCheckbox->getState())
+					graphicsModeChanged = true;
+
 				ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
 				ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
 				ConfMan.setBool("disable_dithering", _disableDitheringCheckbox->getState(), _domain);
@@ -324,6 +324,8 @@ void OptionsDialog::close() {
 
 					while (gm->name) {
 						if (gm->id == (int)_gfxPopUp->getSelectedTag()) {
+							if (ConfMan.get("gfx_mode", _domain) != gm->name)
+								graphicsModeChanged = true;
 							ConfMan.set("gfx_mode", gm->name, _domain);
 							isSet = true;
 							break;
@@ -342,6 +344,61 @@ void OptionsDialog::close() {
 				ConfMan.removeKey("disable_dithering", _domain);
 				ConfMan.removeKey("gfx_mode", _domain);
 				ConfMan.removeKey("render_mode", _domain);
+			}
+		}
+		
+		// Setup graphics again if needed
+		if (_domain == Common::ConfigManager::kApplicationDomain && graphicsModeChanged) {
+			g_system->beginGFXTransaction();
+			g_system->setGraphicsMode(ConfMan.get("gfx_mode", _domain).c_str());
+			
+			if (ConfMan.hasKey("aspect_ratio"))
+				g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio", _domain));
+			if (ConfMan.hasKey("fullscreen"))
+				g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen", _domain));
+			OSystem::TransactionError gfxError = g_system->endGFXTransaction();
+
+			// Since this might change the screen resolution we need to give
+			// the GUI a chance to update it's internal state. Otherwise we might
+			// get a crash when the GUI tries to grab the overlay.
+			//
+			// This fixes bug #3303501 "Switching from HQ2x->HQ3x crashes ScummVM"
+			//
+			// It is important that this is called *before* any of the current
+			// dialog's widgets are destroyed (for example before
+			// Dialog::close) is called, to prevent crashes caused by invalid
+			// widgets being referenced or similar errors.
+			g_gui.checkScreenChange();
+
+			if (gfxError != OSystem::kTransactionSuccess) {
+				// Revert ConfMan to what OSystem is using.
+				Common::String message = "Failed to apply some of the graphic options changes:";
+
+				if (gfxError & OSystem::kTransactionModeSwitchFailed) {
+					const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
+					while (gm->name) {
+						if (gm->id == g_system->getGraphicsMode()) {
+							ConfMan.set("gfx_mode", gm->name, _domain);
+							break;
+						}
+						gm++;
+					}
+					message += "\nthe video mode could not be changed.";
+				}
+			
+				if (gfxError & OSystem::kTransactionAspectRatioFailed) {
+					ConfMan.setBool("aspect_ratio", g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection), _domain);
+					message += "\nthe fullscreen setting could not be changed";
+				}
+
+				if (gfxError & OSystem::kTransactionFullscreenFailed) {
+					ConfMan.setBool("fullscreen", g_system->getFeatureState(OSystem::kFeatureFullscreenMode), _domain);
+					message += "\nthe aspect ratio setting could not be changed";
+				}
+
+				// And display the error
+				GUI::MessageDialog dialog(message);
+				dialog.runModal();
 			}
 		}
 

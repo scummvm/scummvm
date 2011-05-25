@@ -18,13 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/error.h"
-#include "common/util.h"
 
 #include "common/translation.h"
 
@@ -70,9 +66,6 @@ static String errorToString(ErrorCode errorCode) {
 		return _s("Could not find suitable engine plugin");
 	case kEnginePluginNotSupportSaves:
 		return _s("Engine plugin does not support save states");
-
-	case kArgumentNotProcessed:
-		return _s("Command line argument not processed");
 
 	case kUserCanceled:
 		return _s("User canceled");

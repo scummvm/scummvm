@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifdef _WIN32_WCE
@@ -32,6 +29,7 @@
 #include "backends/platform/wince/wince-sdl.h"
 #include "backends/mixer/wincesdl/wincesdl-mixer.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #ifdef USE_VORBIS
 #ifndef USE_TREMOR

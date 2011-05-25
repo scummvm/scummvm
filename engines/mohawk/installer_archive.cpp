@@ -18,17 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "mohawk/installer_archive.h"
 
 #include "common/dcl.h"
 #include "common/debug.h"
-#include "common/substream.h"
-#include "common/util.h"
 
 namespace Mohawk {
 

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/scummsys.h"
@@ -28,6 +25,7 @@
 #ifdef _WIN32_WCE
 
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "common/translation.h"
 #include "common/mutex.h"
 
@@ -1162,16 +1160,16 @@ void WINCESdlGraphicsManager::adjustMouseEvent(const Common::Event &event) {
 	if (!event.synthetic) {
 		Common::Event newEvent(event);
 		newEvent.synthetic = true;
+		/*
 		if (!_overlayVisible) {
-			/*
 			newEvent.mouse.x = newEvent.mouse.x * _scaleFactorXd / _scaleFactorXm;
 			newEvent.mouse.y = newEvent.mouse.y * _scaleFactorYd / _scaleFactorYm;
 			newEvent.mouse.x /= _videoMode.scaleFactor;
 			newEvent.mouse.y /= _videoMode.scaleFactor;
-			*/
 			if (_videoMode.aspectRatioCorrection)
 				newEvent.mouse.y = aspect2Real(newEvent.mouse.y);
 		}
+		*/
 		g_system->getEventManager()->pushEvent(newEvent);
 	}
 }

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -141,6 +138,21 @@ void ResourceManager::emptyCache() {
 	while (iter != _resources.end()) {
 		if ((*iter)->getLockCount() == 0) {
 			// Delete the resource
+			iter = deleteResource(*iter);
+		} else
+			++iter;
+	}
+}
+
+void ResourceManager::emptyThumbnailCache() {
+	// Scan through the resource list
+	Common::List<Resource *>::iterator iter = _resources.begin();
+	while (iter != _resources.end()) {
+		if ((*iter)->getFileName().hasPrefix("/saves")) {
+			// Unlock the thumbnail
+			while ((*iter)->getLockCount() > 0)
+				(*iter)->release();
+			// Delete the thumbnail
 			iter = deleteResource(*iter);
 		} else
 			++iter;

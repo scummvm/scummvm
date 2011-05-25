@@ -18,31 +18,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
-
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/EventRecorder.h"
-
-#include "audio/mididrv.h"
-#include "audio/mixer.h"
 
 #include "kyra/kyra_v1.h"
 #include "kyra/sound_intern.h"
 #include "kyra/resource.h"
-#include "kyra/screen.h"
-#include "kyra/text.h"
 #include "kyra/timer.h"
-#include "kyra/script.h"
 #include "kyra/debugger.h"
+
+#include "common/error.h"
+#include "common/config-manager.h"
+#include "common/debug-channels.h"
 
 namespace Kyra {
 
 KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
-	: Engine(system), _flags(flags) {
+	: Engine(system), _flags(flags), _rnd("kyra") {
 	_res = 0;
 	_sound = 0;
 	_text = 0;
@@ -86,8 +77,6 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	DebugMan.addDebugChannel(kDebugLevelSequence, "Sequence", "Sequence debug level");
 	DebugMan.addDebugChannel(kDebugLevelMovie, "Movie", "Movie debug level");
 	DebugMan.addDebugChannel(kDebugLevelTimer, "Timer", "Timer debug level");
-
-	g_eventRec.registerRandomSource(_rnd, "kyra");
 }
 
 ::GUI::Debugger *KyraEngine_v1::getDebugger() {

@@ -17,25 +17,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef GUI_WIDGET_H
 #define GUI_WIDGET_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/str.h"
-#include "common/str-array.h"
 #include "common/keyboard.h"
+#include "graphics/font.h"
 #include "graphics/surface.h"
 #include "gui/object.h"
 #include "gui/ThemeEngine.h"
 
 namespace GUI {
-
-class Dialog;
 
 enum {
 	WIDGET_ENABLED		= 1 <<  0,

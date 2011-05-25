@@ -18,16 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "video/flic_decoder.h"
-#include "common/archive.h"
-#include "common/stream.h"
 #include "common/endian.h"
+#include "common/rect.h"
+#include "common/stream.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Video {
 
@@ -79,7 +77,7 @@ bool FlicDecoder::loadStream(Common::SeekableReadStream *stream) {
 	_offsetFrame2 = _fileStream->readUint32LE();
 
 	_surface = new Graphics::Surface();
-	_surface->create(width, height, 1);
+	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	_palette = (byte *)malloc(3 * 256);
 	memset(_palette, 0, 3 * 256);
 	_paletteChanged = false;
@@ -226,7 +224,7 @@ const Graphics::Surface *FlicDecoder::decodeNextFrame() {
 				_surface->free();
 				delete _surface;
 				_surface = new Graphics::Surface();
-				_surface->create(newWidth, newHeight, 1);
+				_surface->create(newWidth, newHeight, Graphics::PixelFormat::createFormatCLUT8());
 			}
 		}
 		break;

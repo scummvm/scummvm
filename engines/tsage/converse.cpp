@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/str-array.h"
@@ -52,7 +49,10 @@ void SequenceManager::setup() {
 	_sceneObject = _objectList[0];
 }
 
-void SequenceManager::synchronise(Serialiser &s) {
+void SequenceManager::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		Action::synchronize(s);
+
 	s.syncAsSint32LE(_resNum);
 	s.syncAsSint32LE(_sequenceOffset);
 	s.syncAsByte(_keepActive);
@@ -181,7 +181,7 @@ void SequenceManager::signal() {
 			break;
 		case 15:
 			v1 = getNextValue();
-			_sceneObject->_field7A = v1;
+			_sceneObject->_moveRate = v1;
 			break;
 		case 16:
 			v1 = getNextValue();
@@ -208,7 +208,7 @@ void SequenceManager::signal() {
 			break;
 		case 22:
 			v1 = getNextValue();
-			_sceneObject->setPriority2(v1);
+			_sceneObject->fixPriority(v1);
 			break;
 		case 23:
 			v1 = getNextValue();
@@ -244,6 +244,7 @@ void SequenceManager::signal() {
 		}
 		case 28:
 			_objectIndex = getNextValue();
+			assert((_objectIndex >= 0) && (_objectIndex < 6));
 			_sceneObject = _objectList[_objectIndex];
 			assert(_sceneObject);
 			break;
@@ -272,14 +273,15 @@ void SequenceManager::signal() {
 		case 34: {
 			v1 = getNextValue();
 			v2 = getNextValue();
-			int objIndex1 = getNextValue();
-			int objIndex2 = getNextValue();
-			int objIndex3 = getNextValue();
-			int objIndex4 = getNextValue();
-			int objIndex5 = getNextValue();
+			int objIndex1 = getNextValue() - 1;
+			int objIndex2 = getNextValue() - 1;
+			int objIndex3 = getNextValue() - 1;
+			int objIndex4 = getNextValue() - 1;
+			int objIndex5 = getNextValue() - 1;
+			int objIndex6 = getNextValue() - 1;
 
 			setAction(globalManager(), v2 ? this : NULL, v1, _objectList[objIndex1], _objectList[objIndex2],
-				_objectList[objIndex3], _objectList[objIndex4], _objectList[objIndex5]);
+				_objectList[objIndex3], _objectList[objIndex4], _objectList[objIndex5], _objectList[objIndex6], NULL);
 			break;
 		}
 		default:
@@ -294,17 +296,19 @@ void SequenceManager::process(Event &event) {
 		!event.handled && _globals->_sceneObjects->contains(&_sceneText)) {
 		// Remove the text item
 		_sceneText.remove();
+		setDelay(2);
+		event.handled = true;
 	} else {
 		Action::process(event);
 	}
 }
 
 
-void SequenceManager::attached(EventHandler *newOwner, EventHandler *fmt, va_list va) {
+void SequenceManager::attached(EventHandler *newOwner, EventHandler *endHandler, va_list va) {
 	// Get the sequence number to use
 	_resNum = va_arg(va, int);
 
-	byte *seqData = _vm->_dataManager->getResource(RES_SEQUENCE, _resNum, 0);
+	byte *seqData = _resourceManager->getResource(RES_SEQUENCE, _resNum, 0);
 	uint seqSize = _vm->_memoryManager.getSize(seqData);
 
 	_sequenceData.resize(seqSize);
@@ -320,7 +324,7 @@ void SequenceManager::attached(EventHandler *newOwner, EventHandler *fmt, va_lis
 	}
 
 	setup();
-	Action::attached(newOwner, fmt, va);
+	Action::attached(newOwner, endHandler, va);
 }
 
 /**
@@ -340,20 +344,22 @@ void SequenceManager::setMessage(int resNum, int lineNum, int color, const Commo
 	_sceneText._width = width;
 
 	// Get the display message
-	Common::String msg = _vm->_dataManager->getMessage(resNum, lineNum);
+	Common::String msg = _resourceManager->getMessage(resNum, lineNum);
 
-	// Get the needed rect, and move it to the desired position
-	Rect textRect;
-	_globals->gfxManager().getStringBounds(msg.c_str(), textRect, width);
+	// Set the text message
+	_sceneText.setup(msg);
+
+	// Move the text to the correct position
+	Rect textRect = _sceneText._bounds;
 	Rect sceneBounds = _globals->_sceneManager._scene->_sceneBounds;
 	sceneBounds.collapse(4, 2);
 	textRect.moveTo(pt);
 	textRect.contain(sceneBounds);
 
-	// Set the text message
-	_sceneText.setup(msg);
 	_sceneText.setPosition(Common::Point(textRect.left, textRect.top));
-	_sceneText.setPriority2(255);
+
+	// Draw the text
+	_sceneText.fixPriority(255);
 	_sceneText.show();
 
 	// Set the delay based on the number of words
@@ -412,8 +418,10 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 	Event event;
 	while (!_vm->getEventManager()->shouldQuit()) {
 		while (!_globals->_events.getEvent(event, EVENT_KEYPRESS | EVENT_BUTTON_DOWN | EVENT_MOUSE_MOVE) &&
-				!_vm->getEventManager()->shouldQuit())
-			;
+				!_vm->getEventManager()->shouldQuit()) {
+			g_system->delayMillis(10);
+			g_system->updateScreen();
+		}
 		if (_vm->getEventManager()->shouldQuit())
 			break;
 
@@ -505,12 +513,12 @@ void Obj44::load(const byte *dataP) {
 	_speakerOffset = READ_LE_UINT16(dataP + 0x42);
 }
 
-void Obj44::synchronise(Serialiser &s) {
+void Obj44::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_id);
 	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
 		s.syncAsSint32LE(_field2[idx]);
 	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
-		_list[idx].synchronise(s);
+		_list[idx].synchronize(s);
 	s.syncAsUint32LE(_speakerOffset);
 }
 
@@ -542,7 +550,7 @@ void StripManager::reset() {
 	_actionIndex = 0;
 	_delayFrames = 0;
 	_owner = NULL;
-	_fmt = NULL;
+	_endHandler = NULL;
 	_field2E6 = false;
 	_stripNum = -1;
 	_obj44Index = 0;
@@ -560,7 +568,7 @@ void StripManager::reset() {
 
 void StripManager::load() {
 	// Get the script
-	byte *script = _vm->_dataManager->getResource(RES_STRIP, _stripNum, 2);
+	byte *script = _resourceManager->getResource(RES_STRIP, _stripNum, 2);
 	uint scriptSize = _vm->_memoryManager.getSize(script);
 
 	_script.resize(scriptSize);
@@ -569,7 +577,7 @@ void StripManager::load() {
 	DEALLOCATE(script);
 
 	// Get the object list
-	byte *obj44List = _vm->_dataManager->getResource(RES_STRIP, _stripNum, 1);
+	byte *obj44List = _resourceManager->getResource(RES_STRIP, _stripNum, 1);
 	int dataSize = _vm->_memoryManager.getSize(obj44List);
 	assert((dataSize % 0x44) == 0);
 
@@ -583,24 +591,27 @@ void StripManager::load() {
 	DEALLOCATE(obj44List);
 }
 
-void StripManager::synchronise(Serialiser &s) {
+void StripManager::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		Action::synchronize(s);
+
 	s.syncAsSint32LE(_stripNum);
 	s.syncAsSint32LE(_obj44Index);
 	s.syncAsSint32LE(_field20);
 	s.syncAsSint32LE(_sceneNumber);
-	_sceneBounds.synchronise(s);
+	_sceneBounds.synchronize(s);
 	SYNC_POINTER(_activeSpeaker);
 	s.syncAsByte(_textShown);
 	s.syncAsByte(_field2E6);
 	s.syncAsSint32LE(_field2E8);
 
-	// Synchronise the item list
+	// Synchronize the item list
 	int arrSize = _obj44List.size();
 	s.syncAsUint16LE(arrSize);
 	if (s.isLoading())
 		_obj44List.resize(arrSize);
 	for (int i = 0; i < arrSize; ++i)
-		_obj44List[i].synchronise(s);
+		_obj44List[i].synchronize(s);
 
 	// Synhcronise script data
 	int scriptSize = _script.size();
@@ -646,7 +657,7 @@ void StripManager::signal() {
 	}
 
 	if (_obj44Index < 0) {
-		EventHandler *owner = _fmt;
+		EventHandler *owner = _endHandler;
 		int stripNum = ABS(_obj44Index);
 		remove();
 
@@ -731,8 +742,8 @@ void StripManager::process(Event &event) {
 	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
 		if (_obj44Index != 10000) {
 			int currIndex = _obj44Index;
-			while (!_obj44List[_obj44Index + 1]._id) {
-				_obj44Index = getNewIndex(_obj44List[_obj44Index]._id);
+			while (!_obj44List[_obj44Index]._list[1]._id) {
+				_obj44Index = getNewIndex(_obj44List[_obj44Index]._list[0]._id);
 				if ((_obj44Index < 0) || (_obj44Index == 10000))
 					break;
 				currIndex = _obj44Index;
@@ -795,13 +806,16 @@ Speaker::Speaker() : EventHandler() {
 	_speakerName = "SPEAKER";
 }
 
-void Speaker::synchronise(Serialiser &s) {
-	_fieldA.synchronise(s);
+void Speaker::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		EventHandler::synchronize(s);
+
+	_fieldA.synchronize(s);
 	SYNC_POINTER(_field18);
 	s.syncString(_speakerName);
 	s.syncAsSint32LE(_newSceneNumber);
 	s.syncAsSint32LE(_oldSceneNumber);
-	_sceneBounds.synchronise(s);
+	_sceneBounds.synchronize(s);
 	s.syncAsSint32LE(_textWidth);
 	s.syncAsSint16LE(_textPos.x); s.syncAsSint16LE(_textPos.y);
 	s.syncAsSint32LE(_fontNumber);
@@ -847,7 +861,7 @@ void Speaker::setText(const Common::String &msg) {
 	_sceneText._textMode = _textMode;
 	_sceneText.setup(msg);
 	_sceneText.setPosition(_textPos);
-	_sceneText.setPriority2(256);
+	_sceneText.fixPriority(256);
 
 	// Count the number of words (by spaces) in the string
 	const char *msgP = msg.c_str();

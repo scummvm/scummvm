@@ -18,14 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "engines/advancedDetector.h"
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
@@ -163,7 +161,7 @@ public:
 	HugoMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	const char *getName() const {
-		return "Hugo Engine";
+		return "Hugo";
 	}
 
 	const char *getOriginalCopyright() const {

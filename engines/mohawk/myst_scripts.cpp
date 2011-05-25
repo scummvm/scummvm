@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "mohawk/cursors.h"
@@ -31,6 +28,8 @@
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 
+#include "common/system.h"
+#include "common/textconsole.h"
 #include "gui/message.h"
 
 namespace Mohawk {
@@ -146,6 +145,7 @@ void MystScriptParser::setupCommonOpcodes() {
 	OPCODE(44, o_restoreMainCursor);
 	// Opcode 45 Not Present
 	OPCODE(46, o_soundWaitStop);
+	OPCODE(51, o_exitMap);
 	// Opcodes 47 to 99 Not Present
 
 	OPCODE(0xFFFF, NOP);
@@ -155,6 +155,11 @@ void MystScriptParser::setupCommonOpcodes() {
 
 void MystScriptParser::runScript(MystScript script, MystResource *invokingResource) {
 	debugC(kDebugScript, "Script Size: %d", script->size());
+
+	// Scripted drawing takes more time to simulate older hardware
+	// This way opcodes can't overwrite what the previous ones drew too quickly
+	_vm->_gfx->enableDrawingTimeSimulation(true);
+
 	for (uint16 i = 0; i < script->size(); i++) {
 		MystScriptEntry &entry = script->operator[](i);
 		debugC(kDebugScript, "\tOpcode %d: %d", i, entry.opcode);
@@ -166,6 +171,8 @@ void MystScriptParser::runScript(MystScript script, MystResource *invokingResour
 
 		runOpcode(entry.opcode, entry.var, entry.argc, entry.argv);
 	}
+
+	_vm->_gfx->enableDrawingTimeSimulation(false);
 }
 
 void MystScriptParser::runOpcode(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -914,6 +921,17 @@ void MystScriptParser::o_soundWaitStop(uint16 op, uint16 var, uint16 argc, uint1
 
 void MystScriptParser::o_quit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_vm->quitGame();
+}
+
+void MystScriptParser::showMap() {
+	if (_vm->getCurCard() != getMap()) {
+		_savedMapCardId = _vm->getCurCard();
+		_vm->changeToCard(getMap(), true);
+	}
+}
+
+void MystScriptParser::o_exitMap(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	_vm->changeToCard(_savedMapCardId, true);
 }
 
 } // End of namespace Mohawk

@@ -18,16 +18,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "kyra/script_tim.h"
-#include "kyra/script.h"
 #include "kyra/resource.h"
 #include "kyra/sound.h"
-#include "kyra/wsamovie.h"
 
 #ifdef ENABLE_LOL
 #include "kyra/lol.h"
@@ -35,7 +30,7 @@
 #endif // ENABLE_LOL
 
 #include "common/iff_container.h"
-#include "common/endian.h"
+#include "common/system.h"
 
 namespace Kyra {
 

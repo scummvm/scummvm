@@ -18,12 +18,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "parallaction/gui.h"
 #include "parallaction/input.h"
@@ -483,7 +481,7 @@ public:
 		_y = 90;
 
 		Graphics::Surface *surf = new Graphics::Surface;
-		surf->create(w, 110, 1);
+		surf->create(w, 110, Graphics::PixelFormat::createFormatCLUT8());
 		surf->fillRect(Common::Rect(0, 0, w, 110), 12);
 		surf->fillRect(Common::Rect(10, 10, w-10, 100), 15);
 

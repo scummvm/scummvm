@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Only compile if Mohawk is enabled or if we're building dynamic modules
@@ -30,11 +27,11 @@
 #define VIDEO_CODECS_QDM2_H
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Audio {
-	class AudioStream;
+class AudioStream;
 }
 
 namespace Video {

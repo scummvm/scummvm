@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * Functions to set up moving actors' reels.
  */
 
@@ -28,6 +25,7 @@
 #include "tinsel/pcode.h"	// For D_UP, D_DOWN
 #include "tinsel/rince.h"
 
+#include "common/textconsole.h"
 #include "common/util.h"
 
 namespace Tinsel {

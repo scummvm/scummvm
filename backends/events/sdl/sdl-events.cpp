@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/scummsys.h"
@@ -31,6 +28,7 @@
 #include "backends/platform/sdl/sdl.h"
 #include "backends/graphics/graphics.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
 // FIXME move joystick defines out and replace with confile file options
 // we should really allow users to map any key to a joystick button
@@ -65,7 +63,7 @@ SdlEventSource::SdlEventSource()
 
 		// Enable joystick
 		if (SDL_NumJoysticks() > 0) {
-			printf("Using joystick: %s\n", SDL_JoystickName(0));
+			debug("Using joystick: %s", SDL_JoystickName(0));
 			_joystick = SDL_JoystickOpen(joystick_num);
 		}
 	}
@@ -281,7 +279,7 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 		event.type = Common::EVENT_QUIT;
 		return true;
 	}
-#elif defined(UNIX)
+#elif defined(POSIX)
 	// On other *nix systems, Control-Q quits
 	if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'q') {
 		event.type = Common::EVENT_QUIT;
@@ -325,7 +323,7 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 		if (ev.key.keysym.sym == 'm' ||	// Ctrl-m toggles mouse capture
 #if defined(MACOSX)
 			// Meta - Q, handled below
-#elif defined(UNIX)
+#elif defined(POSIX)
 			ev.key.keysym.sym == 'q' ||	// On other *nix systems, Control-Q quits
 #else
 			ev.key.keysym.sym == 'z' ||	// Ctrl-z quit
@@ -338,7 +336,7 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 #if defined(MACOSX)
 	if ((mod & KMOD_META) && ev.key.keysym.sym == 'q')
 		return false;	// On Macintosh, Cmd-Q quits
-#elif defined(UNIX)
+#elif defined(POSIX)
 	// Control Q has already been handled above
 #else
 	if ((mod & KMOD_ALT) && ev.key.keysym.sym == 'x')

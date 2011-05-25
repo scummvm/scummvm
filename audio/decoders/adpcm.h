@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /**
@@ -40,12 +37,13 @@
 #include "common/scummsys.h"
 #include "common/types.h"
 
-namespace Common { class SeekableReadStream; }
+namespace Common {
+class SeekableReadStream;
+}
 
 
 namespace Audio {
 
-class AudioStream;
 class RewindableAudioStream;
 
 // There are several types of ADPCM encoding, only some are supported here
@@ -56,7 +54,6 @@ class RewindableAudioStream;
 enum typesADPCM {
 	kADPCMOki,                 // Dialogic/Oki ADPCM (aka VOX)
 	kADPCMMSIma,               // Microsoft IMA ADPCM
-	kADPCMMSImaLastExpress,    // Microsoft IMA ADPCM (with inverted samples)
 	kADPCMMS,                  // Microsoft ADPCM
 	kADPCMDVI,                 // Intel DVI IMA ADPCM
 	kADPCMApple,               // Apple QuickTime IMA ADPCM

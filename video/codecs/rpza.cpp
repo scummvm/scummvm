@@ -18,17 +18,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
  // Based off ffmpeg's RPZA decoder
 
 #include "video/codecs/rpza.h"
 
+#include "common/debug.h"
 #include "common/system.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 #include "graphics/colormasks.h"
 
 namespace Video {
@@ -44,7 +43,7 @@ RPZADecoder::RPZADecoder(uint16 width, uint16 height) : Codec() {
 	debug(2, "RPZA corrected width: %d", width);
 
 	_surface = new Graphics::Surface();
-	_surface->create(width, height, _pixelFormat.bytesPerPixel);
+	_surface->create(width, height, _pixelFormat);
 }
 
 RPZADecoder::~RPZADecoder() {

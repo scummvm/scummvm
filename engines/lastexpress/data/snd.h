@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef LASTEXPRESS_SND_H
@@ -42,8 +39,8 @@
 #include "audio/mixer.h"
 
 namespace Audio {
-	class AudioStream;
-	class QueuingAudioStream;
+class AudioStream;
+class QueuingAudioStream;
 }
 
 namespace Common {

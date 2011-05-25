@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TOOLS_CREATE_PROJECT_VISUALSTUDIO_H
@@ -43,13 +40,17 @@ protected:
 
 	void writeReferences(std::ofstream &output);
 
-	void outputGlobalPropFile(std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix);
+	void outputGlobalPropFile(std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents);
 
 	void createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32, bool enableAnalysis);
 
 	const char *getProjectExtension();
 	const char *getPropertiesExtension();
 	int getVisualStudioVersion();
+
+	void outputConfiguration(std::ostream &project, const BuildSetup &setup, const std::string &libraries, const std::string &config, const std::string &platform, const std::string &props, const bool isWin32);
+	void outputConfiguration(std::ostream &project, const std::string &toolConfig, const std::string &config, const std::string &platform, const std::string &props);
+	void outputBuildEvents(std::ostream &project, const BuildSetup &setup, const bool isWin32);
 };
 
 } // End of CreateProjectTool namespace

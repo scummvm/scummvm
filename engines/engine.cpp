@@ -17,10 +17,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
+
+#define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
 
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 #define WIN32_LEAN_AND_MEAN
@@ -32,25 +31,26 @@
 
 #include "engines/engine.h"
 #include "engines/dialogs.h"
-#include "engines/metaengine.h"
-#include "engines/util.h"
 
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/events.h"
 #include "common/file.h"
-#include "common/timer.h"
-#include "common/savefile.h"
 #include "common/system.h"
 #include "common/str.h"
+#include "common/error.h"
+#include "common/list.h"
+#include "common/list_intern.h"
+#include "common/scummsys.h"
+#include "common/textconsole.h"
 
 #include "gui/debugger.h"
+#include "gui/dialog.h"
 #include "gui/message.h"
-#include "gui/gui-manager.h"
 
 #include "audio/mixer.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/pixelformat.h"
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone();

@@ -17,14 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #if defined(__amigaos4__)
+
 #include "backends/fs/amigaos4/amigaos4-fs-factory.h"
-#include "backends/fs/amigaos4/amigaos4-fs.cpp"
+#include "backends/fs/amigaos4/amigaos4-fs.h"
 
 AbstractFSNode *AmigaOSFilesystemFactory::makeRootFileNode() const {
 	return new AmigaOSFilesystemNode();

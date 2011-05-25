@@ -18,14 +18,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 
-#include "common/endian.h"
-#include "common/util.h"
+#include "common/textconsole.h"
 
 #include "sword1/text.h"
 #include "sword1/resman.h"
@@ -77,7 +73,7 @@ uint32 Text::lowTextManager(uint8 *ascii, int32 width, uint8 pen) {
 	return textObjId;
 }
 
-void Text::makeTextSprite(uint8 slot, uint8 *text, uint16 maxWidth, uint8 pen) {
+void Text::makeTextSprite(uint8 slot, const uint8 *text, uint16 maxWidth, uint8 pen) {
 	LineInfo lines[MAX_LINES];
 	uint16 numLines = analyzeSentence(text, maxWidth, lines);
 
@@ -119,7 +115,7 @@ uint16 Text::charWidth(uint8 ch) {
 	return _resMan->getUint16(_resMan->fetchFrame(_font, ch - SPACE)->width);
 }
 
-uint16 Text::analyzeSentence(uint8 *text, uint16 maxWidth, LineInfo *line) {
+uint16 Text::analyzeSentence(const uint8 *text, uint16 maxWidth, LineInfo *line) {
 	uint16 lineNo = 0;
 
 	bool firstWord = true;

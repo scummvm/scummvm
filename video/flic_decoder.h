@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef VIDEO_FLICDECODER_H
@@ -28,10 +25,13 @@
 
 #include "video/video_decoder.h"
 #include "common/list.h"
+#include "common/rational.h"
 #include "common/rect.h"
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Video {

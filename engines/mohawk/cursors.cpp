@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "mohawk/cursors.h"
@@ -29,9 +26,11 @@
 
 #include "common/macresman.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "common/winexe_ne.h"
 #include "common/winexe_pe.h"
 #include "graphics/cursorman.h"
+#include "graphics/maccursor.h"
 #include "graphics/wincursor.h"
 
 #ifdef ENABLE_MYST
@@ -40,11 +39,6 @@
 #endif
 
 namespace Mohawk {
-
-static const byte s_bwPalette[] = {
-	0x00, 0x00, 0x00,	// Black
-	0xFF, 0xFF, 0xFF	// White
-};
 
 void CursorManager::showCursor() {
 	CursorMan.showMouse(true);
@@ -78,8 +72,13 @@ void CursorManager::setDefaultCursor() {
 		0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0
 	};
 
+	static const byte bwPalette[] = {
+		0x00, 0x00, 0x00,	// Black
+		0xFF, 0xFF, 0xFF	// White
+	};
+
 	CursorMan.replaceCursor(defaultCursor, 12, 20, 0, 0, 0);
-	CursorMan.replaceCursorPalette(s_bwPalette, 1, 2);
+	CursorMan.replaceCursorPalette(bwPalette, 1, 2);
 }
 
 void CursorManager::setCursor(uint16 id) {
@@ -87,35 +86,24 @@ void CursorManager::setCursor(uint16 id) {
 	setDefaultCursor();
 }
 
-void CursorManager::setMacXorCursor(Common::SeekableReadStream *stream) {
+void CursorManager::setMacCursor(Common::SeekableReadStream *stream) {
 	assert(stream);
 
-	byte cursorBitmap[16 * 16];
+	Graphics::MacCursor *macCursor = new Graphics::MacCursor();
 
-	// Get black and white data
-	for (int i = 0; i < 32; i++) {
-		byte imageByte = stream->readByte();
-		for (int b = 0; b < 8; b++)
-			cursorBitmap[i * 8 + b] = (imageByte & (0x80 >> b)) ? 1 : 2;
-	}
+	if (!macCursor->readFromStream(*stream))
+		error("Could not parse Mac cursor");
 
-	// Apply mask data
-	for (int i = 0; i < 32; i++) {
-		byte imageByte = stream->readByte();
-		for (int b = 0; b < 8; b++)
-			if ((imageByte & (0x80 >> b)) == 0)
-				cursorBitmap[i * 8 + b] = 0;
-	}
+	CursorMan.replaceCursor(macCursor->getSurface(), macCursor->getWidth(), macCursor->getHeight(),
+			macCursor->getHotspotX(), macCursor->getHotspotY(), macCursor->getKeyColor());
+	CursorMan.replaceCursorPalette(macCursor->getPalette(), 0, 256);
 
-	uint16 hotspotY = stream->readUint16BE();
-	uint16 hotspotX = stream->readUint16BE();
-
-	CursorMan.replaceCursor(cursorBitmap, 16, 16, hotspotX, hotspotY, 0);
-	CursorMan.replaceCursorPalette(s_bwPalette, 1, 2);
+	delete macCursor;
+	delete stream;
 }
 
 void DefaultCursorManager::setCursor(uint16 id) {
-	setMacXorCursor(_vm->getResource(_tag, id));
+	setMacCursor(_vm->getResource(_tag, id));
 }
 
 #ifdef ENABLE_MYST
@@ -139,6 +127,13 @@ void MystCursorManager::hideCursor() {
 }
 
 void MystCursorManager::setCursor(uint16 id) {
+	// Zero means empty cursor
+	if (id == 0) {
+		static const byte emptyCursor = 0;
+		CursorMan.replaceCursor(&emptyCursor, 1, 1, 0, 0, 0);
+		return;
+	}
+
 	// Both Myst and Myst ME use the "MystBitmap" format for cursor images.
 	MohawkSurface *mhkSurface = _bmpDecoder->decodeImage(_vm->getResource(ID_WDIB, id));
 	Graphics::Surface *surface = mhkSurface->getSurface();
@@ -148,7 +143,7 @@ void MystCursorManager::setCursor(uint16 id) {
 	delete clrcStream;
 
 	// Myst ME stores some cursors as 24bpp images instead of 8bpp
-	if (surface->bytesPerPixel == 1) {
+	if (surface->format.bytesPerPixel == 1) {
 		CursorMan.replaceCursor((byte *)surface->pixels, surface->w, surface->h, hotspotX, hotspotY, 0);
 		CursorMan.replaceCursorPalette(mhkSurface->getPalette(), 0, 256);
 	} else {
@@ -223,26 +218,12 @@ void MacCursorManager::setCursor(uint16 id) {
 	// Try a color cursor first
 	Common::SeekableReadStream *stream = _resFork->getResource(MKTAG('c','r','s','r'), id);
 
-	if (stream) {
-		byte *cursor, *palette;
-		int width, height, hotspotX, hotspotY, keyColor, palSize;
-
-		_resFork->convertCrsrCursor(stream, &cursor, width, height, hotspotX, hotspotY, keyColor, true, &palette, palSize);
-
-		CursorMan.replaceCursor(cursor, width, height, hotspotX, hotspotY, keyColor);
-		CursorMan.replaceCursorPalette(palette, 0, palSize);
-
-		delete[] cursor;
-		delete[] palette;
-		delete stream;
-		return;
-	}
-
-	// Fall back to b&w cursors
-	stream = _resFork->getResource(MKTAG('C','U','R','S'), id);
+	// Fall back to monochrome cursors
+	if (!stream)
+		stream = _resFork->getResource(MKTAG('C','U','R','S'), id);
 
 	if (stream) {
-		setMacXorCursor(stream);
+		setMacCursor(stream);
 		delete stream;
 	} else {
 		setDefaultCursor();
@@ -265,7 +246,7 @@ LivingBooksCursorManager_v2::~LivingBooksCursorManager_v2() {
 
 void LivingBooksCursorManager_v2::setCursor(uint16 id) {
 	if (_sysArchive && _sysArchive->hasResource(ID_TCUR, id)) {
-		setMacXorCursor(_sysArchive->getResource(ID_TCUR, id));
+		setMacCursor(_sysArchive->getResource(ID_TCUR, id));
 	} else {
 		// TODO: Handle generated cursors
 	}

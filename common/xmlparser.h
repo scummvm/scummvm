@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef XML_PARSER_H
@@ -29,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/types.h"
 
+#include "common/fs.h"
 #include "common/list.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
@@ -37,7 +35,6 @@
 
 namespace Common {
 
-class FSNode;
 class SeekableReadStream;
 
 #define MAX_XML_DEPTH 8

@@ -17,16 +17,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef GRAPHICS_SURFACE_H
 #define GRAPHICS_SURFACE_H
 
 #include "common/scummsys.h"
-#include "common/rect.h"
+
+namespace Common {
+struct Rect;
+}
+
+#include "graphics/pixelformat.h"
 
 namespace Graphics {
 
@@ -65,14 +67,14 @@ struct Surface {
 	void *pixels;
 
 	/**
-	 * How many bytes a single pixel occupies.
+	 * The pixel format of the surface.
 	 */
-	uint8 bytesPerPixel;
+	PixelFormat format;
 
 	/**
 	 * Construct a simple Surface object.
 	 */
-	Surface() : w(0), h(0), pitch(0), pixels(0), bytesPerPixel(0) {
+	Surface() : w(0), h(0), pitch(0), pixels(0), format() {
 	}
 
 	/**
@@ -83,7 +85,7 @@ struct Surface {
 	 * @return Pointer to the pixel.
 	 */
 	inline const void *getBasePtr(int x, int y) const {
-		return (const byte *)(pixels) + y * pitch + x * bytesPerPixel;
+		return (const byte *)(pixels) + y * pitch + x * format.bytesPerPixel;
 	}
 
 	/**
@@ -94,7 +96,7 @@ struct Surface {
 	 * @return Pointer to the pixel.
 	 */
 	inline void *getBasePtr(int x, int y) {
-		return static_cast<byte *>(pixels) + y * pitch + x * bytesPerPixel;
+		return static_cast<byte *>(pixels) + y * pitch + x * format.bytesPerPixel;
 	}
 
 	/**
@@ -105,9 +107,9 @@ struct Surface {
 	 *
 	 * @param width Width of the surface object.
 	 * @param height Height of the surface object.
-	 * @param bytePP The number of bytes a single pixel uses.
+	 * @param format The pixel format the surface should use.
 	 */
-	void create(uint16 width, uint16 height, uint8 bytesPP);
+	void create(uint16 width, uint16 height, const PixelFormat &format);
 
 	/**
 	 * Release the memory used by the pixels memory of this surface. This is the

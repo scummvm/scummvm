@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #if defined(__ANDROID__)
@@ -35,6 +32,7 @@
 #include "common/util.h"
 #include "common/archive.h"
 #include "common/debug.h"
+#include "common/textconsole.h"
 
 #include "backends/platform/android/jni.h"
 #include "backends/platform/android/asset-archive.h"

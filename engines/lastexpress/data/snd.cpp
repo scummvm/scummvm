@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Based on the Xentax Wiki documentation:
@@ -30,11 +27,47 @@
 
 #include "lastexpress/debug.h"
 
-#include "audio/decoders/adpcm.h"
+#include "audio/decoders/adpcm_intern.h"
 #include "audio/audiostream.h"
+#include "common/debug.h"
 #include "common/memstream.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 namespace LastExpress {
+
+// Last Express ADPCM is similar to MS IMA mono, but inverts its nibbles
+// and does not have the 4 byte per channel requirement
+
+class LastExpress_ADPCMStream : public Audio::Ima_ADPCMStream {
+public:
+	LastExpress_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, uint32 blockSize) :
+			Audio::Ima_ADPCMStream(stream, disposeAfterUse, size, 44100, 1, blockSize) {}
+
+	int readBuffer(int16 *buffer, const int numSamples) {
+		int samples = 0;
+
+		assert(numSamples % 2 == 0);
+
+		while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
+			if (_blockPos[0] == _blockAlign) {
+				// read block header
+				_status.ima_ch[0].last = _stream->readSint16LE();
+				_status.ima_ch[0].stepIndex = _stream->readSint16LE();
+				_blockPos[0] = 4;
+			}
+
+			for (; samples < numSamples && _blockPos[0] < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
+				byte data = _stream->readByte();
+				_blockPos[0]++;
+				buffer[samples] = decodeIMA((data >> 4) & 0x0f);
+				buffer[samples + 1] = decodeIMA(data & 0x0f);
+			}
+		}
+
+		return samples;
+	}
+};
 
 //////////////////////////////////////////////////////////////////////////
 // Sound
@@ -60,7 +93,7 @@ void SimpleSound::loadHeader(Common::SeekableReadStream *in) {
 }
 
 Audio::AudioStream *SimpleSound::makeDecoder(Common::SeekableReadStream *in, uint32 size) const {
-	return Audio::makeADPCMStream(in, DisposeAfterUse::YES, size, Audio::kADPCMMSImaLastExpress, 44100, 1, _blockSize);
+	return new LastExpress_ADPCMStream(in, DisposeAfterUse::YES, size, _blockSize);
 }
 
 void SimpleSound::play(Audio::AudioStream *as) {

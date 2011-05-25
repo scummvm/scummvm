@@ -18,29 +18,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SOUND_MIXER_H
 #define SOUND_MIXER_H
 
 #include "common/types.h"
-#include "common/mutex.h"
 #include "common/noncopyable.h"
-
-#include "audio/timestamp.h"
-
-class OSystem;
-
 
 namespace Audio {
 
 class AudioStream;
 class Channel;
-class Mixer;
-class MixerImpl;
+class Timestamp;
 
 /**
  * A SoundHandle instances corresponds to a specific sound

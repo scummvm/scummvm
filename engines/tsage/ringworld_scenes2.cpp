@@ -18,11 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
+#include "common/config-manager.h"
 #include "tsage/ringworld_scenes2.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
@@ -112,20 +110,24 @@ void Scene1000::Action3::signal() {
 		setDelay(240);
 		break;
 	case 5: {
-		// WORKAROUND: At this point, the original used the presence of a file called 'Intro.txt'
-		// to determine whether the introduction has been played the first time the game was started.
-		// In ScummVM, we don't like creating any files that aren't explicitly savegames, so the
-		// game startup will always show the Start Play / Introduction buttons, even when the game
-		// is played for the first time
-
-		// Prompt user for whether to start play or watch introduction
 		_globals->_player.enableControl();
 
-		if (MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING) == 0) {
-			_actionIndex = 20;
-			_globals->_soundHandler.proc1(this);
-		} else {
+		const char *SEEN_INTRO = "seen_intro";
+		if (!ConfMan.hasKey(SEEN_INTRO) || !ConfMan.getBool(SEEN_INTRO)) {
+			// First time being played, so show the introduction
+			ConfMan.setBool(SEEN_INTRO, true);
+			ConfMan.flushToDisk();
 			setDelay(1);
+		} else {
+			// Prompt user for whether to start play or watch introduction
+			_globals->_player.enableControl();
+
+			if (MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING) == 0) {
+				_actionIndex = 20;
+				_globals->_soundHandler.proc1(this);
+			} else {
+				setDelay(1);
+			}
 		}
 
 		_globals->_player.disableControl();
@@ -434,7 +436,7 @@ void Scene1001::Action1::signal() {
 		scene->_object6.setStrip2(6);
 		scene->_object6.setFrame2(2);
 		scene->_object6._moveDiff = Common::Point(20, 20);
-		scene->_object6.setPriority2(20);
+		scene->_object6.fixPriority(20);
 		scene->_object6.setPosition(Common::Point(scene->_object2._position.x - 6, scene->_object2._position.y + 7));
 		scene->_object6.animate(ANIM_MODE_5, NULL);
 
@@ -453,7 +455,7 @@ void Scene1001::Action1::signal() {
 		scene->_object7.setFrame2(1);
 		scene->_object7._moveDiff = Common::Point(20, 20);
 		scene->_object7.setPosition(Common::Point(scene->_object3._position.x - 28, scene->_object3._position.y - 11));
-		scene->_object7.setPriority2(200);
+		scene->_object7.fixPriority(200);
 		scene->_object7.animate(ANIM_MODE_5, NULL);
 
 		Common::Point pt(scene->_object7._position.x - 70, scene->_object7._position.y - 70);
@@ -468,20 +470,21 @@ void Scene1001::Action1::signal() {
 		scene->_object5.setVisage(16);
 		scene->_object5.setPosition(Common::Point(306, 93));
 		scene->_object5._strip = 3;
-		scene->_object5.setPriority2(200);
+		scene->_object5.fixPriority(200);
 		scene->_object5.animate(ANIM_MODE_2, NULL);
 		setDelay(30);
 		break;
 	case 19: {
 		_globals->_soundHandler.startSound(91);
 		byte adjustData[4] = {0xff, 0xff, 0xff, 0};
-		_globals->_scenePalette.fade(adjustData, true, 0);
+		_globals->_scenePalette.fade(adjustData, false, 0);
 
 		scene->_object1._strip = 7;
 		scene->_object1._frame = 1;
 		scene->_object1.setPosition(Common::Point(314, 112));
 		scene->_object1.addMover(NULL);
 		setDelay(2);
+		break;
 	}
 	case 20:
 		_globals->_scenePalette.loadPalette(16);
@@ -633,7 +636,7 @@ void Scene1250::postInit(SceneObjectList *OwnerList) {
 	_object2.setVisage(1250);
 	_object2.setPosition(Common::Point(126, 69));
 	_object2.setStrip2(2);
-	_object2.setPriority2(255);
+	_object2.fixPriority(255);
 	_object2._frame = 1;
 	_object2.setAction(&_action2);
 
@@ -766,7 +769,7 @@ void Scene1400::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.setVisage(1401);
 	_globals->_player.animate(ANIM_MODE_2, 0);
 	_globals->_player.setStrip2(4);
-	_globals->_player.setPriority2(4);
+	_globals->_player.fixPriority(4);
 	_globals->_player.disableControl();
 
 	_globals->_player._moveDiff = Common::Point(4, 2);
@@ -869,7 +872,7 @@ void Scene1500::Action2::signal() {
 	case 1: {
 		scene->_object2.postInit();
 		scene->_object2.setVisage(1502);
-		scene->_object2.setPriority2(255);
+		scene->_object2.fixPriority(255);
 		scene->_object2.changeZoom(5);
 		scene->_object2._frame = 1;
 		scene->_object2._moveDiff = Common::Point(1, 1);

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Resource library
@@ -28,9 +25,8 @@
 #include "common/dcl.h"
 #include "common/util.h"
 #include "common/endian.h"
-#include "common/debug.h"
-#include "common/debug-channels.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 #include "sci/decompressor.h"
 #include "sci/sci.h"

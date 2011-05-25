@@ -18,13 +18,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/system.h"
 #include "common/array.h"
+#include "common/textconsole.h"
 #include "m4/actor.h"
 #include "m4/m4_views.h"
 #include "m4/assets.h"

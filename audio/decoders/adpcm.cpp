@@ -18,16 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
-#include "common/endian.h"
+#include "common/stream.h"
+#include "common/textconsole.h"
+#include "common/util.h"
 
 #include "audio/decoders/adpcm.h"
 #include "audio/decoders/adpcm_intern.h"
-#include "audio/audiostream.h"
 
 
 namespace Audio {
@@ -201,60 +199,49 @@ int Apple_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	return samples[0] + samples[1];
 }
 
+
 #pragma mark -
 
 
-int MSIma_ADPCMStream::readBufferMSIMA1(int16 *buffer, const int numSamples) {
-	int samples = 0;
-	byte data;
+int MSIma_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
+	// Need to write at least one sample per channel
+	assert((numSamples % _channels) == 0);
 
-	assert(numSamples % 2 == 0);
+	int samples = 0;
 
 	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
 		if (_blockPos[0] == _blockAlign) {
-			// read block header
-			_status.ima_ch[0].last = _stream->readSint16LE();
-			_status.ima_ch[0].stepIndex = _stream->readSint16LE();
-			_blockPos[0] = 4;
+			for (int i = 0; i < _channels; i++) {
+				// read block header
+				_status.ima_ch[i].last = _stream->readSint16LE();
+				_status.ima_ch[i].stepIndex = _stream->readSint16LE();
+			}
+
+			_blockPos[0] = _channels * 4;
 		}
 
-		for (; samples < numSamples && _blockPos[0] < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
-			data = _stream->readByte();
-			_blockPos[0]++;
-			buffer[samples] = decodeIMA(_invertSamples ? (data >> 4) & 0x0f : data & 0x0f);
-			buffer[samples + 1] = decodeIMA(_invertSamples ? data & 0x0f : (data >> 4) & 0x0f);
-		}
-	}
-	return samples;
-}
-
-
-// Microsoft as usual tries to implement it differently. This method
-// is used for stereo data.
-int MSIma_ADPCMStream::readBufferMSIMA2(int16 *buffer, const int numSamples) {
-	int samples;
-	uint32 data;
-	int nibble;
-	byte k;
-
-	// TODO: Currently this implementation only supports
-	// reading a multiple of 16 samples at once. We might
-	// consider changing that so it could read an arbitrary
-	// sample pair count.
-	assert(numSamples % 16 == 0);
-
-	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos;) {
-		for (int channel = 0; channel < 2; channel++) {
-			data = _stream->readUint32LE();
-
-			for (nibble = 0; nibble < 8; nibble++) {
-				k = ((data & 0xf0000000) >> 28);
-				buffer[samples + channel + nibble * 2] = decodeIMA(k);
-				data <<= 4;
+		// Decode a set of samples
+		for (int i = 0; i < _channels; i++) {
+			// The stream encodes four bytes per channel at a time
+			for (int j = 0; j < 4; j++) {
+				byte data = _stream->readByte();
+				_blockPos[0]++;
+				_buffer[i][j * 2] = decodeIMA(data & 0x0f, i);
+				_buffer[i][j * 2 + 1] = decodeIMA((data >> 4) & 0x0f, i);
+				_samplesLeft[i] += 2;
 			}
 		}
-		samples += 16;
+
+		while (samples < numSamples && _samplesLeft[0] != 0) {
+			for (int i = 0; i < _channels; i++) {
+				buffer[samples] = _buffer[i][8 - _samplesLeft[i]];
+				_samplesLeft[i]--;
+			}
+
+			samples += _channels;
+		}
 	}
+
 	return samples;
 }
 
@@ -449,8 +436,6 @@ RewindableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, Dispo
 		return new Oki_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
 	case kADPCMMSIma:
 		return new MSIma_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
-	case kADPCMMSImaLastExpress:
-		return new MSIma_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign, true);
 	case kADPCMMS:
 		return new MS_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
 	case kADPCMDVI:

@@ -18,14 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/system.h"
 #include "common/translation.h"
+#include "common/textconsole.h"
 
 #include "mohawk/cursors.h"
 #include "mohawk/graphics.h"
@@ -72,7 +71,8 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	// original, including bugs, missing bits etc. :)
 	_tweaksEnabled = true;
 
-	_currentCursor = _mainCursor = kDefaultMystCursor;
+	_currentCursor = 0;
+	_mainCursor = kDefaultMystCursor;
 	_showResourceRects = false;
 	_curCard = 0;
 	_needsUpdate = false;
@@ -256,7 +256,10 @@ Common::Error MohawkEngine_Myst::run() {
 	_loadDialog->setSaveMode(false);
 	_optionsDialog = new MystOptionsDialog(this);
 	_cursor = new MystCursorManager(this);
-	_rnd = new Common::RandomSource();
+	_rnd = new Common::RandomSource("myst");
+
+	// Cursor is visible by default
+	_cursor->showCursor();
 
 	// Load game from launcher/command line if requested
 	if (ConfMan.hasKey("save_slot") && canLoadGameStateCurrently()) {
@@ -285,9 +288,6 @@ Common::Error MohawkEngine_Myst::run() {
 
 	// Test Load Function...
 	loadHelp(10000);
-
-	// Set the cursor
-	_cursor->setCursor(_currentCursor);
 
 	Common::Event event;
 	while (!shouldQuit()) {
@@ -341,7 +341,20 @@ Common::Error MohawkEngine_Myst::run() {
 						drawResourceRects();
 					break;
 				case Common::KEYCODE_F5:
+					_needsPageDrop = false;
+					_needsShowMap = false;
+
 					runDialog(*_optionsDialog);
+
+					if (_needsPageDrop) {
+						dropPage();
+						_needsPageDrop = false;
+					}
+
+					if (_needsShowMap) {
+						_scriptParser->showMap();
+						_needsShowMap = false;
+					}
 					break;
 				default:
 					break;
@@ -402,6 +415,11 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 	debug(2, "changeToStack(%d)", stack);
 
 	_curStack = stack;
+
+	// Fill screen with black and empty cursor
+	_cursor->setCursor(0);
+	_system->fillScreen(_system->getScreenFormat().RGBToColor(0, 0, 0));
+	_system->updateScreen();
 
 	_sound->stopSound();
 	_sound->stopBackgroundMyst();
@@ -551,7 +569,7 @@ uint16 MohawkEngine_Myst::getCardBackgroundId() {
 }
 
 void MohawkEngine_Myst::drawCardBackground() {
-	_gfx->copyImageToBackBuffer(getCardBackgroundId(), Common::Rect(0, 0, 544, 333));
+	_gfx->copyImageToBackBuffer(getCardBackgroundId(), Common::Rect(0, 0, 544, 332));
 }
 
 void MohawkEngine_Myst::changeToCard(uint16 card, bool updateScreen) {
@@ -629,17 +647,17 @@ void MohawkEngine_Myst::changeToCard(uint16 card, bool updateScreen) {
 
 	// TODO: Handle Script Resources
 
-	// Make sure we have the right cursor showing
-	_dragResource = 0;
-	_hoverResource = 0;
-	_curResource = -1;
-	checkCurrentResource();
-
 	// Make sure the screen is updated
 	if (updateScreen) {
 		_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
 		_system->updateScreen();
 	}
+
+	// Make sure we have the right cursor showing
+	_dragResource = 0;
+	_hoverResource = 0;
+	_curResource = -1;
+	checkCurrentResource();
 
 	// Debug: Show resource rects
 	if (_showResourceRects)
@@ -1177,6 +1195,44 @@ bool MohawkEngine_Myst::canSaveGameStateCurrently() {
 	}
 
 	return false;
+}
+
+void MohawkEngine_Myst::dropPage() {
+    uint16 page = _gameState->_globals.heldPage;
+	bool whitePage = page == 13;
+	bool bluePage = page - 1 < 6;
+    bool redPage = page - 7 < 6;
+
+    // Play drop page sound
+    _sound->replaceSoundMyst(800);
+
+    // Drop page
+    _gameState->_globals.heldPage = 0;
+
+    // Redraw page area
+    if (whitePage && _gameState->_globals.currentAge == 2) {
+    	redrawArea(41);
+    } else if (bluePage) {
+    	if (page == 6) {
+    		if (_gameState->_globals.currentAge == 2)
+    			redrawArea(24);
+    	} else {
+    		redrawArea(103);
+    	}
+    } else if (redPage) {
+    	if (page == 12) {
+    		if (_gameState->_globals.currentAge == 2)
+    			redrawArea(25);
+    	} else if (page == 10) {
+    		if (_gameState->_globals.currentAge == 1)
+    			redrawArea(35);
+    	} else {
+    		redrawArea(102);
+    	}
+    }
+
+    setMainCursor(kDefaultMystCursor);
+    checkCursorHints();
 }
 
 } // End of namespace Mohawk

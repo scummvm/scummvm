@@ -18,15 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/scummsys.h"
+#include "common/error.h"
+#include "common/textconsole.h"
 
 #ifdef WIN32
 
@@ -36,6 +35,8 @@
 
 #include "backends/platform/sdl/win32/win32.h"
 #include "backends/fs/windows/windows-fs-factory.h"
+
+#include "common/memstream.h"
 
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 
@@ -166,6 +167,90 @@ Common::WriteStream *OSystem_Win32::createLogFile() {
 	} else {
 		return 0;
 	}
+}
+
+namespace {
+
+class Win32ResourceArchive : public Common::Archive {
+	friend BOOL CALLBACK EnumResNameProc(HMODULE hModule, LPCTSTR lpszType, LPTSTR lpszName, LONG_PTR lParam);
+public:
+	Win32ResourceArchive();
+
+	virtual bool hasFile(const Common::String &name);
+	virtual int listMembers(Common::ArchiveMemberList &list);
+	virtual Common::ArchiveMemberPtr getMember(const Common::String &name);
+	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+private:
+	typedef Common::List<Common::String> FilenameList;
+
+	FilenameList _files;
+};
+
+BOOL CALLBACK EnumResNameProc(HMODULE hModule, LPCTSTR lpszType, LPTSTR lpszName, LONG_PTR lParam) {
+	if (IS_INTRESOURCE(lpszName))
+		return TRUE;
+
+	Win32ResourceArchive *arch = (Win32ResourceArchive *)lParam;
+	arch->_files.push_back(lpszName);
+	return TRUE;
+}
+
+Win32ResourceArchive::Win32ResourceArchive() {
+	EnumResourceNames(NULL, MAKEINTRESOURCE(256), &EnumResNameProc, (LONG_PTR)this);
+}
+
+bool Win32ResourceArchive::hasFile(const Common::String &name) {
+	for (FilenameList::const_iterator i = _files.begin(); i != _files.end(); ++i) {
+		if (i->equalsIgnoreCase(name))
+			return true;
+	}
+
+	return false;
+}
+
+int Win32ResourceArchive::listMembers(Common::ArchiveMemberList &list) {
+	int count = 0;
+
+	for (FilenameList::const_iterator i = _files.begin(); i != _files.end(); ++i, ++count)
+		list.push_back(Common::ArchiveMemberPtr(new Common::GenericArchiveMember(*i, this)));
+
+	return count;
+}
+
+Common::ArchiveMemberPtr Win32ResourceArchive::getMember(const Common::String &name) {
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+}
+
+Common::SeekableReadStream *Win32ResourceArchive::createReadStreamForMember(const Common::String &name) const {
+	HRSRC resource = FindResource(NULL, name.c_str(), MAKEINTRESOURCE(256));
+
+	if (resource == NULL)
+		return 0;
+
+	HGLOBAL handle = LoadResource(NULL, resource);
+
+	if (handle == NULL)
+		return 0;
+
+	const byte *data = (const byte *)LockResource(handle);
+
+	if (data == NULL)
+		return 0;
+
+	uint32 size = SizeofResource(NULL, resource);
+
+	if (size == 0)
+		return 0;
+
+	return new Common::MemoryReadStream(data, size);
+}
+
+} // End of anonymous namespace
+
+void OSystem_Win32::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+	s.add("Win32Res", new Win32ResourceArchive());
+
+	OSystem_SDL::addSysArchivesToSearchSet(s, priority);
 }
 
 #endif

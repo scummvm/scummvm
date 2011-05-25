@@ -17,14 +17,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef COMMON_TRANSLATION_H
 #define COMMON_TRANSLATION_H
 
+#include "common/array.h"
+#include "common/fs.h"
+#include "common/str.h"
 #include "common/singleton.h"
 #include "common/str-array.h"
 
@@ -33,7 +33,6 @@
 namespace Common {
 
 class File;
-class FSNode;
 
 enum TranslationIDs {
 	kTranslationAutodetectId = 0,

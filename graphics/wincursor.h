@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef GRAPHICS_WINCURSOR_H
@@ -30,9 +27,9 @@
 #include "common/winexe.h"
 
 namespace Common {
-	class NEResources;
-	class PEResources;
-	class SeekableReadStream;
+class NEResources;
+class PEResources;
+class SeekableReadStream;
 }
 
 namespace Graphics {

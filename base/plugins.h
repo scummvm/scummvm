@@ -18,24 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef BASE_PLUGINS_H
 #define BASE_PLUGINS_H
 
 #include "common/array.h"
-#include "common/error.h"
-#include "common/singleton.h"
-#include "common/util.h"
+#include "common/fs.h"
+#include "common/str.h"
 #include "backends/plugins/elf/version.h"
-
-namespace Common {
-	class FSList;
-	class FSNode;
-}
 
 
 /**

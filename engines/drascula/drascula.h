@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef DRASCULA_H
@@ -573,8 +570,8 @@ public:
 	void enterName();
 	bool soundIsActive();
 	void waitFrameSSN();
-	void mixVideo(byte *OldScreen, byte *NewScreen);
-	void decodeRLE(byte *BufferRLE, byte *MiVideoRLE);
+	void mixVideo(byte *OldScreen, byte *NewScreen, uint16 oldPitch);
+	void decodeRLE(byte *BufferRLE, byte *MiVideoRLE, uint16 pitch = 320);
 	void decodeOffset(byte *BufferOFF, byte *MiVideoOFF, int length);
 	int playFrameSSN(Common::SeekableReadStream *stream);
 

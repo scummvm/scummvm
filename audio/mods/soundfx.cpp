@@ -18,16 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/endian.h"
+#include "common/stream.h"
+#include "common/textconsole.h"
 
 #include "audio/mods/paula.h"
 #include "audio/mods/soundfx.h"
-#include "audio/audiostream.h"
 
 namespace Audio {
 

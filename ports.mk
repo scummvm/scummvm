@@ -1,12 +1,10 @@
 # This file contains port specific Makefile rules. It is automatically
 # included by the default (main) Makefile.
 #
-# $URL$
-# $Id$
 
 
 #
-# UNIX specific
+# POSIX specific
 #
 install:
 	$(INSTALL) -d "$(DESTDIR)$(bindir)"
@@ -161,26 +159,42 @@ osxsnap: bundle
 # Windows specific
 #
 
-scummvmico.o: $(srcdir)/icons/scummvm.ico
-	$(WINDRES) $(WINDRESFLAGS) -I$(srcdir) $(srcdir)/dists/scummvm.rc scummvmico.o
+scummvmwinres.o: $(srcdir)/icons/scummvm.ico $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(srcdir)/dists/scummvm.rc
+	$(QUIET_WINDRES)$(WINDRES) -DHAVE_CONFIG_H $(WINDRESFLAGS) $(DEFINES) -I. -I$(srcdir) $(srcdir)/dists/scummvm.rc scummvmwinres.o
 
-# Special target to create a win32 snapshot binary
-win32dist: $(EXECUTABLE)
-	mkdir -p $(WIN32PATH)
-	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
-	cp $(DIST_FILES_THEMES) $(WIN32PATH)
+# Special target to prepare data files for distribution / installer creation
+win32data: $(EXECUTABLE)
+	mkdir -p $(srcdir)/$(WIN32PATH)
+	cp $(srcdir)/AUTHORS          $(srcdir)/$(WIN32PATH)
+	cp $(srcdir)/COPYING          $(srcdir)/$(WIN32PATH)
+	cp $(srcdir)/COPYING.LGPL     $(srcdir)/$(WIN32PATH)
+	cp $(srcdir)/COPYRIGHT        $(srcdir)/$(WIN32PATH)
+	cp $(srcdir)/NEWS             $(srcdir)/$(WIN32PATH)
+	cp $(srcdir)/README           $(srcdir)/$(WIN32PATH)
+	cp /usr/local/README-SDL.txt  $(srcdir)/$(WIN32PATH)/README-SDL
+	unix2dos $(srcdir)/$(WIN32PATH)/*.*
+	$(STRIP) $(EXECUTABLE) -o $(srcdir)/$(WIN32PATH)/$(EXECUTABLE)
+	cp $(DIST_FILES_THEMES) $(srcdir)/$(WIN32PATH)
 ifdef DIST_FILES_ENGINEDATA
-	cp $(DIST_FILES_ENGINEDATA) $(WIN32PATH)
+	cp $(DIST_FILES_ENGINEDATA) $(srcdir)/$(WIN32PATH)
 endif
-	cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt
-	cp $(srcdir)/COPYING $(WIN32PATH)/COPYING.txt
-	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING.LGPL.txt
-	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
-	cp $(srcdir)/NEWS $(WIN32PATH)/NEWS.txt
-	cp $(srcdir)/README $(WIN32PATH)/README.txt
-	cp /usr/local/README-SDL.txt $(WIN32PATH)
-	cp /usr/local/bin/SDL.dll $(WIN32PATH)
-	u2d $(WIN32PATH)/*.txt
+	cp /usr/local/bin/SDL.dll $(srcdir)/$(WIN32PATH)
+
+# Special target to create a win32 snapshot binary (for Inno Setup)
+win32dist: win32data
+	cp $(srcdir)/icons/scummvm.ico       $(srcdir)/$(WIN32PATH)
+	cp $(srcdir)/dists/win32/ScummVM.iss $(srcdir)/$(WIN32PATH)
+	mv $(WIN32PATH)/AUTHORS              $(srcdir)/$(WIN32PATH)/AUTHORS.txt
+	mv $(WIN32PATH)/COPYING              $(srcdir)/$(WIN32PATH)/COPYING.txt
+	mv $(WIN32PATH)/COPYING.LGPL         $(srcdir)/$(WIN32PATH)/COPYING.LGPL.txt
+	mv $(WIN32PATH)/COPYRIGHT            $(srcdir)/$(WIN32PATH)/COPYRIGHT.txt
+	mv $(WIN32PATH)/NEWS                 $(srcdir)/$(WIN32PATH)/NEWS.txt
+	mv $(WIN32PATH)/README               $(srcdir)/$(WIN32PATH)/README.txt
+	mv $(WIN32PATH)/README-SDL           $(srcdir)/$(WIN32PATH)/README-SDL.txt
+
+# Special target to create a win32 NSIS installer
+win32setup: win32data
+	makensis -V2 -Dtop_srcdir="../.." -Dtext_dir="../../$(WIN32PATH)" -Dbuild_dir="../../$(WIN32PATH)" $(srcdir)/dists/nsis/scummvm.nsi
 
 #
 # AmigaOS specific

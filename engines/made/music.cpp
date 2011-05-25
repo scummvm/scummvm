@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // FIXME: This code is taken from SAGA and needs more work (e.g. setVolume).
@@ -30,8 +27,6 @@
 #include "audio/audiostream.h"
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
-#include "common/config-manager.h"
-#include "common/file.h"
 
 #include "made/music.h"
 

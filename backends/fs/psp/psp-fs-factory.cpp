@@ -17,14 +17,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #if defined(__PSP__)
+
+// Disable printf override in common/forbidden.h to avoid
+// clashes with pspdebug.h from the PSP SDK.
+// That header file uses
+//   __attribute__((format(printf,1,2)));
+// which gets messed up by our override mechanism; this could
+// be avoided by either changing the PSP SDK to use the equally
+// legal and valid
+//   __attribute__((format(__printf__,1,2)));
+// or by refining our printf override to use a varadic macro
+// (which then wouldn't be portable, though).
+// Anyway, for now we just disable the printf override globally
+// for the PSP port
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
+#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+
 #include "backends/fs/psp/psp-fs-factory.h"
-#include "backends/fs/psp/psp-fs.cpp"
+#include "backends/fs/psp/psp-fs.h"
+#include "backends/platform/psp/powerman.h"
+
+#include <unistd.h>
 
 DECLARE_SINGLETON(PSPFilesystemFactory);
 
@@ -34,7 +51,7 @@ AbstractFSNode *PSPFilesystemFactory::makeRootFileNode() const {
 
 AbstractFSNode *PSPFilesystemFactory::makeCurrentDirectoryFileNode() const {
 	char buf[MAXPATHLEN];
-	char * ret = 0;
+	char *ret = 0;
 
 	PowerMan.beginCriticalSection();
 	ret = getcwd(buf, MAXPATHLEN);
@@ -46,4 +63,5 @@ AbstractFSNode *PSPFilesystemFactory::makeCurrentDirectoryFileNode() const {
 AbstractFSNode *PSPFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	return new PSPFilesystemNode(path, true);
 }
+
 #endif

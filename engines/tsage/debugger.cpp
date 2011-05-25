@@ -18,17 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "tsage/debugger.h"
-#include "common/config-manager.h"
-#include "common/endian.h"
 #include "tsage/globals.h"
 #include "tsage/graphics.h"
-
+#include "tsage/ringworld_logic.h"
 
 namespace tSage {
 
@@ -42,8 +37,7 @@ Debugger::Debugger() : GUI::Debugger() {
 	DCmd_Register("clearflag",		WRAP_METHOD(Debugger, Cmd_ClearFlag));
 	DCmd_Register("listobjects",	WRAP_METHOD(Debugger, Cmd_ListObjects));
 	DCmd_Register("moveobject",		WRAP_METHOD(Debugger, Cmd_MoveObject));
-
-	DCmd_Register("item",			WRAP_METHOD(Debugger, Cmd_Item));
+	DCmd_Register("hotspots",		WRAP_METHOD(Debugger, Cmd_Hotspots));
 }
 
 static int strToInt(const char *s) {
@@ -94,6 +88,8 @@ bool Debugger::Cmd_WalkRegions(int argc, const char **argv) {
 	Graphics::Surface destSurface = _globals->_sceneManager._scene->_backSurface.lockSurface();
 
 	// Loop through drawing each walk region in a different color to the background surface
+	Common::String regionsDesc;
+
 	for (uint regionIndex = 0; regionIndex < _globals->_walkRegions._regionList.size(); ++regionIndex, ++color) {
 		WalkRegion &wr = _globals->_walkRegions._regionList[regionIndex];
 
@@ -104,6 +100,9 @@ bool Debugger::Cmd_WalkRegions(int argc, const char **argv) {
 				destSurface.hLine(sliceSet.items[idx].xs - _globals->_sceneOffset.x, yp,
 				sliceSet.items[idx].xe - _globals->_sceneOffset.x, color);
 		}
+
+		regionsDesc += Common::String::format("Region #%d d bounds=%d,%d,%d,%d\n",
+					regionIndex, wr._bounds.left, wr._bounds.top, wr._bounds.right, wr._bounds.bottom);
 	}
 
 	// Release the surface
@@ -111,6 +110,9 @@ bool Debugger::Cmd_WalkRegions(int argc, const char **argv) {
 
 	// Mark the scene as requiring a full redraw
 	_globals->_paneRefreshFlag[0] = 2;
+
+	DebugPrintf("Total regions = %d\n", _globals->_walkRegions._regionList.size());
+	DebugPrintf("%s\n", regionsDesc.c_str());
 
 	return false;
 }
@@ -276,103 +278,103 @@ bool Debugger::Cmd_MoveObject(int argc, const char **argv) {
 
 	switch (objNum) {
 	case OBJECT_STUNNER:
-		_globals->_inventory._stunner._sceneNumber = sceneNum;
+		RING_INVENTORY._stunner._sceneNumber = sceneNum;
 		break;
 	case OBJECT_SCANNER:
-		_globals->_inventory._scanner._sceneNumber = sceneNum;
+		RING_INVENTORY._scanner._sceneNumber = sceneNum;
 		break;
 	case OBJECT_STASIS_BOX:
-		_globals->_inventory._stasisBox._sceneNumber = sceneNum;
+		RING_INVENTORY._stasisBox._sceneNumber = sceneNum;
 		break;
 	case OBJECT_INFODISK:
-		_globals->_inventory._infoDisk._sceneNumber = sceneNum;
+		RING_INVENTORY._infoDisk._sceneNumber = sceneNum;
 		break;
 	case OBJECT_STASIS_NEGATOR:
-		_globals->_inventory._stasisNegator._sceneNumber = sceneNum;
+		RING_INVENTORY._stasisNegator._sceneNumber = sceneNum;
 		break;
 	case OBJECT_KEY_DEVICE:
-		_globals->_inventory._keyDevice._sceneNumber = sceneNum;
+		RING_INVENTORY._keyDevice._sceneNumber = sceneNum;
 		break;
 	case OBJECT_MEDKIT:
-		_globals->_inventory._medkit._sceneNumber = sceneNum;
+		RING_INVENTORY._medkit._sceneNumber = sceneNum;
 		break;
 	case OBJECT_LADDER:
-		_globals->_inventory._ladder._sceneNumber = sceneNum;
+		RING_INVENTORY._ladder._sceneNumber = sceneNum;
 		break;
 	case OBJECT_ROPE:
-		_globals->_inventory._rope._sceneNumber = sceneNum;
+		RING_INVENTORY._rope._sceneNumber = sceneNum;
 		break;
 	case OBJECT_KEY:
-		_globals->_inventory._key._sceneNumber = sceneNum;
+		RING_INVENTORY._key._sceneNumber = sceneNum;
 		break;
 	case OBJECT_TRANSLATOR:
-		_globals->_inventory._translator._sceneNumber = sceneNum;
+		RING_INVENTORY._translator._sceneNumber = sceneNum;
 		break;
 	case OBJECT_ALE:
-		_globals->_inventory._ale._sceneNumber = sceneNum;
+		RING_INVENTORY._ale._sceneNumber = sceneNum;
 		break;
 	case OBJECT_PAPER:
-		_globals->_inventory._paper._sceneNumber = sceneNum;
+		RING_INVENTORY._paper._sceneNumber = sceneNum;
 		break;
 	case OBJECT_WALDOS:
-		_globals->_inventory._waldos._sceneNumber = sceneNum;
+		RING_INVENTORY._waldos._sceneNumber = sceneNum;
 		break;
 	case OBJECT_STASIS_BOX2:
-		_globals->_inventory._stasisBox2._sceneNumber = sceneNum;
+		RING_INVENTORY._stasisBox2._sceneNumber = sceneNum;
 		break;
 	case OBJECT_RING:
-		_globals->_inventory._ring._sceneNumber = sceneNum;
+		RING_INVENTORY._ring._sceneNumber = sceneNum;
 		break;
 	case OBJECT_CLOAK:
-		_globals->_inventory._cloak._sceneNumber = sceneNum;
+		RING_INVENTORY._cloak._sceneNumber = sceneNum;
 		break;
 	case OBJECT_TUNIC:
-		_globals->_inventory._tunic._sceneNumber = sceneNum;
+		RING_INVENTORY._tunic._sceneNumber = sceneNum;
 		break;
 	case OBJECT_CANDLE:
-		_globals->_inventory._candle._sceneNumber = sceneNum;
+		RING_INVENTORY._candle._sceneNumber = sceneNum;
 		break;
 	case OBJECT_STRAW:
-		_globals->_inventory._straw._sceneNumber = sceneNum;
+		RING_INVENTORY._straw._sceneNumber = sceneNum;
 		break;
 	case OBJECT_SCIMITAR:
-		_globals->_inventory._scimitar._sceneNumber = sceneNum;
+		RING_INVENTORY._scimitar._sceneNumber = sceneNum;
 		break;
 	case OBJECT_SWORD:
-		_globals->_inventory._sword._sceneNumber = sceneNum;
+		RING_INVENTORY._sword._sceneNumber = sceneNum;
 		break;
 	case OBJECT_HELMET:
-		_globals->_inventory._helmet._sceneNumber = sceneNum;
+		RING_INVENTORY._helmet._sceneNumber = sceneNum;
 		break;
 	case OBJECT_ITEMS:
-		_globals->_inventory._items._sceneNumber = sceneNum;
+		RING_INVENTORY._items._sceneNumber = sceneNum;
 		break;
 	case OBJECT_CONCENTRATOR:
-		_globals->_inventory._concentrator._sceneNumber = sceneNum;
+		RING_INVENTORY._concentrator._sceneNumber = sceneNum;
 		break;
 	case OBJECT_NULLIFIER:
-		_globals->_inventory._nullifier._sceneNumber = sceneNum;
+		RING_INVENTORY._nullifier._sceneNumber = sceneNum;
 		break;
 	case OBJECT_PEG:
-		_globals->_inventory._peg._sceneNumber = sceneNum;
+		RING_INVENTORY._peg._sceneNumber = sceneNum;
 		break;
 	case OBJECT_VIAL:
-		_globals->_inventory._vial._sceneNumber = sceneNum;
+		RING_INVENTORY._vial._sceneNumber = sceneNum;
 		break;
 	case OBJECT_JACKET:
-		_globals->_inventory._jacket._sceneNumber = sceneNum;
+		RING_INVENTORY._jacket._sceneNumber = sceneNum;
 		break;
 	case OBJECT_TUNIC2:
-		_globals->_inventory._tunic2._sceneNumber = sceneNum;
+		RING_INVENTORY._tunic2._sceneNumber = sceneNum;
 		break;
 	case OBJECT_BONE:
-		_globals->_inventory._bone._sceneNumber = sceneNum;
+		RING_INVENTORY._bone._sceneNumber = sceneNum;
 		break;
 	case OBJECT_EMPTY_JAR:
-		_globals->_inventory._emptyJar._sceneNumber = sceneNum;
+		RING_INVENTORY._emptyJar._sceneNumber = sceneNum;
 		break;
 	case OBJECT_JAR:
-		_globals->_inventory._jar._sceneNumber = sceneNum;
+		RING_INVENTORY._jar._sceneNumber = sceneNum;
 		break;
 	default:
 		DebugPrintf("Invlid object Id %s\n", argv[1]);
@@ -382,11 +384,53 @@ bool Debugger::Cmd_MoveObject(int argc, const char **argv) {
 }
 
 /**
- * Give a specified item to the player
+ * Show any active hotspot areas in the scene
  */
-bool Debugger::Cmd_Item(int argc, const char **argv) {
-	_globals->_inventory._infoDisk._sceneNumber = 1;
-	return true;
+bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
+	int colIndex = 16;
+	const Rect &sceneBounds = _globals->_sceneManager._scene->_sceneBounds;
+
+	// Lock the background surface for access
+	Graphics::Surface destSurface = _globals->_sceneManager._scene->_backSurface.lockSurface();
+	
+	// Iterate through the scene items
+	SynchronizedList<SceneItem *>::iterator i;
+	for (i = _globals->_sceneItems.reverse_begin(); i != _globals->_sceneItems.end(); --i, ++colIndex) {
+		SceneItem *o = *i;
+
+		// Draw the contents of the hotspot area
+		if (o->_sceneRegionId == 0) {
+			// Scene item doesn't use a region, so fill in the entire area
+			destSurface.fillRect(Rect(o->_bounds.left - sceneBounds.left, o->_bounds.top - sceneBounds.top,
+				o->_bounds.right - sceneBounds.left - 1, o->_bounds.bottom - sceneBounds.top - 1), colIndex);
+		} else {
+			// Scene uses a region, so get it and use it to fill out only the correct parts
+			SceneRegions::iterator ri = _globals->_sceneRegions.begin();
+			while ((ri != _globals->_sceneRegions.end()) && ((*ri)._regionId != o->_sceneRegionId))
+				++ri;
+
+			if (ri != _globals->_sceneRegions.end()) {
+				// Fill out the areas defined by the region
+				Region &r = *ri;
+
+				for (int y = r._bounds.top; y < r._bounds.bottom; ++y) {
+					LineSliceSet set = r.getLineSlices(y);
+
+					for (uint p = 0; p < set.items.size(); ++p)
+						destSurface.hLine(set.items[p].xs - sceneBounds.left, y - sceneBounds.top, 
+							set.items[p].xe - sceneBounds.left - 1, colIndex);
+				}
+			}
+		}
+	}
+
+	// Release the surface
+	_globals->_sceneManager._scene->_backSurface.unlockSurface();
+
+	// Mark the scene as requiring a full redraw
+	_globals->_paneRefreshFlag[0] = 2;
+
+	return false;
 }
 
 

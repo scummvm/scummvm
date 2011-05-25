@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/events.h"
@@ -38,6 +35,7 @@ namespace tSage {
 
 EventsClass::EventsClass() {
 	_currentCursor = CURSOR_NONE;
+	_lastCursor = CURSOR_NONE;
 	_frameNumber = 0;
 	_priorFrameTime = 0;
 	_prevDelayFrame = 0;
@@ -139,17 +137,11 @@ bool EventsClass::getEvent(Event &evt, int eventMask) {
  * @cursorType Specified cursor number
  */
 void EventsClass::setCursor(CursorType cursorType) {
+	if (cursorType == _lastCursor)
+		return;
+
+	_lastCursor = cursorType;
 	_globals->clearFlag(122);
-
-	if ((_currentCursor == cursorType) && CursorMan.isVisible())
-		return;
-
-	if (cursorType == CURSOR_NONE) {
-		if (CursorMan.isVisible())
-			CursorMan.showMouse(false);
-		return;
-	}
-
 	CursorMan.showMouse(true);
 
 	const byte *cursor;
@@ -157,27 +149,32 @@ void EventsClass::setCursor(CursorType cursorType) {
 	uint size;
 
 	switch (cursorType) {
-	case CURSOR_CROSSHAIRS:
-		// Crosshairs cursor
-		cursor = _vm->_dataManager->getSubResource(4, 1, 6, &size);
+	case CURSOR_NONE:
+		// No cursor
 		_globals->setFlag(122);
+
+		if (_vm->getFeatures() & GF_DEMO) {
+			CursorMan.showMouse(false);
+			return;
+		}
+		cursor = _resourceManager->getSubResource(4, 1, 6, &size);
 		break;
 
 	case CURSOR_LOOK:
 		// Look cursor
-		cursor = _vm->_dataManager->getSubResource(4, 1, 5, &size);
+		cursor = _resourceManager->getSubResource(4, 1, 5, &size);
 		_currentCursor = CURSOR_LOOK;
 		break;
 
 	case CURSOR_USE:
 		// Use cursor
-		cursor = _vm->_dataManager->getSubResource(4, 1, 4, &size);
+		cursor = _resourceManager->getSubResource(4, 1, 4, &size);
 		_currentCursor = CURSOR_USE;
 		break;
 
 	case CURSOR_TALK:
 		// Talk cursor
-		cursor = _vm->_dataManager->getSubResource(4, 1, 3, &size);
+		cursor = _resourceManager->getSubResource(4, 1, 3, &size);
 		_currentCursor = CURSOR_TALK;
 		break;
 
@@ -208,6 +205,62 @@ void EventsClass::setCursor(CursorType cursorType) {
 		DEALLOCATE(cursor);
 }
 
+void EventsClass::pushCursor(CursorType cursorType) {
+	const byte *cursor;
+	bool delFlag = true;
+	uint size;
+
+	switch (cursorType) {
+	case CURSOR_NONE:
+		// No cursor
+		cursor = _resourceManager->getSubResource(4, 1, 6, &size);
+		break;
+
+	case CURSOR_LOOK:
+		// Look cursor
+		cursor = _resourceManager->getSubResource(4, 1, 5, &size);
+		break;
+
+	case CURSOR_USE:
+		// Use cursor
+		cursor = _resourceManager->getSubResource(4, 1, 4, &size);
+		break;
+
+	case CURSOR_TALK:
+		// Talk cursor
+		cursor = _resourceManager->getSubResource(4, 1, 3, &size);
+		break;
+
+	case CURSOR_ARROW:
+		// Arrow cursor
+		cursor = CURSOR_ARROW_DATA;
+		delFlag = false;
+		break;
+
+	case CURSOR_WALK:
+	default:
+		// Walk cursor
+		cursor = CURSOR_WALK_DATA;
+		delFlag = false;
+		break;
+	}
+
+	// Decode the cursor
+	GfxSurface s = surfaceFromRes(cursor);
+
+	Graphics::Surface surface = s.lockSurface();
+	const byte *cursorData = (const byte *)surface.getBasePtr(0, 0);
+	CursorMan.pushCursor(cursorData, surface.w, surface.h, s._centroid.x, s._centroid.y, s._transColor);
+	s.unlockSurface();
+
+	if (delFlag)
+		DEALLOCATE(cursor);
+}
+
+void EventsClass::popCursor() {
+	CursorMan.popCursor();
+}
+
 void EventsClass::setCursor(Graphics::Surface &cursor, int transColor, const Common::Point &hotspot, CursorType cursorId) {
 	const byte *cursorData = (const byte *)cursor.getBasePtr(0, 0);
 	CursorMan.replaceCursor(cursorData, cursor.w, cursor.h, hotspot.x, hotspot.y, transColor);
@@ -216,15 +269,19 @@ void EventsClass::setCursor(Graphics::Surface &cursor, int transColor, const Com
 }
 
 void EventsClass::setCursorFromFlag() {
-	setCursor(_globals->getFlag(122) ? CURSOR_CROSSHAIRS : _currentCursor);
+	setCursor(isCursorVisible() ? _currentCursor : CURSOR_NONE);
 }
 
 void EventsClass::showCursor() {
-	CursorMan.showMouse(true);
+	setCursor(_currentCursor);
 }
 
 void EventsClass::hideCursor() {
-	CursorMan.showMouse(false);
+	setCursor(CURSOR_NONE);
+}
+
+bool EventsClass::isCursorVisible() const { 
+	return !_globals->getFlag(122);
 }
 
 /**

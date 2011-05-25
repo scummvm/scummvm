@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -31,6 +28,8 @@
  * Licensed under GNU GPL v2
  *
  */
+
+#include "common/textconsole.h"
 
 #include "sword25/script/luacallback.h"
 #include "sword25/script/luabindhelper.h"

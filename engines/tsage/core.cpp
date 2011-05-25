@@ -18,16 +18,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/system.h"
-#include "common/config-manager.h"
-#include "common/translation.h"
 #include "engines/engine.h"
-#include "gui/saveload.h"
+#include "graphics/palette.h"
 #include "tsage/tsage.h"
 #include "tsage/core.h"
 #include "tsage/dialogs.h"
@@ -51,7 +46,7 @@ InvObject::InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType curs
 
 	// Decode the image for the inventory item to get it's display bounds
 	uint size;
-	byte *imgData = _vm->_dataManager->getSubResource(_displayResNum, _rlbNum, _cursorNum, &size);
+	byte *imgData = _resourceManager->getSubResource(_displayResNum, _rlbNum, _cursorNum, &size);
 	GfxSurface s = surfaceFromRes(imgData);
 	_bounds = s.getBounds();
 
@@ -71,81 +66,12 @@ void InvObject::setCursor() {
 
 /*--------------------------------------------------------------------------*/
 
-InvObjectList::InvObjectList() :
-		_stunner(2280, 1, 2, OBJECT_STUNNER, "This is your stunner."),
-		_scanner(1, 1, 3, OBJECT_SCANNER, "A combination scanner comm unit."),
-		_stasisBox(5200, 1, 4, OBJECT_STASIS_BOX, "A stasis box."),
-		_infoDisk(40, 1, 1, OBJECT_INFODISK, "The infodisk you took from the assassin."),
-		_stasisNegator(0, 2, 2, OBJECT_STASIS_NEGATOR, "The stasis field negator."),
-		_keyDevice(4250, 1, 6, OBJECT_KEY_DEVICE, "A magnetic key device."),
-		_medkit(2280, 1, 7, OBJECT_MEDKIT,  "Your medkit."),
-		_ladder(4100, 1, 8, OBJECT_LADDER, "The chief's ladder."),
-		_rope(4150, 1, 9, OBJECT_ROPE, "The chief's rope."),
-		_key(7700, 1, 11, OBJECT_KEY, "A key."),
-		_translator(7700, 1, 13, OBJECT_TRANSLATOR,  "The dolphin translator box."),
-		_ale(2150, 1, 10, OBJECT_ALE, "A bottle of ale."),
-		_paper(7700, 1, 12, OBJECT_PAPER, "A slip of paper with the numbers 2,4, and 3 written on it."),
-		_waldos(0, 1, 14, OBJECT_WALDOS, "A pair of waldos from the ruined probe."),
-		_stasisBox2(8100, 1, 4, OBJECT_STASIS_BOX2, "A stasis box."),
-		_ring(8100, 2, 5, OBJECT_RING, "This is a signet ring sent to you by Louis Wu."),
-		_cloak(9850, 2, 6, OBJECT_CLOAK, "A fine silk cloak."),
-		_tunic(9450, 2, 7, OBJECT_TUNIC, "The patriarch's soiled tunic."),
-		_candle(9500, 2, 8, OBJECT_CANDLE, "A tallow candle."),
-		_straw(9400, 2, 9, OBJECT_STRAW, "Clean, dry straw."),
-		_scimitar(9850, 1, 18, OBJECT_SCIMITAR, "A scimitar from the Patriarch's closet."),
-		_sword(9850, 1, 17, OBJECT_SWORD, "A short sword from the Patriarch's closet."),
-		_helmet(9500, 2, 4, OBJECT_HELMET, "Some type of helmet."),
-		_items(4300, 2, 10, OBJECT_ITEMS, "Two interesting items from the Tnuctipun vessel."),
-		_concentrator(4300, 2, 11, OBJECT_CONCENTRATOR, "The Tnuctipun anti-matter concentrator contained in a stasis field."),
-		_nullifier(5200, 2, 12, OBJECT_NULLIFIER, "A purported neural wave nullifier."),
-		_peg(4045, 2, 16, OBJECT_PEG, "A peg with a symbol."),
-		_vial(5100, 2, 17, OBJECT_VIAL, "A vial of the bat creatures anti-pheromone drug."),
-		_jacket(9850, 3, 1, OBJECT_JACKET, "A natty padded jacket."),
-		_tunic2(9850, 3, 2, OBJECT_TUNIC2, "A very hairy tunic."),
-		_bone(5300, 3, 5, OBJECT_BONE, "A very sharp bone."),
-		_jar(7700, 3, 4, OBJECT_JAR, "An jar filled with a green substance."),
-		_emptyJar(7700, 3, 3, OBJECT_EMPTY_JAR, "An empty jar.") {
-
-	// Add the items to the list
-	_itemList.push_back(&_stunner);
-	_itemList.push_back(&_scanner);
-	_itemList.push_back(&_stasisBox);
-	_itemList.push_back(&_infoDisk);
-	_itemList.push_back(&_stasisNegator);
-	_itemList.push_back(&_keyDevice);
-	_itemList.push_back(&_medkit);
-	_itemList.push_back(&_ladder);
-	_itemList.push_back(&_rope);
-	_itemList.push_back(&_key);
-	_itemList.push_back(&_translator);
-	_itemList.push_back(&_ale);
-	_itemList.push_back(&_paper);
-	_itemList.push_back(&_waldos);
-	_itemList.push_back(&_stasisBox2);
-	_itemList.push_back(&_ring);
-	_itemList.push_back(&_cloak);
-	_itemList.push_back(&_tunic);
-	_itemList.push_back(&_candle);
-	_itemList.push_back(&_straw);
-	_itemList.push_back(&_scimitar);
-	_itemList.push_back(&_sword);
-	_itemList.push_back(&_helmet);
-	_itemList.push_back(&_items);
-	_itemList.push_back(&_concentrator);
-	_itemList.push_back(&_nullifier);
-	_itemList.push_back(&_peg);
-	_itemList.push_back(&_vial);
-	_itemList.push_back(&_jacket);
-	_itemList.push_back(&_tunic2);
-	_itemList.push_back(&_bone);
-	_itemList.push_back(&_jar);
-	_itemList.push_back(&_emptyJar);
-
+InvObjectList::InvObjectList() {
 	_selectedItem = NULL;
 }
 
-void InvObjectList::synchronise(Serialiser &s) {
-	SavedObject::synchronise(s);
+void InvObjectList::synchronize(Serializer &s) {
+	SavedObject::synchronize(s);
 	SYNC_POINTER(_selectedItem);
 }
 
@@ -155,17 +81,17 @@ void EventHandler::dispatch() {
 	if (_action) _action->dispatch();
 }
 
-void EventHandler::setAction(Action *action, EventHandler *fmt, ...) {
+void EventHandler::setAction(Action *action, EventHandler *endHandler, ...) {
 	if (_action) {
-		_action->_fmt = NULL;
+		_action->_endHandler = NULL;
 		_action->remove();
 	}
 
 	_action = action;
 	if (action) {
 		va_list va;
-		va_start(va, fmt);
-		_action->attached(this, fmt, va);
+		va_start(va, endHandler);
+		_action->attached(this, endHandler, va);
 		va_end(va);
 	}
 }
@@ -175,20 +101,21 @@ void EventHandler::setAction(Action *action, EventHandler *fmt, ...) {
 Action::Action() {
 	_actionIndex = 0;
 	_owner = NULL;
-	_fmt = NULL;
+	_endHandler = NULL;
+	_attached = false;
 }
 
-void Action::synchronise(Serialiser &s) {
-	EventHandler::synchronise(s);
-	if (s.isLoading())
+void Action::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
+	if (s.getVersion() == 1)
 		remove();
 
 	SYNC_POINTER(_owner);
 	s.syncAsSint32LE(_actionIndex);
 	s.syncAsSint32LE(_delayFrames);
 	s.syncAsUint32LE(_startFrame);
-	s.syncAsSint16LE(_field16);
-	SYNC_POINTER(_fmt);
+	s.syncAsByte(_attached);
+	SYNC_POINTER(_endHandler);
 }
 
 void Action::remove() {
@@ -202,9 +129,9 @@ void Action::remove() {
 		_globals->_sceneManager.removeAction(this);
 	}
 
-	_field16 = 0;
-	if (_fmt)
-		_fmt->signal();
+	_attached = false;
+	if (_endHandler)
+		_endHandler->signal();
 }
 
 void Action::process(Event &event) {
@@ -230,13 +157,13 @@ void Action::dispatch() {
 	}
 }
 
-void Action::attached(EventHandler *newOwner, EventHandler *fmt, va_list va) {
+void Action::attached(EventHandler *newOwner, EventHandler *endHandler, va_list va) {
 	_actionIndex = 0;
 	_delayFrames = 0;
 	_startFrame = _globals->_events.getFrameNumber();
 	_owner = newOwner;
-	_fmt = fmt;
-	_field16 = 1;
+	_endHandler = endHandler;
+	_attached = true;
 	signal();
 }
 
@@ -252,15 +179,15 @@ ObjectMover::~ObjectMover() {
 		_sceneObject->_mover = NULL;
 }
 
-void ObjectMover::synchronise(Serialiser &s) {
-	EventHandler::synchronise(s);
+void ObjectMover::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
 
 	s.syncAsSint16LE(_destPosition.x); s.syncAsSint16LE(_destPosition.y);
 	s.syncAsSint16LE(_moveDelta.x); s.syncAsSint16LE(_moveDelta.y);
 	s.syncAsSint16LE(_moveSign.x); s.syncAsSint16LE(_moveSign.y);
 	s.syncAsSint32LE(_minorDiff);
 	s.syncAsSint32LE(_majorDiff);
-	s.syncAsSint32LE(_field1A);
+	s.syncAsSint32LE(_changeCtr);
 	SYNC_POINTER(_action);
 	SYNC_POINTER(_sceneObject);
 }
@@ -294,10 +221,10 @@ void ObjectMover::dispatch() {
 			ySign = _moveSign.y;
 		else {
 			int v = yAmount / yChange;
-			_field1A += yAmount % yChange;
-			if (_field1A >= yChange) {
+			_changeCtr += yAmount % yChange;
+			if (_changeCtr >= yChange) {
 				++v;
-				_field1A -= yChange;
+				_changeCtr -= yChange;
 			}
 
 			ySign = _moveSign.y * v;
@@ -320,10 +247,10 @@ void ObjectMover::dispatch() {
 			xSign = _moveSign.x;
 		else {
 			int v = xAmount / xChange;
-			_field1A += xAmount % xChange;
-			if (_field1A >= xChange) {
+			_changeCtr += xAmount % xChange;
+			if (_changeCtr >= xChange) {
 				++v;
-				_field1A -= xChange;
+				_changeCtr -= xChange;
 			}
 
 			xSign = _moveSign.x * v;
@@ -373,7 +300,7 @@ void ObjectMover::setup(const Common::Point &destPos) {
 	_destPosition = destPos;
 	_moveDelta = Common::Point(diffX, diffY);
 	_moveSign = Common::Point(xSign, ySign);
-	_field1A = 0;
+	_changeCtr = 0;
 
 	if (!diffX && !diffY)
 		// Object is already at the correct destination
@@ -398,8 +325,8 @@ ObjectMover2::ObjectMover2() : ObjectMover() {
 	_destObject = NULL;
 }
 
-void ObjectMover2::synchronise(Serialiser &s) {
-	ObjectMover::synchronise(s);
+void ObjectMover2::synchronize(Serializer &s) {
+	ObjectMover::synchronize(s);
 
 	SYNC_POINTER(_destObject);
 	s.syncAsSint32LE(_minArea);
@@ -474,8 +401,8 @@ void NpcMover::startMove(SceneObject *sceneObj, va_list va) {
 
 /*--------------------------------------------------------------------------*/
 
-void PlayerMover::synchronise(Serialiser &s) {
-	NpcMover::synchronise(s);
+void PlayerMover::synchronize(Serializer &s) {
+	NpcMover::synchronize(s);
 
 	s.syncAsSint16LE(_finalDest.x); s.syncAsSint16LE(_finalDest.y);
 	s.syncAsSint32LE(_routeIndex);
@@ -627,7 +554,6 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 		} while (routeRegions[++idx] != destRegion);
 
 		tempList[idx] = 1;
-		idx = 0;
 		for (int listIndex = 1; listIndex <= endIndex; ++listIndex) {
 			int var10 = tempList[listIndex];
 			int var12 = tempList[listIndex + 1];
@@ -997,9 +923,11 @@ bool PlayerMover::sub_F8E5(const Common::Point &pt1, const Common::Point &pt2, c
 
 /*--------------------------------------------------------------------------*/
 
-void PlayerMover2::synchronise(Serialiser &s) {
+void PlayerMover2::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		PlayerMover::synchronize(s);
 	SYNC_POINTER(_destObject);
-	s.syncAsSint16LE(_field7E);
+	s.syncAsSint16LE(_maxArea);
 	s.syncAsSint16LE(_minArea);
 }
 
@@ -1016,7 +944,7 @@ void PlayerMover2::dispatch() {
 
 void PlayerMover2::startMove(SceneObject *sceneObj, va_list va) {
 	_sceneObject = sceneObj;
-	_field7E = va_arg(va, int);
+	_maxArea = va_arg(va, int);
 	_minArea = va_arg(va, int);
 	_destObject = va_arg(va, SceneObject *);
 
@@ -1047,8 +975,8 @@ void PaletteModifierCached::setPalette(ScenePalette *palette, int step) {
 	_percent = 100;
 }
 
-void PaletteModifierCached::synchronise(Serialiser &s) {
-	PaletteModifier::synchronise(s);
+void PaletteModifierCached::synchronize(Serializer &s) {
+	PaletteModifier::synchronize(s);
 
 	s.syncAsByte(_step);
 	s.syncAsSint32LE(_percent);
@@ -1062,8 +990,8 @@ PaletteRotation::PaletteRotation() : PaletteModifierCached() {
 	_frameNumber = _globals->_events.getFrameNumber();
 }
 
-void PaletteRotation::synchronise(Serialiser &s) {
-	PaletteModifierCached::synchronise(s);
+void PaletteRotation::synchronize(Serializer &s) {
+	PaletteModifierCached::synchronize(s);
 
 	s.syncAsSint32LE(_delayCtr);
 	s.syncAsUint32LE(_frameNumber);
@@ -1191,8 +1119,8 @@ void PaletteRotation::setDelay(int amount) {
 
 /*--------------------------------------------------------------------------*/
 
-void PaletteFader::synchronise(Serialiser &s) {
-	PaletteModifierCached::synchronise(s);
+void PaletteFader::synchronize(Serializer &s) {
+	PaletteModifierCached::synchronize(s);
 
 	s.syncAsSint16LE(_step);
 	s.syncAsSint16LE(_percent);
@@ -1235,12 +1163,16 @@ ScenePalette::ScenePalette() {
 	_field412 = 0;
 }
 
+ScenePalette::~ScenePalette() {
+	clearListeners();
+}
+
 ScenePalette::ScenePalette(int paletteNum) {
 	loadPalette(paletteNum);
 }
 
 bool ScenePalette::loadPalette(int paletteNum) {
-	byte *palData = _vm->_dataManager->getResource(RES_PALETTE, paletteNum, 0, true);
+	byte *palData = _resourceManager->getResource(RES_PALETTE, paletteNum, 0, true);
 	if (!palData)
 		return false;
 
@@ -1319,13 +1251,16 @@ void ScenePalette::getPalette(int start, int count) {
 }
 
 void ScenePalette::signalListeners() {
-	for (SynchronisedList<PaletteModifier *>::iterator i = _listeners.begin(); i != _listeners.end(); ++i) {
-		(*i)->signal();
+	SynchronizedList<PaletteModifier *>::iterator i = _listeners.begin();
+	while (i != _listeners.end()) {
+		PaletteModifier *obj = *i;
+		++i;
+		obj->signal();
 	}
 }
 
 void ScenePalette::clearListeners() {
-	SynchronisedList<PaletteModifier *>::iterator i = _listeners.begin();
+	SynchronizedList<PaletteModifier *>::iterator i = _listeners.begin();
 	while (i != _listeners.end()) {
 		PaletteModifier *obj = *i;
 		++i;
@@ -1409,12 +1344,15 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 	_globals->_screenSurface.copyFrom(_globals->_sceneManager._scene->_backSurface,
 		bounds, Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), NULL);
 
-	for (SynchronisedList<PaletteModifier *>::iterator i = tempPalette._listeners.begin(); i != tempPalette._listeners.end(); ++i)
+	for (SynchronizedList<PaletteModifier *>::iterator i = tempPalette._listeners.begin(); i != tempPalette._listeners.end(); ++i)
 		delete *i;
 	tempPalette._listeners.clear();
 }
 
-void ScenePalette::synchronise(Serialiser &s) {
+void ScenePalette::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		SavedObject::synchronize(s);
+
 	s.syncBytes(_palette, 256 * 3);
 	s.syncAsSint32LE(_colors.foreground);
 	s.syncAsSint32LE(_colors.background);
@@ -1430,10 +1368,10 @@ void ScenePalette::synchronise(Serialiser &s) {
 
 /*--------------------------------------------------------------------------*/
 
-void SceneItem::synchronise(Serialiser &s) {
-	EventHandler::synchronise(s);
+void SceneItem::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
 
-	_bounds.synchronise(s);
+	_bounds.synchronize(s);
 	s.syncString(_msg);
 	s.syncAsSint32LE(_fieldE);
 	s.syncAsSint32LE(_field10);
@@ -1481,7 +1419,7 @@ bool SceneItem::contains(const Common::Point &pt) {
 }
 
 void SceneItem::display(int resNum, int lineNum, ...) {
-	Common::String msg = !resNum ? Common::String() : _vm->_dataManager->getMessage(resNum, lineNum);
+	Common::String msg = !resNum ? Common::String() : _resourceManager->getMessage(resNum, lineNum);
 
 	if (_globals->_sceneObjects->contains(&_globals->_sceneText)) {
 		_globals->_sceneText.remove();
@@ -1591,7 +1529,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 			_globals->_sceneText.setPosition(pos, 0);
 		}
 
-		_globals->_sceneText.setPriority2(255);
+		_globals->_sceneText.fixPriority(255);
 		_globals->_sceneObjects->draw();
 	}
 
@@ -1656,12 +1594,19 @@ void NamedHotspot::doAction(int action) {
 	}
 }
 
-void NamedHotspot::setup(const int ys, const int xe, const int ye, const int xs, const int resnum, const int lookLineNum, const int useLineNum) {
+void NamedHotspot::setup(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum) {
 	setBounds(ys, xe, ye, xs);
 	_resnum = resnum;
 	_lookLineNum = lookLineNum;
 	_useLineNum = useLineNum;
 	_globals->_sceneItems.addItems(this, NULL);
+}
+
+void NamedHotspot::synchronize(Serializer &s) {
+	SceneHotspot::synchronize(s);
+	s.syncAsSint16LE(_resnum);
+	s.syncAsSint16LE(_lookLineNum);
+	s.syncAsSint16LE(_useLineNum);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1672,8 +1617,8 @@ void SceneObjectWrapper::setSceneObject(SceneObject *so) {
 	so->_flags |= OBJFLAG_PANES;
 }
 
-void SceneObjectWrapper::synchronise(Serialiser &s) {
-	EventHandler::synchronise(s);
+void SceneObjectWrapper::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
 	SYNC_POINTER(_sceneObject);
 }
 
@@ -1735,7 +1680,7 @@ SceneObject::SceneObject() : SceneHotspot() {
 	_moveDiff.y = 3;
 	_numFrames = 10;
 	_numFrames = 10;
-	_field7A = 10;
+	_moveRate = 10;
 	_regionBitList = 0;
 	_sceneRegionId = 0;
 	_percent = 100;
@@ -1865,7 +1810,7 @@ void SceneObject::setPriority(int priority) {
 	}
 }
 
-void SceneObject::setPriority2(int priority) {
+void SceneObject::fixPriority(int priority) {
 	if (priority == -1) {
 		_flags &= ~OBJFLAG_FIXED_PRIORITY;
 	} else {
@@ -1897,8 +1842,8 @@ void SceneObject::addMover(ObjectMover *mover, ...) {
 	if (mover) {
 		// Set up the assigned mover
 		_walkStartFrame = _globals->_events.getFrameNumber();
-		if (_field7A != 0)
-			_walkStartFrame = 60 / _field7A;
+		if (_moveRate != 0)
+			_walkStartFrame = 60 / _moveRate;
 
 		// Signal the mover that movement is beginning
 		va_list va;
@@ -1951,7 +1896,7 @@ int SceneObject::checkRegion(const Common::Point &pt) {
 	}
 	newY -= _yDiff;
 
-	SynchronisedList<SceneObject *>::iterator i;
+	SynchronizedList<SceneObject *>::iterator i;
 	for (i = _globals->_sceneObjects->begin(); (regionIndex == 0) && (i != _globals->_sceneObjects->end()); ++i) {
 		if ((*i) && ((*i)->_flags & OBJFLAG_CHECK_REGION)) {
 			int objYDiff = (*i)->_position.y - _yDiff;
@@ -2070,8 +2015,8 @@ int SceneObject::getSpliceArea(const SceneObject *obj) {
 	return (xd * xd + yd) / 2;
 }
 
-void SceneObject::synchronise(Serialiser &s) {
-	SceneHotspot::synchronise(s);
+void SceneObject::synchronize(Serializer &s) {
+	SceneHotspot::synchronize(s);
 
 	s.syncAsUint32LE(_updateStartFrame);
 	s.syncAsUint32LE(_walkStartFrame);
@@ -2082,8 +2027,8 @@ void SceneObject::synchronise(Serialiser &s) {
 	s.syncAsUint32LE(_flags);
 	s.syncAsSint16LE(_xs);
 	s.syncAsSint16LE(_xe);
-	_paneRects[0].synchronise(s);
-	_paneRects[1].synchronise(s);
+	_paneRects[0].synchronize(s);
+	_paneRects[1].synchronize(s);
 	s.syncAsSint32LE(_visage);
 	SYNC_POINTER(_objectWrapper);
 	s.syncAsSint32LE(_strip);
@@ -2096,7 +2041,7 @@ void SceneObject::synchronise(Serialiser &s) {
 	s.syncAsSint32LE(_regionIndex);
 	SYNC_POINTER(_mover);
 	s.syncAsSint16LE(_moveDiff.x); s.syncAsSint16LE(_moveDiff.y);
-	s.syncAsSint32LE(_field7A);
+	s.syncAsSint32LE(_moveRate);
 	SYNC_POINTER(_endAction);
 	s.syncAsUint32LE(_regionBitList);
 }
@@ -2119,7 +2064,7 @@ void SceneObject::postInit(SceneObjectList *OwnerList) {
 		_yDiff = 0;
 		_moveDiff.x = 5;
 		_moveDiff.y = 3;
-		_field7A = 10;
+		_moveRate = 10;
 		_regionIndex = 0x40;
 		_numFrames = 10;
 		_regionBitList = 0;
@@ -2146,8 +2091,8 @@ void SceneObject::dispatch() {
 		_action->dispatch();
 
 	if (_mover && (_walkStartFrame <= currTime)) {
-		if (_field7A) {
-			int frameInc = 60 / _field7A;
+		if (_moveRate) {
+			int frameInc = 60 / _moveRate;
 			_walkStartFrame = currTime + frameInc;
 		}
 		_mover->dispatch();
@@ -2309,7 +2254,7 @@ void SceneObject::setup(int visage, int stripFrameNum, int frameNum, int posX, i
 	setStrip(stripFrameNum);
 	setFrame(frameNum);
 	setPosition(Common::Point(posX, posY), 0);
-	setPriority2(priority);
+	fixPriority(priority);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -2376,7 +2321,7 @@ void SceneObjectList::draw() {
 		uint32 flagMask = (paneNum == 0) ? OBJFLAG_PANE_0 : OBJFLAG_PANE_1;
 
 		// Initial loop to set up object list and update object position, priority, and flags
-		for (SynchronisedList<SceneObject *>::iterator i = _globals->_sceneObjects->begin();
+		for (SynchronizedList<SceneObject *>::iterator i = _globals->_sceneObjects->begin();
 				i != _globals->_sceneObjects->end(); ++i) {
 			SceneObject *obj = *i;
 			objList.push_back(obj);
@@ -2530,7 +2475,7 @@ void SceneObjectList::activate() {
 	_globals->_sceneObjects_queue.push_front(this);
 
 	// Flag all the objects as modified
-	SynchronisedList<SceneObject *>::iterator i;
+	SynchronizedList<SceneObject *>::iterator i;
 	for (i = begin(); i != end(); ++i) {
 		(*i)->_flags |= OBJFLAG_PANES;
 	}
@@ -2551,7 +2496,7 @@ void SceneObjectList::deactivate() {
 	_globals->_sceneObjects_queue.pop_front();
 	_globals->_sceneObjects = *_globals->_sceneObjects_queue.begin();
 
-	SynchronisedList<SceneObject *>::iterator i;
+	SynchronizedList<SceneObject *>::iterator i;
 	for (i = objectList->begin(); i != objectList->end(); ++i) {
 		if (!((*i)->_flags & OBJFLAG_CLONED)) {
 			SceneObject *sceneObj = (*i)->clone();
@@ -2561,8 +2506,10 @@ void SceneObjectList::deactivate() {
 	}
 }
 
-void SceneObjectList::synchronise(Serialiser &s) {
-	_objList.synchronise(s);
+void SceneObjectList::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		SavedObject::synchronize(s);
+	_objList.synchronize(s);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -2589,6 +2536,8 @@ void SceneText::setup(const Common::String &msg) {
 	gfxMan._font._colors2.foreground = _color3;
 
 	gfxMan.getStringBounds(msg.c_str(), textRect, _width);
+	_bounds.setWidth(textRect.width());
+	_bounds.setHeight(textRect.height());
 
 	// Set up a new blank surface to hold the text
 	_textSurface.create(textRect.width(), textRect.height());
@@ -2604,8 +2553,8 @@ void SceneText::setup(const Common::String &msg) {
 	gfxMan.deactivate();
 }
 
-void SceneText::synchronise(Serialiser &s) {
-	SceneObject::synchronise(s);
+void SceneText::synchronize(Serializer &s) {
+	SceneObject::synchronize(s);
 
 	s.syncAsSint16LE(_fontNumber);
 	s.syncAsSint16LE(_width);
@@ -2646,7 +2595,7 @@ void Visage::setVisage(int resNum, int rlbNum) {
 		_resNum = resNum;
 		_rlbNum = rlbNum;
 		DEALLOCATE(_data);
-		_data = _vm->_dataManager->getResource(RES_VISAGE, resNum, rlbNum);
+		_data = _resourceManager->getResource(RES_VISAGE, resNum, rlbNum);
 		assert(_data);
 	}
 }
@@ -2673,6 +2622,12 @@ int Visage::getFrameCount() const {
 }
 
 /*--------------------------------------------------------------------------*/
+
+Player::Player(): SceneObject() {
+	_canWalk = false;
+	_uiEnabled = false;
+	_field8C = 0;
+}
 
 void Player::postInit(SceneObjectList *OwnerList) {
 	SceneObject::postInit();
@@ -2723,8 +2678,8 @@ void Player::process(Event &event) {
 	}
 }
 
-void Player::synchronise(Serialiser &s) {
-	SceneObject::synchronise(s);
+void Player::synchronize(Serializer &s) {
+	SceneObject::synchronize(s);
 
 	s.syncAsByte(_canWalk);
 	s.syncAsByte(_uiEnabled);
@@ -2736,9 +2691,20 @@ void Player::synchronise(Serialiser &s) {
 Region::Region(int resNum, int rlbNum, ResourceType ctlType) {
 	_regionId = rlbNum;
 
-	byte *regionData = _vm->_dataManager->getResource(ctlType, resNum, rlbNum);
+	byte *regionData = _resourceManager->getResource(ctlType, resNum, rlbNum);
 	assert(regionData);
 
+	load(regionData);
+
+	DEALLOCATE(regionData);
+}
+
+Region::Region(int regionId, const byte *regionData) {
+	_regionId = regionId;
+	load(regionData);
+}
+
+void Region::load(const byte *regionData) {
 	// Set the region bounds
 	_bounds.top = READ_LE_UINT16(regionData + 6);
 	_bounds.left = READ_LE_UINT16(regionData + 8);
@@ -2761,8 +2727,6 @@ Region::Region(int resNum, int rlbNum, ResourceType ctlType) {
 
 		_ySlices.push_back(sliceSet);
 	}
-
-	DEALLOCATE(regionData);
 }
 
 /**
@@ -2947,15 +2911,22 @@ void Region::uniteRect(const Rect &rect) {
 
 void SceneRegions::load(int sceneNum) {
 	clear();
-
-	byte *regionData = _vm->_dataManager->getResource(RES_CONTROL, sceneNum, 9999, true);
+	bool altRegions = _vm->getFeatures() & GF_ALT_REGIONS;
+	byte *regionData = _resourceManager->getResource(RES_CONTROL, sceneNum, altRegions ? 1 : 9999, true);
 
 	if (regionData) {
 		int regionCount = READ_LE_UINT16(regionData);
 		for (int regionCtr = 0; regionCtr < regionCount; ++regionCtr) {
-			int rlbNum = READ_LE_UINT16(regionData + regionCtr * 6 + 2);
+			int regionId = READ_LE_UINT16(regionData + regionCtr * 6 + 2);
 
-			push_back(Region(sceneNum, rlbNum));
+			if (altRegions) {
+				// Load data from within this resource
+				uint32 dataOffset = READ_LE_UINT32(regionData + regionCtr * 6 + 4);
+				push_back(Region(regionId, regionData + dataOffset));
+			} else {
+				// Load region from a separate resource
+				push_back(Region(sceneNum, regionId));
+			}
 		}
 
 		DEALLOCATE(regionData);
@@ -3210,9 +3181,20 @@ void WalkRegions::clear() {
 
 void WalkRegions::load(int sceneNum) {
 	clear();
-
 	_resNum = sceneNum;
-	byte *regionData = _vm->_dataManager->getResource(RES_WALKRGNS, sceneNum, 1, true);
+
+	if (_vm->getFeatures() & GF_ALT_REGIONS) {
+		loadRevised();
+	} else {
+		loadOriginal();
+	}
+}
+
+/**
+ * This version handles loading walk regions for Ringworld floppy version and Demo #1
+ */
+void WalkRegions::loadOriginal() {
+	byte *regionData = _resourceManager->getResource(RES_WALKRGNS, _resNum, 1, true);
 	if (!regionData) {
 		// No data, so return
 		_resNum = -1;
@@ -3223,7 +3205,7 @@ void WalkRegions::load(int sceneNum) {
 	int dataSize;
 
 	// Load the field 18 list
-	dataP = _vm->_dataManager->getResource(RES_WALKRGNS, sceneNum, 2);
+	dataP = _resourceManager->getResource(RES_WALKRGNS, _resNum, 2);
 	dataSize = _vm->_memoryManager.getSize(dataP);
 	assert(dataSize % 10 == 0);
 
@@ -3237,7 +3219,7 @@ void WalkRegions::load(int sceneNum) {
 	DEALLOCATE(dataP);
 
 	// Load the idx list
-	dataP = _vm->_dataManager->getResource(RES_WALKRGNS, sceneNum, 3);
+	dataP = _resourceManager->getResource(RES_WALKRGNS, _resNum, 3);
 	dataSize = _vm->_memoryManager.getSize(dataP);
 	assert(dataSize % 2 == 0);
 
@@ -3248,7 +3230,7 @@ void WalkRegions::load(int sceneNum) {
 	DEALLOCATE(dataP);
 
 	// Load the secondary idx list
-	dataP = _vm->_dataManager->getResource(RES_WALKRGNS, sceneNum, 4);
+	dataP = _resourceManager->getResource(RES_WALKRGNS, _resNum, 4);
 	dataSize = _vm->_memoryManager.getSize(dataP);
 	assert(dataSize % 2 == 0);
 
@@ -3259,7 +3241,7 @@ void WalkRegions::load(int sceneNum) {
 	DEALLOCATE(dataP);
 
 	// Handle the loading of the actual regions themselves
-	dataP = _vm->_dataManager->getResource(RES_WALKRGNS, sceneNum, 5);
+	dataP = _resourceManager->getResource(RES_WALKRGNS, _resNum, 5);
 
 	byte *pWalkRegion = regionData + 16;
 	byte *srcP = dataP;
@@ -3272,7 +3254,7 @@ void WalkRegions::load(int sceneNum) {
 		wr._idxListIndex = READ_LE_UINT32(pWalkRegion + 4);
 		wr._idxList2Index = READ_LE_UINT32(pWalkRegion + 8);
 
-		// Region in the region data
+		// Read in the region data
 		int size = READ_LE_UINT16(srcP);
 		srcP += 2;
 		wr.loadRegion(srcP, size);
@@ -3286,13 +3268,81 @@ void WalkRegions::load(int sceneNum) {
 }
 
 /**
+ * This version handles loading walk regions for Ringworld CD version and Demo #2. Given it's the newer
+ * version, it may also be used by future game titles
+ */
+void WalkRegions::loadRevised() {
+	byte *regionData = _resourceManager->getResource(RES_WALKRGNS, _resNum, 2, true);
+	if (!regionData) {
+		// No data, so return
+		_resNum = -1;
+		return;
+	}
+
+	byte *data1P = regionData + READ_LE_UINT32(regionData);
+	byte *data2P = regionData + READ_LE_UINT32(regionData + 4);
+	byte *data3P = regionData + READ_LE_UINT32(regionData + 8);
+	byte *data4P = regionData + READ_LE_UINT32(regionData + 12);
+	byte *regionOffset = regionData + 16;
+	int dataSize;
+
+	// Load the field 18 list
+	dataSize = READ_LE_UINT32(regionData + 8) - READ_LE_UINT32(regionData + 4);
+	assert(dataSize % 10 == 0);
+
+	byte *p = data2P;
+	for (int idx = 0; idx < (dataSize / 10); ++idx, p += 10) {
+		WRField18 rec;
+		rec.load(p);
+		_field18.push_back(rec);
+	}
+
+	// Load the idx list
+	dataSize = READ_LE_UINT32(regionData + 12) - READ_LE_UINT32(regionData + 8);
+	assert(dataSize % 2 == 0);
+
+	p = data3P;
+	for (int idx = 0; idx < (dataSize / 2); ++idx, p += 2)
+		_idxList.push_back(READ_LE_UINT16(p));
+
+	// Load the secondary idx list
+	dataSize = READ_LE_UINT32(regionData + 16) - READ_LE_UINT32(regionData + 12);
+	assert(dataSize % 2 == 0);
+
+	p = data4P;
+	for (int idx = 0; idx < (dataSize / 2); ++idx, p += 2)
+		_idxList2.push_back(READ_LE_UINT16(p));
+
+	// Handle the loading of the actual regions themselves
+	byte *pWalkRegion = data1P + 16;
+	for (; (int16)READ_LE_UINT16(pWalkRegion) != -20000; pWalkRegion += 16, regionOffset += 4) {
+		WalkRegion wr;
+		byte *srcP = regionData + READ_LE_UINT32(regionOffset);
+
+		// Set the Walk region specific fields
+		wr._pt.x = (int16)READ_LE_UINT16(pWalkRegion);
+		wr._pt.y = (int16)READ_LE_UINT16(pWalkRegion + 2);
+		wr._idxListIndex = READ_LE_UINT32(pWalkRegion + 4);
+		wr._idxList2Index = READ_LE_UINT32(pWalkRegion + 8);
+
+		// Read in the region data
+		wr._regionId = 0;
+		wr.load(srcP);
+
+		_regionList.push_back(wr);
+	}
+
+	DEALLOCATE(regionData);
+}
+
+/**
  * Returns the index of the walk region that contains the given point
  * @param pt		Point to locate
  * @param indexList	List of region indexes that should be ignored
  */
 int WalkRegions::indexOf(const Common::Point &pt, const Common::List<int> *indexList) {
 	for (uint idx = 0; idx < _regionList.size(); ++idx) {
-		if ((!indexList || contains(*indexList, int(idx + 1))) && _regionList[idx].contains(pt))
+		if ((!indexList || !contains(*indexList, int(idx + 1))) && _regionList[idx].contains(pt))
 			return idx + 1;
 	}
 
@@ -3305,18 +3355,27 @@ void ScenePriorities::load(int resNum) {
 	_resNum = resNum;
 	clear();
 
-	byte *regionData = _vm->_dataManager->getResource(RES_PRIORITY, resNum, 9999, true);
+	bool altMode = (_vm->getFeatures() & GF_ALT_REGIONS) != 0;
+	byte *regionData = _resourceManager->getResource(RES_PRIORITY, resNum, altMode ? 1 : 9999, true);
+	if (!regionData)
+		return;
 
-	if (regionData) {
-		int regionCount = READ_LE_UINT16(regionData);
-		for (int regionCtr = 0; regionCtr < regionCount; ++regionCtr) {
+	int regionCount = READ_LE_UINT16(regionData);
+	for (int regionCtr = 0; regionCtr < regionCount; ++regionCtr) {
+		if (altMode) {
+			// Region data is embedded within the resource
+			uint16 regionId = READ_LE_UINT16(regionData + regionCtr * 6 + 2);
+			uint32 dataOffset = READ_LE_UINT32(regionData + regionCtr * 6 + 4);
+			push_back(Region(regionId, regionData + dataOffset));
+		} else {
+			// The data contains the index of another resource containing the region data
 			int rlbNum = READ_LE_UINT16(regionData + regionCtr * 6 + 2);
 
 			push_back(Region(resNum, rlbNum, RES_PRIORITY));
 		}
-
-		DEALLOCATE(regionData);
 	}
+
+	DEALLOCATE(regionData);
 }
 
 Region *ScenePriorities::find(int priority) {
@@ -3327,7 +3386,7 @@ Region *ScenePriorities::find(int priority) {
 	if (priority > 255)
 		priority = 255;
 
-	// Loop through the regions to find the closest for the givne priority level
+	// Loop through the regions to find the closest for the given priority level
 	int minRegionId = 9998;
 	Region *region = NULL;
 	for (ScenePriorities::iterator i = begin(); i != end(); ++i) {
@@ -3376,7 +3435,7 @@ GameHandler::GameHandler() : EventHandler() {
 
 GameHandler::~GameHandler() {
 	if (_globals)
-		_globals->_game.removeHandler(this);
+		_globals->_game->removeHandler(this);
 }
 
 void GameHandler::execute() {
@@ -3386,9 +3445,12 @@ void GameHandler::execute() {
 	}
 }
 
-void GameHandler::synchronise(Serialiser &s) {
-	_lockCtr.synchronise(s);
-	_waitCtr.synchronise(s);
+void GameHandler::synchronize(Serializer &s) {
+	if (s.getVersion() >= 2)
+		EventHandler::synchronize(s);
+
+	_lockCtr.synchronize(s);
+	_waitCtr.synchronize(s);
 	s.syncAsSint16LE(_nextWaitCtr);
 	s.syncAsSint16LE(_field14);
 }
@@ -3402,7 +3464,7 @@ SceneHandler::SceneHandler() {
 
 void SceneHandler::registerHandler() {
 	postInit();
-	_globals->_game.addHandler(this);
+	_globals->_game->addHandler(this);
 }
 
 void SceneHandler::postInit(SceneObjectList *OwnerList) {
@@ -3414,72 +3476,16 @@ void SceneHandler::postInit(SceneObjectList *OwnerList) {
 	// TODO: Bunch of other scene related setup goes here
 	_globals->_soundManager.postInit();
 
-	// Set some default flags and cursor
-	_globals->setFlag(12);
-	_globals->setFlag(34);
-	_globals->_events.setCursor(CURSOR_WALK);
-
-	// Set the screen to scroll in response to the player moving off-screen
-	_globals->_scrollFollower = &_globals->_player;
-
-	// Set the object's that will be in the player's inventory by default
-	_globals->_inventory._stunner._sceneNumber = 1;
-	_globals->_inventory._scanner._sceneNumber = 1;
-	_globals->_inventory._ring._sceneNumber = 1;
-
-	// Switch to the title screen
-	_globals->_sceneManager.setNewScene(1000);
+	_globals->_game->start();
 }
 
 void SceneHandler::process(Event &event) {
 	// Main keypress handler
-	if ((event.eventType == EVENT_KEYPRESS) && !event.handled) {
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_F1:
-			// F1 - Help
-			_globals->_events.setCursor(CURSOR_ARROW);
-			MessageDialog::show(HELP_MSG, OK_BTN_STRING);
-			break;
+	if (!event.handled) {
+		_globals->_game->processEvent(event);
 
-		case Common::KEYCODE_F2: {
-			// F2 - Sound Options
-			ConfigDialog *dlg = new ConfigDialog();
-			dlg->runModal();
-			delete dlg;
+		if (event.eventType == EVENT_KEYPRESS)
 			_globals->_events.setCursorFromFlag();
-			break;
-		}
-
-		case Common::KEYCODE_F3:
-			// F3 - Quit
-			_globals->_game.quitGame();
-			event.handled = false;
-			break;
-
-		case Common::KEYCODE_F4:
-			// F4 - Restart
-			_globals->_game.restartGame();
-			_globals->_events.setCursorFromFlag();
-			break;
-
-		case Common::KEYCODE_F7:
-			// F7 - Restore
-			_globals->_game.restoreGame();
-			_globals->_events.setCursorFromFlag();
-			break;
-
-		case Common::KEYCODE_F10:
-			// F10 - Pause
-			GfxDialog::setPalette();
-			MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
-			_globals->_events.setCursorFromFlag();
-			break;
-
-		default:
-			break;
-		}
-
-		_globals->_events.setCursorFromFlag();
 	}
 
 	// Check for displaying right-click dialog
@@ -3501,7 +3507,7 @@ void SceneHandler::process(Event &event) {
 		// Separate check for F5 - Save key
 		if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_F5)) {
 			// F5 - Save
-			_globals->_game.saveGame();
+			_globals->_game->saveGame();
 			event.handled = true;
 			_globals->_events.setCursorFromFlag();
 		}
@@ -3518,7 +3524,7 @@ void SceneHandler::process(Event &event) {
 		if (_globals->_player._uiEnabled && (event.eventType == EVENT_BUTTON_DOWN) &&
 				!_globals->_sceneItems.empty()) {
 			// Scan the item list to find one the mouse is within
-			SynchronisedList<SceneItem *>::iterator i = _globals->_sceneItems.begin();
+			SynchronizedList<SceneItem *>::iterator i = _globals->_sceneItems.begin();
 			while ((i != _globals->_sceneItems.end()) && !(*i)->contains(event.mousePos))
 				++i;
 
@@ -3596,152 +3602,8 @@ void SceneHandler::dispatchObject(EventHandler *obj) {
 	obj->dispatch();
 }
 
-void SceneHandler::saveListener(Serialiser &ser) {
+void SceneHandler::saveListener(Serializer &ser) {
 	warning("TODO: SceneHandler::saveListener");
-}
-
-/*--------------------------------------------------------------------------*/
-
-void Game::execute() {
-	// Main game loop
-	bool activeFlag = false;
-	do {
-		// Process all currently atcive game handlers
-		activeFlag = false;
-		for (SynchronisedList<GameHandler *>::iterator i = _handlers.begin(); i != _handlers.end(); ++i) {
-			GameHandler *gh = *i;
-			if (gh->_lockCtr.getCtr() == 0) {
-				gh->execute();
-				activeFlag = true;
-			}
-		}
-	} while (activeFlag && !_vm->getEventManager()->shouldQuit());
-}
-
-void Game::restartGame() {
-	if (MessageDialog::show(RESTART_MSG, CANCEL_BTN_STRING, RESTART_BTN_STRING) == 1)
-		_globals->_game.restart();
-}
-
-void Game::saveGame() {
-	if (_globals->getFlag(50))
-		MessageDialog::show(SAVING_NOT_ALLOWED_MSG, OK_BTN_STRING);
-	else {
-		// Show the save dialog
-		handleSaveLoad(true, _globals->_sceneHandler._saveGameSlot, _globals->_sceneHandler._saveName);
-	}
-}
-
-void Game::restoreGame() {
-	if (_globals->getFlag(50))
-		MessageDialog::show(RESTORING_NOT_ALLOWED_MSG, OK_BTN_STRING);
-	else {
-		// Show the load dialog
-		handleSaveLoad(false, _globals->_sceneHandler._loadGameSlot, _globals->_sceneHandler._saveName);
-	}
-}
-
-void Game::quitGame() {
-	if (MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING) == 1)
-		_vm->quitGame();
-}
-
-void Game::handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName) {
-	const EnginePlugin *plugin = 0;
-	EngineMan.findGame(_vm->getGameId(), &plugin);
-	GUI::SaveLoadChooser *dialog;
-	if (saveFlag)
-		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"));
-	else
-		dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"));
-
-	dialog->setSaveMode(saveFlag);
-
-	saveSlot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
-	saveName = dialog->getResultString();
-
-	delete dialog;
-}
-
-void Game::restart() {
-	_globals->_scenePalette.clearListeners();
-	_globals->_soundHandler.proc3();
-
-	// Reset the flags
-	_globals->reset();
-	_globals->setFlag(34);
-
-	// Clear save/load slots
-	_globals->_sceneHandler._saveGameSlot = -1;
-	_globals->_sceneHandler._loadGameSlot = -1;
-
-	_globals->_stripNum = 0;
-	_globals->_events.setCursor(CURSOR_WALK);
-
-	// Reset item properties
-	_globals->_inventory._stunner._sceneNumber = 1;
-	_globals->_inventory._scanner._sceneNumber = 1;
-	_globals->_inventory._stasisBox._sceneNumber = 5200;
-	_globals->_inventory._infoDisk._sceneNumber = 40;
-	_globals->_inventory._stasisNegator._sceneNumber = 0;
-	_globals->_inventory._keyDevice._sceneNumber = 0;
-	_globals->_inventory._medkit._sceneNumber = 2280;
-	_globals->_inventory._ladder._sceneNumber = 4100;
-	_globals->_inventory._rope._sceneNumber = 4150;
-	_globals->_inventory._key._sceneNumber = 7700;
-	_globals->_inventory._translator._sceneNumber = 2150;
-	_globals->_inventory._paper._sceneNumber = 7700;
-	_globals->_inventory._waldos._sceneNumber = 0;
-	_globals->_inventory._ring._sceneNumber = 1;
-	_globals->_inventory._stasisBox2._sceneNumber = 8100;
-	_globals->_inventory._cloak._sceneNumber = 9850;
-	_globals->_inventory._tunic._sceneNumber = 9450;
-	_globals->_inventory._candle._sceneNumber = 9500;
-	_globals->_inventory._straw._sceneNumber = 9400;
-	_globals->_inventory._scimitar._sceneNumber = 9850;
-	_globals->_inventory._sword._sceneNumber = 9850;
-	_globals->_inventory._helmet._sceneNumber = 9500;
-	_globals->_inventory._items._sceneNumber = 4300;
-	_globals->_inventory._concentrator._sceneNumber = 4300;
-	_globals->_inventory._nullifier._sceneNumber = 4300;
-	_globals->_inventory._peg._sceneNumber = 4045;
-	_globals->_inventory._vial._sceneNumber = 5100;
-	_globals->_inventory._jacket._sceneNumber = 9850;
-	_globals->_inventory._tunic2._sceneNumber = 9850;
-	_globals->_inventory._bone._sceneNumber = 5300;
-	_globals->_inventory._jar._sceneNumber = 7700;
-	_globals->_inventory._emptyJar._sceneNumber = 7700;
-	_globals->_inventory._selectedItem = NULL;
-
-	// Change to the first game scene
-	_globals->_sceneManager.changeScene(30);
-}
-
-void Game::endGame(int resNum, int lineNum) {
-	_globals->_events.setCursor(CURSOR_WALK);
-	Common::String msg = _vm->_dataManager->getMessage(resNum, lineNum);
-	bool savesExist = _saver->savegamesExist();
-
-	if (!savesExist) {
-		// No savegames exist, so prompt the user to restart or quit
-		if (MessageDialog::show(msg, QUIT_BTN_STRING, RESTART_BTN_STRING) == 0)
-			_vm->quitGame();
-		else
-			restart();
-	} else {
-		// Savegames exist, so prompt for Restore/Restart
-		bool breakFlag;
-		do {
-			if (MessageDialog::show(msg, RESTART_BTN_STRING, RESTORE_BTN_STRING) == 0) {
-				breakFlag = true;
-			} else {
-				handleSaveLoad(false, _globals->_sceneHandler._loadGameSlot, _globals->_sceneHandler._saveName);
-				breakFlag = _globals->_sceneHandler._loadGameSlot > 0;
-			}
-		} while (!breakFlag);
-	}
-
-	_globals->_events.setCursorFromFlag();
 }
 
 } // End of namespace tSage

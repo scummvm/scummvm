@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #if defined(__PLAYSTATION2__)
@@ -28,7 +25,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/fs/ps2/ps2-fs-factory.h"
-#include "backends/fs/ps2/ps2-fs.cpp"
+#include "backends/fs/ps2/ps2-fs.h"
 
 DECLARE_SINGLETON(Ps2FilesystemFactory);
 
@@ -43,4 +40,5 @@ AbstractFSNode *Ps2FilesystemFactory::makeCurrentDirectoryFileNode() const {
 AbstractFSNode *Ps2FilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	return new Ps2FilesystemNode(path, true);
 }
+
 #endif

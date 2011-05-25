@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "agi/agi.h"
@@ -279,7 +276,7 @@ void AgiEngine::handleGetstring(int key) {
 void AgiEngine::handleKeys(int key) {
 	uint8 *p = NULL;
 	int c = 0;
-	static uint8 formattedEntry[256];
+	static uint8 formattedEntry[40];
 	int l = _game.lineUserInput;
 	int fg = _game.colorFg, bg = _game.colorBg;
 	int promptLength = strlen(agiSprintf(_game.strings[0]));
@@ -298,7 +295,7 @@ void AgiEngine::handleKeys(int key) {
 			;
 
 		// Copy to internal buffer
-		for (; *p; p++) {
+		for (; *p && c < 40-1; p++) {
 			// Squash spaces
 			if (*p == 0x20 && *(p + 1) == 0x20) {
 				p++;

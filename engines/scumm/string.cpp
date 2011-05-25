@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 
@@ -35,6 +32,7 @@
 #ifdef ENABLE_HE
 #include "scumm/he/intern_he.h"
 #endif
+#include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/scumm_v6.h"
 #include "scumm/scumm_v8.h"
@@ -354,7 +352,7 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 	const int charsetCode = (_game.heversion >= 80) ? 127 : 64;
 	uint32 talk_sound_a = 0;
-	uint32 talk_sound_b = 0;
+	//uint32 talk_sound_b = 0;
 	int i, c = 0;
 	char value[32];
 	bool endLoop = false;
@@ -385,7 +383,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 				i++;
 			}
 			value[i] = 0;
-			talk_sound_b = atoi(value);
+			//talk_sound_b = atoi(value);
 			((SoundHE *)_sound)->startHETalkSound(talk_sound_a);
 			break;
 		case 104:
@@ -408,7 +406,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 			}
 			value[i] = 0;
 			talk_sound_a = atoi(value);
-			talk_sound_b = 0;
+			//talk_sound_b = 0;
 			((SoundHE *)_sound)->startHETalkSound(talk_sound_a);
 			break;
 		case 119:

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "graphics/surface.h"
@@ -30,6 +27,7 @@
 #include "audio/mixer_intern.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "graphics/colormasks.h"
+#include "graphics/palette.h"
 
 #include <AudioToolbox/AudioQueue.h>
 
@@ -88,9 +86,9 @@ protected:
 	bool _mouseDirty;
 	long _lastMouseDown;
 	long _lastMouseTap;
+	long _queuedEventTime;
 	Common::Rect _lastDrawnMouseRect;
 	Common::Event _queuedInputEvent;
-	bool _needEventRestPeriod;
 	bool _secondaryTapped;
 	long _lastSecondaryDown;
 	long _lastSecondaryTap;

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_GLOBALS_H
@@ -41,7 +38,7 @@ public:
 	GfxManager _gfxManagerInstance;
 	Common::List<GfxManager *> _gfxManagers;
 	SceneHandler _sceneHandler;
-	Game _game;
+	Game *_game;
 	EventsClass _events;
 	SceneManager _sceneManager;
 	ScenePalette _scenePalette;
@@ -49,7 +46,7 @@ public:
 	SceneItemList _sceneItems;
 	SceneObjectList _sceneObjectsInstance;
 	SceneObjectList *_sceneObjects;
-	SynchronisedList<SceneObjectList *> _sceneObjects_queue;
+	SynchronizedList<SceneObjectList *> _sceneObjects_queue;
 	SceneText _sceneText;
 	int _gfxFontNumber;
 	GfxColors _gfxColors;
@@ -57,11 +54,11 @@ public:
 	SoundManager _soundManager;
 	Common::Point _dialogCenter;
 	WalkRegions _walkRegions;
-	SynchronisedList<EventHandler *> _sceneListeners;
+	SynchronizedList<EventHandler *> _sceneListeners;
 	bool _flags[256];
 	Player _player;
 	SoundHandler _soundHandler;
-	InvObjectList _inventory;
+	InvObjectList *_inventory;
 	Region _paneRegions[2];
 	int _paneRefreshFlag[2];
 	Common::Point _sceneOffset;
@@ -76,24 +73,28 @@ public:
 
 	void reset();
 	void setFlag(int flagNum) {
-		assert((flagNum > 0) && (flagNum < MAX_FLAGS));
+		assert((flagNum >= 0) && (flagNum < MAX_FLAGS));
 		_flags[flagNum] = true;
 	}
 	void clearFlag(int flagNum) {
-		assert((flagNum > 0) && (flagNum < MAX_FLAGS));
+		assert((flagNum >= 0) && (flagNum < MAX_FLAGS));
 		_flags[flagNum] = false;
 	}
 	bool getFlag(int flagNum) const {
-		assert((flagNum > 0) && (flagNum < MAX_FLAGS));
+		assert((flagNum >= 0) && (flagNum < MAX_FLAGS));
 		return _flags[flagNum];
 	}
 
 	GfxManager &gfxManager() { return **_gfxManagers.begin(); }
 	virtual Common::String getClassName() { return "Globals"; }
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 };
 
 extern Globals *_globals;
+
+// Note: Currently this can't be part of the _globals structure, since it needs to be constructed
+// prior to many of the fields in Globals execute their constructors
+extern ResourceManager *_resourceManager;
 
 } // End of namespace tSage
 

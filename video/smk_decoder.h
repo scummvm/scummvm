@@ -18,19 +18,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef VIDEO_SMK_PLAYER_H
 #define VIDEO_SMK_PLAYER_H
 
+#include "common/rational.h"
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 #include "video/video_decoder.h"
 #include "audio/mixer.h"
 
 namespace Audio {
-	class QueuingAudioStream;
+class QueuingAudioStream;
+}
+
+namespace Common {
+class SeekableReadStream;
 }
 
 namespace Video {

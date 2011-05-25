@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 //
@@ -30,12 +27,12 @@
 #include "common/scummsys.h"
 #include "common/archive.h"
 #include "common/debug.h"
-#include "common/util.h"
 #include "common/unarj.h"
 #include "common/file.h"
 #include "common/hash-str.h"
 #include "common/memstream.h"
 #include "common/bufferedstream.h"
+#include "common/textconsole.h"
 
 namespace Common {
 

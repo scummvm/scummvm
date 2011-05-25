@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef MOHAWK_CURSORS_H
@@ -29,11 +26,11 @@
 #include "common/scummsys.h"
 
 namespace Common {
-	class MacResManager;
-	class NEResources;
-	class PEResources;
-	class SeekableReadStream;
-	class String;
+class MacResManager;
+class NEResources;
+class PEResources;
+class SeekableReadStream;
+class String;
 }
 
 #include "mohawk/resource.h"
@@ -63,8 +60,8 @@ public:
 	virtual bool hasSource() const { return false; }
 
 protected:
-	// Set a Mac XOR/AND map cursor to the screen
-	void setMacXorCursor(Common::SeekableReadStream *stream);
+	// Set a Mac CURS/crsr cursor to the screen
+	void setMacCursor(Common::SeekableReadStream *stream);
 };
 
 // The default Mohawk cursor manager

@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef GRAPHICS_IMAGEDEC_H
@@ -28,14 +25,13 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
-#include "graphics/pixelformat.h"
-
 namespace Common{
 class SeekableReadStream;
 }
 
 namespace Graphics {
 
+struct PixelFormat;
 struct Surface;
 
 class ImageDecoder {

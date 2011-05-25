@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -146,17 +143,6 @@ public:
 	 */
 	bool saveThumbnailScreenshot(const Common::String &filename);
 
-	/**
-	 * Reads the current contents of the frame buffer
-	 * Notes: This method is for creating screenshots. It is not very optimised. It should only be called
-	 * after a call to EndFrame(), and before the next call to StartFrame().
-	 * @param Width     Returns the width of the frame buffer
-	 * @param Height    Returns the height of the frame buffer
-	 * @param Data      Returns the raw data of the frame buffer as an array of 32-bit color values.
-	*/
-	Graphics::Surface *getScreenshot();
-
-
 	RenderObjectPtr<Panel> getMainPanel();
 
 	/**
@@ -245,9 +231,6 @@ public:
 
 	Graphics::Surface _backSurface;
 	Graphics::Surface *getSurface() { return &_backSurface; }
-
-	Graphics::Surface _frameBuffer;
-	Graphics::Surface *getFrameBuffer() { return &_frameBuffer; }
 
 	Common::SeekableReadStream *_thumbnail;
 	Common::SeekableReadStream *getThumbnail() { return _thumbnail; }

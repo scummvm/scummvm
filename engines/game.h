@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef ENGINES_GAME_H
@@ -28,6 +25,8 @@
 
 #include "common/array.h"
 #include "common/hash-str.h"
+#include "common/str.h"
+#include "common/util.h"
 
 /**
  * A simple structure used to map gameids (like "monkey", "sword1", ...) to

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * LGPL licensed version of MAMEs fmopl (V0.37a modified) by
  * Tatsuyuki Satoh. Included from LGPL'ed AdPlug.
  */
@@ -30,7 +27,6 @@
 #define SOUND_SOFTSYNTH_OPL_MAME_H
 
 #include "common/scummsys.h"
-#include "common/util.h"
 #include "common/random.h"
 
 #include "audio/fmopl.h"
@@ -151,7 +147,7 @@ typedef struct fm_opl_f {
 	OPL_UPDATEHANDLER UpdateHandler;	/* stream update handler   */
 	int UpdateParam;					/* stream update parameter */
 
-	Common::RandomSource rnd;
+	Common::RandomSource *rnd;
 } FM_OPL;
 
 /* ---------- Generic interface section ---------- */

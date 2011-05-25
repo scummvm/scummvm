@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
@@ -52,6 +49,10 @@ uint32 TSageEngine::getGameID() const {
 
 uint32 TSageEngine::getFeatures() const {
 	return _gameDescription->features;
+}
+
+Common::String TSageEngine::getPrimaryFilename() const {
+	return Common::String(_gameDescription->desc.filesDescriptions[0].fileName);
 }
 
 } // End of namespace tSage
@@ -87,7 +88,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "TsAGE Engine";
+		return "TsAGE";
 	}
 
 	virtual const char *getOriginalCopyright() const {
@@ -122,16 +123,18 @@ public:
 
 	virtual SaveStateList listSaves(const char *target) const {
 		Common::String pattern = target;
-		pattern += ".*";
+		pattern += ".???";
 
 		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
+		sort(filenames.begin(), filenames.end());
 		tSage::tSageSavegameHeader header;
 
 		SaveStateList saveList;
 		for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-			int slot;
 			const char *ext = strrchr(file->c_str(), '.');
-			if (ext && (slot = atoi(ext + 1)) >= 0 && slot < MAX_SAVES) {
+			int slot = ext ? atoi(ext + 1) : -1;
+
+			if (slot >= 0 && slot < MAX_SAVES) {
 				Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 
 				if (in) {

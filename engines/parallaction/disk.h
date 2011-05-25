@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef PARALLACTION_DISK_H
@@ -29,14 +26,20 @@
 #define PATH_LEN 200
 
 #include "common/archive.h"
+#include "common/str.h"
 
-#include "graphics/surface.h"
 #include "graphics/iff.h"
 
 namespace Common {
-	class FSDirectory;
+class FSDirectory;
+class ReadStream;
+class SeekableReadStream;
+struct IFFChunk;
 }
 
+namespace Graphics {
+struct Surface;
+}
 
 namespace Parallaction {
 

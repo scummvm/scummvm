@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -34,10 +31,18 @@
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/algorithm.h"
+#include "common/array.h"
+#include "common/error.h"
+#include "common/fs.h"
+#include "common/singleton.h"
+#include "common/str-array.h"
+#include "common/str.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 #include "engines/util.h"
 
 #include "sword25/sword25.h"
-#include "sword25/kernel/filesystemutil.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/persistenceservice.h"
 #include "sword25/package/packagemanager.h"

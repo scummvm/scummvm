@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
@@ -325,14 +322,6 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 		return acc;
 	}
 
-	// If the current volume of the slot is the same as the target volume,
-	// return without performing any fading. This fixes the music in room
-	// 406 in KQ6 (bug #3267956), where the game scripts ask for the background
-	// music to be played, and then faded to volume 127 (but the music is
-	// already at volume 127) and subsequently stopped.
-	if (argc >= 4 && musicSlot->volume == CLIP<uint16>(argv[1].toUint16(), 0, MUSIC_VOLUME_MAX))
-		return acc;
-
 	switch (argc) {
 	case 1: // SCI0
 		// SCI0 fades out all the time and when fadeout is done it will also
@@ -353,7 +342,25 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 			musicSlot->fadeStep = volume > musicSlot->fadeTo ? -5 : 5;
 		musicSlot->fadeTickerStep = argv[2].toUint16() * 16667 / _music->soundGetTempo();
 		musicSlot->fadeTicker = 0;
-		musicSlot->stopAfterFading = (argc == 5) ? (argv[4].toUint16() != 0) : false;
+
+		if (argc == 5) {
+			// TODO: We currently treat this argument as a boolean, but may
+			// have to handle different non-zero values differently. (e.g.,
+			// some KQ6 scripts pass 3 here)
+			musicSlot->stopAfterFading = (argv[4].toUint16() != 0);
+		} else {
+			musicSlot->stopAfterFading = false;
+		}
+
+		// WORKAROUND/HACK: In the labyrinth in KQ6, when falling in the pit and
+		// lighting the lantern, the game scripts perform a fade in of the game
+		// music, but set it to stop after fading. Remove that flag here. This is
+		// marked as both a workaround and a hack because this issue could be a
+		// problem with our fading code and an incorrect handling of that
+		// parameter, or a script bug in that scene. Fixes bug #3267956.
+		if (g_sci->getGameId() == GID_KQ6 && g_sci->getEngineState()->currentRoomNumber() == 406 &&
+			musicSlot->resourceId == 400)
+			musicSlot->stopAfterFading = false;
 		break;
 
 	default:

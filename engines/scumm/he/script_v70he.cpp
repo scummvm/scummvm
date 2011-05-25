@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
@@ -364,10 +361,10 @@ void ScummEngine_v70he::o70_getStringLen() {
 
 void ScummEngine_v70he::o70_isResourceLoaded() {
 	// Reports percentage of resource loaded by queue
-	int type;
+	ResType type;
 
 	byte subOp = fetchScriptByte();
-	/* int idx = */ pop();
+	int idx = pop();
 
 	switch (subOp) {
 	case 18:
@@ -388,6 +385,7 @@ void ScummEngine_v70he::o70_isResourceLoaded() {
 	default:
 		error("o70_isResourceLoaded: default case %d", subOp);
 	}
+	debug(7, "o70_isResourceLoaded(%d,%d)", type, idx);
 
 	push(100);
 }

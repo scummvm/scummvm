@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef KYRA_SCRIPT_TIM_H
@@ -36,6 +33,7 @@ namespace Kyra {
 
 class WSAMovie_v2;
 class Screen_v2;
+class Movie;
 class LoLEngine;
 
 class TimAnimator {

@@ -18,12 +18,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/array.h"
+#include "common/textconsole.h"
 
 #include "drascula/drascula.h"
 
@@ -140,6 +138,9 @@ void DrasculaEngine::setupRoomsTable() {
 }
 
 void DrasculaEngine::freeRoomsTable() {
+	if (_roomHandlers == 0)
+		return;
+
 	for (uint32 i = 0; i < _roomHandlers->roomParsers.size(); i++)
 		delete _roomHandlers->roomParsers[i];
 	_roomHandlers->roomParsers.clear();

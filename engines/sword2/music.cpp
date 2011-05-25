@@ -20,9 +20,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 // One feature still missing is the original's DipMusic() function which, as
@@ -36,6 +33,7 @@
 #include "common/memstream.h"
 #include "common/substream.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/vorbis.h"
@@ -51,40 +49,6 @@
 #include "sword2/sound.h"
 
 namespace Sword2 {
-
-/**
- * This class behaves like SeekableSubReadStream, except it remembers where the
- * previous read() or seek() took it, so that it can continue from that point
- * the next time. This is because we're frequently streaming two pieces of
- * music from the same file.
- */
-class SafeSubReadStream : public Common::SeekableSubReadStream {
-protected:
-	uint32 _previousPos;
-public:
-	SafeSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end);
-	virtual uint32 read(void *dataPtr, uint32 dataSize);
-	virtual bool seek(int32 offset, int whence = SEEK_SET);
-};
-
-SafeSubReadStream::SafeSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end)
-	: SeekableSubReadStream(parentStream, begin, end, DisposeAfterUse::NO) {
-	_previousPos = 0;
-}
-
-uint32 SafeSubReadStream::read(void *dataPtr, uint32 dataSize) {
-	uint32 result;
-	SeekableSubReadStream::seek(_previousPos);
-	result = SeekableSubReadStream::read(dataPtr, dataSize);
-	_previousPos = pos();
-	return result;
-}
-
-bool SafeSubReadStream::seek(int32 offset, int whence) {
-	bool result = SeekableSubReadStream::seek(offset, whence);
-	_previousPos = pos();
-	return result;
-}
 
 static Audio::AudioStream *makeCLUStream(Common::File *fp, int size);
 static Audio::AudioStream *makePSXCLUStream(Common::File *fp, int size);
@@ -196,19 +160,19 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 			return makeCLUStream(&fh->file, enc_len);
 #ifdef USE_MAD
 	case kMP3Mode: {
-		SafeSubReadStream *tmp = new SafeSubReadStream(&fh->file, pos, pos + enc_len);
+		Common::SafeSubReadStream *tmp = new Common::SafeSubReadStream(&fh->file, pos, pos + enc_len);
 		return Audio::makeMP3Stream(tmp, DisposeAfterUse::YES);
 		}
 #endif
 #ifdef USE_VORBIS
 	case kVorbisMode: {
-		SafeSubReadStream *tmp = new SafeSubReadStream(&fh->file, pos, pos + enc_len);
+		Common::SafeSubReadStream *tmp = new Common::SafeSubReadStream(&fh->file, pos, pos + enc_len);
 		return Audio::makeVorbisStream(tmp, DisposeAfterUse::YES);
 		}
 #endif
 #ifdef USE_FLAC
 	case kFLACMode: {
-		SafeSubReadStream *tmp = new SafeSubReadStream(&fh->file, pos, pos + enc_len);
+		Common::SafeSubReadStream *tmp = new Common::SafeSubReadStream(&fh->file, pos, pos + enc_len);
 		return Audio::makeFLACStream(tmp, DisposeAfterUse::YES);
 		}
 #endif

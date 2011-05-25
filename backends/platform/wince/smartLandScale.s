@@ -18,9 +18,6 @@
 @ along with this program; if not, write to the Free Software
 @ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 @
-@ $URL$
-@ $Id$
-@
 @ @author Robin Watts (robin@wss.co.uk)
 
 	@ For 16 source pixels 0123456789ABCDEF, we want to produce 11 output

@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef PS2_FILESYSTEM_FACTORY_H
@@ -38,9 +35,6 @@ public:
 	virtual AbstractFSNode *makeRootFileNode() const;
 	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const;
 	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const;
-
-protected:
-	Ps2FilesystemFactory() {};
 
 private:
 	friend class Common::Singleton<SingletonBaseType>;

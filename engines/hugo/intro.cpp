@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -31,6 +28,7 @@
  */
 
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "hugo/hugo.h"
 #include "hugo/intro.h"
@@ -93,7 +91,7 @@ void intro_v1d::introInit() {
 	surf.h = 200;
 	surf.pixels = _vm->_screen->getFrontBuffer();
 	surf.pitch = 320;
-	surf.bytesPerPixel = 1;
+	surf.format = Graphics::PixelFormat::createFormatCLUT8();
 	_vm->_screen->displayList(kDisplayInit);
 }
 
@@ -247,7 +245,7 @@ void intro_v2d::introInit() {
 	surf.h = 200;
 	surf.pixels = _vm->_screen->getFrontBuffer();
 	surf.pitch = 320;
-	surf.bytesPerPixel = 1;
+	surf.format = Graphics::PixelFormat::createFormatCLUT8();
 
 	char buffer[128];
 
@@ -293,7 +291,7 @@ void intro_v3d::introInit() {
 	surf.h = 200;
 	surf.pixels = _vm->_screen->getFrontBuffer();
 	surf.pitch = 320;
-	surf.bytesPerPixel = 1;
+	surf.format = Graphics::PixelFormat::createFormatCLUT8();
 
 	char buffer[128];
 	if (_vm->_boot.registered)

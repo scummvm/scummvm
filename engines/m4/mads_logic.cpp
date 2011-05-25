@@ -18,10 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
+
+#include "common/textconsole.h"
 
 #include "m4/m4.h"
 #include "m4/dialogs.h"
@@ -170,25 +169,81 @@ const char *MadsSceneLogic::_opcodeStrings[] = {
  * This method sets up the data map with pointers to all the common game objects. This allows the script engine to
  * convert game specific offsets for various fields in the original game's data segment into a generic data index
  * that will be common across all the MADS games
- */
+
 void MadsSceneLogic::initialiseDataMap() {
 	// The unique order of these items must be maintained
-	MAP_DATA((uint16 *)&_madsVm->scene()->_abortTimersMode2);
-	MAP_DATA(&_madsVm->scene()->_abortTimers);
-	MAP_DATA(&_madsVm->_player._stepEnabled);
-	MAP_DATA(&_madsVm->scene()->_nextScene);
-	MAP_DATA(&_madsVm->scene()->_previousScene);
-	MAP_DATA(&_madsVm->_player._playerPos.x);
-	MAP_DATA(&_madsVm->_player._playerPos.y);
-	MAP_DATA(&_madsVm->_player._direction);
-	MAP_DATA(&_madsVm->_player._visible);
-	MAP_DATA(&getActiveAnimationBool);
-	MAP_DATA(&getAnimationCurrentFrame);
+}
+*/
 
+uint32 MadsSceneLogic::getDataValue(int dataId) {
+	switch (dataId) {
+	case 1: 
+		return _madsVm->scene()->_abortTimersMode2;
+	case 2:
+		return _madsVm->scene()->_abortTimers;
+	case 3:
+		return _madsVm->_player._stepEnabled ? 0xffff : 0;
+	case 4:
+		return _madsVm->scene()->_nextScene;
+	case 5:
+		return _madsVm->scene()->_previousScene;
+	case 6:
+		return _madsVm->_player._playerPos.x;
+	case 7:
+		return _madsVm->_player._playerPos.y;
+	case 8:
+		return _madsVm->_player._direction;
+	case 9:
+		return _madsVm->_player._visible ? 0xffff : 0;
+	case 10:
+		return getActiveAnimationBool();
+	case 11:
+		return getAnimationCurrentFrame();
+	default:
+		// All other data variables get stored in the hash table
+		return _madsVm->globals()->_dataMap[dataId];
+		break;
+	}
 }
 
-DataMap &MadsSceneLogic::dataMap() {
-	return _madsVm->globals()->_dataMap;
+void MadsSceneLogic::setDataValue(int dataId, uint16 dataValue) {
+	switch (dataId) {
+	case 1: 
+		_madsVm->scene()->_abortTimersMode2 = (AbortTimerMode)dataValue;
+		break;
+	case 2:
+		_madsVm->scene()->_abortTimers = dataValue;
+		break;
+	case 3:
+		_madsVm->_player._stepEnabled = dataValue != 0;
+		break;
+	case 4:
+		_madsVm->scene()->_nextScene = dataValue;
+		break;
+	case 5:
+		_madsVm->scene()->_previousScene = dataValue;
+		break;
+	case 6:
+		_madsVm->_player._playerPos.x = dataValue;
+		break;
+	case 7:
+		_madsVm->_player._playerPos.y = dataValue;
+		break;
+	case 8:
+		_madsVm->_player._direction = dataValue;
+		break;
+	case 9:
+		_madsVm->_player._visible = dataValue != 0;
+		break;
+	case 10:
+	case 11:
+		error("Tried to set read only data field %d", dataId);
+		break;
+	default:
+		// All other data variables get stored in the hash table
+		_madsVm->globals()->_dataMap[dataId] = dataValue;
+		break;
+	}
 }
 
 const char *MadsSceneLogic::formAnimName(char sepChar, int16 suffixNum) {
@@ -532,7 +587,7 @@ void MadsSceneLogic::execute(uint32 subOffset) {
 
 		case OP_DLOAD: {		// Gets data variable
 			param = getParam(scriptOffset, opcode);
-			uint16 v = dataMap().get(param);
+			uint16 v = getDataValue(param);
 			stack.push(ScriptVar(v));
 			break;
 		}
@@ -540,7 +595,7 @@ void MadsSceneLogic::execute(uint32 subOffset) {
 		case OP_DSTORE:	{		// Stores data variable
 			param = getParam(scriptOffset, opcode); 
 			ScriptVar v = stack.pop();
-			dataMap().set(param, v.isInt() ? v.get() : 0);
+			setDataValue(param, v.isInt() ? v.get() : 0);
 			break;
 		}
 		

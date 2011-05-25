@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #define RONIN_TIMER_ACCESS
@@ -720,7 +717,7 @@ Graphics::Surface *OSystem_Dreamcast::lockScreen()
   _framebuffer.w = _screen_w;
   _framebuffer.h = _screen_h;
   _framebuffer.pitch = SCREEN_W*2;
-  _framebuffer.bytesPerPixel = (_screenFormat == 0? 1 : 2);
+  _framebuffer.format = screenFormats[_screenFormat];
 
   return &_framebuffer;
 }

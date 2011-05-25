@@ -28,6 +28,7 @@
 #include "backends/events/gph/gph-events.h"
 #include "graphics/scaler/aspect.h"
 #include "common/mutex.h"
+#include "common/textconsole.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", "Standard", GFX_NORMAL},
@@ -444,14 +445,14 @@ bool GPHGraphicsManager::loadGFXMode() {
 		_videoMode.aspectRatioCorrection = false;
 	}
 
-	fprintf(stdout, "Game ScreenMode = %d*%d\n", _videoMode.screenWidth, _videoMode.screenHeight);
+	debug("Game ScreenMode = %d*%d", _videoMode.screenWidth, _videoMode.screenHeight);
 	if (_videoMode.screenWidth > 320 || _videoMode.screenHeight > 240) {
 		_videoMode.aspectRatioCorrection = false;
 		setGraphicsMode(GFX_HALF);
-		fprintf(stdout, "GraphicsMode set to HALF\n");
+		debug("GraphicsMode set to HALF");
 	} else {
 		setGraphicsMode(GFX_NORMAL);
-		fprintf(stdout, "GraphicsMode set to NORMAL\n");
+		debug("GraphicsMode set to NORMAL");
 	}
 
 	if ((_videoMode.mode == GFX_HALF) && !_overlayVisible) {

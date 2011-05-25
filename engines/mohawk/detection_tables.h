@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 namespace Mohawk {
@@ -793,6 +790,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"seussabc",
+			"Demo",
+			AD_ENTRY1("BookOutline", "17d72660680ae32cd7c560d0cf04d2ef"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		0
+	},
+
+	{
+		{
 			"1stdegree",
 			"",
 			AD_ENTRY1("AL236_1.MHK", "3ba145492a7b8b4dee0ef4222c5639c3"),
@@ -1021,6 +1033,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GType_LIVINGBOOKSV3,
 		0,
 		0
+	},
+
+	// Just Grandma and Me 1.0
+	// From scoriae
+	{
+		{
+			"grandma",
+			"v1.0",
+			AD_ENTRY1("PAGES.512", "e694ac10f957dd2e20611350bf968da3"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_LB_10,
+		"GRANDMA.EXE"
 	},
 
 	{
@@ -1252,6 +1281,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GType_LIVINGBOOKSV3,
 		0,
 		0
+	},
+
+	// From zerep in bug #3287894
+	{
+		{
+			"arthurbday",
+			"",
+			AD_ENTRY1("BIRTHDAY.512", "874f80ff363214d63593864e58c4a130"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"BIRTHDAY.EXE"
 	},
 
 	{
@@ -1543,6 +1588,55 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GType_LIVINGBOOKSV1,
 		0,
 		"Bears Get in a Fight"
+	},
+
+	// From bkennimer in bug #3284930
+	{
+		{
+			"beardark",
+			"",
+			AD_ENTRY1("DARK.LB", "81d1e6eaf88d54bd29836a133935c0d4"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	// From bkennimer in bug #3284930
+	// 32-bit version of the previous entry
+	{
+		{
+			"beardark",
+			"",
+			AD_ENTRY1("DARK32.LB", "28abbf5498aeb29e78e5e0dec969ebe2"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	// From bkennimer in bug #3284930
+	{
+		{
+			"beardark",
+			"",
+			AD_ENTRY1("BookOutline", "95b2e43778ca9cfaee37bdde843e7681"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
 	},
 
 	{

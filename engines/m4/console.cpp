@@ -18,10 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
+
+#include "common/textconsole.h"
 
 #include "m4/m4.h"
 #include "m4/console.h"
@@ -148,12 +147,12 @@ bool Console::cmdDumpFile(int argc, const char **argv) {
 		DebugPrintf("If uncompress is 1, the file is uncompressed (for MADS games)\n");
 	} else {
 		if (argc == 2) {
-			_vm->dumpFile(strdup(argv[1]));
+			_vm->dumpFile(argv[1], false);
 		} else {
 			if (argc == 3 && atoi(argv[2]) == 1)
-				_vm->dumpFile(strdup(argv[1]), true);
+				_vm->dumpFile(argv[1], true);
 			else
-				_vm->dumpFile(strdup(argv[1]));
+				_vm->dumpFile(argv[1], false);
 		}
 	}
 	return true;

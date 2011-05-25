@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef OPTIONS_DIALOG_H
@@ -27,7 +24,7 @@
 
 #include "gui/dialog.h"
 #include "common/str.h"
-#include "audio/musicplugin.h"
+#include "audio/mididrv.h"
 
 #ifdef SMALL_SCREEN_DEVICE
 #include "gui/KeysDialog.h"
@@ -35,13 +32,16 @@
 
 namespace GUI {
 
-class BrowserDialog;
 class CheckboxWidget;
 class PopUpWidget;
 class SliderWidget;
 class StaticTextWidget;
-class ListWidget;
 class TabWidget;
+class ButtonWidget;
+class CommandSender;
+class GuiObject;
+class RadiobuttonGroup;
+class RadiobuttonWidget;
 
 class OptionsDialog : public Dialog {
 public:

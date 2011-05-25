@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Resource library
@@ -28,6 +25,7 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/macresman.h"
+#include "common/textconsole.h"
 
 #include "sci/resource.h"
 #include "sci/resource_intern.h"
@@ -1275,7 +1273,7 @@ ResVersion ResourceManager::detectVolVersion() {
 	// SCI32 volume format:   {bResType wResNumber dwPacked dwUnpacked wCompression} = 13 bytes
 	// Try to parse volume with SCI0 scheme to see if it make sense
 	// Checking 1MB of data should be enough to determine the version
-	uint16 resId, wCompression;
+	uint16 wCompression;
 	uint32 dwPacked, dwUnpacked;
 	ResVersion curVersion = kResVersionSci0Sci1Early;
 	bool failed = false;
@@ -1285,7 +1283,7 @@ ResVersion ResourceManager::detectVolVersion() {
 	while (!fileStream->eos() && fileStream->pos() < 0x100000) {
 		if (curVersion > kResVersionSci0Sci1Early)
 			fileStream->readByte();
-		resId = fileStream->readUint16LE();
+		fileStream->skip(2);	// resId
 		dwPacked = (curVersion < kResVersionSci2) ? fileStream->readUint16LE() : fileStream->readUint32LE();
 		dwUnpacked = (curVersion < kResVersionSci2) ? fileStream->readUint16LE() : fileStream->readUint32LE();
 

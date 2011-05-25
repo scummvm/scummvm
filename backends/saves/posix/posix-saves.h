@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #if !defined(BACKEND_POSIX_SAVES_H) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
@@ -28,7 +25,7 @@
 
 #include "backends/saves/default/default-saves.h"
 
-#if defined(UNIX)
+#if defined(POSIX) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 /**
  * Customization of the DefaultSaveFileManager for POSIX platforms.
  * The only two differences are that the default constructor sets
@@ -38,7 +35,6 @@
 class POSIXSaveFileManager : public DefaultSaveFileManager {
 public:
 	POSIXSaveFileManager();
-//	POSIXSaveFileManager(const Common::String &defaultSavepath);
 
 protected:
 	/**

@@ -18,12 +18,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #if defined(__ANDROID__)
+
+// Allow use of stuff in <time.h>
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
+// Disable printf override in common/forbidden.h to avoid
+// clashes with log.h from the Android SDK.
+// That header file uses
+//   __attribute__ ((format(printf, 3, 4)))
+// which gets messed up by our override mechanism; this could
+// be avoided by either changing the Android SDK to use the equally
+// legal and valid
+//   __attribute__ ((format(printf, 3, 4)))
+// or by refining our printf override to use a varadic macro
+// (which then wouldn't be portable, though).
+// Anyway, for now we just disable the printf override globally
+// for the Android port
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
 #include "base/main.h"
 #include "graphics/surface.h"
@@ -147,7 +161,7 @@ void GLESBaseTexture::setLinearFilter(bool value) {
 void GLESBaseTexture::allocBuffer(GLuint w, GLuint h) {
 	_surface.w = w;
 	_surface.h = h;
-	_surface.bytesPerPixel = _pixelFormat.bytesPerPixel;
+	_surface.format = _pixelFormat;
 
 	if (w == _texture_width && h == _texture_height)
 		return;
@@ -241,14 +255,14 @@ void GLESTexture::allocBuffer(GLuint w, GLuint h) {
 	delete[] _buf;
 	delete[] _pixels;
 
-	_pixels = new byte[w * h * _surface.bytesPerPixel];
+	_pixels = new byte[w * h * _surface.format.bytesPerPixel];
 	assert(_pixels);
 
 	_surface.pixels = _pixels;
 
 	fillBuffer(0);
 
-	_buf = new byte[w * h * _surface.bytesPerPixel];
+	_buf = new byte[w * h * _surface.format.bytesPerPixel];
 	assert(_buf);
 }
 
@@ -257,10 +271,10 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 	setDirtyRect(Common::Rect(x, y, x + w, y + h));
 
 	const byte *src = (const byte *)buf;
-	byte *dst = _pixels + y * _surface.pitch + x * _surface.bytesPerPixel;
+	byte *dst = _pixels + y * _surface.pitch + x * _surface.format.bytesPerPixel;
 
 	do {
-		memcpy(dst, src, w * _surface.bytesPerPixel);
+		memcpy(dst, src, w * _surface.format.bytesPerPixel);
 		dst += _surface.pitch;
 		src += pitch_buf;
 	} while (--h);
@@ -301,10 +315,10 @@ void GLESTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 			_tex = _buf;
 
 			byte *src = _pixels + _dirty_rect.top * _surface.pitch +
-						_dirty_rect.left * _surface.bytesPerPixel;
+						_dirty_rect.left * _surface.format.bytesPerPixel;
 			byte *dst = _buf;
 
-			uint16 l = dwidth * _surface.bytesPerPixel;
+			uint16 l = dwidth * _surface.format.bytesPerPixel;
 
 			for (uint16 i = 0; i < dheight; ++i) {
 				memcpy(dst, src, l);
@@ -373,7 +387,7 @@ void GLESFakePaletteTexture::allocBuffer(GLuint w, GLuint h) {
 
 	GLESBaseTexture::allocBuffer(w, h);
 
-	_surface.bytesPerPixel = 1;
+	_surface.format = Graphics::PixelFormat::createFormatCLUT8();
 	_surface.pitch = w;
 
 	if (_surface.w == oldw && _surface.h == oldh) {

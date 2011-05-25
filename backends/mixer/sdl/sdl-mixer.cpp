@@ -18,16 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #if defined(SDL_BACKEND)
 
 #include "backends/mixer/sdl/sdl-mixer.h"
+#include "common/debug.h"
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
 #ifdef GP2X
 #define SAMPLES_PER_SEC 11025

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_RINGWORLD_SCENES3_H
@@ -288,6 +285,7 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void stripCallback(int v);
 	virtual void signal();
+	virtual void synchronize(Serializer &s);
 };
 
 class Scene2120 : public Scene {
@@ -323,8 +321,9 @@ public:
 	int _subjectIndex;
 	int _lineOffset;
 
+	Scene2120();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 };
 
 class Scene2150 : public Scene {
@@ -381,7 +380,7 @@ public:
 
 	Scene2150();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void signal();
 	virtual void dispatch();
 };
@@ -446,7 +445,7 @@ public:
 	Scene2200();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void stripCallback(int v);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void signal();
 	virtual void dispatch();
 };
@@ -579,7 +578,7 @@ public:
 
 	Scene2230();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void dispatch();
 };
 
@@ -679,7 +678,7 @@ public:
 
 	Scene2280();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void signal();
 	virtual void dispatch();
 };
@@ -760,7 +759,7 @@ public:
 
 	Scene2310();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void signal();
 	virtual void process(Event &event);
 	virtual void dispatch();
@@ -873,7 +872,7 @@ public:
 
 	Scene2320();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void synchronise(Serialiser &s);
+	virtual void synchronize(Serializer &s);
 	virtual void signal();
 };
 

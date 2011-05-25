@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef COMMON_SAVEFILE_H
@@ -145,7 +142,7 @@ public:
 
 	/**
 	 * Request a list of available savegames with a given DOS-style pattern,
-	 * also known as "glob" in the UNIX world. Refer to the Common::matchString()
+	 * also known as "glob" in the POSIX world. Refer to the Common::matchString()
 	 * function to learn about the precise pattern format.
 	 * @param pattern Pattern to match. Wildcards like * or ? are available.
 	 * @return list of strings for all present file names.

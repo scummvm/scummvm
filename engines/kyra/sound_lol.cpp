@@ -18,16 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifdef ENABLE_LOL
 
-#include "kyra/sound.h"
 #include "kyra/lol.h"
+#include "kyra/sound.h"
 #include "kyra/resource.h"
+
+#include "common/system.h"
 
 #include "audio/audiostream.h"
 

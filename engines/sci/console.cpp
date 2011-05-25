@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Console module
@@ -442,7 +439,7 @@ ResourceType parseResourceType(const char *resid) {
 }
 
 bool Console::cmdGetVersion(int argc, const char **argv) {
-	const char *viewTypeDesc[] = { "Unknown", "EGA", "VGA", "VGA SCI1.1", "Amiga" };
+	const char *viewTypeDesc[] = { "Unknown", "EGA", "Amiga ECS 32 colors", "Amiga AGA 64 colors", "VGA", "VGA SCI1.1" };
 
 	bool hasVocab997 = g_sci->getResMan()->testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS)) ? true : false;
 	Common::String gameVersion = "N/A";
@@ -1532,7 +1529,7 @@ bool Console::cmdUndither(int argc, const char **argv) {
 	}
 
 	bool flag = atoi(argv[1]) ? true : false;
-	_engine->_gfxScreen->debugUnditherSetState(flag);
+	_engine->_gfxScreen->enableUndithering(flag);
 	if (flag)
 		DebugPrintf("undithering ENABLED\n");
 	else
@@ -3375,7 +3372,7 @@ bool Console::cmdQuit(int argc, const char **argv) {
 
 	} else if (!scumm_stricmp(argv[1], "now")) {
 		// Quit ungracefully
-		exit(0);
+		g_system->quit();
 	}
 
 	return Cmd_Exit(0, 0);
@@ -3775,7 +3772,7 @@ int Console::printObject(reg_t pos) {
 	DebugPrintf("  -- member variables:\n");
 	for (i = 0; (uint)i < obj->getVarCount(); i++) {
 		DebugPrintf("    ");
-		if (i < var_container->getVarCount()) {
+		if (var_container && i < var_container->getVarCount()) {
 			uint16 varSelector = var_container->getVarSelector(i);
 			DebugPrintf("[%03x] %s = ", varSelector, _engine->getKernel()->getSelectorName(varSelector).c_str());
 		} else

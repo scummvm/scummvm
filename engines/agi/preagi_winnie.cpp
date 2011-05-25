@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "agi/preagi.h"
@@ -32,6 +29,7 @@
 #include "common/events.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 
 namespace Agi {
 
@@ -216,15 +214,9 @@ int Winnie::getObjInRoom(int iRoom) {
 	return 0;
 }
 
-#define setTakeDrop() {\
-	if (getObjInRoom(_room))\
-		fCanSel[IDI_WTP_SEL_TAKE] = true;\
-	else\
-		fCanSel[IDI_WTP_SEL_TAKE] = false;\
-	if (_game.iObjHave)\
-		fCanSel[IDI_WTP_SEL_DROP] = true;\
-	else\
-		fCanSel[IDI_WTP_SEL_DROP] = false;\
+void Winnie::setTakeDrop(int fCanSel[]) {
+	fCanSel[IDI_WTP_SEL_TAKE] = getObjInRoom(_room);
+	fCanSel[IDI_WTP_SEL_DROP] = _game.iObjHave;
 }
 
 void Winnie::setFlag(int iFlag) {
@@ -280,7 +272,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 				fCanSel[IDI_WTP_SEL_EAST] = fCanSel[IDI_WTP_SEL_WEST] = true;
 
 			// check if object in room or player carrying one
-			setTakeDrop();
+			setTakeDrop(fCanSel);
 
 			// check which rows have a menu option
 			for (iSel = 0; iSel < IDI_WTP_MAX_OPTION; iSel++) {
@@ -366,11 +358,11 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 				break;
 			case IDI_WTP_SEL_TAKE:
 				takeObj(_room);
-				setTakeDrop();
+				setTakeDrop(fCanSel);
 				break;
 			case IDI_WTP_SEL_DROP:
 				dropObj(_room);
-				setTakeDrop();
+				setTakeDrop(fCanSel);
 				break;
 			}
 		}
@@ -795,13 +787,12 @@ void Winnie::getMenuMouseSel(int *iSel, int fCanSel[], int x, int y) {
 	}
 }
 
-#define makeSel() {\
-	if (fCanSel[*iSel]) {\
-		return;\
-	} else {\
-		keyHelp();\
-		clrMenuSel(iSel, fCanSel);\
-	}\
+void Winnie::makeSel(int *iSel, int fCanSel[]) {
+	if (fCanSel[*iSel])
+		return;
+
+	keyHelp();
+	clrMenuSel(iSel, fCanSel);
 }
 
 void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
@@ -843,22 +834,22 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 				// Click to move
 				if (fCanSel[IDI_WTP_SEL_NORTH] && hotspotNorth.contains(event.mouse.x, event.mouse.y)) {
 					*iSel = IDI_WTP_SEL_NORTH;
-					makeSel();
+					makeSel(iSel, fCanSel);
 					_vm->_gfx->setCursorPalette(false);
 					return;
 				} else if (fCanSel[IDI_WTP_SEL_SOUTH] && hotspotSouth.contains(event.mouse.x, event.mouse.y)) {
 					*iSel = IDI_WTP_SEL_SOUTH;
-					makeSel();
+					makeSel(iSel, fCanSel);
 					_vm->_gfx->setCursorPalette(false);
 					return;
 				} else if (fCanSel[IDI_WTP_SEL_WEST] && hotspotWest.contains(event.mouse.x, event.mouse.y)) {
 					*iSel = IDI_WTP_SEL_WEST;
-					makeSel();
+					makeSel(iSel, fCanSel);
 					_vm->_gfx->setCursorPalette(false);
 					return;
 				} else if (fCanSel[IDI_WTP_SEL_EAST] && hotspotEast.contains(event.mouse.x, event.mouse.y)) {
 					*iSel = IDI_WTP_SEL_EAST;
-					makeSel();
+					makeSel(iSel, fCanSel);
 					_vm->_gfx->setCursorPalette(false);
 					return;
 				} else {
@@ -943,31 +934,31 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 					break;
 				case Common::KEYCODE_n:
 					*iSel = IDI_WTP_SEL_NORTH;
-					makeSel();
+					makeSel(iSel, fCanSel);
 					break;
 				case Common::KEYCODE_s:
 					if (event.kbd.flags & Common::KBD_CTRL) {
 						_vm->flipflag(fSoundOn);
 					} else {
 						*iSel = IDI_WTP_SEL_SOUTH;
-						makeSel();
+						makeSel(iSel, fCanSel);
 					}
 					break;
 				case Common::KEYCODE_e:
 					*iSel = IDI_WTP_SEL_EAST;
-					makeSel();
+					makeSel(iSel, fCanSel);
 					break;
 				case Common::KEYCODE_w:
 					*iSel = IDI_WTP_SEL_WEST;
-					makeSel();
+					makeSel(iSel, fCanSel);
 					break;
 				case Common::KEYCODE_t:
 					*iSel = IDI_WTP_SEL_TAKE;
-					makeSel();
+					makeSel(iSel, fCanSel);
 					break;
 				case Common::KEYCODE_d:
 					*iSel = IDI_WTP_SEL_DROP;
-					makeSel();
+					makeSel(iSel, fCanSel);
 					break;
 				case Common::KEYCODE_RETURN:
 					switch (*iSel) {

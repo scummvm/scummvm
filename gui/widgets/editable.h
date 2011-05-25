@@ -17,17 +17,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef GUI_WIDGETS_EDITABLE_H
 #define GUI_WIDGETS_EDITABLE_H
 
+#include "common/keyboard.h"
 #include "common/str.h"
-#include "common/rect.h"
 #include "gui/widget.h"
+#include "gui/ThemeEngine.h"
+#include "gui/object.h"
+
+namespace Common {
+struct Rect;
+}
 
 namespace GUI {
 

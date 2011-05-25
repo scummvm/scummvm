@@ -18,17 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 
 #include "common/system.h"
-#include "common/EventRecorder.h"
 #include "common/events.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/palette.h"
 
 #include "queen/display.h"
 #include "queen/input.h"
@@ -40,7 +37,7 @@ namespace Queen {
 
 Display::Display(QueenEngine *vm, OSystem *system)
 	: _fullscreen(true), _horizontalScroll(0), _bdWidth(0), _bdHeight(0),
-	_system(system), _vm(vm) {
+	_system(system), _vm(vm), _rnd("queenDisplay") {
 
 	initFont();
 
@@ -75,7 +72,6 @@ Display::Display(QueenEngine *vm, OSystem *system)
 	memset(&_dynalum, 0, sizeof(_dynalum));
 
 	setupInkColors();
-	g_eventRec.registerRandomSource(_rnd, "queenDisplay");
 }
 
 Display::~Display() {

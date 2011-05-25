@@ -18,14 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "scumm/actor.h"
 #include "scumm/file.h"
 #include "scumm/imuse/imuse.h"
+#include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/he/sound_he.h"
 #include "scumm/he/intern_he.h"
@@ -304,13 +302,13 @@ void SoundHE::setOverrideFreq(int freq) {
 }
 
 void SoundHE::setupHEMusicFile() {
-	int i, total_size;
+	int i;
 	Common::File musicFile;
 	Common::String buf(_vm->generateFilename(-4));
 
 	if (musicFile.open(buf) == true) {
 		musicFile.seek(4, SEEK_SET);
-		total_size = musicFile.readUint32BE();
+		/*int total_size =*/ musicFile.readUint32BE();
 		musicFile.seek(16, SEEK_SET);
 		_heMusicTracks = musicFile.readUint32LE();
 		debug(5, "Total music tracks %d", _heMusicTracks);

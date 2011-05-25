@@ -17,28 +17,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
-#ifdef WIN32
+#if defined(WIN32)
 
-#if defined(ARRAYSIZE)
-#undef ARRAYSIZE
-#endif
-#include <windows.h>
-// winnt.h defines ARRAYSIZE, but we want our own one...
-#undef ARRAYSIZE
-#ifdef _WIN32_WCE
-#undef GetCurrentDirectory
-#endif
-#include "backends/fs/abstract-fs.h"
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include "backends/fs/windows/windows-fs.h"
 #include "backends/fs/stdiostream.h"
-#include <io.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <tchar.h>
 
 // F_OK, R_OK and W_OK are not defined under MSVC, so we define them here
 // For more information on the modes used by MSVC, check:
@@ -55,84 +42,17 @@
 #define W_OK 2
 #endif
 
-/**
- * Implementation of the ScummVM file system API based on Windows API.
- *
- * Parts of this class are documented in the base interface class, AbstractFSNode.
- */
-class WindowsFilesystemNode : public AbstractFSNode {
-protected:
-	Common::String _displayName;
-	Common::String _path;
-	bool _isDirectory;
-	bool _isPseudoRoot;
-	bool _isValid;
+bool WindowsFilesystemNode::exists() const {
+	return _access(_path.c_str(), F_OK) == 0;
+}
 
-public:
-	/**
-	 * Creates a WindowsFilesystemNode with the root node as path.
-	 *
-	 * In regular windows systems, a virtual root path is used "".
-	 * In windows CE, the "\" root is used instead.
-	 */
-	WindowsFilesystemNode();
+bool WindowsFilesystemNode::isReadable() const {
+	return _access(_path.c_str(), R_OK) == 0;
+}
 
-	/**
-	 * Creates a WindowsFilesystemNode for a given path.
-	 *
-	 * Examples:
-	 *			path=c:\foo\bar.txt, currentDir=false -> c:\foo\bar.txt
-	 *			path=c:\foo\bar.txt, currentDir=true -> current directory
-	 *			path=NULL, currentDir=true -> current directory
-	 *
-	 * @param path Common::String with the path the new node should point to.
-	 * @param currentDir if true, the path parameter will be ignored and the resulting node will point to the current directory.
-	 */
-	WindowsFilesystemNode(const Common::String &path, const bool currentDir);
-
-	virtual bool exists() const { return _access(_path.c_str(), F_OK) == 0; }
-	virtual Common::String getDisplayName() const { return _displayName; }
-	virtual Common::String getName() const { return _displayName; }
-	virtual Common::String getPath() const { return _path; }
-	virtual bool isDirectory() const { return _isDirectory; }
-	virtual bool isReadable() const { return _access(_path.c_str(), R_OK) == 0; }
-	virtual bool isWritable() const { return _access(_path.c_str(), W_OK) == 0; }
-
-	virtual AbstractFSNode *getChild(const Common::String &n) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
-	virtual AbstractFSNode *getParent() const;
-
-	virtual Common::SeekableReadStream *createReadStream();
-	virtual Common::WriteStream *createWriteStream();
-
-private:
-	/**
-	 * Adds a single WindowsFilesystemNode to a given list.
-	 * This method is used by getChildren() to populate the directory entries list.
-	 *
-	 * @param list List to put the file entry node in.
-	 * @param mode Mode to use while adding the file entry to the list.
-	 * @param base Common::String with the directory being listed.
-	 * @param find_data Describes a file that the FindFirstFile, FindFirstFileEx, or FindNextFile functions find.
-	 */
-	static void addFile(AbstractFSList &list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data);
-
-	/**
-	 * Converts a Unicode string to Ascii format.
-	 *
-	 * @param str Common::String to convert from Unicode to Ascii.
-	 * @return str in Ascii format.
-	 */
-	static char *toAscii(TCHAR *str);
-
-	/**
-	 * Converts an Ascii string to Unicode format.
-	 *
-	 * @param str Common::String to convert from Ascii to Unicode.
-	 * @return str in Unicode format.
-	 */
-	static const TCHAR* toUnicode(const char *str);
-};
+bool WindowsFilesystemNode::isWritable() const {
+	return _access(_path.c_str(), W_OK) == 0;
+}
 
 void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data) {
 	WindowsFilesystemNode entry;
@@ -314,11 +234,11 @@ AbstractFSNode *WindowsFilesystemNode::getParent() const {
 }
 
 Common::SeekableReadStream *WindowsFilesystemNode::createReadStream() {
-	return StdioStream::makeFromPath(getPath().c_str(), false);
+	return StdioStream::makeFromPath(getPath(), false);
 }
 
 Common::WriteStream *WindowsFilesystemNode::createWriteStream() {
-	return StdioStream::makeFromPath(getPath().c_str(), true);
+	return StdioStream::makeFromPath(getPath(), true);
 }
 
 #endif //#ifdef WIN32

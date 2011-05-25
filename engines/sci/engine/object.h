@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SCI_ENGINE_OBJECT_H
@@ -28,6 +25,7 @@
 
 #include "common/array.h"
 #include "common/serializer.h"
+#include "common/textconsole.h"
 
 #include "sci/sci.h"			// for the SCI versions
 #include "sci/engine/vm_types.h"	// for reg_t

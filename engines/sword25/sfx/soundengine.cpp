@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -38,6 +35,8 @@
 #include "sword25/kernel/resource.h"
 
 #include "audio/decoders/vorbis.h"
+
+#include "common/system.h"
 
 namespace Sword25 {
 
@@ -152,13 +151,17 @@ bool SoundEngine::playSound(const Common::String &fileName, SOUND_TYPES type, fl
 
 uint SoundEngine::playSoundEx(const Common::String &fileName, SOUND_TYPES type, float volume, float pan, bool loop, int loopStart, int loopEnd, uint layer) {
 	Common::SeekableReadStream *in = Kernel::getInstance()->getPackage()->getStream(fileName);
+#ifdef USE_VORBIS
 	Audio::SeekableAudioStream *stream = Audio::makeVorbisStream(in, DisposeAfterUse::YES);
+#endif
 	uint id;
 	SndHandle *handle = getHandle(&id);
 
 	debugC(1, kDebugSound, "SoundEngine::playSoundEx(%s, %d, %f, %f, %d, %d, %d, %d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
 
+#ifdef USE_VORBIS
 	_mixer->playStream(getType(type), &(handle->handle), stream, -1, (byte)(volume * 255), (int8)(pan * 127));
+#endif
 
 	return id;
 }

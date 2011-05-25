@@ -18,20 +18,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef COMMON_STREAM_H
 #define COMMON_STREAM_H
 
-#include "common/types.h"
 #include "common/endian.h"
+#include "common/scummsys.h"
+#include "common/str.h"
 
 namespace Common {
 
-class String;
 class SeekableReadStream;
 
 /**
@@ -45,12 +42,18 @@ public:
 	 * Returns true if an I/O failure occurred.
 	 * This flag is never cleared automatically. In order to clear it,
 	 * client code has to call clearErr() explicitly.
+	 *
+	 * @note The semantics of any implementation of this method are
+	 * supposed to match those of ISO C ferror().
 	 */
 	virtual bool err() const { return false; }
 
 	/**
 	 * Reset the I/O error status as returned by err().
 	 * For a ReadStream, also reset the end-of-stream status returned by eos().
+	 *
+	 * @note The semantics of any implementation of this method are
+	 * supposed to match those of ISO C clearerr().
 	 */
 	virtual void clearErr() {}
 };
@@ -64,6 +67,9 @@ public:
 	 * Write data into the stream. Subclasses must implement this
 	 * method; all other write methods are implemented using it.
 	 *
+	 * @note The semantics of any implementation of this method are
+	 * supposed to match those of ISO C fwrite().
+	 *
 	 * @param dataPtr	pointer to the data to be written
 	 * @param dataSize	number of bytes to be written
 	 * @return the number of bytes which were actually written.
@@ -74,6 +80,9 @@ public:
 	 * Commit any buffered data to the underlying channel or
 	 * storage medium; unbuffered streams can use the default
 	 * implementation.
+	 *
+	 * @note The semantics of any implementation of this method are
+	 * supposed to match those of ISO C fflush().
 	 *
 	 * @return true on success, false in case of a failure
 	 */
@@ -158,12 +167,21 @@ public:
 	 * Returns true if a read failed because the stream end has been reached.
 	 * This flag is cleared by clearErr().
 	 * For a SeekableReadStream, it is also cleared by a successful seek.
+	 *
+	 * @note The semantics of any implementation of this method are
+	 * supposed to match those of ISO C feof(). In particular, in a stream
+	 * with N bytes, reading exactly N bytes from the start should *not*
+	 * set eos; only reading *beyond* the available data should set it.
 	 */
 	virtual bool eos() const = 0;
 
 	/**
 	 * Read data from the stream. Subclasses must implement this
 	 * method; all other read methods are implemented using it.
+	 *
+	 * @note The semantics of any implementation of this method are
+	 * supposed to match those of ISO C fread(), in particular where
+	 * it concerns setting error and end of file/stream flags.
 	 *
 	 * @param dataPtr	pointer to a buffer into which the data is read
 	 * @param dataSize	number of bytes to be read
@@ -337,6 +355,9 @@ public:
 	 * SEEK_END, the offset is relative to the start of the file, the current
 	 * position indicator, or end-of-file, respectively. A successful call
 	 * to the seek() method clears the end-of-file indicator for the stream.
+	 *
+	 * @note The semantics of any implementation of this method are
+	 * supposed to match those of ISO C fseek().
 	 *
 	 * @param offset	the relative offset in bytes
 	 * @param whence	the seek reference: SEEK_SET, SEEK_CUR, or SEEK_END

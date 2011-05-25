@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "sci/engine/kernel.h"
@@ -74,6 +71,11 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE4,         -1,     0,  0,                 NULL, "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when selecting "Control" from the menu (temp vars 0-3) - bug #3039294
 	{ GID_HOYLE4,        910,    18,  0,                 NULL, "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // during tutorial - bug #3042756
 	{ GID_HOYLE4,        910,   910,  0,                 NULL, "setup",          -1,    3, { WORKAROUND_FAKE,   0 } }, // when selecting "Tutorial" from the main menu - bug #3039294
+	{ GID_HOYLE4,        700,   718,  0,       "compete_tree", "doit",           -1,   75, { WORKAROUND_FAKE,   0 } }, // when placing a bid in bridge - bug #3292332
+	{ GID_HOYLE4,        700,   716,  0,        "other1_tree", "doit",           -1,   46, { WORKAROUND_FAKE,   0 } }, // sometimes when placing a bid in bridge
+	{ GID_HOYLE4,        700,   700,  1,         "BridgeHand", "calcQTS",        -1,    3, { WORKAROUND_FAKE,   0 } }, // sometimes when placing a bid in bridge
+	{ GID_HOYLE4,        300,   300,  0,                   "", "export 2",   0x1d4d,    0, { WORKAROUND_FAKE,   0 } }, // after passing around cards in hearts
+	{ GID_HOYLE4,        400,   400,  1,            "GinHand", "calcRuns",       -1,    4, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Gin Rummy (e.g. when knocking and placing a card) - bug #3292334
 	{ GID_ISLANDBRAIN,   100,   937,  0,            "IconBar", "dispatchEvent",  -1,   58, { WORKAROUND_FAKE,   0 } }, // when using ENTER at the startup menu - bug #3045225
 	{ GID_ISLANDBRAIN,   140,   140,  0,              "piece", "init",           -1,    3, { WORKAROUND_FAKE,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
 	{ GID_ISLANDBRAIN,   200,   268,  0,          "anElement", "select",         -1,    0, { WORKAROUND_FAKE,   0 } }, // elements puzzle, gets used before super TextIcon
@@ -208,6 +210,8 @@ const SciWorkaroundEntry kDisplay_workarounds[] = {
 	{ GID_PQ2,            23,    23,  0,         "rm23Script", "elements",    0x4ae,    0, { WORKAROUND_IGNORE,    0 } }, // when looking at the 2nd page of pate's file - 0x75 as id
 	{ GID_PQ2,            23,    23,  0,         "rm23Script", "elements",    0x4c1,    0, { WORKAROUND_IGNORE,    0 } }, // when looking at the 2nd page of pate's file - 0x75 as id (another pq2 version, bug #3043904)
 	{ GID_QFG1,           11,    11,  0,             "battle", "<noname90>",     -1,    0, { WORKAROUND_IGNORE,    0 } }, // DEMO: When entering battle, 0x75 as id
+	{ GID_QFG3,           -1,    47,  0,          "barterWin", "open",       0x1426,    0, { WORKAROUND_IGNORE,    0 } }, // sometimes when talking with a vendor that can be bartered with, the wrong local variable is checked and the variable contents are wrong - bug #3292251
+	{ GID_QFG3,           -1,    47,  0,         "barterIcon", "show",       0x135c,    0, { WORKAROUND_IGNORE,    0 } }, // sometimes when talking with a vendor that can be bartered with, the wrong local variable is checked and the variable contents are wrong - bug #3292251
 	{ GID_SQ1,            -1,   700,  0,       "arcadaRegion", "doit",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // restoring in some rooms of the arcada (right at the start)
 	{ GID_SQ4,           397,     0,  0,                   "", "export 12",      -1,    0, { WORKAROUND_IGNORE,    0 } }, // FLOPPY: when going into the computer store (bug #3044044)
 	{ GID_SQ4,           391,   391,  0,          "doCatalog", "mode",         0x84,    0, { WORKAROUND_IGNORE,    0 } }, // CD: clicking on catalog in roboter sale - a parameter is an object
@@ -225,7 +229,7 @@ const SciWorkaroundEntry kDirLoop_workarounds[] = {
 const SciWorkaroundEntry kDisposeScript_workarounds[] = {
 	{ GID_LAURABOW,      777,   777,  0,             "myStab", "changeState",    -1,    0, { WORKAROUND_IGNORE,    0 } }, // DEMO: after the will is signed, parameter 0 is an object - bug #3034907
 	{ GID_QFG1,           -1,    64,  0,               "rm64", "dispose",        -1,    0, { WORKAROUND_IGNORE,    0 } }, // when leaving graveyard, parameter 0 is an object
-	{ GID_SQ4,           150,   151,  0,        "fightScript", "dispose",        -1,    0, { WORKAROUND_IGNORE,    0 } }, // during fight with vohaul, parameter 0 is an object
+	{ GID_SQ4,           150,   151,  0,        "fightScript", "dispose",        -1,    0, { WORKAROUND_IGNORE,    0 } }, // during fight with Vohaul, parameter 0 is an object
 	{ GID_SQ4,           150,   152,  0,       "driveCloseUp", "dispose",        -1,    0, { WORKAROUND_IGNORE,    0 } }, // when choosing "beam download", parameter 0 is an object
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
@@ -251,6 +255,7 @@ const SciWorkaroundEntry kGetAngle_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kFindKey_workarounds[] = {
 	{ GID_ECOQUEST2,     100,   999,  0,            "myList", "contains",        -1,    0, { WORKAROUND_FAKE, 0 } }, // When Noah Greene gives Adam the Ecorder, and just before the game gives a demonstration, a null reference to a list is passed - bug #3035186
+	{    GID_HOYLE4,     300,   999,  0,             "Piles", "contains",        -1,    0, { WORKAROUND_FAKE, 0 } }, // When passing the three cards in Hearts, a null reference to a list is passed - bug #3292333
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 

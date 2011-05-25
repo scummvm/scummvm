@@ -34,7 +34,6 @@
 
 #include "common/scummsys.h"
 
-#include "graphics/scaler/intern.h"
 #include "graphics/scaler/scale3x.h"
 
 /***************************************************************************/

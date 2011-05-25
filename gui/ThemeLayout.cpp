@@ -18,21 +18,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/util.h"
 #include "common/system.h"
-#include "common/events.h"
-#include "common/xmlparser.h"
 
-#include "gui/ThemeEval.h"
 #include "gui/ThemeLayout.h"
 
-#ifdef LAYOUT_DEBUG_DIALOG
 #include "graphics/font.h"
+
+#ifdef LAYOUT_DEBUG_DIALOG
 #include "graphics/surface.h"
 #endif
 

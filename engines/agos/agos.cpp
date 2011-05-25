@@ -18,16 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
-#include "common/EventRecorder.h"
-#include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/textconsole.h"
 #include "common/system.h"
 
 #include "engines/util.h"
@@ -35,14 +31,12 @@
 #include "agos/debugger.h"
 #include "agos/intern.h"
 #include "agos/agos.h"
-#include "agos/vga.h"
 
 #include "backends/audiocd/audiocd.h"
 
 #include "graphics/surface.h"
 
 #include "audio/mididrv.h"
-#include "audio/mods/protracker.h"
 
 namespace AGOS {
 
@@ -62,8 +56,8 @@ static const GameSpecificSettings puzzlepack_settings = {
 };
 
 #ifdef ENABLE_AGOS2
-AGOSEngine_DIMP::AGOSEngine_DIMP(OSystem *system)
-	: AGOSEngine_PuzzlePack(system) {
+AGOSEngine_DIMP::AGOSEngine_DIMP(OSystem *system, const AGOSGameDescription *gd)
+	: AGOSEngine_PuzzlePack(system, gd) {
 
 	_iconToggleCount = 0;
 	_voiceCount = 0;
@@ -73,24 +67,24 @@ AGOSEngine_DIMP::AGOSEngine_DIMP(OSystem *system)
 	_tSecondCount = 0;
 }
 
-AGOSEngine_PuzzlePack::AGOSEngine_PuzzlePack(OSystem *system)
-	: AGOSEngine_Feeble(system) {
+AGOSEngine_PuzzlePack::AGOSEngine_PuzzlePack(OSystem *system, const AGOSGameDescription *gd)
+	: AGOSEngine_Feeble(system, gd) {
 
 	_oopsValid = false;
 	_gameTime = 0;
 }
 #endif
 
-AGOSEngine_Simon2::AGOSEngine_Simon2(OSystem *system)
-	: AGOSEngine_Simon1(system) {
+AGOSEngine_Simon2::AGOSEngine_Simon2(OSystem *system, const AGOSGameDescription *gd)
+	: AGOSEngine_Simon1(system, gd) {
 }
 
-AGOSEngine_Simon1::AGOSEngine_Simon1(OSystem *system)
-	: AGOSEngine_Waxworks(system) {
+AGOSEngine_Simon1::AGOSEngine_Simon1(OSystem *system, const AGOSGameDescription *gd)
+	: AGOSEngine_Waxworks(system, gd) {
 }
 
-AGOSEngine_Waxworks::AGOSEngine_Waxworks(OSystem *system)
-	: AGOSEngine_Elvira2(system) {
+AGOSEngine_Waxworks::AGOSEngine_Waxworks(OSystem *system, const AGOSGameDescription *gd)
+	: AGOSEngine_Elvira2(system, gd) {
 
 	_boxCR = false;
 	_boxLineCount = 0;
@@ -106,16 +100,16 @@ AGOSEngine_Waxworks::AGOSEngine_Waxworks(OSystem *system)
 	memset(_lineCounts, 0, sizeof(_lineCounts));
 }
 
-AGOSEngine_Elvira2::AGOSEngine_Elvira2(OSystem *system)
-	: AGOSEngine_Elvira1(system) {
+AGOSEngine_Elvira2::AGOSEngine_Elvira2(OSystem *system, const AGOSGameDescription *gd)
+	: AGOSEngine_Elvira1(system, gd) {
 }
 
-AGOSEngine_Elvira1::AGOSEngine_Elvira1(OSystem *system)
-	: AGOSEngine(system) {
+AGOSEngine_Elvira1::AGOSEngine_Elvira1(OSystem *system, const AGOSGameDescription *gd)
+	: AGOSEngine(system, gd) {
 }
 
-AGOSEngine::AGOSEngine(OSystem *syst)
-	: Engine(syst) {
+AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
+	: Engine(system), _rnd("agos"), _gameDescription(gd) {
 
 	_vcPtr = 0;
 	_vcGetOutOfCode = 0;
@@ -531,8 +525,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "movies");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sfx");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "speech");
-
-	g_eventRec.registerRandomSource(_rnd, "agos");
 }
 
 Common::Error AGOSEngine::init() {
@@ -568,33 +560,33 @@ Common::Error AGOSEngine::init() {
 
 	// allocate buffers
 	_backGroundBuf = new Graphics::Surface();
-	_backGroundBuf->create(_screenWidth, _screenHeight, 1);
+	_backGroundBuf->create(_screenWidth, _screenHeight, Graphics::PixelFormat::createFormatCLUT8());
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		_backBuf = new Graphics::Surface();
-		_backBuf->create(_screenWidth, _screenHeight, 1);
+		_backBuf->create(_screenWidth, _screenHeight, Graphics::PixelFormat::createFormatCLUT8());
 		_scaleBuf = new Graphics::Surface();
-		_scaleBuf->create(_screenWidth, _screenHeight, 1);
+		_scaleBuf->create(_screenWidth, _screenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
 	if (getGameType() == GType_SIMON2) {
 		_window4BackScn = new Graphics::Surface();
-		_window4BackScn->create(_screenWidth, _screenHeight, 1);
+		_window4BackScn->create(_screenWidth, _screenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	} else if (getGameType() == GType_SIMON1) {
 		_window4BackScn = new Graphics::Surface();
-		_window4BackScn->create(_screenWidth, 134, 1);
+		_window4BackScn->create(_screenWidth, 134, Graphics::PixelFormat::createFormatCLUT8());
 	} else if (getGameType() == GType_WW || getGameType() == GType_ELVIRA2) {
 		_window4BackScn = new Graphics::Surface();
-		_window4BackScn->create(224, 127, 1);
+		_window4BackScn->create(224, 127, Graphics::PixelFormat::createFormatCLUT8());
 	} else if (getGameType() == GType_ELVIRA1) {
 		_window4BackScn = new Graphics::Surface();
 		if (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_DEMO)) {
-			_window4BackScn->create(224, 196, 1);
+			_window4BackScn->create(224, 196, Graphics::PixelFormat::createFormatCLUT8());
 		} else {
-			_window4BackScn->create(224, 144, 1);
+			_window4BackScn->create(224, 144, Graphics::PixelFormat::createFormatCLUT8());
 		}
 		_window6BackScn = new Graphics::Surface();
-		_window6BackScn->create(48, 80, 1);
+		_window6BackScn->create(48, 80, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
 	setupGame();

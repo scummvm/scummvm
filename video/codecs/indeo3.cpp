@@ -18,14 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/scummsys.h"
-
-#ifdef USE_INDEO3
 
 /* Intel Indeo 3 decompressor, derived from ffmpeg.
  *
@@ -35,8 +30,8 @@
 
 #include "common/system.h"
 #include "common/endian.h"
-#include "common/frac.h"
-#include "common/file.h"
+#include "common/stream.h"
+#include "common/textconsole.h"
 
 #include "graphics/conversion.h"
 
@@ -51,7 +46,7 @@ Indeo3Decoder::Indeo3Decoder(uint16 width, uint16 height) : _ModPred(0), _correc
 	_pixelFormat = g_system->getScreenFormat();
 
 	_surface = new Graphics::Surface;
-	_surface->create(width, height, _pixelFormat.bytesPerPixel);
+	_surface->create(width, height, _pixelFormat);
 
 	buildModPred();
 	allocFrames();
@@ -322,10 +317,10 @@ const Graphics::Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *
 
 				const uint32 color = _pixelFormat.RGBToColor(r, g, b);
 
-				for (uint32 sW = 0; sW < scaleWidth; sW++, rowDest += _surface->bytesPerPixel) {
-					if      (_surface->bytesPerPixel == 1)
+				for (uint32 sW = 0; sW < scaleWidth; sW++, rowDest += _surface->format.bytesPerPixel) {
+					if      (_surface->format.bytesPerPixel == 1)
 						*((uint8 *)rowDest) = (uint8)color;
-					else if (_surface->bytesPerPixel == 2)
+					else if (_surface->format.bytesPerPixel == 2)
 						*((uint16 *)rowDest) = (uint16)color;
 				}
 			}
@@ -3519,5 +3514,3 @@ const uint32 Indeo3Decoder::correctionhighorder[] = {
 };
 
 } // End of namespace Video
-
-#endif // USE_INDEO3
