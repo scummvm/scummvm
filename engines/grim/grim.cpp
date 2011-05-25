@@ -1151,13 +1151,22 @@ void GrimEngine::savegameRestore() {
 	g_movie->pause(true);
 
 	//  free all resource
+	killColors();
+	killBitmaps();
+	killFonts();
+	killObjectStates();
+	killScenes();
+	killTextObjects();
+	killPrimitiveObjects();
+	killActors();
+
 	//  lock resources
 
 	_selectedActor = NULL;
 	_talkingActor = NULL;
-	if (_currScene)
-		removeScene(_currScene);
-	delete _currScene;
+	//if (_currScene)
+	//	removeScene(_currScene);
+	//delete _currScene;
 	_currScene = NULL;
 
 	restoreColors(_savedState);
@@ -1198,24 +1207,23 @@ void GrimEngine::savegameRestore() {
 	printf("GrimEngine::savegameRestore() finished.\n");
 }
 
+template<typename T>
+void GrimEngine::restoreObjects(SaveGame *state, Common::HashMap<int32, T *> &map) {
+	int32 size = state->readLESint32();
+	for (int32 i = 0; i < size; ++i) {
+		int32 id = state->readLEUint32();
+		T *t = new T();
+		t->setId(id);
+		map[t->getId()] = t;
+
+		t->restoreState(state);
+	}
+}
+
 void GrimEngine::restoreActors(SaveGame *state) {
 	state->beginSection('ACTR');
 
-	int32 size = state->readLEUint32();
-	for (int32 i = 0; i < size; ++i) {
-		int32 id = state->readLEUint32();
-		Actor *a = getActor(id);
-		if (!a) {
-			a = new Actor();
-			a->_id = id;
-			registerActor(a);
-			if (id > Actor::s_id) {
-				Actor::s_id = id;
-			}
-		}
-
-		a->restoreState(state);
-	}
+	restoreObjects(state, _actors);
 
 	int32 id = state->readLEUint32();
 	if (id != 0) {
@@ -1239,23 +1247,7 @@ void GrimEngine::restoreTextObjects(SaveGame *state) {
 	_sayLineDefaults.setY(state->readLESint32());
 	_sayLineDefaults.setDuration(state->readLESint32());
 
-	killTextObjects();
-
-	int32 size = state->readLESint32();
-	for (int32 i = 0; i < size; ++i) {
-		int32 id = state->readLEUint32();
-		TextObject *t = getTextObject(id);
-		if (!t) {
-			t = new TextObject();
-			t->_id = id;
-			registerTextObject(t);
-			if (id > TextObject::s_id) {
-				TextObject::s_id = id;
-			}
-		}
-
-		t->restoreState(state);
-	}
+	restoreObjects(state, _textObjects);
 
 	state->endSection();
 }
@@ -1263,21 +1255,7 @@ void GrimEngine::restoreTextObjects(SaveGame *state) {
 void GrimEngine::restoreScenes(SaveGame *state) {
 	state->beginSection('SET ');
 
-	int32 size = state->readLESint32();
-	for (int32 i = 0; i < size; ++i) {
-		int32 id = state->readLEUint32();
-		Scene *s = _scenes[id];
-		if (!s) {
-			s = new Scene();
-			s->_id = id;
-			registerScene(s);
-			if (id > Scene::s_id) {
-				Scene::s_id = id;
-			}
-		}
-
-		s->restoreState(state);
-	}
+	restoreObjects(state, _scenes);
 
 	_currScene = _scenes[state->readLEUint32()];
 
@@ -1287,21 +1265,7 @@ void GrimEngine::restoreScenes(SaveGame *state) {
 void GrimEngine::restorePrimitives(SaveGame *state) {
 	state->beginSection('PRIM');
 
-	int32 size = state->readLESint32();
-	for (int32 i = 0; i < size; ++i) {
-		int32 id = state->readLEUint32();
-		PrimitiveObject *p = getPrimitiveObject(id);
-		if (!p) {
-			p = new PrimitiveObject();
-			p->_id = id;
-			registerPrimitiveObject(p);
-			if (id > PrimitiveObject::s_id) {
-				PrimitiveObject::s_id = id;
-			}
-		}
-
-		p->restoreState(state);
-	}
+	restoreObjects(state, _primitiveObjects);
 
 	state->endSection();
 }
@@ -1309,29 +1273,13 @@ void GrimEngine::restorePrimitives(SaveGame *state) {
 void GrimEngine::restoreObjectStates(SaveGame *state) {
 	state->beginSection('STAT');
 
-	int32 size = state->readLESint32();
-	for (int32 i = 0; i < size; ++i) {
-		int32 id = state->readLEUint32();
-		ObjectState *o = getObjectState(id);
-		if (!o) {
-			o = new ObjectState();
-			o->_id = id;
-			registerObjectState(o);
-			if (id > ObjectState::s_id) {
-				ObjectState::s_id = id;
-			}
-		}
-
-		o->restoreState(state);
-	}
+	restoreObjects(state, _objectStates);
 
 	state->endSection();
 }
 
 void GrimEngine::restoreBitmaps(SaveGame *state) {
 	state->beginSection('VBUF');
-
-	killBitmaps();
 
 	int32 size = state->readLESint32();
 	for (int32 i = 0; i < size; ++i) {
@@ -1356,8 +1304,6 @@ void GrimEngine::restoreBitmaps(SaveGame *state) {
 void GrimEngine::restoreFonts(SaveGame *state) {
 	state->beginSection('FONT');
 
-	killFonts();
-
 	int32 size = state->readLESint32();
 	for (int32 i = 0; i < size; ++i) {
 		int32 id = state->readLEUint32();
@@ -1377,21 +1323,7 @@ void GrimEngine::restoreFonts(SaveGame *state) {
 void GrimEngine::restoreColors(SaveGame *state) {
 	state->beginSection('COLR');
 
-	killColors();
-
-	int32 size = state->readLESint32();
-	for (int32 i = 0; i < size; ++i) {
-		int32 id = state->readLEUint32();
-		Color *c = new Color();
-		c->_id = id;
-		if (id > Object::s_id) {
-			Object::s_id = id;
-		}
-		c->getRed() = state->readByte();
-		c->getGreen() = state->readByte();
-		c->getBlue() = state->readByte();
-		registerColor(c);
-	}
+	restoreObjects(state, _colors);
 
 	state->endSection();
 }
@@ -1476,16 +1408,21 @@ void GrimEngine::savegameSave() {
 	printf("GrimEngine::savegameSave() finished.\n");
 }
 
-void GrimEngine::saveActors(SaveGame *state) {
-	state->beginSection('ACTR');
-
-	state->writeLEUint32(_actors.size());
-	for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); ++i) {
-		Actor *a = i->_value;
+template<typename T>
+void GrimEngine::saveObjects(SaveGame *state, Common::HashMap<int32, T *> &map) {
+	state->writeLEUint32(map.size());
+	for (Common::HashMap<int32, T *>::iterator i = map.begin(); i != map.end(); ++i) {
+		T *a = i->_value;
 		state->writeLEUint32(i->_key);
 
 		a->saveState(state);
 	}
+}
+
+void GrimEngine::saveActors(SaveGame *state) {
+	state->beginSection('ACTR');
+
+	saveObjects(state, _actors);
 
 	if (_selectedActor) {
 		state->writeLEUint32(_selectedActor->getId());
@@ -1514,12 +1451,7 @@ void GrimEngine::saveTextObjects(SaveGame *state) {
 	state->writeLESint32(_sayLineDefaults.getY());
 	state->writeLESint32(_sayLineDefaults.getDuration());
 
-	state->writeLESint32(_textObjects.size());
-	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); ++i) {
-		TextObject *t = i->_value;
-		state->writeLEUint32(i->_key);
-		t->saveState(state);
-	}
+	saveObjects(state, _textObjects);
 
 	state->endSection();
 }
@@ -1527,12 +1459,7 @@ void GrimEngine::saveTextObjects(SaveGame *state) {
 void GrimEngine::saveScenes(SaveGame *state) {
 	state->beginSection('SET ');
 
-	state->writeLESint32(_scenes.size());
-	for (SceneListType::iterator i = _scenes.begin(); i != _scenes.end(); ++i) {
-		Scene *s = i->_value;
-		state->writeLEUint32(s->_id);
-		s->saveState(state);
-	}
+	saveObjects(state, _scenes);
 
 	state->writeLEUint32(_currScene->_id);
 
@@ -1542,12 +1469,7 @@ void GrimEngine::saveScenes(SaveGame *state) {
 void GrimEngine::savePrimitives(SaveGame *state) {
 	state->beginSection('PRIM');
 
-	state->writeLESint32(_primitiveObjects.size());
-	for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); ++i) {
-		PrimitiveObject *p = i->_value;
-		state->writeLEUint32(p->_id);
-		p->saveState(state);
-	}
+	saveObjects(state, _primitiveObjects);
 
 	state->endSection();
 }
@@ -1555,12 +1477,7 @@ void GrimEngine::savePrimitives(SaveGame *state) {
 void GrimEngine::saveObjectStates(SaveGame *state) {
 	state->beginSection('STAT');
 
-	state->writeLESint32(_objectStates.size());
-	for (StateListType::iterator i = _objectStates.begin(); i != _objectStates.end(); ++i) {
-		ObjectState *o = i->_value;
-		state->writeLEUint32(o->_id);
-		o->saveState(state);
-	}
+	saveObjects(state, _objectStates);
 
 	state->endSection();
 }
@@ -1597,14 +1514,7 @@ void GrimEngine::saveFonts(SaveGame *state) {
 void GrimEngine::saveColors(SaveGame *state) {
 	state->beginSection('COLR');
 
-	state->writeLESint32(_colors.size());
-	for (ColorListType::iterator i = _colors.begin(); i != _colors.end(); ++i) {
-		state->writeLEUint32(i->_key);
-		Color *c = i->_value;
-		state->writeByte(c->getRed());
-		state->writeByte(c->getGreen());
-		state->writeByte(c->getBlue());
-	}
+	saveObjects(state, _colors);
 
 	state->endSection();
 }

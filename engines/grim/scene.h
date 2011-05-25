@@ -41,6 +41,8 @@ public:
 	Scene();
 	~Scene();
 
+	int32 getId();
+
 	void loadText(TextSplitter &ts);
 	void loadBinary(Common::MemoryReadStream *ms);
 
@@ -131,7 +133,7 @@ public:
 	};
 
 private:
-
+	void setId(int32 id);
 	Common::String _name;
 	int _numCmaps;
 	ObjectPtr<CMap> *_cmaps;

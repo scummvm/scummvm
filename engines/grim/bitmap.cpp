@@ -305,6 +305,9 @@ Bitmap::~Bitmap() {
 	g_grim->killBitmap(this);
 }
 
+void Bitmap::restoreState(SaveGame *state) {
+}
+
 void BitmapData::convertToColorFormat(int num, int format) {
 	// Supports 1555->RGBA, RGBA->565
 	unsigned char red = 0, green = 0, blue = 0, alpha = 0;

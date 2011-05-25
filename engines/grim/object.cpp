@@ -63,4 +63,11 @@ int32 Object::getId() {
 	return _id;
 }
 
+void Object::setId(int32 id) {
+	if (id > s_id) {
+		s_id = id;
+	}
+	_id = id;
+}
+
 }

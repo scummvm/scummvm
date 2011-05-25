@@ -86,10 +86,10 @@ public:
 	typedef Common::HashMap<int32, Font *> FontListType;
 	typedef Common::HashMap<int32, Color *> ColorListType;
 	typedef Common::HashMap<int32, ObjectState *> StateListType;
-	typedef Common::HashMap<int, Scene *> SceneListType;
-	typedef Common::HashMap<int, Actor *> ActorListType;
+	typedef Common::HashMap<int32, Scene *> SceneListType;
+	typedef Common::HashMap<int32, Actor *> ActorListType;
 	typedef Common::HashMap<int32, TextObject *> TextListType;
-	typedef Common::HashMap<int, PrimitiveObject *> PrimitiveListType;
+	typedef Common::HashMap<int32, PrimitiveObject *> PrimitiveListType;
 
 	GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language);
 	virtual ~GrimEngine();
@@ -220,6 +220,8 @@ public:
 	void saveBitmaps(SaveGame *savedState);
 	void saveFonts(SaveGame *savedState);
 	void saveColors(SaveGame *savedState);
+	template<typename T>
+	void saveObjects(SaveGame *state, Common::HashMap<int32, T *> &map);
 
 	void savegameRestore();
 	void restoreActors(SaveGame *savedState);
@@ -230,6 +232,8 @@ public:
 	void restoreBitmaps(SaveGame *savedState);
 	void restoreFonts(SaveGame *savedState);
 	void restoreColors(SaveGame *savedState);
+	template<typename T>
+	void restoreObjects(SaveGame *state, Common::HashMap<int32, T *> &map);
 
 	void savegameCallback();
 	static void savegameReadStream(void *data, int32 size);
