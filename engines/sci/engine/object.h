@@ -236,7 +236,7 @@ private:
 	void initSelectorsSci3(const byte *buf);
 
 	const byte *_baseObj; /**< base + object offset within base */
-	uint16 *_baseVars; /**< Pointer to the varselector area for this object */
+	const uint16 *_baseVars; /**< Pointer to the varselector area for this object */
 	Common::Array<uint16> _baseMethod; /**< Pointer to the method selector area for this object */
 	uint16 *_propertyOffsetsSci3; /**< This is used to enable relocation of property valuesa in SCI3 */
 
