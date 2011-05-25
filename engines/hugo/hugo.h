@@ -177,6 +177,8 @@ struct status_t {                                   // Game status (not saved)
 	bool     recallFl;                              // Toolbar "recall" button pressed
 	bool     newScreenFl;                           // New screen just loaded in dib_a
 	bool     godModeFl;                             // Allow DEBUG features in live version
+	bool     showBoundariesFl;                      // Flag used to show and hide boundaries, 
+	                                                // used by the console
 	bool     doQuitFl;
 	bool     skipIntroFl;
 	bool     helpFl;

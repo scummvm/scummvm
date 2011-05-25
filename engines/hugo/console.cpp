@@ -30,6 +30,7 @@ namespace Hugo {
 HugoConsole::HugoConsole(HugoEngine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("listscreens", WRAP_METHOD(HugoConsole, Cmd_listScreens));
 	DCmd_Register("gotoscreen",  WRAP_METHOD(HugoConsole, Cmd_gotoScreen));
+	DCmd_Register("Boundaries",  WRAP_METHOD(HugoConsole, Cmd_boundaries));
 }
 
 HugoConsole::~HugoConsole() {
@@ -77,6 +78,19 @@ bool HugoConsole::Cmd_listScreens(int argc, const char **argv) {
 	for (int i = 0; i < _vm->_numScreens; i++)
 		DebugPrintf("%2d - %s\n", i, _vm->_text->getScreenNames(i));
 	return true;
+}
+
+/**
+ * This command shows and hides boundaries
+ */
+bool HugoConsole::Cmd_boundaries(int argc, const char **argv) {
+	if (argc != 1) {
+		DebugPrintf("Usage: %s\n", argv[0]);
+		return true;
+	}
+
+	_vm->getGameStatus().showBoundariesFl = !_vm->getGameStatus().showBoundariesFl;
+	return false;
 }
 
 } // End of namespace Hugo
