@@ -181,6 +181,8 @@ public:
 
 private:
 	bool _hierShared;
+	Common::List<MainModelComponent*> _children;
+	MainModelComponent *_parentModel;
 	friend class Costume;
 };
 
@@ -252,6 +254,14 @@ SpriteComponent::SpriteComponent(Costume::Component *p, int parentID, const char
 
 SpriteComponent::~SpriteComponent() {
 	if (_sprite) {
+		if (_parent) {
+			MeshComponent *mc = static_cast<MeshComponent *>(_parent);
+			if (mc) {
+				ModelComponent *mdlc = dynamic_cast<ModelComponent *>(mc->getParent());
+				if (mdlc && mdlc->getHierarchy())
+					mc->getNode()->removeSprite(_sprite);
+			}
+		}
 		delete _sprite->_material;
 		delete _sprite;
 	}
@@ -264,7 +274,7 @@ void SpriteComponent::init() {
 
 	if (_sprite) {
 		if (_parent) {
-			MeshComponent *mc = dynamic_cast<MeshComponent *>(_parent);
+			MeshComponent *mc = static_cast<MeshComponent *>(_parent);
 			mc->getNode()->removeSprite(_sprite);
 		}
 		delete _sprite;
@@ -556,7 +566,7 @@ void ModelComponent::draw() {
 }
 
 MainModelComponent::MainModelComponent(Costume::Component *p, int parentID, const char *filename, Costume::Component *prevComponent, tag32 t) :
-		ModelComponent(p, parentID, filename, prevComponent, t), _hierShared(false) {
+		ModelComponent(p, parentID, filename, prevComponent, t), _hierShared(false), _parentModel(NULL) {
 	if (parentID == -2 && prevComponent) {
 		MainModelComponent *mmc = dynamic_cast<MainModelComponent *>(prevComponent);
 
@@ -565,6 +575,8 @@ MainModelComponent::MainModelComponent(Costume::Component *p, int parentID, cons
 			_obj = mmc->_obj;
 			_hier = mmc->_hier;
 			_hierShared = true;
+			mmc->_children.push_back(this);
+			_parentModel = mmc;
 		}
 	}
 }
@@ -591,6 +603,15 @@ void MainModelComponent::reset() {
 MainModelComponent::~MainModelComponent() {
 	if (_hierShared)
 		_hier = NULL; // Keep ~ModelComp from deleting it
+
+	for (Common::List<MainModelComponent*>::iterator i = _children.begin(); i != _children.end(); ++i) {
+		(*i)->_hier = NULL;
+		(*i)->_parentModel = NULL;
+	}
+
+	if (_parentModel) {
+		_parentModel->_children.remove(this);
+	}
 }
 
 class MaterialComponent : public Costume::Component {
@@ -1128,6 +1149,18 @@ Costume::Component::Component(Component *p, int parentID, tag32 t)  {
 	_tag = t;
 }
 
+Costume::Component::~Component()
+{
+	if (_parent)
+		_parent->removeChild(this);
+
+	Component *child = _child;
+	while (child) {
+		child->_parent = NULL;
+		child = child->_sibling;
+	}
+}
+
 void Costume::Component::setColormap(CMap *c) {
 	if (c)
 		_cmap = c;
@@ -1165,6 +1198,16 @@ void Costume::Component::setParent(Component *newParent) {
 		while (*lastChildPos)
 			lastChildPos = &((*lastChildPos)->_sibling);
 		*lastChildPos = this;
+	}
+}
+
+void Costume::Component::removeChild(Component *child) {
+	Component **childPos = &_child;
+	while (*childPos && *childPos != child)
+		childPos = &(*childPos)->_sibling;
+	if (*childPos) {
+		*childPos = child->_sibling;
+		child->_parent = NULL;
 	}
 }
 
