@@ -97,6 +97,7 @@ public:
 
 	virtual void lineHandler() = 0;
 	virtual void showInventory() const = 0;
+	virtual void takeObject(object_t *obj) = 0;
 
 protected:
 	HugoEngine *_vm;
@@ -135,10 +136,10 @@ public:
 
 	virtual void lineHandler();
 	virtual void showInventory() const;
+	virtual void takeObject(object_t *obj);
 
 protected:
-	virtual void  dropObject(object_t *obj);
-	virtual void  takeObject(object_t *obj);
+	virtual void dropObject(object_t *obj);
 
 	const char *findNextNoun(const char *noun) const;
 	bool  isBackgroundWord_v1(const char *noun, const char *verb, objectList_t obj) const;
