@@ -22,16 +22,16 @@
 #include "fs-factory.h"
 #include "fs.h"
 
-AbstractFSNode *BADAFilesystemFactory::makeRootFileNode() const {
-	return new BADAFilesystemNode("/");
+AbstractFSNode *BadaFilesystemFactory::makeRootFileNode() const {
+	return new BadaFilesystemNode("/");
 }
 
-AbstractFSNode *BADAFilesystemFactory::makeCurrentDirectoryFileNode() const {
-	return new BADAFilesystemNode("/Home");
+AbstractFSNode *BadaFilesystemFactory::makeCurrentDirectoryFileNode() const {
+	return new BadaFilesystemNode("/Home");
 }
 
-AbstractFSNode *BADAFilesystemFactory::makeFileNodePath(const Common::String &path) const {
+AbstractFSNode *BadaFilesystemFactory::makeFileNodePath(const Common::String &path) const {
   AppAssert(!path.empty());
-  return new BADAFilesystemNode(path);
+  return new BadaFilesystemNode(path);
 }
 

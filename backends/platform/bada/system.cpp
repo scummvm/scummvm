@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include "common/scummsys.h"
 #include "common/events.h"
 #include "fs-factory.h"
@@ -147,7 +148,7 @@ BadaSystem::BadaSystem(BadaAppForm* appForm) :
 result BadaSystem::Construct(void) {
   logEntered();
 
-  _fsFactory = new BADAFilesystemFactory();
+  _fsFactory = new BadaFilesystemFactory();
   if (!_fsFactory) {
     return E_OUT_OF_MEMORY;
   }
@@ -216,18 +217,16 @@ void BadaSystem::initBackend() {
 
 bool BadaSystem::pollEvent(Common::Event &event) {
   Thread::Sleep(100);
-  return false;
+  return true;
 }
 
 uint32 BadaSystem::getMillis() {
   uint32 result = 0;
-  DateTime currentTime;
-  if (E_SUCCESS == Osp::System::SystemTime::GetCurrentTime(currentTime)) {
-    result = currentTime.GetTime().GetMilliseconds();
-  }
-  else {
-    fatalError();
-  }
+
+	TimeSpan timeSpan(0,0,0);
+	Osp::System::SystemTime::GetUptime(timeSpan);
+	result = timeSpan.GetMilliseconds();
+
   return result;
 }
 
@@ -264,12 +263,12 @@ void BadaSystem::logMessage(LogMessageType::Type /*type*/, const char *message) 
 }
 
 Common::SeekableReadStream* BadaSystem::createConfigReadStream() {
-  BADAFilesystemNode file(DEFAULT_CONFIG_FILE);
+  BadaFilesystemNode file(DEFAULT_CONFIG_FILE);
   return file.createReadStream();
 }
 
 Common::WriteStream* BadaSystem::createConfigWriteStream() {
-  BADAFilesystemNode file(DEFAULT_CONFIG_FILE);
+  BadaFilesystemNode file(DEFAULT_CONFIG_FILE);
   return file.createWriteStream();
 }
 

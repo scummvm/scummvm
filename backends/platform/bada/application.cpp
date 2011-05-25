@@ -41,9 +41,6 @@ BadaScummVM::BadaScummVM() : appForm(0) {
 }
 
 BadaScummVM::~BadaScummVM() {
-  if (appForm) {
-    delete appForm;
-  }
 }
 
 bool BadaScummVM::OnAppInitializing(AppRegistry& appRegistry) {

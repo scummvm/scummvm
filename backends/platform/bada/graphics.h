@@ -23,6 +23,7 @@
 #ifndef BADA_GRAPHICS_H
 #define BADA_GRAPHICS_H
 
+#include "config.h"
 #include "backends/graphics/opengl/opengl-graphics.h"
 
 #include <FBase.h>
@@ -32,12 +33,14 @@
 #include <FSystem.h>
 #include <FUi.h>
 
+using namespace Osp::Graphics;
 using namespace Osp::Graphics::Opengl;
 using namespace Osp::App;
 
 struct BadaGraphicsManager : public OpenGLGraphicsManager {
   BadaGraphicsManager(BadaAppForm* appForm);
 
+	Common::List<Graphics::PixelFormat> getSupportedFormats() const;
   bool hasFeature(OSystem::Feature f);
   void updateScreen();
   void internUpdateScreen();
@@ -53,6 +56,8 @@ struct BadaGraphicsManager : public OpenGLGraphicsManager {
   EGLSurface eglSurface;
   EGLConfig  eglConfig;
   EGLContext eglContext;
+	EGLSurface pixmapSurface;
+	Bitmap* pBitmap;
 };
 
 #endif
