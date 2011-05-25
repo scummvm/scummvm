@@ -433,9 +433,9 @@ void parseSayLineTable(lua_Object paramObj, bool *background, int *vol, int *pan
 	lua_pushobject(paramObj);
 	lua_pushobject(lua_getref(refTextObjectBackground));
 	tableObj = lua_gettable();
-	if (!lua_isnil(tableObj)) {
+	if (tableObj) {
 		if (*background)
-			*background = 0;
+			*background = (int)lua_getnumber(tableObj);
 	}
 
 	lua_pushobject(paramObj);
@@ -492,7 +492,7 @@ void L1_SayLine() {
 				paramObj = lua_getparam(paramId++);
 			}
 			if (!msg.empty()) {
-				actor->sayLine(msg.c_str(), msgId); //background, vol, pan, x, y
+				actor->sayLine(msg.c_str(), msgId, background); //background, vol, pan, x, y
 			}
 		}
 	}

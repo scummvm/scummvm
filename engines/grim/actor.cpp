@@ -835,7 +835,7 @@ float Actor::getYawTo(Graphics::Vector3d p) const {
 		return atan2(-dpos.x(), dpos.y()) * (180.f / LOCAL_PI);
 }
 
-void Actor::sayLine(const char *msg, const char *msgId) {
+void Actor::sayLine(const char *msg, const char *msgId, bool background) {
 	assert(msg);
 	assert(msgId);
 
@@ -896,7 +896,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	}
 
 	GrimEngine::SpeechMode m = g_grim->getSpeechMode();
-	if (!g_grim->_sayLineDefaults.getFont() || m == GrimEngine::VoiceOnly)
+	if (!g_grim->_sayLineDefaults.getFont() || m == GrimEngine::VoiceOnly || background)
 		return;
 
 	_sayLineText = new TextObject(false, true);
