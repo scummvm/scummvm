@@ -223,7 +223,7 @@ public:
 	void startScene(int sceneNum) {
 		if (!_scene) {
 			_scene = new MadsScene(this);
-			((MadsScene *)_scene)->initialise();
+			((MadsScene *)_scene)->initialize();
 		}
 		_scene->show();
 		_scene->loadScene(101);

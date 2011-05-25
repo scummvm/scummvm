@@ -705,7 +705,7 @@ void LoadBasicChunks() {
 	int numObjects;
 
 	// Allocate RAM for savescene data
-	InitialiseSaveScenes();
+	InitializeSaveScenes();
 
 	// CHUNK_TOTAL_ACTORS seems to be missing in the released version, hard coding a value
 	// TODO: Would be nice to just change 511 to MAX_SAVED_ALIVES

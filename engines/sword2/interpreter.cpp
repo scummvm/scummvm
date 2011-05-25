@@ -264,7 +264,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 	//	int32_TYPE	1		numberOfScripts
 	//	int32_TYPE	numberOfScripts	The offsets for each script
 
-	// Initialise some stuff
+	// Initialize some stuff
 
 	uint32 ip = 0;			 // Code pointer
 	int scriptNumber;
@@ -614,7 +614,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 
 			// The scripts do not always call the mcode command
 			// with as many parameters as it can accept. To keep
-			// things predictable, initialise the remaining
+			// things predictable, initialize the remaining
 			// parameters to 0.
 
 			for (i = STACK_SIZE - 1; i >= value; i--) {

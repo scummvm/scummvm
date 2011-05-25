@@ -47,12 +47,12 @@ Panel::Panel(RenderObjectPtr<RenderObject> parentPtr, int width, int height, uin
 	_height = height;
 
 	if (_width < 0) {
-		error("Tried to initialise a panel with an invalid width (%d).", _width);
+		error("Tried to initialize a panel with an invalid width (%d).", _width);
 		return;
 	}
 
 	if (_height < 0) {
-		error("Tried to initialise a panel with an invalid height (%d).", _height);
+		error("Tried to initialize a panel with an invalid height (%d).", _height);
 		return;
 	}
 

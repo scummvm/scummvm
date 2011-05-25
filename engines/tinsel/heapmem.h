@@ -35,8 +35,8 @@ struct MEM_NODE;
 |*			Memory Function Prototypes			*|
 \*----------------------------------------------------------------------*/
 
-void MemoryInit();			// initialises the memory manager
-void MemoryDeinit();		// deinitialises the memory manager
+void MemoryInit();			// initializes the memory manager
+void MemoryDeinit();		// deinitializes the memory manager
 
 // reserves a memory node for a movable & discardable block
 MEM_NODE *MemoryNoAlloc();

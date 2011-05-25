@@ -92,7 +92,7 @@ Common::Error CruiseEngine::run() {
 
 	mainLoop();
 
-	deinitialise();
+	deinitialize();
 
 	return Common::kNoError;
 }
@@ -118,7 +118,7 @@ void CruiseEngine::initialize() {
 	_vm->_polyStruct = NULL;
 }
 
-void CruiseEngine::deinitialise() {
+void CruiseEngine::deinitialize() {
 	_vm->_polyStructNorm.clear();
 	_vm->_polyStructExp.clear();
 

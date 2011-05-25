@@ -94,12 +94,12 @@ void MadsScene::loadScene2(const char *aaName, int sceneNumber) {
 	// Load scene walk paths
 	loadSceneCodes(_currentScene);
 
-	// Initialise the scene animation
+	// Initialize the scene animation
 	uint16 flags = 0x4100;
 	if (_madsVm->globals()->_config.textWindowStill)
 		flags |= 0x200;
 
-	_sceneAnimation->initialise(aaName, flags, _interfaceSurface, NULL);
+	_sceneAnimation->initialize(aaName, flags, _interfaceSurface, NULL);
 }
 
 /**
@@ -113,7 +113,7 @@ void MadsScene::loadSceneTemporary() {
 		{0x00<<2, 0x10<<2, 0x16<<2}};
 	_vm->_palette->setPalette(&sysColors[0], 4, 3);
 
-	_interfaceSurface->initialise();
+	_interfaceSurface->initialize();
 
 	loadSceneHotspots(_currentScene);
 
@@ -596,7 +596,7 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 	char buffer1[80];
 	const char *sceneName;
 
-	// TODO: Initialise spriteSet / xp_list
+	// TODO: Initialize spriteSet / xp_list
 
 	if (sceneNumber > 0) {
 		sceneName = MADSResourceManager::getResourceName(RESPREFIX_RM, sceneNumber, ".DAT");
@@ -668,7 +668,7 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 
 	delete stream;
 
-	// Initialise a copy of the surfaces if they weren't provided
+	// Initialize a copy of the surfaces if they weren't provided
 	bool dsFlag = false, ssFlag = false;
 	if (!surface) {
 		surface = new M4Surface(_width, _height);
@@ -864,7 +864,7 @@ void MadsInterfaceView::setFontMode(InterfaceFontMode newMode) {
 	}
 }
 
-void MadsInterfaceView::initialise() {
+void MadsInterfaceView::initialize() {
 	// Build up the inventory list
 	_inventoryList.clear();
 

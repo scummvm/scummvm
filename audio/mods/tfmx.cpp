@@ -332,7 +332,7 @@ void Tfmx::macroRun(ChannelContext &channel) {
 			channel.vibLength = macroPtr[1];
 			channel.vibCount = macroPtr[1] / 2;
 			channel.vibDelta = macroPtr[3];
-			// TODO: Perhaps a bug, vibValue could be left uninitialised
+			// TODO: Perhaps a bug, vibValue could be left uninitialized
 			if (!channel.portaDelta) {
 				channel.period = channel.refPeriod;
 				channel.vibValue = 0;
@@ -700,7 +700,7 @@ void Tfmx::noteCommand(const uint8 note, const uint8 param1, const uint8 param2,
 		channel.relVol = param2 >> 4;
 		channel.fineTune = (int8)param3;
 
-		// TODO: the point where the channel gets initialised varies with the games, needs more research.
+		// TODO: the point where the channel gets initialized varies with the games, needs more research.
 		initMacroProgramm(channel);
 		channel.keyUp = false; // key down = playing a Note
 

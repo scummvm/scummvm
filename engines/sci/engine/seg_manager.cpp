@@ -1007,9 +1007,9 @@ int SegManager::instantiateScript(int scriptNum) {
 
 	scr->init(scriptNum, _resMan);
 	scr->load(_resMan);
-	scr->initialiseLocals(this);
-	scr->initialiseClasses(this);
-	scr->initialiseObjects(this, segmentId);
+	scr->initializeLocals(this);
+	scr->initializeClasses(this);
+	scr->initializeObjects(this, segmentId);
 
 	return segmentId;
 }

@@ -415,7 +415,7 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	flags2 = READ_LE_UINT16(&rec->flags2);
 	headerFlags = READ_LE_UINT16(&rec->hdrFlags);
 
-	// Initialise runtime fields
+	// Initialize runtime fields
 	actionCtr = 0;
 	blockedState = BS_NONE;
 	blockedFlag = false;

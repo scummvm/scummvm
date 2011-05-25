@@ -79,7 +79,7 @@ public:
 	uint getMilliTicks();
 
 	/**
-	 * Specifies whether the kernel was successfully initialised
+	 * Specifies whether the kernel was successfully initialized
 	 */
 	bool getInitSuccess() const {
 		return _initSuccess;

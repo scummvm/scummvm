@@ -73,7 +73,7 @@ struct BACKGND {
 |*			Background Function Prototypes			*|
 \*----------------------------------------------------------------------*/
 
-void InitBackground(		// called to initialise a background
+void InitBackground(		// called to initialize a background
 	const BACKGND *pBgnd);	// pointer to data struct for current background
 
 void StartupBackground(CORO_PARAM, SCNHANDLE hFilm);

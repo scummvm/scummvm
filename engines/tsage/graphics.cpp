@@ -874,7 +874,7 @@ GfxDialog::~GfxDialog() {
 void GfxDialog::setDefaults() {
 	GfxElement::setDefaults();
 
-	// Initialise the embedded graphics manager
+	// Initialize the embedded graphics manager
 	_gfxManager.setDefaults();
 
 	// Figure out a rect needed for all the added elements

@@ -22,7 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// high level layer initialising
+// high level layer initializing
 
 // the system supports:
 //	1 optional background parallax layer
@@ -97,7 +97,7 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 
 	debug(2, "layers=%d width=%d depth=%d", screen_head.noLayers, screen_head.width, screen_head.height);
 
-	// initialise the driver back buffer
+	// initialize the driver back buffer
 	setLocationMetrics(screen_head.width, screen_head.height);
 
 	for (i = 0; i < screen_head.noLayers; i++) {
@@ -180,22 +180,22 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 
 	for (i = 0; i < 2; i++) {
 		if (screenLayerTable.bg_parallax[i])
-			initialiseBackgroundLayer(_vm->fetchBackgroundParallaxLayer(file, i));
+			initializeBackgroundLayer(_vm->fetchBackgroundParallaxLayer(file, i));
 		else
-			initialiseBackgroundLayer(NULL);
+			initializeBackgroundLayer(NULL);
 	}
 
 	// Normal backround layer
 
-	initialiseBackgroundLayer(_vm->fetchBackgroundLayer(file));
+	initializeBackgroundLayer(_vm->fetchBackgroundLayer(file));
 
 	// Foreground parallax layers
 
 	for (i = 0; i < 2; i++) {
 		if (screenLayerTable.fg_parallax[i])
-			initialiseBackgroundLayer(_vm->fetchForegroundParallaxLayer(file, i));
+			initializeBackgroundLayer(_vm->fetchForegroundParallaxLayer(file, i));
 		else
-			initialiseBackgroundLayer(NULL);
+			initializeBackgroundLayer(NULL);
 	}
 
 	_vm->_resman->closeResource(_thisScreen.background_layer_id);
@@ -243,7 +243,7 @@ void Screen::initPsxBackground(int32 res, int32 new_palette) {
 
 	debug(2, "layers=%d width=%d depth=%d", screen_head.noLayers, screen_head.width, screen_head.height);
 
-	// initialise the driver back buffer
+	// initialize the driver back buffer
 	setLocationMetrics(screen_head.width, screen_head.height);
 
 	for (i = 0; i < screen_head.noLayers; i++) {
@@ -279,15 +279,15 @@ void Screen::initPsxBackground(int32 res, int32 new_palette) {
 	_thisScreen.feet_y = 340;
 
 	// Background parallax layers
-	initialisePsxParallaxLayer(_vm->fetchBackgroundParallaxLayer(file, 0));
-	initialisePsxParallaxLayer(NULL);
+	initializePsxParallaxLayer(_vm->fetchBackgroundParallaxLayer(file, 0));
+	initializePsxParallaxLayer(NULL);
 
 	// Normal backround layer
-	initialisePsxBackgroundLayer(_vm->fetchBackgroundLayer(file));
+	initializePsxBackgroundLayer(_vm->fetchBackgroundLayer(file));
 
 	// Foreground parallax layers
-	initialisePsxParallaxLayer(_vm->fetchForegroundParallaxLayer(file, 1));
-	initialisePsxParallaxLayer(NULL);
+	initializePsxParallaxLayer(_vm->fetchForegroundParallaxLayer(file, 1));
+	initializePsxParallaxLayer(NULL);
 
 	_vm->_resman->closeResource(_thisScreen.background_layer_id);
 

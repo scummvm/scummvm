@@ -164,7 +164,7 @@ int MidiDriver_ALSA::open() {
 	}
 
 	printf("Connected to Alsa sequencer client [%d:%d]\n", seq_client, seq_port);
-	printf("ALSA client initialised [%d:0]\n", my_client);
+	printf("ALSA client initialized [%d:0]\n", my_client);
 
 	return 0;
 }

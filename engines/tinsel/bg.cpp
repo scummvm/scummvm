@@ -126,7 +126,7 @@ static void BGmainProcess(CORO_PARAM, const void *param) {
 			// Get the MULTI_INIT structure
 			pmi = (const MULTI_INIT *)LockMem(FROM_LE_32(pReel->mobj));
 
-			// Initialise and insert the object, and initialise its script.
+			// Initialize and insert the object, and initialize its script.
 			pBG[0] = MultiInitObject(pmi);
 			MultiInsertObject(GetPlayfieldList(FIELD_WORLD), pBG[0]);
 			InitStepAnimScript(&thisAnim[0], pBG[0], FROM_LE_32(pReel->script), BGspeed);
@@ -141,7 +141,7 @@ static void BGmainProcess(CORO_PARAM, const void *param) {
 				// Get the MULTI_INIT structure
 				pmi = (PMULTI_INIT) LockMem(FROM_LE_32(pFilm->reels[i].mobj));
 
-				// Initialise and insert the object, and initialise its script.
+				// Initialize and insert the object, and initialize its script.
 				pBG[i] = MultiInitObject(pmi);
 				MultiInsertObject(GetPlayfieldList(FIELD_WORLD), pBG[i]);
 				MultiSetZPosition(pBG[i], 0);
@@ -176,7 +176,7 @@ static void BGmainProcess(CORO_PARAM, const void *param) {
 			pFilm = (const FILM *)LockMem(hBackground);
 			assert(bgReels == (int32)FROM_LE_32(pFilm->numreels));
 
-			// Just re-initialise the scripts.
+			// Just re-initialize the scripts.
 			for (int i = 0; i < bgReels; i++) {
 				InitStepAnimScript(&thisAnim[i], pBG[i], pFilm->reels[i].script, BGspeed);
 				StepAnimScript(&thisAnim[i]);
@@ -202,7 +202,7 @@ static void BGotherProcess(CORO_PARAM, const void *param) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	// Initialise and insert the object, and initialise its script.
+	// Initialize and insert the object, and initialize its script.
 	_ctx->pObj = MultiInitObject(pmi);
 	MultiInsertObject(GetPlayfieldList(FIELD_WORLD), _ctx->pObj);
 

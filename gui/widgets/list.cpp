@@ -38,7 +38,7 @@ ListWidget::ListWidget(Dialog *boss, const String &name, const char *tooltip, ui
 	_scrollBar = NULL;
 	_textWidth = NULL;
 
-	// This ensures that _entriesPerPage is properly initialised.
+	// This ensures that _entriesPerPage is properly initialized.
 	reflowLayout();
 
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth + 1, 0, _scrollBarWidth, _h);
@@ -70,7 +70,7 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const char *too
 	_scrollBar = NULL;
 	_textWidth = NULL;
 
-	// This ensures that _entriesPerPage is properly initialised.
+	// This ensures that _entriesPerPage is properly initialized.
 	reflowLayout();
 
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth + 1, 0, _scrollBarWidth, _h);

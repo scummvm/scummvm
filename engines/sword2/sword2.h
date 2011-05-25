@@ -233,8 +233,8 @@ public:
 
 	void sleepUntil(uint32 time);
 
-	void initialiseFontResourceFlags();
-	void initialiseFontResourceFlags(uint8 language);
+	void initializeFontResourceFlags();
+	void initializeFontResourceFlags(uint8 language);
 
 	bool initStartMenu();
 	void registerStartPoint(int32 key, char *name);

@@ -63,7 +63,7 @@ protected:
 	void generateSamples(int16 *buf, int len);
 
 public:
-	bool _initialising;
+	bool _initializing;
 
 	MidiDriver_MT32(Audio::Mixer *mixer);
 	virtual ~MidiDriver_MT32();
@@ -215,7 +215,7 @@ static MT32Emu::File *MT32_OpenFile(void *userData, const char *filename, MT32Em
 }
 
 static void MT32_PrintDebug(void *userData, const char *fmt, va_list list) {
-	if (((MidiDriver_MT32 *)userData)->_initialising) {
+	if (((MidiDriver_MT32 *)userData)->_initializing) {
 		char buf[512];
 
 		vsnprintf(buf, 512, fmt, list);
@@ -239,7 +239,7 @@ static int MT32_Report(void *userData, MT32Emu::ReportType type, const void *rep
 		error("Failed to load MT32_PCM.ROM");
 		break;
 	case MT32Emu::ReportType_progressInit:
-		if (((MidiDriver_MT32 *)userData)->_initialising) {
+		if (((MidiDriver_MT32 *)userData)->_initializing) {
 			drawProgress(*((const float *)reportData));
 			return eatSystemEvents();
 		}
@@ -283,7 +283,7 @@ MidiDriver_MT32::MidiDriver_MT32(Audio::Mixer *mixer) : MidiDriver_Emulated(mixe
 	// at rates other than 32KHz, thus we produce data at 32KHz and
 	// rely on Mixer to convert.
 	_outputRate = 32000; //_mixer->getOutputRate();
-	_initialising = false;
+	_initializing = false;
 }
 
 MidiDriver_MT32::~MidiDriver_MT32() {
@@ -324,11 +324,11 @@ int MidiDriver_MT32::open() {
 		g_system->getPaletteManager()->setPalette(dummy_palette, 0, 3);
 	}
 
-	_initialising = true;
-	drawMessage(-1, _s("Initialising MT-32 Emulator"));
+	_initializing = true;
+	drawMessage(-1, _s("Initializing MT-32 Emulator"));
 	if (!_synth->open(prop))
 		return MERR_DEVICE_NOT_AVAILABLE;
-	_initialising = false;
+	_initializing = false;
 
 	if (screenFormat.bytesPerPixel > 1)
 		g_system->fillScreen(screenFormat.RGBToColor(0, 0, 0));

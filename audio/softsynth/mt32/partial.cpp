@@ -164,7 +164,7 @@ void Partial::startPartial(dpoly *usePoly, const PatchCache *useCache, Partial *
 	structurePosition = patchCache->structurePosition;
 
 	play = true;
-	initKeyFollow(poly->freqnum); // Initialises noteVal, filtVal and realVal
+	initKeyFollow(poly->freqnum); // Initializes noteVal, filtVal and realVal
 #if MT32EMU_ACCURATENOTES == 0
 	noteLookup = &synth->tables.noteLookups[noteVal - LOWEST_NOTE];
 #else

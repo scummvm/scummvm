@@ -306,7 +306,7 @@ public:
 
 
 	/**
-	 * Initialise the event manager.
+	 * Initialize the event manager.
 	 * @note	called after graphics system has been set up
 	 */
 	virtual void init() {}

@@ -100,7 +100,7 @@ static void MemoryStats() {
 #endif
 
 /**
- * Initialises the memory manager.
+ * Initializes the memory manager.
  */
 void MemoryInit() {
 	// place first node on free list
@@ -133,7 +133,7 @@ void MemoryInit() {
 }
 
 /**
- * Deinitialises the memory manager.
+ * Deinitializes the memory manager.
  */
 void MemoryDeinit() {
 	const MEM_NODE *pHeap = &heapSentinel;

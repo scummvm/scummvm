@@ -45,7 +45,7 @@ private:
 	int _count;
 	int _dataOffset;
 
-	void initialise(Common::SeekableReadStream *stream);
+	void initialize(Common::SeekableReadStream *stream);
 public:
 	static bool isCompressed(Common::SeekableReadStream *stream);
 	MadsPack(Common::SeekableReadStream *stream);

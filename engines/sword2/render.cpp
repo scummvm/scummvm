@@ -342,10 +342,10 @@ void Screen::renderParallax(byte *ptr, int16 l) {
 #define LIMIT_FRAME_RATE
 
 /**
- * Initialises the timers before the render loop is entered.
+ * Initializes the timers before the render loop is entered.
  */
 
-void Screen::initialiseRenderCycle() {
+void Screen::initializeRenderCycle() {
 	_initialTime = _vm->_system->getMillis();
 	_totalTime = _initialTime + (1000 / _vm->getFramesPerSecond());
 }
@@ -399,7 +399,7 @@ bool Screen::endRenderCycle() {
 		renderCountIndex = 0;
 
 	if (_renderTooSlow) {
-		initialiseRenderCycle();
+		initializeRenderCycle();
 		return true;
 	}
 
@@ -461,13 +461,13 @@ void Screen::resetRenderEngine() {
  * or a NULL pointer in order of background parallax to foreground parallax.
  */
 
-int32 Screen::initialiseBackgroundLayer(byte *parallax) {
+int32 Screen::initializeBackgroundLayer(byte *parallax) {
 	Parallax p;
 	uint16 i, j, k;
 	byte *data;
 	byte *dst;
 
-	debug(2, "initialiseBackgroundLayer");
+	debug(2, "initializeBackgroundLayer");
 
 	assert(_layer < MAXLAYERS);
 
@@ -588,14 +588,14 @@ int32 Screen::initialiseBackgroundLayer(byte *parallax) {
  * ratio correction), while PC backgrounds are in tiles of 64x64.
  */
 
-int32 Screen::initialisePsxBackgroundLayer(byte *parallax) {
+int32 Screen::initializePsxBackgroundLayer(byte *parallax) {
 	uint16 bgXres, bgYres;
 	uint16 trueXres, stripeNumber, totStripes;
 	uint32 baseAddress, stripePos;
 	uint16 i, j;
 	byte *dst;
 
-	debug(2, "initialisePsxBackgroundLayer");
+	debug(2, "initializePsxBackgroundLayer");
 
 	assert(_layer < MAXLAYERS);
 
@@ -698,14 +698,14 @@ int32 Screen::initialisePsxBackgroundLayer(byte *parallax) {
  * can be understood by renderParallax functions.
  */
 
-int32 Screen::initialisePsxParallaxLayer(byte *parallax) {
+int32 Screen::initializePsxParallaxLayer(byte *parallax) {
 	uint16 plxXres, plxYres;
 	uint16 xTiles, yTiles;
 	uint16 i, j, k;
 	byte *data;
 	byte *dst;
 
-	debug(2, "initialisePsxParallaxLayer");
+	debug(2, "initializePsxParallaxLayer");
 
 	assert(_layer < MAXLAYERS);
 

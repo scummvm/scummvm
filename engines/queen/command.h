@@ -97,7 +97,7 @@ public:
 	Command(QueenEngine *vm);
 	~Command();
 
-	//! initialise command construction
+	//! initialize command construction
 	void clear(bool clearTexts);
 
 	//! execute last constructed command

@@ -54,7 +54,7 @@ public:
 	// -----------------------------------------------------------------------------
 
 	/**
-	 * Initialises the scrip tengine. Returns true if successful, false otherwise.
+	 * Initializes the scrip tengine. Returns true if successful, false otherwise.
 	 */
 	virtual bool init() = 0;
 

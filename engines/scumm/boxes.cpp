@@ -962,7 +962,7 @@ void ScummEngine::calcItineraryMatrix(byte *itineraryMatrix, int num) {
 	// Allocate the adjacent & itinerary matrices
 	adjacentMatrix = (byte *)malloc(boxSize * boxSize);
 
-	// Initialise the adjacent matrix: each box has distance 0 to itself,
+	// Initialize the adjacent matrix: each box has distance 0 to itself,
 	// and distance 1 to its direct neighbors. Initially, it has distance
 	// 255 (= infinity) to all other boxes.
 	for (i = 0; i < num; i++) {

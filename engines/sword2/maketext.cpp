@@ -636,7 +636,7 @@ void FontRenderer::killTextBloc(uint32 bloc_number) {
 
 #define SAVE_LINE_NO	1
 
-void Sword2Engine::initialiseFontResourceFlags() {
+void Sword2Engine::initializeFontResourceFlags() {
 	byte *textFile = _resman->openResource(TEXT_RES);
 
 	// If language is Polish or Finnish it requires alternate fonts.
@@ -649,11 +649,11 @@ void Sword2Engine::initialiseFontResourceFlags() {
 	char *textLine = (char *)fetchTextLine(textFile, SAVE_LINE_NO) + 2;
 
 	if (strcmp(textLine, "tallenna") == 0)
-		initialiseFontResourceFlags(FINNISH_TEXT);
+		initializeFontResourceFlags(FINNISH_TEXT);
 	else if (strcmp(textLine, "zapisz") == 0)
-		initialiseFontResourceFlags(POLISH_TEXT);
+		initializeFontResourceFlags(POLISH_TEXT);
 	else
-		initialiseFontResourceFlags(DEFAULT_TEXT);
+		initializeFontResourceFlags(DEFAULT_TEXT);
 
 	// Get the game name for the windows application
 
@@ -677,10 +677,10 @@ void Sword2Engine::initialiseFontResourceFlags() {
 }
 
 /**
- * Called from initialiseFontResourceFlags(), and also from console.cpp
+ * Called from initializeFontResourceFlags(), and also from console.cpp
  */
 
-void Sword2Engine::initialiseFontResourceFlags(uint8 language) {
+void Sword2Engine::initializeFontResourceFlags(uint8 language) {
 	switch (language) {
 	case FINNISH_TEXT:
 		_speechFontId = FINNISH_SPEECH_FONT_ID;

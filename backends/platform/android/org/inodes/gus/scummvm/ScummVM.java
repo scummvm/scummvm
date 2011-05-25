@@ -260,7 +260,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 
 		if (_audio_track.getState() != AudioTrack.STATE_INITIALIZED)
 			throw new Exception(
-				String.format("Error initialising AudioTrack: %d",
+				String.format("Error initializing AudioTrack: %d",
 								_audio_track.getState()));
 	}
 

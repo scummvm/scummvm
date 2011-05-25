@@ -345,7 +345,7 @@ void GetAniPosition(OBJECT *pObj, int *pPosX, int *pPosY) {
 }
 
 /**
- * Initialise a object using a OBJ_INIT structure to supply parameters.
+ * Initialize a object using a OBJ_INIT structure to supply parameters.
  * @param pInitTbl			Pointer to object initialisation table
  */
 OBJECT *InitObject(const OBJ_INIT *pInitTbl) {
@@ -486,7 +486,7 @@ void AnimateObject(OBJECT *pAniObj, SCNHANDLE hNewImg) {
  * @param height		Height of rectangle
  */
 OBJECT *RectangleObject(SCNHANDLE hPal, int color, int width, int height) {
-	// template for initialising the rectangle object
+	// template for initializing the rectangle object
 	static const OBJ_INIT rectObj = {0, DMA_CONST, OID_EFFECTS, 0, 0, 0};
 	PALQ *pPalQ;		// palette queue pointer
 
@@ -522,7 +522,7 @@ OBJECT *RectangleObject(SCNHANDLE hPal, int color, int width, int height) {
  * @param height		Height of rectangle
  */
 OBJECT *TranslucentObject(int width, int height) {
-	// template for initialising the rectangle object
+	// template for initializing the rectangle object
 	static const OBJ_INIT rectObj = {0, DMA_TRANS, OID_EFFECTS, 0, 0, 0};
 
 	// allocate and init a new object

@@ -390,12 +390,12 @@ public:
 	void resetRenderLists();
 
 	void setLocationMetrics(uint16 w, uint16 h);
-	int32 initialiseBackgroundLayer(byte *parallax);
-	int32 initialisePsxParallaxLayer(byte *parallax);   // These are used to initialize psx backgrounds and
-	int32 initialisePsxBackgroundLayer(byte *parallax); // parallaxes, which are different from pc counterparts.
+	int32 initializeBackgroundLayer(byte *parallax);
+	int32 initializePsxParallaxLayer(byte *parallax);   // These are used to initialize psx backgrounds and
+	int32 initializePsxBackgroundLayer(byte *parallax); // parallaxes, which are different from pc counterparts.
 	void closeBackgroundLayer();
 
-	void initialiseRenderCycle();
+	void initializeRenderCycle();
 
 	void initBackground(int32 res, int32 new_palette);
 	void initPsxBackground(int32 res, int32 new_palette);

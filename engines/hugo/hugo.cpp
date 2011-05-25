@@ -593,7 +593,7 @@ void HugoEngine::initialize() {
 	_scheduler->initEventQueue();                   // Init scheduler stuff
 	_screen->initDisplay();                         // Create Dibs and palette
 	_file->openDatabaseFiles();                     // Open database files
-	calcMaxScore();                                 // Initialise maxscore
+	calcMaxScore();                                 // Initialize maxscore
 
 	_rnd = new Common::RandomSource("hugo");
 	_rnd->setSeed(42);                              // Kick random number generator
