@@ -126,6 +126,9 @@ SoundGenPCJr::SoundGenPCJr(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, p
 	memset(_tchannel, 0, sizeof(_tchannel));
 
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+
+	_v1data = NULL;
+	_v1size = 0;
 }
 
 SoundGenPCJr::~SoundGenPCJr() {
@@ -323,6 +326,17 @@ int SoundGenPCJr::getNextNote_v1(int ch, Tone *tone)
 {
 	static bool fetched[4] = { false, false, false, false };
 	static int duration = 0;
+
+	byte *data = _v1data;
+	uint32 len = _v1size;
+	int reg = 0;
+
+	if (len <= 0 || data == NULL) {
+		_channel[ch].avail = 0;
+		_channel[ch].attenuation = 0x0F;
+		_channel[ch].attenuationCopy = 0x0F;
+		return -1;
+	}
 	
 	// Get previously fetched data if possible
 	if (fetched[ch]) {
@@ -348,13 +362,6 @@ int SoundGenPCJr::getNextNote_v1(int ch, Tone *tone)
 	duration = 2 * CHAN_MAX;
 
 	// Otherwise fetch a row of data for all channels
-	byte *data = _v1data;
-	uint32 len = _v1size;
-	int reg = 0;
-
-	if (len <= 0 || data == NULL)
-		return -1;
-
 	fetched[0] = fetched[1] = fetched[2] = fetched[3] = true;
 
 	while (*data) {
