@@ -122,6 +122,8 @@ public:
 	~PCjrSound() { free(_data); }
 	virtual uint16 type() { return _type; }
 	const uint8 *getVoicePointer(uint voiceNum);
+	uint8 *getData() { return _data; }
+	uint32 getLength() { return _len; }
 protected:
 	uint8 *_data; ///< Raw sound resource data
 	uint32 _len;  ///< Length of the raw sound resource

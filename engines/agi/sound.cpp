@@ -41,6 +41,10 @@ AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, S
 		return NULL;
 	uint16 type = READ_LE_UINT16(data);
 
+	// For V1 sound resources
+	if ((type & 0xFF) == 0x01)
+		return new PCjrSound(data, len, resnum, manager);
+
 	switch (type) { // Create a sound object based on the type
 	case AGI_SOUND_SAMPLE:
 		return new IIgsSample(data, len, resnum, manager);
@@ -62,6 +66,11 @@ PCjrSound::PCjrSound(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : A
 	_data = data; // Save the resource pointer
 	_len  = len;  // Save the resource's length
 	_type = READ_LE_UINT16(data); // Read sound resource's type
+
+	// Detect V1 sound resources
+	if ((_type & 0xFF) == 0x01)
+		_type = AGI_SOUND_4CHN;
+
 	_isValid = (_type == AGI_SOUND_4CHN) && (_data != NULL) && (_len >= 2);
 
 	if (!_isValid) // Check for errors

@@ -153,6 +153,9 @@ void SoundGenPCJr::play(int resnum) {
 		_tchannel[i].genType = kGenTone;
 		_tchannel[i].genTypePrev = -1;
 	}
+
+	_v1data = pcjrSound->getData() + 1;
+	_v1size = pcjrSound->getLength() - 1;
 }
 
 void SoundGenPCJr::stop(void) {
@@ -214,11 +217,22 @@ int SoundGenPCJr::volumeCalc(SndGenChan *chan) {
 	return attenuation;
 }
 
+int SoundGenPCJr::getNextNote(int ch, Tone *tone)
+{
+	if (_vm->getVersion() > 0x2001)
+		return getNextNote_v2(ch, tone);
+	else
+		return getNextNote_v1(ch, tone);
+
+	return -1;
+}
+
 // read the next channel data.. fill it in *tone
 // if tone isn't touched.. it should be inited so it just plays silence
 // return 0 if it's passing more data
 // return -1 if it's passing nothing (end of data)
-int SoundGenPCJr::getNextNote(int ch, Tone *tone) {
+
+int SoundGenPCJr::getNextNote_v2(int ch, Tone *tone) {
 	ToneChan *tpcm;
 	SndGenChan *chan;
 	const byte *data;
@@ -305,6 +319,89 @@ int SoundGenPCJr::getNextNote(int ch, Tone *tone) {
 	return 0;
 }
 
+int SoundGenPCJr::getNextNote_v1(int ch, Tone *tone)
+{
+	static bool fetched[4] = { false, false, false, false };
+	static int duration = 0;
+	
+	// Get previously fetched data if possible
+	if (fetched[ch]) {
+		fetched[ch] = false;
+	
+		tone->freqCount = _channel[ch].freqCount;
+		tone->atten = _channel[ch].attenuation;
+		tone->type = _channel[ch].genType;
+		
+		return 0;
+	}
+
+	// In the V1 player the default duration for a row is 2 ticks
+	if (duration > 0) {
+		duration--;
+
+		tone->freqCount = _channel[ch].freqCount;
+		tone->atten = _channel[ch].attenuation;
+		tone->type = _channel[ch].genType;
+
+		return 0;
+	}
+	duration = 2 * CHAN_MAX;
+
+	// Otherwise fetch a row of data for all channels
+	byte *data = _v1data;
+	uint32 len = _v1size;
+	int reg = 0;
+
+	if (len <= 0 || data == NULL)
+		return -1;
+
+	fetched[0] = fetched[1] = fetched[2] = fetched[3] = true;
+
+	while (*data) {
+		if ((*data & 0x90) == 0x90) {
+			reg = (*data >> 5) & 0x3;
+			_channel[reg].attenuation = *data & 0xF;
+		} else if ((*data & 0xF0) == 0xE0) {
+			_channel[3].genType = (data[3] & 0x4) ? kGenWhite : kGenPeriod;
+			int noiseFreq = data[3] & 0x03;
+			switch (noiseFreq) {
+			case 0:
+				_channel[3].freqCount = 32;
+				break;
+			case 1:
+				_channel[3].freqCount = 64;
+				break;
+			case 2:
+				_channel[3].freqCount = 128;
+				break;
+			case 3:
+				_channel[3].freqCount = _channel[2].freqCount * 2;
+				break;
+			}
+		} else if (*data & 0x80) {
+			reg = (*data >> 5) & 0x3;
+			_channel[reg].freqCount = *data & 0xF;
+			_channel[reg].genType = kGenTone;
+		} else {
+			_channel[reg].freqCount |= (*data & 0x3F) << 4;
+		}
+
+		data++;
+		len--;
+	}
+	data++;
+	len--;
+
+	_v1data = data;
+	_v1size = len;
+
+	tone->freqCount = _channel[ch].freqCount;
+	tone->atten = _channel[ch].attenuation;
+	tone->type = _channel[ch].genType;
+
+	return 0;
+}
+
 // Formulas for noise generator
 // bit0 = output
 
@@ -348,9 +445,13 @@ int SoundGenPCJr::chanGen(int chan, int16 *stream, int len) {
 
 	retVal = -1;
 
+	debugC(5, kDebugLevelSound, "chanGen()");
+
 	while (len > 0) {
 		if (tpcm->noteCount <= 0) {
 			// get new tone data
+			tpcm->avail=1;
+			debugC(5, kDebugLevelSound, "new note data (avail=%d)", tpcm->avail);
 			toneNew.freqCount = 0;
 			toneNew.atten = 0xF;
 			toneNew.type = kGenTone;
