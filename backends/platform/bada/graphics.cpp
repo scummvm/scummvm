@@ -31,9 +31,22 @@ BadaGraphicsManager::BadaGraphicsManager(BadaAppForm* appForm) :
   eglDisplay(EGL_DEFAULT_DISPLAY),
   eglSurface(EGL_NO_SURFACE),
   eglConfig(0),
-  eglContext(EGL_NO_CONTEXT) {
+  eglContext(EGL_NO_CONTEXT),
+  pixmapSurface(EGL_NO_SURFACE),
+  pBitmap(null) {
   assert(appForm != null);
   _videoMode.fullscreen = true;
+}
+
+Common::List<Graphics::PixelFormat> BadaGraphicsManager::getSupportedFormats() const {
+  logEntered();
+
+  Common::List<Graphics::PixelFormat> res;
+  res.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0));
+  res.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+  res.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
+  res.push_back(Graphics::PixelFormat::createFormatCLUT8());
+  return res;
 }
 
 bool BadaGraphicsManager::hasFeature(OSystem::Feature f) {
@@ -65,19 +78,6 @@ void BadaGraphicsManager::updateScreen() {
   if (_transactionMode == kTransactionNone) {
     internUpdateScreen();
   }
-}
-
-void BadaGraphicsManager::internUpdateScreen() {
-  logEntered();
-
-  eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
-  OpenGLGraphicsManager::internUpdateScreen();
-
-  //glClearColor(0.1, 0, 0.5, 1);
-  //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  eglSwapBuffers(eglDisplay, eglSurface);
-
-  logLeaving();
 }
 
 // see: http://forums.badadev.com/viewtopic.php?f=7&t=208
@@ -165,22 +165,85 @@ bool BadaGraphicsManager::loadGFXMode() {
     return false;
   }
 
-  eglQuerySurface(eglDisplay, eglSurface, EGL_WIDTH, &_videoMode.hardwareWidth);
-  eglQuerySurface(eglDisplay, eglSurface, EGL_HEIGHT, &_videoMode.hardwareHeight);
+  int x, y, width, height;
+  appForm->GetBounds(x, y, width, height);
 
-  _videoMode.screenWidth = _videoMode.overlayWidth = _videoMode.hardwareWidth;
-  _videoMode.screenHeight = _videoMode.overlayHeight = _videoMode.hardwareHeight;
+  EGLint surfaceType;
+  eglGetConfigAttrib(eglDisplay, eglConfig, EGL_SURFACE_TYPE, &surfaceType);
+
+  if ((surfaceType & EGL_PIXMAP_BIT) > 0) {
+    // can also just draw directly to the eglSurface so not 
+    // sure what the advantage of using this is
+    pBitmap = new Bitmap();
+    result r = pBitmap->Construct(Osp::Graphics::Rectangle(0, 0, width, height));
+    if (!IsFailed(r)) {
+      pixmapSurface = eglCreatePixmapSurface(eglDisplay, eglConfig, (NativePixmapType)pBitmap, null);
+      if (pixmapSurface == EGL_NO_SURFACE) {
+        delete pBitmap;
+        pBitmap = null;
+      }
+    }
+  }
+
+  assert(pixmapSurface != EGL_NO_SURFACE);
+
+  _videoMode.screenWidth = _videoMode.overlayWidth = _videoMode.hardwareWidth = width;
+  _videoMode.screenHeight = _videoMode.overlayHeight = _videoMode.hardwareHeight = height;
   AppLog("screen size: %dx%d", _videoMode.screenWidth, _videoMode.screenHeight);
-    
-  // Call and return parent implementation of this method
-  return OpenGLGraphicsManager::loadGFXMode();
+
+  _screenFormat = Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0); 
+  _videoMode.format = _screenFormat; // RGBA444
+
+	initGL();
+	loadTextures();
+	refreshCursorScale();
+	refreshDisplaySize();
+
+  fillScreen(1444);
+  refreshGameScreen();
+
+	internUpdateScreen();
+  return true;
+}
+
+void BadaGraphicsManager::internUpdateScreen() {
+  logEntered();
+
+  eglMakeCurrent(eglDisplay, pixmapSurface, pixmapSurface, eglContext);
+  OpenGLGraphicsManager::internUpdateScreen();
+
+  // these might not be needed
+  glFlush();
+  glFinish();
+  eglSwapBuffers(eglDisplay, eglSurface);
+
+  eglUpdateBufferOSP(eglDisplay, pixmapSurface);
+  if (pBitmap) {
+    Rectangle dstRect(0, 0, _videoMode.screenWidth, _videoMode.screenHeight);
+    Canvas canvas;
+    canvas.Construct();
+    canvas.DrawBitmap(dstRect, *pBitmap);
+    canvas.Show();
+  }
+
+  logLeaving();
 }
 
 void BadaGraphicsManager::unloadGFXMode() {
   logEntered();
 
+  if (pBitmap) {
+    delete pBitmap;
+    pBitmap = null;
+  }
+
   if (EGL_NO_DISPLAY != eglDisplay) {
     eglMakeCurrent(eglDisplay, null, null, null);
+
+    if (pixmapSurface != EGL_NO_SURFACE) {
+      eglDestroySurface(eglDisplay, pixmapSurface);
+      pixmapSurface = EGL_NO_SURFACE;
+    }
 
     if (eglContext != EGL_NO_CONTEXT) {
       eglDestroyContext(eglDisplay, eglContext);

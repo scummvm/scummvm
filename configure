@@ -2423,7 +2423,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	android | dingux | dreamcast | gph | openpandora | psp | samsungtv | sdl | webos | wii)
+	android | bada | dingux | dreamcast | gph | openpandora | psp | samsungtv | sdl | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else

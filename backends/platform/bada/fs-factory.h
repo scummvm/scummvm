@@ -22,14 +22,15 @@
 #ifndef BADA_FILESYSTEM_FACTORY_H
 #define BADA_FILESYSTEM_FACTORY_H
 
+#include "config.h"
 #include "backends/fs/fs-factory.h"
 
 /**
- * Creates BADAFilesystemNode objects.
+ * Creates BadaFilesystemNode objects.
  *
  * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
-class BADAFilesystemFactory : public FilesystemFactory {
+class BadaFilesystemFactory : public FilesystemFactory {
   AbstractFSNode *makeRootFileNode() const;
   AbstractFSNode *makeCurrentDirectoryFileNode() const;
   AbstractFSNode *makeFileNodePath(const Common::String &path) const;

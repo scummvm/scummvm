@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "config.h"
 #include "fs.h"
 #include "backends/fs/stdiostream.h"
 
@@ -29,7 +30,7 @@ class BadaFileStream : public Common::SeekableReadStream,
                        public Common::WriteStream, 
                        public Common::NonCopyable {
 public:
-	static BadaFileStream* makeFromPath(const Common::String &path, bool writeMode);
+	static BadaFileStream* makeFromPath(const String &path, bool writeMode);
 
 	BadaFileStream(File* file);
 	~BadaFileStream();
@@ -115,14 +116,10 @@ bool BadaFileStream::flush() {
 	return (E_SUCCESS == file->Flush());
 }
 
-BadaFileStream *BadaFileStream::makeFromPath(const Common::String &path, 
-                                             bool writeMode) {
+BadaFileStream *BadaFileStream::makeFromPath(const String &path, bool writeMode) {
 	File* ioFile = new File();
   
-  String unicodePath;
-  StringUtil::Utf8ToString(path.c_str(), unicodePath);
-
-  result r = ioFile->Construct(unicodePath, writeMode ? "wb" : "rb", false);
+  result r = ioFile->Construct(path, writeMode ? "wb" : "rb", false);
   if (r == E_SUCCESS) {
 		return new BadaFileStream(ioFile);
   }
@@ -151,13 +148,12 @@ Common::String fromString(const Osp::Base::String& in) {
 }
 
 //
-// BADAFilesystemNode
+// BadaFilesystemNode
 //
-BADAFilesystemNode::BADAFilesystemNode(const Common::String& p) {
+BadaFilesystemNode::BadaFilesystemNode(const Common::String& p) {
   AppAssert(p.size() > 0);
   AppLog("creating node for %s", p.c_str());
 
-  String unicodePath;
   StringUtil::Utf8ToString(p.c_str(), unicodePath);
 
   isValid = !IsFailed(File::GetAttributes(unicodePath, attr));
@@ -167,23 +163,23 @@ BADAFilesystemNode::BADAFilesystemNode(const Common::String& p) {
   displayName = Common::lastPathComponent(path, '/');
 }
 
-bool BADAFilesystemNode::exists() const {
+bool BadaFilesystemNode::exists() const {
   return isValid;
 }
 
-bool BADAFilesystemNode::isReadable() const { 
+bool BadaFilesystemNode::isReadable() const { 
   return (isValid && !attr.IsDirectory());
 }
 
-bool BADAFilesystemNode::isDirectory() const {
+bool BadaFilesystemNode::isDirectory() const {
   return (isValid && attr.IsDirectory());
 }
 
-bool BADAFilesystemNode::isWritable() const { 
+bool BadaFilesystemNode::isWritable() const { 
   return (isValid && !attr.IsDirectory() && !attr.IsReadOnly());
 }
 
-AbstractFSNode* BADAFilesystemNode::getChild(const Common::String &n) const {
+AbstractFSNode* BadaFilesystemNode::getChild(const Common::String &n) const {
   AppAssert(!path.empty());
   AppAssert(isDirectory());
 
@@ -201,7 +197,7 @@ AbstractFSNode* BADAFilesystemNode::getChild(const Common::String &n) const {
 	return makeNode(newPath);
 }
 
-bool BADAFilesystemNode::getChildren(AbstractFSList &myList, 
+bool BadaFilesystemNode::getChildren(AbstractFSList &myList, 
                                      ListMode mode, bool hidden) const {
   AppAssert(isDirectory());
 
@@ -210,9 +206,6 @@ bool BADAFilesystemNode::getChildren(AbstractFSList &myList,
   Directory* pDir = new Directory();
 
   // open directory
-  String unicodePath;
-  StringUtil::Utf8ToString(path.c_str(), unicodePath);
-
   if (!IsFailed(pDir->Construct(unicodePath))) {
     // read all directory entries
     pDirEnum = pDir->ReadN();
@@ -237,7 +230,7 @@ bool BADAFilesystemNode::getChildren(AbstractFSList &myList,
       }
       
       // Start with a clone of this node, with the correct path set
-      BADAFilesystemNode entry(*this);
+      BadaFilesystemNode entry(*this);
       entry.displayName = fromString(fileName);
       if (path.lastChar() != '/') {
         entry.path += '/';
@@ -251,7 +244,7 @@ bool BADAFilesystemNode::getChildren(AbstractFSList &myList,
           (mode == Common::FSNode::kListDirectoriesOnly && !dirEntry.IsDirectory())) {
         continue;
       }
-      myList.push_back(new BADAFilesystemNode(entry));
+      myList.push_back(new BadaFilesystemNode(entry));
     }
   }
 
@@ -268,7 +261,7 @@ bool BADAFilesystemNode::getChildren(AbstractFSList &myList,
   return result;
 }
 
-AbstractFSNode* BADAFilesystemNode::getParent() const {
+AbstractFSNode* BadaFilesystemNode::getParent() const {
 	if (path == "/") {
 		return 0;	// The filesystem root has no parent
   }
@@ -293,21 +286,17 @@ AbstractFSNode* BADAFilesystemNode::getParent() const {
 	return makeNode(Common::String(start, end));
 }
 
-Common::SeekableReadStream* BADAFilesystemNode::createReadStream() {
-  Common::SeekableReadStream* result = BadaFileStream::makeFromPath(getPath(), false);
+Common::SeekableReadStream* BadaFilesystemNode::createReadStream() {
+  Common::SeekableReadStream* result = BadaFileStream::makeFromPath(unicodePath, false);
   if (result != null) {
-    String unicodePath;
-    StringUtil::Utf8ToString(getPath().c_str(), unicodePath);
     isValid = !IsFailed(File::GetAttributes(unicodePath, attr));
   }
   return result;
 }
 
-Common::WriteStream* BADAFilesystemNode::createWriteStream() {
-  Common::WriteStream* result = BadaFileStream::makeFromPath(getPath(), true);
+Common::WriteStream* BadaFilesystemNode::createWriteStream() {
+  Common::WriteStream* result = BadaFileStream::makeFromPath(unicodePath, true);
   if (result != null) {
-    String unicodePath;
-    StringUtil::Utf8ToString(getPath().c_str(), unicodePath);
     isValid = !IsFailed(File::GetAttributes(unicodePath, attr));
   }
   return result;

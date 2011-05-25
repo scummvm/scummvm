@@ -22,6 +22,7 @@
 #ifndef BADA_FILESYSTEM_H
 #define BADA_FILESYSTEM_H
 
+#include "config.h"
 #include "common/scummsys.h"
 #include "backends/fs/abstract-fs.h"
 
@@ -39,14 +40,14 @@ using namespace Osp::Base::Utility;
  *
  * Parts of this class are documented in the base interface class, AbstractFSNode.
  */
-class BADAFilesystemNode : public AbstractFSNode {
+class BadaFilesystemNode : public AbstractFSNode {
 public:
 	/**
-	 * Creates a BADAFilesystemNode for a given path.
+	 * Creates a BadaFilesystemNode for a given path.
 	 *
 	 * @param path the path the new node should point to.
 	 */
-	BADAFilesystemNode(const Common::String &path);
+	BadaFilesystemNode(const Common::String &path);
 
 	Common::String getDisplayName() const { return displayName; }
 	Common::String getName() const { return displayName; }
@@ -68,14 +69,15 @@ protected:
 	/**
 	 * Plain constructor, for internal use only (hence protected).
 	 */
-	BADAFilesystemNode() : isValid(false) {}
+	BadaFilesystemNode() : isValid(false) {}
 
   AbstractFSNode *makeNode(const Common::String &path) const {
-		return new BADAFilesystemNode(path);
+		return new BadaFilesystemNode(path);
 	}
 
 	Common::String displayName;
 	Common::String path;
+  String unicodePath;
 	bool isValid;
   FileAttributes attr;
 };
