@@ -1120,7 +1120,7 @@ protected:
 
 	void calcItineraryMatrix(byte *itineraryMatrix, int num);
 	void createBoxMatrix();
-	virtual bool areBoxesNeighbours(int i, int j);
+	virtual bool areBoxesNeighbors(int i, int j);
 
 	/* String class */
 public:

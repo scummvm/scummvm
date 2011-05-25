@@ -726,7 +726,7 @@ int ScummEngine::getNextBox(byte from, byte to) {
 		dest = to;
 		do {
 			dest = itineraryMatrix[numOfBoxes * from + dest];
-		} while (dest != Actor::kInvalidBox && !areBoxesNeighbours(from, dest));
+		} while (dest != Actor::kInvalidBox && !areBoxesNeighbors(from, dest));
 
 		if (dest == Actor::kInvalidBox)
 			dest = -1;
@@ -970,7 +970,7 @@ void ScummEngine::calcItineraryMatrix(byte *itineraryMatrix, int num) {
 			if (i == j) {
 				adjacentMatrix[i * boxSize + j] = 0;
 				itineraryMatrix[i * boxSize + j] = j;
-			} else if (areBoxesNeighbours(i, j)) {
+			} else if (areBoxesNeighbors(i, j)) {
 				adjacentMatrix[i * boxSize + j] = 1;
 				itineraryMatrix[i * boxSize + j] = j;
 			} else {
@@ -1060,8 +1060,8 @@ void ScummEngine::createBoxMatrix() {
 	free(itineraryMatrix);
 }
 
-/** Check if two boxes are neighbours. */
-bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
+/** Check if two boxes are neighbors. */
+bool ScummEngine::areBoxesNeighbors(int box1nr, int box2nr) {
 	Common::Point tmp;
 	BoxCoords box;
 	BoxCoords box2;
@@ -1158,7 +1158,7 @@ bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
 	return false;
 }
 
-bool ScummEngine_v0::areBoxesNeighbours(int box1nr, int box2nr) {
+bool ScummEngine_v0::areBoxesNeighbors(int box1nr, int box2nr) {
 	int i;
 	const int numOfBoxes = getNumBoxes();
 	const byte *boxm;

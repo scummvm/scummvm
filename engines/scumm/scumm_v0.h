@@ -94,7 +94,7 @@ protected:
 
 	virtual void resetSentence(bool walking);
 
-	virtual bool areBoxesNeighbours(int box1nr, int box2nr);
+	virtual bool areBoxesNeighbors(int box1nr, int box2nr);
 
 	/* Version C64 script opcodes */
 	void o_stopCurrentScript();

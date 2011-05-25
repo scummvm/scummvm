@@ -1626,7 +1626,7 @@ void Logic::asmSetLightsOn() {
 
 void Logic::asmSetManequinAreaOn() {
 	Area *a = _vm->grid()->area(ROOM_FLODA_FRONTDESK, 7);
-	a->mapNeighbours = ABS(a->mapNeighbours);
+	a->mapNeighbors = ABS(a->mapNeighbors);
 }
 
 void Logic::asmPanToJoe() {
