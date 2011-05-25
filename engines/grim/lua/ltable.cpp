@@ -56,6 +56,23 @@ static int64 hashindex(TObject *ref) {
 	return (h >= 0 ? h : -(h + 1));
 }
 
+int32 present(Hash *t, TObject *key) {
+	int32 tsize = nhash(t);
+	int64 h = hashindex(key);
+	int32 h1 = int32(h % tsize);
+	TObject *rf = ref(node(t, h1));
+	if (ttype(rf) != LUA_T_NIL && !luaO_equalObj(key, rf)) {
+		int32 h2 = int32(h % (tsize - 2) + 1);
+		do {
+			h1 += h2;
+			if (h1 >= tsize)
+				h1 -= tsize;
+			rf = ref(node(t, h1));
+		} while (ttype(rf) != LUA_T_NIL && !luaO_equalObj(key, rf));
+	}
+	return h1;
+}
+
 #else
 
 static int32 hashindex(TObject *r) {
@@ -92,11 +109,9 @@ static int32 hashindex(TObject *r) {
 	return (h >= 0 ? h : -(h + 1));
 }
 
-#endif
-
 int32 present(Hash *t, TObject *key) {
 	int32 tsize = nhash(t);
-	int32 h = (int32)hashindex(key);
+	int32 h = hashindex(key);
 	int32 h1 = h % tsize;
 	TObject *rf = ref(node(t, h1));
 	if (ttype(rf) != LUA_T_NIL && !luaO_equalObj(key, rf)) {
@@ -110,6 +125,8 @@ int32 present(Hash *t, TObject *key) {
 	}
 	return h1;
 }
+
+#endif
 
 /*
 ** Alloc a vector node
