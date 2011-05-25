@@ -91,7 +91,8 @@ void L1_CleanBuffer() {
 }
 
 void L1_StartFullscreenMovie() {
-	bool looping = getbool(2);
+	bool looping = getbool(2), result;
+	int prev_engine_mode = g_grim->getMode();
 
 	lua_Object name = lua_getparam(1);
 	if (!lua_isstring(name)) {
@@ -100,11 +101,14 @@ void L1_StartFullscreenMovie() {
 	}
 	L1_CleanBuffer();
 	g_grim->setMode(ENGINE_MODE_SMUSH);
-	pushbool(g_movie->play(lua_getstring(name), looping, 0, 0));
+	if ((result = g_movie->play(lua_getstring(name), looping, 0, 0)) == false)
+		g_grim->setMode(prev_engine_mode);
+	pushbool(result);
 }
 
 void L1_StartMovie() {
-	bool looping = getbool(2);
+	bool looping = getbool(2), result;
+	int prev_engine_mode = g_grim->getMode();
 	int x = 0, y = 0;
 
 	lua_Object name = lua_getparam(1);
@@ -119,7 +123,9 @@ void L1_StartMovie() {
 		y = (int)lua_getnumber(lua_getparam(4));
 
 	g_grim->setMode(ENGINE_MODE_NORMAL);
-	pushbool(g_movie->play(lua_getstring(name), looping, x, y));
+	if ((result = g_movie->play(lua_getstring(name), looping, x, y)) == false)
+		g_grim->setMode(prev_engine_mode);
+	pushbool(result);
 }
 
 /* Fullscreen movie playing query and normal movie
