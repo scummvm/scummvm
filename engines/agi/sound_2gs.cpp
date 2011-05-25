@@ -396,7 +396,7 @@ void SoundGen2GS::midiNoteOn(int channel, int note, int velocity) {
 		wb++;
 
 	// Prepare the generator.
-	g->osc[0].base	= i->wave[0][wa].base;
+	g->osc[0].base	= i->base + i->wave[0][wa].offset;
 	g->osc[0].size	= i->wave[0][wa].size;
 	g->osc[0].pd	= doubleToFrac(midiKeyToFreq(note, (double)i->wave[0][wa].tune / 256.0) / (double)_sampleRate);
 	g->osc[0].p		= 0;
@@ -405,7 +405,7 @@ void SoundGen2GS::midiNoteOn(int channel, int note, int velocity) {
 	g->osc[0].swap	= i->wave[0][wa].swap;
 	g->osc[0].chn	= i->wave[0][wa].chn;
 
-	g->osc[1].base	= i->wave[1][wb].base;
+	g->osc[1].base	= i->base + i->wave[1][wb].offset;
 	g->osc[1].size	= i->wave[1][wb].size;
 	g->osc[1].pd	= doubleToFrac(midiKeyToFreq(note, (double)i->wave[1][wb].tune / 256.0) / (double)_sampleRate);
 	g->osc[1].p		= 0;
@@ -528,19 +528,19 @@ bool IIgsInstrumentHeader::read(Common::SeekableReadStream &stream, bool ignoreA
 	for (int i = 0; i < 2; i++)
 	for (int k = 0; k < waveCount[i]; k++) {
 		wave[i][k].key = stream.readByte();
-		wave[i][k].base = (int8*)(stream.readByte() << 8);
+		wave[i][k].offset = stream.readByte() << 8;
 		wave[i][k].size = 0x100 << (stream.readByte() & 7);
 		uint8 b = stream.readByte();
 		wave[i][k].tune = stream.readUint16LE();
 
 		// For sample resources we ignore the address.
 		if (ignoreAddr)
-			wave[i][k].base = 0;
+			wave[i][k].offset = 0;
 
 		// Check for samples that extend out of the wavetable.
-		if ((int)wave[i][k].base + wave[i][k].size >= SIERRASTANDARD_SIZE) {
+		if (wave[i][k].offset + wave[i][k].size >= SIERRASTANDARD_SIZE) {
 			warning("Invalid data detected in the instrument set of Apple IIGS AGI. Continuing anyway...");
-			wave[i][k].size = SIERRASTANDARD_SIZE - (int)wave[i][k].base;
+			wave[i][k].size = SIERRASTANDARD_SIZE - wave[i][k].offset;
 		}
 
 		// Parse the generator mode byte to separate fields.
@@ -558,9 +558,8 @@ bool IIgsInstrumentHeader::finalize(int8 *wavetable) {
 	// in case the sample ends prematurely.
 	for (int i = 0; i < 2; i++)
 	for (int k = 0; k < waveCount[i]; k++) {
-		wave[i][k].base += (uint)wavetable;
-
-		int8 *p = wave[i][k].base;
+		base = wavetable;
+		int8 *p = base + wave[i][k].offset;
 		uint trueSize;
 		for (trueSize = 0; trueSize < wave[i][k].size; trueSize++)
 			if (p[trueSize] == -ZERO_OFFSET)

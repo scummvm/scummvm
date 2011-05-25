@@ -80,7 +80,7 @@ struct IIgsInstrumentHeader {
 	uint8 waveCount[2];	///< Wave count for both generators
 	struct {
 		uint8 key;		///< Highest MIDI key to use this wave
-		int8* base;		///< Pointer to wave data
+		int offset;		///< Offset of wave data, relative to base
 		uint size;		///< Wave size
 		bool halt;		///< Oscillator halted?
 		bool loop;		///< Loop mode?
@@ -88,6 +88,8 @@ struct IIgsInstrumentHeader {
 		bool chn;		///< Output channel (left / right)
 		int16 tune;		///< Fine tune in semitones (8.8 fixed point)
 	} wave[2][MAX_OSCILLATOR_WAVES];
+
+	int8* base; ///< Base of wave data
 
 	/**
 	 * Read an Apple IIGS instrument header from the given stream.
