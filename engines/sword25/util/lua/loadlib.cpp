@@ -8,19 +8,6 @@
 ** implementation for Windows, and a stub for other systems.
 */
 
-// FIXME: Avoid using these APIs.
-// Actually, this could be achieved by removing 80% of the remaining
-// code in this file. Most of it is an elaborate way of expressing
-// something like "return ERROR;" anyway, as we don't support loading
-// dynamic libs
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
-#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-
-
-#include <stdlib.h>
-#include <string.h>
-
 
 #define loadlib_c
 #define LUA_LIB
@@ -42,11 +29,6 @@
 
 #define POF		LUA_POF
 #define LIB_FAIL	"open"
-
-
-/* error codes for ll_loadfunc */
-#define ERRLIB		1
-#define ERRFUNC		2
 
 
 /*
@@ -97,29 +79,28 @@ static int gctm (lua_State *L) {
 }
 
 
-static int ll_loadfunc (lua_State *L, const char *path, const char *sym) {
-  void **reg = ll_register(L, path);
-  if (*reg == NULL) {
-    lua_pushliteral(L, DLMSG); // loading not supported, just push an error msg
-    return ERRLIB;  /* unable to load library */
-  } else {
-    return ERRFUNC;  /* unable to find function */
-  }
-}
+/* error codes for ll_loadfunc */
+#define ERRLIB		1
+#define ERRFUNC		2
 
 
 static int ll_loadlib (lua_State *L) {
   const char *path = luaL_checkstring(L, 1);
-  const char *init = luaL_checkstring(L, 2);
-  int stat = ll_loadfunc(L, path, init);
-  if (stat == 0)  /* no errors? */
-    return 1;  /* return the loaded function */
-  else {  /* error; error message is on stack top */
-    lua_pushnil(L);
-    lua_insert(L, -2);
-    lua_pushstring(L, (stat == ERRLIB) ?  LIB_FAIL : "init");
-    return 3;  /* return nil, error message, and where */
+//  const char *init = luaL_checkstring(L, 2);
+  int stat;
+  void **reg = ll_register(L, path);
+  if (*reg == NULL) {
+    stat = ERRLIB;  /* unable to load library */
+  } else {
+    stat = ERRFUNC;  /* unable to find function */
   }
+  lua_pushliteral(L, DLMSG);
+
+  /* error; error message is on stack top */
+  lua_pushnil(L);
+  lua_insert(L, -2);
+  lua_pushstring(L, (stat == ERRLIB) ?  LIB_FAIL : "init");
+  return 3;  /* return nil, error message, and where */
 }
 
 
@@ -129,109 +110,6 @@ static int ll_loadlib (lua_State *L) {
 ** 'require' function
 ** =======================================================
 */
-
-
-static int readable (const char *filename) {
-  FILE *f = fopen(filename, "r");  /* try to open file */
-  if (f == NULL) return 0;  /* open failed */
-  fclose(f);
-  return 1;
-}
-
-
-static const char *pushnexttemplate (lua_State *L, const char *path) {
-  const char *l;
-  while (*path == *LUA_PATHSEP) path++;  /* skip separators */
-  if (*path == '\0') return NULL;  /* no more templates */
-  l = strchr(path, *LUA_PATHSEP);  /* find next separator */
-  if (l == NULL) l = path + strlen(path);
-  lua_pushlstring(L, path, l - path);  /* template */
-  return l;
-}
-
-
-static const char *findfile (lua_State *L, const char *name,
-                                           const char *pname) {
-  const char *path;
-  name = luaL_gsub(L, name, ".", LUA_DIRSEP);
-  lua_getfield(L, LUA_ENVIRONINDEX, pname);
-  path = lua_tostring(L, -1);
-  if (path == NULL)
-    luaL_error(L, LUA_QL("package.%s") " must be a string", pname);
-  lua_pushliteral(L, "");  /* error accumulator */
-  while ((path = pushnexttemplate(L, path)) != NULL) {
-    const char *filename;
-    filename = luaL_gsub(L, lua_tostring(L, -1), LUA_PATH_MARK, name);
-    lua_remove(L, -2);  /* remove path template */
-    if (readable(filename))  /* does file exist and is readable? */
-      return filename;  /* return that file name */
-    lua_pushfstring(L, "\n\tno file " LUA_QS, filename);
-    lua_remove(L, -2);  /* remove file name */
-    lua_concat(L, 2);  /* add entry to possible error message */
-  }
-  return NULL;  /* not found */
-}
-
-
-static void loaderror (lua_State *L, const char *filename) {
-  luaL_error(L, "error loading module " LUA_QS " from file " LUA_QS ":\n\t%s",
-                lua_tostring(L, 1), filename, lua_tostring(L, -1));
-}
-
-
-static int loader_Lua (lua_State *L) {
-  const char *filename;
-  const char *name = luaL_checkstring(L, 1);
-  filename = findfile(L, name, "path");
-  if (filename == NULL) return 1;  /* library not found in this path */
-  if (luaL_loadfile(L, filename) != 0)
-    loaderror(L, filename);
-  return 1;  /* library loaded successfully */
-}
-
-
-static const char *mkfuncname (lua_State *L, const char *modname) {
-  const char *funcname;
-  const char *mark = strchr(modname, *LUA_IGMARK);
-  if (mark) modname = mark + 1;
-  funcname = luaL_gsub(L, modname, ".", LUA_OFSEP);
-  funcname = lua_pushfstring(L, POF"%s", funcname);
-  lua_remove(L, -2);  /* remove 'gsub' result */
-  return funcname;
-}
-
-
-static int loader_C (lua_State *L) {
-  const char *funcname;
-  const char *name = luaL_checkstring(L, 1);
-  const char *filename = findfile(L, name, "cpath");
-  if (filename == NULL) return 1;  /* library not found in this path */
-  funcname = mkfuncname(L, name);
-  if (ll_loadfunc(L, filename, funcname) != 0)
-    loaderror(L, filename);
-  return 1;  /* library loaded successfully */
-}
-
-
-static int loader_Croot (lua_State *L) {
-  const char *funcname;
-  const char *filename;
-  const char *name = luaL_checkstring(L, 1);
-  const char *p = strchr(name, '.');
-  int stat;
-  if (p == NULL) return 0;  /* is root */
-  lua_pushlstring(L, name, p - name);
-  filename = findfile(L, lua_tostring(L, -1), "cpath");
-  if (filename == NULL) return 1;  /* root not found */
-  funcname = mkfuncname(L, name);
-  if ((stat = ll_loadfunc(L, filename, funcname)) != 0) {
-    if (stat != ERRFUNC) loaderror(L, filename);  /* real error */
-    lua_pushfstring(L, "\n\tno module " LUA_QS " in file " LUA_QS,
-                       name, filename);
-    return 1;  /* function not found */
-  }
-  return 1;
-}
 
 
 static int loader_preload (lua_State *L) {
@@ -409,7 +287,7 @@ static const luaL_Reg ll_funcs[] = {
 
 
 static const lua_CFunction loaders[] =
-  {loader_preload, loader_Lua, loader_C, loader_Croot, NULL};
+  {loader_preload, NULL};
 
 
 LUALIB_API int luaopen_package (lua_State *L) {
