@@ -1200,9 +1200,9 @@ void GrimEngine::savegameRestore() {
 
 template<typename T>
 void GrimEngine::restoreObjects(SaveGame *state, Common::HashMap<int32, T *> &map) {
-	int32 size = state->readLESint32();
+	int32 size = state->readLEUint32();
 	for (int32 i = 0; i < size; ++i) {
-		int32 id = state->readLEUint32();
+		int32 id = state->readLESint32();
 		T *t = new T();
 		t->setId(id);
 		map[t->getId()] = t;
@@ -1408,7 +1408,7 @@ void GrimEngine::saveObjects(SaveGame *state, Common::HashMap<int32, T *> &map) 
 	state->writeLEUint32(map.size());
 	for (Common::HashMap<int32, T *>::iterator i = map.begin(); i != map.end(); ++i) {
 		T *a = i->_value;
-		state->writeLEUint32(i->_key);
+		state->writeLESint32(i->_key);
 
 		a->saveState(state);
 	}
