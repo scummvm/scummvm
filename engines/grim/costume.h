@@ -99,7 +99,7 @@ public:
 		virtual void resetColormap() { }
 		virtual void saveState(SaveGame *) { }
 		virtual void restoreState(SaveGame *) { }
-		virtual ~Component() { }
+		virtual ~Component();
 
 	protected:
 		ObjectPtr<CMap> _cmap, _previousCmap;
@@ -112,6 +112,7 @@ public:
 		Costume *_cost;
 		void setCostume(Costume *cost) { _cost = cost; }
 		void setParent(Component *newParent);
+		void removeChild(Component *child);
 
 		friend class Costume;
 	};
