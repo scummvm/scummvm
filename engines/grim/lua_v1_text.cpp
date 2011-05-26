@@ -168,7 +168,8 @@ void L1_BlastText() {
 	}
 
 	const char *line = lua_getstring(textObj);
-	Common::String text = line;
+	if (!line || line[0] == 0)
+		return;
 
 	TextObject *textObject = new TextObject(true);
 	textObject->setDefaults(&g_grim->_blastTextDefaults);
@@ -176,7 +177,7 @@ void L1_BlastText() {
 	if (lua_istable(tableObj))
 		setTextObjectParams(textObject, tableObj);
 
-	textObject->setText(text.c_str());
+	textObject->setText(line);
 	textObject->draw();
 	delete textObject;
 }

@@ -141,6 +141,10 @@ int TextObject::getTextCharPosition(int pos) {
 
 void TextObject::setupText() {
 	Common::String msg = parseMsgText(_textID, NULL);
+	if (msg.size() == 0) {
+		_disabled = true;
+		return;
+	}
 	Common::String message;
 	const char *c = msg.c_str();
 
