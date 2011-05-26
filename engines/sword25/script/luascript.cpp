@@ -177,7 +177,7 @@ bool LuaScriptEngine::executeFile(const Common::String &fileName) {
 }
 
 bool LuaScriptEngine::executeString(const Common::String &code) {
-	return executeBuffer((byte *)code.c_str(), code.size(), "???");
+	return executeBuffer((const byte *)code.c_str(), code.size(), "???");
 }
 
 namespace {
