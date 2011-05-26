@@ -46,7 +46,7 @@ void L1_KillTextObject() {
 
 	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKTAG('T', 'E', 'X', 'T')) {
 		TextObject *textObject = gettextobject(textObj);
-		textObject->setDisabled(true);
+		g_grim->killTextObject(textObject);
 	}
 }
 
