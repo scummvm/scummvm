@@ -1408,7 +1408,7 @@ void GrimEngine::savegameSave() {
 template<typename T>
 void GrimEngine::saveObjects(SaveGame *state, Common::HashMap<int32, T *> &map) {
 	state->writeLEUint32(map.size());
-	for (Common::HashMap<int32, T *>::iterator i = map.begin(); i != map.end(); ++i) {
+	for (typename Common::HashMap<int32, T *>::iterator i = map.begin(); i != map.end(); ++i) {
 		T *a = i->_value;
 		state->writeLESint32(i->_key);
 
