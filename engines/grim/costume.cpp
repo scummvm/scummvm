@@ -701,7 +701,9 @@ void KeyframeComponent::setKey(int val) {
 		_repeatMode = val;
 		break;
 	case 5:
+		_active = false;
 		warning("Key 5 (meaning uncertain) used  for keyframe %s", _anim._keyf->getFilename().c_str());
+		break;
 	case 4:
 		deactivate();
 		break;
