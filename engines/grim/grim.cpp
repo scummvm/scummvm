@@ -1151,22 +1151,13 @@ void GrimEngine::savegameRestore() {
 	g_movie->pause(true);
 
 	//  free all resource
-	killColors();
-	killBitmaps();
-	killFonts();
-	killObjectStates();
-	killScenes();
-	killTextObjects();
-	killPrimitiveObjects();
-	killActors();
-
 	//  lock resources
 
 	_selectedActor = NULL;
 	_talkingActor = NULL;
-	//if (_currScene)
-	//	removeScene(_currScene);
-	//delete _currScene;
+	if (_currScene)
+		removeScene(_currScene);
+	delete _currScene;
 	_currScene = NULL;
 
 	restoreColors(_savedState);
@@ -1281,6 +1272,8 @@ void GrimEngine::restoreObjectStates(SaveGame *state) {
 void GrimEngine::restoreBitmaps(SaveGame *state) {
 	state->beginSection('VBUF');
 
+	killBitmaps();
+
 	int32 size = state->readLESint32();
 	for (int32 i = 0; i < size; ++i) {
 		int32 id = state->readLEUint32();
@@ -1303,6 +1296,8 @@ void GrimEngine::restoreBitmaps(SaveGame *state) {
 
 void GrimEngine::restoreFonts(SaveGame *state) {
 	state->beginSection('FONT');
+
+	killFonts();
 
 	int32 size = state->readLESint32();
 	for (int32 i = 0; i < size; ++i) {

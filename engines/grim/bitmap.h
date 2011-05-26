@@ -70,8 +70,6 @@ public:
 	Bitmap(const char *data, int width, int height, int bpp, const char *filename);
 	Bitmap();
 
-	void restoreState(SaveGame *state);
-
 	const Common::String &getFilename() const { return _data->_fname; }
 
 	void draw() const;
