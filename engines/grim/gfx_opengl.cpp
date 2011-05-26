@@ -837,11 +837,9 @@ void GfxOpenGL::createFont(Font *font) {
 	GLuint *texture = &(userData->texture);
 	glGenTextures(1, texture);
 
-
-	uint start = (uint)font->getCharData(0);
 	for (int i = 0, row = 0; i < 256; ++i) {
 		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
-		uint d = (uint)font->getCharData(i) - start;
+		int32 d = font->getCharOffset(i);
 		for (int x = 0; x < height; ++x) {
 			uint a = row * size * size * bpp * charsHigh;
 			uint b = x * size * charsWide * bpp;

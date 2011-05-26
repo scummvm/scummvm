@@ -43,6 +43,7 @@ public:
 	int32 getCharWidth(unsigned char c) const { return _charHeaders[getCharIndex(c)].width; }
 	int32 getCharStartingCol(unsigned char c) const { return _charHeaders[getCharIndex(c)].startingCol; }
 	int32 getCharStartingLine(unsigned char c) const { return _charHeaders[getCharIndex(c)].startingLine; }
+	int32 getCharOffset(unsigned char c) const { return _charHeaders[getCharIndex(c)].offset; }
 	const byte *getCharData(unsigned char c) const { return _fontData + (_charHeaders[getCharIndex(c)].offset); }
 
 	const byte *getFontData() const { return _fontData; }
