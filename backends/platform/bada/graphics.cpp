@@ -199,9 +199,8 @@ bool BadaGraphicsManager::loadGFXMode() {
 	refreshCursorScale();
 	refreshDisplaySize();
 
-  fillScreen(1444);
+  fillScreen(50);
   refreshGameScreen();
-
 	internUpdateScreen();
   return true;
 }

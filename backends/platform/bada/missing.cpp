@@ -26,15 +26,16 @@
 #include <FSystem.h>
 #include <FBase.h>
 
+#include "portdefs.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
 
-#include "portdefs.h"
-#include "system.h"
-
 #define BUF_SIZE 255
+
+void systemError(const char* format, ...);
 
 C_LINKAGE_BEGIN
 

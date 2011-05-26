@@ -21,7 +21,6 @@
 
 #include "config.h"
 #include "fs.h"
-#include "backends/fs/stdiostream.h"
 
 //
 // BadaFileStream
