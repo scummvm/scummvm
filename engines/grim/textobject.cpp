@@ -146,27 +146,22 @@ void TextObject::setupText() {
 		return;
 	}
 	Common::String message;
-	const char *c = msg.c_str();
 
 	// remove spaces (NULL_TEXT) from the end of the string,
 	// while this helps make the string unique it screws up
 	// text justification
-	for (uint i = msg.size() - 1; c[i] == ' '; i--)
-		msg.deleteLastChar();
-
-	if (msg.size() == 0) {
-		_disabled = true;
-		return;
-	}
-
 	// remove char of id 13 from the end of the string,
-	for (uint i = msg.size() - 1; c[i] == 13; i--)
+	int pos = msg.size() - 1;
+	while (pos > 0 && (msg[pos] == ' ' || msg[pos] == 13)) {
 		msg.deleteLastChar();
+		pos = msg.size() - 1;
+	}
 
 	if (msg.size() == 0) {
 		_disabled = true;
 		return;
 	}
+
 
 	// format the output message to incorporate line wrapping
 	// (if necessary) for the text object
