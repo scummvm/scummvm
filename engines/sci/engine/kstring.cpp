@@ -66,8 +66,24 @@ reg_t kStrCpy(EngineState *s, int argc, reg_t *argv) {
 			s->_segMan->strncpy(argv[0], argv[1], length);
 		else
 			s->_segMan->memcpy(argv[0], argv[1], -length);
-	} else
+	} else {
+		if (g_sci->getGameId() == GID_LAURABOW2 && g_sci->getLanguage() == Common::DE_DEU &&
+			s->currentRoomNumber() == 360) {
+			// One of the game texts in LB2 German contains loads of spaces in
+			// its end. We trim the text here, otherwise the graphics code will
+			// attempt to draw a very large window (larger than the screen) to
+			// show the text, and crash.
+			// Fixes bug #3306417.
+			SegmentRef src = s->_segMan->dereference(argv[1]);
+			if (src.maxSize == 7992) {	// the problematic resource. Trim it.
+				Common::String text = s->_segMan->getString(argv[1]);
+				text.trim();
+				s->_segMan->strcpy(argv[1], text.c_str());
+			}
+		}
+
 		s->_segMan->strcpy(argv[0], argv[1]);
+	}
 
 	return argv[0];
 }
