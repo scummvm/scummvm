@@ -177,7 +177,8 @@ private:
 		bool _hasPlayed, _playing, _looping;
 		int _currTime;
 
-		int _fadeLength, _fadeCurrTime;
+		int _fadeLength;
+		float _fade;
 		FadeMode _fadeMode;
 
 		void setKeys(int startTime, int stopTime);

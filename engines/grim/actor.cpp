@@ -756,8 +756,11 @@ void Actor::setWalkChore(int chore, Costume *cost) {
 	if (_walkCostume == cost && _walkChore == chore)
 		return;
 
-	if (_walkChore >= 0)
-		_walkCostume->stopChore(_walkChore);
+	if (_walkChore >= 0 && _walkCostume->isChoring(_walkChore, false) >= 0) {
+		_walkCostume->fadeChoreOut(_walkChore, 150);
+		if (_restChore >= 0)
+			_restCostume->fadeChoreIn(_restChore, 150);
+	}
 
 	_walkCostume = cost;
 	_walkChore = chore;
@@ -1140,34 +1143,44 @@ void Actor::update() {
 		if (_walkedCur) {
 			if (_walkCostume->isChoring(_walkChore, false) < 0) {
 				_lastStepTime = 0;
+				_walkCostume->stopChore(_walkChore);
 				_walkCostume->playChoreLooping(_walkChore);
+				_walkCostume->fadeChoreIn(_walkChore, 150);
 			}
-			if (_restChore >= 0 && _restCostume->isChoring(_restChore, false)) {
-				_restCostume->stopChore(_restChore);
+			if (_restChore >= 0) {
+				_restCostume->fadeChoreOut(_restChore, 150);
 			}
 		} else {
-			if (_walkCostume->isChoring(_walkChore, false) >= 0)
-				_walkCostume->stopChore(_walkChore);
+			if (_walkCostume->isChoring(_walkChore, false) >= 0) {
+				_walkCostume->fadeChoreOut(_walkChore, 150);
+				_restCostume->fadeChoreIn(_restChore, 150);
+			}
 		}
 	}
 
 	if (_leftTurnChore >= 0) {
 		if (_walkedCur)
 			_currTurnDir = 0;
+
+		if (_restChore >= 0) {
+			if (_currTurnDir != 0)
+				_restCostume->fadeChoreOut(_restChore, 500);
+			else if (_lastTurnDir != 0)
+				_restCostume->fadeChoreIn(_restChore, 100);
+		}
+
 		if (_lastTurnDir != 0 && _lastTurnDir != _currTurnDir)
-			_turnCostume->stopChore(getTurnChore(_lastTurnDir));
+			_turnCostume->fadeChoreOut(getTurnChore(_lastTurnDir), 100);
 		if (_currTurnDir != 0 && _currTurnDir != _lastTurnDir) {
-			_turnCostume->playChore(getTurnChore(_currTurnDir));
-			if (_restChore >= 0 && _restCostume->isChoring(_restChore, false)) {
-				_restCostume->stopChore(_restChore);
-			}
+			_turnCostume->playChoreLooping(getTurnChore(_currTurnDir));
+			_turnCostume->fadeChoreIn(getTurnChore(_currTurnDir), 500);
 		}
 	} else
 		_currTurnDir = 0;
 
 	// The rest chore might have been stopped because of a
 	// StopActorChore(nil).  Restart it if so.
-	if (!_walkedCur && !_currTurnDir && _restChore >= 0 && _restCostume->isChoring(_restChore, false) < 0)
+	if (_restChore >= 0 && _restCostume->isChoring(_restChore, false) < 0)
 		_restCostume->playChoreLooping(_restChore);
 
 	_walkedLast = _walkedCur;

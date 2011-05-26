@@ -1250,6 +1250,7 @@ void Costume::Chore::play() {
 	_hasPlayed = true;
 	_looping = false;
 	_currTime = -1;
+	_fade = 1.0f;
 }
 
 void Costume::Chore::playLooping() {
@@ -1257,6 +1258,7 @@ void Costume::Chore::playLooping() {
 	_hasPlayed = true;
 	_looping = true;
 	_currTime = -1;
+	_fade = 1.0f;
 }
 
 void Costume::Chore::stop() {
@@ -1280,13 +1282,7 @@ void Costume::Chore::setKeys(int startTime, int stopTime) {
 		if (!comp)
 			continue;
 
-		if (_fadeMode == FadeIn) {
-			comp->setFade((float)_fadeCurrTime / (float)_fadeLength);
-		} else if (_fadeMode == FadeOut) {
-			comp->setFade(1.f - ((float)_fadeCurrTime / (float)_fadeLength));
-		} else {
-			comp->setFade(1.f);
-		}
+		comp->setFade(_fade);
 
 		for (int j = 0; j < _tracks[i].numKeys; j++) {
 			if (_tracks[i].keys[j].time > stopTime)
@@ -1313,6 +1309,7 @@ void Costume::Chore::setLastFrame() {
 	_playing = false;
 	_hasPlayed = true;
 	_looping = false;
+	_fade = 1.0f;
 	setKeys(-1, _currTime);
 	_currTime = -1;
 	_fadeMode = None;
@@ -1328,22 +1325,24 @@ void Costume::Chore::update() {
 	else
 		newTime = _currTime + g_grim->getFrameTime();
 
-	if (_fadeMode != None) {
-		_fadeCurrTime += g_grim->getFrameTime();
-
-		if (_fadeCurrTime > _fadeLength) {
-			if (_fadeMode == FadeOut) {
-				_playing = false;
-				_fadeMode = None;
-				for (int i = 0; i < _numTracks; i++) {
-					Component *comp = _owner->_components[_tracks[i].compID];
-					if (comp)
-						comp->setFade(0.f);
-				}
-				return;
-			} else {
-				_fadeMode = None;
+	if (_fadeMode == FadeOut) {
+		_fade -= (float)g_grim->getFrameTime() / (float)_fadeLength;
+		if (_fade <= 0.0f) {
+			_playing = false;
+			_fadeMode = None;
+			_fade = 0.0f;
+			for (int i = 0; i < _numTracks; i++) {
+				Component *comp = _owner->_components[_tracks[i].compID];
+				if (comp)
+					comp->setFade(0.f);
 			}
+			return;
+		}
+	} else if (_fadeMode == FadeIn) {
+		_fade += (float)g_grim->getFrameTime() / (float)_fadeLength;
+		if (_fade >= 1.0f) {
+			_fadeMode = None;
+			_fade = 1.0f;
 		}
 	}
 
@@ -1368,10 +1367,16 @@ void Costume::Chore::update() {
 }
 
 void Costume::Chore::fade(Costume::Chore::FadeMode mode, int msecs) {
+	if (mode == FadeIn) {
+		if (!_playing || _fadeMode != mode) {
+			_currTime = -1;
+			_fade = 0.0f;
+		}
+	}
 	_playing = true;
+	_hasPlayed = true;
 	_fadeMode = mode;
 	_fadeLength = msecs;
-	_fadeCurrTime = 0;
 }
 
 Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *parent, int parentID, const char *name, Costume::Component *prevComponent) {
@@ -1499,7 +1504,6 @@ void Costume::stopChores() {
 }
 
 void Costume::fadeChoreIn(int chore, int msecs) {
-	_chores[chore].play();
 	_chores[chore].fade(Chore::FadeIn, msecs);
 }
 
