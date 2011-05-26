@@ -35,7 +35,7 @@
 
 #include "common/savefile.h"
 #include "sword25/package/packagemanager.h"
-#include "sword25/gfx/image/pngloader.h"
+#include "sword25/gfx/image/imgloader.h"
 #include "sword25/gfx/image/renderedimage.h"
 
 #include "common/system.h"
@@ -93,30 +93,6 @@ static byte *readSavegameThumbnail(const Common::String &filename, uint &fileSiz
 	return pFileData;
 }
 
-// TODO: Move this method into a more generic image loading class, together with the PNG reading code
-static bool decodeThumbnail(const byte *pFileData, uint fileSize, byte *&pUncompressedData, int &width, int &height, int &pitch) {
-	const byte *src = pFileData + 4;	// skip header
-	width = READ_LE_UINT16(src); src += 2;
-	height = READ_LE_UINT16(src); src += 2;
-	src++;	// version, ignored for now
-	pitch = width * 4;
-
-	uint32 totalSize = pitch * height;
-	pUncompressedData = new byte[totalSize];
-	uint32 *dst = (uint32 *)pUncompressedData;	// treat as uint32, for pixelformat output
-	const Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
-	byte r, g, b;
-
-	for (uint32 i = 0; i < totalSize / 4; i++) {
-		r = *src++;
-		g = *src++;
-		b = *src++;
-		*dst++ = format.RGBToColor(r, g, b);
-	}
-
-	return true;
-}
-
 RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 	_data(0),
 	_width(0),
@@ -148,9 +124,9 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 	// Uncompress the image
 	int pitch;
 	if (isPNG)
-		result = PNGLoader::decodeImage(pFileData, fileSize, _data, _width, _height, pitch);
+		result = ImgLoader::decodePNGImage(pFileData, fileSize, _data, _width, _height, pitch);
 	else
-		result = decodeThumbnail(pFileData, fileSize, _data, _width, _height, pitch);
+		result = ImgLoader::decodeThumbnailImage(pFileData, fileSize, _data, _width, _height, pitch);
 
 	if (!result) {
 		error("Could not decode image.");

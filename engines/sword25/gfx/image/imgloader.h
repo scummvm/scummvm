@@ -29,8 +29,8 @@
  *
  */
 
-#ifndef SWORD25_PNGLOADER2_H
-#define SWORD25_PNGLOADER2_H
+#ifndef SWORD25_IMGLOADER_H
+#define SWORD25_IMGLOADER_H
 
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/graphicengine.h"
@@ -42,9 +42,9 @@ namespace Sword25 {
  *
  * Originally written by Malte Thiesen.
  */
-class PNGLoader {
+class ImgLoader {
 protected:
-	PNGLoader() {}	// Protected constructor to prevent instances
+	ImgLoader() {}	// Protected constructor to prevent instances
 
 public:
 
@@ -62,7 +62,12 @@ public:
 	 * @remark This function does not free the image buffer passed to it,
 	 *         it is the callers responsibility to do so.
 	 */
-	static bool decodeImage(const byte *pFileData, uint fileSize,
+	static bool decodePNGImage(const byte *pFileData, uint fileSize,
+	                        byte *&pUncompressedData,
+	                        int &width, int &height,
+	                        int &pitch);
+
+	static bool decodeThumbnailImage(const byte *pFileData, uint fileSize,
 	                        byte *&pUncompressedData,
 	                        int &width, int &height,
 	                        int &pitch);
