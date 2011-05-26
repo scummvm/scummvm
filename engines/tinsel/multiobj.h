@@ -53,7 +53,7 @@ typedef MULTI_INIT *PMULTI_INIT;
 |*			Multi Object Function Prototypes		*|
 \*----------------------------------------------------------------------*/
 
-OBJECT *MultiInitObject(	// Initialise a multi-part object
+OBJECT *MultiInitObject(	// Initialize a multi-part object
 	const MULTI_INIT *pInitTbl);	// pointer to multi-object initialisation table
 
 void MultiInsertObject(		// Insert a multi-part object onto a object list

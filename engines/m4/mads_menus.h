@@ -117,8 +117,8 @@ class RexDialogView : public View, public MadsView {
 private:
 	int _priorSceneId;
 
-	void initialiseLines();
-	void initialiseGraphics();
+	void initializeLines();
+	void initializeGraphics();
 	void loadBackground();
 	void loadMenuSprites();
 protected:

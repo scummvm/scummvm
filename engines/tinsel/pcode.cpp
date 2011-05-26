@@ -348,7 +348,7 @@ void FreeMasterInterpretContext() {
 }
 
 /**
- * Allocate and initialise an interpret context.
+ * Allocate and initialize an interpret context.
  * Called from a process prior to Interpret().
  * @param gsort			which sort of code
  * @param hCode			Handle to code to execute
@@ -385,7 +385,7 @@ INT_CONTEXT *InitInterpretContext(GSORT gsort, SCNHANDLE hCode,	TINSEL_EVENT eve
 }
 
 /**
- * Allocate and initialise an interpret context with restored data.
+ * Allocate and initialize an interpret context with restored data.
  */
 INT_CONTEXT *RestoreInterpretContext(INT_CONTEXT *ric) {
 	INT_CONTEXT *ic;

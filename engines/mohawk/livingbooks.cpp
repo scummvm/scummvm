@@ -3781,7 +3781,7 @@ void LBProxyItem::init() {
 	Common::String filename = _vm->getFileNameFromConfig("Proxies", _desc.c_str(), leftover);
 	if (!leftover.empty())
 		error("LBProxyItem tried loading proxy '%s' but got leftover '%s'", _desc.c_str(), leftover.c_str());
-	uint16 baseId;
+	uint16 baseId = 0;
 	for (uint i = 0; i < filename.size(); i++) {
 		if (filename[i] == ';') {
 			baseId = atoi(filename.c_str() + i + 1);

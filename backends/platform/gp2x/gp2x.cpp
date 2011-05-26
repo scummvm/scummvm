@@ -125,7 +125,7 @@ void OSystem_GP2X::initBackend() {
 
 	ConfMan.setBool("FM_low_quality", true);
 
-	/* Initialise any GP2X specific stuff we may want (Batt Status, scaler etc.) */
+	/* Initialize any GP2X specific stuff we may want (Batt Status, scaler etc.) */
 	GP2X_HW::deviceInit();
 
 	/* Set Default hardware mixer volume to a preset level (VOLUME_INITIAL). This is done to 'reset' volume level if set by other apps. */

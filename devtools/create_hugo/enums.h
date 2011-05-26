@@ -1376,7 +1376,7 @@ enum action_t {                                     // Parameters:
 	INIT_MAZE          = 30,                        // 30 - Start special maze hotspot processing
 	EXIT_MAZE          = 31,                        // 31 - Exit special maze processing
 	INIT_PRIORITY      = 32,                        // 32 - Initialize fbg field
-	INIT_SCREEN        = 33,                        // 33 - Initialise screen field of object
+	INIT_SCREEN        = 33,                        // 33 - Initialize screen field of object
 	AGSCHEDULE         = 34,                        // 34 - Global schedule - lasts over new screen
 	REMAPPAL           = 35,                        // 35 - Remappe palette - palette index, color
 	COND_NOUN          = 36,                        // 36 - Conditional on noun appearing in line

@@ -37,7 +37,7 @@ namespace Tinsel {
 const BACKGND *pCurBgnd = NULL;
 
 /**
- * Called to initialise a background.
+ * Called to initialize a background.
  * @param pBgnd			Pointer to data struct for current background
  */
 

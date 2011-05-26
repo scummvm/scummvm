@@ -92,7 +92,7 @@ public:
 	MadsSceneLogic() { _scriptsData = NULL; }
 	~MadsSceneLogic() { delete _scriptsData; }
 
-	void initialiseScripts();
+	void initializeScripts();
 	void selectScene(int sceneNum);
 
 	void setupScene();
@@ -109,7 +109,7 @@ public:
 
 class MadsGameLogic {
 public:
-	static void initialiseGlobals();
+	static void initializeGlobals();
 };
 
 }

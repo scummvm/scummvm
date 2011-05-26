@@ -134,7 +134,7 @@ private:
 	void InitBMV(byte *memoryBuffer);
 	void PrepAudio(const byte *sourceData, int blobCount, byte *destPtr);
 	void MoviePalette(int paletteOffset);
-	void InitialiseMovieSound();
+	void InitializeMovieSound();
 	void StartMovieSound();
 	void FinishMovieSound();
 	void MovieAudio(int audioOffset, int blobs);
@@ -144,7 +144,7 @@ private:
 	int MovieCommand(char cmd, int commandOffset);
 	int FollowingPacket(int thisPacket, bool bReallyImportant);
 	void LoadSlots(int number);
-	void InitialiseBMV();
+	void InitializeBMV();
 	bool MaintainBuffer();
 	bool DoBMVFrame();
 	bool DoSoundFrame();

@@ -106,7 +106,7 @@ private:
 	int _jump;
 	bool _endProgram;
 
-	/** List of all GPL commands. Initialised in the constructor. */
+	/** List of all GPL commands. Initialized in the constructor. */
 	const GPL2Command *_commandList;
 	const GPL2Operator *_operatorList;
 	const GPL2Function *_functionList;

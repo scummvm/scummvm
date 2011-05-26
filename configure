@@ -138,21 +138,19 @@ _mpeg2=no
 _png=auto
 _theoradec=auto
 _fluidsynth=auto
-_16bit=auto
 _opengl=auto
 _opengles=auto
 _readline=auto
 # Default option behaviour yes/no
 _debug_build=auto
 _release_build=auto
+_verbose_build=no
 _text_console=no
 _mt32emu=yes
 _build_scalers=yes
 _build_hq_scalers=yes
 _enable_prof=no
-_posix=no
 _global_constructors=no
-_elf_loader=no
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
@@ -160,12 +158,9 @@ _keymapper=no
 _translation=yes
 # Default platform settings
 _backend=sdl
-_endian=unknown
-_need_memalign=yes
-_have_x86=no
-_arm_asm=no
-_verbose_build=no
+_16bit=auto
 _dynamic_modules=no
+_elf_loader=no
 _plugins_default=static
 _plugin_prefix=
 _plugin_suffix=
@@ -185,6 +180,15 @@ _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
 _tainted_build=no
+# The following variables are automatically detected, and should not
+# be modified otherwise. Consider them read-only.
+_posix=no
+_endian=unknown
+_need_memalign=yes
+_have_x86=no
+_arm_asm=no
+
+
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -1508,11 +1512,25 @@ EOF
 $CXX $CXXFLAGS -c -o $TMPO.o tmp_endianness_check.cpp
 if strings $TMPO.o | grep BIGenDianSyS >/dev/null; then
 	_endian=big
-else
+elif strings $TMPO.o | grep LiTTleEnDian >/dev/null; then
 	_endian=little
 fi
 echo $_endian;
 cc_check_clean tmp_endianness_check.cpp
+
+case $_endian in
+	big)
+		add_line_to_config_h '#undef SCUMM_LITTLE_ENDIAN'
+		add_line_to_config_h '#define SCUMM_BIG_ENDIAN'
+		;;
+	little)
+		add_line_to_config_h '#define SCUMM_LITTLE_ENDIAN'
+		add_line_to_config_h '#undef SCUMM_BIG_ENDIAN'
+		;;
+	*)
+		exit 1
+		;;
+esac
 
 #
 # Determine a data type with the given length
@@ -1561,6 +1579,85 @@ type_4_byte=`find_type_with_size 4`
 TMPR="$?"
 echo "$type_4_byte"
 test $TMPR -eq 0 || exit 1	# check exit code of subshell
+
+#
+# Check whether memory alignment is required
+#
+# For some CPU types, unaligned memory access is either not supported at
+# all (and so leads to a crash), requires a super-slow emulation via an
+# exception handler, or just results in incorrect results.
+# On the other hand, accessing data in a manner that works regardless of
+# alignment can be a lot slower than regular access, so we don't want
+# to use it if we don't have to.
+#
+# So we do the following: For CPU families where we know whether unaligned
+# access is safe & fast, we enable / disable unaligned access accordingly.
+# Otherwise, we just disable memory alignment.
+#
+# NOTE: In the past, for non-cross compiled builds, we would also run some code
+# which would try to test whether unaligned access worked or not. But this test
+# could not reliably determine whether unaligned access really worked in all
+# situations (and across different implementations of the target CPU arch), nor
+# whether it was fast (as opposed to slowly emulated by fault handlers). Hence,
+# we do not use this approach anymore.
+#
+# NOTE: The only kinds of unaligned access we allow are for 2 byte and 4
+# byte loads / stores. No promises are made for bigger sizes, such as 8
+# or 16 byte loads, for which architectures may behave differently than
+# for the smaller sizes.
+echo_n "Alignment required... "
+case $_host_cpu in
+	i[3-6]86 | x86_64 | ppc*)
+		# Unaligned access should work
+		_need_memalign=no
+		;;
+	alpha* | arm* | bfin* | hp* | mips* | sh* | sparc* | ia64 | nv1*)
+		# Unaligned access is not supported or extremely slow.
+		_need_memalign=yes
+		;;
+	*)
+		# Status of unaligned access is unknown, so assume the worst.
+		_need_memalign=yes
+		;;
+esac
+echo "$_need_memalign"
+
+define_in_config_h_if_yes $_need_memalign 'SCUMM_NEED_ALIGNMENT'
+
+#
+# Check whether we can use x86 asm routines
+#
+echo_n "Compiling for x86... "
+case $_host_cpu in
+	i386|i486|i586|i686)
+		_have_x86=yes
+		;;
+	*)
+		_have_x86=no
+		;;
+esac
+echo "$_have_x86"
+define_in_config_h_if_yes $_have_x86 'HAVE_X86'
+
+#
+# Check whether to use optimized ARM asm
+#
+echo_n "Compiling for ARM... "
+case $_host_cpu in
+	arm*)
+		_arm_asm=yes
+		;;
+	*)
+		_arm_asm=no
+		;;
+esac
+echo "$_arm_asm"
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_SCALER_ASM'
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_SOUND_ASM'
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_SMUSH_ASM'
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_GFX_ASM'
+define_in_config_if_yes "$_arm_asm" 'USE_ARM_COSTUME_ASM'
+
 
 #
 # Determine build settings
@@ -1759,35 +1856,6 @@ case $_host_os in
 		DEFINES="$DEFINES -D__cdecl__="
 		;;
 esac
-
-#
-# Determine whether host is POSIX compliant, or at least POSIX
-# compatible enough to support our POSIX code (including dlsym(),
-# mkdir() and some other APIs).
-#
-# TODO: Instead of basing this on the host name, we should really base
-# this on the presence of features (such as the dlsym and mkdir APIs).
-#
-echo_n "Checking if host is POSIX compliant... "
-case $_host_os in
-	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | psp | wii | wince)
-		;;
-	android | beos* | bsd* | darwin* | freebsd* | gph-linux | haiku* | hpux* | iphone | irix* | linux* | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
-		_posix=yes
-		;;
-	os2-emx*)
-		_posix=yes	# FIXME: Really???
-		;;
-	*)
-		# given this is a shell script, we might assume some type of posix.
-		# However, the host system might be a totally different one, so
-		# we can assume nothing about it.
-		# Indeed, as mentioned further above, we really should test for the
-		# presences of relevant APIs on the host anyway...
-		_posix=no
-		;;
-esac
-echo $_posix
 
 if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
@@ -2104,50 +2172,6 @@ if test -n "$_host"; then
 fi
 
 #
-# Check whether memory alignment is required
-#
-# For some CPU types, unaligned memory access is either not supported at
-# all (and so leads to a crash), requires a super-slow emulation via an
-# exception handler, or just results in incorrect results.
-# On the other hand, accessing data in a manner that works regardless of
-# alignment can be a lot slower than regular access, so we don't want
-# to use it if we don't have to.
-#
-# So we do the following: For CPU families where we know whether unaligned
-# access is safe & fast, we enable / disable unaligned access accordingly.
-# Otherwise, we just disable memory alignment.
-#
-# NOTE: In the past, for non-cross compiled builds, we would also run some code
-# which would try to test whether unaligned access worked or not. But this test
-# could not reliably determine whether unaligned access really worked in all
-# situations (and across different implementations of the target CPU arch), nor
-# whether it was fast (as opposed to slowly emulated by fault handlers). Hence,
-# we do not use this approach anymore.
-#
-# NOTE: The only kinds of unaligned access we allow are for 2 byte and 4
-# byte loads / stores. No promises are made for bigger sizes, such as 8
-# or 16 byte loads, for which architectures may behave differently than
-# for the smaller sizes.
-echo_n "Alignment required... "
-case $_host_cpu in
-	i[3-6]86 | x86_64 | ppc*)
-		# Unaligned access should work
-		_need_memalign=no
-		;;
-	alpha* | arm* | bfin* | hp* | mips* | sh* | sparc* | ia64 | nv1*)
-		# Unaligned access is not supported or extremely slow.
-		_need_memalign=yes
-		;;
-	*)
-		# Status of unaligned access is unknown, so assume the worst.
-		_need_memalign=yes
-		;;
-esac
-echo "$_need_memalign"
-
-define_in_config_h_if_yes $_need_memalign 'SCUMM_NEED_ALIGNMENT'
-
-#
 # Backend related stuff
 #
 case $_backend in
@@ -2283,21 +2307,34 @@ esac
 
 
 #
-# Add the results of the above checks to config.h
+# Determine whether host is POSIX compliant, or at least POSIX
+# compatible enough to support our POSIX code (including dlsym(),
+# mkdir() and some other APIs).
 #
-case $_endian in
-	big)
-		add_line_to_config_h '#undef SCUMM_LITTLE_ENDIAN'
-		add_line_to_config_h '#define SCUMM_BIG_ENDIAN'
+# TODO: Instead of basing this on the host name, we should really base
+# this on the presence of features (such as the dlsym and mkdir APIs).
+#
+echo_n "Checking if host is POSIX compliant... "
+case $_host_os in
+	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | psp | wii | wince)
+		_posix=no
 		;;
-	little)
-		add_line_to_config_h '#define SCUMM_LITTLE_ENDIAN'
-		add_line_to_config_h '#undef SCUMM_BIG_ENDIAN'
+	android | beos* | bsd* | darwin* | freebsd* | gph-linux | haiku* | hpux* | iphone | irix* | linux* | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
+		_posix=yes
+		;;
+	os2-emx*)
+		_posix=yes	# FIXME: Really???
 		;;
 	*)
-		exit 1
+		# given this is a shell script, we might assume some type of posix.
+		# However, the host system might be a totally different one, so
+		# we can assume nothing about it.
+		# Indeed, as mentioned further above, we really should test for the
+		# presences of relevant APIs on the host anyway...
+		_posix=no
 		;;
 esac
+echo $_posix
 
 if test "$_posix" = yes ; then
 	DEFINES="$DEFINES -DPOSIX"
@@ -2324,6 +2361,8 @@ if test "$_dynamic_modules" = yes ; then
 	android)
 		_plugin_prefix="lib"
 		_plugin_suffix=".so"
+		CXXFLAGS="$CXXFLAGS -fpic"
+		LIBS="$LIBS -ldl"
 # Work around an Android 2.0+ run-time linker bug:
 # The linker doesn't actually look in previously
 # loaded libraries when trying to resolve symbols -
@@ -2334,22 +2373,20 @@ if test "$_dynamic_modules" = yes ; then
 # to the main libscummvm.so.
 _mak_plugins='
 PLUGIN_EXTRA_DEPS = libscummvm.so
-CXXFLAGS        += -fpic
 PLUGIN_LDFLAGS  += $(LDFLAGS) -L. -lscummvm
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
-LIBS            += -ldl
 '
 		;;
 	darwin*)
 		_plugin_prefix=""
 		_plugin_suffix=".plugin"
+		LIBS="$LIBS -ldl"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS = $(EXECUTABLE)
 PLUGIN_LDFLAGS  += -bundle -bundle_loader $(EXECUTABLE) -exported_symbols_list "$(srcdir)/plugin.exp"
 PRE_OBJS_FLAGS  := -all_load
 POST_OBJS_FLAGS :=
-LIBS            += -ldl
 '
 		;;
 	dreamcast)
@@ -2357,7 +2394,7 @@ LIBS            += -ldl
 		_plugin_suffix=".plg"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS	= $(abspath $(srcdir)/backends/platform/dc/plugin.x $(srcdir)/backends/platform/dc/plugin.syms) $(EXECUTABLE) backends/platform/dc/plugin_head.o
-PLUGIN_LDFLAGS		= -ml -m4-single-only -nostartfiles -Wl,-q,-T$(srcdir)/backends/platform/dc/plugin.x,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/dc/plugin.syms -L$(ronindir)/lib backends/platform/dc/plugin_head.o
+PLUGIN_LDFLAGS		= -ml -m4-single-only -nostartfiles -Wl,-q,-T$(srcdir)/backends/platform/dc/plugin.x,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/dc/plugin.syms backends/platform/dc/plugin_head.o
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '
@@ -2372,9 +2409,9 @@ PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb-interwo
 	freebsd*)
 		_plugin_prefix="lib"
 		_plugin_suffix=".so"
+		CXXFLAGS="$CXXFLAGS -fpic"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS =
-CXXFLAGS        += -fpic
 PLUGIN_LDFLAGS  += -shared
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
@@ -2390,25 +2427,25 @@ PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/wii/plugin.ld
 	gph*)
 		_plugin_prefix=""
 		_plugin_suffix=".plugin"
+		CXXFLAGS="$CXXFLAGS -fpic"
+		LIBS="$LIBS -ldl"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS = $(EXECUTABLE)
-CXXFLAGS        += -fpic
 PLUGIN_LDFLAGS  += -shared
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
-LIBS            += -ldl
 '
 		;;
 	linux*)
 		_plugin_prefix="lib"
 		_plugin_suffix=".so"
+		CXXFLAGS="$CXXFLAGS -fpic"
+		LIBS="$LIBS -ldl"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS =
-CXXFLAGS        += -fpic
 PLUGIN_LDFLAGS  += -shared
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
-LIBS            += -ldl
 '
 		;;
 	*mingw32*)
@@ -2437,7 +2474,7 @@ POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-im
 		_elf_loader=yes
 		DEFINES="$DEFINES -DMIPS_TARGET"
 _mak_plugins='
-LDFLAGS				+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T$(srcdir)/backends/plugins/ps2/main_prog.ld
+LDFLAGS				+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/main_prog.ld
 PLUGIN_LDFLAGS		+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/plugin.ld -lstdc++ -lc
 '
 		;;
@@ -2452,13 +2489,13 @@ PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lstdc++ -lc
 	webos)
 		_plugin_prefix="lib"
 		_plugin_suffix=".so"
+		CXXFLAGS="$CXXFLAGS -fpic"
+		LIBS="$LIBS -ldl"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS =
-CXXFLAGS        += -fpic
 PLUGIN_LDFLAGS  += -shared $(LDFLAGS)
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
-LIBS            += -ldl
 '
 		;;
 	*)
@@ -2945,40 +2982,6 @@ define_in_config_if_yes "$_opengles" "USE_GLES"
 
 
 #
-# Check whether we can use x86 asm routines
-#
-echo_n "Compiling for x86... "
-case $_host_cpu in
-	i386|i486|i586|i686)
-		_have_x86=yes
-		;;
-	*)
-		_have_x86=no
-		;;
-esac
-echo "$_have_x86"
-define_in_config_h_if_yes $_have_x86 'HAVE_X86'
-
-#
-# Check whether to use optimized ARM asm
-#
-echo_n "Compiling for ARM... "
-case $_host_cpu in
-	arm*)
-		_arm_asm=yes
-		;;
-	*)
-		_arm_asm=no
-		;;
-esac
-echo "$_arm_asm"
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_SCALER_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_SOUND_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_SMUSH_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_GFX_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_COSTUME_ASM'
-
-#
 # Check for nasm
 #
 if test "$_have_x86" = yes ; then
@@ -3150,7 +3153,7 @@ case $_backend in
 		system_libs=''
 		for lib in $LIBS; do
 			case $lib in
-			-lz|-lm)
+			-lz|-lm|-ldl)
 				system_libs="$system_libs $lib"
 				;;
 			*)

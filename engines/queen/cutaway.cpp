@@ -1152,10 +1152,10 @@ void Cutaway::updateGameState() {
 
 				if (areaSubIndex > 0) {
 					Area *area = _vm->grid()->area(areaIndex, areaSubIndex);
-					area->mapNeighbours = ABS(area->mapNeighbours);
+					area->mapNeighbors = ABS(area->mapNeighbors);
 				} else {
 					Area *area = _vm->grid()->area(areaIndex, ABS(areaSubIndex));
-					area->mapNeighbours = -ABS(area->mapNeighbours);
+					area->mapNeighbors = -ABS(area->mapNeighbors);
 				}
 			}
 

@@ -73,7 +73,7 @@ public:
 
 private:
 	Common::Array<RailNode *> _nodes;
-	Common::Array<int16 *> _edges;
+	Common::Array<int16> _edges;
 	Common::List<NoWalkRect *> _noWalkRects;
 	M4Surface *_walkCodes;
 

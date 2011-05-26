@@ -49,7 +49,7 @@ public:
 	virtual ~LuaScriptEngine();
 
 	/**
-	 * Initialises the scripting engine
+	 * Initializes the scripting engine
 	 * @return              Returns true if successful, otherwise false.
 	*/
 	virtual bool init();

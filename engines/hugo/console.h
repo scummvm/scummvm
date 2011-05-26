@@ -36,6 +36,12 @@ public:
 
 private:
 	HugoEngine *_vm;
+	bool Cmd_listScreens(int argc, const char **argv);
+	bool Cmd_listObjects(int argc, const char **argv);
+	bool Cmd_getObject(int argc, const char **argv);
+	bool Cmd_getAllObjects(int argc, const char **argv);
+	bool Cmd_gotoScreen(int argc, const char **argv);
+	bool Cmd_boundaries(int argc, const char **argv);
 };
 
 } // End of namespace Hugo

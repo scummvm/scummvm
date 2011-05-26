@@ -112,7 +112,7 @@ byte *FontRenderer::makeTextSprite(byte *sentence, uint16 maxWidth, uint8 pen, u
 	// Get details of sentence breakdown into array of LineInfo structures
 	// and get the number of lines involved
 
-	uint16 noOfLines = analyseSentence(sentence, maxWidth, fontRes, (LineInfo *)line);
+	uint16 noOfLines = analyzeSentence(sentence, maxWidth, fontRes, (LineInfo *)line);
 
 	// Construct the sprite based on the info gathered - returns floating
 	// mem block
@@ -123,7 +123,7 @@ byte *FontRenderer::makeTextSprite(byte *sentence, uint16 maxWidth, uint8 pen, u
 	return textSprite;
 }
 
-uint16 FontRenderer::analyseSentence(byte *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line) {
+uint16 FontRenderer::analyzeSentence(byte *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line) {
 	// joinWidth = how much extra space is needed to append a word to a
 	// line. NB. SPACE requires TWICE the '_charSpacing' to join a word
 	// to line
@@ -199,7 +199,7 @@ uint16 FontRenderer::analyseSentence(byte *sentence, uint16 maxWidth, uint32 fon
  * @param  sentence  pointer to a null-terminated string
  * @param  fontRes   the font resource id
  * @param  pen       the text color, or zero to use the source colors
- * @param  line      array of LineInfo structures, created by analyseSentence()
+ * @param  line      array of LineInfo structures, created by analyzeSentence()
  * @param  noOfLines the number of lines, i.e. the number of elements in 'line'
  * @return a handle to a floating memory block containing the text sprite
  * @note   The sentence must contain no leading, trailing or extra spaces.
@@ -636,7 +636,7 @@ void FontRenderer::killTextBloc(uint32 bloc_number) {
 
 #define SAVE_LINE_NO	1
 
-void Sword2Engine::initialiseFontResourceFlags() {
+void Sword2Engine::initializeFontResourceFlags() {
 	byte *textFile = _resman->openResource(TEXT_RES);
 
 	// If language is Polish or Finnish it requires alternate fonts.
@@ -649,11 +649,11 @@ void Sword2Engine::initialiseFontResourceFlags() {
 	char *textLine = (char *)fetchTextLine(textFile, SAVE_LINE_NO) + 2;
 
 	if (strcmp(textLine, "tallenna") == 0)
-		initialiseFontResourceFlags(FINNISH_TEXT);
+		initializeFontResourceFlags(FINNISH_TEXT);
 	else if (strcmp(textLine, "zapisz") == 0)
-		initialiseFontResourceFlags(POLISH_TEXT);
+		initializeFontResourceFlags(POLISH_TEXT);
 	else
-		initialiseFontResourceFlags(DEFAULT_TEXT);
+		initializeFontResourceFlags(DEFAULT_TEXT);
 
 	// Get the game name for the windows application
 
@@ -677,10 +677,10 @@ void Sword2Engine::initialiseFontResourceFlags() {
 }
 
 /**
- * Called from initialiseFontResourceFlags(), and also from console.cpp
+ * Called from initializeFontResourceFlags(), and also from console.cpp
  */
 
-void Sword2Engine::initialiseFontResourceFlags(uint8 language) {
+void Sword2Engine::initializeFontResourceFlags(uint8 language) {
 	switch (language) {
 	case FINNISH_TEXT:
 		_speechFontId = FINNISH_SPEECH_FONT_ID;

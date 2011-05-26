@@ -530,7 +530,7 @@ Common::Error MadsEngine::run() {
 	//debugCN(kDebugCore, "%s\n----------\n", _globals->loadMessage(i));
 
 	if (getGameType() == GType_RexNebular) {
-		MadsGameLogic::initialiseGlobals();
+		MadsGameLogic::initializeGlobals();
 
 		_scene = NULL;
 		loadMenu(MAIN_MENU);

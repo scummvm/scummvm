@@ -5594,6 +5594,7 @@ void Scene2320::Hotspot8::doAction(int action) {
 }
 
 void Scene2320::Hotspot10::doAction(int action) {
+	// Seeker
 	Scene2320 *scene = (Scene2320 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -5687,6 +5688,7 @@ void Scene2320::Hotspot12::doAction(int action) {
 }
 
 void Scene2320::Hotspot14::doAction(int action) {
+	// Right Console
 	Scene2320 *scene = (Scene2320 *)_globals->_sceneManager._scene;
 
 	switch (action) {

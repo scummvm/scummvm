@@ -59,7 +59,7 @@ Polygon::~Polygon() {
 }
 
 bool Polygon::init(int vertexCount_, const Vertex *vertices_) {
-	// Rember the old obstate to restore it if an error occurs whilst initialising it with the new data
+	// Rember the old obstate to restore it if an error occurs whilst initializing it with the new data
 	int oldvertexCount = this->vertexCount;
 	Vertex *oldvertices = this->vertices;
 

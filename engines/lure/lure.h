@@ -65,7 +65,7 @@ struct LureGameDescription;
 
 class LureEngine : public Engine {
 private:
-	bool _initialised;
+	bool _initialized;
 	int _gameToLoad;
 	uint8 _saveVersion;
 	Disk *_disk;

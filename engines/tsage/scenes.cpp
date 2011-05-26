@@ -319,7 +319,7 @@ void Scene::loadSceneData(int sceneNum) {
 	// Load the priority regions
 	_priorities.load(sceneNum);
 
-	// Initialise the section enabled list
+	// Initialize the section enabled list
 	Common::set_to(&_enabledSections[0], &_enabledSections[16 * 16], 0xffff);
 
 	_globals->_sceneOffset.x = (_sceneBounds.left / 160) * 160;

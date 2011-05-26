@@ -63,7 +63,7 @@ Kernel::Kernel() :
 	// Create the resource manager
 	_resourceManager = new ResourceManager(this);
 
-	// Initialise the script engine
+	// Initialize the script engine
 	_script = new LuaScriptEngine(this);
 	if (!_script || !_script->init()) {
 		_initSuccess = false;

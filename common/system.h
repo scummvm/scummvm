@@ -1031,7 +1031,7 @@ public:
 };
 
 
-/** The global OSystem instance. Initialised in main(). */
+/** The global OSystem instance. Initialized in main(). */
 extern OSystem *g_system;
 
 #endif

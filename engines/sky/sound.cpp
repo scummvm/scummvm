@@ -313,7 +313,7 @@ static const Sfx fx_hello_helga = {
 	}
 };
 
-static const Sfx fx_statue_on_armour = {
+static const Sfx fx_statue_on_armor = {
 	8,
 	0,
 	{
@@ -985,7 +985,7 @@ static const Sfx *musicList[] = {
 	&fx_null, // 365
 	&fx_break_crystals, // 366
 	&fx_disintegrate, // 367
-	&fx_statue_on_armour, // 368
+	&fx_statue_on_armor, // 368
 	&fx_null, // 369
 	&fx_null, // 360
 	&fx_ping, // 371

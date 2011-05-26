@@ -643,7 +643,7 @@ void CSTimeInterface::startDragging(uint16 id) {
 	_vm->getView()->dragFeature((NewFeature *)invObj->feature, _grabPoint, 4, dragFlags, NULL);
 
 	if (_vm->getCase()->getId() == 1 && id == 2) {
-		// Hardcoded behaviour for the torch in the first case.
+		// Hardcoded behavior for the torch in the first case.
 		if (_vm->getCase()->getCurrScene()->getId() == 4) {
 			// This is the dark tomb.
 			// FIXME: apply torch hack
@@ -810,7 +810,7 @@ void CSTimeInterface::stopDragging() {
 	}
 
 	if (_vm->getCase()->getId() == 1 && _vm->getCase()->getCurrScene()->getId() == 4) {
-		// Hardcoded behaviour for torches in the dark tomb, in the first case.
+		// Hardcoded behavior for torches in the dark tomb, in the first case.
 		if (_draggedItem == 1 && foundInvObjHotspot == 0xffff) {
 			// Trying to drag an unlit torch around?
 			_vm->addEvent(CSTimeEvent(kCSTimeEventCharStartFlapping, 0, 16352));

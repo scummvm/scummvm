@@ -393,7 +393,6 @@ void AudioStreamInstance::decodeADPCM(uint8 *comp, int16 *dest, int32 packetSize
 void AudioStreamInstance::play(bool fade, Audio::Mixer::SoundType soundType) {
 	debugC(1, kDebugAudio, "play(%d)", (fade) ? 1 : 0);
 
-	Audio::SoundHandle soundHandle;
 	_stopped = false;
 	_fadingIn = fade;
 	_fadeTime = 0;

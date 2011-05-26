@@ -492,7 +492,7 @@ SegmentRef Script::dereference(reg_t pointer) {
 	return ret;
 }
 
-void Script::initialiseLocals(SegManager *segMan) {
+void Script::initializeLocals(SegManager *segMan) {
 	LocalVariables *locals = segMan->allocLocalsSegment(this);
 	if (locals) {
 		if (getSciVersion() > SCI_VERSION_0_EARLY) {
@@ -508,7 +508,7 @@ void Script::initialiseLocals(SegManager *segMan) {
 	}
 }
 
-void Script::initialiseClasses(SegManager *segMan) {
+void Script::initializeClasses(SegManager *segMan) {
 	const byte *seeker = 0;
 	uint16 mult = 0;
 
@@ -580,7 +580,7 @@ void Script::initialiseClasses(SegManager *segMan) {
 	}
 }
 
-void Script::initialiseObjectsSci0(SegManager *segMan, SegmentId segmentId) {
+void Script::initializeObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 	// We need to make two passes, as the objects in the script might be in the
@@ -632,7 +632,7 @@ void Script::initialiseObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 		relocateSci0Sci21(make_reg(segmentId, relocationBlock - getBuf() + 4));
 }
 
-void Script::initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId) {
+void Script::initializeObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 	const byte *seeker = _heapStart + 4 + READ_SCI11ENDIAN_UINT16(_heapStart + 2) * 2;
 
 	while (READ_SCI11ENDIAN_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
@@ -667,7 +667,7 @@ void Script::initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 	relocateSci0Sci21(make_reg(segmentId, READ_SCI11ENDIAN_UINT16(_heapStart)));
 }
 
-void Script::initialiseObjectsSci3(SegManager *segMan, SegmentId segmentId) {
+void Script::initializeObjectsSci3(SegManager *segMan, SegmentId segmentId) {
 	const byte *seeker = getSci3ObjectsPointer();
 
 	while (READ_SCI11ENDIAN_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
@@ -681,13 +681,13 @@ void Script::initialiseObjectsSci3(SegManager *segMan, SegmentId segmentId) {
 	relocateSci3(make_reg(segmentId, 0));
 }
 
-void Script::initialiseObjects(SegManager *segMan, SegmentId segmentId) {
+void Script::initializeObjects(SegManager *segMan, SegmentId segmentId) {
 	if (getSciVersion() <= SCI_VERSION_1_LATE)
-		initialiseObjectsSci0(segMan, segmentId);
+		initializeObjectsSci0(segMan, segmentId);
 	else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1)
-		initialiseObjectsSci11(segMan, segmentId);
+		initializeObjectsSci11(segMan, segmentId);
 	else if (getSciVersion() == SCI_VERSION_3)
-		initialiseObjectsSci3(segMan, segmentId);
+		initializeObjectsSci3(segMan, segmentId);
 }
 
 reg_t Script::findCanonicAddress(SegManager *segMan, reg_t addr) const {

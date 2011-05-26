@@ -38,7 +38,7 @@ namespace Common {
  * a certain length do we allocate a buffer on the heap.
  *
  * The presence of \0 characters in the string will cause undefined
- * behaviour in some operations.
+ * behavior in some operations.
  */
 class String {
 protected:

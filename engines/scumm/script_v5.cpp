@@ -2646,7 +2646,7 @@ void ScummEngine_v5::decodeParseString() {
 
 
 			// In SCUMM V1-V3, there were no 'default' values for the text slot
-			// values. Hence to achieve correct behaviour, we have to keep the
+			// values. Hence to achieve correct behavior, we have to keep the
 			// 'default' values in sync with the active values.
 			//
 			// Note: This is needed for Indy3 (Grail Diary). It's also needed

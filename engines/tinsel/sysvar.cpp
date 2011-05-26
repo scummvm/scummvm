@@ -112,7 +112,7 @@ static SCNHANDLE systemStrings[SS_MAX_VALID];	// FIXME: Avoid non-const global v
 //----------------- FUNCTIONS --------------------------------
 
 /**
- * Initialises the system variable list
+ * Initializes the system variable list
  */
 
 void InitSysVars() {

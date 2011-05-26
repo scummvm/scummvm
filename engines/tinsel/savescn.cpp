@@ -150,14 +150,14 @@ void DoRestoreScene(SAVED_DATA *sd, bool bFadeOut) {
 		RestoreSceneCount = RS_COUNT;	// Set restore scene count
 }
 
-void InitialiseSaveScenes() {
+void InitializeSaveScenes() {
 	if (ssData == NULL) {
 		ssData = (SAVED_DATA *)calloc(MAX_NEST, sizeof(SAVED_DATA));
 		if (ssData == NULL) {
 			error("Cannot allocate memory for scene changes");
 		}
 	} else {
-		// Re-initialise - no scenes saved
+		// Re-initialize - no scenes saved
 		savedSceneCount = 0;
 	}
 }

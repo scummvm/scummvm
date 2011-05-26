@@ -86,8 +86,8 @@ public:
 	virtual Common::Error saveGameState(int slot, const char *desc);
 	Common::String generateSaveName(int slot);
 
-	void initialise();
-	void deinitialise();
+	void initialize();
+	void deinitialize();
 };
 
 extern TSageEngine *_vm;

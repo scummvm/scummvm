@@ -303,14 +303,14 @@ void ScummEngine::processInput() {
 	if ((_leftBtnPressed & msClicked) && (_rightBtnPressed & msClicked) && _game.version >= 4) {
 		// Pressing both mouse buttons is treated as if you pressed
 		// the cutscene exit key (ESC) in V4+ games. That mimicks
-		// the behaviour of the original engine where pressing both
+		// the behavior of the original engine where pressing both
 		// mouse buttons also skips the current cutscene.
 		_mouseAndKeyboardStat = 0;
 		lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
 	} else if ((_rightBtnPressed & msClicked) && (_game.version <= 3 && _game.id != GID_LOOM)) {
 		// Pressing right mouse button is treated as if you pressed
 		// the cutscene exit key (ESC) in V0-V3 games. That mimicks
-		// the behaviour of the original engine where pressing right
+		// the behavior of the original engine where pressing right
 		// mouse button also skips the current cutscene.
 		_mouseAndKeyboardStat = 0;
 		lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);

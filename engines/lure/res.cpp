@@ -345,7 +345,7 @@ void Resources::reloadData() {
 	}
 	delete mb;
 
-	// Initialise delay list
+	// Initialize delay list
 	_delayList.clear(true);
 
 	// Load miscellaneous data

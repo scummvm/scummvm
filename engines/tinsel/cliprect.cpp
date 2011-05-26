@@ -209,7 +209,7 @@ void UpdateClipRect(OBJECT **pObjList, Common::Point *pWin, Common::Rect *pClip)
 	DRAWOBJECT currentObj;		// filled in to draw the current object in list
 	OBJECT *pObj;				// object list iterator
 
-	// Initialise the fields of the drawing object to empty
+	// Initialize the fields of the drawing object to empty
 	memset(&currentObj, 0, sizeof(DRAWOBJECT));
 
 	for (pObj = *pObjList; pObj != NULL; pObj = pObj->pNext) {

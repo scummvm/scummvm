@@ -672,7 +672,7 @@ void AgiEngine::cmd_adj_ego_move_to_x_y(uint8 *p) {
 
 		// Turn off ego's current movement caused with the mouse if
 		// adj.ego.move.to.x.y is called with other arguments than previously.
-		// Fixes weird looping behaviour when walking to a ladder in the mines
+		// Fixes weird looping behavior when walking to a ladder in the mines
 		// (Rooms 147-162) in Gold Rush using the mouse. Sometimes the ego didn't
 		// stop when walking to a ladder using the mouse but kept moving on the
 		// ladder in a horizontally looping manner i.e. from right to left, from

@@ -1007,9 +1007,9 @@ int SegManager::instantiateScript(int scriptNum) {
 
 	scr->init(scriptNum, _resMan);
 	scr->load(_resMan);
-	scr->initialiseLocals(this);
-	scr->initialiseClasses(this);
-	scr->initialiseObjects(this, segmentId);
+	scr->initializeLocals(this);
+	scr->initializeClasses(this);
+	scr->initializeObjects(this, segmentId);
 
 	return segmentId;
 }
@@ -1020,7 +1020,7 @@ void SegManager::uninstantiateScript(int script_nr) {
 
 	if (!scr || scr->isMarkedAsDeleted()) {   // Is it already unloaded?
 		//warning("unloading script 0x%x requested although not loaded", script_nr);
-		// This is perfectly valid SCI behaviour
+		// This is perfectly valid SCI behavior
 		return;
 	}
 

@@ -426,36 +426,36 @@ bool Synth::open(SynthProperties &useProp) {
 		}
 	}
 
-	printDebug("Initialising Timbre Bank A");
+	printDebug("Initializing Timbre Bank A");
 	if (!initTimbres(controlROMMap->timbreAMap, controlROMMap->timbreAOffset, 0)) {
 		return false;
 	}
 
-	printDebug("Initialising Timbre Bank B");
+	printDebug("Initializing Timbre Bank B");
 	if (!initTimbres(controlROMMap->timbreBMap, controlROMMap->timbreBOffset, 64)) {
 		return false;
 	}
 
-	printDebug("Initialising Timbre Bank R");
+	printDebug("Initializing Timbre Bank R");
 	if (!initRhythmTimbres(controlROMMap->timbreRMap, controlROMMap->timbreRCount)) {
 		return false;
 	}
 
-	printDebug("Initialising Timbre Bank M");
-	// CM-64 seems to initialise all bytes in this bank to 0.
+	printDebug("Initializing Timbre Bank M");
+	// CM-64 seems to initialize all bytes in this bank to 0.
 	memset(&mt32ram.timbres[128], 0, sizeof (mt32ram.timbres[128]) * 64);
 
 	partialManager = new PartialManager(this);
 
 	pcmWaves = new PCMWaveEntry[controlROMMap->pcmCount];
 
-	printDebug("Initialising PCM List");
+	printDebug("Initializing PCM List");
 	initPCMList(controlROMMap->pcmTable, controlROMMap->pcmCount);
 
-	printDebug("Initialising Rhythm Temp");
+	printDebug("Initializing Rhythm Temp");
 	memcpy(mt32ram.rhythmSettings, &controlROMData[controlROMMap->rhythmSettings], controlROMMap->rhythmSettingsCount * 4);
 
-	printDebug("Initialising Patches");
+	printDebug("Initializing Patches");
 	for (Bit8u i = 0; i < 128; i++) {
 		PatchParam *patch = &mt32ram.patches[i];
 		patch->timbreGroup = i / 64;
@@ -468,9 +468,9 @@ bool Synth::open(SynthProperties &useProp) {
 		patch->dummy = 0;
 	}
 
-	printDebug("Initialising System");
+	printDebug("Initializing System");
 	// The MT-32 manual claims that "Standard pitch" is 442Hz.
-	mt32ram.system.masterTune = 0x40; // Confirmed on CM-64 as 0x4A, but SCUMM games use 0x40 and we don't want to initialise twice
+	mt32ram.system.masterTune = 0x40; // Confirmed on CM-64 as 0x4A, but SCUMM games use 0x40 and we don't want to initialize twice
 	mt32ram.system.reverbMode = 0; // Confirmed
 	mt32ram.system.reverbTime = 5; // Confirmed
 	mt32ram.system.reverbLevel = 3; // Confirmed
@@ -792,7 +792,7 @@ void Synth::writeSysex(unsigned char device, const Bit8u *sysex, Bit32u len) {
 	for (;;) {
 		// Find the appropriate memory region
 		int regionNum;
-		const MemoryRegion *region = NULL; // Initialised to please compiler
+		const MemoryRegion *region = NULL; // Initialized to please compiler
 		for (regionNum = 0; regionNum < NUM_REGIONS; regionNum++) {
 			region = &memoryRegions[regionNum];
 			if (region->contains(addr)) {

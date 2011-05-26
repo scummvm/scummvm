@@ -69,7 +69,7 @@ private:
 	bool _speedFlag;
 
 	void initialize();
-	void deinitialise();
+	void deinitialize();
 	bool loadLanguageStrings();
 	bool makeLoad(char *saveName);
 	void mainLoop();

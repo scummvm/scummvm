@@ -447,7 +447,7 @@ protected:
 public:
 	Animation(MadsM4Engine *vm);
 	virtual ~Animation();
-	virtual void initialise(const Common::String &filename, uint16 flags, M4Surface *surface, M4Surface *depthSurface) = 0;
+	virtual void initialize(const Common::String &filename, uint16 flags, M4Surface *surface, M4Surface *depthSurface) = 0;
 	virtual void load(const Common::String &filename, int v0) = 0;
 	virtual void update() = 0;
 	virtual void setCurrentFrame(int frameNumber) = 0;

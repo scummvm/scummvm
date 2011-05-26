@@ -111,7 +111,7 @@ void decodePBM(Common::ReadStream &input, Surface &surface, byte *colors);
  * Decode a given PackBits encoded stream.
  *
  * PackBits is an RLE compression algorithm introduced by Apple. It is also
- * used to encode ILBM and PBM subtypes of IFF files, and some flavours of
+ * used to encode ILBM and PBM subtypes of IFF files, and some flavors of
  * TIFF.
  *
  * As there is no compression across row boundaries in the above formats,
