@@ -23,7 +23,6 @@
 #ifndef GRIM_COLOR_H
 #define GRIM_COLOR_H
 
-#include "common/scummsys.h"
 #include "engines/grim/object.h"
 
 namespace Grim {
@@ -33,14 +32,9 @@ public:
 	byte _vals[3];
 
 	Color() : Object() {}
-	Color(byte r, byte g, byte b) :
-			Object() {
-		_vals[0] = r; _vals[1] = g; _vals[2] = b;
-	}
-	Color(const Color& c) :
-			Object() {
-		_vals[0] = c._vals[0]; _vals[1] = c._vals[1]; _vals[2] = c._vals[2];
-	}
+	Color(byte r, byte g, byte b);
+	Color(const Color& c);
+
 	byte &getRed() { return _vals[0]; }
 	byte getRed() const { return _vals[0]; }
 	byte &getGreen() { return _vals[1]; }
@@ -48,15 +42,12 @@ public:
 	byte &getBlue() { return _vals[2]; }
 	byte getBlue() const { return _vals[2]; }
 
-	Color& operator =(const Color &c) {
-		_vals[0] = c._vals[0]; _vals[1] = c._vals[1]; _vals[2] = c._vals[2];
-		return *this;
-	}
+	Color& operator =(const Color &c);
+	Color& operator =(Color *c);
 
-	Color& operator =(Color *c) {
-		_vals[0] = c->_vals[0]; _vals[1] = c->_vals[1]; _vals[2] = c->_vals[2];
-		return *this;
-	}
+	void restoreState(SaveGame *state);
+	void saveState(SaveGame *state);
+
 };
 
 } // end of namespace Grim

@@ -20,54 +20,50 @@
  *
  */
 
-#include "engines/grim/lua/lobject.h"
-
+#include "engines/grim/color.h"
 #include "engines/grim/savegame.h"
-#include "engines/grim/font.h"
-#include "engines/grim/object.h"
-
 
 namespace Grim {
 
-int32 Object::s_id = 0;
-
-Object::Object() :
-	_refCount(0) {
-
-	++s_id;
-	_id = s_id;
+Color::Color(byte r, byte g, byte b) :
+		Object() {
+	_vals[0] = r;
+	_vals[1] = g;
+	_vals[2] = b;
 }
 
-Object::~Object() {
-	for (Common::List<Pointer *>::iterator i = _pointers.begin(); i != _pointers.end(); ++i) {
-		(*i)->resetPointer();
-	}
+Color::Color(const Color& c) :
+		Object() {
+	_vals[0] = c._vals[0];
+	_vals[1] = c._vals[1];
+	_vals[2] = c._vals[2];
 }
 
-void Object::reference() {
-	++_refCount;
+Color& Color::operator =(const Color &c) {
+	_vals[0] = c._vals[0];
+	_vals[1] = c._vals[1];
+	_vals[2] = c._vals[2];
+	return *this;
 }
 
-void Object::dereference() {
-	if (_refCount > 0) {
-		--_refCount;
-	}
-
-	if (_refCount == 0) {
-		_refCount = -1;
-		delete this;
-	}
+Color& Color::operator =(Color *c) {
+	_vals[0] = c->_vals[0];
+	_vals[1] = c->_vals[1];
+	_vals[2] = c->_vals[2];
+	return *this;
 }
 
-int32 Object::getId() {
-	return _id;
+void Color::restoreState(SaveGame *state) {
+	getRed() = state->readByte();
+	getGreen() = state->readByte();
+	getBlue() = state->readByte();
 }
 
-void Object::setId(int32 id) {
-	if (id > s_id) {
-		s_id = id;
-	}
-	_id = id;
+void Color::saveState(SaveGame *state) {
+	state->writeByte(getRed());
+	state->writeByte(getGreen());
+	state->writeByte(getBlue());
 }
 
-}
+} // end of namespace Grim
+

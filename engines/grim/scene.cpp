@@ -77,6 +77,17 @@ Scene::~Scene() {
 	}
 }
 
+int32 Scene::getId() {
+	return _id;
+}
+
+void Scene::setId(int32 id) {
+	if (id > s_id) {
+		s_id = id;
+	}
+	_id = id;
+}
+
 void Scene::loadText(TextSplitter &ts){
 	char tempBuf[256];
 

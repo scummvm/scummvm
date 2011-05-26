@@ -48,6 +48,7 @@ public:
 	int32 getId();
 
 private:
+	void setId(int32 id);
 	int _refCount;
 	Common::List<Pointer *> _pointers;
 	int32 _id;
