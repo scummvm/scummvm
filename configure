@@ -1154,7 +1154,8 @@ if test "$_release_build" = yes; then
 	# makes it possible to use -Wuninitialized, so let's do that.
 	# We will also add a define, which indicates we are doing
 	# an build for a release version.
-	CXXFLAGS="$CXXFLAGS -O2 -Wuninitialized"
+	CXXFLAGS="$CXXFLAGS -O2"
+	CXXFLAGS="$CXXFLAGS -Wuninitialized"
 	DEFINES="$DEFINES -DRELEASE_BUILD"
 fi
 
@@ -1403,12 +1404,12 @@ if test "$have_gcc" = yes ; then
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__
 		amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | wii | wince )
-			CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 			;;
 		*)
-			CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
+			CXXFLAGS="$CXXFLAGS -ansi"
 			;;
 		esac
+		CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 		add_line_to_config_mk 'HAVE_GCC3 = 1'
 		add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
 	fi;
@@ -1621,7 +1622,8 @@ echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
 	amigaos*)
-		LDFLAGS="$LDFLAGS -use-dynld -L/sdk/local/newlib/lib"
+		LDFLAGS="$LDFLAGS -use-dynld"
+		LDFLAGS="$LDFLAGS -L/sdk/local/newlib/lib"
 		# We have to use 'long' for our 4 byte typedef because AmigaOS already typedefs (u)int32
 		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
 		type_4_byte='long'
@@ -1630,25 +1632,36 @@ case $_host_os in
 	android)
 		case $_host in
 			android)
-				CXXFLAGS="$CXXFLAGS -march=armv5te -mtune=xscale -msoft-float"
+				CXXFLAGS="$CXXFLAGS -march=armv5te"
+				CXXFLAGS="$CXXFLAGS -mtune=xscale"
+				CXXFLAGS="$CXXFLAGS -msoft-float"
 				;;
 			android-v7a)
-				CXXFLAGS="$CXXFLAGS -march=armv7-a -mfloat-abi=softfp -mfpu=vfp"
+				CXXFLAGS="$CXXFLAGS -march=armv7-a"
+				CXXFLAGS="$CXXFLAGS -mfloat-abi=softfp"
+				CXXFLAGS="$CXXFLAGS -mfpu=vfp"
 				LDFLAGS="$LDFLAGS -Wl,--fix-cortex-a8"
 				;;
 		esac
 		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
-		CXXFLAGS="$CXXFLAGS -fpic -ffunction-sections -funwind-tables"
+		CXXFLAGS="$CXXFLAGS -fpic"
+		CXXFLAGS="$CXXFLAGS -ffunction-sections"
+		CXXFLAGS="$CXXFLAGS -funwind-tables"
 		if test "$_debug_build" = yes; then
-			CXXFLAGS="$CXXFLAGS -fno-omit-frame-pointer -fno-strict-aliasing"
+			CXXFLAGS="$CXXFLAGS -fno-omit-frame-pointer"
+			CXXFLAGS="$CXXFLAGS -fno-strict-aliasing"
 		else
-			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer -fstrict-aliasing"
+			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
+			CXXFLAGS="$CXXFLAGS -fstrict-aliasing"
 		fi
 		CXXFLAGS="$CXXFLAGS -finline-limit=300"
-		CXXFLAGS="$CXXFLAGS -Os -mthumb-interwork"
+		CXXFLAGS="$CXXFLAGS -Os"
+		CXXFLAGS="$CXXFLAGS -mthumb-interwork"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
-		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__"
-		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5E__ -D__ARM_ARCH_5TE__"
+		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5__"
+		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5T__"
+		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5E__"
+		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5TE__"
 		# supress 'mangling of 'va_list' has changed in GCC 4.4'
 		CXXFLAGS="$CXXFLAGS -Wno-psabi"
 		LDFLAGS="$LDFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
@@ -1684,11 +1697,20 @@ case $_host_os in
 		DEFINES="$DEFINES -DARM9"
 		DEFINES="$DEFINES -DARM"
 		DEFINES="$DEFINES -DNONSTANDARD_PORT"
-		CXXFLAGS="$CXXFLAGS -isystem $DEVKITPRO/libnds/include -isystem $DEVKITPRO/devkitARM/arm-eabi/include"
-		CXXFLAGS="$CXXFLAGS -mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer -mthumb-interwork"
-		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fno-strict-aliasing"
+		CXXFLAGS="$CXXFLAGS -isystem $DEVKITPRO/libnds/include"
+		CXXFLAGS="$CXXFLAGS -isystem $DEVKITPRO/devkitARM/arm-eabi/include"
+		CXXFLAGS="$CXXFLAGS -mcpu=arm9tdmi"
+		CXXFLAGS="$CXXFLAGS -mtune=arm9tdmi"
+		CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
+		CXXFLAGS="$CXXFLAGS -mthumb-interwork"
+		CXXFLAGS="$CXXFLAGS -ffunction-sections"
+		CXXFLAGS="$CXXFLAGS -fdata-sections"
+		CXXFLAGS="$CXXFLAGS -fno-strict-aliasing"
 		CXXFLAGS="$CXXFLAGS -fuse-cxa-atexit"
-		LDFLAGS="$LDFLAGS -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt"
+		LDFLAGS="$LDFLAGS -specs=ds_arm9.specs"
+		LDFLAGS="$LDFLAGS -mthumb-interwork"
+		LDFLAGS="$LDFLAGS -mno-fpu"
+		LDFLAGS="$LDFLAGS -Wl,-Map,map.txt"
 		if test "$_dynamic_modules" = no ; then
 			LDFLAGS="$LDFLAGS -Wl,--gc-sections"
 		else
@@ -1704,12 +1726,21 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -I/usr/local/include"
 		;;
 	gamecube)
-		CXXFLAGS="$CXXFLAGS -Os -mogc -mcpu=750 -meabi -mhard-float"
-		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
+		CXXFLAGS="$CXXFLAGS -Os"
+		CXXFLAGS="$CXXFLAGS -mogc"
+		CXXFLAGS="$CXXFLAGS -mcpu=750"
+		CXXFLAGS="$CXXFLAGS -meabi"
+		CXXFLAGS="$CXXFLAGS -mhard-float"
+		CXXFLAGS="$CXXFLAGS -ffunction-sections"
+		CXXFLAGS="$CXXFLAGS -fdata-sections"
+		CXXFLAGS="$CXXFLAGS -fmodulo-sched"
 		CXXFLAGS="$CXXFLAGS -fuse-cxa-atexit"
 		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
 		# libogc is required to link the cc tests (includes _start())
-		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube -logc"
+		LDFLAGS="$LDFLAGS -mogc"
+		LDFLAGS="$LDFLAGS -mcpu=750"
+		LDFLAGS="$LDFLAGS -L$DEVKITPRO/libogc/lib/cube"
+		LDFLAGS="$LDFLAGS -logc"
 		if test "$_dynamic_modules" = "yes" ; then
 			# retarded toolchain patch forces --gc-sections, overwrite it
 			LDFLAGS="$LDFLAGS -Wl,--no-gc-sections"
@@ -1765,8 +1796,10 @@ case $_host_os in
 		if test -d "$PSPDEV/psp/lib"; then
 			LDFLAGS="$LDFLAGS -L$PSPDEV/psp/lib"
 		fi
-		LDFLAGS="$LDFLAGS -L$PSPSDK/lib -specs=$_srcdir/backends/platform/psp/psp.spec"
-		CXXFLAGS="$CXXFLAGS -O3 -I$PSPSDK/include"
+		LDFLAGS="$LDFLAGS -L$PSPSDK/lib"
+		LDFLAGS="$LDFLAGS -specs=$_srcdir/backends/platform/psp/psp.spec"
+		CXXFLAGS="$CXXFLAGS -O3"
+		CXXFLAGS="$CXXFLAGS -I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		CXXFLAGS="$CXXFLAGS -D_PSP_FW_VERSION=150"
 		;;
@@ -1777,29 +1810,46 @@ case $_host_os in
 		LIBS="$LIBS -lnsl -lsocket"
 		;;
 	webos)
-		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/include -I$WEBOS_PDK/include/SDL -I$WEBOS_PDK/device/usr/include"
+		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/include"
+		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/include/SDL"
+		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/device/usr/include"
 		# These compiler options are needed to support the Palm Pixi
-		CXXFLAGS="$CXXFLAGS -mcpu=arm1136jf-s -mfpu=vfp -mfloat-abi=softfp"
-		LDFLAGS="$LDFLAGS -L$WEBOS_PDK/device/lib -L$WEBOS_PDK/device/usr/lib"
+		CXXFLAGS="$CXXFLAGS -mcpu=arm1136jf-s"
+		CXXFLAGS="$CXXFLAGS -mfpu=vfp "
+		CXXFLAGS="$CXXFLAGS mfloat-abi=softfp"
+		LDFLAGS="$LDFLAGS -L$WEBOS_PDK/device/lib"
+		LDFLAGS="$LDFLAGS -L$WEBOS_PDK/device/usr/lib"
 		LDFLAGS="$LDFLAGS -Wl,--allow-shlib-undefined"
 		LDFLAGS="$LDFLAGS --sysroot=$WEBOS_PDK/arm-gcc/sysroot"
 		add_line_to_config_mk "WEBOS_SDK = $WEBOS_SDK"
 		_seq_midi=no
 		;;
 	wii)
-		CXXFLAGS="$CXXFLAGS -Os -mrvl -mcpu=750 -meabi -mhard-float"
-		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
+		CXXFLAGS="$CXXFLAGS -Os"
+		CXXFLAGS="$CXXFLAGS -mrvl"
+		CXXFLAGS="$CXXFLAGS -mcpu=750"
+		CXXFLAGS="$CXXFLAGS -meabi"
+		CXXFLAGS="$CXXFLAGS -mhard-float"
+		CXXFLAGS="$CXXFLAGS -ffunction-sections"
+		CXXFLAGS="$CXXFLAGS -fdata-sections"
+		CXXFLAGS="$CXXFLAGS -fmodulo-sched"
 		CXXFLAGS="$CXXFLAGS -fuse-cxa-atexit"
 		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
 		# libogc is required to link the cc tests (includes _start())
-		LDFLAGS="$LDFLAGS -mrvl -mcpu=750 -L$DEVKITPRO/libogc/lib/wii -logc"
+		LDFLAGS="$LDFLAGS -mrvl"
+		LDFLAGS="$LDFLAGS -mcpu=750"
+		LDFLAGS="$LDFLAGS -L$DEVKITPRO/libogc/lib/wii"
+		LDFLAGS="$LDFLAGS -logc"
 		if test "$_dynamic_modules" = "yes" ; then
 			# retarded toolchain patch forces --gc-sections, overwrite it
 			LDFLAGS="$LDFLAGS -Wl,--no-gc-sections"
 		fi
 		;;
 	wince)
-		CXXFLAGS="$CXXFLAGS -O3 -fno-inline-functions -march=armv4 -mtune=xscale"
+		CXXFLAGS="$CXXFLAGS -O3"
+		CXXFLAGS="$CXXFLAGS -fno-inline-functions"
+		CXXFLAGS="$CXXFLAGS -march=armv4"
+		CXXFLAGS="$CXXFLAGS -mtune=xscale"
 		DEFINES="$DEFINES -D_WIN32_WCE=300"
 		DEFINES="$DEFINES -D__ARM__"
 		DEFINES="$DEFINES -D_ARM_"
@@ -1818,7 +1868,8 @@ if test -n "$_host"; then
 	case "$_host" in
 		android | android-v7a)
 			# we link a .so as default
-			LDFLAGS="$LDFLAGS -shared -Wl,-Bsymbolic,--no-undefined"
+			LDFLAGS="$LDFLAGS -shared"
+			LDFLAGS="$LDFLAGS -Wl,-Bsymbolic,--no-undefined"
 			HOSTEXEPRE=lib
 			HOSTEXEEXT=.so
 			_backend="android"
@@ -1846,7 +1897,8 @@ if test -n "$_host"; then
 				# Use -O3 on the Caanoo for non-debug builds.
 				CXXFLAGS="$CXXFLAGS -O3"
 			fi
-			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
+			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s"
+			CXXFLAGS="$CXXFLAGS -mtune=arm926ej-s"
 			ASFLAGS="$ASFLAGS"
 			_backend="gph"
 			_build_hq_scalers=no
@@ -1865,7 +1917,8 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
 			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 			ASFLAGS="$ASFLAGS"
-			CXXFLAGS="$CXXFLAGS -msoft-float -mips32"
+			CXXFLAGS="$CXXFLAGS -msoft-float"
+			CXXFLAGS="$CXXFLAGS -mips32"
 			_backend="dingux"
 			_mt32emu=no
 			_vkeybd=yes
@@ -1881,7 +1934,11 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE"
 			DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
-			CXXFLAGS="$CXXFLAGS -O3 -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks"
+			CXXFLAGS="$CXXFLAGS -O3"
+			CXXFLAGS="$CXXFLAGS -funroll-loops"
+			CXXFLAGS="$CXXFLAGS -fschedule-insns2"
+			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
+			CXXFLAGS="$CXXFLAGS -fdelete-null-pointer-checks"
 			_backend="dc"
 			_build_scalers=no
 			_mad=yes
@@ -1945,7 +2002,8 @@ if test -n "$_host"; then
 			if test "$_debug_build" = yes; then
 				DEFINES="$DEFINES -DGPH_DEBUG"
 			fi
-			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
+			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s"
+			CXXFLAGS="$CXXFLAGS -mtune=arm926ej-s"
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			_backend="gph"
 			_build_hq_scalers=no
@@ -1998,10 +2056,19 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
 			;;
 		n64)
-			CXXFLAGS="$CXXFLAGS -mno-extern-sdata --param max-inline-insns-auto=20 -fomit-frame-pointer"
-			CXXFLAGS="$CXXFLAGS -march=vr4300 -mtune=vr4300 -mhard-float"
-			LDFLAGS="$LDFLAGS -march=vr4300 -mtune=vr4300 -nodefaultlibs -nostartfiles -mno-crt0"
-			LDFLAGS="$LDFLAGS -L$N64SDK/hkz-libn64 -L$N64SDK/lib"
+			CXXFLAGS="$CXXFLAGS -mno-extern-sdata"
+			CXXFLAGS="$CXXFLAGS --param max-inline-insns-auto=20"
+			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
+			CXXFLAGS="$CXXFLAGS -march=vr4300"
+			CXXFLAGS="$CXXFLAGS -mtune=vr4300"
+			CXXFLAGS="$CXXFLAGS -mhard-float"
+			LDFLAGS="$LDFLAGS -march=vr4300"
+			LDFLAGS="$LDFLAGS -mtune=vr4300"
+			LDFLAGS="$LDFLAGS -nodefaultlibs"
+			LDFLAGS="$LDFLAGS -nostartfiles"
+			LDFLAGS="$LDFLAGS -mno-crt0"
+			LDFLAGS="$LDFLAGS -L$N64SDK/hkz-libn64"
+			LDFLAGS="$LDFLAGS -L$N64SDK/lib"
 			LDFLAGS="$LDFLAGS -T n64ld_cpp.x -Xlinker -Map -Xlinker scummvm.map"
 			_backend="n64"
 			_mt32emu=no
@@ -2033,7 +2100,9 @@ if test -n "$_host"; then
 				# Use -O3 on the OpenPandora for non-debug builds.
 				CXXFLAGS="$CXXFLAGS -O3"
 			fi
-			CXXFLAGS="$CXXFLAGS -march=armv7-a -mtune=cortex-a8 -mfpu=neon"
+			CXXFLAGS="$CXXFLAGS -march=armv7-a"
+			CXXFLAGS="$CXXFLAGS -mtune=cortex-a8"
+			CXXFLAGS="$CXXFLAGS -mfpu=neon"
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			_backend="openpandora"
 			_build_hq_scalers=yes
@@ -2069,7 +2138,9 @@ if test -n "$_host"; then
 				DEFINES="$DEFINES -D__PS2_DEBUG__"
 				#INCLUDES="$INCLUDES -I$(PS2GDB)/ee"
 				#LDFLAGS="$LDFLAGS -L$(PS2GDB)/lib"
-				LDFLAGS="$LDFLAGS -lps2gdbStub -lps2ip -ldebug"
+				LDFLAGS="$LDFLAGS -lps2gdbStub"
+				LDFLAGS="$LDFLAGS -lps2ip"
+				LDFLAGS="$LDFLAGS -ldebug"
 			else
 				# If not building for debug mode, strip binaries.
 				CXXFLAGS="$CXXFLAGS -s"
@@ -2143,8 +2214,12 @@ case $_backend in
 		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 		;;
 	dc)
-		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
-		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000 -nostartfiles "'$(ronindir)/lib/crt0.o -L$(ronindir)/lib'
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc'
+		INCLUDES="$INCLUDES "'-isystem $(ronindir)/include'
+		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000"
+		LDFLAGS="$LDFLAGS -nostartfiles"
+		LDFLAGS="$LDFLAGS "'$(ronindir)/lib/crt0.o'
+		LDFLAGS="$LDFLAGS "'-L$(ronindir)/lib'
 		LIBS="$LIBS -lronin -lm"
 		;;
 	dingux)
@@ -2161,7 +2236,9 @@ case $_backend in
 		;;
 	iphone)
 		OBJCFLAGS="$OBJCFLAGS --std=c99"
-		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES -framework QuartzCore -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
+		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
+		LIBS="$LIBS -framework QuartzCore -framework GraphicsServices -framework CoreFoundation"
+		LIBS="$LIBS -framework Foundation -framework AudioToolbox -framework CoreAudio"
 		;;
 	linuxmoto)
 		DEFINES="$DEFINES -DLINUXMOTO"
@@ -2171,7 +2248,8 @@ case $_backend in
 		INCLUDES="$INCLUDES "'-I$(N64SDK)/mips64/include'
 		INCLUDES="$INCLUDES "'-I$(N64SDK)/hkz-libn64'
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/n64'
-		LIBS="$LIBS -lpakfs -lframfs -ln64 -ln64utils -lromfs -lm -lstdc++ -lc -lgcc -lz -lnosys"
+		LIBS="$LIBS -lpakfs -lframfs -ln64 -ln64utils -lromfs"
+		LIBS="$LIBS -lm -lstdc++ -lc -lgcc -lz -lnosys"
 		;;
 	null)
 		DEFINES="$DEFINES -DUSE_NULL_DRIVER"
@@ -2181,22 +2259,30 @@ case $_backend in
 	ps2)
 		DEFINES="$DEFINES -D_EE"
 		DEFINES="$DEFINES -DFORCE_RTL"
-		INCLUDES="$INCLUDES -I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2SDK/ports/include"
+		INCLUDES="$INCLUDES -I$PS2SDK/ee/include"
+		INCLUDES="$INCLUDES -I$PS2SDK/common/include"
+		INCLUDES="$INCLUDES -I$PS2SDK/ports/include"
 		if test "$_dynamic_modules" = no ; then
-			LDFLAGS="$LDFLAGS -mno-crt0 $PS2SDK/ee/startup/crt0.o -T $PS2SDK/ee/startup/linkfile"
+			LDFLAGS="$LDFLAGS -mno-crt0"
+			LDFLAGS="$LDFLAGS $PS2SDK/ee/startup/crt0.o"
+			LDFLAGS="$LDFLAGS -T $PS2SDK/ee/startup/linkfile"
 		fi
-		LDFLAGS="$LDFLAGS -L$PS2SDK/ee/lib -L$PS2SDK/ports/lib"
-		LIBS="$LIBS -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lm -lc -lfileXio -lkernel -lstdc++ "
+		LDFLAGS="$LDFLAGS -L$PS2SDK/ee/lib"
+		LDFLAGS="$LDFLAGS -L$PS2SDK/ports/lib"
+		LIBS="$LIBS -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm"
+		LIBS="$LIBS -lm -lc -lfileXio -lkernel -lstdc++"
 		;;
 	psp)
 		DEFINES="$DEFINES -D__PSP__"
 		DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
 		DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
-		LIBS="$LIBS -lpng -Wl,-Map,mapfile.txt"
+		LIBS="$LIBS -lpng"
+		LIBS="$LIBS -Wl,-Map,mapfile.txt"
 		;;
 	samsungtv)
 		DEFINES="$DEFINES -DSAMSUNGTV"
-		LDFLAGS="$LDFLAGS -shared -fpic"
+		LDFLAGS="$LDFLAGS -shared"
+		LDFLAGS="$LDFLAGS -fpic"
 		;;
 	webos)
 		# There is no sdl-config in the WebOS PDK so we don't use find_sdlconfig here.
@@ -2218,7 +2304,12 @@ case $_backend in
 		esac
 		;;
 	wince)
-		INCLUDES="$INCLUDES "'-I$(srcdir) -I$(srcdir)/backends/platform/wince -I$(srcdir)/engines -I$(srcdir)/backends/platform/wince/missing/gcc -I$(srcdir)/backends/platform/wince/CEgui -I$(srcdir)/backends/platform/wince/CEkeys'
+		INCLUDES="$INCLUDES "'-I$(srcdir)'
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/wince'
+		INCLUDES="$INCLUDES "'-I$(srcdir)/engines'
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/wince/missing/gcc'
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/wince/CEgui'
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/wince/CEkeys'
 		LIBS="$LIBS -static -lSDL"
 		DEFINES="$DEFINES -DSDL_BACKEND"
 		;;
