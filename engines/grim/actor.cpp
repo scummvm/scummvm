@@ -1143,6 +1143,7 @@ void Actor::update() {
 		if (_walkedCur) {
 			if (_walkCostume->isChoring(_walkChore, false) < 0) {
 				_lastStepTime = 0;
+				_walkCostume->stopChore(_walkChore);
 				_walkCostume->playChoreLooping(_walkChore);
 				_walkCostume->fadeChoreIn(_walkChore, 150);
 			}
