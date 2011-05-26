@@ -154,9 +154,19 @@ void TextObject::setupText() {
 	for (uint i = msg.size() - 1; c[i] == ' '; i--)
 		msg.deleteLastChar();
 
+	if (msg.size() == 0) {
+		_disabled = true;
+		return;
+	}
+
 	// remove char of id 13 from the end of the string,
 	for (uint i = msg.size() - 1; c[i] == 13; i--)
 		msg.deleteLastChar();
+
+	if (msg.size() == 0) {
+		_disabled = true;
+		return;
+	}
 
 	// format the output message to incorporate line wrapping
 	// (if necessary) for the text object
