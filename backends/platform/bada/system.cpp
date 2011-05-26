@@ -216,7 +216,6 @@ void BadaSystem::initBackend() {
 }
 
 bool BadaSystem::pollEvent(Common::Event &event) {
-  Thread::Sleep(100);
   return true;
 }
 
@@ -275,6 +274,11 @@ Common::WriteStream* BadaSystem::createConfigWriteStream() {
 //
 // BadaAppForm
 //
+BadaAppForm::BadaAppForm() :
+  pThread(0),
+  eventQueueLock((OSystem::MutexRef) new Mutex()) {
+}
+
 result BadaAppForm::Construct() {
   result r = Form::Construct(Osp::Ui::Controls::FORM_STYLE_NORMAL);
   if (IsFailed(r)) {
@@ -310,7 +314,6 @@ result BadaAppForm::Construct() {
   }
   else {
     g_system = badaSystem;
-    pThread->Start();
   }
 
   return r;
@@ -322,12 +325,26 @@ BadaAppForm::~BadaAppForm() {
   }
 }
 
+result BadaAppForm::OnInitializing(void) {
+  logEntered();
+
+  SetOrientation(Osp::Ui::ORIENTATION_LANDSCAPE);
+	AddOrientationEventListener(*this);
+  return E_SUCCESS;
+}
+
 result BadaAppForm::OnDraw(void) {
   logEntered();
   if (g_system) {
     g_system->updateScreen();
   }
   return E_SUCCESS;
+}
+
+void BadaAppForm::OnOrientationChanged(const Osp::Ui::Control& source, 
+                                       Osp::Ui::OrientationStatus orientationStatus) {
+  logEntered();
+  pThread->Start();
 }
 
 Object* BadaAppForm::Run(void) {

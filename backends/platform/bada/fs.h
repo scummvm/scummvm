@@ -24,6 +24,8 @@
 
 #include "config.h"
 #include "common/scummsys.h"
+#include "common/stream.h"
+//#include "common/str.h"
 #include "backends/fs/abstract-fs.h"
 
 #include <FBaseString.h>
