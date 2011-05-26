@@ -23,7 +23,7 @@
 
 #include "backends/platform/sdl/sdl-sys.h"
 #include "backends/platform/openpandora/op-sdl.h"
-#include "backends/plugins/posix/posix-provider.h"
+#include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
 #if defined(OPENPANDORA)
@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
 	//((OSystem_OP *)g_system)->init();
 
 #ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new POSIXPluginProvider());
+	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
 #endif
 
 	// Invoke the actual ScummVM main entry point:
