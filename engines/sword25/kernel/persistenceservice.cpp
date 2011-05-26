@@ -301,6 +301,7 @@ bool PersistenceService::saveGame(uint slotID, const Common::String &screenshotF
 
 	if (thumbnail) {
 		byte *buffer = new byte[FILE_COPY_BUFFER_SIZE];
+		thumbnail->seek(0, SEEK_SET);
 		while (!thumbnail->eos()) {
 			int bytesRead = thumbnail->read(&buffer[0], FILE_COPY_BUFFER_SIZE);
 			file->write(&buffer[0], bytesRead);
