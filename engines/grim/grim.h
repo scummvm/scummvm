@@ -227,28 +227,18 @@ private:
 	void handlePause();
 
 	void savegameSave();
-	void saveActors(SaveGame *savedState);
-	void saveTextObjects(SaveGame *savedState);
-	void savePrimitives(SaveGame *savedState);
-	void saveScenes(SaveGame *savedState);
-	void saveObjectStates(SaveGame *savedState);
-	void saveBitmaps(SaveGame *savedState);
-	void saveFonts(SaveGame *savedState);
-	void saveColors(SaveGame *savedState);
+	void saveGRIM();
+	void saveBitmaps();
+	void saveFonts();
 	template<typename T>
-	void saveObjects(SaveGame *state, Common::HashMap<int32, T *> &map);
+	void saveObjects(Common::HashMap<int32, T *> &map, uint32 ID);
 
 	void savegameRestore();
-	void restoreActors(SaveGame *savedState);
-	void restoreTextObjects(SaveGame *savedState);
-	void restorePrimitives(SaveGame *savedState);
-	void restoreScenes(SaveGame *savedState);
-	void restoreObjectStates(SaveGame *savedState);
-	void restoreBitmaps(SaveGame *savedState);
-	void restoreFonts(SaveGame *savedState);
-	void restoreColors(SaveGame *savedState);
+	void restoreGRIM();
+	void restoreBitmaps();
+	void restoreFonts();
 	template<typename T>
-	void restoreObjects(SaveGame *state, Common::HashMap<int32, T *> &map);
+	void restoreObjects(Common::HashMap<int32, T *> &map, uint32 ID);
 
 	void savegameCallback();
 	void storeSaveGameImage(SaveGame *savedState);
