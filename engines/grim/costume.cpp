@@ -362,7 +362,7 @@ void ModelComponent::init() {
 
 		// Get the default colormap if we haven't found
 		// a valid colormap
-		if (!cm)
+		if (!cm && g_grim->getCurrScene())
 			cm = g_grim->getCurrScene()->getCMap();
 		if (!cm) {
 			if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
