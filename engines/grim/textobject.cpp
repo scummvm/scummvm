@@ -141,10 +141,6 @@ int TextObject::getTextCharPosition(int pos) {
 
 void TextObject::setupText() {
 	Common::String msg = parseMsgText(_textID, NULL);
-	if (msg.size() == 0) {
-		_disabled = true;
-		return;
-	}
 	Common::String message;
 
 	// remove spaces (NULL_TEXT) from the end of the string,
@@ -152,11 +148,10 @@ void TextObject::setupText() {
 	// text justification
 	// remove char of id 13 from the end of the string,
 	int pos = msg.size() - 1;
-	while (pos > 0 && (msg[pos] == ' ' || msg[pos] == 13)) {
+	while (pos >= 0 && (msg[pos] == ' ' || msg[pos] == 13)) {
 		msg.deleteLastChar();
 		pos = msg.size() - 1;
 	}
-
 	if (msg.size() == 0) {
 		_disabled = true;
 		return;
