@@ -26,9 +26,8 @@
 #include "lstring.h"
 #include "ltable.h"
 #include "ltm.h"
-#include "lundump.h"
 #include "lvm.h"
-
+#include "common/textconsole.h"
 
 
 const char lua_ident[] =
@@ -876,17 +875,8 @@ LUA_API int lua_load (lua_State *L, lua_Reader reader, void *data,
 
 
 LUA_API int lua_dump (lua_State *L, lua_Writer writer, void *data) {
-  int status;
-  TValue *o;
-  lua_lock(L);
-  api_checknelems(L, 1);
-  o = L->top - 1;
-  if (isLfunction(o))
-    status = luaU_dump(L, clvalue(o)->l.p, writer, data, 0);
-  else
-    status = 1;
-  lua_unlock(L);
-  return status;
+  error("lua_dump not supported: Handling of precompiled LUA scripts has been removed in ScummVM");
+  return 1;	// error
 }
 
 
