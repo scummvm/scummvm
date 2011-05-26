@@ -66,7 +66,9 @@ uint16 MemoryManager::allocate(uint32 size) {
 
 byte *MemoryManager::allocate2(uint32 size) {
 	uint32 idx = allocate(size);
-	return lock(idx);
+	byte *result = lock(idx);
+	Common::set_to(result, result + size, 0);
+	return result;
 }
 
 byte *MemoryManager::lock(uint32 handle) {

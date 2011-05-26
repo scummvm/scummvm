@@ -678,7 +678,7 @@ void SoundManager::_sfSetMasterVol(int volume) {
 }
 
 void SoundManager::_sfExtractTrackInfo(trackInfoStruct *trackInfo, const byte *soundData, int groupNum) {
-	trackInfo->count = 0;
+	trackInfo->_count = 0;
 
 	const byte *p = soundData + READ_LE_UINT16(soundData + 8);
 	uint32 v;
@@ -688,14 +688,14 @@ void SoundManager::_sfExtractTrackInfo(trackInfoStruct *trackInfo, const byte *s
 			p += 6;
 
 			for (int idx = 0; idx < count; ++idx) {
-				if (trackInfo->count == 16) {
-					trackInfo->count = -1;
+				if (trackInfo->_count == 16) {
+					trackInfo->_count = -1;
 					return;
 				}
 
-				trackInfo->rlbList[trackInfo->count] = READ_LE_UINT16(p);
-				trackInfo->arr2[trackInfo->count] = READ_LE_UINT16(p + 2);
-				++trackInfo->count;
+				trackInfo->_rlbList[trackInfo->_count] = READ_LE_UINT16(p);
+				trackInfo->_arr2[trackInfo->_count] = READ_LE_UINT16(p + 2);
+				++trackInfo->_count;
 				p += 4;
 			} 
 		}
@@ -829,9 +829,9 @@ Sound::Sound() {
 	_volume4 = 0;
 	_timeIndex = 0;
 	_field26 = 0;
-	_trackInfo.count = 0;
+	_trackInfo._count = 0;
 	_primed = false;
-	_field26C = 0;
+	_isEmpty = false;
 	_field26E = NULL;
 }
 
@@ -862,6 +862,7 @@ void Sound::_prime(int soundNum, bool queFlag) {
 
 	if (_soundNum != -1) {
 		// Sound number specified
+		_isEmpty = false;
 		_field26E = NULL;
 		byte *soundData = _resourceManager->getResource(RES_SOUND, soundNum, 0);
 		_globals->_soundManager.checkResVersion(soundData);
@@ -870,18 +871,19 @@ void Sound::_prime(int soundNum, bool queFlag) {
 		_loop = _globals->_soundManager.extractLoop(soundData);
 		_globals->_soundManager.extractTrackInfo(&_trackInfo, soundData, _groupNum);
 
-		for (int idx = 0; idx < _trackInfo.count; ++idx) {
-			_handleList[idx] = _resourceManager->getResource(RES_SOUND, soundNum, _trackInfo.rlbList[idx]);
+		for (int idx = 0; idx < _trackInfo._count; ++idx) {
+			_trackInfo._handleList[idx] = _resourceManager->getResource(RES_SOUND, soundNum, _trackInfo._rlbList[idx]);
 		}
 
 		DEALLOCATE(soundData);
 	} else {
 		// No sound specified
+		_isEmpty = true;
 		_groupNum = 0;
 		_soundPriority = 0;
 		_loop = 0;
-		_trackInfo.count = 0;
-		_handleList[0] = ALLOCATE(200);
+		_trackInfo._count = 0;
+		_trackInfo._handleList[0] = ALLOCATE(200);
 		_field26E = ALLOCATE(200);
 	}
 
@@ -893,17 +895,17 @@ void Sound::_prime(int soundNum, bool queFlag) {
 
 void Sound::_unPrime() {
 	if (_primed) {
-		if (_field26C) {
-			DEALLOCATE(_handleList[0]);
+		if (_isEmpty) {
+			DEALLOCATE(_trackInfo._handleList[0]);
 			DEALLOCATE(_field26E);
 			_field26E = NULL;
 		} else {
-			for (int idx = 0; idx < _trackInfo.count; ++idx) {
-				DEALLOCATE(_handleList[idx]);
+			for (int idx = 0; idx < _trackInfo._count; ++idx) {
+				DEALLOCATE(_trackInfo._handleList[idx]);
 			}
 		}
 
-		_trackInfo.count = 0;
+		_trackInfo._count = 0;
 		_globals->_soundManager.removeFromSoundList(this);
 
 		_primed = false;
@@ -912,13 +914,13 @@ void Sound::_unPrime() {
 }
 
 void Sound::orientAfterDriverChange() {
-	if (!_field26C) {
+	if (!_isEmpty) {
 		int timeIndex = getTimeIndex();
 
-		for (int idx = 0; idx < _trackInfo.count; ++idx)
-			DEALLOCATE(_handleList[idx]);
+		for (int idx = 0; idx < _trackInfo._count; ++idx)
+			DEALLOCATE(_trackInfo._handleList[idx]);
 		
-		_trackInfo.count = 0;
+		_trackInfo._count = 0;
 		_primed = false;
 		_prime(_soundNum, true);
 		setTimeIndex(timeIndex);
@@ -926,7 +928,7 @@ void Sound::orientAfterDriverChange() {
 }
 
 void Sound::orientAfterRestore() {
-	if (_field26C) {
+	if (_isEmpty) {
 		int timeIndex = getTimeIndex();
 		_primed = false;
 		_prime(_soundNum, true);

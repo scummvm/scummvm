@@ -37,9 +37,18 @@ class Sound;
 #define ADLIB_DRIVER_NUM 3
 
 struct trackInfoStruct {
-	int count;
-	int rlbList[SOUND_ARR_SIZE];
-	int arr2[SOUND_ARR_SIZE];
+	int _count;
+	int _rlbList[SOUND_ARR_SIZE];
+	int _arr2[SOUND_ARR_SIZE];
+	byte *_handleList[SOUND_ARR_SIZE];
+	int field82[SOUND_ARR_SIZE];
+	int field92[SOUND_ARR_SIZE];
+	int fielda2[SOUND_ARR_SIZE];
+	int fieldb2[SOUND_ARR_SIZE];
+	int fieldf2[SOUND_ARR_SIZE];
+	int field132[SOUND_ARR_SIZE];
+	int field152[SOUND_ARR_SIZE];
+
 };
 
 enum SoundDriverStatus {SNDSTATUS_FAILED = 0, SNDSTATUS_DETECTED = 1, SNDSTATUS_SKIPPED = 2};
@@ -254,11 +263,8 @@ public:
 	int _fieldC8[SOUND_ARR_SIZE];
 	int _fieldE8[SOUND_ARR_SIZE];
 	trackInfoStruct _trackInfo;
-	byte *_handleList[75];
-	int _field266;
-	int _field268;
 	bool _primed;
-	int _field26C;
+	bool _isEmpty;
 	byte *_field26E;
 public:
 	Sound();
