@@ -2279,6 +2279,8 @@ if test "$_dynamic_modules" = yes ; then
 	android)
 		_plugin_prefix="lib"
 		_plugin_suffix=".so"
+		CXXFLAGS="$CXXFLAGS -fpic"
+		LIBS="$LIBS -ldl"
 # Work around an Android 2.0+ run-time linker bug:
 # The linker doesn't actually look in previously
 # loaded libraries when trying to resolve symbols -
@@ -2289,22 +2291,20 @@ if test "$_dynamic_modules" = yes ; then
 # to the main libscummvm.so.
 _mak_plugins='
 PLUGIN_EXTRA_DEPS = libscummvm.so
-CXXFLAGS        += -fpic
 PLUGIN_LDFLAGS  += $(LDFLAGS) -L. -lscummvm
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
-LIBS            += -ldl
 '
 		;;
 	darwin*)
 		_plugin_prefix=""
 		_plugin_suffix=".plugin"
+		LIBS="$LIBS -ldl"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS = $(EXECUTABLE)
 PLUGIN_LDFLAGS  += -bundle -bundle_loader $(EXECUTABLE) -exported_symbols_list "$(srcdir)/plugin.exp"
 PRE_OBJS_FLAGS  := -all_load
 POST_OBJS_FLAGS :=
-LIBS            += -ldl
 '
 		;;
 	dreamcast)
@@ -2327,9 +2327,9 @@ PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb-interwo
 	freebsd*)
 		_plugin_prefix="lib"
 		_plugin_suffix=".so"
+		CXXFLAGS="$CXXFLAGS -fpic"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS =
-CXXFLAGS        += -fpic
 PLUGIN_LDFLAGS  += -shared
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
@@ -2345,25 +2345,25 @@ PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/wii/plugin.ld
 	gph*)
 		_plugin_prefix=""
 		_plugin_suffix=".plugin"
+		CXXFLAGS="$CXXFLAGS -fpic"
+		LIBS="$LIBS -ldl"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS = $(EXECUTABLE)
-CXXFLAGS        += -fpic
 PLUGIN_LDFLAGS  += -shared
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
-LIBS            += -ldl
 '
 		;;
 	linux*)
 		_plugin_prefix="lib"
 		_plugin_suffix=".so"
+		CXXFLAGS="$CXXFLAGS -fpic"
+		LIBS="$LIBS -ldl"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS =
-CXXFLAGS        += -fpic
 PLUGIN_LDFLAGS  += -shared
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
-LIBS            += -ldl
 '
 		;;
 	*mingw32*)
@@ -2392,7 +2392,7 @@ POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-im
 		_elf_loader=yes
 		DEFINES="$DEFINES -DMIPS_TARGET"
 _mak_plugins='
-LDFLAGS				+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T$(srcdir)/backends/plugins/ps2/main_prog.ld
+LDFLAGS				+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/main_prog.ld
 PLUGIN_LDFLAGS		+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/plugin.ld -lstdc++ -lc
 '
 		;;
@@ -2407,13 +2407,13 @@ PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lstdc++ -lc
 	webos)
 		_plugin_prefix="lib"
 		_plugin_suffix=".so"
+		CXXFLAGS="$CXXFLAGS -fpic"
+		LIBS="$LIBS -ldl"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS =
-CXXFLAGS        += -fpic
 PLUGIN_LDFLAGS  += -shared $(LDFLAGS)
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
-LIBS            += -ldl
 '
 		;;
 	*)
