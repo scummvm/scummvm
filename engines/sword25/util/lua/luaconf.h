@@ -18,14 +18,6 @@
 ** ===================================================================
 */
 
-#if defined(__ANDROID__)
-/* Android is missing strcoll().
-** For more information, refer to:
-** http://www.damonkohler.com/2008/12/lua-on-android.html
-*/
-#define strcoll strcmp
-#endif
-
 
 /*
 @@ LUA_ANSI controls the use of non-ansi features.
