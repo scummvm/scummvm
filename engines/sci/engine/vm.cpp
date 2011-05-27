@@ -297,13 +297,6 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		if (argc > 0x800)	// More arguments than the stack could possibly accomodate for
 			error("send_selector(): More than 0x800 arguments to function call");
 
-		if (send_obj.isNull()) {
-			warning("Attempt to invoke a selector of a null/disposed object. Ignoring call");
-			framesize -= (2 + argc);
-			argp += argc + 1;
-			continue;
-		}
-
 		SelectorType selectorType = lookupSelector(s->_segMan, send_obj, selector, &varp, &funcp);
 		if (selectorType == kSelectorNone)
 			error("Send to invalid selector 0x%x of object at %04x:%04x", 0xffff & selector, PRINT_REG(send_obj));
