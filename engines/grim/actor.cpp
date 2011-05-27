@@ -1147,11 +1147,12 @@ void Actor::update() {
 				_walkCostume->playChoreLooping(_walkChore);
 				_walkCostume->fadeChoreIn(_walkChore, 150);
 			}
+
 			if (_restChore >= 0) {
 				_restCostume->fadeChoreOut(_restChore, 150);
 			}
 		} else {
-			if (_walkCostume->isChoring(_walkChore, false) >= 0) {
+			if (_walkedLast && _walkCostume->isChoring(_walkChore, false) >= 0) {
 				_walkCostume->fadeChoreOut(_walkChore, 150);
 				_restCostume->fadeChoreIn(_restChore, 150);
 			}
@@ -1159,18 +1160,22 @@ void Actor::update() {
 	}
 
 	if (_leftTurnChore >= 0) {
-		if (_walkedCur)
+		if (_walkedCur || _walkedLast)
 			_currTurnDir = 0;
 
 		if (_restChore >= 0) {
-			if (_currTurnDir != 0)
-				_restCostume->fadeChoreOut(_restChore, 500);
-			else if (_lastTurnDir != 0)
-				_restCostume->fadeChoreIn(_restChore, 100);
+			if (_currTurnDir != 0) {
+				if (_turnCostume->isChoring(getTurnChore(_currTurnDir), false) >= 0)
+					_restCostume->fadeChoreOut(_restChore, 500);
+			}
+			else if (_lastTurnDir != 0) {
+				if (!_walkedCur && _turnCostume->isChoring(getTurnChore(_lastTurnDir), false) >= 0)
+					_restCostume->fadeChoreIn(_restChore, 150);
+			}
 		}
 
 		if (_lastTurnDir != 0 && _lastTurnDir != _currTurnDir)
-			_turnCostume->fadeChoreOut(getTurnChore(_lastTurnDir), 100);
+			_turnCostume->fadeChoreOut(getTurnChore(_lastTurnDir), 150);
 		if (_currTurnDir != 0 && _currTurnDir != _lastTurnDir) {
 			_turnCostume->playChoreLooping(getTurnChore(_currTurnDir));
 			_turnCostume->fadeChoreIn(getTurnChore(_currTurnDir), 500);

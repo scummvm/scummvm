@@ -498,7 +498,7 @@ void ModelComponent::animate() {
 			float time = j->_anim->_time / 1000.0f;
 			float weight = j->_anim->_fade * remainingWeight;
 			if (j->_anim->_keyf->animate(_hier, i, time, weight, j->_tagged))
-				totalWeight += weight;
+				totalWeight += j->_anim->_fade;
 		}
 
 		float weightFactor = 1.0f;
@@ -1368,7 +1368,7 @@ void Costume::Chore::update() {
 
 void Costume::Chore::fade(Costume::Chore::FadeMode mode, int msecs) {
 	if (mode == FadeIn) {
-		if (!_playing || _fadeMode != mode) {
+		if (!_playing || _fadeMode == None) {
 			_currTime = -1;
 			_fade = 0.0f;
 		}
