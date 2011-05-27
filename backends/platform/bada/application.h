@@ -32,27 +32,28 @@
 #include "system.h"
 
 class BadaScummVM :
-	public Osp::App::Application,
-	public Osp::System::IScreenEventListener,
-	public Osp::Ui::IKeyEventListener {
+  public Osp::App::Application,
+  public Osp::System::IScreenEventListener,
+  public Osp::Ui::IKeyEventListener {
 
 public:
-	BadaScummVM();
-	~BadaScummVM();
+  BadaScummVM();
+  ~BadaScummVM();
 
-	static Osp::App::Application* createInstance(void);
+  static Osp::App::Application* createInstance(void);
 
-	bool OnAppInitializing(Osp::App::AppRegistry& appRegistry);
-	bool OnAppTerminating(Osp::App::AppRegistry& appRegistry, bool forcedTermination = false);
-	void OnForeground(void);
-	void OnBackground(void);
-	void OnLowMemory(void);
-	void OnBatteryLevelChanged(Osp::System::BatteryLevel batteryLevel);
-	void OnKeyPressed(const Osp::Ui::Control& source, Osp::Ui::KeyCode keyCode);
-	void OnKeyReleased(const Osp::Ui::Control& source, Osp::Ui::KeyCode keyCode);
-	void OnKeyLongPressed(const Osp::Ui::Control& source, Osp::Ui::KeyCode keyCode);
-	void OnScreenOn(void);
-	void OnScreenOff(void);
+  bool OnAppInitializing(Osp::App::AppRegistry& appRegistry);
+  bool OnAppTerminating(Osp::App::AppRegistry& appRegistry, bool forcedTermination = false);
+  void OnForeground(void);
+  void OnBackground(void);
+  void OnLowMemory(void);
+  void OnBatteryLevelChanged(Osp::System::BatteryLevel batteryLevel);
+  void OnKeyPressed(const Osp::Ui::Control& source, Osp::Ui::KeyCode keyCode);
+  void OnKeyReleased(const Osp::Ui::Control& source, Osp::Ui::KeyCode keyCode);
+  void OnKeyLongPressed(const Osp::Ui::Control& source, Osp::Ui::KeyCode keyCode);
+  void OnScreenOn(void);
+  void OnScreenOff(void);
+  void OnUserEventReceivedN(RequestId requestId, Osp::Base::Collection::IList* pArgs);
 
   BadaAppForm* appForm;
 };

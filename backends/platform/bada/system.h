@@ -31,9 +31,19 @@
 #include <FIoFile.h>
 
 #include "config.h"
+#include "common/scummsys.h"
 #include "common/events.h"
-#include "common/queue.h"
-#include "common/mutex.h"
+#include "backends/modular-backend.h"
+#include "base/main.h"
+#include "backends/mutex/mutex.h"
+#include "backends/saves/default/default-saves.h"
+#include "backends/timer/default/default-timer.h"
+#include "backends/events/default/default-events.h"
+#include "backends/audiocd/default/default-audiocd.h"
+#include "audio/mixer_intern.h"
+#include "fs-factory.h"
+#include "fs.h"
+#include "form.h"
 
 #if defined(_DEBUG)
 #define logEntered() AppLog("%s entered (%s %d)", \
@@ -45,27 +55,39 @@
 #define logLeaving()
 #endif
 
-struct BadaAppForm : public Osp::Ui::Controls::Form,
-                     public Osp::Ui::IOrientationEventListener,
-                     public Osp::Base::Runtime::IRunnable {
-  BadaAppForm();
-  ~BadaAppForm();
-
-  Object* Run();
-  result Construct();
-  result OnInitializing(void);
-  result OnDraw(void);
-	void OnOrientationChanged(const Osp::Ui::Control& source, 
-                            Osp::Ui::OrientationStatus orientationStatus);
-
-  Osp::Base::Runtime::Thread* pThread;
-  Common::Queue<Common::Event> eventQueue;
-  Common::MutexRef eventQueueLock;
-};
-
 BadaAppForm* systemStart(Osp::App::Application* app);
-void systemStop(BadaAppForm* appForm);
-void systemPostEvent();
 void systemError(const char* format, ...);
+
+#define USER_MESSAGE_HALT 1000
+
+//
+// BadaSystem
+//
+class BadaSystem : public ModularBackend, 
+                   Common::EventSource {
+ public:
+  BadaSystem(BadaAppForm* appForm);
+  ~BadaSystem();
+
+  result Construct();
+  void closeGraphics();
+
+ private:
+  void initBackend();
+  result initModules();
+
+  void updateScreen();
+  bool pollEvent(Common::Event& event);
+  uint32 getMillis();
+  void delayMillis(uint msecs);
+  void getTimeAndDate(TimeDate& t) const;
+  void fatalError();
+  void logMessage(LogMessageType::Type type, const char *message);
+
+  Common::SeekableReadStream* createConfigReadStream();
+  Common::WriteStream* createConfigWriteStream();
+  
+  BadaAppForm* appForm;
+};
 
 #endif

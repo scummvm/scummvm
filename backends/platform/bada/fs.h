@@ -22,16 +22,15 @@
 #ifndef BADA_FILESYSTEM_H
 #define BADA_FILESYSTEM_H
 
-#include "config.h"
-#include "common/scummsys.h"
-#include "common/stream.h"
-//#include "common/str.h"
-#include "backends/fs/abstract-fs.h"
-
 #include <FBaseString.h>
 #include <FBaseUtilStringUtil.h>
 #include <FIoDirectory.h>
 #include <FIoFile.h>
+
+#include "config.h"
+#include "common/scummsys.h"
+#include "common/stream.h"
+#include "backends/fs/abstract-fs.h"
 
 using namespace Osp::Io;
 using namespace Osp::Base;
