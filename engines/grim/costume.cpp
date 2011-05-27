@@ -1262,9 +1262,6 @@ void Costume::Chore::playLooping() {
 }
 
 void Costume::Chore::stop() {
-	if (!_hasPlayed)
-		return;
-
 	_playing = false;
 	_hasPlayed = false;
 	_fadeMode = None;
@@ -1466,6 +1463,8 @@ void Costume::playChoreLooping(int num) {
 		return;
 	}
 	_chores[num].playLooping();
+	if (Common::find(_playingChores.begin(), _playingChores.end(), &_chores[num]) == _playingChores.end())
+		_playingChores.push_back(&_chores[num]);
 }
 
 void Costume::playChore(const char *name) {
@@ -1486,6 +1485,8 @@ void Costume::playChore(int num) {
 		return;
 	}
 	_chores[num].play();
+	if (Common::find(_playingChores.begin(), _playingChores.end(), &_chores[num]) == _playingChores.end())
+		_playingChores.push_back(&_chores[num]);
 }
 
 void Costume::setColormap(const Common::String &map) {
@@ -1499,16 +1500,22 @@ void Costume::setColormap(const Common::String &map) {
 }
 
 void Costume::stopChores() {
-	for (int i = 0; i < _numChores; i++)
+	for (int i = 0; i < _numChores; i++) {
 		_chores[i].stop();
+		_playingChores.remove(&_chores[i]);
+	}
 }
 
 void Costume::fadeChoreIn(int chore, int msecs) {
 	_chores[chore].fade(Chore::FadeIn, msecs);
+	if (Common::find(_playingChores.begin(), _playingChores.end(), &_chores[chore]) == _playingChores.end())
+		_playingChores.push_back(&_chores[chore]);
 }
 
 void Costume::fadeChoreOut(int chore, int msecs) {
 	_chores[chore].fade(Chore::FadeOut, msecs);
+	if (Common::find(_playingChores.begin(), _playingChores.end(), &_chores[chore]) == _playingChores.end())
+		_playingChores.push_back(&_chores[chore]);
 }
 
 int Costume::isChoring(const char *name, bool excludeLooping) {
@@ -1547,8 +1554,13 @@ void Costume::draw() {
 }
 
 void Costume::update() {
-	for (int i = 0; i < _numChores; i++)
-		_chores[i].update();
+	for (Common::List<Chore*>::iterator i = _playingChores.begin(); i != _playingChores.end(); ++i) {
+		(*i)->update();
+		if (!(*i)->_playing) {
+			i = _playingChores.erase(i);
+			--i;
+		}
+	}
 
 	for (int i = 0; i < _numComponents; i++) {
 		if (_components[i]) {
@@ -1744,6 +1756,9 @@ void Costume::saveState(SaveGame *state) const {
 		state->writeLESint32(c._looping);
 		state->writeLESint32(c._currTime);
 		state->writeLESint32(c._fadeMode);
+		// Uncomment on next save format change.
+		//state->writeLESint32(c._fadeLength);
+		//state->writeFloat(c._fade);
 	}
 
 	for (int i = 0; i < _numComponents; ++i) {
@@ -1757,6 +1772,12 @@ void Costume::saveState(SaveGame *state) const {
 			c->saveState(state);
 		}
 	}
+
+	// Uncomment on next save format change.
+	/*state->writeLEUint32(_playingChores.size());
+	for (Common::List<Chore*>::const_iterator i = _playingChores.begin(); i != _playingChores.end(); ++i) {
+		state->writeLESint32((*i)->_id);
+	}*/
 
 	state->writeLESint32(_head.joint1);
 	state->writeLESint32(_head.joint2);
@@ -1780,6 +1801,9 @@ bool Costume::restoreState(SaveGame *state) {
 		c._looping = state->readLESint32();
 		c._currTime = state->readLESint32();
 		c._fadeMode = (Chore::FadeMode)state->readLESint32();
+		// Uncomment on next save format change.
+		//c._fadeLength = state->readLESint32();
+		//c._fade = state->readFloat();
 	}
 	for (int i = 0; i < _numComponents; ++i) {
 		Component *c = _components[i];
@@ -1792,6 +1816,13 @@ bool Costume::restoreState(SaveGame *state) {
 			c->restoreState(state);
 		}
 	}
+
+	// Uncomment on next save format change.
+	/*int numPlayingChores = state->readLEUint32();
+	for (int i = 0; i < numPlayingChores; ++i) {
+		int id = state->readLESint32();
+		_playingChores.push_back(&_chores[id]);
+	}*/
 
 	int j1 = state->readLESint32();
 	int j2 = state->readLESint32();
