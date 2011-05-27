@@ -66,10 +66,10 @@ public:
 	bool isPointInSector(Graphics::Vector3d point) const;
 	Common::List<Graphics::Line3d> getBridgesTo(Sector *sector) const;
 
-	Graphics::Vector3d getProjectionToPlane(Graphics::Vector3d point) const;
-	Graphics::Vector3d getProjectionToPuckVector(Graphics::Vector3d v) const;
+	Graphics::Vector3d getProjectionToPlane(const Graphics::Vector3d &point) const;
+	Graphics::Vector3d getProjectionToPuckVector(const Graphics::Vector3d &v) const;
 
-	Graphics::Vector3d getClosestPoint(Graphics::Vector3d point) const;
+	Graphics::Vector3d getClosestPoint(const Graphics::Vector3d &point) const;
 
 	// Interface to trace a ray to its exit from the polygon
 	struct ExitInfo {
@@ -77,7 +77,7 @@ public:
 		float angleWithEdge;
 		Graphics::Vector3d edgeDir;
 	};
-	void getExitInfo(Graphics::Vector3d start, Graphics::Vector3d dir, struct ExitInfo *result);
+	void getExitInfo(const Graphics::Vector3d &start, const Graphics::Vector3d &dir, struct ExitInfo *result) const;
 
 	int getNumVertices() { return _numVertices; }
 	Graphics::Vector3d *getVertices() { return _vertices; }

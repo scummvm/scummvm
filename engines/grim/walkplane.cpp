@@ -275,7 +275,7 @@ Common::List<Graphics::Line3d> Sector::getBridgesTo(Sector *sector) const {
 	return bridges;
 }
 
-Graphics::Vector3d Sector::getProjectionToPlane(Graphics::Vector3d point) const {
+Graphics::Vector3d Sector::getProjectionToPlane(const Graphics::Vector3d &point) const {
 	if (_normal.z() == 0)
 		error("Trying to walk along vertical plane");
 
@@ -285,7 +285,7 @@ Graphics::Vector3d Sector::getProjectionToPlane(Graphics::Vector3d point) const 
 	return result;
 }
 
-Graphics::Vector3d Sector::getProjectionToPuckVector(Graphics::Vector3d v) const {
+Graphics::Vector3d Sector::getProjectionToPuckVector(const Graphics::Vector3d &v) const {
 	if (_normal.z() == 0)
 		error("Trying to walk along vertical plane");
 
@@ -295,7 +295,7 @@ Graphics::Vector3d Sector::getProjectionToPuckVector(Graphics::Vector3d v) const
 }
 
 // Find the closest point on the walkplane to the given point
-Graphics::Vector3d Sector::getClosestPoint(Graphics::Vector3d point) const {
+Graphics::Vector3d Sector::getClosestPoint(const Graphics::Vector3d &point) const {
 	// First try to project to the plane
 	Graphics::Vector3d p2 = point;
 	p2 -= (dot(_normal, p2 - _vertices[0])) * _normal;
@@ -327,9 +327,9 @@ Graphics::Vector3d Sector::getClosestPoint(Graphics::Vector3d point) const {
 	return _vertices[index];
 }
 
-void Sector::getExitInfo(Graphics::Vector3d start, Graphics::Vector3d dir, struct ExitInfo *result) {
-	start = getProjectionToPlane(start);
-	dir = getProjectionToPuckVector(dir);
+void Sector::getExitInfo(const Graphics::Vector3d &s, const Graphics::Vector3d &dirVec, struct ExitInfo *result) const {
+	Graphics::Vector3d start = getProjectionToPlane(s);
+	Graphics::Vector3d dir = getProjectionToPuckVector(dirVec);
 
 	// First find the edge the ray exits through: this is where
 	// the z-component of (v_i - start) x dir changes sign from
