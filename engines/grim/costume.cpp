@@ -1262,9 +1262,6 @@ void Costume::Chore::playLooping() {
 }
 
 void Costume::Chore::stop() {
-	if (!_hasPlayed)
-		return;
-
 	_playing = false;
 	_hasPlayed = false;
 	_fadeMode = None;
