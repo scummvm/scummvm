@@ -66,7 +66,7 @@ private:
 		void loadText(TextSplitter &ts);
 		~KeyframeNode();
 
-		bool animate(Model::HierNode &node, float frame, float fade) const;
+		bool animate(Model::HierNode &node, float frame, float fade, bool useDelta) const;
 
 		char _meshName[32];
 		int _numEntries;
