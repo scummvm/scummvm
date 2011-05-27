@@ -3088,6 +3088,7 @@ void Scene4150::dispatch() {
 
 	if (!_action && (_globals->_player._position.x >= 316)) {
 		_globals->_soundHandler.proc1(NULL);
+		_soundHandler.proc1(NULL);
 		_globals->_player.disableControl();
 		_sceneMode = 4152;
 		setAction(&_sequenceManager, this, 4152, &_globals->_player, NULL);
