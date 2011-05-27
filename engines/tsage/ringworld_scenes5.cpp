@@ -1458,7 +1458,7 @@ void Scene4025::Hole::doAction(int action) {
 void Scene4025::Peg::synchronize(Serializer &s) {
 	SceneObject::synchronize(s);
 	s.syncAsSint16LE(_field88);
-	SYNC_POINTER(_armStrip);
+	s.syncAsSint16LE(_armStrip);
 }
 
 void Scene4025::Peg::doAction(int action) {
