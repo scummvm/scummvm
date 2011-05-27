@@ -683,7 +683,7 @@ void SoundManager::_sfSetMasterVol(int volume) {
 }
 
 void SoundManager::_sfExtractTrackInfo(trackInfoStruct *trackInfo, const byte *soundData, int groupNum) {
-	trackInfo->_count = 0;
+	trackInfo->_maxTrack = 0;
 
 	const byte *p = soundData + READ_LE_UINT16(soundData + 8);
 	uint32 v;
@@ -693,14 +693,14 @@ void SoundManager::_sfExtractTrackInfo(trackInfoStruct *trackInfo, const byte *s
 			p += 6;
 
 			for (int idx = 0; idx < count; ++idx) {
-				if (trackInfo->_count == 16) {
-					trackInfo->_count = -1;
+				if (trackInfo->_maxTrack == 16) {
+					trackInfo->_maxTrack = -1;
 					return;
 				}
 
-				trackInfo->_rlbList[trackInfo->_count] = READ_LE_UINT16(p);
-				trackInfo->_arr2[trackInfo->_count] = READ_LE_UINT16(p + 2);
-				++trackInfo->_count;
+				trackInfo->_rlbList[trackInfo->_maxTrack] = READ_LE_UINT16(p);
+				trackInfo->_arr2[trackInfo->_maxTrack] = READ_LE_UINT16(p + 2);
+				++trackInfo->_maxTrack;
 				p += 4;
 			} 
 		}
@@ -834,7 +834,7 @@ Sound::Sound() {
 	_volume4 = 0;
 	_timeIndex = 0;
 	_field26 = 0;
-	_trackInfo._count = 0;
+	_trackInfo._maxTrack = 0;
 	_primed = false;
 	_isEmpty = false;
 	_field26E = NULL;
@@ -880,7 +880,7 @@ void Sound::_prime(int soundNum, bool queFlag) {
 		_loop = _soundManager->extractLoop(soundData);
 		_soundManager->extractTrackInfo(&_trackInfo, soundData, _groupNum);
 
-		for (int idx = 0; idx < _trackInfo._count; ++idx) {
+		for (int idx = 0; idx <= _trackInfo._maxTrack; ++idx) {
 			_trackInfo._handleList[idx] = _resourceManager->getResource(RES_SOUND, soundNum, _trackInfo._rlbList[idx]);
 		}
 
@@ -891,7 +891,7 @@ void Sound::_prime(int soundNum, bool queFlag) {
 		_groupNum = 0;
 		_soundPriority = 0;
 		_loop = 0;
-		_trackInfo._count = 0;
+		_trackInfo._maxTrack = 0;
 		_trackInfo._handleList[0] = ALLOCATE(200);
 		_field26E = ALLOCATE(200);
 	}
@@ -909,12 +909,12 @@ void Sound::_unPrime() {
 			DEALLOCATE(_field26E);
 			_field26E = NULL;
 		} else {
-			for (int idx = 0; idx < _trackInfo._count; ++idx) {
+			for (int idx = 0; idx <= _trackInfo._maxTrack; ++idx) {
 				DEALLOCATE(_trackInfo._handleList[idx]);
 			}
 		}
 
-		_trackInfo._count = 0;
+		_trackInfo._maxTrack = 0;
 		_soundManager->removeFromSoundList(this);
 
 		_primed = false;
@@ -926,10 +926,10 @@ void Sound::orientAfterDriverChange() {
 	if (!_isEmpty) {
 		int timeIndex = getTimeIndex();
 
-		for (int idx = 0; idx < _trackInfo._count; ++idx)
+		for (int idx = 0; idx <= _trackInfo._maxTrack; ++idx)
 			DEALLOCATE(_trackInfo._handleList[idx]);
 		
-		_trackInfo._count = 0;
+		_trackInfo._maxTrack = 0;
 		_primed = false;
 		_prime(_soundNum, true);
 		setTimeIndex(timeIndex);
