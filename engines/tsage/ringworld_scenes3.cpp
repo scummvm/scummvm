@@ -488,11 +488,11 @@ void Scene2100::Action1::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		_globals->_player.disableControl();
-		if (!scene->_field1800)
+		if (!scene->_sitFl)
 			setDelay(1);
 		else {
 			setAction(&scene->_sequenceManager, this, 2102, &_globals->_player, NULL);
-			scene->_field1800 = 0;
+			scene->_sitFl = 0;
 		}
 		break;
 	case 1: {
@@ -631,7 +631,7 @@ void Scene2100::Action4::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		_globals->_player.disableControl();
-		if (!scene->_field1800)
+		if (!scene->_sitFl)
 			setDelay(1);
 		else
 			setAction(&scene->_sequenceManager, this, 2102, &_globals->_player, NULL);
@@ -1410,7 +1410,7 @@ void Scene2100::Hotspot10::doAction(int action) {
 		SceneItem::display2(2100, 13);
 		break;
 	case CURSOR_USE:
-		if (scene->_field1800) {
+		if (scene->_sitFl) {
 			_globals->_player.disableControl();
 			scene->_sceneMode = 2102;
 			scene->setAction(&scene->_sequenceManager, scene, 2102, &_globals->_player, NULL);
@@ -1688,7 +1688,7 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 	_globals->_player._moveDiff.x = 4;
 	_globals->_player.changeZoom(-1);
 	_globals->_player.disableControl();
-	_field1800 = 0;
+	_sitFl = 0;
 
 	switch (_globals->_sceneManager._previousScene) {
 	case 2120:
@@ -1823,7 +1823,7 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 		_globals->_player.fixPriority(152);
 		_globals->_player.setStrip(2);
 
-		_field1800 = 1;
+		_sitFl = 1;
 
 		_object4.postInit();
 		_object4.setVisage(2102);
@@ -1857,7 +1857,7 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 			_globals->_player.fixPriority(152);
 			_globals->_player.setStrip(2);
 
-			_field1800 = 1;
+			_sitFl = 1;
 			setAction(&_action16);
 		}
 		break;
@@ -1931,12 +1931,12 @@ void Scene2100::stripCallback(int v) {
 void Scene2100::signal() {
 	switch (_sceneMode) {
 	case 2101:
-		_field1800 = 1;
+		_sitFl = 1;
 		_globals->_player._uiEnabled = true;
 		_globals->_events.setCursor(CURSOR_USE);
 		break;
 	case 2102:
-		_field1800 = 0;
+		_sitFl = 0;
 		_globals->_player.enableControl();
 		break;
 	case 2103:
@@ -1963,7 +1963,7 @@ void Scene2100::signal() {
 void Scene2100::synchronize(Serializer &s) {
 	Scene::synchronize(s);
 	if (s.getVersion() >= 3)
-		s.syncAsSint16LE(_field1800);		
+		s.syncAsSint16LE(_sitFl);		
 }
 
 /*--------------------------------------------------------------------------
