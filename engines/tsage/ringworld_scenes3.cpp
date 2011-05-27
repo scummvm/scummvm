@@ -655,6 +655,7 @@ void Scene2100::Action4::signal() {
 }
 
 void Scene2100::Action5::signal() {
+	// Quinn enters the cokpit after Seeker decided to enter the cave alone
 	Scene2100 *scene = (Scene2100 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -1416,6 +1417,7 @@ void Scene2100::Hotspot10::doAction(int action) {
 		} else if (_globals->getFlag(13)) {
 			SceneItem::display2(2100, 28);
 		} else {
+			_globals->_player.disableControl();
 			scene->_sceneMode = 2101;
 			scene->setAction(&scene->_sequenceManager, scene, 2101, &_globals->_player, NULL);
 		}
@@ -1499,6 +1501,7 @@ void Scene2100::Object2::doAction(int action) {
 }
 
 void Scene2100::Object3::doAction(int action) {
+	// Miranda
 	Scene2100 *scene = (Scene2100 *)_globals->_sceneManager._scene;
 
 	switch (action) {
