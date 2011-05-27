@@ -2068,6 +2068,7 @@ void Scene5300::postInit(SceneObjectList *OwnerList) {
 		_globals->_player.disableControl();
 
 		if (_globals->getFlag(107) && _globals->getFlag(106)) {
+			_hotspot2.setVisage(2806);
 			_hotspot2.postInit();
 			_hotspot2.setObjectWrapper(new SceneObjectWrapper());
 			_hotspot2.animate(ANIM_MODE_1, NULL);
@@ -2175,7 +2176,7 @@ void Scene5300::signal() {
 		setAction(&_sequenceManager, this, 5315, &_hotspot2, NULL);
 		break;
 	case 5315:
-		_globals->_stripNum = 5315;
+		_globals->_stripNum = 5302;
 		_globals->_sceneManager.changeScene(5100);
 		break;
 	}
