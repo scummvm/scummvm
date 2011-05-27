@@ -73,24 +73,19 @@ public:
 	}
 	void setLightIntensity(const char *light, float intensity);
 	void setLightIntensity(int light, float intensity);
-	void setLightPosition(const char *light, Graphics::Vector3d pos);
-	void setLightPosition(int light, Graphics::Vector3d pos);
+	void setLightPosition(const char *light, const Graphics::Vector3d &pos);
+	void setLightPosition(int light, const Graphics::Vector3d &pos);
 
 	void setSetup(int num);
 	int getSetup() const { return _currSetup - _setups; }
 
 	// Sector access functions
-	int getSectorCount() {
-		return _numSectors;
-	}
-	Sector *getSectorBase(int id) {
-		if ((_numSectors >= 0) && (id < _numSectors))
-			return _sectors[id];
-		else
-			return NULL;
-	}
-	Sector *findPointSector(Graphics::Vector3d p, Sector::SectorType type);
-	void findClosestSector(Graphics::Vector3d p, Sector **sect, Graphics::Vector3d *closestPt);
+	int getSectorCount() { return _numSectors; }
+
+	Sector *getSectorBase(int id);
+
+	Sector *findPointSector(const Graphics::Vector3d &p, Sector::SectorType type);
+	void findClosestSector(const Graphics::Vector3d &p, Sector **sect, Graphics::Vector3d *closestPt);
 
 	void addObjectState(ObjectState *s) {
 		_states.push_back(s);
@@ -125,14 +120,16 @@ public:
 		float _intensity, _umbraangle, _penumbraangle;
 	};
 
-	bool _locked;
 	CMap *getCMap() {
 		if (!_cmaps || ! _numCmaps)
 			return NULL;
 		return _cmaps[0];
 	};
 
+	Setup *getCurrSetup() { return _currSetup; }
+
 private:
+	bool _locked;
 	void setId(int32 id);
 	Common::String _name;
 	int _numCmaps;
@@ -143,9 +140,8 @@ private:
 	Light *_lights;
 	Setup *_setups;
 	bool _lightsConfigured;
-public:
+
 	Setup *_currSetup;
-private:
 	typedef Common::List<ObjectState*> StateList;
 	StateList _states;
 

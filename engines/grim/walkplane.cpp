@@ -162,7 +162,7 @@ void Sector::setVisible(bool vis) {
 	_visible = vis;
 }
 
-bool Sector::isPointInSector(Graphics::Vector3d point) const {
+bool Sector::isPointInSector(const Graphics::Vector3d &point) const {
 	// The algorithm: for each edge A->B, check whether the z-component
 	// of (B-A) x (P-A) is >= 0.  Then the point is at least in the
 	// cylinder above&below the polygon.  (This works because the polygons'

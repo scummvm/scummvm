@@ -1186,7 +1186,7 @@ void L1_WalkActorVector() {
 	moveVert = luaL_check_number(4);
 
 	// Get the direction the camera is pointing
-	Graphics::Vector3d cameraVector = g_grim->getCurrScene()->_currSetup->_interest - g_grim->getCurrScene()->_currSetup->_pos;
+	Graphics::Vector3d cameraVector = g_grim->getCurrScene()->getCurrSetup()->_interest - g_grim->getCurrScene()->getCurrSetup()->_pos;
 	// find the angle the camera direction is around the unit circle
 	float cameraYaw = cameraVector.unitCircleAngle();
 
@@ -1292,20 +1292,21 @@ void L1_PutActorAtInterest() {
 		return;
 
 	Actor *actor = getactor(actorObj);
-	if (!g_grim->getCurrScene())
+	Scene *scene = g_grim->getCurrScene();
+	if (!scene)
 		return;
 
-	Graphics::Vector3d p = g_grim->getCurrScene()->_currSetup->_interest;
+	Graphics::Vector3d p = scene->getCurrSetup()->_interest;
 	Graphics::Vector3d resultPt = p;
 	float minDist = -1.f;
 
-	for (int i = 0; i < g_grim->getCurrScene()->getSectorCount(); ++i) {
-		Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
+	for (int i = 0; i < scene->getSectorCount(); ++i) {
+		Sector *sector = scene->getSectorBase(i);
 		if (sector->getType() != Sector::WalkType || !sector->isVisible())
 			continue;
 
 		Graphics::Vector3d closestPt = sector->getClosestPoint(p);
-		if (g_grim->getCurrScene()->findPointSector(closestPt, Sector::HotType))
+		if (scene->findPointSector(closestPt, Sector::HotType))
 			continue;
 		float thisDist = (closestPt - p).magnitude();
 		if (minDist < 0 || thisDist < minDist) {
