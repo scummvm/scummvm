@@ -29,7 +29,12 @@
 
 namespace tSage {
 
+static SoundManager *_soundManager = NULL;
+
+/*--------------------------------------------------------------------------*/
+
 SoundManager::SoundManager() {
+	_soundManager = this;
 	__sndmgrReady = false;
 	_minVersion = 0x102;
 	_maxVersion = 0x10A;
@@ -62,6 +67,8 @@ SoundManager::~SoundManager() {
 		}
 		_sfTerminate();
 	}
+
+	_soundManager = NULL;
 }
 
 void SoundManager::postInit() {
@@ -284,9 +291,9 @@ void SoundManager::checkResVersion(const byte *soundData) {
 	int maxVersion = READ_LE_UINT16(soundData + 4);
 	int minVersion = READ_LE_UINT16(soundData + 6);
 
-	if (_globals->_soundManager._minVersion < minVersion)
+	if (_soundManager->_minVersion < minVersion)
 		error("Attempt to play/prime sound resource that is too new");
-	if (_globals->_soundManager._minVersion > maxVersion)
+	if (_soundManager->_minVersion > maxVersion)
 		error("Attempt to play/prime sound resource that is too old");
 }
 
@@ -393,7 +400,7 @@ void SoundManager::_sfUpdateVoiceStructs() {
 /*--------------------------------------------------------------------------*/
 
 void SoundManager::saveNotifier(bool postFlag) {
-	_globals->_soundManager.saveNotifierProc(postFlag);
+	_soundManager->saveNotifierProc(postFlag);
 }
 
 void SoundManager::saveNotifierProc(bool postFlag) {
@@ -401,7 +408,7 @@ void SoundManager::saveNotifierProc(bool postFlag) {
 }
 
 void SoundManager::loadNotifier(bool postFlag) {
-	_globals->_soundManager.loadNotifierProc(postFlag);
+	_soundManager->loadNotifierProc(postFlag);
 }
 
 void SoundManager::loadNotifierProc(bool postFlag) {
@@ -416,7 +423,7 @@ void SoundManager::listenerSynchronize(Serializer &s) {
 /*--------------------------------------------------------------------------*/
 
 SoundManager &SoundManager::sfManager() {
-	return _globals->_soundManager;
+	return *_soundManager;
 }
 
 void SoundManager::_soSetTimeIndex(int timeIndex) {
@@ -427,7 +434,7 @@ int SoundManager::_sfDetermineGroup(const byte *soundData) {
 	const byte *p = soundData + READ_LE_UINT16(soundData + 8);
 	uint32 v;
 	while ((v = READ_LE_UINT32(p)) != 0) {
-		if ((v & _globals->_soundManager._groupMask) == v)
+		if ((v & _soundManager->_groupMask) == v)
 			return v;
 
 		p += 6 + (READ_LE_UINT16(p + 4) * 4);
@@ -452,9 +459,9 @@ void SoundManager::_sfRemoveFromPlayList(Sound *sound) {
 }
 
 bool SoundManager::_sfIsOnPlayList(Sound *sound) {
-	++_globals->_soundManager._suspendCtr; 
-	bool result = contains(_globals->_soundManager._playList, sound);
-	--_globals->_soundManager._suspendCtr;
+	++_soundManager->_suspendCtr; 
+	bool result = contains(_soundManager->_playList, sound);
+	--_soundManager->_suspendCtr;
 
 	return result;
 }
@@ -640,7 +647,7 @@ void SoundManager::_sfDereferenceAll() {
 }
 
 void SoundManager::_sfUpdatePriority(Sound *sound) {
-	++_globals->_soundManager._suspendCtr; 
+	++_soundManager->_suspendCtr; 
 
 	int tempPriority = (sound->_priority2 == 255) ? sound->_soundPriority : sound->_priority;
 	if (sound->_priority != tempPriority) {
@@ -651,7 +658,7 @@ void SoundManager::_sfUpdatePriority(Sound *sound) {
 		}
 	}
 
-	--_globals->_soundManager._suspendCtr;
+	--_soundManager->_suspendCtr;
 }
 
 void SoundManager::_sfUpdateLoop(Sound *sound) {
@@ -665,11 +672,11 @@ void SoundManager::_sfSetMasterVol(int volume) {
 	if (volume > 127)
 		volume = 127;
 
-	if (volume != _globals->_soundManager._volume) {
-		_globals->_soundManager._volume = volume;
+	if (volume != _soundManager->_volume) {
+		_soundManager->_volume = volume;
 
-		for (Common::List<SoundDriver *>::iterator i = _globals->_soundManager._installedDrivers.begin(); 
-				i != _globals->_soundManager._installedDrivers.end(); ++i) {
+		for (Common::List<SoundDriver *>::iterator i = _soundManager->_installedDrivers.begin(); 
+				i != _soundManager->_installedDrivers.end(); ++i) {
 			(*i)->setMasterVolume(volume);
 		}
 	}
@@ -709,9 +716,9 @@ void SoundManager::_sfTerminate() {
 void SoundManager::_sfExtractGroupMask() {
 	uint32 mask = 0;
 	for (int idx = 0; idx < SOUND_ARR_SIZE; ++idx)
-		mask |= _globals->_soundManager._groupList[idx];
+		mask |= _soundManager->_groupList[idx];
 
-	_globals->_soundManager._groupMask = mask;
+	_soundManager->_groupMask = mask;
 }
 
 bool SoundManager::_sfInstallDriver(SoundDriver *driver) {
@@ -775,7 +782,7 @@ bool SoundManager::_sfDoRemoveFromPlayList(Sound *sound) {
 }
 
 void SoundManager::_sfDoUpdateVolume(Sound *sound) {
-	++_globals->_soundManager._suspendCtr; 
+	++_soundManager->_suspendCtr; 
 
 	for (int voiceIndex = 0; voiceIndex < SOUND_ARR_SIZE; ++voiceIndex) {
 		VoiceStruct *vs = sfManager()._voiceStructPtrs[voiceIndex];
@@ -800,7 +807,7 @@ void SoundManager::_sfDoUpdateVolume(Sound *sound) {
 		}
 	}
 	
-	--_globals->_soundManager._suspendCtr;
+	--_soundManager->_suspendCtr;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -839,11 +846,11 @@ Sound::~Sound() {
 
 void Sound::play(int soundNum) {
 	prime(soundNum);
-	_globals->_soundManager.addToPlayList(this);
+	_soundManager->addToPlayList(this);
 }
 
 void Sound::stop() {
-	_globals->_soundManager.removeFromPlayList(this);
+	_soundManager->removeFromPlayList(this);
 	_unPrime();
 }
 
@@ -867,11 +874,11 @@ void Sound::_prime(int soundNum, bool queFlag) {
 		_isEmpty = false;
 		_field26E = NULL;
 		byte *soundData = _resourceManager->getResource(RES_SOUND, soundNum, 0);
-		_globals->_soundManager.checkResVersion(soundData);
-		_groupNum = _globals->_soundManager.determineGroup(soundData);
-		_soundPriority = _globals->_soundManager.extractPriority(soundData);
-		_loop = _globals->_soundManager.extractLoop(soundData);
-		_globals->_soundManager.extractTrackInfo(&_trackInfo, soundData, _groupNum);
+		_soundManager->checkResVersion(soundData);
+		_groupNum = _soundManager->determineGroup(soundData);
+		_soundPriority = _soundManager->extractPriority(soundData);
+		_loop = _soundManager->extractLoop(soundData);
+		_soundManager->extractTrackInfo(&_trackInfo, soundData, _groupNum);
 
 		for (int idx = 0; idx < _trackInfo._count; ++idx) {
 			_trackInfo._handleList[idx] = _resourceManager->getResource(RES_SOUND, soundNum, _trackInfo._rlbList[idx]);
@@ -890,7 +897,7 @@ void Sound::_prime(int soundNum, bool queFlag) {
 	}
 
 	if (queFlag)
-		_globals->_soundManager.addToSoundList(this);
+		_soundManager->addToSoundList(this);
 
 	_primed = true;
 }
@@ -908,7 +915,7 @@ void Sound::_unPrime() {
 		}
 
 		_trackInfo._count = 0;
-		_globals->_soundManager.removeFromSoundList(this);
+		_soundManager->removeFromSoundList(this);
 
 		_primed = false;
 		_stopFlag = false;
@@ -942,11 +949,11 @@ void Sound::go() {
 	if (!_primed)
 		error("Attempt to execute Sound::go() on an unprimed Sound");
 
-	_globals->_soundManager.addToPlayList(this);
+	_soundManager->addToPlayList(this);
 }
 
 void Sound::halt(void) {
-	_globals->_soundManager.removeFromPlayList(this);
+	_soundManager->removeFromPlayList(this);
 }
 
 int Sound::getSoundNum() const {
@@ -954,7 +961,7 @@ int Sound::getSoundNum() const {
 }
 
 bool Sound::isPlaying() {
-	return _globals->_soundManager.isOnPlayList(this);
+	return _soundManager->isOnPlayList(this);
 }
 
 bool Sound::isPrimed() const {
@@ -970,31 +977,31 @@ bool Sound::isMuted() const {
 }
 
 void Sound::pause(bool flag) {
-	_globals->_soundManager.suspendSoundServer();
+	_soundManager->suspendSoundServer();
 
 	if (flag)
 		++_pauseCtr;
 	else if (_pauseCtr > 0)
 		--_pauseCtr;
 
-	_globals->_soundManager.rethinkVoiceTypes();
-	_globals->_soundManager.restartSoundServer();
+	_soundManager->rethinkVoiceTypes();
+	_soundManager->restartSoundServer();
 }
 
 void Sound::mute(bool flag) {
-	_globals->_soundManager.suspendSoundServer();
+	_soundManager->suspendSoundServer();
 
 	if (flag)
 		++_muteCtr;
 	else if (_muteCtr > 0)
 		--_muteCtr;
 
-	_globals->_soundManager.rethinkVoiceTypes();
-	_globals->_soundManager.restartSoundServer();
+	_soundManager->rethinkVoiceTypes();
+	_soundManager->restartSoundServer();
 }
 
 void Sound::fade(int volume1, int volume2, int volume3, int volume4) {
-	_globals->_soundManager.suspendSoundServer();
+	_soundManager->suspendSoundServer();
 
 	if (volume1 > 127)
 		volume1 = 127;
@@ -1009,7 +1016,7 @@ void Sound::fade(int volume1, int volume2, int volume3, int volume4) {
 	_volume5 = 0;
 	_volume4 = volume4;
 
-	_globals->_soundManager.restartSoundServer();
+	_soundManager->restartSoundServer();
 }
 
 void Sound::setTimeIndex(uint32 timeIndex) {
@@ -1039,7 +1046,7 @@ void Sound::setVol(int volume) {
 	if (_volume != volume) {
 		_volume = volume;
 		if (isPlaying())
-			_globals->_soundManager.updateSoundVol(this);
+			_soundManager->updateSoundVol(this);
 	}
 }
 
@@ -1051,12 +1058,12 @@ void Sound::setPri(int priority) {
 	if (priority > 127)
 		priority = 127;
 	_priority2 = priority;
-	_globals->_soundManager.updateSoundPri(this);
+	_soundManager->updateSoundPri(this);
 }
 
 void Sound::setLoop(bool flag) {
 	_loopFlag2 = flag;
-	_globals->_soundManager.updateSoundLoop(this);
+	_soundManager->updateSoundLoop(this);
 }
 
 int Sound::getPri() const {

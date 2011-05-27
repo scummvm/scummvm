@@ -90,7 +90,6 @@ void TSageEngine::deinitialise() {
 	delete _globals;
 	delete _resourceManager;
 	delete _saver;
-	_globals = NULL;
 	_resourceManager = NULL;
 	_saver = NULL;
 }
