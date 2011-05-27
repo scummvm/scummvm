@@ -588,6 +588,39 @@ void L1_IsPointInSector() {
 	lua_pushnil();
 }
 
+void L1_GetSectorOppositeEdge() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object nameObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	if (!lua_isstring(nameObj)) {
+		lua_pushnil();
+		return;
+	}
+
+	Actor *actor = getactor(actorObj);
+	const char *name = lua_getstring(nameObj);
+
+	int numSectors = g_grim->getCurrScene()->getSectorCount();
+	for (int i = 0; i < numSectors; i++) {
+		Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
+		if (strmatch(sector->getName(), name)) {
+			Sector::ExitInfo e;
+			sector->getExitInfo(actor->getPos(), actor->getPuckVector(), &e);
+
+			lua_pushnumber(e.exitPoint.x());
+			lua_pushnumber(e.exitPoint.y());
+			lua_pushnumber(e.exitPoint.z());
+
+			return;
+		}
+	}
+
+	lua_pushnil();
+}
+
 void L1_MakeSectorActive() {
 	lua_Object sectorObj = lua_getparam(1);
 
@@ -1240,7 +1273,6 @@ STUB_FUNC(L1_SetCameraInterest)
 STUB_FUNC(L1_GetCameraPosition)
 STUB_FUNC(L1_SpewStartup)
 STUB_FUNC(L1_PreRender)
-STUB_FUNC(L1_GetSectorOppositeEdge)
 STUB_FUNC(L1_PreviousSetup)
 STUB_FUNC(L1_NextSetup)
 STUB_FUNC(L1_WorldToScreen)
