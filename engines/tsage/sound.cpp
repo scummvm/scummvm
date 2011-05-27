@@ -129,9 +129,7 @@ Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool detectFlag) {
 }
 
 void SoundManager::installConfigDrivers() {
-#ifdef TSAGE_SOUND
 	installDriver(ADLIB_DRIVER_NUM);
-#endif
 }
 
 Common::List<SoundDriverEntry> &SoundManager::getDriverList(bool detectFlag) {
@@ -623,7 +621,7 @@ void SoundManager::_sfRethinkVoiceTypes() {
 		}
 	}
 
-	int var2 = 0;
+//	int var2 = 0;
 	for (Common::List<Sound *>::iterator playIterator = sfManager()._playList.begin();
 				playIterator != sfManager()._playList.end(); ++playIterator) {
 
@@ -833,6 +831,10 @@ Sound::Sound() {
 	_primed = false;
 	_isEmpty = false;
 	_field26E = NULL;
+}
+
+Sound::~Sound() {
+	stop();
 }
 
 void Sound::play(int soundNum) {
@@ -1158,6 +1160,7 @@ const byte adlib_group_data[] = { 1, 1, 9, 1, 0xff };
 
 AdlibSoundDriver::AdlibSoundDriver() {
 	_minVersion = 0x102;
+	_maxVersion = 0x10A;
 
 
 	_groupData.groupMask = 1;

@@ -257,7 +257,7 @@ public:
 	int _field58[SOUND_ARR_SIZE];
 	int _field68[SOUND_ARR_SIZE];
 	int _field78[SOUND_ARR_SIZE];
-	int _field98[SOUND_ARR_SIZE];
+	int _voiceStructIndex[SOUND_ARR_SIZE];
 	int _fieldA8[SOUND_ARR_SIZE];
 	int _fieldB8[SOUND_ARR_SIZE];
 	int _fieldC8[SOUND_ARR_SIZE];
@@ -268,6 +268,7 @@ public:
 	byte *_field26E;
 public:
 	Sound();
+	~Sound();
 
 	void play(int soundNum);
 	void stop();
