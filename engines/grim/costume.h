@@ -52,7 +52,7 @@ public:
 	void playChoreLooping(int num);
 	void setChoreLastFrame(int num) { _chores[num].setLastFrame(); }
 	void setChoreLooping(int num, bool val) { _chores[num].setLooping(val); }
-	void stopChore(int num) { _chores[num].stop(); }
+	void stopChore(int num) { _chores[num].stop(); _playingChores.remove(&_chores[num]); }
 	void fadeChoreIn(int chore, int msecs);
 	void fadeChoreOut(int chore, int msecs);
 	Model::HierNode *getModelNodes();
@@ -189,6 +189,7 @@ private:
 	ObjectPtr<CMap> _cmap;
 	int _numChores;
 	Chore *_chores;
+	Common::List<Chore*> _playingChores;
 	Graphics::Matrix4 _matrix;
 	Model::HierNode *_joint1Node;
 	Model::HierNode *_joint2Node;
