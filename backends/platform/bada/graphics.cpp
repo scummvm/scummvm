@@ -20,6 +20,7 @@
  *
  */
 
+#include "form.h"
 #include "system.h"
 #include "graphics.h"
 
@@ -194,20 +195,11 @@ bool BadaGraphicsManager::loadGFXMode() {
   _screenFormat = Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0); 
   _videoMode.format = _screenFormat; // RGBA444
 
-	initGL();
-	loadTextures();
-	refreshCursorScale();
-	refreshDisplaySize();
-
-  fillScreen(50);
-  refreshGameScreen();
-	internUpdateScreen();
-  return true;
+  return OpenGLGraphicsManager::loadGFXMode();
 }
 
 void BadaGraphicsManager::internUpdateScreen() {
   logEntered();
-
   eglMakeCurrent(eglDisplay, pixmapSurface, pixmapSurface, eglContext);
   OpenGLGraphicsManager::internUpdateScreen();
 
@@ -224,8 +216,6 @@ void BadaGraphicsManager::internUpdateScreen() {
     canvas.DrawBitmap(dstRect, *pBitmap);
     canvas.Show();
   }
-
-  logLeaving();
 }
 
 void BadaGraphicsManager::unloadGFXMode() {
@@ -264,4 +254,6 @@ void BadaGraphicsManager::unloadGFXMode() {
   logLeaving();
 }
 
-
+//
+// end of graphics.cpp 
+//

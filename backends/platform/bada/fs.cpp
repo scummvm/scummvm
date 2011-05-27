@@ -301,3 +301,6 @@ Common::WriteStream* BadaFilesystemNode::createWriteStream() {
   return result;
 }
 
+//
+// end of fs.cpp 
+//

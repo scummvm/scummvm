@@ -20,6 +20,7 @@
  *
  */
 
+#include "form.h"
 #include "system.h"
 #include "application.h"
 
@@ -50,8 +51,14 @@ bool BadaScummVM::OnAppInitializing(AppRegistry& appRegistry) {
 
 bool BadaScummVM::OnAppTerminating(AppRegistry& appRegistry, 
                                    bool forcedTermination) {
-  systemStop(appForm);
 	return true;
+}
+
+void BadaScummVM::OnUserEventReceivedN(RequestId requestId, 
+                                       Osp::Base::Collection::IList* pArgs) {
+  if (requestId == USER_MESSAGE_HALT) {
+    Application::GetInstance()->Terminate();
+  }
 }
 
 void BadaScummVM::OnForeground(void) {
@@ -90,3 +97,6 @@ void BadaScummVM::OnScreenOff(void) {
 
 }
 
+//
+// end of application.cpp 
+//

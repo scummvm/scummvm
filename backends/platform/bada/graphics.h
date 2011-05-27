@@ -23,15 +23,16 @@
 #ifndef BADA_GRAPHICS_H
 #define BADA_GRAPHICS_H
 
-#include "config.h"
-#include "backends/graphics/opengl/opengl-graphics.h"
-
 #include <FBase.h>
 #include <FGraphics.h>
 #include <FApp.h>
 #include <FGraphicsOpengl.h>
 #include <FSystem.h>
 #include <FUi.h>
+
+#include "config.h"
+#include "backends/graphics/opengl/opengl-graphics.h"
+#include "form.h"
 
 using namespace Osp::Graphics;
 using namespace Osp::Graphics::Opengl;

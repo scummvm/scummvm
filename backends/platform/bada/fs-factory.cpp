@@ -35,3 +35,6 @@ AbstractFSNode *BadaFilesystemFactory::makeFileNodePath(const Common::String &pa
   return new BadaFilesystemNode(path);
 }
 
+//
+// end of fs-factory.cpp 
+//

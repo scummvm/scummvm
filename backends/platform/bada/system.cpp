@@ -20,27 +20,16 @@
  *
  */
 
-#include "config.h"
-#include "common/scummsys.h"
-#include "common/events.h"
-#include "fs-factory.h"
-#include "fs.h"
-#include "backends/modular-backend.h"
-#include "base/main.h"
-#include "backends/mutex/mutex.h"
-#include "backends/saves/default/default-saves.h"
-#include "backends/timer/default/default-timer.h"
-#include "backends/events/default/default-events.h"
-#include "backends/audiocd/default/default-audiocd.h"
-#include "audio/mixer_intern.h"
-
+#include <FUiCtrlMessageBox.h>
 #include <stdarg.h>
 
+#include "form.h"
 #include "system.h"
 #include "graphics.h"
 
 using namespace Osp::Base;
 using namespace Osp::Base::Runtime;
+using namespace Osp::Ui::Controls;
 
 #define DEFAULT_CONFIG_FILE "/Home/scummvm.ini"
 
@@ -95,7 +84,9 @@ struct BadaMutexManager : public MutexManager {
 };
 
 OSystem::MutexRef BadaMutexManager::createMutex() {
-  return (OSystem::MutexRef) new Mutex();
+  Mutex* mutex = new Mutex();
+  mutex->Create();
+  return (OSystem::MutexRef) mutex;
 }
 
 void BadaMutexManager::lockMutex(OSystem::MutexRef mutex) {
@@ -116,31 +107,6 @@ void BadaMutexManager::deleteMutex(OSystem::MutexRef mutex) {
 //
 // BadaSystem
 //
-struct BadaSystem : public ModularBackend, 
-                    Common::EventSource {
-  BadaSystem(BadaAppForm* appForm);
-  ~BadaSystem();
-
-  result Construct();
-  void initBackend();
-  result initModules();
-
-  void updateScreen();
-  bool pollEvent(Common::Event &event);
-  uint32 getMillis();
-  void delayMillis(uint msecs);
-  void getTimeAndDate(TimeDate &t) const;
-  void fatalError();
-  void logMessage(LogMessageType::Type type, const char *message);
-
-  Common::SeekableReadStream* createConfigReadStream();
-  Common::WriteStream* createConfigWriteStream();
-
-  void draw();
-  
-  BadaAppForm* appForm;
-};
-
 BadaSystem::BadaSystem(BadaAppForm* appForm) : 
   appForm(appForm) {
 }
@@ -215,16 +181,16 @@ void BadaSystem::initBackend() {
   logLeaving();
 }
 
-bool BadaSystem::pollEvent(Common::Event &event) {
-  return true;
+bool BadaSystem::pollEvent(Common::Event& event) {
+  return appForm->pollEvent(event);
 }
 
 uint32 BadaSystem::getMillis() {
   uint32 result = 0;
 
-	TimeSpan timeSpan(0,0,0);
-	Osp::System::SystemTime::GetUptime(timeSpan);
-	result = timeSpan.GetMilliseconds();
+  TimeSpan timeSpan(0,0,0);
+  Osp::System::SystemTime::GetUptime(timeSpan);
+  result = timeSpan.GetMilliseconds();
 
   return result;
 }
@@ -254,7 +220,6 @@ void BadaSystem::getTimeAndDate(TimeDate &td) const {
 
 void BadaSystem::fatalError() {
   systemError("ScummVM: Fatal internal error.");
-  exit(1);
 }
 
 void BadaSystem::logMessage(LogMessageType::Type /*type*/, const char *message) {
@@ -271,87 +236,11 @@ Common::WriteStream* BadaSystem::createConfigWriteStream() {
   return file.createWriteStream();
 }
 
-//
-// BadaAppForm
-//
-BadaAppForm::BadaAppForm() :
-  pThread(0),
-  eventQueueLock((OSystem::MutexRef) new Mutex()) {
-}
-
-result BadaAppForm::Construct() {
-  result r = Form::Construct(Osp::Ui::Controls::FORM_STYLE_NORMAL);
-  if (IsFailed(r)) {
-    return r;
+void BadaSystem::closeGraphics() {
+  if (_graphicsManager) {
+    delete _graphicsManager;
+    _graphicsManager = null;
   }
-
-  BadaSystem* badaSystem = null;
-  pThread = null;
-
-  badaSystem = new BadaSystem(this);
-  r = badaSystem != null ? E_SUCCESS : E_OUT_OF_MEMORY;
-  
-  if (!IsFailed(r)) {
-    r = badaSystem->Construct();
-  }
-
-  if (!IsFailed(r)) {
-    pThread = new Thread();
-    r = pThread != null ? E_SUCCESS : E_OUT_OF_MEMORY;
-  }
-
-  if (!IsFailed(r)) {
-    r = pThread->Construct(*this);
-  }
-
-  if (IsFailed(r)) {
-    if (badaSystem != null) {
-      delete badaSystem;
-    }
-    if (pThread != null) {
-      delete pThread;
-    }
-  }
-  else {
-    g_system = badaSystem;
-  }
-
-  return r;
-}
-
-BadaAppForm::~BadaAppForm() {
-  if (pThread) {
-    delete pThread;
-  }
-}
-
-result BadaAppForm::OnInitializing(void) {
-  logEntered();
-
-  SetOrientation(Osp::Ui::ORIENTATION_LANDSCAPE);
-	AddOrientationEventListener(*this);
-  return E_SUCCESS;
-}
-
-result BadaAppForm::OnDraw(void) {
-  logEntered();
-  if (g_system) {
-    g_system->updateScreen();
-  }
-  return E_SUCCESS;
-}
-
-void BadaAppForm::OnOrientationChanged(const Osp::Ui::Control& source, 
-                                       Osp::Ui::OrientationStatus orientationStatus) {
-  logEntered();
-  pThread->Start();
-}
-
-Object* BadaAppForm::Run(void) {
-  scummvm_main(0, 0);
-  AppLog("scummvm_main completed");
-  delete this;
-  return null;
 }
 
 //
@@ -377,18 +266,6 @@ BadaAppForm* systemStart(Osp::App::Application* app) {
 }
 
 //
-// prepares to halt the application
-//
-void systemStop(BadaAppForm* appForm) {
-}
-
-//
-// adds a new event to the event queue
-//
-void systemPostEvent() {
-}
-
-//
 // display a fatal error notification
 //
 void systemError(const char* format, ...) {
@@ -400,6 +277,19 @@ void systemError(const char* format, ...) {
   va_end(ap);
   
   AppLog(buffer);
-  // TODO: display in a popup
+
+  // prevent graphicsmanager from overwriting the popup
+  if (g_system) {
+    ((BadaSystem*) g_system)->closeGraphics();
+  }
+
+  MessageBox messageBox;
+  messageBox.Construct(L"Fatal Error", buffer, MSGBOX_STYLE_OK);
+  int modalResult;
+  messageBox.ShowAndWait(modalResult);
+  Application::GetInstance()->SendUserEvent(USER_MESSAGE_HALT, null);
 }
 
+//
+// end of system.cpp 
+//

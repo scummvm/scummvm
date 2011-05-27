@@ -45,7 +45,6 @@ void __assert_func(const char* file, int line,
                    const char* func, const char* err) {
   systemError("ScummVM internal error: %s %d %s %s", 
               file, line, func, err);
-  exit(1);
 }
 
 void voidFunc(void* file, const char* format, ...) {
