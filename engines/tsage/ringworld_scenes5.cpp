@@ -2712,6 +2712,10 @@ void Scene4100::postInit(SceneObjectList *OwnerList) {
 			setAction(&_action4);
 
 			_globals->clearFlag(43);
+		} else {
+			// Workaround: In the original, the mouse is hidden when Quinn
+			// goes back to scene 4150 then to scene 4100. This enables everything.
+			_globals->_player.enableControl();
 		}
 
 		_globals->_player.setPosition(Common::Point(252, 139));
