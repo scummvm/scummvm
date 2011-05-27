@@ -1506,14 +1506,14 @@ void Scene2100::Object3::doAction(int action) {
 
 	switch (action) {
 	case CURSOR_LOOK:
-		if (!_globals->getFlag(59))
+		if (_globals->getFlag(59))
 			SceneItem::display2(2100, 34);
 		else
 			error("***I have no response.");
 		break;
 
 	case CURSOR_TALK:
-		if (!_globals->getFlag(59)) {
+		if (_globals->getFlag(59)) {
 			_globals->_player.disableControl();
 			scene->_sceneMode = 2108;
 			scene->setAction(&scene->_sequenceManager, scene, 2108, NULL);
