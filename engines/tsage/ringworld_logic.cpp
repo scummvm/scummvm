@@ -1334,8 +1334,12 @@ void RingworldGame::start() {
 	RING_INVENTORY._scanner._sceneNumber = 1;
 	RING_INVENTORY._ring._sceneNumber = 1;
 
-	// Switch to the title screen
-	_globals->_sceneManager.setNewScene(1000);
+
+	if (ConfMan.hasKey("save_slot"))
+		_globals->_sceneHandler._loadGameSlot = ConfMan.getInt("save_slot");
+	else
+		// Switch to the title screen
+		_globals->_sceneManager.setNewScene(1000);
 
 	_globals->_events.showCursor();
 }

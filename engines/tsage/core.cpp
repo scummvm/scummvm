@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "engines/engine.h"
 #include "graphics/palette.h"
 #include "tsage/tsage.h"

@@ -227,6 +227,11 @@ void SceneManager::setBgOffset(const Common::Point &pt, int loadCount) {
 void SceneManager::listenerSynchronize(Serializer &s) {
 	s.validate("SceneManager");
 
+	if (s.isLoading() && !_globals->_sceneManager._scene)
+		// Loading a savegame straight from the launcher, so instantiate a blank placeholder scene
+		// in order for the savegame loading to work correctly
+		_globals->_sceneManager._scene = new Scene();
+
 	_altSceneObjects.synchronize(s);
 	s.syncAsSint32LE(_sceneNumber);
 	s.syncAsUint16LE(_globals->_sceneManager._scene->_activeScreenNumber);
