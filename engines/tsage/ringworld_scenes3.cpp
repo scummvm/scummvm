@@ -1753,6 +1753,7 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 			setAction(&_action14);
 		} else {
 			_globals->_player.disableControl();
+			_globals->_player.fixPriority(1);
 			_globals->_player.setPosition(Common::Point(157, 56));
 			_sceneMode = 2104;
 
