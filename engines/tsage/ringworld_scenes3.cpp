@@ -5770,6 +5770,14 @@ Scene2320::Scene2320() :
 		_hotspot4(0, CURSOR_LOOK, 2320, 14, LIST_END),
 		_hotspot13(0, CURSOR_LOOK, 2320, 12, LIST_END)
 {
+	_area1.setup(2153, 2, 1, 2100);
+	_area1._pt = Common::Point(200, 31);
+	_area2.setup(2153, 3, 1, 2150);
+	_area2._pt = Common::Point(200, 50);
+	_area3.setup(2153, 4, 1, 2320);
+	_area3._pt = Common::Point(200, 75);
+	_area4.setup(2153, 1, 1, 10);
+	_area4._pt = Common::Point(237, 77);
 }
 
 void Scene2320::postInit(SceneObjectList *OwnerList) {
@@ -5821,15 +5829,6 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 
 		_globals->_sceneItems.push_back(&_hotspot8);
 	}
-
-	_area1.setup(2153, 2, 1, 2100);
-	_area1._pt = Common::Point(200, 31);
-	_area2.setup(2153, 3, 1, 2150);
-	_area2._pt = Common::Point(200, 50);
-	_area3.setup(2153, 4, 1, 2320);
-	_area3._pt = Common::Point(200, 75);
-	_area4.setup(2153, 1, 1, 10);
-	_area4._pt = Common::Point(237, 77);
 
 	if (_globals->getFlag(43)) {
 		_hotspot11.postInit();
