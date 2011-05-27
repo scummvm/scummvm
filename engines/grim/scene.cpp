@@ -156,8 +156,12 @@ void Scene::loadText(TextSplitter &ts){
 	_sectors = new Sector*[_numSectors];
 	ts.setLineNumber(sectorStart);
 	for (int i = 0; i < _numSectors; i++) {
-		_sectors[i] = new Sector();
-		_sectors[i]->load(ts);
+		// Use the ids as index for the sector in the array.
+		// This way when looping they are checked from the id 0 sto the last,
+		// which seems important for sets with overlapping camera sectors, like ga.set.
+		Sector *s = new Sector();
+		s->load(ts);
+		_sectors[s->getSectorId()] = s;
 	}
 }
 
