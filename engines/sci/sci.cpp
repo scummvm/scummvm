@@ -213,8 +213,6 @@ Common::Error SciEngine::run() {
 	_gfxScreen = new GfxScreen(_resMan);
 	_gfxScreen->enableUndithering(ConfMan.getBool("disable_dithering"));
 
-	// Create debugger console. It requires GFX to be initialized
-	_console = new Console(this);
 	_kernel = new Kernel(_resMan, segMan);
 
 	_features = new GameFeatures(segMan, _kernel);
@@ -226,6 +224,9 @@ Common::Error SciEngine::run() {
 	_audio = new AudioPlayer(_resMan);
 	_gamestate = new EngineState(segMan);
 	_eventMan = new EventManager(_resMan->detectFontExtended());
+
+	// Create debugger console. It requires GFX and _gamestate to be initialized
+	_console = new Console(this);
 
 	// The game needs to be initialized before the graphics system is initialized, as
 	// the graphics code checks parts of the seg manager upon initialization (e.g. for

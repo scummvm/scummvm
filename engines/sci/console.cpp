@@ -74,6 +74,9 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 Console::Console(SciEngine *engine) : GUI::Debugger(),
 	_engine(engine), _debugState(engine->_debugState) {
 
+	assert(_engine);
+	assert(_engine->_gamestate);
+
 	// Variables
 	DVar_Register("sleeptime_factor",	&g_debug_sleeptime_factor, DVAR_INT, 0);
 	DVar_Register("gc_interval",		&engine->_gamestate->scriptGCInterval, DVAR_INT, 0);
