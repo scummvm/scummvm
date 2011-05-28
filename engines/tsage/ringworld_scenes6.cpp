@@ -1744,6 +1744,7 @@ void Scene5200::dispatch() {
  *--------------------------------------------------------------------------*/
 
 void Scene5300::Action1::signal() {
+	// Seeker waking up
 	Scene5300 *scene = (Scene5300 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -1777,7 +1778,8 @@ void Scene5300::Action1::signal() {
 			_globals->_player.enableControl();
 			remove();
 		} else {
-			_globals->getFlag(60);
+			_globals->setFlag(60);
+			scene->_hotspot2._numFrames = 10;
 
 			if (_globals->getFlag(67)) {
 				scene->_sceneMode = 5310;
@@ -1855,8 +1857,8 @@ void Scene5300::Hotspot1::doAction(int action) {
 		break;
 	}
 }
-
 void Scene5300::Hotspot2::doAction(int action) {
+	// Seeker
 	Scene5300 *scene = (Scene5300 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -1930,6 +1932,7 @@ void Scene5300::Hotspot2::doAction(int action) {
 }
 
 void Scene5300::Hotspot5::doAction(int action) {
+	// Sharp bone
 	Scene5300 *scene = (Scene5300 *)_globals->_sceneManager._scene;
 
 	switch (action) {
