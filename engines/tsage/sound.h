@@ -37,7 +37,7 @@ class Sound;
 #define ADLIB_DRIVER_NUM 3
 
 struct trackInfoStruct {
-	int _maxTrack;
+	int _count;
 	int _rlbList[SOUND_ARR_SIZE];
 	int _arr2[SOUND_ARR_SIZE];
 	byte *_handleList[SOUND_ARR_SIZE];
