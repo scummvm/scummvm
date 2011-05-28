@@ -1215,7 +1215,7 @@ void Costume::Component::removeChild(Component *child) {
 
 // Should initialize the status variables so the chore can't play unexpectedly
 Costume::Chore::Chore() : _hasPlayed(false), _playing(false), _looping(false), _currTime(-1),
-                          _tracks(NULL), _fadeMode(None) {
+                          _tracks(NULL), _fadeMode(None), _fade(1.f) {
 }
 
 Costume::Chore::~Chore() {
@@ -1364,7 +1364,6 @@ void Costume::Chore::update() {
 }
 
 void Costume::Chore::fade(Costume::Chore::FadeMode mode, int msecs) {
-	_fade = 1.0f;
 	if (mode == FadeIn) {
 		if (!_playing || _fadeMode == None) {
 			_currTime = -1;
