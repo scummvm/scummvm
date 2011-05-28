@@ -161,7 +161,7 @@ bool KeyframeAnim::animate(Model::HierNode *nodes, int num, float time, float fa
 		frame = _numFrames;
 
 	if (_nodes[num] && tagged == ((_type & nodes[num]._type) != 0)) {
-		return _nodes[num]->animate(nodes[num], frame, fade);
+		return _nodes[num]->animate(nodes[num], frame, fade, (_flags & 256) == 0);
 	} else {
 		return false;
 	}
@@ -222,7 +222,7 @@ KeyframeAnim::KeyframeNode::~KeyframeNode() {
 	delete[] _entries;
 }
 
-bool KeyframeAnim::KeyframeNode::animate(Model::HierNode &node, float frame, float fade) const {
+bool KeyframeAnim::KeyframeNode::animate(Model::HierNode &node, float frame, float fade, bool useDelta) const {
 	if (_numEntries == 0)
 		return false;
 
@@ -238,10 +238,16 @@ bool KeyframeAnim::KeyframeNode::animate(Model::HierNode &node, float frame, flo
 	}
 
 	float dt = frame - _entries[low]._frame;
-	Graphics::Vector3d pos = _entries[low]._pos + dt * _entries[low]._dpos;
-	float pitch = _entries[low]._pitch + dt * _entries[low]._dpitch;
-	float yaw = _entries[low]._yaw + dt * _entries[low]._dyaw;
-	float roll = _entries[low]._roll + dt * _entries[low]._droll;
+	Graphics::Vector3d pos = _entries[low]._pos;
+	float pitch = _entries[low]._pitch;
+	float yaw = _entries[low]._yaw;
+	float roll = _entries[low]._roll;
+	if (useDelta) {
+		pos += dt * _entries[low]._dpos;
+		pitch += dt * _entries[low]._dpitch;
+		yaw += dt * _entries[low]._dyaw;
+		roll += dt * _entries[low]._droll;
+	}
 
 	node._animPos += (pos - node._pos) * fade;
 
