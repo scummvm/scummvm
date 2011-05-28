@@ -712,6 +712,7 @@ void Scene5100::Action2::signal() {
 }
 
 void Scene5100::Action3::signal() {
+	// Quinns shots flesheater
 	Scene5100 *scene = (Scene5100 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -746,7 +747,7 @@ void Scene5100::Action3::signal() {
 			scene->_hotspot2.setAction(NULL);
 
 			scene->_hotspot3.setStrip2(1);
-			ADD_PLAYER_MOVER_THIS(scene->_hotspot3, 1200, 100);
+			ADD_PLAYER_MOVER_NULL(scene->_hotspot3, 1200, 100);
 		} else {
 			scene->_hotspot3.setVisage(5130);
 			scene->_hotspot3._strip = 1;
@@ -807,6 +808,7 @@ void Scene5100::Action4::signal() {
 }
 
 void Scene5100::Action5::signal() {
+	// Quinns forgot the statis box in the throne room, and goes back
 	Scene5100 *scene = (Scene5100 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -943,6 +945,7 @@ void Scene5100::Hotspot9::doAction(int action) {
 }
 
 void Scene5100::Hotspot17::doAction(int action) {
+	// Rock blocking pit entrance
 	Scene5100 *scene = (Scene5100 *)_globals->_sceneManager._scene;
 
 	switch (action) {
