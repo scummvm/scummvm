@@ -71,6 +71,8 @@ public:
 	void stopAllSoundEffects();
 
 	void beginFadeOut();
+
+	void pause(bool paused);
 private:
 	static void onTimer(void *data);
 
