@@ -4376,6 +4376,7 @@ void Scene2280::synchronize(Serializer &s) {
  *--------------------------------------------------------------------------*/
 
 void Scene2300::Action1::signal() {
+	// Quinn and Seeker
 	Scene2300 *scene = (Scene2300 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -4446,6 +4447,7 @@ void Scene2300::Action1::signal() {
 		break;
 	case 8:
 		_globals->_game->endGame(2300, 0);
+		remove();
 		break;
 	case 9:
 		if (scene->_hotspot5._mover)
@@ -4518,6 +4520,7 @@ void Scene2300::Action1::signal() {
 }
 
 void Scene2300::Action2::signal() {
+	// Miranda tearing cables
 	Scene2300 *scene = (Scene2300 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -4584,6 +4587,7 @@ void Scene2300::Action2::signal() {
 }
 
 void Scene2300::Action3::signal() {
+	// Stunned Miranda
 	Scene2300 *scene = (Scene2300 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -4636,6 +4640,7 @@ void Scene2300::Action3::signal() {
 }
 
 void Scene2300::Action4::signal() {
+	// Ennemies coming
 	Scene2300 *scene = (Scene2300 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -4674,6 +4679,7 @@ void Scene2300::Action4::signal() {
 /*--------------------------------------------------------------------------*/
 
 void Scene2300::Hotspot5::doAction(int action) {
+	// Ennemies
 	Scene2300 *scene = (Scene2300 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -4696,6 +4702,7 @@ void Scene2300::Hotspot5::doAction(int action) {
 }
 
 void Scene2300::Hotspot7::doAction(int action) {
+	// Miranda
 	Scene2300 *scene = (Scene2300 *)_globals->_sceneManager._scene;
 
 	switch (action) {
