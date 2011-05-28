@@ -1,0 +1,85 @@
+.\"	$Id$
+.Dd May 28, 2011
+.Dt RESIDUAL 6
+.Os
+.Sh NAME
+.Nm residual
+.Nd interpreter for several 3D games
+.Sh SYNOPSIS
+.Nm residual
+.Op Ar options
+.Op Ar game
+.Sh DESCRIPTION
+.Nm
+is a game engine reimplementation that allows you
+to play 3D adventure games such as Grim Fandango.
+.Bl -tag -width Ds
+.It Fl F
+Force windowed mode.
+.It Fl c Ar config
+Use
+.Ar config
+as alternate configuration file.
+.It Fl d Ar level
+Set debug verbosity to
+.Ar level .
+.It Fl f
+Force full-screen mode.
+.It Fl h
+Display a brief help text and exit.
+.It Fl m Ar vol
+Set the music volume to
+.Ar vol
+range 0-127 (default: 127).
+.It Fl p Ar path
+Path to where the game is installed.
+.It Fl r Ar vol
+Set the speech volume to
+.Ar vol
+range 0-127 (default: 127).
+.It Fl s Ar vol
+Set the sfx volume to
+.Ar vol
+range 0-127 (default: 127).
+.It Fl t
+Display list of configured targets and exit.
+.It Fl v
+Display Residual version information and exit.
+.It Fl x Ar slot
+Save game
+.Ar slot
+number to load (default: autosave).
+.It Fl z
+Display list of supported games and exit.
+.It Fl -output-rate= Ns Ar rate
+Set output sample rate in Hz to
+.Ar rate
+(e.g. 22050).
+.It Fl -savepath= Ns Ar path
+Look for savegames in
+.Ar path .
+.El
+.Sh INGAME KEYS
+.Bl -tag -width Ds
+.It Cmd-q
+Quit (Mac OS X)
+.It Ctrl-q
+Quit (Most platforms)
+.El
+.Sh FILES
+.Bl -tag -width Ds
+.It Pa $HOME/.residualrc
+Configuration file on UNIX.
+.It Pa "$HOME/Library/Preferences/Residual Preferences"
+Configuration file on Mac OS X.
+.El
+.Sh EXAMPLES
+Running the builtin game launcher:
+.Pp
+.Dl $ residual
+.Pp
+.Sh SEE ALSO
+More information can be found in the README and on the website
+.Pa http://residual.sourceforge.net .
+.Sh AUTHORS
+See AUTHORS file for more information.
