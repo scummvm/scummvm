@@ -211,6 +211,21 @@ public:
 	void killColors();
 	Color *getColor(int32 id) const;
 
+	void saveGame(const Common::String &file);
+	void loadGame(const Common::String &file);
+
+	Common::StringArray _listFiles;
+	Common::StringArray::const_iterator _listFilesIter;
+
+	TextObjectDefaults _sayLineDefaults, _printLineDefaults, _blastTextDefaults;
+
+private:
+	void handleControls(int operation, int key, int keyModifier, uint16 ascii);
+	void handleChars(int operation, int key, int keyModifier, uint16 ascii);
+	void handleUserPaint();
+	void handleExit();
+	void handlePause();
+
 	void savegameSave();
 	void saveActors(SaveGame *savedState);
 	void saveTextObjects(SaveGame *savedState);
@@ -249,19 +264,6 @@ public:
 	bool _savegameSaveRequest;
 	Common::String _savegameFileName;
 	SaveGame *_savedState;
-
-	Common::StringArray _listFiles;
-	Common::StringArray::const_iterator _listFilesIter;
-
-	TextObjectDefaults _sayLineDefaults, _printLineDefaults, _blastTextDefaults;
-
-private:
-
-	void handleControls(int operation, int key, int keyModifier, uint16 ascii);
-	void handleChars(int operation, int key, int keyModifier, uint16 ascii);
-	void handleUserPaint();
-	void handleExit();
-	void handlePause();
 
 	Scene *_currScene;
 	int _mode, _previousMode;

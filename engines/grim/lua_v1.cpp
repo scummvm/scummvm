@@ -1023,27 +1023,25 @@ void L1_GetSaveGameData() {
 void L1_Load() {
 	lua_Object fileName = lua_getparam(1);
 	if (lua_isnil(fileName)) {
-		g_grim->_savegameFileName = "";
+		g_grim->loadGame("");
 	} else if (lua_isstring(fileName)) {
-		g_grim->_savegameFileName = lua_getstring(fileName);
+		g_grim->loadGame(lua_getstring(fileName));
 	} else {
 		warning("Load() fileName is wrong");
 		return;
 	}
-	g_grim->_savegameLoadRequest = true;
 }
 
 void L1_Save() {
 	lua_Object fileName = lua_getparam(1);
 	if (lua_isnil(fileName)) {
-		g_grim->_savegameFileName = "";
+		g_grim->saveGame("");
 	} else if (lua_isstring(fileName)) {
-		g_grim->_savegameFileName = lua_getstring(fileName);
+		g_grim->saveGame(lua_getstring(fileName));
 	} else {
 		warning("Save() fileName is wrong");
 		return;
 	}
-	g_grim->_savegameSaveRequest = true;
 }
 
 void L1_Remove() {

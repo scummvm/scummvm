@@ -1099,6 +1099,16 @@ void GrimEngine::mainLoop() {
 	}
 }
 
+void GrimEngine::saveGame(const Common::String &file) {
+	_savegameFileName = file;
+	_savegameSaveRequest = true;
+}
+
+void GrimEngine::loadGame(const Common::String &file) {
+	_savegameFileName = file;
+	_savegameLoadRequest = true;
+}
+
 void GrimEngine::savegameReadStream(void *data, int32 size) {
 	g_grim->_savedState->read(data, size);
 }
