@@ -1530,15 +1530,23 @@ void Scene2100::Object3::doAction(int action) {
 /*--------------------------------------------------------------------------*/
 
 Scene2100::Scene2100() :
-		_hotspot1(0, CURSOR_LOOK, 2100, 2, LIST_END),
-		_hotspot5(0, CURSOR_LOOK, 2100, 9, LIST_END),
-		_hotspot6(0, CURSOR_LOOK, 2100, 7, CURSOR_USE, 2100, 8, LIST_END),
-		_hotspot7(0, CURSOR_LOOK, 2100, 7, CURSOR_USE, 2100, 11, LIST_END),
-		_hotspot9(0, CURSOR_LOOK, 2100, 14, LIST_END),
-		_hotspot11(0, CURSOR_LOOK, 2100, 15, CURSOR_USE, 2100, 16, LIST_END),
-		_hotspot12(0, CURSOR_LOOK, 2100, 24, CURSOR_USE, 2100, 25, LIST_END),
-		_hotspot13(0, CURSOR_LOOK, 2100, 17, LIST_END),
-		_hotspot15(0, CURSOR_LOOK, 2100, 22, CURSOR_USE, 2100, 23, LIST_END) {
+	_hotspot1(0, CURSOR_LOOK, 2100, 2, LIST_END),
+	_hotspot5(0, CURSOR_LOOK, 2100, 9, LIST_END),
+	_hotspot6(0, CURSOR_LOOK, 2100, 7, CURSOR_USE, 2100, 8, LIST_END),
+	_hotspot7(0, CURSOR_LOOK, 2100, 7, CURSOR_USE, 2100, 11, LIST_END),
+	_hotspot9(0, CURSOR_LOOK, 2100, 14, LIST_END),
+	_hotspot11(0, CURSOR_LOOK, 2100, 15, CURSOR_USE, 2100, 16, LIST_END),
+	_hotspot12(0, CURSOR_LOOK, 2100, 24, CURSOR_USE, 2100, 25, LIST_END),
+	_hotspot13(0, CURSOR_LOOK, 2100, 17, LIST_END),
+	_hotspot15(0, CURSOR_LOOK, 2100, 22, CURSOR_USE, 2100, 23, LIST_END) {
+	_area1.setup(2153, 2, 1, 2100);
+	_area1._pt = Common::Point(200, 31);
+	_area2.setup(2153, 3, 1, 2150);
+	_area2._pt = Common::Point(200, 50);
+	_area3.setup(2153, 4, 1, 2320);
+	_area3._pt = Common::Point(200, 75);
+	_area4.setup(2153, 1, 1, OBJECT_TRANSLATOR);
+	_area4._pt = Common::Point(237, 77);
 }
 
 void Scene2100::postInit(SceneObjectList *OwnerList) {
@@ -1664,15 +1672,6 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 	_globals->_sceneItems.addItems(&_hotspot15, &_hotspot11, &_hotspot10, &_hotspot9, &_hotspot14,
 		&_hotspot13, &_hotspot12, &_hotspot8, &_object1, &_hotspot2, &_hotspot3, &_hotspot4, &_hotspot5,
 		&_hotspot6, &_hotspot7, &_hotspot1, NULL);
-
-	_area1.setup(2153, 2, 1, 2100);
-	_area1._pt = Common::Point(200, 31);
-	_area2.setup(2153, 3, 1, 2150);
-	_area2._pt = Common::Point(200, 50);
-	_area3.setup(2153, 4, 1, 2320);
-	_area3._pt = Common::Point(200, 75);
-	_area4.setup(2153, 1, 1, OBJECT_TRANSLATOR);
-	_area4._pt = Common::Point(237, 77);
 
 	_globals->_player.postInit();
 	if (_globals->getFlag(13)) {
