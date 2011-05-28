@@ -1364,6 +1364,7 @@ void Costume::Chore::update() {
 }
 
 void Costume::Chore::fade(Costume::Chore::FadeMode mode, int msecs) {
+	_fade = 1.0f;
 	if (mode == FadeIn) {
 		if (!_playing || _fadeMode == None) {
 			_currTime = -1;
