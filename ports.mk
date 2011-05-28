@@ -9,8 +9,8 @@
 install:
 	$(INSTALL) -d "$(DESTDIR)$(bindir)"
 	$(INSTALL) -c -s -m 755 "./$(EXECUTABLE)" "$(DESTDIR)$(bindir)/$(EXECUTABLE)"
-	#$(INSTALL) -d "$(DESTDIR)$(mandir)/man6/"
-	#$(INSTALL) -c -m 644 "$(srcdir)/dists/residual.6" "$(DESTDIR)$(mandir)/man6/residual.6"
+	$(INSTALL) -d "$(DESTDIR)$(mandir)/man6/"
+	$(INSTALL) -c -m 644 "$(srcdir)/dists/residual.6" "$(DESTDIR)$(mandir)/man6/residual.6"
 	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/pixmaps/"
 	$(INSTALL) -c -m 644 "$(srcdir)/icons/residual.xpm" "$(DESTDIR)$(datarootdir)/pixmaps/residual.xpm"
 	$(INSTALL) -d "$(DESTDIR)$(docdir)"
