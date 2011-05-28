@@ -1053,14 +1053,6 @@ void L1_Remove() {
 	}
 }
 
-PointerId saveCallback(int32 /*tag*/, PointerId ptr, SaveSint32 /*savedState*/) {
-	return ptr;
-}
-
-PointerId restoreCallback(int32 /*tag*/, PointerId ptr, RestoreSint32 /*savedState*/) {
-	return ptr;
-}
-
 void L1_LockFont() {
 	lua_Object param1 = lua_getparam(1);
 	if (lua_isstring(param1)) {
@@ -1642,9 +1634,6 @@ void registerLua() {
 
 	lua_pushobject(lua_setfallback("concat", L1_concatFallback));
 	refOldConcatFallback = lua_ref(1);
-
-	saveCallbackPtr = saveCallback;
-	restoreCallbackPtr = restoreCallback;
 
 	// initialize Text globals
 	lua_pushstring("x");

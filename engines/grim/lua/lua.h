@@ -59,20 +59,9 @@ public:
 	void seek(int32 pos, int whence = 0);
 };
 
-typedef void (*SaveStream)(void *, int32);
-typedef void (*SaveSint32)(int32);
-typedef void (*SaveUint32)(uint32);
-typedef void (*RestoreStream)(void *, int32);
-typedef int32 (*RestoreSint32)();
-typedef uint32 (*RestoreUint32)();
-typedef PointerId (*SaveCallback)(int32, PointerId, SaveSint32);
-typedef PointerId (*RestoreCallback)(int32, PointerId, RestoreSint32);
-
-extern SaveCallback saveCallbackPtr;
-extern RestoreCallback restoreCallbackPtr;
-
-void lua_Save(SaveStream, SaveSint32, SaveUint32);
-void lua_Restore(RestoreStream, RestoreSint32, RestoreUint32);
+class SaveGame;
+void lua_Save(SaveGame *state);
+void lua_Restore(SaveGame *state);
 
 void lua_removelibslists();
 

@@ -251,13 +251,6 @@ private:
 	void restoreObjects(SaveGame *state, Common::HashMap<int32, T *> &map);
 
 	void savegameCallback();
-	static void savegameReadStream(void *data, int32 size);
-	static void savegameWriteStream(void *data, int32 size);
-	static int32 savegameReadSint32();
-	static void savegameWriteSint32(int32 val);
-	static uint32 savegameReadUint32();
-	static void savegameWriteUint32(uint32 val);
-
 	void storeSaveGameImage(SaveGame *savedState);
 
 	bool _savegameLoadRequest;

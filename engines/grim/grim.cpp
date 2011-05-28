@@ -1109,30 +1109,6 @@ void GrimEngine::loadGame(const Common::String &file) {
 	_savegameLoadRequest = true;
 }
 
-void GrimEngine::savegameReadStream(void *data, int32 size) {
-	g_grim->_savedState->read(data, size);
-}
-
-void GrimEngine::savegameWriteStream(void *data, int32 size) {
-	g_grim->_savedState->write(data, size);
-}
-
-int32 GrimEngine::savegameReadSint32() {
-	return g_grim->_savedState->readLESint32();
-}
-
-void GrimEngine::savegameWriteSint32(int32 val) {
-	g_grim->_savedState->writeLESint32(val);
-}
-
-uint32 GrimEngine::savegameReadUint32() {
-	return g_grim->_savedState->readLEUint32();
-}
-
-void GrimEngine::savegameWriteUint32(uint32 val) {
-	g_grim->_savedState->writeLEUint32(val);
-}
-
 void GrimEngine::savegameRestore() {
 	printf("GrimEngine::savegameRestore() started.\n");
 	_savegameLoadRequest = false;
@@ -1170,10 +1146,8 @@ void GrimEngine::savegameRestore() {
 	g_driver->restoreState(_savedState);
 	g_imuse->restoreState(_savedState);
 	g_movie->restoreState(_savedState);
-	_savedState->beginSection('LUAS');
-	lua_Restore(savegameReadStream, savegameReadSint32, savegameReadUint32);
-	_savedState->endSection();
-	//  unlock resources
+	lua_Restore(_savedState);
+
 	delete _savedState;
 
 	// Apply the patch, only if it wasn't applied already.
@@ -1374,9 +1348,7 @@ void GrimEngine::savegameSave() {
 	g_driver->saveState(_savedState);
 	g_imuse->saveState(_savedState);
 	g_movie->saveState(_savedState);
-	_savedState->beginSection('LUAS');
-	lua_Save(savegameWriteStream, savegameWriteSint32, savegameWriteUint32);
-	_savedState->endSection();
+	lua_Save(_savedState);
 
 	delete _savedState;
 

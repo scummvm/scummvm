@@ -73,8 +73,6 @@ bool findCostume(lua_Object costumeObj, Actor *actor, Costume **costume);
 
 Common::String parseMsgText(const char *msg, char *msgId);
 void parseSayLineTable(lua_Object paramObj, bool *background, int *vol, int *pan, int *x, int *y);
-PointerId saveCallback(int32 /*tag*/, PointerId ptr, SaveSint32 /*savedState*/);
-PointerId restoreCallback(int32 /*tag*/, PointerId ptr, RestoreSint32 /*savedState*/);
 void setTextObjectParams(TextObjectCommon *textObject, lua_Object tableObj);
 void dummyHandler();
 
