@@ -653,8 +653,22 @@ void ColormapComponent::init() {
 
 class KeyframeComponent : public Costume::Component {
 public:
+	enum RepeatMode {
+		Once = 0,
+		Looping = 1,
+		PauseAtEnd = 2,
+		FadeAtEnd = 3
+	};
+	enum FadeMode {
+		None = 0,
+		FadeIn = 1,
+		FadeOut = 2
+	};
+
 	KeyframeComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag);
 	void init();
+	void play(RepeatMode repeatMode);
+	void fade(FadeMode, int fadeLength);
 	void setKey(int val);
 	void update();
 	void reset();
@@ -670,14 +684,19 @@ private:
 	Model::HierNode *_hier;
 	int _numNodes;
 	bool _active;
-	int _repeatMode;
+	bool _paused;
+	RepeatMode _repeatMode;
+	FadeMode _fadeMode;
+	int _fadeLength;
+	int _fadeCurrTime;
 	Common::String _fname;
 
 	friend class Costume;
 };
 
 KeyframeComponent::KeyframeComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
-		Costume::Component(p, parentID, t), _priority1(1), _priority2(5), _hier(NULL), _active(false) {
+		Costume::Component(p, parentID, t), _priority1(1), _priority2(5), _hier(NULL), _active(false),
+		_paused(false), _repeatMode(Once), _fadeMode(None) {
 	_fname = filename;
 	const char *comma = strchr(filename, ',');
 	if (comma) {
@@ -688,24 +707,83 @@ KeyframeComponent::KeyframeComponent(Costume::Component *p, int parentID, const 
 		_anim._keyf = g_resourceloader->getKeyframe(filename);
 }
 
+void KeyframeComponent::play(RepeatMode repeatMode) {
+	_repeatMode = repeatMode;
+	if (_repeatMode != Looping)
+		_anim._time = -1;
+	_paused = false;
+	_fadeMode = None;
+	activate();
+}
+
+void KeyframeComponent::fade(FadeMode fadeMode, int fadeLength) {
+	if (fadeMode == FadeIn) {
+		_repeatMode = PauseAtEnd;
+		_anim._time = -1;
+		_paused = false;
+		activate();
+	}
+	_fadeMode = fadeMode;
+	_fadeCurrTime = 0;
+	_fadeLength = fadeLength;
+}
+
 void KeyframeComponent::setKey(int val) {
 	switch (val) {
-	case 0:
-	case 1:
-	case 2:
-	case 3:
-		if (!_active || val != 1) {
-			activate();
-			_anim._time = -1;
-		}
-		_repeatMode = val;
+	case 0: // "Play Once"
+		play(Once);
 		break;
-	case 5:
-		_active = false;
-		warning("Key 5 (meaning uncertain) used  for keyframe %s", _anim._keyf->getFilename().c_str());
+	case 1: // "Play Looping"
+		play(Looping);
 		break;
-	case 4:
+	case 2: // "Play and Endpause"
+		play(PauseAtEnd);
+		break;
+	case 3: // "Play and Endfade"
+		play(FadeAtEnd);
+		break;
+	case 4: // "Stop"
+		// Without this Velasco's animation in lm.set is choppy when he turns
+		// back to face the bottle, because a fading out keyframe is stopped
+		// before it is completely faded out.
+		if (_fadeMode == FadeOut)
+			break;
+
+		_fadeMode = None;
+		_fadeCurrTime = 0;
+		_anim._time = -1;
+		_paused = false;
 		deactivate();
+		break;
+	case 5: // "Pause"
+		_paused = true;
+		break;
+	case 6: // "Unpause"
+		_paused = false;
+		break;
+	case 7: // "1.0 Fade in"
+		fade(FadeIn, 1000);
+		break;
+	case 8: // "0.5 Fade in"
+		fade(FadeIn, 500);
+		break;
+	case 9: // "0.25 Fade in"
+		fade(FadeIn, 250);
+		break;
+	case 10: // "0.125 Fade in"
+		fade(FadeIn, 125);
+		break;
+	case 11: // "1.0 Fade out"
+		fade(FadeOut, 1000);
+		break;
+	case 12: // "0.5 Fade out
+		fade(FadeOut, 500);
+		break;
+	case 13: // "0.25 Fade out"
+		fade(FadeOut, 250);
+		break;
+	case 14: // "0.125 Fade out"
+		fade(FadeOut, 125);
 		break;
 	default:
 		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
@@ -723,23 +801,47 @@ void KeyframeComponent::update() {
 
 	if (_anim._time < 0)		// For first time through
 		_anim._time = 0;
-	else
+	else if (!_paused)
 		_anim._time += g_grim->getFrameTime();
 
 	int animLength = (int)(_anim._keyf->getLength() * 1000);
 
-	if (_anim._time > animLength) { // What to do at end?
-		switch (_repeatMode) {
-			case 0: // Stop
-			case 3: // Fade at end
+	if (_fadeMode != None) {
+		_fadeCurrTime += g_grim->getFrameTime();
+		if (_fadeCurrTime > _fadeLength) {
+			if (_fadeMode == FadeOut) {
+				_fadeMode = None;
 				deactivate();
 				return;
-			case 1: // Loop
+			} else {
+				_fadeMode = None;
+			}
+		}
+	}
+
+	if (_anim._time > animLength) { // What to do at end?
+		switch (_repeatMode) {
+			case Once:
+				if (_fadeMode == None)
+					deactivate();
+				else
+					_anim._time = animLength;
+				break;
+			case Looping:
 				do
 					_anim._time -= animLength;
 				while (_anim._time > animLength);
 				break;
-			case 2: // Hold at end
+			case PauseAtEnd:
+				_anim._time = animLength;
+				_paused = true;
+				break;
+			case FadeAtEnd:
+				if (_fadeMode != FadeOut) {
+					_fadeMode = FadeOut;
+					_fadeLength = 250;
+					_fadeCurrTime = 0;
+				}
 				_anim._time = animLength;
 				break;
 			default:
@@ -748,7 +850,12 @@ void KeyframeComponent::update() {
 		}
 	}
 
-	_anim._fade = _fade;
+	if (_fadeMode == FadeIn)
+		_anim._fade = _fade * (float)_fadeCurrTime / (float)_fadeLength;
+	else if (_fadeMode == FadeOut)
+		_anim._fade = _fade * (1.0f - (float)_fadeCurrTime / (float)_fadeLength);
+	else
+		_anim._fade = _fade;
 }
 
 void KeyframeComponent::init() {
@@ -766,14 +873,24 @@ void KeyframeComponent::init() {
 
 void KeyframeComponent::saveState(SaveGame *state) {
 	state->writeLESint32(_active);
-	state->writeLESint32(_repeatMode);
+	state->writeLESint32((int)_repeatMode);
 	state->writeLESint32(_anim._time);
+	// Uncomment on next save format change.
+	/*state->writeLESint32((int)_fadeMode);
+	state->writeLESint32(_fadeCurrTime);
+	state->writeLESint32(_fadeLength);
+	state->writeLESint32(_paused);*/
 }
 
 void KeyframeComponent::restoreState(SaveGame *state) {
 	bool active = state->readLESint32();
-	_repeatMode = state->readLESint32();
+	_repeatMode = (RepeatMode)state->readLESint32();
 	_anim._time = state->readLESint32();
+	// Uncomment on next save format change.
+	/*_fadeMode = (FadeMode)state->readLESint32();
+	_fadeCurrTime = state->readLESint32();
+	_fadeLength = state->readLESint32();
+	_paused = state->readLESint32();*/
 
 	if (active)
 		activate();
