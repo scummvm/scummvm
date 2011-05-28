@@ -322,6 +322,7 @@ void Scene4000::Action7::signal() {
 }
 
 void Scene4000::Action8::signal() {
+	// Climb down right Chimney using a rope
 	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -335,7 +336,7 @@ void Scene4000::Action8::signal() {
 	case 1:
 		_globals->_player.setVisage(4008);
 		_globals->_player.setStrip(5);
-		_globals->_player.setPriority(16);
+		_globals->_player.fixPriority(16);
 		_globals->_player.setFrame(1);
 		_globals->_player.setPosition(Common::Point(283, 52));
 		_globals->_player.animate(ANIM_MODE_5, this);
