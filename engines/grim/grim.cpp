@@ -516,7 +516,6 @@ Common::Error GrimEngine::run() {
 
 	lua_pushnil();		// resumeSave
 	lua_pushnil();		// bootParam - not used in scripts
-//	lua_pushnumber(0);	// bootParam
 	lua_call("BOOT");
 
 	_savegameLoadRequest = false;
@@ -913,7 +912,6 @@ void GrimEngine::updateDisplayScene() {
 
 	if (_mode == ENGINE_MODE_SMUSH) {
 		if (g_movie->isPlaying()) {
-			//_mode = ENGINE_MODE_NORMAL; ???
 			_movieTime = g_movie->getMovieTime();
 			if (g_movie->isUpdateNeeded()) {
 				g_driver->prepareSmushFrame(g_movie->getWidth(), g_movie->getHeight(), g_movie->getDstPtr());
@@ -996,14 +994,7 @@ void GrimEngine::updateDisplayScene() {
 
 		drawPrimitives();
 	} else if (_mode == ENGINE_MODE_DRAW) {
-		// Adding line below and comment out rest solve flickering, also in tripple buffering mode too
 		_doFlip = false;
-/*		if (_refreshDrawNeeded) {
-			handleUserPaint();
-			g_driver->flipBuffer();
-		}
-		_refreshDrawNeeded = false;
-		return;*/
 	}
 }
 
@@ -1150,9 +1141,6 @@ void GrimEngine::savegameRestore() {
 	g_imuse->pause(true);
 	g_movie->pause(true);
 
-	//  free all resource
-	//  lock resources
-
 	_selectedActor = NULL;
 	_talkingActor = NULL;
 	if (_currScene)
@@ -1170,15 +1158,6 @@ void GrimEngine::savegameRestore() {
 	restoreActors(_savedState);
 
 	g_driver->restoreState(_savedState);
-
-	//Chore_Restore(_savedState);
-	//Resource_Restore(_savedState);
-	//Text_Restore(_savedState);
-	//Room_Restore(_savedState);
-	//Actor_Restore(_savedState);
-	//Render_Restore(_savedState);
-	//Primitive_Restore(_savedState);
-	//Smush_Restore(_savedState);
 	g_imuse->restoreState(_savedState);
 	g_movie->restoreState(_savedState);
 	_savedState->beginSection('LUAS');
@@ -1383,15 +1362,6 @@ void GrimEngine::savegameSave() {
 	saveActors(_savedState);
 
 	g_driver->saveState(_savedState);
-
-	//Chore_Save(_savedState);
-	//Resource_Save(_savedState);
-	//Text_Save(_savedState);
-	//Room_Save(_savedState);
-	//Actor_Save(_savedState);
-	//Render_Save(_savedState);
-	//Primitive_Save(_savedState);
-	//Smush_Save(_savedState);
 	g_imuse->saveState(_savedState);
 	g_movie->saveState(_savedState);
 	_savedState->beginSection('LUAS');
