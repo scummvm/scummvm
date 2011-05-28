@@ -472,10 +472,6 @@ void Actor::setPos(Graphics::Vector3d position) {
 	}
 }
 
-Graphics::Vector3d Actor::getPos() const {
-	return _pos;
-}
-
 void Actor::turnTo(float pitchParam, float yawParam, float rollParam) {
 	_pitch = pitchParam;
 	_roll = rollParam;
@@ -721,10 +717,6 @@ void Actor::walkForward() {
 	if (turnAmt > ei.angleWithEdge)
 		turnAmt = ei.angleWithEdge;
 	setYaw(_yaw + turnAmt * turnDir);
-}
-
-void Actor::setRunning(bool running) {
-	_running = running;
 }
 
 Graphics::Vector3d Actor::getPuckVector() const {
@@ -1022,10 +1014,6 @@ void Actor::setHead(int joint1, int joint2, int joint3, float maxRoll, float max
 	if (!_costumeStack.empty()) {
 		_costumeStack.back()->setHead(joint1, joint2, joint3, maxRoll, maxPitch, maxYaw);
 	}
-}
-
-void Actor::setScale(float scale) {
-	_scale = scale;
 }
 
 Costume *Actor::findCostume(const Common::String &n) {
@@ -1370,10 +1358,6 @@ void Actor::clearShadowPlanes() {
 		shadow->active = false;
 		shadow->dontNegate = false;
 	}
-}
-
-void Actor::putInSet(const char *setName) {
-	_setName = setName;
 }
 
 bool Actor::isInSet(const Common::String &setName) const {

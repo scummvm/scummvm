@@ -63,7 +63,7 @@ public:
 	void setTalkColor(Color *c) { _talkColor = c; }
 	Color *getTalkColor() const { return _talkColor; }
 	void setPos(Graphics::Vector3d position);
-	Graphics::Vector3d getPos() const;
+	Graphics::Vector3d getPos() const { return _pos; }
 	void walkTo(const Graphics::Vector3d &p);
 	void stopWalking() { _walking = false; }
 	bool isWalking() const;
@@ -75,10 +75,10 @@ public:
 	float getRoll() const { return _roll; }
 	void setVisibility(bool val) { _visible = val; }
 	bool isVisible() const { return _visible; }
-	void setScale(float scale);
+	void setScale(float scale) { _scale = scale; }
 	// The set should change immediately, otherwise a very rapid set change
 	// for an actor will be recognized incorrectly and the actor will be lost.
-	void putInSet(const char *setName);
+	void putInSet(const Common::String &setName) { _setName = setName; }
 	void setTurnRate(float rate) { _turnRate = rate; }
 	float getTurnRate() const { return _turnRate; }
 	void setWalkRate(float rate) { _walkRate = rate; }
@@ -90,7 +90,7 @@ public:
 
 	bool isInSet(const Common::String &setName) const;
 	void walkForward();
-	void setRunning(bool running);
+	void setRunning(bool running) { _running = running; }
 	void setReflection(float angle) { _reflectionAngle = angle; }
 	Graphics::Vector3d getPuckVector() const;
 	void turn(int dir);

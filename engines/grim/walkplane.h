@@ -63,7 +63,7 @@ public:
 	int getSectorId() const { return _id; }
 	SectorType getType() const { return _type; } // FIXME: Implement type de-masking
 	bool isVisible() const { return _visible; }
-	bool isPointInSector(Graphics::Vector3d point) const;
+	bool isPointInSector(const Graphics::Vector3d &point) const;
 	Common::List<Graphics::Line3d> getBridgesTo(Sector *sector) const;
 
 	Graphics::Vector3d getProjectionToPlane(const Graphics::Vector3d &point) const;
