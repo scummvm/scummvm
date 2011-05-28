@@ -1883,11 +1883,17 @@ void Scene5300::Hotspot2::doAction(int action) {
 			_globals->_player.disableControl();
 
 			if (RING_INVENTORY._stasisBox._sceneNumber != 1) {
+				scene->_sceneMode = 5316;
 				scene->setAction(&scene->_sequenceManager, scene, 5316, NULL);
 			} else {
 				_globals->setFlag(60);
-				scene->_sceneMode = _globals->getFlag(67) ? 5315 : 5347;
-				scene->setAction(&scene->_sequenceManager, scene, 5315, this);
+				if (_globals->getFlag(67)) {
+					scene->_sceneMode = 5315;
+					scene->setAction(&scene->_sequenceManager, scene, 5315, this, NULL);
+				} else {
+					scene->_sceneMode = 5347;
+					scene->setAction(&scene->_sequenceManager, scene, 5347, NULL);
+				}
 			}
 		}
 		break;
