@@ -3362,20 +3362,22 @@ bool Console::cmdSfx01Track(int argc, const char **argv) {
 
 bool Console::cmdQuit(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("%s game - exit gracefully\n", argv[0]);
-		DebugPrintf("%s now - exit ungracefully\n", argv[0]);
-		return true;
 	}
 
-	if (!scumm_stricmp(argv[1], "game")) {
+	if (argc == 2 && !scumm_stricmp(argv[1], "now")) {
+		// Quit ungracefully
+		g_system->quit();
+	} else if (argc == 1 || (argc == 2 && !scumm_stricmp(argv[1], "game"))) {
+
 		// Quit gracefully
 		_engine->_gamestate->abortScriptProcessing = kAbortQuitGame; // Terminate VM
 		_debugState.seeking = kDebugSeekNothing;
 		_debugState.runningStep = 0;
 
-	} else if (!scumm_stricmp(argv[1], "now")) {
-		// Quit ungracefully
-		g_system->quit();
+	} else {
+		DebugPrintf("%s [game] - exit gracefully\n", argv[0]);
+		DebugPrintf("%s now - exit ungracefully\n", argv[0]);
+		return true;
 	}
 
 	return Cmd_Exit(0, 0);
