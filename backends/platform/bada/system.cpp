@@ -198,6 +198,9 @@ void BadaSystem::initBackend() {
   // allow translations to be found
   ConfMan.set("themepath", "/Res");
 
+  // set default save path to writable area
+  ConfMan.set("savepath", "/Home");
+
   if (E_SUCCESS != initModules()) {
     systemError("initModules failed");
   }
@@ -213,13 +216,9 @@ bool BadaSystem::pollEvent(Common::Event& event) {
 }
 
 uint32 BadaSystem::getMillis() {
-  uint32 result = 0;
-
-  TimeSpan timeSpan(0,0,0);
-  Osp::System::SystemTime::GetUptime(timeSpan);
-  result = timeSpan.GetMilliseconds();
-
-  return result;
+  long long ticks = 0;
+  Osp::System::SystemTime::GetTicks(ticks);
+  return ticks;
 }
 
 void BadaSystem::delayMillis(uint msecs) {
