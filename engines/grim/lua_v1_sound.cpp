@@ -57,7 +57,7 @@ void L1_ImStartSound() {
 	int group = (int)lua_getnumber(groupObj);
 
 	// Start the sound with the appropriate settings
-	if (g_imuse->startSound(soundName, group, 0, 127, 0, priority, NULL)) {
+	if (g_imuse->startSound(soundName, group, 0, 127, 64, priority, NULL)) {
 		// FIXME actually it's pushnumber from result of startSound
 		lua_pushstring(soundName);
 	}
