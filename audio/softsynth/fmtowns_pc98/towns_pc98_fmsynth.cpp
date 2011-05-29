@@ -875,6 +875,8 @@ TownsPC98_FmSynth::~TownsPC98_FmSynth() {
 	if (_ready)
 		deinit();
 
+	Common::StackLock lock(_mutex);
+
 	delete _ssg;
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
 	delete _prc;
@@ -1166,7 +1168,7 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 					
 					(this->*_timers[i].cb)();
 
-					if (_ready && !locked && _externalMutex) {
+					if (!locked && _externalMutex) {
 						_mutex.lock();
 						locked = true;
 					}
@@ -1238,6 +1240,10 @@ void TownsPC98_FmSynth::deinit() {
 	_mixer->stopHandle(_soundHandle);
 	Common::StackLock lock(_mutex);
 	_timers[0].cb = _timers[1].cb = &TownsPC98_FmSynth::idleTimerCallback;
+}
+
+void TownsPC98_FmSynth::toggleRegProtection(bool prot) {
+	_regProtectionFlag = prot;
 }
 
 uint8 TownsPC98_FmSynth::readSSGStatus() {

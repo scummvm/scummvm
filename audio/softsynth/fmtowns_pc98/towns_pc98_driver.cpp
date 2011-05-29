@@ -1054,6 +1054,8 @@ TownsPC98_AudioDriver::~TownsPC98_AudioDriver() {
 	_ready = false;
 	deinit();
 
+	Common::StackLock lock(_mutex);
+
 	if (_channels) {
 		for (int i = 0; i < _numChan; i++)
 			delete _channels[i];
