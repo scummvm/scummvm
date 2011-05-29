@@ -67,14 +67,9 @@ public:
 	Common::WriteStream *createWriteStream();
 
 protected:
-	/**
-	 * Plain constructor, for internal use only (hence protected).
-	 */
-	BadaFilesystemNode() : isValid(false) {}
-
-  AbstractFSNode *makeNode(const Common::String &path) const {
-		return new BadaFilesystemNode(path);
-	}
+  BadaFilesystemNode(const Common::String& root,
+                     const Common::String& p);
+  void init(const Common::String& nodePath);
 
 	Common::String displayName;
 	Common::String path;

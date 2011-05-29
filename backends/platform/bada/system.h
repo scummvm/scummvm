@@ -43,7 +43,7 @@
 #include "backends/fs/fs-factory.h"
 #include "audio/mixer_intern.h"
 
-#include "file.h"
+#include "fs.h"
 #include "form.h"
 
 #if defined(_DEBUG)

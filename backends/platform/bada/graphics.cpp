@@ -199,7 +199,6 @@ bool BadaGraphicsManager::loadGFXMode() {
 }
 
 void BadaGraphicsManager::internUpdateScreen() {
-  logEntered();
   eglMakeCurrent(eglDisplay, pixmapSurface, pixmapSurface, eglContext);
   OpenGLGraphicsManager::internUpdateScreen();
 
