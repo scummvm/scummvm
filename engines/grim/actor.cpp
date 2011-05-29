@@ -941,7 +941,7 @@ void Actor::shutUp() {
 		if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
 			_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
 		_lipSync = NULL;
-	} else if (_mumbleChore >= 0) {
+	} else if (_mumbleChore >= 0 && _mumbleCostume->isChoring(_mumbleChore, false) >= 0) {
 		_mumbleCostume->stopChore(_mumbleChore);
 	}
 
