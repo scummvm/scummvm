@@ -177,13 +177,14 @@ public:
 	MadsObject() {}
 	MadsObject(Common::SeekableReadStream *stream);
 	void load(Common::SeekableReadStream *stream);
-	bool isInInventory() const { return roomNumber == PLAYER_INVENTORY; }
+	bool isInInventory() const { return _roomNumber == PLAYER_INVENTORY; }
+	void setRoom(int roomNumber);
 
-	uint16 descId;
-	uint16 roomNumber;
-	MADSArticles article;
-	uint8 vocabCount;
-	VocabEntry vocabList[3];
+	uint16 _descId;
+	uint16 _roomNumber;
+	MADSArticles _article;
+	uint8 _vocabCount;
+	VocabEntry _vocabList[3];
 };
 
 typedef Common::Array<Common::SharedPtr<MadsObject> > MadsObjectArray;

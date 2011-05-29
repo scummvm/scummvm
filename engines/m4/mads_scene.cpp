@@ -428,7 +428,29 @@ void MadsScene::doSceneStep() {
 }
 
 void MadsScene::doAction() {
-	warning("TODO MadsScene::doAction");
+	AbortTimerMode mode = ABORTMODE_0;
+	_abortTimersMode2 = mode;
+
+	if ((_action._inProgress || (_abortTimers != 0)) && !_action._v8453A) {
+		_sceneLogic.doAction();
+		mode = _action._inProgress ? ABORTMODE_0 : ABORTMODE_1;
+	}
+
+	if (_screenObjects._v832EC)
+		_action._inProgress = false;
+	else {
+		if ((_action._inProgress || (_abortTimers != 0)) && (mode == ABORTMODE_0) && (_action._v8453A == mode)) {
+			// TODO: sound_fn_p();
+			mode = _action._inProgress ? ABORTMODE_0 : ABORTMODE_1;
+
+		}
+
+		if ((_action._inProgress || (_abortTimers != 0)) && (mode == ABORTMODE_0) && (_action._v8453A == mode)) {
+			// Perform a core scene-indepedant action on an object
+			// object_do_action
+		}
+	}
+
 }
 
 
@@ -870,7 +892,7 @@ void MadsInterfaceView::initialize() {
 
 	for (uint i = 0; i < _madsVm->globals()->getObjectsSize(); ++i) {
 		MadsObject *obj = _madsVm->globals()->getObject(i);
-		if (obj->roomNumber == PLAYER_INVENTORY)
+		if (obj->_roomNumber == PLAYER_INVENTORY)
 			_inventoryList.push_back(i);
 	}
 
@@ -919,7 +941,7 @@ void MadsInterfaceView::setSelectedObject(int objectNumber) {
 
 void MadsInterfaceView::addObjectToInventory(int objectNumber) {
 	if (_inventoryList.indexOf(objectNumber) == -1) {
-		_madsVm->globals()->getObject(objectNumber)->roomNumber = PLAYER_INVENTORY;
+		_madsVm->globals()->getObject(objectNumber)->_roomNumber = PLAYER_INVENTORY;
 		_inventoryList.push_back(objectNumber);
 	}
 
@@ -972,7 +994,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 			break;
 
 		const char *descStr = _madsVm->globals()->getVocab(_madsVm->globals()->getObject(
-			_inventoryList[_topIndex + i])->descId);
+			_inventoryList[_topIndex + i])->_descId);
 		strcpy(buffer, descStr);
 		if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
 
@@ -1002,13 +1024,13 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 
 		// List the vocab actions for the currently selected object
 		MadsObject *obj = _madsVm->globals()->getObject(_selectedObject);
-		int yIndex = MIN(_highlightedElement - VOCAB_START, obj->vocabCount - 1);
+		int yIndex = MIN(_highlightedElement - VOCAB_START, obj->_vocabCount - 1);
 
-		for (int i = 0; i < obj->vocabCount; ++i) {
+		for (int i = 0; i < obj->_vocabCount; ++i) {
 			const Common::Rect r(_screenObjects[VOCAB_START + i]);
 
 			// Get the vocab description and capitalise it
-			const char *descStr = _madsVm->globals()->getVocab(obj->vocabList[i].vocabId);
+			const char *descStr = _madsVm->globals()->getVocab(obj->_vocabList[i].vocabId);
 			strcpy(buffer, descStr);
 			if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
 
@@ -1060,12 +1082,12 @@ bool MadsInterfaceView::onEvent(M4EventType eventType, int32 param1, int x, int 
 			} else if ((_highlightedElement >= VOCAB_START) && (_highlightedElement < (VOCAB_START + 5))) {
 				// A vocab action was selected
 				MadsObject *obj = _madsVm->globals()->getObject(_selectedObject);
-				int vocabIndex = MIN(_highlightedElement - VOCAB_START, obj->vocabCount - 1);
+				int vocabIndex = MIN(_highlightedElement - VOCAB_START, obj->_vocabCount - 1);
 				if (vocabIndex >= 0) {
 					act._actionMode = ACTMODE_OBJECT;
 					act._actionMode2 = ACTMODE2_2;
-					act._flags1 = obj->vocabList[1].flags1;
-					act._flags2 = obj->vocabList[1].flags2;
+					act._flags1 = obj->_vocabList[1].flags1;
+					act._flags2 = obj->_vocabList[1].flags2;
 
 					act._action.verbId = _selectedObject;
 					act._articleNumber = act._flags2;

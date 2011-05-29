@@ -951,7 +951,7 @@ void MadsSceneLogic::callSubroutine(int subIndex, Common::Stack<ScriptVar> &stac
 		// object_is_present
 		EXTRACT_PARAMS(1);
 		const MadsObject *obj = _madsVm->globals()->getObject(p[0]);
-		stack.push(ScriptVar((obj->roomNumber == _madsVm->scene()->_currentScene)));
+		stack.push(ScriptVar((obj->_roomNumber == _madsVm->scene()->_currentScene)));
 		break;
 	}
 
@@ -975,6 +975,14 @@ void MadsSceneLogic::callSubroutine(int subIndex, Common::Stack<ScriptVar> &stac
 		EXTRACT_PARAMS(1);
 		const MadsObject *obj = _madsVm->globals()->getObject(p[0]);
 		stack.push(ScriptVar(obj->isInInventory()));
+		break;
+	}
+
+	case 26: {
+		// object_set_room
+		EXTRACT_PARAMS(2);
+		MadsObject *obj = _madsVm->globals()->getObject(p[0]);
+		obj->setRoom(p[1]);
 		break;
 	}
 
