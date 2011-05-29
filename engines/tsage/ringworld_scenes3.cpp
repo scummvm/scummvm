@@ -5915,7 +5915,7 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 
 		_globals->_player.disableControl();
 		_globals->_player.animate(ANIM_MODE_NONE, NULL);
-		_globals->_player.setObjectWrapper(new SceneObjectWrapper());
+		_globals->_player.setObjectWrapper(NULL);
 		_globals->_player.setVisage(2347);
 		_globals->_player.setStrip(2);
 		_globals->_player.setFrame(5);
