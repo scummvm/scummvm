@@ -34,8 +34,6 @@ static void restoreObjectValue(TObject *object, SaveGame *savedState) {
 			break;
 		case LUA_T_NIL:
 			{
-				savedState->readLEUint32();
-				savedState->readLEUint32();
 				object->value.ts = NULL;
 			}
 			break;
@@ -99,7 +97,6 @@ static void restoreObjectValue(TObject *object, SaveGame *savedState) {
 		case LUA_T_LINE:
 			{
 				object->value.i = savedState->readLESint32();
-				savedState->readLESint32();
 			}
 			break;
 		default:

@@ -82,10 +82,6 @@ static void saveObjectValue(TObject *object, SaveGame *savedState) {
 			}
 			break;
 		case LUA_T_NIL:
-			{
-				savedState->writeLEUint32(0);
-				savedState->writeLEUint32(0);
-			}
 			break;
 		case LUA_T_ARRAY:
 			{
@@ -121,7 +117,6 @@ static void saveObjectValue(TObject *object, SaveGame *savedState) {
 		case LUA_T_LINE:
 			{
 				savedState->writeLESint32(object->value.i);
-				savedState->writeLESint32(0);
 			}
 			break;
 		default:
