@@ -115,6 +115,7 @@ public:
 	void init();
 	void setKey(int val);
 	void reset();
+	void update();
 	void saveState(SaveGame *state);
 	void restoreState(SaveGame *state);
 
@@ -318,6 +319,12 @@ void SpriteComponent::setKey(int val) {
 void SpriteComponent::reset() {
 	if (_sprite)
 		_sprite->_visible = false;
+}
+
+void SpriteComponent::update() {
+	if (_sprite && _sprite->_visible && _fade == 0.f) {
+		_sprite->_visible = false;
+	}
 }
 
 void SpriteComponent::saveState(SaveGame *state) {
@@ -1445,8 +1452,9 @@ void Costume::Chore::update() {
 			_fade = 0.0f;
 			for (int i = 0; i < _numTracks; i++) {
 				Component *comp = _owner->_components[_tracks[i].compID];
-				if (comp)
+				if (comp) {
 					comp->setFade(0.f);
+				}
 			}
 			return;
 		}
