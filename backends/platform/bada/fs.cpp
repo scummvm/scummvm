@@ -170,7 +170,19 @@ void BadaFilesystemNode::init(const Common::String& nodePath) {
   displayName = Common::lastPathComponent(path, '/');
 
   StringUtil::Utf8ToString(path.c_str(), unicodePath);
-  isValid = !IsFailed(File::GetAttributes(unicodePath, attr));
+  isRoot = (path == "/");
+  isValid = isRoot || !IsFailed(File::GetAttributes(unicodePath, attr));
+}
+
+void BadaFilesystemNode::addRootPath(AbstractFSList &myList,
+                                     const Common::String& path) const {
+  FileAttributes at;
+  String badaPath;
+
+  StringUtil::Utf8ToString(path.c_str(), badaPath);
+  if (!IsFailed(File::GetAttributes(badaPath, at)) && at.IsDirectory()) {
+    myList.push_back(new BadaFilesystemNode(path));
+  }
 }
 
 bool BadaFilesystemNode::exists() const {
@@ -178,11 +190,11 @@ bool BadaFilesystemNode::exists() const {
 }
 
 bool BadaFilesystemNode::isReadable() const {
-  return (isValid && !attr.IsHidden());
+  return isRoot || (isValid && !attr.IsHidden());
 }
 
 bool BadaFilesystemNode::isDirectory() const {
-  return (isValid && attr.IsDirectory());
+  return isRoot || (isValid && attr.IsDirectory());
 }
 
 bool BadaFilesystemNode::isWritable() const {
@@ -200,55 +212,67 @@ bool BadaFilesystemNode::getChildren(AbstractFSList &myList,
   AppAssert(isDirectory());
 
   bool result = false;
-  DirEnumerator* pDirEnum = 0;
-  Directory* pDir = new Directory();
 
-  // open directory
-  if (IsFailed(pDir->Construct(unicodePath))) {
-    AppLog("Failed to open directory");
-  }
-  else {
-    // read all directory entries
-    pDirEnum = pDir->ReadN();
-    if (pDirEnum) {
+  if (isRoot) {
+    if (mode != Common::FSNode::kListFilesOnly) {
+      // present well known BADA file system areas
+      addRootPath(myList, "/Home");
+      addRootPath(myList, "/HomeExt");
+      addRootPath(myList, "/Media");
+      addRootPath(myList, "/Storagecard");
       result = true;
     }
-
-    // loop through all directory entries
-    while (pDirEnum && pDirEnum->MoveNext() == E_SUCCESS) {
-      DirEntry dirEntry = pDirEnum->GetCurrentDirEntry();
-
-      // skip 'invisible' files if necessary
-      Osp::Base::String fileName = dirEntry.GetName();
-
-      if (fileName[0] == '.' && !hidden) {
-        continue;
-      }
-
-      // skip '.' and '..' to avoid cycles
-      if ((fileName[0] == '.' && fileName[1] == 0) ||
-          (fileName[0] == '.' && fileName[1] == '.')) {
-        continue;
-      }
-
-      // Honor the chosen mode
-      if ((mode == Common::FSNode::kListFilesOnly && dirEntry.IsDirectory()) ||
-          (mode == Common::FSNode::kListDirectoriesOnly && !dirEntry.IsDirectory())) {
-        continue;
-      }
-
-      myList.push_back(new BadaFilesystemNode(path, fromString(fileName)));
+  }
+  else {
+    DirEnumerator* pDirEnum = 0;
+    Directory* pDir = new Directory();
+    
+    // open directory
+    if (IsFailed(pDir->Construct(unicodePath))) {
+      AppLog("Failed to open directory");
     }
-  }
-
-  // cleanup
-  if (pDirEnum) {
-    delete pDirEnum;
-  }
-
-  // close the opened directory
-  if (pDir) {
-    delete pDir;
+    else {
+      // read all directory entries
+      pDirEnum = pDir->ReadN();
+      if (pDirEnum) {
+        result = true;
+      }
+      
+      // loop through all directory entries
+      while (pDirEnum && pDirEnum->MoveNext() == E_SUCCESS) {
+        DirEntry dirEntry = pDirEnum->GetCurrentDirEntry();
+        
+        // skip 'invisible' files if necessary
+        Osp::Base::String fileName = dirEntry.GetName();
+        
+        if (fileName[0] == '.' && !hidden) {
+          continue;
+        }
+        
+        // skip '.' and '..' to avoid cycles
+        if ((fileName[0] == '.' && fileName[1] == 0) ||
+            (fileName[0] == '.' && fileName[1] == '.')) {
+          continue;
+        }
+        
+        // Honor the chosen mode
+        if ((mode == Common::FSNode::kListFilesOnly && dirEntry.IsDirectory()) ||
+            (mode == Common::FSNode::kListDirectoriesOnly && !dirEntry.IsDirectory())) {
+          continue;
+        }
+        myList.push_back(new BadaFilesystemNode(path, fromString(fileName)));
+      }
+    }
+    
+    // cleanup
+    if (pDirEnum) {
+      delete pDirEnum;
+    }
+    
+    // close the opened directory
+    if (pDir) {
+      delete pDir;
+    }
   }
 
   return result;

@@ -126,6 +126,7 @@ void BadaAppForm::pushEvent(Common::EventType type,
   e.type = type;
   e.mouse.x = currentPosition.x;
   e.mouse.y = currentPosition.y;
+  g_system->warpMouse(currentPosition.x, currentPosition.y);
 
   eventQueueLock->Acquire();
   eventQueue.push(e);
