@@ -806,6 +806,11 @@ void KeyframeComponent::update() {
 	if (!_active)
 		return;
 
+	if (_fade == 0.0f) {
+		deactivate();
+		return;
+	}
+
 	if (_anim._time < 0)		// For first time through
 		_anim._time = 0;
 	else if (!_paused)
