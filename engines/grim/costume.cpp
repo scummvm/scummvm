@@ -875,22 +875,20 @@ void KeyframeComponent::saveState(SaveGame *state) {
 	state->writeLESint32(_active);
 	state->writeLESint32((int)_repeatMode);
 	state->writeLESint32(_anim._time);
-	// Uncomment on next save format change.
-	/*state->writeLESint32((int)_fadeMode);
+	state->writeLESint32((int)_fadeMode);
 	state->writeLESint32(_fadeCurrTime);
 	state->writeLESint32(_fadeLength);
-	state->writeLESint32(_paused);*/
+	state->writeLESint32(_paused);
 }
 
 void KeyframeComponent::restoreState(SaveGame *state) {
 	bool active = state->readLESint32();
 	_repeatMode = (RepeatMode)state->readLESint32();
 	_anim._time = state->readLESint32();
-	// Uncomment on next save format change.
-	/*_fadeMode = (FadeMode)state->readLESint32();
+	_fadeMode = (FadeMode)state->readLESint32();
 	_fadeCurrTime = state->readLESint32();
 	_fadeLength = state->readLESint32();
-	_paused = state->readLESint32();*/
+	_paused = state->readLESint32();
 
 	if (active)
 		activate();
@@ -1873,9 +1871,8 @@ void Costume::saveState(SaveGame *state) const {
 		state->writeLESint32(c._looping);
 		state->writeLESint32(c._currTime);
 		state->writeLESint32(c._fadeMode);
-		// Uncomment on next save format change.
-		//state->writeLESint32(c._fadeLength);
-		//state->writeFloat(c._fade);
+		state->writeLESint32(c._fadeLength);
+		state->writeFloat(c._fade);
 	}
 
 	for (int i = 0; i < _numComponents; ++i) {
@@ -1890,11 +1887,10 @@ void Costume::saveState(SaveGame *state) const {
 		}
 	}
 
-	// Uncomment on next save format change.
-	/*state->writeLEUint32(_playingChores.size());
+	state->writeLEUint32(_playingChores.size());
 	for (Common::List<Chore*>::const_iterator i = _playingChores.begin(); i != _playingChores.end(); ++i) {
 		state->writeLESint32((*i)->_id);
-	}*/
+	}
 
 	state->writeLESint32(_head.joint1);
 	state->writeLESint32(_head.joint2);
@@ -1918,9 +1914,8 @@ bool Costume::restoreState(SaveGame *state) {
 		c._looping = state->readLESint32();
 		c._currTime = state->readLESint32();
 		c._fadeMode = (Chore::FadeMode)state->readLESint32();
-		// Uncomment on next save format change.
-		//c._fadeLength = state->readLESint32();
-		//c._fade = state->readFloat();
+		c._fadeLength = state->readLESint32();
+		c._fade = state->readFloat();
 	}
 	for (int i = 0; i < _numComponents; ++i) {
 		Component *c = _components[i];
@@ -1934,12 +1929,11 @@ bool Costume::restoreState(SaveGame *state) {
 		}
 	}
 
-	// Uncomment on next save format change.
-	/*int numPlayingChores = state->readLEUint32();
+	int numPlayingChores = state->readLEUint32();
 	for (int i = 0; i < numPlayingChores; ++i) {
 		int id = state->readLESint32();
 		_playingChores.push_back(&_chores[id]);
-	}*/
+	}
 
 	int j1 = state->readLESint32();
 	int j2 = state->readLESint32();
