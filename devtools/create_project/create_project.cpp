@@ -636,7 +636,7 @@ bool setEngineBuildState(const std::string &name, EngineDescList &engines, bool 
 		if (engine != engines.end()) {
 			engine->enable = enable;
 
-			// When we disable an einge, we also need to disable all the sub engines.
+			// When we disable an engine, we also need to disable all the sub engines.
 			if (!enable && !engine->subEngines.empty()) {
 				for (StringList::const_iterator j = engine->subEngines.begin(); j != engine->subEngines.end(); ++j) {
 					EngineDescList::iterator subEngine = std::find(engines.begin(), engines.end(), *j);
