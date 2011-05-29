@@ -21,6 +21,8 @@
  */
 
 #include <FUiCtrlMessageBox.h>
+
+#include "common/config-manager.h"
 #include <stdarg.h>
 
 #include "form.h"
@@ -32,6 +34,28 @@ using namespace Osp::Base::Runtime;
 using namespace Osp::Ui::Controls;
 
 #define DEFAULT_CONFIG_FILE "/Home/scummvm.ini"
+
+//
+// BadaFilesystemFactory
+//
+class BadaFilesystemFactory : public FilesystemFactory {
+  AbstractFSNode *makeRootFileNode() const;
+  AbstractFSNode *makeCurrentDirectoryFileNode() const;
+  AbstractFSNode *makeFileNodePath(const Common::String &path) const;
+};
+
+AbstractFSNode *BadaFilesystemFactory::makeRootFileNode() const {
+	return new BadaFilesystemNode("/");
+}
+
+AbstractFSNode *BadaFilesystemFactory::makeCurrentDirectoryFileNode() const {
+	return new BadaFilesystemNode("/Home");
+}
+
+AbstractFSNode *BadaFilesystemFactory::makeFileNodePath(const Common::String &path) const {
+  AppAssert(!path.empty());
+  return new BadaFilesystemNode(path);
+}
 
 //
 // BadaSaveFileManager
@@ -171,6 +195,9 @@ result BadaSystem::initModules() {
 void BadaSystem::initBackend() {
   logEntered();
 
+  // allow translations to be found
+  ConfMan.set("themepath", "/Res");
+
   if (E_SUCCESS != initModules()) {
     systemError("initModules failed");
   }
@@ -287,7 +314,7 @@ void systemError(const char* format, ...) {
   messageBox.Construct(L"Fatal Error", buffer, MSGBOX_STYLE_OK);
   int modalResult;
   messageBox.ShowAndWait(modalResult);
-  Application::GetInstance()->SendUserEvent(USER_MESSAGE_HALT, null);
+  Application::GetInstance()->SendUserEvent(USER_MESSAGE_EXIT, null);
 }
 
 //

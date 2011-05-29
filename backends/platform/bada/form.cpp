@@ -142,7 +142,7 @@ Object* BadaAppForm::Run(void) {
   scummvm_main(0, 0);
 
   AppLog("scummvm_main completed");
-  Application::GetInstance()->SendUserEvent(USER_MESSAGE_HALT, null);
+  Application::GetInstance()->SendUserEvent(USER_MESSAGE_EXIT, null);
   return null;
 }
 

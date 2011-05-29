@@ -56,8 +56,9 @@ bool BadaScummVM::OnAppTerminating(AppRegistry& appRegistry,
 
 void BadaScummVM::OnUserEventReceivedN(RequestId requestId, 
                                        Osp::Base::Collection::IList* pArgs) {
-  if (requestId == USER_MESSAGE_HALT) {
-    Application::GetInstance()->Terminate();
+  logEntered();
+  if (requestId == USER_MESSAGE_EXIT) {
+    Terminate();
   }
 }
 
