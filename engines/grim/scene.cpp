@@ -610,9 +610,9 @@ void Scene::setSoundPosition(const char *soundName, Graphics::Vector3d pos) {
 }
 
 void Scene::setSoundPosition(const char *soundName, Graphics::Vector3d pos, int minVol, int maxVol) {
+	// TODO: The volume and pan needs to be updated when the setup changes.
 	Graphics::Vector3d cameraPos = _currSetup->_pos;
-	Graphics::Vector3d vector, vector2;
-	vector.set(fabs(cameraPos.x() - pos.x()), fabs(cameraPos.y() - pos.y()), fabs(cameraPos.z() - pos.z()));
+	Graphics::Vector3d vector = pos - cameraPos;
 	float distance = vector.magnitude();
 	float diffVolume = maxVol - minVol;
 	//This 8.f is a guess, so it may need some adjusting
@@ -622,8 +622,20 @@ void Scene::setSoundPosition(const char *soundName, Graphics::Vector3d pos, int 
 		newVolume = _maxVolume;
 	g_imuse->setVolume(soundName, newVolume);
 
-	//TODO
-	//g_imuse->setPan(soundName, pan);
+	Graphics::Vector3d cameraVector =_currSetup->_interest - _currSetup->_pos;
+	Graphics::Vector3d up(0,0,1);
+	Graphics::Vector3d right;
+	cameraVector.normalize();
+	float roll = -_currSetup->_roll * LOCAL_PI / 180.f;
+	float cosr = cos(roll);
+	// Rotate the up vector by roll.
+	up = up * cosr + Graphics::cross(cameraVector, up) * sin(roll) +
+		cameraVector * Graphics::dot(cameraVector, up) * (1 - cosr);
+	right = Graphics::cross(cameraVector, up);
+	right.normalize();
+	float angle = atan2(Graphics::dot(vector, right), Graphics::dot(vector, cameraVector));
+	float pan = sin(angle);
+	g_imuse->setPan(soundName, (int)((pan + 1.f) / 2.f * 127.f) + 0.5f);
 }
 
 Sector *Scene::getSectorBase(int id) {
