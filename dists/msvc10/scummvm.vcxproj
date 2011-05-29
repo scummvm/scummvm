@@ -84,7 +84,7 @@
 		</ClCompile>
 		<Link>
 			<OutputFile>$(OutDir)scummvm.exe</OutputFile>
-			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;libpng.lib;libtheora_static.lib;opengl32.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		</Link>
 	</ItemDefinitionGroup>
 	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'">
@@ -93,7 +93,7 @@
 		</ClCompile>
 		<Link>
 			<OutputFile>$(OutDir)scummvm.exe</OutputFile>
-			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;libpng.lib;libtheora_static.lib;opengl32.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		</Link>
 	</ItemDefinitionGroup>
 	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -102,7 +102,7 @@
 		</ClCompile>
 		<Link>
 			<OutputFile>$(OutDir)scummvm.exe</OutputFile>
-			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;libpng.lib;libtheora_static.lib;opengl32.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		</Link>
 	</ItemDefinitionGroup>
 	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -111,7 +111,7 @@
 		</ClCompile>
 		<Link>
 			<OutputFile>$(OutDir)scummvm.exe</OutputFile>
-			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;libpng.lib;libtheora_static.lib;opengl32.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		</Link>
 	</ItemDefinitionGroup>
 	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'">
@@ -120,7 +120,7 @@
 		</ClCompile>
 		<Link>
 			<OutputFile>$(OutDir)scummvm.exe</OutputFile>
-			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;libpng.lib;libtheora_static.lib;opengl32.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		</Link>
 	</ItemDefinitionGroup>
 	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -129,7 +129,7 @@
 		</ClCompile>
 		<Link>
 			<OutputFile>$(OutDir)scummvm.exe</OutputFile>
-			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;libpng.lib;libtheora_static.lib;opengl32.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+			<AdditionalDependencies>zlib.lib;libmad.lib;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;libFLAC_static.lib;sdl.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		</Link>
 	</ItemDefinitionGroup>
 	<ItemGroup>
@@ -487,6 +487,7 @@
 		<ClInclude Include="..\..\backends\graphics\opengl\opengl-graphics.h" />
 		<ClInclude Include="..\..\backends\graphics\openglsdl\openglsdl-graphics.h" />
 		<ClInclude Include="..\..\backends\graphics\openpandora\op-graphics.h" />
+		<ClInclude Include="..\..\backends\graphics\samsungtvsdl\samsungtvsdl-graphics.h" />
 		<ClInclude Include="..\..\backends\graphics\sdl\sdl-graphics.h" />
 		<ClInclude Include="..\..\backends\graphics\symbiansdl\symbiansdl-graphics.h" />
 		<ClInclude Include="..\..\backends\graphics\wincesdl\wincesdl-graphics.h" />

@@ -16,37 +16,37 @@
 		<Configuration Name="Debug|Win32" ConfigurationType="1" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
 			<Tool	Name="VCCLCompilerTool" DisableLanguageExtensions="false" />
 			<Tool	Name="VCLinkerTool" OutputFile="$(OutDir)/scummvm"
-				AdditionalDependencies=" zlib.lib libmad.lib libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib libFLAC_static.lib libpng.lib libtheora_static.lib opengl32.lib sdl.lib winmm.lib"
+				AdditionalDependencies=" zlib.lib libmad.lib libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib libFLAC_static.lib sdl.lib winmm.lib"
 			/>
 		</Configuration>
 		<Configuration Name="Analysis|Win32" ConfigurationType="1" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
 			<Tool	Name="VCCLCompilerTool" DisableLanguageExtensions="false" />
 			<Tool	Name="VCLinkerTool" OutputFile="$(OutDir)/scummvm"
-				AdditionalDependencies=" zlib.lib libmad.lib libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib libFLAC_static.lib libpng.lib libtheora_static.lib opengl32.lib sdl.lib winmm.lib"
+				AdditionalDependencies=" zlib.lib libmad.lib libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib libFLAC_static.lib sdl.lib winmm.lib"
 			/>
 		</Configuration>
 		<Configuration Name="Release|Win32" ConfigurationType="1" InheritedPropertySheets=".\ScummVM_Release.vsprops">
 			<Tool	Name="VCCLCompilerTool" DisableLanguageExtensions="false" />
 			<Tool	Name="VCLinkerTool" OutputFile="$(OutDir)/scummvm"
-				AdditionalDependencies=" zlib.lib libmad.lib libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib libFLAC_static.lib libpng.lib libtheora_static.lib opengl32.lib sdl.lib winmm.lib"
+				AdditionalDependencies=" zlib.lib libmad.lib libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib libFLAC_static.lib sdl.lib winmm.lib"
 			/>
 		</Configuration>
 		<Configuration Name="Debug|x64" ConfigurationType="1" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
 			<Tool	Name="VCCLCompilerTool" DisableLanguageExtensions="false" />
 			<Tool	Name="VCLinkerTool" OutputFile="$(OutDir)/scummvm"
-				AdditionalDependencies=" zlib.lib libmad.lib libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib libFLAC_static.lib libpng.lib libtheora_static.lib opengl32.lib sdl.lib winmm.lib"
+				AdditionalDependencies=" zlib.lib libmad.lib libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib libFLAC_static.lib sdl.lib winmm.lib"
 			/>
 		</Configuration>
 		<Configuration Name="Analysis|x64" ConfigurationType="1" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
 			<Tool	Name="VCCLCompilerTool" DisableLanguageExtensions="false" />
 			<Tool	Name="VCLinkerTool" OutputFile="$(OutDir)/scummvm"
-				AdditionalDependencies=" zlib.lib libmad.lib libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib libFLAC_static.lib libpng.lib libtheora_static.lib opengl32.lib sdl.lib winmm.lib"
+				AdditionalDependencies=" zlib.lib libmad.lib libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib libFLAC_static.lib sdl.lib winmm.lib"
 			/>
 		</Configuration>
 		<Configuration Name="Release|x64" ConfigurationType="1" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
 			<Tool	Name="VCCLCompilerTool" DisableLanguageExtensions="false" />
 			<Tool	Name="VCLinkerTool" OutputFile="$(OutDir)/scummvm"
-				AdditionalDependencies=" zlib.lib libmad.lib libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib libFLAC_static.lib libpng.lib libtheora_static.lib opengl32.lib sdl.lib winmm.lib"
+				AdditionalDependencies=" zlib.lib libmad.lib libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib libFLAC_static.lib sdl.lib winmm.lib"
 			/>
 		</Configuration>
 	</Configurations>
