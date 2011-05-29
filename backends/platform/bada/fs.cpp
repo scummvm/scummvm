@@ -21,7 +21,7 @@
 
 #include "config.h"
 #include "system.h"
-#include "file.h"
+#include "fs.h"
 
 //
 // BadaFileStream
@@ -60,7 +60,6 @@ BadaFileStream::~BadaFileStream() {
 }
 
 bool BadaFileStream::err() const {
-  logEntered();
   return (GetLastResult() != E_SUCCESS);
 }
 
@@ -77,7 +76,6 @@ int32 BadaFileStream::pos() const {
 }
 
 int32 BadaFileStream::size() const {
-  logEntered();
   int32 oldPos = pos();
   file->Seek(FILESEEKPOSITION_END, 0);
 
@@ -88,7 +86,6 @@ int32 BadaFileStream::size() const {
 }
 
 bool BadaFileStream::seek(int32 offs, int whence) {
-  logEntered();
   bool result = false;
   switch (whence) {
   case SEEK_SET:
@@ -120,7 +117,6 @@ bool BadaFileStream::flush() {
 }
 
 BadaFileStream *BadaFileStream::makeFromPath(const String &path, bool writeMode) {
-  logEntered();
   File* ioFile = new File();
 
   result r = ioFile->Construct(path, writeMode ? L"wb" : L"rb", false);
@@ -137,8 +133,6 @@ BadaFileStream *BadaFileStream::makeFromPath(const String &path, bool writeMode)
 // converts a bada (wchar) String into a scummVM (char) string
 //
 Common::String fromString(const Osp::Base::String& in) {
-  logEntered();
-
   ByteBuffer* buf = StringUtil::StringToUtf8N(in);
   Common::String result((const char*) buf->GetPointer());
   delete buf;
@@ -149,61 +143,61 @@ Common::String fromString(const Osp::Base::String& in) {
 //
 // BadaFilesystemNode
 //
-BadaFilesystemNode::BadaFilesystemNode(const Common::String& p) {
-  AppAssert(p.size() > 0);
+BadaFilesystemNode::BadaFilesystemNode(const Common::String& nodePath) {
+  AppAssert(nodePath.size() > 0);
+  init(nodePath);
+}
 
-  StringUtil::Utf8ToString(p.c_str(), unicodePath);
-  isValid = !IsFailed(File::GetAttributes(unicodePath, attr));
-  AppLog("creating node for %s %d", p.c_str(), isValid);
+BadaFilesystemNode::BadaFilesystemNode(const Common::String& root,
+                                       const Common::String& nodePath) {
+  // Make sure the string contains no slashes
+  AppAssert(!nodePath.contains('/'));
 
+  // We assume here that path is already normalized (hence don't bother to
+  // call Common::normalizePath on the final path).
+  Common::String newPath(root);
+  if (root.lastChar() != '/') {
+    newPath += '/';
+  }
+  newPath += nodePath;
+
+  init(newPath);
+}
+
+void BadaFilesystemNode::init(const Common::String& nodePath) {
   // Normalize the path (that is, remove unneeded slashes etc.)
-  path = Common::normalizePath(p, '/');
+  path = Common::normalizePath(nodePath, '/');
   displayName = Common::lastPathComponent(path, '/');
+
+  StringUtil::Utf8ToString(path.c_str(), unicodePath);
+  isValid = !IsFailed(File::GetAttributes(unicodePath, attr));
 }
 
 bool BadaFilesystemNode::exists() const {
-  logEntered();
   return isValid;
 }
 
 bool BadaFilesystemNode::isReadable() const {
-  logEntered();
   return (isValid && !attr.IsHidden());
 }
 
 bool BadaFilesystemNode::isDirectory() const {
-  logEntered();
   return (isValid && attr.IsDirectory());
 }
 
 bool BadaFilesystemNode::isWritable() const {
-  logEntered();
   return (isValid && !attr.IsDirectory() && !attr.IsReadOnly());
 }
 
 AbstractFSNode* BadaFilesystemNode::getChild(const Common::String &n) const {
-  logEntered();
   AppAssert(!path.empty());
   AppAssert(isDirectory());
-
-  // Make sure the string contains no slashes
-  AppAssert(!n.contains('/'));
-
-  // We assume here that path is already normalized (hence don't bother to
-  // call Common::normalizePath on the final path).
-  Common::String newPath(path);
-  if (path.lastChar() != '/') {
-    newPath += '/';
-  }
-  newPath += n;
-
-  return makeNode(newPath);
+  return new BadaFilesystemNode(path, n);
 }
 
 bool BadaFilesystemNode::getChildren(AbstractFSList &myList,
                                      ListMode mode, bool hidden) const {
   AppAssert(isDirectory());
-  AppLog("get children of %S", unicodePath.GetPointer());
 
   bool result = false;
   DirEnumerator* pDirEnum = 0;
@@ -243,16 +237,7 @@ bool BadaFilesystemNode::getChildren(AbstractFSList &myList,
         continue;
       }
 
-      // Start with a clone of this node, with the correct path set
-      BadaFilesystemNode entry(*this);
-      entry.displayName = fromString(fileName);
-      if (path.lastChar() != '/') {
-        entry.path += '/';
-      }
-
-      entry.path += entry.displayName;
-      entry.isValid = true;
-      myList.push_back(new BadaFilesystemNode(entry));
+      myList.push_back(new BadaFilesystemNode(path, fromString(fileName)));
     }
   }
 
@@ -292,11 +277,10 @@ AbstractFSNode* BadaFilesystemNode::getParent() const {
     return 0;
   }
 
-  return makeNode(Common::String(start, end));
+  return new BadaFilesystemNode(Common::String(start, end));
 }
 
 Common::SeekableReadStream* BadaFilesystemNode::createReadStream() {
-  logEntered();
   Common::SeekableReadStream* result = BadaFileStream::makeFromPath(unicodePath, false);
   if (result != null) {
     isValid = !IsFailed(File::GetAttributes(unicodePath, attr));
@@ -305,7 +289,6 @@ Common::SeekableReadStream* BadaFilesystemNode::createReadStream() {
 }
 
 Common::WriteStream* BadaFilesystemNode::createWriteStream() {
-  logEntered();
   Common::WriteStream* result = BadaFileStream::makeFromPath(unicodePath, true);
   if (result != null) {
     isValid = !IsFailed(File::GetAttributes(unicodePath, attr));
