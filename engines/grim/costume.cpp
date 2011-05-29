@@ -876,6 +876,8 @@ void KeyframeComponent::init() {
 		_hier = NULL;
 		_numNodes = 0;
 	}
+
+	_anim._time = -1;
 }
 
 void KeyframeComponent::saveState(SaveGame *state) {
