@@ -750,8 +750,6 @@ void L1_GetShrinkPos() {
 }
 
 void L1_FileFindDispose() {
-	if (g_grim->_listFilesIter)
-		g_grim->_listFilesIter->begin();
 	g_grim->_listFiles.clear();
 	g_grim->_listFilesIter = NULL;
 }
