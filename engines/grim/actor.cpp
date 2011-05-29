@@ -1142,7 +1142,10 @@ void Actor::update() {
 		} else {
 			if (_walkedLast && _walkCostume->isChoring(_walkChore, false) >= 0) {
 				_walkCostume->fadeChoreOut(_walkChore, 150);
-				_restCostume->fadeChoreIn(_restChore, 150);
+
+				if (_restChore >= 0) {
+					_restCostume->fadeChoreIn(_restChore, 150);
+				}
 			}
 		}
 	}
