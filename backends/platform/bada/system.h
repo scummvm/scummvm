@@ -33,16 +33,17 @@
 #include "config.h"
 #include "common/scummsys.h"
 #include "common/events.h"
-#include "backends/modular-backend.h"
 #include "base/main.h"
+#include "backends/modular-backend.h"
 #include "backends/mutex/mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "backends/events/default/default-events.h"
 #include "backends/audiocd/default/default-audiocd.h"
+#include "backends/fs/fs-factory.h"
 #include "audio/mixer_intern.h"
-#include "fs-factory.h"
-#include "fs.h"
+
+#include "file.h"
 #include "form.h"
 
 #if defined(_DEBUG)
@@ -58,7 +59,7 @@
 BadaAppForm* systemStart(Osp::App::Application* app);
 void systemError(const char* format, ...);
 
-#define USER_MESSAGE_HALT 1000
+#define USER_MESSAGE_EXIT 1000
 
 //
 // BadaSystem
