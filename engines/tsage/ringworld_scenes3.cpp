@@ -1475,24 +1475,23 @@ void Scene2100::Object2::doAction(int action) {
 	case CURSOR_TALK:
 		if (_globals->getFlag(72)) {
 			_globals->_player.disableControl();
-			if (!_globals->getFlag(52))
+			if (!_globals->getFlag(52)) {
+				scene->_sceneMode = 2111;
 				scene->setAction(&scene->_sequenceManager, scene, 2111, NULL);
-			else {
+			} else {
 				scene->_sceneMode = _globals->getFlag(53) ? 2112 : 2110;
 				scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, NULL);
 			}
-		} else {
-			if (_globals->getFlag(14))
+		} else if (_globals->getFlag(13)) {
+				SceneItem::display2(2100, 31);
+		} else if (_globals->getFlag(14)) {
 				SceneItem::display2(2100, 32);
-			else {
+		} else {
 				_globals->setFlag(14);
 				_globals->_player.disableControl();
 				scene->_sceneMode = 2108;
 				scene->setAction(&scene->_sequenceManager, scene, 2109, NULL);
-			}
 		}
-
-		scene->setAction(&scene->_action4);
 		break;
 	default:
 		SceneHotspot::doAction(action);
