@@ -57,6 +57,7 @@
 #include "common/endian.h"
 #include "common/rect.h"
 #include "common/macresman.h"
+#include "common/random.h"
 
 struct ADGameDescription;
 
@@ -99,8 +100,7 @@ private:
 	bool loadWorld(Common::MacResManager *resMan);
 
 public:
-	// We need random numbers
-	Common::RandomSource _rnd;
+	Common::RandomSource *_rnd;
 
 	World *_world;
 

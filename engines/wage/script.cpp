@@ -208,17 +208,17 @@ Script::Operand *Script::readOperand() {
 	case 0xC3: // MONSTER@
 		return new Operand(_callbacks->_monster, Operand::CHR);
 	case 0xC4: // RANDOMSCN@
-		return new Operand(_world->_orderedScenes[_callbacks->_rnd.getRandomNumber(_world->_orderedScenes.size())], Operand::SCENE);
+		return new Operand(_world->_orderedScenes[_callbacks->_rnd->getRandomNumber(_world->_orderedScenes.size())], Operand::SCENE);
 	case 0xC5: // RANDOMCHR@
-		return new Operand(_world->_orderedChrs[_callbacks->_rnd.getRandomNumber(_world->_orderedChrs.size())], Operand::CHR);
+		return new Operand(_world->_orderedChrs[_callbacks->_rnd->getRandomNumber(_world->_orderedChrs.size())], Operand::CHR);
 	case 0xC6: // RANDOMOBJ@
-		return new Operand(_world->_orderedObjs[_callbacks->_rnd.getRandomNumber(_world->_orderedObjs.size())], Operand::OBJ);
+		return new Operand(_world->_orderedObjs[_callbacks->_rnd->getRandomNumber(_world->_orderedObjs.size())], Operand::OBJ);
 	case 0xB0: // VISITS#
 		return new Operand(_world->_player->_context._visits, Operand::NUMBER);
 	case 0xB1: // RANDOM# for Star Trek, but VISITS# for some other games?
-		return new Operand(1 + _callbacks->_rnd.getRandomNumber(100), Operand::NUMBER);
+		return new Operand(1 + _callbacks->_rnd->getRandomNumber(100), Operand::NUMBER);
 	case 0xB5: // RANDOM# // A random number between 1 and 100.
-		return new Operand(1 + _callbacks->_rnd.getRandomNumber(100), Operand::NUMBER);
+		return new Operand(1 + _callbacks->_rnd->getRandomNumber(100), Operand::NUMBER);
 	case 0xB2: // LOOP#
 		return new Operand(_loopCount, Operand::NUMBER);
 	case 0xB3: // VICTORY#
