@@ -74,7 +74,6 @@ WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(sy
 }
  
 WageEngine::~WageEngine() {
-	// Dispose your resources here
 	debug("WageEngine::~WageEngine()");
  
 	DebugMan.clearAllDebugChannels();
@@ -82,16 +81,14 @@ WageEngine::~WageEngine() {
 }
  
 Common::Error WageEngine::run() {
-	// Initialize graphics using following:
 	initGraphics(320, 200, false);
  
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
  
-	// Additional setup.
 	debug("WageEngine::init");
  
-	// Your main even loop should be (invoked from) here.
+	// Your main event loop should be (invoked from) here.
 	_resManager = new Common::MacResManager();
 	_resManager->open(getGameFile());
 
