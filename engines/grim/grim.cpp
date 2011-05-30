@@ -1134,6 +1134,9 @@ void GrimEngine::savegameRestore() {
 	delete _currScene;
 	_currScene = NULL;
 
+	killTextObjects();
+	killPrimitiveObjects();
+
 	restoreObjects(_colors, 'COLR');
 	restoreBitmaps();
 	restoreFonts();
