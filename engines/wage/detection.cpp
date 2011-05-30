@@ -66,6 +66,10 @@ static const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace Wage
 
+static const char *directoryGlobs[] = {
+        0
+};
+
 static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)Wage::gameDescriptions,
@@ -84,7 +88,11 @@ static const ADParams detectionParams = {
 	// Flags
 	0,
 	// Additional GUI options (for every game}
-	Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI
+	Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI,
+        // Maximum directory depth
+        0,
+        // List of directory globs
+        directoryGlobs
 };
 
 class WageMetaEngine : public AdvancedMetaEngine {
