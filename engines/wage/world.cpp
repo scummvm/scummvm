@@ -71,21 +71,21 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	byte *res;
 	Common::MacResIDArray::const_iterator iter;
 
-	if ((resArray = resMan->getResIDArray("GCOD")).size() == 0)
+	if ((resArray = resMan->getResIDArray(MKTAG('G','C','O','D'))).size() == 0)
 		return false;
 
 	// Load global script
-	res = resMan->getResource("GCOD", resArray[0], &resSize);
+	res = resMan->getResource(MKTAG('G','C','O','D'), resArray[0], &resSize);
 	_globalScript = new Script(res, resSize);
 
 	// Load main configuration
-	if ((resArray = resMan->getResIDArray("VERS")).size() == 0)
+	if ((resArray = resMan->getResIDArray(MKTAG('V','E','R','S'))).size() == 0)
 		return false;
 
 	if (resArray.size() > 1)
 		warning("Too many VERS resources");
 
-	res = resMan->getResource("VERS", resArray[0], &resSize);
+	res = resMan->getResource(MKTAG('V','E','R','S'), resArray[0], &resSize);
 
 	Common::MemoryReadStream readS(res, resSize);
 	readS.skip(10);
@@ -106,16 +106,16 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	free(res);
 
 	// Load scenes
-	resArray = resMan->getResIDArray("ASCN");
+	resArray = resMan->getResIDArray(MKTAG('A','S','C','N'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = resMan->getResource("ASCN", *iter, &resSize);
-		Scene *scene = new Scene(resMan->getResName("ASCN", *iter), res, resSize);
+		res = resMan->getResource(MKTAG('A','S','C','N'), *iter, &resSize);
+		Scene *scene = new Scene(resMan->getResName(MKTAG('A','S','C','N'), *iter), res, resSize);
 
-		res = resMan->getResource("ACOD", *iter, &resSize);
+		res = resMan->getResource(MKTAG('A','C','O','D'), *iter, &resSize);
 		if (res != NULL)
 			scene->_script = new Script(res, resSize);
 
-		res = resMan->getResource("ATXT", *iter, &resSize);
+		res = resMan->getResource(MKTAG('A','T','X','T'), *iter, &resSize);
 		if (res != NULL) {
 			Common::MemoryReadStream readT(res, resSize);
 			scene->_textBounds = readRect(readT);
@@ -134,17 +134,17 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	}
 	
 	// Load Objects
-	resArray = resMan->getResIDArray("AOBJ");
+	resArray = resMan->getResIDArray(MKTAG('A','O','B','J'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = resMan->getResource("AOBJ", *iter, &resSize);
-		addObj(new Obj(resMan->getResName("AOBJ", *iter), res, resSize));
+		res = resMan->getResource(MKTAG('A','O','B','J'), *iter, &resSize);
+		addObj(new Obj(resMan->getResName(MKTAG('A','O','B','J'), *iter), res, resSize));
 	}
 
 	// Load Characters
-	resArray = resMan->getResIDArray("ACHR");
+	resArray = resMan->getResIDArray(MKTAG('A','C','H','R'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = resMan->getResource("ACHR", *iter, &resSize);
-		Chr *chr = new Chr(resMan->getResName("ACHR", *iter), res, resSize);
+		res = resMan->getResource(MKTAG('A','C','H','R'), *iter, &resSize);
+		Chr *chr = new Chr(resMan->getResName(MKTAG('A','C','H','R'), *iter), res, resSize);
 
 		addChr(chr);
 		// TODO: What if there's more than one player character?
@@ -153,10 +153,10 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	}
 
 	// Load Sounds
-	resArray = resMan->getResIDArray("ASND");
+	resArray = resMan->getResIDArray(MKTAG('A','S','N','D'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = resMan->getResource("ASND", *iter, &resSize);
-		addSound(new Sound(resMan->getResName("ASND", *iter), res, resSize));
+		res = resMan->getResource(MKTAG('A','S','N','D'), *iter, &resSize);
+		addSound(new Sound(resMan->getResName(MKTAG('A','S','N','D')), *iter), res, resSize));
 	}
 	
 	if (_soundLibrary1.size() > 0) {
@@ -167,7 +167,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	}
 
 	// Load Patterns
-	res = resMan->getResource("PAT#", 900, &resSize);
+	res = resMan->getResource(MKTAG('P','A','T','#'), 900, &resSize);
 	if (res != NULL) {
 		Common::MemoryReadStream readP(res, resSize);
 		int count = readP.readUint16BE();
@@ -203,10 +203,10 @@ void World::loadExternalSounds(String fname) {
 	byte *res;
 	Common::MacResIDArray::const_iterator iter;
 
-	resArray = resMan->getResIDArray("ASND");
+	resArray = resMan->getResIDArray(MKTAG('A','S','N','D'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = resMan->getResource("ASND", *iter, &resSize);
-		addSound(new Sound(resMan->getResName("ASND", *iter), res, resSize));
+		res = resMan->getResource(MKTAG('A','S','N','D'), *iter, &resSize);
+		addSound(new Sound(resMan->getResName(MKTAG('A','S','N','D'), *iter), res, resSize));
 	}
 }
 
