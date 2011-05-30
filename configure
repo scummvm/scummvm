@@ -2304,10 +2304,7 @@ case $_backend in
 		esac
 		;;
 	wince)
-		INCLUDES="$INCLUDES "'-I$(srcdir)'
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/wince'
-		INCLUDES="$INCLUDES "'-I$(srcdir)/engines'
-		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/wince/missing/gcc'
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/wince/CEgui'
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/wince/CEkeys'
 		LIBS="$LIBS -static -lSDL"
