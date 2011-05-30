@@ -207,6 +207,11 @@ void BadaSystem::initBackend() {
     ConfMan.set("savepath", "/Home");
   }
 
+	ConfMan.registerDefault("fullscreen", true);
+	ConfMan.registerDefault("aspect_ratio", true);
+
+  Osp::System::SystemTime::GetTicks(epoch);
+
   if (E_SUCCESS != initModules()) {
     systemError("initModules failed");
   }
@@ -222,9 +227,10 @@ bool BadaSystem::pollEvent(Common::Event& event) {
 }
 
 uint32 BadaSystem::getMillis() {
-  long long ticks = 0;
+  long long result, ticks = 0;
   Osp::System::SystemTime::GetTicks(ticks);
-  return ticks;
+  result = ticks - epoch;
+  return result;
 }
 
 void BadaSystem::delayMillis(uint msecs) {

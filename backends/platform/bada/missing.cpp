@@ -47,8 +47,21 @@ void __assert_func(const char* file, int line,
               file, line, func, err);
 }
 
-void voidFunc(void* file, const char* format, ...) {
-  // empty
+void stderr_fprintf(void*, const char* format, ...) {
+  va_list ap;
+  char buffer[BUF_SIZE];
+
+  va_start(ap, format);
+  vsnprintf(buffer, sizeof(buffer), format, ap);
+  va_end(ap);
+
+  AppLog(buffer);
+}
+
+void stderr_vfprintf(void*, const char* format, va_list ap) {
+  char buffer[BUF_SIZE];
+  int result = vsnprintf(buffer, sizeof(buffer), format, ap);
+  AppLog(buffer);
 }
 
 int printf(const char* format, ...) {
