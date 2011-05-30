@@ -162,11 +162,6 @@ result BadaSystem::initModules() {
     return E_OUT_OF_MEMORY;
   }
 
-  _eventManager = new DefaultEventManager(this);
-  if (!_eventManager) {
-    return E_OUT_OF_MEMORY;
-  }
-
   _savefileManager = new BadaSaveFileManager();
   if (!_savefileManager) {
     return E_OUT_OF_MEMORY;
@@ -174,6 +169,12 @@ result BadaSystem::initModules() {
 
   _graphicsManager = (GraphicsManager*) new BadaGraphicsManager(appForm);
   if (!_graphicsManager) {
+    return E_OUT_OF_MEMORY;
+  }
+
+  // depends on _graphicsManager when ENABLE_VKEYBD enabled
+  _eventManager = new DefaultEventManager(this); 
+  if (!_eventManager) {
     return E_OUT_OF_MEMORY;
   }
 
@@ -187,7 +188,7 @@ result BadaSystem::initModules() {
     return E_OUT_OF_MEMORY;
   }
 
-  ((Audio::MixerImpl*) _mixer)->setReady(false);
+  ((Audio::MixerImpl*) _mixer)->setReady(true);
   logLeaving();
   return E_SUCCESS;
 }
@@ -198,8 +199,13 @@ void BadaSystem::initBackend() {
   // allow translations to be found
   ConfMan.set("themepath", "/Res");
 
+  // allow virtual keypad pack to be found
+  ConfMan.set("vkeybdpath", "/Res/--vkeybd_default");
+
   // set default save path to writable area
-  ConfMan.set("savepath", "/Home");
+  if (!ConfMan.hasKey("savepath")) {
+    ConfMan.set("savepath", "/Home");
+  }
 
   if (E_SUCCESS != initModules()) {
     systemError("initModules failed");
