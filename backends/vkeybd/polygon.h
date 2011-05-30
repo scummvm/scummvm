@@ -23,9 +23,10 @@
 #ifndef COMMON_POLYGON_H
 #define COMMON_POLYGON_H
 
+#include "common/scummsys.h"
+
 #ifdef ENABLE_VKEYBD
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
 

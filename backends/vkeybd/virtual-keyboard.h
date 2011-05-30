@@ -23,11 +23,12 @@
 #ifndef COMMON_VIRTUAL_KEYBOARD_H
 #define COMMON_VIRTUAL_KEYBOARD_H
 
+#include "common/scummsys.h"
+
 #ifdef ENABLE_VKEYBD
 
 class OSystem;
 
-#include "common/scummsys.h"
 #include "common/events.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"

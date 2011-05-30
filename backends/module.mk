@@ -7,20 +7,19 @@ MODULE_OBJS := \
 	events/default/default-events.o \
 	fs/abstract-fs.o \
 	fs/stdiostream.o \
-	graphics/opengl/glerrorcheck.o \
-	graphics/opengl/gltexture.o \
-	graphics/opengl/opengl-graphics.o \
-	graphics/openglsdl/openglsdl-graphics.o \
-	keymapper/action.o \
-	keymapper/keymap.o \
-	keymapper/keymapper.o \
-	keymapper/remap-dialog.o \
 	log/log.o \
 	midi/alsa.o \
 	midi/dmedia.o \
 	midi/seq.o \
 	midi/stmidi.o \
 	midi/timidity.o \
+	saves/savefile.o \
+	saves/default/default-saves.o \
+	timer/default/default-timer.o
+
+
+ifdef USE_ELF_LOADER
+MODULE_OBJS := \
 	plugins/elf/arm-loader.o \
 	plugins/elf/elf-loader.o \
 	plugins/elf/elf-provider.o \
@@ -28,15 +27,33 @@ MODULE_OBJS := \
 	plugins/elf/mips-loader.o \
 	plugins/elf/ppc-loader.o \
 	plugins/elf/shorts-segment-manager.o \
-	plugins/elf/version.o \
-	saves/savefile.o \
-	saves/default/default-saves.o \
-	timer/default/default-timer.o \
+	plugins/elf/version.o
+endif
+
+ifdef ENABLE_KEYMAPPER
+MODULE_OBJS := \
+	keymapper/action.o \
+	keymapper/keymap.o \
+	keymapper/keymapper.o \
+	keymapper/remap-dialog.o
+endif
+
+ifdef USE_OPENGL
+MODULE_OBJS := \
+	graphics/opengl/glerrorcheck.o \
+	graphics/opengl/gltexture.o \
+	graphics/opengl/opengl-graphics.o \
+	graphics/openglsdl/openglsdl-graphics.o
+endif
+
+ifdef ENABLE_VKEYBD
+MODULE_OBJS := \
 	vkeybd/image-map.o \
 	vkeybd/polygon.o \
 	vkeybd/virtual-keyboard.o \
 	vkeybd/virtual-keyboard-gui.o \
 	vkeybd/virtual-keyboard-parser.o
+endif
 
 # SDL specific source files.
 # We cannot just check $BACKEND = sdl, as various other backends

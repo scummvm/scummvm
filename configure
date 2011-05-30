@@ -2571,14 +2571,13 @@ fi
 #
 # Set up some common plugin settings in config.h and config.mk, if enabled
 #
+define_in_config_if_yes "$_dynamic_modules" 'DYNAMIC_MODULES'
+
 if test "$_dynamic_modules" = yes ; then
 	add_line_to_config_h "#define PLUGIN_PREFIX	\"$_plugin_prefix\""
 	add_line_to_config_h "#define PLUGIN_SUFFIX	\"$_plugin_suffix\""
 	add_line_to_config_mk "PLUGIN_PREFIX := $_plugin_prefix"
 	add_line_to_config_mk "PLUGIN_SUFFIX := $_plugin_suffix"
-
-	add_line_to_config_mk "DYNAMIC_MODULES := 1"
-	DEFINES="$DEFINES -DDYNAMIC_MODULES"
 fi
 
 
@@ -3088,12 +3087,8 @@ define_in_config_if_yes $_nasm 'USE_NASM'
 #
 # Enable vkeybd / keymapper
 #
-if test "$_vkeybd" = yes ; then
-	DEFINES="$DEFINES -DENABLE_VKEYBD"
-fi
-if test "$_keymapper" = yes ; then
-	DEFINES="$DEFINES -DENABLE_KEYMAPPER"
-fi
+define_in_config_if_yes $_vkeybd 'ENABLE_VKEYBD'
+define_in_config_if_yes $_keymapper 'ENABLE_KEYMAPPER'
 
 # Check whether to build translation support
 #
