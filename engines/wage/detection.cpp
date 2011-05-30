@@ -138,7 +138,7 @@ bool WageMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 SaveStateList WageMetaEngine::listSaves(const char *target) const {
 	const uint32 WAGEflag = MKTAG('W','A','G','E');
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringList filenames;
+	Common::StringArray filenames;
 	char saveDesc[31];
 	Common::String pattern = target;
 	pattern += ".???";
@@ -147,7 +147,7 @@ SaveStateList WageMetaEngine::listSaves(const char *target) const {
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
-	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 3);
 
