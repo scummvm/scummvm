@@ -92,7 +92,8 @@ Common::Error WageEngine::run() {
 	debug("WageEngine::init");
  
 	// Your main even loop should be (invoked from) here.
-	_resManager = new Common::MacResManager(getGameFile());
+	_resManager = new Common::MacResManager();
+	_resManager->open(getGameFile());
 
 	_world = new World();
 
