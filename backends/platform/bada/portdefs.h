@@ -40,9 +40,11 @@
 C_LINKAGE_BEGIN
 
 // overcome fprintf logging in xmlparser.cpp
+// the bada fprintf does not support stderr/stdout
 // OSystem::logMessage is overridden
 
-void voidFunc(void*, const char*, ...);
+void stderr_fprintf(void*, const char* format, ...);
+void stderr_vfprintf(void*, const char* format, va_list ap);
 
 #undef fprintf
 #undef vfprintf
@@ -52,20 +54,20 @@ void voidFunc(void*, const char*, ...);
 #undef fputs
 #undef fflush
 
-#define fprintf voidFunc
-#define vfprintf voidFunc
 #define FILE void
 #define stderr (void*)0
 #define stdout (void*)1
 #define fputs(str, file)
 #define fflush(file)
 #define sscanf simple_sscanf
+#define fprintf stderr_fprintf
+#define vfprintf stderr_vfprintf
 
 int printf(const char* format, ...);
 int sprintf(char* str, const char* format, ...);
 int simple_sscanf(const char* buffer, const char* format, ...);
 char* strdup(const char* s1);
-int vsprintf(char* str, const char* format, va_list arg);
+int vsprintf(char* str, const char* format, va_list ap);
 
 C_LINKAGE_END
 

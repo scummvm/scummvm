@@ -57,8 +57,6 @@ struct BadaGraphicsManager : public OpenGLGraphicsManager {
   EGLSurface eglSurface;
   EGLConfig  eglConfig;
   EGLContext eglContext;
-	EGLSurface pixmapSurface;
-	Bitmap* pBitmap;
 };
 
 #endif

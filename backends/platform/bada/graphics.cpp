@@ -32,11 +32,10 @@ BadaGraphicsManager::BadaGraphicsManager(BadaAppForm* appForm) :
   eglDisplay(EGL_DEFAULT_DISPLAY),
   eglSurface(EGL_NO_SURFACE),
   eglConfig(0),
-  eglContext(EGL_NO_CONTEXT),
-  pixmapSurface(EGL_NO_SURFACE),
-  pBitmap(null) {
+  eglContext(EGL_NO_CONTEXT) {
   assert(appForm != null);
   _videoMode.fullscreen = true;
+  _videoMode.antialiasing = true;
 }
 
 Common::List<Graphics::PixelFormat> BadaGraphicsManager::getSupportedFormats() const {
@@ -157,67 +156,24 @@ bool BadaGraphicsManager::loadGFXMode() {
 
   int x, y, width, height;
   appForm->GetBounds(x, y, width, height);
+  _videoMode.overlayWidth = _videoMode.hardwareWidth = width;
+  _videoMode.overlayHeight = _videoMode.hardwareHeight = height;
+  _videoMode.scaleFactor = 3; // for proportional sized cursor in the launcher
 
-  EGLint surfaceType;
-  eglGetConfigAttrib(eglDisplay, eglConfig, EGL_SURFACE_TYPE, &surfaceType);
-
-  if ((surfaceType & EGL_PIXMAP_BIT) > 0) {
-    // can also just draw directly to the eglSurface so not 
-    // sure what the advantage of using this is
-    pBitmap = new Bitmap();
-    result r = pBitmap->Construct(Osp::Graphics::Rectangle(0, 0, width, height));
-    if (!IsFailed(r)) {
-      pixmapSurface = eglCreatePixmapSurface(eglDisplay, eglConfig, (NativePixmapType)pBitmap, null);
-      if (pixmapSurface == EGL_NO_SURFACE) {
-        delete pBitmap;
-        pBitmap = null;
-      }
-    }
-  }
-
-  assert(pixmapSurface != EGL_NO_SURFACE);
-
-  _videoMode.screenWidth = _videoMode.overlayWidth = _videoMode.hardwareWidth = width;
-  _videoMode.screenHeight = _videoMode.overlayHeight = _videoMode.hardwareHeight = height;
-  AppLog("screen size: %dx%d", _videoMode.screenWidth, _videoMode.screenHeight);
-
+  AppLog("screen size: %dx%d", _videoMode.hardwareWidth, _videoMode.hardwareHeight);
   return OpenGLGraphicsManager::loadGFXMode();
 }
 
 void BadaGraphicsManager::internUpdateScreen() {
-  eglMakeCurrent(eglDisplay, pixmapSurface, pixmapSurface, eglContext);
   OpenGLGraphicsManager::internUpdateScreen();
-
-  // these might not be needed
-  glFlush();
-  glFinish();
   eglSwapBuffers(eglDisplay, eglSurface);
-
-  eglUpdateBufferOSP(eglDisplay, pixmapSurface);
-  if (pBitmap) {
-    Rectangle dstRect(0, 0, _videoMode.screenWidth, _videoMode.screenHeight);
-    Canvas canvas;
-    canvas.Construct();
-    canvas.DrawBitmap(dstRect, *pBitmap);
-    canvas.Show();
-  }
 }
 
 void BadaGraphicsManager::unloadGFXMode() {
   logEntered();
 
-  if (pBitmap) {
-    delete pBitmap;
-    pBitmap = null;
-  }
-
   if (EGL_NO_DISPLAY != eglDisplay) {
     eglMakeCurrent(eglDisplay, null, null, null);
-
-    if (pixmapSurface != EGL_NO_SURFACE) {
-      eglDestroySurface(eglDisplay, pixmapSurface);
-      pixmapSurface = EGL_NO_SURFACE;
-    }
 
     if (eglContext != EGL_NO_CONTEXT) {
       eglDestroyContext(eglDisplay, eglContext);
