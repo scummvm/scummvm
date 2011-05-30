@@ -49,12 +49,13 @@
  */
 
 #include "wage/wage.h"
-#include "common/macresman.h"
 #include "wage/entities.h"
 #include "wage/script.h"
 #include "wage/world.h"
 
-#include "common/stream.h"
+#include "common/file.h"
+#include "common/macresman.h"
+#include "common/memstream.h"
 
 namespace Wage {
 
