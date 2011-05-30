@@ -136,7 +136,7 @@ bool WageMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 }
 
 SaveStateList WageMetaEngine::listSaves(const char *target) const {
-	const uint32 WAGEflag = MKID_BE('WAGE');
+	const uint32 WAGEflag = MKTAG('W','A','G','E');
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringList filenames;
 	char saveDesc[31];
