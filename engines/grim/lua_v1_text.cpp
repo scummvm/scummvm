@@ -46,7 +46,12 @@ void L1_KillTextObject() {
 
 	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKTAG('T', 'E', 'X', 'T')) {
 		TextObject *textObject = gettextobject(textObj);
-		g_grim->killTextObject(textObject);
+		// Must check that, or else when setting in don's computer a response right
+		// after another one it will crash, since co.computer.stop_interface() will
+		// be called two times.
+		if (textObject) {
+			g_grim->killTextObject(textObject);
+		}
 	}
 }
 
