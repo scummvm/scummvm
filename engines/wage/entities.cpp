@@ -52,7 +52,7 @@
 #include "wage/entities.h"
 #include "wage/design.h"
 
-#include "common/stream.h"
+#include "common/memstream.h"
 
 namespace Wage {
 
