@@ -51,6 +51,7 @@
 #include "common/scummsys.h"
  
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/fs.h"
@@ -73,8 +74,7 @@ WageEngine::~WageEngine() {
 	// Dispose your resources here
 	debug("WageEngine::~WageEngine()");
  
-	// Remove all of our debug levels here
-	Common::clearAllDebugChannels();
+	DebugMan.clearAllDebugChannels();
 	delete _rnd;
 }
  
