@@ -41,10 +41,7 @@ MODULE_OBJS := \
 # SDL specific source files.
 # We cannot just check $BACKEND = sdl, as various other backends
 # derive from the SDL backend, and they all need the following files.
-# TODO: Add SDL_BACKEND to config.mk; this would match the fact that
-# we also add -DSDL_BACKEND to the DEFINES.
-# However, the latter is only done for *most* SDL based stuff, not always
-# so we really should unify the relevant code in configure.
+ifdef SDL_BACKEND
 MODULE_OBJS += \
 	audiocd/sdl/sdl-audiocd.o \
 	events/sdl/sdl-events.o \
@@ -54,6 +51,7 @@ MODULE_OBJS += \
 	mutex/sdl/sdl-mutex.o \
 	plugins/sdl/sdl-provider.o \
 	timer/sdl/sdl-timer.o
+endif
 
 ifdef POSIX
 MODULE_OBJS += \

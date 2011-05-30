@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #ifdef WIN32
 #if defined(ARRAYSIZE) && !defined(_WINDOWS_)
 #undef ARRAYSIZE

@@ -2287,8 +2287,9 @@ case $_backend in
 	webos)
 		# There is no sdl-config in the WebOS PDK so we don't use find_sdlconfig here.
 		LIBS="$LIBS -lSDL"
-		DEFINES="$DEFINES -DSDL_BACKEND"
 		DEFINES="$DEFINES -DWEBOS"
+		DEFINES="$DEFINES -DSDL_BACKEND"
+		add_line_to_config_mk "SDL_BACKEND = 1"
 		MODULES="$MODULES backends/platform/sdl"
 		;;
 	wii)
@@ -2309,6 +2310,7 @@ case $_backend in
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/wince/CEkeys'
 		LIBS="$LIBS -static -lSDL"
 		DEFINES="$DEFINES -DSDL_BACKEND"
+		add_line_to_config_mk "SDL_BACKEND = 1"
 		;;
 	sdl)
 		;;
@@ -2328,6 +2330,7 @@ case $_backend in
 		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		DEFINES="$DEFINES -DSDL_BACKEND"
+		add_line_to_config_mk "SDL_BACKEND = 1"
 		;;
 esac
 
