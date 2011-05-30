@@ -66,12 +66,12 @@ WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(sy
 
 	_aim = -1;
  
-	printf("WageEngine::WageEngine\n");
+	debug("WageEngine::WageEngine()");
 }
  
 WageEngine::~WageEngine() {
 	// Dispose your resources here
-	printf("WageEngine::~WageEngine\n");
+	debug("WageEngine::~WageEngine()");
  
 	// Remove all of our debug levels here
 	Common::clearAllDebugChannels();
@@ -86,7 +86,7 @@ Common::Error WageEngine::run() {
 	_console = new Console(this);
  
 	// Additional setup.
-	printf("WageEngine::init\n");
+	debug("WageEngine::init");
  
 	// Your main even loop should be (invoked from) here.
 	_resManager = new Common::MacResManager(getGameFile());
