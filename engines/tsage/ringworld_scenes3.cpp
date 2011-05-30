@@ -2505,7 +2505,7 @@ void Scene2150::postInit(SceneObjectList *OwnerList) {
 	_hotspot7.setVisage(2152);
 	_hotspot7._frame = 1;
 	_hotspot7._strip = 2;
-	_hotspot7.animate(ANIM_MODE_8, NULL);
+	_hotspot7.animate(ANIM_MODE_8, NULL, NULL);
 	_hotspot7.setPosition(Common::Point(122, 62));
 	_hotspot7.changeZoom(100);
 	_hotspot7.fixPriority(76);
