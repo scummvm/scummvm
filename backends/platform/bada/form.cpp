@@ -25,11 +25,12 @@
 #include "form.h"
 #include "system.h"
 
+using namespace Osp::App;
 using namespace Osp::Base;
 using namespace Osp::Base::Runtime;
-using namespace Osp::Ui;
 using namespace Osp::Graphics;
-using namespace Osp::App;
+using namespace Osp::Ui;
+using namespace Osp::Ui::Controls;
 
 //
 // BadaAppForm
@@ -70,6 +71,7 @@ result BadaAppForm::Construct() {
     }
     if (pThread != null) {
       delete pThread;
+      pThread = null;
     }
   }
   else {
@@ -147,9 +149,21 @@ Object* BadaAppForm::Run(void) {
   return null;
 }
 
+// TODO: use touchEventInfo, eg Flicked() to map commonly used keycodes
+// such as the escape key, long press could be EVENT_MAINMENU etc.
+// Can't experiment with this until the code is running on the device
+
 void BadaAppForm::OnTouchDoublePressed(const Control& source, 
                                        const Point& currentPosition, 
                                        const TouchEventInfo& touchInfo) {
+  // display the virtual keypad
+  Common::Event e;
+  e.type = Common::EVENT_KEYDOWN;
+  e.kbd.keycode = Common::KEYCODE_F7;
+
+  eventQueueLock->Acquire();
+  eventQueue.push(e);
+  eventQueueLock->Release();
 }
 
 void BadaAppForm::OnTouchFocusIn(const Control& source, 

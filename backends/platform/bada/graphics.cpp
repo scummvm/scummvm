@@ -58,21 +58,10 @@ bool BadaGraphicsManager::hasFeature(OSystem::Feature f) {
 }
 
 void BadaGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
-  logEntered();
-  switch (f) {
-  case OSystem::kFeatureVirtualKeyboard:
-    // TODO
-    // http://forums.badadev.com/viewtopic.php?f=6&t=258
-    break;
-  default:
-    OpenGLGraphicsManager::setFeatureState(f, enable);
-    break;
-  }
+  OpenGLGraphicsManager::setFeatureState(f, enable);
 }
 
 void BadaGraphicsManager::setInternalMousePosition(int x, int y) {
-  logEntered();
-
 }
 
 void BadaGraphicsManager::updateScreen() {
@@ -191,9 +180,6 @@ bool BadaGraphicsManager::loadGFXMode() {
   _videoMode.screenWidth = _videoMode.overlayWidth = _videoMode.hardwareWidth = width;
   _videoMode.screenHeight = _videoMode.overlayHeight = _videoMode.hardwareHeight = height;
   AppLog("screen size: %dx%d", _videoMode.screenWidth, _videoMode.screenHeight);
-
-  _screenFormat = Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0); 
-  _videoMode.format = _screenFormat; // RGBA444
 
   return OpenGLGraphicsManager::loadGFXMode();
 }

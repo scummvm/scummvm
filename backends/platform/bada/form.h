@@ -28,6 +28,7 @@
 #include <FSystem.h>
 #include <FBase.h>
 #include <FUiITouchEventListener.h>
+#include <FUiITextEventListener.h>
 
 #include "config.h"
 #include "common/scummsys.h"
@@ -80,10 +81,10 @@ class BadaAppForm : public Osp::Ui::Controls::Form,
   void pushEvent(Common::EventType type,
                  const Osp::Graphics::Point& currentPosition);
 
+  // event handling
   Osp::Base::Runtime::Thread* pThread;
   Osp::Base::Runtime::Mutex* eventQueueLock;
   Common::Queue<Common::Event> eventQueue;
 };
-
 
 #endif

@@ -24,6 +24,8 @@
 #include "system.h"
 #include "application.h"
 
+#include "engines/engine.h"
+
 using namespace Osp::Base;
 using namespace Osp::Base::Runtime;
 using namespace Osp::Graphics;
@@ -51,6 +53,9 @@ bool BadaScummVM::OnAppInitializing(AppRegistry& appRegistry) {
 
 bool BadaScummVM::OnAppTerminating(AppRegistry& appRegistry, 
                                    bool forcedTermination) {
+  if (g_engine) {
+    g_engine->quitGame();
+  }
 	return true;
 }
 
@@ -91,11 +96,15 @@ void BadaScummVM::OnKeyLongPressed(const Control& source, KeyCode keyCode) {
 }
 
 void BadaScummVM::OnScreenOn(void) {
-
+  if (g_engine) {
+    g_engine->pauseEngine(false);
+  }
 }
 
 void BadaScummVM::OnScreenOff(void) {
-
+  if (g_engine) {
+    g_engine->pauseEngine(true);
+  }
 }
 
 //
