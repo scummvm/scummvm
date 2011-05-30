@@ -66,17 +66,16 @@ World::World() {
 }
 
 bool World::loadWorld(Common::MacResManager *resMan) {
-	int resSize;
 	Common::MacResIDArray resArray;
-	byte *res;
+	Common::SeekableReadStream *res;
 	Common::MacResIDArray::const_iterator iter;
 
 	if ((resArray = resMan->getResIDArray(MKTAG('G','C','O','D'))).size() == 0)
 		return false;
 
 	// Load global script
-	res = resMan->getResource(MKTAG('G','C','O','D'), resArray[0], &resSize);
-	_globalScript = new Script(res, resSize);
+	res = resMan->getResource(MKTAG('G','C','O','D'), resArray[0]);
+	_globalScript = new Script(res, res->size());
 
 	// Load main configuration
 	if ((resArray = resMan->getResIDArray(MKTAG('V','E','R','S'))).size() == 0)
@@ -85,9 +84,9 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	if (resArray.size() > 1)
 		warning("Too many VERS resources");
 
-	res = resMan->getResource(MKTAG('V','E','R','S'), resArray[0], &resSize);
+	res = resMan->getResource(MKTAG('V','E','R','S'), resArray[0]);
 
-	Common::MemoryReadStream readS(res, resSize);
+	Common::MemoryReadStream readS(res, res->size());
 	readS.skip(10);
 	byte b = readS.readByte();
 	_weaponMenuDisabled = (b != 0);
@@ -108,27 +107,27 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	// Load scenes
 	resArray = resMan->getResIDArray(MKTAG('A','S','C','N'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = resMan->getResource(MKTAG('A','S','C','N'), *iter, &resSize);
-		Scene *scene = new Scene(resMan->getResName(MKTAG('A','S','C','N'), *iter), res, resSize);
+		res = resMan->getResource(MKTAG('A','S','C','N'), *iter);
+		Scene *scene = new Scene(resMan->getResName(MKTAG('A','S','C','N'), *iter), res, res->size());
 
-		res = resMan->getResource(MKTAG('A','C','O','D'), *iter, &resSize);
+		res = resMan->getResource(MKTAG('A','C','O','D'), *iter);
 		if (res != NULL)
-			scene->_script = new Script(res, resSize);
+			scene->_script = new Script(res, res->size());
 
-		res = resMan->getResource(MKTAG('A','T','X','T'), *iter, &resSize);
+		res = resMan->getResource(MKTAG('A','T','X','T'), *iter);
 		if (res != NULL) {
-			Common::MemoryReadStream readT(res, resSize);
+			Common::MemoryReadStream readT(res, res->size());
 			scene->_textBounds = readRect(readT);
 			scene->_fontType = readT.readUint16BE();
 			scene->_fontSize = readT.readUint16BE();
 			
-			for (int i = 12; i < resSize; i++)
+			for (int i = 12; i < res->size(); i++)
 				if (res[i] == 0x0d)
 					res[i] = '\n';
-			String text(&((char*)res)[12], resSize - 12);
+			String text(&((char*)res)[12], res->size() - 12);
 			scene->_text = text;
 
-			free(res);
+			delete res;
 		}
 		addScene(scene);
 	}
@@ -136,15 +135,15 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	// Load Objects
 	resArray = resMan->getResIDArray(MKTAG('A','O','B','J'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = resMan->getResource(MKTAG('A','O','B','J'), *iter, &resSize);
-		addObj(new Obj(resMan->getResName(MKTAG('A','O','B','J'), *iter), res, resSize));
+		res = resMan->getResource(MKTAG('A','O','B','J'), *iter);
+		addObj(new Obj(resMan->getResName(MKTAG('A','O','B','J'), *iter), res, res->size()));
 	}
 
 	// Load Characters
 	resArray = resMan->getResIDArray(MKTAG('A','C','H','R'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = resMan->getResource(MKTAG('A','C','H','R'), *iter, &resSize);
-		Chr *chr = new Chr(resMan->getResName(MKTAG('A','C','H','R'), *iter), res, resSize);
+		res = resMan->getResource(MKTAG('A','C','H','R'), *iter);
+		Chr *chr = new Chr(resMan->getResName(MKTAG('A','C','H','R'), *iter), res, res->size());
 
 		addChr(chr);
 		// TODO: What if there's more than one player character?
@@ -155,8 +154,8 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	// Load Sounds
 	resArray = resMan->getResIDArray(MKTAG('A','S','N','D'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = resMan->getResource(MKTAG('A','S','N','D'), *iter, &resSize);
-		addSound(new Sound(resMan->getResName(MKTAG('A','S','N','D')), *iter), res, resSize));
+		res = resMan->getResource(MKTAG('A','S','N','D'), *iter);
+		addSound(new Sound(resMan->getResName(MKTAG('A','S','N','D')), *iter), res, res->size()));
 	}
 	
 	if (_soundLibrary1.size() > 0) {
@@ -167,9 +166,9 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	}
 
 	// Load Patterns
-	res = resMan->getResource(MKTAG('P','A','T','#'), 900, &resSize);
+	res = resMan->getResource(MKTAG('P','A','T','#'), 900);
 	if (res != NULL) {
-		Common::MemoryReadStream readP(res, resSize);
+		Common::MemoryReadStream readP(res, res->size());
 		int count = readP.readUint16BE();
 		for (int i = 0; i < count; i++) {
 			byte *pattern = (byte *)malloc(8);
@@ -179,7 +178,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 			}
 		}
 		
-		free(res);
+		delete res;
 	}
 
 	return true;
@@ -198,15 +197,14 @@ void World::loadExternalSounds(String fname) {
 	Common::MacResManager *resMan;
 	resMan = new Common::MacResManager(fname);
 
-	int resSize;
 	Common::MacResIDArray resArray;
-	byte *res;
+	Common::SeekableReadStream *res;
 	Common::MacResIDArray::const_iterator iter;
 
 	resArray = resMan->getResIDArray(MKTAG('A','S','N','D'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = resMan->getResource(MKTAG('A','S','N','D'), *iter, &resSize);
-		addSound(new Sound(resMan->getResName(MKTAG('A','S','N','D'), *iter), res, resSize));
+		res = resMan->getResource(MKTAG('A','S','N','D'), *iter);
+		addSound(new Sound(resMan->getResName(MKTAG('A','S','N','D'), *iter), res, res->size()));
 	}
 }
 
