@@ -136,88 +136,47 @@
 //
 #define SCUMMVM_USE_PRAGMA_PACK
 
+//
+// Determine the host endianess and whether memory alignment is required.
+//
+#if !defined(HAVE_CONFIG_H)
+	#if defined(SDL_BACKEND)
+		/* need this for the SDL_BYTEORDER define */
+		#include <SDL_byteorder.h>
 
-#if defined(HAVE_CONFIG_H)
-	// All settings should have been set in config.h
+		#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+		#define SCUMM_LITTLE_ENDIAN
+		#elif SDL_BYTEORDER == SDL_BIG_ENDIAN
+		#define SCUMM_BIG_ENDIAN
+		#else
+		#error Neither SDL_BIG_ENDIAN nor SDL_LIL_ENDIAN is set.
+		#endif
 
-#elif defined(__SYMBIAN32__)
+	#elif defined(__DC__) || \
+		  defined(__DS__) || \
+		  defined(__GP32__) || \
+		  defined(IPHONE) || \
+		  defined(__PLAYSTATION2__) || \
+		  defined(__PSP__) || \
+		  defined(__SYMBIAN32__)
 
-	#define SCUMM_LITTLE_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
+		#define SCUMM_LITTLE_ENDIAN
+		#define SCUMM_NEED_ALIGNMENT
 
-#elif defined(_WIN32_WCE)
+	#elif defined(_WIN32_WCE) || defined(_MSC_VER) || defined(__MINGW32__)
 
-	#define SCUMM_LITTLE_ENDIAN
+		#define SCUMM_LITTLE_ENDIAN
 
-#elif defined(_MSC_VER)
+	#elif defined(__amigaos4__) || defined(__N64__) || defined(__WII__)
 
-	#define SCUMM_LITTLE_ENDIAN
+		#define SCUMM_BIG_ENDIAN
+		#define SCUMM_NEED_ALIGNMENT
 
-#elif defined(__MINGW32__)
-
-	#define SCUMM_LITTLE_ENDIAN
-
-#elif defined(SDL_BACKEND)
-	/* need this for the SDL_BYTEORDER define */
-	#include <SDL_byteorder.h>
-
-	#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-	#define SCUMM_LITTLE_ENDIAN
-	#elif SDL_BYTEORDER == SDL_BIG_ENDIAN
-	#define SCUMM_BIG_ENDIAN
 	#else
-	#error Neither SDL_BIG_ENDIAN nor SDL_LIL_ENDIAN is set.
+
+		#error No system type defined, host endianess unknown.
+
 	#endif
-
-#elif defined(__DC__)
-
-	#define SCUMM_LITTLE_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
-
-#elif defined(__GP32__)
-
-	#define SCUMM_LITTLE_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
-
-#elif defined(__PLAYSTATION2__)
-
-	#define SCUMM_LITTLE_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
-
-#elif defined(__N64__)
-
-	#define SCUMM_BIG_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
-
-#elif defined(__PSP__)
-
-	#define	SCUMM_LITTLE_ENDIAN
-	#define	SCUMM_NEED_ALIGNMENT
-
-#elif defined(__amigaos4__)
-
-	#define	SCUMM_BIG_ENDIAN
-	#define	SCUMM_NEED_ALIGNMENT
-
-#elif defined(__DS__)
-
-	#define SCUMM_NEED_ALIGNMENT
-	#define SCUMM_LITTLE_ENDIAN
-
-#elif defined(__WII__)
-
-	#define	SCUMM_BIG_ENDIAN
-	#define	SCUMM_NEED_ALIGNMENT
-
-#elif defined(IPHONE)
-
-	#define	SCUMM_LITTLE_ENDIAN
-	#define	SCUMM_NEED_ALIGNMENT
-
-
-#else
-	#error No system type defined
-
 #endif
 
 
@@ -284,7 +243,7 @@
 	#if defined(_MSC_VER)
 		#define NORETURN_PRE __declspec(noreturn)
 	#else
-		#define	NORETURN_PRE
+		#define NORETURN_PRE
 	#endif
 #endif
 
@@ -292,7 +251,7 @@
 	#if defined(__GNUC__) || defined(__INTEL_COMPILER)
 		#define NORETURN_POST __attribute__((__noreturn__))
 	#else
-		#define	NORETURN_POST
+		#define NORETURN_POST
 	#endif
 #endif
 
