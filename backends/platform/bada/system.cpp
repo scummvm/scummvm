@@ -200,7 +200,7 @@ void BadaSystem::initBackend() {
   ConfMan.set("themepath", "/Res");
 
   // allow virtual keypad pack to be found
-  ConfMan.set("vkeybdpath", "/Res/--vkeybd_default");
+  ConfMan.set("vkeybdpath", "/Res/vkeybd_default");
 
   // set default save path to writable area
   if (!ConfMan.hasKey("savepath")) {

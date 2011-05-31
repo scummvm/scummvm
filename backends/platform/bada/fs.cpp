@@ -23,6 +23,8 @@
 #include "system.h"
 #include "fs.h"
 
+#define BUFFER_SIZE 128
+
 //
 // BadaFileStream
 //
@@ -48,10 +50,16 @@ public:
   uint32 read(void *dataPtr, uint32 dataSize);
 
 private:
+  byte buffer[BUFFER_SIZE];
+  uint32 bufferIndex;
+  uint32 bufferLength;
   File* file;
 };
 
-BadaFileStream::BadaFileStream(File* ioFile) : file(ioFile) {
+BadaFileStream::BadaFileStream(File* ioFile) : 
+  bufferIndex(0),
+  bufferLength(0),
+  file(ioFile) {
   AppAssert(ioFile != 0);
 }
 
@@ -68,11 +76,11 @@ void BadaFileStream::clearErr() {
 }
 
 bool BadaFileStream::eos() const {
-  return (GetLastResult() == E_END_OF_FILE);
+  return bufferLength == 0 && (GetLastResult() == E_END_OF_FILE);
 }
 
 int32 BadaFileStream::pos() const {
-  return file->Tell();
+  return file->Tell() - (bufferLength - bufferIndex);
 }
 
 int32 BadaFileStream::size() const {
@@ -94,18 +102,64 @@ bool BadaFileStream::seek(int32 offs, int whence) {
     break;
   case SEEK_CUR:
     // set relative to offs
-    result = (E_SUCCESS == file->Seek(FILESEEKPOSITION_CURRENT, offs));
+    if (bufferIndex < bufferLength && bufferIndex > -offs) {
+      // re-position within the buffer
+      bufferIndex += offs;
+      return true;
+    }
+    else {
+      offs -= (bufferLength - bufferIndex);
+      result = (E_SUCCESS == file->Seek(FILESEEKPOSITION_CURRENT, offs));
+    }
     break;
   case SEEK_END:
     // set relative to end - positive will increase the file size
     result = (E_SUCCESS == file->Seek(FILESEEKPOSITION_END, offs));
     break;
   }
+  bufferIndex = bufferLength = 0;
   return result;
 }
 
-uint32 BadaFileStream::read(void *ptr, uint32 len) {
-  return file->Read(ptr, len);
+uint32 BadaFileStream::read(void* ptr, uint32 len) {
+  uint32 result = 0;
+
+  if (bufferIndex < bufferLength) {
+    // use existing buffer
+    uint32 available = bufferLength - bufferIndex;
+    if (len <= available) {
+      // use allocation
+      memcpy((byte*) ptr, &buffer[bufferIndex], len);
+      bufferIndex += len;
+      result = len;
+    }
+    else {
+      // use remaining allocation
+      memcpy((byte*) ptr, &buffer[bufferIndex], available);
+      uint32 remaining = len - available;
+      result = available;
+
+      if (remaining) {
+        result += file->Read(((byte*) ptr) + available, remaining);
+      }
+      bufferIndex = bufferLength = 0;
+    }
+  }
+  else if (len < BUFFER_SIZE) {
+    // allocate and use buffer
+    bufferIndex = 0;
+    bufferLength = file->Read(buffer, BUFFER_SIZE);
+    if (bufferLength) {
+      memcpy((byte*) ptr, buffer, len);
+      result = bufferIndex = len;
+    }
+  }
+  else {
+    result = file->Read((byte*) ptr, len);
+    bufferIndex = bufferLength = 0;
+  }
+
+  return result;
 }
 
 uint32 BadaFileStream::write(const void *ptr, uint32 len) {
@@ -116,8 +170,9 @@ bool BadaFileStream::flush() {
   return (E_SUCCESS == file->Flush());
 }
 
-BadaFileStream *BadaFileStream::makeFromPath(const String &path, bool writeMode) {
+BadaFileStream* BadaFileStream::makeFromPath(const String &path, bool writeMode) {
   File* ioFile = new File();
+  AppLog("Open file %S", path.GetPointer());
 
   result r = ioFile->Construct(path, writeMode ? L"wb" : L"rb", false);
   if (r == E_SUCCESS) {

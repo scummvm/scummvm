@@ -80,7 +80,9 @@ void BadaScummVM::OnBatteryLevelChanged(BatteryLevel batteryLevel) {
 }
 
 void BadaScummVM::OnLowMemory(void) {
-
+  if (g_engine) {
+    g_engine->pauseEngine(true);
+  }
 }
 
 void BadaScummVM::OnKeyPressed(const Control& source, KeyCode keyCode) {
