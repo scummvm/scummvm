@@ -34,6 +34,8 @@
 
 namespace Sci {
 
+// TODO: Code cleanup
+
 #define AVOIDPATH_DYNMEM_STRING "AvoidPath polyline"
 
 #define POLY_LAST_POINT 0x7777
@@ -1174,7 +1176,6 @@ static void change_polygons_opt_0(PathfindingState *s) {
 static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Common::Point start, Common::Point end, int width, int height, int opt) {
 	SegManager *segMan = s->_segMan;
 	Polygon *polygon;
-	int err;
 	int count = 0;
 	PathfindingState *pf_s = new PathfindingState(width, height);
 
@@ -1197,50 +1198,53 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 		}
 	}
 
-	if (opt == 0) {
-		Common::Point intersection;
-
-		// Keyboard support
-		// FIXME: We don't need to dijkstra for keyboard support as we currently do
+	if (opt == 0)
 		change_polygons_opt_0(pf_s);
 
-		// Find nearest intersection
-		err = nearest_intersection(pf_s, start, end, &intersection);
+	Common::Point *new_start = fixup_start_point(pf_s, start);
+	
+	if (!new_start) {
+		warning("AvoidPath: Couldn't fixup start position for pathfinding");
+		delete pf_s;
+		return NULL;
+	}
 
-		if (err == PF_FATAL) {
-			warning("AvoidPath: fatal error finding nearest intersection");
-			delete pf_s;
-			return NULL;
-		}
+	Common::Point *new_end = fixup_end_point(pf_s, end);
+	
+	if (!new_end) {
+		warning("AvoidPath: Couldn't fixup end position for pathfinding");
+		delete new_start;
+		delete pf_s;
+		return NULL;
+	}
 
-		if (err == PF_OK) {
-			// Intersection was found, prepend original start position after pathfinding
-			pf_s->_prependPoint = new Common::Point(start);
-			// Merge new start point into polygon set
-			pf_s->vertex_start = merge_point(pf_s, intersection);
-		} else {
-			// Otherwise we proceed with the original start point
-			pf_s->vertex_start = merge_point(pf_s, start);
+	if (opt == 0) {
+		// Keyboard support. Only the first edge of the path we compute
+		// here matches the path returned by SSCI. This is assumed to be
+		// sufficient as all known use cases only use the first two
+		// vertices of the returned path.
+		// Pharkas uses this mode for a secondary polygon set containing
+		// rectangular polygons used to block an actor's path.
+
+		// If we have a prepended point, we do nothing here as the
+		// actor is in barred territory and should be moved outside of
+		// it ASAP. This matches the behavior of SSCI.
+		if (!pf_s->_prependPoint) {
+			// Actor position is OK, find nearest obstacle.
+			int err = nearest_intersection(pf_s, start, *new_end, new_start);
+
+			if (err == PF_FATAL) {
+				warning("AvoidPath: error finding nearest intersection");
+				delete new_start;
+				delete new_end;
+				delete pf_s;
+				return NULL;
+			}
+
+			if (err == PF_OK)
+				pf_s->_prependPoint = new Common::Point(start);
 		}
-		// Merge end point into polygon set
-		pf_s->vertex_end = merge_point(pf_s, end);
 	} else {
-		Common::Point *new_start = fixup_start_point(pf_s, start);
-
-		if (!new_start) {
-			warning("AvoidPath: Couldn't fixup start position for pathfinding");
-			delete pf_s;
-			return NULL;
-		}
-
-		Common::Point *new_end = fixup_end_point(pf_s, end);
-
-		if (!new_end) {
-			warning("AvoidPath: Couldn't fixup end position for pathfinding");
-			delete pf_s;
-			return NULL;
-		}
-
 		// WORKAROUND LSL5 room 660. Priority glitch due to us choosing a different path
 		// than SSCI. Happens when Patti walks to the control room.
 		if (g_sci->getGameId() == GID_LSL5 && (s->currentRoomNumber() == 660) && (Common::Point(67, 131) == *new_start) && (Common::Point(229, 101) == *new_end)) {
@@ -1248,14 +1252,14 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 			pf_s->_prependPoint = new_start;
 			new_start = new Common::Point(77, 107);
 		}
-
-		// Merge start and end points into polygon set
-		pf_s->vertex_start = merge_point(pf_s, *new_start);
-		pf_s->vertex_end = merge_point(pf_s, *new_end);
-
-		delete new_start;
-		delete new_end;
 	}
+
+	// Merge start and end points into polygon set
+	pf_s->vertex_start = merge_point(pf_s, *new_start);
+	pf_s->vertex_end = merge_point(pf_s, *new_end);
+
+	delete new_start;
+	delete new_end;
 
 	// Allocate and build vertex index
 	pf_s->vertex_index = (Vertex**)malloc(sizeof(Vertex *) * (count + 2));
