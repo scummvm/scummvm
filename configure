@@ -1816,7 +1816,7 @@ case $_host_os in
 		# These compiler options are needed to support the Palm Pixi
 		CXXFLAGS="$CXXFLAGS -mcpu=arm1136jf-s"
 		CXXFLAGS="$CXXFLAGS -mfpu=vfp "
-		CXXFLAGS="$CXXFLAGS mfloat-abi=softfp"
+		CXXFLAGS="$CXXFLAGS -mfloat-abi=softfp"
 		LDFLAGS="$LDFLAGS -L$WEBOS_PDK/device/lib"
 		LDFLAGS="$LDFLAGS -L$WEBOS_PDK/device/usr/lib"
 		LDFLAGS="$LDFLAGS -Wl,--allow-shlib-undefined"
