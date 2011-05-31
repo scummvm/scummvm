@@ -80,7 +80,7 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 	(ENABLE_##ID && !PLUGIN_ENABLED_DYNAMIC(ID))
 
 #define PLUGIN_ENABLED_DYNAMIC(ID) \
-	(ENABLE_##ID && (ENABLE_##ID == DYNAMIC_PLUGIN) && DYNAMIC_MODULES)
+	(ENABLE_##ID && (ENABLE_##ID == DYNAMIC_PLUGIN) && defined(DYNAMIC_MODULES))
 
 // see comments in backends/plugins/elf/elf-provider.cpp
 #if defined(USE_ELF_LOADER) && defined(ELF_LOADER_CXA_ATEXIT)
