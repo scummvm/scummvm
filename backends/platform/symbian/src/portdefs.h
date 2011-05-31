@@ -57,6 +57,7 @@ typedef signed long int int32;
 // re-define those data types.
 #define SCUMMVM_DONT_DEFINE_TYPES
 
+#define SMALL_SCREEN_DEVICE
 
 #define DISABLE_COMMAND_LINE
 

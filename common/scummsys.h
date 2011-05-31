@@ -225,17 +225,7 @@
 // Some more system specific settings.
 // TODO/FIXME: All of these should be moved to backend specific files (such as portdefs.h)
 //
-#if defined(__SYMBIAN32__)
-
-	#define SMALL_SCREEN_DEVICE
-
-#elif defined(_WIN32_WCE)
-
-	#if _WIN32_WCE < 300
-	#define SMALL_SCREEN_DEVICE
-	#endif
-
-#elif defined(DINGUX)
+#if defined(DINGUX)
 
 	// Very BAD hack following, used to avoid triggering an assert in uClibc dingux library
 	// "toupper" when pressing keyboard function keys.
