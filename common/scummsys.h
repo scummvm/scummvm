@@ -288,13 +288,6 @@
 
 
 //
-// Define scumm_stricmp and scumm_strnicmp
-//
-extern int scumm_stricmp(const char *s1, const char *s2);
-extern int scumm_strnicmp(const char *s1, const char *s2, uint n);
-
-
-//
 // Overlay color type (FIXME: shouldn't be declared here)
 //
 #if defined(NEWGUI_256)
