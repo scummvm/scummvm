@@ -2249,7 +2249,7 @@ case $_backend in
 		INCLUDES="$INCLUDES "'-I$(N64SDK)/hkz-libn64'
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/n64'
 		LIBS="$LIBS -lpakfs -lframfs -ln64 -ln64utils -lromfs"
-		LIBS="$LIBS -lm -lstdc++ -lc -lgcc -lz -lnosys"
+		LIBS="$LIBS -lm -lstdc++ -lz"
 		;;
 	null)
 		DEFINES="$DEFINES -DUSE_NULL_DRIVER"
@@ -3207,6 +3207,11 @@ case $_backend in
 		# all toolchain symbols in *our* libraries rather
 		# than pick up anything unhygenic from the Android libs.
 		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -lGLESv1_CM"
+		;;
+	n64)
+		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found 
+		# during linking stage
+		LIBS="$LIBS -lc -lgcc -lnosys"
 		;;
 esac
 
