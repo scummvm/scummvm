@@ -44,6 +44,9 @@
 		#if (_MSC_VER < 1500)
 			#define vsnprintf _vsnprintf
 		#endif
+		// FIXME: Is this actually necessary for WinCE or Windows?
+		// If yes, please add corresponding comments. Otherwise, let's get rid of it!
+		#define snprintf _snprintf
 		#endif
 
 		#if !defined(_WIN32_WCE)
@@ -289,10 +292,6 @@
 //
 extern int scumm_stricmp(const char *s1, const char *s2);
 extern int scumm_strnicmp(const char *s1, const char *s2, uint n);
-#if defined(_WIN32_WCE) || defined(_MSC_VER)
-	// FIXME: Why is this necessary?
-	#define snprintf _snprintf
-#endif
 
 
 //
