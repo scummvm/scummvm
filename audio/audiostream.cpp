@@ -33,6 +33,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/flac.h"
 #include "audio/decoders/mp3.h"
+#include "audio/decoders/quicktime.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
 
@@ -51,7 +52,7 @@ struct StreamFileFormat {
 };
 
 static const StreamFileFormat STREAM_FILEFORMATS[] = {
-	/* decoderName,  fileExt, openStreamFuntion */
+	/* decoderName,  fileExt, openStreamFunction */
 #ifdef USE_FLAC
 	{ "FLAC",         ".flac", makeFLACStream },
 	{ "FLAC",         ".fla",  makeFLACStream },
@@ -62,6 +63,7 @@ static const StreamFileFormat STREAM_FILEFORMATS[] = {
 #ifdef USE_MAD
 	{ "MPEG Layer 3", ".mp3",  makeMP3Stream },
 #endif
+	{ "MPEG-4 Audio",   ".m4a",  makeQuickTimeStream },
 
 	{ NULL, NULL, NULL } // Terminator
 };
