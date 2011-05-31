@@ -163,10 +163,10 @@ private:
 	Common::SeekableReadStream *decompressMidi(Common::SeekableReadStream *stream);
 };
 
-class MusicPlayerMPEG4 : public MusicPlayer {
+class MusicPlayerIOS : public MusicPlayer {
 public:
-	MusicPlayerMPEG4(GroovieEngine *vm);
-	~MusicPlayerMPEG4();
+	MusicPlayerIOS(GroovieEngine *vm);
+	~MusicPlayerIOS();
 
 protected:
 	void updateVolume();

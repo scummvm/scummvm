@@ -158,7 +158,7 @@ Common::Error GroovieEngine::run() {
 		_musicPlayer = new MusicPlayerMac(this);
 		break;
 	case Common::kPlatformIOS:
-		_musicPlayer = new MusicPlayerMPEG4(this);
+		_musicPlayer = new MusicPlayerIOS(this);
 		break;
 	default:
 		_musicPlayer = new MusicPlayerXMI(this, _gameDescription->version == kGroovieT7G ? "fat" : "sample");

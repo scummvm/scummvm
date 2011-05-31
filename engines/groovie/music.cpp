@@ -765,26 +765,26 @@ Common::SeekableReadStream *MusicPlayerMac::decompressMidi(Common::SeekableReadS
 	return new Common::MemoryReadStream(output, size, DisposeAfterUse::YES);
 }
 
-MusicPlayerMPEG4::MusicPlayerMPEG4(GroovieEngine *vm) : MusicPlayer(vm) {
+MusicPlayerIOS::MusicPlayerIOS(GroovieEngine *vm) : MusicPlayer(vm) {
 	vm->getTimerManager()->installTimerProc(&onTimer, 50 * 1000, this);
 }
 
-MusicPlayerMPEG4::~MusicPlayerMPEG4() {
+MusicPlayerIOS::~MusicPlayerIOS() {
 	_vm->getTimerManager()->removeTimerProc(&onTimer);
 }
 
-void MusicPlayerMPEG4::updateVolume() {
+void MusicPlayerIOS::updateVolume() {
 	// Just set the mixer volume for the music sound type
 	_vm->_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _userVolume * _gameVolume / 100);
 }
 
-void MusicPlayerMPEG4::unload() {
+void MusicPlayerIOS::unload() {
 	MusicPlayer::unload();
 
 	_vm->_system->getMixer()->stopHandle(_handle);
 }
 
-bool MusicPlayerMPEG4::load(uint32 fileref, bool loop) {
+bool MusicPlayerIOS::load(uint32 fileref, bool loop) {
 	// Find correct filename
 	ResInfo info;
 	_vm->_resMan->getResInfo(fileref, info);
