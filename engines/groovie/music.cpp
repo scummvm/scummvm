@@ -36,8 +36,6 @@
 #include "common/textconsole.h"
 #include "audio/audiostream.h"
 #include "audio/midiparser.h"
-#include "audio/decoders/mp3.h"
-#include "audio/decoders/quicktime.h"
 
 namespace Groovie {
 
@@ -234,20 +232,18 @@ void MusicPlayer::unload() {
 }
 
 void MusicPlayer::playCreditsIOS() {
-#ifdef USE_MAD
-	Common::File *f = new Common::File();
-	f->open("7th_Guest_Dolls_from_Hell_OC_ReMix.mp3");
-	Audio::AudioStream *stream = Audio::makeMP3Stream(f, DisposeAfterUse::YES);
+	Audio::AudioStream *stream = Audio::SeekableAudioStream::openStreamFile("7th_Guest_Dolls_from_Hell_OC_ReMix");
+
+	if (!stream) {
+		warning("Could not find '7th_Guest_Dolls_from_Hell_OC_ReMix' audio file");
+		return;
+	}
+
 	_vm->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_handleCreditsIOS, stream);
-#else
-	warning("MAD library required for credits music");
-#endif
 }
 
 void MusicPlayer::stopCreditsIOS() {
-#ifdef USE_MAD
 	_vm->_system->getMixer()->stopHandle(_handleCreditsIOS);
-#endif
 }
 
 // MusicPlayerMidi
@@ -829,21 +825,22 @@ bool MusicPlayerMPEG4::load(uint32 fileref, bool loop) {
 
 	// iOS port provides alternative intro sequence music
 	if (info.filename == "gu39.xmi") {
-		info.filename = "intro.m4a";
+		info.filename = "intro";
 	} else if (info.filename == "gu32.xmi") {
-		info.filename = "foyer.m4a";
+		info.filename = "foyer";
 	} else {
-		// RL still says xmi, but we're after external m4a
-		info.filename.setChar('m', len-3);
-		info.filename.setChar('4', len-2);
-		info.filename.setChar('a', len-1);
+		// Remove the extension
+		info.filename.deleteLastChar();
+		info.filename.deleteLastChar();
+		info.filename.deleteLastChar();
+		info.filename.deleteLastChar();
 	}
 
 	// Create the audio stream
-	Audio::AudioStream *audStream = Audio::makeQuickTimeStream(info.filename);
+	Audio::AudioStream *audStream = Audio::SeekableAudioStream::openStreamFile(info.filename);
 
 	if (!audStream) {
-		warning("Could not play MPEG-4 sound '%s'", info.filename.c_str());
+		warning("Could not play audio file '%s'", info.filename.c_str());
 		return false;
 	}
 
