@@ -71,6 +71,7 @@ public:
 		_enableLights = state;
 		_lightsConfigured = false;
 	}
+	void setLightsDirty();
 	void setLightIntensity(const char *light, float intensity);
 	void setLightIntensity(int light, float intensity);
 	void setLightPosition(const char *light, const Graphics::Vector3d &pos);

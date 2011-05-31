@@ -571,6 +571,10 @@ ObjectState *Scene::findState(const char *filename) {
 	return NULL;
 }
 
+void Scene::setLightsDirty() {
+	_lightsConfigured = false;
+}
+
 void Scene::setLightIntensity(const char *light, float intensity) {
 	for (int i = 0; i < _numLights; ++i) {
 		Light &l = _lights[i];
