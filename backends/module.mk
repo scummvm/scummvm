@@ -19,7 +19,7 @@ MODULE_OBJS := \
 
 
 ifdef USE_ELF_LOADER
-MODULE_OBJS := \
+MODULE_OBJS += \
 	plugins/elf/arm-loader.o \
 	plugins/elf/elf-loader.o \
 	plugins/elf/elf-provider.o \
@@ -31,7 +31,7 @@ MODULE_OBJS := \
 endif
 
 ifdef ENABLE_KEYMAPPER
-MODULE_OBJS := \
+MODULE_OBJS += \
 	keymapper/action.o \
 	keymapper/keymap.o \
 	keymapper/keymapper.o \
@@ -39,7 +39,7 @@ MODULE_OBJS := \
 endif
 
 ifdef USE_OPENGL
-MODULE_OBJS := \
+MODULE_OBJS += \
 	graphics/opengl/glerrorcheck.o \
 	graphics/opengl/gltexture.o \
 	graphics/opengl/opengl-graphics.o \
@@ -47,7 +47,7 @@ MODULE_OBJS := \
 endif
 
 ifdef ENABLE_VKEYBD
-MODULE_OBJS := \
+MODULE_OBJS += \
 	vkeybd/image-map.o \
 	vkeybd/polygon.o \
 	vkeybd/virtual-keyboard.o \
