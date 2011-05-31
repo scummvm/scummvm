@@ -320,74 +320,20 @@
 
 
 //
-// Typedef our system types
+// Typedef our system types unless they have already been defined by config.h,
+// or SCUMMVM_DONT_DEFINE_TYPES is set.
 //
-#if !defined(HAVE_CONFIG_H)
-
-	#if defined(__SYMBIAN32__)
-
-		// Enable Symbians own datatypes
-		// This is done for two reasons
-		// a) uint is already defined by Symbians libc component
-		// b) Symbian is using its "own" datatyping, and the Scummvm port
-		//    should follow this to ensure the best compability possible.
-		typedef unsigned char byte;
-
-		typedef unsigned char uint8;
-		typedef signed char int8;
-
-		typedef unsigned short int uint16;
-		typedef signed short int int16;
-
-		typedef unsigned long int uint32;
-		typedef signed long int int32;
-
-	#elif defined(__GP32__)
-
-		// Override typenames. uint is already defined by system header files.
-		typedef unsigned char byte;
-
-		typedef unsigned char uint8;
-		typedef signed char int8;
-
-		typedef unsigned short int uint16;
-		typedef signed short int int16;
-
-		typedef unsigned long int uint32;
-		typedef signed long int int32;
-
-	#elif defined(__N64__)
-
-		typedef unsigned char byte;
-
-		typedef unsigned char uint8;
-		typedef signed char int8;
-
-		typedef unsigned short int uint16;
-		typedef signed short int int16;
-
-		typedef unsigned int uint32;
-		typedef signed int int32;
-
-	#elif defined(__DS__)
-
-		// Do nothing, the SDK defines all types we need in nds/ndstypes.h,
-		// which we include in our portsdef.h
-
-	#else
-
-		typedef unsigned char byte;
-		typedef unsigned char uint8;
-		typedef signed char int8;
-		typedef unsigned short uint16;
-		typedef signed short int16;
-		typedef unsigned int uint32;
-		typedef signed int int32;
-		typedef unsigned int uint;
-
-	#endif
-
+#if !defined(HAVE_CONFIG_H) && !defined(SCUMMVM_DONT_DEFINE_TYPES)
+	typedef unsigned char byte;
+	typedef unsigned char uint8;
+	typedef signed char int8;
+	typedef unsigned short uint16;
+	typedef signed short int16;
+	typedef unsigned int uint32;
+	typedef signed int int32;
+	typedef unsigned int uint;
 #endif
+
 
 //
 // Define scumm_stricmp and scumm_strnicmp
