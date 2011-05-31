@@ -20,9 +20,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef	SWORD2_SCREEN_H
@@ -393,12 +390,12 @@ public:
 	void resetRenderLists();
 
 	void setLocationMetrics(uint16 w, uint16 h);
-	int32 initialiseBackgroundLayer(byte *parallax);
-	int32 initialisePsxParallaxLayer(byte *parallax);   // These are used to initialize psx backgrounds and
-	int32 initialisePsxBackgroundLayer(byte *parallax); // parallaxes, which are different from pc counterparts.
+	int32 initializeBackgroundLayer(byte *parallax);
+	int32 initializePsxParallaxLayer(byte *parallax);   // These are used to initialize psx backgrounds and
+	int32 initializePsxBackgroundLayer(byte *parallax); // parallaxes, which are different from pc counterparts.
 	void closeBackgroundLayer();
 
-	void initialiseRenderCycle();
+	void initializeRenderCycle();
 
 	void initBackground(int32 res, int32 new_palette);
 	void initPsxBackground(int32 res, int32 new_palette);

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 
@@ -153,7 +150,7 @@ void MidiPlayer::send(uint32 b) {
 			// We have received a "Reset All Controllers" message
 			// and passed it on to the MIDI driver. This may or may
 			// not have affected the volume controller. To ensure
-			// consistent behaviour, explicitly set the volume to
+			// consistent behavior, explicitly set the volume to
 			// what we think it should be.
 
 			if (_current == &_sfx)

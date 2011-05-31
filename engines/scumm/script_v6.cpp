@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
@@ -360,11 +357,11 @@ void ScummEngine_v6::nukeArray(int a) {
 }
 
 int ScummEngine_v6::findFreeArrayId() {
-	byte **addr = _res->address[rtString];
+	const ResourceManager::ResTypeData &rtd = _res->_types[rtString];
 	int i;
 
 	for (i = 1; i < _numArray; i++) {
-		if (!addr[i])
+		if (!rtd[i]._address)
 			return i;
 	}
 	error("Out of array pointers, %d max", _numArray);

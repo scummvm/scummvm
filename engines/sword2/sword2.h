@@ -20,9 +20,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef	SWORD2_H
@@ -236,8 +233,8 @@ public:
 
 	void sleepUntil(uint32 time);
 
-	void initialiseFontResourceFlags();
-	void initialiseFontResourceFlags(uint8 language);
+	void initializeFontResourceFlags();
+	void initializeFontResourceFlags(uint8 language);
 
 	bool initStartMenu();
 	void registerStartPoint(int32 key, char *name);

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SCI_ENGINE_SEGMAN_H
@@ -74,7 +71,7 @@ public:
 	 */
 	Script *allocateScript(int script_nr, SegmentId *seg_id);
 
-	// The script must then be initialised; see section (1b.), below.
+	// The script must then be initialized; see section (1b.), below.
 
 	/**
 	 * Forcefully deallocate a previously allocated script.

@@ -18,16 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/system.h"
 #include "common/random.h"
 #include "common/error.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/debug-channels.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
@@ -531,15 +527,16 @@ void HugoEngine::initPlaylist(bool playlist[kMaxTunes]) {
  */
 void HugoEngine::initStatus() {
 	debugC(1, kDebugEngine, "initStatus");
-	_status.storyModeFl   = false;                  // Not in story mode
-	_status.gameOverFl    = false;                  // Hero not knobbled yet
-	_status.lookFl        = false;                  // Toolbar "look" button
-	_status.recallFl      = false;                  // Toolbar "recall" button
-	_status.newScreenFl   = false;                  // Screen not just loaded
-	_status.godModeFl     = false;                  // No special cheats allowed
-	_status.doQuitFl      = false;
-	_status.skipIntroFl   = false;
-	_status.helpFl        = false;
+	_status.storyModeFl      = false;               // Not in story mode
+	_status.gameOverFl       = false;               // Hero not knobbled yet
+	_status.lookFl           = false;               // Toolbar "look" button
+	_status.recallFl         = false;               // Toolbar "recall" button
+	_status.newScreenFl      = false;               // Screen not just loaded
+	_status.godModeFl        = false;               // No special cheats allowed
+	_status.showBoundariesFl = false;               // Boundaries hidden by default
+	_status.doQuitFl         = false;
+	_status.skipIntroFl      = false;
+	_status.helpFl           = false;
 
 	// Initialize every start of new game
 	_status.tick            = 0;                    // Tick count
@@ -597,10 +594,9 @@ void HugoEngine::initialize() {
 	_scheduler->initEventQueue();                   // Init scheduler stuff
 	_screen->initDisplay();                         // Create Dibs and palette
 	_file->openDatabaseFiles();                     // Open database files
-	calcMaxScore();                                 // Initialise maxscore
+	calcMaxScore();                                 // Initialize maxscore
 
-	_rnd = new Common::RandomSource();
-	g_eventRec.registerRandomSource(*_rnd, "hugo");
+	_rnd = new Common::RandomSource("hugo");
 	_rnd->setSeed(42);                              // Kick random number generator
 
 	switch (_gameVariant) {

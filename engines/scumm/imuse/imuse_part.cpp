@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 
@@ -140,7 +137,8 @@ void Part::set_pan(int8 pan) {
 }
 
 void Part::set_transpose(int8 transpose) {
-	_transpose_eff = transpose_clamp((_transpose = transpose) + _player->getTranspose(), -24, 24);
+	_transpose = transpose;
+	_transpose_eff = (_transpose == -128) ? 0 : transpose_clamp(_transpose + _player->getTranspose(), -24, 24);
 	sendPitchBend();
 }
 

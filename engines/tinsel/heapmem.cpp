@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * This file contains the handle based Memory Manager code.
  */
 
@@ -103,7 +100,7 @@ static void MemoryStats() {
 #endif
 
 /**
- * Initialises the memory manager.
+ * Initializes the memory manager.
  */
 void MemoryInit() {
 	// place first node on free list
@@ -136,7 +133,7 @@ void MemoryInit() {
 }
 
 /**
- * Deinitialises the memory manager.
+ * Deinitializes the memory manager.
  */
 void MemoryDeinit() {
 	const MEM_NODE *pHeap = &heapSentinel;

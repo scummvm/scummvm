@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef COMMON_FORBIDDEN_H
@@ -128,6 +125,27 @@
 #endif
 
 
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getc
+#undef getc
+#define getc(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getchar
+#undef getchar
+#define getchar()	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_putc
+#undef putc
+#define putc(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_putchar
+#undef putchar
+#define putchar(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_setjmp
 #undef setjmp
 #define setjmp(a)	FORBIDDEN_SYMBOL_REPLACEMENT
@@ -141,6 +159,31 @@
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_system
 #undef system
 #define system(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_exit
+#undef exit
+#define exit(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getenv
+#undef getenv
+#define getenv(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_putenv
+#undef putenv
+#define putenv(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_setenv
+#undef setenv
+#define setenv(a,b,c)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_unsetenv
+#undef unsetenv
+#define unsetenv(a)	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
 
@@ -246,6 +289,64 @@
 #undef setvbuf
 #define setvbuf(a,b,c,d)	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
+
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_tmpfile
+#undef tmpfile
+#define tmpfile()	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_tmpnam
+#undef tmpnam
+#define tmpnam(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_tempnam
+#undef tempnam
+#define tempnam(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_rand
+#undef rand
+#define rand()	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_srand
+#undef srand
+#define srand(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_random
+#undef random
+#define random()	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_srandom
+#undef srandom
+#define srandom(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_stricmp
+#undef stricmp
+#define stricmp(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strnicmp
+#undef strnicmp
+#define strnicmp(a,b,c)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strcasecmp
+#undef strcasecmp
+#define strcasecmp(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strncasecmp
+#undef strncasecmp
+#define strncasecmp(a,b,c)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
 
 /*
  * We also would like to disable the following symbols;

@@ -1,6 +1,4 @@
 # SCUMMVM-PSP MakeFile
-# $URL$
-# $Id$
 
 
 #Use only this section to modify how the makefile behaves ------------

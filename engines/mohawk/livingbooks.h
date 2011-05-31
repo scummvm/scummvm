@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef MOHAWK_LIVINGBOOKS_H
@@ -572,6 +569,17 @@ public:
 	~LBMiniGameItem();
 
 	bool togglePlaying(bool playing, bool restart);
+};
+
+class LBProxyItem : public LBItem {
+public:
+	LBProxyItem(MohawkEngine_LivingBooks *_vm, LBPage *page, Common::Rect rect);
+	~LBProxyItem();
+
+	void init();
+
+protected:
+	class LBPage *_page;
 };
 
 struct NotifyEvent {

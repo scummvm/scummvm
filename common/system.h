@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef COMMON_SYSTEM_H
@@ -1034,7 +1031,7 @@ public:
 };
 
 
-/** The global OSystem instance. Initialised in main(). */
+/** The global OSystem instance. Initialized in main(). */
 extern OSystem *g_system;
 
 #endif

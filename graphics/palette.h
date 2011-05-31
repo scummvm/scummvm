@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef GRAPHICS_PALETTE_H
@@ -58,7 +55,7 @@ public:
 	 * @param start		the first palette entry to be updated
 	 * @param num		the number of palette entries to be updated
 	 *
-	 * @note It is an error if start+num exceeds 256, behaviour is undefined
+	 * @note It is an error if start+num exceeds 256, behavior is undefined
 	 *       in that case (the backend may ignore it silently or assert).
 	 * @note It is an error if this function gets called when the pixel format
 	 *       in use (the return value of getScreenFormat) has more than one

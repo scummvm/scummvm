@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_RINGWORLD_SCENES8_H
@@ -48,11 +45,7 @@ class SceneObject7700 : public SceneObjectExt {
 public:
 	int _lookLineNum, _defltLineNum;
 
-	virtual void synchronize(Serializer &s) {
-		SceneObject::synchronize(s);
-		s.syncAsSint16LE(_lookLineNum);
-		s.syncAsSint16LE(_defltLineNum);
-	}
+	virtual void synchronize(Serializer &s);
 	virtual Common::String getClassName() { return "SceneObject7700"; }
 };
 
@@ -489,6 +482,7 @@ public:
 	virtual void signal();
 	virtual void process(Event &event);
 	virtual void dispatch();
+	virtual void synchronize(Serializer &s);
 };
 
 } // End of namespace tSage

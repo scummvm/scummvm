@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "cruise/cruise_main.h"
@@ -214,7 +211,7 @@ int m_color;
    This "worked" on many platforms so far, but on OSX apparently the buffers don't
    occupy contiguous memory, and this causes severe corruption and subsequent crashes.
    Since I'm not really familiar with how the strange drawing code is supposed to work,
-   or whether this behaviour is intentional or not, the short-term fix is to allocate a big
+   or whether this behavior is intentional or not, the short-term fix is to allocate a big
    buffer and setup pointers within it.  This fixes the crashes I'm seeing without causing any
    (visual) side-effects.
    If anyone wants to look, this is easily reproduced by starting the game and examining the rug.

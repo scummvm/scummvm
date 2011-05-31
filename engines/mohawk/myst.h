@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef MOHAWK_MYST_H
@@ -168,6 +165,8 @@ public:
 
 	bool _tweaksEnabled;
 	bool _needsUpdate;
+	bool _needsPageDrop;
+	bool _needsShowMap;
 
 	MystView _view;
 	MystGraphics *_gfx;
@@ -209,6 +208,8 @@ private:
 	uint16 _curCard;
 
 	bool _runExitScript;
+
+	void dropPage();
 
 	void loadCard();
 	void unloadCard();

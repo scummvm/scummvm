@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*! \mainpage %ScummVM Source Reference
@@ -352,8 +349,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	Common::Error res;
 
 	// TODO: deal with settings that require plugins to be loaded
-	res = Base::processSettings(command, settings);
-	if (res.getCode() != Common::kArgumentNotProcessed) {
+	if (Base::processSettings(command, settings, res)) {
 		if (res.getCode() != Common::kNoError)
 			warning("%s", res.getDesc().c_str());
 		return res.getCode();

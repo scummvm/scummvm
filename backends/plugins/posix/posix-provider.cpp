@@ -18,14 +18,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/scummsys.h"
 
-#if defined(DYNAMIC_MODULES) && defined(UNIX)
+#if defined(DYNAMIC_MODULES) && defined(POSIX)
 
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
@@ -80,9 +77,9 @@ public:
 };
 
 
-Plugin* POSIXPluginProvider::createPlugin(const Common::FSNode &node) const {
+Plugin *POSIXPluginProvider::createPlugin(const Common::FSNode &node) const {
 	return new POSIXPlugin(node.getPath());
 }
 
 
-#endif // defined(DYNAMIC_MODULES) && defined(UNIX)
+#endif // defined(DYNAMIC_MODULES) && defined(POSIX)

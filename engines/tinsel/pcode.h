@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * Virtual processor definitions
  */
 
@@ -77,7 +74,7 @@ struct INT_CONTEXT {
 	int ip;				///< instruction pointer
 	bool bHalt;			///< set to exit interpeter
 	bool escOn;
-	int myEscape;		///< only initialised to prevent compiler warning!
+	int myEscape;		///< only initialized to prevent compiler warning!
 
 	uint32 waitNumber1;		// The waiting numbert
 	uint32 waitNumber2;		// The wait for number

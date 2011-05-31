@@ -2188,15 +2188,15 @@ msgstr "Drehen"
 
 #: backends/platform/wince/CELauncherDialog.cpp:60
 msgid "Using SDL driver "
-msgstr "SDL-Treiber verwenden"
+msgstr "Verwende SDL-Treiber "
 
 #: backends/platform/wince/CELauncherDialog.cpp:64
 msgid "Display "
-msgstr "Anzeige"
+msgstr "Anzeige "
 
 #: backends/platform/wince/CELauncherDialog.cpp:106
 msgid "Do you want to perform an automatic scan ?"
-msgstr "Möchten Sie eine automatische Durchsuchung vornehmen?"
+msgstr "Möchten Sie eine automatische Suche durchführen?"
 
 #: backends/platform/wince/wince-sdl.cpp:486
 msgid "Map right click action"

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Disable symbol overrides for FILE as that is used in FLAC headers
@@ -306,7 +303,7 @@ int FLACStream::readBuffer(int16 *buffer, const int numSamples) {
 	const uint numChannels = getChannels();
 
 	if (numChannels == 0) {
-		warning("FLACStream: Stream not successfully initialised, cant playback");
+		warning("FLACStream: Stream not successfully initialized, cant playback");
 		return -1; // streaminfo wasnt read!
 	}
 

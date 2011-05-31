@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef M4_ANIMATION_H
@@ -114,7 +111,7 @@ public:
 	MadsAnimation(MadsM4Engine *vm, MadsView *view);
 	virtual ~MadsAnimation();
 
-	virtual void initialise(const Common::String &filename, uint16 flags, M4Surface *surface, M4Surface *depthSurface);
+	virtual void initialize(const Common::String &filename, uint16 flags, M4Surface *surface, M4Surface *depthSurface);
 	virtual void load(const Common::String &filename, int abortTimers);
 	virtual void update();
 	virtual void setCurrentFrame(int frameNumber);

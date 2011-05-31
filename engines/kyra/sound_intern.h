@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef KYRA_SOUND_INTERN_H
@@ -74,6 +71,8 @@ public:
 	void stopAllSoundEffects();
 
 	void beginFadeOut();
+
+	void pause(bool paused);
 private:
 	static void onTimer(void *data);
 
@@ -142,8 +141,6 @@ private:
 
 	TownsEuphonyDriver *_driver;
 	
-	Common::Mutex _mutex;
-
 	bool _cdaPlaying;
 
 	const uint8 *_musicFadeTable;

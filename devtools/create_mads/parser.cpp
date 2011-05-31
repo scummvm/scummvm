@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include <stdio.h>
@@ -240,10 +237,10 @@ void close_source_file() {
 }
 
 /**
- * Initialises the scanner
+ * Initializes the scanner
  */
 void init_scanner(const char *name) {
-	// Initialise character table
+	// Initialize character table
 	for (int i = 0;   i < 256;  ++i) char_table[i] = SPECIAL;
 	for (int i = '0'; i <= '9'; ++i) char_table[i] = DIGIT;
 	for (int i = 'A'; i <= 'Z'; ++i) char_table[i] = LETTER;
@@ -268,7 +265,7 @@ void quit_scanner() {
 
 
 /**
- * Initialises the output
+ * Initializes the output
  */
 void init_output(const char *destFilename) {
 	dest_file = fopen(destFilename, "wb");

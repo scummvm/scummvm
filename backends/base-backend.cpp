@@ -60,15 +60,11 @@ void BaseBackend::fillScreen(uint32 col) {
 */
 
 
-#if defined(UNIX)
-#if defined(SAMSUNGTV)
-#define DEFAULT_CONFIG_FILE "/dtv/usb/sda1/.scummvmrc"
-#else
+#if defined(POSIX)
 #define DEFAULT_CONFIG_FILE ".scummvmrc"
 #endif
-#endif
 
-#if !defined(UNIX)
+#if !defined(POSIX)
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 #endif
 

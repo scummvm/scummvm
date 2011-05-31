@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
@@ -39,7 +36,7 @@ namespace Scumm {
 /* Start executing script 'script' with the given parameters */
 void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, int *lvarptr, int cycle) {
 	ScriptSlot *s;
-	byte *scriptPtr;
+	//byte *scriptPtr;
 	uint32 scriptOffs;
 	byte scriptType;
 	int slot;
@@ -51,7 +48,8 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 		stopScript(script);
 
 	if (script < _numGlobalScripts) {
-		scriptPtr = getResourceAddress(rtScript, script);
+		// Call getResourceAddress to ensure the resource is loaded & its usage count reset
+		/*scriptPtr =*/ getResourceAddress(rtScript, script);
 		scriptOffs = _resourceHeaderSize;
 		scriptType = WIO_GLOBAL;
 
@@ -393,26 +391,26 @@ void ScummEngine::getScriptBaseAddress() {
 				break;
 		_scriptOrgPointer = getResourceAddress(rtInventory, idx);
 		assert(idx < _numInventory);
-		_lastCodePtr = &_res->address[rtInventory][idx];
+		_lastCodePtr = &_res->_types[rtInventory][idx]._address;
 		break;
 
 	case WIO_LOCAL:
 	case WIO_ROOM:								/* room script */
 		if (_game.version == 8) {
 			_scriptOrgPointer = getResourceAddress(rtRoomScripts, _roomResource);
-			assert(_roomResource < _res->num[rtRoomScripts]);
-			_lastCodePtr = &_res->address[rtRoomScripts][_roomResource];
+			assert(_roomResource < (int)_res->_types[rtRoomScripts].size());
+			_lastCodePtr = &_res->_types[rtRoomScripts][_roomResource]._address;
 		} else {
 			_scriptOrgPointer = getResourceAddress(rtRoom, _roomResource);
 			assert(_roomResource < _numRooms);
-			_lastCodePtr = &_res->address[rtRoom][_roomResource];
+			_lastCodePtr = &_res->_types[rtRoom][_roomResource]._address;
 		}
 		break;
 
 	case WIO_GLOBAL:							/* global script */
 		_scriptOrgPointer = getResourceAddress(rtScript, ss->number);
 		assert(ss->number < _numScripts);
-		_lastCodePtr = &_res->address[rtScript][ss->number];
+		_lastCodePtr = &_res->_types[rtScript][ss->number]._address;
 		break;
 
 	case WIO_FLOBJECT:						/* flobject script */
@@ -421,7 +419,7 @@ void ScummEngine::getScriptBaseAddress() {
 		idx = _objs[idx].fl_object_index;
 		_scriptOrgPointer = getResourceAddress(rtFlObject, idx);
 		assert(idx < _numFlObject);
-		_lastCodePtr = &_res->address[rtFlObject][idx];
+		_lastCodePtr = &_res->_types[rtFlObject][idx]._address;
 		break;
 	default:
 		error("Bad type while getting base address");
@@ -448,7 +446,7 @@ void ScummEngine::resetScriptPointer() {
  * collected by ResourceManager::expireResources.
  */
 void ScummEngine::refreshScriptPointer() {
-	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
+	if (*_lastCodePtr != _scriptOrgPointer) {
 		long oldoffs = _scriptPointer - _scriptOrgPointer;
 		getScriptBaseAddress();
 		_scriptPointer = _scriptOrgPointer + oldoffs;
@@ -496,7 +494,11 @@ void ScummEngine::executeOpcode(byte i) {
 }
 
 const char *ScummEngine::getOpcodeDesc(byte i) {
+#ifndef REDUCE_MEMORY_USAGE
 	return _opcodes[i].desc;
+#else
+	return "";
+#endif
 }
 
 byte ScummEngine::fetchScriptByte() {
@@ -1102,7 +1104,7 @@ void ScummEngine::checkAndRunSentenceScript() {
 			// For now we assume that if there are more than 460 scripts, then
 			// the pair 29/104 is used, else the pair 28/103.
 
-			if (_res->num[rtScript] > 460) {
+			if (_res->_types[rtScript].size() > 460) {
 				if (sentenceScript == 104)
 					sentenceScript = 29;
 			} else {

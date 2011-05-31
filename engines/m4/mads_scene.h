@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef M4_MADS_SCENE_H
@@ -111,9 +108,8 @@ public:
 public:
 	MadsScene(MadsEngine *vm);
 	virtual ~MadsScene();
-	void initialise() {
-		_sceneLogic.initialiseScripts();
-		_sceneLogic.initialiseDataMap();
+	void initialize() {
+		_sceneLogic.initializeScripts();
 	}
 
 	// Methods that differ between engines
@@ -181,7 +177,7 @@ public:
 	MadsInterfaceView(MadsM4Engine *vm);
 	~MadsInterfaceView();
 
-	virtual void initialise();
+	virtual void initialize();
 	virtual void setSelectedObject(int objectNumber);
 	virtual void addObjectToInventory(int objectNumber);
 	int getSelectedObject() { return _selectedObject; }

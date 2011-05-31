@@ -20,9 +20,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "base/plugins.h"
@@ -31,7 +28,6 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -80,7 +76,7 @@ static const GameSettings sword2_settings[] = {
 class Sword2MetaEngine : public MetaEngine {
 public:
 	virtual const char *getName() const {
-		return "Broken Sword II";
+		return "Sword2";
 	}
 	virtual const char *getOriginalCopyright() const {
 		return "Broken Sword Games (C) Revolution";
@@ -255,7 +251,7 @@ Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) c
 
 namespace Sword2 {
 
-Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
+Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst), _rnd("sword2") {
 	// Add default file directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "clusters");
@@ -295,8 +291,6 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 	_gameSpeed = 1;
 
 	_gmmLoadSlot = -1; // Used to manage GMM Loading
-
-	g_eventRec.registerRandomSource(_rnd, "sword2");
 }
 
 Sword2Engine::~Sword2Engine() {
@@ -431,7 +425,7 @@ Common::Error Sword2Engine::run() {
 	setInputEventFilter(RD_LEFTBUTTONUP | RD_RIGHTBUTTONUP | RD_WHEELUP | RD_WHEELDOWN);
 
 	setupPersistentResources();
-	initialiseFontResourceFlags();
+	initializeFontResourceFlags();
 
 	if (_features & GF_DEMO)
 		_logic->writeVar(DEMO, 1);
@@ -469,7 +463,7 @@ Common::Error Sword2Engine::run() {
 	} else
 		startGame();
 
-	_screen->initialiseRenderCycle();
+	_screen->initializeRenderCycle();
 
 	while (1) {
 		_debugger->onFrame();

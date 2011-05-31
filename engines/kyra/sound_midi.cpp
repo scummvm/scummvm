@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "kyra/sound_intern.h"
@@ -715,6 +712,26 @@ void SoundMidiPC::beginFadeOut() {
 
 	_fadeMusicOut = true;
 	_fadeStartTime = _vm->_system->getMillis();
+}
+
+void SoundMidiPC::pause(bool paused) {
+	// Stop all mixer related sounds
+	Sound::pause(paused);
+
+	Common::StackLock lock(_mutex);
+
+	if (paused) {
+		_music->setMidiDriver(0);
+		for (int i = 0; i < 3; i++)
+			_sfx[i]->setMidiDriver(0);
+		for (int i = 0; i < 16; i++)
+			_output->stopNotesOnChannel(i);
+	} else {
+		_music->setMidiDriver(_output);
+		for (int i = 0; i < 3; ++i)
+			_sfx[i]->setMidiDriver(_output);
+		// Possible TODO (IMHO unnecessary): restore notes and/or update _fadeStartTime
+	}
 }
 
 void SoundMidiPC::onTimer(void *data) {

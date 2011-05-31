@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * Clipping rectangle defines
  */
 
@@ -58,7 +55,7 @@ bool UnionRectangle(		// Creates the union of two rectangles
 	const Common::Rect &pSrc2);		// a source rectangle
 
 void FindMovingObjects(		// Creates clipping rectangles for all the objects that have moved on the specified object list
-	OBJECT *pObjList,	// playfield display list to draw
+	OBJECT **pObjList,	// playfield display list to draw
 	Common::Point *pWin,		// playfield window top left position
 	Common::Rect *pClip,		// playfield clipping rectangle
 	bool bVelocity,		// when set, objects pos is updated with velocity
@@ -67,7 +64,7 @@ void FindMovingObjects(		// Creates clipping rectangles for all the objects that
 void MergeClipRect();	// Merges any clipping rectangles that overlap
 
 void UpdateClipRect(		// Redraws all objects within this clipping rectangle
-	OBJECT *pObjList,	// object list to draw
+	OBJECT **pObjList,	// object list to draw
 	Common::Point *pWin,		// window top left position
 	Common::Rect *pClip);		// pointer to clip rectangle
 

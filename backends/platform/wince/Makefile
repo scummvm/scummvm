@@ -1,7 +1,5 @@
 # ScummVM Makefile for Windows CE port
 # Uses the cegcc toolchain. For build info check out the wiki: http://wiki.scummvm.org
-# $URL$
-# $Id$
 
 ########################################################################
 ## Do you want a debug build or not?

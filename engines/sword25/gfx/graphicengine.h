@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -109,7 +106,7 @@ public:
 	// ---------
 
 	/**
-	 * Initialises the graphics engine and sets the screen mode. Returns
+	 * Initializes the graphics engine and sets the screen mode. Returns
 	 * true if initialisation failed.
 	 * @note This method should be called immediately after the
 	 * initialisation of all services.

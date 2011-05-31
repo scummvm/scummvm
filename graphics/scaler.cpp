@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "graphics/scaler/intern.h"
@@ -199,7 +196,7 @@ void Normal2x(const uint8  *srcPtr,
 
 #else
 /**
- * Trivial nearest-neighbour 2x scaler.
+ * Trivial nearest-neighbor 2x scaler.
  */
 void Normal2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
@@ -224,7 +221,7 @@ void Normal2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 #endif
 
 /**
- * Trivial nearest-neighbour 3x scaler.
+ * Trivial nearest-neighbor 3x scaler.
  */
 void Normal3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
@@ -257,7 +254,7 @@ void Normal3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 #define interpolate_1_1_1_1	interpolate16_1_1_1_1<ColorMask>
 
 /**
- * Trivial nearest-neighbour 1.5x scaler.
+ * Trivial nearest-neighbor 1.5x scaler.
  */
 template<typename ColorMask>
 void Normal1o5xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,

@@ -9,7 +9,7 @@ TESTS        := $(srcdir)/test/common/*.h $(srcdir)/test/audio/*.h
 TEST_LIBS    := audio/libaudio.a common/libcommon.a
 
 #
-TEST_FLAGS   := --runner=StdioPrinter
+TEST_FLAGS   := --runner=StdioPrinter --no-std --no-eh
 TEST_CFLAGS  := -I$(srcdir)/test/cxxtest
 TEST_LDFLAGS := $(LIBS)
 TEST_CXXFLAGS := $(filter-out -Wglobal-constructors,$(CXXFLAGS))

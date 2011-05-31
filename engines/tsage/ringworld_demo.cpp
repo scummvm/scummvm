@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "tsage/ringworld_demo.h"
@@ -29,6 +26,80 @@
 #include "tsage/staticres.h"
 
 namespace tSage {
+
+void RingworldDemoGame::start() {
+	// Start the demo's single scene
+	_globals->_sceneManager.changeScene(1);
+	
+	_globals->_events.setCursor(CURSOR_NONE);
+}
+
+Scene *RingworldDemoGame::createScene(int sceneNumber) {
+	// The demo only has a single scene, so ignore the scene number and always return it
+	return new RingworldDemoScene();
+}
+
+void RingworldDemoGame::quitGame() {
+	_globals->_events.setCursor(CURSOR_ARROW);
+	MessageDialog *dlg = new MessageDialog(DEMO_EXIT_MSG, EXIT_BTN_STRING, DEMO_BTN_STRING);
+	dlg->draw();
+
+	GfxButton *selectedButton = dlg->execute(&dlg->_btn2);
+	bool exitFlag  =  selectedButton != &dlg->_btn2;
+
+	delete dlg;
+	_globals->_events.hideCursor();
+
+	if (exitFlag)
+		_vm->quitGame();
+}
+
+void RingworldDemoGame::pauseGame() {
+	_globals->_events.setCursor(CURSOR_ARROW);
+	MessageDialog *dlg = new MessageDialog(DEMO_PAUSED_MSG, EXIT_BTN_STRING, DEMO_RESUME_BTN_STRING);
+	dlg->draw();
+
+	GfxButton *selectedButton = dlg->execute(&dlg->_btn2);
+	bool exitFlag  =  selectedButton != &dlg->_btn2;
+
+	delete dlg;
+	_globals->_events.hideCursor();
+
+	if (exitFlag)
+		_vm->quitGame();
+}
+
+void RingworldDemoGame::processEvent(Event &event) {
+	if (event.eventType == EVENT_KEYPRESS) {
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_F1:
+			// F1 - Help
+			MessageDialog::show(DEMO_HELP_MSG, OK_BTN_STRING);
+			break;
+
+		case Common::KEYCODE_F2: {
+			// F2 - Sound Options
+			ConfigDialog *dlg = new ConfigDialog();
+			dlg->runModal();
+			delete dlg;
+			_globals->_events.setCursorFromFlag();
+			break;
+		}
+
+		case Common::KEYCODE_F3:
+			// F3 - Quit
+			quitGame();
+			event.handled = false;
+			break;
+
+		default:
+			break;
+		}
+	} else if (event.eventType == EVENT_BUTTON_DOWN) {
+		pauseGame();
+		event.handled = true;
+	}
+}
 
 /*--------------------------------------------------------------------------
  * Ringworld Demo scene

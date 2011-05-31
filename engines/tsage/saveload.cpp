@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/savefile.h"
@@ -67,14 +64,12 @@ Saver::~Saver() {
 
 void Serializer::syncPointer(SavedObject **ptr, Common::Serializer::Version minVersion,
 		Common::Serializer::Version maxVersion) {
-	int idx;
+	int idx = 0;
 	assert(ptr);
 
 	if (isSaving()) {
 		// Get the object index for the given pointer and write it out
-		if (!*ptr) {
-			idx = 0;
-		} else {
+		if (*ptr) {
 			idx = _saver->blockIndexOf(*ptr);
 			assert(idx > 0);
 		}
@@ -211,6 +206,7 @@ Common::Error Saver::restore(int slot) {
 	// Final post-restore notifications
 	_macroRestoreFlag = false;
 	_loadNotifiers.notify(false);
+	_globals->_events.setCursor(_globals->_player._uiEnabled ? CURSOR_WALK : CURSOR_NONE);
 
 	return Common::kNoError;
 }

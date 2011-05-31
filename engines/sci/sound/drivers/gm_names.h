@@ -18,15 +18,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SCI_SOUND_DRIVERS_GM_NAMES_H
 #define SCI_SOUND_DRIVERS_GM_NAMES_H
 
 namespace Sci {
+
+// These tables are only used for debugging. Don't include them for devices
+// with not enough available memory (e.g. phones), where REDUCE_MEMORY_USAGE
+// is defined
+#ifndef REDUCE_MEMORY_USAGE
 
 static const char *GmInstrumentNames[] = {
 	/*000*/  "Acoustic Grand Piano",
@@ -214,6 +216,8 @@ static const char *GmPercussionNames[] = {
 	/*80*/  "Mute Triangle",
 	/*81*/  "Open Triangle"
 };
+
+#endif	// REDUCE_MEMORY_USAGE
 
 } // End of namespace Sci
 

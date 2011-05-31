@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_SAVELOAD_H
@@ -36,7 +33,7 @@ namespace tSage {
 
 typedef void (*SaveNotifierFn)(bool postFlag);
 
-#define TSAGE_SAVEGAME_VERSION 2
+#define TSAGE_SAVEGAME_VERSION 3
 
 class SavedObject;
 
@@ -118,7 +115,7 @@ template<typename T>
 class SynchronizedList : public Common::List<T> {
 public:
 	void synchronize(Serializer &s) {
-		int entryCount;
+		int entryCount = 0;
 
 		if (s.isLoading()) {
 			this->clear();

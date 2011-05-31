@@ -20,9 +20,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 
@@ -782,19 +779,19 @@ bool Debugger::Cmd_Sfx(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_English(int argc, const char **argv) {
-	_vm->initialiseFontResourceFlags(DEFAULT_TEXT);
+	_vm->initializeFontResourceFlags(DEFAULT_TEXT);
 	DebugPrintf("Default fonts selected\n");
 	return true;
 }
 
 bool Debugger::Cmd_Finnish(int argc, const char **argv) {
-	_vm->initialiseFontResourceFlags(FINNISH_TEXT);
+	_vm->initializeFontResourceFlags(FINNISH_TEXT);
 	DebugPrintf("Finnish fonts selected\n");
 	return true;
 }
 
 bool Debugger::Cmd_Polish(int argc, const char **argv) {
-	_vm->initialiseFontResourceFlags(POLISH_TEXT);
+	_vm->initializeFontResourceFlags(POLISH_TEXT);
 	DebugPrintf("Polish fonts selected\n");
 	return true;
 }

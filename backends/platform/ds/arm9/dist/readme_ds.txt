@@ -679,7 +679,7 @@ not supported.
 
 Cdex can do the conversion very well and I recommend using it to convert
 your audio files, although any CD ripping software can be used, so feel
-free to use your favourite program. The format you need to use is
+free to use your favorite program. The format you need to use is
 IMA-ADPCM 4-bit Mono. You may use any sample rate. All other formats
 will be rejected, including uncompressed WAV files.
 

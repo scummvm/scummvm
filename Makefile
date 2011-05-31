@@ -1,5 +1,3 @@
-# $URL$
-# $Id$
 
 #######################################################################
 # Default compilation parameters. Normally don't edit these           #

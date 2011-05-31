@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 
@@ -496,7 +493,7 @@ const SongData Sound::_song[] = {
 	/* 124 - Dino Horn */
 	{ { 127, 0 }, 128, 128, 128, 0, 1 },
 
-	/* 125 - Tyre Screech */
+	/* 125 - Tire Screech */
 	{ { 128, 0 }, 128, 128, 128, 0, 1 },
 
 	/* 126 - Oil Splat */
@@ -1241,7 +1238,7 @@ const TuneData Sound::_tune[] = {
 	/* 127 - Dino Horn */
 	{ { 0, 0 }, { 67, 0 }, 2, 0 },
 
-	/* 128 - Tyre Screech */
+	/* 128 - Tire Screech */
 	{ { 0, 0 }, { 68, 0 }, 2, 0 },
 
 	/* 129 - Oil Splat */
@@ -1700,7 +1697,7 @@ const char *Sound::_sfxName[] = {
 	/* 67 - Dino Horn */
 	"103sssss",
 
-	/* 68 - Tyre Screech */
+	/* 68 - Tire Screech */
 	"125sssss",
 
 	/* 69 - Chicken */

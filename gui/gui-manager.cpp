@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "common/events.h"
@@ -300,7 +297,7 @@ void GuiManager::runLoop() {
 			// dialog-related events since they were probably generated while the old dialog
 			// was still visible, and therefore not intended for the new one.
 			//
-			// This hopefully fixes strange behaviour/crashes with pop-up widgets. (Most easily
+			// This hopefully fixes strange behavior/crashes with pop-up widgets. (Most easily
 			// triggered in 3x mode or when running ScummVM under Valgrind.)
 			if (activeDialog != getTopDialog() && event.type != Common::EVENT_SCREEN_CHANGED)
 				continue;

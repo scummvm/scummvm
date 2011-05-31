@@ -175,15 +175,15 @@ void WiiOptionsDialog::handleTickle() {
 			break;
 
 		case -EBUSY:
-			label = _("Initialising network");
+			label = _("Initializing network");
 			break;
 
 		case -ETIMEDOUT:
-			label = _("Timeout while initialising network");
+			label = _("Timeout while initializing network");
 			break;
 
 		default:
-			label = String::format(_("Network not initialised (%d)"), status);
+			label = String::format(_("Network not initialized (%d)"), status);
 			break;
 		}
 

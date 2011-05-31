@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef M4_GLOBALS_H
@@ -180,13 +177,14 @@ public:
 	MadsObject() {}
 	MadsObject(Common::SeekableReadStream *stream);
 	void load(Common::SeekableReadStream *stream);
-	bool isInInventory() const { return roomNumber == PLAYER_INVENTORY; }
+	bool isInInventory() const { return _roomNumber == PLAYER_INVENTORY; }
+	void setRoom(int roomNumber);
 
-	uint16 descId;
-	uint16 roomNumber;
-	MADSArticles article;
-	uint8 vocabCount;
-	VocabEntry vocabList[3];
+	uint16 _descId;
+	uint16 _roomNumber;
+	MADSArticles _article;
+	uint8 _vocabCount;
+	VocabEntry _vocabList[3];
 };
 
 typedef Common::Array<Common::SharedPtr<MadsObject> > MadsObjectArray;
@@ -243,63 +241,6 @@ union DataMapEntry {
 
 typedef Common::HashMap<uint16, uint16> DataMapHash;
 
-enum DataMapType {BOOL, UINT16, INT, INT_FN};
-
-class DataMapWrapper {
-	friend class DataMap;
-private:
-	DataMapEntry _value;
-	DataMapType _type;
-public:
-	DataMapWrapper(bool *v) { _value.boolValue = v; _type = BOOL; }
-	DataMapWrapper(uint16 *v) { _value.uint16Value = v; _type = UINT16; }
-	DataMapWrapper(int16 *v) { _value.uint16Value = (uint16 *)v; _type = UINT16; }
-	DataMapWrapper(int *v) { _value.intValue = v; _type = INT; }
-	DataMapWrapper(IntFunctionPtr v) { _value.fnPtr = v; _type = INT_FN; }
-
-	uint16 getIntValue() {
-		if (_type == BOOL) return *_value.boolValue ? 0xffff : 0;
-		else if (_type == UINT16) return *_value.uint16Value;
-		else if (_type == INT) return *_value.intValue;
-		else return _value.fnPtr();
-	}
-	void setIntValue(uint16 v) {
-		if (_type == BOOL) *_value.boolValue = v != 0;
-		else if (_type == UINT16) *_value.uint16Value = v;
-		else if (_type == INT) *_value.intValue = v;
-	}
-};
-
-#define MAP_DATA(V) _madsVm->globals()->_dataMap.addMapping(new DataMapWrapper(V))
-
-class DataMap {
-private:
-	DataMapHash _data;
-	Common::Array<DataMapWrapper *> _mapList;
-public:
-	DataMap() {
-		_mapList.push_back(NULL);
-	}
-	~DataMap() {
-		for (uint i = 1; i < _mapList.size(); ++i)
-			delete _mapList[i];
-	}
-	
-	void addMapping(DataMapWrapper *v) { _mapList.push_back(v); }
-	uint16 get(uint16 index) {
-		if (index < _mapList.size()) 
-			return _mapList[index]->getIntValue();
-
-		return _data[index];
-	}
-	void set(uint16 index, uint16 v) {
-		if (index < _mapList.size()) 
-			_mapList[index]->setIntValue(v);
-		else
-			_data[index] = v;
-	}
-};
-
 class MadsGlobals : public Globals {
 private:
 	struct MessageItem {
@@ -328,7 +269,7 @@ public:
 	int previousScene;
 	int16 _nextSceneId;
 	uint16 actionNouns[3];
-	DataMap _dataMap;
+	DataMapHash _dataMap;
 	int _difficultyLevel;
 
 	void loadMadsVocab();

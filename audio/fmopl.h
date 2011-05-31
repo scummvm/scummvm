@@ -17,16 +17,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef SOUND_FMOPL_H
 #define SOUND_FMOPL_H
 
 #include "common/scummsys.h"
-#include "common/str.h"
+
+namespace Common {
+class String;
+}
 
 namespace OPL {
 

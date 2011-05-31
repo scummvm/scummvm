@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "sci/engine/kernel.h"
@@ -224,6 +221,7 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 	byte command = 0, lastCommand = 0;
 	int delta = 0;
 	int midiParamCount = 0;
+	bool containsMidiData = false;
 
 	_mixedData = outData;
 
@@ -250,6 +248,9 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 			}
 		}
 		if ((1 << curChannel) & channelMask) {
+			if (curChannel != 0xF)
+				containsMidiData = true;
+
 			if (command != kEndOfTrack) {
 				// Write delta
 				while (delta > 240) {
@@ -306,6 +307,11 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 	*outData++ = 0x2F; // End of track (EOT)
 	*outData++ = 0x00;
 	*outData++ = 0x00;
+
+	// This occurs in the music tracks of LB1 Amiga, when using the MT-32
+	// driver (bug #3297881)
+	if (!containsMidiData)
+		warning("MIDI parser: the requested SCI0 sound has no MIDI note data for the currently selected sound driver");
 
 	return _mixedData;
 }

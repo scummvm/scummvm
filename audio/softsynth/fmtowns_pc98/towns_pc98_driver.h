@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TOWNS_PC98_AUDIODRIVER_H
@@ -53,33 +50,19 @@ public:
 
 	void fadeStep();
 
-	void pause() {
-		_musicPlaying = false;
-	}
-	void cont() {
-		_musicPlaying = true;
-	}
+	void pause();
+	void cont();
 
-	void timerCallbackB();
+	bool looping();
+	bool musicPlaying();
+
+	void setMusicVolume(int volume);
+	void setSoundEffectVolume(int volume);
+
+private:
 	void timerCallbackA();
+	void timerCallbackB();
 
-	bool looping() {
-		return _looping == _updateChannelsFlag ? true : false;
-	}
-	bool musicPlaying() {
-		return _musicPlaying;
-	}
-
-	void setMusicVolume(int volume) {
-		_musicVolume = volume;
-		setVolumeIntern(_musicVolume, _sfxVolume);
-	}
-	void setSoundEffectVolume(int volume) {
-		_sfxVolume = volume;
-		setVolumeIntern(_musicVolume, _sfxVolume);
-	}
-
-protected:
 	void startSoundEffect();
 
 	void setMusicTempo(uint8 tempo);

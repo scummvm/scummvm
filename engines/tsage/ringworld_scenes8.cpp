@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "graphics/cursorman.h"
@@ -37,12 +34,21 @@ void NamedHotspotMult::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_lookLineNum);
 }
 
+void SceneObject7700::synchronize(Serializer &s) {
+	SceneObject::synchronize(s);
+	if (s.getVersion() >= 3) {
+		s.syncAsSint16LE(_lookLineNum);
+		s.syncAsSint16LE(_defltLineNum);
+	}
+}
+
 /*--------------------------------------------------------------------------
- * Scene 7000
+ * Scene 7000 - Landing near beach
  *
  *--------------------------------------------------------------------------*/
 
 void Scene7000::Action1::signal() {
+	// Quinn walks from the lander to the seaside (action6) then discuss with Skeenar
 	Scene7000 *scene = (Scene7000 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -114,12 +120,13 @@ void Scene7000::Action3::dispatch() {
 
 	Action::dispatch();
 	if (_actionIndex == 4)
-		scene->_object4.setPosition(scene->_object3._position);
+		scene->_object4.setPosition(Common::Point(scene->_object3._position.x, scene->_object3._position.y + 15));
 }
 
 /*--------------------------------------------------------------------------*/
 
 void Scene7000::Action3::signal() {
+	// Lander is landing
 	Scene7000 *scene = (Scene7000 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -255,6 +262,7 @@ void Scene7000::Action5::signal() {
 /*--------------------------------------------------------------------------*/
 
 void Scene7000::Action6::signal() {
+	// Quinn walks from the lander to the seaside
 	switch (_actionIndex++) {
 	case 0:
 		_globals->_player.disableControl();
@@ -356,6 +364,7 @@ void Scene7000::Hotspot1::doAction(int action) {
 /*--------------------------------------------------------------------------*/
 
 void Scene7000::Object1::doAction(int action) {
+	// Skeenar
 	Scene7000 *scene = (Scene7000 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -434,10 +443,10 @@ void Scene7000::Object1::doAction(int action) {
 			scene->_sceneMode = 7005;
 			scene->setAction(&scene->_sequenceManager, scene, 7013, NULL);
 		} else if (_globals->getFlag(13)) {
-			_globals->_sceneManager._sceneNumber = 7002;
+			scene->_sceneMode = 7002;
 			scene->setAction(&scene->_sequenceManager, scene, 7014, NULL);
 		} else {
-			_globals->_sceneManager._sceneNumber = 7002;
+			scene->_sceneMode = 7002;
 			scene->setAction(&scene->_sequenceManager, scene, 7002, NULL);
 		}
 		break;
@@ -647,7 +656,7 @@ void Scene7000::signal() {
 
 
 /*--------------------------------------------------------------------------
- * Scene 7100
+ * Scene 7100 - Underwater: swimming
  *
  *--------------------------------------------------------------------------*/
 
@@ -1131,7 +1140,7 @@ void Scene7100::postInit(SceneObjectList *OwnerList) {
 	_globals->_soundHandler.startSound(270);
 }
 /*--------------------------------------------------------------------------
- * Scene 7200
+ * Scene 7200 - Underwater: Entering the cave
  *
  *--------------------------------------------------------------------------*/
 
@@ -1297,7 +1306,7 @@ void Scene7200::postInit(SceneObjectList *OwnerList) {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 7300
+ * Scene 7300 - Underwater: Lord Poria
  *
  *--------------------------------------------------------------------------*/
 
@@ -1492,7 +1501,7 @@ void Scene7300::postInit(SceneObjectList *OwnerList) {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 7600
+ * Scene 7600 - Floating Buildings: Outside
  *
  *--------------------------------------------------------------------------*/
 
@@ -1597,7 +1606,7 @@ void Scene7600::postInit(SceneObjectList *OwnerList) {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 7700
+ * Scene 7700 - Floating Buildings: In the lab
  *
  *--------------------------------------------------------------------------*/
 
@@ -2521,6 +2530,15 @@ Scene7700::Scene7700() {
 	_object5._state = 0;
 	_object6._state = 0;
 	_prof._state = 0;
+}
+
+void Scene7700::synchronize(Serializer &s) {
+	Scene::synchronize(s);
+	if (s.getVersion() >= 3) {
+		s.syncAsSint16LE(_field977);
+		s.syncAsSint16LE(_field979);
+		s.syncAsSint16LE(_field97B);
+	}
 }
 
 } // End of namespace tSage

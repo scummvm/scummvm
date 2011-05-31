@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * System variable handling.
  */
 
@@ -115,7 +112,7 @@ static SCNHANDLE systemStrings[SS_MAX_VALID];	// FIXME: Avoid non-const global v
 //----------------- FUNCTIONS --------------------------------
 
 /**
- * Initialises the system variable list
+ * Initializes the system variable list
  */
 
 void InitSysVars() {

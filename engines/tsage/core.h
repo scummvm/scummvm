@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_CORE_H
@@ -910,30 +907,6 @@ public:
 
 	static void dispatchObject(EventHandler *obj);
 	static void saveListener(Serializer &ser);
-};
-
-/*--------------------------------------------------------------------------*/
-
-class Game {
-protected:
-	SynchronizedList<GameHandler *> _handlers;
-
-	static bool notLockedFn(GameHandler *g);
-	virtual void handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName) {}
-public:
-	virtual ~Game() {}
-
-	void addHandler(GameHandler *entry) { _handlers.push_back(entry); }
-	void removeHandler(GameHandler *entry) { _handlers.remove(entry); }
-
-	void execute();
-	virtual void start() = 0;
-	virtual void restart() {}
-	virtual void restartGame() {}
-	virtual void saveGame() {}
-	virtual void restoreGame() {}
-	virtual void quitGame() {}
-	virtual void endGame(int resNum, int lineNum) {}
 };
 
 } // End of namespace tSage

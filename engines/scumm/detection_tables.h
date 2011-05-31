@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SCUMM_DETECTION_TABLES_H
@@ -187,6 +184,8 @@ using Common::GUIO_NOLAUNCHLOAD;
 using Common::GUIO_NOMIDI;
 using Common::GUIO_NOSPEECH;
 using Common::GUIO_MIDITOWNS;
+using Common::GUIO_MIDIADLIB;
+using Common::GUIO_MIDIMT32;
 
 // The following table contains information about variants of our various
 // games. We index into it with help of md5table (from scumm-md5.h), to find
@@ -245,11 +244,11 @@ static const GameSettings gameVariantsTable[] = {
 	{"monkey", "SEGA",         0, GID_MONKEY,     5, 0, MDT_NONE,                         GF_AUDIOTRACKS, Common::kPlatformSegaCD, GUIO_NOSPEECH | GUIO_NOMIDI},
 
 	{"monkey2",  "", 0, GID_MONKEY2,  5, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, UNK, GUIO_NOSPEECH},
-	{"monkey2", "FM-TOWNS", 0, GID_MONKEY2,  5, 0, MDT_TOWNS | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, Common::kPlatformFMTowns, GUIO_NOSPEECH},
+	{"monkey2", "FM-TOWNS", 0, GID_MONKEY2,  5, 0, MDT_TOWNS | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, Common::kPlatformFMTowns, GUIO_NOSPEECH | GUIO_MIDITOWNS | GUIO_MIDIADLIB | GUIO_MIDIMT32},
 
 	{"atlantis", "", 0, GID_INDY4,    5, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, UNK, GUIO_NONE},
 	{"atlantis", "Floppy", 0, GID_INDY4,    5, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, UNK, GUIO_NOSPEECH},
-	{"atlantis", "FM-TOWNS", 0, GID_INDY4,    5, 0, MDT_TOWNS | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, Common::kPlatformFMTowns, GUIO_NONE},
+	{"atlantis", "FM-TOWNS", 0, GID_INDY4,    5, 0, MDT_TOWNS | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, Common::kPlatformFMTowns, GUIO_MIDITOWNS | GUIO_MIDIADLIB | GUIO_MIDIMT32},
 
 	{"tentacle", "", 0, GID_TENTACLE, 6, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM, GF_USE_KEY, UNK, GUIO_NONE},
 	{"tentacle", "Floppy", 0, GID_TENTACLE, 6, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM, GF_USE_KEY, UNK, GUIO_NOSPEECH},

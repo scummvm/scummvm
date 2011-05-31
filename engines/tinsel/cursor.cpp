@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * Cursor and cursor trails.
  */
 
@@ -80,7 +77,7 @@ static int nextTrail = 0;
 
 static bool bWhoa = false;		// Set by DropCursor() at the end of a scene
 				// - causes cursor processes to do nothing
-				// Reset when main cursor has re-initialised
+				// Reset when main cursor has re-initialized
 
 static uint16 restart = 0;	// When main cursor has been bWhoa-ed, it waits
 							// for this to be set to 0x8000.
@@ -109,8 +106,8 @@ static int lastCursorX = 0, lastCursorY = 0;
 static void DoCursorMove();
 
 /**
- * Initialise and insert a cursor trail object, set its Z-pos, and hide
- * it. Also initialise its animation script.
+ * Initialize and insert a cursor trail object, set its Z-pos, and hide
+ * it. Also initialize its animation script.
  */
 static void InitCurTrailObj(int i, int x, int y) {
 	const FREEL *pfr;		// pointer to reel
@@ -130,13 +127,13 @@ static void InitCurTrailObj(int i, int x, int y) {
 	assert(BgPal()); // No background palette
 	pim->hImgPal = TO_LE_32(BgPal());
 
-	// Initialise and insert the object, set its Z-pos, and hide it
+	// Initialize and insert the object, set its Z-pos, and hide it
 	ntrailData[i].trailObj = MultiInitObject(pmi);
 	MultiInsertObject(GetPlayfieldList(FIELD_STATUS), ntrailData[i].trailObj);
 	MultiSetZPosition(ntrailData[i].trailObj, Z_CURSORTRAIL);
 	MultiSetAniXY(ntrailData[i].trailObj, x, y);
 
-	// Initialise the animation script
+	// Initialize the animation script
 	InitStepAnimScript(&ntrailData[i].trailAnim, ntrailData[i].trailObj, FROM_LE_32(pfr->script), ONE_SECOND / FROM_LE_32(pfilm->frate));
 	StepAnimScript(&ntrailData[i].trailAnim);
 }
@@ -230,7 +227,7 @@ void GetCursorXY(int *x, int *y, bool absolute) {
 }
 
 /**
- * Re-initialise the main cursor to use the main cursor reel.
+ * Re-initialize the main cursor to use the main cursor reel.
  * Called from TINLIB.C to restore cursor after hiding it.
  * Called from INVENTRY.C to restore cursor after customising it.
  */
@@ -388,11 +385,11 @@ void SetAuxCursor(SCNHANDLE hFilm) {
 	ACoY = (short)((FROM_LE_16(pim->imgHeight) & ~C16_FLAG_MASK)/2 -
 		((int16) FROM_LE_16(pim->anioffY)));
 
-	// Initialise and insert the auxillary cursor object
+	// Initialize and insert the auxillary cursor object
 	AcurObj = MultiInitObject(pmi);
 	MultiInsertObject(GetPlayfieldList(FIELD_STATUS), AcurObj);
 
-	// Initialise the animation and set its position
+	// Initialize the animation and set its position
 	InitStepAnimScript(&AcurAnim, AcurObj, FROM_LE_32(pfr->script), ONE_SECOND / FROM_LE_32(pfilm->frate));
 	MultiSetAniXY(AcurObj, x - ACoX, y - ACoY);
 	MultiSetZPosition(AcurObj, Z_ACURSOR);
@@ -473,7 +470,7 @@ static void DoCursorMove() {
 }
 
 /**
- * Initialise cursor object.
+ * Initialize cursor object.
  */
 static void InitCurObj() {
 	const FILM *pFilm;
@@ -503,7 +500,7 @@ static void InitCurObj() {
 }
 
 /**
- * Initialise the cursor position.
+ * Initialize the cursor position.
  */
 static void InitCurPos() {
 	Common::Point ptMouse = _vm->getMousePosition();
@@ -533,7 +530,7 @@ static void CursorStoppedCheck(CORO_PARAM) {
 		while (restart != 0x8000)
 			CORO_SLEEP(1);
 
-		// Re-initialise
+		// Re-initialize
 		InitCurObj();
 		InitCurPos();
 		InventoryIconCursor(false);	// May be holding something
@@ -659,7 +656,7 @@ void DropCursor() {
  * RestartCursor is called when a new scene is starting up.
  */
 void RestartCursor() {
-	restart = 0x8000;	// Get the main cursor to re-initialise
+	restart = 0x8000;	// Get the main cursor to re-initialize
 }
 
 /**

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 
@@ -44,6 +41,10 @@ Sound::Sound(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 }
 
 Sound::~Sound() {
+}
+
+void Sound::pause(bool paused) {
+	_mixer->pauseAll(paused);
 }
 
 bool Sound::voiceFileIsPresent(const char *file) {

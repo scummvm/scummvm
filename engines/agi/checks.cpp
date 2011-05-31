@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "agi/agi.h"
@@ -268,7 +265,7 @@ void AgiEngine::updatePosition() {
  * This function adjusts the position of a sprite moving it until
  * certain criteria is matched. According to priority and control line
  * data, a sprite may not always appear at the location we specified.
- * This behaviour is also known as the "Budin-Sonneveld effect".
+ * This behavior is also known as the "Budin-Sonneveld effect".
  *
  * @param n view table entry number
  */

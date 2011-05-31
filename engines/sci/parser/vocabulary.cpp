@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // Main vocabulary support functions and word lookup
@@ -395,9 +392,11 @@ void Vocabulary::lookupWord(ResultWordList& retval, const char *word, int word_l
 		// SCI01 was the first version to support
 		// multiple matches, so no need to look further
 		// in earlier versions.
-		if (getSciVersion() < SCI_VERSION_01)
-			return;
 
+		// In versions that do support multiple matches, it seems
+		// that SSCI also aborts early when it finds an exact match in the
+		// dictionary.
+		return;
 	}
 
 	// Now try all suffixes

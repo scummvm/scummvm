@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "mohawk/cursors.h"
@@ -130,6 +127,13 @@ void MystCursorManager::hideCursor() {
 }
 
 void MystCursorManager::setCursor(uint16 id) {
+	// Zero means empty cursor
+	if (id == 0) {
+		static const byte emptyCursor = 0;
+		CursorMan.replaceCursor(&emptyCursor, 1, 1, 0, 0, 0);
+		return;
+	}
+
 	// Both Myst and Myst ME use the "MystBitmap" format for cursor images.
 	MohawkSurface *mhkSurface = _bmpDecoder->decodeImage(_vm->getResource(ID_WDIB, id));
 	Graphics::Surface *surface = mhkSurface->getSurface();

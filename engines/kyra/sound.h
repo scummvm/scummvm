@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef KYRA_SOUND_H
@@ -104,7 +101,7 @@ public:
 
 	/**
 	 * Load a sound file for playing music
-	 * (and somtimes sound effects) from.
+	 * (and sometimes sound effects) from.
 	 */
 	virtual void loadSoundFile(Common::String file) = 0;
 
@@ -155,6 +152,11 @@ public:
 	 * playing a new track or sound effect.
 	 */
 	virtual void beginFadeOut() = 0;
+
+	/**
+	* Stops all audio playback when paused. Continues after end of pause.
+	*/
+	virtual void pause(bool paused);
 
 	void enableMusic(int enable) { _musicEnabled = enable; }
 	int musicEnabled() const { return _musicEnabled; }
@@ -278,6 +280,7 @@ public:
 	void stopAllSoundEffects() { _sfx->stopAllSoundEffects(); }
 
 	void beginFadeOut() { _music->beginFadeOut(); }
+	void pause(bool paused) { _music->pause(paused); _sfx->pause(paused); }
 private:
 	Sound *_music, *_sfx;
 };

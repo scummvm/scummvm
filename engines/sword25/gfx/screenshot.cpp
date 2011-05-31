@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -32,89 +29,36 @@
  *
  */
 
-// Disable symbol overrides so that we can use png.h
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "common/memstream.h"
 #include "common/textconsole.h"
 #include "sword25/gfx/screenshot.h"
 #include "sword25/kernel/filesystemutil.h"
-#include <png.h>
 
 namespace Sword25 {
 
-#include "common/pack-start.h"
-struct RGB_PIXEL {
-	byte red;
-	byte green;
-	byte blue;
-} PACKED_STRUCT;
-#include "common/pack-end.h"
-
-void userWriteFn(png_structp png_ptr, png_bytep data, png_size_t length) {
-	static_cast<Common::WriteStream *>(png_get_io_ptr(png_ptr))->write(data, length);
-}
-
-void userFlushFn(png_structp png_ptr) {
-}
+#define THUMBNAIL_VERSION 1
 
 bool Screenshot::saveToFile(Graphics::Surface *data, Common::WriteStream *stream) {
-	// Reserve buffer space
-	RGB_PIXEL *pixelBuffer = new RGB_PIXEL[data->w * data->h];
-
 	// Convert the RGBA data to RGB
 	const byte *pSrc = (const byte *)data->getBasePtr(0, 0);
-	RGB_PIXEL *pDest = pixelBuffer;
+
+	// Write our own custom header
+	stream->writeUint32BE(MKTAG('S','C','R','N'));	// SCRN, short for "Screenshot"
+	stream->writeUint16LE(data->w);
+	stream->writeUint16LE(data->h);
+	stream->writeByte(THUMBNAIL_VERSION);
 
 	for (uint y = 0; y < data->h; y++) {
 		for (uint x = 0; x < data->w; x++) {
+			// This is only called by createThumbnail below, which
+			// provides a fake 'surface' with LE data in it.
 			uint32 srcPixel = READ_LE_UINT32(pSrc);
 			pSrc += sizeof(uint32);
-			pDest->red = (srcPixel >> 16) & 0xff;
-			pDest->green = (srcPixel >> 8) & 0xff;
-			pDest->blue = srcPixel & 0xff;
-			++pDest;
+			stream->writeByte((srcPixel >> 16) & 0xff); // R
+			stream->writeByte((srcPixel >> 8) & 0xff);  // G
+			stream->writeByte(srcPixel & 0xff);         // B
 		}
 	}
-
-	png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	if (!png_ptr)
-		error("Could not create PNG write-struct.");
-
-	png_infop info_ptr = png_create_info_struct(png_ptr);
-	if (!info_ptr)
-		error("Could not create PNG info-struct.");
-
-	// The compression buffer must be large enough to the entire image.
-	// This ensures that only an IDAT chunk is created.
-	// When buffer size is used 110% of the raw data size to be sure.
-	png_set_compression_buffer_size(png_ptr, (data->w * data->h * 3 * 110) / 100);
-
-	// Initialise PNG-Info structure
-	png_set_IHDR(png_ptr, info_ptr,
-	             data->w,                        // Width
-	             data->h,                        // Height
-	             8,                              // Bits depth
-	             PNG_COLOR_TYPE_RGB,             // Color type
-	             PNG_INTERLACE_NONE,             // No interlacing
-	             PNG_COMPRESSION_TYPE_DEFAULT,   // Compression type
-	             PNG_FILTER_TYPE_DEFAULT);       // Filter Type
-
-	// Rowpointer erstellen
-	png_bytep *rowPointers = new png_bytep[data->h];
-	for (uint i = 0; i < data->h; i++) {
-		rowPointers[i] = (png_bytep)&pixelBuffer[data->w * i];
-	}
-	png_set_rows(png_ptr, info_ptr, &rowPointers[0]);
-
-	// Write out the png data to the file
-	png_set_write_fn(png_ptr, (void *)stream, userWriteFn, userFlushFn);
-	png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
-
-	png_destroy_write_struct(&png_ptr, &info_ptr);
-
-	delete[] pixelBuffer;
-	delete[] rowPointers;
 
 	return true;
 }
@@ -148,7 +92,7 @@ Common::SeekableReadStream *Screenshot::createThumbnail(Graphics::Surface *data)
 		for (int j = 0; j < 4; ++j) {
 			const uint32 *srcP = (const uint32 *)data->getBasePtr(x * 4, y * 4 + j + 50);
 			for (int i = 0; i < 4; ++i) {
-				uint32 pixel = READ_LE_UINT32(srcP + i);
+				uint32 pixel = READ_UINT32(srcP + i);
 				alpha += (pixel >> 24);
 				red += (pixel >> 16) & 0xff;
 				green += (pixel >> 8) & 0xff;

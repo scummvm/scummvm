@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * The movie player.
  */
 
@@ -388,7 +385,7 @@ void BMVPlayer::MoviePalette(int paletteOffset) {
 		SetTextPal(talkColor);
 }
 
-void BMVPlayer::InitialiseMovieSound() {
+void BMVPlayer::InitializeMovieSound() {
 	_audioStream = Audio::makeQueuingAudioStream(22050, true);
 	audioStarted = false;
 }
@@ -666,7 +663,7 @@ void BMVPlayer::LoadSlots(int number) {
 /**
  * Called from the foreground when starting playback of a movie.
  */
-void BMVPlayer::InitialiseBMV() {
+void BMVPlayer::InitializeBMV() {
 	if (!stream.open(szMovieFile))
 		error(CANNOT_FIND_FILE, szMovieFile);
 
@@ -683,7 +680,7 @@ void BMVPlayer::InitialiseBMV() {
 	// Pass the sceen buffer to the decompresser
 	InitBMV(screenBuffer);
 
-	// Initialise some stuff
+	// Initialize some stuff
 	nextUseOffset = 0;
 	nextSoundOffset = 0;
 	wrapUseOffset = -1;
@@ -708,8 +705,8 @@ void BMVPlayer::InitialiseBMV() {
 	while (numAdvancePackets < ADVANCE_SOUND)
 		LoadSlots(1);
 
-	// Initialise the sound channel
-	InitialiseMovieSound();
+	// Initialize the sound channel
+	InitializeMovieSound();
 }
 
 /**
@@ -1069,7 +1066,7 @@ void BMVPlayer::FettleBMV() {
 
 		// First time in with this movie
 
-		InitialiseBMV();
+		InitializeBMV();
 
 		for (i = 0; i < ADVANCE_SOUND;) {
 			if (DoSoundFrame())

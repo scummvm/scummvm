@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/endian.h"
@@ -53,6 +50,9 @@ DemoPlayer::Script DemoPlayer::_scripts[] = {
 		"slide xant.imd 20\nslide tum.imd 20\nslide voile.imd 20\n"     \
 		"slide int.imd 20\nslide voila.imd 1\nslide voilb.imd 1\n"},
 	{kScriptSourceFile, "coktelplayer.scn"},
+	{kScriptSourceFile, "demogb.scn"},
+	{kScriptSourceFile, "demoall.scn"},
+	{kScriptSourceFile, "demofra.scn"}
 };
 
 DemoPlayer::DemoPlayer(GobEngine *vm) : _vm(vm) {

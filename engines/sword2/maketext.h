@@ -20,9 +20,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef SWORD2_MAKETEXT_H
@@ -94,7 +91,7 @@ private:
 				// each line - negative for overlap
 	uint8 _borderPen;	// output pen color of character borders
 
-	uint16 analyseSentence(byte *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line);
+	uint16 analyzeSentence(byte *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line);
 	byte *buildTextSprite(byte *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines);
 	uint16 charWidth(byte ch, uint32 fontRes);
 	uint16 charHeight(uint32 fontRes);

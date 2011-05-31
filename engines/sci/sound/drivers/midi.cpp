@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "sci/sci.h"
@@ -819,11 +816,13 @@ void MidiPlayer_Midi::mapMt32ToGm(byte *data, size_t size) {
 		if (_patchMap[i] == MIDI_UNMAPPED) {
 			debugC(kDebugLevelSound, "[Unmapped]");
 		} else {
+#ifndef REDUCE_MEMORY_USAGE
 			if (_patchMap[i] >= 128) {
 				debugC(kDebugLevelSound, "%s [Rhythm]", GmPercussionNames[_patchMap[i] - 128]);
 			} else {
 				debugC(kDebugLevelSound, "%s", GmInstrumentNames[_patchMap[i]]);
 			}
+#endif
 		}
 
 		_keyShift[i] = CLIP<uint8>(keyshift, 0, 48) - 24;
@@ -855,10 +854,12 @@ void MidiPlayer_Midi::mapMt32ToGm(byte *data, size_t size) {
 				}
 			}
 
+#ifndef REDUCE_MEMORY_USAGE
 			if (_percussionMap[ins] == MIDI_UNMAPPED)
 				debugC(kDebugLevelSound, "[Unmapped]");
 			else
 				debugC(kDebugLevelSound, "%s", GmPercussionNames[_percussionMap[ins]]);
+#endif
 
 			_percussionVelocityScale[ins] = *(data + pos + 4 * i + 3) * 127 / 100;
 		}

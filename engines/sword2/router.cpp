@@ -20,9 +20,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 
@@ -323,7 +320,7 @@ int32 Router::getRoute() {
 		// of a line
 
 		// scan through the nodes linking each node to its nearest
-		// neighbour until no more nodes change
+		// neighbor until no more nodes change
 
 		// This is the routine that finds a route using scan()
 

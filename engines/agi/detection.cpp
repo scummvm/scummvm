@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // FIXME: Avoid using printf
@@ -167,7 +164,7 @@ public:
 	AgiMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "AGI preAGI + v2 + v3 Engine";
+		return "AGI preAGI + v2 + v3";
 	}
 	virtual const char *getOriginalCopyright() const {
 		return "Sierra AGI Engine (C) Sierra On-Line Software";

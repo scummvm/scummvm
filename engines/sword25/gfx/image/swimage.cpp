@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -33,7 +30,7 @@
  */
 
 #include "sword25/package/packagemanager.h"
-#include "sword25/gfx/image/pngloader.h"
+#include "sword25/gfx/image/imgloader.h"
 #include "sword25/gfx/image/swimage.h"
 
 namespace Sword25 {
@@ -56,18 +53,10 @@ SWImage::SWImage(const Common::String &filename, bool &result) :
 		return;
 	}
 
-#ifndef USE_INTERNAL_PNG_DECODER
-	// Determine image properties
-	if (!PNGLoader::imageProperties(pFileData, fileSize, _width, _height)) {
-		error("Could not read image properties.");
-		return;
-	}
-#endif
-
 	// Uncompress the image
 	int pitch;
 	byte *pUncompressedData;
-	if (!PNGLoader::decodeImage(pFileData, fileSize, pUncompressedData, _width, _height, pitch)) {
+	if (!ImgLoader::decodePNGImage(pFileData, fileSize, pUncompressedData, _width, _height, pitch)) {
 		error("Could not decode image.");
 		return;
 	}

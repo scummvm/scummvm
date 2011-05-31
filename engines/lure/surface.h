@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef LURE_SURFACE_H
@@ -52,8 +49,8 @@ public:
 	static void getDialogBounds(Common::Point &size, int charWidth, int numLines,
 		bool squashedLines = true);
 
-	static void initialise();
-	static void deinitialise();
+	static void initialize();
+	static void deinitialize();
 
 	uint16 width() { return _width; }
 	uint16 height() { return _height; }

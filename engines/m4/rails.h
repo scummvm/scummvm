@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef M4_RAILS_H
@@ -76,7 +73,7 @@ public:
 
 private:
 	Common::Array<RailNode *> _nodes;
-	Common::Array<int16 *> _edges;
+	Common::Array<int16> _edges;
 	Common::List<NoWalkRect *> _noWalkRects;
 	M4Surface *_walkCodes;
 

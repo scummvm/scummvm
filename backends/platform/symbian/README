@@ -6,8 +6,6 @@
  Copyright (C) 2002-2008 Jurgen 'SumthinWicked' Braam
 
  Copyright (C) 2003-2005 Andreas 'Sprawl' Karlsson
- $URL$
- $Id$
 
 Using parts of snprintf.c by
 Mark Martinec <mark.martinec@ijs.si>, April 1999, June 2000

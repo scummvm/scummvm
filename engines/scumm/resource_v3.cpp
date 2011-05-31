@@ -18,44 +18,42 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 
 #include "scumm/scumm_v3.h"
 #include "scumm/file.h"
+#include "scumm/resource.h"
 #include "scumm/util.h"
 
 namespace Scumm {
 
-extern const char *resTypeFromId(int id);
+extern const char *nameOfResType(ResType type);
 
-int ScummEngine_v3old::readResTypeList(int id) {
-	int num;
-	int i;
+int ScummEngine_v3old::readResTypeList(ResType type) {
+	uint num;
+	ResId idx;
 
-	debug(9, "readResTypeList(%s)", resTypeFromId(id));
+	debug(9, "readResTypeList(%s)", nameOfResType(type));
 
 	num = _fileHandle->readByte();
 
 	if (num >= 0xFF) {
-		error("Too many %ss (%d) in directory", resTypeFromId(id), num);
+		error("Too many %ss (%d) in directory", nameOfResType(type), num);
 	}
 
-	if (id == rtRoom) {
-		for (i = 0; i < num; i++)
-			_res->roomno[id][i] = i;
+	if (type == rtRoom) {
+		for (idx = 0; idx < num; idx++)
+			_res->_types[type][idx]._roomno = idx;
 		_fileHandle->seek(num, SEEK_CUR);
 	} else {
-		for (i = 0; i < num; i++)
-			_res->roomno[id][i] = _fileHandle->readByte();
+		for (idx = 0; idx < num; idx++)
+			_res->_types[type][idx]._roomno = _fileHandle->readByte();
 	}
-	for (i = 0; i < num; i++) {
-		_res->roomoffs[id][i] = _fileHandle->readUint16LE();
-		if (_res->roomoffs[id][i] == 0xFFFF)
-			_res->roomoffs[id][i] = (uint32)RES_INVALID_OFFSET;
+	for (idx = 0; idx < num; idx++) {
+		_res->_types[type][idx]._roomoffs = _fileHandle->readUint16LE();
+		if (_res->_types[type][idx]._roomoffs == 0xFFFF)
+			_res->_types[type][idx]._roomoffs = (uint32)RES_INVALID_OFFSET;
 	}
 
 	return num;

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_RINGWORLD_SCENES3_H
@@ -281,13 +278,14 @@ public:
 	Action15 _action15;
 	Action16 _action16;
 	Action17 _action17;
-	int _field1800;
+	int _sitFl;
 	SceneArea _area1, _area2, _area3, _area4;
 
 	Scene2100();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void stripCallback(int v);
 	virtual void signal();
+	virtual void synchronize(Serializer &s);
 };
 
 class Scene2120 : public Scene {
@@ -323,6 +321,7 @@ public:
 	int _subjectIndex;
 	int _lineOffset;
 
+	Scene2120();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void synchronize(Serializer &s);
 };

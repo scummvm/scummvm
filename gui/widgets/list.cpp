@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "common/system.h"
@@ -41,7 +38,7 @@ ListWidget::ListWidget(Dialog *boss, const String &name, const char *tooltip, ui
 	_scrollBar = NULL;
 	_textWidth = NULL;
 
-	// This ensures that _entriesPerPage is properly initialised.
+	// This ensures that _entriesPerPage is properly initialized.
 	reflowLayout();
 
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth + 1, 0, _scrollBarWidth, _h);
@@ -73,7 +70,7 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const char *too
 	_scrollBar = NULL;
 	_textWidth = NULL;
 
-	// This ensures that _entriesPerPage is properly initialised.
+	// This ensures that _entriesPerPage is properly initialized.
 	reflowLayout();
 
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth + 1, 0, _scrollBarWidth, _h);
@@ -590,6 +587,7 @@ void ListWidget::startEditMode() {
 	if (_editable && !_editMode && _selectedItem >= 0) {
 		_editMode = true;
 		setEditString(_list[_selectedItem]);
+		_caretPos = _editString.size();	// Force caret to the *end* of the selection.
 		if (_listColors.empty()) {
 			_editColor = ThemeEngine::kFontColorNormal;
 		} else {

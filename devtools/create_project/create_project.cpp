@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // HACK to allow building with the SDL backend on MinGW
@@ -639,7 +636,7 @@ bool setEngineBuildState(const std::string &name, EngineDescList &engines, bool 
 		if (engine != engines.end()) {
 			engine->enable = enable;
 
-			// When we disable an einge, we also need to disable all the sub engines.
+			// When we disable an engine, we also need to disable all the sub engines.
 			if (!enable && !engine->subEngines.empty()) {
 				for (StringList::const_iterator j = engine->subEngines.begin(); j != engine->subEngines.end(); ++j) {
 					EngineDescList::iterator subEngine = std::find(engines.begin(), engines.end(), *j);
@@ -741,7 +738,6 @@ const Feature s_features[] = {
 	{     "mt32emu",     "USE_MT32EMU",         "", true, "integrated MT-32 emulator" },
 	{        "nasm",        "USE_NASM",         "", true, "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
 	{      "opengl",      "USE_OPENGL", "opengl32", true, "OpenGL support" },
-	{      "indeo3",      "USE_INDEO3",         "", true, "Indeo3 codec support"},
 	{ "translation", "USE_TRANSLATION",         "", true, "Translation support" },
 	{      "vkeybd",   "ENABLE_VKEYBD",         "", false, "Virtual keyboard support"},
 	{  "langdetect",  "USE_DETECTLANG",         "", true, "System language detection support" } // This feature actually depends on "translation", there

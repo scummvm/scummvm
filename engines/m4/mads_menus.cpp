@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/textconsole.h"
@@ -599,18 +596,18 @@ RexDialogView::RexDialogView(): View(_madsVm, Common::Rect(0, 0, _madsVm->_scree
 		MadsView(this) {
 	_screenType = VIEWID_MENU;
 
-	// Initialise class variables
+	// Initialize class variables
 	_priorSceneId = _madsVm->_scene->getCurrentScene();
 	_dialogType = DIALOG_NONE;
 
 	// Load necessary quotes
 	_madsVm->globals()->loadQuoteRange(1, 48);
 
-	initialiseLines();
-	initialiseGraphics();
+	initializeLines();
+	initializeGraphics();
 }
 
-void RexDialogView::initialiseLines() {
+void RexDialogView::initializeLines() {
 	// Set up a list of blank entries for use in the various dialogs
 	for (int i = 0; i < DIALOG_LINES_SIZE; ++i) {
 		DialogTextEntry rec;
@@ -625,7 +622,7 @@ void RexDialogView::initialiseLines() {
 	_spriteSlots[0].seqIndex = -1;
 }
 
-void RexDialogView::initialiseGraphics() {
+void RexDialogView::initializeGraphics() {
 	// Set needed palette entries
 	_madsVm->_palette->blockRange(0, 16);
 	_madsVm->_palette->setEntry(10, 0, 255, 0);

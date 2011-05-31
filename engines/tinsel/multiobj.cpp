@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * This file contains utilities to handle multi-part objects.
  */
 
@@ -32,7 +29,7 @@
 namespace Tinsel {
 
 /**
- * Initialise a multi-part object using a list of images to init
+ * Initialize a multi-part object using a list of images to init
  * each object piece. One object is created for each image in the list.
  * All objects are given the same palette as the first image. A pointer
  * to the first (master) object created is returned.
@@ -93,7 +90,7 @@ OBJECT *MultiInitObject(const MULTI_INIT *pInitTbl) {
 
  */
 
-void MultiInsertObject(OBJECT *pObjList, OBJECT *pInsObj) {
+void MultiInsertObject(OBJECT **pObjList, OBJECT *pInsObj) {
 	// validate object pointer
 	assert(isValidObject(pInsObj));
 
@@ -114,7 +111,7 @@ void MultiInsertObject(OBJECT *pObjList, OBJECT *pInsObj) {
  * @param pMultiObj			Multi-part object to be deleted
  */
 
-void MultiDeleteObject(OBJECT *pObjList, OBJECT *pMultiObj) {
+void MultiDeleteObject(OBJECT **pObjList, OBJECT *pMultiObj) {
 	// validate object pointer
 	assert(isValidObject(pMultiObj));
 

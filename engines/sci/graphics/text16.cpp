@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/util.h"
@@ -469,7 +466,7 @@ void GfxText16::Box(const char *text, bool show, const Common::Rect &rect, TextA
 
 	if (doubleByteMode) {
 		// Kanji is written by pc98 rom to screen directly. Because of
-		// GetLongest() behaviour (not cutting off the last char, that causes a
+		// GetLongest() behavior (not cutting off the last char, that causes a
 		// new line), results in the script thinking that the text would need
 		// less space. The coordinate adjustment in fontsjis.cpp handles the
 		// incorrect centering because of that and this code actually shows all

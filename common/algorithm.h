@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef COMMON_ALGORITHM_H
@@ -237,6 +234,13 @@ void sort(T first, T last) {
 	sort(first, last, Common::Less<typename T::ValueType>());
 }
 
+// MSVC is complaining about the minus operator being applied to an unsigned type
+// We disable this warning for the affected section of code
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 4146)
+#endif
+
 /**
  * Euclid's algorithm to compute the greatest common divisor.
  */
@@ -258,6 +262,10 @@ T gcd(T a, T b) {
 
 	return b;
 }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 } // End of namespace Common
 #endif

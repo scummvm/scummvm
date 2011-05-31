@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -50,12 +47,12 @@ Panel::Panel(RenderObjectPtr<RenderObject> parentPtr, int width, int height, uin
 	_height = height;
 
 	if (_width < 0) {
-		error("Tried to initialise a panel with an invalid width (%d).", _width);
+		error("Tried to initialize a panel with an invalid width (%d).", _width);
 		return;
 	}
 
 	if (_height < 0) {
-		error("Tried to initialise a panel with an invalid height (%d).", _height);
+		error("Tried to initialize a panel with an invalid height (%d).", _height);
 		return;
 	}
 

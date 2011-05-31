@@ -17,9 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/system.h"
@@ -220,6 +217,10 @@ Gdi::Gdi(ScummEngine *vm) : _vm(vm) {
 
 Gdi::~Gdi() {
 }
+
+GdiHE::GdiHE(ScummEngine *vm) : Gdi(vm), _tmskPtr(0) {
+}
+
 
 GdiNES::GdiNES(ScummEngine *vm) : Gdi(vm) {
 	memset(&_NES, 0, sizeof(_NES));
@@ -582,7 +583,7 @@ void ScummEngine::updateDirtyScreen(VirtScreenNumber slot) {
 			vs->tdirty[i] = vs->h;
 			vs->bdirty[i] = 0;
 			if (i != (_gdi->_numStrips - 1) && vs->bdirty[i + 1] == bottom && vs->tdirty[i + 1] == top) {
-				// Simple optimizations: if two or more neighbouring strips
+				// Simple optimizations: if two or more neighboring strips
 				// form one bigger rectangle, coalesce them.
 				w += 8;
 				continue;
@@ -1503,6 +1504,15 @@ void Gdi::prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 	// Do nothing by default
 }
 
+void GdiHE::prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
+					const int x, const int y, const int width, const int height,
+	                int stripnr, int numstrip) {
+	if (_vm->_game.heversion >= 72) {
+		_tmskPtr = _vm->findResource(MKTAG('T','M','S','K'), ptr);
+	} else
+		_tmskPtr = 0;
+}
+
 void GdiV1::prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 					const int x, const int y, const int width, const int height,
 	                int stripnr, int numstrip) {
@@ -1748,11 +1758,6 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 
 	numzbuf = getZPlanes(ptr, zplane_list, false);
 
-	const byte *tmsk_ptr = NULL;
-	if (_vm->_game.heversion >= 72) {
-		tmsk_ptr = _vm->findResource(MKTAG('T','M','S','K'), ptr);
-	}
-
 	if (y + height > vs->h) {
 		warning("Gdi::drawBitmap, strip drawn to %d below window bottom %d", y + height, vs->h);
 	}
@@ -1815,7 +1820,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 				clear8Col(frontBuf, vs->pitch, height, vs->format.bytesPerPixel);
 		}
 
-		decodeMask(x, y, width, height, stripnr, numzbuf, zplane_list, transpStrip, flag, tmsk_ptr);
+		decodeMask(x, y, width, height, stripnr, numzbuf, zplane_list, transpStrip, flag);
 
 #if 0
 		// HACK: blit mask(s) onto normal screen. Useful to debug masking
@@ -1904,7 +1909,7 @@ bool GdiV2::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int widt
 
 void Gdi::decodeMask(int x, int y, const int width, const int height,
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag, const byte *tmsk_ptr) {
+	                bool transpStrip, byte flag) {
 	int i;
 	byte *mask_ptr;
 	const byte *z_plane_ptr;
@@ -1960,10 +1965,7 @@ void Gdi::decodeMask(int x, int y, const int width, const int height,
 			if (offs) {
 				z_plane_ptr = zplane_list[i] + offs;
 
-				if (tmsk_ptr) {
-					const byte *tmsk = tmsk_ptr + READ_LE_UINT16(tmsk_ptr + stripnr * 2 + 8);
-					decompressTMSK(mask_ptr, tmsk, z_plane_ptr, height);
-				} else if (transpStrip && (flag & dbAllowMaskOr)) {
+				if (transpStrip && (flag & dbAllowMaskOr)) {
 					decompressMaskImgOr(mask_ptr, z_plane_ptr, height);
 				} else {
 					decompressMaskImg(mask_ptr, z_plane_ptr, height);
@@ -1978,9 +1980,46 @@ void Gdi::decodeMask(int x, int y, const int width, const int height,
 	}
 }
 
+void GdiHE::decodeMask(int x, int y, const int width, const int height,
+	                int stripnr, int numzbuf, const byte *zplane_list[9],
+	                bool transpStrip, byte flag) {
+	int i;
+	byte *mask_ptr;
+	const byte *z_plane_ptr;
+
+	for (i = 1; i < numzbuf; i++) {
+		uint32 offs;
+
+		if (!zplane_list[i])
+			continue;
+
+		offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
+
+		mask_ptr = getMaskBuffer(x, y, i);
+
+		if (offs) {
+			z_plane_ptr = zplane_list[i] + offs;
+
+			if (_tmskPtr) {
+				const byte *tmsk = _tmskPtr + READ_LE_UINT16(_tmskPtr + stripnr * 2 + 8);
+				decompressTMSK(mask_ptr, tmsk, z_plane_ptr, height);
+			} else if (transpStrip && (flag & dbAllowMaskOr)) {
+				decompressMaskImgOr(mask_ptr, z_plane_ptr, height);
+			} else {
+				decompressMaskImg(mask_ptr, z_plane_ptr, height);
+			}
+
+		} else {
+			if (!(transpStrip && (flag & dbAllowMaskOr)))
+				for (int h = 0; h < height; h++)
+					mask_ptr[h * _numStrips] = 0;
+		}
+	}
+}
+
 void GdiNES::decodeMask(int x, int y, const int width, const int height,
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag, const byte *tmsk_ptr) {
+	                bool transpStrip, byte flag) {
 	byte *mask_ptr = getMaskBuffer(x, y, 1);
 	drawStripNESMask(mask_ptr, stripnr, y, height);
 }
@@ -1988,7 +2027,7 @@ void GdiNES::decodeMask(int x, int y, const int width, const int height,
 #ifdef USE_RGB_COLOR
 void GdiPCEngine::decodeMask(int x, int y, const int width, const int height,
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag, const byte *tmsk_ptr) {
+	                bool transpStrip, byte flag) {
 	byte *mask_ptr = getMaskBuffer(x, y, 1);
 	drawStripPCEngineMask(mask_ptr, stripnr, y, height);
 }
@@ -1996,14 +2035,14 @@ void GdiPCEngine::decodeMask(int x, int y, const int width, const int height,
 
 void GdiV1::decodeMask(int x, int y, const int width, const int height,
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag, const byte *tmsk_ptr) {
+	                bool transpStrip, byte flag) {
 	byte *mask_ptr = getMaskBuffer(x, y, 1);
 	drawStripC64Mask(mask_ptr, stripnr, width, height);
 }
 
 void GdiV2::decodeMask(int x, int y, const int width, const int height,
 	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag, const byte *tmsk_ptr) {
+	                bool transpStrip, byte flag) {
 	// Do nothing here for V2 games - zplane was already handled.
 }
 
@@ -2371,7 +2410,7 @@ void Gdi::decompressMaskImg(byte *dst, const byte *src, int height) const {
 	}
 }
 
-void Gdi::decompressTMSK(byte *dst, const byte *tmsk, const byte *src, int height) const {
+void GdiHE::decompressTMSK(byte *dst, const byte *tmsk, const byte *src, int height) const {
 	byte srcbits = 0;
 	byte srcFlag = 0;
 	byte maskFlag = 0;

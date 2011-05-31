@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "mohawk/livingbooks.h"
@@ -31,10 +28,10 @@
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/fs.h"
 #include "common/archive.h"
 #include "common/textconsole.h"
+#include "common/system.h"
 
 #include "graphics/palette.h"
 
@@ -128,8 +125,7 @@ MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGa
 
 	_alreadyShowedIntro = false;
 
-	_rnd = new Common::RandomSource();
-	g_eventRec.registerRandomSource(*_rnd, "livingbooks");
+	_rnd = new Common::RandomSource("livingbooks");
 
 	_page = NULL;
 
@@ -293,6 +289,15 @@ void MohawkEngine_LivingBooks::loadBookInfo(const Common::String &filename) {
 	//     - fUse254ColorPalette         (always true?)
 	//     - nKBRequired                 (4096, RAM requirement?)
 	//     - fDebugWindow                (always 0?)
+
+	if (_bookInfoFile.hasSection("Globals")) {
+		const Common::ConfigFile::SectionKeyList globals = _bookInfoFile.getKeys("Globals");
+		for (Common::ConfigFile::SectionKeyList::const_iterator i = globals.begin(); i != globals.end(); i++) {
+			Common::String command = Common::String::format("%s = %s", i->key.c_str(), i->value.c_str());
+			debug("global: %s", command.c_str());
+			// TODO: run command
+		}
+	}
 }
 
 Common::String MohawkEngine_LivingBooks::stringForMode(LBMode mode) {
@@ -745,6 +750,9 @@ void LBPage::loadBITL(uint16 resourceId) {
 			break;
 		case kLBMiniGameItem:
 			res = new LBMiniGameItem(_vm, this, rect);
+			break;
+		case kLBProxyItem:
+			res = new LBProxyItem(_vm, this, rect);
 			break;
 		default:
 			warning("Unknown item type %04x", type);
@@ -2700,10 +2708,20 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 			break;
 
 		case kLBOpLoad:
+			// FIXME
+			warning("ignoring kLBOpLoad (event 0x%04x, param 0x%04x, target '%s')",
+				entry->event, entry->param, target->_desc.c_str());
+			break;
+
 		case kLBOpPreload:
+			// FIXME
+			warning("ignoring kLBOpPreload (event 0x%04x, param 0x%04x, target '%s')",
+				entry->event, entry->param, target->_desc.c_str());
+			break;
+
 		case kLBOpUnload:
 			// FIXME
-			warning("ignoring kLBOpLoad/Preload/Unload (event 0x%04x, param 0x%04x, target '%s')",
+			warning("ignoring kLBOpUnload (event 0x%04x, param 0x%04x, target '%s')",
 				entry->event, entry->param, target->_desc.c_str());
 			break;
 
@@ -3746,6 +3764,37 @@ bool LBMiniGameItem::togglePlaying(bool playing, bool restart) {
 	_vm->addNotifyEvent(NotifyEvent(kLBNotifyChangePage, destPage));
 
 	return false;
+}
+
+LBProxyItem::LBProxyItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
+	debug(3, "new LBProxyItem");
+
+	_page = NULL;
+}
+
+LBProxyItem::~LBProxyItem() {
+	delete _page;
+}
+
+void LBProxyItem::init() {
+	Common::String leftover;
+	Common::String filename = _vm->getFileNameFromConfig("Proxies", _desc.c_str(), leftover);
+	if (!leftover.empty())
+		error("LBProxyItem tried loading proxy '%s' but got leftover '%s'", _desc.c_str(), leftover.c_str());
+	uint16 baseId = 0;
+	for (uint i = 0; i < filename.size(); i++) {
+		if (filename[i] == ';') {
+			baseId = atoi(filename.c_str() + i + 1);
+			filename = Common::String(filename.c_str(), i);
+		}
+	}
+
+	debug(1, "LBProxyItem loading archive '%s' with id %d", filename.c_str(), baseId);
+	MohawkArchive *pageArchive = _vm->createMohawkArchive();
+	if (!pageArchive->open(filename))
+		error("failed to open archive '%s' (for proxy '%s')", filename.c_str(), _desc.c_str());
+	_page = new LBPage(_vm);
+	_page->open(pageArchive, baseId);
 }
 
 } // End of namespace Mohawk

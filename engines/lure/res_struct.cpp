@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "lure/disk.h"
@@ -418,7 +415,7 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	flags2 = READ_LE_UINT16(&rec->flags2);
 	headerFlags = READ_LE_UINT16(&rec->hdrFlags);
 
-	// Initialise runtime fields
+	// Initialize runtime fields
 	actionCtr = 0;
 	blockedState = BS_NONE;
 	blockedFlag = false;

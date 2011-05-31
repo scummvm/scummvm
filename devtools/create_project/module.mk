@@ -1,5 +1,3 @@
-# $URL$
-# $Id$
 
 MODULE := devtools/create_project
 

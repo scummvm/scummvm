@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/str-array.h"
@@ -421,8 +418,10 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 	Event event;
 	while (!_vm->getEventManager()->shouldQuit()) {
 		while (!_globals->_events.getEvent(event, EVENT_KEYPRESS | EVENT_BUTTON_DOWN | EVENT_MOUSE_MOVE) &&
-				!_vm->getEventManager()->shouldQuit())
-			;
+				!_vm->getEventManager()->shouldQuit()) {
+			g_system->delayMillis(10);
+			g_system->updateScreen();
+		}
 		if (_vm->getEventManager()->shouldQuit())
 			break;
 

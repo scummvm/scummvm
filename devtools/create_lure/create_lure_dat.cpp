@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * This is a utility for extracting needed resource data from different language
  * version of the Lure of the Temptress lure.exe executable files into a new file
  * lure.dat - this file is required for the ScummVM  Lure of the Temptress module
@@ -1923,7 +1920,7 @@ bool validate_executable() {
 		dataSegment = 0xAD20;
 		printf("Detected Spanish version\n");
 	} else {
-		printf("Lure executable version not recognised. Checksum = %xh\n", sumTotal);
+		printf("Lure executable version not recognized. Checksum = %xh\n", sumTotal);
 		return false;
 	}
 

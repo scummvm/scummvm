@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * Handles things to do with actors, delegates much moving actor stuff.
  */
 
@@ -437,7 +434,7 @@ void StartTaggedActors(SCNHANDLE ah, int numActors, bool bRunScript) {
 		memset(taggedActors, 0, sizeof(taggedActors));
 		numTaggedActors = numActors;
 	} else {
-		// Only actors with code blocks got (x, y) re-initialised, so...
+		// Only actors with code blocks got (x, y) re-initialized, so...
 		for (i = 0; i < NumActors; i++) {
 			actorInfo[i].x = actorInfo[i].y = 0;
 			actorInfo[i].mtype = 0;

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -42,7 +39,8 @@
 #ifdef USE_THEORADEC
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "graphics/conversion.h"
+#include "common/util.h"
+#include "graphics/yuv_to_rgb.h"
 #include "audio/decoders/raw.h"
 #include "sword25/kernel/common.h"
 
@@ -54,15 +52,14 @@ static double rint(double v) {
 	return floor(v + 0.5);
 }
 
-TheoraDecoder::TheoraDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) : _mixer(mixer) {
+TheoraDecoder::TheoraDecoder(Audio::Mixer::SoundType soundType) {
 	_fileStream = 0;
-	_surface = 0;
 
 	_theoraPacket = 0;
 	_vorbisPacket = 0;
 	_theoraDecode = 0;
 	_theoraSetup = 0;
-	_stateFlag = false;
+	_nextFrameStartTime = 0.0;
 
 	_soundType = soundType;
 	_audStream = 0;
@@ -70,7 +67,7 @@ TheoraDecoder::TheoraDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundT
 
 	ogg_sync_init(&_oggSync);
 
-	_curFrame = 0;
+	_curFrame = -1;
 	_audiobuf = (ogg_int16_t *)malloc(AUDIOFD_FRAGSIZE * sizeof(ogg_int16_t));
 
 	reset();
@@ -103,6 +100,8 @@ int TheoraDecoder::bufferData() {
 bool TheoraDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
+	_endOfAudio = false;
+	_endOfVideo = false;
 	_fileStream = stream;
 
 	// start up Ogg stream synchronization layer
@@ -118,7 +117,8 @@ bool TheoraDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	// Ogg file open; parse the headers
 	// Only interested in Vorbis/Theora streams
-	while (!_stateFlag) {
+	bool foundHeader = false;
+	while (!foundHeader) {
 		int ret = bufferData();
 
 		if (ret == 0)
@@ -131,7 +131,7 @@ bool TheoraDecoder::loadStream(Common::SeekableReadStream *stream) {
 			if (!ogg_page_bos(&_oggPage)) {
 				// don't leak the page; get it into the appropriate stream
 				queuePage(&_oggPage);
-				_stateFlag = true;
+				foundHeader = true;
 				break;
 			}
 
@@ -275,22 +275,39 @@ bool TheoraDecoder::loadStream(Common::SeekableReadStream *stream) {
 		vorbis_block_init(&_vorbisDSP, &_vorbisBlock);
 		debug(3, "Ogg logical stream %lx is Vorbis %d channel %ld Hz audio.",
 		      _vorbisOut.serialno, _vorbisInfo.channels, _vorbisInfo.rate);
+
+		_audStream = Audio::makeQueuingAudioStream(_vorbisInfo.rate, _vorbisInfo.channels);
+
+		// Get enough audio data to start us off
+		while (_audStream->numQueuedStreams() == 0) {
+			// Queue more data
+			bufferData();
+			while (ogg_sync_pageout(&_oggSync, &_oggPage) > 0)
+				queuePage(&_oggPage);
+
+			queueAudio();
+		}
+
+		if (_audStream)
+			g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _audHandle, _audStream);
 	} else {
 		// tear down the partial vorbis setup
 		vorbis_info_clear(&_vorbisInfo);
 		vorbis_comment_clear(&_vorbisComment);
+		_endOfAudio = true;
 	}
 
-	// open audio
-	if (_vorbisPacket) {
-		_audStream = createAudioStream();
-		if (_audStream && _mixer)
-			_mixer->playStream(_soundType, _audHandle, _audStream);
-	}
+	_surface.create(_theoraInfo.frame_width, _theoraInfo.frame_height, g_system->getScreenFormat());
 
-	_surface = new Graphics::Surface();
+	// Set up a display surface
+	_displaySurface.pixels = _surface.getBasePtr(_theoraInfo.pic_x, _theoraInfo.pic_y);
+	_displaySurface.w = _theoraInfo.pic_width;
+	_displaySurface.h = _theoraInfo.pic_height;
+	_displaySurface.format = _surface.format;
+	_displaySurface.pitch = _surface.pitch;
 
-	_surface->create(_theoraInfo.frame_width, _theoraInfo.frame_height, g_system->getScreenFormat());
+	// Set the frame rate
+	_frameRate = Common::Rational(_theoraInfo.fps_numerator, _theoraInfo.fps_denominator);
 
 	return true;
 }
@@ -303,8 +320,8 @@ void TheoraDecoder::close() {
 		vorbis_comment_clear(&_vorbisComment);
 		vorbis_info_clear(&_vorbisInfo);
 
-		if (_mixer)
-			_mixer->stopHandle(*_audHandle);
+		g_system->getMixer()->stopHandle(*_audHandle);
+
 		_audStream = 0;
 		_vorbisPacket = false;
 	}
@@ -325,57 +342,16 @@ void TheoraDecoder::close() {
 	delete _fileStream;
 	_fileStream = 0;
 
-	_surface->free();
-	delete _surface;
-	_surface = 0;
+	_surface.free();
+	_displaySurface.pixels = 0;
+	_displaySurface.free();
 
 	reset();
 }
 
 const Graphics::Surface *TheoraDecoder::decodeNextFrame() {
-	int i, j;
-
-	// we want a video and audio frame ready to go at all times.  If
-	// we have to buffer incoming, buffer the compressed data (ie, let
-	// ogg do the buffering)
-	while (_vorbisPacket && !_audiobufReady) {
-		int ret;
-		float **pcm;
-
-		// if there's pending, decoded audio, grab it
-		if ((ret = vorbis_synthesis_pcmout(&_vorbisDSP, &pcm)) > 0) {
-			int count = _audiobufFill / 2;
-			int maxsamples = ((AUDIOFD_FRAGSIZE - _audiobufFill) / _vorbisInfo.channels) >> 1;
-			for (i = 0; i < ret && i < maxsamples; i++)
-				for (j = 0; j < _vorbisInfo.channels; j++) {
-					int val = CLIP((int)rint(pcm[j][i] * 32767.f), -32768, 32767);
-					_audiobuf[count++] = val;
-				}
-
-			vorbis_synthesis_read(&_vorbisDSP, i);
-			_audiobufFill += (i * _vorbisInfo.channels) << 1;
-
-			if (_audiobufFill == AUDIOFD_FRAGSIZE)
-				_audiobufReady = true;
-
-#if ENABLE_THEORA_SEEKING
-			if (_vorbisDSP.granulepos >= 0)
-				_audiobufGranulePos = _vorbisDSP.granulepos - ret + i;
-			else
-				_audiobufGranulePos += i;
-#endif
-		} else {
-
-			// no pending audio; is there a pending packet to decode?
-			if (ogg_stream_packetout(&_vorbisOut, &_oggPacket) > 0) {
-				if (vorbis_synthesis(&_vorbisBlock, &_oggPacket) == 0) // test for success!
-					vorbis_synthesis_blockin(&_vorbisDSP, &_vorbisBlock);
-			} else   // we need more data; break out to suck in another page
-				break;
-		}
-	}
-
-	while (_theoraPacket && !_videobufReady) {
+	// First, let's get our frame
+	while (_theoraPacket) {
 		// theora is one in, one out...
 		if (ogg_stream_packetout(&_theoraOut, &_oggPacket) > 0) {
 
@@ -385,84 +361,123 @@ const Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 				_ppInc = 0;
 			}
 
-#if ENABLE_THEORA_SEEKING
-			// HACK: This should be set after a seek or a gap, but we might not have
-			// a granulepos for the first packet (we only have them for the last
-			// packet on a page), so we just set it as often as we get it.
-			// To do this right, we should back-track from the last packet on the
-			// page and compute the correct granulepos for the first packet after
-			// a seek or a gap.
-			if (_oggPacket.granulepos >= 0) {
-				th_decode_ctl(_theoraDecode, TH_DECCTL_SET_GRANPOS, &_oggPacket.granulepos, sizeof(_oggPacket.granulepos));
-			}
-
-			if (th_decode_packetin(_theoraDecode, &_oggPacket, &_videobufGranulePos) == 0) {
-				_videobufTime = th_granule_time(_theoraDecode, _videobufGranulePos);
-#else
 			if (th_decode_packetin(_theoraDecode, &_oggPacket, NULL) == 0) {
-#endif
 				_curFrame++;
-				_videobufReady = true;
+
+				// Convert YUV data to RGB data
+				th_ycbcr_buffer yuv;
+				th_decode_ycbcr_out(_theoraDecode, yuv);
+				translateYUVtoRGBA(yuv);
+
+				if (_curFrame == 0)
+					_startTime = g_system->getMillis();
+
+				double time = th_granule_time(_theoraDecode, _oggPacket.granulepos);
+
+				// We need to calculate when the next frame should be shown
+				// This is all in floating point because that's what the Ogg code gives us
+				// Ogg is a lossy container format, so it doesn't always list the time to the
+				// next frame. In such cases, we need to calculate it ourselves.
+				if (time == -1.0)
+					_nextFrameStartTime += _frameRate.getInverse().toDouble();
+				else
+					_nextFrameStartTime = time;
+
+				// break out
+				break;
 			}
-		} else
-			break;
+		} else {
+			// If we can't get any more frames, we're done.
+			if (_theoraOut.e_o_s || _fileStream->eos()) {
+				_endOfVideo = true;
+				break;
+			}
+
+			// Queue more data
+			bufferData();
+			while (ogg_sync_pageout(&_oggSync, &_oggPage) > 0)
+				queuePage(&_oggPage);
+		}
+
+		// Update audio if we can
+		queueAudio();
 	}
 
-	if (!_videobufReady && !_audiobufReady && _fileStream->eos()) {
-		return NULL;
-	}
-
-	if (!_videobufReady || !_audiobufReady) {
-		// no data yet for somebody.  Grab another page
+	// Force at least some audio to be buffered
+	// TODO: 5 is very arbitrary. We probably should do something like QuickTime does.
+	while (!_endOfAudio && _audStream->numQueuedStreams() < 5) {
 		bufferData();
-		while (ogg_sync_pageout(&_oggSync, &_oggPage) > 0) {
+		while (ogg_sync_pageout(&_oggSync, &_oggPage) > 0)
 			queuePage(&_oggPage);
+
+		bool queuedAudio = queueAudio();
+		if ((_vorbisOut.e_o_s  || _fileStream->eos()) && !queuedAudio) {
+			_endOfAudio = true;
+			break;
 		}
 	}
 
-	// If playback has begun, top audio buffer off immediately.
-	if (_stateFlag && _audiobufReady) {
-		_audStream->queueBuffer((byte *)_audiobuf, AUDIOFD_FRAGSIZE, DisposeAfterUse::NO, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO);
+	return &_displaySurface;
+}
 
-		// The audio mixer is now responsible for the old audio buffer.
-		// We need to create a new one.
-		_audiobuf = (ogg_int16_t *)malloc(AUDIOFD_FRAGSIZE * sizeof(ogg_int16_t));
-		_audiobufFill = 0;
-		_audiobufReady = false;
+bool TheoraDecoder::queueAudio() {
+	if (!_audStream)
+		return false;
+
+	bool queuedAudio = false;
+
+	for (;;) {
+		float **pcm;
+
+		// if there's pending, decoded audio, grab it
+		int ret = vorbis_synthesis_pcmout(&_vorbisDSP, &pcm);
+		if (ret > 0) {
+			int count = _audiobufFill / 2;
+			int maxsamples = ((AUDIOFD_FRAGSIZE - _audiobufFill) / _vorbisInfo.channels) >> 1;
+			int i;
+			for (i = 0; i < ret && i < maxsamples; i++)
+				for (int j = 0; j < _vorbisInfo.channels; j++) {
+					int val = CLIP((int)rint(pcm[j][i] * 32767.f), -32768, 32767);
+					_audiobuf[count++] = val;
+				}
+
+			vorbis_synthesis_read(&_vorbisDSP, i);
+			_audiobufFill += (i * _vorbisInfo.channels) << 1;
+
+			if (_audiobufFill == AUDIOFD_FRAGSIZE) {
+				byte flags = Audio::FLAG_16BITS | Audio::FLAG_STEREO;
+#ifdef SCUMM_LITTLE_ENDIAN
+				flags |= Audio::FLAG_LITTLE_ENDIAN;
+#endif
+				_audStream->queueBuffer((byte *)_audiobuf, AUDIOFD_FRAGSIZE, DisposeAfterUse::NO, flags);
+
+				// The audio mixer is now responsible for the old audio buffer.
+				// We need to create a new one.
+				_audiobuf = (ogg_int16_t *)malloc(AUDIOFD_FRAGSIZE * sizeof(ogg_int16_t));
+				_audiobufFill = 0;
+				queuedAudio = true;
+			}
+		} else {
+			// no pending audio; is there a pending packet to decode?
+			if (ogg_stream_packetout(&_vorbisOut, &_oggPacket) > 0) {
+				if (vorbis_synthesis(&_vorbisBlock, &_oggPacket) == 0) // test for success!
+					vorbis_synthesis_blockin(&_vorbisDSP, &_vorbisBlock);
+			} else   // we've buffered all we have, break out for now
+				return queuedAudio;
+		}
 	}
 
-	// are we at or past time for this video frame?
-	if (_stateFlag && _videobufReady) {
-		th_ycbcr_buffer yuv;
-
-		th_decode_ycbcr_out(_theoraDecode, yuv);
-
-		// Convert YUV data to RGB data
-		translateYUVtoRGBA(yuv, (byte *)_surface->getBasePtr(0, 0));
-		
-		_videobufReady = false;
-	}
-
-	// if our buffers either don't exist or are ready to go,
-	// we can begin playback
-	if ((!_theoraPacket || _videobufReady) &&
-	        (!_vorbisPacket || _audiobufReady))
-		_stateFlag = true;
-
-	// same if we've run out of input
-	if (_fileStream->eos())
-		_stateFlag = true;
-
-	return _surface;
+	// Unreachable
+	return false;
 }
 
 void TheoraDecoder::reset() {
-	FixedRateVideoDecoder::reset();
+	VideoDecoder::reset();
+
+	// FIXME: This does a rewind() instead of a reset()!
 
 	if (_fileStream)
 		_fileStream->seek(0);
-
-	_videobufReady = false;
 
 #if ENABLE_THEORA_SEEKING
 	_videobufGranulePos = -1;
@@ -473,36 +488,39 @@ void TheoraDecoder::reset() {
 	_audiobufFill = 0;
 	_audiobufReady = false;
 
-	_curFrame = 0;
+	_curFrame = -1;
 
 	_theoraPacket = 0;
 	_vorbisPacket = 0;
-	_stateFlag = false;
 }
 
 bool TheoraDecoder::endOfVideo() const {
-	return !isVideoLoaded();
+	return !isVideoLoaded() || (_endOfVideo && (!_audStream || (_audStream->endOfData() && _endOfAudio)));
 }
 
+uint32 TheoraDecoder::getTimeToNextFrame() const {
+	if (endOfVideo() || _curFrame < 0)
+		return 0;
+
+	uint32 elapsedTime = getElapsedTime();
+	uint32 nextFrameStartTime = (uint32)(_nextFrameStartTime * 1000);
+
+	if (nextFrameStartTime <= elapsedTime)
+		return 0;
+
+	return nextFrameStartTime - elapsedTime;
+}
 
 uint32 TheoraDecoder::getElapsedTime() const {
-	if (_audStream && _mixer)
-		return _mixer->getSoundElapsedTime(*_audHandle);
+	if (_audStream)
+		return g_system->getMixer()->getSoundElapsedTime(*_audHandle);
 
-	return FixedRateVideoDecoder::getElapsedTime();
+	return VideoDecoder::getElapsedTime();
 }
 
-Audio::QueuingAudioStream *TheoraDecoder::createAudioStream() {
-	return Audio::makeQueuingAudioStream(_vorbisInfo.rate, _vorbisInfo.channels);
-}
-
-static void convertYUVtoBGRA(int y, int u, int v, byte *dst) {
-	byte r, g, b;
-	Graphics::YUV2RGB(y, u, v, r, g, b);
-	*(dst + 0) = b;
-	*(dst + 1) = g;
-	*(dst + 2) = r;
-	*(dst + 3) = 0xFF;
+void TheoraDecoder::pauseVideoIntern(bool pause) {
+	if (_audStream)
+		g_system->getMixer()->pauseHandle(*_audHandle, pause);
 }
 
 enum TheoraYUVBuffers {
@@ -511,7 +529,7 @@ enum TheoraYUVBuffers {
 	kBufferV = 2
 };
 
-void TheoraDecoder::translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer, byte *pixelData) {
+void TheoraDecoder::translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer) {
 	// Width and height of all buffers have to be divisible by 2.
 	assert((YUVBuffer[kBufferY].width & 1)   == 0);
 	assert((YUVBuffer[kBufferY].height & 1)  == 0);
@@ -524,40 +542,7 @@ void TheoraDecoder::translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer, byte *pixelDa
 	assert(YUVBuffer[kBufferU].height == YUVBuffer[kBufferY].height >> 1);
 	assert(YUVBuffer[kBufferV].height == YUVBuffer[kBufferY].height >> 1);
 
-	const byte *ySrc = YUVBuffer[kBufferY].data;
-	const byte *uSrc = YUVBuffer[kBufferU].data;
-	const byte *vSrc = YUVBuffer[kBufferV].data;
-	byte *dst  = pixelData;
-	int u = 0, v = 0;
-
-	const int blockSize = YUVBuffer[kBufferY].width << 2;
-	const int halfHeight = YUVBuffer[kBufferY].height >> 1;
-	const int halfWidth = YUVBuffer[kBufferY].width >> 1;
-	const int yStep = (YUVBuffer[kBufferY].stride << 1) - YUVBuffer[kBufferY].width;
-	// The UV step is usually 0, since in most cases stride == width.
-	// The asserts at the top ensure that the U and V steps are equal
-	// (and they must always be equal)
-	const int uvStep = YUVBuffer[kBufferU].stride - YUVBuffer[kBufferU].width;
-	const int stride = YUVBuffer[kBufferY].stride;
-
-	for (int h = 0; h < halfHeight; ++h) {
-		for (int w = 0; w < halfWidth; ++w) {
-			u = *uSrc++;
-			v = *vSrc++;
-
-			for (int i = 0; i <= 1; i++) {
-				convertYUVtoBGRA(*ySrc, u, v, dst);
-				convertYUVtoBGRA(*(ySrc + stride), u, v, dst + blockSize);
-				ySrc++;
-				dst += 4;	// BGRA
-			}
-		}
-
-		dst   += blockSize;
-		ySrc  += yStep;
-		uSrc  += uvStep;
-		vSrc  += uvStep;
-	}
+	Graphics::convertYUV420ToRGB(&_surface, YUVBuffer[kBufferY].data, YUVBuffer[kBufferU].data, YUVBuffer[kBufferV].data, YUVBuffer[kBufferY].width, YUVBuffer[kBufferY].height, YUVBuffer[kBufferY].stride, YUVBuffer[kBufferU].stride);
 }
 
 } // End of namespace Sword25

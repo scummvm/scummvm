@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * Should really be called "moving actors.h"
  */
 
@@ -99,7 +96,7 @@ void ProcessSRQueue();
 void RequestSaveGame(char *name, char *desc, SAVED_DATA *sd, int *ssCount, SAVED_DATA *ssData);
 void RequestRestoreGame(int num, SAVED_DATA *sd, int *ssCount, SAVED_DATA *ssData);
 
-void InitialiseSaveScenes();
+void InitializeSaveScenes();
 void FreeSaveScenes();
 
 } // End of namespace Tinsel

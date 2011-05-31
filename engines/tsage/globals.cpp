@@ -18,13 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "tsage/globals.h"
 #include "tsage/tsage.h"
+#include "tsage/blueforce_logic.h"
+#include "tsage/ringworld_demo.h"
 #include "tsage/ringworld_logic.h"
 
 namespace tSage {
@@ -52,8 +51,9 @@ static SavedObject *classFactoryProc(const Common::String &className) {
 /*--------------------------------------------------------------------------*/
 
 Globals::Globals() :
-		_dialogCenter(160, 140),
-		_gfxManagerInstance(_screenSurface) {
+	_dialogCenter(160, 140),
+	_gfxManagerInstance(_screenSurface),
+	_randomSource("tsage") {
 	reset();
 	_stripNum = 0;
 
@@ -64,6 +64,13 @@ Globals::Globals() :
 		_fontColors.background = 0;
 		_fontColors.foreground = 0;
 		_dialogCenter.y = 80;
+	} else if ((_vm->getGameID() == GType_Ringworld) &&  (_vm->getFeatures() & GF_CD)) {
+		_gfxFontNumber = 50;
+		_gfxColors.background = 53;
+		_gfxColors.foreground = 0;
+		_fontColors.background = 51;
+		_fontColors.foreground = 54;
+		warning("TODO: Check the 3 additional colors");
 	} else {
 		_gfxFontNumber = 50;
 		_gfxColors.background = 53;
@@ -84,11 +91,19 @@ Globals::Globals() :
 	_scrollFollower = NULL;
 	_inventory = NULL;
 
-	if (!(_vm->getFeatures() & GF_DEMO)) {
-		_inventory = new RingworldInvObjectList();
-		_game = new RingworldGame();
-	} else {
-		_game = new RingworldDemoGame();
+	switch (_vm->getGameID()) {
+	case GType_Ringworld:
+		if (!(_vm->getFeatures() & GF_DEMO)) {
+			_inventory = new RingworldInvObjectList();
+			_game = new RingworldGame();
+		} else {
+			_game = new RingworldDemoGame();
+		}
+		break;
+
+	case GType_BlueForce:
+		_game = new BlueForceGame();
+		break;
 	}
 }
 

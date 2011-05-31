@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TOWNS_PC98_FMSYNTH_H
@@ -47,7 +44,7 @@ class TownsPC98_FmSynthPercussionSource;
 #endif
 
 enum EnvelopeState {
-	kEnvReady,
+	kEnvReady = 0,
 	kEnvAttacking,
 	kEnvDecaying,
 	kEnvSustaining,
@@ -62,7 +59,7 @@ public:
 		kType86
 	};
 
-	TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type);
+	TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type, bool externalMutexHandling = false);
 	virtual ~TownsPC98_FmSynth();
 
 	virtual bool init();
@@ -72,15 +69,9 @@ public:
 
 	// AudioStream interface
 	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const {
-		return true;
-	}
-	bool endOfData() const {
-		return false;
-	}
-	int getRate() const {
-		return _mixer->getOutputRate();
-	}
+	bool isStereo() const;
+	bool endOfData() const;
+	int getRate() const;
 
 protected:
 	void deinit();
@@ -89,17 +80,15 @@ protected:
 	// additional output that has to be inserted into the buffer.
 	virtual void nextTickEx(int32 *buffer, uint32 bufferSize) {}
 
-	void toggleRegProtection(bool prot) {
-		_regProtectionFlag = prot;
-	}
+	void toggleRegProtection(bool prot);
 	uint8 readSSGStatus();
 
 	virtual void timerCallbackA() = 0;
 	virtual void timerCallbackB() = 0;
 
-	// The audio driver can store and apply two different audio settings
+	// The audio driver can store and apply two different volume settings
 	// (usually for music and sound effects). The channel mask will determine
-	// which channels get effected by the setting. The first bits will be
+	// which channels get effected by which setting. The first bits will be
 	// the normal fm channels, the next bits the ssg channels and the final
 	// bit the rhythm channel.
 	void setVolumeIntern(int volA, int volB);
@@ -110,6 +99,8 @@ protected:
 	const bool _hasPercussion;
 
 	Common::Mutex _mutex;
+	bool _externalMutex;
+
 private:
 	void generateTables();
 	void nextTick(int32 *buffer, uint32 bufferSize);
@@ -127,6 +118,7 @@ private:
 		}
 
 		uint16 frqTemp;
+		uint8 fmIndex;
 		bool enableLeft;
 		bool enableRight;
 		bool updateEnvelopeParameters;

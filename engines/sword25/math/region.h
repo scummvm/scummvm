@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -76,12 +73,12 @@ public:
 	virtual ~Region();
 
 	/**
-	 * Initialises a BS_Region object
+	 * Initializes a BS_Region object
 	 * @param Contour       A polygon indicating the outline of the region
 	 * @param pHoles        A pointer to an array of polygons representing the hole state in the region.
 	 * If the region has no holes, it must be passed as NULL. The default value is NULL.
 	 * @return              Returns true if the initialisation was successful, otherwise false.
-	 * @remark              If the region was already initialised, the old state will be deleted.
+	 * @remark              If the region was already initialized, the old state will be deleted.
 	 */
 	virtual bool init(const Polygon &contour, const Common::Array<Polygon> *pHoles = NULL);
 

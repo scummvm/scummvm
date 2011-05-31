@@ -19,6 +19,10 @@
  * IN THE SOFTWARE.
  */
 
+
+// FIXME: Avoid using rand
+#define FORBIDDEN_SYMBOL_EXCEPTION_rand
+
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -28,7 +32,7 @@
 #if defined(MACOSX) || defined(SOLARIS) || defined(__MINGW32__)
 // Older versions of Mac OS X didn't supply a powf function, so using it
 // will cause a binary incompatibility when trying to run a binary built
-// on a newer OS X release on an olderr one. And Solaris 8 doesn't provide
+// on a newer OS X release on an older one. And Solaris 8 doesn't provide
 // powf, floorf, fabsf etc. at all.
 // Cross-compiled MinGW32 toolchains suffer from a cross-compile bug in
 // libstdc++. math/stubs.o should be empty, but it comes with a symbol for
@@ -199,7 +203,7 @@ void Tables::initEnvelopes(float samplerate) {
 
 void Tables::initMT32ConstantTables(Synth *synth) {
 	int lf;
-	synth->printDebug("Initialising Pitch Tables");
+	synth->printDebug("Initializing Pitch Tables");
 	for (lf = -108; lf <= 108; lf++) {
 		tvfKeyfollowMult[lf + 108] = (int)(256 * powf(2.0f, (float)(lf / 24.0f)));
 		//synth->printDebug("KT %d = %d", f, keytable[f+108]);
@@ -664,7 +668,7 @@ bool Tables::initNotes(Synth *synth, PCMWaveEntry *pcmWaves, float rate, float m
 	bool abort = false;
 	synth->report(ReportType_progressInit, &progress);
 	for (int f = LOWEST_NOTE; f <= HIGHEST_NOTE; f++) {
-		synth->printDebug("Initialising note %s%d", NoteNames[f % 12], (f / 12) - 2);
+		synth->printDebug("Initializing note %s%d", NoteNames[f % 12], (f / 12) - 2);
 		NoteLookup *noteLookup = &noteLookups[f - LOWEST_NOTE];
 		file = initNote(synth, noteLookup, (float)f, rate, masterTune, pcmWaves, file);
 		progress = (f - LOWEST_NOTE + 1) / (float)NUM_NOTES;
@@ -719,12 +723,12 @@ void Tables::freeNotes() {
 			}
 		}
 	}
-	initialisedMasterTune = 0.0f;
+	initializedMasterTune = 0.0f;
 }
 
 Tables::Tables() {
-	initialisedSampleRate = 0.0f;
-	initialisedMasterTune = 0.0f;
+	initializedSampleRate = 0.0f;
+	initializedMasterTune = 0.0f;
 	memset(&noteLookups, 0, sizeof(noteLookups));
 }
 
@@ -733,23 +737,23 @@ bool Tables::init(Synth *synth, PCMWaveEntry *pcmWaves, float sampleRate, float 
 		synth->printDebug("Bad sampleRate (%f <= 0.0f)", (double)sampleRate);
 		return false;
 	}
-	if (initialisedSampleRate == 0.0f) {
+	if (initializedSampleRate == 0.0f) {
 		initMT32ConstantTables(synth);
 	}
-	if (initialisedSampleRate != sampleRate) {
+	if (initializedSampleRate != sampleRate) {
 		initFiltCoeff(sampleRate);
 		initEnvelopes(sampleRate);
 		for (int key = 12; key <= 108; key++) {
 			initDep(&keyLookups[key - 12], (float)key);
 		}
 	}
-	if (initialisedSampleRate != sampleRate || initialisedMasterTune != masterTune) {
+	if (initializedSampleRate != sampleRate || initializedMasterTune != masterTune) {
 		freeNotes();
 		if (!initNotes(synth, pcmWaves, sampleRate, masterTune)) {
 			return false;
 		}
-		initialisedSampleRate = sampleRate;
-		initialisedMasterTune = masterTune;
+		initializedSampleRate = sampleRate;
+		initializedMasterTune = masterTune;
 	}
 	return true;
 }

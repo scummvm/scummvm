@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef HUGO_CONSOLE_H
@@ -39,6 +36,12 @@ public:
 
 private:
 	HugoEngine *_vm;
+	bool Cmd_listScreens(int argc, const char **argv);
+	bool Cmd_listObjects(int argc, const char **argv);
+	bool Cmd_getObject(int argc, const char **argv);
+	bool Cmd_getAllObjects(int argc, const char **argv);
+	bool Cmd_gotoScreen(int argc, const char **argv);
+	bool Cmd_boundaries(int argc, const char **argv);
 };
 
 } // End of namespace Hugo

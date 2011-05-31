@@ -18,16 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/system.h"
 #include "common/savefile.h"
-#include "common/EventRecorder.h"
 
 #include "engines/util.h"
 
@@ -42,8 +38,8 @@ namespace Lure {
 
 static LureEngine *int_engine = NULL;
 
-LureEngine::LureEngine(OSystem *system, const LureGameDescription *gameDesc): Engine(system), _gameDescription(gameDesc) {
-	g_eventRec.registerRandomSource(_rnd, "lure");
+LureEngine::LureEngine(OSystem *system, const LureGameDescription *gameDesc)
+	: Engine(system), _gameDescription(gameDesc), _rnd("lure") {
 
 	DebugMan.addDebugChannel(kLureDebugScripts, "scripts", "Scripts debugging");
 	DebugMan.addDebugChannel(kLureDebugAnimations, "animations", "Animations debugging");
@@ -55,7 +51,7 @@ LureEngine::LureEngine(OSystem *system, const LureGameDescription *gameDesc): En
 
 Common::Error LureEngine::init() {
 	int_engine = this;
-	_initialised = false;
+	_initialized = false;
 	_saveLoadAllowed = false;
 
 	initGraphics(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT, false);
@@ -89,12 +85,12 @@ Common::Error LureEngine::init() {
 	_mouse = new Mouse();
 	_events = new Events();
 	_menu = new Menu();
-	Surface::initialise();
+	Surface::initialize();
 	_room = new Room();
 	_fights = new FightsManager();
 
 	_gameToLoad = -1;
-	_initialised = true;
+	_initialized = true;
 
 	// Setup mixer
 	syncSoundSettings();
@@ -106,9 +102,9 @@ LureEngine::~LureEngine() {
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
 
-	if (_initialised) {
-		// Delete and deinitialise subsystems
-		Surface::deinitialise();
+	if (_initialized) {
+		// Delete and deinitialize subsystems
+		Surface::deinitialize();
 		Sound.destroy();
 		delete _fights;
 		delete _room;

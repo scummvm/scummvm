@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef COMMON_SCUMMSYS_H
@@ -47,6 +44,9 @@
 		#if (_MSC_VER < 1500)
 			#define vsnprintf _vsnprintf
 		#endif
+		// FIXME: Is this actually necessary for WinCE or Windows?
+		// If yes, please add corresponding comments. Otherwise, let's get rid of it!
+		#define snprintf _snprintf
 		#endif
 
 		#if !defined(_WIN32_WCE)
@@ -110,21 +110,6 @@
 #include "config.h"
 #endif
 
-//
-// Define scumm_stricmp and scumm_strnicmp
-//
-#if defined(_WIN32_WCE) || defined(_MSC_VER)
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp _strnicmp
-	#define snprintf _snprintf
-#elif defined(__MINGW32__) || defined(__GP32__) || defined(__DS__)
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp strnicmp
-#else
-	#define scumm_stricmp strcasecmp
-	#define scumm_strnicmp strncasecmp
-#endif
-
 
 // In the following we configure various targets, in particular those
 // which can't use our "configure" tool and hence don't use config.h.
@@ -154,82 +139,47 @@
 //
 #define SCUMMVM_USE_PRAGMA_PACK
 
+//
+// Determine the host endianess and whether memory alignment is required.
+//
+#if !defined(HAVE_CONFIG_H)
+	#if defined(SDL_BACKEND)
+		/* need this for the SDL_BYTEORDER define */
+		#include <SDL_endian.h>
 
-#if defined(HAVE_CONFIG_H)
-	// All settings should have been set in config.h
+		#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+		#define SCUMM_LITTLE_ENDIAN
+		#elif SDL_BYTEORDER == SDL_BIG_ENDIAN
+		#define SCUMM_BIG_ENDIAN
+		#else
+		#error Neither SDL_BIG_ENDIAN nor SDL_LIL_ENDIAN is set.
+		#endif
 
-#elif defined(__SYMBIAN32__)
+	#elif defined(__DC__) || \
+		  defined(__DS__) || \
+		  defined(__GP32__) || \
+		  defined(IPHONE) || \
+		  defined(__PLAYSTATION2__) || \
+		  defined(__PSP__) || \
+		  defined(__SYMBIAN32__)
 
-	#define SCUMM_LITTLE_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
+		#define SCUMM_LITTLE_ENDIAN
+		#define SCUMM_NEED_ALIGNMENT
 
-#elif defined(_WIN32_WCE)
+	#elif defined(_WIN32_WCE) || defined(_MSC_VER) || defined(__MINGW32__)
 
-	#define SCUMM_LITTLE_ENDIAN
+		#define SCUMM_LITTLE_ENDIAN
 
-#elif defined(_MSC_VER)
+	#elif defined(__amigaos4__) || defined(__N64__) || defined(__WII__)
 
-	#define SCUMM_LITTLE_ENDIAN
+		#define SCUMM_BIG_ENDIAN
+		#define SCUMM_NEED_ALIGNMENT
 
-#elif defined(__MINGW32__)
-
-	#define SCUMM_LITTLE_ENDIAN
-
-#elif defined(SDL_BACKEND)
-	/* need this for the SDL_BYTEORDER define */
-	#include <SDL_byteorder.h>
-
-	#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-	#define SCUMM_LITTLE_ENDIAN
-	#elif SDL_BYTEORDER == SDL_BIG_ENDIAN
-	#define SCUMM_BIG_ENDIAN
 	#else
-	#error Neither SDL_BIG_ENDIAN nor SDL_LIL_ENDIAN is set.
+
+		#error No system type defined, host endianess unknown.
+
 	#endif
-
-#elif defined(__DC__)
-
-	#define SCUMM_LITTLE_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
-
-#elif defined(__GP32__)
-
-	#define SCUMM_LITTLE_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
-
-#elif defined(__PLAYSTATION2__)
-
-	#define SCUMM_LITTLE_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
-
-#elif defined(__N64__)
-
-	#define SCUMM_BIG_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
-
-#elif defined(__PSP__)
-
-	#define	SCUMM_LITTLE_ENDIAN
-	#define	SCUMM_NEED_ALIGNMENT
-
-#elif defined(__amigaos4__)
-
-	#define	SCUMM_BIG_ENDIAN
-	#define	SCUMM_NEED_ALIGNMENT
-
-#elif defined(__DS__)
-
-	#define SCUMM_NEED_ALIGNMENT
-	#define SCUMM_LITTLE_ENDIAN
-
-#elif defined(__WII__)
-
-	#define	SCUMM_BIG_ENDIAN
-	#define	SCUMM_NEED_ALIGNMENT
-
-#else
-	#error No system type defined
-
 #endif
 
 
@@ -237,17 +187,7 @@
 // Some more system specific settings.
 // TODO/FIXME: All of these should be moved to backend specific files (such as portdefs.h)
 //
-#if defined(__SYMBIAN32__)
-
-	#define SMALL_SCREEN_DEVICE
-
-#elif defined(_WIN32_WCE)
-
-	#if _WIN32_WCE < 300
-	#define SMALL_SCREEN_DEVICE
-	#endif
-
-#elif defined(DINGUX)
+#if defined(DINGUX)
 
 	// Very BAD hack following, used to avoid triggering an assert in uClibc dingux library
 	// "toupper" when pressing keyboard function keys.
@@ -306,7 +246,7 @@
 	#if defined(_MSC_VER)
 		#define NORETURN_PRE __declspec(noreturn)
 	#else
-		#define	NORETURN_PRE
+		#define NORETURN_PRE
 	#endif
 #endif
 
@@ -314,7 +254,7 @@
 	#if defined(__GNUC__) || defined(__INTEL_COMPILER)
 		#define NORETURN_POST __attribute__((__noreturn__))
 	#else
-		#define	NORETURN_POST
+		#define NORETURN_POST
 	#endif
 #endif
 
@@ -332,60 +272,10 @@
 
 
 //
-// Typedef our system types
+// Typedef our system types unless they have already been defined by config.h,
+// or SCUMMVM_DONT_DEFINE_TYPES is set.
 //
-#if !defined(HAVE_CONFIG_H) && defined(__SYMBIAN32__)
-
-	// Enable Symbians own datatypes
-	// This is done for two reasons
-	// a) uint is already defined by Symbians libc component
-	// b) Symbian is using its "own" datatyping, and the Scummvm port
-	//    should follow this to ensure the best compability possible.
-	typedef unsigned char byte;
-
-	typedef unsigned char uint8;
-	typedef signed char int8;
-
-	typedef unsigned short int uint16;
-	typedef signed short int int16;
-
-	typedef unsigned long int uint32;
-	typedef signed long int int32;
-
-#elif !defined(HAVE_CONFIG_H) && defined(__GP32__)
-
-	// Override typenames. uint is already defined by system header files.
-	typedef unsigned char byte;
-
-	typedef unsigned char uint8;
-	typedef signed char int8;
-
-	typedef unsigned short int uint16;
-	typedef signed short int int16;
-
-	typedef unsigned long int uint32;
-	typedef signed long int int32;
-
-#elif !defined(HAVE_CONFIG_H) && defined(__N64__)
-
-	typedef unsigned char byte;
-
-	typedef unsigned char uint8;
-	typedef signed char int8;
-
-	typedef unsigned short int uint16;
-	typedef signed short int int16;
-
-	typedef unsigned int uint32;
-	typedef signed int int32;
-
-#elif !defined(HAVE_CONFIG_H) && defined(__DS__)
-
-	// Do nothing, the SDK defines all types we need in nds/ndstypes.h,
-	// which we include in our portsdef.h
-
-#else
-
+#if !defined(HAVE_CONFIG_H) && !defined(SCUMMVM_DONT_DEFINE_TYPES)
 	typedef unsigned char byte;
 	typedef unsigned char uint8;
 	typedef signed char int8;
@@ -397,18 +287,11 @@
 #endif
 
 
-
 //
 // Overlay color type (FIXME: shouldn't be declared here)
 //
-#if defined(NEWGUI_256)
-	// 256 color only on PalmOS
-	typedef byte OverlayColor;
-#else
-	// 15/16 bit color mode everywhere else...
-	typedef uint16 OverlayColor;
-#endif
+typedef uint16 OverlayColor;
 
-#include "common/forbidden.h"	
+#include "common/forbidden.h"
 
 #endif

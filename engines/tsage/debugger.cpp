@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "tsage/debugger.h"
@@ -66,13 +63,13 @@ bool Debugger::Cmd_Scene(int argc, const char **argv) {
 	if (argc < 2) {
 		DebugPrintf("Usage: %s <scene number> [prior scene #]\n", argv[0]);
 		return true;
-	} else {
-		if (argc == 3)
-			_globals->_sceneManager._sceneNumber = strToInt(argv[2]);
+	} 
 
-		_globals->_sceneManager.changeScene(strToInt(argv[1]));
-		return false;
-	}
+	if (argc == 3)
+		_globals->_sceneManager._sceneNumber = strToInt(argv[2]);
+
+	_globals->_sceneManager.changeScene(strToInt(argv[1]));
+	return false;
 }
 
 /**
@@ -380,7 +377,8 @@ bool Debugger::Cmd_MoveObject(int argc, const char **argv) {
 		RING_INVENTORY._jar._sceneNumber = sceneNum;
 		break;
 	default:
-		DebugPrintf("Invlid object Id %s\n", argv[1]);
+		DebugPrintf("Invalid object Id %s\n", argv[1]);
+		break;
 	}
 
 	return true;

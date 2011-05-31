@@ -20,9 +20,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 
@@ -621,7 +618,7 @@ public:
 
 	// The sound mute switches have 0 as their "down" state and 1 as
 	// their "up" state, so this function is needed to get consistent
-	// behaviour.
+	// behavior.
 
 	void reverseStates() {
 		_upState = 1;

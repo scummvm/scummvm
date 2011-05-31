@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_RINGWORLD_LOGIC_H
@@ -454,20 +451,10 @@ public:
 	virtual void restoreGame();
 	virtual void quitGame();
 	virtual void endGame(int resNum, int lineNum);
-};
 
-class RingworldDemoGame: public Game {
-protected:
-	virtual void restart();
-public:
-	virtual void start();
-	virtual void restartGame() {}
-	virtual void saveGame() {}
-	virtual void restoreGame() {}
-	virtual void quitGame() {}
-	virtual void endGame(int resNum, int lineNum) {}
+	virtual Scene *createScene(int sceneNumber);
+	virtual void processEvent(Event &event);
 };
-
 
 } // End of namespace tSage
 

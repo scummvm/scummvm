@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef CRUISE_CRUISE_H
@@ -72,7 +69,7 @@ private:
 	bool _speedFlag;
 
 	void initialize();
-	void deinitialise();
+	void deinitialize();
 	bool loadLanguageStrings();
 	bool makeLoad(char *saveName);
 	void mainLoop();

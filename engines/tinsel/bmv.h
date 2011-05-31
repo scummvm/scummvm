@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * Plays films within a scene, takes into account the actor in each 'column'.
  */
 
@@ -137,7 +134,7 @@ private:
 	void InitBMV(byte *memoryBuffer);
 	void PrepAudio(const byte *sourceData, int blobCount, byte *destPtr);
 	void MoviePalette(int paletteOffset);
-	void InitialiseMovieSound();
+	void InitializeMovieSound();
 	void StartMovieSound();
 	void FinishMovieSound();
 	void MovieAudio(int audioOffset, int blobs);
@@ -147,7 +144,7 @@ private:
 	int MovieCommand(char cmd, int commandOffset);
 	int FollowingPacket(int thisPacket, bool bReallyImportant);
 	void LoadSlots(int number);
-	void InitialiseBMV();
+	void InitializeBMV();
 	bool MaintainBuffer();
 	bool DoBMVFrame();
 	bool DoSoundFrame();

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * This file contains the handle based Memory Manager defines
  */
 
@@ -38,8 +35,8 @@ struct MEM_NODE;
 |*			Memory Function Prototypes			*|
 \*----------------------------------------------------------------------*/
 
-void MemoryInit();			// initialises the memory manager
-void MemoryDeinit();		// deinitialises the memory manager
+void MemoryInit();			// initializes the memory manager
+void MemoryDeinit();		// deinitializes the memory manager
 
 // reserves a memory node for a movable & discardable block
 MEM_NODE *MemoryNoAlloc();

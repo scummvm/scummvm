@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -91,7 +88,7 @@ public:
 	~SoundEngine() {}
 
 	/**
-	 * Initialises the sound engine
+	 * Initializes the sound engine
 	 * @param SampleRate    Specifies the sample rate to use.
 	 * @param Channels      The maximum number of channels. The default is 32.
 	 * @return              Returns true on success, otherwise false.

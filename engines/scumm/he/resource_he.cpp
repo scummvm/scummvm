@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "scumm/scumm.h"
@@ -229,7 +226,7 @@ void ScummEngine_v70he::readRoomsOffsets() {
 	num = READ_LE_UINT16(_heV7RoomOffsets);
 	ptr = _heV7RoomOffsets + 2;
 	for (i = 0; i < num; i++) {
-		_res->roomoffs[rtRoom][i] = READ_LE_UINT32(ptr);
+		_res->_types[rtRoom][i]._roomoffs = READ_LE_UINT32(ptr);
 		ptr += 4;
 	}
 }
@@ -256,8 +253,6 @@ void ScummEngine_v70he::readGlobalObjects() {
 #ifdef ENABLE_HE
 void ScummEngine_v99he::readMAXS(int blockSize) {
 	if (blockSize == 52) {
-		debug(0, "ScummEngine_v99he readMAXS: MAXS has blocksize %d", blockSize);
-
 		_numVariables = _fileHandle->readUint16LE();
 		_fileHandle->readUint16LE();
 		_numRoomVariables = _fileHandle->readUint16LE();
@@ -290,8 +285,6 @@ void ScummEngine_v99he::readMAXS(int blockSize) {
 
 void ScummEngine_v90he::readMAXS(int blockSize) {
 	if (blockSize == 46) {
-		debug(0, "ScummEngine_v90he readMAXS: MAXS has blocksize %d", blockSize);
-
 		_numVariables = _fileHandle->readUint16LE();
 		_fileHandle->readUint16LE();
 		_numRoomVariables = _fileHandle->readUint16LE();
@@ -324,8 +317,6 @@ void ScummEngine_v90he::readMAXS(int blockSize) {
 
 void ScummEngine_v72he::readMAXS(int blockSize) {
 	if (blockSize == 40) {
-		debug(0, "ScummEngine_v72he readMAXS: MAXS has blocksize %d", blockSize);
-
 		_numVariables = _fileHandle->readUint16LE();
 		_fileHandle->readUint16LE();
 		_numBitVariables = _numRoomVariables = _fileHandle->readUint16LE();
@@ -350,14 +341,14 @@ void ScummEngine_v72he::readMAXS(int blockSize) {
 		ScummEngine_v6::readMAXS(blockSize);
 }
 
-byte *ScummEngine_v72he::getStringAddress(int i) {
-	byte *addr = getResourceAddress(rtString, i);
+byte *ScummEngine_v72he::getStringAddress(ResId idx) {
+	byte *addr = getResourceAddress(rtString, idx);
 	if (addr == NULL)
 		return NULL;
 	return ((ScummEngine_v72he::ArrayHeader *)addr)->data;
 }
 
-int ScummEngine_v72he::getSoundResourceSize(int id) {
+int ScummEngine_v72he::getSoundResourceSize(ResId id) {
 	const byte *ptr;
 	int offs, size;
 

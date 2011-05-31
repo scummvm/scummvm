@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * Multi-part object definitions
  */
 
@@ -56,15 +53,15 @@ typedef MULTI_INIT *PMULTI_INIT;
 |*			Multi Object Function Prototypes		*|
 \*----------------------------------------------------------------------*/
 
-OBJECT *MultiInitObject(	// Initialise a multi-part object
+OBJECT *MultiInitObject(	// Initialize a multi-part object
 	const MULTI_INIT *pInitTbl);	// pointer to multi-object initialisation table
 
 void MultiInsertObject(		// Insert a multi-part object onto a object list
-	OBJECT *pObjList,	// list to insert multi-part object onto
+	OBJECT **pObjList,	// list to insert multi-part object onto
 	OBJECT *pInsObj);	// head of multi-part object to insert
 
 void MultiDeleteObject(		// Delete all the pieces of a multi-part object
-	OBJECT *pObjList,	// list to delete multi-part object from
+	OBJECT **pObjList,	// list to delete multi-part object from
 	OBJECT *pMultiObj);	// multi-part object to be deleted
 
 void MultiHideObject(		// Hide a multi-part object

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef MYST_SCRIPTS_SELENITIC_H
@@ -52,6 +49,8 @@ private:
 	uint16 getVar(uint16 var);
 	void toggleVar(uint16 var);
 	bool setVarValue(uint16 var, uint16 value);
+
+	virtual uint16 getMap() { return 9930; }
 
 	DECLARE_OPCODE(o_mazeRunnerMove);
 	DECLARE_OPCODE(o_mazeRunnerSoundRepeat);

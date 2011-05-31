@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "agos/agos.h"
@@ -134,7 +131,7 @@ void AGOSEngine_PN::pcf(uint8 ch) {
 	if (ch == 255) {
 		_bp = 0;
 		_xofs = 0;
-		return;		/* pcf(255) initialises the routine */
+		return;		/* pcf(255) initializes the routine */
 	}			/* pcf(254) flushes its working _buffer */
 	if (ch != 254) {
 		if ((ch != 32) || (_bp + _xofs != 50))

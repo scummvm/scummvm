@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 
@@ -118,7 +115,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	VAR(VAR_ROOM) = room;
 	_fullRedraw = true;
 
-	_res->increaseResourceCounter();
+	_res->increaseResourceCounters();
 
 	_currentRoom = room;
 	VAR(VAR_ROOM) = room;
@@ -468,7 +465,7 @@ void ScummEngine::setupRoomSubBlocks() {
  * So it is not appropriate to call it after loading a savegame.
  */
 void ScummEngine::resetRoomSubBlocks() {
-	int i;
+	ResId i;
 	const byte *ptr;
 	byte *roomptr;
 
@@ -528,14 +525,14 @@ void ScummEngine::resetRoomSubBlocks() {
 	//
 	// Load scale data
 	//
-	for (i = 1; i < _res->num[rtScaleTable]; i++)
+	for (i = 1; i < _res->_types[rtScaleTable].size(); i++)
 		_res->nukeResource(rtScaleTable, i);
 
 	ptr = findResourceData(MKTAG('S','C','A','L'), roomptr);
 	if (ptr) {
 		int s1, s2, y1, y2;
 		if (_game.version == 8) {
-			for (i = 1; i < _res->num[rtScaleTable]; i++, ptr += 16) {
+			for (i = 1; i < _res->_types[rtScaleTable].size(); i++, ptr += 16) {
 				s1 = READ_LE_UINT32(ptr);
 				y1 = READ_LE_UINT32(ptr + 4);
 				s2 = READ_LE_UINT32(ptr + 8);
@@ -543,7 +540,7 @@ void ScummEngine::resetRoomSubBlocks() {
 				setScaleSlot(i, 0, y1, s1, 0, y2, s2);
 			}
 		} else {
-			for (i = 1; i < _res->num[rtScaleTable]; i++, ptr += 8) {
+			for (i = 1; i < _res->_types[rtScaleTable].size(); i++, ptr += 8) {
 				s1 = READ_LE_UINT16(ptr);
 				y1 = READ_LE_UINT16(ptr + 2);
 				s2 = READ_LE_UINT16(ptr + 4);
@@ -715,7 +712,6 @@ void ScummEngine_v3old::setupRoomSubBlocks() {
 }
 
 void ScummEngine_v3old::resetRoomSubBlocks() {
-	int i;
 	const byte *ptr;
 	byte *roomptr;
 
@@ -772,7 +768,7 @@ void ScummEngine_v3old::resetRoomSubBlocks() {
 			size = 0;
 
 			// Compute matrix size
-			for (i = 0; i < numOfBoxes; i++) {
+			for (int i = 0; i < numOfBoxes; i++) {
 				while (*tmp != 0xFF) {
 					size++;
 					tmp++;
@@ -797,8 +793,8 @@ void ScummEngine_v3old::resetRoomSubBlocks() {
 	//
 	// No scale data in old bundle games
 	//
-	for (i = 1; i < _res->num[rtScaleTable]; i++)
-		_res->nukeResource(rtScaleTable, i);
+	for (ResId id = 1; id < _res->_types[rtScaleTable].size(); id++)
+		_res->nukeResource(rtScaleTable, id);
 
 }
 

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -61,7 +58,7 @@ ObjectHandler_v1w::~ObjectHandler_v1w() {
 void ObjectHandler_v1w::updateImages() {
 	debugC(5, kDebugObject, "updateImages");
 
-	// Initialise the index array to visible objects in current screen
+	// Initialize the index array to visible objects in current screen
 	int  num_objs = 0;
 	byte objindex[kMaxObjNumb];                     // Array of indeces to objects
 

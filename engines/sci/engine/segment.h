@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SCI_ENGINE_SEGMENT_H
@@ -134,7 +131,7 @@ public:
 	/**
 	 * Iterates over all references reachable from the specified object.
 	 * Used by the garbage collector.
-	 * @param  object	object (within the current segment) to analyse
+	 * @param  object	object (within the current segment) to analyze
 	 * @return a list of outgoing references within the object
 	 *
 	 * @note This function may also choose to report numbers (segment 0) as adresses

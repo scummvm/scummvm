@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SWORD1_SWORDDEFS_H
@@ -502,7 +499,7 @@ enum ScriptVariableNames {
 	CASE_2_LOCKED_FLAG,
 	CASE_3_LOCKED_FLAG,
 	CASE_4_LOCKED_FLAG,
-	SEEN_ARMOUR_28_FLAG,
+	SEEN_ARMOR_28_FLAG,
 	CLOSED_WINDOW_28_FLAG,
 	WINDOW_28_FLAG,
 	WINDOW_DRAUGHT_FLAG,
@@ -1408,7 +1405,7 @@ enum ScriptVariableNames {
 	SEEN_STATUE_FLAG,
 	SYRIA_DEAD_FLAG,
 	SYRIA_NICHE_FLAG,
-	ARMOUR_HIDE_FLAG,
+	ARMOR_HIDE_FLAG,
 	CANDLE59_FLAG,
 	CANDLE_BURNT,
 	CHALICE_FLAG,

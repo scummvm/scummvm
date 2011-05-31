@@ -18,10 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
+
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
 #include "backends/modular-backend.h"
 
@@ -279,4 +278,8 @@ Common::SaveFileManager *ModularBackend::getSavefileManager() {
 FilesystemFactory *ModularBackend::getFilesystemFactory() {
 	assert(_fsFactory);
 	return _fsFactory;
+}
+
+void ModularBackend::quit() {
+	exit(0);
 }

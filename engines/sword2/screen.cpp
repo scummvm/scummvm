@@ -20,9 +20,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 // ---------------------------------------------------------------------------
@@ -64,11 +61,11 @@ Screen::Screen(Sword2Engine *vm, int16 width, int16 height) {
 
 	_dirtyGrid = (byte *)calloc(_gridWide, _gridDeep);
 	if (!_dirtyGrid)
-		error("Could not initialise dirty grid");
+		error("Could not initialize dirty grid");
 
 	_buffer = (byte *)malloc(width * height);
 	if (!_buffer)
-		error("Could not initialise display");
+		error("Could not initialize display");
 
 	for (int i = 0; i < ARRAYSIZE(_blockSurfaces); i++)
 		_blockSurfaces[i] = NULL;
@@ -1228,11 +1225,11 @@ void Screen::rollCredits() {
 void Screen::splashScreen() {
 	byte *bgfile = _vm->_resman->openResource(2950);
 
-	initialiseBackgroundLayer(NULL);
-	initialiseBackgroundLayer(NULL);
-	initialiseBackgroundLayer(_vm->fetchBackgroundLayer(bgfile));
-	initialiseBackgroundLayer(NULL);
-	initialiseBackgroundLayer(NULL);
+	initializeBackgroundLayer(NULL);
+	initializeBackgroundLayer(NULL);
+	initializeBackgroundLayer(_vm->fetchBackgroundLayer(bgfile));
+	initializeBackgroundLayer(NULL);
+	initializeBackgroundLayer(NULL);
 
 	_vm->fetchPalette(bgfile, _palette);
 	setPalette(0, 256, _palette, RDPAL_FADE);

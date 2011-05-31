@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SCI_ENGINE_SCRIPT_H
@@ -140,20 +137,20 @@ public:
 	 * Initializes the script's local variables
 	 * @param segMan	A reference to the segment manager
 	 */
-	void initialiseLocals(SegManager *segMan);
+	void initializeLocals(SegManager *segMan);
 
 	/**
 	 * Adds the script's classes to the segment manager's class table
 	 * @param segMan	A reference to the segment manager
 	 */
-	void initialiseClasses(SegManager *segMan);
+	void initializeClasses(SegManager *segMan);
 
 	/**
 	 * Initializes the script's objects (SCI0)
 	 * @param segMan	A reference to the segment manager
 	 * @param segmentId	The script's segment id
 	 */
-	void initialiseObjects(SegManager *segMan, SegmentId segmentId);
+	void initializeObjects(SegManager *segMan, SegmentId segmentId);
 
 	// script lock operations
 
@@ -283,21 +280,21 @@ private:
 	 * @param segMan	A reference to the segment manager
 	 * @param segmentId	The script's segment id
 	 */
-	void initialiseObjectsSci0(SegManager *segMan, SegmentId segmentId);
+	void initializeObjectsSci0(SegManager *segMan, SegmentId segmentId);
 
 	/**
 	 * Initializes the script's objects (SCI1.1 - SCI2.1)
 	 * @param segMan	A reference to the segment manager
 	 * @param segmentId	The script's segment id
 	 */
-	void initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId);
+	void initializeObjectsSci11(SegManager *segMan, SegmentId segmentId);
 
 	/**
 	 * Initializes the script's objects (SCI3)
 	 * @param segMan	A reference to the segment manager
 	 * @param segmentId	The script's segment id
 	 */
-	void initialiseObjectsSci3(SegManager *segMan, SegmentId segmentId);
+	void initializeObjectsSci3(SegManager *segMan, SegmentId segmentId);
 };
 
 } // End of namespace Sci

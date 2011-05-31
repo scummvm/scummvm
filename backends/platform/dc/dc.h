@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "backends/base-backend.h"
@@ -56,7 +53,7 @@ class DCHardware {
 };
 
 class DCCDManager : public DefaultAudioCDManager {
-  // Initialise the specified CD drive for audio playback.
+  // Initialize the specified CD drive for audio playback.
   bool openCD(int drive);
 
   // Poll cdrom status

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/translation.h"
@@ -73,12 +70,11 @@ MessageDialog::MessageDialog(const Common::String &message, const Common::String
 
 int MessageDialog::show(const Common::String &message, const Common::String &btn1Message, const Common::String &btn2Message) {
 	// Ensure that the cursor is the arrow
-	_globals->_events.pushCursor(CURSOR_ARROW);
-	_globals->_events.showCursor();
+	_globals->_events.setCursor(CURSOR_ARROW);
 
 	int result = show2(message, btn1Message, btn2Message);
 
-	_globals->_events.popCursor();
+	_globals->_events.setCursorFromFlag();
 	return result;
 }
 
@@ -472,8 +468,10 @@ void InventoryDialog::execute() {
 	while (!_vm->getEventManager()->shouldQuit()) {
 		// Get events
 		Event event;
-		while (!_globals->_events.getEvent(event) && !_vm->getEventManager()->shouldQuit())
-			;
+		while (!_globals->_events.getEvent(event) && !_vm->getEventManager()->shouldQuit()) {
+			g_system->delayMillis(10);
+			g_system->updateScreen();
+		}
 		if (_vm->getEventManager()->shouldQuit())
 			return;
 

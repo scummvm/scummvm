@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "kyra/sound_intern.h"
@@ -116,7 +113,7 @@ void SoundTowns::haltTrack() {
 	for (int i = 0x40; i < 0x46; i++)
 		_driver->chanVolume(i, 0);	
 	for (int i = 0; i < 32; i++)
-		_driver->chanEnable(i, 0);
+		_driver->configChan_enable(i, 0);
 	_driver->stopParser();
 }
 
@@ -300,8 +297,6 @@ bool SoundTowns::loadInstruments() {
 	if (!twm)
 		return false;
 
-	Common::StackLock lock(_mutex);
-
 	Screen::decodeFrame4(twm, _musicTrackData, 50570);
 	for (int i = 0; i < 128; i++)
 		_driver->loadInstrument(0, i, &_musicTrackData[i * 48 + 8]);
@@ -325,23 +320,21 @@ bool SoundTowns::loadInstruments() {
 }
 
 void SoundTowns::playEuphonyTrack(uint32 offset, int loop) {
-	Common::StackLock lock(_mutex);
-
 	uint8 *twm = _vm->resource()->fileData("twmusic.pak", 0);
 	Screen::decodeFrame4(twm + 19312 + offset, _musicTrackData, 50570);
 	delete[] twm;
 
 	const uint8 *src = _musicTrackData + 852;
 	for (int i = 0; i < 32; i++)
-		_driver->chanEnable(i, *src++);
+		_driver->configChan_enable(i, *src++);
 	for (int i = 0; i < 32; i++)
-		_driver->chanMode(i, *src++);
+		_driver->configChan_setMode(i, *src++);
 	for (int i = 0; i < 32; i++)
-		_driver->chanOrdr(i, *src++);
+		_driver->configChan_remap(i, *src++);
 	for (int i = 0; i < 32; i++)
-		_driver->chanVolumeShift(i, *src++);
+		_driver->configChan_adjustVolume(i, *src++);
 	for (int i = 0; i < 32; i++)
-		_driver->chanNoteShift(i, *src++);
+		_driver->configChan_setTranspose(i, *src++);
 
 	src = _musicTrackData + 1748;
 	for (int i = 0; i < 6; i++)

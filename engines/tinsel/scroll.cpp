@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * Handles scrolling
  */
 
@@ -419,7 +416,7 @@ void ScrollProcess(CORO_PARAM, const void *) {
 	CORO_BEGIN_CODE(_ctx);
 
 	// In Tinsel v2, scenes may play movies, so the background may not always
-	// already be initialised like it is in v1
+	// already be initialized like it is in v1
 	while (!GetBgObject())
 		CORO_SLEEP(1);
 

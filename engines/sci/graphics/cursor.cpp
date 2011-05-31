@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/config-manager.h"
@@ -255,10 +252,10 @@ void GfxCursor::setPosition(Common::Point pos) {
 	// Some games display a new menu, set mouse position somewhere within and
 	//  expect it to be in there. This is fine for a real mouse, but on wii using
 	//  wii-mote or touch interfaces this won't work. In fact on those platforms
-	//  the menus will close immediately because of that behaviour.
+	//  the menus will close immediately because of that behavior.
 	// We identify those cases and set a reaction-rect. If the mouse it outside
 	//  of that rect, we won't report the position back to the scripts.
-	//  As soon as the mouse was inside once, we will revert to normal behaviour
+	//  As soon as the mouse was inside once, we will revert to normal behavior
 	// Currently this code is enabled for all platforms, especially because we can't
 	//  differentiate between e.g. Windows used via mouse and Windows used via touchscreen
 	// The workaround won't hurt real-mouse platforms

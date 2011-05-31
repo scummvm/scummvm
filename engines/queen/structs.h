@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef QUEEN_STRUCTS_H
@@ -80,7 +77,7 @@ struct Box {
 
 struct Area {
 	//! bitmask of connected areas
-	int16 mapNeighbours;
+	int16 mapNeighbors;
 	//! coordinates defining area limits
 	Box box;
 	//! scaling factors for bobs actors
@@ -89,7 +86,7 @@ struct Area {
 	uint16 object;
 
 	void readFromBE(byte *&ptr) {
-		mapNeighbours = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		mapNeighbors = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		box.readFromBE(ptr);
 		bottomScaleFactor = READ_BE_UINT16(ptr); ptr += 2;
 		topScaleFactor = READ_BE_UINT16(ptr); ptr += 2;
@@ -97,7 +94,7 @@ struct Area {
 	}
 
 	void writeToBE(byte *&ptr) {
-		WRITE_BE_UINT16(ptr, mapNeighbours); ptr += 2;
+		WRITE_BE_UINT16(ptr, mapNeighbors); ptr += 2;
 		box.writeToBE(ptr);
 		WRITE_BE_UINT16(ptr, bottomScaleFactor); ptr += 2;
 		WRITE_BE_UINT16(ptr, topScaleFactor); ptr += 2;

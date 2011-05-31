@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * Handles the inventory and conversation windows.
  *
  * And the save/load game windows. Some of this will be platform
@@ -1322,7 +1319,7 @@ extern int WhichItemHeld() {
 }
 
 /**
- * Called from the cursor module when it re-initialises (at the start of
+ * Called from the cursor module when it re-initializes (at the start of
  * a new scene). For if we are holding something at scene-change time.
  */
 extern void InventoryIconCursor(bool bNewItem) {

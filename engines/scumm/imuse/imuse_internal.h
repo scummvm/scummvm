@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef SCUMM_IMUSE_INTERNAL
@@ -232,6 +229,7 @@ protected:
 
 	// Sequencer part
 	int start_seq_sound(int sound, bool reset_vars = true);
+	void loadStartParameters(int sound);
 	int query_param(int param);
 
 public:
@@ -397,7 +395,6 @@ protected:
 	TimerCallbackInfo _timer_info_native;
 
 	uint32 _game_id;
-	byte **_base_sounds;
 
 	// Plug-in SysEx handling. Right now this only supports one
 	// custom SysEx handler for the hardcoded IMUSE_SYSEX_ID
@@ -449,7 +446,14 @@ protected:
 	static void midiTimerCallback(void *data);
 	void on_timer(MidiDriver *midi);
 
-	byte *findStartOfSound(int sound);
+	enum ChunkType {
+		kMThd = 1,
+		kFORM = 2,
+		kMDhd = 4,	// Used in MI2 and INDY4. Contain certain start parameters (priority, volume, etc. ) for the player.
+		kMDpg = 8	// These chunks exist in DOTT and SAMNMAX. They don't get processed, however. 
+	};
+
+	byte *findStartOfSound(int sound, int ct = (kMThd | kFORM));
 	bool isMT32(int sound);
 	bool isMIDI(int sound);
 	int get_queue_sound_status(int sound) const;
@@ -513,7 +517,6 @@ public:
 	int save_or_load(Serializer *ser, ScummEngine *scumm);
 	bool get_sound_active(int sound) const;
 	int32 doCommand(int numargs, int args[]);
-	void setBase(byte **base);
 	uint32 property(int prop, uint32 value);
 	virtual void addSysexHandler(byte mfgID, sysexfunc handler);
 

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "tsage/events.h"
@@ -673,12 +670,18 @@ void GfxElement::drawFrame() {
  * @event Event to process
  */
 bool GfxElement::focusedEvent(Event &event) {
+	Common::Point mousePos = event.mousePos;
 	bool highlightFlag = false;
 
-	while (!_vm->getEventManager()->shouldQuit()) {
+	// HACK: It should use the GfxManager object to figure out the relative
+	// position, but for now this seems like the easiest way.
+	int xOffset = mousePos.x - _globals->_events._mousePos.x;
+	int yOffset = mousePos.y - _globals->_events._mousePos.y;
+
+	while (event.eventType != EVENT_BUTTON_UP && !_vm->getEventManager()->shouldQuit()) {
 		g_system->delayMillis(10);
 
-		if (_bounds.contains(event.mousePos)) {
+		if (_bounds.contains(mousePos)) {
 			if (!highlightFlag) {
 				// First highlight call to show the highlight
 				highlightFlag = true;
@@ -690,8 +693,12 @@ bool GfxElement::focusedEvent(Event &event) {
 			highlight();
 		}
 
-		if (_globals->_events.getEvent(event, EVENT_BUTTON_UP))
-			break;
+		if (_globals->_events.getEvent(event, EVENT_MOUSE_MOVE | EVENT_BUTTON_UP)) {
+			if (event.eventType == EVENT_MOUSE_MOVE) {
+				mousePos.x = event.mousePos.x + xOffset;
+				mousePos.y = event.mousePos.y + yOffset;
+			}
+		}
 	}
 
 	if (highlightFlag) {
@@ -867,7 +874,7 @@ GfxDialog::~GfxDialog() {
 void GfxDialog::setDefaults() {
 	GfxElement::setDefaults();
 
-	// Initialise the embedded graphics manager
+	// Initialize the embedded graphics manager
 	_gfxManager.setDefaults();
 
 	// Figure out a rect needed for all the added elements
@@ -970,9 +977,10 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 	// Event loop
 	GfxButton *selectedButton = NULL;
 
-	while (!_vm->getEventManager()->shouldQuit()) {
+	bool breakFlag = false;
+	while (!_vm->getEventManager()->shouldQuit() && !breakFlag) {
 		Event event;
-		while (_globals->_events.getEvent(event)) {
+		while (_globals->_events.getEvent(event) && !breakFlag) {
 			// Adjust mouse positions to be relative within the dialog
 			event.mousePos.x -= _gfxManager._bounds.left;
 			event.mousePos.y -= _gfxManager._bounds.top;
@@ -981,19 +989,25 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 				if ((*i)->process(event))
 					selectedButton = static_cast<GfxButton *>(*i);
 			}
-		}
 
-		if (selectedButton)
-			break;
-		else if (!event.handled) {
-			if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
-				selectedButton = NULL;
+			if (selectedButton) {
+				breakFlag = true;
 				break;
-			} else if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_RETURN)) {
-				selectedButton = defaultButton;
-				break;
+			} else if (!event.handled) {
+				if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+					selectedButton = NULL;
+					breakFlag = true;
+					break;
+				} else if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_RETURN)) {
+					selectedButton = defaultButton;
+					breakFlag = true;
+					break;
+				}
 			}
 		}
+
+		g_system->delayMillis(10);
+		g_system->updateScreen();
 	}
 
 	_gfxManager.deactivate();
@@ -1195,7 +1209,7 @@ int GfxFont::getStringWidth(const char *s) {
 /**
  * Returns the maximum number of characters for words that will fit into a given width
  *
- * @s Message to be analysed
+ * @s Message to be analyzed
  * @maxWidth Maximum allowed width
  */
 int GfxFont::getStringFit(const char *&s, int maxWidth) {
@@ -1241,7 +1255,7 @@ int GfxFont::getStringFit(const char *&s, int maxWidth) {
  * Fills out the passed rect with the dimensions of a given string word-wrapped to a
  * maximum specified width
  *
- * @s Message to be analysed
+ * @s Message to be analyzed
  * @bounds Rectangle to put output size into
  * @maxWidth Maximum allowed line width in pixels
  */

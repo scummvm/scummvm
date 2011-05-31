@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // FIXME: Avoid using printf
@@ -43,6 +40,7 @@
 #include "scumm/scumm_v8.h"
 #include "scumm/file.h"
 #include "scumm/file_nes.h"
+#include "scumm/resource.h"
 
 #include "engines/metaengine.h"
 
@@ -70,27 +68,27 @@ static const MD5Table *findInMD5Table(const char *md5) {
 }
 
 Common::String ScummEngine::generateFilename(const int room) const {
-	const int diskNumber = (room > 0) ? _res->roomno[rtRoom][room] : 0;
-	char buf[128];
+	const int diskNumber = (room > 0) ? _res->_types[rtRoom][room]._roomno : 0;
+	Common::String result;
 
 	if (_game.version == 4) {
 		if (room == 0 || room >= 900) {
-			snprintf(buf, sizeof(buf), "%03d.lfl", room);
+			result = Common::String::format("%03d.lfl", room);
 		} else {
-			snprintf(buf, sizeof(buf), "disk%02d.lec", diskNumber);
+			result = Common::String::format("disk%02d.lec", diskNumber);
 		}
 	} else {
 		switch (_filenamePattern.genMethod) {
 		case kGenDiskNum:
-			snprintf(buf, sizeof(buf), _filenamePattern.pattern, diskNumber);
+			result = Common::String::format(_filenamePattern.pattern, diskNumber);
 			break;
 
 		case kGenRoomNum:
-			snprintf(buf, sizeof(buf), _filenamePattern.pattern, room);
+			result = Common::String::format(_filenamePattern.pattern, room);
 			break;
 
 		case kGenUnchanged:
-			strncpy(buf, _filenamePattern.pattern, sizeof(buf));
+			result = _filenamePattern.pattern;
 			break;
 
 		default:
@@ -98,11 +96,11 @@ Common::String ScummEngine::generateFilename(const int room) const {
 		}
 	}
 
-	return buf;
+	return result;
 }
 
 Common::String ScummEngine_v60he::generateFilename(const int room) const {
-	char buf[128];
+	Common::String result;
 	char id = 0;
 
 	switch (_filenamePattern.genMethod) {
@@ -112,21 +110,21 @@ Common::String ScummEngine_v60he::generateFilename(const int room) const {
 		if (room < 0) {
 			id = '0' - room;
 		} else {
-			const int diskNumber = (room > 0) ? _res->roomno[rtRoom][room] : 0;
+			const int diskNumber = (room > 0) ? _res->_types[rtRoom][room]._roomno : 0;
 			id = diskNumber + '0';
 		}
 
 		if (_filenamePattern.genMethod == kGenHEPC) {
-			snprintf(buf, sizeof(buf), "%s.he%c", _filenamePattern.pattern, id);
+			result = Common::String::format("%s.he%c", _filenamePattern.pattern, id);
 		} else {
 			if (id == '3') { // special case for cursors
 				// For mac they're stored in game binary
-				strncpy(buf, _filenamePattern.pattern, sizeof(buf));
+				result = _filenamePattern.pattern;
 			} else {
 				if (_filenamePattern.genMethod == kGenHEMac)
-					snprintf(buf, sizeof(buf), "%s (%c)", _filenamePattern.pattern, id);
+					result = Common::String::format("%s (%c)", _filenamePattern.pattern, id);
 				else
-					snprintf(buf, sizeof(buf), "%s %c", _filenamePattern.pattern, id);
+					result = Common::String::format("%s %c", _filenamePattern.pattern, id);
 			}
 		}
 
@@ -137,11 +135,11 @@ Common::String ScummEngine_v60he::generateFilename(const int room) const {
 		return ScummEngine::generateFilename(room);
 	}
 
-	return buf;
+	return result;
 }
 
 Common::String ScummEngine_v70he::generateFilename(const int room) const {
-	char buf[128];
+	Common::String result;
 	char id = 0;
 
 	switch (_filenamePattern.genMethod) {
@@ -158,19 +156,19 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 				id = 'b';
 				// Special cases for Blue's games, which share common (b) files
 				if (_game.id == GID_BIRTHDAY && !(_game.features & GF_DEMO))
-					strcpy(buf, "Blue'sBirthday.(b)");
+					result = "Blue'sBirthday.(b)";
 				else if (_game.id == GID_TREASUREHUNT)
-					strcpy(buf, "Blue'sTreasureHunt.(b)");
+					result = "Blue'sTreasureHunt.(b)";
 				else
-					snprintf(buf, sizeof(buf), "%s.(b)", _filenamePattern.pattern);
+					result = Common::String::format("%s.(b)", _filenamePattern.pattern);
 				break;
 			case 1:
 				id = 'a';
-				snprintf(buf, sizeof(buf), "%s.(a)", _filenamePattern.pattern);
+				result = Common::String::format("%s.(a)", _filenamePattern.pattern);
 				break;
 			default:
 				id = '0';
-				snprintf(buf, sizeof(buf), "%s.he0", _filenamePattern.pattern);
+				result = Common::String::format("%s.he0", _filenamePattern.pattern);
 			}
 		} else if (room < 0) {
 			id = '0' - room;
@@ -181,16 +179,16 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 		if (_filenamePattern.genMethod == kGenHEPC) {
 			// For HE >= 98, we already called snprintf above.
 			if (_game.heversion < 98 || room < 0)
-				snprintf(buf, sizeof(buf), "%s.he%c", _filenamePattern.pattern, id);
+				result = Common::String::format("%s.he%c", _filenamePattern.pattern, id);
 		} else {
 			if (id == '3') { // special case for cursors
 				// For mac they're stored in game binary
-				strncpy(buf, _filenamePattern.pattern, sizeof(buf));
+				result = _filenamePattern.pattern;
 			} else {
 				if (_filenamePattern.genMethod == kGenHEMac)
-					snprintf(buf, sizeof(buf), "%s (%c)", _filenamePattern.pattern, id);
+					result = Common::String::format("%s (%c)", _filenamePattern.pattern, id);
 				else
-					snprintf(buf, sizeof(buf), "%s %c", _filenamePattern.pattern, id);
+					result = Common::String::format("%s %c", _filenamePattern.pattern, id);
 			}
 		}
 
@@ -201,40 +199,39 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 		return ScummEngine_v60he::generateFilename(room);
 	}
 
-	return buf;
+	return result;
 }
 
 static Common::String generateFilenameForDetection(const char *pattern, FilenameGenMethod genMethod) {
-	char buf[128];
+	Common::String result;
 
 	switch (genMethod) {
 	case kGenDiskNum:
 	case kGenRoomNum:
-		snprintf(buf, sizeof(buf), pattern, 0);
+		result = Common::String::format(pattern, 0);
 		break;
 
 	case kGenHEPC:
-		snprintf(buf, sizeof(buf), "%s.he0", pattern);
+		result = Common::String::format("%s.he0", pattern);
 		break;
 
 	case kGenHEMac:
-		snprintf(buf, sizeof(buf), "%s (0)", pattern);
+		result = Common::String::format("%s (0)", pattern);
 		break;
 
 	case kGenHEMacNoParens:
-		snprintf(buf, sizeof(buf), "%s 0", pattern);
+		result = Common::String::format("%s 0", pattern);
 		break;
 
 	case kGenUnchanged:
-		strncpy(buf, pattern, sizeof(buf));
+		result = pattern;
 		break;
 
 	default:
 		error("generateFilenameForDetection: Unsupported genMethod");
 	}
 
-	buf[sizeof(buf) - 1] = 0;
-	return buf;
+	return result;
 }
 
 struct DetectorDesc {
@@ -1039,6 +1036,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	// Simply use the first match
 	DetectorResult res(*(results.begin()));
 	debug(1, "Using gameid %s, variant %s, extra %s", res.game.gameid, res.game.variant, res.extra);
+	debug(1, "  SCUMM version %d, HE version %d", res.game.version, res.game.heversion);
 
 	// Print the MD5 of the game; either verbose using printf, in case of an
 	// unknown MD5, or with a medium debug level in case of a known MD5 (for
@@ -1157,7 +1155,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 }
 
 const char *ScummMetaEngine::getName() const {
-	return "SCUMM Engine ["
+	return "SCUMM ["
 
 #if defined(ENABLE_SCUMM_7_8) && defined(ENABLE_HE)
 		"all games"

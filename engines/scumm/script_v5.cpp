@@ -18,14 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/object.h"
+#include "scumm/resource.h"
 #include "scumm/scumm_v3.h"
 #include "scumm/scumm_v5.h"
 #include "scumm/sound.h"
@@ -1492,7 +1490,7 @@ void ScummEngine_v5::o5_systemOps() {
 }
 
 void ScummEngine_v5::o5_resourceRoutines() {
-	const ResTypes resType[4] = { rtScript, rtSound, rtCostume, rtRoom };
+	const ResType resType[4] = { rtScript, rtSound, rtCostume, rtRoom };
 	int resid = 0;
 	int foo, bar;
 
@@ -2648,7 +2646,7 @@ void ScummEngine_v5::decodeParseString() {
 
 
 			// In SCUMM V1-V3, there were no 'default' values for the text slot
-			// values. Hence to achieve correct behaviour, we have to keep the
+			// values. Hence to achieve correct behavior, we have to keep the
 			// 'default' values in sync with the active values.
 			//
 			// Note: This is needed for Indy3 (Grail Diary). It's also needed

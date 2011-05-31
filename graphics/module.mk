@@ -25,7 +25,8 @@ MODULE_OBJS := \
 	thumbnail.o \
 	VectorRenderer.o \
 	VectorRendererSpec.o \
-	wincursor.o
+	wincursor.o \
+	yuv_to_rgb.o
 
 ifdef USE_SCALERS
 MODULE_OBJS += \

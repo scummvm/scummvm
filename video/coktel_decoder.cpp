@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/scummsys.h"
@@ -1627,11 +1624,7 @@ bool VMDDecoder::openExternalCodec() {
 		if (_videoCodec == kVideoCodecIndeo3) {
 			_isPaletted = false;
 
-#ifdef USE_INDEO3
 			_codec = new Indeo3Decoder(_width, _height);
-#else
-			warning("VMDDecoder::openExternalCodec(): Indeo3 decoder not compiled in");
-#endif
 
 		} else {
 			warning("VMDDecoder::openExternalCodec(): Unknown video codec FourCC \"%s\"",

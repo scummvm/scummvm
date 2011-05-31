@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "m4/compression.h"
@@ -47,16 +44,16 @@ bool MadsPack::isCompressed(Common::SeekableReadStream *stream) {
 }
 
 MadsPack::MadsPack(Common::SeekableReadStream *stream) {
-	initialise(stream);
+	initialize(stream);
 }
 
 MadsPack::MadsPack(const char *resourceName, MadsM4Engine* vm) {
 	Common::SeekableReadStream *stream = vm->_resourceManager->get(resourceName);
-	initialise(stream);
+	initialize(stream);
 	vm->_resourceManager->toss(resourceName);
 }
 
-void MadsPack::initialise(Common::SeekableReadStream *stream) {
+void MadsPack::initialize(Common::SeekableReadStream *stream) {
 	if (!MadsPack::isCompressed(stream))
 		error("Attempted to decompress a resource that was not MadsPacked");
 
@@ -124,7 +121,7 @@ void FabDecompressor::decompress(const byte *srcData, int srcSize, byte *destDat
 	copyOfs = 0xFFFF0000;
 	destP = destData;
 
-	// Initialise data fields
+	// Initialize data fields
 	_srcData = srcData;
 	_srcP = _srcData + 6;
 	_srcSize = srcSize;

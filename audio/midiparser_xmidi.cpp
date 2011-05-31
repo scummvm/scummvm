@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "audio/midiparser.h"
@@ -240,7 +237,7 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 			pos += 4;
 			_num_tracks = 1;
 		} else if (memcmp(pos, "XDIR", 4)) {
-			// Not an XMIDI that we recognise
+			// Not an XMIDI that we recognize
 			warning("Expected 'XDIR' but found '%c%c%c%c'", pos[0], pos[1], pos[2], pos[3]);
 			return false;
 		} else {

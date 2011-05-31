@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef QUEEN_COMMAND_H
@@ -100,7 +97,7 @@ public:
 	Command(QueenEngine *vm);
 	~Command();
 
-	//! initialise command construction
+	//! initialize command construction
 	void clear(bool clearTexts);
 
 	//! execute last constructed command

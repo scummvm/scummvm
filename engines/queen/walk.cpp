@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/textconsole.h"
@@ -114,7 +111,7 @@ void Walk::animateJoe() {
 		WalkData *pwd = &_walkData[i];
 
 		// area has been turned off, see if we should execute a cutaway
-		if (pwd->area->mapNeighbours < 0) {
+		if (pwd->area->mapNeighbors < 0) {
 			// queen.c l.2838-2911
 			_vm->logic()->handleSpecialArea(pwd->anim.facing, pwd->areaNum, i);
 			_joeMoveBlock = true;
@@ -485,7 +482,7 @@ int16 Walk::findAreaPosition(int16 *x, int16 *y, bool recalibrate) {
 uint16 Walk::findFreeArea(uint16 area) const {
 	uint16 testArea;
 	uint16 freeArea = 0;
-	uint16 map = ABS(_roomArea[area].mapNeighbours);
+	uint16 map = ABS(_roomArea[area].mapNeighbors);
 	for (testArea = 1; testArea <= _roomAreaCount; ++testArea) {
 		int b = _roomAreaCount - testArea;
 		if (map & (1 << b)) {

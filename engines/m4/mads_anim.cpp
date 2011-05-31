@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/textconsole.h"
@@ -606,7 +603,7 @@ static bool tempFlag = true;//****DEBUG - Temporarily allow me to skip several i
 		flags |= 0x100;
 
 	_activeAnimation = new MadsAnimation(_vm, this);
-	_activeAnimation->initialise(_currentLine, flags, &_backgroundSurface, &_codeSurface);
+	_activeAnimation->initialize(_currentLine, flags, &_backgroundSurface, &_codeSurface);
 
 	if (_startFrame != -1)
 		_activeAnimation->setCurrentFrame(_startFrame);

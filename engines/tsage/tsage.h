@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef TSAGE_H
@@ -89,8 +86,8 @@ public:
 	virtual Common::Error saveGameState(int slot, const char *desc);
 	Common::String generateSaveName(int slot);
 
-	void initialise();
-	void deinitialise();
+	void initialize();
+	void deinitialize();
 };
 
 extern TSageEngine *_vm;

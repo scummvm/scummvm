@@ -21,8 +21,11 @@ MODULE_OBJS := \
 	../../../gui/Key.o \
 	../../../gui/KeysDialog.o \
 	missing/missing.o \
-	PocketSCUMM.o \
 	smartLandScale.o
+
+ifndef DYNAMIC_MODULES
+MODULE_OBJS += PocketSCUMM.o
+endif
 
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
 MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))

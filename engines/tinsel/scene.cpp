@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * Starts up new scenes.
  */
 
@@ -204,8 +201,8 @@ void SendSceneTinselProcess(TINSEL_EVENT event) {
 
 /**
  * Get the SCENE_STRUC
- * Initialise polygons for the scene
- * Initialise the actors for this scene
+ * Initialize polygons for the scene
+ * Initialize the actors for this scene
  * Run the appropriate entrance code (if any)
  * Get the default refer type
  */
@@ -247,10 +244,10 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 	if (entry == NO_ENTRY_NUM) {
 		// Restoring scene
 
-		// Initialise all the polygons for this scene
+		// Initialize all the polygons for this scene
 		InitPolygons(FROM_LE_32(ss->hPoly), FROM_LE_32(ss->numPoly), true);
 
-		// Initialise the actors for this scene
+		// Initialize the actors for this scene
 		StartTaggedActors(FROM_LE_32(ss->hTaggedActor), FROM_LE_32(ss->numTaggedActor), false);
 
 		if (TinselV2)
@@ -260,10 +257,10 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 	} else {
 		// Genuine new scene
 
-		// Initialise all the polygons for this scene
+		// Initialize all the polygons for this scene
 		InitPolygons(FROM_LE_32(ss->hPoly), FROM_LE_32(ss->numPoly), false);
 
-		// Initialise the actors for this scene
+		// Initialize the actors for this scene
 		StartTaggedActors(FROM_LE_32(ss->hTaggedActor), FROM_LE_32(ss->numTaggedActor), true);
 
 		// Run the appropriate entrance code (if any)

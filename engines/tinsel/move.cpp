@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * Handles walking and use of the path system.
  *
  * Contains the dodgiest code in the whole system.
@@ -581,7 +578,7 @@ static void SetMoverUltDest(PMOVER pActor, int x, int y) {
  * Set intermediate destination.
  *
  * If in final destination path, go straight to target.
- * If in a neighbouring path to the final destination, if the target path
+ * If in a neighboring path to the final destination, if the target path
  * is a follow nodes path, head for the end node, otherwise head straight
  * for the target.
  * Otherwise, head towards the pseudo-center or end node of the first

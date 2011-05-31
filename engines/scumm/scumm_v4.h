@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SCUMM_SCRIPT_V4_H
@@ -59,7 +56,7 @@ protected:
 
 	virtual void scummLoop_handleSaveLoad();
 
-	virtual int readResTypeList(int id);
+	virtual int readResTypeList(ResType type);
 	virtual void readIndexFile();
 	virtual void loadCharset(int no);
 	virtual void resetRoomObjects();

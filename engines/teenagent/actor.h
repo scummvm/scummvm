@@ -17,13 +17,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #include "teenagent/animation.h"
 #include "common/rect.h"
+
+namespace Common {
+class RandomSource;
+}
 
 namespace TeenAgent {
 
@@ -33,7 +34,7 @@ class Actor : public Animation {
 public:
 	Actor();
 	Common::Rect render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, bool head, uint zoom);
-	Common::Rect renderIdle(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, uint zoom);
+	Common::Rect renderIdle(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, uint zoom, Common::RandomSource &rnd);
 };
 
 } // End of namespace TeenAgent

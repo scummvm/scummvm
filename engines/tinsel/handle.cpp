@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * This file contains the handle based Memory Manager code
  */
 
@@ -246,9 +243,6 @@ void LoadCDGraphData(MEMHANDLE *pH) {
  * @param next			Handle of end of range + 1
  */
 void LoadExtraGraphData(SCNHANDLE start, SCNHANDLE next) {
-	if (start == cdBaseHandle)
-		return;
-
 	OpenCDGraphFile();
 
 	MemoryDiscard((handleTable + cdPlayHandle)->_node); // Free it

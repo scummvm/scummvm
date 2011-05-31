@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 /*
@@ -81,15 +78,15 @@ public:
 	virtual ~Polygon();
 
 	/**
-	 * Initialises the BS_Polygon with a list of Vertecies.
+	 * Initializes the BS_Polygon with a list of Vertecies.
 	 *
 	 * The Vertices need to define a polygon must not have self-intersections.
-	 * If a polygon already has verticies, this will re-initialise it with the new list.
+	 * If a polygon already has verticies, this will re-initialize it with the new list.
 	 *
 	 * @param VertexCount       The number of vertices being passed
 	 * @param Vertecies         An array of BS_Vertex objects representing the vertices in the polygon.
 	 * @return                  Returns false if the Vertecies have self-intersections. In this case,
-	 * the object is not initialised.
+	 * the object is not initialized.
 	 */
 	bool init(int vertexCount_, const Vertex *vertices_);
 

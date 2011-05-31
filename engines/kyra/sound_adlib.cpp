@@ -34,9 +34,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $URL$
- * $Id$
- *
  */
 
 
@@ -1561,7 +1558,7 @@ int AdLibDriver::update_changeExtraLevel2(uint8 *&dataptr, Channel &channel, uin
 	return 0;
 }
 
-// Apart from initialising to zero, these two functions are the only ones that
+// Apart from initializing to zero, these two functions are the only ones that
 // modify _vibratoAndAMDepthBits.
 
 int AdLibDriver::update_setAMDepth(uint8 *&dataptr, Channel &channel, uint8 value) {

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #if defined(__ANDROID__)
@@ -182,7 +179,7 @@ void OSystem_Android::initSurface() {
 
 	JNI::initSurface();
 
-	// Initialise OpenGLES context.
+	// Initialize OpenGLES context.
 	GLESTexture::initGLExtensions();
 
 	if (_game_texture)

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "sci/sci.h"
@@ -865,6 +862,7 @@ const byte qfg3DialogCrash[] = {
 	0x34, 0xe7, 0x03,  // ldi 3e7 (999)
 	0x22,              // lt?
 	0x33,              // jmp [back] ---> BUG! Infinite loop
+	0
 };
 
 const uint16 qfg3PatchDialogCrash[] = {
@@ -874,50 +872,9 @@ const uint16 qfg3PatchDialogCrash[] = {
 	PATCH_END
 };
 
-// Part of script 47 that handles the barter icon checks for the wrong local.
-// The local is supposed to contain the value returned by a previous kDisplay
-// call, but since the wrong one is checked, it contains junk instead. We
-// remove that check here (this doesn't affect the game at all). This occurs
-// when attempting to purchase something from a vendor and the barter button is
-// available (e.g. when buying the robe or meat from the associated vendors).
-// Fixes bug #3292251.
-const byte qfg3BarterCrash[] = {
-	22,
-	0x83, 0x10,        // lal 10   ---> BUG! Wrong local
-	0x30, 0x11, 0x00,  // bnt 0011 ---> the accumulator will now contain garbage, so this check fails
-	0x35, 0x00,        // ldi 00
-	0xa5, 0x00,        // sat 00
-	0x39, 0x03,        // pushi 03
-	0x5b, 0x04, 0x00,  // lea 04 00
-	0x36,              // push
-	0x39, 0x6c,        // pushi 6c
-	0x8b, 0x10,        // lsl 10   ---> local 10 contains garbage, so the call below will fail
-	0x43, 0x1b, 0x06   // callk Display[1b] 06
-};
-
-// Same as above, but for local 0x11
-const byte qfg3BarterCrash2[] = {
-	18,
-	0x83, 0x11,        // lal 11   ---> BUG! Wrong local
-	0x30, 0x0d, 0x00,  // bnt 000d ---> the accumulator will now contain garbage, so this check fails
-	0x39, 0x03,        // pushi 03
-	0x5b, 0x04, 0x00,  // lea 04 00
-	0x36,              // push
-	0x39, 0x6c,        // pushi 6c
-	0x8b, 0x11,        // lsl 11   ---> local 11 contains garbage, so the call below will fail
-	0x43, 0x1b, 0x06   // callk Display[1b] 06
-};
-
-const uint16 qfg3PatchBarterCrash[] = {
-	0x35, 0x00,       // ldi 00    ---> the accumulator will always be zero, so the problematic code won't run
-	PATCH_END
-};
-
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg3Signatures[] = {
 	{     23, "dialog crash",                                   1, PATCH_MAGICDWORD(0xe7, 0x03, 0x22, 0x33),  -1,           qfg3DialogCrash,          qfg3PatchDialogCrash },
-	{     47, "barter crash",                                   1, PATCH_MAGICDWORD(0x83, 0x10, 0x30, 0x11),   0,           qfg3BarterCrash,          qfg3PatchBarterCrash },
-	{     47, "barter crash 2",                                 1, PATCH_MAGICDWORD(0x83, 0x11, 0x30, 0x0d),   0,          qfg3BarterCrash2,          qfg3PatchBarterCrash },
 	{    944, "import dialog continuous calls",                 1, PATCH_MAGICDWORD(0x2a, 0x31, 0x0b, 0x7a),  -1, qfg3SignatureImportDialog,         qfg3PatchImportDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef LURE_SOUND_H
@@ -156,7 +153,7 @@ public:
 	uint sfxVolume() const { return _sfxVolume; }
 
 	// The following methods implement the external sound player module
-	void musicInterface_Initialise();
+	void musicInterface_Initialize();
 	void musicInterface_Play(uint8 soundNumber, uint8 channelNumber, uint8 numChannels = 4);
 	void musicInterface_Stop(uint8 soundNumber);
 	bool musicInterface_CheckPlaying(uint8 soundNumber);

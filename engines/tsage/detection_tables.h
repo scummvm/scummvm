@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 namespace tSage {
@@ -112,7 +109,34 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_BlueForce,
 		GF_FLOPPY
 	},
-
+	// Blue Force floppy
+	{
+		{
+			"blueforce",
+			"Floppy",
+			AD_ENTRY1s("blue.rlb", "17c3993415e8a2cf93040eef7e88ec93", 1156508),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_BlueForce,
+		GF_FLOPPY
+	},
+	// Blue Force CD and First Wave use the same files
+	{
+		{
+			"blueforce",
+			"CD",
+			AD_ENTRY1s("blue.rlb", "ac29f38184cb3b874ea18523059872ba", 63863322),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_BlueForce,
+		GF_CD
+	},
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
