@@ -1035,23 +1035,7 @@ void Actor::updateWalk() {
 	if (y < 0.f) {
 		y += 360.f;
 	}
-	float a = y;
-	while (a > 90) {
-		a -= 180;
-	}
-	while (a < -90) {
-		a += 180;
-	}
-	float b = _yaw;
-	while (b > 90) {
-		b -= 180;
-	}
-	while (b < -90) {
-		b += 180;
-	}
-	if (a - b > 15 || a - b < -15) {
-		turnTo(_pitch, y, _roll);
-	}
+	turnTo(_pitch, y, _roll);
 
 	Graphics::Vector3d dir = destPos - _pos;
 	float dist = dir.magnitude();
