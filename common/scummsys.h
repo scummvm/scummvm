@@ -290,13 +290,7 @@
 //
 // Overlay color type (FIXME: shouldn't be declared here)
 //
-#if defined(NEWGUI_256)
-	// 256 color only on PalmOS
-	typedef byte OverlayColor;
-#else
-	// 15/16 bit color mode everywhere else...
-	typedef uint16 OverlayColor;
-#endif
+typedef uint16 OverlayColor;
 
 #include "common/forbidden.h"
 
