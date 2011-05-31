@@ -1614,6 +1614,16 @@ void Costume::playChore(int num) {
 		_playingChores.push_back(&_chores[num]);
 }
 
+void Costume::stopChore(int num) {
+	if (num < 0 || num >= _numChores) {
+		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
+			warning("Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
+		return;
+	}
+	_chores[num].stop();
+	_playingChores.remove(&_chores[num]);
+}
+
 void Costume::setColormap(const Common::String &map) {
 	// Sometimes setColormap is called on a null costume,
 	// see where raoul is gone in hh.set

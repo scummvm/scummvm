@@ -52,7 +52,7 @@ public:
 	void playChoreLooping(int num);
 	void setChoreLastFrame(int num) { _chores[num].setLastFrame(); }
 	void setChoreLooping(int num, bool val) { _chores[num].setLooping(val); }
-	void stopChore(int num) { _chores[num].stop(); _playingChores.remove(&_chores[num]); }
+	void stopChore(int num);
 	void fadeChoreIn(int chore, int msecs);
 	void fadeChoreOut(int chore, int msecs);
 	Model::HierNode *getModelNodes();
