@@ -145,7 +145,7 @@
 #if !defined(HAVE_CONFIG_H)
 	#if defined(SDL_BACKEND)
 		/* need this for the SDL_BYTEORDER define */
-		#include <SDL_byteorder.h>
+		#include <SDL_endian.h>
 
 		#if SDL_BYTEORDER == SDL_LIL_ENDIAN
 		#define SCUMM_LITTLE_ENDIAN
