@@ -65,8 +65,9 @@ static void debugScript(int level, bool nl, const char *s, ...) {
 
 Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_code(NULL), _savedCode(NULL), _stacktop(0), _debugger(NULL), _vm(vm),
-	_videoFile(NULL), _videoRef(0), _staufsMove(NULL),
-	_random("GroovieScripts") {
+	_videoFile(NULL), _videoRef(0), _staufsMove(NULL), _lastCursor(0xff),
+	_version(version), _random("GroovieScripts") {
+
 	// Initialize the opcode set depending on the engine version
 	switch (version) {
 	case kGroovieT7G:
@@ -385,6 +386,7 @@ bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
 
 		// If clicked with the mouse, jump to the specified address
 		if (_mouseClicked) {
+			_lastCursor = cursor;
 			_inputAction = address;
 		}
 	}
@@ -584,6 +586,10 @@ bool Script::playvideofromref(uint32 fileref) {
 
 		if (_videoFile) {
 			_videoRef = fileref;
+			// If teeth cursor, and in main script, mark video prefer low-speed
+			// filename check as sometimes teeth used for puzzle movements (bishops)
+			if (_version == kGroovieT7G && _lastCursor == 7 && _scriptFile == "script.grv")
+				_bitflags |= (1 << 15);
 			_vm->_videoPlayer->load(_videoFile, _bitflags);
 		} else {
 			error("Couldn't open file");

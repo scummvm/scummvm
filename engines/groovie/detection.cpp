@@ -111,6 +111,20 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieT7G, 0
 	},
 
+	{
+		{
+			"t7g", "",
+			{
+				{ "script.grv", 0, "d1b8033b40aa67c076039881eccce90d", 16659},
+				{ "SeventhGuest", 0, NULL, -1},
+				{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY, Common::kPlatformIOS, ADGF_NO_FLAGS,
+			Common::GUIO_NOMIDI
+		},
+		kGroovieT7G, 0
+	},
+
 #ifdef ENABLE_GROOVIE2
 	// The 11th Hour DOS English
 	{
