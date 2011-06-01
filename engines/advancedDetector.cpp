@@ -196,12 +196,10 @@ static void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *
 		desc["gameid"] = params.singleid;
 	}
 
-	if (!(params.flags & kADFlagDontAugmentPreferredTarget)) {
-		if (!desc.contains("preferredtarget"))
-			desc["preferredtarget"] = desc["gameid"];
+	if (!desc.contains("preferredtarget"))
+		desc["preferredtarget"] = desc["gameid"];
 
-		desc["preferredtarget"] = generatePreferredTarget(desc["preferredtarget"], realDesc);
-	}
+	desc["preferredtarget"] = generatePreferredTarget(desc["preferredtarget"], realDesc);
 
 	if (params.flags & kADFlagUseExtraAsHint)
 		desc["extra"] = realDesc->extra;
