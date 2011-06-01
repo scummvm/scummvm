@@ -19,7 +19,6 @@ export DEFINES=-DNDEBUG
 cd ../../../..
 ./configure --backend=openpandora --host=openpandora --disable-nasm \
   --with-sdl-prefix=/usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr/bin \
-  --with-mpeg2-prefix=/usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr \
   --disable-vorbis --enable-tremor --with-tremor-prefix=/usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr \
   --enable-zlib --with-zlib-prefix=/usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr \
   --enable-mad --with-mad-prefix=/usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr \

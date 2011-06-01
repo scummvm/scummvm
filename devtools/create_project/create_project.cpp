@@ -729,7 +729,6 @@ const Feature s_features[] = {
 	{    "flac",        "USE_FLAC", "libFLAC_static",   true, "FLAC support" },
 	{     "png",         "USE_PNG", "libpng",           true, "libpng support" },
 	{  "theora",   "USE_THEORADEC", "libtheora_static", true, "Theora decoding support" },
-	{   "mpeg2",       "USE_MPEG2", "libmpeg2",         false, "mpeg2 codec for cutscenes" },
 
 	// Feature flags
 	{     "scalers",     "USE_SCALERS",         "", true, "Scalers" },

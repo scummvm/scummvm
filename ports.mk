@@ -92,10 +92,6 @@ ifdef USE_MAD
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmad.a
 endif
 
-ifdef USE_MPEG2
-OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmpeg2.a
-endif
-
 ifdef USE_PNG
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libpng.a
 endif

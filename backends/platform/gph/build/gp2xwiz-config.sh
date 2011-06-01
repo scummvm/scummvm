@@ -16,8 +16,9 @@ export LDFLAGS=-L/opt/open2x/gcc-4.1.1-glibc-2.3.6/lib
 
 # Edit the configure line to suit.
 cd ../../../..
-./configure --backend=gph --disable-mt32emu --host=gp2xwiz --disable-flac --disable-nasm --disable-hq-scalers \
-  --with-sdl-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6/bin --with-mpeg2-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6 \
+./configure --backend=gph --disable-mt32emu --host=gp2xwiz \
+  --disable-flac --disable-nasm --disable-hq-scalers \
+  --with-sdl-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6/bin \
   --enable-tremor --with-tremor-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6 \
   --enable-zlib   --with-zlib-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6 \
   --enable-mad --with-mad-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6 \

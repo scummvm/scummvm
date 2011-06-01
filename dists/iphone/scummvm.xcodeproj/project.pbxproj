@@ -2151,13 +2151,10 @@
 		DFAAAFFC0F0112DF003E9390 /* detection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAAFFB0F0112DF003E9390 /* detection.cpp */; };
 		DFAAB0020F011392003E9390 /* thumbnail_intern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAB0010F011392003E9390 /* thumbnail_intern.cpp */; };
 		DFAAD23D0F50120E00C3A4E2 /* console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAD2390F50120E00C3A4E2 /* console.cpp */; };
-		DFB0576811B753AF0015AE65 /* mpeg_player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0576211B753AF0015AE65 /* mpeg_player.cpp */; };
 		DFB0576911B753AF0015AE65 /* qt_decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0576411B753AF0015AE65 /* qt_decoder.cpp */; };
 		DFB0576A11B753AF0015AE65 /* video_decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0576611B753AF0015AE65 /* video_decoder.cpp */; };
-		DFB0576B11B753AF0015AE65 /* mpeg_player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0576211B753AF0015AE65 /* mpeg_player.cpp */; };
 		DFB0576C11B753AF0015AE65 /* qt_decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0576411B753AF0015AE65 /* qt_decoder.cpp */; };
 		DFB0576D11B753AF0015AE65 /* video_decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0576611B753AF0015AE65 /* video_decoder.cpp */; };
-		DFB0576E11B753AF0015AE65 /* mpeg_player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0576211B753AF0015AE65 /* mpeg_player.cpp */; };
 		DFB0576F11B753AF0015AE65 /* qt_decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0576411B753AF0015AE65 /* qt_decoder.cpp */; };
 		DFB0577011B753AF0015AE65 /* video_decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0576611B753AF0015AE65 /* video_decoder.cpp */; };
 		DFB0577611B753DA0015AE65 /* rational.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0577411B753DA0015AE65 /* rational.cpp */; };
@@ -3151,7 +3148,6 @@
 		DFF95CBF0FB22D5700A3EC78 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF842A190E7BB34E00F5680E /* UIKit.framework */; };
 		DFF95CC00FB22D5700A3EC78 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF842A270E7BB37500F5680E /* AudioToolbox.framework */; };
 		DFF95CC10FB22D5700A3EC78 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF842A2E0E7BB39E00F5680E /* QuartzCore.framework */; };
-		DFF95CCF0FB22D8500A3EC78 /* libmpeg2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFD6476D0F49F7EF008E18EF /* libmpeg2.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -4765,8 +4761,6 @@
 		DFAAB0010F011392003E9390 /* thumbnail_intern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = thumbnail_intern.cpp; sourceTree = "<group>"; };
 		DFAAD2390F50120E00C3A4E2 /* console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = console.cpp; sourceTree = "<group>"; };
 		DFAAD23A0F50120E00C3A4E2 /* console.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = console.h; sourceTree = "<group>"; };
-		DFB0576211B753AF0015AE65 /* mpeg_player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mpeg_player.cpp; sourceTree = "<group>"; };
-		DFB0576311B753AF0015AE65 /* mpeg_player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpeg_player.h; sourceTree = "<group>"; };
 		DFB0576411B753AF0015AE65 /* qt_decoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_decoder.cpp; sourceTree = "<group>"; };
 		DFB0576511B753AF0015AE65 /* qt_decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qt_decoder.h; sourceTree = "<group>"; };
 		DFB0576611B753AF0015AE65 /* video_decoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = video_decoder.cpp; sourceTree = "<group>"; };
@@ -4834,7 +4828,6 @@
 		DFD518B90DF34BA600854012 /* scale3x.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scale3x.h; sourceTree = "<group>"; };
 		DFD6476B0F49F7EF008E18EF /* libFLAC.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFLAC.a; path = lib/libFLAC.a; sourceTree = "<group>"; };
 		DFD6476C0F49F7EF008E18EF /* libmad.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmad.a; path = lib/libmad.a; sourceTree = "<group>"; };
-		DFD6476D0F49F7EF008E18EF /* libmpeg2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmpeg2.a; path = lib/libmpeg2.a; sourceTree = "<group>"; };
 		DFD6476F0F49F7EF008E18EF /* libvorbisidec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisidec.a; path = lib/libvorbisidec.a; sourceTree = "<group>"; };
 		DFE470C10D81F4BA00B6D1FB /* commandLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = commandLine.cpp; sourceTree = "<group>"; };
 		DFE470C20D81F4BA00B6D1FB /* commandLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = commandLine.h; sourceTree = "<group>"; };
@@ -5044,7 +5037,6 @@
 				DFF959050FB22D3000A3EC78 /* libmad.a in Frameworks */,
 				DFF959060FB22D3100A3EC78 /* libFLAC.a in Frameworks */,
 				DFF959080FB22D3300A3EC78 /* libvorbisidec.a in Frameworks */,
-				DFF95CCF0FB22D8500A3EC78 /* libmpeg2.a in Frameworks */,
 				DF224E040FB23BC500C8E453 /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5339,8 +5331,6 @@
 				DF6118610FE3A9410042AD3F /* dxa_decoder.h */,
 				DF6118620FE3A9410042AD3F /* flic_decoder.cpp */,
 				DF6118630FE3A9410042AD3F /* flic_decoder.h */,
-				DFB0576211B753AF0015AE65 /* mpeg_player.cpp */,
-				DFB0576311B753AF0015AE65 /* mpeg_player.h */,
 				DFB0576411B753AF0015AE65 /* qt_decoder.cpp */,
 				DFB0576511B753AF0015AE65 /* qt_decoder.h */,
 				DF6118640FE3A9410042AD3F /* smk_decoder.cpp */,
@@ -7107,7 +7097,6 @@
 			children = (
 				DFD6476B0F49F7EF008E18EF /* libFLAC.a */,
 				DFD6476C0F49F7EF008E18EF /* libmad.a */,
-				DFD6476D0F49F7EF008E18EF /* libmpeg2.a */,
 				DFD6476F0F49F7EF008E18EF /* libvorbisidec.a */,
 			);
 			name = libs;
@@ -8677,7 +8666,6 @@
 				DF9B9249118E46730069C19D /* error.cpp in Sources */,
 				DF9B9254118E46A00069C19D /* fontsjis.cpp in Sources */,
 				DF9B9263118E46FE0069C19D /* error.cpp in Sources */,
-				DFB0576B11B753AF0015AE65 /* mpeg_player.cpp in Sources */,
 				DFB0576C11B753AF0015AE65 /* qt_decoder.cpp in Sources */,
 				DFB0576D11B753AF0015AE65 /* video_decoder.cpp in Sources */,
 				DFB0577711B753DA0015AE65 /* rational.cpp in Sources */,
@@ -9707,7 +9695,6 @@
 				DF9B924A118E46730069C19D /* error.cpp in Sources */,
 				DF9B9256118E46A00069C19D /* fontsjis.cpp in Sources */,
 				DF9B9264118E46FE0069C19D /* error.cpp in Sources */,
-				DFB0576E11B753AF0015AE65 /* mpeg_player.cpp in Sources */,
 				DFB0576F11B753AF0015AE65 /* qt_decoder.cpp in Sources */,
 				DFB0577011B753AF0015AE65 /* video_decoder.cpp in Sources */,
 				DFB0577811B753DA0015AE65 /* rational.cpp in Sources */,
@@ -10738,7 +10725,6 @@
 				DF9B9248118E46730069C19D /* error.cpp in Sources */,
 				DF9B9252118E46A00069C19D /* fontsjis.cpp in Sources */,
 				DF9B9262118E46FE0069C19D /* error.cpp in Sources */,
-				DFB0576811B753AF0015AE65 /* mpeg_player.cpp in Sources */,
 				DFB0576911B753AF0015AE65 /* qt_decoder.cpp in Sources */,
 				DFB0576A11B753AF0015AE65 /* video_decoder.cpp in Sources */,
 				DFB0577611B753DA0015AE65 /* rational.cpp in Sources */,
@@ -11126,7 +11112,6 @@
 					ENABLE_TUCKER,
 					USE_FLAC,
 					USE_MAD,
-					USE_MPEG2,
 					USE_TREMOR,
 					USE_VORBIS,
 					USE_ZLIB,
@@ -11212,7 +11197,6 @@
 					ENABLE_TUCKER,
 					USE_FLAC,
 					USE_MAD,
-					USE_MPEG2,
 					USE_TREMOR,
 					USE_VORBIS,
 					USE_ZLIB,

@@ -47,7 +47,6 @@ ENABLE_MADE = STATIC_PLUGIN
 ## Pick which libraries you want to use here
 
 USE_MAD           = 1
-#USE_MPEG2         = 1
 #USE_TREMOR        = 1
 USE_TREMOLO       = 1
 #USE_FLAC          = 1
@@ -131,11 +130,6 @@ endif
 ifdef USE_MAD
 DEFINES += -DUSE_MAD
 LIBS += -lmad
-endif
-
-ifdef USE_MPEG2
-DEFINES += -DUSE_MPEG2
-LIBS += -lmpeg2
 endif
 
 ifdef USE_TREMOR
