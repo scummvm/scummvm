@@ -107,6 +107,8 @@ public:
 	void setWalkChore(int choreNumber, Costume *cost);
 	void setTurnChores(int left_chore, int right_chore, Costume *cost);
 	void setTalkChore(int index, int choreNumber, Costume *cost);
+	int getTalkChore(int index) const { return _talkChore[index]; }
+	Costume* getTalkCostume(int index) const { return _talkCostume[index]; }
 	void setMumbleChore(int choreNumber, Costume *cost);
 
 	void setColormap(const char *map);

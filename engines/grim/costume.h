@@ -62,6 +62,7 @@ public:
 	int isChoring(const char *name, bool excludeLooping);
 	int isChoring(int num, bool excludeLooping);
 	int isChoring(bool excludeLooping);
+	int getNumChores() const { return _numChores; }
 
 	void setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
 	void moveHead(bool lookingMode, const Graphics::Vector3d &lookAt, float rate);
