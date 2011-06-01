@@ -138,7 +138,7 @@ void OptionsDialog::init() {
 	_subSpeedDesc = 0;
 	_subSpeedSlider = 0;
 	_subSpeedLabel = 0;
-	_oldTheme = ConfMan.get("gui_theme");
+	_oldTheme = g_gui.theme()->getThemeId();
 
 	// Retrieve game GUI options
 	_guioptions = 0;
