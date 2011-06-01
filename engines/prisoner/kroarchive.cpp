@@ -28,6 +28,7 @@
 
 #include "common/debug.h"
 #include "common/textconsole.h"
+#include "common/memstream.h"
 
 #if defined(USE_ZLIB)
   #ifdef __SYMBIAN32__
@@ -64,6 +65,16 @@ int uncompress (Bytef *dest, uint32 *destLen, Bytef *source, uint32 sourceLen) {
 	*destLen = stream.total_out;
 	err = inflateEnd(&stream);
 	return err;
+}
+
+void decryptBuffer(byte *buf, uint32 size) {
+	byte value = 0x5A;
+	while (size > 0) {
+		*buf ^= value;
+		value = *buf;
+		buf++;
+		size--;
+	}
 }
 
 /* KroArchive */
@@ -146,14 +157,28 @@ void KroArchive::loadDirectory(const char *filename, uint32 offset, bool isEncry
 
 	debug(0, "%s", filename);
 
+	Common::File *fd = new Common::File();
+	if (!fd->open(filename))
+		error("PakDirectory::load() Could not open %s", filename);
+
 	if (isEncrypted) {
-		// TODO: Load file and decrypt
+		// Load file and decrypt
+		debug("Directory from encrypted data");
+		uint32 dirDataSize;
+		byte *dirData;
+		fd->seek(offset);
+		dirDataSize = fd->readUint32LE();
+		debug("dirDataSize = %d", dirDataSize);
+		dirData = (byte*)malloc(dirDataSize);
+		fd->read(dirData, dirDataSize);
+		decryptBuffer(dirData, dirDataSize);
+		delete fd;
+		stream = new Common::MemoryReadStream(dirData, dirDataSize, DisposeAfterUse::YES);
 	} else {
-		Common::File *fd = new Common::File();
-		if (!fd->open(filename))
-			error("PakDirectory::load() Could not open %s", filename);
+		debug("Directory from non-encrypted data");
 		stream = fd;
 	}
+
 	uint32 count = stream->readUint32LE();
 	_pakDirectory.reserve(count);
 	for (uint32 i = 0; i < count; i++) {
@@ -164,9 +189,23 @@ void KroArchive::loadDirectory(const char *filename, uint32 offset, bool isEncry
 		entry.pakName = pakName;
 		entry.baseIndex = stream->readUint32LE();
 		_pakDirectory.push_back(entry);
-		debug(0, "pakName = %s; baseIndex = %d", entry.pakName.c_str(), entry.baseIndex);
+		debug("{\"%s\", %d}, ", entry.pakName.c_str(), entry.baseIndex);
+		//debug(0, "pakName = %s; baseIndex = %d", entry.pakName.c_str(), entry.baseIndex);
 	}
+
 	delete stream;
+
+}
+
+void KroArchive::loadDirectory(const _PakDirectoryEntry directory[]) {
+	const _PakDirectoryEntry *xentry = directory;
+	while (xentry->pakName) {
+		PakDirectoryEntry entry;
+		entry.pakName = xentry->pakName;
+		entry.baseIndex = xentry->baseIndex;
+		_pakDirectory.push_back(entry);
+		xentry++;
+	}
 }
 
 uint32 KroArchive::getPakBaseIndex(Common::String &pakName) {
@@ -176,7 +215,5 @@ uint32 KroArchive::getPakBaseIndex(Common::String &pakName) {
 	}
 	error("KroArchive::getPakBaseIndex() PakName %s not found", pakName.c_str());
 }
-
-/* PakDirectory */
 
 } // End of namespace Prisoner

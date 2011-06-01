@@ -64,6 +64,7 @@ public:
 	PrisonerResourceLoader();
 	~PrisonerResourceLoader();
 	byte *load(Common::String &pakName, int16 pakSlot, int16 type, uint32 &dataSize);
+	KroArchive *getArchiveForType(int16 type);
 protected:
 	KroArchive *_vgaArchive, *_soundArchive, *_langArchive;
 };

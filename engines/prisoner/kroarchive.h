@@ -42,6 +42,11 @@ struct PakDirectoryEntry {
 	uint32 baseIndex;
 };
 
+struct _PakDirectoryEntry {
+	const char *pakName;
+	uint32 baseIndex;
+};
+
 class KroArchive {
 public:
 	KroArchive();
@@ -52,6 +57,7 @@ public:
 	uint32 getSize(uint index);
 	uint getCount() const { return _entries.size(); }
 	void loadDirectory(const char *filename, uint32 offset, bool isEncrypted);
+	void loadDirectory(const _PakDirectoryEntry directory[]);
 	uint32 getPakBaseIndex(Common::String &pakName);
 protected:
 	Common::File *_fd;

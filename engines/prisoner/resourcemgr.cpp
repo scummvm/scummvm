@@ -38,21 +38,85 @@ namespace Prisoner {
 
 PrisonerResourceLoader::PrisonerResourceLoader() {
 
-	/* TODO: Later the vga and sound pak directories should
-		be loaded from the exe or some other external file.
-	*/
+	// NOTE: An alternative to hardcoding the data would be to load it from the game Exe
+	// (The file-based loadDirectory supports this already.)
+
+	static const _PakDirectoryEntry kPrisonerKSVGADirectory[] = {
+		{"SA02", 0},
+		{"SA03", 179},
+		{"SA06", 380},
+		{"SA08", 459},
+		{"SA09", 544},
+		{"SA10", 609},
+		{"SA11", 688},
+		{"SA12", 724},
+		{"SB02", 815},
+		{"SB03", 882},
+		{"SB06", 1001},
+		{"SB08", 1039},
+		{"SB09", 1057},
+		{"SB10", 1076},
+		{"SB11", 1099},
+		{"SB12", 1108},
+		{"SM02", 1138},
+		{"SM03", 1180},
+		{"SM06", 1234},
+		{"SM08", 1251},
+		{"SM09", 1262},
+		{"SM10", 1271},
+		{"SM11", 1286},
+		{"SM12", 1292},
+		{"SOBJECT", 1306},
+		{"S_CURSOR", 1315},
+		{"S_DEBUG", 1316},
+		{"S_FONT", 1317},
+		{"S_PANEL", 1320},
+		{NULL, 0}
+	};
+
+	static const _PakDirectoryEntry kPrisonerKSOUNDDirectory[] = {
+		{"MUS02", 0},
+		{"MUS03", 6},
+		{"MUS06", 23},
+		{"MUS08", 32},
+		{"MUS09", 34},
+		{"MUS10", 38},
+		{"MUS11", 41},
+		{"MUS12", 42},
+		{"SMP02", 45},
+		{"SMP03", 113},
+		{"SMP06", 165},
+		{"SMP08", 196},
+		{"SMP09", 222},
+		{"SMP10", 244},
+		{"SMP11", 261},
+		{"SMP12", 277},
+		{"SOUNDTST", 305},
+		{"WUS02", 308},
+		{"WUS03", 314},
+		{"WUS06", 331},
+		{"WUS08", 340},
+		{"WUS09", 342},
+		{"WUS10", 346},
+		{"WUS11", 349},
+		{"WUS12", 350},
+		{NULL, 0}
+	};
+
+	// TODO: Make a addArchive method with kro name, directory and resource types as parameters
+	// Then we don't need member vars for each kro since the kro objects will then be in an array instead.
 
 	_vgaArchive = new KroArchive();
 	_vgaArchive->open("KSVGA.KRO");
-	_vgaArchive->loadDirectory("KSVGA.0", 0, false);
+	_vgaArchive->loadDirectory(kPrisonerKSVGADirectory);
 
 	_soundArchive = new KroArchive();
 	_soundArchive->open("KSOUND.KRO");
-	_soundArchive->loadDirectory("KSOUND.0", 0, false);
+	_vgaArchive->loadDirectory(kPrisonerKSOUNDDirectory);
 
 	_langArchive = new KroArchive();
 	_langArchive->open("E_KLANG.KRO");
-	_langArchive->loadDirectory("E_KLANG.0", 0, false);
+	_langArchive->loadDirectory("E_KLANG.BIN", 0, true);
 
 }
 
@@ -65,11 +129,15 @@ PrisonerResourceLoader::~PrisonerResourceLoader() {
 }
 
 byte *PrisonerResourceLoader::load(Common::String &pakName, int16 pakSlot, int16 type, uint32 &dataSize) {
+	KroArchive *archive = getArchiveForType(type);
+	uint32 baseIndex = archive->getPakBaseIndex(pakName);
+	byte *data = archive->load(baseIndex + pakSlot);
+	dataSize = archive->getSize(baseIndex + pakSlot);
+	return data;
 
-	byte *data = NULL;
-	KroArchive *archive = NULL;
-	uint32 baseIndex = 0;
+}
 
+KroArchive *PrisonerResourceLoader::getArchiveForType(int16 type) {
 	switch (type) {
 	case 0:
 	case 1:
@@ -83,28 +151,19 @@ byte *PrisonerResourceLoader::load(Common::String &pakName, int16 pakSlot, int16
 	case 11:
 	case 14:
 	case 17:
-		archive = _vgaArchive;
-		break;
+		return _vgaArchive;
 	case 12:
 	case 13:
 	case 18:
-		archive = _soundArchive;
-		break;
+		return _soundArchive;
 	case 3:
 	case 16:
 	case 19:
-		archive = _langArchive;
-		break;
+		return _langArchive;
 	default:
-		error("ResourceManager::load(%s, %d, %d) Unknown resource type", pakName.c_str(), pakSlot, type);
+		error("PrisonerResourceLoader::getArchiveForType() Unknown resource type %d", type);
 	}
-
-	baseIndex = archive->getPakBaseIndex(pakName);
-	data = archive->load(baseIndex + pakSlot);
-	dataSize = archive->getSize(baseIndex + pakSlot);
-
-	return data;
-
+	return NULL;
 }
 
 /* ResourceManager */
