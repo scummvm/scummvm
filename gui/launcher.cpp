@@ -685,10 +685,7 @@ void LauncherDialog::updateListing() {
 		}
 
 		if (description.empty()) {
-			char tmp[200];
-
-			snprintf(tmp, 200, "Unknown (target %s, gameid %s)", iter->_key.c_str(), gameid.c_str());
-			description = tmp;
+			description = Common::String::format("Unknown (target %s, gameid %s)", iter->_key.c_str(), gameid.c_str());
 		}
 
 		if (!gameid.empty() && !description.empty()) {
@@ -841,12 +838,10 @@ Common::String addGameToConf(const GameDescriptor &result) {
 	assert(!domain.empty());
 	if (ConfMan.hasGameDomain(domain)) {
 		int suffixN = 1;
-		char suffix[16];
 		Common::String gameid(domain);
 
 		while (ConfMan.hasGameDomain(domain)) {
-			snprintf(suffix, 16, "-%d", suffixN);
-			domain = gameid + suffix;
+			domain = gameid + Common::String::format("-%d", suffixN);
 			suffixN++;
 		}
 	}

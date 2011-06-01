@@ -240,9 +240,7 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, 
 }
 
 void StaticTextWidget::setValue(int value) {
-	char buf[256];
-	sprintf(buf, "%d", value);
-	_label = buf;
+	_label = Common::String::format("%d", value);
 }
 
 void StaticTextWidget::setLabel(const Common::String &label) {
