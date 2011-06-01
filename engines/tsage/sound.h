@@ -24,6 +24,9 @@
 #define TSAGE_SOUND_H
 
 #include "common/scummsys.h"
+#include "audio/audiostream.h"
+#include "audio/fmopl.h"
+#include "audio/mixer.h"
 #include "common/list.h"
 #include "tsage/saveload.h"
 #include "tsage/core.h"
@@ -40,7 +43,7 @@ struct trackInfoStruct {
 	int _count;
 	int _rlbList[SOUND_ARR_SIZE];
 	int _arr2[SOUND_ARR_SIZE];
-	byte *_handleList[SOUND_ARR_SIZE];
+	byte *_channelData[SOUND_ARR_SIZE];
 	int field82[SOUND_ARR_SIZE];
 	int field92[SOUND_ARR_SIZE];
 	int fielda2[SOUND_ARR_SIZE];
@@ -90,6 +93,7 @@ public:
 	virtual void installPatchBank(const byte *data) {}
 	virtual void setVolume0(int channel, int v2, int v3, int volume) {}
 	virtual void setVolume1(int channel, int v2, int v3, int volume) {}
+	virtual void play(const byte *data, int size, int channel, int volume) {}
 	virtual void poll() {}
 };
 
@@ -337,15 +341,184 @@ public:
 	void release() { _sound.release(); }
 };
 
+/*--------------------------------------------------------------------------
+ * Adlib related classes
+ *--------------------------------------------------------------------------
+ */
+
+struct AdLibRegisterSoundInstrument {
+	uint8 vibrato;
+	uint8 attackDecay;
+	uint8 sustainRelease;
+	uint8 feedbackStrength;
+	uint8 keyScaling;
+	uint8 outputLevel;
+	uint8 freqMod;
+};
+
+struct AdLibSoundInstrument {
+	byte mode;
+	byte channel;
+	AdLibRegisterSoundInstrument regMod;
+	AdLibRegisterSoundInstrument regCar;
+	byte waveSelectMod;
+	byte waveSelectCar;
+	byte amDepth;
+};
+
+struct VolumeEntry {
+	int original;
+	int adjusted;
+};
+
+class PCSoundDriver {
+public:
+	typedef void (*UpdateCallback)(void *);
+
+	PCSoundDriver() { _upCb = NULL, _upRef = NULL, _musicVolume = 0, _sfxVolume = 0; }
+	virtual ~PCSoundDriver() {}
+
+	virtual void setupChannel(int channel, const byte *data, int instrument, int volume) = 0;
+	virtual void setChannelFrequency(int channel, int frequency) = 0;
+	virtual void stopChannel(int channel) = 0;
+	virtual void playSample(const byte *data, int size, int channel, int volume) = 0;
+	virtual void stopAll() = 0;
+	virtual const char *getInstrumentExtension() const { return ""; }
+	virtual void syncSounds();
+
+	void setUpdateCallback(UpdateCallback upCb, void *ref);
+	void resetChannel(int channel);
+	void findNote(int freq, int *note, int *oct) const;
+protected:
+	UpdateCallback _upCb;
+	void *_upRef;
+	uint8 _musicVolume;
+	uint8 _sfxVolume;
+
+	static const int _noteTable[];
+	static const int _noteTableCount;
+};
+
+class AdlibDriverBase : public PCSoundDriver, Audio::AudioStream {
+public:
+	AdlibDriverBase(Audio::Mixer *mixer);
+	virtual ~AdlibDriverBase();
+
+	// PCSoundDriver interface
+	virtual void setupChannel(int channel, const byte *data, int instrument, int volume);
+	virtual void stopChannel(int channel);
+	virtual void stopAll();
+
+	// AudioStream interface
+	virtual int readBuffer(int16 *buffer, const int numSamples);
+	virtual bool isStereo() const { return false; }
+	virtual bool endOfData() const { return false; }
+	virtual int getRate() const { return _sampleRate; }
+
+	void initCard();
+	void update(int16 *buf, int len);
+	void setupInstrument(const byte *data, int channel);
+	void setupInstrument(const AdLibSoundInstrument *ins, int channel);
+	void loadRegisterInstrument(const byte *data, AdLibRegisterSoundInstrument *reg);
+	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi) = 0;
+	virtual void syncSounds();
+
+	void adjustVolume(int channel, int volume);
+
+protected:
+	FM_OPL *_opl;
+	int _sampleRate;
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _soundHandle;
+
+	byte _vibrato;
+	VolumeEntry _channelsVolumeTable[10];
+	AdLibSoundInstrument _instrumentsTable[10];
+
+	static const int _freqTable[];
+	static const int _freqTableCount;
+	static const int _operatorsTable[];
+	static const int _operatorsTableCount;
+	static const int _voiceOperatorsTable[];
+	static const int _voiceOperatorsTableCount;
+};
+
+class AdlibSoundDriverADL : public AdlibDriverBase {
+public:
+	AdlibSoundDriverADL(Audio::Mixer *mixer) : AdlibDriverBase(mixer) {}
+	virtual const char *getInstrumentExtension() const { return ".ADL"; }
+	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi);
+	virtual void setChannelFrequency(int channel, int frequency);
+	virtual void playSample(const byte *data, int size, int channel, int volume);
+};
+
+class PCSoundFxPlayer {
+private:
+	enum {
+		NUM_INSTRUMENTS = 15,
+		NUM_CHANNELS = 4
+	};
+
+	void update();
+	void handleEvents();
+	void handlePattern(int channel, const byte *patternData);
+
+	char _musicName[33];
+	bool _playing;
+	bool _songPlayed;
+	int _currentPos;
+	int _currentOrder;
+	int _numOrders;
+	int _eventsDelay;
+	bool _looping;
+	int _fadeOutCounter;
+	int _updateTicksCounter;
+	int _instrumentsChannelTable[NUM_CHANNELS];
+	byte *_sfxData;
+	byte *_instrumentsData[NUM_INSTRUMENTS];
+	PCSoundDriver *_driver;
+
+public:
+	PCSoundFxPlayer(PCSoundDriver *driver);
+	~PCSoundFxPlayer();
+
+	bool load(const char *song);
+	void play();
+	void stop();
+	void unload();
+	void fadeOut();
+	void doSync(Common::Serializer &s);
+
+	static void updateCallback(void *ref);
+
+	bool songLoaded() const { return _sfxData != NULL; }
+	bool songPlayed() const { return _songPlayed; }
+	bool playing() const { return _playing; }
+	uint8 numOrders() const { assert(_sfxData); return _sfxData[470]; }
+	void setNumOrders(uint8 v) { assert(_sfxData); _sfxData[470] = v; }
+	void setPattern(int offset, uint8 value) { assert(_sfxData); _sfxData[472 + offset] = value; }
+	const char *musicName() { return _musicName; }
+
+	// Note: Original game never actually uses looping variable. Songs are hardcoded to loop
+	bool looping() const { return _looping; }
+	void setLooping(bool v) { _looping = v; }
+};
+
 class AdlibSoundDriver: public SoundDriver {
 private:
 	GroupData _groupData;
+	Audio::Mixer *_mixer;
+	PCSoundDriver *_soundDriver;
+	PCSoundFxPlayer *_player;
 public:
 	AdlibSoundDriver();
 
 	virtual void setVolume(int volume) {}
 	virtual void installPatchBank(const byte *data) {}
 	virtual const GroupData *getGroupData() { return &_groupData; }
+	virtual void play(const byte *data, int size, int channel, int volume) { 
+		_soundDriver->playSample(data, size, channel, volume); 
+	}
 };
 
 } // End of namespace tSage
