@@ -2999,6 +2999,13 @@ void Scene6100::Action5::dispatch() {
 		if ((idx != 3) && (scene->_fadePercent == 100) &&
 				(tempSet.sqrt(zeroSet) < 150.0)) {
 			switch (scene->_hitCount++) {
+			case 0:
+				scene->_soundHandler.startSound(233);
+				scene->showMessage(NULL, 0, NULL);
+
+				if (!_globals->getFlag(76))
+					scene->_probe.setAction(&scene->_action1);
+				break;
 			case 1:
 				scene->_soundHandler.startSound(233);
 				scene->showMessage(NULL, 0, NULL);
@@ -3006,7 +3013,6 @@ void Scene6100::Action5::dispatch() {
 				if (!_globals->getFlag(76))
 					scene->_probe.setAction(&scene->_action2);
 				break;
-
 			case 2:
 				scene->_soundHandler.startSound(234);
 				scene->showMessage(NULL, 0, NULL);
@@ -3014,14 +3020,6 @@ void Scene6100::Action5::dispatch() {
 				if (!_globals->getFlag(76))
 					scene->_probe.setAction(NULL);
 				scene->setAction(&scene->_action3);
-				break;
-
-			default:
-				scene->_soundHandler.startSound(233);
-				scene->showMessage(NULL, 0, NULL);
-
-				if (!_globals->getFlag(76))
-					scene->_probe.setAction(&scene->_action1);
 				break;
 			}
 
