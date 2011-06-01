@@ -28,11 +28,12 @@
 
 #include "config.h"
 #include "create_project.h"
-#include "codeblocks.h"
 
+#include "codeblocks.h"
 #include "msvc.h"
 #include "visualstudio.h"
 #include "msbuild.h"
+#include "xcode.h"
 
 #include <fstream>
 #include <iostream>
@@ -107,7 +108,8 @@ typedef std::list<FSNode> FileList;
 enum ProjectType {
 	kProjectNone,
 	kProjectCodeBlocks,
-	kProjectMSVC
+	kProjectMSVC,
+	kProjectXcode
 };
 
 int main(int argc, char *argv[]) {
@@ -174,6 +176,14 @@ int main(int argc, char *argv[]) {
 			}
 
 			projectType = kProjectMSVC;
+
+		} else if (!std::strcmp(argv[i], "--xcode")) {
+			if (projectType != kProjectNone) {
+				std::cerr << "ERROR: You cannot pass more than one project type!\n";
+				return -1;
+			}
+
+			projectType = kProjectXcode;
 
 		} else if (!std::strcmp(argv[i], "--msvc-version")) {
 			if (i + 1 >= argc) {
@@ -463,6 +473,32 @@ int main(int argc, char *argv[]) {
 			provider = new CreateProjectTool::MSBuildProvider(globalWarnings, projectWarnings, msvcVersion);
 
 		break;
+
+	case kProjectXcode:
+		////////////////////////////////////////////////////////////////////////////
+		// Xcode is also using GCC behind the scenes. See Code::Blocks comment
+		// for info on all warnings
+		////////////////////////////////////////////////////////////////////////////
+		globalWarnings.push_back("-Wall");
+		globalWarnings.push_back("-Wno-long-long");
+		globalWarnings.push_back("-Wno-multichar");
+		globalWarnings.push_back("-Wno-unknown-pragmas");
+		globalWarnings.push_back("-Wno-reorder");
+		globalWarnings.push_back("-Wpointer-arith");
+		globalWarnings.push_back("-Wcast-qual");
+		globalWarnings.push_back("-Wcast-align");
+		globalWarnings.push_back("-Wshadow");
+		globalWarnings.push_back("-Wimplicit");
+		globalWarnings.push_back("-Wnon-virtual-dtor");
+		globalWarnings.push_back("-Wwrite-strings");
+		// The following are not warnings at all... We should consider adding them to
+		// a different list of parameters.
+		globalWarnings.push_back("-fno-rtti");
+		globalWarnings.push_back("-fno-exceptions");
+		globalWarnings.push_back("-fcheck-new");
+
+		provider = new CreateProjectTool::XCodeProvider(globalWarnings, projectWarnings);
+		break;
 	}
 
 	provider->createProject(setup);
@@ -501,6 +537,7 @@ void displayHelp(const char *exe) {
 	        "Project specific settings:\n"
 	        " --codeblock              build Code::Blocks project files\n"
 	        " --msvc                   build Visual Studio project files\n"
+	        " --xcode                  build XCode project files\n"
 	        " --file-prefix prefix     allow overwriting of relative file prefix in the\n"
 	        "                          MSVC project files. By default the prefix is the\n"
 	        "                          \"path\\to\\source\" argument\n"

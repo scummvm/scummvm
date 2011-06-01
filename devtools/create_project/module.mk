@@ -6,7 +6,8 @@ MODULE_OBJS := \
 	codeblocks.o \
 	msvc.o \
 	visualstudio.o \
-	msbuild.o
+	msbuild.o \
+	xcode.o
 
 # Set the name of the executable
 TOOL_EXECUTABLE := create_project
