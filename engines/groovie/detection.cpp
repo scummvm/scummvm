@@ -116,7 +116,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"t7g", "",
 			{
 				{ "script.grv", 0, "d1b8033b40aa67c076039881eccce90d", 16659},
-				{ "gu16.m4a", 0, NULL, 2051214 },
+				{ "SeventhGuest", 0, NULL, -1},
 				{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY, Common::kPlatformIOS, ADGF_NO_FLAGS,
