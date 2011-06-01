@@ -29,11 +29,6 @@
 #include "common/file.h"
 #include "common/array.h"
 
-#if defined(USE_ZLIB)
-#else
-  #error Sorry, zlib is required for the Prisoner engine
-#endif
-
 namespace Prisoner {
 
 struct KroArchiveEntry {
