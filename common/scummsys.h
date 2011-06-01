@@ -143,19 +143,8 @@
 // Determine the host endianess and whether memory alignment is required.
 //
 #if !defined(HAVE_CONFIG_H)
-	#if defined(SDL_BACKEND)
-		/* need this for the SDL_BYTEORDER define */
-		#include <SDL_endian.h>
 
-		#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-		#define SCUMM_LITTLE_ENDIAN
-		#elif SDL_BYTEORDER == SDL_BIG_ENDIAN
-		#define SCUMM_BIG_ENDIAN
-		#else
-		#error Neither SDL_BIG_ENDIAN nor SDL_LIL_ENDIAN is set.
-		#endif
-
-	#elif defined(__DC__) || \
+	#if defined(__DC__) || \
 		  defined(__DS__) || \
 		  defined(__GP32__) || \
 		  defined(IPHONE) || \
@@ -174,6 +163,20 @@
 
 		#define SCUMM_BIG_ENDIAN
 		#define SCUMM_NEED_ALIGNMENT
+
+	#elif defined(SDL_BACKEND)
+		// On SDL based ports, we try to use SDL_BYTEORDER to determine the
+		// endianess. We explicitly do this as the *last* thing we try, so that
+		// platform specific settings have precedence.
+		#include <SDL_endian.h>
+
+		#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+		#define SCUMM_LITTLE_ENDIAN
+		#elif SDL_BYTEORDER == SDL_BIG_ENDIAN
+		#define SCUMM_BIG_ENDIAN
+		#else
+		#error Neither SDL_BIG_ENDIAN nor SDL_LIL_ENDIAN is set.
+		#endif
 
 	#else
 
