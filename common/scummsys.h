@@ -44,8 +44,18 @@
 		#if (_MSC_VER < 1500)
 			#define vsnprintf _vsnprintf
 		#endif
-		// FIXME: Is this actually necessary for WinCE or Windows?
-		// If yes, please add corresponding comments. Otherwise, let's get rid of it!
+		// Visual Studio does not include snprintf in its standard C library.
+		// Instead it includes a function called _snprintf with somewhat
+		// similar semantics. The minor difference is that the return value in
+		// case the formatted string exceeds the buffer size is different.
+		// A much more dangerous one is that _snprintf does not always include
+		// a terminating null (Whoops!).
+		//
+		// FIXME: Provide a proper snprintf function for MSVC. It should at
+		// least always include a terminating null!
+		//
+		// See here for more details:
+		// http://msdn.microsoft.com/en-us/library/2ts7cx93%28v=VS.100%29.aspx
 		#define snprintf _snprintf
 		#endif
 
