@@ -40,7 +40,10 @@
 	#if defined(WIN32)
 
 		#ifdef _MSC_VER
-		// vsnprintf is already defined in Visual Studio 2008
+		// vnsprintf was introduced with Visual Studio 2008. The 2003 edition
+		// only included a function called _vsnprintf. We do not officially
+		// support MSVC 2003 anymore, but it should not hurt to still have
+		// this around here.
 		#if (_MSC_VER < 1500)
 			#define vsnprintf _vsnprintf
 		#endif
