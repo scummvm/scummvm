@@ -1688,6 +1688,7 @@ SceneObject::SceneObject() : SceneHotspot() {
 	_flags |= OBJFLAG_PANES;
 
 	_frameChange = 0;
+	_visage = 0;
 }
 
 SceneObject::SceneObject(const SceneObject &so) : SceneHotspot() {
