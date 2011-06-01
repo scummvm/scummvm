@@ -53,6 +53,8 @@
 #include "wage/script.h"
 #include "wage/world.h"
 
+#include "common/stream.h"
+
 namespace Wage {
 
 bool Script::execute(World *world, int loopCount, String *inputText, Designed *inputClick, WageEngine *callbacks) {
@@ -63,20 +65,18 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 	_callbacks = callbacks;
 	_handled = false;
 
-	_index = 12;
-	while (_index < _dataSize) {
-		switch(_data[_index]) {
+	_data->skip(12);
+	while (_data->pos() < _data->size()) {
+		switch(_data->readByte()) {
 		case 0x80: // IF
-			_index++;
 			processIf();
 			break;
 		case 0x87: // EXIT
-			debug(0, "exit at offset %d", _index - 1);
+			debug(0, "exit at offset %d", _data->pos() - 1);
 
 			return true;
 		case 0x89: // MOVE
 			{
-				_index++;
 				Scene *currentScene = _world->_player->_currentScene;
 				processMove();
 				if (_world->_player->_currentScene != currentScene)
@@ -85,43 +85,41 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 			}
 		case 0x8B: // PRINT
 			{
-				_index++;
 				Operand *op = readOperand();
 				// TODO check op type is string or number, or something good...
 				appendText(op->_str);
-				// TODO check data[_index] == 0xFD
-				_index++;
+				byte d = _data->readByte();
+				if (d != 0xFD)
+					warning("Operand 0x8B (PRINT) End Byte != 0xFD");
 				break;
 			}
 		case 0x8C: // SOUND
 			{
-				_index++;
 				Operand *op = readOperand();
 				// TODO check op type is string.
 				_handled = true;
 				callbacks->playSound(op->_str);
-				// TODO check data[_index] == 0xFD
-				_index++;
+				byte d = _data->readByte();
+				if (d != 0xFD)
+					warning("Operand 0x8B (PRINT) End Byte != 0xFD");
 				break;
 			}
 		case 0x8E: // LET
-			_index++;
 			processLet();
 			break;
 		case 0x95: // MENU
 			{
-				_index++;
 				Operand *op = readStringOperand(); // allows empty menu
 				// TODO check op type is string.
 				_callbacks->setMenu(op->_str);
-				// TODO check data[_index] == 0xFD
-				_index++;
+				byte d = _data->readByte();
+				if (d != 0xFD)
+					warning("Operand 0x8B (PRINT) End Byte != 0xFD");
 			}
 		case 0x88: // END
-			_index++;
 			break;
 		default:
-			debug(0, "Unknown opcode: %d", _index);
+			debug(0, "Unknown opcode: %d", _data->pos());
 		}
 	}
 
@@ -194,7 +192,8 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 }
 	
 Script::Operand *Script::readOperand() {
-	switch (_data[_index++]) {
+	byte operandType = _data->readByte();
+	switch (operandType) {
 	case 0xA0: // TEXT$
 		return new Operand(_inputText, Operand::TEXT_INPUT);
 	case 0xA1:
@@ -228,7 +227,7 @@ Script::Operand *Script::readOperand() {
 	case 0xFF:
 		{
 			// user variable
-			int value = _data[_index++];
+			int value = _data->readByte();
 			if (value < 0)
 				value += 256;
 
@@ -272,13 +271,11 @@ Script::Operand *Script::readOperand() {
 	case 0xE8:
 		return new Operand(_world->_player->_context._statVariables[Context::PHYS_SPE_CUR], Operand::NUMBER);
 	default:
-		_index--;
-		if (_data[_index] >= 0x20 && _data[_index] < 0x80) {
+		if (operandType >= 0x20 && operandType < 0x80) {
 			return readStringOperand();
 		} else {
-			debug("Dunno what %x is (index=%d)!\n", _data[_index], _index);
+			debug("Dunno what %x is (index=%d)!\n", operandType, _data->pos()-1);
 		}
-		_index++;
 		return NULL;
 	}
 }
@@ -289,8 +286,9 @@ Script::Operand *Script::readStringOperand() {
 
 	sb = new String();
 
-	while (_data[_index] >= 0x20 && _data[_index] < 0x80) {
-		char c = _data[_index++];
+	byte c = 0x20;
+	while (c >= 0x20 && c < 0x80) {
+		c = _data->readByte();
 		if (c < '0' || c > '9')
 			allDigits = false;
 		*sb += c;

@@ -55,19 +55,17 @@ namespace Wage {
 
 class Script {
 public:
-	Script(byte *data, int dataSize) : _data(data), _dataSize(dataSize) {}
+	Script(Common::SeekableReadStream *data) : _data(data) {}
 	~Script();
 
 private:
-	byte *_data;
-	int _dataSize;
+	Common::SeekableReadStream *_data;
 
 	WageEngine *_callbacks;
 	World *_world;
 	int _loopCount;
 	String *_inputText;
 	Designed *_inputClick;
-	int _index;
 	bool _evalResult;
 	bool _handled;
 

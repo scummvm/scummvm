@@ -75,7 +75,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 	// Load global script
 	res = resMan->getResource(MKTAG('G','C','O','D'), resArray[0]);
-	_globalScript = new Script(res, res->size());
+	_globalScript = new Script(res);
 
 	// Load main configuration
 	if ((resArray = resMan->getResIDArray(MKTAG('V','E','R','S'))).size() == 0)
@@ -86,23 +86,22 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 	res = resMan->getResource(MKTAG('V','E','R','S'), resArray[0]);
 
-	Common::MemoryReadStream readS(res, res->size());
-	readS.skip(10);
-	byte b = readS.readByte();
+	res->skip(10);
+	byte b = res->readByte();
 	_weaponMenuDisabled = (b != 0);
 	if (b != 0 && b != 1)
 		error("Unexpected value for weapons menu");
 
-	readS.skip(3);
-	_aboutMessage = readPascalString(readS);
+	res->skip(3);
+	_aboutMessage = readPascalString(res);
 
 	if (!scumm_stricmp(resMan->getFileName().c_str(), "Scepters"))
-		readS.skip(1); // ????
+		res->skip(1); // ????
 
-	_soundLibrary1 = readPascalString(readS);
-	_soundLibrary2 = readPascalString(readS);
+	_soundLibrary1 = readPascalString(res);
+	_soundLibrary2 = readPascalString(res);
 
-	free(res);
+	delete res;
 
 	// Load scenes
 	resArray = resMan->getResIDArray(MKTAG('A','S','C','N'));
@@ -116,10 +115,9 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 		res = resMan->getResource(MKTAG('A','T','X','T'), *iter);
 		if (res != NULL) {
-			Common::MemoryReadStream readT(res, res->size());
-			scene->_textBounds = readRect(readT);
-			scene->_fontType = readT.readUint16BE();
-			scene->_fontSize = readT.readUint16BE();
+			scene->_textBounds = readRect(res);
+			scene->_fontType = res->readUint16BE();
+			scene->_fontSize = res->readUint16BE();
 			
 			for (int i = 12; i < res->size(); i++)
 				if (res[i] == 0x0d)
@@ -168,12 +166,11 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	// Load Patterns
 	res = resMan->getResource(MKTAG('P','A','T','#'), 900);
 	if (res != NULL) {
-		Common::MemoryReadStream readP(res, res->size());
-		int count = readP.readUint16BE();
+		int count = res->readUint16BE();
 		for (int i = 0; i < count; i++) {
 			byte *pattern = (byte *)malloc(8);
 			for (int j = 0; j < 8; j++) {
-				pattern[j] = readP.readByte();
+				pattern[j] = res->readByte();
 				_patterns.push_back(pattern);
 			}
 		}
