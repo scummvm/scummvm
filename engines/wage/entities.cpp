@@ -61,40 +61,34 @@ void Designed::setDesignBounds(Common::Rect *bounds) {
 	_design->setBounds(bounds);
 }
 
-Scene::Scene(String name, byte *data, int dataSize) {
+Scene::Scene(String name, Common::SeekableReadStream *data) {
 	_name = name;
-	_design = new Design(data, dataSize);
+	_design = new Design(data);
 
-	Common::MemoryReadStream in(data, dataSize);
-
-	in.skip(in.readUint16BE() - 2); // Skip design.
-	setDesignBounds(readRect(in));
-	_worldY = in.readSint16BE();
-	_worldX = in.readSint16BE();
-	_blocked[Scene::NORTH] = (in.readByte() != 0);
-	_blocked[Scene::SOUTH] = (in.readByte() != 0);
-	_blocked[Scene::EAST] = (in.readByte() != 0);
-	_blocked[Scene::WEST] = (in.readByte() != 0);
-	_soundFrequency = in.readSint16BE();
-	_soundType = in.readByte();
-	in.readByte(); // unknown
-	_messages[Scene::NORTH] = readPascalString(in);
-	_messages[Scene::SOUTH] = readPascalString(in);
-	_messages[Scene::EAST] = readPascalString(in);
-	_messages[Scene::WEST] = readPascalString(in);
-	_soundName = readPascalString(in);
+	setDesignBounds(readRect(*data));
+	_worldY = data->readSint16BE();
+	_worldX = data->readSint16BE();
+	_blocked[Scene::NORTH] = (data->readByte() != 0);
+	_blocked[Scene::SOUTH] = (data->readByte() != 0);
+	_blocked[Scene::EAST] = (data->readByte() != 0);
+	_blocked[Scene::WEST] = (data->readByte() != 0);
+	_soundFrequency = data->readSint16BE();
+	_soundType = data->readByte();
+	data->readByte(); // unknown
+	_messages[Scene::NORTH] = readPascalString(*data);
+	_messages[Scene::SOUTH] = readPascalString(*data);
+	_messages[Scene::EAST] = readPascalString(*data);
+	_messages[Scene::WEST] = readPascalString(*data);
+	_soundName = readPascalString(*data);
 }
 
-Obj::Obj(String name, byte *data, int dataSize) : _currentOwner(NULL), _currentScene(NULL) {
+Obj::Obj(String name, Common::SeekableReadStream *data) : _currentOwner(NULL), _currentScene(NULL) {
 	_name = name;
-	_design = new Design(data, dataSize);
+	_design = new Design(data);
 
-	Common::MemoryReadStream in(data, dataSize);
+	setDesignBounds(readRect(*data));
 
-	in.skip(in.readSint16BE() - 2); // Skip design.
-	setDesignBounds(readRect(in));
-
-	int16 namePlural = in.readSint16BE();
+	int16 namePlural = data->readSint16BE();
 
 	if (namePlural == 256)
 		_namePlural = true; // TODO: other flags?
@@ -103,19 +97,19 @@ Obj::Obj(String name, byte *data, int dataSize) : _currentOwner(NULL), _currentS
 	else
 		error("Obj <%s> had weird namePlural set", name.c_str());
 
-	if (in.readSint16BE() != 0)
+	if (data->readSint16BE() != 0)
 		error("Obj <%s> had short set", name.c_str());
 
-	if (in.readByte() != 0)
+	if (data->readByte() != 0)
 		error("Obj <%s> had byte set", name.c_str());
 
-	_accuracy = in.readByte();
-	_value = in.readByte();
-	_type = in.readSByte();
-	_damage = in.readByte();
-	_attackType = in.readSByte();
-	_numberOfUses = in.readSint16BE();
-	int16 returnTo = in.readSint16BE();
+	_accuracy = data->readByte();
+	_value = data->readByte();
+	_type = data->readSByte();
+	_damage = data->readByte();
+	_attackType = data->readSByte();
+	_numberOfUses = data->readSint16BE();
+	int16 returnTo = data->readSint16BE();
 	if (returnTo == 256) // TODO any other possibilities?
 		_returnToRandomScene = true;
 	else if (returnTo == 0)
@@ -123,84 +117,81 @@ Obj::Obj(String name, byte *data, int dataSize) : _currentOwner(NULL), _currentS
 	else
 		error("Obj <%s> had weird returnTo set", name.c_str());
 
-	_sceneOrOwner = readPascalString(in);
-	_clickMessage = readPascalString(in);
-	_operativeVerb = readPascalString(in);
-	_failureMessage = readPascalString(in);
-	_useMessage = readPascalString(in);
-	_sound = readPascalString(in);
+	_sceneOrOwner = readPascalString(*data);
+	_clickMessage = readPascalString(*data);
+	_operativeVerb = readPascalString(*data);
+	_failureMessage = readPascalString(*data);
+	_useMessage = readPascalString(*data);
+	_sound = readPascalString(*data);
 }
 
-Chr::Chr(String name, byte *data, int dataSize) {
+Chr::Chr(String name, Common::SeekableReadStream *data) {
 	_name = name;
-	_design = new Design(data, dataSize);
+	_design = new Design(data);
 
-	Common::MemoryReadStream in(data, dataSize);
+	setDesignBounds(readRect(*data));
 
-	in.skip(in.readSint16BE() - 2); // Skip design.
-	setDesignBounds(readRect(in));
+	_physicalStrength = data->readByte();
+	_physicalHp = data->readByte();
+	_naturalArmor = data->readByte();
+	_physicalAccuracy = data->readByte();
 
-	_physicalStrength = in.readByte();
-	_physicalHp = in.readByte();
-	_naturalArmor = in.readByte();
-	_physicalAccuracy = in.readByte();
+	_spiritualStength = data->readByte();
+	_spiritialHp = data->readByte();
+	_resistanceToMagic = data->readByte();
+	_spiritualAccuracy = data->readByte();
 
-	_spiritualStength = in.readByte();
-	_spiritialHp = in.readByte();
-	_resistanceToMagic = in.readByte();
-	_spiritualAccuracy = in.readByte();
+	_runningSpeed = data->readByte();
+	_rejectsOffers = data->readByte();
+	_followsOpponent = data->readByte();
 
-	_runningSpeed = in.readByte();
-	_rejectsOffers = in.readByte();
-	_followsOpponent = in.readByte();
+	data->readSByte(); // TODO: ???
+	data->readSint32BE(); // TODO: ???
 
-	in.readSByte(); // TODO: ???
-	in.readSint32BE(); // TODO: ???
+	_weaponDamage1 = data->readByte();
+	_weaponDamage2 = data->readByte();
 
-	_weaponDamage1 = in.readByte();
-	_weaponDamage2 = in.readByte();
+	data->readSByte(); // TODO: ???
 
-	in.readSByte(); // TODO: ???
-
-	if (in.readSByte() == 1)
+	if (data->readSByte() == 1)
 		_playerCharacter = true;
-	_maximumCarriedObjects = in.readByte();
-	_returnTo = in.readSByte();
+	_maximumCarriedObjects = data->readByte();
+	_returnTo = data->readSByte();
 
-	_winningWeapons = in.readByte();
-	_winningMagic = in.readByte();
-	_winningRun = in.readByte();
-	_winningOffer = in.readByte();
-	_losingWeapons = in.readByte();
-	_losingMagic = in.readByte();
-	_losingRun = in.readByte();
-	_losingOffer = in.readByte();
+	_winningWeapons = data->readByte();
+	_winningMagic = data->readByte();
+	_winningRun = data->readByte();
+	_winningOffer = data->readByte();
+	_losingWeapons = data->readByte();
+	_losingMagic = data->readByte();
+	_losingRun = data->readByte();
+	_losingOffer = data->readByte();
 
-	_gender = in.readSByte();
-	if (in.readSByte() == 1)
+	_gender = data->readSByte();
+	if (data->readSByte() == 1)
 		_nameProperNoun = true;
 
-	_initialScene = readPascalString(in);
-	_nativeWeapon1 = readPascalString(in);
-	_operativeVerb1 = readPascalString(in);
-	_nativeWeapon2 = readPascalString(in);
-	_operativeVerb2 = readPascalString(in);
+	_initialScene = readPascalString(*data);
+	_nativeWeapon1 = readPascalString(*data);
+	_operativeVerb1 = readPascalString(*data);
+	_nativeWeapon2 = readPascalString(*data);
+	_operativeVerb2 = readPascalString(*data);
 
-	_initialComment = readPascalString(in);
-	_scoresHitComment = readPascalString(in);
-	_receivesHitComment = readPascalString(in);
-	_makesOfferComment = readPascalString(in);
-	_rejectsOfferComment = readPascalString(in);
-	_acceptsOfferComment = readPascalString(in);
-	_dyingWords = readPascalString(in);
+	_initialComment = readPascalString(*data);
+	_scoresHitComment = readPascalString(*data);
+	_receivesHitComment = readPascalString(*data);
+	_makesOfferComment = readPascalString(*data);
+	_rejectsOfferComment = readPascalString(*data);
+	_acceptsOfferComment = readPascalString(*data);
+	_dyingWords = readPascalString(*data);
 
-	_initialSound = readPascalString(in);
-	_scoresHitSound = readPascalString(in);
-	_receivesHitSound = readPascalString(in);
-	_dyingSound = readPascalString(in);
+	_initialSound = readPascalString(*data);
+	_scoresHitSound = readPascalString(*data);
+	_receivesHitSound = readPascalString(*data);
+	_dyingSound = readPascalString(*data);
 
-	_weaponSound1 = readPascalString(in);
-	_weaponSound2 = readPascalString(in);
+	_weaponSound1 = readPascalString(*data);
+	_weaponSound2 = readPascalString(*data);
 }
 
 } // End of namespace Wage

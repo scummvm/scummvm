@@ -143,7 +143,7 @@ public:
 		SHIELD_ARMOR = 2
 	};
 	
-	Chr(String name, byte *data, int dataSize);
+	Chr(String name, Common::SeekableReadStream *data);
 
 	int _index;
 	String _initialScene;
@@ -296,7 +296,7 @@ public:
 class Obj : public Weapon, public Designed {
 public:
 	Obj() : _currentOwner(NULL), _currentScene(NULL) {}
-	Obj(String name, byte *data, int dataSize);
+	Obj(String name, Common::SeekableReadStream *data);
 
 	enum ObjectTypes {
 		REGULAR_WEAPON = 1,
@@ -381,7 +381,7 @@ public:
 	Common::List<Chr> _chrs;
 
 	Scene() {}
-	Scene(String name, byte *data, int dataSize);
+	Scene(String name, Common::SeekableReadStream *data);
 
 	Common::Rect *getTextBounds() {
 		return _textBounds == NULL ? NULL : new Common::Rect(*_textBounds);
@@ -443,11 +443,11 @@ taliesin(24):Wingdings(Decorative)
 
 class Sound {
 public:
-  Sound(String name, byte *data, int dataSize) : _name(name), _data(data) {}
-	~Sound() { free(_data); }
+  Sound(String name, Common::SeekableReadStream *data) : _name(name), _data(data) {}
+	~Sound() { }
 
 	String _name;
-	byte *_data;
+	Common::SeekableReadStream *_data;
 };
 
 } // End of namespace Wage

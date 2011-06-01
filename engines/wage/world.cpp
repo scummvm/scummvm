@@ -93,13 +93,13 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		error("Unexpected value for weapons menu");
 
 	res->skip(3);
-	_aboutMessage = readPascalString(res);
+	_aboutMessage = readPascalString(*res);
 
-	if (!scumm_stricmp(resMan->getFileName().c_str(), "Scepters"))
+	if (!scumm_stricmp(resMan->getBaseFileName().c_str(), "Scepters"))
 		res->skip(1); // ????
 
-	_soundLibrary1 = readPascalString(res);
-	_soundLibrary2 = readPascalString(res);
+	_soundLibrary1 = readPascalString(*res);
+	_soundLibrary2 = readPascalString(*res);
 
 	delete res;
 
@@ -107,22 +107,25 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	resArray = resMan->getResIDArray(MKTAG('A','S','C','N'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = resMan->getResource(MKTAG('A','S','C','N'), *iter);
-		Scene *scene = new Scene(resMan->getResName(MKTAG('A','S','C','N'), *iter), res, res->size());
+		Scene *scene = new Scene(resMan->getResName(MKTAG('A','S','C','N'), *iter), res);
 
 		res = resMan->getResource(MKTAG('A','C','O','D'), *iter);
 		if (res != NULL)
-			scene->_script = new Script(res, res->size());
+			scene->_script = new Script(res);
 
 		res = resMan->getResource(MKTAG('A','T','X','T'), *iter);
 		if (res != NULL) {
-			scene->_textBounds = readRect(res);
+			scene->_textBounds = readRect(*res);
 			scene->_fontType = res->readUint16BE();
 			scene->_fontSize = res->readUint16BE();
 			
-			for (int i = 12; i < res->size(); i++)
-				if (res[i] == 0x0d)
-					res[i] = '\n';
-			String text(&((char*)res)[12], res->size() - 12);
+			String text;
+			while (res->pos() < res->size()) {
+				char c = res->readByte();
+				if (c == 0x0d)
+					c = '\n';
+				text += c;
+			}
 			scene->_text = text;
 
 			delete res;
@@ -134,14 +137,14 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	resArray = resMan->getResIDArray(MKTAG('A','O','B','J'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = resMan->getResource(MKTAG('A','O','B','J'), *iter);
-		addObj(new Obj(resMan->getResName(MKTAG('A','O','B','J'), *iter), res, res->size()));
+		addObj(new Obj(resMan->getResName(MKTAG('A','O','B','J'), *iter), res));
 	}
 
 	// Load Characters
 	resArray = resMan->getResIDArray(MKTAG('A','C','H','R'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = resMan->getResource(MKTAG('A','C','H','R'), *iter);
-		Chr *chr = new Chr(resMan->getResName(MKTAG('A','C','H','R'), *iter), res, res->size());
+		Chr *chr = new Chr(resMan->getResName(MKTAG('A','C','H','R'), *iter), res);
 
 		addChr(chr);
 		// TODO: What if there's more than one player character?
@@ -153,7 +156,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	resArray = resMan->getResIDArray(MKTAG('A','S','N','D'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = resMan->getResource(MKTAG('A','S','N','D'), *iter);
-		addSound(new Sound(resMan->getResName(MKTAG('A','S','N','D')), *iter), res, res->size()));
+		addSound(new Sound(resMan->getResName(MKTAG('A','S','N','D'), *iter), res));
 	}
 	
 	if (_soundLibrary1.size() > 0) {
@@ -192,7 +195,8 @@ void World::loadExternalSounds(String fname) {
 	in.close();
 
 	Common::MacResManager *resMan;
-	resMan = new Common::MacResManager(fname);
+	resMan = new Common::MacResManager();
+	resMan->open(fname);
 
 	Common::MacResIDArray resArray;
 	Common::SeekableReadStream *res;
@@ -201,7 +205,7 @@ void World::loadExternalSounds(String fname) {
 	resArray = resMan->getResIDArray(MKTAG('A','S','N','D'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = resMan->getResource(MKTAG('A','S','N','D'), *iter);
-		addSound(new Sound(resMan->getResName(MKTAG('A','S','N','D'), *iter), res, res->size()));
+		addSound(new Sound(resMan->getResName(MKTAG('A','S','N','D'), *iter), res));
 	}
 }
 

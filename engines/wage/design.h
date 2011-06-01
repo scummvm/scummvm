@@ -57,7 +57,7 @@ namespace Wage {
 
 class Design {
 public:
-	Design(byte *data, int size);
+	Design(Common::SeekableReadStream *data);
 	~Design();
 
 	void setBounds(Common::Rect *bounds) {

@@ -51,13 +51,16 @@
 #include "wage/wage.h"
 #include "wage/design.h"
 
+#include "common/stream.h"
+
 namespace Wage {
 
-Design::Design(byte *data, int dataSize) {
+Design::Design(Common::SeekableReadStream *data) {
 	int len = READ_BE_UINT16(data);
 
 	_data = (byte *)malloc(len);
-	memcpy(_data, data, len);
+	for (int i = 0; i < len; i++)
+		_data[i] = data->readByte();
 }
 
 Design::~Design() {
