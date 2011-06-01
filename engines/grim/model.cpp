@@ -543,11 +543,6 @@ void Model::HierNode::setMatrix(Graphics::Matrix4 matrix) {
 }
 
 void Model::HierNode::update() {
-	if (_sibling) {
-		_sibling->setMatrix(_matrix);
-		_sibling->update();
-	}
-
 	if (!_initialized)
 		return;
 
@@ -569,9 +564,12 @@ void Model::HierNode::update() {
 		_mesh->_matrix = _pivotMatrix;
 	}
 
-	if (_child) {
-		_child->setMatrix(_matrix);
-		_child->update();
+	HierNode *child = _child;
+	while (child) {
+		child->setMatrix(_matrix);
+		child->update();
+
+		child = child->_sibling;
 	}
 }
 
