@@ -995,11 +995,24 @@ void L1_IsActorChoring() {
 			lua_pushnil();
 		return;
 	} else if (lua_isnil(choreObj)) {
-		int chore = costume->isChoring(excludeLoop);
-		if (chore != -1) {
-			lua_pushnumber(chore);
-			pushbool(true);
-			return;
+		for (int i = 0; i < costume->getNumChores(); i++) {
+			int chore = costume->isChoring(i, excludeLoop);
+			if (chore != -1) {
+				// Ignore talk chores.
+				bool isTalk = false;
+				for (int j = 0; j < 10; j++) {
+					if (costume == actor->getTalkCostume(j) && actor->getTalkChore(j) == chore) {
+						isTalk = true;
+						break;
+					}
+				}
+				if (isTalk)
+					continue;
+
+				lua_pushnumber(chore);
+				pushbool(true);
+				return;
+			}
 		}
 	}
 
