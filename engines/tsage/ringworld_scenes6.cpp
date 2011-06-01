@@ -614,6 +614,7 @@ void Scene5000::dispatch() {
  *--------------------------------------------------------------------------*/
 
 void Scene5100::Action1::signal() {
+	// Quinn enters the cave for the first time
 	Scene5100 *scene = (Scene5100 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -663,6 +664,7 @@ void Scene5100::Action1::signal() {
 }
 
 void Scene5100::Action2::signal() {
+	// Quinn and Seeker exit the cave
 	Scene5100 *scene = (Scene5100 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -824,7 +826,7 @@ void Scene5100::Action5::signal() {
 		break;
 	case 3:
 		scene->_sceneMode = 5106;
-		scene->setAction(&scene->_sequenceManager, scene, 5106, &_globals->_player, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, 5106, &_globals->_player, &scene->_hotspot14, NULL);
 		break;
 	}
 }
@@ -1086,7 +1088,7 @@ void Scene5100::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.animate(ANIM_MODE_1, NULL);
 	_globals->_player.disableControl();
 
-	if (!_globals->getFlag(66)) {
+	if ((!_globals->getFlag(66)) || (RING_INVENTORY._stasisBox._sceneNumber != 1)) {
 		_hotspot14.postInit();
 		_hotspot14.setVisage(5101);
 		_hotspot14.setPosition(Common::Point(498, 147));
