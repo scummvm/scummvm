@@ -224,7 +224,7 @@ bool cleanupPirated(ADGameDescList &matched) {
 		// We ruled out all variants and now have nothing
 		if (matched.empty()) {
 
-			warning("Illegitimate copy of the game detected. We give no support in such cases %d", matched.size());
+			warning("Illegitimate game copy detected. We give no support in such cases %d", matched.size());
 
 			return true;
 		}
