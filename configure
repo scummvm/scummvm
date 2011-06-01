@@ -1945,8 +1945,9 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE"
 			DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
-			# for release builds:
-			#DEFINES="$DEFINES -DNOSERIAL"
+			if test "$_release_build" = yes; then
+				DEFINES="$DEFINES -DNOSERIAL"
+			fi
 			CXXFLAGS="$CXXFLAGS -O3"
 			CXXFLAGS="$CXXFLAGS -funroll-loops"
 			CXXFLAGS="$CXXFLAGS -fschedule-insns2"
@@ -2233,7 +2234,11 @@ case $_backend in
 		LDFLAGS="$LDFLAGS -nostartfiles"
 		LDFLAGS="$LDFLAGS "'$(ronindir)/lib/crt0.o'
 		LDFLAGS="$LDFLAGS "'-L$(ronindir)/lib'
-		LIBS="$LIBS -lronin -lm"
+		if test "$_release_build" = yes; then
+			LIBS="$LIBS -lronin-noserial -lm"
+		else
+			LIBS="$LIBS -lronin -lm"
+		fi
 		;;
 	dingux)
 		DEFINES="$DEFINES -DDINGUX"
