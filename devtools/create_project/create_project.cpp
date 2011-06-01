@@ -113,7 +113,7 @@ enum ProjectType {
 int main(int argc, char *argv[]) {
 #ifndef USE_WIN32_API
 	// Initialize random number generator for UUID creation
-	std::srand(std::time(0));
+	std::srand((uint)std::time(0));
 #endif
 
 	if (argc < 2) {
