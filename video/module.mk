@@ -15,7 +15,6 @@ MODULE_OBJS := \
 	codecs/mjpeg.o \
 	codecs/msrle.o \
 	codecs/msvideo1.o \
-	codecs/qdm2.o \
 	codecs/qtrle.o \
 	codecs/rpza.o \
 	codecs/smc.o \
