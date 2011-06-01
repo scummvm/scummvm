@@ -466,20 +466,24 @@ void ToonEngine::doMagnifierEffect() {
 
 	byte tempBuffer[25 * 25];
 	for (int32 y = -12; y <= 12; y++) {
+		int32 cy = CLIP<int32>(posY + y, 0, TOON_BACKBUFFER_HEIGHT-1);
 		for (int32 x = -12; x <= 12; x++) {
+			int32 cx = CLIP<int32>(posX + x, 0, TOON_BACKBUFFER_WIDTH-1);
 			int32 destPitch = surface.pitch;
-			uint8 *curRow = (uint8 *)surface.pixels + (posY + y) * destPitch + (posX + x);
+			uint8 *curRow = (uint8 *)surface.pixels + cy * destPitch + cx;
 			tempBuffer[(y + 12) * 25 + x + 12] = *curRow;
 		}
 	}
 
 	for (int32 y = -12; y <= 12; y++) {
+		int32 cy = CLIP<int32>(posY + y, 0, TOON_BACKBUFFER_HEIGHT-1);
 		for (int32 x = -12; x <= 12; x++) {
 			int32 dist = y * y + x * x;
 			if (dist > 144)
 				continue;
+			int32 cx = CLIP<int32>(posX + x, 0, TOON_BACKBUFFER_WIDTH-1);
 			int32 destPitch = surface.pitch;
-			uint8 *curRow = (uint8 *)surface.pixels + (posY + y) * destPitch + (posX + x);
+			uint8 *curRow = (uint8 *)surface.pixels + cy * destPitch + cx;
 			int32 lerp = (512 + intSqrt[dist] * 256 / 12);
 			*curRow = tempBuffer[(y * lerp / 1024 + 12) * 25 + x * lerp / 1024 + 12];
 		}
