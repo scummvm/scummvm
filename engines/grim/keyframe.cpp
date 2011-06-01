@@ -100,8 +100,9 @@ void KeyframeAnim::loadBinary(const char *data, int len) {
 			return;
 		}
 		if (_nodes[nodeNum]) {
-			warning("The node %d was already allocated. %s", nodeNum, _fname.c_str());
-			delete _nodes[nodeNum];
+			// Null node. Usually 7, 13 and 27 are null nodes.
+			data += 44;
+			continue;
 		}
 		_nodes[nodeNum] = new KeyframeNode;
 		_nodes[nodeNum]->loadBinary(data);
