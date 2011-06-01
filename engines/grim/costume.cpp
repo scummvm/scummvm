@@ -1642,12 +1642,26 @@ void Costume::stopChores() {
 }
 
 void Costume::fadeChoreIn(int chore, int msecs) {
+	if (chore >= _numChores) {
+		if (chore < 0 || chore >= _numChores) {
+			if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
+				warning("Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
+			return;
+		}
+	}
 	_chores[chore].fade(Chore::FadeIn, msecs);
 	if (Common::find(_playingChores.begin(), _playingChores.end(), &_chores[chore]) == _playingChores.end())
 		_playingChores.push_back(&_chores[chore]);
 }
 
 void Costume::fadeChoreOut(int chore, int msecs) {
+	if (chore >= _numChores) {
+		if (chore < 0 || chore >= _numChores) {
+			if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
+				warning("Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
+			return;
+		}
+	}
 	_chores[chore].fade(Chore::FadeOut, msecs);
 	if (Common::find(_playingChores.begin(), _playingChores.end(), &_chores[chore]) == _playingChores.end())
 		_playingChores.push_back(&_chores[chore]);
