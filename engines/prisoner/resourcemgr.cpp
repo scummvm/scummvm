@@ -44,31 +44,23 @@ PrisonerResourceLoader::PrisonerResourceLoader() {
 
 	_vgaArchive = new KroArchive();
 	_vgaArchive->open("KSVGA.KRO");
-	_vgaPakDirectory = new PakDirectory();
-	_vgaPakDirectory->load("KSVGA.0", 0, false);
+	_vgaArchive->loadDirectory("KSVGA.0", 0, false);
 
 	_soundArchive = new KroArchive();
 	_soundArchive->open("KSOUND.KRO");
-	_soundPakDirectory = new PakDirectory();
-	_soundPakDirectory->load("KSOUND.0", 0, false);
+	_soundArchive->loadDirectory("KSOUND.0", 0, false);
 
 	_langArchive = new KroArchive();
 	_langArchive->open("E_KLANG.KRO");
-	_langPakDirectory = new PakDirectory();
-	_langPakDirectory->load("E_KLANG.0", 0, false);
+	_langArchive->loadDirectory("E_KLANG.0", 0, false);
 
 }
 
 PrisonerResourceLoader::~PrisonerResourceLoader() {
 
 	delete _vgaArchive;
-	delete _vgaPakDirectory;
-
 	delete _soundArchive;
-	delete _soundPakDirectory;
-
 	delete _langArchive;
-	delete _langPakDirectory;
 
 }
 
@@ -76,7 +68,6 @@ byte *PrisonerResourceLoader::load(Common::String &pakName, int16 pakSlot, int16
 
 	byte *data = NULL;
 	KroArchive *archive = NULL;
-	PakDirectory *pakDirectory = NULL;
 	uint32 baseIndex = 0;
 
 	switch (type) {
@@ -93,25 +84,22 @@ byte *PrisonerResourceLoader::load(Common::String &pakName, int16 pakSlot, int16
 	case 14:
 	case 17:
 		archive = _vgaArchive;
-		pakDirectory = _vgaPakDirectory;
 		break;
 	case 12:
 	case 13:
 	case 18:
 		archive = _soundArchive;
-		pakDirectory = _soundPakDirectory;
 		break;
 	case 3:
 	case 16:
 	case 19:
 		archive = _langArchive;
-		pakDirectory = _langPakDirectory;
 		break;
 	default:
 		error("ResourceManager::load(%s, %d, %d) Unknown resource type", pakName.c_str(), pakSlot, type);
 	}
 
-	baseIndex = pakDirectory->getBaseIndex(pakName);
+	baseIndex = archive->getPakBaseIndex(pakName);
 	data = archive->load(baseIndex + pakSlot);
 	dataSize = archive->getSize(baseIndex + pakSlot);
 

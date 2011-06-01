@@ -37,6 +37,11 @@ struct KroArchiveEntry {
 	uint32 compressionType;
 };
 
+struct PakDirectoryEntry {
+	Common::String pakName;
+	uint32 baseIndex;
+};
+
 class KroArchive {
 public:
 	KroArchive();
@@ -46,24 +51,12 @@ public:
 	byte *load(uint index);
 	uint32 getSize(uint index);
 	uint getCount() const { return _entries.size(); }
+	void loadDirectory(const char *filename, uint32 offset, bool isEncrypted);
+	uint32 getPakBaseIndex(Common::String &pakName);
 protected:
 	Common::File *_fd;
 	Common::Array<KroArchiveEntry> _entries;
-};
-
-struct PakDirectoryEntry {
-	Common::String pakName;
-	uint32 baseIndex;
-};
-
-class PakDirectory {
-public:
-	PakDirectory();
-	~PakDirectory();
-	void load(const char *filename, uint32 offset, bool isEncrypted);
-	uint32 getBaseIndex(Common::String &pakName);
-protected:
-	Common::Array<PakDirectoryEntry> _directory;
+	Common::Array<PakDirectoryEntry> _pakDirectory;
 };
 
 } // End of namespace Prisoner

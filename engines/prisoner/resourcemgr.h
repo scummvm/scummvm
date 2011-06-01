@@ -66,7 +66,6 @@ public:
 	byte *load(Common::String &pakName, int16 pakSlot, int16 type, uint32 &dataSize);
 protected:
 	KroArchive *_vgaArchive, *_soundArchive, *_langArchive;
-	PakDirectory *_vgaPakDirectory, *_soundPakDirectory, *_langPakDirectory;
 };
 
 class ResourceManager {

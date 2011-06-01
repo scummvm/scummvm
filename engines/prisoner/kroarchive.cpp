@@ -141,15 +141,7 @@ uint32 KroArchive::getSize(uint index) {
 	return _entries[index].size;
 }
 
-/* PakDirectory */
-
-PakDirectory::PakDirectory() {
-}
-
-PakDirectory::~PakDirectory() {
-}
-
-void PakDirectory::load(const char *filename, uint32 offset, bool isEncrypted) {
+void KroArchive::loadDirectory(const char *filename, uint32 offset, bool isEncrypted) {
 	Common::ReadStream *stream = NULL;
 
 	debug(0, "%s", filename);
@@ -163,7 +155,7 @@ void PakDirectory::load(const char *filename, uint32 offset, bool isEncrypted) {
 		stream = fd;
 	}
 	uint32 count = stream->readUint32LE();
-	_directory.reserve(count);
+	_pakDirectory.reserve(count);
 	for (uint32 i = 0; i < count; i++) {
 		PakDirectoryEntry entry;
 		char pakName[9];
@@ -171,20 +163,20 @@ void PakDirectory::load(const char *filename, uint32 offset, bool isEncrypted) {
 		pakName[8] = 0;
 		entry.pakName = pakName;
 		entry.baseIndex = stream->readUint32LE();
-		_directory.push_back(entry);
-
+		_pakDirectory.push_back(entry);
 		debug(0, "pakName = %s; baseIndex = %d", entry.pakName.c_str(), entry.baseIndex);
-
 	}
 	delete stream;
 }
 
-uint32 PakDirectory::getBaseIndex(Common::String &pakName) {
-	for (uint i = 0; i < _directory.size(); i++) {
-		if (_directory[i].pakName == pakName)
-			return _directory[i].baseIndex;
+uint32 KroArchive::getPakBaseIndex(Common::String &pakName) {
+	for (uint i = 0; i < _pakDirectory.size(); i++) {
+		if (_pakDirectory[i].pakName == pakName)
+			return _pakDirectory[i].baseIndex;
 	}
-	error("PakDirectory::getBaseIndex() PakName %s not found", pakName.c_str());
+	error("KroArchive::getPakBaseIndex() PakName %s not found", pakName.c_str());
 }
+
+/* PakDirectory */
 
 } // End of namespace Prisoner
