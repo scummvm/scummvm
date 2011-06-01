@@ -23,6 +23,7 @@ lib*.a
 /.project
 /.cproject
 /.settings
+/Icon.*
 
 /build
 
@@ -147,3 +148,7 @@ ipch/
 #Ignore default Visual Studio build folders
 [Dd]ebug/
 [Rr]elease/
+
+#Ignore XCode user data
+xcuserdata
+project.xcworkspace
