@@ -314,8 +314,4 @@ bool LastExpressEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsRTL);
 }
 
-void LastExpressEngine::errorString(const char *buf_input, char *buf_output, int buf_output_size) {
-	snprintf(buf_output, (uint)buf_output_size, "%s", buf_input);
-}
-
 } // End of namespace LastExpress
