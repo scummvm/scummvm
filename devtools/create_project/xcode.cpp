@@ -224,7 +224,146 @@ void XCodeProvider::setupCopyFilesBuildPhase() {
  * (each native target has different build rules)
  */
 void XCodeProvider::setupFrameworksBuildPhase() {
-	// TODO
+	_frameworksBuildPhase.comment = "PBXFrameworksBuildPhase";
+
+	// Setup framework file properties
+	std::map<std::string, FileProperty> properties;
+
+	// Frameworks
+	properties["ApplicationServices.framework"] = FileProperty("wrapper.framework", "ApplicationServices.framework", "System/Library/Frameworks/ApplicationServices.framework", "SDKROOT");
+	properties["AudioToolbox.framework"]        = FileProperty("wrapper.framework", "AudioToolbox.framework", "System/Library/Frameworks/AudioToolbox.framework", "SDKROOT");
+	properties["AudioUnit.framework"]           = FileProperty("wrapper.framework", "AudioUnit.framework", "System/Library/Frameworks/AudioUnit.framework", "SDKROOT");
+	properties["Carbon.framework"]              = FileProperty("wrapper.framework", "Carbon.framework", "System/Library/Frameworks/Carbon.framework", "SDKROOT");
+	properties["Cocoa.framework"]               = FileProperty("wrapper.framework", "Cocoa.framework", "System/Library/Frameworks/Cocoa.framework", "SDKROOT");
+	properties["CoreAudio.framework"]           = FileProperty("wrapper.framework", "CoreAudio.framework", "System/Library/Frameworks/CoreAudio.framework", "SDKROOT");
+	properties["CoreFoundation.framework"]      = FileProperty("wrapper.framework", "CoreFoundation.framework", "System/Library/Frameworks/CoreFoundation.framework", "SDKROOT");
+	properties["CoreMIDI.framework"]            = FileProperty("wrapper.framework", "CoreMIDI.framework", "System/Library/Frameworks/CoreMIDI.framework", "SDKROOT");
+	properties["Foundation.framework"]          = FileProperty("wrapper.framework", "Foundation.framework", "System/Library/Frameworks/Foundation.framework", "SDKROOT");
+	properties["IOKit.framework"]               = FileProperty("wrapper.framework", "IOKit.framework", "System/Library/Frameworks/IOKit.framework", "SDKROOT");
+	properties["OpenGLES.framework"]            = FileProperty("wrapper.framework", "OpenGLES.framework", "System/Library/Frameworks/OpenGLES.framework", "SDKROOT");
+	properties["QuartzCore.framework"]          = FileProperty("wrapper.framework", "QuartzCore.framework", "System/Library/Frameworks/QuartzCore.framework", "SDKROOT");
+	properties["QuickTime.framework"]           = FileProperty("wrapper.framework", "QuickTime.framework", "System/Library/Frameworks/QuickTime.framework", "SDKROOT");
+	properties["UIKit.framework"]               = FileProperty("wrapper.framework", "UIKit.framework", "System/Library/Frameworks/UIKit.framework", "SDKROOT");
+
+	// Local libraries
+	properties["libFLAC.a"]                     = FileProperty("archive.ar", "libFLAC.a", "lib/libFLAC.a", "\"<group>\"");
+	properties["libmad.a"]                      = FileProperty("archive.ar", "libmad.a", "lib/libmad.a", "\"<group>\"");
+	//properties["libmpeg2.a"]                    = FileProperty("archive.ar", "libmpeg2.a", "lib/libmpeg2.a", "\"<group>\"");
+	properties["libvorbisidec.a"]               = FileProperty("archive.ar", "libvorbisidec.a", "lib/libvorbisidec.a", "\"<group>\"");
+
+	//////////////////////////////////////////////////////////////////////////
+	// iPhone
+	Object *framework_iPhone = new Object(this, "PBXFrameworksBuildPhase_" + _targets[0], "PBXFrameworksBuildPhase", "PBXFrameworksBuildPhase", "", "Frameworks");
+
+	framework_iPhone->addProperty("buildActionMask", "2147483647", "", SettingsNoValue);
+	framework_iPhone->addProperty("runOnlyForDeploymentPostprocessing", "0", "", SettingsNoValue);
+
+	// List of frameworks
+	Property iPhone_files;
+	iPhone_files.hasOrder = true;
+	iPhone_files.flags = SettingsAsList;
+
+	ValueList frameworks_iPhone;
+	frameworks_iPhone.push_back("CoreAudio.framework");
+	frameworks_iPhone.push_back("CoreFoundation.framework");
+	frameworks_iPhone.push_back("Foundation.framework");
+	frameworks_iPhone.push_back("UIKit.framework");
+	frameworks_iPhone.push_back("AudioToolbox.framework");
+	frameworks_iPhone.push_back("QuartzCore.framework");
+	frameworks_iPhone.push_back("libmad.a");
+	//frameworks_iPhone.push_back("libmpeg2.a");
+	frameworks_iPhone.push_back("libFLAC.a");
+	frameworks_iPhone.push_back("libvorbisidec.a");
+	frameworks_iPhone.push_back("OpenGLES.framework");
+
+	int order = 0;
+	for (ValueList::iterator framework = frameworks_iPhone.begin(); framework != frameworks_iPhone.end(); framework++) {
+		std::string id = "Frameworks_" + *framework + "_iphone";
+		std::string comment = *framework + " in Frameworks";
+
+		ADD_SETTING_ORDER_NOVALUE(iPhone_files, getHash(id), comment, order++);
+		ADD_BUILD_FILE(id, *framework, comment);
+		ADD_FILE_REFERENCE(*framework, properties[*framework]);
+	}
+
+	framework_iPhone->properties["files"] = iPhone_files;
+
+	_frameworksBuildPhase.add(framework_iPhone);
+
+	//////////////////////////////////////////////////////////////////////////
+	// ScummVM-OS X
+	Object *framework_OSX = new Object(this, "PBXFrameworksBuildPhase_" + _targets[1], "PBXFrameworksBuildPhase", "PBXFrameworksBuildPhase", "", "Frameworks");
+
+	framework_OSX->addProperty("buildActionMask", "2147483647", "", SettingsNoValue);
+	framework_OSX->addProperty("runOnlyForDeploymentPostprocessing", "0", "", SettingsNoValue);
+
+	// List of frameworks
+	Property osx_files;
+	osx_files.hasOrder = true;
+	osx_files.flags = SettingsAsList;
+
+	ValueList frameworks_osx;
+	frameworks_osx.push_back("CoreFoundation.framework");
+	frameworks_osx.push_back("Foundation.framework");
+	frameworks_osx.push_back("AudioToolbox.framework");
+	frameworks_osx.push_back("QuickTime.framework");
+	frameworks_osx.push_back("CoreMIDI.framework");
+	frameworks_osx.push_back("CoreAudio.framework");
+	frameworks_osx.push_back("QuartzCore.framework");
+	frameworks_osx.push_back("Carbon.framework");
+	frameworks_osx.push_back("ApplicationServices.framework");
+	frameworks_osx.push_back("IOKit.framework");
+	frameworks_osx.push_back("Cocoa.framework");
+	frameworks_osx.push_back("AudioUnit.framework");
+
+	order = 0;
+	for (ValueList::iterator framework = frameworks_osx.begin(); framework != frameworks_osx.end(); framework++) {
+		std::string id = "Frameworks_" + *framework + "_osx";
+		std::string comment = *framework + " in Frameworks";
+
+		ADD_SETTING_ORDER_NOVALUE(osx_files, getHash(id), comment, order++);
+		ADD_BUILD_FILE(id, *framework, comment);
+		ADD_FILE_REFERENCE(*framework, properties[*framework]);
+	}
+
+	framework_OSX->properties["files"] = osx_files;
+
+	_frameworksBuildPhase.add(framework_OSX);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Simulator
+	Object *framework_simulator = new Object(this, "PBXFrameworksBuildPhase_" + _targets[2], "PBXFrameworksBuildPhase", "PBXFrameworksBuildPhase", "", "Frameworks");
+
+	framework_simulator->addProperty("buildActionMask", "2147483647", "", SettingsNoValue);
+	framework_simulator->addProperty("runOnlyForDeploymentPostprocessing", "0", "", SettingsNoValue);
+
+	// List of frameworks
+	Property simulator_files;
+	simulator_files.hasOrder = true;
+	simulator_files.flags = SettingsAsList;
+
+	ValueList frameworks_simulator;
+	frameworks_simulator.push_back("CoreAudio.framework");
+	frameworks_simulator.push_back("CoreFoundation.framework");
+	frameworks_simulator.push_back("Foundation.framework");
+	frameworks_simulator.push_back("UIKit.framework");
+	frameworks_simulator.push_back("AudioToolbox.framework");
+	frameworks_simulator.push_back("QuartzCore.framework");
+	frameworks_simulator.push_back("OpenGLES.framework");
+
+	order = 0;
+	for (ValueList::iterator framework = frameworks_simulator.begin(); framework != frameworks_simulator.end(); framework++) {
+		std::string id = "Frameworks_" + *framework + "_simulator";
+		std::string comment = *framework + " in Frameworks";
+
+		ADD_SETTING_ORDER_NOVALUE(simulator_files, getHash(id), comment, order++);
+		ADD_BUILD_FILE(id, *framework, comment);
+		ADD_FILE_REFERENCE(*framework, properties[*framework]);
+	}
+
+	framework_simulator->properties["files"] = simulator_files;
+
+	_frameworksBuildPhase.add(framework_simulator);
 }
 
 void XCodeProvider::setupNativeTarget() {
