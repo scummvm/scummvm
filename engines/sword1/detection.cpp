@@ -249,15 +249,11 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 int SwordMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 void SwordMetaEngine::removeSaveState(const char *target, int slot) const {
-	char fileName[12];
-	snprintf(fileName, 12, "sword1.%03d", slot);
-
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	g_system->getSavefileManager()->removeSavefile(Common::String::format("sword1.%03d", slot));
 }
 
 SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	char fileName[12];
-	snprintf(fileName, 12, "sword1.%03d", slot);
+	Common::String fileName = Common::String::format("sword1.%03d", slot);
 	char name[40];
 	uint32 playTime = 0;
 	byte versionSave;
