@@ -147,7 +147,7 @@ public:
 
 	static void			defragment();	// move in memory to reduce fragmentation
 	void 				copyFrom(ConfigManager &source);
-	
+
 private:
 	friend class Singleton<SingletonBaseType>;
 	ConfigManager();

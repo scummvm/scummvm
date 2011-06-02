@@ -108,7 +108,7 @@ public:
 	Font *getFont(const char *filename);
 	void setFont(const char *filename);
 
-	Font *current() { 
+	Font *current() {
 		assert(_currentFont);
 		return _currentFont;
 	}

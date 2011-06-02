@@ -44,9 +44,9 @@ public:
 	//void loadOn(Graphics::Surface &surface, int id, uint16 &dst, uint16 *flags);
 	//void loadOns(Graphics::Surface &surface, int id, uint16 &dst);
 
-	/* 
-	 * PSP (as the other sony playstation consoles - to be confirmed and 'ifdef'ed here too) 
-	 * is very sensitive to the number of simultaneously opened files. 
+	/*
+	 * PSP (as the other sony playstation consoles - to be confirmed and 'ifdef'ed here too)
+	 * is very sensitive to the number of simultaneously opened files.
 	 * This is an attempt to reduce their number to zero.
 	 * TransientFilePack does not keep opened file descriptors and reopens it on each request.
 	 */

@@ -113,7 +113,7 @@ public:
 	 * @return true if the CD drive was inited succesfully
 	 */
 	virtual bool openCD(int drive) = 0;
-	
+
 	/**
 	 * Poll CD status.
 	 * @return true if CD audio is playing

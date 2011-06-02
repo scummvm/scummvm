@@ -166,7 +166,7 @@ bool MacResExtractor::extractResource(int id, CachedCursor *cc) {
 	}
 
 	Common::SeekableReadStream *dataStream = _resMgr->getResource('crsr', id + 1000);
-	
+
 	if (!dataStream)
 		return false;
 

@@ -32,6 +32,6 @@ ifeq ($(ENABLE_TSAGE), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 
-# Include common rules 
+# Include common rules
 include $(srcdir)/rules.mk
 

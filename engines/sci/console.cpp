@@ -253,7 +253,7 @@ void Console::postEnter() {
 			videoDecoder = new RobotDecoder(g_system->getMixer(), _engine->getPlatform() == Common::kPlatformMacintosh);
 		} else if (_videoFile.hasSuffix(".duk")) {
 			duckMode = true;
-			videoDecoder = new Video::AviDecoder(g_system->getMixer());	
+			videoDecoder = new Video::AviDecoder(g_system->getMixer());
 #endif
 		} else if (_videoFile.hasSuffix(".avi")) {
 			videoDecoder = new Video::AviDecoder(g_system->getMixer());
@@ -891,7 +891,7 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 	return true;
 }
 
-// Same as in sound/drivers/midi.cpp 
+// Same as in sound/drivers/midi.cpp
 uint8 getGmInstrument(const Mt32ToGmMap &Mt32Ins) {
 	if (Mt32Ins.gmInstr == MIDI_MAPPED_TO_RHYTHM)
 		return Mt32Ins.gmRhythmKey + 0x80;
@@ -909,7 +909,7 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 	MidiPlayer *player = MidiPlayer_Midi_create(doSoundVersion);
 	MidiParser_SCI *parser = new MidiParser_SCI(doSoundVersion, 0);
 	parser->setMidiDriver(player);
-	
+
 	Common::List<ResourceId> *resources = _engine->getResMan()->listResources(kResourceTypeSound);
 	Common::sort(resources->begin(), resources->end());
 	Common::List<ResourceId>::iterator itr = resources->begin();
@@ -980,7 +980,7 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 				if (channel != 15) {	// SCI special
 					byte instrument = *channelData++;
 					if (!firstOneShown)
-						firstOneShown = true;					
+						firstOneShown = true;
 					else
 						DebugPrintf(",");
 
@@ -1573,7 +1573,7 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 	Common::String filename = argv[1];
 	filename.toLowercase();
 
-	if (filename.hasSuffix(".seq") || filename.hasSuffix(".avi") || filename.hasSuffix(".vmd") || 
+	if (filename.hasSuffix(".seq") || filename.hasSuffix(".avi") || filename.hasSuffix(".vmd") ||
 		filename.hasSuffix(".rbt") || filename.hasSuffix(".duk")) {
 		_videoFile = filename;
 		_videoFrameDelay = (argc == 2) ? 10 : atoi(argv[2]);
@@ -1657,7 +1657,7 @@ bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
 			case SEG_TYPE_STRING:
 				DebugPrintf("T  SCI32 strings (%d)", (*(StringTable *)mobj).entries_used);
 				break;
-#endif				
+#endif
 
 			default:
 				DebugPrintf("I  Invalid (type = %x)", mobj->getType());
@@ -2782,8 +2782,8 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 						uint16 argc2 = opparams[1];
 
 						if (kFuncNum == kernelFuncNum) {
-							DebugPrintf("Called from script %d, object %s, method %s(%d) with %d parameters\n", 
-								itr->getNumber(), objName, 
+							DebugPrintf("Called from script %d, object %s, method %s(%d) with %d parameters\n",
+								itr->getNumber(), objName,
 								_engine->getKernel()->getSelectorName(obj->getFuncSelector(i)).c_str(), i, argc2);
 						}
 					}

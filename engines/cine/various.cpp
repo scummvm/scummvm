@@ -55,7 +55,7 @@ int16 canUseOnObject = 0;
 
 void waitPlayerInput() {
 	uint16 button;
-	
+
 	do {
 		manageEvents();
 		getMouseData(mouseUpdateStatus, &button, &dummyU16, &dummyU16);

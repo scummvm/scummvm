@@ -32,7 +32,7 @@ Player_Towns::Player_Towns(ScummEngine *vm, bool isVersion2) : _vm(vm), _v2(isVe
 
 void Player_Towns::setSfxVolume(int vol) {
 	if (!_intf)
-		return;	
+		return;
 	_intf->setSoundEffectVolume(vol);
 }
 
@@ -98,17 +98,17 @@ void Player_Towns::playPcmTrack(int sound, const uint8 *data, int velo, int pan,
 		return;
 
 	const uint8 *sfxData = data + 16;
-	
+
 	int numChan = _v2 ? 1 : data[14];
 	for (int i = 0; i < numChan; i++) {
 		int chan = allocatePcmChannel(sound, i, priority);
 		if (!chan)
 			return;
-		
+
 		_intf->callback(70, _unkFlags);
 		_intf->callback(3, chan + 0x3f, pan);
 		_intf->callback(37, chan + 0x3f, note, velo, sfxData);
-		
+
 		_pcmCurrentSound[chan].note = note;
 		_pcmCurrentSound[chan].velo = velo;
 		_pcmCurrentSound[chan].pan = pan;
@@ -191,7 +191,7 @@ Player_Towns_v1::Player_Towns_v1(ScummEngine *vm, Audio::Mixer *mixer) : Player_
 	if (_vm->_game.version == 3) {
 		_soundOverride = new SoundOvrParameters[_numSoundMax];
 		memset(_soundOverride, 0, _numSoundMax * sizeof(SoundOvrParameters));
-	}	
+	}
 
 	_driver = new TownsEuphonyDriver(mixer);
 }
@@ -204,7 +204,7 @@ Player_Towns_v1::~Player_Towns_v1() {
 bool Player_Towns_v1::init() {
 	if (!_driver)
 		return false;
-	
+
 	if (!_driver->init())
 		return false;
 
@@ -235,13 +235,13 @@ void Player_Towns_v1::startSound(int sound) {
 	if (type == 0) {
 		uint8 velocity = 0;
 		uint8 note = 0;
-		
+
 		if (_vm->_game.version == 3) {
 			velocity = (_soundOverride[sound].vLeft + _soundOverride[sound].vRight);
 			note = _soundOverride[sound].note;
 		}
 
-		velocity = velocity ? velocity >> 2 : ptr[14] >> 1;		
+		velocity = velocity ? velocity >> 2 : ptr[14] >> 1;
 		playPcmTrack(sound, ptr + 6, velocity, 64, note ? note : ptr[50], READ_LE_UINT16(ptr + 10));
 
 	} else if (type == 1) {
@@ -267,7 +267,7 @@ void Player_Towns_v1::stopSound(int sound) {
 		_eupLooping = false;
 		_driver->stopParser();
 	}
-	
+
 	stopPcmTrack(sound);
 }
 
@@ -293,7 +293,7 @@ int Player_Towns_v1::getSoundStatus(int sound) const {
 
 int32 Player_Towns_v1::doCommand(int numargs, int args[]) {
 	int32 res = 0;
-	
+
 	switch (args[0]) {
 	case 2:
 		_driver->intf()->callback(73, 0);
@@ -381,12 +381,12 @@ void Player_Towns_v1::saveLoadWithSerializer(Serializer *ser) {
 
 void Player_Towns_v1::restoreAfterLoad() {
 	setVolumeCD(_cdaVolLeft, _cdaVolRight);
-	
+
 	if (_cdaCurrentSoundTemp) {
 		uint8 *ptr = _vm->getResourceAddress(rtSound, _cdaCurrentSoundTemp) + 6;
 		if (_vm->_game.version != 3)
 			ptr += 2;
-		
+
 		if (ptr[7] == 2) {
 			playCdaTrack(_cdaCurrentSoundTemp, ptr, true);
 			_cdaCurrentSound = _cdaCurrentSoundTemp;
@@ -398,7 +398,7 @@ void Player_Towns_v1::restoreAfterLoad() {
 		uint8 *ptr = _vm->getResourceAddress(rtSound, _eupCurrentSound) + 6;
 		if (_vm->_game.version != 3)
 			ptr += 2;
-		
+
 		if (ptr[7] == 1) {
 			setSoundVolume(_eupCurrentSound, _eupVolLeft, _eupVolRight);
 			playEuphonyTrack(_eupCurrentSound, ptr);
@@ -458,7 +458,7 @@ void Player_Towns_v1::startSoundEx(int sound, int velo, int pan, int note) {
 	} else if (ptr[13] == 2) {
 		int volLeft = velo;
 		int volRight = velo;
-		
+
 		if (pan < 50)
 			volRight = ((pan * 2 + 1) * velo + 50) / 100;
 		else if (pan > 50)
@@ -478,7 +478,7 @@ void Player_Towns_v1::stopSoundSuspendLooping(int sound) {
 		return;
 	} else if (sound == _cdaCurrentSound) {
 		if (_cdaNumLoops && _cdaForceRestart)
-			_cdaForceRestart = 1;		
+			_cdaForceRestart = 1;
 	} else {
 		for (int i = 1; i < 9; i++) {
 			if (sound == _pcmCurrentSound[i].index) {
@@ -487,7 +487,7 @@ void Player_Towns_v1::stopSoundSuspendLooping(int sound) {
 				_driver->stopSoundEffect(i + 0x3f);
 				if (_pcmCurrentSound[i].looping)
 					_pcmCurrentSound[i].paused = 1;
-				else 
+				else
 					_pcmCurrentSound[i].index = 0;
 			}
 		}
@@ -532,7 +532,7 @@ void Player_Towns_v1::playEuphonyTrack(int sound, const uint8 *data) {
 	uint32 trackSize = READ_LE_UINT32(src);
 	src += 4;
 	uint8 startTick = *src++;
-	
+
 	_driver->setMusicTempo(*src++);
 	_driver->startMusicTrack(trackData, trackSize, startTick);
 
@@ -559,7 +559,7 @@ void Player_Towns_v1::playCdaTrack(int sound, const uint8 *data, bool skipTrackV
 		}
 	}
 
-	if (sound == _cdaCurrentSound && _vm->_sound->pollCD() == 1)			
+	if (sound == _cdaCurrentSound && _vm->_sound->pollCD() == 1)
 		return;
 
 	ptr += 16;
@@ -585,7 +585,7 @@ Player_Towns_v2::~Player_Towns_v2() {
 	_intf = 0;
 
 	if (_imuseDispose)
-		delete _imuse;	
+		delete _imuse;
 
 	delete[] _sblData;
 	delete[] _soundOverride;
@@ -594,7 +594,7 @@ Player_Towns_v2::~Player_Towns_v2() {
 bool Player_Towns_v2::init() {
 	if (!_intf)
 		return false;
-	
+
 	if (!_intf->init())
 		return false;
 
@@ -637,7 +637,7 @@ void Player_Towns_v2::startSound(int sound) {
 
 void Player_Towns_v2::stopSound(int sound) {
 	if (_soundOverride[sound].type == 7) {
-		stopPcmTrack(sound);		
+		stopPcmTrack(sound);
 	} else {
 		_imuse->stopSound(sound);
 	}
@@ -651,7 +651,7 @@ void Player_Towns_v2::stopAllSounds() {
 int32 Player_Towns_v2::doCommand(int numargs, int args[]) {
 	int32 res = -1;
 	uint8 *ptr = 0;
-	
+
 	switch (args[0]) {
 	case 8:
 		startSound(args[1]);
@@ -675,7 +675,7 @@ int32 Player_Towns_v2::doCommand(int numargs, int args[]) {
 	case 258:
 		if (_soundOverride[args[1]].type == 0) {
 			ptr = _vm->getResourceAddress(rtSound, args[1]);
-			if (READ_BE_UINT32(ptr) == MKTAG('T','O','W','S')) 
+			if (READ_BE_UINT32(ptr) == MKTAG('T','O','W','S'))
 				_soundOverride[args[1]].type = 7;
 		}
 		if (_soundOverride[args[1]].type == 7)	{
@@ -683,11 +683,11 @@ int32 Player_Towns_v2::doCommand(int numargs, int args[]) {
 			res = 0;
 		}
 		break;
-	
+
 	case 259:
 		if (_soundOverride[args[1]].type == 0) {
 			ptr = _vm->getResourceAddress(rtSound, args[1]);
-			if (READ_BE_UINT32(ptr) == MKTAG('T','O','W','S')) 
+			if (READ_BE_UINT32(ptr) == MKTAG('T','O','W','S'))
 				_soundOverride[args[1]].type = 7;
 		}
 		if (_soundOverride[args[1]].type == 7)	{
@@ -702,7 +702,7 @@ int32 Player_Towns_v2::doCommand(int numargs, int args[]) {
 
 	if (res == -1)
 		return _imuse->doCommand(numargs, args);
-	
+
 	return res;
 }
 
@@ -718,9 +718,9 @@ void Player_Towns_v2::playVocTrack(const uint8 *data) {
 		0x00, 0x00, 0x00, 0x00,	0x00, 0x00, 0x00, 0x00,
 		0x36, 0x04, 0x00, 0x00, 0x3C, 0x00, 0x00, 0x00
 	};
-	
+
 	uint32 len = (READ_LE_UINT32(data) >> 8) - 2;
-	
+
 	int chan = allocatePcmChannel(0xffff, 0, 0x1000);
 	if (!chan)
 		return;

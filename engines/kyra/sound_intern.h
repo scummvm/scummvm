@@ -140,7 +140,7 @@ private:
 	uint8 _sfxChannel;
 
 	TownsEuphonyDriver *_driver;
-	
+
 	bool _cdaPlaying;
 
 	const uint8 *_musicFadeTable;

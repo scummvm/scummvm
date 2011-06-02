@@ -97,8 +97,8 @@ long *DataAsset::getRow(int index) {
 	return &_data[_recSize * index];
 }
 
-SpriteAsset::SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name, 
-						 bool asStream, int flags) : 
+SpriteAsset::SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name,
+						 bool asStream, int flags) :
 			BaseAsset(vm) {
 	_stream = stream;
 	_palInterface = NULL;
@@ -285,7 +285,7 @@ void SpriteAsset::loadMadsSpriteAsset(MadsM4Engine *vm, Common::SeekableReadStre
 
 			// Load the frame
 			Common::MemoryReadStream *rs = new Common::MemoryReadStream(destData, frameSizes[curFrame]);
-			_frames[curFrame].frame = new M4Sprite(rs, _frames[curFrame].x, _frames[curFrame].y, 
+			_frames[curFrame].frame = new M4Sprite(rs, _frames[curFrame].x, _frames[curFrame].y,
 				_frames[curFrame].w, _frames[curFrame].h, false);
 			delete rs;
 
@@ -634,7 +634,7 @@ MadsSpriteSetCharInfo::MadsSpriteSetCharInfo(Common::SeekableReadStream *s) {
 	_totalFrames = s->readByte();
 	s->skip(1);
 	_numEntries = s->readUint16LE();
-	
+
 	for (int i = 0; i < 16; ++i)
 		_frameList[i] = s->readUint16LE();
 	for (int i = 0; i < 16; ++i)

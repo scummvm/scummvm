@@ -85,7 +85,7 @@ bool FontResource::parserCallback_font(ParserNode *node) {
 		                 getFileName().c_str(), DEFAULT_GAPWIDTH);
 		_gapWidth = DEFAULT_GAPWIDTH;
 	}
-	
+
 	// Get a reference to the package manager
 	assert(_pKernel);
 	PackageManager *pPackage = _pKernel->getPackage();

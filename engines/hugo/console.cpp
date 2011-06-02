@@ -64,8 +64,8 @@ bool HugoConsole::Cmd_gotoScreen(int argc, const char **argv) {
 	if ((argc != 2) || (strToInt(argv[1]) > _vm->_numScreens)){
 		DebugPrintf("Usage: %s <screen number>\n", argv[0]);
 		return true;
-	} 
-	
+	}
+
 	_vm->_scheduler->newScreen(strToInt(argv[1]));
 	return false;
 }
@@ -78,7 +78,7 @@ bool HugoConsole::Cmd_listScreens(int argc, const char **argv) {
 		DebugPrintf("Usage: %s\n", argv[0]);
 		return true;
 	}
-	
+
 	DebugPrintf("Available screens for this game are:\n");
 	for (int i = 0; i < _vm->_numScreens; i++)
 		DebugPrintf("%2d - %s\n", i, _vm->_text->getScreenNames(i));
@@ -93,7 +93,7 @@ bool HugoConsole::Cmd_listObjects(int argc, const char **argv) {
 		DebugPrintf("Usage: %s\n", argv[0]);
 		return true;
 	}
-	
+
 	DebugPrintf("Available objects for this game are:\n");
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
 		if (_vm->_object->_objects[i].genericCmd & TAKE)
@@ -110,7 +110,7 @@ bool HugoConsole::Cmd_getObject(int argc, const char **argv) {
 		DebugPrintf("Usage: %s <object number>\n", argv[0]);
 		return true;
 	}
-	
+
 	if (_vm->_object->_objects[strToInt(argv[1])].genericCmd & TAKE)
 		_vm->_parser->takeObject(&_vm->_object->_objects[strToInt(argv[1])]);
 	else
@@ -127,7 +127,7 @@ bool HugoConsole::Cmd_getAllObjects(int argc, const char **argv) {
 		DebugPrintf("Usage: %s\n", argv[0]);
 		return true;
 	}
-	
+
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
 		if (_vm->_object->_objects[i].genericCmd & TAKE)
 			_vm->_parser->takeObject(&_vm->_object->_objects[i]);

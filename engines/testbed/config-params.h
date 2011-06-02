@@ -34,7 +34,7 @@ class ConfigParams : public Common::Singleton<ConfigParams> {
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 	ConfigParams();
-	
+
 	/**
 	 * Private variables related to log files.
 	 */
@@ -57,16 +57,16 @@ private:
 	TestbedConfigManager *_testbedConfMan;
 
 public:
-	
+
 	bool isRerunRequired();
 	void setRerunFlag(bool flag) { _rerunTests = flag; }
 
 	bool isSessionInteractive() { return _isInteractive; }
 	void setSessionAsInteractive(bool status) { _isInteractive = status; }
-	
+
 	bool isGameDataFound() { return _isGameDataFound; }
 	void setGameDataFound(bool status) { _isGameDataFound = status; }
-	
+
 	TestbedConfigManager *getTestbedConfigManager() { return _testbedConfMan; }
 	void setTestbedConfigManager(TestbedConfigManager* confMan) { _testbedConfMan = confMan; }
 
@@ -74,7 +74,7 @@ public:
 	void setLogDirectory(const Common::String &dirname) { _logDirectory = dirname; }
 	Common::String &getLogFilename() { return _logFilename; }
 	void setLogFilename(const Common::String &filename) { _logFilename = filename; }
-	
+
 	Common::WriteStream *getLogWriteStream() { return _ws; }
 	Graphics::FontManager::FontUsage getCurrentFontUsageType() { return _displayFont; }
 	void setCurrentFontUsageType(Graphics::FontManager::FontUsage f) { _displayFont = f; }

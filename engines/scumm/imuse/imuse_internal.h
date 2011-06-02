@@ -450,7 +450,7 @@ protected:
 		kMThd = 1,
 		kFORM = 2,
 		kMDhd = 4,	// Used in MI2 and INDY4. Contain certain start parameters (priority, volume, etc. ) for the player.
-		kMDpg = 8	// These chunks exist in DOTT and SAMNMAX. They don't get processed, however. 
+		kMDpg = 8	// These chunks exist in DOTT and SAMNMAX. They don't get processed, however.
 	};
 
 	byte *findStartOfSound(int sound, int ct = (kMThd | kFORM));

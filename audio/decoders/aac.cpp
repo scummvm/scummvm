@@ -127,7 +127,7 @@ int AACStream::readBuffer(int16 *buffer, const int numSamples) {
 	// Dip into our remaining samples pool if it's available
 	if (_remainingSamples) {
 		samples = MIN<int>(numSamples, _remainingSamplesSize - _remainingSamplesPos);
-	
+
 		memcpy(buffer, _remainingSamples + _remainingSamplesPos, samples * 2);
 		_remainingSamplesPos += samples;
 

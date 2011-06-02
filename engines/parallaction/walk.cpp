@@ -590,14 +590,14 @@ void PathWalker_BR::doWalk(State &s) {
 	int xStep = (scale * 16) / 100 + 1;
 	int yStep = (scale * 10) / 100 + 1;
 
-	/* WORKAROUND: in the balloon scene, the position of the balloon (which is implemented as a 
+	/* WORKAROUND: in the balloon scene, the position of the balloon (which is implemented as a
 	Character) is controlled by the user (for movement, via this walking code) and by the scripts
 	(to simulate the balloon floating in the air, in a neverending loop that alters the position
 	coordinates).
 	When the two step sizes are equal in magnitude and opposite in direction, then the walk code
 	enters an infinite loop without giving control back to the user (this happens quite frequently
-	when navigating the balloon near the borders of the screen, where the calculated step is 
-	forcibly small because of clipping). Since the "floating" script (part1/scripts/mongolo.scr) 
+	when navigating the balloon near the borders of the screen, where the calculated step is
+	forcibly small because of clipping). Since the "floating" script (part1/scripts/mongolo.scr)
 	uses increments of 3 for both x and y, we tweak the calculated steps accordingly here. */
 	if (xStep == 3) xStep--;
 	if (yStep == 3) yStep--;

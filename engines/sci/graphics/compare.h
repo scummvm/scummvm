@@ -51,7 +51,7 @@ private:
 	GfxCoordAdjuster *_coordAdjuster;
 
 	uint16 isOnControl(uint16 screenMask, const Common::Rect &rect);
-	
+
 	/**
 	 * This function checks whether any of the objects in the given list,
 	 * *different* from checkObject, has a brRect which is contained inside

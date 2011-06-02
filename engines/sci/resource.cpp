@@ -128,7 +128,7 @@ static const char *s_resourceTypeSuffixes[] = {
 	"trn", "rbt", "vmd", "chk",    "",
 	"etc", "duk", "clu", "tga", "zzz",
 	   "",    "",    ""
-}; 
+};
 
 const char *getResourceTypeName(ResourceType restype) {
 	if (restype != kResourceTypeInvalid)
@@ -449,11 +449,11 @@ bool MacResourceForkResourceSource::isCompressableResource(ResourceType type) co
 		*ptr++ = value; \
 	}
 
-void MacResourceForkResourceSource::decompressResource(Common::SeekableReadStream *stream, Resource *resource) const {	
+void MacResourceForkResourceSource::decompressResource(Common::SeekableReadStream *stream, Resource *resource) const {
 	// KQ6 Mac is the only game not compressed. It's not worth writing a
 	// heuristic just for that game. Also, skip over any resource that cannot
 	// be compressed.
-	bool canBeCompressed = !(g_sci && g_sci->getGameId() == GID_KQ6) && isCompressableResource(resource->_id.getType()); 
+	bool canBeCompressed = !(g_sci && g_sci->getGameId() == GID_KQ6) && isCompressableResource(resource->_id.getType());
 	uint32 uncompressedSize = 0;
 
 	// GK2 Mac is crazy. In its Patches resource fork, picture 2315 is not
@@ -503,7 +503,7 @@ void MacResourceForkResourceSource::decompressResource(Common::SeekableReadStrea
 				// Copy chunk expanded
 				extraByte1 = stream->readByte();
 				extraByte2 = stream->readByte();
- 
+
 				literalLength = extraByte2 & 3;
 
 				OUTPUT_LITERAL()
@@ -824,7 +824,7 @@ void ChunkResourceSource::scanSource(ResourceManager *resMan) {
 
 	byte *ptr = chunk->data;
 	uint32 firstOffset = 0;
-	
+
 	for (;;) {
 		ResourceType type = resMan->convertResType(*ptr);
 		uint16 number = READ_LE_UINT16(ptr + 1);
@@ -844,7 +844,7 @@ void ChunkResourceSource::scanSource(ResourceManager *resMan) {
 		// There's no end marker to the data table, but the first resource
 		// begins directly after the entry table. So, when we hit the first
 		// resource, we're at the end of the entry table.
-		
+
 		if (!firstOffset)
 			firstOffset = entry.offset;
 
@@ -1243,7 +1243,7 @@ ResVersion ResourceManager::detectVolVersion() {
 
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
 		rsrc = *it;
-	
+
 		if (rsrc->getSourceType() == kSourceVolume) {
 			if (rsrc->_resourceFile) {
 				fileStream = rsrc->_resourceFile->createReadStream();
@@ -1291,7 +1291,7 @@ ResVersion ResourceManager::detectVolVersion() {
 		// loading SCI3 volumes, the format is otherwise
 		// identical to SCI2. We therefore get the compression
 		// indicator here, but disregard it in the following
-		// code. 
+		// code.
 		wCompression = fileStream->readUint16LE();
 
 		if (fileStream->eos()) {
@@ -1473,7 +1473,7 @@ void ResourceManager::readResourcePatchesBase36() {
 			name = (*x)->getName();
 
 			ResourceId resource36 = convertPatchNameBase36((ResourceType)i, name);
-			
+
 			/*
 			if (i == kResourceTypeAudio36)
 				debug("audio36 patch: %s => %s. tuple:%d, %s\n", name.c_str(), inputName.c_str(), resource36.tuple, resource36.toString().c_str());
@@ -1494,7 +1494,7 @@ void ResourceManager::readResourcePatchesBase36() {
 
 				// Check for SOL as well
 				tag = (tag << 16) | stream->readUint16BE();
-					
+
 				if (tag != MKTAG('S','O','L',0)) {
 					delete stream;
 					continue;
@@ -1613,7 +1613,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 			warning("Error while reading %s", map->getLocationName().c_str());
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 		}
-	
+
 		if (offset == 0xFFFFFFFF)
 			break;
 
@@ -2129,7 +2129,7 @@ void ResourceManager::detectSciVersion() {
 	bool oldDecompressors = true;
 
 	ResourceCompression viewCompression;
-#ifdef ENABLE_SCI32	
+#ifdef ENABLE_SCI32
 	viewCompression = getViewCompression();
 #else
 	if (_volVersion >= kResVersionSci2) {
@@ -2173,7 +2173,7 @@ void ResourceManager::detectSciVersion() {
 		}
 #endif
 	}
-	
+
 	if (_volVersion == kResVersionSci11Mac) {
 		// SCI32 doesn't have the resource.cfg file, so we can figure out
 		// which of the games are SCI1.1. Note that there are no Mac SCI2 games.

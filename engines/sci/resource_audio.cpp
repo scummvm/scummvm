@@ -356,14 +356,14 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 			stream->seek(offset + 1);
 			byte headerSize = stream->readByte();
 			assert(headerSize == 11 || headerSize == 12);
-			
+
 			stream->skip(5);
 			uint32 size = stream->readUint32LE() + headerSize + 2;
 
 			addResource(ResourceId(kResourceTypeAudio, n), src, offset, size);
 		}
 	} else {
-		bool isEarly = (entrySize != 11); 
+		bool isEarly = (entrySize != 11);
 
 		if (!isEarly) {
 			offset = READ_LE_UINT32(ptr);

@@ -202,7 +202,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 		palOffset = READ_SCI11ENDIAN_UINT32(_resourceData + 8);
 
 		// For SCI32, this is a scale flag
-		if (getSciVersion() >= SCI_VERSION_2) { 
+		if (getSciVersion() >= SCI_VERSION_2) {
 			_sci2ScaleRes = (Sci32ViewNativeResolution)_resourceData[5];
 			if (_screen->getUpscaledHires() == GFX_SCREEN_UPSCALED_DISABLED)
 				_sci2ScaleRes = SCI_VIEW_NATIVERES_NONE;
@@ -426,7 +426,7 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 		// compression for SCI1.1+ Mac
 		while (pixelNr < pixelCount) {
 			uint32 pixelLine = pixelNr;
-		
+
 			if (hasByteLengths) {
 				pixelNr += *rlePtr++;
 				runLength = *rlePtr++;
@@ -500,7 +500,7 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 				} else {
 					memcpy(outPtr + pixelNr,    literalPtr, MIN<uint16>(runLength, pixelCount - pixelNr));
 					literalPtr += runLength;
-				}			
+				}
 				break;
 			case 0x80: // fill with color
 				if (!literalPos)

@@ -632,7 +632,7 @@ bool RivenConsole::Cmd_Combos(int argc, const char **argv) {
 	uint32 teleCombo = _vm->_vars["tcorrectorder"];
 	uint32 prisonCombo = _vm->_vars["pcorrectorder"];
 	uint32 domeCombo = _vm->_vars["adomecombo"];
-	
+
 	DebugPrintf("Telescope Combo:\n  ");
 	for (int i = 0; i < 5; i++)
 		DebugPrintf("%d ", _vm->_externalScriptHandler->getComboDigit(teleCombo, i));

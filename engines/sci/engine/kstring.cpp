@@ -427,7 +427,7 @@ reg_t kGetFarText(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	seeker = (char *)textres->data;
-	
+
 	// The second parameter (counter) determines the number of the string
 	// inside the text resource.
 	while (counter--) {
@@ -715,7 +715,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		// triggers an assert when doing string2[i + index2].
 		for (uint16 i = 0; i < count; i++)
 			string1->setValue(i + index1, string2[i + index2]);
-	
+
 		return strAddress;
 	}
 	case 7: { // Cmp
@@ -781,14 +781,14 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	case 15: { // upper
 		Common::String string = s->_segMan->getString(argv[1]);
-		
+
 		string.toUppercase();
 		s->_segMan->strcpy(argv[1], string.c_str());
 		return NULL_REG;
 	}
 	case 16: { // lower
 		Common::String string = s->_segMan->getString(argv[1]);
-		
+
 		string.toLowercase();
 		s->_segMan->strcpy(argv[1], string.c_str());
 		return NULL_REG;

@@ -328,7 +328,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	memset(&_cyclRects, 0, 16 * sizeof(Common::Rect));
 	_numCyclRects = 0;
 #endif
-	
+
 	//
 	// Init all VARS to 0xFF
 	//
@@ -1145,7 +1145,7 @@ Common::Error ScummEngine::init() {
 			screenWidth *= _textSurfaceMultiplier;
 			screenHeight *= _textSurfaceMultiplier;
 		}
-		if (_game.features & GF_16BIT_COLOR 
+		if (_game.features & GF_16BIT_COLOR
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			|| _game.platform == Common::kPlatformFMTowns
 #endif
@@ -1838,7 +1838,7 @@ void ScummEngine::setupMusic(int midi) {
 		}
 
 		_imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);
-		
+
 		if (_game.platform == Common::kPlatformFMTowns) {
 			_musicEngine = _townsPlayer = new Player_Towns_v2(this, _mixer, _imuse, true);
 			if (!_townsPlayer->init())

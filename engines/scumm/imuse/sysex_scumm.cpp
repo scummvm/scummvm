@@ -76,7 +76,7 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 			part->set_pri(p[4]);
 			part->volume((p[5] & 0x0F) << 4 |(p[6] & 0x0F));
 			part->set_pan((p[7] & 0x0F) << 4 | (p[8] & 0x0F));
-			part->_percussion = player->_isMIDI ? ((p[9] & 0x08) > 0) : false;			
+			part->_percussion = player->_isMIDI ? ((p[9] & 0x08) > 0) : false;
 			part->set_transpose((p[9] & 0x0F) << 4 | (p[10] & 0x0F));
 			part->set_detune((p[11] & 0x0F) << 4 | (p[12] & 0x0F));
 			part->pitchBendFactor((p[13] & 0x0F) << 4 | (p[14] & 0x0F));

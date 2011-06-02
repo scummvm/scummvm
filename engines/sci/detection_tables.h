@@ -2338,7 +2338,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		//{"ressci.007", 0, "3aae6559aa1df273bc542d5ac6330d75", 25859038},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
-		
+
 	// Phantasmagoria - English DOS Demo
 	// Executable scanning reports "2.100.002"
 	{"phantasmagoria", "Demo", {
@@ -3471,7 +3471,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Space Quest 4 - English Macintosh
 	// Executable scanning reports "x.yyy.zzz"
-	// VERSION file reports "1.148" 
+	// VERSION file reports "1.148"
 	{"sq4", "", {
 		{"resource.map", 0, "6ffc6f76c4127d140759a512ab9a07be", 6042},
 		{"resource.000", 0, "6a538b389705232cf9b2d7de2cf9c0a7", 224833},

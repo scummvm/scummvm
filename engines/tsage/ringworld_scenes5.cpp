@@ -1921,7 +1921,7 @@ void Scene4045::postInit(SceneObjectList *OwnerList) {
 			_miranda.setStrip(3);
 			_miranda.setFrame(2);
 			_miranda.changeZoom(-1);
-			
+
 			_miranda.setPosition(Common::Point(66, 209));
 			_globals->_sceneItems.push_back(&_miranda);
 		}
@@ -4268,7 +4268,7 @@ void Scene4301::Action1::signal() {
 		_actionIndex = 2;
 		break;
 	case 10:
-		// Puzzle: Wrong code 
+		// Puzzle: Wrong code
 		_globals->_events.setCursor(CURSOR_NONE);
 		scene->_soundHandler.startSound(337);
 		if (scene->_hotspot3._flags & OBJFLAG_HIDE)

@@ -201,7 +201,7 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 		adjustInvalidCels(view, it);
 		processViewScaling(view, it);
 		setNsRect(view, it);
-		
+
 		//warning("%s view %d, loop %d, cel %d, signal %x", _s->_segMan->getObjectName(curObject), it->viewId, it->loopNo, it->celNo, it->signal);
 
 		// Calculate current priority according to y-coordinate
@@ -659,7 +659,7 @@ void GfxAnimate::throttleSpeed() {
 		// No entries drawn -> no speed throttler triggering
 		break;
 	case 1: {
-		
+
 		// One entry drawn -> check if that entry was a speed benchmark view, if not enable speed throttler
 		AnimateEntry *onlyCast = &_lastCastData[0];
 		if ((onlyCast->viewId == 0) && (onlyCast->loopNo == 13) && (onlyCast->celNo == 0)) {

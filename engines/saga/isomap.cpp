@@ -836,7 +836,7 @@ void IsoMap::drawTile(uint16 tileIndex, const Point &point, const Location *loca
 					count = colDiff;
 					col += colDiff;
 				}
-				
+
 				colDiff = _tileClip.right - col;
 				if (colDiff > 0) {
 					int countDiff = fgRunCount - count;

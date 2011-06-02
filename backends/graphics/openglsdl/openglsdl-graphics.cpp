@@ -302,7 +302,7 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 
 		int screenAspectRatio = _videoMode.screenWidth * 10000 / _videoMode.screenHeight;
 		int desiredAspectRatio = getAspectRatio();
-	
+
 		// Do not downscale dimensions, only enlarge them if needed
 		if (screenAspectRatio > desiredAspectRatio)
 			_videoMode.hardwareHeight = (_videoMode.overlayWidth * 10000  + 5000) / desiredAspectRatio;
@@ -385,7 +385,7 @@ void OpenGLSdlGraphicsManager::internUpdateScreen() {
 	OpenGLGraphicsManager::internUpdateScreen();
 
 	// Swap OpenGL buffers
-	SDL_GL_SwapBuffers(); 
+	SDL_GL_SwapBuffers();
 }
 
 #ifdef USE_OSD
@@ -557,7 +557,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 					// Check if the desktop resolution has been detected
 					if (_desktopWidth > 0 && _desktopHeight > 0)
 						// If the new scale factor is too big, do not scale
-						if (_videoMode.screenWidth * factor > _desktopWidth || 
+						if (_videoMode.screenWidth * factor > _desktopWidth ||
 							_videoMode.screenHeight * factor > _desktopHeight)
 							return false;
 
@@ -607,7 +607,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		break;
 	case Common::EVENT_KEYUP:
 		return isHotkey(event);
-	// HACK: Handle special SDL event 
+	// HACK: Handle special SDL event
 	// The new screen size is saved on the mouse event as part of HACK,
 	// there is no common resize event.
 	case OSystem_SDL::kSdlEventResize:

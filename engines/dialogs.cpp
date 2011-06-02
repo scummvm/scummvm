@@ -173,7 +173,7 @@ void MainMenuDialog::reflowLayout() {
 		_loadButton->setEnabled(_engine->canLoadGameStateCurrently());
 	if (_engine->hasFeature(Engine::kSupportsSavingDuringRuntime))
 		_saveButton->setEnabled(_engine->canSaveGameStateCurrently());
-	
+
 	// Overlay size might have changed since the construction of the dialog.
 	// Update labels when it might be needed
 	// FIXME: it might be better to declare GUI::StaticTextWidget::setLabel() virtual

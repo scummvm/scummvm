@@ -56,7 +56,7 @@ private:
 	HugoEngine *_vm;
 
 	static const int kStepDy = 8;                   // Pixels per step movement
-	
+
 	int16    _firstIconId;                          // Index of first icon to display
 	int16   *_invent;
 	istate_t _inventoryState;                       // Inventory icon bar state

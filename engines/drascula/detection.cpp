@@ -243,7 +243,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 	},
-	
+
 	{
 		// Drascula French version (ScummVM repacked files)
 		{

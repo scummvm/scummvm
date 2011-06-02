@@ -140,7 +140,7 @@ void DosSoundMan_ns::playMusic() {
 	Common::SeekableReadStream *stream = _vm->_disk->loadMusic(_musicFile);
 	_midiPlayer->play(stream);
 	_midiPlayer->setVolume(255);
-	
+
 	_playing = true;
 }
 
@@ -159,7 +159,7 @@ void DosSoundMan_ns::pause(bool p) {
 bool DosSoundMan_ns::locationHasOwnSoftMusic(const char *locationName) {
 	return !scumm_stricmp(locationName, "night") || !scumm_stricmp(locationName, "intsushi");
 }
-	
+
 void DosSoundMan_ns::playCharacterMusic(const char *character) {
 	if (!character || locationHasOwnSoftMusic(_vm->_location._name)) {
 		return;
@@ -167,7 +167,7 @@ void DosSoundMan_ns::playCharacterMusic(const char *character) {
 
 	char *name = const_cast<char*>(character);
 	const char *newMusicFile = 0;
-	
+
 	if (!scumm_stricmp(name, _dinoName)) {
 		newMusicFile = "dino";
 	} else
@@ -200,7 +200,7 @@ void DosSoundMan_ns::playLocationMusic(const char *location) {
 		debugC(2, kDebugExec, "changeLocation: music stopped");
 	} else {
 		playCharacterMusic(_vm->_char.getBaseName());
-	}	
+	}
 }
 
 

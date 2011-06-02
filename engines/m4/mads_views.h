@@ -208,7 +208,7 @@ public:
 #define TIMED_TEXT_SIZE 10
 #define INDEFINITE_TIMEOUT 9999999
 
-enum KernelMessageFlags {KMSG_QUOTED = 1, KMSG_PLAYER_TIMEOUT = 2, KMSG_SEQ_ENTRY = 4, KMSG_SCROLL = 8, KMSG_RIGHT_ALIGN = 0x10, 
+enum KernelMessageFlags {KMSG_QUOTED = 1, KMSG_PLAYER_TIMEOUT = 2, KMSG_SEQ_ENTRY = 4, KMSG_SCROLL = 8, KMSG_RIGHT_ALIGN = 0x10,
 	KMSG_CENTER_ALIGN = 0x20, KMSG_EXPIRE = 0x40, KMSG_ACTIVE = 0x80};
 
 class MadsKernelMessageEntry {
@@ -388,7 +388,7 @@ struct MadsSequenceEntry {
 	int8 active;
 	int8 spriteListIndex;
 	bool flipped;
-	
+
 	int frameIndex;
 	int frameStart;
 	int numSprites;
@@ -402,7 +402,7 @@ struct MadsSequenceEntry {
 
 	bool nonFixed;
 	int field_13;
-	
+
 	Common::Point msgPos;
 	int triggerCountdown;
 	bool doneFlag;
@@ -424,10 +424,10 @@ private:
 public:
 	MadsSequenceList(MadsView &owner);
 
-	MadsSequenceEntry &operator[](int index) { return _entries[index]; }	
+	MadsSequenceEntry &operator[](int index) { return _entries[index]; }
 	void clear();
 	bool addSubEntry(int index, SequenceSubEntryMode mode, int frameIndex, int abortVal);
-	int add(int spriteListIndex, bool flipped, int frameIndex, int triggerCountdown, int delayTicks, 
+	int add(int spriteListIndex, bool flipped, int frameIndex, int triggerCountdown, int delayTicks,
 		int extraTicks, int numTicks, int msgX, int msgY, bool nonFixed, char scale, uint8 depth,
 		int frameInc, SpriteAnimType animType, int numSprites, int frameStart);
 	void remove(int seqIndex);
@@ -452,7 +452,7 @@ public:
 	virtual void setCurrentFrame(int frameNumber) = 0;
 	virtual int getCurrentFrame() = 0;
 };
-	
+
 
 class MadsView {
 private:

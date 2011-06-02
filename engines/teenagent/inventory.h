@@ -75,12 +75,12 @@ private:
 		void backgroundEffect(Graphics::Surface *s);
 		void render(Inventory *inventory, uint item_id, Graphics::Surface *surface, int delta);
 	};
-	
+
 	Item _graphics[24];
 
 	bool _active;
 	Common::Point _mouse;
-	
+
 	bool tryObjectCallback(InventoryObject *obj);
 
 	InventoryObject *_hoveredObj;

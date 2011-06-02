@@ -470,7 +470,7 @@ public:
 	bool isEmpty() const { return _actions.begin() == _actions.end(); }
 	void clear() { _actions.clear(); }
 	CurrentActionEntry &top() { return **_actions.begin(); }
-	CurrentActionEntry &bottom() { 
+	CurrentActionEntry &bottom() {
 		ActionsList::iterator i = _actions.end();
 		--i;
 		return **i;

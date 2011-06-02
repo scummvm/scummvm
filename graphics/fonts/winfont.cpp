@@ -81,7 +81,7 @@ bool WinFont::loadFromFON(const Common::String &fileName, const WinFontDirEntry 
 		return true;
 
 	// Then try loading via the PE code
-	return loadFromPE(fileName, dirEntry);	
+	return loadFromPE(fileName, dirEntry);
 }
 
 bool WinFont::loadFromNE(const Common::String &fileName, const WinFontDirEntry &dirEntry) {
@@ -98,7 +98,7 @@ bool WinFont::loadFromNE(const Common::String &fileName, const WinFontDirEntry &
 	}
 
 	uint32 fontId = getFontIndex(*fontDirectory, dirEntry);
-	
+
 	delete fontDirectory;
 
 	// Couldn't match the face name
@@ -133,7 +133,7 @@ bool WinFont::loadFromPE(const Common::String &fileName, const WinFontDirEntry &
 	}
 
 	uint32 fontId = getFontIndex(*fontDirectory, dirEntry);
-	
+
 	delete fontDirectory;
 
 	// Couldn't match the face name

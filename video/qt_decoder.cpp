@@ -134,7 +134,7 @@ uint32 QuickTimeDecoder::findKeyFrame(uint32 frame) const {
 	for (int i = _tracks[_videoTrackIndex]->keyframeCount - 1; i >= 0; i--)
 		if (_tracks[_videoTrackIndex]->keyframes[i] <= frame)
 				return _tracks[_videoTrackIndex]->keyframes[i];
-	
+
 	// If none found, we'll assume the requested frame is a key frame
 	return frame;
 }

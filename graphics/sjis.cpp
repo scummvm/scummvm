@@ -161,7 +161,7 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 		outlineExtraWidth = 0;
 		outlineXOffset = 1;
 	}
-	
+
 	if (maxH != -1 && maxH < height) {
 		height = maxH;
 		outlineExtraHeight = 0;
@@ -191,7 +191,7 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 		if (_drawMode == kOutlineMode) {
 			blitCharacter<uint8>(outline, width + outlineExtraWidth, height + outlineExtraHeight, (uint8 *)dst, pitch, c2);
 			blitCharacter<uint8>(glyphSource, width - outlineXOffset, height - outlineYOffset, (uint8 *)dst + pitch + 1, pitch, c1);
-		} else {			
+		} else {
 			if (_drawMode != kDefaultMode) {
 				blitCharacter<uint8>(glyphSource, width - outlineXOffset, height, ((uint8*)dst) + 1, pitch, c2);
 				blitCharacter<uint8>(glyphSource, width, height - outlineYOffset, ((uint8*)dst) + pitch, pitch, c2);

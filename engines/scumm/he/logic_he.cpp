@@ -1018,7 +1018,7 @@ int LogicHEsoccer::op_1007(int32 *args) {
 // Returns the square root of the sum of the squares of the arguments
 static inline double sqrtSquare(double a1, double a2, double a3) {
 	return sqrt(a1 * a1 + a2 * a2 + a3 * a3);
-}	
+}
 
 int LogicHEsoccer::op_1008(int32 *args) {
 	// TODO: Used during a match (kicking?)
