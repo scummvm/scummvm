@@ -151,9 +151,7 @@ GameList SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 		while (sv->dinnerTableEntries) {
 			if (dinnerTableEntries == sv->dinnerTableEntries &&
 				(sv->dataDiskSize == dataDiskSize || sv->dataDiskSize == -1)) {
-				char buf[32];
-				snprintf(buf, sizeof(buf), "v0.0%d %s", sv->version, sv->extraDesc);
-				dg.updateDesc(buf);
+				dg.updateDesc(Common::String::format("v0.0%d %s", sv->version, sv->extraDesc).c_str());
 				dg.setGUIOptions(sv->guioptions);
 				break;
 			}
