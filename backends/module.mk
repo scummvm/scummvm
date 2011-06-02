@@ -108,7 +108,8 @@ ifdef PLAYSTATION3
 MODULE_OBJS += \
 	fs/posix/posix-fs.o \
 	fs/posix/posix-fs-factory.o \
-	fs/ps3/ps3-fs-factory.o
+	fs/ps3/ps3-fs-factory.o \
+	mixer/sdl13/sdl13-mixer.o
 endif
 
 ifeq ($(BACKEND),ds)
