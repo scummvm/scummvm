@@ -67,12 +67,12 @@ void ArchiveReader::dump(uint resIndex, const char *prefix) {
 	int32 resourceSize = getResourceSize(resIndex);
 	byte *data = new byte[resourceSize];
 
-	char fn[256];
+	Common::String fn;
 	
 	if (prefix)
-		snprintf(fn, 256, "%s_%04X.0", prefix, resIndex);
+		fn = Common::String::format("%s_%04X.0", prefix, resIndex);
 	else
-		snprintf(fn, 256, "%04X.0", resIndex);
+		fn = Common::String::format("%04X.0", resIndex);
 
 	openResource(resIndex);
 	read(data, resourceSize);
