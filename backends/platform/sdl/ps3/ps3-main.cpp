@@ -22,33 +22,18 @@
 
 #include "common/scummsys.h"
 
-// Several SDL based ports use a custom main, and hence do not want to compile
-// of this file. The following "#if" ensures that.
-#if !defined(POSIX) && \
-    !defined(WIN32) && \
-    !defined(__MAEMO__) && \
-    !defined(__SYMBIAN32__) && \
-    !defined(_WIN32_WCE) && \
-    !defined(__amigaos4__) && \
-    !defined(DINGUX) && \
-    !defined(CAANOO) && \
-    !defined(LINUXMOTO) && \
-    !defined(SAMSUNGTV) && \
-    !defined(PLAYSTATION3) && \
-    !defined(OPENPANDORA)
-
-#include "backends/platform/sdl/sdl.h"
+#include "backends/platform/sdl/ps3/ps3.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
 int main(int argc, char *argv[]) {
 
 	// Create our OSystem instance
-	g_system = new OSystem_SDL();
+	g_system = new OSystem_PS3();
 	assert(g_system);
 
 	// Pre initialize the backend
-	((OSystem_SDL *)g_system)->init();
+	((OSystem_PS3 *)g_system)->init();
 
 #ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
@@ -58,9 +43,7 @@ int main(int argc, char *argv[]) {
 	int res = scummvm_main(argc, argv);
 
 	// Free OSystem
-	delete (OSystem_SDL *)g_system;
+	delete (OSystem_PS3 *)g_system;
 
 	return res;
 }
-
-#endif

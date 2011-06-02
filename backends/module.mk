@@ -104,6 +104,13 @@ MODULE_OBJS += \
 	midi/camd.o
 endif
 
+ifdef PLAYSTATION3
+MODULE_OBJS += \
+	fs/posix/posix-fs.o \
+	fs/posix/posix-fs-factory.o \
+	fs/ps3/ps3-fs-factory.o
+endif
+
 ifeq ($(BACKEND),ds)
 MODULE_OBJS += \
 	fs/ds/ds-fs.o \

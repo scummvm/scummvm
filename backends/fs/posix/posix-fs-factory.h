@@ -30,6 +30,7 @@
  * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
 class POSIXFilesystemFactory : public FilesystemFactory {
+protected:
 	virtual AbstractFSNode *makeRootFileNode() const;
 	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const;
 	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const;
