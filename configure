@@ -2379,6 +2379,15 @@ case $_backend in
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		DEFINES="$DEFINES -DSDL_BACKEND"
 		add_line_to_config_mk "SDL_BACKEND = 1"
+
+		_sdlversion=`$_sdlconfig --version`
+		case $_sdlversion in
+			1.3.*)
+				add_line_to_config_mk "USE_SDL13 = 1"
+				;;
+			*)
+				;;
+		esac
 		;;
 esac
 

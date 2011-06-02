@@ -60,7 +60,6 @@ endif
 # derive from the SDL backend, and they all need the following files.
 ifdef SDL_BACKEND
 MODULE_OBJS += \
-	audiocd/sdl/sdl-audiocd.o \
 	events/sdl/sdl-events.o \
 	graphics/surfacesdl/surfacesdl-graphics.o \
 	mixer/doublebuffersdl/doublebuffersdl-mixer.o \
@@ -68,6 +67,12 @@ MODULE_OBJS += \
 	mutex/sdl/sdl-mutex.o \
 	plugins/sdl/sdl-provider.o \
 	timer/sdl/sdl-timer.o
+	
+# SDL 1.3 removed audio CD support
+ifndef USE_SDL13
+MODULE_OBJS += \
+	audiocd/sdl/sdl-audiocd.o
+endif
 endif
 
 ifdef POSIX
