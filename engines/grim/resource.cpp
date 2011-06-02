@@ -242,7 +242,7 @@ CMap *ResourceLoader::loadColormap(const Common::String &filename) {
 	return result;
 }
 
-static Common::String fixFilename(const Common::String filename) {
+static Common::String fixFilename(const Common::String filename, bool append = true) {
 	Common::String fname(filename);
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		int len = fname.size();
@@ -252,7 +252,8 @@ static Common::String fixFilename(const Common::String filename) {
 			}
 		}
 		// Append b to end of filename for EMI
-		fname += "b";
+		if (append)
+			fname += "b";
 	}
 	return fname;
 }
@@ -329,11 +330,11 @@ LipSync *ResourceLoader::loadLipSync(const Common::String &filename) {
 }
 
 Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c) {
-	Common::String fname = filename;
+	Common::String fname = fixFilename(filename, false);
 	fname.toLowercase();
-	Block *b = getFileFromCache(filename);
+	Block *b = getFileFromCache(fname);
 	if (!b) {
-		b = getFileBlock(filename);
+		b = getFileBlock(fname);
 		if (!b)
 			error("Could not find material %s", filename.c_str());
 		putIntoCache(filename, b);
