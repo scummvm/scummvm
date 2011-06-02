@@ -185,10 +185,7 @@ void CineMetaEngine::removeSaveState(const char *target, int slot) const {
 	memset(saveNames, 0, sizeof(saveNames));
 
 	Common::InSaveFile *in;
-	char tmp[80];
-
-	snprintf(tmp, 80, "%s.dir", target);
-	in = g_system->getSavefileManager()->openForLoading(tmp);
+	in = g_system->getSavefileManager()->openForLoading(Common::String::format("%s.dir", target));
 
 	if (!in)
 		return;
@@ -202,12 +199,10 @@ void CineMetaEngine::removeSaveState(const char *target, int slot) const {
 	strncpy(saveNames[slot], slotName, 20);
 
 	// Update savegame descriptions
-	char indexFile[80];
-	snprintf(indexFile, 80, "%s.dir", target);
-
+	Common::String indexFile = Common::String::format("%s.dir", target);
 	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(indexFile);
 	if (!out) {
-		warning("Unable to open file %s for saving", indexFile);
+		warning("Unable to open file %s for saving", indexFile.c_str());
 		return;
 	}
 
@@ -246,12 +241,11 @@ Common::Error CineEngine::saveGameState(int slot, const char *desc) {
 	currentSaveName[slot][sizeof(CommandeType) - 1] = 0;
 
 	// Update savegame descriptions
-	char indexFile[80];
-	snprintf(indexFile, 80, "%s.dir", _targetName.c_str());
+	Common::String indexFile = Common::String::format("%s.dir", _targetName.c_str());
 
 	Common::OutSaveFile *fHandle = _saveFileMan->openForSaving(indexFile);
 	if (!fHandle) {
-		warning("Unable to open file %s for saving", indexFile);
+		warning("Unable to open file %s for saving", indexFile.c_str());
 		return Common::kUnknownError;
 	}
 

@@ -460,10 +460,7 @@ void saveSeqList(Common::OutSaveFile &out) {
 
 bool CineEngine::loadSaveDirectory() {
 	Common::InSaveFile *fHandle;
-	char tmp[80];
-
-	snprintf(tmp, 80, "%s.dir", _targetName.c_str());
-	fHandle = _saveFileMan->openForLoading(tmp);
+	fHandle = _saveFileMan->openForLoading(Common::String::format("%s.dir", _targetName.c_str()));
 
 	if (!fHandle) {
 		return false;
