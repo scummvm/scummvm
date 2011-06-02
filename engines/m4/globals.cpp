@@ -154,24 +154,24 @@ void Kernel::loadGlobalScriptFunctions() {
 }
 
 void Kernel::loadSectionScriptFunctions() {
-	char tempFnName[128];
-	snprintf(tempFnName, 128, "section_init_%d", currentSection);
+	Common::String tempFnName;
+	tempFnName = Common::String::format("section_init_%d", currentSection);
 	_sectionInitFn = _vm->_script->loadFunction(tempFnName);
-	snprintf(tempFnName, 128, "section_daemon_%d", currentSection);
+	tempFnName = Common::String::format("section_daemon_%d", currentSection);
 	_sectionDaemonFn = _vm->_script->loadFunction(tempFnName);
-	snprintf(tempFnName, 128, "section_parser_%d", currentSection);
+	tempFnName = Common::String::format("section_parser_%d", currentSection);
 	_sectionParserFn = _vm->_script->loadFunction(tempFnName);
 }
 
 void Kernel::loadRoomScriptFunctions() {
-	char tempFnName[128];
-	snprintf(tempFnName, 128, "room_init_%d", currentRoom);
+	Common::String tempFnName;
+	tempFnName = Common::String::format("room_init_%d", currentRoom);
 	_roomInitFn = _vm->_script->loadFunction(tempFnName);
-	snprintf(tempFnName, 128, "room_daemon_%d", currentRoom);
+	tempFnName = Common::String::format("room_daemon_%d", currentRoom);
 	_roomDaemonFn = _vm->_script->loadFunction(tempFnName);
-	snprintf(tempFnName, 128, "room_pre_parser_%d", currentRoom);
+	tempFnName = Common::String::format("room_pre_parser_%d", currentRoom);
 	_roomPreParserFn = _vm->_script->loadFunction(tempFnName);
-	snprintf(tempFnName, 128, "room_parser_%d", currentRoom);
+	tempFnName = Common::String::format("room_parser_%d", currentRoom);
 	_roomParserFn = _vm->_script->loadFunction(tempFnName);
 }
 
