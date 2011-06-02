@@ -223,11 +223,8 @@ SaveStateList SagaMetaEngine::listSaves(const char *target) const {
 int SagaMetaEngine::getMaximumSaveSlot() const { return MAX_SAVES - 1; }
 
 void SagaMetaEngine::removeSaveState(const char *target, int slot) const {
-	char extension[6];
-	snprintf(extension, sizeof(extension), ".s%02d", slot);
-
 	Common::String filename = target;
-	filename += extension;
+	filename += Common::String::format(".s%02d", slot);;
 
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
