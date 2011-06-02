@@ -201,8 +201,7 @@ public:
 		}
 		for (int slot = 0; slot <= Tucker::kLastSaveSlot; ++slot) {
 			if (slotsTable[slot]) {
-				char description[64];
-				snprintf(description, sizeof(description), "savegm.%02d", slot);
+				Common::String description = Common::String::format("savegm.%02d", slot);
 				saveList.push_back(SaveStateDescriptor(slot, description));
 			}
 		}
