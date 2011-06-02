@@ -215,15 +215,13 @@ void ToonEngine::parseInput() {
 				if (slotNum >= 0 && slotNum <= 9 && canSaveGameStateCurrently()) {
 					if (saveGame(slotNum, Common::String())) {
 						// ok
-						char buf[256];
-						snprintf(buf, 256, "Saved game in slot #%d ", slotNum);
+						Common::String buf = Common::String::format("Saved game in slot #%d ", slotNum);
 						GUI::TimedMessageDialog dialog(buf, 1000);
 						dialog.runModal();
 					} else {
-						char buf[256];
-						snprintf(buf, 256, "Could not quick save into slot #%d", slotNum);
-						GUI::MessageDialog dialog2(buf, "OK", 0);
-						dialog2.runModal();
+						Common::String buf = Common::String::format("Could not quick save into slot #%d", slotNum);
+						GUI::MessageDialog dialog(buf, "OK", 0);
+						dialog.runModal();
 
 					}
 				}
@@ -234,15 +232,13 @@ void ToonEngine::parseInput() {
 				if (slotNum >= 0 && slotNum <= 9 && canLoadGameStateCurrently()) {
 					if (loadGame(slotNum)) {
 						// ok
-						char buf[256];
-						snprintf(buf, 256, "Savegame #%d quick loaded", slotNum);
+						Common::String buf = Common::String::format("Savegame #%d quick loaded", slotNum);
 						GUI::TimedMessageDialog dialog(buf, 1000);
 						dialog.runModal();
 					} else {
-						char buf[256];
-						snprintf(buf, 256, "Could not quick load the savegame #%d", slotNum);
+						Common::String buf = Common::String::format("Could not quick load the savegame #%d", slotNum);
 						GUI::MessageDialog dialog(buf, "OK", 0);
-						warning("%s", buf);
+						warning("%s", buf.c_str());
 						dialog.runModal();
 					}
 				}
@@ -404,15 +400,15 @@ void ToonEngine::render() {
 	//_drew->plotPath(*_mainSurface);		// used to debug path finding
 
 #if 0
-	char test[256];
 	if (_mouseX > 0 && _mouseX < 640 && _mouseY > 0 && _mouseY < 400) {
-		sprintf(test, "%d %d / mask %d layer %d z %d", _mouseX, _mouseY, getMask()->getData(_mouseX, _mouseY), getLayerAtPoint(_mouseX, _mouseY), getZAtPoint(_mouseX, _mouseY));
+		Common::String test;
+		test = Common::String::format("%d %d / mask %d layer %d z %d", _mouseX, _mouseY, getMask()->getData(_mouseX, _mouseY), getLayerAtPoint(_mouseX, _mouseY), getZAtPoint(_mouseX, _mouseY));
 
 		int32 c = *(uint8 *)_mainSurface->getBasePtr(_mouseX, _mouseY);
-		sprintf(test, "%d %d / color id %d %d,%d,%d", _mouseX, _mouseY, c, _finalPalette[c * 3 + 0], _finalPalette[c * 3 + 1], _finalPalette[c * 3 + 2]);
+		test = Common::String::format("%d %d / color id %d %d,%d,%d", _mouseX, _mouseY, c, _finalPalette[c * 3 + 0], _finalPalette[c * 3 + 1], _finalPalette[c * 3 + 2]);
 
 		_fontRenderer->setFont(_fontToon);
-		_fontRenderer->renderText(40, 150, Common::String(test), 0);
+		_fontRenderer->renderText(40, 150, test, 0);
 	}
 #endif
 
@@ -4570,26 +4566,27 @@ void ToonEngine::createShadowLUT() {
 
 bool ToonEngine::loadToonDat() {
 	Common::File in;
-	char buf[256];
+	Common::String msg;
 	int majVer, minVer;
 
 	in.open("toon.dat");
 
 	if (!in.isOpen()) {
-		Common::String errorMessage = "You're missing the 'toon.dat' file. Get it from the ScummVM website";
-		GUIErrorMessage(errorMessage);
-		warning("%s", errorMessage.c_str());
+		msg = "You're missing the 'toon.dat' file. Get it from the ScummVM website";
+		GUIErrorMessage(msg);
+		warning("%s", msg.c_str());
 		return false;
 	}
 
 	// Read header
+	char buf[4+1];
 	in.read(buf, 4);
 	buf[4] = '\0';
 
 	if (strcmp(buf, "TOON")) {
-		Common::String errorMessage = "File 'toon.dat' is corrupt. Get it from the ScummVM website";
-		GUIErrorMessage(errorMessage);
-		warning("%s", errorMessage.c_str());
+		msg = "File 'toon.dat' is corrupt. Get it from the ScummVM website";
+		GUIErrorMessage(msg);
+		warning("%s", msg.c_str());
 		return false;
 	}
 
@@ -4597,9 +4594,9 @@ bool ToonEngine::loadToonDat() {
 	minVer = in.readByte();
 
 	if ((majVer != TOON_DAT_VER_MAJ) || (minVer != TOON_DAT_VER_MIN)) {
-		snprintf(buf, 256, "File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from the ScummVM website", TOON_DAT_VER_MAJ, TOON_DAT_VER_MIN, majVer, minVer);
-		GUIErrorMessage(buf);
-		warning("%s", buf);
+		msg = Common::String::format("File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from the ScummVM website", TOON_DAT_VER_MAJ, TOON_DAT_VER_MIN, majVer, minVer);
+		GUIErrorMessage(msg);
+		warning("%s", msg.c_str());
 
 		return false;
 	}
