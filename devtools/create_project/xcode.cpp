@@ -215,7 +215,7 @@ void XCodeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &p
 // Setup functions
 //////////////////////////////////////////////////////////////////////////
 void XCodeProvider::setupCopyFilesBuildPhase() {
-	// TODO
+	// Nothing to do here
 }
 
 /**
@@ -228,7 +228,33 @@ void XCodeProvider::setupFrameworksBuildPhase() {
 }
 
 void XCodeProvider::setupNativeTarget() {
-	// TODO
+	_nativeTarget.comment = "PBXNativeTarget";
+
+	// Output native target section
+	for (unsigned int i = 0; i < _targets.size(); i++) {
+		Object *target = new Object(this, "PBXNativeTarget_" + _targets[i], "PBXNativeTarget", "PBXNativeTarget", "", _targets[i]);
+
+		target->addProperty("buildConfigurationList", getHash("XCConfigurationList_" + _targets[i]), "Build configuration list for PBXNativeTarget \"" + _targets[i] + "\"", SettingsNoValue);
+
+		Property buildPhases;
+		buildPhases.hasOrder = true;
+		buildPhases.flags = SettingsAsList;
+		buildPhases.settings[getHash("PBXResourcesBuildPhase_" + _targets[i])] = Setting("", "Resources", SettingsNoValue, 0, 0);
+		buildPhases.settings[getHash("PBXSourcesBuildPhase_" + _targets[i])] = Setting("", "Sources", SettingsNoValue, 0, 1);
+		buildPhases.settings[getHash("PBXFrameworksBuildPhase_" + _targets[i])] = Setting("", "Frameworks", SettingsNoValue, 0, 2);
+		target->properties["buildPhases"] = buildPhases;
+
+		target->addProperty("buildRules", "", "", SettingsNoValue|SettingsAsList);
+
+		target->addProperty("dependencies", "", "", SettingsNoValue|SettingsAsList);
+
+		target->addProperty("name", _targets[i], "", SettingsNoValue|SettingsQuoteVariable);
+		target->addProperty("productName", "scummvm", "", SettingsNoValue);
+		target->addProperty("productReference", getHash("PBXFileReference_ScummVM.app_" + _targets[i]), "ScummVM.app", SettingsNoValue);
+		target->addProperty("productType", "com.apple.product-type.application", "", SettingsNoValue|SettingsQuoteVariable);
+
+		_nativeTarget.add(target);
+	}
 }
 
 void XCodeProvider::setupProject() {
@@ -255,11 +281,12 @@ void XCodeProvider::setupProject() {
 	project->addProperty("projectRoot", "", "", SettingsNoValue|SettingsQuoteVariable);
 
 	// List of targets
-	//Property targets;
-	//targets.flags = SettingsAsList;
-	// TODO
-	//project->properties["targets"] = targets;
-	project->addProperty("targets", "", "", SettingsNoValue|SettingsAsList);
+	Property targets;
+	targets.flags = SettingsAsList;
+	targets.settings[getHash("PBXNativeTarget_" + _targets[0])] = Setting("", _targets[0], SettingsNoValue, 0, 0);
+	targets.settings[getHash("PBXNativeTarget_" + _targets[1])] = Setting("", _targets[1], SettingsNoValue, 0, 1);
+	targets.settings[getHash("PBXNativeTarget_" + _targets[2])] = Setting("", _targets[2], SettingsNoValue, 0, 2);
+	project->properties["targets"] = targets;
 
 	_project.add(project);
 }
