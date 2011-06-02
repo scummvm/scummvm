@@ -527,19 +527,55 @@ void XCodeProvider::setupBuildConfiguration() {
 	// * iPhone
 	// ****************************************/
 
-	//// Debug
+	// Debug
 	Object *iPhone_Debug_Object = new Object(this, "XCBuildConfiguration_ScummVM-iPhone_Debug", _targets[0] /* ScummVM-iPhone */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
 	Property iPhone_Debug;
-	iPhone_Debug.flags = SettingsSingleItem;
-	// TODO Add settings
+	ADD_SETTING_QUOTE(iPhone_Debug, "ARCHS", "$(ARCHS_UNIVERSAL_IPHONE_OS)");
+	ADD_SETTING_QUOTE(iPhone_Debug, "CODE_SIGN_IDENTITY", "iPhone Developer");
+	ADD_SETTING_QUOTE_VAR(iPhone_Debug, "CODE_SIGN_IDENTITY[sdk=iphoneos*]", "iPhone Developer");
+	ADD_SETTING(iPhone_Debug, "COMPRESS_PNG_FILES", "NO");
+	ADD_SETTING(iPhone_Debug, "COPY_PHASE_STRIP", "NO");
+	ADD_SETTING_QUOTE(iPhone_Debug, "DEBUG_INFORMATION_FORMAT", "dwarf-with-dsym");
+	ValueList iPhone_FrameworkSearchPaths;
+	iPhone_FrameworkSearchPaths.push_back("$(inherited)");
+	iPhone_FrameworkSearchPaths.push_back("\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"");
+	ADD_SETTING_LIST(iPhone_Debug, "FRAMEWORK_SEARCH_PATHS", iPhone_FrameworkSearchPaths, SettingsAsList, 5);
+	ADD_SETTING(iPhone_Debug, "GCC_DYNAMIC_NO_PIC", "NO");
+	ADD_SETTING(iPhone_Debug, "GCC_ENABLE_CPP_EXCEPTIONS", "NO");
+	ADD_SETTING(iPhone_Debug, "GCC_ENABLE_FIX_AND_CONTINUE", "NO");
+	ADD_SETTING(iPhone_Debug, "GCC_OPTIMIZATION_LEVEL", "0");
+	ADD_SETTING(iPhone_Debug, "GCC_PRECOMPILE_PREFIX_HEADER", "NO");
+	ADD_SETTING_QUOTE(iPhone_Debug, "GCC_PREFIX_HEADER", "");
+	ADD_SETTING(iPhone_Debug, "GCC_THUMB_SUPPORT", "NO");
+	ADD_SETTING(iPhone_Debug, "GCC_UNROLL_LOOPS", "YES");
+	ValueList iPhone_HeaderSearchPaths;
+	iPhone_HeaderSearchPaths.push_back("../../engines/");
+	iPhone_HeaderSearchPaths.push_back("../../");
+	iPhone_HeaderSearchPaths.push_back("include/");
+	ADD_SETTING_LIST(iPhone_Debug, "HEADER_SEARCH_PATHS", iPhone_HeaderSearchPaths, SettingsAsList|SettingsNoQuote, 5);
+	ADD_SETTING(iPhone_Debug, "INFOPLIST_FILE", "Info.plist");
+	ValueList iPhone_LibPaths;
+	iPhone_LibPaths.push_back("$(inherited)");
+	iPhone_LibPaths.push_back("\"$(SRCROOT)/lib\"");
+	ADD_SETTING_LIST(iPhone_Debug, "LIBRARY_SEARCH_PATHS", iPhone_LibPaths, SettingsAsList, 5);
+	ADD_SETTING(iPhone_Debug, "ONLY_ACTIVE_ARCH", "YES");
+	ADD_SETTING(iPhone_Debug, "PREBINDING", "NO");
+	ADD_SETTING(iPhone_Debug, "PRODUCT_NAME", "ScummVM");
+	ADD_SETTING_QUOTE(iPhone_Debug, "PROVISIONING_PROFILE", "EF590570-5FAC-4346-9071-D609DE2B28D8");
+	ADD_SETTING_QUOTE_VAR(iPhone_Debug, "PROVISIONING_PROFILE[sdk=iphoneos*]", "");
+	ADD_SETTING(iPhone_Debug, "SDKROOT", "iphoneos4.0");
+	ADD_SETTING_QUOTE(iPhone_Debug, "TARGETED_DEVICE_FAMILY", "1,2");
 
 	iPhone_Debug_Object->addProperty("name", "Debug", "", SettingsNoValue);
 	iPhone_Debug_Object->properties["buildSettings"] = iPhone_Debug;
 
-	//// Release
+	// Release
 	Object *iPhone_Release_Object = new Object(this, "XCBuildConfiguration_ScummVM-iPhone_Release", _targets[0] /* ScummVM-iPhone */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
 	Property iPhone_Release(iPhone_Debug);
-	// TODO Add settings
+	ADD_SETTING(iPhone_Release, "GCC_OPTIMIZATION_LEVEL", "3");
+	ADD_SETTING(iPhone_Release, "COPY_PHASE_STRIP", "YES");
+	REMOVE_SETTING(iPhone_Release, "GCC_DYNAMIC_NO_PIC");
+	ADD_SETTING(iPhone_Release, "WRAPPER_EXTENSION", "app");
 
 	iPhone_Release_Object->addProperty("name", "Release", "", SettingsNoValue);
 	iPhone_Release_Object->properties["buildSettings"] = iPhone_Release;
@@ -554,8 +590,36 @@ void XCodeProvider::setupBuildConfiguration() {
 	// Debug
 	Object *scummvm_Debug_Object = new Object(this, "XCBuildConfiguration_scummvm_Debug", "scummvm", "XCBuildConfiguration", "PBXProject", "Debug");
 	Property scummvm_Debug;
-	scummvm_Debug.flags = SettingsSingleItem;
-	// TODO Add settings
+	ADD_SETTING(scummvm_Debug, "ALWAYS_SEARCH_USER_PATHS", "NO");
+	ADD_SETTING_QUOTE(scummvm_Debug, "ARCHS", "$(ARCHS_STANDARD_32_BIT)");
+	ADD_SETTING_QUOTE(scummvm_Debug, "CODE_SIGN_IDENTITY", "Don't Code Sign");
+	ADD_SETTING_QUOTE_VAR(scummvm_Debug, "CODE_SIGN_IDENTITY[sdk=iphoneos*]", "Don't Code Sign");
+	ADD_SETTING_QUOTE(scummvm_Debug, "FRAMEWORK_SEARCH_PATHS", "");
+	ADD_SETTING(scummvm_Debug, "GCC_C_LANGUAGE_STANDARD", "c99");
+	ADD_SETTING(scummvm_Debug, "GCC_ENABLE_CPP_EXCEPTIONS", "NO");
+	ADD_SETTING(scummvm_Debug, "GCC_ENABLE_CPP_RTTI", "NO");
+	ADD_SETTING(scummvm_Debug, "GCC_INPUT_FILETYPE", "automatic");
+	ADD_SETTING(scummvm_Debug, "GCC_OPTIMIZATION_LEVEL", "0");
+	ValueList scummvm_defines(_defines);
+	ADD_DEFINE(scummvm_defines, "IPHONE");
+	ADD_DEFINE(scummvm_defines, "XCODE");
+	ADD_DEFINE(scummvm_defines, "IPHONE_OFFICIAL");
+	ADD_SETTING_LIST(scummvm_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvm_defines, SettingsNoQuote|SettingsAsList, 5);
+	ADD_SETTING(scummvm_Debug, "GCC_THUMB_SUPPORT", "NO");
+	ADD_SETTING(scummvm_Debug, "GCC_USE_GCC3_PFE_SUPPORT", "NO");
+	ADD_SETTING(scummvm_Debug, "GCC_WARN_ABOUT_RETURN_TYPE", "YES");
+	ADD_SETTING(scummvm_Debug, "GCC_WARN_UNUSED_VARIABLE", "YES");
+	ValueList scummvm_HeaderPaths;
+	scummvm_HeaderPaths.push_back("include/");
+	scummvm_HeaderPaths.push_back("../../engines/");
+	scummvm_HeaderPaths.push_back("../../");
+	ADD_SETTING_LIST(scummvm_Debug, "HEADER_SEARCH_PATHS", scummvm_HeaderPaths, SettingsNoQuote|SettingsAsList, 5);
+	ADD_SETTING_QUOTE(scummvm_Debug, "LIBRARY_SEARCH_PATHS", "");
+	ADD_SETTING(scummvm_Debug, "ONLY_ACTIVE_ARCH", "YES");
+	ADD_SETTING_QUOTE(scummvm_Debug, "OTHER_CFLAGS", "");
+	ADD_SETTING_QUOTE(scummvm_Debug, "OTHER_LDFLAGS", "-lz");
+	ADD_SETTING(scummvm_Debug, "PREBINDING", "NO");
+	ADD_SETTING(scummvm_Debug, "SDKROOT", "macosx10.6");
 
 	scummvm_Debug_Object->addProperty("name", "Debug", "", SettingsNoValue);
 	scummvm_Debug_Object->properties["buildSettings"] = scummvm_Debug;
@@ -563,7 +627,10 @@ void XCodeProvider::setupBuildConfiguration() {
 	// Release
 	Object *scummvm_Release_Object = new Object(this, "XCBuildConfiguration_scummvm_Release", "scummvm", "XCBuildConfiguration", "PBXProject", "Release");
 	Property scummvm_Release(scummvm_Debug);
-	// TODO Add settings
+	REMOVE_SETTING(scummvm_Release, "GCC_C_LANGUAGE_STANDARD");       // Not sure why we remove that, or any of the other warnings
+	REMOVE_SETTING(scummvm_Release, "GCC_WARN_ABOUT_RETURN_TYPE");
+	REMOVE_SETTING(scummvm_Release, "GCC_WARN_UNUSED_VARIABLE");
+	REMOVE_SETTING(scummvm_Release, "ONLY_ACTIVE_ARCH");
 
 	scummvm_Release_Object->addProperty("name", "Release", "", SettingsNoValue);
 	scummvm_Release_Object->properties["buildSettings"] = scummvm_Release;
@@ -578,8 +645,51 @@ void XCodeProvider::setupBuildConfiguration() {
 	// Debug
 	Object *scummvmOSX_Debug_Object = new Object(this, "XCBuildConfiguration_ScummVM-OSX_Debug", _targets[1] /* ScummVM-OS X */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
 	Property scummvmOSX_Debug;
-	scummvmOSX_Debug.flags = SettingsSingleItem;
-	// TODO Add settings
+	ADD_SETTING_QUOTE(scummvmOSX_Debug, "ARCHS", "$(NATIVE_ARCH)");
+	ADD_SETTING(scummvmOSX_Debug, "COMPRESS_PNG_FILES", "NO");
+	ADD_SETTING(scummvmOSX_Debug, "COPY_PHASE_STRIP", "NO");
+	ADD_SETTING_QUOTE(scummvmOSX_Debug, "DEBUG_INFORMATION_FORMAT", "dwarf-with-dsym");
+	ADD_SETTING_QUOTE(scummvmOSX_Debug, "FRAMEWORK_SEARCH_PATHS", "");
+	ADD_SETTING(scummvmOSX_Debug, "GCC_C_LANGUAGE_STANDARD", "c99");
+	ADD_SETTING(scummvmOSX_Debug, "GCC_ENABLE_CPP_EXCEPTIONS", "NO");
+	ADD_SETTING(scummvmOSX_Debug, "GCC_ENABLE_CPP_RTTI", "NO");
+	ADD_SETTING(scummvmOSX_Debug, "GCC_DYNAMIC_NO_PIC", "NO");
+	ADD_SETTING(scummvmOSX_Debug, "GCC_ENABLE_FIX_AND_CONTINUE", "NO");
+	ADD_SETTING(scummvmOSX_Debug, "GCC_OPTIMIZATION_LEVEL", "0");
+	ADD_SETTING(scummvmOSX_Debug, "GCC_PRECOMPILE_PREFIX_HEADER", "NO");
+	ADD_SETTING_QUOTE(scummvmOSX_Debug, "GCC_PREFIX_HEADER", "");
+	ValueList scummvmOSX_defines(_defines);
+	ADD_DEFINE(scummvmOSX_defines, "SDL_BACKEND");
+	ADD_DEFINE(scummvmOSX_defines, "MACOSX");
+	ADD_SETTING_LIST(scummvmOSX_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmOSX_defines, SettingsNoQuote|SettingsAsList, 5);
+	ADD_SETTING_QUOTE(scummvmOSX_Debug, "GCC_VERSION", "");
+	ValueList scummvmOSX_HeaderPaths;
+	scummvmOSX_HeaderPaths.push_back("/opt/local/include/SDL");
+	scummvmOSX_HeaderPaths.push_back("/opt/local/include");
+	scummvmOSX_HeaderPaths.push_back("include/");
+	scummvmOSX_HeaderPaths.push_back("../../engines/");
+	scummvmOSX_HeaderPaths.push_back("../../");
+	ADD_SETTING_LIST(scummvmOSX_Debug, "HEADER_SEARCH_PATHS", scummvmOSX_HeaderPaths, SettingsNoQuote|SettingsAsList, 5);
+	ADD_SETTING_QUOTE(scummvmOSX_Debug, "INFOPLIST_FILE", "$(SRCROOT)/../macosx/Info.plist");
+	ValueList scummvmOSX_LibPaths;
+	scummvmOSX_LibPaths.push_back("/sw/lib");
+	scummvmOSX_LibPaths.push_back("/opt/local/lib");
+	scummvmOSX_LibPaths.push_back("\"$(inherited)\"");
+	scummvmOSX_LibPaths.push_back("\"\\\\\\\"$(SRCROOT)/lib\\\\\\\"\"");  // mmmh, all those slashes, it's almost Christmas \o/
+	ADD_SETTING_LIST(scummvmOSX_Debug, "LIBRARY_SEARCH_PATHS", scummvmOSX_LibPaths, SettingsNoQuote|SettingsAsList, 5);
+	ADD_SETTING_QUOTE(scummvmOSX_Debug, "OTHER_CFLAGS", "");
+	ValueList scummvmOSX_LdFlags;
+	scummvmOSX_LdFlags.push_back("-lSDLmain");
+	scummvmOSX_LdFlags.push_back("-logg");
+	scummvmOSX_LdFlags.push_back("-lvorbisfile");
+	scummvmOSX_LdFlags.push_back("-lvorbis");
+	scummvmOSX_LdFlags.push_back("-lmad");
+	scummvmOSX_LdFlags.push_back("-lFLAC");
+	scummvmOSX_LdFlags.push_back("-lSDL");
+	scummvmOSX_LdFlags.push_back("-lz");
+	ADD_SETTING_LIST(scummvmOSX_Debug, "OTHER_LDFLAGS", scummvmOSX_LdFlags, SettingsAsList, 5);
+	ADD_SETTING(scummvmOSX_Debug, "PREBINDING", "NO");
+	ADD_SETTING(scummvmOSX_Debug, "PRODUCT_NAME", "ScummVM");
 
 	scummvmOSX_Debug_Object->addProperty("name", "Debug", "", SettingsNoValue);
 	scummvmOSX_Debug_Object->properties["buildSettings"] = scummvmOSX_Debug;
@@ -587,7 +697,10 @@ void XCodeProvider::setupBuildConfiguration() {
 	// Release
 	Object *scummvmOSX_Release_Object = new Object(this, "XCBuildConfiguration_ScummVMOSX_Release", _targets[1] /* ScummVM-OS X */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
 	Property scummvmOSX_Release(scummvmOSX_Debug);
-	// TODO Add settings
+	ADD_SETTING(scummvmOSX_Release, "COPY_PHASE_STRIP", "YES");
+	REMOVE_SETTING(scummvmOSX_Release, "GCC_DYNAMIC_NO_PIC");
+	REMOVE_SETTING(scummvmOSX_Release, "GCC_OPTIMIZATION_LEVEL");
+	ADD_SETTING(scummvmOSX_Release, "WRAPPER_EXTENSION", "app");
 
 	scummvmOSX_Release_Object->addProperty("name", "Release", "", SettingsNoValue);
 	scummvmOSX_Release_Object->properties["buildSettings"] = scummvmOSX_Release;
@@ -602,7 +715,10 @@ void XCodeProvider::setupBuildConfiguration() {
 	// Debug
 	Object *scummvmSimulator_Debug_Object = new Object(this, "XCBuildConfiguration_ScummVM-Simulator_Debug", _targets[2] /* ScummVM-Simulator */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
 	Property scummvmSimulator_Debug(iPhone_Debug);
-	// TODO Add settings
+	ADD_SETTING_QUOTE(scummvmSimulator_Debug, "FRAMEWORK_SEARCH_PATHS", "$(inherited)");
+	ADD_SETTING_LIST(scummvmSimulator_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvm_defines, SettingsNoQuote|SettingsAsList, 5);
+	ADD_SETTING(scummvmSimulator_Debug, "SDKROOT", "iphonesimulator3.2");
+	REMOVE_SETTING(scummvmSimulator_Debug, "TARGETED_DEVICE_FAMILY");
 
 	scummvmSimulator_Debug_Object->addProperty("name", "Debug", "", SettingsNoValue);
 	scummvmSimulator_Debug_Object->properties["buildSettings"] = scummvmSimulator_Debug;
@@ -610,7 +726,9 @@ void XCodeProvider::setupBuildConfiguration() {
 	// Release
 	Object *scummvmSimulator_Release_Object = new Object(this, "XCBuildConfiguration_ScummVM-Simulator_Release", _targets[2] /* ScummVM-Simulator */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
 	Property scummvmSimulator_Release(scummvmSimulator_Debug);
-	/// TODO Add settings
+	ADD_SETTING(scummvmSimulator_Release, "COPY_PHASE_STRIP", "YES");
+	REMOVE_SETTING(scummvmSimulator_Release, "GCC_DYNAMIC_NO_PIC");
+	ADD_SETTING(scummvmSimulator_Release, "WRAPPER_EXTENSION", "app");
 
 	scummvmSimulator_Release_Object->addProperty("name", "Release", "", SettingsNoValue);
 	scummvmSimulator_Release_Object->properties["buildSettings"] = scummvmSimulator_Release;
@@ -618,8 +736,8 @@ void XCodeProvider::setupBuildConfiguration() {
 	_buildConfiguration.add(scummvmSimulator_Debug_Object);
 	_buildConfiguration.add(scummvmSimulator_Release_Object);
 
-	////////////////////////////////////////////////////////////////////////////
-	//// Configuration List
+	//////////////////////////////////////////////////////////////////////////
+	// Configuration List
 	_configurationList.comment = "XCConfigurationList";
 	_configurationList.flags = SettingsAsList;
 
