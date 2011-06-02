@@ -1617,10 +1617,7 @@ int TownsAudio_PcmChannel::initInstrument(uint8 &note, TownsAudio_WaveTable *&ta
 	if (i == 8)
 		return 8;
 
-	int il = i << 3;
-	note += _curInstrument[il + 70];
-	
-	uint8 *d = &_curInstrument[il + 64];
+	uint8 *d = &_curInstrument[(i << 3) + 64];
 	_envTotalLevel = d[0];
 	_envAttackRate = d[1];
 	_envDecayRate = d[2];
@@ -1822,7 +1819,7 @@ void TownsAudio_PcmChannel::envAttack() {
 	_envState = kEnvAttacking;
 	int16 t = _envTotalLevel << 8;
 	if (_envAttackRate == 127) {
-		_envStep = 0;
+		_envCurrentLevel = _envStep = 0;
 	} else if (_envAttackRate) {
 		_envStep = t / _envAttackRate;
 		_envCurrentLevel = 1;
