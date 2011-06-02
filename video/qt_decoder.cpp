@@ -203,38 +203,6 @@ void QuickTimeDecoder::seekToTime(Audio::Timestamp time) {
 	seekToFrame(frame);
 }
 
-Codec *QuickTimeDecoder::createCodec(uint32 codecTag, byte bitsPerPixel) {
-	if (codecTag == MKTAG('c','v','i','d')) {
-		// Cinepak: As used by most Myst and all Riven videos as well as some Myst ME videos. "The Chief" videos also use this.
-		return new CinepakDecoder(bitsPerPixel);
-	} else if (codecTag == MKTAG('r','p','z','a')) {
-		// Apple Video ("Road Pizza"): Used by some Myst videos.
-		return new RPZADecoder(getWidth(), getHeight());
-	} else if (codecTag == MKTAG('r','l','e',' ')) {
-		// QuickTime RLE: Used by some Myst ME videos.
-		return new QTRLEDecoder(getWidth(), getHeight(), bitsPerPixel);
-	} else if (codecTag == MKTAG('s','m','c',' ')) {
-		// Apple SMC: Used by some Myst videos.
-		return new SMCDecoder(getWidth(), getHeight());
-	} else if (codecTag == MKTAG('S','V','Q','1')) {
-		// Sorenson Video 1: Used by some Myst ME videos.
-		warning("Sorenson Video 1 not yet supported");
-	} else if (codecTag == MKTAG('S','V','Q','3')) {
-		// Sorenson Video 3: Used by some Myst ME videos.
-		warning("Sorenson Video 3 not yet supported");
-	} else if (codecTag == MKTAG('j','p','e','g')) {
-		// Motion JPEG: Used by some Myst ME 10th Anniversary videos.
-		return new JPEGDecoder();
-	} else if (codecTag == MKTAG('Q','k','B','k')) {
-		// CDToons: Used by most of the Broderbund games.
-		return new CDToonsDecoder(getWidth(), getHeight());
-	} else {
-		warning("Unsupported codec \'%s\'", tag2str(codecTag));
-	}
-
-	return NULL;
-}
-
 void QuickTimeDecoder::startAudio() {
 	if (_audStream) {
 		updateAudioBuffer();
@@ -256,7 +224,7 @@ Codec *QuickTimeDecoder::findDefaultVideoCodec() const {
 	if (_videoStreamIndex < 0 || _streams[_videoStreamIndex]->sampleDescs.empty())
 		return 0;
 
-	return ((VideoSampleDesc *)_streams[_videoStreamIndex]->sampleDescs[0])->videoCodec;
+	return ((VideoSampleDesc *)_streams[_videoStreamIndex]->sampleDescs[0])->_videoCodec;
 }
 
 const Graphics::Surface *QuickTimeDecoder::decodeNextFrame() {
@@ -282,22 +250,22 @@ const Graphics::Surface *QuickTimeDecoder::decodeNextFrame() {
 	// Find which video description entry we want
 	VideoSampleDesc *entry = (VideoSampleDesc *)_streams[_videoStreamIndex]->sampleDescs[descId - 1];
 
-	if (!entry->videoCodec)
+	if (!entry->_videoCodec)
 		return 0;
 
-	const Graphics::Surface *frame = entry->videoCodec->decodeImage(frameData);
+	const Graphics::Surface *frame = entry->_videoCodec->decodeImage(frameData);
 	delete frameData;
 
 	// Update the palette
-	if (entry->videoCodec->containsPalette()) {
+	if (entry->_videoCodec->containsPalette()) {
 		// The codec itself contains a palette
-		if (entry->videoCodec->hasDirtyPalette()) {
-			_palette = entry->videoCodec->getPalette();
+		if (entry->_videoCodec->hasDirtyPalette()) {
+			_palette = entry->_videoCodec->getPalette();
 			_dirtyPalette = true;
 		}
 	} else {
 		// Check if the video description has been updated
-		byte *palette = entry->palette;
+		byte *palette = entry->_palette;
 
 		if (palette != _palette) {
 			_palette = palette;
@@ -381,10 +349,8 @@ void QuickTimeDecoder::init() {
 
 	// Initialize video, if present
 	if (_videoStreamIndex >= 0) {
-		for (uint32 i = 0; i < _streams[_videoStreamIndex]->sampleDescs.size(); i++) {
-			VideoSampleDesc *entry = (VideoSampleDesc *)_streams[_videoStreamIndex]->sampleDescs[i];
-			entry->videoCodec = createCodec(entry->codecTag, entry->bitsPerSample & 0x1F);
-		}
+		for (uint32 i = 0; i < _streams[_videoStreamIndex]->sampleDescs.size(); i++)
+			((VideoSampleDesc *)_streams[_videoStreamIndex]->sampleDescs[i])->initCodec();
 
 		if (getScaleFactorX() != 1 || getScaleFactorY() != 1) {
 			// We have to initialize the scaled surface
@@ -398,8 +364,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(MOVStreamC
 	if (st->codec_type == CODEC_TYPE_VIDEO) {
 		debug(0, "Video Codec FourCC: \'%s\'", tag2str(format));
 
-		VideoSampleDesc *entry = new VideoSampleDesc();
-		entry->codecTag = format;
+		VideoSampleDesc *entry = new VideoSampleDesc(st, format);
 
 		_fd->readUint16BE(); // version
 		_fd->readUint16BE(); // revision level
@@ -426,24 +391,24 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(MOVStreamC
 		byte codec_name[32];
 		_fd->read(codec_name, 32); // codec name, pascal string (FIXME: true for mp4?)
 		if (codec_name[0] <= 31) {
-			memcpy(entry->codecName, &codec_name[1], codec_name[0]);
-			entry->codecName[codec_name[0]] = 0;
+			memcpy(entry->_codecName, &codec_name[1], codec_name[0]);
+			entry->_codecName[codec_name[0]] = 0;
 		}
 
-		entry->bitsPerSample = _fd->readUint16BE(); // depth
-		entry->colorTableId = _fd->readUint16BE(); // colortable id
+		entry->_bitsPerSample = _fd->readUint16BE(); // depth
+		entry->_colorTableId = _fd->readUint16BE(); // colortable id
 
 		// figure out the palette situation
-		byte colorDepth = entry->bitsPerSample & 0x1F;
-		bool colorGreyscale = (entry->bitsPerSample & 0x20) != 0;
+		byte colorDepth = entry->_bitsPerSample & 0x1F;
+		bool colorGreyscale = (entry->_bitsPerSample & 0x20) != 0;
 
 		debug(0, "color depth: %d", colorDepth);
 
 		// if the depth is 2, 4, or 8 bpp, file is palettized
 		if (colorDepth == 2 || colorDepth == 4 || colorDepth == 8) {
 			// Initialize the palette
-			entry->palette = new byte[256 * 3];
-			memset(entry->palette, 0, 256 * 3);
+			entry->_palette = new byte[256 * 3];
+			memset(entry->_palette, 0, 256 * 3);
 
 			if (colorGreyscale) {
 				debug(0, "Greyscale palette");
@@ -453,12 +418,12 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(MOVStreamC
 				int16 colorIndex = 255;
 				byte colorDec = 256 / (colorCount - 1);
 				for (byte j = 0; j < colorCount; j++) {
-					entry->palette[j * 3] = entry->palette[j * 3 + 1] = entry->palette[j * 3 + 2] = colorIndex;
+					entry->_palette[j * 3] = entry->_palette[j * 3 + 1] = entry->_palette[j * 3 + 2] = colorIndex;
 					colorIndex -= colorDec;
 					if (colorIndex < 0)
 						colorIndex = 0;
 				}
-			} else if (entry->colorTableId & 0x08) {
+			} else if (entry->_colorTableId & 0x08) {
 				// if flag bit 3 is set, use the default palette
 				//uint16 colorCount = 1 << colorDepth;
 
@@ -476,11 +441,11 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(MOVStreamC
 					// up front
 					_fd->readByte();
 					_fd->readByte();
-					entry->palette[j * 3] = _fd->readByte();
+					entry->_palette[j * 3] = _fd->readByte();
 					_fd->readByte();
-					entry->palette[j * 3 + 1] = _fd->readByte();
+					entry->_palette[j * 3 + 1] = _fd->readByte();
 					_fd->readByte();
-					entry->palette[j * 3 + 2] = _fd->readByte();
+					entry->_palette[j * 3 + 2] = _fd->readByte();
 					_fd->readByte();
 				}
 			}
@@ -581,10 +546,10 @@ void QuickTimeDecoder::updateAudioBuffer() {
 		uint32 curAudioChunk = _curAudioChunk - _audStream->numQueuedStreams();
 
 		for (; timeFilled < timeToNextFrame && curAudioChunk < _streams[_audioStreamIndex]->chunk_count; numberOfChunksNeeded++, curAudioChunk++) {
-			uint32 sampleCount = getAudioChunkSampleCount(curAudioChunk);
+			uint32 sampleCount = entry->getAudioChunkSampleCount(curAudioChunk);
 			assert(sampleCount);
 
-			timeFilled += sampleCount * 1000 / entry->sampleRate;
+			timeFilled += sampleCount * 1000 / entry->_sampleRate;
 		}
 
 		// Add a couple extra to ensure we don't underrun
@@ -596,16 +561,56 @@ void QuickTimeDecoder::updateAudioBuffer() {
 		queueNextAudioChunk();
 }
 
-QuickTimeDecoder::VideoSampleDesc::VideoSampleDesc() : Common::QuickTimeParser::SampleDesc() {
-	memset(codecName, 0, 32);
-	colorTableId = 0;
-	palette = 0;
-	videoCodec = 0;
+QuickTimeDecoder::VideoSampleDesc::VideoSampleDesc(Common::QuickTimeParser::MOVStreamContext *parentStream, uint32 codecTag) : Common::QuickTimeParser::SampleDesc(parentStream, codecTag) {
+	memset(_codecName, 0, 32);
+	_colorTableId = 0;
+	_palette = 0;
+	_videoCodec = 0;
+	_bitsPerSample = 0;
 }
 
 QuickTimeDecoder::VideoSampleDesc::~VideoSampleDesc() {
-	delete[] palette;
-	delete videoCodec;
+	delete[] _palette;
+	delete _videoCodec;
+}
+
+void QuickTimeDecoder::VideoSampleDesc::initCodec() {
+	switch (_codecTag) {
+	case MKTAG('c','v','i','d'):
+		// Cinepak: As used by most Myst and all Riven videos as well as some Myst ME videos. "The Chief" videos also use this.
+		_videoCodec = new CinepakDecoder(_bitsPerSample & 0x1f);
+		break;
+	case MKTAG('r','p','z','a'):
+		// Apple Video ("Road Pizza"): Used by some Myst videos.
+		_videoCodec = new RPZADecoder(_parentStream->width, _parentStream->height);
+		break;
+	case MKTAG('r','l','e',' '):
+		// QuickTime RLE: Used by some Myst ME videos.
+		_videoCodec = new QTRLEDecoder(_parentStream->width, _parentStream->height, _bitsPerSample & 0x1f);
+		break;
+	case MKTAG('s','m','c',' '):
+		// Apple SMC: Used by some Myst videos.
+		_videoCodec = new SMCDecoder(_parentStream->width, _parentStream->height);
+		break;
+	case MKTAG('S','V','Q','1'):
+		// Sorenson Video 1: Used by some Myst ME videos.
+		warning("Sorenson Video 1 not yet supported");
+		break;
+	case MKTAG('S','V','Q','3'):
+		// Sorenson Video 3: Used by some Myst ME videos.
+		warning("Sorenson Video 3 not yet supported");
+		break;
+	case MKTAG('j','p','e','g'):
+		// Motion JPEG: Used by some Myst ME 10th Anniversary videos.
+		_videoCodec = new JPEGDecoder();
+		break;
+	case MKTAG('Q','k','B','k'):
+		// CDToons: Used by most of the Broderbund games.
+		_videoCodec = new CDToonsDecoder(_parentStream->width, _parentStream->height);
+		break;
+	default:
+		warning("Unsupported codec \'%s\'", tag2str(_codecTag));
+	}
 }
 
 } // End of namespace Video

@@ -116,12 +116,18 @@ protected:
 		Common::Rational mediaRate;
 	};
 
-	struct SampleDesc {
-		SampleDesc();
+	struct MOVStreamContext;
+
+	class SampleDesc {
+	public:
+		SampleDesc(MOVStreamContext *parentStream, uint32 codecTag);
 		virtual ~SampleDesc() {}
 
-		uint32 codecTag;
-		uint16 bitsPerSample;
+		uint32 getCodecTag() const { return _codecTag; }
+
+	protected:
+		MOVStreamContext *_parentStream;
+		uint32 _codecTag;
 	};
 
 	enum CodecType {

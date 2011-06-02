@@ -65,30 +65,33 @@ public:
 	bool loadAudioStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle);
 
 protected:
-	struct AudioSampleDesc : public Common::QuickTimeParser::SampleDesc {
-		AudioSampleDesc();
+	class AudioSampleDesc : public Common::QuickTimeParser::SampleDesc {
+	public:
+		AudioSampleDesc(Common::QuickTimeParser::MOVStreamContext *parentStream, uint32 codecTag);
 
-		uint16 channels;
-		uint32 sampleRate;
-		uint32 samplesPerFrame;
-		uint32 bytesPerFrame;
+		bool isAudioCodecSupported() const;
+		uint32 getAudioChunkSampleCount(uint chunk) const;
+		AudioStream *createAudioStream(Common::SeekableReadStream *stream) const;
+
+		// TODO: Make private in the long run
+		uint16 _bitsPerSample;
+		uint16 _channels;
+		uint32 _sampleRate;
+		uint32 _samplesPerFrame;
+		uint32 _bytesPerFrame;
 	};
 
 	// Common::QuickTimeParser API
 	virtual Common::QuickTimeParser::SampleDesc *readSampleDesc(MOVStreamContext *st, uint32 format);
 
-	AudioStream *createAudioStream(Common::SeekableReadStream *stream);
-	bool checkAudioCodecSupport(uint32 tag, byte objectTypeMP4);
 	void init();
-
-	void queueNextAudioChunk();
-	uint32 getAudioChunkSampleCount(uint chunk);
-	int8 _audioStreamIndex;
-	uint _curAudioChunk;
-	QueuingAudioStream *_audStream;
-
 	void setAudioStreamPos(const Timestamp &where);
 	bool isOldDemuxing() const;
+	void queueNextAudioChunk();
+
+	int _audioStreamIndex;
+	uint _curAudioChunk;
+	QueuingAudioStream *_audStream;
 };
 
 } // End of namespace Audio

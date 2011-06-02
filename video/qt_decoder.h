@@ -114,14 +114,19 @@ public:
 	uint32 getDuration() const { return _duration * 1000 / _timeScale; }
 
 protected:
-	struct VideoSampleDesc : public Common::QuickTimeParser::SampleDesc {
-		VideoSampleDesc();
+	class VideoSampleDesc : public Common::QuickTimeParser::SampleDesc {
+	public:
+		VideoSampleDesc(Common::QuickTimeParser::MOVStreamContext *parentStream, uint32 codecTag);
 		~VideoSampleDesc();
 
-		char codecName[32];
-		uint16 colorTableId;
-		byte *palette;
-		Codec *videoCodec;
+		void initCodec();
+
+		// TODO: Make private in the long run
+		uint16 _bitsPerSample;
+		char _codecName[32];
+		uint16 _colorTableId;
+		byte *_palette;
+		Codec *_videoCodec;
 	};
 
 	Common::QuickTimeParser::SampleDesc *readSampleDesc(MOVStreamContext *st, uint32 format);

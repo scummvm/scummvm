@@ -686,7 +686,7 @@ int QuickTimeParser::readWAVE(MOVatom atom) {
 	if (atom.size > (1 << 30))
 		return -1;
 
-	if (st->sampleDescs[0]->codecTag == MKTAG('Q', 'D', 'M', '2')) // Read extradata for QDM2
+	if (st->sampleDescs[0]->getCodecTag() == MKTAG('Q', 'D', 'M', '2')) // Read extradata for QDM2
 		st->extradata = _fd->readStream(atom.size - 8);
 	else if (atom.size > 8)
 		return readDefault(atom);
@@ -773,9 +773,9 @@ void QuickTimeParser::close() {
 	_fd = 0;
 }
 
-QuickTimeParser::SampleDesc::SampleDesc() {
-	codecTag = 0;
-	bitsPerSample = 0;
+QuickTimeParser::SampleDesc::SampleDesc(MOVStreamContext *parentStream, uint32 codecTag) {
+	_parentStream = parentStream;
+	_codecTag = codecTag;
 }
 
 QuickTimeParser::MOVStreamContext::MOVStreamContext() {

@@ -79,13 +79,13 @@ void QuickTimeAudioDecoder::init() {
 	if (_audioStreamIndex >= 0) {
 		AudioSampleDesc *entry = (AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
 
-		if (checkAudioCodecSupport(entry->codecTag, _streams[_audioStreamIndex]->objectTypeMP4)) {
-			_audStream = makeQueuingAudioStream(entry->sampleRate, entry->channels == 2);
+		if (entry->isAudioCodecSupported()) {
+			_audStream = makeQueuingAudioStream(entry->_sampleRate, entry->_channels == 2);
 			_curAudioChunk = 0;
 
 			// Make sure the bits per sample transfers to the sample size
-			if (entry->codecTag == MKTAG('r', 'a', 'w', ' ') || entry->codecTag == MKTAG('t', 'w', 'o', 's'))
-				_streams[_audioStreamIndex]->sample_size = (entry->bitsPerSample / 8) * entry->channels;
+			if (entry->getCodecTag() == MKTAG('r', 'a', 'w', ' ') || entry->getCodecTag() == MKTAG('t', 'w', 'o', 's'))
+				_streams[_audioStreamIndex]->sample_size = (entry->_bitsPerSample / 8) * entry->_channels;
 		}
 	}
 }
@@ -94,32 +94,31 @@ Common::QuickTimeParser::SampleDesc *QuickTimeAudioDecoder::readSampleDesc(MOVSt
 	if (st->codec_type == CODEC_TYPE_AUDIO) {
 		debug(0, "Audio Codec FourCC: \'%s\'", tag2str(format));
 
-		AudioSampleDesc *entry = new AudioSampleDesc();
-		entry->codecTag = format;
+		AudioSampleDesc *entry = new AudioSampleDesc(st, format);
 
 		uint16 stsdVersion = _fd->readUint16BE();
 		_fd->readUint16BE(); // revision level
 		_fd->readUint32BE(); // vendor
 
-		entry->channels = _fd->readUint16BE();			 // channel count
-		entry->bitsPerSample = _fd->readUint16BE();	  // sample size
+		entry->_channels = _fd->readUint16BE();			 // channel count
+		entry->_bitsPerSample = _fd->readUint16BE();	  // sample size
 
 		_fd->readUint16BE(); // compression id = 0
 		_fd->readUint16BE(); // packet size = 0
 
-		entry->sampleRate = (_fd->readUint32BE() >> 16);
+		entry->_sampleRate = (_fd->readUint32BE() >> 16);
 
 		debug(0, "stsd version =%d", stsdVersion);
 		if (stsdVersion == 0) {
 			// Not used, except in special cases. See below.
-			entry->samplesPerFrame = entry->bytesPerFrame = 0;
+			entry->_samplesPerFrame = entry->_bytesPerFrame = 0;
 		} else if (stsdVersion == 1) {
 			// Read QT version 1 fields. In version 0 these dont exist.
-			entry->samplesPerFrame = _fd->readUint32BE();
-			debug(0, "stsd samples_per_frame =%d",entry->samplesPerFrame);
+			entry->_samplesPerFrame = _fd->readUint32BE();
+			debug(0, "stsd samples_per_frame =%d",entry->_samplesPerFrame);
 			_fd->readUint32BE(); // bytes per packet
-			entry->bytesPerFrame = _fd->readUint32BE();
-			debug(0, "stsd bytes_per_frame =%d", entry->bytesPerFrame);
+			entry->_bytesPerFrame = _fd->readUint32BE();
+			debug(0, "stsd bytes_per_frame =%d", entry->_bytesPerFrame);
 			_fd->readUint32BE(); // bytes per sample
 		} else {
 			warning("Unsupported QuickTime STSD audio version %d", stsdVersion);
@@ -130,102 +129,17 @@ Common::QuickTimeParser::SampleDesc *QuickTimeAudioDecoder::readSampleDesc(MOVSt
 		// Version 0 videos (such as the Riven ones) don't have this set,
 		// but we need it later on. Add it in here.
 		if (format == MKTAG('i', 'm', 'a', '4')) {
-			entry->samplesPerFrame = 64;
-			entry->bytesPerFrame = 34 * entry->channels;
+			entry->_samplesPerFrame = 64;
+			entry->_bytesPerFrame = 34 * entry->_channels;
 		}
 
-		if (entry->sampleRate == 0 && st->time_scale > 1)
-			entry->sampleRate = st->time_scale;
+		if (entry->_sampleRate == 0 && st->time_scale > 1)
+			entry->_sampleRate = st->time_scale;
 
 		return entry;
 	}
 
 	return 0;
-}
-
-bool QuickTimeAudioDecoder::checkAudioCodecSupport(uint32 tag, byte objectTypeMP4) {
-	// Check if the codec is a supported codec
-	if (tag == MKTAG('t', 'w', 'o', 's') || tag == MKTAG('r', 'a', 'w', ' ') || tag == MKTAG('i', 'm', 'a', '4'))
-		return true;
-
-#ifdef AUDIO_QDM2_H
-	if (tag == MKTAG('Q', 'D', 'M', '2'))
-		return true;
-#endif
-
-	if (tag == MKTAG('m', 'p', '4', 'a')) {
-		Common::String audioType;
-		switch (objectTypeMP4) {
-		case 0x40: // AAC
-#ifdef USE_FAAD
-			return true;
-#else
-			audioType = "AAC";
-			break;
-#endif
-		default:
-			audioType = "Unknown";
-			break;
-		}
-		warning("No MPEG-4 audio (%s) support", audioType.c_str());
-	} else
-		warning("Audio Codec Not Supported: \'%s\'", tag2str(tag));
-
-	return false;
-}
-
-AudioStream *QuickTimeAudioDecoder::createAudioStream(Common::SeekableReadStream *stream) {
-	if (!stream || _audioStreamIndex < 0)
-		return NULL;
-
-	AudioSampleDesc *entry = (AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
-
-	if (entry->codecTag == MKTAG('t', 'w', 'o', 's') || entry->codecTag == MKTAG('r', 'a', 'w', ' ')) {
-		// Fortunately, most of the audio used in Myst videos is raw...
-		uint16 flags = 0;
-		if (entry->codecTag == MKTAG('r', 'a', 'w', ' '))
-			flags |= FLAG_UNSIGNED;
-		if (entry->channels == 2)
-			flags |= FLAG_STEREO;
-		if (entry->bitsPerSample == 16)
-			flags |= FLAG_16BITS;
-		uint32 dataSize = stream->size();
-		byte *data = (byte *)malloc(dataSize);
-		stream->read(data, dataSize);
-		delete stream;
-		return makeRawStream(data, dataSize, entry->sampleRate, flags);
-	} else if (entry->codecTag == MKTAG('i', 'm', 'a', '4')) {
-		// Riven uses this codec (as do some Myst ME videos)
-		return makeADPCMStream(stream, DisposeAfterUse::YES, stream->size(), kADPCMApple, entry->sampleRate, entry->channels, 34);
-	} else if (entry->codecTag == MKTAG('m', 'p', '4', 'a')) {
-		// The 7th Guest iOS uses an MPEG-4 codec
-#ifdef USE_FAAD
-		if (_streams[_audioStreamIndex]->objectTypeMP4 == 0x40)
-			return makeAACStream(stream, DisposeAfterUse::YES, _streams[_audioStreamIndex]->extradata);
-#endif
-#ifdef AUDIO_QDM2_H
-	} else if (entry->codecTag == MKTAG('Q', 'D', 'M', '2')) {
-		// Myst ME uses this codec for many videos
-		return makeQDM2Stream(stream, _streams[_audioStreamIndex]->extradata);
-#endif
-	}
-
-	error("Unsupported audio codec");
-
-	return NULL;
-}
-
-uint32 QuickTimeAudioDecoder::getAudioChunkSampleCount(uint chunk) {
-	if (_audioStreamIndex < 0)
-		return 0;
-
-	uint32 sampleCount = 0;
-
-	for (uint32 j = 0; j < _streams[_audioStreamIndex]->sample_to_chunk_sz; j++)
-		if (chunk >= _streams[_audioStreamIndex]->sample_to_chunk[j].first)
-			sampleCount = _streams[_audioStreamIndex]->sample_to_chunk[j].count;
-
-	return sampleCount;
 }
 
 bool QuickTimeAudioDecoder::isOldDemuxing() const {
@@ -240,7 +154,7 @@ void QuickTimeAudioDecoder::queueNextAudioChunk() {
 	_fd->seek(_streams[_audioStreamIndex]->chunk_offsets[_curAudioChunk]);
 
 	// First, we have to get the sample count
-	uint32 sampleCount = getAudioChunkSampleCount(_curAudioChunk);
+	uint32 sampleCount = entry->getAudioChunkSampleCount(_curAudioChunk);
 	assert(sampleCount);
 
 	if (isOldDemuxing()) {
@@ -250,12 +164,12 @@ void QuickTimeAudioDecoder::queueNextAudioChunk() {
 		while (sampleCount > 0) {
 			uint32 samples = 0, size = 0;
 
-			if (entry->samplesPerFrame >= 160) {
-				samples = entry->samplesPerFrame;
-				size = entry->bytesPerFrame;
-			} else if (entry->samplesPerFrame > 1) {
-				samples = MIN<uint32>((1024 / entry->samplesPerFrame) * entry->samplesPerFrame, sampleCount);
-				size = (samples / entry->samplesPerFrame) * entry->bytesPerFrame;
+			if (entry->_samplesPerFrame >= 160) {
+				samples = entry->_samplesPerFrame;
+				size = entry->_bytesPerFrame;
+			} else if (entry->_samplesPerFrame > 1) {
+				samples = MIN<uint32>((1024 / entry->_samplesPerFrame) * entry->_samplesPerFrame, sampleCount);
+				size = (samples / entry->_samplesPerFrame) * entry->_bytesPerFrame;
 			} else {
 				samples = MIN<uint32>(1024, sampleCount);
 				size = samples * _streams[_audioStreamIndex]->sample_size;
@@ -274,7 +188,7 @@ void QuickTimeAudioDecoder::queueNextAudioChunk() {
 		// Find our starting sample
 		uint32 startSample = 0;
 		for (uint32 i = 0; i < _curAudioChunk; i++)
-			startSample += getAudioChunkSampleCount(i);
+			startSample += entry->getAudioChunkSampleCount(i);
 
 		for (uint32 i = 0; i < sampleCount; i++) {
 			uint32 size = (_streams[_audioStreamIndex]->sample_size != 0) ? _streams[_audioStreamIndex]->sample_size : _streams[_audioStreamIndex]->sample_sizes[i + startSample];
@@ -288,7 +202,7 @@ void QuickTimeAudioDecoder::queueNextAudioChunk() {
 	}
 
 	// Now queue the buffer
-	_audStream->queueAudioStream(createAudioStream(new Common::MemoryReadStream(wStream->getData(), wStream->size(), DisposeAfterUse::YES)));
+	_audStream->queueAudioStream(entry->createAudioStream(new Common::MemoryReadStream(wStream->getData(), wStream->size(), DisposeAfterUse::YES)));
 	delete wStream;
 
 	_curAudioChunk++;
@@ -301,7 +215,7 @@ void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
 	// Re-create the audio stream
 	delete _audStream;
 	Audio::QuickTimeAudioDecoder::AudioSampleDesc *entry = (Audio::QuickTimeAudioDecoder::AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
-	_audStream = Audio::makeQueuingAudioStream(entry->sampleRate, entry->channels == 2);
+	_audStream = Audio::makeQueuingAudioStream(entry->_sampleRate, entry->_channels == 2);
 
 	// First, we need to track down what audio sample we need
 	Audio::Timestamp curAudioTime = where.convertToFramerate(_streams[_audioStreamIndex]->time_scale);
@@ -325,7 +239,7 @@ void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
 	uint32 totalSamples = 0;
 	_curAudioChunk = 0;
 	for (uint32 i = 0; i < _streams[_audioStreamIndex]->chunk_count; i++, _curAudioChunk++) {
-		uint32 chunkSampleCount = getAudioChunkSampleCount(i);
+		uint32 chunkSampleCount = entry->getAudioChunkSampleCount(i);
 
 		if (seekSample < totalSamples + chunkSampleCount)
 			break;
@@ -338,7 +252,7 @@ void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
 	if (sample != totalSamples) {
 		// HACK: Skip a certain amount of samples from the stream
 		// (There's got to be a better way to do this!)
-		int skipSamples = (sample - totalSamples) * entry->channels;
+		int skipSamples = (sample - totalSamples) * entry->_channels;
 
 		int16 *tempBuffer = new int16[skipSamples];
 		_audStream->readBuffer(tempBuffer, skipSamples);
@@ -346,11 +260,92 @@ void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
 	}
 }
 
-QuickTimeAudioDecoder::AudioSampleDesc::AudioSampleDesc() : Common::QuickTimeParser::SampleDesc() {
-	channels = 0;
-	sampleRate = 0;
-	samplesPerFrame = 0;
-	bytesPerFrame = 0;
+QuickTimeAudioDecoder::AudioSampleDesc::AudioSampleDesc(Common::QuickTimeParser::MOVStreamContext *parentStream, uint32 codecTag) : Common::QuickTimeParser::SampleDesc(parentStream, codecTag) {
+	_channels = 0;
+	_sampleRate = 0;
+	_samplesPerFrame = 0;
+	_bytesPerFrame = 0;
+	_bitsPerSample = 0;
+}
+
+bool QuickTimeAudioDecoder::AudioSampleDesc::isAudioCodecSupported() const {
+	// Check if the codec is a supported codec
+	if (_codecTag == MKTAG('t', 'w', 'o', 's') || _codecTag == MKTAG('r', 'a', 'w', ' ') || _codecTag == MKTAG('i', 'm', 'a', '4'))
+		return true;
+
+#ifdef AUDIO_QDM2_H
+	if (_codecTag == MKTAG('Q', 'D', 'M', '2'))
+		return true;
+#endif
+
+	if (_codecTag == MKTAG('m', 'p', '4', 'a')) {
+		Common::String audioType;
+		switch (_parentStream->objectTypeMP4) {
+		case 0x40: // AAC
+#ifdef USE_FAAD
+			return true;
+#else
+			audioType = "AAC";
+			break;
+#endif
+		default:
+			audioType = "Unknown";
+			break;
+		}
+		warning("No MPEG-4 audio (%s) support", audioType.c_str());
+	} else
+		warning("Audio Codec Not Supported: \'%s\'", tag2str(_codecTag));
+
+	return false;
+}
+
+uint32 QuickTimeAudioDecoder::AudioSampleDesc::getAudioChunkSampleCount(uint chunk) const {
+	uint32 sampleCount = 0;
+
+	for (uint32 j = 0; j < _parentStream->sample_to_chunk_sz; j++)
+		if (chunk >= _parentStream->sample_to_chunk[j].first)
+			sampleCount = _parentStream->sample_to_chunk[j].count;
+
+	return sampleCount;
+}
+
+AudioStream *QuickTimeAudioDecoder::AudioSampleDesc::createAudioStream(Common::SeekableReadStream *stream) const {
+	if (!stream)
+		return 0;
+
+	if (_codecTag == MKTAG('t', 'w', 'o', 's') || _codecTag == MKTAG('r', 'a', 'w', ' ')) {
+		// Fortunately, most of the audio used in Myst videos is raw...
+		uint16 flags = 0;
+		if (_codecTag == MKTAG('r', 'a', 'w', ' '))
+			flags |= FLAG_UNSIGNED;
+		if (_channels == 2)
+			flags |= FLAG_STEREO;
+		if (_bitsPerSample == 16)
+			flags |= FLAG_16BITS;
+		uint32 dataSize = stream->size();
+		byte *data = (byte *)malloc(dataSize);
+		stream->read(data, dataSize);
+		delete stream;
+		return makeRawStream(data, dataSize, _sampleRate, flags);
+	} else if (_codecTag == MKTAG('i', 'm', 'a', '4')) {
+		// Riven uses this codec (as do some Myst ME videos)
+		return makeADPCMStream(stream, DisposeAfterUse::YES, stream->size(), kADPCMApple, _sampleRate, _channels, 34);
+	} else if (_codecTag == MKTAG('m', 'p', '4', 'a')) {
+		// The 7th Guest iOS uses an MPEG-4 codec
+#ifdef USE_FAAD
+		if (_parentStream->objectTypeMP4 == 0x40)
+			return makeAACStream(stream, DisposeAfterUse::YES, _parentStream->extradata);
+#endif
+#ifdef AUDIO_QDM2_H
+	} else if (_codecTag == MKTAG('Q', 'D', 'M', '2')) {
+		// Myst ME uses this codec for many videos
+		return makeQDM2Stream(stream, _parentStream->extradata);
+#endif
+	}
+
+	error("Unsupported audio codec");
+
+	return NULL;
 }
 
 /**
