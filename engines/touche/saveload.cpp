@@ -380,9 +380,7 @@ Common::String generateGameStateFileName(const char *target, int slot, bool pref
 	if (prefixOnly) {
 		name += ".*";
 	} else {
-		char slotStr[16];
-		snprintf(slotStr, sizeof(slotStr), ".%d", slot);
-		name += slotStr;
+		name += Common::String::format(".%d", slot);
 	}
 	return name;
 }
