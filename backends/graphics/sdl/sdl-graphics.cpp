@@ -463,7 +463,8 @@ void SdlGraphicsManager::closeOverlay() {
 #pragma mark -
 
 bool SdlGraphicsManager::showMouse(bool visible) {
-	return false;
+	SDL_ShowCursor(visible);
+	return true;
 }
 
 void SdlGraphicsManager::warpMouse(int x, int y) {
