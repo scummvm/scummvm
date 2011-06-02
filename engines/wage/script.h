@@ -111,9 +111,7 @@ private:
 		}
 
 		Operand(int value, OperandTypes type) {
-			char buf[30];
 			_value.number = value;
-			snprintf(buf, 30, "%d", value);
 			_str = value;
 			_type = type;
 		}
