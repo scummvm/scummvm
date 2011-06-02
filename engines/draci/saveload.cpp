@@ -86,7 +86,7 @@ void writeSavegameHeader(Common::OutSaveFile *out, const DraciSavegameHeader &he
 }
 
 Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName, DraciEngine &vm) {
-	const char *filename = vm.getSavegameFile(saveGameIdx);
+	Common::String filename = vm.getSavegameFile(saveGameIdx);
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::OutSaveFile *f = saveMan->openForSaving(filename);
 	if (f == NULL)

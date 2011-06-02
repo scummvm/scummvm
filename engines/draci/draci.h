@@ -67,7 +67,7 @@ public:
 
 	void handleEvents();
 
-	static const char *getSavegameFile(int saveGameIdx);
+	static Common::String getSavegameFile(int saveGameIdx);
 	virtual Common::Error loadGameState(int slot);
 	virtual bool canLoadGameStateCurrently();
 	virtual Common::Error saveGameState(int slot, const char *desc);

@@ -439,10 +439,8 @@ void DraciEngine::syncSoundSettings() {
 	_music->syncVolume();
 }
 
-const char *DraciEngine::getSavegameFile(int saveGameIdx) {
-	static char buffer[20];
-	sprintf(buffer, "draci.s%02d", saveGameIdx);
-	return buffer;
+Common::String DraciEngine::getSavegameFile(int saveGameIdx) {
+	return Common::String::format("draci.s%02d", saveGameIdx);
 }
 
 Common::Error DraciEngine::loadGameState(int slot) {

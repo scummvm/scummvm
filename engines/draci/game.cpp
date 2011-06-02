@@ -934,13 +934,12 @@ void Game::inventorySwitch(int keycode) {
 void Game::dialogueMenu(int dialogueID) {
 	int oldLines, hit;
 
-	char tmp[5];
-	sprintf(tmp, "%d", dialogueID+1);
-	Common::String ext(tmp);
-	_dialogueArchive = new BArchive(dialoguePath + ext + ".dfw");
+	Common::String name;
+	name = dialoguePath + Common::String::format("%d.dfw", dialogueID + 1);
+	_dialogueArchive = new BArchive(name);
 
 	debugC(4, kDraciLogicDebugLevel, "Starting dialogue (ID: %d, Archive: %s)",
-	    dialogueID, (dialoguePath + ext + ".dfw").c_str());
+	    dialogueID, name.c_str());
 
 	_currentDialogue = dialogueID;
 	oldLines = 255;
