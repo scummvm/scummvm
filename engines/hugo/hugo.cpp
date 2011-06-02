@@ -130,7 +130,7 @@ void HugoEngine::setMaxScore(const int newScore) {
 	_maxscore = newScore;
 }
 
-Common::Error HugoEngine::saveGameState(int slot, const char *desc) {
+Common::Error HugoEngine::saveGameState(int slot, const Common::String &desc) {
 	return (_file->saveGame(slot, desc) ? Common::kWritingFailed : Common::kNoError);
 }
 

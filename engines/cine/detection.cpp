@@ -232,16 +232,16 @@ Common::Error CineEngine::loadGameState(int slot) {
 	return gameLoaded ? Common::kNoError : Common::kUnknownError;
 }
 
-Common::Error CineEngine::saveGameState(int slot, const char *desc) {
+Common::Error CineEngine::saveGameState(int slot, const Common::String &desc) {
 	// Load savegame descriptions from index file
 	loadSaveDirectory();
 
 	// Set description for selected slot making sure it ends with a trailing zero
-	strncpy(currentSaveName[slot], desc, 20);
+	strncpy(currentSaveName[slot], desc.c_str(), 20);
 	currentSaveName[slot][sizeof(CommandeType) - 1] = 0;
 
 	// Update savegame descriptions
-	Common::String indexFile = Common::String::format("%s.dir", _targetName.c_str());
+	Common::String indexFile = _targetName + ".dir";
 
 	Common::OutSaveFile *fHandle = _saveFileMan->openForSaving(indexFile);
 	if (!fHandle) {

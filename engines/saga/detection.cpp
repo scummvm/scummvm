@@ -363,8 +363,8 @@ Common::Error SagaEngine::loadGameState(int slot) {
 	return Common::kNoError;	// TODO: return success/failure
 }
 
-Common::Error SagaEngine::saveGameState(int slot, const char *desc) {
-	save(calcSaveFileName((uint)slot), desc);
+Common::Error SagaEngine::saveGameState(int slot, const Common::String &desc) {
+	save(calcSaveFileName((uint)slot), desc.c_str());
 	return Common::kNoError;	// TODO: return success/failure
 }
 

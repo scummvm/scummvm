@@ -101,7 +101,7 @@ Common::Error TuckerEngine::loadGameState(int num) {
 	return ret;
 }
 
-Common::Error TuckerEngine::saveGameState(int num, const char *description) {
+Common::Error TuckerEngine::saveGameState(int num, const Common::String &description) {
 	Common::Error ret = Common::kNoError;
 	Common::String gameStateFileName = generateGameStateFileName(_targetName.c_str(), num);
 	Common::OutSaveFile *f = _saveFileMan->openForSaving(gameStateFileName);

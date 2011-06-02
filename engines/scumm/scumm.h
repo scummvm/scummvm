@@ -401,7 +401,7 @@ public:
 
 	virtual Common::Error loadGameState(int slot);
 	virtual bool canLoadGameStateCurrently();
-	virtual Common::Error saveGameState(int slot, const char *desc);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual bool canSaveGameStateCurrently();
 
 	virtual void pauseEngineIntern(bool pause);
@@ -572,7 +572,7 @@ protected:
 	uint32 _lastSaveTime;
 	bool _saveTemporaryState;
 	Common::String _saveLoadFileName;
-	char _saveLoadName[32];
+	Common::String _saveLoadDescription;
 
 	bool saveState(Common::OutSaveFile *out, bool writeHeader = true);
 	bool saveState(int slot, bool compat);
@@ -594,7 +594,7 @@ public:
 	bool getSavegameName(int slot, Common::String &desc);
 	void listSavegames(bool *marks, int num);
 
-	void requestSave(int slot, const char *name);
+	void requestSave(int slot, const Common::String &name);
 	void requestLoad(int slot);
 
 // thumbnail + info stuff

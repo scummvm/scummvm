@@ -461,7 +461,7 @@ bool DraciEngine::canLoadGameStateCurrently() {
 		(_game->getLoopSubstatus() == kOuterLoop);
 }
 
-Common::Error DraciEngine::saveGameState(int slot, const char *desc) {
+Common::Error DraciEngine::saveGameState(int slot, const Common::String &desc) {
 	return saveSavegameData(slot, desc, *this);
 }
 

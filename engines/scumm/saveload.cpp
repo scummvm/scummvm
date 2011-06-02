@@ -103,7 +103,7 @@ bool ScummEngine::canLoadGameStateCurrently() {
 	return (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0);
 }
 
-Common::Error ScummEngine::saveGameState(int slot, const char *desc) {
+Common::Error ScummEngine::saveGameState(int slot, const Common::String &desc) {
 	requestSave(slot, desc);
 	return Common::kNoError;
 }
@@ -135,13 +135,11 @@ bool ScummEngine::canSaveGameStateCurrently() {
 }
 
 
-void ScummEngine::requestSave(int slot, const char *name) {
+void ScummEngine::requestSave(int slot, const Common::String &name) {
 	_saveLoadSlot = slot;
 	_saveTemporaryState = false;
 	_saveLoadFlag = 1;		// 1 for save
-	assert(name);
-	strncpy(_saveLoadName, name, sizeof(_saveLoadName));
-	_saveLoadName[sizeof(_saveLoadName) - 1] = 0;
+	_saveLoadDescription = name;
 }
 
 void ScummEngine::requestLoad(int slot) {
@@ -166,7 +164,7 @@ bool ScummEngine::saveState(Common::OutSaveFile *out, bool writeHeader) {
 	SaveGameHeader hdr;
 
 	if (writeHeader) {
-		memcpy(hdr.name, _saveLoadName, sizeof(hdr.name));
+		Common::strlcpy(hdr.name, _saveLoadDescription.c_str(), sizeof(hdr.name));
 		saveSaveGameHeader(out, hdr);
 	}
 #if !defined(__DS__) && !defined(__N64__) /* && !defined(__PLAYSTATION2__) */
@@ -387,7 +385,8 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	if (hdr.ver == VER(7))
 		hdr.ver = VER(8);
 
-	memcpy(_saveLoadName, hdr.name, sizeof(hdr.name));
+	hdr.name[sizeof(hdr.name)-1] = 0;
+	_saveLoadDescription = hdr.name;
 
 	// Unless specifically requested with _saveSound, we do not save the iMUSE
 	// state for temporary state saves - such as certain cutscenes in DOTT,
@@ -589,9 +588,9 @@ bool ScummEngine::loadState(int slot, bool compat) {
 }
 
 Common::String ScummEngine::makeSavegameName(const Common::String &target, int slot, bool temporary) {
-	char extension[6];
-	snprintf(extension, sizeof(extension), ".%c%02d", temporary ? 'c' : 's', slot);
-	return (target + extension);
+	Common::String extension;
+	extension = Common::String::format(".%c%02d", temporary ? 'c' : 's', slot);
+	return target + extension;
 }
 
 void ScummEngine::listSavegames(bool *marks, int num) {

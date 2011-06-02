@@ -318,7 +318,7 @@ bool QueenEngine::canLoadOrSave() const {
 	return !_input->cutawayRunning() && !(_resource->isDemo() || _resource->isInterview());
 }
 
-Common::Error QueenEngine::saveGameState(int slot, const char *desc) {
+Common::Error QueenEngine::saveGameState(int slot, const Common::String &desc) {
 	debug(3, "Saving game to slot %d", slot);
 	char name[20];
 	Common::Error err = Common::kNoError;
@@ -341,7 +341,7 @@ Common::Error QueenEngine::saveGameState(int slot, const char *desc) {
 		file->writeUint32BE(0);
 		file->writeUint32BE(dataSize);
 		char description[32];
-		Common::strlcpy(description, desc, sizeof(description));
+		Common::strlcpy(description, desc.c_str(), sizeof(description));
 		file->write(description, sizeof(description));
 
 		// write save data

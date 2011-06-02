@@ -1017,10 +1017,10 @@ Common::Error AgiEngine::loadGameState(int slot) {
 	}
 }
 
-Common::Error AgiEngine::saveGameState(int slot, const char *desc) {
+Common::Error AgiEngine::saveGameState(int slot, const Common::String &desc) {
 	char saveLoadSlot[12];
 	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), slot);
-	if (saveGame(saveLoadSlot, desc) == errOK)
+	if (saveGame(saveLoadSlot, desc.c_str()) == errOK)
 		return Common::kNoError;
 	else
 		return Common::kUnknownError;

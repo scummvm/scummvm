@@ -336,8 +336,8 @@ bool SwordEngine::canLoadGameStateCurrently() {
 	return (mouseIsActive() && !_control->isPanelShown()); // Disable GMM loading when game panel is shown
 }
 
-Common::Error SwordEngine::saveGameState(int slot, const char *desc) {
-	_control->setSaveDescription(slot, desc);
+Common::Error SwordEngine::saveGameState(int slot, const Common::String &desc) {
+	_control->setSaveDescription(slot, desc.c_str());
 	_control->saveGameToFile(slot);
 	return Common::kNoError;	// TODO: return success/failure
 }

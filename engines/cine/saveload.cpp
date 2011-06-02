@@ -765,7 +765,7 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 	return !(in.eos() || in.err());
 }
 
-bool CineEngine::makeLoad(char *saveName) {
+bool CineEngine::makeLoad(const Common::String &saveName) {
 	Common::SharedPtr<Common::InSaveFile> saveFile(_saveFileMan->openForLoading(saveName));
 
 	if (!saveFile) {

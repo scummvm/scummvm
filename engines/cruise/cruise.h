@@ -71,7 +71,6 @@ private:
 	void initialize();
 	void deinitialize();
 	bool loadLanguageStrings();
-	bool makeLoad(char *saveName);
 	void mainLoop();
 	int processInput();
 protected:
@@ -100,7 +99,7 @@ public:
 	static const char *getSavegameFile(int saveGameIdx);
 	virtual Common::Error loadGameState(int slot);
 	virtual bool canLoadGameStateCurrently();
-	virtual Common::Error saveGameState(int slot, const char *desc);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual bool canSaveGameStateCurrently();
 	virtual void syncSoundSettings();
 

@@ -123,7 +123,7 @@ public:
 	virtual Common::Error loadGameState(int slot) {
 		return loadGame(slot) ? Common::kReadingFailed : Common::kNoError;
 	}
-	virtual Common::Error saveGameState(int slot, const char *desc) {
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) {
 		Common::String s(desc);
 		return saveGame(slot, s) ? Common::kReadingFailed : Common::kNoError;
 	}

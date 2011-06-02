@@ -228,7 +228,7 @@ static void handleSaveLoad(bool saveFlag) {
 				result = Common::String::format("Save %d", slot + 1);
 			}
 
-			_vm->saveGameState(slot, result.c_str());
+			_vm->saveGameState(slot, result);
 		}
 	}
 

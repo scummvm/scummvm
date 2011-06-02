@@ -124,7 +124,7 @@ Common::Error TSageEngine::loadGameState(int slot) {
 /**
  * Save the game to the given slot index, and with the given name
  */
-Common::Error TSageEngine::saveGameState(int slot, const char *desc) {
+Common::Error TSageEngine::saveGameState(int slot, const Common::String &desc) {
 	return _saver->save(slot, desc);
 }
 

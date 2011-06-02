@@ -82,7 +82,7 @@ protected:
 // 	void pauseEngineIntern(bool pause);	// TODO: Implement this!!!
 // 	void syncSoundSettings();	// TODO: Implement this!!!
 // 	Common::Error loadGameState(int slot);	// TODO: Implement this?
-// 	Common::Error saveGameState(int slot, const char *desc);	// TODO: Implement this?
+// 	Common::Error saveGameState(int slot, const Common::String &desc);	// TODO: Implement this?
 // 	bool canLoadGameStateCurrently();	// TODO: Implement this?
 // 	bool canSaveGameStateCurrently();	// TODO: Implement this?
 
