@@ -34,6 +34,7 @@ namespace tSage {
  *--------------------------------------------------------------------------*/
 
 void Scene4000::Action1::signal() {
+	// Quinn has the peg. Everybody enter the screen.
 	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -124,6 +125,8 @@ void Scene4000::Action1::signal() {
 }
 
 void Scene4000::Action2::signal() {
+	// Quinn, Seeker and Miranda walks down to the village
+	// Then, they talk to Rock, and enter the priest hut
 	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -179,6 +182,7 @@ void Scene4000::Action2::signal() {
 }
 
 void Scene4000::Action3::signal() {
+	// The guard walks to the left and exits the screen
 	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -197,6 +201,7 @@ void Scene4000::Action3::signal() {
 }
 
 void Scene4000::Action4::signal() {
+	// Quinn ties the rope to the rock
 	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -235,6 +240,7 @@ void Scene4000::Action4::signal() {
 }
 
 void Scene4000::Action5::signal() {
+	// Chat with Miranda
 	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -261,6 +267,8 @@ void Scene4000::Action5::signal() {
 }
 
 void Scene4000::Action6::signal() {
+	// Quinn and Miranda enter the screen and walk to the village.
+	// Rock comes and notices the alcohol. They all enter his hut.
 	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -363,6 +371,7 @@ void Scene4000::Action8::signal() {
 }
 
 void Scene4000::Action9::signal() {
+	// Villager animations
 	switch (_actionIndex++) {
 	case 0:
 		setDelay(_globals->_randomSource.getRandomNumber(119) + 240);
@@ -375,6 +384,7 @@ void Scene4000::Action9::signal() {
 }
 
 void Scene4000::Action10::signal() {
+	// Villager animations
 	switch (_actionIndex++) {
 	case 0:
 		setDelay(_globals->_randomSource.getRandomNumber(119) + 240);
@@ -433,6 +443,7 @@ void Scene4000::Action11::signal() {
 }
 
 void Scene4000::Action12::signal() {
+	// Quinn enter Rock's hut
 	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -474,6 +485,7 @@ void Scene4000::Action12::signal() {
 }
 
 void Scene4000::Action13::signal() {
+	// Lander is landing
 	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -539,6 +551,7 @@ void Scene4000::Miranda::doAction(int action) {
 }
 
 void Scene4000::Hotspot8::doAction(int action) {
+	// Guard
 	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -653,7 +666,7 @@ void Scene4000::TheTech::doAction(int action) {
 }
 
 void Scene4000::Hotspot13::doAction(int action) {
-	// Rock
+	// Rock between the two chimneys
 	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -673,6 +686,7 @@ void Scene4000::Hotspot13::doAction(int action) {
 }
 
 void Scene4000::Hotspot::doAction(int action) {
+	// Wall between the two doors
 	Scene4000 *scene = (Scene4000 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -753,6 +767,7 @@ void Scene4000::Hotspot18::doAction(int action) {
 }
 
 void Scene4000::Hotspot23::doAction(int action) {
+	// Door of the temple
 	switch (action) {
 	case CURSOR_LOOK:
 		SceneItem::display2(4000, _globals->getFlag(31) ? 10 : 9);
@@ -997,6 +1012,7 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 			_miranda.setPosition(Common::Point(246, 146));
 
 		if (_globals->getFlag(39)) {
+			// Ollo follows Quinn and gives explanations on the Tech.
 			_globals->clearFlag(39);
 
 			_olo.postInit();
@@ -1007,6 +1023,8 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 
 			_sceneMode = 4010;
 			_globals->_player.disableControl();
+			// This is the buggy animation where Miranda comments the Tech even
+			// if she's not in the room but in the lander.
 			setAction(&_sequenceManager1, this, 4010, &_globals->_player, &_olo, NULL);
 		}
 
