@@ -639,7 +639,7 @@ void Scene::setSoundPosition(const char *soundName, Graphics::Vector3d pos, int 
 	right.normalize();
 	float angle = atan2(Graphics::dot(vector, right), Graphics::dot(vector, cameraVector));
 	float pan = sin(angle);
-	g_imuse->setPan(soundName, (int)((pan + 1.f) / 2.f * 127.f) + 0.5f);
+	g_imuse->setPan(soundName, (int)((pan + 1.f) / 2.f * 127.f + 0.5f));
 }
 
 Sector *Scene::getSectorBase(int id) {

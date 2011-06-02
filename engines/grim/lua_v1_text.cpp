@@ -295,7 +295,7 @@ void setTextObjectParams(TextObjectCommon *textObject, lua_Object tableObj) {
 	keyObj = lua_gettable();
 	if (keyObj) {
 		if (lua_isnumber(keyObj)) {
-			textObject->setDuration(lua_getnumber(keyObj));
+			textObject->setDuration((int)lua_getnumber(keyObj));
 		}
 	}
 }
