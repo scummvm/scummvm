@@ -195,6 +195,10 @@ void XCodeProvider::ouputMainProjectFile(const BuildSetup &setup) {
 void XCodeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
                                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix) {
 
+	// Add comments for shared lists
+	_buildFile.comment = "PBXBuildFile";
+	_fileReference.comment = "PBXFileReference";
+
 	// Init root group
 	_groups.comment = "PBXGroup";
 	Object *group = new Object(this, "PBXGroup", "PBXGroup", "PBXGroup", "", "");
@@ -431,7 +435,82 @@ void XCodeProvider::setupProject() {
 }
 
 void XCodeProvider::setupResourcesBuildPhase() {
-	// TODO
+	_resourcesBuildPhase.comment = "PBXResourcesBuildPhase";
+
+	// Setup resource file properties
+	std::map<std::string, FileProperty> properties;
+	properties["scummclassic.zip"] = FileProperty("archive.zip", "", "scummclassic.zip", "\"<group>\"");
+	properties["scummmodern.zip"]  = FileProperty("archive.zip", "", "scummmodern.zip", "\"<group>\"");
+
+	properties["kyra.dat"]         = FileProperty("file", "", "kyra.dat", "\"<group>\"");
+	properties["lure.dat"]         = FileProperty("file", "", "lure.dat", "\"<group>\"");
+	properties["queen.tbl"]        = FileProperty("file", "", "queen.tbl", "\"<group>\"");
+	properties["sky.cpt"]          = FileProperty("file", "", "sky.cpt", "\"<group>\"");
+	properties["drascula.dat"]     = FileProperty("file", "", "drascula.dat", "\"<group>\"");
+	properties["hugo.dat"]         = FileProperty("file", "", "hugo.dat", "\"<group>\"");
+	properties["m4.dat"]           = FileProperty("file", "", "m4.dat", "\"<group>\"");
+	properties["teenagent.dat"]    = FileProperty("file", "", "teenagent.dat", "\"<group>\"");
+	properties["toon.dat"]         = FileProperty("file", "", "toon.dat", "\"<group>\"");
+
+	properties["Default.png"]      = FileProperty("image.png", "", "Default.png", "\"<group>\"");
+	properties["icon.png"]         = FileProperty("image.png", "", "icon.png", "\"<group>\"");
+	properties["icon-72.png"]      = FileProperty("image.png", "", "icon-72.png", "\"<group>\"");
+	properties["icon4.png"]        = FileProperty("image.png", "", "icon4.png", "\"<group>\"");
+
+	// Same as for containers: a rule for each native target
+	for (unsigned int i = 0; i < _targets.size(); i++) {
+		Object *resource = new Object(this, "PBXResourcesBuildPhase_" + _targets[i], "PBXResourcesBuildPhase", "PBXResourcesBuildPhase", "", "Resources");
+
+		resource->addProperty("buildActionMask", "2147483647", "", SettingsNoValue);
+
+		// Add default files
+		Property files;
+		files.hasOrder = true;
+		files.flags = SettingsAsList;
+
+		ValueList files_list;
+		files_list.push_back("scummclassic.zip");
+		files_list.push_back("scummmodern.zip");
+		files_list.push_back("kyra.dat");
+		files_list.push_back("lure.dat");
+		files_list.push_back("queen.tbl");
+		files_list.push_back("sky.cpt");
+		files_list.push_back("Default.png");
+		files_list.push_back("icon.png");
+		files_list.push_back("icon-72.png");
+		files_list.push_back("icon4.png");
+		files_list.push_back("drascula.dat");
+		files_list.push_back("hugo.dat");
+		files_list.push_back("m4.dat");
+		files_list.push_back("teenagent.dat");
+		files_list.push_back("toon.dat");
+
+		int order = 0;
+		for (ValueList::iterator file = files_list.begin(); file != files_list.end(); file++) {
+			std::string id = "PBXResources_" + *file;
+			std::string comment = *file + " in Resources";
+
+			ADD_SETTING_ORDER_NOVALUE(files, getHash(id), comment, order++);
+			// TODO Fix crash when adding build file for data
+			//ADD_BUILD_FILE(id, *file, comment);
+			ADD_FILE_REFERENCE(*file, properties[*file]);
+		}
+
+		// Add custom files depending on the target
+		if (_targets[i] == "ScummVM-OS X") {
+			files.settings[getHash("PBXResources_scummvm.icns")] = Setting("", "scummvm.icns in Resources", SettingsNoValue, 0, 6);
+
+			// Remove 2 iphone icon files
+			files.settings.erase(getHash("PBXResources_Default.png"));
+			files.settings.erase(getHash("PBXResources_icon.png"));
+		}
+
+		resource->properties["files"] = files;
+
+		resource->addProperty("runOnlyForDeploymentPostprocessing", "0", "", SettingsNoValue);
+
+		_resourcesBuildPhase.add(resource);
+	}
 }
 
 void XCodeProvider::setupSourcesBuildPhase() {
