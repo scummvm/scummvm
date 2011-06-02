@@ -13,17 +13,30 @@
 		F9A66C6C1396D4DF00CEE494 /* msvc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9A66C671396D4DF00CEE494 /* msvc.cpp */; };
 		F9A66C6F1396D4E800CEE494 /* visualstudio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9A66C6D1396D4E800CEE494 /* visualstudio.cpp */; };
 		F9A66C871396E2F500CEE494 /* xcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9A66C861396E2F500CEE494 /* xcode.cpp */; };
+		F9A66C91139704A400CEE494 /* create_project in CopyFiles */ = {isa = PBXBuildFile; fileRef = F9A66C271396D36100CEE494 /* create_project */; };
+		F9BA99141398064E00C276C2 /* create_project in CopyFiles */ = {isa = PBXBuildFile; fileRef = F9A66C271396D36100CEE494 /* create_project */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		F9A66C251396D36100CEE494 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = ../../../../../dists/iphone;
+			dstSubfolderSpec = 16;
 			files = (
+				F9A66C91139704A400CEE494 /* create_project in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F9BA99131398063A00C276C2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = ../../../../../dists/macosx;
+			dstSubfolderSpec = 16;
+			files = (
+				F9BA99141398064E00C276C2 /* create_project in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -111,6 +124,7 @@
 				F9A66C231396D36100CEE494 /* Sources */,
 				F9A66C241396D36100CEE494 /* Frameworks */,
 				F9A66C251396D36100CEE494 /* CopyFiles */,
+				F9BA99131398063A00C276C2 /* CopyFiles */,
 			);
 			buildRules = (
 			);
