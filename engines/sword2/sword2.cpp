@@ -210,11 +210,8 @@ SaveStateList Sword2MetaEngine::listSaves(const char *target) const {
 int Sword2MetaEngine::getMaximumSaveSlot() const { return 999; }
 
 void Sword2MetaEngine::removeSaveState(const char *target, int slot) const {
-	char extension[6];
-	snprintf(extension, sizeof(extension), ".%03d", slot);
-
 	Common::String filename = target;
-	filename += extension;
+	filename += Common::String::format(".%03d", slot);
 
 	g_system->getSavefileManager()->removeSavefile(filename);
 }

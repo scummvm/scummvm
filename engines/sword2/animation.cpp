@@ -72,17 +72,17 @@ bool MoviePlayer::load(const char *name) {
 
 	_textSurface = NULL;
 
-	char filename[20];
+	Common::String filename;
 	switch (_decoderType) {
 	case kVideoDecoderDXA:
-		snprintf(filename, sizeof(filename), "%s.dxa", name);
+		filename = Common::String::format("%s.dxa", name);
 		break;
 	case kVideoDecoderSMK:
-		snprintf(filename, sizeof(filename), "%s.smk", name);
+		filename = Common::String::format("%s.smk", name);
 		break;
 	}
 
-	return _decoder->loadFile(filename);
+	return _decoder->loadFile(filename.c_str());
 }
 
 void MoviePlayer::play(MovieText *movieTexts, uint32 numMovieTexts, uint32 leadIn, uint32 leadOut) {
@@ -358,18 +358,18 @@ uint32 DXADecoderWithSound::getElapsedTime() const {
 ///////////////////////////////////////////////////////////////////////////////
 
 MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, Audio::Mixer *snd, OSystem *system) {
-	char filename[20];
+	Common::String filename;
 	char buf[60];
 	Audio::SoundHandle *bgSoundHandle = new Audio::SoundHandle;
 
-	snprintf(filename, sizeof(filename), "%s.smk", name);
+	filename = Common::String::format("%s.smk", name);
 
 	if (Common::File::exists(filename)) {
 		Video::SmackerDecoder *smkDecoder = new Video::SmackerDecoder(snd);
 		return new MoviePlayer(vm, snd, system, bgSoundHandle, smkDecoder, kVideoDecoderSMK);
 	}
 
-	snprintf(filename, sizeof(filename), "%s.dxa", name);
+	filename = Common::String::format("%s.dxa", name);
 
 	if (Common::File::exists(filename)) {
 #ifdef USE_ZLIB
@@ -383,7 +383,7 @@ MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, Audio::Mixer *s
 	}
 
 	// Old MPEG2 cutscenes
-	snprintf(filename, sizeof(filename), "%s.mp2", name);
+	filename = Common::String::format("%s.mp2", name);
 
 	if (Common::File::exists(filename)) {
 		GUI::MessageDialog dialog("MPEG2 cutscenes are no longer supported", "OK");
