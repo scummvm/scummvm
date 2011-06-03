@@ -128,11 +128,17 @@ bool OSystem_DS::hasFeature(Feature f) {
 void OSystem_DS::setFeatureState(Feature f, bool enable) {
 	if (f == kFeatureVirtualKeyboard)
 		DS::setKeyboardIcon(enable);
+	else if (f == kFeatureCursorPalette) {
+		_disableCursorPalette = !enable;
+		refreshCursor();
+	}
 }
 
 bool OSystem_DS::getFeatureState(Feature f) {
 	if (f == kFeatureVirtualKeyboard)
 		return DS::getKeyboardIcon();
+	if (f == kFeatureCursorPalette)
+		return !_disableCursorPalette;
 	return false;
 }
 

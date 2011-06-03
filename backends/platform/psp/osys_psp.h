@@ -99,7 +99,6 @@ protected:
 	void grabPalette(byte *colors, uint start, uint num);
 public:
 	void setCursorPalette(const byte *colors, uint start, uint num);
-	void disableCursorPalette(bool disable);
 
 	// Screen related
 	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);

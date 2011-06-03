@@ -172,8 +172,6 @@ public:
 
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
-	virtual void disableCursorPalette(bool dis) { _disableCursorPalette = dis; refreshCursor(); }
-
 	FilesystemFactory *getFilesystemFactory();
 
 	void refreshCursor();

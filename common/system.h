@@ -167,14 +167,14 @@ public:
 		kFeatureVirtualKeyboard,
 
 		/**
-		 * This flag determines whether or not the cursor can have its own palette.
-		 * It is currently used only by some Macintosh versions of Humongous
-		 * Entertainment games. If the backend doesn't implement this feature then
-		 * the engine switches to b/w versions of cursors.
-		 * The GUI also relies on this feature for mouse cursors.
+		 * Backends supporting this feature allow specifying a custom palette
+		 * for the cursor. The custom palette is used if the feature state
+		 * is set to true by the client code via setFeatureState().
 		 *
-		 * To enable the cursor palette call "disableCursorPalette" with false.
-		 * @see disableCursorPalette
+		 * It is currently used only by some Macintosh versions of Humongous
+		 * Entertainment games. If the backend doesn't implement this feature
+		 * then the engine switches to b/w versions of cursors.
+		 * The GUI also relies on this feature for mouse cursors.
 		 */
 		kFeatureCursorPalette,
 
@@ -799,18 +799,6 @@ public:
 	 * @see kFeatureCursorPalette
 	 */
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) {}
-
-	/**
-	 * Disable or enable cursor palette.
-	 *
-	 * Backends which implement it should have kFeatureCursorPalette flag set
-	 *
-	 * @param disable  True to disable, false to enable.
-	 *
-	 * @see setPalette
-	 * @see kFeatureCursorPalette
-	 */
-	virtual void disableCursorPalette(bool disable) {}
 
 	//@}
 

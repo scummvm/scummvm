@@ -114,9 +114,16 @@ bool OSystem_PSP::hasFeature(Feature f) {
 }
 
 void OSystem_PSP::setFeatureState(Feature f, bool enable) {
+	if (f == kFeatureCursorPalette) {
+		_pendingUpdate = false;
+		_cursor.enableCursorPalette(enable);
+	}
 }
 
 bool OSystem_PSP::getFeatureState(Feature f) {
+	if (f == kFeatureCursorPalette) {
+		return _cursor.isCursorPaletteEnabled();
+	}
 	return false;
 }
 
@@ -196,12 +203,6 @@ void OSystem_PSP::setCursorPalette(const byte *colors, uint start, uint num) {
 	_cursor.setCursorPalette(colors, start, num);
 	_cursor.enableCursorPalette(true);
 	_cursor.clearKeyColor();	// Do we need this?
-}
-
-void OSystem_PSP::disableCursorPalette(bool disable) {
-	DEBUG_ENTER_FUNC();
-	_pendingUpdate = false;
-	_cursor.enableCursorPalette(!disable);
 }
 
 void OSystem_PSP::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {

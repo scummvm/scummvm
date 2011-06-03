@@ -237,6 +237,7 @@ private:
 	void clipMouse(Common::Point &p);
 	void scaleMouse(Common::Point &p, int x, int y, bool deductDrawRect = true);
 	void updateEventScale();
+	void disableCursorPalette();
 
 protected:
 	// PaletteManager API
@@ -272,7 +273,6 @@ public:
 								int cursorTargetScale,
 								const Graphics::PixelFormat *format);
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
-	virtual void disableCursorPalette(bool disable);
 
 	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis();

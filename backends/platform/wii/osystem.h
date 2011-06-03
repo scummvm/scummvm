@@ -171,7 +171,6 @@ protected:
 	virtual void grabPalette(byte *colors, uint start, uint num);
 public:
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
-	virtual void disableCursorPalette(bool disable);
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y,
 									int w, int h);
 	virtual void updateScreen();

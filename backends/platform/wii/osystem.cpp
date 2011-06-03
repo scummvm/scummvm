@@ -188,6 +188,13 @@ void OSystem_Wii::setFeatureState(Feature f, bool enable) {
 	case kFeatureAspectRatioCorrection:
 		_arCorrection = enable;
 		break;
+	case kFeatureCursorPalette:
+		_cursorPaletteDisabled = !enable;
+		if (_texMouse.palette && !enable) {
+			memcpy(_texMouse.palette, _cursorPalette, 256 * 2);
+			_cursorPaletteDirty = true;
+		}
+		break;
 	default:
 		break;
 	}
@@ -199,6 +206,8 @@ bool OSystem_Wii::getFeatureState(Feature f) {
 		return _fullscreen;
 	case kFeatureAspectRatioCorrection:
 		return _arCorrection;
+	case kFeatureCursorPalette:
+		return !_cursorPaletteDisabled;
 	default:
 		return false;
 	}

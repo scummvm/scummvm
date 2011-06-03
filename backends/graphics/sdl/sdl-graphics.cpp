@@ -235,6 +235,10 @@ void SdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	case OSystem::kFeatureAspectRatioCorrection:
 		setAspectRatioCorrection(enable);
 		break;
+	case OSystem::kFeatureCursorPalette:
+		_cursorPaletteDisabled = !enable;
+		blitCursor();
+		break;
 	case OSystem::kFeatureIconifyWindow:
 		if (enable)
 			SDL_WM_IconifyWindow();
@@ -245,13 +249,15 @@ void SdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 }
 
 bool SdlGraphicsManager::getFeatureState(OSystem::Feature f) {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	switch (f) {
 	case OSystem::kFeatureFullscreenMode:
 		return _videoMode.fullscreen;
 	case OSystem::kFeatureAspectRatioCorrection:
 		return _videoMode.aspectRatioCorrection;
+	case OSystem::kFeatureCursorPalette:
+		return !_cursorPaletteDisabled;
 	default:
 		return false;
 	}
@@ -1455,11 +1461,6 @@ void SdlGraphicsManager::setCursorPalette(const byte *colors, uint start, uint n
 	}
 
 	_cursorPaletteDisabled = false;
-	blitCursor();
-}
-
-void SdlGraphicsManager::disableCursorPalette(bool disable) {
-	_cursorPaletteDisabled = disable;
 	blitCursor();
 }
 

@@ -203,10 +203,19 @@ bool OSystem_N64::hasFeature(Feature f) {
 }
 
 void OSystem_N64::setFeatureState(Feature f, bool enable) {
-	return;
+	if (f == kFeatureCursorPalette) {
+		_cursorPaletteDisabled = !enable;
+
+		// Rebuild cursor hicolor buffer
+		rebuildOffscreenMouseBuffer();
+
+		_dirtyOffscreen = true;
+	}
 }
 
 bool OSystem_N64::getFeatureState(Feature f) {
+	if (f == kFeatureCursorPalette)
+		return !_cursorPaletteDisabled
 	return false;
 }
 
@@ -430,15 +439,6 @@ void OSystem_N64::setCursorPalette(const byte *colors, uint start, uint num) {
 	}
 
 	_cursorPaletteDisabled = false;
-
-	// Rebuild cursor hicolor buffer
-	rebuildOffscreenMouseBuffer();
-
-	_dirtyOffscreen = true;
-}
-
-void OSystem_N64::disableCursorPalette(bool disable) {
-	_cursorPaletteDisabled = disable;
 
 	// Rebuild cursor hicolor buffer
 	rebuildOffscreenMouseBuffer();

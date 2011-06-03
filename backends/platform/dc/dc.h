@@ -145,9 +145,6 @@ public:
   // Replace the specified range of cursor the palette with new colors.
   void setCursorPalette(const byte *colors, uint start, uint num);
 
-  // Disable or enable cursor palette.
-  void disableCursorPalette(bool disable);
-
   // Shaking is used in SCUMM. Set current shake position.
   void setShakePos(int shake_pos);
 

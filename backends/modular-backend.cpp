@@ -222,10 +222,6 @@ void ModularBackend::setCursorPalette(const byte *colors, uint start, uint num) 
 	_graphicsManager->setCursorPalette(colors, start, num);
 }
 
-void ModularBackend::disableCursorPalette(bool disable) {
-	_graphicsManager->disableCursorPalette(disable);
-}
-
 Common::TimerManager *ModularBackend::getTimerManager() {
 	assert(_timerManager);
 	return _timerManager;
