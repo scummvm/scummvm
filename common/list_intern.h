@@ -82,7 +82,7 @@ namespace ListInternal {
 			return tmp;
 		}
 		ValueRef operator*() const {
-			assert(_node);
+			ASSUME_NON_NULL(_node);
 			return static_cast<NodePtr>(_node)->_data;
 		}
 		ValuePtr operator->() const {
@@ -136,7 +136,7 @@ namespace ListInternal {
 			return tmp;
 		}
 		ValueRef operator*() const {
-			assert(_node);
+			ASSUME_NON_NULL(_node);
 			return static_cast<NodePtr>(_node)->_data;
 		}
 		ValuePtr operator->() const {

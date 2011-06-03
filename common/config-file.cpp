@@ -62,11 +62,11 @@ bool ConfigFile::loadFromFile(const String &filename) {
 }
 
 bool ConfigFile::loadFromSaveFile(const char *filename) {
-	assert(g_system);
+	ASSUME_NON_NULL(g_system);
 	SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	SeekableReadStream *loadFile;
 
-	assert(saveFileMan);
+	ASSUME_NON_NULL(saveFileMan);
 	if (!(loadFile = saveFileMan->openForLoading(filename)))
 		return false;
 
@@ -190,11 +190,11 @@ bool ConfigFile::saveToFile(const String &filename) {
 }
 
 bool ConfigFile::saveToSaveFile(const char *filename) {
-	assert(g_system);
+	ASSUME_NON_NULL(g_system);
 	SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	WriteStream *saveFile;
 
-	assert(saveFileMan);
+	ASSUME_NON_NULL(saveFileMan);
 	if (!(saveFile = saveFileMan->openForSaving(filename)))
 		return false;
 

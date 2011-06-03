@@ -29,7 +29,7 @@ namespace Common {
 RandomSource::RandomSource(const String &name) {
 	// Use system time as RNG seed. Normally not a good idea, if you are using
 	// a RNG for security purposes, but good enough for our purposes.
-	assert(g_system);
+	ASSUME_NON_NULL(g_system);
 	uint32 seed = g_system->getMillis();
 	setSeed(seed);
 

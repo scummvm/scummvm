@@ -27,7 +27,7 @@
 namespace Common {
 
 Mutex::Mutex() {
-	assert(g_system);
+	ASSUME_NON_NULL(g_system);
 	_mutex = g_system->createMutex();
 }
 

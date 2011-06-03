@@ -166,7 +166,7 @@ private:
 		IteratorImpl(uint idx, hashmap_t *hashmap) : _idx(idx), _hashmap(hashmap) {}
 
 		NodeType *deref() const {
-			assert(_hashmap != 0);
+			ASSUME_NON_NULL(_hashmap);
 			assert(_idx <= _hashmap->_mask);
 			Node *node = _hashmap->_storage[_idx];
 			assert(node != 0);
@@ -186,7 +186,7 @@ private:
 		bool operator!=(const IteratorImpl &iter) const { return !(*this == iter); }
 
 		IteratorImpl &operator++() {
-			assert(_hashmap);
+			ASSUME_NON_NULL(_hashmap);
 			do {
 				_idx++;
 			} while (_idx <= _hashmap->_mask && (_hashmap->_storage[_idx] == 0 || _hashmap->_storage[_idx] == HASHMAP_DUMMY_NODE));

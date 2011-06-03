@@ -107,37 +107,37 @@ bool File::isOpen() const {
 }
 
 bool File::err() const {
-	assert(_handle);
+	ASSUME_NON_NULL(_handle);
 	return _handle->err();
 }
 
 void File::clearErr() {
-	assert(_handle);
+	ASSUME_NON_NULL(_handle);
 	_handle->clearErr();
 }
 
 bool File::eos() const {
-	assert(_handle);
+	ASSUME_NON_NULL(_handle);
 	return _handle->eos();
 }
 
 int32 File::pos() const {
-	assert(_handle);
+	ASSUME_NON_NULL(_handle);
 	return _handle->pos();
 }
 
 int32 File::size() const {
-	assert(_handle);
+	ASSUME_NON_NULL(_handle);
 	return _handle->size();
 }
 
 bool File::seek(int32 offs, int whence) {
-	assert(_handle);
+	ASSUME_NON_NULL(_handle);
 	return _handle->seek(offs, whence);
 }
 
 uint32 File::read(void *ptr, uint32 len) {
-	assert(_handle);
+	ASSUME_NON_NULL(_handle);
 	return _handle->read(ptr, len);
 }
 
@@ -183,22 +183,22 @@ bool DumpFile::isOpen() const {
 }
 
 bool DumpFile::err() const {
-	assert(_handle);
+	ASSUME_NON_NULL(_handle);
 	return _handle->err();
 }
 
 void DumpFile::clearErr() {
-	assert(_handle);
+	ASSUME_NON_NULL(_handle);
 	_handle->clearErr();
 }
 
 uint32 DumpFile::write(const void *ptr, uint32 len) {
-	assert(_handle);
+	ASSUME_NON_NULL(_handle);
 	return _handle->write(ptr, len);
 }
 
 bool DumpFile::flush() {
-	assert(_handle);
+	ASSUME_NON_NULL(_handle);
 	return _handle->flush();
 }
 

@@ -113,7 +113,8 @@ enum {
 };
 
 char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
-	assert(buf != 0 && bufSize > 1);
+	ASSUME_NON_NULL(buf);
+	assert(bufSize > 1);
 	char *p = buf;
 	size_t len = 0;
 	char c = 0;

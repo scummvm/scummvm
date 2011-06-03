@@ -202,7 +202,7 @@ void String::decRefCount(int *oldRefCount) {
 		// The ref count reached zero, so we free the string storage
 		// and the ref count storage.
 		if (oldRefCount) {
-			assert(g_refCountPool);
+			ASSUME_NON_NULL(g_refCountPool);
 			g_refCountPool->freeChunk(oldRefCount);
 		}
 		delete[] _str;
@@ -296,7 +296,7 @@ bool String::hasPrefix(const String &x) const {
 }
 
 bool String::hasPrefix(const char *x) const {
-	assert(x != 0);
+	ASSUME_NON_NULL(x);
 	// Compare x with the start of _str.
 	const char *y = c_str();
 	while (*x && *x == *y) {
@@ -313,7 +313,7 @@ bool String::hasSuffix(const String &x) const {
 }
 
 bool String::hasSuffix(const char *x) const {
-	assert(x != 0);
+	ASSUME_NON_NULL(x);
 	// Compare x with the end of _str.
 	const uint32 x_size = strlen(x);
 	if (x_size > _size)
@@ -333,7 +333,7 @@ bool String::contains(const String &x) const {
 }
 
 bool String::contains(const char *x) const {
-	assert(x != 0);
+	ASSUME_NON_NULL(x);
 	return strstr(c_str(), x) != NULL;
 }
 
@@ -532,7 +532,7 @@ bool String::equals(const String &x) const {
 }
 
 bool String::equals(const char *x) const {
-	assert(x != 0);
+	ASSUME_NON_NULL(x);
 	return (0 == compareTo(x));
 }
 
@@ -541,7 +541,7 @@ bool String::equalsIgnoreCase(const String &x) const {
 }
 
 bool String::equalsIgnoreCase(const char *x) const {
-	assert(x != 0);
+	ASSUME_NON_NULL(x);
 	return (0 == compareToIgnoreCase(x));
 }
 
@@ -550,7 +550,7 @@ int String::compareTo(const String &x) const {
 }
 
 int String::compareTo(const char *x) const {
-	assert(x != 0);
+	ASSUME_NON_NULL(x);
 	return strcmp(c_str(), x);
 }
 
@@ -559,7 +559,7 @@ int String::compareToIgnoreCase(const String &x) const {
 }
 
 int String::compareToIgnoreCase(const char *x) const {
-	assert(x != 0);
+	ASSUME_NON_NULL(x);
 	return scumm_stricmp(c_str(), x);
 }
 
@@ -688,8 +688,8 @@ String normalizePath(const String &path, const char sep) {
 }
 
 bool matchString(const char *str, const char *pat, bool ignoreCase, bool pathMode) {
-	assert(str);
-	assert(pat);
+	ASSUME_NON_NULL(str);
+	ASSUME_NON_NULL(pat);
 
 	const char *p = 0;
 	const char *q = 0;
