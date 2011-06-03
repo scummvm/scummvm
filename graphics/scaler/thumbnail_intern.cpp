@@ -98,7 +98,7 @@ static bool grabScreen565(Graphics::Surface *surf) {
 		return false;
 
 	assert(screen->format.bytesPerPixel == 1 || screen->format.bytesPerPixel == 2);
-	assert(screen->pixels != 0);
+	ASSUME_NON_NULL(screen->pixels);
 
 	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
 
@@ -207,7 +207,7 @@ static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 }
 
 bool createThumbnailFromScreen(Graphics::Surface* surf) {
-	assert(surf);
+	ASSUME_NON_NULL(surf);
 
 	Graphics::Surface screen;
 
@@ -218,7 +218,7 @@ bool createThumbnailFromScreen(Graphics::Surface* surf) {
 }
 
 bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h, const uint8 *palette) {
-	assert(surf);
+	ASSUME_NON_NULL(surf);
 
 	Graphics::Surface screen;
 	screen.create(w, h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));

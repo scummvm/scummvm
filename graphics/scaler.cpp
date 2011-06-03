@@ -132,7 +132,7 @@ void InitScalers(uint32 BitFormat) {
 	} else if (gBitFormat == 565) {
 		format = Graphics::createPixelFormat<565>();
 	} else {
-		assert(g_system);
+		ASSUME_NON_NULL(g_system);
 		format = g_system->getOverlayFormat();
 	}
 

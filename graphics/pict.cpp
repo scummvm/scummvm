@@ -46,7 +46,7 @@ PictDecoder::~PictDecoder() {
 }
 
 Surface *PictDecoder::decodeImage(Common::SeekableReadStream *stream, byte *palette) {
-	assert(stream);
+	ASSUME_NON_NULL(stream);
 
 	_outputSurface = 0;
 

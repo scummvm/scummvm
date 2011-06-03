@@ -31,7 +31,7 @@
 namespace Graphics {
 
 void BMHD::load(Common::ReadStream *stream) {
-	assert(stream);
+	ASSUME_NON_NULL(stream);
 	stream->read(this, sizeof(BMHD));
 	width = FROM_BE_16(width);
 	height = FROM_BE_16(height);
@@ -48,7 +48,7 @@ void ILBMDecoder::loadHeader(Common::ReadStream *stream) {
 }
 
 void ILBMDecoder::loadBitmap(uint32 mode, byte *buffer, Common::ReadStream *stream) {
-	assert(stream);
+	ASSUME_NON_NULL(stream);
 	uint32 numPlanes = MIN(mode & ILBM_UNPACK_PLANES, (uint32)_header.depth);
 	assert(numPlanes == 1 || numPlanes == 2 || numPlanes == 3 || numPlanes == 4 || numPlanes == 5 || numPlanes == 8);
 

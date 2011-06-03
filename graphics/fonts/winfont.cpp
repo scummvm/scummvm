@@ -319,9 +319,9 @@ bool WinFont::loadFromFNT(Common::SeekableReadStream &stream) {
 }
 
 void WinFont::drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const {
-	assert(dst);
+	ASSUME_NON_NULL(dst);
 	assert(dst->format.bytesPerPixel == 1 || dst->format.bytesPerPixel == 2 || dst->format.bytesPerPixel == 4);
-	assert(_glyphs);
+	ASSUME_NON_NULL(_glyphs);
 
 	GlyphEntry &glyph = _glyphs[characterToIndex(chr)];
 
