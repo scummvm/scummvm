@@ -522,7 +522,7 @@ int AdLibDriver::snd_startSong(va_list &list) {
 	_flagTrigger = 1;
 
 	uint8 *ptr = getProgram(songId);
-	assert(ptr);
+	ASSUME_NON_NULL(ptr);
 	uint8 chan = *ptr;
 
 	if ((songId << 1) != 0) {
@@ -576,7 +576,7 @@ int AdLibDriver::snd_readByte(va_list &list) {
 	int a = va_arg(list, int);
 	int b = va_arg(list, int);
 	uint8 *ptr = getProgram(a) + b;
-	assert(ptr);
+	ASSUME_NON_NULL(ptr);
 	return *ptr;
 }
 
@@ -585,7 +585,7 @@ int AdLibDriver::snd_writeByte(va_list &list) {
 	int b = va_arg(list, int);
 	uint8 value = va_arg(list, int);
 	uint8 *ptr = getProgram(a) + b;
-	assert(ptr);
+	ASSUME_NON_NULL(ptr);
 	SWAP(*ptr, value);
 	return value;
 }

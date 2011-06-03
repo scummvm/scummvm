@@ -1008,7 +1008,7 @@ void LoLEngine::setupEpilogueData(bool load) {
 	};
 
 	const char * const *fileList = _flags.isTalkie ? fileListCD : fileListFloppy;
-	assert(fileList);
+	ASSUME_NON_NULL(fileList);
 
 	char filename[32];
 	for (uint i = 0; fileList[i]; ++i) {
@@ -1066,7 +1066,7 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 	_screen->clearPage(8);
 
 	TIM *outro = _tim->load("LOLFINAL.TIM", &_timOutroOpcodes);
-	assert(outro);
+	ASSUME_NON_NULL(outro);
 	outro->lolCharacter = character;
 
 	_screen->loadFont(Screen::FID_6_FNT, "NEW6P.FNT");

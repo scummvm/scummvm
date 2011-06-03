@@ -1204,7 +1204,7 @@ uint16 Screen::fetchChar(const char *&s) const {
 
 void Screen::drawChar(uint16 c, int x, int y) {
 	Font *fnt = _fonts[_currentFont];
-	assert(fnt);
+	ASSUME_NON_NULL(fnt);
 
 	const bool useOverlay = fnt->usesOverlay();
 	const int charWidth = fnt->getCharWidth(c);
@@ -3283,7 +3283,7 @@ void AMIGAFont::drawChar(uint16 c, byte *dst, int pitch) const {
 	pitch -= _chars[c].graphics.width;
 
 	const uint8 *src = _chars[c].graphics.bitmap;
-	assert(src);
+	ASSUME_NON_NULL(src);
 
 	for (int y = 0; y < _chars[c].graphics.height; ++y) {
 		for (int x = 0; x < _chars[c].graphics.width; ++x) {
@@ -3306,7 +3306,7 @@ void AMIGAFont::unload() {
 
 SJISFont::SJISFont(Screen *s, Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool outlineSize)
     : _colorMap(0), _font(font), _invisColor(invisColor), _is16Color(is16Color), _screen(s) {
-	assert(_font);
+	ASSUME_NON_NULL(_font);
 
 	_font->setDrawingMode(outlineSize ? Graphics::FontSJIS::kOutlineMode : Graphics::FontSJIS::kDefaultMode);
 

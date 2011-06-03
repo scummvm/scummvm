@@ -137,7 +137,7 @@ void SeqPlayer::s1_wsaPlayFrame() {
 	int16 frame = (int8)*_seqData++;
 	_seqMovies[wsaObj].pos.x = READ_LE_UINT16(_seqData); _seqData += 2;
 	_seqMovies[wsaObj].pos.y = *_seqData++;
-	assert(_seqMovies[wsaObj].movie);
+	ASSUME_NON_NULL(_seqMovies[wsaObj].movie);
 	_seqMovies[wsaObj].movie->displayFrame(frame, _seqMovies[wsaObj].page, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y, 0, 0, 0);
 	_seqMovies[wsaObj].frame = frame;
 }
@@ -476,7 +476,7 @@ void SeqPlayer::s1_prefetchVocFile() {
 }
 
 bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
-	assert(seqData);
+	ASSUME_NON_NULL(seqData);
 
 	static const SeqEntry floppySeqProcs[] = {
 		// 0x00

@@ -581,7 +581,7 @@ void KyraEngine_LoK::setupShapes123(const Shape *shapeTable, int endShape, int f
 	for (int i = 123; i < 123+endShape; ++i) {
 		uint8 newImage = shapeTable[i-123].imageIndex;
 		if (newImage != curImage && newImage != 0xFF) {
-			assert(_characterImageTable);
+			ASSUME_NON_NULL(_characterImageTable);
 			_screen->loadBitmap(_characterImageTable[newImage], 8, 8, 0);
 			curImage = newImage;
 		}

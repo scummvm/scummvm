@@ -320,7 +320,7 @@ void KyraEngine_MR::loadSceneMsc() {
 
 	_res->exists(filename, true);
 	Common::SeekableReadStream *stream = _res->createReadStream(filename);
-	assert(stream);
+	ASSUME_NON_NULL(stream);
 	int16 minY = 0, height = 0;
 	minY = stream->readSint16LE();
 	height = stream->readSint16LE();
@@ -351,7 +351,7 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 
 	_res->exists(filename, true);
 	Common::SeekableReadStream *stream = _res->createReadStream(filename);
-	assert(stream);
+	ASSUME_NON_NULL(stream);
 	stream->seek(2, SEEK_CUR);
 
 	byte scaleTable[15];

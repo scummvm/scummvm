@@ -98,12 +98,12 @@ int KyraEngine_LoK::buttonAmuletCallback(Button *caller) {
 	if (!queryGameFlag(0x2D))
 		return 1;
 	if (_itemInHand != kItemNone) {
-		assert(_putDownFirst);
+		ASSUME_NON_NULL(_putDownFirst);
 		characterSays(2000, _putDownFirst[0], 0, -2);
 		return 1;
 	}
 	if (queryGameFlag(0xF1)) {
-		assert(_waitForAmulet);
+		ASSUME_NON_NULL(_waitForAmulet);
 		characterSays(2001, _waitForAmulet[0], 0, -2);
 		return 1;
 	}
