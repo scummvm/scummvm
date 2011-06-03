@@ -88,15 +88,15 @@ bool OSystem_MacOSX::displayLogFile() {
 	if (_logFilePath.empty())
 		return false;
 
-    FSRef ref;
-    OSStatus err;
+	FSRef ref;
+	OSStatus err;
 
-    err = FSPathMakeRef((const UInt8 *)_logFilePath.c_str(), &ref, NULL);
-    if (err == noErr) {
-        err = LSOpenFSRef(&ref, NULL);
-    }
+	err = FSPathMakeRef((const UInt8 *)_logFilePath.c_str(), &ref, NULL);
+	if (err == noErr) {
+		err = LSOpenFSRef(&ref, NULL);
+	}
 
-    return err != noErr;
+	return err != noErr;
 }
 
 #endif
