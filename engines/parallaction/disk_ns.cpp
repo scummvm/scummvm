@@ -284,7 +284,7 @@ Script* Disk_ns::loadScript(const char* name) {
 }
 
 Cnv *Disk_ns::makeCnv(Common::SeekableReadStream *stream) {
-	assert(stream);
+	ASSUME_NON_NULL(stream);
 
 	uint16 numFrames = stream->readByte();
 	uint16 width = stream->readByte();
@@ -501,7 +501,7 @@ void DosDisk_ns::loadScenery(BackgroundInfo& info, const char *name, const char 
 	sprintf(maskPath, "%s.msk", mask);
 
 	Common::SeekableReadStream *stream = openFile(maskPath);
-	assert(stream);
+	ASSUME_NON_NULL(stream);
 
 	parseDepths(info, *stream);
 

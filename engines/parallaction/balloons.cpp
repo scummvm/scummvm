@@ -600,7 +600,7 @@ int BalloonManager_br::setSingleBalloon(const Common::String &text, uint16 x, ui
 		srcFrame = 0;
 	}
 
-	assert(src);
+	ASSUME_NON_NULL(src);
 
 	balloon->surface = expandBalloon(src, srcFrame);
 	src->getRect(srcFrame, balloon->box);
@@ -636,7 +636,7 @@ int BalloonManager_br::setDialogueBalloon(const Common::String &text, uint16 win
 		srcFrame = id;
 	}
 
-	assert(src);
+	ASSUME_NON_NULL(src);
 
 	balloon->surface = expandBalloon(src, srcFrame);
 	src->getRect(srcFrame, balloon->box);

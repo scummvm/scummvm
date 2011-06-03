@@ -585,7 +585,7 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 	loader.load(stream, true);
 
 	Graphics::Surface* surf = loader._surf;
-	assert(surf);
+	ASSUME_NON_NULL(surf);
 
 	// Static pictures are drawn used the upper half of the palette: this must be
 	// done before shadow mask is applied. This way, only really transparent pixels

@@ -376,12 +376,12 @@ public:
 	}
 
 	int16 getValue() const {
-		assert(_accessor);
+		ASSUME_NON_NULL(_accessor);
 		return _accessor->operator()();
 	}
 
 	void setValue(int16 value) {
-		assert(_mutator);
+		ASSUME_NON_NULL(_mutator);
 		_mutator->operator()(value);
 	}
 };

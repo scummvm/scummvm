@@ -225,7 +225,7 @@ MidiPlayer_MSC::MidiPlayer_MSC()
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_driver = MidiDriver::createMidi(dev);
-	assert(_driver);
+	ASSUME_NON_NULL(_driver);
 
 	int ret = _driver->open();
 	if (ret == 0) {

@@ -126,7 +126,7 @@ GfxObj* Gfx::loadCharacterAnim(const char *name) {
 
 GfxObj* Gfx::loadGet(const char *name) {
 	GfxObj *obj = _disk->loadStatic(name);
-	assert(obj);
+	ASSUME_NON_NULL(obj);
 
 	obj->z = kGfxObjGetZ;	// this preset Z value ensures that get zones are drawn after doors but before animations
 	obj->type = kGfxObjTypeGet;

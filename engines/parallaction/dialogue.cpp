@@ -143,7 +143,7 @@ DialogueManager::DialogueManager(Parallaction *vm, ZonePtr z) : _vm(vm), _z(z) {
 }
 
 void DialogueManager::start() {
-	assert(_dialogue);
+	ASSUME_NON_NULL(_dialogue);
 	_q = _dialogue->_questions[0];
 	_state = DIALOGUE_START;
 	transitionToState(displayQuestion() ? RUN_QUESTION : NEXT_ANSWER);
@@ -511,7 +511,7 @@ void Parallaction::enterDialogueMode(ZonePtr z) {
 
 	debugC(1, kDebugDialogue, "Parallaction::enterDialogueMode(%s)", z->u._filename.c_str());
 	_dialogueMan = createDialogueManager(z);
-	assert(_dialogueMan);
+	ASSUME_NON_NULL(_dialogueMan);
 	_dialogueMan->start();
 	_input->_inputMode = Input::kInputModeDialogue;
 }

@@ -1272,7 +1272,7 @@ void ProgramParser_br::init() {
 }
 
 void LocationParser_br::parse(Script *script, LocationParserOutput_br *out) {
-	assert(out);
+	ASSUME_NON_NULL(out);
 	_out = out;
 	_out->_info = new BackgroundInfo;
 	assert(_out->_info);
