@@ -179,7 +179,7 @@ int SoundGenPCJr::volumeCalc(SndGenChan *chan) {
 		break;
 	}
 
-	assert(chan);
+	ASSUME_NON_NULL(chan);
 
 	attenuation = chan->attenuation;
 	if (attenuation != 0x0F) {	// != silence
@@ -222,7 +222,7 @@ int SoundGenPCJr::getNextNote(int ch, Tone *tone) {
 	SndGenChan *chan;
 	const byte *data;
 
-	assert(tone);
+	ASSUME_NON_NULL(tone);
 	assert(ch < CHAN_MAX);
 
 	if (!_vm->getflag(fSoundOn))
