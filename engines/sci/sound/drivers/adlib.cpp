@@ -792,7 +792,7 @@ uint32 MidiDriver_AdLib::property(int prop, uint32 param) {
 
 
 int MidiPlayer_AdLib::open(ResourceManager *resMan) {
-	assert(resMan != NULL);
+	ASSUME_NON_NULL(resMan);
 
 	// Load up the patch.003 file, parse out the instruments
 	Resource *res = resMan->findResource(ResourceId(kResourceTypePatch, 3), 0);

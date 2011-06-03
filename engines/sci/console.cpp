@@ -75,7 +75,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	_engine(engine), _debugState(engine->_debugState) {
 
 	assert(_engine);
-	assert(_engine->_gamestate);
+	ASSUME_NON_NULL(_engine->_gamestate);
 
 	// Variables
 	DVar_Register("sleeptime_factor",	&g_debug_sleeptime_factor, DVAR_INT, 0);

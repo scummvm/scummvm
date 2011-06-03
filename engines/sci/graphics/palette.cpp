@@ -982,7 +982,7 @@ bool GfxPalette::loadClut(uint16 clutId) {
 
 byte GfxPalette::matchClutColor(uint16 color) {
 	// Match a color in RGB565 format to a palette index based on the loaded CLUT
-	assert(_clutTable);
+	ASSUME_NON_NULL(_clutTable);
 	return _clutTable[color];
 }
 

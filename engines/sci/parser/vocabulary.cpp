@@ -601,7 +601,7 @@ void Vocabulary::printParserWords() const {
 }
 
 void _vocab_recursive_ptree_dump(ParseTreeNode *tree, int blanks) {
-	assert(tree);
+	ASSUME_NON_NULL(tree);
 
 	ParseTreeNode* lbranch = tree->left;
 	ParseTreeNode* rbranch = tree->right;

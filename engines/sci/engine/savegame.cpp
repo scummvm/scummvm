@@ -187,7 +187,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		if (s.isLoading())
 			mobj = SegmentObj::createSegmentObj(type);
 
-		assert(mobj);
+		ASSUME_NON_NULL(mobj);
 
 		// Let the object sync custom data
 		mobj->saveLoadWithSerializer(s);
@@ -920,8 +920,8 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 }
 
 bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata *meta) {
-	assert(stream);
-	assert(meta);
+	ASSUME_NON_NULL(stream);
+	ASSUME_NON_NULL(meta);
 
 	Common::Serializer ser(stream, 0);
 	sync_SavegameMetadata(ser, *meta);

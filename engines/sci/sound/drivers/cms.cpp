@@ -171,7 +171,7 @@ int MidiDriver_CMS::open() {
 	if (_cms)
 		return MERR_ALREADY_OPEN;
 
-	assert(_resMan);
+	ASSUME_NON_NULL(_resMan);
 	Resource *res = _resMan->findResource(ResourceId(kResourceTypePatch, 101), 0);
 	if (!res)
 		return -1;

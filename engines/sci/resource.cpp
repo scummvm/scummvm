@@ -1091,7 +1091,7 @@ Resource *ResourceManager::findResource(ResourceId id, bool lock) {
 }
 
 void ResourceManager::unlockResource(Resource *res) {
-	assert(res);
+	ASSUME_NON_NULL(res);
 
 	if (res->_status != kResStatusLocked) {
 		debugC(kDebugLevelResMan, 2, "[resMan] Attempt to unlock unlocked resource %s", res->_id.toString().c_str());

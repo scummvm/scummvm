@@ -746,7 +746,7 @@ void SoundCommandParser::pauseAll(bool pause) {
 }
 
 MusicType SoundCommandParser::getMusicType() const {
-	assert(_music);
+	ASSUME_NON_NULL(_music);
 	return _music->soundGetMusicType();
 }
 

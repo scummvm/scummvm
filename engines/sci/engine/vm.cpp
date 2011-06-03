@@ -278,7 +278,7 @@ extern void debugSelectorCall(reg_t send_obj, Selector selector, int argc, Stack
 ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPtr sp, int framesize, StackPtr argp) {
 	// send_obj and work_obj are equal for anything but 'super'
 	// Returns a pointer to the TOS exec_stack element
-	assert(s);
+	ASSUME_NON_NULL(s);
 
 	reg_t funcp;
 	Selector selector;
@@ -542,7 +542,7 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 }
 
 void run_vm(EngineState *s) {
-	assert(s);
+	ASSUME_NON_NULL(s);
 
 	int temp;
 	reg_t r_temp; // Temporary register

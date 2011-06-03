@@ -646,7 +646,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 }
 
 byte MidiParser_SCI::getSongReverb() {
-	assert(_track);
+	ASSUME_NON_NULL(_track);
 
 	if (_soundVersion >= SCI_VERSION_1_EARLY) {
 		for (int i = 0; i < _track->channelCount; i++) {

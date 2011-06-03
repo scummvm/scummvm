@@ -1150,7 +1150,7 @@ static void change_polygons_opt_0(PathfindingState *s) {
 	PolygonList::iterator it = s->polygons.begin();
 	while (it != s->polygons.end()) {
 		Polygon *polygon = *it;
-		assert(polygon);
+		ASSUME_NON_NULL(polygon);
 
 		if (polygon->type == POLY_TOTAL_ACCESS) {
 			delete polygon;
@@ -1367,7 +1367,7 @@ static reg_t allocateOutputArray(SegManager *segMan, int size) {
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
 		SciArray<reg_t> *array = segMan->allocateArray(&addr);
-		assert(array);
+		ASSUME_NON_NULL(array);
 		array->setType(0);
 		array->setSize(size * 2);
 		return addr;

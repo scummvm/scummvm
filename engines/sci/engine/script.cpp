@@ -124,7 +124,7 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 
 void Script::load(ResourceManager *resMan) {
 	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, _nr), 0);
-	assert(script != 0);
+	ASSUME_NON_NULL(script);
 
 	uint extraLocalsWorkaround = 0;
 	if (g_sci->getGameId() == GID_FANMADE && _nr == 1 && script->size == 11140) {
