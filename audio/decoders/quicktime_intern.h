@@ -67,7 +67,7 @@ public:
 protected:
 	class AudioSampleDesc : public Common::QuickTimeParser::SampleDesc {
 	public:
-		AudioSampleDesc(Common::QuickTimeParser::MOVStreamContext *parentStream, uint32 codecTag);
+		AudioSampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag);
 
 		bool isAudioCodecSupported() const;
 		uint32 getAudioChunkSampleCount(uint chunk) const;
@@ -82,14 +82,14 @@ protected:
 	};
 
 	// Common::QuickTimeParser API
-	virtual Common::QuickTimeParser::SampleDesc *readSampleDesc(MOVStreamContext *st, uint32 format);
+	virtual Common::QuickTimeParser::SampleDesc *readSampleDesc(Track *track, uint32 format);
 
 	void init();
 	void setAudioStreamPos(const Timestamp &where);
 	bool isOldDemuxing() const;
 	void queueNextAudioChunk();
 
-	int _audioStreamIndex;
+	int _audioTrackIndex;
 	uint _curAudioChunk;
 	QueuingAudioStream *_audStream;
 };

@@ -88,23 +88,23 @@ protected:
 
 	DisposeAfterUse::Flag _disposeFileHandle;
 
-	struct MOVatom {
+	struct Atom {
 		uint32 type;
 		uint32 offset;
 		uint32 size;
 	};
 
 	struct ParseTable {
-		int (QuickTimeParser::*func)(MOVatom atom);
+		int (QuickTimeParser::*func)(Atom atom);
 		uint32 type;
 	};
 
-	struct MOVstts {
+	struct TimeToSampleEntry {
 		int count;
 		int duration;
 	};
 
-	struct MOVstsc {
+	struct SampleToChunkEntry {
 		uint32 first;
 		uint32 count;
 		uint32 id;
@@ -116,17 +116,17 @@ protected:
 		Common::Rational mediaRate;
 	};
 
-	struct MOVStreamContext;
+	struct Track;
 
 	class SampleDesc {
 	public:
-		SampleDesc(MOVStreamContext *parentStream, uint32 codecTag);
+		SampleDesc(Track *parentTrack, uint32 codecTag);
 		virtual ~SampleDesc() {}
 
 		uint32 getCodecTag() const { return _codecTag; }
 
 	protected:
-		MOVStreamContext *_parentStream;
+		Track *_parentTrack;
 		uint32 _codecTag;
 	};
 
@@ -136,77 +136,76 @@ protected:
 		CODEC_TYPE_AUDIO
 	};
 
-	struct MOVStreamContext {
-		MOVStreamContext();
-		~MOVStreamContext();
+	struct Track {
+		Track();
+		~Track();
 
-		uint32 chunk_count;
-		uint32 *chunk_offsets;
-		int stts_count;
-		MOVstts *stts_data;
-		uint32 sample_to_chunk_sz;
-		MOVstsc *sample_to_chunk;
-		uint32 sample_size;
-		uint32 sample_count;
-		uint32 *sample_sizes;
-		uint32 keyframe_count;
+		uint32 chunkCount;
+		uint32 *chunkOffsets;
+		int timeToSampleCount;
+		TimeToSampleEntry *timeToSample;
+		uint32 sampleToChunkCount;
+		SampleToChunkEntry *sampleToChunk;
+		uint32 sampleSize;
+		uint32 sampleCount;
+		uint32 *sampleSizes;
+		uint32 keyframeCount;
 		uint32 *keyframes;
-		int32 time_scale;
+		int32 timeScale;
 
 		uint16 width;
 		uint16 height;
-		CodecType codec_type;
+		CodecType codecType;
 
 		Common::Array<SampleDesc *> sampleDescs;
 
 		uint32 editCount;
 		EditListEntry *editList;
 
-		Common::SeekableReadStream *extradata;
+		Common::SeekableReadStream *extraData;
 
-		uint32 nb_frames;
+		uint32 frameCount;
 		uint32 duration;
-		uint32 start_time;
+		uint32 startTime;
 		Common::Rational scaleFactorX;
 		Common::Rational scaleFactorY;
 
 		byte objectTypeMP4;
 	};
 
-	virtual SampleDesc *readSampleDesc(MOVStreamContext *st, uint32 format) = 0;
+	virtual SampleDesc *readSampleDesc(Track *track, uint32 format) = 0;
 
 	const ParseTable *_parseTable;
 	bool _foundMOOV;
 	uint32 _timeScale;
 	uint32 _duration;
-	uint32 _numStreams;
 	Common::Rational _scaleFactorX;
 	Common::Rational _scaleFactorY;
-	MOVStreamContext *_streams[20];
+	Common::Array<Track *> _tracks;
 	uint32 _beginOffset;
 	Common::MacResManager *_resFork;
 
 	void initParseTable();
 	void init();
 
-	int readDefault(MOVatom atom);
-	int readLeaf(MOVatom atom);
-	int readELST(MOVatom atom);
-	int readHDLR(MOVatom atom);
-	int readMDHD(MOVatom atom);
-	int readMOOV(MOVatom atom);
-	int readMVHD(MOVatom atom);
-	int readTKHD(MOVatom atom);
-	int readTRAK(MOVatom atom);
-	int readSTCO(MOVatom atom);
-	int readSTSC(MOVatom atom);
-	int readSTSD(MOVatom atom);
-	int readSTSS(MOVatom atom);
-	int readSTSZ(MOVatom atom);
-	int readSTTS(MOVatom atom);
-	int readCMOV(MOVatom atom);
-	int readWAVE(MOVatom atom);
-	int readESDS(MOVatom atom);
+	int readDefault(Atom atom);
+	int readLeaf(Atom atom);
+	int readELST(Atom atom);
+	int readHDLR(Atom atom);
+	int readMDHD(Atom atom);
+	int readMOOV(Atom atom);
+	int readMVHD(Atom atom);
+	int readTKHD(Atom atom);
+	int readTRAK(Atom atom);
+	int readSTCO(Atom atom);
+	int readSTSC(Atom atom);
+	int readSTSD(Atom atom);
+	int readSTSS(Atom atom);
+	int readSTSZ(Atom atom);
+	int readSTTS(Atom atom);
+	int readCMOV(Atom atom);
+	int readWAVE(Atom atom);
+	int readESDS(Atom atom);
 };
 
 } // End of namespace Common

@@ -69,50 +69,50 @@ QuickTimeDecoder::~QuickTimeDecoder() {
 }
 
 uint16 QuickTimeDecoder::getWidth() const {
-	if (_videoStreamIndex < 0)
+	if (_videoTrackIndex < 0)
 		return 0;
 
-	return (Common::Rational(_streams[_videoStreamIndex]->width) / getScaleFactorX()).toInt();
+	return (Common::Rational(_tracks[_videoTrackIndex]->width) / getScaleFactorX()).toInt();
 }
 
 uint16 QuickTimeDecoder::getHeight() const {
-	if (_videoStreamIndex < 0)
+	if (_videoTrackIndex < 0)
 		return 0;
 
-	return (Common::Rational(_streams[_videoStreamIndex]->height) / getScaleFactorY()).toInt();
+	return (Common::Rational(_tracks[_videoTrackIndex]->height) / getScaleFactorY()).toInt();
 }
 
 uint32 QuickTimeDecoder::getFrameCount() const {
-	if (_videoStreamIndex < 0)
+	if (_videoTrackIndex < 0)
 		return 0;
 
-	return _streams[_videoStreamIndex]->nb_frames;
+	return _tracks[_videoTrackIndex]->frameCount;
 }
 
 Common::Rational QuickTimeDecoder::getScaleFactorX() const {
-	if (_videoStreamIndex < 0)
+	if (_videoTrackIndex < 0)
 		return 1;
 
-	return (_scaleFactorX * _streams[_videoStreamIndex]->scaleFactorX);
+	return (_scaleFactorX * _tracks[_videoTrackIndex]->scaleFactorX);
 }
 
 Common::Rational QuickTimeDecoder::getScaleFactorY() const {
-	if (_videoStreamIndex < 0)
+	if (_videoTrackIndex < 0)
 		return 1;
 
-	return (_scaleFactorY * _streams[_videoStreamIndex]->scaleFactorY);
+	return (_scaleFactorY * _tracks[_videoTrackIndex]->scaleFactorY);
 }
 
 uint32 QuickTimeDecoder::getFrameDuration() {
-	if (_videoStreamIndex < 0)
+	if (_videoTrackIndex < 0)
 		return 0;
 
 	uint32 curFrameIndex = 0;
-	for (int32 i = 0; i < _streams[_videoStreamIndex]->stts_count; i++) {
-		curFrameIndex += _streams[_videoStreamIndex]->stts_data[i].count;
+	for (int32 i = 0; i < _tracks[_videoTrackIndex]->timeToSampleCount; i++) {
+		curFrameIndex += _tracks[_videoTrackIndex]->timeToSample[i].count;
 		if ((uint32)_curFrame < curFrameIndex) {
 			// Ok, now we have what duration this frame has.
-			return _streams[_videoStreamIndex]->stts_data[i].duration;
+			return _tracks[_videoTrackIndex]->timeToSample[i].duration;
 		}
 	}
 
@@ -131,17 +131,17 @@ Graphics::PixelFormat QuickTimeDecoder::getPixelFormat() const {
 }
 
 uint32 QuickTimeDecoder::findKeyFrame(uint32 frame) const {
-	for (int i = _streams[_videoStreamIndex]->keyframe_count - 1; i >= 0; i--)
-		if (_streams[_videoStreamIndex]->keyframes[i] <= frame)
-				return _streams[_videoStreamIndex]->keyframes[i];
+	for (int i = _tracks[_videoTrackIndex]->keyframeCount - 1; i >= 0; i--)
+		if (_tracks[_videoTrackIndex]->keyframes[i] <= frame)
+				return _tracks[_videoTrackIndex]->keyframes[i];
 	
 	// If none found, we'll assume the requested frame is a key frame
 	return frame;
 }
 
 void QuickTimeDecoder::seekToFrame(uint32 frame) {
-	assert(_videoStreamIndex >= 0);
-	assert(frame < _streams[_videoStreamIndex]->nb_frames);
+	assert(_videoTrackIndex >= 0);
+	assert(frame < _tracks[_videoTrackIndex]->frameCount);
 
 	// Stop all audio (for now)
 	stopAudio();
@@ -155,20 +155,20 @@ void QuickTimeDecoder::seekToFrame(uint32 frame) {
 	_nextFrameStartTime = 0;
 	uint32 curFrame = 0;
 
-	for (int32 i = 0; i < _streams[_videoStreamIndex]->stts_count && curFrame < frame; i++) {
-		for (int32 j = 0; j < _streams[_videoStreamIndex]->stts_data[i].count && curFrame < frame; j++) {
+	for (int32 i = 0; i < _tracks[_videoTrackIndex]->timeToSampleCount && curFrame < frame; i++) {
+		for (int32 j = 0; j < _tracks[_videoTrackIndex]->timeToSample[i].count && curFrame < frame; j++) {
 			curFrame++;
-			_nextFrameStartTime += _streams[_videoStreamIndex]->stts_data[i].duration;
+			_nextFrameStartTime += _tracks[_videoTrackIndex]->timeToSample[i].duration;
 		}
 	}
 
 	// Adjust the video starting point
-	const Audio::Timestamp curVideoTime(0, _nextFrameStartTime, _streams[_videoStreamIndex]->time_scale);
+	const Audio::Timestamp curVideoTime(0, _nextFrameStartTime, _tracks[_videoTrackIndex]->timeScale);
 	_startTime = g_system->getMillis() - curVideoTime.msecs();
 	resetPauseStartTime();
 
 	// Adjust the audio starting point
-	if (_audioStreamIndex >= 0) {
+	if (_audioTrackIndex >= 0) {
 		_audioStartOffset = curVideoTime;
 
 		// Seek to the new audio location
@@ -181,17 +181,17 @@ void QuickTimeDecoder::seekToFrame(uint32 frame) {
 
 void QuickTimeDecoder::seekToTime(Audio::Timestamp time) {
 	// Use makeQuickTimeStream() instead
-	if (_videoStreamIndex < 0)
+	if (_videoTrackIndex < 0)
 		error("Audio-only seeking not supported");
 
 	// Try to find the last frame that should have been decoded
 	uint32 frame = 0;
-	Audio::Timestamp totalDuration(0, _streams[_videoStreamIndex]->time_scale);
+	Audio::Timestamp totalDuration(0, _tracks[_videoTrackIndex]->timeScale);
 	bool done = false;
 
-	for (int32 i = 0; i < _streams[_videoStreamIndex]->stts_count && !done; i++) {
-		for (int32 j = 0; j < _streams[_videoStreamIndex]->stts_data[i].count; j++) {
-			totalDuration = totalDuration.addFrames(_streams[_videoStreamIndex]->stts_data[i].duration);
+	for (int32 i = 0; i < _tracks[_videoTrackIndex]->timeToSampleCount && !done; i++) {
+		for (int32 j = 0; j < _tracks[_videoTrackIndex]->timeToSample[i].count; j++) {
+			totalDuration = totalDuration.addFrames(_tracks[_videoTrackIndex]->timeToSample[i].duration);
 			if (totalDuration > time) {
 				done = true;
 				break;
@@ -221,14 +221,14 @@ void QuickTimeDecoder::pauseVideoIntern(bool pause) {
 }
 
 Codec *QuickTimeDecoder::findDefaultVideoCodec() const {
-	if (_videoStreamIndex < 0 || _streams[_videoStreamIndex]->sampleDescs.empty())
+	if (_videoTrackIndex < 0 || _tracks[_videoTrackIndex]->sampleDescs.empty())
 		return 0;
 
-	return ((VideoSampleDesc *)_streams[_videoStreamIndex]->sampleDescs[0])->_videoCodec;
+	return ((VideoSampleDesc *)_tracks[_videoTrackIndex]->sampleDescs[0])->_videoCodec;
 }
 
 const Graphics::Surface *QuickTimeDecoder::decodeNextFrame() {
-	if (_videoStreamIndex < 0 || _curFrame >= (int32)getFrameCount() - 1)
+	if (_videoTrackIndex < 0 || _curFrame >= (int32)getFrameCount() - 1)
 		return 0;
 
 	if (_startTime == 0)
@@ -244,11 +244,11 @@ const Graphics::Surface *QuickTimeDecoder::decodeNextFrame() {
 	uint32 descId;
 	Common::SeekableReadStream *frameData = getNextFramePacket(descId);
 
-	if (!frameData || !descId || descId > _streams[_videoStreamIndex]->sampleDescs.size())
+	if (!frameData || !descId || descId > _tracks[_videoTrackIndex]->sampleDescs.size())
 		return 0;
 
 	// Find which video description entry we want
-	VideoSampleDesc *entry = (VideoSampleDesc *)_streams[_videoStreamIndex]->sampleDescs[descId - 1];
+	VideoSampleDesc *entry = (VideoSampleDesc *)_tracks[_videoTrackIndex]->sampleDescs[descId - 1];
 
 	if (!entry->_videoCodec)
 		return 0;
@@ -305,7 +305,7 @@ uint32 QuickTimeDecoder::getTimeToNextFrame() const {
 		return 0;
 
 	// Convert from the QuickTime rate base to 1000
-	uint32 nextFrameStartTime = _nextFrameStartTime * 1000 / _streams[_videoStreamIndex]->time_scale;
+	uint32 nextFrameStartTime = _nextFrameStartTime * 1000 / _tracks[_videoTrackIndex]->timeScale;
 	uint32 elapsedTime = getElapsedTime();
 
 	if (nextFrameStartTime <= elapsedTime)
@@ -333,13 +333,13 @@ bool QuickTimeDecoder::loadStream(Common::SeekableReadStream *stream) {
 void QuickTimeDecoder::init() {
 	Audio::QuickTimeAudioDecoder::init();
 
-	_videoStreamIndex = -1;
+	_videoTrackIndex = -1;
 	_startTime = 0;
 
 	// Find video streams
-	for (uint32 i = 0; i < _numStreams; i++)
-		if (_streams[i]->codec_type == CODEC_TYPE_VIDEO && _videoStreamIndex < 0)
-			_videoStreamIndex = i;
+	for (uint32 i = 0; i < _tracks.size(); i++)
+		if (_tracks[i]->codecType == CODEC_TYPE_VIDEO && _videoTrackIndex < 0)
+			_videoTrackIndex = i;
 
 	// Start the audio codec if we've got one that we can handle
 	if (_audStream) {
@@ -348,9 +348,9 @@ void QuickTimeDecoder::init() {
 	}
 
 	// Initialize video, if present
-	if (_videoStreamIndex >= 0) {
-		for (uint32 i = 0; i < _streams[_videoStreamIndex]->sampleDescs.size(); i++)
-			((VideoSampleDesc *)_streams[_videoStreamIndex]->sampleDescs[i])->initCodec();
+	if (_videoTrackIndex >= 0) {
+		for (uint32 i = 0; i < _tracks[_videoTrackIndex]->sampleDescs.size(); i++)
+			((VideoSampleDesc *)_tracks[_videoTrackIndex]->sampleDescs[i])->initCodec();
 
 		if (getScaleFactorX() != 1 || getScaleFactorY() != 1) {
 			// We have to initialize the scaled surface
@@ -360,11 +360,11 @@ void QuickTimeDecoder::init() {
 	}
 }
 
-Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(MOVStreamContext *st, uint32 format) {
-	if (st->codec_type == CODEC_TYPE_VIDEO) {
+Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Track *track, uint32 format) {
+	if (track->codecType == CODEC_TYPE_VIDEO) {
 		debug(0, "Video Codec FourCC: \'%s\'", tag2str(format));
 
-		VideoSampleDesc *entry = new VideoSampleDesc(st, format);
+		VideoSampleDesc *entry = new VideoSampleDesc(track, format);
 
 		_fd->readUint16BE(); // version
 		_fd->readUint16BE(); // revision level
@@ -378,21 +378,21 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(MOVStreamC
 		// The width is most likely invalid for entries after the first one
 		// so only set the overall width if it is not zero here.
 		if (width)
-			st->width = width;
+			track->width = width;
 
 		if (height)
-			st->height = height;
+			track->height = height;
 
 		_fd->readUint32BE(); // horiz resolution
 		_fd->readUint32BE(); // vert resolution
 		_fd->readUint32BE(); // data size, always 0
 		_fd->readUint16BE(); // frames per samples
 
-		byte codec_name[32];
-		_fd->read(codec_name, 32); // codec name, pascal string (FIXME: true for mp4?)
-		if (codec_name[0] <= 31) {
-			memcpy(entry->_codecName, &codec_name[1], codec_name[0]);
-			entry->_codecName[codec_name[0]] = 0;
+		byte codecName[32];
+		_fd->read(codecName, 32); // codec name, pascal string (FIXME: true for mp4?)
+		if (codecName[0] <= 31) {
+			memcpy(entry->_codecName, &codecName[1], codecName[0]);
+			entry->_codecName[codecName[0]] = 0;
 		}
 
 		entry->_bitsPerSample = _fd->readUint16BE(); // depth
@@ -455,7 +455,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(MOVStreamC
 	}
 
 	// Pass it on up
-	return Audio::QuickTimeAudioDecoder::readSampleDesc(st, format);
+	return Audio::QuickTimeAudioDecoder::readSampleDesc(track, format);
 }
 
 void QuickTimeDecoder::close() {
@@ -472,7 +472,7 @@ void QuickTimeDecoder::close() {
 }
 
 Common::SeekableReadStream *QuickTimeDecoder::getNextFramePacket(uint32 &descId) {
-	if (_videoStreamIndex < 0)
+	if (_videoTrackIndex < 0)
 		return NULL;
 
 	// First, we have to track down which chunk holds the sample and which sample in the chunk contains the frame we are looking for.
@@ -480,22 +480,22 @@ Common::SeekableReadStream *QuickTimeDecoder::getNextFramePacket(uint32 &descId)
 	int32 sampleInChunk = 0;
 	int32 actualChunk = -1;
 
-	for (uint32 i = 0; i < _streams[_videoStreamIndex]->chunk_count; i++) {
+	for (uint32 i = 0; i < _tracks[_videoTrackIndex]->chunkCount; i++) {
 		int32 sampleToChunkIndex = -1;
 
-		for (uint32 j = 0; j < _streams[_videoStreamIndex]->sample_to_chunk_sz; j++)
-			if (i >= _streams[_videoStreamIndex]->sample_to_chunk[j].first)
+		for (uint32 j = 0; j < _tracks[_videoTrackIndex]->sampleToChunkCount; j++)
+			if (i >= _tracks[_videoTrackIndex]->sampleToChunk[j].first)
 				sampleToChunkIndex = j;
 
 		if (sampleToChunkIndex < 0)
 			error("This chunk (%d) is imaginary", sampleToChunkIndex);
 
-		totalSampleCount += _streams[_videoStreamIndex]->sample_to_chunk[sampleToChunkIndex].count;
+		totalSampleCount += _tracks[_videoTrackIndex]->sampleToChunk[sampleToChunkIndex].count;
 
 		if (totalSampleCount > getCurFrame()) {
 			actualChunk = i;
-			descId = _streams[_videoStreamIndex]->sample_to_chunk[sampleToChunkIndex].id;
-			sampleInChunk = _streams[_videoStreamIndex]->sample_to_chunk[sampleToChunkIndex].count - totalSampleCount + getCurFrame();
+			descId = _tracks[_videoTrackIndex]->sampleToChunk[sampleToChunkIndex].id;
+			sampleInChunk = _tracks[_videoTrackIndex]->sampleToChunk[sampleToChunkIndex].count - totalSampleCount + getCurFrame();
 			break;
 		}
 	}
@@ -506,23 +506,23 @@ Common::SeekableReadStream *QuickTimeDecoder::getNextFramePacket(uint32 &descId)
 	}
 
 	// Next seek to that frame
-	_fd->seek(_streams[_videoStreamIndex]->chunk_offsets[actualChunk]);
+	_fd->seek(_tracks[_videoTrackIndex]->chunkOffsets[actualChunk]);
 
 	// Then, if the chunk holds more than one frame, seek to where the frame we want is located
 	for (int32 i = getCurFrame() - sampleInChunk; i < getCurFrame(); i++) {
-		if (_streams[_videoStreamIndex]->sample_size != 0)
-			_fd->skip(_streams[_videoStreamIndex]->sample_size);
+		if (_tracks[_videoTrackIndex]->sampleSize != 0)
+			_fd->skip(_tracks[_videoTrackIndex]->sampleSize);
 		else
-			_fd->skip(_streams[_videoStreamIndex]->sample_sizes[i]);
+			_fd->skip(_tracks[_videoTrackIndex]->sampleSizes[i]);
 	}
 
 	// Finally, read in the raw data for the frame
-	//printf ("Frame Data[%d]: Offset = %d, Size = %d\n", getCurFrame(), _fd->pos(), _streams[_videoStreamIndex]->sample_sizes[getCurFrame()]);
+	//printf ("Frame Data[%d]: Offset = %d, Size = %d\n", getCurFrame(), _fd->pos(), _tracks[_videoTrackIndex]->sampleSizes[getCurFrame()]);
 
-	if (_streams[_videoStreamIndex]->sample_size != 0)
-		return _fd->readStream(_streams[_videoStreamIndex]->sample_size);
+	if (_tracks[_videoTrackIndex]->sampleSize != 0)
+		return _fd->readStream(_tracks[_videoTrackIndex]->sampleSize);
 
-	return _fd->readStream(_streams[_videoStreamIndex]->sample_sizes[getCurFrame()]);
+	return _fd->readStream(_tracks[_videoTrackIndex]->sampleSizes[getCurFrame()]);
 }
 
 void QuickTimeDecoder::updateAudioBuffer() {
@@ -531,21 +531,21 @@ void QuickTimeDecoder::updateAudioBuffer() {
 
 	uint32 numberOfChunksNeeded = 0;
 
-	if (_videoStreamIndex < 0 || _curFrame == (int32)_streams[_videoStreamIndex]->nb_frames - 1) {
+	if (_videoTrackIndex < 0 || _curFrame == (int32)_tracks[_videoTrackIndex]->frameCount - 1) {
 		// If we have no video, there's nothing to base our buffer against
 		// However, one must ask why a QuickTimeDecoder is being used instead of the nice makeQuickTimeStream() function
 
 		// If we're on the last frame, make sure all audio remaining is buffered
-		numberOfChunksNeeded = _streams[_audioStreamIndex]->chunk_count;
+		numberOfChunksNeeded = _tracks[_audioTrackIndex]->chunkCount;
 	} else {
-		Audio::QuickTimeAudioDecoder::AudioSampleDesc *entry = (Audio::QuickTimeAudioDecoder::AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
+		Audio::QuickTimeAudioDecoder::AudioSampleDesc *entry = (Audio::QuickTimeAudioDecoder::AudioSampleDesc *)_tracks[_audioTrackIndex]->sampleDescs[0];
 
 		// Calculate the amount of chunks we need in memory until the next frame
 		uint32 timeToNextFrame = getTimeToNextFrame();
 		uint32 timeFilled = 0;
 		uint32 curAudioChunk = _curAudioChunk - _audStream->numQueuedStreams();
 
-		for (; timeFilled < timeToNextFrame && curAudioChunk < _streams[_audioStreamIndex]->chunk_count; numberOfChunksNeeded++, curAudioChunk++) {
+		for (; timeFilled < timeToNextFrame && curAudioChunk < _tracks[_audioTrackIndex]->chunkCount; numberOfChunksNeeded++, curAudioChunk++) {
 			uint32 sampleCount = entry->getAudioChunkSampleCount(curAudioChunk);
 			assert(sampleCount);
 
@@ -557,11 +557,11 @@ void QuickTimeDecoder::updateAudioBuffer() {
 	}
 
 	// Keep three streams in buffer so that if/when the first two end, it goes right into the next
-	while (_audStream->numQueuedStreams() < numberOfChunksNeeded && _curAudioChunk < _streams[_audioStreamIndex]->chunk_count)
+	while (_audStream->numQueuedStreams() < numberOfChunksNeeded && _curAudioChunk < _tracks[_audioTrackIndex]->chunkCount)
 		queueNextAudioChunk();
 }
 
-QuickTimeDecoder::VideoSampleDesc::VideoSampleDesc(Common::QuickTimeParser::MOVStreamContext *parentStream, uint32 codecTag) : Common::QuickTimeParser::SampleDesc(parentStream, codecTag) {
+QuickTimeDecoder::VideoSampleDesc::VideoSampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag) : Common::QuickTimeParser::SampleDesc(parentTrack, codecTag) {
 	memset(_codecName, 0, 32);
 	_colorTableId = 0;
 	_palette = 0;
@@ -582,15 +582,15 @@ void QuickTimeDecoder::VideoSampleDesc::initCodec() {
 		break;
 	case MKTAG('r','p','z','a'):
 		// Apple Video ("Road Pizza"): Used by some Myst videos.
-		_videoCodec = new RPZADecoder(_parentStream->width, _parentStream->height);
+		_videoCodec = new RPZADecoder(_parentTrack->width, _parentTrack->height);
 		break;
 	case MKTAG('r','l','e',' '):
 		// QuickTime RLE: Used by some Myst ME videos.
-		_videoCodec = new QTRLEDecoder(_parentStream->width, _parentStream->height, _bitsPerSample & 0x1f);
+		_videoCodec = new QTRLEDecoder(_parentTrack->width, _parentTrack->height, _bitsPerSample & 0x1f);
 		break;
 	case MKTAG('s','m','c',' '):
 		// Apple SMC: Used by some Myst videos.
-		_videoCodec = new SMCDecoder(_parentStream->width, _parentStream->height);
+		_videoCodec = new SMCDecoder(_parentTrack->width, _parentTrack->height);
 		break;
 	case MKTAG('S','V','Q','1'):
 		// Sorenson Video 1: Used by some Myst ME videos.
@@ -606,7 +606,7 @@ void QuickTimeDecoder::VideoSampleDesc::initCodec() {
 		break;
 	case MKTAG('Q','k','B','k'):
 		// CDToons: Used by most of the Broderbund games.
-		_videoCodec = new CDToonsDecoder(_parentStream->width, _parentStream->height);
+		_videoCodec = new CDToonsDecoder(_parentTrack->width, _parentTrack->height);
 		break;
 	default:
 		warning("Unsupported codec \'%s\'", tag2str(_codecTag));

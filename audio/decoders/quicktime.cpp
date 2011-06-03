@@ -68,16 +68,16 @@ bool QuickTimeAudioDecoder::loadAudioStream(Common::SeekableReadStream *stream, 
 void QuickTimeAudioDecoder::init() {
 	Common::QuickTimeParser::init();
 
-	_audioStreamIndex = -1;
+	_audioTrackIndex = -1;
 
 	// Find an audio stream
-	for (uint32 i = 0; i < _numStreams; i++)
-		if (_streams[i]->codec_type == CODEC_TYPE_AUDIO && _audioStreamIndex < 0)
-			_audioStreamIndex = i;
+	for (uint32 i = 0; i < _tracks.size(); i++)
+		if (_tracks[i]->codecType == CODEC_TYPE_AUDIO && _audioTrackIndex < 0)
+			_audioTrackIndex = i;
 
 	// Initialize audio, if present
-	if (_audioStreamIndex >= 0) {
-		AudioSampleDesc *entry = (AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
+	if (_audioTrackIndex >= 0) {
+		AudioSampleDesc *entry = (AudioSampleDesc *)_tracks[_audioTrackIndex]->sampleDescs[0];
 
 		if (entry->isAudioCodecSupported()) {
 			_audStream = makeQueuingAudioStream(entry->_sampleRate, entry->_channels == 2);
@@ -85,16 +85,16 @@ void QuickTimeAudioDecoder::init() {
 
 			// Make sure the bits per sample transfers to the sample size
 			if (entry->getCodecTag() == MKTAG('r', 'a', 'w', ' ') || entry->getCodecTag() == MKTAG('t', 'w', 'o', 's'))
-				_streams[_audioStreamIndex]->sample_size = (entry->_bitsPerSample / 8) * entry->_channels;
+				_tracks[_audioTrackIndex]->sampleSize = (entry->_bitsPerSample / 8) * entry->_channels;
 		}
 	}
 }
 
-Common::QuickTimeParser::SampleDesc *QuickTimeAudioDecoder::readSampleDesc(MOVStreamContext *st, uint32 format) {
-	if (st->codec_type == CODEC_TYPE_AUDIO) {
+Common::QuickTimeParser::SampleDesc *QuickTimeAudioDecoder::readSampleDesc(Track *track, uint32 format) {
+	if (track->codecType == CODEC_TYPE_AUDIO) {
 		debug(0, "Audio Codec FourCC: \'%s\'", tag2str(format));
 
-		AudioSampleDesc *entry = new AudioSampleDesc(st, format);
+		AudioSampleDesc *entry = new AudioSampleDesc(track, format);
 
 		uint16 stsdVersion = _fd->readUint16BE();
 		_fd->readUint16BE(); // revision level
@@ -133,8 +133,8 @@ Common::QuickTimeParser::SampleDesc *QuickTimeAudioDecoder::readSampleDesc(MOVSt
 			entry->_bytesPerFrame = 34 * entry->_channels;
 		}
 
-		if (entry->_sampleRate == 0 && st->time_scale > 1)
-			entry->_sampleRate = st->time_scale;
+		if (entry->_sampleRate == 0 && track->timeScale > 1)
+			entry->_sampleRate = track->timeScale;
 
 		return entry;
 	}
@@ -143,15 +143,15 @@ Common::QuickTimeParser::SampleDesc *QuickTimeAudioDecoder::readSampleDesc(MOVSt
 }
 
 bool QuickTimeAudioDecoder::isOldDemuxing() const {
-	assert(_audioStreamIndex >= 0);
-	return _streams[_audioStreamIndex]->stts_count == 1 && _streams[_audioStreamIndex]->stts_data[0].duration == 1;
+	assert(_audioTrackIndex >= 0);
+	return _tracks[_audioTrackIndex]->timeToSampleCount == 1 && _tracks[_audioTrackIndex]->timeToSample[0].duration == 1;
 }
 
 void QuickTimeAudioDecoder::queueNextAudioChunk() {
-	AudioSampleDesc *entry = (AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
+	AudioSampleDesc *entry = (AudioSampleDesc *)_tracks[_audioTrackIndex]->sampleDescs[0];
 	Common::MemoryWriteStreamDynamic *wStream = new Common::MemoryWriteStreamDynamic();
 
-	_fd->seek(_streams[_audioStreamIndex]->chunk_offsets[_curAudioChunk]);
+	_fd->seek(_tracks[_audioTrackIndex]->chunkOffsets[_curAudioChunk]);
 
 	// First, we have to get the sample count
 	uint32 sampleCount = entry->getAudioChunkSampleCount(_curAudioChunk);
@@ -172,7 +172,7 @@ void QuickTimeAudioDecoder::queueNextAudioChunk() {
 				size = (samples / entry->_samplesPerFrame) * entry->_bytesPerFrame;
 			} else {
 				samples = MIN<uint32>(1024, sampleCount);
-				size = samples * _streams[_audioStreamIndex]->sample_size;
+				size = samples * _tracks[_audioTrackIndex]->sampleSize;
 			}
 
 			// Now, we read in the data for this data and output it
@@ -191,7 +191,7 @@ void QuickTimeAudioDecoder::queueNextAudioChunk() {
 			startSample += entry->getAudioChunkSampleCount(i);
 
 		for (uint32 i = 0; i < sampleCount; i++) {
-			uint32 size = (_streams[_audioStreamIndex]->sample_size != 0) ? _streams[_audioStreamIndex]->sample_size : _streams[_audioStreamIndex]->sample_sizes[i + startSample];
+			uint32 size = (_tracks[_audioTrackIndex]->sampleSize != 0) ? _tracks[_audioTrackIndex]->sampleSize : _tracks[_audioTrackIndex]->sampleSizes[i + startSample];
 
 			// Now, we read in the data for this data and output it
 			byte *data = (byte *)malloc(size);
@@ -214,31 +214,31 @@ void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
 
 	// Re-create the audio stream
 	delete _audStream;
-	Audio::QuickTimeAudioDecoder::AudioSampleDesc *entry = (Audio::QuickTimeAudioDecoder::AudioSampleDesc *)_streams[_audioStreamIndex]->sampleDescs[0];
+	Audio::QuickTimeAudioDecoder::AudioSampleDesc *entry = (Audio::QuickTimeAudioDecoder::AudioSampleDesc *)_tracks[_audioTrackIndex]->sampleDescs[0];
 	_audStream = Audio::makeQueuingAudioStream(entry->_sampleRate, entry->_channels == 2);
 
 	// First, we need to track down what audio sample we need
-	Audio::Timestamp curAudioTime = where.convertToFramerate(_streams[_audioStreamIndex]->time_scale);
+	Audio::Timestamp curAudioTime = where.convertToFramerate(_tracks[_audioTrackIndex]->timeScale);
 	uint32 sample = curAudioTime.totalNumberOfFrames();
 	uint32 seekSample = sample; 
 
 	if (!isOldDemuxing()) {
 		// We shouldn't have audio samples that are a different duration
 		// That would be quite bad!
-		if (_streams[_audioStreamIndex]->stts_count != 1) {
+		if (_tracks[_audioTrackIndex]->timeToSampleCount != 1) {
 			warning("Failed seeking");
 			return;
 		}
 
 		// Note that duration is in terms of *one* channel
 		// This eases calculation a bit
-		seekSample /= _streams[_audioStreamIndex]->stts_data[0].duration;
+		seekSample /= _tracks[_audioTrackIndex]->timeToSample[0].duration;
 	}
 
 	// Now to track down what chunk it's in
 	uint32 totalSamples = 0;
 	_curAudioChunk = 0;
-	for (uint32 i = 0; i < _streams[_audioStreamIndex]->chunk_count; i++, _curAudioChunk++) {
+	for (uint32 i = 0; i < _tracks[_audioTrackIndex]->chunkCount; i++, _curAudioChunk++) {
 		uint32 chunkSampleCount = entry->getAudioChunkSampleCount(i);
 
 		if (seekSample < totalSamples + chunkSampleCount)
@@ -260,7 +260,7 @@ void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
 	}
 }
 
-QuickTimeAudioDecoder::AudioSampleDesc::AudioSampleDesc(Common::QuickTimeParser::MOVStreamContext *parentStream, uint32 codecTag) : Common::QuickTimeParser::SampleDesc(parentStream, codecTag) {
+QuickTimeAudioDecoder::AudioSampleDesc::AudioSampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag) : Common::QuickTimeParser::SampleDesc(parentTrack, codecTag) {
 	_channels = 0;
 	_sampleRate = 0;
 	_samplesPerFrame = 0;
@@ -280,7 +280,7 @@ bool QuickTimeAudioDecoder::AudioSampleDesc::isAudioCodecSupported() const {
 
 	if (_codecTag == MKTAG('m', 'p', '4', 'a')) {
 		Common::String audioType;
-		switch (_parentStream->objectTypeMP4) {
+		switch (_parentTrack->objectTypeMP4) {
 		case 0x40: // AAC
 #ifdef USE_FAAD
 			return true;
@@ -302,9 +302,9 @@ bool QuickTimeAudioDecoder::AudioSampleDesc::isAudioCodecSupported() const {
 uint32 QuickTimeAudioDecoder::AudioSampleDesc::getAudioChunkSampleCount(uint chunk) const {
 	uint32 sampleCount = 0;
 
-	for (uint32 j = 0; j < _parentStream->sample_to_chunk_sz; j++)
-		if (chunk >= _parentStream->sample_to_chunk[j].first)
-			sampleCount = _parentStream->sample_to_chunk[j].count;
+	for (uint32 j = 0; j < _parentTrack->sampleToChunkCount; j++)
+		if (chunk >= _parentTrack->sampleToChunk[j].first)
+			sampleCount = _parentTrack->sampleToChunk[j].count;
 
 	return sampleCount;
 }
@@ -333,13 +333,13 @@ AudioStream *QuickTimeAudioDecoder::AudioSampleDesc::createAudioStream(Common::S
 	} else if (_codecTag == MKTAG('m', 'p', '4', 'a')) {
 		// The 7th Guest iOS uses an MPEG-4 codec
 #ifdef USE_FAAD
-		if (_parentStream->objectTypeMP4 == 0x40)
-			return makeAACStream(stream, DisposeAfterUse::YES, _parentStream->extradata);
+		if (_parentTrack->objectTypeMP4 == 0x40)
+			return makeAACStream(stream, DisposeAfterUse::YES, _parentTrack->extraData);
 #endif
 #ifdef AUDIO_QDM2_H
 	} else if (_codecTag == MKTAG('Q', 'D', 'M', '2')) {
 		// Myst ME uses this codec for many videos
-		return makeQDM2Stream(stream, _parentStream->extradata);
+		return makeQDM2Stream(stream, _parentTrack->extraData);
 #endif
 	}
 
@@ -357,11 +357,11 @@ public:
 	~QuickTimeAudioStream() {}
 
 	bool openFromFile(const Common::String &filename) {
-		return QuickTimeAudioDecoder::loadAudioFile(filename) && _audioStreamIndex >= 0 && _audStream;
+		return QuickTimeAudioDecoder::loadAudioFile(filename) && _audioTrackIndex >= 0 && _audStream;
 	}
 
 	bool openFromStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle) {
-		return QuickTimeAudioDecoder::loadAudioStream(stream, disposeFileHandle) && _audioStreamIndex >= 0 && _audStream;
+		return QuickTimeAudioDecoder::loadAudioStream(stream, disposeFileHandle) && _audioTrackIndex >= 0 && _audStream;
 	}
 
 	// AudioStream API
@@ -380,7 +380,7 @@ public:
 
 	bool isStereo() const { return _audStream->isStereo(); }
 	int getRate() const { return _audStream->getRate(); }
-	bool endOfData() const { return _curAudioChunk >= _streams[_audioStreamIndex]->chunk_count && _audStream->endOfData(); }
+	bool endOfData() const { return _curAudioChunk >= _tracks[_audioTrackIndex]->chunkCount && _audStream->endOfData(); }
 
 	// SeekableAudioStream API
 	bool seek(const Timestamp &where) {
@@ -392,7 +392,7 @@ public:
 	}
 
 	Timestamp getLength() const {
-		return Timestamp(0, _streams[_audioStreamIndex]->duration, _streams[_audioStreamIndex]->time_scale);
+		return Timestamp(0, _tracks[_audioTrackIndex]->duration, _tracks[_audioTrackIndex]->timeScale);
 	}
 };
 

@@ -116,7 +116,7 @@ public:
 protected:
 	class VideoSampleDesc : public Common::QuickTimeParser::SampleDesc {
 	public:
-		VideoSampleDesc(Common::QuickTimeParser::MOVStreamContext *parentStream, uint32 codecTag);
+		VideoSampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag);
 		~VideoSampleDesc();
 
 		void initCodec();
@@ -129,7 +129,7 @@ protected:
 		Codec *_videoCodec;
 	};
 
-	Common::QuickTimeParser::SampleDesc *readSampleDesc(MOVStreamContext *st, uint32 format);
+	Common::QuickTimeParser::SampleDesc *readSampleDesc(Track *track, uint32 format);
 
 private:
 	Common::SeekableReadStream *getNextFramePacket(uint32 &descId);
@@ -146,7 +146,7 @@ private:
 	Codec *createCodec(uint32 codecTag, byte bitsPerPixel);
 	Codec *findDefaultVideoCodec() const;
 	uint32 _nextFrameStartTime;
-	int8 _videoStreamIndex;
+	int _videoTrackIndex;
 	uint32 findKeyFrame(uint32 frame) const;
 
 	bool _dirtyPalette;

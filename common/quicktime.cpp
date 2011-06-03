@@ -48,7 +48,6 @@ namespace Common {
 
 QuickTimeParser::QuickTimeParser() {
 	_beginOffset = 0;
-	_numStreams = 0;
 	_fd = 0;
 	_scaleFactorX = 1;
 	_scaleFactorY = 1;
@@ -68,10 +67,9 @@ bool QuickTimeParser::parseFile(const Common::String &filename) {
 		return false;
 
 	_foundMOOV = false;
-	_numStreams = 0;
 	_disposeFileHandle = DisposeAfterUse::YES;
 
-	MOVatom atom = { 0, 0, 0xffffffff };
+	Atom atom = { 0, 0, 0xffffffff };
 
 	if (_resFork->hasResFork()) {
 		// Search for a 'moov' resource
@@ -104,10 +102,9 @@ bool QuickTimeParser::parseFile(const Common::String &filename) {
 bool QuickTimeParser::parseStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle) {
 	_fd = stream;
 	_foundMOOV = false;
-	_numStreams = 0;
 	_disposeFileHandle = disposeFileHandle;
 
-	MOVatom atom = { 0, 0, 0xffffffff };
+	Atom atom = { 0, 0, 0xffffffff };
 
 	if (readDefault(atom) < 0 || !_foundMOOV) {
 		close();
@@ -119,21 +116,19 @@ bool QuickTimeParser::parseStream(Common::SeekableReadStream *stream, DisposeAft
 }
 
 void QuickTimeParser::init() {
-	// Remove unknown/unhandled streams
-	for (uint32 i = 0; i < _numStreams;) {
-		if (_streams[i]->codec_type == CODEC_TYPE_MOV_OTHER) {
-			delete _streams[i];
-			for (uint32 j = i + 1; j < _numStreams; j++)
-				_streams[j - 1] = _streams[j];
-			_numStreams--;
-		} else
-			i++;
+	// Remove unknown/unhandled tracks
+	for (uint32 i = 0; i < _tracks.size(); i++) {
+		if (_tracks[i]->codecType == CODEC_TYPE_MOV_OTHER) {
+			delete _tracks[i];
+			_tracks.remove_at(i);
+			i--;
+		}
 	}
 
 	// Adjust time scale
-	for (uint32 i = 0; i < _numStreams; i++)
-		if (!_streams[i]->time_scale)
-			_streams[i]->time_scale = _timeScale;
+	for (uint32 i = 0; i < _tracks.size(); i++)
+		if (!_tracks[i]->timeScale)
+			_tracks[i]->timeScale = _timeScale;
 }
 
 void QuickTimeParser::initParseTable() {
@@ -170,9 +165,9 @@ void QuickTimeParser::initParseTable() {
 	_parseTable = p;
 }
 
-int QuickTimeParser::readDefault(MOVatom atom) {
+int QuickTimeParser::readDefault(Atom atom) {
 	uint32 total_size = 0;
-	MOVatom a;
+	Atom a;
 	int err = 0;
 
 	a.offset = atom.offset;
@@ -240,14 +235,14 @@ int QuickTimeParser::readDefault(MOVatom atom) {
 	return err;
 }
 
-int QuickTimeParser::readLeaf(MOVatom atom) {
+int QuickTimeParser::readLeaf(Atom atom) {
 	if (atom.size > 1)
 		_fd->seek(atom.size, SEEK_SET);
 
 	return 0;
 }
 
-int QuickTimeParser::readMOOV(MOVatom atom) {
+int QuickTimeParser::readMOOV(Atom atom) {
 	if (readDefault(atom) < 0)
 		return -1;
 
@@ -256,7 +251,7 @@ int QuickTimeParser::readMOOV(MOVatom atom) {
 	return 1;
 }
 
-int QuickTimeParser::readCMOV(MOVatom atom) {
+int QuickTimeParser::readCMOV(Atom atom) {
 #ifdef USE_ZLIB
 	// Read in the dcom atom
 	_fd->readUint32BE();
@@ -294,7 +289,7 @@ int QuickTimeParser::readCMOV(MOVatom atom) {
 	_fd = new Common::MemoryReadStream(uncompressedData, uncompressedSize, DisposeAfterUse::YES);
 
 	// Read the contents of the uncompressed data
-	MOVatom a = { MKTAG('m', 'o', 'o', 'v'), 0, uncompressedSize };
+	Atom a = { MKTAG('m', 'o', 'o', 'v'), 0, uncompressedSize };
 	int err = readDefault(a);
 
 	// Assign the file handle back to the original handle
@@ -309,7 +304,7 @@ int QuickTimeParser::readCMOV(MOVatom atom) {
 #endif
 }
 
-int QuickTimeParser::readMVHD(MOVatom atom) {
+int QuickTimeParser::readMVHD(Atom atom) {
 	byte version = _fd->readByte(); // version
 	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
 
@@ -358,21 +353,21 @@ int QuickTimeParser::readMVHD(MOVatom atom) {
 	return 0;
 }
 
-int QuickTimeParser::readTRAK(MOVatom atom) {
-	MOVStreamContext *sc = new MOVStreamContext();
+int QuickTimeParser::readTRAK(Atom atom) {
+	Track *track = new Track();
 
-	if (!sc)
+	if (!track)
 		return -1;
 
-	sc->codec_type = CODEC_TYPE_MOV_OTHER;
-	sc->start_time = 0; // XXX: check
-	_streams[_numStreams++] = sc;
+	track->codecType = CODEC_TYPE_MOV_OTHER;
+	track->startTime = 0; // XXX: check
+	_tracks.push_back(track);
 
 	return readDefault(atom);
 }
 
-int QuickTimeParser::readTKHD(MOVatom atom) {
-	MOVStreamContext *st = _streams[_numStreams - 1];
+int QuickTimeParser::readTKHD(Atom atom) {
+	Track *track = _tracks.back();
 	byte version = _fd->readByte();
 
 	_fd->readByte(); _fd->readByte();
@@ -392,9 +387,9 @@ int QuickTimeParser::readTKHD(MOVatom atom) {
 		_fd->readUint32BE(); // modification time
 	}
 
-	/* st->id = */_fd->readUint32BE(); // track id (NOT 0 !)
+	/* track->id = */_fd->readUint32BE(); // track id (NOT 0 !)
 	_fd->readUint32BE(); // reserved
-	//st->start_time = 0; // check
+	//track->startTime = 0; // check
 	(version == 1) ? (_fd->readUint32BE(), _fd->readUint32BE()) : _fd->readUint32BE(); // highlevel (considering edits) duration in movie timebase
 	_fd->readUint32BE(); // reserved
 	_fd->readUint32BE(); // reserved
@@ -411,11 +406,11 @@ int QuickTimeParser::readTKHD(MOVatom atom) {
 	uint32 yMod = _fd->readUint32BE();
 	_fd->skip(16);
 
-	st->scaleFactorX = Common::Rational(0x10000, xMod);
-	st->scaleFactorY = Common::Rational(0x10000, yMod);
+	track->scaleFactorX = Common::Rational(0x10000, xMod);
+	track->scaleFactorY = Common::Rational(0x10000, yMod);
 
-	st->scaleFactorX.debugPrint(1, "readTKHD(): scaleFactorX =");
-	st->scaleFactorY.debugPrint(1, "readTKHD(): scaleFactorY =");
+	track->scaleFactorX.debugPrint(1, "readTKHD(): scaleFactorX =");
+	track->scaleFactorY.debugPrint(1, "readTKHD(): scaleFactorY =");
 
 	// these are fixed-point, 16:16
 	// uint32 tkWidth = _fd->readUint32BE() >> 16; // track width
@@ -425,33 +420,33 @@ int QuickTimeParser::readTKHD(MOVatom atom) {
 }
 
 // edit list atom
-int QuickTimeParser::readELST(MOVatom atom) {
-	MOVStreamContext *st = _streams[_numStreams - 1];
+int QuickTimeParser::readELST(Atom atom) {
+	Track *track = _tracks.back();
 
 	_fd->readByte(); // version
 	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
 
-	st->editCount = _fd->readUint32BE();
-	st->editList = new EditListEntry[st->editCount];
+	track->editCount = _fd->readUint32BE();
+	track->editList = new EditListEntry[track->editCount];
 
-	debug(2, "Track %d edit list count: %d", _numStreams - 1, st->editCount);
+	debug(2, "Track %d edit list count: %d", _tracks.size() - 1, track->editCount);
 
-	for (uint32 i = 0; i < st->editCount; i++){
-		st->editList[i].trackDuration = _fd->readUint32BE();
-		st->editList[i].mediaTime = _fd->readSint32BE();
-		st->editList[i].mediaRate = Common::Rational(_fd->readUint32BE(), 0x10000);
-		debugN(3, "\tDuration = %d, Media Time = %d, ", st->editList[i].trackDuration, st->editList[i].mediaTime);
-		st->editList[i].mediaRate.debugPrint(3, "Media Rate =");
+	for (uint32 i = 0; i < track->editCount; i++){
+		track->editList[i].trackDuration = _fd->readUint32BE();
+		track->editList[i].mediaTime = _fd->readSint32BE();
+		track->editList[i].mediaRate = Common::Rational(_fd->readUint32BE(), 0x10000);
+		debugN(3, "\tDuration = %d, Media Time = %d, ", track->editList[i].trackDuration, track->editList[i].mediaTime);
+		track->editList[i].mediaRate.debugPrint(3, "Media Rate =");
 	}
 
-	if (st->editCount != 1)
+	if (track->editCount != 1)
 		warning("Multiple edit list entries. Things may go awry");
 
 	return 0;
 }
 
-int QuickTimeParser::readHDLR(MOVatom atom) {
-	MOVStreamContext *st = _streams[_numStreams - 1];
+int QuickTimeParser::readHDLR(Atom atom) {
+	Track *track = _tracks.back();
 
 	_fd->readByte(); // version
 	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
@@ -469,9 +464,9 @@ int QuickTimeParser::readHDLR(MOVatom atom) {
 		debug(0, "MPEG-4 detected");
 
 	if (type == MKTAG('v', 'i', 'd', 'e'))
-		st->codec_type = CODEC_TYPE_VIDEO;
+		track->codecType = CODEC_TYPE_VIDEO;
 	else if (type == MKTAG('s', 'o', 'u', 'n'))
-		st->codec_type = CODEC_TYPE_AUDIO;
+		track->codecType = CODEC_TYPE_AUDIO;
 
 	_fd->readUint32BE(); // component manufacture
 	_fd->readUint32BE(); // component flags
@@ -489,8 +484,8 @@ int QuickTimeParser::readHDLR(MOVatom atom) {
 	return 0;
 }
 
-int QuickTimeParser::readMDHD(MOVatom atom) {
-	MOVStreamContext *st = _streams[_numStreams - 1];
+int QuickTimeParser::readMDHD(Atom atom) {
+	Track *track = _tracks.back();
 	byte version = _fd->readByte();
 
 	if (version > 1)
@@ -507,8 +502,8 @@ int QuickTimeParser::readMDHD(MOVatom atom) {
 		_fd->readUint32BE(); // modification time
 	}
 
-	st->time_scale = _fd->readUint32BE();
-	st->duration = (version == 1) ? (_fd->readUint32BE(), _fd->readUint32BE()) : _fd->readUint32BE(); // duration
+	track->timeScale = _fd->readUint32BE();
+	track->duration = (version == 1) ? (_fd->readUint32BE(), _fd->readUint32BE()) : _fd->readUint32BE(); // duration
 
 	_fd->readUint16BE(); // language
 	_fd->readUint16BE(); // quality
@@ -516,17 +511,17 @@ int QuickTimeParser::readMDHD(MOVatom atom) {
 	return 0;
 }
 
-int QuickTimeParser::readSTSD(MOVatom atom) {
-	MOVStreamContext *st = _streams[_numStreams - 1];
+int QuickTimeParser::readSTSD(Atom atom) {
+	Track *track = _tracks.back();
 
 	_fd->readByte(); // version
 	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
 
 	uint32 entryCount = _fd->readUint32BE();
-	st->sampleDescs.resize(entryCount);
+	track->sampleDescs.resize(entryCount);
 
 	for (uint32 i = 0; i < entryCount; i++) { // Parsing Sample description table
-		MOVatom a = { 0, 0, 0 };
+		Atom a = { 0, 0, 0 };
 		uint32 start_pos = _fd->pos();
 		int size = _fd->readUint32BE(); // size
 		uint32 format = _fd->readUint32BE(); // data format
@@ -535,11 +530,11 @@ int QuickTimeParser::readSTSD(MOVatom atom) {
 		_fd->readUint16BE(); // reserved
 		_fd->readUint16BE(); // index
 
-		st->sampleDescs[i] = readSampleDesc(st, format);
+		track->sampleDescs[i] = readSampleDesc(track, format);
 
-		debug(0, "size=%d 4CC= %s codec_type=%d", size, tag2str(format), st->codec_type);
+		debug(0, "size=%d 4CC= %s codec_type=%d", size, tag2str(format), track->codecType);
 
-		if (!st->sampleDescs[i]) {
+		if (!track->sampleDescs[i]) {
 			// other codec type, just skip (rtp, mp4s, tmcd ...)
 			_fd->seek(size - (_fd->pos() - start_pos), SEEK_CUR);
 		}
@@ -555,139 +550,139 @@ int QuickTimeParser::readSTSD(MOVatom atom) {
 	return 0;
 }
 
-int QuickTimeParser::readSTSC(MOVatom atom) {
-	MOVStreamContext *st = _streams[_numStreams - 1];
+int QuickTimeParser::readSTSC(Atom atom) {
+	Track *track = _tracks.back();
 
 	_fd->readByte(); // version
 	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
 
-	st->sample_to_chunk_sz = _fd->readUint32BE();
+	track->sampleToChunkCount = _fd->readUint32BE();
 
-	debug(0, "track[%i].stsc.entries = %i", _numStreams - 1, st->sample_to_chunk_sz);
+	debug(0, "track[%i].stsc.entries = %i", _tracks.size() - 1, track->sampleToChunkCount);
 
-	st->sample_to_chunk = new MOVstsc[st->sample_to_chunk_sz];
+	track->sampleToChunk = new SampleToChunkEntry[track->sampleToChunkCount];
 
-	if (!st->sample_to_chunk)
+	if (!track->sampleToChunk)
 		return -1;
 
-	for (uint32 i = 0; i < st->sample_to_chunk_sz; i++) {
-		st->sample_to_chunk[i].first = _fd->readUint32BE() - 1;
-		st->sample_to_chunk[i].count = _fd->readUint32BE();
-		st->sample_to_chunk[i].id = _fd->readUint32BE();
-		//warning("Sample to Chunk[%d]: First = %d, Count = %d", i, st->sample_to_chunk[i].first, st->sample_to_chunk[i].count);
+	for (uint32 i = 0; i < track->sampleToChunkCount; i++) {
+		track->sampleToChunk[i].first = _fd->readUint32BE() - 1;
+		track->sampleToChunk[i].count = _fd->readUint32BE();
+		track->sampleToChunk[i].id = _fd->readUint32BE();
+		//warning("Sample to Chunk[%d]: First = %d, Count = %d", i, track->sampleToChunk[i].first, track->sampleToChunk[i].count);
 	}
 
 	return 0;
 }
 
-int QuickTimeParser::readSTSS(MOVatom atom) {
-	MOVStreamContext *st = _streams[_numStreams - 1];
+int QuickTimeParser::readSTSS(Atom atom) {
+	Track *track = _tracks.back();
 
 	_fd->readByte(); // version
 	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
 
-	st->keyframe_count = _fd->readUint32BE();
+	track->keyframeCount = _fd->readUint32BE();
 
-	debug(0, "keyframe_count = %d", st->keyframe_count);
+	debug(0, "keyframeCount = %d", track->keyframeCount);
 
-	st->keyframes = new uint32[st->keyframe_count];
+	track->keyframes = new uint32[track->keyframeCount];
 
-	if (!st->keyframes)
+	if (!track->keyframes)
 		return -1;
 
-	for (uint32 i = 0; i < st->keyframe_count; i++) {
-		st->keyframes[i] = _fd->readUint32BE() - 1; // Adjust here, the frames are based on 1
-		debug(6, "keyframes[%d] = %d", i, st->keyframes[i]);
+	for (uint32 i = 0; i < track->keyframeCount; i++) {
+		track->keyframes[i] = _fd->readUint32BE() - 1; // Adjust here, the frames are based on 1
+		debug(6, "keyframes[%d] = %d", i, track->keyframes[i]);
 
 	}
 	return 0;
 }
 
-int QuickTimeParser::readSTSZ(MOVatom atom) {
-	MOVStreamContext *st = _streams[_numStreams - 1];
+int QuickTimeParser::readSTSZ(Atom atom) {
+	Track *track = _tracks.back();
 
 	_fd->readByte(); // version
 	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
 
-	st->sample_size = _fd->readUint32BE();
-	st->sample_count = _fd->readUint32BE();
+	track->sampleSize = _fd->readUint32BE();
+	track->sampleCount = _fd->readUint32BE();
 
-	debug(5, "sample_size = %d sample_count = %d", st->sample_size, st->sample_count);
+	debug(5, "sampleSize = %d sampleCount = %d", track->sampleSize, track->sampleCount);
 
-	if (st->sample_size)
+	if (track->sampleSize)
 		return 0; // there isn't any table following
 
-	st->sample_sizes = new uint32[st->sample_count];
+	track->sampleSizes = new uint32[track->sampleCount];
 
-	if (!st->sample_sizes)
+	if (!track->sampleSizes)
 		return -1;
 
-	for(uint32 i = 0; i < st->sample_count; i++) {
-		st->sample_sizes[i] = _fd->readUint32BE();
-		debug(6, "sample_sizes[%d] = %d", i, st->sample_sizes[i]);
+	for(uint32 i = 0; i < track->sampleCount; i++) {
+		track->sampleSizes[i] = _fd->readUint32BE();
+		debug(6, "sampleSizes[%d] = %d", i, track->sampleSizes[i]);
 	}
 
 	return 0;
 }
 
-int QuickTimeParser::readSTTS(MOVatom atom) {
-	MOVStreamContext *st = _streams[_numStreams - 1];
+int QuickTimeParser::readSTTS(Atom atom) {
+	Track *track = _tracks.back();
 	uint32 totalSampleCount = 0;
 
 	_fd->readByte(); // version
 	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
 
-	st->stts_count = _fd->readUint32BE();
-	st->stts_data = new MOVstts[st->stts_count];
+	track->timeToSampleCount = _fd->readUint32BE();
+	track->timeToSample = new TimeToSampleEntry[track->timeToSampleCount];
 
-	debug(0, "track[%d].stts.entries = %d", _numStreams - 1, st->stts_count);
+	debug(0, "track[%d].stts.entries = %d", _tracks.size() - 1, track->timeToSampleCount);
 
-	for (int32 i = 0; i < st->stts_count; i++) {
-		st->stts_data[i].count = _fd->readUint32BE();
-		st->stts_data[i].duration = _fd->readUint32BE();
+	for (int32 i = 0; i < track->timeToSampleCount; i++) {
+		track->timeToSample[i].count = _fd->readUint32BE();
+		track->timeToSample[i].duration = _fd->readUint32BE();
 
-		debug(1, "\tCount = %d, Duration = %d", st->stts_data[i].count, st->stts_data[i].duration);
+		debug(1, "\tCount = %d, Duration = %d", track->timeToSample[i].count, track->timeToSample[i].duration);
 
-		totalSampleCount += st->stts_data[i].count;
+		totalSampleCount += track->timeToSample[i].count;
 	}
 
-	st->nb_frames = totalSampleCount;
+	track->frameCount = totalSampleCount;
 	return 0;
 }
 
-int QuickTimeParser::readSTCO(MOVatom atom) {
-	MOVStreamContext *st = _streams[_numStreams - 1];
+int QuickTimeParser::readSTCO(Atom atom) {
+	Track *track = _tracks.back();
 
 	_fd->readByte(); // version
 	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
 
-	st->chunk_count = _fd->readUint32BE();
-	st->chunk_offsets = new uint32[st->chunk_count];
+	track->chunkCount = _fd->readUint32BE();
+	track->chunkOffsets = new uint32[track->chunkCount];
 
-	if (!st->chunk_offsets)
+	if (!track->chunkOffsets)
 		return -1;
 
-	for (uint32 i = 0; i < st->chunk_count; i++) {
+	for (uint32 i = 0; i < track->chunkCount; i++) {
 		// WORKAROUND/HACK: The offsets in Riven videos (ones inside the Mohawk archives themselves)
 		// have offsets relative to the archive and not the video. This is quite nasty. We subtract
 		// the initial offset of the stream to get the correct value inside of the stream.
-		st->chunk_offsets[i] = _fd->readUint32BE() - _beginOffset;
+		track->chunkOffsets[i] = _fd->readUint32BE() - _beginOffset;
 	}
 
 	return 0;
 }
 
-int QuickTimeParser::readWAVE(MOVatom atom) {
-	if (_numStreams < 1)
+int QuickTimeParser::readWAVE(Atom atom) {
+	if (_tracks.empty())
 		return 0;
 
-	MOVStreamContext *st = _streams[_numStreams - 1];
+	Track *track = _tracks.back();
 
 	if (atom.size > (1 << 30))
 		return -1;
 
-	if (st->sampleDescs[0]->getCodecTag() == MKTAG('Q', 'D', 'M', '2')) // Read extradata for QDM2
-		st->extradata = _fd->readStream(atom.size - 8);
+	if (track->sampleDescs[0]->getCodecTag() == MKTAG('Q', 'D', 'M', '2')) // Read extra data for QDM2
+		track->extraData = _fd->readStream(atom.size - 8);
 	else if (atom.size > 8)
 		return readDefault(atom);
 	else
@@ -723,11 +718,11 @@ static void readMP4Desc(Common::SeekableReadStream *stream, byte &tag, int &leng
 	length = readMP4DescLength(stream);
 }
 
-int QuickTimeParser::readESDS(MOVatom atom) {
-	if (_numStreams < 1)
+int QuickTimeParser::readESDS(Atom atom) {
+	if (_tracks.empty())
 		return 0;
 
-	MOVStreamContext *st = _streams[_numStreams - 1];
+	Track *track = _tracks.back();
 
 	_fd->readUint32BE(); // version + flags
 
@@ -744,7 +739,7 @@ int QuickTimeParser::readESDS(MOVatom atom) {
 	if (tag != kMP4DecConfigDescTag) 
 		return 0;
 
-	st->objectTypeMP4 = _fd->readByte();
+	track->objectTypeMP4 = _fd->readByte();
 	_fd->readByte();                      // stream type
 	_fd->readUint16BE(); _fd->readByte(); // buffer size
 	_fd->readUint32BE();                  // max bitrate
@@ -755,17 +750,17 @@ int QuickTimeParser::readESDS(MOVatom atom) {
 	if (tag != kMP4DecSpecificDescTag)
 		return 0;
 
-	st->extradata = _fd->readStream(length);
+	track->extraData = _fd->readStream(length);
 
-	debug(0, "MPEG-4 object type = %02x", st->objectTypeMP4);
+	debug(0, "MPEG-4 object type = %02x", track->objectTypeMP4);
 	return 0;
 }
 
 void QuickTimeParser::close() {
-	for (uint32 i = 0; i < _numStreams; i++)
-		delete _streams[i];
+	for (uint32 i = 0; i < _tracks.size(); i++)
+		delete _tracks[i];
 
-	_numStreams = 0;
+	_tracks.clear();
 
 	if (_disposeFileHandle == DisposeAfterUse::YES)
 		delete _fd;
@@ -773,44 +768,44 @@ void QuickTimeParser::close() {
 	_fd = 0;
 }
 
-QuickTimeParser::SampleDesc::SampleDesc(MOVStreamContext *parentStream, uint32 codecTag) {
-	_parentStream = parentStream;
+QuickTimeParser::SampleDesc::SampleDesc(Track *parentTrack, uint32 codecTag) {
+	_parentTrack = parentTrack;
 	_codecTag = codecTag;
 }
 
-QuickTimeParser::MOVStreamContext::MOVStreamContext() {
-	chunk_count = 0;
-	chunk_offsets = 0;
-	stts_count = 0;
-	stts_data = 0;
-	sample_to_chunk_sz = 0;
-	sample_to_chunk = 0;
-	sample_size = 0;
-	sample_count = 0;
-	sample_sizes = 0;
-	keyframe_count = 0;
+QuickTimeParser::Track::Track() {
+	chunkCount = 0;
+	chunkOffsets = 0;
+	timeToSampleCount = 0;
+	timeToSample = 0;
+	sampleToChunkCount = 0;
+	sampleToChunk = 0;
+	sampleSize = 0;
+	sampleCount = 0;
+	sampleSizes = 0;
+	keyframeCount = 0;
 	keyframes = 0;
-	time_scale = 0;
+	timeScale = 0;
 	width = 0;
 	height = 0;
-	codec_type = CODEC_TYPE_MOV_OTHER;
+	codecType = CODEC_TYPE_MOV_OTHER;
 	editCount = 0;
 	editList = 0;
-	extradata = 0;
-	nb_frames = 0;
+	extraData = 0;
+	frameCount = 0;
 	duration = 0;
-	start_time = 0;
+	startTime = 0;
 	objectTypeMP4 = 0;
 }
 
-QuickTimeParser::MOVStreamContext::~MOVStreamContext() {
-	delete[] chunk_offsets;
-	delete[] stts_data;
-	delete[] sample_to_chunk;
-	delete[] sample_sizes;
+QuickTimeParser::Track::~Track() {
+	delete[] chunkOffsets;
+	delete[] timeToSample;
+	delete[] sampleToChunk;
+	delete[] sampleSizes;
 	delete[] keyframes;
 	delete[] editList;
-	delete extradata;
+	delete extraData;
 
 	for (uint32 i = 0; i < sampleDescs.size(); i++)
 		delete sampleDescs[i];
