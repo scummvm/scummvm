@@ -3125,7 +3125,7 @@ typedef signed $type_4_byte int32;
 
 // Residual 64bit stuff
 $_def_64bit_type_signed
-#if defined(__APPLE__) && !defined(__ppc)
+#if defined(__APPLE__) && !defined(__ppc__)
 #ifndef _UINT64
 #define _UINT64
 $_def_64bit_type_unsigned
