@@ -139,14 +139,14 @@ void Map::setPass(int x, int y, int8 pass, int width) {
 }
 
 const WayPoint &Map::getWayPoint(int n) const {
-	assert(_wayPoints);
+	ASSUME_NON_NULL(_wayPoints);
 	assert(n < _wayPointCount);
 
 	return _wayPoints[n];
 }
 
 int16 Map::getItem(int x, int y) const {
-	assert(_itemsMap);
+	ASSUME_NON_NULL(_itemsMap);
 
 	x = CLIP<int>(x, 0, _mapWidth - 1);
 	y = CLIP<int>(y, 0, _mapHeight - 1);
@@ -155,7 +155,7 @@ int16 Map::getItem(int x, int y) const {
 }
 
 void Map::setItem(int x, int y, int16 item) {
-	assert(_itemsMap);
+	ASSUME_NON_NULL(_itemsMap);
 
 	x = CLIP<int>(x, 0, _mapWidth - 1);
 	y = CLIP<int>(y, 0, _mapHeight - 1);

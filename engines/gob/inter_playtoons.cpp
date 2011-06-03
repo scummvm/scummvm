@@ -312,7 +312,7 @@ void Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 }
 
 void Inter_Playtoons::oPlaytoons_loadMultObject() {
-	assert(_vm->_mult->_objects);
+	ASSUME_NON_NULL(_vm->_mult->_objects);
 
 	uint16 objIndex = _vm->_game->_script->readValExpr();
 

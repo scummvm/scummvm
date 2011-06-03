@@ -392,7 +392,7 @@ void Inter_v2::o2_initMult() {
 }
 
 void Inter_v2::o2_loadMultObject() {
-	assert(_vm->_mult->_objects);
+	ASSUME_NON_NULL(_vm->_mult->_objects);
 
 	uint16 objIndex = _vm->_game->_script->readValExpr();
 

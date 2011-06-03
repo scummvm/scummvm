@@ -39,7 +39,7 @@
 namespace Gob {
 
 Font::Font(const byte *data) : _dataPtr(data) {
-	assert(data);
+	ASSUME_NON_NULL(data);
 
 	bool hasWidths = _dataPtr[0] & 0x80;
 
