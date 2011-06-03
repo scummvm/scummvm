@@ -425,7 +425,7 @@ void PluginManagerUncached::updateConfigWithFileName(const Common::String &gameI
 			ConfMan.addMiscDomain("plugin_files");
 
 		Common::ConfigManager::Domain *domain = ConfMan.getDomain("plugin_files");
-		assert(domain);
+		ASSUME_NON_NULL(domain);
 		(*domain)[gameId] = (*_currentPlugin)->getFileName();
 
 		ConfMan.flushToDisk();
@@ -495,7 +495,7 @@ void PluginManager::unloadPluginsExcept(PluginType type, const Plugin *plugin, b
  * Used only by the cached plugin manager since it deletes the plugin.
  */
 bool PluginManager::tryLoadPlugin(Plugin *plugin) {
-	assert(plugin);
+	ASSUME_NON_NULL(plugin);
 	// Try to load the plugin
 	if (plugin->loadPlugin()) {
 		addToPluginsInMemList(plugin);

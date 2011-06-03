@@ -295,7 +295,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	Common::String command;
 
 	// Verify that the backend has been initialized (i.e. g_system has been set).
-	assert(g_system);
+	ASSUME_NON_NULL(g_system);
 	OSystem &system = *g_system;
 
 	// Register config manager defaults
