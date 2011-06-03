@@ -63,7 +63,7 @@ void MidiPlayer::createDriver(int flags) {
 	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
 
 	_driver = MidiDriver::createMidi(dev);
-	assert(_driver);
+	ASSUME_NON_NULL(_driver);
 	if (_nativeMT32)
 		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 }
@@ -136,14 +136,14 @@ void MidiPlayer::metaEvent(byte type, byte *data, uint16 length) {
 
 void MidiPlayer::endOfTrack() {
 	if (_isLooping) {
-		assert(_parser);
+		ASSUME_NON_NULL(_parser);
 		_parser->jumpToTick(0);
 	} else
 		stop();
 }
 
 void MidiPlayer::timerCallback(void *data) {
-	assert(data);
+	ASSUME_NON_NULL(data);
 	((MidiPlayer *)data)->onTimer();
 }
 

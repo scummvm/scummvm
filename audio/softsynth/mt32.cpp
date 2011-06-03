@@ -138,7 +138,7 @@ static void drawProgress(float progress) {
 	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kGUIFont));
 	Graphics::Surface *screen = g_system->lockScreen();
 
-	assert(screen);
+	ASSUME_NON_NULL(screen);
 	assert(screen->pixels);
 
 	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
@@ -177,7 +177,7 @@ static void drawMessage(int offset, const Common::String &text) {
 	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kGUIFont));
 	Graphics::Surface *screen = g_system->lockScreen();
 
-	assert(screen);
+	ASSUME_NON_NULL(screen);
 	assert(screen->pixels);
 
 	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();

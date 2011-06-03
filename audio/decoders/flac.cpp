@@ -675,49 +675,49 @@ inline void FLACStream::callbackError(::FLAC__StreamDecoderErrorStatus status) {
 /* Static Callback Wrappers */
 ::FLAC__SeekableStreamDecoderReadStatus FLACStream::callWrapRead(const ::FLAC__SeekableStreamDecoder *decoder, FLAC__byte buffer[], FLAC_size_t *bytes, void *clientData) {
 	FLACStream *instance = (FLACStream *)clientData;
-	assert(0 != instance);
+	ASSUME_NON_NULL(instance);
 	return instance->callbackRead(buffer, bytes);
 }
 
 ::FLAC__SeekableStreamDecoderSeekStatus FLACStream::callWrapSeek(const ::FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 absoluteByteOffset, void *clientData) {
 	FLACStream *instance = (FLACStream *)clientData;
-	assert(0 != instance);
+	ASSUME_NON_NULL(instance);
 	return instance->callbackSeek(absoluteByteOffset);
 }
 
 ::FLAC__SeekableStreamDecoderTellStatus FLACStream::callWrapTell(const ::FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 *absoluteByteOffset, void *clientData) {
 	FLACStream *instance = (FLACStream *)clientData;
-	assert(0 != instance);
+	ASSUME_NON_NULL(instance);
 	return instance->callbackTell(absoluteByteOffset);
 }
 
 ::FLAC__SeekableStreamDecoderLengthStatus FLACStream::callWrapLength(const ::FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 *streamLength, void *clientData) {
 	FLACStream *instance = (FLACStream *)clientData;
-	assert(0 != instance);
+	ASSUME_NON_NULL(instance);
 	return instance->callbackLength(streamLength);
 }
 
 FLAC__bool FLACStream::callWrapEOF(const ::FLAC__SeekableStreamDecoder *decoder, void *clientData) {
 	FLACStream *instance = (FLACStream *)clientData;
-	assert(0 != instance);
+	ASSUME_NON_NULL(instance);
 	return instance->callbackEOF();
 }
 
 ::FLAC__StreamDecoderWriteStatus FLACStream::callWrapWrite(const ::FLAC__SeekableStreamDecoder *decoder, const ::FLAC__Frame *frame, const FLAC__int32 * const buffer[], void *clientData) {
 	FLACStream *instance = (FLACStream *)clientData;
-	assert(0 != instance);
+	ASSUME_NON_NULL(instance);
 	return instance->callbackWrite(frame, buffer);
 }
 
 void FLACStream::callWrapMetadata(const ::FLAC__SeekableStreamDecoder *decoder, const ::FLAC__StreamMetadata *metadata, void *clientData) {
 	FLACStream *instance = (FLACStream *)clientData;
-	assert(0 != instance);
+	ASSUME_NON_NULL(instance);
 	instance->callbackMetadata(metadata);
 }
 
 void FLACStream::callWrapError(const ::FLAC__SeekableStreamDecoder *decoder, ::FLAC__StreamDecoderErrorStatus status, void *clientData) {
 	FLACStream *instance = (FLACStream *)clientData;
-	assert(0 != instance);
+	ASSUME_NON_NULL(instance);
 	instance->callbackError(status);
 }
 

@@ -464,8 +464,8 @@ Channel::Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *stream,
       _balance(0), _pauseLevel(0), _samplesConsumed(0), _samplesDecoded(0), _mixerTimeStamp(0),
       _pauseStartTime(0), _pauseTime(0), _autofreeStream(autofreeStream), _converter(0),
       _stream(stream) {
-	assert(mixer);
-	assert(stream);
+	ASSUME_NON_NULL(mixer);
+	ASSUME_NON_NULL(stream);
 
 	// Get a rate converter instance
 	_converter = makeRateConverter(_stream->getRate(), mixer->getOutputRate(), _stream->isStereo(), reverseStereo);
@@ -561,14 +561,14 @@ Timestamp Channel::getElapsedTime() {
 }
 
 int Channel::mix(int16 *data, uint len) {
-	assert(_stream);
+	ASSUME_NON_NULL(_stream);
 
 	int res = 0;
 
 	if (_stream->endOfData()) {
 		// TODO: call drain method
 	} else {
-		assert(_converter);
+		ASSUME_NON_NULL(_converter);
 		_samplesConsumed = _samplesDecoded;
 		_mixerTimeStamp = g_system->getMillis();
 		_pauseTime = 0;
