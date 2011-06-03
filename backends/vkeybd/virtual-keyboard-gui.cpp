@@ -79,7 +79,7 @@ VirtualKeyboardGUI::VirtualKeyboardGUI(VirtualKeyboard *kbd)
 	_cursorAnimateTimer(0), _cursorAnimateCounter(0) {
 
 	assert(_kbd);
-	assert(g_system);
+	ASSUME_NON_NULL(g_system);
 	_system = g_system;
 
 	_lastScreenChanged = _system->getScreenChangeID();
@@ -96,7 +96,7 @@ VirtualKeyboardGUI::~VirtualKeyboardGUI() {
 }
 
 void VirtualKeyboardGUI::initMode(VirtualKeyboard::Mode *mode) {
-	assert(mode->image);
+	ASSUME_NON_NULL(mode->image);
 
 	_kbdSurface = mode->image;
 	_kbdTransparentColor = mode->transparentColor;

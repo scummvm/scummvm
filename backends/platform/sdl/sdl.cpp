@@ -443,12 +443,12 @@ void OSystem_SDL::getTimeAndDate(TimeDate &td) const {
 }
 
 Audio::Mixer *OSystem_SDL::getMixer() {
-	assert(_mixerManager);
+	ASSUME_NON_NULL(_mixerManager);
 	return _mixerManager->getMixer();
 }
 
 SdlMixerManager *OSystem_SDL::getMixerManager() {
-	assert(_mixerManager);
+	ASSUME_NON_NULL(_mixerManager);
 	return _mixerManager;
 }
 

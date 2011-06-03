@@ -685,7 +685,7 @@ static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &w
 	const int h = height;
 
 	SDL_Rect const* const*availableModes = SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_SWSURFACE); //TODO : Maybe specify a pixel format
-	assert(availableModes);
+	ASSUME_NON_NULL(availableModes);
 
 	const SDL_Rect *bestMode = NULL;
 	uint bestMetric = (uint)-1; // Metric is wasted space
@@ -1400,7 +1400,7 @@ int16 SdlGraphicsManager::getWidth() {
 }
 
 void SdlGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
-	assert(colors);
+	ASSUME_NON_NULL(colors);
 
 #ifdef USE_RGB_COLOR
 	assert(_screenFormat.bytesPerPixel == 1);
@@ -1434,7 +1434,7 @@ void SdlGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
 }
 
 void SdlGraphicsManager::grabPalette(byte *colors, uint start, uint num) {
-	assert(colors);
+	ASSUME_NON_NULL(colors);
 
 #ifdef USE_RGB_COLOR
 	assert(_screenFormat.bytesPerPixel == 1);
@@ -1450,7 +1450,7 @@ void SdlGraphicsManager::grabPalette(byte *colors, uint start, uint num) {
 }
 
 void SdlGraphicsManager::setCursorPalette(const byte *colors, uint start, uint num) {
-	assert(colors);
+	ASSUME_NON_NULL(colors);
 	const byte *b = colors;
 	uint i;
 	SDL_Color *base = _cursorPalette + start;
@@ -2038,7 +2038,7 @@ void SdlGraphicsManager::drawMouse() {
 #ifdef USE_OSD
 void SdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 	assert (_transactionMode == kTransactionNone);
-	assert(msg);
+	ASSUME_NON_NULL(msg);
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 

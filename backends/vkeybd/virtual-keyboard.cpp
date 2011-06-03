@@ -240,7 +240,7 @@ void VirtualKeyboard::show() {
 
 	if (_submitKeys) {
 		EventManager *eventMan = _system->getEventManager();
-		assert(eventMan);
+		ASSUME_NON_NULL(eventMan);
 
 		// push keydown & keyup events into the event manager
 		Event evt;

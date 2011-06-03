@@ -47,7 +47,7 @@ void insertPrioQueue(TimerSlot *head, TimerSlot *newSlot) {
 	// Insert the new slot into the sorted list of already scheduled
 	// timers in such a way that the list stays sorted...
 	while (true) {
-		assert(slot);
+		ASSUME_NON_NULL(slot);
 		if (slot->next == 0 || nextFireTime < slot->next->nextFireTime) {
 			newSlot->next = slot->next;
 			slot->next = newSlot;

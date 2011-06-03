@@ -204,22 +204,22 @@ void ModularBackend::setCursorPalette(const byte *colors, uint start, uint num) 
 }
 
 OSystem::MutexRef ModularBackend::createMutex() {
-	assert(_mutexManager);
+	ASSUME_NON_NULL(_mutexManager);
 	return _mutexManager->createMutex();
 }
 
 void ModularBackend::lockMutex(MutexRef mutex) {
-	assert(_mutexManager);
+	ASSUME_NON_NULL(_mutexManager);
 	_mutexManager->lockMutex(mutex);
 }
 
 void ModularBackend::unlockMutex(MutexRef mutex) {
-	assert(_mutexManager);
+	ASSUME_NON_NULL(_mutexManager);
 	_mutexManager->unlockMutex(mutex);
 }
 
 void ModularBackend::deleteMutex(MutexRef mutex) {
-	assert(_mutexManager);
+	ASSUME_NON_NULL(_mutexManager);
 	_mutexManager->deleteMutex(mutex);
 }
 
