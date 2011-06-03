@@ -253,7 +253,7 @@ AnimData &AnimData::operator=(const AnimData &src) {
 }
 
 byte AnimData::getColor(int x, int y) {
-	assert(_data);
+	ASSUME_NON_NULL(_data);
 	assert(x >= 0 && x < _realWidth && y >= 0 && y <= _height);
 	assert(x + y * _realWidth < _size);
 

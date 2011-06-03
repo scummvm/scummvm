@@ -1407,7 +1407,7 @@ uint16 addAni(uint16 param1, uint16 objIdx, const int8 *ptr, SeqListElement &ele
 		param1, objIdx, ptr, element.var8, element.var14, param3);
 
 	// In the original an error string is set and 0 is returned if the following doesn't hold
-	assert(ptr);
+	ASSUME_NON_NULL(ptr);
 
 	// We probably could just use a local variable here instead of the dummyU16 but
 	// haven't checked if this has any side-effects so keeping it this way still.
@@ -1451,7 +1451,7 @@ uint16 addAni(uint16 param1, uint16 objIdx, const int8 *ptr, SeqListElement &ele
 	if (param3 || !element.var14) {
 		g_cine->_objectTable[objIdx].costume = di;
 	} else {
-		assert(param4);
+		ASSUME_NON_NULL(param4);
 		*param4 = di;
 	}
 
