@@ -549,7 +549,7 @@ void HotspotDataList::loadFromStream(Common::ReadStream *stream) {
 	uint16 hotspotId = stream->readUint16LE();
 	while (hotspotId != 0) {
 		HotspotData *hotspot = res.getHotspot(hotspotId);
-		assert(hotspot);
+		ASSUME_NON_NULL(hotspot);
 		hotspot->loadFromStream(stream);
 		hotspotId = stream->readUint16LE();
 	}
@@ -1126,7 +1126,7 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 	PausedCharacterList::iterator i;
 	int result = 0;
 	Hotspot *charHotspot = res.getActiveHotspot(charId);
-	assert(charHotspot);
+	ASSUME_NON_NULL(charHotspot);
 
 	for (int index = 0; index < numImpinging; ++index) {
 		Hotspot *hotspot = res.getActiveHotspot(impingingList[index]);

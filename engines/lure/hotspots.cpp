@@ -90,7 +90,7 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 // Special constructor used to create a voice hotspot
 
 Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
-	assert(character);
+	ASSUME_NON_NULL(character);
 
 	_originalId = objType;
 	_data = NULL;
@@ -732,7 +732,7 @@ void Hotspot::resetPosition() {
 
 void Hotspot::converse(uint16 destCharacterId, uint16 messageId, bool srcStandStill,
 					   bool destStandStill) {
-	assert(_data);
+	ASSUME_NON_NULL(_data);
 	_data->talkDestCharacterId = destCharacterId;
 	_data->talkMessageId = messageId;
 	_data->talkCountdown = CONVERSE_COUNTDOWN_SIZE;
@@ -822,7 +822,7 @@ void Hotspot::showMessage(uint16 messageId, uint16 destCharacterId) {
 }
 
 void Hotspot::handleTalkDialog() {
-	assert(_data);
+	ASSUME_NON_NULL(_data);
 	Resources &res = Resources::getReference();
 	ValueTableData &fields = res.fieldList();
 	Room &room = Room::getReference();
@@ -909,7 +909,7 @@ void Hotspot::handleTalkDialog() {
 }
 
 void Hotspot::startTalkDialog() {
-	assert(_data);
+	ASSUME_NON_NULL(_data);
 	Room &room = Room::getReference();
 
 	if ((_data->talkDestCharacterId != 0) && (_data->talkDestCharacterId != NOONE_ID)) {
@@ -2837,7 +2837,7 @@ void HotspotTickHandlers::voiceBubbleAnimHandler(Hotspot &h) {
 void HotspotTickHandlers::puzzledAnimHandler(Hotspot &h) {
 	Resources &res = Resources::getReference();
 	HotspotData *charHotspot = res.getHotspot(h.destHotspotId());
-	assert(charHotspot);
+	ASSUME_NON_NULL(charHotspot);
 
 	h.setVoiceCtr(h.voiceCtr() - 1);
 	if ((charHotspot->roomNumber != h.roomNumber()) || (h.voiceCtr() == 0) ||
@@ -3271,7 +3271,7 @@ void HotspotTickHandlers::playerSewerExitAnimHandler(Hotspot &h) {
 
 		// Setup Ratpouch
 		Hotspot *ratpouchHotspot = res.getActiveHotspot(RATPOUCH_ID);
-		assert(ratpouchHotspot);
+		ASSUME_NON_NULL(ratpouchHotspot);
 		ratpouchHotspot->setCharacterMode(CHARMODE_NONE);
 		ratpouchHotspot->setDelayCtr(0);
 		ratpouchHotspot->setActions(0x821C00);
@@ -3315,7 +3315,7 @@ void HotspotTickHandlers::sparkleAnimHandler(Hotspot &h) {
 
 		if (fields.getField(28) != 0) {
 			Hotspot *ratpouch = res.getActiveHotspot(RATPOUCH_ID);
-			assert(ratpouch);
+			ASSUME_NON_NULL(ratpouch);
 			ratpouch->converse(NOONE_ID, 0x854, false);
 
 			uint16 dataId = res.getCharOffset(4);
@@ -3640,7 +3640,7 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 void HotspotTickHandlers::talkEndConversation() {
 	Resources &res = Resources::getReference();
 	Hotspot *charHotspot = res.getActiveHotspot(talkDestCharacter);
-	assert(charHotspot);
+	ASSUME_NON_NULL(charHotspot);
 
 	res.getActiveHotspot(PLAYER_ID)->setTickProc(PLAYER_TICK_PROC_ID);
 	charHotspot->setUseHotspotId(0);
@@ -3741,7 +3741,7 @@ void HotspotTickHandlers::barmanAnimHandler(Hotspot &h) {
 				barEntry.customers[index].serveFlags = 0;
 				barEntry.currentCustomer = &barEntry.customers[index];
 				Hotspot *hotspot = res.getActiveHotspot(barEntry.customers[index].hotspotId);
-				assert(hotspot);
+				ASSUME_NON_NULL(hotspot);
 				h.setSupportValue(hotspot->x());    // Save the position to move to
 				h.setFrameCtr(0x80);				// Flag for movement
 				return;
@@ -3960,7 +3960,7 @@ void HotspotTickHandlers::castleSkorlAnimHandler(Hotspot &h) {
 
 	if (h.executeScript()) {
 		HotspotData *hotspot = res.getHotspot(h.hotspotId());
-		assert(hotspot);
+		ASSUME_NON_NULL(hotspot);
 		res.deactivateHotspot(hotspot->hotspotId);
 		hotspot->roomNumber = 0xffff;
 		hotspot->layer = 255;

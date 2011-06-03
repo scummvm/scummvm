@@ -522,7 +522,7 @@ void Resources::setTalkingCharacter(uint16 id) {
 	if (_talkingCharacter != 0) {
 		deactivateHotspot(_talkingCharacter, true);
 		HotspotData *charHotspot = res.getHotspot(_talkingCharacter);
-		assert(charHotspot);
+		ASSUME_NON_NULL(charHotspot);
 		charHotspot->talkDestCharacterId = 0;
 
 		if (_talkingCharacter != id)
@@ -609,7 +609,7 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 
 		if (loadFlag) {
 			Hotspot *hotspot = addHotspot(hotspotId);
-			assert(hotspot);
+			ASSUME_NON_NULL(hotspot);
 
 			// Special post-load handling
 			if (res->loadOffset == 3) hotspot->setPersistant(true);
@@ -652,7 +652,7 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 
 Hotspot *Resources::addHotspot(uint16 hotspotId) {
 	HotspotData *hData = getHotspot(hotspotId);
-	assert(hData);
+	ASSUME_NON_NULL(hData);
 	Hotspot *hotspot = new Hotspot(hData);
 	_activeHotspots.push_back(HotspotList::value_type(hotspot));
 

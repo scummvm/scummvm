@@ -349,7 +349,7 @@ void Game::playerChangeRoom() {
 	delayList.clear();
 
 	RoomData *roomData = res.getRoom(roomNum);
-	assert(roomData);
+	ASSUME_NON_NULL(roomData);
 	roomData->flags |= HOTSPOTFLAG_FOUND;
 
 	// Check for any room change animation

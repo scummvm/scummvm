@@ -312,7 +312,7 @@ public:
 	uint16 charRectY() { return _charRectY; }
 	uint16 roomNumber() { return _roomNumber; }
 	uint16 talkScript() {
-		assert(_data);
+		ASSUME_NON_NULL(_data);
 		return _data->talkScriptOffset;
 	}
 	uint16 hotspotScript() { return _hotspotScriptOffset; }
@@ -335,19 +335,19 @@ public:
 	void setDestHotspot(uint16 id) { _destHotspotId = id; }
 	void setExitCtr(uint8 value) { _exitCtr = value; }
 	BlockedState blockedState() {
-		assert(_data);
+		ASSUME_NON_NULL(_data);
 		return _data->blockedState;
 	}
 	void setBlockedState(BlockedState newState) {
-		assert(_data);
+		ASSUME_NON_NULL(_data);
 		_data->blockedState = newState;
 	}
 	bool blockedFlag() {
-		assert(_data);
+		ASSUME_NON_NULL(_data);
 		return _data->blockedFlag;
 	}
 	void setBlockedFlag(bool newValue) {
-		assert(_data);
+		ASSUME_NON_NULL(_data);
 		_data->blockedFlag = newValue;
 	}
 	void setWalkFlag(bool value) { _walkFlag = value; }
@@ -361,67 +361,67 @@ public:
 		_height = newHeight;
 	}
 	void setHotspotScript(uint16 offset) {
-		assert(_data != NULL);
+		ASSUME_NON_NULL(_data);
 		_hotspotScriptOffset = offset;
 		_data->hotspotScriptOffset = offset;
 	}
 	void setLayer(uint8 newLayer) {
-		assert(_data != NULL);
+		ASSUME_NON_NULL(_data);
 		_layer = newLayer;
 		_data->layer = newLayer;
 	}
 	void setActions(uint32 newActions) {
-		assert(_data);
+		ASSUME_NON_NULL(_data);
 		_data->actions = newActions;
 	}
 	void setCharRectY(uint16 value) { _charRectY = value; }
 	void setSkipFlag(bool value) { _skipFlag = value; }
 	CharacterMode characterMode() {
-		assert(_data != NULL);
+		ASSUME_NON_NULL(_data);
 		return _data->characterMode;
 	}
 	void setCharacterMode(CharacterMode value) {
-		assert(_data != NULL);
+		ASSUME_NON_NULL(_data);
 		_data->characterMode = value;
 	}
 	uint16 delayCtr() {
-		assert(_data);
+		ASSUME_NON_NULL(_data);
 		return _data->delayCtr;
 	}
 	void setDelayCtr(uint16 value) {
-		assert(_data);
+		ASSUME_NON_NULL(_data);
 		_data->delayCtr = value;
 	}
 	uint16 pauseCtr() {
-		assert(_data);
+		ASSUME_NON_NULL(_data);
 		return _data->pauseCtr;
 	}
 	void setPauseCtr(uint16 value) {
-		assert(_data);
+		ASSUME_NON_NULL(_data);
 		_data->pauseCtr = value;
 	}
 	VariantBool coveredFlag() {
-		assert(_data);
+		ASSUME_NON_NULL(_data);
 		return _data->coveredFlag;
 	}
 	void setCoveredFlag(VariantBool value) {
-		assert(_data);
+		ASSUME_NON_NULL(_data);
 		_data->coveredFlag = value;
 	}
 	uint16 useHotspotId() {
-		assert(_data);
+		ASSUME_NON_NULL(_data);
 		return _data->useHotspotId;
 	}
 	void setUseHotspotId(uint16 value) {
-		assert(_data);
+		ASSUME_NON_NULL(_data);
 		_data->useHotspotId = value;
 	}
 	uint16 talkGate() {
-		assert(_data);
+		ASSUME_NON_NULL(_data);
 		return _data->talkGate;
 	}
 	void setTalkGate(uint16 value) {
-		assert(_data);
+		ASSUME_NON_NULL(_data);
 		_data->talkGate = value;
 	}
 	uint16 supportValue() { return _supportValue; }
@@ -450,7 +450,7 @@ public:
 	void doAction();
 	void doAction(Action action, HotspotData *hotspot);
 	CurrentActionStack &currentActions() {
-		assert(_data);
+		ASSUME_NON_NULL(_data);
 		return _data->npcSchedule;
 	}
 	PathFinder &pathFinder() { return _pathFinder; }
@@ -459,11 +459,11 @@ public:
 	void setFrameCtr(uint16 value) { _frameCtr = value; }
 	void decrFrameCtr() { if (_frameCtr > 0) --_frameCtr; }
 	uint8 actionCtr() {
-		assert(_data);
+		ASSUME_NON_NULL(_data);
 		return _data->actionCtr;
 	}
 	void setActionCtr(uint8 v) {
-		assert(_data);
+		ASSUME_NON_NULL(_data);
 		_data->actionCtr = v;
 	}
 	uint8 voiceCtr() { return _voiceCtr; }

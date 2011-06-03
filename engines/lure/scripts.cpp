@@ -75,7 +75,7 @@ void Script::setHotspotScript(uint16 hotspotId, uint16 scriptIndex, uint16 v3) {
 		hotspot->setHotspotScript(offset);
 	} else {
 		HotspotData *hs = res.getHotspot(hotspotId);
-		assert(hs);
+		ASSUME_NON_NULL(hs);
 		hs->hotspotScriptOffset = offset;
 	}
 }
@@ -142,7 +142,7 @@ void Script::deactivateHotspot(uint16 hotspotId, uint16 v2, uint16 v3) {
 void Script::setDesc(uint16 hotspotId, uint16 descId, uint16 v3) {
 	Resources &res = Resources::getReference();
 	HotspotData *hotspot = res.getHotspot(hotspotId);
-	assert(hotspot);
+	ASSUME_NON_NULL(hotspot);
 	hotspot->descId = descId;
 }
 
@@ -264,7 +264,7 @@ void Script::remoteRoomViewSetup(uint16 v1, uint16 v2, uint16 v3) {
 void Script::startSpeakingToNoone(uint16 characterId, uint16 stringId, uint16 v3) {
 	Resources &res = Resources::getReference();
 	Hotspot *charHotspot = res.getActiveHotspot(characterId);
-	assert(charHotspot);
+	ASSUME_NON_NULL(charHotspot);
 
 	charHotspot->converse(NOONE_ID, stringId, true);
 }
@@ -315,7 +315,7 @@ void Script::characterChangeRoom(uint16 y, uint16 x, uint16 roomNumber) {
 	Resources &res = Resources::getReference();
 	ValueTableData &fields = res.fieldList();
 	Hotspot *charHotspot = res.getActiveHotspot(fields.getField(CHARACTER_HOTSPOT_ID));
-	assert(charHotspot);
+	ASSUME_NON_NULL(charHotspot);
 
 	uint16 newRoomNumber = roomNumber & 0xff;
 	Direction newDirection = (Direction)(roomNumber >> 8);
@@ -329,7 +329,7 @@ void Script::characterChangeRoom(uint16 y, uint16 x, uint16 roomNumber) {
 void Script::pauseRatpouch(uint16 v1, uint16 v2, uint16 v3) {
 	Resources &res = Resources::getReference();
 	Hotspot *ratpouch = res.getActiveHotspot(RATPOUCH_ID);
-	assert(ratpouch);
+	ASSUME_NON_NULL(ratpouch);
 	ratpouch->setCharacterMode(CHARMODE_PAUSED);
 	ratpouch->setDelayCtr(0x7fff);
 }
@@ -367,7 +367,7 @@ void Script::setTalking(uint16 characterId, uint16 destHotspot, uint16 messageId
 
 void Script::setActionCtr(uint16 hotspotId, uint16 value, uint16 v3) {
 	HotspotData *hotspot = Resources::getReference().getHotspot(hotspotId);
-	assert(hotspot);
+	ASSUME_NON_NULL(hotspot);
 	hotspot->actionCtr = value;
 }
 
@@ -415,13 +415,13 @@ void Script::enableHotspot(uint16 hotspotId, uint16 v2, uint16 v3) {
 
 void Script::displayMessage2(uint16 messageId, uint16 hotspotId, uint16 v3) {
 	Hotspot *hotspot = Resources::getReference().getActiveHotspot(hotspotId);
-	assert(hotspot);
+	ASSUME_NON_NULL(hotspot);
 	hotspot->showMessage(messageId);
 }
 
 void Script::startOilBurner(uint16 v1, uint16 v2, uint16 v3) {
 	Hotspot *hotspot = Resources::getReference().getActiveHotspot(OIL_BURNER_ID);
-	assert(hotspot);
+	ASSUME_NON_NULL(hotspot);
 	hotspot->setPosition(152, hotspot->y());
 	hotspot->setTickProc(STANDARD_ANIM_TICK_PROC);
 }
@@ -456,7 +456,7 @@ void Script::townHallClose(uint16 v1, uint16 v2, uint16 v3) {
 void Script::checkRoomNumber(uint16 hotspotId, uint16 roomNumber, uint16 v3) {
 	Resources &res = Resources::getReference();
 	HotspotData *hotspot = res.getHotspot(hotspotId);
-	assert(hotspot);
+	ASSUME_NON_NULL(hotspot);
 	uint16 seqResult = (hotspot->roomNumber == roomNumber) ? 1 : 0;
 	res.fieldList().setField(SEQUENCE_RESULT, seqResult);
 }
@@ -491,7 +491,7 @@ void Script::doorClose(uint16 hotspotId, uint16 v2, uint16 v3) {
 void Script::fixGoewin(uint16 v1, uint16 v2, uint16 v3) {
 	Resources &res = Resources::getReference();
 	Hotspot *hotspot = res.getActiveHotspot(GOEWIN_ID);
-	assert(hotspot);
+	ASSUME_NON_NULL(hotspot);
 	hotspot->setTickProc(STANDARD_CHARACTER_TICK_PROC);
 
 	CharacterScheduleEntry *entry = res.charSchedules().getEntry(GOEWIN_STANDARD_SUPPORT_ID);
@@ -518,7 +518,7 @@ void Script::doorOpen(uint16 hotspotId, uint16 v2, uint16 v3) {
 
 void Script::npcWait(uint16 hotspotId, uint16 v2, uint16 v3) {
 	Hotspot *hotspot = Resources::getReference().getActiveHotspot(hotspotId);
-	assert(hotspot);
+	ASSUME_NON_NULL(hotspot);
 	hotspot->setCharacterMode(CHARMODE_WAIT_FOR_INTERACT);
 	hotspot->setDelayCtr(130);
 }
@@ -572,7 +572,7 @@ void Script::setSupportData(uint16 hotspotId, uint16 index, uint16 v3) {
 	assert(entry != NULL);
 
 	Hotspot *h = res.getActiveHotspot(hotspotId);
-	assert(h);
+	ASSUME_NON_NULL(h);
 	assert(!h->currentActions().isEmpty());
 	h->currentActions().pop();
 	h->currentActions().addFront(DISPATCH_ACTION, entry, h->roomNumber());
@@ -598,7 +598,7 @@ void Script::decreaseNumGroats(uint16 characterId, uint16 numGroats, uint16 v3) 
 void Script::makeGoewinWork(uint16 v1, uint16 v2, uint16 v3) {
 	Resources &res = Resources::getReference();
 	Hotspot *goewin = res.getActiveHotspot(GOEWIN_ID);
-	assert(goewin);
+	ASSUME_NON_NULL(goewin);
 	goewin->updateMovement();
 	goewin->currentActions().addBack(EXEC_HOTSPOT_SCRIPT, 34);
 	goewin->setHotspotScript(0x616);
@@ -616,7 +616,7 @@ void Script::moveCharacterToPlayer(uint16 characterId, uint16 v2, uint16 v3) {
 	Resources &res = Resources::getReference();
 	Hotspot *playerHotspot = res.getActiveHotspot(PLAYER_ID);
 	Hotspot *charHotspot = res.getActiveHotspot(characterId);
-	assert(charHotspot);
+	ASSUME_NON_NULL(charHotspot);
 
 	// If character in same room as player, then no need to do anything
 	if (!charHotspot->currentActions().isEmpty() &&
@@ -643,7 +643,7 @@ void Script::moveCharacterToPlayer(uint16 characterId, uint16 v2, uint16 v3) {
 void Script::setVillageSkorlTickProc(uint16 v1, uint16 v2, uint16 v3) {
 	Resources &res = Resources::getReference();
 	Hotspot *skorlHotspot = res.getActiveHotspot(WAYNE_ID);
-	assert(skorlHotspot);
+	ASSUME_NON_NULL(skorlHotspot);
 	skorlHotspot->setTickProc(JAILOR_TICK_PROC_ID);
 }
 
@@ -698,7 +698,7 @@ void Script::enableGargoylesTalk(uint16 v1, uint16 v2, uint16 v3) {
 void Script::normalGoewin(uint16 v1, uint16 v2, uint16 v3) {
 	Resources &res = Resources::getReference();
 	Hotspot *hotspot = res.getActiveHotspot(GOEWIN_ID);
-	assert(hotspot);
+	ASSUME_NON_NULL(hotspot);
 
 	if (!hotspot->currentActions().isEmpty())
 		hotspot->currentActions().top().setAction(DISPATCH_ACTION);
