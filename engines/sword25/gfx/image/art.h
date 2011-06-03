@@ -57,6 +57,7 @@ namespace Sword25 {
 				} else { \
 					max = 1; \
 					p = art_new(type, 1); \
+					if (!p) error("Cannot allocate memory for art data"); \
 				} \
 			} while (0)
 

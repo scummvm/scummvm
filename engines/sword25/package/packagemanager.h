@@ -141,6 +141,9 @@ public:
 		uint fileSize;
 		char *data = (char *)getFile(fileName, &fileSize);
 		char *result = (char *)malloc(fileSize + strlen(versionStr) + 1);
+		if (!result)
+			error("[PackageManager::getXmlFile] Cannot allocate memory");
+
 		strcpy(result, versionStr);
 		Common::copy(data, data + fileSize, result + strlen(versionStr));
 		result[fileSize + strlen(versionStr)] = '\0';
