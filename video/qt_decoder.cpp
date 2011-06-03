@@ -280,7 +280,7 @@ const Graphics::Surface *QuickTimeDecoder::scaleSurface(const Graphics::Surface 
 	if (getScaleFactorX() == 1 && getScaleFactorY() == 1)
 		return frame;
 
-	assert(_scaledSurface);
+	ASSUME_NON_NULL(_scaledSurface);
 
 	for (int32 j = 0; j < _scaledSurface->h; j++)
 		for (int32 k = 0; k < _scaledSurface->w; k++)

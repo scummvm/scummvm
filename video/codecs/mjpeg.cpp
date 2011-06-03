@@ -60,7 +60,7 @@ const Graphics::Surface *JPEGDecoder::decodeImage(Common::SeekableReadStream* st
 	}
 
 	Graphics::Surface *frame = _jpeg->getSurface(_pixelFormat);
-	assert(frame);
+	ASSUME_NON_NULL(frame);
 
 	_surface->copyFrom(*frame);
 
