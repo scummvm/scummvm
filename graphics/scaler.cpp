@@ -24,6 +24,7 @@
 #include "graphics/scaler/scalebit.h"
 #include "common/util.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 int gBitFormat = 565;
 
@@ -89,6 +90,9 @@ void InitLUT(Graphics::PixelFormat format) {
 	// Allocate the YUV/LUT buffers on the fly if needed.
 	if (RGBtoYUV == 0)
 		RGBtoYUV = (uint32 *)malloc(65536 * sizeof(uint32));
+
+	if (!RGBtoYUV)
+		error("[InitLUT] Cannot allocate memory for YUV/LUT buffers");
 
 	for (int color = 0; color < 65536; ++color) {
 		format.colorToRGB(color, r, g, b);
