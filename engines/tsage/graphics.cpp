@@ -786,7 +786,10 @@ void GfxMessage::draw() {
 	// Set the font and color
 	gfxManager.setFillFlag(false);
 	gfxManager._font.setFontNumber(_fontNumber);
-	gfxManager._font._colors.foreground = this->_colors.foreground;
+
+	gfxManager._font._colors.foreground = this->_unkColor1;
+	gfxManager._font._colors2.background = this->_unkColor2;
+	gfxManager._font._colors2.foreground = this->_unkColor3;
 
 	// Display the text
 	gfxManager._font.writeLines(_message.c_str(), _bounds, _textAlign);
