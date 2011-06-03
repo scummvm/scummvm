@@ -573,7 +573,7 @@ void L2_StartMovie() {
 }
 
 void L2_IsMoviePlaying() {
-	warning("L2_StartMovie: always returns false");
+	warning("L2_IsMoviePlaying: always returns false");
 	lua_pushnil();
 }
 
