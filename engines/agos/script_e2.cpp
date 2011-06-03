@@ -651,7 +651,7 @@ void AGOSEngine_Elvira2::oe2_isAdjNoun() {
 		return;
 	}
 
-	assert(item);
+	ASSUME_NON_NULL(item);
 	setScriptCondition(item->adjective == a && item->noun == n);
 }
 
