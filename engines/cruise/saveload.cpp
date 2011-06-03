@@ -293,7 +293,7 @@ static void syncOverlays2(Common::Serializer &s) {
 
 				if (ovlRestoreData[i]._sNumObj) {
 					ovlRestoreData[i]._pObj = (objectParams *) mallocAndZero(ovlRestoreData[i]._sNumObj * sizeof(objectParams));
-					ASSERT(ovlRestoreData[i]._pObj);
+					ASSUME_NON_NULL(ovlRestoreData[i]._pObj);
 
 					for (int j = 0; j < ovlRestoreData[i]._sNumObj; j++) {
 						s.syncAsSint16LE(ovlRestoreData[i]._pObj[j].X);

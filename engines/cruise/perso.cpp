@@ -240,7 +240,7 @@ void processActorWalk(MovementEntry &resx_y, int16 *inc_droite, int16 *inc_droit
 void affiche_chemin(int16 persoIdx, MovementEntry &data) {
 	persoStruct *pPerso = persoTable[persoIdx];
 
-	ASSERT(pPerso);
+	ASSUME_NON_NULL(pPerso);
 
 	processActorWalk(data, &pPerso->inc_droite, &pPerso->inc_droite0,
 	                 &pPerso->inc_chemin, pPerso->coordinates, pPerso->solution,

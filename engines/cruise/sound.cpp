@@ -221,9 +221,9 @@ public:
 	bool songLoaded() const { return _sfxData != NULL; }
 	bool songPlayed() const { return _songPlayed; }
 	bool playing() const { return _playing; }
-	uint8 numOrders() const { assert(_sfxData); return _sfxData[470]; }
-	void setNumOrders(uint8 v) { assert(_sfxData); _sfxData[470] = v; }
-	void setPattern(int offset, uint8 value) { assert(_sfxData); _sfxData[472 + offset] = value; }
+	uint8 numOrders() const { ASSUME_NON_NULL(_sfxData); return _sfxData[470]; }
+	void setNumOrders(uint8 v) { ASSUME_NON_NULL(_sfxData); _sfxData[470] = v; }
+	void setPattern(int offset, uint8 value) { ASSUME_NON_NULL(_sfxData); _sfxData[472 + offset] = value; }
 	const char *musicName() { return _musicName; }
 
 	// Note: Original game never actually uses looping variable. Songs are hardcoded to loop

@@ -39,7 +39,7 @@ menuStruct *createMenu(int X, int Y, const char *menuName) {
 	menuStruct *entry;
 
 	entry = (menuStruct *) MemAlloc(sizeof(menuStruct));
-	ASSERT(entry);
+	ASSUME_NON_NULL(entry);
 
 	entry->x = X - 160 / 2;
 	entry->y = Y;
@@ -69,7 +69,7 @@ void addSelectableMenuEntry(int ovlIdx, int headerIdx, menuStruct *pMenu, int pa
 					if (!strcmp(var_6->string, menuText)) {
 						pNewElement = var_6;
 						pSubStruct = (menuElementSubStruct *)allocAndZero(sizeof(menuElementSubStruct));
-						ASSERT(pSubStruct);
+						ASSUME_NON_NULL(pSubStruct);
 
 						pSubStruct->pNext = NULL;
 						pSubStruct->ovlIdx = ovlIdx;
@@ -99,9 +99,9 @@ void addSelectableMenuEntry(int ovlIdx, int headerIdx, menuStruct *pMenu, int pa
 		}
 
 		pNewElement = (menuElementStruct *)allocAndZero(sizeof(menuElementStruct));
-		ASSERT(pNewElement);
+		ASSUME_NON_NULL(pNewElement);
 		pSubStruct = (menuElementSubStruct *)allocAndZero(sizeof(menuElementSubStruct));
-		ASSERT(pSubStruct);
+		ASSUME_NON_NULL(pSubStruct);
 
 		pNewElement->string = menuText;
 		pNewElement->next = NULL;
