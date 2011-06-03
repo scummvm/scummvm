@@ -106,7 +106,7 @@ OBJECT *AllocObject() {
 	OBJECT *pObj = pFreeObjects;	// get a free object
 
 	// check for no free objects
-	assert(pObj != NULL);
+	ASSUME_NON_NULL(pObj);
 
 	// a free object exists
 
@@ -353,7 +353,7 @@ OBJECT *InitObject(const OBJ_INIT *pInitTbl) {
 	OBJECT *pObj = AllocObject();
 
 	// make sure object created
-	assert(pObj != NULL);
+	ASSUME_NON_NULL(pObj);
 
 	// set objects shape
 	pObj->hImg = pInitTbl->hObjImg;

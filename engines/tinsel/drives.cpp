@@ -193,37 +193,37 @@ void TinselFile::close() {
 }
 
 int32 TinselFile::pos() const {
-	assert(_stream);
+	ASSUME_NON_NULL(_stream);
 	return _stream->pos();
 }
 
 int32 TinselFile::size() const {
-	assert(_stream);
+	ASSUME_NON_NULL(_stream);
 	return _stream->size();
 }
 
 bool TinselFile::seek(int32 offset, int whence) {
-	assert(_stream);
+	ASSUME_NON_NULL(_stream);
 	return _stream->seek(offset, whence);
 }
 
 bool TinselFile::eos() const {
-	assert(_stream);
+	ASSUME_NON_NULL(_stream);
 	return _stream->eos();
 }
 
 bool TinselFile::err() const {
-	assert(_stream);
+	ASSUME_NON_NULL(_stream);
 	return _stream->err();
 }
 
 void TinselFile::clearErr() {
-	assert(_stream);
+	ASSUME_NON_NULL(_stream);
 	_stream->clearErr();
 }
 
 uint32 TinselFile::read(void *dataPtr, uint32 dataSize) {
-	assert(_stream);
+	ASSUME_NON_NULL(_stream);
 	return _stream->read(dataPtr, dataSize);
 }
 

@@ -210,7 +210,7 @@ void LoadCDGraphData(MEMHANDLE *pH) {
 	assert(addr);
 
 	// Move to correct place in file and load the required data
-	assert(cdGraphStream);
+	ASSUME_NON_NULL(cdGraphStream);
 	cdGraphStream->seek(cdBaseHandle & OFFSETMASK, SEEK_SET);
 	bytes = cdGraphStream->read(addr, (cdTopHandle - cdBaseHandle) & OFFSETMASK);
 

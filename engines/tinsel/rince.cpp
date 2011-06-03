@@ -220,7 +220,7 @@ bool getMActorState(PMOVER pActor) {
  * cause the object to re-appear.
  */
 void HideMover(PMOVER pMover, int sf) {
-	assert(pMover); // Hiding null moving actor
+	ASSUME_NON_NULL(pMover); // Hiding null moving actor
 
 	pMover->bHidden = true;
 
@@ -317,7 +317,7 @@ void SetMoverZoverride(PMOVER pMover, uint32 zFactor) {
  * UnHideMover
  */
 void UnHideMover(PMOVER pMover) {
-	assert(pMover); // unHiding null moving actor
+	ASSUME_NON_NULL(pMover); // unHiding null moving actor
 
 	if (!TinselV2 || pMover->bHidden) {
 		pMover->bHidden = false;
@@ -404,7 +404,7 @@ void PositionMover(PMOVER pMover, int x, int y) {
 	int	node;
 	HPOLYGON hPath;
 
-	assert(pMover); // Moving null moving actor
+	ASSUME_NON_NULL(pMover); // Moving null moving actor
 	assert(pMover->actorObj);
 
 	pMover->objX = x;
@@ -446,7 +446,7 @@ void PositionMover(PMOVER pMover, int x, int y) {
  * Get position of a moving actor.
  */
 void GetMoverPosition(PMOVER pMover, int *paniX, int *paniY) {
-	assert(pMover); // Getting null moving actor's position
+	ASSUME_NON_NULL(pMover); // Getting null moving actor's position
 
 	if (pMover->actorObj != NULL)
 		GetAniPosition(pMover->actorObj, paniX, paniY);
@@ -460,7 +460,7 @@ void GetMoverPosition(PMOVER pMover, int *paniX, int *paniY) {
  * Moving actor's mid-top position.
  */
 void GetMoverMidTop(PMOVER pMover, int *aniX, int *aniY) {
-	assert(pMover); // Getting null moving actor's mid-top position
+	ASSUME_NON_NULL(pMover); // Getting null moving actor's mid-top position
 	assert(pMover->actorObj); // Getting null moving actor's mid-top position
 
 	*aniX = (MultiLeftmost(pMover->actorObj) + MultiRightmost(pMover->actorObj)) / 2;
@@ -471,7 +471,7 @@ void GetMoverMidTop(PMOVER pMover, int *aniX, int *aniY) {
  * Moving actor's left-most co-ordinate.
  */
 int GetMoverLeft(PMOVER pMover) {
-	assert(pMover); // Getting null moving actor's leftmost position
+	ASSUME_NON_NULL(pMover); // Getting null moving actor's leftmost position
 	assert(pMover->actorObj); // Getting null moving actor's leftmost position
 
 	return MultiLeftmost(pMover->actorObj);
@@ -481,7 +481,7 @@ int GetMoverLeft(PMOVER pMover) {
  * Moving actor's right-most co-ordinate.
  */
 int GetMoverRight(PMOVER pMover) {
-	assert(pMover); // Getting null moving actor's rightmost position
+	ASSUME_NON_NULL(pMover); // Getting null moving actor's rightmost position
 	assert(pMover->actorObj); // Getting null moving actor's rightmost position
 
 	return MultiRightmost(pMover->actorObj);
@@ -491,7 +491,7 @@ int GetMoverRight(PMOVER pMover) {
  * Moving actor's top co-ordinate.
  */
 int GetMoverTop(PMOVER pMover) {
-	assert(pMover); // Getting null moving actor's topmost position
+	ASSUME_NON_NULL(pMover); // Getting null moving actor's topmost position
 	assert(pMover->actorObj); // Getting null moving actor's topmost position
 
 	return MultiHighest(pMover->actorObj);
@@ -501,7 +501,7 @@ int GetMoverTop(PMOVER pMover) {
  * Moving actor's bottom co-ordinate.
  */
 int GetMoverBottom(PMOVER pMover) {
-	assert(pMover); // Getting null moving actor's bottommost position
+	ASSUME_NON_NULL(pMover); // Getting null moving actor's bottommost position
 	assert(pMover->actorObj); // Getting null moving actor's bottommost position
 
 	return MultiLowest(pMover->actorObj);
@@ -511,7 +511,7 @@ int GetMoverBottom(PMOVER pMover) {
  * See if moving actor is stood within a polygon.
  */
 bool MoverIsInPolygon(PMOVER pMover, HPOLYGON hp) {
-	assert(pMover); // Checking if null moving actor is in polygon
+	ASSUME_NON_NULL(pMover); // Checking if null moving actor is in polygon
 	assert(pMover->actorObj); // Checking if null moving actor is in polygon
 
 	int aniX, aniY;
@@ -548,7 +548,7 @@ void AlterMover(PMOVER pMover, SCNHANDLE film, AR_FUNCTION fn) {
 		pMover->hLastFilm = film;
 
 		pfilm = (const FILM *)LockMem(film);
-		assert(pfilm != NULL);
+		ASSUME_NON_NULL(pfilm);
 
 		InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, FROM_LE_32(pfilm->reels[0].script), ONE_SECOND / FROM_LE_32(pfilm->frate));
 		if (!TinselV2)
@@ -641,7 +641,7 @@ void SetMoverWalkReel(PMOVER pMover, DIRECTION reel, int scale, bool force) {
 		}
 
 		pfilm = (const FILM *)LockMem(whichReel);
-		assert(pfilm != NULL); // no film
+		ASSUME_NON_NULL(pfilm); // no film
 
 		InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, FROM_LE_32(pfilm->reels[0].script), 1);
 

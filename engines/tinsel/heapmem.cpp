@@ -160,7 +160,7 @@ static MEM_NODE *AllocMemNode() {
 	MEM_NODE *pMemNode = pFreeMemNodes;
 
 	// make sure a mnode is available
-	assert(pMemNode); // Out of memory nodes
+	ASSUME_NON_NULL(pMemNode); // Out of memory nodes
 
 	// the next free mnode
 	pFreeMemNodes = pMemNode->pNext;

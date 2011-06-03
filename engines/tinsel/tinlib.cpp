@@ -621,7 +621,7 @@ static void AddInv(int invno, int object) {
  */
 static void AuxScale(int actor, int scale, SCNHANDLE *rp) {
 	PMOVER pMover = GetMover(actor);
-	assert(pMover);
+	ASSUME_NON_NULL(pMover);
 
 	int j;
 	for (j = 0; j < 4; ++j)
@@ -978,7 +978,7 @@ static void DecLead(uint32 id, SCNHANDLE *rp = 0, SCNHANDLE text = 0) {
 		RegisterMover(id);			// Establish as a moving actor
 
 		pMover = GetMover(id);		// Get moving actor structure
-		assert(pMover);
+		ASSUME_NON_NULL(pMover);
 
 		// Store all those reels
 		int i, j;
@@ -1510,7 +1510,7 @@ void Offset(EXTREME extreme, int x, int y) {
  * OtherObject()
  */
 int OtherObject(INV_OBJECT *pinvo) {
-	assert(pinvo != NULL);
+	ASSUME_NON_NULL(pinvo);
 
 	// return held object or object clicked on - whichever is not the calling object
 
@@ -2064,7 +2064,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 
 	CORO_BEGIN_CODE(_ctx);
 
-	assert(pinvo != 0); // PrintObj() may only be called from an object code block
+	ASSUME_NON_NULL(pinvo); // PrintObj() may only be called from an object code block
 	_ctx->myEscape = myEscape;
 
 	if (hText == (SCNHANDLE)-1) {	// 'OFF'
@@ -3026,7 +3026,7 @@ static void StopWalk(int actor) {
 	PMOVER pMover;
 
 	pMover = GetMover(actor);
-	assert(pMover);
+	ASSUME_NON_NULL(pMover);
 
 	if (TinselV2) {
 		if (MoverHidden(pMover))
@@ -3626,7 +3626,7 @@ static void TempTalkFont(SCNHANDLE hFilm) {
  * ThisObject
  */
 static int ThisObject(INV_OBJECT *pinvo) {
-	assert(pinvo != NULL);
+	ASSUME_NON_NULL(pinvo);
 
 	return pinvo->id;
 }
@@ -3870,7 +3870,7 @@ void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm, int hold, bool i
 	bool bQuick = hold != 0;
 	PMOVER pMover = GetMover(actor);
 
-	assert(pMover); // Can't walk a non-moving actor
+	ASSUME_NON_NULL(pMover); // Can't walk a non-moving actor
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -3957,7 +3957,7 @@ static void Walked(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, bool esc
 	CORO_END_CONTEXT(_ctx);
 
 	PMOVER pMover = GetMover(actor);
-	assert(pMover); // Can't walk a non-moving actor
+	ASSUME_NON_NULL(pMover); // Can't walk a non-moving actor
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -4026,7 +4026,7 @@ static void WalkingActor(uint32 id, SCNHANDLE *rp = NULL) {
 
 	RegisterMover(id);		// Establish as a moving actor
 	pActor = GetMover(id);
-	assert(pActor);
+	ASSUME_NON_NULL(pActor);
 
 	// Store all those reels
 	int i, j;
@@ -4060,7 +4060,7 @@ static void WalkPoly(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool es
 
 	assert(hp != NOPOLY); // WalkPoly() may only be called from a polygon code block
 	PMOVER pMover = GetMover(actor);
-	assert(pMover); // Can't walk a non-moving actor
+	ASSUME_NON_NULL(pMover); // Can't walk a non-moving actor
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -4118,7 +4118,7 @@ static void WalkTag(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool esc
 	CORO_END_CONTEXT(_ctx);
 
 	PMOVER pMover = GetMover(actor);
-	assert(pMover); // Can't walk a non-moving actor
+	ASSUME_NON_NULL(pMover); // Can't walk a non-moving actor
 
 	CORO_BEGIN_CODE(_ctx);
 
