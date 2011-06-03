@@ -290,7 +290,7 @@ public:
 	void setSciLanguage(kLanguage lang);
 	void setSciLanguage();
 
-	Common::String getSciLanguageString(const char *str, kLanguage lang, kLanguage *lang2 = NULL) const;
+	Common::String getSciLanguageString(const Common::String &str, kLanguage lang, kLanguage *lang2 = NULL) const;
 
 	// Check if vocabulary needs to get switched (in multilingual parser games)
 	void checkVocabularySwitch();

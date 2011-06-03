@@ -100,7 +100,7 @@ enum {
 
 
 
-reg_t file_open(EngineState *s, const char *filename, int mode, bool unwrapFilename) {
+reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool unwrapFilename) {
 	Common::String englishName = g_sci->getSciLanguageString(filename, K_LANG_ENGLISH);
 	Common::String wrappedName = unwrapFilename ? g_sci->wrapFilename(englishName) : englishName;
 	Common::SeekableReadStream *inFile = 0;
@@ -178,7 +178,7 @@ reg_t kFOpen(EngineState *s, int argc, reg_t *argv) {
 	int mode = argv[1].toUint16();
 
 	debugC(kDebugLevelFile, "kFOpen(%s,0x%x)", name.c_str(), mode);
-	return file_open(s, name.c_str(), mode, true);
+	return file_open(s, name, mode, true);
 }
 
 static FileHandle *getFileFromHandle(EngineState *s, uint handle) {
@@ -644,7 +644,7 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 	if (!out) {
 		warning("Error opening savegame \"%s\" for writing", filename.c_str());
 	} else {
-		if (!gamestate_save(s, out, game_description.c_str(), version.c_str())) {
+		if (!gamestate_save(s, out, game_description, version)) {
 			warning("Saving the game failed");
 		} else {
 			s->r_acc = TRUE_REG; // save successful
@@ -792,7 +792,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		unwrapFilename = false;
 	}
 
-	return file_open(s, name.c_str(), mode, unwrapFilename);
+	return file_open(s, name, mode, unwrapFilename);
 }
 
 reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {

@@ -447,7 +447,7 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 			workaround = workaroundList;
 			while (workaround->methodName) {
 				bool objectNameMatches = (workaround->objectName == NULL) || 
-										 (workaround->objectName == g_sci->getSciLanguageString(searchObjectName.c_str(), K_LANG_ENGLISH));
+										 (workaround->objectName == g_sci->getSciLanguageString(searchObjectName, K_LANG_ENGLISH));
 
 				// Special case: in the fanmade Russian translation of SQ4, all
 				// of the object names have been deleted or renamed to Russian,
@@ -460,7 +460,7 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 						&& ((workaround->roomNr == -1) || (workaround->roomNr == curRoomNumber))
 						&& ((workaround->inheritanceLevel == -1) || (workaround->inheritanceLevel == inheritanceLevel))
 						&& objectNameMatches
-						&& workaround->methodName == g_sci->getSciLanguageString(curMethodName.c_str(), K_LANG_ENGLISH)
+						&& workaround->methodName == g_sci->getSciLanguageString(curMethodName, K_LANG_ENGLISH)
 						&& workaround->localCallOffset == lastCall->debugLocalCallOffset
 						&& ((workaround->index == -1) || (workaround->index == index))) {
 					// Workaround found

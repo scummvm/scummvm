@@ -192,10 +192,10 @@ static kLanguage charToLanguage(const char c) {
 	}
 }
 
-Common::String SciEngine::getSciLanguageString(const char *str, kLanguage lang, kLanguage *lang2) const {
+Common::String SciEngine::getSciLanguageString(const Common::String &str, kLanguage lang, kLanguage *lang2) const {
 	kLanguage secondLang = K_LANG_NONE;
 
-	const char *seeker = str;
+	const char *seeker = str.c_str();
 	while (*seeker) {
 		if ((*seeker == '%') || (*seeker == '#')) {
 			secondLang = charToLanguage(*(seeker + 1));
@@ -242,9 +242,9 @@ Common::String SciEngine::getSciLanguageString(const char *str, kLanguage lang, 
 	}
 
 	if (seeker)
-		return Common::String(str, seeker - str);
+		return Common::String(str.c_str(), seeker - str.c_str());
 	else
-		return Common::String(str);
+		return str;
 }
 
 kLanguage SciEngine::getSciLanguage() {
