@@ -51,6 +51,7 @@ public:
 	int _gfxFontNumber;
 	GfxColors _gfxColors;
 	GfxColors _fontColors;
+	byte _unkColor1, _unkColor2, _unkColor3;
 	SoundManager _soundManager;
 	Common::Point _dialogCenter;
 	WalkRegions _walkRegions;

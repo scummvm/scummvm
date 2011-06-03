@@ -589,6 +589,9 @@ void GfxElement::setDefaults() {
 	_fontNumber = _globals->_gfxFontNumber;
 	_colors = _globals->_gfxColors;
 	_fontColors = _globals->_fontColors;
+	_unkColor1 = _globals->_unkColor1;
+	_unkColor2 = _globals->_unkColor2;
+	_unkColor3 = _globals->_unkColor3;
 }
 
 /**
@@ -820,7 +823,11 @@ void GfxButton::draw() {
 
 	// Set the font and color
 	gfxManager._font.setFontNumber(_fontNumber);
-	gfxManager._font._colors.foreground = this->_colors.foreground;
+
+	// 
+	gfxManager._font._colors.foreground = this->_unkColor1;
+	gfxManager._font._colors2.background = this->_unkColor2;
+	gfxManager._font._colors2.foreground = this->_unkColor3;
 
 	// Display the button's text
 	Rect tempRect(_bounds);
