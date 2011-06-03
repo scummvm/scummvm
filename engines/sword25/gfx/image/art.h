@@ -51,7 +51,9 @@ namespace Sword25 {
 #define art_expand(p, type, max) \
 			do { \
 				if(max) {\
-					p = art_renew(p, type, max <<= 1); \
+					type *tmp = art_renew(p, type, max <<= 1); \
+					if (!tmp) error("Cannot reallocate memory for art data"); \
+					p = tmp; \
 				} else { \
 					max = 1; \
 					p = art_new(type, 1); \

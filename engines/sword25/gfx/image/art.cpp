@@ -167,9 +167,14 @@ ArtSVP *art_svp_from_vpath(ArtVpath *vpath) {
 			if (points != NULL && n_points >= 2) {
 				if (n_segs == n_segs_max) {
 					n_segs_max <<= 1;
-					svp = (ArtSVP *)realloc(svp, sizeof(ArtSVP) +
-					                            (n_segs_max - 1) *
-					                            sizeof(ArtSVPSeg));
+					ArtSVP *tmp = (ArtSVP *)realloc(svp, sizeof(ArtSVP) +
+					                                    (n_segs_max - 1) *
+					                                    sizeof(ArtSVPSeg));
+
+					if (!tmp)
+						error("Cannot reallocate memory in art_svp_from_vpath()");
+
+					svp = tmp;
 				}
 				svp->segs[n_segs].n_points = n_points;
 				svp->segs[n_segs].dir = (dir > 0);
@@ -204,9 +209,14 @@ ArtSVP *art_svp_from_vpath(ArtVpath *vpath) {
 				y = points[n_points - 1].y;
 				if (n_segs == n_segs_max) {
 					n_segs_max <<= 1;
-					svp = (ArtSVP *)realloc(svp, sizeof(ArtSVP) +
-					                            (n_segs_max - 1) *
-					                            sizeof(ArtSVPSeg));
+					ArtSVP *tmp = (ArtSVP *)realloc(svp, sizeof(ArtSVP) +
+					                                     (n_segs_max - 1) *
+					                                     sizeof(ArtSVPSeg));
+
+					if (!tmp)
+						error("Cannot reallocate memory in art_svp_from_vpath()");
+
+					svp = tmp;
 				}
 				svp->segs[n_segs].n_points = n_points;
 				svp->segs[n_segs].dir = (dir > 0);
@@ -246,9 +256,14 @@ ArtSVP *art_svp_from_vpath(ArtVpath *vpath) {
 		if (n_points >= 2) {
 			if (n_segs == n_segs_max) {
 				n_segs_max <<= 1;
-				svp = (ArtSVP *)realloc(svp, sizeof(ArtSVP) +
-				                            (n_segs_max - 1) *
-				                            sizeof(ArtSVPSeg));
+				ArtSVP *tmp = (ArtSVP *)realloc(svp, sizeof(ArtSVP) +
+				                                     (n_segs_max - 1) *
+				                                      sizeof(ArtSVPSeg));
+
+				if (!tmp)
+					error("Cannot reallocate memory in art_svp_from_vpath()");
+
+				svp = tmp;
 			}
 			svp->segs[n_segs].n_points = n_points;
 			svp->segs[n_segs].dir = (dir > 0);
@@ -1157,8 +1172,13 @@ static int art_svp_writer_rewind_add_segment(ArtSvpWriter *self, int wind_left,
 		                            (swr->n_segs_max - 1) *
 		                            sizeof(ArtSVPSeg));
 		swr->svp = svp;
-		swr->n_points_max = art_renew(swr->n_points_max, int,
-		                              swr->n_segs_max);
+		int *tmp = art_renew(swr->n_points_max, int,
+		                                        swr->n_segs_max);
+
+		if (!tmp)
+			error("Cannot reallocate memory in art_svp_writer_rewind_add_segment()");
+
+		swr->n_points_max = tmp;
 	}
 	seg = &svp->segs[seg_num];
 	seg->n_points = 1;
