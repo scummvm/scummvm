@@ -132,7 +132,7 @@ TestExitStatus MiscTests::testMutexes() {
 		Testsuite::writeOnScreen("Installing mutex", Common::Point(0, 100));
 	}
 
-	static SharedVars sv = {1, 1, true, g_system->createMutex()};
+	SharedVars sv = {1, 1, true, g_system->createMutex()};
 
 	if (g_system->getTimerManager()->installTimerProc(criticalSection, 100000, &sv)) {
 		g_system->delayMillis(150);
