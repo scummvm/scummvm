@@ -382,7 +382,7 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 	// Create the driver
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_driver = MidiDriver::createMidi(dev);
-	assert(_driver);
+	ASSUME_NON_NULL(_driver);
 
 	_driver->open();	// TODO: Handle return value != 0 (indicating an error)
 
@@ -684,7 +684,7 @@ MusicPlayerMac::MusicPlayerMac(GroovieEngine *vm) : MusicPlayerMidi(vm) {
 	// Create the driver
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_driver = MidiDriver::createMidi(dev);
-	assert(_driver);
+	ASSUME_NON_NULL(_driver);
 
 	_driver->open();	// TODO: Handle return value != 0 (indicating an error)
 
