@@ -73,6 +73,10 @@ Common::String OSystem_POSIX::getDefaultConfigFileName() {
 }
 
 Common::WriteStream *OSystem_POSIX::createLogFile() {
+	// Start out by resetting _logFilePath, so that in case
+	// of a failure, we know that no log file is open.
+	_logFilePath.clear();
+
 	const char *home = getenv("HOME");
 	if (home == NULL)
 		return 0;
@@ -128,7 +132,10 @@ Common::WriteStream *OSystem_POSIX::createLogFile() {
 	logFile += "/scummvm.log";
 
 	Common::FSNode file(logFile);
-	return file.createWriteStream();
+	Common::WriteStream *stream = file.createWriteStream();
+	if (stream)
+		_logFilePath = logFile;
+	return stream;
 }
 
 #endif

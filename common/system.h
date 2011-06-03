@@ -195,7 +195,13 @@ public:
 		 * engine queries for to assign keys to actions ("Here's my default key
 		 * map for these actions, what do you want them set to?").
 		 */
-		kFeatureDisableKeyFiltering
+		kFeatureDisableKeyFiltering,
+
+		/**
+		 * This feature indicates whether the displayLogFile() call
+		 * is supported.
+		 */
+		kFeatureDisplayLogFile
 	};
 
 	/**
@@ -1008,6 +1014,29 @@ public:
 	 * @param message the message itself
 	 */
 	virtual void logMessage(LogMessageType::Type type, const char *message);
+
+	/**
+	 * Open the log file in a way that allows the user to review it,
+	 * and possibly email it (or parts of it) to the ScummVM team,
+	 * e.g. as part of a bug report.
+	 *
+	 * On a desktop operating system, this would typically launch
+	 * some kind of (external) text editor / viewer.
+	 * On a phone, it might also cause a context switch to another
+	 * application. Finally, on some ports, it might not be supported.
+	 * at all, and so do nothing.
+	 *
+	 * The kFeatureDisplayLogFile feature flag can be used to
+	 * test whether this call has been implemented by the active
+	 * backend.
+	 *
+	 * @return true if all seems to have gone fine, false if an error occurred
+	 *
+	 * @note An error could mean that the log file did not exist,
+	 * or the editor could not launch. However, a return value of true does
+	 * not guarantee that the user actually will the log file.
+	 */
+	virtual bool displayLogFile() { return false; }
 
 	/**
 	 * Returns the locale of the system.
