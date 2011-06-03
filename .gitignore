@@ -85,6 +85,7 @@ project.xcworkspace
 
 /dists/msvc*/[Dd]ebug*/
 /dists/msvc*/[Rr]elease*/
+/dists/msvc*/[Aa]nalysis*/
 /dists/msvc*/*.lib
 /dists/msvc*/*.SAV
 /dists/msvc*/*.dat
