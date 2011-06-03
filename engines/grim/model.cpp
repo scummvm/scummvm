@@ -79,6 +79,9 @@ void Model::loadEMI(Common::MemoryReadStream &ms) {
 
 	ms.read(name, nameLength);
 
+	// skip over some unkown floats
+	ms.seek(48, SEEK_CUR);
+
 	_numMaterials = ms.readUint32LE();
 	_materials = new MaterialPtr[_numMaterials];
 	_materialNames = new char[_numMaterials][32];
@@ -87,7 +90,12 @@ void Model::loadEMI(Common::MemoryReadStream &ms) {
 		assert(nameLength < 32);
 
 		ms.read(_materialNames[i], nameLength);
-		_materials[i] = g_resourceloader->getMaterial(_materialNames[i], 0);
+		// I'm not sure what specialty mateials are, but they are handled differently.
+		if (memcmp(_materialNames[i], "specialty", 9) == 0) {
+			_materials[i] = 0;
+		} else {
+			_materials[i] = g_resourceloader->getMaterial(_materialNames[i], 0);
+		}
 		ms.seek(4, SEEK_CUR);
 	}
 

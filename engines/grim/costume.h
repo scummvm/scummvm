@@ -120,7 +120,7 @@ public:
 
 private:
 	Component *loadComponent(tag32 tag, Component *parent, int parentID, const char *name, Component *prevComponent);
-	Component *loadComponentEMI(const char *name, int parentID);
+	Component *loadComponentEMI(Costume::Component *parent, int parentID, const char *name, Costume::Component *prevComponent);
 
 	Common::String _fname;
 	Costume *_prevCostume;

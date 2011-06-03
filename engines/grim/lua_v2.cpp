@@ -538,6 +538,22 @@ void L2_ImFlushStack() {
 	warning("L2_ImFlushStack: implement opcode");
 }
 
+void L2_ImSetMusicVol() {
+	warning("L2_ImSetMusicVol: implement opcode");
+}
+
+void L2_ImSetSfxVol() {
+	warning("L2_ImSetSfxVol: implement opcode");
+}
+
+void L2_ImSetVoiceVol() {
+	warning("L2_ImSetVoiceVol: implement opcode");
+}
+
+void L2_ImSetVoiceEffect() {
+	warning("L2_ImSetVoiceEffect: implement opcode");
+}
+
 void L2_EngineDisplay() {
 	// dummy
 }
@@ -548,6 +564,17 @@ void L2_SetAmbientLight() {
 
 void L2_Display() {
 	// dummy
+}
+
+void L2_StartMovie() {
+	//stub this untill EMI movie stuff is worked out.
+	g_grim->setMode(ENGINE_MODE_SMUSH);
+	warning("L2_StartMovie: implement opcode");
+}
+
+void L2_IsMoviePlaying() {
+	warning("L2_StartMovie: always returns false");
+	lua_pushnil();
 }
 
 // Stub function for builtin functions not yet implemented
@@ -578,7 +605,6 @@ STUB_FUNC2(L2_SetActorHead)
 STUB_FUNC2(L2_GetActorRot)
 STUB_FUNC2(L2_LockSet)
 STUB_FUNC2(L2_UnLockSet)
-STUB_FUNC2(L2_StartMovie)
 STUB_FUNC2(L2_PlaySound)
 STUB_FUNC2(L2_IsSoundPlaying)
 STUB_FUNC2(L2_MakeSectorActive)
@@ -687,10 +713,6 @@ STUB_FUNC2(L2_ImStateHasLooped)
 STUB_FUNC2(L2_ImStateHasEnded)
 STUB_FUNC2(L2_ImPushState)
 STUB_FUNC2(L2_ImPopState)
-STUB_FUNC2(L2_ImSetMusicVol)
-STUB_FUNC2(L2_ImSetSfxVol)
-STUB_FUNC2(L2_ImSetVoiceVol)
-STUB_FUNC2(L2_ImSetVoiceEffect)
 STUB_FUNC2(L2_GetSectorName)
 STUB_FUNC2(L2_GetCameraYaw)
 STUB_FUNC2(L2_YawCamera)
@@ -785,7 +807,7 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "StartMovie", L2_StartMovie },
 	{ "StopMovie", L1_StopMovie },
 	{ "PauseMovie", L1_PauseMovie },
-	{ "IsMoviePlaying", L1_IsMoviePlaying },
+	{ "IsMoviePlaying", L2_IsMoviePlaying },
 	{ "PlaySound", L2_PlaySound },
 	{ "IsSoundPlaying", L2_IsSoundPlaying },
 	{ "FileFindFirst", L1_FileFindFirst },
