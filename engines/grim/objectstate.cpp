@@ -37,7 +37,9 @@ ObjectState::ObjectState(int setup, ObjectState::Position position, const char *
 	g_grim->registerBitmap(_bitmap);
 	if (zbitmap) {
 		_zbitmap = g_resourceloader->loadBitmap(zbitmap);
-		g_grim->registerBitmap(_zbitmap);
+		if (_zbitmap) {
+			g_grim->registerBitmap(_zbitmap);
+		}
 	} else
 		_zbitmap = NULL;
 }
