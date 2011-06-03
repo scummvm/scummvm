@@ -217,7 +217,7 @@ FontResource *Text::lockFontResource() {
 
 void Text::updateFormat() {
 	FontResource *fontPtr = lockFontResource();
-	assert(fontPtr);
+	ASSUME_NON_NULL(fontPtr);
 
 	updateMetrics(*fontPtr);
 

@@ -266,7 +266,7 @@ static Region *checkRegion(lua_State *L) {
 
 static int r_isValid(lua_State *L) {
 	Region *pR = checkRegion(L);
-	assert(pR);
+	ASSUME_NON_NULL(pR);
 
 	lua_pushbooleancpp(L, pR->isValid());
 	return 1;
@@ -274,7 +274,7 @@ static int r_isValid(lua_State *L) {
 
 static int r_getX(lua_State *L) {
 	Region *pR = checkRegion(L);
-	assert(pR);
+	ASSUME_NON_NULL(pR);
 
 	lua_pushnumber(L, pR->getPosX());
 	return 1;
@@ -282,7 +282,7 @@ static int r_getX(lua_State *L) {
 
 static int r_getY(lua_State *L) {
 	Region *pR = checkRegion(L);
-	assert(pR);
+	ASSUME_NON_NULL(pR);
 
 	lua_pushnumber(L, pR->getPosY());
 	return 1;
@@ -290,7 +290,7 @@ static int r_getY(lua_State *L) {
 
 static int r_getPos(lua_State *L) {
 	Region *pR = checkRegion(L);
-	assert(pR);
+	ASSUME_NON_NULL(pR);
 
 	Vertex::vertexToLuaVertex(L, pR->getPosition());
 	return 1;
@@ -298,7 +298,7 @@ static int r_getPos(lua_State *L) {
 
 static int r_isPointInRegion(lua_State *L) {
 	Region *pR = checkRegion(L);
-	assert(pR);
+	ASSUME_NON_NULL(pR);
 
 	Vertex vertex;
 	Vertex::luaVertexToVertex(L, 2, vertex);
@@ -308,7 +308,7 @@ static int r_isPointInRegion(lua_State *L) {
 
 static int r_setPos(lua_State *L) {
 	Region *pR = checkRegion(L);
-	assert(pR);
+	ASSUME_NON_NULL(pR);
 
 	Vertex vertex;
 	Vertex::luaVertexToVertex(L, 2, vertex);
@@ -319,7 +319,7 @@ static int r_setPos(lua_State *L) {
 
 static int r_setX(lua_State *L) {
 	Region *pR = checkRegion(L);
-	assert(pR);
+	ASSUME_NON_NULL(pR);
 
 	pR->setPosX(static_cast<int>(luaL_checknumber(L, 2)));
 
@@ -328,7 +328,7 @@ static int r_setX(lua_State *L) {
 
 static int r_setY(lua_State *L) {
 	Region *pR = checkRegion(L);
-	assert(pR);
+	ASSUME_NON_NULL(pR);
 
 	pR->setPosY(static_cast<int>(luaL_checknumber(L, 2)));
 
@@ -337,7 +337,7 @@ static int r_setY(lua_State *L) {
 
 static int r_getCentroid(lua_State *L) {
 	Region *RPtr = checkRegion(L);
-	assert(RPtr);
+	ASSUME_NON_NULL(RPtr);
 
 	Vertex::vertexToLuaVertex(L, RPtr->getCentroid());
 
@@ -386,7 +386,7 @@ static WalkRegion *checkWalkRegion(lua_State *L) {
 
 static int wr_getPath(lua_State *L) {
 	WalkRegion *pWR = checkWalkRegion(L);
-	assert(pWR);
+	ASSUME_NON_NULL(pWR);
 
 	Vertex start;
 	Vertex::luaVertexToVertex(L, 2, start);
@@ -414,9 +414,9 @@ static const luaL_reg WALKREGION_METHODS[] = {
 
 bool Geometry::registerScriptBindings() {
 	Kernel *pKernel = Kernel::getInstance();
-	assert(pKernel);
+	ASSUME_NON_NULL(pKernel);
 	ScriptEngine *pScript = pKernel->getScript();
-	assert(pScript);
+	ASSUME_NON_NULL(pScript);
 	lua_State *L = static_cast< lua_State *>(pScript->getScriptObject());
 	assert(L);
 

@@ -143,7 +143,7 @@ bool LuaScriptEngine::executeFile(const Common::String &fileName) {
 
 	// Get a pointer to the package manager
 	PackageManager *pPackage = Kernel::getInstance()->getPackage();
-	assert(pPackage);
+	ASSUME_NON_NULL(pPackage);
 
 	// File read
 	uint fileSize;

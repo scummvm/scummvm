@@ -39,7 +39,7 @@ Resource::Resource(const Common::String &fileName, RESOURCE_TYPES type) :
 	_type(type),
 	_refCount(0) {
 	PackageManager *pPM = Kernel::getInstance()->getPackage();
-	assert(pPM);
+	ASSUME_NON_NULL(pPM);
 
 	_fileName = pPM->getAbsolutePath(fileName);
 }

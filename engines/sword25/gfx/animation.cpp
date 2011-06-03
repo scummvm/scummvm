@@ -156,7 +156,7 @@ void Animation::stop() {
 
 void Animation::setFrame(uint nr) {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	assert(animationDescriptionPtr);
+	ASSUME_NON_NULL(animationDescriptionPtr);
 
 	if (nr >= animationDescriptionPtr->getFrameCount()) {
 		error("Tried to set animation to illegal frame (%d). Value must be between 0 and %d.",
@@ -172,12 +172,12 @@ void Animation::setFrame(uint nr) {
 
 bool Animation::doRender() {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	assert(animationDescriptionPtr);
+	ASSUME_NON_NULL(animationDescriptionPtr);
 	assert(_currentFrame < animationDescriptionPtr->getFrameCount());
 
 	// Bitmap des aktuellen Frames holen
 	Resource *pResource = Kernel::getInstance()->getResourceManager()->requestResource(animationDescriptionPtr->getFrame(_currentFrame).fileName);
-	assert(pResource);
+	ASSUME_NON_NULL(pResource);
 	assert(pResource->getType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmapResource = static_cast<BitmapResource *>(pResource);
 
@@ -207,7 +207,7 @@ bool Animation::doRender() {
 
 void Animation::frameNotification(int timeElapsed) {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	assert(animationDescriptionPtr);
+	ASSUME_NON_NULL(animationDescriptionPtr);
 	assert(timeElapsed >= 0);
 
 	// Nur wenn die Animation läuft wird sie auch weiterbewegt
@@ -294,11 +294,11 @@ void Animation::frameNotification(int timeElapsed) {
 
 void Animation::computeCurrentCharacteristics() {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	assert(animationDescriptionPtr);
+	ASSUME_NON_NULL(animationDescriptionPtr);
 	const AnimationResource::Frame &curFrame = animationDescriptionPtr->getFrame(_currentFrame);
 
 	Resource *pResource = Kernel::getInstance()->getResourceManager()->requestResource(curFrame.fileName);
-	assert(pResource);
+	ASSUME_NON_NULL(pResource);
 	assert(pResource->getType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmap = static_cast<BitmapResource *>(pResource);
 
@@ -318,7 +318,7 @@ void Animation::computeCurrentCharacteristics() {
 bool Animation::lockAllFrames() {
 	if (!_framesLocked) {
 		AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-		assert(animationDescriptionPtr);
+		ASSUME_NON_NULL(animationDescriptionPtr);
 		for (uint i = 0; i < animationDescriptionPtr->getFrameCount(); ++i) {
 			if (!Kernel::getInstance()->getResourceManager()->requestResource(animationDescriptionPtr->getFrame(i).fileName)) {
 				error("Could not lock all animation frames.");
@@ -335,7 +335,7 @@ bool Animation::lockAllFrames() {
 bool Animation::unlockAllFrames() {
 	if (_framesLocked) {
 		AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-		assert(animationDescriptionPtr);
+		ASSUME_NON_NULL(animationDescriptionPtr);
 		for (uint i = 0; i < animationDescriptionPtr->getFrameCount(); ++i) {
 			Resource *pResource;
 			if (!(pResource = Kernel::getInstance()->getResourceManager()->requestResource(animationDescriptionPtr->getFrame(i).fileName))) {
@@ -357,37 +357,37 @@ bool Animation::unlockAllFrames() {
 
 Animation::ANIMATION_TYPES Animation::getAnimationType() const {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	assert(animationDescriptionPtr);
+	ASSUME_NON_NULL(animationDescriptionPtr);
 	return animationDescriptionPtr->getAnimationType();
 }
 
 int Animation::getFPS() const {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	assert(animationDescriptionPtr);
+	ASSUME_NON_NULL(animationDescriptionPtr);
 	return animationDescriptionPtr->getFPS();
 }
 
 int Animation::getFrameCount() const {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	assert(animationDescriptionPtr);
+	ASSUME_NON_NULL(animationDescriptionPtr);
 	return animationDescriptionPtr->getFrameCount();
 }
 
 bool Animation::isScalingAllowed() const {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	assert(animationDescriptionPtr);
+	ASSUME_NON_NULL(animationDescriptionPtr);
 	return animationDescriptionPtr->isScalingAllowed();
 }
 
 bool Animation::isAlphaAllowed() const {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	assert(animationDescriptionPtr);
+	ASSUME_NON_NULL(animationDescriptionPtr);
 	return animationDescriptionPtr->isAlphaAllowed();
 }
 
 bool Animation::isColorModulationAllowed() const {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	assert(animationDescriptionPtr);
+	ASSUME_NON_NULL(animationDescriptionPtr);
 	return animationDescriptionPtr->isColorModulationAllowed();
 }
 
@@ -412,7 +412,7 @@ void Animation::setY(int relY) {
 
 void Animation::setAlpha(int alpha) {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	assert(animationDescriptionPtr);
+	ASSUME_NON_NULL(animationDescriptionPtr);
 	if (!animationDescriptionPtr->isAlphaAllowed()) {
 		warning("Tried to set alpha value on an animation that does not support alpha. Call was ignored.");
 		return;
@@ -427,7 +427,7 @@ void Animation::setAlpha(int alpha) {
 
 void Animation::setModulationColor(uint modulationColor) {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	assert(animationDescriptionPtr);
+	ASSUME_NON_NULL(animationDescriptionPtr);
 	if (!animationDescriptionPtr->isColorModulationAllowed()) {
 		warning("Tried to set modulation color on an animation that does not support color modulation. Call was ignored");
 		return;
@@ -447,7 +447,7 @@ void Animation::setScaleFactor(float scaleFactor) {
 
 void Animation::setScaleFactorX(float scaleFactorX) {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	assert(animationDescriptionPtr);
+	ASSUME_NON_NULL(animationDescriptionPtr);
 	if (!animationDescriptionPtr->isScalingAllowed()) {
 		warning("Tried to set x scale factor on an animation that does not support scaling. Call was ignored");
 		return;
@@ -464,7 +464,7 @@ void Animation::setScaleFactorX(float scaleFactorX) {
 
 void Animation::setScaleFactorY(float scaleFactorY) {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	assert(animationDescriptionPtr);
+	ASSUME_NON_NULL(animationDescriptionPtr);
 	if (!animationDescriptionPtr->isScalingAllowed()) {
 		warning("Tried to set y scale factor on an animation that does not support scaling. Call was ignored");
 		return;
@@ -481,7 +481,7 @@ void Animation::setScaleFactorY(float scaleFactorY) {
 
 const Common::String &Animation::getCurrentAction() const {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	assert(animationDescriptionPtr);
+	ASSUME_NON_NULL(animationDescriptionPtr);
 	return animationDescriptionPtr->getFrame(_currentFrame).action;
 }
 
@@ -503,11 +503,11 @@ int Animation::getAbsoluteY() const {
 
 int Animation::computeXModifier() const {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	assert(animationDescriptionPtr);
+	ASSUME_NON_NULL(animationDescriptionPtr);
 	const AnimationResource::Frame &curFrame = animationDescriptionPtr->getFrame(_currentFrame);
 
 	Resource *pResource = Kernel::getInstance()->getResourceManager()->requestResource(curFrame.fileName);
-	assert(pResource);
+	ASSUME_NON_NULL(pResource);
 	assert(pResource->getType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmap = static_cast<BitmapResource *>(pResource);
 
@@ -521,11 +521,11 @@ int Animation::computeXModifier() const {
 
 int Animation::computeYModifier() const {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	assert(animationDescriptionPtr);
+	ASSUME_NON_NULL(animationDescriptionPtr);
 	const AnimationResource::Frame &curFrame = animationDescriptionPtr->getFrame(_currentFrame);
 
 	Resource *pResource = Kernel::getInstance()->getResourceManager()->requestResource(curFrame.fileName);
-	assert(pResource);
+	ASSUME_NON_NULL(pResource);
 	assert(pResource->getType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmap = static_cast<BitmapResource *>(pResource);
 

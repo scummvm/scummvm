@@ -100,7 +100,7 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 	result = false;
 
 	PackageManager *pPackage = Kernel::getInstance()->getPackage();
-	assert(pPackage);
+	ASSUME_NON_NULL(pPackage);
 
 	_backSurface = Kernel::getInstance()->getGfx()->getSurface();
 

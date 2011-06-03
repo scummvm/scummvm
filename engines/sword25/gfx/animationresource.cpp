@@ -50,7 +50,7 @@ AnimationResource::AnimationResource(const Common::String &filename) :
 		_valid(false) {
 	// Get a pointer to the package manager
 	_pPackage = Kernel::getInstance()->getPackage();
-	assert(_pPackage);
+	ASSUME_NON_NULL(_pPackage);
 
 	// Switch to the folder the specified Xml fiile is in
 	Common::String oldDirectory = _pPackage->getCurrentDirectory();

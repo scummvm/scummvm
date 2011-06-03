@@ -275,7 +275,7 @@ Resource *GraphicEngine::loadResource(const Common::String &filename) {
 
 		// Pointer auf Package-Manager holen
 		PackageManager *pPackage = Kernel::getInstance()->getPackage();
-		assert(pPackage);
+		ASSUME_NON_NULL(pPackage);
 
 		// Datei laden
 		byte *pFileData;
