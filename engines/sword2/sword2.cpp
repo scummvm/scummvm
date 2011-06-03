@@ -218,7 +218,7 @@ void Sword2MetaEngine::removeSaveState(const char *target, int slot) const {
 
 Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(syst);
-	assert(engine);
+	ASSUME_NON_NULL(engine);
 
 	Common::FSList fslist;
 	Common::FSNode dir(ConfMan.get("path"));
