@@ -744,7 +744,7 @@ bool Actor::followProtagonist(ActorData *actor) {
 	int16 newU;
 	int16 newV;
 
-	assert(_protagonist);
+	ASSUME_NON_NULL(_protagonist);
 
 	actor->_flags &= ~(kFaster | kFastest);
 	protagonistLocation = _protagonist->_location;
