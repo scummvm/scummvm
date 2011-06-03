@@ -190,6 +190,7 @@ private:
 protected:
 	bool Cmd_Exit(int argc, const char **argv);
 	bool Cmd_Help(int argc, const char **argv);
+	bool Cmd_OpenLog(int argc, const char **argv);
 	bool Cmd_DebugFlagsList(int argc, const char **argv);
 	bool Cmd_DebugFlagEnable(int argc, const char **argv);
 	bool Cmd_DebugFlagDisable(int argc, const char **argv);
