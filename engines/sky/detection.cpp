@@ -164,7 +164,7 @@ GameList SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 }
 
 Common::Error SkyMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
-	assert(engine);
+	ASSUME_NON_NULL(engine);
 	*engine = new Sky::SkyEngine(syst);
 	return Common::kNoError;
 }
