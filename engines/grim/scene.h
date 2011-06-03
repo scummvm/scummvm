@@ -76,6 +76,8 @@ public:
 	void setLightIntensity(int light, float intensity);
 	void setLightPosition(const char *light, const Graphics::Vector3d &pos);
 	void setLightPosition(int light, const Graphics::Vector3d &pos);
+	void setLightEnabled(const char *light, bool enabled);
+	void setLightEnabled(int light, bool enabled);
 
 	void setSetup(int num);
 	int getSetup() const { return _currSetup - _setups; }
@@ -119,6 +121,7 @@ public:
 		Graphics::Vector3d _pos, _dir;
 		Color _color;
 		float _intensity, _umbraangle, _penumbraangle;
+		bool _enabled;
 	};
 
 	CMap *getCMap() {

@@ -455,6 +455,8 @@ void Scene::Light::load(TextSplitter &ts) {
 	_color.getRed() = r;
 	_color.getGreen() = g;
 	_color.getBlue() = b;
+
+	_enabled = true;
 }
 
 void Scene::Light::loadBinary(Common::MemoryReadStream *ms) {
@@ -484,8 +486,13 @@ void Scene::setupLights() {
 		return;
 	}
 
+	int count = 0;
 	for (int i = 0; i < _numLights; i++) {
-		g_driver->setupLight(&_lights[i], i);
+		Light *l = &_lights[i];
+		if (l->_enabled) {
+			g_driver->setupLight(l, count);
+			++count;
+		}
 	}
 }
 
@@ -589,6 +596,23 @@ void Scene::setLightIntensity(const char *light, float intensity) {
 void Scene::setLightIntensity(int light, float intensity) {
 	Light &l = _lights[light];
 	l._intensity = intensity;
+	_lightsConfigured = false;
+}
+
+void Scene::setLightEnabled(const char *light, bool enabled) {
+	for (int i = 0; i < _numLights; ++i) {
+		Light &l = _lights[i];
+		if (l._name == light) {
+			l._enabled = enabled;
+			_lightsConfigured = false;
+			return;
+		}
+	}
+}
+
+void Scene::setLightEnabled(int light, bool enabled) {
+	Light &l = _lights[light];
+	l._enabled = enabled;
 	_lightsConfigured = false;
 }
 

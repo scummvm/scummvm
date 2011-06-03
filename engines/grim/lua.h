@@ -272,6 +272,7 @@ void L1_LightMgrSetChange();
 void L1_SetAmbientLight();
 void L1_SetLightIntensity();
 void L1_SetLightPosition();
+void L1_TurnLightOn();
 void L1_RenderModeUser();
 void L1_SetGamma();
 void L1_Display();

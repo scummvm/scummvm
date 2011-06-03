@@ -1127,6 +1127,18 @@ void L1_SetLightPosition() {
 	}
 }
 
+void L1_TurnLightOn() {
+	lua_Object lightObj = lua_getparam(1);
+
+	Scene *scene = g_grim->getCurrScene();
+	bool isOn = getbool(2);
+	if (lua_isnumber(lightObj)) {
+		scene->setLightEnabled((int)lua_getnumber(lightObj), isOn);
+	} else if (lua_isstring(lightObj)) {
+		scene->setLightEnabled(lua_getstring(lightObj), isOn);
+	}
+}
+
 void L1_LightMgrStartup() {
 	// we will not implement this opcode
 }
@@ -1254,7 +1266,6 @@ STUB_FUNC(L1_SetActorClipActive)
 STUB_FUNC(L1_SetActorCollisionScale)
 STUB_FUNC(L1_SetActorCollisionMode)
 STUB_FUNC(L1_FlushControls)
-STUB_FUNC(L1_TurnLightOn)
 STUB_FUNC(L1_GetCameraLookVector)
 STUB_FUNC(L1_SetCameraRoll)
 STUB_FUNC(L1_SetCameraInterest)
