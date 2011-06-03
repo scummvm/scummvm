@@ -122,7 +122,7 @@ void OSystem_DS::initBackend() {
 }
 
 bool OSystem_DS::hasFeature(Feature f) {
-	return (f == kFeatureVirtualKeyboard) || (f == kFeatureCursorHasPalette);
+	return (f == kFeatureVirtualKeyboard) || (f == kFeatureCursorPalette);
 }
 
 void OSystem_DS::setFeatureState(Feature f, bool enable) {

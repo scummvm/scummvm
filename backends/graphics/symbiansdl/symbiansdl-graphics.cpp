@@ -54,7 +54,7 @@ bool SymbianSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 	switch (f) {
 	case OSystem::kFeatureFullscreenMode:
 	case OSystem::kFeatureAspectRatioCorrection:
-	case OSystem::kFeatureCursorHasPalette:
+	case OSystem::kFeatureCursorPalette:
 #ifdef  USE_VIBRA_SE_PXXX
 	case OSystem::kFeatureVibration:
 #endif

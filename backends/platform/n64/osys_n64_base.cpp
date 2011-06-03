@@ -199,7 +199,7 @@ void OSystem_N64::initBackend() {
 }
 
 bool OSystem_N64::hasFeature(Feature f) {
-	return (f == kFeatureCursorHasPalette);
+	return (f == kFeatureCursorPalette);
 }
 
 void OSystem_N64::setFeatureState(Feature f, bool enable) {

@@ -110,7 +110,7 @@ void OSystem_PSP::engineDone() {
 }
 
 bool OSystem_PSP::hasFeature(Feature f) {
-	return (f == kFeatureOverlaySupportsAlpha || f == kFeatureCursorHasPalette);
+	return (f == kFeatureOverlaySupportsAlpha || f == kFeatureCursorPalette);
 }
 
 void OSystem_PSP::setFeatureState(Feature f, bool enable) {

@@ -476,7 +476,7 @@ bool GPHGraphicsManager::loadGFXMode() {
 bool GPHGraphicsManager::hasFeature(OSystem::Feature f) {
 	return
 	    (f == OSystem::kFeatureAspectRatioCorrection) ||
-	    (f == OSystem::kFeatureCursorHasPalette);
+	    (f == OSystem::kFeatureCursorPalette);
 }
 
 void GPHGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {

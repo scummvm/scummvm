@@ -91,7 +91,7 @@ void OpenGLGraphicsManager::initEventObserver() {
 bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) {
 	return
 		(f == OSystem::kFeatureAspectRatioCorrection) ||
-		(f == OSystem::kFeatureCursorHasPalette);
+		(f == OSystem::kFeatureCursorPalette);
 }
 
 void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {

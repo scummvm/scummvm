@@ -35,7 +35,7 @@ SamsungTVSdlGraphicsManager::SamsungTVSdlGraphicsManager(SdlEventSource *sdlEven
 bool SamsungTVSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 	return
 		(f == OSystem::kFeatureAspectRatioCorrection) ||
-		(f == OSystem::kFeatureCursorHasPalette);
+		(f == OSystem::kFeatureCursorPalette);
 }
 
 void SamsungTVSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {

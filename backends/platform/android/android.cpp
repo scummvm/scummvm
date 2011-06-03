@@ -399,7 +399,7 @@ void OSystem_Android::addPluginDirectories(Common::FSList &dirs) const {
 bool OSystem_Android::hasFeature(Feature f) {
 	return (f == kFeatureFullscreenMode ||
 			f == kFeatureAspectRatioCorrection ||
-			f == kFeatureCursorHasPalette ||
+			f == kFeatureCursorPalette ||
 			f == kFeatureVirtualKeyboard ||
 			f == kFeatureOverlaySupportsAlpha);
 }

@@ -468,7 +468,7 @@ bool DINGUXSdlGraphicsManager::loadGFXMode() {
 bool DINGUXSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 	return
 	    (f == OSystem::kFeatureAspectRatioCorrection) ||
-	    (f == OSystem::kFeatureCursorHasPalette);
+	    (f == OSystem::kFeatureCursorPalette);
 }
 
 void DINGUXSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {

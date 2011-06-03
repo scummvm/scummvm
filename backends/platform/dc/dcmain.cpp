@@ -163,7 +163,7 @@ bool OSystem_Dreamcast::hasFeature(Feature f)
   case kFeatureAspectRatioCorrection:
   case kFeatureVirtualKeyboard:
   case kFeatureOverlaySupportsAlpha:
-  case kFeatureCursorHasPalette:
+  case kFeatureCursorPalette:
     return true;
   default:
     return false;

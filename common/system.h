@@ -168,7 +168,7 @@ public:
 		 * To enable the cursor palette call "disableCursorPalette" with false.
 		 * @see disableCursorPalette
 		 */
-		kFeatureCursorHasPalette,
+		kFeatureCursorPalette,
 
 		/**
 		 * Set to true if the overlay pixel format has an alpha channel.
@@ -776,22 +776,22 @@ public:
 	 * The palette entries from 'start' till (start+num-1) will be replaced - so
 	 * a full palette update is accomplished via start=0, num=256.
 	 *
-	 * Backends which implement it should have kFeatureCursorHasPalette flag set
+	 * Backends which implement it should have kFeatureCursorPalette flag set
 	 *
 	 * @see setPalette
-	 * @see kFeatureCursorHasPalette
+	 * @see kFeatureCursorPalette
 	 */
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) {}
 
 	/**
 	 * Disable or enable cursor palette.
 	 *
-	 * Backends which implement it should have kFeatureCursorHasPalette flag set
+	 * Backends which implement it should have kFeatureCursorPalette flag set
 	 *
 	 * @param disable  True to disable, false to enable.
 	 *
 	 * @see setPalette
-	 * @see kFeatureCursorHasPalette
+	 * @see kFeatureCursorPalette
 	 */
 	virtual void disableCursorPalette(bool disable) {}
 

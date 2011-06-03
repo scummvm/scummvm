@@ -223,7 +223,7 @@ bool SdlGraphicsManager::hasFeature(OSystem::Feature f) {
 	return
 		(f == OSystem::kFeatureFullscreenMode) ||
 		(f == OSystem::kFeatureAspectRatioCorrection) ||
-		(f == OSystem::kFeatureCursorHasPalette) ||
+		(f == OSystem::kFeatureCursorPalette) ||
 		(f == OSystem::kFeatureIconifyWindow);
 }
 

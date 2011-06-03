@@ -244,7 +244,7 @@ void rotatePalette(byte *palette, int size) {
  */
 void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName, int cursorTargetScale) {
 	bool isFeaturePresent;
-	isFeaturePresent = g_system->hasFeature(OSystem::kFeatureCursorHasPalette);
+	isFeaturePresent = g_system->hasFeature(OSystem::kFeatureCursorPalette);
 	Common::Rect cursorRect;
 
 	if (isFeaturePresent) {

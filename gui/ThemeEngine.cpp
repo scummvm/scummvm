@@ -1271,7 +1271,7 @@ void ThemeEngine::openDialog(bool doBuffer, ShadingStyle style) {
 }
 
 bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int hotspotY, int scale) {
-	if (!_system->hasFeature(OSystem::kFeatureCursorHasPalette))
+	if (!_system->hasFeature(OSystem::kFeatureCursorPalette))
 		return true;
 
 	// Try to locate the specified file among all loaded bitmaps
