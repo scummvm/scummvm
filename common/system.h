@@ -128,11 +128,19 @@ public:
 	 *  - fullscreen mode
 	 *  - aspect ration correction
 	 *  - a virtual keyboard for text entry (on PDAs)
+	 *
+	 * One has to distinguish between the *availability* of a feature,
+	 * which can be checked using hasFeature(), and its *state*.
+	 * For example, the SDL backend *has* the kFeatureFullscreenMode,
+	 * so hasFeature returns true for it. On the other hand,
+	 * fullscreen mode may be active or not; this can be determined
+	 * by checking the state via getFeatureState(). Finally, to
+	 * switch between fullscreen and windowed mode, use setFeatureState().
 	 */
 	enum Feature {
 		/**
-		 * If your backend supports both a windowed and a fullscreen mode,
-		 * then this feature flag can be used to switch between the two.
+		 * If supported, this feature flag can be used to switch between
+		 * windowed and fullscreen mode.
 		 */
 		kFeatureFullscreenMode,
 
@@ -144,10 +152,10 @@ public:
 		 * pixels). When the backend support this, then games running at
 		 * 320x200 pixels should be scaled up to 320x240 pixels. For all other
 		 * resolutions, ignore this feature flag.
-		 * @note You can find utility functions in common/scaler.h which can
-		 *       be used to implement aspect ratio correction. In particular,
+		 * @note Backend implementors can find utility functions in common/scaler.h
+		 *       which can be used to implement aspect ratio correction. In
 		 *       stretch200To240() can stretch a rect, including (very fast)
-		 *       interpolation, and works in-place.
+		 *       particular, interpolation, and works in-place.
 		 */
 		kFeatureAspectRatioCorrection,
 
@@ -171,25 +179,32 @@ public:
 		kFeatureCursorPalette,
 
 		/**
-		 * Set to true if the overlay pixel format has an alpha channel.
-		 * This should only be set if it offers at least 3-4 bits of accuracy,
-		 * as opposed to a single alpha bit.
+		 * A backend have this feature if its overlay pixel format has an alpha
+		 * channel which offers at least 3-4 bits of accuracy (as opposed to
+		 * just a single alpha bit).
+		 *
+		 * This feature has no associated state.
 		 */
 		kFeatureOverlaySupportsAlpha,
 
 		/**
-		 * Set to true to iconify the window.
+		 * Client code can set the state of this feature to true in order to
+		 * iconify the application window.
 		 */
 		kFeatureIconifyWindow,
 
 		/**
-		 * This feature, set to true, is a hint toward the backend to disable all
-		 * key filtering/mapping, in cases where it would be beneficial to do so.
-		 * As an example case, this is used in the agi engine's predictive dialog.
+		 * Setting the state of this feature to true tells the backend to disable
+		 * all key filtering/mapping, in cases where it would be beneficial to do so.
+		 * As an example case, this is used in the AGI engine's predictive dialog.
 		 * When the dialog is displayed this feature is set so that backends with
 		 * phone-like keypad temporarily unmap all user actions which leads to
 		 * comfortable word entry. Conversely, when the dialog exits the feature
 		 * is set to false.
+		 *
+		 * TODO: The word 'beneficial' above is very unclear. Beneficial to
+		 * whom and for what??? Just giving an example is not enough.
+		 *
 		 * TODO: Fingolfin suggests that the way the feature is used can be
 		 * generalized in this sense: Have a keyboard mapping feature, which the
 		 * engine queries for to assign keys to actions ("Here's my default key
@@ -198,8 +213,10 @@ public:
 		kFeatureDisableKeyFiltering,
 
 		/**
-		 * This feature indicates whether the displayLogFile() call
-		 * is supported.
+		 * The presence of this feature indicates whether the displayLogFile()
+		 * call is supported.
+		 *
+		 * This feature has no associated state.
 		 */
 		kFeatureDisplayLogFile
 	};
