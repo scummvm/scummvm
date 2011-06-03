@@ -97,7 +97,8 @@ int16 ThemeLayoutStacked::getParentWidth() {
 		p = p->_parent;
 	}
 
-	assert(p && p->getLayoutType() == kLayoutMain);
+	ASSUME_NON_NULL(p);
+	assert(p->getLayoutType() == kLayoutMain);
 	return p->getWidth() - width;
 }
 
@@ -117,7 +118,8 @@ int16 ThemeLayoutStacked::getParentHeight() {
 		p = p->_parent;
 	}
 
-	assert(p && p->getLayoutType() == kLayoutMain);
+	ASSUME_NON_NULL(p);
+	assert(p->getLayoutType() == kLayoutMain);
 	return p->getHeight() - height;
 }
 

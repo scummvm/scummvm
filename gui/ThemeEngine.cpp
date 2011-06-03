@@ -732,8 +732,8 @@ bool ThemeEngine::loadDefaultXML() {
 }
 
 bool ThemeEngine::loadThemeXML(const Common::String &themeId) {
-	assert(_parser);
-	assert(_themeArchive);
+	ASSUME_NON_NULL(_parser);
+	ASSUME_NON_NULL(_themeArchive);
 
 	_themeName.clear();
 
