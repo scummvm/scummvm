@@ -865,7 +865,7 @@ bool Debugger::cmdBeetle(int argc, const char **argv) {
 				askForRedraw();
 				redrawScreen();
 
-				while (g_engine->getEventManager()->pollEvent(ev)) {
+				while (g_system->getEventManager()->pollEvent(ev)) {
 
 					switch (ev.type) {
 					default:
