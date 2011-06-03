@@ -561,7 +561,7 @@ void MohawkBitmap::handleRivenSubcommandStream(byte count, byte *&dst) {
 //////////////////////////////////////////
 
 void MohawkBitmap::drawRaw(Graphics::Surface *surface) {
-	assert(surface);
+	ASSUME_NON_NULL(surface);
 
 	for (uint16 y = 0; y < _header.height; y++) {
 		if (getBitsPerPixel() == 24) {
@@ -593,7 +593,7 @@ void MohawkBitmap::drawRLE8(Graphics::Surface *surface, bool isLE) {
 	// A very simple RLE8 scheme is used as a secondary compression on
 	// most images in non-Riven tBMP's.
 
-	assert(surface);
+	ASSUME_NON_NULL(surface);
 
 	for (uint16 i = 0; i < _header.height; i++) {
 		uint16 rowByteCount = isLE ? _data->readUint16LE() : _data->readUint16BE();

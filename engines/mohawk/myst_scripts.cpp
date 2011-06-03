@@ -198,7 +198,7 @@ const Common::String MystScriptParser::getOpcodeDesc(uint16 op) {
 }
 
 MystScript MystScriptParser::readScript(Common::SeekableReadStream *stream, MystScriptType type) {
-	assert(stream);
+	ASSUME_NON_NULL(stream);
 	assert(type != kMystScriptNone);
 
 	MystScript script = MystScript(new Common::Array<MystScriptEntry>());

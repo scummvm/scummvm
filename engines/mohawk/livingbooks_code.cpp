@@ -562,7 +562,7 @@ Common::Array<LBValue> LBCode::readParams() {
 
 Common::Rect LBCode::getRectFromParams(const Common::Array<LBValue> &params) {
 	if (params.size() == 0) {
-		assert(_currSource);
+		ASSUME_NON_NULL(_currSource);
 		return _currSource->getRect();
 	} else if (params.size() == 1) {
 		const LBValue &val = params[0];
