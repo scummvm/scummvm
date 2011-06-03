@@ -142,7 +142,7 @@ void initCommonGFX(bool defaultTo1XScaler) {
 	const Common::ConfigManager::Domain *transientDomain = ConfMan.getDomain(Common::ConfigManager::kTransientDomain);
 	const Common::ConfigManager::Domain *gameDomain = ConfMan.getActiveDomain();
 
-	assert(transientDomain);
+	ASSUME_NON_NULL(transientDomain);
 
 	const bool useDefaultGraphicsMode =
 		(!transientDomain->contains("gfx_mode") ||
