@@ -282,7 +282,7 @@ void SceneArea::display() {
 }
 
 void SceneArea::restore() {
-	assert(_savedArea);
+	ASSUME_NON_NULL(_savedArea);
 	_savedArea->draw(Common::Point(_bounds.left, _bounds.top));
 	delete _savedArea;
 	_savedArea = NULL;

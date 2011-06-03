@@ -1394,7 +1394,7 @@ void Scene4025::Action2::signal() {
 				scene->_pegPtr2 = scene->_holePtr->_pegPtr;
 			}
 
-			assert(scene->_pegPtr);
+			ASSUME_NON_NULL(scene->_pegPtr);
 			scene->_pegPtr->setPosition(scene->_holePtr->_newPosition);
 			scene->_pegPtr->setStrip(1);
 			scene->_pegPtr->show();

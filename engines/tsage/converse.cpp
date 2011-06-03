@@ -542,7 +542,7 @@ void StripManager::start(int stripNum, EventHandler *owner, StripCallback *callb
 	_sceneBounds = _globals->_sceneManager._scene->_sceneBounds;
 	_script.clear();
 
-	assert(owner);
+	ASSUME_NON_NULL(owner);
 	owner->setAction(this, owner);
 }
 
