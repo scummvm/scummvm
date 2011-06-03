@@ -228,7 +228,7 @@ void MadsPlayer::setupFrame() {
 	}
 
 	SpriteAsset &spriteSet = _madsVm->scene()->_spriteSlots.getSprite(_spriteListStart + _spriteListIdx);
-	assert(spriteSet._charInfo);
+	ASSUME_NON_NULL(spriteSet._charInfo);
 	_unk1 = MAX(spriteSet._charInfo->_unk1, 100);
 	setTicksAmount();
 
@@ -382,7 +382,7 @@ int MadsPlayer::getSpriteSlot() {
 
 void MadsPlayer::setTicksAmount() {
 	SpriteAsset &spriteSet = _madsVm->scene()->_spriteSlots.getSprite(_spriteListStart + _spriteListIdx);
-	assert(spriteSet._charInfo);
+	ASSUME_NON_NULL(spriteSet._charInfo);
 	_madsVm->_player._ticksAmount = spriteSet._charInfo->_ticksAmount;
 	if (_madsVm->_player._ticksAmount == 0)
 		_madsVm->_player._ticksAmount = 6;
@@ -398,7 +398,7 @@ void MadsPlayer::resetActionList() {
 
 int MadsPlayer::queueAction(int action1, int action2) {
 	SpriteAsset &spriteSet = _madsVm->scene()->_spriteSlots.getSprite(_spriteListStart + _spriteListIdx);
-	assert(spriteSet._charInfo);
+	ASSUME_NON_NULL(spriteSet._charInfo);
 
 	if ((action1 < spriteSet._charInfo->_numEntries) && (_actionIndex < 11)) {
 		++_actionIndex;
@@ -418,7 +418,7 @@ void MadsPlayer::idle() {
 	}
 
 	SpriteAsset &spriteSet = _madsVm->scene()->_spriteSlots.getSprite(_spriteListStart + _spriteListIdx);
-	assert(spriteSet._charInfo);
+	ASSUME_NON_NULL(spriteSet._charInfo);
 	if (spriteSet._charInfo->_numEntries == 0)
 		// No entries, so exit immediately
 		return;
