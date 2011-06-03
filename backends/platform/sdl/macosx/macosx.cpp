@@ -33,8 +33,9 @@
 #include "common/archive.h"
 #include "common/fs.h"
 
-#include "CoreFoundation/CoreFoundation.h"
-#include "CoreServices/CoreServices.h"
+#include "ApplicationServices/ApplicationServices.h"	// for LSOpenFSRef
+#include "CoreFoundation/CoreFoundation.h"	// for CF* stuff
+#include "CoreServices/CoreServices.h"	// for FSPathMakeRef
 
 OSystem_MacOSX::OSystem_MacOSX()
 	:
