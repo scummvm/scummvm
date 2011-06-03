@@ -188,7 +188,7 @@ void MadsPlayer::update() {
  */
 void MadsPlayer::updateFrame() {
 	SpriteAsset &spriteSet = _madsVm->scene()->_spriteSlots.getSprite(_spriteListStart + _spriteListIdx);
-	assert(spriteSet._charInfo);
+	ASSUME_NON_NULL(spriteSet._charInfo);
 
 	if (!spriteSet._charInfo->_numEntries) {
 		_frameNum = 1;
