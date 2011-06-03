@@ -301,7 +301,7 @@ bool SaveConverter::createStream(SaveWriter &writer) {
 }
 
 /* Stream functions. If the new save data stream is available, redirect the stream
- * operations to that stream. Normal stream error behaviour if not. */
+ * operations to that stream. Normal stream error behavior if not. */
 
 bool SaveConverter::err() const {
 	if (!_data || !_stream)

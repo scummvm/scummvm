@@ -43,7 +43,8 @@
 #include <math.h>
 #include "common/rect.h"
 #include "sword25/kernel/common.h"
-#include "sword25/util/lua/lua.h"
+
+struct lua_State;
 
 #if defined(MACOSX) || defined(SOLARIS) || defined(__MINGW32__)
 #define sqrtf(x)	((float)sqrt(x))

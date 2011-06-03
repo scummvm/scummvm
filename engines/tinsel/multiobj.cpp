@@ -29,7 +29,7 @@
 namespace Tinsel {
 
 /**
- * Initialise a multi-part object using a list of images to init
+ * Initialize a multi-part object using a list of images to init
  * each object piece. One object is created for each image in the list.
  * All objects are given the same palette as the first image. A pointer
  * to the first (master) object created is returned.

@@ -60,7 +60,7 @@ bool TSageEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-void TSageEngine::initialise() {
+void TSageEngine::initialize() {
 	_saver = new Saver();
 
 	// Set up the resource manager
@@ -83,7 +83,7 @@ void TSageEngine::initialise() {
 	_globals->gfxManager().setDefaults();
 }
 
-void TSageEngine::deinitialise() {
+void TSageEngine::deinitialize() {
 	delete _globals;
 	delete _resourceManager;
 	delete _saver;
@@ -91,12 +91,12 @@ void TSageEngine::deinitialise() {
 
 Common::Error TSageEngine::run() {
 	// Basic initialisation
-	initialise();
+	initialize();
 
 	_globals->_sceneHandler.registerHandler();
 	_globals->_game->execute();
 
-	deinitialise();
+	deinitialize();
 	return Common::kNoError;
 }
 
@@ -124,7 +124,7 @@ Common::Error TSageEngine::loadGameState(int slot) {
 /**
  * Save the game to the given slot index, and with the given name
  */
-Common::Error TSageEngine::saveGameState(int slot, const char *desc) {
+Common::Error TSageEngine::saveGameState(int slot, const Common::String &desc) {
 	return _saver->save(slot, desc);
 }
 

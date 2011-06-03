@@ -43,6 +43,10 @@ Sound::Sound(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 Sound::~Sound() {
 }
 
+void Sound::pause(bool paused) {
+	_mixer->pauseAll(paused);
+}
+
 bool Sound::voiceFileIsPresent(const char *file) {
 	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
 		Common::String f = file;

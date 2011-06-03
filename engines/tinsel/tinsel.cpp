@@ -705,7 +705,7 @@ void LoadBasicChunks() {
 	int numObjects;
 
 	// Allocate RAM for savescene data
-	InitialiseSaveScenes();
+	InitializeSaveScenes();
 
 	// CHUNK_TOTAL_ACTORS seems to be missing in the released version, hard coding a value
 	// TODO: Would be nice to just change 511 to MAX_SAVED_ALIVES
@@ -886,9 +886,7 @@ TinselEngine::~TinselEngine() {
 }
 
 Common::String TinselEngine::getSavegameFilename(int16 saveNum) const {
-	char filename[256];
-	snprintf(filename, 256, "%s.%03d", getTargetName().c_str(), saveNum);
-	return filename;
+	return Common::String::format("%s.%03d", getTargetName().c_str(), saveNum);
 }
 
 Common::Error TinselEngine::run() {

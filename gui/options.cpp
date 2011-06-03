@@ -138,7 +138,7 @@ void OptionsDialog::init() {
 	_subSpeedDesc = 0;
 	_subSpeedSlider = 0;
 	_subSpeedLabel = 0;
-	_oldTheme = ConfMan.get("gui_theme");
+	_oldTheme = g_gui.theme()->getThemeId();
 
 	// Retrieve game GUI options
 	_guioptions = 0;
@@ -241,11 +241,8 @@ void OptionsDialog::open() {
 		}
 
 		// MIDI gain setting
-		char buf[10];
-
 		_midiGainSlider->setValue(ConfMan.getInt("midi_gain", _domain));
-		sprintf(buf, "%.2f", (double)_midiGainSlider->getValue() / 100.0);
-		_midiGainLabel->setLabel(buf);
+		_midiGainLabel->setLabel(Common::String::format("%.2f", (double)_midiGainSlider->getValue() / 100.0));
 	}
 
 	// MT-32 options
@@ -530,12 +527,9 @@ void OptionsDialog::close() {
 }
 
 void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	char buf[10];
-
 	switch (cmd) {
 	case kMidiGainChanged:
-		sprintf(buf, "%.2f", (double)_midiGainSlider->getValue() / 100.0);
-		_midiGainLabel->setLabel(buf);
+		_midiGainLabel->setLabel(Common::String::format("%.2f", (double)_midiGainSlider->getValue() / 100.0));
 		_midiGainLabel->draw();
 		break;
 	case kMusicVolumeChanged:

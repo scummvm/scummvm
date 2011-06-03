@@ -223,11 +223,8 @@ SaveStateList SagaMetaEngine::listSaves(const char *target) const {
 int SagaMetaEngine::getMaximumSaveSlot() const { return MAX_SAVES - 1; }
 
 void SagaMetaEngine::removeSaveState(const char *target, int slot) const {
-	char extension[6];
-	snprintf(extension, sizeof(extension), ".s%02d", slot);
-
 	Common::String filename = target;
-	filename += extension;
+	filename += Common::String::format(".s%02d", slot);;
 
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
@@ -363,8 +360,8 @@ Common::Error SagaEngine::loadGameState(int slot) {
 	return Common::kNoError;	// TODO: return success/failure
 }
 
-Common::Error SagaEngine::saveGameState(int slot, const char *desc) {
-	save(calcSaveFileName((uint)slot), desc);
+Common::Error SagaEngine::saveGameState(int slot, const Common::String &desc) {
+	save(calcSaveFileName((uint)slot), desc.c_str());
 	return Common::kNoError;	// TODO: return success/failure
 }
 

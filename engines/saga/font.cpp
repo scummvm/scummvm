@@ -40,6 +40,10 @@ Font::Font(SagaEngine *vm) : _vm(vm) {
 
 	_fonts.resize(_vm->getFontsCount());
 	for (i = 0; i < _vm->getFontsCount(); i++) {
+#ifdef __DS__
+		_fonts[i].outline.font = NULL;
+		_fonts[i].normal.font = NULL;
+#endif
 		loadFont(&_fonts[i],	_vm->getFontDescription(i)->fontResourceId);
 	}
 
@@ -48,6 +52,18 @@ Font::Font(SagaEngine *vm) : _vm(vm) {
 
 Font::~Font() {
 	debug(8, "Font::~Font(): Freeing fonts.");
+
+#ifdef __DS__
+	for (int i = 0; i < _vm->getFontsCount(); i++) {
+		if (_fonts[i].outline.font) {
+			free(_fonts[i].outline.font);
+		}
+
+		if (_fonts[i].normal.font) {
+			free(_fonts[i].normal.font);
+		}
+	}
+#endif
 }
 
 
@@ -104,9 +120,17 @@ void Font::loadFont(FontData *font, uint32 fontResourceId) {
 		error("Invalid font resource size");
 	}
 
+#ifndef __DS__
 	font->normal.font.resize(fontResourceData.size() - FONT_DESCSIZE);
 	memcpy(font->normal.font.getBuffer(), fontResourceData.getBuffer() + FONT_DESCSIZE, fontResourceData.size() - FONT_DESCSIZE);
+#else
+	if (font->normal.font) {
+		free(font->normal.font);
+	}
 
+	font->normal.font = (byte *) malloc(fontResourceData.size() - FONT_DESCSIZE);
+	memcpy(font->normal.font, fontResourceData.getBuffer() + FONT_DESCSIZE, fontResourceData.size() - FONT_DESCSIZE);
+#endif
 
 	// Create outline font style
 	createOutline(font);
@@ -150,7 +174,15 @@ void Font::createOutline(FontData *font) {
 	font->outline.header.rowLength = newRowLength;
 
 	// Allocate new font representation storage
+#ifdef __DS__
+	if (font->outline.font) {
+		free(font->outline.font);
+	}
+
+	font->outline.font = (byte *) calloc(newRowLength * font->outline.header.charHeight, 1);
+#else
 	font->outline.font.resize(newRowLength * font->outline.header.charHeight);
+#endif
 
 
 	// Generate outline font representation

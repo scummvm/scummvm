@@ -20,6 +20,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #define RONIN_TIMER_ACCESS
 
 #include <common/scummsys.h>

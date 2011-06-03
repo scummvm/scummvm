@@ -20,11 +20,12 @@ ifdef TOOL_EXECUTABLE
 # TODO: Refactor this, so that even our master executable can use this rule?
 ################################################
 TOOL-$(MODULE) := $(MODULE)/$(TOOL_EXECUTABLE)$(EXEEXT)
-$(TOOL-$(MODULE)): $(MODULE_OBJS-$(MODULE))
+$(TOOL-$(MODULE)): $(MODULE_OBJS-$(MODULE)) $(TOOL_DEPS)
 	$(QUIET_CXX)$(CXX) $(LDFLAGS) $+ -o $@
 
-# Reset TOOL_EXECUTABLE var
+# Reset TOOL_* vars
 TOOL_EXECUTABLE:=
+TOOL_DEPS:=
 
 # Add to "devtools" target
 devtools: $(TOOL-$(MODULE))

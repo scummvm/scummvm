@@ -181,9 +181,7 @@ void MadeEngine::resetAllTimers() {
 }
 
 Common::String MadeEngine::getSavegameFilename(int16 saveNum) {
-	char filename[256];
-	snprintf(filename, 256, "%s.%03d", getTargetName().c_str(), saveNum);
-	return filename;
+	return Common::String::format("%s.%03d", getTargetName().c_str(), saveNum);
 }
 
 void MadeEngine::handleEvents() {

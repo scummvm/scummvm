@@ -36,7 +36,8 @@
 #include "common/str-array.h"
 #include "sword25/kernel/common.h"
 #include "sword25/script/script.h"
-#include "sword25/util/lua/lua.h"
+
+struct lua_State;
 
 namespace Sword25 {
 
@@ -48,7 +49,7 @@ public:
 	virtual ~LuaScriptEngine();
 
 	/**
-	 * Initialises the scripting engine
+	 * Initializes the scripting engine
 	 * @return              Returns true if successful, otherwise false.
 	*/
 	virtual bool init();

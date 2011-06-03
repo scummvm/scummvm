@@ -261,7 +261,7 @@ int32 Router::getRoute() {
 		// of a line
 
 		// scan through the nodes linking each node to its nearest
-		// neighbour until no more nodes change
+		// neighbor until no more nodes change
 
 		// This is the routine that finds a route using scan()
 

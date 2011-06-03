@@ -29,30 +29,22 @@
  *
  */
 
-#ifndef SWORD25_PNGLOADER2_H
-#define SWORD25_PNGLOADER2_H
+#ifndef SWORD25_IMGLOADER_H
+#define SWORD25_IMGLOADER_H
 
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/graphicengine.h"
 
 namespace Sword25 {
 
-// Define to use ScummVM's PNG decoder, instead of libpng
-#define USE_INTERNAL_PNG_DECODER
-
 /**
  * Class for loading PNG files, and PNG data embedded into savegames.
  *
  * Originally written by Malte Thiesen.
  */
-class PNGLoader {
+class ImgLoader {
 protected:
-	PNGLoader() {}	// Protected constructor to prevent instances
-
-	static bool doDecodeImage(const byte *fileDataPtr, uint fileSize, byte *&uncompressedDataPtr, int &width, int &height, int &pitch);
-#ifndef USE_INTERNAL_PNG_DECODER
-	static bool doImageProperties(const byte *fileDataPtr, uint fileSize, int &width, int &height);
-#endif
+	ImgLoader() {}	// Protected constructor to prevent instances
 
 public:
 
@@ -70,28 +62,15 @@ public:
 	 * @remark This function does not free the image buffer passed to it,
 	 *         it is the callers responsibility to do so.
 	 */
-	static bool decodeImage(const byte *pFileData, uint fileSize,
+	static bool decodePNGImage(const byte *pFileData, uint fileSize,
 	                        byte *&pUncompressedData,
 	                        int &width, int &height,
 	                        int &pitch);
 
-#ifndef USE_INTERNAL_PNG_DECODER
-	/**
-	 * Extract the properties of an image.
-	 * @param[in] fileDatePtr	pointer to the image data
-	 * @param[in] fileSize		size of the image data in bytes
-	 * @param[out] width		if successful, this is set to the width of the image
-	 * @param[out] height		if successful, this is set to the height of the image
-	 * @return returns true if extraction of the properties was successful, false in case of an error
-	 *
-	 * @remark This function does not free the image buffer passed to it,
-	 *         it is the callers responsibility to do so.
-	 */
-	static bool imageProperties(const byte *fileDatePtr, uint fileSize,
-	                            int &width,
-	                            int &height);
-#endif
-
+	static bool decodeThumbnailImage(const byte *pFileData, uint fileSize,
+	                        byte *&pUncompressedData,
+	                        int &width, int &height,
+	                        int &pitch);
 };
 
 } // End of namespace Sword25

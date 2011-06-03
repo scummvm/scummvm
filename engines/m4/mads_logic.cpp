@@ -31,7 +31,7 @@
 
 namespace M4 {
 
-void MadsGameLogic::initialiseGlobals() {
+void MadsGameLogic::initializeGlobals() {
 	// Clear the entire globals list
 	Common::set_to(&_madsVm->globals()->_globals[0], &_madsVm->globals()->_globals[TOTAL_NUM_VARIABLES], 0);
 
@@ -170,7 +170,7 @@ const char *MadsSceneLogic::_opcodeStrings[] = {
  * convert game specific offsets for various fields in the original game's data segment into a generic data index
  * that will be common across all the MADS games
 
-void MadsSceneLogic::initialiseDataMap() {
+void MadsSceneLogic::initializeDataMap() {
 	// The unique order of these items must be maintained
 }
 */
@@ -382,7 +382,7 @@ void MadsSceneLogic::getPlayerSpritesPrefix2() {
 /**
  * Loads the MADS.DAT file and loads the script data for the correct game/language
  */
-void MadsSceneLogic::initialiseScripts() {
+void MadsSceneLogic::initializeScripts() {
 	Common::File f;
 	if (!f.open("mads.dat")) {
 		warning("Could not locate mads.dat file");
@@ -951,7 +951,7 @@ void MadsSceneLogic::callSubroutine(int subIndex, Common::Stack<ScriptVar> &stac
 		// object_is_present
 		EXTRACT_PARAMS(1);
 		const MadsObject *obj = _madsVm->globals()->getObject(p[0]);
-		stack.push(ScriptVar((obj->roomNumber == _madsVm->scene()->_currentScene)));
+		stack.push(ScriptVar((obj->_roomNumber == _madsVm->scene()->_currentScene)));
 		break;
 	}
 
@@ -975,6 +975,14 @@ void MadsSceneLogic::callSubroutine(int subIndex, Common::Stack<ScriptVar> &stac
 		EXTRACT_PARAMS(1);
 		const MadsObject *obj = _madsVm->globals()->getObject(p[0]);
 		stack.push(ScriptVar(obj->isInInventory()));
+		break;
+	}
+
+	case 26: {
+		// object_set_room
+		EXTRACT_PARAMS(2);
+		MadsObject *obj = _madsVm->globals()->getObject(p[0]);
+		obj->setRoom(p[1]);
 		break;
 	}
 

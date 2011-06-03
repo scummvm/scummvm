@@ -727,7 +727,7 @@ Common::Error MohawkEngine_Riven::loadGameState(int slot) {
 	return _saveLoad->loadGame(_saveLoad->generateSaveGameList()[slot]) ? Common::kNoError : Common::kUnknownError;
 }
 
-Common::Error MohawkEngine_Riven::saveGameState(int slot, const char *desc) {
+Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc) {
 	Common::StringArray saveList = _saveLoad->generateSaveGameList();
 
 	if ((uint)slot < saveList.size())

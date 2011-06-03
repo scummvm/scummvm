@@ -2749,7 +2749,7 @@ static void SetTag(CORO_PARAM, int tagno) {
 }
 
 /**
- * Initialise a timer.
+ * Initialize a timer.
  */
 static void SetTimer(int timerno, int start, bool up, bool frame) {
 	StartTimer(timerno, start, up != 0, frame != 0);
@@ -2999,7 +2999,7 @@ static void StartProcess(CORO_PARAM, uint32 procID) {
 }
 
 /**
- * Initialise a timer.
+ * Initialize a timer.
  */
 static void StartTimerFn(int timerno, int start, bool up, int fs) {
 	StartTimer(timerno, start, up, fs);

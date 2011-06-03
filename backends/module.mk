@@ -7,20 +7,19 @@ MODULE_OBJS := \
 	events/default/default-events.o \
 	fs/abstract-fs.o \
 	fs/stdiostream.o \
-	graphics/opengl/glerrorcheck.o \
-	graphics/opengl/gltexture.o \
-	graphics/opengl/opengl-graphics.o \
-	graphics/openglsdl/openglsdl-graphics.o \
-	keymapper/action.o \
-	keymapper/keymap.o \
-	keymapper/keymapper.o \
-	keymapper/remap-dialog.o \
 	log/log.o \
 	midi/alsa.o \
 	midi/dmedia.o \
 	midi/seq.o \
 	midi/stmidi.o \
 	midi/timidity.o \
+	saves/savefile.o \
+	saves/default/default-saves.o \
+	timer/default/default-timer.o
+
+
+ifdef USE_ELF_LOADER
+MODULE_OBJS += \
 	plugins/elf/arm-loader.o \
 	plugins/elf/elf-loader.o \
 	plugins/elf/elf-provider.o \
@@ -28,23 +27,38 @@ MODULE_OBJS := \
 	plugins/elf/mips-loader.o \
 	plugins/elf/ppc-loader.o \
 	plugins/elf/shorts-segment-manager.o \
-	plugins/elf/version.o \
-	saves/savefile.o \
-	saves/default/default-saves.o \
-	timer/default/default-timer.o \
+	plugins/elf/version.o
+endif
+
+ifdef ENABLE_KEYMAPPER
+MODULE_OBJS += \
+	keymapper/action.o \
+	keymapper/keymap.o \
+	keymapper/keymapper.o \
+	keymapper/remap-dialog.o
+endif
+
+ifdef USE_OPENGL
+MODULE_OBJS += \
+	graphics/opengl/glerrorcheck.o \
+	graphics/opengl/gltexture.o \
+	graphics/opengl/opengl-graphics.o \
+	graphics/openglsdl/openglsdl-graphics.o
+endif
+
+ifdef ENABLE_VKEYBD
+MODULE_OBJS += \
 	vkeybd/image-map.o \
 	vkeybd/polygon.o \
 	vkeybd/virtual-keyboard.o \
 	vkeybd/virtual-keyboard-gui.o \
 	vkeybd/virtual-keyboard-parser.o
+endif
 
 # SDL specific source files.
 # We cannot just check $BACKEND = sdl, as various other backends
 # derive from the SDL backend, and they all need the following files.
-# TODO: Add SDL_BACKEND to config.mk; this would match the fact that
-# we also add -DSDL_BACKEND to the DEFINES.
-# However, the latter is only done for *most* SDL based stuff, not always
-# so we really should unify the relevant code in configure.
+ifdef SDL_BACKEND
 MODULE_OBJS += \
 	audiocd/sdl/sdl-audiocd.o \
 	events/sdl/sdl-events.o \
@@ -54,8 +68,9 @@ MODULE_OBJS += \
 	mutex/sdl/sdl-mutex.o \
 	plugins/sdl/sdl-provider.o \
 	timer/sdl/sdl-timer.o
+endif
 
-ifdef UNIX
+ifdef POSIX
 MODULE_OBJS += \
 	fs/posix/posix-fs.o \
 	fs/posix/posix-fs-factory.o \
@@ -147,9 +162,10 @@ MODULE_OBJS += \
 	timer/psp/timer.o
 endif
 
-ifeq ($(BACKEND),samsungstv)
+ifeq ($(BACKEND),samsungtv)
 MODULE_OBJS += \
-	events/samsungtvsdl/samsungtvsdl-events.o
+	events/samsungtvsdl/samsungtvsdl-events.o \
+	graphics/samsungtvsdl/samsungtvsdl-graphics.o
 endif
 
 ifeq ($(BACKEND),webos)

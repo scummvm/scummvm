@@ -29,7 +29,7 @@
 
 namespace GUI {
 
-#ifndef USE_TEXT_CONSOLE
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 class ConsoleDialog;
 #endif
 
@@ -144,7 +144,7 @@ private:
 	 */
 	bool _firstTime;
 
-#ifndef USE_TEXT_CONSOLE
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 	GUI::ConsoleDialog *_debuggerDialog;
 #endif
 
@@ -194,7 +194,7 @@ protected:
 	bool Cmd_DebugFlagEnable(int argc, const char **argv);
 	bool Cmd_DebugFlagDisable(int argc, const char **argv);
 
-#ifndef USE_TEXT_CONSOLE
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 private:
 	static bool debuggerInputCallback(GUI::ConsoleDialog *console, const char *input, void *refCon);
 	static bool debuggerCompletionCallback(GUI::ConsoleDialog *console, const char *input, Common::String &completion, void *refCon);

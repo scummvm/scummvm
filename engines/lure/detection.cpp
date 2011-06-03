@@ -205,7 +205,7 @@ public:
 	LureMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "Lure of the Temptress";
+		return "Lure";
 	}
 
 	virtual const char *getOriginalCopyright() const {
@@ -271,11 +271,8 @@ SaveStateList LureMetaEngine::listSaves(const char *target) const {
 int LureMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 void LureMetaEngine::removeSaveState(const char *target, int slot) const {
-	char extension[6];
-	snprintf(extension, sizeof(extension), ".%03d", slot);
-
 	Common::String filename = target;
-	filename += extension;
+	filename += Common::String::format(".%03d", slot);
 
 	g_system->getSavefileManager()->removeSavefile(filename);
 }

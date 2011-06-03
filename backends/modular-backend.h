@@ -148,8 +148,7 @@ public:
 
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual FilesystemFactory *getFilesystemFactory();
-	virtual void quit() { exit(0); }
-	virtual void setWindowCaption(const char *caption) {}
+	virtual void quit();
 	virtual void displayMessageOnOSD(const char *msg);
 
 	//@}

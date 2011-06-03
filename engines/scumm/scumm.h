@@ -44,7 +44,7 @@
 
 #ifdef __DS__
 /* This disables the dual layer mode which is used in FM-Towns versions
- * of SCUMM games and which emulates the behaviour of the original code.
+ * of SCUMM games and which emulates the behavior of the original code.
  * The only purpose is code size reduction for certain backends.
  * SCUMM 3 (FM-Towns) games will run in normal (DOS VGA) mode, which should
  * work just fine in most situations. Some glitches might occur. SCUMM 5 games
@@ -228,7 +228,7 @@ enum ScummGameId {
 	GID_TENTACLE,
 	GID_ZAK,
 
-	GID_HEGAME,      // Generic name for all HE games with default behaviour
+	GID_HEGAME,      // Generic name for all HE games with default behavior
 	GID_PUTTDEMO,
 	GID_FBEAR,
 	GID_PUTTMOON,
@@ -401,7 +401,7 @@ public:
 
 	virtual Common::Error loadGameState(int slot);
 	virtual bool canLoadGameStateCurrently();
-	virtual Common::Error saveGameState(int slot, const char *desc);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual bool canSaveGameStateCurrently();
 
 	virtual void pauseEngineIntern(bool pause);
@@ -572,7 +572,7 @@ protected:
 	uint32 _lastSaveTime;
 	bool _saveTemporaryState;
 	Common::String _saveLoadFileName;
-	char _saveLoadName[32];
+	Common::String _saveLoadDescription;
 
 	bool saveState(Common::OutSaveFile *out, bool writeHeader = true);
 	bool saveState(int slot, bool compat);
@@ -594,7 +594,7 @@ public:
 	bool getSavegameName(int slot, Common::String &desc);
 	void listSavegames(bool *marks, int num);
 
-	void requestSave(int slot, const char *name);
+	void requestSave(int slot, const Common::String &name);
 	void requestLoad(int slot);
 
 // thumbnail + info stuff
@@ -1120,7 +1120,7 @@ protected:
 
 	void calcItineraryMatrix(byte *itineraryMatrix, int num);
 	void createBoxMatrix();
-	virtual bool areBoxesNeighbours(int i, int j);
+	virtual bool areBoxesNeighbors(int i, int j);
 
 	/* String class */
 public:

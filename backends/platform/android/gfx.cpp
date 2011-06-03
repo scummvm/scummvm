@@ -179,7 +179,7 @@ void OSystem_Android::initSurface() {
 
 	JNI::initSurface();
 
-	// Initialise OpenGLES context.
+	// Initialize OpenGLES context.
 	GLESTexture::initGLExtensions();
 
 	if (_game_texture)

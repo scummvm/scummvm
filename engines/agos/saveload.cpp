@@ -35,7 +35,7 @@
 namespace AGOS {
 
 int AGOSEngine::countSaveGames() {
-	Common::InSaveFile *f;
+	Common::InSaveFile *f = NULL;
 	Common::StringArray filenames;
 	uint i = 1;
 	char slot[4];

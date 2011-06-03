@@ -267,7 +267,7 @@ bool MadsConsole::cmdObject(int argc, const char **argv) {
 			DebugPrintf("%2d - ", objStart);
 			for (uint objId = objStart; objId < MIN<uint>(_vm->globals()->getObjectsSize(), objStart + 5); ++objId) {
 				if (objId != objStart) DebugPrintf(", ");
-				uint16 descId = _vm->globals()->getObject(objId)->descId;
+				uint16 descId = _vm->globals()->getObject(objId)->_descId;
 				DebugPrintf("%s", _vm->globals()->getVocab(descId));
 			}
 
@@ -297,15 +297,15 @@ bool MadsConsole::cmdObject(int argc, const char **argv) {
 		else {
 			const MadsObject *obj = _vm->globals()->getObject(objNum);
 
-			DebugPrintf("Object #%d (%s) room=%d article=%d/%s vocabs=%d", objNum, _vm->globals()->getVocab(obj->descId),
-				obj->roomNumber, (int)obj->article, englishMADSArticleList[obj->article], obj->vocabCount);
+			DebugPrintf("Object #%d (%s) room=%d article=%d/%s vocabs=%d", objNum, _vm->globals()->getVocab(obj->_descId),
+				obj->_roomNumber, (int)obj->_article, englishMADSArticleList[obj->_article], obj->_vocabCount);
 
-			if (obj->vocabCount > 0) {
+			if (obj->_vocabCount > 0) {
 				DebugPrintf(" - ");
-				for (int i = 0; i < obj->vocabCount; ++i) {
+				for (int i = 0; i < obj->_vocabCount; ++i) {
 					if (i != 0) DebugPrintf(", ");
-					DebugPrintf("%s (%d)/%d,%d", _vm->globals()->getVocab(obj->vocabList[i].vocabId),
-						obj->vocabList[i].vocabId, obj->vocabList[i].flags1, obj->vocabList[i].flags2);
+					DebugPrintf("%s (%d)/%d,%d", _vm->globals()->getVocab(obj->_vocabList[i].vocabId),
+						obj->_vocabList[i].vocabId, obj->_vocabList[i].flags1, obj->_vocabList[i].flags2);
 				}
 			}
 			DebugPrintf("\n");

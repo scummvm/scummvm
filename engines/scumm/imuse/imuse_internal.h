@@ -229,6 +229,7 @@ protected:
 
 	// Sequencer part
 	int start_seq_sound(int sound, bool reset_vars = true);
+	void loadStartParameters(int sound);
 	int query_param(int param);
 
 public:
@@ -445,7 +446,14 @@ protected:
 	static void midiTimerCallback(void *data);
 	void on_timer(MidiDriver *midi);
 
-	byte *findStartOfSound(int sound);
+	enum ChunkType {
+		kMThd = 1,
+		kFORM = 2,
+		kMDhd = 4,	// Used in MI2 and INDY4. Contain certain start parameters (priority, volume, etc. ) for the player.
+		kMDpg = 8	// These chunks exist in DOTT and SAMNMAX. They don't get processed, however. 
+	};
+
+	byte *findStartOfSound(int sound, int ct = (kMThd | kFORM));
 	bool isMT32(int sound);
 	bool isMIDI(int sound);
 	int get_queue_sound_status(int sound) const;

@@ -227,6 +227,11 @@ void SceneManager::setBgOffset(const Common::Point &pt, int loadCount) {
 void SceneManager::listenerSynchronize(Serializer &s) {
 	s.validate("SceneManager");
 
+	if (s.isLoading() && !_globals->_sceneManager._scene)
+		// Loading a savegame straight from the launcher, so instantiate a blank placeholder scene
+		// in order for the savegame loading to work correctly
+		_globals->_sceneManager._scene = new Scene();
+
 	_altSceneObjects.synchronize(s);
 	s.syncAsSint32LE(_sceneNumber);
 	s.syncAsUint16LE(_globals->_sceneManager._scene->_activeScreenNumber);
@@ -319,7 +324,7 @@ void Scene::loadSceneData(int sceneNum) {
 	// Load the priority regions
 	_priorities.load(sceneNum);
 
-	// Initialise the section enabled list
+	// Initialize the section enabled list
 	Common::set_to(&_enabledSections[0], &_enabledSections[16 * 16], 0xffff);
 
 	_globals->_sceneOffset.x = (_sceneBounds.left / 160) * 160;
@@ -458,32 +463,32 @@ void Scene::drawAltObjects() {
 }
 
 void Scene::setZoomPercents(int yStart, int minPercent, int yEnd, int maxPercent) {
-	int var_6 = 0;
+	int currDiff = 0;
 	int v = 0;
 	while (v < yStart)
 		_zoomPercents[v++] = minPercent;
 
 	int diff1 = ABS(maxPercent - minPercent);
 	int diff2 = ABS(yEnd - yStart);
-	int var_8 = MAX(diff1, diff2);
+	int remainingDiff = MAX(diff1, diff2);
 
-	while (var_8-- != 0) {
-        _zoomPercents[v] = minPercent;
-        if (diff2 <= diff1) {
-                ++minPercent;
-                var_6 += diff2;
-                if (var_6 >= diff1) {
-                        var_6 -= diff1;
-                        ++v;
-                }
-        } else {
-                ++v;
-                var_6 += diff1;
-                if (var_6 >= diff2) {
-                        var_6 -= diff2;
-                        ++minPercent;
-                }
-        }
+	while (remainingDiff-- != 0) {
+		_zoomPercents[v] = minPercent;
+		if (diff2 <= diff1) {
+			++minPercent;
+			currDiff += diff2;
+			if (currDiff >= diff1) {
+				currDiff -= diff1;
+				++v;
+			}
+		} else {
+			++v;
+			currDiff += diff1;
+			if (currDiff >= diff2) {
+				currDiff -= diff2;
+				++minPercent;
+			}
+		}
 	}
 
 	while (yEnd < 256)

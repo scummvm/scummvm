@@ -20,32 +20,37 @@
  *
  */
 
-// Only compile if Mohawk is enabled or if we're building dynamic modules
-#if defined(ENABLE_MOHAWK) || defined(DYNAMIC_MODULES)
+#ifndef SWORD25_SCUMMVM_FILE_H
+#define SWORD25_SCUMMVM_FILE_H
 
-#ifndef VIDEO_CODECS_QDM2_H
-#define VIDEO_CODECS_QDM2_H
+#include "common/str.h"
 
-namespace Common {
-class SeekableReadStream;
-}
-
-namespace Audio {
-class AudioStream;
-}
-
-namespace Video {
+namespace Sword25 {
 
 /**
- * Create a new AudioStream from the QDM2 data in the given stream.
- *
- * @param stream       the SeekableReadStream from which to read the FLAC data
- * @param extraData    the QuickTime extra data stream
- * @return   a new AudioStream, or NULL, if an error occurred
+ * The following class acts as a proxy interface to the I/O code, pretending that the ScummVM
+ * settings are a properly formatted 'config.lua' file
  */
-Audio::AudioStream *makeQDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadStream *extraData);
+class Sword25FileProxy {
+private:
+	Common::String _readData;
+	uint _readPos;
+	Common::String _settings;
 
-} // End of namespace Video
+	void setupConfigFile();
+	Common::String getLanguage();
+	void setLanguage(const Common::String &lang);
+	void writeSettings();
+	void updateSetting(const Common::String &setting, const Common::String &value);
+public:
+	Sword25FileProxy(const Common::String &filename, const Common::String &mode);
+	~Sword25FileProxy();
 
-#endif // VIDEO_CODECS_QDM2_H
-#endif // Mohawk/Plugins guard
+	bool eof() const { return _readPos >= _readData.size(); }
+	size_t read(void *ptr, size_t size, size_t count);
+	size_t write(const char *ptr, size_t count);
+};
+
+} // End of namespace Sword25
+
+#endif

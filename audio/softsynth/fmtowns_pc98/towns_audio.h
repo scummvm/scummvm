@@ -25,7 +25,7 @@
 
 #include "audio/mixer.h"
 
-class TownsAudioInterfaceIntern;
+class TownsAudioInterfaceInternal;
 
 class TownsAudioInterfacePluginDriver {
 public:
@@ -35,7 +35,7 @@ public:
 
 class TownsAudioInterface {
 public:
-	TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver);
+	TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling = false);
 	~TownsAudioInterface();
 
 	bool init();
@@ -49,7 +49,7 @@ public:
 	void setSoundEffectChanMask(int mask);
 
 private:
-	TownsAudioInterfaceIntern *_intf;
+	TownsAudioInterfaceInternal *_intf;
 };
 
 #endif

@@ -141,7 +141,7 @@ void OSystem_GPH::initBackend() {
 		printf("%s\n", "Debug: STDOUT and STDERR redirected to text files.");
 	#endif /* DUMP_STDOUT */
 
-	/* Initialise any GP2X Wiz specific stuff we may want (Batt Status, scaler etc.) */
+	/* Initialize any GP2X Wiz specific stuff we may want (Batt Status, scaler etc.) */
 	WIZ_HW::deviceInit();
 
 	/* Set Default hardware mixer volume to a preset level (VOLUME_INITIAL). This is done to 'reset' volume level if set by other apps. */

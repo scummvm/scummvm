@@ -585,7 +585,7 @@ Player_Towns_v2::~Player_Towns_v2() {
 	_intf = 0;
 
 	if (_imuseDispose)
-		delete _imuse;
+		delete _imuse;	
 
 	delete[] _sblData;
 	delete[] _soundOverride;

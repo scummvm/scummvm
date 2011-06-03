@@ -23,7 +23,10 @@
 #define SOUND_FMOPL_H
 
 #include "common/scummsys.h"
-#include "common/str.h"
+
+namespace Common {
+class String;
+}
 
 namespace OPL {
 

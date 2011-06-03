@@ -20,7 +20,7 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_chdir
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include <common/scummsys.h>
 #include <engines/engine.h>

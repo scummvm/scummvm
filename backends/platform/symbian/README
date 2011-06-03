@@ -114,9 +114,6 @@ Building ScummVM
 	- flac, the Free Lossless Audio Codec
 	  http://flac.sourceforge.net/
 
-	- libmpeg2, a free MPEG-2 video stream decoder
-	  http://libmpeg2.sourceforge.net
-
 	Compiling ScummVM
 	-----------------
 

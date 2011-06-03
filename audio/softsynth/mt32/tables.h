@@ -69,8 +69,8 @@ struct KeyLookup {
 };
 
 class Tables {
-	float initialisedSampleRate;
-	float initialisedMasterTune;
+	float initializedSampleRate;
+	float initializedMasterTune;
 	void initMT32ConstantTables(Synth *synth);
 	static Bit16s clampWF(Synth *synth, const char *n, float ampVal, double input);
 	static File *initWave(Synth *synth, NoteLookup *noteLookup, float ampsize, float div2, File *file);

@@ -227,11 +227,11 @@ void MainMenuDialog::save() {
 		Common::String result(_saveDialog->getResultString());
 		if (result.empty()) {
 			// If the user was lazy and entered no save name, come up with a default name.
-			char buf[20];
-			snprintf(buf, 20, "Save %d", slot + 1);
+			Common::String buf;
+			buf = Common::String::format("Save %d", slot + 1);
 			_engine->saveGameState(slot, buf);
 		} else {
-			_engine->saveGameState(slot, result.c_str());
+			_engine->saveGameState(slot, result);
 		}
 
 		close();

@@ -29,9 +29,6 @@
  *
  */
 
-// Disable symbol overrides so that we can use png.h
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "common/memstream.h"
 #include "common/textconsole.h"
 #include "sword25/gfx/screenshot.h"
@@ -53,6 +50,8 @@ bool Screenshot::saveToFile(Graphics::Surface *data, Common::WriteStream *stream
 
 	for (uint y = 0; y < data->h; y++) {
 		for (uint x = 0; x < data->w; x++) {
+			// This is only called by createThumbnail below, which
+			// provides a fake 'surface' with LE data in it.
 			uint32 srcPixel = READ_LE_UINT32(pSrc);
 			pSrc += sizeof(uint32);
 			stream->writeByte((srcPixel >> 16) & 0xff); // R
@@ -93,7 +92,7 @@ Common::SeekableReadStream *Screenshot::createThumbnail(Graphics::Surface *data)
 		for (int j = 0; j < 4; ++j) {
 			const uint32 *srcP = (const uint32 *)data->getBasePtr(x * 4, y * 4 + j + 50);
 			for (int i = 0; i < 4; ++i) {
-				uint32 pixel = READ_LE_UINT32(srcP + i);
+				uint32 pixel = READ_UINT32(srcP + i);
 				alpha += (pixel >> 24);
 				red += (pixel >> 16) & 0xff;
 				green += (pixel >> 8) & 0xff;

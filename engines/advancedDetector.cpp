@@ -196,12 +196,10 @@ static void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *
 		desc["gameid"] = params.singleid;
 	}
 
-	if (!(params.flags & kADFlagDontAugmentPreferredTarget)) {
-		if (!desc.contains("preferredtarget"))
-			desc["preferredtarget"] = desc["gameid"];
+	if (!desc.contains("preferredtarget"))
+		desc["preferredtarget"] = desc["gameid"];
 
-		desc["preferredtarget"] = generatePreferredTarget(desc["preferredtarget"], realDesc);
-	}
+	desc["preferredtarget"] = generatePreferredTarget(desc["preferredtarget"], realDesc);
 
 	if (params.flags & kADFlagUseExtraAsHint)
 		desc["extra"] = realDesc->extra;
@@ -226,7 +224,7 @@ bool cleanupPirated(ADGameDescList &matched) {
 		// We ruled out all variants and now have nothing
 		if (matched.empty()) {
 
-			warning("Illegitimate copy of the game detected. We give no support in such cases %d", matched.size());
+			warning("Illegitimate game copy detected. We give no support in such cases %d", matched.size());
 
 			return true;
 		}

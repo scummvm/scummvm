@@ -130,7 +130,7 @@ void HugoEngine::setMaxScore(const int newScore) {
 	_maxscore = newScore;
 }
 
-Common::Error HugoEngine::saveGameState(int slot, const char *desc) {
+Common::Error HugoEngine::saveGameState(int slot, const Common::String &desc) {
 	return (_file->saveGame(slot, desc) ? Common::kWritingFailed : Common::kNoError);
 }
 
@@ -527,15 +527,16 @@ void HugoEngine::initPlaylist(bool playlist[kMaxTunes]) {
  */
 void HugoEngine::initStatus() {
 	debugC(1, kDebugEngine, "initStatus");
-	_status.storyModeFl   = false;                  // Not in story mode
-	_status.gameOverFl    = false;                  // Hero not knobbled yet
-	_status.lookFl        = false;                  // Toolbar "look" button
-	_status.recallFl      = false;                  // Toolbar "recall" button
-	_status.newScreenFl   = false;                  // Screen not just loaded
-	_status.godModeFl     = false;                  // No special cheats allowed
-	_status.doQuitFl      = false;
-	_status.skipIntroFl   = false;
-	_status.helpFl        = false;
+	_status.storyModeFl      = false;               // Not in story mode
+	_status.gameOverFl       = false;               // Hero not knobbled yet
+	_status.lookFl           = false;               // Toolbar "look" button
+	_status.recallFl         = false;               // Toolbar "recall" button
+	_status.newScreenFl      = false;               // Screen not just loaded
+	_status.godModeFl        = false;               // No special cheats allowed
+	_status.showBoundariesFl = false;               // Boundaries hidden by default
+	_status.doQuitFl         = false;
+	_status.skipIntroFl      = false;
+	_status.helpFl           = false;
 
 	// Initialize every start of new game
 	_status.tick            = 0;                    // Tick count
@@ -593,7 +594,7 @@ void HugoEngine::initialize() {
 	_scheduler->initEventQueue();                   // Init scheduler stuff
 	_screen->initDisplay();                         // Create Dibs and palette
 	_file->openDatabaseFiles();                     // Open database files
-	calcMaxScore();                                 // Initialise maxscore
+	calcMaxScore();                                 // Initialize maxscore
 
 	_rnd = new Common::RandomSource("hugo");
 	_rnd->setSeed(42);                              // Kick random number generator

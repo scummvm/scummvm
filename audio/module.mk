@@ -13,12 +13,15 @@ MODULE_OBJS := \
 	musicplugin.o \
 	null.o \
 	timestamp.o \
+	decoders/aac.o \
 	decoders/adpcm.o \
 	decoders/aiff.o \
 	decoders/flac.o \
 	decoders/iff_sound.o \
 	decoders/mac_snd.o \
 	decoders/mp3.o \
+	decoders/qdm2.o \
+	decoders/quicktime.o \
 	decoders/raw.o \
 	decoders/vag.o \
 	decoders/voc.o \

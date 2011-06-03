@@ -51,7 +51,7 @@ LureEngine::LureEngine(OSystem *system, const LureGameDescription *gameDesc)
 
 Common::Error LureEngine::init() {
 	int_engine = this;
-	_initialised = false;
+	_initialized = false;
 	_saveLoadAllowed = false;
 
 	initGraphics(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT, false);
@@ -85,12 +85,12 @@ Common::Error LureEngine::init() {
 	_mouse = new Mouse();
 	_events = new Events();
 	_menu = new Menu();
-	Surface::initialise();
+	Surface::initialize();
 	_room = new Room();
 	_fights = new FightsManager();
 
 	_gameToLoad = -1;
-	_initialised = true;
+	_initialized = true;
 
 	// Setup mixer
 	syncSoundSettings();
@@ -102,9 +102,9 @@ LureEngine::~LureEngine() {
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
 
-	if (_initialised) {
-		// Delete and deinitialise subsystems
-		Surface::deinitialise();
+	if (_initialized) {
+		// Delete and deinitialize subsystems
+		Surface::deinitialize();
 		Sound.destroy();
 		delete _fights;
 		delete _room;

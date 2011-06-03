@@ -84,7 +84,7 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 }
 
 void KyraEngine_v1::pauseEngineIntern(bool pause) {
-	Engine::pauseEngineIntern(pause);
+	_sound->pause(pause);
 	_timer->pause(pause);
 }
 
@@ -350,23 +350,43 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 }
 
 void KyraEngine_v1::setupKeyMap() {
-	static const Common::KeyCode keyboardEvents[] = {
-		Common::KEYCODE_SPACE,  Common::KEYCODE_RETURN, Common::KEYCODE_UP,     Common::KEYCODE_KP8,
-		Common::KEYCODE_RIGHT,  Common::KEYCODE_KP6,    Common::KEYCODE_DOWN,   Common::KEYCODE_KP2,
-		Common::KEYCODE_KP5,	Common::KEYCODE_LEFT,   Common::KEYCODE_KP4,	Common::KEYCODE_HOME,
-		Common::KEYCODE_KP7,	Common::KEYCODE_PAGEUP, Common::KEYCODE_KP9,    Common::KEYCODE_F1,
-		Common::KEYCODE_F2,		Common::KEYCODE_F3,     Common::KEYCODE_o,      Common::KEYCODE_r,
-		Common::KEYCODE_SLASH,	Common::KEYCODE_ESCAPE
+	struct KeyMapEntry {
+		Common::KeyCode kcScummVM;
+		int16 kcDOS;
+		int16 kcPC98;
 	};
 
-	static const int16 keyCodesDOS[] = { 61, 43, 96, 96, 102, 102, 98, 98, 97, 92, 92, 91, 91, 101, 101, 112, 113, 114, 25, 20, 55, 110};
-	static const int16 keyCodesPC98[] = { 53, 29, 68, 68, 73, 73, 76, 76, 72, 71, 71, 67, 67, 69, 69, 99, 100, 101, 25, 20, 55, 1 };
+#define KC(x) Common::KEYCODE_##x
+	static const KeyMapEntry keys[] = {
+		{ KC(SPACE), 61, 53 },
+		{ KC(RETURN), 43, 29 },
+		{ KC(UP), 96, 68 },
+		{ KC(KP8), 96, 68 },
+		{ KC(RIGHT), 102, 73 },
+		{ KC(KP6), 102, 73 },
+		{ KC(DOWN), 98, 76 },
+		{ KC(KP2), 98, 76 },
+		{ KC(KP5), 97, 72 },
+		{ KC(LEFT), 92, 71 },
+		{ KC(KP4), 92, 71 },
+		{ KC(HOME), 91, 67 },
+		{ KC(KP7), 91, 67 },
+		{ KC(PAGEUP), 101, 69 },
+		{ KC(KP9), 101, 69 },
+		{ KC(F1), 112, 99 },
+		{ KC(F2), 113, 100 },
+		{ KC(F3), 114, 101 },
+		{ KC(o), 25, 25 },
+		{ KC(r), 20, 20 },
+		{ KC(SLASH), 55, 55 },
+		{ KC(ESCAPE), 110, 1 },
+	};
+#undef KC
 
-	const int16 *keyCodes = _flags.platform == Common::kPlatformPC98 ? keyCodesPC98 : keyCodesDOS;
 	_keyMap.clear();
 
-	for (int i = 0; i < ARRAYSIZE(keyboardEvents); i++)
-		_keyMap[keyboardEvents[i]] = keyCodes[i];
+	for (int i = 0; i < ARRAYSIZE(keys); i++)
+		_keyMap[keys[i].kcScummVM] = (_flags.platform == Common::kPlatformPC98) ? keys[i].kcPC98 : keys[i].kcDOS;
 }
 
 void KyraEngine_v1::updateInput() {

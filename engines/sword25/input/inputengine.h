@@ -172,7 +172,7 @@ public:
 	/// --------------------------------------------------------------
 
 	/**
-	 * Initialises the input engine
+	 * Initializes the input engine
 	 * @return          Returns a true on success, otherwise false.
 	 */
 	bool init();

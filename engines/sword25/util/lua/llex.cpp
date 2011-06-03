@@ -6,6 +6,7 @@
 
 
 #include <ctype.h>
+#include <stdio.h>
 #include <string.h>
 
 #define llex_c
@@ -175,11 +176,23 @@ static void buffreplace (LexState *ls, char from, char to) {
 
 static void trydecpoint (LexState *ls, SemInfo *seminfo) {
   /* format error: try to update decimal point separator */
-  // Non-portable call to update the decimal point separator.
-  // It has been simplified in ScummVM to not use any system locale
-  // information, as it's not used in sword25.
+  // Normally we'd use localeconv() to get the decimal point separator, but
+  // annoyingly that is not available on some platforms, e.g. Android. Figure
+  // it out by formatting a known value and extract the separator from that
+  // instead. The result could be cached, but considering the game I doubt
+  // this will ever be a bottleneck. Note that the separator is assumed to fit
+  // in a char, but that was a limitation in the original code as well.
   char old = ls->decpoint;
+  char buf[5];
+  int i;
+  sprintf(buf, "%.1f", 1.0);
   ls->decpoint = '.';
+  for (i = 0; buf[i]; i++) {
+    if (!isspace(buf[i]) && !isdigit(buf[i])) {
+      ls->decpoint = buf[i];
+      break;
+    }
+  }
   buffreplace(ls, old, ls->decpoint);  /* try updated decimal separator */
   if (!luaO_str2d(luaZ_buffer(ls->buff), &seminfo->r)) {
     /* format error with correct decimal point: no more options */

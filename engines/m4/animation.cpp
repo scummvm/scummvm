@@ -61,9 +61,9 @@ MadsAnimation::~MadsAnimation() {
 #define FILENAME_SIZE 13
 
 /**
- * Initialises and loads the data of an animation
+ * Initializes and loads the data of an animation
  */
-void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4Surface *surface, M4Surface *depthSurface) {
+void MadsAnimation::initialize(const Common::String &filename, uint16 flags, M4Surface *surface, M4Surface *depthSurface) {
 	MadsPack anim(filename.c_str(), _vm);
 	bool madsRes = filename[0] == '*';
 	char buffer[20];
@@ -131,7 +131,7 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 	if (flags & 0x100)
 		loadInterface(surface, depthSurface);
 
-	// Initialise the reference list
+	// Initialize the reference list
 	for (int i = 0; i < spriteListCount; ++i)
 		_spriteListIndexes.push_back(-1);
 
@@ -266,7 +266,7 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
  * Loads an animation file for display
  */
 void MadsAnimation::load(const Common::String &filename, int abortTimers) {
-	initialise(filename, 0, NULL, NULL);
+	initialize(filename, 0, NULL, NULL);
 	_messageCtr = 0;
 	_skipLoad = true;
 
@@ -279,7 +279,7 @@ void MadsAnimation::load(const Common::String &filename, int abortTimers) {
 	}
 */
 
-	// Initialise miscellaneous fields
+	// Initialize miscellaneous fields
 	_currentFrame = 0;
 	_oldFrameEntry = 0;
 	_nextFrameTimer = _madsVm->_currentTimer;
@@ -289,7 +289,7 @@ void MadsAnimation::load(const Common::String &filename, int abortTimers) {
 	if (_madsVm->_scene)
 		_actionNouns = _madsVm->scene()->_action._action;
 
-	// Initialise kernel message list
+	// Initialize kernel message list
 	for (uint i = 0; i < _messages.size(); ++i)
 		_messages[i].kernelMsgIndex = -1;
 }

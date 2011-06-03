@@ -583,7 +583,7 @@ void ScummEngine::updateDirtyScreen(VirtScreenNumber slot) {
 			vs->tdirty[i] = vs->h;
 			vs->bdirty[i] = 0;
 			if (i != (_gdi->_numStrips - 1) && vs->bdirty[i + 1] == bottom && vs->tdirty[i + 1] == top) {
-				// Simple optimizations: if two or more neighbouring strips
+				// Simple optimizations: if two or more neighboring strips
 				// form one bigger rectangle, coalesce them.
 				w += 8;
 				continue;

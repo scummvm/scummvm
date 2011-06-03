@@ -4,9 +4,9 @@
 ** See Copyright Notice in lua.h
 */
 
+// FIXME: Get rid of all time.h stuff
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
-#include <stdlib.h>
-#include <string.h>
 #include <time.h>
 
 #define loslib_c
@@ -17,9 +17,14 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+#include "common/system.h"
+#include "common/textconsole.h"
+
 
 static int os_execute (lua_State *L) {
-  lua_pushinteger(L, system(luaL_optstring(L, 1, NULL)));
+  // Non-portable call, removed in ScummVM.
+  // FIXME: Is this ever invoked? If so, investigate that code further.
+  lua_pushinteger(L, -1);	// signal that an error occurred
   return 1;
 }
 
@@ -35,24 +40,30 @@ static int os_remove (lua_State *L) {
 
 
 static int os_rename (lua_State *L) {
-  // Removed in ScummVM, does nothing.
+  // Non-portable call, removed in ScummVM.
   return 1;
 }
 
 
 static int os_tmpname (lua_State *L) {
+  // Non-portable call, removed in ScummVM.
+  // FIXME: Why do we return an error in tmpname, but for other
+  // removed methods we just do nothing?
   return luaL_error(L, "unable to generate a unique filename");
 }
 
 
 static int os_getenv (lua_State *L) {
-  lua_pushstring(L, getenv(luaL_checkstring(L, 1)));  /* if NULL push nil */
+  // Non-portable call, removed in ScummVM.
+  // FIXME: Is this ever invoked? If so, investigate that code further.
+  lua_pushstring(L, NULL);
   return 1;
 }
 
 
 static int os_clock (lua_State *L) {
-  lua_pushnumber(L, ((lua_Number)clock())/(lua_Number)CLOCKS_PER_SEC);
+  // Non-portable call to clock() replaced by invocation of OSystem::getMillis.
+  lua_pushnumber(L, ((lua_Number)g_system->getMillis())/(lua_Number)1000);
   return 1;
 }
 
@@ -103,6 +114,12 @@ static int getfield (lua_State *L, const char *key, int d) {
 
 static int os_date (lua_State *L) {
   const char *s = luaL_optstring(L, 1, "%c");
+  // FIXME: Rewrite the code below to use OSystem::getTimeAndDate
+  // Alternatively, remove it, if sword25 does not use it.
+  //
+  // The former would mean sacrificing the ability to choose the timezone, *or*
+  // we would have to drive an effort to add time zone support to OSystem (is it
+  // worth that, though???)
   time_t t = luaL_opt(L, (time_t)luaL_checknumber, 2, time(NULL));
   struct tm *stm;
   if (*s == '!') {  /* UTC? */
@@ -148,6 +165,8 @@ static int os_date (lua_State *L) {
 
 
 static int os_time (lua_State *L) {
+  // FIXME: Rewrite the code below to use OSystem::getTimeAndDate.
+  // Alternatively, remove it, if sword25 does not use it.
   time_t t;
   if (lua_isnoneornil(L, 1))  /* called without args? */
     t = time(NULL);  /* get current time */
@@ -173,6 +192,9 @@ static int os_time (lua_State *L) {
 
 
 static int os_difftime (lua_State *L) {
+  // FIXME: difftime is not portable, unfortunately.
+  // So we either have to replace this code, or just remove it,
+  // depending on whether sword25 actually uses it.
   lua_pushnumber(L, difftime((time_t)(luaL_checknumber(L, 1)),
                              (time_t)(luaL_optnumber(L, 2, 0))));
   return 1;
@@ -189,7 +211,13 @@ static int os_setlocale (lua_State *L) {
 
 
 static int os_exit (lua_State *L) {
-  exit(luaL_optint(L, 1, EXIT_SUCCESS));
+  // FIXME: Using exit is not portable!
+  // Using OSystem::quit() isn't really a great idea, either.
+  // We really would prefer to let the main run loop exit, so that
+  // our main() can perform cleanup.
+  if (0 == luaL_optint(L, 1, EXIT_SUCCESS))
+	  g_system->quit();
+  error("LUA os_exit invokes with non-zero exit value");
 }
 
 static const luaL_Reg syslib[] = {

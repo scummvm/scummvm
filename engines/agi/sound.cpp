@@ -99,51 +99,53 @@ void SoundMgr::unloadSound(int resnum) {
 	}
 }
 
+/**
+ * Start playing a sound resource. The logic here is that when the sound is
+ * finished we set the given flag to be true. This way the condition can be
+ * detected by the game. On the other hand, if the game wishes to start
+ * playing a new sound before the current one is finished, we also let it
+ * do that.
+ * @param resnum  the sound resource number
+ * @param flag    the flag that is wished to be set true when finished
+ */
 void SoundMgr::startSound(int resnum, int flag) {
-	AgiSoundEmuType type;
-
-	if (_vm->_game.sounds[resnum] != NULL && _vm->_game.sounds[resnum]->isPlaying())
-		return;
-
-	stopSound();
+	debugC(3, kDebugLevelSound, "startSound(resnum = %d, flag = %d)", resnum, flag);
 
 	if (_vm->_game.sounds[resnum] == NULL) // Is this needed at all?
 		return;
 
-	type = (AgiSoundEmuType)_vm->_game.sounds[resnum]->type();
+	stopSound();
 
+	AgiSoundEmuType type = (AgiSoundEmuType)_vm->_game.sounds[resnum]->type();
 	if (type != AGI_SOUND_SAMPLE && type != AGI_SOUND_MIDI && type != AGI_SOUND_4CHN)
 		return;
+	debugC(3, kDebugLevelSound, "    type = %d", type);
 
 	_vm->_game.sounds[resnum]->play();
 	_playingSound = resnum;
-
-	debugC(3, kDebugLevelSound, "startSound(resnum = %d, flag = %d) type = %d", resnum, flag, type);
-
 	_soundGen->play(resnum);
 
+	// Reset the flag
 	_endflag = flag;
-
-	// Nat Budin reports that the flag should be reset when sound starts
 	_vm->setflag(_endflag, false);
 }
 
 void SoundMgr::stopSound() {
 	debugC(3, kDebugLevelSound, "stopSound() --> %d", _playingSound);
 
-	_endflag = -1;
-
 	if (_playingSound != -1) {
 		if (_vm->_game.sounds[_playingSound]) // sanity checking
 			_vm->_game.sounds[_playingSound]->stop();
-
 		_soundGen->stop();
-
 		_playingSound = -1;
 	}
 
+	// This is probably not needed most of the time, but there also should
+	// not be any harm doing it, so do it anyway.
 	if (_endflag != -1)
 		_vm->setflag(_endflag, true);
+	
+	_endflag = -1;
 }
 
 int SoundMgr::initSound() {

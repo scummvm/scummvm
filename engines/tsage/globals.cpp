@@ -64,6 +64,13 @@ Globals::Globals() :
 		_fontColors.background = 0;
 		_fontColors.foreground = 0;
 		_dialogCenter.y = 80;
+	} else if ((_vm->getGameID() == GType_Ringworld) &&  (_vm->getFeatures() & GF_CD)) {
+		_gfxFontNumber = 50;
+		_gfxColors.background = 53;
+		_gfxColors.foreground = 0;
+		_fontColors.background = 51;
+		_fontColors.foreground = 54;
+		warning("TODO: Check the 3 additional colors");
 	} else {
 		_gfxFontNumber = 50;
 		_gfxColors.background = 53;

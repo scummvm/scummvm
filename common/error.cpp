@@ -67,9 +67,6 @@ static String errorToString(ErrorCode errorCode) {
 	case kEnginePluginNotSupportSaves:
 		return _s("Engine plugin does not support save states");
 
-	case kArgumentNotProcessed:
-		return _s("Command line argument not processed");
-
 	case kUnknownError:
 	default:
 		return _s("Unknown error");

@@ -100,8 +100,8 @@ void MadsAction::set() {
 			int selectedObject = _madsVm->scene()->getInterface()->getSelectedObject();
 			MadsObject *objEntry = _madsVm->globals()->getObject(selectedObject);
 			
-			_action.objectNameId = objEntry->descId;
-			_currentAction = objEntry->vocabList[_selectedRow].vocabId;
+			_action.objectNameId = objEntry->_descId;
+			_currentAction = objEntry->_vocabList[_selectedRow].vocabId;
 
 			// Set up the status text stirng
 			strcpy(_statusText, useStr);
@@ -119,7 +119,7 @@ void MadsAction::set() {
 					int selectedObject = _madsVm->scene()->getInterface()->getSelectedObject();
 					MadsObject *objEntry = _madsVm->globals()->getObject(selectedObject);
 
-					_currentAction = objEntry->vocabList[_selectedRow].vocabId;
+					_currentAction = objEntry->_vocabList[_selectedRow].vocabId;
 				}
 
 				appendVocab(_currentAction, true);
@@ -165,7 +165,7 @@ void MadsAction::set() {
 				if ((_actionMode2 == ACTMODE2_2) || (_actionMode2 == ACTMODE2_5)) {
 					// Get name from given inventory object
 					int objectId = _madsVm->scene()->getInterface()->getInventoryObject(_hotspotId);
-					_action.objectNameId = _madsVm->globals()->getObject(objectId)->descId;
+					_action.objectNameId = _madsVm->globals()->getObject(objectId)->_descId;
 				} else if (_hotspotId < hotspotCount) {
 					// Get name from scene hotspot
 					_action.objectNameId = (*_madsVm->scene()->getSceneResources().hotspots)[_hotspotId].getVocabID();
@@ -184,7 +184,7 @@ void MadsAction::set() {
 
 					if ((_v86F42 == 2) || (_v86F42 == 5)) {
 						int objectId = _madsVm->scene()->getInterface()->getInventoryObject(_hotspotId);
-						articleNum = _madsVm->globals()->getObject(objectId)->article;
+						articleNum = _madsVm->globals()->getObject(objectId)->_article;
 					} else if (_v86F3A < hotspotCount) {
 						articleNum = (*_madsVm->scene()->getSceneResources().hotspots)[_hotspotId].getArticle();
 					} else {
@@ -256,7 +256,7 @@ void MadsAction::startAction() {
 	_madsVm->_player.moveComplete();
 
 	_inProgress = true;
-	_v8453A = 0;
+	_v8453A = ABORTMODE_0;
 	_savedFields.selectedRow = _selectedRow;
 	_savedFields.articleNumber = _articleNumber;
 	_savedFields.actionMode = _actionMode;
@@ -271,7 +271,7 @@ void MadsAction::startAction() {
 	strcpy(_dialogTitle, _statusText);
 
 	if ((_savedFields.actionMode2 == ACTMODE2_4) && (savedV86F42 == 0))
-		_v8453A = true;
+		_v8453A = ABORTMODE_1;
 
 	_startWalkFlag = false;
 	int hotspotId = -1;

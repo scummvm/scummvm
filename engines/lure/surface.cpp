@@ -33,8 +33,8 @@
 
 namespace Lure {
 
-// These variables hold resources commonly used by the Surfaces, and must be initialised and freed
-// by the static Surface methods initialise and deinitailse
+// These variables hold resources commonly used by the Surfaces, and must be initialized and freed
+// by the static Surface methods initialize and deinitailse
 
 static MemoryBlock *int_font = NULL;
 static MemoryBlock *int_dialog_frame = NULL;
@@ -45,7 +45,7 @@ static const byte char8A[8] = {0x40, 0x20, 0x00, 0x90, 0x90, 0x90, 0x68, 0x00}; 
 static const byte char8D[8] = {0x80, 0x40, 0x00, 0xc0, 0x40, 0x40, 0x60, 0x00}; // accented `i
 static const byte char95[8] = {0x40, 0x20, 0x00, 0x60, 0x90, 0x90, 0x60, 0x00}; // accented `o
 
-void Surface::initialise() {
+void Surface::initialize() {
 	Disk &disk = Disk::getReference();
 	int_font = disk.getEntry(FONT_RESOURCE_ID);
 	int_dialog_frame = disk.getEntry(DIALOG_RESOURCE_ID);
@@ -80,7 +80,7 @@ void Surface::initialise() {
 	}
 }
 
-void Surface::deinitialise() {
+void Surface::deinitialize() {
 	delete int_font;
 	delete int_dialog_frame;
 }

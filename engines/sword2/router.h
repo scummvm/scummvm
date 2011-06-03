@@ -26,7 +26,7 @@
 #define SWORD2_ROUTER_H
 
 // This used to be a variable, but it was never set. Actually, it wasn't even
-// initialised!
+// initialized!
 //
 // Define this to force the use of slidy router (so solid path not used when
 // ending walk in ANY direction)

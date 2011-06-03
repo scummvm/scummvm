@@ -145,7 +145,7 @@ bool MoviePlayer::isMovieLoaded() {
 }
 
 bool MoviePlayer::isPaused() {
-	return _decoder.isPaused();
+	return _decoder.isPaused() || _decoder.endOfVideo();
 }
 
 float MoviePlayer::getScaleFactor() {

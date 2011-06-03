@@ -439,10 +439,8 @@ void DraciEngine::syncSoundSettings() {
 	_music->syncVolume();
 }
 
-const char *DraciEngine::getSavegameFile(int saveGameIdx) {
-	static char buffer[20];
-	sprintf(buffer, "draci.s%02d", saveGameIdx);
-	return buffer;
+Common::String DraciEngine::getSavegameFile(int saveGameIdx) {
+	return Common::String::format("draci.s%02d", saveGameIdx);
 }
 
 Common::Error DraciEngine::loadGameState(int slot) {
@@ -463,7 +461,7 @@ bool DraciEngine::canLoadGameStateCurrently() {
 		(_game->getLoopSubstatus() == kOuterLoop);
 }
 
-Common::Error DraciEngine::saveGameState(int slot, const char *desc) {
+Common::Error DraciEngine::saveGameState(int slot, const Common::String &desc) {
 	return saveSavegameData(slot, desc, *this);
 }
 

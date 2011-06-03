@@ -841,7 +841,7 @@ void GfxMgr::setAGIPal(int p0) {
 
 	// Use only the lowest 6 bits of each color component (Red, Green and Blue)
 	// because VGA used only 6 bits per color component (i.e. VGA had 18-bit colors).
-	// This should now be identical to the original AGIPAL-hack's behaviour.
+	// This should now be identical to the original AGIPAL-hack's behavior.
 	bool validVgaPalette = true;
 	for (int i = 0; i < 16 * 3; i++) {
 		if (_agipalPalette[i] >= (1 << 6)) {

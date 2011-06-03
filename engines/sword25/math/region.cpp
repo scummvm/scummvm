@@ -115,7 +115,7 @@ bool Region::init(const Polygon &contour, const Common::Array<Polygon> *pHoles) 
 	}
 
 
-	// Initialise bounding box
+	// Initialize bounding box
 	updateBoundingBox();
 
 	_valid = true;

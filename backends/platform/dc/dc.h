@@ -53,7 +53,7 @@ class DCHardware {
 };
 
 class DCCDManager : public DefaultAudioCDManager {
-  // Initialise the specified CD drive for audio playback.
+  // Initialize the specified CD drive for audio playback.
   bool openCD(int drive);
 
   // Poll cdrom status

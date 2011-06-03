@@ -874,7 +874,7 @@ GfxDialog::~GfxDialog() {
 void GfxDialog::setDefaults() {
 	GfxElement::setDefaults();
 
-	// Initialise the embedded graphics manager
+	// Initialize the embedded graphics manager
 	_gfxManager.setDefaults();
 
 	// Figure out a rect needed for all the added elements
@@ -1209,7 +1209,7 @@ int GfxFont::getStringWidth(const char *s) {
 /**
  * Returns the maximum number of characters for words that will fit into a given width
  *
- * @s Message to be analysed
+ * @s Message to be analyzed
  * @maxWidth Maximum allowed width
  */
 int GfxFont::getStringFit(const char *&s, int maxWidth) {
@@ -1255,7 +1255,7 @@ int GfxFont::getStringFit(const char *&s, int maxWidth) {
  * Fills out the passed rect with the dimensions of a given string word-wrapped to a
  * maximum specified width
  *
- * @s Message to be analysed
+ * @s Message to be analyzed
  * @bounds Rectangle to put output size into
  * @maxWidth Maximum allowed line width in pixels
  */

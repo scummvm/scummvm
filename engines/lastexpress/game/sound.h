@@ -347,8 +347,9 @@ private:
 	// Looping sound
 	void playLoopingSound();
 
-	// Sound cache
-	Common::List<SoundEntry *> _cache;
+	// Sound entries
+	Common::List<SoundEntry *> _soundList;    ///< List of all sound entries
+	Common::List<SoundEntry *> _soundCache;   ///< List of entries with a data buffer
 	void *_soundCacheData;
 
 	SoundEntry *getEntry(EntityIndex index);

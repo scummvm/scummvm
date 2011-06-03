@@ -18,14 +18,6 @@
 ** ===================================================================
 */
 
-#if defined(__ANDROID__)
-/* Android is missing strcoll().
-** For more information, refer to:
-** http://www.damonkohler.com/2008/12/lua-on-android.html
-*/
-#define strcoll strcmp
-#endif
-
 
 /*
 @@ LUA_ANSI controls the use of non-ansi features.
@@ -357,7 +349,7 @@
 /*
 @@ LUA_COMPAT_LSTR controls compatibility with old long string nesting
 @* facility.
-** CHANGE it to 2 if you want the old behaviour, or undefine it to turn
+** CHANGE it to 2 if you want the old behavior, or undefine it to turn
 ** off the advisory error when nesting [[...]].
 */
 #define LUA_COMPAT_LSTR		1

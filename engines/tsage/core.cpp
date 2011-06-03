@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "engines/engine.h"
 #include "graphics/palette.h"
 #include "tsage/tsage.h"
@@ -1687,6 +1688,7 @@ SceneObject::SceneObject() : SceneHotspot() {
 	_flags |= OBJFLAG_PANES;
 
 	_frameChange = 0;
+	_visage = 0;
 }
 
 SceneObject::SceneObject(const SceneObject &so) : SceneHotspot() {

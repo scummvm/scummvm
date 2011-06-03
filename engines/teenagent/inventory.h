@@ -51,37 +51,40 @@ public:
 
 	bool processEvent(const Common::Event &event);
 
-	InventoryObject *selectedObject() { return selected_obj; }
-	void resetSelectedObject() { selected_obj = NULL; }
+	InventoryObject *selectedObject() { return _selectedObj; }
+	void resetSelectedObject() { _selectedObj = NULL; }
 
 private:
 	TeenAgentEngine *_engine;
-	Surface background;
-	byte *items;
-	uint offset[93];
+	Surface _background;
+	byte *_items;
+	uint _offset[93];
 
-	Common::Array<InventoryObject> objects;
-	byte *inventory;
+	Common::Array<InventoryObject> _objects;
+	byte *_inventory;
+
 	struct Item {
-		Animation animation;
-		Surface surface;
-		Rect rect;
-		bool hovered;
+		Animation _animation;
+		Surface _surface;
+		Rect _rect;
+		bool _hovered;
 
-		Item() : hovered(false) {}
+		Item() : _hovered(false) {}
 		void free();
 		void load(Inventory *inventory, uint item_id);
 		void backgroundEffect(Graphics::Surface *s);
 		void render(Inventory *inventory, uint item_id, Graphics::Surface *surface, int delta);
-	} graphics[24];
+	};
+	
+	Item _graphics[24];
 
 	bool _active;
-	Common::Point mouse;
-	int hovered;
+	Common::Point _mouse;
 	
 	bool tryObjectCallback(InventoryObject *obj);
 
-	InventoryObject *hovered_obj, *selected_obj;
+	InventoryObject *_hoveredObj;
+	InventoryObject *_selectedObj;
 };
 
 } // End of namespace TeenAgent

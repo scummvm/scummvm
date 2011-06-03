@@ -603,10 +603,7 @@ bool Resources::dumpResource(const Resource &resource, uint16 id,
 
 	Common::String fileName = _fileBase;
 
-	char idStr[7];
-
-	snprintf(idStr, 7, "_%05d", id);
-	fileName += idStr;
+	fileName += Common::String::format("_%05d", id);
 	fileName += ".";
 	fileName += ext;
 

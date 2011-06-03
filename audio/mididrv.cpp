@@ -197,7 +197,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	// detected since they are hard coded and cannot be disabled.
 	for (int l = (flags & (MDT_PREFER_GM | MDT_PREFER_MT32)) ? 1 : 0; l < 2; ++l) {
 		if ((flags & MDT_MIDI) && (l == 1)) {
-			// If a preferred MT32 or GM device has been selected that device gets returned
+			// If a preferred MT32 or GM device has been selected that device gets returned.
 			if (flags & MDT_PREFER_MT32)
 				hdl = getDeviceHandle(ConfMan.get("mt32_device"));
 			else if (flags & MDT_PREFER_GM)
@@ -207,20 +207,20 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 
 			const MusicType type = getMusicType(hdl);
 
-			// If have a "Don't use GM/MT-32" setting we skip this part and jump
+			// If we have a "Don't use GM/MT-32" setting we skip this part and jump
 			// to AdLib, PC Speaker etc. detection right away.
 			if (type != MT_NULL) {
 				if (type != MT_AUTO && type != MT_INVALID) {
 					if (flags & MDT_PREFER_MT32)
-						// If we have a preferred MT32 device we disable the gm/mt32 mapping (more about this in mididrv.h)
+						// If we have a preferred MT32 device we disable the gm/mt32 mapping (more about this in mididrv.h).
 						_forceTypeMT32 = true;
 
 					return hdl;
 				}
 
-				// If we have no specific device selected (neither in the scummvm nor in the game domain)
-				// and no preferred MT32 or GM device selected we arrive here.
-				// If MT32 is preferred we try for the first available device with music type 'MT_MT32' (usually the mt32 emulator)
+				// If no specific device is selected (neither in the scummvm nor in the game domain)
+				// and there is no preferred MT32 or GM device selected either we arrive here.
+				// If MT32 is preferred we try for the first available device with music type 'MT_MT32' (usually the mt32 emulator).
 				if (flags & MDT_PREFER_MT32) {
 					for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
 						MusicDevices i = (**m)->getDevices();
@@ -260,7 +260,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		else if (flags & MDT_APPLEIIGS)
 			tp = MT_APPLEIIGS;
 		else if (l == 0)
-			// if we haven't tried to find a MIDI device yet we do this now.
+			// If we haven't tried to find a MIDI device yet we do this now.
 			continue;
 		else
 			tp = MT_AUTO;
@@ -292,7 +292,7 @@ MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &ident
 	const MusicPlugin::List p = MusicMan.getPlugins();
 
 	if (p.begin() == p.end())
-		error("Music plugins must be loaded prior to calling this method");
+		error("MidiDriver::getDeviceHandle: Music plugins must be loaded prior to calling this method");
 
 	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
 		MusicDevices i = (**m)->getDevices();

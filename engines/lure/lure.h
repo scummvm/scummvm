@@ -65,7 +65,7 @@ struct LureGameDescription;
 
 class LureEngine : public Engine {
 private:
-	bool _initialised;
+	bool _initialized;
 	int _gameToLoad;
 	uint8 _saveVersion;
 	Disk *_disk;
@@ -123,7 +123,7 @@ public:
 	virtual Common::Error loadGameState(int slot) {
 		return loadGame(slot) ? Common::kReadingFailed : Common::kNoError;
 	}
-	virtual Common::Error saveGameState(int slot, const char *desc) {
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) {
 		Common::String s(desc);
 		return saveGame(slot, s) ? Common::kReadingFailed : Common::kNoError;
 	}

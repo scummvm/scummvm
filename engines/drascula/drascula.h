@@ -588,7 +588,7 @@ public:
 	void quadrant_2();
 	void quadrant_3();
 	void quadrant_4();
-	void saveGame(char[]);
+	void saveGame(const char *gameName);
 	void increaseFrameNum();
 	int whichObject();
 	bool checkMenuFlags();

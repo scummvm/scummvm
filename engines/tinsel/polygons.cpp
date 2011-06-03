@@ -1275,13 +1275,13 @@ HPOLYGON GetPolyHandle(int i) {
 
 // **************************************************************************
 //
-// Code called to initialise or wrap up a scene:
+// Code called to initialize or wrap up a scene:
 //
 // **************************************************************************
 
 /**
  * Called at the start of a scene, when all polygons have been
- * initialised, to work out which paths are adjacent to which.
+ * initialized, to work out which paths are adjacent to which.
  */
 static int DistinctCorners(HPOLYGON hp1, HPOLYGON hp2) {
 	const POLYGON *pp1, *pp2;
@@ -1593,7 +1593,7 @@ static PPOLYGON GetPolyEntry() {
 
 /**
  * Variation of  GetPolyEntry from Tinsel 1 that splits up getting a new
- * polygon structure from initialising it
+ * polygon structure from initializing it
  */
 static PPOLYGON CommonInits(PTYPE polyType, int pno, const Poly &ptp, bool bRestart) {
 	int i;
@@ -1657,14 +1657,14 @@ static void PseudoCenter(POLYGON *p) {
 }
 
 /**
- * Initialise an EXIT polygon.
+ * Initialize an EXIT polygon.
  */
 static void InitExit(const Poly &ptp, int pno, bool bRestart) {
 	CommonInits(EXIT, pno, ptp, bRestart);
 }
 
 /**
- * Initialise a PATH or NPATH polygon.
+ * Initialize a PATH or NPATH polygon.
  */
 static void InitPath(const Poly &ptp, bool NodePath, int pno, bool bRestart) {
 	PPOLYGON p = CommonInits(PATH, pno, ptp, bRestart);
@@ -1676,14 +1676,14 @@ static void InitPath(const Poly &ptp, bool NodePath, int pno, bool bRestart) {
 
 
 /**
- * Initialise a BLOCKING polygon.
+ * Initialize a BLOCKING polygon.
  */
 static void InitBlock(const Poly &ptp, int pno, bool bRestart) {
 	CommonInits(BLOCK, pno, ptp, bRestart);
 }
 
 /**
- * Initialise an extra BLOCKING polygon related to a moving actor.
+ * Initialize an extra BLOCKING polygon related to a moving actor.
  * The width of the polygon depends on the width of the actor which is
  * trying to walk through the actor you first thought of.
  * This is for dynamic blocking.
@@ -1718,7 +1718,7 @@ HPOLYGON InitExtraBlock(PMOVER ca, PMOVER ta) {
 }
 
 /**
- * Initialise an EFFECT polygon.
+ * Initialize an EFFECT polygon.
  */
 static void InitEffect(const Poly &ptp, int pno, bool bRestart) {
 	CommonInits(EFFECT, pno, ptp, bRestart);
@@ -1726,7 +1726,7 @@ static void InitEffect(const Poly &ptp, int pno, bool bRestart) {
 
 
 /**
- * Initialise a REFER polygon.
+ * Initialize a REFER polygon.
  */
 static void InitRefer(const Poly &ptp, int pno, bool bRestart) {
 	PPOLYGON p = CommonInits(REFER, pno, ptp, bRestart);
@@ -1736,7 +1736,7 @@ static void InitRefer(const Poly &ptp, int pno, bool bRestart) {
 
 
 /**
- * Initialise a TAG polygon.
+ * Initialize a TAG polygon.
  */
 static void InitTag(const Poly &ptp, int pno, bool bRestart) {
 	CommonInits(TAG, pno, ptp, bRestart);
@@ -1781,7 +1781,7 @@ static void KillDeadPolygons() {
 }
 
 /**
- * Called at the start of a scene to initialise the polys in that scene.
+ * Called at the start of a scene to initialize the polys in that scene.
  */
 void InitPolygons(SCNHANDLE ph, int numPoly, bool bRestart) {
 	pHandle = ph;

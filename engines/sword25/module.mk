@@ -24,7 +24,7 @@ MODULE_OBJS := \
 	gfx/text.o \
 	gfx/timedrenderobject.o \
 	gfx/image/art.o \
-	gfx/image/pngloader.o \
+	gfx/image/imgloader.o \
 	gfx/image/renderedimage.o \
 	gfx/image/swimage.o \
 	gfx/image/vectorimage.o \
@@ -60,7 +60,6 @@ MODULE_OBJS := \
 	util/lua/ldblib.o \
 	util/lua/ldebug.o \
 	util/lua/ldo.o \
-	util/lua/ldump.o \
 	util/lua/lfunc.o \
 	util/lua/lgc.o \
 	util/lua/linit.o \
@@ -79,10 +78,9 @@ MODULE_OBJS := \
 	util/lua/ltable.o \
 	util/lua/ltablib.o \
 	util/lua/ltm.o \
-	util/lua/lundump.o \
 	util/lua/lvm.o \
 	util/lua/lzio.o \
-	util/lua/print.o \
+	util/lua/scummvm_file.o \
 	util/pluto/pdep.o \
 	util/pluto/pluto.o \
 	util/pluto/plzio.o

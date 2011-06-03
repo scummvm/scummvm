@@ -1,15 +1,49 @@
 ScummVM Windows CE FAQ
-Last updated: $Date$
-Release version: 1.1.0
+Last updated: 2011-05-27
+Release version: 1.3.0
 ------------------------------------------------------------------------
 
 New in this version
 -------------------
 
-1.1.1
+1.3.0:
+This is the first official Windows CE release since 1.1.1.
+
+The following new engines are now included (changes since last WinCE release):
+ - Draci Engine (Dragon History)
+ - Hugo Engine (Hugo Trilogy)
+ - Mohawk Engine (Myst, Riven, Living Book games & Where in Time is Carmen
+   Sandiego?)
+ - SCI Engine (Sierra SCI games, see main README for a list of supported games)
+ - Toon Engine (Toonstruck)
+
+Also, there are now 4 binaries in this distribution, a single executable
+which contains all engines (for devices with enough memory) and 3 smaller
+binaries which contain only some of the engines. The following lists all
+executables and the engines they contain:
+
+scummvm.exe:
+ - all supported engines
+scummvm1.exe:
+ - scumm, agi, cruise, draci, lure, queen, sky, sword1, tinsel, touche
+scummvm2.exe:
+ - agos, cine, drascula, gob, groovie, kyra, made, parallaction, saga,
+   teenagent, tucker
+scummvm3.exe:
+ - hugo, mohawk, sci, sword2, toon
+
+There are no other port specific changes.
+
+1.2.1:
+(Note: No official 1.2.1 release)
+
+1.2.0:
+(Note: No official 1.2.0 release)
+
+1.1.1:
 Fix to the Normal2xAspect scaler that was causing crashes.
 
-1.1.0
+1.1.0:
 The TeenAgent engine is now included, but there are no other port specific
 changes since 1.0.0.
 

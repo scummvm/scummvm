@@ -20,6 +20,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include <romfs.h>
 
 #include <malloc.h> // Required for memalign

@@ -43,22 +43,22 @@ Inventory::Inventory(TeenAgentEngine *engine) {
 		if (!s)
 			error("no inventory background");
 		debug(0, "loading inventory background...");
-		background.load(s, Surface::kTypeOns);
+		_background.load(s, Surface::kTypeOns);
 	}
 
 	uint32 items_size = varia.getSize(4);
 	if (items_size == 0)
 		error("invalid inventory items size");
 	debug(0, "loading items, size: %u", items_size);
-	items = new byte[items_size];
-	varia.read(4, items, items_size);
+	_items = new byte[items_size];
+	varia.read(4, _items, items_size);
 
-	byte offsets = items[0];
+	byte offsets = _items[0];
 	assert(offsets == 92);
 	for (byte i = 0; i < offsets; ++i) {
-		offset[i] = READ_LE_UINT16(items + i * 2 + 1);
+		_offset[i] = READ_LE_UINT16(_items + i * 2 + 1);
 	}
-	offset[92] = items_size; 
+	_offset[92] = items_size; 
 
 	Resources *res = Resources::instance();
 	for (byte i = 0; i <= 92; ++i) {
@@ -66,31 +66,31 @@ Inventory::Inventory(TeenAgentEngine *engine) {
 		uint16 obj_addr = res->dseg.get_word(0xc4a4 + i * 2);
 		if (obj_addr != 0)
 			io.load(res->dseg.ptr(obj_addr));
-		objects.push_back(io);
+		_objects.push_back(io);
 	}
 
-	inventory = res->dseg.ptr(0xc48d);
+	_inventory = res->dseg.ptr(0xc48d);
 
 	for (int y = 0; y < 4; ++y)
 		for (int x = 0; x < 6; ++x) {
 			int i = y * 6 + x;
-			graphics[i].rect.left = 28 + 45 * x - 1;
-			graphics[i].rect.top = 23 + 31 * y - 1;
-			graphics[i].rect.right = graphics[i].rect.left + 40;
-			graphics[i].rect.bottom = graphics[i].rect.top + 26;
+			_graphics[i]._rect.left = 28 + 45 * x - 1;
+			_graphics[i]._rect.top = 23 + 31 * y - 1;
+			_graphics[i]._rect.right = _graphics[i]._rect.left + 40;
+			_graphics[i]._rect.bottom = _graphics[i]._rect.top + 26;
 		}
 
 	varia.close();
-	hovered_obj = selected_obj = NULL;
+	_hoveredObj = _selectedObj = NULL;
 }
 
 Inventory::~Inventory() {
-	delete[] items;
+	delete[] _items;
 }
 
 bool Inventory::has(byte item) const {
 	for (int i = 0; i < 24; ++i) {
-		if (inventory[i] == item)
+		if (_inventory[i] == item)
 			return true;
 	}
 	return false;
@@ -100,32 +100,32 @@ void Inventory::remove(byte item) {
 	debug(0, "removing %u from inventory", item);
 	int i;
 	for (i = 0; i < 24; ++i) {
-		if (inventory[i] == item) {
+		if (_inventory[i] == item) {
 			break;
 		}
 	}
 	for (; i < 23; ++i) {
-		inventory[i] = inventory[i + 1];
-		graphics[i].free();
+		_inventory[i] = _inventory[i + 1];
+		_graphics[i].free();
 	}
-	inventory[23] = 0;
-	graphics[23].free();
+	_inventory[23] = 0;
+	_graphics[23].free();
 }
 
 void Inventory::clear() {
 	debug(0, "clearing inventory");
 	for (int i = 0; i < 24; ++i) {
-		inventory[i] = 0;
-		graphics[i].free();
+		_inventory[i] = 0;
+		_graphics[i].free();
 	}
 }
 
 void Inventory::reload() {
 	for (int i = 0; i < 24; ++i) {
-		graphics[i].free();
-		uint item = inventory[i];
+		_graphics[i].free();
+		uint item = _inventory[i];
 		if (item != 0)
-			graphics[i].load(this, item);
+			_graphics[i].load(this, item);
 	}
 }
 
@@ -134,8 +134,8 @@ void Inventory::add(byte item) {
 		return;
 	debug(0, "adding %u to inventory", item);
 	for (int i = 0; i < 24; ++i) {
-		if (inventory[i] == 0) {
-			inventory[i] = item;
+		if (_inventory[i] == 0) {
+			_inventory[i] = item;
 			return;
 		}
 	}
@@ -165,27 +165,27 @@ bool Inventory::processEvent(const Common::Event &event) {
 		if (!_active) {
 			if (event.mouse.y < 5)
 				activate(true);
-			mouse = event.mouse;
+			_mouse = event.mouse;
 			return false;
 		}
 
-		if (event.mouse.x < 17 || event.mouse.x >= 303 || (event.mouse.y - mouse.y > 0 && event.mouse.y >= 153)) {
+		if (event.mouse.x < 17 || event.mouse.x >= 303 || (event.mouse.y - _mouse.y > 0 && event.mouse.y >= 153)) {
 			activate(false);
-			mouse = event.mouse;
+			_mouse = event.mouse;
 			return false;
 		}
 
-		mouse = event.mouse;
-		hovered_obj = NULL;
+		_mouse = event.mouse;
+		_hoveredObj = NULL;
 
 		for (int i = 0; i < 24; ++i) {
-			byte item = inventory[i];
+			byte item = _inventory[i];
 			if (item == 0)
 				continue;
 
-			graphics[i].hovered = graphics[i].rect.in(mouse);
-			if (graphics[i].hovered)
-				hovered_obj = &objects[item];
+			_graphics[i]._hovered = _graphics[i]._rect.in(_mouse);
+			if (_graphics[i]._hovered)
+				_hoveredObj = &_objects[item];
 		}
 		return true;
 
@@ -194,22 +194,22 @@ bool Inventory::processEvent(const Common::Event &event) {
 		if (!_active)
 			return false;
 
-		if (hovered_obj == NULL)
+		if (_hoveredObj == NULL)
 			return true;
 
-		debug(0, "lclick on %u:%s", hovered_obj->id, hovered_obj->name.c_str());
+		debug(0, "lclick on %u:%s", _hoveredObj->id, _hoveredObj->name.c_str());
 
-		if (selected_obj == NULL) {
-			if (tryObjectCallback(hovered_obj))
+		if (_selectedObj == NULL) {
+			if (tryObjectCallback(_hoveredObj))
 				return true;
 			//activate(false);
-			int w = res->font7.render(NULL, 0, 0, hovered_obj->description, 0xd1);
-			_engine->scene->displayMessage(hovered_obj->description, 0xd1, Common::Point((320 - w) / 2, 162));
+			int w = res->font7.render(NULL, 0, 0, _hoveredObj->description, 0xd1);
+			_engine->scene->displayMessage(_hoveredObj->description, 0xd1, Common::Point((320 - w) / 2, 162));
 			return true;
 		}
 
-		int id1 = selected_obj->id;
-		int id2 = hovered_obj->id;
+		int id1 = _selectedObj->id;
+		int id2 = _hoveredObj->id;
 		if (id1 == id2)
 			return true;
 
@@ -246,15 +246,15 @@ bool Inventory::processEvent(const Common::Event &event) {
 		if (!_active)
 			return false;
 
-		if (hovered_obj != NULL) {
-			debug(0, "rclick object %u:%s", hovered_obj->id, hovered_obj->name.c_str());
-			if (hovered_obj->id != 51 && tryObjectCallback(hovered_obj)) //do not process callback for banknote on r-click
+		if (_hoveredObj != NULL) {
+			debug(0, "rclick object %u:%s", _hoveredObj->id, _hoveredObj->name.c_str());
+			if (_hoveredObj->id != 51 && tryObjectCallback(_hoveredObj)) //do not process callback for banknote on r-click
 				return true;
 		}
 
-		selected_obj = hovered_obj;
-		if (selected_obj)
-			debug(0, "selected object %s", selected_obj->name.c_str());
+		_selectedObj = _hoveredObj;
+		if (_selectedObj)
+			debug(0, "selected object %s", _selectedObj->name.c_str());
 		return true;
 
 	case Common::EVENT_KEYDOWN:
@@ -279,13 +279,13 @@ bool Inventory::processEvent(const Common::Event &event) {
 
 
 void Inventory::Item::free() {
-	animation.free();
-	surface.free();
+	_animation.free();
+	_surface.free();
 }
 
 void Inventory::Item::backgroundEffect(Graphics::Surface *s) {
-	uint w = rect.right - rect.left, h = rect.bottom - rect.top;
-	byte *line = (byte *)s->getBasePtr(rect.left, rect.top);
+	uint w = _rect.right - _rect.left, h = _rect.bottom - _rect.top;
+	byte *line = (byte *)s->getBasePtr(_rect.left, _rect.top);
 	for(uint y = 0; y < h; ++y, line += s->pitch) {
 		byte *dst = line;
 		for(uint x = 0; x < w; ++x, ++dst) {
@@ -295,54 +295,54 @@ void Inventory::Item::backgroundEffect(Graphics::Surface *s) {
 }
 
 void Inventory::Item::load(Inventory *inventory, uint item_id) {
-	InventoryObject *obj = &inventory->objects[item_id];
+	InventoryObject *obj = &inventory->_objects[item_id];
 	if (obj->animated) {
-		if (animation.empty()) {
-			debug(0, "loading item %d from offset %x", obj->id, inventory->offset[obj->id - 1]);
-			Common::MemoryReadStream s(inventory->items + inventory->offset[obj->id - 1], inventory->offset[obj->id] - inventory->offset[obj->id - 1]);
-			animation.load(&s, Animation::kTypeInventory);
+		if (_animation.empty()) {
+			debug(0, "loading item %d from offset %x", obj->id, inventory->_offset[obj->id - 1]);
+			Common::MemoryReadStream s(inventory->_items + inventory->_offset[obj->id - 1], inventory->_offset[obj->id] - inventory->_offset[obj->id - 1]);
+			_animation.load(&s, Animation::kTypeInventory);
 		}
 	} else {
-		if (surface.empty()) {
-			debug(0, "loading item %d from offset %x", obj->id, inventory->offset[obj->id - 1]);
-			Common::MemoryReadStream s(inventory->items + inventory->offset[obj->id - 1], inventory->offset[obj->id] - inventory->offset[obj->id - 1]);
-			surface.load(&s, Surface::kTypeOns);
+		if (_surface.empty()) {
+			debug(0, "loading item %d from offset %x", obj->id, inventory->_offset[obj->id - 1]);
+			Common::MemoryReadStream s(inventory->_items + inventory->_offset[obj->id - 1], inventory->_offset[obj->id] - inventory->_offset[obj->id - 1]);
+			_surface.load(&s, Surface::kTypeOns);
 		}
 	}
 }
 
 void Inventory::Item::render(Inventory *inventory, uint item_id, Graphics::Surface *dst, int delta) {
-	InventoryObject *obj = &inventory->objects[item_id];
+	InventoryObject *obj = &inventory->_objects[item_id];
 	Resources *res = Resources::instance();
 
 	backgroundEffect(dst);
-	rect.render(dst, hovered ? 233 : 234);
+	_rect.render(dst, _hovered ? 233 : 234);
 	load(inventory, item_id);
 	if (obj->animated) {
-		if (hovered) {
-			Surface *s = animation.currentFrame(delta);
-			if (animation.currentIndex() == 0)
-				s = animation.currentFrame(1); //force index to be 1 here
+		if (_hovered) {
+			Surface *s = _animation.currentFrame(delta);
+			if (_animation.currentIndex() == 0)
+				s = _animation.currentFrame(1); //force index to be 1 here
 			if (s != NULL)
-				s->render(dst, rect.left + 1, rect.top + 1);
+				s->render(dst, _rect.left + 1, _rect.top + 1);
 		} else {
-			Surface *s = animation.firstFrame();
+			Surface *s = _animation.firstFrame();
 			if (s != NULL)
-				s->render(dst, rect.left + 1, rect.top + 1);
+				s->render(dst, _rect.left + 1, _rect.top + 1);
 		}
 	} else {
-		surface.render(dst, rect.left + 1, rect.top + 1);
+		_surface.render(dst, _rect.left + 1, _rect.top + 1);
 	}
 
 	Common::String name;
-	if (inventory->selected_obj) {
-		name = inventory->selected_obj->name;
+	if (inventory->_selectedObj) {
+		name = inventory->_selectedObj->name;
 		name += " & ";
 	}
-	if (inventory->selected_obj != inventory->hovered_obj)
+	if (inventory->_selectedObj != inventory->_hoveredObj)
 		name += obj->name;
 
-	if (hovered && inventory->_engine->scene->getMessage().empty()) {
+	if (_hovered && inventory->_engine->scene->getMessage().empty()) {
 		int w = res->font7.render(NULL, 0, 0, name, 0xd1, true);
 		res->font7.render(dst, (320 - w) / 2, 180, name, 0xd1, true);
 	}
@@ -352,17 +352,17 @@ void Inventory::render(Graphics::Surface *surface, int delta) {
 	if (!_active)
 		return;
 
-	background.render(surface);
+	_background.render(surface);
 
 	for (int y = 0; y < 4; y++) {
 		for (int x = 0; x < 6; x++) {
 			int idx = x + 6 * y;
-			byte item = inventory[idx];
+			byte item = _inventory[idx];
 			if (item == 0)
 				continue;
 
 			//debug(0, "%d,%d -> %u", x0, y0, item);
-			graphics[idx].render(this, item, surface, delta);
+			_graphics[idx].render(this, item, surface, delta);
 		}
 	}
 }

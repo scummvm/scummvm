@@ -126,7 +126,7 @@ public:
 	bool canLoadGameStateCurrently() { return true; }
 	bool canSaveGameStateCurrently() { return true; }
 	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const char *desc);
+	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool hasFeature(EngineFeature f) const;
 
 	typedef void (*TimerProc)(MohawkEngine_Riven *vm);

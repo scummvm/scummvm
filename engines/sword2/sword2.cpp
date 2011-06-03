@@ -76,7 +76,7 @@ static const GameSettings sword2_settings[] = {
 class Sword2MetaEngine : public MetaEngine {
 public:
 	virtual const char *getName() const {
-		return "Broken Sword II";
+		return "Sword2";
 	}
 	virtual const char *getOriginalCopyright() const {
 		return "Broken Sword Games (C) Revolution";
@@ -210,11 +210,8 @@ SaveStateList Sword2MetaEngine::listSaves(const char *target) const {
 int Sword2MetaEngine::getMaximumSaveSlot() const { return 999; }
 
 void Sword2MetaEngine::removeSaveState(const char *target, int slot) const {
-	char extension[6];
-	snprintf(extension, sizeof(extension), ".%03d", slot);
-
 	Common::String filename = target;
-	filename += extension;
+	filename += Common::String::format(".%03d", slot);
 
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
@@ -425,7 +422,7 @@ Common::Error Sword2Engine::run() {
 	setInputEventFilter(RD_LEFTBUTTONUP | RD_RIGHTBUTTONUP | RD_WHEELUP | RD_WHEELDOWN);
 
 	setupPersistentResources();
-	initialiseFontResourceFlags();
+	initializeFontResourceFlags();
 
 	if (_features & GF_DEMO)
 		_logic->writeVar(DEMO, 1);
@@ -463,7 +460,7 @@ Common::Error Sword2Engine::run() {
 	} else
 		startGame();
 
-	_screen->initialiseRenderCycle();
+	_screen->initializeRenderCycle();
 
 	while (1) {
 		_debugger->onFrame();
@@ -776,8 +773,8 @@ uint32 Sword2Engine::getMillis() {
 	return _system->getMillis();
 }
 
-Common::Error Sword2Engine::saveGameState(int slot, const char *desc) {
-	uint32 saveVal = saveGame(slot, (const byte *)desc);
+Common::Error Sword2Engine::saveGameState(int slot, const Common::String &desc) {
+	uint32 saveVal = saveGame(slot, (const byte *)desc.c_str());
 
 	if (saveVal == SR_OK)
 		return Common::kNoError;

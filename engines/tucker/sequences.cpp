@@ -115,31 +115,31 @@ void TuckerEngine::handleCreditsSequence() {
 			_fadePaletteCounter = 0;
 			clearSprites();
 			++num;
-			char filename[40];
+			Common::String filename;
 			if (num == 6) {
 				for (int i = 0; i < 16; ++i) {
-					snprintf(filename, sizeof(filename), "cogs%04d.pcx", i + 1);
-					loadImage(filename, imgBuf + i * 64000, 2);
+					filename = Common::String::format("cogs%04d.pcx", i + 1);
+					loadImage(filename.c_str(), imgBuf + i * 64000, 2);
 				}
 			} else {
 				switch (num) {
 				case 1:
-					strcpy(filename, "loc75.pcx");
+					filename = "loc75.pcx";
 					break;
 				case 2:
-					strcpy(filename, "loc76.pcx");
+					filename = "loc76.pcx";
 					break;
 				case 3:
-					strcpy(filename, "paper-3.pcx");
+					filename = "paper-3.pcx";
 					break;
 				case 4:
-					strcpy(filename, "loc77.pcx");
+					filename = "loc77.pcx";
 					break;
 				case 5:
-					strcpy(filename, "loc78.pcx");
+					filename = "loc78.pcx";
 					break;
 				}
-				loadImage(filename, _quadBackgroundGfxBuf, 2);
+				loadImage(filename.c_str(), _quadBackgroundGfxBuf, 2);
 			}
 			_spritesCount = _creditsSequenceSpriteCounts[num];
 			++_flagsTable[236];
@@ -584,8 +584,7 @@ Audio::RewindableAudioStream *AnimationSequencePlayer::loadSound(int index, Anim
 	if (stream)
 		return stream;
 
-	char fileName[64];
-	snprintf(fileName, sizeof(fileName), "audio/%s", _audioFileNamesTable[index]);
+	Common::String fileName = Common::String::format("audio/%s", _audioFileNamesTable[index]);
 	Common::File f;
 	if (f.open(fileName)) {
 		int size = 0, rate = 0;

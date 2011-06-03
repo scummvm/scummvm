@@ -237,7 +237,7 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 			pos += 4;
 			_num_tracks = 1;
 		} else if (memcmp(pos, "XDIR", 4)) {
-			// Not an XMIDI that we recognise
+			// Not an XMIDI that we recognize
 			warning("Expected 'XDIR' but found '%c%c%c%c'", pos[0], pos[1], pos[2], pos[3]);
 			return false;
 		} else {

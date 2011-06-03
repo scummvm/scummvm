@@ -49,9 +49,7 @@ public:
 	}
 
 	SaveStateDescriptor(int s, const Common::String &d) : _thumbnail() {
-		char buf[16];
-		sprintf(buf, "%d", s);
-		setVal("save_slot", buf);
+		setVal("save_slot", Common::String::format("%d", s));
 		setVal("description", d);
 	}
 

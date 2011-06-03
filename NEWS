@@ -5,7 +5,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  SDL ports:
    - Added support for OpenGL (GSoC Task).
 
-1.3.0 (????-??-??)
+1.3.0 (2011-05-28)
  New Games:
    - Added support for Backyard Baseball.
    - Added support for Backyard Baseball 2001.
@@ -1123,7 +1123,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added MMX i386 assembler versions of the HQ2x and HQ3x scalers.
    - Added 'Extra Path' option allows for a searching an additional datafile
      location (for reencoded cutscenes and the like).
-   - Disabled Alt-x and Ctrl-z quit keys in favour of Ctrl-q on unix like
+   - Disabled Alt-x and Ctrl-z quit keys in favor of Ctrl-q on unix like
      operating systems, like Linux (exception: Mac OS X still uses Cmd-q).
    - Separate smaller font for the console, allowing for more visible
      information, for example in the SCUMM debugger.

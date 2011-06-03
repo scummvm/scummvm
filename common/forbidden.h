@@ -125,6 +125,27 @@
 #endif
 
 
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getc
+#undef getc
+#define getc(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getchar
+#undef getchar
+#define getchar()	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_putc
+#undef putc
+#define putc(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_putchar
+#undef putchar
+#define putchar(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_setjmp
 #undef setjmp
 #define setjmp(a)	FORBIDDEN_SYMBOL_REPLACEMENT
@@ -138,6 +159,31 @@
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_system
 #undef system
 #define system(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_exit
+#undef exit
+#define exit(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getenv
+#undef getenv
+#define getenv(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_putenv
+#undef putenv
+#define putenv(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_setenv
+#undef setenv
+#define setenv(a,b,c)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_unsetenv
+#undef unsetenv
+#define unsetenv(a)	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
 
@@ -278,6 +324,27 @@
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_srandom
 #undef srandom
 #define srandom(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_stricmp
+#undef stricmp
+#define stricmp(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strnicmp
+#undef strnicmp
+#define strnicmp(a,b,c)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strcasecmp
+#undef strcasecmp
+#define strcasecmp(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strncasecmp
+#undef strncasecmp
+#define strncasecmp(a,b,c)	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
 

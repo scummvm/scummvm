@@ -157,15 +157,15 @@ struct NewFontData;
 
 class NewFont : public Font {
 protected:
-	FontDesc desc;
-	NewFontData *font;
+	FontDesc _desc;
+	NewFontData *_font;
 
 public:
-	NewFont(const FontDesc &d, NewFontData *font_ = 0) : desc(d), font(font_) {}
+	NewFont(const FontDesc &desc, NewFontData *font = 0) : _desc(desc), _font(font) {}
 	~NewFont();
 
-	virtual int getFontHeight() const { return desc.height; }
-	virtual int getMaxCharWidth() const { return desc.maxwidth; }
+	virtual int getFontHeight() const { return _desc.height; }
+	virtual int getMaxCharWidth() const { return _desc.maxwidth; }
 
 	virtual int getCharWidth(byte chr) const;
 	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const;

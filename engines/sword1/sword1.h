@@ -110,7 +110,7 @@ protected:
 
 	Common::Error loadGameState(int slot);
 	bool canLoadGameStateCurrently();
-	Common::Error saveGameState(int slot, const char *desc);
+	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool canSaveGameStateCurrently();
 
 private:

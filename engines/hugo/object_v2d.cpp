@@ -58,7 +58,7 @@ ObjectHandler_v2d::~ObjectHandler_v2d() {
 void ObjectHandler_v2d::updateImages() {
 	debugC(5, kDebugObject, "updateImages");
 
-	// Initialise the index array to visible objects in current screen
+	// Initialize the index array to visible objects in current screen
 	int  num_objs = 0;
 	byte objindex[kMaxObjNumb];                     // Array of indeces to objects
 

@@ -639,10 +639,9 @@ void ScriptInterpreter::dumpScript(int16 objectIndex, int *opcodeStats, int *ext
 			const char *sig = _commands[opcode - 1].sig;
 			int valueType; /* 0: dec; 1: hex; 2: extended function */
 			int16 value;
-			char tempStr[32];
 			opcodeStats[opcode - 1]++;
-			snprintf(tempStr, 32, "[%04X] ", (uint16)(code - codeStart - 1));
-			codeLine += tempStr;
+
+			codeLine += Common::String::format("[%04X] ", (uint16)(code - codeStart - 1));
 			codeLine += desc;
 			for (; *sig != '\0'; sig++) {
 				codeLine += " ";
@@ -670,19 +669,21 @@ void ScriptInterpreter::dumpScript(int16 objectIndex, int *opcodeStats, int *ext
 					value = *code++;
 					break;
 				}
+
+				Common::String tempStr;
 				switch (valueType) {
 				case 0:
-					snprintf(tempStr, 32, "%d", value);
+					tempStr = Common::String::format("%d", value);
 					break;
 				case 1:
-					snprintf(tempStr, 32, "0x%X", value);
+					tempStr = Common::String::format("0x%X", value);
 					break;
 				case 2:
 					if (value < _functions->getCount()) {
-						snprintf(tempStr, 32, "%s", _functions->getFuncName(value));
+						tempStr = Common::String::format("%s", _functions->getFuncName(value));
 						externStats[value]++;
 					} else {
-						snprintf(tempStr, 32, "invalid: %d", value);
+						tempStr = Common::String::format("invalid: %d", value);
 					}
 					break;
 				}

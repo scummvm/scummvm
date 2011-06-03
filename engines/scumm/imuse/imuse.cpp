@@ -99,8 +99,9 @@ IMuseInternal::~IMuseInternal() {
 	}
 }
 
-byte *IMuseInternal::findStartOfSound(int sound) {
+byte *IMuseInternal::findStartOfSound(int sound, int ct) {	
 	int32 size, pos;
+	static uint32 id[] = { 'MThd', 'FORM', 'MDhd', 'MDpg' };
 
 	byte *ptr = g_scumm->_res->_types[rtSound][sound]._address;
 
@@ -110,10 +111,11 @@ byte *IMuseInternal::findStartOfSound(int sound) {
 	}
 
 	// Check for old-style headers first, like 'RO'
+	int trFlag = (kMThd | kFORM);
 	if (ptr[0] == 'R' && ptr[1] == 'O'&& ptr[2] != 'L')
-		return ptr;
+		return ct == trFlag ? ptr : 0;
 	if (ptr[4] == 'S' && ptr[5] == 'O')
-		return ptr + 4;
+		return ct == trFlag ? ptr + 4 : 0;
 
 	ptr += 4;
 	size = READ_BE_UINT32(ptr);
@@ -124,12 +126,16 @@ byte *IMuseInternal::findStartOfSound(int sound) {
 	size = 48; // Arbitrary; we should find our tag within the first 48 bytes of the resource
 	pos = 0;
 	while (pos < size) {
-		if (!memcmp(ptr + pos, "MThd", 4) || !memcmp(ptr + pos, "FORM", 4))
-			return ptr + pos;
+		for (int i = 0; i < ARRAYSIZE(id); ++i) {
+			if ((ct & (1 << i)) && (READ_BE_UINT32(ptr + pos) == id[i]))
+				return ptr + pos;
+		}
 		++pos; // We could probably iterate more intelligently
 	}
 
-	debug(3, "IMuseInternal::findStartOfSound(): Failed to align on sound %d", sound);
+	if (ct == (kMThd | kFORM))
+		debug(3, "IMuseInternal::findStartOfSound(): Failed to align on sound %d", sound);
+
 	return 0;
 }
 
@@ -556,7 +562,7 @@ bool IMuseInternal::startSound_internal(int sound, int offset) {
 			return false;
 	}
 
-	void *ptr = findStartOfSound(sound);
+	byte *ptr = findStartOfSound(sound);
 	if (!ptr) {
 		debug(2, "IMuseInternal::startSound(): Couldn't find sound %d", sound);
 		return false;
@@ -576,8 +582,11 @@ bool IMuseInternal::startSound_internal(int sound, int offset) {
 	// Bug #590511 and Patch #607175 (which was reversed to fix
 	// an FOA regression: Bug #622606).
 	Player *player = findActivePlayer(sound);
-	if (!player)
-		player = allocate_player(128);
+	if (!player) {
+		ptr = findStartOfSound(sound, IMuseInternal::kMDhd);
+		player = allocate_player(ptr ? (READ_BE_UINT32(&ptr[4]) && ptr[10] ? ptr[10] : 128) : 128);
+	}
+
 	if (!player)
 		return false;
 

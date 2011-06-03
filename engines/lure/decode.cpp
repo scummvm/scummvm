@@ -131,7 +131,7 @@ MemoryBlock *PictureDecoder::egaDecode(MemoryBlock *src, uint32 maxOutputSize) {
 		READ_BIT_DX
 
 		if (!bitFlag) {
-			// Get the favourite color
+			// Get the favorite color
 			v = popTable[tableOffset];
 
 		} else {
@@ -143,7 +143,7 @@ MemoryBlock *PictureDecoder::egaDecode(MemoryBlock *src, uint32 maxOutputSize) {
 				READ_BIT_DX
 
 				if (bitFlag) {
-					// We have no favourite. Could this be a repeat?
+					// We have no favorite. Could this be a repeat?
 					al = dx >> 11;
 					READ_BITS(5);
 
@@ -184,7 +184,7 @@ MemoryBlock *PictureDecoder::egaDecode(MemoryBlock *src, uint32 maxOutputSize) {
 					}
 
 				} else {
-					// Fourth favourite
+					// Fourth favorite
 					v = popTable[tableOffset + 96];
 				}
 
@@ -193,10 +193,10 @@ MemoryBlock *PictureDecoder::egaDecode(MemoryBlock *src, uint32 maxOutputSize) {
 				READ_BIT_DX
 
 				if (bitFlag) {
-					// Third favourite
+					// Third favorite
 					v = popTable[tableOffset + 64];
 				} else {
-					// Second favourite
+					// Second favorite
 					v = popTable[tableOffset + 32];
 				}
 			}

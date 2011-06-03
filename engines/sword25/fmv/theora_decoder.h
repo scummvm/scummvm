@@ -70,8 +70,8 @@ public:
 	const Graphics::Surface *decodeNextFrame();
 
 	bool isVideoLoaded() const { return _fileStream != 0; }
-	uint16 getWidth() const { return _surface->w; }
-	uint16 getHeight() const { return _surface->h; }
+	uint16 getWidth() const { return _displaySurface.w; }
+	uint16 getHeight() const { return _displaySurface.h; }
 
 	uint32 getFrameCount() const {
 		// It is not possible to get frame count easily
@@ -80,7 +80,7 @@ public:
 		return 0;
 	}
 
-	Graphics::PixelFormat getPixelFormat() const { return _surface->format; }
+	Graphics::PixelFormat getPixelFormat() const { return _displaySurface.format; }
 	uint32 getElapsedTime() const;
 	uint32 getTimeToNextFrame() const;
 
@@ -96,7 +96,8 @@ private:
 	void translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer);
 
 	Common::SeekableReadStream *_fileStream;
-	Graphics::Surface *_surface;
+	Graphics::Surface _surface;
+	Graphics::Surface _displaySurface;
 	Common::Rational _frameRate;
 	double _nextFrameStartTime;
 	bool _endOfVideo;

@@ -147,7 +147,7 @@ void Mouse::buildMenu() {
 		}
 	}
 
-	// Initialise the menu from the master list.
+	// Initialize the menu from the master list.
 
 	for (i = 0; i < 15; i++) {
 		uint32 res = _masterMenuList[i].icon_resource;

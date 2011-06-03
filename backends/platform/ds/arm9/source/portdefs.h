@@ -26,8 +26,11 @@
 // Include ndstypes.h for uint16 etc. typedefs
 #include "nds/ndstypes.h"
 
-// Somebody removed these from scummsys.h, but they're still required, so I'm
-// adding them here in the hope that they'll stay.
+// Define SCUMMVM_DONT_DEFINE_TYPES to prevent scummsys.h from trying to
+// re-define those data types.
+#define SCUMMVM_DONT_DEFINE_TYPES
+
+// Include required headers
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

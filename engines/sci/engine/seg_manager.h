@@ -71,7 +71,7 @@ public:
 	 */
 	Script *allocateScript(int script_nr, SegmentId *seg_id);
 
-	// The script must then be initialised; see section (1b.), below.
+	// The script must then be initialized; see section (1b.), below.
 
 	/**
 	 * Forcefully deallocate a previously allocated script.

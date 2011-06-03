@@ -213,6 +213,7 @@ const SciWorkaroundEntry kDisplay_workarounds[] = {
 	{ GID_QFG3,           -1,    47,  0,          "barterWin", "open",       0x1426,    0, { WORKAROUND_IGNORE,    0 } }, // sometimes when talking with a vendor that can be bartered with, the wrong local variable is checked and the variable contents are wrong - bug #3292251
 	{ GID_QFG3,           -1,    47,  0,         "barterIcon", "show",       0x135c,    0, { WORKAROUND_IGNORE,    0 } }, // sometimes when talking with a vendor that can be bartered with, the wrong local variable is checked and the variable contents are wrong - bug #3292251
 	{ GID_SQ1,            -1,   700,  0,       "arcadaRegion", "doit",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // restoring in some rooms of the arcada (right at the start)
+	{ GID_SQ1,            44,    44,  0,           "spinDone", "changeState",0x13b0,    0, { WORKAROUND_IGNORE,    0 } }, // restoring a game at the slot machine in Ulence Flats (bug #3308087)
 	{ GID_SQ4,           397,     0,  0,                   "", "export 12",      -1,    0, { WORKAROUND_IGNORE,    0 } }, // FLOPPY: when going into the computer store (bug #3044044)
 	{ GID_SQ4,           391,   391,  0,          "doCatalog", "mode",         0x84,    0, { WORKAROUND_IGNORE,    0 } }, // CD: clicking on catalog in roboter sale - a parameter is an object
 	{ GID_SQ4,           391,   391,  0,         "choosePlug", "changeState",    -1,    0, { WORKAROUND_IGNORE,    0 } }, // CD: ordering connector in roboter sale - a parameter is an object

@@ -101,7 +101,7 @@ static void initDijkstraNodes(DijkstraNode::Container &dijkstraNodes, const Regi
 	// Allocate sufficient space in the array
 	dijkstraNodes.resize(nodes.size());
 
-	// Initialise all the nodes which are visible from the starting node
+	// Initialize all the nodes which are visible from the starting node
 	DijkstraNode::Iter dijkstraIter = dijkstraNodes.begin();
 	for (Common::Array<Vertex>::const_iterator nodesIter = nodes.begin();
 	        nodesIter != nodes.end(); nodesIter++, dijkstraIter++) {
@@ -173,7 +173,7 @@ void reverseArray(Common::Array<T> &arr) {
 bool WalkRegion::findPath(const Vertex &start, const Vertex &end, BS_Path &path) const {
 	// This is an implementation of Dijkstra's algorithm
 
-	// Initialise edge node list
+	// Initialize edge node list
 	DijkstraNode::Container dijkstraNodes;
 	initDijkstraNodes(dijkstraNodes, *this, start, _nodes);
 
@@ -247,7 +247,7 @@ void WalkRegion::initNodeVector() {
 }
 
 void WalkRegion::computeVisibilityMatrix() {
-	// Initialise visibility matrix
+	// Initialize visibility matrix
 	_visibilityMatrix = Common::Array< Common::Array <int> >();
 	for (uint idx = 0; idx < _nodes.size(); ++idx) {
 		Common::Array<int> arr;

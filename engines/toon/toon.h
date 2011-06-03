@@ -318,7 +318,7 @@ public:
 		return _shouldQuit;
 	}
 
-	Common::Error saveGameState(int slot, const char *desc) {
+	Common::Error saveGameState(int slot, const Common::String &desc) {
 		
 		return (saveGame(slot, desc) ? Common::kWritingFailed : Common::kNoError);
 	}

@@ -170,9 +170,11 @@ bool ResMan_t7g::getResInfo(uint32 fileRef, ResInfo &resInfo) {
 	}
 
 	// Read the resource name (just for debugging purposes)
-	char resname[12];
+	char resname[13];
 	rlFile->read(resname, 12);
+	resname[12] = 0;
 	debugC(2, kGroovieDebugResource | kGroovieDebugAll, "Groovie::Resource: Resource name: %12s", resname);
+	resInfo.filename = resname;
 
 	// Read the resource information
 	resInfo.offset = rlFile->readUint32LE();
@@ -281,6 +283,7 @@ bool ResMan_v2::getResInfo(uint32 fileRef, ResInfo &resInfo) {
 	char resname[12];
 	rlFile.read(resname, 12);
 	debugC(2, kGroovieDebugResource | kGroovieDebugAll, "Groovie::Resource: Resource name: %12s", resname);
+	resInfo.filename = resname;
 
 	// 6 padding bytes? (it looks like they're always 0)
 

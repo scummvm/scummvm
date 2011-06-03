@@ -75,7 +75,7 @@ else
 			ifdef DS_BUILD_K
 
 			else
-		#		USE_MAD = 1
+				USE_MAD = 1
 			endif
 		endif
 	endif
@@ -245,7 +245,9 @@ ifdef USE_MAD
 	DEFINES += -DUSE_MAD
 endif
 
-DEFINES += -DREDUCE_MEMORY_USAGE -DDISABLE_DEBUGGER -DUSE_TEXT_CONSOLE -DDISABLE_MASS_ADD -DDISABLE_NES_APU
+DEFINES += -DREDUCE_MEMORY_USAGE -DDISABLE_DEBUGGER -DUSE_TEXT_CONSOLE_FOR_DEBUGGER -DDISABLE_MASS_ADD -DDISABLE_NES_APU
+# for release builds:
+#DEFINES +=  -DNDEBUG
 
 LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections
 
@@ -259,7 +261,7 @@ BACKEND := ds
 INCLUDES= -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/engines \
 			-I$(portdir)/data -I$(portdir)/../commoninclude \
 			-I$(portdir)/source -I$(portdir)/source/mad \
-			-I$(libndsdir)/include -include $(srcdir)/common/scummsys.h
+			-I$(libndsdir)/include -include $(portdir)/source/portdefs.h
 
 
 LIBS	= -lm -L$(libndsdir)/lib -L$(portdir)/lib -lnds9

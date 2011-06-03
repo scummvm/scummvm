@@ -64,6 +64,11 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 		//   BYTE 14: Pitchbend range(lower 4 bits) [bug #1088045]
 		//   BYTE 15: Program(upper 4 bits)
 		//   BYTE 16: Program(lower 4 bits)
+
+		// athrxx (05-21-2011):
+		// BYTE  9, 10: Transpose (if set to 0x80, this means that part->_transpose_eff will be 0 (also ignoring player->_transpose)
+		// BYTE 11, 12: Detune
+
 		part = player->getPart(p[0] & 0x0F);
 		if (part) {
 			part->set_onoff(p[2] & 0x01);
@@ -71,7 +76,8 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 			part->set_pri(p[4]);
 			part->volume((p[5] & 0x0F) << 4 |(p[6] & 0x0F));
 			part->set_pan((p[7] & 0x0F) << 4 | (p[8] & 0x0F));
-			part->_percussion = player->_isMIDI ? ((p[9] & 0x08) > 0) : false;
+			part->_percussion = player->_isMIDI ? ((p[9] & 0x08) > 0) : false;			
+			part->set_transpose((p[9] & 0x0F) << 4 | (p[10] & 0x0F));
 			part->set_detune((p[11] & 0x0F) << 4 | (p[12] & 0x0F));
 			part->pitchBendFactor((p[13] & 0x0F) << 4 | (p[14] & 0x0F));
 			if (part->_percussion) {

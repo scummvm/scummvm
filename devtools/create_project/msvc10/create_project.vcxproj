@@ -58,10 +58,12 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\msvc10\
+      <Command>@echo off
+xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\msvc10\
 xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\msvc9\
 xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\msvc8\
-xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\codeblocks\</Command>
+xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\codeblocks\
+xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\iphone\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -98,6 +100,7 @@ xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\codeblocks\</Command>
     <ClCompile Include="..\msbuild.cpp" />
     <ClCompile Include="..\msvc.cpp" />
     <ClCompile Include="..\visualstudio.cpp" />
+    <ClCompile Include="..\xcode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\codeblocks.h" />
@@ -106,6 +109,7 @@ xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\codeblocks\</Command>
     <ClInclude Include="..\msbuild.h" />
     <ClInclude Include="..\msvc.h" />
     <ClInclude Include="..\visualstudio.h" />
+    <ClInclude Include="..\xcode.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\scripts\installer.vbs" />

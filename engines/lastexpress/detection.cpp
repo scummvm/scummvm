@@ -207,7 +207,7 @@ public:
 	LastExpressMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	const char *getName() const {
-		return "Last Express";
+		return "Lastexpress";
 	}
 
 	const char *getOriginalCopyright() const {

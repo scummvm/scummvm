@@ -35,20 +35,12 @@
 
 #include "common/savefile.h"
 #include "sword25/package/packagemanager.h"
-#include "sword25/gfx/image/pngloader.h"
+#include "sword25/gfx/image/imgloader.h"
 #include "sword25/gfx/image/renderedimage.h"
 
 #include "common/system.h"
 
 namespace Sword25 {
-
-// Duplicated from kernel/persistenceservice.cpp
-static Common::String generateSavegameFilename(uint slotID) {
-	char buffer[100];
-	// NOTE: This is hardcoded to sword25
-	snprintf(buffer, 100, "%s.%.3d", "sword25", slotID);
-	return Common::String(buffer);
-}
 
 // -----------------------------------------------------------------------------
 // CONSTRUCTION / DESTRUCTION
@@ -74,8 +66,9 @@ static Common::String loadString(Common::SeekableReadStream &in, uint maxSize = 
 static byte *readSavegameThumbnail(const Common::String &filename, uint &fileSize, bool &isPNG) {
 	byte *pFileData;
 	Common::SaveFileManager *sfm = g_system->getSavefileManager();
-	int slotNum = atoi(filename.c_str() + filename.size() - 3);
-	Common::InSaveFile *file = sfm->openForLoading(generateSavegameFilename(slotNum));
+	Common::InSaveFile *file = sfm->openForLoading(lastPathComponent(filename, '/'));
+	if (!file)
+		error("Save file \"%s\" could not be loaded.", filename.c_str());
 
 	// Seek to the actual PNG image
 	loadString(*file);		// Marker (BS25SAVEGAME)
@@ -98,30 +91,6 @@ static byte *readSavegameThumbnail(const Common::String &filename, uint &fileSiz
 	delete file;
 
 	return pFileData;
-}
-
-// TODO: Move this method into a more generic image loading class, together with the PNG reading code
-static bool decodeThumbnail(const byte *pFileData, uint fileSize, byte *&pUncompressedData, int &width, int &height, int &pitch) {
-	const byte *src = pFileData + 4;	// skip header
-	width = READ_LE_UINT16(src); src += 2;
-	height = READ_LE_UINT16(src); src += 2;
-	src++;	// version, ignored for now
-	pitch = width * 4;
-
-	uint32 totalSize = pitch * height;
-	pUncompressedData = new byte[totalSize];
-	uint32 *dst = (uint32 *)pUncompressedData;	// treat as uint32, for pixelformat output
-	const Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
-	byte r, g, b;
-
-	for (uint32 i = 0; i < totalSize / 4; i++) {
-		r = *src++;
-		g = *src++;
-		b = *src++;
-		*dst++ = format.RGBToColor(r, g, b);
-	}
-
-	return true;
 }
 
 RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
@@ -152,21 +121,12 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 		return;
 	}
 
-#ifndef USE_INTERNAL_PNG_DECODER
-	// Determine image properties
-	if (!PNGLoader::imageProperties(pFileData, fileSize, _width, _height)) {
-		error("Could not read image properties.");
-		delete[] pFileData;
-		return;
-	}
-#endif
-
 	// Uncompress the image
 	int pitch;
 	if (isPNG)
-		result = PNGLoader::decodeImage(pFileData, fileSize, _data, _width, _height, pitch);
+		result = ImgLoader::decodePNGImage(pFileData, fileSize, _data, _width, _height, pitch);
 	else
-		result = decodeThumbnail(pFileData, fileSize, _data, _width, _height, pitch);
+		result = ImgLoader::decodeThumbnailImage(pFileData, fileSize, _data, _width, _height, pitch);
 
 	if (!result) {
 		error("Could not decode image.");
