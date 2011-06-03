@@ -275,7 +275,7 @@ public:
 
 	// Used by the qsort function
 	static HugoEngine &get() {
-		assert(s_Engine != 0);
+		ASSUME_NON_NULL(s_Engine);
 		return *s_Engine;
 	}
 

@@ -1041,7 +1041,8 @@ void Scheduler::saveActions(Common::WriteStream *f) const {
 */
 void Scheduler::findAction(const act* action, int16* index, int16* subElem) {
 
-	assert(index && subElem);
+	ASSUME_NON_NULL(index);
+	ASSUME_NON_NULL(subElem);
 	if (!action) {
 		*index = -1;
 		*subElem = -1;
