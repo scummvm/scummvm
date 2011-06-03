@@ -214,7 +214,7 @@ GameList SwordMetaEngine::detectGames(const Common::FSList &fslist) const {
 }
 
 Common::Error SwordMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
-	assert(engine);
+	ASSUME_NON_NULL(engine);
 	*engine = new Sword1::SwordEngine(syst);
 	return Common::kNoError;
 }
