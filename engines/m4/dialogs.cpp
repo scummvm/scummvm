@@ -265,7 +265,7 @@ void Dialog::setupInputArea() {
  */
 bool Dialog::matchCommand(const char *s1, const char *s2) {
 	bool result = scumm_strnicmp(s1, s2, strlen(s2)) == 0;
-	_commandCase = isupper(*s1);
+	_commandCase = isupper(static_cast<unsigned char>(*s1));
 	return result;
 }
 

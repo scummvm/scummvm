@@ -238,14 +238,14 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 			/* int writelength; -- unused atm */
 
-			if (xfer && (isdigit(xfer) || xfer == '-' || xfer == '=')) {
+			if (xfer && (isdigit(static_cast<unsigned char>(xfer)) || xfer == '-' || xfer == '=')) {
 				char *destp;
 
 				if (xfer == '0')
 					fillchar = '0';
 				else if (xfer == '=')
 					align = ALIGN_CENTER;
-				else if (isdigit(xfer) || (xfer == '-'))
+				else if (isdigit(static_cast<unsigned char>(xfer)) || (xfer == '-'))
 					source--; // Go to start of length argument
 
 				str_leng = strtol(source, &destp, 10);

@@ -944,7 +944,7 @@ int Font::wordWrapText(const Common::String &str, int maxWidth, Common::Array<Co
 			if (lineWidth > 0) {
 				wrapper.add(line, lineWidth);
 				// Trim left side
-				while (tmpStr.size() && isspace(tmpStr[0])) {
+				while (tmpStr.size() && isspace(static_cast<unsigned char>(tmpStr[0]))) {
 					tmpWidth -= getCharWidth(tmpStr[0]);
 					tmpStr.deleteChar(0);
 				}
