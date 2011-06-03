@@ -417,7 +417,7 @@ void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 			return;
 		}
 		imhd = (const ImageHeader *)findResourceData(MKTAG('I','M','H','D'), ptr);
-		assert(imhd);
+		ASSUME_NON_NULL(imhd);
 		if (_game.version == 8) {
 			switch (FROM_LE_32(imhd->v8.version)) {
 			case 800:
@@ -1000,7 +1000,7 @@ void ScummEngine::resetRoomObject(ObjectData *od, const byte *room, const byte *
 	od->flags = Gdi::dbAllowMaskOr;
 
 	if (_game.version == 8) {
-		assert(imhd);
+		ASSUME_NON_NULL(imhd);
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
 
 		od->parent = cdhd->v7.parent;
@@ -1368,7 +1368,7 @@ int ScummEngine_v8::getObjectIdFromOBIM(const byte *obim) {
 	const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKTAG('I','M','H','D'), obim);
 	ObjectNameId *found = (ObjectNameId *)bsearch(imhd->v8.name, _objectIDMap, _objectIDMapSize,
 					sizeof(ObjectNameId), (int (*)(const void*, const void*))strcmp);
-	assert(found);
+	ASSUME_NON_NULL(found);
 	return found->id;
 }
 

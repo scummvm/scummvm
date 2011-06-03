@@ -1027,7 +1027,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 	byte *end;
 	byte transBuf[384];
 
-	assert(dst);
+	ASSUME_NON_NULL(dst);
 	end = dst + dstSize;
 
 	if (msg == NULL) {
@@ -1154,7 +1154,7 @@ int ScummEngine_v72he::convertMessageToString(const byte *msg, byte *dst, int ds
 	const byte *src;
 	byte *end;
 
-	assert(dst);
+	ASSUME_NON_NULL(dst);
 	end = dst + dstSize;
 
 	if (msg == NULL) {

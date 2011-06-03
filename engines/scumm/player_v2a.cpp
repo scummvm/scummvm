@@ -1903,7 +1903,7 @@ void Player_V2A::stopSound(int nr) {
 }
 
 void Player_V2A::startSound(int nr) {
-	assert(_vm);
+	ASSUME_NON_NULL(_vm);
 	byte *data = _vm->getResourceAddress(rtSound, nr);
 	assert(data);
 	uint32 crc = GetCRC(data + 0x0A, READ_BE_UINT16(data + 0x08));

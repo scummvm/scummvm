@@ -87,7 +87,7 @@ public:
 		char *def_start = strchr(buffer, '#');
 		while (def_start != NULL) {
 			char *def_end = strchr(def_start, '\n');
-			assert(def_end != NULL);
+			ASSUME_NON_NULL(def_end);
 
 			char *id_end = def_end;
 			while (id_end >= def_start && !isdigit(*(id_end-1))) {
@@ -606,7 +606,7 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 		str = string3;
 	}
 
-	assert(sf != NULL);
+	ASSUME_NON_NULL(sf);
 	sf->setColor(color);
 
 	if (_vm->_game.id == GID_CMI && string2[0] != 0) {
@@ -1012,7 +1012,7 @@ void SmushPlayer::parseNextFrame() {
 		_seekPos = -1;
 	}
 
-	assert(_base);
+	ASSUME_NON_NULL(_base);
 
 	const uint32 subType = _base->readUint32BE();
 	const int32 subSize = _base->readUint32BE();

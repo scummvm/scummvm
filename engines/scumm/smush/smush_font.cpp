@@ -37,7 +37,7 @@ SmushFont::SmushFont(ScummEngine *vm, const char *filename, bool use_original_co
 }
 
 int SmushFont::getStringWidth(const char *str) {
-	assert(str);
+	ASSUME_NON_NULL(str);
 
 	int width = 0;
 	while (*str) {
@@ -51,7 +51,7 @@ int SmushFont::getStringWidth(const char *str) {
 }
 
 int SmushFont::getStringHeight(const char *str) {
-	assert(str);
+	ASSUME_NON_NULL(str);
 
 	int height = 0;
 	while (*str) {

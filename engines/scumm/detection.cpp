@@ -923,7 +923,7 @@ GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 	for (Common::List<DetectorResult>::iterator
 	          x = results.begin(); x != results.end(); ++x) {
 		const PlainGameDescriptor *g = findPlainGameDescriptor(x->game.gameid, gameDescriptions);
-		assert(g);
+		ASSUME_NON_NULL(g);
 		GameDescriptor dg(x->game.gameid, g->description, x->language, x->game.platform);
 
 		// Append additional information, if set, to the description.
@@ -969,7 +969,7 @@ GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
  */
 Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(syst);
-	assert(engine);
+	ASSUME_NON_NULL(engine);
 	const char *gameid = ConfMan.get("gameid").c_str();
 
 	// We start by checking whether the specified game ID is obsolete.

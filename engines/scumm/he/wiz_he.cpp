@@ -945,7 +945,7 @@ template void Wiz::decompressWizImage<kWizCopy>(uint8 *dst, int dstPitch, int ds
 template <int type>
 void Wiz::decompressRawWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 *src, int srcPitch, int w, int h, int transColor, const uint8 *palPtr, uint8 bitDepth) {
 	if (type == kWizRMap) {
-		assert(palPtr != 0);
+		ASSUME_NON_NULL(palPtr);
 	}
 
 	if (w <= 0 || h <= 0) {
@@ -2340,7 +2340,7 @@ void Wiz::remapWizImagePal(const WizParameters *params) {
 	uint8 *iwiz = _vm->getResourceAddress(rtImage, params->img.resNum);
 	assert(iwiz);
 	uint8 *rmap = _vm->findWrappedBlock(MKTAG('R','M','A','P'), iwiz, st, 0);
-	assert(rmap);
+	ASSUME_NON_NULL(rmap);
 	WRITE_BE_UINT32(rmap, 0x01234567);
 	while (num--) {
 		uint8 idx = *index++;

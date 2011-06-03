@@ -2060,7 +2060,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 	const byte *zplane_list[9];
 
 	const byte *bmap_ptr = _vm->findResourceData(MKTAG('B','M','A','P'), ptr);
-	assert(bmap_ptr);
+	ASSUME_NON_NULL(bmap_ptr);
 
 	byte code = *bmap_ptr++;
 	byte *dst = vs->getBackPixels(0, 0);
@@ -2140,7 +2140,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 
 void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h) {
 	const byte *bmap_ptr = _vm->findResourceData(MKTAG('B','M','A','P'), ptr);
-	assert(bmap_ptr);
+	ASSUME_NON_NULL(bmap_ptr);
 
 	byte code = *bmap_ptr++;
 	int scrX = _vm->_screenStartStrip * 8 * _vm->_bytesPerPixel;

@@ -261,7 +261,7 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
 					sound->marker[curIndexMarker].pos = READ_BE_UINT32(ptr + 4);
 					sound->marker[curIndexMarker].length = strlen((const char *)(ptr + 8)) + 1;
 					sound->marker[curIndexMarker].ptr = new char[sound->marker[curIndexMarker].length];
-					assert(sound->marker[curIndexMarker].ptr);
+					ASSUME_NON_NULL(sound->marker[curIndexMarker].ptr);
 					strcpy(sound->marker[curIndexMarker].ptr, (const char *)(ptr + 8));
 					curIndexMarker++;
 				}
@@ -635,7 +635,8 @@ int ImuseDigiSndMgr::getJumpFade(SoundDesc *soundDesc, int number) {
 int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte **buf, int32 offset, int32 size) {
 	debug(6, "getDataFromRegion() region:%d, offset:%d, size:%d, numRegions:%d", region, offset, size, soundDesc->numRegions);
 	assert(checkForProperHandle(soundDesc));
-	assert(buf && offset >= 0 && size >= 0);
+	ASSUME_NON_NULL(buf);
+	assert(offset >= 0 && size >= 0);
 	assert(region >= 0 && region < soundDesc->numRegions);
 
 	int32 region_offset = soundDesc->region[region].offset;

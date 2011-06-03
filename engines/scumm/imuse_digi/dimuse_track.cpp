@@ -326,7 +326,7 @@ void IMuseDigital::setTrigger(TriggerParams *trigger) {
 }
 
 Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
-	assert(track);
+	ASSUME_NON_NULL(track);
 	Track *fadeTrack;
 
 	debug(5, "cloneToFadeOutTrack(soundId:%d, fade:%d) - begin of func", track->trackId, fadeDelay);

@@ -364,7 +364,7 @@ void IMuseDigital::callback() {
 }
 
 void IMuseDigital::switchToNextRegion(Track *track) {
-	assert(track);
+	ASSUME_NON_NULL(track);
 
 	if (track->trackId >= MAX_DIGITAL_TRACKS) {
 		flushTrack(track);

@@ -1726,7 +1726,7 @@ void ScummEngine_v72he::checkArrayLimits(int array, int dim2start, int dim2end, 
 		error("Down max %d smaller than min %d", dim2end, dim2start);
 	}
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
-	assert(ah);
+	ASSUME_NON_NULL(ah);
 	if ((int)FROM_LE_32(ah->dim2start) > dim2start || (int)FROM_LE_32(ah->dim2end) < dim2end || (int)FROM_LE_32(ah->dim1start) > dim1start || (int)FROM_LE_32(ah->dim1end) < dim1end) {
 		error("Invalid array access (%d,%d,%d,%d) limit (%d,%d,%d,%d)", dim2start, dim2end, dim1start, dim1end, FROM_LE_32(ah->dim2start), FROM_LE_32(ah->dim2end), FROM_LE_32(ah->dim1start), FROM_LE_32(ah->dim1end));
 	}
@@ -1750,9 +1750,9 @@ void ScummEngine_v72he::copyArray(int array1, int a1_dim2start, int a1_dim2end, 
 
 	if (array1 != array2) {
 		ArrayHeader *ah1 = (ArrayHeader *)getResourceAddress(rtString, readVar(array1));
-		assert(ah1);
+		ASSUME_NON_NULL(ah1);
 		ArrayHeader *ah2 = (ArrayHeader *)getResourceAddress(rtString, readVar(array2));
-		assert(ah2);
+		ASSUME_NON_NULL(ah2);
 		if (FROM_LE_32(ah1->type) == FROM_LE_32(ah2->type)) {
 			copyArrayHelper(ah1, a1_dim2start, a1_dim1start, a1_dim1end, &dst, &dstPitch, &rowSize);
 			copyArrayHelper(ah2, a2_dim2start, a2_dim1start, a2_dim1end, &src, &srcPitch, &rowSize);

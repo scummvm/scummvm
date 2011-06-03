@@ -1236,8 +1236,8 @@ void ScummEngine::readGlobalObjects() {
 	int i;
 	int num = _fileHandle->readUint16LE();
 	assert(num == _numGlobalObjects);
-	assert(_objectStateTable);
-	assert(_objectOwnerTable);
+	ASSUME_NON_NULL(_objectStateTable);
+	ASSUME_NON_NULL(_objectOwnerTable);
 
 	_fileHandle->read(_objectOwnerTable, num);
 	for (i = 0; i < num; i++) {
@@ -1259,7 +1259,7 @@ void ScummEngine_v8::readGlobalObjects() {
 	int i;
 	int num = _fileHandle->readUint32LE();
 	assert(num == _numGlobalObjects);
-	assert(_objectStateTable);
+	ASSUME_NON_NULL(_objectStateTable);
 	assert(_objectOwnerTable);
 
 	_objectIDMap = new ObjectNameId[num];
