@@ -43,7 +43,7 @@ int __errno; // for overridden method in saves/default/default-saves.cpp
 
 void __assert_func(const char* file, int line, 
                    const char* func, const char* err) {
-  systemError("ScummVM internal error: %s %d %s %s", 
+  systemError("ScummVM internal error: %s %d %s %s",
               file, line, func, err);
 }
 
@@ -60,7 +60,7 @@ void stderr_fprintf(void*, const char* format, ...) {
 
 void stderr_vfprintf(void*, const char* format, va_list ap) {
   char buffer[BUF_SIZE];
-  int result = vsnprintf(buffer, sizeof(buffer), format, ap);
+  vsnprintf(buffer, sizeof(buffer), format, ap);
   AppLog(buffer);
 }
 

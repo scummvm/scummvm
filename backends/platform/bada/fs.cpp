@@ -102,7 +102,7 @@ bool BadaFileStream::seek(int32 offs, int whence) {
     break;
   case SEEK_CUR:
     // set relative to offs
-    if (bufferIndex < bufferLength && bufferIndex > -offs) {
+    if (bufferIndex < bufferLength && bufferIndex > (uint32) -offs) {
       // re-position within the buffer
       bufferIndex += offs;
       return true;
@@ -172,9 +172,15 @@ bool BadaFileStream::flush() {
 
 BadaFileStream* BadaFileStream::makeFromPath(const String &path, bool writeMode) {
   File* ioFile = new File();
-  AppLog("Open file %S", path.GetPointer());
 
-  result r = ioFile->Construct(path, writeMode ? L"wb" : L"rb", false);
+  String filePath = path;
+  if (writeMode && (path[0] != '.' && path[0] != '/')) {
+    filePath.Insert("/Home/", 0);
+  }
+
+  AppLog("Open file %S", filePath.GetPointer());
+
+  result r = ioFile->Construct(filePath, writeMode ? L"wb" : L"rb", false);
   if (r == E_SUCCESS) {
     return new BadaFileStream(ioFile);
   }
