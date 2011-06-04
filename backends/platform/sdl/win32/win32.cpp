@@ -102,7 +102,7 @@ bool OSystem_Win32::displayLogFile() {
 
 	// Try opening the log file with the default text editor
 	// log files should be registered as "txtfile" by default and thus open in the default text editor
-	int shellExec = (int)ShellExecute(NULL, NULL, _logFilePath.c_str(), NULL, NULL, SW_SHOWNORMAL);
+	long shellExec = (long)ShellExecute(NULL, NULL, _logFilePath.c_str(), NULL, NULL, SW_SHOWNORMAL);
 	if (shellExec > 32)
 		return true;
 
