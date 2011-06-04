@@ -227,6 +227,7 @@ ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) ps3pkg/USRDIR/data/
 endif
 	cp $(DIST_FILES_DOCS) ps3pkg/USRDIR/doc/
+	cp $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip ps3pkg/USRDIR/data/
 	cp dists/ps3/ICON0.PNG ps3pkg/
 	cp dists/ps3/PIC1.PNG ps3pkg/
 	sfo.py -f dists/ps3/sfo.xml ps3pkg/PARAM.SFO

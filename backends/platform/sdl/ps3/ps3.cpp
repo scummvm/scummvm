@@ -30,6 +30,7 @@
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/fs/ps3/ps3-fs-factory.h"
+#include "backends/events/ps3sdl/ps3sdl-events.h"
 #include "backends/mixer/sdl13/sdl13-mixer.h"
 
 #include <dirent.h>
@@ -58,7 +59,8 @@ void OSystem_PS3::init() {
 }
 
 void OSystem_PS3::initBackend() {
-	ConfMan.registerDefault("joystick_num", 0);
+	ConfMan.set("joystick_num", 0);
+	ConfMan.set("vkeybdpath", PREFIX "/data");
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
 
@@ -73,6 +75,10 @@ void OSystem_PS3::initBackend() {
 		// Setup and start mixer
 		_mixerManager->init();
 	}
+
+	// Event source
+	if (_eventSource == 0)
+		_eventSource = new PS3SdlEventSource();
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();

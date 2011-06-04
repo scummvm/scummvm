@@ -2232,6 +2232,7 @@ if test -n "$_host"; then
 		ps3)
 			_mt32emu=no
 			_timidity=no
+			_vkeybd=yes
 			;;
 		psp)
 			_backend="psp"
