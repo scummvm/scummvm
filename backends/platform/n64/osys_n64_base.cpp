@@ -215,7 +215,7 @@ void OSystem_N64::setFeatureState(Feature f, bool enable) {
 
 bool OSystem_N64::getFeatureState(Feature f) {
 	if (f == kFeatureCursorPalette)
-		return !_cursorPaletteDisabled
+		return !_cursorPaletteDisabled;
 	return false;
 }
 
