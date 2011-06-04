@@ -265,6 +265,7 @@ void registerDefaults() {
 #define DO_OPTION_INT(shortCmd, longCmd) \
 	DO_OPTION(shortCmd, longCmd) \
 	char *endptr = 0; \
+	ASSUME_NON_NULL(option); \
 	long int retval = strtol(option, &endptr, 0); \
 	if (endptr == NULL || *endptr != 0 || retval == 0 || retval == LONG_MAX || retval == LONG_MIN || errno == ERANGE) \
 		usage("--%s: Invalid number '%s'", longCmd, option);
@@ -318,6 +319,8 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 
 	// Iterate over all command line arguments and parse them into our string map.
 	for (int i = 1; i < argc; ++i) {
+		ASSUME_NON_NULL(argv);
+
 		s = argv[i];
 		s2 = (i < argc-1) ? argv[i+1] : 0;
 
