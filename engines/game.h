@@ -89,7 +89,7 @@ public:
 	 * or not officially supported
 	 */
 	bool isWIP() const { return contains("wip"); };
-	void setWIP(bool wip) { if (wip) setVal("wip", "true"); else clear("wip"); };
+	void setWIP(bool wip) { if (wip) setVal("wip", "true"); else erase("wip"); };
 
 	Common::String &gameid() { return getVal("gameid"); }
 	Common::String &description() { return getVal("description"); }
