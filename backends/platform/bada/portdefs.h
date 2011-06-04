@@ -34,29 +34,33 @@
 
 #define M_PI 3.14159265358979323846
 
-#define C_LINKAGE_BEGIN extern "C" {
-#define C_LINKAGE_END }
+#ifdef __cplusplus
+ #define C_LINKAGE_BEGIN extern "C" {
+ #define C_LINKAGE_END }
+#else 
+ #define C_LINKAGE_BEGIN
+ #define C_LINKAGE_END
+#endif
 
 C_LINKAGE_BEGIN
 
-// overcome fprintf logging in xmlparser.cpp
-// the bada fprintf does not support stderr/stdout
-// OSystem::logMessage is overridden
+// overcome use of fprintf since bada/newlib (1.2) does not 
+// support stderr/stdout (undefined reference to `_impure_ptr').
 
 void stderr_fprintf(void*, const char* format, ...);
 void stderr_vfprintf(void*, const char* format, va_list ap);
 
 #undef fprintf
 #undef vfprintf
-#undef FILE
 #undef stderr
 #undef stdout
+#undef stdin
 #undef fputs
 #undef fflush
 
-#define FILE void
 #define stderr (void*)0
 #define stdout (void*)1
+#define stdin  (void*)2
 #define fputs(str, file)
 #define fflush(file)
 #define sscanf simple_sscanf

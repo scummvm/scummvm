@@ -52,10 +52,18 @@
 <tool id="cdt.managedbuild.tool.osp.gnu.simul.cpp.linker.exe.simul.285730549" name="bada C++ Linker" superClass="cdt.managedbuild.tool.osp.gnu.simul.cpp.linker.exe.simul">
 <option id="osp.gnu.cpp.link.simual.debug.option.libs.paths.2096211037" name="Library search path (-L)" superClass="osp.gnu.cpp.link.simual.debug.option.libs.paths" valueType="libPaths">
 <listOptionValue builtIn="false" value="&quot;${SIMULATOR_LIB_PATH}&quot;"/>
+<listOptionValue builtIn="false" value="c:/cygwin/usr/local/lib"/>
 <listOptionValue builtIn="false" value="c:/src/scummvm"/>
 </option>
 <option id="osp.gnu.cpp.link.simual.debug.option.libs.927448207" name="Libraries (-l)" superClass="osp.gnu.cpp.link.simual.debug.option.libs" valueType="libs">
 <listOptionValue builtIn="false" value="scummvm"/>
+<listOptionValue builtIn="false" value="FLAC"/>
+<listOptionValue builtIn="false" value="mad"/>
+<listOptionValue builtIn="false" value="vorbisenc"/>
+<listOptionValue builtIn="false" value="vorbisfile"/>
+<listOptionValue builtIn="false" value="vorbis"/>
+<listOptionValue builtIn="false" value="ogg"/>
+<listOptionValue builtIn="false" value="z"/>
 <listOptionValue builtIn="false" value="osp_rt0"/>
 <listOptionValue builtIn="false" value="FOsp"/>
 <listOptionValue builtIn="false" value="FGraphicsOpengl"/>

@@ -1577,6 +1577,11 @@ case $_host_os in
     BADA_SDK_ROOT="`cygpath.exe -m ${BADA_SDK}`"
     add_line_to_config_mk "BADA_SDK = $BADA_SDK"
     add_line_to_config_mk "BADA_SDK_ROOT = $BADA_SDK_ROOT"
+
+    # assume dependencies have been installed in cygwin's /usr/local
+    CYGWIN_USR_LOCAL="`cygpath.exe -m /usr/local`"
+		LDFLAGS="$LDFLAGS -L${CYGWIN_USR_LOCAL}/lib"
+		CXXFLAGS="$CXXFLAGS -I${CYGWIN_USR_LOCAL}/include"
 		;;
 	beos*)
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
