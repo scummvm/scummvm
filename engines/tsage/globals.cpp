@@ -54,6 +54,7 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 		_randomSource("tsage"), _unkColor1(0), _unkColor2(255), _unkColor3(255) {
 	reset();
 	_stripNum = 0;
+	_gfxEdgeAdjust = 3;
 
 	if (_vm->getFeatures() & GF_DEMO) {
 		_gfxFontNumber = 0;

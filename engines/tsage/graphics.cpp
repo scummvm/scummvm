@@ -605,7 +605,7 @@ void GfxElement::highlight() {
 	// Scan through the contents of the element, switching any occurances of the foreground
 	// color with the background color and vice versa
 	Rect tempRect(_bounds);
-	tempRect.collapse(2, 2);
+	tempRect.collapse(_globals->_gfxEdgeAdjust - 1, _globals->_gfxEdgeAdjust - 1);
 
 	for (int yp = tempRect.top; yp < tempRect.bottom; ++yp) {
 		byte *lineP = (byte *)surface.getBasePtr(tempRect.left, yp);
@@ -637,7 +637,7 @@ void GfxElement::drawFrame() {
 	}
 
 	Rect tempRect = _bounds;
-	tempRect.collapse(3, 3);
+	tempRect.collapse(_globals->_gfxEdgeAdjust, _globals->_gfxEdgeAdjust);
 	tempRect.collapse(-1, -1);
 	gfxManager.fillRect(tempRect, _colors.background);
 
@@ -810,7 +810,7 @@ void GfxButton::setDefaults() {
 	tempRect.right = ((tempRect.right + 15) / 16) * 16;
 
 	// Set the button bounds to a reduced area
-	tempRect.collapse(-3, -3);
+	tempRect.collapse(-_globals->_gfxEdgeAdjust, -_globals->_gfxEdgeAdjust);
 	tempRect.moveTo(_bounds.left, _bounds.top);
 	_bounds = tempRect;
 }
@@ -834,7 +834,7 @@ void GfxButton::draw() {
 
 	// Display the button's text
 	Rect tempRect(_bounds);
-	tempRect.collapse(3, 3);
+	tempRect.collapse(_globals->_gfxEdgeAdjust, _globals->_gfxEdgeAdjust);
 	gfxManager._font.writeLines(_message.c_str(), tempRect, ALIGN_CENTER);
 
 	gfxManager.unlockSurface();
@@ -895,7 +895,7 @@ void GfxDialog::setDefaults() {
 
 	// Set the dialog boundaries
 	_gfxManager._bounds = tempRect;
-	tempRect.collapse(-6, -6);
+	tempRect.collapse(-_globals->_gfxEdgeAdjust * 2, -_globals->_gfxEdgeAdjust * 2);
 	_bounds = tempRect;
 }
 
@@ -925,7 +925,7 @@ void GfxDialog::draw() {
 	drawFrame();
 
 	// Reset the dialog's graphics manager to only draw within the dialog boundaries
-	tempRect.translate(6, 6);
+	tempRect.translate(_globals->_gfxEdgeAdjust * 2, _globals->_gfxEdgeAdjust * 2);
 	_gfxManager._bounds = tempRect;
 
 	// Draw each element in the dialog in order
@@ -962,7 +962,7 @@ void GfxDialog::addElements(GfxElement *ge, ...) {
 }
 
 void GfxDialog::setTopLeft(int xp, int yp) {
-	_bounds.moveTo(xp - 6, yp - 6);
+	_bounds.moveTo(xp - _globals->_gfxEdgeAdjust * 2, yp - _globals->_gfxEdgeAdjust * 2);
 }
 
 void GfxDialog::setCenter(int xp, int yp) {

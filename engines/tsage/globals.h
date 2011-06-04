@@ -68,6 +68,7 @@ public:
 	SequenceManager _sequenceManager;
 	Common::RandomSource _randomSource;
 	int _stripNum;
+	int _gfxEdgeAdjust;
 public:
 	Globals();
 	~Globals();
