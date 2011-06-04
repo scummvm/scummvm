@@ -5,8 +5,8 @@
         <English>ScummVM</English>
         <eng-GB>ScummVM</eng-GB>
     </Name>
-    <Vendor>Chris Warren-Smith</Vendor>
-    <Description/>
+    <Vendor>ScummVM is the legal property of its developers, whose names are too numerous to list here. Please refer to the COPYRIGHT file distributed with the source distribution.</Vendor>
+    <Description>Graphic Adventure Engine</Description>
     <Icons>
         <MainMenu>mainMenu1.png<Type1>mainMenu1.png</Type1>
             <Type2>mainMenu2.png</Type2>
