@@ -1279,16 +1279,16 @@ void Chip::Setup( Bit32u rate ) {
 	for ( Bit8u i = 0; i < 76; i++ ) {
 		Bit8u index, shift;
 		EnvelopeSelect( i, index, shift );
-		linearRates[i] = (Bit32u)( scale * (EnvelopeIncreaseTable[ index ] << ( RATE_SH + ENV_EXTRA - shift - 3 )));
+		linearRates[i] = (Bit32u)( scale * (((unsigned long long)EnvelopeIncreaseTable[ index ]) << ( RATE_SH + ENV_EXTRA - shift - 3 )));
 	}
 	//Generate the best matching attack rate
 	for ( Bit8u i = 0; i < 62; i++ ) {
 		Bit8u index, shift;
 		EnvelopeSelect( i, index, shift );
 		//Original amount of samples the attack would take
-		Bit32s original = (Bit32u)( (AttackSamplesTable[ index ] << shift) / scale);
+		Bit32s original = (Bit32u)( (((unsigned long long)AttackSamplesTable[ index ]) << shift) / scale);
 
-		Bit32s guessAdd = (Bit32u)( scale * (EnvelopeIncreaseTable[ index ] << ( RATE_SH - shift - 3 )));
+		Bit32s guessAdd = (Bit32u)( scale * (((unsigned long long)EnvelopeIncreaseTable[ index ]) << ( RATE_SH - shift - 3 )));
 		Bit32s bestAdd = guessAdd;
 		Bit32u bestDiff = 1 << 30;
 		for( Bit32u passes = 0; passes < 16; passes ++ ) {
