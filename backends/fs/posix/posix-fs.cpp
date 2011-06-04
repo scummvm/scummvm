@@ -27,6 +27,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_getenv
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit		//Needed for IRIX's unistd.h
 
 #include "backends/fs/posix/posix-fs.h"
 #include "backends/fs/stdiostream.h"
