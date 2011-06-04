@@ -37,7 +37,7 @@ using Common::GUIO_NONE;
 		gid, \
 		interp, \
 		features, \
-		ver \
+		ver, \
 	}
 
 #define GAME_LVFPNF(id,name,fname,md5,size,lang,ver,features,gid,platform,interp) { \
@@ -53,7 +53,7 @@ using Common::GUIO_NONE;
 		gid, \
 		interp, \
 		features, \
-		ver \
+		ver, \
 	}
 
 #define GAME(id,extra,md5,ver,gid) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformPC,GType_V2)
@@ -196,7 +196,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		GID_GOLDRUSH,
 		GType_V3,
 		GF_MACGOLDRUSH,
-		0x3149
+		0x3149,
 	},
 
 
@@ -514,7 +514,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		GID_SQ2,
 		GType_V2,
 		0,
-		0x2936
+		0x2936,
 	},
 
 
@@ -659,7 +659,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		GID_FANMADE,
 		GType_V2,
 		GF_AGDS,
-		0x2440
+		0x2440,
 	},
 
 	{
@@ -676,7 +676,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		GID_GETOUTTASQ,
 		GType_V2,
 		0,
-		0x2440
+		0x2440,
 	},
 
 	FANMADE_F("Half-Death - Terror At White-Mesa", "b62c05d0ace878261392073f57ae788c", GF_AGIMOUSE),
@@ -831,7 +831,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		GID_FANMADE,
 		GType_V3,
 		GF_FANMADE,
-		0x3149
+		0x3149,
 	},
 	FANMADE_SVP("V - The Graphical Adventure", "1646eaade74f137a9041eb427a389969", 768, 0x2440, Common::kPlatformCoCo3),
 
@@ -859,7 +859,7 @@ static AGIGameDescription g_fallbackDesc = {
 	GID_FANMADE,
 	GType_V2,
 	GF_FANMADE,
-	0x2917
+	0x2917,
 };
 
 /**

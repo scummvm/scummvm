@@ -332,7 +332,7 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXX
 		if (file->isDirectory()) continue;
 		Common::String filename = file->getName();
 		filename.toLowercase();
-		allFiles[filename] = true;   // Save the filename in a hash table
+		allFiles[filename] = true; // Save the filename in a hash table
 
 		if (filename.hasSuffix(".wag")) {
 			// Save latest found *.wag file's path (Can be used to open the file, the name can't)
