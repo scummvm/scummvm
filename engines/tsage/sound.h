@@ -40,18 +40,9 @@ class Sound;
 #define ADLIB_DRIVER_NUM 3
 
 struct trackInfoStruct {
-	int _count;
-	int _rlbList[SOUND_ARR_SIZE];
-	int _arr2[SOUND_ARR_SIZE];
-	byte *_channelData[SOUND_ARR_SIZE];
-	int _channelNum[SOUND_ARR_SIZE];
-	int field92[SOUND_ARR_SIZE];
-	int fielda2[SOUND_ARR_SIZE];
-	int fieldb2[SOUND_ARR_SIZE];
-	int fieldf2[SOUND_ARR_SIZE];
-	int field132[SOUND_ARR_SIZE];
-	int field152[SOUND_ARR_SIZE];
-
+	int _numTracks;
+	int _chunks[SOUND_ARR_SIZE];
+	int _voiceTypes[SOUND_ARR_SIZE];
 };
 
 enum SoundDriverStatus {SNDSTATUS_FAILED = 0, SNDSTATUS_DETECTED = 1, SNDSTATUS_SKIPPED = 2};
@@ -229,54 +220,63 @@ public:
 
 class Sound: public EventHandler {
 private:
-	void _prime(int soundNum, bool queFlag);
+	void _prime(int soundResID, bool queFlag);
 	void _unPrime();
 	void orientAfterRestore();
 public:
 	int _field0;
-	bool _stopFlag;
-	int _soundNum;
-	int _groupNum;
-	int _soundPriority;
-	int _priority2;
-	int _loop;
-	bool _loopFlag2;
+	bool _stoppedAsynchronously;
+	int _soundResID;
+	int _group;
+	int _sndResPriority;
+	int _fixedPriority;
+	int _sndResLoop;
+	bool _fixedLoop;
 	int _priority;
 	int _volume;
-	bool _loopFlag;
-	int _pauseCtr;
-	int _muteCtr;
-	int _holdAt;
+	bool _loop;
+	int _pausedCount;
+	int _mutedCount;
+	int _hold;
 	int _cueValue;
-	int _volume1;
-	int _volume3;
-	int _volume2;
-	int _volume5;
-	int _volume4;
-	uint _timeIndex;
-	int _field26;
-	int _field28[SOUND_ARR_SIZE];
-	int _field38[SOUND_ARR_SIZE];
-	int _field48[SOUND_ARR_SIZE];
-	int _field58[SOUND_ARR_SIZE];
-	int _field68[SOUND_ARR_SIZE];
-	int _field78[SOUND_ARR_SIZE];
-	int _voiceStructIndex[SOUND_ARR_SIZE];
-	int _fieldA8[SOUND_ARR_SIZE];
-	int _fieldB8[SOUND_ARR_SIZE];
-	int _fieldC8[SOUND_ARR_SIZE];
-	int _fieldE8[SOUND_ARR_SIZE];
+	int _fadeDest;
+	int _fadeSteps;
+	int _fadeTicks;
+	int _fadeCounter;
+	bool _stopAfterFadeFlag;
+	uint _timer;
+	int _loopTimer;
+	int _chProgram[SOUND_ARR_SIZE];
+	int _chModulation[SOUND_ARR_SIZE];
+	int _chVolume[SOUND_ARR_SIZE];
+	int _chPan[SOUND_ARR_SIZE];
+	int _chDamper[SOUND_ARR_SIZE];
+	int _chPitchBlend[SOUND_ARR_SIZE];
+	int _chVoiceType[SOUND_ARR_SIZE];
+	int _chNumVoices[SOUND_ARR_SIZE];
+	int _chSubPriority[SOUND_ARR_SIZE];
+	int _chFlags[SOUND_ARR_SIZE];
+	int _chWork[SOUND_ARR_SIZE];
 	trackInfoStruct _trackInfo;
+	byte *_channelData[SOUND_ARR_SIZE];
+	int _trkChannel[SOUND_ARR_SIZE];
+	int _trkState[SOUND_ARR_SIZE];
+	int _trkLoopState[SOUND_ARR_SIZE];
+	int _trkIndex[SOUND_ARR_SIZE];
+	int _trkLoopIndex[SOUND_ARR_SIZE];
+	int _trkRest[SOUND_ARR_SIZE];
+	int _trkLoopRest[SOUND_ARR_SIZE];
+
 	bool _primed;
 	bool _isEmpty;
-	byte *_field26E;
+	byte *_remoteReceiver;
 public:
 	Sound();
 	~Sound();
 
-	void play(int soundNum);
+	void play(int soundResID);
 	void stop();
-	void prime(int soundNum);
+	void prime(int soundResID);
 	void unPrime();
 	void go();
 	void halt(void);
@@ -287,7 +287,7 @@ public:
 	bool isMuted() const;
 	void pause(bool flag);
 	void mute(bool flag);
-	void fade(int volume1, int volume2, int volume3, int v4);
+	void fade(int fadeDest, int fadeTicks, int fadeSteps, bool stopAfterFadeFlag);
 	void setTimeIndex(uint32 timeIndex);
 	uint32 getTimeIndex() const;
 	int getCueValue() const;

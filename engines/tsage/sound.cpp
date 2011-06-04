@@ -90,7 +90,7 @@ void SoundManager::dispatch() {
 		++i;
 
 		// If the sound is flagged for stopping, then stop it
-		if (sound->_stopFlag) {
+		if (sound->_stoppedAsynchronously) {
 			sound->stop();
 		}
 	}
@@ -446,7 +446,7 @@ int SoundManager::_sfDetermineGroup(const byte *soundData) {
 void SoundManager::_sfAddToPlayList(Sound *sound) {
 	++sfManager()._suspendCtr;
 	_sfDoAddToPlayList(sound);
-	sound->_stopFlag = false;
+	sound->_stoppedAsynchronously = false;
 	_sfRethinkVoiceTypes();
 	--sfManager()._suspendCtr;
 }
@@ -603,7 +603,7 @@ void SoundManager::_sfDereferenceAll() {
 void SoundManager::_sfUpdatePriority(Sound *sound) {
 	++_soundManager->_suspendCtr; 
 
-	int tempPriority = (sound->_priority2 == 255) ? sound->_soundPriority : sound->_priority;
+	int tempPriority = (sound->_fixedPriority == 255) ? sound->_sndResPriority : sound->_priority;
 	if (sound->_priority != tempPriority) {
 		sound->_priority = tempPriority;
 		if (_sfDoRemoveFromPlayList(sound)) {
@@ -616,10 +616,10 @@ void SoundManager::_sfUpdatePriority(Sound *sound) {
 }
 
 void SoundManager::_sfUpdateLoop(Sound *sound) {
-	if (sound->_loopFlag2)
-		sound->_loopFlag = sound->_loop;
+	if (sound->_fixedLoop)
+		sound->_loop = sound->_sndResLoop;
 	else
-		sound->_loopFlag = sound->_loopFlag2;
+		sound->_loop = sound->_fixedLoop;
 }
 
 void SoundManager::_sfSetMasterVol(int volume) {
@@ -637,7 +637,7 @@ void SoundManager::_sfSetMasterVol(int volume) {
 }
 
 void SoundManager::_sfExtractTrackInfo(trackInfoStruct *trackInfo, const byte *soundData, int groupNum) {
-	trackInfo->_count = 0;
+	trackInfo->_numTracks = 0;
 
 	const byte *p = soundData + READ_LE_UINT16(soundData + 8);
 	uint32 v;
@@ -648,14 +648,14 @@ void SoundManager::_sfExtractTrackInfo(trackInfoStruct *trackInfo, const byte *s
 			p += 6;
 
 			for (int idx = 0; idx < count; ++idx) {
-				if (trackInfo->_count == 16) {
-					trackInfo->_count = -1;
+				if (trackInfo->_numTracks == 16) {
+					trackInfo->_numTracks = -1;
 					return;
 				}
 
-				trackInfo->_rlbList[trackInfo->_count] = READ_LE_UINT16(p);
-				trackInfo->_arr2[trackInfo->_count] = READ_LE_UINT16(p + 2);
-				++trackInfo->_count;
+				trackInfo->_chunks[trackInfo->_numTracks] = READ_LE_UINT16(p);
+				trackInfo->_voiceTypes[trackInfo->_numTracks] = READ_LE_UINT16(p + 2);
+				++trackInfo->_numTracks;
 				p += 4;
 			}
 		} else {
@@ -753,12 +753,12 @@ void SoundManager::_sfDoUpdateVolume(Sound *sound) {
 
 			if (vs->_voiceType == VOICETYPE_0) {
 				if (!vse._field4 && !vse._field6) {
-					int vol = sound->_volume * sound->_field48[vse._field8] / 127;
+					int vol = sound->_volume * sound->_chVolume[vse._field8] / 127;
 					driver->setVolume0(voiceIndex, vse._field0, 7, vol);
 				}
 			} else {
 				if (!vse._field8 && !vse._fieldA) {
-					int vol = sound->_volume * sound->_field48[vse._fieldC] / 127;
+					int vol = sound->_volume * sound->_chVolume[vse._fieldC] / 127;
 					driver->setVolume1(voiceIndex, vse._field0, 7, vol);
 				}
 			}
@@ -771,31 +771,31 @@ void SoundManager::_sfDoUpdateVolume(Sound *sound) {
 /*--------------------------------------------------------------------------*/
 
 Sound::Sound() {
-	_stopFlag = false;
-	_soundNum = 0;
-	_groupNum = 0;
-	_soundPriority = 0;
-	_priority2 = -1;
-	_loop = true;
-	_loopFlag2 = true;
+	_stoppedAsynchronously = false;
+	_soundResID = 0;
+	_group = 0;
+	_sndResPriority = 0;
+	_fixedPriority = -1;
+	_sndResLoop = true;
+	_fixedLoop = true;
 	_priority = 0;
 	_volume = 127;
-	_loopFlag = false;
-	_pauseCtr = 0;
-	_muteCtr = 0;
-	_holdAt = 0xff;
+	_loop = false;
+	_pausedCount = 0;
+	_mutedCount = 0;
+	_hold = 0xff;
 	_cueValue = -1;
-	_volume1 = -1;
-	_volume3 = 0;
-	_volume2 = 0;
-	_volume5 = 0;
-	_volume4 = 0;
-	_timeIndex = 0;
-	_field26 = 0;
-	_trackInfo._count = 0;
+	_fadeDest = -1;
+	_fadeSteps = 0;
+	_fadeTicks = 0;
+	_fadeCounter = 0;
+	_stopAfterFadeFlag = false;
+	_timer = 0;
+	_loopTimer = 0;
+	_trackInfo._numTracks = 0;
 	_primed = false;
 	_isEmpty = false;
-	_field26E = NULL;
+	_remoteReceiver = NULL;
 }
 
 Sound::~Sound() {
@@ -812,10 +812,10 @@ void Sound::stop() {
 	_unPrime();
 }
 
-void Sound::prime(int soundNum) {
-	if (_soundNum != -1) {
+void Sound::prime(int soundResID) {
+	if (_soundResID != -1) {
 		stop();
-		_prime(soundNum, false);
+		_prime(soundResID, false);
 	}
 }
 
@@ -823,35 +823,35 @@ void Sound::unPrime() {
 	stop();
 }
 
-void Sound::_prime(int soundNum, bool queFlag) {
+void Sound::_prime(int soundResID, bool queFlag) {
 	if (_primed)
 		unPrime();
 
-	if (_soundNum != -1) {
+	if (_soundResID != -1) {
 		// Sound number specified
 		_isEmpty = false;
-		_field26E = NULL;
-		byte *soundData = _resourceManager->getResource(RES_SOUND, soundNum, 0);
+		_remoteReceiver = NULL;
+		byte *soundData = _resourceManager->getResource(RES_SOUND, soundResID, 0);
 		_soundManager->checkResVersion(soundData);
-		_groupNum = _soundManager->determineGroup(soundData);
-		_soundPriority = _soundManager->extractPriority(soundData);
-		_loop = _soundManager->extractLoop(soundData);
-		_soundManager->extractTrackInfo(&_trackInfo, soundData, _groupNum);
+		_group = _soundManager->determineGroup(soundData);
+		_sndResPriority = _soundManager->extractPriority(soundData);
+		_sndResLoop = _soundManager->extractLoop(soundData);
+		_soundManager->extractTrackInfo(&_trackInfo, soundData, _group);
 
-		for (int idx = 0; idx < _trackInfo._count; ++idx) {
-			_trackInfo._channelData[idx] = _resourceManager->getResource(RES_SOUND, soundNum, _trackInfo._rlbList[idx]);
+		for (int idx = 0; idx < _trackInfo._numTracks; ++idx) {
+			_channelData[idx] = _resourceManager->getResource(RES_SOUND, soundResID, _trackInfo._chunks[idx]);
 		}
 
 		DEALLOCATE(soundData);
 	} else {
 		// No sound specified
 		_isEmpty = true;
-		_groupNum = 0;
-		_soundPriority = 0;
-		_loop = 0;
-		_trackInfo._count = 0;
-		_trackInfo._channelData[0] = ALLOCATE(200);
-		_field26E = ALLOCATE(200);
+		_group = 0;
+		_sndResPriority = 0;
+		_sndResLoop = 0;
+		_trackInfo._numTracks = 0;
+		_channelData[0] = ALLOCATE(200);
+		_remoteReceiver = ALLOCATE(200);
 	}
 
 	if (queFlag)
@@ -863,20 +863,20 @@ void Sound::_prime(int soundNum, bool queFlag) {
 void Sound::_unPrime() {
 	if (_primed) {
 		if (_isEmpty) {
-			DEALLOCATE(_trackInfo._channelData[0]);
-			DEALLOCATE(_field26E);
-			_field26E = NULL;
+			DEALLOCATE(_channelData[0]);
+			DEALLOCATE(_remoteReceiver);
+			_remoteReceiver = NULL;
 		} else {
-			for (int idx = 0; idx < _trackInfo._count; ++idx) {
-				DEALLOCATE(_trackInfo._channelData[idx]);
+			for (int idx = 0; idx < _trackInfo._numTracks; ++idx) {
+				DEALLOCATE(_channelData[idx]);
 			}
 		}
 
-		_trackInfo._count = 0;
+		_trackInfo._numTracks = 0;
 		_soundManager->removeFromSoundList(this);
 
 		_primed = false;
-		_stopFlag = false;
+		_stoppedAsynchronously = false;
 	}
 }
 
@@ -884,12 +884,12 @@ void Sound::orientAfterDriverChange() {
 	if (!_isEmpty) {
 		int timeIndex = getTimeIndex();
 
-		for (int idx = 0; idx < _trackInfo._count; ++idx)
-			DEALLOCATE(_trackInfo._channelData[idx]);
+		for (int idx = 0; idx < _trackInfo._numTracks; ++idx)
+			DEALLOCATE(_channelData[idx]);
 		
-		_trackInfo._count = 0;
+		_trackInfo._numTracks = 0;
 		_primed = false;
-		_prime(_soundNum, true);
+		_prime(_soundResID, true);
 		setTimeIndex(timeIndex);
 	}
 }
@@ -898,7 +898,7 @@ void Sound::orientAfterRestore() {
 	if (_isEmpty) {
 		int timeIndex = getTimeIndex();
 		_primed = false;
-		_prime(_soundNum, true);
+		_prime(_soundResID, true);
 		setTimeIndex(timeIndex);
 	}
 }
@@ -915,7 +915,7 @@ void Sound::halt(void) {
 }
 
 int Sound::getSoundNum() const {
-	return _soundNum;
+	return _soundResID;
 }
 
 bool Sound::isPlaying() {
@@ -927,20 +927,20 @@ bool Sound::isPrimed() const {
 }
 
 bool Sound::isPaused() const {
-	return _pauseCtr != 0;
+	return _pausedCount != 0;
 }
 
 bool Sound::isMuted() const {
-	return _muteCtr != 0;
+	return _mutedCount != 0;
 }
 
 void Sound::pause(bool flag) {
 	_soundManager->suspendSoundServer();
 
 	if (flag)
-		++_pauseCtr;
-	else if (_pauseCtr > 0)
-		--_pauseCtr;
+		++_pausedCount;
+	else if (_pausedCount > 0)
+		--_pausedCount;
 
 	_soundManager->rethinkVoiceTypes();
 	_soundManager->restartSoundServer();
@@ -950,29 +950,29 @@ void Sound::mute(bool flag) {
 	_soundManager->suspendSoundServer();
 
 	if (flag)
-		++_muteCtr;
-	else if (_muteCtr > 0)
-		--_muteCtr;
+		++_mutedCount;
+	else if (_mutedCount > 0)
+		--_mutedCount;
 
 	_soundManager->rethinkVoiceTypes();
 	_soundManager->restartSoundServer();
 }
 
-void Sound::fade(int volume1, int volume2, int volume3, int volume4) {
+void Sound::fade(int fadeDest, int fadeTicks, int fadeSteps, bool stopAfterFadeFlag) {
 	_soundManager->suspendSoundServer();
 
-	if (volume1 > 127)
-		volume1 = 127;
-	if (volume2 > 127)
-		volume2 = 127;
-	if (volume3 > 255)
-		volume3 = 255;
+	if (fadeDest > 127)
+		fadeDest = 127;
+	if (fadeTicks > 127)
+		fadeTicks = 127;
+	if (fadeSteps > 255)
+		fadeSteps = 255;
 
-	_volume1 = volume1;
-	_volume2 = volume2;
-	_volume3 = volume3;
-	_volume5 = 0;
-	_volume4 = volume4;
+	_fadeDest = fadeDest;
+	_fadeTicks = fadeTicks;
+	_fadeSteps = fadeSteps;
+	_fadeCounter = 0;
+	_stopAfterFadeFlag = stopAfterFadeFlag;
 
 	_soundManager->restartSoundServer();
 }
@@ -986,7 +986,7 @@ void Sound::setTimeIndex(uint32 timeIndex) {
 }
 
 uint32 Sound::getTimeIndex() const {
-	return _timeIndex;
+	return _timer;
 }
 
 int Sound::getCueValue() const {
@@ -1015,12 +1015,12 @@ int Sound::getVol() const {
 void Sound::setPri(int priority) {
 	if (priority > 127)
 		priority = 127;
-	_priority2 = priority;
+	_fixedPriority = priority;
 	_soundManager->updateSoundPri(this);
 }
 
 void Sound::setLoop(bool flag) {
-	_loopFlag2 = flag;
+	_fixedLoop = flag;
 	_soundManager->updateSoundLoop(this);
 }
 
@@ -1029,17 +1029,17 @@ int Sound::getPri() const {
 }
 
 bool Sound::getLoop() {
-	return _loopFlag;
+	return _loop;
 }
 
 void Sound::holdAt(int amount) {
 	if (amount > 127)
 		amount = 127;
-	_holdAt = amount;
+	_hold = amount;
 }
 
 void Sound::release() {
-	_holdAt = -1;
+	_hold = -1;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1092,10 +1092,10 @@ void ASound::stop() {
 	_action = NULL;
 }
 
-void ASound::prime(int soundNum, Action *action) {
+void ASound::prime(int soundResID, Action *action) {
 	_action = action;
 	_cueValue = 0;
-	_sound.prime(soundNum);
+	_sound.prime(soundResID);
 }
 
 void ASound::unPrime() {
