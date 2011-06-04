@@ -2564,6 +2564,9 @@ void SceneText::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_color2);
 	s.syncAsSint16LE(_color3);
 	SYNC_ENUM(_textMode, TextAlign);
+
+	if (s.getVersion() >= 5)
+		_textSurface.synchronize(s);
 }
 
 /*--------------------------------------------------------------------------*/

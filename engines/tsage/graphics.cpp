@@ -304,6 +304,43 @@ void GfxSurface::unlockSurface() {
 	}
 }
 
+void GfxSurface::synchronize(Serializer &s) {
+	assert(!_lockSurfaceCtr);
+	assert(!_screenSurface);
+
+	s.syncAsByte(_disableUpdates);
+	_bounds.synchronize(s);
+	s.syncAsSint16LE(_centroid.x);
+	s.syncAsSint16LE(_centroid.y);
+	s.syncAsSint16LE(_transColor);
+
+	if (s.isSaving()) {
+		// Save contents of the surface
+		if (_customSurface) {
+			s.syncAsSint16LE(_customSurface->w);
+			s.syncAsSint16LE(_customSurface->h);
+			s.syncBytes((byte *)_customSurface->pixels, _customSurface->w * _customSurface->h);
+		} else {
+			int zero = 0;
+			s.syncAsSint16LE(zero);
+			s.syncAsSint16LE(zero);
+		}
+	} else {
+		int w, h;
+		s.syncAsSint16LE(w);
+		s.syncAsSint16LE(h);
+
+		if ((w == 0) || (h == 0)) {
+			if (_customSurface)
+				delete _customSurface;
+			_customSurface = NULL;
+		} else {
+			create(w, h);
+			s.syncBytes((byte *)_customSurface->pixels, w * h);
+		}
+	}
+}
+
 /**
  * Fills a specified rectangle on the surface with the specified color
  *
