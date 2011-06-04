@@ -167,6 +167,10 @@ bool OSystem_POSIX::displayLogFile() {
 		execlp("xdg-open", "xdg-open", _logFilePath.c_str(), (char*)0);
 
 		// If we're here, that clearly failed.
+
+		// TODO: We may also want to try detecting the case where
+		// xdg-open is successfully executed but returns an error code.
+
 		// Try xterm+less next
 
 		execlp("xterm", "xterm", "-e", "less", _logFilePath.c_str(), (char*)0);
@@ -182,6 +186,9 @@ bool OSystem_POSIX::displayLogFile() {
 	int status;
 	// Wait for viewer to close.
 	// (But note that xdg-open may have spawned a viewer in the background.)
+
+	// FIXME: We probably want the viewer to always open in the background.
+	// This may require installing a SIGCHLD handler.
 	pid = waitpid(pid, &status, 0);
 
 	if (pid < 0) {
