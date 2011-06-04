@@ -809,8 +809,10 @@ void GfxButton::setDefaults() {
 	gfxManager._font.getStringBounds(_message.c_str(), tempRect, 240);
 	tempRect.right = ((tempRect.right + 15) / 16) * 16;
 
-	// Set the button bounds to a reduced area
+	// Set the button bounds 
 	tempRect.collapse(-_globals->_gfxEdgeAdjust, -_globals->_gfxEdgeAdjust);
+	if (_vm->getFeatures() & GF_CD)
+		--tempRect.top;
 	tempRect.moveTo(_bounds.left, _bounds.top);
 	_bounds = tempRect;
 }

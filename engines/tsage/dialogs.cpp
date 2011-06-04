@@ -43,20 +43,20 @@ MessageDialog::MessageDialog(const Common::String &message, const Common::String
 							 const Common::String &btn2Message) : GfxDialog() {
 	// Set up the message
 	addElements(&_msg, &_btn1, NULL);
-
+ 
 	_msg.set(message, 200, ALIGN_LEFT);
-	_btn1._bounds.moveTo(_msg._bounds.left, _msg._bounds.bottom + 2);
+	_msg._bounds.moveTo(0, 0);
 	_defaultButton = &_btn1;
 
 	// Set up the first button
 	_btn1.setText(btn1Message);
-	_btn1._bounds.moveTo(_msg._bounds.right - _btn1._bounds.width(), _msg._bounds.bottom);
+	_btn1._bounds.moveTo(_msg._bounds.right - _btn1._bounds.width(), _msg._bounds.bottom + 2);
 
 	if (!btn2Message.empty()) {
 		// Set up the second button
 		add(&_btn2);
 		_btn2.setText(btn2Message);
-		_btn2._bounds.moveTo(_msg._bounds.right - _btn2._bounds.width(), _msg._bounds.bottom);
+		_btn2._bounds.moveTo(_msg._bounds.right - _btn2._bounds.width(), _msg._bounds.bottom + 2);
 		_btn1._bounds.translate(-(_btn2._bounds.width() + 4), 0);
 	}
 
