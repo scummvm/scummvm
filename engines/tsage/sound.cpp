@@ -36,21 +36,16 @@ static SoundManager *_soundManager = NULL;
 SoundManager::SoundManager() {
 	_soundManager = this;
 	__sndmgrReady = false;
-	_minVersion = 0x102;
-	_maxVersion = 0x10A;
+	_ourSndResVersion = 0x102;
+	_ourDrvResVersion = 0x10A;
 
-	for (int i = 0; i < SOUND_ARR_SIZE; ++i) {
-		_field89[i] = 0;
-		_groupList[i] = 0;
-		_fieldE9[i] = 0;
-		_field109[i] = 0;
+	for (int i = 0; i < SOUND_ARR_SIZE; ++i)
 		_voiceStructPtrs[i] = NULL;
-	}
 
-	_groupMask = 0;
-	_volume = 127;
-	_suspendCtr = 0;
-	_disableCtr = 0;
+	_groupsAvail = 0;
+	_masterVol = 127;
+	_serverSuspendedCount = 0;
+	_serverDisabledCount = 0;
 	_suspendedCount = 0;
 	_driversDetected = false;
 	_needToRethink = false;
@@ -151,21 +146,21 @@ void SoundManager::dumpDriverList() {
 }
 
 void SoundManager::disableSoundServer() {
-	++_disableCtr;
+	++_serverDisabledCount;
 }
 
 void SoundManager::enableSoundServer() {
-	if (_disableCtr > 0)
-		--_disableCtr;
+	if (_serverDisabledCount > 0)
+		--_serverDisabledCount;
 }
 
 void SoundManager::suspendSoundServer() {
-	++_suspendCtr;
+	++_serverSuspendedCount;
 }
 
 void SoundManager::restartSoundServer() {
-	if (_suspendCtr > 0)
-		--_suspendCtr;
+	if (_serverSuspendedCount > 0)
+		--_serverSuspendedCount;
 }
 
 /**
@@ -181,7 +176,7 @@ void SoundManager::installDriver(int driverNum) {
 	if (!driver)
 		return;
 
-	assert((_maxVersion >= driver->_minVersion) && (_maxVersion <= driver->_maxVersion));
+	assert((_ourDrvResVersion >= driver->_minVersion) && (_ourDrvResVersion <= driver->_maxVersion));
 
 	// Mute any loaded sounds
 	disableSoundServer();
@@ -230,7 +225,7 @@ SoundDriver *SoundManager::instantiateDriver(int driverNum) {
 void SoundManager::unInstallDriver(int driverNum) {
 	Common::List<SoundDriver *>::const_iterator i;
 	for (i = _installedDrivers.begin(); i != _installedDrivers.end(); ++i) {
-		if ((*i)->_driverNum == driverNum) {
+		if ((*i)->_driverResID == driverNum) {
 			// Found driver to remove
 
 			// Mute any loaded sounds
@@ -260,7 +255,7 @@ void SoundManager::unInstallDriver(int driverNum) {
 bool SoundManager::isInstalled(int driverNum) const {
 	Common::List<SoundDriver *>::const_iterator i;
 	for (i = _installedDrivers.begin(); i != _installedDrivers.end(); ++i) {
-		if ((*i)->_driverNum == driverNum)
+		if ((*i)->_driverResID == driverNum)
 			return true;
 	}
 
@@ -272,7 +267,7 @@ void SoundManager::setMasterVol(int volume) {
 }
 
 int SoundManager::getMasterVol() const {
-	return _volume;
+	return _masterVol;
 }
 
 void SoundManager::loadSound(int soundNum, bool showErrors) {
@@ -291,9 +286,9 @@ void SoundManager::checkResVersion(const byte *soundData) {
 	int maxVersion = READ_LE_UINT16(soundData + 4);
 	int minVersion = READ_LE_UINT16(soundData + 6);
 
-	if (_soundManager->_minVersion < minVersion)
+	if (_soundManager->_ourSndResVersion < minVersion)
 		error("Attempt to play/prime sound resource that is too new");
-	if (_soundManager->_minVersion > maxVersion)
+	if (_soundManager->_ourSndResVersion > maxVersion)
 		error("Attempt to play/prime sound resource that is too old");
 }
 
@@ -347,7 +342,7 @@ void SoundManager::rethinkVoiceTypes() {
 }
 
 void SoundManager::_sfSoundServer() {
-	if (!sfManager()._disableCtr && !sfManager()._suspendCtr)
+	if (!sfManager()._serverDisabledCount && !sfManager()._serverSuspendedCount)
 		return;
 
 	if (sfManager()._needToRethink) {
@@ -360,8 +355,8 @@ void SoundManager::_sfSoundServer() {
 	// Handle any fading if necessary
 	do {
 		_sfProcessFading();
-	} while (sfManager()._suspendCtr > 0);
-	sfManager()._suspendCtr = 0;
+	} while (sfManager()._serverSuspendedCount > 0);
+	sfManager()._serverSuspendedCount = 0;
 
 	// Poll all sound drivers in case they need it
 	for (Common::List<SoundDriver *>::iterator i = sfManager()._installedDrivers.begin(); 
@@ -434,7 +429,7 @@ int SoundManager::_sfDetermineGroup(const byte *soundData) {
 	const byte *p = soundData + READ_LE_UINT16(soundData + 8);
 	uint32 v;
 	while ((v = READ_LE_UINT32(p)) != 0) {
-		if ((v & _soundManager->_groupMask) == v)
+		if ((v & _soundManager->_groupsAvail) == v)
 			return v;
 
 		p += 6 + (READ_LE_UINT16(p + 4) * 4);
@@ -444,24 +439,24 @@ int SoundManager::_sfDetermineGroup(const byte *soundData) {
 }
 
 void SoundManager::_sfAddToPlayList(Sound *sound) {
-	++sfManager()._suspendCtr;
+	++sfManager()._serverSuspendedCount;
 	_sfDoAddToPlayList(sound);
 	sound->_stoppedAsynchronously = false;
 	_sfRethinkVoiceTypes();
-	--sfManager()._suspendCtr;
+	--sfManager()._serverSuspendedCount;
 }
 	
 void SoundManager::_sfRemoveFromPlayList(Sound *sound) {
-	++sfManager()._suspendCtr;
+	++sfManager()._serverSuspendedCount;
 	if (_sfDoRemoveFromPlayList(sound))
 		_sfRethinkVoiceTypes();
-	--sfManager()._suspendCtr;
+	--sfManager()._serverSuspendedCount;
 }
 
 bool SoundManager::_sfIsOnPlayList(Sound *sound) {
-	++_soundManager->_suspendCtr; 
+	++_soundManager->_serverSuspendedCount; 
 	bool result = contains(_soundManager->_playList, sound);
-	--_soundManager->_suspendCtr;
+	--_soundManager->_serverSuspendedCount;
 
 	return result;
 }
@@ -583,7 +578,7 @@ void SoundManager::_sfRethinkSoundDrivers() {
 }
 
 void SoundManager::_sfRethinkVoiceTypes() {
-	++sfManager()._suspendCtr;
+	++sfManager()._serverSuspendedCount;
 	_sfDereferenceAll();
 
 
@@ -601,7 +596,7 @@ void SoundManager::_sfDereferenceAll() {
 }
 
 void SoundManager::_sfUpdatePriority(Sound *sound) {
-	++_soundManager->_suspendCtr; 
+	++_soundManager->_serverSuspendedCount; 
 
 	int tempPriority = (sound->_fixedPriority == 255) ? sound->_sndResPriority : sound->_priority;
 	if (sound->_priority != tempPriority) {
@@ -612,7 +607,7 @@ void SoundManager::_sfUpdatePriority(Sound *sound) {
 		}
 	}
 
-	--_soundManager->_suspendCtr;
+	--_soundManager->_serverSuspendedCount;
 }
 
 void SoundManager::_sfUpdateLoop(Sound *sound) {
@@ -626,8 +621,8 @@ void SoundManager::_sfSetMasterVol(int volume) {
 	if (volume > 127)
 		volume = 127;
 
-	if (volume != _soundManager->_volume) {
-		_soundManager->_volume = volume;
+	if (volume != _soundManager->_masterVol) {
+		_soundManager->_masterVol = volume;
 
 		for (Common::List<SoundDriver *>::iterator i = _soundManager->_installedDrivers.begin(); 
 				i != _soundManager->_installedDrivers.end(); ++i) {
@@ -676,7 +671,7 @@ void SoundManager::_sfExtractGroupMask() {
 				i != sfManager()._installedDrivers.end(); ++i) 
 		mask |= (*i)->_groupMask;
 
-	_soundManager->_groupMask = mask;
+	_soundManager->_groupsAvail = mask;
 }
 
 bool SoundManager::_sfInstallDriver(SoundDriver *driver) {
@@ -689,7 +684,7 @@ bool SoundManager::_sfInstallDriver(SoundDriver *driver) {
 
 	_sfExtractGroupMask();
 	_sfRethinkSoundDrivers();
-	driver->setMasterVolume(sfManager()._volume);
+	driver->setMasterVolume(sfManager()._masterVol);
 
 	return true;
 }
@@ -710,21 +705,21 @@ void SoundManager::_sfInstallPatchBank(SoundDriver *driver, const byte *bankData
  * Adds the specified sound in the playing sound list, inserting in order of priority
  */
 void SoundManager::_sfDoAddToPlayList(Sound *sound) {
-	++sfManager()._suspendCtr;
+	++sfManager()._serverSuspendedCount;
 
 	Common::List<Sound *>::iterator i = sfManager()._playList.begin();
 	while ((i != sfManager()._playList.end()) && (sound->_priority > (*i)->_priority))
 		++i;
 
 	sfManager()._playList.insert(i, sound);
-	--sfManager()._suspendCtr;
+	--sfManager()._serverSuspendedCount;
 }
 
 /**
  * Removes the specified sound from the play list
  */
 bool SoundManager::_sfDoRemoveFromPlayList(Sound *sound) {
-	++sfManager()._suspendCtr;
+	++sfManager()._serverSuspendedCount;
 
 	bool result = false;
 	for (Common::List<Sound *>::iterator i = sfManager()._playList.begin(); i != sfManager()._playList.end(); ++i) {
@@ -735,12 +730,12 @@ bool SoundManager::_sfDoRemoveFromPlayList(Sound *sound) {
 		}
 	}
 	
-	--sfManager()._suspendCtr;
+	--sfManager()._serverSuspendedCount;
 	return result;
 }
 
 void SoundManager::_sfDoUpdateVolume(Sound *sound) {
-	++_soundManager->_suspendCtr; 
+	++_soundManager->_serverSuspendedCount; 
 
 	for (int voiceIndex = 0; voiceIndex < SOUND_ARR_SIZE; ++voiceIndex) {
 		VoiceStruct *vs = sfManager()._voiceStructPtrs[voiceIndex];
@@ -765,7 +760,7 @@ void SoundManager::_sfDoUpdateVolume(Sound *sound) {
 		}
 	}
 	
-	--_soundManager->_suspendCtr;
+	--_soundManager->_serverSuspendedCount;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1114,7 +1109,7 @@ void ASound::fade(int v1, int v2, int v3, int v4, Action *action) {
 /*--------------------------------------------------------------------------*/
 
 SoundDriver::SoundDriver() {
-	_driverNum = 0;
+	_driverResID = 0;
 	_minVersion = _maxVersion = 0;
 	_groupMask = 0;
 }

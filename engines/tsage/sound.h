@@ -66,11 +66,11 @@ struct GroupData {
 class SoundDriver {
 public:
 	Common::String _shortDescription, _longDescription;
-	int _driverNum;
 	int _minVersion, _maxVersion;
 	// The following fields were originally held in separate arrays in the SoundManager class
 	uint32 _groupMask;
 	const GroupData *_groupOffset;
+	int _driverResID;
 public:
 	SoundDriver();
 
@@ -129,22 +129,18 @@ private:
 	SoundDriver *instantiateDriver(int driverNum);
 public:
 	bool __sndmgrReady;
-	int _minVersion, _maxVersion;
+	int _ourSndResVersion, _ourDrvResVersion;
 	Common::List<Sound *> _playList;
-	int _field109[SOUND_ARR_SIZE];
-	uint32 _groupMask;
-	int _volume;
-	int _disableCtr;
-	int _suspendCtr;
+	Common::List<SoundDriver *> _installedDrivers;
+	VoiceStruct *_voiceStructPtrs[SOUND_ARR_SIZE];
+	uint32 _groupsAvail;
+	int _masterVol;
+	int _serverDisabledCount;
+	int _serverSuspendedCount;
 	int _suspendedCount;
 	bool _driversDetected;
 	Common::List<Sound *> _soundList;
 	Common::List<SoundDriverEntry> _availableDrivers;
-	Common::List<SoundDriver *> _installedDrivers;
-	int _field89[SOUND_ARR_SIZE];
-	uint16 _groupList[SOUND_ARR_SIZE];
-	int _fieldE9[SOUND_ARR_SIZE];
-	VoiceStruct *_voiceStructPtrs[SOUND_ARR_SIZE];
 	bool _needToRethink;
 public:
 	SoundManager();
