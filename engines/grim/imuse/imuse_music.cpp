@@ -131,6 +131,7 @@ void Imuse::playMusic(const ImuseTable *table, int atribPos, bool sequence) {
 			pan = table->pan;
 		if (!soundName) {
 			startMusic(table->filename, hookId, 0, pan);
+			setVolume(table->filename, 0);
 			setFadeVolume(table->filename, table->volume, table->fadeOut60TicksDelay);
 			return;
 		}
@@ -144,6 +145,9 @@ void Imuse::playMusic(const ImuseTable *table, int atribPos, bool sequence) {
 		if (table->opcode == 2) {
 			fadeOutMusic(table->fadeOut60TicksDelay);
 			startMusic(table->filename, hookId, table->volume, pan);
+			setVolume(table->filename, 0);
+			setFadeVolume(table->filename, table->volume, table->fadeOut60TicksDelay);
+			setFadePan(table->filename, pan, table->fadeOut60TicksDelay);
 			return;
 		}
 		if (strcmp(soundName, table->filename) == 0) {
@@ -154,11 +158,14 @@ void Imuse::playMusic(const ImuseTable *table, int atribPos, bool sequence) {
 
 		if (!sequence && table->atribPos && table->atribPos == _stateMusicTable[_curMusicState].atribPos) {
 			fadeOutMusicAndStartNew(table->fadeOut60TicksDelay, table->filename, hookId, old_vol, old_pan);
+			setVolume(table->filename, 0);
 			setFadeVolume(table->filename, table->volume, table->fadeOut60TicksDelay);
 			setFadePan(table->filename, pan, table->fadeOut60TicksDelay);
 		} else {
 			fadeOutMusic(table->fadeOut60TicksDelay);
 			startMusic(table->filename, hookId, table->volume, pan);
+			setVolume(table->filename, 0);
+			setFadeVolume(table->filename, table->volume, table->fadeOut60TicksDelay);
 		}
 	}
 }
