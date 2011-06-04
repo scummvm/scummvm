@@ -375,6 +375,13 @@ INLINE Bit32s Operator::RateForward( Bit32u add ) {
 	return ret;
 }
 
+// MSVC is complaining potential comparison of a constant with another constant
+// We disable this warning for the affected section of code
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 6326)
+#endif
+
 template< Operator::State yes>
 Bits Operator::TemplateVolume(  ) {
 	Bit32s vol = volume;
@@ -425,6 +432,10 @@ Bits Operator::TemplateVolume(  ) {
 	volume = vol;
 	return vol;
 }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 static const VolumeHandler VolumeHandlerTable[5] = {
 	&Operator::TemplateVolume< Operator::OFF >,
@@ -838,6 +849,13 @@ INLINE void Channel::GeneratePercussion( Chip* chip, Bit32s* output ) {
 	}
 }
 
+// MSVC is complaining potential comparison of a constant with another constant
+// We disable this warning for the affected section of code
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 6326)
+#endif
+
 template<SynthMode mode>
 Channel* Channel::BlockTemplate( Chip* chip, Bit32u samples, Bit32s* output ) {
 	switch( mode ) {
@@ -1013,6 +1031,10 @@ Channel* Channel::BlockTemplate( Chip* chip, Bit32u samples, Bit32s* output ) {
 	}
 	return 0;
 }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 /*
 	Chip
