@@ -44,14 +44,15 @@ struct ADGameFileDescription {
 
 enum ADGameFlags {
 	ADGF_NO_FLAGS = 0,
+	ADGF_WIP_UNSTABLE = (1 << 21),    	// flag to designate not yet officially-supported games that are not fit for public testing
+	ADGF_WIP_TESTING = (1 << 22),    	// flag to designate not yet officially-supported games that are fit for public testing
 	ADGF_PIRATED = (1 << 23), // flag to designate well known pirated versions with cracks
 	ADGF_ADDENGLISH = (1 << 24), // always add English as language option
 	ADGF_MACRESFORK = (1 << 25), // the md5 for this entry will be calculated from the resource fork
 	ADGF_USEEXTRAASTITLE = (1 << 26), // Extra field value will be used as main game title, not gameid
 	ADGF_DROPLANGUAGE = (1 << 28), // don't add language to gameid
 	ADGF_CD = (1 << 29),    	// add "-cd" to gameid
-	ADGF_DEMO = (1 << 30),   	// add "-demo" to gameid
-	ADGF_WIP = (1 << 31)    	// flag to designate not yet officially-supported games
+	ADGF_DEMO = (1 << 30)   	// add "-demo" to gameid
 };
 
 struct ADGameDescription {
