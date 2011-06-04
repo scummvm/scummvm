@@ -837,6 +837,8 @@ void GfxButton::draw() {
 	// Display the button's text
 	Rect tempRect(_bounds);
 	tempRect.collapse(_globals->_gfxEdgeAdjust, _globals->_gfxEdgeAdjust);
+	if (_vm->getFeatures() & GF_CD)
+		++tempRect.top;
 	gfxManager._font.writeLines(_message.c_str(), tempRect, ALIGN_CENTER);
 
 	gfxManager.unlockSurface();
