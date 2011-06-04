@@ -482,6 +482,13 @@ void Hotspot::setTickProc(uint16 newVal) {
 	_tickHandler = _tickHandlers.getHandler(newVal);
 }
 
+// MSVC is complaining potential comparison of a constant with another constant
+// We disable this warning for the affected section of code
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 6326)
+#endif
+
 void Hotspot::walkTo(int16 endPosX, int16 endPosY, uint16 destHotspot) {
 	if ((hotspotId() == PLAYER_ID) && (PATHFIND_COUNTDOWN != 0)) {
 		// Show the clock cursor whilst pathfinding will be calculated
@@ -494,6 +501,10 @@ void Hotspot::walkTo(int16 endPosX, int16 endPosY, uint16 destHotspot) {
 	_destHotspotId = destHotspot;
 	currentActions().addFront(START_WALKING, _roomNumber);
 }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 void Hotspot::stopWalking() {
 	_voiceCtr = 0;
@@ -4143,6 +4154,13 @@ void PathFinder::reset(RoomPathsData &src) {
 	_inUse = true;
 }
 
+// MSVC is complaining potential comparison of a constant with another constant
+// We disable this warning for the affected section of code
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 6326)
+#endif
+
 // Does the next stage of processing to figure out a path to take to a given
 // destination. Returns true if the path finding has been completed
 
@@ -4369,6 +4387,10 @@ final_step:
 
 	return result;
 }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 Common::String PathFinder::getDebugInfo() const {
 	Common::String buffer;
