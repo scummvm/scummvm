@@ -25,6 +25,8 @@
 #if defined(PLAYSTATION3)
 
 #include "backends/events/ps3sdl/ps3sdl-events.h"
+#include "backends/platform/sdl/sdl.h"
+#include "engines/engine.h"
 
 #include "common/util.h"
 #include "common/events.h"
@@ -119,6 +121,43 @@ bool PS3SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 		break;
 	}
 	return true;
+}
+
+/**
+ * The XMB (PS3 in game menu) needs the screen buffers to be constantly flip while open.
+ * This pauses execution and keeps redrawing the screen until the XMB is closed.
+ */
+void PS3SdlEventSource::preprocessEvents(SDL_Event *event) {
+	if (event->type == SDL_ACTIVEEVENT) {
+		if (event->active.state == SDL_APPMOUSEFOCUS && !event->active.gain) {
+			// XMB opened
+			if (g_engine)
+				g_engine->pauseEngine(true);
+
+			for (;;) {
+				if (!SDL_PollEvent(event)) {
+					// Locking the screen forces a full redraw
+					Graphics::Surface* screen = g_system->lockScreen();
+					if (screen) {
+						g_system->unlockScreen();
+						g_system->updateScreen();
+					}
+					SDL_Delay(10);
+					continue;
+				}
+				if (event->type == SDL_QUIT)
+					return;
+				if (event->type != SDL_ACTIVEEVENT)
+					continue;
+				if (event->active.state == SDL_APPMOUSEFOCUS && event->active.gain) {
+					// XMB closed
+					if (g_engine)
+						g_engine->pauseEngine(false);
+					return;
+				}
+			}
+		}
+	}
 }
 
 #endif

@@ -30,6 +30,7 @@
  */
 class PS3SdlEventSource : public SdlEventSource {
 protected:
+	void preprocessEvents(SDL_Event *event);
 	bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
 	bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
 };
