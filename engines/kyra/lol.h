@@ -315,7 +315,6 @@ private:
 	GUI_LoL *_gui;
 
 	TIMInterpreter *_tim;
-	TimAnimator *_animator;
 
 	Common::Error init();
 	Common::Error go();

@@ -42,7 +42,6 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_gui = 0;
 	_txt = 0;
 	_tim = 0;
-	_animator = 0;
 
 	switch (_flags.lang) {
 	case Common::EN_ANY:
@@ -576,7 +575,6 @@ Common::Error LoLEngine::go() {
 
 	_tim = new TIMInterpreter_LoL(this, _screen, _system);
 	assert(_tim);
-	_animator = _tim->animator();
 
 	if (shouldQuit())
 		return Common::kNoError;
@@ -1811,11 +1809,13 @@ void LoLEngine::createTransparencyTables() {
 }
 
 void LoLEngine::updateSequenceBackgroundAnimations() {
-	if (_updateFlags & 8 || !_animator)
+	if (_updateFlags & 8 || !_tim)
+		return;
+	if (!_tim->animator())
 		return;
 
 	for (int i = 0; i < 6; i++)
-		_animator->update(i);
+		_tim->animator()->update(i);
 }
 
 void LoLEngine::loadTalkFile(int index) {
@@ -2720,7 +2720,7 @@ int LoLEngine::processMagicMistOfDoom(int charNum, int spellLevel) {
 	_screen->copyPage(12, 0);
 
 	updateDrawPage2();
-	this->snd_playQueuedEffects();
+	snd_playQueuedEffects();
 	return 1;
 }
 
