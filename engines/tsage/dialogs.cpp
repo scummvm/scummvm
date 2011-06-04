@@ -473,7 +473,7 @@ void InventoryDialog::execute() {
 			g_system->updateScreen();
 		}
 		if (_vm->getEventManager()->shouldQuit())
-			return;
+			break;
 
 		hiliteObj = NULL;
 		if ((event.eventType == EVENT_BUTTON_DOWN) && !_bounds.contains(event.mousePos))
