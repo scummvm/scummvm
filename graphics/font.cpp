@@ -214,6 +214,8 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 	char buf[256];
 	char facename[256];
 	char copyright[256];
+	memset(facename, 0, sizeof(facename));
+	memset(copyright, 0, sizeof(copyright));
 
 	/* set certain values to errors for later error checking*/
 	pf->defaultchar = -1;
@@ -235,6 +237,7 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 				warning("Error: bad 'FONT'");
 				return 0;
 			}
+
 			pf->facename = strdup(facename);
 			continue;
 		}
@@ -243,6 +246,7 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 				warning("Error: bad 'COPYRIGHT'");
 				return 0;
 			}
+
 			pf->copyright = strdup(copyright);
 			continue;
 		}
