@@ -631,6 +631,24 @@ struct AgiGame {
 	Common::Rect mouseFence;		/**< rectangle set by fence.mouse command */
 };
 
+/**
+ * Check if a disk image with the given MD5 sum exists in the search path.
+ *
+ * @param  md5       MD5 sum of the disk image to be searched
+ * @param  filename  Filled with a filename in case the image is found
+ * @return True if found, otherwise false.
+ */
+bool diskImageExists(Common::String md5, Common::String &filename);
+
+/**
+ * Get MD5 sums for a given game from the booter game description table.
+ *
+ * @param gid       Game ID of the game
+ * @param md5Disk0  Filled with the MD5 sum of disk 0
+ * @param md5Disk1  Filled with the MD5 sum of disk 1 if there are two disks
+ */
+bool getBooterMD5Sums(AgiGameID gid, Common::String &md5Disk0, Common::String &md5Disk1);
+
 class AgiLoader {
 public:
 
@@ -649,18 +667,14 @@ public:
 class AgiLoader_v1 : public AgiLoader {
 private:
 	AgiEngine *_vm;
-	Common::String _dsk0Name;
-	Common::String _dsk1Name;
+	Common::String _filenameDisk0;
+	Common::String _filenameDisk1;
 
 	int loadDir(AgiDir *agid, int offset, int num);
 	uint8 *loadVolRes(AgiDir *agid);
 
 public:
-	AgiLoader_v1(AgiEngine *vm, Common::String dsk0, Common::String dsk1) {
-		_vm = vm;
-		_dsk0Name = dsk0;
-		_dsk1Name = dsk1;
-	}
+	AgiLoader_v1(AgiEngine *vm);
 
 	virtual int init();
 	virtual int deinit();
@@ -714,6 +728,7 @@ public:
 	virtual int loadObjects(const char *);
 	virtual int loadWords(const char *);
 };
+
 
 class GfxMgr;
 class SpritesMgr;

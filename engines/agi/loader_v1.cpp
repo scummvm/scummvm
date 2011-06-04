@@ -21,6 +21,7 @@
  */
 
 #include "agi/agi.h"
+#include "common/md5.h"
 
 #define offsetTHS(track,head,sector) (512 * ((((track) * 2 + (head)) * 9) + (sector)))
 #define offset(sector) offsetTHS(sector / 18, (sector % 18) / 9, (sector % 18) % 9)
@@ -41,6 +42,18 @@
 
 namespace Agi {
 
+
+AgiLoader_v1::AgiLoader_v1(AgiEngine *vm) {
+	_vm = vm;
+	
+	// Find filenames for the disk images
+	Common::String md5Disk0, md5Disk1;
+	getBooterMD5Sums((AgiGameID)_vm->getGameID(), md5Disk0, md5Disk1);
+	diskImageExists(md5Disk0, _filenameDisk0);
+	if (!md5Disk1.empty())
+		diskImageExists(md5Disk1, _filenameDisk1);
+}
+
 int AgiLoader_v1::detectGame() {
 	return _vm->setupV2Game(_vm->getVersion());
 }
@@ -48,7 +61,7 @@ int AgiLoader_v1::detectGame() {
 int AgiLoader_v1::loadDir(AgiDir *agid, int offset, int num) {
 	Common::File fp;
 	
-	if (!fp.open(_dsk0Name))
+	if (!fp.open(_filenameDisk0))
 		return errBadFileOpen;
 
 	// Cleanup
@@ -108,7 +121,7 @@ uint8 *AgiLoader_v1::loadVolRes(struct AgiDir *agid) {
 	int sec = agid->offset >> 16;
 	int off = agid->offset & 0xFFFF;
 	
-	fp.open(_dsk0Name);
+	fp.open(_filenameDisk0);
 	fp.seek(offset(sec) + off, SEEK_SET);
 
 	int signature = fp.readUint16BE();

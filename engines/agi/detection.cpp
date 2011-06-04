@@ -48,9 +48,6 @@ struct AGIGameDescription {
 	int gameType;
 	uint32 features;
 	uint16 version;
-
-	Common::String dsk0Name;
-	Common::String dsk1Name;
 };
 
 uint32 AgiBase::getGameID() const {
@@ -96,6 +93,20 @@ void AgiBase::setVersion(uint16 version) {
 void AgiBase::initVersion() {
 	_gameVersion = _gameDescription->version;
 }
+
+struct AGIBooterDescription {
+	Common::String md5Disk0;
+	Common::String md5Disk1;
+	Common::String id;
+	Common::String extra;
+	int gameID;
+	int gameType;
+	uint32 features;
+	uint16 version;
+};
+
+bool isDiskImage(Common::SeekableReadStream *stream, Common::String filename, Common::String md5);
+bool diskImageExistsInFSList(const Common::FSList &fslist, Common::String md5, Common::String &filename);
 
 }
 
@@ -294,9 +305,7 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXXX, const Common::FSList &fslist) const {
 	typedef Common::HashMap<Common::String, int32> IntMap;
-	typedef Common::HashMap<Common::String, Common::FSNode> NodeMap;
 	IntMap allFiles;
-	NodeMap allNodes;
 	bool matchedUsingFilenames = false;
 	bool matchedUsingWag = false;
 	int wagFileCount = 0;
@@ -324,7 +333,6 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXX
 		Common::String filename = file->getName();
 		filename.toLowercase();
 		allFiles[filename] = true;   // Save the filename in a hash table
-		allNodes[filename] = *file;  // ...and also the FSNode
 
 		if (filename.hasSuffix(".wag")) {
 			// Save latest found *.wag file's path (Can be used to open the file, the name can't)
@@ -429,41 +437,25 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXX
 
 	// Try to detect disk images of AGI v1 and AGI v2.001 booter games
 	if (!matchedUsingFilenames && !matchedUsingWag) {
-		int index = -1;
-		
-		for (IntMap::const_iterator f = allFiles.begin(); f != allFiles.end(); ++f) {
-			if (f->_key.hasSuffix(".dsk") || f->_key.hasSuffix(".img")) {
-				Common::File file;
-				file.open(allNodes[f->_key]);
-				Common::String md5str = Common::computeStreamMD5AsString(file, detectionParams.md5Bytes);
-				debug(3, "Agi::fallbackDetector: disk image (%s) found with md5 sum (%s) ", f->_key.c_str(), md5str.c_str());
+		for (int i = 0; !booterDescription[i].md5Disk0.empty(); i++) {
+			Common::String filenameDisk0;
+			Common::String filenameDisk1;
 
-				for (int i = 0; !booterDescription[i].md5str_dsk0.empty(); i++) {
-					if (booterDescription[i].md5str_dsk0 == md5str) {
-						index = i;
-						g_fallbackDesc.dsk0Name = f->_key;
-					}
-					if (booterDescription[i].md5str_dsk1 == md5str) {
-						index = i;
-						g_fallbackDesc.dsk1Name = f->_key;
-					}
-				}
-			}
-		}
-		
-		if (index >= 0) {
-			if ((booterDescription[index].md5str_dsk0.empty() == g_fallbackDesc.dsk0Name.empty()) &&
-				(booterDescription[index].md5str_dsk1.empty() == g_fallbackDesc.dsk1Name.empty())) {
-				g_fallbackDesc.gameID = booterDescription[index].gameID;
-				g_fallbackDesc.gameType = booterDescription[index].gameType;
-				g_fallbackDesc.features = booterDescription[index].features;
-				g_fallbackDesc.version = booterDescription[index].version;
+			if (!diskImageExistsInFSList(fslist, booterDescription[i].md5Disk0, filenameDisk0))
+				continue;
+			if (!booterDescription[i].md5Disk1.empty())
+				if (!diskImageExistsInFSList(fslist, booterDescription[i].md5Disk1, filenameDisk1))
+					continue;
 
-				g_fallbackDesc.desc.gameid = booterDescription[index].id.c_str();
-				g_fallbackDesc.desc.extra = booterDescription[index].extra.c_str();
+			g_fallbackDesc.gameID = booterDescription[i].gameID;
+			g_fallbackDesc.gameType = booterDescription[i].gameType;
+			g_fallbackDesc.features = booterDescription[i].features;
+			g_fallbackDesc.version = booterDescription[i].version;
 
-				return (const ADGameDescription *)&g_fallbackDesc;
-			}
+			g_fallbackDesc.desc.gameid = booterDescription[i].id.c_str();
+			g_fallbackDesc.desc.extra = booterDescription[i].extra.c_str();
+
+			return (const ADGameDescription *)&g_fallbackDesc;
 		}
 	}
 
@@ -508,6 +500,66 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXX
 
 namespace Agi {
 
+bool isDiskImage(Common::SeekableReadStream *stream, Common::String filename, Common::String md5) {
+	if (!(filename.hasSuffix(".dsk") || filename.hasSuffix(".img")))
+		return false;
+
+	if (stream->size() == 368640 && computeStreamMD5AsString(*stream, 5000) == md5)
+		return true;
+
+	return false;
+}
+
+bool diskImageExistsInFSList(const Common::FSList &fslist, Common::String md5, Common::String &filename) {
+	for (Common::FSList::const_iterator x = fslist.begin(); x != fslist.end(); x++) {
+		if (x->isDirectory()) continue;
+		
+		Common::SeekableReadStream *stream = x->createReadStream();
+		if (isDiskImage(stream, x->getName(), md5)) {
+			filename = x->getName();
+			delete stream;
+			return true;
+		}
+		delete stream;
+	}
+
+	return false;
+}
+
+bool diskImageExists(Common::String md5, Common::String &filename) {
+	Common::ArchiveMemberList files;
+	SearchMan.listMembers(files);
+	
+	Common::File file;
+	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); x++) {
+		file.open((*x)->getName());
+		if (isDiskImage(&file, (*x)->getName(), md5)) {
+			filename = (*x)->getName();
+			file.close();
+			return true;
+		}
+		file.close();
+	}
+	
+	return false;
+}
+
+bool getBooterMD5Sums(AgiGameID gid, Common::String &md5Disk0, Common::String &md5Disk1) {
+	AGIBooterDescription *booter = NULL;
+	int i = 0;
+	while (!booterDescription[i].md5Disk0.empty()) {
+		if (booterDescription[i].gameID == gid)
+			booter = &booterDescription[i];
+		i++;
+	}
+	if (booter == NULL)
+		return false;
+	
+	md5Disk0 = booter->md5Disk0;
+	md5Disk1 = booter->md5Disk1;
+	return true;
+}
+
 bool AgiBase::canLoadGameStateCurrently() {
 	return (!(getGameType() == GType_PreAGI) && getflag(fMenusWork) && !_noSaveLoadAllowed);
 }
@@ -525,7 +577,7 @@ int AgiEngine::agiDetectGame() {
 	assert(_gameDescription != NULL);
 
 	if (getVersion() <= 0x2001) {
-		_loader = new AgiLoader_v1(this, _gameDescription->dsk0Name, _gameDescription->dsk1Name);
+		_loader = new AgiLoader_v1(this);
 	} else if (getVersion() <= 0x2999) {
 		_loader = new AgiLoader_v2(this);
 	} else {
