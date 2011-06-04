@@ -60,8 +60,8 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 		_gfxFontNumber = 0;
 		_gfxColors.background = 6;
 		_gfxColors.foreground = 0;
-		_fontColors.background = 0;
-		_fontColors.foreground = 0;
+		_fontColors.background = 255;
+		_fontColors.foreground = 6;
 		_dialogCenter.y = 80;
 		// Workaround in order to use later version of the engine
 		_unkColor1 = _gfxColors.foreground;

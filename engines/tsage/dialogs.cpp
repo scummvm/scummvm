@@ -54,7 +54,6 @@ MessageDialog::MessageDialog(const Common::String &message, const Common::String
 
 	if (!btn2Message.empty()) {
 		// Set up the second button
-		_defaultButton = &_btn2;
 		add(&_btn2);
 		_btn2.setText(btn2Message);
 		_btn2._bounds.moveTo(_msg._bounds.right - _btn2._bounds.width(), _msg._bounds.bottom);
@@ -82,8 +81,9 @@ int MessageDialog::show2(const Common::String &message, const Common::String &bt
 	MessageDialog *dlg = new MessageDialog(message, btn1Message, btn2Message);
 	dlg->draw();
 
-	GfxButton *selectedButton = dlg->execute();
-	int result =  (selectedButton == &dlg->_btn1) ? 0 : 1;
+	GfxButton *defaultButton = !btn2Message.empty() ? &dlg->_btn2 : &dlg->_btn1;
+	GfxButton *selectedButton = dlg->execute(defaultButton);
+	int result =  (selectedButton == defaultButton) ? 1 : 0;
 
 	delete dlg;
 	return result;
