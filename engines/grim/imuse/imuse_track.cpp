@@ -110,6 +110,7 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 	track->curHookId = hookId;
 	track->priority = priority;
 	track->curRegion = -1;
+	track->trackId = l;
 
 	int bits = 0, freq = 0, channels = 0;
 
