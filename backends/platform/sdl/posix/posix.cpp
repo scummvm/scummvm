@@ -22,6 +22,8 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_getenv
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
+#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h	//On IRIX, sys/stat.h includes sys/time.h
 
 #include "common/scummsys.h"
@@ -34,6 +36,8 @@
 
 #include <errno.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 
 OSystem_POSIX::OSystem_POSIX(Common::String baseConfigName)
@@ -56,6 +60,12 @@ void OSystem_POSIX::initBackend() {
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();
+}
+
+bool OSystem_POSIX::hasFeature(Feature f) {
+	if (f == kFeatureDisplayLogFile)
+		return true;
+	return OSystem_SDL::hasFeature(f);
 }
 
 Common::String OSystem_POSIX::getDefaultConfigFileName() {
@@ -137,5 +147,50 @@ Common::WriteStream *OSystem_POSIX::createLogFile() {
 		_logFilePath = logFile;
 	return stream;
 }
+
+bool OSystem_POSIX::displayLogFile() {
+	if (_logFilePath.empty())
+		return false;
+
+	// FIXME: This may not work perfectly when in fullscreen mode.
+	// On my system it drops from fullscreen without ScummVM noticing,
+	// so the next Alt-Enter does nothing, going from windowed to windowed.
+	// (wjp, 20110604)
+
+	pid_t pid = fork();
+	if (pid < 0) {
+		// failed to fork
+		return false;
+	} else if (pid == 0) {
+
+		// Try xdg-open first
+		execlp("xdg-open", "xdg-open", _logFilePath.c_str(), (char*)0);
+
+		// If we're here, that clearly failed.
+		// Try xterm+less next
+
+		execlp("xterm", "xterm", "-e", "less", _logFilePath.c_str(), (char*)0);
+
+		// TODO: If less does not exist we could fall back to 'more'.
+		// However, we'll have to use 'xterm -hold' for that to prevent the
+		// terminal from closing immediately (for short log files) or
+		// unexpectedly.
+
+		exit(127);
+	}
+
+	int status;
+	// Wait for viewer to close.
+	// (But note that xdg-open may have spawned a viewer in the background.)
+	pid = waitpid(pid, &status, 0);
+
+	if (pid < 0) {
+		// Probably nothing sensible to do in this error situation
+		return false;
+	}
+
+	return WIFEXITED(status) && WEXITSTATUS(status) == 0;
+}
+
 
 #endif

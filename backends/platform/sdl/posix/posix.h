@@ -31,6 +31,10 @@ public:
 	OSystem_POSIX(Common::String baseConfigName = ".scummvmrc");
 	virtual ~OSystem_POSIX() {}
 
+	virtual bool hasFeature(Feature f);
+
+	virtual bool displayLogFile();
+
 	virtual void init();
 	virtual void initBackend();
 
