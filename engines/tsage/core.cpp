@@ -1353,6 +1353,8 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 void ScenePalette::synchronize(Serializer &s) {
 	if (s.getVersion() >= 2)
 		SavedObject::synchronize(s);
+	if (s.getVersion() >= 5)
+		_listeners.synchronize(s);
 
 	s.syncBytes(_palette, 256 * 3);
 	s.syncAsSint32LE(_colors.foreground);
