@@ -26,6 +26,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
+#include "engines/engine.h"
 #include "audio/mididrv.h"
 #include "audio/musicplugin.h"
 
@@ -125,6 +126,7 @@ Common::String MidiDriver::getDeviceString(DeviceHandle handle, DeviceStringType
 MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	// Query the selected music device (defaults to MT_AUTO device).
 	DeviceHandle hdl = getDeviceHandle(ConfMan.get("music_driver"));
+	DeviceHandle reslt = MT_AUTO;
 
 	_forceTypeMT32 = false;
 
@@ -133,71 +135,87 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	switch (getMusicType(hdl)) {
 	case MT_PCSPK:
 		if (flags & MDT_PCSPK)
-			return hdl;
+			reslt = hdl;
 		break;
 
 	case MT_PCJR:
 		if (flags & MDT_PCJR)
-			return hdl;
+			reslt = hdl;
 		break;
 
 	case MT_CMS:
 		if (flags & MDT_CMS)
-			return hdl;
+			reslt = hdl;
 		break;
 
 	case MT_ADLIB:
 		if (flags & MDT_ADLIB)
-			return hdl;
+			reslt = hdl;
 		break;
 
 	case MT_C64:
 		if (flags & MDT_C64)
-			return hdl;
+			reslt = hdl;
 		break;
 
 	case MT_AMIGA:
 		if (flags & MDT_AMIGA)
-			return hdl;
+			reslt = hdl;
 		break;
 
 	case MT_APPLEIIGS:
 		if (flags & MDT_APPLEIIGS)
-			return hdl;
+			reslt = hdl;
 		break;
 
 	case MT_TOWNS:
 		if (flags & MDT_TOWNS)
-			return hdl;
+			reslt = hdl;
 		break;
 
 	case MT_PC98:
 		if (flags & MDT_PC98)
-			return hdl;
+			reslt = hdl;
 		break;
 
 	case MT_GM:
 	case MT_GS:
 	case MT_MT32:
 		if (flags & MDT_MIDI)
-			return hdl;
+			reslt = hdl;
 		break;
 
 	case MT_NULL:
-		return hdl;
+		reslt = hdl;
 
 	default:
 		break;
 	}
+
+	Common::String failedDevStr;
+	MusicType tp = getMusicType(reslt);
+	if (tp != MT_INVALID && tp != MT_AUTO) {
+		if (checkDevice(reslt)) {
+			return reslt;
+		} else {
+			// If the expressly selected device is unavailable we display a warning and continue.
+			failedDevStr = getDeviceString(hdl, MidiDriver::kDriverName);
+			Common::String errorMessage = "Failed to detect the selected audio device '" + failedDevStr +"'. See log file for more information. Attempting to fall back to the next available device...";
+			GUIErrorMessage(errorMessage);
+		}
+	}
+
+	reslt = MT_AUTO;
 
 	// If the selected driver did not match the flags setting,
 	// we try to determine a suitable and "optimal" music driver.
 	const MusicPlugin::List p = MusicMan.getPlugins();
 	// If only MDT_MIDI but not MDT_PREFER_MT32 or MDT_PREFER_GM is set we prefer the other devices (which will always be
 	// detected since they are hard coded and cannot be disabled.
-	for (int l = (flags & (MDT_PREFER_GM | MDT_PREFER_MT32)) ? 1 : 0; l < 2; ++l) {
-		if ((flags & MDT_MIDI) && (l == 1)) {
-			// If a preferred MT32 or GM device has been selected that device gets returned.
+	bool skipMidi = !(flags & (MDT_PREFER_GM | MDT_PREFER_MT32));
+	while (flags != MDT_NONE) {
+		if ((flags & MDT_MIDI) && !skipMidi) {
+			// If a preferred MT32 or GM device has been selected that device gets returned if available.
 			if (flags & MDT_PREFER_MT32)
 				hdl = getDeviceHandle(ConfMan.get("mt32_device"));
 			else if (flags & MDT_PREFER_GM)
@@ -211,70 +229,117 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 			// to AdLib, PC Speaker etc. detection right away.
 			if (type != MT_NULL) {
 				if (type != MT_AUTO && type != MT_INVALID) {
-					if (flags & MDT_PREFER_MT32)
-						// If we have a preferred MT32 device we disable the gm/mt32 mapping (more about this in mididrv.h).
-						_forceTypeMT32 = true;
-
-					return hdl;
+					if (checkDevice(hdl)) {
+						if (flags & MDT_PREFER_MT32)
+							// If we have a preferred MT32 device we disable the gm/mt32 mapping (more about this in mididrv.h).
+							_forceTypeMT32 = true;
+						return hdl;
+					} else {
+						// If the preferred (expressly requested) device is unavailable we display a warning and continue.
+						// Don't warn about the missing device if we did already (this becomes relevant if the failing
+						// device is selected as preferred device and also as GM or MT-32 device).
+						if (failedDevStr != getDeviceString(hdl, MidiDriver::kDriverName)) {							
+							Common::String errorMessage = "Failed to detect the preferred device '" + getDeviceString(hdl, MidiDriver::kDriverName) + "'. See log file for more information. Attempting to fall back to the next available device...";
+							GUIErrorMessage(errorMessage);
+						}
+						hdl = MT_AUTO;
+					}
 				}
 
 				// If no specific device is selected (neither in the scummvm nor in the game domain)
-				// and there is no preferred MT32 or GM device selected either we arrive here.
+				// and there is no preferred MT32 or GM device selected either or if the detected device is unavailable we arrive here.
 				// If MT32 is preferred we try for the first available device with music type 'MT_MT32' (usually the mt32 emulator).
 				if (flags & MDT_PREFER_MT32) {
 					for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
 						MusicDevices i = (**m)->getDevices();
 						for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
-							if (d->getMusicType() == MT_MT32)
-								return d->getHandle();
+							if (d->getMusicType() == MT_MT32) {
+								hdl = d->getHandle();
+								if (checkDevice(hdl))
+									return hdl;
+								else
+									// No warning here, since the user hasn't expressly requested anything.
+									hdl = MT_AUTO;
+							}
 						}
 					}
 				}
 
-				// Now we default to the first available device with music type 'MT_GM'
-				for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
-					MusicDevices i = (**m)->getDevices();
-					for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
-						if (d->getMusicType() == MT_GM || d->getMusicType() == MT_GS)
-							return d->getHandle();
+				// Now we default to the first available device with music type 'MT_GM' if not 
+				// MT-32 is preferred or if MT-32 is preferred but all other devices have failed.
+				if (!(flags & MDT_PREFER_MT32) || flags == (MDT_PREFER_MT32 | MDT_MIDI)) {
+					for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
+						MusicDevices i = (**m)->getDevices();
+						for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
+							if (d->getMusicType() == MT_GM || d->getMusicType() == MT_GS) {
+								hdl = d->getHandle();
+								if (checkDevice(hdl))
+									return hdl;
+								else
+									// No warning here, since the user hasn't expressly requested anything.
+									hdl = MT_AUTO;
+							}
+						}
 					}
+					// Detection flags get removed after final detection attempt to avoid further attempts.
+					flags &= ~(MDT_MIDI | MDT_PREFER_GM | MDT_PREFER_MT32);
 				}
 			}
 		}
 
-		MusicType tp = MT_AUTO;
-		if (flags & MDT_TOWNS)
+		// The order in this list is important, since this is the order of preference
+		// (e.g. MT_ADLIB is checked before MT_PCJR and MT_PCSPK for a good reason.
+		// Detection flags get removed after detection attempt to avoid further attempts.
+		if (flags & MDT_TOWNS) {
 			tp = MT_TOWNS;
-		else if (flags & MDT_PC98)
+			flags &= ~MDT_TOWNS;
+		} else if (flags & MDT_PC98) {
 			tp = MT_PC98;
-		else if (flags & MDT_ADLIB)
+			flags &= ~MDT_PC98;
+		} else if (flags & MDT_ADLIB) {
 			tp = MT_ADLIB;
-		else if (flags & MDT_PCJR)
+			flags &= ~MDT_ADLIB;
+		} else if (flags & MDT_PCJR) {
 			tp = MT_PCJR;
-		else if (flags & MDT_PCSPK)
+			flags &= ~MDT_PCJR;
+		} else if (flags & MDT_PCSPK) {
 			tp = MT_PCSPK;
-		else if (flags & MDT_C64)
+			flags &= ~MDT_PCSPK;
+		} else if (flags & MDT_C64) {
 			tp = MT_C64;
-		else if (flags & MDT_AMIGA)
+			flags &= ~MDT_C64;
+		} else if (flags & MDT_AMIGA) {
 			tp = MT_AMIGA;
-		else if (flags & MDT_APPLEIIGS)
+			flags &= ~MDT_AMIGA;
+		} else if (flags & MDT_APPLEIIGS) {
 			tp = MT_APPLEIIGS;
-		else if (l == 0)
+			flags &= ~MDT_APPLEIIGS;
+		} else if (flags & MDT_MIDI) {
 			// If we haven't tried to find a MIDI device yet we do this now.
+			skipMidi = false;
 			continue;
-		else
+		} else if (flags) {
+			// Invalid flags. Set them to MDT_NONE to leave detection loop.
+			flags = MDT_NONE;
 			tp = MT_AUTO;
+		}
 
 		for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
 			MusicDevices i = (**m)->getDevices();
 			for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
-				if (d->getMusicType() == tp)
-					return d->getHandle();
+				if (d->getMusicType() == tp) {
+					hdl = d->getHandle();
+					if (checkDevice(hdl))
+						return hdl;
+					else
+						// No warning here, since the user hasn't expressly requested anything.
+						hdl = MT_AUTO;
+				}
 			}
 		}
 	}
 
-	return 0;
+	return reslt;
 }
 
 MidiDriver *MidiDriver::createMidi(MidiDriver::DeviceHandle handle) {
@@ -286,6 +351,16 @@ MidiDriver *MidiDriver::createMidi(MidiDriver::DeviceHandle handle) {
 	}
 
 	return driver;
+}
+
+bool MidiDriver::checkDevice(MidiDriver::DeviceHandle handle) {
+	const MusicPlugin::List p = MusicMan.getPlugins();
+	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
+		if (getDeviceString(handle, MidiDriver::kDriverId).equals((**m)->getId()))
+			return (**m)->checkDevice(handle);
+	}
+
+	return false;
 }
 
 MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &identifier) {
