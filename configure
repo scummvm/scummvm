@@ -3103,6 +3103,7 @@ case $_backend in
 	bada)
     # dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
     DEFINES="$DEFINES -DBADA -DDISABLE_POSIX_FS -DNONSTANDARD_PORT"
+    DEFINES="$DEFINES -DNO_STDERR_STDOUT"
     INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/bada '
     INCLUDES="$INCLUDES "'-I$(BADA_SDK)/include'
     INCLUDES="$INCLUDES "'-I$(BADA_SDK_ROOT)/Include'

@@ -26,7 +26,6 @@
 #include <assert.h>
 #include <stdarg.h>
 #include <string.h>
-#include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -35,6 +34,7 @@
 #define M_PI 3.14159265358979323846
 
 #ifdef __cplusplus
+ #include <ctype.h> // causes a link error when building c programs
  #define C_LINKAGE_BEGIN extern "C" {
  #define C_LINKAGE_END }
 #else 
@@ -43,6 +43,12 @@
 #endif
 
 C_LINKAGE_BEGIN
+
+// for libFLAC
+#undef fseeko
+#undef ftello
+#define fseeko fseek
+#define ftello ftell
 
 // overcome use of fprintf since bada/newlib (1.2) does not 
 // support stderr/stdout (undefined reference to `_impure_ptr').

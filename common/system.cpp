@@ -77,7 +77,7 @@ void OSystem::fatalError() {
 }
 
 void OSystem::logMessage(LogMessageType::Type type, const char *message) {
-#if !defined(BADA)
+#if !defined(NO_STDERR_STDOUT)
 	FILE *output = 0;
 
 	if (type == LogMessageType::kDebug)
