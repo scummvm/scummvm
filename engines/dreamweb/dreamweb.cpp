@@ -133,3 +133,239 @@ Common::Error DreamWebEngine::run() {
 }
 
 } // End of namespace DreamWeb
+
+
+namespace dreamgen {
+void randomnumber(Context &context) {
+	::error("randomnumber");
+}
+
+void quickquit(Context &context) {
+	::error("quickquit");
+}
+
+void quickquit2(Context &context) {
+	::error("quickquit2");
+}
+
+void keyboardread(Context &context) {
+	::error("keyboardread");
+}
+
+void resetkeyboard(Context &context) {
+	::error("resetkeyboard");
+}
+
+void setkeyboardint(Context &context) {
+	::error("setkeyboardint");
+}
+
+void readfromfile(Context &context) {
+	::error("readfromfile");
+}
+
+void closefile(Context &context) {
+	::error("closefile");
+}
+
+void openforsave(Context &context) {
+	::error("openforsave");
+}
+
+void openfilenocheck(Context &context) {
+	::error("openfilenocheck");
+}
+
+void openfile(Context &context) {
+	::error("openfile");
+}
+
+void createfile(Context &context) {
+	::error("createfile");
+}
+
+void dontloadseg(Context &context) {
+	::error("dontloadseg");
+}
+
+void mousecall(Context &context) {
+	::error("mousecall");
+}
+
+void setmouse(Context &context) {
+	::error("setmouse");
+}
+
+void gettime(Context &context) {
+	::error("gettime");
+}
+
+void allocatemem(Context &context) {
+	::error("allocatemem");
+}
+
+void deallocatemem(Context &context) {
+	::error("deallocatemem");
+}
+
+void removeemm(Context &context) {
+	::error("removeemm");
+}
+
+void setupemm(Context &context) {
+	::error("setupemm");
+}
+
+void pitinterupt(Context &context) {
+	::error("pitinterupt");
+}
+
+void getridofpit(Context &context) {
+	::error("getridofpit");
+}
+
+void setuppit(Context &context) {
+	::error("setuppit");
+}
+
+void startdmablock(Context &context) {
+	::error("startdmablock");
+}
+
+void dmaend(Context &context) {
+	::error("dmaend");
+}
+
+void restoreems(Context &context) {
+	::error("restoreems");
+}
+
+void saveems(Context &context) {
+	::error("saveems");
+}
+
+void bothchannels(Context &context) {
+	::error("bothchannels");
+}
+
+void channel1only(Context &context) {
+	::error("channel1only");
+}
+
+void channel0only(Context &context) {
+	::error("channel0only");
+}
+
+void out22c(Context &context) {
+	::error("out22c");
+}
+
+void soundend(Context &context) {
+	::error("soundend");
+}
+
+void interupttest(Context &context) {
+	::error("interupttest");
+}
+
+void disablesoundint(Context &context) {
+	::error("disablesoundint");
+}
+
+void enablesoundint(Context &context) {
+	::error("enablesoundint");
+}
+
+void checksoundint(Context &context) {
+	::error("checksoundint");
+}
+
+void setsoundoff(Context &context) {
+	::error("setsoundoff");
+}
+
+void soundstartup(Context &context) {
+	::error("soundstartup");
+}
+
+void loadsecondsample(Context &context) {
+	::error("loadsecondsample");
+}
+
+void loadsample(Context &context) {
+	::error("loadsample");
+}
+
+void loadspeech(Context &context) {
+	::error("loadspeech");
+}
+
+void scanfornames(Context &context) {
+	::error("scanfornames");
+}
+
+void saveseg(Context &context) {
+	::error("saveseg");
+}
+
+void loadseg(Context &context) {
+	::error("loadseg");
+}
+
+void loadposition(Context &context) {
+	::error("loadposition");
+}
+
+void saveposition(Context &context) {
+	::error("saveposition");
+}
+
+void error(Context &context) {
+	::error("error");
+}
+
+void generalerror(Context &context) {
+	::error("generalerror");
+}
+
+void dosreturn(Context &context) {
+	::error("dosreturn");
+}
+
+void set16colpalette(Context &context) {
+	::error("set16colpalette");
+}
+
+void mode640x480(Context &context) {
+	::error("mode640x480");
+}
+
+void showgroup(Context &context) {
+	::error("showgroup");
+}
+
+void fadedos(Context &context) {
+	::error("fadedos");
+}
+
+void doshake(Context &context) {
+	::error("doshake");
+}
+
+void vsync(Context &context) {
+	::error("vsync");
+}
+
+void setmode(Context &context) {
+	::error("setmode");
+}
+
+void readoneblock(Context &context) {
+	::error("readoneblock");
+}
+
+void showpcx(Context &context) {
+	::error("showpcx");
+}
+
+} /*namespace dreamgen */
