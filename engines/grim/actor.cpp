@@ -873,7 +873,8 @@ void Actor::sayLine(const char *msg, const char *msgId, bool background) {
 			// For example, when reading the work order (a LIP file exists for no reason).
 			// Also, some lip sync files have no entries
 			// In these cases, revert to using the mumble chore.
-			_lipSync = g_resourceloader->getLipSync(soundLip);
+			if (g_grim->getSpeechMode() != GrimEngine::TextOnly)
+				_lipSync = g_resourceloader->getLipSync(soundLip);
 			// If there's no lip sync file then load the mumble chore if it exists
 			// (the mumble chore doesn't exist with the cat races announcer)
 			if (!_lipSync && _mumbleChore != -1)
