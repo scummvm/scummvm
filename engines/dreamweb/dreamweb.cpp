@@ -40,6 +40,7 @@
 #include "graphics/palette.h"
 
 #include "dreamweb/dreamweb.h"
+#include "dreamweb/dreamgen.h"
 
 namespace DreamWeb {
 
@@ -91,6 +92,9 @@ void DreamWebEngine::waitForVSync() {
 
 Common::Error DreamWebEngine::run() {
 	_console = new DreamWebConsole(this);
+	
+	dreamgen::Context context;
+	dreamgen::__start(context);
 
 	Common::EventManager *event_manager = _system->getEventManager();
 	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 60, this);
