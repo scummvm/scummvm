@@ -159,6 +159,9 @@ public:
 	/** Find the music driver matching the given driver name/description. */
 	static DeviceHandle getDeviceHandle(const Common::String &identifier);
 
+	/** Check whether the device with the given handle is available. */
+	static bool checkDevice(DeviceHandle handle);
+
 	/** Get the music type matching the given device handle, or MT_AUTO if there is no match. */
 	static MusicType getMusicType(DeviceHandle handle);
 
