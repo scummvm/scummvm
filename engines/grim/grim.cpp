@@ -939,6 +939,7 @@ void GrimEngine::updateDisplayScene() {
 		g_driver->clearScreen();
 
 		_prevSmushFrame = 0;
+		_movieTime = 0;
 
 		_currScene->drawBackground();
 
@@ -995,6 +996,8 @@ void GrimEngine::updateDisplayScene() {
 		drawPrimitives();
 	} else if (_mode == ENGINE_MODE_DRAW) {
 		_doFlip = false;
+		_prevSmushFrame = 0;
+		_movieTime = 0;
 	}
 }
 
