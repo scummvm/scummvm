@@ -128,7 +128,7 @@ Common::String MidiDriver::getDeviceString(DeviceHandle handle, DeviceStringType
 MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	// Query the selected music device (defaults to MT_AUTO device).
 	DeviceHandle hdl = getDeviceHandle(ConfMan.get("music_driver"));
-	DeviceHandle reslt = MT_AUTO;
+	DeviceHandle reslt = 0;
 
 	_forceTypeMT32 = false;
 
@@ -208,7 +208,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		}
 	}
 
-	reslt = MT_AUTO;
+	reslt = 0;
 
 	// If the selected driver did not match the flags setting,
 	// we try to determine a suitable and "optimal" music driver.
@@ -246,7 +246,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 							GUI::MessageDialog dialog(warningMsg);
 							dialog.runModal();
 						}
-						hdl = MT_AUTO;
+						hdl = 0;
 					}
 				}
 
@@ -263,7 +263,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 									return hdl;
 								else
 									// No warning here, since the user hasn't expressly requested anything.
-									hdl = MT_AUTO;
+									hdl = 0;
 							}
 						}
 					}
@@ -281,7 +281,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 									return hdl;
 								else
 									// No warning here, since the user hasn't expressly requested anything.
-									hdl = MT_AUTO;
+									hdl = 0;
 							}
 						}
 					}
@@ -337,7 +337,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 						return hdl;
 					else
 						// No warning here, since the user hasn't expressly requested anything.
-						hdl = MT_AUTO;
+						hdl = 0;
 				}
 			}
 		}
