@@ -93,15 +93,6 @@ Common::Error KyraEngine_v1::init() {
 	syncSoundSettings();
 
 	if (!_flags.useDigSound) {
-		// In Kyra 1 users who have specified a default MT-32 device in the launcher settings
-		// will get MT-32 music, otherwise AdLib. In Kyra 2 and LoL users who have specified a
-		// default GM device in the launcher will get GM music, otherwise AdLib. Users who want
-		// MT-32 music in Kyra2 or LoL have to select this individually (since we assume that
-		// most users rather have a GM device than a MT-32 device).
-		// Users who want PC speaker sound always have to select this individually for all
-		// Kyra games.
-		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_PCSPK | MDT_MIDI | MDT_ADLIB | ((_flags.gameID == GI_KYRA2 || _flags.gameID == GI_LOL) ? MDT_PREFER_GM : MDT_PREFER_MT32));
-
 		if (_flags.platform == Common::kPlatformFMTowns) {
 			if (_flags.gameID == GI_KYRA1)
 				_sound = new SoundTowns(this, _mixer);
@@ -114,43 +105,53 @@ Common::Error KyraEngine_v1::init() {
 				_sound = new SoundTownsPC98_v2(this, _mixer);
 		} else if (_flags.platform == Common::kPlatformAmiga) {
 			_sound = new SoundAmiga(this, _mixer);
-		} else if (MidiDriver::getMusicType(dev) == MT_ADLIB) {
-			_sound = new SoundAdLibPC(this, _mixer);
 		} else {
-			Sound::kType type;
-			const MusicType midiType = MidiDriver::getMusicType(dev);
-
-			if (midiType == MT_PCSPK || midiType == MT_NULL)
-				type = Sound::kPCSpkr;
-			else if (midiType == MT_MT32 || ConfMan.getBool("native_mt32"))
-				type = Sound::kMidiMT32;
-			else
-				type = Sound::kMidiGM;
-
-			MidiDriver *driver = 0;
-
-			if (MidiDriver::getMusicType(dev) == MT_PCSPK) {
-				driver = new MidiDriver_PCSpeaker(_mixer);
+			// In Kyra 1 users who have specified a default MT-32 device in the launcher settings
+			// will get MT-32 music, otherwise AdLib. In Kyra 2 and LoL users who have specified a
+			// default GM device in the launcher will get GM music, otherwise AdLib. Users who want
+			// MT-32 music in Kyra2 or LoL have to select this individually (since we assume that
+			// most users rather have a GM device than a MT-32 device).
+			// Users who want PC speaker sound always have to select this individually for all
+			// Kyra games.
+			MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_PCSPK | MDT_MIDI | MDT_ADLIB | ((_flags.gameID == GI_KYRA2 || _flags.gameID == GI_LOL) ? MDT_PREFER_GM : MDT_PREFER_MT32));
+			if (MidiDriver::getMusicType(dev) == MT_ADLIB) {
+				_sound = new SoundAdLibPC(this, _mixer);
 			} else {
-				driver = MidiDriver::createMidi(dev);
-				if (type == Sound::kMidiMT32)
-					driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-			}
+				Sound::kType type;
+				const MusicType midiType = MidiDriver::getMusicType(dev);
 
-			assert(driver);
+				if (midiType == MT_PCSPK || midiType == MT_NULL)
+					type = Sound::kPCSpkr;
+				else if (midiType == MT_MT32 || ConfMan.getBool("native_mt32"))
+					type = Sound::kMidiMT32;
+				else
+					type = Sound::kMidiGM;
 
-			SoundMidiPC *soundMidiPc = new SoundMidiPC(this, _mixer, driver, type);
-			_sound = soundMidiPc;
-			assert(_sound);
+				MidiDriver *driver = 0;
 
-			// Unlike some SCUMM games, it's not that the MIDI sounds are
-			// missing. It's just that at least at the time of writing they
-			// are decidedly inferior to the AdLib ones.
-			if (ConfMan.getBool("multi_midi")) {
-				SoundAdLibPC *adlib = new SoundAdLibPC(this, _mixer);
-				assert(adlib);
+				if (MidiDriver::getMusicType(dev) == MT_PCSPK) {
+					driver = new MidiDriver_PCSpeaker(_mixer);
+				} else {
+					driver = MidiDriver::createMidi(dev);
+					if (type == Sound::kMidiMT32)
+						driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+				}
 
-				_sound = new MixedSoundDriver(this, _mixer, soundMidiPc, adlib);
+				assert(driver);
+
+				SoundMidiPC *soundMidiPc = new SoundMidiPC(this, _mixer, driver, type);
+				_sound = soundMidiPc;
+				assert(_sound);
+
+				// Unlike some SCUMM games, it's not that the MIDI sounds are
+				// missing. It's just that at least at the time of writing they
+				// are decidedly inferior to the AdLib ones.
+				if (ConfMan.getBool("multi_midi")) {
+					SoundAdLibPC *adlib = new SoundAdLibPC(this, _mixer);
+					assert(adlib);
+
+					_sound = new MixedSoundDriver(this, _mixer, soundMidiPc, adlib);
+				}
 			}
 		}
 
