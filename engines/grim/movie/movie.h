@@ -50,7 +50,7 @@ protected:
 	int32 _frame;
 	bool _updateNeeded;
 	int32 _speed;
-	int32 _movieTime;
+	float _movieTime;
 	int _channels;
 	int _freq;
 	bool _videoFinished;
@@ -93,7 +93,7 @@ public:
 	virtual int getHeight() { return _height; }
 	virtual int getFrame() { return _frame; }
 	virtual void clearUpdateNeeded() { _updateNeeded = false; }
-	virtual int32 getMovieTime() { return _movieTime; }
+	virtual int32 getMovieTime() { return (int32)_movieTime; }
 
 	virtual void saveState(SaveGame *state) = 0;
 	virtual void restoreState(SaveGame *state) = 0;

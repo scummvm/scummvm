@@ -224,7 +224,7 @@ void SmushPlayer::handleFrame() {
 	_updateNeeded = true;
 
 	_frame++;
-	_movieTime += _speed / 1000;
+	_movieTime += _speed / 1000.f;
 	if (_frame == _nbframes) {
 		// If we're not supposed to loop (or looping fails) then end the video
 		if (!_videoLooping || !_file.setPos(_startPos)) {
@@ -380,7 +380,7 @@ void SmushPlayer::handleFrameDemo() {
 	_updateNeeded = true;
 
 	_frame++;
-	_movieTime += _speed / 1000;
+	_movieTime += _speed / 1000.f;
 	if (_frame == _nbframes) {
 		_videoFinished = true;
 		g_grim->setMode(ENGINE_MODE_NORMAL);
@@ -543,7 +543,7 @@ void SmushPlayer::saveState(SaveGame *state) {
 	state->writeString(_fname);
 
 	state->writeLESint32(_frame);
-	state->writeLESint32(_movieTime);
+	state->writeFloat(_movieTime);
 	state->writeLESint32(_videoFinished);
 	state->writeLESint32(_videoLooping);
 
@@ -559,7 +559,7 @@ void SmushPlayer::restoreState(SaveGame *state) {
 	_fname = state->readString();
 
 	int32 frame = state->readLESint32();
-	int32 movieTime = state->readLESint32();
+	float movieTime = state->readFloat();
 	bool videoFinished = state->readLESint32();
 	bool videoLooping = state->readLESint32();
 
