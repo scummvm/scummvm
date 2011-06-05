@@ -349,6 +349,7 @@ void OSystem_IPHONE::showOverlay() {
 	//printf("showOverlay()\n");
 	_overlayVisible = true;
 	dirtyFullOverlayScreen();
+	updateScreen();
 	iPhone_enableOverlay(true);
 }
 
@@ -368,7 +369,7 @@ void OSystem_IPHONE::clearOverlay() {
 
 void OSystem_IPHONE::grabOverlay(OverlayColor *buf, int pitch) {
 	//printf("grabOverlay()\n");
-	int h = _screenHeight;
+	int h = _overlayHeight;
 	OverlayColor *src = _overlayBuffer;
 
 	do {
