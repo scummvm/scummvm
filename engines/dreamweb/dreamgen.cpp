@@ -2,6 +2,8 @@
 
 namespace dreamgen {
 
+static inline void seecommandtail(Context &context);
+static inline void checkbasemem(Context &context);
 static inline void allocatebuffers(Context &context);
 static inline void clearbuffers(Context &context);
 static inline void clearpalette(Context &context);
@@ -278,6 +280,7 @@ static inline void runintroseq(Context &context);
 static inline void trysoundalloc(Context &context);
 static inline void allocatework(Context &context);
 static inline void checkforemm(Context &context);
+static inline void parseblaster(Context &context);
 static inline void printcurs(Context &context);
 static inline void delcurs(Context &context);
 static inline void commandonly(Context &context);
@@ -295,7 +298,6 @@ static inline void checkifset(Context &context);
 static inline void identifyob(Context &context);
 static inline void convnum(Context &context);
 static inline void onedigit(Context &context);
-static inline void parseblaster(Context &context);
 static inline void volumeadjust(Context &context);
 static inline void loopchannel0(Context &context);
 static inline void createname(Context &context);
@@ -11771,52 +11773,114 @@ doneit:
 	return;
 }
 
-static inline void seecommandtail(Context & context) {
-	context.data.word(372) = 0x220;
-	context.data.byte(378) = 5;
-	context.data.byte(379) = 1;
-	context.data.byte(73) = 0;
-	context.bx = 2;
-	context.ax = context.data.word(context.bx);
-	context.dx = context.es;
-	context._sub(context.ax, context.dx);
-	context.data.word(534) = context.ax;
-	context.bx = 0x02c;
-	context.ax = context.data.word(context.bx);
-	context.push(context.es);
-	context.push(context.bx);
-	context.es = context.ax;
-	context.bx = 0;
-findblaster:
-	context.ax = context.data.word(context.bx);
-	context._cmp(context.ax, 0);
-	if (context.flags.z()) goto endofenvironment;
-	context._cmp(context.al, 'B');
-	if (!context.flags.z()) goto notblast;
-	context._cmp(context.ah, 'L');
-	if (!context.flags.z()) goto notblast;
-	context._cmp(context.data.byte(context.bx+2), 'A');
-	if (!context.flags.z()) goto notblast;
-	context._cmp(context.data.byte(context.bx+3), 'S');
-	if (!context.flags.z()) goto notblast;
-	context._cmp(context.data.byte(context.bx+4), 'T');
-	if (!context.flags.z()) goto notblast;
-	context._cmp(context.data.byte(context.bx+5), 'E');
-	if (!context.flags.z()) goto notblast;
-	context._cmp(context.data.byte(context.bx+6), 'R');
-	if (!context.flags.z()) goto notblast;
-	context._add(context.bx, 7);
-	parseblaster(context);
-	goto endofenvironment;
-notblast:
-	context._add(context.bx, 1);
-	goto findblaster;
-endofenvironment:
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.bx = 0x81;
-	parseblaster(context);
-	return;
+static inline void dreamweb(Context & context) {
+	seecommandtail(context);
+	checkbasemem(context);
+	soundstartup(context);
+	setkeyboardint(context);
+	setupemm(context);
+	allocatebuffers(context);
+	setmouse(context);
+	fadedos(context);
+	gettime(context);
+	clearbuffers(context);
+	clearpalette(context);
+	set16colpalette(context);
+	readsetdata(context);
+	context.data.byte(391) = 0;
+	context.dx = 1922;
+	loadsample(context);
+	setsoundoff(context);
+	scanfornames(context);
+	context._cmp(context.al, 0);
+	if (!context.flags.z()) goto dodecisions;
+	setmode(context);
+	loadpalfromiff(context);
+	titles(context);
+	credits(context);
+	goto playgame;
+dodecisions:
+	cls(context);
+	setmode(context);
+	decide(context);
+	context._cmp(context.data.byte(103), 4);
+	if (context.flags.z()) goto mainloop;
+	titles(context);
+	credits(context);
+playgame:
+	clearchanges(context);
+	setmode(context);
+	loadpalfromiff(context);
+	context.data.byte(9) = 255;
+	context.data.byte(67) = 1;
+	context.data.byte(188) = 35;
+	context.data.byte(386) = 7;
+	loadroom(context);
+	clearsprites(context);
+	initman(context);
+	entrytexts(context);
+	entryanims(context);
+	context.data.byte(183) = 3;
+	initialinv(context);
+	context.data.byte(153) = 32;
+	startup1(context);
+	context.data.byte(387) = 0;
+	context.data.byte(388) = -1;
+	context.data.byte(100) = 255;
+	goto mainloop;
+loadnew:
+	clearbeforeload(context);
+	loadroom(context);
+	clearsprites(context);
+	initman(context);
+	entrytexts(context);
+	entryanims(context);
+	context.data.byte(188) = 255;
+	startup(context);
+	context.data.byte(100) = 255;
+	worktoscreenm(context);
+	goto mainloop;
+alreadyloaded:
+	context.data.byte(188) = 255;
+	clearsprites(context);
+	initman(context);
+	startup(context);
+	context.data.byte(100) = 255;
+mainloop:
+	screenupdate(context);
+	context._cmp(context.data.byte(391), 0);
+	if (!context.flags.z()) goto endofgame;
+	context._cmp(context.data.byte(56), 1);
+	if (context.flags.z()) goto gameover;
+	context._cmp(context.data.byte(56), 2);
+	if (context.flags.z()) goto gameover;
+	context._cmp(context.data.word(21), 0);
+	if (context.flags.z()) goto notwatching;
+	context.al = context.data.byte(477);
+	context._cmp(context.al, context.data.byte(475));
+	if (!context.flags.z()) goto mainloop;
+	context._sub(context.data.word(21), 1);
+	if (!context.flags.z()) goto mainloop;
+notwatching:
+	context._cmp(context.data.byte(56), 4);
+	if (context.flags.z()) goto gameover;
+	context._cmp(context.data.byte(188), 255);
+	if (!context.flags.z()) goto loadnew;
+	goto mainloop;
+gameover:
+	clearbeforeload(context);
+	showgun(context);
+	fadescreendown(context);
+	context.cx = 100;
+	hangon(context);
+	goto dodecisions;
+endofgame:
+	clearbeforeload(context);
+	fadescreendowns(context);
+	context.cx = 200;
+	hangon(context);
+	endgame(context);
+	{ quickquit2(context); return; };
 }
 
 static inline void parseblaster(Context & context) {
@@ -12710,6 +12774,64 @@ static inline void getridoftempcharset(Context & context) {
 static inline void getridoftempsp(Context & context) {
 	context.es = context.data.word(464);
 	deallocatemem(context);
+	return;
+}
+
+static inline void seecommandtail(Context & context) {
+	context.data.word(372) = 0x220;
+	context.data.byte(378) = 5;
+	context.data.byte(379) = 1;
+	context.data.byte(73) = 0;
+	context.bx = 2;
+	context.ax = context.data.word(context.bx);
+	context.dx = context.es;
+	context._sub(context.ax, context.dx);
+	context.data.word(534) = context.ax;
+	context.bx = 0x02c;
+	context.ax = context.data.word(context.bx);
+	context.push(context.es);
+	context.push(context.bx);
+	context.es = context.ax;
+	context.bx = 0;
+findblaster:
+	context.ax = context.data.word(context.bx);
+	context._cmp(context.ax, 0);
+	if (context.flags.z()) goto endofenvironment;
+	context._cmp(context.al, 'B');
+	if (!context.flags.z()) goto notblast;
+	context._cmp(context.ah, 'L');
+	if (!context.flags.z()) goto notblast;
+	context._cmp(context.data.byte(context.bx+2), 'A');
+	if (!context.flags.z()) goto notblast;
+	context._cmp(context.data.byte(context.bx+3), 'S');
+	if (!context.flags.z()) goto notblast;
+	context._cmp(context.data.byte(context.bx+4), 'T');
+	if (!context.flags.z()) goto notblast;
+	context._cmp(context.data.byte(context.bx+5), 'E');
+	if (!context.flags.z()) goto notblast;
+	context._cmp(context.data.byte(context.bx+6), 'R');
+	if (!context.flags.z()) goto notblast;
+	context._add(context.bx, 7);
+	parseblaster(context);
+	goto endofenvironment;
+notblast:
+	context._add(context.bx, 1);
+	goto findblaster;
+endofenvironment:
+	context.bx = context.pop();
+	context.es = context.pop();
+	context.bx = 0x81;
+	parseblaster(context);
+	return;
+}
+
+static inline void checkbasemem(Context & context) {
+	context.bx = context.data.word(534);
+	context._cmp(context.bx, 0x9360);
+	if (!context.flags.c()) goto enoughmem;
+	context.data.byte(532) = 5;
+	{ quickquit(context); return; };
+enoughmem:
 	return;
 }
 
@@ -20745,6 +20867,116 @@ static inline void endgame(Context & context) {
 	return;
 }
 
+static inline void dreamweb(Context & context) {
+	seecommandtail(context);
+	checkbasemem(context);
+	soundstartup(context);
+	setkeyboardint(context);
+	setupemm(context);
+	allocatebuffers(context);
+	setmouse(context);
+	fadedos(context);
+	gettime(context);
+	clearbuffers(context);
+	clearpalette(context);
+	set16colpalette(context);
+	readsetdata(context);
+	context.data.byte(391) = 0;
+	context.dx = 1922;
+	loadsample(context);
+	setsoundoff(context);
+	scanfornames(context);
+	context._cmp(context.al, 0);
+	if (!context.flags.z()) goto dodecisions;
+	setmode(context);
+	loadpalfromiff(context);
+	titles(context);
+	credits(context);
+	goto playgame;
+dodecisions:
+	cls(context);
+	setmode(context);
+	decide(context);
+	context._cmp(context.data.byte(103), 4);
+	if (context.flags.z()) goto mainloop;
+	titles(context);
+	credits(context);
+playgame:
+	clearchanges(context);
+	setmode(context);
+	loadpalfromiff(context);
+	context.data.byte(9) = 255;
+	context.data.byte(67) = 1;
+	context.data.byte(188) = 35;
+	context.data.byte(386) = 7;
+	loadroom(context);
+	clearsprites(context);
+	initman(context);
+	entrytexts(context);
+	entryanims(context);
+	context.data.byte(183) = 3;
+	initialinv(context);
+	context.data.byte(153) = 32;
+	startup1(context);
+	context.data.byte(387) = 0;
+	context.data.byte(388) = -1;
+	context.data.byte(100) = 255;
+	goto mainloop;
+loadnew:
+	clearbeforeload(context);
+	loadroom(context);
+	clearsprites(context);
+	initman(context);
+	entrytexts(context);
+	entryanims(context);
+	context.data.byte(188) = 255;
+	startup(context);
+	context.data.byte(100) = 255;
+	worktoscreenm(context);
+	goto mainloop;
+alreadyloaded:
+	context.data.byte(188) = 255;
+	clearsprites(context);
+	initman(context);
+	startup(context);
+	context.data.byte(100) = 255;
+mainloop:
+	screenupdate(context);
+	context._cmp(context.data.byte(391), 0);
+	if (!context.flags.z()) goto endofgame;
+	context._cmp(context.data.byte(56), 1);
+	if (context.flags.z()) goto gameover;
+	context._cmp(context.data.byte(56), 2);
+	if (context.flags.z()) goto gameover;
+	context._cmp(context.data.word(21), 0);
+	if (context.flags.z()) goto notwatching;
+	context.al = context.data.byte(477);
+	context._cmp(context.al, context.data.byte(475));
+	if (!context.flags.z()) goto mainloop;
+	context._sub(context.data.word(21), 1);
+	if (!context.flags.z()) goto mainloop;
+notwatching:
+	context._cmp(context.data.byte(56), 4);
+	if (context.flags.z()) goto gameover;
+	context._cmp(context.data.byte(188), 255);
+	if (!context.flags.z()) goto loadnew;
+	goto mainloop;
+gameover:
+	clearbeforeload(context);
+	showgun(context);
+	fadescreendown(context);
+	context.cx = 100;
+	hangon(context);
+	goto dodecisions;
+endofgame:
+	clearbeforeload(context);
+	fadescreendowns(context);
+	context.cx = 200;
+	hangon(context);
+	endgame(context);
+	{ quickquit2(context); return; };
+}
+
 
 Data::Data() {
 	static const uint8 src[] = {
@@ -21899,6 +22131,7 @@ void __dispatch_call(Context &context, unsigned addr) {
 		case 0xc938: setuppit(context); break;
 		case 0xc93c: getridofpit(context); break;
 		case 0xc940: pitinterupt(context); break;
+		case 0xc944: dreamweb(context); break;
 		case 0xc944: dreamweb(context); break;
 		case 0xc948: entrytexts(context); break;
 		case 0xc94c: entryanims(context); break;
