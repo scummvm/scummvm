@@ -88,6 +88,8 @@ void iPhone_setMouseCursor(short* buffer, int width, int height) {
 
 void iPhone_enableOverlay(int state) {
 	_overlayIsEnabled = state;
+
+	[sharedInstance performSelectorOnMainThread:@selector(clearColorBuffer) withObject:nil waitUntilDone: YES];
 }
 
 int iPhone_getScreenHeight() {
@@ -481,12 +483,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
 
-	// The color buffer is triple-buffered, so we clear it multiple times right away to avid doing any glClears later.
-	int clearCount = 5;
-	while (clearCount-- > 0) {
-		glClear(GL_COLOR_BUFFER_BIT); printOpenGLError();
-		[_context presentRenderbuffer:GL_RENDERBUFFER_OES];
-	}
+	[self clearColorBuffer];
 
 	if (_keyboardView != nil) {
 		[_keyboardView removeFromSuperview];
@@ -535,6 +532,15 @@ bool getLocalMouseCoords(CGPoint *point) {
 		[self addSubview: _keyboardView];
 		[[_keyboardView inputView] becomeFirstResponder];
 		_overlayPortraitRatio = (_overlayHeight * ratio) / _overlayWidth;
+	}
+}
+
+- (void)clearColorBuffer {
+	// The color buffer is triple-buffered, so we clear it multiple times right away to avid doing any glClears later.
+	int clearCount = 5;
+	while (clearCount-- > 0) {
+		glClear(GL_COLOR_BUFFER_BIT); printOpenGLError();
+		[_context presentRenderbuffer:GL_RENDERBUFFER_OES];
 	}
 }
 

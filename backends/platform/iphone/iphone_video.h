@@ -70,6 +70,7 @@
 - (void)updateMainSurface;
 - (void)updateOverlaySurface;
 - (void)updateMouseSurface;
+- (void)clearColorBuffer;
 
 -(void)updateMouseCursor;
 
