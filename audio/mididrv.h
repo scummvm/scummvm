@@ -142,6 +142,7 @@ public:
 	enum DeviceStringType {
 		kDriverName,
 		kDriverId,
+		kDeviceName,
 		kDeviceId
 	};
 
