@@ -46,6 +46,7 @@ struct trackInfoStruct {
 };
 
 enum SoundDriverStatus {SNDSTATUS_FAILED = 0, SNDSTATUS_DETECTED = 1, SNDSTATUS_SKIPPED = 2};
+enum VoiceType {VOICETYPE_0 = 0, VOICETYPE_1 = 1};
 
 class SoundDriverEntry {
 public:
@@ -80,19 +81,40 @@ public:
 	virtual bool open() { return true; }
 	virtual void close() {}
 	virtual const GroupData *getGroupData() = 0;
-	virtual void setMasterVolume(int volume) {}
 	virtual void installPatchBank(const byte *data) {}
-	virtual void setVolume0(int channel, int v2, int v3, int volume) {}
-	virtual void setVolume1(int channel, int v2, int v3, int volume) {}
-	virtual void play(const byte *data, int size, int channel, int volume) {}
 	virtual void poll() {}
+	virtual void setMasterVolume(int volume) {}
+	virtual void proc18(int al, VoiceType voiceType) {}
+	virtual void proc20(int al, VoiceType voiceType) {}
+	virtual void proc22(int al, VoiceType voiceType, int v3) {}
+	virtual void setVolume0(int channel, int v2, int v3, int volume) {}
+	virtual void setProgram(int channel, int program) {}
+	virtual void setVolume1(int channel, int v2, int v3, int volume) {}
+	virtual void setPitchBlend(int channel, int pitchBlend) {}
+	virtual void play(const byte *data, int size, int channel, int volume) {}
 };
 
-struct VoiceStructEntry {
-	int _field0;
-	int _field1;
-	SoundDriver *_driver;
+struct VoiceStructEntryType0 {
+	Sound *_sound;
+	int _channelNum;
+	int _field9;
+	int _fieldA;
+	Sound *_sound2;
+	int _channelNum2;
+	int _field11;
+	int _field12;
+	int _field13;
+	Sound *_sound3;
+	int _field16;
+	int _channelNum3;
+	int _field19;
+	int _field1A;
+	int _field1B;
+};
+
+struct VoiceStructEntryType1 {
 	int _field4;
+	int _field5;
 	int _field6;
 	int _field8;
 	int _field9;
@@ -108,18 +130,23 @@ struct VoiceStructEntry {
 	int _field16;
 	int _field18;
 	int _field19;
-
-	int _field1A;
-	int _field1B;
 };
 
-enum VoiceType {VOICETYPE_0 = 0, VOICETYPE_1 = 1};
+struct VoiceStructEntry {
+	int _field0;
+	int _field1;
+	SoundDriver *_driver;
 
-class VoiceStruct {
+	VoiceStructEntryType0 _type0;
+	VoiceStructEntryType1 _type1;
+};
+
+class VoiceTypeStruct {
 public:
 	VoiceType _voiceType;
 	int _field1;
 	int _field2;
+	int _field3;
 
 	Common::Array<VoiceStructEntry> _entries;
 };
@@ -132,7 +159,7 @@ public:
 	int _ourSndResVersion, _ourDrvResVersion;
 	Common::List<Sound *> _playList;
 	Common::List<SoundDriver *> _installedDrivers;
-	VoiceStruct *_voiceStructPtrs[SOUND_ARR_SIZE];
+	VoiceTypeStruct *_voiceTypeStructPtrs[SOUND_ARR_SIZE];
 	uint32 _groupsAvail;
 	int _masterVol;
 	int _serverDisabledCount;
@@ -142,6 +169,8 @@ public:
 	Common::List<Sound *> _soundList;
 	Common::List<SoundDriverEntry> _availableDrivers;
 	bool _needToRethink;
+	// Misc flags
+	bool _soTimeIndexFlag;
 public:
 	SoundManager();
 	~SoundManager();
@@ -186,10 +215,9 @@ public:
 	void loadSound(int soundNum, bool showErrors);
 	void unloadSound(int soundNum);
 
-	// _so methods
+	// _sf methods
 	static SoundManager &sfManager();
 	static void _sfTerminate();
-	static void _soSetTimeIndex(int timeIndex);
 	static int _sfDetermineGroup(const byte *soundData);
 	static void _sfAddToPlayList(Sound *sound);
 	static void _sfRemoveFromPlayList(Sound *sound);
@@ -216,7 +244,7 @@ public:
 
 class Sound: public EventHandler {
 private:
-	void _prime(int soundResID, bool queFlag);
+	void _prime(int soundResID, bool queueFlag);
 	void _unPrime();
 	void orientAfterRestore();
 public:
@@ -226,11 +254,11 @@ public:
 	int _group;
 	int _sndResPriority;
 	int _fixedPriority;
-	int _sndResLoop;
+	bool _sndResLoop;
 	bool _fixedLoop;
 	int _priority;
 	int _volume;
-	bool _loop;
+	int _loop;
 	int _pausedCount;
 	int _mutedCount;
 	int _hold;
@@ -296,8 +324,17 @@ public:
 	bool getLoop();
 	void holdAt(int amount);
 	void release();
-
 	void orientAfterDriverChange();
+
+	// _so methods
+	void _soPrimeSound(bool queueFlag);
+	void _soSetTimeIndex(uint timeIndex);
+	void _soPrimeChannelData();
+	bool _soServiceTracks();
+	void _soServiceTrackType0(int trackIndex, const byte *channelData);
+	void _soServiceTrackType1(int trackIndex, const byte *channelData);
+	void _soDoTrackCommand(int channelNum, int command, int value);
+	bool _soDoUpdateTracks(int command, int value);
 };
 
 class ASound: public EventHandler {
