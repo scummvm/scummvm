@@ -111,6 +111,8 @@ Common::String MidiDriver::getDeviceString(DeviceHandle handle, DeviceStringType
 						return d->getMusicDriverName();
 					else if (type == kDriverId)
 						return d->getMusicDriverId();
+					else if (type == kDeviceName)
+						return d->getCompleteName();
 					else if (type == kDeviceId)
 						return d->getCompleteId();
 					else
@@ -199,7 +201,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 			return reslt;
 		} else {
 			// If the expressly selected device is unavailable we display a warning and continue.
-			failedDevStr = getDeviceString(hdl, MidiDriver::kDriverName);
+			failedDevStr = getDeviceString(hdl, MidiDriver::kDeviceName);
 			Common::String warningMsg = "Failed to detect the selected audio device '" + failedDevStr +"'. See log file for more information. Attempting to fall back to the next available device...";
 			GUI::MessageDialog dialog(warningMsg);
 			dialog.runModal();
@@ -239,8 +241,8 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 						// If the preferred (expressly requested) device is unavailable we display a warning and continue.
 						// Don't warn about the missing device if we did already (this becomes relevant if the failing
 						// device is selected as preferred device and also as GM or MT-32 device).
-						if (failedDevStr != getDeviceString(hdl, MidiDriver::kDriverName)) {							
-							Common::String warningMsg = "Failed to detect the preferred device '" + getDeviceString(hdl, MidiDriver::kDriverName) + "'. See log file for more information. Attempting to fall back to the next available device...";
+						if (failedDevStr != getDeviceString(hdl, MidiDriver::kDeviceName)) {							
+							Common::String warningMsg = "Failed to detect the preferred device '" + getDeviceString(hdl, MidiDriver::kDeviceName) + "'. See log file for more information. Attempting to fall back to the next available device...";
 							GUI::MessageDialog dialog(warningMsg);
 							dialog.runModal();
 						}
