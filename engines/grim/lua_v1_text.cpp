@@ -65,7 +65,7 @@ void L1_ChangeTextObject() {
 	int paramId = 2;
 	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKTAG('T', 'E', 'X', 'T')) {
 		TextObject *textObject = gettextobject(textObj);
-		do {
+		for (;;) {
 			lua_Object paramObj = lua_getparam(paramId++);
 			if (!paramObj)
 				break;
@@ -84,7 +84,7 @@ void L1_ChangeTextObject() {
 
 			lua_pushnumber(textObject->getBitmapWidth());
 			lua_pushnumber(textObject->getBitmapHeight());
-		} while (false);
+		}
 	}
 }
 
