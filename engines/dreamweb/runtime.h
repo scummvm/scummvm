@@ -114,12 +114,10 @@ class SegmentRef {
 	Segment			*_segment;
 
 public:
-	SegmentRef(Context *ctx): _context(ctx), _value(), _segment() {
+	SegmentRef(Context *ctx, uint16 value = 0, Segment *segment = 0): _context(ctx), _value(value), _segment(segment) {
 	}
 
-	inline void reset(uint16 value) {
-		
-	}
+	inline void reset(uint16 value);
 
 	inline SegmentRef& operator=(const uint16 id) {
 		return *this;
@@ -142,6 +140,11 @@ public:
 	inline WordRef word(unsigned index) {
 		assert(_segment != 0);
 		return _segment->word(index);
+	}
+
+	inline void assign(const uint8 *b, const uint8 *e) {
+		assert(_segment != 0);
+		_segment->assign(b, e);
 	}
 };
 
@@ -174,9 +177,12 @@ struct Flags {
 };
 
 class Context {
-	Common::HashMap<uint16, Segment> _segments;
+	typedef Common::HashMap<uint16, Segment> SegmentMap;
+	SegmentMap _segments;
 	
 public:
+	enum { kDefaultDataSegment };
+	
 	Register ax, dx, bx, cx, si, di;
 	RegisterPart<kLowPartOfRegister> al;
 	RegisterPart<kHighPartOfRegister> ah;
@@ -191,9 +197,18 @@ public:
 	Flags flags;
 
 	inline Context(): al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx), cs(this), ds(this), es(this) {
-		
+		_segments[kDefaultDataSegment] = Segment();
+		cs.reset(1);
+		ds.reset(1);
+		es.reset(1);
 	}
-
+	
+	SegmentRef getSegment(uint16 value) {
+		SegmentMap::iterator i = _segments.find(value);
+		assert(i != _segments.end());
+		return SegmentRef(this, value, &i->_value);
+	}
+	
 	inline void _cmp(uint8 a, uint8 b) {
 		uint8 x = a;
 		_sub(x, b);
@@ -342,9 +357,11 @@ public:
 		stack.pop_back();
 		return v;
 	}
-	
-	Segment data;
 };
+
+inline void SegmentRef::reset(uint16 value) {
+	*this = _context->getSegment(value);
+}
 
 }
 

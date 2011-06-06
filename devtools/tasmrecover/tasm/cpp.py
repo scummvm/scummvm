@@ -63,7 +63,7 @@ namespace %s {
 			if size == 0:
 				raise Exception("invalid var '%s' size %u" %(name, size))
 			if self.indirection == 0:
-				value = "context.data.%s(%d)" %("byte" if size == 1 else "word", g.offset)
+				value = "context.ds.%s(%d)" %("byte" if size == 1 else "word", g.offset)
 			elif self.indirection == -1:
 				value = "%s" %g.offset
 				self.indirection = 0
@@ -161,9 +161,9 @@ namespace %s {
 		
 		if indirection == 1:
 			if size == 1:
-				expr = "context.data.byte(%s)" %expr
+				expr = "context.ds.byte(%s)" %expr
 			elif size == 2:
-				expr = "context.data.word(%s)" %expr
+				expr = "context.ds.word(%s)" %expr
 			else:
 				expr = "@invalid size 0"
 		elif indirection == 0:
@@ -505,7 +505,7 @@ namespace %s {
 			n += 1
 			if (n & 0xf) == 0:
 				data_impl += "\n\t\t"
-		data_impl += "};\n\tcontext.data.assign(src, src + sizeof(src))"
+		data_impl += "};\n\tcontext.ds.assign(src, src + sizeof(src))"
 		hid = "TASMRECOVER_%s_STUBS_H__" %self.namespace.upper()
 		self.hd.write("""#ifndef %s
 #define %s
