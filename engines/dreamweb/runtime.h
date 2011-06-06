@@ -1,18 +1,15 @@
-#ifndef TASM_RECOVER_H__
-#define TASM_RECOVER_H__
+#ifndef ENGINES_DREAMGEN_RUNTIME_H__
+#define ENGINES_DREAMGEN_RUNTIME_H__
 
 #include <stdint.h>
 #include <assert.h>
 #include <vector>
+#include "common/scummsys.h"
 
-typedef uint16_t uint16;
-typedef uint8_t uint8;
-typedef int16_t int16;
-typedef int8_t int8;
+//fixme: name clash
+#undef random
 
-//little endian
-#define REG_LOW 0
-#define REG_HIGH 1
+enum { kLowPartOfRegister = 0, kHighPartOfRegister = 1 };
 
 struct Register {
 	union {
@@ -160,14 +157,14 @@ struct Flags {
 template<typename Data>
 struct RegisterContext {
 	Register ax, dx, bx, cx, si, di;
-	RegisterPart<REG_LOW> al;
-	RegisterPart<REG_HIGH> ah;
-	RegisterPart<REG_LOW> bl;
-	RegisterPart<REG_HIGH> bh;
-	RegisterPart<REG_LOW> cl;
-	RegisterPart<REG_HIGH> ch;
-	RegisterPart<REG_LOW> dl;
-	RegisterPart<REG_HIGH> dh;
+	RegisterPart<kLowPartOfRegister> al;
+	RegisterPart<kHighPartOfRegister> ah;
+	RegisterPart<kLowPartOfRegister> bl;
+	RegisterPart<kHighPartOfRegister> bh;
+	RegisterPart<kLowPartOfRegister> cl;
+	RegisterPart<kHighPartOfRegister> ch;
+	RegisterPart<kLowPartOfRegister> dl;
+	RegisterPart<kHighPartOfRegister> dh;
 	
 	SegmentRef cs, ds, es;
 	Flags flags;
