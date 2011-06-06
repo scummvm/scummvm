@@ -1289,7 +1289,7 @@ void GlobalOptionsDialog::close() {
 			// only become active *after* the options dialog has closed.
 			g_gui.loadNewTheme(g_gui.theme()->getThemeId(), ThemeEngine::kGfxDisabled, true);
 #else
-			MessageDialog error(_("You have to restart ScummVM to take the effect."));
+			MessageDialog error(_("You have to restart ScummVM before your changes will take effect."));
 			error.runModal();
 #endif
 		}
