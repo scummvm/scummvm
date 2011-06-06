@@ -521,6 +521,13 @@ namespace %s {
 """ %(self.namespace))
 		for f in self.failed:
 			self.hd.write("\tvoid %s(Context &context);\n" %f)
+		
+		offsets_decl = "\n"
+		for k,v in self.context.get_offsets().items():
+			offsets_decl += "\tconst static uint16 k%s = %d;\n" %(k.capitalize(), v[0])
+		offsets_decl += "\n"
+		self.hd.write(offsets_decl);
+
 		self.hd.write("\n}\n\n#endif\n")
 		self.hd.close()
 		

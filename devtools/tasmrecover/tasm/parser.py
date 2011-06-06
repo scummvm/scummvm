@@ -64,6 +64,9 @@ class parser:
 	def get_offset(self, name):
 		name = name.lower()
 		return self.__offsets[name]
+	
+	def get_offsets(self):
+		return self.__offsets
 
 	def include(self, basedir, fname):
 		path = fname.split('\\')[self.strip_path:]
