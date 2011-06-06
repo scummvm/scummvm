@@ -497,20 +497,16 @@ namespace %s {
 		self.fd.write("\n\n")
 		print "%d ok, %d failed of %d, %.02g%% translated" %(done, failed, done + failed, 100.0 * done / (done + failed))
 		print "\n".join(self.failed)
-		data_decl = "struct Data : public Segment {\n\t\tData();\n"
-		data_impl = "Data::Data() {\n"
 		data_bin = self.data_seg
-		data_impl += "\tstatic const uint8 src[] = {\n\t\t"
+		data_impl = "\n\tstatic const uint8 src[] = {\n\t\t"
 		n = 0
 		for v in data_bin:
-			data_impl += "%s, " %v
+			data_impl += "0x%02x, " %v
 			n += 1
 			if (n & 0xf) == 0:
 				data_impl += "\n\t\t"
-		data_impl += "};\ndata.assign(src, src + sizeof(src));\n"
+		data_impl += "};\n\tcontext.data.assign(src, src + sizeof(src))"
 		hid = "TASMRECOVER_%s_STUBS_H__" %self.namespace.upper()
-		data_decl += "\t};\n\n"
-		data_impl += "\t};\n\n"
 		self.hd.write("""#ifndef %s
 #define %s
 """ %(hid, hid))
@@ -519,21 +515,16 @@ namespace %s {
 
 namespace %s {
 
-	%s
-	typedef RegisterContext<Data> Context;
-
 	void __dispatch_call(Context &context, unsigned addr);
 	void __start(Context &context);
 
-""" %(self.namespace, data_decl))
-		self.fd.write(data_impl)
-		
+""" %(self.namespace))
 		for f in self.failed:
 			self.hd.write("\tvoid %s(Context &context);\n" %f)
 		self.hd.write("\n}\n\n#endif\n")
 		self.hd.close()
 		
-		self.fd.write("\nvoid __start(Context &context) { %s(context); }\n" %start)
+		self.fd.write("\nvoid __start(Context &context) { %s; %s(context); }\n" %(data_impl, start))
 		
 		self.fd.write("\nvoid __dispatch_call(Context &context, unsigned addr) {\n\tswitch(addr) {\n")
 		self.proc_addr.sort(cmp = lambda x, y: x[1] - y[1])
