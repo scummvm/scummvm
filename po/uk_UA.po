@@ -1901,7 +1901,7 @@ msgstr "OpenGL нормальний"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:134
 msgid "OpenGL Conserve"
-msgstr "OpenGL збережений
+msgstr "OpenGL збережений"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:135
 msgid "OpenGL Original"
