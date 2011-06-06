@@ -505,7 +505,7 @@ namespace %s {
 			n += 1
 			if (n & 0xf) == 0:
 				data_impl += "\n\t\t"
-		data_impl += "};\n\tcontext.ds.assign(src, src + sizeof(src))"
+		data_impl += "};\n\tcontext.ds.assign(src, src + sizeof(src));\n"
 		hid = "TASMRECOVER_%s_STUBS_H__" %self.namespace.upper()
 		self.hd.write("""#ifndef %s
 #define %s
@@ -524,7 +524,7 @@ namespace %s {
 		self.hd.write("\n}\n\n#endif\n")
 		self.hd.close()
 		
-		self.fd.write("\nvoid __start(Context &context) { %s; %s(context); }\n" %(data_impl, start))
+		self.fd.write("\nvoid __start(Context &context) { %s%s(context); \n}\n" %(data_impl, start))
 		
 		self.fd.write("\nvoid __dispatch_call(Context &context, unsigned addr) {\n\tswitch(addr) {\n")
 		self.proc_addr.sort(cmp = lambda x, y: x[1] - y[1])
