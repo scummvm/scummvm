@@ -120,6 +120,7 @@ public:
 	inline void reset(uint16 value);
 
 	inline SegmentRef& operator=(const uint16 id) {
+		reset(id);
 		return *this;
 	}
 
