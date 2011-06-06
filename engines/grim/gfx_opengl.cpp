@@ -841,6 +841,9 @@ void GfxOpenGL::createFont(Font *font) {
 		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
 		int32 d = font->getCharOffset(i);
 		for (int x = 0; x < height; ++x) {
+			// a is the offset to get to the correct row.
+			// b is the offset to get to the correct line in the character.
+			// c is the offset of the character from the start of the row.
 			uint a = row * size * size * bpp * charsHigh;
 			uint b = x * size * charsWide * bpp;
 			uint c = 0;
@@ -896,8 +899,6 @@ void GfxOpenGL::drawTextObject(TextObject *text) {
 
 	glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
-
-	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
 	const Color *color = text->getFGColor();
@@ -922,18 +923,18 @@ void GfxOpenGL::drawTextObject(TextObject *text) {
 			int z = x + font->getCharStartingCol(character);
 
 			glBindTexture(GL_TEXTURE_2D, texture);
-			float width = 1/16.f;
-			float cx = ((character-1)%16)/16.0f;
-			float cy = ((character-1)/16)/16.0f;
+			float width = 1 / 16.f;
+			float cx = ((character-1) % 16) / 16.0f;
+			float cy = ((character-1) / 16) / 16.0f;
 			glBegin(GL_QUADS);
 			glTexCoord2f(cx, cy);
 			glVertex2i(z, w);
-			glTexCoord2f(cx+width, cy);
-			glVertex2i(z+size, w);
-			glTexCoord2f(cx+width, cy+width);
-			glVertex2i(z+size, w+size);
-			glTexCoord2f(cx, cy+width);
-			glVertex2i(z, w+size);
+			glTexCoord2f(cx + width, cy);
+			glVertex2i(z + size, w);
+			glTexCoord2f(cx + width, cy + width);
+			glVertex2i(z + size, w + size);
+			glTexCoord2f(cx, cy + width);
+			glVertex2i(z, w + size);
 			glEnd();
 			x += font->getCharWidth(character);
 		}
@@ -941,10 +942,8 @@ void GfxOpenGL::drawTextObject(TextObject *text) {
 
 	glColor3f(1, 1, 1);
 
-	glDisable(GL_SCISSOR_TEST);
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
-	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 }
