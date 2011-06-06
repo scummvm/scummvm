@@ -30,14 +30,13 @@
 
 #include "audio/mixer.h"
 #include "common/events.h"
+#include "common/timer.h"
+#include "common/savefile.h"
 #include "gui/message.h"
 #include "graphics/pixelformat.h"
 
 ModularBackend::ModularBackend()
 	:
-	_fsFactory(0),
-	_savefileManager(0),
-	_timerManager(0),
 	_mutexManager(0),
 	_graphicsManager(0),
 	_mixer(0) {
@@ -45,16 +44,10 @@ ModularBackend::ModularBackend()
 }
 
 ModularBackend::~ModularBackend() {
-	delete _fsFactory;
-	_fsFactory = 0;
 	delete _graphicsManager;
 	_graphicsManager = 0;
 	delete _mixer;
 	_mixer = 0;
-	delete _savefileManager;
-	_savefileManager = 0;
-	delete _timerManager;
-	_timerManager = 0;
 	delete _mutexManager;
 	_mutexManager = 0;
 }
@@ -215,11 +208,6 @@ void ModularBackend::setCursorPalette(const byte *colors, uint start, uint num) 
 	_graphicsManager->setCursorPalette(colors, start, num);
 }
 
-Common::TimerManager *ModularBackend::getTimerManager() {
-	assert(_timerManager);
-	return _timerManager;
-}
-
 OSystem::MutexRef ModularBackend::createMutex() {
 	assert(_mutexManager);
 	return _mutexManager->createMutex();
@@ -247,16 +235,6 @@ Audio::Mixer *ModularBackend::getMixer() {
 
 void ModularBackend::displayMessageOnOSD(const char *msg) {
 	_graphicsManager->displayMessageOnOSD(msg);
-}
-
-Common::SaveFileManager *ModularBackend::getSavefileManager() {
-	assert(_savefileManager);
-	return _savefileManager;
-}
-
-FilesystemFactory *ModularBackend::getFilesystemFactory() {
-	assert(_fsFactory);
-	return _fsFactory;
 }
 
 void ModularBackend::quit() {

@@ -34,12 +34,16 @@
 #include "common/textconsole.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
+#include "backends/timer/default/default-timer.h"
 
 OSystem *g_system = 0;
 
 OSystem::OSystem() {
 	_audiocdManager = 0;
 	_eventManager = 0;
+	_timerManager = 0;
+	_savefileManager = 0;
+	_fsFactory = 0;
 }
 
 OSystem::~OSystem() {
@@ -48,20 +52,35 @@ OSystem::~OSystem() {
 
 	delete _eventManager;
 	_eventManager = 0;
+
+	delete _timerManager;
+	_timerManager = 0;
+
+	delete _savefileManager;
+	_savefileManager = 0;
+
+	delete _fsFactory;
+	_fsFactory = 0;
 }
 
 void OSystem::initBackend() {
-	// Init AudioCD manager
+	// Init audio CD manager
 #ifndef DISABLE_DEFAULT_AUDIOCD_MANAGER
 	if (!_audiocdManager)
 		_audiocdManager = new DefaultAudioCDManager();
 #endif
-	if (!_audiocdManager)
-		error("Backend failed to instantiate AudioCD manager");
 
-	// Verify Event manager has been set
+	// Verify all managers has been set
+	if (!_audiocdManager)
+		error("Backend failed to instantiate audio CD manager");
 	if (!_eventManager)
-		error("Backend failed to instantiate Event manager");
+		error("Backend failed to instantiate event manager");
+	if (!_timerManager)
+		error("Backend failed to instantiate timer manager");
+// 	if (!_savefileManager)
+// 		error("Backend failed to instantiate savefile manager");
+// 	if (!_fsFactory)
+// 		error("Backend failed to instantiate fs factory");
 }
 
 bool OSystem::setGraphicsMode(const char *name) {
@@ -88,6 +107,20 @@ bool OSystem::setGraphicsMode(const char *name) {
 void OSystem::fatalError() {
 	quit();
 	exit(1);
+}
+
+Common::TimerManager *OSystem::getTimerManager() {
+	return _timerManager;
+}
+
+Common::SaveFileManager *OSystem::getSavefileManager() {
+	assert(_savefileManager);
+	return _savefileManager;
+}
+
+FilesystemFactory *OSystem::getFilesystemFactory() {
+	assert(_fsFactory);
+	return _fsFactory;
 }
 
 Common::SeekableReadStream *OSystem::createConfigReadStream() {
