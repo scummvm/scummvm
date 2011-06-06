@@ -142,7 +142,7 @@ MidiTestSuite::MidiTestSuite() {
 		// add some fallback test if filesystem loading failed
 		Testsuite::logPrintf("Warning! Midi: Sound data file music.mid not found\n");
 		_isMidiDataFound = false;
-		enable(false);
+		MidiTestSuite::enable(false);
 	}
 }
 
