@@ -48,8 +48,8 @@ void OSystem_Dreamcast::delayMillis(uint msecs)
   unsigned int t, start = Timer();
   int time = (((unsigned int)msecs)*3125U)>>6;
   while (((int)((t = Timer())-start))<time) {
-    if (_timer != NULL)
-      _timer->handler();
+    if (_timerManager != NULL)
+      ((DefaultTimerManager *)_timerManager)->handler();
     checkSound();
   }
   getMillis();

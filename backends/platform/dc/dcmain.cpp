@@ -41,20 +41,21 @@ const char *gGameName;
 
 OSystem_Dreamcast::OSystem_Dreamcast()
   : _devpoll(0), screen(NULL), mouse(NULL), overlay(NULL), _softkbd(this),
-    _ms_buf(NULL), _timer(NULL), _mixer(NULL), _savefile(NULL),
+    _ms_buf(NULL), _mixer(NULL),
     _current_shake_pos(0), _aspect_stretch(false), _softkbd_on(false),
     _softkbd_motion(0), _enable_cursor_palette(false), _screenFormat(0)
 {
   memset(screen_tx, 0, sizeof(screen_tx));
   memset(mouse_tx, 0, sizeof(mouse_tx));
   memset(ovl_tx, 0, sizeof(ovl_tx));
+  _fsFactory = this;
 }
 
 void OSystem_Dreamcast::initBackend()
 {
   ConfMan.setInt("autosave_period", 0);
-  _savefile = createSavefileManager();
-  _timer = new DefaultTimerManager();
+  _savefileManager = createSavefileManager();
+  _timerManager = new DefaultTimerManager();
 
   uint sampleRate = initSound();
   _mixer = new Audio::MixerImpl(this, sampleRate);
