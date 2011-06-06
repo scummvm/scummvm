@@ -535,23 +535,3 @@ size_t ps2_fwrite(const void *buf, size_t r, size_t n, FILE *stream) {
 	assert(r != 0);
 	return ((Ps2File*)stream)->write(buf, r * n) / r;
 }
-
-int ps2_fputs(const char *s, FILE *stream) {
-	int len = strlen(s);
-
-	if (stream == stderr || stream == stdout) {
-		printf("%s", s);
-		sioprintf("%s", s);
-		return len;
-	}
-
-	if (ps2_fwrite(s, 1, len, stream) == (size_t)len)
-		return len;
-	else
-		return EOF;
-}
-
-int ps2_fflush(FILE *stream) {
-	// printf("fflush not implemented\n");
-	return 0;
-}
