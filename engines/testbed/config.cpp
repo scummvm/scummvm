@@ -159,7 +159,7 @@ void TestbedInteractionDialog::addList(uint x, uint y, uint w, uint h, const Com
 	_yOffset += h;
 }
 
-void TestbedInteractionDialog::addButtonXY(uint x, uint y, uint w, uint h, const Common::String name, uint32 cmd) {
+void TestbedInteractionDialog::addButtonXY(uint x, uint /* y */, uint w, uint h, const Common::String name, uint32 cmd) {
 	_buttonArray.push_back(new GUI::ButtonWidget(this, x, _yOffset, w, h, name, 0, cmd));
 }
 
@@ -174,7 +174,6 @@ void TestbedConfigManager::initDefaultConfiguration() {
 }
 
 void TestbedConfigManager::writeTestbedConfigToStream(Common::WriteStream *ws) {
-	Common::String wStr;
 	for (Common::Array<Testsuite *>::const_iterator i = _testsuiteList.begin(); i < _testsuiteList.end(); i++) {
 		_configFileInterface.setKey("this", (*i)->getName(), boolToString((*i)->isEnabled()));
 		const Common::Array<Test *> &testList = (*i)->getTestList();

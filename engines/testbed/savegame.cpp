@@ -158,11 +158,9 @@ TestExitStatus SaveGametests::testListingSavefile() {
 			}
 		}
 		return kTestPassed;
-	} else {
-		Testsuite::logDetailedPrintf("listing Savefiles failed!\n");
-		return kTestFailed;
 	}
 
+	Testsuite::logDetailedPrintf("listing Savefiles failed!\n");
 	return kTestFailed;
 }
 

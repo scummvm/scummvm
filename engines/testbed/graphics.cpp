@@ -186,7 +186,7 @@ void GFXtests::HSVtoRGB(int &rComp, int &gComp, int &bComp, int hue, int sat, in
 	bComp = (int)(b * 255);
 }
 
-Common::Rect GFXtests::drawCursor(bool cursorPaletteDisabled, const char *gfxModeName, int cursorTargetScale) {
+Common::Rect GFXtests::drawCursor(bool cursorPaletteDisabled, int cursorTargetScale) {
 	// Buffer initialized with yellow color
 	byte buffer[500];
 	memset(buffer, 2, sizeof(buffer));
@@ -249,7 +249,7 @@ void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName
 
 	if (isFeaturePresent) {
 
-		cursorRect = GFXtests::drawCursor(disableCursorPalette, gfxModeName, cursorTargetScale);
+		cursorRect = GFXtests::drawCursor(disableCursorPalette, cursorTargetScale);
 
 		Common::EventManager *eventMan = g_system->getEventManager();
 		Common::Event event;
@@ -741,7 +741,7 @@ TestExitStatus GFXtests::scaledCursors() {
 	if (isAspectRatioCorrected) {
 		info += "\nDisabling Aspect ratio correction, for letting cusors match exactly, will be restored after this test.";
 	}
-	
+
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Scaled Cursors\n");
 		return kTestSkipped;
@@ -753,7 +753,7 @@ TestExitStatus GFXtests::scaledCursors() {
 	}
 
 
-	if (isAspectRatioCorrected) {	
+	if (isAspectRatioCorrected) {
 		g_system->beginGFXTransaction();
 		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, false);
 		g_system->endGFXTransaction();
@@ -766,7 +766,7 @@ TestExitStatus GFXtests::scaledCursors() {
 		// for every graphics mode display cursors for cursorTargetScale 1, 2 and 3
 		// Switch Graphics mode
 		// FIXME: Crashes with "3x" mode now.:
-		
+
 		info = Common::String::format("Testing : Scaled cursors with GFX Mode %s\n", gfxMode->name);
 		if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 			Testsuite::logPrintf("\tInfo! Skipping sub-test : Scaled Cursors :: GFX Mode %s\n", gfxMode->name);
@@ -779,7 +779,7 @@ TestExitStatus GFXtests::scaledCursors() {
 			Testsuite::logPrintf("Info! Explicit exit requested during scaling test, this test may be incomplete\n");
 			return kTestSkipped;
 		}
-		
+
 		g_system->beginGFXTransaction();
 
 		bool isGFXModeSet = g_system->setGraphicsMode(gfxMode->id);
@@ -807,7 +807,7 @@ TestExitStatus GFXtests::scaledCursors() {
 		if (Testsuite::handleInteractiveInput(info, "Yes", "No", kOptionRight)) {
 			Testsuite::logPrintf("\tInfo! Failed sub-test : Scaled Cursors :: GFX Mode %s\n", gfxMode->name);
 		}
-		
+
 		if (Engine::shouldQuit()) {
 			// Explicit exit requested
 			Testsuite::logPrintf("Info! Explicit exit requested during scaling test, this test may be incomplete\n");
@@ -824,7 +824,7 @@ TestExitStatus GFXtests::scaledCursors() {
 	if (isAspectRatioCorrected) {
 		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, true);
 	}
-	
+
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
 	if (gfxError != OSystem::kTransactionSuccess || !isGFXModeSet) {
@@ -962,7 +962,7 @@ TestExitStatus GFXtests::paletteRotation() {
 		Testsuite::logPrintf("Info! Skipping test : palette Rotation\n");
 		return kTestSkipped;
 	}
-	Common::Point pt(0, 10);
+
 	Testsuite::clearEntireScreen();
 
 	// Use 256 colors
@@ -1065,7 +1065,6 @@ TestExitStatus GFXtests::pixelFormats() {
 	}
 
 	Common::List<Graphics::PixelFormat> pfList = g_system->getSupportedFormats();
-	Common::List<Graphics::PixelFormat>::const_iterator iter = pfList.begin();
 
 	int numFormatsTested = 0;
 	int numPassed = 0;
@@ -1073,7 +1072,7 @@ TestExitStatus GFXtests::pixelFormats() {
 
 	Testsuite::logDetailedPrintf("Testing Pixel Formats. Size of list : %d\n", pfList.size());
 
-	for (iter = pfList.begin(); iter != pfList.end(); iter++) {
+	for (Common::List<Graphics::PixelFormat>::const_iterator iter = pfList.begin(); iter != pfList.end(); iter++) {
 		numFormatsTested++;
 		if (iter->bytesPerPixel == 1) {
 			// Palettes already tested
