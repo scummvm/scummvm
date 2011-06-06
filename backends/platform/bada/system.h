@@ -41,10 +41,10 @@
 #include "backends/events/default/default-events.h"
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/fs/fs-factory.h"
-#include "audio/mixer_intern.h"
 
 #include "fs.h"
 #include "form.h"
+#include "audio.h"
 
 #if defined(_DEBUG)
 #define logEntered() AppLog("%s entered (%s %d)", \
@@ -90,6 +90,7 @@ class BadaSystem : public ModularBackend,
   
   BadaAppForm* appForm;
   long long epoch;
+  AudioThread* audioThread;
 };
 
 #endif
