@@ -214,7 +214,7 @@ void setTextObjectParams(TextObjectCommon *textObject, lua_Object tableObj) {
 	if (keyObj) {
 		if (g_grim->getGameType() == GType_MONKEY4 && lua_isstring(keyObj)) {
 			textObject->setFont(g_resourceloader->getFont(lua_getstring(keyObj)));
-		else if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKTAG('F','O','N','T')) {
+		} else if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKTAG('F','O','N','T')) {
 			textObject->setFont(getfont(keyObj));
 		}
 	}
