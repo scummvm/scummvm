@@ -11,13 +11,17 @@ namespace dreamgen {
 //fixme: name clash
 #undef random
 
-enum { kLowPartOfRegister = 0, kHighPartOfRegister = 1 };
+struct LowPartOfRegister {
+	enum { Mask = 0xff };
+	enum { Shift = 0 };
+};
+struct HighPartOfRegister {
+	enum { Mask = 0xff00 };
+	enum { Shift = 8 };
+};
 
 struct Register {
-	union {
-		uint16 _value;
-		uint8 _part[2];
-	};
+	uint16 _value;
 	inline Register(): _value() {}
 	inline Register& operator=(uint16 v) { _value = v; return *this; }
 	inline operator uint16&() { return _value; }
@@ -29,44 +33,46 @@ struct Register {
 	}
 };
 
-template<unsigned PART>
+template<typename P>
 struct RegisterPart {
-	uint8 &_part;
+	typedef P 		PartTraits;
+	Register		&_reg;
+	uint8			_value;
 
-	inline RegisterPart(Register &reg) : _part(reg._part[PART]) {}
+	inline RegisterPart(Register &reg) : _reg(reg), _value(reg._value >> PartTraits::Shift) {}
 
 	inline operator uint8&() {
-		return _part;
+		return _value;
 	}
 	inline RegisterPart& operator=(const RegisterPart& o) {
-		_part = o._part;
+		_value = o._value;
 		return *this;
 	}
 	inline RegisterPart& operator=(uint8 v) {
-		_part = v;
+		_value = v;
 		return *this;
+	}
+	inline ~RegisterPart() {
+		_reg._value = (_reg._value & ~PartTraits::Mask) | (_value << PartTraits::Shift);
 	}
 };
 
 class WordRef {
 	Common::Array<uint8>	&_data;
 	unsigned				_index;
-	bool					_changed;
 	uint16					_value;
 
 public:
 
-	inline WordRef(Common::Array<uint8> &data, unsigned index) : _data(data), _index(index), _changed(false) {
+	inline WordRef(Common::Array<uint8> &data, unsigned index) : _data(data), _index(index) {
 		assert(index + 1 < data.size());
 		_value = _data[index] | (_data[index + 1] << 8);
 	}
 	inline WordRef& operator=(const WordRef &ref) {
-		_changed = true;
 		_value = ref._value;
 		return *this;
 	}
 	inline WordRef& operator=(uint16 v) {
-		_changed = true;
 		_value = v;
 		return *this;
 	}
@@ -77,10 +83,8 @@ public:
 		return _value;
 	}
 	inline ~WordRef() {
-		if (_changed) {
-			_data[_index] = _value & 0xff;
-			_data[_index + 1] = _value >> 8;
-		}
+		_data[_index] = _value & 0xff;
+		_data[_index + 1] = _value >> 8;
 	}
 };
 
@@ -185,14 +189,14 @@ public:
 	enum { kDefaultDataSegment = 0x1000 };
 	
 	Register ax, dx, bx, cx, si, di;
-	RegisterPart<kLowPartOfRegister> al;
-	RegisterPart<kHighPartOfRegister> ah;
-	RegisterPart<kLowPartOfRegister> bl;
-	RegisterPart<kHighPartOfRegister> bh;
-	RegisterPart<kLowPartOfRegister> cl;
-	RegisterPart<kHighPartOfRegister> ch;
-	RegisterPart<kLowPartOfRegister> dl;
-	RegisterPart<kHighPartOfRegister> dh;
+	RegisterPart<LowPartOfRegister> al;
+	RegisterPart<HighPartOfRegister> ah;
+	RegisterPart<LowPartOfRegister> bl;
+	RegisterPart<HighPartOfRegister> bh;
+	RegisterPart<LowPartOfRegister> cl;
+	RegisterPart<HighPartOfRegister> ch;
+	RegisterPart<LowPartOfRegister> dl;
+	RegisterPart<HighPartOfRegister> dh;
 	
 	SegmentRef cs, ds, es;
 	Flags flags;
