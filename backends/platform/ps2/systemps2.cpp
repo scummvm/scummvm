@@ -980,7 +980,7 @@ void OSystem_PS2::makeConfigPath() {
 }
 
 Common::String OSystem_PS2::getDefaultConfigFileName() {
-	return _configFile
+	return _configFile;
 }
 
 void OSystem_PS2::logMessage(LogMessageType::Type type, const char *message) {
