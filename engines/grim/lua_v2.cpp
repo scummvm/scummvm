@@ -507,8 +507,108 @@ static void L2_SetActorLighting() {
 	}
 }
 
+static void L2_SetActorCollisionMode() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object modeObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	assert(actor);
+	int mode = (int)lua_getnumber(modeObj);
+	// From _actors.lua
+	// COLLISION_OFF = 0
+	// COLLISION_BOX = 1
+	// COLLISION_SPHERE = 2
+
+	// FIXME: set collision mode
+	//actor->func(mode);
+	warning("L2_SetActorCollisionMode: implement opcode. Mode %d", mode);
+}
+
+static void L2_SetActorCollisionScale() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object scaleObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	assert(actor);
+
+	float scale = lua_getnumber(scaleObj);
+	// FIXME: set collision scale
+	//actor->func(scale);
+	warning("L2_SetActorCollisionScale: implement opcode. Scale %f", scale);
+}
+
+static void L2_GetActorPuckVector() {
+	// stub this for now as the regular one crashes.
+	warning("L2_GetActorPuckVector: stubbed to L2 for now, L1 crashes");
+	lua_pushnil();
+}
+
+static void L2_SetActorHeadLimits() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object param2Obj = lua_getparam(2);
+	lua_Object param3Obj = lua_getparam(3);
+	lua_Object param4Obj = lua_getparam(4);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	if (!actor)
+		return;
+
+	if (lua_isnumber(param2Obj) && lua_isnumber(param3Obj) && lua_isnumber(param4Obj)) {
+		float param2 = lua_getnumber(param2Obj); // belows needs multiply by some runtime value
+		float param3 = lua_getnumber(param3Obj);
+		float param4 = lua_getnumber(param4Obj);
+		// FIXME: implement missing func
+		//actor->func(param2, param3, param4);
+		warning("L2_SetActorHeadLimits: implement opcode. actor: %s, params: %f, %f, %f", actor->getName().c_str(), param2, param3, param4);
+	}
+}
+
+static void L2_SetActorFOV() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object fovObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	if (!actor)
+		return;
+
+	if (lua_isnumber(fovObj)) {
+		float fov = lua_getnumber(fovObj);
+		// FIXME: implement missing code
+		//actor->func(fov); // cos(fov * some tuntime val * 0.5)
+		warning("L2_SetActorFOV: implement opcode. actor: %s, param: %f", actor->getName().c_str(), fov);
+	}
+}
+
+static void L2_AttachActor() {
+	// Missing lua parts
+	warning("L2_AttachActor: implement opcode");
+}
+
 static void L2_GetCPUSpeed() {
 	lua_pushnumber(500); // anything above 333 make best configuration
+}
+
+static void L2_StartMovie() {
+	//stub this untill EMI movie stuff is worked out.
+	g_grim->setMode(ENGINE_MODE_SMUSH);
+	warning("L2_StartMovie: implement opcode");
+}
+
+static void L2_IsMoviePlaying() {
+	warning("L2_IsMoviePlaying: always returns false");
+	lua_pushnil();
 }
 
 static void L2_SetActiveCD() {
@@ -533,48 +633,37 @@ static void L2_PurgeText() {
 	warning("L2_PurgeText: implement opcode");
 }
 
-void L2_ImFlushStack() {
+static void L2_ImFlushStack() {
 	// FIXME
 	warning("L2_ImFlushStack: implement opcode");
 }
 
-void L2_ImSetMusicVol() {
+static void L2_ImSetMusicVol() {
 	warning("L2_ImSetMusicVol: implement opcode");
 }
 
-void L2_ImSetSfxVol() {
+static void L2_ImSetSfxVol() {
 	warning("L2_ImSetSfxVol: implement opcode");
 }
 
-void L2_ImSetVoiceVol() {
+static void L2_ImSetVoiceVol() {
 	warning("L2_ImSetVoiceVol: implement opcode");
 }
 
-void L2_ImSetVoiceEffect() {
+static void L2_ImSetVoiceEffect() {
 	warning("L2_ImSetVoiceEffect: implement opcode");
 }
 
-void L2_EngineDisplay() {
+static void L2_EngineDisplay() {
 	// dummy
 }
 
-void L2_SetAmbientLight() {
+static void L2_SetAmbientLight() {
 	// dummy
 }
 
-void L2_Display() {
+static void L2_Display() {
 	// dummy
-}
-
-void L2_StartMovie() {
-	//stub this untill EMI movie stuff is worked out.
-	g_grim->setMode(ENGINE_MODE_SMUSH);
-	warning("L2_StartMovie: implement opcode");
-}
-
-void L2_IsMoviePlaying() {
-	warning("L2_IsMoviePlaying: always returns false");
-	lua_pushnil();
 }
 
 // Stub function for builtin functions not yet implemented
@@ -597,7 +686,6 @@ STUB_FUNC2(L2_SetActorMumblechore)
 STUB_FUNC2(L2_SetActorTalkChore)
 STUB_FUNC2(L2_GetActorPos)
 STUB_FUNC2(L2_WalkActorVector)
-STUB_FUNC2(L2_ActorLookAt)
 STUB_FUNC2(L2_SetActorLookRate)
 STUB_FUNC2(L2_GetActorLookRate)
 STUB_FUNC2(L2_GetVisibleThings)
@@ -617,7 +705,6 @@ STUB_FUNC2(L2_ImGetMusicVol)
 STUB_FUNC2(L2_ImSetSequence)
 STUB_FUNC2(L2_RenderModeUser)
 STUB_FUNC2(L2_SayLine)
-STUB_FUNC2(L2_MakeTextObject)
 STUB_FUNC2(L2_GetTextObjectDimensions)
 STUB_FUNC2(L2_ChangeTextObject)
 STUB_FUNC2(L2_ExpireText)
@@ -642,8 +729,6 @@ STUB_FUNC2(L2_IrisUp)
 STUB_FUNC2(L2_IrisDown)
 STUB_FUNC2(L2_SetActorClipPlane)
 STUB_FUNC2(L2_SetActorClipActive)
-STUB_FUNC2(L2_SetActorCollisionScale)
-STUB_FUNC2(L2_SetActorCollisionMode)
 STUB_FUNC2(L2_FlushControls)
 STUB_FUNC2(L2_ActorToClean)
 STUB_FUNC2(L2_TurnLightOn)
@@ -680,12 +765,9 @@ STUB_FUNC2(L2_ThumbnailFromFile)
 STUB_FUNC2(L2_ClearSpecialtyTexture)
 STUB_FUNC2(L2_ClearOverworld)
 STUB_FUNC2(L2_ToggleOverworld)
-STUB_FUNC2(L2_SetActorFOV)
-STUB_FUNC2(L2_SetActorHeadLimits)
 STUB_FUNC2(L2_EnableActorPuck)
 STUB_FUNC2(L2_SetActorLocalAlpha)
 STUB_FUNC2(L2_GetActorSortOrder)
-STUB_FUNC2(L2_AttachActor)
 STUB_FUNC2(L2_DetachActor)
 STUB_FUNC2(L2_IsChoreValid)
 STUB_FUNC2(L2_IsChorePlaying)
@@ -751,18 +833,18 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "Save", L1_Save },
 	{ "remove", L1_Remove },
 	{ "SetActorTimeScale", L2_SetActorTimeScale },
-	{ "SetActorWalkChore", L2_SetActorWalkChore },
-	{ "SetActorTurnChores", L2_SetActorTurnChores },
-	{ "SetActorRestChore", L2_SetActorRestChore },
-	{ "SetActorMumblechore", L2_SetActorMumblechore },
-	{ "SetActorTalkChore", L2_SetActorTalkChore },
+	{ "SetActorWalkChore", L1_SetActorWalkChore },
+	{ "SetActorTurnChores", L1_SetActorTurnChores },
+	{ "SetActorRestChore", L1_SetActorRestChore },
+	{ "SetActorMumblechore", L1_SetActorMumblechore },
+	{ "SetActorTalkChore", L1_SetActorTalkChore },
 	{ "SetActorWalkRate", L2_SetActorWalkRate },
 	{ "GetActorWalkRate", L2_GetActorWalkRate },
 	{ "SetActorTurnRate", L1_SetActorTurnRate },
 	{ "SetSelectedActor", L1_SetSelectedActor },
 	{ "LoadActor", L1_LoadActor },
 	{ "GetActorPos", L2_GetActorPos },
-	{ "GetActorPuckVector", L1_GetActorPuckVector },
+	{ "GetActorPuckVector", L2_GetActorPuckVector },
 	{ "GetActorYawToPoint", L1_GetActorYawToPoint },
 	{ "SetActorReflection", L1_SetActorReflection },
 	{ "PutActorAt", L1_PutActorAt },
@@ -771,7 +853,7 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "WalkActorForward", L1_WalkActorForward },
 	{ "WalkActorTo", L1_WalkActorTo },
 	{ "WalkActorToAvoiding", L2_WalkActorToAvoiding },
-	{ "ActorLookAt", L2_ActorLookAt },
+	{ "ActorLookAt", L1_ActorLookAt },
 	{ "SetActorLookRate", L2_SetActorLookRate },
 	{ "GetActorLookRate", L2_GetActorLookRate },
 	{ "GetVisibleThings", L2_GetVisibleThings },
@@ -962,7 +1044,7 @@ struct luaL_reg monkeyTextOpcodes[] = {
 	{ "SetSayLineDefaults", L1_SetSayLineDefaults },
 	{ "SetActorTalkColor", L1_SetActorTalkColor },
 	{ "SayLine", L2_SayLine },
-	{ "MakeTextObject", L2_MakeTextObject },
+	{ "MakeTextObject", L1_MakeTextObject },
 	{ "GetTextObjectDimensions", L2_GetTextObjectDimensions },
 	{ "GetFontDimensions", L2_GetFontDimensions },
 	{ "ChangeTextObject", L2_ChangeTextObject },
