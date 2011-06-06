@@ -73,12 +73,12 @@ OSystem_NULL::~OSystem_NULL() {
 }
 
 void OSystem_NULL::initBackend() {
-	_mutexManager = (MutexManager *)new NullMutexManager();
+	_mutexManager = new NullMutexManager();
 	_timerManager = new DefaultTimerManager();
 	_eventManager = new DefaultEventManager(this);
 	_savefileManager = new DefaultSaveFileManager();
-	_graphicsManager = (GraphicsManager *)new NullGraphicsManager();
-	_audiocdManager = (AudioCDManager *)new DefaultAudioCDManager();
+	_graphicsManager = new NullGraphicsManager();
+	_audiocdManager = new DefaultAudioCDManager();
 	_mixer = new Audio::MixerImpl(this, 22050);
 
 	((Audio::MixerImpl *)_mixer)->setReady(false);
