@@ -900,7 +900,7 @@ void Actor::sayLine(const char *msg, const char *msgId, bool background) {
 	_sayLineText->setText(msg);
 	_sayLineText->setFGColor(_talkColor);
 	if (m == GrimEngine::TextOnly || g_grim->getMode() == ENGINE_MODE_SMUSH) {
-		_sayLineText->setDuration((int)((float)strlen(msg) * 20.f / sqrt((float)g_grim->getTextSpeed() / 10.f)));
+		textObject->setDuration(500 + strlen(msg) * 15 * (11 - g_grim->getTextSpeed()));
 	}
 	if (g_grim->getMode() == ENGINE_MODE_SMUSH) {
 		_sayLineText->setX(640 / 2);
