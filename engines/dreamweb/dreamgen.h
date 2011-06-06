@@ -11,6 +11,7 @@ namespace dreamgen {
 	void randomnumber(Context &context);
 	void quickquit(Context &context);
 	void quickquit2(Context &context);
+	void seecommandtail(Context &context);
 	void keyboardread(Context &context);
 	void resetkeyboard(Context &context);
 	void setkeyboardint(Context &context);

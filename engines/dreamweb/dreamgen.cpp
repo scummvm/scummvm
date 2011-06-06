@@ -2,7 +2,6 @@
 
 namespace dreamgen {
 
-static void seecommandtail(Context &context);
 static void checkbasemem(Context &context);
 static void allocatebuffers(Context &context);
 static void clearbuffers(Context &context);
@@ -145,7 +144,6 @@ static void dumptimedtext(Context &context);
 static void readmouse4(Context &context);
 static void dumpwatch(Context &context);
 static void fadescreenup(Context &context);
-static void parseblaster(Context &context);
 static void clearreels(Context &context);
 static void clearrest(Context &context);
 static void trysoundalloc(Context &context);
@@ -17455,54 +17453,6 @@ static void clearrest(Context & context) {
 	return;
 }
 
-static void seecommandtail(Context & context) {
-	context.ds.word(372) = 0x220;
-	context.ds.byte(378) = 5;
-	context.ds.byte(379) = 1;
-	context.ds.byte(73) = 0;
-	context.bx = 2;
-	context.ax = context.ds.word(context.bx);
-	context.dx = context.es;
-	context._sub(context.ax, context.dx);
-	context.ds.word(534) = context.ax;
-	context.bx = 0x02c;
-	context.ax = context.ds.word(context.bx);
-	context.push(context.es);
-	context.push(context.bx);
-	context.es = context.ax;
-	context.bx = 0;
-findblaster:
-	context.ax = context.ds.word(context.bx);
-	context._cmp(context.ax, 0);
-	if (context.flags.z()) goto endofenvironment;
-	context._cmp(context.al, 'B');
-	if (!context.flags.z()) goto notblast;
-	context._cmp(context.ah, 'L');
-	if (!context.flags.z()) goto notblast;
-	context._cmp(context.ds.byte(context.bx+2), 'A');
-	if (!context.flags.z()) goto notblast;
-	context._cmp(context.ds.byte(context.bx+3), 'S');
-	if (!context.flags.z()) goto notblast;
-	context._cmp(context.ds.byte(context.bx+4), 'T');
-	if (!context.flags.z()) goto notblast;
-	context._cmp(context.ds.byte(context.bx+5), 'E');
-	if (!context.flags.z()) goto notblast;
-	context._cmp(context.ds.byte(context.bx+6), 'R');
-	if (!context.flags.z()) goto notblast;
-	context._add(context.bx, 7);
-	parseblaster(context);
-	goto endofenvironment;
-notblast:
-	context._add(context.bx, 1);
-	goto findblaster;
-endofenvironment:
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.bx = 0x81;
-	parseblaster(context);
-	return;
-}
-
 static void parseblaster(Context & context) {
 lookattail:
 	context.al = context.ds.byte(context.bx);
@@ -22043,7 +21993,6 @@ void __dispatch_call(Context &context, unsigned addr) {
 		case 0xc97c: clearrest(context); break;
 		case 0xc980: deallocatemem(context); break;
 		case 0xc984: allocatemem(context); break;
-		case 0xc988: seecommandtail(context); break;
 		case 0xc98c: parseblaster(context); break;
 		case 0xc990: startup(context); break;
 		case 0xc994: startup1(context); break;

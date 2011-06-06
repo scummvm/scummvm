@@ -136,15 +136,25 @@ Common::Error DreamWebEngine::run() {
 
 
 namespace dreamgen {
+void seecommandtail(Context &context) {
+	context.ds.word(kSoundbaseadd) = 0x220;
+	context.ds.byte(kSoundint) = 5;
+	context.ds.byte(kSounddmachannel) = 1;
+	context.ds.byte(kBrightness) = 1;
+	context.ds.word(kHowmuchalloc) = 0x9360;
+}
+
 void randomnumber(Context &context) {
 	::error("randomnumber");
 }
 
 void quickquit(Context &context) {
+	assert(0);
 	::error("quickquit");
 }
 
 void quickquit2(Context &context) {
+	assert(0);
 	::error("quickquit2");
 }
 
