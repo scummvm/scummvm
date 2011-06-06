@@ -20,9 +20,6 @@
  *
  */
 
-// FIXME: Avoid using printf
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
-
 #include "common/debug.h"
 #include "common/util.h"
 #include "common/hash-str.h"
@@ -30,7 +27,9 @@
 #include "common/macresman.h"
 #include "common/md5.h"
 #include "common/config-manager.h"
+#include "common/system.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 
@@ -366,14 +365,18 @@ static void reportUnknown(const Common::FSNode &path, const SizeMD5Map &filesSiz
 	//
 	// Might also be helpful to display the full path (for when this is used
 	// from the mass detector).
-	printf("The game in '%s' seems to be unknown.\n", path.getPath().c_str());
-	printf("Please, report the following data to the ScummVM team along with name\n");
-	printf("of the game you tried to add and its version/language/etc.:\n");
+	Common::String report = Common::String::format(_("The game in '%s' seems to be unknown."), path.getPath().c_str()) + "\n";
+	report += _("Please, report the following data to the ScummVM team along with name");
+	report += "\n";
+	report += _("of the game you tried to add and its version/language/etc.:");
+	report += "\n";
 
 	for (SizeMD5Map::const_iterator file = filesSizeMD5.begin(); file != filesSizeMD5.end(); ++file)
-		printf("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5.c_str(), file->_value.size);
+		report += Common::String::format("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5.c_str(), file->_value.size);
 
-	printf("\n");
+	report += "\n";
+
+	g_system->logMessage(LogMessageType::kInfo, report.c_str());
 }
 
 static ADGameDescList detectGameFilebased(const FileMap &allFiles, const ADParams &params);
@@ -626,10 +629,14 @@ static ADGameDescList detectGameFilebased(const FileMap &allFiles, const ADParam
 	if (matchedDesc) { // We got a match
 		matched.push_back(matchedDesc);
 		if (params.flags & kADFlagPrintWarningOnFileBasedFallback) {
-			printf("Your game version has been detected using filename matching as a\n");
-			printf("variant of %s.\n", matchedDesc->gameid);
-			printf("If this is an original and unmodified version, please report any\n");
-			printf("information previously printed by ScummVM to the team.\n");
+			Common::String report = Common::String::format(_("Your game version has been detected using "
+				"filename matching as a variant of %s."), matchedDesc->gameid);
+			report += "\n";
+			report += _("If this is an original and unmodified version, please report any");
+			report += "\n";
+			report += _("information previously printed by ScummVM to the team.");
+			report += "\n";
+			g_system->logMessage(LogMessageType::kInfo, report.c_str());
 		}
 	}
 

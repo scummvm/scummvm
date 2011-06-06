@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-06-06 11:59+0200\n"
+"POT-Creation-Date: 2011-06-06 12:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1072,6 +1072,34 @@ msgstr ""
 #: common/util.cpp:283
 msgctxt "lowres"
 msgid "Hercules Amber"
+msgstr ""
+
+#: engines/advancedDetector.cpp:368
+#, c-format
+msgid "The game in '%s' seems to be unknown."
+msgstr ""
+
+#: engines/advancedDetector.cpp:369
+msgid "Please, report the following data to the ScummVM team along with name"
+msgstr ""
+
+#: engines/advancedDetector.cpp:371
+msgid "of the game you tried to add and its version/language/etc.:"
+msgstr ""
+
+#: engines/advancedDetector.cpp:632
+#, c-format
+msgid ""
+"Your game version has been detected using filename matching as a variant of %"
+"s."
+msgstr ""
+
+#: engines/advancedDetector.cpp:635
+msgid "If this is an original and unmodified version, please report any"
+msgstr ""
+
+#: engines/advancedDetector.cpp:637
+msgid "information previously printed by ScummVM to the team."
 msgstr ""
 
 #: engines/dialogs.cpp:84

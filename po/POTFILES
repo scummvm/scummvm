@@ -19,6 +19,7 @@ base/main.cpp
 common/error.cpp
 common/util.cpp
 
+engines/advancedDetector.cpp
 engines/dialogs.cpp
 engines/scumm/dialogs.cpp
 engines/scumm/help.cpp
