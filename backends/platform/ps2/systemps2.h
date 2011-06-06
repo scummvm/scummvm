@@ -114,6 +114,8 @@ public:
 
 	virtual Common::String getDefaultConfigFileName();
 
+	virtual void logMessage(LogMessageType::Type type, const char *message);
+
 	virtual Graphics::PixelFormat getOverlayFormat() const;
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual FilesystemFactory *getFilesystemFactory();

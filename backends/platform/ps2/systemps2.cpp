@@ -986,3 +986,15 @@ void OSystem_PS2::makeConfigPath() {
 Common::String OSystem_PS2::getDefaultConfigFileName() {
 	return _configFile
 }
+
+void OSystem_PS2::logMessage(LogMessageType::Type type, const char *message) {
+	FILE *output = 0;
+
+	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
+		output = stdout;
+	else
+		output = stderr;
+
+	ps2_fputs(message, output);
+	ps2_fflush(output);
+}
