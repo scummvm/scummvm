@@ -523,8 +523,14 @@ namespace %s {
 			self.hd.write("\tvoid %s(Context &context);\n" %f)
 		
 		offsets_decl = "\n"
-		for k,v in self.context.get_offsets().items():
-			offsets_decl += "\tconst static uint16 k%s = %d;\n" %(k.capitalize(), v[0])
+		offsets = []
+		for k, v in self.context.get_globals().items():
+			if isinstance(v, op.var):
+				offsets.append((k.capitalize(), v.offset))
+		
+		offsets = sorted(offsets, key=lambda t: t[1])
+		for o in offsets:
+			offsets_decl += "\tconst static uint16 k%s = %d;\n" %o
 		offsets_decl += "\n"
 		self.hd.write(offsets_decl);
 

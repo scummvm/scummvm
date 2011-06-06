@@ -48,6 +48,9 @@ class parser:
 		name = name.lower()
 		return self.__globals[name]
 
+	def get_globals(self):
+		return self.__globals
+
 	def has_global(self, name):
 		name = name.lower()
 		return self.__globals.has_key(name)
@@ -65,9 +68,6 @@ class parser:
 		name = name.lower()
 		return self.__offsets[name]
 	
-	def get_offsets(self):
-		return self.__offsets
-
 	def include(self, basedir, fname):
 		path = fname.split('\\')[self.strip_path:]
 		path = os.path.join(basedir, os.path.pathsep.join(path))
