@@ -888,6 +888,18 @@ FilesystemFactory *OSystem_N64::getFilesystemFactory() {
 	return _fsFactory;
 }
 
+void OSystem_N64::logMessage(LogMessageType::Type type, const char *message) {
+	FILE *output = 0;
+
+	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
+		output = stdout;
+	else
+		output = stderr;
+
+	fputs(message, output);
+	fflush(output);
+}
+
 void OSystem_N64::setTimerCallback(TimerProc callback, int interval) {
 	assert (interval > 0);
 
