@@ -71,6 +71,7 @@ Actor::Actor(const Common::String &actorName) :
 	_lastStepTime = 0;
 	_running = false;
 	_scale = 1.f;
+	_timeScale = 1.f;
 
 	for (int i = 0; i < 5; i++) {
 		_shadowArray[i].active = false;
@@ -98,6 +99,7 @@ Actor::Actor() :
 	_lastStepTime = 0;
 	_running = false;
 	_scale = 1.f;
+	_timeScale = 1.f;
 
 	for (int i = 0; i < 5; i++) {
 		_shadowArray[i].active = false;

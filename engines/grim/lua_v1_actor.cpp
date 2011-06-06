@@ -46,11 +46,9 @@ void L1_GetActorTimeScale() {
 	lua_Object actorObj = lua_getparam(1);
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
-/*	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));*/
-	// TODO lua_pushnumber(actor->getTimeScale());
-	// return 1 so the game doesn't halt when Manny attempts
-	// to pick up the fire extinguisher
-	lua_pushnumber(1);
+
+	Actor *actor = getactor(actorObj);
+	lua_pushnumber(actor->getTimeScale());
 }
 
 void L1_SetSelectedActor() {
@@ -252,6 +250,22 @@ void L1_SetActorScale() {
 		scale = lua_getnumber(scaleObj);
 
 	actor->setScale(scale);
+}
+
+void L1_SetActorTimeScale() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object scaleObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	float scale = 1.f;
+
+	if (lua_isnumber(scaleObj))
+		scale = lua_getnumber(scaleObj);
+
+	actor->setTimeScale(scale);
 }
 
 void L1_PutActorAt() {

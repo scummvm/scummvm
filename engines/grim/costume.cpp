@@ -811,15 +811,17 @@ void KeyframeComponent::update() {
 		return;
 	}
 
+	int time = g_grim->getFrameTime() * g_currentUpdatedActor->getTimeScale();
+
 	if (_anim._time < 0)		// For first time through
 		_anim._time = 0;
 	else if (!_paused)
-		_anim._time += g_grim->getFrameTime();
+		_anim._time += time;
 
 	int animLength = (int)(_anim._keyf->getLength() * 1000);
 
 	if (_fadeMode != None) {
-		_fadeCurrTime += g_grim->getFrameTime();
+		_fadeCurrTime += time;
 		if (_fadeCurrTime > _fadeLength) {
 			if (_fadeMode == FadeOut) {
 				_fadeMode = None;
@@ -1462,14 +1464,16 @@ void Costume::Chore::update() {
 	if (!_playing)
 		return;
 
+	int time = g_grim->getFrameTime() * g_currentUpdatedActor->getTimeScale();
+
 	int newTime;
 	if (_currTime < 0)
 		newTime = 0; // For first time through
 	else
-		newTime = _currTime + g_grim->getFrameTime();
+		newTime = _currTime + time;
 
 	if (_fadeMode == FadeOut) {
-		_fade -= (float)g_grim->getFrameTime() / (float)_fadeLength;
+		_fade -= (float)time / (float)_fadeLength;
 		if (_fade <= 0.0f) {
 			_playing = false;
 			_fadeMode = None;
@@ -1483,7 +1487,7 @@ void Costume::Chore::update() {
 			return;
 		}
 	} else if (_fadeMode == FadeIn) {
-		_fade += (float)g_grim->getFrameTime() / (float)_fadeLength;
+		_fade += (float)time / (float)_fadeLength;
 		if (_fade >= 1.0f) {
 			_fadeMode = None;
 			_fade = 1.0f;

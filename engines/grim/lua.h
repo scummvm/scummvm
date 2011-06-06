@@ -107,6 +107,7 @@ void L1_SetActorTalkChore();
 void L1_SetActorMumblechore();
 void L1_SetActorVisibility();
 void L1_SetActorScale();
+void L1_SetActorTimeScale();
 void L1_PutActorAt();
 void L1_GetActorPos();
 void L1_SetActorRot();

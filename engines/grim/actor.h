@@ -76,6 +76,8 @@ public:
 	void setVisibility(bool val) { _visible = val; }
 	bool isVisible() const { return _visible; }
 	void setScale(float scale) { _scale = scale; }
+	void setTimeScale(float scale) { _timeScale = scale; }
+	float getTimeScale() const { return _timeScale; }
 	// The set should change immediately, otherwise a very rapid set change
 	// for an actor will be recognized incorrectly and the actor will be lost.
 	void putInSet(const Common::String &setName) { _setName = setName; }
@@ -189,6 +191,7 @@ private:
 	float _reflectionAngle;	// Maximum angle to turn by at walls
 	bool _visible;
 	float _scale;
+	float _timeScale;
 	bool _lookingMode;
 	Common::String _talkSoundName;
 	ObjectPtr<LipSync> _lipSync;
