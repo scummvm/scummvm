@@ -26,8 +26,9 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_fflush
 
 #include "common/system.h"
-#include "common/str.h"
+#include "common/events.h"
 #include "common/fs.h"
+#include "common/str.h"
 #include "common/textconsole.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
@@ -36,19 +37,29 @@ OSystem *g_system = 0;
 
 OSystem::OSystem() {
 	_audiocdManager = 0;
+	_eventManager = 0;
 }
 
 OSystem::~OSystem() {
 	delete _audiocdManager;
+	_audiocdManager = 0;
+
+	delete _eventManager;
+	_eventManager = 0;
 }
 
 void OSystem::initBackend() {
+	// Init AudioCD manager
 #ifndef DISABLE_DEFAULT_AUDIOCD_MANAGER
 	if (!_audiocdManager)
 		_audiocdManager = new DefaultAudioCDManager();
 #endif
 	if (!_audiocdManager)
 		error("Backend failed to instantiate AudioCD manager");
+
+	// Verify Event manager has been set
+	if (!_eventManager)
+		error("Backend failed to instantiate Event manager");
 }
 
 bool OSystem::setGraphicsMode(const char *name) {

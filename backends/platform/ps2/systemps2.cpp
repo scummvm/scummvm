@@ -603,11 +603,7 @@ void OSystem_PS2::delayMillis(uint msecs) {
 Common::TimerManager *OSystem_PS2::getTimerManager() {
 	return _scummTimerManager;
 }
-/*
-Common::EventManager *OSystem_PS2::getEventManager() {
-	return getEventManager();
-}
-*/
+
 Audio::Mixer *OSystem_PS2::getMixer() {
 	return _scummMixer;
 }

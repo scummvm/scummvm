@@ -113,6 +113,21 @@ protected:
 	 */
 	AudioCDManager *_audiocdManager;
 
+	/**
+	 * For backend authors only, this pointer may be set by OSystem
+	 * subclasses to an EventManager instance. This is only useful
+	 * if your backend does not want to use the DefaultEventManager.
+	 *
+	 * This instance is returned by OSystem::getEventManager(),
+	 * and it is deleted by the OSystem destructor.
+	 *
+	 * A backend may set this pointer in its initBackend() method,
+	 * its constructor or somewhere in between; but it must
+	 * set it no later than in its initBackend() implementation, because
+	 * OSystem::initBackend() will by default create a DefaultEventManager
+	 * instance if _eventManager has not yet been set.
+	 */
+	Common::EventManager *_eventManager;
 public:
 
 	/**
@@ -848,7 +863,9 @@ public:
 	 * Return the event manager singleton. For more information, refer
 	 * to the EventManager documentation.
 	 */
-	virtual Common::EventManager *getEventManager() = 0;
+	inline Common::EventManager *getEventManager() {
+		return _eventManager;
+	}
 
 	/**
 	 * Register hardware keys with keymapper

@@ -28,7 +28,8 @@
 
 class BaseBackend : public OSystem, Common::EventSource {
 public:
-	virtual Common::EventManager *getEventManager();
+	virtual void initBackend();
+
 	virtual void displayMessageOnOSD(const char *msg);
 	virtual void fillScreen(uint32 col);
 

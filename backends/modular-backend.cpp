@@ -36,7 +36,6 @@
 ModularBackend::ModularBackend()
 	:
 	_fsFactory(0),
-	_eventManager(0),
 	_savefileManager(0),
 	_timerManager(0),
 	_mutexManager(0),
@@ -50,8 +49,6 @@ ModularBackend::~ModularBackend() {
 	_fsFactory = 0;
 	delete _graphicsManager;
 	_graphicsManager = 0;
-	delete _eventManager;
-	_eventManager = 0;
 	delete _mixer;
 	_mixer = 0;
 	delete _savefileManager;
@@ -221,11 +218,6 @@ void ModularBackend::setCursorPalette(const byte *colors, uint start, uint num) 
 Common::TimerManager *ModularBackend::getTimerManager() {
 	assert(_timerManager);
 	return _timerManager;
-}
-
-Common::EventManager *ModularBackend::getEventManager() {
-	assert(_eventManager);
-	return _eventManager;
 }
 
 OSystem::MutexRef ModularBackend::createMutex() {

@@ -111,7 +111,6 @@ public:
 	//@{
 	
 	virtual Common::TimerManager *getTimerManager();
-	virtual Common::EventManager *getEventManager();
 	virtual Common::HardwareKeySet *getHardwareKeySet() { return 0; }
 
 	//@}
@@ -148,7 +147,6 @@ protected:
 	//@{
 
 	FilesystemFactory *_fsFactory;
-	Common::EventManager *_eventManager;
 	Common::SaveFileManager *_savefileManager;
 	Common::TimerManager *_timerManager;
 	MutexManager *_mutexManager;

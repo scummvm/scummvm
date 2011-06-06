@@ -24,7 +24,11 @@
  */
 
 #include "backends/base-backend.h"
+
+#ifndef DISABLE_DEFAULT_EVENT_MANAGER
 #include "backends/events/default/default-events.h"
+#endif
+
 #include "gui/message.h"
 
 void BaseBackend::displayMessageOnOSD(const char *msg) {
@@ -33,16 +37,12 @@ void BaseBackend::displayMessageOnOSD(const char *msg) {
 	dialog.runModal();
 }
 
-
-static Common::EventManager *s_eventManager = 0;
-
-Common::EventManager *BaseBackend::getEventManager() {
-	// FIXME/TODO: Eventually this method should be turned into an abstract one,
-	// to force backends to implement this conciously (even if they
-	// end up returning the default event manager anyway).
-	if (!s_eventManager)
-		s_eventManager = new DefaultEventManager(this);
-	return s_eventManager;
+void BaseBackend::initBackend() {
+	// Init Event manager
+#ifndef DISABLE_DEFAULT_EVENT_MANAGER
+	if (!_eventManager)
+		_eventManager = new DefaultEventManager(this);
+#endif
 }
 
 void BaseBackend::fillScreen(uint32 col) {
