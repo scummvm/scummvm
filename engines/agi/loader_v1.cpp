@@ -23,21 +23,20 @@
 #include "agi/agi.h"
 #include "common/md5.h"
 
-#define offsetTHS(track,head,sector) (512 * ((((track) * 2 + (head)) * 9) + (sector)))
-#define offset(sector) offsetTHS(sector / 18, (sector % 18) / 9, (sector % 18) % 9)
+#define SECTOR_OFFSET(s) ((s) * 512)
 
 #define BASE_SECTOR	0x1C2
 
-#define LOGDIR_SEC	offset(171) + 5
+#define LOGDIR_SEC	SECTOR_OFFSET(171) + 5
 #define LOGDIR_NUM	43
 
-#define PICDIR_SEC	offset(180) + 5
+#define PICDIR_SEC	SECTOR_OFFSET(180) + 5
 #define PICDIR_NUM	30
 
-#define VIEWDIR_SEC	offset(189) + 5
+#define VIEWDIR_SEC	SECTOR_OFFSET(189) + 5
 #define VIEWDIR_NUM	171
 
-#define SNDDIR_SEC	offset(198) + 5
+#define SNDDIR_SEC	SECTOR_OFFSET(198) + 5
 #define SNDDIR_NUM	64
 
 namespace Agi {
@@ -122,7 +121,7 @@ uint8 *AgiLoader_v1::loadVolRes(struct AgiDir *agid) {
 	int off = agid->offset & 0xFFFF;
 	
 	fp.open(_filenameDisk0);
-	fp.seek(offset(sec) + off, SEEK_SET);
+	fp.seek(SECTOR_OFFSET(sec) + off, SEEK_SET);
 
 	int signature = fp.readUint16BE();
 	if (signature != 0x1234) {
@@ -256,7 +255,7 @@ int AgiLoader_v1::loadObjects(const char *fname) {
 
 // TODO: Find the disk image equivalent.
 int AgiLoader_v1::loadWords(const char *fname) {
-	return _vm->loadObjects(fname);
+	return _vm->loadWords(fname);
 }
 
 }
