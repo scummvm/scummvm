@@ -1101,7 +1101,7 @@ public:
 	 * @param type    the type of the message
 	 * @param message the message itself
 	 */
-	virtual void logMessage(LogMessageType::Type type, const char *message);
+	virtual void logMessage(LogMessageType::Type type, const char *message) = 0;
 
 	/**
 	 * Open the log file in a way that allows the user to review it,
