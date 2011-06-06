@@ -172,12 +172,14 @@ public:
 
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
-	FilesystemFactory *getFilesystemFactory();
+	virtual FilesystemFactory *getFilesystemFactory();
 
 	void refreshCursor();
 
-	Common::WriteStream *createConfigWriteStream();
-	Common::SeekableReadStream *createConfigReadStream();
+	virtual Common::WriteStream *createConfigWriteStream();
+	virtual Common::SeekableReadStream *createConfigReadStream();
+
+	virtual void logMessage(LogMessageType::Type type, const char *message);
 
 	u16 applyGamma(u16 color);
 	void setGammaValue(int gamma) { _gammaValue = gamma; }
