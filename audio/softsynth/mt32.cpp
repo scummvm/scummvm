@@ -561,7 +561,7 @@ MusicDevices MT32EmuMusicPlugin::getDevices() const {
 bool MT32EmuMusicPlugin::checkDevice(MidiDriver::DeviceHandle) const {
 	if (!((Common::File::exists("MT32_CONTROL.ROM") && Common::File::exists("MT32_PCM.ROM")) ||
 		(Common::File::exists("CM32L_CONTROL.ROM") && Common::File::exists("CM32L_PCM.ROM")))) {
-			warning("The MT-32 emulator requires the following 2 files (not bundled with ScummVM:\n either 'MT32_CONTROL.ROM' and 'MT32_PCM.ROM', or 'CM32L_CONTROL.ROM' and 'CM32L_PCM.ROM'");
+			warning("The MT-32 emulator requires one of the two following file sets (not bundled with ScummVM):\n Either 'MT32_CONTROL.ROM' and 'MT32_PCM.ROM' or 'CM32L_CONTROL.ROM' and 'CM32L_PCM.ROM'");
 			return false;
 	}
 	
