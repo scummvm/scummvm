@@ -5,13 +5,6 @@
 
 namespace dreamgen {
 
-	struct Data : public Segment {
-		Data();
-	};
-
-
-	typedef RegisterContext<Data> Context;
-
 	void __dispatch_call(Context &context, unsigned addr);
 	void __start(Context &context);
 

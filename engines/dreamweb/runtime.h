@@ -6,6 +6,8 @@
 #include "common/array.h"
 #include "common/hashmap.h"
 
+namespace dreamgen {
+
 //fixme: name clash
 #undef random
 
@@ -84,10 +86,16 @@ public:
 
 struct Segment {
 	Common::Array<uint8> data;
+	
+	inline void assign(const uint8 *b, const uint8 *e) {
+		data.assign(b, e);
+	}
+	
 	inline uint8 &byte(unsigned index) {
 		assert(index < data.size());
 		return data[index];
 	}
+	
 	inline uint16 word(unsigned index) const {
 		assert(index + 1 < data.size());
 		return data[index] | (data[index + 1] << 8);
@@ -98,14 +106,15 @@ struct Segment {
 	}
 };
 
+class Context;
 
 class SegmentRef {
-
-	uint16		_value;
-	Segment		*_segment;
+	Context			*_context;
+	uint16			_value;
+	Segment			*_segment;
 
 public:
-	SegmentRef(): _value(), _segment() {
+	SegmentRef(Context *ctx): _context(ctx), _value(), _segment() {
 	}
 
 	inline void reset(uint16 value) {
@@ -164,8 +173,10 @@ struct Flags {
 	}
 };
 
-template<typename Data>
-struct RegisterContext {
+class Context {
+	Common::HashMap<uint16, Segment> _segments;
+	
+public:
 	Register ax, dx, bx, cx, si, di;
 	RegisterPart<kLowPartOfRegister> al;
 	RegisterPart<kHighPartOfRegister> ah;
@@ -179,7 +190,9 @@ struct RegisterContext {
 	SegmentRef cs, ds, es;
 	Flags flags;
 
-	inline RegisterContext(): al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx) {}
+	inline Context(): al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx), cs(this), ds(this), es(this) {
+		
+	}
 
 	inline void _cmp(uint8 a, uint8 b) {
 		uint8 x = a;
@@ -330,8 +343,10 @@ struct RegisterContext {
 		return v;
 	}
 	
-	Data data;
+	Segment data;
 };
+
+}
 
 #endif
 
