@@ -985,3 +985,15 @@ Common::WriteStream *OSystem_PS2::createConfigWriteStream() {
 	Common::FSNode file(_configFile);
 	return file.createWriteStream();
 }
+
+void OSystem_PS2::logMessage(LogMessageType::Type type, const char *message) {
+	FILE *output = 0;
+
+	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
+		output = stdout;
+	else
+		output = stderr;
+
+	ps2_fputs(message, output);
+	ps2_fflush(output);
+}
