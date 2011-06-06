@@ -919,6 +919,7 @@ void GfxOpenGL::drawTextObject(TextObject *text) {
 		for (uint i = 0; i < line.size(); ++i) {
 			uint8 character = line[i];
 			int w = y + font->getCharStartingLine(character) + font->getBaseOffsetY();
+			int z = x + font->getCharStartingCol(character);
 
 			glBindTexture(GL_TEXTURE_2D, texture);
 			float width = 1/16.f;
@@ -926,13 +927,13 @@ void GfxOpenGL::drawTextObject(TextObject *text) {
 			float cy = ((character-1)/16)/16.0f;
 			glBegin(GL_QUADS);
 			glTexCoord2f(cx, cy);
-			glVertex2i(x, w);
+			glVertex2i(z, w);
 			glTexCoord2f(cx+width, cy);
-			glVertex2i(x+size, w);
+			glVertex2i(z+size, w);
 			glTexCoord2f(cx+width, cy+width);
-			glVertex2i(x+size, w+size);
+			glVertex2i(z+size, w+size);
 			glTexCoord2f(cx, cy+width);
-			glVertex2i(x, w+size);
+			glVertex2i(z, w+size);
 			glEnd();
 			x += font->getCharWidth(character);
 		}
