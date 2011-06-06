@@ -215,7 +215,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	// we try to determine a suitable and "optimal" music driver.
 	const MusicPlugin::List p = MusicMan.getPlugins();
 	// If only MDT_MIDI but not MDT_PREFER_MT32 or MDT_PREFER_GM is set we prefer the other devices (which will always be
-	// detected since they are hard coded and cannot be disabled.
+	// detected since they are hard coded and cannot be disabled).
 	bool skipMidi = !(flags & (MDT_PREFER_GM | MDT_PREFER_MT32));
 	while (flags != MDT_NONE) {
 		if ((flags & MDT_MIDI) && !skipMidi) {
@@ -293,7 +293,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		}
 
 		// The order in this list is important, since this is the order of preference
-		// (e.g. MT_ADLIB is checked before MT_PCJR and MT_PCSPK for a good reason.
+		// (e.g. MT_ADLIB is checked before MT_PCJR and MT_PCSPK for a good reason).
 		// Detection flags get removed after detection attempt to avoid further attempts.
 		if (flags & MDT_TOWNS) {
 			tp = MT_TOWNS;
