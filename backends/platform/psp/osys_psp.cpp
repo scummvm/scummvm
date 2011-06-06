@@ -20,8 +20,7 @@
  *
  */
 
-// Allow use of stuff in <time.h>
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include <pspuser.h>
 #include <pspgu.h>
@@ -422,7 +421,15 @@ void OSystem_PSP::quit() {
 }
 
 void OSystem_PSP::logMessage(LogMessageType::Type type, const char *message) {
-	BaseBackend::logMessage(type, message);
+	FILE *output = 0;
+
+	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
+		output = stdout;
+	else
+		output = stderr;
+
+	fputs(message, output);
+	fflush(output);
 
 	if (type == LogMessageType::kError)
 		PspDebugTrace(false, "%s", message);	// write to file
