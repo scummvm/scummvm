@@ -260,8 +260,10 @@ void out22c(Context &context) {
 	::error("out22c");
 }
 
+void soundstartup(Context &context) {
+}
+
 void soundend(Context &context) {
-	::error("soundend");
 }
 
 void interupttest(Context &context) {
@@ -284,9 +286,6 @@ void setsoundoff(Context &context) {
 	::error("setsoundoff");
 }
 
-void soundstartup(Context &context) {
-	::error("soundstartup");
-}
 
 void loadsecondsample(Context &context) {
 	::error("loadsecondsample");
