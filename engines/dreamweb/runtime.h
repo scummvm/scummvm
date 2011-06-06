@@ -181,7 +181,7 @@ class Context {
 	SegmentMap _segments;
 	
 public:
-	enum { kDefaultDataSegment };
+	enum { kDefaultDataSegment = 0x1000 };
 	
 	Register ax, dx, bx, cx, si, di;
 	RegisterPart<kLowPartOfRegister> al;
@@ -198,9 +198,9 @@ public:
 
 	inline Context(): al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx), cs(this), ds(this), es(this) {
 		_segments[kDefaultDataSegment] = Segment();
-		cs.reset(1);
-		ds.reset(1);
-		es.reset(1);
+		cs.reset(kDefaultDataSegment);
+		ds.reset(kDefaultDataSegment);
+		es.reset(kDefaultDataSegment);
 	}
 	
 	SegmentRef getSegment(uint16 value) {
