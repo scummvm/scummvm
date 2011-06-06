@@ -134,7 +134,6 @@ int Font::getStringLength(const Common::String &text) const {
 	int result = 0;
 	for (uint32 i = 0; i < text.size(); ++i) {
 		result += MAX(getCharDataWidth(text[i]), getCharWidth(text[i]));
-		//result += getCharDataWidth(text[i]);
 	}
 	return result;
 }
