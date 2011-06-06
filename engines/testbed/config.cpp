@@ -150,7 +150,7 @@ void TestbedInteractionDialog::addButton(uint w, uint h, const Common::String na
 	_yOffset += h;
 }
 
-void TestbedInteractionDialog::addList(uint x, uint y, uint w, uint h, Common::Array<Common::String> &strArray, GUI::ListWidget::ColorList *colors, uint yPadding) {
+void TestbedInteractionDialog::addList(uint x, uint y, uint w, uint h, const Common::Array<Common::String> &strArray, GUI::ListWidget::ColorList *colors, uint yPadding) {
 	_yOffset += yPadding;
 	GUI::ListWidget *list = new GUI::ListWidget(this, x, y, w, h);
 	list->setEditable(false);
@@ -186,13 +186,13 @@ void TestbedConfigManager::writeTestbedConfigToStream(Common::WriteStream *ws) {
 	ws->flush();
 }
 
-Common::SeekableReadStream *TestbedConfigManager::getConfigReadStream() {
+Common::SeekableReadStream *TestbedConfigManager::getConfigReadStream() const {
 	// Look for config file using SearchMan
 	Common::SeekableReadStream *rs = SearchMan.createReadStreamForMember(_configFileName);
 	return rs;
 }
 
-Common::WriteStream *TestbedConfigManager::getConfigWriteStream() {
+Common::WriteStream *TestbedConfigManager::getConfigWriteStream() const {
 	// Look for config file in game-path
 	const Common::String &path = ConfMan.get("path");
 	Common::WriteStream *ws;

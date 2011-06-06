@@ -102,7 +102,7 @@ void GFXtests::initMousePalette() {
 	CursorMan.replaceCursorPalette(palette, 0, 3);
 }
 
-Common::Rect GFXtests::computeSize(Common::Rect &cursorRect, int scalingFactor, int cursorTargetScale) {
+Common::Rect GFXtests::computeSize(const Common::Rect &cursorRect, int scalingFactor, int cursorTargetScale) {
 	if (cursorTargetScale == 1 || scalingFactor == 1) {
 		// Game data and cursor would be scaled equally.
 		// so dimensions would be same.
