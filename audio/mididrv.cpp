@@ -25,6 +25,7 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "common/util.h"
 #include "gui/message.h"
 #include "audio/mididrv.h"
@@ -202,7 +203,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		} else {
 			// If the expressly selected device is unavailable we display a warning and continue.
 			failedDevStr = getDeviceString(hdl, MidiDriver::kDeviceName);
-			Common::String warningMsg = "Failed to detect the selected audio device '" + failedDevStr +"'. See log file for more information. Attempting to fall back to the next available device...";
+			Common::String warningMsg = Common::String::format(_("Failed to detect the selected audio device '%s'. See log file for more information. Attempting to fall back to the next available device..."), failedDevStr.c_str());
 			GUI::MessageDialog dialog(warningMsg);
 			dialog.runModal();
 		}
@@ -242,7 +243,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 						// Don't warn about the missing device if we did already (this becomes relevant if the failing
 						// device is selected as preferred device and also as GM or MT-32 device).
 						if (failedDevStr != getDeviceString(hdl, MidiDriver::kDeviceName)) {							
-							Common::String warningMsg = "Failed to detect the preferred device '" + getDeviceString(hdl, MidiDriver::kDeviceName) + "'. See log file for more information. Attempting to fall back to the next available device...";
+							Common::String warningMsg = Common::String::format(_("Failed to detect the preferred device '%s'. See log file for more information. Attempting to fall back to the next available device..."), getDeviceString(hdl, MidiDriver::kDeviceName).c_str());
 							GUI::MessageDialog dialog(warningMsg);
 							dialog.runModal();
 						}

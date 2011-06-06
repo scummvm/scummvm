@@ -31,6 +31,7 @@ engines/sci/engine/kfile.cpp
 engines/agos/saveload.cpp
 
 audio/fmopl.cpp
+audio/mididrv.cpp
 audio/musicplugin.cpp
 audio/null.h
 audio/null.cpp

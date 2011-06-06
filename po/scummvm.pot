@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-04-22 19:33+0100\n"
+"POT-Creation-Date: 2011-06-06 12:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1714,7 +1714,21 @@ msgstr ""
 msgid "DOSBox OPL emulator"
 msgstr ""
 
-#: audio/null.h:46
+#: audio/mididrv.cpp:206
+#, c-format
+msgid ""
+"Failed to detect the selected audio device '%s'. See log file for more "
+"information. Attempting to fall back to the next available device..."
+msgstr ""
+
+#: audio/mididrv.cpp:246
+#, c-format
+msgid ""
+"Failed to detect the preferred device '%s'. See log file for more "
+"information. Attempting to fall back to the next available device..."
+msgstr ""
+
+#: audio/null.h:43
 msgid "No music"
 msgstr ""
 
