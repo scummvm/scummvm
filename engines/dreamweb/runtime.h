@@ -4,6 +4,7 @@
 #include <assert.h>
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/hashmap.h"
 
 //fixme: name clash
 #undef random
@@ -45,36 +46,38 @@ struct RegisterPart {
 	}
 };
 
-struct WordRef {
-	Common::Array<uint8> &data;
-	unsigned index;
-	bool changed;
-	uint16 value;
+class WordRef {
+	Common::Array<uint8>	&_data;
+	unsigned				_index;
+	bool					_changed;
+	uint16					_value;
 
-	inline WordRef(Common::Array<uint8> &data, unsigned index) : data(data), index(index), changed(false) {
+public:
+
+	inline WordRef(Common::Array<uint8> &data, unsigned index) : _data(data), _index(index), _changed(false) {
 		assert(index + 1 < data.size());
-		value = data[index] | (data[index + 1] << 8);
+		_value = _data[index] | (_data[index + 1] << 8);
 	}
 	inline WordRef& operator=(const WordRef &ref) {
-		changed = true;
-		value = ref.value;
+		_changed = true;
+		_value = ref._value;
 		return *this;
 	}
 	inline WordRef& operator=(uint16 v) {
-		changed = true;
-		value = v;
+		_changed = true;
+		_value = v;
 		return *this;
 	}
 	inline operator uint16() const {
-		return value;
+		return _value;
 	}
 	inline operator uint16&() {
-		return value;
+		return _value;
 	}
 	inline ~WordRef() {
-		if (changed) {
-			data[index] = value & 0xff;
-			data[index + 1] = value >> 8;
+		if (_changed) {
+			_data[_index] = _value & 0xff;
+			_data[_index + 1] = _value >> 8;
 		}
 	}
 };
@@ -96,32 +99,40 @@ struct Segment {
 };
 
 
-struct SegmentRef {
-	public:
-	uint16 value;
-	Common::Array<uint8> *data;
-	inline SegmentRef& operator=(const SegmentRef &o) {
-		data = o.data;
-		return *this;
+class SegmentRef {
+
+	uint16		_value;
+	Segment		*_segment;
+
+public:
+	SegmentRef(): _value(), _segment() {
 	}
+
+	inline void reset(uint16 value) {
+		
+	}
+
 	inline SegmentRef& operator=(const uint16 id) {
 		return *this;
 	}
+
 	inline uint8 &byte(unsigned index) {
-		assert(index < data->size());
-		return (*data)[index];
+		assert(_segment != 0);
+		return _segment->byte(index);
 	}
+
 	inline uint16 word(unsigned index) const {
-		assert(index + 1 < data->size());
-		return (*data)[index] | ((*data)[index + 1] << 8);
+		assert(_segment != 0);
+		return _segment->word(index);
 	}
 	
 	inline operator uint16() const {
-		return value;
+		return _value;
 	}
 
 	inline WordRef word(unsigned index) {
-		return WordRef(*data, index);
+		assert(_segment != 0);
+		return _segment->word(index);
 	}
 };
 
@@ -139,16 +150,16 @@ struct Flags {
 	inline bool le() const { return _z || _s != _o; }
 	
 	inline void update_sign(uint8 v) {
-		bool s = v & 0x80;
-		_o = s != _s;
-		_s = s;
+		bool new_s = v & 0x80;
+		_o = new_s != _s;
+		_s = new_s;
 		_z = v == 0;
 	}
 
 	inline void update(uint16 v) {
-		bool s = v & 0x8000;
-		_o = s != _s;
-		_s = s;
+		bool new_s = v & 0x8000;
+		_o = new_s != _s;
+		_s = new_s;
 		_z = v == 0;
 	}
 };
