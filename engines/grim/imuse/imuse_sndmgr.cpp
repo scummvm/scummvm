@@ -281,6 +281,12 @@ int ImuseSndMgr::getRegionOffset(SoundDesc *sound, int region) {
 	return sound->region[region].offset;
 }
 
+int ImuseSndMgr::getRegionLength(SoundDesc *sound, int region) {
+	assert(checkForProperHandle(sound));
+	assert(region >= 0 && region < sound->numRegions);
+	return sound->region[region].length;
+}
+
 int ImuseSndMgr::getJumpIdByRegionAndHookId(SoundDesc *sound, int region, int hookId) {
 	assert(checkForProperHandle(sound));
 	assert(region >= 0 && region < sound->numRegions);

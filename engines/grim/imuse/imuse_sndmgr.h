@@ -105,6 +105,7 @@ public:
 	int getNumRegions(SoundDesc *sound);
 	int getNumJumps(SoundDesc *sound);
 	int getRegionOffset(SoundDesc *sound, int region);
+	int getRegionLength(SoundDesc *sound, int region);
 	int getJumpIdByRegionAndHookId(SoundDesc *sound, int region, int hookId);
 	int getRegionIdByJumpId(SoundDesc *sound, int jumpId);
 	int getJumpHookId(SoundDesc *sound, int number);
