@@ -253,7 +253,7 @@ public:
 	}
 
 	void assign(const T *srcBegin, const T *srcEnd) {
-		reserve(distance(srcBegin, srcEnd));
+		resize(distance(srcBegin, srcEnd)); //fixme: ineffective?
 		T *dst = _storage;
 		while(srcBegin != srcEnd)
 			*dst++ = *srcBegin++;
