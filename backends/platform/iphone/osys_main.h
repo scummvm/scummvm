@@ -187,6 +187,8 @@ public:
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
 
+	virtual void logMessage(LogMessageType::Type type, const char *message);
+
 protected:
 	void internUpdateScreen();
 	void dirtyFullScreen();
