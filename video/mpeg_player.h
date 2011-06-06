@@ -65,12 +65,7 @@ typedef sequence_t mpeg2_sequence_t;
 
 #endif
 
-#ifdef BACKEND_8BIT
-#define SQR(x) ((x) * (x))
-#define SHIFT 3
-#else
 #define SHIFT 1
-#endif
 
 #define BITDEPTH (1 << (8 - SHIFT))
 #define ROUNDADD (1 << (SHIFT - 1))
@@ -93,9 +88,7 @@ protected:
 	int _frameWidth;
 	int _frameHeight;
 
-#ifndef BACKEND_8BIT
 	int _movieScale;
-#endif
 
 	OSystem *_sys;
 
@@ -108,30 +101,10 @@ protected:
 
 	Common::File *_mpegFile;
 
-#ifdef BACKEND_8BIT
-	int _palNum;
-	int _maxPalNum;
-
-	byte _yuvLookup[2][(BITDEPTH+1) * (BITDEPTH+1) * (BITDEPTH+1)];
-	byte *_lut;
-	byte *_lut2;
-	int _lutCalcNum;
-
-	int _curPal;
-	int _cr;
-	int _pos;
-
-	struct {
-		uint cnt;
-		uint end;
-		byte pal[4 * 256];
-	} _palettes[50];
-#else
 	OverlayColor *_overlay;
 	Graphics::PixelFormat _overlayFormat;
 	int16 *_colorTab;
 	OverlayColor *_rgbToPix;
-#endif
 
 public:
 	BaseAnimationState(OSystem *sys, int width, int height);
@@ -142,9 +115,7 @@ public:
 	void handleScreenChanged();
 	void updateScreen();
 
-#ifndef BACKEND_8BIT
 	void buildLookup();
-#endif
 
 	int getFrameWidth() { return _frameWidth; }
 	int getFrameHeight() { return _frameHeight; }
@@ -153,15 +124,10 @@ protected:
 	bool checkPaletteSwitch();
 	virtual void drawYUV(int width, int height, byte *const *dat) = 0;
 
-#ifdef BACKEND_8BIT
-	void buildLookup(int p, int lines);
-	virtual void setPalette(byte *pal) = 0;
-#else
 	void plotYUV(int width, int height, byte *const *dat);
 	void plotYUV1x(int width, int height, byte *const *dat);
 	void plotYUV2x(int width, int height, byte *const *dat);
 	void plotYUV3x(int width, int height, byte *const *dat);
-#endif
 };
 
 } // End of namespace Video

@@ -92,7 +92,6 @@ namespace Video {
 
 BaseAnimationState::BaseAnimationState(OSystem *sys, int width, int height)
 	: _movieWidth(width), _movieHeight(height), _frameWidth(width), _frameHeight(height), _sys(sys) {
-#ifndef BACKEND_8BIT
 	const int screenW = _sys->getOverlayWidth();
 	const int screenH = _sys->getOverlayHeight();
 
@@ -105,7 +104,6 @@ BaseAnimationState::BaseAnimationState(OSystem *sys, int width, int height)
 	_colorTab = NULL;
 	_rgbToPix = NULL;
 	memset(&_overlayFormat, 0, sizeof(_overlayFormat));
-#endif
 }
 
 BaseAnimationState::~BaseAnimationState() {
@@ -113,12 +111,10 @@ BaseAnimationState::~BaseAnimationState() {
 	if (_mpegDecoder)
 		mpeg2_close(_mpegDecoder);
 	delete _mpegFile;
-#ifndef BACKEND_8BIT
 	_sys->hideOverlay();
 	free(_overlay);
 	free(_colorTab);
 	free(_rgbToPix);
-#endif
 #endif
 }
 
@@ -130,57 +126,9 @@ bool BaseAnimationState::init(const char *name) {
 	_mpegDecoder = NULL;
 	_mpegFile = NULL;
 
-#ifdef BACKEND_8BIT
-
-	uint i, p;
-
-	// Load lookup palettes
-	sprintf(tempFile, "%s.pal", name);
-
-	Common::File f;
-
-	if (!f.open(tempFile)) {
-		warning("Cutscene: %s palette missing", tempFile);
-		return false;
-	}
-
-	p = 0;
-	while (!f.eos()) {
-		_palettes[p].end = f.readUint16LE();
-		_palettes[p].cnt = f.readUint16LE();
-
-		for (i = 0; i < _palettes[p].cnt; i++) {
-			_palettes[p].pal[4 * i] = f.readByte();
-			_palettes[p].pal[4 * i + 1] = f.readByte();
-			_palettes[p].pal[4 * i + 2] = f.readByte();
-			_palettes[p].pal[4 * i + 3] = 0;
-		}
-		for (; i < 256; i++) {
-			_palettes[p].pal[4 * i] = 0;
-			_palettes[p].pal[4 * i + 1] = 0;
-			_palettes[p].pal[4 * i + 2] = 0;
-			_palettes[p].pal[4 * i + 3] = 0;
-		}
-
-		p++;
-	}
-
-	f.close();
-
-	_palNum = 0;
-	_maxPalNum = p;
-	setPalette(_palettes[_palNum].pal);
-	_lut = _lut2 = _yuvLookup[0];
-	_curPal = -1;
-	_cr = 0;
-	buildLookup(_palNum, 256);
-	_lut2 = _yuvLookup[1];
-	_lutCalcNum = (BITDEPTH + _palettes[_palNum].end + 2) / (_palettes[_palNum].end + 2);
-#else
 	buildLookup();
 	_overlay = (OverlayColor *)calloc(_movieScale * _movieWidth * _movieScale * _movieHeight, sizeof(OverlayColor));
 	_sys->showOverlay();
-#endif
 
 	// Open MPEG2 stream
 	_mpegFile = new Common::File();
@@ -228,10 +176,6 @@ bool BaseAnimationState::decodeFrame() {
 			if (_mpegInfo->display_fbuf) {
 				checkPaletteSwitch();
 				drawYUV(sequence_i->width, sequence_i->height, _mpegInfo->display_fbuf->buf);
-#ifdef BACKEND_8BIT
-				buildLookup(_palNum + 1, _lutCalcNum);
-#endif
-
 				_frameNum++;
 				return true;
 			}
@@ -246,24 +190,10 @@ bool BaseAnimationState::decodeFrame() {
 }
 
 bool BaseAnimationState::checkPaletteSwitch() {
-#ifdef BACKEND_8BIT
-	// if we have reached the last image with this palette, switch to new one
-	if (_frameNum == _palettes[_palNum].end) {
-		unsigned char *l = _lut2;
-		_palNum++;
-		setPalette(_palettes[_palNum].pal);
-		_lutCalcNum = (BITDEPTH + _palettes[_palNum].end - (_frameNum + 1) + 2) / (_palettes[_palNum].end - (_frameNum + 1) + 2);
-		_lut2 = _lut;
-		_lut = l;
-		return true;
-	}
-#endif
-
 	return false;
 }
 
 void BaseAnimationState::handleScreenChanged() {
-#ifndef BACKEND_8BIT
 	const int screenW = _sys->getOverlayWidth();
 	const int screenH = _sys->getOverlayHeight();
 
@@ -287,62 +217,7 @@ void BaseAnimationState::handleScreenChanged() {
 	}
 
 	buildLookup();
-#endif
 }
-
-#ifdef BACKEND_8BIT
-
-/**
- * Build 'Best-Match' RGB lookup table
- */
-void BaseAnimationState::buildLookup(int p, int lines) {
-	int y, cb;
-	int r, g, b, ii;
-
-	if (p >= _maxPalNum)
-		return;
-
-	if (p != _curPal) {
-		_curPal = p;
-		_cr = 0;
-		_pos = 0;
-	}
-
-	if (_cr > BITDEPTH)
-		return;
-
-	for (ii = 0; ii < lines; ii++) {
-		r = (-16 * 256 + (int) (256 * 1.596) * ((_cr << SHIFT) - 128)) / 256;
-		for (cb = 0; cb <= BITDEPTH; cb++) {
-			g = (-16 * 256 - (int) (0.813 * 256) * ((_cr << SHIFT) - 128) - (int) (0.391 * 256) * ((cb << SHIFT) - 128)) / 256;
-			b = (-16 * 256 + (int) (2.018 * 256) * ((cb << SHIFT) - 128)) / 256;
-
-			for (y = 0; y <= BITDEPTH; y++) {
-				int idx, bst = 0;
-				int dis = 2 * SQR(r - _palettes[p].pal[0]) + 4 * SQR(g - _palettes[p].pal[1]) + SQR(b - _palettes[p].pal[2]);
-
-				for (idx = 1; idx < 256; idx++) {
-					long d2 = 2 * SQR(r - _palettes[p].pal[4 * idx]) + 4 * SQR(g - _palettes[p].pal[4 * idx + 1]) + SQR(b - _palettes[p].pal[4 * idx + 2]);
-					if (d2 < dis) {
-						bst = idx;
-						dis = d2;
-					}
-				}
-				_lut2[_pos++] = bst;
-
-				r += (1 << SHIFT);
-				g += (1 << SHIFT);
-				b += (1 << SHIFT);
-			}
-			r -= (BITDEPTH + 1) * (1 << SHIFT);
-		}
-		_cr++;
-		if (_cr > BITDEPTH)
-			return;
-	}
-}
-
-#else
 
 void BaseAnimationState::buildLookup() {
 	// Do we already have lookup tables for this bit format?
@@ -600,10 +475,7 @@ void BaseAnimationState::plotYUV3x(int width, int height, byte *const *dat) {
 	}
 }
 
-#endif
-
 void BaseAnimationState::updateScreen() {
-#ifndef BACKEND_8BIT
 	int width = _movieScale * _frameWidth;
 	int height = _movieScale * _frameHeight;
 	int pitch = _movieScale * _movieWidth;
@@ -615,7 +487,6 @@ void BaseAnimationState::updateScreen() {
 	int y = (screenH - _movieScale * _frameHeight) / 2;
 
 	_sys->copyRectToOverlay(_overlay, pitch, x, y, width, height);
-#endif
 	_sys->updateScreen();
 }
 
