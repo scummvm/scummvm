@@ -28,6 +28,7 @@
 #include "form.h"
 #include "system.h"
 #include "graphics.h"
+#include "audio.h"
 
 using namespace Osp::Base;
 using namespace Osp::Base::Runtime;
@@ -147,6 +148,11 @@ result BadaSystem::Construct(void) {
 }
 
 BadaSystem::~BadaSystem() {
+  if (audioThread) {
+    audioThread->Stop();
+    delete audioThread;
+    audioThread = null;
+  }
 }
 
 result BadaSystem::initModules() {
@@ -178,7 +184,12 @@ result BadaSystem::initModules() {
     return E_OUT_OF_MEMORY;
   }
 
-  _mixer = new Audio::MixerImpl(this, 22050);
+  audioThread = new AudioThread();
+  if (!audioThread) {
+    return E_OUT_OF_MEMORY;
+  }
+
+  _mixer = audioThread->Construct(this);
   if (!_mixer) {
     return E_OUT_OF_MEMORY;
   }
@@ -188,7 +199,7 @@ result BadaSystem::initModules() {
     return E_OUT_OF_MEMORY;
   }
 
-  ((Audio::MixerImpl*) _mixer)->setReady(true);
+  audioThread->Start();
   logLeaving();
   return E_SUCCESS;
 }

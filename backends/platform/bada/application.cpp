@@ -85,18 +85,6 @@ void BadaScummVM::OnLowMemory(void) {
   }
 }
 
-void BadaScummVM::OnKeyPressed(const Control& source, KeyCode keyCode) {
-
-}
-
-void BadaScummVM::OnKeyReleased(const Control& source, KeyCode keyCode) {	
-
-}
-
-void BadaScummVM::OnKeyLongPressed(const Control& source, KeyCode keyCode) {
-
-}
-
 void BadaScummVM::OnScreenOn(void) {
   if (g_engine) {
     g_engine->pauseEngine(false);

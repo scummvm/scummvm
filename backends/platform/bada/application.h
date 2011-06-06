@@ -33,8 +33,7 @@
 
 class BadaScummVM :
   public Osp::App::Application,
-  public Osp::System::IScreenEventListener,
-  public Osp::Ui::IKeyEventListener {
+  public Osp::System::IScreenEventListener {
 
 public:
   BadaScummVM();
@@ -48,9 +47,6 @@ public:
   void OnBackground(void);
   void OnLowMemory(void);
   void OnBatteryLevelChanged(Osp::System::BatteryLevel batteryLevel);
-  void OnKeyPressed(const Osp::Ui::Control& source, Osp::Ui::KeyCode keyCode);
-  void OnKeyReleased(const Osp::Ui::Control& source, Osp::Ui::KeyCode keyCode);
-  void OnKeyLongPressed(const Osp::Ui::Control& source, Osp::Ui::KeyCode keyCode);
   void OnScreenOn(void);
   void OnScreenOff(void);
   void OnUserEventReceivedN(RequestId requestId, Osp::Base::Collection::IList* pArgs);
