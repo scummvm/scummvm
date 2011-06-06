@@ -365,7 +365,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	}
 	_speechMode = TextAndVoice;
 	_textSpeed = 7;
-	_mode = _previousMode = ENGINE_MODE_IDLE;
+	_mode = _previousMode = ENGINE_MODE_NORMAL;
 	_flipEnable = true;
 	int speed = atol(g_registry->get("engine_speed", "30"));
 	if (speed <= 0 || speed > 100)
@@ -1041,12 +1041,6 @@ void GrimEngine::mainLoop() {
 
 		g_imuse->flushTracks();
 		g_imuse->refreshScripts();
-
-		if (_mode == ENGINE_MODE_IDLE) {
-			// don't kill CPU
-			g_system->delayMillis(10);
-			continue;
-		}
 
 		// Process events
 		Common::Event event;
