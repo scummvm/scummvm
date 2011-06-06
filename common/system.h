@@ -1072,7 +1072,7 @@ public:
 	 * On a desktop operating system, this would typically launch
 	 * some kind of (external) text editor / viewer.
 	 * On a phone, it might also cause a context switch to another
-	 * application. Finally, on some ports, it might not be supported.
+	 * application. Finally, on some ports, it might not be supported
 	 * at all, and so do nothing.
 	 *
 	 * The kFeatureDisplayLogFile feature flag can be used to
@@ -1083,7 +1083,11 @@ public:
 	 *
 	 * @note An error could mean that the log file did not exist,
 	 * or the editor could not launch. However, a return value of true does
-	 * not guarantee that the user actually will the log file.
+	 * not guarantee that the user actually will see the log file.
+	 *
+	 * @note It is up to the backend to ensure that the system is in a state
+	 * that allows the user to actually see the displayed log files. This
+	 * might for example require leaving fullscreen mode.
 	 */
 	virtual bool displayLogFile() { return false; }
 
