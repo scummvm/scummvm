@@ -50,8 +50,9 @@ struct DreamWebGameDescription;
 
 class DreamWebEngine : public Engine {
 private:
-	DreamWebConsole *_console;
-	bool _vSyncInterrupt;
+	DreamWebConsole			*_console;
+	bool					_vSyncInterrupt;
+	static DreamWebEngine	*_instance;
 
 protected:
 	// Engine APIs
@@ -61,6 +62,7 @@ protected:
 public:
 	DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc);
 	virtual ~DreamWebEngine();
+	static DreamWebEngine* instance() { return _instance; }
 
 	void setVSyncInterrupt(bool flag);
 	void waitForVSync();
@@ -71,10 +73,12 @@ public:
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 
-	const DreamWebGameDescription *_gameDescription;
+//dreamgen public api:
+	uint8 randomNumber() { return _rnd.getRandomNumber(255); }
 
-	Common::RandomSource *_rnd;
-	
+private:
+	const DreamWebGameDescription *_gameDescription;
+	Common::RandomSource _rnd;
 	Common::Point _mouse;
 };
 

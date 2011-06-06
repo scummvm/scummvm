@@ -44,25 +44,26 @@
 
 namespace DreamWeb {
 
-DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+DreamWebEngine *DreamWebEngine::_instance;
+
+DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc) : 
+	Engine(syst), _gameDescription(gameDesc), _rnd("dreamweb") {
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-
-	_rnd = new Common::RandomSource("dreamweb");
 
 	_vSyncInterrupt = false;
 
 	_console = 0;
 	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Animation Debug Flag");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
+	_instance = this;
 }
 
 DreamWebEngine::~DreamWebEngine() {
 	DebugMan.clearAllDebugChannels();
 	delete _console;
-	delete _rnd;
 }
 
 // Let's see if it's a good idea to emulate VSYNC interrupts with a timer like
@@ -136,6 +137,11 @@ Common::Error DreamWebEngine::run() {
 
 
 namespace dreamgen {
+
+static inline DreamWeb::DreamWebEngine *engine() {
+	return DreamWeb::DreamWebEngine::instance();
+}
+
 void seecommandtail(Context &context) {
 	context.ds.word(kSoundbaseadd) = 0x220;
 	context.ds.byte(kSoundint) = 5;
@@ -145,7 +151,7 @@ void seecommandtail(Context &context) {
 }
 
 void randomnumber(Context &context) {
-	::error("randomnumber");
+	context.al = engine()->randomNumber();
 }
 
 void quickquit(Context &context) {
@@ -201,11 +207,18 @@ void mousecall(Context &context) {
 }
 
 void setmouse(Context &context) {
-	::error("setmouse");
+	context.ds.word(kOldpointerx) = 0xffff;
+	warning("setmouse: fixme: add range setting");
+	//set vertical range to 15-184
+	//set horizontal range to 15-298*2
 }
 
 void gettime(Context &context) {
-	::error("gettime");
+	warning("gettime: stub: ");
+	context.ch = 10;
+	context.cl = 15;
+	context.dh = 0;
+;
 }
 
 void allocatemem(Context &context) {
@@ -357,7 +370,7 @@ void showgroup(Context &context) {
 }
 
 void fadedos(Context &context) {
-	::error("fadedos");
+	warning("fadedos: STUB");
 }
 
 void doshake(Context &context) {
