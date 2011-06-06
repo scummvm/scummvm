@@ -59,8 +59,7 @@ bool VirtualKeyboardParser::closedKeyCallback(ParserNode *node) {
 			return parserError("Initial mode of keyboard pack not defined");
 	} else if (node->name.equalsIgnoreCase("mode")) {
 		if (!_layoutParsed) {
-			return parserError("'%s' layout missing from '%s' mode",
-				_mode->resolution.c_str(), _mode->name.c_str());
+			return parserError("'" + _mode->resolution + "' layout missing from '" + _mode->name + "' mode");
 		}
 	}
 	return true;
@@ -105,7 +104,7 @@ bool VirtualKeyboardParser::parserCallback_mode(ParserNode *node) {
 	if (_parseMode == kParseFull) {
 		// if full parse then add new mode to keyboard
 		if (_keyboard->_modes.contains(name))
-			return parserError("Mode '%s' has already been defined", name.c_str());
+			return parserError("Mode '" + name + "' has already been defined");
 
 		VirtualKeyboard::Mode mode;
 		mode.name = name;
@@ -177,7 +176,7 @@ bool VirtualKeyboardParser::parserCallback_event(ParserNode *node) {
 
 	String name = node->values["name"];
 	if (_mode->events.contains(name))
-		return parserError("Event '%s' has already been defined", name.c_str());
+		return parserError("Event '" + name + "' has already been defined");
 
 	VirtualKeyboard::VKEvent *evt = new VirtualKeyboard::VKEvent();
 	evt->name = name;
@@ -235,7 +234,7 @@ bool VirtualKeyboardParser::parserCallback_event(ParserNode *node) {
 		evt->type = VirtualKeyboard::kVKEventMoveRight;
 	} else {
 		delete evt;
-		return parserError("Event type '%s' not known", type.c_str());
+		return parserError("Event type '" + type + "' not known");
 	}
 
 	_mode->events[name] = evt;
@@ -257,7 +256,7 @@ bool VirtualKeyboardParser::parserCallback_layout(ParserNode *node) {
 
 	SeekableReadStream *file = _keyboard->_fileArchive->createReadStreamForMember(_mode->bitmapName);
 	if (!file)
-		return parserError("Bitmap '%s' not found", _mode->bitmapName.c_str());
+		return parserError("Bitmap '" + _mode->bitmapName + "' not found");
 
 	const Graphics::PixelFormat format = g_system->getOverlayFormat();
 
@@ -265,7 +264,7 @@ bool VirtualKeyboardParser::parserCallback_layout(ParserNode *node) {
 	delete file;
 
 	if (!_mode->image)
-		return parserError("Error loading bitmap '%s'", _mode->bitmapName.c_str());
+		return parserError("Error loading bitmap '" + _mode->bitmapName + "'");
 
 	int r, g, b;
 	if (node->values.contains("transparent_color")) {
@@ -313,7 +312,7 @@ bool VirtualKeyboardParser::parserCallback_area(ParserNode *node) {
 		Polygon *poly = _mode->imageMap.createArea(target);
 		return parsePolygon(*poly, coords);
 	}
-	return parserError("Area shape '%s' not known", shape.c_str());
+	return parserError("Area shape '" + shape + "' not known");
 }
 
 byte VirtualKeyboardParser::parseFlags(const String& flags) {
