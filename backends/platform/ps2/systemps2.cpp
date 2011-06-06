@@ -983,12 +983,6 @@ void OSystem_PS2::makeConfigPath() {
 	_configFile = strdup(path);
 }
 
-Common::SeekableReadStream *OSystem_PS2::createConfigReadStream() {
-	Common::FSNode file(_configFile);
-	return file.createReadStream();
-}
-
-Common::WriteStream *OSystem_PS2::createConfigWriteStream() {
-	Common::FSNode file(_configFile);
-	return file.createWriteStream();
+Common::String OSystem_PS2::getDefaultConfigFileName() {
+	return _configFile
 }

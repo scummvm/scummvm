@@ -184,8 +184,7 @@ public:
 	void startSoundsystem();
 	void stopSoundsystem();
 
-	virtual Common::SeekableReadStream *createConfigReadStream();
-	virtual Common::WriteStream *createConfigWriteStream();
+	virtual Common::String getDefaultConfigFileName();
 
 protected:
 	void internUpdateScreen();

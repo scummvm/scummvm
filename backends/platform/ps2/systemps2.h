@@ -112,8 +112,7 @@ public:
 
 	virtual void quit();
 
-	virtual Common::SeekableReadStream *createConfigReadStream();
-	virtual Common::WriteStream *createConfigWriteStream();
+	virtual Common::String getDefaultConfigFileName();
 
 	virtual Graphics::PixelFormat getOverlayFormat() const;
 	virtual Common::SaveFileManager *getSavefileManager();

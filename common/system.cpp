@@ -26,6 +26,7 @@
 
 #include "common/system.h"
 #include "common/str.h"
+#include "common/fs.h"
 #include "common/textconsole.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
@@ -88,6 +89,24 @@ bool OSystem::setGraphicsMode(const char *name) {
 void OSystem::fatalError() {
 	quit();
 	exit(1);
+}
+
+Common::SeekableReadStream *OSystem::createConfigReadStream() {
+	Common::FSNode file(getDefaultConfigFileName());
+	return file.createReadStream();
+}
+
+Common::WriteStream *OSystem::createConfigWriteStream() {
+#ifdef __DC__
+	return 0;
+#else
+	Common::FSNode file(getDefaultConfigFileName());
+	return file.createWriteStream();
+#endif
+}
+
+Common::String OSystem::getDefaultConfigFileName() {
+	return "scummvm.ini";
 }
 
 void OSystem::logMessage(LogMessageType::Type type, const char *message) {

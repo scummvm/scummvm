@@ -39,8 +39,6 @@ class MutexManager;
  * A backend derivated from this class, will need to implement
  * these functions on its own:
  *   OSystem::pollEvent()
- *   OSystem::createConfigReadStream()
- *   OSystem::createConfigWriteStream()
  *   OSystem::getMillis()
  *   OSystem::delayMillis()
  *   OSystem::getTimeAndDate()

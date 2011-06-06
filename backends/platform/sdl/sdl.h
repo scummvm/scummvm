@@ -65,8 +65,6 @@ public:
 
 	virtual void setWindowCaption(const char *caption);
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
-	virtual Common::SeekableReadStream *createConfigReadStream();
-	virtual Common::WriteStream *createConfigWriteStream();
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &td) const;
@@ -102,12 +100,6 @@ protected:
 	 * Setup the window icon.
 	 */
 	virtual void setupIcon();
-
-	/**
-	 * Get the file path where the user configuration
-	 * of ScummVM will be saved.
-	 */
-	virtual Common::String getDefaultConfigFileName();
 
 	// Logging
 	virtual Common::WriteStream *createLogFile() { return 0; }

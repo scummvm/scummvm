@@ -156,9 +156,7 @@ public:
 
 	void logMessage(LogMessageType::Type type, const char *message);
 
-	Common::SeekableReadStream *createConfigReadStream();
-	Common::WriteStream *createConfigWriteStream();
-
+	virtual Common::String getDefaultConfigFileName();
 };
 
 #endif /* OSYS_PSP_H */

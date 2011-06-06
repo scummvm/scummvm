@@ -52,9 +52,6 @@ public:
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &t) const {}
-
-	virtual Common::SeekableReadStream *createConfigReadStream();
-	virtual Common::WriteStream *createConfigWriteStream();
 };
 
 OSystem_NULL::OSystem_NULL() {
@@ -98,18 +95,6 @@ uint32 OSystem_NULL::getMillis() {
 }
 
 void OSystem_NULL::delayMillis(uint msecs) {
-}
-
-#define DEFAULT_CONFIG_FILE "scummvm.ini"
-
-Common::SeekableReadStream *OSystem_NULL::createConfigReadStream() {
-	Common::FSNode file(DEFAULT_CONFIG_FILE);
-	return file.createReadStream();
-}
-
-Common::WriteStream *OSystem_NULL::createConfigWriteStream() {
-	Common::FSNode file(DEFAULT_CONFIG_FILE);
-	return file.createWriteStream();
 }
 
 OSystem *OSystem_NULL_create() {

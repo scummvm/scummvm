@@ -176,8 +176,7 @@ public:
 
 	void refreshCursor();
 
-	Common::WriteStream *createConfigWriteStream();
-	Common::SeekableReadStream *createConfigReadStream();
+	virtual Common::String getDefaultConfigFileName();
 
 	u16 applyGamma(u16 color);
 	void setGammaValue(int gamma) { _gammaValue = gamma; }

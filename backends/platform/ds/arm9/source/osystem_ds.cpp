@@ -853,16 +853,8 @@ void OSystem_DS::setCharactersEntered(int count) {
 	DS::setCharactersEntered(count);
 }
 
-Common::SeekableReadStream *OSystem_DS::createConfigReadStream() {
-	Common::FSNode file(DEFAULT_CONFIG_FILE);
-//	consolePrintf("R %s", DEFAULT_CONFIG_FILE);
-	return file.createReadStream();
-}
-
-Common::WriteStream *OSystem_DS::createConfigWriteStream() {
-	Common::FSNode file(DEFAULT_CONFIG_FILE);
-//	consolePrintf("W %s", DEFAULT_CONFIG_FILE);
-	return file.createWriteStream();
+Common::String OSystem_DS::getDefaultConfigFileName() {
+	return DEFAULT_CONFIG_FILE;
 }
 
 u16 OSystem_DS::applyGamma(u16 color) {

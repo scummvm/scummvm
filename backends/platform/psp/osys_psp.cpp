@@ -439,14 +439,6 @@ void OSystem_PSP::getTimeAndDate(TimeDate &td) const {
 	td.tm_year = t.tm_year;
 }
 
-#define PSP_CONFIG_FILE "ms0:/scummvm.ini"
-
-Common::SeekableReadStream *OSystem_PSP::createConfigReadStream() {
-	Common::FSNode file(PSP_CONFIG_FILE);
-	return file.createReadStream();
-}
-
-Common::WriteStream *OSystem_PSP::createConfigWriteStream() {
-	Common::FSNode file(PSP_CONFIG_FILE);
-	return file.createWriteStream();
+Common::String OSystem_PSP::getDefaultConfigFileName() {
+	return "ms0:/scummvm.ini";
 }

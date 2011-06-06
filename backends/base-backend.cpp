@@ -52,40 +52,5 @@ void BaseBackend::fillScreen(uint32 col) {
 	unlockScreen();
 }
 
-
-/*
- FIXME: Maybe we should push the default config file loading/saving code below
- out to all the backends?
-*/
-
-
-#if defined(POSIX)
-#define DEFAULT_CONFIG_FILE ".scummvmrc"
-#endif
-
-#if !defined(POSIX)
-#define DEFAULT_CONFIG_FILE "scummvm.ini"
-#endif
-
-BaseBackend::BaseBackend() {
-}
-
-BaseBackend::~BaseBackend() {
-}
-
-Common::SeekableReadStream *BaseBackend::createConfigReadStream() {
-	Common::FSNode file(DEFAULT_CONFIG_FILE);
-	return file.createReadStream();
-}
-
-Common::WriteStream *BaseBackend::createConfigWriteStream() {
-#ifdef __DC__
-	return 0;
-#else
-	Common::FSNode file(DEFAULT_CONFIG_FILE);
-	return file.createWriteStream();
-#endif
-}
-
 void BaseBackend::resetGraphicsScale() {
 }

@@ -229,29 +229,16 @@ OSystem *OSystem_IPHONE_create() {
 	return new OSystem_IPHONE();
 }
 
-Common::SeekableReadStream *OSystem_IPHONE::createConfigReadStream() {
+CCommon::String OSystem_IPHONE::getDefaultConfigFileName() {
 #ifdef IPHONE_OFFICIAL
-	char buf[256];
-	strncpy(buf, iPhone_getDocumentsDir(), 256);
-	strncat(buf, "/Preferences", 256 - strlen(buf) );
-	Common::FSNode file(buf);
+	Common::String path = iPhone_getDocumentsDir();
+	path += "/Preferences";
+	return path;
 #else
-	Common::FSNode file(SCUMMVM_PREFS_PATH);
+	return SCUMMVM_PREFS_PATH;
 #endif
-	return file.createReadStream();
 }
 
-Common::WriteStream *OSystem_IPHONE::createConfigWriteStream() {
-#ifdef IPHONE_OFFICIAL
-	char buf[256];
-	strncpy(buf, iPhone_getDocumentsDir(), 256);
-	strncat(buf, "/Preferences", 256 - strlen(buf) );
-	Common::FSNode file(buf);
-#else
-	Common::FSNode file(SCUMMVM_PREFS_PATH);
-#endif
-	return file.createWriteStream();
-}
 
 void OSystem_IPHONE::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	// Get URL of the Resource directory of the .app bundle
