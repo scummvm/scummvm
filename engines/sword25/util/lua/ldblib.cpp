@@ -4,6 +4,10 @@
 ** See Copyright Notice in lua.h
 */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_stdin
+#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
+#define FORBIDDEN_SYMBOL_EXCEPTION_fputs
+#define FORBIDDEN_SYMBOL_EXCEPTION_fgets
 
 #include <stdio.h>
 #include <stdlib.h>

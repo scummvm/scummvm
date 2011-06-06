@@ -24,6 +24,8 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 #define FORBIDDEN_SYMBOL_EXCEPTION_fputs
 #define FORBIDDEN_SYMBOL_EXCEPTION_fflush
+#define FORBIDDEN_SYMBOL_EXCEPTION_stdout
+#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
 
 #include "common/system.h"
 #include "common/events.h"

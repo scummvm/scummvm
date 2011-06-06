@@ -79,6 +79,21 @@
 #define FILE	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_stdin
+#undef stdin
+#define stdin	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_stdout
+#undef stdout
+#define stdout	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_stderr
+#undef stderr
+#define stderr	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_fopen
 #undef fopen
 #define fopen(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
@@ -124,20 +139,39 @@
 #define fputc(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_fgets
+#undef fgets
+#define fgets(a,b,c)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_fputs
+#undef fputs
+#define fputs(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_getc
 #undef getc
 #define getc(a)	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
-#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getchar
-#undef getchar
-#define getchar()	FORBIDDEN_SYMBOL_REPLACEMENT
-#endif
-
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_putc
 #undef putc
 #define putc(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_gets
+#undef gets
+#define gets(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_puts
+#undef puts
+#define puts(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getchar
+#undef getchar
+#define getchar()	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_putchar

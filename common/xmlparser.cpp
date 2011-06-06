@@ -22,6 +22,7 @@
 
 // FIXME: Avoid using fprintf
 #define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
+#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
 
 
 #include "common/xmlparser.h"
