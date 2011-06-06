@@ -147,7 +147,7 @@ MidiTestSuite::MidiTestSuite() {
 }
 
 void MidiTestSuite::enable(bool flag) {
-	Testsuite::enable(_isMidiDataFound & flag);
+	Testsuite::enable(_isMidiDataFound ? flag : false);
 }
 
 }
