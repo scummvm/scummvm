@@ -214,9 +214,9 @@ void setmouse(Context &context) {
 }
 
 void gettime(Context &context) {
-	warning("gettime: stub: ");
+	warning("gettime: stub: 10:10:00");
 	context.ch = 10;
-	context.cl = 15;
+	context.cl = 10;
 	context.dh = 0;
 }
 
