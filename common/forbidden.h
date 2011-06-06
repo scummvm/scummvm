@@ -34,6 +34,9 @@
  * Backend files may #define FORBIDDEN_SYMBOL_ALLOW_ALL if they
  * have to access functions like fopen, fread etc.
  * Regular code, esp. code in engines/, should never do that.
+ * To ease transition, though, we allow re-enabling selected symbols
+ * in frontend code. However, this should only be used as a temporary
+ * measure. Especially new code should avoid this at all costs.
  */
 
 #ifndef FORBIDDEN_SYMBOL_ALLOW_ALL
@@ -51,7 +54,7 @@
  * the compiler will hopefully print along with its own error message),
  * we try to make clear what is causing the error.
  */
-#define FORBIDDEN_SYMBOL_REPLACEMENT	FORBIDDEN SYMBOL !%*
+#define FORBIDDEN_SYMBOL_REPLACEMENT	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_printf
