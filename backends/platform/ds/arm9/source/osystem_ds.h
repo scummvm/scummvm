@@ -172,11 +172,13 @@ public:
 
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
-	FilesystemFactory *getFilesystemFactory();
+	virtual FilesystemFactory *getFilesystemFactory();
 
 	void refreshCursor();
 
 	virtual Common::String getDefaultConfigFileName();
+
+	virtual void logMessage(LogMessageType::Type type, const char *message);
 
 	u16 applyGamma(u16 color);
 	void setGammaValue(int gamma) { _gammaValue = gamma; }
