@@ -218,7 +218,6 @@ void gettime(Context &context) {
 	context.ch = 10;
 	context.cl = 15;
 	context.dh = 0;
-;
 }
 
 void allocatemem(Context &context) {
