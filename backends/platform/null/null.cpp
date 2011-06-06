@@ -83,7 +83,7 @@ void OSystem_NULL::initBackend() {
 	// this way; they need to be hooked into the system somehow to
 	// be functional. Of course, can't do that in a NULL backend :).
 
-	BaseBackend::initBackend();
+	ModularBackend::initBackend();
 }
 
 bool OSystem_NULL::pollEvent(Common::Event &event) {
