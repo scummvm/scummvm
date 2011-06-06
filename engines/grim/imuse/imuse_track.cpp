@@ -390,7 +390,7 @@ Track *Imuse::moveToFadeOutTrack(Track *track, int fadeDelay) {
 	Track *fadeTrack;
 
 	if (track->toBeRemoved) {
-		error("cloneToFadeOutTrack: Tried to move a track to be removed, please bug report");
+		error("moveToFadeOutTrack: Tried to move a track to be removed, please bug report");
 		return NULL;
 	}
 
