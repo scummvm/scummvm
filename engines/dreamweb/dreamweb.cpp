@@ -153,11 +153,9 @@ void keyboardread(Context &context) {
 }
 
 void resetkeyboard(Context &context) {
-	::error("resetkeyboard");
 }
 
 void setkeyboardint(Context &context) {
-	::error("setkeyboardint");
 }
 
 void readfromfile(Context &context) {
@@ -201,7 +199,12 @@ void gettime(Context &context) {
 }
 
 void allocatemem(Context &context) {
-	::error("allocatemem");
+	uint size = (context.bx + 2) * 16;
+	debug(1, "allocate mem, %u bytes", size);
+	context.flags._c = false;
+	SegmentRef seg = context.allocateSegment(size);
+	context.ax = (uint16)seg;
+	debug(1, "\tsegment address -> %04x", (uint16)context.ax);
 }
 
 void deallocatemem(Context &context) {
@@ -213,7 +216,7 @@ void removeemm(Context &context) {
 }
 
 void setupemm(Context &context) {
-	::error("setupemm");
+	//fixme: double check this, but it seems that emm pages used only for sound
 }
 
 void pitinterupt(Context &context) {

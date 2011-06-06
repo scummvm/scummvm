@@ -209,6 +209,14 @@ public:
 		return SegmentRef(this, value, &i->_value);
 	}
 	
+	SegmentRef allocateSegment(uint size) {
+		unsigned id = kDefaultDataSegment + _segments.size();
+		assert(!_segments.contains(id));
+		Segment &seg = _segments[id];
+		seg.data.resize(size);
+		return SegmentRef(this, id, &seg);
+	}
+	
 	inline void _cmp(uint8 a, uint8 b) {
 		uint8 x = a;
 		_sub(x, b);
