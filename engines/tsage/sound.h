@@ -91,7 +91,7 @@ public:
 	virtual void setProgram(int channel, int program) {}
 	virtual void setVolume1(int channel, int v2, int v3, int volume) {}
 	virtual void setPitchBlend(int channel, int pitchBlend) {}
-	virtual void play(const byte *data, int size, int channel, int volume) {}
+	virtual void updateVoice(int voiceNum) {}
 };
 
 struct VoiceStructEntryType0 {
@@ -116,24 +116,19 @@ struct VoiceStructEntryType1 {
 	int _field4;
 	int _field5;
 	int _field6;
-	int _field8;
-	int _field9;
-	int _fieldA;
-	int _fieldC;
+	Sound *_sound;
+	int _channelNum;
 	int _fieldD;
-	int _fieldE;
-	int _field10;
-	int _field11;
-	int _field12;
+	Sound *_sound2;
+	int _channelNum2;
 	int _field13;
-	int _field14;
-	int _field16;
-	int _field18;
+	Sound *_sound3;
+	int _channelNum3;
 	int _field19;
 };
 
 struct VoiceStructEntry {
-	int _field0;
+	int _voiceNum;
 	int _field1;
 	SoundDriver *_driver;
 
@@ -329,9 +324,12 @@ public:
 	// _so methods
 	void _soPrimeSound(bool queueFlag);
 	void _soSetTimeIndex(uint timeIndex);
-	void _soPrimeChannelData();
 	bool _soServiceTracks();
+	void _soPrimeChannelData();
+	void _soRemoteReceive();
 	void _soServiceTrackType0(int trackIndex, const byte *channelData);
+	void _soUpdateDamper(VoiceTypeStruct *voiceType, int channelNum, VoiceType mode, int v0);
+
 	void _soServiceTrackType1(int trackIndex, const byte *channelData);
 	void _soDoTrackCommand(int channelNum, int command, int value);
 	bool _soDoUpdateTracks(int command, int value);

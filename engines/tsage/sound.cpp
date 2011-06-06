@@ -368,7 +368,63 @@ void SoundManager::_sfSoundServer() {
 }
 
 void SoundManager::_sfProcessFading() {
-	//TODO
+	// Loop through processing active sounds
+	bool removeFlag = false;
+	Common::List<Sound *>::iterator i = sfManager()._playList.begin();
+	while (i != sfManager()._playList.end()) {
+		Sound *s = *i;
+		++i;
+
+		if (!s->_pausedCount)
+			removeFlag = s->_soServiceTracks();
+		if (removeFlag) {
+			_sfDoRemoveFromPlayList(s);
+			s->_stoppedAsynchronously = true;
+			sfManager()._needToRethink = true;
+		}
+
+		if (s->_fadeDest != 255) {
+			if (s->_fadeCounter != 0)
+				--s->_fadeCounter;
+			else {
+				if (s->_volume >= s->_fadeDest) {
+					if ((s->_fadeDest - s->_volume) > s->_fadeSteps)
+						s->_volume += s->_fadeSteps;
+					else
+						s->_volume = s->_fadeDest;
+				} else {
+					if (s->_fadeDest > s->_fadeSteps)
+						s->_volume -= s->_fadeSteps;
+					else
+						s->_volume = s->_fadeDest;
+				}
+
+				_sfDoUpdateVolume(s);
+				if (s->_volume != s->_fadeDest)
+					s->_fadeCounter = s->_fadeTicks;
+				else {
+					s->_fadeDest = -1;
+					if (s->_stopAfterFadeFlag) {
+						_sfDoRemoveFromPlayList(s);
+						s->_stoppedAsynchronously = true;
+						sfManager()._needToRethink = true;
+					}
+				}
+			}
+		}
+	}
+
+	// Loop through the voiceType list
+	for (int voiceIndex = 0; voiceIndex < SOUND_ARR_SIZE; ++voiceIndex) {
+		VoiceTypeStruct &voiceType = *sfManager()._voiceTypeStructPtrs[voiceIndex];
+
+		if (voiceType._voiceType == VOICETYPE_1) {
+			for (uint idx = 0; idx < voiceType._entries.size(); ++idx) {
+				if (voiceType._entries[idx]._type1._field6 >= -1)
+					++voiceType._entries[idx]._type1._field6;
+			}
+		}
+	}
 }
 
 void SoundManager::_sfUpdateVoiceStructs() {
@@ -384,9 +440,8 @@ void SoundManager::_sfUpdateVoiceStructs() {
 				vse._type0._field9 = vse._type0._field11;
 				vse._type0._fieldA = vse._type0._field12;
 			} else {
-				vse._type1._field8 = vse._type1._fieldE;
-				vse._type1._fieldA = vse._type1._field10;
-				vse._type1._fieldC = vse._type1._field12;
+				vse._type1._sound = vse._type1._sound2;
+				vse._type1._channelNum = vse._type1._channelNum2;
 				vse._type1._fieldD = vse._type1._field13;
 			}
 		}
@@ -549,14 +604,13 @@ void SoundManager::_sfRethinkSoundDrivers() {
 
 							for (int idx = 0; idx < byteVal; ++idx) {
 								VoiceStructEntry ve;
-								ve._field0 = idx;
+								ve._voiceNum = idx;
 								ve._driver = driver;
 								ve._type1._field4 = 0xff;
 								ve._type1._field5 = 0;
 								ve._type1._field6 = 0;
-								ve._type1._field8 = 0;
-								ve._type1._fieldA = 0;
-								ve._type1._fieldC = 0;
+								ve._type1._sound = NULL;
+								ve._type1._channelNum = 0;
 								ve._type1._fieldD = 0;
 
 								vs->_entries.push_back(ve);
@@ -603,21 +657,18 @@ void SoundManager::_sfRethinkVoiceTypes() {
 		} else {
 			for (uint idx = 0; idx < vs->_entries.size(); ++idx) {
 				VoiceStructEntry &vse = vs->_entries[idx];
-				vse._type1._field14 = vse._type1._field8;
-				vse._type1._field16 = vse._type1._fieldA;
-				vse._type1._field18 = vse._type1._fieldC;
+				vse._type1._sound3 = vse._type1._sound;
+				vse._type1._channelNum3 = vse._type1._channelNum;
 				vse._type1._field19 = vse._type1._fieldD;
-				vse._type1._field8 = 0;
-				vse._type1._fieldA = 0;
-				vse._type1._fieldC = 0;
+				vse._type1._sound = NULL;
+				vse._type1._channelNum = 0;
 				vse._type1._fieldD = 0;
-				vse._type1._fieldE = 0;
-				vse._type1._field10 = 0;
-				vse._type1._field12 = 0;
+				vse._type1._sound2 = NULL;
+				vse._type1._channelNum2 = 0;
 			}
 		}
 	}
-
+//TODO: Lots of this method
 	// Post-processing
 	for (int voiceIndex = 0; voiceIndex < SOUND_ARR_SIZE; ++voiceIndex) {
 		VoiceTypeStruct *vs = sfManager()._voiceTypeStructPtrs[voiceIndex];
@@ -631,17 +682,15 @@ void SoundManager::_sfRethinkVoiceTypes() {
 			// Type 1
 			for (uint idx = 0; idx < vs->_entries.size(); ++idx) {
 				VoiceStructEntry &vse = vs->_entries[idx];
-				vse._type1._field8 = 0;
-				vse._type1._fieldA = 0;
-				vse._type1._fieldC = 0;
+				vse._type1._sound = NULL;
+				vse._type1._channelNum = 0;
 				vse._type1._fieldD = 0;
 			}
 
 			for (uint idx = 0; idx < vs->_entries.size(); ++idx) {
 				VoiceStructEntry &vse = vs->_entries[idx];
-				if (vse._type1._fieldE | vse._type1._field10) {
-					//dx = vse._field10;
-					//ax = vse._fieldE;
+				if (vse._type1._sound2) {
+					//dx/ax = vse._sound2;
 					//si = 0;
 				}
 			}
@@ -814,12 +863,12 @@ void SoundManager::_sfDoUpdateVolume(Sound *sound) {
 			if (vs->_voiceType == VOICETYPE_0) {
 				if (!vse._type0._sound) {
 					int vol = sound->_volume * sound->_chVolume[vse._type0._channelNum] / 127;
-					driver->setVolume0(voiceIndex, vse._field0, 7, vol);
+					driver->setVolume0(voiceIndex, vse._voiceNum, 7, vol);
 				}
 			} else {
-				if (!vse._type1._field8 && !vse._type1._fieldA) {
-					int vol = sound->_volume * sound->_chVolume[vse._type1._fieldC] / 127;
-					driver->setVolume1(voiceIndex, vse._field0, 7, vol);
+				if (!vse._type1._sound) {
+					int vol = sound->_volume * sound->_chVolume[vse._type1._channelNum] / 127;
+					driver->setVolume1(voiceIndex, vse._voiceNum, 7, vol);
 				}
 			}
 		}
@@ -1124,6 +1173,68 @@ void Sound::_soPrimeSound(bool queueFlag) {
 	_soPrimeChannelData();
 }
 
+void Sound::_soSetTimeIndex(uint timeIndex) {
+	++_soundManager->_serverDisabledCount;
+
+	if (timeIndex != _timer) {
+		_soundManager->_soTimeIndexFlag = true;
+		_timer = 0;
+		_loopTimer = 0;
+		_soPrimeChannelData();
+
+		while (timeIndex > 0) {
+			if (_soServiceTracks()) {
+				SoundManager::_sfDoRemoveFromPlayList(this);
+				_stoppedAsynchronously = true;
+				_soundManager->_needToRethink = true;
+				break;
+			}
+		}
+
+		_soundManager->_soTimeIndexFlag = false;
+	}
+
+	--_soundManager->_serverDisabledCount;
+}
+
+bool Sound::_soServiceTracks() {
+	if (_isEmpty) {
+		_soRemoteReceive();
+		return false;
+	} 
+	
+	bool flag = true;
+	for (int trackCtr = 0; trackCtr < _trackInfo._numTracks; ++trackCtr) {
+		int mode = *_channelData[trackCtr];
+
+		if (mode == 0) {
+			_soServiceTrackType0(trackCtr, _channelData[trackCtr]);
+		} else if (mode == 1) {
+			_soServiceTrackType1(trackCtr, _channelData[trackCtr]);
+		} else {
+			error("Unknown sound mode encountered");
+		}
+
+		if (_trkState[trackCtr])
+			flag = false;
+	}
+
+	if (!flag)
+		return false;
+	else if ((_loop > 0) && (--_loop == 0))
+		return true;
+	else {
+		for (int trackCtr = 0; trackCtr < _trackInfo._numTracks; ++trackCtr) {
+			_trkState[trackCtr] = _trkLoopState[trackCtr];
+			_trkRest[trackCtr] = _trkLoopRest[trackCtr];
+			_trkIndex[trackCtr] = _trkLoopIndex[trackCtr];
+		}
+
+		_timer = _loopTimer;
+		return false;
+	}
+}
+
 void Sound::_soPrimeChannelData() {
 	if (_isEmpty) {
 		for (int idx = 0; idx < 16; ++idx) {
@@ -1186,66 +1297,8 @@ void Sound::_soPrimeChannelData() {
 	}
 }
 
-void Sound::_soSetTimeIndex(uint timeIndex) {
-	++_soundManager->_serverDisabledCount;
-
-	if (timeIndex != _timer) {
-		_soundManager->_soTimeIndexFlag = true;
-		_timer = 0;
-		_loopTimer = 0;
-		_soPrimeChannelData();
-
-		while (timeIndex > 0) {
-			if (_soServiceTracks()) {
-				SoundManager::_sfDoRemoveFromPlayList(this);
-				_stoppedAsynchronously = true;
-				_soundManager->_needToRethink = true;
-				break;
-			}
-		}
-
-		_soundManager->_soTimeIndexFlag = false;
-	}
-
-	--_soundManager->_serverDisabledCount;
-}
-
-bool Sound::_soServiceTracks() {
-	if (_isEmpty) {
-		assert("TODO: Service empty sound");
-		return 0;
-	} 
-	
-	bool flag = true;
-	for (int trackCtr = 0; trackCtr < _trackInfo._numTracks; ++trackCtr) {
-		int mode = *_channelData[trackCtr];
-
-		if (mode == 0) {
-			_soServiceTrackType0(trackCtr, _channelData[trackCtr]);
-		} else if (mode == 1) {
-			_soServiceTrackType1(trackCtr, _channelData[trackCtr]);
-		} else {
-			error("Unknown sound mode encountered");
-		}
-
-		if (_trkState[trackCtr])
-			flag = false;
-	}
-
-	if (!flag)
-		return false;
-	else if ((_loop > 0) && (--_loop == 0))
-		return true;
-	else {
-		for (int trackCtr = 0; trackCtr < _trackInfo._numTracks; ++trackCtr) {
-			_trkState[trackCtr] = _trkLoopState[trackCtr];
-			_trkRest[trackCtr] = _trkLoopRest[trackCtr];
-			_trkIndex[trackCtr] = _trkLoopIndex[trackCtr];
-		}
-
-		_timer = _loopTimer;
-		return false;
-	}
+void Sound::_soRemoteReceive() {
+	error("_soRemoteReceive not implemented");
 }
 
 void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
@@ -1258,7 +1311,7 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 
 	int channelNum = _trkChannel[trackIndex];
 	int chFlags = (channelNum == -1) ? 0 : _chFlags[channelNum];
-	int var1A = -1;
+	int voiceNum = -1;
 	SoundDriver *driver = NULL;
 	
 	VoiceTypeStruct *vtStruct;
@@ -1277,7 +1330,7 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 				for (uint idx = 0; idx < vtStruct->_entries.size(); ++idx) {
 					if (!vtStruct->_entries[idx]._type0._sound && 
 							(vtStruct->_entries[idx]._type0._channelNum != channelNum)) {
-						var1A = vtStruct->_entries[idx]._field0;
+						voiceNum = vtStruct->_entries[idx]._voiceNum;
 						driver = vtStruct->_entries[idx]._driver;
 						break;
 					}
@@ -1296,11 +1349,10 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 				// Only do processing if fast forwarding to a given time index
 				if (channelNum != -1) {
 					if (voiceType == VOICETYPE_1) {
-						// TODO: sub_25D49
-						error("TODO");
-					} else if (var1A != -1) {
+						_soUpdateDamper(vtStruct, channelNum, chVoiceType, v);
+					} else if (voiceNum != -1) {
 						assert(driver);
-						driver->proc18(var1A, chVoiceType);
+						driver->proc18(voiceNum, chVoiceType);
 					}
 				}
 			}		
@@ -1322,9 +1374,9 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 							error("TODO: sub_25E32");
 						else
 							error("TODO: sub_25DD8");
-					} else if (var1A != -1) {
+					} else if (voiceNum != -1) {
 						assert(driver);
-						driver->proc20(var1A, chVoiceType);
+						driver->proc20(voiceNum, chVoiceType);
 					}
 				}
 			} else {
@@ -1366,9 +1418,9 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 				if (!_soundManager->_soTimeIndexFlag) {
 					if (voiceType != VOICETYPE_0) {
 						error("sub_25F0E");
-					} else if (var1A != -1) {
+					} else if (voiceNum != -1) {
 						assert(driver);
-						driver->setVolume0(var1A, chVoiceType, cmdVal, b);
+						driver->setVolume0(voiceNum, chVoiceType, cmdVal, b);
 					}
 				}
 			}
@@ -1381,7 +1433,7 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 
 				if (channelNum != -1) {
 					assert(driver);
-					driver->proc22(var1A, chVoiceType, cx);
+					driver->proc22(voiceNum, chVoiceType, cx);
 				}
 			} else {
 				pData += 2;
@@ -1397,9 +1449,9 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 				if (!_soundManager->_soTimeIndexFlag) {
 					if (voiceType != VOICETYPE_0) {
 						error("sub_25F0E");
-					} else if (var1A != -1) {
+					} else if (voiceNum != -1) {
 						assert(driver);
-						driver->setVolume0(var1A, chVoiceType, cmd, value);
+						driver->setVolume0(voiceNum, chVoiceType, cmd, value);
 					}
 				}
 			} else if (_soDoUpdateTracks(cmd, value)) {
@@ -1417,7 +1469,7 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 
 					if (voiceType != VOICETYPE_0) {
 						error("sub_25FD0");
-					} else if (var1A != -1) {
+					} else if (voiceNum != -1) {
 						assert(driver);
 						driver->setPitchBlend(channel, pitchBlend);
 					}
@@ -1434,9 +1486,9 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 				_chProgram[channel] = program;
 
 				if (!_soundManager->_soTimeIndexFlag) {
-					if ((voiceType == VOICETYPE_0) && (var1A != -1)) {
+					if ((voiceType == VOICETYPE_0) && (voiceNum != -1)) {
 						assert(driver);
-						driver->setProgram(var1A, program);
+						driver->setProgram(voiceNum, program);
 					}
 				}
 			} else {
@@ -1454,9 +1506,9 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 			}
 
 			if (!_soundManager->_soTimeIndexFlag) {
-				if ((channelNum != -1) && (voiceType == VOICETYPE_0) && (var1A != -1)) {
+				if ((channelNum != -1) && (voiceType == VOICETYPE_0) && (voiceNum != -1)) {
 					assert(driver);
-					driver->setVolume1(var1A, chVoiceType, 0, b);
+					driver->setVolume1(voiceNum, chVoiceType, 0, b);
 				}
 
 			}
@@ -1464,8 +1516,42 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 	}
 }
 
-void Sound::_soServiceTrackType1(int trackIndex, const byte *channelData) {
+void Sound::_soUpdateDamper(VoiceTypeStruct *voiceType, int channelNum, VoiceType mode, int v0) {
+	bool hasDamper = _chDamper[channelNum] != 0;
 
+	for (uint idx = 0; idx < voiceType->_entries.size(); ++idx) {
+		VoiceStructEntryType1 &vte = voiceType->_entries[idx]._type1;
+
+		if ((vte._field4 == v0) && (vte._channelNum == channelNum) && (vte._sound == this)) {
+			if (hasDamper)
+				vte._field5 = 1;
+			else {
+				SoundDriver *driver = voiceType->_entries[idx]._driver;
+				assert(driver);
+
+				vte._field4 = -1;
+				vte._field5 = 0;
+				driver->updateVoice(voiceType->_entries[idx]._voiceNum);
+			}
+		}
+	}
+}
+
+void Sound::_soServiceTrackType1(int trackIndex, const byte *channelData) {
+	if (_soundManager->_soTimeIndexFlag || !_trkState[trackIndex])
+		return;
+
+	int channel = _trkChannel[trackIndex];
+	if (channel == -1)
+		_trkState[trackIndex] = 0;
+	else {
+		VoiceTypeStruct *voiceType = _soundManager->_voiceTypeStructPtrs[_chVoiceType[channel]];
+		if (!voiceType)
+			_trkState[trackIndex] = 0;
+		else {
+			
+		}
+	}
 }
 
 void Sound::_soDoTrackCommand(int channelNum, int command, int value) {
