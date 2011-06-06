@@ -575,6 +575,10 @@ void OSystem_Android::addSysArchivesToSearchSet(Common::SearchSet &s,
 void OSystem_Android::logMessage(LogMessageType::Type type,
 									const char *message) {
 	switch (type) {
+	case LogMessageType::kInfo:
+		__android_log_write(ANDROID_LOG_INFO, android_log_tag, message);
+		break;
+
 	case LogMessageType::kDebug:
 		__android_log_write(ANDROID_LOG_DEBUG, android_log_tag, message);
 		break;

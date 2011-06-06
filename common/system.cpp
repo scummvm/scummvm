@@ -79,7 +79,7 @@ void OSystem::fatalError() {
 void OSystem::logMessage(LogMessageType::Type type, const char *message) {
 	FILE *output = 0;
 
-	if (type == LogMessageType::kDebug)
+	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
 		output = stdout;
 	else
 		output = stderr;

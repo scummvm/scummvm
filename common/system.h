@@ -73,6 +73,7 @@ struct TimeDate {
 namespace LogMessageType {
 
 enum Type {
+	kInfo,
 	kError,
 	kWarning,
 	kDebug
