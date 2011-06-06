@@ -135,13 +135,6 @@ public:
 
 	//@}
 
-	/** @name Audio CD */
-	//@{
-
-	virtual AudioCDManager *getAudioCDManager();
-
-	//@}
-
 	/** @name Miscellaneous */
 	//@{
 
@@ -163,7 +156,6 @@ protected:
 	MutexManager *_mutexManager;
 	GraphicsManager *_graphicsManager;
 	Audio::Mixer *_mixer;
-	AudioCDManager *_audiocdManager;
 
 	//@}
 };

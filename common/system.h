@@ -96,6 +96,23 @@ protected:
 	OSystem();
 	virtual ~OSystem();
 
+protected:
+	/**
+	 * For backend authors only, this pointer may be set by OSystem
+	 * subclasses to an AudioCDManager instance. This is only useful
+	 * if your backend does not want to use the DefaultAudioCDManager.
+	 *
+	 * This instance is returned by OSystem::getAudioCDManager(),
+	 * and it is deleted by the OSystem destructor.
+	 *
+	 * A backend may set this pointer in its initBackend() method,
+	 * its constructor or somewhere in between; but it must
+	 * set it no later than in its initBackend() implementation, because
+	 * OSystem::initBackend() will by default create a DefaultAudioCDManager
+	 * instance if _audiocdManager has not yet been set.
+	 */
+	AudioCDManager *_audiocdManager;
+
 public:
 
 	/**
@@ -106,7 +123,7 @@ public:
 	 *       parent class. They should do so near the end of their own
 	 *       implementation.
 	 */
-	virtual void initBackend() { }
+	virtual void initBackend();
 
 	/**
 	 * Allows the backend to perform engine specific init.
@@ -921,7 +938,9 @@ public:
 	 * Return the audio cd manager. For more information, refer to the
 	 * AudioCDManager documentation.
 	 */
-	virtual AudioCDManager *getAudioCDManager() = 0;
+	inline AudioCDManager *getAudioCDManager() {
+		return _audiocdManager;
+	}
 
 	//@}
 

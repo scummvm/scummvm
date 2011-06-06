@@ -206,6 +206,8 @@ void OSystem_SDL::initBackend() {
 	setupIcon();
 
 	_inited = true;
+
+	ModularBackend::initBackend();
 }
 
 void OSystem_SDL::initSDL() {

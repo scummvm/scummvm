@@ -63,7 +63,9 @@ void OSystem_Dreamcast::initBackend()
   _mixer = new Audio::MixerImpl(this, sampleRate);
   _mixer->setReady(true);
 
-  _cdManager = new DCCDManager();
+  _audiocdManager = new DCCDManager();
+
+  BaseBackend::initBackend();
 }
 
 

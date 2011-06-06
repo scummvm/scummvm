@@ -161,8 +161,6 @@ public:
   // Returns true if an event was retrieved.
   bool pollEvent(Common::Event &event);
 
-  AudioCDManager *getAudioCDManager() { return _cdManager; }
-
   // Quit
   void quit();
 
@@ -206,7 +204,6 @@ public:
   Audio::MixerImpl *_mixer;
   DefaultTimerManager *_timer;
   SoftKeyboard _softkbd;
-  DCCDManager *_cdManager;
 
   int _ms_cur_x, _ms_cur_y, _ms_cur_w, _ms_cur_h, _ms_old_x, _ms_old_y;
   int _ms_hotspot_x, _ms_hotspot_y, _ms_visible, _devpoll, _last_screen_refresh;

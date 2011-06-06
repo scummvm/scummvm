@@ -388,6 +388,8 @@ void OSystem_Android::initBackend() {
 		warning("couldn't renice the main thread");
 
 	JNI::setReadyForEvents(true);
+
+	BaseBackend::initBackend();
 }
 
 void OSystem_Android::addPluginDirectories(Common::FSList &dirs) const {

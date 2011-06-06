@@ -38,12 +38,7 @@ public:
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
 
-	virtual AudioCDManager *getAudioCDManager();
-
 	virtual void resetGraphicsScale();
-
-protected:
-	AudioCDManager *_audiocdManager;
 };
 
 

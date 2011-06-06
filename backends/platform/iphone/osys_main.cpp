@@ -101,7 +101,7 @@ void OSystem_IPHONE::initBackend() {
 
 	setTimerCallback(&OSystem_IPHONE::timerHandler, 10);
 
-	OSystem::initBackend();
+	BaseBackend::initBackend();
 }
 
 bool OSystem_IPHONE::hasFeature(Feature f) {

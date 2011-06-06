@@ -25,7 +25,6 @@
 #include "backends/modular-backend.h"
 
 #include "backends/fs/fs-factory.h"
-#include "backends/audiocd/audiocd.h"
 #include "backends/graphics/graphics.h"
 #include "backends/mutex/mutex.h"
 
@@ -42,8 +41,7 @@ ModularBackend::ModularBackend()
 	_timerManager(0),
 	_mutexManager(0),
 	_graphicsManager(0),
-	_mixer(0),
-	_audiocdManager(0) {
+	_mixer(0) {
 
 }
 
@@ -56,8 +54,6 @@ ModularBackend::~ModularBackend() {
 	_eventManager = 0;
 	delete _mixer;
 	_mixer = 0;
-	delete _audiocdManager;
-	_audiocdManager = 0;
 	delete _savefileManager;
 	_savefileManager = 0;
 	delete _timerManager;
@@ -255,11 +251,6 @@ void ModularBackend::deleteMutex(MutexRef mutex) {
 Audio::Mixer *ModularBackend::getMixer() {
 	assert(_mixer);
 	return (Audio::Mixer *)_mixer;
-}
-
-AudioCDManager *ModularBackend::getAudioCDManager() {
-	assert(_audiocdManager);
-	return _audiocdManager;
 }
 
 void ModularBackend::displayMessageOnOSD(const char *msg) {

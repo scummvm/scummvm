@@ -6,7 +6,7 @@
 ######################################################################
 
 TESTS        := $(srcdir)/test/common/*.h $(srcdir)/test/audio/*.h
-TEST_LIBS    := audio/libaudio.a common/libcommon.a
+TEST_LIBS    := backends/libbackends.a audio/libaudio.a common/libcommon.a
 
 #
 TEST_FLAGS   := --runner=StdioPrinter --no-std --no-eh

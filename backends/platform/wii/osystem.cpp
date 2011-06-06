@@ -150,7 +150,7 @@ void OSystem_Wii::initBackend() {
 	initSfx();
 	initEvents();
 
-	OSystem::initBackend();
+	BaseBackend::initBackend();
 }
 
 void OSystem_Wii::quit() {

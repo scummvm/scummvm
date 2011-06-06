@@ -26,6 +26,9 @@
 
 #include "common/system.h"
 #include "common/str.h"
+#include "common/textconsole.h"
+
+#include "backends/audiocd/default/default-audiocd.h"
 
 #ifdef __PLAYSTATION2__
 	// for those replaced fopen/fread/etc functions
@@ -45,9 +48,20 @@
 OSystem *g_system = 0;
 
 OSystem::OSystem() {
+	_audiocdManager = 0;
 }
 
 OSystem::~OSystem() {
+	delete _audiocdManager;
+}
+
+void OSystem::initBackend() {
+#ifndef DISABLE_DEFAULT_AUDIOCD_MANAGER
+	if (!_audiocdManager)
+		_audiocdManager = new DefaultAudioCDManager();
+#endif
+	if (!_audiocdManager)
+		error("Backend failed to instantiate AudioCD manager");
 }
 
 bool OSystem::setGraphicsMode(const char *name) {

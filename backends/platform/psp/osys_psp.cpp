@@ -100,7 +100,7 @@ void OSystem_PSP::initBackend() {
 
 	setupMixer();
 
-	OSystem::initBackend();
+	BaseBackend::initBackend();
 }
 
 // Let's us know an engine

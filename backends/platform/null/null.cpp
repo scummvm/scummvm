@@ -78,7 +78,6 @@ void OSystem_NULL::initBackend() {
 	_eventManager = new DefaultEventManager(this);
 	_savefileManager = new DefaultSaveFileManager();
 	_graphicsManager = new NullGraphicsManager();
-	_audiocdManager = new DefaultAudioCDManager();
 	_mixer = new Audio::MixerImpl(this, 22050);
 
 	((Audio::MixerImpl *)_mixer)->setReady(false);
@@ -87,7 +86,7 @@ void OSystem_NULL::initBackend() {
 	// this way; they need to be hooked into the system somehow to
 	// be functional. Of course, can't do that in a NULL backend :).
 
-	OSystem::initBackend();
+	BaseBackend::initBackend();
 }
 
 bool OSystem_NULL::pollEvent(Common::Event &event) {
