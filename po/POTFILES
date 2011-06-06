@@ -40,7 +40,6 @@ audio/softsynth/appleiigs.cpp
 audio/softsynth/sid.cpp
 audio/softsynth/mt32.cpp
 audio/softsynth/pcspk.cpp
-audio/softsynth/ym2612.cpp
 
 backends/keymapper/remap-dialog.cpp
 backends/midi/windows.cpp
