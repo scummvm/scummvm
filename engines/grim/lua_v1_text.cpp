@@ -30,6 +30,7 @@
 #include "engines/grim/lipsync.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/colormap.h"
+#include "engines/grim/resource.h"
 
 #include "engines/grim/imuse/imuse.h"
 
@@ -211,7 +212,9 @@ void setTextObjectParams(TextObjectCommon *textObject, lua_Object tableObj) {
 	lua_pushobject(lua_getref(refTextObjectFont));
 	keyObj = lua_gettable();
 	if (keyObj) {
-		if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKTAG('F','O','N','T')) {
+		if (g_grim->getGameType() == GType_MONKEY4 && lua_isstring(keyObj)) {
+			textObject->setFont(g_resourceloader->getFont(lua_getstring(keyObj)));
+		else if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKTAG('F','O','N','T')) {
 			textObject->setFont(getfont(keyObj));
 		}
 	}

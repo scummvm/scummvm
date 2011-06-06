@@ -1553,6 +1553,9 @@ Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *paren
 
 Costume::Component *Costume::loadComponentEMI(Costume::Component *parent, int parentID, const char *name, Costume::Component *prevComponent) {
 	// some have an exclimation mark, this could mean something.
+	// for now, return 0 otherwise it will just crash in some other part.
+	return 0;
+
 	assert(name[0] == '!');
 	++name;
 
