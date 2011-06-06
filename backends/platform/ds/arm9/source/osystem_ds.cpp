@@ -865,6 +865,13 @@ Common::WriteStream *OSystem_DS::createConfigWriteStream() {
 	return file.createWriteStream();
 }
 
+void OSystem_DS::logMessage(LogMessageType::Type type, const char *message) {
+#ifndef DISABLE_TEXT_CONSOLE
+	nocashMessage((char *)message);
+//	consolePrintf((char *)message);
+#endif
+}
+
 u16 OSystem_DS::applyGamma(u16 color) {
 	// Attempt to do gamma correction (or something like it) to palette entries
 	// to improve the contrast of the image on the original DS screen.

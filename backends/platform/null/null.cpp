@@ -55,6 +55,8 @@ public:
 
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
+
+	virtual void logMessage(LogMessageType::Type type, const char *message);
 };
 
 OSystem_NULL::OSystem_NULL() {
@@ -110,6 +112,18 @@ Common::SeekableReadStream *OSystem_NULL::createConfigReadStream() {
 Common::WriteStream *OSystem_NULL::createConfigWriteStream() {
 	Common::FSNode file(DEFAULT_CONFIG_FILE);
 	return file.createWriteStream();
+}
+
+void OSystem_NULL::logMessage(LogMessageType::Type type, const char *message) {
+	FILE *output = 0;
+
+	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
+		output = stdout;
+	else
+		output = stderr;
+
+	fputs(message, output);
+	fflush(output);
 }
 
 OSystem *OSystem_NULL_create() {

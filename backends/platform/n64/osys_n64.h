@@ -207,6 +207,7 @@ public:
 	virtual Common::TimerManager *getTimerManager();
 	virtual void setTimerCallback(TimerProc callback, int interval);
 	FilesystemFactory *getFilesystemFactory();
+	virtual void logMessage(LogMessageType::Type type, const char *message);
 
 	void rebuildOffscreenGameBuffer(void);
 	void rebuildOffscreenMouseBuffer(void);
