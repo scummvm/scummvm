@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-06-06 12:43+0200\n"
+"POT-Creation-Date: 2011-06-06 23:15+0100\n"
 "PO-Revision-Date: 2011-05-02 13:07+0100\n"
 "Last-Translator: Hampus Flink <hampus.flink@gmail.com>\n"
 "Language-Team: \n"
@@ -599,7 +599,8 @@ msgstr "Renderingsläge:"
 msgid "Special dithering modes supported by some games"
 msgstr "Speciella gitterlägen stödda av vissa spel"
 
-#: gui/options.cpp:726
+#: gui/options.cpp:726 backends/graphics/sdl/sdl-graphics.cpp:2252
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:456
 msgid "Fullscreen mode"
 msgstr "Fullskärmsläge"
 
@@ -1961,6 +1962,29 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normalt (ingen skalning)"
 
+#: backends/graphics/sdl/sdl-graphics.cpp:2137
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:517
+#, fuzzy
+msgid "Enabled aspect ratio correction"
+msgstr "Korrektion av bildförhållande på/av"
+
+#: backends/graphics/sdl/sdl-graphics.cpp:2143
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:522
+#, fuzzy
+msgid "Disabled aspect ratio correction"
+msgstr "Korrektion av bildförhållande på/av"
+
+#: backends/graphics/sdl/sdl-graphics.cpp:2198
+#, fuzzy
+msgid "Active graphics filter:"
+msgstr "Växla grafikfilter"
+
+#: backends/graphics/sdl/sdl-graphics.cpp:2254
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:461
+#, fuzzy
+msgid "Windowed mode"
+msgstr "Renderingsläge:"
+
 #: backends/graphics/opengl/opengl-graphics.cpp:139
 msgid "OpenGL Normal"
 msgstr "OpenGL normal"
@@ -1972,6 +1996,23 @@ msgstr "OpenGL konservation"
 #: backends/graphics/opengl/opengl-graphics.cpp:141
 msgid "OpenGL Original"
 msgstr "OpenGL original"
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:399
+#, fuzzy
+msgid "Current display mode"
+msgstr "Aktivt videoläge:"
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:412
+msgid "Current scale"
+msgstr ""
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:542
+msgid "Active filter mode: Linear"
+msgstr ""
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:544
+msgid "Active filter mode: Nearest"
+msgstr ""
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
@@ -2294,6 +2335,52 @@ msgid ""
 msgstr ""
 "Glöm inte att välja en tangent för \"Göm verktygsrad\" för att se hela "
 "inventariet"
+
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:273
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:317
+#: backends/events/gph/gph-events.cpp:367
+#: backends/events/gph/gph-events.cpp:410
+#: backends/events/openpandora/op-events.cpp:78
+msgid "Touchscreen 'Tap Mode' - Left Click"
+msgstr ""
+
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:275
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:319
+#: backends/events/gph/gph-events.cpp:369
+#: backends/events/gph/gph-events.cpp:412
+#: backends/events/openpandora/op-events.cpp:80
+msgid "Touchscreen 'Tap Mode' - Right Click"
+msgstr ""
+
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:277
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:321
+#: backends/events/gph/gph-events.cpp:371
+#: backends/events/gph/gph-events.cpp:414
+#: backends/events/openpandora/op-events.cpp:82
+msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
+msgstr ""
+
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:297
+#: backends/events/gph/gph-events.cpp:391
+#, fuzzy
+msgid "Maximum Volume"
+msgstr "Volym"
+
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:299
+#: backends/events/gph/gph-events.cpp:393
+msgid "Increasing Volume"
+msgstr ""
+
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:306
+#: backends/events/gph/gph-events.cpp:399
+#, fuzzy
+msgid "Minimal Volume"
+msgstr "Volym"
+
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:308
+#: backends/events/gph/gph-events.cpp:401
+msgid "Decreasing Volume"
+msgstr ""
 
 #~ msgid "Discovered %d new games."
 #~ msgstr "Nya spel upptäckta: %d."
