@@ -2133,12 +2133,14 @@ bool SdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 #ifdef USE_OSD
 		char buffer[128];
 		if (_videoMode.aspectRatioCorrection)
-			sprintf(buffer, "Enabled aspect ratio correction\n%d x %d -> %d x %d",
+			sprintf(buffer, "%s\n%d x %d -> %d x %d",
+				_("Enabled aspect ratio correction"),
 				_videoMode.screenWidth, _videoMode.screenHeight,
 				_hwscreen->w, _hwscreen->h
 				);
 		else
-			sprintf(buffer, "Disabled aspect ratio correction\n%d x %d -> %d x %d",
+			sprintf(buffer, "%s\n%d x %d -> %d x %d",
+				_("Disabled aspect ratio correction"),
 				_videoMode.screenWidth, _videoMode.screenHeight,
 				_hwscreen->w, _hwscreen->h
 				);
@@ -2192,7 +2194,8 @@ bool SdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 			}
 			if (newScalerName) {
 				char buffer[128];
-				sprintf(buffer, "Active graphics filter: %s\n%d x %d -> %d x %d",
+				sprintf(buffer, "%s %s\n%d x %d -> %d x %d",
+					_("Active graphics filter:"),
 					newScalerName,
 					_videoMode.screenWidth, _videoMode.screenHeight,
 					_hwscreen->w, _hwscreen->h
@@ -2246,9 +2249,9 @@ void SdlGraphicsManager::toggleFullScreen() {
 	endGFXTransaction();
 #ifdef USE_OSD
 	if (_videoMode.fullscreen)
-		displayMessageOnOSD("Fullscreen mode");
+		displayMessageOnOSD(_("Fullscreen mode"));
 	else
-		displayMessageOnOSD("Windowed mode");
+		displayMessageOnOSD(_("Windowed mode"));
 #endif
 }
 

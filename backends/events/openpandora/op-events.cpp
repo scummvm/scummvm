@@ -34,6 +34,8 @@
 #include "backends/platform/openpandora/op-sdl.h"
 #include "backends/platform/openpandora/op-options.h"
 
+#include "common/translation.h"
+
 /* Quick default button states for modifiers. */
 int BUTTON_STATE_L					=	false;
 
@@ -73,11 +75,11 @@ bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		case SDLK_PAGEUP:
 			OP::ToggleTapMode();
 			if (OP::tapmodeLevel == TAPMODE_LEFT) {
-				g_system->displayMessageOnOSD("Touchscreen 'Tap Mode' - Left Click");
+				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Left Click"));
 			} else if (OP::tapmodeLevel == TAPMODE_RIGHT) {
-				g_system->displayMessageOnOSD("Touchscreen 'Tap Mode' - Right Click");
+				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Right Click"));
 			} else if (OP::tapmodeLevel == TAPMODE_HOVER) {
-				g_system->displayMessageOnOSD("Touchscreen 'Tap Mode' - Hover (No Click)");
+				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Hover (No Click)"));
 			}
 			break;
 		case SDLK_RSHIFT:
