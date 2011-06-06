@@ -229,7 +229,7 @@ OSystem *OSystem_IPHONE_create() {
 	return new OSystem_IPHONE();
 }
 
-CCommon::String OSystem_IPHONE::getDefaultConfigFileName() {
+Common::String OSystem_IPHONE::getDefaultConfigFileName() {
 #ifdef IPHONE_OFFICIAL
 	Common::String path = iPhone_getDocumentsDir();
 	path += "/Preferences";
