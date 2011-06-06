@@ -79,7 +79,7 @@ void decryptBuffer(byte *buf, uint32 size) {
 
 /* KroArchive */
 
-KroArchive::KroArchive() : _fd(NULL) {
+KroArchive::KroArchive() : _fd(NULL), _resourceTypes(NULL) {
 }
 
 KroArchive::~KroArchive() {
@@ -214,6 +214,14 @@ uint32 KroArchive::getPakBaseIndex(Common::String &pakName) {
 			return _pakDirectory[i].baseIndex;
 	}
 	error("KroArchive::getPakBaseIndex() PakName %s not found", pakName.c_str());
+}
+
+bool KroArchive::hasResourceType(int16 resourceType) {
+	for (const int16 *iter = _resourceTypes; iter && *iter != -1; iter++) {
+		if (*iter == resourceType)
+			return true;
+	}
+	return false;
 }
 
 } // End of namespace Prisoner

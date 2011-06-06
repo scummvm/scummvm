@@ -65,8 +65,10 @@ public:
 	~PrisonerResourceLoader();
 	byte *load(Common::String &pakName, int16 pakSlot, int16 type, uint32 &dataSize);
 	KroArchive *getArchiveForType(int16 type);
+	void addArchive(const char *filename, const _PakDirectoryEntry directory[], const int16 *resourceTypes);
+	void addArchive(const char *filename, const char *directoryFilename, uint32 offset, bool isEncrypted, const int16 *resourceTypes);
 protected:
-	KroArchive *_vgaArchive, *_soundArchive, *_langArchive;
+	Common::Array<KroArchive*> _archives;
 };
 
 class ResourceManager {
@@ -92,7 +94,7 @@ public:
 	template<class T>
 	T* get(int16 slotIndex) const { return (T*)_slots[slotIndex].resource; }
 	void unload(int16 slotIndex);
-	void purge();
+	void purge(bool all);
 	void getSlotInfo(int16 slotIndex, Common::String &pakName, int16 &pakSlot, int16 *type = NULL) {
 		pakName = _slots[slotIndex].pakName;
 		pakSlot = _slots[slotIndex].pakSlot;

@@ -126,8 +126,6 @@ void PrisonerEngine::enterScene(int16 moduleIndex, int16 sceneIndex) {
 
 	debug("PrisonerEngine::enterScene(%d, %d)", moduleIndex, sceneIndex);
 
-	//if (moduleIndex == 2 && sceneIndex == 33) gDebugLevel = 8; else gDebugLevel = 0;
-
 	Common::String modulePakName = Common::String::format("SM%02d", moduleIndex);
 
 	_lockUserInputRefCounter = 0;
@@ -237,7 +235,7 @@ void PrisonerEngine::leaveScene() {
 		unloadDialogPanel();
 		unloadInventoryItems();
 		// Free all unused resources
-		_res->purge();
+		_res->purge(false);
 		/* CHECKME: The original defragments the system memory here,
 			I don't think that's neccessary on any supported platform.
 		*/

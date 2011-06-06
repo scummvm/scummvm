@@ -59,10 +59,13 @@ public:
 	void loadDirectory(const char *filename, uint32 offset, bool isEncrypted);
 	void loadDirectory(const _PakDirectoryEntry directory[]);
 	uint32 getPakBaseIndex(Common::String &pakName);
+	void setResourceTypes(const int16 *resourceTypes) { _resourceTypes = resourceTypes; }
+	bool hasResourceType(int16 resourceType);
 protected:
 	Common::File *_fd;
 	Common::Array<KroArchiveEntry> _entries;
 	Common::Array<PakDirectoryEntry> _pakDirectory;
+	const int16 *_resourceTypes;
 };
 
 } // End of namespace Prisoner

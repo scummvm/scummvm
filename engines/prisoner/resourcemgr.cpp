@@ -41,6 +41,7 @@ PrisonerResourceLoader::PrisonerResourceLoader() {
 	// NOTE: An alternative to hardcoding the data would be to load it from the game Exe
 	// (The file-based loadDirectory supports this already.)
 
+	// Same in DOS, Win95
 	static const _PakDirectoryEntry kPrisonerKSVGADirectory[] = {
 		{"SA02", 0},
 		{"SA03", 179},
@@ -74,7 +75,7 @@ PrisonerResourceLoader::PrisonerResourceLoader() {
 		{NULL, 0}
 	};
 
-	static const _PakDirectoryEntry kPrisonerKSOUNDDirectory[] = {
+	static const _PakDirectoryEntry kPrisonerDOSKSOUNDDirectory[] = {
 		{"MUS02", 0},
 		{"MUS03", 6},
 		{"MUS06", 23},
@@ -103,29 +104,41 @@ PrisonerResourceLoader::PrisonerResourceLoader() {
 		{NULL, 0}
 	};
 
-	// TODO: Make a addArchive method with kro name, directory and resource types as parameters
-	// Then we don't need member vars for each kro since the kro objects will then be in an array instead.
+	static const int16 kPrisonerKSVGAResourceTypes[] = {0, 1, 2, 4, 6, 7, 8, 9, 10, 11, 14, 17, -1};
+	static const int16 kPrisonerKSOUNDResourceTypes[] = {12, 13, 18, -1};
+	static const int16 kPrisonerKLANGResourceTypes[] = {3, 16, 19, -1};
 
-	_vgaArchive = new KroArchive();
-	_vgaArchive->open("KSVGA.KRO");
-	_vgaArchive->loadDirectory(kPrisonerKSVGADirectory);
+	/*
+	// Same as in the DOS version minus several PAKs
+	// I'm not sure yet if the other PAKs are defined elsewhere or
+	// completely absent here.
+	static const _PakDirectoryEntry kPrisonerWinKSOUNDDirectory[] = {
+		{"MUS02", 0},
+		{"MUS03", 6},
+		{"MUS06", 23},
+		{"MUS08", 32},
+		{"MUS09", 34},
+		{"MUS10", 38},
+		{"MUS11", 41},
+		{"MUS12", 42},
+		{"SMP02", 45},
+		{"SMP03", 113},
+		{"SMP06", 165},
+		{"SMP08", 196},
+		{"SMP09", 222},
+		{NULL, 0}
+	};
+	*/
 
-	_soundArchive = new KroArchive();
-	_soundArchive->open("KSOUND.KRO");
-	_vgaArchive->loadDirectory(kPrisonerKSOUNDDirectory);
-
-	_langArchive = new KroArchive();
-	_langArchive->open("E_KLANG.KRO");
-	_langArchive->loadDirectory("E_KLANG.BIN", 0, true);
+	addArchive("KSVGA.KRO", kPrisonerKSVGADirectory, kPrisonerKSVGAResourceTypes);
+	addArchive("KSOUND.KRO", kPrisonerDOSKSOUNDDirectory, kPrisonerKSOUNDResourceTypes);
+	addArchive("E_KLANG.KRO", "E_KLANG.BIN", 0, true, kPrisonerKLANGResourceTypes);
 
 }
 
 PrisonerResourceLoader::~PrisonerResourceLoader() {
-
-	delete _vgaArchive;
-	delete _soundArchive;
-	delete _langArchive;
-
+	for (Common::Array<KroArchive*>::iterator iter = _archives.begin(); iter != _archives.end(); iter++)
+		delete *iter;
 }
 
 byte *PrisonerResourceLoader::load(Common::String &pakName, int16 pakSlot, int16 type, uint32 &dataSize) {
@@ -134,36 +147,32 @@ byte *PrisonerResourceLoader::load(Common::String &pakName, int16 pakSlot, int16
 	byte *data = archive->load(baseIndex + pakSlot);
 	dataSize = archive->getSize(baseIndex + pakSlot);
 	return data;
-
 }
 
 KroArchive *PrisonerResourceLoader::getArchiveForType(int16 type) {
-	switch (type) {
-	case 0:
-	case 1:
-	case 2:
-	case 4:
-	case 6:
-	case 7:
-	case 8:
-	case 9:
-	case 10:
-	case 11:
-	case 14:
-	case 17:
-		return _vgaArchive;
-	case 12:
-	case 13:
-	case 18:
-		return _soundArchive;
-	case 3:
-	case 16:
-	case 19:
-		return _langArchive;
-	default:
-		error("PrisonerResourceLoader::getArchiveForType() Unknown resource type %d", type);
+	for (Common::Array<KroArchive*>::iterator iter = _archives.begin(); iter != _archives.end(); iter++) {
+		KroArchive *archive = *iter;
+		if (archive->hasResourceType(type))
+			return archive;
 	}
+	error("PrisonerResourceLoader::getArchiveForType() Unknown resource type %d", type);
 	return NULL;
+}
+
+void PrisonerResourceLoader::addArchive(const char *filename, const _PakDirectoryEntry directory[], const int16 *resourceTypes) {
+	KroArchive *archive = new KroArchive();
+	archive->open(filename);
+	archive->loadDirectory(directory);
+	archive->setResourceTypes(resourceTypes);
+	_archives.push_back(archive);
+}
+
+void PrisonerResourceLoader::addArchive(const char *filename, const char *directoryFilename, uint32 offset, bool isEncrypted, const int16 *resourceTypes) {
+	KroArchive *archive = new KroArchive();
+	archive->open(filename);
+	archive->loadDirectory(directoryFilename, offset, isEncrypted);
+	archive->setResourceTypes(resourceTypes);
+	_archives.push_back(archive);
 }
 
 /* ResourceManager */
@@ -173,16 +182,18 @@ ResourceManager::ResourceManager(ResourceLoader *loader)
 }
 
 ResourceManager::~ResourceManager() {
-	// TODO: Free all resources
+	// Free all resources
+	purge(true);
 }
 
-void ResourceManager::purge() {
-	debug(1, "ResourceManager::purge()");
+void ResourceManager::purge(bool all) {
+	debug(1, "ResourceManager::purge(%d)", all);
 	for (int16 slotIndex = 0; slotIndex < kMaxResourceSlots; slotIndex++) {
-		if (_slots[slotIndex].resource && _slots[slotIndex].refCount == 0) {
+		if (_slots[slotIndex].resource && (all || _slots[slotIndex].refCount == 0)) {
 			delete _slots[slotIndex].resource;
 			_slots[slotIndex].resource = NULL;
 			_slots[slotIndex].type = -1;
+			_slots[slotIndex].refCount = 0;
 			_freeSlotsCount++;
 		}
 	}
@@ -213,7 +224,7 @@ int16 ResourceManager::add(Common::String &pakName, int16 pakSlot, int16 type) {
 	int16 slotIndex;
 
 	if (_freeSlotsCount == 0)
-		purge();
+		purge(false);
 
 	for (slotIndex = 0; slotIndex < kMaxResourceSlots; slotIndex++) {
 		if (_slots[slotIndex].type == -1)
