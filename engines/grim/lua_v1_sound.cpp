@@ -321,8 +321,7 @@ void L1_LoadBundle() {
 }
 
 void L1_PlaySound() {
-	if (gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
-		error("OPCODE USAGE VERIFICATION: PlaySound");
+	// dummy
 }
 
 } // end of namespace Grim
