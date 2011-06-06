@@ -697,7 +697,7 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 
 	case kCursorDoor:
 		if (buttonState != 0) {
-			checkZoneAction(kCursorDoor);
+			checkZoneAction(3);
 			inpMouseSetWaitRelease(true);
 		}
 		break;
@@ -821,8 +821,10 @@ bool PrisonerEngine::handleMuxInput() {
 	uint16 buttonState;
 	updateEvents();
 	getInputStatus(keyState, buttonState);
-	debug("keyState = %d; buttonState = %d", keyState, buttonState);
-	if (_muxEasterEggCount != 3 && (keyState != Common::KEYCODE_INVALID || buttonState != 0)) {
+	//debug("keyState = %d; buttonState = %d", keyState, buttonState);
+	if (_loadingSavegame)
+		aborted = true;
+	else if (_muxEasterEggCount != 3 && (keyState != Common::KEYCODE_INVALID || buttonState != 0)) {
 		_muxEasterEggKey = keyState;
 		aborted = true;
 		inpSetWaitRelease(true);

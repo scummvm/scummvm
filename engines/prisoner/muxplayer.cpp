@@ -89,8 +89,8 @@ bool MuxPlayer::open(const char *filename) {
 	_header.width = _fd.readUint16LE();
 	_header.height = _fd.readUint16LE();
 
-	debug("width = %d; height = %d", _header.width, _header.height);
-	debug("u3 = %d; u4 = %d; u5 = %d; u6 = %d; u7 = %d; u8 = %d", _header.u3, _header.u4, _header.u5, _header.u6, _header.u7, _header.u8);
+	debug(3, "width = %d; height = %d", _header.width, _header.height);
+	debug(3, "u3 = %d; u4 = %d; u5 = %d; u6 = %d; u7 = %d; u8 = %d", _header.u3, _header.u4, _header.u5, _header.u6, _header.u7, _header.u8);
 
 	_frameBuffer = new byte[_header.width * _header.height];
 
@@ -156,7 +156,7 @@ bool MuxPlayer::play() {
 		}
 	}
 
-	debug("Mux playback done.");
+	debug(3, "Mux playback done.");
 
 	return !aborted;
 }
@@ -171,8 +171,8 @@ void MuxPlayer::handleFrame() {
 		chunkType = _fd.readUint16LE();
 		chunkSize = _fd.readUint32LE();
 
-		debug("chunkNum = %d; ", chunkNum++);
-		debug("chunkType = %04X; chunkSize = %d (%08X); ofs = %08X", chunkType, chunkSize, chunkSize, _fd.pos());
+		debug(3, "chunkNum = %d; ", chunkNum++);
+		debug(3, "chunkType = %04X; chunkSize = %d (%08X); ofs = %08X", chunkType, chunkSize, chunkSize, _fd.pos());
 
 		switch (chunkType) {
 		case kEndOfChunk:
@@ -192,7 +192,7 @@ void MuxPlayer::handleFrame() {
 			// Nothing (handled in while condition)
 			break;
 		default:
-			debug("skipping unknown chunk %02X", chunkType);
+			debug(3, "skipping unknown chunk %02X", chunkType);
 			_fd.seek(chunkSize, SEEK_CUR);
 		}
 	} while (chunkType != kEndOfChunk && chunkType != kEndOfFile);
@@ -223,13 +223,13 @@ void MuxPlayer::handleVideo(uint32 chunkSize) {
 
 	flags = _fd.readByte();
 
-	debug("flags = %02X", flags);
+	debug(3, "flags = %02X", flags);
 
 	_fd.readUint32LE();
 	bufSize1 = _fd.readUint32LE();
 	bufSize2 = _fd.readUint32LE();
 
-	debug("chunkSize = %d; bufSize1 = %d; bufSize2 = %d", chunkSize, bufSize1, bufSize2);
+	debug(3, "chunkSize = %d; bufSize1 = %d; bufSize2 = %d", chunkSize, bufSize1, bufSize2);
 
 	buffer = new byte[chunkSize];
 	_fd.read(buffer, chunkSize);
@@ -237,15 +237,15 @@ void MuxPlayer::handleVideo(uint32 chunkSize) {
 	if (flags & 4) {
 		byte *compBuffer = buffer;
 		buffer = new byte[bufSize1 + bufSize2];
-		debug("decompress...");
+		debug(3, "decompress...");
 		decompress(compBuffer, buffer, chunkSize, bufSize1 + bufSize2);
-		debug("decompress ok");
+		debug(3, "decompress ok");
 		delete[] compBuffer;
 	}
 
-	debug("decodeFrame...");
+	debug(3, "decodeFrame...");
 	decodeFrame(buffer, buffer + bufSize1, _frameBuffer, bufSize1, bufSize2, !(flags & 2));
-	debug("decodeFrame ok");
+	debug(3, "decodeFrame ok");
 
 	delete[] buffer;
 }

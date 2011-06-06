@@ -100,7 +100,6 @@ void PrisonerEngine::startScript(int16 programIndex, int16 scriptIndex) {
 	script->zoneEnterLeaveFlag = 0;
 	script->screenTextIndex = -1;
 	script->sleepCounter = 0;
-	/*script->unk3 = 0;*/
 	script->syncScriptNumber = -1;
 	script->actorIndex = -1;
 
