@@ -57,7 +57,7 @@ Actor::Actor(const Common::String &actorName) :
 		_walkCostume(NULL), _walkChore(-1), _walkedLast(false), _walkedCur(false),
 		_turnCostume(NULL), _leftTurnChore(-1), _rightTurnChore(-1),
 		_lastTurnDir(0), _currTurnDir(0),
-		_mumbleCostume(NULL), _mumbleChore(-1), _sayLineText(NULL) {
+		_mumbleCostume(NULL), _mumbleChore(-1), _sayLineText(0) {
 	_lookingMode = false;
 	_lookAtRate = 200;
 	_constrain = false;
@@ -259,11 +259,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	}
 	savedState->writeLESint32(_activeShadowSlot);
 
-	if (_sayLineText) {
-		savedState->writeLEUint32(_sayLineText->getId());
-	} else {
-		savedState->writeLEUint32(0);
-	}
+	savedState->writeLEUint32(_sayLineText);
 
 	savedState->writeVector3d(_lookAtVector);
 	savedState->writeFloat(_lookAtRate);
@@ -423,7 +419,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 	}
 	_activeShadowSlot = savedState->readLESint32();
 
-	_sayLineText = g_grim->getTextObject(savedState->readLEUint32());
+	_sayLineText = savedState->readLEUint32();
 
 	_lookAtVector = savedState->readVector3d();
 	_lookAtRate = savedState->readFloat();
@@ -887,42 +883,51 @@ void Actor::sayLine(const char *msg, const char *msgId, bool background) {
 	g_grim->setTalkingActor(this);
 
 	if (_sayLineText) {
-		g_grim->killTextObject(_sayLineText);
-		_sayLineText = NULL;
+		TextObject *textObject = g_grim->getTextObject(_sayLineText);
+		if (textObject)
+			g_grim->killTextObject(textObject);
+		_sayLineText = 0;
 	}
 
 	GrimEngine::SpeechMode m = g_grim->getSpeechMode();
 	if (!g_grim->_sayLineDefaults.getFont() || m == GrimEngine::VoiceOnly || background)
 		return;
 
-	_sayLineText = new TextObject(false, true);
-	_sayLineText->setDefaults(&g_grim->_sayLineDefaults);
-	_sayLineText->setText(msg);
-	_sayLineText->setFGColor(_talkColor);
+	TextObject *textObject = new TextObject(false, true);
+	textObject->setDefaults(&g_grim->_sayLineDefaults);
+	textObject->setText(msg);
+	textObject->setFGColor(_talkColor);
+	if (g_grim->getMode() == ENGINE_MODE_SMUSH)
+		g_grim->killTextObjects();
 	if (m == GrimEngine::TextOnly || g_grim->getMode() == ENGINE_MODE_SMUSH) {
 		textObject->setDuration(500 + strlen(msg) * 15 * (11 - g_grim->getTextSpeed()));
 	}
 	if (g_grim->getMode() == ENGINE_MODE_SMUSH) {
-		_sayLineText->setX(640 / 2);
-		_sayLineText->setY(456);
+		textObject->setX(640 / 2);
+		textObject->setY(456);
 	} else {
 		if (_winX1 == 1000 || _winX2 == -1000 || _winY2 == -1000) {
-			_sayLineText->setX(640 / 2);
-			_sayLineText->setY(463);
+			textObject->setX(640 / 2);
+			textObject->setY(463);
 		} else {
-			_sayLineText->setX((_winX1 + _winX2) / 2);
-			_sayLineText->setY(_winY1);
+			textObject->setX((_winX1 + _winX2) / 2);
+			textObject->setY(_winY1);
 		}
 	}
-	_sayLineText->createBitmap();
-	g_grim->registerTextObject(_sayLineText);
+	textObject->createBitmap();
+	g_grim->registerTextObject(textObject);
+	if (g_grim->getMode() != ENGINE_MODE_SMUSH)
+		_sayLineText = textObject->getId();
 }
 
 bool Actor::isTalking() {
 	// If there's no sound file then we're obviously not talking
 	GrimEngine::SpeechMode m = g_grim->getSpeechMode();
-	if ((m == GrimEngine::TextOnly && (!_sayLineText || _sayLineText->getDisabled())) ||
-	    (m != GrimEngine::TextOnly && (strlen(_talkSoundName.c_str()) == 0 || !g_imuse->getSoundStatus(_talkSoundName.c_str())))) {
+	TextObject *textObject = NULL;
+	if (_sayLineText)
+		textObject = g_grim->getTextObject(_sayLineText);
+	if ((m == GrimEngine::TextOnly && (!textObject || textObject->getDisabled())) ||
+			(m != GrimEngine::TextOnly && (strlen(_talkSoundName.c_str()) == 0 || !g_imuse->getSoundStatus(_talkSoundName.c_str())))) {
 		return false;
 	}
 
@@ -947,8 +952,10 @@ void Actor::shutUp() {
 	}
 
 	if (_sayLineText) {
-		g_grim->killTextObject(_sayLineText);
-		_sayLineText = NULL;
+		TextObject *textObject = g_grim->getTextObject(_sayLineText);
+		if (textObject)
+			g_grim->killTextObject(textObject);
+		_sayLineText = 0;
 	}
 	if (g_grim->getTalkingActor() == this) {
 		g_grim->setTalkingActor(NULL);

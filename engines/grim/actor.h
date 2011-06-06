@@ -98,7 +98,7 @@ public:
 	void sayLine(const char *msg, const char *msgId, bool background);
 	// When we clean all text objects we don't want the actors to clean their
 	// objects again since they're already freed
-	void lineCleanup() { _sayLineText = NULL; }
+	void lineCleanup() { _sayLineText = 0; }
 	void shutUp();
 	bool isTalking();
 
@@ -228,7 +228,7 @@ private:
 	int _activeShadowSlot;
 
 	static ObjectPtr<Font> _sayLineFont;
-	TextObject *_sayLineText;
+	int _sayLineText;
 
 	// Validate a yaw angle then set it appropriately
 	void setYaw(float yaw);
