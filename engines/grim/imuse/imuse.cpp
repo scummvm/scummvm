@@ -216,7 +216,7 @@ void Imuse::callback() {
 			// Ignore tracks which are about to finish. Also, if it did finish in the meantime,
 			// mark it as unused.
 			if (!track->stream) {
-				if (!g_system->getMixer()->isSoundHandleActive(track->handle))
+				if (!track->soundDesc || !g_system->getMixer()->isSoundHandleActive(track->handle))
 					memset(track, 0, sizeof(Track));
 				continue;
 			}
