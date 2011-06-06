@@ -126,10 +126,13 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 		ws = _testbedConfMan->getConfigWriteStream();
 		_testbedConfMan->writeTestbedConfigToStream(ws);
 		delete ws;
-	default:
-		GUI::Dialog::handleCommand(sender, cmd, data);
+		break;
 
+	default:
+		break;
 	}
+
+	GUI::Dialog::handleCommand(sender, cmd, data);
 }
 
 void TestbedInteractionDialog::addText(uint w, uint h, const Common::String text, Graphics::TextAlign textAlign, uint xOffset, uint yPadding) {
