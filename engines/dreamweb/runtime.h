@@ -1,10 +1,9 @@
 #ifndef ENGINES_DREAMGEN_RUNTIME_H__
 #define ENGINES_DREAMGEN_RUNTIME_H__
 
-#include <stdint.h>
 #include <assert.h>
-#include <vector>
 #include "common/scummsys.h"
+#include "common/array.h"
 
 //fixme: name clash
 #undef random
@@ -17,7 +16,7 @@ struct Register {
 		uint8 _part[2];
 	};
 	inline Register(): _value() {}
-	inline Register& operator=(uint16_t v) { _value = v; return *this; }
+	inline Register& operator=(uint16 v) { _value = v; return *this; }
 	inline operator uint16&() { return _value; }
 	inline void cbw() {
 		if (_value & 0x80)
@@ -29,7 +28,7 @@ struct Register {
 
 template<unsigned PART>
 struct RegisterPart {
-	uint8_t &_part;
+	uint8 &_part;
 
 	inline RegisterPart(Register &reg) : _part(reg._part[PART]) {}
 
@@ -40,19 +39,19 @@ struct RegisterPart {
 		_part = o._part;
 		return *this;
 	}
-	inline RegisterPart& operator=(uint8_t v) {
+	inline RegisterPart& operator=(uint8 v) {
 		_part = v;
 		return *this;
 	}
 };
 
 struct WordRef {
-	std::vector<uint8> &data;
+	Common::Array<uint8> &data;
 	unsigned index;
 	bool changed;
-	uint16_t value;
+	uint16 value;
 
-	inline WordRef(std::vector<uint8> &data, unsigned index) : data(data), index(index), changed(false) {
+	inline WordRef(Common::Array<uint8> &data, unsigned index) : data(data), index(index), changed(false) {
 		assert(index + 1 < data.size());
 		value = data[index] | (data[index + 1] << 8);
 	}
@@ -61,15 +60,15 @@ struct WordRef {
 		value = ref.value;
 		return *this;
 	}
-	inline WordRef& operator=(uint16_t v) {
+	inline WordRef& operator=(uint16 v) {
 		changed = true;
 		value = v;
 		return *this;
 	}
-	inline operator uint16_t() const {
+	inline operator uint16() const {
 		return value;
 	}
-	inline operator uint16_t&() {
+	inline operator uint16&() {
 		return value;
 	}
 	inline ~WordRef() {
@@ -81,12 +80,12 @@ struct WordRef {
 };
 
 struct Segment {
-	std::vector<uint8> data;
-	inline uint8_t &byte(unsigned index) {
+	Common::Array<uint8> data;
+	inline uint8 &byte(unsigned index) {
 		assert(index < data.size());
 		return data[index];
 	}
-	inline uint16_t word(unsigned index) const {
+	inline uint16 word(unsigned index) const {
 		assert(index + 1 < data.size());
 		return data[index] | (data[index + 1] << 8);
 	}
@@ -99,25 +98,25 @@ struct Segment {
 
 struct SegmentRef {
 	public:
-	uint16_t value;
-	std::vector<uint8> *data;
+	uint16 value;
+	Common::Array<uint8> *data;
 	inline SegmentRef& operator=(const SegmentRef &o) {
 		data = o.data;
 		return *this;
 	}
-	inline SegmentRef& operator=(const uint16_t id) {
+	inline SegmentRef& operator=(const uint16 id) {
 		return *this;
 	}
-	inline uint8_t &byte(unsigned index) {
+	inline uint8 &byte(unsigned index) {
 		assert(index < data->size());
 		return (*data)[index];
 	}
-	inline uint16_t word(unsigned index) const {
+	inline uint16 word(unsigned index) const {
 		assert(index + 1 < data->size());
 		return (*data)[index] | ((*data)[index + 1] << 8);
 	}
 	
-	inline operator uint16_t() const {
+	inline operator uint16() const {
 		return value;
 	}
 
@@ -310,7 +309,7 @@ struct RegisterContext {
 		b = t;
 	}
 
-	std::vector<uint16> stack;
+	Common::Array<uint16> stack;
 	inline void push(uint16 v) {
 		stack.push_back(v);
 	}
