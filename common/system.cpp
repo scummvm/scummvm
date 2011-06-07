@@ -77,8 +77,16 @@ void OSystem::initBackend() {
 		error("Backend failed to instantiate event manager");
 	if (!_timerManager)
 		error("Backend failed to instantiate timer manager");
+
+	// TODO: We currently don't check _savefileManager, because at least
+	// on the Nintendo DS, it is possible that none is set. That should
+	// probably be treated as "saving is not possible". Or else the NDS
+	// port needs to be changed to always set a _savefileManager
 // 	if (!_savefileManager)
 // 		error("Backend failed to instantiate savefile manager");
+
+	// TODO: We currently don't check _fsFactory because not all ports
+	// set it.
 // 	if (!_fsFactory)
 // 		error("Backend failed to instantiate fs factory");
 }
@@ -107,11 +115,6 @@ bool OSystem::setGraphicsMode(const char *name) {
 void OSystem::fatalError() {
 	quit();
 	exit(1);
-}
-
-Common::SaveFileManager *OSystem::getSavefileManager() {
-	assert(_savefileManager);
-	return _savefileManager;
 }
 
 FilesystemFactory *OSystem::getFilesystemFactory() {

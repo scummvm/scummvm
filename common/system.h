@@ -1042,7 +1042,9 @@ public:
 	 * and other modifiable persistent game data. For more information,
 	 * refer to the SaveFileManager documentation.
 	 */
-	virtual Common::SaveFileManager *getSavefileManager();
+	inline Common::SaveFileManager *getSavefileManager() {
+		return _savefileManager;
+	}
 
 	/**
 	 * Returns the FilesystemFactory object, depending on the current architecture.
