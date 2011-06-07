@@ -83,7 +83,7 @@ public:
 		return "Copyright (C) ScummVM";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription * /* desc */) const {
 		// Instantiate Engine even if the game data is not found.
 		*engine = new Testbed::TestbedEngine(syst);
 		return true;
