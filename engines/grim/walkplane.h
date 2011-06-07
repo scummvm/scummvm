@@ -76,6 +76,7 @@ public:
 		Graphics::Vector3d exitPoint;
 		float angleWithEdge;
 		Graphics::Vector3d edgeDir;
+		int edgeVertex;
 	};
 	void getExitInfo(const Graphics::Vector3d &start, const Graphics::Vector3d &dir, struct ExitInfo *result) const;
 

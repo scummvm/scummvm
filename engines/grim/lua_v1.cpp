@@ -607,12 +607,20 @@ void L1_GetSectorOppositeEdge() {
 	for (int i = 0; i < numSectors; i++) {
 		Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
 		if (strmatch(sector->getName(), name)) {
+			assert(sector->getNumVertices() == 4);
+			Graphics::Vector3d* vertices = sector->getVertices();
 			Sector::ExitInfo e;
-			sector->getExitInfo(actor->getPos(), actor->getPuckVector(), &e);
 
-			lua_pushnumber(e.exitPoint.x());
-			lua_pushnumber(e.exitPoint.y());
-			lua_pushnumber(e.exitPoint.z());
+			sector->getExitInfo(actor->getPos(), -actor->getPuckVector(), &e);
+			float frac = (e.exitPoint - vertices[e.edgeVertex + 1]).magnitude() / e.edgeDir.magnitude();
+			e.edgeVertex -= 2;
+			if (e.edgeVertex < 0)
+				e.edgeVertex += sector->getNumVertices();
+			Graphics::Vector3d edge = vertices[e.edgeVertex + 1] - vertices[e.edgeVertex];
+			Graphics::Vector3d p = vertices[e.edgeVertex] + edge * frac;
+			lua_pushnumber(p.x());
+			lua_pushnumber(p.y());
+			lua_pushnumber(p.z());
 
 			return;
 		}

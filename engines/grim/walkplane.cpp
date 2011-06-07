@@ -355,6 +355,7 @@ void Sector::getExitInfo(const Graphics::Vector3d &s, const Graphics::Vector3d &
 
 	result->edgeDir = _vertices[i] - _vertices[i - 1];
 	result->angleWithEdge = angle(dir, result->edgeDir);
+	result->edgeVertex = i - 1;
 
 	Graphics::Vector3d edgeNormal(result->edgeDir.y(), -result->edgeDir.x(), 0);
 	float d = dot(dir, edgeNormal);
