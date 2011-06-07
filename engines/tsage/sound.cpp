@@ -1676,11 +1676,30 @@ void Sound::_soServiceTrackType1(int trackIndex, const byte *channelData) {
 	if (channel == -1)
 		_trkState[trackIndex] = 0;
 	else {
-		VoiceTypeStruct *voiceType = _soundManager->_voiceTypeStructPtrs[_chVoiceType[channel]];
-		if (!voiceType)
+		int voiceType = _chVoiceType[channel];
+		VoiceTypeStruct *vtStruct = _soundManager->_voiceTypeStructPtrs[voiceType];
+
+		if (!vtStruct)
 			_trkState[trackIndex] = 0;
 		else {
-			
+			if (vtStruct->_voiceType != VOICETYPE_0) {
+				if (_trkState[trackIndex] == 1) {
+					int entryIndex = _soFindSound(vtStruct, *(channelData + 1));
+					if (entryIndex != -1) {
+						SoundDriver *driver = vtStruct->_entries[entryIndex]._driver;
+						assert(driver);
+
+						vtStruct->_entries[entryIndex]._type1._field6 = 0;
+						vtStruct->_entries[entryIndex]._type1._field4 = *(channelData + 1);
+						vtStruct->_entries[entryIndex]._type1._field5 = 0;
+
+						driver->proc32(vtStruct->_entries[entryIndex]._voiceNum, voiceType, 
+							_channelData[trackIndex], this, 0x7f, 0xff, 0xE);
+					}
+				} else {
+
+				}
+			}
 		}
 	}
 }
