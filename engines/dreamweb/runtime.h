@@ -60,7 +60,6 @@ public:
 	inline WordRef(Common::Array<uint8> &data, unsigned index) : _data(data.begin() + index), _index(index) {
 		assert(index + 1 < data.size());
 		_value = _data[0] | (_data[1] << 8);
-		debug(1, "word ref %d -> 0x%04x", _index, _value);
 	}
 
 	inline WordRef& operator=(const WordRef &ref) {
@@ -78,11 +77,9 @@ public:
 	}
 
 	inline ~WordRef() {
-		debug(1, "writing %d -> 0x%04x", _index, _value);
 		_data[0] = _value & 0xff;
 		_data[1] = _value >> 8;
 		_value = _data[0] | (_data[1] << 8);
-		debug(1, "word ref result %d -> 0x%04x", _index, _value);
 	}
 };
 
@@ -131,6 +128,7 @@ public:
 	}
 
 	inline WordRef word(unsigned index) {
+		//debug(1, "getting word ref for %04x:%d", _value, index);
 		assert(_segment != 0);
 		return _segment->word(index);
 	}
@@ -186,14 +184,16 @@ public:
 	LowPartOfRegister	dl;
 	HighPartOfRegister	dh;
 	
-	SegmentRef cs, ds, es;
+	SegmentRef cs, ds, es, data;
+	//data == fake segment register always pointing to data segment
 	Flags flags;
 
-	inline Context(): al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx), cs(this), ds(this), es(this) {
+	inline Context(): al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx), cs(this), ds(this), es(this), data(this) {
 		_segments[kDefaultDataSegment] = Segment();
 		cs.reset(kDefaultDataSegment);
 		ds.reset(kDefaultDataSegment);
 		es.reset(kDefaultDataSegment);
+		data.reset(kDefaultDataSegment);
 	}
 
 	SegmentRef getSegment(uint16 value) {
