@@ -732,7 +732,7 @@ void L1_GetCurrentSetup() {
 	lua_pushnumber(scene->getSetup());
 }
 
-/* This function makes the walkplane sectors littler by the
+/* This function makes the walkplane sectors smaller by the
  * given size. This is used when manny is holding some big
  * thing, like his scythe, that is likely to clip with the
  * things around him. The sectors are still connected, but they
