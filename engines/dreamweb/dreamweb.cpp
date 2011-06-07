@@ -133,6 +133,15 @@ Common::Error DreamWebEngine::run() {
 	return Common::kNoError;
 }
 
+void DreamWebEngine::openFile(const Common::String &name) {
+	if (_file.isOpen()) {
+		_file.close();
+	}
+	if (!_file.open(name))
+		error("cannot open file %s", name.c_str());
+}
+
+
 } // End of namespace DreamWeb
 
 
@@ -194,9 +203,11 @@ void openfile(Context &context) {
 	uint16 name_ptr = context.dx;
 	Common::String name;
 	uint8 c;
-	while((c = context.data.byte(name_ptr++)) != 0)
+	while((c = context.cs.byte(name_ptr++)) != 0)
 		name += (char)c;
 	debug(1, "opening file: %s", name.c_str());
+	context.cs.word(kHandle) = 1; //only one handle
+	context.flags._c = false;
 }
 
 void createfile(Context &context) {

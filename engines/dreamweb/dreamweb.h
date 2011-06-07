@@ -26,10 +26,11 @@
 #ifndef DREAMWEB_H
 #define DREAMWEB_H
 
-#include "common/scummsys.h"
+#include "common/error.h"
+#include "common/file.h"
 #include "common/random.h"
 #include "common/rect.h"
-#include "common/error.h"
+#include "common/scummsys.h"
 
 #include "engines/engine.h"
 #include "dreamweb/console.h"
@@ -76,10 +77,14 @@ public:
 //dreamgen public api:
 	uint8 randomNumber() { return _rnd.getRandomNumber(255); }
 
+	void openFile(const Common::String &name);
+
 private:
 	const DreamWebGameDescription *_gameDescription;
 	Common::RandomSource _rnd;
 	Common::Point _mouse;
+	
+	Common::File _file;
 };
 
 } // End of namespace DreamWeb
