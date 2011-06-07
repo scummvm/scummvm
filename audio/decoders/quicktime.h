@@ -50,8 +50,8 @@ class SeekableAudioStream;
  * Try to load a QuickTime sound file from the given file name and create a SeekableAudioStream
  * from that data.
  *
- * @param filename			the filename of the file from which to read the data
- * @return	a new SeekableAudioStream, or NULL, if an error occurred
+ * @param filename          the filename of the file from which to read the data
+ * @return  a new SeekableAudioStream, or NULL, if an error occurred
  */
 SeekableAudioStream *makeQuickTimeStream(const Common::String &filename);
 
@@ -59,9 +59,9 @@ SeekableAudioStream *makeQuickTimeStream(const Common::String &filename);
  * Try to load a QuickTime sound file from the given seekable stream and create a SeekableAudioStream
  * from that data.
  *
- * @param stream			the SeekableReadStream from which to read the data
- * @param disposeAfterUse	whether to delete the stream after use
- * @return	a new SeekableAudioStream, or NULL, if an error occurred
+ * @param stream            the SeekableReadStream from which to read the data
+ * @param disposeAfterUse   whether to delete the stream after use
+ * @return  a new SeekableAudioStream, or NULL, if an error occurred
  */
 SeekableAudioStream *makeQuickTimeStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
