@@ -21,44 +21,31 @@
  */
 
 #include "audio.h"
+#include "system.h"
 
-AudioThread::AudioThread() : mixer(0),
-                             timer(0),
-                             audioOut(0),
-                             audioBufferIndex(0) {
+AudioThread::AudioThread() : 
+  mixer(0),
+  timer(0),
+  audioOut(0),
+  head(0),
+  tail(0) {
 }
 
 Audio::MixerImpl* AudioThread::Construct(OSystem* system) {
-  Osp::Base::Runtime::Thread::Construct(THREAD_TYPE_EVENT_DRIVEN);
+  logEntered();
 
-  audioOut = new Osp::Media::AudioOut();
-  if (!audioOut ||
-      IsFailed(audioOut->Construct(*this))) {
-    AppLog("Failed to create AudioOut");
-    return null;
-  }
-  
-  int bufferSize = audioOut->GetMinBufferSize();
-  for (int i = 0; i < NUM_AUDIO_BUFFERS; i++) {
-    if (IsFailed(audioBuffer[i].Construct(bufferSize))) {
-      AppLog("Failed to create audio buffer");
-      return null;
-    }
-  }
-
-  timer = new Timer();
-  if (!timer ||
-      IsFailed(timer->Construct(*this)) ||
-      IsFailed(timer->Start(TIMER_INTERVAL))) {
-    AppLog("Failed to create audio timer");
+  if (IsFailed(Thread::Construct(THREAD_TYPE_EVENT_DRIVEN))) {
+    AppLog("Failed to create AudioThread");
     return null;
   }
 
   mixer = new Audio::MixerImpl(system, 44100);
-  mixer->setReady(true);
+  return mixer;
 }
 
 AudioThread::~AudioThread() {
+  logEntered();
+
   if (audioOut) {
     delete audioOut;
   }
@@ -67,39 +54,105 @@ AudioThread::~AudioThread() {
   }
 }
 
-void AudioThread::OnAudioOutBufferEndReached(Osp::Media::AudioOut& src) {
-  // TODO
-  //r = src.WriteBuffer(*pWriteBuffer);
-}
-
-void AudioThread::OnAudioOutErrorOccurred(Osp::Media::AudioOut& src, result r) {
-}
-
-void AudioThread::OnAudioOutInterrupted(Osp::Media::AudioOut& src) {
-}
-
-void AudioThread::OnAudioOutReleased(Osp::Media::AudioOut& src) {
-}
-
-Osp::Base::Object* AudioThread::Run(void) {
-  return null;
-}
-
 bool AudioThread::OnStart(void) {
-  // TODO
-  // result r = audioOut->Prepare(AUDIO_TYPE_PCM_U8, AUDIO_CHANNEL_TYPE_STEREO, 8000);
+  logEntered();
+
+  audioOut = new Osp::Media::AudioOut();
+  if (!audioOut ||
+      IsFailed(audioOut->Construct(*this))) {
+    AppLog("Failed to create AudioOut");
+    return false;
+  }
+
+  int sampleRate = mixer->getOutputRate();
+  if (IsFailed(audioOut->Prepare(AUDIO_TYPE_PCM_S16_LE,
+                                 AUDIO_CHANNEL_TYPE_STEREO,
+                                 sampleRate))) {
+    AppLog("Failed to prepare AudioOut %d", sampleRate);
+    return false;
+  }
+
+  int bufferSize = audioOut->GetMinBufferSize();
+  for (int i = 0; i < NUM_AUDIO_BUFFERS; i++) {
+    if (IsFailed(audioBuffer[i].Construct(bufferSize))) {
+      AppLog("Failed to create audio buffer");
+      return false;
+    }
+  }
+
+  timer = new Timer();
+  if (!timer || IsFailed(timer->Construct(*this))) {
+    AppLog("Failed to create audio timer");
+    return false;
+  }
+
+  if (IsFailed(timer->Start(TIMER_INTERVAL))) {
+    AppLog("failed to start audio timer");
+    return false;
+  }
+
+  mixer->setReady(true);
+  audioOut->Start();
   return true;
 }
 
 void AudioThread::OnStop(void) {
+  logEntered();
+
+  if (audioOut) {
+    audioOut->Stop();
+    audioOut->Unprepare();
+  }
   if (timer) {
     timer->Cancel();
   }
 }
 
-void AudioThread::OnTimerExpired(Timer& timer) {
-  timer.Start(TIMER_INTERVAL);
-  // TODO
-  // r = __pAudioThread->WriteBuffer(__byteBuffer[0]);
+void AudioThread::OnAudioOutBufferEndReached(Osp::Media::AudioOut& src) {
+  consumeAudio();
+  produceAudio(1);
 }
 
+void AudioThread::OnAudioOutErrorOccurred(Osp::Media::AudioOut& src, result r) {
+  logEntered();
+}
+
+void AudioThread::OnAudioOutInterrupted(Osp::Media::AudioOut& src) {
+  logEntered();
+}
+
+void AudioThread::OnAudioOutReleased(Osp::Media::AudioOut& src) {
+  logEntered();
+}
+
+void AudioThread::OnTimerExpired(Timer& timer) {
+  produceAudio(BUFFER_FILL_SIZE);
+  timer.Start(TIMER_INTERVAL);
+}
+
+void AudioThread::consumeAudio() {
+  if (head != tail) {
+    audioOut->WriteBuffer(audioBuffer[tail]);
+    tail = (tail + 1 == NUM_AUDIO_BUFFERS ? 0 : tail + 1);
+  }
+}
+
+void AudioThread::produceAudio(int fillSize) {
+  int len = (head < tail ? head + (NUM_AUDIO_BUFFERS - tail) : head - tail);
+
+  if (len < NUM_AUDIO_BUFFERS) {
+    uint len = audioBuffer[head].GetCapacity();
+    int samples = mixer->mixCallback((byte *) audioBuffer[head].GetPointer(), len);
+    if (samples) {
+      head = (head + 1 == NUM_AUDIO_BUFFERS ? 0 : head + 1);
+    }
+  }
+
+  if (len >= fillSize) {
+    consumeAudio();
+  }
+}
+
+//
+// end of audio.cpp 
+//
