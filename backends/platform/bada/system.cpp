@@ -199,7 +199,11 @@ result BadaSystem::initModules() {
     return E_OUT_OF_MEMORY;
   }
 
-  audioThread->Start();
+  if (IsFailed(audioThread->Start())) {
+    AppLog("Failed to start audio thread");
+    return E_OUT_OF_MEMORY;
+  }
+
   logLeaving();
   return E_SUCCESS;
 }
