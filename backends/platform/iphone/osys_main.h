@@ -57,9 +57,7 @@ protected:
 	static SoundProc s_soundCallback;
 	static void *s_soundParam;
 
-	Common::SaveFileManager *_savefile;
 	Audio::MixerImpl *_mixer;
-	Common::TimerManager *_timer;
 
 	Graphics::Surface _framebuffer;
 	byte *_offscreen;
@@ -177,9 +175,7 @@ public:
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 	virtual void getTimeAndDate(TimeDate &t) const;
 
-	virtual Common::SaveFileManager *getSavefileManager();
 	virtual Audio::Mixer *getMixer();
-	virtual Common::TimerManager *getTimerManager();
 
 	void startSoundsystem();
 	void stopSoundsystem();
