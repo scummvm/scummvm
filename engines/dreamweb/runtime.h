@@ -345,7 +345,7 @@ public:
 		es.byte(di++) = al;
 	}
 	inline void _stosw() {
-		es.word(di) = al;
+		es.word(di) = ax;
 		di += 2;
 	}
 	
